@@ -1,0 +1,109 @@
+#!/usr/bin/python
+
+import os
+import sys
+import fx
+import buildsys
+import util
+
+flpath = os.path.dirname(os.path.realpath(os.path.dirname(sys.argv[0])))
+cpath = os.path.realpath(flpath).rstrip(os.sep) + os.sep
+curdir = os.path.realpath(os.getcwd()).rstrip(os.sep) + os.sep
+
+if len(fx.extra_args) != 1:
+  print """
+  fl-build: Builds files as part of the FASTlib build system.
+     (usage: fl-build <targetname> [--mode={verbose|debug|check|fast|unsafe}])
+  
+  This builds the specified target rule and places links to generated files
+  and a Makefile in the current directory.  I assume that FASTlib is
+  installed here: %s
+  This will build code outside of the above FASTlib tree, just be sure other
+  external rules can are referred by relative paths like "." or "..".
+  
+  BACKGROUND - BUILD RULES
+  
+    Build rules are named in the form path:name where the path is a relative
+    path from the current directory, or absolute from the FASTlib C
+    directory.  For instance:
+    
+       :helper        the rule 'helper' in current directory
+       ..:parent      the rule 'parent' in parent directory
+       ../sib:sib     the rule 'sib' in the sibling directory 'sib'
+       linear:linear  the 'linear' package in root of FASTlib tree
+    
+    The path specifies where the build.py specifying the rule is.  Each
+    build.py file specifies what rules are defined for that directory;
+    nameless rules take the name of the directory.
+  
+  EXTRA COMMAND LINE OPTIONS
+  
+    --mode={verbose|debug|check|fast|unsafe|small} = compilation mode
+         [verbose] verbosity messages    [debug] "i need to use gdb"
+         *[check]* assertions and fast   [fast]  usually fastest
+         [unsafe]  bad optimizations     [small] code size
+    --j={1|2|3...} = number of CPU's to compile with
+  """ % (cpath)
+  sys.exit(1)
+
+if curdir.startswith(cpath):
+  # When building inside build system, use relative paths from root
+  # of build system.
+  print "*** Building from within build system"
+  #real_path = curdir[len(cpath):]
+  real_rootpath = cpath
+  real_path = curdir.rstrip(os.sep)
+  fake_path = curdir[len(cpath):].replace(os.sep, "/").rstrip("/")
+else:
+  # When building from outside build system, use absolute paths.
+  # However, for generated files, we need somewhere to put them within
+  # the bin/ directory; se use 'OUTSIDE' to signify this.
+  print "*** Building from OUTSIDE build system... cross your fingers!"
+  print " - I think the build system is here: %s" % cpath
+  print " - This is where you are: %s" % curdir
+  real_rootpath = cpath
+  real_path = os.path.abspath(curdir).rstrip(os.sep)
+  fake_path = "external/" + curdir.replace(os.sep, "/").strip("/")
+
+# Create build parameters
+
+fx.param_default("mode", "check")
+fx.param_default("compiler", "gcc")
+fx.param_default("j", "1")
+target_name = fx.extra_args[0]
+
+if not ":" in target_name:
+  # Target names MUST contain a colon.
+  target_name = os.path.dirname(target_name) + ":" + os.path.basename(target_name)
+  print "!!! No ':' specified, assuming '%s'." % target_name
+
+makefile_path = os.path.abspath("./Makefile")
+mode = fx.param_str("mode")
+compiler = fx.param_str("compiler")
+(kernel, nodename, release, version, arch) = os.uname()
+arch = util.sanitize_basename(arch)
+kernel = util.sanitize_basename(kernel)
+
+# Dispatch
+
+print "*** Generating Makefile in current directory"
+
+params = dict(arch=arch,kernel=kernel,mode=mode,compiler=compiler)
+
+print "*** Target Rule: '%s'" % target_name
+
+loader = buildsys.Loader(real_rootpath)
+target = loader.find_rule(target_name, real_path, fake_path)
+linkrule = buildsys.SymlinkRule([target], curdir)
+linkrule.generate(loader.thebuildsys, params)
+
+# TODO: Make symbolic link to result
+makefile_lines = loader.thebuildsys.to_makefile()
+
+print "*** Running Makefile"
+
+processors = fx.param_int("j")
+
+util.writelines(makefile_path, makefile_lines)
+sys.exit(os.spawnvp(os.P_WAIT, "make", ["make", "-j%d" % processors]))
+
