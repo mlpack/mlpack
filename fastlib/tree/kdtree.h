@@ -213,6 +213,7 @@ namespace tree {
 
   // TODO: Perhaps move this into a "util.h" file
   
+  /** Serializes a KD tree to a serializer. */
   template<typename TKdTree, typename Serializer>
   void SerializeKdTree(const TKdTree *tree,
       const Matrix& matrix,
@@ -223,6 +224,7 @@ namespace tree {
     old_from_new.Serialize(s);
   }
 
+  /** Deserializes a KD tree from a serializer. */
   template<typename TKdTree, typename Deserializer>
   void DeserializeKdTree(TKdTree *uninit_tree,
       Matrix* uninit_matrix,
@@ -235,6 +237,7 @@ namespace tree {
     }
   }
 
+  /** Reads a KD tree from a file in the SERIALIZED format. */
   template<typename TKdTree>
   void ReadKdTreeFromFile(const char *fname,
       TKdTree *uninit_tree,
@@ -248,6 +251,7 @@ namespace tree {
   }
 };
 
+/** Basic KD tree structure. */
 typedef BinarySpaceTree<DHrectBound, Matrix> BasicKdTree;
 
 #endif
