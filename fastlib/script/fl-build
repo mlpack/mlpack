@@ -1,4 +1,38 @@
-#!/usr/bin/python
+#!/usr/bin/env python
+
+USAGE = """
+fl-build: Builds files as part of the FASTlib build system.
+   (usage: fl-build <targetname> [--mode={verbose|debug|check|fast|unsafe}])
+
+This builds the specified target rule and places links to generated files
+and a Makefile in the current directory.  I assume that FASTlib is
+installed here: %s
+This will build code outside of the above FASTlib tree, just be sure other
+external rules can are referred by relative paths like "." or "..".
+
+BACKGROUND - BUILD RULES
+
+  Build rules are named in the form path:name where the path is a relative
+  path from the current directory, or absolute from the FASTlib C
+  directory.  For instance:
+  
+     fastlib:fastlib  the 'fastlib' package in root of FASTlib tree
+     :helper          the rule 'helper' in current directory
+     ..:parent        the rule 'parent' in parent directory
+     ../sib:sib       the rule 'sib' in the sibling directory 'sib'
+  
+  The path specifies where the build.py specifying the rule is.  Each
+  build.py file specifies what rules are defined for that directory;
+  nameless rules take the name of the directory.
+
+OPTIONAL COMMAND LINE OPTIONS
+
+  --mode={verbose|debug|check|fast|unsafe|small} = compilation mode
+       [verbose] verbosity messages    [debug] "i need to use gdb"
+       *[check]* assertions and fast   [fast]  usually fastest
+       [unsafe]  bad optimizations     [small] code size
+  --j={1|2|3...} = number of CPU's to compile with
+"""
 
 import os
 import sys
@@ -11,39 +45,7 @@ cpath = os.path.realpath(flpath).rstrip(os.sep) + os.sep
 curdir = os.path.realpath(os.getcwd()).rstrip(os.sep) + os.sep
 
 if len(fx.extra_args) != 1:
-  print """
-  fl-build: Builds files as part of the FASTlib build system.
-     (usage: fl-build <targetname> [--mode={verbose|debug|check|fast|unsafe}])
-  
-  This builds the specified target rule and places links to generated files
-  and a Makefile in the current directory.  I assume that FASTlib is
-  installed here: %s
-  This will build code outside of the above FASTlib tree, just be sure other
-  external rules can are referred by relative paths like "." or "..".
-  
-  BACKGROUND - BUILD RULES
-  
-    Build rules are named in the form path:name where the path is a relative
-    path from the current directory, or absolute from the FASTlib C
-    directory.  For instance:
-    
-       :helper        the rule 'helper' in current directory
-       ..:parent      the rule 'parent' in parent directory
-       ../sib:sib     the rule 'sib' in the sibling directory 'sib'
-       linear:linear  the 'linear' package in root of FASTlib tree
-    
-    The path specifies where the build.py specifying the rule is.  Each
-    build.py file specifies what rules are defined for that directory;
-    nameless rules take the name of the directory.
-  
-  EXTRA COMMAND LINE OPTIONS
-  
-    --mode={verbose|debug|check|fast|unsafe|small} = compilation mode
-         [verbose] verbosity messages    [debug] "i need to use gdb"
-         *[check]* assertions and fast   [fast]  usually fastest
-         [unsafe]  bad optimizations     [small] code size
-    --j={1|2|3...} = number of CPU's to compile with
-  """ % (cpath)
+  print USAGE % (cpath)
   sys.exit(1)
 
 if curdir.startswith(cpath):
@@ -74,8 +76,8 @@ target_name = fx.extra_args[0]
 
 if not ":" in target_name:
   # Target names MUST contain a colon.
-  target_name = os.path.dirname(target_name) + ":" + os.path.basename(target_name)
-  print "!!! No ':' specified, assuming '%s'." % target_name
+  target_name = ":".join(os.path.split(target_name))
+  print "!!! No ':' is in the target rule name, assuming '%s'." % target_name
 
 makefile_path = os.path.abspath("./Makefile")
 mode = fx.param_str("mode")
