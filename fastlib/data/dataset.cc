@@ -528,15 +528,16 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
   DEBUG_ASSERT(i_test == test->n_points());
 }
 
-void data::Load(const char *fname, Matrix *matrix) {
+success_t data::Load(const char *fname, Matrix *matrix) {
   Dataset dataset;
-  dataset.InitFromFile(fname);
+  success_t result = dataset.InitFromFile(fname);
   matrix->Own(&dataset.matrix());
+  return result;
 }
 
-void data::Save(const char *fname, const Matrix& matrix) {
+success_t data::Save(const char *fname, const Matrix& matrix) {
   Dataset dataset;
   dataset.AliasMatrix(matrix);
-  dataset.WriteCsv(fname);
+  return dataset.WriteCsv(fname);
 }
 

@@ -580,7 +580,7 @@ namespace data {
    * @param fname the file name to load
    * @param matrix a pointer to an uninitialized matrix to load
    */
-  void Load(const char *fname, Matrix *matrix);
+  success_t Load(const char *fname, Matrix *matrix);
   /**
    * Saves a matrix to a file.
    *
@@ -595,7 +595,7 @@ namespace data {
    * @param fname the file name to load
    * @param matrix a pointer to an uninitialized matrix to load
    */
-  void Save(const char *fname, const Matrix& matrix);
+  success_t Save(const char *fname, const Matrix& matrix);
 };
 
 #endif
