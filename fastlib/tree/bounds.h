@@ -275,7 +275,7 @@ class DHrectBound {
 class DEuclideanMetric {
  public:
   static double CalculateMetric(const Vector& a, const Vector& b) {
-    return sqrt(la::DistanceSqEuclidean(a.ptr(), b.ptr(), a.length()));
+    return sqrt(la::DistanceSqEuclidean(a.length(), a.ptr(), b.ptr()));
   }
 };
 

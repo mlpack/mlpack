@@ -81,7 +81,8 @@ static void fx__attempt_speedup()
   sync();
   sleep(3);
 
-  /* Stop and restart default timer to cache the timer code. */
+  /* Stop and restart default timer to ensure timer code is dynamically
+   * loaded and hopefully in L2 cache. */
   fx_timer_start(NULL, NULL);
   fx_timer_stop(NULL, NULL);
 }

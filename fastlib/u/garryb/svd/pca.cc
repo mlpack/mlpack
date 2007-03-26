@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     D.Destruct();
     D.Own(&D_new);
   }
-    
+  
   Matrix U;
   Matrix VT;
   Vector s;
@@ -29,14 +29,19 @@ int main(int argc, char *argv[]) {
   fx_timer_stop(NULL, "svd");
   
   Matrix S_VT;
-  Matrix S;
-  S.Init(s.length(), s.length());
-  S.SetDiagonal(s);
-  la::MulInit(S, VT, &S_VT);
+  fx_timer_start(NULL, "multiply");
+  S_VT.Copy(VT);
+  la::ScaleRows(s, &S_VT);
+  fx_timer_stop(NULL, "multiply");
   
-  data::Save("S_VT.csv", S_VT);
-  data::Save("S.csv", S);
-  data::Save("U.csv", U);
+  Matrix S_row;
+  S_row.AliasColVector(s);
+  
+  if (!fx_param_exists(NULL, "nosave")) {
+    data::Save("S_VT.csv", S_VT);
+    data::Save("S.csv", S_row);
+    data::Save("U.csv", U);
+  }
   
   fx_done();
   

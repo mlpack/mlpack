@@ -95,6 +95,20 @@
  * addition/scaling/subtraction.
  */
 namespace la {
+  /**
+   * Scales the rows of a column-major matrix by a different value for
+   * each row.
+   */
+  inline void ScaleRows(index_t n_rows, index_t n_cols,
+      const double *scales, double *matrix) {
+    do {
+      for (index_t i = 0; i < n_rows; i++) {
+        matrix[i] *= scales[i];
+      }
+      matrix += n_rows;
+    } while (--n_cols);
+  }
+  
 #if defined(USE_LAPACK) && defined(USE_BLAS_L1)
   /* --- Wrappers for BLAS level 1 --- */
   /*
@@ -269,6 +283,18 @@ namespace la {
    */
   inline void Scale(double alpha, Matrix *X) {
     Scale(X->n_elements(), alpha, X->ptr());
+  }
+  /**
+   * Scales each row of the matrix to a different scale.
+   *
+   * X <- diag(d) * X
+   * 
+   * @param d a length-M vector with each value corresponding
+   * @param X the matrix to scale
+   */
+  inline void ScaleRows(const Vector& d, Matrix *X) {
+    DEBUG_SAME_INT(d.length(), X->n_rows());
+    ScaleRows(d.length(), X->n_cols(), d.ptr(), X->ptr());
   }
 
   /**

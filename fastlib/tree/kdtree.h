@@ -18,6 +18,7 @@
 #include "base/common.h"
 #include "col/arraylist.h"
 #include "file/serialize.h"
+#include "fx/fx.h"
 
 /* Implementation */
 
@@ -239,7 +240,7 @@ namespace tree {
 
   /** Reads a KD tree from a file in the SERIALIZED format. */
   template<typename TKdTree>
-  void ReadKdTreeFromFile(const char *fname,
+  void LoadKdTreeFromFile(const char *fname,
       TKdTree *uninit_tree,
       Matrix* uninit_matrix,
       ArrayList<index_t>* uninit_old_from_new) {
@@ -248,6 +249,91 @@ namespace tree {
     ASSERT_PASS(ds.Init(fname));
     DeserializeKdTree(uninit_tree, uninit_matrix, uninit_old_from_new,
         &ds);
+  }
+  
+  /**
+   * Loads a KD tree from a command-line parameter,
+   * creating a KD tree if necessary.
+   *
+   * This optionally allows the end user to write out the created KD tree
+   * to a file, as a convenience.
+   *
+   * Requires a sub-module, with the root parameter of the submodule being
+   * the filename, and optional parameters leaflen, type, and save (see
+   * example below).
+   *
+   * Example:
+   *
+   * @code
+   * MyKdTree *q_tree;
+   * Matrix q_matrix;
+   * ArrayList<index_t> q_permutation;
+   * LoadKdTree(fx_submodule(NULL, "q", "q"), &q_matrix, &q_tree,
+   *    &q_permutation);
+   * @endcode
+   *
+   * Command-line use:
+   *
+   * @code
+   * ./main --q=foo.txt                  # load from csv format
+   * ./main --q=foo.txt --q/leaflen=20   # leaf length
+   * ./main --q=foo.kd --q/type=native   # load from serialized format
+   * ./main --q=foo.txt --q/save=foo.kd  # serialize the tree too
+   * @endcode
+   *
+   * @param module the module to get parameters from
+   * @param matrix the matrix to initialize, undefined on failure
+   * @param tree_pp an unitialized pointer that will be set to the root
+   *        of the tree, must still be freed on failure
+   * @param old_from_new stores the permutation to get from the indices in
+   *        the matrix returned to the original data point indices
+   * @return SUCCESS_PASS or SUCCESS_FAIL
+   */
+  template<typename TKdTree>
+  success_t LoadKdTree(datanode *module,
+      Matrix *matrix, TKdTree **tree_pp,
+      ArrayList<index_t> *old_from_new) {
+    const char *type = fx_param_str(module, "type", "text");
+    const char *fname = fx_param_str(module, "", NULL);
+    success_t success = SUCCESS_PASS;
+
+    fx_timer_start(module, "load");
+    if (strcmp(type, "native") == 0) {
+      fx_timer_start(module, "deserialize");
+      *tree_pp = new TKdTree();
+      tree::LoadKdTreeFromFile(fname, *tree_pp, matrix, old_from_new);
+      fx_timer_stop(module, "deserialize");
+    } else if (strcmp(type, "text") == 0) {
+      int leaflen = fx_param_int(module, "leaflen", 20);
+
+      fx_timer_start(module, "load_matrix");
+      success = data::Load(fname, matrix);
+      fx_timer_stop(module, "load_matrix");
+      
+      //if (fx_param_exists("do_pca")) {
+      //  
+      //}
+
+      fx_timer_start(module, "make_tree");
+      *tree_pp = MakeKdTreeMidpoint<TKdTree>(
+          *matrix, leaflen, old_from_new);
+      fx_timer_stop(module, "make_tree");
+    } else {
+      FATAL("Uknown file type: %s", type);
+    }
+    fx_timer_stop(module, "load");
+    
+    if (fx_param_exists(module, "save")) {
+      const char *save_fname = fx_param_str_req(module, "save");
+      fx_timer_start(module, "save");
+      NativeArraySerializer serializer;
+      serializer.Init();
+      SerializeKdTree(*tree_pp, *matrix, *old_from_new, &serializer);
+      serializer.WriteFile(save_fname);
+      fx_timer_stop(module, "save");
+    }
+    
+    return success;
   }
 };
 
