@@ -102,8 +102,8 @@ struct datanode *datanode_get_node(struct datanode *node, const char *name,
 {
   struct datanode *child;
 
-  DEBUG_ASSERT_MSG(datanode__valid_path(name),
-		   "Invalid path %s", name);
+  DEBUG_ASSERT_MSG(name != NULL, "NULL path");
+  DEBUG_ASSERT_MSG(datanode__valid_path(name), "Invalid path %s", name);
 
   /* Seek query in node's children */
   for (child = node->children; child; child = child->next) {
@@ -130,7 +130,10 @@ struct datanode *datanode_get_path(struct datanode *node, const char *path,
 #if DEBUG
   const char *orig_path = path;
 #endif
-  while (path && node) {
+
+  DEBUG_ASSERT_MSG(path != NULL, "NULL path");
+
+  while (node) {
     struct datanode *child;
     const char *slash;
     ssize_t len;
@@ -138,23 +141,22 @@ struct datanode *datanode_get_path(struct datanode *node, const char *path,
     while (*path == '/') {
       path++;
     }
-    
     if (*path == '\0') {
       break;
     }
-    
+
     for (slash = path; *slash != '\0' && *slash != '/'; slash++) {}
-    
-    DEBUG_ASSERT_MSG(datanode__valid_path_len(path, slash - path),
-		     "Invalid path %s", orig_path);
-    
+
     /* Obtain length of current path query */
     len = slash - path;
+
+    DEBUG_ASSERT_MSG(datanode__valid_path_len(path, len),
+		     "Invalid path %s", orig_path);
 
     /* Seek query in node's children */
     for (child = node->children; child; child = child->next) {
       if (strncmp(path, child->key, len) == 0
-          && child->key[len] == 0) {
+          && child->key[len] == '\0') {
 	break;
       }
     }
@@ -216,22 +218,29 @@ static char *datanode__hex(char *dest, const char *src, int remaining)
 }
 
 static void datanode__write_buf(struct datanode *node, FILE *f,
+				char *prefix, char *buf);
+
+static void datanode__write_buf_backwards(struct datanode *node, FILE *f,
+    char *prefix, char *buf) {
+  if (node) {
+    datanode__write_buf_backwards(node->next, f, prefix, buf);
+    char *child_buf =
+          datanode__hex(buf + 1, node->key, 4096 - (buf - prefix) -1);
+    datanode__write_buf(node, f, prefix, child_buf);
+  }
+}
+
+static void datanode__write_buf(struct datanode *node, FILE *f,
 				char *prefix, char *buf)
 {
-  struct datanode *child;
-
-  if (node->val) {
+  	if (node->val) {
     buf[0] = ' ';
     datanode__hex(buf + 1, node->val, 4096 - (buf - prefix) - 1);
     fprintf(f, "%s\n", prefix);
   }
 
   buf[0] = '/';
-  for (child = node->children; child; child = child->next) {
-    char *child_buf =
-        datanode__hex(buf + 1, child->key, 4096 - (buf - prefix) -1);
-    datanode__write_buf(child, f, prefix, child_buf);
-  }
+  datanode__write_buf_backwards(node->children, f, prefix, buf);
 }
 
 void datanode_write(struct datanode *node, FILE *f)

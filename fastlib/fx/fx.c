@@ -66,11 +66,11 @@ static void fx__parse_cmd_line(struct datanode *node, int argc, char *argv[])
 static void fx__read_debug_params(struct datanode *node)
 {
   debug_verbosity = fx_param_double(node, "./verbosity_level", 1.0);
-  print_got_heres = fx_param_bool(node, "./print_got_heres", "1");
-  print_warnings = fx_param_bool(node, "./print_warnings", "1");
-  abort_on_nonfatal = fx_param_bool(node, "./abort_on_nonfatal", "0");
-  pause_on_nonfatal = fx_param_bool(node, "./pause_on_nonfatal", "0");
-  print_notify_headers = fx_param_bool(node, "./print_notify_headers", "1");
+  print_got_heres = fx_param_bool(node, "./print_got_heres", 1);
+  print_warnings = fx_param_bool(node, "./print_warnings", 1);
+  abort_on_nonfatal = fx_param_bool(node, "./abort_on_nonfatal", 0);
+  pause_on_nonfatal = fx_param_bool(node, "./pause_on_nonfatal", 0);
+  print_notify_headers = fx_param_bool(node, "./print_notify_headers", 1);
 }
 
 static void fx__attempt_speedup()
@@ -96,7 +96,7 @@ void fx_init(int argc, char **argv) {
       argc - 1, argv + 1);
   fx__read_debug_params(fx_param_node(NULL, "debug"));
 
-  if (fx_param_bool(NULL, "fx/timing", "0")) {
+  if (fx_param_bool(NULL, "fx/timing", 0)) {
     fx__attempt_speedup();
   }
 
@@ -152,9 +152,9 @@ static void fx__report_usage(int type, struct datanode *node)
   /* Store all getrusage values, even if they are bogus. */
   fx_set_result(node, "./WARNING", "your_OS_might_not_support_all_of_these");
   fx_format_result(node, "./utime", 
-      "%ld.%06ld", usage.ru_utime.tv_sec, usage.ru_utime.tv_usec);
+      "%ld.%06ld", (long)usage.ru_utime.tv_sec, (long)usage.ru_utime.tv_usec);
   fx_format_result(node, "./stime",
-      "%ld.%06ld", usage.ru_stime.tv_sec, usage.ru_stime.tv_usec);
+      "%ld.%06ld", (long)usage.ru_stime.tv_sec, (long)usage.ru_stime.tv_usec);
   fx_format_result(node, "./minflt", "%ld", usage.ru_minflt);
   fx_format_result(node, "./majflt", "%ld", usage.ru_majflt);
   fx_format_result(node, "./maxrss", "%ld", usage.ru_maxrss);
@@ -215,8 +215,11 @@ static struct datanode *fx__param(struct datanode *module, const char *name,
     module = fx_root;
   }
 
-  if (name[0] == '.' && name[1] == '/') {
-    node = datanode_get_path(module, name + 2, create_type);
+  DEBUG_ERR_MSG_IF(name == NULL/* || name[0] == '\0'*/,
+		   "Empty path; maybe you want \".\"");
+
+  if (name[0] == '.' && (name[1] == '/' || name[1] == '\0')) {
+    node = datanode_get_path(module, name + 1, create_type);
   } else {
     DEBUG_WARN_MSG_IF(module->type != NODETYPE_MODULE,
 		      "Accessing \"params\" of non-module \"%s\".",
@@ -254,57 +257,104 @@ const char *fx_param_str(struct datanode *module, const char *name,
   return node->val;
 }
 
-double fx_param_double(struct datanode *module, const char *name,
-		       double def)
+const char *fx_param_str_req(struct datanode *module, const char *name)
+{
+  return fx_param_str(module, name, NULL);
+}
+
+double fx_param_double(struct datanode *module, const char *name, double def)
 {
   struct datanode *node = fx__param(module, name, 1);
-  
+
   if (!node->val) {
-    if (isnan(def)) {
-      FATAL("Required parameter \"%s\" unspecified in module \"%s\".",
-          name, module ? module->key : fx_root->key);
-    } else {
-      char buf[100];
-      sprintf(buf, "%.15g", def);
-      node->val = strdup(buf);
-      return def;
-    }
+    char buf[32];
+    sprintf(buf, "%.16g", def);
+    node->val = strdup(buf);
   } else {
     if (sscanf(node->val, "%lf", &def) != 1) {
-      FATAL("Parameter \"%s\" in \"%s\" is not a valid floating-point number: \"%s\".",
-          name, module ? module->key : fx_root->key, (char*)node->val);
+      FATAL("Parameter \"%s\" in module \"%s\" is not a double: \"%s\".",
+	    name, module ? module->key : fx_root->key, (char *)node->val);
     }
-    return def;
   }
+
+  return def;
+}
+
+double fx_param_double_req(struct datanode *module, const char *name)
+{
+  const char *val = fx_param_str_req(module, name);
+  double res;
+
+  if (sscanf(val, "%lf", &res) != 1) {
+    FATAL("Parameter \"%s\" in module \"%s\" is not a double: \"%s\".",
+	  name, module ? module->key : fx_root->key, val);
+  }
+
+  return res;
 }
 
 int fx_param_int(struct datanode *module, const char *name, int def)
 {
   struct datanode *node = fx__param(module, name, 1);
-  
+
   if (!node->val) {
-    if (def == -1) {
-      FATAL("Required parameter \"%s\" unspecified in module \"%s\".",
-          name, module ? module->key : fx_root->key);
-    } else {
-      char buf[3 * sizeof(int) + 2];
-      sprintf(buf, "%d", def);
-      node->val = strdup(buf);
-      return def;
-    }
+    char buf[3 * sizeof(int) + 2];
+    sprintf(buf, "%d", def);
+    node->val = strdup(buf);
   } else {
     if (sscanf(node->val, "%d", &def) != 1) {
-      FATAL("Parameter \"%s\" in \"%s\" is not a valid integer: \"%s\".",
-          name, module ? module->key : fx_root->key, (char*)node->val);
+      FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
+	    name, module ? module->key : fx_root->key, (char *)node->val);
     }
+  }
+
+  return def;
+}
+
+int fx_param_int_req(struct datanode *module, const char *name)
+{
+  const char *val = fx_param_str_req(module, name);
+  int res;
+
+  if (sscanf(val, "%d", &res) != 1) {
+    FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
+	  name, module ? module->key : fx_root->key, val);
+  }
+
+  return res;
+}
+
+int fx_param_bool(struct datanode *module, const char *name, int def)
+{
+  struct datanode *node = fx__param(module, name, 1);
+
+  if (!node->val) {
+    node->val = strdup(def ? "1" : "0");
     return def;
+  } else {
+    if (strchr("1tTyY", ((char *)node->val)[0]) != NULL) {
+      return 1;
+    } else if (strchr("0fFnN", ((char *)node->val)[0]) != NULL) {
+      return 0;
+    } else {
+      FATAL("Parameter \"%s\" in module \"%s\" is not a bool: \"%s\".",
+	    name, module ? module->key : fx_root->key, (char *)node->val);
+    }
   }
 }
 
-int fx_param_bool(struct datanode *module, const char *name,
-		  const char *def)
+int fx_param_bool_req(struct datanode *module, const char *name)
 {
-  return strchr("0fFnN", fx_param_str(module, name, def)[0]) == NULL;
+  const char *val = fx_param_str_req(module, name);
+
+  if (strchr("1tTyY", val[0]) != NULL) {
+    return 1;
+  } else if (strchr("0fFnN", val[0]) != NULL) {
+    return 0;
+  } else {
+    FATAL("Parameter \"%s\" in module \"%s\" is not a bool: \"%s\".",
+	  name, module ? module->key : fx_root->key, val);
+  }
 }
 
 struct datanode *fx_param_node(struct datanode *module, const char *name)
@@ -324,12 +374,14 @@ static void fx__set_param_val(struct datanode *node, const char *val,
   }
 }
 
-void fx_def_param(struct datanode *module, const char *name, const char *def)
+void fx_default_param(struct datanode *module, const char *name,
+		      const char *def)
 {
   fx__set_param_val(fx__param(module, name, 1), def, 0);
 }
 
-void fx_set_param(struct datanode *module, const char *name, const char *val)
+void fx_set_param(struct datanode *module, const char *name,
+		  const char *val)
 {
   fx__set_param_val(fx__param(module, name, 1), val, 1);
 }
@@ -378,10 +430,11 @@ static void fx__copy_params(struct datanode *node,
   }
 }
 
-void fx_def_param_node(struct datanode *dest_module, const char *destname,
-		       struct datanode *src_module, const char *srcname)
+void fx_default_param_node(struct datanode *dest_module, const char *destname,
+			   struct datanode *src_module, const char *srcname)
 {
   struct datanode *source_node = fx__param(src_module, srcname, 0);
+
   if (source_node) {
     fx__copy_params(fx__param(dest_module, destname, 1), source_node, 0);
   }
@@ -391,6 +444,7 @@ void fx_set_param_node(struct datanode *dest_module, const char *destname,
 		       struct datanode *src_module, const char *srcname)
 {
   struct datanode *source_node = fx__param(src_module, srcname, 0);
+
   if (source_node) {
     fx__copy_params(fx__param(dest_module, destname, 1), source_node, 1);
   }
@@ -406,8 +460,11 @@ static struct datanode *fx__result(struct datanode *module, const char *name,
     module = fx_root;
   }
 
-  if (name[0] == '.' && name[1] == '/') {
-    node = datanode_get_path(module, name + 2, create_type);
+  DEBUG_ERR_MSG_IF(name == NULL/* || name[0] == '\0'*/,
+		   "Empty path; maybe you want \".\"");
+
+  if (name[0] == '.' && (name[1] == '/' || name[1] == '\0')) {
+    node = datanode_get_path(module, name + 1, create_type);
   } else {
     DEBUG_WARN_MSG_IF(module->type != NODETYPE_MODULE,
 		      "Accessing \"results\" of non-module \"%s\".",
@@ -463,8 +520,11 @@ static struct datanode *fx__timer(struct datanode *module, const char *name,
     name = "default";
   }
 
-  if (name[0] == '.' && name[1] == '/') {
-    node = datanode_get_path(module, name + 2, create_type);
+  DEBUG_ERR_MSG_IF(name == NULL/* || name[0] == '\0'*/,
+		   "Empty path; maybe you want \".\"");
+
+  if (name[0] == '.' && (name[1] == '/' || name[1] == '\0')) {
+    node = datanode_get_path(module, name + 1, create_type);
   } else {
     DEBUG_WARN_MSG_IF(module->type != NODETYPE_MODULE,
 		      "Accessing \"timers\" of non-module \"%s\".",
@@ -513,28 +573,33 @@ void fx_timer_stop(struct datanode *module, const char *name)
   }
 }
 
-struct datanode *fx_submodule(struct datanode *module, const char *name,
-			      const char *params_path_template, ...)
+struct datanode *fx_submodule(struct datanode *module, const char *params,
+			      const char *name_format, ...)
 {
   struct datanode *node;
+  char buf[1024];
+  va_list vl;
 
   if (!module) {
     module = fx_root;
   }
 
-  node = datanode_get_path(module, name, NODETYPE_MODULE);
+  DEBUG_ERR_MSG_IF(name_format == NULL, "Empty submodule path.");
+
+  va_start(vl, name_format);
+  vsnprintf(buf, 1024, name_format, vl);
+  va_end(vl);
+
+  DEBUG_ERR_MSG_IF(buf[0] == '\0', "Empty submodule path.");
+
+  node = datanode_get_path(module, buf, NODETYPE_MODULE);
 
   DEBUG_WARN_MSG_IF(node->type != NODETYPE_MODULE,
-		    "Datastore entry \"%s\" is not a module.", name);
+		    "Datastore entry \"%s\" is not a module.", buf);
 
-  if (params_path_template) {
-    char params_path[256];
-    va_list vl;
-    va_start(vl, params_path_template);
-    snprintf(params_path, sizeof(params_path), params_path_template, vl);
-    va_end(vl);
+  if (params) {
     fx__copy_params(datanode_get_node(node, "params", NODETYPE_PARAM), 
-		    fx_param_node(module, params_path), 1);
+		    fx_param_node(module, params), 1);
   }
 
   return node;

@@ -3,7 +3,7 @@ librule(
     name = "example",              # this line can be safely omitted
     sources = ["helper.cc"],       # files that must be compiled
     headers = ["helper.h"],        # include files part of the 'lib'
-    deplibs = ["fastlib:fastlib"]  # depends on fastlib core
+    deplibs = ["fastlib:fastlib-int"]  # depends on fastlib core
     )
 
 binrule(
