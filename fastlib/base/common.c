@@ -20,8 +20,13 @@ const double FLT_NAN = 0.0f / 0.0f;
 int abort_on_nonfatal = 0;
 int pause_on_nonfatal = 0;
 int print_notify_headers = 0;
+#ifdef VERBOSE
 int print_got_heres = 1;
 int print_warnings = 1;
+#else
+int print_got_heres = 0;
+int print_warnings = 0;
+#endif
 
 void fl_abort(void)
 {
