@@ -328,7 +328,7 @@ class TextWriter {
   }
   
   /**
-   * Opens a file by name.
+   * Opens a file by name (initializer).
    *
    * @return success or failure
    */

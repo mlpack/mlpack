@@ -22,8 +22,9 @@
  * tokenizers that you may find useful.  Finally, it is non-templated,
  * so compiler errors are easier to understand.
  *
- * WARNING: This has gone through rigorous testing -- we expect it to work,
- * but there may be some issues.
+ * WARNING: This has not gone through rigorous testing -- we expect it to
+ * work, but there may be some issues.  You will be just fine using the
+ * STL string if you need string processing.
  */
 class String {
  private:
@@ -365,6 +366,24 @@ class String {
   index_t Split(const char *delimeters, ArrayList<String> *result) const {
     return Split(0, delimeters, "", 0, result);
   }
+  
+  /**
+   * Creates a new string with the specified characters removed from the left
+   * part of the string.
+   */
+  void TrimLeft(const char *delimeters, String *result) const;
+
+  /**
+   * Creates a new string with the specified characters removed from the right
+   * part of the string.
+   */
+  void TrimRight(const char *delimeters, String *result) const;
+
+  /**
+   * Creates a new string with the specified characters removed from the left
+   * and right parts of the string.
+   */
+  void Trim(const char *delimeters, String *result) const;
 
   /**
    * Compares two strings case-insensitively.

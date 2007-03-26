@@ -92,6 +92,8 @@ class MinHeap {
   
   /**
    * Pops and returns the lowest element off the heap.
+   *
+   * @return the value associated with the highest priority
    */
   Value Pop() {
     Value t = entries_[0].value;
@@ -103,6 +105,9 @@ class MinHeap {
   
   /**
    * Removes the lowest element from the heap.
+   *
+   * Simply pops the top value on the queue, without
+   * returning it.
    */
   void PopOnly() {
     Entry entry = *entries_.PopBackPtr();

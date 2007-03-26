@@ -24,6 +24,7 @@
 #include "scale.h"
 
 #include <float.h>
+#include <math.h>
 
 EXTERN_C_START
 

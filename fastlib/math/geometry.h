@@ -11,11 +11,9 @@
 
 #include "base/cc.h"
 
-#include <cmath>
+#include <math.h>
 
 namespace math {
-  const double PI = 3.141592653589793238462643383279;
-  
   /**
    * Computes the hyper-volume of a hyper-sphere of dimension d.
    *

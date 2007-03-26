@@ -144,4 +144,14 @@
 #define offsetof(structure, field) ((size_t)((&(structure const *)0)->field))
 #endif
 
+#ifdef __cplusplus
+/** Use constant reference type in C, otherwise use constant pointer. */
+#define CONST_REF const&
+/** Use reference type in C, otherwise use pointer. */
+#define REF &
+#else
+#define CONST_REF const*
+#define REF *
+#endif
+
 #endif

@@ -16,7 +16,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <cmath>
+#include <math.h>
 
 /**
  * Double-precision vector for use with LAPACK.
@@ -236,7 +236,7 @@ class Vector {
   }
   
   /**
-   * Copies the values from another matrix to this matrix.
+   * Copies the values from another vector to this vector.
    *
    * @param other the vector to copy from
    */
@@ -245,32 +245,75 @@ class Vector {
     mem::Copy(ptr_, other.ptr_, length_);
   }
   
+  /**
+   * Prints to a stream as a debug message.
+   * @param name a name that will be printed with the vector
+   */
+  void PrintDebug(const char *name = "", FILE *stream = stderr) const {
+    fprintf(stream, "----- VECTOR %s ------\n", name);
+    for (index_t i = 0; i < length(); i++) {
+      fprintf(stream, "%+3.3f ", get(i));
+    }
+    fprintf(stream, "\n");
+  }
+  
  public:
+  /** The number of elements in this vector. */
   index_t length() const {
     return length_;
   }
   
+  /**
+   * A pointer to the C-style array containing the elements of this vector.
+   */
   double *ptr() {
     return ptr_;
   }
   
+  /**
+   * A pointer to the C-style array containing the elements of this vector.
+   */
   const double *ptr() const {
     return ptr_;
   }
   
+  /**
+   * Gets the i'th element of this vector.
+   */
   double operator [] (index_t i) const {
     DEBUG_BOUNDS(i, length_);
     return ptr_[i];
   }
   
+  /**
+   * Gets a mutable reference to the i'th element of this vector.
+   */
   double &operator [] (index_t i) {
+    DEBUG_BOUNDS(i, length_);
+    return ptr_[i];
+  }
+  
+  /**
+   * Gets a value to the i'th element of this vector (convenient when
+   * you have a pointer to a vector).
+   *
+   * This is identical to the array subscript operator, except for the
+   * following reason:
+   *
+   * @code
+   * void FooBar(Vector *v) {
+   *    v->get(0) // much easier to read than (*v)[0]
+   * }
+   * @endcode
+   */
+  double get(index_t i) const {
     DEBUG_BOUNDS(i, length_);
     return ptr_[i];
   }
   
  private:
   void AssertUninitialized_() const {
-    DEBUG_ASSERT(length_ == BIG_BAD_NUMBER);
+    DEBUG_ASSERT_MSG(length_ == BIG_BAD_NUMBER, "Cannot re-init vectors.");
   }
   
   void Uninitialize_() {
@@ -380,6 +423,19 @@ class Matrix {
     // zero
     SetAll(0);
   }
+  
+  /**
+   * Makes this a diagonal matrix whose diagonals are the values in v.
+   */
+  void SetDiagonal(const Vector& v) {
+    DEBUG_ASSERT(n_rows() == v.length());
+    DEBUG_ASSERT(n_cols() == v.length());
+    SetZero();
+    index_t n = v.length();
+    for (index_t i = 0; i < n; i++) {
+      set(i, i, v[i]);
+    }
+  }
 
   /**
    * Makes this uninitialized matrix a copy of the other vector.
@@ -432,6 +488,24 @@ class Matrix {
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
     should_free_ = false;
+  }
+  
+  /**
+   * Makes this a 1 row by N column alias of a vector of length N.
+   *
+   * @param row_vector the vector to alias
+   */
+  void AliasRowVector(const Vector& row_vector) {
+    Alias(const_cast<double*>(row_vector.ptr()), 1, row_vector.length());
+  }
+  
+  /**
+   * Makes this an N row by 1 column alias of a vector of length N.
+   *
+   * @param col_vector the vector to alias
+   */
+  void AliasColVector(const Vector& col_vector) {
+    Alias(const_cast<double*>(col_vector.ptr()), col_vector.length(), 1);
   }
   
   /**
@@ -571,12 +645,14 @@ class Matrix {
   }
   
   /**
-   * Reduces the number of columns, but REQUIRES that there are no aliases
+   * Changes the number of columns, but REQUIRES that there are no aliases
    * to this matrix anywhere else.
+   *
+   * If the size is increased, the remaining space is not initialized.
    *
    * @param new_n_cols the new number of columns
    */
-  void OwnerReduceColumns(index_t new_n_cols) {
+  void ResizeNoalias(index_t new_n_cols) {
     DEBUG_ASSERT(should_free_); // the best assert we can do
     n_cols_ = new_n_cols;
     ptr_ = mem::Resize(ptr_, n_elements());
@@ -594,6 +670,31 @@ class Matrix {
     DEBUG_ASSERT(n_cols() == other->n_cols());
     DEBUG_ASSERT(n_rows() == other->n_rows());
     mem::Swap(ptr_, other->ptr_, n_elements());
+  }
+  
+  /**
+   * Copies the values from another matrix to this matrix.
+   *
+   * @param other the vector to copy from
+   */
+  void CopyValues(const Matrix& other) {
+    DEBUG_ASSERT(n_rows() == other.n_rows());
+    DEBUG_ASSERT(n_cols() == other.n_cols());
+    mem::Copy(ptr_, other.ptr_, n_elements());
+  }
+
+  /**
+   * Prints to a stream as a debug message.
+   * @param name a name that will be printed with the matrix
+   */
+  void PrintDebug(const char *name = "", FILE *stream = stderr) const {
+    fprintf(stream, "----- MATRIX %s ------\n", name);
+    for (index_t r = 0; r < n_rows(); r++) {
+      for (index_t c = 0; c < n_cols(); c++) {
+        fprintf(stream, "%+3.3f ", get(r, c));
+      }
+      fprintf(stream, "\n");
+    }
   }
   
  public:
@@ -680,7 +781,7 @@ class Matrix {
   
  private:
   void AssertUninitialized_() const {
-    DEBUG_ASSERT(n_rows_ == BIG_BAD_NUMBER);
+    DEBUG_ASSERT_MSG(n_rows_ == BIG_BAD_NUMBER, "Cannot re-init matrices.");
   }
   
   void Uninitialize_() {

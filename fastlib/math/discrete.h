@@ -12,7 +12,7 @@
 #include "base/cc.h"
 #include "col/arraylist.h"
 
-#include <cmath>
+#include <math.h>
 
 namespace math {
   /**

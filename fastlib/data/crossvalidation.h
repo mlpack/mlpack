@@ -13,7 +13,8 @@
 #include "fx/fx.h"
 
 /**
- * Cross-validator for classifiers, integrating tightly with FastExec.
+ * Cross-validator for simple classifiers, integrating tightly with
+ * FastExec.
  *
  * Cross-validation runs go under path you give it (kfold_fx_name),
  * by default "kfold".
@@ -50,6 +51,32 @@
  * /kfold/params/dataset      # the name of the dataset
  * /kfold/0/knn/params/k      # this ensures you'll get default params
  * /kfold
+ * @endcode
+ *
+ * Before the cross-validator runs, it will copy parameters from the module
+ * you specify -- if it is module_root, this will just take the original
+ * command line parameters that are stored in "/params".  In the previous
+ * example, the command line parameters from "/params/knn/" and
+ * "/params/kfold/" are used.  These parameters are specified by the user
+ * as "--params/knn/someparameter=3" or "--param/kfold/k=4" to set KNN's
+ * "someparameter" to 3, and the cross-validator's number of folds to 4.
+ *
+ *
+ * To build a classifier suitable for use with SimpleCrossValidator, you
+ * must create a class with the following methods:
+ *
+ * @code
+ * class MyClassifier {
+ *   ...
+ *   // Trains on the dataset specified.  n_classes is the number of class
+ *   // labels.  Tweak parameters can be obtained from the "datanode" passed
+ *   // using fx_param_int, fx_param_double, etc, but passing in "module" as
+ *   // the first parameter instead of NULL.
+ *   //
+ *   void InitTrain(const Dataset& dataset, int n_classes, datanode *module);
+ *   // For a test datum, returns the class label 0 <= label < n_classes
+ *   int Classify(const Vector& test_datum);
+ * };
  * @endcode
  */
 template<class TClassifier>
@@ -145,12 +172,12 @@ class SimpleCrossValidator {
       Dataset test;
       Dataset train;
       index_t local_n_correct = 0;
-      datanode *foldmodule = fx_submodule(kfold_module_,
-          String().InitSprintf("%d", i_folds).c_str(), NULL);
-      datanode *classifier_module = fx_submodule(foldmodule,
-          classifier_fx_name_, NULL);
+      datanode *foldmodule = fx_submodule(kfold_module_, NULL,
+          String().InitSprintf("%d", i_folds).c_str());
+      datanode *classifier_module = fx_submodule(foldmodule, NULL,
+          classifier_fx_name_);
       
-      fx_def_param_node(classifier_module, "", root_module_,
+      fx_default_param_node(classifier_module, "", root_module_,
           classifier_fx_name_);
 
       data_->SplitTrainTest(n_folds_, i_folds, permutation, &train, &test);

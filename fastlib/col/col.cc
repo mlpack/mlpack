@@ -72,6 +72,10 @@ index_t String::Split(index_t start_index,
     
     while (1) {
       if (unlikely(*endpos == '\0') || strchr(donechars, *endpos) != NULL) {
+        // strip extra delimeters from right side
+        while (endpos > startpos && strchr(delimeters, endpos[-1]) != NULL) {
+          endpos--;
+        }
         done = true;
         break;
       }
@@ -93,3 +97,31 @@ index_t String::Split(index_t start_index,
   return pos - begin();
 }
 
+void String::TrimLeft(const char *delimeters, String *result) const {
+  const char *s = begin();
+  while (*s != '\0' && strchr(delimeters, *s)) {
+    s++;
+  }
+  result->Copy(s, end() - s);
+}
+
+void String::TrimRight(const char *delimeters, String *result) const {
+  const char *s = end() - 1;
+  const char *b = begin();
+  while (s >= b && strchr(delimeters, *s)) {
+    s--;
+  }
+  result->Copy(b, s - b + 1);
+}
+
+void String::Trim(const char *delimeters, String *result) const {
+  const char *b = begin();
+  const char *e = end() - 1;
+  while (e >= b && strchr(delimeters, *e)) {
+    e--;
+  }
+  while (e >= b && strchr(delimeters, *b)) {
+    b++;
+  }
+  result->Copy(b, e - b + 1);
+}

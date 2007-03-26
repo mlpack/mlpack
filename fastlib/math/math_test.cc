@@ -5,16 +5,16 @@
 TEST_SUITE_BEGIN(math)
 
 void TestPermutation() {
-  ArrayList<index_t> p1;
-  ArrayList<index_t> p2;
+  ArrayList<index_t> p_rand;
+  ArrayList<index_t> p_idnt;
   ArrayList<int> visited;
   int n = 3111;
   
-  math::MakeRandomPermutation(n, &p1);
-  math::MakeIdentityPermutation(n, &p2);
+  math::MakeRandomPermutation(n, &p_rand);
+  math::MakeIdentityPermutation(n, &p_idnt);
   
   for (int i = 0; i < n; i++) {
-    TEST_ASSERT(p2[i] == i);
+    TEST_ASSERT(p_idnt[i] == i);
   }
   
   visited.Init(n);
@@ -24,7 +24,7 @@ void TestPermutation() {
   }
 
   for (int i = 0; i < n; i++) {
-    visited[p1[i]]++;
+    visited[p_rand[i]]++;
   }
 
   for (int i = 0; i < n; i++) {

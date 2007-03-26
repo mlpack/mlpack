@@ -3,7 +3,7 @@
 
 #include "xrun/xrun.h"
 
-#include <cmath>
+#include <math.h>
 
 void Test1() {
   TextTokenizer scanner;

@@ -8,6 +8,7 @@
 
 #include "geometry.h"
 #include "discrete.h"
+#include "math.h"
 
 namespace math {
 

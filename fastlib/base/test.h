@@ -23,6 +23,14 @@
 #define TEST_ASSERT(x) \
     DEBUG_ASSERT(x)
 
+#define TEST_DOUBLE_EXACT(a, b) \
+    if (unlikely((a) != (b))) \
+    FATAL("%.10e (%s) != %.10e (%s)", (double)(a), #a, (double)(b), #b); else
+
+#define TEST_DOUBLE_APPROX(a, b, absolute_eps) \
+    if (unlikely(fabs((a) - (b)) > absolute_eps)) \
+    FATAL("%.10e (%s) !~= %.10e (%s)", (double)(a), #a, (double)(b), #b); else
+
 /**
  * Begin a test suite of a given name.
  *
@@ -49,7 +57,7 @@
     }
 
 typedef void (*test__void_func)();
-#endif
 
 #endif
 
+#endif

@@ -49,7 +49,7 @@ void fx_done(void);
  */
 int fx_param_exists(struct datanode *module, const char *name);
 /**
- * Obtain a string parameter.
+ * Obtain a string parameter or use provided default.
  *
  * @param module the param's containing module, or NULL for global
  * @param name the name of the parameter (paths allowed)
@@ -58,41 +58,75 @@ int fx_param_exists(struct datanode *module, const char *name);
 const char *fx_param_str(struct datanode *module, const char *name,
 			 const char *def);
 /**
- * Obtain a floating-point parameter.
+ * Obtain a string parameter, failing if it is not specified.
+ *
+ * @param module the param's containing module, or NULL for global
+ * @param name the name of the parameter (paths allowed)
+ */
+const char *fx_param_str_req(struct datanode *module, const char *name);
+/**
+ * Obtain a floating-point parameter or use provided default.
  *
  * If the parameter is not specified by the user and the default is not
  * DBL_NAN, then the default value will be stored explicitly in the tree.
  *
  * @param module the param's containing module, or NULL for global
  * @param name the name of the parameter (paths allowed)
- * @param def value used if param not given, or DBL_NAN if required
+ * @param def value used if param not given
  */
-double fx_param_double(struct datanode *module, const char *name,
-		       double def);
+double fx_param_double(struct datanode *module, const char *name, double def);
 /**
- * Obtain an integral parameter.
+ * Obtain a floating-point parameter, failing if it is not specified.
+ *
+ * If the parameter is not specified by the user and the default is not
+ * DBL_NAN, then the default value will be stored explicitly in the tree.
+ *
+ * @param module the param's containing module, or NULL for global
+ * @param name the name of the parameter (paths allowed)
+ */
+double fx_param_double_req(struct datanode *module, const char *name);
+/**
+ * Obtain an integral parameter or use provided default.
  *
  * If the parameter is not specified by the user and the default is not -1,
  * then the default value will be stored explicitly in the tree.
  *
  * @param module the param's containing module, or NULL for global
  * @param name the name of the parameter (paths allowed)
- * @param def value used if param not given, or -1 if required
+ * @param def value used if param not given
  */
-int fx_param_int(struct datanode *module, const char *name,
-		 int def);
+int fx_param_int(struct datanode *module, const char *name, int def);
 /**
- * Obtain a boolean parameter.
+ * Obtain an integral parameter, failing if it is not specified.
+ *
+ * If the parameter is not specified by the user and the default is not -1,
+ * then the default value will be stored explicitly in the tree.
+ *
+ * @param module the param's containing module, or NULL for global
+ * @param name the name of the parameter (paths allowed)
+ */
+int fx_param_int_req(struct datanode *module, const char *name);
+/**
+ * Obtain a boolean parameter or use provided default.
  *
  * Values starting with f, F, n, N, or 0 are false; all others are
  * true.
  *
  * @param module the param's containing module, or NULL for global
  * @param name the name of the parameter (paths allowed)
- * @param def value used if param not given, or NULL if required
+ * @param def value used if param not given
  */
-int fx_param_bool(struct datanode *module, const char *name,
-		  const char *def);
+int fx_param_bool(struct datanode *module, const char *name, int def);
+/**
+ * Obtain a boolean parameter, failing if it is not specified.
+ *
+ * Values starting with f, F, n, N, or 0 are false; all others are
+ * true.
+ *
+ * @param module the param's containing module, or NULL for global
+ * @param name the name of the parameter (paths allowed)
+ */
+int fx_param_bool_req(struct datanode *module, const char *name);
 /**
  * Obtain a segment of the datastore corresponding to a parameter.
  *
@@ -125,7 +159,8 @@ struct datanode *fx_param_node(struct datanode *module, const char *name);
  * @param name the name of the parameter (paths allowed)
  * @param def the value the parameter assumes if unspecified
  */
-void fx_def_param(struct datanode *module, const char *name, const char *def);
+void fx_default_param(struct datanode *module, const char *name,
+		      const char *def);
 /**
  * Set a parameter to a given value.
  *
@@ -135,7 +170,8 @@ void fx_def_param(struct datanode *module, const char *name, const char *def);
  * @param name the name of the parameter (paths allowed)
  * @param format a format string for the parameter, as in printf
  */
-void fx_set_param(struct datanode *module, const char *name, const char *val);
+void fx_set_param(struct datanode *module, const char *name,
+		  const char *val);
 /**
  * Set a parameter to a formatted string.
  *
@@ -172,9 +208,8 @@ void fx_clear_param(struct datanode *module, const char *name);
  * @param src_module the module to copy it from
  * @param srcname the name under the module's params to copy it from
  */
-void fx_def_param_node(struct datanode *dest_module, const char *destname,
-		       struct datanode *src_module, const char *srcname);
-
+void fx_default_param_node(struct datanode *dest_module, const char *destname,
+			   struct datanode *src_module, const char *srcname);
 /**
  * Copy parameters from one module to another, overwriting.
  *
@@ -265,7 +300,7 @@ void fx_timer_stop(struct datanode *module, const char *name);
  * before they are used.
  *
  * @code
- * struct datanode *tb_mod = fx_module(NULL, "tree_bldg", "tree_building");
+ * struct datanode *tb_mod = fx_module(NULL, "tree_building", "tree_bldg");
  * @endcode
  *
  * Any existing parameters (e.g. if the submodule is not fresh) are
@@ -273,12 +308,13 @@ void fx_timer_stop(struct datanode *module, const char *name);
  * forwarding.
  *
  * @param module the containing module of the submodule
- * @param name the name of the submodule (paths allowed)
- * @param params_path_template the param node to forward (paths allowed)
- *        or NULL, printf-style
+ * @param params the param node to forward (paths allowed) or NULL
+ * @param name_format the name of the submodule (paths allowed);
+ *        formatted as in printf
  */
-struct datanode *fx_submodule(struct datanode *module, const char *name,
-			      const char *params_path_template, ...);
+COMPILER_PRINTF(3, 4)
+struct datanode *fx_submodule(struct datanode *module, const char *param,
+			      const char *name_format, ...);
 
 EXTERN_C_END
 

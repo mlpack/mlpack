@@ -545,8 +545,8 @@ class Dataset {
   /**
    * Creates a training and test dataset for k-fold cross validation.
    *
-   * The training set will be approximately n_points() / folds, and the
-   * test set will be all remaining points.  This takes as an argument
+   * The test set will be approximately n_points() / folds, and the
+   * training set will be all remaining points.  This takes as an argument
    * a permutation to allow use of consistent random permutations.  If
    * an identity permutation is used, the split will be performed strided.
    *
@@ -560,6 +560,42 @@ class Dataset {
   void SplitTrainTest(int folds, int fold_number,
       const ArrayList<index_t>& permutation,
       Dataset *train, Dataset *test) const;
+};
+
+/**
+ * Miscellaneous dataset-related routines.
+ */
+namespace data {
+  /**
+   * Loads a matrix from a file.
+   *
+   * This supports any type the Dataset class supports with the
+   * InitFromFile function: CSV and ARFF.
+   *
+   * @code
+   * Matrix A;
+   * data::Load("foo.csv", &A);
+   * @endcode
+   *
+   * @param fname the file name to load
+   * @param matrix a pointer to an uninitialized matrix to load
+   */
+  void Load(const char *fname, Matrix *matrix);
+  /**
+   * Saves a matrix to a file.
+   *
+   * This saves in CSV format that MATLAB and Excel can handle.
+   *
+   * @code
+   * Matrix matrix_to_save;
+   * ... matrix_to_save contains the values you want to save
+   * data::Save("mymatrix.csv", matrix_to_save);
+   * @endcode
+   *
+   * @param fname the file name to load
+   * @param matrix a pointer to an uninitialized matrix to load
+   */
+  void Save(const char *fname, const Matrix& matrix);
 };
 
 #endif

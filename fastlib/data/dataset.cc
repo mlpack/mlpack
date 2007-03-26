@@ -5,6 +5,7 @@
  */
 
 #include "file/textfile.h"
+#include "base/common.h"
 
 #include "dataset.h"
 
@@ -161,15 +162,19 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
             feature->InitNominal(portions[1]);
             // TODO: Doesn't support values with spaces {
             portions[2].Split(1, ", \t", "}%", 0, &feature->value_names());
-          } else if (portions[2].EqualsNoCase("numeric")
-              || portions[2].EqualsNoCase("real")) {
-            features_.AddBack()->InitContinuous(portions[1]);
-          } else if (portions[2].EqualsNoCase("integer")) {
-            features_.AddBack()->InitInteger(portions[1]);
           } else {
-            reader->Error(
-                "ARFF: Only support 'numeric', 'real', and {nominal}.");
-            result = SUCCESS_FAIL;
+            String type(portions[2]);
+            //portions[2].Trim(" \t", &type);
+            if (type.EqualsNoCase("numeric")
+                || type.EqualsNoCase("real")) {
+              features_.AddBack()->InitContinuous(portions[1]);
+            } else if (type.EqualsNoCase("integer")) {
+              features_.AddBack()->InitInteger(portions[1]);
+            } else {
+              reader->Error(
+                  "ARFF: Only support 'numeric', 'real', and {nominal}.");
+              result = SUCCESS_FAIL;
+            }
           }
         }
       } else if (portions[0].EqualsNoCase("@data")) {
@@ -353,6 +358,10 @@ success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const 
       break;
     }
     
+    while (*pos == ' ' || *pos == '\t' || *pos == ',') {
+      pos++;
+    }
+    
     if (*pos != '\0') {
       for (char *s = reader->Peek().begin(); s < pos; s++) {
         if (*s == '\0') {
@@ -518,3 +527,16 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
   DEBUG_ASSERT(i_train == train->n_points());
   DEBUG_ASSERT(i_test == test->n_points());
 }
+
+void data::Load(const char *fname, Matrix *matrix) {
+  Dataset dataset;
+  dataset.InitFromFile(fname);
+  matrix->Own(&dataset.matrix());
+}
+
+void data::Save(const char *fname, const Matrix& matrix) {
+  Dataset dataset;
+  dataset.AliasMatrix(matrix);
+  dataset.WriteCsv(fname);
+}
+

@@ -214,4 +214,10 @@ void debug_poison_ptr(T *&x) {
         "%s == %"L64"d exceeds bound %s == %"L64"d\n", \
         #x, STATIC_CAST(uint64, x), #bound, STATIC_CAST(uint64, bound))
 
+/**
+ * Asserts that two integers are the same in debug mode.
+ */
+#define DEBUG_SAME_INT(a, b) \
+    DEBUG_ASSERT_MSG(((a) == (b)), "[%s] %d != %d [%s]", #a, (int)(a), (int)(b), #b)
+
 #endif

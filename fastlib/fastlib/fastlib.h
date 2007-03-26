@@ -45,11 +45,14 @@
  * comment header files and not source files -- even without Doxygen, header
  * files remain a natural place for documentation.
  *
- * To generate the doxygen yourself, go in to the code directory and type:
+ * To generate this HTML documentation yourself, go in to the code directory
+ * and type:
  *
  * @code
  * doxygen
  * @endcode
+ *
+ * Then, visit doc/html/index.html (within the code directory).
  *
  * @section remarks Final Remarks
  *

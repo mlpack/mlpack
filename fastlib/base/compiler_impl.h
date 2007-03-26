@@ -23,8 +23,8 @@
 
 #ifdef __GNUC__
 #define expect__impl(expr, value) (__builtin_expect((expr), (value)))
-#define likely__impl(x) (__builtin_expect((x), 1))
-#define unlikely__impl(x) (__builtin_expect((x), 0))
+#define likely__impl(x) (__builtin_expect(!!(x), 1))
+#define unlikely__impl(x) (__builtin_expect(!!(x), 0))
 #define COMPILER_NORETURN__IMPL __attribute__((noreturn))
 #define COMPILER_PRINTF__IMPL(format_arg, dotdotdot_arg) \
     __attribute__((format(printf, format_arg, dotdotdot_arg)))

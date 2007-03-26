@@ -11,8 +11,9 @@
 
 #include "base/common.h"
 #include "math/geometry.h"
+#include "math/math.h"
 
-#include <cmath>
+#include <math.h>
 
 /* More to come soon - Gaussian, Epanechnakov, etc. */
 
