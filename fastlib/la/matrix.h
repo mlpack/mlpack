@@ -639,7 +639,7 @@ class Matrix {
    * @return an array where the i'th element is the i'th row of that
    *         particular column
    */
-    const double *GetColumnPtr(index_t col) const {
+  const double *GetColumnPtr(index_t col) const {
     DEBUG_BOUNDS(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
@@ -790,6 +790,116 @@ class Matrix {
     DEBUG_ONLY(n_cols_ = BIG_BAD_NUMBER);
   } 
 
+};
+
+/**
+ * Low-overhead vector if length is known at compile time.
+ */
+template<int t_length>
+class SmallVector : public Vector {
+ private:
+  double array_[t_length];
+  
+ public:
+  SmallVector() {
+    Alias(array_, t_length);
+  }
+  ~SmallVector() {}
+  
+ public:
+  index_t length() const {
+    return t_length;
+  }
+
+  double *ptr() {
+    return array_;
+  }
+  
+  const double *ptr() const {
+    return array_;
+  }
+  
+  double operator [] (index_t i) const {
+    DEBUG_BOUNDS(i, t_length);
+    return array_[i];
+  }
+  
+  double &operator [] (index_t i) {
+    DEBUG_BOUNDS(i, t_length);
+    return array_[i];
+  }
+  
+  double get(index_t i) const {
+    DEBUG_BOUNDS(i, t_length);
+    return array_[i];
+  }
+};
+
+/**
+ * Low-overhead matrix if size is known at compile time.
+ */
+template<int t_rows, int t_cols>
+class SmallMatrix : public Matrix {
+ private:
+  double array_[t_cols][t_rows];
+
+ public:
+  SmallMatrix() {
+    Alias(array_[0], t_rows, t_cols);
+  }
+  ~SmallMatrix() {}
+
+ public:
+  const double *ptr() const {
+    return array_[0];
+  }
+
+  double *ptr() {
+    return array_[0];
+  }
+
+  double get(index_t r, index_t c) const {
+    DEBUG_BOUNDS(r, t_rows);
+    DEBUG_BOUNDS(c, t_cols);
+    return array_[c][r];
+  }
+
+  void set(index_t r, index_t c, double v) {
+    DEBUG_BOUNDS(r, t_rows);
+    DEBUG_BOUNDS(c, t_cols);
+    array_[c][r] = v;
+  }
+
+  double &ref(index_t r, index_t c) {
+    DEBUG_BOUNDS(r, t_rows);
+    DEBUG_BOUNDS(c, t_cols);
+    return array_[c][r];
+  }
+
+  index_t n_cols() const {
+    return t_cols;
+  }
+
+  index_t n_rows() const {
+    return t_rows;
+  }
+
+  size_t n_elements() const {
+    // TODO: putting the size_t on the outside may be faster (32-bit
+    // versus 64-bit multiplication in cases) but is more likely to result
+    // in bugs
+    return size_t(t_rows) * size_t(t_cols);
+  }
+
+  double *GetColumnPtr(index_t col) {
+    DEBUG_BOUNDS(col, t_cols);
+    return array_[col];
+  }
+
+  const double *GetColumnPtr(index_t col) const {
+    DEBUG_BOUNDS(col, t_cols);
+    return array_[col];
+  }
 };
 
 #endif

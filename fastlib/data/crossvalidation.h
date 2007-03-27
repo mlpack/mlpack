@@ -102,6 +102,8 @@ class SimpleCrossValidator {
   const char *classifier_fx_name_;
   /** Total number correct classified. */
   index_t n_correct_;
+  /** Confusion matrix. */
+  Matrix confusion_matrix_;
   
  public:
   SimpleCrossValidator() {}
@@ -146,6 +148,9 @@ class SimpleCrossValidator {
     n_folds_ = fx_param_int(kfold_module_, "k", default_k);
     
     DEBUG_ONLY(n_correct_ = BIG_BAD_NUMBER);
+    
+    confusion_matrix_.Init(n_classes_, n_classes_);
+    confusion_matrix_.SetZero();
   }
   
   /**
@@ -197,19 +202,21 @@ class SimpleCrossValidator {
         test_vector_with_label.MakeSubvector(
             0, test.n_features()-1, &test_vector);
         
-        int label_actual = classifier.Classify(test_vector);
+        int label_predict = classifier.Classify(test_vector);
         double label_expect_dbl = test_vector_with_label[test.n_features()-1];
         int label_expect = int(label_expect_dbl);
         
         DEBUG_ASSERT(double(label_expect) == label_expect_dbl);
         DEBUG_ASSERT(label_expect < n_classes_);
         DEBUG_ASSERT(label_expect >= 0);
-        DEBUG_ASSERT(label_actual < n_classes_);
-        DEBUG_ASSERT(label_actual >= 0);
+        DEBUG_ASSERT(label_predict < n_classes_);
+        DEBUG_ASSERT(label_predict >= 0);
         
-        if (label_expect == label_actual) {
+        if (label_expect == label_predict) {
           local_n_correct++;
         }
+        
+        confusion_matrix_.ref(label_expect, label_predict) += 1;
       }
       fx_timer_stop(foldmodule, "test");
       
@@ -245,6 +252,16 @@ class SimpleCrossValidator {
   /** Gets the portion calculated correct. */
   double portion_correct() {
     return n_correct_ * 1.0 / data_->n_points();
+  }
+  
+  /**
+   * Gets the confusion matrix.
+   *
+   * The element at row i column j is the number of training samples where
+   * the actual classification is i but the predicted classification is j.
+   */
+  const Matrix& confusion_matrix() const {
+    return confusion_matrix_;
   }
   
   /** Gets the dataset. */

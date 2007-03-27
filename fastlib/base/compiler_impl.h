@@ -38,7 +38,7 @@
 #define COMPILER_FUNCTIONAL__IMPL
 #endif
 
-#ifdef __cplusplus__
+#ifdef __cplusplus
 template <typename T>
 struct base_compiler_h__Tchar {
   T t;

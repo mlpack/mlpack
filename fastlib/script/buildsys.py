@@ -407,22 +407,34 @@ class Loader:
   def pathjoin_fake(self, left, right):
     return self.pathjoin(left, right, "", "/", "/")
 
-  def find_rule(self, rule_path, cur_real_path, cur_fake_path):
+  def find_rule(self, rule_path, cur_real_path, cur_fake_path, posttext = ""):
     #print "trying: %s" % fullname
     (path_rel, rule_name) = rule_path.split(":")
     
     fake_path = self.pathjoin_fake(cur_fake_path, path_rel)
     real_path = self.pathjoin_real(cur_real_path, path_rel)
     
+    if rule_name == "":
+      rule_name = fake_path.split("/")[-1]
+    
     if not fake_path in self.loader_map:
-      self.load(real_path, fake_path)
+      self.load(real_path, fake_path, posttext)
+    elif posttext:
+      print "XXX Ignored Post-text: ", posttext
     if not rule_name in self.loader_map[fake_path]:
       raise Exception("Rule '%s' not found in '%s'." % (rule_name, real_path))
     #print "Found [%s][%s] aka [%s]" % (fullname, defaultpath, path)
     return self.loader_map[fake_path][rule_name]
 
-  def load(self, real_path, fake_path):
-    """Loads build rules, by exposing a 'register' function."""
+  def load(self, real_path, fake_path, posttext = ""):
+    """Loads build rules, by exposing a 'register' function.
+    
+    real_path - path on file system
+    
+    fake_path - path according to build system
+    
+    posttext - optionally inject text at the end of a build file
+    """
     
     # !!!!! LOOK AT ME!  All the functions in build rules are defined here!
     
@@ -499,6 +511,7 @@ class Loader:
     build_file_path = os.path.join(real_path, BUILD_FILE)
     print "... Reading %s" % (build_file_path)
     text = util.readfile(build_file_path)
+    text = text + "\n" + posttext
     exec text in {"register" : register, "Types" : Types,
                   "find" : find, "dep" : dep, "lglob" : lglob,
                   "sourcerule" : sourcerule, "sourcerules" : sourcerules,

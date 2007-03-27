@@ -213,7 +213,7 @@ namespace tree {
   }
 
   // TODO: Perhaps move this into a "util.h" file
-  
+
   /** Serializes a KD tree to a serializer. */
   template<typename TKdTree, typename Serializer>
   void SerializeKdTree(const TKdTree *tree,
@@ -250,7 +250,7 @@ namespace tree {
     DeserializeKdTree(uninit_tree, uninit_matrix, uninit_old_from_new,
         &ds);
   }
-  
+
   /**
    * Loads a KD tree from a command-line parameter,
    * creating a KD tree if necessary.
@@ -309,10 +309,8 @@ namespace tree {
       fx_timer_start(module, "load_matrix");
       success = data::Load(fname, matrix);
       fx_timer_stop(module, "load_matrix");
-      
-      //if (fx_param_exists("do_pca")) {
-      //  
-      //}
+
+      //if (fx_param_exists("do_pca")) {}
 
       fx_timer_start(module, "make_tree");
       *tree_pp = MakeKdTreeMidpoint<TKdTree>(

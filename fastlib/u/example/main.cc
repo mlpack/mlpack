@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
   cross_validator.Init(&dataset, n_labels, 10, fx_root, "knn");
   
   cross_validator.Run();
+  cross_validator.confusion_matrix().PrintDebug("confusion matrix");
   
   fx_done();
 }

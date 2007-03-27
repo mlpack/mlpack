@@ -74,10 +74,18 @@ fx.param_default("compiler", "gcc")
 fx.param_default("j", "1")
 target_name = fx.extra_args[0]
 
+implicit = False
+
 if not ":" in target_name:
   # Target names MUST contain a colon.
   target_name = ":".join(os.path.split(target_name))
   print "!!! No ':' is in the target rule name, assuming '%s'." % target_name
+  if target_name.endswith(".cc"):
+    # okay, there is actually not a build rule... let's build the library
+    # and link to it
+    implicit = True
+    target_name = target_name[:-3]
+    print "!!! Ends with .cc, assuming ad-hoc build."
 
 makefile_path = os.path.abspath("./Makefile")
 mode = fx.param_str("mode")
@@ -95,7 +103,13 @@ params = dict(arch=arch,kernel=kernel,mode=mode,compiler=compiler)
 print "*** Target Rule: '%s'" % target_name
 
 loader = buildsys.Loader(real_rootpath)
-target = loader.find_rule(target_name, real_path, fake_path)
+if implicit:
+  target_shortname = target_name[target_name.index(":")+1:]
+  posttext = "binrule(name = '%s', sources=['%s.cc'], linkables = [':'])" \
+      % (target_shortname, target_shortname)
+else:
+  posttext = ""
+target = loader.find_rule(target_name, real_path, fake_path, posttext)
 linkrule = buildsys.SymlinkRule([target], curdir)
 linkrule.generate(loader.thebuildsys, params)
 

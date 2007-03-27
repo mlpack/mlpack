@@ -1,5 +1,6 @@
 #include "arraylist.h"
 #include "heap.h"
+#include "fastalloc.h"
 
 #include "base/test.h"
 
@@ -98,5 +99,26 @@ void TestMinHeap() {
   DEBUG_ASSERT_MSG(last == 97, "%d", h.top());
 }
 
-TEST_SUITE_END(col, TestArrayListInt, TestMinHeap)
+struct MyStruct {
+  int a;
+  int b;
+  MyStruct *next;
+  
+  MyStruct() {}
+  MyStruct(int a_in, int b_in, MyStruct *next_in) {
+    a = a_in;
+    b = b_in;
+    next = next_in;
+  }
+};
+
+void TestFastAlloc() {
+  MyStruct *a = fast_new(MyStruct)(3, 4, NULL);
+  MyStruct *b = fast_new(MyStruct)(1, 2, a);
+  
+  fast_delete(a);
+  fast_delete(b);
+}
+
+TEST_SUITE_END(col, TestArrayListInt, TestMinHeap, TestFastAlloc)
 

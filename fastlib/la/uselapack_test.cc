@@ -231,7 +231,6 @@ void TestVector() {
   Vector v2;
   Vector v3;
   Vector v4;
-  Vector v5;
   Vector v6;
   Vector v7;
   Vector v8;
@@ -254,7 +253,7 @@ void TestVector() {
   v4.Copy(v3);
   TEST_ASSERT(v4.length() == 5);
   TEST_ASSERT(v4[4] == 6);
-  v5.Init(21);
+  SmallVector<21> v5;
   v5.SetZero();
   TEST_ASSERT(v5[20] == 0.0);
   v6.Alias(v1.ptr(), v1.length());
@@ -288,7 +287,6 @@ void TestMatrix() {
   Matrix m2;
   Matrix m3;
   Matrix m4;
-  Matrix m5;
   Matrix m6;
   Matrix m7;
   Matrix m8;
@@ -317,7 +315,7 @@ void TestMatrix() {
   m4.Copy(m3);
   TEST_ASSERT(m4.n_cols() == 5);
   TEST_ASSERT(m4.get(4, 0) == 6);
-  m5.Init(21, 21);
+  SmallMatrix<21, 21> m5;
   m5.SetZero();
   TEST_ASSERT(m5.get(20, 0) == 0.0);
   m6.Alias(m1.ptr(), m1.n_rows(), m1.n_cols());
