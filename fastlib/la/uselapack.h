@@ -123,20 +123,23 @@ namespace la {
   }
 
   /**
-   * Finds the dot-product of two arrays.
+   * Finds the dot-product of two arrays
+   * (\f$\vx \cdot \vy\f$).
    */
   inline double Dot(index_t length, const double *x, const double *y) {
     return F77_FUNC(ddot)(length, x, 1, y, 1);
   }
 
   /**
-   * Scales an array in-place by some factor (x <- alpha * x).
+   * Scales an array in-place by some factor
+   * (\f$\vx \gets \alpha \vx\f$).
    */
   inline void Scale(index_t length, double alpha, double *x) {
     F77_FUNC(dscal)(length, alpha, x, 1);
   }
   /**
-   * Sets an array to another scaled by some factor (y <- alpha * x).
+   * Sets an array to another scaled by some factor
+   * (\f$\vy \gets \alpha \vx\f$).
    */
   inline void ScaleOverwrite(index_t length,
       double alpha, const double *x, double *y) {
@@ -145,7 +148,8 @@ namespace la {
   }
 
   /**
-   * Adds a scaled array to an existing array (y <- y + alpha * x).
+   * Adds a scaled array to an existing array
+   * (\f$\vy \gets \vy + \alpha \vx\f$).
    */
   inline void AddExpert(index_t length,
       double alpha, const double *x, double *y) {
@@ -153,13 +157,15 @@ namespace la {
   }
 
   /**
-   * Adds an array to an existing array (y <- y + x);
+   * Adds an array to an existing array
+   * (\f$\vy \gets \vy + \vx\f$).
    */
   inline void AddTo(index_t length, const double *x, double *y) {
     AddExpert(length, 1.0, x, y);
   }
   /**
-   * Sets an array to the sum of two arrays (z <- y + x).
+   * Sets an array to the sum of two arrays
+   * (\f$\vz \gets \vy + \vx\f$).
    */
   inline void AddOverwrite(index_t length,
       const double *x, const double *y, double *z) {
@@ -168,13 +174,15 @@ namespace la {
   }
 
   /**
-   * Subtracts an array from an existing array (y <- y - x).
+   * Subtracts an array from an existing array
+   * (\f$\vy \gets \vy - \vx\f$).
    */
   inline void SubFrom(index_t length, const double *x, double *y) {
     AddExpert(length, -1.0, x, y);
   }
   /**
-   * Sets an array to the difference of two arrays (z <- y - x).
+   * Sets an array to the difference of two arrays
+   * (\f$\vx \gets \vy - \vx\f$).
    */
   inline void SubOverwrite(index_t length,
       const double *x, const double *y, double *z) {
@@ -256,14 +264,16 @@ namespace la {
 #endif
 
   /**
-   * Finds the square root of the dot product of a vector with itself.
+   * Finds the square root of the dot product of a vector with itself
+   * (\f$\sqrt{\vx \cdot \vx}\f$).
    */
   inline double LengthEuclidean(const Vector &x) {
     return LengthEuclidean(x.length(), x.ptr());
   }
 
   /**
-   * Finds the dot product of two vectors.
+   * Finds the dot product of two vectors
+   * (\f$\vx \cdot \vy\f$).
    */
   inline double Dot(const Vector &x, const Vector &y) {
     DEBUG_SAME_INT(x.length(), y.length());
@@ -273,13 +283,15 @@ namespace la {
   /* --- Matrix/Vector Scaling --- */
 
   /**
-   * Scales a vector in-place by some factor (x <- alpha * x).
+   * Scales a vector in-place by some factor
+   * (\f$\vx \gets \alpha \vx\f$).
    */
   inline void Scale(double alpha, Vector *x) {
     Scale(x->length(), alpha, x->ptr());
   }
   /**
-   * Scales a matrix in-place by some factor (X <- alpha * X).
+   * Scales a matrix in-place by some factor
+   * (\f$X \gets \alpha X\f$).
    */
   inline void Scale(double alpha, Matrix *X) {
     Scale(X->n_elements(), alpha, X->ptr());
@@ -298,14 +310,16 @@ namespace la {
   }
 
   /**
-   * Sets a vector to another scaled by some factor (y <- alpha * x).
+   * Sets a vector to another scaled by some factor
+   * (\f$\vy \gets \alpha \vx\f$).
    */
   inline void ScaleOverwrite(double alpha, const Vector &x, Vector *y) {
     DEBUG_SAME_INT(x.length(), y->length());
     ScaleOverwrite(x.length(), alpha, x.ptr(), y->ptr());
   }
   /**
-   * Sets a matrix to another scaled by some factor (Y <- alpha * X).
+   * Sets a matrix to another scaled by some factor
+   * (\f$Y \gets \alpha X\f$).
    */
   inline void ScaleOverwrite(double alpha, const Matrix &X, Matrix *Y) {
     DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
@@ -314,14 +328,16 @@ namespace la {
   }
 
   /**
-   * Inits a vector to another scaled by some factor (y <- alpha * x).
+   * Inits a vector to another scaled by some factor
+   * (\f$\vy \gets \alpha \vx\f$).
    */
   inline void ScaleInit(double alpha, const Vector &x, Vector *y) {
     y->Init(x.length());
     ScaleOverwrite(alpha, x, y);
   }
   /**
-   * Inits a matrix to another scaled by some factor (Y <- alpha * X).
+   * Inits a matrix to another scaled by some factor
+   * (\f$Y \gets \alpha X\f$).
    */
   inline void ScaleInit(double alpha, const Matrix &X, Matrix *Y) {
     Y->Init(X.n_rows(), X.n_cols());
@@ -331,14 +347,16 @@ namespace la {
   /* --- Scaled Matrix/Vector Addition --- */
 
   /**
-   * Adds a scaled vector to an existing vector (y <- y + alpha * x).
+   * Adds a scaled vector to an existing vector
+   * (\f$\vy \gets \vy + \alpha \vx\f$).
    */
   inline void AddExpert(double alpha, const Vector &x, Vector *y) {
     DEBUG_SAME_INT(x.length(), y->length());
     AddExpert(x.length(), alpha, x.ptr(), y->ptr());
   }
   /**
-   * Adds a scaled matrix to an existing matrix (Y <- Y + alpha * X).
+   * Adds a scaled matrix to an existing matrix
+   * (\f$Y \gets Y + \alpha X\f$).
    */
   inline void AddExpert(double alpha, const Matrix &X, Matrix *Y) {
     DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
@@ -349,14 +367,16 @@ namespace la {
   /* --- Matrix/Vector Addition --- */
 
   /**
-   * Adds a vector to an existing vector (y <- y + x);
+   * Adds a vector to an existing vector
+   * (\f$\vy \gets \vy + \vx\f$);
    */
   inline void AddTo(const Vector &x, Vector *y) {
     DEBUG_SAME_INT(x.length(), y->length());
     AddTo(x.length(), x.ptr(), y->ptr());
   }
   /**
-   * Adds a matrix to an existing matrix (Y <- Y + X);
+   * Adds a matrix to an existing matrix
+   * (\f$Y \gets Y + X\f$);
    */
   inline void AddTo(const Matrix &X, Matrix *Y) {
     DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
@@ -365,7 +385,8 @@ namespace la {
   }
 
   /**
-   * Sets a vector to the sum of two vectors (z <- y + x).
+   * Sets a vector to the sum of two vectors
+   * (\f$\vz \gets \vy + \vx).
    */
   inline void AddOverwrite(const Vector &x, const Vector &y, Vector *z) {
     DEBUG_SAME_INT(x.length(), y.length());
@@ -373,7 +394,8 @@ namespace la {
     AddOverwrite(x.length(), x.ptr(), y.ptr(), z->ptr());
   }
   /**
-   * Sets a matrix to the sum of two matrices (Z <- Y + X).
+   * Sets a matrix to the sum of two matrices
+   * (\f$Z \gets Y + X\f$).
    */
   inline void AddOverwrite(const Matrix &X, const Matrix &Y, Matrix *Z) {
     DEBUG_SAME_INT(X.n_rows(), Y.n_rows());
@@ -384,14 +406,16 @@ namespace la {
   }
 
   /**
-   * Inits a vector to the sum of two vectors (z <- y + x).
+   * Inits a vector to the sum of two vectors
+   * (\f$\vz \gets \vy + \vx\f$).
    */
   inline void AddInit(const Vector &x, const Vector &y, Vector *z) {
     z->Init(x.length());
     AddOverwrite(x, y, z);
   }
   /**
-   * Inits a matrix to the sum of two matrices (Z <- Y + X).
+   * Inits a matrix to the sum of two matrices
+   * (\f$Z \gets Y + X\f$).
    */
   inline void AddInit(const Matrix &X, const Matrix &Y, Matrix *Z) {
     Z->Init(X.n_rows(), X.n_cols());
@@ -401,14 +425,16 @@ namespace la {
   /* --- Matrix/Vector Subtraction --- */
 
   /**
-   * Subtracts a vector from an existing vector (y <- y - x).
+   * Subtracts a vector from an existing vector
+   * (\f$\vy \gets \vy - \vx\f$).
    */
   inline void SubFrom(const Vector &x, Vector *y) {
     DEBUG_SAME_INT(x.length(), y->length());
     SubFrom(x.length(), x.ptr(), y->ptr());
   }
   /**
-   * Subtracts a matrix from an existing matrix (Y <- Y - X).
+   * Subtracts a matrix from an existing matrix
+   * (\f$Y \gets Y - X\f$).
    */
   inline void SubFrom(const Matrix &X, Matrix *Y) {
     DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
@@ -417,7 +443,8 @@ namespace la {
   }
 
   /**
-   * Sets a vector to the difference of two vectors (z <- y - x).
+   * Sets a vector to the difference of two vectors
+   * (\f$\vz \gets \vy - \vx\f$).
    */
   inline void SubOverwrite(const Vector &x, const Vector &y, Vector *z) {
     DEBUG_SAME_INT(x.length(), y.length());
@@ -425,7 +452,8 @@ namespace la {
     SubOverwrite(x.length(), x.ptr(), y.ptr(), z->ptr());
   }
   /**
-   * Sets a matrix to the difference of two matrices (Z <- Y - X).
+   * Sets a matrix to the difference of two matrices
+   * (\f$Z \gets Y - X\f$).
    */
   inline void SubOverwrite(const Matrix &X, const Matrix &Y, Matrix *Z) {
     DEBUG_SAME_INT(X.n_rows(), Y.n_rows());
@@ -436,14 +464,16 @@ namespace la {
   }
 
   /**
-   * Inits a vector to the difference of two vectors (z <- y - x).
+   * Inits a vector to the difference of two vectors
+   * (\f$\vz \gets \vy - \vx\f$).
    */
   inline void SubInit(const Vector &x, const Vector &y, Vector *z) {
     z->Init(x.length());
     SubOverwrite(x, y, z);
   }
   /**
-   * Inits a matrix to the difference of two matrices (Z <- Y - X).
+   * Inits a matrix to the difference of two matrices
+   * (\f$Z \gets Y - X\f$).
    */
   inline void SubInit(const Matrix &X, const Matrix &Y, Matrix *Z) {
     Z->Init(X.n_rows(), X.n_cols());
@@ -458,7 +488,8 @@ namespace la {
    */
 
   /**
-   * Computes a square matrix transpose in-place (X <- X').
+   * Computes a square matrix transpose in-place
+   * (\f$X \gets X'\f$).
    */
   inline void TransposeSquare(Matrix *X) {
     DEBUG_MATSQUARE(*X);
@@ -473,7 +504,8 @@ namespace la {
   }
 
   /**
-   * Sets a matrix to the transpose of another (Y <- X').
+   * Sets a matrix to the transpose of another
+   * (\f$Y \gets X'\f$).
    */
   inline void TransposeOverwrite(const Matrix &X, Matrix *Y) {
     DEBUG_SAME_INT(X.n_rows(), Y->n_cols());
@@ -487,7 +519,8 @@ namespace la {
     }
   }
   /**
-   * Inits a matrix to the transpose of another (Y <- X').
+   * Inits a matrix to the transpose of another
+   * (\f$Y \gets X'\f$).
    */
   inline void TransposeInit(const Matrix &X, Matrix *Y) {
     Y->Init(X.n_cols(), X.n_rows());
@@ -500,7 +533,8 @@ namespace la {
   /* --- Wrappers for BLAS level 2 --- */
 
   /**
-   * Scaled matrix-vector multiplication (y <- alpha * A * x + beta * y).
+   * Scaled matrix-vector multiplication
+   * (\f$\vy \gets \alpha A \vx + \beta \vy\f$).
    *
    * @param alpha the scaling factor of A * x
    * @param A an M-by-N matrix
@@ -521,7 +555,7 @@ namespace la {
 
   /**
    * Sets a vector to the results of matrix-vector multiplication
-   * (y <- A * x).
+   * (\f$\vy \gets A\vx\f$).
    *
    * @code
    * Matrix A;
@@ -543,7 +577,7 @@ namespace la {
   }
   /**
    * Inits a vector to the results of matrix-vector multiplication
-   * (y <- A * x).
+   * (\f$\vy \gets A\vx\f$).
    *
    * @param A an M-by-N matrix
    * @param x an N-length vector to right-multiply by
@@ -556,9 +590,10 @@ namespace la {
   }
 
   /**
-   * Scaled vector-matrix multiplication (y <- alpha * x * A + beta * y).
+   * Scaled vector-matrix multiplication
+   * (\f$\vy \gets \alpha \vx A + \beta \vy\f$).
    *
-   * Equivalent to: y <- alpha * A' * x + beta * y
+   * Equivalent to: \f$\vy \gets \alpha A' \vx + \beta \vy\f$
    *
    * @param alpha the scaling factor of x * A
    * @param x an N-length vector to left-multiply by
@@ -579,9 +614,7 @@ namespace la {
 
   /**
    * Sets a vector to the results of vector-matrix multiplication
-   * (y <- x * A).
-   *
-   * Equivalent to: y <- A' * x
+   * (\f$\vy \gets \vx A\f$ or \f$\vy \gets A' \vx\f$).
    *
    * @param A an N-by-M matrix
    * @param x an N-length vector to right-multiply by
@@ -592,9 +625,7 @@ namespace la {
   }
   /**
    * Inits a vector to the results of vector-matrix multiplication
-   * (y <- x * A).
-   *
-   * Equivalent to: y <- A' * x
+   * (\f$\vy \gets \vx A\f$ or \f$\vy \gets A' \vx\f$).
    *
    * @param A an N-by-M matrix
    * @param x an N-length vector to right-multiply by
@@ -612,8 +643,7 @@ namespace la {
 
   /**
    * Scaled, optionally transposed matrix multiplcation
-   *
-   * (C <- alpha * A['] * B['] + beta * C).
+   * (\f$C \gets \alpha A'^{?} B'^{?} + \beta C\f$).
    *
    * @param alpha the scaling factor for A['] * B[']
    * @param trans_A whether to transpose A
@@ -640,7 +670,8 @@ namespace la {
         beta, C->ptr(), C->n_rows());
   }
   /**
-   * Scaled matrix multiplication (C <- alpha * A * B + beta * C).
+   * Scaled matrix multiplication
+   * (\f$C \gets \alpha A B + \beta C\f$).
    *
    * @param alpha the scaling factor for A * B
    * @param A an M-by-K matrix
@@ -655,7 +686,8 @@ namespace la {
   }
 
   /**
-   * Sets a matrix to the results of matrix multiplication (C <- A * B).
+   * Sets a matrix to the results of matrix multiplication
+   * (\f$C \gets AB\f$).
    *
    * @code
    * Matrix A;
@@ -676,7 +708,8 @@ namespace la {
     MulExpert(1.0, A, B, 0.0, C);
   }
   /**
-   * Inits a matrix to the results of matrix multiplication (C <- A * B).
+   * Inits a matrix to the results of matrix multiplication
+   * (\f$C \gets AB\f$).
    *
    * @param A an M-by-K matrix
    * @param B a K-by-N matrix
@@ -689,7 +722,8 @@ namespace la {
   }
 
   /**
-   * Computes left-transposed matrix multiplication (C <- A' * B).
+   * Computes left-transposed matrix multiplication
+   * (\f$C \gets A'B\f$).
    *
    * @param A an K-by-M matrix to be transposed
    * @param B a K-by-N matrix
@@ -700,7 +734,8 @@ namespace la {
     MulExpert(1.0, true, A, false, B, 0.0, C);
   }
   /**
-   * Inits with left-transposed matrix multiplication (C <- A' * B).
+   * Inits with left-transposed matrix multiplication
+   * (\f$C \gets A'B\f$).
    *
    * @param A an K-by-M matrix to be transposed
    * @param B a K-by-N matrix
@@ -714,7 +749,8 @@ namespace la {
   }
 
   /**
-   * Computes right-transposed matrix multiplication (C <- A' * B).
+   * Computes right-transposed matrix multiplication
+   * (\f$C \gets AB'\f$).
    *
    * @param A an M-by-K matrix
    * @param B a N-by-K matrix to be transposed
@@ -725,7 +761,8 @@ namespace la {
     MulExpert(1.0, false, A, true, B, 0.0, C);
   }
   /**
-   * Inits with right-transposed matrix multiplication (C <- A' * B).
+   * Inits with right-transposed matrix multiplication
+   * (\f$C \gets AB'\f$).
    *
    * @param A an M-by-K matrix
    * @param B a N-by-K matrix to be transposed
@@ -795,7 +832,8 @@ namespace la {
     return SUCCESS_FROM_LAPACK(info);
   }
   /**
-   * Set a matrix to the inverse of another matrix.
+   * Set a matrix to the inverse of another matrix
+   * (\f$A^{-1}\f$).
    *
    * @code
    * Matrix A;
@@ -812,7 +850,8 @@ namespace la {
    */
   success_t InverseOverwrite(const Matrix &A, Matrix *B);
   /**
-   * Init a matrix to the inverse of another matrix.
+   * Init a matrix to the inverse of another matrix
+   * (\f$A^{-1}\f$).
    *
    * @param A an N-by-N matrix to invert
    * @param B a fresh matrix to be initialized to size N-by-N
@@ -825,7 +864,8 @@ namespace la {
   }
 
   /**
-   * Returns the determinant of a matrix.
+   * Returns the determinant of a matrix
+   * (\f$\det A\f$).
    *
    * @code
    * Matrix A;
@@ -839,7 +879,8 @@ namespace la {
    */
   long double Determinant(const Matrix &A);
   /**
-   * Returns the log-determinant of a matrix (to avoid overflow).
+   * Returns the log-determinant of a matrix
+   * (\f$\ln |\det A|\f$).
    *
    * This is effectively log(fabs(Determinant(A))).
    * To compute log base 10, divide the result by Math::LN_10.
