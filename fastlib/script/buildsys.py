@@ -302,7 +302,7 @@ class BinRule(dep.Rule):
     reversed_libs = list(files["linkables"].to_names())
     reversed_libs.reverse()
     sysentry.command(compiler.linker + " -o %s %s %s %s %s" % (
-        binfile.name, cflags,
+        sq(binfile.name), cflags,
         lflags_start, " ".join(sq(reversed_libs)), lflags_end))
     return [(Types.BINFILE, binfile)]
 
