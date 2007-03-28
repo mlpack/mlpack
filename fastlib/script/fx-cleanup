@@ -4,10 +4,10 @@ USAGE = """fx-cleanup: Shows a status summary of a FASTexec experiment.
 
 Example:
 
-  fx-status knn_k ./main           # removes status files of failed trials
-  fx-status knn_k ./main --purge   # removes entire directories of
+  fx-cleanup knn_k ./main           # removes status files of failed trials
+  fx-cleanup knn_k ./main --purge   # removes entire directories of
                                      failed trials
-  fx-status knn_k ./main --nuke    # removes all directories of all trials
+  fx-cleanup knn_k ./main --nuke    # removes all directories of all trials
 
 The point of fx-cleanup is to allow the re-running of trials.
 The normal use (with no special options) allows the re-running of trials

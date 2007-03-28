@@ -227,7 +227,7 @@ def shellquote(s):
     if c in map.keys():
       result += map[c]
       changed = True
-    elif c.isalnum() or c == '/':
+    elif c.isalnum() or c in "/._-":
       result += c
     else:
       result += c
