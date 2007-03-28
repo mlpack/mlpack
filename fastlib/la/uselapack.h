@@ -124,7 +124,7 @@ namespace la {
 
   /**
    * Finds the dot-product of two arrays
-   * (\f$\vx \cdot \vy\f$).
+   * (\f$\vec{x} \cdot \vec{y}\f$).
    */
   inline double Dot(index_t length, const double *x, const double *y) {
     return F77_FUNC(ddot)(length, x, 1, y, 1);
@@ -132,14 +132,14 @@ namespace la {
 
   /**
    * Scales an array in-place by some factor
-   * (\f$\vx \gets \alpha \vx\f$).
+   * (\f$\vec{x} \gets \alpha \vec{x}\f$).
    */
   inline void Scale(index_t length, double alpha, double *x) {
     F77_FUNC(dscal)(length, alpha, x, 1);
   }
   /**
    * Sets an array to another scaled by some factor
-   * (\f$\vy \gets \alpha \vx\f$).
+   * (\f$\vec{y} \gets \alpha \vec{x}\f$).
    */
   inline void ScaleOverwrite(index_t length,
       double alpha, const double *x, double *y) {
@@ -149,7 +149,7 @@ namespace la {
 
   /**
    * Adds a scaled array to an existing array
-   * (\f$\vy \gets \vy + \alpha \vx\f$).
+   * (\f$\vec{y} \gets \vec{y} + \alpha \vec{x}\f$).
    */
   inline void AddExpert(index_t length,
       double alpha, const double *x, double *y) {
@@ -158,14 +158,14 @@ namespace la {
 
   /**
    * Adds an array to an existing array
-   * (\f$\vy \gets \vy + \vx\f$).
+   * (\f$\vec{y} \gets \vec{y} + \vec{x}\f$).
    */
   inline void AddTo(index_t length, const double *x, double *y) {
     AddExpert(length, 1.0, x, y);
   }
   /**
    * Sets an array to the sum of two arrays
-   * (\f$\vz \gets \vy + \vx\f$).
+   * (\f$\vec{z} \gets \vec{y} + \vec{x}\f$).
    */
   inline void AddOverwrite(index_t length,
       const double *x, const double *y, double *z) {
@@ -175,14 +175,14 @@ namespace la {
 
   /**
    * Subtracts an array from an existing array
-   * (\f$\vy \gets \vy - \vx\f$).
+   * (\f$\vec{y} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubFrom(index_t length, const double *x, double *y) {
     AddExpert(length, -1.0, x, y);
   }
   /**
    * Sets an array to the difference of two arrays
-   * (\f$\vx \gets \vy - \vx\f$).
+   * (\f$\vec{x} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubOverwrite(index_t length,
       const double *x, const double *y, double *z) {
@@ -265,7 +265,7 @@ namespace la {
 
   /**
    * Finds the square root of the dot product of a vector with itself
-   * (\f$\sqrt{\vx \cdot \vx}\f$).
+   * (\f$\sqrt{\vec{x} \cdot \vec{x}}\f$).
    */
   inline double LengthEuclidean(const Vector &x) {
     return LengthEuclidean(x.length(), x.ptr());
@@ -273,7 +273,7 @@ namespace la {
 
   /**
    * Finds the dot product of two vectors
-   * (\f$\vx \cdot \vy\f$).
+   * (\f$\vec{x} \cdot \vec{y}\f$).
    */
   inline double Dot(const Vector &x, const Vector &y) {
     DEBUG_SAME_INT(x.length(), y.length());
@@ -284,7 +284,7 @@ namespace la {
 
   /**
    * Scales a vector in-place by some factor
-   * (\f$\vx \gets \alpha \vx\f$).
+   * (\f$\vec{x} \gets \alpha \vec{x}\f$).
    */
   inline void Scale(double alpha, Vector *x) {
     Scale(x->length(), alpha, x->ptr());
@@ -311,7 +311,7 @@ namespace la {
 
   /**
    * Sets a vector to another scaled by some factor
-   * (\f$\vy \gets \alpha \vx\f$).
+   * (\f$\vec{y} \gets \alpha \vec{x}\f$).
    */
   inline void ScaleOverwrite(double alpha, const Vector &x, Vector *y) {
     DEBUG_SAME_INT(x.length(), y->length());
@@ -329,7 +329,7 @@ namespace la {
 
   /**
    * Inits a vector to another scaled by some factor
-   * (\f$\vy \gets \alpha \vx\f$).
+   * (\f$\vec{y} \gets \alpha \vec{x}\f$).
    */
   inline void ScaleInit(double alpha, const Vector &x, Vector *y) {
     y->Init(x.length());
@@ -348,7 +348,7 @@ namespace la {
 
   /**
    * Adds a scaled vector to an existing vector
-   * (\f$\vy \gets \vy + \alpha \vx\f$).
+   * (\f$\vec{y} \gets \vec{y} + \alpha \vec{x}\f$).
    */
   inline void AddExpert(double alpha, const Vector &x, Vector *y) {
     DEBUG_SAME_INT(x.length(), y->length());
@@ -368,7 +368,7 @@ namespace la {
 
   /**
    * Adds a vector to an existing vector
-   * (\f$\vy \gets \vy + \vx\f$);
+   * (\f$\vec{y} \gets \vec{y} + \vec{x}\f$);
    */
   inline void AddTo(const Vector &x, Vector *y) {
     DEBUG_SAME_INT(x.length(), y->length());
@@ -386,7 +386,7 @@ namespace la {
 
   /**
    * Sets a vector to the sum of two vectors
-   * (\f$\vz \gets \vy + \vx\f$).
+   * (\f$\vec{z} \gets \vec{y} + \vec{x}\f$).
    */
   inline void AddOverwrite(const Vector &x, const Vector &y, Vector *z) {
     DEBUG_SAME_INT(x.length(), y.length());
@@ -407,7 +407,7 @@ namespace la {
 
   /**
    * Inits a vector to the sum of two vectors
-   * (\f$\vz \gets \vy + \vx\f$).
+   * (\f$\vec{z} \gets \vec{y} + \vec{x}\f$).
    */
   inline void AddInit(const Vector &x, const Vector &y, Vector *z) {
     z->Init(x.length());
@@ -426,7 +426,7 @@ namespace la {
 
   /**
    * Subtracts a vector from an existing vector
-   * (\f$\vy \gets \vy - \vx\f$).
+   * (\f$\vec{y} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubFrom(const Vector &x, Vector *y) {
     DEBUG_SAME_INT(x.length(), y->length());
@@ -444,7 +444,7 @@ namespace la {
 
   /**
    * Sets a vector to the difference of two vectors
-   * (\f$\vz \gets \vy - \vx\f$).
+   * (\f$\vec{z} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubOverwrite(const Vector &x, const Vector &y, Vector *z) {
     DEBUG_SAME_INT(x.length(), y.length());
@@ -465,7 +465,7 @@ namespace la {
 
   /**
    * Inits a vector to the difference of two vectors
-   * (\f$\vz \gets \vy - \vx\f$).
+   * (\f$\vec{z} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubInit(const Vector &x, const Vector &y, Vector *z) {
     z->Init(x.length());
@@ -534,7 +534,7 @@ namespace la {
 
   /**
    * Scaled matrix-vector multiplication
-   * (\f$\vy \gets \alpha A \vx + \beta \vy\f$).
+   * (\f$\vec{y} \gets \alpha A \vec{x} + \beta \vec{y}\f$).
    *
    * @param alpha the scaling factor of A * x
    * @param A an M-by-N matrix
@@ -555,7 +555,7 @@ namespace la {
 
   /**
    * Sets a vector to the results of matrix-vector multiplication
-   * (\f$\vy \gets A\vx\f$).
+   * (\f$\vec{y} \gets A\vec{x}\f$).
    *
    * @code
    * Matrix A;
@@ -577,7 +577,7 @@ namespace la {
   }
   /**
    * Inits a vector to the results of matrix-vector multiplication
-   * (\f$\vy \gets A\vx\f$).
+   * (\f$\vec{y} \gets A\vec{x}\f$).
    *
    * @param A an M-by-N matrix
    * @param x an N-length vector to right-multiply by
@@ -591,9 +591,9 @@ namespace la {
 
   /**
    * Scaled vector-matrix multiplication
-   * (\f$\vy \gets \alpha \vx A + \beta \vy\f$).
+   * (\f$\vec{y} \gets \alpha \vec{x} A + \beta \vec{y}\f$).
    *
-   * Equivalent to: \f$\vy \gets \alpha A' \vx + \beta \vy\f$
+   * Equivalent to: \f$\vec{y} \gets \alpha A' \vec{x} + \beta \vec{y}\f$
    *
    * @param alpha the scaling factor of x * A
    * @param x an N-length vector to left-multiply by
@@ -614,7 +614,7 @@ namespace la {
 
   /**
    * Sets a vector to the results of vector-matrix multiplication
-   * (\f$\vy \gets \vx A\f$ or \f$\vy \gets A' \vx\f$).
+   * (\f$\vec{y} \gets \vec{x} A\f$ or \f$\vec{y} \gets A' \vec{x}\f$).
    *
    * @param A an N-by-M matrix
    * @param x an N-length vector to right-multiply by
@@ -625,7 +625,7 @@ namespace la {
   }
   /**
    * Inits a vector to the results of vector-matrix multiplication
-   * (\f$\vy \gets \vx A\f$ or \f$\vy \gets A' \vx\f$).
+   * (\f$\vec{y} \gets \vec{x} A\f$ or \f$\vec{y} \gets A' \vec{x}\f$).
    *
    * @param A an N-by-M matrix
    * @param x an N-length vector to right-multiply by
@@ -831,6 +831,21 @@ namespace la {
     F77_FUNC(dgetri)(n, LU_in_B_out->ptr(), n, pivots, work, lwork, &info);
     return SUCCESS_FROM_LAPACK(info);
   }
+  /**
+   * Inverts a matrix in place
+   * (\f$A^{-1}\f$).
+   *
+   * @code
+   * Matrix A;
+   * ... assign A to [4 0; 0 0.5]
+   * la::Inverse(&A);
+   * ... A is now [0.25 0; 0 2.0]
+   * @endcode
+   *
+   * @param A an N-by-N matrix to invert
+   * @return SUCCESS_PASS if invertible, SUCCESS_FAIL otherwise
+   */
+  success_t Inverse(Matrix *A);
   /**
    * Set a matrix to the inverse of another matrix
    * (\f$A^{-1}\f$).

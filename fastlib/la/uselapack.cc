@@ -84,6 +84,19 @@ success_t la::PLUInit(const Matrix &A,
   return success;
 }
 
+success_t la::Inverse(Matrix *A) {
+  f77_integer pivots[A->n_rows()];
+
+  success_t success = PLUExpert(pivots, A);
+
+  if (!PASSED(success)) {
+    return success;
+  }
+
+  return InverseExpert(pivots, A);
+}
+  
+
 success_t la::InverseOverwrite(const Matrix &A, Matrix *B) {
   f77_integer pivots[A.n_rows()];
 

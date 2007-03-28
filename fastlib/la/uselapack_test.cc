@@ -481,6 +481,10 @@ void TestInverse() {
   Matrix c_inv_actual;
   // Try inverting a 3x3 rank-3 matrix
   TEST_ASSERT(!PASSED(la::InverseInit(c, &c_inv_actual)));
+  
+  // Try inverting a 3x3 rank-3 matrix
+  TEST_ASSERT(PASSED(la::Inverse(&b)));
+  AssertApproxMatrix(b, b_inv_actual, 1.0e-5);
 }
 
 void TestDeterminant() {

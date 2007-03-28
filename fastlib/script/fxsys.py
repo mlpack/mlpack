@@ -62,16 +62,17 @@ class AbstractExperiment:
     wq.add([work.WorkEntry(self, x) for x in paramset.enumerate()])
     wq.inline_exec()
 
-  def print_status(self, show_finished = False):
+  def print_status(self, detail_finished = False, show_finished = True):
     """Prints the log files of any run that is not completed."""
     num_printed = 0
     items = self.get_status_of_attempted_runs().items()
     items_ordered = []
-    items_ordered += [(x,y) for (x,y) in items if y == work.WorkEntry.FINISHED]
+    if show_finished:
+      items_ordered += [(x,y) for (x,y) in items if y == work.WorkEntry.FINISHED]
     items_ordered += [(x,y) for (x,y) in items if y != work.WorkEntry.FINISHED]
     for (runname, status) in items_ordered:
-      print "%s -- %s" % (status, runname)
-      if status != work.WorkEntry.FINISHED or show_finished:
+      print status, "--", runname
+      if status != work.WorkEntry.FINISHED or detail_finished:
         logfile = os.path.join(self.pathof_run(runname), work.WorkEntry.LOGFILE)
         try:
           num_printed += 1

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-USAGE = """fx-status: Shows a status summary of a FASTexec experiment.
+USAGE = """fx-status: Shows a status summary of FASTexec experiment trials.
 
 Example:
 
@@ -24,6 +24,6 @@ exename = os.path.abspath(fx.extra_args[1])
 show_finished = fx.param_bool("show_finished")
 
 experiment = fxsys.SimpleExperiment(os.path.abspath("."), exename, label)
-print "*** Experiments stored in: %s" % fxsys.path
+print "*** Experiments stored in: %s" % experiment.path
 
 experiment.print_status(show_finished)
