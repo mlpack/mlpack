@@ -30,11 +30,14 @@ STRIP_FROM_INC_PATH    =
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = YES
 MULTILINE_CPP_IS_BRIEF = NO
-DETAILS_AT_TOP         = NO
+DETAILS_AT_TOP         = YES
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
-ALIASES                = 
+ALIASES                = "experimental=\par EXPERIMENTAL FEATURE.\n" \
+                         "vy=\vec{y}" \
+                         "vx=\vec{x}" \
+                         "vz=\vec{z}"
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 BUILTIN_STL_SUPPORT    = NO

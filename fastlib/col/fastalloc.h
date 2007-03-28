@@ -1,7 +1,9 @@
 /**
- * @file fastalloc
+ * @file fastalloc.h
  *
  * Lightweight specialized memory allocator for lots of equally-sized objects.
+ *
+ * @experimental
  */
 
 #ifndef COL_FASTALLOC_H
@@ -73,6 +75,8 @@ char *SlabAllocator<item_size>::freelist_ = 0;
  * A very lightweight replacement for new for allocating lots of objects
  * of the same type.
  *
+ * @experimental
+ *
  * This allocator has zero space overhead and only a marginal per-allocation
  * overhead.  It is useful for cases where you need to allocate lots
  * of pointers to the same type of object and might need to free a lot
@@ -91,6 +95,8 @@ char *SlabAllocator<item_size>::freelist_ = 0;
 
 /**
  * Delete operator for fast_new.
+ *
+ * @experimental
  *
  * @code
  * fast_delete(ptr);

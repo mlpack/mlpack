@@ -497,8 +497,8 @@ class Dataset {
   success_t WriteArff(const char *fname) const;
 
   /**
-   * Initializes from a matrix copying all contents, assuming only continuous
-   * values.
+   * Initializes from a matrix copying all contents, assuming all features
+   * are continuous.
    *
    * @param matrix_in data where rows are features, columns are points
    */
@@ -510,7 +510,7 @@ class Dataset {
   
   /**
    * Initializes by becoming the owner of an existing matrix, assuming
-   * continuous values.
+   * all features are continuous.
    *
    * By becoming the owner of the matrix, it means that the matrix will be
    * freed when the Dataset falls out of scope.  See Matrix class for
@@ -526,7 +526,7 @@ class Dataset {
   
   /**
    * Initializes as an alias or mirror of an existing matrix, assuming
-   * continuous.
+   * all features are continuous.
    *
    * This does not copy the matrix but instead refers to an existing
    * matrix, and changes in one will be reflected in the other.  Make

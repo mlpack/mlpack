@@ -79,10 +79,25 @@ class ArrayList {
   ~ArrayList() {
     Destruct();
   }
-
+  
+  /**
+   * Returns this to an invalid state so it can be re-initialized.
+   *
+   * Example:
+   *
+   * @code
+   * ArrayList<int> list;
+   * list.Init(20);
+   * ... do stuff with list
+   * list.Destruct();
+   * list.Copy(some_other_list);
+   * @endcode
+   */
   void Destruct() {
     DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(Element),
-        "You forgot to initialize an ArrayList before it got automatically freed.");
+        "You forgot to initialize an ArrayList before it got automatically "
+        "freed.  If you declare an ArrayList, you must use Init or similar, "
+        "even if you never use it.");
     if (unlikely(ptr_ != NULL)) {
       mem::DestructAll(ptr_, size_);
       mem::Free(ptr_);

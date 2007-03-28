@@ -30,7 +30,7 @@ namespace math {
   const double LN_10 = 2.30258509299404568402;
   /** The ratio of the circumference of a circle to its diameter. */
   const double PI = 3.141592653589793238462643383279;
-  /** The ratio of the radius of a circle to its diameter. */
+  /** The ratio of the circumference of a circle to its radius. */
   const double PI_2 = 1.57079632679489661923;
 
   /** Squares a number. */

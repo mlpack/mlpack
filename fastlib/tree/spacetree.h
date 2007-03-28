@@ -4,6 +4,8 @@
  * @file spacetree.h
  *
  * Generalized space partitioning tree.
+ *
+ * @experimental
  */
 
 #ifndef TREE_SPACETREE_H
@@ -21,6 +23,8 @@
  * @param TBound the bounding type of each child (TODO explain interface)
  * @param TDataset the data set type
  * @param TStatistic extra data in the node
+ *
+ * @experimental
  */
 template<class TBound,
          class TDataset,

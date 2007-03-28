@@ -7,6 +7,8 @@
  *
  * TODO: Come up with a better design so you can do plug-and-play distance
  * metrics.
+ *
+ * @experimental
  */
 
 #ifndef TREE_BOUNDS_H
@@ -17,6 +19,8 @@
 
 /**
  * Simple real-valued range.
+ *
+ * @experimental
  */
 struct DBound {
  public:
@@ -42,6 +46,8 @@ struct DBound {
 
 /**
  * Hyper-rectangle bound.
+ *
+ * @experimental
  */
 class DHrectBound {
  private:
@@ -271,6 +277,8 @@ class DHrectBound {
 
 /**
  * Euclidean metric for use with ball bounds.
+ *
+ * @experimental
  */
 class DEuclideanMetric {
  public:
@@ -281,6 +289,8 @@ class DEuclideanMetric {
 
 /**
  * Bound of a ball tree.
+ *
+ * @experimental
  */
 template<class TInstance, class TMetric>
 class BallBound {

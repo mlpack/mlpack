@@ -27,10 +27,7 @@ class CompilerInfo:
     #else:
     #  self.lflags_ar_start = "-Wl,-whole-archive"
     #  self.lflags_ar_end = "-Wl,-no-whole-archive"
-    if self.kernel in ["Darwin"]:
-      self.lflags_fortran = ""
-    else:
-      self.lflags_fortran = "-lg2c"
+    self.lflags_fortran = "-lg2c"
   def compiler_program(self, extension):
     # for instance, turn "gcc %s -c %s -o ..." into just "gcc"
     return self.command_from_ext[extension].split(" ")[0]

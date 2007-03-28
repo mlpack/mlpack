@@ -386,7 +386,7 @@ namespace la {
 
   /**
    * Sets a vector to the sum of two vectors
-   * (\f$\vz \gets \vy + \vx).
+   * (\f$\vz \gets \vy + \vx\f$).
    */
   inline void AddOverwrite(const Vector &x, const Vector &y, Vector *z) {
     DEBUG_SAME_INT(x.length(), y.length());
@@ -605,8 +605,8 @@ namespace la {
       double alpha, const Vector &x, const Matrix &A,
       double beta, Vector *y) {
     DEBUG_ASSERT(x.ptr() != y->ptr());
-    DEBUG_SAME_INT(A.n_cols(), x.length());
-    DEBUG_SAME_INT(A.n_rows(), y->length());
+    DEBUG_SAME_INT(A.n_rows(), x.length());
+    DEBUG_SAME_INT(A.n_cols(), y->length());
     F77_FUNC(dgemv)("T", A.n_rows(), A.n_cols(),
         alpha, A.ptr(), A.n_rows(), x.ptr(), 1,
         beta, y->ptr(), 1);
@@ -693,7 +693,7 @@ namespace la {
    * Matrix A;
    * Matrix B;
    * Matrix C;
-   * ... // assign A to [0 2; 2 0]
+   * ... // assign A to [2 0; 0 2]
    * ... // assign B to [0 1; 1 0]
    * ... // C must be initialized and size 2-by-2
    * la::MulOverwrite(A, B, &C);

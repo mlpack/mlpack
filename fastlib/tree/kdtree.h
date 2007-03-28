@@ -7,6 +7,8 @@
  *
  * Eventually we hope to support KD trees with non-L2 (Euclidean)
  * metrics, like Manhattan distance.
+ *
+ * @experimental
  */
 
 #ifndef TREE_KDTREE_H
@@ -165,6 +167,8 @@ namespace tree {
   /**
    * Creates a KD tree from data, splitting on the midpoint.
    *
+   * @experimental
+   *
    * This requires you to pass in two unitialized ArrayLists which will contain
    * index mappings so you can account for the re-ordering of the matrix.
    * (By unitialized I mean don't call Init on it)
@@ -214,7 +218,7 @@ namespace tree {
 
   // TODO: Perhaps move this into a "util.h" file
 
-  /** Serializes a KD tree to a serializer. */
+  /** Serializes a KD tree to a serializer. @experimental */
   template<typename TKdTree, typename Serializer>
   void SerializeKdTree(const TKdTree *tree,
       const Matrix& matrix,
@@ -225,7 +229,7 @@ namespace tree {
     old_from_new.Serialize(s);
   }
 
-  /** Deserializes a KD tree from a serializer. */
+  /** Deserializes a KD tree from a serializer. @experimental */
   template<typename TKdTree, typename Deserializer>
   void DeserializeKdTree(TKdTree *uninit_tree,
       Matrix* uninit_matrix,
@@ -238,7 +242,7 @@ namespace tree {
     }
   }
 
-  /** Reads a KD tree from a file in the SERIALIZED format. */
+  /** Reads a KD tree from a file in the SERIALIZED format. @experimental */
   template<typename TKdTree>
   void LoadKdTreeFromFile(const char *fname,
       TKdTree *uninit_tree,
@@ -254,6 +258,8 @@ namespace tree {
   /**
    * Loads a KD tree from a command-line parameter,
    * creating a KD tree if necessary.
+   *
+   * @experimental
    *
    * This optionally allows the end user to write out the created KD tree
    * to a file, as a convenience.
@@ -335,7 +341,7 @@ namespace tree {
   }
 };
 
-/** Basic KD tree structure. */
+/** Basic KD tree structure. @experimental */
 typedef BinarySpaceTree<DHrectBound, Matrix> BasicKdTree;
 
 #endif

@@ -6,6 +6,8 @@
  * Home for the concept of tree statistics.
  *
  * You should define your own statistic that looks like EmptyStatistic.
+ *
+ * @experimental
  */
 
 #ifndef TREE_STATISTIC_H
@@ -14,6 +16,8 @@
 /**
  * Empty statistic if you are not interested in storing statistics in your
  * tree.  Use this as a template for your own.
+ *
+ * @experimental
  */
 template<class TDataset>
 class EmptyStatistic {

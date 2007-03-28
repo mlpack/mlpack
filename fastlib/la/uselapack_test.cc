@@ -427,6 +427,21 @@ void TestMultiply() {
   v2_a_actual.Init(3);
   la::MulOverwrite(v2, a, &v2_a_actual);
   AssertApproxVector(v2_a, v2_a_actual, 0);
+  
+  // Test non-square matrices (we had some bad debug checks)
+  MAKE_VECTOR(v3, 4,     1, 2, 3, 4);
+  MAKE_VECTOR(b_v3, 3,   62, 41, 59);
+  MAKE_VECTOR(v1_b, 4,   48, 106, 35, 88);
+  
+  SmallVector<3> b_v3_actual;
+  
+  la::MulOverwrite(b, v3, &b_v3_actual);
+  AssertApproxVector(b_v3, b_v3_actual, 0);
+
+  Vector v1_b_actual;
+  la::MulInit(v1, b, &v1_b_actual);
+  AssertApproxVector(v1_b, v1_b_actual, 0);
+  
 }
 
 void TestInverse() {
