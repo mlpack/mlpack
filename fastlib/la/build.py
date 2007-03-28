@@ -14,6 +14,7 @@ def doit_compile_lapack(sysentry, files, params):
   compiler = compiler_info.compiler_program("f")
   # Make sure we won't rm -rf anything bad
   assert "libblaspack_workspace" in workspace_dir
+  sysentry.command("echo '... Extracting FORTRAN files...'")
   sysentry.command("mkdir -p %s" % workspace_dir)
   sysentry.command("cd %s && tar -xzf %s" % (workspace_dir, blaspack_tgz.name))
   sysentry.command("echo '*** Compiling LAPACK with BLAS reference implementation.'")

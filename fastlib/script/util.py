@@ -222,12 +222,17 @@ def shellquote(s):
   """
   result = ""
   map = {"$":"\\$", "\"":"\\\"", "`":"\\`", "!":"\\!"}
+  changed = False
   for c in str(s):
     if c in map.keys():
       result += map[c]
+      changed = True
     else:
       result += c
-  return "\"%s\"" % result
+  if changed:
+    return "\"%s\"" % result
+  else:
+    return result
 
 def sanitize_basename(s, replacechar = "_"):
   """Sanitizes the base of a filename.

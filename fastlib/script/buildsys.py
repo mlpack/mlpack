@@ -5,6 +5,12 @@ import glob
 
 import os
 
+def sq(str):
+  if isinstance(str, list):
+    return [sq(s) for s in str]
+  else:
+    return util.shellquote(str)
+
 class Types:
   HEADER="buildsys/.h"
   GCC_SOURCE="buildsys/gcc"  # .c, .cpp, etc
@@ -132,17 +138,17 @@ class MakeBuildSys(dep.DepSys):
     for (outfiles, infiles, commands) in self.entries:
       i += 1
       if commands:
-        lines.append("%s: %s" % (" ".join(outfiles), " ".join(infiles)))
+        lines.append("%s: %s" % (" ".join(sq(outfiles)), " ".join(sq(infiles))))
         outfiles_short = [shorten(outfile) for outfile in outfiles]
-        lines.extend(["\t@echo '... Making %s'" % (" ".join(outfiles_short))])
+        lines.extend(["\t@echo '... Making %s'" % (" ".join(sq(outfiles_short)))])
         lines.extend(["\t@" + c for c in commands])
       elif infiles:
-        lines.append("pseudo_%d: %s" % (i, " ".join(infiles)))
-        lines.extend(["\t@echo '*** Done with %s'" % (" ".join(infiles))])
+        lines.append("pseudo_%d: %s" % (i, " ".join(sq(infiles))))
+        lines.extend(["\t@echo '*** Done with %s'" % (" ".join(sq(infiles)))])
     self.entries.reverse()
     lines.append("clean:")
     lines.append("\t@echo 'Removing the bin/ directory.'");
-    lines.append("\trm -rf %s/*" % (self.bin_dir))
+    lines.append("\trm -rf %s/*" % (sq(self.bin_dir)))
     return lines
 
 class MakeBuildSysEntry(dep.DepSysEntry):
@@ -183,7 +189,7 @@ class MakeBuildSysEntry(dep.DepSysEntry):
   def makefile(self):
     return self.source_file(os.path.abspath("./Makefile"), "Makefile")
   def ensure_writable(self, name):
-    self.command("mkdir -p %s" % (os.path.dirname(name)))
+    self.command("mkdir -p %s" % (sq(os.path.dirname(name))))
   def command(self, str):
     self.commands.append(str)
   def end(self, files):
@@ -223,7 +229,7 @@ class CompileRule(dep.Rule):
     command_template = compiler.command_from_ext[sourceextension]
     (source_dirname, source_basename) = os.path.split(source.name)
     compile_cmd = command_template % (my_flags, source_basename, object.name)
-    sysentry.command("cd " + source_dirname + " && " + compile_cmd)
+    sysentry.command("cd " + sq(source_dirname) + " && " + compile_cmd)
     return [(Types.OBJECT, object)]
 
 class ArchiveRule(dep.Rule):
@@ -234,7 +240,8 @@ class ArchiveRule(dep.Rule):
     objects = files["objects"].many(Types.OBJECT)
     if len(objects) != 0:
       libfile = sysentry.file("lib" + self.name + ".a", "arch", "kernel", "mode", "compiler")
-      sysentry.command("ar r %s %s" % (libfile, " ".join([x.name for x in objects])))
+      sysentry.command("ar r %s %s" % (sq(libfile),
+          " ".join([sq(x.name) for x in objects])))
       return [(Types.LINKABLE, libfile)]
     else:
       # no compilable code was found -- just don't create an object
@@ -247,7 +254,7 @@ class HeaderSummaryRule(dep.Rule):
     self.name = name
   def doit(self, sysentry, files, params):
     libfile = sysentry.file("lib" + self.name + ".h")
-    sysentry.command("touch %s" % (libfile))
+    sysentry.command("touch %s" % (sq(libfile)))
     return [(Types.PLACEHOLDER, libfile)]
 
 class LibRule(dep.Rule):
@@ -287,7 +294,7 @@ class BinRule(dep.Rule):
     reversed_libs.reverse()
     sysentry.command(compiler.linker + " -o %s %s %s %s %s" % (
         binfile.name, cflags,
-        lflags_start, " ".join(reversed_libs), lflags_end))
+        lflags_start, " ".join(sq(reversed_libs)), lflags_end))
     return [(Types.BINFILE, binfile)]
 
 class MakefileRule(dep.Rule):
@@ -312,8 +319,8 @@ class SymlinkRule(dep.Rule):
       destname = os.path.join(self.dest_dir, os.path.basename(file.simplename))
       # the symlink's simplename will be the same as the original's
       destfile = sysentry.source_file(destname, file.simplename)
-      sysentry.command("rm -f %s" % destname)
-      sysentry.command("ln -s -f %s %s" % (sourcename, destname))
+      sysentry.command("rm -f %s" % sq(destname))
+      sysentry.command("ln -s -f %s %s" % (sq(sourcename), sq(destname)))
       all.append((classname, destfile))
     sysentry.command("echo '*** Created %d symlinks in %s.'" % (len(pairs), self.dest_dir))
     return all
@@ -326,8 +333,10 @@ class WgetRule(dep.Rule):
     self.type = type
     dep.Rule.__init__(self)
   def doit(self, sysentry, files, params):
-    real_dir = os.path.dirname(self.real_path)
-    sysentry.command("cd %s && wget %s" % (real_dir, util.shellquote(self.url)))
+    (real_dir, filename) = os.path.split(self.real_path)
+    sysentry.command("echo 'Downloading the file using curl...'")
+    sysentry.command("cd %s && curl -L -o %s %s" % (
+        real_dir, sq(filename), sq(self.url)))
     return [(self.type, sysentry.source_file(self.real_path, self.fake_path))]
 
 # Parameter loader
