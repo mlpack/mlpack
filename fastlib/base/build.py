@@ -2,7 +2,8 @@ def config_doit(sysentry, files, params):
   script = files["script"].single(Types.SCRIPT)
   outdir = sysentry.bin_dir("arch", "kernel", "compiler")
   indir = sysentry.sys.source_dir
-  sysentry.command("%s --genfiles_dir=%s --source_dir=%s" % (script, outdir, indir))
+  sysentry.command("%s --genfiles_dir=%s --source_dir=%s" % (
+      sq(script), sq(outdir), sq(indir)))
   gen_headers = ["base/basic_types.h"]
   return [(Types.HEADER, sysentry.file(h, "arch", "kernel", "compiler"))
       for h in gen_headers]

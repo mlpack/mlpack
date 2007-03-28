@@ -227,8 +227,11 @@ def shellquote(s):
     if c in map.keys():
       result += map[c]
       changed = True
+    elif c.isalnum() or c == '/':
+      result += c
     else:
       result += c
+      changed = True
   if changed:
     return "\"%s\"" % result
   else:

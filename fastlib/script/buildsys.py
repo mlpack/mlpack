@@ -6,10 +6,18 @@ import glob
 import os
 
 def sq(str):
+  """escape a string for use in a shell"""
   if isinstance(str, list):
     return [sq(s) for s in str]
   else:
     return util.shellquote(str)
+
+def mq(str):
+  """escape a string for use in makefiles"""
+  if isinstance(str, list):
+    return [mq(s) for s in str]
+  else:
+    return str.replace(" ", "\ ")
 
 class Types:
   HEADER="buildsys/.h"
@@ -138,13 +146,13 @@ class MakeBuildSys(dep.DepSys):
     for (outfiles, infiles, commands) in self.entries:
       i += 1
       if commands:
-        lines.append("%s: %s" % (" ".join(sq(outfiles)), " ".join(sq(infiles))))
+        lines.append("%s: %s" % (" ".join(mq(outfiles)), " ".join(mq(infiles))))
         outfiles_short = [shorten(outfile) for outfile in outfiles]
-        lines.extend(["\t@echo '... Making %s'" % (" ".join(sq(outfiles_short)))])
+        lines.extend(["\t@echo '... Making %s'" % (" ".join(outfiles_short))])
         lines.extend(["\t@" + c for c in commands])
       elif infiles:
         lines.append("pseudo_%d: %s" % (i, " ".join(sq(infiles))))
-        lines.extend(["\t@echo '*** Done with %s'" % (" ".join(sq(infiles)))])
+        lines.extend(["\t@echo '*** Done with %s'" % (" ".join(infiles))])
     self.entries.reverse()
     lines.append("clean:")
     lines.append("\t@echo 'Removing the bin/ directory.'");
@@ -220,15 +228,16 @@ class CompileRule(dep.Rule):
     simplename = source.simplename[:dot] + ".o"
     object = sysentry.file("obj/" + simplename.replace("/", "_"), "arch", "kernel", "mode", "compiler")
     # TODO: -I flags
-    my_includes = "-I%s -I%s" % (sysentry.bin_dir("arch", "kernel", "compiler"),
-        sysentry.sys.source_dir)
+    my_includes = "-I%s -I%s" % (
+        sq(sysentry.bin_dir("arch", "kernel", "compiler")),
+        sq(sysentry.sys.source_dir))
     mode = params["mode"]
     my_flags = my_includes + " " + compiler.mode_dictionary[params["mode"]] + " " + self.cflags
     if not sourceextension in compiler.command_from_ext:
       raise Exception("Don't know how to compile files of type [%s]." % sourceextension)
     command_template = compiler.command_from_ext[sourceextension]
     (source_dirname, source_basename) = os.path.split(source.name)
-    compile_cmd = command_template % (my_flags, source_basename, object.name)
+    compile_cmd = command_template % (my_flags, sq(source_basename), sq(object.name))
     sysentry.command("cd " + sq(source_dirname) + " && " + compile_cmd)
     return [(Types.OBJECT, object)]
 
@@ -336,7 +345,7 @@ class WgetRule(dep.Rule):
     (real_dir, filename) = os.path.split(self.real_path)
     sysentry.command("echo 'Downloading the file using curl...'")
     sysentry.command("cd %s && curl -L -o %s %s" % (
-        real_dir, sq(filename), sq(self.url)))
+        sq(real_dir), sq(filename), sq(self.url)))
     return [(self.type, sysentry.source_file(self.real_path, self.fake_path))]
 
 # Parameter loader

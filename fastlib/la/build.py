@@ -27,8 +27,8 @@ def doit_compile_lapack(sysentry, files, params):
   sysentry.command("cd %s && %s -O2 -c src/*.f" % (sq(workspace_dir), sq(compiler)))
   sysentry.command("echo '... Almost done with LAPACK/BLAS...'")
   noopt = "dlamch slamch" # these have to be compiled without optimization
-  noopt_real = " ".join(["src/%s.f" % x for x in noopt.split()])
-  sysentry.command("cd %s && %s -O0 -c %s" % (sq(workspace_dir), sq(compiler), sq(noopt_real)))
+  noopt_real = " ".join(sq(["src/%s.f" % x for x in noopt.split()]))
+  sysentry.command("cd %s && %s -O0 -c %s" % (sq(workspace_dir), sq(compiler), noopt_real))
   sysentry.command("cd %s && ar r %s *.o" % (sq(workspace_dir), sq(libblaspack.name)))
   sysentry.command("echo '... Created archive, cleaning up.'")
   sysentry.command("rm -rf %s" % sq(workspace_dir))

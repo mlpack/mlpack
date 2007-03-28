@@ -22,7 +22,7 @@ print "... determining architecture"
 
 if arch == "x86_64":
   print "*** found 64-bit extensions (Opteron style)"
-elif arch == "i686":
+elif arch == "i686" or arch == "i586" or arch == "i386":
   print "*** found 32-bit Intel"
 else:
   print "!!! We haven't tested this on '%s' systems.  It might not work." % (arch)
