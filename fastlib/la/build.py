@@ -15,8 +15,8 @@ def doit_compile_lapack(sysentry, files, params):
   # Make sure we won't rm -rf anything bad
   assert "libblaspack_workspace" in workspace_dir
   sysentry.command("echo '... Extracting FORTRAN files...'")
-  sysentry.command("mkdir -p %s" % workspace_dir)
-  sysentry.command("cd %s && tar -xzf %s" % (workspace_dir, blaspack_tgz.name))
+  sysentry.command("mkdir -p %s" % sq(workspace_dir))
+  sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq(blaspack_tgz.name)))
   sysentry.command("echo '*** Compiling LAPACK with BLAS reference implementation.'")
   sysentry.command("echo '... Our compilation differs slightly from regular LAPACK/BLAS:'")
   sysentry.command("echo '... NOTE 1: We omit complex-number routines (halves compile time).'")
@@ -24,14 +24,14 @@ def doit_compile_lapack(sysentry, files, params):
   sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
   # Loop unrolling is not useful on modern architectures (and bloats EXE size).
   # Thus, we only compile -O2.
-  sysentry.command("cd %s && %s -O2 -c src/*.f" % (workspace_dir, compiler))
+  sysentry.command("cd %s && %s -O2 -c src/*.f" % (sq(workspace_dir), sq(compiler)))
   sysentry.command("echo '... Almost done with LAPACK/BLAS...'")
   noopt = "dlamch slamch" # these have to be compiled without optimization
   noopt_real = " ".join(["src/%s.f" % x for x in noopt.split()])
-  sysentry.command("cd %s && %s -O0 -c %s" % (workspace_dir, compiler, noopt_real))
-  sysentry.command("cd %s && ar r %s *.o" % (workspace_dir, libblaspack.name))
+  sysentry.command("cd %s && %s -O0 -c %s" % (sq(workspace_dir), sq(compiler), sq(noopt_real)))
+  sysentry.command("cd %s && ar r %s *.o" % (sq(workspace_dir), sq(libblaspack.name)))
   sysentry.command("echo '... Created archive, cleaning up.'")
-  sysentry.command("rm -rf %s" % workspace_dir)
+  sysentry.command("rm -rf %s" % sq(workspace_dir))
   sysentry.command("echo '*** Done with LAPACK and BLAS!'")
   return [(Types.LINKABLE, libblaspack)]
 

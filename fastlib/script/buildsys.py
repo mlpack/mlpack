@@ -523,5 +523,5 @@ class Loader:
                   "sourcerule" : sourcerule, "sourcerules" : sourcerules,
                   "librule" : librule, "binrule" : binrule,
                   "customrule" : customrule, "wgetrule" : wgetrule,
-                  "compilers" : compilers, "os" : os}
+                  "compilers" : compilers, "os" : os, "sq" : sq}
 
