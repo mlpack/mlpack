@@ -1,0 +1,25 @@
+
+Statistic
+ - compose
+ - loop
+- both mutable and static statistics
+
+DualTreeRunner
+  - intimately tied with expansion pattern
+    - local best first prefers a different tree layout from breadth-first
+  - functions
+    - prune
+    - prioritize
+    - basecase
+    - and in some cases:
+      - prune action
+        - n-point: global statistic
+        - kde: summarized downward contribution
+          - is per-query downward contribution ever necessary?
+          - no -- the information can be stored for arbitrary sets, so
+          it can be summarized as a statistic, okay, i'm satisfied
+      - decompose (where does this go?)
+  - data
+    - q: hierarchy, bound, static stat, mutable stat, result
+    - r: hierarchy, bound, static stat
+    - global stat (compose function)
