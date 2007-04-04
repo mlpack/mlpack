@@ -16,6 +16,8 @@ is desired to re-run completed trials because perhaps your program changed.
 It is also possible just to explore the fx/ directory tree yourself and
 remove individual trials by hand -- simple rm -rf will work.
 
+See information on fx-run for more information about status files.
+
 """
 
 import pm

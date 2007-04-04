@@ -153,21 +153,23 @@ double la::DeterminantLog(const Matrix &A, int *sign_out) {
     }
 
     double value = LU.get(i, i);
+
     if (value < 0) {
       sign_det = -sign_det;
-      log_det += log(-value);
-    } else if (value > 0) {
-      log_det += log(value);
-    } else {
+      value = -value;
+    } else if (!(value > 0)) {
       sign_det = 0;
       log_det = DBL_NAN;
       break;
     }
+
+    log_det += log(value);
   }
 
   if (sign_out) {
     *sign_out = sign_det;
   }
+
   return log_det;
 }
 

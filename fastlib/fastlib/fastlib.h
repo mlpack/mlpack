@@ -4,8 +4,6 @@
  * @file fastlib.h
  *
  * Includes all of fastlib.
- *
- * This might make compilation slow, so do not use this in library code.
  */
 
 

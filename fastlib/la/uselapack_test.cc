@@ -2,7 +2,7 @@
 
 #include "uselapack.h"
 
-TEST_SUITE_BEGIN(uselapack)
+TEST_SUITE_BEGIN(uselapack);
 
 /**
  * Creates a matrix locally.
@@ -864,4 +864,4 @@ TEST_SUITE_END(uselapack,
     TestSVD,
     TestCholesky,
     TestSolve,
-    )
+    );

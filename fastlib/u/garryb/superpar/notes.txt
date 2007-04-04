@@ -1,8 +1,11 @@
 
 Statistic
- - compose
- - loop
-- both mutable and static statistics
+- compose
+- loop over data
+
+MutableStatistic
+- compose, decompose
+- loop over data
 
 DualTreeRunner
   - intimately tied with expansion pattern
@@ -23,3 +26,9 @@ DualTreeRunner
     - q: hierarchy, bound, static stat, mutable stat, result
     - r: hierarchy, bound, static stat
     - global stat (compose function)
+  - notes
+    - propagate bounds information and results: mutable statistic updates
+    must be atomic
+
+Array
+

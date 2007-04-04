@@ -40,30 +40,35 @@ import fx
 import buildsys
 import util
 
-flpath = os.path.dirname(os.path.realpath(os.path.dirname(sys.argv[0])))
-cpath = os.path.realpath(flpath).rstrip(os.sep) + os.sep
+# figure out where fastlib is
+fl_build_path = sys.argv[0]
+script_path = os.path.realpath(os.path.dirname(fl_build_path))
+fastlib_path = os.path.dirname(script_path)
+
+# normalize path names and ensure a single '/' at the end of them
+code_path = os.path.realpath(fastlib_path).rstrip(os.sep) + os.sep
 curdir = os.path.realpath(os.getcwd()).rstrip(os.sep) + os.sep
 
 if len(fx.extra_args) != 1:
-  print USAGE % (cpath)
+  print USAGE % (code_path)
   sys.exit(1)
 
-if curdir.startswith(cpath):
+if curdir.startswith(code_path):
   # When building inside build system, use relative paths from root
   # of build system.
   print "*** Building from within build system"
-  #real_path = curdir[len(cpath):]
-  real_rootpath = cpath
+  #real_path = curdir[len(code_path):]
+  real_rootpath = code_path
   real_path = curdir.rstrip(os.sep)
-  fake_path = curdir[len(cpath):].replace(os.sep, "/").rstrip("/")
+  fake_path = curdir[len(code_path):].replace(os.sep, "/").rstrip("/")
 else:
   # When building from outside build system, use absolute paths.
   # However, for generated files, we need somewhere to put them within
   # the bin/ directory; se use 'OUTSIDE' to signify this.
   print "*** Building from OUTSIDE build system... cross your fingers!"
-  print " - I think the build system is here: %s" % cpath
+  print " - I think the build system is here: %s" % code_path
   print " - This is where you are: %s" % curdir
-  real_rootpath = cpath
+  real_rootpath = code_path
   real_path = os.path.abspath(curdir).rstrip(os.sep)
   fake_path = "external/" + curdir.replace(os.sep, "/").strip("/")
 

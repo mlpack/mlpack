@@ -9,6 +9,8 @@
 #ifndef MATH_MATH_H
 #define MATH_MATH_H
 
+#include <math.h>
+
 /**
  * Math routines.
  *

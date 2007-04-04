@@ -66,6 +66,16 @@
 #define unlikely(x) unlikely__impl(x)
 
 /**
+ * For optimization purposes, this returns whether an expression is constant.
+ *
+ * If the compiler doesn't have a suitable built-in mechanism for this,
+ * this always returns false.
+ *
+ * @return 1 if provably constant, 0 if compiler is unsure
+ */
+#define IS_CONSTANT_EXPRESSION(x) IS_CONSTANT_EXPRESSION__IMPL(x)
+
+/**
  * Tells the compiler that a function never returns, such as exit or abort.
  *
  * Use this before your function, such as:
