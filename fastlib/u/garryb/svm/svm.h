@@ -44,7 +44,7 @@ void SVM<TKernel>::InitTrain(
   
   kernel_.Init(fx_submodule(module, "kernel", "kernel"));
   
-  c_ = fx_param_double(module, "c", 0.01);
+  c_ = fx_param_double(module, "c", 1.0);
   
   SMO<Kernel> smo;
   smo.Init(&dataset, c_);
@@ -55,6 +55,11 @@ void SVM<TKernel>::InitTrain(
   smo.GetSVM(&support_vectors_, &alpha_);
   DEBUG_ASSERT(alpha_.length() != 0);
   DEBUG_ASSERT(alpha_.length() == support_vectors_.n_cols());
+  
+  DEBUG_ONLY(fprintf(stderr, "----------------------\n"));
+  DEBUG_ONLY(support_vectors_.PrintDebug("support vectors"));
+  DEBUG_ONLY(alpha_.PrintDebug("support vector weights"));
+  DEBUG_ONLY(fprintf(stderr, "-- THRESHOLD: %f\n", thresh_));
 }
 
 template<typename TKernel>
@@ -64,10 +69,14 @@ int SVM<TKernel>::Classify(const Vector& datum) {
   for (index_t i = 0; i < alpha_.length(); i++) {
     Vector support_vector;
     support_vectors_.MakeColumnVector(i, &support_vector);
+    double term = alpha_[i] * kernel_.Eval(datum, support_vector);
     
-    summation += alpha_[i] * kernel_.Eval(datum, support_vector);
+    DEBUG_MSG(0, "alpha %f, term %f", alpha_[i], term);
+    
+    summation += term;
   }
   
+  DEBUG_MSG(0, "summation=%f, thresh_=%f", summation, thresh_);
   
   return (summation - thresh_ > 0.0) ? 1 : 0;
 }

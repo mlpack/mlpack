@@ -81,11 +81,13 @@ class SMO {
   }
 
   bool IsBound_(double alpha) const {
-    return alpha <= 0 || alpha >= c_;
+    return alpha == 0 || alpha == c_;
   }
 
   double GetLabelSign_(index_t i) const {
-    return matrix_.get(matrix_.n_rows()-1, i) * 2.0 - 1.0;
+    double v = matrix_.get(matrix_.n_rows()-1, i) * 2.0 - 1.0;
+    //DEBUG_MSG(0, "v = %f", v);
+    return v;
   }
 
   void GetVector_(index_t i, Vector *v) const {
@@ -93,11 +95,16 @@ class SMO {
   }
 
   double Error_(index_t i) const {
+    double val;
     if (!IsBound_(alpha_[i])) {
-      return error_[i];
+      val = error_[i];
+#ifdef VERBOSE
+      DEBUG_MSG(0, "error values %f and %f", error_[i], Evaluate_(i) - GetLabelSign_(i));
+#endif
     } else {
-      return Evaluate_(i) - GetLabelSign_(i);
+      val = Evaluate_(i) - GetLabelSign_(i);
     }
+    return val;
   }
 
   double Evaluate_(index_t i) const;
@@ -137,6 +144,8 @@ void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *support_alpha) const 
       dest.CopyValues(source);
 
       (*support_alpha)[i_support] = alpha_[i] * GetLabelSign_(i);
+      
+      i_support++;
     }
   }
 }
@@ -149,7 +158,7 @@ double SMO<TKernel>::Evaluate_(index_t i) const {
   double summation = 0;
 
   // TODO: This is linear in the size of the training points
-  for (index_t j = 0; j < matrix_.n_cols(); j++) {
+  for (index_t j = 0; j < alpha_.length(); j++) {
     if (likely(alpha_[j] != 0)) {
       Vector support_vector;
       GetVector_(j, &support_vector);
@@ -161,23 +170,24 @@ double SMO<TKernel>::Evaluate_(index_t i) const {
     }
   }
 
-  return summation - thresh_;
+  return (summation - thresh_);
 }
 
 template<typename TKernel>
 void SMO<TKernel>::Train() {
   bool examine_all = true;
+  index_t num_changed = 0;
 
-  do {
+  while (num_changed > 0 || examine_all) {
     DEBUG_GOT_HERE(0);
-    index_t num_changed = TrainIteration_(examine_all);
+    num_changed = TrainIteration_(examine_all);
 
     if (examine_all) {
       examine_all = false;
     } else if (num_changed == 0) {
       examine_all = true;
     }
-  } while (examine_all);
+  }
 }
 
 template<typename TKernel>
@@ -185,7 +195,7 @@ index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
   index_t num_changed = 0;
 
   for (index_t i = 0; i < alpha_.length(); i++) {
-    if ((examine_all || IsBound_(alpha_[i])) && TryChange_(i)) {
+    if ((examine_all || !IsBound_(alpha_[i])) && TryChange_(i)) {
       num_changed++;
     }
   }
@@ -198,6 +208,8 @@ bool SMO<TKernel>::TryChange_(index_t j) {
   double error_j = Error_(j); // WALDO
   double rj = error_j * GetLabelSign_(j);
 
+  DEBUG_GOT_HERE(0);
+
   if (!((rj < -SMO_TOLERANCE && alpha_[j] < c_)
       || (rj > SMO_TOLERANCE && alpha_[j] > 0))) {
     return false; // nothing changed
@@ -205,27 +217,26 @@ bool SMO<TKernel>::TryChange_(index_t j) {
 
   // first try the one we suspect to have the largest yield
 
-  if (error_j > 0) {
+  if (error_j != 0) {
     index_t i = -1;
     double error_i = error_j;
-    for (index_t k = 0; k < alpha_.length(); k++) {
-      if (!IsBound_(alpha_[k]) && error_[k] < error_i) {
-        error_i = error_[k];
-        i = k;
+    
+    if (error_j > 0) {
+      for (index_t k = 0; k < alpha_.length(); k++) {
+        if (!IsBound_(alpha_[k]) && error_[k] < error_i) {
+          error_i = error_[k];
+          i = k;
+        }
+      }
+    } else {
+      for (index_t k = 0; k < alpha_.length(); k++) {
+        if (!IsBound_(alpha_[k]) && error_[k] > error_i) {
+          error_i = error_[k];
+          i = k;
+        }
       }
     }
-    if (i != -1 && TakeStep_(i, j, error_j)) {
-      return true;
-    }
-  } else if (likely(error_j < 0)) {
-    index_t i = -1;
-    double error_i = error_j;
-    for (index_t k = 0; k < alpha_.length(); k++) {
-      if (!IsBound_(alpha_[k]) && error_[k] > error_i) {
-        error_i = error_[k];
-        i = k;
-      }
-    }
+    
     if (i != -1 && TakeStep_(i, j, error_j)) {
       return true;
     }
@@ -261,14 +272,15 @@ bool SMO<TKernel>::TryChange_(index_t j) {
 template<typename TKernel>
 bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   if (i == j) {
+    DEBUG_GOT_HERE(0);
     return false;
   }
 
   double yi = GetLabelSign_(i);
-  double yj = GetLabelSign_(i);
+  double yj = GetLabelSign_(j);
   double alpha_i;
   double alpha_j;
-  double thresh_new;
+  double d_thresh;
   double l;
   double u;
   double s = yi * yj;
@@ -286,6 +298,8 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   if (l == u) {
     // TODO: might put in some tolerance
+    DEBUG_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
+    DEBUG_GOT_HERE(0);
     return false;
   }
 
@@ -294,13 +308,16 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
   // second derivative of objective function
-  double eta = 2 * kij - kii - kjj;
+  double eta = +2*kij - kii - kjj;
 
+  DEBUG_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
 
   if (likely(eta < 0)) {
+    DEBUG_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = math::ClampRange(alpha_j, l, u);
   } else {
+    DEBUG_MSG(0, "Uncommon case");
     double fiold = error_i + yi;
     double fjold = error_j + yj;
     double vi = fiold + thresh_ - yi*alpha_[i]*kii - yj*alpha_[j]*kij;
@@ -329,6 +346,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   // check if there is progress
   if (fabs(d_alpha_j) < SMO_EPS*(alpha_j + alpha_[j] + SMO_EPS)) {
+    DEBUG_GOT_HERE(0);
     return false;
   }
 
@@ -336,15 +354,15 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   double d_alpha_i = alpha_i - alpha_[i];
 
   // calculate threshold
-  double thresh_i = thresh_ + error_i + yi*d_alpha_i*kii + yj*d_alpha_j*kij;
-  double thresh_j = thresh_ + error_j + yi*d_alpha_i*kij + yj*d_alpha_j*kjj;
+  double d_thresh_i = error_i + yi*d_alpha_i*kii + yj*d_alpha_j*kij;
+  double d_thresh_j = error_j + yi*d_alpha_i*kij + yj*d_alpha_j*kjj;
 
   if (!IsBound_(alpha_i)) {
-    thresh_new = thresh_i;
+    d_thresh = d_thresh_i;
   } else if (!IsBound_(alpha_j)) {
-    thresh_new = thresh_j;
+    d_thresh = d_thresh_j;
   } else {
-    thresh_new = (thresh_i + thresh_j) / 2.0;
+    d_thresh = (d_thresh_i + d_thresh_j) / 2.0;
   }
 
   // if not bound, error must be zero
@@ -355,23 +373,23 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     error_[j] = 0;
   }
   if (!IsBound_(alpha_i) && !IsBound_(alpha_j)) {
-    fprintf(stderr, "Neither ai nor aj are bound.");
+    DEBUG_MSG(0, "Neither ai nor aj are bound.");
   }
 
   double ti = yi*d_alpha_i;
-  double tj = yi*d_alpha_j;
-  double d_thresh = thresh_new - thresh_;
+  double tj = yj*d_alpha_j;
 
   for (index_t k = 0; k < error_.length(); k++) {
-    if (likely(k != i)) {
+    if (likely(k != i) && likely(k != j) && !IsBound_(alpha_[k])) {
       error_[k] += ti*EvalKernel_(i, k) + tj*EvalKernel_(j, k) - d_thresh;
     }
   }
 
-  thresh_ = thresh_new;
+  thresh_ += d_thresh;
   alpha_[i] = alpha_i;
   alpha_[j] = alpha_j;
-  
+
+  DEBUG_GOT_HERE(0);
   return true;
 }
 
