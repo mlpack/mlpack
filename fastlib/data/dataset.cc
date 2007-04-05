@@ -318,7 +318,9 @@ success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const 
             *s = ',';
           }
         }
-        reader->Error("Not enough tokens");
+        reader->Error("I am expecting %"LI"d entries per row, "
+            "but this line has only %"LI"d.",
+            n_features, i);
         retval = SUCCESS_FAIL;
         break;
       }

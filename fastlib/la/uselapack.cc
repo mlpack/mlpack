@@ -436,10 +436,13 @@ success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
       s, U, m, VT, k, &d, -1, iwork, &info);
   {
     f77_integer lwork = (f77_integer)d;
-    double work[lwork];
+    // work for DGESDD can be large, we really do need to malloc it
+    double *work = mem::Alloc<double>(lwork);
 
     F77_FUNC(dgesdd)(job, m, n, A_garbage->ptr(), m,
         s, U, m, VT, k, work, lwork, iwork, &info);
+
+    mem::Free(work);
   }
 
   return SUCCESS_FROM_LAPACK(info);

@@ -52,8 +52,7 @@ class Vector {
   
  public:
   /**
-   * Creates a completely uninitialized Vector which is only useful for
-   * transferring ownership to.
+   * Creates a completely uninitialized Vector which must be initialized.
    */
   Vector() {
     DEBUG_ONLY(Uninitialize_());
@@ -217,7 +216,7 @@ class Vector {
    */
   void MakeSubvector(index_t start_index, index_t len, Vector* dest) {
     DEBUG_BOUNDS(start_index, length_);
-    DEBUG_BOUNDS(start_index + len - 1, length_);
+    DEBUG_BOUNDS(start_index + len, length_ + 1);
     
     dest->Alias(ptr_ + start_index, len);
   }
@@ -367,7 +366,7 @@ class Matrix {
   CC_ASSIGNMENT_OPERATOR(Matrix);
 
   /**
-   * Non-initializing constructor.
+   * Creates a matrix that can be initialized.
    */
   Matrix() {
     DEBUG_ONLY(Uninitialize_());
@@ -575,7 +574,7 @@ class Matrix {
   void MakeColumnSlice(index_t start_col, index_t n_cols_new,
       Matrix *dest) const {
     DEBUG_BOUNDS(start_col, n_cols_);
-    DEBUG_BOUNDS(start_col + n_cols_new - 1, n_cols_);
+    DEBUG_BOUNDS(start_col + n_cols_new, n_cols_ + 1);
     dest->Alias(ptr_ + start_col * n_rows_,
         n_rows_, n_cols_new);
   }
@@ -619,12 +618,29 @@ class Matrix {
   }
   
   /**
+   * Makes an alias of a subvector of particular column.
+   *
+   * @param col the column to alias
+   * @param start_row the first row to put in the subvector
+   * @param n_rows_new the number of rows of the subvector
+   * @param dest a pointer to an uninitialized vector, which will be
+   *        initialized as an alias to the particular column's subvector
+   */
+  void MakeColumnSubvector(index_t col, index_t start_row, index_t n_rows_new,
+      Vector *dest) const {
+    DEBUG_BOUNDS(col, n_cols_);
+    DEBUG_BOUNDS(start_row, n_rows_);
+    DEBUG_BOUNDS(start_row + n_rows_new, n_rows_ + 1);
+    dest->Alias(n_rows_ * col + start_row + ptr_, n_rows_new);
+  }
+  
+  /**
    * Retrieves a pointer to a contiguous array corresponding to a particular
    * column.
    *
    * @param col the column number
    * @return an array where the i'th element is the i'th row of that
-   *         particular column
+   *         par ticular column
    */
   double *GetColumnPtr(index_t col) {
     DEBUG_BOUNDS(col, n_cols_);

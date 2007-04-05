@@ -58,6 +58,24 @@ namespace math {
   inline double ClampNonPositive(double d) {
     return (d - fabs(d)) / 2;
   }
+  
+  /**
+   * Clips a number between a particular range.
+   *
+   * @param value the number to clip
+   * @param range_min the first of the range
+   * @param range_max the last of the range
+   * @return max(range_min, min(range_max, d))
+   */
+  inline double ClampRange(double value, double range_min, double range_max) {
+    if (unlikely(value < range_min)) {
+      return range_min;
+    } else if (unlikely(value > range_max)) {
+      return range_max; 
+    } else {
+      return value;
+    }
+  }
 };
 
 #include "discrete.h"

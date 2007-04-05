@@ -833,7 +833,7 @@ namespace la {
   }
   /**
    * Inverts a matrix in place
-   * (\f$A^{-1}\f$).
+   * (\f$A \gets A^{-1}\f$).
    *
    * @code
    * Matrix A;
@@ -848,7 +848,7 @@ namespace la {
   success_t Inverse(Matrix *A);
   /**
    * Set a matrix to the inverse of another matrix
-   * (\f$A^{-1}\f$).
+   * (\f$B \gets A^{-1}\f$).
    *
    * @code
    * Matrix A;
@@ -866,7 +866,7 @@ namespace la {
   success_t InverseOverwrite(const Matrix &A, Matrix *B);
   /**
    * Init a matrix to the inverse of another matrix
-   * (\f$A^{-1}\f$).
+   * (\f$B \gets A^{-1}\f$).
    *
    * @param A an N-by-N matrix to invert
    * @param B a fresh matrix to be initialized to size N-by-N
@@ -1262,7 +1262,7 @@ namespace la {
    *         SUCCESS_FAIL otherwise
    */
   success_t Cholesky(Matrix *A_in_U_out);
-  
+
   /**
    * Inits a matrix to the Cholesky factorization (A = U' * U).
    *

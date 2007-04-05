@@ -234,7 +234,7 @@ class CompileRule(dep.Rule):
     mode = params["mode"]
     my_flags = my_includes + " " + compiler.mode_dictionary[params["mode"]] + " " + self.cflags
     if not sourceextension in compiler.command_from_ext:
-      raise Exception("Don't know how to compile files of type [%s]." % sourceextension)
+      raise Exception("Don't know how to compile files of type '*.%s'." % sourceextension)
     command_template = compiler.command_from_ext[sourceextension]
     (source_dirname, source_basename) = os.path.split(source.name)
     compile_cmd = command_template % (my_flags, sq(source_basename), sq(object.name))
@@ -526,7 +526,8 @@ class Loader:
     build_file_path = os.path.join(real_path, BUILD_FILE)
     print "... Reading %s" % (build_file_path)
     text = util.readfile(build_file_path)
-    text = text + "\n" + posttext
+    # remove DOS line feeds and add posttext
+    text = text.replace("\r", "") + "\n" + posttext
     exec text in {"register" : register, "Types" : Types,
                   "find" : find, "dep" : dep, "lglob" : lglob,
                   "sourcerule" : sourcerule, "sourcerules" : sourcerules,

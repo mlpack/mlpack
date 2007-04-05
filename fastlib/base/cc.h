@@ -73,9 +73,8 @@ inline T max(T a, T b) {
  * make a suitable assignment operator.
  */
 #define CC_ASSIGNMENT_OPERATOR(cl) \
-        const cl&operator=(const cl&o) \
+        public: const cl&operator=(const cl&o) \
         {if(this!=&o){this->~cl();new(this)cl(o);}return *this;}
-                
                 
 /**
  * Defines inequality comparators for this class, given the friend

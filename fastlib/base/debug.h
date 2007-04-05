@@ -95,7 +95,7 @@ extern int print_warnings;
 #define DEBUG_GOT_HERE(min_verbosity) \
     VERBOSE_ONLY( \
         unlikely(print_got_heres && debug_verbosity >= (min_verbosity)) \
-            ? NOTIFY("Got to line " __LINE__ " of " __func__) : NOP)
+            ? NOTIFY("Got to line %d of %s", __LINE__, __func__) : NOP)
 
 /**
  * Conditionally emit a warning message, which may abort or pause
