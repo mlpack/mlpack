@@ -189,7 +189,7 @@ class SimpleCrossValidator {
     
       DEBUG_MSG(1, "cross: Training fold %d", i_folds);
       fx_timer_start(foldmodule, "train");
-      classifier.InitTrain(*data_, n_classes_, classifier_module);
+      classifier.InitTrain(train, n_classes_, classifier_module);
       fx_timer_stop(foldmodule, "train");
       
       fx_timer_start(foldmodule, "test");

@@ -18,6 +18,7 @@ class SMO {
  private:
   Kernel kernel_;
   const Dataset *dataset_;
+  index_t n_data_;
   Matrix matrix_;
   Vector alpha_;
   Vector error_;
@@ -38,11 +39,13 @@ class SMO {
 
     dataset_ = dataset_in;
     matrix_.Alias(dataset_->matrix());
+    
+    n_data_ = matrix_.n_cols();
 
-    alpha_.Init(matrix_.n_cols());
+    alpha_.Init(n_data_);
     alpha_.SetZero();
 
-    error_.Init(matrix_.n_cols());
+    error_.Init(n_data_);
     error_.SetZero();
 
     thresh_ = 0;
@@ -81,7 +84,7 @@ class SMO {
   }
 
   bool IsBound_(double alpha) const {
-    return alpha == 0 || alpha == c_;
+    return alpha <= 0 || alpha >= c_;
   }
 
   double GetLabelSign_(index_t i) const {
@@ -125,7 +128,7 @@ void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *support_alpha) const 
   index_t n_support = 0;
   index_t i_support = 0;
 
-  for (index_t i = 0; i < alpha_.length(); i++) {
+  for (index_t i = 0; i < n_data_; i++) {
     if (unlikely(alpha_[i] != 0)) {
       n_support++;
     }
@@ -134,7 +137,7 @@ void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *support_alpha) const 
   support_vectors->Init(matrix_.n_rows() - 1, n_support);
   support_alpha->Init(n_support);
 
-  for (index_t i = 0; i < alpha_.length(); i++) {
+  for (index_t i = 0; i < n_data_; i++) {
     if (unlikely(alpha_[i] != 0)) {
       Vector source;
       Vector dest;
@@ -158,7 +161,7 @@ double SMO<TKernel>::Evaluate_(index_t i) const {
   double summation = 0;
 
   // TODO: This is linear in the size of the training points
-  for (index_t j = 0; j < alpha_.length(); j++) {
+  for (index_t j = 0; j < n_data_; j++) {
     if (likely(alpha_[j] != 0)) {
       Vector support_vector;
       GetVector_(j, &support_vector);
@@ -194,7 +197,7 @@ template<typename TKernel>
 index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
   index_t num_changed = 0;
 
-  for (index_t i = 0; i < alpha_.length(); i++) {
+  for (index_t i = 0; i < n_data_; i++) {
     if ((examine_all || !IsBound_(alpha_[i])) && TryChange_(i)) {
       num_changed++;
     }
@@ -205,33 +208,47 @@ index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
 
 template<typename TKernel>
 bool SMO<TKernel>::TryChange_(index_t j) {
-  double error_j = Error_(j); // WALDO
+  double error_j = Error_(j);
   double rj = error_j * GetLabelSign_(j);
 
   DEBUG_GOT_HERE(0);
 
   if (!((rj < -SMO_TOLERANCE && alpha_[j] < c_)
       || (rj > SMO_TOLERANCE && alpha_[j] > 0))) {
-    return false; // nothing changed
+    return false; // nothing to change
   }
 
   // first try the one we suspect to have the largest yield
 
   if (error_j != 0) {
     index_t i = -1;
-    double error_i = error_j;
+    double diff_max = 0;
     
+    /*
+    //double error_i = error_j;
     if (error_j > 0) {
-      for (index_t k = 0; k < alpha_.length(); k++) {
+      for (index_t k = 0; k < n_data_; k++) {
         if (!IsBound_(alpha_[k]) && error_[k] < error_i) {
           error_i = error_[k];
           i = k;
         }
       }
     } else {
-      for (index_t k = 0; k < alpha_.length(); k++) {
+      for (index_t k = 0; k < n_data_; k++) {
         if (!IsBound_(alpha_[k]) && error_[k] > error_i) {
           error_i = error_[k];
+          i = k;
+        }
+      }
+    }
+    */
+    
+    for (index_t k = 0; k < n_data_; k++) {
+      if (!IsBound_(alpha_[k])) {
+        double error_k = error_[k];
+        double diff_k = fabs(error_k - error_j);
+        if (unlikely(diff_k > diff_max)) {
+          diff_max = diff_k;
           i = k;
         }
       }
@@ -244,26 +261,26 @@ bool SMO<TKernel>::TryChange_(index_t j) {
 
   DEBUG_GOT_HERE(0);
   // try searching through non-bound examples
-  index_t start_i = rand() % alpha_.length();
+  index_t start_i = rand() % n_data_;
   index_t i = start_i;
 
   do {
     if (!IsBound_(alpha_[i]) && TakeStep_(i, j, error_j)) {
       return true;
     }
-    i = (i + 1) % alpha_.length();
+    i = (i + 1) % n_data_;
   } while (i != start_i);
 
   DEBUG_GOT_HERE(0);
   // try searching through all examples
-  start_i = rand() % alpha_.length();
+  start_i = rand() % n_data_;
   i = start_i;
 
   do {
     if (TakeStep_(i, j, error_j)) {
       return true;
     }
-    i = (i + 1) % alpha_.length();
+    i = (i + 1) % n_data_;
   } while (i != start_i);
 
   return false;
@@ -278,21 +295,21 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   double yi = GetLabelSign_(i);
   double yj = GetLabelSign_(j);
-  double alpha_i;
-  double alpha_j;
-  double d_thresh;
+  double alpha_i = alpha_[i];
+  double alpha_j = alpha_[j];
+  double delta_thresh;
   double l;
   double u;
   double s = yi * yj;
   double error_i = Error_(i);
-  double r;// = alpha_[j] * s*alpha_[i] + c_*0.5*(1.0-s);
-
+  double r;
+  
   if (s < 0) {
-    r = alpha_[j] - alpha_[i]; // target values are not equal
+    r = alpha_j - alpha_i; // target values are not equal
   } else {
-    r = alpha_[j] + alpha_[i] - c_; // target values are equal
+    r = alpha_j + alpha_i - c_; // target values are equal
   }
-
+  
   l = math::ClampNonNegative(r);
   u = c_ + math::ClampNonPositive(r);
 
@@ -318,6 +335,12 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     alpha_j = math::ClampRange(alpha_j, l, u);
   } else {
     DEBUG_MSG(0, "Uncommon case");
+    double c1 = eta/2;
+    double c2 = yj * (error_i - error_j) - eta * alpha_j;
+    double objlower = c1*l*l + c2*l;
+    double objupper = c1*u*u + c2*u;
+    /*
+    abort();
     double fiold = error_i + yi;
     double fjold = error_j + yj;
     double vi = fiold + thresh_ - yi*alpha_[i]*kii - yj*alpha_[j]*kij;
@@ -330,7 +353,8 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     double objupper = fu + u
         - 0.5*kii*fu*fu - 0.5*kjj*u*u
         - s*kij*fu*u - yj*u*vj;
-
+    */
+    
     if (objlower > objupper + SMO_EPS) {
       alpha_j = l;
     } else if (objlower < objupper - SMO_EPS) {
@@ -342,52 +366,57 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   alpha_j = FixAlpha_(alpha_j);
 
-  double d_alpha_j = alpha_j - alpha_[j];
+  double delta_alpha_j = alpha_j - alpha_[j];
 
   // check if there is progress
-  if (fabs(d_alpha_j) < SMO_EPS*(alpha_j + alpha_[j] + SMO_EPS)) {
+  if (fabs(delta_alpha_j) < SMO_EPS*(alpha_j + alpha_[j] + SMO_EPS)) {
     DEBUG_GOT_HERE(0);
     return false;
   }
 
-  alpha_i = FixAlpha_(alpha_[i] - s*(d_alpha_j));
-  double d_alpha_i = alpha_i - alpha_[i];
+  alpha_i = alpha_i - s*(delta_alpha_j);
+  if (alpha_i < SMO_ZERO) {
+    alpha_j += s * alpha_i;
+    alpha_i = 0;
+    //abort();
+  } else if (alpha_i > c_ - SMO_ZERO) {
+    double t = alpha_i - c_;
+    alpha_j += s * t;
+    alpha_i = c_;
+    //abort();
+  }
+  alpha_j = FixAlpha_(alpha_j);
+  double delta_alpha_i = alpha_i - alpha_[i];
 
   // calculate threshold
-  double d_thresh_i = error_i + yi*d_alpha_i*kii + yj*d_alpha_j*kij;
-  double d_thresh_j = error_j + yi*d_alpha_i*kij + yj*d_alpha_j*kjj;
+  double delta_thresh_i = error_i + yi*delta_alpha_i*kii + yj*delta_alpha_j*kij;
+  double delta_thresh_j = error_j + yi*delta_alpha_i*kij + yj*delta_alpha_j*kjj;
 
   if (!IsBound_(alpha_i)) {
-    d_thresh = d_thresh_i;
+    delta_thresh = delta_thresh_i;
   } else if (!IsBound_(alpha_j)) {
-    d_thresh = d_thresh_j;
+    delta_thresh = delta_thresh_j;
   } else {
-    d_thresh = (d_thresh_i + d_thresh_j) / 2.0;
+    delta_thresh = (delta_thresh_i + delta_thresh_j) / 2.0;
   }
 
-  // if not bound, error must be zero
-  if (!IsBound_(alpha_i)) {
-    error_[i] = 0;
-  }
-  if (!IsBound_(alpha_j)) {
-    error_[j] = 0;
-  }
-  if (!IsBound_(alpha_i) && !IsBound_(alpha_j)) {
-    DEBUG_MSG(0, "Neither ai nor aj are bound.");
-  }
+  double ti = yi*delta_alpha_i;
+  double tj = yj*delta_alpha_j;
 
-  double ti = yi*d_alpha_i;
-  double tj = yj*d_alpha_j;
-
-  for (index_t k = 0; k < error_.length(); k++) {
+  for (index_t k = 0; k < n_data_; k++) {
     if (likely(k != i) && likely(k != j) && !IsBound_(alpha_[k])) {
-      error_[k] += ti*EvalKernel_(i, k) + tj*EvalKernel_(j, k) - d_thresh;
+      error_[k] += ti*EvalKernel_(i, k) + tj*EvalKernel_(j, k) - delta_thresh;
     }
   }
 
-  thresh_ += d_thresh;
+  thresh_ += delta_thresh;
   alpha_[i] = alpha_i;
   alpha_[j] = alpha_j;
+
+  // this is only necessary when i or j are not bound, but there is nothing
+  // wrong with doing this all the time
+  error_[i] = 0;
+  error_[j] = 0;
 
   DEBUG_GOT_HERE(0);
   return true;

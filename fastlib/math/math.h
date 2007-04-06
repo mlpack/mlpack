@@ -68,9 +68,9 @@ namespace math {
    * @return max(range_min, min(range_max, d))
    */
   inline double ClampRange(double value, double range_min, double range_max) {
-    if (unlikely(value < range_min)) {
+    if (unlikely(value <= range_min)) {
       return range_min;
-    } else if (unlikely(value > range_max)) {
+    } else if (unlikely(value >= range_max)) {
       return range_max; 
     } else {
       return value;
