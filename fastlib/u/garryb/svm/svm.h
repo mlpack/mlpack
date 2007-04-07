@@ -17,6 +17,29 @@ struct SVMLinearKernel {
   }
 };
 
+class SVMRBFKernel {
+ private:
+  double sigma_;
+  double gamma_;
+  
+ public:
+  
+  void Init(datanode *node) {
+    sigma_ = fx_param_double_req(node, "sigma");
+    gamma_ = -1.0 / (2 * math::Sqr(sigma));
+  }
+  
+  void Copy(const SVMLinearKernel& other) {}
+  
+  double Eval(const Vector& a, const Vector& b) const {
+    return la::Dot(a, b);
+  }
+  
+  double sigma() const {
+    return sigma_;
+  }
+};
+
 template<typename TKernel>
 class SVM {
  public:
