@@ -147,7 +147,7 @@ void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *support_alpha) const 
       dest.CopyValues(source);
 
       (*support_alpha)[i_support] = alpha_[i] * GetLabelSign_(i);
-      
+
       i_support++;
     }
   }
@@ -225,7 +225,7 @@ bool SMO<TKernel>::TryChange_(index_t j) {
     double diff_max = 0;
     
     /*
-    //double error_i = error_j;
+    double error_i = error_j;
     if (error_j > 0) {
       for (index_t k = 0; k < n_data_; k++) {
         if (!IsBound_(alpha_[k]) && error_[k] < error_i) {
@@ -265,6 +265,7 @@ bool SMO<TKernel>::TryChange_(index_t j) {
   index_t i = start_i;
 
   do {
+    //if (alpha_[i] != 0 && TakeStep_(i, j, error_j)) {
     if (!IsBound_(alpha_[i]) && TakeStep_(i, j, error_j)) {
       return true;
     }
@@ -277,7 +278,7 @@ bool SMO<TKernel>::TryChange_(index_t j) {
   i = start_i;
 
   do {
-    if (TakeStep_(i, j, error_j)) {
+    if (IsBound_(alpha_[i]) && TakeStep_(i, j, error_j)) {
       return true;
     }
     i = (i + 1) % n_data_;
@@ -335,6 +336,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     alpha_j = math::ClampRange(alpha_j, l, u);
   } else {
     DEBUG_MSG(0, "Uncommon case");
+    //abort();
     double c1 = eta/2;
     double c2 = yj * (error_i - error_j) - eta * alpha_j;
     double objlower = c1*l*l + c2*l;
@@ -374,7 +376,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     return false;
   }
 
-  alpha_i = alpha_i - s*(delta_alpha_j);
+  alpha_i = alpha_i - (s)*(delta_alpha_j);
   if (alpha_i < SMO_ZERO) {
     alpha_j += s * alpha_i;
     alpha_i = 0;
@@ -410,6 +412,10 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   }
 
   thresh_ += delta_thresh;
+  
+  //printf("%d(%f%+f) %d(%f%+f)\n", i, alpha_i, delta_alpha_i,
+  //    j, alpha_j, delta_alpha_j);
+  
   alpha_[i] = alpha_i;
   alpha_[j] = alpha_j;
 

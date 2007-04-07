@@ -26,13 +26,17 @@ class SVMRBFKernel {
   
   void Init(datanode *node) {
     sigma_ = fx_param_double_req(node, "sigma");
-    gamma_ = -1.0 / (2 * math::Sqr(sigma));
+    gamma_ = -1.0 / (2 * math::Sqr(sigma_));
   }
   
-  void Copy(const SVMLinearKernel& other) {}
+  void Copy(const SVMRBFKernel& other) {
+    sigma_ = other.sigma_;
+    gamma_ = other.gamma_;
+  }
   
   double Eval(const Vector& a, const Vector& b) const {
-    return la::Dot(a, b);
+    double distance_squared = la::DistanceSqEuclidean(a, b);
+    return exp(gamma_ * distance_squared);
   }
   
   double sigma() const {
