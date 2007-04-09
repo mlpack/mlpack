@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
   }
   
   SimpleCrossValidator< SVM<SVMRBFKernel> > cross_validator;
-  cross_validator.Init(&dataset, 2, 4, fx_root, "svm");
+  cross_validator.Init(&dataset, 2, 2, fx_root, "svm");
   cross_validator.Run(true);
   
   fx_done();

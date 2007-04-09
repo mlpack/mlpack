@@ -167,7 +167,7 @@ double SMO<TKernel>::Evaluate_(index_t i) const {
       GetVector_(j, &support_vector);
 
       summation +=
-          GetLabelSign_(i)
+          GetLabelSign_(j)
           * alpha_[j]
           * kernel_.Eval(example, support_vector);
     }
@@ -336,13 +336,14 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     alpha_j = math::ClampRange(alpha_j, l, u);
   } else {
     DEBUG_MSG(0, "Uncommon case");
+    /*
     //abort();
     double c1 = eta/2;
     double c2 = yj * (error_i - error_j) - eta * alpha_j;
     double objlower = c1*l*l + c2*l;
     double objupper = c1*u*u + c2*u;
-    /*
     abort();
+    */
     double fiold = error_i + yi;
     double fjold = error_j + yj;
     double vi = fiold + thresh_ - yi*alpha_[i]*kii - yj*alpha_[j]*kij;
@@ -355,7 +356,6 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     double objupper = fu + u
         - 0.5*kii*fu*fu - 0.5*kjj*u*u
         - s*kij*fu*u - yj*u*vj;
-    */
     
     if (objlower > objupper + SMO_EPS) {
       alpha_j = l;
