@@ -1,3 +1,10 @@
+/**
+ * @file gnp.h
+ *
+ * Framework for defining and executing generalized n-body problems, in
+ * serial or parallel.
+ */
+
 #ifndef SUPERPAR_GNP_H
 #define SUPERPAR_GNP_H
 
@@ -66,73 +73,156 @@ class GnpQueryReferenceRunner {
   typedef typename GNP::GlobalStat GlobalStat;
   
  private:
-  Array< SpNode<Bound> > r_tree_;
-  Array<RStat> r_stat_;
+  Algorithm algorithm_;
   
-  Array< SpNode<Bound> > q_tree_;
-  Array<QStat> q_stat_;
-  Array<QMutStat> q_mut_stat_;
-  Array<QMassResult> q_mass_result_;
+  Array< SpNode<Bound> > r_tree_a_;
+  Array<Point> r_point_a_;
+  Array<RStat> r_stat_a_;
   
-  Array<QResult> q_result_;
+  Array< SpNode<Bound> > q_tree_a_;
+  Array<Point> q_point_a_;
+  Array<QStat> q_stat_a_;
+  Array<QMutStat> q_mut_stat_a_;
+  Array<QMassResult> q_mass_result_a_;
   
-  GlobalStat global_stat_;
+  Array<QResult> q_result_a_;
+  
+  GlobalStat global_stat_a_;
   
  public:
+  void Init(datanode *module) {
+    algorithm_.Init(fx_submodule(module, "algorithm", "algorithm"),
+        &global_stat_a_);
+    #error need to create kd trees
+  }
+  void Compute();
   
  private:
-  // TODO: Th
-  void DualTree(index_t q_index, index_t r_index); {
-    const SpNode<Bound> *r_node = r_tree_.StartRead(r_index);
-    const RStat *r_stat = r_bound_.StartRead(r_index);
-    
-    const SpNode<Bound> *q_node = q_tree_.StartRead(q_index);
-    const QStat *q_stat = q_stat_.StartRead(q_index);
-    QMutStat *q_mut_stat = q_mut_stat_.StartWrite(q_index);
-    QMutStat *q_mass_result = q_mut_stat_.StartWrite(q_index);
-    
-    if (Algorithm::TryPrune(
-        r_node->bound(), *r_stat,
-        q_node->bound(), *q_stat, q_mut_stat, q_mass_result,
-        &global_stat_) {
-      return;
-    }
-    
-    if (q_node.is_leaf() && r_node.is_leaf()) {
-      BaseCase(...);
-    } else if (q_node.count() >= r_node.count()) {
-      
-    }
-  }
+  void DualTree(index_t q_node_i, index_t r_node_i);
 };
 
 template<class GNP, class TArray>
-void GnpQueryReferenceRunner::DualTree(index_t q_index, index_t r_index); {
-  const SpNode<Bound> *r_node = r_tree_.StartRead(r_index);
-  const RStat *r_stat = r_bound_.StartRead(r_index);
-  
-  const SpNode<Bound> *q_node = q_tree_.StartRead(q_index);
-  const QStat *q_stat = q_stat_.StartRead(q_index);
-  QMutStat *q_mut_stat = q_mut_stat_.StartWrite(q_index);
-  QMutStat *q_mass_result = q_mut_stat_.StartWrite(q_index);
-  
-  if (Algorithm::TryPrune(
+void GnpQueryReferenceRunner::BaseCase(
+    const SpNode<Bound> *r_node,
+    const RStat& r_stat,
+    const SpNode<Bound> *q_node,
+    const QStat& q_stat,
+    QMutStat *q_mut_stat) {
+  /* base case */
+  index_t q_begin = q_node->begin();
+  index_t r_begin = r_node->begin();
+  index_t q_point_i = q_node->count() + q_begin;
+  index_t r_end = r_node->count() + r_begin;
+
+  q_mut_stat->StartUpdate();
+
+  do {
+    index_t r_point_i = r_count + r_begin;
+
+    q_point_i--;
+
+    const Point *q_point = q_point_a_.StartRead(q_point_i);
+    Result *q_result = q_result_a_.StartWrite(q_point_i);
+    // Copy the result to allow it to be register-allocated
+    Result q_result_cached(q_result);
+
+    bool did_a_prune = algorithm_.TryPrune(
+      r_node->bound(), r_stat,
+      q_node->bound(), q_stat, q_mut_stat, q_result,
+      &g_stat);
+      
+    do {
+      r_point_i--;
+      // INNERMOST LOOP - PERFORMANCE CRUNCH HERE!
+      // We might want fast sub-arrays of some sort
+      const Point *r_point = r_point_a_.StartRead(r_point_i);
+      q_result_cached.Update(*q_point, *r_point);
+      r_point_a_.StopWrite(r_point, r_point_i);
+    } while (likely(r_point_i > q_begin));
+
+    *q_result = q_result_cached;
+    q_result_a_.StopWrite(q_result, q_point_i);
+    q_point_a_.StopRead(q_point, q_point_i);
+
+    q_mut_stat->Update(q_result_cached);
+  } while (likely(q_point_i > q_begin));
+
+  q_mut_stat->StopUpdate();
+}
+
+template<class GNP, class TArray>
+void GnpQueryReferenceRunner::DualTree(index_t q_node_i, index_t r_node_i); {
+  const SpNode<Bound> *r_node = r_tree_a_.StartRead(r_node_i);
+  const RStat *r_stat = r_stat_a_.StartRead(r_node_i);
+
+  const SpNode<Bound> *q_node = q_tree_a_.StartRead(q_node_i);
+  const QStat *q_stat = q_stat_a_.StartRead(q_node_i);
+  QMutStat *q_mut_stat = q_mut_stat_a_.StartWrite(q_node_i);
+  QMutStat *q_mass_result = q_mass_result_a_.StartWrite(q_node_i);
+
+#error no q mass result logic
+
+  bool did_a_prune = algorithm_.TryPrune(
       r_node->bound(), *r_stat,
       q_node->bound(), *q_stat, q_mut_stat, q_mass_result,
-      &global_stat_) {
-    return;
-  }
+      &global_stat_);
   
-  if (q_node.is_leaf() && r_node.is_leaf()) {
-    BaseCase(...);
-  } else if ((q_node.count() >= r_node.count() && !q_node.is_leaf())
-      || (r_node.is_leaf())) {
-    do both q children
-    run mut stat accumulator
-  } else {
-    prioritize references
-    run references
+  if (!did_a_prune) {
+    if (q_node.is_leaf() && r_node.is_leaf()) {
+      BaseCase(r_node, r_stat, q_node, q_stat, q_mut_stat);
+    } else if ((q_node.count() >= r_node.count() && !q_node.is_leaf())
+        || (r_node.is_leaf())) {
+      q_mut_stat->StartUpdate();
+      for (index_t i = 0; i < cardinality; i++) {
+        index_t q_child_i = q_node->child(i);
+        GnpQueryReferenceRunner::DualTree(q_child_i, r_node_i);
+        const QMutStat *q_child_mut_stat = q_mut_stat_a_.StartRead(q_child_i);
+        q_mut_stat->Update(q_child_mut_stat);
+        q_mut_stat_a_.StopRead(q_child_mut_stat, q_child_i);
+      }
+      q_mut_stat->StopUpdate();
+    } else {
+      double priority[cardinality];
+      
+      for (index_t i = 0; i < cardinality; i++) {
+        index_t r_child_i = r_node->child(i);
+        
+        const SpNode<Bound> *r_child_node = r_tree_a_.StartRead(r_child_i);
+        const RStat *r_child_stat = r_stat_a_.StartRead(r_child_i);
+        
+        p[i] = algorithm_.Prioritize(
+           r_child_node->bound(), *r_child_stat,
+           q_child->bound(), *q_stat, *q_mut_stat,
+           global_stat_);
+        
+        r_tree_a_.StopRead(r_child_node, r_child_i);
+        r_stat_a_.StopRead(r_child_stat, r_child_i);
+      }
+      
+      DEBUG_ASSERT(cardinality == 2);
+      
+      index_t r_child_order[i];
+      
+      if (p[0] > p[1]) {
+        r_child_order[0] = r_node->child(0);
+        r_child_order[1] = r_node->child(1);
+      } else {
+        r_child_order[0] = r_node->child(1);
+        r_child_order[1] = r_node->child(0);
+      }
+      
+      for (index_t i = 0; i < cardinality; i++) {
+        DualTree(q_node_i, r_child_order[i]);
+      }
+    }
   }
+
+  r_tree_a_.StopRead(r_node, r_node_i);
+  r_stat_a_.StopRead(r_stat, r_node_i);
+  q_node_a_.StopRead(q_node, q_node_i);
+  q_stat_a_.StopRead(q_stat, q_node_i);
+  q_mut_stat_a_.StopWrite(q_mut_stat, q_node_i);
+  q_mass_result_a_.StopWrite(q_mass_result, q_node_i);
 }
 
 /**
@@ -153,7 +243,7 @@ class EmptyStat {
   void Update(const EmptyStat& sub_stat, index_t sub_stat_n_points) {
   }
   
-  void FinishUpdate(index_t n_points) {
+  void StopUpdate(index_t n_points) {
   }
 };
 
@@ -185,7 +275,7 @@ class EmptyMutStat {
   void Update(const EmptyStat& sub_stat, index_t sub_stat_n_points) {
   }
   
-  void FinishUpdate(index_t n_points) {
+  void StopUpdate(index_t n_points) {
   }
 };
 
@@ -204,7 +294,7 @@ struct EmptyResult{
   void Init() {
   }
   
-  void Update(const Point &p) {
+  void Update(const Point &q, const Point& r) {
   }
 };
 
@@ -254,7 +344,7 @@ struct EmptyMassResult {
   void Apply(TResult *result) const {
   }
 
-  void FinishDistribute() {
+  void StopDistribute() {
   }
 #endif
 };

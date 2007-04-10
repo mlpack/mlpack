@@ -55,30 +55,32 @@ class AllNearestNeighborsGnp {
   };
 
   struct Algorithm {
-    static bool TryPrune(
+    void Init(datanode *module, GlobalStat *gstat) {}
+
+    bool TryPrune(
         const RBound &rbound, const EmptyStat &rstat,
         const QPoint &qpoint, QResult *qresult,
-        GlobalStat *gstat) {
+        GlobalStat *gstat) const {
       bool can_prune =
           bound::MinDistanceSq(qbound, qpoint) > qresult.distance_sq;
       return can_prune;
     }
 
-    static bool TryPrune(
+    bool TryPrune(
         const RBound &r_bound, const EmptyStat &r_stat,
         const QBound &q_bound, const EmptyStat &q_stat,
         QMutStat *q_mut_stat, EmptyMassResult *q_mass_result,
-        GlobalStat *g_stat) {
+        GlobalStat *g_stat) const {
       bool can_prune = q_bound.MinDistanceSqToInstance(r_bound)
           > q_mut_stat->worst_distance_sq;
       return can_prune;
     }
 
-    static double Prioritize(
+    double Prioritize(
         const Bound &r_bound, const EmptyStat &r_stat,
         const Bound &q_bound, const EmptyStat &q_stat,
         const QMutStat &q_mut_stat,
-        const GlobalStat &gstat) {
+        const GlobalStat &gstat) const {
       return qbound.MidDistanceSqToBound(r_bound);
     }
   };
@@ -97,9 +99,5 @@ class AllNearestNeighborsGnp {
   typedef GnpQueryReferenceRunner<GNP> Runner;
 
  public:
-  /* TODO: Pass in number of points */
-  void Run(datanode *node) {
-    Runner runner;
-    runner.Run(fx_submodule(node, "data", "data"));
-  }
+  ...
 };

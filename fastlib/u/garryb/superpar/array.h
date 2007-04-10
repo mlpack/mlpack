@@ -66,6 +66,7 @@ class ArrayInCore {
    * pointer (if necessary).
    */
   void StopRead(const Element *ptr, index_t begin, index_t count) {
+    DEBUG_ASSERT(ptr - ptr_ == begin);
     /* nothing necessary */
   }
 
@@ -89,6 +90,7 @@ class ArrayInCore {
    * associated resources.
    */
   void StopWrite(Element *ptr, index_t begin, index_t count) {
+    DEBUG_ASSERT(ptr - ptr_ == begin);
     /* nothing necessary */
   }
 
@@ -109,6 +111,7 @@ class ArrayInCore {
    * pointer (if necessary).
    */
   void StopRead(const Element *ptr, index_t element_id) {
+    DEBUG_ASSERT(ptr - ptr_ == element_id);
     /* nothing necessary */
   }
 
@@ -131,6 +134,7 @@ class ArrayInCore {
    * associated resources.
    */
   void StopWrite(Element *ptr, index_t element_id) {
+    DEBUG_ASSERT(ptr - ptr_ == element_id);
     /* nothing necessary */
   }
 };
