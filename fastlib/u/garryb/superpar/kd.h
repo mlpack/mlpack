@@ -31,6 +31,11 @@ class SpNode {
   typedef TDataset Dataset;
   typedef TStatistic Statistic;
   
+  enum {
+    /** The root node of a tree is always at index zero. */
+    ROOT_INDEX = 0;
+  };
+  
  private:
   index_t begin_;
   index_t count_;
@@ -98,6 +103,13 @@ class SpNode {
    */
   index_t count() const {
     return count_;
+  }
+  
+  /**
+   * Returns the number of children of this node.
+   */
+  index_t cardinality() const {
+    return t_cardinality;
   }
   
   void PrintSelf() const {

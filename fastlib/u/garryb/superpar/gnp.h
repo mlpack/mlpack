@@ -19,7 +19,7 @@ template<
   typename TQStat, typename QMutStat, typename TMassResult,
   typename TGlobalStat
 >
-class GnpQueryReference {
+class GnpDualTree {
  public:
   /** The dual-tree parts of the algorithm. */
   typedef TAlgorithm Algorithm;
@@ -45,13 +45,15 @@ class GnpQueryReference {
 };
 
 template<
-  class GNP, //< A query-reference generalized N-body problem
+  class TGNP, //< A query-reference generalized N-body problem
   class TArray, //< The array type to use for the implementation
 >
-class GnpQueryReferenceRunner {
+class GnpDualTreeRunner {
  public:
   /** The array type used to store data. */
   typedef TArray Array;
+  /** The generalized N-body problem to solve. */
+  typedef TGNP GNP;
 
   /** The dual-tree parts of the algorithm. */
   typedef typename GNP::Algorithm Algorithm;
@@ -72,14 +74,17 @@ class GnpQueryReferenceRunner {
   /** Stat computed for the entire computation. */
   typedef typename GNP::GlobalStat GlobalStat;
   
+  /** Tree nodes. */
+  typedef SpNode< Bound > TreeNode;
+ 
  private:
   Algorithm algorithm_;
   
-  Array< SpNode<Bound> > r_tree_a_;
+  Array<TreeNode> r_tree_a_;
   Array<Point> r_point_a_;
   Array<RStat> r_stat_a_;
   
-  Array< SpNode<Bound> > q_tree_a_;
+  Array<TreeNode> q_tree_a_;
   Array<Point> q_point_a_;
   Array<QStat> q_stat_a_;
   Array<QMutStat> q_mut_stat_a_;
@@ -98,14 +103,58 @@ class GnpQueryReferenceRunner {
   void Compute();
   
  private:
-  void DualTree(index_t q_node_i, index_t r_node_i);
+  void BaseCase_(
+      const TreeNode *r_node,
+      const RStat& r_stat,
+      const TreeNode *q_node,
+      const QStat& q_stat,
+      QMutStat *q_mut_stat) {
+  void DualTree_(index_t q_node_i, index_t r_node_i);
+  
+  void DistributeMassResults_();
+  
+  void RecursivelyDistributeMassResults_(const TreeNode *q_node,
+      QMassResult *q_mass_result);
 };
 
-template<class GNP, class TArray>
-void GnpQueryReferenceRunner::BaseCase(
-    const SpNode<Bound> *r_node,
+
+template<class TGNP, class TArray>
+void GnpDualTreeRunner<TGNP, TArray>::DistributeMassResults_() {
+  if (have_mass_result()) {
+    const TreeNode *q_root_node = q_tree_a_.StartRead(
+        TreeNode::ROOT_INDEX);
+    QMassResult *q_root_mass_result = q_mass_result_a_.StartWrite(
+        TreeNode::ROOT_INDEX);
+    
+    RecursivelyDistributeMassResults_(q_root_node, q_root_mass_result);
+  }
+}
+
+template<class TGNP, class TArray>
+void GnpDualTreeRunner<TGNP, TArray>::RecursivelyDistributeMassResults_(
+    const TreeNode *q_node, QMassResult *q_mass_result) {
+  q_mass_result->StartDistribute();
+  
+  for (index_t i = 0; i < q_node->cardinality(); i++) {
+    index_t q_child_i = 0;
+    const TreeNode *q_child_node = q_tree_a_.StartRead(q_child_i);
+    QMassResult *q_child_mass_result = q_mass_result_a_.StartWrite(q_child_i);
+    
+    q_mass_result->Apply(q_child_mass_result);
+    RecursivelyDistributeMassResults_(q_child_node, q_child_mass_result);
+    
+    q_tree_a_.StopRead(q_child_node, q_child_i);
+    q_mass_result_a_.StopWrite(q_child_mass_result, q_child_i);
+  }
+
+  q_mass_result->StopDistribute();
+}
+
+template<class TGNP, class TArray>
+void GnpDualTreeRunner<TGNP, TArray>::BaseCase_(
+    const TreeNode *r_node,
     const RStat& r_stat,
-    const SpNode<Bound> *q_node,
+    const TreeNode *q_node,
     const QStat& q_stat,
     QMutStat *q_mut_stat) {
   /* base case */
@@ -150,17 +199,17 @@ void GnpQueryReferenceRunner::BaseCase(
   q_mut_stat->StopUpdate();
 }
 
-template<class GNP, class TArray>
-void GnpQueryReferenceRunner::DualTree(index_t q_node_i, index_t r_node_i); {
-  const SpNode<Bound> *r_node = r_tree_a_.StartRead(r_node_i);
+template<class TGNP, class TArray>
+void GnpDualTreeRunner<TGNP, TArray>::DualTree_(
+    index_t q_node_i, index_t r_node_i) {
+  // Read all data
+  const TreeNode *r_node = r_tree_a_.StartRead(r_node_i);
   const RStat *r_stat = r_stat_a_.StartRead(r_node_i);
 
-  const SpNode<Bound> *q_node = q_tree_a_.StartRead(q_node_i);
+  const TreeNode *q_node = q_tree_a_.StartRead(q_node_i);
   const QStat *q_stat = q_stat_a_.StartRead(q_node_i);
   QMutStat *q_mut_stat = q_mut_stat_a_.StartWrite(q_node_i);
-  QMutStat *q_mass_result = q_mass_result_a_.StartWrite(q_node_i);
-
-#error no q mass result logic
+  QMassResult *q_mass_result = q_mass_result_a_.StartWrite(q_node_i);
 
   bool did_a_prune = algorithm_.TryPrune(
       r_node->bound(), *r_stat,
@@ -168,12 +217,12 @@ void GnpQueryReferenceRunner::DualTree(index_t q_node_i, index_t r_node_i); {
       &global_stat_);
   
   if (!did_a_prune) {
-    if (q_node.is_leaf() && r_node.is_leaf()) {
+    if (q_node->is_leaf() && r_node->is_leaf()) {
       BaseCase(r_node, r_stat, q_node, q_stat, q_mut_stat);
-    } else if ((q_node.count() >= r_node.count() && !q_node.is_leaf())
-        || (r_node.is_leaf())) {
+    } else if ((q_node->count() >= r_node->count() && !q_node->is_leaf())
+        || (r_node->is_leaf())) {
       q_mut_stat->StartUpdate();
-      for (index_t i = 0; i < cardinality; i++) {
+      for (index_t i = 0; i < q_node->cardinality(); i++) {
         index_t q_child_i = q_node->child(i);
         GnpQueryReferenceRunner::DualTree(q_child_i, r_node_i);
         const QMutStat *q_child_mut_stat = q_mut_stat_a_.StartRead(q_child_i);
@@ -182,13 +231,16 @@ void GnpQueryReferenceRunner::DualTree(index_t q_node_i, index_t r_node_i); {
       }
       q_mut_stat->StopUpdate();
     } else {
-      double priority[cardinality];
+      DEBUG_ASSERT(node.cardinality() == 2);
+      double priority[2];
+      index_t r_child_order[2];
       
-      for (index_t i = 0; i < cardinality; i++) {
+      for (index_t i = 0; i < node.cardinality(); i++) {
         index_t r_child_i = r_node->child(i);
-        
-        const SpNode<Bound> *r_child_node = r_tree_a_.StartRead(r_child_i);
+        const TreeNode *r_child_node = r_tree_a_.StartRead(r_child_i);
         const RStat *r_child_stat = r_stat_a_.StartRead(r_child_i);
+
+        r_child_order[i] = r_child_i;
         
         p[i] = algorithm_.Prioritize(
            r_child_node->bound(), *r_child_stat,
@@ -199,16 +251,11 @@ void GnpQueryReferenceRunner::DualTree(index_t q_node_i, index_t r_node_i); {
         r_stat_a_.StopRead(r_child_stat, r_child_i);
       }
       
-      DEBUG_ASSERT(cardinality == 2);
-      
-      index_t r_child_order[i];
       
       if (p[0] > p[1]) {
-        r_child_order[0] = r_node->child(0);
-        r_child_order[1] = r_node->child(1);
-      } else {
-        r_child_order[0] = r_node->child(1);
-        r_child_order[1] = r_node->child(0);
+        index_t t;
+        r_child_order[0] = r_child_order[1];
+        r_child_order[1] = t;
       }
       
       for (index_t i = 0; i < cardinality; i++) {

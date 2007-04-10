@@ -58,20 +58,20 @@ class AllNearestNeighborsGnp {
     void Init(datanode *module, GlobalStat *gstat) {}
 
     bool TryPrune(
-        const RBound &rbound, const EmptyStat &rstat,
+        const Bound &rbound, const EmptyStat &rstat,
         const QPoint &qpoint, QResult *qresult,
         GlobalStat *gstat) const {
       bool can_prune =
-          bound::MinDistanceSq(qbound, qpoint) > qresult.distance_sq;
+          bound::MinDistanceSqToInstance(qbound, qpoint) > qresult.distance_sq;
       return can_prune;
     }
 
     bool TryPrune(
-        const RBound &r_bound, const EmptyStat &r_stat,
-        const QBound &q_bound, const EmptyStat &q_stat,
+        const Bound &r_bound, const EmptyStat &r_stat,
+        const Bound &q_bound, const EmptyStat &q_stat,
         QMutStat *q_mut_stat, EmptyMassResult *q_mass_result,
         GlobalStat *g_stat) const {
-      bool can_prune = q_bound.MinDistanceSqToInstance(r_bound)
+      bool can_prune = q_bound.MinDistanceSqToBound(r_bound)
           > q_mut_stat->worst_distance_sq;
       return can_prune;
     }
