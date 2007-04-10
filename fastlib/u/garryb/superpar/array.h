@@ -1,3 +1,10 @@
+/**
+ * Abstractions for arrays of pointerless structs.
+ *
+ * These arrays can be transparently distributed and parallel without
+ * your slighted knowledge.
+ */
+
 #ifndef SUPERPAR_ARRAY_H
 #define SUPERPAR_ARRAY_H
 
@@ -11,28 +18,32 @@ class ArrayInCore {
  public:
   /** The element type. */
   typedef TElement Element;
-  
+
  private:
   /** A plain old in-memory array. */
   Element *ptr_;
   /** The number of elements in the array. */
   index_t size_;
-  
+
  public:
-  /** Creates a sample. */
+#error "This doesn't cover exclusion"
+
+  /**
+   * Efficient sampling from a large array.
+   */
   void MakeSample(Element *dest_, index_t begin, index_t count,
       index_t n) {
     DEBUG_BOUNDS(n, size_);
     index_t step = count / n;
     index_t i_mine = begin;
-    
+
     // TODO: Better sampling algorithm, or cache efficient algorithm
     for (index_t i_dest = 0; i_dest < n; i_dest++) {
       dest_[i_dest] = ptr_[i_mine];
       i_mine += step;
     }
   }
-  
+
   /**
    * Starts reading from a segment of the array.
    *
@@ -47,7 +58,7 @@ class ArrayInCore {
     DEBUG_BOUNDS(begin + count, size_ + 1);
     return ptr_ + begin;
   }
-  
+
   /**
    * Stops reading from a segment of the array.
    *
@@ -57,7 +68,7 @@ class ArrayInCore {
   void StopRead(const Element *ptr, index_t begin, index_t count) {
     /* nothing necessary */
   }
-  
+
   /**
    * Starts writing to a segment of the array.
    *
@@ -70,7 +81,7 @@ class ArrayInCore {
     DEBUG_BOUNDS(begin + count, size_ + 1);
     return ptr_ + begin;
   }
-  
+
   /**
    * Stops writing from a segment of the array.
    *
@@ -80,7 +91,7 @@ class ArrayInCore {
   void StopWrite(Element *ptr, index_t begin, index_t count) {
     /* nothing necessary */
   }
-  
+
   /**
    * Starts reading a single element.
    *
@@ -90,7 +101,7 @@ class ArrayInCore {
     DEBUG_BOUNDS(element_id, size_);
     return ptr_ + element_id;
   }
-  
+
   /**
    * Stops reading a single element.
    *
@@ -100,7 +111,7 @@ class ArrayInCore {
   void StopRead(const Element *ptr, index_t element_id) {
     /* nothing necessary */
   }
-  
+
   /**
    * Starts writing to a segment of the array.
    *
@@ -112,7 +123,7 @@ class ArrayInCore {
     DEBUG_BOUNDS(element_id, size_);
     return ptr_ + element_id;
   }
-  
+
   /**
    * Stops writing from a segment of the array.
    *
