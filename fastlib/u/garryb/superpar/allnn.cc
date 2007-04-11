@@ -15,17 +15,17 @@ class AllNearestNeighborsGnp {
       index = -1;
     }
 
-    void Update(const QPoint &q, const RPoint &r, index_t other_index) {
-      double trial_distance_sq = la::DistanceSqEuclidean(self, other);
+    void Update(const QPoint &q, const RPoint &r, index_t r_index) {
+      double trial_distance_sq = la::DistanceSqEuclidean(q, r);
 
       if (unlikely(trial_distance_sq < distance_sq)) {
-        distance_sq = other;
-        index = other_index;
+        distance_sq = trial_distance_sq;
+        index = r_index;
       }
     }
   };
 
-  struct QMutStat {
+  struct QResultStat {
     double worst_distance_sq;
 
     void Init() {
@@ -43,7 +43,7 @@ class AllNearestNeighborsGnp {
       }
     }
 
-    void Update(const QMutStat& substat, index_t substat_n_points) {
+    void Update(const QResultStat& substat, index_t substat_n_points) {
       if (substat.worst_distance_sq > worst_distance_sq) {
         worst_distance_sq = substat.worst_distance_sq;
       }
@@ -69,17 +69,17 @@ class AllNearestNeighborsGnp {
     bool TryPrune(
         const Bound &r_bound, const EmptyStat &r_stat,
         const Bound &q_bound, const EmptyStat &q_stat,
-        QMutStat *q_mut_stat, EmptyMassResult *q_mass_result,
+        QResultStat *q_result_stat, EmptyMassResult *q_delta,
         GlobalStat *g_stat) const {
       bool can_prune = q_bound.MinDistanceSqToBound(r_bound)
-          > q_mut_stat->worst_distance_sq;
+          > q_result_stat->worst_distance_sq;
       return can_prune;
     }
 
     double Prioritize(
         const Bound &r_bound, const EmptyStat &r_stat,
         const Bound &q_bound, const EmptyStat &q_stat,
-        const QMutStat &q_mut_stat,
+        const QResultStat &q_result_stat,
         const GlobalStat &gstat) const {
       return qbound.MidDistanceSqToBound(r_bound);
     }
@@ -91,13 +91,15 @@ class AllNearestNeighborsGnp {
       Algorithm,
       Point, Bound,
       EmptyStat,
-      EmptyStat, QMutStat, EmptyMassResult,
-      Result,
+      EmptyStat, QResultStat, EmptyMassResult, Result,
       EmptyGlobalStat,
       AllNearestNeighborGNP
   > GNP;
   typedef GnpQueryReferenceRunner<GNP> Runner;
 
  public:
-  ...
+  void Run(datanode *params) {
+    Runner runner;
+    runner.Run(params);
+  }
 };

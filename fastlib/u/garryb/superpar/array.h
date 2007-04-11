@@ -15,19 +15,42 @@
  */
 template<typename TElement>
 class ArrayInCore {
+  FORBID_COPY(ArrayInCore);
+
  public:
   /** The element type. */
   typedef TElement Element;
 
  private:
-  /** A plain old in-memory array. */
+  /** A plain old in-memory array.
+   *
+   * TODO: Use ArrayList
+   */
   Element *ptr_;
   /** The number of elements in the array. */
   index_t size_;
+  /** Number of live items. */
+  index_t live_;
 
  public:
-#error "This doesn't cover exclusion"
-
+#error "This doesn't cover region exclusion"
+  ArrayInCore() {}
+  ~ArrayInCore() {
+    delete ptr_;
+    DEBUG_ONLY(ptr_ = BIG_BAD_NUMBER);
+    DEBUG_SAME_INT(live_, 0);
+  }
+  
+  void Init(index_t size_in) {
+    ptr_ = new Element[size_];
+    size_ = size_in;
+    live_ = 0;
+  }
+  
+  index_t size() const {
+    return size_;
+  }
+  
   /**
    * Efficient sampling from a large array.
    */
@@ -56,6 +79,7 @@ class ArrayInCore {
   const Element *StartRead(index_t begin, index_t count) {
     DEBUG_BOUNDS(begin, size_);
     DEBUG_BOUNDS(begin + count, size_ + 1);
+    DEBUG_ONLY(live_++);
     return ptr_ + begin;
   }
 
@@ -67,6 +91,7 @@ class ArrayInCore {
    */
   void StopRead(const Element *ptr, index_t begin, index_t count) {
     DEBUG_ASSERT(ptr - ptr_ == begin);
+    DEBUG_ONLY(live_--);
     /* nothing necessary */
   }
 
@@ -80,6 +105,7 @@ class ArrayInCore {
   Element *StartWrite(index_t begin, index_t count) {
     DEBUG_BOUNDS(begin, size_);
     DEBUG_BOUNDS(begin + count, size_ + 1);
+    DEBUG_ONLY(live_++);
     return ptr_ + begin;
   }
 
@@ -91,6 +117,7 @@ class ArrayInCore {
    */
   void StopWrite(Element *ptr, index_t begin, index_t count) {
     DEBUG_ASSERT(ptr - ptr_ == begin);
+    DEBUG_ONLY(live_--);
     /* nothing necessary */
   }
 
@@ -101,6 +128,7 @@ class ArrayInCore {
    */
   const Element *StartRead(index_t element_id) {
     DEBUG_BOUNDS(element_id, size_);
+    DEBUG_ONLY(live_++);
     return ptr_ + element_id;
   }
 
@@ -112,6 +140,7 @@ class ArrayInCore {
    */
   void StopRead(const Element *ptr, index_t element_id) {
     DEBUG_ASSERT(ptr - ptr_ == element_id);
+    DEBUG_ONLY(live_--);
     /* nothing necessary */
   }
 
@@ -124,6 +153,7 @@ class ArrayInCore {
    */
   Element *StartWrite(index_t element_id) {
     DEBUG_BOUNDS(element_id, size_);
+    DEBUG_ONLY(live_++);
     return ptr_ + element_id;
   }
 
@@ -135,6 +165,7 @@ class ArrayInCore {
    */
   void StopWrite(Element *ptr, index_t element_id) {
     DEBUG_ASSERT(ptr - ptr_ == element_id);
+    DEBUG_ONLY(live_--);
     /* nothing necessary */
   }
 };

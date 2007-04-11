@@ -1,0 +1,71 @@
+
+\begin{document}
+
+\begin{tabular}{ccc}
+function              & name               & defined in terms of
+\\
+\hline
+\sigma_q(Q')          & statistic          & \sigma_q'(Q'_L, Q'_R)
+\\
+\sigma_r(R')          & statistic          & \sigma_r(R'_L, R'_R)
+\\
+\hline
+\delta(Q' \times R')  & delta              & 
+\\
+\mu(Q' \times R)      & mass result        & 
+\\
+\gamma(Q \times R)    & global stat        & 
+\hline
+\\
+\phi(q \times r)      & pairwise           & 
+\\
+\lambda(q \times R')  & local accumulation & 
+\\
+\rho(q \times R)      & result per query   & 
+\hline
+\\
+H(Q' \times R')       & heuristic          & 
+\\
+S(Q' \times R')       & prune              & 
+
+\end{tabular}
+
+\begin{verbatim}
+
+I think I've characterized data dependence.  Neglecting the practical
+considerations (such as difference between points, info, and bounds).
+
+valid functions (note each occurence of 'f' is a distinct function, i'm lazy):
+
+  f(Q) -> used for initial values for bounding info
+  f(R) -> used for initial values of bounding info
+  
+  f(q)  -> point/info/transform     <- primitive
+  f(Q') -> stat                     <- join( f(q) )
+
+  f(r)  -> point/info/transform     <- primitive
+  f(R') -> stat                     <- join( f(r) )
+  
+  f(Q' x R') -> delta               <- primitive
+  f(Q' x R)  -> mass result         <- join( f(Q' x R'), f(q x R) )
+  f(Q x R)   -> global stat         <- join( f(Q' x R'), f(q x r) )
+  
+  f(q x r)   -> pairwise evaluation <- primitive
+  f(q x R')  -> local accumulator   <- join( f(q x r) )
+  f(q x R)   -> result              <- join( f(q x R) )
+
+some discourse on delta land:
+
+  - delta land is interesting, it involves f(Q' x R') without any
+  exploration
+  - f(Q' x R') [delta] applies itself to f(Q' x R)
+    - this change is uniform for all children
+    - f(Q' x R') -> f(Q' x R)
+    - if f(Q' x R') results in a prune, this does NOT need to be archived
+    - if f(Q' x R') does not result in a prune, this must be archived to
+    allow undoing
+
+\end{verbatim}
+
+\end{document}
+
