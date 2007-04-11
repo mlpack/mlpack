@@ -1,71 +1,61 @@
+\documentclass[11pt]{article}
+\usepackage[left=1in,top=1.5in,right=1in,bottom=0.5in]{geometry}
 
 \begin{document}
 
-\begin{tabular}{ccc}
-function              & name               & defined in terms of
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+function   & domain           & description        & calculated from & example
 \\
 \hline
-\sigma_q(Q')          & statistic          & \sigma_q'(Q'_L, Q'_R)
+$\sigma_q$ & $(Q')$           & statistic          & $q$ / $\sigma_q$    & moment
 \\
-\sigma_r(R')          & statistic          & \sigma_r(R'_L, R'_R)
+$\sigma_r$ & $(R')$           & statistic          & $r$ / $\sigma_r$    & moment
 \\
 \hline
-\delta(Q' \times R')  & delta              & 
+$\phi$     & $(q \times r)$   & pairwise           & $(q, r)$            & kernel
 \\
-\mu(Q' \times R)      & mass result        & 
+$\lambda$  & $(q \times R')$  & local accumulation & $\phi$              & local kernel sum
 \\
-\gamma(Q \times R)    & global stat        & 
+$\rho$     & $(q \times R)$   & result per query   & $\lambda$ / $\delta$ & kernel sum
+\\
 \hline
+$\delta$   & $(Q' \times R')$ & delta              & $(Q', R')$          & kernel sum refinement
 \\
-\phi(q \times r)      & pairwise           & 
+$\mu$      & $(Q' \times R)$  & mass result        & $\delta$ / $\rho$ / $\mu$ & kernel sum bounds, NN distance
 \\
-\lambda(q \times R')  & local accumulation & 
+$\gamma$   & $(Q \times R)$   & global stat        & $\delta$ / $\phi$ (?$\mu$/$\lambda$?) & 2-point correlation
 \\
-\rho(q \times R)      & result per query   & 
 \hline
+$H$        & $(Q' \times R')$ & heuristic          & $\sigma_q$/$\sigma_r$/$\mu$ & bounding-box distance
 \\
-H(Q' \times R')       & heuristic          & 
+$S$        & $(Q' \times R')$ & prune              & $\sigma_q$/$\sigma_r$/$\mu$ & bound distance $\geq$ NN distance
 \\
-S(Q' \times R')       & prune              & 
-
+\hline
 \end{tabular}
 
-\begin{verbatim}
-
 I think I've characterized data dependence.  Neglecting the practical
-considerations (such as difference between points, info, and bounds).
+considerations (such as difference between points, info, and bounds), the above table
+shows all the theoretical "functions" or rather "values" that we need to
+calculate and update.
 
-valid functions (note each occurence of 'f' is a distinct function, i'm lazy):
+Notation: $Q$ is entire query tree, $Q'$ is a query node, $q$ is a query point.
+I'm using these to represent points/nodes/trees, but in the "domain"
+field I really technically mean "the space of" nodes/points/trees.
 
-  f(Q) -> used for initial values for bounding info
-  f(R) -> used for initial values of bounding info
-  
-  f(q)  -> point/info/transform     <- primitive
-  f(Q') -> stat                     <- join( f(q) )
+Most of it is straight-forward bottom-up propagation.
+Of most interest is delta, however -- it is the only top-down computation, because it is
+an estimation.
 
-  f(r)  -> point/info/transform     <- primitive
-  f(R') -> stat                     <- join( f(r) )
-  
-  f(Q' x R') -> delta               <- primitive
-  f(Q' x R)  -> mass result         <- join( f(Q' x R'), f(q x R) )
-  f(Q x R)   -> global stat         <- join( f(Q' x R'), f(q x r) )
-  
-  f(q x r)   -> pairwise evaluation <- primitive
-  f(q x R')  -> local accumulator   <- join( f(q x r) )
-  f(q x R)   -> result              <- join( f(q x R) )
+Basically, $\delta$ is an estimated change to bounding information.
+In the case a prune occurs, that means that $\delta$ is in fact an exact computation, and
+its values just need to lazily be propagated to children at some time.  Delta only would
+need to be stored per-node (if that), and NOT per pair, even in breadth-first expansion.
+Now this is a slight kicker -- if delta is zero, that implies $S$ = 1, but additionally,
+for approximation purposes, $S$ may be *close* to zero.
 
-some discourse on delta land:
-
-  - delta land is interesting, it involves f(Q' x R') without any
-  exploration
-  - f(Q' x R') [delta] applies itself to f(Q' x R)
-    - this change is uniform for all children
-    - f(Q' x R') -> f(Q' x R)
-    - if f(Q' x R') results in a prune, this does NOT need to be archived
-    - if f(Q' x R') does not result in a prune, this must be archived to
-    allow undoing
-
-\end{verbatim}
+In the case a prune doesn't occur, and $\delta$ is non-trivial, then $\delta$ would have
+to be stored per $Q', R'$ pair for breadth-first or global-best-first.
 
 \end{document}
 
