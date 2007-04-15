@@ -3,59 +3,113 @@
 
 \begin{document}
 
+\begin{figure}
 \begin{tabular}{|l|l|l|l|l|}
 \hline
 function   & domain           & description        & calculated from & example
 \\
 \hline
-$\sigma_q$ & $(Q')$           & statistic          & $q$ / $\sigma_q$    & moment
+$\sigma_q$ & $(Q')$           & statistic          & $q\ast$ / $\sigma_q\ast$    & hrect, 2nd moment
 \\
-$\sigma_r$ & $(R')$           & statistic          & $r$ / $\sigma_r$    & moment
-\\
-\hline
-$\phi$     & $(q \times r)$   & pairwise           & $(q, r)$            & kernel
-\\
-$\lambda$  & $(q \times R')$  & local accumulation & $\phi$              & local kernel sum
-\\
-$\rho$     & $(q \times R)$   & result per query   & $\lambda$ / $\delta$ & kernel sum
+$\sigma_r$ & $(R')$           & statistic          & $r\ast$ / $\sigma_r\ast$    & hrect, 2nd moment
 \\
 \hline
-$\delta$   & $(Q' \times R')$ & delta              & $(Q', R')$          & kernel sum refinement
+\hline
+$\phi$     & $(q \times r)$   & pairwise           & $(q, r)$ & kernel
 \\
-$\mu$      & $(Q' \times R)$  & mass result        & $\delta$ / $\rho$ / $\mu$ & kernel sum bounds, NN distance
+%$\lambda$  & $(q \times R')$  & local accumulation & $(q, \sigma_r)$ / $\phi\ast$ / $\delta\downarrow$ & local kernel sum
+$\lambda$  & $(q \times R')$  & (not useful)       & - & -
 \\
-$\gamma$   & $(Q \times R)$   & global stat        & $\delta$ / $\phi$ (?$\mu$/$\lambda$?) & 2-point correlation
+$\rho$     & $(q \times R)$   & \bf{result per query} & $\phi\ast$ / $(q, \delta\downarrow)$ & kernel sum
 \\
 \hline
-$H$        & $(Q' \times R')$ & heuristic          & $\sigma_q$/$\sigma_r$/$\mu$ & bounding-box distance
+-          & $(Q' \times r)$  & (not useful)       & - & -
 \\
-$S$        & $(Q' \times R')$ & prune              & $\sigma_q$/$\sigma_r$/$\mu$ & bound distance $\geq$ NN distance
+$\delta$   & $(Q' \times R')$ & \bf{delta}         & $(\sigma_q, \sigma_r)$ / $\delta\downarrow$ & kernel sum refinement
+\\
+$\mu$      & $(Q' \times R)$  & mass result        & $\rho\ast$ / $\mu\ast$ / $(\sigma_q, \delta \downarrow)$ & kernel sum bounds, NN distance
+\\
+\hline
+-          & $(Q \times r)$   & (not useful)       & - & -
+\\
+-          & $(Q \times R')$  & (not useful)       & - & -
+\\
+$\gamma$   & $(Q \times R)$   & \bf{global result} & $\delta\ast$ / $\lambda\ast$ / $\phi\ast$ & 2-point correlation
+\\
+\hline
+\hline
+$S$        & $(Q' \times R')$ & \bf{can prune?}    & $\sigma_q$ / $\sigma_r$ / $\delta$ / $\mu$ / $\gamma$ & hrect distance $\geq$ NN distance
+\\
+$H$        & $(Q' \times R')$ & \bf{heuristic}     & $\sigma_q$ / $\sigma_r$ / $\mu$ & hrect distance
+\\
+\hline
+\end{tabular}
+\caption{Different functions involved in the computation of a dual-tree algorithm.
+Bolded are the fundamental values that need to be computed for a dual-tree
+algorithm to function: the results, pruning necessities, and heuristics.
+Shown only are direct dependencies that may arise in some GNP's -- for instance,
+$\gamma$ cares about $\delta$ (because it can be accumulated into a global result)
+but not about $\mu$ (these values cannot be easily merged).
+The $\ast$ symbol implies upwards accumulation,
+and $\downarrow$ implies downwards distribution among the query tree.
+The label "not useful" means that the importance of the statistic violates our assumption
+that we have a valid query-reference problem, and the problem would thus not be parallelizable.
+(It would be nice if we can prove that all of these have constant size!)
+}
+\label{fig:functions}
+\end{figure}
+
+\begin{figure}
+
+\begin{tabular}{|l|l|}
+\hline
+point function & node function
+\\
+\hline
+$q$ & $\sigma_q$
+\\
+\hline
+$r$ & $\sigma_r$
+\\
+\hline
+$\lambda$ & $\delta$
+\\
+\hline
+$\rho$ & $\mu$
 \\
 \hline
 \end{tabular}
 
-I think I've characterized data dependence.  Neglecting the practical
-considerations (such as difference between points, info, and bounds), the above table
-shows all the theoretical "functions" or rather "values" that we need to
-calculate and update.
+\caption{Analogs between single-query-point and query-tree.
+Each has similar properties, and single tree algorithms can be derived from a dual tree
+algorithm by substituting each node function with its analogous point function.
+}
+\end{figure}
 
-Notation: $Q$ is entire query tree, $Q'$ is a query node, $q$ is a query point.
-I'm using these to represent points/nodes/trees, but in the "domain"
+I think I've characterized data dependence.  Neglecting the practical
+considerations (such as difference between points and info, or bounds and
+stats), the above table shows all the theoretical "functions" or rather
+"values" that we need to calculate and update.
+
+Notation: $Q$ is entire query tree, $Q'$ is a query node, $q$ is a query
+point. I'm using these to represent points/nodes/trees, but in the "domain"
 field I really technically mean "the space of" nodes/points/trees.
 
-Most of it is straight-forward bottom-up propagation.
-Of most interest is delta, however -- it is the only top-down computation, because it is
-an estimation.
+Most of it is straight-forward bottom-up propagation. Of most interest is
+delta, however -- it is the only top-down computation, because it is an
+estimation.
 
-Basically, $\delta$ is an estimated change to bounding information.
-In the case a prune occurs, that means that $\delta$ is in fact an exact computation, and
-its values just need to lazily be propagated to children at some time.  Delta only would
-need to be stored per-node (if that), and NOT per pair, even in breadth-first expansion.
-Now this is a slight kicker -- if delta is zero, that implies $S$ = 1, but additionally,
-for approximation purposes, $S$ may be *close* to zero.
+Basically, $\delta$ is an estimated change to bounding information or to
+some result. In the case a prune occurs, that means that $\delta$ is in fact
+an exact computation, and its values just need to lazily be propagated to
+children at some time.  Delta only would need to be stored per-node (if
+that), and NOT per pair, even in breadth-first expansion. Now this is a
+slight kicker -- if delta is known with high accuracy, then this implies
+$S$ = 1 -- a prune.
 
-In the case a prune doesn't occur, and $\delta$ is non-trivial, then $\delta$ would have
-to be stored per $Q', R'$ pair for breadth-first or global-best-first.
+In the case a prune doesn't occur, and $\delta$ is non-trivial, then
+$\delta$ would have to be stored per $Q', R'$ pair for breadth-first or
+global-best-first.
 
 \end{document}
 

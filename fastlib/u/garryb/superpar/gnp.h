@@ -293,130 +293,176 @@ void GnpDualTreeRunner<TGNP, TArray>::DualTree_(
   q_delta_a_.StopWrite(q_delta, q_node_i);
 }
 
-/**
- * (Empty) Statistic that can be computed bottom-up.
- *
- * (Use this as a starting point for your own work, except yours may not
- * need to be so templated.)
- */
-template<typename TPoint>
-class EmptyStat {
- public:
-  // Necessities:
-  // - Accumulating sub-stats
-  // - Weighting (for things like means)
-  // - Taking into account my OWN bound
 
-  /** Initialize to a primal value. */
-  void StartUpdate() {
+// sigma
+template<typename TParam, typename TPoint, typename TBound>
+struct EmptyStat {
+  void Init(const TParam& param) {
   }
-
-  /** Incorporate a single point result. */
-  void Update(const TPoint& point, const TInfo& info) {
+  
+  void Accumulate(const TParam& param, const TPoint& point) {
   }
-
-  /** Incorporate a summary over a sub-result. */
-  void Update(const EmptyStat& sub_stat, index_t sub_stat_n_points) {
+  
+  void Accumulate(const TParam& param,
+      const EmptyStat& stat, const TBound& bound, index_t n) {
   }
-
-  /** Do any post-processing necessary for an update step. */
-  void StopUpdate(const TBound& bound, index_t n_points) {
+  
+  void Finish(const TParam& param, const TBound& bound, index_t n) {
   }
 };
 
+// rho, but a bit of phi and lambda
+template<typename TParam, typename TPoint, typename TDelta>
+struct EmptyResult {
+  void Init(const TParam& param,
+      const TBound& r_global_bound, const TStat& r_global_stat,
+      index_t r_global_count) {
+  }
+  
+  void AccumulatePair(const TParam& param,
+     const TPoint& q, const TPoint& r) {
+  }
+  
+  void Finish(const TParam& param) {
+  }
+  
+  void Apply(const TParam& param, const TDelta& delta, const TPoint& q) {
+  }
+};
 
-/**
- * (Empty) Per-point result.
- *
- * This considers results of tuple computations and has no concept
- * of bottom-up accumulation.
- *
- * (Use this as a starting point for your own work, except yours may not
- * need to be so templated.)
- */
-template<typename TPoint>
-struct EmptyResult{
- public:
+// mu
+template<typename TParam, typename TResult, typename TDelta>
+struct EmptyMassResult {
+  // must be called with enough information to reproduce its child's value
+  void Init(const TParam& param,
+      const TBound& q_bound, const TQStat& q_stat, index_t q_count,
+      const TBound& r_global_bound, const TRStat& r_global_stat,
+      index_t r_global_count) {
+  }
+  
+  void StartReaccumulate(const TParam& param) {
+  }
+  
+  void Accumulate(const TParam& param, const TResult& result) {
+  }
+  
+  void Accumulate(const TParam& param,
+      const EmptyMassResult& result, index_t n_points) {
+  }
+  
+  void Finish(const TParam& param) {
+  }
+  
+/*
+
+delta behaviors
+
+                33,0
+           /            \
+         21,0          12,0
+        /   \          /   \
+      1,20 0,20      1,10 1,10
+
+  - STRICT breadth first
+    - when i consider a node, i:
+      - check for prune conditions
+      - if i can prune:
+        - postpone my delta (which was already applied) so it will apply
+        to entire tree
+      - if mu has postponed deltas (i.e. a prune occured higher up)
+        - apply postponed deltas to q children
+        - clear my postponed deltas
+        - possible cache problem
+      - if i cannot prune:
+        - calculate deltas for q children
+        - enqueue these
+        - if needed, fix my own value: undo my own delta, and apply
+        children deltas; this might give better pruning info at current level
+  - depth first
+    - when i consider a node, i:
+      - check if i can prune
+      - apply deltas?!?!?!?!
+        - for idempotent functions you can apply a delta to aid pruning
+        - i don't think this is ever helpful
+      - if i can prune:
+        - apply and postpone my delta
+        - example
+          - exact thresholded Epanechnikov KDE inclusion:
+            store moments.  conservative updates to density bounds are
+            questionable -- they would have to be undone.
+      - if i cannot prune:
+        - for each q child
+          - apply postponed deltas
+          - 
+        - recalculate mu (this implicitly clears all postponed deltas)
+
+*/
+
+  // void ApplyDeltas(const TParam& param,
+  //     const MassResult& foo,
+  //     const TStat& stat, const TBound& bound, index_t n) {
+  // }  
+  // 
+  // void PostponeDelta(const TParam& param, const TDelta& delta,
+  //     const TStat& stat, const TBound& bound, index_t n) {
+  // }
+};
+
+// delta
+class EmptyDelta {
+  // no data necessary
+};
+
+// DeltaUndoInformation
+
+// gamma - only knows how to accumulate self, assume other functions smart
+class EmptyGlobalResult {
+  void Init(const TParam& param) {
+  }
+  
+  void Accumulate(const TParam& param, const EmptyGlobalResult& global_result) {
+  }
+  
+  void Finish(const TParam& param) {
+  }
+};
+
+class EmptyAlgorithm {
+  void Init(const TParam& param) {
+  }
+  
   /**
-   * Initialize to a sensible initial value before any results have been
-   * considered.
+   *
+   * delta behavior: delta comes in initialized.  do not make changes
+   * to mass result yourself, use delta to do it for you.
+   *
+   * @param q_bound bound of query node
+   * @param q_stat statistic of query node
+   * @param q_count number of points in query subtree
+   * @param r_bound bound of reference node
+   * @param r_stat statistic of reference node
+   * @param r_count number of points in query subtree
+   * @param delta a delta to update (it begins UNinitialized)
+   * @param q_mass_result the mass result to update
+   * @param global_result global result to update
+   * @return whether a prune occured and further exploration stops
    */
-  void Init() {
+  static bool Consider(
+      const TParam& params,
+      const TBound& q_bound, const TQStat& q_stat, index_t q_count,
+      const TBound& r_bound, const TRStat& r_stat, index_t r_count,
+      TDelta* delta, TMassResult* q_mass_result, TGlobalResult* global_result) {
   }
-
+  
   /**
-   * Incorporate a new point into consideration.
+   * Computes a heuristic for how early a computation should occur -- smaller
+   * values are earlier.
    */
-  void Update(const TPoint &q, const TPoint& r, index_t r_index) {
-  }
-};
-
-/**
- * (Empty) Statistic that involves results of tuple-wise computation, that is
- * continually *recomputed* bottom-up.
- *
- * Unlike a bottom-up statistic, this considers the result of computations
- * rather than a summary of points.  This is also constrained to be
- * solely commutative and associative operators and don't take into account
- * bounds themselves.
- *
- * (Use this as a starting point for your own work, except yours may not
- * need to be so templated.)
- */
-template<typename TResult>
-class EmptyResultStat {
- public:
-  // This might need pairs of stats?
-
-  /** Sets to an initial value. */
-  void Init() {
-  }
-
-  /** Resets value in preparation to be updated. */
-  void StartUpdate() {
-  }
-
-  /** Incorporates a single result. */
-  void Update(const TResult& point_result) {
-  }
-
-  /** Incorporates a sub-result. */
-  void Update(const EmptyStat& sub_stat) {
-  }
-
-  void StopUpdate() {
-  }
-};
-
-
-/**
- * (Empty) Change to sub-results for an entire region that is pushed down.
- *
- * This is useful for series expansions for example, where the Delta
- * may store the different moments of the reference points.  These moments
- * can be propagated down in a straightforward manner, and eventually be
- * applied to leaves.
- *
- * (Use this as a starting point for your own work, except yours may not
- * need to be so templated.)
- */
-template<typename TResult>
-struct EmptyDelta {
- public:
-  void Init() {
-  }
-
-  void Reset() {
-  }
-
-  void ApplyTo(TResultStat *result_stat)  const {
-  }
-
-  void ApplyTo(EmptyDelta *sub_delta) const {
-  }
-
-  void ApplyTo(const TPoint& point,
-      const TInfo& info, TResult *result) const {
+  static double Heuristic(
+      const TParam& params,
+      const TBound& q_bound, const TQStat& q_stat, index_t q_count,
+      const TBound& r_bound, const TRStat& r_stat, index_t r_count,
+      const TMassResult& q_mass_result) {
   }
 };
 
