@@ -1,4 +1,4 @@
-
+/*
 
 QUESTIONS:
   - when/how are deltas computed?
@@ -30,156 +30,227 @@ MORE PROBLEMS
     - later
   - iterator design pattern?  or allow SIMD?
 
-  // rho, but a bit of phi and lambda
-  template<typename AllnnParam, typename Point, typename AllnnDelta>
-  struct AllnnResult {
-    double best_distance;
-    index_t best_index;
-    
-    void Init(const AllnnParam& param,
-        const TBound& r_global_bound, const TStat& r_global_stat,
-        index_t r_global_count) {
-      best_distance = DBL_MAX;
-      best_index = -1;
-    }
-    
-    // WALDO: Prototype changed
-    void AccumulatePair(const AllnnParam& param,
-         const Point& q, const Point& r, index_t r_index,
-         GlobalResult *global_result) {
-       double d = la::DistanceSqEuclidean(q, r);
-       if (unlikely(d <= best_distance)) {
-         best_distance = d;
-         best_index = r_index;
-       }
-    }
-    
-    void Finish(const AllnnParam& param) {
-    }
-    
-    void Apply(const AllnnParam& param, const AllnnDelta& delta, const Point& q) {
-      if (unlikely(delta.distance_hi < best_distance)) {
-        best_distance = delta.distance_hi;
-        DEBUG_ONLY(best_index = -1);
-      }
-    }
-  };
+stat = EmptyStat
+*/
 
-  // mu
-  template<typename AllnnParam, typename AllnnResult, typename AllnnDelta>
-  struct EmptyMassResult {
-    double best_distance_hi;
-    
-    // must be called with enough information to reproduce its child's value
-    void Init(const AllnnParam& param,
-        const TBound& q_bound, const TQStat& q_stat, index_t q_count,
-        const TBound& r_global_bound, const TRStat& r_global_stat,
-        index_t r_global_count) {
-      best_distance_hi = DBL_MAX;
-    }
-    
-    void StartReaccumulate(const AllnnParam& param) {
-      best_distance_hi = -DBL_MAX;
-    }
-    
-    void Accumulate(const AllnnParam& param, const AllnnResult& result) {
-      if (unlikely(result.best_distance > best_distance_hi)) {
-        best_distance_hi = result.best_distance;
-      }
-    }
-    
-    void Accumulate(const AllnnParam& param,
-        const EmptyMassResult& result, index_t n_points) {
-      best_distance_hi = max(best_distance_hi, distance_hi);
-    }
-    
-    void Finish(const AllnnParam& param) {
-    }
-    
-    bool Apply(const AllnnParam& param, const AllnnDelta& delta,
-        const TStat& stat, const TBound& bound, index_t n) {
-      if (unlikely(delta.distance_hi < best_distance_hi)) {
-        best_distance_hi = delta.distance_hi;
-        return true;
-      } else {
-        return false;
-      }
-    }
-  };
+struct AllnnStat {
+  void Init(const AllnnParam& param) {
+  }
+  
+  void Accumulate(const AllnnParam& param, const Point& point) {
+  }
+  
+  void Accumulate(const AllnnParam& param,
+      const AllnnStat& stat, const Bound& bound, index_t n) {
+  }
+  
+  void Finish(const AllnnParam& param, const Bound& bound, index_t n) {
+  }
+};
 
-  // delta
-  class EmptyDelta {
-    // TODO: An agnostic init function for when it's going to be clobbered?
-    double distance_hi;
-    
-    enum { NEED_UNAPPLY = 0; }
-    
-    void InitCompute(const AllnnParam& param,
-        const AllnnParam& params,
-        const Bound& q_bound, const EmptyStat& q_stat, index_t q_count,
-        const Bound& r_bound, const EmptyStat& r_stat, index_t r_count) {
-      
+struct AllnnPointPairVisitor {
+  double best_distance;
+  index_t best_index;
+  
+  void Init(const AllnnParam& param) {
+  }
+  
+  bool StartVisitingQueryPoint(const AllnnParam& param,
+      const Point& q_point,
+      const RNode& r_node,
+      QResult* q_result,
+      GlobalResult* global_result) {
+    if (r_node.bound().MinDistanceSqToPoint(q_point) > best_distance) {
+      return true;
+    } else {
+      best_distance = q_result->best_distance;
+      best_index = q_result->best_index;
+      return false;
     }
-    
-    void Init(const AllnnParam& param) {
-      distance_hi = DBL_MAX;
+  }
+  
+  void VisitPair(const AllnnParam& param,
+      const TPoint& q_point, const TQInfo& q_info,
+      const TPoint& r_point, const TRInfo& r_info, index_t r_index) {
+    double distance = la::DistanceEuclidean(q_point, r_point);
+    if (unlikely(distance <= min_distance)) {
+      best_distance = distance;
+      best_index = r_index;
     }
-    
-    void Reset(const AllnnParam& param) {
-      distance_hi = DBL_MAX;
+  }
+  
+  void FinishVisitingQueryPoint(const AllnnParam& param,
+      const TPoint& q_point,
+      const TBound& r_bound, const TRStat& r_stat, index_t r_count,
+      TResult* q_result,
+      TGlobalResult* global_result) {
+    q_result->best_distance = best_distance;
+    q_result->best_index = best_index;
+  }
+};
+
+// rho, but a bit of phi and lambda
+struct AllnnResult {
+  double best_distance;
+  index_t best_index;
+  
+  void Init(const AllnnParam& param,
+      const Point& q_point, const QInfo& q_info,
+      const RNode& r_root) {
+    best_distance = DBL_MAX;
+    best_index = -1;
+  }
+  
+  void Finish(const AllnnParam& param,
+      const Point& q_point, const QInfo& q_info,
+      const RNode& r_root) {
+  }
+  
+  void PullParentResults(const AllnnParam& param,
+      const Point& q_point,
+      const TMassResult& parent_mass_result) {
+    if (unlikely(parent_mass_result < best_distance)) {
+      best_distance = parent_mass_result;
+      DEBUG_ONLY(best_index = -1);
     }
-    
-    void Apply(const AllnnDelta& delta) {
-      distance_hi = max(distance_hi, delta.distance_hi);
-    }
-    
-    void Unapply(const AllnnDelta& delta) {
-      // no "reverse application" necessary
-    }
-  };
+  }
+};
+
+// mu
+struct AllnnMassResult {
+  double best_distance_u;
+
+  void Init(const AllnnParam& param,
+      const QNode& q_node,
+      const RNode& r_root) {
+    best_distance_u = DBL_MAX;
+  }
+
+  void StartReaccumulate(const AllnnParam& param,
+      const QNode& q_node) {
+    best_distance_u = -DBL_MAX;
+  }
+
+  void Accumulate(const AllnnParam& param, const AllnnResult& result) {
+    best_distance_u = max(best_distance_u, result.best_distance);
+  }
+
+  void Accumulate(const AllnnParam& param,
+      const AllnnMassResult& result, index_t n_points) {
+    best_distance_u = max(best_distance_u, result.best_distance_u);
+  }
+
+  void FinishReaccumulate(const AllnnParam& param,
+      const QNode& q_node) {
+  }
 
 
-  class AllnnAlgorithm {
-    void Init(const TParam& param) {
+  void ResetLazyResults(const AllnnParam& param) {
+    /* no lazy results to reset */
+  }
+
+  bool PullParentResult(const AllnnParam& param,
+      const TMassResult& parent_mass_result,
+      const QNode& q_node) {
+    if (parent_mass_result.best_distance_u < best_distance_u) {
+      best_distance_u = parent_mass_result.best_distance_u;
+      return CHANGE;
+    } else {
+      return NO_CHANGE;
     }
-    
-    /**
-     *
-     * delta behavior: delta comes in UNinitialized.  do not make changes
-     * to mass result yourself, use delta to do it for you.
-     *
-     * @param q_bound bound of query node
-     * @param q_stat statistic of query node
-     * @param q_count number of points in query subtree
-     * @param r_bound bound of reference node
-     * @param r_stat statistic of reference node
-     * @param r_count number of points in query subtree
-     * @param delta a delta to update (it begins completely unitialized)
-     * @param q_mass_result the mass result to update
-     * @param global_result global result to update
-     * @return whether a prune occured and further exploration stops
-     */
-    static bool Consider(
-        const AllnnParam& params,
-        const Bound& q_bound, const EmptyStat& q_stat, index_t q_count,
-        const Bound& r_bound, const EmptyStat& r_stat, index_t r_count,
-        const AllnnDelta& delta, AllnnMassResult* q_mass_result,
-        EmptyGlobalResult* global_result) {
-      double distance_lo = q_bound.MinDistanceTo(r_bound);
-      
-      return distance_lo > q_mass_result->distance_hi;
+  }
+
+  bool ApplyDelta(const AllnnParam& param,
+      const Delta& delta, const QNode& q_node) {
+    if (delta.distance_u < best_distance_u) {
+      best_distance_u = delta.distance_u;
+      return CHANGE;
+    } else {
+      return NO_CHANGE;
     }
-    
-    /**
-     * Computes a heuristic for how early a computation should occur -- smaller
-     * values are earlier.
-     */
-    static double Heuristic(
-        const AllnnParam& params,
-        const Bound& q_bound, const EmptyStat& q_stat, index_t q_count,
-        const Bound& r_bound, const EmptyStat& r_stat, index_t r_count,
-        const AllnnDelta& delta,
-        const AllnnResult& q_mass_result) {
-      return q_bound.MidDistanceTo(r_bound);
-    }
-  };
+  }
+
+  void UndoDelta(const AllnnParam& param,
+      const Delta& delta, const QNode& q_node) {
+    /* no undo operation necessary */
+  }
+
+  void Finish(const AllnnParam& param) {
+  }
+};
+
+// delta
+class AllnnDelta {
+  double distance_u;
+  
+  void Init(const AllnnParam& param) {
+  }
+  
+  void Compute(const AllnnParam& param,
+      const QNode& q_node,
+      const RNode& r_node,
+      const TMassResult& q_mass_result) {
+    distance_u = q_node.bound().MaxDistanceToBound(r_node.bound());
+  }
+};
+
+// DeltaUndoInformation
+
+class AllnnGlobalResult {
+  void Init(const AllnnParam& param) {
+  }
+  
+  void Accumulate(const AllnnParam& param,
+      const AllnnGlobalResult& other_global_result) {
+  }
+  
+  void ApplyDelta(const AllnnParam& param,
+      const AllnnDelta& delta) {
+  }
+  
+  void UndoDelta(const AllnnParam& param,
+      const AllnnDelta& delta) {
+  }
+  
+  void Finish(const AllnnParam& param) {
+  }
+};
+
+class AllnnAlgorithm {
+  void Init(const AllnnParam& param) {
+  }
+  
+  /**
+   * @param q_bound bound of query node
+   * @param q_stat statistic of query node
+   * @param q_count number of points in query subtree
+   * @param r_bound bound of reference node
+   * @param r_stat statistic of reference node
+   * @param r_count number of points in query subtree
+   * @param delta a delta to update (it begins UNinitialized)
+   * @param q_mass_result the mass result to update
+   * @param global_result global result to update
+   * @return whether a prune occured and further exploration stops
+   */
+  static bool MustExplore(
+      const AllnnParam& param,
+      const QNode& q_node,
+      const RNode& r_node,
+      const TDelta& delta,
+      const TMassResult& q_mass_result, const TGlobalResult& global_result) {
+    double distance_l = q_node.bound().MinDistanceSqToBound(r_node.bound());
+    return distance_l <= q_mass_result.best_distance_u;
+  }
+  
+  /**
+   * Computes a heuristic for how early a computation should occur -- smaller
+   * values are earlier.
+   */
+  static double Heuristic(
+      const AllnnParam& param,
+      const QNode& q_node,
+      const RNode& r_node,
+      const TMassResult& q_mass_result) {
+    return q_node.bound().MidDistanceSqToBound(r_node.bound());
+  }
+};

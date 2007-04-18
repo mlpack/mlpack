@@ -9,6 +9,59 @@
 #define SUPERPAR_GNP_H
 
 
+/*
+
+delta behaviors
+
+                33,0
+           /            \
+         21,0          12,0
+        /   \          /   \
+      1,20 0,20      1,10 1,10
+
+  - STRICT breadth first
+    - when i consider a node, i:
+      - check for prune conditions
+      - if i can prune:
+        - postpone my delta (which was already applied) so it will apply
+        to entire tree
+      - if mu has postponed deltas (i.e. a prune occured higher up)
+        - apply postponed deltas to q children
+        - clear my postponed deltas
+        - possible cache problem
+      - if i cannot prune:
+        - calculate deltas for q children
+        - enqueue these
+        - if needed, fix my own value: undo my own delta, and apply
+        children deltas; this might give better pruning info at current level
+  - depth first
+    - when i consider a node, i:
+      - check if i can prune
+      - apply deltas?!?!?!?!
+        - for idempotent functions you can apply a delta to aid pruning
+        - i don't think this is ever helpful
+      - if i can prune:
+        - apply and postpone my delta
+        - example
+          - exact thresholded Epanechnikov KDE inclusion:
+            store moments.  conservative updates to density bounds are
+            questionable -- they would have to be undone.
+      - if i cannot prune:
+        - for each q child
+          - apply postponed deltas
+          - 
+        - recalculate mu (this implicitly clears all postponed deltas)
+
+*/
+
+  // void ApplyDeltas(const TParam& param,
+  //     const MassResult& foo,
+  //     const TStat& stat, const TBound& bound, index_t n) {
+  // }  
+  // 
+  // void PostponeDelta(const TParam& param, const TDelta& delta,
+  //     const TStat& stat, const TBound& bound, index_t n) {
+  // }
 
 /*
 
@@ -63,7 +116,7 @@ class GnpDualTree {
   /**
    * Stat computed for the entire computation.
    */
-  typedef TGlobalStat GlobalStat;
+  typedef TGlobalResult GlobalResult;
 };
 
 template<
@@ -76,8 +129,6 @@ class GnpDualTreeRunner {
   typedef TArray Array;
   /** The generalized N-body problem to solve. */
   typedef TGNP GNP;
-
-#error "todo: typedefs"
 
   /** Tree nodes. */
   typedef SpNode< Bound > TreeNode;
@@ -124,6 +175,9 @@ class GnpDualTreeRunner {
 };
 
 
+
+
+
 template<class TGNP, class TArray>
 void GnpDualTreeRunner<TGNP, TArray>::DistributeDeltas_() {
   if (HAVE_MASS_RESULT) {
@@ -168,6 +222,8 @@ void GnpDualTreeRunner<TGNP, TArray>::RecursivelyDistributeDeltas_(
 
   q_delta->StopDistribute();
 }
+
+
 
 template<class TGNP, class TArray>
 void GnpDualTreeRunner<TGNP, TArray>::BaseCase_(
@@ -293,7 +349,6 @@ void GnpDualTreeRunner<TGNP, TArray>::DualTree_(
   q_delta_a_.StopWrite(q_delta, q_node_i);
 }
 
-
 // sigma
 template<typename TParam, typename TPoint, typename TBound>
 struct EmptyStat {
@@ -311,16 +366,37 @@ struct EmptyStat {
   }
 };
 
+struct EmptyPointPairVisitor {
+  void Init(const TParam& param) {
+  }
+  
+  bool StartVisitingQueryPoint(const TParam& param,
+      const TPoint& q_point,
+      const TBound& r_bound, const TRStat& r_stat, index_t r_count,
+      TResult* q_result,
+      TGlobalResult* global_result) {
+    return true;
+  }
+  
+  void VisitPair(const TParam& param,
+      const TPoint& q_point, const TQInfo& q_info,
+      const TPoint& r_point, const TRInfo& r_info, index_t r_index) {
+  }
+  
+  void StopVisitingQueryPoint(const TParam& param,
+      const TPoint& q_point,
+      const TBound& r_bound, const TRStat& r_stat, index_t r_count,
+      TResult* q_result,
+      TGlobalResult* global_result) {
+  }
+};
+
 // rho, but a bit of phi and lambda
 template<typename TParam, typename TPoint, typename TDelta>
 struct EmptyResult {
   void Init(const TParam& param,
       const TBound& r_global_bound, const TStat& r_global_stat,
       index_t r_global_count) {
-  }
-  
-  void AccumulatePair(const TParam& param,
-     const TPoint& q, const TPoint& r) {
   }
   
   void Finish(const TParam& param) {
@@ -350,67 +426,29 @@ struct EmptyMassResult {
       const EmptyMassResult& result, index_t n_points) {
   }
   
-  void Finish(const TParam& param) {
+  void Apply(const TParam& param,
+      const TDelta& delta,
+      const TBound& q_bound, const TQStat& q_stat, index_t q_count) {
+  }
+
+  void Unapply(const TParam& param,
+      const TDelta& delta,
+      const TBound& q_bound, const TQStat& q_stat, index_t q_count) {
   }
   
-/*
-
-delta behaviors
-
-                33,0
-           /            \
-         21,0          12,0
-        /   \          /   \
-      1,20 0,20      1,10 1,10
-
-  - STRICT breadth first
-    - when i consider a node, i:
-      - check for prune conditions
-      - if i can prune:
-        - postpone my delta (which was already applied) so it will apply
-        to entire tree
-      - if mu has postponed deltas (i.e. a prune occured higher up)
-        - apply postponed deltas to q children
-        - clear my postponed deltas
-        - possible cache problem
-      - if i cannot prune:
-        - calculate deltas for q children
-        - enqueue these
-        - if needed, fix my own value: undo my own delta, and apply
-        children deltas; this might give better pruning info at current level
-  - depth first
-    - when i consider a node, i:
-      - check if i can prune
-      - apply deltas?!?!?!?!
-        - for idempotent functions you can apply a delta to aid pruning
-        - i don't think this is ever helpful
-      - if i can prune:
-        - apply and postpone my delta
-        - example
-          - exact thresholded Epanechnikov KDE inclusion:
-            store moments.  conservative updates to density bounds are
-            questionable -- they would have to be undone.
-      - if i cannot prune:
-        - for each q child
-          - apply postponed deltas
-          - 
-        - recalculate mu (this implicitly clears all postponed deltas)
-
-*/
-
-  // void ApplyDeltas(const TParam& param,
-  //     const MassResult& foo,
-  //     const TStat& stat, const TBound& bound, index_t n) {
-  // }  
-  // 
-  // void PostponeDelta(const TParam& param, const TDelta& delta,
-  //     const TStat& stat, const TBound& bound, index_t n) {
-  // }
+  void Finish(const TParam& param) {
+  }
 };
 
 // delta
 class EmptyDelta {
-  // no data necessary
+  void Init(const TParam& param);
+  
+  void Compute(const TParam& param,
+      const TBound& q_bound, const TQStat& q_stat, index_t q_count,
+      const TBound& r_bound, const TRStat& r_stat, index_t r_count,
+      const TMassResult& q_mass_result);
+  // nothing necessary
 };
 
 // DeltaUndoInformation
@@ -420,7 +458,20 @@ class EmptyGlobalResult {
   void Init(const TParam& param) {
   }
   
-  void Accumulate(const TParam& param, const EmptyGlobalResult& global_result) {
+  void Accumulate(const TParam& param,
+      const EmptyGlobalResult& other_global_result) {
+  }
+  
+  void Unaccumulate(const TParam& param,
+      const EmptyGlobalResult& other_global_result) {
+  }
+  
+  void Apply(const TParam& param,
+      const Delta& delta) {
+  }
+  
+  void Unapply(const TParam& param,
+      const Delta& delta) {
   }
   
   void Finish(const TParam& param) {
@@ -432,10 +483,6 @@ class EmptyAlgorithm {
   }
   
   /**
-   *
-   * delta behavior: delta comes in initialized.  do not make changes
-   * to mass result yourself, use delta to do it for you.
-   *
    * @param q_bound bound of query node
    * @param q_stat statistic of query node
    * @param q_count number of points in query subtree
@@ -447,11 +494,12 @@ class EmptyAlgorithm {
    * @param global_result global result to update
    * @return whether a prune occured and further exploration stops
    */
-  static bool Consider(
-      const TParam& params,
+  static bool CanPrune(
+      const TParam& param,
       const TBound& q_bound, const TQStat& q_stat, index_t q_count,
       const TBound& r_bound, const TRStat& r_stat, index_t r_count,
-      TDelta* delta, TMassResult* q_mass_result, TGlobalResult* global_result) {
+      const TDelta& delta,
+      const TMassResult& q_mass_result, const TGlobalResult& global_result) {
   }
   
   /**
@@ -459,7 +507,7 @@ class EmptyAlgorithm {
    * values are earlier.
    */
   static double Heuristic(
-      const TParam& params,
+      const TParam& param,
       const TBound& q_bound, const TQStat& q_stat, index_t q_count,
       const TBound& r_bound, const TRStat& r_stat, index_t r_count,
       const TMassResult& q_mass_result) {
