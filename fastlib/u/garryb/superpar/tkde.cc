@@ -125,17 +125,17 @@ class Tkde {
       moment_info.Add(stat.moment_info);
     }
     
-    void Postprocess(const TkdeParam& param, const Bound& bound, index_t n) {
-    }
+    void Postprocess(const TkdeParam& param, const Bound& bound, index_t n) {}
   };
 
   typedef BinarySpaceTree<Bound, Matrix, TkdeStat> RNode;
   typedef BinarySpaceTree<Bound, Matrix, EmptyStatistic<Matrix> > QNode;
-  
+
   enum Label {
-    LAB_LO = -1,
+    LAB_LO = 2,
     LAB_UNKNOWN = 0,
-    LAB_HI = 1
+    LAB_HI = 1,
+    LAB_CONFLICT = 3
   };
 
   /**
@@ -157,8 +157,8 @@ class Tkde {
     }
 
     void ApplyPostponed(const TkdeParam& param, const TkdePostponed& other) {
-      DEBUG_ASSERT_MSG(label ^ other.label != -2, "Conflicting labels?");
       label |= other.label;
+      DEBUG_ASSERT_MSG(label != LAB_CONFLICT, "Conflicting labels?");
       moment_info.Add(other.moment_info);
     }
   };
@@ -214,19 +214,12 @@ class Tkde {
   };
 
   class TkdeGlobalResult {
-    void Init(const TkdeParam& param) {
-    }
-    
+    void Init(const TkdeParam& param) {}
     void Accumulate(const TkdeParam& param,
-        const TkdeGlobalResult& other_global_result) {
-    }
-    
-    void ApplyDelta(const TkdeParam& param,
-        const TkdeDelta& delta) {
-    }
-    
-    void Postprocess(const TkdeParam& param) {
-    }
+        const TkdeGlobalResult& other_global_result) {}
+    void ApplyDelta(const TkdeParam& param, const TkdeDelta& delta) {}
+    void UndoDelta(const TkdeParam& param, const TkdeDelta& delta) {}
+    void Postprocess(const TkdeParam& param) {}
   };
 
   struct TkdeMassResult {
@@ -236,28 +229,32 @@ class Tkde {
 
     void Copy(const TkdeMassResult& other) {
       density = other.density;
+      label = other.label;
     }
 
     void Init(const TkdeParam& param) {
       /* horizontal init */
       density.Init(0, 0);
+      label = 0;
     }
 
     void StartReaccumulate(const TkdeParam& param, const QNode& q_node) {
       /* vertical init */
       density.InitEmptySet();
+      label = LAB_CONFLICT;
     }
 
-    void Accumulate(const TkdeParam& param, const TkdeResult& result,
-        const TkdeMassResult& horizontal_result) {
+    void Accumulate(const TkdeParam& param, const TkdeResult& result) {
       // TODO: applying to single result could be made part of Result,
       // but in some cases may require a copy/undo stage
-      density |= result.density + horizontal_result.density;
+      density |= result.density;
+      label &= result.label;
     }
 
     void Accumulate(const TkdeParam& param,
         const TkdeMassResult& result, index_t n_points) {
       density |= result.density;
+      density &= result.label;
     }
 
     void FinishReaccumulate(const TkdeParam& param,
@@ -269,6 +266,8 @@ class Tkde {
     void ApplyMassResult(const TkdeParam& param,
         const TkdeMassResult& mass_result) {
       density += mass_result.density;
+      label |= mass_result.label;
+      DEBUG_ASSERT(label != LAB_CONFLICT);
     }
 
     void ApplyDelta(const TkdeParam& param,
@@ -301,8 +300,7 @@ class Tkde {
   struct TkdeVectorPairVisitor {
     double density;
     
-    void Init(const TkdeParam& param) {
-    }
+    void Init(const TkdeParam& param) {}
     
     bool StartVisitingQueryPoint(const TkdeParam& param,
         const Vector& q_point,
@@ -350,11 +348,11 @@ class Tkde {
 
       double adjusted_threshold = param.threshold - q_result->density;
       
-      if (unlikely(unapplied_mass_results->density.lo > adjusted_threshold)) {
+      if (unlikely(unapplied_mass_results->density.lo - EPS
+          > adjusted_threshold)) {
         q_result->label = LAB_HI;
-      }
-      
-      if (unlikely(unapplied_mass_result->density.hi < adjusted_threshold)) {
+      } else if (unlikely(unapplied_mass_result->density.hi + EPS
+          < adjusted_threshold)) {
         q_result->label = LAB_LO;
       }
     }
@@ -413,18 +411,19 @@ class Tkde {
     static bool ConsiderQueryTermination(
         const TkdeParam& param,
         const QNode& q_node,
-        const TkdeDelta& delta,
         const TkdeMassResult& q_mass_result,
         const TkdeGlobalResult& global_result,
         TkdePostponed* q_postponed) {
-      bool need_expansion = true;
+      bool need_expansion = false;
       
-      if (q_mass_result.density.lo > param.thresh) {
-        q_postponed->label = 1;
-        need_expansion = false;
-      } else if (q_mass_result.density.hi < param.thresh) {
-        q_postponed->label = -1;
-        need_expansion = false;
+      if (unlikely(q_mass_result.label != LAB_UNKNOWN)) {
+        q_postponed->label = q_mass_result.label;
+      } else if (unlikely(q_mass_result.density.lo - EPS > param.thresh)) {
+        q_postponed->label = LAB_HI;
+      } else if (unlikely(q_mass_result.density.hi + EPS < param.thresh)) {
+        q_postponed->label = LAB_LO;
+      } else {
+        need_expansion = true;
       }
       
       return need_expansion;
