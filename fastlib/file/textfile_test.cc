@@ -1,11 +1,13 @@
 
 #include "textfile.h"
 
-#include "xrun/xrun.h"
+#include "base/test.h"
 
 #include <math.h>
 
-void Test1() {
+TEST_SUITE_BEGIN(textfile)
+
+/*void Test1() {
   TextTokenizer scanner;
   const char *input = xrun_param_str("input");
   
@@ -15,7 +17,7 @@ void Test1() {
     fprintf(stderr, "Got: %d, [%s]\n", scanner.PeekType(), scanner.Peek().c_str());
     scanner.Gobble();
   }
-}
+}*/
 
 #define REQUIRE(scanner, cond) \
     if (!(scanner.cond)) { fprintf(stderr, "FAILED: %s: '%s'\n", #cond, \
@@ -54,7 +56,6 @@ void Test2() {
   REQUIRE(scanner, Match("end"));
   REQUIRE(scanner, Match("("));
   REQUIRE(scanner, Match("2.0e-21"));
-  fprintf(stderr, "scanner.Current() == [%s]\n", scanner.Current().c_str());
   assert(scanner.Current() == "2.0e-21");
   assert(fabs(strtod(scanner.Current().c_str(), NULL) - 2.0e-21) < 1.0e-30);
   REQUIRE(scanner, Match(")"));
@@ -62,11 +63,5 @@ void Test2() {
   REQUIRE(scanner, Match("abc"));
 }
 
-int main(int argc, char *argv[]) {
-  xrun_init(argc, argv);
-  
-  Test1();
-  Test2();
-  
-  xrun_done();
-}
+TEST_SUITE_END(textfile, Test2)
+

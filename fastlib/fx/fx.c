@@ -344,6 +344,7 @@ int fx_param_bool(struct datanode *module, const char *name, int def)
 	    name, module ? module->key : fx_root->key, (char *)node->val);
     }
   }
+  return -1;
 }
 
 int fx_param_bool_req(struct datanode *module, const char *name)
@@ -358,6 +359,7 @@ int fx_param_bool_req(struct datanode *module, const char *name)
     FATAL("Parameter \"%s\" in module \"%s\" is not a bool: \"%s\".",
 	  name, module ? module->key : fx_root->key, val);
   }
+  return -1;
 }
 
 struct datanode *fx_param_node(struct datanode *module, const char *name)

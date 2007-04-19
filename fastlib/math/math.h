@@ -9,6 +9,7 @@
 #ifndef MATH_MATH_H
 #define MATH_MATH_H
 
+#include "base/common.h"
 #include <math.h>
 
 /**

@@ -19,7 +19,6 @@
 #define EXTERN_C_START__impl 
 #define EXTERN_C_END__impl 
 #define COMPILER_CAST__impl(cast, type, var) ((type)(var))
-#define IS_CONSTANT_EXPRESSION__impl(x) (__builtin_constant_p(x))
 #endif
 
 #ifdef __GNUC__
@@ -30,6 +29,7 @@
 #define COMPILER_PRINTF__IMPL(format_arg, dotdotdot_arg) \
     __attribute__((format(printf, format_arg, dotdotdot_arg)))
 #define COMPILER_FUNCTIONAL__IMPL __attribute__((const))
+#define IS_CONSTANT_EXPRESSION__impl(x) (__builtin_constant_p(x))
 #else
 #define expect__impl(expr, value) (expr)
 #define likely__impl(x) (x)

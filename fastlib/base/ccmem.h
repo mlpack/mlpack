@@ -101,7 +101,19 @@ namespace mem {
   inline T * AllocZeroed(size_t elems = 1) {
      return reinterpret_cast<T*>(::calloc(elems * sizeof(T), 1));
   }
-  
+
+  /**
+   * Allocates the specified number of elements, constructing each one.
+   * @param elems number of *elements*
+   * @return a pointer that must be freed with mem::Free
+   */
+  template<typename T>
+  inline T * AllocConstruct(size_t elems) {
+    T *p = Alloc<T>(elems);
+    for (size_t i = 0; i < elems; i++) {
+      new(p[i])T();
+    }
+  }
   /**
    * Allocates the specified number of elements, initializing all of them
    * to the specified value.

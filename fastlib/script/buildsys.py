@@ -325,9 +325,10 @@ class SymlinkRule(dep.Rule):
     pairs = files["filerules"].to_pairs()
     for (classname, file) in pairs:
       sourcename = file.name
-      destname = os.path.join(self.dest_dir, os.path.basename(file.simplename))
+      shortname = os.path.basename(file.name)
+      destname = os.path.join(self.dest_dir, shortname)
       # the symlink's simplename will be the same as the original's
-      destfile = sysentry.source_file(destname, file.simplename)
+      destfile = sysentry.source_file(destname, shortname)
       sysentry.command("rm -f %s" % sq(destname))
       sysentry.command("ln -s -f %s %s" % (sq(sourcename), sq(destname)))
       all.append((classname, destfile))
@@ -463,16 +464,16 @@ class Loader:
     def find(rule_name):
       return self.find_rule(rule_name, real_path, fake_path)
     def pathify_real(name):
-      return self.pathjoin_real(real_path, name)
+      return self.pathjoin_real(real_path, "./" + name)
     def pathify_fake(name):
-      return self.pathjoin_fake(fake_path, name)
+      return self.pathjoin_fake(fake_path, "./" + name)
     def sourcerule(type, name):
       if isinstance(name, str):
         # If there is a colon, it is a rule; otherwise, it is just a file.
         if ":" in name:
           return find(name)
         else:
-          return SourceRule(type, pathify_real("./" + name), pathify_fake("./" + name))
+          return SourceRule(type, pathify_real(name), pathify_fake(name))
       else:
         return name
     def sourcerules(type, names):
@@ -514,15 +515,17 @@ class Loader:
       if fname == None:
         fname = url[url.rindex('/')+1:]
       register(name, WgetRule(url, type,
-          pathify_real("./" + fname), pathify_fake("./" + fname)))
+          pathify_real(fname), pathify_fake(fname)))
     def binrule(name, linkables = [], sources = [], headers = [], cflags = ""):
       # (source, headers, cflags)
+      longname = pathify_fake(name)
       if sources:
-        lib = librule(name = name + "__auto",
+        lib = librule(name = longname + "__auto",
             sources = sources, headers = headers, deplibs = linkables,
             cflags = cflags)
         linkables = linkables + [lib]
-      register(name, BinRule(name, sourcerules(Types.LINKABLE, linkables)))
+      register(name, BinRule(longname,
+          sourcerules(Types.LINKABLE, linkables)))
     build_file_path = os.path.join(real_path, BUILD_FILE)
     print "... Reading %s" % (build_file_path)
     text = util.readfile(build_file_path)

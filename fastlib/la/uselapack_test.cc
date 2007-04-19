@@ -1,3 +1,9 @@
+/**
+ * @file uselapack_test.cc
+ *
+ * Tests for LAPACK integration.
+ */
+
 #include "base/test.h"
 
 #include "uselapack.h"

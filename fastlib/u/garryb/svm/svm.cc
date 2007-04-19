@@ -12,6 +12,8 @@ int main(int argc, char *argv[]) {
       return 1;
     }
   } else {
+    // create an artificial dataset and save it to "m.csv"
+    
     Matrix m;
     index_t n = fx_param_int(NULL, "n", 30);
     double offset = fx_param_double(NULL, "offset", 0.0);
@@ -21,6 +23,7 @@ int main(int argc, char *argv[]) {
     double var = fx_param_double(NULL, "var", 1.0);
     double intercept = fx_param_double(NULL, "intercept", 0.0);
     
+    // 3 dimensional dataset, size n
     m.Init(3, n);
     
     for (index_t i = 0; i < n; i += 2) {

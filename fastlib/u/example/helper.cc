@@ -11,7 +11,8 @@ void KnnClassifier::InitTrain(const Dataset& dataset, int n_classes,
   DEBUG_ASSERT_MSG(n_classes == 2, "This is only a binary classifier");
   matrix_.Copy(dataset.matrix());
   k_ = fx_param_int(module, "k", 5);     // sets default parameter for k
-  DEBUG_ASSERT_MSG(k_ < matrix_.n_cols(), "k_ must be smaller than dataset!");
+  DEBUG_ASSERT_MSG(k_ < matrix_.n_cols(), "knn/k must be smaller than dataset!");
+  DEBUG_ASSERT_MSG(k_ % 2 == 1, "knn/k must not be even!");
 }
 
 int KnnClassifier::Classify(const Vector& test_datum) {

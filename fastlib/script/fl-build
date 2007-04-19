@@ -92,6 +92,8 @@ if not ":" in target_name:
     target_name = target_name[:-3]
     print "!!! Ends with .cc, assuming ad-hoc build."
 
+target_name = target_name.replace(os.sep, "/")
+
 makefile_path = os.path.abspath("./Makefile")
 mode = fx.param_str("mode")
 compiler = fx.param_str("compiler")
