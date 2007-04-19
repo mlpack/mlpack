@@ -111,11 +111,12 @@ class Queue {
   };
  
  private: 
+  const Param *param_;
+  QNode *q_node_;
   ArrayList<Entry> list_;
-  Delta delta_forward_;
-  Delta delta_pruned_;
-  const Param *param;
-  QNode *q_node_in;
+  MassResult q_mass_result_;
+  PostponedResult q_postponed_;
+  GlobalResult *global_result_;
   
  public:
   void Init(QNode* q_node_in, const Param& param) {
@@ -131,37 +132,30 @@ class Queue {
     q_node_ = q_node_in;
     
     list_.Init();
-    delta_pruned_.Init(*param_);
-    delta_pruned_.Apply(*param_, parent.delta_pruned_);
     
-    delta_forward_.Init();
+    q_mass_result_.Init(*param_);
+    
+    q_postponed_.Init(*param_);
+    q_postponed_.ApplyPostponed(*parent.q_postponed_);
+    
+    global_result_ = parent.global_result_;
   }
   
   void Add(RNode *r_node) {
     Entry *entry = list_.AddBack();
-    bool try_explore = entry->delta.InitCompute(param, *q_node, *r_node);
-    
-    delta_forward_.Apply(entry->delta);
+    bool try_explore = Algorithm::ConsiderPairIntrinsic(
+        *param_, *q_node_, *r_node,
+        &entry->delta, &q_mass_result_, global_result_, &q_postponed_);
     
     if (try_explore) {
       entry->r_node = r_node;
     } else {
-      delta_pruned_.Apply(*param_, entry->delta);
       list_.PopBack();
     }
   }
   
-  /**
-   * Do the postprocessing reverse step.
-   */
-  void TransformDeltas() {
-    const Delta* cur_delta = &delta_pruned_;
-    
-    for (index_t i = list_.size() - 2; i != 0; i--) {
-      Entry *entry = &list_[i];
-      entry->delta.Apply(*param_, *cur_delta);
-      cur_delta = &entry->delta;
-    }
+  void Finish() {
+    mass_result_.ApplyPostponed(*param_, q_postponed_);
   }
   
   index_t size() const {
@@ -173,7 +167,7 @@ class Queue {
   }
   
   /** returns the sum of deltas including the specified up to the end */
-  const Delta& delta_backward(int i) const {
+  const Delta& delta(int i) const {
     return list_[i].delta;
   }
   
@@ -184,6 +178,10 @@ class Queue {
   const Delta& delta_pruned() const {
     return delta_pruned_;
   }
+
+  MassResult q_mass_result_;
+  PostponedResult q_postponed_;
+  GlobalResult *global_result_;
   
   const ArrayList<Entry>& list() const {
     return list_;

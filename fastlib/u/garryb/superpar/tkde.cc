@@ -131,6 +131,12 @@ class Tkde {
 
   typedef BinarySpaceTree<Bound, Matrix, TkdeStat> RNode;
   typedef BinarySpaceTree<Bound, Matrix, EmptyStatistic<Matrix> > QNode;
+  
+  enum Label {
+    LAB_LO = -1,
+    LAB_UNKNOWN = 0,
+    LAB_HI = 1
+  };
 
   /**
    * Coarse result on a region.
@@ -138,12 +144,21 @@ class Tkde {
   struct TkdePostponed {
     /** Moments of pruned things. */
     MomentInfo moment_info;
+    /** We pruned an entire part of the tree with a particular label. */
+    Label label;
+    
 
     void Init(const TkdeParam& param) {
       moment_info.Init(param);
     }
+    
+    void Reset(const TkdeParam& param) {
+      moment_info.Reset();
+    }
 
     void ApplyPostponed(const TkdeParam& param, const TkdePostponed& other) {
+      DEBUG_ASSERT_MSG(label ^ other.label != -2, "Conflicting labels?");
+      label |= other.label;
       moment_info.Add(other.moment_info);
     }
   };
@@ -162,12 +177,6 @@ class Tkde {
     void ApplyDelta(const TkdeParam& param, const TkdeDelta& other) {
       d_density += other.d_density;
     }
-  };
-  
-  enum Label {
-    LAB_LO = -1,
-    LAB_UNKNOWN = 0,
-    LAB_HI = 1
   };
 
   // rho, but a bit of phi and lambda
@@ -196,6 +205,8 @@ class Tkde {
     void ApplyPostponed(const TkdeParam& param,
         const TkdePostponed& postponed,
         const Vector& q_point) {
+      label |= postponed.label; /* bitwise OR */
+      
       if (!postponed.moment_info.is_empty()) {
         density += postponed.moment_info.ComputeKernelSum(param, q_point);
       }
@@ -267,16 +278,26 @@ class Tkde {
     
     bool ApplyPostponed(const TkdeParam& param,
         const TkdePostponed& postponed, const QNode& q_node) {
-      bool anything_to_do = !postponed.moment_info.is_empty();
+      bool change_made;
       
-      if (unlikely(anything_to_do)) {
+      if (unlikely(postponed.label)) {
+        label = postponed.label;
+        change_made = true;
+      } else  if (unlikely(!postponed_moment_info.is_empty())) {
         density += moment_info.ComputeKernelSumRange(param, q_node.bound());
+        change_made = true;
+      } else {
+        change_made = false;
       }
       
-      return anything_to_do;
+      return change_made;
     }
   };
 
+  /**
+   * Abstract out the inner loop in a way that allows temporary variables
+   * to be register-allocated.
+   */
   struct TkdeVectorPairVisitor {
     double density;
     
@@ -306,7 +327,9 @@ class Tkde {
             param, q_point);
         return false;
       }
-
+      
+      density = 0;
+      
       return true;
     }
     
