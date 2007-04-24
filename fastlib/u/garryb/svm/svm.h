@@ -52,6 +52,7 @@ class SVM {
  private:
   TKernel kernel_;
   double c_;
+  double b_;
   Matrix support_vectors_;
   double thresh_;
   Vector alpha_;
@@ -72,9 +73,10 @@ void SVM<TKernel>::InitTrain(
   kernel_.Init(fx_submodule(module, "kernel", "kernel"));
   
   c_ = fx_param_double(module, "c", 1.0);
+  b_ = fx_param_double(module, "b", dataset.n_points());
   
   SMO<Kernel> smo;
-  smo.Init(&dataset, c_);
+  smo.Init(&dataset, c_, b_);
   smo.kernel().Copy(kernel_);
   smo.Train();
   

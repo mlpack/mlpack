@@ -25,6 +25,8 @@ class SMO {
   Vector error_;
   double thresh_;
   double c_;
+  double b_;
+  double sum_alpha_;
 
  public:
   SMO() {}
@@ -35,8 +37,9 @@ class SMO {
    *
    * You must initialize separately the kernel.
    */
-  void Init(const Dataset* dataset_in, double c_in) {
+  void Init(const Dataset* dataset_in, double c_in, double b_in) {
     c_ = c_in;
+    b_ = b_in;
 
     dataset_ = dataset_in;
     matrix_.Alias(dataset_->matrix());
@@ -45,6 +48,7 @@ class SMO {
 
     alpha_.Init(n_data_);
     alpha_.SetZero();
+    sum_alpha_ = 0;
 
     error_.Init(n_data_);
     error_.SetZero();
@@ -223,23 +227,6 @@ bool SMO<TKernel>::TryChange_(index_t j) {
     index_t i = -1;
     
 #if 0
-/*    double error_i = error_j;
-    if (error_j > 0) {
-      for (index_t k = 0; k < n_data_; k++) {
-        if (!IsBound_(alpha_[k]) && error_[k] < error_i) {
-          error_i = error_[k];
-          i = k;
-        }
-      }
-    } else {
-      for (index_t k = 0; k < n_data_; k++) {
-        if (!IsBound_(alpha_[k]) && error_[k] > error_i) {
-          error_i = error_[k];
-          i = k;
-        }
-      }
-    }
-*/
 #else    
     double diff_max = 0;
     
@@ -304,15 +291,20 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   int s = (yi == yj) ? 1 : -1;
   double error_i = Error_(i);
   double r;
+  double budget_upper_bound;
   
   if (s < 0) {
+    DEBUG_ASSERT(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
+    double gamma = alpha_i - alpha_j;
+    budget_upper_bound = (gamma - b_*c_ + sum_alpha_ - alpha_i - alpha_j) / (-2);
   } else {
     r = alpha_j + alpha_i - c_; // target values are equal
+    budget_upper_bound = DBL_MAX;
   }
   
   l = math::ClampNonNegative(r);
-  u = c_ + math::ClampNonPositive(r);
+  u = min(c_ + math::ClampNonPositive(r), budget_upper_bound);
 
   if (l == u) {
     // TODO: might put in some tolerance
@@ -341,19 +333,6 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     double c2 = yj * (error_i - error_j) - eta * alpha_j;
     double objlower = c1*l*l + c2*l;
     double objupper = c1*u*u + c2*u;
-    /*double fiold = error_i + yi;
-    double fjold = error_j + yj;
-    double vi = fiold + thresh_ - yi*alpha_[i]*kii - yj*alpha_[j]*kij;
-    double vj = fjold + thresh_ - yi*alpha_[i]*kij - yj*alpha_[j]*kjj;
-    double fl = alpha_[i] + s*alpha_[j] - s*l;
-    double fu = alpha_[i] + s*alpha_[j] - s*u;
-    double objlower = fl + l
-        - 0.5*kii*fl*fl - 0.5*kjj*l*l
-        - s*kij*fl*l - yj*l*vi;
-    double objupper = fu + u
-        - 0.5*kii*fu*fu - 0.5*kjj*u*u
-        - s*kij*fu*u - yj*u*vj;
-    */
     
     if (objlower > objupper + SMO_EPS) {
       alpha_j = l;
@@ -416,6 +395,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   alpha_[i] = alpha_i;
   alpha_[j] = alpha_j;
+  sum_alpha_ += delta_alpha_i + delta_alpha_j;
 
   // this is only necessary when i or j are not bound, but there is nothing
   // wrong with doing this all the time
