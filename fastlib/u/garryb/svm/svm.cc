@@ -1,5 +1,29 @@
 #include "svm.h"
 
+void PCA(Dataset* dataset) {
+  Matrix u;
+  Matrix vt;
+  Vector s;
+  Vector values;
+  
+  values.Init(dataset->n_points());
+  for (index_t i = 0; i < values.length(); i++) {
+    double *v = &dataset->matrix().ref(dataset->n_features() - 1, i);
+    values[i] = *v;
+    *v = 0;
+  }
+  
+  la::SVDInit(dataset->matrix(), &s, &u, &vt);
+  la::ScaleRows(s, &vt);
+  
+  dataset->matrix().CopyValues(vt);
+
+  for (index_t i = 0; i < values.length(); i++) {
+    double *v = &dataset->matrix().ref(dataset->n_features() - 1, i);
+      *v = values[i];
+  }
+}
+
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
   
@@ -44,6 +68,13 @@ int main(int argc, char *argv[]) {
     }
     data::Save("m.csv", m);
     dataset.OwnMatrix(&m);
+  }
+  
+  if (fx_param_exists(NULL, "pca")) {
+    fprintf(stderr, "Doing PCA\n");
+    PCA(&dataset);
+  } else {
+    fprintf(stderr, "Skipping PCA\n");
   }
   
   SimpleCrossValidator< SVM<SVMRBFKernel> > cross_validator;
