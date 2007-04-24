@@ -14,6 +14,10 @@ void PCA(Dataset* dataset) {
   }
   
   la::SVDInit(dataset->matrix(), &s, &u, &vt);
+  
+  /* Normalize singular values to length 1. */
+  la::Scale(1.0 / s[0], &s);
+  
   la::ScaleRows(s, &vt);
   
   dataset->matrix().CopyValues(vt);
@@ -22,6 +26,8 @@ void PCA(Dataset* dataset) {
     double *v = &dataset->matrix().ref(dataset->n_features() - 1, i);
       *v = values[i];
   }
+  
+  //dataset->matrix().PrintDebug("m");
 }
 
 int main(int argc, char *argv[]) {
