@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
   const char *data = fx_param_str(NULL, "data", NULL);
-  int n_labels = fx_param_int(NULL, "n_labels", 0);
+  int n_labels = fx_param_int(NULL, "n_labels", 2);
 
   Dataset dataset;
 

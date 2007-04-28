@@ -8,9 +8,9 @@ Examples:
   fx-csv knn_k ./main kfold/*/knn/params/k kfold/*/results/p_correct
   fx-csv knn_k ./main /params/knn/k kfold/*/results/p_correct
 
-This looks at results for all trials created from executable ./main and the
-label "knn_k".  Each path specified is a column in the resulting CSV file.
-Each match found is saved as a row in the file.
+All of these look at results for all trials created from executable ./main
+and the label "knn_k".  Each path specified is a column in the resulting CSV
+file. Each match found is saved as a row in the file.
 
 The paths allow a little bit of flexibility with the * operator.
 The * operator can be used in any position in the path names, and
@@ -18,6 +18,13 @@ just means to consider every directory in that path.  It is okay to combine
 paths with and without a * (as in the third example), and the result is to
 show all combinations (for experienced database folk, this is similar in
 idea to a database "natural join" operation.)
+
+Another feature is that you can select only a subset.  For example:
+
+  fx-csv knn_k ./main params/a=1 params/b results/val
+
+gives you a csv with a, b, and val as the columns, but only selects rows
+that contain a=1.
 
 See also fx-latex for creating LaTeX tables.
 

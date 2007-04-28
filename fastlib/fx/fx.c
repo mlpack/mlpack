@@ -19,10 +19,22 @@
 #include <unistd.h>
 #include <math.h>
 
+#if defined(VERBOSE) || defined(DEBUG)
+#define FX_SHOW_RESULTS_TIMERS
+#endif
+
 struct datanode *fx_root;
 
 /* TODO: Use this mutex everywhere */
 static pthread_mutex_t fx__mutex;
+
+static const char *fx__module_name(const struct datanode *node) {
+  if (node) {
+    return node->key;
+  } else {
+    return fx_root->key;
+  }
+}
 
 static void fx__report_system(struct datanode *node)
 {
@@ -83,8 +95,8 @@ static void fx__attempt_speedup()
 
   /* Stop and restart default timer to ensure timer code is dynamically
    * loaded and hopefully in L2 cache. */
-  fx_timer_start(NULL, NULL);
-  fx_timer_stop(NULL, NULL);
+  fx_timer_start(NULL, "default");
+  fx_timer_stop(NULL, "default");
 }
 
 void fx_init(int argc, char **argv) {
@@ -103,7 +115,7 @@ void fx_init(int argc, char **argv) {
     fx__attempt_speedup();
   }
 
-  fx_timer_start(NULL, NULL);
+  fx_timer_start(NULL, "default");
 }
 
 static void fx__finalize_timers(struct datanode *node,
@@ -151,6 +163,8 @@ static void fx__report_usage(int type, struct datanode *node)
   struct rusage usage;
   
   getrusage(type, &usage);
+  
+  /* TODO: It might be nice to disable this in debug mode. */
   
   /* Store all getrusage values, even if they are bogus. */
   fx_set_result(node, "./WARNING", "your_OS_might_not_support_all_of_these");
@@ -251,7 +265,7 @@ const char *fx_param_str(struct datanode *module, const char *name,
   if (!node->val) {
     if (!def) {
       FATAL("Required parameter \"%s\" unspecified in module \"%s\".",
-	    name, module ? module->key : fx_root->key);
+	    name, fx__module_name(module));
     } else {
       node->val = strdup(def);
     }
@@ -276,7 +290,7 @@ double fx_param_double(struct datanode *module, const char *name, double def)
   } else {
     if (sscanf(node->val, "%lf", &def) != 1) {
       FATAL("Parameter \"%s\" in module \"%s\" is not a double: \"%s\".",
-	    name, module ? module->key : fx_root->key, (char *)node->val);
+	    name, fx__module_name(module), (char*)node->val);
     }
   }
 
@@ -290,7 +304,7 @@ double fx_param_double_req(struct datanode *module, const char *name)
 
   if (sscanf(val, "%lf", &res) != 1) {
     FATAL("Parameter \"%s\" in module \"%s\" is not a double: \"%s\".",
-	  name, module ? module->key : fx_root->key, val);
+	  name, fx__module_name(module), (char*)val);
   }
 
   return res;
@@ -307,7 +321,7 @@ int fx_param_int(struct datanode *module, const char *name, int def)
   } else {
     if (sscanf(node->val, "%d", &def) != 1) {
       FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
-	    name, module ? module->key : fx_root->key, (char *)node->val);
+	    name, fx__module_name(module), (char*)node->val);
     }
   }
 
@@ -321,7 +335,7 @@ int fx_param_int_req(struct datanode *module, const char *name)
 
   if (sscanf(val, "%d", &res) != 1) {
     FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
-	  name, module ? module->key : fx_root->key, val);
+	  name, fx__module_name(module), val);
   }
 
   return res;
@@ -341,7 +355,7 @@ int fx_param_bool(struct datanode *module, const char *name, int def)
       return 0;
     } else {
       FATAL("Parameter \"%s\" in module \"%s\" is not a bool: \"%s\".",
-	    name, module ? module->key : fx_root->key, (char *)node->val);
+	    name, fx__module_name(module), (char *)node->val);
     }
   }
   return -1;
@@ -357,7 +371,7 @@ int fx_param_bool_req(struct datanode *module, const char *name)
     return 0;
   } else {
     FATAL("Parameter \"%s\" in module \"%s\" is not a bool: \"%s\".",
-	  name, module ? module->key : fx_root->key, val);
+	  name, fx__module_name(module), val);
   }
   return -1;
 }
@@ -488,6 +502,11 @@ void fx_set_result(struct datanode *module, const char *name, const char *val)
   struct datanode *node = fx__result(module, name, 1);
 
   node->val = strdup(val);
+
+#ifdef FX_SHOW_RESULTS_TIMERS
+  fprintf(stderr, "Result [%s] in [%s] set to [%s].\n",
+      name, module->key, val);
+#endif
 }
 
 void fx_format_result(struct datanode *module, const char *name,
@@ -521,9 +540,9 @@ static struct datanode *fx__timer(struct datanode *module, const char *name,
   if (!module) {
     module = fx_root;
   }
-  if (!name) {
+  /*if (!name) {
     name = "default";
-  }
+  }*/
 
   DEBUG_ERR_MSG_IF(name == NULL/* || name[0] == '\0'*/,
 		   "Empty path; maybe you want \".\"");
@@ -547,8 +566,13 @@ void fx_timer_start(struct datanode *module, const char *name)
 {
   struct datanode *node = fx__timer(module, name, 1);
 
-  DEBUG_MSG(0.0, "Timer \"%s\" in module \"%s\" started.",
-            name ? name : "default", module ? module->key : fx_root->key);
+#ifdef FX_SHOW_RESULTS_TIMERS
+  fprintf(stderr, "Timer [%s] in [%s] started.\n", name,
+      fx__module_name(module));
+#endif
+
+  /*DEBUG_MSG(0.0, "Timer \"%s\" in module \"%s\" started.",
+            name ? name : "default", module ? module->key : fx_root->key);*/
 
   if (!node->val) {
     node->val = malloc(sizeof(struct timer));
@@ -569,13 +593,16 @@ void fx_timer_stop(struct datanode *module, const char *name)
 
   if (node) {
     timer_stop(node->val, &now);
-    DEBUG_MSG(0.0, "Timer \"%s\" in module \"%s\" stopped at %5.3f wall-secs.",
-	      name ? name : "default", module ? module->key : fx_root->key,
-	      ((struct timer *)node->val)->total.micros / 1.0e6);
+#ifdef FX_SHOW_RESULTS_TIMERS
+    fprintf(stderr, "Timer [%s] in [%s] stopped, totalling %.3f wall-secs.\n",
+        name, module->key,
+        (int)((struct timer *)node->val)->total.micros / 1.0e6);
+#endif
   } else {
     NONFATAL("No timer named \"%s\" in module \"%s\".",
-	     name ? name : "default", module ? module->key : fx_root->key);
+	     name, fx__module_name(module));
   }
+
 }
 
 struct datanode *fx_submodule(struct datanode *module, const char *params,

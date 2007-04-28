@@ -56,7 +56,7 @@ class GCCCompiler(CompilerInfo):
       "check": "-O2 -g -DDEBUG",
       "fast": "-O2 -g -fomit-frame-pointer -DNDEBUG",
       "unsafe": "-O3 -ffast-math -g -fomit-frame-pointer -DNDEBUG",
-      "profile" : "-O2 -pg -finline-limit=8 -DPROFILE -DNDEBUG",
+      "profile" : "-O2 -pg -finline-limit=12 -DPROFILE -DNDEBUG",
       "small": "-Os -DNDEBUG"
     }
     self.command_from_ext = {

@@ -16,7 +16,9 @@ class CCInformDebug {
     fprintf(stderr, "[*] To collect profiling information:\n");
     fprintf(stderr, "[*] -> gprof $this_binary >profile.out && less profile.out\n");
 #endif
-    DEBUG_MSG(0.0, "Program was run in debug mode; up to 25%% slower.");
+#ifdef DEBUG
+    fprintf(stderr, "Program is being run with debugging checks on.");
+#endif
   }
 };
 

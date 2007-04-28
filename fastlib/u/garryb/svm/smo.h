@@ -1,4 +1,4 @@
-	#ifndef U_SVM_SMO_H
+#ifndef U_SVM_SMO_H
 #define U_SVM_SMO_H
 
 #include "fastlib/fastlib.h"
@@ -25,7 +25,7 @@ class SMO {
   Vector error_;
   double thresh_;
   double c_;
-  double b_;
+  int budget_;
   double sum_alpha_;
 
  public:
@@ -37,14 +37,14 @@ class SMO {
    *
    * You must initialize separately the kernel.
    */
-  void Init(const Dataset* dataset_in, double c_in, double b_in) {
+  void Init(const Dataset* dataset_in, double c_in, int budget_in) {
     c_ = c_in;
-    b_ = b_in;
 
     dataset_ = dataset_in;
     matrix_.Alias(dataset_->matrix());
     
     n_data_ = matrix_.n_cols();
+    budget_ = min(budget_in, n_data_);
 
     alpha_.Init(n_data_);
     alpha_.SetZero();
@@ -106,11 +106,15 @@ class SMO {
       val = error_[i];
       DEBUG_MSG(0, "error values %f and %f", error_[i], Evaluate_(i) - GetLabelSign_(i));
     } else {
-      val = Evaluate_(i) - GetLabelSign_(i);
+      val = CalculateError_(i);
     }
     return val;
   }
 
+  double CalculateError_(index_t i) const {
+    return Evaluate_(i) - GetLabelSign_(i);
+  }
+  
   double Evaluate_(index_t i) const;
 
   double EvalKernel_(index_t i, index_t j) const {
@@ -181,10 +185,11 @@ template<typename TKernel>
 void SMO<TKernel>::Train() {
   bool examine_all = true;
   index_t num_changed = 0;
+  int n_iter = 0;
   
   CalcKernels_();
 
-  while (num_changed > 0 || examine_all) {
+  while ((num_changed > 0 || examine_all)) {
     DEBUG_GOT_HERE(0);
     num_changed = TrainIteration_(examine_all);
 
@@ -192,6 +197,40 @@ void SMO<TKernel>::Train() {
       examine_all = false;
     } else if (num_changed == 0) {
       examine_all = true;
+    }
+    
+    if (++n_iter == 200) {
+      fprintf(stderr, "Max iterations %f!!!!!!!!!!!!!!!!!!!!!!!!!!\n",
+         sum_alpha_);
+      break;
+    }
+    
+    if (n_iter % 100 == 0 && budget_ < n_data_) {
+      MinHeap<double, int> alphas;
+      
+      alphas.Init();
+      for (index_t i = 0; i < n_data_; i++) {
+        alphas.Put(-alpha_[i], i);
+      }
+      
+      for (index_t i = 0; i < budget_; i++) {
+        alphas.Pop();
+      }
+      
+      while (alphas.size() > 0) {
+        alpha_[alphas.Pop()] = 0;
+      }
+      
+      sum_alpha_ = 0;
+      
+      for (index_t i = 0; i < n_data_; i++) {
+        if (!IsBound_(alpha_[i])) {
+          error_[i] = CalculateError_(i);
+        } else {
+          error_[i] = 0;
+        }
+        sum_alpha_ += alpha_[i];
+      }
     }
   }
 }
@@ -226,8 +265,6 @@ bool SMO<TKernel>::TryChange_(index_t j) {
   if (error_j != 0) {
     index_t i = -1;
     
-#if 0
-#else    
     double diff_max = 0;
     
     for (index_t k = 0; k < n_data_; k++) {
@@ -240,7 +277,6 @@ bool SMO<TKernel>::TryChange_(index_t j) {
         }
       }
     }
-#endif
     if (i != -1 && TakeStep_(i, j, error_j)) {
       return true;
     }
@@ -292,21 +328,22 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   double error_i = Error_(i);
   double r;
   double budget_upper_bound;
-  
+
   if (s < 0) {
     DEBUG_ASSERT(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
+    //budget_upper_bound = (budget_*c_ - sum_alpha_ + 2*alpha_j) / 2;
     double gamma = alpha_i - alpha_j;
-    budget_upper_bound = (gamma - b_*c_ + sum_alpha_ - alpha_i - alpha_j) / (-2);
+    budget_upper_bound = (gamma - budget_*c_ + sum_alpha_ - alpha_i - alpha_j) / (-2);
   } else {
     r = alpha_j + alpha_i - c_; // target values are equal
     budget_upper_bound = DBL_MAX;
   }
-  
+
   l = math::ClampNonNegative(r);
   u = min(c_ + math::ClampNonPositive(r), budget_upper_bound);
 
-  if (l == u) {
+  if (l >= u - SMO_TOLERANCE) {
     // TODO: might put in some tolerance
     DEBUG_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
     DEBUG_GOT_HERE(0);
@@ -325,7 +362,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   if (likely(eta < 0)) {
     DEBUG_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
-    alpha_j = math::ClampRange(alpha_j, l, u);
+    alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));
   } else {
     DEBUG_MSG(0, "Uncommon case");
     //abort();
@@ -341,6 +378,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     } else {
       alpha_j = alpha_[j];
     }
+    DEBUG_ASSERT(alpha_j == FixAlpha_(alpha_j));
   }
 
   alpha_j = FixAlpha_(alpha_j);
@@ -357,14 +395,12 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   if (alpha_i < SMO_ZERO) {
     alpha_j += s * alpha_i;
     alpha_i = 0;
-    //abort();
   } else if (alpha_i > c_ - SMO_ZERO) {
     double t = alpha_i - c_;
     alpha_j += s * t;
     alpha_i = c_;
-    //abort();
   }
-  alpha_j = FixAlpha_(alpha_j);
+  
   double delta_alpha_i = alpha_i - alpha_[i];
 
   // calculate threshold
@@ -381,7 +417,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   Vector kernel_i;
   Vector kernel_j;
-  
+
   kernel_cache_sign_.MakeColumnVector(i, &kernel_i);
   kernel_cache_sign_.MakeColumnVector(j, &kernel_j);
 
