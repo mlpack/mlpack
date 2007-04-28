@@ -10,8 +10,10 @@ __HYPERECTANGLE__::HyperRectangle(){
 
 __TEMPLATE__
 __HyperRectangle__::Init(int32 dimension) {
-  min_.Reset(Allocator_t::calloc<Precision_t>(dimension, 0));
-	max_.Reset(Allocator_t::calloc<Precision_t>(dimension, 0));
+  min_.Reset(Allocator_t::calloc<Precision_t>
+			 (dimension, numeric_limits<Precision_t>::max()));
+	max_.Reset(Allocator_t::calloc<Precision_t>
+			 (dimension, -numeric_limits<Precision_t>::max()));
 	pivot_dimension_=0;
 	pivot_value_=0;
 }

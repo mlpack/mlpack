@@ -34,6 +34,7 @@ class HyperRectangle {
 	typedef Loki::TL::TypeAt<TYPELIST, 2>::Result  Metric_t;
 	typedef HyperRectangle<TYPELIST, dignostic> HyperRectangle_t;
 	typedef Allocator_t:: template ArrayPtr<Precision_t> ArrayPtr_t;
+  typedef Allocator_t::template ArrayPtr<Precision_t> Array_t;
 	friend class HyperRectangleTest;
   
 	HyperRectangle();
@@ -83,9 +84,27 @@ class HyperRectangle {
 							 int32 dimension,
 							 ComputationsCounter<diagnostic> &comp);                            
   string Print(int32 dimension);
+  Array_t &get_min() {
+	  return min_;
+	}
+	Array_t &get_max() {
+	  return max_;
+	}
+	int32 get_pivot_dimension() {
+	  return pivot_dimension_;
+	}
+	Precision_t get_pivot_value() {
+	  return pivot_value_;
+	}
+	void set_pivot_dimension(int32 pivot_dimension) {
+	  pivot_dimension_=pivot_dimension;
+	}
+	void set_pivot_value(Precision_t pivot_value) {
+	  pivot_vlue_=pivot_velue;
+	}
  private:
-	Allocator_t::template ArrayPtr<Precision_t> min_;
-  Allocator_t::template ArrayPtr<Precision_t> max_;
+	Array_t min_;
+  Array_t max_;
   int32  pivot_dimension_; 
   Precision_t pivot_value_;                                                      
 };                         
