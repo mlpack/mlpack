@@ -52,7 +52,7 @@ class SVM {
  private:
   TKernel kernel_;
   double c_;
-  double b_;
+  int b_;
   Matrix support_vectors_;
   double thresh_;
   Vector alpha_;
@@ -73,7 +73,7 @@ void SVM<TKernel>::InitTrain(
   kernel_.Init(fx_submodule(module, "kernel", "kernel"));
   
   c_ = fx_param_double(module, "c", 1.0);
-  b_ = fx_param_double(module, "b", dataset.n_points());
+  b_ = fx_param_int(module, "b", dataset.n_points());
   
   SMO<Kernel> smo;
   smo.Init(&dataset, c_, b_);
@@ -89,6 +89,8 @@ void SVM<TKernel>::InitTrain(
   DEBUG_ONLY(support_vectors_.PrintDebug("support vectors"));
   DEBUG_ONLY(alpha_.PrintDebug("support vector weights"));
   DEBUG_ONLY(fprintf(stderr, "-- THRESHOLD: %f\n", thresh_));
+
+  fx_format_result(module, "n_support", "%"LI"d", alpha_.length());
 }
 
 template<typename TKernel>

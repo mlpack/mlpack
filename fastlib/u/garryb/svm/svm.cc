@@ -1,32 +1,62 @@
 #include "svm.h"
 
-void PCA(Dataset* dataset) {
-  Matrix u;
-  Matrix vt;
-  Vector s;
-  Vector values;
-  
-  values.Init(dataset->n_points());
-  for (index_t i = 0; i < values.length(); i++) {
-    double *v = &dataset->matrix().ref(dataset->n_features() - 1, i);
-    values[i] = *v;
-    *v = 0;
-  }
-  
-  la::SVDInit(dataset->matrix(), &s, &u, &vt);
-  
-  /* Normalize singular values to length 1. */
-  la::Scale(1.0 / s[0], &s);
-  
-  la::ScaleRows(s, &vt);
-  
-  dataset->matrix().CopyValues(vt);
+void DoSvmNormalize(Dataset* dataset) {
+  Matrix m;
+  Vector sums;
 
-  for (index_t i = 0; i < values.length(); i++) {
-    double *v = &dataset->matrix().ref(dataset->n_features() - 1, i);
-      *v = values[i];
+  m.Init(dataset->n_features()-1, dataset->n_points());
+  sums.Init(dataset->n_features() - 1);
+  sums.SetZero();
+
+  for (index_t i = 0; i < dataset->n_points(); i++) {
+    Vector s;
+    Vector d;
+    dataset->matrix().MakeColumnSubvector(i, 0, dataset->n_features()-1, &s);
+    m.MakeColumnVector(i, &d);
+    d.CopyValues(s);
+    la::AddTo(s, &sums);
   }
   
+  la::Scale(-1.0 / dataset->n_points(), &sums);
+  for (index_t i = 0; i < dataset->n_points(); i++) {
+    Vector d;
+    m.MakeColumnVector(i, &d);
+    la::AddTo(sums, &d);
+  }
+  
+  Matrix cov;
+
+
+  la::MulTransBInit(m, m, &cov);
+
+  Vector d;
+  Matrix u; // eigenvectors
+  Matrix ui; // the inverse of eigenvectors
+
+  //cov.PrintDebug("cov");
+  la::EigenvectorsInit(cov, &d, &u);
+  la::TransposeInit(u, &ui);
+
+  for (index_t i = 0; i < d.length(); i++) {
+    d[i] = 1.0 / sqrt(d[i] / (dataset->n_points() - 1));
+  }
+
+  la::ScaleRows(d, &ui);
+
+  Matrix cov_inv_half;
+  la::MulInit(u, ui, &cov_inv_half);
+
+  Matrix final;
+  la::MulInit(cov_inv_half, m, &final);
+
+  for (index_t i = 0; i < dataset->n_points(); i++) {
+    Vector s;
+    Vector d;
+    dataset->matrix().MakeColumnSubvector(i, 0, dataset->n_features()-1, &d);
+    final.MakeColumnVector(i, &s);
+    d.CopyValues(s);
+  }
+
   //dataset->matrix().PrintDebug("m");
 }
 
@@ -76,16 +106,23 @@ int main(int argc, char *argv[]) {
     dataset.OwnMatrix(&m);
   }
   
-  if (fx_param_exists(NULL, "pca")) {
-    fprintf(stderr, "Doing PCA\n");
-    PCA(&dataset);
+  if (fx_param_bool(NULL, "normalize", 1)) {
+    fprintf(stderr, "Normalizing\n");
+    DoSvmNormalize(&dataset);
   } else {
-    fprintf(stderr, "Skipping PCA\n");
+    fprintf(stderr, "Skipping normalize\n");
+  }
+  
+  if (fx_param_bool(NULL, "save", 0)) {
+    fx_default_param(NULL, "kfold/save", "1");
+    dataset.WriteCsv("normalized.csv");
   }
   
   SimpleCrossValidator< SVM<SVMRBFKernel> > cross_validator;
   cross_validator.Init(&dataset, 2, 2, fx_root, "svm");
   cross_validator.Run(true);
+  
+  cross_validator.confusion_matrix().PrintDebug("confusion matrix");
   
   fx_done();
 }

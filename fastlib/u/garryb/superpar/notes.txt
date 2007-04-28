@@ -32,3 +32,13 @@ DualTreeRunner
 
 Array
 
+- some ideas for me
+  - "stream" interface
+    - backend: separate files versus single files
+    - think about in-RAM
+      - linked list of blocks sounds okay
+  - small-cache interface
+    - allocate all memory necessary
+    - blocks have no alignment
+    - read blocks on first use
+    - explicit ranged writebacks

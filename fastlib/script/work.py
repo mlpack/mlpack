@@ -33,6 +33,10 @@ class WorkEntry:
     self.logfile = os.path.join(self.rundir, WorkEntry.LOGFILE)
     self.statusfile = os.path.join(self.rundir, WorkEntry.STATUSFILE)
   
+  def should_rerun(self, status):
+    """Used to allow errored runs to be re-run."""
+    return status != WorkEntry.IN_PROGRESS and status != WorkEntry.FINISHED
+  
   def to_datastore(self, node):
     #TODO: FINISH
     node.get_subnode_create()
@@ -73,35 +77,35 @@ class WorkEntry:
       for infile in self.runspec.all_inputs:
         if not os.path.exists(infile):
           return self.INPUT_NOT_AVAILABLE
-      if not os.path.exists(self.rundir):
-        util.ensuredir(self.rundir)
     except OSError:
       print "ERROR: Error reading input files: %s" % (str(self.runspec.all_inputs))
       return self.ERROR
+    if not os.path.exists(self.rundir):
+      util.ensuredir(self.rundir)
     try:
       if not util.createlock(self.statusfile):
         try:
           lines = util.readlines(self.statusfile)
           WorkEntry.STATES.index(lines[0]) # raise exception if not a valid state
-          return lines[0]
+          if not self.should_rerun(lines[0]):
+            return lines[0]
         except OSError:
           print "ERROR: Could not read status file %s." % self.statusfile
           return self.ERROR
+      print " ... %s" % self.runspec.to_command()
+      util.writefile(self.statusfile, self.IN_PROGRESS)
+      retval = util.spawn_redirect(
+        self.rundir, self.runspec.to_args(),
+        self.runspec.stdin, self.runspec.stdout, self.logfile)
+      if retval != 0:
+        status = self.ERROR
+        print " ... Error %d " % retval
+        print util.readfile(self.logfile)
       else:
-        print " ... %s" % self.runspec.to_command()
-        util.writefile(self.statusfile, self.IN_PROGRESS)
-        retval = util.spawn_redirect(
-          self.rundir, self.runspec.to_args(),
-          self.runspec.stdin, self.runspec.stdout, self.logfile)
-        if retval != 0:
-          status = self.ERROR
-          print " ... Error %d " % retval
-          print util.readfile(self.logfile)
-        else:
-          status = self.FINISHED
-          print " ... Done!"
-        util.writefile(self.statusfile, status)
-        return status
+        status = self.FINISHED
+        print " ... Done!"
+      util.writefile(self.statusfile, status)
+      return status
     except WorkQueue:
       try:
         util.writefile(self.statusfile, self.ERROR)
