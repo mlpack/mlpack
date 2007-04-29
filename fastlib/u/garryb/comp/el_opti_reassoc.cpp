@@ -1,26 +1,4 @@
 
-
-skeleton
-
-
-   f <- a + d                                                             
-   r1 <- a + b                                                             
-   r2 <- c + d                                                             
-   r3 <- r1 + r2                                                             
-   a <- b                                                             
-   g <- q                                                             
-   x <- f + g                                                             
- + f <- x + c                                                             
-   live-out: x, f                                                             
-
-  e = [h * i]
-  c = [f * g]
-  x = [a, b, c, d, e]
-  
-  r1 <- a + b
-  r2 <- r1 + b
-  x = ?
-
 bool r_is_add(Opcode opc) {
   return opc == ADD_W || opc == ADDL_W;
 }
@@ -37,85 +15,80 @@ bool r_is_mpy(Opcode opc) {
   return opc == MPY_W || opc == MPYL_W;
 }
 
+bool r_get_sign(Opcode opc) {
+  return (r_is_sub(opc)) ? -1 : 1;
+}
+
 bool r_can_reassoc(Opcode opc) {
   return r_is_addsub(opc) || r_is_mpy(opc);
 }
 
-struct Assoc_add_entry {
+Opcode r_get_canonical(Opcode opc) {
+  if (opc == ADD_W || opc == SUB_W) {
+    return ADD_W;
+  } else if (opc == ADDL_W || opc == SUBL_W) {
+    return ADDL_W;
+  } else if (opc == MPY_W) {
+    return MPY_W;
+  } else if (opc == MPYL_W) {
+    return MPYL_W;
+  }
+}
+
+struct Assoc_op_entry {
   int sign;
   int rank;
   const Operand& operand;
   
-  Assoc_add_entry(int sign_in, int rank_in, const Operand& operand_in)
+  Assoc_op_entry(int sign_in, int rank_in, const Operand& operand_in)
       : sign(sign_in)
       , rank(rank_in)
       , operand(operand_in) {
   }
   
-  friend operator < (const Assoc_add_entry& a, const Assoc_add_entry& b) {
-    if (a.sign != b.sign) {
-      return a.sign > b.sign;
-    } else {
+  friend operator < (const Assoc_op_entry& a, const Assoc_op_entry& b) {
+    if (a.rank != b.rank) {
       return a.rank < b.rank;
+    } else {
+      return a.sign > b.sign;
     }
   }
 
-  friend operator == (const Assoc_add_entry& a, const Assoc_add_entry& b) {
+  friend operator == (const Assoc_op_entry& a, const Assoc_op_entry& b) {
     return (a.sign == b.sign) && (a.rank == b.rank);
   }
 };
 
-struct Assoc_mul_entry {
-  int rank;
-  const Operand& operand;
-  
-  Assoc_add_entry(iint rank_in, const Operand& operand_in)
-      : rank(rank_in)
-      , operand(operand_in) {
-  }
-
-  friend operator < (const Assoc_mul_entry& a, const Assoc_mul_entry& b) {
-    return a.rank < b.rank;
-  }
-
-  friend operator == (const Assoc_mul_entry& a, const Assoc_mul_entry& b) {
-    return (a.rank == b.rank);
-  }
-};
-
+#warning "Rank information not used"
 #define NO_RANK 0
 
 class Associator {
  public:
-  
-  void Combine_adds(int sign, const Operand& operand,
-      Slist<Assoc_add_entry> *dest) const {
-    if (adds.is_bound(operand)) {
-      for (Slist_iterator<Assoc_add_entry> it(adds.value(operand)); it != 0; ++it) {
-        dest->add(Assoc_add_entry(it->sign * sign, it->rank, it->operand));
-      }
-    } else {
-      dest->add(Assoc_add_entry(sign, NO_RANK, operand));
-    }
-  }
-  
-  void Combine_muls(const Operand& operand,
-      Slist<Assoc_mul_entry> *dest) const {
-    if (adds.is_bound(operand)) {
-      for (Slist_iterator<Assoc_mul_entry> it(muls.value(operand)); it != 0; ++it) {
-        dest->add(Assoc_mul_entry(it->rank, it->operand));
-      }
-    } else {
-      dest->add(Assoc_mul_entry(NO_RANK, operand));
-    }
-  }
-  
+  void combine_ops(int sign, Opcode canonical,
+      const Operand& operand,
+      Slist<Assoc_op_entry> *dest) const;
+
  private:
   Basicblock *bb;
   Hash_set<int> delete_set;
-  Map<Operand, Slist<Assoc_add_entry>> adds;
-  Map<Operand, Slist<Assoc_mul_entry>> muls;
+  Map<Operand, Slist<Assoc_op_entry>> adds;
+  Map<Operand, Opcode> opcodes;
 };
+
+void Associator::combine_ops(
+    int sign, Opcode canonical,
+    const Operand& operand,
+    Slist<Assoc_op_entry> *dest) const {
+  if (opcodes.is_bound(operand) && opcodes.value(operand) == canonical) {
+    for (Slist_iterator<Assoc_op_entry> it(adds.value(operand));
+        it != 0; ++it) {
+      dest->add(Assoc_op_entry(it->sign * sign, it->rank, it->operand));
+    }
+  } else {
+    dest->add(Assoc_op_entry(sign, NO_RANK, operand));
+  }
+}
+
 
 /**
  * Initial backwards pass that finds out which lines must be computed
@@ -136,7 +109,7 @@ void Associator::find_delete_set() {
   
   for (Region_ops_linear op_iter(bb, true); op_iter != 0; --op_iter, --pos) {
     Op* cur_op = *op_iter;
-    bool can_reassoc = r_can_reassoc(op);
+    bool can_reassoc = false;
     bool must_compute = !can_reassoc;
     int my_dests_last_use = -999999; /* used before the block starts */
     int my_inputs_first_redef = max_pos;
@@ -209,17 +182,20 @@ class Result {
   
  public:
   Result() : op_(NULL), oper_(NULL), val_(-1) {}
-
-  Result(int constant, const Data_type& type)
-      : op_(NULL), oper_(new Int_lit(constant, type)), data_type_(type),
-        is_const_(true), val_(constant) {}
   
-  Result(Op* op_in, Datatype datatype_in)
-      : op_(op_in), oper_(NULL), data_type_(datatype_in), is_const_(false),
-        val_(-1) {}
+  Result(Op* op_in, Datatype data_type_in)
+      : op_(op_in)
+      , oper_(NULL)
+      , data_type_(data_type_in)
+      , is_const_(false)
+      , val_(-1)
+  {}
   
   Result(const Operand* oper_in)
-      : op_(NULL), oper_(oper_in), data_type_(oper_in->data_type()) {
+      : op_(NULL)
+      , oper_(oper_in)
+      , data_type_(oper_in->data_type())
+  {
     if (oper_in->is_lit() && oper_in->is_int()) {
       is_const_ = true;
       val_ = oper_in->int_value();
@@ -238,13 +214,8 @@ class Result {
       op_->set_dest(DEST1, dest);
     } else if (oper_) {
       op_ = new Op(get_move_opcode_for_operand(dest));
-      
-      Operand pred_true(new Pred_lit(true));
-      new_op->set_src(PRED1, pred_true);
-
-      Op_explicit_sources sources(new_op);
-      *sources = *oper_;
-      
+      op_->set_src(PRED1, Operand(new Pred_lit(true)));
+      op_->set_src(SRC1, *oper_);
       El_insert_op_before(successor->parent(), new_op, successor);
     }
     return op_;
@@ -306,17 +277,15 @@ Result Associator::insert_binop_before(const Result& lhs, const Result& rhs,
   }
 
   Op *new_op = new Op(opcode);
-
   new_op->set_src(PRED1, Operand(new Pred_list(true)));
   new_op->set_src(SRC1, lhs.make_operand());
   new_op->set_src(SRC2, rhs.make_operand());
 
-  assert(bb == successor->parent());
 
+  assert(bb == successor->parent());
   El_insert_op_before(successor->parent(), new_op, successor);
 
-  ASSERT(lhs.data_type() == rhs.data_type());
-
+  assert(lhs.data_type() == rhs.data_type());
   return Result(new_op, lhs.data_type());
 }
 
@@ -327,56 +296,25 @@ Result Associator::gen_code(const Operand& name, Op *successor) {
   Operand dest;
   Result result;
 
-  if (adds.is_bound(name)) {
-    Slist<Assoc_add_entry> adds;
-    Slist<Assoc_add_entry> subs;
-    Opcode add_opcode = get_add_opcode_for_operand(name);
-    Opcode sub_opcode = get_sub_opcode_for_operand(name);
+  if (opcodes.is_bound(name)) {
+    Opcode opcode = opcodes.value(name); // the canonical opcode
+    Opcode add_opcode;
+    Opcode sub_opcode;
 
-    for (Slist_iterator<Assoc_add_entry> all_it(adds.value(name));
-         all_it != 0; ++all_it) {
-      if (all_it->sign < 0) {
-        subs.add(*all_it);
-      } else {
-        adds.add(*all_it);
-      }
+    if (r_is_mpy(opcode)) {
+      result = Result(new Int_lit(1, name.data_type()));
+      add_opcode = get_mpy_opcode_for_operand(name);
+    } else if (r_is_add(opcode)) {
+      result = Result(new Int_lit(0, name.data_type()));
+      add_opcode = get_add_opcode_for_operand(name);
+      sub_opcode = get_sub_opcode_for_operand(name);
     }
 
-    Slist_iterator<Assoc_add_entry> add_iterator(adds);
-    Slist_iterator<Assoc_add_entry> sub_iterator(subs);
-
-    result = Result(0, name.data_type());
-
-    for (; sub_iterator != 0; ++sub_iterator) {
-      Result subresult = gen_code(sub_iterator->operand, successor);
+    for (Slist_iterator<Assoc_op_entry> subexpr(adds.value(name));
+         subexpr != 0; ++subexpr) {
+      Result subresult = gen_code(subexpr->operand, successor);
       result = insert_binop_before(result, subresult,
-          add_opcode, successor);
-    }
-
-    Result subresult;
-
-    if (add_iterator != 0) {
-      gen_code(add_iterator->operand, succesor);
-      insert_binop_before(subresult, result, sub_opcode, successor);
-      ++add_iterator;
-
-      for (; add_iterator != 0; ++add_iterator) {
-        Result subresult = gen_code(add_iterator->operand, successor);
-        result = insert_binop_before(result, subresult, add_opcode, successor);
-      }      
-    } else {
-      insert_binop_before(Result(0, name.data_type()), result,
-          sub_oppcode, successor);
-    }
-  } else if (muls.is_bound(name)) {
-    Slist_iterator<Assoc_mul_entry> entry_it(adds.value(name));
-    Opcode opcode = get_mpy_opcode_for_operand(name);
-
-    result = Result(1, name.data_type());
-
-    for (; entry_it != 0; ++entry_it) {
-      Result subresult = gen_code(entry_it->operand, successor);
-      result = insert_binop_before(result, subresult, opcode, successor);
+          subexpr->sign == 1 ? add_opcode : sub_opcode, successor);
     }
   } else {
     result = Result(&name);
@@ -389,55 +327,37 @@ void Associator::fix_basic_block() {
   for (Region_ops_linear op_iter(bb, false); op_iter != 0; ++op_iter) {
     Op* cur_op = *op_iter;
     bool can_reassoc = CAN_REASSOC(op);
+    bool must_compute = !delete_set.contains(cur_op->id());
 
     if (can_reassoc) {
-      Op_explicit_inputs input_oper(cur_op);
-      Operand& op1 = *input_oper;
-      Operand& op2 = *++input_oper;
-      Op_explicit_dests dest_oper_it(cur_op);
-      Operand& dest_oper = *dest_oper_it;
-      Opcode opcode = op->opcode();
+      Operand lhs = cur_op->src(SRC1);
+      Operand rhs = cur_op->src(SRC2);
+      Operand dest = cur_op->dest(DEST1);
+      Slist<Assoc_op_entry> mylist;
+      Opcode opcode = get_root(cur_op->opcode());
+      Opcode canonical = r_get_canonical(opcode);
 
-      if (r_is_addsub(opcode)) {
-        Slist<Assoc_add_entry> mylist;
-        int sign = r_is_add(opcode) ? 1 : -1;
+      combine_ops(1, canonical, op1, &mylist);
+      combine_ops(r_get_sign(opcode), canonical, op2, &mylist);
 
-        Combine_adds(1, op1, &mylist);
-        Combine_adds(sign, op2, &mylist);
+      adds.bind(dest, mylist);
+      opcodes.bind(dest, opcode);
 
-        adds.bind(dest_oper, mylist);
-      } else if (r_is_mpy(opcode)) {
-        Slist<Assoc_mul_entry> mylist;
-
-        Combine_muls(op1, &mylist);
-        Combine_muls(op2, &mylist);
-
-        muls.bind(dest_oper, mylist);
-        opcodes_bind(dest_oper, opcode);
-      } else {
-        abort();
-      }
-    }
-    
-    if (!delete_set.contains(cur_op->id())) {
-      if (can_reassoc) {
-        const Operand& dest_oper = cur_op->dest(cur_op->first_dest());
-        Result result = gen_code(dest_oper, cur_op);
-        result.assign_to(dest_oper, cur_op);
-        // remove from the sets -- make sure this is referenced explicitly
+      if (must_compute) {
+        gen_code(dest_oper, cur_op).assign_to(dest, cur_op);
+        // this must be referenced by name and not recalculated, so remove
+        // from sets.
+        opcodes.unbind(dest_oper);
         adds.unbind(dest_oper);
-        muls.unbind(dest_oper);
-      } else {
-        for (Op_complete_inputs input_oper(cur_op); input_oper != 0; ++input_oper) {
-          if (input_oper->is_reg()) {
-            Result result = gen_code(dest_oper, cur_op);
-            *input_oper = result.make_operand();
-          }
-        }
+      }
+    } else if (must_compute) {
+      for (Op_complete_inputs input_oper(cur_op);
+          input_oper != 0; ++input_oper) {
+        *input_oper = gen_code(*input_oper, cur_op).make_operand();
       }
     }
   }
-  
+
   for (Hash_set_iterator iter(delete_set); iter != 0; ++iter) {
     Op* op = (Op*)graph.b_map[iter];
     El_remove_op(op);
