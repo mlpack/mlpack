@@ -22,6 +22,7 @@
 #include "loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "dataset/binary_dataset.h"
+#include "hyper_rectangle.h"
 
 template<typename TYPELIST, bool diagnostic>
 class KdPivoter1 {
@@ -29,8 +30,9 @@ class KdPivoter1 {
 	typedef Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
 	typedef Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
   typedef Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
-  typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
-  struct PivotInfo {
+  typedef HyperBall<TYPELIST, diagnostic> HyperBall_t;
+  FORBID_COPY(KdPivoter1)
+	struct PivotInfo {
 	 public:
 	  void Init(index_t start, index_t num_of_points, HyperRectangle_t &box) {
 		  box_.Copy(box_);
@@ -42,15 +44,10 @@ class KdPivoter1 {
 		index_t start_;
 		index_t num_of_points_;
 	}; 
-  FORBID_COPY(KdPivoter1)
-	Init(BinaryDataset<Precision_t> *data) {
+ 	Init(BinaryDataset<Precision_t> *data) {
 	  data_=data;
 	}
-	PivotInfo *operator()(index_t num_of_points) {
 	
-	
-	
-	}
   pair<PivotInfo*, PivotInfo*> operator()(PivotInfo *pivot) {	
 	  index_t left_start = pivot->start_;
 	  index_t right_start = pivot->start_ + pivot->num_of_points_-1;
@@ -144,4 +141,4 @@ class KdPivoter1 {
 };
 
 
-#endif // KD_PIVOTER1_H_
+#endif // KD_PIVOTER_H_
