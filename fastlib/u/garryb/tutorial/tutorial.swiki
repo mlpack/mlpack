@@ -1,0 +1,438 @@
+!!!This Document
+
+We have three main types of documentation that come with the FASTlib, for different purposes.
+- Tutorial - you've never seen anything before, and you want to understand it.  This is in-depth over higher-level concepts.
+- Cookbook - If you're working on the code and don't know how to do X, see the *FASTlib Cookbook*.  This is very shallow over low-level details.
+- Doxygen - The most complete browsable documentation will always be the Doxygen, at *http://www.cc.gatech.edu/~garryb/fastlib/html/*.  It's a lot like Javadoc, and great if you know in general what you are looking for, or just want to grok how code is structured.
+
+!!!Introduction
+
+The FASTlib core, the library you downloaded, is meant to provide the basic tools needed to start hands-on with machine learning.  Its design goals are to have a low learning curve, allow distributed development, be as fast as possible, yet avoid most of the worst problems of developing in a low-level language.  It's very new and researchy, so it is possible that there will be a fair number of bugs.  Hold on to these emails for all sorts of complaints: garryb@cc.gatech.edu, rriegel@cc.gatech.edu
+
+Right now, it looks like FASTlib's core has the following:
+- Reading and writing datasets (ARFF and CSV)
+- Automating all sorts of experiments and result gathering
+- Debugging tools
+- Matrices and vectors, with dense matrix operations thanks to BLAS and LAPACK
+- Miscellaneous collections classes and math routines
+
+A lot of you probably learn by example, and will probably want to download the code example, and just check back here for reference.  The code example might be a nice place to start hacking away, located in u/example.
+
+!!!Getting Started
+
+!!Before installation
+
+Systems that we have tested:
+
+- Linux: 32-bit, 64-bit, Itanium
+- Cygwin
+- MacOSX (you will need g77, see http://hpc.sourceforge.net/ and search for g77; let us know if there are any further problems)
+
+Tools you'll need:
+
+- required: gcc C compiler, g++ C++ compiler, and g77 FORTRAN compiler (NOTE: g77 requirement is new!)
+- required: python 2.2 or later, check by typing python -V, earlier versions will NOT work
+- optional: doxygen (to generate local copies of documentation)
+
+!!Installation
+
+First, obtain a SVN password from your mail (these should be out sometime Wednesday, we'll send each person their own email).  Then, you will use:
+
+<code>
+svn checkout http://svn.cc.gatech.edu/fastlib-ext/fastlib
+</code>
+
+It will first ask you to enter a password for the user you are logged in -- if your SVN login differs from your username, just enter an empty password and it'll ask you for a username.  You will never need to use the password again for this particular repository, but you might keep store it somewhere in case you want to check out from scratch or on another computer.  Subversion commands are almost identical to CVS.  To get the newest version, just do "svn update".  If you are new to source control, see a subversion tutorial.
+
+Let's now assume that FASTlib is located in $FASTLIBPATH.  That is, if I checked out FASTlib and it is now stored in /net/hc293/garryb/fastlib, then whenever I see "$FASTLIBPATH" in this tutorial I will assume /net/hc293/garryb/fastlib.  Make sure this is an absolute path (it will start with a "/" at the beginning).
+
+After this, you will need to make sure your environment variables are set up properly.  Simply add $FASTLIBPATH/script into your $PATH environment variable.  First find out what shell you are using by typing <html></code>echo $0</code></html>, and it will be bash, ksh, csh, or tcsh.  If you are using the bash or ksh shell, you should add this to your ~/.bashrc (for bash) or ~/.kshrc (for ksh), or ~/.profile if the other doesn't exist, substituting $FASTLIBPATH accordingly:
+
+<code>
+export PATH="$FASTLIBPATH/script:$PATH"
+</code>
+
+If you are using csh or tcsh, put the following in your ~/.cshrc file:
+<code>setenv PATH "$FASTLIBPATH/script:""$PATH"</code>
+
+Close your terminal and re-open it.  Check to see if FASTlib is working by typing:
+<code>fl-build  # that is lowercase "FL-BUILD"</code>
+It should give you the help message for FASTlib's build system.  If it doesn't, type:
+<code>echo $PATH</code>
+and make sure the <i>$FASTLIBPATH</i>/script is there and is spelled exactly correctly.  Try typing the export or setenv command by hand and see if it starts working afterwards.  Consult your friend who knows Unix when necessary.
+
+Now, change into your $FASTLIBPATH, and change into u/example.  This is where the example code is, and you can try building it by:
+
+<code>
+fl-build main
+</code>
+
+If this does not work, email garryb@cc and tell what kind of system you are trying this on or anything else you think would be interesting (really old versions of python, etc).  If it worked, there will be a ./main executable.  If you can find an ARFF dataset with no missing data, having a last column that is a binary classification (nominal), then you can run 10-fold cross-validation with K-nearest-neighbors:
+
+<code>
+./main --data=fake.arff
+</code>
+
+You should see p_correct is 1.0 -- this dataset was fabricated to do well with nearest-neighbor classification.
+
+!!Code Organization
+
+FASTlib's core has a major C++ part, but smaller python parts with a few shell scripts.  These are laid out in the following way:
+
+- Core C++
+-- base/ - basic compiler abstractions and debugging tools
+-- fx/ - FASTexec client library, for managing parameters, results, and timers, via the data store
+-- data/ - dataset utilities and cross-validation
+-- math/ - some basic mathematical utilities (we envision growing this)
+-- la/ - linear algebra routines (thanks to BLAS and LAPACK)
+-- file/ - convenient stateful file readers
+-- col/ - collections (dynamic array, heap)
+-- fastlib/ - wraps all the packages neatly into one package and header
+- Community-built C++
+-- u/ (user directory)
+- Other
+-- script/ has scripts that will be in your $PATH variable, and a python mini-library used by the scripts
+-- bin/ contains files generated by the build system - deleting this is equivalent to make clean
+
+!!Adding your code to the repository
+
+Add your code under the u/ directory.  There are existing directories for each of the major projects which you can feel free to use to synchronize your code.  When you want to add a new file, create the file first and then run:
+
+<code>svn add yourfilename</code>
+
+To actually get the code into the repository, change into your team directory and run:
+
+<code>svn commit -m 'short message describing what you changed'</code>
+
+Before you commit, you may have to get back changes that other people have made to ensure there aren't any conflicts.  Go up to $FASTLIBPATH and type:
+
+<code>svn update</code>
+
+You then will be able to analyze if someone else made conflicting changes -- you'd want to make sure the code still compiles.
+
+From time to time we will add updates to the entire fastlib core.  While we do all the tests we can to make sure this doesn't break anything, we cannot guarantee the occasional break.  Emails are highly appropriate in this case :-)
+
+!!Building
+
+!Using the build tool
+
+As stated earlier, building is done via the <code>fl-build</code> tool.  This tool reads through very short files which just have a list of sources (.cc files), headers (.h files), and other sub-packages it depends on, and produces a Makefile, which it runs automatically.
+
+There are a handful of compilation modes supported by fl-build, specified by the --mode=<i>mode</i> parameter.  Each mode has a use, and enables certain flags:
+
+- verbose: tracking the execution of a program when it's infeasible to step through manually.  disables optimizations, enables printing of verbosity messages
+- debug: allow best use with gdb for tracking bugs.  disables optimization, enables all debug checks, enables highest level of gdb.
+- check (default mode): regular development.  enables code optimizations and leaves in debug checks, at a 25% or so penalty.  gdb symbols are compiled in but may result in inaccurate information.
+- fast: timing runs, for the fairest timing comparisons.  debug symbols still enabled but may be inaccurate.
+- unsafe: optimizations that might alter correctness, and often will slow the program down.
+- profile: speed profiling.  compile with --mode=profile, run your program, and run <code>gprof ./binaryfile | less</code> to see what the bottleneck is.
+
+(For the curious: The command line flags are listed in script/buildsys.py)
+
+Thus, we could re-build the example, but turn off all debug checks:
+
+<code>
+fl-build main --mode=debug
+</code>
+
+!Writing build files
+
+You probably want to skip this subsection until you start writing new code.
+
+The fl-build tool looks in the current directory for a file called build.py.  When this file is called, a few specific functions are defined which you call.  These functions define meta-rules.  In processing these, the build system recursively pulls build files from other directories and resolves the dependencies.  This finally creates a Makefile in your current directory, which fl-build will automatically run for you.
+
+Here is a sample build rule that will build an executable test compiled from test.cc and test.h, and link it against the fastlib library:
+
+<code>
+binrule(
+   name = "test",
+   sources = ["test.cc"],
+   headers = ["test.h"],
+   linkables = ["fastlib:fastlib"]
+</code>
+
+Each string you see is actually processed by the build system, and it will figure out what you are referring to.  If there is no colon ":" character, it looks for a file in the same directory as the build file.  If it finds a ":", such as "fastlib:fastlib", it looks in the directory "fastlib" for a rule named "fastlib" -- the left part of the colon is the directory, the right part is the rule name.  The full path to the rule for main in /example is "u/example:main".
+
+Next, you might want to create a small reusable library.  Looking at the build file in u/example/build.py:
+
+<code>
+librule(
+    name = "example",              # this line can be safely omitted
+          # (since this is u/<b>example</b>, the build system
+          # will automatically name it "example" if you omit it -- most
+          # other sub-packages will omit it
+    sources = ["helper.cc"],       # files that must be compiled
+    headers = ["helper.h"],        # include files part of the 'lib'
+    deplibs = ["fastlib:fastlib"]  # depends on fastlib core
+    )
+
+binrule(
+    name = "main",                 # the executable name
+    sources = ["main.cc"],         # compile main.cc
+    headers = [],                  # no extra headers
+    linkables = [":example"]       # depends on example in this folder
+    )
+</code>
+
+!!!Use of C++
+
+FASTlib is C++, but only to an extent.  If you are familiar with C, you will have no problem.  The things we use from C++ is:
+
+- Templates, for pluggability
+- Classes, for coupling data and operations over the data
+- Destructors, to avoid unnecessary clean-up code, and to better support templates
+
+FASTlib mostly avoids inheritance, virtual functions, and operator overloading.  It also notably avoids most constructors due to their pickiness about when they are called.  Here's an example of what this looks like.  In particular, we'll create a multiplication table:
+
+<code>
+  Matrix mult_table;
+
+  mult_table.Init(10, 10); // make it 10 rows by 10 columns
+
+  for (index_t i = 0; i < 10; i++) {
+    for (index_t j = 0; j < 10; j++) {
+      mult_table.set(i, j, i * j);
+    }
+  }
+  // the matrix does not have to be freed
+</code>
+
+Some quick notes before we move on.  The matrix must be initialized before it is usable, but keep in mind everything is freed by default.  <u>Caution</u> -- if you declare a matrix and never initialize it, the program will crash at the end of the function.  In debug mode, many FASTlib classes will let you know that this is happening.
+
+Next, the index_t type is usually an regular int, but is wired through the system to become 64-bit if you tell it to.
+
+!!Copying and Aliasing
+
+C++ is infamous for its desire to make copies of everything.  If you forget to pass a parameter as a constant reference (const Classname&), everything will be copied, but sometimes, there is just no way to get around of it.  By avoiding constructors, we find copying is usually not needed.  To avoid accidental copies of your class, put FORBID_COPY at the beginning like this:
+
+<code>
+class X {
+  FORBID_COPY(X);
+  ...
+}
+</code>
+
+Sometimes, though, you really need to make copies, or at least things like copies.  Many classes support a Copy method to explicitly do so, through the Matrix and Vector.
+
+The Vector and Matrix classes support a concept of <i>aliasing</i>.  A vector can be a vector on its own, or it could also point to some column within a matrix; a matrix can also refer to a subset of another matrix's columns.  The concept is simple, but there is one caveat: without garbage collection, somebody eventually has to free the memory.  Each Vector and Matrix then knows whether it is the <i>owner</i> of the memory it points to, and if it is, it will free the data automatically; otherwise, it is only an alias.
+
+An example is shown here:
+
+<code>
+   Matrix original;
+   original.Init(5, 5);
+   ...
+   for (int j = 0; j < 3; ++) {
+     Matrix weak_alias;
+     weak_alias.Alias(original); // this matrix now aliases the original
+     weak_alias.set(j, j, 999.0); // this modifies the original matrix
+     // the destructor of weak_alias is called, but the memory is not freed
+   }
+   Matrix newowner;
+   newowner.Own(&original); // newowner
+   Matrix copy;
+   copy.Copy(original); // a completely new copy 
+   original.Destruct(); // newowner is still valid
+   original.Init(99, 99);
+</code>
+
+!!Debugging
+
+C++, and equally C, can sometimes make it easy to shoot yourself in the foot.  To help you avoid this, we made debugging an important part of FASTlib.
+
+The build system by default will enable all checks in the form of <b>#ifdef DEBUG</b> (we'll get back to this later).  These checks and safeguards, such as bounds checking and memory poisoning, are present in nearly all core FASTlib classes.  If you are debugging and find 0xDEADBEEF, 2146666666, or 0x7FF388AA, or NaN, it probably means you forgot to initialize something; if you go beyond the end of a Vector, it will let you know.  In practice, these have a 20% or so performance penalty -- as a habit, we've found it's just fine to leave these on until you want to run timing experiments.  In machine learning code, since you can sometimes generate seemingly good results from garbage data, these types of safeguards are almost essential.
+
+To use debugging yourself, plaster your code with the following:
+
+- DEBUG_ASSERT_MSG(condition, format, ...) - If the condition is false, your program will print the formatted message to stderr and die.
+- DEBUG_GOT_HERE(3) - If verbosity is > 3 and verbose-mode is compiled on, it will print the function and line number.  You can safely leave these in at no cost in non debug mode.  To set verbosity level to 3.0, you would specify the command line argument: --debug/verbosity_level=3.0
+
+See the Doxygen for base/debug.h for more information.
+
+!!!FASTexec - Command-line parameters and experimentation
+
+We felt it is important that machine learning researchers can run a lot of experiments without too much trouble.  Parameter passing is integral to the experimentation process, so we unified these.
+
+The core idea behind the system is that within one run of your program, a hierarchial data store is created.  In some ways it is similar to a "Windows registry" except it only has a very brief existence.  In fact, it more like an XML document tree, except without attributes, and has a "stateless" output format.
+
+Back to reality, you probably want to learn how to use this.  We'll split this up into the more basic and advanced sections.
+
+!!Basic command-line parameters
+
+Let's look at a non-trivial example.  We're measuring how different strided memory access patterns affect cache performance (something you probably won't care about, but is trivial to code):
+
+<code>
+#include "fastlib/fastlib.h"
+int main(int argc, char *argv[]) {
+  fx_init(argc, argv); // initialize command-line parameters and the data store
+  int count = fx_param_int_req( // get a REQUIRED integer parameter
+      NULL, // directly from command line (not from a sub module)
+      "count"); // called "count", as in --count=num
+  int stride = fx_param_int(NULL, "stride", 1); // defaults to stride 1
+  double factor = fx_param_double(NULL, "factor", 1.0); // default value 1.0
+  
+  ArrayList<double> values;
+  values.Init(count);
+
+  fx_timer_start(NULL, "strides"); // timers have names
+  // Let's see how stride effects cache performance
+  for (int s = 0; s < stride; s++) {
+    for (int j = s; j < count; j += stride) {
+      values[j] = factor * j;
+    }
+  }
+  fx_timer_stop(NULL, "strides");
+  fx_format_result(NULL, "success", "%d", 1); // store some result
+  fx_done();
+}
+</code>
+
+The useful functions we used were fx_param_int (to get an integer), fx_param_double (to get a double-precision value), fx_timer_{start|stop} to have timers, and fx_done() to output the results.  I ran this example with the parameters:
+
+<code>
+./test --count=10000 --factor=2.0
+</code>
+
+and the following text resulted:
+
+<code>
+/timers/strides/children/sys 0.000000
+/timers/strides/children/user 0.000000
+/timers/strides/self/sys 0.000000
+/timers/strides/self/user 0.000000
+/timers/strides/wall/sec 0.000061
+/timers/default/children/sys 0.000000
+/timers/default/children/user 0.000000
+/timers/default/self/sys 0.000000
+/timers/default/self/user 0.000000
+/timers/default/wall/sec 0.000354
+/params/stride 1
+/params/fx/timing 0
+/params/debug/print_notify_headers 1
+/params/debug/pause_on_nonfatal 0
+/params/debug/abort_on_nonfatal 0
+/params/debug/print_warnings 1
+/params/debug/print_got_heres 1
+/params/debug/verbosity_level 1
+/params/factor 2.0
+/params/count 10000
+/results/success 1
+/info/rusage/children/nivcsw 0
+/info/rusage/children/nvcsw 0
+/info/rusage/children/nsignals 0
+/info/rusage/children/msgrcv 0
+/info/rusage/children/msgsnd 0
+/info/rusage/children/oublock 0
+/info/rusage/children/inblock 0
+/info/rusage/children/nswap 0
+/info/rusage/children/isrss 0
+/info/rusage/children/idrss 0
+/info/rusage/children/ixrss 0
+/info/rusage/children/maxrss 0
+/info/rusage/children/majflt 0
+/info/rusage/children/minflt 0
+/info/rusage/children/stime 0.000000
+/info/rusage/children/utime 0.000000
+/info/rusage/children/WARNING your_OS_might_not_support_all_of_these
+/info/rusage/self/nivcsw 1
+/info/rusage/self/nvcsw 3
+/info/rusage/self/nsignals 0
+/info/rusage/self/msgrcv 0
+/info/rusage/self/msgsnd 0
+/info/rusage/self/oublock 0
+/info/rusage/self/inblock 0
+/info/rusage/self/nswap 0
+/info/rusage/self/isrss 0
+/info/rusage/self/idrss 0
+/info/rusage/self/ixrss 0
+/info/rusage/self/maxrss 0
+/info/rusage/self/majflt 0
+/info/rusage/self/minflt 393
+/info/rusage/self/stime 0.002999
+/info/rusage/self/utime 0.002999
+/info/rusage/self/WARNING your_OS_might_not_support_all_of_these
+/info/system/kernel/build %231%20SMP%20Tue%20Jan%2023%2012%3A49%3A51%20EST%202007
+/info/system/kernel/release 2.6.9-42.0.8.ELsmp
+/info/system/kernel/name Linux
+/info/system/arch/name x86_64
+/info/system/node/name shannon.cc.gatech.edu
+</code>
+
+We admit this is a lot of text, but when you later comb through the results, you can only select the portions you care about.  Briefly, each portion of the tree:
+
+- params/ - Parameters you were called with.  Default parameters are explicitly stored in case you later change what the default values are.
+- timers/ - Each timer.  There will always be a default timer, which runs between fx_init and fx_done.
+- results/ - Results that you decided to emit
+- info/rusage/ - System information related to rusage.  See the manpage for getrusage(2).
+- info/system/ - Information on the system run on.  See manpage for uname(2).
+
+This output could indeed just be an s-expression, or it could be an attribute-less XML file.  We chose this path-value dump format because it is stateless -- i.e. anyone can process it with a little bit of grep.  Corruption in the file will only affect it until the next newline.
+
+!!Running automated experiments and collecting results
+
+Running experiments and collecting results is made simpler using FASTexec.  After using the FASTexec code to store output variables in the datastore, you can use FASTexec to run multiple experiments.
+
+If you type the command:
+<code>fx-run | less</code>
+you will see the help screen for fx-run.  (I'll also paste these into *FASTexec Help Screens*).  This program will run your executable with all combinations of the parameters you give it, and save it in a directory called "fx" that is created in the same directory you run the tests.  After that, gather results using fx-csv to make an Excel-compatible comma-separated-values file, or fx-latex to create a LaTeX table.
+
+An example usage you can try out, using the K-nearest-neighbors classifier example in u/example:
+
+<code>
+  cd $FASTLIBPATH/u/example && fl-build main
+  fx-run knn_k ./main --knn/k=1,2,3,4,5 --data=../../../../fake.arff
+  fx-csv knn_k ./main /params/knn/k /kfold/results/p_correct
+  fx-latex knn_k ./main /params/knn/k /kfold/results/p_correct --preview
+</code>
+
+!!!Little gotchas
+
+!!Success and failure
+
+The success_t type in base/common.h defines our standard for indicating success or failure.  Rather than assuming 1 or 0 or -1 indicates something or other, we explicitly return SUCCESS_PASS (succeeded), SUCCESS_FAIL (failed), or SUCCESS_WARN (something was suboptimal).
+
+!!Basic types
+
+You will notice heavy use of index_t (in base/scale.h) rather than integers.  For practical purposes, index_t is a signed integer -- signed so you can loop over &gt;= 0.  On 32-bit and 64-bit Intel/AMD machines, this will be 32-bits, which is the fastest int for both systems and is relatively compact.  But if you want to operate on datasets larger than a few gigabytes, you can define the SCALE_LARGE macro, and these will instantly switch to the largest size your computer can address.
+
+Also, the base/basic_types.h file (it will be in bin/ since it is auto-generated) defines standard int16, int32, int64, uint16, uint32, uint64 types (which most OS's provide, but the names vary from OS to OS).
+
+!!Printf versus Streams
+
+We operate under the assumption that more of our audience is familiar with C I/O than with C++ I/O, especially when it comes to fancy floating-point formatting.
+
+The caveat is that printf only works with native types like int, short, long.  To print an index_t, you use:
+
+<code>
+printf("Iteration %"LI"d complete.", some_index_var);   // no special formatting
+printf("Iteration %04"LI"d complete.", some_index_var); // with formatting
+</code>
+
+The LI macro is a string that will have the suitable "l" modifier for index_t (see man sprintf for more details).  For other types:
+
+- int16 and uint16: L16
+- int32 and uint32: L32
+- int64 and uint64: L64
+
+Alternately, you can just cast the variable to a native type like (int) (short) or (long), if you want to be lazy.
+
+!!Coding style
+
+The funny usage of capitalization and underscores does have a method to the madness.  In particular:
+
+- variables are <i>lower_with_underscore_and_descriptive_when_possible</i>
+- namespaces are <i>lowercase</i>
+- classes are <i>InitialCamelCase</i>
+- member methods which perform an actual interesting action are <i>InitialCamelCase</i>
+- member methods which are just getters or setters are <i>short_and_lowercase</i>
+- private members variables are <i>lower_with_trailing_underscore_</i>
+- sub-packages intended for incorporation into non-fastlib C code look more like traditional C
+
+After a while it will make sense.  The inconsistency in member methods looks very odd at first, but you must admit it kind of helps you mentally understand this very non-Demeterish example:
+
+<code>
+warehouse.carboard_box().contents().bottom().AttachTape(
+    samsclub.utilities_department().shelf(3).item("packaging tape").Purchase());
+</code>
+
+Finally, there is no requirement you adhere to this -- we believed it was just best to document this somewhere.

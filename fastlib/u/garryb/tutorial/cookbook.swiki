@@ -1,0 +1,136 @@
+(Feel free to edit)
+
+_
+!!!Dataset Stuff
+
+!Reading a dataset
+
+<code>
+  const char *data = fx_param_str(NULL, "data", NULL);
+
+  Dataset dataset;
+
+  if (!PASSED(dataset.InitFromFile(data))) {
+    fprintf(stderr, "Couldn't open file '%s'.\n", data);
+    return 1;
+  }
+</code>
+
+You can access the data by calling <html><code>dataset.matrix()</code></html>.  Each row is a feature, each column is a point/datum.
+
+To figure out if a parameter is continuous, integer, or nominal, look at <html><code>dataset.n_features()</code></html> and <html><code>dataset.info().feature(feature_number)</code></html> -- see the DatasetFeature class.
+
+A simpler function if all you want to do is load a matrix:
+<code>
+Matrix D;
+data::Load("filename.csv", &D);
+</code>
+
+!Writing a dataset
+
+<code>
+const char *outfile;
+if (!PASSED(dataset.WriteCsv(outfile)) {
+  fprintf(stderr, "Error writing the file '%s'.\n", outfile);
+}
+</code>
+
+Alternately, use WriteArff.  WriteCsv will output a header with the column names if you add another parameter "true": WriteCsv(outfile, true).
+
+To write a matrix directly to CSV, use:
+<code>data::Save("foo.csv", some_matrix);</code>
+
+!Cross validation
+
+Implement a class:
+
+<code>
+class MyClassifier {
+   ...
+   // Trains on the dataset specified.  n_classes is the number of class
+   // labels.  Tweak parameters can be obtained from the "datanode" passed
+   // using fx_param_int, fx_param_double, etc, but passing in "module" as
+   // the first parameter instead of NULL.
+   //
+   void InitTrain(const Dataset& dataset, int n_classes, datanode *module);
+   // For a test datum, returns the class label 0 <= label < n_classes
+   int Classify(const Vector& test_datum);
+ };
+</code>
+
+Then, use:
+
+<code>
+Dataset dataset;
+dataset.InitFromFile("somefile.csv");
+SimpleCrossValidator<KnnClassifier> cross_validator;
+const char *algorithm_name = "knn"; // k-nearest-neighbors
+int n_labels = 2; // binary classifier -- label is 0 or 1
+int n_folds = 10; // 10-fold cross validation
+cross_validator.Init(&dataset, n_labels, n_folds, fx_root, algorithm_name);
+cross_validator.Run();
+</code>
+
+Since algorithm_name is knn, we can pass parameters to it using the path "knn".  For example, if the KNN classifier wants a parameter called "k" and we want to set it to 5, we run:
+
+<code>
+./executable --knn/k=5
+</code>
+
+The cross validator assumes the last column of the dataset is an integer label 0 &lt;= label &lt; n_labels.  For n_labels = 2, the values must be 0 or 1.
+
+
+_
+!!!Common matrix operations
+
+<code>
+Matrix A;
+Matrix B;
+
+A.Init(3, 3);
+B.Init(3, 4);
+.. omitted: set contents of A and B to some matrix
+
+// Matrix multiplication
+Matrix A_times_B;
+la::MulInit(A, B, &A_times_B);
+Matrix Atrans_times_B;
+la::MulTransAInit(A, B, &Atrans_times_B);
+
+// Inverse
+Matrix A_inverse;
+la::InverseInit(A, &A_inverse);
+
+// Determinant
+double d = la::Determinant(A);
+
+// Solve a system of equations for a vector
+Vector b; // solve single vector -- for multiple vectors, use a matrix
+Vector x;
+b.Init(3);
+... set values of b to the vector to solve for
+la::SolveInit(A, b, &x);
+
+// Eigenvalues
+Matrix V;
+Vector w;
+la::EigenvectorsInit(A, &V, &w);
+
+// Singular value decomposition
+Matrix U;
+Vector s;
+Matrix VT;
+la::SvdInit(B, &U, &s, &VT);
+
+// Creating a diagonal matrix S from vector s
+Matrix S;
+S.Init(s.length());
+S.SetDiag(s);
+</code>
+
+_
+!!!Math Stuff
+
+(example section - can add more)
+
+
