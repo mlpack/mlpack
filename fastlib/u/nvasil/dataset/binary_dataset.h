@@ -35,6 +35,23 @@ class BinaryDataset {
 	friend class BinaryDatasetTest;
  public:
 	typedef PRECISION Precision_t;
+	friend class BinaryDataset<Precision_t>::iterator;
+	class Iterator {
+	 public:
+		Iterator(BinaryDataset<Precision_t> *dataset_) {
+		  set_=dataset;
+		} 
+		Iterator &operator=(const iterator &other) {
+		}
+		Iterator operator++();
+		Iterator operator--();
+		bool operator==(const Iterator &other);
+		bool operator!=(const Iterator &other);
+		Iterator & operator*();
+
+	 private:
+	  BinaryDataset<Precision_t> *set_;	
+	};
 	BinaryDataset() {
 	  data_file_="";
 		index_file_="";
@@ -111,10 +128,19 @@ class BinaryDataset {
 	}
 	// returns a pointer on the data at the ith point
 	Precision_t* At(index_t i) {
+		DEBUG_ASSERT_MSG(i<num_of_points_, 
+				             "Attempt to acces data out of range "LI">"LI, i, 
+										  num_of_points_);
 	  return data_+i*dimension_;
 	}
 	// returns a reference on the i,j element
 	Precision_t &At(index_t i, index_t j) {
+     DEBUG_ASSERT_MSG(i<num_of_points_, 
+		                  "Attempt to acces data out of range "LI">"LI, i, 
+										   num_of_points_);
+    DEBUG_ASSERT_MSG(j<dimension_,
+				             "Attempt to access element greater that the dimension "
+										 LI">"L32, j, dimension_a;)
 	  return data_[i*dimension_+j];
 	}
 	// get the index at i point

@@ -1,24 +1,24 @@
 #ifndef HYPER_RECTANGLE_IMPL_H_
 #define HYPER_RECTANGLE_IMPL_H_
 
-#define __TEMPLATE__ template<typename TYPELIST, bool diagnostic>
-#define __HyperRectangle__ HyperRectangle<TYPELIST, diagnostic>
+#define TEMPLATE__ template<typename TYPELIST, bool diagnostic>
+#define HYPERRECTANGLE__ HyperRectangle<TYPELIST, diagnostic>
 
-__TEMPLATE__
-__HYPERECTANGLE__::HyperRectangle(){
+TEMPLATE__
+HYPERRECTANGLE__::HyperRectangle(){
 }
 
-__TEMPLATE__
-__HyperRectangle__::Init(int32 dimension) {
-  min_.Reset(Allocator_t::calloc<Precision_t>
+TEMPLATE__
+void HYPERRECTANGLE__::Init(int32 dimension) {
+  min_.Reset(Allocator_t:: template calloc<Precision_t>
 			 (dimension, numeric_limits<Precision_t>::max()));
-	max_.Reset(Allocator_t::calloc<Precision_t>
+	max_.Reset(Allocator_t:: template calloc<Precision_t>
 			 (dimension, -numeric_limits<Precision_t>::max()));
 	pivot_dimension_=0;
 	pivot_value_=0;
 }
-__TEMPLATE__
-__HyperRectangle__::Init(Array_t min, Array_t max, int32 pivot_dimension,
+TEMPLATE__
+void HYPERRECTANGLE__::Init(Array_t min, Array_t max, int32 pivot_dimension,
 		                     Precision_t pivot_value) { 
 	min_ = min;
   max_ = max;
@@ -27,8 +27,8 @@ __HyperRectangle__::Init(Array_t min, Array_t max, int32 pivot_dimension,
 }
 
 
-__TEMPLATE__
-HyperRectangle<TYPELIST, diagnostic> &__HyperRectangle__::operator=
+TEMPLATE__
+HyperRectangle<TYPELIST, diagnostic> &HYPERRECTANGLE__::operator=
     (HyperRectangle<TYPELIST, diagnostic> &hr) {
   
   this->min_ = hr.min_;
@@ -38,8 +38,8 @@ HyperRectangle<TYPELIST, diagnostic> &__HyperRectangle__::operator=
   return *this;
 }
 
-__TEMPLATE__
-void __HyperRectangle__::Alias(const HyperRectangle_t &hr) {
+TEMPLATE__
+void HYPERRECTANGLE__::Alias(const HyperRectangle_t &hr) {
   
   this->min_ = hr.min_;
   this->max_ = hr.max_;
@@ -48,8 +48,8 @@ void __HyperRectangle__::Alias(const HyperRectangle_t &hr) {
 }
 
 
-__TEMPLATE__
-void __HyperRectangle__::Copy(const HyperRectangle_t &hr, 
+TEMPLATE__
+void HYPERRECTANGLE__::Copy(const HyperRectangle_t &hr, 
 		                              int32 dimension) {
   
   this->min_.Copy(hr.min_, dimension);
@@ -58,33 +58,33 @@ void __HyperRectangle__::Copy(const HyperRectangle_t &hr,
   pivot_value_ = hr.pivot_value_;
 }
 
-_TEMPLATE__
-void *__HyperRectangle__::operator new(size_t size) {
-  return ALLOCATOR::malloc(size);
+TEMPLATE__
+void *HYPERRECTANGLE__::operator new(size_t size) {
+  return Allocator_t::malloc(size);
 }
 
-__TEMPLATE__
-void __HyperRectangle__::operator delete(void *p) {
+TEMPLATE__
+void HYPERRECTANGLE__::operator delete(void *p) {
 }
 
-__TEMPLATE__
+TEMPLATE__
 template<typename POINTTYPE> 
-inline bool __HyperRectangle__::IsWithin(
+inline bool HYPERRECTANGLE__::IsWithin(
     POINTTYPE point, int32 dimension, Precision_t range, 
     ComputationsCounter<diagnostic> &comp) {
   // non overlaping at all 
   for(int32 i=0; i<dimension; i++) {
-  	  comp.UpdateComparisons();
-      if ( point[i] > max_[i] || point[i] < min_[i]) {
-  	    return false;
-  	  }
-    }
+    comp.UpdateComparisons();
+    if ( point[i] > max_[i] || point[i] < min_[i]) {
+  	  return false;
+  	}
+  }
   Precision_t closest_projection = max_[0]-min_[0]; 
   for(int32 i=0; i<dimension; i++) {
     Precision_t projection1 = max_[i] - point[i];
     Precision_t projection2 = point[i] - min_[i];
     comp.UpdateComparisons();
-    if (closest_projection > projection1 ) {
+    if (closest_projection > projection1) {
       closest_projection = projection1;
     }
     comp.UpdateComparisons();
@@ -99,12 +99,11 @@ inline bool __HyperRectangle__::IsWithin(
   }
 	// Completelly inside
   return true;
-} 
-
+}
     	
-    
-__TEMPLATE__
-inline Precsion_t __HyperRectangle__::IsWithin(
+     
+TEMPLATE__
+inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::IsWithin(
     HyperRectangle_t &hr,
     int32 dimension, 
     Precision_t range,
@@ -132,10 +131,10 @@ inline Precsion_t __HyperRectangle__::IsWithin(
          (sqrt(range) - closest_projection); 
 }    	
 
-__TEMPLATE__
+TEMPLATE__
 template<typename POINTTYPE> 
-inline bool __HyperRectangle__::CrossesBoundaries(
-    POINTTYPE point, int32 dimension, Precision_t range, 
+inline bool HYPERRECTANGLE__::CrossesBoundaries(
+    POINTTYPE point, int32 dimension, HYPERRECTANGLE__::Precision_t range, 
     ComputationsCounter<diagnostic> &comp) {
   
   Precision_t closest_point_coordinate;
@@ -161,11 +160,12 @@ inline bool __HyperRectangle__::CrossesBoundaries(
   } 
   return dist <= range;
 }   
-__TEMPLATE__ 
+TEMPLATE__ 
 template<typename POINTTYPE1, typename POINTTYPE2>
-inline Precision_t __HyperRectangle__::Distance(POINTTYPE1 point1, 
-		                                          POINTTYPE2 point2, 
-							         											  int32 dimension) {
+inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
+		                                            POINTTYPE1 point1, 
+		                                            POINTTYPE2 point2, 
+							         											    int32 dimension) {
   Precision_t distance = 0;
 	for(int32 i=0; i< dimension; i++) {
 	  distance+=(point1[i]-point2[i]) * (point1[i]-point2[i]);
@@ -173,10 +173,10 @@ inline Precision_t __HyperRectangle__::Distance(POINTTYPE1 point1,
 	return distance;
 }
                    	         
-__TEMPLATE__
-inline Precision_t __HyperRectangle__::Distance(
-    HyperRectangle<Precision_t, ALLOCATOR, diagnostic> &hr1,
-    HyperRectangle<Precision_t, ALLOCATOR, diagnostic> &hr2,
+TEMPLATE__
+inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
+    typename HYPERRECTANGLE__::HyperRectangle_t &hr1,
+    typename HYPERRECTANGLE__::HyperRectangle_t &hr2,
     int32 dimension,
     ComputationsCounter<diagnostic> &comp) {
   
@@ -197,11 +197,11 @@ inline Precision_t __HyperRectangle__::Distance(
 
 }
 
-__TEMPLATE__
-inline Precision_t __HyperRectangle__::Distance(
-    HyperRectangle<Precision_t, ALLOCATOR, diagnostic> &hr1,
-    HyperRectangle<Precision_t, ALLOCATOR, diagnostic> &hr2,
-    Precision_t threshold_distance,
+TEMPLATE__
+inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
+    typename HYPERRECTANGLE__::HyperRectangle_t &hr1,
+    typename HYPERRECTANGLE__::HyperRectangle_t &hr2,
+    typename HYPERRECTANGLE__::Precision_t threshold_distance,
     int32 dimension,
     ComputationsCounter<diagnostic> &comp) {
   
@@ -228,12 +228,13 @@ inline Precision_t __HyperRectangle__::Distance(
   return dist;
 }
 
-__TEMPLATE__
+TEMPLATE__
 template<typename POINTTYPE, typename NODETYPE> 
-inline pair<Allocator_t:: template Ptr<NODETYPE>, 
-	   Allocator_t:: template Ptr<NODETYPE> > __HyperRectangle__::
-    ClosestChild(Allocator_t::template Ptr<NODETYPE> left,
-		           Allocator_t::template Ptr<NODETYPE> right,
+inline pair<typename HYPERRECTANGLE__::Allocator_t:: template Ptr<NODETYPE>, 
+	  typename HYPERRECTANGLE__::Allocator_t:: template Ptr<NODETYPE> > 
+		HYPERRECTANGLE__::ClosestChild(
+	  typename HYPERRECTANGLE__::Allocator_t::template Ptr<NODETYPE> left,
+		typename HYPERRECTANGLE__::Allocator_t::template Ptr<NODETYPE> right,
 						 	 POINTTYPE point,
 							 int32 dimension,
 							 ComputationsCounter<diagnostic> &comp) {
@@ -245,8 +246,8 @@ inline pair<Allocator_t:: template Ptr<NODETYPE>,
   }
 } 
 
-__TEMPLATE__
-string  __HyperRectangle__::Print(int32 dimension) {
+TEMPLATE__
+string  HYPERRECTANGLE__::Print(int32 dimension) {
   char buf[8192];
   sprintf(buf, "max: ");
   string str;
@@ -268,7 +269,7 @@ string  __HyperRectangle__::Print(int32 dimension) {
   
 	return str;
 }
-#undef __TEMPLATE__
-#undef __HyperRectangle__
+#undef TEMPLATE__
+#undef HYPERRECTANGLE__
 
 #endif /*HYPER_RECTANGLE_IMPL_H_*/

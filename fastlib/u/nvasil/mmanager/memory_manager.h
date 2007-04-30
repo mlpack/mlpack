@@ -24,10 +24,10 @@ struct Logger;
 template<bool Logmode, int32 page_size=65536>
 class MemoryManager {
  public:
-  static  MemoryManager<Logmode> *allocator;
+  static  MemoryManager<Logmode> *allocator_;
   friend class MemoryManagerTest;
   static const int kTypicalSystemPageSize_ = 65536;
-  static const uint32 kMinimumCapacity_=268435456;
+  static const uint32 kMinimumCapacity_=33554432;
   template<typename T>
   struct Tchar {
    	T t;
@@ -164,12 +164,13 @@ class MemoryManager {
 		}
   }
   ~MemoryManager() {
-	  FATAL(munmap(pool_, capacity_) <0, 
-				  "Failed to unmap memory error: %s\n", strerror(errno));
+		if (unlikely(munmap(pool_, capacity_)<0))
+	  FATAL("Failed to unmap memory error: %s\n", strerror(errno));
     
 		if (Logmode==true && fp_log_!=NULL) {
-  	  FATAL(fclose(fp_log_)!=0, 
-					  "Error closing %s\n", page_access_filename_.c_str());
+  	  if (unlikely(fclose(fp_log_)!=0)) {
+			  FATAL("Error closing %s\n", page_access_filename_.c_str());
+			}
 	  }	
   }
 
@@ -189,10 +190,11 @@ class MemoryManager {
 						      pool_name_.c_str(),
 					        (unsigned long long)info.st_size);
 				if ((uint64)info.st_size < capacity_) {
-				 FATAL("There is a filename for memory manager "
-					     "but the size is smaller than the requested "
-							 "capacity %llu <"L64,
-							 (unsigned long long) info.st_size,
+				 const char *temp="There is a filename for memory manager "
+					                "but the size is smaller than the requested "
+													"capacity "L64"<"L64"";
+				 FATAL(temp,
+							 info.st_size,
 							 capacity_);
 				}
     	  fd = open(pool_name_.c_str(), O_RDWR | O_CREAT);
@@ -294,21 +296,21 @@ class MemoryManager {
     }
     void *return_ptr = (void *)(pool_+current_position_);
   	current_position_ +=size;
-    if (ulikely(current_position_ >capacity_)) {
+    if (unlikely(current_position_ >capacity_)) {
       Reallocate();
     } 
     return return_ptr;
   }
 	template<typename T>
   static T* malloc() {
-	  return allocator->Alloc<T>;
+	  return allocator_->Alloc<T>;
 	}
 	template<typename T>
 	static T* malloc(size_t size) {
-	  return allocator->Alloc<T>(size);
+	  return allocator_->Alloc<T>(size);
 	}
 	static void* malloc(size_t size) {
-	  return allocator->AllignedAlloc(size);
+	  return allocator_->AllignedAlloc(size);
 	}
 	template<typename T>
 	static T* calloc(size_t size, const T init_value) {
@@ -477,7 +479,7 @@ template<>
 struct Logger<true> {
   template<typename T>
   static void Log(T *p) {
-		MemoryManager<true>::allocator->Log(p);
+		MemoryManager<true>::allocator_->Log(p);
   }
 };
 
@@ -489,8 +491,8 @@ struct Logger<false> {
 };
  
 template<>
-MemoryManager<false>  *MemoryManager<false>::allocator = 0;
+MemoryManager<false>  *MemoryManager<false>::allocator_ = 0;
 template<>
-MemoryManager<true>  *MemoryManager<true>::allocator = 0;
+MemoryManager<true>  *MemoryManager<true>::allocator_ = 0;
 
 #endif /*MEMORY_MANAGER_H_*/

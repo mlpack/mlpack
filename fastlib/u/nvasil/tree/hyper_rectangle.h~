@@ -22,20 +22,20 @@
 #include <new>
 #include <math.h>
 #include <string>
-#include "loki/Typelist.h"
-#include "fastib/fastlib.h"
+#include "u/nvasil/loki/Typelist.h"
+#include "fastlib/fastlib.h"
 #include "computations_counter.h"
 
 template<typename TYPELIST, bool diagnostic>
 class HyperRectangle {
  public:
-	typedef Loki::TL::TypeAt<TYPELIST, 0>::Result  Precision_t;  
-	typedef Loki::TL::TypeAt<TYPELIST, 1>::Result  Allocator_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 2>::Result  Metric_t;
-	typedef HyperRectangle<TYPELIST, dignostic> HyperRectangle_t;
-	typedef Allocator_t:: template ArrayPtr<Precision_t> ArrayPtr_t;
-  typedef Allocator_t::template ArrayPtr<Precision_t> Array_t;
-	friend class HyperRectangleTest;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 0>::Result  Precision_t;  
+	typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result  Allocator_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result  Metric_t;
+	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
+	typedef typename Allocator_t:: template ArrayPtr<Precision_t> ArrayPtr_t;
+  typedef typename Allocator_t:: template ArrayPtr<Precision_t> Array_t;
+	template<typename, bool> friend	class  HyperRectangleTest;
   
 	HyperRectangle();
 	void Init(int32 dimension);
@@ -50,7 +50,7 @@ class HyperRectangle {
   template<typename POINTTYPE> 
   bool  IsWithin(POINTTYPE point, int32 dimension, Precision_t range, 
                      ComputationsCounter<diagnostic> &comp);
-	typename<POINTTYPE>
+	template <typename POINTTYPE>
 	bool IsWithin(POINTTYPE point, int32 dimension, Precision_t metric_matrix,
 			          Precision_t range, ComputationsCounter<diagnostic> &comp);
   Precision_t IsWithin(HyperRectangle_t &hr,
@@ -65,7 +65,7 @@ class HyperRectangle {
 		                        	int32 dimension);
   template<typename POINTTYPE1, typename POINTTYPE2>
 	static Precision_t Distance(POINTTYPE1 point1, POINTTYPE2 point2, 
-			                        int32 dimension, Precision_t **metric_matrix)
+			                        int32 dimension, Precision_t **metric_matrix);
 	static Precision_t Distance(HyperRectangle_t &hr1,
                             HyperRectangle_t &hr2,
                             int32 dimension,
@@ -76,10 +76,10 @@ class HyperRectangle {
                               int32 dimension,
                               ComputationsCounter<diagnostic> &comp);                            
   template<typename POINTTYPE, typename NODETYPE>                   	
-  pair<Allocator_t::template Ptr<NODETYPE>,
-	     Allocator_t::template Ptr<NODETYPE> >
-  ClosestChild(Allocator_t::template Ptr<NODETYPE> left,
-		           Allocator_t::template Ptr<NODETYPE> right,
+  pair<typename Allocator_t::template Ptr<NODETYPE>,
+	     typename Allocator_t::template Ptr<NODETYPE> >
+  ClosestChild(typename Allocator_t::template Ptr<NODETYPE> left,
+		           typename Allocator_t::template Ptr<NODETYPE> right,
 						 	 POINTTYPE point,
 							 int32 dimension,
 							 ComputationsCounter<diagnostic> &comp);                            
@@ -100,7 +100,7 @@ class HyperRectangle {
 	  pivot_dimension_=pivot_dimension;
 	}
 	void set_pivot_value(Precision_t pivot_value) {
-	  pivot_vlue_=pivot_velue;
+	  pivot_value_=pivot_value;
 	}
  private:
 	Array_t min_;
@@ -109,4 +109,6 @@ class HyperRectangle {
   Precision_t pivot_value_;                                                      
 };                         
 
+#include "hyper_rectangle_impl.h"
 
+#endif 
