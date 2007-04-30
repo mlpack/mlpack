@@ -16,24 +16,25 @@
  * =====================================================================================
  */
 
-#include "loki/Typelist.h"
+#include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
-#include "mmanager/memory_manager.h"
-#include "dataset/binary_dataset.h"
+#include "u/nvasil/mmanager/memory_manager.h"
+#include "u/nvasil/dataset/binary_dataset.h"
 #include "hyper_rectangle.h"
+#include "node.h"
 
 template<typename TYPELIST, bool diagnostic>
 class NodeTest {
   public:
-  typedef Loki::TL::TypeAt<TYPELIST, 0>::value Precision_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 1>::value Allocator_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 2>::value Metric_t;
+  typedef typename Loki::TL::TypeAt<TYPELIST, 0>::value Precision_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 1>::value Allocator_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 2>::value Metric_t;
 	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
-	typedef Loki::TL::Append<TYPELIST, 
-	    TYPELIST_2(HyperRectangle_t, NullStatistics)> UserTypeParameters_t;
-
+	typedef typename Loki::TL::Append<TYPELIST,
+				 	LOKI_TYPELIST_2(HyperRectangle_t, Loki::NullType)>::Result
+			UserTypeParameters_t;
 	typedef Node<UserTypeParameters_t, diagnostic> Node_t;
-	typedef Allocator_t:: template ArrayPtr<Precision_t> Array_t;
+	typedef typename Allocator_t:: template ArrayPtr<Precision_t> Array_t;
 	typedef Point<Precision_t, Loki::NullType> Point_t;
   NodeTest() {
 	}

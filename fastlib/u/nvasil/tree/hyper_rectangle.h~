@@ -20,6 +20,7 @@
 #define U_NVASIL_HYPER_RECTANGLE_H_
 
 #include <new>
+#include <limits>
 #include <math.h>
 #include <string>
 #include "u/nvasil/loki/Typelist.h"
@@ -49,7 +50,7 @@ class HyperRectangle {
 	void Copy(const HyperRectangle_t &other, int32 dimension);
   template<typename POINTTYPE> 
   bool  IsWithin(POINTTYPE point, int32 dimension, Precision_t range, 
-                     ComputationsCounter<diagnostic> &comp);
+                  ComputationsCounter<diagnostic> &comp);
 	template <typename POINTTYPE>
 	bool IsWithin(POINTTYPE point, int32 dimension, Precision_t metric_matrix,
 			          Precision_t range, ComputationsCounter<diagnostic> &comp);
