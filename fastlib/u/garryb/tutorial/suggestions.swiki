@@ -1,0 +1,22 @@
+Edit FASTlib Desires here!
+
+!!Wishlist
+-The incorporation of a sub-library that would handle most of the coding for distributed computing.
+
+[garryb@cc] There is an unreleased sub-package that makes threading pretty easy (still requires manual work decomposition, but will do a tiny bit of load balancing) -- although we used it to write a research paper, it is not thoroughly code reviewed.  FASTlib will also build MPI code by passing "--compiler=mpi" to the compiler, assuming MPI is set up correctly on your system, and we have a simple work dispatcher too for that, but getting results back is not automated.  There is an unreleased "serialization" tool that might help with this, but like the threading, we're not 100% sure it's ready for prime-time.  If you are willing to work with us, we can release experimental code :-)
+
+- Statistical functions like beta, f-test, Student's T (similar to the ones in CERN's JET JAVA)
+
+- General cross validation.  As far as I can tell, the current one only supports 0-1 loss for classification.  It would be nice to be able to cross validate with any loss function.
+
+- Some more math: multi-index notation, polynomials, etc [gfb]
+
+- Support on Windows platform? For instance, Visual Studio? Thanks!
+
+- A Sparse Matrix class that works with the linear-algebra routines
+
+!!Suggestions for improvement
+
+List suggestions for improvement here.
+
+
