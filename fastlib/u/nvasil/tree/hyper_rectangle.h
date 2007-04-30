@@ -20,12 +20,14 @@
 #define U_NVASIL_HYPER_RECTANGLE_H_
 
 #include <new>
+#include <limits>
 #include <math.h>
 #include <string>
 #include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "computations_counter.h"
 
+using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class HyperRectangle {
  public:

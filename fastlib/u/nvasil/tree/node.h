@@ -2,25 +2,23 @@
 #define NODE_H_
 #include <new>
 #include <limits>
-#include "boost/type_traits.hpp"
-#include "loki/Typelist.h"
+#include "u/nvasil/loki/TypeTraits.h"
+#include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "point.h"
-#include "point_traits.h"
-#include "traits_nearest_neighbor.h"
 #include "point_identity_discriminator.h"
 #include "computations_counter.h"
-#include "dataset/binary_dataset.h"
+#include "u/nvasil/dataset/binary_dataset.h"
 
 template<typename TYPELIST,
          bool diagnostic>
 class Node {
  public:
-  typedef Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
-  typedef Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 3>::Result BoundingBox_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 4>::Result NodeCachedStatistics_t;
+  typedef typename Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
+  typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 3>::Result BoundingBox_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 4>::Result NodeCachedStatistics_t;
 	typedef Allocator_t::template ArrayPtr<Precision_t> Array_t;
   typedef Node<TYPELIST, diagnostic> Node_t;
 	typedef Allocator_t::template Ptr<Node> NodePtr_t;
