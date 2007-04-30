@@ -43,7 +43,7 @@ class HyperRectangleTest {
    	hyper_rectangle_->Init(dimension_);
 		hyper_rectangle_->min_[0]=-1;
 		hyper_rectangle_->min_[1]=-1;
-		hyper_rectangle_->max_[1]=1;
+		hyper_rectangle_->max_[0]=1;
 		hyper_rectangle_->max_[1]=1;
 	}
 	void Destruct() {
@@ -107,7 +107,7 @@ class HyperRectangleTest {
 		point.Init(dimension_);
 	  point[0]=2;
 		point[1]=-4;
-		Precision_t range=1.5;
+		Precision_t range=11;
 		DEBUG_ASSERT_MSG(hyper_rectangle_->CrossesBoundaries(point, dimension_, 
 					                                 range, comp_)==true, 
 				             "CrossesBoundary doesn't work\n");
@@ -119,15 +119,15 @@ class HyperRectangleTest {
     Destruct();
 	}
 	void DistanceTest(){
-    Init()
+    Init();
 		Point<Precision_t, Allocator_t> point1;
 	  Point<Precision_t, Allocator_t> point2;
 	  point1.Init(dimension_);
+    point2.Init(dimension_);
 		point1[0]=0;
 		point1[1]=1;
 		point2[0]=-1;
 		point2[1]=-2;
-		point2.Init(dimension_);
 		DEBUG_ASSERT_MSG(HyperRectangle_t::Distance(point1, point2, dimension_)==10,
 				             "Distance between points doesn't work\n");
 		HyperRectangle_t other;
@@ -139,12 +139,12 @@ class HyperRectangleTest {
 		
 		DEBUG_ASSERT_MSG(HyperRectangle_t::Distance(*hyper_rectangle_, other,
 				                                   dimension_, comp_)==1,
-				                                   "Dimension doesn't work\n");
+				                                   "Distance doesn't work\n");
 		other.min_[0]=-0.5;
 		other.min_[1]=-0.5;
 		DEBUG_ASSERT_MSG(HyperRectangle_t::Distance(*hyper_rectangle_, other,
 				                                   dimension_, comp_)==0,
-				                                   "Dimension doesn't work\n");
+				                                   "Distance doesn't work\n");
 		Destruct();             
 	}
 	
