@@ -128,14 +128,14 @@ inline void NODE__::FindNearest(POINTTYPE query_point,
 		  if (dist<=range){
 				Point_t point;
 				point.Alias(points_.get()+i*dimension, index_[i]);
-			  nearest.push_back(make_par(dist, point));
+			  nearest.push_back(make_pair(dist, point));
 			}
 		}
     // for k-nearest neighbors
 	  if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
-  	  std::partial_sort(nearest[0], nearest[nearest.size]);
-		  if (nearest.size()>range) {
-		    nearest.remove(&nearest[range], nearest.end());
+  	  std::partial_sort(nearest[0], nearest[nearest.size()]);
+		  if (nearest.size()>(uint32)range) {
+		    nearest.erase(&nearest[range], nearest.end());
 		  }
 	  }
 	}
@@ -157,8 +157,6 @@ inline void NODE__::FindAllNearest(
 		if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
      	// get the current maximum distance for the specific point
   	  Precision_t distance = query_node->kneighbors_[i*range+range-1].distance_;
-		} else {
-		  distance=range;
 		}
     // We should check whether this speeds up or slows down 
 		// the performance 

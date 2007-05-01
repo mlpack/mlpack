@@ -31,6 +31,11 @@ class Point {
 		this->p_ = point.p_;
 		this->id_ = point.id_;
   }
+
+	void Alias(const Precision_t *ptr, index_t point_id) {
+	  this->p_= ptr;
+		this->id_=point_id;
+	}
 	template<typename POINTTYPE>
   void Copy(POINTTYPE point, int32 dimension) {
   	for(int32 i=0; i<dimension; i++) {

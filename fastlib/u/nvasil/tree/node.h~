@@ -124,14 +124,14 @@ class Node {
 	void set_kneighbors(NNResult *chunk, uint32 knns) {
 	  kneighbors_=chunk;
 		for(index_t i=0; i< num_of_points_; i++) {
-		  for(index_t j=0; j<knns; j++) {
-	      kneighbors_[i*knns+j].	kneighbors_[i*knns+j].point_id_ =
+		  for(index_t j=0; j<(index_t)knns; j++) {
+	      kneighbors_[i*knns+j].point_id_ =
 				index_[i];	
 			}
 		}
 	}
 	
-	void NODE__::InitKNeighbors(int32 knns);
+	void InitKNeighbors(int32 knns);
 
 	void set_range_neighbors(FILE *fp) {
     range_nn_fp_=fp;	
