@@ -194,7 +194,6 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
   	}
   }
   return dist;
-
 }
 
 TEMPLATE__

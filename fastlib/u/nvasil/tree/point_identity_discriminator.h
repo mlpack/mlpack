@@ -18,26 +18,33 @@
 #ifndef POINT_IDENTITY_DISCRIMINATOR_H_
 #define POINT_IDENTITY_DISCRIMINATOR_H_
 #include <stdio.h>
-#include <assert.h>
-#include "base/basic_types.h"
-#include "timit/transcript.h"
-template <typename IDPRECISION>
-class PointIdentityDiscriminator {
+#include "fastlib/fastlib.h"
+#include "u/nvasil/timit/transcript.h"
+
+class SimpleDiscriminator {
  public: 
-	enum DiscriminantType {SIMPLE=0, TIMIT_SPEAKER_LOOCV=1, 
-		                     TIMIT_TEST_TRAIN_LOOCV=2};
-	PointIdentityDiscriminator() {
-	  method_=SIMPLE;
+	FORBID_COPY(SimpleDiscriminator);
+	SimpleDiscriminator() {
 	}
-	PointIdentityDiscriminator(DiscriminantType method,
-		                         Transcript *index) {
+  inline  bool AreTheSame(index_t i, index_t j) {
+	  return i==j;
+	}
+};
+
+class TimitDiscriminator {
+ public: 
+	FORBID_COPY(TimitDiscriminator);
+	enum DiscriminantType {TIMIT_SPEAKER_LOOCV=1, 
+		                     TIMIT_TEST_TRAIN_LOOCV=2};
+  TimitDiscriminator() {
+	 
+	}
+	TimitDiscriminator(const DiscriminantType method,
+		                 Transcript *index) {
 		method_=method;
 	  index_=index;   
 	}
-	inline bool operator()(IDPRECISION id1, IDPRECISION id2) {
-	  if (method_==SIMPLE) {
-	    return id1==id2;	  
-		}
+	inline bool AreTheSame(index_t id1, index_t id2) {
 		if (method_==TIMIT_SPEAKER_LOOCV) {
 			assert(index_[id1].speaker_!=-1);
     	assert(index_[id2].speaker_!=-1);

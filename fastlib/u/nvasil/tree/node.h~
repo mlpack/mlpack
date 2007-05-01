@@ -6,8 +6,6 @@
 #include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "point.h"
-#include "point_traits.h"
-#include "traits_nearest_neighbor.h"
 #include "point_identity_discriminator.h"
 #include "computations_counter.h"
 #include "u/nvasil/dataset/binary_dataset.h"
@@ -21,11 +19,12 @@ class Node {
   typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
 	typedef typename Loki::TL::TypeAt<TYPELIST, 3>::Result BoundingBox_t;
 	typedef typename Loki::TL::TypeAt<TYPELIST, 4>::Result NodeCachedStatistics_t;
-	typedef Allocator_t::template ArrayPtr<Precision_t> Array_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 5>::Result PointIdDiscriminator_t;
+	typedef typename Allocator_t::template ArrayPtr<Precision_t> Array_t;
   typedef Node<TYPELIST, diagnostic> Node_t;
-	typedef Allocator_t::template Ptr<Node> NodePtr_t;
+	typedef typename Allocator_t::template Ptr<Node> NodePtr_t;
 	typedef Point<Precision_t, Allocator_t> Point_t;
-	friend class NodeTest<TYPELIST, diagnostic>; 
+	template<typename , bool> friend class NodeTest; 
 	struct NNResult {
 		NNResult() : point_id_(0),
       distance_(numeric_limits<Precision_t>::max()) {
@@ -46,22 +45,20 @@ class Node {
     Point_t nearest_;
 		Precision_t	distance_;
 	};
-	
-	Node() {	
-	}
-  // Use this for node
-  Init(const BoundingBox_t &box, 
-	     const NodeCachedStatistics_t &statistics,		
-			 index_t node_id,
-			 index_t num_of_points);  
+  Node();
+	// Use this for node
+  void Init(const BoundingBox_t &box, 
+	          const NodeCachedStatistics_t &statistics,		
+			      index_t node_id,
+			      index_t num_of_points);  
   // Use this for leaf
-  Init(const BoundingBox_t &box,
-			 const NodeCachedStatistics_t &statistics,
-			 index_t node_id,
-			 index_t num_of_points,
-       BinaryDataset<Precision_t> *dataset,
-			 index_t start,
-			 int32 dimension); 
+  void Init(const BoundingBox_t &box,
+			      const NodeCachedStatistics_t &statistics,
+			      index_t node_id,
+			      index_t num_of_points,
+			      index_t start,
+			      int32 dimension,
+            BinaryDataset<Precision_t> *dataset); 
   ~Node();
   static void *operator new(size_t size);
   static void  operator delete(void *p);
@@ -69,14 +66,15 @@ class Node {
 		return !points_.IsNULL();
 	}
 	template<typename POINTTYPE>                   	
-  pair<Allocator_t::template Ptr<NODETYPE>, 
-		   Allocator_t::template Ptr<NODETYPE> > 
-			 ClosestChild(POINTTYPE point, int32 dimension,
-					 ComputationsCounter<diagnostic> &comp);
-  pair<pair<Allocator_t::template Ptr<NODETYPE>, Precision_t>, 
-	     pair<Allocator_t::template Ptr<NODETYPE>, Precision_t> > 
-			 ClosestNode(Allocator_t::template Ptr<NODETYPE>,
-					         Allocator_t::template Ptr<NODETYPE>,
+  pair<NodePtr_t, NodePtr_t> 
+			 ClosestChild(POINTTYPE point, 
+					          int32 dimension,
+					          ComputationsCounter<diagnostic> &comp);
+
+  pair<pair<NodePtr_t, Precision_t>, 
+	     pair<NodePtr_t, Precision_t> > 
+			 ClosestNode(NodePtr_t, 
+					         NodePtr_t,
 									 int32 dimension,
 							     ComputationsCounter<diagnostic> &comp);
 
@@ -85,9 +83,11 @@ class Node {
 // from the same speaker
 	template<typename POINTTYPE, typename NEIGHBORTYPE>
   void FindNearest(POINTTYPE query_point, 
-			             vector<pair<Precision_t, Point_t> &nearest, 
-                   Precision_t &distance, NEIGHBORTYPE range, int32 dimension,
-                   PointIdentityDiscriminator<IDPrecision_t> &discriminator,
+			             vector<pair<Precision_t, Point_t> >  &nearest, 
+                   Precision_t &distance, 
+									 NEIGHBORTYPE range, 
+									 int32 dimension,
+									 PointIdDiscriminator_t &discriminator,
 									 ComputationsCounter<diagnostic> &comp);
 
 // This one store the results directly on a memmory mapped file
@@ -95,24 +95,23 @@ class Node {
 // very efficient for large datasets
 // Uses a custom descriminator
   template<typename NEIGHBORTYPE>
-  void FindAllNearest(Allocator_t::template  Ptr<NODETYPE> query_node,
+  void FindAllNearest(NodePtr_t query_node,
                       Precision_t &max_neighbor_distance,
-                      int32 range,
+                      NEIGHBORTYPE range,
                       int32 dimension,
-                      PointIdentityDiscriminator<IDPrecision_t> &discriminator,
+											PointIdDiscriminator_t &discriminator,
                       ComputationsCounter<diagnostic> &comp);
   
-  Allocator_t::template Ptr<NODETYPE>& get_left() {
+  NodePtr_t& get_left() {
   	return left_;
   }
-  Allocator_t::template Ptr<NODETYPE>& get_right() {
+  NodePtr_t& get_right() {
   	return right_;
   }
   BoundingBox_t &get_box() {
 	  return box_;
 	}
-  Allocator_t::template ArrayPtr<Point_t>&
-	get_points() {
+  typename Allocator_t::template ArrayPtr<Point_t>& 	get_points() {
 		  return points_;
 	}
 	index_t get_num_of_points() {
@@ -124,16 +123,18 @@ class Node {
 	}
 	void set_kneighbors(NNResult *chunk, uint32 knns) {
 	  kneighbors_=chunk;
-		for(index_t i=0; i< num_of_points; i++) {
+		for(index_t i=0; i< num_of_points_; i++) {
 		  for(index_t j=0; j<knns; j++) {
-	      kneighbors_[i*range+j].	kneighbors_[i*range+j].point_id_ =
+	      kneighbors_[i*knns+j].	kneighbors_[i*knns+j].point_id_ =
 				index_[i];	
 			}
 		}
 	}
 	
+	void NODE__::InitKNeighbors(int32 knns);
+
 	void set_range_neighbors(FILE *fp) {
-    range_nn_fp=fp;	
+    range_nn_fp_=fp;	
 	}
 	FILE *get_range_nn_fp() {
 	  return range_nn_fp_;
@@ -144,19 +145,20 @@ class Node {
 	void set_min_dist_so_far(Precision_t distance) {
 	  min_dist_so_far_=distance;
 	}
+
  private:
 	BoundingBox_t box_;
   index_t node_id_;
   NodePtr_t left_;
   NodePtr_t right_;
-	Allocator_t::template ArrayPtr<index_t> index_;
-  Allocator_t::template ArrayPtr<Precision_t> points_;
-	Allocator_t::template Ptr<NodeCachedStatistics> statistics_;
+	typename Allocator_t::template ArrayPtr<index_t> index_;
+  typename Allocator_t::template ArrayPtr<Precision_t> points_;
+	typename Allocator_t::template Ptr<NodeCachedStatistics_t> statistics_;
   index_t num_of_points_;
 	union {
     NNResult *kneighbors_;
 		FILE *range_nn_fp_;
-	}
+	};
 	Precision_t  min_dist_so_far_;	
 };
 

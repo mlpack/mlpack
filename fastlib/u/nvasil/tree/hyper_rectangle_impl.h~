@@ -198,10 +198,10 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
 }
 
 TEMPLATE__
-inline HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
-    HYPERRECTANGLE__::HyperRectangle_t &hr1,
-    HYPERRECTANGLE__::HyperRectangle_t &hr2,
-    HYPERRECTANGLE__::Precision_t threshold_distance,
+inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
+    typename HYPERRECTANGLE__::HyperRectangle_t &hr1,
+    typename HYPERRECTANGLE__::HyperRectangle_t &hr2,
+    typename HYPERRECTANGLE__::Precision_t threshold_distance,
     int32 dimension,
     ComputationsCounter<diagnostic> &comp) {
   
