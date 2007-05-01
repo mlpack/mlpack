@@ -22,8 +22,8 @@
 #include "u/nvasil/timit/transcript.h"
 
 class SimpleDiscriminator {
+ FORBID_COPY(SimpleDiscriminator);
  public: 
-	FORBID_COPY(SimpleDiscriminator);
 	SimpleDiscriminator() {
 	}
   inline  bool AreTheSame(index_t i, index_t j) {

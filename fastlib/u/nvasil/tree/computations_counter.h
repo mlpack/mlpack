@@ -19,7 +19,7 @@
  */
 #ifndef COMPUTATIONS_COUNTER_
 #define COMPUTATIONS_COUNTER_
-#include "base/basic_types.h"
+#include "fastlib/fastlib.h"
 
 template<bool diagnostic>
 class ComputationsCounter { 

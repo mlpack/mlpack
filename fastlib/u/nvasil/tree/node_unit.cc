@@ -33,10 +33,11 @@ class NodeTest {
   typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
   typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
 	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
-	typedef typename Loki::TL::Append<TYPELIST,
-	 			 	 LOKI_TYPELIST_3(HyperRectangle_t, 
-							            Loki::NullType,
-													SimpleDiscriminator)>::Result	UserTypeParameters_t;
+	typedef typename Loki::TL::Append<TYPELIST, HyperRectangle_t>::Result Temp1_t;
+  typedef typename Loki::TL::Append<Temp1_t, Loki::NullType>::Result Temp2_t;
+	typedef typename Loki::TL::Append<Temp2_t, SimpleDiscriminator>::Result 
+							UserTypeParameters_t;
+ 
 	typedef Node<UserTypeParameters_t, diagnostic> Node_t;
 	typedef typename Allocator_t:: template ArrayPtr<Precision_t> Array_t;
 	typedef Point<Precision_t, Loki::NullType> Point_t;
@@ -63,12 +64,14 @@ class NodeTest {
 			dataset_.set_id(i,i);
 		}	
 		hyper_rectangle_->Init(min, max, 0, 0);
-	  node_->Init(hyper_rectangle_,
-			          NullStatistics_t(),
-							  &dataset_,
-			          0,
+	  Loki::NullType statistics;
+		//	typename Node_t::NodeCachedStatistics_t statistics;
+	  node_->Init(*hyper_rectangle_,
+                statistics,
+								0,
 			          num_of_points_, 
-			          dimension_); 
+			          dimension_,
+							  &dataset_); 
   }
 	void Destruct() {
 		hyper_rectangle_->Destruct();
@@ -81,7 +84,7 @@ class NodeTest {
 	void FindNearest() { 
 	  SimpleDiscriminator discriminator;
     vector<pair<Precision_t, Point<Precision_t, Allocator_t> > > nearest;
-    ComputationsCounter<diagnostic> &comp;
+    ComputationsCounter<diagnostic> comp;
 		for(index_t i=0; i<num_of_points_; i++) {
 			Point_t query_point;
 			Precision_t node_distance;
@@ -107,9 +110,9 @@ class NodeTest {
 					min_dist=distance;
 				}
 			}
-			DEBUG_ASSERT_MSG(distance==nearest[0].first, 
+			DEBUG_ASSERT_MSG(min_dist==nearest[0].first, 
 					"Something wrong in the distance\n");
-			DEBUG_ASSERT_MSG(min_id==nearest[0].second.get_id(i), 
+			DEBUG_ASSERT_MSG(min_id==nearest[0].second.get_id(), 
 					             "Something wrong in the distance\n");
 	  }	
 	}
@@ -140,7 +143,7 @@ class NodeTest {
 			    min_dist=distance;
 		    }
 	    }
-			DEBUG_ASSERT_MSG(distance==result[i].nearest_.distance_, 
+			DEBUG_ASSERT_MSG(min_dist==result[i].distance_, 
 					"Something wrong in the distance\n");
 			DEBUG_ASSERT_MSG(min_id==result[i].nearest_.get_id(), 
 					             "Something wrong in the distance\n");
@@ -153,7 +156,7 @@ class NodeTest {
     Destruct();
     Init();
     FindAllNearest();
-    Destruct;	 
+    Destruct();	 
 	}
 	
  private: 

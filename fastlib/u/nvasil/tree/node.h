@@ -55,8 +55,8 @@ class Node {
   void Init(const BoundingBox_t &box,
 			      const NodeCachedStatistics_t &statistics,
 			      index_t node_id,
-			      index_t num_of_points,
 			      index_t start,
+			      index_t num_of_points,
 			      int32 dimension,
             BinaryDataset<Precision_t> *dataset); 
   ~Node();
@@ -124,8 +124,8 @@ class Node {
 	void set_kneighbors(NNResult *chunk, uint32 knns) {
 	  kneighbors_=chunk;
 		for(index_t i=0; i< num_of_points_; i++) {
-		  for(index_t j=0; j<knns; j++) {
-	      kneighbors_[i*knns+j].	kneighbors_[i*knns+j].point_id_ =
+		  for(index_t j=0; j<(index_t)knns; j++) {
+	      kneighbors_[i*knns+j].point_id_ =
 				index_[i];	
 			}
 		}
