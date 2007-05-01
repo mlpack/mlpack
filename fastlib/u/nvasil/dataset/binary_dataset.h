@@ -15,15 +15,16 @@
  * 
  * =====================================================================================
  */
+#ifndef BINARY_DATASET_
+#define BINARY_DATASET_
 #include <sys/unistd.h>
 #include <sys/mman.h>
-#include <sys/type.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <string>
 #include "fastlib/fastlib.h"
-#include "boost/type_traits.hpp"
 // BinaryDataset
 // Use this class to read a binary data file that is also 
 // accompanied by a file with the index values (uint64)
@@ -35,13 +36,13 @@ class BinaryDataset {
 	friend class BinaryDatasetTest;
  public:
 	typedef PRECISION Precision_t;
-	friend class BinaryDataset<Precision_t>::iterator;
+	friend class BinaryDataset<Precision_t>::Iterator;
 	class Iterator {
 	 public:
-		Iterator(BinaryDataset<Precision_t> *dataset_) {
+		Iterator(BinaryDataset<Precision_t> *dataset) {
 		  set_=dataset;
 		} 
-		Iterator &operator=(const iterator &other) {
+		Iterator &operator=(const Iterator &other) {
 		}
 		Iterator operator++();
 		Iterator operator--();
@@ -88,6 +89,7 @@ class BinaryDataset {
 		index_file_=data_file;
 		data_file_.append("ind");
 		Init(data_file_, index_file_, num_of_points_, dimension);
+		return SUCCESS_PASS;
 	}
 	
 	success_t Init(string data_file, string index_file, 
@@ -98,6 +100,7 @@ class BinaryDataset {
 		dimension_=dimension;
 		CreateDataFile(); 
 		CreateIndexFile();
+		return SUCCESS_PASS;
 	}
   // Use this to swap the points of a dataset
 	// swaps the index values as well
@@ -117,14 +120,15 @@ class BinaryDataset {
 	}
 	// returns a matrix on the data
 	Matrix get_data_matrix() {
-	  Matrix matrix;
+		Matrix matrix;
 		matrix.Alias(data_, num_of_points_/dimension_, dimension_);
 		return matrix;
 	}
 	// returns a vector on the index
 	Vector get_index_vector() {
-	  Vector vector;
+		Vector vector;
 		vector.Alias(index_, num_of_points_);
+		return vector;
 	}
 	// returns a pointer on the data at the ith point
 	Precision_t* At(index_t i) {
@@ -135,12 +139,12 @@ class BinaryDataset {
 	}
 	// returns a reference on the i,j element
 	Precision_t &At(index_t i, index_t j) {
-     DEBUG_ASSERT_MSG(i<num_of_points_, 
-		                  "Attempt to acces data out of range "LI">"LI, i, 
+    DEBUG_ASSERT_MSG(i<num_of_points_, 
+		                "Attempt to acces data out of range "LI">"LI, i, 
 										   num_of_points_);
     DEBUG_ASSERT_MSG(j<dimension_,
 				             "Attempt to access element greater that the dimension "
-										 LI">"L32, j, dimension_a;)
+										 LI">"L32, j, dimension_);
 	  return data_[i*dimension_+j];
 	}
 	// get the index at i point
@@ -185,16 +189,20 @@ class BinaryDataset {
 	// data file
 	void  ReadDimNumOfPointsFromFile(string file_name) {
     FILE *fp=fopen(file_name.c_str(), "r");
-	  FATAL(fp==NULL, "Error :%s while reading %s\n",
-				  strerror(errno), file_name.c_str());
-		
-		FATAL(fread(&dimension_, sizeof(int32), 1, fp),
-			  	"Error :%s while reading %s\n",
-				   strerror(errno), file_name.c_str());
+	  if (unlikely(fp==NULL)) {
+		  FATAL("Error :%s while reading %s\n",
+				    strerror(errno), file_name.c_str());
+		}
+		if (unlikely(fread(&dimension_, sizeof(int32), 1, fp)!=1)) {
+		  FATAL("Error :%s while reading %s\n",
+				     strerror(errno), file_name.c_str());
+		}
     fclose(fp);
 	  struct stat info;
-    FATAL(stat(file_name.c_str(), &info)!=0, "Error %s file %s\n",
-				  %strerror(errno), file_name.c_str());
+    if (unlikely(stat(file_name.c_str(), &info)!=0)) { 
+      FATAL("Error %s file %s\n",
+				     strerror(errno), file_name.c_str());
+		}
 		num_of_points_ = (info.st_size-sizeof(int32))/
 			               (dimension_*sizeof(Precision_t));
 	}
@@ -204,26 +212,32 @@ class BinaryDataset {
 	// while in the index file we set it to zero
   void* MemoryMap(string file_name, uint64 offset) {
     struct stat info;
-    FATAL(stat(file_name.c_str(), &info)!=0, "Error %s file %s\n",
-				  %strerror(errno), file_name.c_str());
+    if (unlikely(stat(file_name.c_str(), &info)!=0)) {
+      FATAL("Error %s file %s\n",
+				    strerror(errno), file_name.c_str());
+		}
 		uint64 map_size = info.st_size-sizeof(int32);
 		int fp=open(file_name.c_str(), O_RDWR);
 		void *ptr=mmap(NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fp,
 			             offset);
-    FATAL(ptr==MAP_FAILED, "Error %s while mapping %s\n", 
-				  strerror(errno), file_name.c_str());
+    if (unlikely(ptr==MAP_FAILED)) {
+		  FATAL("Error %s while mapping %s\n", 
+				    strerror(errno), file_name.c_str());
+		}
     close(fp);
     return ptr;		
 	}
 	// same as the above for unmapping
 	success_t MemoryUnmap(void *ptr, string file_name, uint64 offset) {
 	  struct stat info;
-    NONFATAL(stat(file_name.c_str(), &info)!=0, "Error %s file %s\n",
-				     %strerror(errno), file_name.c_str());
+    if (unlikely(stat(file_name.c_str(), &info)!=0)) {
+      NONFATAL("Error %s file %s\n",
+			  	     strerror(errno), file_name.c_str());
+		}
 		return SUCCESS_FAIL;
 		uint64 map_size = info.st_size-offset;
 		if(munmap(ptr , map_size)<0) {
-		  NONFATAL(munmap(ptr , map_size)<0, "Error %s while mapping %s\n", 
+		  NONFATAL("Error %s while mapping %s\n", 
 		           strerror(errno), file_name.c_str());
 			return SUCCESS_FAIL;
 		}
@@ -234,21 +248,23 @@ class BinaryDataset {
 			                 int32 dimension, 
 											 uint64 num_of_points) {
 	  FILE *fp=fopen(file_name.c_str(), "w");
-		FATAL(fwrite(&dimension, sizeof(int32), 1, fp)!=1, 
-				  "Error %s, while writing for file %s\n",
-					strerror(errno), file_name.c_str());
+		if (unlikely(fwrite(&dimension, sizeof(int32), 1, fp)!=1)) {
+		  FATAL("Error %s, while writing for file %s\n",
+					  strerror(errno), file_name.c_str());
+		}
 		uint64 total_size = num_of_points * dimension * sizeof(float32);
 		const uint64 buffer_length=8192;
 		char *buffer=new char[buffer_length];
 		for(uint64 i=0; i<total_size/buffer_length; i++) {
-		  FATAL(fwrite(buffer, 1, buffer_length, fp)!=buffer_length,
-					  "Error %s, while writing for file %s\n",
-					   strerror(errno), file_name.c_str());
+      if (unlikely(fwrite(buffer, 1, buffer_length, fp)!=buffer_length))		  
+			  FATAL("Error %s, while writing for file %s\n",
+					    strerror(errno), file_name.c_str());
     }
-		FATAL(fwrite(buffer, 1, total_size % buffer_length, fp)!=
-				  total_size % buffer_length,
-					"Error %s, while writing for file %s\n",
-					 strerror(errno), file_name.c_str());
+		if (unlikely(fwrite(buffer, 1, total_size % buffer_length, fp)!=
+				         total_size % buffer_length)) {
+		  FATAL("Error %s, while writing for file %s\n",
+					  strerror(errno), file_name.c_str());
+		}
 		fclose(fp);
 	}
 
@@ -260,14 +276,17 @@ class BinaryDataset {
 		const uint64 buffer_length=8192;
 		char *buffer=new char[buffer_length];
 		for(uint64 i=0; i<total_size/buffer_length; i++) {
-		  FATAL(fwrite(buffer, 1, buffer_length, fp)!=buffer_length,
-					  "Error %s, while writing for file %s\n",
+			if (unlikely(fwrite(buffer, 1, buffer_length, fp)!=buffer_length)) {
+		    FATAL("Error %s, while writing for file %s\n",
 					   strerror(errno), file_name.c_str());
+			}
     }
-		FATAL(fwrite(buffer, 1, total_size % buffer_length, fp)!=
-				  total_size % buffer_length,
-					"Error %s, while writing for file %s\n",
+		if (unlikely(fwrite(buffer, 1, total_size % buffer_length, fp)!=
+				         total_size % buffer_length)) {
+		  FATAL("Error %s, while writing for file %s\n",
 					 strerror(errno), file_name.c_str());
 		fclose(fp);
 	}	
 };
+
+#endif // BINARY_DATASET_H_

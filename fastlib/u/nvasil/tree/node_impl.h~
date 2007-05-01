@@ -1,94 +1,94 @@
 #ifndef NODE_IMPL_H_
 #define NODE_IMPL_H_
 
-#define __TEMPLATE__                                               \
-template<typename TYPELIST, bool diagnostic >                                                                  
+#define TEMPLATE__                                               \
+template<typename TYPELIST, bool diagnostic>                                                                  
 
-#define __NODE__                                                   \
+#define NODE__                                                   \
 	Node<TYPELIST, diagnostic>                  
  
-__TEMPLATE__    
-__NODE__::Node() {
-        	
+TEMPLATE__    
+NODE__::Node() {
   left_.SetNULL();
   right_.SetNULL();
   points_.SetNULL();
   kneighbors_=NULL;
-	node_id_ = node_id;
+	node_id_ = numeric_limits<index_t>::max();
 	min_dist_so_far_=numeric_limits<Precision_t>::max();
 }
 
-__TEMPLATE__
-__NODE__::Init(const BoundingBox_t &box, 
-	             const NodeCachedStatistics_t &statistics,		
-			         index_t node_id,
-			         index_t num_of_points) {
+TEMPLATE__
+void NODE__::Init(const BoundingBox_t &box, 
+	                const NodeCachedStatistics_t &statistics,		
+			            index_t node_id,
+			            index_t num_of_points) {
   box_=box;
   statistics_=statistics;
   node_id_ = node_id;
 	num_of_points_ = num_of_points;
-	points_
 }
 
-__TEMPLATE__
-__NODE__::Init(BoundingBox_t &box,
-			         NodeCachedStatistics_t &statistics,
-			         index_t node_id,
-			         BinaryDataset<Precision_t> *dataset,
-               index_t start,
-               index_t num_of_points,
-							 int32 dimension) {
+TEMPLATE__
+void NODE__::Init(const typename NODE__::BoundingBox_t &box,
+		      	      const typename NODE__::NodeCachedStatistics_t &statistics,
+			            index_t node_id,
+                  index_t start,
+                  index_t num_of_points,
+							    int32 dimension,
+			            BinaryDataset<Precision_t> *dataset) {
 	box_=box;
 	statistics_=statistics;
 	node_id_ = node_id;
 	num_of_points_ = num_of_points;
-	points_.Reset(Allocator_t::malloc<Precision_t>(num_of_points_*dimension_));
-  index_.Reset(Allocator_t::malloc<index_t>(num_of_points_));
-	for(index_t i=start; i<start+num_of_points; i++) {
+	points_.Reset(Allocator_t::template malloc<Precision_t>
+			             (num_of_points_*dimension));
+  index_.Reset(Allocator_t::template malloc<index_t>(num_of_points_));
+	for(index_t i=start; i<start+num_of_points_; i++) {
 	  for(int32 j=0; j<dimension; j++) {
-		  points_[i*dimension+j]=dataset_.At(i,j);
+		  points_[i*dimension+j]=dataset->At(i,j);
 	  }
 		index_[i]=dataset->get_id(i);
 	}
 } 
 
-__TEMPLATE__
-__NODE__::~Node() {
+TEMPLATE__
+NODE__::~Node() {
 }
 
-__TEMPLATE__
-void *__NODE__::operator new(size_t size) {
+TEMPLATE__
+void *NODE__::operator new(size_t size) {
   return Allocator_t::allocator->AllignedAlloc(size);
 }
      	
-__TEMPLATE__
-void __NODE__::operator delete(void *p) {
+TEMPLATE__
+void NODE__::operator delete(void *p) {
 }
-__TEMPLATE__
-void __NODE__::InitKNeighbors(int32 knns) {
+
+TEMPLATE__
+void NODE__::InitKNeighbors(int32 knns) {
 	for(index_t i=0; i<num_of_points_; i++) {
 	  for(int32 j=0; j<knns; j++) {
-		  kneighbors_[i*range+j].point_id_=index_[i];
+		  kneighbors_[i*knns+j].point_id_=index_[i];
 		}
 	} 
 }
                  	
-__TEMPLATE__
+TEMPLATE__
 template<typename POINTTYPE>
-pair<Allocator_t::template Ptr<NODETYPE>, 
-	   Allocator_t::template Ptr<NODETYPE> >                     
-__NODE__::ClosestChild(POINTTYPE point, int32 dimension, 
-		                   ComputationsCounter<diagnostic> &comp) {
+pair<typename NODE__::NodePtr_t, typename NODE__::NodePtr_t>                     
+NODE__::ClosestChild(POINTTYPE point, int32 dimension, 
+		                 ComputationsCounter<diagnostic> &comp) {
   return box_.ClosestChild(left_, right_, point, dimension, comp);
 }
 
-__TEMPLATE__
-inline pair<pair<Allocator_t::template Ptr<NODETYPE>, Precision_t>, 
-		 pair<Allocator_t::template Ptr<NODETYPE>, Precision_t> > 
-__NODE__::ClosestNode(Allocator_t::template Ptr<NODETYPE> ptr1,
-		                  Allocator_t::template Ptr<NODETYPE> ptr2,
-									    int32 dimension,
-							        ComputationsCounter<diagnostic> &comp) {
+TEMPLATE__
+inline 
+pair<pair<typename NODE__::NodePtr_t, typename NODE__::Precision_t>, 
+		 pair<typename NODE__::NodePtr_t, typename NODE__::Precision_t> > 
+NODE__::ClosestNode(typename NODE__::NodePtr_t ptr1,
+		                typename NODE__::NodePtr_t ptr2,
+									  int32 dimension,
+							      ComputationsCounter<diagnostic> &comp) {
 	Precision_t dist1 = BoundingBox_t::Distance(box_, ptr1->get_box(), 
 			                                      dimension, comp);
 	Precision_t dist2 = BoundingBox_t::Distance(box_, ptr2->get_box(), 
@@ -100,19 +100,22 @@ __NODE__::ClosestNode(Allocator_t::template Ptr<NODETYPE> ptr1,
 	}
 }
 
-__TEMPLATE__
+TEMPLATE__
 template<typename POINTTYPE, typename NEIGHBORTYPE>
-inline void __NODE__::FindNearest(POINTTYPE query_point, 
-		               vector<pair<Precision_t, Point_t> > &nearest, 
-                   Precision_t &distance, NEIGHBORTYPE range, int32 dimension,
-                   PointIdentityDiscriminator &discriminator,
-									 ComputationsCounter<diagnostic> &comp) {
+inline void NODE__::FindNearest(POINTTYPE query_point, 
+    vector<pair<typename NODE__::Precision_t, 
+		            typename NODE__::Point_t> > &nearest, 
+    typename NODE__::Precision_t &distance, 
+		NEIGHBORTYPE range, 
+		int32 dimension,
+		typename NODE__::PointIdDiscriminator_t &discriminator,
+    ComputationsCounter<diagnostic> &comp) {
   
 	for(index_t i=0; i<num_of_points_; i++) {
   	comp.UpdateDistances();
   	//  we have to check if we are comparing the point with itself
- 	  if (unlikely(discriminator(index_[i], 
-			PointTraits<POINTTYPE>::GetPointId(query_point, dimension))==true)) {
+ 	  if (unlikely(discriminator.AreTheSame(index_[i], 
+		       	query_point.get_id())==true)) {
   	 	continue;
  	  } 
 
@@ -121,36 +124,37 @@ inline void __NODE__::FindNearest(POINTTYPE query_point,
 			                  points_.get()+i*dimension,
 			  							  dimension);
 		// In case it is range nearest neighbors
-		if (boost::is_floating_point<NEIGHBORTYPE>::value==true) {
+		if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) {
 		  if (dist<=range){
 				Point_t point;
 				point.Alias(points_.get()+i*dimension, index_[i]);
-			  nearest.push_back(make_par(dist, points));
-			 }
+			  nearest.push_back(make_par(dist, point));
+			}
 		}
-  // for k-nearest neighbors
-	if (boost::is_floating_point<NEIGHBORTYPE>::value==false) {
-  	std::partial_sort(nearest[0], nearest[nearest.size]);
-		if (nearest.size()>range) {
-		  nearest.remove(&nearest[range], nearest.end());
-		}
+    // for k-nearest neighbors
+	  if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
+  	  std::partial_sort(nearest[0], nearest[nearest.size]);
+		  if (nearest.size()>range) {
+		    nearest.remove(&nearest[range], nearest.end());
+		  }
+	  }
 	}
 }
 
-__TEMPLATE__
+TEMPLATE__
 template<typename NEIGHBORTYPE>
-inline void __NODE__::FindAllNearest(
-		                Allocator_t::template Ptr<NODETYPE> query_node,
-                    Precision_t &max_neighbor_distance,
+inline void NODE__::FindAllNearest(
+		                NodePtr_t query_node,
+                    typename NODE__::Precision_t &max_neighbor_distance,
                     NEIGHBORTYPE range,
                     int32 dimension,
-                    PointIdentityDiscriminator &discriminator,
+										typename NODE__::PointIdDiscriminator_t &discriminator,
                     ComputationsCounter<diagnostic> &comp) {
   
   Precision_t max_local_distance = numeric_limits<Precision_t>::min();
   for(index_t i=0; i<query_node->num_of_points_; i++) {
 		// for k nearest neighbors
-		if (boost::is_floating_point<NEIGBORTYPE>::value==false) {
+		if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
      	// get the current maximum distance for the specific point
   	  Precision_t distance = query_node->kneighbors_[i*range+range-1].distance_;
 		} else {
@@ -164,8 +168,8 @@ inline void __NODE__::FindAllNearest(
                                                distance, 
                                                comp)) {
 		 // for k nearest neighbors
-     if (boost::is_floating_point<NEIGHBORTYPE>::value==false) {                                          	
-			 vector<pair<Precision_t, Point_t> > > temp(range);
+     if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {                                          	
+			 vector<pair<Precision_t, Point_t> > temp(range);
 			 for(int32 j=0; j<range; j++) {
 			   temp[j].first=query_node->kneighbors_[i*range+j].distance_;
 				 temp[j].second=query_node->kneighbors_[i*range+j].nearest_;
@@ -188,7 +192,7 @@ inline void __NODE__::FindAllNearest(
 
 		 } else {
 		 // for range nearest neighbors
-	     vector<pair<Precision_t, Point_t> > > temp;
+	     vector<pair<Precision_t, Point_t> >  temp;
 			 temp.clear();
 		   FindNearest(query_node->points_[i], temp, 
                    distance, range, dimension,
@@ -203,11 +207,11 @@ inline void __NODE__::FindAllNearest(
 						    strerror(errno));
 			 }                                     
   }
-	if (boost::is_floating_point<NEIGBORTYPE>::value==true) {
+	if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) {
 	  max_local_distance=range;
 	}	
 }
 
-#undef __TEMPLATE__
-#undef __NODE__     	               	
+#undef TEMPLATE__
+#undef NODE__     	               	
 #endif /*NODE_IMPL_H_*/
