@@ -57,7 +57,7 @@ NODE__::~Node() {
 
 TEMPLATE__
 void *NODE__::operator new(size_t size) {
-  return Allocator_t::allocator->AllignedAlloc(size);
+  return Allocator_t::allocator_->AllignedAlloc(size);
 }
      	
 TEMPLATE__
@@ -129,22 +129,24 @@ inline void NODE__::FindNearest(POINTTYPE query_point,
 				point.Alias(points_.get()+i*dimension, index_[i]);
 			  nearest.push_back(make_pair(dist, point));
 			}
+		} else {
+			// for k nearest neighbors
+		  Point_t point;
+			point.Alias(points_.get()+i*dimension, index_[i]);
+			nearest.push_back(make_pair(dist, point));
 		}
-    // for k-nearest neighbors
-    typename  std::vector<pair<Precision_t, Point_t> >::iterator it;
-		it=nearest.begin()+range;
-		//for(index_t k=0; k<range; k++) {
-		//	it++;
-		//}
-	  if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
-  	  std::partial_sort(nearest.begin(), 
-					              it,
-					              nearest.end(),
-												PairComparator());
-		  if (nearest.size()>(uint32)range) {
-		    nearest.erase(it, nearest.end());
-		  }
-	  }
+	}
+  // for k-nearest neighbors
+  typename  std::vector<pair<Precision_t, Point_t> >::iterator it;
+	it=nearest.begin()+range;
+	if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
+  	std::partial_sort(nearest.begin(), 
+				              it,
+				              nearest.end(),
+											PairComparator());
+		if (nearest.size()>(uint32)range) {
+		  nearest.erase(it, nearest.end());
+		}	  
 	}
 }
 

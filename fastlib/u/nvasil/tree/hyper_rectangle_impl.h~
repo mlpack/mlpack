@@ -20,7 +20,7 @@ void HYPERRECTANGLE__::Init(int32 dimension) {
 TEMPLATE__
 void HYPERRECTANGLE__::Init(Array_t min, Array_t max, int32 pivot_dimension,
 		                     Precision_t pivot_value) { 
-	min_ = min;
+	min_.Reset(min.get());
   max_ = max;
   pivot_dimension_ = pivot_dimension;
   pivot_value_= pivot_value;
@@ -194,7 +194,6 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
   	}
   }
   return dist;
-
 }
 
 TEMPLATE__
