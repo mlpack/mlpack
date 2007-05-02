@@ -97,7 +97,7 @@ class NodeTest {
                          discriminator,
 									       comp);
 			Precision_t min_dist=numeric_limits<Precision_t>::max();
-			index_t min_id;
+			index_t min_id=0;
       for(index_t j=0; j<num_of_points_; j++) {
 			  if (unlikely(dataset_.get_id(j)==dataset_.get_id(i))) {
 				  continue;

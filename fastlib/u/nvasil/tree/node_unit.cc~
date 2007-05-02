@@ -89,11 +89,9 @@ class NodeTest {
     ComputationsCounter<diagnostic> comp;
 		for(index_t i=0; i<num_of_points_; i++) {
 			Point_t query_point;
-			Precision_t node_distance;
       		  query_point.Alias(dataset_.At(i), dataset_.get_id(i));
 			node_->FindNearest(query_point, 
 			                   nearest, 
-                         node_distance, 
 							  				 1, 
 												 dimension_,
                          discriminator,
