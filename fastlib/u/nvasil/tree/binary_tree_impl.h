@@ -1,16 +1,16 @@
-#ifndef TREE_IMPL_H_
-#define TREE_IMPL_H_
+#ifndef BINARY_TREE_IMPL_H_
+#define BINARY_TREE_IMPL_H_
 
-#define __TEMPLATE__           \
+#define TEMPLATE__           \
 template<typename TYPELIST, diagnostic>
-#define __TREE__ Tree<TYPELIST, diagnostic>
+#define TREE__ Tree<TYPELIST, diagnostic>
 
 // Straight forward implemantation of the algorithms as described in Andrew Moore's
 // paper. For more information regarding traits of nearest neighbors look at 
 // traits_nearest_neighbor.h file
 
-__TEMPLATE__            
-__TREE__::Init(BinaryDataset<Precision_t> &data) {
+TEMPLATE__            
+TREE__::Init(BinaryDataset<Precision_t> &data) {
     	
   data_ = data;
   dimension_  = data.get_dimension();
@@ -25,12 +25,12 @@ __TREE__::Init(BinaryDataset<Precision_t> &data) {
 	discriminator_.reset(new PointIdentityDiscriminator());
 }
 
-__TEMPLATE__
-__TREE__::~Tree(){
+TEMPLATE__
+TREE__::~Tree(){
 }
 
-__TEMPLATE__
-void __TREE__::BuildBreadthFirst() {
+TEMPLATE__
+void TREE__::BuildBreadthFirst() {
   
 	progress_.Reset();
   total_points_visited_ = 0;
@@ -55,8 +55,8 @@ void __TREE__::BuildBreadthFirst() {
   }
 }
 
-__TEMPLATE__
-void __TREE__::BuildBreadthFirst(list<pair<Node_ptr_ptr, PivotInfo_t *> > &fifo) {
+TEMPLATE__
+void TREE__::BuildBreadthFirst(list<pair<Node_ptr_ptr, PivotInfo_t *> > &fifo) {
   
   pair<PivotInfo_t*, PivotInfo_t*> pivot_pair; 
   while (!fifo.empty()) {
@@ -97,8 +97,8 @@ void __TREE__::BuildBreadthFirst(list<pair<Node_ptr_ptr, PivotInfo_t *> > &fifo)
   }  
 }      	
                                    	
-__TEMPLATE__ 
-void __TREE__::BuildDepthFirst() {
+TEMPLATE__ 
+void TREE__::BuildDepthFirst() {
   total_points_visited_ = 0;
 	min_depth_=numeric_limits<index_t>::max();
 	max_depth_=0;
@@ -110,8 +110,8 @@ void __TREE__::BuildDepthFirst() {
   }
 }
 
-__TEMPLATE__
-void __TREE__::BuildDepthFirst(Node_ptr &ptr, 
+TEMPLATE__
+void TREE__::BuildDepthFirst(Node_ptr &ptr, 
                                PivotInfo_t  *pivot_info) {
                                  	
   pair<PivotInfo_t *, PivotInfo_t *>  pivot_pair;
@@ -186,9 +186,9 @@ void __TREE__::BuildDepthFirst(Node_ptr &ptr,
 
 // This function will return any of the nearest neighbors
 // k nearest, range nearest or just nearest
-__TEMPLATE__
+TEMPLATE__
 template<typename POINTTYPE, typename NEIGHBORTYPE>
-void __TREE__::NearestNeighbor(POINTTYPE &test_point,
+void TREE__::NearestNeighbor(POINTTYPE &test_point,
                                 *nearest_point,
                                NEIGHBORTYPE range) {
   bool found = false;
@@ -196,9 +196,9 @@ void __TREE__::NearestNeighbor(POINTTYPE &test_point,
   NearestNeighbor(parent_, test_point, nearest_point, distance, range, found);
 }           
 
-__TEMPLATE__
+TEMPLATE__
 template<typename POINTTYPE, typename NEIGHBORTYPE>
-void __TREE__::NearestNeighbor(Node_ptr ptr,
+void TREE__::NearestNeighbor(Node_ptr ptr,
                                POINTTYPE &test_point,
                                vector<pair<Precision_t, Point_t> > *nearest,
                                NEIGHBORTYPE range,
@@ -242,9 +242,9 @@ void __TREE__::NearestNeighbor(Node_ptr ptr,
   }  	
 }    
 
-__TEMPLATE__                  	                                
+TEMPLATE__                  	                                
 template<typename NEIGHBORTYPE>
-void __TREE__::AllNearestNeighbors(Node_ptr query, 
+void TREE__::AllNearestNeighbors(Node_ptr query, 
                                    NEIGHBORTYPE range) {
    ResetCounters();
    Precision_t distance = numeric_limits<PRECISION>::max();
@@ -253,9 +253,9 @@ void __TREE__::AllNearestNeighbors(Node_ptr query,
 	 total_points_visited_=0;
 }
 
-__TEMPLATE__ 
+TEMPLATE__ 
 template<typename NEIGHBORTYPE >
-void __TREE__::AllNearestNeighbors(Node_ptr query, 
+void TREE__::AllNearestNeighbors(Node_ptr query, 
                                    Node_ptr reference,
                                    NEIGHBORTYPE range, 
                                    Precision_t distance) {                                               	
@@ -354,8 +354,8 @@ void __TREE__::AllNearestNeighbors(Node_ptr query,
   
 }     	                                                                              	  
 
-__TEMPLATE__
-void __TREE__::InitAllKNearestNeighborOutput(string file, 
+TEMPLATE__
+void TREE__::InitAllKNearestNeighborOutput(string file, 
 		                                        int32 knns) {
   FILE *fp=fopen(file.c_str(), "w");
 	const int32 kChunk=8192;
@@ -382,8 +382,8 @@ void __TREE__::InitAllKNearestNeighborOutput(string file,
 }
 
 
-__TEMPLATE__
-void __TREE__::InitAllKNearestNeighborOutput(Node_ptr ptr, 
+TEMPLATE__
+void TREE__::InitAllKNearestNeighborOutput(Node_ptr ptr, 
 		                                        int32 knns) {
   if (ptr->IsLeaf()) {
   	ptr->set_kneighbors(all_nn_out_.Allocate(ptr->get_num_of_points(),
@@ -396,8 +396,8 @@ void __TREE__::InitAllKNearestNeighborOutput(Node_ptr ptr,
 
 }
 
-__TEMPLATE__
-void __TREE__::InitAllRangeNearestNeighbrOutput(string file) {
+TEMPLATE__
+void TREE__::InitAllRangeNearestNeighbrOutput(string file) {
 	FILE *fp=fopen(file.c_str(), "w");
 	FATAL(fp==NULL, "Cannot open %s, error: %s\n", 
 			  file.c_str(), 
@@ -407,8 +407,8 @@ void __TREE__::InitAllRangeNearestNeighbrOutput(string file) {
 }
 
 
-__TEMPLATE__
-void __TREE__::InitAllRangeNearestNeighborOutput(Node_ptr ptr,
+TEMPLATE__
+void TREE__::InitAllRangeNearestNeighborOutput(Node_ptr ptr,
 		                                            FILE *fp) {
   if (ptr->IsLeaf()) {
 	  ptr->set_range_neighbors(fp);
@@ -418,8 +418,8 @@ void __TREE__::InitAllRangeNearestNeighborOutput(Node_ptr ptr,
 	}
 }
 
-__TEMPLATE__
-void __TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
+TEMPLATE__
+void TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
   if (munmap(all_nn_out_.get_ptr(), 
 			   sizeof(typename Node_t::Result)*knns*num_of_points_)<0) {
 	  fprintf(stderr, "Failed to umap file: %s", strerror(errno));
@@ -427,19 +427,19 @@ void __TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
 	}
 }
 
-__TEMPLATE__
-void __TREE__::CloseAllRangeNeighborOutput() {
+TEMPLATE__
+void TREE__::CloseAllRangeNeighborOutput() {
   fclose(parent_->get_range_nn_fp());
 }
 
-__TEMPLATE__
-void __TREE__::Print() {
+TEMPLATE__
+void TREE__::Print() {
   RecursivePrint(parent_);
 }
 
 
-__TEMPLATE__
-void __TREE__::RecursivePrint(Node_ptr ptr) {
+TEMPLATE__
+void TREE__::RecursivePrint(Node_ptr ptr) {
   string str;
   if (ptr->IsLeaf()) {
  	str = ptr->Print(dimension_);
@@ -455,8 +455,8 @@ void __TREE__::RecursivePrint(Node_ptr ptr) {
 }
  
 
-__TEMPLATE__
-string __TREE__::Statistics() {
+TEMPLATE__
+string TREE__::Statistics() {
   char buff[4096];
   sprintf(buff, "Number of points     : %llu,\n"
                 "Number of dimensions : %i\n"
@@ -473,8 +473,8 @@ string __TREE__::Statistics() {
    return string(buff);
 }
 
-__TEMPLATE__
-string __TREE__::Computations() {
+TEMPLATE__
+string TREE__::Computations() {
   char buff[4096];
 	sprintf(buff,"number of comparisons:  %llu\n"
 			         "number of distances:    %llu\n",
@@ -483,8 +483,8 @@ string __TREE__::Computations() {
   return string(buff);
 }
 
-__TEMPLATE__
-void __TREE__::set_log_file(const string &log_file) {
+TEMPLATE__
+void TREE__::set_log_file(const string &log_file) {
   if (log_file_ptr_ != stderr ) {
   	if (fclose(log_file_ptr_)!= 0) {
   	  fprintf(stderr, "Cannot close file %s\n", log_file_.c_str());
@@ -498,6 +498,6 @@ void __TREE__::set_log_file(const string &log_file) {
 
      	           
 
-#undef __TREE__
-#undef __TEMPLATE__
-#endif /*TREE_IMPL_H_*/
+#undef TREE__
+#undef TEMPLATE__
+#endif /*BINARY_TREE_IMPL_H_*/

@@ -28,21 +28,21 @@
 #include <string.h>
 #include <vector> 
 #include <list>
-#include "loki/Typelist.h"
+#include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "show_progress.h"
-
+using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class BinaryTree {
  public:
 	// For testing purposes only
   friend class BinaryTreeTest;
-	typedef Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
-  typedef Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 3>::Result BoundingBox_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 4>::Result NodeCachedStatistics_t;
-	typedef Loki::TL::TypeAr<TYPELIST, 5>::Result Pivot_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
+  typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 3>::Result BoundingBox_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 4>::Result NodeCachedStatistics_t;
+	typedef typename Loki::TL::TypeAr<TYPELIST, 5>::Result Pivot_t;
 	typedef Allocator_t::template ArrayPtr<Precision_t> Array_t;
   typedef Node<TYPELIST, diagnostic> Node_t;
 	typedef Allocator_t::template Ptr<Node> NodePtr_t;
