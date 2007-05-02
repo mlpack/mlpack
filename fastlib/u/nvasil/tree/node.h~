@@ -55,8 +55,8 @@ class Node {
   void Init(const BoundingBox_t &box,
 			      const NodeCachedStatistics_t &statistics,
 			      index_t node_id,
-			      index_t num_of_points,
 			      index_t start,
+			      index_t num_of_points,
 			      int32 dimension,
             BinaryDataset<Precision_t> *dataset); 
   ~Node();
@@ -84,7 +84,6 @@ class Node {
 	template<typename POINTTYPE, typename NEIGHBORTYPE>
   void FindNearest(POINTTYPE query_point, 
 			             vector<pair<Precision_t, Point_t> >  &nearest, 
-                   Precision_t &distance, 
 									 NEIGHBORTYPE range, 
 									 int32 dimension,
 									 PointIdDiscriminator_t &discriminator,
@@ -160,6 +159,13 @@ class Node {
 		FILE *range_nn_fp_;
 	};
 	Precision_t  min_dist_so_far_;	
+	class PairComparator {
+	 public:
+	   bool operator()(const pair<Precision_t, Point_t> &a, 
+			               const pair<Precision_t, Point_t>  &b)  {
+	     return a.first<b.first;
+		}
+	};
 };
 
 #include "node_impl.h"

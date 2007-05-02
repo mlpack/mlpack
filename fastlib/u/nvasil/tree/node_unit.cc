@@ -22,6 +22,7 @@
 #include "u/nvasil/dataset/binary_dataset.h"
 #include "hyper_rectangle.h"
 #include "euclidean_metric.h"
+#include "null_statistics.h"
 #include "point_identity_discriminator.h"
 #include "computations_counter.h"
 #include "node.h"
@@ -34,7 +35,7 @@ class NodeTest {
   typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
 	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
 	typedef typename Loki::TL::Append<TYPELIST, HyperRectangle_t>::Result Temp1_t;
-  typedef typename Loki::TL::Append<Temp1_t, Loki::NullType>::Result Temp2_t;
+  typedef typename Loki::TL::Append<Temp1_t, NullStatistics>::Result Temp2_t;
 	typedef typename Loki::TL::Append<Temp2_t, SimpleDiscriminator>::Result 
 							UserTypeParameters_t;
  
@@ -64,10 +65,11 @@ class NodeTest {
 			dataset_.set_id(i,i);
 		}	
 		hyper_rectangle_->Init(min, max, 0, 0);
-	  Loki::NullType statistics;
+	  NullStatistics statistics;
 		//	typename Node_t::NodeCachedStatistics_t statistics;
 	  node_->Init(*hyper_rectangle_,
                 statistics,
+								0,
 								0,
 			          num_of_points_, 
 			          dimension_,
@@ -87,11 +89,9 @@ class NodeTest {
     ComputationsCounter<diagnostic> comp;
 		for(index_t i=0; i<num_of_points_; i++) {
 			Point_t query_point;
-			Precision_t node_distance;
       		  query_point.Alias(dataset_.At(i), dataset_.get_id(i));
 			node_->FindNearest(query_point, 
 			                   nearest, 
-                         node_distance, 
 							  				 1, 
 												 dimension_,
                          discriminator,

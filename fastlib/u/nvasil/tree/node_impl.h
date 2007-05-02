@@ -36,8 +36,8 @@ void NODE__::Init(const typename NODE__::BoundingBox_t &box,
                   index_t num_of_points,
 							    int32 dimension,
 			            BinaryDataset<Precision_t> *dataset) {
-	box_=box;
-	statistics_=statistics;
+	box_.Alias(box);
+	statistics_->Alias(statistics);
 	node_id_ = node_id;
 	num_of_points_ = num_of_points;
 	points_.Reset(Allocator_t::template malloc<Precision_t>
@@ -105,7 +105,6 @@ template<typename POINTTYPE, typename NEIGHBORTYPE>
 inline void NODE__::FindNearest(POINTTYPE query_point, 
     vector<pair<typename NODE__::Precision_t, 
 		            typename NODE__::Point_t> > &nearest, 
-    typename NODE__::Precision_t &distance, 
 		NEIGHBORTYPE range, 
 		int32 dimension,
 		typename NODE__::PointIdDiscriminator_t &discriminator,
@@ -115,7 +114,7 @@ inline void NODE__::FindNearest(POINTTYPE query_point,
   	comp.UpdateDistances();
   	//  we have to check if we are comparing the point with itself
  	  if (unlikely(discriminator.AreTheSame(index_[i], 
-		       	query_point.get_id())==true)) {
+		       	     query_point.get_id())==true)) {
   	 	continue;
  	  } 
 
@@ -132,10 +131,18 @@ inline void NODE__::FindNearest(POINTTYPE query_point,
 			}
 		}
     // for k-nearest neighbors
+    typename  std::vector<pair<Precision_t, Point_t> >::iterator it;
+		it=nearest.begin()+range;
+		//for(index_t k=0; k<range; k++) {
+		//	it++;
+		//}
 	  if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
-  	  std::partial_sort(nearest[0], nearest[nearest.size()]);
+  	  std::partial_sort(nearest.begin(), 
+					              it,
+					              nearest.end(),
+												PairComparator());
 		  if (nearest.size()>(uint32)range) {
-		    nearest.erase(&nearest[range], nearest.end());
+		    nearest.erase(it, nearest.end());
 		  }
 	  }
 	}
@@ -153,10 +160,13 @@ inline void NODE__::FindAllNearest(
   
   Precision_t max_local_distance = numeric_limits<Precision_t>::min();
   for(index_t i=0; i<query_node->num_of_points_; i++) {
+		Precision_t distance;
 		// for k nearest neighbors
 		if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
      	// get the current maximum distance for the specific point
-  	  Precision_t distance = query_node->kneighbors_[i*range+range-1].distance_;
+  	  distance = query_node->kneighbors_[i*range+range-1].distance_;
+		} else {
+		  distance=range;
 		}
     // We should check whether this speeds up or slows down 
 		// the performance 
@@ -172,11 +182,14 @@ inline void NODE__::FindAllNearest(
 			    temp[j].first=query_node->kneighbors_[i*range+j].distance_;
 				  temp[j].second=query_node->kneighbors_[i*range+j].nearest_;
 			  }
-        FindNearest(query_node->points_[i], temp, 
-                    distance, range, dimension,
+				Point_t point;
+				point.Alias(query_node->points_.get()+i*dimension, index_[i]);
+        FindNearest(point, temp, 
+                    range, dimension,
 				 				    discriminator,	comp);
 			  for(int32 j=range-1; j>=0; j--) {
-			    if (query_node->kneighbors_[i*range+j].nearest_==temp[j].second) {
+			    if (query_node->kneighbors_[i*range+j].nearest_.get_id()
+							==temp[j].second.get_id()) {
 				    break;
 			    }
 			    query_node->kneighbors_[i*range+j].distance_=temp[j].first;
@@ -191,17 +204,20 @@ inline void NODE__::FindAllNearest(
 		    // for range nearest neighbors
 	      vector<pair<Precision_t, Point_t> >  temp;
 			  temp.clear();
-		    FindNearest(query_node->points_[i], temp, 
-                    distance, range, dimension,
+				Point_t point;
+				point.Alias(query_node->points_.get()+i*dimension, index_[i]);
+		    FindNearest(point, temp, 
+                    range, dimension,
 				  				  discriminator,	comp);
-			  for(index_t j=0; j<temp.size(); j++) {
+			  for(index_t j=0; j<(index_t)temp.size(); j++) {
 				  NNResult result;
-				  result.point_id_=query_node->points_[i].get_id();
-				  result.nearest_=temp[j].first;
-				  result.distance_=temp[j].second;
-				  FATAL(fwrite(&result, sizeof(NNResult), 1, range_nn_fp_)!=1, 
-						    "Error while writing range nearest neighbors: %s\n",
-						    strerror(errno));
+				  result.point_id_=query_node->index_[i];
+				  result.nearest_.Alias(temp[j].second);
+				  result.distance_=temp[j].first;
+					if (fwrite(&result, sizeof(NNResult), 1, range_nn_fp_)!=1) {
+				    FATAL("Error while writing range nearest neighbors: %s\n",
+						      strerror(errno));
+					}
 			  }
 			}				
     }  

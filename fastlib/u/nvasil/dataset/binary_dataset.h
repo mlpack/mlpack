@@ -36,7 +36,7 @@ class BinaryDataset {
 	friend class BinaryDatasetTest;
  public:
 	typedef PRECISION Precision_t;
-	friend class BinaryDataset<Precision_t>::Iterator;
+	friend class Iterator;
 	class Iterator {
 	 public:
 		Iterator(BinaryDataset<Precision_t> *dataset) {
@@ -98,8 +98,8 @@ class BinaryDataset {
 		index_file_=index_file;
 		num_of_points_=num_of_points;
 		dimension_=dimension;
-		CreateDataFile(); 
-		CreateIndexFile();
+		CreateDataFile(data_file, dimension, num_of_points); 
+		CreateIndexFile(index_file, num_of_points);
 		return SUCCESS_PASS;
 	}
   // Use this to swap the points of a dataset
@@ -131,20 +131,19 @@ class BinaryDataset {
 		return vector;
 	}
 	// returns a pointer on the data at the ith point
-	Precision_t* At(index_t i) {
-		DEBUG_ASSERT_MSG(i<num_of_points_, 
-				             "Attempt to acces data out of range "LI">"LI, i, 
-										  num_of_points_);
+  Precision_t* At(uint64 i) {
+		const char *temp="Attempt to acces data out of range "LI">"LI"";
+		DEBUG_ASSERT_MSG(i<num_of_points_, temp, i, num_of_points_);
 	  return data_+i*dimension_;
 	}
 	// returns a reference on the i,j element
-	Precision_t &At(index_t i, index_t j) {
-    DEBUG_ASSERT_MSG(i<num_of_points_, 
-		                "Attempt to acces data out of range "LI">"LI, i, 
-										   num_of_points_);
-    DEBUG_ASSERT_MSG(j<dimension_,
-				             "Attempt to access element greater that the dimension "
-										 LI">"L32, j, dimension_);
+	Precision_t &At(uint64 i, int32 j) {
+   	const char *temp="Attempt to acces data out of range "LI">"LI"";
+		DEBUG_ASSERT_MSG(i<num_of_points_, temp, i, num_of_points_);
+    const char *temp1="Attempt to access element greater that the "
+			                "dimension "LI">"L32"";
+
+		DEBUG_ASSERT_MSG(j<dimension_, temp1, j, dimension_);
 	  return data_[i*dimension_+j];
 	}
 	// get the index at i point
@@ -285,6 +284,7 @@ class BinaryDataset {
 				         total_size % buffer_length)) {
 		  FATAL("Error %s, while writing for file %s\n",
 					 strerror(errno), file_name.c_str());
+		}
 		fclose(fp);
 	}	
 };

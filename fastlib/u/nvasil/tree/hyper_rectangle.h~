@@ -27,6 +27,7 @@
 #include "fastlib/fastlib.h"
 #include "computations_counter.h"
 
+using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class HyperRectangle {
  public:
