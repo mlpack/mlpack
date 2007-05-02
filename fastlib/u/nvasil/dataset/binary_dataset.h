@@ -61,7 +61,6 @@ class BinaryDataset {
 
 	}
 	~BinaryDataset() {
-	  Destruct();
 	}
 	// Initializes a the BinaryDataset from two existent files
 	// one for data and one for the index
@@ -76,7 +75,7 @@ class BinaryDataset {
 	// If the index file is not given it assumes it has the same name as
 	// the data file appended with ind
 	success_t Init(string data_file) {
-    string temp=data_file.append("ind");
+    string temp=data_file.append(".ind");
 	  Init(data_file, temp);	
 		return SUCCESS_PASS;
 	}
@@ -87,7 +86,8 @@ class BinaryDataset {
 			           int32 dimension) {
 	  data_file_=data_file;
 		index_file_=data_file;
-		data_file_.append("ind");
+		index_file_.append(".ind");
+		num_of_points_=num_of_points;
 		Init(data_file_, index_file_, num_of_points_, dimension);
 		return SUCCESS_PASS;
 	}
@@ -100,6 +100,8 @@ class BinaryDataset {
 		dimension_=dimension;
 		CreateDataFile(data_file, dimension, num_of_points); 
 		CreateIndexFile(index_file, num_of_points);
+		data_=(Precision_t*)MemoryMap(data_file_, sizeof(int32));
+		index_=(uint64*)MemoryMap(index_file_,0);
 		return SUCCESS_PASS;
 	}
   // Use this to swap the points of a dataset
@@ -217,8 +219,15 @@ class BinaryDataset {
 		}
 		uint64 map_size = info.st_size-sizeof(int32);
 		int fp=open(file_name.c_str(), O_RDWR);
-		void *ptr=mmap(NULL, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fp,
-			             offset);
+		if (fp<0) {
+		  FATAL("Cannot open %s, error %s\n", file_name.c_str(), strerror(errno));
+		}
+		lseek(fp, offset, SEEK_SET);
+		void *ptr=mmap(0, 
+				           map_size, 
+				           PROT_READ | PROT_WRITE, MAP_SHARED, 
+									 fp,
+			             0);
     if (unlikely(ptr==MAP_FAILED)) {
 		  FATAL("Error %s while mapping %s\n", 
 				    strerror(errno), file_name.c_str());
@@ -236,7 +245,7 @@ class BinaryDataset {
 		return SUCCESS_FAIL;
 		uint64 map_size = info.st_size-offset;
 		if(munmap(ptr , map_size)<0) {
-		  NONFATAL("Error %s while mapping %s\n", 
+		  NONFATAL("Error %s while unmapping %s\n", 
 		           strerror(errno), file_name.c_str());
 			return SUCCESS_FAIL;
 		}

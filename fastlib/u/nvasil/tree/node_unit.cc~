@@ -60,14 +60,15 @@ class NodeTest {
 		data_file_="data";
     dataset_.Init(data_file_, num_of_points_, dimension_);
     for(index_t i=0; i<num_of_points_; i++) {
-		  dataset_.At(i)[0]=rand()/14.333;
-			dataset_.At(i)[1]=rand()/1.6778;
+		  dataset_.At(i)[0]=Precision_t(rand())/RAND_MAX;
+			dataset_.At(i)[1]=Precision_t(-rand())/RAND_MAX;
 			dataset_.set_id(i,i);
-		}	
-		hyper_rectangle_->Init(min, max, 0, 0);
+		}
+		hyper_rectangle_.Init(min, max, 0, 0);
 	  NullStatistics statistics;
 		//	typename Node_t::NodeCachedStatistics_t statistics;
-	  node_->Init(*hyper_rectangle_,
+	  node_.Reset(new Node_t);
+		node_->Init(hyper_rectangle_,
                 statistics,
 								0,
 								0,
@@ -76,7 +77,7 @@ class NodeTest {
 							  &dataset_); 
   }
 	void Destruct() {
-		hyper_rectangle_->Destruct();
+		hyper_rectangle_.Destruct();
 		delete Allocator_t::allocator_;
 		dataset_.Destruct();
 		unlink(data_file_.c_str());
@@ -84,12 +85,14 @@ class NodeTest {
 	}
 
 	void FindNearest() { 
-	  SimpleDiscriminator discriminator;
+	  printf("Testing find nearest\n");
+		SimpleDiscriminator discriminator;
     vector<pair<Precision_t, Point<Precision_t, Allocator_t> > > nearest;
     ComputationsCounter<diagnostic> comp;
 		for(index_t i=0; i<num_of_points_; i++) {
 			Point_t query_point;
       		  query_point.Alias(dataset_.At(i), dataset_.get_id(i));
+			nearest.clear();
 			node_->FindNearest(query_point, 
 			                   nearest, 
 							  				 1, 
@@ -97,7 +100,7 @@ class NodeTest {
                          discriminator,
 									       comp);
 			Precision_t min_dist=numeric_limits<Precision_t>::max();
-			index_t min_id;
+			index_t min_id=0;
       for(index_t j=0; j<num_of_points_; j++) {
 			  if (unlikely(dataset_.get_id(j)==dataset_.get_id(i))) {
 				  continue;
@@ -118,7 +121,7 @@ class NodeTest {
 	}
   void FindAllNearest() {
     typename Node_t::NNResult result[num_of_points_];
-	  node_->set_kneighbors(result, num_of_points_);	  
+	  node_->set_kneighbors(result, 1);	  
 		Precision_t max_neighbor_distance=numeric_limits<Precision_t>::max();
     SimpleDiscriminator discriminator;
     ComputationsCounter<diagnostic> comp;
@@ -161,8 +164,8 @@ class NodeTest {
 	
  private: 
 	typename Allocator_t:: template Ptr<Node_t> node_;
-	string data_file_;
-	typename Allocator_t:: template Ptr<HyperRectangle_t> hyper_rectangle_;
+  string data_file_;
+	HyperRectangle_t  hyper_rectangle_;
   BinaryDataset<Precision_t> dataset_;
 	index_t num_of_points_;
   int32 dimension_; 
