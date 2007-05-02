@@ -84,7 +84,6 @@ class Node {
 	template<typename POINTTYPE, typename NEIGHBORTYPE>
   void FindNearest(POINTTYPE query_point, 
 			             vector<pair<Precision_t, Point_t> >  &nearest, 
-                   Precision_t &distance, 
 									 NEIGHBORTYPE range, 
 									 int32 dimension,
 									 PointIdDiscriminator_t &discriminator,
@@ -160,6 +159,13 @@ class Node {
 		FILE *range_nn_fp_;
 	};
 	Precision_t  min_dist_so_far_;	
+	class PairComparator {
+	 public:
+	   bool operator()(const pair<Precision_t, Point_t> &a, 
+			               const pair<Precision_t, Point_t>  &b)  {
+	     return a.first<b.first;
+		}
+	};
 };
 
 #include "node_impl.h"

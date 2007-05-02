@@ -44,6 +44,8 @@ class HyperRectangle {
   void Init(ArrayPtr_t min, ArrayPtr_t max, int32 pivot_dimension,
 			      Precision_t pivot_value);
   ~HyperRectangle() {};
+	void Destruct(){
+	}
   static void *operator new(size_t size);
   static void  operator delete(void *p);
   HyperRectangle_t &operator=(HyperRectangle_t &);

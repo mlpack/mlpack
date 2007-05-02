@@ -17,4 +17,7 @@
  */
 
 class NullStatistics {
+ public:	
+	void Alias(const NullStatistics &other) {
+	}
 };

@@ -32,8 +32,8 @@ class Point {
 		this->id_ = point.id_;
   }
 
-	void Alias(const Precision_t *ptr, index_t point_id) {
-	  this->p_= ptr;
+	void Alias(Precision_t *ptr, index_t point_id) {
+	  this->p_.Reset(ptr);
 		this->id_=point_id;
 	}
 	template<typename POINTTYPE>
@@ -83,7 +83,7 @@ class Point<PRECISION, Loki::NullType> {
 		this->id_=0;
 	};
 	Precision_t &operator[](index_t i) {
-	  return &p_[i];
+	  return p_[i];
 	}
   void Alias(const Point_t &point) {
 		this->p_ = point.p_;
