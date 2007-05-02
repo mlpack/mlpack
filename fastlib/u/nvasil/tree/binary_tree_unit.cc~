@@ -17,11 +17,11 @@
  */
 
 #include <unistd.h>
-#include <sys/mmap.h>
+#include <sys/mman.h>
 #include <limits.h>
-#include "loki/Typelist.h"
+#include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
-#include "test/test.h"
+#include "u/nvasil/test/test.h"
 #include "dataset/binary_dataset.h"
 #include "binary_tree.h"
 
@@ -167,6 +167,8 @@ class BinaryTreeTest {
 					                   numeric_limits<Precision_t>::epsilon());
 			  TEST_ASSERT(res[i].second.get_id()==
 				            nearest_naive[j+1].second);
+				i++;
+				j++;
 			}			
 		}		
 		munmap(res, map_size);

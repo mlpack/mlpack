@@ -17,12 +17,12 @@
  */
 
 #include <unistd.h>
-#include <sys/mmap.h>
+#include <sys/mman.h>
 #include <limits.h>
-#include "loki/Typelist.h"
+#include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
-#include "test/test.h"
-#include "dataset/binary_dataset.h"
+#include "u/nvasil/test/test.h"
+#include "u/nvasil/dataset/binary_dataset.h"
 #include "binary_tree.h"
 
 using namespace std;

@@ -1,5 +1,5 @@
-#ifndef TREE_IMPL_H_
-#define TREE_IMPL_H_
+#ifndef BINARY_TREE_IMPL_H_
+#define BINARY_TREE_IMPL_H_
 
 #define __TEMPLATE__           \
 template<typename TYPELIST, diagnostic>
@@ -43,7 +43,7 @@ void __TREE__::BuildBreadthFirst() {
 								pivot->num_of_points_);
 	node_id_++;
   pair<PivotInfo_t*, PivotInfo_t*> pivot_pair;
-  pivot_pair = pivoter_(pivot->start_, pivot->num_of_points);
+  pivot_pair = pivoter_(pivot);
   delete pivot;     
   
 	fifo.push_front(make_pair(parent_->get_left().Reference(), pivot_pair.first));
@@ -71,7 +71,7 @@ void __TREE__::BuildBreadthFirst(list<pair<Node_ptr_ptr, PivotInfo_t *> > &fifo)
 							                 pivot_info->num_of_points_);
 
   	  node_id_++;
-  	  pivot_pair = pivoter_(fifo_pair.second.start_, pivot_num_of_points_);
+  	  pivot_pair = pivoter_(fifo_pair.second);
   	  delete fifo_pair.second;     
   	  fifo.push_front(make_pair((*fifo_pair.first)->get_left().Reference(), 
 						                    pivot_pair.first));
@@ -122,7 +122,7 @@ void __TREE__::BuildDepthFirst(Node_ptr &ptr,
 							node_id_,
 							pivot_info->num_of_points_);
 		node_id_++;
-    pivot_pair = Policy_t::Pivot(data_, pivot_info);  
+    pivot_pair = pivoter(pivot_info);  
 	  // There is a case where on all the points are the same
 		// so pivoting returns 0 points on the left side
 		// In that case we create a gigantic leaf
@@ -500,4 +500,4 @@ void __TREE__::set_log_file(const string &log_file) {
 
 #undef __TREE__
 #undef __TEMPLATE__
-#endif /*TREE_IMPL_H_*/
+#endif /*BINARY_TREE_IMPL_H_*/
