@@ -42,3 +42,74 @@ Array
     - blocks have no alignment
     - read blocks on first use
     - explicit ranged writebacks
+
+
+how to build tree
+
+- build first (log p) levels in parallel
+  - first: assume block size >= p
+    - first block is not completely filled
+  - next: if block size < p
+    - second layer of blocks not completely filled
+    - this may be space-hungry if B^2 < N, but in that case, you're kind of
+    silly for using that many processors
+  - so overall
+    - block wastage: P blocks max (really B^(floor((log P)/(log B)))),
+      (N log P)/(B log B) percent
+- fits in memory
+  - arrays are synced by region
+  - trees are private-write
+- doesn't fit in memory
+  - first:
+    - ensure writable portion fits in memory, lock it, and private writes
+      - allocate cache that can exactly fit it?
+    - non-writable parts of tree are not locked
+    - DFS: fit entire query into RAM, fit useful part of reference into RAM
+    - RBFS: only one or logarithmic query nodes even needed in RAM at a time
+      - for best performance, all relevant references must fit
+        - okay for nearest neighbors (linear search space), bad for larger
+        search spaces
+        - generalized: okay for *any* algorithm that performs well
+        single-tree!!!!!!!!!
+  - later: any point in *not* making this assumption?
+    - breadth first?
+      - query-reference problems: use recursive breadth first
+      - global problems: no writes to trees necessary
+
+how to execute
+
+- operation by pattern
+  - in best conditions these are all O((Q+R)/B)
+  - DFS
+    - (QR)/(MB)
+    - tree
+      - query: lock into RAM, private writes
+      - reference: load via cache
+      - I/O worst-case: (4QR/(MB))
+    - data:
+      - make sure query fits in RAM
+      - reference: ranged
+  - RBFS
+    - (QR log B)/(B) without block-chunking
+    - tree
+      - query: one block at a time
+      - reference: via cache
+        - if reference set stays large, cache performance will be abysmal
+        - make sure references are sorted based on block order
+        - if it was N^2 time before I/O efficiency would be
+          - I/O rate: O(Q(R/B)(log B)), but it could have been
+            O((Q/M)(R/B))
+        - *sigh* still better than single-tree
+    - data: cached with ranges
+  - Block breadth-first
+    - (QR log B)/(MB)
+    - looks at pairs of blocks
+    - tree: only one query and one references needed at any time
+    - queue size: QR/B^2
+    - I/O worst-case: either QR/B^2 or (4QR/(MB))(log B)
+      - towards the bottom, we end up working on pairs of half-memory-sized
+      chunks
+      - we may choose number of points per leaf to be comparable to log B
+    - for simplicity, my first version simply won't support mu
+    (mu will just equal the root's delta); we will just target
+    gamma-based problems

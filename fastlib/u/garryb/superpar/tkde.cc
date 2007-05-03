@@ -47,17 +47,35 @@ class Tkde {
     }
   };
 
-  struct QInfo {};
+  struct BlankInfo {
+    template<typename Serializer>
+    void Serialize(Serializer *s) const {}
+    template<typename Deserializer>
+    void Deserialize(Deserializer *s) {}
+  };
 
-  struct RInfo {};
+  typedef BlankInfo QInfo;
+  typedef BlankInfo RInfo;
 
   struct MomentInfo {
     ALLOW_COPY(MomentInfo);
     
-   public:
     Vector mass;
     double sumsq;
     index_t count;
+
+    template<typename Serializer>
+    void Serialize(Serializer *s) const {
+      mass->Serialize(s);
+      s->Put(sumsq);
+      s->Put(count);
+    }
+    template<typename Deserializer>
+    void Deserialize(Deserializer *s) {
+      mass->Deserialize(s);
+      s->Get(&sumsq);
+      s->Get(&count);
+    }
     
     void Init(const TkdeParam& param) {
       mass.Init(param.dim);
@@ -110,6 +128,15 @@ class Tkde {
 
   struct TkdeStat {
     MomentInfo moment_info;
+
+    template<typename Serializer>
+    void Serialize(Serializer *s) const {
+      moment_info->Serialize(s);
+    }
+    template<typename Deserializer>
+    void Deserialize(Deserializer *s) {
+      moment_info->Deserialize(s);
+    }
     
     void InitZero(const TkdeParam& param) {
       moment_info.Init(param);
@@ -147,6 +174,16 @@ class Tkde {
     /** We pruned an entire part of the tree with a particular label. */
     Label label;
     
+    template<typename Serializer>
+    void Serialize(Serializer *s) const {
+      moment_info.Serialize(s);
+      s->Put(label);
+    }
+    template<typename Deserializer>
+    void Deserialize(Deserializer *s) {
+      moment_info->Deserialize(s);
+      s->Get(&label);
+    }
 
     void Init(const TkdeParam& param) {
       moment_info.Init(param);
@@ -169,6 +206,15 @@ class Tkde {
   struct TkdeDelta {
     /** Density update to apply to children's bound. */
     DRange d_density;
+
+    template<typename Serializer>
+    void Serialize(Serializer *s) const {
+      d_density.Serialize(s);
+    }
+    template<typename Deserializer>
+    void Deserialize(Deserializer *s) {
+      d_density.Deserialize(s);
+    }
     
     void Init(const TkdeParam& param) {
       d_density.Init(0, 0);
@@ -183,6 +229,17 @@ class Tkde {
   struct TkdeResult {
     double density;
     Label label;
+
+    template<typename Serializer>
+    void Serialize(Serializer *s) const {
+      s->Put(density);
+      s->Put(label);
+    }
+    template<typename Deserializer>
+    void Deserialize(Deserializer *s) {
+      s->Get(&density);
+      s->Get(&label);
+    }
 
     void Init(const TkdeParam& param,
         const Vector& q_point, const QInfo& q_info,
@@ -214,6 +271,10 @@ class Tkde {
   };
 
   class TkdeGlobalResult {
+    template<typename Serializer>
+    void Serialize(Serializer *s) const {}
+    template<typename Deserializer>
+    void Deserialize(Deserializer *s) {}
     void Init(const TkdeParam& param) {}
     void Accumulate(const TkdeParam& param,
         const TkdeGlobalResult& other_global_result) {}
@@ -226,6 +287,17 @@ class Tkde {
     /** Bound on density from leaves. */
     DRange density;
     Label label;
+
+    template<typename Serializer>
+    void Serialize(Serializer *s) const {
+      density.Serialize(s);
+      s->Put(label);
+    }
+    template<typename Deserializer>
+    void Deserialize(Deserializer *s) {
+      density.Deserialize(s);
+      s->Get(&label);
+    }
 
     void Copy(const TkdeMassResult& other) {
       density = other.density;
