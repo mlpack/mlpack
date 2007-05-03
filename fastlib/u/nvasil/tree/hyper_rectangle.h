@@ -23,18 +23,17 @@
 #include <limits>
 #include <math.h>
 #include <string>
-#include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "computations_counter.h"
 
 using namespace std;
-template<typename TYPELIST, bool diagnostic>
+template<typename BASICTYPES, bool diagnostic>
 class HyperRectangle {
  public:
-	typedef typename Loki::TL::TypeAt<TYPELIST, 0>::Result  Precision_t;  
-	typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result  Allocator_t;
-	typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result  Metric_t;
-	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
+	typedef typename BASICTYPES::Precision_t Precision_t;
+  typedef typename BASICTYPES::Allocator_t  Allocator_t;
+	typedef typename BASICTYPES::Metric_t     Metric_t;
+	typedef HyperRectangle<BASICTYPES, diagnostic> HyperRectangle_t;
 	typedef typename Allocator_t:: template ArrayPtr<Precision_t> ArrayPtr_t;
   typedef typename Allocator_t:: template ArrayPtr<Precision_t> Array_t;
 	template<typename, bool> friend	class  HyperRectangleTest;

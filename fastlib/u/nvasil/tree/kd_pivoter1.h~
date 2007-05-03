@@ -27,19 +27,19 @@
 template<typename TYPELIST, bool diagnostic>
 class KdPivoter1 {
  public:
-	typedef Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
-  typedef Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
-  typedef HyperBall<TYPELIST, diagnostic> HyperBall_t;
+	typedef typename TYPELIST::Precision_t Precision_t;
+	typedef typename TYPELIST::Allocator_t Allocator_t;
+  typedef typename TYPELIST::Metric_t    Metric_t;
+  typedef typename HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
   FORBID_COPY(KdPivoter1)
 	struct PivotInfo {
 	 public:
-	  void Init(index_t start, index_t num_of_points, HyperBall_t &box) {
+	  void Init(index_t start, index_t num_of_points, HyperRectangle_t &box) {
 		  box_.Copy(box_);
 			start_=start;
 			num_of_points_=num_of_points;
 		}	 
-		HyperBall_t box_;
+		HyperRectangle_t box_;
     Loki::NullType statistics_;
 		index_t start_;
 		index_t num_of_points_;

@@ -14,12 +14,12 @@ template<typename TYPELIST,
          bool diagnostic>
 class Node {
  public:
-  typedef typename Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
-	typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
-  typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
-	typedef typename Loki::TL::TypeAt<TYPELIST, 3>::Result BoundingBox_t;
-	typedef typename Loki::TL::TypeAt<TYPELIST, 4>::Result NodeCachedStatistics_t;
-	typedef typename Loki::TL::TypeAt<TYPELIST, 5>::Result PointIdDiscriminator_t;
+	typedef typename TYPELIST::Precision_t Precision_t;
+	typedef typename TYPELIST::Allocator_t Allocator_t;
+	typedef typename TYPELIST::Metric_t    Metric_t;
+	typedef typename TYPELIST::BoundingBox_t BoundingBox_t;
+	typedef typename TYPELIST::NodeCachedStatistics_t NodeCachedStatistics_t;
+	typedef typename TYPELIST::PointIdDescriminator_t PointIdDescriminator_t;
 	typedef typename Allocator_t::template ArrayPtr<Precision_t> Array_t;
   typedef Node<TYPELIST, diagnostic> Node_t;
 	typedef typename Allocator_t::template Ptr<Node> NodePtr_t;

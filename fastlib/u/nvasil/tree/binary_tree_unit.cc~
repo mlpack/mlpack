@@ -19,10 +19,11 @@
 #include <unistd.h>
 #include <sys/mman.h>
 #include <limits.h>
-#include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "u/nvasil/test/test.h"
-#include "dataset/binary_dataset.h"
+#include "u/nvasil/dataset/binary_dataset.h"
+#include "kd_pivoter1.h"
+#include "tree_parameters_macro.h"
 #include "binary_tree.h"
 
 using namespace std;
@@ -30,12 +31,13 @@ using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class BinaryTreeTest {
  public:
-  typedef Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
-  typedef Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 3>::Result BoundingBox_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 4>::Result NodeCachedStatistics_t;
-	typedef Loki::TL::TypeAr<TYPELIST, 5>::Result Pivot_t;
+  typedef typename TYPELIST::Precision_t   Precision_t;
+	typedef typename TYPELIST::Allocator_t   Allocator_t;
+  typedef typename TYPELIST::Metric_t      Metric_t;
+	typedef typename TYPELIST::BoundingBox_t BoundingBox_t;
+	typedef typename TYPELIST::NodeCachedStatistics_t NodeCachedStatistics_t;
+	typedef typename TYPENAME::PointIdDiscriminator_t PointIdDiscriminator_t;
+	typedef typename TYPELIST::Pivot_t Pivot_t;
 	typedef Point<Precision_t, Allocator_t> Point_t; 
 	typedef BinaryTree<TYPELIST, diagnostic> BinaryTree_t;
 	
@@ -209,6 +211,13 @@ class BinaryTreeTest {
 	
 };
 
+TREE_PARAMETERS(float32,
+		            MemoryManager<false>,
+		            EuclideanMetric<float32>,
+	              HyperRectangle,
+	              NullStatistics,
+                SimpleDiscriminator,
+		            KdPivoter1) 
 
 
-RUN_ALL_TESTS(BinaryTreeTesti_t)
+RUN_ALL_TESTS(BinaryTreeTest_t)

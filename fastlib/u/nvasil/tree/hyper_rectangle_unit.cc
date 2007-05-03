@@ -16,7 +16,6 @@
  * =====================================================================================
  */
 
-#include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "u/nvasil/mmanager/memory_manager.h"
 #include "point.h"
@@ -27,9 +26,9 @@ template<typename TYPELIST, bool diagnostic>
 class HyperRectangleTest {
  friend class HyperRectangle<TYPELIST, diagnostic>;
  public:
-  typedef typename Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
-  typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
-	typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
+  typedef typename TYPELIST::Precision_t Precision_t;
+	typedef typename TYPELIST::Allocator_t Allocator_t;
+	typedef typename TYPELIST::Metric_t    Metric_t;
 	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
   HyperRectangleTest() {
 	}
@@ -154,12 +153,18 @@ class HyperRectangleTest {
   ComputationsCounter<diagnostic> comp_;	
 };
 
+/*
 typedef LOKI_TYPELIST_3(float32, 
 		                    MemoryManager<false>, 
 		                    EuclideanMetric<float32>) UserTypeParameters_t;
-
+*/
+struct BasicTypes {
+  typedef float32 Precision_t;
+	typedef MemoryManager<false> Allocator_t;
+	typedef EuclideanMetric<float32> Metric_t;
+};
 int main(int argc, char *argv[]) {
-	HyperRectangleTest<UserTypeParameters_t, false> hyper_rectangle_test;
+	HyperRectangleTest<BasicTypes, false> hyper_rectangle_test;
 	hyper_rectangle_test.AliasTest();
 	hyper_rectangle_test.IsWithinTest();
 	hyper_rectangle_test.CrossesBoundariesTest();

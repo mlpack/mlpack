@@ -28,13 +28,18 @@
 #include "computations_counter.h"
 
 using namespace std;
-template<typename TYPELIST, bool diagnostic>
+template<typename BASICTYPES, bool diagnostic>
 class HyperRectangle {
  public:
+	typedef typename BASICTYPES::Precision_t Precision_t;
+  typedef typename BASICTYPES::Allocator_t  Allocator_t;
+	typedef typename BASICTYPES::Metric_t     Metric_t;
+/*	
 	typedef typename Loki::TL::TypeAt<TYPELIST, 0>::Result  Precision_t;  
 	typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result  Allocator_t;
 	typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result  Metric_t;
-	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
+	*/
+	typedef HyperRectangle<BASICTYPES, diagnostic> HyperRectangle_t;
 	typedef typename Allocator_t:: template ArrayPtr<Precision_t> ArrayPtr_t;
   typedef typename Allocator_t:: template ArrayPtr<Precision_t> Array_t;
 	template<typename, bool> friend	class  HyperRectangleTest;
@@ -44,6 +49,8 @@ class HyperRectangle {
   void Init(ArrayPtr_t min, ArrayPtr_t max, int32 pivot_dimension,
 			      Precision_t pivot_value);
   ~HyperRectangle() {};
+	void Destruct(){
+	}
   static void *operator new(size_t size);
   static void  operator delete(void *p);
   HyperRectangle_t &operator=(HyperRectangle_t &);

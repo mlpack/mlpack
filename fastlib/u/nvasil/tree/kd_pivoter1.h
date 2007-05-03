@@ -19,7 +19,6 @@
 #ifdef KD_PIVOTER1_H_
 #define KD_PIVOTER1_H_
 
-#include "loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "dataset/binary_dataset.h"
 #include "hyper_rectangle.h"
@@ -27,10 +26,10 @@
 template<typename TYPELIST, bool diagnostic>
 class KdPivoter1 {
  public:
-	typedef Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
-	typedef Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
-  typedef Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
-  typedef HyperBall<TYPELIST, diagnostic> HyperBall_t;
+	typedef typename TYPELIST::Precision_t Precision_t;
+	typedef typename TYPELIST::Allocator_t Allocator_t;
+  typedef typename TYPELIST::Metric_t    Metric_t;
+  typedef typename HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
   FORBID_COPY(KdPivoter1)
 	struct PivotInfo {
 	 public:
