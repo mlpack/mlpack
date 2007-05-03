@@ -70,15 +70,15 @@ class NativeArraySerializer {
  public:
   NativeArraySerializer() {}
   ~NativeArraySerializer() {}
-  
+
   void Init() {
     data_.Init();
   }
-  
+ 
   void PutMagic(file::magic_t magic_num) {
     Put(magic_num);
   }
-  
+
   /**
    * Appends a struct or primitive to the end.
    *
@@ -89,7 +89,7 @@ class NativeArraySerializer {
   void Put(const T& val) {
     mem::CopyBytes(data_.AddBack(sizeof(T)), &val, sizeof(T));
   }
-  
+
   /**
    * Appends an array of structs or primtives to the end.
    *
@@ -100,6 +100,16 @@ class NativeArraySerializer {
   void Put(const T* array, index_t count) {
     size_t bytes = count * sizeof(T);
     mem::CopyBytes(data_.AddBack(bytes), array, bytes);
+  }
+
+  /**
+   * Appends an array of non-primitives to the end.
+   */
+  template<typename T>
+  void Serialize(const T* array, index_t count) {
+    for (index_t i = 0; i < count; i++) {
+      array[i].Serialize(this);
+    }
   }
   
   /**
@@ -189,6 +199,16 @@ class NativeArrayDeserializer {
     DEBUG_ASSERT(index_t(pos_ + bytes) <= index_t(size_));
     mem::CopyBytes(dest, ptr_ + pos_, bytes);
     pos_ += bytes;
+  }
+  
+  /**
+   * Retrieves an array of Serializables.
+   */
+  template<typename T>
+  void Deserialize(T *dest, index_t count) {
+    for (index_t i = 0; i < count; i++) {
+      dest[i].Deserialize(this);
+    }
   }
   
   /**

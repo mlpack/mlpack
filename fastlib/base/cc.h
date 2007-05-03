@@ -10,7 +10,6 @@
 #ifndef BASE_CC_H
 #define BASE_CC_H
 
-#include "common.h"
 #include "compiler.h"
 #include "debug.h"
 #include "scale.h"
@@ -75,6 +74,16 @@ inline T max(T a, T b) {
 #define CC_ASSIGNMENT_OPERATOR(cl) \
         public: const cl&operator=(const cl&o) \
         {if(this!=&o){this->~cl();new(this)cl(o);}return *this;}
+
+/**
+ * Creates a copy constructor using the Copy method.
+ *
+ * This does not call the default constructor, so if you are explicitly
+ * checking for debug poisons, your checks will fail.
+ */
+#define ALLOW_COPY(cl) \
+        public: cl(const cl& other) { Copy(other); } \
+        CC_ASSIGNMENT_OPERATOR(cl)
                 
 /**
  * Defines inequality comparators for this class, given the friend

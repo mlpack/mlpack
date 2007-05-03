@@ -29,6 +29,10 @@
 class String {
  private:
   ArrayList<char> array_;
+
+  OT_DEF(String) {
+    OT_MY_OBJECT(array_);
+  }
    
  public:
   String() {}

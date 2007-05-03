@@ -280,7 +280,7 @@ void AllNNDualTree::BaseCase(Tree *q, const Tree *r, double closest_offer) {
     double q_best_dist = results_[q_i].dist;
     
     if (closest_offer < q_best_dist
-        && r->bound().MinDistanceSqToInstance(q_col) < q_best_dist) {
+        && r->bound().MinDistanceSqToPoint(q_col) < q_best_dist) {
       for (index_t r_i = r->begin(); r_i < r_end; r_i++) {
         const double *r_col = r_matrix_.GetColumnPtr(r_i);
         double dist = la::DistanceSqEuclidean(

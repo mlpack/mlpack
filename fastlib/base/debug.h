@@ -186,10 +186,10 @@ extern int print_warnings;
  */
 #ifdef __cplusplus
 #define DEBUG_POISON_PTR(x) \
-    DEBUG_ONLY(debug_poison_ptr(x))
+    DEBUG_ONLY(debug_poison_ptr__impl(x))
 
 template<typename T>
-void debug_poison_ptr(T *&x) {
+void debug_poison_ptr__impl(T *&x) {
   x = BIG_BAD_POINTER(T);
 }
 #else

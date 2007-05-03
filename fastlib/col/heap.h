@@ -35,6 +35,10 @@ class MinHeap {
   
   ArrayList<Entry> entries_;
   
+  OT_DEF(MinHeap) {
+    OT_MY_OBJECT(entries_);
+  }
+  
  public:
   MinHeap() {}
   ~MinHeap() {}
