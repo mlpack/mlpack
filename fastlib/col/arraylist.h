@@ -11,6 +11,7 @@
 
 #include "base/ccmem.h"
 #include "base/scale.h"
+#include "base/otrav.h"
 
 /**
  * Fast expandable array with debug-mode bounds checking.
@@ -64,6 +65,15 @@ class ArrayList {
   Element* ptr_;
   index_t size_;
   index_t cap_;
+  
+  OT_DEF(ArrayList) {
+    OT_MY_OBJECT(size_);
+    OT_MALLOC_ARRAY_NULLABLE(ptr_, size_);
+  }
+  
+  OT_FIX(ArrayList) {
+    cap_ = size_;
+  }
 
  public:
   ArrayList() {

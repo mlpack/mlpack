@@ -13,6 +13,7 @@
 #include "base/scale.h"
 #include "base/cc.h"
 #include "base/ccmem.h"
+#include "base/otrav.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -49,6 +50,15 @@ class Vector {
   index_t length_;
   /** Whether this should be freed, i.e. it is not an alias. */
   bool should_free_;
+  
+  OT_DEF(Vector) {
+    OT_MY_OBJECT(length_);
+    OT_MALLOC_ARRAY(ptr_, length_);
+  }
+  
+  OT_FIX(Vector) {
+    should_free_ = true;
+  }
   
  public:
   /**
@@ -346,6 +356,16 @@ class Matrix {
   index_t n_cols_;
   /** Whether I am a strong copy (not an alias). */
   bool should_free_;
+  
+  OT_DEF(Matrix) {
+    OT_MY_OBJECT(n_rows_);
+    OT_MY_OBJECT(n_cols_);
+    OT_MALLOC_ARRAY(ptr_, n_elements());
+  }
+  
+  OT_FIX(Matrix) {
+    should_free_ = true;
+  }
 
  public:
   /**

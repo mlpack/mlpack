@@ -100,6 +100,8 @@ static void fx__attempt_speedup()
 }
 
 void fx_init(int argc, char **argv) {
+  DEBUG_ASSERT_MSG(fx_root == NULL, "Cannot call fx_init twice.");
+  
   pthread_mutex_init(&fx__mutex, NULL);
 
   fx_root = malloc(sizeof(struct datanode));
@@ -206,6 +208,9 @@ static void fx__write(struct datanode *node)
 void fx_done(void) {
   struct timestamp now;
 
+  DEBUG_ASSERT_MSG(fx_root != NULL,
+      "fx_done called twice, or fx_init was not called.");
+
   /* TODO: Report compile flags. */
   /* TODO: Report the command line verbatim.  (Avoid doing this.) */
   timestamp_now(&now);
@@ -218,6 +223,7 @@ void fx_done(void) {
 
   datanode_destroy(fx_root);
   free(fx_root);
+  fx_root = NULL;
 
   pthread_mutex_destroy(&fx__mutex);
 }

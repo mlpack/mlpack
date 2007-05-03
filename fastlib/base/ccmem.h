@@ -40,6 +40,11 @@
  *
  */
 namespace mem {
+  template<size_t t_elems, typename T = char>
+  struct Chunk {
+    T data[t_elems];
+  };
+  
   /**
    * In debug mode, sets the entire chunk of memory to a BIG_BAD_NUMBER.
    * @param array chunk of memory
@@ -162,12 +167,65 @@ namespace mem {
   }
   /**
    * Copies bit-by-bit from one location to another (memcpy).
+   * @param dest the destination
+   * @param src the source
    * @param elems the desired number of *elements*
-   * @return a new pointer
+   * @return the destination pointer
    */
   template<typename T>
-  inline T * Copy(T* dest, const T* src, size_t elems = 1) {
+  inline T * Copy(T* dest, const T* src, size_t elems) {
      return CopyBytes(dest, src, elems * sizeof(T));
+  }
+  
+  template<typename ChunkType, size_t elems, typename T>
+  inline void ChunkCopy(T* dest, const T* src) {
+    *reinterpret_cast<Chunk<sizeof(T), ChunkType>*>(dest)
+        = reinterpret_cast<Chunk<sizeof(T), ChunkType>*>(src);
+  }
+  
+  template<bool mod_2, bool mod_4, bool mod_8, size_t bytes, typename T>
+  struct CopyHelper {
+    static void DoCopy(T* dest, const T* src) {
+      ChunkCopy<char, bytes>(dest, src);
+    }
+  };
+
+  template<size_t bytes, typename T>
+  struct CopyHelper<0, 1, 1, bytes, T> {
+    static void DoCopy(T* dest, const T* src) {
+      ChunkCopy<uint16, bytes/2>(dest, src);
+    }
+  };
+
+  template<size_t bytes, typename T>
+  struct CopyHelper<0, 0, 1, bytes, T> { 
+    static void DoCopy(T* dest, const T* src) {
+      ChunkCopy<uint32, bytes/4>(dest, src);
+    }
+  };
+
+  template<size_t bytes, typename T>
+  struct CopyHelper<0, 0, 0, bytes, T> {
+    static void DoCopy(T* dest, const T* src) {
+      ChunkCopy<uint32, bytes/8>(dest, src);
+    }
+  };
+  
+  /**
+   * Copies bit-by-bit from one location to another (memcpy).
+   *
+   * Attempts to be smart when it can.
+   *
+   * @param dest 
+   */
+  template<typename T>
+  inline T * Copy(T* dest, const T* src) {
+     CopyHelper<strideof(T) % 2 != 0,
+                strideof(T) % 4 != 0,
+                strideof(T) % 8 != 0,
+                sizeof(T),
+                T>::DoCopy(dest, src);
+     return dest;
   }
   
   template<typename T>
@@ -307,8 +365,50 @@ namespace mem {
   }
 
   template<typename T>
-  void Swap(T* a, T* b, size_t elems = 1) {
+  inline void Swap(T* a, T* b, size_t elems = 1) {
     SwapBytes(a, b, elems * sizeof(T));
+  }
+  
+  /**
+   * Adds a byte-by-byte difference to a pointer.
+   *
+   * This is different from pointer addition because this requires an
+   * intermediate cast to character in order to get per-byte addition.
+   *
+   * @param x the pointer offset
+   * @param difference_in_bytes the number of bytes to add
+   * @return the sum
+   */
+  template<typename T>
+  inline T* PointerAdd(T* x, ptrdiff_t difference_in_bytes) {
+    return reinterpret_cast<T*>(reinterpret_cast<char*>(x)
+        + difference_in_bytes);
+  }
+
+  /**
+   * Finds the byte-by-byte distance between two pointers, lhs - rhs.
+   *
+   * This is different from pointer subtraction because this requires an
+   * intermediate cast to character in order to get per-byte differences.
+   *
+   * @param lhs the "positive" pointer
+   * @param rhs the "negative" pointer
+   * @return the difference, (char*)rhs - (char*)lhs
+   */
+  template<typename T>
+  inline ptrdiff_t PointerDiff(const T* lhs, const T* rhs) {
+    return reinterpret_cast<char*>(lhs) - reinterpret_cast<char*>(rhs);
+  }
+
+  /**
+   * Finds the inter-valued absolute address of a pointer.
+   *
+   * @param pointer the pointer to get the absolute address of
+   * @return the pointer, but in integer form
+   */
+  template<typename T>
+  inline ptrdiff_t PointerAbsoluteAddress(const T* pointer) {
+    return reinterpret_cast<ptrdiff_t>(pointer);
   }
 };
 

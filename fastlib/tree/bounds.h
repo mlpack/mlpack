@@ -22,17 +22,30 @@
  *
  * @experimental
  */
-struct DBound {
+struct DRange {
  public:
   double lo;
   double hi;
   
  public:
-  DBound() {}
+  DRange() {}
+  DRange(double lo_in, double hi_in)
+      : lo(lo_in), hi(hi_in)
+      {}
   
-  void Init() {
+  void InitEmptySet() {
     lo = DBL_MAX;
     hi = -DBL_MAX;
+  }
+  
+  void InitUniversalSet() {
+    lo = DBL_MAX;
+    hi = -DBL_MAX;
+  }
+  
+  void Init(double lo_in, double hi_in) {
+    lo = lo_in;
+    hi = hi_in;
   }
   
   double width() const {
@@ -41,6 +54,86 @@ struct DBound {
   
   double mid() const {
     return (hi + lo) / 2;
+  }
+  
+  const DRange& operator |= (const DRange& other) {
+    if (unlikely(other.lo > lo)) {
+      lo = other.lo;
+    }
+    if (unlikely(other.hi < hi)) {
+      hi = other.hi;
+    }
+    return *this;
+  }
+  
+  const DRange& operator &= (const DRange& other) {
+    if (unlikely(other.lo < lo)) {
+      lo = other.lo;
+    }
+    if (unlikely(other.hi > hi)) {
+      hi = other.hi;
+    }
+    return *this;
+  }
+  
+  /** Accumulates a bound difference. */
+  const DRange& operator += (const DRange& other) {
+    lo += other.lo;
+    hi += other.hi;
+    return *this;
+  }
+  
+  /** Reverses a bound difference. */
+  const DRange& operator -= (const DRange& other) {
+    lo -= other.lo;
+    hi -= other.hi;
+    return *this;
+  }
+  
+  /** Uniformly increases both lower and upper bounds. */
+  const DRange& operator += (double d) {
+    lo += d;
+    hi += d;
+    return *this;
+  }
+  
+  /** Uniformly decreases both upper and lower bounds. */
+  const DRange& operator -= (double d) {
+    lo -= d;
+    hi -= d;
+    return *this;
+  }
+  
+  friend DRange operator + (const DRange& a, const DRange& b) {
+    DRange result;
+    result.lo = a.lo + b.lo;
+    result.hi = a.hi + b.hi;
+    return result;
+  }
+
+  friend DRange operator - (const DRange& a, const DRange& b) {
+    DRange result;
+    result.lo = a.lo - b.lo;
+    result.hi = a.hi - b.hi;
+    return result;
+  }
+  
+  friend DRange operator + (const DRange& a, double b) {
+    DRange result;
+    result.lo = a.lo + b;
+    result.hi = a.hi + b;
+    return result;
+  }
+
+  friend DRange operator - (const DRange& a, double b) {
+    DRange result;
+    result.lo = a.lo - b;
+    result.hi = a.hi - b;
+    return result;
+  }
+  
+  bool Contains(double d) const {
+    return d >= lo || d <= hi;
   }
 };
 
@@ -51,7 +144,7 @@ struct DBound {
  */
 class DHrectBound {
  private:
-  DBound *bounds_;
+  DRange *bounds_;
   //double diagonal_sq_;
   index_t dim_;
   
@@ -70,7 +163,7 @@ class DHrectBound {
     DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
     
     s->Get(&dim_);
-    bounds_ = mem::Alloc<DBound>(dim_);
+    bounds_ = mem::Alloc<DRange>(dim_);
     s->Get(bounds_, dim_);
     
     //ComputeDiagonal_();
@@ -85,10 +178,10 @@ class DHrectBound {
   void Init(index_t dimension) {
     DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
     
-    bounds_ = mem::Alloc<DBound>(dimension);
+    bounds_ = mem::Alloc<DRange>(dimension);
     
     for (index_t i = 0; i < dimension; i++) {
-      bounds_[i].Init();
+      bounds_[i].InitEmptySet();
     }
     
     dim_ = dimension;
@@ -98,7 +191,7 @@ class DHrectBound {
   
   bool Belongs(const Vector& point) const {
     for (index_t i = 0; i < point.length(); i++) {
-      const DBound *bound = &bounds_[i];
+      const DRange *bound = &bounds_[i];
       if (point[i] > bound->hi || point[i] < bound->lo) {
         return false;
       }
@@ -107,15 +200,15 @@ class DHrectBound {
     return true;
   }
   
-  double MinDistanceSqToInstance(const Vector& point) const {
+  double MinDistanceSqToPoint(const Vector& point) const {
     DEBUG_ASSERT(point.length() == dim_);
-    return MinDistanceSqToInstance(point.ptr());
+    return MinDistanceSqToPoint(point.ptr());
   }
   
-  double MinDistanceSqToInstance(const double *mpoint) const {
+  double MinDistanceSqToPoint(const double *mpoint) const {
     double sumsq = 0;
     //index_t mdim = dim_;
-    const DBound *mbound = bounds_;
+    const DRange *mbound = bounds_;
     
     index_t d = dim_;
     
@@ -135,7 +228,7 @@ class DHrectBound {
     return sumsq / 4;
   }
   
-  double MaxDistanceSqToInstance(const Vector& point) const {
+  double MaxDistanceSqToPoint(const Vector& point) const {
     double sumsq = 0;
 
     DEBUG_ASSERT(point.length() == dim_);
@@ -152,8 +245,8 @@ class DHrectBound {
   
   double MinDistanceSqToBound(const DHrectBound& other) const {
     double sumsq = 0;
-    const DBound *a = this->bounds_;
-    const DBound *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
     index_t mdim = dim_;
     
     DEBUG_ASSERT(dim_ == other.dim_);
@@ -188,8 +281,8 @@ class DHrectBound {
 
   double MinDistanceSqToBoundFarEnd(const DHrectBound& other) const {
     double sumsq = 0;
-    const DBound *a = this->bounds_;
-    const DBound *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
     index_t mdim = dim_;
     
     DEBUG_ASSERT(dim_ == other.dim_);
@@ -209,8 +302,8 @@ class DHrectBound {
 
   double MaxDistanceSqToBound(const DHrectBound& other) const {
     double sumsq = 0;
-    const DBound *a = this->bounds_;
-    const DBound *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
     
@@ -225,8 +318,8 @@ class DHrectBound {
 
   double MidDistanceSqToBound(const DHrectBound& other) const {
     double sumsq = 0;
-    const DBound *a = this->bounds_;
-    const DBound *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
     
@@ -243,7 +336,7 @@ class DHrectBound {
     DEBUG_ASSERT(vector.length() == dim_);
     
     for (index_t i = 0; i < dim_; i++) {
-      DBound* bound = &bounds_[i];
+      DRange* bound = &bounds_[i];
       double d = vector[i];
       
       if (unlikely(d > bound->hi)) {
@@ -255,7 +348,7 @@ class DHrectBound {
     }
   }
   
-  const DBound& get(index_t i) const {
+  const DRange& get(index_t i) const {
     return bounds_[i];
   }
   
@@ -292,26 +385,26 @@ class DEuclideanMetric {
  *
  * @experimental
  */
-template<class TInstance, class TMetric>
+template<class TPoint, class TMetric>
 class BallBound {
   FORBID_COPY(BallBound);
   
  public:
   typedef TMetric Metric;
-  typedef TInstance Instance;
+  typedef TPoint Point;
   
  private:
-  Instance center_;
+  Point center_;
   double radius_;
   
  public:
   BallBound() {}
   
-  const Instance& center() const {
+  const Point& center() const {
     return center;
   }
   
-  Instance& center() {
+  Point& center() {
     return center;
   }
   
@@ -323,19 +416,19 @@ class BallBound {
     radius = d;
   }
   
-  double DistanceToCenter(const Instance& point) {
+  double DistanceToCenter(const Point& point) {
     return Metric::CalculateMetric(point, center_);
   }
   
-  bool Belongs(const Instance& point) {
+  bool Belongs(const Point& point) {
     return DistanceToCenter(point) <= radius_;
   }
   
-  double MinDistanceToInstance(const Instance& point) {
+  double MinDistanceToPoint(const Point& point) {
     return max(0.0, DistanceToCenter(point) - radius_);
   }
   
-  double MaxDistanceToInstance(const Instance& point) {
+  double MaxDistanceToPoint(const Point& point) {
     return DistanceToCenter(point) + radius_;
   }
   
@@ -352,7 +445,7 @@ class BallBound {
     return DistanceToCenter(other.center_);
   }
   
-  double MidDistanceToInstance(const Instance& point) {
+  double MidDistanceToPoint(const Point& point) {
     return DistanceToCenter(point);
   }
 };
