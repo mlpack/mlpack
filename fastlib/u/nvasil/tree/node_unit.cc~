@@ -30,16 +30,16 @@
 template<typename TYPELIST, bool diagnostic>
 class NodeTest {
  public:
-  typedef typename Loki::TL::TypeAt<TYPELIST, 0>::Result Precision_t;
-  typedef typename Loki::TL::TypeAt<TYPELIST, 1>::Result Allocator_t;
-  typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
+  typedef typename TYPELIST::Precision_t Precision_t;
+  typedef typename TYPELIST::Allocator_t Allocator_t;
+  typedef typename TYPELIST::Metric_t    Metric_t;
 	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
-	typedef typename Loki::TL::Append<TYPELIST, HyperRectangle_t>::Result Temp1_t;
-  typedef typename Loki::TL::Append<Temp1_t, NullStatistics>::Result Temp2_t;
-	typedef typename Loki::TL::Append<Temp2_t, SimpleDiscriminator>::Result 
-							UserTypeParameters_t;
- 
-	typedef Node<UserTypeParameters_t, diagnostic> Node_t;
+  struct  NodeParameters : public TYPELIST {
+	 	typedef HyperRectangle_t    BoundingBox_t;
+	  typedef NullStatistics      NodeCachedStatistics_t;
+	  typedef SimpleDiscriminator PointIdDescriminator_t;
+	};
+	typedef Node<NodeParameters, diagnostic> Node_t;
 	typedef typename Allocator_t:: template ArrayPtr<Precision_t> Array_t;
 	typedef Point<Precision_t, Loki::NullType> Point_t;
   NodeTest() {
@@ -120,7 +120,8 @@ class NodeTest {
 	  }	
 	}
   void FindAllNearest() {
-    typename Node_t::NNResult result[num_of_points_];
+    printf("Testing find all nearest\n");
+		typename Node_t::NNResult result[num_of_points_];
 	  node_->set_kneighbors(result, 1);	  
 		Precision_t max_neighbor_distance=numeric_limits<Precision_t>::max();
     SimpleDiscriminator discriminator;
@@ -172,12 +173,13 @@ class NodeTest {
   	
 };
 
-typedef LOKI_TYPELIST_3(float32, 
-		                    MemoryManager<false>, 
-		                    EuclideanMetric<float32>)	 UserTypeParameters1_t;
+struct BasicParameters{
+	typedef float32                  Precision_t; 
+	typedef MemoryManager<false>     Allocator_t; 
+	typedef EuclideanMetric<float32> Metric_t;
+};
 
 int main(int argc, char *argv[]) {
-  		
-	NodeTest<UserTypeParameters1_t, false> node_test;
+	NodeTest<BasicParameters}, false> node_test;
 	node_test.TestAll();
 }

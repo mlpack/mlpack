@@ -30,8 +30,9 @@
 #include <list>
 #include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
+#include "node.h"
 #include "show_progress.h"
-
+using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class BinaryTree {
  public:
@@ -42,14 +43,16 @@ class BinaryTree {
   typedef typename Loki::TL::TypeAt<TYPELIST, 2>::Result Metric_t;
 	typedef typename Loki::TL::TypeAt<TYPELIST, 3>::Result BoundingBox_t;
 	typedef typename Loki::TL::TypeAt<TYPELIST, 4>::Result NodeCachedStatistics_t;
-	typedef typename Loki::TL::TypeAr<TYPELIST, 5>::Result Pivot_t;
-	typedef Allocator_t::template ArrayPtr<Precision_t> Array_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 5>::Result PointIdDiscriminator_t;
+	typedef typename Loki::TL::TypeAt<TYPELIST, 6>::Result Pivot_t;
+	typedef typename Allocator_t::template ArrayPtr<Precision_t> Array_t;
   typedef Node<TYPELIST, diagnostic> Node_t;
-	typedef Allocator_t::template Ptr<Node> NodePtr_t;
+	typedef typename Allocator_t::template Ptr<Node_t> NodePtr_t;
+	typedef typename Allocator_t::template Ptr<NodePtr_t> NodePtrPtr_t;
 	typedef Point<Precision_t, Allocator_t> Point_t;
-	typedef Node_t::Result Result_t;
-	typedef BinaryTree<TYPELIST, bool> BinaryTree_t;
-  typedef Pivot_t::PivotInfo PivotInfo_t;	
+	typedef typename Node_t::NNResult Result_t;
+	typedef BinaryTree<TYPELIST, diagnostic> BinaryTree_t;
+  typedef typename Pivot_t::PivotInfo PivotInfo_t;	
 	class OutPutAllocator {
 	 public: 
 		OutPutAllocator() {
@@ -61,63 +64,62 @@ class BinaryTree {
 	  Result_t *get_ptr() {
 		  return ptr_;
 		}
-		Result_t *Allocate(int32 num_of_points, int32 range) {
+		Result_t *Allocate(int32 num_of_points, int32 knns) {
 		  Result_t *result=ptr_+num_;
-			num_+=range*num_of_points;
+			num_+=knns*num_of_points;
 		  return result;	
 		}
 	 private:
 		Result_t *ptr_;
-		IDPRECISION num_;
-
+		index_t num_;
 	};
 	BinaryTree();
   ~BinaryTree();
-	void Init(BinaryDataset &data);
+	void Init(BinaryDataset<Precision_t> &data);
   // Call this function to build Depth first a tree
   void BuildDepthFirst();
-	void BuildDepthFirst(Node_ptr &ptr, Pivot_t *pivot);
+	void BuildDepthFirst(NodePtr_t &ptr, PivotInfo_t *pivot);
   void BuildBreadthFirst();
-	void BuildBreadthFirst(list<pair<Node_ptr_ptr, Pivot_t *> > &fifo);
+	void BuildBreadthFirst(
+			list<pair<NodePtrPtr_t, PivotInfo_t *> > &fifo);
    // Builds tree k depth first. It builds all the  subtrees depth first up to k level
 	void BuildKDepthFirst();
   template<typename POINTTYPE, typename NEIGHBORTYPE>
   void NearestNeighbor(POINTTYPE &test_point,
-                       vector<pair<Precision_t, Point_t> > *nearest_point,
-                       NEIGHBORTYPE range);
+      vector<pair<Precision_t, Point_t> > *nearest_point,
+      NEIGHBORTYPE range);
 
 	// This is the core function doing the recursion, Use that only if you want
 	// to start the search from a particular node and not the parent
 	template<typename POINTTYPE, typename NEIGHBORTYPE>
-  void NearestNeighbor(Node_ptr ptr,
-                       POINTTYPE &test_point,
-                       vector<pair<Precision_t, Point_t> > *nearest_point,
-                       NEIGHBORTYPE range,
-                       bool &found);
+  void NearestNeighbor(NodePtr_t ptr,
+     POINTTYPE &test_point,
+     vector<pair<Precision_t, Point_t> > *nearest_point,
+     NEIGHBORTYPE range,
+     bool &found);
   
   // This is the duall tree nearest neighbors method, again it works
   // for all cases k nearest/ range nearest 
   template<typename NEIGHBORTYPE>
-  void AllNearestNeighbors(Node_ptr query, 
+  void AllNearestNeighbors(NodePtr_t query, 
                            NEIGHBORTYPE range);                    
   template<typename NEIGHBORTYPE>
-  void AllNearestNeighbors(Node_ptr query, 
-                           Node_ptr reference,
+  void AllNearestNeighbors(NodePtr_t query, 
+                           NodePtr_t reference,
                            NEIGHBORTYPE range, 
-                           PRECISION distance);
+                           Precision_t distance);
 	void InitAllKNearestNeighborOutput(string file, int32 knns);
 	void CloseAllKNearestNeighborOutput(int32 knns);
-	void InitAllKNearestNeighborOutput(Node_ptr ptr, 
+	void InitAllKNearestNeighborOutput(NodePtr_t ptr, 
 		                                int32 knns);
 	void InitAllRangeNearestNeighborOutput(string file);
+  void InitAllRangeNearestNeighborOutput(NodePtr_t ptr,
+		                                     FILE *fp);
 	void CloseAllRangeNearestNeighborOutput(int32 range);
-	void InitAllRangeNearestNeighborOutput(Node_ptr ptr, 
-		                                int32 range);
-
-
+	
 	// Print the tree depth first
 	void Print();
-  void RecursivePrint(Node_ptr ptr);  
+  void RecursivePrint(NodePtr_t ptr);  
   // Resets the counters of the tree that keep the statistics of search
 	void ResetCounters() {
     computations_.Reset();
@@ -131,25 +133,25 @@ class BinaryTree {
   uint64 get_num_of_points(){
   	return num_of_points_;
   }
-  Node_ptr get_parent() {
+  NodePtr_t get_parent() {
   	return parent_;
   }
-	void set_discriminator(PointIdentityDiscriminator<IDPRECISION> *disc) {
+	void set_discriminator(PointIdDiscriminator_t *disc) {
 	  discriminator_.reset(disc);
 	}
-	void set_max_points_on_leaf(index_t max_point_on_leaf) {
+	void set_max_points_on_leaf(index_t max_points_on_leaf) {
 		max_points_on_leaf_=max_points_on_leaf;
 	}
 	index_t get_max_points_on_leaf() {
-	  return max_points_on_leaf();
+	  return max_points_on_leaf_;
 	}
  private:
 	// Maximum number of points on a leaf
   index_t  max_points_on_leaf_;
   // Parent/Root
-	Node_ptr parent_;
+	NodePtr_t parent_;
   // Source of data
-	BinaryDataset data_;
+	BinaryDataset<Precision_t> data_;
   // Total number of points on the tree
 	index_t num_of_points_;
 	// Number of Leafs on the tree
@@ -179,7 +181,8 @@ class BinaryTree {
   FILE *log_file_ptr_;
 	string log_file_;
 	// This is usefull for our timit experiments
-  PointIdentityDiscriminator	discriminator_;
+  PointIdDiscriminator_t discriminator_;
+	// Does all the partitioning for the tree
 	Pivot_t pivoter_;
 };
 #include "binary_tree_impl.h"
