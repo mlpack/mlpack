@@ -1,0 +1,81 @@
+remember 143
+
+/- serialization of tkde
+- array char abstraction
+- array char mem abstraction
+- array char disk abstraction
+- array char local cache abstraction
+- array abstraction (kind of done already)
+- dfs
+
+
+- how to resolve write conflicts
+  - a: bit array
+  - b: ranges (requires carefulness)
+  - c: block exclusivity, enforced
+  - d: do it manually
+  - c: block exclusivity, assumed
+
+  blocker.read_block(i).offset(i)
+
+- question: in DFS how do we get fault tolerance?
+  XXX- option 1: rely on mu
+    - we have to know the state of mu
+    - impossible to guarantee using a cache
+    - we never know the state of the data
+  - option 2: nuke
+    - we can always nuke a region of the query tree
+    - also required for work stealing
+
+final answer:
+  - bit-vector or pre-allocated dirty flags
+
+
+- abstractions
+  - to make network/disk access easy we use block backends.  but there
+  are two frontends to these:
+    - scanning frontend (cache size is single block)
+      - Scanner(blockdevice, begin_id, end_id)
+        - sequential access
+        - can we put lots of scanners in a single dude?
+          - we don't want to
+          - avoid having tiny files
+          - allow run-time decision of backends: use virtual functions
+      - Cache(blockdevice, begin_id, end_id)
+        - random-access read write
+
+void treebuild(array) {
+  makesample(array, &sample)
+  tree <- maketree(sample)
+  assign a number 1 to B to each leaf of the tree
+
+  newarray <- memarray hosted at me
+  allocators <- new blockallocators[B]
+  links <- new int[B]
+  
+  for elem in array:
+    assign i to elem
+    int address = allocators[i].allocate()
+    newarray[address].content <- memcpy(elem)
+    if links[i]:
+      newarray[links[i]].link <- address
+    links[i] = address
+
+  for i in range(B) in parallel:
+    treebuild(newarray, [])
+  finish postponed items (the work queue thing realizes this thread is
+                          blocking and uses it to run one of the work
+                          threads)
+}
+
+
+NetManager
+
+  - simulates java RPC
+  manager.register(id, networklistener)
+  manager.unregister(id)
+  manager.send(id, datasize, data)
+  manager.workqueue_crap_crap
+
+
+

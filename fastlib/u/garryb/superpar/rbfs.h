@@ -168,8 +168,10 @@ class RecursiveBreadthFirstDualTreeRunner {
   Param param_;
   ArrayList<QInfo> q_info_;
   ArrayList<RInfo> r_info_;
-  QNode *q_root_;
-  RNode *r_root_;
+  const QNode *q_root_;
+  const RNode *r_root_;
+  ArrayList<QResult> q_result_;
+  GlobalResult global_result_;
   
  public:
   void Init(struct datanode *module,
@@ -187,11 +189,15 @@ class RecursiveBreadthFirstDualTreeRunner {
   }
   
   ArrayList<QInfo>& q_info() {
-    return q_info;
+    return q_info_;
   }
   
   ArrayList<RInfo>& r_info() {
-    return r_info;
+    return r_info_;
+  }
+  
+  ArrayList<QResult>& q_result() {
+    return q_result_;
   }
 
  private:
@@ -203,20 +209,20 @@ class RecursiveBreadthFirstDualTreeRunner {
         DEBUG_POISON_PTR(r_node);
       }
       
-      RNode *r_node;
+      const RNode *r_node;
       Delta delta;
     };
    
    private: 
     const Param *param_;
-    QNode *q_node_;
+    const QNode *q_node_;
     ArrayList<Entry> list_;
-    MassResult q_mass_result_;
-    PostponedResult q_postponed_;
+    QMassResult q_mass_result_;
+    QPostponedResult q_postponed_;
     GlobalResult *global_result_;
     
    public:
-    void Init(QNode* q_node_in, const Param* param,
+    void Init(const QNode* q_node_in, const Param* param,
         GlobalResult* global_result_in) {
       param_ = param;
       q_node_ = q_node_in;
@@ -230,7 +236,7 @@ class RecursiveBreadthFirstDualTreeRunner {
       global_result_ = global_result_in;
     }
     
-    void Init(QNode* q_node_in, const Queue& parent) {
+    void Init(const QNode* q_node_in, const Queue& parent) {
       param_ = parent.param;
       q_node_ = q_node_in;
       
@@ -244,14 +250,14 @@ class RecursiveBreadthFirstDualTreeRunner {
       global_result_ = parent.global_result_;
     }
     
-    void Add(RNode *r_node) {
+    void Add(const RNode *r_node) {
       Entry *entry = list_.AddBack();
       bool try_explore = Algorithm::ConsiderPairIntrinsic(
           *param_, *q_node_, *r_node,
-          &entry->delta, &q_mass_result_, global_result_, &q_postponed_);
-      
+          &entry->delta, global_result_, &q_postponed_);
       if (try_explore) {
         entry->r_node = r_node;
+        q_mass_result_.ApplyDelta(*param_, entry->delta);
       } else {
         list_.PopBack();
       }
@@ -266,7 +272,7 @@ class RecursiveBreadthFirstDualTreeRunner {
       return list_.size();
     }
     
-    RNode* rnode(index_t i) const {
+    const RNode* rnode(index_t i) const {
       return ;
     }
     
@@ -275,92 +281,195 @@ class RecursiveBreadthFirstDualTreeRunner {
       return list_[i].delta;
     }
 
-    const MassResult& q_mass_result() const { return q_mass_result_; }
+    const QMassResult& q_mass_result() const { return q_mass_result_; }
     
-    const PostponedResult& q_postponed() const { return q_postponed_; }
+    const QPostponedResult& q_postponed() const { return q_postponed_; }
     
-    PostponedResult& q_postponed() { return q_postponed_; }
+    QPostponedResult& q_postponed() { return q_postponed_; }
   };
 
-
-  void SplitQ(QNode *q_node, const Queue& list_old) {
-    if (q_node->is_leaf()) {
-      DoQLeafStuffWALDO_TODO(q_node, list_old);
-      return;
-    }
-    
-    if (Algorithm::ConsiderQueryTermination(&param_, *q_node,
+  void RecursivelyApplyPostponed(
+      const QNode* q_node, const QPostponedResult& postponed_result);
+  
+  bool TryTerminate(const QNode *q_node, const Queue& list_old) {
+    if (Algorithm::ConsiderQueryTermination(param_, *q_node,
         list_old.q_mass_result(), *global_result_, &list_old.q_postponed())) {
       RecursivelyApplyPostponed(q_node, list_old.q_postponed());
       return;
-    }
-
-    Queue list_new[cardinality];
-    
-    /* TODO: termination prunes can be checked here */
-    
-    for (int c = 0; c < cardinality; c++) {
-      list_new[c].Init(q_node->child(i), list_old);
-    }
-    
-    QPostponedResults postponed;
-    
-    postponed.Init(*param_);
-    // We haven't done any exhaustive comparisons, we start with an empty.
-    
-    for (index_t i = 0; i < list_old.size(); i++) {
-      RNode *r_node = list_old.rnode(i);
-      const Delta* delta = &list_old.delta(i);
-      
-      if (likely(Algorithm::ConsiderPairExtrinsic(param_, *q_node, *r_node,
-          *delta, list_old.q_mass_result(), *global_result_, &postponed))) {
-        global_result_.UndoDelta(param_, *delta);
-        for (int c_q = 0; c_q < cardinality; c_q++) {
-          global_result_.ApplyDelta(param_, *delta);
-          list_new[c_q].Add(r_node);
-        }
-      }
-    }
-    
-    /* recurse over query children */
-    
-    for (int c = 0; c < cardinality; c++) {
-      list_new[c].q_postponed().ApplyPostponed(*param_, postponed);
-      list_new[c].Finish(param_);
-      SplitR(q_node->child(c), list_new[c]);
     }
   }
 
-  void SplitR(QNode *q_node, const ArrayList<Entry>& list_old) {
-    Queue list_new;
+  void FinishQ(const QNode *q_node, const Queue& list_old);
+
+  void SplitQ(const QNode *q_node, const Queue& list_old);
+
+  void SplitR(const QNode *q_node, const ArrayList<Entry>& list_old);
+};
+
+template<class GNP>
+void RecursiveBreadthFirstDualTreeRunner<GNP>::RecursivelyApplyPostponed(
+    const QNode* q_node, const QPostponedResult& postponed_result) {
+  for (index_t i = q_node->begin(); i < q_node->end(); i++) {
+    q_results_[i].ApplyPostponedResult(param_, postponed_result, *q_node);
+  }
+}
+
+template<class GNP>
+void RecursiveBreadthFirstDualTreeRunner<GNP>::SplitQ(
+    const QNode *q_node, const Queue& list_old) {
+  if (q_node->is_leaf()) {
+    RecurseOnLeaves(q_node, list_old);
+    return;
+  }
+  
+  if (TryTerminate(q_node, list_old)) {
+    return;
+  }
+
+  Queue list_new[cardinality];
+  
+  /* TODO: termination prunes can be checked here */
+  
+  for (int c = 0; c < cardinality; c++) {
+    list_new[c].Init(q_node->child(i), list_old);
+  }
+  
+  QPostponedResults postponed;
+  
+  postponed.Init(param_);
+  // We haven't done any exhaustive comparisons, we start with an empty.
+  
+  for (index_t i = 0; i < list_old.size(); i++) {
+    const RNode *r_node = list_old.rnode(i);
+    const Delta* delta = &list_old.delta(i);
     
-    if (Algorithm::ConsiderQueryTermination(&param_, *q_node,
-        list_old.q_mass_result(), *global_result_, &list_old.q_postponed())) {
-      RecursivelyApplyPostponed(q_node, list_old.q_postponed());
-      return;
+    if (likely(Algorithm::ConsiderPairExtrinsic(param_, *q_node, *r_node,
+        *delta, list_old.q_mass_result(), *global_result_, &postponed))) {
+      global_result_.UndoDelta(param_, *delta);
+      for (int c_q = 0; c_q < cardinality; c_q++) {
+        global_result_.ApplyDelta(param_, *delta);
+        list_new[c_q].Add(r_node);
+      }
     }
+  }
+  
+  /* recurse over query children */
+  
+  for (int c = 0; c < cardinality; c++) {
+    list_new[c].q_postponed().ApplyPostponed(param_, postponed);
+    list_new[c].Finish(param_);
+    SplitR(q_node->child(c), list_new[c]);
+  }
+}
+
+template<class GNP>
+void RecursiveBreadthFirstDualTreeRunner<GNP>::SplitR(
+    const QNode *q_node, const ArrayList<Entry>& list_old) {
+  Queue list_new;
+  
+  if (TryTerminate(q_node, list_old)) {
+    return;
+  }
+  
+  list_new.Init(q_node, list_old);
+  
+  for (index_t i = 0; i < list_old.size(); i++) {
+    const RNode *r_node = list_old.rnode(i);
+    const Delta* delta = &list_old.delta(i);
     
-    list_new.Init(q_node, list_old);
-    
-    for (index_t i = 0; i < list_old.size(); i++) {
-      RNode *r_node = list_old.rnode(i);
-      const Delta* delta = &list_old.delta(i);
-      
+    if (likely(Algorithm::ConsiderPairExtrinsic(param_, *q_node, *r_node,
+        *delta, list_old.q_mass_result(), *global_result_,
+        &list_new.q_postponed()))) {
       if (entry_old->r_node->is_leaf()) {
         // TODO: We can collapse the mu's for these together
         list_new.Add(r_node);
       } else {
-        if (likely(Algorithm::ConsiderPairExtrinsic(param_, *q_node, *r_node,
-            *delta, list_old.q_mass_result(), *global_result_,
-            &list_new.q_postponed()))) {
-          global_result_.UndoDelta(*delta);
-          for (int c = 0; c < cardinality; c++) {
-            global_result_.ApplyDelta(*delta);
-            list_new.Add(node->child(i));
-          }
+        global_result_.UndoDelta(*delta);
+        for (int c = 0; c < cardinality; c++) {
+          global_result_.ApplyDelta(*delta);
+          list_new.Add(node->child(i));
         }
       }
     }
   }
-};
+  
+  SplitQ(q_node, list_new);
+}
+
+template<class GNP>
+void RecursiveBreadthFirstDualTreeRunner<GNP>::EnumerateLeaves(
+    const QNode *q_node, const RNode *r_node,
+    const QMassResult& old_q_mass_result,
+    ) {
+  DEBUG_ASSERT(q_node->is_leaf());
+
+  if (likely(Algorithm::ConsiderPairExtrinsic(param_, *q_node, *r_node,
+      *delta, old_q_mass_result(), *global_result_,
+      &list_new.q_postponed()))) {
+    if (r_node->is_leaf()) {
+      void Add(const RNode *r_node) {
+        Entry *entry = list_.AddBack();
+        bool try_explore = Algorithm::ConsiderPairIntrinsic(
+            *param_, *q_node_, *r_node,
+            &entry->delta, global_result_, &q_postponed_);
+        if (try_explore) {
+          entry->r_node = r_node;
+          q_mass_result_.ApplyDelta(*param_, entry->delta);
+        } else {
+          list_.PopBack();
+        }
+      }
+      node_list->AddBack(r_node);
+    } else {
+      global_result_.UndoDelta(*delta);
+      for (int c = 0; c < cardinality; c++) {
+        global_result_.ApplyDelta(*delta);
+        EnumerateLeaves(q_node, node->child(i));
+      }
+    }
+  }
+}
+
+template<class GNP>
+void RecursiveBreadthFirstDualTreeRunner<GNP>::HandleQueryLeaf(
+    const QNode *q_node, const Queue& list_old) {
+  Queue list_new;
+  
+  DEBUG_ASSERT(q->is_leaf());
+  
+  check for termination
+  
+  list_new.Init(q_node, list_old);
+  
+  for (index_t i = 0; i < list_old.size(); i++) {
+    const RNode *r_node = list_old.rnode(i);
+    const Delta* delta = &list_old.delta(i);
+    
+    EnumerateLeaves(q_node, r_node, list_old.q_mass_result(), &list_new);
+  }
+  
+  
+  MinHeap<double, Queue::Entry*> priority_queue;
+  
+  for (index_t i = 0; i < list_new.size(); i++) {
+    const Queue::Entry* entry = list_new.entry(i);
+    double heuristic = Algorithm::Heuristic(param_, *q_node, *entry->r_node,
+        entry->delta, list_old.mass_result());
+    priority_queue.Put(-heuristic, entry);
+  }
+  
+  ArrayList<const Queue::Entry*> entries;
+  ArrayList<QMassResult> mass_results;
+  const QMassResult* cur_mass_result = ;
+  
+  mass_results.Init(new_list.size());
+  entries.Init(new_list.size());
+  
+  for (index_t i = new_list.size(); i--;) {
+    entries[i] = priority_queue.Pop();
+    mass_results[i].Copy(*cur_mass_result);
+    cur_mass_result = &mass_results[i];
+  }
+  
+}
 
