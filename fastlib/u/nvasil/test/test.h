@@ -52,8 +52,9 @@
 /**
  * Create a test suite of a given name, 
  */
-#define TEST_SUITE ( functions ...) \
-    int execute_all_tests() { \
+#define TEST_SUITE(functions ...) \
+typedef   (*test__void_func)();\
+int execute_all_tests() { \
         test__void_func tests[] = { functions }; \
         for (size_t i = 0; i < sizeof(tests)/sizeof(tests[0]); i++) { \
             Init();\
@@ -62,19 +63,18 @@
         } \
         fprintf(stderr, "ALL TESTS PASSED!\n"); \
         return 0; \
-      } \
-    };
+     } \
+    
 
 /**
  * Run the tests
  */
 #define RUN_TESTS(test_class) \
-    int main(void) { \
+  int main() { \
 			test_class test; \
       return test.execute_all_tests(); \
     }
 
-typedef void (*test__void_func)();
 
 #define AFFILIATE_WITH_TESTER(class_name) \
 	friend class class_name ## Test;
