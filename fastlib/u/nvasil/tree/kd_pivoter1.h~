@@ -33,7 +33,7 @@ class KdPivoter1 {
 	struct PivotInfo {
 	 public:
 	  void Init(index_t start, index_t num_of_points, HyperRectangle_t &box) {
-		  box_.Copy(box_);
+		  box_.Alias(box);
 			start_=start;
 			num_of_points_=num_of_points;
 		}	 
@@ -98,11 +98,12 @@ class KdPivoter1 {
 	  HyperRectangle_t hr;
     hr.Init(data_->get_dimension());
     for(index_t i=0; i<num_of_points; i++) {
-  	  Precision_t *point = data->At(i);
+  	  Precision_t *point = data_->At(i);
       UpdateHyperRectangle(point, hr);
     }
     FindPivotDimensionValue(hr); 
-    PivotInfo *pv = new PivotInfo(0, num_of_points, hr);
+    PivotInfo *pv = new PivotInfo();
+		pv->Init(0, num_of_points, hr);
 	  return pv;                               
   }
 

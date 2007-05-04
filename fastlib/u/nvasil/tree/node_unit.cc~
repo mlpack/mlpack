@@ -180,6 +180,6 @@ struct BasicParameters{
 };
 
 int main(int argc, char *argv[]) {
-	NodeTest<BasicParameters}, false> node_test;
+	NodeTest<BasicParameters, false> node_test;
 	node_test.TestAll();
 }

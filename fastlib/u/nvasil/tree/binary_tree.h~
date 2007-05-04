@@ -52,7 +52,7 @@ class BinaryTree {
 	typedef BinaryTree<TYPELIST, diagnostic> BinaryTree_t;
   typedef typename Pivot_t::PivotInfo PivotInfo_t;	
   // For testing purposes only
-  template<typename >friend class BinaryTreeTest;
+  template<typename, bool >friend class BinaryTreeTest;
 
 	class OutPutAllocator {
 	 public: 
@@ -77,6 +77,7 @@ class BinaryTree {
 	BinaryTree();
   ~BinaryTree();
 	void Init(BinaryDataset<Precision_t> &data);
+	void Destruct() {}
   // Call this function to build Depth first a tree
   void BuildDepthFirst();
 	void BuildDepthFirst(NodePtr_t &ptr, PivotInfo_t *pivot);

@@ -37,7 +37,7 @@ class NodeTest {
   struct  NodeParameters : public TYPELIST {
 	 	typedef HyperRectangle_t    BoundingBox_t;
 	  typedef NullStatistics      NodeCachedStatistics_t;
-	  typedef SimpleDiscriminator PointIdDescriminator_t;
+	  typedef SimpleDiscriminator PointIdDiscriminator_t;
 	};
 	typedef Node<NodeParameters, diagnostic> Node_t;
 	typedef typename Allocator_t:: template ArrayPtr<Precision_t> Array_t;

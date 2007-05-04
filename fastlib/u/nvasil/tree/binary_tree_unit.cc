@@ -46,7 +46,8 @@ class BinaryTreeTest {
 	typedef Point<Precision_t, Allocator_t> Point_t; 
 	typedef BinaryTree<TYPELIST, diagnostic> BinaryTree_t;
 	typedef typename BinaryTree_t::Node_t Node_t;
-	
+  BinaryTreeTest() {
+	}	
 	void Init() {
     dimension_=2;
     num_of_points_=1000;
@@ -71,40 +72,40 @@ class BinaryTreeTest {
 		unlink(result_file_.c_str());
 	}
 	void BuildDepthFirst(){
-    tree_.BuildDepstFirst();
+    tree_.BuildDepthFirst();
 	}
 	void BuildBreadthFirst() {
 	  tree_.BuildBreadthFirst();
 	}
 	void kNearestNeighbor() {
-		tree_->BuildDepthFirst();
-    vector<pair<Precision_t, Point_t> nearest_tree;
+		tree_.BuildDepthFirst();
+    vector<pair<Precision_t, Point_t> > nearest_tree;
 		pair<Precision_t, index_t> nearest_naive[num_of_points_];
 	  for(index_t i=0; i<num_of_points_; i++) {
-		  tree_.NearestNeighbor(data_.At(i),
+		  tree_.NearestNeighbor(data_.get_point(i),
                             &nearest_tree,
                             knns_);
-			Naive(data_.At(i), knns_, nearest_naive);
+			Naive(i, nearest_naive);
 			for(index_t j=0; j<knns_; j++) {
-			  ASSERT_DOUBLE_APPROX(nearest_naive[j+1].first, 
-			 	  	                 nearest_tree[j].first,
-					                   numeric_limits<Precision_t>::epsilon());
+			  TEST_DOUBLE_APPROX(nearest_naive[j+1].first, 
+			 	  	               nearest_tree[j].first,
+					                 numeric_limits<Precision_t>::epsilon());
 			  TEST_ASSERT(nearest_tree[j].second.get_id()==
-				            naive_tree[j+1].second)	;
+				            nearest_naive[j+1].second)	;
 			}
 		}
 	}
 	void RangeNearestNeighbor() {
 		tree_.BuildBreadthFirst();
-	  vector<pair<Precision_t, Point_t> nearest_tree;
-		pair<Precisiont_t, index_t> nearest_naive[num_of_points_];
+	  vector<pair<Precision_t, Point_t> > nearest_tree;
+		pair<Precision_t, index_t> nearest_naive[num_of_points_];
 	  for(index_t i=0; i<num_of_points_; i++) {
-		  tree_.NearestNeighbor(data_.At(i),
+		  tree_.NearestNeighbor(data_.get_point(i),
                             &nearest_tree,
                             range_);
-			Naive(data_.At(i), neares_naive);
-			for(index_t j=0; j<nearest_tree.size(); j++) {
-			  ASSERT_DOUBLE_APPROX(nearest_naive[j+1].first, 
+			Naive(i, nearest_naive);
+			for(index_t j=0; j<(index_t)nearest_tree.size(); j++) {
+			  TEST_DOUBLE_APPROX(nearest_naive[j+1].first, 
 			 	  	                 nearest_tree[j].first,
 					                   numeric_limits<Precision_t>::epsilon());
 			  TEST_ASSERT(nearest_tree[j].second.get_id()==
@@ -116,7 +117,7 @@ class BinaryTreeTest {
 		tree_.BuildBreadthFirst();
 	  tree_.InitAllKNearestNeighborOutput(result_file_, 
 				                                 knns_);
-		tree_.AllKNearestNeighbor(tree_.parent_, knns_);
+		tree_.AllNearestNeighbors(tree_.parent_, knns_);
     tree_.CloseAllKNearestNeighborOutput(knns_);
     struct stat info;
 		if (stat(data_file_.c_str(), &info)!=0) {
@@ -126,7 +127,8 @@ class BinaryTreeTest {
 		uint64 map_size = info.st_size-sizeof(int32);
 
     int fp=open(result_file_.c_str(), O_RDWR);
-    typename Node_t::NNResult *res=mmap(NULL, 
+    typename Node_t::NNResult *res;
+		res=(typename Node_t::NNResult *) mmap(NULL, 
 				                                map_size, 
 											         				  PROT_READ | PROT_WRITE, 
 															          MAP_SHARED, fp,
@@ -135,12 +137,12 @@ class BinaryTreeTest {
 		std::sort(res, res+num_of_points_*knns_);
 		pair<Precision_t, index_t> nearest_naive[num_of_points_];
     for(index_t i=0; i<num_of_points_; i++) {
-		  Naive(data_.At(res[i].point_id_), nearest_naive);
+		  Naive(res[i].point_id_, nearest_naive);
 		 	for(index_t j=0; j<knns_; j++) {
-			 	ASSERT_DOUBLE_APPROX(nearest_naive[j+1].first, 
+			 	TEST_DOUBLE_APPROX(nearest_naive[j+1].first, 
 			 	  	                 res[i*knns_+j].distance_,
 					                   numeric_limits<Precision_t>::epsilon());
-			  TEST_ASSERT(res[j].second.get_id()==
+			  TEST_ASSERT(res[j].nearest_.get_id()==
 				            nearest_naive[j+1].second);
 			}			
 		}		
@@ -149,10 +151,9 @@ class BinaryTreeTest {
 	
 	void AllRangeNearestNeighbors() {
 	  tree_.BuildBreadthFirst();
-	  tree_.InitAllKNearestNeighborOutput(result_file_, 
-				                                 range_);
-		tree_.AllKNearestNeighbor(tree_.parent_, range_);
-    tree_.CloseAllKNearestNeighborOutput();
+	  tree_.InitAllRangeNearestNeighborOutput(result_file_);
+		tree_.AllNearestNeighbors(tree_.parent_, range_);
+    tree_.CloseAllRangeNearestNeighborOutput();
     struct stat info;
 		if (stat(data_file_.c_str(), &info)!=0) {
       FATAL( "Error %s file %s\n",
@@ -161,7 +162,8 @@ class BinaryTreeTest {
 		uint64 map_size = info.st_size-sizeof(int32);
 
     int fp=open(result_file_.c_str(), O_RDWR);
-    typename Node_t::NNResult *res=mmap(NULL, 
+    typename Node_t::NNResult *res;
+		res=(typename Node_t::NNResult *)mmap(NULL, 
 				                                map_size, 
 											          				PROT_READ | PROT_WRITE, 
 															          MAP_SHARED, fp,
@@ -171,13 +173,13 @@ class BinaryTreeTest {
 		pair<Precision_t, index_t> nearest_naive[num_of_points_];
 		index_t i=0;
     while (i<num_of_points_) {
-		  Naive(data_.At(res[i].point_id_), nearest_naive);
+		  Naive(res[i].point_id_, nearest_naive);
 			index_t j=0;
 		 	while (nearest_naive[j+1].first<range_) {
-			 	ASSERT_DOUBLE_APPROX(nearest_naive[j+1].first, 
+			 	TEST_DOUBLE_APPROX(nearest_naive[j+1].first, 
 			 	  	                 res[i].distance_,
 					                   numeric_limits<Precision_t>::epsilon());
-			  TEST_ASSERT(res[i].second.get_id()==
+			  TEST_ASSERT(res[i].nearest_.get_id()==
 				            nearest_naive[j+1].second);
 				i++;
 				j++;
@@ -186,13 +188,26 @@ class BinaryTreeTest {
 		munmap(res, map_size);
 	}
 
-	
-	TEST_SUITE(BuildDepthFirst,
-		         BuildBreadthFirst,
-		         kNearestNeighbor,
-		         RangeNearestNeighbor,
-		         AllKNearestNeighbors,
-						 AllRangeNearestNeighbors)	
+  void TestAll() {
+	  Init();
+		BuildDepthFirst();
+		Destruct();
+		Init();
+		BuildBreadthFirst();
+		Destruct();
+		Init();
+		kNearestNeighbor();
+		Destruct();
+		Init();
+		RangeNearestNeighbor();
+		Destruct();
+		Init();
+		AllKNearestNeighbors();
+		Destruct();
+		Init();
+		AllRangeNearestNeighbors();
+    Destruct();
+	}	
  private:
   BinaryTree_t tree_; 
   BinaryDataset<Precision_t> data_;
@@ -213,8 +228,8 @@ class BinaryTreeTest {
 			Precision_t dist=Metric_t::Distance(data_.At(i), 
 					                                data_.At(query), 
 					                                dimension_);
-		  result[i].first=i;
-		  result[i].second=dist;
+		  result[i].first=dist;
+		  result[i].second=i;
 		}
 		sort(result, result+num_of_points_);
 	}
@@ -244,4 +259,7 @@ struct Parameters {
   typedef KdPivoter1<BasicTypes, false> Pivot_t; 
 };
 typedef BinaryTreeTest<Parameters, false> BinaryTreeTest_t;
-RUN_ALL_TESTS(BinaryTreeTest_t)
+int main(int argc, char *argv[]) {
+  BinaryTreeTest_t test;
+	test.TestAll();
+}

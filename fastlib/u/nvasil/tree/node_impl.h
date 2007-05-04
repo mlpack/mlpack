@@ -136,10 +136,11 @@ inline void NODE__::FindNearest(POINTTYPE query_point,
 			nearest.push_back(make_pair(dist, point));
 		}
 	}
-  // for k-nearest neighbors
-  typename  std::vector<pair<Precision_t, Point_t> >::iterator it;
-	it=nearest.begin()+range;
-	if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
+	
+  // for k-nearest neighbors 
+  if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
+	  typename  std::vector<pair<Precision_t, Point_t> >::iterator it;
+	  it=nearest.begin()+(index_t)range;
   	std::partial_sort(nearest.begin(), 
 				              it,
 				              nearest.end(),
@@ -166,7 +167,7 @@ inline void NODE__::FindAllNearest(
 		// for k nearest neighbors
 		if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
      	// get the current maximum distance for the specific point
-  	  distance = query_node->kneighbors_[i*range+range-1].distance_;
+  	  distance = query_node->kneighbors_[i*(int32)range+(int32)range-1].distance_;
 		} else {
 		  distance=range;
 		}
@@ -179,23 +180,23 @@ inline void NODE__::FindAllNearest(
                                      comp)) {
 		  // for k nearest neighbors
       if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {                                          	
-			  vector<pair<Precision_t, Point_t> > temp(range);
+			  vector<pair<Precision_t, Point_t> > temp((index_t)range);
 			  for(int32 j=0; j<range; j++) {
-			    temp[j].first=query_node->kneighbors_[i*range+j].distance_;
-				  temp[j].second=query_node->kneighbors_[i*range+j].nearest_;
+			    temp[j].first=query_node->kneighbors_[i*(index_t)range+j].distance_;
+				  temp[j].second=query_node->kneighbors_[i*(index_t)range+j].nearest_;
 			  }
 				Point_t point;
 				point.Alias(query_node->points_.get()+i*dimension, index_[i]);
         FindNearest(point, temp, 
                     range, dimension,
 				 				    discriminator,	comp);
-			  for(int32 j=range-1; j>=0; j--) {
-			    if (query_node->kneighbors_[i*range+j].nearest_.get_id()
+			  for(int32 j=(index_t)range-1; j>=0; j--) {
+			    if (query_node->kneighbors_[i*(index_t)range+j].nearest_.get_id()
 							==temp[j].second.get_id()) {
 				    break;
 			    }
-			    query_node->kneighbors_[i*range+j].distance_=temp[j].first;
-			    query_node->kneighbors_[i*range+j].nearest_=temp[j].second;
+			    query_node->kneighbors_[i*(index_t)range+j].distance_=temp[j].first;
+			    query_node->kneighbors_[i*(index_t)range+j].nearest_=temp[j].second;
 			  }
         // Estimate the  maximum nearest neighbor distance
         comp.UpdateComparisons();

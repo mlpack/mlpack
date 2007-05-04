@@ -77,6 +77,7 @@ class BinaryTree {
 	BinaryTree();
   ~BinaryTree();
 	void Init(BinaryDataset<Precision_t> &data);
+	void Destruct() {}
   // Call this function to build Depth first a tree
   void BuildDepthFirst();
 	void BuildDepthFirst(NodePtr_t &ptr, PivotInfo_t *pivot);
@@ -86,7 +87,7 @@ class BinaryTree {
    // Builds tree k depth first. It builds all the  subtrees depth first up to k level
 	void BuildKDepthFirst();
   template<typename POINTTYPE, typename NEIGHBORTYPE>
-  void NearestNeighbor(POINTTYPE &test_point,
+  void NearestNeighbor(POINTTYPE test_point,
       vector<pair<Precision_t, Point_t> > *nearest_point,
       NEIGHBORTYPE range);
 
