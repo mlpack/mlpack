@@ -192,7 +192,7 @@ void TREE__::NearestNeighbor(POINTTYPE &test_point,
     vector<pair<Precision_t, Point_t> > *nearest_point,
     NEIGHBORTYPE range) {
   bool found = false;
-  *distance = numeric_limits<Precision_t>::max();                         	
+  *distance = std::numeric_limits<Precision_t>::max();                         	
   NearestNeighbor(parent_, test_point, nearest_point, distance, range, found);
 }           
 
@@ -429,7 +429,7 @@ void TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
 }
 
 TEMPLATE__
-void TREE__::CloseAllRangeNeighborOutput() {
+void TREE__::CloseAllRangeNearestNeighborOutput() {
   fclose(parent_->get_range_nn_fp());
 }
 

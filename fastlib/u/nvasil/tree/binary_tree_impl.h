@@ -429,7 +429,7 @@ void TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
 }
 
 TEMPLATE__
-void TREE__::CloseAllRangeNeighborOutput() {
+void TREE__::CloseAllRangeNearestNeighborOutput() {
   fclose(parent_->get_range_nn_fp());
 }
 
