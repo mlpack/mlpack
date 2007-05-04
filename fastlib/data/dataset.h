@@ -41,6 +41,12 @@ class DatasetFeature {
   /** If nominal, the names of each numbered value. */
   ArrayList<String> value_names_;
   
+  OT_DEF(DatasetFeature) {
+    OT_MY_OBJECT(name_);
+    OT_MY_OBJECT(type_);
+    OT_MY_OBJECT(value_names_);
+  }
+  
  public:
   DatasetFeature() {}
   ~DatasetFeature() {}
@@ -171,6 +177,11 @@ class DatasetInfo {
  private:
   String name_;
   ArrayList<DatasetFeature> features_;
+  
+  OT_DEF(DatasetInfo) {
+    OT_MY_OBJECT(name_);
+    OT_MY_OBJECT(features_);
+  }
   
  public:
   DatasetInfo() {}
@@ -328,6 +339,11 @@ class Dataset {
  private:
   Matrix matrix_;
   DatasetInfo info_;
+  
+  OT_DEF(Dataset) {
+    OT_MY_OBJECT(matrix_);
+    OT_MY_OBJECT(info_);
+  }
   
  public:
   Dataset() {}

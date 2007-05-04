@@ -8,7 +8,6 @@ librule(
              ]
     )
 
-
 librule(
     name = "fastlib_int",
     headers = ["fastlib.h"],
@@ -18,3 +17,8 @@ librule(
              "tree:tree", "par:par"
              ]
     )
+
+binrule(
+    name = "otrav_test",
+    sources = ["otrav_test.cc"],
+    linkables = [":fastlib_int"])
