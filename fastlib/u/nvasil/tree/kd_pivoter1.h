@@ -16,21 +16,20 @@
  * =====================================================================================
  */
 
-#ifdef KD_PIVOTER1_H_
+#ifndef KD_PIVOTER1_H_
 #define KD_PIVOTER1_H_
 
 #include "fastlib/fastlib.h"
-#include "dataset/binary_dataset.h"
+#include "u/nvasil/dataset/binary_dataset.h"
 #include "hyper_rectangle.h"
-
+using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class KdPivoter1 {
  public:
 	typedef typename TYPELIST::Precision_t Precision_t;
 	typedef typename TYPELIST::Allocator_t Allocator_t;
   typedef typename TYPELIST::Metric_t    Metric_t;
-  typedef typename HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
-  FORBID_COPY(KdPivoter1)
+  typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
 	struct PivotInfo {
 	 public:
 	  void Init(index_t start, index_t num_of_points, HyperRectangle_t &box) {
@@ -39,11 +38,11 @@ class KdPivoter1 {
 			num_of_points_=num_of_points;
 		}	 
 		HyperRectangle_t box_;
-    Loki::NullType statistics_;
+    NullStatistics statistics_;
 		index_t start_;
 		index_t num_of_points_;
 	}; 
- 	Init(BinaryDataset<Precision_t> *data) {
+ 	void Init(BinaryDataset<Precision_t> *data) {
 	  data_=data;
 	}
 	
@@ -67,7 +66,7 @@ class KdPivoter1 {
              point_left[max_range_dimension] < pivot_value) {
         UpdateHyperRectangle(point_left, hr_left);
         left_points++;
-			  point_left = data->At(left_start+left_points);
+			  point_left = data_->At(left_start+left_points);
       } 	   
       if (point_left > point_right || left_points == pivot->num_of_points_) {	
         break;
@@ -76,12 +75,12 @@ class KdPivoter1 {
              point_right[max_range_dimension] >= pivot_value) {
         UpdateHyperRectangle(point_right, hr_right);
         right_points++;
-        point_right = data->At(right_start - right_points);
+        point_right = data_->At(right_start - right_points);
       } 	
       if (point_left > point_right || right_points == pivot->num_of_points_) {
         break;
       } 	 
-      data->Swap(left_start+left_points, right_start - right_points);
+      data_->Swap(left_start+left_points, right_start - right_points);
     }
     DEBUG_ASSERT(left_points+right_points == right_start - left_start+1);
     FindPivotDimensionValue(hr_left);
@@ -99,7 +98,7 @@ class KdPivoter1 {
 	  HyperRectangle_t hr;
     hr.Init(data_->get_dimension());
     for(index_t i=0; i<num_of_points; i++) {
-  	  Precision_t *point = data->At(i);
+  	  Precision_t *point = data_->At(i);
       UpdateHyperRectangle(point, hr);
     }
     FindPivotDimensionValue(hr); 

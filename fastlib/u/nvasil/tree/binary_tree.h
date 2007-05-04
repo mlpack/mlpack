@@ -26,6 +26,7 @@
 #include <string>
 #include <errno.h>
 #include <string.h>
+#include <limits>
 #include <vector> 
 #include <list>
 #include "fastlib/fastlib.h"
@@ -35,8 +36,6 @@ using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class BinaryTree {
  public:
-	// For testing purposes only
-  friend class BinaryTreeTest;
 	typedef typename TYPELIST::Precision_t   Precision_t;
 	typedef typename TYPELIST::Allocator_t   Allocator_t;
   typedef typename TYPELIST::Metric_t      Metric_t;
@@ -52,6 +51,9 @@ class BinaryTree {
 	typedef typename Node_t::NNResult Result_t;
 	typedef BinaryTree<TYPELIST, diagnostic> BinaryTree_t;
   typedef typename Pivot_t::PivotInfo PivotInfo_t;	
+  // For testing purposes only
+  template<typename, bool >friend class BinaryTreeTest;
+
 	class OutPutAllocator {
 	 public: 
 		OutPutAllocator() {
@@ -114,7 +116,7 @@ class BinaryTree {
 	void InitAllRangeNearestNeighborOutput(string file);
   void InitAllRangeNearestNeighborOutput(NodePtr_t ptr,
 		                                     FILE *fp);
-	void CloseAllRangeNearestNeighborOutput(int32 range);
+	void CloseAllRangeNearestNeighborOutput();
 	
 	// Print the tree depth first
 	void Print();
