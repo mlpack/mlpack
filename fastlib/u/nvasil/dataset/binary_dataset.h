@@ -25,11 +25,14 @@
 #include <errno.h>
 #include <string>
 #include "fastlib/fastlib.h"
+#include "u/nvasil/loki/NullType.h"
+#include "u/nvasil/tree/point.h"
 // BinaryDataset
 // Use this class to read a binary data file that is also 
 // accompanied by a file with the index values (uint64)
 // It is templetized so that you can use it with different precisions
 // for data
+using namespace std;
 template <typename PRECISION>
 class BinaryDataset {
   FORBID_COPY(BinaryDataset<PRECISION>);
@@ -39,19 +42,60 @@ class BinaryDataset {
 	friend class Iterator;
 	class Iterator {
 	 public:
+		Iterator(){
+		} 
 		Iterator(BinaryDataset<Precision_t> *dataset) {
 		  set_=dataset;
+			current_pos_=0;
 		} 
 		Iterator &operator=(const Iterator &other) {
+		  this->set_=other.set_;
+			this->current_pos_=other.current_pos_;
 		}
-		Iterator operator++();
-		Iterator operator--();
-		bool operator==(const Iterator &other);
-		bool operator!=(const Iterator &other);
-		Iterator & operator*();
+		Iterator operator++() {
+      current_pos_++;
+      DEBUG_ASSERT_MSG(current_pos_>set_->get_num_of_points(),
+					             "Iterator out of bounds "LI">"LI"", 
+											 current_pos_, set_->get_num_of_points());			
+		}
+		Iterator operator--() {
+		  current_pos_--;
+      DEBUG_ASSERT_MSG(current_pos_<0,
+					             "Iterator out of bounds "LI"<0", 
+											 current_pos_ );			
 
+		}
+		bool operator==(const Iterator &other) {
+		  if (likely(other.set_==set_)) {
+			  return current_pos_==other.current_pos_;
+			} else {
+			  return false;
+			}
+		}
+		bool operator!=(const Iterator &other) {
+		  if (likely(other.set_==set_)) {
+			  return current_pos_!=other.current_pos_;
+			} else {
+			  return true;
+			}
+		}
+		CompletePoint<Precision_t> operator*() {
+		  CompletePoint<Precision_t> point;
+			point.Alias(set_->At(current_pos_), 
+					        set_->get_id(current_pos_),
+									set_->get_dimension());
+			return point;
+		}
+    CompletePoint<Precision_t> operator->() {
+		  CompletePoint<Precision_t> point;
+			point.Alias(set_->At(current_pos_), 
+					        set_->get_id(current_pos_),
+									set_->get_dimension());
+			return point;
+		}
 	 private:
 	  BinaryDataset<Precision_t> *set_;	
+		index_t current_pos_;
 	};
 	BinaryDataset() {
 	  data_file_="";
@@ -104,16 +148,28 @@ class BinaryDataset {
 		index_=(uint64*)MemoryMap(index_file_,0);
 		return SUCCESS_PASS;
 	}
+  
+	Iterator Begin() {
+	  Iterator it(this);
+		return it;
+	}
+
+	Iterator End() {
+	  Iterator it(this);
+		it.current_pos_=num_of_points_;
+		return it;
+	}
+	
   // Use this to swap the points of a dataset
 	// swaps the index values as well
 	void Swap(uint64 i, uint64 j) {
 	  Precision_t temp[dimension_];
-		memcmp(temp, At(j), dimension_, sizeof(Precision_t));
-		memcmp(At(j), At(i), dimension_, sizeof(Precision_t));
-		memcmp(At(i), temp, dimension_, sizeof(Precision_t));
+		memcmp(temp, At(j), dimension_* sizeof(Precision_t));
+		memcmp(At(j), At(i), dimension_* sizeof(Precision_t));
+		memcmp(At(i), temp, dimension_* sizeof(Precision_t));
     uint64 temp_index=index_[i];
 		       index_[i]=index_[j];
-					 index_[j]=temp;
+					 index_[j]=temp_index;
 	}	
 	// Use this for destruction
 	void Destruct() {
@@ -131,6 +187,11 @@ class BinaryDataset {
 		Vector vector;
 		vector.Alias(index_, num_of_points_);
 		return vector;
+	}
+	Point<Precision_t, Loki::NullType> get_point(index_t i) {
+		Point<Precision_t, Loki::NullType> point;
+		point.Alias(At(i), get_id(i));
+		return point;
 	}
 	// returns a pointer on the data at the ith point
   Precision_t* At(uint64 i) {

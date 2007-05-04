@@ -127,4 +127,34 @@ class Point<PRECISION, Loki::NullType> {
   index_t id_;
 };
 
+template<class PRECISION>
+class CompletePoint {
+ public:
+  typedef PRECISION Precision_t;
+	typedef CompletePoint<Precision_t> CompletePoint_t;
+	CompletePoint() {}
+	~CompletePoint(){}
+	CompletePoint(const CompletePoint_t &other) {
+	  this->p_=other.p_;
+		this->id_=other.id_;
+		this->dimension_=other.dimension_;
+	}
+  CompletePoint_t &operator=(const CompletePoint_t &other) {
+	  DEBUG_ASSERT_MSG(this->dimension_==other.dimension_, 
+				             "Points have different dimensions "LI"!="LI"", 
+										  this->dimension_, other.dimension_);
+		memcpy(this->p_, other.p_, dimension_*sizeof(Precision_t));
+		this->id_=other.id_;
+	}
+	void Alias(Precision_t *ptr, index_t id, int32 dimension) {
+	  p_=ptr;
+		id_=id;
+		dimension_=dimension;
+	}
+ private:
+	Precision_t *p_;
+	index_t id_;
+	int32 dimension_;
+};
+
 #endif /*POINT_H_*/
