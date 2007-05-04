@@ -10,10 +10,10 @@ template<typename TYPELIST, bool diagnostic>
 // traits_nearest_neighbor.h file
 
 TEMPLATE__            
-void TREE__::Init(BinaryDataset<Precision_t> &data) {
+void TREE__::Init(BinaryDataset<Precision_t> *data) {
   data_ = data;
-  dimension_  = data.get_dimension();
-  num_of_points_ = data.get_num_of_points();
+  dimension_  = data->get_dimension();
+  num_of_points_ = data->get_num_of_points();
 	node_id_=0;
 	num_of_leafs_=0;
 	current_level_=0;
@@ -89,7 +89,7 @@ void TREE__::BuildBreadthFirst(
 			                        fifo_pair.second->start_,
 			                        fifo_pair.second->num_of_points_,
                               dimension_,
-                              &data_); 
+                              data_); 
 
 		  num_of_leafs_++;
 			node_id_++;
@@ -144,7 +144,7 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t &ptr,
 			          pivot_pair.second->start_,
 			          pivot_pair.second->num_of_points_,
 			          dimension_,
-                &data_); 
+                data_); 
 
 		  node_id_++;
 		  num_of_leafs_++;
@@ -176,7 +176,7 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t &ptr,
 			        pivot_info->start_,
 			        pivot_info->num_of_points_,
 			        dimension_,
-              &data_); 
+              data_); 
 
 		node_id_++;
 		num_of_leafs_++;

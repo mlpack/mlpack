@@ -104,7 +104,7 @@ class BinaryTreeTest {
                             &nearest_tree,
                             range_);
 			Naive(i, nearest_naive);
-			for(index_t j=0; j<nearest_tree.size(); j++) {
+			for(index_t j=0; j<(index_t)nearest_tree.size(); j++) {
 			  TEST_DOUBLE_APPROX(nearest_naive[j+1].first, 
 			 	  	                 nearest_tree[j].first,
 					                   numeric_limits<Precision_t>::epsilon());

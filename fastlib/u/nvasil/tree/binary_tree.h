@@ -74,9 +74,9 @@ class BinaryTree {
 		Result_t *ptr_;
 		index_t num_;
 	};
-	BinaryTree();
+	BinaryTree(){}
   ~BinaryTree();
-	void Init(BinaryDataset<Precision_t> &data);
+	void Init(BinaryDataset<Precision_t> *data);
 	void Destruct() {}
   // Call this function to build Depth first a tree
   void BuildDepthFirst();
@@ -153,7 +153,7 @@ class BinaryTree {
   // Parent/Root
 	NodePtr_t parent_;
   // Source of data
-	BinaryDataset<Precision_t> data_;
+	BinaryDataset<Precision_t> *data_;
   // Total number of points on the tree
 	index_t num_of_points_;
 	// Number of Leafs on the tree
