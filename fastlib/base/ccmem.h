@@ -180,7 +180,7 @@ namespace mem {
   template<typename ChunkType, size_t elems, typename T>
   inline void ChunkCopy(T* dest, const T* src) {
     *reinterpret_cast<Chunk<sizeof(T), ChunkType>*>(dest)
-        = reinterpret_cast<Chunk<sizeof(T), ChunkType>*>(src);
+        = *reinterpret_cast<const Chunk<sizeof(T), ChunkType>*>(src);
   }
   
   template<bool mod_2, bool mod_4, bool mod_8, size_t bytes, typename T>
@@ -220,11 +220,12 @@ namespace mem {
    */
   template<typename T>
   inline T * Copy(T* dest, const T* src) {
-     CopyHelper<strideof(T) % 2 != 0,
+     /*CopyHelper<strideof(T) % 2 != 0,
                 strideof(T) % 4 != 0,
                 strideof(T) % 8 != 0,
                 sizeof(T),
-                T>::DoCopy(dest, src);
+                T>::DoCopy(dest, src);*/
+     CopyBytes(dest, src, sizeof(T));
      return dest;
   }
   
@@ -395,9 +396,9 @@ namespace mem {
    * @param rhs the "negative" pointer
    * @return the difference, (char*)rhs - (char*)lhs
    */
-  template<typename T>
-  inline ptrdiff_t PointerDiff(const T* lhs, const T* rhs) {
-    return reinterpret_cast<char*>(lhs) - reinterpret_cast<char*>(rhs);
+  template<typename A, typename B>
+  inline ptrdiff_t PointerDiff(const A* lhs, const B* rhs) {
+    return reinterpret_cast<const char*>(lhs) - reinterpret_cast<const char*>(rhs);
   }
 
   /**

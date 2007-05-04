@@ -30,6 +30,7 @@
 
 #include <typeinfo>
 #include <stdarg.h>
+#include <ctype.h>
 
 #define PASADENA(x) 3
 // TODO: Remove nullability from arrays
@@ -223,15 +224,28 @@ inline void TraverseArray(T* x, index_t n_elems, Visitor *v) {
 namespace ot_private {
   // TODO: Conservatory serialization and deserialization
   
+  // These have to be hoisted out of the class.
+  // Apparently explicit specialization for templates cannot be done in class
+  // scope.
+  
   /** Visits an object with no OT implementation. */
-  template<typename Printer, typename T> inline void OTPrinter_Primitive(const T& x, Printer* printer) {
-    printer->Write("%s (don't know how to print)", typeinfo(x).name());
+  template<typename Printer, typename T> void OTPrinter_Primitive(const T& x, Printer* printer) {
+    printer->ShowIndents();
+    fprintf(printer->stream(), "%s  hexdump:", typeid(x).name());
+    for (size_t i = 0; i < sizeof(T); i++) {
+      fprintf(printer->stream(), " %02X", reinterpret_cast<const char*>(&x)[i]);
+    }
+    putc('\n', printer->stream());
   }
   template<typename Printer> inline void OTPrinter_Primitive(const char* x, Printer* printer) {
     printer->Write("string %s", x);
   }
   template<typename Printer> inline void OTPrinter_Primitive(char x, Printer* printer) {
-    printer->Write("char %d", x);
+    if (isprint(x)) {
+      printer->Write("char %d '%c'", x, x);
+    } else {
+      printer->Write("char %d", x);
+    }
   }
   template<typename Printer> inline void OTPrinter_Primitive(short x, Printer* printer) {
     printer->Write("short %d", x);
@@ -271,7 +285,7 @@ namespace ot_private {
     
    public:
     template<typename T>
-    void InitBegin(const T& x, FILE *stream_in) const {
+    void InitBegin(const T& x, FILE *stream_in) {
       stream_ = stream_in;
       indent_amount_ = 0;
       TraverseObject(const_cast<T*>(&x), this);
@@ -281,15 +295,16 @@ namespace ot_private {
       OTPrinter_Primitive(x, this);
     }
 
-    template<typename T> void Object(T* obj, bool nullable) {
+    template<typename T> void Object(T* obj, bool nullable,
+        const char *label) {
       if (nullable && !obj) {
-        Write("object %s NULL {}", typeid(T).name());
+        Write("%s %s = NULL", label, typeid(T).name());
       } else {
+        Write("%s %s {", label, typeid(T).name());
         Indent(2);
-        Write("object %s {", typeid(T).name());
         TraverseObject(obj, this);
-        Write("} end object %s", typeid(T).name());
         Indent(-2);
+        Write("}");
       }
     }
 
@@ -298,18 +313,18 @@ namespace ot_private {
       if (nullable && !array) {
         Write("array %s NULL {}", typeid(T).name());
       } else {
-        Indent(2);
         Write("array %s len %"LI"d {", typeid(T).name(), len);
-        TraverseObject(array, this);
-        Write("} end array %s", typeid(T).name());
+        Indent(2);
+        TraverseArray(array, len, this);
         Indent(-2);
+        Write("}");
       }
     }
 
     /** Visits an internal object. */
     template<typename T> void MyObject(T& x) {
       // Recurse in case this sub-object has pointers
-      Object(&x);
+      Object(&x, false, "embedded");
     }
     /** Visits an array. */
     template<typename T> void MyArray(T* x, index_t len) {
@@ -324,7 +339,7 @@ namespace ot_private {
      * data pointed to, and recurses on the data pointed to.
      */
     template<typename T> void Ptr(T*& source_region, bool nullable) {
-      Object(source_region, nullable);
+      Object(source_region, nullable, "pointer-to");
     }
 
     /** Visits an array pointed to, allocated with malloc */
@@ -339,6 +354,12 @@ namespace ot_private {
     }
     
     void Write(const char *format, ...);
+    
+    void ShowIndents();
+    
+    FILE *stream() const {
+      return stream_;
+    }
   };
 
   /**
@@ -370,14 +391,18 @@ namespace ot_private {
     
    public:
     template<typename T>
-    void InitBegin(char *block_in, const T& x) {
+    void InitBegin(const T& x, char *block_in) {
       block_ = block_in;
       pos_ = sizeof(T);
-      freeze_offset_ = PointerDiff(block_, &x);
+      freeze_offset_ = mem::PointerDiff(block_, &x);
       
-      mem::Copy(mem::PointerAbsoluteAddress(block_), &x);
+      mem::Copy(reinterpret_cast<T*>(block_), &x);
       // we must cast away const due to TraverseObject's limitations
       TraverseObject(const_cast<T*>(&x), this);
+    }
+    
+    size_t size() const {
+      return pos_;
     }
     
     /** Visits an object with no OT implementation. */
@@ -429,8 +454,8 @@ namespace ot_private {
      *        its original location within the larger structure, used with
      *        pointer arithmetic for updating the resulting pointers
      */
-    T* DestinationEquivalentPointer_(T** source_region_ptr) {
-      return PointerAdd(source_region_ptr, freeze_offset_);
+    T** DestinationEquivalentPointer_(T** source_region_ptr) {
+      return mem::PointerAdd(source_region_ptr, freeze_offset_);
     }
     /**
      * Aligns the current position to the given stride, and returns a
@@ -454,7 +479,8 @@ namespace ot_private {
       T** pointer_to_fix = DestinationEquivalentPointer_(source_region_ptr);
       // We already copied the source region to the destination we are
       // considering, so the value of these two pointers should be equal.
-      DEBUG_ASSERT(*pointer_to_fix == *source_region_ptr);
+      DEBUG_ASSERT_MSG(*pointer_to_fix == *source_region_ptr,
+          "%p != %p", *pointer_to_fix, *source_region_ptr);
       // Now, we normalize the pointer such that zero is the beginning of the
       // chynk of memory.
       *pointer_to_fix = reinterpret_cast<T*>(pos_);
@@ -477,7 +503,7 @@ namespace ot_private {
       size_t freeze_offset_tmp = freeze_offset_;
       // Calculate new freeze offset as the distance between the source and
       // destination memory regions.
-      freeze_offset_ = PointerDiff(dest, source_region);
+      freeze_offset_ = mem::PointerDiff(dest, source_region);
       // Recurse on the object.
       TraverseObject(source_region, this);
       TraverseObjectPostprocess(dest);
@@ -496,16 +522,15 @@ namespace ot_private {
       // Calculate the total size allocated, copy, and progress
       size_t size = len * sizeof(T);
       pos_ += size;
-      mem::CopyBytes(reinterpret_cast<T*>(block_ + pos_), source_region, size);
+      mem::CopyBytes(dest, source_region, size);
       // Save old freeze offset
       size_t freeze_offset_tmp = freeze_offset_;
       // Calculate new freeze offset
-      freeze_offset_ = PointerDiff(dest, source_region);
+      freeze_offset_ = mem::PointerDiff(dest, source_region);
       // Recurse over each object
       for (index_t i = 0; i < len; i++) {
-        T* dest_array_element = &dest[i];
-        TraverseObject(dest_array_element);
-        TraverseObjectPostprocess(dest_array_element);
+        TraverseObject(&source_region[i], this);
+        TraverseObjectPostprocess(&dest[i]);
       }
       // Restore old freeze offset because we have returned to the old object
       freeze_offset_ = freeze_offset_tmp;
@@ -520,6 +545,7 @@ namespace ot_private {
     template<typename T>
     void InitBegin(const T& obj) {
       pos_ = 0;
+      PretendLayout_<T>(1);
       TraverseObject(const_cast<T*>(&obj), this);
     }
 
@@ -563,7 +589,7 @@ namespace ot_private {
    private:
     template<typename T>
     void PretendLayout_(index_t count) {
-      pos_ = stride_align(pos_, T) + sizeof(T) * count;
+      pos_ = (stride_align(pos_, T)) + (sizeof(T) * count);
     }
   };
 
@@ -573,9 +599,11 @@ namespace ot_private {
     
    public:
     template<typename T>
-    void InitBegin(char *data) {
+    T* InitBegin(char *data) {
       offset_ = reinterpret_cast<size_t>(data);
-      TraverseObject(reinterpret_cast<T*>(data), this);
+      T* dest = reinterpret_cast<T*>(data);
+      TraverseObject(dest, this);
+      return dest;
     }
     
     /** visits an object with no OT implementation */
@@ -614,9 +642,10 @@ namespace ot_private {
     
    public:
     template<typename T>
-    void InitBegin(char *data) {
-      offset_ = -reinterpret_cast<size_t>(data);
-      TraverseObject(reinterpret_cast<T*>(data), this);
+    T* InitBegin(T *dest) {
+      offset_ = -reinterpret_cast<size_t>(dest);
+      TraverseObject(dest, this);
+      return dest;
     }
     
     /** visits an object with no OT implementation */
@@ -657,12 +686,23 @@ void OTPrint(const T& object, FILE *stream) {
 }
 
 /**
+ * Finds the number of bytes required to freeze an object.
+ */
+template<typename T>
+size_t OTPointerFrozenSize(const T& obj) {
+  ot_private::OTFrozenSizeCalculator calc;
+  calc.InitBegin(obj);
+  return calc.size();
+}
+
+/**
  * Makes a copy of an object, freezing it for the first time.
  */
 template<typename T>
-T* OTPointerFreeze(const T& live_object, char *block) {
+void OTPointerFreeze(const T& live_object, char *block) {
   ot_private::OTPointerFreezer freezer;
   freezer.InitBegin(live_object, block);
+  DEBUG_SAME_INT(freezer.size(), OTPointerFrozenSize(live_object));
 }
 
 /**
@@ -670,9 +710,9 @@ T* OTPointerFreeze(const T& live_object, char *block) {
  * so that they are normalized to zero.
  */
 template<typename T>
-T* OTPointerRefreeze(char *block) {
+void OTPointerRefreeze(T* obj) {
   ot_private::OTPointerRefreezer fixer;
-  fixer.InitBegin<T>(block);
+  fixer.InitBegin<T>(obj);
 }
 
 /**
@@ -682,7 +722,7 @@ T* OTPointerRefreeze(char *block) {
 template<typename T>
 T* OTPointerThaw(char *block) {
   ot_private::OTPointerThawer fixer;
-  fixer.InitBegin<T>(block);
+  return fixer.InitBegin<T>(block);
 }
 
 #endif
