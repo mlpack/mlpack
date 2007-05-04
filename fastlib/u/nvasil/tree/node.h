@@ -152,7 +152,7 @@ class Node {
   NodePtr_t right_;
 	typename Allocator_t::template ArrayPtr<index_t> index_;
   typename Allocator_t::template ArrayPtr<Precision_t> points_;
-	typename Allocator_t::template Ptr<NodeCachedStatistics_t> statistics_;
+	NodeCachedStatistics_t statistics_;
   index_t num_of_points_;
 	union {
     NNResult *kneighbors_;

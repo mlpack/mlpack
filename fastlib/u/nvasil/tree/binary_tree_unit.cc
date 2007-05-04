@@ -62,7 +62,7 @@ class BinaryTreeTest {
 			}
 			data_.set_id(i,i);
 		}		
-    tree_.Init(data_);
+    tree_.Init(&data_);
 	}
 	void Destruct() {
 	  tree_.Destruct();

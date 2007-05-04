@@ -22,8 +22,8 @@ void NODE__::Init(const BoundingBox_t &box,
 	                const NodeCachedStatistics_t &statistics,		
 			            index_t node_id,
 			            index_t num_of_points) {
-  box_=box;
-  statistics_=statistics;
+  box_.Alias(box);
+  statistics_.Alias(statistics);
   node_id_ = node_id;
 	num_of_points_ = num_of_points;
 }
@@ -37,7 +37,7 @@ void NODE__::Init(const typename NODE__::BoundingBox_t &box,
 							    int32 dimension,
 			            BinaryDataset<Precision_t> *dataset) {
 	box_.Alias(box);
-	statistics_->Alias(statistics);
+	statistics_.Alias(statistics);
 	node_id_ = node_id;
 	num_of_points_ = num_of_points;
 	points_.Reset(Allocator_t::template malloc<Precision_t>

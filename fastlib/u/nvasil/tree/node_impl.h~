@@ -22,8 +22,8 @@ void NODE__::Init(const BoundingBox_t &box,
 	                const NodeCachedStatistics_t &statistics,		
 			            index_t node_id,
 			            index_t num_of_points) {
-  box_=box;
-  statistics_=statistics;
+  box_.Alias(box);
+  statistics_.Alias(statistics);
   node_id_ = node_id;
 	num_of_points_ = num_of_points;
 }
@@ -195,8 +195,8 @@ inline void NODE__::FindAllNearest(
 							==temp[j].second.get_id()) {
 				    break;
 			    }
-			    query_node->kneighbors_[i*range+j].distance_=temp[j].first;
-			    query_node->kneighbors_[i*range+j].nearest_=temp[j].second;
+			    query_node->kneighbors_[i*(index_t)range+j].distance_=temp[j].first;
+			    query_node->kneighbors_[i*(index_t)range+j].nearest_=temp[j].second;
 			  }
         // Estimate the  maximum nearest neighbor distance
         comp.UpdateComparisons();
