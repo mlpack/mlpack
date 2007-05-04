@@ -19,5 +19,9 @@
 class NullStatistics {
  public:	
 	void Alias(const NullStatistics &other) {
+		
+	}
+  NullStatistics &operator=(const NullStatistics &other) {
+	  return *this;
 	}
 };
