@@ -1,3 +1,13 @@
+TODO
+ /- otrav
+ /- freeze/thaw
+ - cache array
+ - local cache
+ - network sharing
+ - GNP reduce DFS
+ - GNP reduce RBFS
+ X- diskio (WAIT NOT NECESSARY)
+
 
 Statistic
 - compose
@@ -113,3 +123,14 @@ how to execute
     - for simplicity, my first version simply won't support mu
     (mu will just equal the root's delta); we will just target
     gamma-based problems
+
+
+cache behavior
+  - new blocks
+    - initialize locally or remotely?
+      - locally whenever possible
+  - modes
+    - read mode
+    - write mode
+    - if you are doing read and write, you can only read things that you
+    yourself wrote, or if it was saved previously

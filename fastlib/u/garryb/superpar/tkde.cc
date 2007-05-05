@@ -1,17 +1,42 @@
 #include "fastlib/fastlib.h"
 
+/**
+ * An N-Body-Reduce problem.
+ */
 class Tkde {
  public:
+  /** The bounding type. Required by NBR. */
   typedef DHrectBound Bound;
+  /** The type of point in use. Required by NBR. */
+  typedef Vector Point;
+
+  /** The type of kernel in use.  NOT required by NBR. */
   typedef EpanKernel Kernel;
   
+  /**
+   * All parameters required by the execution of the algorithm.
+   *
+   * Required by N-Body Reduce.
+   */
   struct TkdeParam {
+   public:
+    /** The kernel in use. */
     Kernel kernel;
+    /** The dimensionality of the data sets. */
     index_t dim;
     
+    OT_DEF(TkdeParam) {
+      OT_MY_OBJECT(kernel);
+      OT_MY_OBJECT(dim);
+    }
+    
+   public:
     void Init(datanode *datanode) {
       kernel.Init(fx_param_double_req(datanode, "h"));
     }
+    
+   public:
+    // Convenience methods for purpose of thresholded KDE
     
     /**
      * Compute kernel sum for a region of reference points assuming we have the
@@ -47,36 +72,40 @@ class Tkde {
     }
   };
 
+  /**
+   * Per-point extra information, which in case of TKDE is blank.
+   *
+   * For KDE this might be weights.
+   *
+   * Not required by N-Body Reduce, although QInfo and RInfo are.
+   */
   struct BlankInfo {
-    template<typename Serializer>
-    void Serialize(Serializer *s) const {}
-    template<typename Deserializer>
-    void Deserialize(Deserializer *s) {}
+    OT_DEF(BlankInfo) {}
   };
 
+  /** Per-query-point input information.  Required by NBR. */
   typedef BlankInfo QInfo;
+  /** Per-reference-point input information.  Required by NBR. */
   typedef BlankInfo RInfo;
 
+  /**
+   * Moment information used by thresholded KDE.
+   *
+   * NOT required by NBR, but used within other classes.
+   */
   struct MomentInfo {
-    ALLOW_COPY(MomentInfo);
-    
+   public:
     Vector mass;
     double sumsq;
     index_t count;
 
-    template<typename Serializer>
-    void Serialize(Serializer *s) const {
-      mass->Serialize(s);
-      s->Put(sumsq);
-      s->Put(count);
+    OT_DEF(MomentInfo) {
+      OT_MY_OBJECT(mass);
+      OT_MY_OBJECT(sumsq);
+      OT_MY_OBJECT(count);
     }
-    template<typename Deserializer>
-    void Deserialize(Deserializer *s) {
-      mass->Deserialize(s);
-      s->Get(&sumsq);
-      s->Get(&count);
-    }
-    
+   
+   public:
     void Init(const TkdeParam& param) {
       mass.Init(param.dim);
       Reset();
@@ -126,37 +155,62 @@ class Tkde {
     }
   };
 
+  /**
+   * Per-reference-node bottom-up statistic.
+   *
+   * The statistic must be commutative and associative, thus bottom-up
+   * computable.
+   */
   struct TkdeStat {
+   public:
     MomentInfo moment_info;
 
-    template<typename Serializer>
-    void Serialize(Serializer *s) const {
-      moment_info->Serialize(s);
+    OT_DEF(TkdeStat) {
+      OT_MY_OBJECT(moment_info);
     }
-    template<typename Deserializer>
-    void Deserialize(Deserializer *s) {
-      moment_info->Deserialize(s);
-    }
-    
-    void InitZero(const TkdeParam& param) {
+
+   public:
+    /**
+     * Initialize to a default zero value, as if no data is seen (Req NBR).
+     *
+     * This is the only method in which memory allocation can occur.
+     */
+    void Init(const TkdeParam& param) {
       moment_info.Init(param);
     }
-    
+
+    /**
+     * Accumulate data from a single point (Req NBR).
+     */
     void Accumulate(const TkdeParam& param, const Vector& point,
         const RInfo& q_info) {
       moment_info.Add(1, point, la::Dot(point, point));
     }
-    
+
+    /**
+     * Accumulate data from one of your children (Req NBR).
+     */
     void Accumulate(const TkdeParam& param,
         const TkdeStat& stat, const Bound& bound, index_t n) {
       moment_info.Add(stat.moment_info);
     }
-    
-    void Postprocess(const TkdeParam& param, const Bound& bound, index_t n) {}
+
+    /**
+     * Finish accumulating data; for instance, for mean, divide by the
+     * number of points.
+     */
+    void Postprocess(const TkdeParam& param, const Bound& bound, index_t n) {
+    }
   };
 
-  typedef BinarySpaceTree<Bound, Matrix, TkdeStat> RNode;
-  typedef BinarySpaceTree<Bound, Matrix, EmptyStatistic<Matrix> > QNode;
+  /**
+   * Query node.
+   */
+  typedef BinarySpaceTree<Bound, Vector, TkdeStat> RNode;
+  /**
+   * Reference node.
+   */
+  typedef BinarySpaceTree<Bound, Vector, BlankStatistic<Vector, RInfo> > QNode;
 
   enum Label {
     LAB_LO = 2,
@@ -169,11 +223,18 @@ class Tkde {
    * Coarse result on a region.
    */
   struct TkdePostponed {
+   public:
     /** Moments of pruned things. */
     MomentInfo moment_info;
     /** We pruned an entire part of the tree with a particular label. */
     Label label;
     
+    OT_DEF(TkdePostponed) {
+      OT_MY_OBJECT(moment_info);
+      OT_MY_OBJECT(label);
+    }
+    
+   public:
     template<typename Serializer>
     void Serialize(Serializer *s) const {
       moment_info.Serialize(s);
@@ -204,18 +265,15 @@ class Tkde {
    * Coarse result on a region.
    */
   struct TkdeDelta {
+   public:
     /** Density update to apply to children's bound. */
     DRange d_density;
 
-    template<typename Serializer>
-    void Serialize(Serializer *s) const {
-      d_density.Serialize(s);
+    OT_DEF(TkdeDelta) {
+      OT_MY_OBJECT(d_density);
     }
-    template<typename Deserializer>
-    void Deserialize(Deserializer *s) {
-      d_density.Deserialize(s);
-    }
-    
+
+   public:
     void Init(const TkdeParam& param) {
       d_density.Init(0, 0);
     }
@@ -227,20 +285,16 @@ class Tkde {
 
   // rho, but a bit of phi and lambda
   struct TkdeResult {
+   public:
     double density;
     Label label;
 
-    template<typename Serializer>
-    void Serialize(Serializer *s) const {
-      s->Put(density);
-      s->Put(label);
+    OT_DEF(TkdeResult) {
+      OT_MY_OBJECT(density);
+      OT_MY_OBJECT(label);
     }
-    template<typename Deserializer>
-    void Deserialize(Deserializer *s) {
-      s->Get(&density);
-      s->Get(&label);
-    }
-
+    
+   private:
     void Init(const TkdeParam& param,
         const Vector& q_point, const QInfo& q_info,
         const RNode& r_root) {
@@ -271,10 +325,10 @@ class Tkde {
   };
 
   class TkdeGlobalResult {
-    template<typename Serializer>
-    void Serialize(Serializer *s) const {}
-    template<typename Deserializer>
-    void Deserialize(Deserializer *s) {}
+   public:
+    OT_DEF(TkdeGlobalResult) {}
+    
+   public:
     void Init(const TkdeParam& param) {}
     void Accumulate(const TkdeParam& param,
         const TkdeGlobalResult& other_global_result) {}
@@ -284,26 +338,17 @@ class Tkde {
   };
 
   struct TkdeMassResult {
+   public:
     /** Bound on density from leaves. */
     DRange density;
     Label label;
-
-    template<typename Serializer>
-    void Serialize(Serializer *s) const {
-      density.Serialize(s);
-      s->Put(label);
+    
+    OT_DEF(TkdeMassResult) {
+      OT_MY_OBJECT(density);
+      OT_MY_OBJECT(label);
     }
-    template<typename Deserializer>
-    void Deserialize(Deserializer *s) {
-      density.Deserialize(s);
-      s->Get(&label);
-    }
-
-    void Copy(const TkdeMassResult& other) {
-      density = other.density;
-      label = other.label;
-    }
-
+    
+   public:
     void Init(const TkdeParam& param) {
       /* horizontal init */
       density.Init(0, 0);
@@ -370,8 +415,10 @@ class Tkde {
    * to be register-allocated.
    */
   struct TkdeVectorPairVisitor {
+   public:
     double density;
     
+   public:
     void Init(const TkdeParam& param) {}
     
     bool StartVisitingQueryPoint(const TkdeParam& param,
@@ -431,6 +478,7 @@ class Tkde {
   };
 
   class TkdeAlgorithm {
+   public:
     static bool ConsiderPairIntrinsic(
         const TkdeParam& param,
         const QNode& q_node,
