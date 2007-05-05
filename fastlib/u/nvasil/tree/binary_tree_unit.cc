@@ -49,7 +49,9 @@ class BinaryTreeTest {
   BinaryTreeTest() {
 	}	
 	void Init() {
-    dimension_=2;
+    Allocator_t::allocator_ = new Allocator_t();
+		Allocator_t::allocator_->Initialize();
+		dimension_=2;
     num_of_points_=1000;
     data_file_="data";
 		knns_=40;
@@ -58,7 +60,7 @@ class BinaryTreeTest {
     data_.Init(data_file_, num_of_points_, dimension_);
     for(index_t i=0; i<num_of_points_; i++) {
 		  for(index_t j=0; j<dimension_; j++) {
-			  data_.At(i,j)=rand()/RAND_MAX;
+			  data_.At(i,j)=Precision_t(rand())/RAND_MAX - 0.48;
 			}
 			data_.set_id(i,i);
 		}		
@@ -72,12 +74,15 @@ class BinaryTreeTest {
 		unlink(result_file_.c_str());
 	}
 	void BuildDepthFirst(){
-    tree_.BuildDepthFirst();
+    printf("Testing BuildDepthFirst...\n");
+		tree_.BuildDepthFirst();
 	}
 	void BuildBreadthFirst() {
+		printf("Testing BuildBreadthFirst...\n");
 	  tree_.BuildBreadthFirst();
 	}
 	void kNearestNeighbor() {
+		printf("Testing kNearestNeighbor...\n");
 		tree_.BuildDepthFirst();
     vector<pair<Precision_t, Point_t> > nearest_tree;
 		pair<Precision_t, index_t> nearest_naive[num_of_points_];
@@ -96,6 +101,7 @@ class BinaryTreeTest {
 		}
 	}
 	void RangeNearestNeighbor() {
+		printf("Testing RangeNearestNeighbor...\n");
 		tree_.BuildBreadthFirst();
 	  vector<pair<Precision_t, Point_t> > nearest_tree;
 		pair<Precision_t, index_t> nearest_naive[num_of_points_];
@@ -114,6 +120,7 @@ class BinaryTreeTest {
 		}
 	}
 	void AllKNearestNeighbors() {
+		printf("Testing AllKNearestNeighbors...\n");
 		tree_.BuildBreadthFirst();
 	  tree_.InitAllKNearestNeighborOutput(result_file_, 
 				                                 knns_);
@@ -150,7 +157,8 @@ class BinaryTreeTest {
 	}
 	
 	void AllRangeNearestNeighbors() {
-	  tree_.BuildBreadthFirst();
+	  printf("Testing AllRangeNearestNeighbors...\n");
+	 	tree_.BuildBreadthFirst();
 	  tree_.InitAllRangeNearestNeighborOutput(result_file_);
 		tree_.AllNearestNeighbors(tree_.parent_, range_);
     tree_.CloseAllRangeNearestNeighborOutput();

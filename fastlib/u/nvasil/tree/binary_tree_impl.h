@@ -21,6 +21,7 @@ void TREE__::Init(BinaryDataset<Precision_t> *data) {
 	min_depth_ = numeric_limits<index_t>::max();
 	max_points_on_leaf_ =  30;
 	log_progress_=true;
+	pivoter_.Init(data_);
 }
 
 TEMPLATE__

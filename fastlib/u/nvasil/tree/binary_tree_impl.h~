@@ -12,8 +12,8 @@ template<typename TYPELIST, bool diagnostic>
 TEMPLATE__            
 void TREE__::Init(BinaryDataset<Precision_t> *data) {
   data_ = data;
-  dimension_  = data.get_dimension();
-  num_of_points_ = data.get_num_of_points();
+  dimension_  = data->get_dimension();
+  num_of_points_ = data->get_num_of_points();
 	node_id_=0;
 	num_of_leafs_=0;
 	current_level_=0;

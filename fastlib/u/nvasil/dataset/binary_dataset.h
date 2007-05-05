@@ -164,9 +164,9 @@ class BinaryDataset {
 	// swaps the index values as well
 	void Swap(uint64 i, uint64 j) {
 	  Precision_t temp[dimension_];
-		memcmp(temp, At(j), dimension_* sizeof(Precision_t));
-		memcmp(At(j), At(i), dimension_* sizeof(Precision_t));
-		memcmp(At(i), temp, dimension_* sizeof(Precision_t));
+		memcpy(temp, At(j), dimension_  * sizeof(Precision_t));
+		memcpy(At(j), At(i), dimension_ * sizeof(Precision_t));
+		memcpy(At(i), temp, dimension_  * sizeof(Precision_t));
     uint64 temp_index=index_[i];
 		       index_[i]=index_[j];
 					 index_[j]=temp_index;
@@ -195,7 +195,7 @@ class BinaryDataset {
 	}
 	// returns a pointer on the data at the ith point
   Precision_t* At(uint64 i) {
-		const char *temp="Attempt to acces data out of range "LI">"LI"";
+		const char *temp="Attempt to acces data out of range %llu>%llu";
 		DEBUG_ASSERT_MSG(i<num_of_points_, temp, i, num_of_points_);
 	  return data_+i*dimension_;
 	}
