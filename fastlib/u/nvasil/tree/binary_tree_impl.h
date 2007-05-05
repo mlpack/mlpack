@@ -210,6 +210,10 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
     NEIGHBORTYPE range,
     bool &found) {
   computations_.UpdateComparisons();
+	Precision_t max_distance;
+	if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) {
+	  max_distance=range;
+	}
   if (!ptr->IsLeaf()){
   	computations_.UpdateComparisons();
 		pair<NodePtr_t, NodePtr_t> child_pair = 
@@ -217,9 +221,13 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
 
 		NearestNeighbor(child_pair.first, test_point, nearest_point, 
                      range, found);
+		if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
+		  max_distance=nearest_point->back().first;
+		}
+		
     if (child_pair.second->get_box().CrossesBoundaries(test_point, 
 					                                       dimension_, 
-																								 nearest_point->end()->first,
+																								 max_distance,
                                                  computations_)) {
        NearestNeighbor(child_pair.second, 
 			                 test_point, 
@@ -230,8 +238,12 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
       if (found == true) {
       	return;
       } else {
+        if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
+		      max_distance=nearest_point->back().first;
+		    }
         found = ptr->get_box().IsWithin(test_point, 
-						                       dimension_, nearest_point->end()->first,  
+						                       dimension_, 
+																	 max_distance,  
                                    computations_)==0;
         if (found == true) {
           return;
@@ -242,8 +254,11 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
 				             range, dimension_,
 										 discriminator_,
   	                 computations_);
+    if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
+		  max_distance=nearest_point->back().first;
+		}
   	found = ptr->get_box().IsWithin(test_point, dimension_, 
-			                              nearest_point->end()->first,	
+			                              max_distance,	
   	                                computations_);
   }  	
 }    
@@ -373,7 +388,7 @@ void TREE__::InitAllKNearestNeighborOutput(string file,
   fwrite(buffer, sizeof(typename Node_t::NNResult),
 			   (num_of_points_%kChunk)*knns, fp );
 	fclose(fp);
-	delete buffer;
+	delete []buffer;
 	int fd=open(file.c_str(), O_RDWR);
 	typename Node_t::NNResult *ptr =(typename Node_t::NNResult *)mmap(NULL,
       sizeof(typename Node_t::NNResult)*knns*num_of_points_,

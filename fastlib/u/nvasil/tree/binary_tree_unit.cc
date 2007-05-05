@@ -76,22 +76,24 @@ class BinaryTreeTest {
 	void BuildDepthFirst(){
     printf("Testing BuildDepthFirst...\n");
 		tree_.BuildDepthFirst();
-		tree_.Print();
+		//tree_.Print();
 		printf("%s\n", tree_.Statistics().c_str());
 	}
 	void BuildBreadthFirst() {
 		printf("Testing BuildBreadthFirst...\n");
 	  tree_.BuildBreadthFirst();
-		tree_.Print();
+		// tree_.Print();
 		printf("%s\n", tree_.Statistics().c_str());
 	}
 	void kNearestNeighbor() {
 		printf("Testing kNearestNeighbor...\n");
 		tree_.BuildDepthFirst();
+		tree_.Print();
     vector<pair<Precision_t, Point_t> > nearest_tree;
 		pair<Precision_t, index_t> nearest_naive[num_of_points_];
 	  for(index_t i=0; i<num_of_points_; i++) {
-		  tree_.NearestNeighbor(data_.get_point(i),
+		  nearest_tree.clear();
+			tree_.NearestNeighbor(data_.get_point(i),
                             &nearest_tree,
                             knns_);
 			Naive(i, nearest_naive);
@@ -110,14 +112,17 @@ class BinaryTreeTest {
 	  vector<pair<Precision_t, Point_t> > nearest_tree;
 		pair<Precision_t, index_t> nearest_naive[num_of_points_];
 	  for(index_t i=0; i<num_of_points_; i++) {
-		  tree_.NearestNeighbor(data_.get_point(i),
+		  nearest_tree.clear();
+			tree_.NearestNeighbor(data_.get_point(i),
                             &nearest_tree,
                             range_);
+			std::sort(nearest_tree.begin(), nearest_tree.end(), 
+					     typename Node_t::PairComparator());
 			Naive(i, nearest_naive);
 			for(index_t j=0; j<(index_t)nearest_tree.size(); j++) {
 			  TEST_DOUBLE_APPROX(nearest_naive[j+1].first, 
-			 	  	                 nearest_tree[j].first,
-					                   numeric_limits<Precision_t>::epsilon());
+			 	  	               nearest_tree[j].first,
+					                 numeric_limits<Precision_t>::epsilon());
 			  TEST_ASSERT(nearest_tree[j].second.get_id()==
 				            nearest_naive[j+1].second)	;
 			}
@@ -131,11 +136,11 @@ class BinaryTreeTest {
 		tree_.AllNearestNeighbors(tree_.parent_, knns_);
     tree_.CloseAllKNearestNeighborOutput(knns_);
     struct stat info;
-		if (stat(data_file_.c_str(), &info)!=0) {
+		if (stat(result_file_.c_str(), &info)!=0) {
       FATAL("Error %s file %s\n",
 				    strerror(errno), data_file_.c_str());
 		}
-		uint64 map_size = info.st_size-sizeof(int32);
+		uint64 map_size = info.st_size;
 
     int fp=open(result_file_.c_str(), O_RDWR);
     typename Node_t::NNResult *res;
@@ -232,18 +237,14 @@ class BinaryTreeTest {
 	
 	void Naive(index_t query, 
 			       pair<Precision_t, index_t> *result) {
-    
 		for(index_t i=0;  i<num_of_points_; i++) {
-		  if (unlikely(data_.get_id(i)==data_.get_id(query))) {
-			  continue;
-			}
 			Precision_t dist=Metric_t::Distance(data_.At(i), 
 					                                data_.At(query), 
 					                                dimension_);
 		  result[i].first=dist;
-		  result[i].second=i;
+		  result[i].second=data_.get_id(i);
 		}
-		sort(result, result+num_of_points_);
+		std::sort(result, result+num_of_points_);
 	}
 	
 };

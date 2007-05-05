@@ -45,6 +45,13 @@ class Node {
     Point_t nearest_;
 		Precision_t	distance_;
 	};
+   class PairComparator {
+	 public:
+	   bool operator()(const pair<Precision_t, Point_t>  &a, 
+			               const pair<Precision_t, Point_t>  &b)  {
+	     return a.first<b.first;
+		}
+	};
   Node();
 	// Use this for node
   void Init(const BoundingBox_t &box, 
@@ -160,13 +167,7 @@ class Node {
 		FILE *range_nn_fp_;
 	};
 	Precision_t  min_dist_so_far_;	
-	class PairComparator {
-	 public:
-	   bool operator()(const pair<Precision_t, Point_t> &a, 
-			               const pair<Precision_t, Point_t>  &b)  {
-	     return a.first<b.first;
-		}
-	};
+	
 };
 
 #include "node_impl.h"
