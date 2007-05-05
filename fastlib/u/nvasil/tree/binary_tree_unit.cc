@@ -52,7 +52,7 @@ class BinaryTreeTest {
     Allocator_t::allocator_ = new Allocator_t();
 		Allocator_t::allocator_->Initialize();
 		dimension_=2;
-    num_of_points_=1000;
+    num_of_points_=100;
     data_file_="data";
 		knns_=40;
     range_=0.2;
@@ -76,10 +76,14 @@ class BinaryTreeTest {
 	void BuildDepthFirst(){
     printf("Testing BuildDepthFirst...\n");
 		tree_.BuildDepthFirst();
+		tree_.Print();
+		printf("%s\n", tree_.Statistics().c_str());
 	}
 	void BuildBreadthFirst() {
 		printf("Testing BuildBreadthFirst...\n");
 	  tree_.BuildBreadthFirst();
+		tree_.Print();
+		printf("%s\n", tree_.Statistics().c_str());
 	}
 	void kNearestNeighbor() {
 		printf("Testing kNearestNeighbor...\n");

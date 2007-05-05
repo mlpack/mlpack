@@ -45,9 +45,9 @@ void NODE__::Init(const typename NODE__::BoundingBox_t &box,
   index_.Reset(Allocator_t::template malloc<index_t>(num_of_points_));
 	for(index_t i=start; i<start+num_of_points_; i++) {
 	  for(int32 j=0; j<dimension; j++) {
-		  points_[i*dimension+j]=dataset->At(i,j);
+		  points_[(i-start)*dimension+j]=dataset->At(i,j);
 	  }
-		index_[i]=dataset->get_id(i);
+		index_[i-start]=dataset->get_id(i);
 	}
 } 
 
@@ -229,6 +229,34 @@ inline void NODE__::FindAllNearest(
 	  max_local_distance=range;
 	}	
 }
+
+TEMPLATE__
+string NODE__::Print(int32 dimension) {
+  char buf[8192];
+  string str;
+  if (!IsLeaf()) {
+    sprintf(buf, "Node: %llu\n", (unsigned long long)node_id_);
+    str.append(buf);
+  } else {
+  	sprintf(buf, "Leaf: %llu\n", (unsigned long long)node_id_);
+  	str.append(buf);
+  }
+  str.append(box_.Print(dimension));  
+	str.append("num_of_points: ");
+  sprintf(buf,"%llu\n", (unsigned long long)num_of_points_);
+  str.append(buf);
+	if (IsLeaf()) {
+  	for(index_t i=0; i<num_of_points_; i++) {
+  	  for(int32 j=0; j<dimension; j++) {
+  	  	sprintf(buf,"%lg ", points_[i*dimension+j]);
+  	  	str.append(buf);
+  	  }
+  	  sprintf(buf, "-%llu \n",(unsigned long long) index_[i]);
+  	  str.append(buf); 
+  	}
+  }
+  return str;
+}    	 
 
 #undef TEMPLATE__
 #undef NODE__     	               	
