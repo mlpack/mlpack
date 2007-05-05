@@ -144,7 +144,8 @@ class Node {
 	void set_min_dist_so_far(Precision_t distance) {
 	  min_dist_so_far_=distance;
 	}
-
+  string Print(int32 dimension);
+ 
  private:
 	BoundingBox_t box_;
   index_t node_id_;
