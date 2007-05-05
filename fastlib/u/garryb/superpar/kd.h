@@ -44,6 +44,13 @@ class SpNode {
 
   index_t children_[t_cardinality];
   
+  OT_DEF(SpNode) {
+    OT_MY_OBJECT(begin_);
+    OT_MY_OBJECT(count_);
+    OT_MY_OBJECT(bound_);
+    OT_MY_ARRAY(children_, t_cardinality);
+  }
+  
  public:
   SpNode() {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
@@ -62,11 +69,6 @@ class SpNode {
     begin_ = begin_in;
     count_ = count_in;
   }
-  
-  void set_child(index_t i, SpNode *child) {
-    DEBUG_BOUNDS(i, t_cardinality);
-    children_[i] = child;
-  }
 
   const Bound& bound() const {
     return bound_;
@@ -76,12 +78,21 @@ class SpNode {
     return bound_;
   }
 
-  bool is_leaf() const {
-    return !left_;
+  index_t child(index_t child_number) const {
+    return children_[child_number];
   }
 
-  index_t child(index_t i) const {
-    return children_[i];
+  void set_child(index_t child_number, index_t child_index) {
+    DEBUG_BOUNDS(child_number, t_cardinality);
+    children_[child_number] = child_index;
+  }
+
+  void set_leaf() {
+    children_[0] = -index_t(1);
+  }
+
+  bool is_leaf() const {
+    return children_[0] == -index_t(1);
   }
 
   /**
@@ -118,205 +129,145 @@ class SpNode {
   }
 };
 
+/* */
 
-template<int t_length>
-class StaticVector {
- private:
-  double array_[t_length];
 
- public:
-  void MakeVector(Vector* alias) {
-    alias->Alias(array_, t_length);
-  }
+namespace tree_kdtree_private {
 
-  void MakeSubvector(index_t begin, index_t count, Vector *alias) {
-    DEBUG_BOUNDS(begin, t_length);
-    DEBUG_BOUNDS(begin + count, t_length + 1);
-    alias->Alias(array_ + begin, t_length + count);
-  }
-  
-  index_t length() const {
-    return t_length;
+  template<typename TBound>
+  void FindBoundFromMatrix(const Matrix& matrix,
+      index_t first, index_t count, TBound *bounds) {
+    index_t end = first + count;
+    for (index_t i = first; i < end; i++) {
+      Vector col;
+
+      matrix.MakeColumnVector(i, &col);
+      bounds->Update(col);
+    }
   }
 
-  double *ptr() {
-    return array_;
-  }
-  
-  const double *ptr() const {
-    return array_;
-  }
-  
-  double operator [] (index_t i) const {
-    DEBUG_BOUNDS(i, t_length);
-    return array_[i];
-  }
-  
-  double &operator [] (index_t i) {
-    DEBUG_BOUNDS(i, t_length);
-    return array_[i];
-  }
-  
-  double get(index_t i) const {
-    DEBUG_BOUNDS(i, t_length);
-    return array_[i];
-  }
-};
+  template<typename TBound>
+  index_t MatrixPartition(
+      Matrix& matrix, index_t dim, double splitvalue,
+      index_t first, index_t count,
+      TBound* left_bound, TBound* right_bound,
+      index_t *old_from_new) {
+    index_t left = first;
+    index_t right = first + count - 1;
+    
+    /* At any point:
+     *
+     *   everything < left is correct
+     *   everything > right is correct
+     */
+    for (;;) {
+      while (matrix.get(dim, left) < splitvalue && likely(left <= right)) {
+        Vector left_vector;
+        matrix.MakeColumnVector(left, &left_vector);
+        left_bound->Update(left_vector);
+        left++;
+      }
 
-template<int t_length>
-class StaticHrectBound {
- public:
-  struct DBound {
-    double lo_;
-    double hi;
-  };
-  
- private:
-  DBound bounds_[t_length];
-  
- public:
-  bool Belongs(const Vector& point) const {
-    for (index_t i = 0; i < point.length(); i++) {
-      const DBound *bound = &bounds_[i];
-      if (point[i] > bound->hi || point[i] < bound->lo) {
-        return false;
+      while (matrix.get(dim, right) >= splitvalue && likely(left <= right)) {
+        Vector right_vector;
+        matrix.MakeColumnVector(right, &right_vector);
+        right_bound->Update(right_vector);
+        right--;
+      }
+
+      if (unlikely(left > right)) {
+        /* left == right + 1 */
+        break;
+      }
+
+      Vector left_vector;
+      Vector right_vector;
+
+      matrix.MakeColumnVector(left, &left_vector);
+      matrix.MakeColumnVector(right, &right_vector);
+
+      left_vector.SwapValues(&right_vector);
+
+      left_bound->Update(left_vector);
+      right_bound->Update(right_vector);
+      
+      if (old_from_new) {
+        index_t t = old_from_new[left];
+        old_from_new[left] = old_from_new[right];
+        old_from_new[right] = t;
+      }
+
+      DEBUG_ASSERT(left <= right);
+      right--;
+      
+      // this conditional is always true, I belueve
+      //if (likely(left <= right)) {
+      //  right--;
+      //}
+    }
+
+    DEBUG_ASSERT(left == right + 1);
+
+    return left;
+  }
+
+  template<typename TKdTree>
+  void SplitKdTreeMidpoint(Matrix& matrix,
+      TKdTree *node, index_t leaf_size, index_t *old_from_new) {
+    TKdTree *left = NULL;
+    TKdTree *right = NULL;
+    
+    //FindBoundFromMatrix(matrix, node->begin(), node->count(),
+    //    &node->bound());
+
+    if (node->count() > leaf_size) {
+      index_t split_dim = BIG_BAD_NUMBER;
+      double max_width = -1;
+
+      for (index_t d = 0; d < matrix.n_rows(); d++) {
+        double w = node->bound().get(d).width();
+
+        if (unlikely(w > max_width)) {
+          max_width = w;
+          split_dim = d;
+        }
+      }
+
+      double split_val = node->bound().get(split_dim).mid();
+
+      if (max_width == 0) {
+        // Okay, we can't do any splitting, because all these points are the
+        // same.  We have to give up.
+      } else {
+        left = new TKdTree();
+        left->bound().Init(matrix.n_rows());
+
+        right = new TKdTree();
+        right->bound().Init(matrix.n_rows());
+
+        index_t split_col = MatrixPartition(matrix, split_dim, split_val,
+            node->begin(), node->count(),
+            &left->bound(), &right->bound(),
+            old_from_new);
+        
+        DEBUG_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
+            node->begin(), split_col,
+            node->begin() + node->count(), split_dim, split_val,
+            node->bound().get(split_dim).lo,
+            node->bound().get(split_dim).hi);
+
+        left->Init(node->begin(), split_col - node->begin());
+        right->Init(split_col, node->begin() + node->count() - split_col);
+
+        // This should never happen if max_width > 0
+        DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
+
+        SplitKdTreeMidpoint(matrix, left, leaf_size, old_from_new);
+        SplitKdTreeMidpoint(matrix, right, leaf_size, old_from_new);
       }
     }
-    
-    return true;
-  }
-  
-  double MinDistanceSqToInstance(const Vector& point) const {
-    DEBUG_ASSERT(point.length() == t_length);
-    return MinDistanceSqToInstance(point.ptr());
-  }
-  
-  double MinDistanceSqToInstance(const double *mpoint) const {
-    double sumsq = 0;
-    const DBound *mbound = bounds_;
-    index_t d = t_length;
-    
-    do {
-      double v = *mpoint;
-      double v1 = mbound->lo - v;
-      double v2 = v - mbound->hi;
-      
-      v = (v1 + fabs(v1)) + (v2 + fabs(v2));
-      
-      mbound++;
-      mpoint++;
-      
-      sumsq += v * v;
-    } while (--d);
 
-    return sumsq / 4;
-  }
-  
-  double MaxDistanceSqToInstance(const Vector& point) const {
-    double sumsq = 0;
-
-    DEBUG_ASSERT(point.length() == t_length);
-
-    for (index_t d = 0; d < t_length; d++) {
-      double v = max(point[d] - bounds_[d].lo,
-          bounds_[d].hi - point[d]);
-      
-      sumsq += v * v;
-    }
-
-    return sumsq;
-  }
-  
-  double MinDistanceSqToBound(const StaticHrectBound& other) const {
-    double sumsq = 0;
-    const DBound *a = this->bounds_;
-    const DBound *b = other.bounds_;
-    index_t mdim = t_length;
-
-    DEBUG_ASSERT(t_length == other.t_length);
-
-    // We invoke the following:
-    //   x + fabs(x) = max(2*x, 0)
-    //   (x * 2)^2 / 4 = x^2
-
-    for (index_t d = 0; d < mdim; d++) {
-      double v1 = b[d].lo - a[d].hi;
-      double v2 = a[d].lo - b[d].hi;
-
-      double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
-
-      sumsq += v * v;
-    }
-
-    return sumsq / 4;
-  }
-
-  double MinDistanceSqToBoundFarEnd(const StaticHrectBound& other) const {
-    double sumsq = 0;
-    const DBound *a = this->bounds_;
-    const DBound *b = other.bounds_;
-    index_t mdim = t_length;
-
-    for (index_t d = 0; d < mdim; d++) {
-      double v1 = b[d].hi - a[d].hi;
-      double v2 = a[d].lo - b[d].lo;
-      
-      double v = max(v1, v2);
-      v = (v + fabs(v)); /* truncate negative */
-      
-      sumsq += v * v;
-    }
-
-    return sumsq / 4;
-  }
-
-  double MaxDistanceSqToBound(const StaticHrectBound& other) const {
-    double sumsq = 0;
-    const DBound *a = this->bounds_;
-    const DBound *b = other.bounds_;
-
-    for (index_t d = 0; d < t_length; d++) {
-      double v = max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
-      
-      sumsq += v * v;
-    }
-
-    return sumsq;
-  }
-
-  double MidDistanceSqToBound(const StaticHrectBound& other) const {
-    double sumsq = 0;
-    const DBound *a = this->bounds_;
-    const DBound *b = other.bounds_;
-    
-    for (index_t d = 0; d < t_length; d++) {
-      double v = (a[d].hi + a[d].lo - b[d].hi - b[d].lo) * 0.5;
-      
-      sumsq += v * v;
-    }
-
-    return sumsq;
-  }
-  
-  void Update(const Vector& vector) {
-    DEBUG_ASSERT(vector.length() == t_length);
-    
-    for (index_t i = 0; i < t_length; i++) {
-      DBound* bound = &bounds_[i];
-      double d = vector[i];
-      
-      if (unlikely(d > bound->hi)) {
-        bound->hi = d;
-      }
-      if (unlikely(d < bound->lo)) {
-        bound->lo = d;
-      }
-    }
-  }
-  
-  const DBound& get(index_t i) const {
-    DEBUG_BOUNDS(i, t_length);
-    return bounds_[i];
+    node->set_children(matrix, left, right);
   }
 };
 
