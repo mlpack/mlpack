@@ -303,7 +303,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
   	  	                                   computations_);
   	  	AllNearestNeighbors(query, 
 						                closest_child.first.first, // child
-						                range,                            // range  
+						                range,                     // range  
 														closest_child.first.second // distance of query
 												    // from the reference child		
 														);
@@ -388,7 +388,7 @@ void TREE__::InitAllKNearestNeighborOutput(string file,
   fwrite(buffer, sizeof(typename Node_t::NNResult),
 			   (num_of_points_%kChunk)*knns, fp );
 	fclose(fp);
-	delete buffer[];
+	delete []buffer;
 	int fd=open(file.c_str(), O_RDWR);
 	typename Node_t::NNResult *ptr =(typename Node_t::NNResult *)mmap(NULL,
       sizeof(typename Node_t::NNResult)*knns*num_of_points_,
