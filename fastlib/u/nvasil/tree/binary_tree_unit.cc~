@@ -52,7 +52,7 @@ class BinaryTreeTest {
     Allocator_t::allocator_ = new Allocator_t();
 		Allocator_t::allocator_->Initialize();
 		dimension_=2;
-    num_of_points_=100;
+    num_of_points_=1000;
     data_file_="data";
 		knns_=40;
     range_=0.2;
@@ -171,7 +171,7 @@ class BinaryTreeTest {
 	void AllRangeNearestNeighbors() {
 	  printf("Testing AllRangeNearestNeighbors...\n");
 	 	tree_.BuildBreadthFirst();
-		tree_.Print();
+		//tree_.Print();
 	  tree_.InitAllRangeNearestNeighborOutput(result_file_);
 		tree_.AllNearestNeighbors(tree_.parent_, range_);
     tree_.CloseAllRangeNearestNeighborOutput();
@@ -197,15 +197,18 @@ class BinaryTreeTest {
     while (i<num_of_points_) {
 		  Naive(i, nearest_naive);
 			index_t j=0;
-		 	while (nearest_naive[j+1].first<=range_) {
-			 	TEST_DOUBLE_APPROX(nearest_naive[j+1].first, 
-			 	  	                 res[data_.get_id(i)].distance_,
-					                   numeric_limits<Precision_t>::epsilon());
-			  TEST_ASSERT(res[data_.get_id(i)].nearest_.get_id()==
-				            nearest_naive[j+1].second);
-				i++;
+			while(res[j].point_id_<(index_t)data_.get_id(i)) {
+			  j++;
+			}
+			index_t k=1;
+		 	while (nearest_naive[k].first<=range_) {
+				TEST_DOUBLE_APPROX(nearest_naive[k].first, 
+			 	  	               res[j].distance_,
+					                 numeric_limits<Precision_t>::epsilon());
 				j++;
-			}			
+				k++;
+			}
+      i++;			
 		}		
 		munmap(res, map_size);
 	}
@@ -230,6 +233,7 @@ class BinaryTreeTest {
 		AllRangeNearestNeighbors();
     Destruct();
 	}	
+ 
  private:
   BinaryTree_t tree_; 
   BinaryDataset<Precision_t> data_;
@@ -252,17 +256,29 @@ class BinaryTreeTest {
 		std::sort(result, result+num_of_points_);
 	}
 	
+	void Naive(Precision_t *query, 
+			       pair<Precision_t, index_t> *result) {
+		for(index_t i=0;  i<num_of_points_; i++) {
+			Precision_t dist=Metric_t::Distance(data_.At(i), 
+					                                query, 
+					                                dimension_);
+		  result[i].first=dist;
+		  result[i].second=data_.get_id(i);
+		}
+		std::sort(result, result+num_of_points_);
+	}
 };
-/*
+
 TREE_PARAMETERS(float32,
 		            MemoryManager<false>,
-		            EuclideanMetric<float32>,
+		            EuclideanMetric,
 	              HyperRectangle,
 	              NullStatistics,
                 SimpleDiscriminator,
-		            KdPivoter1) 
-								*/
-struct BasicTypes {
+		            KdPivoter1,
+								false) 
+								
+/*struct BasicTypes {
   typedef float32 Precision_t;
 	typedef MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
@@ -276,6 +292,7 @@ struct Parameters {
   typedef SimpleDiscriminator PointIdDiscriminator_t;
   typedef KdPivoter1<BasicTypes, false> Pivot_t; 
 };
+*/
 typedef BinaryTreeTest<Parameters, false> BinaryTreeTest_t;
 int main(int argc, char *argv[]) {
   BinaryTreeTest_t test;
