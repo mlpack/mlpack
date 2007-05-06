@@ -196,7 +196,8 @@ inline void NODE__::FindAllNearest(
 				  temp[j].second=query_node->kneighbors_[i*(index_t)range+j].nearest_;
 			  }
 				Point_t point;
-				point.Alias(query_node->points_.get()+i*dimension, index_[i]);
+				point.Alias(query_node->points_.get()+i*dimension, 
+					          query_node->index_[i]);
         FindNearest(point, temp, 
                     range, dimension,
 				 				    discriminator,	comp);
@@ -219,7 +220,8 @@ inline void NODE__::FindAllNearest(
 	      vector<pair<Precision_t, Point_t> >  temp;
 			  temp.clear();
 				Point_t point;
-				point.Alias(query_node->points_.get()+i*dimension, index_[i]);
+				point.Alias(query_node->points_.get()+i*dimension, 
+						        query_node->index_[i]);
 		    FindNearest(point, temp, 
                     range, dimension,
 				  				  discriminator,	comp);

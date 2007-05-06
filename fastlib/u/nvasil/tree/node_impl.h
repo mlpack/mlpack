@@ -170,7 +170,6 @@ inline void NODE__::FindAllNearest(
                     int32 dimension,
 										typename NODE__::PointIdDiscriminator_t &discriminator,
                     ComputationsCounter<diagnostic> &comp) {
-  printf("%u--%u\n", query_node->get_node_id(), node_id_); 
   Precision_t max_local_distance = numeric_limits<Precision_t>::min();
   for(index_t i=0; i<query_node->num_of_points_; i++) {
 		Precision_t distance;
@@ -220,7 +219,8 @@ inline void NODE__::FindAllNearest(
 	      vector<pair<Precision_t, Point_t> >  temp;
 			  temp.clear();
 				Point_t point;
-				point.Alias(query_node->points_.get()+i*dimension, index_[i]);
+				point.Alias(query_node->points_.get()+i*dimension, 
+						        query_node->index_[i]);
 		    FindNearest(point, temp, 
                     range, dimension,
 				  				  discriminator,	comp);
