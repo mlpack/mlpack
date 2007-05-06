@@ -282,7 +282,8 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
                                  typename TREE__::Precision_t distance) {                                               	
 
   if (distance > query->get_min_dist_so_far()) {
-  	return ;
+  	printf("PRUNEEEEEEEEEEEEEEEEEEEEEEEEEE\n");
+		return ;
   } else {
   	if (query->IsLeaf() && reference->IsLeaf()) {
   	  Precision_t max_distance=numeric_limits<Precision_t>::max();
@@ -303,7 +304,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
   	  	                                   computations_);
   	  	AllNearestNeighbors(query, 
 						                closest_child.first.first, // child
-						                range,                            // range  
+						                range,                     // range  
 														closest_child.first.second // distance of query
 												    // from the reference child		
 														);

@@ -170,7 +170,7 @@ inline void NODE__::FindAllNearest(
                     int32 dimension,
 										typename NODE__::PointIdDiscriminator_t &discriminator,
                     ComputationsCounter<diagnostic> &comp) {
-  
+  printf("%u--%u\n", query_node->get_node_id(), node_id_); 
   Precision_t max_local_distance = numeric_limits<Precision_t>::min();
   for(index_t i=0; i<query_node->num_of_points_; i++) {
 		Precision_t distance;
@@ -191,20 +191,22 @@ inline void NODE__::FindAllNearest(
 		  // for k nearest neighbors
       if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {                                          	
 			  vector<pair<Precision_t, Point_t> > temp((index_t)range);
-			  for(int32 j=0; j<range; j++) {
+			 	for(int32 j=0; j<range; j++) {
 			    temp[j].first=query_node->kneighbors_[i*(index_t)range+j].distance_;
 				  temp[j].second=query_node->kneighbors_[i*(index_t)range+j].nearest_;
 			  }
 				Point_t point;
-				point.Alias(query_node->points_.get()+i*dimension, index_[i]);
+				point.Alias(query_node->points_.get()+i*dimension, 
+					          query_node->index_[i]);
         FindNearest(point, temp, 
                     range, dimension,
 				 				    discriminator,	comp);
-			  for(int32 j=(index_t)range-1; j>=0; j--) {
-			    if (query_node->kneighbors_[i*(index_t)range+j].nearest_.get_id()
-							==temp[j].second.get_id()) {
-				    break;
-			    }
+			  DEBUG_ASSERT_MSG((index_t)temp.size()==range, 
+						"During  %i-nn seach, returned %u results",(int)range, 
+						 (unsigned int)temp.size());
+
+				
+				for(int32 j=0; j<(index_t)range; j++) {
 			    query_node->kneighbors_[i*(index_t)range+j].distance_=temp[j].first;
 			    query_node->kneighbors_[i*(index_t)range+j].nearest_=temp[j].second;
 			  }
@@ -237,7 +239,8 @@ inline void NODE__::FindAllNearest(
 	}
 	if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) {
 	  max_local_distance=range;
-	}	
+	}
+ 
 }
 
 TEMPLATE__

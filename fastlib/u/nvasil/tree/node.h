@@ -30,10 +30,11 @@ class Node {
       distance_(numeric_limits<Precision_t>::max()) {
 		}
 		bool operator<(const NNResult &other) const {
-		  if (distance_==other.distance_ || true) {
-			  return point_id_<other.point_id_;  
+		  if (point_id_==other.point_id_) {
+			  return distance_<other.distance_;  
+		  } else {
+			  return  point_id_<other.point_id_;
 			}
-			return distance_<other.distance_;
 		}
 		Precision_t get_distance() const {
 		  return distance_;
@@ -45,7 +46,7 @@ class Node {
     Point_t nearest_;
 		Precision_t	distance_;
 	};
-   class PairComparator {
+  class PairComparator {
 	 public:
 	   bool operator()(const pair<Precision_t, Point_t>  &a, 
 			               const pair<Precision_t, Point_t>  &b)  {
@@ -132,7 +133,9 @@ class Node {
 		for(index_t i=0; i< num_of_points_; i++) {
 		  for(index_t j=0; j<(index_t)knns; j++) {
 	      kneighbors_[i*knns+j].point_id_ =
-				index_[i];	
+				index_[i];
+			  kneighbors_[i*knns+j].nearest_.
+					  set_id(numeric_limits<index_t>::max());
 			}
 		}
 	}
@@ -150,6 +153,9 @@ class Node {
 	}
 	void set_min_dist_so_far(Precision_t distance) {
 	  min_dist_so_far_=distance;
+	}
+	index_t get_node_id() {
+	  return node_id_;
 	}
   string Print(int32 dimension);
  
