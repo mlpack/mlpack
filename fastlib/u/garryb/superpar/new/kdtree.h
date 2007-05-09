@@ -173,7 +173,7 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::KdTreeMidpointBuilder::Bu
           nodes_[node_i].begin(), nodes_[node_i].count(),
           &nodes_[left_i].bound(),
           &nodes_[right_i].bound());
-
+      
       DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)",
           nodes_[node_i].begin(), split_col,
           nodes_[node_i].begin() + nodes_[node_i].count(), split_dim, split_val,
@@ -183,7 +183,7 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::KdTreeMidpointBuilder::Bu
       nodes_[left_i].Init(nodes_[node_i].begin(),
           split_col - nodes_[node_i].begin());
       nodes_[right_i].Init(split_col,
-          nodes_[node_i].begin() + nodes_[node_i].count() - split_col);
+          nodes_[node_i].end() - split_col);
 
       // This should never happen if max_width > 0
       DEBUG_ASSERT(nodes_[left_i].count() != 0 && nodes_[right_i].count() != 0);

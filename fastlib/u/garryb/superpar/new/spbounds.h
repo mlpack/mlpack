@@ -268,7 +268,7 @@ class SpHrectBound {
       
       double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-      sumsq += math::PowAbs<t_pow, 1>(v * v);
+      sumsq += math::PowAbs<t_pow, 1>(v);
     }
 
     return math::Pow<2, t_pow>(sumsq) / 4;
