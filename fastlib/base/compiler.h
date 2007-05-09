@@ -133,6 +133,17 @@
     (((size_t)(number) + strideof(T) - 1) / strideof(T) * strideof(T))
 
 /**
+ * The maximum stride of any object on the platform.
+ */
+#define MAX_STRIDE 8
+
+/**
+ * Aligns a size_t to the maximum possible stride.
+ */
+#define stride_align_max(number) \
+    (((number) + MAX_STRIDE-1) & ~(size_t)(MAX_STRIDE-1))
+
+/**
  * Does the equivalent of static_cast, but works in C, while avoiding
  * warnings in C++.
  *

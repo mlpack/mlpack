@@ -79,6 +79,84 @@ namespace math {
   }
 };
 
+namespace math_private {
+  template<int t_numerator, int t_denominator = 1>
+  struct PowImpl {
+    static double Calculate(double d) {
+      return pow(d, t_numerator * 1.0 / t_denominator);
+    }
+  };
+
+  template<int t_equal>
+  struct PowImpl<t_equal, t_equal> {
+    static double Calculate(double d) {
+      return d;
+    }
+  };
+
+  template<>
+  struct PowImpl<1, 1> {
+    static double Calculate(double d) {
+      return d;
+    }
+  };
+
+  template<>
+  struct PowImpl<1, 2> {
+    static double Calculate(double d) {
+      return sqrt(d);
+    }
+  };
+
+  template<>
+  struct PowImpl<1, 3> {
+    static double Calculate(double d) {
+      return cbrt(d);
+    }
+  };
+
+  template<int t_denominator>
+  struct PowImpl<0, t_denominator> {
+    static double Calculate(double d) {
+      return 1;
+    }
+  };
+
+  template<int t_numerator>
+  struct PowImpl<t_numerator, 1> {
+    static double Calculate(double d) {
+      return PowImpl<t_numerator - 1, 1>::Calculate(d) * d;
+    }
+  };
+};
+
+namespace math {
+  /**
+   * Calculates a relatively small power using template metaprogramming.
+   *
+   * This allows a numerator and denominator.  In the case where the numerator
+   * and denominator are equal, this will not do anything, or in the case where
+   * the denominator is one.
+   */
+  template<int t_numerator, int t_denominator> 
+  inline double Pow(double d) {
+    return math_private::PowImpl<t_numerator, t_denominator>::Calculate(d);
+  }
+  
+  /**
+   * Calculates a small power of the absolute value of a number
+   * using template metaprogramming.
+   *
+   * This allows a numerator and denominator.  In the case where the numerator
+   * and denominator are equal, this will not do anything, or in the case where
+   * the denominator is one.
+   */
+  template<int t_numerator, int t_denominator> 
+  inline double PowAbs(double d) {
+    return math_private::PowImpl<t_numerator, t_denominator>::Calculate(fabs(d));
+  }
+};
+
 #include "discrete.h"
 #include "kernel.h"
 #include "geometry.h"

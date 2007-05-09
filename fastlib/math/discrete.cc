@@ -10,9 +10,7 @@
 
 #include <stdlib.h>
 
-namespace math {
-
-double Factorial(int d) {
+double math::Factorial(int d) {
   double v = 1;
   
   DEBUG_ASSERT(d >= 0);
@@ -24,13 +22,13 @@ double Factorial(int d) {
   return v;
 }
 
-void MakeIdentityPermutation(index_t size, index_t *array) {
+void math::MakeIdentityPermutation(index_t size, index_t *array) {
   for (index_t i = 0; i < size; i++) {
     array[i] = i;
   }
 }
 
-void MakeRandomPermutation(index_t size, index_t *array) {
+void math::MakeRandomPermutation(index_t size, index_t *array) {
   // Regular permutation algorithm.
   // This is cache inefficient for large sizes; large caches might
   // warrant a more sophisticated blocked algorithm.
@@ -48,4 +46,9 @@ void MakeRandomPermutation(index_t size, index_t *array) {
   }
 }
 
-};
+void math::MakeInversePermutation(index_t size,
+    const index_t *original, index_t *reverse) {
+  for (index_t i = 0; i < size; i++) {
+    reverse[original[i]] = i;
+  }
+}

@@ -208,4 +208,23 @@ inline T max(T a, T b) {
  */
 struct Empty {};
 
+/**
+ * IfThenElse condition for template metaprogramming.  A google search will
+ * explain how to use this.
+ */
+template<bool condition, class TA, class TB>
+class IfThenElse;
+
+template<class TA, class TB>
+class IfThenElse<true, TA, TB> {
+ private:
+  typedef TA Result;
+};
+
+template<class TA, class TB>
+class IfThenElse<false, TA, TB> {
+ private:
+  typedef TB Result;
+};
+
 #endif /* BASE_CC_H */

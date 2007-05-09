@@ -66,6 +66,21 @@ namespace math {
     result->Init(size);
     MakeRandomPermutation(size, result->begin());
   }
+
+  /**
+   * Inverts or transposes an existing permutation.
+   */
+  void MakeInversePermutation(index_t size,
+      const index_t *original, index_t *reverse);
+
+  /**
+   * Inverts or transposes an existing permutation.
+   */
+  inline void MakeInversePermutation(
+      const ArrayList<index_t>& original, ArrayList<index_t> *reverse) {
+    reverse->Init(original.size());
+    MakeInversePermutation(original.size(), original.begin(), reverse->begin());
+  }
 };
 
 #endif

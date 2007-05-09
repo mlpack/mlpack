@@ -32,7 +32,6 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#define PASADENA(x) 3
 // TODO: Remove nullability from arrays
 
 /**
@@ -402,7 +401,7 @@ namespace ot_private {
     }
     
     size_t size() const {
-      return pos_;
+      return stride_align_max(pos_);
     }
     
     /** Visits an object with no OT implementation. */
@@ -553,7 +552,7 @@ namespace ot_private {
      * Returns the calculated size.
      */
     size_t size() const {
-      return pos_;
+      return stride_align_max(pos_);
     }
     
     /** visits an object with no OT implementation */
@@ -679,50 +678,53 @@ namespace ot_private {
   };
 }; // namespace ot_private
 
-template<typename T>
-void OTPrint(const T& object, FILE *stream) {
-  ot_private::OTPrinter printer;
-  printer.InitBegin(object, stream);
-}
+namespace ot {
 
-/**
- * Finds the number of bytes required to freeze an object.
- */
-template<typename T>
-size_t OTPointerFrozenSize(const T& obj) {
-  ot_private::OTFrozenSizeCalculator calc;
-  calc.InitBegin(obj);
-  return calc.size();
-}
+  template<typename T>
+  void Print(const T& object, FILE *stream = stderr) {
+    ot_private::OTPrinter printer;
+    printer.InitBegin(object, stream);
+  }
 
-/**
- * Makes a copy of an object, freezing it for the first time.
- */
-template<typename T>
-void OTPointerFreeze(const T& live_object, char *block) {
-  ot_private::OTPointerFreezer freezer;
-  freezer.InitBegin(live_object, block);
-  DEBUG_SAME_INT(freezer.size(), OTPointerFrozenSize(live_object));
-}
+  /**
+   * Finds the number of bytes required to freeze an object.
+   */
+  template<typename T>
+  size_t PointerFrozenSize(const T& obj) {
+    ot_private::OTFrozenSizeCalculator calc;
+    calc.InitBegin(obj);
+    return calc.size();
+  }
 
-/**
- * Takes an object that is laid out serially, and adjusts all its pointers
- * so that they are normalized to zero.
- */
-template<typename T>
-void OTPointerRefreeze(T* obj) {
-  ot_private::OTPointerRefreezer fixer;
-  fixer.InitBegin<T>(obj);
-}
+  /**
+   * Makes a copy of an object, freezing it for the first time.
+   */
+  template<typename T>
+  void PointerFreeze(const T& live_object, char *block) {
+    ot_private::OTPointerFreezer freezer;
+    freezer.InitBegin(live_object, block);
+    DEBUG_SAME_INT(freezer.size(), OTPointerFrozenSize(live_object));
+  }
 
-/**
- * Takes an object that is laid out serially with all its pointers
- * normalized to zero, and makes all the pointers live again.
- */
-template<typename T>
-T* OTPointerThaw(char *block) {
-  ot_private::OTPointerThawer fixer;
-  return fixer.InitBegin<T>(block);
-}
+  /**
+   * Takes an object that is laid out serially, and adjusts all its pointers
+   * so that they are normalized to zero.
+   */
+  template<typename T>
+  void PointerRefreeze(T* obj) {
+    ot_private::OTPointerRefreezer fixer;
+    fixer.InitBegin<T>(obj);
+  }
+
+  /**
+   * Takes an object that is laid out serially with all its pointers
+   * normalized to zero, and makes all the pointers live again.
+   */
+  template<typename T>
+  T* PointerThaw(char *block) {
+    ot_private::OTPointerThawer fixer;
+    return fixer.InitBegin<T>(block);
+  }
+};
 
 #endif

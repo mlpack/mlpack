@@ -515,7 +515,7 @@ class Loader:
       if fname == None:
         fname = url[url.rindex('/')+1:]
       register(name, WgetRule(url, type,
-          pathify_real(fname), pathify_fake(fname)))
+          pathify_real(fname), pathify_fake(fname)))        
     def binrule(name, linkables = [], sources = [], headers = [], cflags = ""):
       # (source, headers, cflags)
       longname = pathify_fake(name)
