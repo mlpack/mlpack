@@ -171,7 +171,7 @@ class Allnn {
 
     void FinishReaccumulate(const Param& param,
         const QNode& q_node) {
-      if (distance_sq_hi < 0) abort();
+      DEBUG_ASSERT_MSG(distance_sq_hi >= 0, "%f", distance_sq_hi);
       /* no post-processing steps necessary */
     }
 

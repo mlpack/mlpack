@@ -47,8 +47,10 @@ class Tkde {
       kernel.Init(fx_param_double_req(datanode, "h"));
       double t = fx_param_double_req(datanode, "threshold");
       t = t * kernel.CalcNormConstant(dim);
-      thresh.lo = t * (1.0 - 1.0e-7);
-      thresh.hi = t * (1.0 + 1.0e-7);
+      fx_format_result(datanode, "norm_constant", "%f",
+          kernel.CalcNormConstant(dim));
+      thresh.lo = t * (1.0 - 1.0e-4);
+      thresh.hi = t * (1.0 + 1.0e-4);
       // WALDO: Fix me
     }
 
@@ -81,11 +83,13 @@ class Tkde {
     double ComputeKernelSum(
         double distance_squared,
         index_t r_count, const Vector& r_center, double r_sumsq) const {
+      //q*q - 2qr + rsumsq
+      //q*q - 2qr + r*r - r*r
       double quadratic_term =
           (distance_squared - la::Dot(r_center, r_center)) * r_count
           + r_sumsq;
 
-      return r_count - quadratic_term * kernel.inv_bandwidth_sq();
+      return -quadratic_term * kernel.inv_bandwidth_sq() + r_count;
     }
   };
 
@@ -273,10 +277,12 @@ class Tkde {
    public:
     void Init(const Param& param) {
       moment_info.Init(param);
+      label = LAB_UNKNOWN;
     }
 
     void Reset(const Param& param) {
       moment_info.Reset();
+      label = LAB_UNKNOWN;
     }
 
     void ApplyPostponed(const Param& param, const QPostponed& other) {
@@ -302,10 +308,6 @@ class Tkde {
     void Init(const Param& param) {
       d_density.Init(0, 0);
     }
-
-    void ApplyDelta(const Param& param, const Delta& other) {
-      d_density += other.d_density;
-    }
   };
 
   // rho
@@ -330,13 +332,19 @@ class Tkde {
     void Postprocess(const Param& param,
         const Vector& q_point, const QPointInfo& q_info,
         const RNode& r_root) {
-      /* nothing special to do */
+      if (density > param.thresh.hi) {
+        label |= LAB_HI;
+      } else if (density < param.thresh.lo) {
+        label |= LAB_LO;
+      }
+      DEBUG_ASSERT(label != LAB_CONFLICT);
     }
 
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
         const Vector& q_point) {
       label |= postponed.label; /* bitwise OR */
+      DEBUG_ASSERT_MSG(label >= 0 && label < 3, "%d", label);
 
       if (!postponed.moment_info.is_empty()) {
         density += postponed.moment_info.ComputeKernelSum(param, q_point);
@@ -372,7 +380,7 @@ class Tkde {
     void Init(const Param& param) {
       /* horizontal init */
       density.Init(0, 0);
-      label = 0;
+      label = LAB_UNKNOWN;
     }
 
     void StartReaccumulate(const Param& param, const QNode& q_node) {
@@ -386,12 +394,14 @@ class Tkde {
       // but in some cases may require a copy/undo stage
       density |= result.density;
       label &= result.label;
+      DEBUG_ASSERT(result.label != LAB_CONFLICT);
     }
 
     void Accumulate(const Param& param,
         const QMassResult& result, index_t n_points) {
       density |= result.density;
-      density &= result.label;
+      label &= result.label;
+      DEBUG_ASSERT(result.label != LAB_CONFLICT);
     }
 
     void FinishReaccumulate(const Param& param,
@@ -403,8 +413,9 @@ class Tkde {
     void ApplyMassResult(const Param& param,
         const QMassResult& mass_result) {
       density += mass_result.density;
+      DEBUG_ASSERT_MSG((label | mass_result.label) != LAB_CONFLICT,
+          "%d and %d", label, mass_result.label);
       label |= mass_result.label;
-      DEBUG_ASSERT(label != LAB_CONFLICT);
     }
 
     void ApplyDelta(const Param& param,
@@ -417,6 +428,7 @@ class Tkde {
       bool change_made;
 
       if (unlikely(postponed.label)) {
+        DEBUG_ASSERT((label | postponed.label) != LAB_CONFLICT);
         label = postponed.label;
         change_made = true;
       } else  if (unlikely(!postponed.moment_info.is_empty())) {
@@ -520,24 +532,38 @@ class Tkde {
       double distance_sq_lo =
           q_node.bound().MinDistanceSqToBound(r_node.bound());
       bool need_expansion;
+      
+      //printf("%f %f %f\n",
+      //    q_node.bound().MinDistanceSqToBound(r_node.bound()),
+      //    q_node.bound().MidDistanceSqToBound(r_node.bound()),
+      //    q_node.bound().MaxDistanceSqToBound(r_node.bound())
+      //    );
 
-      if (distance_sq_lo >= param.kernel.bandwidth_sq()) {
+      if (distance_sq_lo > param.kernel.bandwidth_sq()) {
         need_expansion = false;
       } else {
         double distance_sq_hi =
             q_node.bound().MaxDistanceSqToBound(r_node.bound());
 
-        if (distance_sq_hi <= param.kernel.bandwidth_sq()) {
+        if (distance_sq_hi < param.kernel.bandwidth_sq()) {
           q_postponed->moment_info.Add(r_node.stat().moment_info);
           need_expansion = false;
         } else {
-          delta->d_density = r_node.stat().moment_info.ComputeKernelSumRange(
-              param, q_node.bound());
+#ifdef BIGPRUNE
+#endif
+          //delta->d_density = r_node.stat().moment_info.ComputeKernelSumRange(
+          //    param, q_node.bound());
           // we computed the lower bound of the quadratic.  if it is positive
           // it means we have a better-than-nothing bound; if it is not, then
           // we can resort to saying the min contribution is zero.
-          delta->d_density.lo = max(delta->d_density.lo, 0.0);
+          //    - problem: the upper bound is no good.
+          //max(delta->d_density.lo, 0.0);
+          delta->d_density.lo = 0;
+          delta->d_density.hi = r_node.count() *
+              param.kernel.EvalUnnormOnSq(distance_sq_lo);
           need_expansion = true;
+#ifdef BIGPRUNE
+#endif
         }
       }
 
