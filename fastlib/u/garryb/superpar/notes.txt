@@ -1,10 +1,21 @@
+
+- bootstrapping
+  - abstract loading/storing of data
+  - data loading
+    - data can come from anywhere
+    - data is decomposed into records
+    - steps
+      - inferring "schema" from beginning of one file
+      - create a "blank" record from schema (to create the serializable array)
+      - fill in a record
+
 TODO
  /- otrav
  /- freeze/thaw
+ - GNP reduce DFS
  - cache array
  - local cache
  - network sharing
- - GNP reduce DFS
  - GNP reduce RBFS
  X- diskio (WAIT NOT NECESSARY)
 
@@ -52,7 +63,14 @@ Array
     - blocks have no alignment
     - read blocks on first use
     - explicit ranged writebacks
-
+- types of arrays
+  - stream
+    - two-way mergeable
+      - read-only
+      - read-write
+    - one-way non-mergeable
+      - append
+  - 
 
 how to build tree
 
@@ -134,3 +152,9 @@ cache behavior
     - write mode
     - if you are doing read and write, you can only read things that you
     yourself wrote, or if it was saved previously
+
+generalization
+ - step 1: read in data into vector form
+ - step 2: make a tree
+
+

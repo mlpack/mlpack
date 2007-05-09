@@ -128,5 +128,13 @@ print "*** Running Makefile"
 processors = fx.param_int("j")
 
 util.writelines(makefile_path, makefile_lines)
-sys.exit(os.spawnvp(os.P_WAIT, "make", ["make", "-j%d" % processors]))
+
+retval = util.spawn_redirect(
+    os.path.abspath("."),
+    ["make", "-j%d" % processors],
+    infile = None,
+    outfile = None,
+    errfile = None)
+
+sys.exit(retval)
 
