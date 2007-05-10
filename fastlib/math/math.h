@@ -128,6 +128,26 @@ namespace math_private {
       return PowImpl<t_numerator - 1, 1>::Calculate(d) * d;
     }
   };
+
+  // absolute-value-power: have special implementations for even powers
+  // TODO: do this for all even integer powers
+
+  template<int t_numerator, int t_denominator, bool is_even>
+  struct PowAbsImpl;
+
+  template<int t_numerator, int t_denominator>
+  struct PowAbsImpl<t_numerator, t_denominator, false> {
+    static double Calculate(double d) {
+      return PowImpl<t_numerator, t_denominator>::Calculate(fabs(d));
+    }
+  };
+
+  template<int t_numerator, int t_denominator>
+  struct PowAbsImpl<t_numerator, t_denominator, true> {
+    static double Calculate(double d) {
+      return PowImpl<t_numerator, t_denominator>::Calculate(d);
+    }
+  };
 };
 
 namespace math {
@@ -153,7 +173,8 @@ namespace math {
    */
   template<int t_numerator, int t_denominator> 
   inline double PowAbs(double d) {
-    return math_private::PowImpl<t_numerator, t_denominator>::Calculate(fabs(d));
+    return math_private::PowAbsImpl<t_numerator, t_denominator,
+        (t_numerator % t_denominator == 0) && ((t_numerator / t_denominator) % 2 == 0)>::Calculate(fabs(d));
   }
 };
 

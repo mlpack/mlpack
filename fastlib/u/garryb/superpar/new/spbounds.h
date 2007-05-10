@@ -44,8 +44,8 @@ struct SpRange {
   }
   
   void InitUniversalSet() {
-    lo = DBL_MAX;
-    hi = -DBL_MAX;
+    lo = -DBL_MAX;
+    hi = DBL_MAX;
   }
   
   void Init(double lo_in, double hi_in) {
@@ -242,9 +242,8 @@ class SpHrectBound {
     DEBUG_ASSERT(point.length() == dim_);
 
     for (index_t d = 0; d < dim_; d++) {
-      double v = max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
-      
-      sumsq += math::PowAbs<t_pow, 1>(v);
+      sumsq += math::PowAbs<t_pow, 1>(
+          max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]));
     }
 
     return math::Pow<2, t_pow>(sumsq);
@@ -255,17 +254,16 @@ class SpHrectBound {
     const SpRange *a = this->bounds_;
     const SpRange *b = other.bounds_;
     index_t mdim = dim_;
-    
+
     DEBUG_ASSERT(dim_ == other.dim_);
-    
-    // We invoke the following:
-    //   x + fabs(x) = max(x * 2, 0)
-    //   (x * 2)^2 / 4 = x^2
+
 
     for (index_t d = 0; d < mdim; d++) {
       double v1 = b[d].lo - a[d].hi;
       double v2 = a[d].lo - b[d].hi;
-      
+      // We invoke the following:
+      //   x + fabs(x) = max(x * 2, 0)
+      //   (x * 2)^2 / 4 = x^2
       double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
       sumsq += math::PowAbs<t_pow, 1>(v);
@@ -285,10 +283,8 @@ class SpHrectBound {
     for (index_t d = 0; d < mdim; d++) {
       double v1 = b[d].hi - a[d].hi;
       double v2 = a[d].lo - b[d].lo;
-      
       double v = max(v1, v2);
-      v = (v + fabs(v)); /* truncate negative */
-      
+      v = (v + fabs(v)); /* truncate negatives to zero */
       sumsq += math::PowAbs<t_pow, 1>(v);
     }
 
@@ -303,9 +299,8 @@ class SpHrectBound {
     DEBUG_ASSERT(dim_ == other.dim_);
     
     for (index_t d = 0; d < dim_; d++) {
-      double v = max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
-      
-      sumsq += math::PowAbs<t_pow, 1>(v);
+      sumsq += math::PowAbs<t_pow, 1>(
+          max(b[d].hi - a[d].lo, a[d].hi - b[d].lo));
     }
 
     return math::Pow<2, t_pow>(sumsq);
@@ -319,12 +314,10 @@ class SpHrectBound {
     DEBUG_ASSERT(dim_ == other.dim_);
     
     for (index_t d = 0; d < dim_; d++) {
-      double v = (a[d].hi + a[d].lo - b[d].hi - b[d].lo) * 0.5;
-      
-      sumsq += math::PowAbs<t_pow, 1>(v);
+      sumsq += math::PowAbs<t_pow, 1>(a[d].hi + a[d].lo - b[d].hi - b[d].lo);
     }
 
-    return math::Pow<2, t_pow>(sumsq);
+    return math::Pow<2, t_pow>(sumsq) / 4;
   }
   
   SpHrectBound& operator |= (const Vector& vector) {
