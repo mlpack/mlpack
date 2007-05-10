@@ -34,44 +34,46 @@
 
 // TODO: Remove nullability from arrays
 
+#define OT__NAME(x) v_OT->Name( #x )
+
 /**
  * Within OT_DEF, declare a sub-object (or primitive) that is directly
  * contained, NOT pointed to.
  */
-#define OT_MY_OBJECT(x) v_OT->MyObject(this->x)
+#define OT_MY_OBJECT(x) (OT__NAME(x), v_OT->MyObject(this->x))
 /**
  * Within OT_DEF, declare a static-sized array embedded within your object.
  *
  * The length of the array is determined automatically via sizeof.
  */
-#define OT_MY_ARRAY(x) v_OT->MyArray(this->x, sizeof(this->x) / sizeof(this->x[0]))
+#define OT_MY_ARRAY(x) (OT__NAME(x), v_OT->MyArray(this->x, sizeof(this->x) / sizeof(this->x[0])))
 /**
  * Within OT_DEF, declare an object being pointed to, managed by
  * new and delete.
  */
-#define OT_PTR(x) v_OT->Ptr(this->x, false)
+#define OT_PTR(x) (OT__NAME(x), v_OT->Ptr(this->x, false))
 /**
  * Within OT_DEF, declare an array being pointed to, managed by
  * new[] and delete[].
  */
-#define OT_ARRAY(x, i) v_OT->Array(this->x, i, false)
+#define OT_ARRAY(x, i) (OT__NAME(x), v_OT->Array(this->x, i, false))
 /**
  * Within OT_DEF, declare an array or object being pointed to managed by
  * malloc and free.
  */
-#define OT_MALLOC_ARRAY(x, i) v_OT->MallocArray(this->x, i, false)
+#define OT_MALLOC_ARRAY(x, i) (OT__NAME(x), v_OT->MallocArray(this->x, i, false))
 /**
  * Within OT_DEF, declare a pointer to an object that might be NULL.
  */
-#define OT_PTR_NULLABLE(x) v_OT->Ptr(this->x, true)
+#define OT_PTR_NULLABLE(x) (OT__NAME(x), v_OT->Ptr(this->x, true))
 /**
  * Within OT_DEF, declare a pointer to an array that might be NULL.
  */
-#define OT_ARRAY_NULLABLE(x, i) v_OT->Array(this->x, i, true)
+#define OT_ARRAY_NULLABLE(x, i) (OT__NAME(x), v_OT->Array(this->x, i, true))
 /**
  * Within OT_DEF, declare a pointer to a malloced array that might be NULL.
  */
-#define OT_MALLOC_ARRAY_NULLABLE(x, i) v_OT->MallocArray(this->x, i, true)
+#define OT_MALLOC_ARRAY_NULLABLE(x, i) (OT__NAME(x), v_OT->MallocArray(this->x, i, true))
 
 /**
  * Define the object traversal for this object.
@@ -221,57 +223,77 @@ inline void TraverseArray(T* x, index_t n_elems, Visitor *v) {
  * Private namespace for object-traversal utilities.
  */
 namespace ot_private {
-  // TODO: Conservatory serialization and deserialization
+  // TODO: Space-conservatory serialization and deserialization
+  // (Currently only freezing/thawing is supported)
   
   // These have to be hoisted out of the class.
   // Apparently explicit specialization for templates cannot be done in class
   // scope.
   
   /** Visits an object with no OT implementation. */
-  template<typename Printer, typename T> void OTPrinter_Primitive(const T& x, Printer* printer) {
-    printer->ShowIndents();
-    fprintf(printer->stream(), "%s  hexdump:", typeid(x).name());
-    for (size_t i = 0; i < sizeof(T); i++) {
-      fprintf(printer->stream(), " %02X", reinterpret_cast<const char*>(&x)[i]);
-    }
-    putc('\n', printer->stream());
+  template<typename DefaultPrinter, typename Printer, typename T>
+  void OTPrinter_Primitive(
+      const char *name, T& x, Printer* printer) {
+    DefaultPrinter::Print(name, x, printer);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(const char* x, Printer* printer) {
-    printer->Write("string %s", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, const char* x, Printer* printer) {
+    printer->Write("%s : string = %s", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(char x, Printer* printer) {
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, char x, Printer* printer) {
     if (isprint(x)) {
-      printer->Write("char %d '%c'", x, x);
+      printer->Write("%s : char = %d '%c'", name, x, x);
     } else {
-      printer->Write("char %d", x);
+      printer->Write("%s : char = %d", name, x);
     }
   }
-  template<typename Printer> inline void OTPrinter_Primitive(short x, Printer* printer) {
-    printer->Write("short %d", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, short x, Printer* printer) {
+    printer->Write("%s : short = %d", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(int x, Printer* printer) {
-    printer->Write("int %d", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, int x, Printer* printer) {
+    printer->Write("%s : int = %d", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(long x, Printer* printer) {
-    printer->Write("long %ld", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, long x, Printer* printer) {
+    printer->Write("%s : long = %ld", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(unsigned char x, Printer* printer) {
-    printer->Write("uchar %u", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, unsigned char x, Printer* printer) {
+    printer->Write("%s : uchar = %u", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(unsigned short x, Printer* printer) {
-    printer->Write("ushort %u", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, unsigned short x, Printer* printer) {
+    printer->Write("%s : ushort = %u", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(unsigned int x, Printer* printer) {
-    printer->Write("uint %u", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, unsigned int x, Printer* printer) {
+    printer->Write("%s : uint = %u", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(unsigned long x, Printer* printer) {
-    printer->Write("ulong %lu", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, unsigned long x, Printer* printer) {
+    printer->Write("%s : ulong = %lu", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(float x, Printer* printer) {
-    printer->Write("float %f", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, float x, Printer* printer) {
+    printer->Write("%s : float = %f", name, x);
   }
-  template<typename Printer> inline void OTPrinter_Primitive(double x, Printer* printer) {
-    printer->Write("double %f", x);
+  template<typename DefaultPrinter, typename Printer>
+  inline void OTPrinter_Primitive(
+      const char *name, double x, Printer* printer) {
+    printer->Write("%s : double = %f", name, x);
   }
 
   /**
@@ -281,7 +303,31 @@ namespace ot_private {
    private:
     FILE *stream_;
     int indent_amount_;
+    const char *name_;
     
+   private:
+    template<typename T>
+    struct DefaultPrimitivePrinter {
+      static void Print(const char *name, const T& x, OTPrinter *printer) {
+        printer->ShowIndents();
+        for (size_t i = 0; i < sizeof(T); i++) {
+          fprintf(printer->stream(), " %02X", reinterpret_cast<const char*>(&x)[i]);
+        }
+        fprintf(printer->stream(), ")\n");
+      }
+    };
+
+    template<typename T>
+    struct DefaultObjectPrinter {
+      static void Print(const char *name, T& x, OTPrinter *printer) {
+        Write("%s : %s {", name, typeid(T).name());
+        Indent(2);
+        TraverseObject(&x, printer);
+        Indent(-2);
+        Write("}");
+      }
+    };
+
    public:
     template<typename T>
     void InitBegin(const T& x, FILE *stream_in) {
@@ -289,32 +335,42 @@ namespace ot_private {
       indent_amount_ = 0;
       TraverseObject(const_cast<T*>(&x), this);
     }
-    
-    template<typename T> inline void Primitive(const T& x) {
-      OTPrinter_Primitive(x, this);
+
+    /** Stores the name of the object going to come in. */
+    void Name(const char *s) {
+      name_ = s;
+    }
+
+    template<typename T> void Primitive(const T& x) {
+      OTPrinter_Primitive< DefaultPrimitivePrinter<T> >
+          (name_, x, this);
     }
 
     template<typename T> void Object(T* obj, bool nullable,
         const char *label) {
       if (nullable && !obj) {
-        Write("%s %s = NULL", label, typeid(T).name());
+        Write("%s : %s %s = NULL", name_, label, typeid(T).name());
       } else {
-        Write("%s %s {", label, typeid(T).name());
-        Indent(2);
-        TraverseObject(obj, this);
-        Indent(-2);
-        Write("}");
+        OTPrinter_Primitive< DefaultObjectPrinter<T> >
+            (name_, *obj, this);
       }
     }
 
     template<typename T> void Array(T* array, index_t len,
         bool nullable) {
       if (nullable && !array) {
-        Write("array %s NULL {}", typeid(T).name());
+        Write("%s : %s[] = NULL", name_, typeid(T).name());
       } else {
-        Write("array %s len %"LI"d {", typeid(T).name(), len);
+        Write("%s : %s[%"LI"d] = {", name_, typeid(T).name(), len);
         Indent(2);
-        TraverseArray(array, len, this);
+        for (index_t i = 0; i < len; i++) {
+          Write("element %"LI"d {", i);
+          Indent(2);
+          name_ = "(array element)";
+          TraverseObject(&array[i], this);
+          Indent(-2);
+          Write("}");
+        }
         Indent(-2);
         Write("}");
       }
@@ -403,6 +459,9 @@ namespace ot_private {
     size_t size() const {
       return stride_align_max(pos_);
     }
+
+    /** Receives the nanme of the upcoming object -- we ignore this. */
+    void Name(const char *s) {}
     
     /** Visits an object with no OT implementation. */
     template<typename T> void Primitive(T& x) {
@@ -554,6 +613,9 @@ namespace ot_private {
     size_t size() const {
       return stride_align_max(pos_);
     }
+
+    /** Receives the nanme of the upcoming object -- we ignore this. */
+    void Name(const char *s) {}
     
     /** visits an object with no OT implementation */
     template<typename T> void Primitive(T& x) {}
@@ -604,6 +666,9 @@ namespace ot_private {
       TraverseObject(dest, this);
       return dest;
     }
+
+    /** Receives the nanme of the upcoming object -- we ignore this. */
+    void Name(const char *s) {}
     
     /** visits an object with no OT implementation */
     template<typename T> void Primitive(T& x) {}
@@ -647,6 +712,9 @@ namespace ot_private {
       return dest;
     }
     
+    /** Receives the nanme of the upcoming object -- we ignore this. */
+    void Name(const char *s) {}
+
     /** visits an object with no OT implementation */
     template<typename T> void Primitive(T& x) {}
     /** visits an internal object */

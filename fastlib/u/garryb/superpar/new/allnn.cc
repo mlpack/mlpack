@@ -268,10 +268,6 @@ class Allnn {
         QPostponed* q_postponed) {
       double distance_sq_lo =
           q_node.bound().MinDistanceSqToBound(r_node.bound());
-      //fprintf(stderr, "Considering (%d, %d) x (%d, %d): %f offered, %f already\n",
-      //    q_node.begin(), q_node.end() - 1,
-      //    r_node.begin(), r_node.end() - 1,
-      //    distance_sq_lo, q_mass_result.distance_sq_hi);
       return distance_sq_lo <= q_mass_result.distance_sq_hi;
     }
 
@@ -292,12 +288,7 @@ class Allnn {
         const Param& param,
         const QNode& q_node,
         const RNode& r_node) {
-      double d = q_node.bound().MidDistanceSqToBound(r_node.bound());
-      //fprintf(stderr, "Mid (%d, %d) x (%d, %d) = %f\n",
-      //    q_node.begin(), q_node.end() - 1,
-      //    r_node.begin(), r_node.end() - 1,
-      //    d);
-      return d;
+      return q_node.bound().MidDistanceSqToBound(r_node.bound());
     }
   };
   
@@ -316,7 +307,7 @@ int main(int argc, char *argv[]) {
   fx_init(argc, argv);
   
   DualTreeDepthFirst<Allnn::GNP> dfs;
-  dfs.Init(fx_submodule(fx_root, "dfs", "dfs"));
+  dfs.Init(fx_root);
   dfs.Begin();
   
   fx_done();

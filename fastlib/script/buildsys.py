@@ -53,8 +53,8 @@ class GCCCompiler(CompilerInfo):
     self.mode_dictionary = {
       "verbose": "-g -DDEBUG -DVERBOSE",
       "debug": "-g3 -DDEBUG",
-      "check": "-O2 -g -DDEBUG",
-      "fast": "-O2 -g -fomit-frame-pointer -DNDEBUG",
+      "check": "-O2 -finline-functions -g -DDEBUG",
+      "fast": "-O2 -finline-functions -fomit-frame-pointer -g -DNDEBUG",
       "unsafe": "-O3 -ffast-math -g -fomit-frame-pointer -DNDEBUG",
       "profile" : "-O2 -pg -finline-limit=12 -DPROFILE -DNDEBUG",
       "small": "-Os -DNDEBUG"
