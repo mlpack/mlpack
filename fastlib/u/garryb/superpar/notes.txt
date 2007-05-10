@@ -12,7 +12,7 @@
 TODO
  /- otrav
  /- freeze/thaw
- - GNP reduce DFS
+ /- GNP reduce DFS
  - cache array
  - local cache
  - network sharing
