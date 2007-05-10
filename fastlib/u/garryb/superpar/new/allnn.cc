@@ -137,7 +137,7 @@ class Allnn {
 
   struct QMassResult {
    public:
-    double distance_sq_hi;
+    MinMaxVal<double> distance_sq_hi;
 
     OT_DEF(QMassResult) {
       OT_MY_OBJECT(distance_sq_hi);
@@ -146,46 +146,33 @@ class Allnn {
    public:
     void Init(const Param& param) {
       /* horizontal init */
-      distance_sq_hi = param.max_dist;
-    }
-
-    void StartReaccumulate(const Param& param, const QNode& q_node) {
-      /* vertical init */
-      distance_sq_hi = -param.max_dist;
-    }
-
-    void Accumulate(const Param& param, const QResult& result) {
-      // TODO: applying to single result could be made part of QResult,
-      // but in some cases may require a copy/undo stage
-      if (unlikely(result.distance_sq > distance_sq_hi)) {
-        distance_sq_hi = result.distance_sq;
-      }
-    }
-
-    void Accumulate(const Param& param,
-        const QMassResult& result, index_t n_points) {
-      if (result.distance_sq_hi > distance_sq_hi) {
-        distance_sq_hi = result.distance_sq_hi;
-      }
-    }
-
-    void FinishReaccumulate(const Param& param,
-        const QNode& q_node) {
-      DEBUG_ASSERT_MSG(distance_sq_hi >= 0, "%f", distance_sq_hi);
-      /* no post-processing steps necessary */
-    }
-
-    /** horizontal join operator */
-    void ApplyMassResult(const Param& param, const QMassResult& mass_result) {
-      /* this is a MIN operator */
-      if (mass_result.distance_sq_hi < distance_sq_hi) {
-        distance_sq_hi = mass_result.distance_sq_hi;
-      }
+      distance_sq_hi = DBL_MAX;
     }
 
     void ApplyDelta(const Param& param, const Delta& delta) {}
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QNode& q_node) {}
+
+    /** horizontal join operator */
+    void ApplyMassResult(const Param& param, const QMassResult& mass_result) {
+      distance_sq_hi.MinWith(mass_result.distance_sq_hi);
+    }
+
+    void StartReaccumulate(const Param& param, const QNode& q_node) {
+      /* vertical init */
+      distance_sq_hi = -DBL_MAX;
+    }
+
+    void Accumulate(const Param& param, const QResult& result) {
+      distance_sq_hi.MaxWith(result.distance_sq);
+    }
+
+    void Accumulate(const Param& param,
+        const QMassResult& result, index_t n_points) {
+      distance_sq_hi.MaxWith(result.distance_sq_hi);
+    }
+
+    void FinishReaccumulate(const Param& param, const QNode& q_node) {}
   };
 
   /**
@@ -210,8 +197,7 @@ class Allnn {
       /* ignore horizontal join operator */
       distance_sq = q_result->distance_sq;
       neighbor_i = q_result->neighbor_i;
-      
-      return true;
+      return r_node.bound().MinDistanceSqToPoint(q_point) < distance_sq;
     }
 
     void VisitPair(const Param& param,
