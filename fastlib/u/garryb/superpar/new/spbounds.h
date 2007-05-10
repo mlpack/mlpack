@@ -18,6 +18,47 @@
 #include "la/la.h"
 
 /**
+ * A 
+ */
+template<typename TValue>
+class MinMaxVal {
+ public:
+  typedef TValue Value;
+  
+ public:
+  Value val;
+  
+  OT_DEF(MinMaxVal) {
+    OT_MY_OBJECT(lo);
+  }
+  
+ public:
+  MinMaxVal(Value val_in) : val(val_in) {}
+  MinMaxVal() {}
+  
+  operator Value() const { return val; }
+  
+  const Value& operator = (Value val_in) {
+    return (val = val_in);
+  }
+  
+  void MinWith(Value incoming_val) {
+    if (unlikely(incoming_val < val)) {
+      val = incoming_val;
+    }
+  }
+  
+  void MaxWith(Value incoming_val) {
+    if (unlikely(incoming_val > val)) {
+      val = incoming_val;
+    }
+  }
+};
+
+class HiBound {
+};
+
+/**
  * Simple real-valued range.
  *
  * @experimental

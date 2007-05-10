@@ -200,17 +200,6 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
   mu.ApplyPostponed(param_, q_node_mut->postponed, *q_node);
   mu.ApplyMassResult(param_, exclusive_unvisited);
   mu.ApplyDelta(param_, delta);
-  
-  //DEBUG_ASSERT_MSG(mu.n_r == r_tree_.points().size(),
-  //    "%d + %d + %d + %d = %d (should be %d, down by %d)",
-  //    q_node_mut->mass_result.n_r,
-  //    q_node_mut->postponed.n_r,
-  //    exclusive_unvisited.n_r,
-  //    delta.n_r,
-  //    mu.n_r,
-  //    r_tree_.points().size(),
-  //    r_tree_.points().size() - mu.n_r
-  //    );
 
   if (!GNP::Algorithm::ConsiderQueryTermination(
           param_, *q_node, mu, global_result_, &q_node_mut->postponed)) {
@@ -223,8 +212,6 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
           param_, *q_node, *r_node, delta, mu, global_result_,
           &q_node_mut->postponed)) {
     DEBUG_MSG(1.0, "Extrinsic prune");
-    //abort();
-    //q_node_mut->postponed.ApplyDelta(param_, delta);
     return;
   }
   /* end prune checks */
@@ -273,23 +260,23 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
     DEBUG_MSG(1.0, "Splitting R");
     index_t r_child1_i = r_node->child(0);
     index_t r_child2_i = r_node->child(1);
+    const typename GNP::RNode *r_child1 = rnode_(r_child1_i);
+    const typename GNP::RNode *r_child2 = rnode_(r_child2_i);
+    
     double r_child1_h = GNP::Algorithm::Heuristic(
         param_, *q_node, *rnode_(r_child1_i));
     double r_child2_h = GNP::Algorithm::Heuristic(
         param_, *q_node, *rnode_(r_child2_i));
 
     if (unlikely(r_child2_h < r_child1_h)) {
-      r_child1_i = r_node->child(1);
-      r_child2_i = r_node->child(0);
+      const typename GNP::RNode *r_child_t = r_child1;
+      r_child1 = r_child2;
+      r_child2 = r_child_t;
+      
+      index_t r_child_t_i = r_child1_i;
+      r_child1_i = r_child2_i;
+      r_child2_i = r_child_t_i;
     }
-
-    const typename GNP::RNode *r_child1;
-    const typename GNP::RNode *r_child2;
-    r_child1 = rnode_(r_child1_i);
-    r_child2 = rnode_(r_child2_i);
-    //fprintf(stderr, "Ordering: (%d,%d) chooses (%d,%d)\n",
-    //    q_node->begin(), q_node->end()-1,
-    //    r_child1->begin(), r_child1->end()-1);
 
     typename GNP::Delta delta1;
     typename GNP::Delta delta2;
@@ -297,29 +284,22 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
     delta1.Init(param_);
     delta2.Init(param_);
 
-    if (!GNP::Algorithm::ConsiderPairIntrinsic(
+    bool do_r2 = GNP::Algorithm::ConsiderPairIntrinsic(
         param_, *q_node, *r_child2, &delta2,
-        &global_result_, &q_node_mut->postponed)) {
-      r_child2 = NULL;
-    }
+        &global_result_, &q_node_mut->postponed);
+    
     if (GNP::Algorithm::ConsiderPairIntrinsic(
         param_, *q_node, *r_child1, &delta1,
         &global_result_, &q_node_mut->postponed)) {
       typename GNP::QMassResult exclusive_unvisited_for_r1(
           exclusive_unvisited);
-      if (r_child2 != NULL) {
+      if (do_r2) {
         exclusive_unvisited_for_r1.ApplyDelta(param_, delta2);
-        DEBUG_MSG(1.0, "I'm getting a delta of %d", delta2.n_r);
       }
-      DEBUG_MSG(1.0, "I'm feeding %d", exclusive_unvisited_for_r1.n_r);
-      DEBUG_MSG(1.0, "R0 (%d,%d) {", r_child1->begin(), r_child1->end());
       Pair_(q_node_i, r_child1_i, delta1, exclusive_unvisited_for_r1);
-      DEBUG_MSG(1.0, "} end R0 (%d,%d)", r_child1->begin(), r_child1->end());
     }
-    if (r_child2 != NULL) {
-      DEBUG_MSG(1.0, "R1 (%d,%d) {", r_child2->begin(), r_child2->end());
+    if (do_r2) {
       Pair_(q_node_i, r_child2_i, delta2, exclusive_unvisited);
-      DEBUG_MSG(1.0, "} end R1 (%d,%d)", r_child2->begin(), r_child2->end());
     }
   }
 }
@@ -347,14 +327,16 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
 
     if (visitor.StartVisitingQueryPoint(param_, *q_point, *q_info, *r_node,
           exclusive_unvisited, q_result, &global_result_)) {
-      for (index_t r_i = r_node->begin(); r_i < r_node->end(); ++r_i) {
+      index_t r_end = r_node->end();
+      
+      for (index_t r_i = r_node->begin(); r_i < r_end; ++r_i) {
         typename GNP::Point *r_point = &r_tree_.points()[r_i];
         typename GNP::RPointInfo *r_info = &r_tree_.point_info()[r_i];
 
         visitor.VisitPair(param_, *q_point, *q_info, q_i,
             *r_point, *r_info, r_i);
       }
-
+      
       visitor.FinishVisitingQueryPoint(param_, *q_point, *q_info, *r_node,
           exclusive_unvisited, q_result, &global_result_);
     }
@@ -364,6 +346,5 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
   q_node_mut->mass_result.FinishReaccumulate(param_, *q_node);
   q_node_mut->postponed.Reset(param_);
 }
-
 
 #endif
