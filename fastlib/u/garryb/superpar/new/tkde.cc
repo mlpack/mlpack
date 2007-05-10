@@ -565,12 +565,13 @@ class Tkde {
         QResult* q_result,
         GlobalResult* global_result) {
       q_result->density += density;
+      
+      SpRange total_density =
+          unapplied_mass_results.density + q_result->density;
 
-      if (unlikely(unapplied_mass_results.density.lo + q_result->density
-          > param.thresh.hi)) {
+      if (unlikely(total_density > param.thresh)) {
         q_result->label = LAB_HI;
-      } else if (unlikely(unapplied_mass_results.density.hi + q_result->density
-          < param.thresh.lo)) {
+      } else if (unlikely(total_density < param.thresh)) {
         q_result->label = LAB_LO;
       }
     }
@@ -653,9 +654,9 @@ class Tkde {
       if (unlikely(q_mass_result.label != LAB_EITHER)) {
         DEBUG_ASSERT((q_mass_result.label & q_postponed->label) != LAB_NEITHER);
         q_postponed->label = q_mass_result.label;
-      } else if (unlikely(q_mass_result.density.lo > param.thresh.hi)) {
+      } else if (unlikely(q_mass_result.density > param.thresh)) {
         q_postponed->label = LAB_HI;
-      } else if (unlikely(q_mass_result.density.hi < param.thresh.lo)) {
+      } else if (unlikely(q_mass_result.density < param.thresh)) {
         q_postponed->label = LAB_LO;
       } else {
         need_expansion = true;

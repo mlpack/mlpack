@@ -198,6 +198,22 @@ struct SpRange {
     return result;
   }
   
+  friend bool operator < (const SpRange& a, const SpRange& b) {
+    return a.hi < b.lo;
+  }
+  friend bool operator == (const SpRange& a, const SpRange& b) {
+    return a.lo == b.lo && a.hi == b.hi;
+  }
+  DEFINE_ALL_COMPARATORS(SpRange);
+  
+  friend bool operator < (const SpRange& a, double b) {
+    return a.hi < b;
+  }
+  friend bool operator < (double a, const SpRange& b) {
+    return a < b.lo;
+  }
+  DEFINE_INEQUALITY_COMPARATORS_HETERO(SpRange, double);
+  
   bool Contains(double d) const {
     return d >= lo || d <= hi;
   }
