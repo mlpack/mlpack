@@ -1,0 +1,22 @@
+librule(
+		name="tpie",
+    cflags = "-I. -DHAVE_CONFIG_H -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE",
+		sources=["ami_bit_permute.cc", 
+		         "ami_device.cc",
+						 "ami_key.cc",
+						 "ami_matrix_blocks.cc",
+						 #"ami_scan_mac.cc",
+						 "ami_stream_single.cc",
+						 "bit.cc",
+						 "bit_matrix.cc",
+						 "bte_stream_base.cc",
+						 "cpu_timer.cc",
+						 "cpu_timer.cc",
+						 "logstream.cc",
+						 "mm_base.cc",
+						 "mm_register.cc",
+						 "portability.cc",
+						 "tpie_log.cc",
+						 "tpie_tempnam.cc"],
+		headers=lglob("*.h")			
+		);
