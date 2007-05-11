@@ -71,7 +71,7 @@ void MEMORY_MANAGER__::Initialize() {
 	// Block transfer engine Initializations
 	MM_manager.ignore_memory_limit();
 	AMI_err ae;
-	disk_= new AMI_STREAM(cache_file_.c_str());
+	disk_= new AMI_STREAM<Page_t>(cache_file_.c_str());
 	for(index_t i=0; i< num_of_pages_; i++) {
 	  if ((ae=disk_.write_array((Page_t *)(cache_+i*page_size_),
 		  	 kTPIEPageSize/page_size_))!=AMI_ERROR_NO_ERROR) {

@@ -112,7 +112,8 @@ class MemoryManager {
 		}
 		template<typename ARRAYTYPE>
 		void Copy(ARRAYTYPE other, index_t length) {
-			T *p1=reinterpret_cast<T>(allocator_->Access(address_));
+			T *p1=reinterpret_cast<T>(allocator_->Access(
+						Ptr<T,logmode>::address_));
 			T *p2=other.get();
 		  for(index_t i=0; i<length; i++) {
 			  p1[i] = p2[i];
