@@ -32,19 +32,16 @@ class PageFileHeader {
   PageFileHeader(int32 version,
                  uint64 total_pages,
                  uint32  cache_size,
-                 uint32  ram_page_size,
                  int32 last_offset) {
     version_ = version;
     total_pages_ = total_pages;
     cache_size_ = cache_size;
-    ram_page_size_ = ram_page_size;
     last_offset_ = last_offset;
   };
   PageFileHeader() {
     version_ = 0;
     total_pages_ = 0;
     cache_size_ = 0;
-    ram_page_size_ = 0;
     last_offset_ = 0;
   }
 };

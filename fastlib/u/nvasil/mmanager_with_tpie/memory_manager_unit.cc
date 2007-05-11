@@ -20,6 +20,6 @@
 
 int main(int argc, char *argv[]) {
   
-	MemoryMager<false>::allocator_ = new MemoryManager<false>();
+	MemoryManager<false>::allocator_ = new MemoryManager<false>();
 
 }
