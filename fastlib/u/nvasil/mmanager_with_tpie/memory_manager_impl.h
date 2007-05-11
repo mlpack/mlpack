@@ -20,9 +20,9 @@
 #define MEMORY_MANAGER__  MemoryManager<Logmode, kTPIEPageSize>
 
 TEMPLATE__
-void MEMORY_MANAGER_::Initialize(string filename) {
+void MEMORY_MANAGER__::Initialize() {
   int fd;
-  sigsegv_install_handler(&FaultHandler);
+  sigsegv_install_handler(&FaultHandler<Logmode, kTPIEPageSize>);
   // Allocate one page of memory by mapping /dev/zero. Map the memory
   // as write-only, initially.
   fd = open ("/dev/zero", O_RDONLY);
@@ -71,7 +71,7 @@ void MEMORY_MANAGER_::Initialize(string filename) {
 	// Block transfer engine Initializations
 	MM_manager.ignore_memory_limit();
 	AMI_err ae;
-	disk= new AMI_STREAM(cache_file_.c_str();)
+	disk_= new AMI_STREAM(cache_file_.c_str());
 	for(index_t i=0; i< num_of_pages_; i++) {
 	  if ((ae=disk_.write_array((Page_t *)(cache_+i*page_size_),
 		  	 kTPIEPageSize/page_size_))!=AMI_ERROR_NO_ERROR) {
@@ -80,9 +80,9 @@ void MEMORY_MANAGER_::Initialize(string filename) {
 		}
 	}
   // open the header file for write
-  FILE *header_fp = fopen(header_file.c_str(), "wb+");
+  FILE *header_fp = fopen(header_file_.c_str(), "wb+");
   if (header_fp == NULL) {
-    FATAL("Couldn't open %s for write\n", header_fp.c_str());
+    FATAL("Couldn't open %s for write\n", header_file_.c_str());
   }
   // The header of the file contains the following information
   // int          : version
@@ -92,26 +92,27 @@ void MEMORY_MANAGER_::Initialize(string filename) {
   page_file_header_.version_ = kVersion;
   page_file_header_.total_pages_ = 0;
   page_file_header_.cache_size_ = cache_size_;
-  page_file_header_.ram_page_size_ = page_size_;
+  page_file_header_.page_size_ = page_size_;
 
-  if (fwrite(&page_file_header_, sizeof(PageFileHeader), 1, disk_ptr_) != 1) {
-    FATAL("Write failure, %s\n", strerror(errorno));
+  if (fwrite(&page_file_header_, sizeof(PageFileHeader), 1, header_fp) != 1) {
+    FATAL("Write failure, %s\n", strerror(errno));
   }
-	flcose(header_fp);
+	fclose(header_fp);
 }
    
 // Load, uses an allready saved file to make a memory manager
 // It actually opens the file for append and it loads all the data
 // (or better the portion of data that fits) in the memory
-void Load(string filename) {
+TEMPLATE__
+void MEMORY_MANAGER__::Load() {
   int fd;
-  sigsegv_install_handler(&FaultHandler);
+  sigsegv_install_handler(&FaultHandler<Logmode, kTPIEPageSize>);
 
   // open the  header file for write
-  FILE *header_fp = fopen(header_file_name_.c_str(), "ab+");
+  FILE *header_fp = fopen(header_file_.c_str(), "ab+");
   if (header_fp == NULL) {
     FATAL("Couldn't open %s for write, %s\n", 
-  			   header_file_name_.c_str(),
+  			   header_file_.c_str(),
 					 strerror(errno));
   }
 
@@ -128,7 +129,7 @@ void Load(string filename) {
   }
   fclose(header_fp);
   alloc_size_ = page_file_header_.cache_size_;
-  page_size_  = page_file_header_.ram_page_size_;
+  page_size_  = page_file_header_.page_size_;
   num_of_pages_ = alloc_size_ / page_size_;
 
   // Initialize internal variables
@@ -205,19 +206,19 @@ void MEMORY_MANAGER__::Close() {
   page_file_header_.total_pages_ = current_page_;
   page_file_header_.last_offset_ = current_offset_;
     
-	FILE *header_fp = fopen(header_file_name_.c_str(), "ab+");
+	FILE *header_fp = fopen(header_file_.c_str(), "ab+");
   if (header_fp == NULL) {
     FATAL("Couldn't open %s for write, %s\n", 
-				   header_file_name_.c_str(),
+				   header_file_.c_str(),
 					 strerror(errno));
   }
 
   if (fwrite(&page_file_header_, sizeof(PageFileHeader), 1, header_fp) != 1) {
     FATAL("Unable, to write the total size, %s\n",
-	  			strerr(errno));
+	  			strerror(errno));
   }
 
-  if (fclose(disk_ptr_) != 0) {
+  if (fclose(header_fp) != 0) {
     FATAL("Unable to close the file, %s\n", strerror(errno));
   }
 }
@@ -283,7 +284,7 @@ inline char *MEMORY_MANAGER__::Access(index_t address) {
   index_t page=address/page_size_;
 	index_t offset=address%page_size_;
   if (unlikely(page_address_[page] == NULL)) {
-  	HandlePageFault(address.ram_);
+  	HandlePageFault(page);
   	total_num_of_page_faults_++;
   }
   page_timestamp_[PageToCachePage(page)]=page_timer_;
@@ -323,7 +324,8 @@ inline void MEMORY_MANAGER__::MoveToDisk(index_t paddress){
 TEMPLATE__
 inline void MEMORY_MANAGER__::MoveToCache(index_t paddress, 
 		                                      index_t ram_page) {
-  off_t disk_offset = static_cast<off_t>paddress * page_size_ / kTPIEPageSize;
+  off_t disk_offset = static_cast<off_t>(paddress * page_size_ 
+			                                   / kTPIEPageSize);
 	AMI_err ae;
   if (unlikely((ae=disk_->seek(disk_offset))!=AMI_ERROR_NO_ERROR)) {
 	  cout << "AMI_ERROR " << ae << "\n";
@@ -396,7 +398,7 @@ inline void MEMORY_MANAGER__::ProtectSysPagesAffected(index_t cache_page,
 
   for(uint64 i = sys_page1; i <= sys_page2; i++) {
     char *addr =  cache_ + (i * system_page_size_);
-    if (unlikey(mprotect(addr, system_page_size_, permission) !=0)) {
+    if (unlikely(mprotect(addr, system_page_size_, permission) !=0)) {
       const char *temp="Error %s while trying to "
 				                "change the protection\n"
 												"Page Address %p\n";
@@ -439,7 +441,6 @@ TEMPLATE__
 inline void MEMORY_MANAGER__::HandlePageFault(index_t page_requested) {
   index_t least_needed_page = LeastNeededPage();
   index_t paddress_least_needed_page = CachePageToPage(least_needed_page);
-  index_t paddress_least_needed_page = CachePageToPage(least_needed_page);
   if (IsPageModified(least_needed_page)) {
     MoveToDisk(paddress_least_needed_page);
   }
@@ -455,7 +456,7 @@ inline void MEMORY_MANAGER__::HandlePageFault(index_t page_requested) {
 
 TEMPLATE__
 inline index_t MEMORY_MANAGER__::PageToCachePage(index_t paddress) {
-  if (ulikely(page_address_[paddress] == NULL)) {
+  if (unlikely(page_address_[paddress] == NULL)) {
 		const char *temp="You are trying to access a page that "
 			               "is not in Cache\n"
 										 "Page number %i\n";
@@ -481,7 +482,7 @@ inline index_t MEMORY_MANAGER__::get_num_of_pages() {
 
 TEMPLATE__
 inline index_t MEMORY_MANAGER__::GetLastObjectAddress(char *ptr) {
-  ndex_t oaddress;
+  index_t oaddress;
   oaddress = current_page_ * page_size_ +
              (ptrdiff_t)(ptr - page_address_[current_page_]);
   return oaddress;
@@ -489,14 +490,14 @@ inline index_t MEMORY_MANAGER__::GetLastObjectAddress(char *ptr) {
 
 TEMPLATE__
 template <typename T>
-index_t MEMORY_MANAGER__::Alloc(size_t size=sizeof(T)) {
+index_t MEMORY_MANAGER__::Alloc(index_t size=sizeof(T)) {
   size_t stride;
 	stride = strideof(T);
   // check if it fits in the current page
   if (unlikely(!FitsInPage(size, stride))) {
   	NextPage();
   } 
-  if (unlikely(!FitsInPage(size, stride, Overhead<T>::size_))) {
+  if (unlikely(!FitsInPage(size, stride))) {
 		FATAL("The object cannot fit in one block (page) "
   	      "of memory, increase page_size and try again...\n");
   }

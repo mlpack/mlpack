@@ -20,7 +20,7 @@
 #include "sigsegv.h"
 #include "memory_manager.h"
 #include "page_file_header.h"
-#include "u/nvasil/tpie/app_config.h"
+#include "app_config.h"
 #include "u/nvasil/tpie/ami.h"
 
 using namespace std;
@@ -34,9 +34,10 @@ struct Logger;
 template<bool Logmode, int32 kTPIEPageSize=4096>
 class MemoryManager {
  public:
+	static const int32 kVersion=1; 
   static  MemoryManager<Logmode> *allocator_;
   friend class MemoryManagerTest;
-  typedef char[kPageSize] Page_t;
+  typedef char Page_t[kTPIEPageSize];
 	
   template<typename T>
   struct Tchar {
@@ -82,7 +83,7 @@ class MemoryManager {
       return reinterpret_cast<T>(allocator_->Access(address_));
     }
     T *operator->() {
-      Logger<logmode>::Log(p_);
+      Logger<logmode>::Log(address_);
 			return reinterpret_cast<T>(allocator_->Access(address_)); 
     }
 		Ptr<Ptr<T, logmode>, logmode> Reference() {
@@ -91,11 +92,11 @@ class MemoryManager {
 			return ptr;
 		}
     T &operator[](index_t ind) {
-      Logger<logmode>::Log(p_);
+      Logger<logmode>::Log(address_);
       return reinterpret_cast<T>(allocator_->Access(address_))[ind];
 		}
 		T *get() {
-		  return reinterpret_cast<T>(allocator_->Access(address_))[ind];
+		  return reinterpret_cast<T>(allocator_->Access(address_));
 		}
     
    protected:
@@ -107,7 +108,7 @@ class MemoryManager {
 		ArrayPtr(){
 		}
 		ArrayPtr(index_t size) {
-		  Reset(malloc<T>(size));
+		  Reset(malloc(size));
 		}
 		template<typename ARRAYTYPE>
 		void Copy(ARRAYTYPE other, index_t length) {
@@ -119,9 +120,8 @@ class MemoryManager {
 		}
 	};
 
-friend class MemoryManagerTest;
  public:
-  const int32 kMaxNumOfPages=1048576;
+  static const int32 kMaxNumOfPages=1048576;
   // The Constructor sets some default parameter such as the cache size
   // and the page size, but it doesn't allocate the memory nor it
   // creates a file on the disk
@@ -131,9 +131,9 @@ friend class MemoryManagerTest;
   MemoryManager(){
     cache_size_ = 256 * 1024;
     system_page_size_  = sysconf(_SC_PAGESIZE);
-    page_size_ = kPageSize;
+    page_size_ = kTPIEPageSize;
 		cache_file_="temp.mem";
-		header_file=cach_file_ + string(".header");
+		header_file_=cache_file_ + string(".header");
   }
 
   // Trivial Destructor
@@ -164,9 +164,13 @@ friend class MemoryManagerTest;
   // Returns a pointer of the requested size in the RAM, If RAM is
   // full it does the appropriate arrangments
   template <typename T>
-  char *Alloc(index_t size);
+  index_t Alloc(index_t size);
   // Align the memory with the stride of the object that has to be
   // allocated in the memory
+	static index_t malloc(index_t size) {
+	  return allocator_->Alloc<double>(std::max(size/sizeof(double), 
+					                           sizeof(double)));
+	}
   inline index_t Align(char *ptr, index_t stride);
   // Given the object address in Cache it returns the ObjectAddress
   inline index_t GetLastObjectAddress(char *ptr);
@@ -191,8 +195,8 @@ friend class MemoryManagerTest;
 	
 	index_t get_num_of_pages();
 
-	void set_capacity(index_t capacity) {
-	  capacity_=capacity;
+	void set_cache_size(index_t cache_size) {
+	  cache_size_=cache_size;
 	}
 
 	void set_page_size(int32 page_size) {
@@ -266,7 +270,7 @@ friend class MemoryManagerTest;
  
   void MapNewAddress(index_t paddress, index_t raddress);
   void UnMapAddress(index_t paddress);
-  bool FitsInPage(index_t size, index_t stride, index_t overhead_size);
+  bool FitsInPage(index_t size, index_t stride);
   void NextPage();
   void MoveToDisk(index_t page);
   void MoveToCache(index_t paddres, index_t ram_page);
@@ -283,6 +287,47 @@ MemoryManager<false>  *MemoryManager<false>::allocator_ = 0;
 template<>
 MemoryManager<true>  *MemoryManager<true>::allocator_ = 0;
 
-
+template<bool Logmode, int32 page_size>
+int FaultHandler(void *fault_address, int serious) {
+  // attempt to write on a page, we have to record that so that
+  // we know we have to write the page back when the page has to moved
+  // to the disk
+	MemoryManager<Logmode,page_size>  allocator=
+      MemoryManager<Logmode,page_size>::allocator_;
+  if (fault_address>= allocator->cache_ &&
+      fault_address < allocator->cache_ + allocator->cache_size_){
+    index_t cache_page = (ptrdiff_t)((char*)fault_address - allocator->cache_) 
+       / allocator->page_size_;
+   // page has to be set as modified 
+   allocator->SetPageModified(cache_page);
+   index_t system_page = (ptrdiff_t)fault_address  / allocator->system_page_size_;
+   pair<index_t, index_t> * p=allocator->PagesAffectedBySEGV(system_page);
+   // if all pages that are covered by the system page are modified
+   // then the whole page should be set uprotected;
+   for(index_t i=p->first; i<=p->second; i++) {
+     if (likely(!allocator->IsPageModified(
+						 static_cast<index_t>(cache_page + i)))) {
+      return 1 ;
+     }
+   } 
+   char *addr = allocator->cache_ + allocator->system_page_size_ *
+       ((ptrdiff_t)((char*)fault_address - allocator->cache_)
+        / allocator->system_page_size_);
+   if (unlikely(mprotect(addr, 
+					 allocator->system_page_size_, PROT_READ | PROT_WRITE) !=0)) {
+     FATAL("Error %s while trying to change the protection\n", 
+            strerror(errno));
+   } 
+   return 1;
+ } 
+     
+  // This is probably a segmentation violation
+  // because of a bug 
+	const char *temp = "Faulting address %p\n"
+      "Cache limits %p to %p\n"
+      "Segmentation violation, There is a bug somewhere\n";
+	FATAL(temp, fault_address, allocator->cache_, 
+			  allocator->cache_+allocator->cache_size_);
+}
 #include "memory_manager_impl.h"
 #endif /*MEMORY_MANAGER_H_*/
