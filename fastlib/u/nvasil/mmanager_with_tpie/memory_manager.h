@@ -37,7 +37,13 @@ class MemoryManager {
 	static const int32 kVersion=1; 
   static  MemoryManager<Logmode> *allocator_;
   friend class MemoryManagerTest;
-  typedef char Page_t[kTPIEPageSize];
+  struct Page {
+	  char data_[kTPIEPageSize];
+		Page &operator=(const Page &other) {
+		 memcpy(data_, other.data_, kTPIEPageSize);
+		 return *this;
+		}
+	};
 	
   template<typename T>
   struct Tchar {
@@ -80,7 +86,7 @@ class MemoryManager {
 		}
     T &operator*() {
       Logger<logmode>::Log(address_);
-      return reinterpret_cast<T>(allocator_->Access(address_));
+      return *(reinterpret_cast<T*>(allocator_->Access(address_)));
     }
     T *operator->() {
       Logger<logmode>::Log(address_);
@@ -179,7 +185,10 @@ class MemoryManager {
   // limits. If it is not it fails. Very useful when we need to make
   // a pointer on a struct member
   inline index_t GetObjectAddress(char *pointer);
-
+	inline void Log(index_t address) {
+	
+	}
+	
   // Access object
   inline char *Access(index_t oaddress);
   char *get_cache() {
@@ -256,9 +265,9 @@ class MemoryManager {
   // the timer that increases after every access
   index_t page_timer_;
 	// resets the page timer when it reaches the maximum age
-  uint32 maximum_page_age_;
+  index_t maximum_page_age_;
   // this is the interface to the hard disk
-	AMI_STREAM<Page_t> *disk_;	
+	AMI_STREAM<Page> *disk_;	
   
 	// After setting files, page_size and other parameters
 	// call this function to do some initializations that are common
@@ -281,6 +290,24 @@ class MemoryManager {
   void HandlePageFault(index_t page_requested);
   pair<index_t, index_t> *PagesAffectedBySEGV(long system_page);
   bool get_page_modified(index_t page);
+};
+
+template<bool logmode>
+struct Logger {
+  static void Log(index_t address);
+};
+template<>
+struct Logger<true> {
+  template<typename T>
+  inline static void Log(index_t address) {
+		MemoryManager<true>::allocator_->Log(address);
+  }
+};
+
+template<>
+struct Logger<false> {
+  inline static void Log(index_t address ) {
+  }
 };
 
 template<>
