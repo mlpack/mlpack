@@ -71,9 +71,9 @@ void MEMORY_MANAGER__::Initialize() {
 	// Block transfer engine Initializations
 	MM_manager.ignore_memory_limit();
 	AMI_err ae;
-	disk_= new AMI_STREAM<Page_t>(cache_file_.c_str());
+	disk_= new AMI_STREAM<Page>(cache_file_.c_str());
 	for(index_t i=0; i< num_of_pages_; i++) {
-	  if ((ae=disk_.write_array((Page_t *)(cache_+i*page_size_),
+	  if ((ae=disk_.write_array((Page *)(cache_+i*page_size_),
 		  	 kTPIEPageSize/page_size_))!=AMI_ERROR_NO_ERROR) {
 		  cout << "AMI_ERROR " << ae << " during disk_.write_item()\n";
 			exit(1);
@@ -298,7 +298,7 @@ TEMPLATE__
 inline void MEMORY_MANAGER__::MoveToDisk(index_t paddress){
   if (page_address_[paddress] == NULL) {
 		const char *temp="Attempt to move a page to disk that doesn't exist"
-                     " or is not in cache\n"
+                     " or is not in cache\n";
     FATAL(temp);
   }
   off_t disk_offset = paddress * page_size_/kTPIEPageSize;
@@ -311,7 +311,7 @@ inline void MEMORY_MANAGER__::MoveToDisk(index_t paddress){
     FATAL("Unable to seek to %llu \n", (unsigned long long)disk_offset);
 	}	
    
- 	if ((ae=disk_.write_array((Page_t *)page_address_[paddress], 
+ 	if ((ae=disk_->write_array((Page *)page_address_[paddress], 
 					                  page_size_/kTPIEPageSize))!=AMI_ERROR_NO_ERROR) {
 	  cout << "AMI ERROR " << ae << " while transfering block to disk\n";
 		FATAL(" An error occured whule trying to write on disk\n");
@@ -335,8 +335,9 @@ inline void MEMORY_MANAGER__::MoveToCache(index_t paddress,
     FATAL("Unable to seek to %llu \n", (unsigned long long)disk_offset);
 	}  
   char *ptr = cache_+ ram_page * page_size_;
-  if ((ae=disk_.read_array((Page_t *)ptr, 
-					                  page_size_/kTPIEPageSize))!=AMI_ERROR_NO_ERROR) {
+	off_t num_of_pages_to_read =page_size_/kTPIEPageSize;
+  if ((ae=disk_->read_array((Page *)ptr, 
+					                  &num_of_pages_to_read))!=AMI_ERROR_NO_ERROR) {
 	  cout << "AMI ERROR " << ae << " while transfering block to disk\n";
 		FATAL(" An error occured while trying to read from disk\n");
 	}
@@ -425,7 +426,7 @@ inline pair<index_t, index_t> *MEMORY_MANAGER__::PagesAffectedBySEGV(long system
 TEMPLATE__
 inline index_t MEMORY_MANAGER__::LeastNeededPage() {
   index_t least_recently_used = 0;
-  uint32 least_recently_used_time = page_timestamp_[0]; 
+  index_t least_recently_used_time = page_timestamp_[0]; 
   for(index_t i=1; i< num_of_pages_; i++) {
   	if (page_timestamp_[i] < least_recently_used_time) {
   	  least_recently_used = i;
@@ -504,7 +505,7 @@ index_t MEMORY_MANAGER__::Alloc(index_t size=sizeof(T)) {
   
   index_t stride_offset = Align(current_ptr_, stride); 
   char *new_ptr = current_ptr_ + stride_offset;
-	char *new_offset=current_offset_+
+	index_t new_offset=current_offset_+ stride_offset;
   current_ptr_ = new_ptr + size;
   current_offset_ = current_offset_ + stride_offset + size;
   return new_offset;
