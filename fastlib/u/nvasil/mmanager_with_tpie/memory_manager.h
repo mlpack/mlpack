@@ -37,7 +37,10 @@ class MemoryManager {
 	static const int32 kVersion=1; 
   static  MemoryManager<Logmode> *allocator_;
   friend class MemoryManagerTest;
-  struct Page {
+  template<bool, int32> friend  int 
+		FaultHandler(void *fault_address, int serious);
+	friend class MemoryManageTest;
+	struct Page {
 	  char data_[kTPIEPageSize];
 		Page &operator=(const Page &other) {
 		 memcpy(data_, other.data_, kTPIEPageSize);
@@ -146,9 +149,9 @@ class MemoryManager {
   // Trivial Destructor
   ~MemoryManager() {
 	}
-  // Initialize allocates memory in the RAM and it creates a new
+  // Init allocates memory in the RAM and it creates a new
   // file on the drive. It creates an entirelly new memory manager
-  void Initialize();
+  void Init();
       
   // Load, uses an allready saved file to make a memory manager
   // It actually opens the file for append and it loads all the data
@@ -271,7 +274,7 @@ class MemoryManager {
   
 	// After setting files, page_size and other parameters
 	// call this function to do some initializations that are common
-	// in Initialize and Load
+	// in Init and Load
 	void DefaultInitializations();
   bool IsPageModified(index_t page);
   void ClearPageStatus(index_t page);
@@ -320,7 +323,7 @@ int FaultHandler(void *fault_address, int serious) {
   // attempt to write on a page, we have to record that so that
   // we know we have to write the page back when the page has to moved
   // to the disk
-	MemoryManager<Logmode,page_size>  allocator=
+	MemoryManager<Logmode,page_size>  *allocator=
       MemoryManager<Logmode,page_size>::allocator_;
   if (fault_address>= allocator->cache_ &&
       fault_address < allocator->cache_ + allocator->cache_size_){
