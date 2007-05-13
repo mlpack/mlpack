@@ -21,28 +21,36 @@
 
 class MemoryManagerTest {
  public:
-	static const index_t kChunkSize=2330;
+	static const index_t kChunkSize=20;
 	typedef int32 Chunk_t[kChunkSize];
 	typedef MemoryManager<false> Allocator_t;
 	typedef Allocator_t::Ptr<Chunk_t> ChunkPtr_t;
 	void Init() {
-   	MemoryManager<false>::allocator_ = new MemoryManager<false>();
-		capacity_=67108864;
-    pagesize_=65536;	
-		num_of_chunks_=50000;
+   	capacity_=16777216;
+    pagesize_=16384;	
+		num_of_chunks_=10;
+    MemoryManager<false>::allocator_ = new MemoryManager<false>();
+    MemoryManager<false>::allocator_->set_cache_size(capacity_);
+    MemoryManager<false>::allocator_->set_page_size(pagesize_);
+    MemoryManager<false>::allocator_->Init();
+
   }
 	
 	void Destruct() {
     MemoryManager<false>::allocator_->Close();
 	  delete MemoryManager<false>::allocator_; 
+		unlink("temp.mem");
+		unlink("temp.mem.header");
 	}
 	
 	void LoadMemoryAndAccess() {
 	  ChunkPtr_t *data= new ChunkPtr_t[num_of_chunks_];
     for(index_t i=0; i<num_of_chunks_; i++) {
-      data[i].Reset(Allocator_t::malloc(sizeof(Chunk_t)));		
+      data[i].Reset(Allocator_t::malloc(kChukSize*sizeof(Chunk_t)));		
 			for(index_t j=0; j < kChunkSize; j++) {
 			  (*data[i])[j]=j*i;
+				printf("%i-%i,  %i\n", i, j,  (*data[i])[j]);	
+        TEST_ASSERT((*data[i])[j]==j*i);
 			}
 		}
 		
@@ -51,7 +59,7 @@ class MemoryManagerTest {
 			  TEST_ASSERT((*data[i])[j]==j*i);
 			}
 		}
-		delete data;
+		delete []data;
 	}
   
   void TestAll() {
@@ -67,7 +75,7 @@ class MemoryManagerTest {
 };
 
 int main(int argc, char *argv[]) {
-  
-	
+  MemoryManagerTest test;
+  test.TestAll();
 
 }

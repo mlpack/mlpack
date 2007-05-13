@@ -20,10 +20,11 @@
 #define MEMORY_MANAGER__  MemoryManager<Logmode, kTPIEPageSize>
 
 TEMPLATE__
-void MEMORY_MANAGER__::Initialize() {
+void MEMORY_MANAGER__::Init() {
   int fd;
   sigsegv_install_handler(&FaultHandler<Logmode, kTPIEPageSize>);
-  // Allocate one page of memory by mapping /dev/zero. Map the memory
+  DefaultInitializations();
+	// Allocate one page of memory by mapping /dev/zero. Map the memory
   // as write-only, initially.
   fd = open ("/dev/zero", O_RDONLY);
   cache_ = (char *)mmap (NULL, alloc_size_, 
@@ -39,7 +40,7 @@ void MEMORY_MANAGER__::Initialize() {
    page_modified_ = new bool[num_of_pages_];
    memset(page_modified_, false, num_of_pages_);
 
-  // Initialize internal variables
+  // Init internal variables
   current_ptr_ = cache_;
   current_offset_ = 0;
   current_page_ = 0;
@@ -57,8 +58,8 @@ void MEMORY_MANAGER__::Initialize() {
     page_address_[i] = cache_ + i * page_size_;
     cache_to_page_[i] = i;
   }
-  // Initialize the page timestamps
-  page_timestamp_ = new uint32[num_of_pages_];
+  // Init the page timestamps
+  page_timestamp_ = new index_t[num_of_pages_];
   ResetPageTimers();
   // Set the first one modified
   SetPageModified(0);
@@ -73,12 +74,13 @@ void MEMORY_MANAGER__::Initialize() {
 	AMI_err ae;
 	disk_= new AMI_STREAM<Page>(cache_file_.c_str());
 	for(index_t i=0; i< num_of_pages_; i++) {
-	  if ((ae=disk_.write_array((Page *)(cache_+i*page_size_),
+	  if ((ae=disk_->write_array((Page *)(cache_+i*page_size_),
 		  	 kTPIEPageSize/page_size_))!=AMI_ERROR_NO_ERROR) {
 		  cout << "AMI_ERROR " << ae << " during disk_.write_item()\n";
 			exit(1);
 		}
 	}
+	disk_->persist(PERSIST_PERSISTENT);
   // open the header file for write
   FILE *header_fp = fopen(header_file_.c_str(), "wb+");
   if (header_fp == NULL) {
@@ -107,7 +109,7 @@ TEMPLATE__
 void MEMORY_MANAGER__::Load() {
   int fd;
   sigsegv_install_handler(&FaultHandler<Logmode, kTPIEPageSize>);
-
+  DefaultInitializations();
   // open the  header file for write
   FILE *header_fp = fopen(header_file_.c_str(), "ab+");
   if (header_fp == NULL) {
@@ -132,7 +134,7 @@ void MEMORY_MANAGER__::Load() {
   page_size_  = page_file_header_.page_size_;
   num_of_pages_ = alloc_size_ / page_size_;
 
-  // Initialize internal variables
+  // Init internal variables
   current_offset_ = 0;
   current_page_ = page_file_header_.total_pages_;
   current_offset_ = page_file_header_.last_offset_ ;
@@ -221,6 +223,8 @@ void MEMORY_MANAGER__::Close() {
   if (fclose(header_fp) != 0) {
     FATAL("Unable to close the file, %s\n", strerror(errno));
   }
+	disk_->persist(PERSIST_PERSISTENT);
+	delete disk_;
 }
 
 // Align the memory with the stride of the object that has to be
