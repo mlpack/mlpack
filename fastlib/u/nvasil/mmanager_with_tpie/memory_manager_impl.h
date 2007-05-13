@@ -243,7 +243,8 @@ inline index_t MEMORY_MANAGER__::Align(char *ptr, index_t stride) {
 TEMPLATE__
 inline bool MEMORY_MANAGER__::FitsInPage(index_t size, index_t stride) {
   index_t stride_offset = Align(current_ptr_, stride);
-  if (likely(current_offset_ + stride_offset + size < page_size_)) {
+	index_t offset=current_offset_ % page_size_;
+  if (likely(offset + stride_offset + size < page_size_)) {
     return true;
   } else {
     return false;
@@ -253,7 +254,6 @@ inline bool MEMORY_MANAGER__::FitsInPage(index_t size, index_t stride) {
 TEMPLATE__
 inline void MEMORY_MANAGER__::NextPage() {
    current_page_++;
-   current_offset_ = 0;
   // check if we are in the end of the cache_
   if (likely(current_page_ >= num_of_pages_)) {
   	index_t page_to_move  = current_page_ % num_of_pages_; 
@@ -263,6 +263,7 @@ inline void MEMORY_MANAGER__::NextPage() {
     // update the current pointer
     index_t new_page =  page_to_move;
     current_ptr_ = cache_ + new_page * page_size_;
+		current_offset_=new_page * page_size_;
     // clean the page
     memset(current_ptr_, 0, page_size_);
     //set the page as modified
@@ -273,7 +274,8 @@ inline void MEMORY_MANAGER__::NextPage() {
     MapNewAddress(current_page_, new_page);
   } else {
   	current_ptr_ = cache_ + current_page_ * page_size_;
-  	SetPageModified(current_page_);
+  	current_offset_=current_page_ * page_size_;
+		SetPageModified(current_page_);
   }
 }
 
@@ -506,7 +508,6 @@ index_t MEMORY_MANAGER__::Alloc(index_t size=sizeof(T)) {
 		FATAL("The object cannot fit in one block (page) "
   	      "of memory, increase page_size and try again...\n");
   }
-  
   index_t stride_offset = Align(current_ptr_, stride); 
   char *new_ptr = current_ptr_ + stride_offset;
 	index_t new_offset=current_offset_+ stride_offset;
