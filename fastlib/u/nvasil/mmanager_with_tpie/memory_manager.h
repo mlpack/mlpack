@@ -178,8 +178,8 @@ class MemoryManager {
   // Align the memory with the stride of the object that has to be
   // allocated in the memory
 	static index_t malloc(index_t size) {
-	  return allocator_->Alloc<double>(std::max(size/sizeof(double), 
-					                           sizeof(double)));
+	  return allocator_->Alloc<double>(
+	     std::max(size/sizeof(double), sizeof(char)))*sizeof(double);
 	}
   inline index_t Align(char *ptr, index_t stride);
   // Given the object address in Cache it returns the ObjectAddress
