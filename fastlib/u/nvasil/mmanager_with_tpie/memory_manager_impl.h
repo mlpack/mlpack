@@ -533,7 +533,6 @@ void MEMORY_MANAGER__::CreateNewPageOnDisk() {
 	memset(ptr, 0, page_size_);
   AMI_err ae;
 	off_t disk_offset = disk_->stream_len();
-  printf("%u\n", disk_->stream_len());
 	if (unlikely((ae=disk_->seek(disk_offset))!=AMI_ERROR_NO_ERROR)) {
 	  cout << "AMI_ERROR " << ae << "\n";
     FATAL("Unable to seek to %llu \n", (unsigned long long)disk_offset);
