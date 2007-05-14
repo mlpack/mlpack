@@ -174,9 +174,9 @@ class NodeTest {
 };
 
 struct BasicParameters{
-	typedef float32                  Precision_t; 
-	typedef MemoryManager<false>     Allocator_t; 
-	typedef EuclideanMetric<float32> Metric_t;
+	typedef float32                        Precision_t; 
+	typedef mmapmm::MemoryManager<false>   Allocator_t; 
+	typedef EuclideanMetric<float32>       Metric_t;
 };
 
 int main(int argc, char *argv[]) {
