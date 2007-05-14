@@ -15,6 +15,8 @@
 
 using namespace std;
 
+namespace mmapmm {
+
 template<bool Logmode, int32 page_size>
 class MemoryManager;
 
@@ -494,5 +496,6 @@ template<>
 MemoryManager<false>  *MemoryManager<false>::allocator_ = 0;
 template<>
 MemoryManager<true>  *MemoryManager<true>::allocator_ = 0;
+};
 
 #endif /*MEMORY_MANAGER_H_*/
