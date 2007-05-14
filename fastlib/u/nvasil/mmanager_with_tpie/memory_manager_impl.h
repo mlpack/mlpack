@@ -75,7 +75,7 @@ void MEMORY_MANAGER__::Init() {
 	disk_= new AMI_STREAM<Page>(cache_file_.c_str());
 	for(index_t i=0; i< num_of_pages_; i++) {
 	  if ((ae=disk_->write_array((Page *)(cache_+i*page_size_),
-		  	 kTPIEPageSize/page_size_))!=AMI_ERROR_NO_ERROR) {
+		  	 page_size_/kTPIEPageSize))!=AMI_ERROR_NO_ERROR) {
 		  cout << "AMI_ERROR " << ae << " during disk_.write_item()\n";
 			exit(1);
 		}
@@ -144,7 +144,7 @@ void MEMORY_MANAGER__::Load() {
   fd = open ("/dev/zero", O_RDONLY);
   cache_ = (char *)mmap (NULL, alloc_size_, PROT_WRITE, MAP_PRIVATE, fd, 0);
   if (mlock(cache_, alloc_size_)==-1) {
-    NONFATAL("Could not lock memory manger's cache, error %s\n",
+    NONFATAL("Could not lock memory manager's cache, error %s\n",
              strerror(errno));
     NONFATAL("Memory manager proceeds with unlocked memory,"
              "this may slow down performance\n");
@@ -256,6 +256,7 @@ inline void MEMORY_MANAGER__::NextPage() {
    current_page_++;
   // check if we are in the end of the cache_
   if (likely(current_page_ >= num_of_pages_)) {
+		CreateNewPageOnDisk();
   	index_t page_to_move  = current_page_ % num_of_pages_; 
     if (likely(IsPageModified(page_to_move))){
       MoveToDisk(CachePageToPage(page_to_move));
@@ -263,8 +264,8 @@ inline void MEMORY_MANAGER__::NextPage() {
     // update the current pointer
     index_t new_page =  page_to_move;
     current_ptr_ = cache_ + new_page * page_size_;
-		current_offset_=new_page * page_size_;
-    // clean the page
+		current_offset_=current_page_*page_size_;
+		// clean the page
     memset(current_ptr_, 0, page_size_);
     //set the page as modified
     SetPageModified(new_page);
@@ -497,9 +498,10 @@ inline index_t MEMORY_MANAGER__::GetLastObjectAddress(char *ptr) {
 
 TEMPLATE__
 template <typename T>
-index_t MEMORY_MANAGER__::Alloc(index_t size=sizeof(T)) {
+index_t MEMORY_MANAGER__::Alloc(index_t size=1) {
   size_t stride;
 	stride = strideof(T);
+	size=size*sizeof(T);	
   // check if it fits in the current page
   if (unlikely(!FitsInPage(size, stride))) {
   	NextPage();
@@ -525,6 +527,26 @@ void MEMORY_MANAGER__::DefaultInitializations() {
 
 }
 
+TEMPLATE__
+void MEMORY_MANAGER__::CreateNewPageOnDisk() {
+  char *ptr=new char[page_size_]; 
+	memset(ptr, 0, page_size_);
+  AMI_err ae;
+	off_t disk_offset = disk_->stream_len();
+  printf("%u\n", disk_->stream_len());
+	if (unlikely((ae=disk_->seek(disk_offset))!=AMI_ERROR_NO_ERROR)) {
+	  cout << "AMI_ERROR " << ae << "\n";
+    FATAL("Unable to seek to %llu \n", (unsigned long long)disk_offset);
+	}	
+	for(index_t i=0; i< num_of_pages_; i++) {
+	  if ((ae=disk_->write_array((Page *)(ptr),
+		  	 page_size_/kTPIEPageSize))!=AMI_ERROR_NO_ERROR) {
+		  cout << "AMI_ERROR " << ae << " during disk_.write_item()\n";
+			exit(1);
+		}
+	}
+	delete []ptr;
+}
 
 
 #undef TEMPLATE__
