@@ -154,9 +154,9 @@ namespace math {
   /**
    * Calculates a relatively small power using template metaprogramming.
    *
-   * This allows a numerator and denominator.  In the case where the numerator
-   * and denominator are equal, this will not do anything, or in the case where
-   * the denominator is one.
+   * This allows a numerator and denominator.  In the case where the
+   * numerator and denominator are equal, this will not do anything, or in
+   * the case where the denominator is one.
    */
   template<int t_numerator, int t_denominator> 
   inline double Pow(double d) {
@@ -167,14 +167,17 @@ namespace math {
    * Calculates a small power of the absolute value of a number
    * using template metaprogramming.
    *
-   * This allows a numerator and denominator.  In the case where the numerator
-   * and denominator are equal, this will not do anything, or in the case where
-   * the denominator is one.
+   * This allows a numerator and denominator.  In the case where the
+   * numerator and denominator are equal, this will not do anything, or in
+   * the case where the denominator is one.  For even powers, this will
+   * avoid calling the absolute value function.
    */
   template<int t_numerator, int t_denominator> 
   inline double PowAbs(double d) {
+    // we specify whether it's an even function -- if so, we can sometimes
+    // avoid the absolute value sign
     return math_private::PowAbsImpl<t_numerator, t_denominator,
-        (t_numerator % t_denominator == 0) && ((t_numerator / t_denominator) % 2 == 0)>::Calculate(fabs(d));
+        (t_numerator%t_denominator == 0) && ((t_numerator/t_denominator)%2 == 0)>::Calculate(fabs(d));
   }
 };
 

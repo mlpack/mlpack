@@ -289,9 +289,9 @@ class LibRule(dep.Rule):
     return files["deplibs"].to_pairs() + files["archive"].to_pairs()
 
 class BinRule(dep.Rule):
-  def __init__(self, name, linkables):
+  def __init__(self, name, deplibs):
     self.name = name
-    dep.Rule.__init__(self, linkables=linkables)
+    dep.Rule.__init__(self, deplibs=deplibs)
   def doit(self, sysentry, files, params):
     compiler = compilers[params["compiler"]]
     binfile = sysentry.file(self.name, "arch", "kernel", "mode", "compiler")
@@ -299,7 +299,7 @@ class BinRule(dep.Rule):
     lflags_start = compiler.lflags_start
     lflags_end = compiler.lflags_end
     cflags = compiler.mode_dictionary[params["mode"]]
-    reversed_libs = list(files["linkables"].to_names())
+    reversed_libs = list(files["deplibs"].to_names())
     reversed_libs.reverse()
     sysentry.command(compiler.linker + " -o %s %s %s %s %s" % (
         sq(binfile.name), cflags,
@@ -516,16 +516,18 @@ class Loader:
         fname = url[url.rindex('/')+1:]
       register(name, WgetRule(url, type,
           pathify_real(fname), pathify_fake(fname)))        
-    def binrule(name, linkables = [], sources = [], headers = [], cflags = ""):
+    def binrule(name, deplibs = [], sources = [], headers = [], cflags = "", linkables = None):
+      if linkables:
+        print "!!! Warning: 'linkables' is deprecated, it has been renamed 'deplibs'"
+        deplibs += linkables
       # (source, headers, cflags)
       longname = pathify_fake(name)
       if sources:
         lib = librule(name = longname + "__auto",
-            sources = sources, headers = headers, deplibs = linkables,
+            sources = sources, headers = headers, deplibs = deplibs,
             cflags = cflags)
-        linkables = linkables + [lib]
-      register(name, BinRule(longname,
-          sourcerules(Types.LINKABLE, linkables)))
+        deplibs = deplibs + [lib]
+      register(name, BinRule(longname, sourcerules(Types.LINKABLE, deplibs)))
     build_file_path = os.path.join(real_path, BUILD_FILE)
     print "... Reading %s" % (build_file_path)
     text = util.readfile(build_file_path)

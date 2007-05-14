@@ -29,15 +29,17 @@
 #define COMPILER_PRINTF__IMPL(format_arg, dotdotdot_arg) \
     __attribute__((format(printf, format_arg, dotdotdot_arg)))
 #define COMPILER_FUNCTIONAL__IMPL __attribute__((const))
+#define COMPILER_NOINLINE__IMPL __attribute__((noinline))
 #define IS_CONSTANT_EXPRESSION__impl(x) (__builtin_constant_p(x))
 #else
 #define expect__impl(expr, value) (expr)
 #define likely__impl(x) (x)
 #define unlikely__impl(x) (x)
-#define IS_CONSTANT_EXPRESSION__impl(x) (0)
 #define COMPILER_NORETURN__IMPL
 #define COMPILER_PRINTF__IMPL(format_arg, dotdotdot_arg)
 #define COMPILER_FUNCTIONAL__IMPL
+#define COMPILER_NOINLINE__IMPL
+#define IS_CONSTANT_EXPRESSION__impl(x) (0)
 #endif
 
 #ifdef __cplusplus
