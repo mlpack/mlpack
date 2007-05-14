@@ -72,7 +72,7 @@ class MemoryManager {
 		}
     ~Ptr() {}
     void Reset(index_t address) {
-      address_=address;
+			address_=address;
     }	
 		void SetNULL() {
 			address_=-1;
@@ -178,8 +178,8 @@ class MemoryManager {
   // Align the memory with the stride of the object that has to be
   // allocated in the memory
 	static index_t malloc(index_t size) {
-	  return allocator_->Alloc<double>(
-	     std::max(size/sizeof(double), sizeof(char)))*sizeof(double);
+			return allocator_->Alloc<double>(
+	     std::max(size/sizeof(double), sizeof(char)));
 	}
   inline index_t Align(char *ptr, index_t stride);
   // Given the object address in Cache it returns the ObjectAddress
@@ -292,6 +292,7 @@ class MemoryManager {
   void SetPageModified(index_t page);
   void HandlePageFault(index_t page_requested);
   pair<index_t, index_t> *PagesAffectedBySEGV(long system_page);
+	void CreateNewPageOnDisk();
   bool get_page_modified(index_t page);
 };
 

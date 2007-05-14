@@ -65,6 +65,7 @@ class MemoryManagerTest {
 	  Init();
 		LoadMemoryAndAccess();
 		Destruct();
+		printf("All tests passed!\n");
 	}	
 	
  private:	 
