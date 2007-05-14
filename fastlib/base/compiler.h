@@ -114,6 +114,14 @@
  */
 #define COMPILER_FUNCTIONAL COMPILER_FUNCTIONAL__IMPL
 
+/**
+ * Tells the compiler not to inline a function.
+ *
+ * This is useful for a "very unlikely" case that you want to avoid
+ * having contribute to code bloat.
+ */
+#define COMPILER_NOINLINE COMPILER_NOINLINE__IMPL
+
 
 /**
  * Computes the stride, or alignment, of a type.

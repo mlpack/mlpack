@@ -13,10 +13,12 @@ TODO
  /- otrav
  /- freeze/thaw
  /- GNP reduce DFS
+ - threadedness
  - cache array
  - local cache
  - network sharing
  - GNP reduce RBFS
+ - tree-building
  X- diskio (WAIT NOT NECESSARY)
 
 
