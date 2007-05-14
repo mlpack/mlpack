@@ -160,7 +160,7 @@ typedef LOKI_TYPELIST_3(float32,
 */
 struct BasicTypes {
   typedef float32 Precision_t;
-	typedef MemoryManager<false> Allocator_t;
+	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
 int main(int argc, char *argv[]) {

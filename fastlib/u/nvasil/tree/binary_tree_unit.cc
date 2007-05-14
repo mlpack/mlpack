@@ -280,12 +280,12 @@ class BinaryTreeTest {
 */								
 struct BasicTypes {
   typedef float32 Precision_t;
-	typedef MemoryManager<false> Allocator_t;
+	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
 struct Parameters {
   typedef float32 Precision_t;
-	typedef MemoryManager<false> Allocator_t;
+	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 	typedef HyperRectangle<BasicTypes, false> BoundingBox_t;
 	typedef NullStatistics NodeCachedStatistics_t;
