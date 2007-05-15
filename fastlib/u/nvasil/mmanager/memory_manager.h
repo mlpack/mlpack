@@ -1,5 +1,6 @@
-#ifndef MEMORY_MANAGER_H_
-#define MEMORY_MANAGER_H_
+#ifndef U_NVASIL_MMANAGER_MEMORY_MANAGER_H_
+#define U_NVASIL_MMANAGER_MEMORY_MANAGER_H_
+
 #include <assert.h>
 #include <sys/unistd.h>
 #include <sys/mman.h>
@@ -30,6 +31,7 @@ class MemoryManager {
   friend class MemoryManagerTest;
   static const int kTypicalSystemPageSize_ = 65536;
   static const uint32 kMinimumCapacity_=33554432;
+	static const void *NullValue;
   template<typename T>
   struct Tchar {
    	T t;
@@ -53,9 +55,9 @@ class MemoryManager {
 		  this->p_ =  other.p_;
 		}
     ~Ptr() {}
-    void Reset(T *p) {
-      p_=p;
-    }	
+	  void Reset(const void *p) {
+		  p_=(T *)p;
+		}	
 		void SetNULL() {
 			p_=NULL;
 		}
@@ -176,7 +178,7 @@ class MemoryManager {
 	  }	
   }
 
-  void Initialize() {
+  void Init() {
 		// do not use a file just use virtual memory
     if (pool_name_.empty()) {
        pool_ = (char*)mmap(NULL, capacity_, PROT_READ | PROT_WRITE, 
@@ -472,6 +474,9 @@ class MemoryManager {
  	  	
 };
 
+template<bool Logmode, int32 page_size>
+const void* MemoryManager<Logmode, page_size>::NullValue=NULL; 
+
 template<bool logmode>
 struct Logger {
   template<typename T>
@@ -496,6 +501,7 @@ template<>
 MemoryManager<false>  *MemoryManager<false>::allocator_ = 0;
 template<>
 MemoryManager<true>  *MemoryManager<true>::allocator_ = 0;
+
 };
 
 #endif /*MEMORY_MANAGER_H_*/
