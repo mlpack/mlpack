@@ -50,7 +50,7 @@ class NodeTest {
 	  dimension_=2;
 	  num_of_points_=30;
 	  Allocator_t::allocator_ = new Allocator_t();
-		Allocator_t::allocator_->Initialize();
+		Allocator_t::allocator_->Init();
 	  Array_t min(dimension_);
 		min[0]=-1;
 		min[1]=-1;

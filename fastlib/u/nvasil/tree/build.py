@@ -4,7 +4,8 @@ librule(
 		        lglob("../loki/*.h")+
 						["point.h", "computations_counter.h",
 						 "euclidean_metric.h", "null_statistics.h",
-						 "point_identity_discriminator.h"]
+						 "point_identity_discriminator.h"],
+						 deplibs=["u/nvasil/mmanager_with_tpie:tpiemm"]
 		);
 binrule(
 		name="hrect_test",

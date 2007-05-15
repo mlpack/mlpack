@@ -37,7 +37,7 @@ class HyperRectangle {
 	typedef typename Allocator_t:: template ArrayPtr<Precision_t> ArrayPtr_t;
   typedef typename Allocator_t:: template ArrayPtr<Precision_t> Array_t;
 	template<typename, bool> friend	class  HyperRectangleTest;
-  
+  static const index_t NullValue=-1;
 	HyperRectangle();
 	void Init(int32 dimension);
   void Init(ArrayPtr_t min, ArrayPtr_t max, int32 pivot_dimension,

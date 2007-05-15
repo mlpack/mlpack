@@ -18,6 +18,7 @@
 
 #include "fastlib/fastlib.h"
 #include "u/nvasil/mmanager/memory_manager.h"
+#include "u/nvasil/mmanager_with_tpie/memory_manager.h"
 #include "point.h"
 #include "euclidean_metric.h"
 #include "hyper_rectangle.h"
@@ -37,7 +38,7 @@ class HyperRectangleTest {
 	void Init() {
 		dimension_=2;
 		Allocator_t::allocator_ = new Allocator_t();
-		Allocator_t::allocator_->Initialize();
+		Allocator_t::allocator_->Init();
 	  hyper_rectangle_= new HyperRectangle_t();
    	hyper_rectangle_->Init(dimension_);
 		hyper_rectangle_->min_[0]=-1;
@@ -146,27 +147,34 @@ class HyperRectangleTest {
 				                                   "Distance doesn't work\n");
 		Destruct();             
 	}
-	
+
+  void TestAll() {
+	  AliasTest();
+	  IsWithinTest();
+	  CrossesBoundariesTest();
+	  DistanceTest();
+	}	
  private: 
   HyperRectangle<TYPELIST, diagnostic> *hyper_rectangle_;
   int32 dimension_; 
   ComputationsCounter<diagnostic> comp_;	
 };
 
-/*
-typedef LOKI_TYPELIST_3(float32, 
-		                    MemoryManager<false>, 
-		                    EuclideanMetric<float32>) UserTypeParameters_t;
-*/
-struct BasicTypes {
+struct BasicTypes1 {
   typedef float32 Precision_t;
 	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
+
+struct BasicTypes2 {
+  typedef float32 Precision_t;
+	typedef tpiemm::MemoryManager<false> Allocator_t;
+	typedef EuclideanMetric<float32> Metric_t;
+};
+
 int main(int argc, char *argv[]) {
-	HyperRectangleTest<BasicTypes, false> hyper_rectangle_test;
-	hyper_rectangle_test.AliasTest();
-	hyper_rectangle_test.IsWithinTest();
-	hyper_rectangle_test.CrossesBoundariesTest();
-	hyper_rectangle_test.DistanceTest();
+	HyperRectangleTest<BasicTypes1, false> hyper_rectangle_test1;
+ 	HyperRectangleTest<BasicTypes2, false> hyper_rectangle_test2;
+	hyper_rectangle_test1.TestAll();
+	hyper_rectangle_test2.TestAll();
 }

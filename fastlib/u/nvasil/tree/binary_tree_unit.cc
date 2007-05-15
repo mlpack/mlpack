@@ -50,7 +50,7 @@ class BinaryTreeTest {
 	}	
 	void Init() {
     Allocator_t::allocator_ = new Allocator_t();
-		Allocator_t::allocator_->Initialize();
+		Allocator_t::allocator_->Init();
 		dimension_=2;
     num_of_points_=1000;
     data_file_="data";
