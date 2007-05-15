@@ -19,6 +19,7 @@
 #define TEMPLATE__ template<bool Logmode, int32 kTPIEPageSize>
 #define MEMORY_MANAGER__  MemoryManager<Logmode, kTPIEPageSize>
 
+namespace tpiemm {
 TEMPLATE__
 void MEMORY_MANAGER__::Init() {
   int fd;
@@ -547,6 +548,7 @@ void MEMORY_MANAGER__::CreateNewPageOnDisk() {
 	delete []ptr;
 }
 
+};
 
 #undef TEMPLATE__
 #undef MEMORY_MANAGER__
