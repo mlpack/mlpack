@@ -660,11 +660,16 @@ namespace ot_private {
     
    public:
     template<typename T>
-    T* InitBegin(char *data) {
-      offset_ = reinterpret_cast<size_t>(data);
+    T* InitBegin(char *data, ptrdiff_t offset_in) {
+      offset_ = offset_in;
       T* dest = reinterpret_cast<T*>(data);
       TraverseObject(dest, this);
       return dest;
+    }
+    
+    template<typename T>
+    T* InitBegin(char *data) {
+      InitBegin(data, reinterpret_cast<ptrdiff_t>(data));
     }
 
     /** Receives the nanme of the upcoming object -- we ignore this. */
@@ -792,6 +797,16 @@ namespace ot {
   T* PointerThaw(char *block) {
     ot_private::OTPointerThawer fixer;
     return fixer.InitBegin<T>(block);
+  }
+  
+  /**
+   * Takes an object that is laid out serially with all its pointers
+   * normalized to zero, and makes all the pointers live again.
+   */
+  template<typename T>
+  T* PointerRelocate(char *block, ptrdiff_t offset) {
+    ot_private::OTPointerThawer fixer;
+    return fixer.InitBegin<T>(block, offset);
   }
 };
 
