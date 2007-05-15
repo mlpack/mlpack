@@ -11,7 +11,7 @@
 #define _APP_CONFIG_H
 
 // Get the configuration as set up by the TPIE configure script.
-#include <config.h>
+#include "u/nvasil/tpie/config.h"
 
 // <><><><><><><><><><><><><><><><><><><><><><> //
 // <><><><><><><> Developer use  <><><><><><><> //
@@ -19,7 +19,7 @@
 
 // Set up some defaults for the test applications
 
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 #include <sys/types.h> // for size_t
 #include <stdlib.h> // for random()
 
@@ -135,13 +135,13 @@ extern int random_seed;
 #define TPL_LOGGING 1
 #endif
 
-#include <tpie_log.h>
+#include "u/nvasil/tpie/tpie_log.h"
 
 // Enable assertions if requested.
 #if TP_ASSERT_APPS
 #define DEBUG_ASSERTIONS 1
 #endif
 
-#include <tpie_assert.h>
+#include "u/nvasil/tpie/tpie_assert.h"
 
 #endif

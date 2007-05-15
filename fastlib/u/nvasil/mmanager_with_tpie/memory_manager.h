@@ -1,8 +1,8 @@
 // This version of memory manager supports memory allocation for
 // objects that are smaller than a page block. This is ok since we
 // are dealing with
-#ifndef MEMORY_MANAGER_H_
-#define MEMORY_MANAGER_H_
+#ifndef U_NVASIL_MEMORY_MANAGER_WITH_TPIE_MEMORY_MANAGER_H_
+#define U_NVASIL_MEMORY_MANAGER_WITH_TPIE_MEMORY_MANAGER_H_
 
 #include <string>
 #include <iostream>
@@ -23,8 +23,9 @@
 #include "app_config.h"
 #include "u/nvasil/tpie/ami.h"
 
-using namespace std;
+namespace tpiemm {
 
+using namespace std;
 template<bool Logmode, int32 page_size>
 class MemoryManager;
 
@@ -34,6 +35,7 @@ struct Logger;
 template<bool Logmode, int32 kTPIEPageSize=4096>
 class MemoryManager {
  public:
+	static const index_t NullValue=-1;
 	static const int32 kVersion=1; 
   static  MemoryManager<Logmode> *allocator_;
   friend class MemoryManagerTest;
@@ -102,10 +104,10 @@ class MemoryManager {
 		}
     T &operator[](index_t ind) {
       Logger<logmode>::Log(address_);
-      return reinterpret_cast<T>(allocator_->Access(address_))[ind];
+      return get()[ind];
 		}
 		T *get() {
-		  return reinterpret_cast<T>(allocator_->Access(address_));
+		  return reinterpret_cast<T*>(allocator_->Access(address_));
 		}
     
    protected:
@@ -180,6 +182,16 @@ class MemoryManager {
 	static index_t malloc(index_t size) {
 			return allocator_->Alloc<double>(
 	     std::max(size/sizeof(double), sizeof(char)));
+	}
+	template <typename T>
+  static index_t  calloc(index_t size, const T init_value) {
+	  Ptr<T> temp;
+		index_t address=malloc(size);
+		temp.Reset(address);
+		 for(index_t i=0; i<size; i++) {
+		   temp[i]=init_value;
+		 }
+		 return address;
 	}
   inline index_t Align(char *ptr, index_t stride);
   // Given the object address in Cache it returns the ObjectAddress
@@ -361,5 +373,7 @@ int FaultHandler(void *fault_address, int serious) {
 	FATAL(temp, fault_address, allocator->cache_, 
 			  allocator->cache_+allocator->cache_size_);
 }
+
+};
 #include "memory_manager_impl.h"
 #endif /*MEMORY_MANAGER_H_*/

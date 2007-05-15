@@ -18,7 +18,7 @@
 #include "fastlib/fastlib.h"
 #include "base/test.h"
 #include "memory_manager.h"
-
+using namespace tpiemm;
 class MemoryManagerTest {
  public:
 	static const index_t kChunkSize=210;
