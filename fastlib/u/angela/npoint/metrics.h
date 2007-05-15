@@ -64,6 +64,8 @@ class Metric {
 	/* Distance computations */
 	public:
 	double ComputeDistance(const Vector a, const Vector b) const;
+	double ComputeDistance(const Matrix data, const index_t x, const index_t y)
+		const;
 	double ComputeNorm(const Vector v) const;
 };
 
