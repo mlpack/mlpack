@@ -10,33 +10,33 @@
 #define _AMI_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // Get a stream implementation.
-#include <ami_stream.h>
+#include "u/nvasil/tpie/ami_stream.h"
 
 // Get templates for ami_scan().
-#include <ami_scan.h>
+#include "u/nvasil/tpie/ami_scan.h"
 
 // Get templates for ami_merge().
-#include <ami_merge.h>
+#include "u/nvasil/tpie/ami_merge.h"
 
 // Get templates for ami_sort().
-#include <ami_sort.h>
+#include "u/nvasil/tpie/ami_sort.h"
 
 // Get templates for general permutation.
-#include <ami_gen_perm.h>
+#include "u/nvasil/tpie/ami_gen_perm.h"
 
 // Get templates for bit permuting.
-#include <ami_bit_permute.h>
+#include "u/nvasil/tpie/ami_bit_permute.h"
 
 // Get a collection implementation.
-#include <ami_coll.h>
+#include "u/nvasil/tpie/ami_coll.h"
 
 // Get a block implementation.
-#include <ami_block.h>
+#include "u/nvasil/tpie/ami_block.h"
 
 // Get templates for AMI_btree.
-#include <ami_btree.h>
+#include "u/nvasil/tpie/ami_btree.h"
 
 #endif // _AMI_H 

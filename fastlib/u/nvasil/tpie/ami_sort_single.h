@@ -11,18 +11,18 @@
 #define _AMI_SORT_SINGLE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #ifndef AMI_STREAM_IMP_SINGLE
 #  warning Including __FILE__ when AMI_STREAM_IMP_SINGLE undefined.
 #endif
 
 // For use in core by main_mem_operate().
-#include <quicksort.h>
-#include <pqueue_heap.h>
+#include "u/nvasil/tpie/quicksort.h"
+#include "u/nvasil/tpie/pqueue_heap.h"
 
-#include <ami_merge.h>
-#include <ami_optimized_merge.h>
+#include "u/nvasil/tpie/ami_merge.h"
+#include "u/nvasil/tpie/ami_optimized_merge.h"
 
 
 // A class of merge objects for merge sorting objects of type T.  We

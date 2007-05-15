@@ -8,14 +8,14 @@
 #define _AMI_SORT_OPTIMIZED_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #ifndef AMI_STREAM_IMP_SINGLE
 #  warning Including __FILE__ when AMI_STREAM_IMP_SINGLE undefined.
 #endif
 
-#include <ami_merge.h>
-#include <ami_optimized_merge.h>
+#include "u/nvasil/tpie/ami_merge.h"
+#include "u/nvasil/tpie/ami_optimized_merge.h"
 
 //------------------------------------------------------------
 template<class T>

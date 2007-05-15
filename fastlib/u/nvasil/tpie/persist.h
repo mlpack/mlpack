@@ -12,7 +12,7 @@
 #define _PERSIST_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 enum persistence {
     // Delete the stream from the disk when it is destructed.

@@ -12,7 +12,7 @@
 #define _AMI_STREAM_SINGLE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // [tavi] for UINT_MAX
 #include <limits.h>
@@ -26,7 +26,7 @@
 #include <stdlib.h>
 
 // To make assertions.
-#include <tpie_assert.h>
+#include "u/nvasil/tpie/tpie_assert.h"
 #include <assert.h>
 
 // Get an appropriate BTE.  Flags may have been set to determine
@@ -34,18 +34,18 @@
 // little concern to us.  bte_stream.h and recursively included files
 // will worry about parsing the appropriate flags and getting us an
 // implementation.
-#include <bte_stream.h>
+#include "u/nvasil/tpie/bte_stream.h"
 
 // Get the AMI_stream_base class.
-#include <ami_stream_base.h>
+#include "u/nvasil/tpie/ami_stream_base.h"
 
 // Get the base memory manager. Normally the BTE will have already
 // gotten this, but in library code where we have no BTE defined, it
 // may not.
-#include <mm_base.h>
+#include "u/nvasil/tpie/mm_base.h"
 
-#include <ami_device.h>
-#include <tpie_tempnam.h>
+#include "u/nvasil/tpie/ami_device.h"
+#include "u/nvasil/tpie/tpie_tempnam.h"
 
 // An initializer class to set the default device for the
 // AMI_stream_single_base class.

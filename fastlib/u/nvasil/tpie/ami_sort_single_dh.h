@@ -39,11 +39,11 @@
 #define _AMI_SORT_SINGLE_DH_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
-#include <ami_stream.h> 
-#include <tpie_tempnam.h>
-#include <mergeheap_dh.h>  //For templated heaps
-#include <internal_sort.h> // Contains classes for sorting internal runs
+#include "u/nvasil/tpie/portability.h"
+#include "u/nvasil/tpie/ami_stream.h" 
+#include "u/nvasil/tpie/tpie_tempnam.h"
+#include "u/nvasil/tpie/mergeheap_dh.h"  //For templated heaps
+#include "u/nvasil/tpie/internal_sort.h" // Contains classes for sorting internal runs
                            // using different comparison types
 #include <math.h> //for log, ceil, etc.
 

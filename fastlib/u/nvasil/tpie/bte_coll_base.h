@@ -13,20 +13,20 @@
 #define _BTE_COLL_BASE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // Include the registration based memory manager.
 #define MM_IMP_REGISTER
-#include <mm.h>
+#include "u/nvasil/tpie/mm.h"
 
 // For persist.
-#include <persist.h>
+#include "u/nvasil/tpie/persist.h"
 // For BTE_stack_ufs
-#include <bte_stack_ufs.h>
+#include "u/nvasil/tpie/bte_stack_ufs.h"
 // For BTE_err.
-#include <bte_err.h>
+#include "u/nvasil/tpie/bte_err.h"
 // For class tpie_stats_collection.
-#include <tpie_stats_coll.h>
+#include "u/nvasil/tpie/tpie_stats_coll.h"
 
 // BTE_COLLECTION types passed to constructors.
 enum BTE_collection_type {

@@ -18,9 +18,9 @@
 #define _STDIO_STACK_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
-#include <bte_stream_stdio.h>
+#include "u/nvasil/tpie/bte_stream_stdio.h"
 
 template<class T>
 class stdio_stack : public BTE_stream_stdio<T> {

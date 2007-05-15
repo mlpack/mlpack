@@ -13,7 +13,7 @@
 #define _CPU_TIMER_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #include <iostream>
 #include <timer.h>

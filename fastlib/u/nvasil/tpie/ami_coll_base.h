@@ -11,7 +11,7 @@
 #define _AMI_COLL_BASE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // AMI collection types passed to constructors
 enum AMI_collection_type {

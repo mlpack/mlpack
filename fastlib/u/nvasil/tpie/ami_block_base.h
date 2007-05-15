@@ -13,12 +13,12 @@
 #define _AMI_BLOCK_BASE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // The AMI error codes.
-#include <ami_err.h>
+#include "u/nvasil/tpie/ami_err.h"
 // The AMI_COLLECTION class.
-#include <ami_coll.h>
+#include "u/nvasil/tpie/ami_coll.h"
 
 // AMI block id type.
 typedef TPIE_BLOCK_ID_TYPE AMI_bid;

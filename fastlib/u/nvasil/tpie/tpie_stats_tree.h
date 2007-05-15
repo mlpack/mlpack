@@ -10,9 +10,9 @@
 #define _TPIE_STATS_TREE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
-#include <tpie_stats.h>
+#include "u/nvasil/tpie/tpie_stats.h"
 
 #define TPIE_STATS_TREE_COUNT 14
 enum TPIE_STATS_TREE {

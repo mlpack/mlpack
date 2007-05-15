@@ -10,9 +10,9 @@
 #define _AMI_MATRIX_BLOCKS_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // Get AMI_gen_perm_object.
-#include <ami_gen_perm_object.h>
+#include "u/nvasil/tpie/ami_gen_perm_object.h"
 
 class perm_matrix_into_blocks : public AMI_gen_perm_object {
 private:

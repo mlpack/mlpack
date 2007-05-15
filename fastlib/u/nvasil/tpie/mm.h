@@ -10,16 +10,16 @@
 #define _MM_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // Get the base class, enums, etc...
-#include <mm_base.h>
+#include "u/nvasil/tpie/mm_base.h"
 
 // Get an implementation definition
 
 // For now only single address space memory management is supported.
 #ifdef MM_IMP_REGISTER
-#include <mm_register.h>
+#include "u/nvasil/tpie/mm_register.h"
 #else
 #error No MM implementation selected.
 #endif

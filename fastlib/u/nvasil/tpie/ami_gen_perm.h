@@ -12,13 +12,13 @@
 #define _AMI_GEN_PERM_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // Get AMI_scan_object.
-#include <ami_scan.h>
+#include "u/nvasil/tpie/ami_scan.h"
 // Get AMI_sort
-#include <ami_sort.h>
+#include "u/nvasil/tpie/ami_sort.h"
 
-#include <ami_gen_perm_object.h>
+#include "u/nvasil/tpie/ami_gen_perm_object.h"
 
 // (tavi) moved dest_obj definition down due to error in gcc 2.8.1
 template<class T> class dest_obj;

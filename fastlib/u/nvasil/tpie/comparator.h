@@ -12,7 +12,7 @@
 #define _COMPARATOR_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 
 // In is unlikely that users will need to directly need these classes

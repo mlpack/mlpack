@@ -19,8 +19,8 @@
 #include <iostream>
 // For min, max.
 #include <algorithm>
-#include <ami_block_base.h>
-#include <ami_point.h>
+#include "u/nvasil/tpie/ami_block_base.h"
+#include "u/nvasil/tpie/ami_point.h"
 
 // AMI_KDTREE_STORE_WEIGHTS determines whether weights are stored in all
 // binary kd-tree nodes (when set to 1), or just in block nodes (when set

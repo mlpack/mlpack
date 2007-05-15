@@ -17,8 +17,8 @@
 #ifndef _AMI_SCAN_H
 #define _AMI_SCAN_H
 
-#include <ami_err.h>
-#include <ami_stream.h>
+#include "u/nvasil/tpie/ami_err.h"
+#include "u/nvasil/tpie/ami_stream.h"
 
 typedef int AMI_SCAN_FLAG;
 

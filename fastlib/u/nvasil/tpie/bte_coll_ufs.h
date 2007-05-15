@@ -10,9 +10,9 @@
 #define _BTE_COLL_UFS_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // Get the base class.
-#include <bte_coll_base.h>
+#include "u/nvasil/tpie/bte_coll_base.h"
 
 // For header's type field (85 == 'U').
 #define BTE_COLLECTION_UFS_ID 85

@@ -15,9 +15,9 @@
 // Get the STL pair class.
 #include <utility>
 // Get the logging macros.
-#include <tpie_log.h>
+#include "u/nvasil/tpie/tpie_log.h"
 // Get the b_vector class.
-#include <b_vector.h>
+#include "u/nvasil/tpie/b_vector.h"
 
 // The only implementation is AMI_cache_manager_lru.
 #define AMI_CACHE_MANAGER AMI_cache_manager_lru

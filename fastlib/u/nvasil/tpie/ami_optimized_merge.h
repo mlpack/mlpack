@@ -37,18 +37,17 @@
 #define _AMI_OPTIMIZED_MERGE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
-
+#include "u/nvasil/tpie/portability.h"
 // For log() and such as needed to compute tree heights.
 #include <math.h>
 
 #include <assert.h>
 #include <fstream>
 
-#include <ami_stream.h>
-#include <mergeheap.h>		//For templated heaps
-#include <quicksort.h>		//For templated qsort_items
-#include <tpie_tempnam.h>
+#include "u/nvasil/tpie/ami_stream.h"
+#include "u/nvasil/tpie/mergeheap.h"		//For templated heaps
+#include "u/nvasil/tpie/quicksort.h"		//For templated qsort_items
+#include "u/nvasil/tpie/tpie_tempnam.h"
 
 typedef int AMI_merge_flag;
 typedef int arity_t;

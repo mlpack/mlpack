@@ -152,7 +152,7 @@ using namespace std;
 #include <sys/resource.h>	
 #endif
 
-#include <bte_err.h>
+#include "u/nvasil/tpie/bte_err.h"
 
 //		Get functions for mapping			//
 #ifdef _WIN32
@@ -384,7 +384,7 @@ typedef TPIE_OS_OFFSET TPIE_BLOCK_ID_TYPE;
 #endif
 
 // for ANSI conform arrays.
-#include <vararray.h>
+#include "u/nvasil/tpie/vararray.h"
 
 //////////////////////////////////////////////
 // functions				    //

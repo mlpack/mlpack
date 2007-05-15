@@ -10,7 +10,7 @@
 #define _AMI_KEY_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // Temporary until the configuration script is edited to determine word
 // size.

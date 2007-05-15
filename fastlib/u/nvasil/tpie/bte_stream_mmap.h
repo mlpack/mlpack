@@ -23,7 +23,7 @@
 #endif
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // For header's type field (77 == 'M').
 #define BTE_STREAM_MMAP 77

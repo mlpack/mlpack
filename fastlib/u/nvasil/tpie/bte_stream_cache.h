@@ -11,17 +11,17 @@
 #define _BTE_STREAM_CACHE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // Include the registration based memory manager.
 #define MM_IMP_REGISTER
-#include <mm.h>
+#include "u/nvasil/tpie/mm.h"
 
-#include <bte_stream_base.h>
+#include "u/nvasil/tpie/bte_stream_base.h"
 
 // This code makes assertions and logs errors.
-#include <tpie_assert.h>
-#include <tpie_log.h>
+#include "u/nvasil/tpie/tpie_assert.h"
+#include "u/nvasil/tpie/tpie_log.h"
 
 
 #define BTE_STREAM_CACHE_DEFAULT_MAX_LEN (1024 * 256)

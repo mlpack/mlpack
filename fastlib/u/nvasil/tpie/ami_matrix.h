@@ -18,17 +18,17 @@
 #define INTERNAL_TIMING 1
 
 #ifdef INTERNAL_TIMING
-#  include <cpu_timer.h>
+#  include "u/nvasil/tpie/cpu_timer.h"
 #  include <iostream>
 #endif
 
 #include <matrix.h>
 
-#include <ami_matrix_pad.h>
-#include <ami_matrix_blocks.h>
-#include <ami_stream_arith.h>
+#include "u/nvasil/tpie/ami_matrix_pad.h"
+#include "u/nvasil/tpie/ami_matrix_blocks.h"
+#include "u/nvasil/tpie/ami_stream_arith.h"
 
-#include <ami_gen_perm.h>
+#include "u/nvasil/tpie/ami_gen_perm.h"
 
 template<class T>
 class AMI_matrix : public AMI_STREAM<T> {

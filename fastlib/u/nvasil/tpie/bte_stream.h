@@ -9,14 +9,14 @@
 #define _BTE_STREAM_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #ifndef BTE_VIRTUAL_BASE
 #  define BTE_VIRTUAL_BASE 0
 #endif
 
 // Get the base class, enums, etc...
-#include <bte_stream_base.h>
+#include "u/nvasil/tpie/bte_stream_base.h"
 
 #ifdef BTE_IMP_UFS
 //	TPIE_OS_UNIX_ONLY_WARNING_USE_BTE_STREAM_IMP_UFS	
@@ -79,7 +79,7 @@
 
  // stdio implementation.
 #if defined(BTE_STREAM_IMP_STDIO)
-#  include <bte_stream_stdio.h>
+#  include "u/nvasil/tpie/bte_stream_stdio.h"
    // If this is the only implementation, then make it easier to get to.
 #  ifndef BTE_STREAM_IMP_MULTI_IMP
 #ifdef BTE_STREAM
@@ -91,7 +91,7 @@
 
  // mmap implementation.
 #if defined(BTE_STREAM_IMP_MMAP)
-#  include <bte_stream_mmap.h>
+#  include "u/nvasil/tpie/bte_stream_mmap.h"
    // If this is the only implementation, then make it easier to get to.
 #  ifndef BTE_STREAM_IMP_MULTI_IMP
 #ifdef BTE_STREAM
@@ -103,7 +103,7 @@
 
  // ufs implementation.
 #if defined(BTE_STREAM_IMP_UFS)
-#  include <bte_stream_ufs.h>
+#  include "u/nvasil/tpie/bte_stream_ufs.h"
    // If this is the only implementation, then make it easier to get to.
 #  ifndef BTE_STREAM_IMP_MULTI_IMP
 #ifdef BTE_STREAM

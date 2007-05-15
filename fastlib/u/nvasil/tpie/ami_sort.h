@@ -9,16 +9,16 @@
 #define _AMI_SORT_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #define CONST const
 
-#include <ami_stream.h>
+#include "u/nvasil/tpie/ami_stream.h"
 
 #ifdef AMI_STREAM_IMP_SINGLE
-#include <ami_sort_single.h>
-#include <ami_optimized_sort.h>
-#include <ami_sort_single_dh.h>
+#include "u/nvasil/tpie/ami_sort_single.h"
+#include "u/nvasil/tpie/ami_optimized_sort.h"
+#include "u/nvasil/tpie/ami_sort_single_dh.h"
 #endif
 
 #endif // _AMI_SORT_H 

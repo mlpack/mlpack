@@ -10,10 +10,10 @@
 #define _AMI_QUEUE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // Get the AMI_STREAM definition.
-#include <ami_stream.h>
-#include <ami_stack.h> 
+#include "u/nvasil/tpie/ami_stream.h"
+#include "u/nvasil/tpie/ami_stack.h"
 
 // Basic Implementation of I/O Efficient FIFO queue. 
 // Uses two stacks

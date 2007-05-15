@@ -25,19 +25,19 @@
 #include <string>
 
 // Get a stream implementation.
-#include <ami_stream.h>
+#include "u/nvasil/tpie/ami_stream.h"
 // Get templates for AMI_sort.
-#include <ami_sort.h>
+#include "u/nvasil/tpie/ami_sort.h"
 // Get a collection implementation.
-#include <ami_coll.h>
+#include "u/nvasil/tpie/ami_coll.h"
 // Get a block implementation.
-#include <ami_block.h>
+#include "u/nvasil/tpie/ami_block.h"
 // The cache manager.
-#include <ami_cache.h>
+#include "u/nvasil/tpie/ami_cache.h"
 // The tpie_stats_tree class for tree statistics.
-#include <tpie_stats_tree.h>
+#include "u/nvasil/tpie/tpie_stats_tree.h"
 // The tpie_tempnam() function
-#include <tpie_tempnam.h>
+#include "u/nvasil/tpie/tpie_tempnam.h"
 
 /// Determines how elements are stored in a leaf. If set to 0, elements are
 /// stored in the order in which they are inserted, which may results in
@@ -1554,7 +1554,7 @@ AMI_err AMI_btree<Key, Value, Compare, KeyOfValue, BTECOLL>::load(AMI_BTREE* bt,
   AMI_btree_params params_saved = params_;
   AMI_err err = AMI_ERROR_NO_ERROR;
   params_.leaf_size_max = std::min(params_.leaf_size_max, size_t(leaf_fill*params_.leaf_size_max));
-  params_.node_size_max = min(params_.leaf_size_max, size_t(node_fill*params_.node_size_max));
+  params_.node_size_max = std::min(params_.leaf_size_max, size_t(node_fill*params_.node_size_max));
   AMI_BTREE_LEAF* lcl = NULL; // locally cached leaf.
 
   // Get the bid of the min leaf in bt.

@@ -10,10 +10,10 @@
 #define _BIT_MATRIX_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
-#include <bit.h>
-#include <matrix.h>
+#include "u/nvasil/tpie/bit.h"
+#include "u/nvasil/tpie/matrix.h"
 
 #include <sys/types.h>
 

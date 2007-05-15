@@ -12,9 +12,9 @@
 #include <iostream>
 
 // Get definitions for working with Unix and Windows.
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // Get the AMI_scan_object definition.
-#include <ami_scan.h>
+#include "u/nvasil/tpie/ami_scan.h"
 
 // A scan object class template for reading the contents of an
 // ordinary C++ input stream into a TPIE stream.  It works with

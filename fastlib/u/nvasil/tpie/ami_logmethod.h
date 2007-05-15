@@ -12,17 +12,17 @@
 #ifndef _LOGMETHOD_H
 #define _LOGMETHOD_H
 
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // For vector
 #include <vector>
 // For pair
 #include <utility>
 // TPIE stuff.
-#include <ami_stream.h>
-#include <ami_coll.h>
+#include "u/nvasil/tpie/ami_stream.h"
+#include "u/nvasil/tpie/ami_coll.h"
 
-#include <tpie_stats_tree.h>
+#include "u/nvasil/tpie/tpie_stats_tree.h"
 
 #define LM_PATH_NAME_LENGTH 128
 

@@ -11,16 +11,16 @@
 #define _BTE_COLL_H
 
 // Get the base class and various definitions.
-#include <bte_coll_base.h>
+#include "u/nvasil/tpie/bte_coll_base.h"
 
 // The MMAP implementation.
-#include <bte_coll_mmap.h>
+#include "u/nvasil/tpie/bte_coll_mmap.h"
 
 // The UFS implementation.
-#include <bte_coll_ufs.h>
+#include "u/nvasil/tpie/bte_coll_ufs.h"
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 
 #if defined(BTE_COLLECTION_IMP_MMB)

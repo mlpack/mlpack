@@ -25,7 +25,7 @@
 #define _BTE_STREAM_UFS_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // For header's type field (85 == 'U').
 #define BTE_STREAM_UFS 85
@@ -65,11 +65,11 @@
 #endif
 
 // Get the BTE_stream_base class and related definitions.
-#include <bte_stream_base.h>
+#include "u/nvasil/tpie/bte_stream_base.h"
 
 // This code makes assertions and logs errors.
-#include <tpie_assert.h>
-#include <tpie_log.h>
+#include "u/nvasil/tpie/tpie_assert.h"
+#include "u/nvasil/tpie/tpie_log.h"
 
 // Define a sensible logical block factor, if not already defined.
 #ifndef  BTE_STREAM_UFS_BLOCK_FACTOR
@@ -393,7 +393,7 @@ BTE_stream_ufs < T >::BTE_stream_ufs (const char *dev_path,
 	    }
 	    if (header->block_size != BTE_STREAM_UFS_BLOCK_FACTOR * os_block_size_) {
 		TP_LOG_WARNING_ID("Stream has different block factor than the default;");
-		TP_LOG_WARNING_ID("\tStream block factor: " << (TPIE_OS_LONGLONG)header->block_size/os_block_size_);
+		//TP_LOG_WARNING_ID("\tStream block factor: " << (TPIE_OS_LONGLONG)header->block_size/os_block_size_);
 		TP_LOG_WARNING_ID("\tDefault block factor: " << BTE_STREAM_UFS_BLOCK_FACTOR);
 		TP_LOG_WARNING_ID("This may cause problems in some existing applications.");
 	    }
@@ -1368,7 +1368,7 @@ BTE_err BTE_stream_ufs < T >::unmap_current (void) {
 	    f_filelen += header->block_size;
      TPIE_OS_OFFSET bla = 0;
 	if ((bla = TPIE_OS_WRITE (fd, (char *) curr_block, header->block_size)) !=
-	     header->block_size) {
+	     (signed long long)header->block_size) {
 	    status_ = BTE_STREAM_STATUS_INVALID;
 	    os_errno = errno;
 	   TP_LOG_FATAL_ID ("write() failed to unmap current block.");

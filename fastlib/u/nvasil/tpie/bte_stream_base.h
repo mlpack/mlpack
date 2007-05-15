@@ -9,17 +9,17 @@
 #define _BTE_STREAM_BASE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
-#include <persist.h>
+#include "u/nvasil/tpie/persist.h"
 // Get the BTE error codes.
-#include <bte_err.h>
+#include "u/nvasil/tpie/bte_err.h"
 // Get statistics definitions.
-#include <tpie_stats_stream.h>
+#include "u/nvasil/tpie/tpie_stats_stream.h"
 
 // Include the registration based memory manager.
 #define MM_IMP_REGISTER
-#include <mm.h>
+#include "u/nvasil/tpie/mm.h"
 
 // Inline commonly called functions.
 //#define B_INLINE 
