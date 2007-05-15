@@ -12,7 +12,7 @@ class Point {
 	typedef ALLOCATOR Allocator_t;
 	typedef Point<Precision_t, Allocator_t> Point_t;
   Point() {
-	  this->p_.Reset(NULL);
+	  this->p_.Reset(Allocator_t::NullValue);
 		this->id_=0;
 	};
   void *operator new(size_t size) {
