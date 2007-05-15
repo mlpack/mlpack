@@ -15,8 +15,8 @@
 #include <portability.h>
 
 #include <string.h>
-#include <tpie_log.h>
-#include <tpie_assert.h>
+#include "u/nvasil/tpie/tpie_log.h"
+#include "u/nvasil/tpie/tpie_assert.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <errno.h>

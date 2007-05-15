@@ -24,10 +24,10 @@
 #include <portability.h>
 
 // Includes needed from TPIE
-#include <ami_stream.h>
-#include <tpie_tempnam.h>
-#include <mergeheap_dh.h>	   //For templated heaps
-#include <quicksort.h>		//For templated qsort_items
+#include "u/nvasil/tpie/ami_stream.h"
+#include "u/nvasil/tpie/tpie_tempnam.h"
+#include "u/nvasil/tpie/mergeheap_dh.h"	   //For templated heaps
+#include "u/nvasil/tpie/quicksort.h"		//For templated qsort_items
 
 typedef int arity_t;
 

@@ -13,7 +13,7 @@
 #define _QUICKSORT_H
  
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 //A simple class that facilitates doing key sorting followed 
 //by in-memory permuting to sort items in-memory. This is 

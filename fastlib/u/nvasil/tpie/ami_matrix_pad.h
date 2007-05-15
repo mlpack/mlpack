@@ -10,9 +10,9 @@
 #define _AMI_MATRIX_PAD_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // Get definition of AMI_scan_object class.
-#include <ami_scan.h>
+#include "u/nvasil/tpie/ami_scan.h"
 
 // This is a scan management object designed to pad a rows by cols
 // matrix with zeroes so that is becomes an (i * block_extent) by (j *

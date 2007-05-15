@@ -10,11 +10,11 @@
 #define MATRIX_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #include <iostream>
 
-#include <tpie_assert.h>
+#include "u/nvasil/tpie/tpie_assert.h"
 
 
 // Enable exceptions if the compiler supports them.

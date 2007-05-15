@@ -13,8 +13,8 @@
 #define _INTERNAL_SORT_H
  
 // Get definitions for working with Unix and Windows
-#include <portability.h>
-#include <quicksort.h>
+#include "u/nvasil/tpie/portability.h"
+#include "u/nvasil/tpie/quicksort.h"
 
 // Use our quicksort, or the sort from STL
 #ifdef TPIE_USE_STL_SORT

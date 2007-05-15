@@ -10,7 +10,7 @@
 #define _TPIE_TEMPNAM_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // The name of the environment variable pointing to a tmp directory.
 #define TMPDIR_ENV "TMPDIR"

@@ -13,15 +13,15 @@
 #define _AMI_BIT_PERMUTE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // Get bit_matrix.
-#include <bit_matrix.h>
+#include "u/nvasil/tpie/bit_matrix.h"
 
 // Get AMI_gen_perm_object.
-#include <ami_gen_perm_object.h>
+#include "u/nvasil/tpie/ami_gen_perm_object.h"
 // Get the AMI_general_permute().
-#include <ami_gen_perm.h>
+#include "u/nvasil/tpie/ami_gen_perm.h"
 
 class AMI_bit_perm_object {
 private:

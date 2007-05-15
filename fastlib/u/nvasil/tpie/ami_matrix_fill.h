@@ -10,9 +10,9 @@
 #define _AMI_MATRIX_FILL_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // Get the AMI_scan_object definition.
-#include <ami_scan.h>
+#include "u/nvasil/tpie/ami_scan.h"
 
 template<class T>
 class AMI_matrix_filler {

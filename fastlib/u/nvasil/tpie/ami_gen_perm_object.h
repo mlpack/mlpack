@@ -9,10 +9,10 @@
 #define _AMI_GEN_PERM_OBJECT_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // For AMI_err.
-#include <ami_err.h>
+#include "u/nvasil/tpie/ami_err.h"
 
 // A class of object that computes permutation destinations.
 class AMI_gen_perm_object {

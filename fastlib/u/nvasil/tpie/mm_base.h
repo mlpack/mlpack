@@ -10,7 +10,7 @@
 #define _MM_BASE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #include <sys/types.h>
 

@@ -12,10 +12,10 @@
 #define _AMI_KDBTREE_H
 
 #include <iostream>
-#include <portability.h>
-#include <ami_point.h>
-#include <ami_kdtree.h>
-#include <ami_kd_base.h>
+#include "u/nvasil/tpie/portability.h"
+#include "u/nvasil/tpie/ami_point.h"
+#include "u/nvasil/tpie/ami_kdtree.h"
+#include "u/nvasil/tpie/ami_kd_base.h"
 #include <string> // STL string.
 
 #define AMI_KDBTREE_HEADER_MAGIC_NUMBER 0xA9542F

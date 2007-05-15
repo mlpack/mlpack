@@ -10,10 +10,10 @@
 #define _AMI_COLL_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
-#include <ami_coll_base.h>
-#include <ami_coll_single.h>
+#include "u/nvasil/tpie/ami_coll_base.h"
+#include "u/nvasil/tpie/ami_coll_single.h"
 
 // AMI_collection_single is the only implementation, so make it easy
 // to get to.

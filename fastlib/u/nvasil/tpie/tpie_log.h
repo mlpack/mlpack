@@ -21,9 +21,9 @@ enum TPIE_LOG_LEVEL {
 
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
-#include <logstream.h>
+#include "u/nvasil/tpie/logstream.h"
 
 // The file name of the log stream.
 char *tpie_log_name();

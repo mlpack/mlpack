@@ -11,7 +11,7 @@
 #define _LOGSTREAM_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // For size_t
 #include <sys/types.h>

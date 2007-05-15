@@ -13,12 +13,12 @@
 #define _AMI_MERGE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // For log() and such as needed to compute tree heights.
 #include <math.h>
 
-#include <ami_stream.h>
+#include "u/nvasil/tpie/ami_stream.h"
 
 enum AMI_merge_output_type {
     AMI_MERGE_OUTPUT_OVERWRITE = 1,

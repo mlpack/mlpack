@@ -11,9 +11,9 @@
 #define _TPIE_ASSERT_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
-#include <tpie_log.h>
+#include "u/nvasil/tpie/tpie_log.h"
 #include <assert.h>
 #include <iostream>
 

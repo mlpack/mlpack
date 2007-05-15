@@ -10,12 +10,12 @@
 #define AMI_SPARSE_MATRIX_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #include <iostream>
 
 // We need dense matrices to support some sparse/dense interactions.
-#include <ami_matrix.h>
+#include "u/nvasil/tpie/ami_matrix.h"
 
 // A spares matrix element is labeled with a row er and a column ec.
 // A sparse matrix is simply represented by a colletion of these.

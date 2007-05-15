@@ -8,24 +8,24 @@
 #define _AMI_STREAM_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 #ifndef AMI_VIRTUAL_BASE
 #  define AMI_VIRTUAL_BASE 0
 #endif
 
 // include definition of VERSION macro
-#include <versions.h>
+#include "u/nvasil/tpie/versions.h"
 
 // Include the configuration header.
-#include <config.h>
+#include "u/nvasil/tpie/config.h"
 
 // Get the base class, enums, etc...
-#include <ami_err.h>
-#include <ami_stream_base.h>
+#include "u/nvasil/tpie/ami_err.h"
+#include "u/nvasil/tpie/ami_stream_base.h"
 
 // Get the device description class
-#include <ami_device.h>
+#include "u/nvasil/tpie/ami_device.h"
 
 // Get an implementation definition
 
@@ -88,7 +88,7 @@
 
 // Single BTE stream implementation.
 #if defined(AMI_STREAM_IMP_SINGLE)
-#  include <ami_stream_single.h>
+#  include "u/nvasil/tpie/ami_stream_single.h"
    // If this is the only implementation, then make it easier to get to.
 #  ifndef AMI_STREAM_IMP_MULTI_IMP
 #    define AMI_STREAM AMI_stream_single

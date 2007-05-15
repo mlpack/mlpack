@@ -13,9 +13,9 @@
 #define _BTE_STACK_UFS_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
-#include <bte_stream_ufs.h>
+#include "u/nvasil/tpie/bte_stream_ufs.h"
 
 template<class T>
 class BTE_stack_ufs : public BTE_stream_ufs<T> {

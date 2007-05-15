@@ -25,8 +25,8 @@
 // Get definitions for working with Unix and Windows
 #include <portability.h>
 
-#include <ami_key.h>
-#include <ami_kb_dist.h>
+#include "u/nvasil/tpie/ami_key.h"
+#include "u/nvasil/tpie/ami_kb_dist.h"
 
 #ifdef KB_KEY
 

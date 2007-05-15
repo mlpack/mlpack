@@ -12,7 +12,7 @@
 #define _BTE_ERR_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 //
 // BTE error codes are returned using the BTE_err type.

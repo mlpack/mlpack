@@ -10,7 +10,7 @@
 //
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // If we have not already seen this file with KB_KEY undefined or
 // KB_KEY is defined, we will process the file.

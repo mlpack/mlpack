@@ -12,13 +12,13 @@
 #define _AMI_BLOCK_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // The AMI_block_base class.
-#include <ami_block_base.h>
+#include "u/nvasil/tpie/ami_block_base.h"
 
 // The b_vector class.
-#include <b_vector.h>
+#include "u/nvasil/tpie/b_vector.h"
  
 template<class E, class I, class BTECOLL = BTE_COLLECTION >
 class AMI_block: public AMI_block_base<BTECOLL> {

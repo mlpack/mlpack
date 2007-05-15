@@ -12,7 +12,7 @@
 #define _AMI_KDTREE_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // For pair.
 #include <utility>
 // For stack.
@@ -27,19 +27,19 @@
 #include <string>
 
 // TPIE stuff.
-#include <ami_stream.h>
-#include <ami_scan.h>
-#include <ami_sort.h>
-#include <ami_coll.h>
-#include <ami_block.h>
+#include "u/nvasil/tpie/ami_stream.h"
+#include "u/nvasil/tpie/ami_scan.h"
+#include "u/nvasil/tpie/ami_sort.h"
+#include "u/nvasil/tpie/ami_coll.h"
+#include "u/nvasil/tpie/ami_block.h"
 // The tpie_stats_tree class.
-#include <tpie_stats_tree.h>
+#include "u/nvasil/tpie/tpie_stats_tree.h"
 // The cache manager.
-#include <ami_cache.h>
+#include "u/nvasil/tpie/ami_cache.h"
 // The AMI_point/AMI_record classes.
 #include <ami_point.h>
 // Supporting types: AMI_kdtree_status, AMI_kdtree_params, etc.
-#include <ami_kd_base.h>
+#include "u/nvasil/tpie/ami_kd_base.h"
 
 // Forward references.
 template<class coord_t, TPIE_OS_SIZE_T dim, class BTECOLL> class AMI_kdtree_leaf;

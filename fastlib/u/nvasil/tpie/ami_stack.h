@@ -10,9 +10,9 @@
 #define _AMI_STACK_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 // Get the AMI_STREAM definition.
-#include <ami_stream.h>
+#include "u/nvasil/tpie/ami_stream.h"
 
 template<class T>
 class AMI_stack : public AMI_STREAM<T> {

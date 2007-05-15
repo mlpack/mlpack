@@ -13,7 +13,7 @@
 #define _PQUEUE_HEAP_H
 
 // Get definitions for working with Unix and Windows
-#include <portability.h>
+#include "u/nvasil/tpie/portability.h"
 
 // The virtual base class that defines what priority queues must do.
 template <class T, class P>
