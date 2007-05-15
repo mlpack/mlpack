@@ -12,6 +12,13 @@ librule(
 	deplibs = ["fastlib:fastlib",":metrics"]
 )
 
+librule(
+	name = "multi_matcher",
+	sources = ["multi_matcher.cc"],
+	headers = ["multi_matcher.h"],
+	deplibs = ["fastlib:fastlib",":matcher",":metrics"]
+)
+
 binrule(
 	name = "naive_test",
 	sources = ["naive_test.cc"],

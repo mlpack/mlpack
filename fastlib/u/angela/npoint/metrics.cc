@@ -65,11 +65,13 @@ success_t Metric::InitFromFile(const int size, const char *file_name) {
 
 success_t is_symmetric(const Matrix M) {
 	index_t i,j;
+
 	for(i=0; i<M.n_cols(); i++) {
 		for (j=0; j<i; j++) {
 			if ( M.get(i,j) != M.get(j,i) ) return SUCCESS_FAIL;
 		}
 	}
+
 	return SUCCESS_PASS;
 }
 
@@ -109,13 +111,27 @@ double Metric::ComputeDistance(const Vector a, const Vector b) const {
 			}
 		}
 	}
+
 	return sqrt(dist);
+}
+
+
+double Metric::ComputeDistance(const Matrix data, const index_t x, 
+		const index_t	y) const {
+	Vector a,b;
+
+	data.MakeColumnVector(x,&a);
+	data.MakeColumnVector(y,&b);
+
+	return (ComputeDistance(a,b));
 }
 
 
 double Metric::ComputeNorm(const Vector v) const {
 	Vector w;
+	
 	w.Init(dimension);
 	w.SetZero();
+	
 	return (ComputeDistance(v,w)); 
 }

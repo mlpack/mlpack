@@ -73,13 +73,8 @@ success_t Matcher::Matches(const Matrix X, const Vector index, const Metric M) c
  index_t i, j;  
  for (i=0;i<n;i++) {
 	 for (j=i+1;j<n;j++) {
-		 Vector a, b;
-		 double dist = 0;
 		 index_t index_i = index[i], index_j = index[j];
-
-		 X.MakeColumnVector(index_i,&a);
-		 X.MakeColumnVector(index_j,&b);
-		 dist = M.ComputeDistance(a,b);
+		 double dist = M.ComputeDistance(X,index_i,index_j);
 
 		 if (dist < lo.get(i,j)) {
 			 return SUCCESS_FAIL;
