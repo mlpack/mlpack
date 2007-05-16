@@ -183,7 +183,7 @@ void MEMORY_MANAGER__::Load() {
 }
 
 TEMPLATE__
-void MEMORY_MANAGER__::Close() {
+void MEMORY_MANAGER__::Destruct() {
   // scan all the pages and see if there is any modified page
   // and save it to disk
   for(index_t i=0; i<num_of_pages_; i++) {
@@ -355,14 +355,14 @@ inline void MEMORY_MANAGER__::MoveToCache(index_t paddress,
 // Returns the object address of a pointer that is in the cache. If
 // it is beyond the cache limits it fails.
 TEMPLATE__ 
-inline index_t MEMORY_MANAGER__::GetObjectAddress(char *pointer) {
-  if (pointer <cache_ || pointer >= cache_ + alloc_size_) {
+inline index_t MEMORY_MANAGER__::GetObjectAddress(void *pointer) {
+  if (unlikely(pointer <cache_ || pointer >= cache_ + alloc_size_)) {
   	FATAL( "Pointer %p is out of cache_limits %p -- %p\n",
   	       pointer, cache_, cache_+cache_size_);
   }
   index_t oaddress;
-  oaddress = CachePageToPage((ptrdiff_t)(pointer - cache_) /page_size_)
-             + (ptrdiff_t)(pointer - cache_) % page_size_;
+  oaddress = CachePageToPage((ptrdiff_t)((char*)pointer - cache_) /page_size_)
+             + (ptrdiff_t)((char*)pointer - cache_) % page_size_;
   return oaddress;
 }
 

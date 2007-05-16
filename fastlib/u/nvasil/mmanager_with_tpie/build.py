@@ -1,6 +1,8 @@
 librule(name="tpiemm",
 		    headers=lglob("*.h"),
-				deplibs=["fastlib: fastlib u/nvasil/tpie:tpie", "libsigsegv.a"]
+				deplibs=["fastlib:fastlib",
+				         "u/nvasil/tpie:tpie", 
+								 "libsigsegv.a"]
 		);
 binrule(
 		name="test",
