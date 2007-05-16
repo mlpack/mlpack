@@ -45,6 +45,13 @@ class Tkde {
   /** The type of kernel in use.  NOT required by NBR. */
   typedef EpanKernel Kernel;
 
+  /** Per-query-point input information.  Required by NBR. */
+  typedef BlankPointInfo QPointInfo;
+  /** Per-reference-point input information.  Required by NBR. */
+  typedef BlankPointInfo RPointInfo;
+  /** Per-query statistic.  Required by NBR. */
+  typedef BlankStat QStat;
+
   /**
    * All parameters required by the execution of the algorithm.
    *
@@ -126,21 +133,6 @@ class Tkde {
     }
   };
 
-  /**
-   * Per-point extra information, which in case of TKDE is blank.
-   *
-   * For KDE this might be weights.
-   *
-   * Not required by N-Body Reduce, although QPointInfo and RPointInfo are.
-   */
-  struct BlankInfo {
-    OT_DEF(BlankInfo) {}
-  };
-
-  /** Per-query-point input information.  Required by NBR. */
-  typedef BlankInfo QPointInfo;
-  /** Per-reference-point input information.  Required by NBR. */
-  typedef BlankInfo RPointInfo;
 
   /**
    * Moment information used by thresholded KDE.
@@ -256,25 +248,7 @@ class Tkde {
     void Postprocess(const Param& param, const Bound& bound, index_t n) {
     }
   };
-
-  class BlankStat {
-   public:
-    void Init(const Param& param) {
-    }
-
-    void Accumulate(const Param& param, const Vector& point,
-        const QPointInfo& r_info) {
-    }
-
-    void Accumulate(const Param& param,
-        const BlankStat& stat, const Bound& bound, index_t n) {
-    }
-
-    void Postprocess(const Param& param, const Bound& bound, index_t n) {
-    }
-  };
   
-  typedef BlankStat QStat;
   
   /**
    * Query node.
@@ -349,7 +323,6 @@ class Tkde {
 
    public:
     void Init(const Param& param) {
-      d_density.Init(0, 0);
       DEBUG_ONLY(n_r = 0);
     }
   };
