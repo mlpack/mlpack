@@ -16,6 +16,7 @@
  * =====================================================================================
  */
 
+#include <unistd.h>
 #include "fastlib/fastlib.h"
 #include "u/nvasil/mmanager/memory_manager.h"
 #include "u/nvasil/mmanager_with_tpie/memory_manager.h"
@@ -48,7 +49,9 @@ class HyperRectangleTest {
 	}
 	void Destruct() {
 	  delete hyper_rectangle_;
+		Allocator_t::allocator_->Destruct();
 		delete Allocator_t::allocator_;
+		unlink("temp_mem");
 	}
 	
   void AliasTest() {
