@@ -79,6 +79,8 @@ class NodeTest {
   }
 	void Destruct() {
 		hyper_rectangle_.Destruct();
+		Allocator_t::allocator_->Destruct();
+		unlink("temp_mem");
 		delete Allocator_t::allocator_;
 		dataset_.Destruct();
 		unlink(data_file_.c_str());
