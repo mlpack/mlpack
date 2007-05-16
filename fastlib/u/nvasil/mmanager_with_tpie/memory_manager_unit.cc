@@ -37,7 +37,7 @@ class MemoryManagerTest {
   }
 	
 	void Destruct() {
-    MemoryManager<false>::allocator_->Close();
+    MemoryManager<false>::allocator_->Destruct();
 	  delete MemoryManager<false>::allocator_; 
 		unlink("temp.mem");
 		unlink("temp.mem.header");

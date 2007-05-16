@@ -73,7 +73,10 @@ class MemoryManager {
 		  this->address_ =  other.address_;
 		}
     ~Ptr() {}
-    void Reset(index_t address) {
+    void Reset(T *address) {
+	    address_ = allocator_->GetObjectAddress((T *)address);	  
+		}
+		void Reset(index_t address) {
 			address_=address;
     }	
 		void SetNULL() {
@@ -95,7 +98,7 @@ class MemoryManager {
     }
     T *operator->() {
       Logger<logmode>::Log(address_);
-			return reinterpret_cast<T>(allocator_->Access(address_)); 
+			return reinterpret_cast<T*>(allocator_->Access(address_)); 
     }
 		Ptr<Ptr<T, logmode>, logmode> Reference() {
 		  Ptr<Ptr<T, logmode>, logmode>  ptr;
@@ -144,7 +147,7 @@ class MemoryManager {
     cache_size_ = 256 * 1024;
     system_page_size_  = sysconf(_SC_PAGESIZE);
     page_size_ = kTPIEPageSize;
-		cache_file_="temp.mem";
+		cache_file_="temp_mem";
 		header_file_=cache_file_ + string(".header");
   }
 
@@ -160,10 +163,10 @@ class MemoryManager {
   // (or better the portion of data that fits) in the memory
   void Load();
   
-	// Close() deallocates all the memory used up to now
+	// Destruct() deallocates all the memory used up to now
   // Saves all modified pages to disk
   // Closes the file
-  void Close();
+  void Destruct();
     
   // Resets the page timestamps
   void ResetPageTimers(){
@@ -180,8 +183,11 @@ class MemoryManager {
   // Align the memory with the stride of the object that has to be
   // allocated in the memory
 	static index_t malloc(index_t size) {
-			return allocator_->Alloc<double>(
-	     std::max(size/sizeof(double), sizeof(char)));
+			return allocator_->Alloc<double>(size);
+	}
+	template <typename T>
+  static index_t malloc(index_t size) {
+			return allocator_->Alloc<T>(size);
 	}
 	template <typename T>
   static index_t  calloc(index_t size, const T init_value) {
@@ -199,7 +205,7 @@ class MemoryManager {
   // Returns the object address of a pointer that is in the cache
   // limits. If it is not it fails. Very useful when we need to make
   // a pointer on a struct member
-  inline index_t GetObjectAddress(char *pointer);
+  inline index_t GetObjectAddress(void *pointer);
 	inline void Log(index_t address) {
 	
 	}

@@ -167,15 +167,18 @@ class MemoryManager {
 			}
 		}
   }
+	void Destruct() {
+	  if (unlikely(munmap(pool_, capacity_)<0)) {
+	    FATAL("Failed to unmap memory error: %s\n", strerror(errno));
+		  if (Logmode==true && fp_log_!=NULL) {
+  	    if (unlikely(fclose(fp_log_)!=0)) {
+			    FATAL("Error closing %s\n", page_access_filename_.c_str());
+			  }
+	    }	
+	  }
+  }
   ~MemoryManager() {
-		if (unlikely(munmap(pool_, capacity_)<0))
-	  FATAL("Failed to unmap memory error: %s\n", strerror(errno));
-    
-		if (Logmode==true && fp_log_!=NULL) {
-  	  if (unlikely(fclose(fp_log_)!=0)) {
-			  FATAL("Error closing %s\n", page_access_filename_.c_str());
-			}
-	  }	
+		
   }
 
   void Init() {
