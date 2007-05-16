@@ -139,16 +139,16 @@ class Allnn {
       /* ignore horizontal join operator */
       distance_sq = q_result->distance_sq;
       neighbor_i = q_result->neighbor_i;
-      return r_node.bound().MinDistanceSqToPoint(q_point) < distance_sq;
+      return r_node.bound().MinDistanceSqToPoint(q_point) <= distance_sq;
     }
 
     void VisitPair(const Param& param,
         const Vector& q_point, const QPointInfo& q_info, index_t q_index,
         const Vector& r_point, const RPointInfo& r_info, index_t r_index) {
       double trial_distance_sq = la::DistanceSqEuclidean(q_point, r_point);
-      if (unlikely(trial_distance_sq < distance_sq)) {
+      if (unlikely(trial_distance_sq <= distance_sq)) {
         // TODO: Is this a hack?
-        if (likely(trial_distance_sq  != 0)) {
+        if (likely(trial_distance_sq != 0)) {
           distance_sq = trial_distance_sq;
           neighbor_i = r_index;
         }
