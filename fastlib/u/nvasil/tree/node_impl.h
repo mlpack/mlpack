@@ -57,7 +57,9 @@ NODE__::~Node() {
 
 TEMPLATE__
 void *NODE__::operator new(size_t size) {
-  return Allocator_t::allocator_->AllignedAlloc(size);
+  typename Allocator_t::template Ptr<Node_t> temp;
+	temp.Reset(Allocator_t::malloc(size));
+  return (void *)temp.get();
 }
      	
 TEMPLATE__

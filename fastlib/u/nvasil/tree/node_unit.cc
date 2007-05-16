@@ -19,13 +19,14 @@
 #include "u/nvasil/loki/Typelist.h"
 #include "fastlib/fastlib.h"
 #include "u/nvasil/mmanager/memory_manager.h"
+#include "u/nvasil/mmanager_with_tpie/memory_manager.h"
 #include "u/nvasil/dataset/binary_dataset.h"
-#include "hyper_rectangle.h"
-#include "euclidean_metric.h"
-#include "null_statistics.h"
-#include "point_identity_discriminator.h"
-#include "computations_counter.h"
-#include "node.h"
+#include "u/nvasil/tree/hyper_rectangle.h"
+#include "u/nvasil/tree/euclidean_metric.h"
+#include "u/nvasil/tree/null_statistics.h"
+#include "u/nvasil/tree/point_identity_discriminator.h"
+#include "u/nvasil/tree/computations_counter.h"
+#include "u/nvasil/tree/node.h"
 
 template<typename TYPELIST, bool diagnostic>
 class NodeTest {
@@ -173,13 +174,23 @@ class NodeTest {
   	
 };
 
-struct BasicParameters{
+struct BasicParameters1 {
 	typedef float32                        Precision_t; 
 	typedef mmapmm::MemoryManager<false>   Allocator_t; 
 	typedef EuclideanMetric<float32>       Metric_t;
 };
 
+struct BasicParameters2 {
+	typedef float32                        Precision_t; 
+	typedef tpiemm::MemoryManager<false>   Allocator_t; 
+	typedef EuclideanMetric<float32>       Metric_t;
+};
+
+
 int main(int argc, char *argv[]) {
-	NodeTest<BasicParameters, false> node_test;
-	node_test.TestAll();
+	NodeTest<BasicParameters1, false> node_test1;
+	node_test1.TestAll();
+	NodeTest<BasicParameters2, false> node_test2;
+	node_test2.TestAll();
+
 }
