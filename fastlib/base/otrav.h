@@ -669,7 +669,7 @@ namespace ot_private {
     
     template<typename T>
     T* InitBegin(char *data) {
-      InitBegin(data, reinterpret_cast<ptrdiff_t>(data));
+      return InitBegin<T>(data, reinterpret_cast<ptrdiff_t>(data));
     }
 
     /** Receives the nanme of the upcoming object -- we ignore this. */

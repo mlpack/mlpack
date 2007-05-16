@@ -45,90 +45,106 @@ struct BlankPointInfo {
   OT_DEF(BlankPointInfo) {}
 };
 
-template<typename Param>
 struct BlankDelta {
  public:
   OT_DEF(BlankDelta) {}
  public:
+  template<typename Param>
   void Init(const Param& param) {}
+  template<typename Param>
   void ApplyDelta(const Param& param, const BlankDelta& other) {}
 };
 
-template <typename Param>
 struct BlankQPostponed {
  public:
   OT_DEF(BlankQPostponed) {}
  public:
+  template<typename Param>
   void Init(const Param& param) {}
+  template<typename Param>
   void Reset(const Param& param) {}
+  template<typename Param>
   void ApplyPostponed(const Param& param, const BlankQPostponed& other) {}
 };
 
-template<typename Param, typename Point, typename Bound, typename PointInfo>
 class BlankStat {
  public:
   OT_DEF(BlankStat) {}
  public:
+  template<typename Param>
   void Init(const Param& param) {}
+  template<typename Param, typename Point, typename PointInfo>
   void Accumulate(const Param& param, const Point& point,
       const PointInfo& r_info) {}
+  template<typename Param, typename Bound>
   void Accumulate(const Param& param,
       const BlankStat& stat, const Bound& bound, index_t n) {}
+  template<typename Param, typename Bound>
   void Postprocess(const Param& param, const Bound& bound, index_t n) {}
 };
 
-template <typename Param, typename Point, typename Bound,
-    typename QPointInfo, typename QPostponed, typename RNode>
 struct BlankQResult {
  public:
   OT_DEF(BlankQResult) {}
  public:
+  template<typename Param, typename Point, typename QPointInfo, typename RNode>
   void Init(const Param& param,
       const Point& q_point, const QPointInfo& q_info,
       const RNode& r_root) {}
+  template<typename Param, typename Point, typename QPointInfo, typename RNode>
   void Postprocess(const Param& param,
       const Point& q_point, const QPointInfo& q_info,
       const RNode& r_root) {}
+  template<typename Param, typename QPostponed, typename QPointInfo, typename Point>
   void ApplyPostponed(const Param& param,
       const QPostponed& postponed,
       const Point& q_point) {}
 };
 
-template <typename Param, typename Delta>
 class BlankGlobalResult {
  public:
   OT_DEF(BlankGlobalResult) {}
  public:
+  template<typename Param>
   void Init(const Param& param) {}
+  template<typename Param>
   void Accumulate(const Param& param, const BlankGlobalResult& other) {}
+  template<typename Param, typename Delta>
   void ApplyDelta(const Param& param, const Delta& delta) {}
+  template<typename Param, typename Delta>
   void UndoDelta(const Param& param, const Delta& delta) {}
+  template<typename Param>
   void Postprocess(const Param& param) {}
 };
 
-template<typename Param, typename QNode,
-    typename Delta, typename QResult, typename QPostponed>
 struct BlankQMassResult {
  public:
   OT_DEF(BlankQMassResult) {}
  public:
+  template<typename Param>
   void Init(const Param& param) {}
+  template<typename Param, typename Delta>
   void ApplyDelta(const Param& param, const Delta& delta) {}
+  template<typename Param, typename QPostponed, typename QNode>
   void ApplyPostponed(const Param& param,
       const QPostponed& postponed, const QNode& q_node) {}
+  template<typename Param>
   void ApplyMassResult(const Param& param, const BlankQMassResult& other) {}
+  template<typename Param, typename QNode>
   void StartReaccumulate(const Param& param, const QNode& q_node) {}
+  template<typename Param, typename QResult>
   void Accumulate(const Param& param, const QResult& result) {}
+  template<typename Param>
   void Accumulate(const Param& param, const BlankQMassResult& result,
       index_t n_points) {}
+  template<typename Param, typename QNode>
   void FinishReaccumulate(const Param& param, const QNode& q_node) {}
 };
 
-template<typename Param, typename QNode, typename RNode,
-    typename Delta, typename QMassResult, typename QPostponed,
-    typename GlobalResult>
 class BlankAlgorithm {
  public:
+  template<typename Param, typename QNode, typename RNode,
+      typename Delta, typename QPostponed, typename GlobalResult>
   static bool ConsiderPairIntrinsic(
       const Param& param,
       const QNode& q_node,
@@ -139,6 +155,9 @@ class BlankAlgorithm {
     return true;
   }
 
+  template<typename Param, typename QNode, typename RNode,
+      typename Delta, typename QMassResult, typename QPostponed,
+      typename GlobalResult>
   static bool ConsiderPairExtrinsic(
       const Param& param,
       const QNode& q_node,
@@ -150,6 +169,9 @@ class BlankAlgorithm {
     return true;
   }
 
+  template<typename Param, typename QNode,
+      typename QMassResult, typename QPostponed,
+      typename GlobalResult>
   static bool ConsiderQueryTermination(
       const Param& param,
       const QNode& q_node,
@@ -159,6 +181,7 @@ class BlankAlgorithm {
     return true;
   }
   
+  template<typename Param, typename QNode, typename RNode>
   static double Heuristic(
       const Param& param,
       const QNode& q_node,

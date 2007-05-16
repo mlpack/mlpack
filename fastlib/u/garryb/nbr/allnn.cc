@@ -42,14 +42,16 @@ class Allnn {
   typedef BlankPointInfo QPointInfo;
   typedef BlankPointInfo RPointInfo;
   
-  typedef BlankStat<Param, Point, Bound, QPointInfo> QStat;
-  typedef BlankStat<Param, Point, Bound, RPointInfo> RStat;
+  typedef BlankStat QStat;
+  typedef BlankStat RStat;
 
   typedef SpNode<Bound, RStat> RNode;
   typedef SpNode<Bound, QStat> QNode;
 
-  typedef BlankQPostponed<Param> QPostponed;
-  typedef BlankDelta<Param> Delta;
+  typedef BlankQPostponed QPostponed;
+  typedef BlankDelta Delta;
+  
+  typedef BlankGlobalResult GlobalResult;
 
   // rho
   struct QResult {
@@ -76,19 +78,6 @@ class Allnn {
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
         const Vector& q_point) {}
-  };
-
-  class GlobalResult {
-   public:
-    OT_DEF(GlobalResult) {}
-
-   public:
-    void Init(const Param& param) {}
-    void Accumulate(const Param& param,
-        const GlobalResult& other_global_result) {}
-    void ApplyDelta(const Param& param, const Delta& delta) {}
-    void UndoDelta(const Param& param, const Delta& delta) {}
-    void Postprocess(const Param& param) {}
   };
 
   struct QMassResult {
