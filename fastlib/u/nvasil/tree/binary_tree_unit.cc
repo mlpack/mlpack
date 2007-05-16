@@ -72,6 +72,9 @@ class BinaryTreeTest {
 	  unlink(data_file_.c_str());
 	  unlink(data_file_.append(".ind").c_str());	
 		unlink(result_file_.c_str());
+		Allocator_t::allocator_->Destruct();
+		delete Allocator_t::allocator_;
+		unlink("temp_mem");
 	}
 	void BuildDepthFirst(){
     printf("Testing BuildDepthFirst...\n");
