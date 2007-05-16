@@ -31,6 +31,7 @@ class KdTreeMidpointBuilder {
   
  private:
   const Param* param_;
+  Matrix matrix_;
   ArrayList<Vector> points_;
   ArrayList<PointInfo> point_info_;
   ArrayList<Node> nodes_;
@@ -44,10 +45,10 @@ class KdTreeMidpointBuilder {
     param_ = param_in_;
     
     points_.Init(matrix_in.n_cols());
+    matrix_.Copy(matrix_in);
+    
     for (index_t i = 0; i < points_.size(); i++) {
-      Vector v;
-      matrix_in.MakeColumnVector(i, &v);
-      points_[i].Copy(v);
+      matrix_.MakeColumnVector(i, &points_[i]);
     }
     
     point_info_.Copy(point_info_in);
@@ -58,7 +59,7 @@ class KdTreeMidpointBuilder {
     dim_ = matrix_in.n_rows();
     
     // TODO: PARAMETERIZE
-    leaf_size_ = 30;
+    leaf_size_ = 35;
   }
   
   void Build();

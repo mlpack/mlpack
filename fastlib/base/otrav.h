@@ -231,7 +231,7 @@ namespace ot_private {
   // scope.
   
   /** Visits an object with no OT implementation. */
-  template<typename DefaultPrinter, typename Printer, typename T>
+/*  template<typename DefaultPrinter, typename Printer, typename T>
   void OTPrinter_Primitive(
       const char *name, T& x, Printer* printer) {
     DefaultPrinter::Print(name, x, printer);
@@ -295,6 +295,32 @@ namespace ot_private {
       const char *name, double x, Printer* printer) {
     printer->Write("%s : double = %f", name, x);
   }
+*/
+  template<typename DefaultPrinter, typename Printer, typename T>
+  struct OTPrinter_Primitive {
+    static void Print(const char *name, T& x, Printer* printer) {
+      DefaultPrinter::Print(name, x, printer);
+    }
+  };
+  /* macro for use within this file */
+  #define OTPRINTER__SPECIAL(T, format_str) \
+    template<typename DefaultPrinter, typename Printer> \
+    struct OTPrinter_Primitive<DefaultPrinter, Printer, T> { \
+      static void Print(const char *name, T x, Printer *printer) { \
+        printer->Write("%s : "format_str, name, x); \
+      } \
+    };
+  OTPRINTER__SPECIAL(const char*, "string = %s");
+  OTPRINTER__SPECIAL(char, "char = %d");
+  OTPRINTER__SPECIAL(short, "short = %d");
+  OTPRINTER__SPECIAL(int, "int = %d");
+  OTPRINTER__SPECIAL(long, "long = %ld");
+  OTPRINTER__SPECIAL(unsigned char, "char = %u");
+  OTPRINTER__SPECIAL(unsigned short, "short = %u");
+  OTPRINTER__SPECIAL(unsigned int, "int = %u");
+  OTPRINTER__SPECIAL(unsigned long, "long = %lu");
+  OTPRINTER__SPECIAL(float, "float = %f");
+  OTPRINTER__SPECIAL(double, "double = %f");
 
   /**
    * Takes an OT-compatible object and prints it to screen.
@@ -342,8 +368,8 @@ namespace ot_private {
     }
 
     template<typename T> void Primitive(const T& x) {
-      OTPrinter_Primitive< DefaultPrimitivePrinter<T> >
-          (name_, x, this);
+      OTPrinter_Primitive< DefaultPrimitivePrinter<T>, OTPrinter, T >
+          ::Print(name_, x, this);
     }
 
     template<typename T> void Object(T* obj, bool nullable,
@@ -351,8 +377,8 @@ namespace ot_private {
       if (nullable && !obj) {
         Write("%s : %s %s = NULL", name_, label, typeid(T).name());
       } else {
-        OTPrinter_Primitive< DefaultObjectPrinter<T> >
-            (name_, *obj, this);
+        OTPrinter_Primitive< DefaultObjectPrinter<T>, OTPrinter, T >
+            ::Print(name_, *obj, this);
       }
     }
 
