@@ -59,7 +59,7 @@ class KdTreeMidpointBuilder {
     dim_ = matrix_in.n_rows();
     
     // TODO: PARAMETERIZE
-    leaf_size_ = 35;
+    leaf_size_ = 20;
   }
   
   void Build();

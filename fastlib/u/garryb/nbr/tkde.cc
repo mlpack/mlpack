@@ -1,6 +1,7 @@
 #include "fastlib/fastlib.h"
 #include "spbounds.h"
 #include "gnp.h"
+#include "dfs.h"
 
 /*
 

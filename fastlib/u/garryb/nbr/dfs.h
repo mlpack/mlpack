@@ -22,6 +22,9 @@ class DualTreeDepthFirst {
   ArrayList<QMutableInfo> q_mutables_;
   bool do_naive_;
   datanode *datanode_;
+  uint64 n_naive_;
+  uint64 n_pre_naive_;
+  uint64 n_recurse_;
   
  public:
   void Init(datanode *datanode);
@@ -108,6 +111,10 @@ void DualTreeDepthFirst<GNP>::Begin() {
 
   fx_timer_start(datanode_, "execute");
   
+  DEBUG_ONLY(n_naive_ = 0);
+  DEBUG_ONLY(n_pre_naive_ = 0);
+  DEBUG_ONLY(n_recurse_ = 0);
+  
   bool need_explore = GNP::Algorithm::ConsiderPairIntrinsic(
       param_, *q_root, *r_root, &delta,
       &global_result_, &q_root_mut->postponed);
@@ -126,6 +133,19 @@ void DualTreeDepthFirst<GNP>::Begin() {
     }
   }
   fx_timer_stop(datanode_, "execute");
+  
+  DEBUG_ONLY(fx_format_result(datanode_, "naive_ratio", "%f",
+      1.0 * n_naive_ / q_root->count() / r_root->count()));
+  DEBUG_ONLY(fx_format_result(datanode_, "naive_per_query", "%f",
+      1.0 * n_naive_ / q_root->count()));
+  DEBUG_ONLY(fx_format_result(datanode_, "pre_naive_ratio", "%f",
+      1.0 * n_pre_naive_ / q_root->count() / r_root->count()));
+  DEBUG_ONLY(fx_format_result(datanode_, "pre_naive_per_query", "%f",
+      1.0 * n_pre_naive_ / q_root->count()));
+  DEBUG_ONLY(fx_format_result(datanode_, "recurse_ratio", "%f",
+      1.0 * n_recurse_ / q_root->count() / r_root->count()));
+  DEBUG_ONLY(fx_format_result(datanode_, "recurse_per_query", "%f",
+      1.0 * n_recurse_ / q_root->count()));
   
   if (fx_param_bool(datanode_, "print", 0)) {
     ot::Print(q_results_);
@@ -167,13 +187,14 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
   DEBUG_MSG(1.0, "Checking (%d,%d) x (%d,%d)",
       q_node->begin(), q_node->end(),
       r_node->begin(), r_node->end());
+  DEBUG_ONLY(n_recurse_++);
 
   /* begin prune checks */
   typename GNP::QMassResult mu(q_node_mut->mass_result);
   mu.ApplyPostponed(param_, q_node_mut->postponed, *q_node);
   mu.ApplyMassResult(param_, exclusive_unvisited);
   mu.ApplyDelta(param_, delta);
-
+  
   if (!GNP::Algorithm::ConsiderQueryTermination(
           param_, *q_node, mu, global_result_, &q_node_mut->postponed)) {
     q_node_mut->mass_result.ApplyDelta(param_, delta);
@@ -201,17 +222,17 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
     q_node_mut->mass_result.StartReaccumulate(param_, *q_node);
 
     for (index_t k = 0; k < 2; k++) {
-      typename GNP::Delta sub_delta;
+      typename GNP::Delta child_delta;
       index_t q_child_i = q_node->child(k);
       typename GNP::QNode *q_child = qnode_(q_child_i);
       QMutableInfo *q_child_mut = &q_mutables_[q_child_i];
 
       q_child_mut->postponed.ApplyPostponed(
           param_, q_node_mut->postponed);
-      sub_delta.Init(param_);
+      child_delta.Init(param_);
 
       if (GNP::Algorithm::ConsiderPairIntrinsic(
-              param_, *q_child, *r_node, &sub_delta,
+              param_, *q_child, *r_node, &child_delta,
               &global_result_, &q_child_mut->postponed)) {
         Pair_(q_child_i, r_node_i, delta, exclusive_unvisited);
       }
@@ -281,6 +302,8 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     QMutableInfo *q_node_mut) {
   typename GNP::PairVisitor visitor;
 
+  DEBUG_ONLY(n_pre_naive_ += q_node->count() * r_node->count());
+  
   visitor.Init(param_);
 
   q_node_mut->mass_result.StartReaccumulate(param_, *q_node);
@@ -308,6 +331,8 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
 
       visitor.FinishVisitingQueryPoint(param_, *q_point, *q_info, *r_node,
           exclusive_unvisited, q_result, &global_result_);
+      
+      DEBUG_ONLY(n_naive_ += r_node->count());
     }
 
     q_node_mut->mass_result.Accumulate(param_, *q_result);

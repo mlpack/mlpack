@@ -287,7 +287,7 @@ class SpHrectBound {
       mbound++;
       mpoint++;
       
-      sumsq += math::PowAbs<t_pow, 1>(v);
+      sumsq += math::Pow<t_pow, 1>(v);
     } while (--d);
     
     return math::Pow<2, t_pow>(sumsq) / 4;
@@ -299,7 +299,7 @@ class SpHrectBound {
     DEBUG_ASSERT(point.length() == dim_);
 
     for (index_t d = 0; d < dim_; d++) {
-      sumsq += math::PowAbs<t_pow, 1>(
+      sumsq += math::Pow<t_pow, 1>(
           max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]));
     }
 
@@ -323,7 +323,7 @@ class SpHrectBound {
       //   (x * 2)^2 / 4 = x^2
       double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-      sumsq += math::PowAbs<t_pow, 1>(v);
+      sumsq += math::Pow<t_pow, 1>(v);
     }
 
     return math::Pow<2, t_pow>(sumsq) / 4;
@@ -342,7 +342,7 @@ class SpHrectBound {
       double v2 = a[d].lo - b[d].lo;
       double v = max(v1, v2);
       v = (v + fabs(v)); /* truncate negatives to zero */
-      sumsq += math::PowAbs<t_pow, 1>(v);
+      sumsq += math::Pow<t_pow, 1>(v);
     }
 
     return math::Pow<2, t_pow>(sumsq) / 4;
@@ -356,7 +356,7 @@ class SpHrectBound {
     DEBUG_ASSERT(dim_ == other.dim_);
     
     for (index_t d = 0; d < dim_; d++) {
-      sumsq += math::PowAbs<t_pow, 1>(
+      sumsq += math::Pow<t_pow, 1>(
           max(b[d].hi - a[d].lo, a[d].hi - b[d].lo));
     }
 

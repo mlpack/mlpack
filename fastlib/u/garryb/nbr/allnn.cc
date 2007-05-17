@@ -101,8 +101,9 @@ class Allnn {
       distance_sq_hi.MinWith(mass_result.distance_sq_hi);
     }
 
+
     void StartReaccumulate(const Param& param, const QNode& q_node) {
-      distance_sq_hi = -DBL_MAX;
+      distance_sq_hi = 0;
     }
 
     void Accumulate(const Param& param, const QResult& result) {
