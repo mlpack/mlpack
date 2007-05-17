@@ -189,6 +189,8 @@ class AllNNDualTree : public AllNN {
   Tree *q_root_;
   const Tree *r_root_;
   uint64 n_naive_;
+  uint64 n_pre_naive_;
+  uint64 n_recurse_;
   
  public:
   AllNNDualTree() {}
@@ -202,6 +204,8 @@ class AllNNDualTree : public AllNN {
     q_root_ = q;
     r_root_ = r;
     n_naive_ = 0;
+    n_recurse_ = 0;
+    n_pre_naive_ = 0;
   }
   
   void Compute(int num_threads, index_t num_grains) {
@@ -214,6 +218,14 @@ class AllNNDualTree : public AllNN {
         (1.0 * n_naive_ / q_root_->count() / r_root_->count()));
     fx_format_result(module_, "naive_per_query", "%f",
         (1.0 * n_naive_ / q_root_->count()));
+    fx_format_result(module_, "pre_naive_ratio", "%f",
+        (1.0 * n_pre_naive_ / q_root_->count() / r_root_->count()));
+    fx_format_result(module_, "pre_naive_per_query", "%f",
+        (1.0 * n_pre_naive_ / q_root_->count()));
+    fx_format_result(module_, "recurse_ratio", "%f",
+        (1.0 * n_recurse_ / q_root_->count() / r_root_->count()));
+    fx_format_result(module_, "recurse_per_query", "%f",
+        (1.0 * n_recurse_ / q_root_->count()));
 #endif
 
     ReportDistanceSq("allnn_dual");
@@ -279,8 +291,8 @@ void AllNNDualTree::BaseCase(Tree *q, const Tree *r, double closest_offer) {
     const double *q_col = q_matrix_.GetColumnPtr(q_i);
     double q_best_dist = results_[q_i].dist;
     
-    if (closest_offer < q_best_dist
-        && r->bound().MinDistanceSqToPoint(q_col) < q_best_dist) {
+    if (closest_offer <= q_best_dist
+        && r->bound().MinDistanceSqToPoint(q_col) <= q_best_dist) {
       for (index_t r_i = r->begin(); r_i < r_end; r_i++) {
         const double *r_col = r_matrix_.GetColumnPtr(r_i);
         double dist = la::DistanceSqEuclidean(
@@ -301,10 +313,12 @@ void AllNNDualTree::BaseCase(Tree *q, const Tree *r, double closest_offer) {
   }
   
   DEBUG_ONLY(n_naive_ += n_naive_l);
+  DEBUG_ONLY(n_pre_naive_ += q->count() * r->count());
   q->stat().dist_upper = dist_upper;
 }
 
 void AllNNDualTree::DualAllNN(Tree *q, const Tree *r, double closest_offer) {
+  DEBUG_ONLY(n_recurse_++);
   if (closest_offer > q->stat().dist_upper) {
     /* pruned */
   } else if (q->is_leaf() && r->is_leaf()) {

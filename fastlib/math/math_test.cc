@@ -82,7 +82,19 @@ void TestMisc() {
   TEST_ASSERT(math::ClampNonPositive(2.25) == 0.0);
 }
 
+void TestPow() {
+  TEST_DOUBLE_EXACT((math::Pow<2, 2>(3.0)), 3.0);
+  TEST_DOUBLE_EXACT((math::Pow<1, 1>(3.0)), 3.0);
+  TEST_DOUBLE_EXACT((math::Pow<2, 1>(3.0)), 9.0);
+  TEST_DOUBLE_EXACT((math::Pow<1, 2>(9.0)), 3.0);
+  TEST_DOUBLE_EXACT((math::Pow<3, 3>(9.0)), 9.0);
+  TEST_DOUBLE_EXACT((math::Pow<1, 3>(8.0)), 2.0);
+  TEST_DOUBLE_EXACT((math::PowAbs<1, 3>(-8.0)), 2.0);
+  TEST_DOUBLE_EXACT((math::PowAbs<1, 1>(-8.0)), 8.0);
+  TEST_DOUBLE_EXACT((math::PowAbs<2, 1>(-8.0)), 64.0);
+}
+
 TEST_SUITE_END(math, TestPermutation, TestFactorial,
-    TestSphereVol, TestKernel, TestMisc)
+    TestSphereVol, TestKernel, TestMisc, TestPow)
 
 
