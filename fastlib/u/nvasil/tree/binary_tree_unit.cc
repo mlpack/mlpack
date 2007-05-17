@@ -21,6 +21,7 @@
 #include <limits>
 #include "fastlib/fastlib.h"
 #include "u/nvasil/mmanager/memory_manager.h"
+#include "u/nvasil/mmanager_with_tpie/memory_manager.h"
 #include "u/nvasil/test/test.h"
 #include "u/nvasil/dataset/binary_dataset.h"
 #include "tree_parameters_macro.h"
@@ -85,7 +86,7 @@ class BinaryTreeTest {
 	void BuildBreadthFirst() {
 		printf("Testing BuildBreadthFirst...\n");
 	  tree_.BuildBreadthFirst();
-		// tree_.Print();
+		//tree_.Print();
 		printf("%s\n", tree_.Statistics().c_str());
 	}
 	void kNearestNeighbor() {
@@ -281,23 +282,43 @@ class BinaryTreeTest {
 		            KdPivoter1,
 								false) 
 */								
-struct BasicTypes {
+struct BasicTypes1 {
   typedef float32 Precision_t;
 	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
-struct Parameters {
+struct Parameters1 {
   typedef float32 Precision_t;
 	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
-	typedef HyperRectangle<BasicTypes, false> BoundingBox_t;
+	typedef HyperRectangle<BasicTypes1, false> BoundingBox_t;
 	typedef NullStatistics NodeCachedStatistics_t;
   typedef SimpleDiscriminator PointIdDiscriminator_t;
-  typedef KdPivoter1<BasicTypes, false> Pivot_t; 
+  typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
+};
+struct BasicTypes2 {
+  typedef float32 Precision_t;
+	typedef tpiemm::MemoryManager<false> Allocator_t;
+	typedef EuclideanMetric<float32> Metric_t;
+};
+struct Parameters2 {
+  typedef float32 Precision_t;
+	typedef tpiemm::MemoryManager<false> Allocator_t;
+	typedef EuclideanMetric<float32> Metric_t;
+	typedef HyperRectangle<BasicTypes2, false> BoundingBox_t;
+	typedef NullStatistics NodeCachedStatistics_t;
+  typedef SimpleDiscriminator PointIdDiscriminator_t;
+  typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
 };
 
-typedef BinaryTreeTest<Parameters, false> BinaryTreeTest_t;
+
+typedef BinaryTreeTest<Parameters1, false> BinaryTreeTest1_t;
+typedef BinaryTreeTest<Parameters2, false> BinaryTreeTest2_t;
+
 int main(int argc, char *argv[]) {
-  BinaryTreeTest_t test;
-	test.TestAll();
+  BinaryTreeTest1_t test1;
+  test1.TestAll();
+  BinaryTreeTest2_t test2;
+	test2.TestAll();
+
 }

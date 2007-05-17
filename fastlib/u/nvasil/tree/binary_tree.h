@@ -80,7 +80,7 @@ class BinaryTree {
 	void Destruct() {}
   // Call this function to build Depth first a tree
   void BuildDepthFirst();
-	void BuildDepthFirst(NodePtr_t &ptr, PivotInfo_t *pivot);
+	void BuildDepthFirst(NodePtrPtr_t ptr, PivotInfo_t *pivot);
   void BuildBreadthFirst();
 	void BuildBreadthFirst(
 			list<pair<NodePtrPtr_t, PivotInfo_t *> > &fifo);

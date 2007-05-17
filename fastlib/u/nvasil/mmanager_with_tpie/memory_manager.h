@@ -73,8 +73,8 @@ class MemoryManager {
 		  this->address_ =  other.address_;
 		}
     ~Ptr() {}
-    void Reset(T *address) {
-	    address_ = allocator_->GetObjectAddress((T *)address);	  
+    void Reset(T *ptr) {
+	    address_ = allocator_->GetObjectAddress((T *)ptr);	  
 		}
 		void Reset(index_t address) {
 			address_=address;
@@ -112,6 +112,10 @@ class MemoryManager {
 		T *get() {
 		  return reinterpret_cast<T*>(allocator_->Access(address_));
 		}
+
+		index_t get_address() {
+		  return address_;
+		}
     
    protected:
     index_t address_;
@@ -122,11 +126,11 @@ class MemoryManager {
 		ArrayPtr(){
 		}
 		ArrayPtr(index_t size) {
-		  Reset(malloc(size));
+		  Reset(malloc<T>(size));
 		}
 		template<typename ARRAYTYPE>
 		void Copy(ARRAYTYPE other, index_t length) {
-			T *p1=reinterpret_cast<T>(allocator_->Access(
+			T *p1=reinterpret_cast<T*>(allocator_->Access(
 						Ptr<T,logmode>::address_));
 			T *p2=other.get();
 		  for(index_t i=0; i<length; i++) {
@@ -180,19 +184,20 @@ class MemoryManager {
   // full it does the appropriate arrangments
   template <typename T>
   index_t Alloc(index_t size);
+	index_t AlignedAlloc(index_t size);
   // Align the memory with the stride of the object that has to be
   // allocated in the memory
 	static index_t malloc(index_t size) {
-			return allocator_->Alloc<double>(size);
+		 return allocator_->AlignedAlloc(size);
 	}
 	template <typename T>
   static index_t malloc(index_t size) {
-			return allocator_->Alloc<T>(size);
+		return allocator_->Alloc<T>(size);
 	}
 	template <typename T>
   static index_t  calloc(index_t size, const T init_value) {
 	  Ptr<T> temp;
-		index_t address=malloc(size);
+		index_t address=malloc<T>(size);
 		temp.Reset(address);
 		 for(index_t i=0; i<size; i++) {
 		   temp[i]=init_value;
