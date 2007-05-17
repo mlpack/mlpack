@@ -105,23 +105,28 @@ void TREE__::BuildDepthFirst() {
 	max_depth_=0;
 	current_level_=0;
 	progress_.Reset();
-  BuildDepthFirst(parent_, pivoter_(num_of_points_));
+  NodePtrPtr_t temp_parent;
+  temp_parent.Reset(Allocator_t::malloc(sizeof(NodePtr_t)));
+  BuildDepthFirst(temp_parent, pivoter_(num_of_points_));
+	parent_=*temp_parent;
   if (log_progress_==true) {
   	printf("\n");
   }
 }
 
 TEMPLATE__
-void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t &ptr, 
+void TREE__::BuildDepthFirst(typename TREE__::NodePtrPtr_t ptr, 
     typename TREE__::PivotInfo_t *pivot_info) {
                                  	
   pair<PivotInfo_t *, PivotInfo_t *>  pivot_pair;
   if (pivot_info->num_of_points_ > max_points_on_leaf_) {
-  	ptr.Reset(new Node_t());
-		ptr->Init(pivot_info->box_, 
+  	(*ptr).Reset(new Node_t());
+		(*ptr)->Init(pivot_info->box_, 
 				      pivot_info->statistics_,
 							node_id_,
 							pivot_info->num_of_points_);
+
+		(*ptr)->Print(dimension_);
 		node_id_++;
     pivot_pair = pivoter_(pivot_info);  
 	  // There is a case where on all the points are the same
@@ -138,8 +143,8 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t &ptr,
 		  if (current_level_ < min_depth_) {
 		    min_depth_=current_level_;
 		  }
-      ptr.Reset(new Node_t());
-			ptr->Init(pivot_pair.second->box_,
+      (*ptr).Reset(new Node_t());
+			(*ptr)->Init(pivot_pair.second->box_,
 			          pivot_pair.second->statistics_,
 			          node_id_,
 			          pivot_pair.second->start_,
@@ -156,8 +161,9 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t &ptr,
 		}
   	delete pivot_info;
   	current_level_++; 
-  	BuildDepthFirst(ptr->get_left(), pivot_pair.first);
-  	BuildDepthFirst(ptr->get_right(), pivot_pair.second);
+ 
+		BuildDepthFirst((*ptr)->get_left().Reference(), pivot_pair.first);
+  	BuildDepthFirst((*ptr)->get_right().Reference(), pivot_pair.second);
   	current_level_--; 
   } else {
   	if (log_progress_==true) {
@@ -170,8 +176,8 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t &ptr,
 		if (current_level_ < min_depth_) {
 		  min_depth_=current_level_;
 		}
-    ptr.Reset(new Node_t());
-    ptr->Init(pivot_info->box_,
+    (*ptr).Reset(new Node_t());
+    (*ptr)->Init(pivot_info->box_,
 			        pivot_info->statistics_,
 			        node_id_,
 			        pivot_info->start_,
@@ -467,13 +473,13 @@ TEMPLATE__
 void TREE__::RecursivePrint(typename TREE__::NodePtr_t ptr) {
   string str;
   if (ptr->IsLeaf()) {
- 	str = ptr->Print(dimension_);
- 	printf("%s\n", str.c_str());
+ 	  str = ptr->Print(dimension_);
+ 	  printf("%s\n", str.c_str());
   } else {
- 	str = ptr->Print(dimension_);
- 	printf("%s\n", str.c_str());
- 	RecursivePrint(ptr->get_left());
- 	RecursivePrint(ptr->get_right());
+ 	  str = ptr->Print(dimension_);
+    printf("%s\n", str.c_str());
+ 	  RecursivePrint(ptr->get_left());
+ 	  RecursivePrint(ptr->get_right());
   }
 }
 

@@ -61,7 +61,7 @@ void HYPERRECTANGLE__::Copy(const HyperRectangle_t &hr,
 TEMPLATE__
 void *HYPERRECTANGLE__::operator new(size_t size) {
 	typename Allocator_t::template Ptr<HyperRectangle_t> temp;
-	temp.Reset(Allocator_t::malloc(size));
+	temp.Reset(Allocator_t::malloc(size) );
   return (void *)temp.get();
 }
 

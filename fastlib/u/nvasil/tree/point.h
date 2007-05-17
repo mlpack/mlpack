@@ -15,12 +15,12 @@ class Point {
 	  this->p_.Reset(Allocator_t::NullValue);
 		this->id_=0;
 	};
-  void *operator new(size_t size) {
+  /*void *operator new(size_t size) {
     return Allocator_t::allocator->AllignedAlloc(size);
   }   	
   void operator delete(void *p) {
   }
-
+  */
 	void Init(int32 dim) {
 	  p_.Reset(Allocator_t::template calloc<Precision_t>(dim, 0));
 	}

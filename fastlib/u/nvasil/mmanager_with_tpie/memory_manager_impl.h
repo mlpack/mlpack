@@ -238,7 +238,7 @@ inline index_t MEMORY_MANAGER__::Align(char *ptr, index_t stride) {
   if (rem != 0) {
     stride_offset = stride - rem;
   }
-  return stride_offset;
+	return stride_offset;
 }
 
 TEMPLATE__
@@ -361,8 +361,9 @@ inline index_t MEMORY_MANAGER__::GetObjectAddress(void *pointer) {
   	       pointer, cache_, cache_+cache_size_);
   }
   index_t oaddress;
+	
   oaddress = CachePageToPage((ptrdiff_t)((char*)pointer - cache_) /page_size_)
-             + (ptrdiff_t)((char*)pointer - cache_) % page_size_;
+            * page_size_ + (ptrdiff_t)((char*)pointer - cache_) % page_size_;
   return oaddress;
 }
 
@@ -498,11 +499,9 @@ inline index_t MEMORY_MANAGER__::GetLastObjectAddress(char *ptr) {
 }
 
 TEMPLATE__
-template <typename T>
-index_t MEMORY_MANAGER__::Alloc(index_t size=1) {
+index_t MEMORY_MANAGER__::AlignedAlloc(index_t size) {
   size_t stride;
-	stride = strideof(T);
-	size=size*sizeof(T);	
+	stride = StrideOf<double>();	
   // check if it fits in the current page
   if (unlikely(!FitsInPage(size, stride))) {
   	NextPage();
@@ -517,6 +516,29 @@ index_t MEMORY_MANAGER__::Alloc(index_t size=1) {
   current_ptr_ = new_ptr + size;
   current_offset_ = current_offset_ + stride_offset + size;
   return new_offset;
+
+}
+
+TEMPLATE__
+template <typename T>
+index_t MEMORY_MANAGER__::Alloc(index_t size=1) {
+  size_t stride;
+	stride = StrideOf<T>();
+	size=size*sizeof(T);	
+  // check if it fits in the current page
+  if (unlikely(!FitsInPage(size, stride))) {
+  	NextPage();
+  } 
+  if (unlikely(!FitsInPage(size, stride))) {
+		FATAL("The object cannot fit in one block (page) "
+  	      "of memory, increase page_size and try again...\n");
+  }
+  index_t stride_offset = Align(current_ptr_, stride); 
+  char *new_ptr = current_ptr_ + stride_offset;
+	index_t new_offset=current_offset_+ stride_offset;
+  current_ptr_ = new_ptr + size;
+  current_offset_ = current_offset_ + stride_offset + size;
+ 	return new_offset;
 } 
 
 TEMPLATE__
