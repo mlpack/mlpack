@@ -1,0 +1,153 @@
+
+Big big big big big
+
+my paper - parallel algorithms with application...
+
+
+My claims:
+  Generalized N-body Problems have locality
+  Not trivial to parallelize, but their generalization makes parallelization
+     trivial
+
+What I must show:
+ - characterize what dual-tree algorithms are
+ - what are query/reference problems, and what is a pure pairwise map-reduce
+ - first: characterize problems with global results, and go over intrinsic
+ and extrinsic prunes
+
+
+INTRO
+
+  dual tree algorithms are x
+
+
+----------------------------------------------------------------------------
+
+P02 What is a generalized N-body problem?
+
+----------------------------------------------------------------------------
+
+P00 What is a dual tree algorithm?  Why is it useful?
+dep: P02
+
+----------------------------------------------------------------------------
+
+P01 What are we showing?
+dep: P00, P02
+
+We find it is possible to express many dual-tree algorithms in a standard programming model.
+Such a model allows flexible implementations, such that many different expansion patterns, including parallel ones, are allowed.
+Our particular choices are motivated by ongoing yet unpublished work to formalize the characteristics of all generalized $N$-body problems.
+
+----------------------------------------------------------------------------
+
+P03 What is a global reduction and how do we generalize?
+dep: P01
+
+\subsection{Global reductions}
+
+A global reduction computes a single scalar or relatively small vector of results.
+These results are the application of a single commutative and associative operator to all pairs of inputs.
+The simplest form of global reduction can be expressed as a pure recurrence relation, where all subcomputations are entirely independent.
+A notable example is the two-point correlation problem:
+
+$$\TWOPT(X, Y) = \sum{(a, b) \in X \times Y)} I(d(a, b) < r)$$
+
+where $I$ is the indicator function, $d(a, b)$ is a distance metric, and $r$ is a radius, and both $X$ and $Y$ are initially the same data set.
+Suppose then we can partition any set $X$ into two subsets $A_L$ and $A_R$ both of cardinality $\Theta(|X|)$, such as in a $kd$-tree.
+Since $\TWOPT$ is a reduction, we can represent a simple recurrence relation:
+
+% \left{ \begin{array}{lr} \\ \end{array} \right.
+
+\begin{equationaray}
+  \TWOPT(X, Y)
+             &=& 0 \if d^\min(X, Y) \geq r
+  \\
+             &=& |X||Y| \if d^\max(X, Y) \leq r
+  \\
+             &=& \TWOPT(X_L, Y) + \TWOPT(X_R, Y)
+  \\
+             &=& \TWOPT(X, Y_L) + \TWOPT(X, Y_R)
+\end{equationarray}
+
+where $d^\max(X, Y)$ is the maximum distance between any two points in $X$ and $Y$, likewise for $d^\min$.
+Computation of actual the maximum distance is not a trivial problem.
+However, summary statistics allow the constant-time computation of an upper bound for the maximum distance.
+In a $kd$-tree, one suitable summary statistic is the bounding hyper-rectangle for each node:
+
+$d^\max(X, Y) \leq d^\max_{\hrect}(\sigma_{\hrect}(X), \sigma_{\hrect}(Y))$
+
+Here we introduce the $\sigma$ meta-function, which is a summary statistic.
+The $\sigma_{\hrect}$ is a statistic function which is used by virtually all dual-tree problems using $kd$-tree.
+Two-point correlation additionally uses the cardinality statistic ($|X|$).
+Series-expansion algorithms may require the mean, variance, or other moment functions of the data.
+
+From this logic, we can generalize the remainder of the recurrence relation for simple global reduction problems.
+We propose that problems of the form:
+
+\begin{equation}
+  \gamma(X, Y) = \oplus_{(a, b) \in X x Y} f(a,b)
+\end{equation}
+
+where $\oplus$ is commutative and associative, can often be expressed as:
+
+\begin{equationaray}
+  \gamma(X, Y)
+             &=& \delta(\sigma(X), \sigma(Y)) \if C(\sigma(X), \sigma(Y))
+  \\
+             &=& \gamma(X_L, Y) \oplus_\gamma \gamma(X_R, Y)
+  \\
+             &=& \gamma(X, B_L) \oplus_\gamma \gamma(X, B_R)
+\label{eqn:global_intrinsic}
+\end{equationarray}
+
+We then define a formal model for simple global reduction problems, in terms of the following operations:
+
+\begin{itemize}
+\item $\sigma(X)$ - Summary statistics over.
+\item $\gamma(X, Y)$ - The result of a global reduction.
+\item $\delta(\sigma(X), \sigma(Y))$ - The estimated contribution of a sub-computation using only summary statistics.
+\item $C(\sigma(X), \sigma(Y))$ - An indicator if a prune is possible.
+\item $\gamma_1 \oplus_\gamma \gamma_2$ - The operator to merge two global results.
+\end{itemize}
+
+Theoretically, the base case $|X| = |Y| = 1$ must be detected by the $C$ function and computed by $\delta$ function.
+To reduce overhead, small subsets are computed exhaustively; thus, in practice, the model contains .
+
+
+----------------------------------------------------------------------------
+
+P04 What is a query-reference problem?
+dep: P01
+
+A query-reference problem computes a result independently for each point in a query set.
+Although each query is independent, speedup is achieved by pruning for {\it an entire set} of reference points for a subset of the query set.
+Distinct .
+
+
+----------------------------------------------------------------------------
+
+P05 Are we better than mapreduce?
+
+----------------------------------------------------------------------------
+
+
+
+
+Ongoing unpublished research attempts to
+characterize all generalized N-body problems with rigorous mathematical
+formality; however, such rigorous formalization is outside the scope of this
+paper.  Here, we postulate that all dual-tree algorithms fall into one or
+both of two categories: a single scalar or vector result summarizing all
+pairs of inputs, or an independent result for each query point computed
+against the entire reference set.
+
+The former category can be generalized by a few custom functions that are
+unique to the problem at hand, with many possible implementations.
+
+
+
+
+
+
+
