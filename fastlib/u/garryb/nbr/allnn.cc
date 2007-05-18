@@ -22,7 +22,6 @@ class Allnn {
    public:
     /** The dimensionality of the data sets. */
     index_t dim;
-    double max_dist;
 
     OT_DEF(Param) {
       OT_MY_OBJECT(dim);
@@ -35,7 +34,6 @@ class Allnn {
     void Init(datanode *datanode, const Matrix& q_matrix,
         const Matrix& r_matrix) {
       dim = q_matrix.n_rows();
-      max_dist = 1.0e8;
     }
   };
 
@@ -45,8 +43,8 @@ class Allnn {
   typedef BlankStat QStat;
   typedef BlankStat RStat;
 
-  typedef SpNode<Bound, RStat> RNode;
-  typedef SpNode<Bound, QStat> QNode;
+  typedef SpNode<Bound, BlankStat> RNode;
+  typedef SpNode<Bound, BlankStat> QNode;
 
   typedef BlankQPostponed QPostponed;
   typedef BlankDelta Delta;
@@ -68,7 +66,7 @@ class Allnn {
     void Init(const Param& param,
         const Vector& q_point, const QPointInfo& q_info,
         const RNode& r_root) {
-      distance_sq = param.max_dist;
+      distance_sq = DBL_MAX;
       neighbor_i = -1;
     }
 
