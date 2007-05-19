@@ -1,85 +1,115 @@
-
-
-#ifdef GRAVEYARD
-
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
-----------------------------------------------------------------------------
-
-class RandomAccessFile {
- private:
-  int fd_;
-
- public:
-  void Init(const char *fname);
-
-  void Read(char *buffer, off_t pos, size_t len);
-  void Write(const char *buffer, off_t pos, size_t len);
+void SmallCache::Init(BlockDevice *inner_in, BlockActionHandler *handler_in) {
+  BlockDeviceWrapper::Init(inner_in);
+  metadata_.Init(inner_in->n_blocks);
+  handler_ = handler_in;
 }
 
-void RandomAccessFile::Init(const char *fname) {
-  fd_ = open(fname, O_RDWR|OCREAT|O_TRUNC, 0666);
-  if (fd_ <= 0) FATAL("Could not open file '%s'.", fname):
+char *SmallCache::StartRead(blockid_t blockid) {
+  Lock();
+
+  Metadata *metadata = GetBlock_(blockid);
+  metadata->lock_count++;
+  Unlock();
+
+  return metadata->data;
 }
 
-void RandomAccessFile::Write(const char *buffer, off_t pos, size_t len) {
-  off_t rv;
+char *SmallCache::StartWrite(blockid_t blockid) {
+  Lock();
 
-  rv = lseek(fd_, pos, SEEK_SET);
+  Metadata *metadata = GetBlock_(blockid);
+  metadata->lock_count++;
+  metadata->is_dirty = 1;
+  Unlock();
 
-  assert(rv >= 0);
+  return metadata->data;
+}
 
-  for (;;) {
-    ssize_t written = write(fd_, buffer, len);
+void SmallCache::StopRead(blockid_t blockid) {
+  Lock();
+  Metadata *metadata = GetBlock_(blockid);
+  --metadata->lock_count;
+  Unlock();
+}
 
-    len -= written;
+void SmallCache::StopWrite(blockid_t blockid) {
+  StopRead(blockid);
+}
 
-    if (len == 0) {
-      break;
+void SmallCache::PerformCacheMiss_(blockid_t blockid) {
+  char *data;
+  Metadata *metadata = &metadata_[blockid];
+
+  data = mem::Alloc<char>(n_block_bytes());
+  if (mode_ == BlockDevice::READ || mode_ == BlockDevice::MODIFY) {
+    inner_->Read(blockid, data);
+    handler_->BlockThaw(n_block_bytes_, data);
+  } else {
+    handler_->BlockInit(n_block_bytes_, data);
+  }
+  metadata->data = data;
+}
+
+void SmallCache::Writeback_(blockid_block, offset_t begin, offset_t end) {
+  if (begin != end) {
+    Metadata *metadata = metadata_[blockid];
+    char *data = metadata->data;
+    
+    if (data) {
+      size_t n_bytes = end - begin;
+      char *buf = data + begin;
+      
+      if (unlikely(metadata->lock_count)) {
+        FATAL("Cannot flush a range that is currently in use.");
+      }
+      
+      handler_->BlockRefreeze(n_bytes, buf, buf);
+      inner_->Write(block, begin, end, buf);
+      handler_->BlockThaw(n_bytes, buf);
     }
-
-    DEBUG_ASSERT_MSG(written > 0, "error writing %lu bytes", len);
-
-    buffer += written;
   }
 }
 
-void RandomAccessFile::Read(char *buffer, off_t pos, size_t len) {
-  off_t rv;
-
-  rv = lseek(fd_, pos, SEEK_SET);
-
-  assert(rv >= 0);
-
-  for (;;) {
-    ssize_t amount_read = read(fd_, buffer, len);
-
-    len -= amount_read;
-
-    if (len == 0) {
-      break;
+void SmallCache::Flush(blockid_t begin_block, offset_t begin_offset,
+    blockid_t last_block, offset_t end_offset) {
+  DEBUG_ASSERT(mode_ != BlockDevice::READ);
+  
+  if (unlikely(mode_ == BlockDevice::MODIFY || mode_ == BlockDevice::CREATE)) {
+    if (begin_block == last_block) {
+      Writeback_(begin_block, begin_offset, end_offset);
+    } else {
+      Writeback_(begin_block, begin_offset, n_block_bytes_ - begin_offest);
+      for (blockid_t i = begin_block + 1; i < last_block - 1; i++) {
+        Writeback_(i, 0, n_block_bytes_);
+      }
+      Writeback_(last_block, 0, end_offset);
     }
-
-    if (amount_read <= 0) {
-      assert(amount_read == 0);
-      /* end-of-file, fill with zeros */
-      memset(buffer, 0, len);
-      break;
-    }
-
-    buffer += amount_read;
   }
 }
 
-
-void DiskBlockDevice::Read(blockid_t blockid, char *data) {
-  copy code from blockio to handle incomplete buffers
+void SmallCache::Read(blockid_t block,
+    offset_t begin, offset_t end, char *buf) {
+  const char *src_buffer = StartRead(blockid) + begin;
+  size_t n_bytes = end - begin;
+  mem::CopyBytes(buf, src_buffer, n_bytes);
+  handler_->BlockRefreeze(n_bytes, src_buffer, buf);
+  StopRead(blockid);
 }
 
-void DiskBlockDevice::Write(blockid_t blockid, const char *data) {
-  copy code from blockio to handle incomplete buffers
+void SmallCache::Write(blockid_t block,
+    offset_t begin, offset_t end, const char *buf) {
+  char *dest_buffer = StartWrite(blockid) + begin;
+  size_t n_bytes = end - begin;
+  mem::CopyBytes(dest_buffer, buf, n_bytes);
+  handler_->BlockThaw(n_bytes, dest_buffer);
+  StopWrite(blockid);
 }
 
-#endif
+SmallCache::~SmallCache() {
+  for (index_t i = 0; i < metadata_.size(); i++) {
+    Metadata *metadata = &metadata_[i];
+    mem::Free(metadata->data);
+    DEBUG_ASSERT(metadata_[i].lock_count == 0);
+    DEBUG_POISON_PTR(metadata->data);
+  }
+}

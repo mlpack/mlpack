@@ -8,9 +8,9 @@ class BlockActionHandler {
  public:
   virtual ~BlockActionHandler() {}
   
-  virtual void BlockInit(char *block) = 0;
-  virtual void BlockRefreeze(char *block) = 0;
-  virtual void BlockThaw(char *block) = 0;
+  virtual void BlockInit(size_t bytes, char *block) = 0;
+  virtual void BlockRefreeze(size_t bytes, const char *old_location, char *block) = 0;
+  virtual void BlockThaw(size_t bytes, char *block) = 0;
 };
 
 class BlockDevice {
@@ -19,6 +19,12 @@ class BlockDevice {
  public:
   typedef uint32 blockid_t;
   typedef uint32 offset_t;
+  enum mode_t {
+    READ,
+    MODIFY,
+    CREATE,
+    TEMP
+  };
 
  protected:
   blockid_t n_blocks_;
@@ -40,9 +46,17 @@ class BlockDevice {
     return uint64(n_blocks_) * n_block_bytes_;
   }
 
-  // todo: rethink the init function
-  virtual void Read(blockid_t blockid, char *data) = 0;
-  virtual void Write(blockid_t blockid, const char *data) = 0;
+  void Read(blockid_t blockid, char *data) {
+    Read(blockid, 0, n_block_bytes_, data);
+  }
+  void Write(blockid_t blockid, const char *data) {
+    Write(blockid, 0, n_block_bytes_, data);
+  }
+  
+  virtual void Read(blockid_t blockid,
+      offset_t begin, offset_t end, char *data) = 0;
+  virtual void Write(blockid_t blockid,
+      offset_t begin, offset_t end, const char *data) = 0;
   virtual blockid_t AllocBlock() = 0;
 
  public:
@@ -50,23 +64,19 @@ class BlockDevice {
   void Unlock() { mutex_.Unlock(); }
 };
 
-class BlankBlockDevice : public BlockDevice {
+class NullBlockDevice : public BlockDevice {
   FORBID_COPY(BlankBlockDevice);
-  
- private:
-  BlockActionHandler *handler_;
-  
  public:
   // todo: rethink the init function
-  void Init(BlockActionHandler *handler_in) {
-    handler_ = handler_in;
-  }
+  void Init() {}
   
-  virtual void Read(blockid_t blockid, char *data) {
-    handler_->BlockInit(data);
+  virtual void Read(blockid_t blockid,
+      offset_t begin, offset_t end, char *data) {
+    abort();
   }
-  virtual void Write(blockid_t blockid, const char *data) {
-    FATAL("Writebacks to a BlankBlockDevice are invalid.");
+  virtual void Write(blockid_t blockid,
+      offset_t begin, offset_t end, const char *data) {
+    // ignore the data
   }
   virtual blockid_t AllocBlock() {
     blockid_t blockid = n_blocks_;
@@ -88,38 +98,51 @@ class BlockDeviceWrapper : public BlockDevice {
     n_block_bytes_ = inner_->n_block_bytes();
   }
   
-  virtual void Read(blockid_t blockid, char *data) {
-    inner_->Read(blockid, data);
+  virtual void Read(blockid_t blockid,
+      offset_t begin, offset_t end, char *data) {
+    inner_->Read(blockid, begin, end, data);
   }
-  virtual void Write(blockid_t blockid, const char *data) {
-    inner_->Write(blockid, data);
+  virtual void Write(blockid_t blockid,
+      offset_t begin, offset_t end, const char *data) {
+    inner_->Write(blockid, begin, end, data);
   }
   virtual blockid_t AllocBlock() {
     blockid_t blockid = inner_->AllocBlock();
+    DEBUG_ASSERT(blockid >= n_blocks_);
     n_blocks_ = blockid + 1;
     return blockid;
   }
 };
 
-/*
+class RandomAccessFile {
+ private:
+  int fd_;
+
+ public:
+  void Init(const char *fname, BlockDevice::mode_t mode);
+
+  void Read(off_t pos, size_t len, char *buffer);
+  void Write(off_t pos, size_t len, const char *buffer);
+  
+  off_t FindSize() const;
+}
+
 class DiskBlockDevice : public BlockDevice {
   FORBID_COPY(DiskBlockDevice);
   
  private:
-  int fd_;
+  RandomAccessFile file_;
   
  public:
-  void Read(blockid_t blockid, char *data);
-  void Write(blockid_t blockid, const char *data);
+  void Init(const char *fname, mode_t mode, offset_t block_size = 131072);
+
+  void Read(blockid_t blockid, offset_t begin, offset_t end,
+     char *data);
+
+  void Write(blockid_t blockid, offset_t begin, offset_t end,
+     const char *data);
+
+  blockid_t AllocBlock();
 };
-
-void DiskBlockDevice::Read(blockid_t blockid, char *data) {
-  copy code from blockio to handle incomplete buffers
-}
-
-void DiskBlockDevice::Write(blockid_t blockid, const char *data) {
-  copy code from blockio to handle incomplete buffers
-}
-*/
 
 #endif
