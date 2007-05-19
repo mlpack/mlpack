@@ -147,7 +147,17 @@ Although we briefly mention strategies for massive parallelization, this paper f
 
 \section{Dual-Tree Algorithm Framework}
 
-Introduction goes here.  WALDO.
+Here, we characterize most dual tree algorithms as belonging to one of two categories, and show how each category can be generalized.
+
+A global reduction computes a single scalar or a vector of results that is constant with the number of data points.
+This type of problem is typically characterized by a single commutative, associative operator applied to pairs of inputs.
+Such problems include 2-point correlation, kernel-based data likelihood estimates, and the closest-pair problem.
+
+On the other hand, a query-reference problem requires a result for each point in a query set.
+For each point in the query set, execute a commutative, associative operator over every element in a reference set.
+These problems include such fundamental problems as all-nearest-neighbors, kernel density estimation, the testing phase of most nonparametric classification methods, matrix-vector multiplication, and many more.
+
+In the next subsections, we formalize a mathematical framework for solving both of these types of problems, and briefly explain how these two types of problems can be unified.
 
 \subsection{Global Reductions}
 
@@ -270,9 +280,10 @@ These problems take on the general form:
 
 Although each query is independent, speedup can still be achieved by looking at queries {\it en masse}.
 It may be possible to show that one set of references is irrelevant to an entire set of queries within a computation, and thus prune the subproblem.
+
 We define $\rho(q, R)$ as each element of the map, i.e. $\rho(q, R) = \bigoplus_{r \in R} f(q, r)$.
 Next, we decompose $f$ into two separate functions $f^1$ and $f^2$ such that $f^2(q, f^1(q, r)) = f(q, r)$.
-We make this decomposition to allow us to take advantage of distributivity if $f(\cdot, \cdot)$ is distributive over $\bigoplus$.
+We make this decomposition to allow us to take advantage of distributivity for problems where $f(\cdot, \cdot)$ distributes over $\bigoplus$.
 In the dual-tree algorithm, $\rho$ can be computed as follows:
 
 \begin{equation}
@@ -320,7 +331,7 @@ In the dual-tree algorithm, $\rho$ can be computed as follows:
  \end{array}
 \end{equation}
 
-under the model:
+under the model\footnote{In practice for Equation \ref{eqn:mu}, rules 1 and 3 are most accurate but only used in depth-first expansions, rule 5 is used only when no other information is available, and rule 4 is used primarily in breadth-first expansions.}:
 \begin{itemize}
   \item $f^1(\sigma(Q), \sigma(R))$ - A pairwise function to allow for distributivity only valid when pruning is possible, identical to $f^1(\cdot, \cdot)$ when $|Q| = |R| = 1$.
   If $f(\cdot, \cdot)$ distributes over $\bigoplus$, then $f^1(\sigma(R))$ is often the same as $\sigma(R)$.
@@ -331,12 +342,14 @@ under the model:
   Formally, succinct information bounding the set of results $\union_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
   For kernel density estimation, this is the pair $(\min_{q \in Q} \sum_{r \in R} K(q, r), \max_{q \in Q} \sum_{r \in R} K(q, r))$.
   \item $\union^{\bigoplus}$ - An operator to relax the bounds for a query region.
-  Given $\mu(Q_L, R)$ and $\mu(Q_R, R)$, we can create more pessimistic pruning information for the worst effect of $R$ on any of the query points $Q$.
+  Given $\mu(Q_L, R)$ and $\mu(Q_R, R)$, we can create more pessimistic pruning information for the worst-case effect of $R$ on any of the query points $Q$.
   In many algorithms, this operator takes the minimum of some lower bound and maximum of some upper bound.
   \item $\bigoplus^{\union}$ - An operator that pessimistically merges the contributions of two disjoint reference subsets on the same query subset.
   For kernel summation problems, this sums the lower and upper bounds.
-  \item $C$ - A Boolean function indicating if a prune is possible, using information from $\mu$ about other computations done so far.
-
+  \item $C$ - A Boolean function indicating if a prune is possible, using information from $\mu$.
+  The operators applied in order to compute $\mu$ depend on the expansion pattern and the sequence of node pairs that have already been visited.
+  It is entirely dependent on the type of problem being solved which expansion pattern, whether it be depth-first or breadth-first, favors the most pruning.
+ For some problems such as exact kernel density estimation, $C$ does not use $\mu$ at all, and any expansion pattern can be used.
 \end{itemize}
 
 It is necessary to clarify in Equation \ref{eqn:pi} the ``if defined'' comment for the second rule.
@@ -348,6 +361,34 @@ The recurrence relationship only defines a base case if the prune check $C$ is t
 
 In fact, evaluating $\rho$ in Equations \ref{eqn:rho} and \ref{eqn:pi} as such is identical to the single-tree algorithm -- recursive subdivision along the reference tree until a prune is possible.
 However, dual-tree algorithms may prune multiple queries at once, prompting the existence of the second rule in Equation \ref{eqn:pi}.
+
+\subsection{Combining the Two}
+
+Query-reference problems, compared to global-reductions, are far more complicated.
+Nonetheless, it is possible to support both types of algorithms with a united framework.
+For both types of problems, we will hereby refer to one of the two trees as a query tree, and the other as a reference, regardless of whether th is is accurate for the problem.
+Although this label is inaccurate, it assists in unifying the two types of problems.
+
+For instance, query-reference problems can compute a global result $\gamma$, although this global result may simply be null, with null operators.
+Similarly, global reduce problems may compute a null per-query result $\rho$.
+
+Another issue to resolve is the overloaded operator $\delta$.
+For global reductions, $\delta(\sigma(Q), \sigma(R))$ is the contribution to the total result; in query-reference problems, $\delta(\sigma(Q), \sigma(R))$ summarizes the worst-case effects of a set of reference points on the set of query points.
+These definitions are in fact quite related, especially if we apply the query-reference nomenclature to the inputs of the global reduce problem.
+
+The complete algorithmic model we use in our C++ implementation contains all the elements from both of the discussed models, with a few additions to allow more efficient base case computation.
+Since each recurrence is over-specified, there are a multitude of ways that these can be executed.
+Our goal in implementation is to choose the execution pattern that maximizes performance for a given problem and for a given set of resources.
+
+\section{Example Algorithms in the Framework}
+
+\section{Recursion Patterns}
+
+\section{Parallel Execution}
+
+We have already shown the general character of 
+
+
 
 ----------------------------------------------------------------------------
 
