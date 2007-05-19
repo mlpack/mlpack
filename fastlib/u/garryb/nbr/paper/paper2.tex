@@ -1,0 +1,383 @@
+
+%
+%  $Description: Author guidelines and sample document in LaTeX 2.09$ 
+%
+%  $Author: ienne $
+%  $Date: 1995/09/15 15:20:59 $
+%  $Revision: 1.4 $
+%
+
+\documentclass[times, 10pt,twocolumn]{article} 
+\usepackage{icdm07}
+\usepackage{times}
+\usepackage{amsmath}
+
+\newcommand{\union}{\cup}
+\newcommand{\intersect}{\cap}
+\DeclareMathOperator*{\map}{map}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator{\TWOPT}{TWOPOINT}
+\DeclareMathOperator{\cardinality}{cardinality}
+\DeclareMathOperator{\hrect}{hrect}
+\DeclareMathOperator{\IF}{if}
+\DeclareMathOperator{\ATDISCRETION}{}
+\newcommand{\dist}{d}
+
+%\documentstyle[times,art10,twocolumn,latex8]{article}
+
+%------------------------------------------------------------------------- 
+% take the % away on next line to produce the final camera-ready version 
+\pagestyle{empty}
+
+%------------------------------------------------------------------------- 
+\begin{document}
+
+\title{Framework for Fast Parallel Generalized N-Body Methods}
+
+\author{Garrett F. Boyer, Ryan N. Riegel, Alexander G. Gray
+\\ Georgia Institute of Technology
+\\ Computational Science and Engineering
+\\ 801 Atlantic Drive, Atlanta, GA
+\\ garryb@cc.gatech.edu
+\\
+% For a paper whose authors are all at the same institution, 
+% omit the following lines up until the closing ``}''.
+% Additional authors and addresses can be added with ``\and'', 
+% just like the second author.
+\and
+\\ Robert Nichol
+\\ University of Portsmouth
+\\ bob.nichol@port.ac.uk
+}
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+
+Comments to myself:
+\footnote{Use ``element'' instead of ``point''}
+\footnote{Make some definitions}
+
+(two different unmerged abstracts follow)
+The multi-tree approach to accelerating data mining methods has proven successful at making practical a large class of fundamental methods previously considered computationally intractable for massive datasets in many cases, including kernel density estimation, all-nearest-neighbor search, spatial statistics, and many others.
+In this paper we pursue further acceleration by parallelizing this class of efficient serial algorithms by first developing a framework for characterizing these algorithms, and demonstrating the effectiveness of a parallel implementation of the framework.
+We present how these algorithms yield an elegant strategy for parallelizing the workload and demonstrate their added efficiency on massive synthetic and real datasets.
+We consider both shared-memory and cluster implementations.
+
+We find it is possible to express many dual-tree algorithms in a standard programming model.
+Such a model allows flexible implementations, such that many different expansion patterns, including parallel ones, are allowed.
+Our particular choices are motivated by ongoing yet unpublished work to formalize the characteristics of all generalized $N$-body problems.
+\end{abstract}
+
+\section{Introduction}
+
+I will rewrite this intro -- this is the old one.
+
+Parallelism is an approach to speeding up algorithms that will become one of the ultimate sources of speedup.
+Already, this approach has made it in laptop computers and gaming consoles, and work is being done to create chips with as many as 80 cores.
+In this paper we will look at ways to exploit this resource for both a single computer and for clusters of computers.
+
+{\bf Fast multi-tree algorithms.}
+We here denote a class of algorithms, called \emph{dual-tree} or \emph{multi-tree} algorithms.
+These which compute results on two or more hierarchial spatial decomposition trees such as $kd$-trees or ball trees.
+The class of problems these algorithms solve is referred to as the \emph{generalized $N$-body problems} because of their close resemblance to the classic physical $N$-body problem\cite{gray_nbody}.
+Currently, multi-tree algorithms offer the fastest practical serial algorithms for many statistical and physical problems, such as kernel density estimation, $n$-point correlation, nearest neighbors, Gaussian process and local polynomial regression, and several others.\
+% Add citations
+These multi-tree algorithms have so far not been parallelized, although as we shall show, they expose great parallelization potential.
+
+{\bf Parallel trees.} There is no shortage of research on the parallelization of spatial tree
+algorithms.
+In fact, the classical physical $N$-body algorithms, the Barnes-Hut\cite{barnes_hut} and Fast Multipole Method\cite{greengard_fmm}, have had massively parallel implementations for well over a decaDe\cite{singh_loadbal, grama_para_bh, amor_para_bh}.
+
+In this paper, we present dual-tree algorithms for three different problems, each of which demonstrates variation in mechanical properties of multi-tree methods.
+The analysis of these examples yields strategies that may be reused across the board for multi-tree algorithms.
+Although we briefly mention strategies for massive parallelization, this paper focuses on the core potential for parallelization of these multi-tree algorithms rather than the implementations themselves.
+
+%TO MENTION:
+%
+%- Constant-time operators
+%
+%
+%Big big big big big
+%
+%my paper - parallel algorithms with application...
+%
+%
+%My claims:
+%  Generalized N-body Problems have locality
+%  Not trivial to parallelize, but their generalization makes parallelization
+%     trivial
+%
+%What I must show:
+% - characterize what dual-tree algorithms are
+% - what are query/reference problems, and what is a pure pairwise map-reduce
+% - first: characterize problems with global results, and go over intrinsic
+% and extrinsic prunes
+%
+%
+%INTRO
+%
+%  dual tree algorithms are x
+
+
+%----------------------------------------------------------------------------
+%
+%P02 What is a generalized N-body problem?
+%
+%----------------------------------------------------------------------------
+%
+%P00 What is a dual tree algorithm?  Why is it useful?
+%dep: P02
+%
+%----------------------------------------------------------------------------
+%
+%P01 What are we showing?
+%dep: P00, P02
+%
+%We find it is possible to express many dual-tree algorithms in a standard programming model.
+%Such a model allows flexible implementations, such that many different expansion patterns, including parallel ones, are allowed.
+%Our particular choices are motivated by ongoing yet unpublished work to formalize the characteristics of all generalized $N$-body problems.
+%
+%----------------------------------------------------------------------------
+%
+%P03 What is a global reduction and how do we generalize?
+%dep: P01
+
+\section{Dual-Tree Algorithm Framework}
+
+Introduction goes here.  WALDO.
+
+\subsection{Global Reductions}
+
+A global reduce computes a single scalar or relatively small vector of results, which are the application of an aggregate commutative and associative operator to all pairs of inputs.
+The simplest form of global reduce can be expressed as a recurrence relation, where all subcomputations are entirely independent.
+A notable example is the two-point correlation problem:
+\begin{equation*}
+  \TWOPT(X, r) = \sum_{(x, y) \in X \times X} I(d(x, y) < r)
+\end{equation*}
+
+\noindent where $I$ is the indicator function, $r$ is a constant radius, and $d(x, y)$ is a distance metric.
+Suppose then we can partition any set $X$ into two subsets $X_L$ and $X_R$ both of cardinality $\Theta(|X|)$, such as in a balanced $kd$-tree.
+A simple yet over-specified recurrence relation exists for $\TWOPT$, if we allow ourselves to think of $\TWOPT$ as finding the correlation between two different data sets (omitting the radius):
+\begin{equation}
+ \begin{array}{ll}
+  \lefteqn{\TWOPT(X, Y) =}
+  \\
+  & \left\{
+    \begin{array}{lr}
+      0 & \IF d^{\min}(X, Y) \geq r
+      \\
+      |X||Y| & \IF d^{\max}(X, Y) \leq r
+      \vspace{0.07in}
+      \\
+      \multicolumn{2}{l}{\TWOPT(X_L, Y) + \TWOPT(X_R, Y)}
+      \\
+      \multicolumn{2}{c}{\scriptstyle{\mbox{\small{or}}}}
+      \\
+      \multicolumn{2}{l}{\TWOPT(X, Y_L) + \TWOPT(X, Y_R)}
+    \end{array}
+  \right.
+ \end{array}
+\end{equation}
+
+\noindent where $d^{\max}(X, Y)$ is the maximum distance between any two points in $X$ and $Y$, likewise for $d^{\min}$.
+Unfortunately, direct computation of actual the maximum distance not practical.
+Summary statistics to allow the constant-time\footnote{with respect to number of points, not dimensions} computation of an upper bound for the actual maximum distance.
+In a $kd$-tree, one suitable summary statistic is the bounding hyper-rectangle for each node:
+\begin{equation}
+d^{\max}(X, Y) \leq d^{\max}_{\hrect}(\sigma_{\hrect}(X), \sigma_{\hrect}(Y))
+\end{equation}
+
+\noindent The meta-function $\sigma$ corresponds to any relevant summary statistic, which can vary from problem to problem.
+In addition to the commonplace statistic $\sigma_{\hrect}$, two-point correlation additionally uses the cardinality statistic $\sigma_{\cardinality}(X) = |X|$.
+Algorithms that utilize multipole expansions may require the mean, variance, or other moment statistics.
+
+We can now generalize the entire recurrence relation for simple global reduce problems.
+We claim that problems of the form:
+\begin{equation}
+  \gamma(X, Y) = \bigoplus_{(x, y) \in X \times Y} f(a,b)
+\end{equation}
+
+\noindent where $\bigoplus$ is any commutative and associative operator, can be expressed as:
+\begin{equation}
+\label{eqn:global_intrinsic}
+ \begin{array}{ll}
+  \lefteqn{\gamma(X, Y) =}
+  \\
+  & \left\{
+    \begin{array}{lr}
+      \delta \left( \sigma(X), \sigma(Y) \right) & \IF C(\sigma(X), \sigma(Y))
+      \\
+      \gamma(X_L, Y) \oplus \gamma(X_R, Y) & \mbox{if convenient}
+      \\
+      \gamma(X, Y_L) \oplus  \gamma(X, Y_R) & \mbox{if convenient}
+    \end{array}
+  \right.
+ \end{array}
+\end{equation}
+
+\noindent under the following model:
+\begin{itemize}
+  \item $\gamma(X, Y)$ - The result of the global reduce, on the entire problem or on a subproblem.
+  \item $\sigma(X)$ - Summary statistics over a range of data.
+  \item $\delta(\sigma(X), \sigma(Y))$ - The estimated contribution of a sub-computation using only summary statistics.
+  \item $C(\sigma(X), \sigma(Y))$ - An indicator if a prune is possible, and that the subproblem $\gamma(X, Y)$ can be substituted by $\delta(\sigma(X), \sigma(Y))$.
+  \item $\bigoplus$ - The reduce operator.
+\end{itemize}
+
+\noindent We also note that in most cases $\sigma$ is in the form:
+\begin{equation}
+  \sigma(X) = \bigoplus^{\sigma}_{x \in X} f^{\sigma}(x)
+\end{equation}
+
+\noindent for some commutative, associative $\bigoplus^{\sigma}$, and can be calculated efficiently in a bottom-up pass while building a $kd$-tree:
+\begin{equation}
+\label{eqn:sigma}
+ \begin{array}{ll}
+  \lefteqn{\sigma(X) =}
+  \\
+  & \left\{
+    \begin{array}{lr}
+      f^{\sigma}(X) & \IF |X| = 1
+      \\
+      \sigma(X_L) \oplus^{\sigma} \sigma(X_R) & \mbox{otherwise}
+    \end{array}
+  \right.
+ \end{array}
+\end{equation}
+
+\noindent The previous functions define the execution of some generalized $N$-body problems in a form that is easily implemented as a dual-tree algorithm\footnote{In practice, very small subsets may be computed exhaustively to reduce the overhead of treating individual points as entire subsets.}.
+
+There is significant freedom in how to compute the thse recurrence relationships.
+The $\gamma$ recurrence permits many types of expansion, such as depth-first, breadth-first, and importantly, parallel expansions.
+Thus, by separating the computation of the recurrence relationship from the problem-specific details, parallelization of all these algorithms requires only the up-front cost of a single parallel execution mechanism.
+
+The model shown so far is limited to very simple dual-tree algorithms.
+First, we later discuss additions to allow for efficient computation of query-reference problems such as all-nearest-neighbors and density estimation.
+Additionally, many algorithms, such as nearest-neighbor, classification problems, and approximate density estimates, require information about previous pairwise computation in order to determine whether pruning is possible.
+Nonetheless, this simple model leads to effective parallelization of problems such as two-point correlation\footnote{WALDO list more}.
+
+\subsection{Query-Reference Problems}
+
+% Depends: Global Reductions
+
+A query-reference problem considers computes a result independently for each point in a query set.
+These problems take on the general form:
+ 
+  $$\map_{q \in Q} \bigoplus_{r \in R} f(q, r)$$
+
+Although each query is independent, speedup can still be achieved by looking at queries {\it en masse}.
+It may be possible to show that one set of references is irrelevant to an entire set of queries within a computation, and thus prune the subproblem.
+We define $\rho(q, R)$ as each element of the map, i.e. $\rho(q, R) = \bigoplus_{r \in R} f(q, r)$.
+Next, we decompose $f$ into two separate functions $f^1$ and $f^2$ such that $f^2(q, f^1(q, r)) = f(q, r)$.
+We make this decomposition to allow us to take advantage of distributivity if $f(\cdot, \cdot)$ is distributive over $\bigoplus$.
+In the dual-tree algorithm, $\rho$ can be computed as follows:
+
+\begin{equation}
+  \label{eqn:rho}
+  \rho(q, R) = f^{2}(q, \bigoplus^{1}_{r \in R} f^{1}(q, R)) = f^{2}(q, \pi(\{q\}, R))
+  \end{equation}
+  
+\noindent where $\pi$ is the {\it postponed information} from prunes and/or exhaustive computations:
+\begin{equation}
+\label{eqn:pi}
+ \begin{array}{ll}
+  \lefteqn{\pi(Q, R) = f^{2}(q, \bigoplus^{1}_{r \in R} f^{1}(q, R))}
+  \\
+  & \left\{
+    \begin{array}{lr}
+      f^{1}(\sigma(Q), \sigma(R)) & \IF C(\sigma(Q), \sigma(R), \mu(Q))
+      \\
+      \pi(Q^{*}, R) & \mbox{if defined for } Q^{*} \supset Q
+      \\
+      \pi(Q, R_L) \oplus^{1} \pi(Q, R_R) & \mbox{otherwise}
+    \end{array}
+  \right.
+ \end{array}
+\end{equation}
+
+\noindent where the {\it on-line per-query-node pruning information} is defined:
+\begin{equation}
+\label{eqn:mu}
+ \begin{array}{ll}
+  \lefteqn{\mu(Q, R) =}
+  \\
+  & \left\{
+    \begin{array}{lr}
+      f(q, r) & \IF Q = \{q\} \mbox{ and } R = \{r\}
+      \\
+      \delta(\sigma(Q), \sigma(R)) & \mbox{if convenient}
+      \\
+      \mu(Q_L, R) \union^{\bigoplus} \mu(Q_R, R) & \mbox{if convenient}
+      \\
+      \mu(Q, R_L) \oplus^{\union} \mu(Q, R_R) & \mbox{if convenient}
+      \\
+      \mu(Q^{*}, R) & \mbox{otherwise, for } Q^{*} \supset Q
+    \end{array}
+  \right.
+ \end{array}
+\end{equation}
+
+under the model:
+\begin{itemize}
+  \item $f^1(\sigma(Q), \sigma(R))$ - A pairwise function to allow for distributivity only valid when pruning is possible, identical to $f^1(\cdot, \cdot)$ when $|Q| = |R| = 1$.
+  If $f(\cdot, \cdot)$ distributes over $\bigoplus$, then $f^1(\sigma(R))$ is often the same as $\sigma(R)$.
+  Otherwise, it usually corresponds to a value whose effect on the overall problem is indistinguishable from $\forall_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
+  \item $f^2(q, \cdot)$ - A post-processing function that is often an identity of the second argument, but may also be responsible for applying the inner function in the case of distributivity.
+  \item $\bigoplus^{1}$ - A commutative and associative operator that operates on the results of $f^1$ before $f^2$ is applied, simulating the effects of the original $\bigoplus$ as specified in Equation \ref{eqn:rho}.
+  \item $\delta(\sigma(Q), \sigma(R))$ - A function that computes pessimistic bounds on the contribution of all of $R$ to any element of $Q$.
+  Formally, succinct information bounding the set of results $\union_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
+  For kernel density estimation, this is the pair $(\min_{q \in Q} \sum_{r \in R} K(q, r), \max_{q \in Q} \sum_{r \in R} K(q, r))$.
+  \item $\union^{\bigoplus}$ - An operator to relax the bounds for a query region.
+  Given $\mu(Q_L, R)$ and $\mu(Q_R, R)$, we can create more pessimistic pruning information for the worst effect of $R$ on any of the query points $Q$.
+  In many algorithms, this operator takes the minimum of some lower bound and maximum of some upper bound.
+  \item $\bigoplus^{\union}$ - An operator that pessimistically merges the contributions of two disjoint reference subsets on the same query subset.
+  For kernel summation problems, this sums the lower and upper bounds.
+  \item $C$ - A Boolean function indicating if a prune is possible, using information from $\mu$ about other computations done so far.
+
+\end{itemize}
+
+It is necessary to clarify in Equation \ref{eqn:pi} the ``if defined'' comment for the second rule.
+The recurrence relationship only defines a base case if the prune check $C$ is true; thus, $\pi$ is not defined if the second rule is invoked improperly.
+
+{\bf Theorem}\footnote{use LaTeX to do this}: If the prune check $C(\sigma(Q), \sigma(R), \cdot)$ is always true for the base case $|Q| = |R| = 1$, then the recurrence of Equation \ref{eqn:pi} invoked via Equation \ref{eqn:rho} must must be defined even if the second rule is not invoked.
+
+{\bf Proof}: The initial invokation, per Equation \ref{eqn:rho}, begins with $Q$ being the singleton set $\{q\}$.  Further invokations will retain $|Q| = 1$ since $Q$ is not modified by the third rule.  However, invoking on $R_L$ and $R_R$ always decreases the reference set by at least one.  Therefore, $|R| = 1$ eventually, and since $|Q| = 1$ always, the first rule will eventually define the result.
+
+In fact, evaluating $\rho$ in Equations \ref{eqn:rho} and \ref{eqn:pi} as such is identical to the single-tree algorithm -- recursive subdivision along the reference tree until a prune is possible.
+However, dual-tree algorithms may prune multiple queries at once, prompting the existence of the second rule in Equation \ref{eqn:pi}.
+
+----------------------------------------------------------------------------
+
+P05 Are we better than mapreduce?
+
+----------------------------------------------------------------------------
+
+
+
+
+Ongoing unpublished research attempts to
+characterize all generalized N-body problems with rigorous mathematical
+formality; however, such rigorous formalization is outside the scope of this
+paper.  Here, we postulate that all dual-tree algorithms fall into one or
+both of two categories: a single scalar or vector result summarizing all
+pairs of inputs, or an independent result for each query point computed
+against the entire reference set.
+
+The former category can be generalized by a few custom functions that are
+unique to the problem at hand, with many possible implementations.
+
+
+
+
+
+
+
+\nocite{ex1,ex2}
+\bibliographystyle{latex8}
+\bibliography{icdm07}
+
+\end{document}
+
