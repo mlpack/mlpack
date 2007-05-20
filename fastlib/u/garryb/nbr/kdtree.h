@@ -44,12 +44,12 @@ class KdTreeMidpointBuilder {
       const Param* param_in_,
       CacheArray<Vector> *points_in,
       CacheArray<PointInfo> *point_infos_in,
-      CacheArray<Node> *nodes_inout) {
+      CacheArray<Node> *nodes_out) {
     param_ = param_in_;
 
     points_.Init(points_in, BlockDevice::MODIFY);
     point_infos_.Init(nodes_, BlockDevice::MODIFY);
-    nodes_.Init(nodes_inout_, BlockDevice::CREATE);
+    nodes_.Init(nodes_out_, BlockDevice::CREATE);
     allocator_.Init(&nodes_);
 
     const Vector *first_point = points_.StartRead(points_.begin_index());
