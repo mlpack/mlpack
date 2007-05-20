@@ -16,7 +16,7 @@
  * =====================================================================================
  */
 
-#include "u/nvasil/loki/Typelist.h"
+#include "u/nvasil/loki/NullType.h"
 #include "fastlib/fastlib.h"
 #include "u/nvasil/mmanager/memory_manager.h"
 #include "u/nvasil/mmanager_with_tpie/memory_manager.h"
@@ -37,7 +37,7 @@ class NodeTest {
 	typedef HyperRectangle<TYPELIST, diagnostic> HyperRectangle_t;
   struct  NodeParameters : public TYPELIST {
 	 	typedef HyperRectangle_t    BoundingBox_t;
-	  typedef NullStatistics      NodeCachedStatistics_t;
+	  typedef NullStatistics<Loki::NullType>      NodeCachedStatistics_t;
 	  typedef SimpleDiscriminator PointIdDiscriminator_t;
 	};
 	typedef Node<NodeParameters, diagnostic> Node_t;

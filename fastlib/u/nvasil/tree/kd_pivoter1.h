@@ -38,7 +38,7 @@ class KdPivoter1 {
 			num_of_points_=num_of_points;
 		}	 
 		HyperRectangle_t box_;
-    NullStatistics statistics_;
+    NullStatistics<> statistics_;
 		index_t start_;
 		index_t num_of_points_;
 	}; 
