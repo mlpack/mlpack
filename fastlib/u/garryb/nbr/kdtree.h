@@ -31,48 +31,39 @@ class KdTreeMidpointBuilder {
   
  private:
   const Param* param_;
-  Matrix matrix_;
-  ArrayList<Vector> points_;
-  ArrayList<PointInfo> point_info_;
-  ArrayList<Node> nodes_;
-  ArrayList<index_t> old_from_new_indices_;
+  CacheArray<Vector> points_;
+  CacheArray<PointInfo> point_infos_;
+  CacheArray<Node> nodes_;
+  CacheArrayAllocator allocator_;
   index_t leaf_size_;
   index_t dim_;
   
  public:
-  void Init(const Param* param_in_,
-      const Matrix& matrix_in, ArrayList<PointInfo> point_info_in) {
+  void InitBuild(
+      struct datanode *module,
+      const Param* param_in_,
+      CacheArray<Vector> *points_in,
+      CacheArray<PointInfo> *point_infos_in,
+      CacheArray<Node> *nodes_inout) {
     param_ = param_in_;
-    
-    points_.Init(matrix_in.n_cols());
-    matrix_.Copy(matrix_in);
-    
-    for (index_t i = 0; i < points_.size(); i++) {
-      matrix_.MakeColumnVector(i, &points_[i]);
-    }
-    
-    point_info_.Copy(point_info_in);
-    math::MakeIdentityPermutation(matrix_in.n_cols(), &old_from_new_indices_);
-    
-    nodes_.Init();
-    
-    dim_ = matrix_in.n_rows();
-    
-    // TODO: PARAMETERIZE
-    leaf_size_ = 20;
-  }
-  
-  void Build();
-  
-  ArrayList<Vector>& points() { return points_; }
-  ArrayList<PointInfo>& point_info() { return point_info_; }
-  ArrayList<Node>& nodes() { return nodes_; }
-  ArrayList<int>& old_from_new_indices() { return old_from_new_indices_; }
 
-  const ArrayList<Vector>& points() const { return points_; }
-  const ArrayList<PointInfo>& point_info() const { return point_info_; }
-  const ArrayList<Node>& nodes() const { return nodes_; }
-  const ArrayList<int>& old_from_new_indices() const { return old_from_new_indices_; }
+    points_.Init(points_in, BlockDevice::MODIFY);
+    point_infos_.Init(nodes_, BlockDevice::MODIFY);
+    nodes_.Init(nodes_inout_, BlockDevice::CREATE);
+    allocator_.Init(&nodes_);
+
+    const Vector *first_point = points_.StartRead(points_.begin_index());
+    dim_ = first_point->length();
+    points_.StopRead(points_.begin_index());
+    
+    leaf_size_ = fx_param_int(module, "leaf_size", 20);
+
+    Build_();
+    
+    points_.Flush();
+    point_infos_.Flush();
+    nodes_.Flush();
+  }
   
  private:
   index_t Partition_(
@@ -81,6 +72,7 @@ class KdTreeMidpointBuilder {
       Bound* left_bound, Bound* right_bound);
   void FindBoundingBox_(index_t first, index_t count, Bound *bound);
   void Build_(index_t node_i);
+  void Build_();
 };
 
 template<typename TPointInfo, typename TNode, typename TParam>
@@ -88,7 +80,9 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::FindBoundingBox_(
     index_t first, index_t count, Bound *bound) {
   index_t end = first + count;
   for (index_t i = first; i < end; i++) {
-    *bound |= points_[i];
+    const Vector *v = points_.StartRead(i);
+    *bound |= *v;
+    points_.StopRead(i);
   }
 }
 template<typename TPointInfo, typename TNode, typename TParam>
@@ -105,13 +99,24 @@ index_t KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Partition_(
    *   everything > right is correct
    */
   for (;;) {
-    while (points_[left][split_dim] < splitvalue && likely(left <= right)) {
-      *left_bound |= points_[left];
+    Vector *left_v;
+    Vector *right_v;
+
+    while (1) {
+      left_v = points_.StartWrite(left);
+      if (left_v->get(split_dim) >= splitvalue || unlikely(left > right)) {
+        break;
+      }
+      *left_bound |= *left_v;;
       left++;
     }
 
-    while (points_[right][split_dim] >= splitvalue && likely(left <= right)) {
-      *right_bound |= points_[right];
+    while (1)
+      right_v = points_.StartWrite(right);
+      if (right_v->get(split_dim) < splitvalue || unlikely(left > right)) {
+        break;
+      }
+      *right_bound |= *right_v;
       right--;
     }
 
@@ -120,17 +125,17 @@ index_t KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Partition_(
       break;
     }
 
-    points_[left].SwapValues(&points_[right]);
+    *left_v.SwapValues(right_v);
     // TODO: If point info has pointers this will incur bad cache performance
     // In the future we rely on OT frozen storage
-    mem::Swap(&point_info_[left], &point_info_[right]);
+    point_infos_.Swap(left, right);
 
-    *left_bound |= points_[left];
-    *right_bound |= points_[right];
+    *left_bound |= *left_v;
+    *right_bound |= *right_v;
 
-    index_t t = old_from_new_indices_[left];
-    old_from_new_indices_[left] = old_from_new_indices_[right];
-    old_from_new_indices_[right] = t;
+    //index_t t = old_from_new_indices_[left];
+    //old_from_new_indices_[left] = old_from_new_indices_[right];
+    //old_from_new_indices_[right] = t;
 
     DEBUG_ASSERT(left <= right);
     right--;
@@ -144,14 +149,18 @@ index_t KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Partition_(
 template<typename TPointInfo, typename TNode, typename TParam>
 void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::KdTreeMidpointBuilder::Build_(
     index_t node_i) {
-  nodes_[node_i].stat().Init(*param_);
+  Node *node = nodes_.StartWrite(node_i);
+  bool leaf;
+  
+  node->stat().Init(*param_);
 
-  if (nodes_[node_i].count() > leaf_size_) {
+  if (node->count() > leaf_size_) {
     index_t split_dim = BIG_BAD_NUMBER;
     double max_width = -1;
 
+    // Short loop to find widest dimension
     for (index_t d = 0; d < dim_; d++) {
-      double w = nodes_[node_i].bound().get(d).width();
+      double w = node->bound().get(d).width();
 
       if (unlikely(w > max_width)) {
         max_width = w;
@@ -159,59 +168,63 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::KdTreeMidpointBuilder::Bu
       }
     }
 
-    double split_val = nodes_[node_i].bound().get(split_dim).mid();
+    double split_val = node->bound().get(split_dim).mid();
 
     if (max_width != 0) {
-      index_t left_i = nodes_.size();
-      index_t right_i = nodes_.size() + 1;
-      
-      nodes_.AddBack(2);
+      index_t left_i = allocator_.Alloc();
+      index_t right_i = allocator_.Alloc();
+      Node *left = nodes_.StartWrite(left_i);
+      Node *right = nodes_.StartWrite(right_i);
 
-      nodes_[left_i].bound().Init(dim_);
-      nodes_[right_i].bound().Init(dim_);
+      left->bound().Init(dim_);
+      right->bound().Init(dim_);
 
       index_t split_col = Partition_(split_dim, split_val,
-          nodes_[node_i].begin(), nodes_[node_i].count(),
-          &nodes_[left_i].bound(),
-          &nodes_[right_i].bound());
+          node->begin(), node->count(),
+          &left->bound(),
+          &right->bound());
       
       DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)",
-          nodes_[node_i].begin(), split_col,
-          nodes_[node_i].begin() + nodes_[node_i].count(), split_dim, split_val,
-          nodes_[node_i].bound().get(split_dim).lo,
-          nodes_[node_i].bound().get(split_dim).hi);
+          node->begin(), split_col,
+          node->begin() + node->count(), split_dim, split_val,
+          node->bound().get(split_dim).lo,
+          node->bound().get(split_dim).hi);
 
-      nodes_[left_i].Init(nodes_[node_i].begin(),
-          split_col - nodes_[node_i].begin());
-      nodes_[right_i].Init(split_col,
-          nodes_[node_i].end() - split_col);
+      left->Init(node->begin(),
+          split_col - node->begin());
+      right->Init(split_col,
+          node->end() - split_col);
 
       // This should never happen if max_width > 0
-      DEBUG_ASSERT(nodes_[left_i].count() != 0 && nodes_[right_i].count() != 0);
+      DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 
       Build_(left_i);
       Build_(right_i);
       
-      nodes_[node_i].set_child(0, left_i);
-      nodes_[node_i].set_child(1, right_i);
+      node->set_child(0, left_i);
+      node->set_child(1, right_i);
       
-      nodes_[node_i].stat().Accumulate(*param_, nodes_[left_i].stat(),
-          nodes_[left_i].bound(), nodes_[left_i].count());
-      nodes_[node_i].stat().Accumulate(*param_, nodes_[right_i].stat(),
-          nodes_[right_i].bound(), nodes_[right_i].count());
-      nodes_[node_i].stat().Postprocess(*param_, nodes_[node_i].bound(),
-          nodes_[node_i].count());
+      node->stat().Accumulate(*param_, left->stat(),
+          left->bound(), left->count());
+      node->stat().Accumulate(*param_, right->stat(),
+          right->bound(), right->count());
+      node->stat().Postprocess(*param_, node->bound(),
+          node->count());
       
-      return;
+      leaf = false;
     }
   }
 
-  nodes_[node_i].set_leaf();
+  if (leaf) {
+    node->set_leaf();
   
-  for (index_t i = nodes_[node_i].begin(); i < nodes_[node_i].end(); i++) {
-    nodes_[node_i].stat().Accumulate(*param_, points_[i], point_info_[i]);
+    for (index_t i = node->begin(); i < node->end(); i++) {
+      node->stat().Accumulate(*param_, points_[i], point_infos_[i]);
+    }
+    node->stat().Postprocess(*param_, node->bound(), node->count());
   }
-  nodes_[node_i].stat().Postprocess(*param_, nodes_[node_i].bound(), nodes_[node_i].count());
+  
+  nodes_.StopWrite(node_i);
 }
 
 template<typename TPointInfo, typename TNode, typename TParam>
@@ -219,10 +232,10 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Build() {
   index_t node_i = 0;
 
   nodes_.AddBack();
-  nodes_[node_i].Init(0, points_.size());
-  nodes_[node_i].bound().Init(dim_);
+  node->Init(0, points_.size());
+  node->bound().Init(dim_);
   
-  FindBoundingBox_(node_i, points_.size(), &nodes_[node_i].bound());
+  FindBoundingBox_(node_i, points_.size(), &node->bound());
 
   Build_(0);
 }
