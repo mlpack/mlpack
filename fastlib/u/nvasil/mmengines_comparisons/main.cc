@@ -69,7 +69,6 @@ int main(int argc, char *argv[]) {
   args.capacity_ = fx_param_int(NULL, "capacity", 134217728);
 	args.knns_ = fx_param_int(NULL, "knns", 2);
   args.memory_file_ = fx_param_str(NULL, "memory_file", "temp_mem"); 
-  fx_timer_start(NULL, "dualltree");	
   args.memory_engine_ = fx_param_str(NULL, "mem_engine", "mmapmm");
 	printf("Creating swap file...\n");
  	if (args.memory_engine_ == "mmapmm") {
@@ -78,10 +77,10 @@ int main(int argc, char *argv[]) {
     mmapmm::MemoryManager<false>::
 			  allocator_->set_capacity(args.capacity_);
 
-		mmapmm::MemoryManager<false>::allocator_->Init();
 		mmapmm::MemoryManager<false>::
 			  allocator_->set_pool_name(args.memory_file_);
 
+		mmapmm::MemoryManager<false>::allocator_->Init();
 		DuallTreeAllNearestNeighbors<BinaryKdTreeMMAPMM_t>(args);    	  
     if (!fx_param_exists(NULL, "data_file")) {
 		  unlink(args.data_file_.c_str()); 
@@ -93,10 +92,10 @@ int main(int argc, char *argv[]) {
       tpiemm::MemoryManager<false>::
 			    allocator_->set_cache_size(args.capacity_);
 
-		  tpiemm::MemoryManager<false>::allocator_->Init();
 		  tpiemm::MemoryManager<false>::
 			    allocator_->set_cache_file(args.memory_file_);
 
+		  tpiemm::MemoryManager<false>::allocator_->Init();
 
 	    DuallTreeAllNearestNeighbors<BinaryKdTreeTPIEMM_t>(args);    	  
       if (!fx_param_exists(NULL, "data_file")) {
@@ -107,10 +106,9 @@ int main(int argc, char *argv[]) {
 					  args.memory_engine_.c_str());
 		}
 	}
-	fx_timer_stop(NULL, "dualltree");
 	fx_format_result(NULL, "success", "%d", 1);
 	fx_done();
-
+  unlink(args.memory_file_.c_str());
 }
 
 template<typename TREE>
@@ -118,13 +116,18 @@ void DuallTreeAllNearestNeighbors(Parameters &args) {
   TREE tree;
 	printf("Building the tree...");
 	tree.Init(&args.data_);
+
+	fx_timer_start(NULL, "build");	
 	tree.BuildDepthFirst();
+	fx_timer_stop(NULL, "build");
 	args.data_.Destruct();
   tree.InitAllKNearestNeighborOutput(args.out_file_, 
 				                              args.knns_);
 	printf("Computing all nearest neighbors...\n");
+  fx_timer_start(NULL, "dualltree");	
 	tree.AllNearestNeighbors(tree.get_parent(), args.knns_);
-  tree.CloseAllKNearestNeighborOutput(args.knns_);
+	fx_timer_stop(NULL, "dualltree");
+	tree.CloseAllKNearestNeighborOutput(args.knns_);
   unlink(args.out_file_.c_str());	
 }
 
