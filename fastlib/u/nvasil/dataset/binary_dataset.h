@@ -58,6 +58,14 @@ class BinaryDataset {
 					             "Iterator out of bounds "LI">"LI"", 
 											 current_pos_, set_->get_num_of_points());			
 		}
+		Iterator operator+(index_t i) {
+		  Iterator it(*this);
+			it.current_pos_+=i;
+			DEBUG_ASSERT_MSG(it.current_pos_<set_.get_num_of_points(),
+					             "iterator out of bounds "LI">="LI"\n",
+											 it.current_pos_, set_.get_num_of_points());
+			return it;
+		}
 		Iterator operator--() {
 		  current_pos_--;
       DEBUG_ASSERT_MSG(current_pos_<0,
