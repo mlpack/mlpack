@@ -61,6 +61,7 @@ int main(int argc, char *argv[]) {
 		for(int64 i=0; i<args.num_of_points_; i++) {
 		  for(int32 j=0; j<args.dimension_; j++) {
 			  args.data_.At(i,j) = 1.0*rand()/RAND_MAX;
+				args.data_.set_id(i,i);
 			}
 		}
 	}	
@@ -121,7 +122,7 @@ void DuallTreeAllNearestNeighbors(Parameters &args) {
 	args.data_.Destruct();
   tree.InitAllKNearestNeighborOutput(args.out_file_, 
 				                              args.knns_);
-	printf("Computing all nearest neughbors...\n");
+	printf("Computing all nearest neighbors...\n");
 	tree.AllNearestNeighbors(tree.get_parent(), args.knns_);
   tree.CloseAllKNearestNeighborOutput(args.knns_);
   unlink(args.out_file_.c_str());	

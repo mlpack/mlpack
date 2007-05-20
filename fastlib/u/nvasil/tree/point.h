@@ -11,45 +11,49 @@ class Point {
 	typedef PRECISION Precision_t;
 	typedef ALLOCATOR Allocator_t;
 	typedef Point<Precision_t, Allocator_t> Point_t;
-  Point() {
+  inline Point() {
 	  this->p_.Reset(Allocator_t::NullValue);
 		this->id_=0;
 	};
+
+  inline Point(const Point_t &other) {
+	  Alias(other);
+	}
   /*void *operator new(size_t size) {
     return Allocator_t::allocator->AllignedAlloc(size);
   }   	
   void operator delete(void *p) {
   }
   */
-	void Init(int32 dim) {
+	inline void Init(int32 dim) {
 	  p_.Reset(Allocator_t::template calloc<Precision_t>(dim, 0));
 	}
 	Precision_t &operator[](index_t i) {
 	  return p_[i];
 	}
-  void Alias(const Point_t &point) {
+  inline void Alias(const Point_t &point) {
 		this->p_ = point.p_;
 		this->id_ = point.id_;
   }
 
-	void Alias(Precision_t *ptr, index_t point_id) {
+	inline void Alias(Precision_t *ptr, index_t point_id) {
 	  this->p_.Reset(ptr);
 		this->id_=point_id;
 	}
 	template<typename POINTTYPE>
-  void Copy(POINTTYPE point, int32 dimension) {
+  inline void Copy(POINTTYPE point, int32 dimension) {
   	for(int32 i=0; i<dimension; i++) {
   	  p_[i] = point[i];
   	}
   }
 	
-	void Copy(Point_t point, int32 dimension) {
+	inline void Copy(Point_t point, int32 dimension) {
 	  for(int32 i=0; i<dimension; i++) {
   	  p_[i] = point[i];
   	}
     id_=point.id_;
 	}
-	void SetNULL() {
+	inline void SetNULL() {
 	  p_=NULL;
 	}
   void Print(int32 dimension) {
@@ -59,10 +63,10 @@ class Point {
   	}
   	printf("; id="LI, id_);
   } 
-  index_t get_id()	{
+  inline index_t get_id()	{
     return id_;
   }
-  void set_id(index_t id) {
+  inline void set_id(index_t id) {
     id_ = id;
   }
 
@@ -78,47 +82,51 @@ class Point<PRECISION, Loki::NullType> {
  public:
 	typedef PRECISION Precision_t;
 	typedef Point<Precision_t, Loki::NullType> Point_t;
-  Point() {
+  inline Point() {
 	  this->p_=NULL;
 		this->id_=0;
 	};
-	Precision_t &operator[](index_t i) {
+
+	inline Point(const Point_t &other) {
+	  Alias(other);
+	}
+	inline Precision_t &operator[](index_t i) {
 	  return p_[i];
 	}
-  void Alias(const Point_t &point) {
+  inline void Alias(const Point_t &point) {
 		this->p_ = point.p_;
 		this->id_ = point.id_;
   }
-	 void Alias(Precision_t *ptr, index_t id) {
+  inline void Alias(Precision_t *ptr, index_t id) {
 	  p_=ptr;
 		id_=id;
 	}
 	template<typename POINTTYPE>
-  void Copy(POINTTYPE point, int32 dimension) {
+  inline void Copy(POINTTYPE point, int32 dimension) {
   	for(int32 i=0; i<dimension; i++) {
   	  p_[i] = point[i];
   	}
   }
-	void Copy(Point_t point, int32 dimension) {
+	inline void Copy(Point_t point, int32 dimension) {
 	  for(int32 i=0; i<dimension; i++) {
   	  p_[i] = point[i];
   	}
     id_=point.id_;
 	}
-	void SetNULL() {
+	inline void SetNULL() {
 	  p_=NULL;
 	}
-  void Print(int32 dimension) {
+  inline void Print(int32 dimension) {
   	printf("values= ");
   	for(int32 i=0; i< dimension; i++) {
   	  printf("%lg ", (double)this->operator[](i));
   	}
   	printf("; id="LI, id_);
   } 
-  index_t get_id()	{
+  inline index_t get_id()	{
     return id_;
   }
-  void set_id(index_t id) {
+  inline void set_id(index_t id) {
     id_ = id;
   }
 

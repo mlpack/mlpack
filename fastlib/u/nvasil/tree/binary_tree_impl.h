@@ -286,7 +286,6 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
                                  typename TREE__::NodePtr_t reference,
                                  NEIGHBORTYPE range, 
                                  typename TREE__::Precision_t distance) {                                               	
-
   if (distance > query->get_min_dist_so_far()) {
 		return ;
   } else {
