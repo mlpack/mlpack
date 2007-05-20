@@ -90,7 +90,7 @@ class Node {
 // We use this for timit experiments so that we exclude points
 // from the same speaker
 	template<typename POINTTYPE, typename NEIGHBORTYPE>
-  void FindNearest(POINTTYPE query_point, 
+  void FindNearest(POINTTYPE &query_point, 
 			             vector<pair<Precision_t, Point_t> >  &nearest, 
 									 NEIGHBORTYPE range, 
 									 int32 dimension,

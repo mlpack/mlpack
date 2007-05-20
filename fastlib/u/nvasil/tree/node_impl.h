@@ -104,7 +104,7 @@ NODE__::ClosestNode(typename NODE__::NodePtr_t ptr1,
 
 TEMPLATE__
 template<typename POINTTYPE, typename NEIGHBORTYPE>
-inline void NODE__::FindNearest(POINTTYPE query_point, 
+inline void NODE__::FindNearest(POINTTYPE &query_point, 
     vector<pair<typename NODE__::Precision_t, 
 		            typename NODE__::Point_t> > &nearest, 
 		NEIGHBORTYPE range, 
@@ -182,55 +182,70 @@ inline void NODE__::FindAllNearest(
 		} else {
 		  distance=range;
 		}
-    		  // for k nearest neighbors
-    if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {                                          	
-		  vector<pair<Precision_t, Point_t> > temp((index_t)range);
-			for(int32 j=0; j<range; j++) {
-			  temp[j].first=query_node->kneighbors_[i*(index_t)range+j].distance_;
-				temp[j].second=query_node->kneighbors_[i*(index_t)range+j].nearest_;
-			}
-			Point_t point;
-			point.Alias(query_node->points_.get()+i*dimension, 
-				          query_node->index_[i]);
-      FindNearest(point, temp, 
-                  range, dimension,
-			 				    discriminator,	comp);
-			DEBUG_ASSERT_MSG((index_t)temp.size()==range, 
-			    "During  %i-nn seach, returned %u results",(int)range, 
-					(unsigned int)temp.size());
+    // We should check whether this speeds up or slows down 
+		// the performance 
+    comp.UpdateComparisons();
+    if (this->box_.CrossesBoundaries(query_node->points_.get()+i*dimension, 
+                                     dimension,
+                                     distance, 
+                                     comp)) {
+		  // for k nearest neighbors
+      if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {                                          	
+			  vector<pair<Precision_t, Point_t> > temp((index_t)range);
+			 	for(int32 j=0; j<range; j++) {
+			    temp[j].first=query_node->kneighbors_[i*(index_t)range+j].distance_;
+				  temp[j].second=query_node->kneighbors_[i*(index_t)range+j].nearest_;
+			  }
+				Point_t point;
+				point.Alias(query_node->points_.get()+i*dimension, 
+					          query_node->index_[i]);
+        FindNearest(point, temp, 
+                    range, dimension,
+				 				    discriminator,	comp);
+			  DEBUG_ASSERT_MSG((index_t)temp.size()==range, 
+						"During  %i-nn seach, returned %u results",(int)range, 
+						 (unsigned int)temp.size());
 
 				
-			for(int32 j=0; j<(index_t)range; j++) {
-			  query_node->kneighbors_[i*(index_t)range+j].distance_=temp[j].first;
-			  query_node->kneighbors_[i*(index_t)range+j].nearest_=temp[j].second;
+				for(int32 j=0; j<(index_t)range; j++) {
+			    query_node->kneighbors_[i*(index_t)range+j].distance_=temp[j].first;
+			    query_node->kneighbors_[i*(index_t)range+j].nearest_=temp[j].second;
+			  }
+        // Estimate the  maximum nearest neighbor distance
+        comp.UpdateComparisons();
+        if  (max_local_distance < temp.back().first) {
+          max_local_distance = temp.back().first;
+        }
+		  } else {
+		    // for range nearest neighbors
+	      vector<pair<Precision_t, Point_t> >  temp;
+			  temp.clear();
+				Point_t point;
+				point.Alias(query_node->points_.get()+i*dimension, 
+						        query_node->index_[i]);
+		    FindNearest(point, temp, 
+                    range, dimension,
+				  				  discriminator,	comp);
+			  for(index_t j=0; j<(index_t)temp.size(); j++) {
+				  NNResult result;
+				  result.point_id_=query_node->index_[i];
+				  result.nearest_.Alias(temp[j].second);
+				  result.distance_=temp[j].first;
+					if (fwrite(&result, sizeof(NNResult), 1, range_nn_fp_)!=1) {
+				    FATAL("Error while writing range nearest neighbors: %s\n",
+						      strerror(errno));
+					}
+			  }
+			}				
+	  } else {
+	    if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) { 	
+			  if  (max_local_distance < distance) {
+          max_local_distance = distance;
+ 				}
 			}
-      // Estimate the  maximum nearest neighbor distance
-      comp.UpdateComparisons();
-      if  (max_local_distance < temp.back().first) {
-        max_local_distance = temp.back().first;
-      }  
-		}	else {
-		  // for range nearest neighbors
-	    vector<pair<Precision_t, Point_t> >  temp;
-			temp.clear();
-			Point_t point;
-			point.Alias(query_node->points_.get()+i*dimension, 
-					        query_node->index_[i]);
-		  FindNearest(point, temp, 
-                  range, dimension,
-			  				  discriminator,	comp);
-			for(index_t j=0; j<(index_t)temp.size(); j++) {
-			  NNResult result;
-				result.point_id_=query_node->index_[i];
-				result.nearest_.Alias(temp[j].second);
-				result.distance_=temp[j].first;
-				if (fwrite(&result, sizeof(NNResult), 1, range_nn_fp_)!=1) {
-				  FATAL("Error while writing range nearest neighbors: %s\n",
-					      strerror(errno));
-				}
-			}
-		}				  
-	}
+		}
+	} 
+	
 	if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) {
 	  max_neighbor_distance=range;
 	} else {
@@ -238,6 +253,7 @@ inline void NODE__::FindAllNearest(
 		  max_neighbor_distance=max_local_distance;
 		}
 	}
+  
 }
 
 TEMPLATE__

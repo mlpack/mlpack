@@ -51,37 +51,37 @@ class MemoryManager {
     Ptr(T *p) {
    	  p_= p;	
     }
-		Ptr(const Ptr<T, logmode> &other) {
+		inline Ptr(const Ptr<T, logmode> &other) {
 		  this->p_ =  other.p_;
 		}
     ~Ptr() {}
-	  void Reset(const void *p) {
+	  inline void Reset(const void *p) {
 		  p_=(T *)p;
 		}	
-		void SetNULL() {
+		inline void SetNULL() {
 			p_=NULL;
 		}
-    bool IsNULL(){
+    inline bool IsNULL(){
 		  return p_==NULL;
 		}
-    Ptr<T, logmode> &operator=(const Ptr<T, logmode> &other) {
+    inline Ptr<T, logmode> &operator=(const Ptr<T, logmode> &other) {
    	  p_ = other.p_;
    	  return *this;
     }
-		bool operator==(const Ptr<T, logmode> &other) const {
+		inline bool operator==(const Ptr<T, logmode> &other) const {
 			return this->p_ == other.p_;
 		}
-    T &operator*() {
+    inline T &operator*() {
       Logger<logmode>::Log(p_);
       //allocator->CachePage(p_);
 		  return *p_;
     }
-    T *operator->() {
+    inline T *operator->() {
       Logger<logmode>::Log(p_);
       //allocator->CachePage(p_);
 			return p_;
     }
-		Ptr<Ptr<T, logmode>, logmode> Reference() {
+		inline Ptr<Ptr<T, logmode>, logmode> Reference() {
 		  Ptr<Ptr<T, logmode>, logmode>  ptr;
 			ptr.Reset(this);
 			return ptr;
@@ -91,7 +91,7 @@ class MemoryManager {
       //allocator->CachePage(p_);
       return p_[ind];
     }
-		T *get() {
+		inline T *get() {
 		  return p_;
 		}
     void Swizzle(ptrdiff_t offset) {
@@ -105,11 +105,11 @@ class MemoryManager {
 	 public:
 		ArrayPtr(){
 		}
-		ArrayPtr(size_t size) {
+		inline ArrayPtr(size_t size) {
 		  Reset(malloc<T>(size));
 		}
 		template<typename ARRAYTYPE>
-		void Copy(ARRAYTYPE other, size_t length) {
+		inline void Copy(ARRAYTYPE other, size_t length) {
 		  for(size_t i=0; i<length; i++) {
 			  this->operator[](i) = other[i];
 			}
@@ -270,7 +270,7 @@ class MemoryManager {
     }
   } 
   template<typename T> 
-  T *Alloc() {
+  inline T *Alloc() {
     current_position_ += StrideOf<T>() - current_position_ % StrideOf<T>();
     if (current_position_ >capacity_) {
       Reallocate();
@@ -284,7 +284,7 @@ class MemoryManager {
   }
 
   template<typename T>
-  T *Alloc(size_t size) {
+  inline T *Alloc(size_t size) {
     current_position_ += StrideOf<T>() - current_position_ % StrideOf<T>();
     if (current_position_ >capacity_) {
       Reallocate();
@@ -296,7 +296,7 @@ class MemoryManager {
     } 
     return return_ptr;
   }
-  void *AllignedAlloc(size_t size) 	{
+  inline void *AllignedAlloc(size_t size) 	{
 		current_position_ += StrideOf<double>() - current_position_ % StrideOf<double>();
     if (unlikely(current_position_ >capacity_)) {
       Reallocate();
@@ -309,18 +309,18 @@ class MemoryManager {
     return return_ptr;
   }
 	template<typename T>
-  static T* malloc() {
+  static inline T* malloc() {
 	  return allocator_->Alloc<T>;
 	}
 	template<typename T>
 	static T* malloc(size_t size) {
 	  return allocator_->Alloc<T>(size);
 	}
-	static void* malloc(size_t size) {
+	inline static void* malloc(size_t size) {
 	  return allocator_->AllignedAlloc(size);
 	}
-	template<typename T>
-	static T* calloc(size_t size, const T init_value) {
+  template<typename T>
+	static inline  T* calloc(size_t size, const T init_value) {
 	  T* ptr = malloc<T>(size);
 		for(size_t i=0; i< size; i++) {
 		  ptr[i]=init_value;
@@ -328,7 +328,7 @@ class MemoryManager {
     return ptr;
 	}
   template<typename T>
-  void Log(T *ptr) {
+  inline void Log(T *ptr) {
 		struct timeval t1;
 		gettimeofday(&t1, NULL);
     if (log_flag_ == true) {

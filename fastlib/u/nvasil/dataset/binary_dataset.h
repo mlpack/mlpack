@@ -162,7 +162,7 @@ class BinaryDataset {
 	
   // Use this to swap the points of a dataset
 	// swaps the index values as well
-	void Swap(uint64 i, uint64 j) {
+	inline void Swap(uint64 i, uint64 j) {
 	  Precision_t temp[dimension_];
 		memcpy(temp, At(j), dimension_  * sizeof(Precision_t));
 		memcpy(At(j), At(i), dimension_ * sizeof(Precision_t));
@@ -177,30 +177,30 @@ class BinaryDataset {
 	  MemoryUnmap(data_, index_file_, 0); 
 	}
 	// returns a matrix on the data
-	Matrix get_data_matrix() {
+	inline Matrix get_data_matrix() {
 		Matrix matrix;
 		matrix.Alias(data_, num_of_points_/dimension_, dimension_);
 		return matrix;
 	}
 	// returns a vector on the index
-	Vector get_index_vector() {
+	inline Vector get_index_vector() {
 		Vector vector;
 		vector.Alias(index_, num_of_points_);
 		return vector;
 	}
-	Point<Precision_t, Loki::NullType> get_point(index_t i) {
+	inline Point<Precision_t, Loki::NullType> get_point(index_t i) {
 		Point<Precision_t, Loki::NullType> point;
 		point.Alias(At(i), get_id(i));
 		return point;
 	}
 	// returns a pointer on the data at the ith point
-  Precision_t* At(uint64 i) {
+ inline Precision_t* At(uint64 i) {
 		const char *temp="Attempt to acces data out of range %llu>%llu";
 		DEBUG_ASSERT_MSG(i<num_of_points_, temp, i, num_of_points_);
 	  return data_+i*dimension_;
 	}
 	// returns a reference on the i,j element
-	Precision_t &At(uint64 i, int32 j) {
+	inline Precision_t &At(uint64 i, int32 j) {
    	const char *temp="Attempt to acces data out of range "LI">"LI"";
 		DEBUG_ASSERT_MSG(i<num_of_points_, temp, i, num_of_points_);
     const char *temp1="Attempt to access element greater that the "
@@ -210,11 +210,11 @@ class BinaryDataset {
 	  return data_[i*dimension_+j];
 	}
 	// get the index at i point
-	uint64 get_id(index_t i) {
+	inline uint64 get_id(index_t i) {
 	  return index_[i];
 	}
 	// set id at point i
-	void set_id(index_t i, index_t value) {
+	inline void set_id(index_t i, index_t value) {
 	  index_[i]=value;
 	}
 	// get the number of points
