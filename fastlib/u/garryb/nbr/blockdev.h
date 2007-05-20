@@ -8,7 +8,7 @@ class BlockActionHandler {
  public:
   virtual ~BlockActionHandler() {}
   
-  virtual void BlockInit(size_t bytes, char *block) = 0;
+  virtual void BlockInitFrozen(size_t bytes, char *block) = 0;
   virtual void BlockRefreeze(size_t bytes, const char *old_location, char *block) = 0;
   virtual void BlockThaw(size_t bytes, char *block) = 0;
 };
@@ -58,6 +58,7 @@ class BlockDevice {
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data) = 0;
   virtual blockid_t AllocBlock() = 0;
+  virtual void Close() {}
 
  public:
   void Lock() { mutex_.Lock(); }
@@ -83,6 +84,7 @@ class NullBlockDevice : public BlockDevice {
     n_blocks_ = blockid + 1;
     return blockid;
   }
+  virtual void Close() {}
 };
 
 class BlockDeviceWrapper : public BlockDevice {
@@ -92,6 +94,8 @@ class BlockDeviceWrapper : public BlockDevice {
   BlockDevice *inner_;
   
  public:
+  virtual ~BlockDeviceWrapper() {}
+  
   void Init(BlockDevice *inner_in) {
     inner_ = inner_in;
     n_blocks_ = inner_->n_blocks();
@@ -112,6 +116,7 @@ class BlockDeviceWrapper : public BlockDevice {
     n_blocks_ = blockid + 1;
     return blockid;
   }
+  virtual void Close() {}
 };
 
 class RandomAccessFile {
@@ -124,15 +129,17 @@ class RandomAccessFile {
   void Read(off_t pos, size_t len, char *buffer);
   void Write(off_t pos, size_t len, const char *buffer);
   
+  void Close();
+  
   off_t FindSize() const;
-}
+};
 
 class DiskBlockDevice : public BlockDevice {
   FORBID_COPY(DiskBlockDevice);
-  
+
  private:
   RandomAccessFile file_;
-  
+
  public:
   void Init(const char *fname, mode_t mode, offset_t block_size = 131072);
 
@@ -143,6 +150,8 @@ class DiskBlockDevice : public BlockDevice {
      const char *data);
 
   blockid_t AllocBlock();
+
+  void Close();
 };
 
 #endif

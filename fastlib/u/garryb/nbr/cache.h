@@ -28,17 +28,18 @@ class SmallCache : public BlockDeviceWrapper {
 
  public:
   virtual ~SmallCache();
-  
+
   mode_t mode() const {
     return mode_;
   }
 
   void Init(BlockDevice *inner_in, BlockActionHandler *handler_in);
-  
+
   char *StartRead(blockid_t blockid);
   char *StartWrite(blockid_t blockid);
   void StopRead(blockid_t blockid);
   void StopWrite(blockid_t blockid);
+  void Close();
 
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data);
@@ -93,7 +94,7 @@ class CacheArrayBlockActionHandler : public BlockActionHandler {
     ot::PointerFreeze(default_obj, default_elem_);
   }
 
-  void BlockInit(size_t bytes, char *block) {
+  void BlockInitFrozen(size_t bytes, char *block) {
     index_t elems = bytes / n_elem_bytes;
     for (index_t i = 0; i < elems; i++) {
       mem::CopyBytes(block, default_elem_, n_elem_bytes_);
@@ -116,8 +117,14 @@ class CacheArrayBlockActionHandler : public BlockActionHandler {
       block += n_elem_bytes_;
     }
   }
+  
+  size_t n_elem_bytes() {
+    return n_elem_bytes_;
+  }
 };
 
+// LIMITATION: This type of cache array assumes that everything fits in
+// memory (it never releases locks).
 template<typename T>
 class CacheArray {
   FORBID_COPY(CacheArray);
@@ -151,11 +158,22 @@ class CacheArray {
   CacheArray() {}
   ~CacheArray() {}
 
+  /** Reopens another cache array */
+  void Init(CacheArray *other, mode_t mode_in) {
+    Init(other, mode_in, other->begin_index(), other->end_index());
+  }
+
+  /** Reopens another cache array */
+  void Init(CacheArray *other, mode_t mode_in, index_t begin_index_in,
+      index_t end_index_in) {
+    Init(other->cache_, mode_in, begin_index_in, end_index_in,
+        other->n_block_elems_, other->n_elem_bytes_);
+  }
+
   void Init(SmallCache *cache_in, Mode mode_in,
       index_t begin_index_in, index_t end_index_in,
       index_t n_block_elems_in, size_t n_elem_bytes_in) {
     cache_ = cache_in;
-    mode_ = mode_in;
     begin_ = begin_index_in;
     end_ = end_index_in;
     n_block_elems_ = n_block_elems_in;
@@ -166,7 +184,7 @@ class CacheArray {
     
     metadata_.Init(end_block_ - begin_block_);
     
-    mode_ = cache_in->mode();
+    mode_ = mode_in;
   }
 
   index_t begin_index() const {
@@ -174,6 +192,10 @@ class CacheArray {
   }
   index_t end_index() const {
     return end_;
+  }
+  
+  unsigned int n_elem_bytes() const {
+    return n_elem_bytes_;
   }
 
   const Element *StartRead(index_t element_id) {
@@ -195,6 +217,28 @@ class CacheArray {
     DEBUG_ONLY(BoundsCheck_(element_id));
     DEBUG_ASSERT(mode_ >= MODE_TEMP);
     ReleaseElement_(element_id);
+  }
+
+  void Swap(index_t index_a, index_t index_b) {
+    DEBUG_ONLY(BoundsCheck_(index_a));
+    DEBUG_ONLY(BoundsCheck_(index_b));
+    DEBUG_ASSERT(mode_ >= MODE_TEMP);
+    char *a = reinterpret_cast<char*>(CheckoutElement_(index_a));
+    char *b = reinterpret_cast<char*>(CheckoutElement_(index_b));
+    mem::Swap(a, b, n_elem_bytes_);
+    ReleaseElement_(index_a);
+    ReleaseElement_(index_b);
+  }
+
+  void Copy(index_t index_src, index_t index_dest) {
+    DEBUG_ONLY(BoundsCheck_(index_src));
+    DEBUG_ONLY(BoundsCheck_(index_dest));
+    DEBUG_ASSERT(mode_ >= MODE_TEMP);
+    const char *src = reinterpret_cast<char*>(CheckoutElement_(index_a));
+    char *dest = reinterpret_cast<char*>(CheckoutElement_(index_b));
+    mem::Copy(dest, src, n_elem_bytes_);
+    ReleaseElement_(index_a);
+    ReleaseElement_(index_b);
   }
 
   /**
@@ -237,6 +281,15 @@ class CacheArray {
 
 template<typename T>
 void CacheArray<T>::Flush() {
+  for (blockid_t block = begin_block_; block < end_block_; block++) {
+    if (metadata_[block - begin_block_].data) {
+      if (mode_ != BlockDevice::READ) {
+        cache_->StopWrite(block);
+      } else {
+        cache_->StopRead(block);
+      }
+    }
+  }
   cache_->Flush(
       begin_ / n_block_elems_, (begin_ % n_block_elems_) * n_elem_bytes_,
       end_ / n_block_elems_, (end_ % n_block_elems_) * n_elem_bytes_);
@@ -259,5 +312,28 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
   
   return reinterpret_cast<Element*>(metadata->data + offset);
 }
+
+template<typename T>
+class CacheAutoPtrConst {
+ private:
+  const T* ptr_;
+  index_t i;
+  
+ public:
+  CacheAutoPtrConst(const CacheArray<T>& array, ) {
+    ptr_ = ;
+  }
+  ~CacheAutoPtrConst() {
+    arrayi;
+  }
+  
+  operator const T* () {
+    return ptr_;
+  }
+  
+  const T* ptr() const {
+    return ptr_;
+  }
+};
 
 #endif

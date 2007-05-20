@@ -22,6 +22,10 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   }
 }
 
+void RandomAccessFIle::Close() {
+  close(fd_);
+}
+
 void RandomAccessFile::Write(off_t pos, size_t len, const char *buffer) {
   off_t rv;
 
@@ -105,4 +109,8 @@ blockid_t DiskBlockDevice::AllocBlock() {
   blockid_t blockid = n_blocks_;
   n_blocks_ = blockid + 1;
   return blockid;
+}
+
+void DiskBlockDevice::Close() {
+  file_.Close();
 }

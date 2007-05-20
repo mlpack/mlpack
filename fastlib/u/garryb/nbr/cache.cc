@@ -45,7 +45,8 @@ void SmallCache::PerformCacheMiss_(blockid_t blockid) {
     inner_->Read(blockid, data);
     handler_->BlockThaw(n_block_bytes_, data);
   } else {
-    handler_->BlockInit(n_block_bytes_, data);
+    handler_->BlockInitFrozen(n_block_bytes_, data);
+    handler_->BlockThaw(n_block_bytes_, data);
   }
   metadata->data = data;
 }
@@ -105,11 +106,15 @@ void SmallCache::Write(blockid_t block,
   StopWrite(blockid);
 }
 
-SmallCache::~SmallCache() {
+void SmallCache::Close() {
   for (index_t i = 0; i < metadata_.size(); i++) {
     Metadata *metadata = &metadata_[i];
     mem::Free(metadata->data);
     DEBUG_ASSERT(metadata_[i].lock_count == 0);
     DEBUG_POISON_PTR(metadata->data);
   }
+  delete handler_;
+}
+
+SmallCache::~SmallCache() {
 }

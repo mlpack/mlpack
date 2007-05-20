@@ -105,33 +105,37 @@ void DualTreeDepthFirst<GNP>::Init(datanode *datanode) {
 template<typename GNP>
 void DualTreeDepthFirst<GNP>::Begin() {
   typename GNP::Delta delta;
-  typename GNP::QNode *q_root = qnode_(0);
-  QMutableInfo *q_root_mut = &q_mutables_[0];
-  const typename GNP::RNode *r_root = rnode_(0);
+  typename GNP::QNode *q_root = q_nodes_.StartRead(0);
+  QMutableInfo *q_root_mut = q_mutables_.StartWrite(0);
+  const typename GNP::RNode *r_root = r_nodes_.StartRead(0);
 
   fx_timer_start(datanode_, "execute");
-  
+
   DEBUG_ONLY(n_naive_ = 0);
   DEBUG_ONLY(n_pre_naive_ = 0);
   DEBUG_ONLY(n_recurse_ = 0);
-  
+
   bool need_explore = GNP::Algorithm::ConsiderPairIntrinsic(
       param_, *q_root, *r_root, &delta,
       &global_result_, &q_root_mut->postponed);
 
-  
   if (need_explore) {
     typename GNP::QMassResult empty_mass_result;
 
     empty_mass_result.Init(param_);
 
     if (do_naive_) {
-      BaseCase_(qnode_(0), rnode_(0), empty_mass_result, &q_mutables_[0]);
+      BaseCase_(*q_root, *r_root, empty_mass_result, q_root_mut);
     } else {
       Pair_(0, 0, delta, empty_mass_result);
       PushDown_(0);
     }
   }
+  
+  q_nodes_.StopRead(0);
+  q_mutables_.StopWrite(0);
+  r_nodes_.StopRead(0);
+  
   fx_timer_stop(datanode_, "execute");
   
   DEBUG_ONLY(fx_format_result(datanode_, "naive_ratio", "%f",
@@ -154,26 +158,37 @@ void DualTreeDepthFirst<GNP>::Begin() {
 
 template<typename GNP>
 void DualTreeDepthFirst<GNP>::PushDown_(index_t q_node_i) {
-  typename GNP::QNode *q_node = qnode_(q_node_i);
-  QMutableInfo *q_node_mut = &q_mutables_[q_node_i];
-  
+  typename GNP::QNode *q_node = q_nodes_.StartWrite(q_node_i);
+  QMutableInfo *q_node_mut = q_mutables_.StartWrite(q_node_i);
+
   if (q_node->is_leaf()) {
     for (index_t q_i = q_node->begin(); q_i < q_node->end(); q_i++) {
-      typename GNP::QResult *q_result = &q_results_[q_i];
-      typename GNP::Point *q_point = &q_tree_.points()[q_i];
-      typename GNP::QPointInfo *q_info = &q_tree_.point_info()[q_i];
+      typename GNP::QResult *q_result = q_results_.StartWrite(q_i);
+      const typename GNP::Point *q_point = q_points_.StartRead(q_i);
+      const typename GNP::QPointInfo *q_info = &q_point_infos_.StartRead(q_i);
+      
+      // WALDO: r_root
       q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point);
-      q_result->Postprocess(param_, *q_point, *q_info, r_tree_.nodes()[0]);
+      q_result->Postprocess(param_, *q_point, *q_info, *r_root);
+      q_results_.StopRead(q_i);
+      q_points_.StopRead(q_i);
+      q_point_infos_.StopRead(q_i);
     }
   } else {
     for (index_t k = 0; k < 2; k++) {
       index_t q_child_i = q_node->child(k);
-      QMutableInfo *q_child_mut = &q_mutables_[q_child_i];
+      QMutableInfo *q_child_mut = q_mutables_.StartWrite(q_child_i);
       
       q_child_mut->postponed.ApplyPostponed(param_, q_node_mut->postponed);
+      
+      q_mutables_.StopWrite(q_child_i);
+      
       PushDown_(q_child_i);
     }
   }
+
+  q_nodes_.StopWrite(q_node_i);
+  q_mutables_.StopWrite(q_node_i);
 }
 
 template<typename GNP>
