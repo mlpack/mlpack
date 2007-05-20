@@ -1,4 +1,4 @@
-
+	
 %
 %  $Description: Author guidelines and sample document in LaTeX 2.09$ 
 %
@@ -21,18 +21,20 @@
 \DeclareMathOperator{\cardinality}{cardinality}
 \DeclareMathOperator{\hrect}{hrect}
 \DeclareMathOperator{\dfs}{dfs}
-\DeclareMathOperator{\exact}{exact}
+\DeclareMathOperator{\child}{child}
+\DeclareMathOperator{\all}{all}
+\DeclareMathOperator{\visited}{visited}
 \DeclareMathOperator{\unvisited}{unvisited}
 \DeclareMathOperator{\prune}{prune}
 \DeclareMathOperator{\IF}{if}
 \DeclareMathOperator{\ATDISCRETION}{}
-\newcommand{\muv}{\union^{\bigoplus}}
-\newcommand{\bigmuv}{\union^{\bigoplus}}
+\newcommand{\muv}{\union^{\oplus}}
+\newcommand{\bigmuv}{\union^{\oplus}}
 \newcommand{\muh}{\oplus^{\union}}
 \newcommand{\bigmuh}{\bigoplus^{\union}}
 \newcommand{\dist}{d}
-\newcommand{\wholeR}{\hat{R}}
-\newcommand{\wholeQ}{\hat{Q}}
+\newcommand{\wholeR}{\mathcal{R}}
+\newcommand{\wholeQ}{\mathcal{Q}}
 \newcommand{\x}{\hspace{0.15in}}
 \newcommand{\xx}{\hspace{0.3in}}
 \newcommand{\xxx}{\hspace{0.45in}}
@@ -102,7 +104,7 @@ These multi-tree algorithms have so far not been parallelized, although as we sh
 
 {\bf Parallel trees.} There is no shortage of research on the parallelization of spatial tree
 algorithms.
-In fact, the classical physical $N$-body algorithms, the Barnes-Hut\cite{barnes_hut} and Fast Multipole Method\cite{greengard_fmm}, have had massively parallel implementations for well over a decaDe\cite{singh_loadbal, grama_para_bh, amor_para_bh}.
+In fact, the classical physical $N$-body algorithms, the Barnes-Hut\cite{barnes_hut} and Fast Multipole Method\cite{greengard_fmm}, have had massively parallel implementations for well over a decade\cite{singh_loadbal, grama_para_bh, amor_para_bh}.
 
 In this paper, we present dual-tree algorithms for three different problems, each of which demonstrates variation in mechanical properties of multi-tree methods.
 The analysis of these examples yields strategies that may be reused across the board for multi-tree algorithms.
@@ -157,6 +159,21 @@ Although we briefly mention strategies for massive parallelization, this paper f
 %
 %P03 What is a global reduction and how do we generalize?
 %dep: P01
+
+\section{Background}
+
+\subsection{Parallel N-Body Simulations}
+
+\begin{verbatim}
+- Pangfeng Liu & Sandeep N. Bhatt n-body paper
+  - compute nodes which are required
+    - we can't do this in general
+    - first, we are not a simulation in general; only one time step
+    - to avoid adding programmer complexity we don't require any information about necessary interactions
+      - their algorithms assume only *intrinsic* prunes
+    - we also can't predict load balancing
+    - since I'm actually *generalizing* their work, I have to emphasize and back up this claim
+\end{verbatim}
 
 \section{Dual-Tree Algorithm Framework}
 
@@ -298,7 +315,6 @@ We define $\rho(q, R)$ as each element of the map, i.e. $\rho(q, R) = \bigoplus_
 Next, we decompose $f$ into two separate functions $f^1$ and $f^2$ such that $f^2(q, f^1(q, r)) = f(q, r)$.
 We make this decomposition to allow us to take advantage of distributivity for problems where $f(\cdot, \cdot)$ distributes over $\bigoplus$.
 In the dual-tree algorithm, $\rho$ can be computed as follows:
-
 \begin{equation}
   \label{eqn:rho}
   \rho(q, R) = f^{2}(q, \bigoplus^{1}_{r \in R} f^{1}(q, R)) = f^{2}(q, \pi(\{q\}, R))
@@ -377,6 +393,11 @@ The recurrence relationship only defines a base case if the prune check $C$ is t
 In fact, evaluating $\rho$ in Equations \ref{eqn:rho} and \ref{eqn:pi} as such is identical to the single-tree algorithm -- recursive subdivision along the reference tree until a prune is possible.
 However, dual-tree algorithms may prune multiple queries at once, prompting the existence of the second rule in Equation \ref{eqn:pi}.
 
+It is also noteworthy that Equation \ref{eqn:mu} may evaluate to very different values during the course of the dual-tree computation.
+As more of the tree is expanded, it becomes ``convenient'' to expand $\mu$ in a manner more advantageous to pruning.
+
+MOTIVATION FOR THIS MODEL: Every type of information transfer is accounted for.
+
 \subsection{Combining the Two}
 
 Query-reference problems, compared to global-reductions, are far more complicated.
@@ -399,16 +420,22 @@ Our goal in implementation is to choose the execution pattern that maximizes per
 
 \section{Recursion Patterns}
 
-DFS meta-algorithm:
+DFS meta-algorithm for query-reference problems:
+(Maybe I should show global reduce problems instead since it's simpler)
 
 \begin{equation*}
   \begin{array}{l}
+    \forall q \in Q, \mu(Q, \child) \gets 0^{\muh}
+    \\
+    \forall q \in Q, \pi(Q, \prune) \gets 0^{\oplus^{1}}
+    \\
     \mbox{procedure dfs}(Q, R, \mu^{*})
     \\
-    \x \mu(Q, R) = \mu(Q, \exact) \muh \delta(\sigma(Q), \sigma(R))
-    \\ \xx \muh F^{2}(\sigma(Q), \pi(Q, \prune) \muh \mu^{*}
+    \x \mu(Q, \visited) \gets \mu(Q, \child) \muh F^{2}(\sigma(Q), \pi(Q, \prune))
     \\
-    \x \mbox{if } C(\sigma(Q), \sigma(R), \mu(Q, R)))
+    \x \mu(Q, \all) \gets \mu(Q, \visited) \muh \delta(\sigma(Q), \sigma(R) \muh \mu^{*}
+    \\
+    \x \mbox{if } C(\sigma(Q), \sigma(R), \mu(Q, \all)))
     \\
     \xx \pi(Q, \prune) \gets \pi(Q, \prune) \oplus^{1} F^{1}(\sigma(Q), \sigma(R))
     \\
@@ -416,43 +443,41 @@ DFS meta-algorithm:
     \\
     \xx \mbox{for } c = L, R
     \\
-    \xxx \pi(Q_c, \prune) \gets \pi(Q_c, \prune) \oplus^{1} \pi(Q_c, \prune)
+    \xxx \pi(Q_c, \prune) \gets \pi(Q_c, \prune) \oplus^{1} \pi(Q, \prune)
     \\
     \xxx \mbox{dfs}(Q_c, R, \mu^{*})
     \\
-    \xx \mu(Q, \exact) \gets
+    \xx \mbox{end for}
     \\
-    \xxx (\mu(Q_L, \exact) \muh F^{2}(\sigma(Q_L), \pi(Q_L, \prune))
+    \xx \mu(Q, \child) \gets \mu(Q_L, \visited) \muv \mu(Q_R, \visited)
     \\
-    \xxx \muv (\mu(Q_R, \exact) \muh F^{2}(\sigma(Q_R), \pi(Q_R, \prune))
-    \\
-    \xx \pi(Q, \prune) \gets 0^{1}
+    \xx \pi(Q, \prune) \gets 0^{\oplus^{1}}
     \\
     \x \mbox{else}
     \\
-    \xx (R_a, R_b) \gets \mbox{prioritize}(\sigma(Q), (R_L, \sigma(R_L)), (R_R, \sigma(R_R)))
+    \xx (R_a, R_b) \gets \mbox{prioritize}(\sigma(Q), R_L, R_R)
     \\
     \xx \dfs(Q, R_a, \mu^{*} \muh \delta(\sigma(Q), \sigma(R_b))
     \\
     \xx \dfs(Q, R_b, \mu^{*})
     \\
-    \x \mbox{fi}
+    \x \mbox{end if}
     \\
     \mbox{end dfs}
     \\
     \mbox{function fixup}(Q, \pi^{*})
     \\
-    \x \pi(Q, \wholeR) \gets \pi^{*} \oplus^{1} \pi(Q, \prune)
+    \x \pi(Q, \all) \gets \pi^{*} \oplus^{1} \pi(Q, \prune)
     \\
     \x \mbox{if } |Q| = 1
     \\
-    \xx \rho(q) \gets f^{2}(q, \pi(Q, \wholeR))
+    \xx \rho(q) \gets f^{2}(q, \pi(Q, \all))
     \\
     \x \mbox{else}
     \\
-    \xx \mbox{fixup}(Q_L, \pi(Q, \wholeR))
+    \xx \mbox{fixup}(Q_L, \pi(Q, \all))
     \\
-    \xx \mbox{fixup}(Q_R, \pi(Q, \wholeR))
+    \xx \mbox{fixup}(Q_R, \pi(Q, \all))
     \\
     \x \mbox{fi}
     \\
