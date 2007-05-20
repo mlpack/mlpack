@@ -1,0 +1,5 @@
+
+- Saturday May 19
+  - Figured out most of the math
+  - Wrote most of the math
+
