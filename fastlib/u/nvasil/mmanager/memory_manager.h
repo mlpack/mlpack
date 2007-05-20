@@ -30,7 +30,7 @@ class MemoryManager {
   static  MemoryManager<Logmode> *allocator_;
   friend class MemoryManagerTest;
   static const int kTypicalSystemPageSize_ = 65536;
-  static const uint32 kMinimumCapacity_=33554432;
+  static const uint32 kMinimumCapacity_= 4194304;
 	static const void *NullValue;
   template<typename T>
   struct Tchar {
@@ -441,13 +441,15 @@ class MemoryManager {
 
 	void set_capacity(uint64 capacity) {
 	  if (pool_ != NULL) {
-		  FATAL("Too late to cahnge capacity, memory manager is already "
-					            "initialized\n");
+			const char *temp="Too late to cahnge capacity, memory manager is already "
+					       "initialized\n";
+		  FATAL(temp);
 		}
 		if (capacity % system_page_size_ != 0) {
-      FATAL("\n Error!, the capacity "L64"  is not a multiple of the "
-            "page size "L32" \n", (unsigned long long) capacity_
-                                       , system_page_size_);
+			const char *temp=
+				"\n Error!, the capacity "L64"  is not a multiple of the "
+        "page size "L32" \n";
+      FATAL(temp, (unsigned long long) capacity_, system_page_size_);
     }
    capacity_ = capacity;
 	}
