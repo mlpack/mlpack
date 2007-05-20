@@ -15,13 +15,16 @@
  * 
  * =====================================================================================
  */
+#include "u/nvasil/loki/NullType.h"
 
+template<typename TYPELIST=Loki::NullType>
 class NullStatistics {
  public:	
 	void Alias(const NullStatistics &other) {
 		
 	}
-  NullStatistics &operator=(const NullStatistics &other) {
+  NullStatistics<TYPELIST> &operator=(
+			const NullStatistics<TYPELIST> &other) {
 	  return *this;
 	}
 };

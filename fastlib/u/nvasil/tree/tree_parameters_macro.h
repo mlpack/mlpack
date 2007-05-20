@@ -16,31 +16,41 @@
  * =====================================================================================
  */
 
-#define TREE_PARAMETERS(PRECISION,\
+#define TREE_PARAMETERS(IDENTIFIER, \
+		                    PRECISION,\
 		                    ALLOCATOR,\
 		                    METRIC,\
 	                      BOUNDINGBOX,\
 	                      NODESTATISTICS,\
-                        POINTIDDESCRIMINATOR,\
+                        POINTIDDISCRIMINATOR,\
 		                    PIVOTER, \
 		                    diagnostic) \
-struct BasicParameters { \
+struct BasicParameters##IDENTIFIER##_t { \
+ public: \
 	typedef PRECISION Precision_t; \
 	typedef ALLOCATOR              Allocator_t; \
 	typedef METRIC<Precision_t>    Metric_t;  \
 };\
 \
-struct NodeParameters {\
-  typedef BOUNDINGBOX<BasicParameters, diagnostic> BoundingBox_t; \
-	typedef NODESTATISTICS<BasicParameters> NodeCachedStatistics_t; \
-	typedef POINTIDDISCIMINATOR PointIdDescriminator_t; \
+struct NodeParameters##IDENTIFIER##_t {\
+ public: \
+ 	typedef BOUNDINGBOX<BasicParameters##IDENTIFIER##_t, diagnostic> BoundingBox_t; \
+	typedef NODESTATISTICS<BasicParameters##IDENTIFIER##_t> NodeCachedStatistics_t; \
+	typedef POINTIDDISCRIMINATOR PointIdDiscriminator_t; \
 }; \
 \
-struct ExtraTreeParameters { \
-	typedef PIVOTER<BasicParameters> Pivot_t;\
+struct ExtraTreeParameters##IDENTIFIER##_t { \
+ public:	\
+	typedef PIVOTER<BasicParameters##IDENTIFIER##_t, diagnostic> Pivot_t;\
 };\
 \
-struct Parameters :  public BasicParamters, public NodeParameters,\
-                     public ExtraTreeParameters { \
- \
+struct TreeParameters##IDENTIFIER##_t { \
+ public: \
+	typedef PRECISION Precision_t; \
+	typedef ALLOCATOR              Allocator_t; \
+	typedef METRIC<Precision_t>    Metric_t;  \
+ 	typedef BOUNDINGBOX<BasicParameters##IDENTIFIER##_t, diagnostic> BoundingBox_t; \
+	typedef NODESTATISTICS<BasicParameters##IDENTIFIER##_t> NodeCachedStatistics_t; \
+	typedef POINTIDDISCRIMINATOR PointIdDiscriminator_t; \
+	typedef PIVOTER<BasicParameters##IDENTIFIER##_t, diagnostic> Pivot_t;\
 };

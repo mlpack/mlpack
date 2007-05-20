@@ -20,6 +20,7 @@
 #include <sys/mman.h>
 #include <limits>
 #include "fastlib/fastlib.h"
+#include "u/nvasil/loki/NullType.h"
 #include "u/nvasil/mmanager/memory_manager.h"
 #include "u/nvasil/mmanager_with_tpie/memory_manager.h"
 #include "u/nvasil/test/test.h"
@@ -292,7 +293,7 @@ struct Parameters1 {
 	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 	typedef HyperRectangle<BasicTypes1, false> BoundingBox_t;
-	typedef NullStatistics NodeCachedStatistics_t;
+	typedef NullStatistics<Loki::NullType> NodeCachedStatistics_t;
   typedef SimpleDiscriminator PointIdDiscriminator_t;
   typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
 };
@@ -306,7 +307,7 @@ struct Parameters2 {
 	typedef tpiemm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 	typedef HyperRectangle<BasicTypes2, false> BoundingBox_t;
-	typedef NullStatistics NodeCachedStatistics_t;
+	typedef NullStatistics<Loki::NullType> NodeCachedStatistics_t;
   typedef SimpleDiscriminator PointIdDiscriminator_t;
   typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
 };

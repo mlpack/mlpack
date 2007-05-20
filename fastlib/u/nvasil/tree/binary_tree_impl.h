@@ -288,11 +288,10 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
                                  typename TREE__::Precision_t distance) {                                               	
 
   if (distance > query->get_min_dist_so_far()) {
-  	printf("PRUNEEEEEEEEEEEEEEEEEEEEEEEEEE\n");
 		return ;
   } else {
   	if (query->IsLeaf() && reference->IsLeaf()) {
-  	  Precision_t max_distance=numeric_limits<Precision_t>::max();
+  	  Precision_t max_distance=query->get_min_dist_so_far();
 			reference->FindAllNearest(query, 
   	                            max_distance,
   	                            range,
@@ -417,6 +416,7 @@ void TREE__::InitAllKNearestNeighborOutput(typename TREE__::NodePtr_t ptr,
   	ptr->set_kneighbors(all_nn_out_.Allocate(ptr->get_num_of_points(), knns),
 			                                       knns);
 	  ptr->InitKNeighbors(knns);
+		ptr->set_min_dist_so_far(numeric_limits<Precision_t>::max());
 	} else {
 	  InitAllKNearestNeighborOutput(ptr->get_left(), knns);
 		InitAllKNearestNeighborOutput(ptr->get_right(), knns);
