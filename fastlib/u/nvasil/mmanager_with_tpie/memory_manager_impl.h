@@ -45,7 +45,6 @@ void MEMORY_MANAGER__::Init() {
   current_ptr_ = cache_;
   current_offset_ = 0;
   current_page_ = 0;
-
   // register all the pages
   page_address_  = new char*[kMaxNumOfPages];
   for(int32 i=0; i < kMaxNumOfPages; i++) {
@@ -466,12 +465,11 @@ inline void MEMORY_MANAGER__::HandlePageFault(index_t page_requested) {
 
 TEMPLATE__
 inline index_t MEMORY_MANAGER__::PageToCachePage(index_t paddress) {
-  if (unlikely(page_address_[paddress] == NULL)) {
-		const char *temp="You are trying to access a page that "
+  const char *temp="You are trying to access a page that "
 			               "is not in Cache\n"
 										 "Page number %i\n";
-  	FATAL(temp, paddress);
-  }
+
+	DEBUG_ASSERT_MSG(page_address_[paddress] != NULL, temp, paddress);
   return  ((ptrdiff_t)(page_address_[paddress] - cache_)) / page_size_;
 }
 

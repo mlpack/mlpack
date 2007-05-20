@@ -201,9 +201,9 @@ class BinaryDataset {
 	}
 	// returns a reference on the i,j element
 	inline Precision_t &At(uint64 i, int32 j) {
-   	const char *temp="Attempt to acces data out of range "LI">"LI"";
+   	static const char *temp="Attempt to acces data out of range "LI">"LI"";
 		DEBUG_ASSERT_MSG(i<num_of_points_, temp, i, num_of_points_);
-    const char *temp1="Attempt to access element greater that the "
+    static const char *temp1="Attempt to access element greater that the "
 			                "dimension "LI">"L32"";
 
 		DEBUG_ASSERT_MSG(j<dimension_, temp1, j, dimension_);

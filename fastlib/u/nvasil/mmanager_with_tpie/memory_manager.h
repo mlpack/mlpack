@@ -153,6 +153,7 @@ class MemoryManager {
     page_size_ = kTPIEPageSize;
 		cache_file_="temp_mem";
 		header_file_=cache_file_ + string(".header");
+		maximum_page_age_=numeric_limits<index_t>::max();
   }
 
   // Trivial Destructor
@@ -173,7 +174,7 @@ class MemoryManager {
   void Destruct();
     
   // Resets the page timestamps
-  void ResetPageTimers(){
+ inline void ResetPageTimers(){
     page_timer_ = 0;
     for(index_t i=0; i<num_of_pages_; i++) {
   	  page_timestamp_[i]=0;
