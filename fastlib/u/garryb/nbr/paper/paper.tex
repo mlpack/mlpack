@@ -20,9 +20,22 @@
 \DeclareMathOperator{\TWOPT}{TWOPOINT}
 \DeclareMathOperator{\cardinality}{cardinality}
 \DeclareMathOperator{\hrect}{hrect}
+\DeclareMathOperator{\dfs}{dfs}
+\DeclareMathOperator{\exact}{exact}
+\DeclareMathOperator{\unvisited}{unvisited}
+\DeclareMathOperator{\prune}{prune}
 \DeclareMathOperator{\IF}{if}
 \DeclareMathOperator{\ATDISCRETION}{}
+\newcommand{\muv}{\union^{\bigoplus}}
+\newcommand{\bigmuv}{\union^{\bigoplus}}
+\newcommand{\muh}{\oplus^{\union}}
+\newcommand{\bigmuh}{\bigoplus^{\union}}
 \newcommand{\dist}{d}
+\newcommand{\wholeR}{\hat{R}}
+\newcommand{\wholeQ}{\hat{Q}}
+\newcommand{\x}{\hspace{0.15in}}
+\newcommand{\xx}{\hspace{0.3in}}
+\newcommand{\xxx}{\hspace{0.45in}}
 
 %\documentstyle[times,art10,twocolumn,latex8]{article}
 
@@ -299,7 +312,7 @@ In the dual-tree algorithm, $\rho$ can be computed as follows:
   \\
   & \left\{
     \begin{array}{lr}
-      f^{1}(\sigma(Q), \sigma(R)) & \IF C(\sigma(Q), \sigma(R), \mu(Q))
+      F^{1}(\sigma(Q), \sigma(R)) & \IF C(\sigma(Q), \sigma(R), \mu(Q))
       \\
       \pi(Q^{*}, R) & \mbox{if defined for } Q^{*} \supset Q
       \\
@@ -321,9 +334,11 @@ In the dual-tree algorithm, $\rho$ can be computed as follows:
       \\
       \delta(\sigma(Q), \sigma(R)) & \mbox{if convenient}
       \\
-      \mu(Q_L, R) \union^{\bigoplus} \mu(Q_R, R) & \mbox{if convenient}
+      F^2(\sigma(Q), \pi(Q, R)) & \mbox{if defined}
       \\
-      \mu(Q, R_L) \oplus^{\union} \mu(Q, R_R) & \mbox{if convenient}
+      \mu(Q_L, R) \muv \mu(Q_R, R) & \mbox{if convenient}
+      \\
+      \mu(Q, R_L) \muh \mu(Q, R_R) & \mbox{if convenient}
       \\
       \mu(Q^{*}, R) & \mbox{otherwise, for } Q^{*} \supset Q
     \end{array}
@@ -331,20 +346,20 @@ In the dual-tree algorithm, $\rho$ can be computed as follows:
  \end{array}
 \end{equation}
 
-under the model\footnote{In practice for Equation \ref{eqn:mu}, rules 1 and 3 are most accurate but only used in depth-first expansions, rule 5 is used only when no other information is available, and rule 4 is used primarily in breadth-first expansions.}:
+under the model\footnote{In practice for Equation \ref{eqn:mu}, rules 1 and 4 are most accurate but only used in depth-first expansions, rule 6 is used only when no other information is available, and rule 5 is used primarily in breadth-first expansions.}:
 \begin{itemize}
-  \item $f^1(\sigma(Q), \sigma(R))$ - A pairwise function to allow for distributivity only valid when pruning is possible, identical to $f^1(\cdot, \cdot)$ when $|Q| = |R| = 1$.
+  \item $F^1(\sigma(Q), \sigma(R))$ - A pairwise function to allow for distributivity only valid when pruning is possible, identical to $f^1(\cdot, \cdot)$ when $|Q| = |R| = 1$.
   If $f(\cdot, \cdot)$ distributes over $\bigoplus$, then $f^1(\sigma(R))$ is often the same as $\sigma(R)$.
   Otherwise, it usually corresponds to a value whose effect on the overall problem is indistinguishable from $\forall_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
-  \item $f^2(q, \cdot)$ - A post-processing function that is often an identity of the second argument, but may also be responsible for applying the inner function in the case of distributivity.
+  \item $F^2(\sigma(Q), \pi(Q, R))$ - A post-processing function that determines the bounds of the effects of $\pi$ on a region of queries.
   \item $\bigoplus^{1}$ - A commutative and associative operator that operates on the results of $f^1$ before $f^2$ is applied, simulating the effects of the original $\bigoplus$ as specified in Equation \ref{eqn:rho}.
   \item $\delta(\sigma(Q), \sigma(R))$ - A function that computes pessimistic bounds on the contribution of all of $R$ to any element of $Q$.
   Formally, succinct information bounding the set of results $\union_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
   For kernel density estimation, this is the pair $(\min_{q \in Q} \sum_{r \in R} K(q, r), \max_{q \in Q} \sum_{r \in R} K(q, r))$.
-  \item $\union^{\bigoplus}$ - An operator to relax the bounds for a query region.
+  \item $\muv$ - An operator to relax the bounds for a query region.
   Given $\mu(Q_L, R)$ and $\mu(Q_R, R)$, we can create more pessimistic pruning information for the worst-case effect of $R$ on any of the query points $Q$.
   In many algorithms, this operator takes the minimum of some lower bound and maximum of some upper bound.
-  \item $\bigoplus^{\union}$ - An operator that pessimistically merges the contributions of two disjoint reference subsets on the same query subset.
+  \item $\bigmuh$ - An operator that pessimistically merges the contributions of two disjoint reference subsets on the same query subset.
   For kernel summation problems, this sums the lower and upper bounds.
   \item $C$ - A Boolean function indicating if a prune is possible, using information from $\mu$.
   The operators applied in order to compute $\mu$ depend on the expansion pattern and the sequence of node pairs that have already been visited.
@@ -383,6 +398,67 @@ Our goal in implementation is to choose the execution pattern that maximizes per
 \section{Example Algorithms in the Framework}
 
 \section{Recursion Patterns}
+
+DFS meta-algorithm:
+
+\begin{equation*}
+  \begin{array}{l}
+    \mbox{procedure dfs}(Q, R, \mu^{*})
+    \\
+    \x \mu(Q, R) = \mu(Q, \exact) \muh \delta(\sigma(Q), \sigma(R))
+    \\ \xx \muh F^{2}(\sigma(Q), \pi(Q, \prune) \muh \mu^{*}
+    \\
+    \x \mbox{if } C(\sigma(Q), \sigma(R), \mu(Q, R)))
+    \\
+    \xx \pi(Q, \prune) \gets \pi(Q, \prune) \oplus^{1} F^{1}(\sigma(Q), \sigma(R))
+    \\
+    \x \mbox{elif } |Q| \geq |R|
+    \\
+    \xx \mbox{for } c = L, R
+    \\
+    \xxx \pi(Q_c, \prune) \gets \pi(Q_c, \prune) \oplus^{1} \pi(Q_c, \prune)
+    \\
+    \xxx \mbox{dfs}(Q_c, R, \mu^{*})
+    \\
+    \xx \mu(Q, \exact) \gets
+    \\
+    \xxx (\mu(Q_L, \exact) \muh F^{2}(\sigma(Q_L), \pi(Q_L, \prune))
+    \\
+    \xxx \muv (\mu(Q_R, \exact) \muh F^{2}(\sigma(Q_R), \pi(Q_R, \prune))
+    \\
+    \xx \pi(Q, \prune) \gets 0^{1}
+    \\
+    \x \mbox{else}
+    \\
+    \xx (R_a, R_b) \gets \mbox{prioritize}(\sigma(Q), (R_L, \sigma(R_L)), (R_R, \sigma(R_R)))
+    \\
+    \xx \dfs(Q, R_a, \mu^{*} \muh \delta(\sigma(Q), \sigma(R_b))
+    \\
+    \xx \dfs(Q, R_b, \mu^{*})
+    \\
+    \x \mbox{fi}
+    \\
+    \mbox{end dfs}
+    \\
+    \mbox{function fixup}(Q, \pi^{*})
+    \\
+    \x \pi(Q, \wholeR) \gets \pi^{*} \oplus^{1} \pi(Q, \prune)
+    \\
+    \x \mbox{if } |Q| = 1
+    \\
+    \xx \rho(q) \gets f^{2}(q, \pi(Q, \wholeR))
+    \\
+    \x \mbox{else}
+    \\
+    \xx \mbox{fixup}(Q_L, \pi(Q, \wholeR))
+    \\
+    \xx \mbox{fixup}(Q_R, \pi(Q, \wholeR))
+    \\
+    \x \mbox{fi}
+    \\
+    \mbox{end fixup}
+  \end{array}
+\end{equation*}
 
 \section{Parallel Execution}
 
