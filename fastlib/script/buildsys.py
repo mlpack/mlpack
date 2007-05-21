@@ -489,7 +489,7 @@ class Loader:
       return register(name, dep.CustomRule(dependencies, doit_fn))
     def librule(name = selfname,
         sources = [], headers = [], deplibs = [], cflags = ""):
-      return register(name, LibRule(pathify_fake(name),
+      return register(name, LibRule(pathify_fake(name).replace("/", "_"),
           sourcerules(Types.GCC_SOURCE, sources),
           sourcerules(Types.HEADER , headers),
           sourcerules(Types.LINKABLE, deplibs),
