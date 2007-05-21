@@ -166,7 +166,7 @@ class CacheArray {
 
  public:
   CacheArray() {}
-  ~CacheArray() {}
+  virtual ~CacheArray() {}
 
   /** Reopens another cache array */
   void Init(CacheArray *other, BlockDevice::mode_t mode_in) {
@@ -325,12 +325,15 @@ template<typename T>
 void CacheArray<T>::Flush() {
   for (BlockDevice::blockid_t blockid = begin_block_;
       blockid < end_block_; blockid++) {
-    if (metadatas_[blockid - begin_block_].data) {
+    Metadata *metadata = &metadatas_[blockid - begin_block_];
+    if (metadata->data != NULL) {
       if (mode_ != BlockDevice::READ) {
         cache_->StopWrite(blockid);
       } else {
         cache_->StopRead(blockid);
       }
+      DEBUG_SAME_INT(metadata->lock_count, 0);
+      metadata->data = NULL;
     }
   }
   cache_->Flush(
@@ -363,7 +366,8 @@ class TempCacheArray : public CacheArray<T> {
   NullBlockDevice null_device_;
   
  public:
-  ~TempCacheArray() {
+  virtual ~TempCacheArray() {
+    CacheArray<T>::Flush();
   }
 
   /** Creates a blank, temporary cached array */

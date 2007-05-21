@@ -111,14 +111,14 @@ void SmallCache::Write(blockid_t blockid,
 }
 
 void SmallCache::Close() {
-  for (index_t i = 0; i < metadatas_.size(); i++) {
-    Metadata *metadata = &metadatas_[i];
-    mem::Free(metadata->data);
-    DEBUG_ASSERT(metadatas_[i].lock_count == 0);
-    DEBUG_POISON_PTR(metadata->data);
-  }
-  delete handler_;
 }
 
 SmallCache::~SmallCache() {
+  for (index_t i = 0; i < metadatas_.size(); i++) {
+    Metadata *metadata = &metadatas_[i];
+    mem::Free(metadata->data);
+    DEBUG_SAME_INT(metadatas_[i].lock_count, 0);
+    DEBUG_POISON_PTR(metadata->data);
+  }
+  delete handler_;
 }

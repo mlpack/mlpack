@@ -51,6 +51,7 @@ class SpNode {
     OT_MY_OBJECT(begin_);
     OT_MY_OBJECT(count_);
     OT_MY_OBJECT(bound_);
+    OT_MY_OBJECT(stat_);
     OT_MY_ARRAY(children_);
   }
   

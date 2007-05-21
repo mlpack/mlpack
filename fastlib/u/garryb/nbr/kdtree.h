@@ -108,6 +108,7 @@ index_t KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Partition_(
         break;
       }
       *left_bound |= *left_v;;
+      points_.StopWrite(left);
       left++;
     }
 
@@ -117,21 +118,25 @@ index_t KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Partition_(
         break;
       }
       *right_bound |= *right_v;
+      points_.StopWrite(right);
       right--;
     }
 
     if (unlikely(left > right)) {
       /* left == right + 1 */
+      points_.StopWrite(left);
+      points_.StopWrite(right);
       break;
     }
 
-    left_v->SwapValues(right_v);
-    // TODO: If point info has pointers this will incur bad cache performance
-    // In the future we rely on OT frozen storage
-    point_infos_.Swap(left, right);
 
+    left_v->SwapValues(right_v);
     *left_bound |= *left_v;
     *right_bound |= *right_v;
+    points_.StopWrite(left);
+    points_.StopWrite(right);
+    
+    point_infos_.Swap(left, right);
 
     //index_t t = old_from_new_indices_[left];
     //old_from_new_indices_[left] = old_from_new_indices_[right];
@@ -208,6 +213,8 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::KdTreeMidpointBuilder::Bu
           node->count());
       
       leaf = false;
+      nodes_->StopWrite(left_i);
+      nodes_->StopWrite(right_i);
     }
   }
 
@@ -239,6 +246,8 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Build_() {
   FindBoundingBox_(node->begin(), node->end(), &node->bound());
 
   Build_(node_i);
+  
+  nodes_->StopWrite(node_i);
 }
 
 #endif
