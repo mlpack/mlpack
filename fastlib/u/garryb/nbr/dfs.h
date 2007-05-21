@@ -90,7 +90,8 @@ void DualTreeDepthFirst<GNP>::Init(
   QMutableInfo default_mutable;
   default_mutable.mass_result.Init(param_);
   default_mutable.postponed.Init(param_);
-  q_mutables_.Init(default_mutable, q_nodes_.n_block_elems());
+  q_mutables_.Init(default_mutable, q_nodes_.n_block_elems(),
+      q_nodes_.n_block_elems());
   
   global_result_.Init(param_);
   
@@ -348,7 +349,8 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
 
       for (index_t r_i_rel = 0; r_i_rel < r_count; ++r_i_rel) {
         visitor.VisitPair(param_, *q_point, *q_info, q_i,
-            r_local_points[i], r_local_infos[i], r_i_rel + r_node->begin());
+            r_local_points[r_i_rel], r_local_infos[r_i_rel],
+            r_i_rel + r_node->begin());
       }
 
       visitor.FinishVisitingQueryPoint(param_, *q_point, *q_info, *r_node,
@@ -366,7 +368,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
 
   for (index_t r_i_rel = 0; r_i_rel < r_node->count(); ++r_i_rel) {
     r_local_points.StopRead(r_i_rel + r_node->begin());
-    r_local_point_infos.StopRead(r_i_rel + r_node->begin());
+    r_local_infos.StopRead(r_i_rel + r_node->begin());
   }
 
   q_node_mut->mass_result.FinishReaccumulate(param_, *q_node);

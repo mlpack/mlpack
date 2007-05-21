@@ -27,6 +27,7 @@ class SmallCache : public BlockDeviceWrapper {
   mode_t mode_;
 
  public:
+  SmallCache() {}
   virtual ~SmallCache();
 
   mode_t mode() const {
