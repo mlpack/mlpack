@@ -39,7 +39,7 @@ class DualTreeDepthFirst {
   
  public:
   void Init(
-      struct datanode *datanode_in,
+      datanode *datanode_in,
       const typename GNP::Param& param_in,
       CacheArray<typename GNP::Point> *q_points,
       CacheArray<typename GNP::QPointInfo> *q_point_infos,
