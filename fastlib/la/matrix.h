@@ -253,6 +253,15 @@ class Vector {
     DEBUG_ASSERT(length() == other.length());
     mem::Copy(ptr_, other.ptr_, length_);
   }
+
+  /**
+   * Copies all of the values from an array of doubles to this vector.
+   *
+   * @param other the vector to copy from
+   */
+  void CopyValues(const double *src_ptr) {
+    mem::Copy(ptr_, src_ptr, length_);
+  }
   
   /**
    * Prints to a stream as a debug message.

@@ -3,7 +3,7 @@
 void SmallCache::Init(BlockDevice *inner_in, BlockActionHandler *handler_in,
     mode_t mode_in) {
   BlockDeviceWrapper::Init(inner_in);
-  metadata_.Init(inner_in->n_blocks());
+  metadatas_.Init(inner_in->n_blocks());
   handler_ = handler_in;
   mode_ = mode_in;
 }
@@ -42,7 +42,7 @@ void SmallCache::StopWrite(blockid_t blockid) {
 
 void SmallCache::PerformCacheMiss_(blockid_t blockid) {
   char *data;
-  Metadata *metadata = &metadata_[blockid];
+  Metadata *metadata = &metadatas_[blockid];
 
   data = mem::Alloc<char>(n_block_bytes());
   if (mode_ == BlockDevice::READ || mode_ == BlockDevice::MODIFY) {
@@ -57,7 +57,7 @@ void SmallCache::PerformCacheMiss_(blockid_t blockid) {
 
 void SmallCache::Writeback_(blockid_t blockid, offset_t begin, offset_t end) {
   if (begin != end) {
-    Metadata *metadata = &metadata_[blockid];
+    Metadata *metadata = &metadatas_[blockid];
     char *data = metadata->data;
     
     if (data) {
@@ -111,10 +111,10 @@ void SmallCache::Write(blockid_t blockid,
 }
 
 void SmallCache::Close() {
-  for (index_t i = 0; i < metadata_.size(); i++) {
-    Metadata *metadata = &metadata_[i];
+  for (index_t i = 0; i < metadatas_.size(); i++) {
+    Metadata *metadata = &metadatas_[i];
     mem::Free(metadata->data);
-    DEBUG_ASSERT(metadata_[i].lock_count == 0);
+    DEBUG_ASSERT(metadatas_[i].lock_count == 0);
     DEBUG_POISON_PTR(metadata->data);
   }
   delete handler_;
