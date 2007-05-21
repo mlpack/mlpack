@@ -1,0 +1,13 @@
+#include "nbr_utils.h"
+
+success_t nbr_utils::Load(const char *fname, TempCacheArray<Vector> *cache_out) {
+  Matrix matrix;
+  Vector first_row;
+  success_t success = data::Load(fname, &matrix);
+  
+  matrix.MakeColumnVector(0, &first_row);
+  cache_out->Init(first_row, matrix.n_cols(),
+      max(matrix.n_cols() + 1, 256));
+  
+  return success;
+}
