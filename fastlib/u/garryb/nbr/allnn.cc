@@ -14,6 +14,9 @@ class Allnn {
   /** The type of point in use. Required by NBR. */
   typedef Vector Point;
 
+  typedef BlankPointInfo QPointInfo;
+  typedef BlankPointInfo RPointInfo;
+
   /**
    * All parameters required by the execution of the algorithm.
    *
@@ -36,14 +39,16 @@ class Allnn {
     /**
      * Initialize parameters from a data node (Req NBR).
      */
-    void Init(datanode *datanode, const Matrix& q_matrix,
-        const Matrix& r_matrix) {
-      dim = q_matrix.n_rows();
+    void Init(datanode *datanode) {
+      dim = -1;
+    }
+    
+    void AnalyzePoint(const Point& q_point, const BlankPointInfo& info) {
+      DEBUG_ASSERT(dim == -1 || dim == q_point.length());
+      dim = q_point.length();
     }
   };
 
-  typedef BlankPointInfo QPointInfo;
-  typedef BlankPointInfo RPointInfo;
   
   typedef BlankStat QStat;
   typedef BlankStat RStat;
@@ -221,22 +226,12 @@ class Allnn {
       return q_node.bound().MidDistanceSqToBound(r_node.bound());
     }
   };
-  
-  typedef DualTreeGNP<
-      Param, Algorithm,
-      Point, Bound,
-      QPointInfo, QStat,
-      RPointInfo, RStat,
-      PairVisitor, Delta,
-      QResult, QMassResult, QPostponed,
-      GlobalResult>
-    GNP;
 };
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
   
-  nbr_utils::SerialDualTreeMain<Allnn::GNP, DualTreeDepthFirst<Allnn::GNP> >(
+  nbr_utils::SerialDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
   
   fx_done();

@@ -67,7 +67,13 @@ class SpNode {
     mem::DebugPoison(children_, t_cardinality);
   }
   
-  void Init(index_t begin_in, index_t count_in) {
+  template<typename Param>
+  void Init(index_t dim, const Param& param) {
+    bound_.Init(dim);
+    stat_.Init(param);
+  }
+  
+  void set_range(index_t begin_in, index_t count_in) {
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     begin_ = begin_in;
     count_ = count_in;

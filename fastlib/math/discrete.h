@@ -81,6 +81,19 @@ namespace math {
     reverse->Init(original.size());
     MakeInversePermutation(original.size(), original.begin(), reverse->begin());
   }
+  
+  /**
+   * Finds the log base 2 of an integer.
+   *
+   * This integer must absolutely be a power of 2.
+   */
+  inline unsigned IntLog2(unsigned i) {
+    unsigned l;
+    for (l = 0; (unsigned(1) << l) != i; l++) {
+      DEBUG_ASSERT_MSG(l < 1024, "Taking IntLog2 of a non-power-of-2.");
+    }
+    return l;
+  }
 };
 
 #endif

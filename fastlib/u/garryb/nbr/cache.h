@@ -22,7 +22,7 @@ class SmallCache : public BlockDeviceWrapper {
 
  private:
   Mutex mutex_;
-  ArrayList<Metadata> metadata_;
+  ArrayList<Metadata> metadatas_;
   BlockActionHandler *handler_;
   mode_t mode_;
 
@@ -52,7 +52,7 @@ class SmallCache : public BlockDeviceWrapper {
 
   virtual blockid_t AllocBlock() {
     blockid_t blockid = BlockDeviceWrapper::AllocBlock();
-    metadata_.Resize(n_blocks());
+    metadatas_.Resize(n_blocks());
     return blockid;
   }
 
@@ -61,7 +61,7 @@ class SmallCache : public BlockDeviceWrapper {
   void Writeback_(blockid_t blockid, offset_t begin, offset_t end);
 
   Metadata *GetBlock_(blockid_t blockid) {
-    Metadata *metadata = &metadata_[blockid];
+    Metadata *metadata = &metadatas_[blockid];
     char *data = metadata->data;
 
     if (unlikely(data == NULL)) {
@@ -139,7 +139,9 @@ class CacheArray {
 
  private:
   struct Metadata {
-    Metadata() : data(NULL) {}
+    Metadata() : data(NULL) {
+      DEBUG_ONLY(lock_count = 0);
+    }
     char *data;
 #ifdef DEBUG
     // lock count will be useful when we start using a FIFO layer
@@ -148,15 +150,19 @@ class CacheArray {
   };
 
  private:
-  SmallCache *cache_;
+  unsigned int n_block_elems_log_;
+  unsigned int n_block_elems_mask_;
+  ArrayList<Metadata> metadatas_;
+  unsigned int n_elem_bytes_;
+  
   index_t begin_;
   index_t end_;
-  index_t begin_block_;
-  index_t end_block_;
-  mode_t mode_;
   unsigned int n_block_elems_;
-  unsigned int n_elem_bytes_;
-  ArrayList<Metadata> metadata_;
+  BlockDevice::blockid_t begin_block_;
+  BlockDevice::blockid_t end_block_;
+  mode_t mode_;
+  
+  SmallCache *cache_;
 
  public:
   CacheArray() {}
@@ -176,20 +182,7 @@ class CacheArray {
 
   void Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
       index_t begin_index_in, index_t end_index_in,
-      index_t n_block_elems_in, size_t n_elem_bytes_in) {
-    cache_ = cache_in;
-    begin_ = begin_index_in;
-    end_ = end_index_in;
-    n_block_elems_ = n_block_elems_in;
-    n_elem_bytes_ = n_elem_bytes_in;
-    
-    begin_block_ = begin_ / n_block_elems_;
-    end_block_ = (end_ + n_block_elems_ - 1) / n_block_elems_;
-    
-    metadata_.Init(end_block_ - begin_block_);
-    
-    mode_ = mode_in;
-  }
+      index_t n_block_elems_in, size_t n_elem_bytes_in);
 
   index_t begin_index() const {
     return begin_;
@@ -221,7 +214,6 @@ class CacheArray {
 
   void StopRead(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    DEBUG_ASSERT(mode_ != BlockDevice::READ);
     ReleaseElement_(element_id);
   }
 
@@ -259,19 +251,18 @@ class CacheArray {
   void Flush();
   
   index_t Alloc() {
-    ++end_index;
-    BlockDevice::blockid_t block = 
-        (end_index + n_block_elems_ - 1) / n_block_elems_;
-    if (block != end_block_) {
-      end_block_ = block;
-      metadata_.Resize(end_block_ - begin_block_);
+    end_++;
+    BlockDevice::blockid_t block_computed = 
+        (end_ + n_block_elems_ - 1) >> n_block_elems_log_;
+    if (block_computed != end_block_) {
+      end_block_ = cache_->AllocBlock();
+      metadatas_.Resize(end_block_ - begin_block_);
       // Okay, notify the lower layers we're allocating.
-      index_t block_allocated = cache_->AllocBlock();
-      DEBUG_ASSERT_MSG(block_allocated == end_block_,
+      DEBUG_ASSERT_MSG(block_computed == end_block_,
           "Distributed data structure creation "
           "is not yet supported by CacheArray.");
     }
-    return end_index - 1;
+    return end_ - 1;
   }
 
  private:
@@ -286,32 +277,55 @@ class CacheArray {
   Element *CheckoutElement_(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
 
-    BlockDevice::blockid_t blockid = element_id / n_block_elems_;
     BlockDevice::offset_t offset =
-        uint(element_id % n_block_elems_) * n_elem_bytes_;
+        (element_id & n_block_elems_mask_) * n_elem_bytes_;
+    BlockDevice::blockid_t blockid = element_id >> n_block_elems_log_;
 
-    Metadata *metadata = &metadata_[blockid - begin_block_];
-    DEBUG_ONLY(metadata_->lock_count++);
-    Element *ptr = reinterpret_cast<Element*>(metadata_->data + offset);
+    Metadata *metadata = &metadatas_[blockid - begin_block_];
 
-    if (unlikely(metadata_->data == NULL)) {
+    DEBUG_ONLY(metadata->lock_count++);
+
+    if (unlikely(!metadata->data)) {
       return HandleCacheMiss_(element_id);
     } else {
+      Element *ptr = reinterpret_cast<Element*>(metadata->data + offset);
       return ptr;
     }
   }
   
   void ReleaseElement_(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    DEBUG_ONLY(--metadata_[element_id / n_block_elems_ - begin_block_].lock_count);
+    DEBUG_ONLY(--metadatas_[
+        (element_id >> n_block_elems_log_) - begin_block_].lock_count);
   }
 };
+
+template<typename T>
+void CacheArray<T>::Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
+    index_t begin_index_in, index_t end_index_in,
+    index_t n_block_elems_in, size_t n_elem_bytes_in) {
+  cache_ = cache_in;
+  begin_ = begin_index_in;
+  end_ = end_index_in;
+  n_block_elems_ = n_block_elems_in;
+  // Cache size must be a power of 2.
+  n_block_elems_log_ = math::IntLog2(n_block_elems_);
+  n_block_elems_mask_ = n_block_elems_ - 1;
+  n_elem_bytes_ = n_elem_bytes_in;
+  
+  begin_block_ = begin_ / n_block_elems_;
+  end_block_ = (end_ + n_block_elems_ - 1) / n_block_elems_;
+  
+  metadatas_.Init(end_block_ - begin_block_);
+  
+  mode_ = mode_in;
+}
 
 template<typename T>
 void CacheArray<T>::Flush() {
   for (BlockDevice::blockid_t blockid = begin_block_;
       blockid < end_block_; blockid++) {
-    if (metadata_[blockid - begin_block_].data) {
+    if (metadatas_[blockid - begin_block_].data) {
       if (mode_ != BlockDevice::READ) {
         cache_->StopWrite(blockid);
       } else {
@@ -320,15 +334,15 @@ void CacheArray<T>::Flush() {
     }
   }
   cache_->Flush(
-      begin_ / n_block_elems_, (begin_ % n_block_elems_) * n_elem_bytes_,
-      end_ / n_block_elems_, (end_ % n_block_elems_) * n_elem_bytes_);
+      begin_ / n_block_elems_, (begin_ & (n_block_elems_ - 1)) * n_elem_bytes_,
+      end_ / n_block_elems_, (end_ & (n_block_elems_ - 1)) * n_elem_bytes_);
 }
 
 template<typename T>
 typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
     index_t element_id) {
-  BlockDevice::blockid_t blockid = element_id / n_block_elems_;
-  Metadata *metadata = &metadata_[blockid];
+  BlockDevice::blockid_t blockid = element_id >> n_block_elems_log_;
+  Metadata *metadata = &metadatas_[blockid];
   
   if (mode_ != BlockDevice::READ) {
     metadata->data = cache_->StartWrite(blockid);
@@ -337,7 +351,7 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
   }
 
   BlockDevice::offset_t offset =
-      uint(element_id % n_block_elems_) * n_elem_bytes_;
+      uint(element_id & (n_block_elems_ - 1)) * n_elem_bytes_;
   
   return reinterpret_cast<Element*>(metadata->data + offset);
 }

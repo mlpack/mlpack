@@ -2,6 +2,7 @@
 #include "spbounds.h"
 #include "gnp.h"
 #include "dfs.h"
+#include "nbr_utils.h"
 
 /*
 
@@ -60,15 +61,17 @@ class Tkde {
    */
   struct Param {
    public:
-    /** The kernel in use. */
-    Kernel kernel;
     /**
      * The threshold in use.
      * This is a range to allow for epsilon checking.
      */
     SpRange thresh;
+    /** The kernel in use. */
+    Kernel kernel;
     /** The dimensionality of the data sets. */
     index_t dim;
+    /** The original threshold */
+    double threshold_orig;
 
     OT_DEF(Param) {
       OT_MY_OBJECT(kernel);
@@ -86,16 +89,21 @@ class Tkde {
     /**
      * Initialize parameters from a data node (Req NBR).
      */
-    void Init(datanode *datanode, const Matrix& q_matrix,
-        const Matrix& r_matrix) {
-      dim = q_matrix.n_rows();
-      kernel.Init(fx_param_double_req(datanode, "h"));
-      double t = fx_param_double_req(datanode, "threshold");
-      t = t * kernel.CalcNormConstant(dim);
-      fx_format_result(datanode, "norm_constant", "%f",
-          kernel.CalcNormConstant(dim));
-      thresh.lo = t * (1.0 - 1.0e-4);
-      thresh.hi = t * (1.0 + 1.0e-4);
+    void Init(datanode *module) {
+      dim = -1;
+      kernel.Init(fx_param_double_req(module, "h"));
+      threshold_orig = fx_param_double_req(module, "threshold");
+    }
+
+    void AnalyzePoint(const Point& q_point, const BlankPointInfo& info) {
+      if (dim == -1) {
+        dim = q_point.length();
+        double t = threshold_orig * kernel.CalcNormConstant(dim);
+        thresh.lo = t * (1.0 - 1.0e-4);
+        thresh.hi = t * (1.0 + 1.0e-4);
+      } else {
+        DEBUG_ASSERT_MSG(dim == q_point.length(), "Differing dimensionality");
+      }
     }
 
    public:
@@ -655,24 +663,13 @@ class Tkde {
       return q_node.bound().MidDistanceSqToBound(r_node.bound());
     }
   };
-  
-  typedef DualTreeGNP<
-      Param, Algorithm,
-      Point, Bound,
-      QPointInfo, QStat,
-      RPointInfo, RStat,
-      PairVisitor, Delta,
-      QResult, QMassResult, QPostponed,
-      GlobalResult>
-    GNP;
 };
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
   
-  DualTreeDepthFirst<Tkde::GNP> dfs;
-  dfs.Init(fx_root);
-  dfs.Begin();
+  nbr_utils::SerialDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+      fx_root, "tkde");
   
   fx_done();
 }

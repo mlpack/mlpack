@@ -6,7 +6,7 @@
 
 #include "ccmem.h"
 
-void mem::SwapBytes__Chars(long *a_lp_in, long *b_lp_in, size_t remaining) {
+/*void mem::SwapBytes__Chars(long *a_lp_in, long *b_lp_in, size_t remaining) {
   char *a_cp = reinterpret_cast<char*>(a_lp_in);
   char *b_cp = reinterpret_cast<char*>(b_lp_in);
   
@@ -19,4 +19,4 @@ void mem::SwapBytes__Chars(long *a_lp_in, long *b_lp_in, size_t remaining) {
     *a_cp = tb;
     a_cp++;
   }
-}
+}*/
