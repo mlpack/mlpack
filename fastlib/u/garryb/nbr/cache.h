@@ -40,13 +40,15 @@ class SmallCache : public BlockDeviceWrapper {
   char *StartWrite(blockid_t blockid);
   void StopRead(blockid_t blockid);
   void StopWrite(blockid_t blockid);
+  void Flush(blockid_t begin_block, offset_t begin_offset,
+    blockid_t last_block, offset_t end_offset);
   void Close();
 
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data);
-  
+
   virtual blockid_t AllocBlock() {
     blockid_t blockid = BlockDeviceWrapper::AllocBlock();
     metadata_.Resize(n_blocks());
@@ -55,7 +57,7 @@ class SmallCache : public BlockDeviceWrapper {
 
  private:
   void PerformCacheMiss_(blockid_t blockid);
-  void Writeback_(blockid_block, offset_t begin, offset_t end);
+  void Writeback_(blockid_t blockid, offset_t begin, offset_t end);
 
   Metadata *GetBlock_(blockid_t blockid) {
     Metadata *metadata = &metadata_[blockid];
@@ -79,13 +81,13 @@ class CacheArrayBlockActionHandler : public BlockActionHandler {
 
  public:
   CacheArrayBlockActionHandler() {
-    n_block_elems_ = BIG_BAD_NUMBER;
+    n_elem_bytes_ = BIG_BAD_NUMBER;
     DEBUG_POISON_PTR(default_elem_);
   }
 
   ~CacheArrayBlockActionHandler() {
     mem::Free(default_elem_);
-    n_block_elems_ = BIG_BAD_NUMBER;
+    n_elem_bytes_ = BIG_BAD_NUMBER;
     DEBUG_POISON_PTR(default_elem_);
   }
 
@@ -96,7 +98,7 @@ class CacheArrayBlockActionHandler : public BlockActionHandler {
   }
 
   void BlockInitFrozen(size_t bytes, char *block) {
-    index_t elems = bytes / n_elem_bytes;
+    index_t elems = bytes / n_elem_bytes_;
     for (index_t i = 0; i < elems; i++) {
       mem::CopyBytes(block, default_elem_, n_elem_bytes_);
       block += n_elem_bytes_;
@@ -104,15 +106,16 @@ class CacheArrayBlockActionHandler : public BlockActionHandler {
   }
 
   void BlockRefreeze(size_t bytes, const char *old_location, char *block) {
-    index_t elems = bytes / n_elem_bytes;
+    index_t elems = bytes / n_elem_bytes_;
     for (index_t i = 0; i < elems; i++) {
-      ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), dest);
+      ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), block);
       block += n_elem_bytes_;
+      old_location += n_elem_bytes_;
     }
   }
 
   void BlockThaw(size_t bytes, char *block) {
-    index_t elems = bytes / n_elem_bytes;
+    index_t elems = bytes / n_elem_bytes_;
     for (index_t i = 0; i < elems; i++) {
       ot::PointerThaw<T>(block);
       block += n_elem_bytes_;
@@ -132,7 +135,6 @@ class CacheArray {
 
  public:
   typedef T Element;
-  typedef PointerType<T, AllowWrite>::Type;
 
  private:
   struct Metadata {
@@ -160,18 +162,18 @@ class CacheArray {
   ~CacheArray() {}
 
   /** Reopens another cache array */
-  void Init(CacheArray *other, mode_t mode_in) {
+  void Init(CacheArray *other, BlockDevice::mode_t mode_in) {
     Init(other, mode_in, other->begin_index(), other->end_index());
   }
 
   /** Reopens another cache array */
-  void Init(CacheArray *other, mode_t mode_in, index_t begin_index_in,
-      index_t end_index_in) {
+  void Init(CacheArray *other, BlockDevice::mode_t mode_in,
+      index_t begin_index_in, index_t end_index_in) {
     Init(other->cache_, mode_in, begin_index_in, end_index_in,
         other->n_block_elems_, other->n_elem_bytes_);
   }
 
-  void Init(SmallCache *cache_in, Mode mode_in,
+  void Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
       index_t begin_index_in, index_t end_index_in,
       index_t n_block_elems_in, size_t n_elem_bytes_in) {
     cache_ = cache_in;
@@ -181,7 +183,7 @@ class CacheArray {
     n_elem_bytes_ = n_elem_bytes_in;
     
     begin_block_ = begin_ / n_block_elems_;
-    last_block_ = (end_ + n_block_elems_ - 1) / n_block_elems_;
+    end_block_ = (end_ + n_block_elems_ - 1) / n_block_elems_;
     
     metadata_.Init(end_block_ - begin_block_);
     
@@ -212,26 +214,26 @@ class CacheArray {
   }
 
   Element *StartWrite(index_t element_id) {
-    DBUG_ASSERT(mode_ != BlockDevice::READ);
+    DEBUG_ASSERT(mode_ != BlockDevice::READ);
     return CheckoutElement_(element_id);
   }
 
-  void StopRead(const Element *ptr, index_t element_id) {
+  void StopRead(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    DEBUG_ASSERT(mode_ >= TEMP);
+    DEBUG_ASSERT(mode_ != BlockDevice::READ);
     ReleaseElement_(element_id);
   }
 
-  void StopWrite(Element *ptr, index_t element_id) {
+  void StopWrite(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    DEBUG_ASSERT(mode_ >= TEMP);
+    DEBUG_ASSERT(mode_ != BlockDevice::READ);
     ReleaseElement_(element_id);
   }
 
   void Swap(index_t index_a, index_t index_b) {
     DEBUG_ONLY(BoundsCheck_(index_a));
     DEBUG_ONLY(BoundsCheck_(index_b));
-    DEBUG_ASSERT(mode_ >= TEMP);
+    DEBUG_ASSERT(mode_ != BlockDevice::READ);
     char *a = reinterpret_cast<char*>(CheckoutElement_(index_a));
     char *b = reinterpret_cast<char*>(CheckoutElement_(index_b));
     mem::Swap(a, b, n_elem_bytes_);
@@ -242,18 +244,34 @@ class CacheArray {
   void Copy(index_t index_src, index_t index_dest) {
     DEBUG_ONLY(BoundsCheck_(index_src));
     DEBUG_ONLY(BoundsCheck_(index_dest));
-    DEBUG_ASSERT(mode_ >= TEMP);
-    const char *src = reinterpret_cast<char*>(CheckoutElement_(index_a));
-    char *dest = reinterpret_cast<char*>(CheckoutElement_(index_b));
+    DEBUG_ASSERT(mode_ != BlockDevice::READ);
+    const char *src = reinterpret_cast<char*>(CheckoutElement_(index_src));
+    char *dest = reinterpret_cast<char*>(CheckoutElement_(index_dest));
     mem::Copy(dest, src, n_elem_bytes_);
-    ReleaseElement_(index_a);
-    ReleaseElement_(index_b);
+    ReleaseElement_(index_src);
+    ReleaseElement_(index_dest);
   }
 
   /**
    * Flushes all changes.
    */
   void Flush();
+  
+  index_t Alloc() {
+    ++end_index;
+    BlockDevice::blockid_t block = 
+        (end_index + n_block_elems_ - 1) / n_block_elems_;
+    if (block != end_block_) {
+      end_block_ = block;
+      metadata_.Resize(end_block_ - begin_block_);
+      // Okay, notify the lower layers we're allocating.
+      index_t block_allocated = cache_->AllocBlock();
+      DEBUG_ASSERT_MSG(block_allocated == end_block_,
+          "Distributed data structure creation "
+          "is not yet supported by CacheArray.");
+    }
+    return end_index - 1;
+  }
 
  private:
   void BoundsCheck_(index_t element_id) {
@@ -275,7 +293,7 @@ class CacheArray {
     DEBUG_ONLY(metadata_->lock_count++);
     Element *ptr = reinterpret_cast<Element*>(metadata_->data + offset);
 
-    if (unlikely(!metadata_->data)) {
+    if (unlikely(metadata_->data == NULL)) {
       return HandleCacheMiss_(element_id);
     } else {
       return ptr;
@@ -290,12 +308,13 @@ class CacheArray {
 
 template<typename T>
 void CacheArray<T>::Flush() {
-  for (blockid_t block = begin_block_; block < end_block_; block++) {
-    if (metadata_[block - begin_block_].data) {
+  for (BlockDevice::blockid_t blockid = begin_block_;
+      blockid < end_block_; blockid++) {
+    if (metadata_[blockid - begin_block_].data) {
       if (mode_ != BlockDevice::READ) {
-        cache_->StopWrite(block);
+        cache_->StopWrite(blockid);
       } else {
-        cache_->StopRead(block);
+        cache_->StopRead(blockid);
       }
     }
   }
@@ -323,30 +342,6 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
 }
 
 template<typename T>
-class CacheAutoPtrConst {
- private:
-  const T* ptr_;
-  index_t i;
-  
- public:
-  CacheAutoPtrConst(const CacheArray<T>& array, ) {
-    ptr_ = ;
-  }
-  ~CacheAutoPtrConst() {
-    arrayi;
-  }
-  
-  operator const T* () {
-    return ptr_;
-  }
-  
-  const T* ptr() const {
-    return ptr_;
-  }
-};
-
-
-template<typename T>
 class TempCacheArray : public CacheArray<T> {
  private:
   SmallCache underlying_cache_;
@@ -358,20 +353,19 @@ class TempCacheArray : public CacheArray<T> {
 
   /** Creates a blank, temporary cached array */
   void Init(const T& default_obj,
-      index_t n_elems,
-      unsigned int n_block_elems) {
-    CacheArrayBlockActionHandler<QMutableInfo> *handler
-        = new CacheArrayBlockActionHandler<QMutableInfo>;
+      index_t n_elems_in,
+      unsigned int n_block_elems_in) {
+    CacheArrayBlockActionHandler<T> *handler =
+        new CacheArrayBlockActionHandler<T>;
     handler->Init(default_obj);
 
-    null_device_.Init((n_elems + n_block_elems + 1) / n_block_elems,
-        n_block_elems);
+    null_device_.Init((n_elems_in + n_block_elems_in + 1) / n_block_elems_in,
+        n_block_elems_in * handler->n_elem_bytes());
     underlying_cache_.Init(&null_device_, handler, BlockDevice::TEMP);
     
     CacheArray<T>::Init(&underlying_cache_, BlockDevice::TEMP,
-        0, q_nodes_.end_index(), q_nodes_.n_block_elems(),
-        mutables_handler->n_elem_bytes());
+        0, n_elems_in, n_block_elems_in, handler->n_elem_bytes());
   }
-}
+};
 
 #endif

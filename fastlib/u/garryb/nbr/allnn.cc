@@ -2,6 +2,7 @@
 #include "spbounds.h"
 #include "gnp.h"
 #include "dfs.h"
+#include "nbr_utils.h"
 
 /**
  * An N-Body-Reduce problem.
@@ -28,6 +29,10 @@ class Allnn {
     }
 
    public:
+    void Copy(const Param& other) {
+      dim = other.dim;
+    }
+   
     /**
      * Initialize parameters from a data node (Req NBR).
      */
@@ -63,9 +68,7 @@ class Allnn {
     }
 
    public:
-    void Init(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
-        const RNode& r_root) {
+    void Init(const Param& param) {
       distance_sq = DBL_MAX;
       neighbor_i = -1;
     }
@@ -233,9 +236,8 @@ class Allnn {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
   
-  DualTreeDepthFirst<Allnn::GNP> dfs;
-  dfs.Init(fx_root);
-  dfs.Begin();
+  nbr_utils::SerialDualTreeMain<Allnn::GNP, DualTreeDepthFirst<Allnn::GNP> >(
+      fx_root, "allnn");
   
   fx_done();
 }

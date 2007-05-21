@@ -6,6 +6,7 @@
 class BlockActionHandler {
   FORBID_COPY(BlockActionHandler);
  public:
+  BlockActionHandler() {}
   virtual ~BlockActionHandler() {}
   
   virtual void BlockInitFrozen(size_t bytes, char *block) = 0;
@@ -66,7 +67,8 @@ class BlockDevice {
 };
 
 class NullBlockDevice : public BlockDevice {
-  FORBID_COPY(BlankBlockDevice);
+  FORBID_COPY(NullBlockDevice);
+  
  public:
   void Init(blockid_t n_blocks_in, offset_t n_block_bytes_in) {
     n_blocks_ = n_blocks_in;

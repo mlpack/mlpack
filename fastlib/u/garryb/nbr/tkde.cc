@@ -72,10 +72,17 @@ class Tkde {
 
     OT_DEF(Param) {
       OT_MY_OBJECT(kernel);
+      OT_MY_OBJECT(thresh);
       OT_MY_OBJECT(dim);
     }
 
    public:
+    void Copy(const Param& other) {
+      kernel.Copy(other.kernel);
+      thresh = other.thresh;
+      dim = other.dim;
+    }
+    
     /**
      * Initialize parameters from a data node (Req NBR).
      */
@@ -356,9 +363,7 @@ class Tkde {
     }
 
    public:
-    void Init(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
-        const RNode& r_root) {
+    void Init(const Param& param) {
       density = 0;
       label = LAB_EITHER;
       DEBUG_ONLY(n_r = 0);

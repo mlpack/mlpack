@@ -1,7 +1,9 @@
+#include "cache.h"
+
 void SmallCache::Init(BlockDevice *inner_in, BlockActionHandler *handler_in,
     mode_t mode_in) {
   BlockDeviceWrapper::Init(inner_in);
-  metadata_.Init(inner_in->n_blocks);
+  metadata_.Init(inner_in->n_blocks());
   handler_ = handler_in;
   mode_ = mode_in;
 }
@@ -53,9 +55,9 @@ void SmallCache::PerformCacheMiss_(blockid_t blockid) {
   metadata->data = data;
 }
 
-void SmallCache::Writeback_(blockid_block, offset_t begin, offset_t end) {
+void SmallCache::Writeback_(blockid_t blockid, offset_t begin, offset_t end) {
   if (begin != end) {
-    Metadata *metadata = metadata_[blockid];
+    Metadata *metadata = &metadata_[blockid];
     char *data = metadata->data;
     
     if (data) {
@@ -67,7 +69,7 @@ void SmallCache::Writeback_(blockid_block, offset_t begin, offset_t end) {
       }
       
       handler_->BlockRefreeze(n_bytes, buf, buf);
-      inner_->Write(block, begin, end, buf);
+      inner_->Write(blockid, begin, end, buf);
       handler_->BlockThaw(n_bytes, buf);
     }
   }
@@ -81,7 +83,7 @@ void SmallCache::Flush(blockid_t begin_block, offset_t begin_offset,
     if (begin_block == last_block) {
       Writeback_(begin_block, begin_offset, end_offset);
     } else {
-      Writeback_(begin_block, begin_offset, n_block_bytes_ - begin_offest);
+      Writeback_(begin_block, begin_offset, n_block_bytes_ - begin_offset);
       for (blockid_t i = begin_block + 1; i < last_block - 1; i++) {
         Writeback_(i, 0, n_block_bytes_);
       }
@@ -90,7 +92,7 @@ void SmallCache::Flush(blockid_t begin_block, offset_t begin_offset,
   }
 }
 
-void SmallCache::Read(blockid_t block,
+void SmallCache::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *buf) {
   const char *src_buffer = StartRead(blockid) + begin;
   size_t n_bytes = end - begin;
@@ -99,7 +101,7 @@ void SmallCache::Read(blockid_t block,
   StopRead(blockid);
 }
 
-void SmallCache::Write(blockid_t block,
+void SmallCache::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *buf) {
   char *dest_buffer = StartWrite(blockid) + begin;
   size_t n_bytes = end - begin;
