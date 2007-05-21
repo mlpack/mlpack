@@ -35,6 +35,7 @@ class BlockDevice {
   Mutex mutex_;
 
  public:
+  BlockDevice() {}
   virtual ~BlockDevice() {}
   
   blockid_t n_blocks() const {
@@ -70,6 +71,9 @@ class NullBlockDevice : public BlockDevice {
   FORBID_COPY(NullBlockDevice);
   
  public:
+  NullBlockDevice() {}
+  BlockDevice() {}
+
   void Init(blockid_t n_blocks_in, offset_t n_block_bytes_in) {
     n_blocks_ = n_blocks_in;
     n_block_bytes_ = n_block_bytes_in;
@@ -98,6 +102,7 @@ class BlockDeviceWrapper : public BlockDevice {
   BlockDevice *inner_;
   
  public:
+  BlockDeviceWrapper() {}
   virtual ~BlockDeviceWrapper() {}
   
   void Init(BlockDevice *inner_in) {
@@ -128,6 +133,9 @@ class RandomAccessFile {
   int fd_;
 
  public:
+  RandomAccessFile() {}
+  ~RandomAccessFile() {}
+  
   void Init(const char *fname, BlockDevice::mode_t mode);
 
   void Read(off_t pos, size_t len, char *buffer);
@@ -145,6 +153,9 @@ class DiskBlockDevice : public BlockDevice {
   RandomAccessFile file_;
 
  public:
+  DiskBlockDevice() {}
+  ~DiskBlockDevice() {}
+  
   void Init(const char *fname, mode_t mode, offset_t block_size = 131072);
 
   void Read(blockid_t blockid, offset_t begin, offset_t end,
