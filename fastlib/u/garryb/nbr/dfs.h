@@ -25,7 +25,7 @@ class DualTreeDepthFirst {
   CacheArray<typename GNP::QPointInfo> q_point_infos_;
   CacheArray<typename GNP::QNode> q_nodes_;
   CacheArray<typename GNP::QResult> q_results_;
-  CacheArray<QMutableInfo> q_mutables_;
+  TempCacheArray<QMutableInfo> q_mutables_;
   
   CacheArray<typename GNP::Point> r_points_;
   CacheArray<typename GNP::RPointInfo> r_point_infos_;
@@ -53,49 +53,54 @@ class DualTreeDepthFirst {
   void PushDown_(index_t q_node_i);
 };
 
-template<typename PointInfo, typename Node, typename Param>
-class LocalTreeManager {
- private:
-  SmallCache point_cache;
-  SmallCache point_info_cache;
-  SmallCache node_cache;
-
- public:
-  TreeManager();
-  ~TreeManager();
+template<typename GNP>
+void DualTreeDepthFirst<GNP>::Init(
+    struct datanode *datanode_in,
+    CacheArray<typename GNP::Point> *q_points,
+    CacheArray<typename GNP::QPointInfo> *q_point_infos,
+    CacheArray<typename GNP::QNode> *q_nodes,
+    CacheArray<typename GNP::Point> *r_points,
+    CacheArray<typename GNP::RPointInfo> *r_point_infos,
+    CacheArray<typename GNP::RNode> *r_nodes,
+    CacheArray<typename GNP::QResult> *q_results) {
+  param_ = WALDO;
   
-  void BuildTree(struct datanode *datanode,
-      const Param& param,
-      CacheArray<Vector> *points_out,
-      CacheArray<PointInfo> *point_infos_out,
-      CacheArray<Node> *nodes_out) {
-    const char *fname = fx_param_str_req(datanode, "");
-    Matrix matrix;
-    data::Load(fname, &matrix);
-    
-    Vector first_data;
-    matrix.MakeColumnVector(0, &first_data);
-    
-    PointInfo blank_info; // WALDO
-    
-    BlockActionHandler *point_handler =
-        new CacheArrayBlockActionHandler<Vector>(first_data);
-    
-    KdTreeMidpointBuilder<PointInfo, Node, Param> tree_builder;
-    tree_builder.InitBuild(
-        fx_submodule(datanode, "tree", "tree"),
-        &param,
-        points_out,
-        point_infos_out,
-        nodes_out);
-  }
+  q_points_.Init(q_points, BlockDevice::READ);
+  q_point_infos_.Init(q_point_infos, BlockDevice::READ);
+  q_nodes_.Init(q_nodes, BlockDevice::READ);
+  r_points_.Init(r_points, BlockDevice::READ);
+  r_point_infos_.Init(r_point_infos, BlockDevice::READ);
+  r_nodes_.Init(r_nodes, BlockDevice::READ);
+  q_results_.Init(q_results, BlockDevice::CREATE);
+  
+  QMutableInfo default_mutable;
+  default_mutable.mass_result.Init(param_);
+  default_mutable.postponed.Init(param_);
+  q_mutables_.Init(default_mutable, q_nodes_.n_block_elems());
+  
+  datanode_ = datanode_in;
+  do_naive_ = fx_param_bool(datanode_, "do_naive", false);
 }
 
-template<typename GNP>
-void DualTreeDepthFirst<GNP>::Init(datanode *datanode) {
+template<typename GNP, typename Solver>
+void DualTreeMain(datanode *datanode) {
   datanode_ = datanode;
+
+  fx_timer_start(datanode_, "q_matrix");
+  cache_utils::Load(fx_param_str(datanode, "q"), );
+  fx_timer_stop(datanode_, "q_matrix");
+
+  TempCacheArray<typename GNP::Point> q_points;
+  TempCacheArray<typename GNP::QPointInfo> q_point_infos;
+  TempCacheArray<typename GNP::QNode> q_nodes;
+  TempCacheArray<typename GNP::Point> r_points;
+  TempCacheArray<typename GNP::RPointInfo> r_point_infos;
+  TempCacheArray<typename GNP::RNode> r_nodes;
+  TempCacheArray<typename GNP::QResult> q_results;
   
-  do_naive_ = fx_param_bool(datanode, "do_naive", 0);
+  Solver solver;
+  solver.Init(&q_points, &q_point_infos, &q_nodes,
+      &r_points, &r_point_infos, &r_nodes, &q_result);
   
   fx_timer_start(datanode_, "q_matrix");
   Matrix q_matrix;

@@ -68,8 +68,10 @@ class BlockDevice {
 class NullBlockDevice : public BlockDevice {
   FORBID_COPY(BlankBlockDevice);
  public:
-  // todo: rethink the init function
-  void Init() {}
+  void Init(blockid_t n_blocks_in, offset_t n_block_bytes_in) {
+    n_blocks_ = n_blocks_in;
+    n_block_bytes_ = n_block_bytes_in;
+  }
   
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data) {

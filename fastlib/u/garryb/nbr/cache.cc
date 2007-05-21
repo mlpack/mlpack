@@ -1,7 +1,9 @@
-void SmallCache::Init(BlockDevice *inner_in, BlockActionHandler *handler_in) {
+void SmallCache::Init(BlockDevice *inner_in, BlockActionHandler *handler_in,
+    mode_t mode_in) {
   BlockDeviceWrapper::Init(inner_in);
   metadata_.Init(inner_in->n_blocks);
   handler_ = handler_in;
+  mode_ = mode_in;
 }
 
 char *SmallCache::StartRead(blockid_t blockid) {
@@ -74,7 +76,7 @@ void SmallCache::Writeback_(blockid_block, offset_t begin, offset_t end) {
 void SmallCache::Flush(blockid_t begin_block, offset_t begin_offset,
     blockid_t last_block, offset_t end_offset) {
   DEBUG_ASSERT(mode_ != BlockDevice::READ);
-  
+
   if (unlikely(mode_ == BlockDevice::MODIFY || mode_ == BlockDevice::CREATE)) {
     if (begin_block == last_block) {
       Writeback_(begin_block, begin_offset, end_offset);

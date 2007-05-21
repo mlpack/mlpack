@@ -33,7 +33,8 @@ class SmallCache : public BlockDeviceWrapper {
     return mode_;
   }
 
-  void Init(BlockDevice *inner_in, BlockActionHandler *handler_in);
+  void Init(BlockDevice *inner_in, BlockActionHandler *handler_in,
+     mode_t mode_in);
 
   char *StartRead(blockid_t blockid);
   char *StartWrite(blockid_t blockid);
@@ -198,6 +199,14 @@ class CacheArray {
     return n_elem_bytes_;
   }
 
+  unsigned int n_block_elems() const {
+    return n_block_elems_;
+  }
+  
+  const SmallCache *cache() const {
+    return cache_;
+  }
+
   const Element *StartRead(index_t element_id) {
     return CheckoutElement_(element_id);
   }
@@ -209,20 +218,20 @@ class CacheArray {
 
   void StopRead(const Element *ptr, index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    DEBUG_ASSERT(mode_ >= MODE_TEMP);
+    DEBUG_ASSERT(mode_ >= TEMP);
     ReleaseElement_(element_id);
   }
 
   void StopWrite(Element *ptr, index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    DEBUG_ASSERT(mode_ >= MODE_TEMP);
+    DEBUG_ASSERT(mode_ >= TEMP);
     ReleaseElement_(element_id);
   }
 
   void Swap(index_t index_a, index_t index_b) {
     DEBUG_ONLY(BoundsCheck_(index_a));
     DEBUG_ONLY(BoundsCheck_(index_b));
-    DEBUG_ASSERT(mode_ >= MODE_TEMP);
+    DEBUG_ASSERT(mode_ >= TEMP);
     char *a = reinterpret_cast<char*>(CheckoutElement_(index_a));
     char *b = reinterpret_cast<char*>(CheckoutElement_(index_b));
     mem::Swap(a, b, n_elem_bytes_);
@@ -233,7 +242,7 @@ class CacheArray {
   void Copy(index_t index_src, index_t index_dest) {
     DEBUG_ONLY(BoundsCheck_(index_src));
     DEBUG_ONLY(BoundsCheck_(index_dest));
-    DEBUG_ASSERT(mode_ >= MODE_TEMP);
+    DEBUG_ASSERT(mode_ >= TEMP);
     const char *src = reinterpret_cast<char*>(CheckoutElement_(index_a));
     char *dest = reinterpret_cast<char*>(CheckoutElement_(index_b));
     mem::Copy(dest, src, n_elem_bytes_);
@@ -335,5 +344,34 @@ class CacheAutoPtrConst {
     return ptr_;
   }
 };
+
+
+template<typename T>
+class TempCacheArray : public CacheArray<T> {
+ private:
+  SmallCache underlying_cache_;
+  NullBlockDevice null_device_;
+  
+ public:
+  ~TempCacheArray() {
+  }
+
+  /** Creates a blank, temporary cached array */
+  void Init(const T& default_obj,
+      index_t n_elems,
+      unsigned int n_block_elems) {
+    CacheArrayBlockActionHandler<QMutableInfo> *handler
+        = new CacheArrayBlockActionHandler<QMutableInfo>;
+    handler->Init(default_obj);
+
+    null_device_.Init((n_elems + n_block_elems + 1) / n_block_elems,
+        n_block_elems);
+    underlying_cache_.Init(&null_device_, handler, BlockDevice::TEMP);
+    
+    CacheArray<T>::Init(&underlying_cache_, BlockDevice::TEMP,
+        0, q_nodes_.end_index(), q_nodes_.n_block_elems(),
+        mutables_handler->n_elem_bytes());
+  }
+}
 
 #endif
