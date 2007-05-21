@@ -72,7 +72,7 @@ class NullBlockDevice : public BlockDevice {
   
  public:
   NullBlockDevice() {}
-  BlockDevice() {}
+  ~NullBlockDevice() {}
 
   void Init(blockid_t n_blocks_in, offset_t n_block_bytes_in) {
     n_blocks_ = n_blocks_in;
