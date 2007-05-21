@@ -1,16 +1,22 @@
+#include "blockdev.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   int octal_mode;
   
   switch(mode) {
-   BlockDevice::READ:
+   case BlockDevice::READ:
     octal_mode = O_RDONLY;
     break;
-   BlockDevice::MODIFY:
+   case BlockDevice::MODIFY:
     octal_mode = O_RDWR;
     break;
-   BlockDevice::CREATE:
-   BlockDevice::TEMP:
+   case BlockDevice::CREATE:
+   case BlockDevice::TEMP:
     octal_mode = O_RDWR|O_CREAT|O_TRUNC;
     break;
    default: abort();
@@ -22,7 +28,7 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   }
 }
 
-void RandomAccessFIle::Close() {
+void RandomAccessFile::Close() {
   close(fd_);
 }
 
@@ -42,7 +48,7 @@ void RandomAccessFile::Write(off_t pos, size_t len, const char *buffer) {
       break;
     }
 
-    DEBUG_ASSERT_MSG(written > 0, "error writing %lu bytes", len);
+    DEBUG_ASSERT_MSG(written > 0, "error writing");
 
     buffer += written;
   }
@@ -105,7 +111,7 @@ void DiskBlockDevice::Write(blockid_t blockid,
   file_.Write(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
 }
 
-blockid_t DiskBlockDevice::AllocBlock() {
+DiskBlockDevice::blockid_t DiskBlockDevice::AllocBlock() {
   blockid_t blockid = n_blocks_;
   n_blocks_ = blockid + 1;
   return blockid;
