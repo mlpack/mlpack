@@ -5,10 +5,17 @@
 
 template<typename GNP>
 class DualTreeDepthFirst {
+  FORBID_COPY(DualTreeDepthFirst);
+  
  private:
   struct QMutableInfo {
     typename GNP::QMassResult mass_result;
     typename GNP::QPostponed postponed;
+    
+    OT_DEF(QMutableInfo) {
+      OT_MY_OBJECT(mass_result);
+      OT_MY_OBJECT(postponed);
+    }
   };
   
  private:
@@ -39,6 +46,9 @@ class DualTreeDepthFirst {
   uint64 n_recurse_;
   
  public:
+  DualTreeDepthFirst() {}
+  ~DualTreeDepthFirst();
+  
   void Init(
       datanode *datanode_in,
       const typename GNP::Param& param_in,
@@ -66,6 +76,19 @@ class DualTreeDepthFirst {
       QMutableInfo *q_node_mut);
   void PushDown_(index_t q_node_i);
 };
+
+template<typename GNP>
+DualTreeDepthFirst<GNP>::~DualTreeDepthFirst() {
+  r_nodes_.StopRead(0);
+  
+  q_points_.Flush();
+  q_point_infos_.Flush();
+  q_nodes_.Flush();
+  r_points_.Flush();
+  r_point_infos_.Flush();
+  r_nodes_.Flush();
+  q_results_.Flush();
+}
 
 template<typename GNP>
 void DualTreeDepthFirst<GNP>::Init(
@@ -96,10 +119,10 @@ void DualTreeDepthFirst<GNP>::Init(
   
   global_result_.Init(param_);
   
+  r_root_ = r_nodes_.StartRead(0);
+  
   datanode_ = datanode_in;
   do_naive_ = fx_param_bool(datanode_, "do_naive", false);
-
-  r_root_ = r_nodes_.StartRead(0);
 }
 
 template<typename GNP>
@@ -133,7 +156,6 @@ void DualTreeDepthFirst<GNP>::Begin() {
 
   q_nodes_.StopRead(0);
   q_mutables_.StopWrite(0);
-  r_nodes_.StopRead(0);
 
   fx_timer_stop(datanode_, "execute");
 
@@ -153,9 +175,6 @@ void DualTreeDepthFirst<GNP>::Begin() {
   if (fx_param_bool(datanode_, "print", 0)) {
     ot::Print(q_results_);
   }
-
-  q_mutables_.Flush();
-  q_results_.Flush();
 }
 
 template<typename GNP>
@@ -172,7 +191,7 @@ void DualTreeDepthFirst<GNP>::PushDown_(index_t q_node_i) {
       
       q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point);
       q_result->Postprocess(param_, *q_point, *q_info, *r_root_);
-      q_results_.StopRead(q_i);
+      q_results_.StopWrite(q_i);
       q_points_.StopRead(q_i);
       //q_point_infos_.StopRead(q_i);
     }
@@ -350,6 +369,8 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
         visitor.VisitPair(param_, *q_point, *q_info, q_i,
             *r_point, *r_info_null,
             r_i_rel + r_node->begin());
+        
+        r_points_.StopRead(r_i_rel + r_node->begin());
       }
 
       visitor.FinishVisitingQueryPoint(param_, *q_point, *q_info, *r_node,
@@ -362,7 +383,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
 
     q_points_.StopRead(q_i);
     //q_point_infos_.StopRead(q_i);
-    q_results_.StartRead(q_i);
+    q_results_.StopWrite(q_i);
   }
 
   q_node_mut->mass_result.FinishReaccumulate(param_, *q_node);

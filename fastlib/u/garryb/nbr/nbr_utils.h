@@ -33,9 +33,10 @@ namespace nbr_utils {
     
     const Vector* first_point = points_out->StartRead(0);
     param->AnalyzePoint(*first_point, blank_info);
-    Node example_node;
-    example_node.Init(first_point->length(), *param);
-    nodes_out->Init(example_node, 0, 256);
+    Node *example_node = new Node();
+    example_node->Init(first_point->length(), *param);
+    nodes_out->Init(*example_node, 0, 256);
+    delete example_node;
     points_out->StopRead(0);
     
     fx_timer_start(datanode, "tree");
