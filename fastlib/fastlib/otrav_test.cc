@@ -9,28 +9,33 @@ void TestDatasetPrint() {
   Dataset d;
   
   d.InitFromFile("fake.arff");
-  OTPrint(d, stderr);
+  ot::Print(d, stderr);
 }
 
 void TestDatasetLayout() {
   Dataset d;
   
   d.InitFromFile("fake.arff");
-  OTPrint(d, stderr);
+  ot::Print(d, stderr);
   
-  size_t size = OTPointerFrozenSize(d);
+  size_t size = ot::PointerFrozenSize(d);
   
   printf("SIZE IS %d\n", int(size));
   
   char dump[size];
   
-  OTPointerFreeze(d, dump);
+  ot::PointerFreeze(d, dump);
   
   Dataset *d2;
-  d2 = OTPointerThaw<Dataset>(dump);
-  OTPointerRefreeze<Dataset>(d2);
-  d2 = OTPointerThaw<Dataset>(dump);
-  d2->WriteArff("test_dataset_layout.arff");
+  d2 = ot::PointerThaw<Dataset>(dump);
+  ot::Print(*d2);
+  char copy[size];
+  mem::CopyBytes(copy, d2, size);
+  ot::PointerRefreeze<Dataset>(d2, copy);
+  
+  Dataset *d3;
+  d3 = ot::PointerThaw<Dataset>(copy);
+  d3->WriteArff("test_dataset_layout.arff");
 }
 
 TEST_SUITE_END(otrav, TestDatasetPrint, TestDatasetLayout)

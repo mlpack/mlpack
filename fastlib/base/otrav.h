@@ -337,20 +337,21 @@ namespace ot_private {
       static void Print(const char *name, const T& x, OTPrinter *printer) {
         printer->ShowIndents();
         for (size_t i = 0; i < sizeof(T); i++) {
-          fprintf(printer->stream(), " %02X", reinterpret_cast<const char*>(&x)[i]);
+          fprintf(printer->stream(), " %02X",
+              reinterpret_cast<const unsigned char*>(&x)[i]);
         }
-        fprintf(printer->stream(), ")\n");
+        fprintf(printer->stream(), "\n");
       }
     };
 
     template<typename T>
     struct DefaultObjectPrinter {
       static void Print(const char *name, T& x, OTPrinter *printer) {
-        Write("%s : %s {", name, typeid(T).name());
-        Indent(2);
+        printer->Write("%s : %s {", name, typeid(T).name());
+        printer->Indent(2);
         TraverseObject(&x, printer);
-        Indent(-2);
-        Write("}");
+        printer->Indent(-2);
+        printer->Write("}");
       }
     };
 
@@ -367,7 +368,7 @@ namespace ot_private {
       name_ = s;
     }
 
-    template<typename T> void Primitive(const T& x) {
+    template<typename T> void Primitive(T& x) {
       OTPrinter_Primitive< DefaultPrimitivePrinter<T>, OTPrinter, T >
           ::Print(name_, x, this);
     }
@@ -733,12 +734,16 @@ namespace ot_private {
 
   class OTPointerRefreezer {
    private:
-    ptrdiff_t offset_;
+    // This is the offset that allows for the object being fixed to have been
+    // memcopied from a prior location.
+    ptrdiff_t pre_offset_;
+    ptrdiff_t post_offset_;
     
    public:
     template<typename T>
-    T* InitBegin(T *dest) {
-      offset_ = -reinterpret_cast<size_t>(dest);
+    T* InitBegin(const T* src, T *dest) {
+      pre_offset_ = mem::PointerDiff(dest, src);
+      post_offset_ = -reinterpret_cast<size_t>(src);
       TraverseObject(dest, this);
       return dest;
     }
@@ -759,15 +764,15 @@ namespace ot_private {
     /** visits an object pointed to, allocated with new */
     template<typename T> void Ptr(T*& x, bool nullable) {
       if (!nullable || x != NULL) {
-        TraverseObject(x, this);
-        x = mem::PointerAdd(x, offset_);
+        TraverseObject(mem::PointerAdd(x, pre_offset_), this);
+        x = mem::PointerAdd(x, post_offset_);
       }
     }
     /** visits an array pointed to, allocated with new[] */
     template<typename T> void Array(T*& x, index_t len, bool nullable) {
       if (!nullable || x != NULL) {
-        TraverseArray(x, len, this);
-        x = mem::PointerAdd(x, offset_);
+        TraverseArray(mem::PointerAdd(x, pre_offset_), len, this);
+        x = mem::PointerAdd(x, post_offset_);
       }
     }
     /** visits an array pointed to, allocated with malloc */
@@ -802,7 +807,7 @@ namespace ot {
   void PointerFreeze(const T& live_object, char *block) {
     ot_private::OTPointerFreezer freezer;
     freezer.InitBegin(live_object, block);
-    DEBUG_SAME_INT(freezer.size(), OTPointerFrozenSize(live_object));
+    DEBUG_SAME_INT(freezer.size(), ot::PointerFrozenSize(live_object));
   }
 
   /**
@@ -812,7 +817,23 @@ namespace ot {
   template<typename T>
   void PointerRefreeze(T* obj) {
     ot_private::OTPointerRefreezer fixer;
-    fixer.InitBegin<T>(obj);
+    fixer.InitBegin<T>(obj, obj);
+  }
+
+  /**
+   * Takes an object that is laid out serially, and adjusts all its pointers
+   * so that they are normalized to zero.
+   *
+   * This assumes that "dest" is an object that is laid out serially, but
+   * all its pointers are as if it had been copied from src.  This is used
+   * for reading from an existing cache -- the pointers are fixed in a
+   * temporary buffer rather than in the cache, so that other threads do not
+   * experience any negative side effects.
+   */
+  template<typename T>
+  void PointerRefreeze(const T* src, char* dest) {
+    ot_private::OTPointerRefreezer fixer;
+    fixer.InitBegin<T>(src, reinterpret_cast<T*>(dest));
   }
 
   /**
