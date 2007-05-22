@@ -93,6 +93,8 @@ namespace nbr_utils {
     int r_nodes_channel = server.NewTag();
     int q_results_channel = server.NewTag();
     
+    remove point-info as a separate array
+    
     if (server) {
       TempCacheArray<typename GNP::Point> q_points;
       TempCacheArray<typename GNP::QPointInfo> q_point_infos;
