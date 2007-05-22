@@ -85,7 +85,7 @@ class Tkde {
       thresh = other.thresh;
       dim = other.dim;
     }
-    
+
     /**
      * Initialize parameters from a data node (Req NBR).
      */
