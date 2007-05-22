@@ -47,12 +47,9 @@ class Tkde {
   /** The type of kernel in use.  NOT required by NBR. */
   typedef EpanKernel Kernel;
 
-  /** Per-query-point input information.  Required by NBR. */
-  typedef BlankPointInfo QPointInfo;
-  /** Per-reference-point input information.  Required by NBR. */
-  typedef BlankPointInfo RPointInfo;
   /** Per-query statistic.  Required by NBR. */
   typedef BlankStat QStat;
+  typedef BlankGlobalResult GlobalResult;
 
   /**
    * All parameters required by the execution of the algorithm.
@@ -95,7 +92,7 @@ class Tkde {
       threshold_orig = fx_param_double_req(module, "threshold");
     }
 
-    void AnalyzePoint(const Point& q_point, const BlankPointInfo& info) {
+    void AnalyzePoint(const Point& q_point) {
       if (dim == -1) {
         dim = q_point.length();
         double t = threshold_orig * kernel.CalcNormConstant(dim);
@@ -245,8 +242,7 @@ class Tkde {
     /**
      * Accumulate data from a single point (Req NBR).
      */
-    void Accumulate(const Param& param, const Vector& point,
-        const RPointInfo& r_info) {
+    void Accumulate(const Param& param, const Vector& point) {
       moment_info.Add(1, point, la::Dot(point, point));
     }
 
@@ -331,19 +327,6 @@ class Tkde {
    public:
     void Init(const Param& param) {
     }
-  };
-
-  class GlobalResult {
-   public:
-    OT_DEF(GlobalResult) {}
-
-   public:
-    void Init(const Param& param) {}
-    void Accumulate(const Param& param,
-        const GlobalResult& other_global_result) {}
-    void ApplyDelta(const Param& param, const Delta& delta) {}
-    void UndoDelta(const Param& param, const Delta& delta) {}
-    void Postprocess(const Param& param) {}
   };
 
   // rho

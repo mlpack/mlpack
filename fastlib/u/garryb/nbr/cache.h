@@ -19,6 +19,9 @@ class SmallCache : public BlockDeviceWrapper {
     char is_dirty;
     char lock_count;
   };
+  
+ private:
+  static const BlockDevice::blockid_t HEADER_BLOCKID = 0;
 
  private:
   Mutex mutex_;
@@ -34,6 +37,15 @@ class SmallCache : public BlockDeviceWrapper {
     return mode_;
   }
 
+  /**
+   * Create a SmallCache.
+   *
+   * If mode is READ or MODIFY, the incoming handler's InitFromMetadata method
+   * will be called.
+   *
+   * If the mode is WRITE or TEMP, the handler is assumed to be initialized,
+   * and its WriteMetadata will be called.
+   */
   void Init(BlockDevice *inner_in, BlockActionHandler *handler_in,
      mode_t mode_in);
 
@@ -55,6 +67,10 @@ class SmallCache : public BlockDeviceWrapper {
     metadatas_.Resize(n_blocks());
     return blockid;
   }
+  
+  BlockActionHandler *block_action_handler() const {
+    return handler_;
+  }
 
  private:
   void PerformCacheMiss_(blockid_t blockid);
@@ -72,70 +88,81 @@ class SmallCache : public BlockDeviceWrapper {
   }
 };
 
+/**
+ * Array elements may vary in size from run to run.  However, we place the
+ * constraint that each array element must be the same size, derived all
+ * from the same default element.
+ */
 template<typename T>
 class CacheArrayBlockActionHandler : public BlockActionHandler {
   FORBID_COPY(CacheArrayBlockActionHandler);
 
  private:
-  char *default_elem_;
-  size_t n_elem_bytes_;
-
+  ArrayList<char> default_elem_;
+  
  public:
-  CacheArrayBlockActionHandler() {
-    n_elem_bytes_ = BIG_BAD_NUMBER;
-    DEBUG_POISON_PTR(default_elem_);
+  CacheArrayBlockActionHandler() {}
+  ~CacheArrayBlockActionHandler() {}
+
+  void InitFromHeader(size_t header_size, char *header) {
+    ArrayList<char> *default_elem_saved =
+        ot::PointerThaw< ArrayList<char> >(header);
+    default_elem_.Copy(*default_elem_saved);
   }
 
-  ~CacheArrayBlockActionHandler() {
-    mem::Free(default_elem_);
-    n_elem_bytes_ = BIG_BAD_NUMBER;
-    DEBUG_POISON_PTR(default_elem_);
+  void WriteHeader(size_t header_size, char *header) {
+    DEBUG_ASSERT_MSG(header_size >= ot::PointerFrozenSize(default_elem_),
+        "Block size too small -- "
+        "At least 2 array elements should fit in a block.");
+    // This looks funny, we're saving an ArrayList in an ArrayList.
+    // However, it's important that we do so -- so we can store the
+    // *size*!
+    ot::PointerFreeze(default_elem_, header);
   }
-
+  
   void Init(const T& default_obj) {
-    n_elem_bytes_ = ot::PointerFrozenSize(default_obj);
-    default_elem_ = mem::Alloc<char>(n_elem_bytes_);
-    ot::PointerFreeze(default_obj, default_elem_);
+    default_elem_.Init(ot::PointerFrozenSize(default_obj));
+    ot::PointerFreeze(default_obj, default_elem_.begin());
   }
 
   void BlockInitFrozen(size_t bytes, char *block) {
-    index_t elems = bytes / n_elem_bytes_;
+    index_t elems = bytes / default_elem_.size();
     for (index_t i = 0; i < elems; i++) {
-      mem::CopyBytes(block, default_elem_, n_elem_bytes_);
-      block += n_elem_bytes_;
+      mem::CopyBytes(block, default_elem_.begin(), default_elem_.size());
+      block += default_elem_.size();
     }
   }
 
   void BlockRefreeze(size_t bytes, const char *old_location, char *block) {
-    index_t elems = bytes / n_elem_bytes_;
+    index_t elems = bytes / default_elem_.size();
     for (index_t i = 0; i < elems; i++) {
       ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), block);
-      block += n_elem_bytes_;
-      old_location += n_elem_bytes_;
+      block += default_elem_.size();
+      old_location += default_elem_.size();
     }
   }
 
   void BlockThaw(size_t bytes, char *block) {
-    index_t elems = bytes / n_elem_bytes_;
+    index_t elems = bytes / default_elem_.size();
     for (index_t i = 0; i < elems; i++) {
       ot::PointerThaw<T>(block);
-      block += n_elem_bytes_;
+      block += default_elem_.size();
     }
   }
   
   size_t n_elem_bytes() {
-    return n_elem_bytes_;
+    return default_elem_.size();
   }
 };
 
 // LIMITATION: This type of cache array assumes that everything fits in
 // memory (it never releases locks).
-template<typename T>
+template<typename TElement>
 class CacheArray {
   FORBID_COPY(CacheArray);
 
  public:
-  typedef T Element;
+  typedef TElement Element;
 
  private:
   struct Metadata {
@@ -148,6 +175,16 @@ class CacheArray {
     char lock_count;
 #endif
   };
+  
+ protected:
+  /**
+   * When dealing with the underlying cache, we must take into account
+   * the metadata block.
+   *
+   * Within CacheArray all block ID's refer to "logical" not "physical"
+   * block ID's, i.e. offset by one to account for metadata.
+   */
+  static const int BLOCK_OFFSET = 1;
 
  private:
   unsigned int n_block_elems_log_;
@@ -158,8 +195,10 @@ class CacheArray {
   index_t begin_;
   index_t end_;
   unsigned int n_block_elems_;
-  BlockDevice::blockid_t begin_block_;
-  BlockDevice::blockid_t end_block_;
+  
+  /* Note these are fake block ID's, offset by 1, to account for metadata blocks. */
+  BlockDevice::blockid_t begin_block_fake_;
+  BlockDevice::blockid_t end_block_fake_;
   mode_t mode_;
   
   SmallCache *cache_;
@@ -176,13 +215,11 @@ class CacheArray {
   /** Reopens another cache array */
   void Init(CacheArray *other, BlockDevice::mode_t mode_in,
       index_t begin_index_in, index_t end_index_in) {
-    Init(other->cache_, mode_in, begin_index_in, end_index_in,
-        other->n_block_elems_, other->n_elem_bytes_);
+    Init(other->cache_, mode_in, begin_index_in, end_index_in);
   }
 
   void Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
-      index_t begin_index_in, index_t end_index_in,
-      index_t n_block_elems_in, size_t n_elem_bytes_in);
+      index_t begin_index_in, index_t end_index_in);
 
   index_t begin_index() const {
     return begin_;
@@ -254,11 +291,11 @@ class CacheArray {
     end_++;
     BlockDevice::blockid_t block_computed = 
         (end_ + n_block_elems_ - 1) >> n_block_elems_log_;
-    if (block_computed != end_block_) {
-      end_block_ = cache_->AllocBlock();
-      metadatas_.Resize(end_block_ - begin_block_);
+    if (block_computed != end_block_fake_) {
+      end_block_fake_ = cache_->AllocBlock() - BLOCK_OFFSET;
+      metadatas_.Resize(end_block_fake_ - begin_block_fake_);
       // Okay, notify the lower layers we're allocating.
-      DEBUG_ASSERT_MSG(block_computed == end_block_,
+      DEBUG_ASSERT_MSG(block_computed == end_block_fake_,
           "Distributed data structure creation "
           "is not yet supported by CacheArray.");
     }
@@ -279,9 +316,10 @@ class CacheArray {
 
     BlockDevice::offset_t offset =
         (element_id & n_block_elems_mask_) * n_elem_bytes_;
-    BlockDevice::blockid_t blockid = element_id >> n_block_elems_log_;
+    BlockDevice::blockid_t blockid =
+        (element_id >> n_block_elems_log_);
 
-    Metadata *metadata = &metadatas_[blockid - begin_block_];
+    Metadata *metadata = &metadatas_[blockid - begin_block_fake_];
 
     DEBUG_ONLY(metadata->lock_count++);
 
@@ -296,49 +334,53 @@ class CacheArray {
   void ReleaseElement_(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
     DEBUG_ONLY(--metadatas_[
-        (element_id >> n_block_elems_log_) - begin_block_].lock_count);
+        (element_id >> n_block_elems_log_) - begin_block_fake_].lock_count);
   }
 };
 
 template<typename T>
 void CacheArray<T>::Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
-    index_t begin_index_in, index_t end_index_in,
-    index_t n_block_elems_in, size_t n_elem_bytes_in) {
+    index_t begin_index_in, index_t end_index_in) {
   cache_ = cache_in;
   begin_ = begin_index_in;
   end_ = end_index_in;
-  n_block_elems_ = n_block_elems_in;
+  n_elem_bytes_ = (static_cast<CacheArrayBlockActionHandler<T>*>
+      (cache_->block_action_handler()))->n_elem_bytes();
+  DEBUG_ASSERT_MSG(cache_->n_block_bytes() % n_elem_bytes_ == 0,
+      "Block size must be a multiple of element size.");
+  n_block_elems_ = cache_->n_block_bytes() / n_elem_bytes_;
   // Cache size must be a power of 2.
   n_block_elems_log_ = math::IntLog2(n_block_elems_);
   n_block_elems_mask_ = n_block_elems_ - 1;
-  n_elem_bytes_ = n_elem_bytes_in;
   
-  begin_block_ = begin_ / n_block_elems_;
-  end_block_ = (end_ + n_block_elems_ - 1) / n_block_elems_;
+  begin_block_fake_ = begin_ / n_block_elems_;
+  end_block_fake_ = (end_ + n_block_elems_ - 1) / n_block_elems_;
   
-  metadatas_.Init(end_block_ - begin_block_);
+  metadatas_.Init(end_block_fake_ - begin_block_fake_);
   
   mode_ = mode_in;
 }
 
 template<typename T>
 void CacheArray<T>::Flush() {
-  for (BlockDevice::blockid_t blockid = begin_block_;
-      blockid < end_block_; blockid++) {
-    Metadata *metadata = &metadatas_[blockid - begin_block_];
+  for (BlockDevice::blockid_t blockid = begin_block_fake_;
+      blockid < end_block_fake_; blockid++) {
+    Metadata *metadata = &metadatas_[blockid - begin_block_fake_];
     if (metadata->data != NULL) {
       if (mode_ != BlockDevice::READ) {
-        cache_->StopWrite(blockid);
+        cache_->StopWrite(blockid + BLOCK_OFFSET);
       } else {
-        cache_->StopRead(blockid);
+        cache_->StopRead(blockid + BLOCK_OFFSET);
       }
       DEBUG_SAME_INT(metadata->lock_count, 0);
       metadata->data = NULL;
     }
   }
   cache_->Flush(
-      begin_ / n_block_elems_, (begin_ & (n_block_elems_ - 1)) * n_elem_bytes_,
-      end_ / n_block_elems_, (end_ & (n_block_elems_ - 1)) * n_elem_bytes_);
+      (begin_ >> n_block_elems_log_) + BLOCK_OFFSET,
+      (begin_ & (n_block_elems_mask_)) * n_elem_bytes_,
+      (end_ >> n_block_elems_log_) + BLOCK_OFFSET,
+      (end_ & (n_block_elems_mask_)) * n_elem_bytes_);
 }
 
 template<typename T>
@@ -348,9 +390,9 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
   Metadata *metadata = &metadatas_[blockid];
   
   if (mode_ != BlockDevice::READ) {
-    metadata->data = cache_->StartWrite(blockid);
+    metadata->data = cache_->StartWrite(blockid + BLOCK_OFFSET);
   } else {
-    metadata->data = cache_->StartRead(blockid);
+    metadata->data = cache_->StartRead(blockid + BLOCK_OFFSET);
   }
 
   BlockDevice::offset_t offset =
@@ -359,6 +401,9 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
   return reinterpret_cast<Element*>(metadata->data + offset);
 }
 
+/**
+ * Specialed cache-array to simplify the creation/cleanup process.
+ */
 template<typename T>
 class TempCacheArray : public CacheArray<T> {
  private:
@@ -378,12 +423,13 @@ class TempCacheArray : public CacheArray<T> {
         new CacheArrayBlockActionHandler<T>;
     handler->Init(default_obj);
 
-    null_device_.Init((n_elems_in + n_block_elems_in + 1) / n_block_elems_in,
+    null_device_.Init(
+        (n_elems_in + n_block_elems_in + 1) / n_block_elems_in
+          + CacheArray<T>::BLOCK_OFFSET,
         n_block_elems_in * handler->n_elem_bytes());
     underlying_cache_.Init(&null_device_, handler, BlockDevice::TEMP);
     
-    CacheArray<T>::Init(&underlying_cache_, BlockDevice::TEMP,
-        0, n_elems_in, n_block_elems_in, handler->n_elem_bytes());
+    CacheArray<T>::Init(&underlying_cache_, BlockDevice::TEMP, 0, n_elems_in);
   }
 };
 

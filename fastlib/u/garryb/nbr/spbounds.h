@@ -29,7 +29,7 @@ class MinMaxVal {
   Value val;
   
   OT_DEF(MinMaxVal) {
-    OT_MY_OBJECT(lo);
+    OT_MY_OBJECT(val);
   }
   
  public:

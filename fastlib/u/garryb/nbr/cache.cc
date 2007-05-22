@@ -1,11 +1,27 @@
 #include "cache.h"
 
-void SmallCache::Init(BlockDevice *inner_in, BlockActionHandler *handler_in,
-    mode_t mode_in) {
-  BlockDeviceWrapper::Init(inner_in);
-  metadatas_.Init(inner_in->n_blocks());
+void SmallCache::Init(
+    BlockDevice *inner_in, BlockActionHandler *handler_in, mode_t mode_in) {
+  BlockDeviceWrapper::Init(inner_in); // sets inner_, n_block_bytes_, etc
+
+  metadatas_.Init(inner_->n_blocks());
   handler_ = handler_in;
   mode_ = mode_in;
+
+  ArrayList<char> header_data;
+  header_data.Init(inner_->n_block_bytes());
+
+  if (mode_ == CREATE || mode_ == TEMP) {
+    char *data = StartWrite(HEADER_BLOCKID);
+    handler_->WriteHeader(n_block_bytes_, data);
+    StopWrite(HEADER_BLOCKID);
+  } else if (mode_ == READ || mode_ == MODIFY) {
+    char *data = StartRead(HEADER_BLOCKID);
+    handler_->InitFromHeader(n_block_bytes_, data);
+    StopRead(HEADER_BLOCKID);
+  } else {
+    FATAL("Unknown mode");
+  }
 }
 
 char *SmallCache::StartRead(blockid_t blockid) {
@@ -13,6 +29,7 @@ char *SmallCache::StartRead(blockid_t blockid) {
 
   Metadata *metadata = GetBlock_(blockid);
   metadata->lock_count++;
+
   Unlock();
 
   return metadata->data;
@@ -24,6 +41,7 @@ char *SmallCache::StartWrite(blockid_t blockid) {
   Metadata *metadata = GetBlock_(blockid);
   metadata->lock_count++;
   metadata->is_dirty = 1;
+  
   Unlock();
 
   return metadata->data;
@@ -37,7 +55,10 @@ void SmallCache::StopRead(blockid_t blockid) {
 }
 
 void SmallCache::StopWrite(blockid_t blockid) {
-  StopRead(blockid);
+  Lock();
+  Metadata *metadata = GetBlock_(blockid);
+  --metadata->lock_count;
+  Unlock();
 }
 
 void SmallCache::PerformCacheMiss_(blockid_t blockid) {
@@ -47,10 +68,16 @@ void SmallCache::PerformCacheMiss_(blockid_t blockid) {
   data = mem::Alloc<char>(n_block_bytes());
   if (mode_ == BlockDevice::READ || mode_ == BlockDevice::MODIFY) {
     inner_->Read(blockid, data);
-    handler_->BlockThaw(n_block_bytes_, data);
+    if (likely(blockid != HEADER_BLOCKID)) {
+      handler_->BlockThaw(n_block_bytes_, data);
+    }
   } else {
-    handler_->BlockInitFrozen(n_block_bytes_, data);
-    handler_->BlockThaw(n_block_bytes_, data);
+    // In a real cache implementation, we'd only do this if we knew the block
+    // was brand-new.
+    if (likely(blockid != HEADER_BLOCKID)) {
+      handler_->BlockInitFrozen(n_block_bytes_, data);
+      handler_->BlockThaw(n_block_bytes_, data);
+    }
   }
   metadata->data = data;
 }
@@ -68,7 +95,9 @@ void SmallCache::Writeback_(blockid_t blockid, offset_t begin, offset_t end) {
         FATAL("Cannot flush a range that is currently in use.");
       }
       
-      handler_->BlockRefreeze(n_bytes, buf, buf);
+      if (likely(blockid != HEADER_BLOCKID)) {
+        handler_->BlockRefreeze(n_bytes, buf, buf);
+      }
       inner_->Write(blockid, begin, end, buf);
       handler_->BlockThaw(n_bytes, buf);
     }
@@ -97,12 +126,19 @@ void SmallCache::Read(blockid_t blockid,
   const char *src_buffer = StartRead(blockid) + begin;
   size_t n_bytes = end - begin;
   mem::CopyBytes(buf, src_buffer, n_bytes);
-  handler_->BlockRefreeze(n_bytes, src_buffer, buf);
+  // TODO: Allow handler to assert that accesses are on block boundaries
+  if (blockid != HEADER_BLOCKID) {
+    handler_->BlockRefreeze(n_bytes, src_buffer, buf);
+  }
   StopRead(blockid);
 }
 
 void SmallCache::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *buf) {
+  DEBUG_ASSERT_MSG(blockid != HEADER_BLOCKID,
+      "The header block is protected and non-writable, "
+      "because it contains important metadata.");
+  
   char *dest_buffer = StartWrite(blockid) + begin;
   size_t n_bytes = end - begin;
   mem::CopyBytes(dest_buffer, buf, n_bytes);

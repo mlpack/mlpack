@@ -8,9 +8,13 @@ class BlockActionHandler {
  public:
   BlockActionHandler() {}
   virtual ~BlockActionHandler() {}
+
+  virtual void InitFromHeader(size_t header_size, char *header) = 0;
+  virtual void WriteHeader(size_t header_size, char *header) = 0;
   
   virtual void BlockInitFrozen(size_t bytes, char *block) = 0;
-  virtual void BlockRefreeze(size_t bytes, const char *old_location, char *block) = 0;
+  virtual void BlockRefreeze(
+      size_t bytes, const char *old_location, char *block) = 0;
   virtual void BlockThaw(size_t bytes, char *block) = 0;
 };
 

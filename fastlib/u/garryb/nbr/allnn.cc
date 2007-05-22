@@ -43,7 +43,7 @@ class Allnn {
       dim = -1;
     }
     
-    void AnalyzePoint(const Point& q_point, const BlankPointInfo& info) {
+    void AnalyzePoint(const Point& q_point) {
       DEBUG_ASSERT(dim == -1 || dim == q_point.length());
       dim = q_point.length();
     }
