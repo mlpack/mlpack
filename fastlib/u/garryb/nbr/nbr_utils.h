@@ -97,10 +97,8 @@ namespace nbr_utils {
     
     if (server) {
       TempCacheArray<typename GNP::Point> q_points;
-      TempCacheArray<typename GNP::QPointInfo> q_point_infos;
       TempCacheArray<typename GNP::QNode> q_nodes;
       TempCacheArray<typename GNP::Point> r_points;
-      TempCacheArray<typename GNP::RPointInfo> r_point_infos;
       TempCacheArray<typename GNP::RNode> r_nodes;
       TempCacheArray<typename GNP::QResult> q_results;
       
@@ -128,14 +126,10 @@ namespace nbr_utils {
       
       NetCacheArray<typename GNP::Point> q_points;
       q_points.Init(q_points_channel, BlockDevice::READ);
-      NetCacheArray<typename GNP::QPointInfo> q_point_infos;
-      q_point_infos.Init(q_point_infos_channel, BlockDevice::READ);
       NetCacheArray<typename GNP::QNode> q_nodes;
       q_nodes.Init(q_nodes_channel, BlockDevice::READ);
       NetCacheArray<typename GNP::Point> r_points;
       r_points.Init(r_points_channel, BlockDevice::READ);
-      NetCacheArray<typename GNP::RPointInfo> r_point_infos;
-      r_point_infos.Init(r_point_infos_channel, BlockDevice::READ);
       NetCacheArray<typename GNP::RNode> r_nodes;
       r_nodes.Init(r_nodes_channel, BlockDevice::READ);
       NetCacheArray<typename GNP::QResult> q_results;
