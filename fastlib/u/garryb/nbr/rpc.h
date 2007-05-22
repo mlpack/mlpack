@@ -233,6 +233,8 @@ class BlockDeviceRemote
   RemoteObjectStub<BlockRequest, BlockResponse> stub_;
 
  public:
+  how big am I? n_blocks etc
+ 
   void Init(int channel_in, int destination_in) {
     stub_.Init(channel_in, destination_in);
   }
