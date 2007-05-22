@@ -66,15 +66,18 @@ class DualTreeDepthFirst {
   }
 
  private:
-  void Pair_(index_t q_node_i, index_t r_node_i,
+  void Pair_(
+      const typename GNP::QNode *q_node,
+      const typename GNP::RNode *r_node,
       const typename GNP::Delta& delta,
-      const typename GNP::QMassResult& exclusive_unvisited);
+      const typename GNP::QMassResult& exclusive_unvisited,
+      QMutableInfo *q_node_mut);
   void BaseCase_(
       const typename GNP::QNode *q_node,
       const typename GNP::RNode *r_node,
       const typename GNP::QMassResult& exclusive_unvisited,
       QMutableInfo *q_node_mut);
-  void PushDown_(index_t q_node_i);
+  void PushDown_(index_t q_node_i, QMutableInfo *q_node_mut);
 };
 
 template<typename GNP>
@@ -149,8 +152,8 @@ void DualTreeDepthFirst<GNP>::Begin() {
     if (do_naive_) {
       BaseCase_(q_root, r_root_, empty_mass_result, q_root_mut);
     } else {
-      Pair_(0, 0, delta, empty_mass_result);
-      PushDown_(0);
+      Pair_(q_root, r_root_, delta, empty_mass_result, q_root_mut);
+      PushDown_(0, q_root_mut);
     }
   }
 
@@ -178,9 +181,9 @@ void DualTreeDepthFirst<GNP>::Begin() {
 }
 
 template<typename GNP>
-void DualTreeDepthFirst<GNP>::PushDown_(index_t q_node_i) {
+void DualTreeDepthFirst<GNP>::PushDown_(
+    index_t q_node_i, QMutableInfo *q_node_mut) {
   const typename GNP::QNode *q_node = q_nodes_.StartRead(q_node_i);
-  QMutableInfo *q_node_mut = q_mutables_.StartWrite(q_node_i);
 
   if (q_node->is_leaf()) {
     for (index_t q_i = q_node->begin(); q_i < q_node->end(); q_i++) {
@@ -202,24 +205,21 @@ void DualTreeDepthFirst<GNP>::PushDown_(index_t q_node_i) {
       
       q_child_mut->postponed.ApplyPostponed(param_, q_node_mut->postponed);
       
+      PushDown_(q_child_i, q_child_mut);
       q_mutables_.StopWrite(q_child_i);
-      
-      PushDown_(q_child_i);
     }
   }
 
   q_nodes_.StopRead(q_node_i);
-  q_mutables_.StopWrite(q_node_i);
 }
 
 template<typename GNP>
-void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
+void DualTreeDepthFirst<GNP>::Pair_(
+    const typename GNP::QNode *q_node,
+    const typename GNP::RNode *r_node,
     const typename GNP::Delta& delta,
-    const typename GNP::QMassResult& exclusive_unvisited) {
-  const typename GNP::RNode *r_node = r_nodes_.StartRead(r_node_i);
-  const typename GNP::QNode *q_node = q_nodes_.StartRead(q_node_i);
-  QMutableInfo *q_node_mut = q_mutables_.StartWrite(q_node_i);
-
+    const typename GNP::QMassResult& exclusive_unvisited,
+    QMutableInfo *q_node_mut) {
   DEBUG_MSG(1.0, "Checking (%d,%d) x (%d,%d)",
       q_node->begin(), q_node->end(),
       r_node->begin(), r_node->end());
@@ -232,7 +232,7 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
   mu.ApplyDelta(param_, delta);
   
   if (!GNP::Algorithm::ConsiderQueryTermination(
-          param_, *q_node, mu, global_result_, &q_node_mut->postponed)) {
+         param_, *q_node, mu, global_result_, &q_node_mut->postponed)) {
     q_node_mut->mass_result.ApplyDelta(param_, delta);
     DEBUG_MSG(1.0, "Termination prune");
   } else if (!GNP::Algorithm::ConsiderPairExtrinsic(
@@ -263,7 +263,7 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
         if (GNP::Algorithm::ConsiderPairIntrinsic(
                 param_, *q_child, *r_node, &child_delta,
                 &global_result_, &q_child_mut->postponed)) {
-          Pair_(q_child_i, r_node_i, delta, exclusive_unvisited);
+          Pair_(q_child, r_node, delta, exclusive_unvisited, q_child_mut);
         }
 
         // We must VERY carefully apply both the horizontal and vertical join
@@ -318,20 +318,16 @@ void DualTreeDepthFirst<GNP>::Pair_(index_t q_node_i, index_t r_node_i,
         if (do_r2) {
           exclusive_unvisited_for_r1.ApplyDelta(param_, delta2);
         }
-        Pair_(q_node_i, r_child1_i, delta1, exclusive_unvisited_for_r1);
+        Pair_(q_node, r_child1, delta1, exclusive_unvisited_for_r1, q_node_mut);
       }
       if (do_r2) {
-        Pair_(q_node_i, r_child2_i, delta2, exclusive_unvisited);
+        Pair_(q_node, r_child2, delta2, exclusive_unvisited, q_node_mut);
       }
       
       r_nodes_.StopRead(r_child1_i);
       r_nodes_.StopRead(r_child2_i);
     }
   }
-  
-  r_nodes_.StopRead(r_node_i);
-  q_nodes_.StopRead(q_node_i);
-  q_mutables_.StopWrite(q_node_i);
 }
 
 template<typename GNP>
