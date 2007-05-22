@@ -167,7 +167,7 @@ struct BlockRequest {
   BlockDevice::block_t blockid;
   BlockDevice::offset_t begin;
   BlockDevice::offset_t end;
-  enum { READ, WRITE, ALLOC } operation;
+  enum { READ, WRITE, ALLOC, INFO } operation;
   ArrayList<char> payload;
 
   OT_DEF(BlockRequest) {
@@ -184,11 +184,13 @@ struct BlockRequest {
  * Protocol response for networked block devices.
  */
 struct BlockResponse {
+  unsigned int n_block_bytes;
   BlockDevice::blockid_t blockid;
   ArrayList<char> payload;
 
   OT_DEF(BlockResponse) {
     OT_MY_OBJECT(remember to make sure it compiles);
+    OT_MY_OBJECT(n_block_bytes);
     OT_MY_OBJECT(blockid);
     OT_MY_OBJECT(payload);
   }
@@ -201,6 +203,7 @@ class BlockDeviceRemoteObjectBackend
 
  public:
   void HandleRequest(const BlockRequest& request, BlockResponse *response) {
+    response->n_block_bytes = blockdev_->n_block_bytes();
 
     if (request.operation == BlockRequest::WRITE) {
       response->payload.Init();
@@ -215,8 +218,11 @@ class BlockDeviceRemoteObjectBackend
     } else if (request.operation == BlockRequest::ALLOC) {
       response->payload.Init();
       response->blockid = blockdev_->AllocBlock();
+    } else if (request.operation == BlockRequest::INFO) {
+      response->payload.Init();
+      response->blockid = blockdev_->n_blocks();
     } else {
-      FATAL("Only valid block operations are READ/WRITE.");
+      FATAL("Unknown block operation %d.", request.operation);
     }
   }
 };
@@ -227,16 +233,30 @@ class BlockDeviceRemoteObjectBackend
  * Individual instances of this object are not
  * thread safe?
  */
-class BlockDeviceRemote
+class RemoteBlockDevice
     : public BlockDevice {
  private:
   RemoteObjectStub<BlockRequest, BlockResponse> stub_;
 
  public:
   how big am I? n_blocks etc
- 
+
   void Init(int channel_in, int destination_in) {
     stub_.Init(channel_in, destination_in);
+
+    BlockRequest request;
+
+    request.blockid = 0;
+    request.begin = 0;
+    request.end = 0;
+    request.operation = BlockRequest::INFO;
+    request.payload.Init();
+
+    stub_.Lock();
+    const BlockResponse *response = stub_.Request(request);
+    n_block_bytes_ = response->n_block_bytes;
+    n_blocks_ = response->blockid;
+    stub_.Unlock();
   }
 
   virtual void Read(blockid_t blockid,
@@ -252,7 +272,7 @@ class BlockDeviceRemote
     stub_.Lock();
     const BlockResponse *response = stub_.Request(request);
     memcpy(data, response->payload.begin(), response->payload.size());
-    DEBUG_SAME_INT(response->payload.size() == end - begin);
+    DEBUG_SAME_INT(response->payload.size(), end - begin);
     stub_.Unlock();
   }
 
@@ -268,7 +288,6 @@ class BlockDeviceRemote
 
     stub_.Lock();
     const BlockResponse *response = stub_.Request(request);
-    DEBUG_ASSERT(response->payload.size(), 0);
     stub_.Unlock();
   }
 
@@ -284,7 +303,6 @@ class BlockDeviceRemote
 
     stub_.Lock();
     const BlockResponse *response = stub_.Request(request);
-    DEBUG_ASSERT(response->payload.size(), 0);
     blockid = response->blockid;
     stub_.Unlock();
 

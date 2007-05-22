@@ -22,10 +22,9 @@
 
 /* Implementation */
 
-template<typename TPointInfo, typename TNode, typename TParam>
+template<typename TNode, typename TParam>
 class KdTreeMidpointBuilder {
  public:
-  typedef TPointInfo PointInfo;
   typedef TNode Node;
   typedef typename TNode::Bound Bound;
   typedef TParam Param;
@@ -33,7 +32,6 @@ class KdTreeMidpointBuilder {
  private:
   const Param* param_;
   CacheArray<Vector> points_;
-  CacheArray<PointInfo> point_infos_;
   CacheArray<Node>* nodes_;
   index_t leaf_size_;
   index_t dim_;
@@ -43,12 +41,10 @@ class KdTreeMidpointBuilder {
       struct datanode *module,
       const Param* param_in_,
       CacheArray<Vector> *points_inout,
-      CacheArray<PointInfo> *point_infos_inout,
       CacheArray<Node> *nodes_out) {
     param_ = param_in_;
 
     points_.Init(points_inout, BlockDevice::MODIFY);
-    point_infos_.Init(point_infos_inout, BlockDevice::MODIFY);
     nodes_ = nodes_out;
     //nodes_.Init(nodes_out, BlockDevice::CREATE);
 
@@ -61,7 +57,6 @@ class KdTreeMidpointBuilder {
     Build_();
     
     points_.Flush();
-    point_infos_.Flush();
     nodes_->Flush();
   }
   
@@ -75,8 +70,8 @@ class KdTreeMidpointBuilder {
   void Build_();
 };
 
-template<typename TPointInfo, typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::FindBoundingBox_(
+template<typename TNode, typename TParam>
+void KdTreeMidpointBuilder<TNode, TParam>::FindBoundingBox_(
     index_t first, index_t count, Bound *bound) {
   index_t end = first + count;
   for (index_t i = first; i < end; i++) {
@@ -85,8 +80,8 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::FindBoundingBox_(
     points_.StopRead(i);
   }
 }
-template<typename TPointInfo, typename TNode, typename TParam>
-index_t KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Partition_(
+template<typename TNode, typename TParam>
+index_t KdTreeMidpointBuilder<TNode, TParam>::Partition_(
     index_t split_dim, double splitvalue,
     index_t first, index_t count,
     Bound* left_bound, Bound* right_bound) {
@@ -136,8 +131,6 @@ index_t KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Partition_(
     points_.StopWrite(left);
     points_.StopWrite(right);
     
-    point_infos_.Swap(left, right);
-
     //index_t t = old_from_new_indices_[left];
     //old_from_new_indices_[left] = old_from_new_indices_[right];
     //old_from_new_indices_[right] = t;
@@ -151,8 +144,8 @@ index_t KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Partition_(
   return left;
 }
 
-template<typename TPointInfo, typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::KdTreeMidpointBuilder::Build_(
+template<typename TNode, typename TParam>
+void KdTreeMidpointBuilder<TNode, TParam>::KdTreeMidpointBuilder::Build_(
     index_t node_i) {
   Node *node = nodes_->StartWrite(node_i);
   bool leaf = true;
@@ -223,10 +216,8 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::KdTreeMidpointBuilder::Bu
   
     for (index_t i = node->begin(); i < node->end(); i++) {
       const Vector *point = points_.StartRead(i);
-      const PointInfo *point_info = point_infos_.StartRead(i);
-      node->stat().Accumulate(*param_, *point, *point_info);
+      node->stat().Accumulate(*param_, *point);
       points_.StopRead(i);
-      point_infos_.StopRead(i);
     }
     node->stat().Postprocess(*param_, node->bound(), node->count());
   }
@@ -234,8 +225,8 @@ void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::KdTreeMidpointBuilder::Bu
   nodes_->StopWrite(node_i);
 }
 
-template<typename TPointInfo, typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TPointInfo, TNode, TParam>::Build_() {
+template<typename TNode, typename TParam>
+void KdTreeMidpointBuilder<TNode, TParam>::Build_() {
   index_t node_i = nodes_->Alloc();
   Node *node = nodes_->StartWrite(node_i);
   

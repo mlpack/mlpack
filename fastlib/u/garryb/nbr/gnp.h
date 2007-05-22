@@ -73,9 +73,8 @@ class BlankStat {
  public:
   template<typename Param>
   void Init(const Param& param) {}
-  template<typename Param, typename Point, typename PointInfo>
-  void Accumulate(const Param& param, const Point& point,
-      const PointInfo& r_info) {}
+  template<typename Param, typename Point>
+  void Accumulate(const Param& param, const Point& point) {}
   template<typename Param, typename Bound>
   void Accumulate(const Param& param,
       const BlankStat& stat, const Bound& bound, index_t n) {}
