@@ -78,6 +78,76 @@ namespace nbr_utils {
         &r_points, &r_point_infos, &r_nodes, &q_results);
     solver.Begin();
   }
+  
+  template<typename GNP, typename Solver>
+  void MpiDualTreeMain(datanode *datanode, const char *gnp_name) {
+    RemoteObjectServer server;
+    
+    server.Init();
+    
+    int q_points_channel = server.NewTag();
+    int q_point_infos_channel = server.NewTag();
+    int q_nodes_channel = server.NewTag();
+    int r_points_channel = server.NewTag();
+    int r_point_infos_channel = server.NewTag();
+    int r_nodes_channel = server.NewTag();
+    int q_results_channel = server.NewTag();
+    
+    if (server) {
+      TempCacheArray<typename GNP::Point> q_points;
+      TempCacheArray<typename GNP::QPointInfo> q_point_infos;
+      TempCacheArray<typename GNP::QNode> q_nodes;
+      TempCacheArray<typename GNP::Point> r_points;
+      TempCacheArray<typename GNP::RPointInfo> r_point_infos;
+      TempCacheArray<typename GNP::RNode> r_nodes;
+      TempCacheArray<typename GNP::QResult> q_results;
+      
+      export all of these arrays to the network
+      
+      typename GNP::Param param;
+
+      param.Init(fx_submodule(datanode, gnp_name, gnp_name));
+
+      nbr_utils::LoadKdTree(fx_submodule(datanode, "q", "q"),
+          &param, &q_point_infos, &q_points, &q_nodes);
+      nbr_utils::LoadKdTree(fx_submodule(datanode, "r", "r"),
+          &param, &r_point_infos, &r_points, &r_nodes);
+
+      typename GNP::QResult default_result;
+      default_result.Init(param);
+      q_results.Init(default_result, q_points.end_index(),
+          q_points.n_block_elems());
+
+      server.Loop();
+    } else if (worker) {
+      MPI_Barrier();
+      
+      initialize them all with default elements
+      
+      NetCacheArray<typename GNP::Point> q_points;
+      q_points.Init(q_points_channel, BlockDevice::READ);
+      NetCacheArray<typename GNP::QPointInfo> q_point_infos;
+      q_point_infos.Init(q_point_infos_channel, BlockDevice::READ);
+      NetCacheArray<typename GNP::QNode> q_nodes;
+      q_nodes.Init(q_nodes_channel, BlockDevice::READ);
+      NetCacheArray<typename GNP::Point> r_points;
+      r_points.Init(r_points_channel, BlockDevice::READ);
+      NetCacheArray<typename GNP::RPointInfo> r_point_infos;
+      r_point_infos.Init(r_point_infos_channel, BlockDevice::READ);
+      NetCacheArray<typename GNP::RNode> r_nodes;
+      r_nodes.Init(r_nodes_channel, BlockDevice::READ);
+      NetCacheArray<typename GNP::QResult> q_results;
+      q_results.Init(q_results_channel, BlockDevice::CREATE);
+      
+      while (work) {
+        Solver solver;
+        solver.Init(fx_submodule(datanode, "solver", "solver"), param,
+            &q_points, &q_point_infos, &q_nodes,
+            &r_points, &r_point_infos, &r_nodes, &q_results);
+        solver.Begin();
+      }
+    }
+  }
 };
 
 #endif
