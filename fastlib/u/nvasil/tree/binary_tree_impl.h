@@ -40,6 +40,7 @@ void TREE__::BuildBreadthFirst() {
 			          pivot->statistics_, 
 								node_id_,
 								pivot->num_of_points_);
+	parent_.Lock();
 	node_id_++;
   pair<PivotInfo_t*, PivotInfo_t*> pivot_pair;
   pivot_pair = pivoter_(pivot);
@@ -66,6 +67,7 @@ void TREE__::BuildBreadthFirst(
   	fifo.pop_back();
   	if (fifo_pair.second->num_of_points_ > max_points_on_leaf_) {
   	  (*fifo_pair.first).Reset(new Node_t());
+			(*fifo_pair.first).Lock();
 			(*fifo_pair.first)->Init(fifo_pair.second->box_, 
 				                       fifo_pair.second->statistics_,
 							                 node_id_,
@@ -78,12 +80,14 @@ void TREE__::BuildBreadthFirst(
 						                    pivot_pair.first));
   	  fifo.push_front(make_pair((*fifo_pair.first)->get_right().Reference(),
 					                    	pivot_pair.second));
+			(*fifo_pair.first).Unlock();
     } else {
       if (log_progress_==true) {
         total_points_visited_ += fifo_pair.second->num_of_points_;
         progress_.Show(total_points_visited_, get_num_of_points());
       }
      (*fifo_pair.first).Reset(new Node_t());
+		 (*fifo_pair.first).Lock();
 		 (*fifo_pair.first)->Init(fifo_pair.second->box_,
 			                        fifo_pair.second->statistics_,
 			                        node_id_,
@@ -92,6 +96,7 @@ void TREE__::BuildBreadthFirst(
                               dimension_,
                               data_); 
 
+			(*fifo_pair.first).Unlock();
 		  num_of_leafs_++;
 			node_id_++;
     }
@@ -105,28 +110,25 @@ void TREE__::BuildDepthFirst() {
 	max_depth_=0;
 	current_level_=0;
 	progress_.Reset();
-  NodePtrPtr_t temp_parent;
-  temp_parent.Reset(Allocator_t::malloc(sizeof(NodePtr_t)));
-  BuildDepthFirst(temp_parent, pivoter_(num_of_points_));
-	parent_=*temp_parent;
+  parent_.Reset(new Node_());
+	BuildDepthFirst(parent_, pivoter_(num_of_points_));
   if (log_progress_==true) {
   	printf("\n");
   }
 }
 
 TEMPLATE__
-void TREE__::BuildDepthFirst(typename TREE__::NodePtrPtr_t ptr, 
+void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t ptr, 
     typename TREE__::PivotInfo_t *pivot_info) {
                                  	
   pair<PivotInfo_t *, PivotInfo_t *>  pivot_pair;
   if (pivot_info->num_of_points_ > max_points_on_leaf_) {
-  	(*ptr).Reset(new Node_t());
-		(*ptr)->Init(pivot_info->box_, 
+		ptr.Lock();
+		ptr->Init(pivot_info->box_, 
 				      pivot_info->statistics_,
 							node_id_,
 							pivot_info->num_of_points_);
 
-		(*ptr)->Print(dimension_);
 		node_id_++;
     pivot_pair = pivoter_(pivot_info);  
 	  // There is a case where on all the points are the same
@@ -143,15 +145,15 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtrPtr_t ptr,
 		  if (current_level_ < min_depth_) {
 		    min_depth_=current_level_;
 		  }
-      (*ptr).Reset(new Node_t());
-			(*ptr)->Init(pivot_pair.second->box_,
+			ptr.Lock();
+			ptr->Init(pivot_pair.second->box_,
 			          pivot_pair.second->statistics_,
 			          node_id_,
 			          pivot_pair.second->start_,
 			          pivot_pair.second->num_of_points_,
 			          dimension_,
                 data_); 
-
+      ptr.Unlock();
 		  node_id_++;
 		  num_of_leafs_++;
       delete pivot_info;    
@@ -160,11 +162,15 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtrPtr_t ptr,
 		  return;
 		}
   	delete pivot_info;
-  	current_level_++; 
- 
-		BuildDepthFirst((*ptr)->get_left().Reference(), pivot_pair.first);
-  	BuildDepthFirst((*ptr)->get_right().Reference(), pivot_pair.second);
-  	current_level_--; 
+  	current_level_++;
+		ptr->get_left().Reset(new Node_t());
+		ptr->get_right().Reset(new Node_t());
+		NodePtr_t left  = ptr->get_left();
+		NodePtr_t right = ptr->get_right(); 
+		ptr.Unlock();
+		BuildDepthFirst(left, pivot_pair.first);
+  	BuildDepthFirst(right, pivot_pair.second);
+		current_level_--; 
   } else {
   	if (log_progress_==true) {
       total_points_visited_ += pivot_info->num_of_points_;
@@ -176,15 +182,15 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtrPtr_t ptr,
 		if (current_level_ < min_depth_) {
 		  min_depth_=current_level_;
 		}
-    (*ptr).Reset(new Node_t());
-    (*ptr)->Init(pivot_info->box_,
+		ptr.Lock();
+    ptr->Init(pivot_info->box_,
 			        pivot_info->statistics_,
 			        node_id_,
 			        pivot_info->start_,
 			        pivot_info->num_of_points_,
 			        dimension_,
               data_); 
-
+    ptr.Unlock();
 		node_id_++;
 		num_of_leafs_++;
     delete pivot_info;
@@ -215,6 +221,7 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
 	              typename TREE__::Point_t> > *nearest_point,
     NEIGHBORTYPE range,
     bool &found) {
+	ptr.Lock();
   computations_.UpdateComparisons();
 	Precision_t max_distance;
 	if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) {
@@ -224,13 +231,13 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
   	computations_.UpdateComparisons();
 		pair<NodePtr_t, NodePtr_t> child_pair = 
 			ptr->ClosestChild(test_point, dimension_, computations_);
-
+    ptr.Unlock();
 		NearestNeighbor(child_pair.first, test_point, nearest_point, 
                      range, found);
 		if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
 		  max_distance=nearest_point->back().first;
 		}
-		
+		child_pair.second.Lock();
     if (child_pair.second->get_box().CrossesBoundaries(test_point, 
 					                                       dimension_, 
 																								 max_distance,
@@ -247,11 +254,13 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
         if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
 		      max_distance=nearest_point->back().first;
 		    }
-        found = ptr->get_box().IsWithin(test_point, 
+        ptr.Lock();
+				found = ptr->get_box().IsWithin(test_point, 
 						                       dimension_, 
 																	 max_distance,  
                                    computations_)==0;
         if (found == true) {
+				  ptr.Unlock();
           return;
         }
       }
@@ -266,7 +275,8 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
   	found = ptr->get_box().IsWithin(test_point, dimension_, 
 			                              max_distance,	
   	                                computations_);
-  }  	
+  }
+  ptr.Unlock();	
 }    
 
 TEMPLATE__                  	                                
@@ -286,7 +296,11 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
                                  typename TREE__::NodePtr_t reference,
                                  NEIGHBORTYPE range, 
                                  typename TREE__::Precision_t distance) {                                               	
-  if (distance > query->get_min_dist_so_far()) {
+  query.Lock();
+	reference.Lock();
+	if (distance > query->get_min_dist_so_far()) {
+		query.Unlock();
+		reference.Unlock();
 		return ;
   } else {
   	if (query->IsLeaf() && reference->IsLeaf()) {
@@ -306,6 +320,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 						                               reference->get_right(),
   	  	                                   dimension_,
   	  	                                   computations_);
+				reference.Unlock()
   	  	AllNearestNeighbors(query, 
 						                closest_child.first.first, // child
 						                range,                     // range  
@@ -314,7 +329,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 														);
         AllNearestNeighbors(query, closest_child.second.first,
 					                         range, closest_child.second.second);
-        
+        query.Unlock();        
   	  } else {
         if (!query->IsLeaf() && reference->IsLeaf()) {
 					pair<pair<NodePtr_t, Precision_t>,
@@ -323,7 +338,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 						                                     query->get_right(),
   	  	                                         dimension_,
   	  	                                         computations_);
-
+          query.Unlock();
 					AllNearestNeighbors(closest_child.first.first, 
 							                reference, 
 															range, 
@@ -332,47 +347,71 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 						                	reference, 
 															range, 
 															closest_child.second.second); 
-          query->set_min_dist_so_far(
+          query.Lock();
+					query->get_left().Lock();
+					query->get_right().Lock();
+					query->set_min_dist_so_far(
 			        std::min<Precision_t>(query->get_min_dist_so_far(),
 								 std::max<Precision_t>(query->get_left()->get_min_dist_so_far(),
 									    query->get_right()->get_min_dist_so_far())));
+					query->get_left().Unlock();
+					query->get_right().Unlock();
+					query->Unlock();
+					reference.Unlock();
         } else {
           if (!query->IsLeaf() && !reference->IsLeaf()) {
           	pair<pair<NodePtr_t, Precision_t>,
 				    pair<NodePtr_t, Precision_t>  >  closest_child;
-  	  	    closest_child = query->get_left()->ClosestNode(
+  	  	    NodePtr_t query_left = query->get_left();
+            query_left.Lock();
+						closest_child = query->get_left()->ClosestNode(
 								reference->get_left(), 
 						    reference->get_right(),
   	  	        dimension_,
   	  	        computations_);
-          	
-						AllNearestNeighbors(query->get_left(), 
+            
+					  query_left.Unlock();
+						query.Unlock();	
+						reference.Unlock();
+						AllNearestNeighbors(query_left, 
 								                closest_child.first.first, 
 																range, 
 								                closest_child.first.second);
-            AllNearestNeighbors(query->get_left(), 
+            AllNearestNeighbors(query_left, 
 								                closest_child.second.first, 
 																range, 
 								                closest_child.second.second);
-            closest_child = query->get_right()->ClosestNode(
+						query.Lock();
+						reference.Lock();
+					  NodePtr_r query_right= query->get_right();
+						query_right_.Lock();
+            closest_child = query_right->ClosestNode(
 								reference->get_left(), 
 						    reference->get_right(),
   	  	        dimension_,
   	  	        computations_);
-            AllNearestNeighbors(query->get_right(), 
+						query_right.Unlock();
+						query.Unlock();
+						reference.Unlock();
+            AllNearestNeighbors(query_right, 
 								                closest_child.first.first, 
 								                range,  
 																closest_child.first.second);
-            AllNearestNeighbors(query->get_right(), 
+            AllNearestNeighbors(query_right, 
 								                closest_child.second.first, 
 								                range, 
 																closest_child.second.second);   
-            query->set_min_dist_so_far(
+            query.Lock();
+						query->get_left().Lock();
+						query->get_right().Lock();
+						query->set_min_dist_so_far(
 			        std::min<Precision_t>(query->get_min_dist_so_far(),
 								std::max<Precision_t>(query->get_left()->get_min_dist_so_far(),
 									    query->get_right()->get_min_dist_so_far())));
- 
-          }
+					  query->get_left().Unlock();
+					  query->get_right().Unlock();	
+            query.Unlock();
+					}
         }
   	  }
   	}
@@ -411,14 +450,22 @@ void TREE__::InitAllKNearestNeighborOutput(string file,
 TEMPLATE__
 void TREE__::InitAllKNearestNeighborOutput(typename TREE__::NodePtr_t ptr, 
 		                                        int32 knns) {
+	ptr.Unlock();
   if (ptr->IsLeaf()) {
   	ptr->set_kneighbors(all_nn_out_.Allocate(ptr->get_num_of_points(), knns),
 			                                       knns);
 	  ptr->InitKNeighbors(knns);
 		ptr->set_min_dist_so_far(numeric_limits<Precision_t>::max());
+		ptr.Unlock();
 	} else {
-	  InitAllKNearestNeighborOutput(ptr->get_left(), knns);
-		InitAllKNearestNeighborOutput(ptr->get_right(), knns);
+		Node_t left = ptr->get_left();
+		ptr.Unlock();
+	  InitAllKNearestNeighborOutput(left, knns);
+		ptr.Lock();
+		Node_t right=ptr->get_right();
+		ptr.Unlock();
+		InitAllKNearestNeighborOutput(right, knns);
+		
 	}
 
 }
@@ -440,11 +487,18 @@ TEMPLATE__
 void TREE__::InitAllRangeNearestNeighborOutput(
 		typename TREE__::NodePtr_t ptr,
 		FILE *fp) {
+	ptr.Lock();
   if (ptr->IsLeaf()) {
 	  ptr->set_range_neighbors(fp);
+		ptr.Unlock();
 	} else {
-	  InitAllRangeNearestNeighborOutput(ptr->get_left(), fp);
-    InitAllRangeNearestNeighborOutput(ptr->get_right(), fp);
+		NodePtr_t left = ptr->get_left();
+		ptr.Unlock();
+	  InitAllRangeNearestNeighborOutput(left, fp);
+		ptr.Lock();
+		NodePtr_t right = ptr->get_right();
+		ptr.Unlock();
+    InitAllRangeNearestNeighborOutput(get_right, fp);
 	}
 }
 
@@ -471,14 +525,22 @@ void TREE__::Print() {
 TEMPLATE__
 void TREE__::RecursivePrint(typename TREE__::NodePtr_t ptr) {
   string str;
+	ptr.Lock();
   if (ptr->IsLeaf()) {
  	  str = ptr->Print(dimension_);
  	  printf("%s\n", str.c_str());
+		ptr.Unlock();
   } else {
+		ptr.Lock();
  	  str = ptr->Print(dimension_);
     printf("%s\n", str.c_str());
- 	  RecursivePrint(ptr->get_left());
- 	  RecursivePrint(ptr->get_right());
+		NodePtr_t left=ptr->get_left();
+		ptr.Unlock();
+ 	  RecursivePrint(left);
+		ptr.Lock();
+		NodePtr_t right=ptr->get_right();
+		ptr.Unlock();
+ 	  RecursivePrint(right);
   }
 }
 

@@ -52,10 +52,14 @@ TEMPLATE__
 void HYPERRECTANGLE__::Copy(const HyperRectangle_t &hr, 
 		                              int32 dimension) {
   
-  this->min_.Copy(hr.min_, dimension);
+  min_.Lock();
+	max_.Lock();
+	this->min_.Copy(hr.min_, dimension);
   this->max_.Copy(hr.max_, dimension);
   pivot_dimension_ = hr.pivot_dimension_;
   pivot_value_ = hr.pivot_value_;
+	min_.Unlock();
+	max_.Unlock();
 }
 
 TEMPLATE__
@@ -75,10 +79,14 @@ inline bool HYPERRECTANGLE__::IsWithin(
     POINTTYPE point, int32 dimension, Precision_t range, 
     ComputationsCounter<diagnostic> &comp) {
   // non overlaping at all 
-  for(int32 i=0; i<dimension; i++) {
+  max_.Lock();
+	min_.Lock();
+	for(int32 i=0; i<dimension; i++) {
     comp.UpdateComparisons();
     if ( point[i] > max_[i] || point[i] < min_[i]) {
-  	  return false;
+  	  max_.Unlock();
+			min_.Unlock();
+			return false;
   	}
   }
   Precision_t closest_projection = max_[0]-min_[0]; 
@@ -96,10 +104,14 @@ inline bool HYPERRECTANGLE__::IsWithin(
     comp.UpdateComparisons();
     if (range >= closest_projection * closest_projection) {
      // Overlapping
+		  min_.Unlock();
+			max_.Unlock();
  			return  false ;
     }
   }
 	// Completelly inside
+	max_.Unlock();
+	min_.Unlock();
   return true;
 }
     	
@@ -110,7 +122,10 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::IsWithin(
     int32 dimension, 
     Precision_t range,
     ComputationsCounter<diagnostic> &comp) {
-  
+  min_.Lock();
+	max_.Lock();
+	hr.max_.Lock();
+  hr.min_.Lock();
   Precision_t closest_projection = numeric_limits<Precision_t>::max();
   for(int32 i=0; i<dimension; i++) {
     comp.UpdateComparisons();
@@ -118,7 +133,11 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::IsWithin(
     Precision_t d1=hr.min_[i] - min_[i];
     Precision_t d2=max_[i] - hr.max_[i];
     if (d1<0 || d2<0) {
-      return -1;
+      min_.Unlock();
+	    max_.Unlock();
+	    hr.max_.Unlock();
+      hr.min_.Unlock();
+			return -1;
     } else {
       Precision_t dist = min(d1,d2);
       if (dist < closest_projection) {
@@ -127,8 +146,16 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::IsWithin(
     }
   }
   if (closest_projection * closest_projection > range) {
-    return 0;
+    min_.Unlock();
+	  max_.Unlock();
+	  hr.max_.Unlock();
+    hr.min_.Unlock();
+		return 0;
   }
+  min_.Unlock();
+	max_.Unlock();
+	hr.max_.Unlock();
+  hr.min_.Unlock();
   return (sqrt(range) - closest_projection) * 
          (sqrt(range) - closest_projection); 
 }    	
@@ -138,7 +165,8 @@ template<typename POINTTYPE>
 inline bool HYPERRECTANGLE__::CrossesBoundaries(
     POINTTYPE point, int32 dimension, HYPERRECTANGLE__::Precision_t range, 
     ComputationsCounter<diagnostic> &comp) {
-  
+  min_.Lock();
+  max_.Lock();	
   Precision_t closest_point_coordinate;
   Precision_t dist = 0;
   for(int32 i=0; i<dimension; i++) {
@@ -157,9 +185,14 @@ inline bool HYPERRECTANGLE__::CrossesBoundaries(
            (closest_point_coordinate - point[i]);
     comp.UpdateComparisons();
     if (dist > range ) {
-      return false;
+      min_.Unlock();
+			max_.Unlock();
+			return false;
     }
   } 
+  min_.Unlock();
+	max_.Unlock();
+
   return dist <= range;
 }   
 TEMPLATE__ 
@@ -181,7 +214,10 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
     typename HYPERRECTANGLE__::HyperRectangle_t &hr2,
     int32 dimension,
     ComputationsCounter<diagnostic> &comp) {
-  
+  hr1.min_.Lock();
+  hr1.max_.Lock();
+  hr2.min_.Lock();
+  hr2.max_.Lock();	
   Precision_t dist=0;
   comp.UpdateDistances();
   for(int32 i=0; i<dimension; i++) {
@@ -189,12 +225,20 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
   	Precision_t d4 = hr1.max_[i] - hr2.min_[i];
   	if (d2>0) {	
   	  dist += d2*d2 ;
-  	  continue;
+  	 hr1.min_.Unlock();
+     hr1.max_.Unlock();
+     hr2.min_.Unlock();
+     hr2.max_.Unlock();	
+		 	continue;
   	} 
   	if (d4<0) {
   	  dist += d4*d4;
   	}
   }
+  hr1.min_.Unlock();
+  hr1.max_.Unlock();
+  hr2.min_.Unlock();
+  hr2.max_.Unlock();	
   return dist;
 }
 
@@ -205,7 +249,10 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
     typename HYPERRECTANGLE__::Precision_t threshold_distance,
     int32 dimension,
     ComputationsCounter<diagnostic> &comp) {
-  
+  hr1.min_.Lock();
+  hr1.max_.Lock();
+  hr2.min_.Lock();
+  hr2.max_.Lock();	
   Precision_t dist=0;
   comp.UpdateDistances();
   for(int32 i=0; i<dimension; i++) {
@@ -214,6 +261,10 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
   	if (d2>0) {	
   	  dist += d2*d2;
   	  if (dist > threshold_distance) {
+        hr1.min_.Unlock();
+        hr1.max_.Unlock();
+        hr2.min_.Unlock();
+        hr2.max_.Unlock();	
   	  	return numeric_limits<Precision_t>::max();
   	  } else {
   	    continue;
@@ -222,10 +273,19 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
   	if (d4<0) {
   	  dist += d4*d4;
   	  if (dist > threshold_distance) {
-  	  	return numeric_limits<Precision_t>::max();
+  	  	hr1.min_.Unlock();
+        hr1.max_.Unlock();
+        hr2.min_.Unlock();
+        hr2.max_.Unlock();	
+				return numeric_limits<Precision_t>::max();
   	  }
   	}
   }
+
+  hr1.min_.Unlock();
+  hr1.max_.Unlock();
+  hr2.min_.Unlock();
+  hr2.max_.Unlock();	
   return dist;
 }
 
@@ -249,7 +309,9 @@ inline pair<typename HYPERRECTANGLE__::Allocator_t:: template Ptr<NODETYPE>,
 
 TEMPLATE__
 string  HYPERRECTANGLE__::Print(int32 dimension) {
-  char buf[8192];
+  min_.Lock();
+	max_.Lock();
+	char buf[8192];
   sprintf(buf, "max: ");
   string str;
 	str.append(buf);
@@ -267,7 +329,8 @@ string  HYPERRECTANGLE__::Print(int32 dimension) {
   }
   sprintf(buf, "\n");
   str.append(buf);
-  
+  min_.Unlock();
+  max_.Unlock();	
 	return str;
 }
 #undef TEMPLATE__

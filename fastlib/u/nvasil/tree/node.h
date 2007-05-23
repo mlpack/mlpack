@@ -24,6 +24,7 @@ class Node {
   typedef Node<TYPELIST, diagnostic> Node_t;
 	typedef typename Allocator_t::template Ptr<Node> NodePtr_t;
 	typedef Point<Precision_t, Allocator_t> Point_t;
+	typedef Point<Precision_t, Loki::NullType> NullPoint_t;
 	template<typename , bool> friend class NodeTest; 
 	struct NNResult {
 		NNResult() : point_id_(0),
@@ -90,7 +91,7 @@ class Node {
 // We use this for timit experiments so that we exclude points
 // from the same speaker
 	template<typename POINTTYPE, typename NEIGHBORTYPE>
-  void FindNearest(POINTTYPE &query_point, 
+  void FindNearest(POINTTYPE query_point, 
 			             vector<pair<Precision_t, Point_t> >  &nearest, 
 									 NEIGHBORTYPE range, 
 									 int32 dimension,
@@ -130,14 +131,18 @@ class Node {
 	}
 	void set_kneighbors(NNResult *chunk, uint32 knns) {
 	  kneighbors_=chunk;
+		index_.Lock();
 		for(index_t i=0; i< num_of_points_; i++) {
 		  for(index_t j=0; j<(index_t)knns; j++) {
-	      kneighbors_[i*knns+j].point_id_ =
+				kneighbors_[i*knns+j].point_id_ =
 				index_[i];
+				kneighbors_[i*knns+j].nearest_.Lock();
 			  kneighbors_[i*knns+j].nearest_.
 					  set_id(numeric_limits<index_t>::max());
+				kneighbors_[i*knns+j].nearest_.Unlock();
 			}
 		}
+		index_.Unlock();
 	}
 	
 	void InitKNeighbors(int32 knns);
