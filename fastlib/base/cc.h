@@ -16,6 +16,12 @@
 
 #include <cstdlib>
 
+/** NaN value for doubles.  Use isnan to check for this. */
+extern const double DBL_NAN;
+
+/** NaN value for floats.  Use isnanf to check for this. */
+extern const double FLT_NAN;
+
 /* TODO: Decide if templated min and max would prefer const refs.
  *
  * I'm purposely not making these const refs for the case of integers

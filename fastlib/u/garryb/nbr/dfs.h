@@ -51,12 +51,11 @@ class DualTreeDepthFirst {
       datanode *datanode_in,
       const typename GNP::Param& param_in,
       index_t q_root_index,
-      CacheArray<typename GNP::Point> *q_points,
-      CacheArray<typename GNP::QNode> *q_nodes,
-      CacheArray<typename GNP::Point> *r_points,
-      CacheArray<typename GNP::RNode> *r_nodes,
-      CacheArray<typename GNP::QResult> *q_results,
-      index_t q_root_index);
+      SmallCache *q_points,
+      SmallCache *q_nodes,
+      SmallCache *r_points,
+      SmallCache *r_nodes,
+      SmallCache *q_results);
   
   const typename GNP::GlobalResult& global_result() const {
     return global_result_;
@@ -107,9 +106,9 @@ void DualTreeDepthFirst<GNP>::InitSolve(
   
   const typename GNP::QNode *q_root = q_nodes_.StartRead(q_root_index);
   q_results_.Init(q_results, BlockDevice::CREATE,
-      q_root->begin(), q_root->count());
+      q_root->begin(), q_root->end());
   q_points_.Init(q_points, BlockDevice::READ,
-      q_root->begin(), q_root->count());
+      q_root->begin(), q_root->end());
   q_nodes_.StopRead(q_root_index);
   
   

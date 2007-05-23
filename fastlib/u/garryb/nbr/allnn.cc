@@ -231,7 +231,7 @@ class Allnn {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
   
-  nbr_utils::SerialDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+  nbr_utils::ThreadedDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
   
   fx_done();
