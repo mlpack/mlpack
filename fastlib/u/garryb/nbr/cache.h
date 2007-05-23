@@ -312,8 +312,7 @@ class CacheArray {
 
  private:
   void BoundsCheck_(index_t element_id) {
-    DEBUG_ASSERT(element_id >= begin_);
-    DEBUG_ASSERT(element_id < end_);
+    DEBUG_BOUNDS(element_id - begin_, end_ - begin_);
   }
 
   COMPILER_NOINLINE
@@ -384,11 +383,14 @@ void CacheArray<TElement>::Flush() {
       metadata->data = NULL;
     }
   }
-  cache_->Flush(
-      (begin_ >> n_block_elems_log_) + BLOCK_OFFSET,
-      (begin_ & (n_block_elems_mask_)) * n_elem_bytes_,
-      (end_ >> n_block_elems_log_) + BLOCK_OFFSET,
-      (end_ & (n_block_elems_mask_)) * n_elem_bytes_);
+  if (mode_ != BlockDevice::READ) {
+    // TODO: flushing isn't really done the way it needs to be done
+    cache_->Flush(
+        (begin_ >> n_block_elems_log_) + BLOCK_OFFSET,
+        (begin_ & (n_block_elems_mask_)) * n_elem_bytes_,
+        (end_ >> n_block_elems_log_) + BLOCK_OFFSET,
+        (end_ & (n_block_elems_mask_)) * n_elem_bytes_);
+  }
 }
 
 template<typename TElement>

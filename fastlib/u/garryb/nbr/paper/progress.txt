@@ -14,17 +14,19 @@ totals:
 - Tuesday May 22
   - Finalized networking structures
   - Task splitting
-  - Tested network structures
+  - Tested thread
 - Wednesday May 23
-  ?- Run threaded experiments
-  ?- Run warp experiments
+  - Tested network structures
+  ?- Fix weird problems in code
   ?- If time permits: read papers
 - Thursday May 24
   ?- Re-assemble old paper
   ?- Fix paper's contents
   ?- If time permits: read papers
 - Friday May 25
-  ?- Fix weird problems in code
+  ?- Datasets
+  ?- Run threaded experiments
+  ?- Run warp experiments
   ?- Make code faster
   ?- When time permits: read papers
 - Saturday May 26
@@ -37,6 +39,7 @@ totals:
   ?- Make math prettier
   ?- Do more literature survey
 - Tuesday May 29
+  ?- Datasets
   ?- In-depth experiments
 - Wednesday May 30
   ?- Prune paper down to size

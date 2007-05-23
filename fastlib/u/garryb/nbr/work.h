@@ -87,10 +87,18 @@ void SimpleWorkQueue<Node>::AddWork_(
 
 struct WorkRequest {
   enum { GIVE_ME_WORK } operation;
+
+  OT_DEF(WorkRequest) {
+    OT_MY_OBJECT(operation);
+  }
 }; 
 
 struct WorkResponse {
   ArrayList<index_t> work_items;
+
+  OT_DEF(WorkResponse) {
+    OT_MY_OBJECT(work_items);
+  }
 };
 
 class RemoteWorkQueueBackend
@@ -107,7 +115,7 @@ class RemoteWorkQueueBackend
 
 class RemoteWorkQueue
     : public WorkQueueInterface {
-  FORBID_COPY(WorkQueueInterface);
+  FORBID_COPY(RemoteWorkQueue);
 
  private:
   RemoteObjectStub<WorkRequest, WorkResponse> stub_;

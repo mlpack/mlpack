@@ -8,6 +8,13 @@
 #define NBR_RPC_H
 
 #ifdef USE_MPI
+
+#include "blockdev.h"
+
+#include "fastlib/fastlib_int.h"
+
+#include <mpi.h>
+
 extern Mutex global_mpi_lock;
 
 /**
@@ -19,17 +26,22 @@ class RemoteObjectStub {
 
  private:
   ArrayList<char> data_;
-  int destination_;
   int channel_;
+  int destination_;
   Mutex mutex_;
 #ifdef DEBUG
   bool locked_; // for debug mode
 #endif
 
  public:
+  RemoteObjectStub() {}
+  ~RemoteObjectStub() {}
+  
   void Init(int channel_in, int destination_in) {
+    data_.Init();
     channel_ = channel_in;
     destination_ = destination_in;
+    DEBUG_ONLY(locked_ = false);
   }
 
   const Response *Request(const Request& request) {
@@ -43,7 +55,9 @@ class RemoteObjectStub {
         destination_, channel_, MPI_COMM_WORLD);
     MPI_Status status;
     MPI_Probe(MPI_ANY_SOURCE, channel_, MPI_COMM_WORLD, &status);
-    data_.Resize(status.MPI_LENGTH);
+    int length;
+    MPI_Get_count(&status, MPI_CHAR, &length);
+    data_.Resize(length);
     MPI_Recv(data_.begin(), data_.size(), MPI_CHAR,
         destination_, channel_, MPI_COMM_WORLD, &status);
 
@@ -75,7 +89,7 @@ class RawRemoteObjectBackend {
   }
 
   virtual void HandleRequestRaw(ArrayList<char> *request,
-      ArrayList<char> *response);
+      ArrayList<char> *response) = 0;
 
   int channel() const {
     return channel_;
@@ -85,7 +99,7 @@ class RawRemoteObjectBackend {
 /**
  * This is how you define the network object on the server.
  */
-template<class Request, class Response>
+template<typename Request, typename Response>
 class RemoteObjectBackend
     : public RawRemoteObjectBackend {
  public:
@@ -93,7 +107,8 @@ class RemoteObjectBackend
 
   virtual void HandleRequestRaw(ArrayList<char> *raw_request,
       ArrayList<char> *raw_response) {
-    const Request* real_request = ot::PointerThaw(raw_request->begin());
+    const Request* real_request =
+        ot::PointerThaw<Request>(raw_request->begin());
     Response real_response;
     HandleRequest(*real_request, &real_response);
     raw_response->Resize(ot::PointerFrozenSize(real_response));
@@ -111,79 +126,104 @@ class RemoteObjectServer {
   int last_tag_;
 
  public:
-  const int TAG_BORN = 0;
-  const int TAG_DONE = 1;
-  const int TAG_FIRST_AVAILABLE = 2;
+  static const int TAG_BORN = 0;
+  static const int TAG_DONE = 1;
+  static const int TAG_FIRST_AVAILABLE = 0;
 
  public:
-  void Init() {
-    last_tag_ = TAG_FIRST_AVAILABLE - 1;
-  }
+  static void Connect(int destination);
+  static void Disconnect(int destination);
+
+ public:
+  RemoteObjectServer() {}
+  ~RemoteObjectServer() {}
+  
+  void Init();
 
   /**
    * Returns a new tag for use.
    *
    * All machines have to use NewTag in an exactly identical way.
    */
-  int NewTag() {
-    return ++last_tag_;
-  }
+  int NewTag();
 
-  void Register(RawRemoteObjectBackend *channel) {
-    if (channel->channel() >= channels_.size()) {
-      channels_.Resize(channel->channel() + 1);
-    }
-    channels_[channel->channel()] = channel_;
-  }
+  void Register(int channel, RawRemoteObjectBackend *backend);
 
-  void Loop(int n_workers_total) {
-    ArrayList<char> data_recv;
-    ArrayList<char> data_send;
-    int n_workers_born = 0;
-    int n_workers_done = 0;
-
-    data_send.Init();
-    data_recv.Init();
-
-    while (n_workers_done != n_workers_total) {
-      MPI_Status status;
-
-      MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-      data_recv.Resize(status.MPI_LENGTH);
-      MPI_Recv(data_recv.begin(), data_recv.size(), MPI_CHAR,
-          MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
-
-      if (status.MPI_TAG == TAG_BORN) {
-        n_workers_born++;
-      } else if (status.MPI_TAG == TAG_DONE) {
-        n_workers_done++;
-      } else {
-        channels_[status.MPI_SOURCE]->HandleRawRequest(
-            &data_recv, &data_send);
-        MPI_Send(data_send.begin(), data_send.size(), MPI_CHAR,
-            status.MPI_SOURCE, status.MPI_TAG, MPI_COMM_WORLD);
-      }
-    }
-  }
+  void Loop(int n_workers_total);
 };
 
 /**
  * Protocol request for networked block devices.
  */
 struct BlockRequest {
-  BlockDevice::block_t blockid;
+  BlockDevice::blockid_t blockid;
   BlockDevice::offset_t begin;
   BlockDevice::offset_t end;
   enum { READ, WRITE, ALLOC, INFO } operation;
   ArrayList<char> payload;
 
   OT_DEF(BlockRequest) {
-    OT_MY_OBJECT(remember to make sure it compiles);
     OT_MY_OBJECT(blockid);
     OT_MY_OBJECT(begin);
     OT_MY_OBJECT(end);
     OT_MY_OBJECT(operation);
     OT_MY_OBJECT(payload);
+  }
+};
+
+struct DataGetterRequest {
+  enum { GET_DATA } operation;
+  
+  OT_DEF(DataGetterRequest) {
+    OT_MY_OBJECT(operation);
+  }
+};
+
+template<typename T>
+struct DataGetterResponse {
+  T data;
+  
+  OT_DEF(DataGetterResponse) {
+    OT_MY_OBJECT(data);
+  }
+};
+
+template<typename T>
+class DataGetterBackend
+    : public RemoteObjectBackend<DataGetterRequest, DataGetterResponse<T> > {
+ private:
+  const T* data_;
+
+ public:
+  void Init(const T* data_in) {
+    data_ = data_in;
+  }
+
+  void HandleRequest(
+      const DataGetterRequest& request, DataGetterResponse<T> *response) {
+    response->data.Copy(*data_);
+  }
+};
+
+template<typename T>
+class RemoteDataGetter {
+ private:
+  RemoteObjectStub<DataGetterRequest, DataGetterResponse<T> > stub_;
+ 
+ public:
+  void Init(int channel, int destination) {
+    stub_.Init(channel, destination);
+  }
+  
+  void GetData(T *result) {
+    DataGetterRequest request;
+    
+    request.operation = DataGetterRequest::GET_DATA;
+    
+    stub_.Lock();
+    const DataGetterResponse<T> *response = stub_.Request(request);
+    result->Copy(response->data);
+    stub_.Unlock();
   }
 };
 
@@ -196,42 +236,20 @@ struct BlockResponse {
   ArrayList<char> payload;
 
   OT_DEF(BlockResponse) {
-    OT_MY_OBJECT(remember to make sure it compiles);
     OT_MY_OBJECT(n_block_bytes);
     OT_MY_OBJECT(blockid);
     OT_MY_OBJECT(payload);
   }
 };
 
-class BlockDeviceRemoteObjectBackend
+class RemoteBlockDeviceBackend
     : public RemoteObjectBackend<BlockRequest, BlockResponse> {
  private:
   BlockDevice *blockdev_;
 
  public:
-  void HandleRequest(const BlockRequest& request, BlockResponse *response) {
-    response->n_block_bytes = blockdev_->n_block_bytes();
-
-    if (request.operation == BlockRequest::WRITE) {
-      response->payload.Init();
-      blockdev_->Write(request.blockid, request.begin, request.end,
-          request.payload.begin());
-      response->blockid = request.blockid;
-    } else if (request.operation == BlockRequest::READ) {
-      response->payload.Init(request.end - request.begin);
-      blockdev_->Read(request.blockid, request.begin, request.end,
-          response->payload.begin());
-      response->blockid = request.blockid;
-    } else if (request.operation == BlockRequest::ALLOC) {
-      response->payload.Init();
-      response->blockid = blockdev_->AllocBlock();
-    } else if (request.operation == BlockRequest::INFO) {
-      response->payload.Init();
-      response->blockid = blockdev_->n_blocks();
-    } else {
-      FATAL("Unknown block operation %d.", request.operation);
-    }
-  }
+  void Init(BlockDevice *device);
+  void HandleRequest(const BlockRequest& request, BlockResponse *response);
 };
 
 /**
@@ -246,74 +264,14 @@ class RemoteBlockDevice
   RemoteObjectStub<BlockRequest, BlockResponse> stub_;
 
  public:
-  void Init(int channel_in, int destination_in) {
-    stub_.Init(channel_in, destination_in);
-
-    BlockRequest request;
-
-    request.blockid = 0;
-    request.begin = 0;
-    request.end = 0;
-    request.operation = BlockRequest::INFO;
-    request.payload.Init();
-
-    stub_.Lock();
-    const BlockResponse *response = stub_.Request(request);
-    n_block_bytes_ = response->n_block_bytes;
-    n_blocks_ = response->blockid;
-    stub_.Unlock();
-  }
-
+  void Init(int channel_in, int destination_in);
   virtual void Read(blockid_t blockid,
-      offset_t begin, offset_t end, char *data) {
-    BlockRequest request;
-
-    request.blockid = blockid;
-    request.begin = begin;
-    request.end = end;
-    request.operation = BlockRequest::READ;
-    request.payload.Init();
-
-    stub_.Lock();
-    const BlockResponse *response = stub_.Request(request);
-    memcpy(data, response->payload.begin(), response->payload.size());
-    DEBUG_SAME_INT(response->payload.size(), end - begin);
-    stub_.Unlock();
-  }
-
+      offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
-      offset_t begin, offset_t end, const char *data) {
-    BlockRequest request;
-
-    request.blockid = blockid;
-    request.begin = begin;
-    request.end = end;
-    request.operation = BlockRequest::WRITE;
-    request.payload.Copy(data, end - begin);
-
-    stub_.Lock();
-    const BlockResponse *response = stub_.Request(request);
-    stub_.Unlock();
-  }
-
-  virtual blockid_t AllocBlock() {
-    BlockRequest request;
-    BlockDevice::blockid_t blockid;
-
-    request.blockid = 0;
-    request.begin = 0;
-    request.end = 0;
-    request.operation = BlockRequest::ALLOC;
-    request.payload.Init();
-
-    stub_.Lock();
-    const BlockResponse *response = stub_.Request(request);
-    blockid = response->blockid;
-    stub_.Unlock();
-
-    return blockid;
-  }
+      offset_t begin, offset_t end, const char *data);
+  virtual blockid_t AllocBlock();
 };
+
 #endif
 
 #endif
