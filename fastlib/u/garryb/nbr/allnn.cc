@@ -230,9 +230,16 @@ class Allnn {
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
-  
+
+#ifdef USE_MPI  
+  MPI_Init(&argc, &argv);
+  nbr_utils::MpiDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+      fx_root, "allnn");
+  MPI_Finalize();
+#else
   nbr_utils::ThreadedDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
+#endif
   
   fx_done();
 }

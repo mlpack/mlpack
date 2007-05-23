@@ -12,16 +12,17 @@ void RemoteWorkQueueBackend::HandleRequest(
 }
 
 
-void RemoteWorkQueue::Init(int channel, int destination); {
+void RemoteWorkQueue::Init(int channel, int destination) {
   stub_.Init(channel, destination);
 }
 
-void RemoteWorkQueue::GetWork(ArrayList<index_t> *work_items); {
+void RemoteWorkQueue::GetWork(ArrayList<index_t> *work_items) {
   WorkRequest request;
   request.operation = WorkRequest::GIVE_ME_WORK;
 
   stub_.Lock();
-  WorkResponse *response = stub_.Request(request);
+  const WorkResponse *response = stub_.Request(request);
+  ot::Print(*response);
   work_items->Copy(response->work_items);
   stub_.Unlock();
 }

@@ -3,6 +3,7 @@
 
 #include "kdtree.h"
 #include "work.h"
+#include "rpc.h"
 
 #include "par/thread.h"
 #include "par/task.h"
@@ -19,6 +20,8 @@ success_t LoadKdTree(struct datanode *module,
     TempCacheArray<Node> *nodes_out) {
   index_t vectors_per_block = fx_param_int(
       module, "vectors_per_block", 256);
+  index_t nodes_per_block = fx_param_int(
+      module, "nodes_per_block", 256);
   success_t success;
 
   fx_timer_start(module, "read");
@@ -35,7 +38,7 @@ success_t LoadKdTree(struct datanode *module,
   param->AnalyzePoint(*first_point);
   Node *example_node = new Node();
   example_node->Init(first_point->length(), *param);
-  nodes_out->Init(*example_node, 0, 256);
+  nodes_out->Init(*example_node, 0, nodes_per_block);
   delete example_node;
   points_out->StopRead(0);
 
@@ -86,7 +89,7 @@ class ThreadedDualTreeSolver {
     WorkerTask(ThreadedDualTreeSolver *base_solver)
         : base_(base_solver)
       { }
-    
+
     void Run() {
       while (1) {
         ArrayList<index_t> work;
@@ -114,7 +117,7 @@ class ThreadedDualTreeSolver {
               base_->q_points_cache_, base_->q_nodes_cache_,
               base_->r_points_cache_, base_->r_nodes_cache_,
               base_->q_results_cache_);
-          
+
           base_->mutex_.Lock();
           base_->global_result_.Accumulate(
               *base_->param_, solver.global_result());
@@ -163,7 +166,7 @@ class ThreadedDualTreeSolver {
     threads.Init(n_threads);
 
     global_result_.Init(*param_);
-    
+
     fx_timer_start(module, "all_threads");
 
     for (index_t i = 0; i < n_threads; i++) {
@@ -218,9 +221,104 @@ void ThreadedDualTreeMain(datanode *module, const char *gnp_name) {
       q_results.cache());
 }
 
-    /*
-    RemoteWorkQueue queue;
-    queue.Init(WORK_CHANNEL, MASTER_RANK);
+/*
+- add the code for loading the tree
+- standardize channel numbers
+- write code that detects and runs the server
+*/
+
+#ifdef USE_MPI
+
+template<typename GNP, typename Solver>
+void MpiDualTreeMain(datanode *module, const char *gnp_name) {
+  const int MASTER_RANK = 0;
+  const int PARAM_CHANNEL = 2;
+  const int WORK_CHANNEL = 3;
+  const int Q_POINTS_CHANNEL = 4;
+  const int Q_NODES_CHANNEL = 5;
+  const int R_POINTS_CHANNEL = 6;
+  const int R_NODES_CHANNEL = 7;
+  const int Q_RESULTS_CHANNEL = 8;
+  typename GNP::Param param;
+  int my_rank;
+  int n_machines;
+  int n_workers_total;
+
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+  MPI_Comm_size(MPI_COMM_WORLD, &n_machines);
+
+  n_workers_total = n_machines - 1;
+
+  if (my_rank == MASTER_RANK) {
+    param.Init(fx_submodule(module, gnp_name, gnp_name));
+
+    TempCacheArray<typename GNP::Point> q_points;
+    TempCacheArray<typename GNP::QNode> q_nodes;
+    TempCacheArray<typename GNP::Point> r_points;
+    TempCacheArray<typename GNP::RNode> r_nodes;
+    TempCacheArray<typename GNP::QResult> q_results;
+
+    nbr_utils::LoadKdTree(fx_submodule(module, "q", "q"),
+        &param, &q_points, &q_nodes);
+    nbr_utils::LoadKdTree(fx_submodule(module, "r", "r"),
+        &param, &r_points, &r_nodes);
+
+    typename GNP::QResult default_result;
+    default_result.Init(param);
+    q_results.Init(default_result, q_points.end_index(),
+        q_points.n_block_elems());
+
+    index_t n_threads = fx_param_int(module, "n_threads", 1);
+    index_t n_grains = fx_param_int(module, "n_grains",
+        n_threads == 1 ? 1 : (n_threads * 3));
+    SimpleWorkQueue<typename GNP::QNode> work_queue;
+    work_queue.Init(&q_nodes, n_grains);
+
+    RemoteWorkQueueBackend work_queue_backend;
+    work_queue_backend.Init(&work_queue);
+
+    RemoteBlockDeviceBackend q_points_backend;
+    q_points_backend.Init(q_points.cache());
+    RemoteBlockDeviceBackend q_nodes_backend;
+    q_nodes_backend.Init(q_nodes.cache());
+    RemoteBlockDeviceBackend r_points_backend;
+    r_points_backend.Init(r_points.cache());
+    RemoteBlockDeviceBackend r_nodes_backend;
+    r_nodes_backend.Init(r_nodes.cache());
+    RemoteBlockDeviceBackend q_results_backend;
+    q_results_backend.Init(q_results.cache());
+
+    DataGetterBackend<typename GNP::Param> param_backend;
+    param_backend.Init(&param);
+
+    RemoteObjectServer server;
+    server.Init();
+
+    server.Register(PARAM_CHANNEL, &param_backend);
+    server.Register(WORK_CHANNEL, &work_queue_backend);
+    server.Register(Q_POINTS_CHANNEL, &q_points_backend);;
+    server.Register(Q_NODES_CHANNEL, &q_nodes_backend);;
+    server.Register(R_POINTS_CHANNEL, &r_points_backend);;
+    server.Register(R_NODES_CHANNEL, &r_nodes_backend);;
+    server.Register(Q_RESULTS_CHANNEL, &q_results_backend);;
+
+    fx_timer_start(module, "server");
+    server.Loop(n_workers_total);
+    fx_timer_stop(module, "server");
+  } else {
+    String my_fx_scope;
+
+    my_fx_scope.InitSprintf("rank%d", my_rank);
+    fx_scope(my_fx_scope.c_str());
+    
+    RemoteObjectServer::Connect(MASTER_RANK);
+    
+    RemoteDataGetter<typename GNP::Param> param_getter;
+    param_getter.Init(PARAM_CHANNEL, MASTER_RANK);
+    param_getter.GetData(&param);
+
+    RemoteWorkQueue work_queue;
+    work_queue.Init(WORK_CHANNEL, MASTER_RANK);
 
     RemoteBlockDevice q_points_device;
     RemoteBlockDevice q_nodes_device;
@@ -234,23 +332,42 @@ void ThreadedDualTreeMain(datanode *module, const char *gnp_name) {
     r_nodes_device.Init(R_NODES_CHANNEL, MASTER_RANK);
     q_results_device.Init(Q_RESULTS_CHANNEL, MASTER_RANK);
 
-    q_points_cache_.Init(&q_points_device,
+    SmallCache q_points_cache;
+    SmallCache q_nodes_cache;
+    SmallCache r_points_cache;
+    SmallCache r_nodes_cache;
+    SmallCache q_results_cache;
+
+    q_points_cache.Init(&q_points_device,
         new CacheArrayBlockActionHandler<typename GNP::Point>,
         BlockDevice::READ);
-    q_nodes_cache_.Init(&q_nodes_device,
+    q_nodes_cache.Init(&q_nodes_device,
         new CacheArrayBlockActionHandler<typename GNP::QNode>,
         BlockDevice::READ);
-    r_points_cache_.Init(&r_points_device,
+    r_points_cache.Init(&r_points_device,
         new CacheArrayBlockActionHandler<typename GNP::Point>,
         BlockDevice::READ);
-    r_nodes_cache_.Init(&r_nodes_device,
-        new CacheArrayBlockActionHandler<typename GNP::RPoint>,
+    r_nodes_cache.Init(&r_nodes_device,
+        new CacheArrayBlockActionHandler<typename GNP::RNode>,
         BlockDevice::READ);
-    q_results_cache_.Init(&q_results_device,
-        new BlockActionHandler<typename GNP::QResult>, BlockDevice::MODIFY);
-    */
+    q_results_cache.Init(&q_results_device,
+        new CacheArrayBlockActionHandler<typename GNP::QResult>,
+        BlockDevice::MODIFY);
 
+    int n_threads = 1; /* HACK!! */
 
+    ThreadedDualTreeSolver<GNP, Solver> solver;
+    solver.InitSolve(
+        fx_submodule(module, "solver", "solver"), param,
+        n_threads, &work_queue,
+        &q_points_cache, &q_nodes_cache,
+        &r_points_cache, &r_nodes_cache,
+        &q_results_cache);
+
+    RemoteObjectServer::Disconnect(MASTER_RANK);
+  }
+}
+#endif
 
   /*
   template<typename GNP, typename Solver>
