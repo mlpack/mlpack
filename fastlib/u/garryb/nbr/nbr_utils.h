@@ -70,24 +70,30 @@ void SerialDualTreeMain(datanode *module, const char *gnp_name) {
       q_points.n_block_elems());
 
   Solver solver;
-  solver.InitSolve(fx_submodule(module, "solver", "solver"), param,
-      0, &q_points, &q_nodes, &r_points, &r_nodes, &q_results);
+  solver.InitSolve(fx_submodule(module, "solver", "solver"), param, 0,
+      q_points.cache(), q_nodes.cache(),
+      r_points.cache(), r_nodes.cache(), q_results.cache());
 }
-
 
 template<typename GNP, typename Solver>
 class ThreadedDualTreeSolver {
  private:
-  class Worker : public Task {
+  class WorkerTask : public Task {
    private:
     ThreadedDualTreeSolver *base_;
 
    public:
+    WorkerTask(ThreadedDualTreeSolver *base_solver)
+        : base_(base_solver)
+      { }
+    
     void Run() {
       while (1) {
         ArrayList<index_t> work;
 
-        queue->work_queue_->GetWork(&work);
+        base_->mutex_.Lock();
+        base_->work_queue_->GetWork(&work);
+        base_->mutex_.Unlock();
 
         if (work.size() == 0) {
           break;
@@ -98,14 +104,21 @@ class ThreadedDualTreeSolver {
           Solver solver;
 
           String name;
-          name.Sprintf("grain_%d", work[i]);
+          name.InitSprintf("grain_%d", work[i]);
+          base_->mutex_.Lock();
           struct datanode *submodule = fx_submodule(base_->module_,
               name.c_str(), name.c_str());
+          base_->mutex_.Unlock();
 
-          solver.InitSolve(submodule, *base_->param_,
-              &base_->q_points_cache_, &base_->q_nodes_cache_,
-              &base_->r_points_cache_, &base_->r_nodes_cache_,
-              &base_->q_results_cache_);
+          solver.InitSolve(submodule, *base_->param_, q_root_index,
+              base_->q_points_cache_, base_->q_nodes_cache_,
+              base_->r_points_cache_, base_->r_nodes_cache_,
+              base_->q_results_cache_);
+          
+          base_->mutex_.Lock();
+          base_->global_result_.Accumulate(
+              *base_->param_, solver.global_result());
+          base_->mutex_.Unlock();
         }
       }
       delete this;
@@ -114,18 +127,20 @@ class ThreadedDualTreeSolver {
 
  private:
   datanode *module_;
-  Param *param_;
+  const typename GNP::Param *param_;
   WorkQueueInterface *work_queue_;
   SmallCache *q_points_cache_;
   SmallCache *q_nodes_cache_;
   SmallCache *r_points_cache_;
   SmallCache *r_nodes_cache_;
   SmallCache *q_results_cache_;
+  typename GNP::GlobalResult global_result_;
+  Mutex mutex_;
 
  public:
   void InitSolve(
       datanode *module,
-      const Param& param,
+      const typename GNP::Param& param,
       int n_threads,
       WorkQueueInterface *work_queue,
       SmallCache *q_points_cache_in,
@@ -136,6 +151,7 @@ class ThreadedDualTreeSolver {
       ) {
     module_ = module;
     param_ = &param;
+    work_queue_ = work_queue;
 
     q_points_cache_ = q_points_cache_in;
     q_nodes_cache_ = q_nodes_cache_in;
@@ -146,9 +162,13 @@ class ThreadedDualTreeSolver {
     ArrayList<Thread*> threads;
     threads.Init(n_threads);
 
+    global_result_.Init(*param_);
+    
+    fx_timer_start(module, "all_threads");
+
     for (index_t i = 0; i < n_threads; i++) {
       threads[i] = new Thread();
-      threads[i]->Init(new ThreadTask(this));
+      threads[i]->Init(new WorkerTask(this));
       threads[i]->Start();
     }
 
@@ -156,6 +176,8 @@ class ThreadedDualTreeSolver {
       threads[i]->WaitStop();
       delete threads[i];
     }
+
+    fx_timer_stop(module, "all_threads");
   }
 };
 
@@ -181,10 +203,11 @@ void ThreadedDualTreeMain(datanode *module, const char *gnp_name) {
   q_results.Init(default_result, q_points.end_index(),
       q_points.n_block_elems());
 
-  index_t n_threads = fx_param_int(module, "n_threads");
-  index_t n_grains = fx_param_int(module, "n_grains");
-  SimpleWorkQueue work_queue;
-  work_queue.Init(q_nodes, n_grains);
+  index_t n_threads = fx_param_int(module, "n_threads", 1);
+  index_t n_grains = fx_param_int(module, "n_grains",
+      n_threads == 1 ? 1 : (n_threads * 3));
+  SimpleWorkQueue<typename GNP::QNode> work_queue;
+  work_queue.Init(&q_nodes, n_grains);
 
   ThreadedDualTreeSolver<GNP, Solver> solver;
   solver.InitSolve(

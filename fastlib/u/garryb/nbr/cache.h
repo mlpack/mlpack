@@ -223,7 +223,7 @@ class CacheArray {
   void Init(SmallCache *cache_in, BlockDevice::mode_t mode_in) {
     index_t block_elems =
         cache_in->n_block_bytes() /
-        (static_cast<CacheArrayBlockActionHandler<T>*>
+        (static_cast<CacheArrayBlockActionHandler<TElement>*>
           (cache_in->block_action_handler()))->n_elem_bytes();
     Init(cache_in, mode_in, 0,
         cache_in->n_blocks() * block_elems - BLOCK_OFFSET);
@@ -244,7 +244,7 @@ class CacheArray {
     return n_block_elems_;
   }
   
-  const SmallCache *cache() const {
+  SmallCache *cache() const {
     return cache_;
   }
 
@@ -346,13 +346,13 @@ class CacheArray {
   }
 };
 
-template<typename T>
-void CacheArray<T>::Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
+template<typename TElement>
+void CacheArray<TElement>::Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
     index_t begin_index_in, index_t end_index_in) {
   cache_ = cache_in;
   begin_ = begin_index_in;
   end_ = end_index_in;
-  n_elem_bytes_ = (static_cast<CacheArrayBlockActionHandler<T>*>
+  n_elem_bytes_ = (static_cast<CacheArrayBlockActionHandler<TElement>*>
       (cache_->block_action_handler()))->n_elem_bytes();
   DEBUG_ASSERT_MSG(cache_->n_block_bytes() % n_elem_bytes_ == 0,
       "Block size must be a multiple of element size.");
@@ -369,8 +369,8 @@ void CacheArray<T>::Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
   mode_ = mode_in;
 }
 
-template<typename T>
-void CacheArray<T>::Flush() {
+template<typename TElement>
+void CacheArray<TElement>::Flush() {
   for (BlockDevice::blockid_t blockid = begin_block_fake_;
       blockid < end_block_fake_; blockid++) {
     Metadata *metadata = &metadatas_[blockid - begin_block_fake_];
@@ -391,11 +391,11 @@ void CacheArray<T>::Flush() {
       (end_ & (n_block_elems_mask_)) * n_elem_bytes_);
 }
 
-template<typename T>
-typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
+template<typename TElement>
+typename CacheArray<TElement>::Element* CacheArray<TElement>::HandleCacheMiss_(
     index_t element_id) {
   BlockDevice::blockid_t blockid = element_id >> n_block_elems_log_;
-  Metadata *metadata = &metadatas_[blockid];
+  Metadata *metadata = &metadatas_[blockid - begin_block_fake_];
   
   if (mode_ != BlockDevice::READ) {
     metadata->data = cache_->StartWrite(blockid + BLOCK_OFFSET);
@@ -412,32 +412,32 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
 /**
  * Specialed cache-array to simplify the creation/cleanup process.
  */
-template<typename T>
-class TempCacheArray : public CacheArray<T> {
+template<typename TElement>
+class TempCacheArray : public CacheArray<TElement> {
  private:
   SmallCache underlying_cache_;
   NullBlockDevice null_device_;
   
  public:
   virtual ~TempCacheArray() {
-    CacheArray<T>::Flush();
+    CacheArray<TElement>::Flush();
   }
 
   /** Creates a blank, temporary cached array */
-  void Init(const T& default_obj,
+  void Init(const TElement& default_obj,
       index_t n_elems_in,
       unsigned int n_block_elems_in) {
-    CacheArrayBlockActionHandler<T> *handler =
-        new CacheArrayBlockActionHandler<T>;
+    CacheArrayBlockActionHandler<TElement> *handler =
+        new CacheArrayBlockActionHandler<TElement>;
     handler->Init(default_obj);
 
     null_device_.Init(
         (n_elems_in + n_block_elems_in + 1) / n_block_elems_in
-          + CacheArray<T>::BLOCK_OFFSET,
+          + CacheArray<TElement>::BLOCK_OFFSET,
         n_block_elems_in * handler->n_elem_bytes());
     underlying_cache_.Init(&null_device_, handler, BlockDevice::TEMP);
     
-    CacheArray<T>::Init(&underlying_cache_, BlockDevice::TEMP, 0, n_elems_in);
+    CacheArray<TElement>::Init(&underlying_cache_, BlockDevice::TEMP, 0, n_elems_in);
   }
 };
 

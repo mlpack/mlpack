@@ -457,6 +457,8 @@ namespace ot_private {
    *
    * The code here is far more complex than I expected it to be -- please
    * read the comments!
+   *
+   * ANY MODIFICATIONS TO THIS MUST ALSO BE MADE TO THE SIZE CALCULATOR!
    */
   class OTPointerFreezer {
    private:

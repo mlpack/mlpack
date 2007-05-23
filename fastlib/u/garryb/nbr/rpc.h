@@ -7,6 +7,7 @@
 #ifndef NBR_RPC_H
 #define NBR_RPC_H
 
+#ifdef USE_MPI
 extern Mutex global_mpi_lock;
 
 /**
@@ -313,5 +314,6 @@ class RemoteBlockDevice
     return blockid;
   }
 };
+#endif
 
 #endif

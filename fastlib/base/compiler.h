@@ -143,7 +143,7 @@
 /**
  * The maximum stride of any object on the platform.
  */
-#define MAX_STRIDE 8
+#define MAX_STRIDE 16
 
 /**
  * Aligns a size_t to the maximum possible stride.

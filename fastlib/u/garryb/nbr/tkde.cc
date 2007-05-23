@@ -50,6 +50,9 @@ class Tkde {
   /** Per-query statistic.  Required by NBR. */
   typedef BlankStat QStat;
   typedef BlankGlobalResult GlobalResult;
+  
+  typedef BlankPointInfo QPointInfo;
+  typedef BlankPointInfo RPointInfo;
 
   /**
    * All parameters required by the execution of the algorithm.
@@ -617,7 +620,7 @@ class Tkde {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
   
-  nbr_utils::SerialDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+  nbr_utils::ThreadedDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
       fx_root, "tkde");
   
   fx_done();

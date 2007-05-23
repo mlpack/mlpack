@@ -14,9 +14,6 @@
 
 double debug_verbosity = 0.0;
 
-const double DBL_NAN = 0.0 / 0.0;
-const double FLT_NAN = 0.0f / 0.0f;
-
 int abort_on_nonfatal = 0;
 int pause_on_nonfatal = 0;
 int print_notify_headers = 0;
@@ -27,11 +24,6 @@ int print_warnings = 1;
 int print_got_heres = 0;
 int print_warnings = 0;
 #endif
-
-void fl_abort(void)
-{
-  abort();
-}
 
 void fl_pause(void)
 {
@@ -87,7 +79,7 @@ void fatal(const char *file, const char *func, int line,
 
   fprintf(stderr, "\n");
 
-  fl_abort();
+  abort();
 }
 
 void nonfatal(const char *file, const char *func, int line,
@@ -104,7 +96,7 @@ void nonfatal(const char *file, const char *func, int line,
   fprintf(stderr, "\n");
 
   if (abort_on_nonfatal) {
-    fl_abort();
+    abort();
   } else if (pause_on_nonfatal) {
     fl_pause();
   }

@@ -1,5 +1,9 @@
 #include "cc.h"
 
+static const double DBL_ZERO = 0.0;
+const double DBL_NAN = DBL_ZERO / DBL_ZERO;
+const double FLT_NAN = DBL_NAN;
+
 #if defined(DEBUG) || defined(PROFILE)
 namespace cc__private {
 /**

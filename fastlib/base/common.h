@@ -31,19 +31,12 @@ EXTERN_C_START
 /** A suitable no-op for macro expressions. */
 #define NOP ((void)0)
 
-/** NaN value for doubles.  Use isnan to check for this. */
-extern const double DBL_NAN;
-
-/** NaN value for floats.  Use isnanf to check for this. */
-extern const double FLT_NAN;
-
 /**
  * Currently, equivalent to C's abort().
  *
  * Note that built-in abort() already flushes all streams.
  */
-COMPILER_NORETURN
-void fl_abort(void);
+#define fl_abort() abort()
 
 /**
  * Waits for the user to press return.
