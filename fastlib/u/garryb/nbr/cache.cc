@@ -146,9 +146,6 @@ void SmallCache::Write(blockid_t blockid,
   StopWrite(blockid);
 }
 
-void SmallCache::Close() {
-}
-
 SmallCache::~SmallCache() {
   for (index_t i = 0; i < metadatas_.size(); i++) {
     Metadata *metadata = &metadatas_[i];

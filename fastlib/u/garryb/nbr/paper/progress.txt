@@ -1,5 +1,51 @@
+totals:
+  - today: coding
+  - 1 day: new algorithm
+  - 3 days for experiments
 
 - Saturday May 19
   - Figured out most of the math
   - Wrote most of the math
+- Sunday May 20
+  - Coded new cache arrays
+- Monday May 21
+  - Tested new cache arrays
+  - Re-began network infrastructure
+- Tuesday May 22
+  - Finalized networking structures
+  - Task splitting
+  - Tested network structures
+- Wednesday May 23
+  ?- Run threaded experiments
+  ?- Run warp experiments
+  ?- If time permits: read papers
+- Thursday May 24
+  ?- Re-assemble old paper
+  ?- Fix paper's contents
+  ?- If time permits: read papers
+- Friday May 25
+  ?- Fix weird problems in code
+  ?- Make code faster
+  ?- When time permits: read papers
+- Saturday May 26
+  ?- Decide algorithms to implement
+  ?- Implement a new algorithm
+- Sunday May 27
+  ?- Read more papers about N-body parallelism
+- Monday May 28
+  ?- Make figures for my paper
+  ?- Make math prettier
+  ?- Do more literature survey
+- Tuesday May 29
+  ?- In-depth experiments
+- Wednesday May 30
+  ?- Prune paper down to size
+  ?- Get Alex to review paper
+- Thursday May 31
+  ?- Admire my paper
+- Friday June 1
+  ?- Admire my paper
+  ?- Dot I's, cross T's
+
+
 
