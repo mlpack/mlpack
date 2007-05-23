@@ -42,10 +42,15 @@ class HyperRectangleTest {
 		Allocator_t::allocator_->Init();
 	  hyper_rectangle_= new HyperRectangle_t();
    	hyper_rectangle_->Init(dimension_);
+		hyper_rectangle_->min_.Lock();
+		hyper_rectangle_->max_.Lock();
 		hyper_rectangle_->min_[0]=-1;
 		hyper_rectangle_->min_[1]=-1;
 		hyper_rectangle_->max_[0]=1;
 		hyper_rectangle_->max_[1]=1;
+    hyper_rectangle_->min_.Unlock();
+		hyper_rectangle_->max_.Unlock();
+
 	}
 	void Destruct() {
 	  delete hyper_rectangle_;
@@ -59,7 +64,9 @@ class HyperRectangleTest {
 	  Init();
     HyperRectangle_t other;
     other.Alias(*hyper_rectangle_);		
-	  DEBUG_ASSERT_MSG(other.min_==hyper_rectangle_->min_, 
+	  other.min_.Lock();
+		other.max_.Lock();
+		DEBUG_ASSERT_MSG(other.min_==hyper_rectangle_->min_, 
 				             "Min don't match\n");
 		DEBUG_ASSERT_MSG(other.max_==hyper_rectangle_->max_,
 				             "Max don't match\n");
@@ -67,7 +74,9 @@ class HyperRectangleTest {
 				             "Pivot dimension doesn't match\n");
 		DEBUG_ASSERT_MSG(other.pivot_value_==hyper_rectangle_->pivot_value_,
 				             "Pivot value don't match\n");
-	  Destruct();
+	  other.min_.Unlock();
+		other.max_.Unlock();
+		Destruct();
 	}
   void CopyTest() {
 		printf("Copy Test\n");
@@ -75,7 +84,9 @@ class HyperRectangleTest {
     HyperRectangle_t other;
 		other.Init(dimension_);
     other.Copy(*hyper_rectangle_, dimension_);	
-    DEBUG_ASSERT_MSG(other.min_==hyper_rectangle_->min_,
+    other.min_.Lock();
+		other.max_.Lock();
+		DEBUG_ASSERT_MSG(other.min_==hyper_rectangle_->min_,
 				             "Min don't match\n");
     DEBUG_ASSERT_MSG(other.max_!=hyper_rectangle_->max_, 
 				             "Max are the same \n");
@@ -85,12 +96,15 @@ class HyperRectangleTest {
 			DEBUG_ASSERT_MSG(other.max_[i]==hyper_rectangle_->max_[i],
 				             "Max left doesn't match\n");
 		}
+		other.min_.Unlock();
+		other.max_.Unlock();
 	  Destruct();
 	}
 	void IsWithinTest() {
 		Init();
 	  Point<Precision_t, Allocator_t> point;
 		point.Init(dimension_);
+		point.Lock();
 	  point[0]=-0.1;
 		point[1]=0.3;
 		Precision_t range=0.03;
@@ -102,12 +116,14 @@ class HyperRectangleTest {
 					                                 range, comp_)==false, 
 				             "IsWithin doesn't work\n");
 
-    Destruct();	  
+    point.Unlock();
+		Destruct();	  
 	}
 	void CrossesBoundariesTest() {
 	  Init();
 		Point<Precision_t, Allocator_t> point;
 		point.Init(dimension_);
+		point.Lock();
 	  point[0]=2;
 		point[1]=-4;
 		Precision_t range=11;
@@ -118,7 +134,7 @@ class HyperRectangleTest {
     DEBUG_ASSERT_MSG(hyper_rectangle_->CrossesBoundaries(point, dimension_, 
 					                                 range, comp_)==false, 
 				             "CrossesBoundary doesn't work\n");
-
+    point.Unlock();
     Destruct();
 	}
 	void DistanceTest(){
@@ -127,6 +143,8 @@ class HyperRectangleTest {
 	  Point<Precision_t, Allocator_t> point2;
 	  point1.Init(dimension_);
     point2.Init(dimension_);
+		point1.Lock();
+		point2.Lock();
 		point1[0]=0;
 		point1[1]=1;
 		point2[0]=-1;
@@ -135,19 +153,30 @@ class HyperRectangleTest {
 				             "Distance between points doesn't work\n");
 		HyperRectangle_t other;
 		other.Init(dimension_);
+		other.min_.Lock();
+		other.max_.Lock();
 		other.min_[0]=2;
 		other.min_[1]=2;
 		other.max_[0]=5;
 		other.max_[1]=5;
+    other.min_.Unlock();
+		other.max_.Unlock();
 		
 		DEBUG_ASSERT_MSG(HyperRectangle_t::Distance(*hyper_rectangle_, other,
 				                                   dimension_, comp_)==2,
 				                                   "Distance doesn't work\n");
+		other.min_.Lock();
+		other.max_.Lock();
 		other.min_[0]=-0.5;
 		other.min_[1]=-0.5;
+		other.min_.Unlock();
+		other.max_.Unlock();
+
 		DEBUG_ASSERT_MSG(HyperRectangle_t::Distance(*hyper_rectangle_, other,
 				                                   dimension_, comp_)==0,
 				                                   "Distance doesn't work\n");
+		point1.Unlock();
+		point2.Unlock();
 		Destruct();             
 	}
 

@@ -15,7 +15,12 @@ class Point {
 	  this->p_.Reset(Allocator_t::NullValue);
 		this->id_=0;
 	};
-
+  inline void Lock() {
+	  this->p_.Lock();
+	}
+	inline void Unlock() {
+	  this->p_.Unlock();
+	}
   inline Point(const Point_t &other) {
 	  Alias(other);
 	}

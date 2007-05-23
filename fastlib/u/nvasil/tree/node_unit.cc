@@ -53,11 +53,15 @@ class NodeTest {
 	  Allocator_t::allocator_ = new Allocator_t();
 		Allocator_t::allocator_->Init();
 	  Array_t min(dimension_);
+		min.Lock();
 		min[0]=-1;
 		min[1]=-1;
+		min.Unlock();
 	  Array_t max(dimension_);
+		max.Lock();
 		max[0]=1;
 		max[1]=1;
+		max.Unlock();
 		data_file_="data";
     dataset_.Init(data_file_, num_of_points_, dimension_);
     for(index_t i=0; i<num_of_points_; i++) {
@@ -66,18 +70,20 @@ class NodeTest {
 			dataset_.set_id(i,i);
 		}
 		hyper_rectangle_.Init(min, max, 0, 0);
-	  NullStatistics statistics;
+	  NullStatistics<Loki::NullType> statistics;
 		//	typename Node_t::NodeCachedStatistics_t statistics;
 	  node_.Reset(new Node_t);
+		node_.Lock();
 		node_->Init(hyper_rectangle_,
                 statistics,
 								0,
 								0,
 			          num_of_points_, 
 			          dimension_,
-							  &dataset_); 
+							  &dataset_);
   }
 	void Destruct() {
+		node_.Unlock();
 		hyper_rectangle_.Destruct();
 		Allocator_t::allocator_->Destruct();
 		unlink("temp_mem");
@@ -92,6 +98,8 @@ class NodeTest {
 		SimpleDiscriminator discriminator;
     vector<pair<Precision_t, Point<Precision_t, Allocator_t> > > nearest;
     ComputationsCounter<diagnostic> comp;
+		node_->points_.Lock();
+		node_->index_.Lock();
 		for(index_t i=0; i<num_of_points_; i++) {
 			Point_t query_point;
       		  query_point.Alias(dataset_.At(i), dataset_.get_id(i));
@@ -120,7 +128,10 @@ class NodeTest {
 					"Something wrong in the distance\n");
 			DEBUG_ASSERT_MSG(min_id==nearest[0].second.get_id(), 
 					             "Something wrong in the distance\n");
-	  }	
+	  }
+    node_->points_.Unlock();
+		node_->index_.Unlock();
+
 	}
   void FindAllNearest() {
     printf("Testing find all nearest\n");

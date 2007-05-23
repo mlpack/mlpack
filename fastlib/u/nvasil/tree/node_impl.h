@@ -43,12 +43,16 @@ void NODE__::Init(const typename NODE__::BoundingBox_t &box,
 	points_.Reset(Allocator_t::template malloc<Precision_t>
 			             (num_of_points_*dimension));
   index_.Reset(Allocator_t::template malloc<index_t>(num_of_points_));
+	points_.Lock();
+	index_.Lock();
 	for(index_t i=start; i<start+num_of_points_; i++) {
 	  for(int32 j=0; j<dimension; j++) {
 		  points_[(i-start)*dimension+j]=dataset->At(i,j);
 	  }
 		index_[i-start]=dataset->get_id(i);
 	}
+	points_.Unlock();
+	index_.Unlock();
 } 
 
 TEMPLATE__
@@ -80,7 +84,11 @@ template<typename POINTTYPE>
 pair<typename NODE__::NodePtr_t, typename NODE__::NodePtr_t>                     
 NODE__::ClosestChild(POINTTYPE point, int32 dimension, 
 		                 ComputationsCounter<diagnostic> &comp) {
-  return box_.ClosestChild(left_, right_, point, dimension, comp);
+  left_.Lock();
+	right_.Lock();
+	return box_.ClosestChild(left_, right_, point, dimension, comp);
+	left_.Unlock();
+	right_.Unlock();
 }
 
 TEMPLATE__
@@ -91,11 +99,15 @@ NODE__::ClosestNode(typename NODE__::NodePtr_t ptr1,
 		                typename NODE__::NodePtr_t ptr2,
 									  int32 dimension,
 							      ComputationsCounter<diagnostic> &comp) {
+	ptr1.Lock();
+	ptr2.Lock();
 	Precision_t dist1 = BoundingBox_t::Distance(box_, ptr1->get_box(), 
 			                                      dimension, comp);
 	Precision_t dist2 = BoundingBox_t::Distance(box_, ptr2->get_box(), 
 			                                      dimension, comp);
-  if (dist1<dist2) {
+  ptr1.Unlock();
+	ptr2.Unlock();
+	if (dist1<dist2) {
 	  return make_pair(make_pair(ptr1, dist1), make_pair(ptr2, dist2));
 	} else {
 	  return make_pair(make_pair(ptr2,dist2), make_pair(ptr1, dist1));
@@ -104,15 +116,14 @@ NODE__::ClosestNode(typename NODE__::NodePtr_t ptr1,
 
 TEMPLATE__
 template<typename POINTTYPE, typename NEIGHBORTYPE>
-inline void NODE__::FindNearest(POINTTYPE &query_point, 
+inline void NODE__::FindNearest(POINTTYPE query_point, 
     vector<pair<typename NODE__::Precision_t, 
 		            typename NODE__::Point_t> > &nearest, 
 		NEIGHBORTYPE range, 
 		int32 dimension,
 		typename NODE__::PointIdDiscriminator_t &discriminator,
     ComputationsCounter<diagnostic> &comp) {
-  
-	for(index_t i=0; i<num_of_points_; i++) {
+  	for(index_t i=0; i<num_of_points_; i++) {
   	comp.UpdateDistances();
   	//  we have to check if we are comparing the point with itself
  	  if (unlikely(discriminator.AreTheSame(index_[i], 
@@ -172,7 +183,12 @@ inline void NODE__::FindAllNearest(
                     int32 dimension,
 										typename NODE__::PointIdDiscriminator_t &discriminator,
                     ComputationsCounter<diagnostic> &comp) {
-  Precision_t max_local_distance = 0;
+  
+  points_.Lock();
+  index_.Lock();	
+	query_node->points_.Lock();
+  query_node->index_.Lock();
+	Precision_t max_local_distance = 0; 
 	for(index_t i=0; i<query_node->num_of_points_; i++) {
 		Precision_t distance;
 		// for k nearest neighbors
@@ -185,7 +201,9 @@ inline void NODE__::FindAllNearest(
     // We should check whether this speeds up or slows down 
 		// the performance 
     comp.UpdateComparisons();
-    if (this->box_.CrossesBoundaries(query_node->points_.get()+i*dimension, 
+   
+    Precision_t *temp_point=query_node->points_.get_p()+i*dimension;
+		if (this->box_.CrossesBoundaries(temp_point, 
                                      dimension,
                                      distance, 
                                      comp)) {
@@ -196,8 +214,8 @@ inline void NODE__::FindAllNearest(
 			    temp[j].first=query_node->kneighbors_[i*(index_t)range+j].distance_;
 				  temp[j].second=query_node->kneighbors_[i*(index_t)range+j].nearest_;
 			  }
-				Point_t point;
-				point.Alias(query_node->points_.get()+i*dimension, 
+				NullPoint_t point;
+				point.Alias(query_node->points_.get_p()+i*dimension, 
 					          query_node->index_[i]);
         FindNearest(point, temp, 
                     range, dimension,
@@ -221,7 +239,7 @@ inline void NODE__::FindAllNearest(
 	      vector<pair<Precision_t, Point_t> >  temp;
 			  temp.clear();
 				Point_t point;
-				point.Alias(query_node->points_.get()+i*dimension, 
+				point.Alias(query_node->points_.get_p()+i*dimension, 
 						        query_node->index_[i]);
 		    FindNearest(point, temp, 
                     range, dimension,
@@ -253,12 +271,19 @@ inline void NODE__::FindAllNearest(
 		  max_neighbor_distance=max_local_distance;
 		}
 	}
-  
+
+  points_.Unlock();
+	index_.Unlock();
+  query_node->points_.Lock();
+  query_node->index_.Lock();
+
 }
 
 TEMPLATE__
 string NODE__::Print(int32 dimension) {
-  char buf[8192];
+  points_.Lock();
+	index_.Lock();
+	char buf[8192];
   string str;
   if (!IsLeaf()) {
     sprintf(buf, "Node: %llu\n", (unsigned long long)node_id_);
@@ -281,6 +306,8 @@ string NODE__::Print(int32 dimension) {
   	  str.append(buf); 
   	}
   }
+	points_.Unlock();
+	index_.Unlock();
   return str;
 }    	 
 
