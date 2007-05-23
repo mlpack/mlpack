@@ -1,3 +1,9 @@
+/**
+ * @file rpc.h
+ *
+ * Remote procedure call support for FASTlib.  Yay!
+ */
+
 #ifndef NBR_RPC_H
 #define NBR_RPC_H
 
@@ -239,8 +245,6 @@ class RemoteBlockDevice
   RemoteObjectStub<BlockRequest, BlockResponse> stub_;
 
  public:
-  how big am I? n_blocks etc
-
   void Init(int channel_in, int destination_in) {
     stub_.Init(channel_in, destination_in);
 
@@ -308,8 +312,6 @@ class RemoteBlockDevice
 
     return blockid;
   }
-
-  virtual void Close() {}
 };
 
 #endif

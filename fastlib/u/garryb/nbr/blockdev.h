@@ -64,7 +64,6 @@ class BlockDevice {
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data) = 0;
   virtual blockid_t AllocBlock() = 0;
-  virtual void Close() {}
 
  public:
   void Lock() { mutex_.Lock(); }
@@ -96,7 +95,6 @@ class NullBlockDevice : public BlockDevice {
     n_blocks_ = blockid + 1;
     return blockid;
   }
-  virtual void Close() {}
 };
 
 class BlockDeviceWrapper : public BlockDevice {
@@ -129,7 +127,6 @@ class BlockDeviceWrapper : public BlockDevice {
     n_blocks_ = blockid + 1;
     return blockid;
   }
-  virtual void Close() {}
 };
 
 class RandomAccessFile {

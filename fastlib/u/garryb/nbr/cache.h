@@ -55,7 +55,6 @@ class SmallCache : public BlockDeviceWrapper {
   void StopWrite(blockid_t blockid);
   void Flush(blockid_t begin_block, offset_t begin_offset,
     blockid_t last_block, offset_t end_offset);
-  void Close();
 
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data);
@@ -220,6 +219,15 @@ class CacheArray {
 
   void Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
       index_t begin_index_in, index_t end_index_in);
+
+  void Init(SmallCache *cache_in, BlockDevice::mode_t mode_in) {
+    index_t block_elems =
+        cache_in->n_block_bytes() /
+        (static_cast<CacheArrayBlockActionHandler<T>*>
+          (cache_in->block_action_handler()))->n_elem_bytes();
+    Init(cache_in, mode_in, 0,
+        cache_in->n_blocks() * block_elems - BLOCK_OFFSET);
+  }
 
   index_t begin_index() const {
     return begin_;
