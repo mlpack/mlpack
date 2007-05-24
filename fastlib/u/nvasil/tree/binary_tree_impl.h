@@ -36,11 +36,11 @@ void TREE__::BuildBreadthFirst() {
   list<pair<NodePtrPtr_t, PivotInfo_t *> > fifo;
   PivotInfo_t *pivot = pivoter_(num_of_points_);
   parent_.Reset(new Node_t());
+	parent_.Lock();
 	parent_->Init(pivot->box_, 
 			          pivot->statistics_, 
 								node_id_,
 								pivot->num_of_points_);
-	parent_.Lock();
 	node_id_++;
   pair<PivotInfo_t*, PivotInfo_t*> pivot_pair;
   pivot_pair = pivoter_(pivot);
@@ -50,6 +50,7 @@ void TREE__::BuildBreadthFirst() {
   fifo.push_front(make_pair(parent_->get_right().Reference(), pivot_pair.second));
   current_level_ =1;                                  
   BuildBreadthFirst(fifo);
+	parent_.Unlock();
   if (log_progress_==true) {
   	printf("\n");
   }
@@ -65,8 +66,9 @@ void TREE__::BuildBreadthFirst(
   	pair<NodePtrPtr_t, PivotInfo_t*> fifo_pair;
   	fifo_pair = fifo.back();
   	fifo.pop_back();
+  	fifo_pair.first.Lock();
   	if (fifo_pair.second->num_of_points_ > max_points_on_leaf_) {
-  	  (*fifo_pair.first).Reset(new Node_t());
+			(*fifo_pair.first).Reset(new Node_t());
 			(*fifo_pair.first).Lock();
 			(*fifo_pair.first)->Init(fifo_pair.second->box_, 
 				                       fifo_pair.second->statistics_,
@@ -100,6 +102,7 @@ void TREE__::BuildBreadthFirst(
 		  num_of_leafs_++;
 			node_id_++;
     }
+	  fifo_pair.first.Unlock();
   }  
 }      	
                                    	
@@ -110,7 +113,7 @@ void TREE__::BuildDepthFirst() {
 	max_depth_=0;
 	current_level_=0;
 	progress_.Reset();
-  parent_.Reset(new Node_());
+  parent_.Reset(new Node_t());
 	BuildDepthFirst(parent_, pivoter_(num_of_points_));
   if (log_progress_==true) {
   	printf("\n");
@@ -265,10 +268,12 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
         }
       }
   } else {
+		ptr->LockPoints();
   	ptr->FindNearest(test_point, *nearest_point, 
 				             range, dimension_,
 										 discriminator_,
   	                 computations_);
+		ptr->UnlockPoints();
     if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
 		  max_distance=nearest_point->back().first;
 		}
@@ -320,7 +325,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 						                               reference->get_right(),
   	  	                                   dimension_,
   	  	                                   computations_);
-				reference.Unlock()
+				reference.Unlock();
   	  	AllNearestNeighbors(query, 
 						                closest_child.first.first, // child
 						                range,                     // range  
@@ -356,7 +361,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 									    query->get_right()->get_min_dist_so_far())));
 					query->get_left().Unlock();
 					query->get_right().Unlock();
-					query->Unlock();
+					query.Unlock();
 					reference.Unlock();
         } else {
           if (!query->IsLeaf() && !reference->IsLeaf()) {
@@ -364,7 +369,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 				    pair<NodePtr_t, Precision_t>  >  closest_child;
   	  	    NodePtr_t query_left = query->get_left();
             query_left.Lock();
-						closest_child = query->get_left()->ClosestNode(
+						closest_child = query_left->ClosestNode(
 								reference->get_left(), 
 						    reference->get_right(),
   	  	        dimension_,
@@ -383,8 +388,8 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 								                closest_child.second.second);
 						query.Lock();
 						reference.Lock();
-					  NodePtr_r query_right= query->get_right();
-						query_right_.Lock();
+					  NodePtr_t query_right= query->get_right();
+						query_right.Lock();
             closest_child = query_right->ClosestNode(
 								reference->get_left(), 
 						    reference->get_right(),
@@ -450,7 +455,7 @@ void TREE__::InitAllKNearestNeighborOutput(string file,
 TEMPLATE__
 void TREE__::InitAllKNearestNeighborOutput(typename TREE__::NodePtr_t ptr, 
 		                                        int32 knns) {
-	ptr.Unlock();
+	ptr.Lock();
   if (ptr->IsLeaf()) {
   	ptr->set_kneighbors(all_nn_out_.Allocate(ptr->get_num_of_points(), knns),
 			                                       knns);
@@ -458,11 +463,11 @@ void TREE__::InitAllKNearestNeighborOutput(typename TREE__::NodePtr_t ptr,
 		ptr->set_min_dist_so_far(numeric_limits<Precision_t>::max());
 		ptr.Unlock();
 	} else {
-		Node_t left = ptr->get_left();
+		NodePtr_t left = ptr->get_left();
 		ptr.Unlock();
 	  InitAllKNearestNeighborOutput(left, knns);
 		ptr.Lock();
-		Node_t right=ptr->get_right();
+		NodePtr_t right=ptr->get_right();
 		ptr.Unlock();
 		InitAllKNearestNeighborOutput(right, knns);
 		
@@ -478,8 +483,10 @@ void TREE__::InitAllRangeNearestNeighborOutput(string file) {
 			    file.c_str(), 
 			    strerror(errno));
 	}
+	parent_.Lock();
 	parent_->set_range_neighbors(fp);
   InitAllRangeNearestNeighborOutput(parent_, fp);
+	parent_.Unlock();
 }
 
 
@@ -498,7 +505,7 @@ void TREE__::InitAllRangeNearestNeighborOutput(
 		ptr.Lock();
 		NodePtr_t right = ptr->get_right();
 		ptr.Unlock();
-    InitAllRangeNearestNeighborOutput(get_right, fp);
+    InitAllRangeNearestNeighborOutput(right, fp);
 	}
 }
 
@@ -513,7 +520,9 @@ void TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
 
 TEMPLATE__
 void TREE__::CloseAllRangeNearestNeighborOutput() {
-  fclose(parent_->get_range_nn_fp());
+  parent_.Lock();
+	fclose(parent_->get_range_nn_fp());
+	parent_.Unlock();
 }
 
 TEMPLATE__
