@@ -311,12 +311,12 @@ class String {
   /**
    * Gets individual characters.
    */
-  char operator [] (int index) const
+  char operator [] (index_t index) const
    { return array_[index]; }
   /**
    * Gets individual characters, and allows modification.
    */
-  char& operator [] (int index)
+  char& operator [] (index_t index)
    { return array_[index]; }
   
   /**

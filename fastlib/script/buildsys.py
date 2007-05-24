@@ -226,14 +226,16 @@ class CompileRule(dep.Rule):
     dot = source.simplename.rindex(".")
     sourceextension = source.simplename[dot+1:]
     simplename = source.simplename[:dot] + ".o"
-    object = sysentry.file("obj/" + simplename.replace("/", "_"), "arch", "kernel", "mode", "compiler")
+    object = sysentry.file("obj/" + simplename.replace("/", "_"),
+        "arch", "kernel", "mode", "compiler", "cflags")
     # TODO: -I flags
     my_includes = "-I%s -I%s -I%s" % (
         sq(sysentry.bin_dir("arch", "kernel", "compiler")),
         sq(sysentry.bin_dir("arch", "kernel", "compiler", "cflags")),
         sq(sysentry.sys.source_dir))
     mode = params["mode"]
-    my_flags = my_includes + " " + compiler.mode_dictionary[params["mode"]] + " " + self.cflags + " " + params["cflags"]
+    my_flags = my_includes + " " + compiler.mode_dictionary[params["mode"]] \
+        + " " + self.cflags + " " + params["cflags"]
     if not sourceextension in compiler.command_from_ext:
       raise Exception("Don't know how to compile files of type '*.%s'." % sourceextension)
     command_template = compiler.command_from_ext[sourceextension]
