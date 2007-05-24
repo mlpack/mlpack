@@ -162,6 +162,15 @@ class Node {
 	index_t get_node_id() {
 	  return node_id_;
 	}
+  inline void LockPoints() {
+	  points_.Lock();
+		index_.Lock();
+	}
+	inline void UnlockPoints() {
+	  points_.Unlock();
+		index_.Unlock();
+	}
+	
   string Print(int32 dimension);
  
  private:

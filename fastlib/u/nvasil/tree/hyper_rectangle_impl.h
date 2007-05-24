@@ -210,8 +210,8 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
                    	         
 TEMPLATE__
 inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
-    typename HYPERRECTANGLE__::HyperRectangle_t &hr1,
-    typename HYPERRECTANGLE__::HyperRectangle_t &hr2,
+    typename HYPERRECTANGLE__::HyperRectangle_t hr1,
+    typename HYPERRECTANGLE__::HyperRectangle_t hr2,
     int32 dimension,
     ComputationsCounter<diagnostic> &comp) {
   hr1.min_.Lock();
@@ -225,10 +225,6 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
   	Precision_t d4 = hr1.max_[i] - hr2.min_[i];
   	if (d2>0) {	
   	  dist += d2*d2 ;
-  	 hr1.min_.Unlock();
-     hr1.max_.Unlock();
-     hr2.min_.Unlock();
-     hr2.max_.Unlock();	
 		 	continue;
   	} 
   	if (d4<0) {
@@ -244,8 +240,8 @@ inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
 
 TEMPLATE__
 inline typename HYPERRECTANGLE__::Precision_t HYPERRECTANGLE__::Distance(
-    typename HYPERRECTANGLE__::HyperRectangle_t &hr1,
-    typename HYPERRECTANGLE__::HyperRectangle_t &hr2,
+    typename HYPERRECTANGLE__::HyperRectangle_t hr1,
+    typename HYPERRECTANGLE__::HyperRectangle_t hr2,
     typename HYPERRECTANGLE__::Precision_t threshold_distance,
     int32 dimension,
     ComputationsCounter<diagnostic> &comp) {

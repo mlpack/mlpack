@@ -60,7 +60,9 @@ class KdPivoter1 {
 	  HyperRectangle_t  hr_right;
     hr_left.Init(dimension);
     hr_right.Init(dimension);
-
+    hr_left.Lock();
+		hr_right.Lock();
+		
 	  while (true) {
       while (left_points < pivot->num_of_points_ &&
              point_left[max_range_dimension] < pivot_value) {
@@ -85,7 +87,8 @@ class KdPivoter1 {
     DEBUG_ASSERT(left_points+right_points == right_start - left_start+1);
     FindPivotDimensionValue(hr_left);
     FindPivotDimensionValue(hr_right);  
-  
+    hr_left.Unlock();
+		hr_right.Unlock();
     PivotInfo* pv_left  =  new PivotInfo();
 		pv_left->Init(left_start, left_points, hr_left);
 	  PivotInfo* pv_right =  new PivotInfo();
@@ -97,6 +100,7 @@ class KdPivoter1 {
     // make the parent
 	  HyperRectangle_t hr;
     hr.Init(data_->get_dimension());
+		hr.Lock();
     for(index_t i=0; i<num_of_points; i++) {
   	  Precision_t *point = data_->At(i);
       UpdateHyperRectangle(point, hr);
@@ -104,6 +108,7 @@ class KdPivoter1 {
     FindPivotDimensionValue(hr); 
     PivotInfo *pv = new PivotInfo();
 		pv->Init(0, num_of_points, hr);
+		hr.Unlock();
 	  return pv;                               
   }
 
@@ -127,7 +132,7 @@ class KdPivoter1 {
 
   void UpdateHyperRectangle(Precision_t *point,
 	  	                      HyperRectangle_t &hr) {
-    for(int32 j=0; j<data_->get_dimension(); j++) {
+		for(int32 j=0; j<data_->get_dimension(); j++) {
       if (point[j] > hr.get_max()[j]) {
         hr.get_max()[j] = point[j];
       } 

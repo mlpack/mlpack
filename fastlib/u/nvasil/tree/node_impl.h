@@ -72,11 +72,13 @@ void NODE__::operator delete(void *p) {
 
 TEMPLATE__
 void NODE__::InitKNeighbors(int32 knns) {
+	index_.Lock();
 	for(index_t i=0; i<num_of_points_; i++) {
 	  for(int32 j=0; j<knns; j++) {
 		  kneighbors_[i*knns+j].point_id_=index_[i];
 		}
-	} 
+	}
+  index_.Unlock();	
 }
                  	
 TEMPLATE__
@@ -117,13 +119,14 @@ NODE__::ClosestNode(typename NODE__::NodePtr_t ptr1,
 TEMPLATE__
 template<typename POINTTYPE, typename NEIGHBORTYPE>
 inline void NODE__::FindNearest(POINTTYPE query_point, 
-    vector<pair<typename NODE__::Precision_t, 
-		            typename NODE__::Point_t> > &nearest, 
+   vector<pair<typename NODE__::Precision_t, 
+	             typename NODE__::Point_t> > &nearest, 
 		NEIGHBORTYPE range, 
 		int32 dimension,
 		typename NODE__::PointIdDiscriminator_t &discriminator,
     ComputationsCounter<diagnostic> &comp) {
-  	for(index_t i=0; i<num_of_points_; i++) {
+  
+	for(index_t i=0; i<num_of_points_; i++) {
   	comp.UpdateDistances();
   	//  we have to check if we are comparing the point with itself
  	  if (unlikely(discriminator.AreTheSame(index_[i], 
@@ -133,7 +136,7 @@ inline void NODE__::FindNearest(POINTTYPE query_point,
 
 		Precision_t dist = BoundingBox_t::
 			template Distance(query_point, 
-			                  points_.get()+i*dimension,
+			                  points_.get_p()+i*dimension,
 			  							  dimension);
 		// In case it is range nearest neighbors
 		if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) {
@@ -238,7 +241,7 @@ inline void NODE__::FindAllNearest(
 		    // for range nearest neighbors
 	      vector<pair<Precision_t, Point_t> >  temp;
 			  temp.clear();
-				Point_t point;
+				NullPoint_t point;
 				point.Alias(query_node->points_.get_p()+i*dimension, 
 						        query_node->index_[i]);
 		    FindNearest(point, temp, 
@@ -274,8 +277,8 @@ inline void NODE__::FindAllNearest(
 
   points_.Unlock();
 	index_.Unlock();
-  query_node->points_.Lock();
-  query_node->index_.Lock();
+  query_node->points_.Unlock();
+  query_node->index_.Unlock();
 
 }
 

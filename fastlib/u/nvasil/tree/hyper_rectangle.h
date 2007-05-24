@@ -69,12 +69,12 @@ class HyperRectangle {
   template<typename POINTTYPE1, typename POINTTYPE2>
 	static Precision_t Distance(POINTTYPE1 point1, POINTTYPE2 point2, 
 			                        int32 dimension, Precision_t **metric_matrix);
-	static Precision_t Distance(HyperRectangle_t &hr1,
-                            HyperRectangle_t &hr2,
+	static Precision_t Distance(HyperRectangle_t hr1,
+                            HyperRectangle_t hr2,
                             int32 dimension,
                             ComputationsCounter<diagnostic> &comp);
-  static Precision_t Distance(HyperRectangle_t &hr1,
-                              HyperRectangle_t &hr2,
+  static Precision_t Distance(HyperRectangle_t hr1,
+                              HyperRectangle_t hr2,
                               Precision_t threshold_distance,
                               int32 dimension,
                               ComputationsCounter<diagnostic> &comp);                            
@@ -104,6 +104,14 @@ class HyperRectangle {
 	}
 	void set_pivot_value(Precision_t pivot_value) {
 	  pivot_value_=pivot_value;
+	}
+	inline void Lock() {
+	  max_.Lock();
+		min_.Lock();
+	}
+	inline void Unlock() {
+	  max_.Unlock();
+		min_.Unlock();
 	}
  private:
 	Array_t min_;
