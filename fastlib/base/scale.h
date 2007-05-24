@@ -24,6 +24,8 @@
 #ifndef FL_SCALE_H
 #define FL_SCALE_H
 
+#include "base/basic_types.h"
+
 #if !defined(FL_SCALE_NORMAL) && !defined(FL_SCALE_LARGE) && !defined(FL_SCALE_TOOLARGE)
 /** Normal problem scale size - up to 16 gigabytes of data. */
 #define FL_SCALE_NORMAL /* assume normal unless otherwise noted */

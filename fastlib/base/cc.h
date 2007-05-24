@@ -36,16 +36,16 @@ extern const double FLT_NAN;
 /**
  * Return the minimum of two objects.
  */
-template<typename T>
-inline T min(T a, T b) {
+template<typename T, typename Q>
+inline T min(T a, Q b) {
   return a < b ? a : b;
 }
 
 /**
  * Return the maximum of two objects.
  */
-template<typename T>
-inline T max(T a, T b) {
+template<typename T, typename Q>
+inline T max(T a, Q b) {
   return a > b ? a : b;
 }
 
