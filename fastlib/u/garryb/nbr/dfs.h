@@ -175,9 +175,9 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   DEBUG_ONLY(fx_format_result(datanode_, "recurse_per_query", "%f",
       1.0 * n_recurse_ / q_root->count()));
 
-  if (fx_param_bool(datanode_, "print", 0)) {
+/*  if (fx_param_bool(datanode_, "print", 0)) {
     ot::Print(q_results_);
-  }
+  }*/
 }
 
 template<typename GNP>

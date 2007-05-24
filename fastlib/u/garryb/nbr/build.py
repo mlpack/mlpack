@@ -18,10 +18,19 @@ binrule(name = "tkde",
    sources = ["tkde.cc"],
    deplibs = [":nbr"])
 
+binrule(name = "tkde_mpi",
+   sources = ["tkde.cc"],
+   deplibs = [":nbr_mpi"],
+   cflags = "-DUSE_MPI")
+
 binrule(name = "allnn_mpi",
    sources = ["allnn.cc"],
    deplibs = [":nbr_mpi"],
    cflags = "-DUSE_MPI")
+
+binrule(name = "allnn",
+   sources = ["allnn.cc"],
+   deplibs = [":nbr"])
 
 
 

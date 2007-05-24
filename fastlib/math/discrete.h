@@ -90,7 +90,7 @@ namespace math {
   inline unsigned IntLog2(unsigned i) {
     unsigned l;
     for (l = 0; (unsigned(1) << l) != i; l++) {
-      DEBUG_ASSERT_MSG(l < 1024, "Taking IntLog2 of a non-power-of-2.");
+      DEBUG_ASSERT_MSG(l < 1024, "Taking IntLog2 of a non-power-of-2: %u.", i);
     }
     return l;
   }

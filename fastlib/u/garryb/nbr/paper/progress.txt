@@ -1,3 +1,6 @@
+papers to look up:
+  A Parallel Tree code for large Nbody simulation: dynamic load balance and data distribution on CRAY T3D
+
 totals:
   - today: coding
   - 1 day: new algorithm
@@ -19,11 +22,17 @@ totals:
   - Tested network structures
   ?- Fix weird problems in code
   ?- If time permits: read papers
+  ?- Probably jump on to tomorrow's material...
+  ?- Decide if I need to write a new I/O framework...
 - Thursday May 24
   ?- Re-assemble old paper
   ?- Fix paper's contents
   ?- If time permits: read papers
 - Friday May 25
+  ?- WHAT I WILL DO for coding:
+    - Make it easier to change block sizes on the fly
+    - Insert read/write instrumentation
+    - If Warp is still not working, write a socket-based implementation
   ?- Datasets
   ?- Run threaded experiments
   ?- Run warp experiments

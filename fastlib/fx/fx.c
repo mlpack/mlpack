@@ -23,6 +23,8 @@
 #define FX_SHOW_RESULTS_TIMERS
 #endif
 
+static struct datanode *fx__real_root;
+
 struct datanode *fx_root;
 
 /* TODO: Use this mutex everywhere */
@@ -105,6 +107,7 @@ void fx_init(int argc, char **argv) {
   pthread_mutex_init(&fx__mutex, NULL);
 
   fx_root = malloc(sizeof(struct datanode));
+  fx__real_root = fx_root;
   datanode_init(fx_root, "FX_ROOT", NODETYPE_MODULE);
   fx__report_system(
       datanode_get_path(fx_root, "info/system", NODETYPE_RESULT));
@@ -219,11 +222,12 @@ void fx_done(void) {
       datanode_get_path(fx_root, "info/rusage/self", NODETYPE_RESULT));
   fx__report_usage(RUSAGE_CHILDREN,
       datanode_get_path(fx_root, "info/rusage/children", NODETYPE_RESULT));
-  fx__write(fx_root);
+  fx__write(fx__real_root);
 
   datanode_destroy(fx_root);
   free(fx_root);
   fx_root = NULL;
+  fx__real_root = NULL;
 
   pthread_mutex_destroy(&fx__mutex);
 }
@@ -642,3 +646,15 @@ struct datanode *fx_submodule(struct datanode *module, const char *params,
 
   return node;
 }
+
+void fx_scope(const char *scope_name) {
+  struct datanode *old_root = fx__real_root;
+
+  free(fx__real_root->key);
+  fx__real_root->key = strdup(scope_name);
+
+  fx__real_root = malloc(sizeof(struct datanode));
+  datanode_init(fx__real_root, "FX_ROOT", NODETYPE_MODULE);
+  fx__real_root->children = old_root;
+}
+

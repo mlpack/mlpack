@@ -50,7 +50,7 @@ void RemoteObjectServer::Loop(int n_workers_total) {
     DEBUG_ASSERT(length != MPI_UNDEFINED);
     data_recv.Resize(length);
     MPI_Recv(data_recv.begin(), data_recv.size(), MPI_CHAR,
-        MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        status.MPI_SOURCE, status.MPI_TAG, MPI_COMM_WORLD, &status);
 
     if (status.MPI_TAG == TAG_BORN) {
       n_workers_born++;
