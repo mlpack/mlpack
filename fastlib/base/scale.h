@@ -35,7 +35,7 @@ typedef int index_t_impl; /* normal sized datasets - usually 32-bit */
 #endif
 
 #ifdef FL_SCALE_LARGE
-typedef long index_t_impl; /* as large as can possibly fit on my machine */
+typedef ssize_t index_t_impl; /* as large as can possibly fit on my machine */
 #define LI_IMPL "l"
 #endif
 

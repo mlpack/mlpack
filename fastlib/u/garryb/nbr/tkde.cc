@@ -619,9 +619,16 @@ class Tkde {
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
-  
+
+#ifdef USE_MPI  
+  MPI_Init(&argc, &argv);
+  nbr_utils::MpiDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+      fx_root, "tkde");
+  MPI_Finalize();
+#else
   nbr_utils::ThreadedDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
       fx_root, "tkde");
+#endif
   
   fx_done();
 }

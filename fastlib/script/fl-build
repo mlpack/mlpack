@@ -74,6 +74,7 @@ else:
 
 # Create build parameters
 
+fx.param_default("cflags", "")
 fx.param_default("mode", "check")
 fx.param_default("compiler", "gcc")
 fx.param_default("j", "1")
@@ -97,6 +98,7 @@ target_name = target_name.replace(os.sep, "/")
 makefile_path = os.path.abspath("./Makefile")
 mode = fx.param_str("mode")
 compiler = fx.param_str("compiler")
+cflags = fx.param_str("cflags")
 (kernel, nodename, release, version, arch) = os.uname()
 arch = util.sanitize_basename(arch)
 kernel = util.sanitize_basename(kernel)
@@ -105,7 +107,7 @@ kernel = util.sanitize_basename(kernel)
 
 print "*** Generating Makefile in current directory"
 
-params = dict(arch=arch,kernel=kernel,mode=mode,compiler=compiler)
+params = dict(arch=arch,kernel=kernel,mode=mode,compiler=compiler,cflags=cflags)
 
 print "*** Target Rule: '%s'" % target_name
 

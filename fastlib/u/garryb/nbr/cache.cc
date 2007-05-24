@@ -87,13 +87,15 @@ void SmallCache::Writeback_(blockid_t blockid, offset_t begin, offset_t end) {
     Metadata *metadata = &metadatas_[blockid];
     char *data = metadata->data;
     
+    DEBUG_BOUNDS(begin, end + 1);
+    
     if (data) {
       size_t n_bytes = end - begin;
       char *buf = data + begin;
       
-      if (unlikely(metadata->lock_count)) {
-        FATAL("Cannot flush a range that is currently in use.");
-      }
+      //if (unlikely(metadata->lock_count)) {
+      //  FATAL("Cannot flush a range that is currently in use.");
+      //}
       
       if (likely(blockid != HEADER_BLOCKID)) {
         handler_->BlockRefreeze(n_bytes, buf, buf);
@@ -112,7 +114,7 @@ void SmallCache::Flush(blockid_t begin_block, offset_t begin_offset,
     if (begin_block == last_block) {
       Writeback_(begin_block, begin_offset, end_offset);
     } else {
-      Writeback_(begin_block, begin_offset, n_block_bytes_ - begin_offset);
+      Writeback_(begin_block, begin_offset, n_block_bytes_);
       for (blockid_t i = begin_block + 1; i < last_block - 1; i++) {
         Writeback_(i, 0, n_block_bytes_);
       }

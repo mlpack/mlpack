@@ -181,13 +181,13 @@ class MakeBuildSysEntry(dep.DepSysEntry):
       else:
         return "COMMON"
 
-    allowed_sequence = ["arch", "kernel", "mode", "compiler"]
-    (arch, kernel, mode, compiler) = [name_part(x) for x in allowed_sequence]
+    allowed_sequence = ["arch", "kernel", "mode", "compiler", "cflags"]
+    (arch, kernel, mode, compiler, cflags) = [name_part(x) for x in allowed_sequence]
     
     for param in pmz:
       if not param in allowed_sequence:
         raise Exception("I can't deal with extra parameterization yet: '%s' not in '%s'" % (param, allowed_sequence))
-    return "%s_%s_%s_%s" % (arch, kernel, mode, compiler)
+    return "%s_%s_%s_%s_%s" % (arch, kernel, mode, compiler, util.sanitize_basename(cflags))
   def bin_dir(self, *pmz):
     return os.path.join(self.sys.bin_dir, self.__name_pmz(pmz))
   def keep_dir(self, *pmz):
@@ -228,11 +228,12 @@ class CompileRule(dep.Rule):
     simplename = source.simplename[:dot] + ".o"
     object = sysentry.file("obj/" + simplename.replace("/", "_"), "arch", "kernel", "mode", "compiler")
     # TODO: -I flags
-    my_includes = "-I%s -I%s" % (
+    my_includes = "-I%s -I%s -I%s" % (
         sq(sysentry.bin_dir("arch", "kernel", "compiler")),
+        sq(sysentry.bin_dir("arch", "kernel", "compiler", "cflags")),
         sq(sysentry.sys.source_dir))
     mode = params["mode"]
-    my_flags = my_includes + " " + compiler.mode_dictionary[params["mode"]] + " " + self.cflags
+    my_flags = my_includes + " " + compiler.mode_dictionary[params["mode"]] + " " + self.cflags + " " + params["cflags"]
     if not sourceextension in compiler.command_from_ext:
       raise Exception("Don't know how to compile files of type '*.%s'." % sourceextension)
     command_template = compiler.command_from_ext[sourceextension]

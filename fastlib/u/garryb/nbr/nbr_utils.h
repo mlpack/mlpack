@@ -19,9 +19,9 @@ success_t LoadKdTree(struct datanode *module,
     TempCacheArray<Vector> *points_out,
     TempCacheArray<Node> *nodes_out) {
   index_t vectors_per_block = fx_param_int(
-      module, "vectors_per_block", 256);
+      module, "vectors_per_block", 4096);
   index_t nodes_per_block = fx_param_int(
-      module, "nodes_per_block", 256);
+      module, "nodes_per_block", 2048);
   success_t success;
 
   fx_timer_start(module, "read");
@@ -243,11 +243,16 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
   int my_rank;
   int n_machines;
   int n_workers_total;
+  int n_threads;
+  int n_grains;
 
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &n_machines);
 
   n_workers_total = n_machines - 1;
+  n_threads = fx_param_int(module, "n_threads", 1);
+  n_grains = fx_param_int(module, "n_grains",
+      n_threads * n_workers_total * 3);
 
   if (my_rank == MASTER_RANK) {
     param.Init(fx_submodule(module, gnp_name, gnp_name));
@@ -268,9 +273,6 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     q_results.Init(default_result, q_points.end_index(),
         q_points.n_block_elems());
 
-    index_t n_threads = fx_param_int(module, "n_threads", 1);
-    index_t n_grains = fx_param_int(module, "n_grains",
-        n_threads == 1 ? 1 : (n_threads * 3));
     SimpleWorkQueue<typename GNP::QNode> work_queue;
     work_queue.Init(&q_nodes, n_grains);
 
@@ -353,8 +355,6 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     q_results_cache.Init(&q_results_device,
         new CacheArrayBlockActionHandler<typename GNP::QResult>,
         BlockDevice::MODIFY);
-
-    int n_threads = 1; /* HACK!! */
 
     ThreadedDualTreeSolver<GNP, Solver> solver;
     solver.InitSolve(

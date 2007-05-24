@@ -22,7 +22,6 @@ void RemoteWorkQueue::GetWork(ArrayList<index_t> *work_items) {
 
   stub_.Lock();
   const WorkResponse *response = stub_.Request(request);
-  ot::Print(*response);
   work_items->Copy(response->work_items);
   stub_.Unlock();
 }

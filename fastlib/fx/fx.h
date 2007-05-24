@@ -316,6 +316,16 @@ COMPILER_PRINTF(3, 4)
 struct datanode *fx_submodule(struct datanode *module, const char *param,
 			      const char *name_format, ...);
 
+/**
+ * Scopes all FASTexec output under an overarching module.
+ *
+ * This is used in MPI runs, so that each machine writes to a different
+ * part of FASTexec.
+ *
+ * @param scope_name the overarching scope name
+ */
+void fx_scope(const char *scope_name);
+
 EXTERN_C_END
 
 #endif
