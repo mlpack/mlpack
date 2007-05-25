@@ -65,18 +65,40 @@ class MemoryManager {
    public: 
     Ptr() {
       address_=-1;
+			p_=NULL;
+#ifdef DEBUG
+      is_owner_=false;
+#endif			
     }
-    Ptr(index_t address) {
+/*    Ptr(index_t address) {
    	  address_=address;	
+			p_=NULL;
     }
+*/
 		Ptr(const Ptr<T, logmode> &other) {
 		  this->address_ =  other.address_;
+			this->p_ = other.p_;
+#ifdef DEBUG
+      is_owner_=false;
+#endif			
+ 
 		}
-    ~Ptr() {}
+    ~Ptr() {
+			DEBUG_ASSERT_MSG((p_==NULL && is_owner_==true) || 
+					              (is_owner_==false)  
+					, "Pointer was keeping a page Locked\n"
+					                       "This might Create Cache Problems");
+		}
     void Reset(T *ptr) {
-	    address_ = allocator_->GetObjectAddress((T *)ptr);	  
+	    address_ = allocator_->GetObjectAddress((T *)ptr);
+#ifdef DEBUG
+			is_owner_=true;
+#endif
 		}
 		void Reset(index_t address) {
+#ifdef DEBUG
+      is_owner_=true;
+#endif		
 			address_=address;
     }	
 		void SetNULL() {
@@ -87,6 +109,11 @@ class MemoryManager {
 		}
     Ptr<T, logmode> &operator=(const Ptr<T, logmode> &other) {
    	  address_ = other.address_;
+			p_ = other.p_;
+#ifdef DEBUG
+      is_owner_=false;
+#endif			
+ 
    	  return *this;
     }
 		bool operator==(const Ptr<T, logmode> &other) const {
@@ -94,11 +121,11 @@ class MemoryManager {
 		}
     T &operator*() {
       Logger<logmode>::Log(address_);
-      return *(reinterpret_cast<T*>(allocator_->Access(address_)));
+      return *p_;
     }
     T *operator->() {
       Logger<logmode>::Log(address_);
-			return reinterpret_cast<T*>(allocator_->Access(address_)); 
+			return p_; 
     }
 		Ptr<Ptr<T, logmode>, logmode> Reference() {
 		  Ptr<Ptr<T, logmode>, logmode>  ptr;
@@ -107,18 +134,34 @@ class MemoryManager {
 		}
     T &operator[](index_t ind) {
       Logger<logmode>::Log(address_);
-      return get()[ind];
+      return p_[ind];
 		}
 		T *get() {
 		  return reinterpret_cast<T*>(allocator_->Access(address_));
+		}
+    T *get_p() {
+		  return p_;
 		}
 
 		index_t get_address() {
 		  return address_;
 		}
+
+		inline void Lock() {
+		  p_=reinterpret_cast<T*>(allocator_->LockAndAccess(address_));
+		}
+
+		inline void Unlock() {
+		  p_=NULL;
+      allocator_->Unlock(address_);
+		}
     
    protected:
     index_t address_;
+		T *p_;
+#ifdef DEBUG
+	  bool is_owner_;	
+#endif
   };
 	template<typename T, bool logmode=Logmode>
 	class ArrayPtr : public Ptr<T, logmode> {
@@ -126,7 +169,7 @@ class MemoryManager {
 		ArrayPtr(){
 		}
 		ArrayPtr(index_t size) {
-		  Reset(malloc<T>(size));
+			Reset(malloc<T>(size));
 		}
 		template<typename ARRAYTYPE>
 		void Copy(ARRAYTYPE other, index_t length) {
@@ -200,9 +243,11 @@ class MemoryManager {
 	  Ptr<T> temp;
 		index_t address=malloc<T>(size);
 		temp.Reset(address);
+		temp.Lock();
 		 for(index_t i=0; i<size; i++) {
 		   temp[i]=init_value;
 		 }
+		 temp.Unlock();
 		 return address;
 	}
   inline index_t Align(char *ptr, index_t stride);
@@ -218,14 +263,15 @@ class MemoryManager {
 	
   // Access object
   inline char *Access(index_t oaddress);
-  char *get_cache() {
-    return cache_;
-  }
-  
+  inline void Lock(index_t address);
+  inline void Unlock(index_t address);	
+	inline char *LockAndAccess(index_t address_);
 	index_t get_page_size() {
     return page_size_;
   }
-  
+  char *get_cache() {
+    return cache_;
+  }
 	uint64 get_total_num_of_page_faults() {
   	return total_num_of_page_faults_;
   }
@@ -291,6 +337,8 @@ class MemoryManager {
   index_t *page_timestamp_;
   // the timer that increases after every access
   index_t page_timer_;
+	// keeps the page locks
+  index_t *page_locks_;	
 	// resets the page timer when it reaches the maximum age
   index_t maximum_page_age_;
   // this is the interface to the hard disk

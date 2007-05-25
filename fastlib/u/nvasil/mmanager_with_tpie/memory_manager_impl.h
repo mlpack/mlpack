@@ -60,6 +60,9 @@ void MEMORY_MANAGER__::Init() {
   }
   // Init the page timestamps
   page_timestamp_ = new index_t[num_of_pages_];
+	// Init the page locks
+	page_locks_ = new index_t[num_of_pages_];
+	memset(page_locks_, 0, num_of_pages_ * sizeof(index_t));
   ResetPageTimers();
   // Set the first one modified
   SetPageModified(0);
@@ -152,6 +155,10 @@ void MEMORY_MANAGER__::Load() {
   close (fd);
   page_modified_ = new bool[num_of_pages_];
   memset(page_modified_, false, num_of_pages_);
+	// Init the page locks
+	page_locks_ = new index_t[num_of_pages_];
+	memset(page_locks_, 0, num_of_pages_ * sizeof(index_t));
+
   current_ptr_ = cache_;
   // fill cache_ with 0
   memset(cache_, 0, cache_size_);
@@ -195,7 +202,7 @@ void MEMORY_MANAGER__::Destruct() {
   // delete other help variables;
   delete []page_address_;
   delete []cache_to_page_;
-  
+  delete []page_locks_; 
   // delete cache
   if (unlikely(munlock(cache_, alloc_size_)==-1)) {
     NONFATAL("Could not unlock memory manger's cache, error %s\n",
@@ -297,6 +304,37 @@ inline char *MEMORY_MANAGER__::Access(index_t address) {
   page_timestamp_[PageToCachePage(page)]=page_timer_;
   char *access_ptr_ = page_address_[page] + offset;
   
+  return access_ptr_;
+}
+
+TEMPLATE__
+inline void MEMORY_MANAGER__::Lock(index_t address) {
+  Access(address);
+	page_locks_[PageToCachePage(address/page_size_)]++;
+}
+
+TEMPLATE__
+inline void MEMORY_MANAGER__::Unlock(index_t address) {
+  page_locks_[PageToCachePage(address/page_size_)]--;
+}
+
+TEMPLATE__
+inline char *MEMORY_MANAGER__::LockAndAccess(index_t address) {
+  page_timer_++;
+  // Reset the page timestamps  
+  if (unlikely(page_timer_ >=  maximum_page_age_)) {
+  	ResetPageTimers();
+  	page_timer_++;
+  }
+  index_t page=address/page_size_;
+	index_t offset=address%page_size_;
+  if (unlikely(page_address_[page] == NULL)) {
+  	HandlePageFault(page);
+  	total_num_of_page_faults_++;
+  }
+  page_timestamp_[PageToCachePage(page)]=page_timer_;
+  char *access_ptr_ = page_address_[page] + offset;
+  Lock(page);  
   return access_ptr_;
 }
 
@@ -433,15 +471,19 @@ inline pair<index_t, index_t> *MEMORY_MANAGER__::PagesAffectedBySEGV(long system
 
 TEMPLATE__
 inline index_t MEMORY_MANAGER__::LeastNeededPage() {
-  index_t least_recently_used = 0;
-  index_t least_recently_used_time = page_timestamp_[0]; 
-  for(index_t i=1; i< num_of_pages_; i++) {
+  index_t least_recently_used = -1;
+  index_t least_recently_used_time = numeric_limits<index_t>::max(); 
+  for(index_t i=0; i< num_of_pages_; i++) {
+	  if (unlikely(page_locks_[i]>0)) {
+		  continue;
+		}
   	if (page_timestamp_[i] < least_recently_used_time) {
   	  least_recently_used = i;
   	  least_recently_used_time = page_timestamp_[i];
     }
   }
- 
+  DEBUG_ASSERT_MSG(least_recently_used!=-1, 
+			"All paged are locked  and cache i stalled. Try to unlock");
   return least_recently_used ;
 //  return rand() % num_of_pages_;
 }

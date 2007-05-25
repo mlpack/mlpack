@@ -94,9 +94,19 @@ class MemoryManager {
 		inline T *get() {
 		  return p_;
 		}
+		inline T *get_p() {
+		  return p_;
+		}
+
     void Swizzle(ptrdiff_t offset) {
       p_ = (T *)((char*)p_ + offset);
     }
+		inline void Lock() {
+		
+		}
+		inline void Unlock() {
+		
+		}
    protected:
     T *p_;
   };
