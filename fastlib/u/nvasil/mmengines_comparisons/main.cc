@@ -29,6 +29,7 @@ struct Parameters {
 	int64 num_of_points_;
 	std::string data_file_;
 	std::string out_file_;
+	std::string temp_dir_;
 	std::string memory_engine_;
 	int32 page_size_;
 	int64 cache_size_;
@@ -36,6 +37,7 @@ struct Parameters {
 	std::string memory_file_;
   BinaryDataset<float32> data_;	
 	uint64 capacity_;
+	
 };
 
 template<typename TREE>
@@ -46,6 +48,7 @@ int main(int argc, char *argv[]) {
 	Parameters args;
 	// initialize command line parameter
 	fx_init(argc, argv);
+	args.temp_dir_=fx_param_str(NULL, "temp_dir", "./");
   if (fx_param_exists(NULL, "data_file")==1) {
 	  args.data_file_=fx_param_str(NULL, "data_file", NULL);
 		args.data_.Init(args.data_file_);
@@ -54,7 +57,7 @@ int main(int argc, char *argv[]) {
 	} else {
 		// if data file is not specified use random points
 		printf("Generating random points...\n");
-	  args.data_file_="temp";
+	  args.data_file_= args.temp_dir_+string("temp");
 		args.dimension_= fx_param_int_req(NULL, "dimension");
 		args.num_of_points_= fx_param_int_req(NULL, "num_of_points");
 		args.data_.Init(args.data_file_, args.num_of_points_, args.dimension_);
@@ -68,8 +71,9 @@ int main(int argc, char *argv[]) {
 	args.out_file_ = fx_param_str(NULL, "out_file", "allnn");
   args.capacity_ = fx_param_int(NULL, "capacity", 134217728);
 	args.knns_ = fx_param_int(NULL, "knns", 2);
+	args.page_size_=fx_param_int(NULL, "page_size", 4096);
   args.memory_file_ = fx_param_str(NULL, "memory_file", "temp_mem"); 
-  args.memory_engine_ = fx_param_str(NULL, "mem_engine", "mmapmm");
+  args.memory_engine_ = fx_param_str(NULL, "memory_engine", "mmapmm");
 	printf("Creating swap file...\n");
  	if (args.memory_engine_ == "mmapmm") {
 		mmapmm::MemoryManager<false>::allocator_ = 
@@ -93,7 +97,10 @@ int main(int argc, char *argv[]) {
 			    allocator_->set_cache_size(args.capacity_);
 
 		  tpiemm::MemoryManager<false>::
-			    allocator_->set_cache_file(args.memory_file_);
+			    allocator_->set_page_size(args.page_size_);
+      
+		  tpiemm::MemoryManager<false>::
+			  allocator_->set_cache_file(args.memory_file_);
 
 		  tpiemm::MemoryManager<false>::allocator_->Init();
 
@@ -121,6 +128,7 @@ void DuallTreeAllNearestNeighbors(Parameters &args) {
 	tree.BuildDepthFirst();
 	fx_timer_stop(NULL, "build");
 	args.data_.Destruct();
+	printf("Initializing all nearest neighbor output...\n");
   tree.InitAllKNearestNeighborOutput(args.out_file_, 
 				                              args.knns_);
 	printf("Computing all nearest neighbors...\n");
