@@ -1,4 +1,4 @@
-	
+
 %
 %  $Description: Author guidelines and sample document in LaTeX 2.09$ 
 %
@@ -162,7 +162,37 @@ Although we briefly mention strategies for massive parallelization, this paper f
 
 \section{Background}
 
-\subsection{Parallel N-Body Simulations}
+\subsection{Parallel \nbody Simulations}
+
+Among the most extensively studied parallelization problem for tree-based algorithms is the \nbody force approximation algorithm developed by Barnes and Hut in \cite{barneshut}, and to some extent, the Greengard's Fast Multipole Method in \cite{fmm}.
+The \nbody simulation problem attempts to model the movement of $N$ particles in an evolving system, during which each particle exerts a certain amount of force on all of the other particles.
+Computational solutions break the simulation into many discrete time steps, during which the total force exerted upon each particle is calculated:
+
+ $$\map{q \in D} \sum{r \in D} f(q, r)$$
+
+\noindent where $q$ and $r$ are points in the system $D$, and $f(\cdot, \cdot)$ is a pairwise force function such as gravitational or Coulombic force.
+Executing the sum directly, the execution is $O(N^2)$ where $N$ = $|D|$.
+
+begin(appel is not really dual tree)
+
+The earliest tree-based algorithm by Appel \cite{appel} is a dual-tree algorithm that approximates these force contributions.
+Unfortunately, the parallelization community has shied away from this algorithm due to claimed implementational difficulty and the popularity of competing methods.
+
+end
+
+The algorithm by Barnes and Hut, presented in \cite{barneshut}, is order $O(N log N)$.
+For each query point $q$, the force contribution is approximated by recursively traversing an oct-tree\footnote{An oct-tree recursively divides all 3 dimensions in half spatially until the node is sufficiently small.}.
+When recursing, if the point $q$ is further than parameter $\theta$ times the spatial width of the node, the force calculation is approximated by placing all points at the node's center of mass.
+Greengard's Fast Multipole Method \cite{greengard_fmm} has some elements of dual-tree computation in its downwards pass, in which the force contribution for an entire node of queries is estimated for an entire node of references.
+The Fast Multipole Method is considered to have a higher constant factor; thus, most research focuses on the single-tree Barnes-Hut\cite{fmm_slower}.
+
+--------
+
+Effective parallelization of an algorithm requires a problem decomposition coupled with load balancing, along with minimized communication.
+
+Parallelization on particule simulations have several strengths that aid in parallelism.
+Since each force calculation step is part of a larger time series, points move little in each step.
+It is therefore suitable to distribute the points among the processors.
 
 \begin{verbatim}
 - Pangfeng Liu & Sandeep N. Bhatt n-body paper
@@ -190,6 +220,145 @@ For each point in the query set, execute a commutative, associative operator ove
 These problems include such fundamental problems as all-nearest-neighbors, kernel density estimation, the testing phase of most nonparametric classification methods, matrix-vector multiplication, and many more.
 
 In the next subsections, we formalize a mathematical framework for solving both of these types of problems, and briefly explain how these two types of problems can be unified.
+
+\subsection{Just the math}
+
+% WALDO: MIssing background: twopoint
+
+A global reduce computes a single scalar or relatively small vector of results, which are the application of an aggregate commutative and associative operator to all pairs of inputs.
+We define a global reduce as:
+\begin{equation}
+\allpsi(X, Y) = {\Oppsi}_{(x, y) \in X \times Y} \fpsi(x, y)
+\label{eqn:defpsi}
+\end{equation}
+
+\noindent where $\allpsi$ is the result, $\Oppsi$ is a commutative and associative operator, and $\fpsi$ is the inner function.
+For instance, the two-point correlation problem $\TWOPT(X, r) = \sum_{(x, y) \in X \times X} I(||x - y|| < r)$ can be expressed with $TWOPT(X, r) = \allpsi_r(X, X)$, $\Oppsi = \sum$, and $\fpsi(x, y) = I(||x - y|| < r)$.
+
+%WALDO: Missing: abelian monoid
+
+Since $\Oppsi$ is commutative and associative, we can break its computation arbitrarily.
+Consider a tree decomposition by partitioning set $X$ into subsets $X\left$ and $X\right$.
+Using this decomposition, we can decompose $\allpsi$ using one of two identities:
+\begin{equationarray}
+\allpsi(X, Y) &=& \allpsi(X\left, Y) \oppsi \allpsi(X\right, Y)
+\\
+\allpsi(X, Y) &=& \allpsi(X, Y\left) \oppsi \allpsi(X, Y\right)
+\label{eqn:dividepsi}
+\end{equationarray}
+
+Dual-tree algorithms are typically executed in a recursion such that both transformations are applied simultaneously; that is, both $X$ and $Y$ are divided into subtrees.
+
+Another feature of these problems is that the inner function $\fpsi$ can be bounded for an entire subproblem, and sometimes lead to the ability to {\it prune} a sub-computation.
+In two-point correlation, if $\left(\min_{(x, y) \in X \times Y} ||x - y||\right) > r$, i.e. all pairs of points are within a radius, then $\allpsi(X, Y) = |X| \times |Y|$.
+Unfortunately, this maximum distance is difficult to compute directly.
+Instead, it is reasonable to compute an upper bound for this distance by pessimistically using the hyper-rectangle for each node: $\left(\max_{(x, y) \in X \times Y} ||x - y||\left) < d^\max_\hrect(\sigma_{\hrect}(X), \sigma_{hrect}(Y))$.
+
+The meta-function $\sigma$ corresponds to any relevant summary statistic.
+In addition to the commonplace statistic $\sigma_{\hrect}$, two-point correlation additionally uses the cardinality statistic $\sigma_{\cardinality}(X) = |X|$ if two subsets are within a radius.
+Algorithms that utilize multipole expansions may require the mean, variance, or other moment statistics.
+We then generalize this type of prune as a {\it intrinsic prune}, because it is applicable based only on summary statistics of $X$ and $Y$, based on the following rule:
+\begin{equation}
+\mbox{if } \canprunepsi(\sigma(X), \sigma(Y)) \mbox{, then } \allpsi(X, Y) = \deltapsi(X, Y)
+\label{eqn:intrinsic}
+\end{equation}
+
+\noindent where $\canprunepsi$ is a Boolean indicator that a prune is possible, and $\deltapsi$ summarizes the result of a subproblem.
+For two-point correlction $\deltapsi(X, Y)$ is either $0$ or $|X| \times |Y|$.
+
+As an aside, $\sigma$ is computed in a similar manner, as a function of commutative and associative operators:
+\begin{equation}
+\sigma(X) = \Opsigma_{x \in X} \fsigma(x)
+\label{eqn:defsigma}
+\end{equation}
+
+\noindent and can be computed bottom-up via the rule $\sigma(X) = \sigma(X\left) \opsigma \sigma(X\right)$.
+
+\noindent The previous substitution rules are sufficient for the dual-tree execution of some generalized $N$-body problems.
+A recursive execition will apply Equation \ref{eqn:dividepsi} until both sets are sufficiently small, and directly compute \ref{eqn:naivepsi}.
+However, many other executions, including parallel, are permitted by these rules.
+Thus, by separating the computation of the recurrence relationship from the problem-specific details, parallelization of all these algorithms requires only the up-front cost of a single parallel execution mechanism.
+
+The model shown so far is limited to very simple dual-tree algorithms.
+First, we later discuss additions to allow for efficient computation of query-reference problems such as all-nearest-neighbors and density estimation.
+Additionally, many algorithms, such as nearest-neighbor, classification problems, and approximate density estimates, require information about previous pairwise computation in order to determine whether pruning is possible.
+Nonetheless, this simple model leads to effective parallelization of problems such as two-point correlation\footnote{WALDO list more}.
+
+\subsection{Just the math: Query-reference problems}
+
+A query-reference problem performs a computation over an entire reference $R$ set independently for each point in a query set $Q$:
+\begin{equation}
+\allrho(q, R) = \gmu \left( \Opmu_{r \in R} \fmu(q, r) \right)
+\end{equation}
+
+\noindent This type of problem includes, in addition to the classic \nbody force calculation, the problems of all-nearest-neighbors, k-nearest-neighbors classification, kernel density estimation, and more.
+Although each query is independent, speedup is achievable by looking at queries {\it en masse}.
+For instance, one the contribution of one set of references on an entire set of queries might be known exactly, or easily approximated.
+
+\subsubsection{Intrinsic Prunes}
+
+We apply a small transformation to the problem to allow for the problems where the distributive property applies between $\fmu(\cdot, \cdot)$ and $\Opmu$\footnote{As an example, some problems that are computable via polar expansions can accumulate the multipole moments first for an entire subtree of queries, propgate the moments over all the queries, and evaluate the expression independently for each query.}.
+First, decompose $\fmu$ into two functions $\fpi$ and $\gpi$ such that $\gpi(q, \fpi(q, r)) = \fmu(q, r)$, such that the following holds:
+\begin{equation}
+\allrho(q, R) = \gpi \left(q, \Oppi_{r \in R} \fpi(q, r) \right)
+\end{equation}
+
+\noindent If $\fmu$ and $\Opmu$ completely distributive, then the inner function $\fpi(q, r) = r$; if they are not distributive, then the outer function $\gpi(q, x) = x$.
+In a dual-tree algorithm $\allrho$ can be rewritten, renaming the inner computation as $\allpi$:
+\begin{equation}
+\allpi(\{q\}, R) = \Oppi_{r \in R} \fpi(q, r)
+\label{eqn:defpi}
+\end{equation}
+
+\noindent The first argument to $\allpi$ is actually a set.
+For simplicity, we will first discuss the single tree approach where the first argument is only a single query.
+Then, $\allpi$ can be computed recursively:
+\begin{equation}
+\allpi(Q, R) = \allpi(Q, R\left) \oppi \allpi(Q, R\right)
+\label{eqn:dividepi}
+\end{equation}
+
+\noindent An intrinsic prune can be defined for query-reference problems:
+\begin{equation}
+\mbox{if } \canprunepi(\sigma(Q), \sigma(R)) \mbox{, then} \allpi(Q, R) = \deltapi(\sigma(Q), \sigma(R))
+\label{eqn:prunepi}
+\end{equation}
+
+In a dual-tree problem, somtimes $\allpi$ can be defined for a large set of queries.
+For instance, in kernel density estimation for a finite kernel, $\allpi(Q, R)$ is zero if $d^{\max}_{\hrect}(\sigma_{\hrect}(Q), \sigma_{\hrect}(R))$ is greater than the bandwidth.
+When a prune happens over a large span of queries, we can apply this prune to each query.
+Expressed formally:
+\begin{equation}
+\mbox{if a prune occured for } Q\parent \supset Q \mbox{, then } \allpi(Q, R) = \allpi(Q\parent, R)
+\end{equation}
+
+\subsubsection{Extrinsic Prunes}
+
+Query-reference problems may also prune computations based on previous results computed for a query\footnote{Global reduction problems have this kind of prune too, but we omitted it for space; it is far simpler than for query reference problems}.
+In the all nearest neighbors problem, if $d^{\min}_{\hrect}(\sigma_{\hrect}(Q), \sigma{\hrect}(R))$ is greater than any of the candidate nearest neighbors found so far, then the computation can be skipped.
+
+begin(ask ryan about this)
+
+Extrinsic prunes are typically due to two properties: if either $\grho$ or $\Oprho$ results in information loss, or if the current calculated values have a low enough error value to yield an approximate answer.
+For the former, $\grho$ may be an indicator of whether the inner value is above or below a threshold -- if the lower and upper bounds show that the inner value is definitely on some side of the thresold, the computation is pruned.
+
+end(ask ryan)
+
+We can define $\allmu(Q, R)$ as a bound on the results of all query points within a set, $\max_{q \in Q} \pi({q}, R)$.
+
+(DEFINE MAX)
+
+$$\allmu(Q, R) = \max_{q \in Q} \allrho(q, R)$$
+
+$$\allmu(\{q\}, R) = \allrho(q, R)$$
+
+$$\allmu(Q, R) \leq \gpi^{\max}(\sigma(Q), \pi(Q, R))$$
+
+$$\allmu(Q, R) = \allmu(Q\left, R) \Opmuv \allmu(Q\right, R)$$
+
+$$\allmu(Q, R) \leq \allmu(Q, R\left) \Opmuh \allmu(Q, R\right)$$
+
+more rules...
 
 \subsection{Global Reductions}
 
