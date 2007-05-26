@@ -431,6 +431,7 @@ void TREE__::InitAllKNearestNeighborOutput(string file,
 	const int32 kChunk=8192;
 	typename Node_t::NNResult *buffer;
 	buffer=new typename Node_t::NNResult[kChunk*knns];
+	printf("Generating output file...\n");
 	for(index_t i=0; i<num_of_points_/kChunk; i++) {
 	  fwrite(buffer, sizeof(typename Node_t::NNResult),kChunk*knns, fp );
 	}
@@ -446,9 +447,19 @@ void TREE__::InitAllKNearestNeighborOutput(string file,
 	  fprintf(stderr, "Unable to map file: %s", strerror(errno));
 		assert(false);
 	}
+	if (madvise(ptr, sizeof(typename Node_t::NNResult)*knns*num_of_points_,
+			   	MADV_SEQUENTIAL)!=0) {
+	  NONFATAL("It wasn't possible to advise output, error: %s", 
+			    strerror(errno)); 
+	}
+
+
 	close(fd);
   all_nn_out_.set_ptr(ptr);
+	printf("Now visiting nodes to initialize output...\n");
+	fx_timer_start(NULL, "init_knn");
 	InitAllKNearestNeighborOutput(parent_, knns);
+	fx_timer_stop(NULL, "init_knn");
 }
 
 
@@ -457,10 +468,11 @@ void TREE__::InitAllKNearestNeighborOutput(typename TREE__::NodePtr_t ptr,
 		                                        int32 knns) {
 	ptr.Lock();
   if (ptr->IsLeaf()) {
-  	ptr->set_kneighbors(all_nn_out_.Allocate(ptr->get_num_of_points(), knns),
+   	ptr->set_kneighbors(all_nn_out_.Allocate(ptr->get_num_of_points(), knns),
 			                                       knns);
 	  ptr->InitKNeighbors(knns);
-		ptr->set_min_dist_so_far(numeric_limits<Precision_t>::max());
+		ptr->set_min_dist_so_far(numeric_limits<Precision_t>::max()); 
+	//	printf("leaf_id: %i\n", ptr->get_node_id());
 		ptr.Unlock();
 	} else {
 		NodePtr_t left = ptr->get_left();
@@ -470,7 +482,6 @@ void TREE__::InitAllKNearestNeighborOutput(typename TREE__::NodePtr_t ptr,
 		NodePtr_t right=ptr->get_right();
 		ptr.Unlock();
 		InitAllKNearestNeighborOutput(right, knns);
-		
 	}
 
 }

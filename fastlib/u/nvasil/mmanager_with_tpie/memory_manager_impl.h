@@ -348,19 +348,20 @@ inline void MEMORY_MANAGER__::MoveToDisk(index_t paddress){
   }
   off_t disk_offset = paddress * page_size_/kTPIEPageSize;
 	AMI_err ae;
-  if (unlikely((ae=disk_->seek(disk_offset))!=AMI_ERROR_NO_ERROR)) {
+  
+	if (unlikely((ae=disk_->seek(disk_offset))!=AMI_ERROR_NO_ERROR)) {
 	  cout << "AMI_ERROR " << ae << "\n";
 		if (paddress<0) {
 		  FATAL("Null pointer exception!\n");
 		}
     FATAL("Unable to seek to %llu \n", (unsigned long long)disk_offset);
 	}	
-   
- 	if ((ae=disk_->write_array((Page *)page_address_[paddress], 
+ 	if ((ae=disk_->write_array((Page *)(page_address_[paddress]), 
 					                  page_size_/kTPIEPageSize))!=AMI_ERROR_NO_ERROR) {
 	  cout << "AMI ERROR " << ae << " while transfering block to disk\n";
 		FATAL(" An error occured whule trying to write on disk\n");
 	}
+
 }
 
 
@@ -431,7 +432,7 @@ TEMPLATE__
 inline void MEMORY_MANAGER__::SetPageModified(index_t cache_page) {
   page_modified_[cache_page] = true;
   // need to set the appropriate system page unprotected
-  ProtectSysPagesAffected(cache_page, PROT_WRITE);
+   ProtectSysPagesAffected(cache_page, PROT_WRITE);
 }
 
 // Unprotects all the system pages that include the requested cache_page
@@ -482,8 +483,9 @@ inline index_t MEMORY_MANAGER__::LeastNeededPage() {
   	  least_recently_used_time = page_timestamp_[i];
     }
   }
-  DEBUG_ASSERT_MSG(least_recently_used!=-1, 
-			"All paged are locked  and cache i stalled. Try to unlock");
+  if (unlikely(least_recently_used==-1)) {
+		FATAL("All paged are locked  and cache is stalled. Try to unlock");
+	}
   return least_recently_used ;
 //  return rand() % num_of_pages_;
 }
@@ -525,10 +527,7 @@ inline bool MEMORY_MANAGER__::get_page_modified(index_t cache_page) {
   return page_modified_[cache_page];
 }
 
-TEMPLATE__
-inline index_t MEMORY_MANAGER__::get_num_of_pages() {
-  return num_of_pages_;
-}
+
 
 TEMPLATE__
 inline index_t MEMORY_MANAGER__::GetLastObjectAddress(char *ptr) {
@@ -600,12 +599,10 @@ void MEMORY_MANAGER__::CreateNewPageOnDisk() {
 	  cout << "AMI_ERROR " << ae << "\n";
     FATAL("Unable to seek to %llu \n", (unsigned long long)disk_offset);
 	}	
-	for(index_t i=0; i< num_of_pages_; i++) {
-	  if ((ae=disk_->write_array((Page *)(ptr),
-		  	 page_size_/kTPIEPageSize))!=AMI_ERROR_NO_ERROR) {
+	if ((ae=disk_->write_array((Page *)(ptr),
+	  	 page_size_/kTPIEPageSize))!=AMI_ERROR_NO_ERROR) {
 		  cout << "AMI_ERROR " << ae << " during disk_.write_item()\n";
 			exit(1);
-		}
 	}
 	delete []ptr;
 }
