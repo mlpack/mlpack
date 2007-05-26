@@ -68,6 +68,7 @@ class BinaryTree {
 		Result_t *Allocate(int32 num_of_points, int32 knns) {
 		  Result_t *result=ptr_+num_;
 			num_+=knns*num_of_points;
+			printf("%i\n", num_);
 		  return result;	
 		}
 	 private:

@@ -32,7 +32,6 @@ struct Parameters {
 	std::string temp_dir_;
 	std::string memory_engine_;
 	int32 page_size_;
-	int64 cache_size_;
 	int32 knns_;
 	std::string memory_file_;
   BinaryDataset<float32> data_;	
@@ -127,11 +126,15 @@ void DuallTreeAllNearestNeighbors(Parameters &args) {
 	fx_timer_start(NULL, "build");	
 	tree.BuildDepthFirst();
 	fx_timer_stop(NULL, "build");
+  printf("Memory usage: %llu\n",
+	        (unsigned long long)TREE::Allocator_t::allocator_->get_usage());
+	printf("%s\n", tree.Statistics().c_str());
 	args.data_.Destruct();
 	printf("Initializing all nearest neighbor output...\n");
   tree.InitAllKNearestNeighborOutput(args.out_file_, 
 				                              args.knns_);
 	printf("Computing all nearest neighbors...\n");
+	fflush(stdout);
   fx_timer_start(NULL, "dualltree");	
 	tree.AllNearestNeighbors(tree.get_parent(), args.knns_);
 	fx_timer_stop(NULL, "dualltree");

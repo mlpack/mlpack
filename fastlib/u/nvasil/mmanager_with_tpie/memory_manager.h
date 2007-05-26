@@ -276,14 +276,23 @@ class MemoryManager {
   	return total_num_of_page_faults_;
   }
 	
-	index_t get_num_of_pages();
+	index_t get_num_of_pages() {
+	  return num_of_pages_;
+	}
 
+	index_t get_usage() {
+	  return current_offset_;
+	}
 	void set_cache_size(index_t cache_size) {
 	  cache_size_=cache_size;
 	}
 
 	void set_page_size(int32 page_size) {
-	  page_size_= page_size;
+	  if (page_size_ % system_page_size_ !=0) {
+		  FATAL("Page size must be a multiple of the system page size %i\n",
+					  system_page_size_);
+		}
+		page_size_= page_size;
 	}
   
 	void set_cache_file(string cache_file) {
@@ -402,26 +411,9 @@ int FaultHandler(void *fault_address, int serious) {
       fault_address < allocator->cache_ + allocator->cache_size_){
     index_t cache_page = (ptrdiff_t)((char*)fault_address - allocator->cache_) 
        / allocator->page_size_;
-   // page has to be set as modified 
+   
+		// page has to be set as modified 
    allocator->SetPageModified(cache_page);
-   index_t system_page = (ptrdiff_t)fault_address  / allocator->system_page_size_;
-   pair<index_t, index_t> * p=allocator->PagesAffectedBySEGV(system_page);
-   // if all pages that are covered by the system page are modified
-   // then the whole page should be set uprotected;
-   for(index_t i=p->first; i<=p->second; i++) {
-     if (likely(!allocator->IsPageModified(
-						 static_cast<index_t>(cache_page + i)))) {
-      return 1 ;
-     }
-   } 
-   char *addr = allocator->cache_ + allocator->system_page_size_ *
-       ((ptrdiff_t)((char*)fault_address - allocator->cache_)
-        / allocator->system_page_size_);
-   if (unlikely(mprotect(addr, 
-					 allocator->system_page_size_, PROT_READ | PROT_WRITE) !=0)) {
-     FATAL("Error %s while trying to change the protection\n", 
-            strerror(errno));
-   } 
    return 1;
  } 
      
