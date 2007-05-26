@@ -39,6 +39,45 @@
 \newcommand{\xx}{\hspace{0.3in}}
 \newcommand{\xxx}{\hspace{0.45in}}
 
+\newcommand{\nbody}{$n$-body}
+
+\newcommand{\kdleft}{^L}
+\newcommand{\kdright}{^R}
+\newcommand{\kdparent}{^P}
+
+\newcommand{\allpsi}{\Psi}
+\newcommand{\Oppsi}{\fbox{$\Psi$}}
+\newcommand{\oppsi}{\fbox{$\Psi$}}
+\newcommand{\fpsi}{f_{\Psi}}
+\newcommand{\gpsi}{g_{\Psi}}
+\newcommand{\canprunepsi}{C_{\Psi}}
+\newcommand{\deltapsi}{\delta_{\Psi}}
+
+\newcommand{\allpi}{\pi}
+\newcommand{\Oppi}{\fbox{$\pi$}}
+\newcommand{\oppi}{\fbox{$\pi$}}
+\newcommand{\fpi}{f_{\pi}}
+\newcommand{\gpi}{g_{\pi}}
+\newcommand{\canprunepi}{C_{\pi}}
+\newcommand{\deltapi}{\delta_{\pi}}
+
+\newcommand{\allrho}{\rho}
+\newcommand{\Oprho}{\fbox{$\rho$}}
+\newcommand{\oprho}{\fbox{$\rho$}}
+\newcommand{\frho}{f_{\rho}}
+\newcommand{\grho}{g_{\rho}}
+
+\newcommand{\allmu}{\mu}
+\newcommand{\Opmu}{\fbox{$\mu$}}
+\newcommand{\opmu}{\fbox{$\mu$}}
+\newcommand{\fmu}{f_{\mu}}
+\newcommand{\gmu}{g_{\mu}}
+
+\newcommand{\allsigma}{\sigma}
+\newcommand{\Opsigma}{\fbox{$\sigma$}}
+\newcommand{\opsigma}{\fbox{$\sigma$}}
+\newcommand{\fsigma}{f_{\sigma}}
+
 %\documentstyle[times,art10,twocolumn,latex8]{article}
 
 %------------------------------------------------------------------------- 
@@ -238,28 +277,28 @@ For instance, the two-point correlation problem $\TWOPT(X, r) = \sum_{(x, y) \in
 %WALDO: Missing: abelian monoid
 
 Since $\Oppsi$ is commutative and associative, we can break its computation arbitrarily.
-Consider a tree decomposition by partitioning set $X$ into subsets $X\left$ and $X\right$.
+Consider a tree decomposition by partitioning set $X$ into subsets $X\kdleft$ and $X\kdright$.
 Using this decomposition, we can decompose $\allpsi$ using one of two identities:
-\begin{equationarray}
-\allpsi(X, Y) &=& \allpsi(X\left, Y) \oppsi \allpsi(X\right, Y)
+\begin{eqnarray}
+\allpsi(X, Y) &=& \allpsi(X\kdleft, Y) \oppsi \allpsi(X\kdright, Y)
 \\
-\allpsi(X, Y) &=& \allpsi(X, Y\left) \oppsi \allpsi(X, Y\right)
+\allpsi(X, Y) &=& \allpsi(X, Y\kdleft) \oppsi \allpsi(X, Y\kdright)
 \label{eqn:dividepsi}
-\end{equationarray}
+\end{eqnarray}
 
 Dual-tree algorithms are typically executed in a recursion such that both transformations are applied simultaneously; that is, both $X$ and $Y$ are divided into subtrees.
 
 Another feature of these problems is that the inner function $\fpsi$ can be bounded for an entire subproblem, and sometimes lead to the ability to {\it prune} a sub-computation.
 In two-point correlation, if $\left(\min_{(x, y) \in X \times Y} ||x - y||\right) > r$, i.e. all pairs of points are within a radius, then $\allpsi(X, Y) = |X| \times |Y|$.
 Unfortunately, this maximum distance is difficult to compute directly.
-Instead, it is reasonable to compute an upper bound for this distance by pessimistically using the hyper-rectangle for each node: $\left(\max_{(x, y) \in X \times Y} ||x - y||\left) < d^\max_\hrect(\sigma_{\hrect}(X), \sigma_{hrect}(Y))$.
+Instead, it is reasonable to compute an upper bound for this distance by pessimistically using the hyper-rectangle for each node: $\left(\max_{(x, y) \in X \times Y} ||x - y||\right) < d^{\max}_{\hrect}(\sigma_{\hrect}(X), \sigma_{hrect}(Y))$.
 
 The meta-function $\sigma$ corresponds to any relevant summary statistic.
 In addition to the commonplace statistic $\sigma_{\hrect}$, two-point correlation additionally uses the cardinality statistic $\sigma_{\cardinality}(X) = |X|$ if two subsets are within a radius.
 Algorithms that utilize multipole expansions may require the mean, variance, or other moment statistics.
 We then generalize this type of prune as a {\it intrinsic prune}, because it is applicable based only on summary statistics of $X$ and $Y$, based on the following rule:
 \begin{equation}
-\mbox{if } \canprunepsi(\sigma(X), \sigma(Y)) \mbox{, then } \allpsi(X, Y) = \deltapsi(X, Y)
+\text{if } \canprunepsi(\sigma(X), \sigma(Y)) \text{, then } \allpsi(X, Y) = \deltapsi(X, Y)
 \label{eqn:intrinsic}
 \end{equation}
 
@@ -272,7 +311,7 @@ As an aside, $\sigma$ is computed in a similar manner, as a function of commutat
 \label{eqn:defsigma}
 \end{equation}
 
-\noindent and can be computed bottom-up via the rule $\sigma(X) = \sigma(X\left) \opsigma \sigma(X\right)$.
+\noindent and can be computed bottom-up via the rule $\sigma(X) = \sigma(X\kdleft) \opsigma \sigma(X\kdright)$.
 
 \noindent The previous substitution rules are sufficient for the dual-tree execution of some generalized $N$-body problems.
 A recursive execition will apply Equation \ref{eqn:dividepsi} until both sets are sufficiently small, and directly compute \ref{eqn:naivepsi}.
@@ -288,7 +327,7 @@ Nonetheless, this simple model leads to effective parallelization of problems su
 
 A query-reference problem performs a computation over an entire reference $R$ set independently for each point in a query set $Q$:
 \begin{equation}
-\allrho(q, R) = \gmu \left( \Opmu_{r \in R} \fmu(q, r) \right)
+\allrho(q, R) = \gmu \left( \Opmu_{r \in R} \fmu (q, r) \right)
 \end{equation}
 
 \noindent This type of problem includes, in addition to the classic \nbody force calculation, the problems of all-nearest-neighbors, k-nearest-neighbors classification, kernel density estimation, and more.
@@ -314,13 +353,13 @@ In a dual-tree algorithm $\allrho$ can be rewritten, renaming the inner computat
 For simplicity, we will first discuss the single tree approach where the first argument is only a single query.
 Then, $\allpi$ can be computed recursively:
 \begin{equation}
-\allpi(Q, R) = \allpi(Q, R\left) \oppi \allpi(Q, R\right)
+\allpi(Q, R) = \allpi(Q, R\kdleft) \oppi \allpi(Q, R\kdright)
 \label{eqn:dividepi}
 \end{equation}
 
 \noindent An intrinsic prune can be defined for query-reference problems:
 \begin{equation}
-\mbox{if } \canprunepi(\sigma(Q), \sigma(R)) \mbox{, then} \allpi(Q, R) = \deltapi(\sigma(Q), \sigma(R))
+\text{if } \canprunepi(\sigma(Q), \sigma(R)) \text{, then} \allpi(Q, R) = \deltapi(\sigma(Q), \sigma(R))
 \label{eqn:prunepi}
 \end{equation}
 
@@ -329,7 +368,7 @@ For instance, in kernel density estimation for a finite kernel, $\allpi(Q, R)$ i
 When a prune happens over a large span of queries, we can apply this prune to each query.
 Expressed formally:
 \begin{equation}
-\mbox{if a prune occured for } Q\parent \supset Q \mbox{, then } \allpi(Q, R) = \allpi(Q\parent, R)
+\text{if a prune occured for } Q\kdparent \supset Q \text{, then } \allpi(Q, R) = \allpi(Q\kdparent, R)
 \end{equation}
 
 \subsubsection{Extrinsic Prunes}
@@ -354,9 +393,9 @@ $$\allmu(\{q\}, R) = \allrho(q, R)$$
 
 $$\allmu(Q, R) \leq \gpi^{\max}(\sigma(Q), \pi(Q, R))$$
 
-$$\allmu(Q, R) = \allmu(Q\left, R) \Opmuv \allmu(Q\right, R)$$
+$$\allmu(Q, R) = \max(\allmu(Q\kdleft, R), \allmu(Q\kdright, R))$$
 
-$$\allmu(Q, R) \leq \allmu(Q, R\left) \Opmuh \allmu(Q, R\right)$$
+$$\allmu(Q, R) \leq \allmu(Q, R\kdleft) \Opmu \allmu(Q, R\kdright)$$
 
 more rules...
 
