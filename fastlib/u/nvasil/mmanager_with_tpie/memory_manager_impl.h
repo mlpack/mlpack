@@ -75,6 +75,12 @@ void MEMORY_MANAGER__::Init() {
 	// Block transfer engine Initializations
 	MM_manager.ignore_memory_limit();
 	AMI_err ae;
+	struct stat info;
+  if (stat(cache_file_.c_str(), &info) == 0) {
+			NONFATAL("Warning file %s already exists, if it is not a valid TPIE file, "
+				       "system will give a floating point exception",
+						     cache_file_.c_str());
+	}
 	disk_= new AMI_STREAM<Page>(cache_file_.c_str());
 	for(index_t i=0; i< num_of_pages_; i++) {
 	  if ((ae=disk_->write_array((Page *)(cache_+i*page_size_),
@@ -432,27 +438,21 @@ TEMPLATE__
 inline void MEMORY_MANAGER__::SetPageModified(index_t cache_page) {
   page_modified_[cache_page] = true;
   // need to set the appropriate system page unprotected
-   ProtectSysPagesAffected(cache_page, PROT_WRITE);
+   ProtectSysPagesAffected(cache_page, PROT_READ | PROT_WRITE);
 }
 
 // Unprotects all the system pages that include the requested cache_page
 TEMPLATE__
 inline void MEMORY_MANAGER__::ProtectSysPagesAffected(index_t cache_page, 
-		                                               int permission) {
-  char *page_ptr1 = cache_ + cache_page * page_size_;
-  char *page_ptr2 = cache_ + (cache_page+1) * page_size_ -1;
-  uint64 sys_page1 = (page_ptr1 - cache_) / system_page_size_;
-  uint64 sys_page2 = (page_ptr2 - cache_) / system_page_size_;
+		                                                  int permission) {
+  char *addr = cache_ + cache_page * page_size_;
 
-  for(uint64 i = sys_page1; i <= sys_page2; i++) {
-    char *addr =  cache_ + (i * system_page_size_);
-    if (unlikely(mprotect(addr, system_page_size_, permission) !=0)) {
-      const char *temp="Error %s while trying to "
-				                "change the protection\n"
-												"Page Address %p\n";
-			FATAL(temp, strerror(errno), addr);
-	  }
-	}
+  if (unlikely(mprotect(addr, page_size_, permission) !=0)) {
+   FATAL("Error %s while trying to "
+				 "change the protection\n"
+				 "Page Address %p\n", strerror(errno), addr);
+  }
+	
 }
 
 TEMPLATE__

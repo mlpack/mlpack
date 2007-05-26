@@ -289,7 +289,7 @@ class MemoryManager {
 
 	void set_page_size(int32 page_size) {
 	  if (page_size_ % system_page_size_ !=0) {
-		  FATAL("Page size must be a multiple of the system page size %i\n",
+		  FATAL("Page size must be a multiple of the system page size %li\n",
 					  system_page_size_);
 		}
 		page_size_= page_size;
