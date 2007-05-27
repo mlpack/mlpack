@@ -36,11 +36,13 @@ struct Parameters {
 	std::string memory_file_;
   BinaryDataset<float32> data_;	
 	uint64 capacity_;
-	
+  bool specialized_for_knns_;	
 };
 
 template<typename TREE>
 void DuallTreeAllNearestNeighbors(Parameters &args);
+template<typename TREE>
+void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args);
 
 int main(int argc, char *argv[]) {
   MM_manager.ignore_memory_limit();
@@ -70,9 +72,10 @@ int main(int argc, char *argv[]) {
 	args.out_file_ = fx_param_str(NULL, "out_file", "allnn");
   args.capacity_ = fx_param_int(NULL, "capacity", 134217728);
 	args.knns_ = fx_param_int(NULL, "knns", 2);
-	args.page_size_=fx_param_int(NULL, "page_size", 4096);
+	args.page_size_ = fx_param_int(NULL, "page_size", 4096);
   args.memory_file_ = fx_param_str(NULL, "memory_file", "temp_mem"); 
   args.memory_engine_ = fx_param_str(NULL, "memory_engine", "mmapmm");
+	args.specialized_for_knns_ = fx_param_int(NULL, "specialized_for_knns", false);
 	printf("Creating swap file...\n");
  	if (args.memory_engine_ == "mmapmm") {
 		mmapmm::MemoryManager<false>::allocator_ = 
@@ -84,7 +87,12 @@ int main(int argc, char *argv[]) {
 			  allocator_->set_pool_name(args.memory_file_);
 
 		mmapmm::MemoryManager<false>::allocator_->Init();
-		DuallTreeAllNearestNeighbors<BinaryKdTreeMMAPMM_t>(args);    	  
+		if (args.specialized_for_knns_==true) {
+      DuallTreeAllNearestNeighborsSpecializedForKnn<
+			    BinaryKdTreeMMAPMMKnnNode_t>(args);
+		} else {
+		  DuallTreeAllNearestNeighbors<BinaryKdTreeMMAPMM_t>(args);    	  
+		}  
     if (!fx_param_exists(NULL, "data_file")) {
 		  unlink(args.data_file_.c_str()); 
 		}	
@@ -102,8 +110,12 @@ int main(int argc, char *argv[]) {
 			  allocator_->set_cache_file(args.memory_file_);
 
 		  tpiemm::MemoryManager<false>::allocator_->Init();
-
-	    DuallTreeAllNearestNeighbors<BinaryKdTreeTPIEMM_t>(args);    	  
+     if (args.specialized_for_knns_==true) {
+       DuallTreeAllNearestNeighborsSpecializedForKnn<
+				 BinaryKdTreeTPIEMMKnnNode_t>(args);    	  
+		 } else {
+	     DuallTreeAllNearestNeighbors<BinaryKdTreeTPIEMM_t>(args);    	  
+		 }
       if (!fx_param_exists(NULL, "data_file")) {
 		    unlink(args.data_file_.c_str()); 
 		  }	
@@ -140,5 +152,27 @@ void DuallTreeAllNearestNeighbors(Parameters &args) {
 	fx_timer_stop(NULL, "dualltree");
 	tree.CloseAllKNearestNeighborOutput(args.knns_);
   unlink(args.out_file_.c_str());	
+}
+
+template<typename TREE>
+void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args) {
+  TREE tree;
+	printf("Building the tree...");
+	tree.Init(&args.data_);
+
+	fx_timer_start(NULL, "build");	
+	tree.BuildDepthFirst();
+	fx_timer_stop(NULL, "build");
+  printf("Memory usage: %llu\n",
+	        (unsigned long long)TREE::Allocator_t::allocator_->get_usage());
+	printf("%s\n", tree.Statistics().c_str());
+	args.data_.Destruct();
+	printf("Computing all nearest neighbors...\n");
+	fflush(stdout);
+  fx_timer_start(NULL, "dualltree");	
+	tree.AllNearestNeighbors(tree.get_parent(), args.knns_);
+	fx_timer_stop(NULL, "dualltree");
+  tree.CollectKNearestNeighborWithMMAP(args.out_file_.c_str());
+	unlink(args.out_file_.c_str());	
 }
 
