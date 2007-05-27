@@ -38,16 +38,16 @@ using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class BinaryTreeTest {
  public:
-  typedef typename TYPELIST::Precision_t   Precision_t;
-	typedef typename TYPELIST::Allocator_t   Allocator_t;
-  typedef typename TYPELIST::Metric_t      Metric_t;
-	typedef typename TYPELIST::BoundingBox_t BoundingBox_t;
-	typedef typename TYPELIST::NodeCachedStatistics_t NodeCachedStatistics_t;
-	typedef typename TYPELIST::PointIdDiscriminator_t PointIdDiscriminator_t;
+	typedef typename TYPELIST::Node_t      Node_t;
+  typedef typename Node_t::Precision_t   Precision_t;
+	typedef typename Node_t::Allocator_t   Allocator_t;
+  typedef typename Node_t::Metric_t      Metric_t;
+	typedef typename Node_t::BoundingBox_t BoundingBox_t;
+	typedef typename Node_t::NodeCachedStatistics_t NodeCachedStatistics_t;
+	typedef typename Node_t::PointIdDiscriminator_t PointIdDiscriminator_t;
 	typedef typename TYPELIST::Pivot_t Pivot_t;
 	typedef Point<Precision_t, Allocator_t> Point_t; 
 	typedef BinaryTree<TYPELIST, diagnostic> BinaryTree_t;
-	typedef typename BinaryTree_t::Node_t Node_t;
   BinaryTreeTest() {
 	}	
 	void Init() {
@@ -288,13 +288,16 @@ struct BasicTypes1 {
 	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
-struct Parameters1 {
+struct NodeParameters1 {
   typedef float32 Precision_t;
 	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 	typedef HyperRectangle<BasicTypes1, false> BoundingBox_t;
 	typedef NullStatistics<Loki::NullType> NodeCachedStatistics_t;
   typedef SimpleDiscriminator PointIdDiscriminator_t;
+};
+struct TreeParameters1 {
+  typedef Node<NodeParameters1, false> Node_t;
   typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
 };
 struct BasicTypes2 {
@@ -302,7 +305,7 @@ struct BasicTypes2 {
 	typedef tpiemm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
-struct Parameters2 {
+struct NodeParameters2 {
   typedef float32 Precision_t;
 	typedef tpiemm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
@@ -312,9 +315,14 @@ struct Parameters2 {
   typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
 };
 
+struct TreeParameters2 {
+  typedef Node<NodeParameters2, false> Node_t;
+  typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
+};
 
-typedef BinaryTreeTest<Parameters1, false> BinaryTreeTest1_t;
-typedef BinaryTreeTest<Parameters2, false> BinaryTreeTest2_t;
+
+typedef BinaryTreeTest<TreeParameters1, false> BinaryTreeTest1_t;
+typedef BinaryTreeTest<TreeParameters2, false> BinaryTreeTest2_t;
 
 int main(int argc, char *argv[]) {
   BinaryTreeTest1_t test1;

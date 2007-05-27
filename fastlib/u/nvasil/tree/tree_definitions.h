@@ -25,6 +25,8 @@
 #include "u/nvasil/tree/hyper_rectangle.h"
 #include "u/nvasil/tree/point_identity_discriminator.h"
 #include "u/nvasil/tree/kd_pivoter1.h"
+#include "u/nvasil/tree/node.h"
+#include "u/nvasil/tree/knn_node.h"
 #include "u/nvasil/tree/binary_tree.h"
 
 TREE_PARAMETERS(TPIEMM,
@@ -51,13 +53,16 @@ struct BasicTypes1 {
 	typedef tpiemm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
-struct Parameters1 {
+struct NodeParameters1 {
   typedef float32 Precision_t;
 	typedef tpiemm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 	typedef HyperRectangle<BasicTypes1, false> BoundingBox_t;
 	typedef NullStatistics<Loki::NullType> NodeCachedStatistics_t;
   typedef SimpleDiscriminator PointIdDiscriminator_t;
+};
+struct TreeParameters1 {
+  typedef Node<NodeParameters1, false>;
   typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
 };
 struct BasicTypes2 {
@@ -65,7 +70,7 @@ struct BasicTypes2 {
 	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
-struct Parameters2 {
+struct NodeParameters2 {
   typedef float32 Precision_t;
 	typedef mmapmm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
@@ -74,9 +79,22 @@ struct Parameters2 {
   typedef SimpleDiscriminator PointIdDiscriminator_t;
   typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
 };
+struct TreeParameters2 {
+  typedef KnnNode<NodeParameters1, false>;
+  typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
+};
+truct TreeParameters3 {
+  typedef KnnNode<NodeParameters1, false>;
+  typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
+};
+struct TreeParameters4 {
+  typedef KnnNode<NodeParameters2, false>;
+  typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
+};
 
-
-typedef BinaryTree<Parameters1, false> BinaryKdTreeTPIEMM_t;
-typedef BinaryTree<Parameters2, false> BinaryKdTreeMMAPMM_t;
+typedef BinaryTree<TreeParameters1, false> BinaryKdTreeTPIEMM_t;
+typedef BinaryTree<TreeParameters2, false> BinaryKdTreeMMAPMM_t;
+typedef BinaryTree<TreeParameters3, false> BinaryKdTreeTPIEMM_KnnNode_t;
+typedef BinaryTree<TreeParameters4, false> BinaryKdTreeMMAPMM_KnnNode_t;
 
 

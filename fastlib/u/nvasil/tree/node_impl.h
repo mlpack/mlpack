@@ -156,11 +156,7 @@ inline void NODE__::FindNearest(POINTTYPE query_point,
   // for k-nearest neighbors 
   if (Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false) {
 	  typename  std::vector<pair<Precision_t, Point_t> >::iterator it;
-		//it=nearest.begin()+(index_t)range;
-		index_t j=0;
-		for(it=nearest.begin(), j=0; j<(index_t)range; j++) {
-		  it++;
-		}
+		it=nearest.begin()+(index_t)range;
   	std::sort(nearest.begin(), 
 				      nearest.end(),
 							PairComparator());
