@@ -30,21 +30,23 @@
 #include <vector> 
 #include <list>
 #include "fastlib/fastlib.h"
-#include "node.h"
-#include "show_progress.h"
+#include "u/nvasil/loki/static_check.h"
+#include "u/nvasil/tree/node.h"
+#include "u/nvasil/tree/knn_node.h"
+#include "u/nvasil/tree/show_progress.h"
 using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class BinaryTree {
- public:
-	typedef typename TYPELIST::Precision_t   Precision_t;
-	typedef typename TYPELIST::Allocator_t   Allocator_t;
-  typedef typename TYPELIST::Metric_t      Metric_t;
-	typedef typename TYPELIST::BoundingBox_t BoundingBox_t;
-	typedef typename TYPELIST::NodeCachedStatistics_t NodeCachedStatistics_t;
-	typedef typename TYPELIST::PointIdDiscriminator_t PointIdDiscriminator_t;
+ public: 
+	typedef typename TYPELIST::Node_t      Node_t; 
+	typedef typename Node_t::Precision_t   Precision_t;
+	typedef typename Node_t::Allocator_t   Allocator_t;
+  typedef typename Node_t::Metric_t      Metric_t;
+	typedef typename Node_t::BoundingBox_t BoundingBox_t;
+	typedef typename Node_t::NodeCachedStatistics_t NodeCachedStatistics_t;
+	typedef typename Node_t::PointIdDiscriminator_t PointIdDiscriminator_t;
 	typedef typename TYPELIST::Pivot_t Pivot_t;
 	typedef typename Allocator_t::template ArrayPtr<Precision_t> Array_t;
-  typedef Node<TYPELIST, diagnostic> Node_t;
 	typedef typename Allocator_t::template Ptr<Node_t> NodePtr_t;
 	typedef typename Allocator_t::template Ptr<NodePtr_t> NodePtrPtr_t;
 	typedef Point<Precision_t, Allocator_t> Point_t;
@@ -52,7 +54,7 @@ class BinaryTree {
 	typedef BinaryTree<TYPELIST, diagnostic> BinaryTree_t;
   typedef typename Pivot_t::PivotInfo PivotInfo_t;	
   // For testing purposes only
-  template<typename, bool >friend class BinaryTreeTest;
+  template<typename, bool> friend class BinaryTreeTest;
 
 	class OutPutAllocator {
 	 public: 
@@ -68,7 +70,6 @@ class BinaryTree {
 		Result_t *Allocate(int32 num_of_points, int32 knns) {
 		  Result_t *result=ptr_+num_;
 			num_+=knns*num_of_points;
-			printf("%i\n", num_);
 		  return result;	
 		}
 	 private:
@@ -80,7 +81,7 @@ class BinaryTree {
 	void Init(BinaryDataset<Precision_t> *data);
 	void Destruct() {}
   // Call this function to build Depth first a tree
-  void BuildDepthFirst();
+	void BuildDepthFirst();
 	void BuildDepthFirst(NodePtr_t ptr, PivotInfo_t *pivot);
   void BuildBreadthFirst();
 	void BuildBreadthFirst(
@@ -119,6 +120,7 @@ class BinaryTree {
   void InitAllRangeNearestNeighborOutput(NodePtr_t ptr,
 		                                     FILE *fp);
 	void CloseAllRangeNearestNeighborOutput();
+	void CollectKNearestNeighbor(string file);
 	
 	// Print the tree depth first
 	void Print();
@@ -147,6 +149,9 @@ class BinaryTree {
 	}
 	index_t get_max_points_on_leaf() {
 	  return max_points_on_leaf_;
+	}
+	void set_knns(index_t knns) {
+	  knns_=knns;
 	}
  private:
 	// Maximum number of points on a leaf
@@ -187,6 +192,31 @@ class BinaryTree {
   PointIdDiscriminator_t discriminator_;
 	// Does all the partitioning for the tree
 	Pivot_t pivoter_;
+	// This is a value for the knns set ahead when we want to build the tre
+	// specifically for knns
+	index_t knns_;
+  
+	template<typename NODETYPE>
+	struct NodeInitializerTrait {
+    static void Init(NodePtr_t ptr) {
+		  
+		}
+	  static bool IsItGoodForRangeNN=true;
+		static bool IsItGoodForKnnInitialization= true;
+	};
+	
+		
 };
+
+template<>
+template<typename TYPELIST, bool diagnostic>
+struct BinaryTree<TYPELIST, diagnostic>::NodeInitializerTrait<KnnNode<TYPELIST, diagnostic> > {
+  static void Init(BinaryTree<TYPELIST, diagnostic>::NodePtr_t ptr) {
+		ptr->set_kneighbors(BinaryTree<TYPELIST, diagnostic>::knns_);
+  } 
+  static bool IsItGoodForRangeNN=false;
+  static bool IsItGoodForKnnInitialization=false;
+};
+
 #include "binary_tree_impl.h"
 #endif /*BINARY_TREE_H_*/
