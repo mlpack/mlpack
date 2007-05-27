@@ -29,7 +29,7 @@ void KNN_NODE__::Init(const BoundingBox_t &box,
 }
 
 TEMPLATE__
-void KNN_NODE__::Init(const typename NODE__::BoundingBox_t &box,
+void KNN_NODE__::Init(const typename KNN_NODE__::BoundingBox_t &box,
 		      	      const typename KNN_NODE__::NodeCachedStatistics_t &statistics,
 			            index_t node_id,
                   index_t start,
@@ -56,7 +56,7 @@ void KNN_NODE__::Init(const typename NODE__::BoundingBox_t &box,
 } 
 
 TEMPLATE__
-KNN_NODE__::~Node() {
+KNN_NODE__::~KnnNode() {
 }
 
 TEMPLATE__
@@ -72,7 +72,7 @@ void KNN_NODE__::operator delete(void *p) {
                  	
 TEMPLATE__
 template<typename POINTTYPE>
-pair<typename KNN_NODE__::NodePtr_t, typename NODE__::NodePtr_t>                     
+pair<typename KNN_NODE__::NodePtr_t, typename KNN_NODE__::NodePtr_t>                     
 KNN_NODE__::ClosestChild(POINTTYPE point, int32 dimension, 
 		                 ComputationsCounter<diagnostic> &comp) {
   left_.Lock();
@@ -84,12 +84,12 @@ KNN_NODE__::ClosestChild(POINTTYPE point, int32 dimension,
 
 TEMPLATE__
 inline 
-pair<pair<typename KNN_NODE__::NodePtr_t, typename NODE__::Precision_t>, 
-		 pair<typename KNN_NODE__::NodePtr_t, typename NODE__::Precision_t> > 
-KNN_NODE__::ClosestNode(typename NODE__::NodePtr_t ptr1,
-		                typename KNN_NODE__::NodePtr_t ptr2,
-									  int32 dimension,
-							      ComputationsCounter<diagnostic> &comp) {
+pair<pair<typename KNN_NODE__::NodePtr_t, typename KNN_NODE__::Precision_t>, 
+		 pair<typename KNN_NODE__::NodePtr_t, typename KNN_NODE__::Precision_t> > 
+KNN_NODE__::ClosestNode(typename KNN_NODE__::NodePtr_t ptr1,
+		                    typename KNN_NODE__::NodePtr_t ptr2,
+									      int32 dimension,
+							          ComputationsCounter<diagnostic> &comp) {
 	ptr1.Lock();
 	ptr2.Lock();
 	Precision_t dist1 = BoundingBox_t::Distance(box_, ptr1->get_box(), 
@@ -134,29 +134,28 @@ inline void KNN_NODE__::FindNearest(POINTTYPE query_point,
 	}
 	
   // for k-nearest neighbors 
-	 typename  std::vector<pair<Precision_t, Point_t> >::iterator it;
-	 it=nearest.begin()+knns;
-   std::sort(nearest.begin(), 
-				     nearest.end(),
-						 PairComparator());
-		if (likely(nearest.size()>(uint32)knns)) {
-		  nearest.erase(it, nearest.end());
-		} else {
-			pair<Precision_t, Point_t> dummy;
-			dummy.first=numeric_limits<Precision_t>::max();
-			index_t extra_size=(index_t)(knns-nearest.size());
-		  for(index_t i=0; i<extra_size; i++) {
-			  nearest.push_back(dummy);
-			}
-		}	  
-	}
+	typename  std::vector<pair<Precision_t, Point_t> >::iterator it;
+	it=nearest.begin()+knns;
+  std::sort(nearest.begin(), 
+			      nearest.end(),
+						PairComparator());
+	if (likely(nearest.size()>(uint32)knns)) {
+	  nearest.erase(it, nearest.end());
+	} else {
+	  pair<Precision_t, Point_t> dummy;
+		dummy.first=numeric_limits<Precision_t>::max();
+		index_t extra_size=(index_t)(knns-nearest.size());
+		for(index_t i=0; i<extra_size; i++) {
+		  nearest.push_back(dummy);
+		}
+	}	  	
 }
 
 TEMPLATE__
 inline void KNN_NODE__::FindAllNearest(
 		                NodePtr_t query_node,
                     typename KNN_NODE__::Precision_t &max_neighbor_distance,
-                    NEIGHBORTYPE range,
+                    index_t knns,
                     int32 dimension,
 										typename KNN_NODE__::PointIdDiscriminator_t &discriminator,
                     ComputationsCounter<diagnostic> &comp) {
@@ -192,14 +191,14 @@ inline void KNN_NODE__::FindAllNearest(
 			point.Alias(query_node->points_.get_p()+i*dimension, 
 					        query_node->index_[i]);
       FindNearest(point, temp, 
-                  range, dimension,
+                  knns, dimension,
 				 				  discriminator,	comp);
 			DEBUG_ASSERT_MSG((index_t)temp.size()==knns, 
-			 		             "During  %i-nn seach, returned %u results",(int)range, 
+			 		             "During  %i-nn seach, returned %u results",(int)knns, 
 						            (unsigned int)temp.size());
 
 				
-			for(int32 j=0; j<(index_t)range; j++) {
+			for(int32 j=0; j<(index_t)knns; j++) {
 			  query_node->kneighbors_[i*knns+j]=temp[j].first;
 			  query_node->distances_[i*knns+j]=temp[j].second;
 			}
@@ -231,9 +230,9 @@ void KNN_NODE__::OutputNeighbors(NNResult *out, index_t knns) {
 		index_.Lock();
     for(index_t i=0; i<num_of_points_; i++) {
 		  for(index_t j=0; j<knns; j++) {
-			  ptr[i*knns+j].point_id_ = index_[i];  
-			  ptr[i*knns+j].nearest_ = kneighbors_[i*knns+j];
-				ptr[i*knns+j].distance_ = distances_[i*knns+j];
+			  out[i*knns+j].point_id_ =index_[i];  
+			  out[i*knns+j].nearest_ = kneighbors_[i*knns+j];
+				out[i*knns+j].distance_ = distances_[i*knns+j];
 			}
 		}
 		index_.Unlock();

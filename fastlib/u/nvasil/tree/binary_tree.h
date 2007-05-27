@@ -120,8 +120,13 @@ class BinaryTree {
   void InitAllRangeNearestNeighborOutput(NodePtr_t ptr,
 		                                     FILE *fp);
 	void CloseAllRangeNearestNeighborOutput();
-	void CollectKNearestNeighbor(string file);
-	
+	void CollectKNearestNeighborWithMMAP(string file);
+	void CollectKNearestNeighbor(NodePtr_t ptr, 
+		                           typename Node_t::NNResult *out);
+  void CollectKNearestNeighborWithFwrite(string file); 
+	void CollectKNearestNeighbor(NodePtr_t ptr, FILE *out);
+
+
 	// Print the tree depth first
 	void Print();
   void RecursivePrint(NodePtr_t ptr);  
@@ -201,8 +206,8 @@ class BinaryTree {
     static void Init(NodePtr_t ptr) {
 		  
 		}
-	  static bool IsItGoodForRangeNN=true;
-		static bool IsItGoodForKnnInitialization= true;
+	  static const bool IsItGoodForRangeNN=true;
+		static const bool IsItGoodForKnnInitialization= true;
 	};
 	
 		
@@ -214,8 +219,8 @@ struct BinaryTree<TYPELIST, diagnostic>::NodeInitializerTrait<KnnNode<TYPELIST, 
   static void Init(BinaryTree<TYPELIST, diagnostic>::NodePtr_t ptr) {
 		ptr->set_kneighbors(BinaryTree<TYPELIST, diagnostic>::knns_);
   } 
-  static bool IsItGoodForRangeNN=false;
-  static bool IsItGoodForKnnInitialization=false;
+  static const bool IsItGoodForRangeNN=false;
+  static const bool IsItGoodForKnnInitialization=false;
 };
 
 #include "binary_tree_impl.h"

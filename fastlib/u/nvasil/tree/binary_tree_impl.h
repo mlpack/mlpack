@@ -212,8 +212,7 @@ void TREE__::NearestNeighbor(POINTTYPE test_point,
   LOKI_STATIC_CHECK((NodeInitializerTrait<Node_t>::IsItGoodForRangeNN && 
 			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) ||  
 	    Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false,
-			"You are using the wrong node, probably KnnNode instead of Node"
-			"Recompile with the right node for range nearest neighbor\n" );
+			You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	bool found = false;
   NearestNeighbor(parent_, 
@@ -299,8 +298,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
   LOKI_STATIC_CHECK((NodeInitializerTrait<Node_t>::IsItGoodForRangeNN && 
 			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) ||
 			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false,
-	    "You are using the wrong node, probably KnnNode instead of Node"
-			"Recompile with the right node for range nearest neighbor\n");
+	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	ResetCounters();
   Precision_t distance = numeric_limits<Precision_t>::max();
@@ -441,8 +439,7 @@ TEMPLATE__
 void TREE__::InitAllKNearestNeighborOutput(string file, 
 		                                        int32 knns) {
   LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization,
-	    "You are using the wrong node, probably KnnNode instead of Node"
-			"Recompile with the right node for range nearest neighbor\n");
+	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 	
 
 	FILE *fp=fopen(file.c_str(), "w");
@@ -504,9 +501,8 @@ void TREE__::InitAllKNearestNeighborOutput(typename TREE__::NodePtr_t ptr,
 
 TEMPLATE__
 void TREE__::InitAllRangeNearestNeighborOutput(string file) {
-	LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForRangeNN
-	    "You are using the wrong node, probably KnnNode instead of Node"
-			"Recompile with the right node for range nearest neighbor\n" );
+	LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForRangeNN,
+	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	FILE *fp=fopen(file.c_str(), "w");
 	if (fp==NULL) {
@@ -542,9 +538,8 @@ void TREE__::InitAllRangeNearestNeighborOutput(
 
 TEMPLATE__
 void TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
-  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization
-	    "You are using the wrong node, probably KnnNode instead of Node"
-			"Recompile with the right node for range nearest neighbor\n" );
+  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization,
+	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	if (munmap(all_nn_out_.get_ptr(), 
 			   sizeof(typename Node_t::NNResult)*knns*num_of_points_)<0) {
@@ -555,9 +550,8 @@ void TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
 
 TEMPLATE__
 void TREE__::CloseAllRangeNearestNeighborOutput() {
-  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForRangeNN
-	    "You are using the wrong node, probably KnnNode instead of Node"
-			"Recompile with the right node for range nearest neighbor\n" );
+  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForRangeNN,
+	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
   parent_.Lock();
 	fclose(parent_->get_range_nn_fp());
@@ -566,20 +560,19 @@ void TREE__::CloseAllRangeNearestNeighborOutput() {
 
 TEMPLATE__
 void TREE__::CollectKNearestNeighborWithMMAP(string file) {
-  LOKI_STATIC_CHECK(!NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization
-	    "You are using the wrong node, probably KnnNode instead of Node"
-			"Recompile with the right node for range nearest neighbor\n" );
+  LOKI_STATIC_CHECK(!NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization,
+	      You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
   FILE *fp=fopen(file.c_str(), "w");
 	const int32 kChunk=8192;
 	typename Node_t::NNResult *buffer;
-	buffer=new typename Node_t::NNResult[kChunk*knns];
+	buffer=new typename Node_t::NNResult[kChunk*knns_];
 	printf("Generating output file...\n");
 	for(index_t i=0; i<num_of_points_/kChunk; i++) {
-	  fwrite(buffer, sizeof(typename Node_t::NNResult),kChunk*knns, fp );
+	  fwrite(buffer, sizeof(typename Node_t::NNResult),kChunk*knns_, fp );
 	}
   fwrite(buffer, sizeof(typename Node_t::NNResult),
-			   (num_of_points_%kChunk)*knns, fp );
+			   (num_of_points_%kChunk)*knns_, fp );
 	fclose(fp);
 	delete []buffer;
 	int fd=open(file.c_str(), O_RDWR);
@@ -590,7 +583,7 @@ void TREE__::CollectKNearestNeighborWithMMAP(string file) {
 	  fprintf(stderr, "Unable to map file: %s", strerror(errno));
 		assert(false);
 	}
-	if (madvise(ptr, sizeof(typename Node_t::NNResult)*knns*num_of_points_,
+	if (madvise(ptr, sizeof(typename Node_t::NNResult)*knns_*num_of_points_,
 			   	MADV_SEQUENTIAL)!=0) {
 	  NONFATAL("It wasn't possible to advise output, error: %s", 
 			    strerror(errno)); 
@@ -605,9 +598,8 @@ void TREE__::CollectKNearestNeighborWithMMAP(string file) {
 
 TEMPLATE__
 void TREE__::CollectKNearestNeighborWithFwrite(string file) {
-  LOKI_STATIC_CHECK(!NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization
-	    "You are using the wrong node, probably KnnNode instead of Node"
-			"Recompile with the right node for range nearest neighbor\n" );
+  LOKI_STATIC_CHECK(!NodeInitializerTrait<Node_t>::IsItGoodForKnnInitializationi,
+	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	FILE *fp=fopen(file.c_str(), "w");
 	if (unlikely(fp==NULL)) {
