@@ -96,7 +96,7 @@ void TREE__::BuildBreadthFirst(
 			                        fifo_pair.second->num_of_points_,
                               dimension_,
                               data_); 
-      NodeInitializerTrait<Node_t>::Init((*fifo_pair.first)); 
+      (*fifo_pair.first)->set_kneighbors(knns_); 
 			(*fifo_pair.first).Unlock();
 		  num_of_leafs_++;
 			node_id_++;
@@ -155,7 +155,7 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t ptr,
 			          pivot_pair.second->num_of_points_,
 			          dimension_,
                 data_); 
-      NodeInitializerTrait<Node_t>::Init(ptr);
+      ptr->set_kneighbors(knns_);
       ptr.Unlock();
 		  node_id_++;
 		  num_of_leafs_++;
@@ -193,7 +193,7 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t ptr,
 			        pivot_info->num_of_points_,
 			        dimension_,
               data_); 
-    NodeInitializerTrait<Node_t>::Init(ptr);
+    ptr->set_kneighbors(knns_);
     ptr.Unlock();
 		node_id_++;
 		num_of_leafs_++;
@@ -209,7 +209,7 @@ void TREE__::NearestNeighbor(POINTTYPE test_point,
     vector<pair<typename TREE__::Precision_t, 
 		            typename TREE__::Point_t> > *nearest_point,
     NEIGHBORTYPE range) {
-  LOKI_STATIC_CHECK((NodeInitializerTrait<Node_t>::IsItGoodForRangeNN && 
+  LOKI_STATIC_CHECK((NodeInitializerTrait<Node_t::SpecialId>::IsItGoodForRangeNN && 
 			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) ||  
 	    Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false,
 			You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
@@ -295,7 +295,7 @@ template<typename NEIGHBORTYPE>
 void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query, 
                                  NEIGHBORTYPE range) {
    
-  LOKI_STATIC_CHECK((NodeInitializerTrait<Node_t>::IsItGoodForRangeNN && 
+  LOKI_STATIC_CHECK((NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForRangeNN && 
 			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) ||
 			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false,
 	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
@@ -438,7 +438,7 @@ void TREE__::AllNearestNeighbors(typename TREE__::NodePtr_t query,
 TEMPLATE__
 void TREE__::InitAllKNearestNeighborOutput(string file, 
 		                                        int32 knns) {
-  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization,
+  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForKnnInitialization,
 	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 	
 
@@ -501,7 +501,7 @@ void TREE__::InitAllKNearestNeighborOutput(typename TREE__::NodePtr_t ptr,
 
 TEMPLATE__
 void TREE__::InitAllRangeNearestNeighborOutput(string file) {
-	LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForRangeNN,
+	LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForRangeNN,
 	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	FILE *fp=fopen(file.c_str(), "w");
@@ -538,7 +538,7 @@ void TREE__::InitAllRangeNearestNeighborOutput(
 
 TEMPLATE__
 void TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
-  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization,
+  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForKnnInitialization,
 	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	if (munmap(all_nn_out_.get_ptr(), 
@@ -550,7 +550,7 @@ void TREE__::CloseAllKNearestNeighborOutput(int32 knns) {
 
 TEMPLATE__
 void TREE__::CloseAllRangeNearestNeighborOutput() {
-  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t>::IsItGoodForRangeNN,
+  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForRangeNN,
 	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
   parent_.Lock();
@@ -560,7 +560,7 @@ void TREE__::CloseAllRangeNearestNeighborOutput() {
 
 TEMPLATE__
 void TREE__::CollectKNearestNeighborWithMMAP(string file) {
-  LOKI_STATIC_CHECK(!NodeInitializerTrait<Node_t>::IsItGoodForKnnInitialization,
+  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForKnnInitialization,
 	      You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
   FILE *fp=fopen(file.c_str(), "w");
@@ -579,6 +579,7 @@ void TREE__::CollectKNearestNeighborWithMMAP(string file) {
 	typename Node_t::NNResult *ptr =(typename Node_t::NNResult *)mmap(NULL,
       sizeof(typename Node_t::NNResult)*knns_*num_of_points_,
 			PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+	close(fd);
 	if (ptr==MAP_FAILED) {
 	  fprintf(stderr, "Unable to map file: %s", strerror(errno));
 		assert(false);
@@ -588,9 +589,8 @@ void TREE__::CollectKNearestNeighborWithMMAP(string file) {
 	  NONFATAL("It wasn't possible to advise output, error: %s", 
 			    strerror(errno)); 
 	}
-	close(fd);
 	CollectKNearestNeighbor(parent_, buffer);
-	if (munmap(buffer, sizeof(typename Node_t::NNResult)*knns_*num_of_points_)
+	if (munmap(ptr, sizeof(typename Node_t::NNResult)*knns_*num_of_points_)
 			==-1) {
     FATAL("Failed to unmap memory, error: %s\n", strerror(errno));	
 	}
@@ -598,7 +598,7 @@ void TREE__::CollectKNearestNeighborWithMMAP(string file) {
 
 TEMPLATE__
 void TREE__::CollectKNearestNeighborWithFwrite(string file) {
-  LOKI_STATIC_CHECK(!NodeInitializerTrait<Node_t>::IsItGoodForKnnInitializationi,
+  LOKI_STATIC_CHECK(!NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForKnnInitializationi,
 	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	FILE *fp=fopen(file.c_str(), "w");
@@ -613,11 +613,19 @@ void TREE__::CollectKNearestNeighborWithFwrite(string file) {
 TEMPLATE__
 void TREE__::CollectKNearestNeighbor(NodePtr_t ptr, 
 		                                 typename Node_t::NNResult *out) {
+	ptr.Lock();
   if (ptr->IsLeaf()) {
 	  ptr->OutputNeighbors(out, knns_);
+		ptr.Unlock();
 	} else {
-	  CollectKNearestNeighbor(ptr->get_left(), out);
-    CollectKNearestNeighbor(ptr->get_right(), out);
+		NodePtr_t left = ptr->get_left();
+		left.Lock();
+	  CollectKNearestNeighbor(left, out);
+		left.Unlock();
+		NodePtr_t right = ptr->get_right();
+		right.Lock();
+    CollectKNearestNeighbor(right, out);
+		right.Unlock();
 	}
 }
 

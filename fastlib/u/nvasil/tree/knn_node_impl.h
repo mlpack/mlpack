@@ -12,7 +12,6 @@ KNN_NODE__::KnnNode() {
   left_.SetNULL();
   right_.SetNULL();
   points_.SetNULL();
-  kneighbors_=NULL;
 	node_id_ = numeric_limits<index_t>::max();
 	min_dist_so_far_=numeric_limits<Precision_t>::max();
 }
@@ -198,9 +197,9 @@ inline void KNN_NODE__::FindAllNearest(
 						            (unsigned int)temp.size());
 
 				
-			for(int32 j=0; j<(index_t)knns; j++) {
-			  query_node->kneighbors_[i*knns+j]=temp[j].first;
-			  query_node->distances_[i*knns+j]=temp[j].second;
+			for(int32 j=0; j<knns; j++) {
+			  query_node->kneighbors_[i*knns+j]=temp[j].second;
+			  query_node->distances_[i*knns+j]=temp[j].first;
 			}
       // Estimate the  maximum nearest neighbor distance
       comp.UpdateComparisons();
