@@ -25,6 +25,8 @@ class KnnNode {
 	typedef typename Allocator_t::template Ptr<KnnNode> NodePtr_t;
 	typedef Point<Precision_t, Allocator_t> Point_t;
 	typedef Point<Precision_t, Loki::NullType> NullPoint_t;
+	static const int kSpecialId=1;
+
 	template<typename , bool> friend class KnnNodeTest; 
 	struct NNResult {
 		NNResult() : point_id_(0),

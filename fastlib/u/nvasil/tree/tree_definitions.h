@@ -62,7 +62,7 @@ struct NodeParameters1 {
   typedef SimpleDiscriminator PointIdDiscriminator_t;
 };
 struct TreeParameters1 {
-  typedef Node<NodeParameters1, false>;
+  typedef Node<NodeParameters1, false> Node_t;
   typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
 };
 struct BasicTypes2 {
@@ -80,21 +80,21 @@ struct NodeParameters2 {
   typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
 };
 struct TreeParameters2 {
-  typedef KnnNode<NodeParameters1, false>;
-  typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
+  typedef Node<NodeParameters2, false> Node_t;
+  typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
 };
-truct TreeParameters3 {
-  typedef KnnNode<NodeParameters1, false>;
+struct TreeParameters3 {
+  typedef KnnNode<NodeParameters1, false> Node_t;
   typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
 };
 struct TreeParameters4 {
-  typedef KnnNode<NodeParameters2, false>;
-  typedef KdPivoter1<BasicTypes1, false> Pivot_t; 
+  typedef KnnNode<NodeParameters2, false> Node_t;
+  typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
 };
 
 typedef BinaryTree<TreeParameters1, false> BinaryKdTreeTPIEMM_t;
 typedef BinaryTree<TreeParameters2, false> BinaryKdTreeMMAPMM_t;
-typedef BinaryTree<TreeParameters3, false> BinaryKdTreeTPIEMM_KnnNode_t;
-typedef BinaryTree<TreeParameters4, false> BinaryKdTreeMMAPMM_KnnNode_t;
+typedef BinaryTree<TreeParameters3, false> BinaryKdTreeTPIEMMKnnNode_t;
+typedef BinaryTree<TreeParameters4, false> BinaryKdTreeMMAPMMKnnNode_t;
 
 

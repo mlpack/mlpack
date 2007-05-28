@@ -200,27 +200,18 @@ class BinaryTree {
 	// This is a value for the knns set ahead when we want to build the tre
 	// specifically for knns
 	index_t knns_;
-  
-	template<typename NODETYPE>
-	struct NodeInitializerTrait {
-    static void Init(NodePtr_t ptr) {
-		  
-		}
-	  static const bool IsItGoodForRangeNN=true;
-		static const bool IsItGoodForKnnInitialization= true;
-	};
-	
-		
+};
+
+template<int SpecialId>
+struct NodeInitializerTrait {
+  static const bool IsItGoodForRangeNN=true;
+	static const bool IsItGoodForKnnInitialization= true;
 };
 
 template<>
-template<typename TYPELIST, bool diagnostic>
-struct BinaryTree<TYPELIST, diagnostic>::NodeInitializerTrait<KnnNode<TYPELIST, diagnostic> > {
-  static void Init(BinaryTree<TYPELIST, diagnostic>::NodePtr_t ptr) {
-		ptr->set_kneighbors(BinaryTree<TYPELIST, diagnostic>::knns_);
-  } 
-  static const bool IsItGoodForRangeNN=false;
-  static const bool IsItGoodForKnnInitialization=false;
+struct NodeInitializerTrait<1> {
+  static const bool IsItGoodForRangeNN=true;
+	static const bool IsItGoodForKnnInitialization= true;
 };
 
 #include "binary_tree_impl.h"

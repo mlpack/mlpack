@@ -26,6 +26,7 @@ class Node {
 	typedef Point<Precision_t, Allocator_t> Point_t;
 	typedef Point<Precision_t, Loki::NullType> NullPoint_t;
 	template<typename , bool> friend class NodeTest; 
+	static const int kSpecialId=0;
 	struct NNResult {
 		NNResult() : point_id_(0),
       distance_(numeric_limits<Precision_t>::max()) {
@@ -129,6 +130,12 @@ class Node {
 	NNResult *get_kneighbors() {
 	  return kneighbors_;  
 	}
+  void set_kneighbors(index_t knns) {
+	  //This is empty it is supposed to be used during the initialization
+		//of the node. It has meaning only for the KnnNode
+	}
+
+	// This is used on an all knn query 
 	void set_kneighbors(NNResult *chunk, uint32 knns) {
 	  kneighbors_=chunk;
 		index_.Lock();

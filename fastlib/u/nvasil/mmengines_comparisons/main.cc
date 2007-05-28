@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
 	args.page_size_ = fx_param_int(NULL, "page_size", 4096);
   args.memory_file_ = fx_param_str(NULL, "memory_file", "temp_mem"); 
   args.memory_engine_ = fx_param_str(NULL, "memory_engine", "mmapmm");
-	args.specialized_for_knns_ = fx_param_int(NULL, "specialized_for_knns", false);
+	args.specialized_for_knns_ = fx_param_bool(NULL, "specialized_for_knns", false);
 	printf("Creating swap file...\n");
  	if (args.memory_engine_ == "mmapmm") {
 		mmapmm::MemoryManager<false>::allocator_ = 
@@ -157,9 +157,10 @@ void DuallTreeAllNearestNeighbors(Parameters &args) {
 template<typename TREE>
 void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args) {
   TREE tree;
+	printf("Procceding with the specialized method for knn node..\n");
 	printf("Building the tree...");
 	tree.Init(&args.data_);
-
+	tree.set_knns(args.knns_);
 	fx_timer_start(NULL, "build");	
 	tree.BuildDepthFirst();
 	fx_timer_stop(NULL, "build");
@@ -172,7 +173,10 @@ void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args) {
   fx_timer_start(NULL, "dualltree");	
 	tree.AllNearestNeighbors(tree.get_parent(), args.knns_);
 	fx_timer_stop(NULL, "dualltree");
+	printf("Collecting results....\n");
+	fx_timer_start(NULL, "collecting_results");
   tree.CollectKNearestNeighborWithMMAP(args.out_file_.c_str());
+	fx_timer_stop(NULL, "collecting_results");
 	unlink(args.out_file_.c_str());	
 }
 
