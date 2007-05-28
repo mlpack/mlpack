@@ -36,7 +36,7 @@ using namespace std;
 template <typename PRECISION>
 class BinaryDataset {
   FORBID_COPY(BinaryDataset<PRECISION>);
-	friend class BinaryDatasetTest;
+	template<typename > friend class BinaryDatasetTest;
  public:
 	typedef PRECISION Precision_t;
 	friend class Iterator;
@@ -127,7 +127,7 @@ class BinaryDataset {
 	// If the index file is not given it assumes it has the same name as
 	// the data file appended with ind
 	success_t Init(string data_file) {
-    string temp=data_file.append(".ind");
+    string temp=data_file + string(".ind");
 	  Init(data_file, temp);	
 		return SUCCESS_PASS;
 	}
@@ -182,7 +182,7 @@ class BinaryDataset {
 	// Use this for destruction
 	void Destruct() {
 	  MemoryUnmap(data_, data_file_, sizeof(int32)); 
-	  MemoryUnmap(data_, index_file_, 0); 
+	  MemoryUnmap(index_, index_file_, 0); 
 	}
 	// returns a matrix on the data
 	inline Matrix get_data_matrix() {
@@ -203,9 +203,11 @@ class BinaryDataset {
 	}
 	// returns a pointer on the data at the ith point
  inline Precision_t* At(uint64 i) {
-		const char *temp="Attempt to acces data out of range %llu>%llu";
-		DEBUG_ASSERT_MSG(i<num_of_points_, temp, i, num_of_points_);
-	  return data_+i*dimension_;
+		DEBUG_ASSERT_MSG(i<num_of_points_, 
+				             "Attempt to acces data out of range %llu>%llu",
+                     (unsigned long long)i, 
+										 (unsigned long long)num_of_points_);
+			  return data_+i*dimension_;
 	}
 	// returns a reference on the i,j element
 	inline Precision_t &At(uint64 i, int32 j) {
@@ -286,17 +288,17 @@ class BinaryDataset {
       FATAL("Error %s file %s\n",
 				    strerror(errno), file_name.c_str());
 		}
-		uint64 map_size = info.st_size-sizeof(int32);
+		uint64 map_size = info.st_size;
 		int fp=open(file_name.c_str(), O_RDWR);
 		if (fp<0) {
 		  FATAL("Cannot open %s, error %s\n", file_name.c_str(), strerror(errno));
 		}
-		lseek(fp, offset, SEEK_SET);
 		void *ptr=mmap(0, 
 				           map_size, 
 				           PROT_READ | PROT_WRITE, MAP_SHARED, 
 									 fp,
 			             0);
+		ptr = (void*) ((char*)ptr+offset);
     if (unlikely(ptr==MAP_FAILED)) {
 		  FATAL("Error %s while mapping %s\n", 
 				    strerror(errno), file_name.c_str());
@@ -310,15 +312,17 @@ class BinaryDataset {
     if (unlikely(stat(file_name.c_str(), &info)!=0)) {
       NONFATAL("Error %s file %s\n",
 			  	     strerror(errno), file_name.c_str());
+		  return SUCCESS_FAIL;
 		}
-		return SUCCESS_FAIL;
-		uint64 map_size = info.st_size-offset;
+		uint64 map_size = info.st_size;
+		ptr = (char *)ptr-offset;
 		if(munmap(ptr , map_size)<0) {
 		  NONFATAL("Error %s while unmapping %s\n", 
 		           strerror(errno), file_name.c_str());
 			return SUCCESS_FAIL;
 		}
-		return SUCCESS_PASS;
+   	return SUCCESS_PASS;
+
 	}
 	// creates a data file
 	void  CreateDataFile(string file_name, 
@@ -329,7 +333,7 @@ class BinaryDataset {
 		  FATAL("Error %s, while writing for file %s\n",
 					  strerror(errno), file_name.c_str());
 		}
-		uint64 total_size = num_of_points * dimension * sizeof(float32);
+		uint64 total_size = num_of_points * dimension * sizeof(Precision_t);
 		const uint64 buffer_length=8192;
 		char *buffer=new char[buffer_length];
 		for(uint64 i=0; i<total_size/buffer_length; i++) {
