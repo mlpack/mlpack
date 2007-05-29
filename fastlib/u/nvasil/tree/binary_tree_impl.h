@@ -589,7 +589,7 @@ void TREE__::CollectKNearestNeighborWithMMAP(string file) {
 	  NONFATAL("It wasn't possible to advise output, error: %s", 
 			    strerror(errno)); 
 	}
-	CollectKNearestNeighbor(parent_, buffer);
+	CollectKNearestNeighbor(parent_, ptr);
 	if (munmap(ptr, sizeof(typename Node_t::NNResult)*knns_*num_of_points_)
 			==-1) {
     FATAL("Failed to unmap memory, error: %s\n", strerror(errno));	
