@@ -320,30 +320,29 @@ double fx_param_double_req(struct datanode *module, const char *name)
   return res;
 }
 
-int fx_param_int(struct datanode *module, const char *name, int def)
+long long int fx_param_int(struct datanode *module, const char *name, long long int def)
 {
   struct datanode *node = fx__param(module, name, 1);
 
   if (!node->val) {
     char buf[3 * sizeof(int) + 2];
-    sprintf(buf, "%d", def);
+    sprintf(buf, "%lli", def);
     node->val = strdup(buf);
   } else {
-    if (sscanf(node->val, "%d", &def) != 1) {
+    if (sscanf(node->val, "%lli", &def) != 1) {
       FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
 	    name, fx__module_name(module), (char*)node->val);
     }
   }
-
   return def;
 }
 
-int fx_param_int_req(struct datanode *module, const char *name)
+long long int fx_param_int_req(struct datanode *module, const char *name)
 {
   const char *val = fx_param_str_req(module, name);
   int res;
 
-  if (sscanf(val, "%d", &res) != 1) {
+  if (sscanf(val, "%lli", &res) != 1) {
     FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
 	  name, fx__module_name(module), val);
   }
