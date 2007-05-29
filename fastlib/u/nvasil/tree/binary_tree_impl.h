@@ -209,11 +209,12 @@ void TREE__::NearestNeighbor(POINTTYPE test_point,
     vector<pair<typename TREE__::Precision_t, 
 		            typename TREE__::Point_t> > *nearest_point,
     NEIGHBORTYPE range) {
-  LOKI_STATIC_CHECK((NodeInitializerTrait<Node_t::SpecialId>::IsItGoodForRangeNN && 
-			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) ||  
-	    Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false,
-			You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
+  LOKI_STATIC_CHECK((NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForRangeNN && 
+			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==true) ||
+			Loki::TypeTraits<NEIGHBORTYPE>::isStdFloat==false,
+	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
+  
 	bool found = false;
   NearestNeighbor(parent_, 
 			            test_point, 

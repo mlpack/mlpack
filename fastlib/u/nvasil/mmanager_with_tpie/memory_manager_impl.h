@@ -30,13 +30,13 @@ void MEMORY_MANAGER__::Init() {
   fd = open ("/dev/zero", O_RDONLY);
   cache_ = (char *)mmap (NULL, alloc_size_, 
 		                   PROT_WRITE, MAP_PRIVATE, fd, 0);
-  if (mlock(cache_, alloc_size_) == -1) {
+ /* if (mlock(cache_, alloc_size_) == -1) {
     NONFATAL("Could not lock memory manger's cache, error %s\n",
   	         strerror(errno));
 		const char *temp="Memory manager proceeds with unlocked memory,"
                      "this may slow down performance\n"	;			
     NONFATAL(temp);
-  }
+  }*/
    close(fd);
    page_modified_ = new bool[num_of_pages_];
    memset(page_modified_, false, num_of_pages_);
@@ -152,12 +152,12 @@ void MEMORY_MANAGER__::Load() {
   // as write-only, initially.
   fd = open ("/dev/zero", O_RDONLY);
   cache_ = (char *)mmap (NULL, alloc_size_, PROT_WRITE, MAP_PRIVATE, fd, 0);
-  if (mlock(cache_, alloc_size_)==-1) {
+  /*if (mlock(cache_, alloc_size_)==-1) {
     NONFATAL("Could not lock memory manager's cache, error %s\n",
              strerror(errno));
     NONFATAL("Memory manager proceeds with unlocked memory,"
              "this may slow down performance\n");
-  }
+  }*/
   close (fd);
   page_modified_ = new bool[num_of_pages_];
   memset(page_modified_, false, num_of_pages_);
@@ -210,11 +210,11 @@ void MEMORY_MANAGER__::Destruct() {
   delete []cache_to_page_;
   delete []page_locks_; 
   // delete cache
-  if (unlikely(munlock(cache_, alloc_size_)==-1)) {
+  /*if (unlikely(munlock(cache_, alloc_size_)==-1)) {
     NONFATAL("Could not unlock memory manger's cache, error %s\n",
   	         strerror(errno));
   	NONFATAL("Continue execution\n");
-  }
+  }*/
   munmap(cache_, alloc_size_);
   delete []page_modified_;
   // Before closing the file we update the number of total ram pages
