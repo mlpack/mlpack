@@ -95,7 +95,7 @@ double fx_param_double_req(struct datanode *module, const char *name);
  * @param name the name of the parameter (paths allowed)
  * @param def value used if param not given
  */
-int fx_param_int(struct datanode *module, const char *name, int def);
+long long int fx_param_int(struct datanode *module, const char *name, long long int def);
 /**
  * Obtain an integral parameter, failing if it is not specified.
  *
@@ -105,7 +105,7 @@ int fx_param_int(struct datanode *module, const char *name, int def);
  * @param module the param's containing module, or NULL for global
  * @param name the name of the parameter (paths allowed)
  */
-int fx_param_int_req(struct datanode *module, const char *name);
+long long int fx_param_int_req(struct datanode *module, const char *name);
 /**
  * Obtain a boolean parameter or use provided default.
  *
