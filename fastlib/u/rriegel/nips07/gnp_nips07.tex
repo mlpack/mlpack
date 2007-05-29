@@ -1,0 +1,836 @@
+\documentclass{article}
+\usepackage{nips07submit_e,times}
+%\documentstyle[nips07submit_09,times]{article}
+
+\usepackage{amsmath,amsthm,amssymb,stmaryrd}
+\usepackage{overlay}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary} {Corollary}
+\newtheorem{definition} {Definition}
+
+\newcommand{\OpSym}{\mathrm{O\!p}}
+\newcommand{\opsym}{{\scriptstyle \mathrm{o\!p}}}
+% \newcommand{\OpSym}{\bigoplus\nolimits}
+% \newcommand{\opsym}{\oplus}
+\newcommand{\OpCurry}[3][]{\mathop{\OpSym^{#1}_{#2}{#3}}}
+\newcommand{\opcurry}[3][]{\mathop{\opsym^{#1}_{#2}{#3}}}
+\newcommand{\Op}[2][]{\OpCurry[#1]{#2}{}}
+\newcommand{\op}[2][]{\opcurry[#1]{#2}{}}
+\newcommand{\VecOp}[2][]{\mathop{\overrightarrow{\OpSym^{#1}_{#2}}}}
+\newcommand{\vecop}[2][]{\mathop{\overrightarrow{\opsym^{#1}_{#2}}}}
+
+\newcommand{\oy}{\mathop{\scriptstyle \overlay{\bigcirc}{\Ydown}}\nolimits}
+\newcommand{\ox}{\mathop{\scriptstyle \overlay{\bigcirc}{\times}}\nolimits}
+\newcommand{\bigoy}{\mathop{\overlay{\bigcirc}{\Ydown}}}
+\newcommand{\bigox}{\mathop{\overlay{\bigcirc}{\times}}}
+
+%\newcommand{\oy}{\odot}
+%\newcommand{\ox}{\otimes}
+%\newcommand{\bigoy}{\bigodot}
+%\newcommand{\bigox}{\bigotimes}
+
+\newcommand{\comp}{\mathop{\circ}\nolimits}
+\newcommand{\GNP}{\psi_{\Theta}}
+
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\map}{map}
+
+
+\title{Some Awesome Title}
+
+\author{
+Ryan N.~Riegel \\
+College of Computiong \\
+Georgia Institute of Technology \\
+Atlanta, GA 30332 \\
+\texttt{rriegel@cc.gatech.edu} \\
+\And
+Alexander G.~Gray \\
+College of Computiong \\
+Georgia Institute of Technology \\
+Atlanta, GA 30332 \\
+\texttt{agray@cc.gatech.edu} \\
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\begin{document}
+
+\makeanontitle
+
+\begin{abstract}
+We present mathematical foundations for a highly successful
+algorithmic strategy that has resulted in the fastest algorithms for
+many machine learning methods and is broadly applicable to scaling
+many future methods up to large datasets.  We formalize for the first
+time a class of computational problems which are very common in
+machine learning, called {\em generalized $N$-body problems}, and
+subsequently present a template {\em generalized $N$-body algorithm},
+which can be specialized to produce efficient problem-dependent
+algorithms.  We demonstrate the use of this mathematical framework for
+deriving algorithms for new machine learning methods, including the
+recent affinity propagation method.
+\end{abstract}
+
+\section{Introduction}
+
+The ability to apply machine learning methods to large datasets is
+increasingly important for many applications.  Unfortunately,
+generally speaking, the more accurate the method, the greater its
+computational cost; most nonparametric methods are $O(N^2)$ or
+$O(N^3)$, where there are $O(N)$ test (or query) points and training
+(or reference) points.
+
+The authors of [[nips2000paper]] presented a new algorithmic strategy
+based on the simultaneous traversal of multiple space-partitioning
+trees, which applies to a number of machine learning methods.  The set
+of problems to which this strategy is applicable was informally named
+{\em generalized $N$-body problems}, in analogy to breakthrough
+methods for computational physics problems [[Appel's algorithm,
+Barnes-Hut, Fast Multipole Method]], all of which have the same
+characteristic form.  This algorithmic strategy generalizes other
+successful algorithms for specific problems in addition to these
+physics problems, such as computing the well-separated pair
+decomposition in theoretical computer science [[wspd]], computing the
+spatial join in databases [[spatial join]], and computing set
+intersections [[baeza-yates]].  In each of these problems no superior
+algorithmic strategy is known.
+% also a kind of dual-tree method in graphics for object collision
+% detection, but we need the reference
+
+This multi-tree algorithmic strategy has been applied to a succession
+of well-known statistical learning methods, each representing certain
+unique challenges for the strategy, including
+all-$k$-nearest-neighbors (a generalization of $k$-nearest-neighbors)
+[[nips2000paper]], kernel density estimation [[nips2000paper,
+kde-siamdm, kde-aistats, kde-nips-dong, kde-uai-dong]],
+$k$-nearest-neighbor classification [[ting-liu]], kernel discriminant
+analysis (or nonparametric Bayes classification) [[nbc-phystat,
+nbc-compstat]], and $n$-point correlation functions [[nips2000paper,
+moore-npt, npt-2004]].  These algorithms have been demonstrated on
+large scientific datasets, producing numerous high-profile results,
+e.g.~[[science 2003, nature 2005]].  For each of these problems, no
+overall faster algorithms are known.  In addition, other authors have
+directed the strategy toward other machine learning problems,
+including dimensionality reduction methods [[hochreiter00beyond]],
+nonparametric belief propagation [[alex ihler]], multiple tracking
+[[jeremy kubica]], linear algebraic machine learning methods [[nando,
+below]], particle filters [[klaas papers, below]].  Aside from speed,
+a unique advantage of this algorithmic approach is the ability to
+specify and achieve rigorous relative error tolerances when
+approximation is necessary, contrary to virtually all other
+approximate speedup approaches.
+%
+%Nando de Freitas, Yang Wang, Maryam Mahdaviani and Dustin Lang. Fast
+%Krylov Methods for N-Body Learning . NIPS 2005.
+%
+%Mike Klaas, Dustin Lang and Nando de Freitas. Fast Maximum a
+%Posteriori Inference in Monte Carlo State Spaces . AISTATS 2005.
+%
+%Mike Klaas, Nando de Freitas and Arnaud Doucet. Toward Practical N^2
+%Monte Carlo: The Marginal Particle Filter . UAI 2005
+%
+%Mike Klaas, Mark Briers, Nando de Freitas, Arnaud Doucet, Simon
+%Maskell and Dustin Lang. Fast Particle Smoothing: If I Had a Million
+%Particles. ICML 2006. 
+%
+%inproceedings{ hochreiter00beyond,
+%    author = "Sepp Hochreiter and Michael Mozer",
+%    title = "Beyond Maximum Likelihood and Density Estimation: A Sample-Based Criterion for Unsupervised Learning of Complex Models",
+%    booktitle = "{NIPS}",
+%    pages = "535-541",
+%    year = "2000",
+%    url = "citeseer.ist.psu.edu/541475.html" }
+
+Some fundamental problems to which the multi-tree strategy is
+applicable are shown in Figure~\ref{tab:probs}, including some canonical
+problems in theoretical computer science [[preparata-shamos]].  These
+problems commonly occur in many guises in many fields, including many
+machine learning methods, both classical and modern, such as recent
+manifold learning [[lle, isomap]] methods.
+
+\begin{table}[t]
+\caption{Various generalized $N$-body problems.}
+\label{tab:probs}
+\vskip 0.15in
+\begin{center}
+\begin{small}
+\begin{sc}
+\begin{tabular}{lr}
+\hline
+Problem & Expression \\
+\hline
+All-nn & $\displaystyle \map_{q \in Q} \argmin_{r \in R} d(q,r)$ \\
+$n$-point cor. & $\displaystyle \sum_{x_1 \in X} \cdots \sum_{x_n \in X} I(\forall x_i, \forall x_j, d(x_i,x_j) \leq r)$ \\
+KDE & $\displaystyle \map_{q \in Q} \sum_{r \in R} K(d(q,r))$ \\
+\hline
+\end{tabular}
+\end{sc}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table}
+
+\begin{table}[t]
+\caption{Sample table title}
+\label{sample-table}
+\begin{center}
+\begin{tabular}{ll}
+\multicolumn{1}{c}{\bf PART}  &\multicolumn{1}{c}{\bf DESCRIPTION}
+\\ \hline \\
+Dendrite         &Input terminal \\
+Axon             &Output terminal \\
+Soma             &Cell body (contains cell nucleus) \\
+\end{tabular}
+\end{center}
+\end{table}
+
+In this paper we begin to investigate the scope of this successful
+algorithmic approach.  For the first time, we mathematically formalize
+the class of {\em generalized $N$-body problems}.  We also formalize
+the algorithmic approach as a single generic algorithm, {\em the
+generalized $N$-body algorithm}, which applies to any problem in the
+class.  We elucidate some of the mathematical properties of such
+problems that can be exploited to achieve computational efficiency.
+These mathematical foundations facilitate the application of the ideas
+we have developed over many problem examples by researchers wishing to
+design fast algorithms for new problems in the class.  These
+foundations also open up the possibility of automatic derivation of
+algorithms for new problems [[autobayes]], as did the specification of
+the generic EM algorithm by [[dempster et al.]].
+
+In the next section, to make the ideas concrete, we present one of the
+more easily understood problems in our class and an efficient
+multi-tree method for it.  We then define generalized $N$-body
+problems, and show that they have a decomposability property which
+ultimately admits a general recursive formulation, the generalized
+$N$-body algorithm.  Making the generalized $N$-body algorithm
+efficient requires a problem-dependent pruning step.  The following
+two sections discuss problem-dependent properties which admit
+efficient pruning steps in the cases of exact and approximate
+computation, respectively.  We conclude with examples of designing
+fast algorithms for machine learning problems, starting with the
+problem of nonparametric density thresholding, a common folk method
+for anomaly detection.  Finally, as a demonstration of the practical
+relevance of this methodology to state-of-the-art machine learning
+methods, we considered the most recent method we could find, affinity
+propagation [[affinity]], and designed and implemented in one day a
+fast algorithm for it allowing it to scale to large datasets despite
+its straightforward $O(N^2)$ runtime.
+
+\section{Examples}
+
+There exist many problems that initially appear to be quadratic or
+worse in nature, involving consideration of all pairs or larger
+groupings of inputs, but are later seen to have efficient algorithms.
+These algorithms exploit a high-order formulation of
+divide-and-conqure, often representing inputs in spatial trees and
+using distance bounds between regions to guide the order of
+computation.  Some examples include all-nearest-neighbors,
+nonparametric Bayes classification, and the $n$-point correlation.
+
+\subsection{All-nearest-neighbors}
+
+The all-nearest-neighbors problem (All-NN) aims to find for each
+point in some set $Q$ of queries the nearest point from a set $R$ of
+references, possibly identical to $Q$.  The problem is represented
+mathematically as
+\[
+\map_{1 \leq i \leq |Q|}\argmin_{1 \leq j \leq |R|} d(q_i,r_j),
+\]
+where metric $d(q_i,r_i) \equiv \infty$ if $Q = R$.
+
+[[Examples of uses.]]
+
+All-NN is solved efficiently by Algorithm~\ref{alg:all-nn}, which
+works on trees formed for both queries and references.  It maintains
+for each query node an upper bound on the distance to any of its
+points' nearest neighbors; in short, the maximum distance to any
+candidate nearest neighbor seen so far.  When a pair of query and
+reference nodes have a lower-bound distance greater than the query
+node's stored upper bound, it is impossible for the reference node to
+contribute any of the contained queries' nearest neighbors and all
+work between the nodes may be pruned.
+
+\subsection{Kernel Density Estimation}
+
+Kernel Density Estimation (KDE) wraps a small probability density
+function around each point in some data set in order to estimate that
+set's distribution.  It is then of interest to determine each point's
+density in order to detect outliers.  Alternately, we may find
+densities for a set of queries not from the original data set.
+\[
+\map_{q \in Q} \sum_{r \in R} K_h(q,r).
+\]
+[[Perhaps mention fitting bandwidth with LOO and L2E, etc.]]
+
+\subsection{Nonparametric Bayes Classification}
+
+Nonparametric Bayes classification (NBC) applies Bayes' Rule to the
+results of kernel density estimation in order to predict the class of
+each of some set of queries $Q$ given sets of references $R_k$ for
+classes $C_k$, $1 \leq k \leq M$.  The problem is given by
+\[
+\map_{1 \leq i \leq |Q|} \argmax_{1 \leq k \leq M} \sum_{1 \leq j \leq |R_k|} K_{h_k}(q_i,r_j),
+\]
+where $K(q_i,r_i) \equiv 0$ if $Q = R$, permitting computation for
+leave-one-out cross-validation.
+
+[[Examples of uses.]]
+
+Algorithm~\ref{alg:nbc} demonstrate an efficient means of computing
+NBC in the two-class case.  It forms trees for all involved sets and
+maintains at query nodes both upper and lower bounds on density
+contributions from the various classes.  When one class's lower-bound
+joint probability (found by multiplying the class's lower-bound
+density and prior) is greater than all other's upper-bounds, then we
+may safely conclude that all queries within the node should be
+attributed to that class.
+
+\subsection{Multi-radius $n$-point Correlation}
+
+The $n$-point correlation is found by counting all unique $n$-tuples
+of points within some radius $r$ of one another.  It is found with
+\[
+\sum_{x_{i_1} \in X} \cdots \sum_{x_{i_n} \in X} I(d(x_{i_j},x_{i_k}) < r \forall j,k),
+\]
+where $I(d(x_{i_j},x_{i_k}) < r \forall j,k) \equiv 0$ unless $i_1 <
+\cdots < i_n$.
+
+[[Examples of uses.]]
+
+[[Description of algorithm.]]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Generalized $N$-body Problems}
+
+The class of Generalized $N$-body Problems (GNPs), or problems
+solvable by means similar to those shown above, is a subset of the
+problems representable as nested applications of high-order function
+reduce.  Reduce is a long-standing and highly versatile feature of
+functional programming languages.  Traditionally, it is a list
+catamorphism, and has distinct implementations for working from
+beginning to end and vice versa.  We pose reduce as a high-order
+function on input multisets\footnote{Unless otherwise noted, data sets
+are understood to be finite multisets, thereby permitting entries with
+identical values; alternately, data sets may store a distinct index
+for each entry, rendering all entries unique.} rather than lists, and
+allow for pre- and postprocessing functions.  $a \oy b \ox c \bigoy d \bigox e$
+\begin{definition}
+  A {\em reduce problem} is a pair $(f,\theta)$ of inner function $f
+  \colon \mathcal{X} \to \mathcal{A}$ and triple $\theta =
+  (\mathcal{X},\op{},g)$ of set of possible inputs $\mathcal{X}$,
+  commutative, associative operator $\op{} \colon \mathcal{A} \times
+  \mathcal{A} \to \mathcal{A}$, and outer function $g \colon
+  \mathcal{A} \to \mathcal{B}$.  Its components form
+  $\Psi_{(f,\theta)} = g \comp \psi_{(f,\theta)}$, where
+  $\psi_{(f,\theta)}(X) = \Op{}_{x \in X} f(x)$ for $X \subset
+  \mathcal{X}$.
+\end{definition}
+\noindent The operators involved in reduce problems form abelian
+semigroups.  Frequently, they also have identities and inverses in
+$\mathcal{A}$, thereby forming abelian groups.  A simple example of a
+reduce problem is finding the expected value of some function under a
+sampled distribution: $\frac{1}{N} \sum_{x \in X} f(x)$.
+
+The inner functions of reduce problems may themselves be reduce
+problems, for example with $f_1(x) = \Psi_{(f_2,\theta_2)}(X_2)$.  It
+is useful to speak of these constructs as single, high-order problems.
+\begin{definition}
+  A {\em high-order reduce problem} is a pair $\Theta =
+  (f,[\theta_1,\ldots,\theta_n])$ of inner function \mbox{$f \colon
+  \mathcal{X}_1\times\cdots\times\mathcal{X}_n\to\mathcal{A}_n$}
+  and list of triples $\theta_i = (\mathcal{X}^*_i,\op{i},g_i)$, $1
+  \leq i \leq n$, of:
+  \begin{itemize}
+  \item Sets of possible input set selectors\footnote{Input set
+    selectors permit inner reduce problems' data to vary depending on
+    the current element of outer problems.  The arguments to
+    $\Psi_{\Theta}$ are then functions mapping input combinations to
+    data sets (elements of $2^{\mathcal{X}_i}$).}  $\mathcal{X}^*_i
+    \subseteq \mathcal{X}_1 \times \cdots \times \mathcal{X}_{i-1} \to
+    2^{\mathcal{X}_i}$.
+  \item Curried commutative, associative operators $\op{i} \colon
+    \mathcal{X}_1 \times \cdots \times \mathcal{X}_{i-1} \to
+    \mathcal{A}_i \times \mathcal{A}_i \to \mathcal{A}_i$.
+  \item Curried outer functions $g_i \colon \mathcal{X}_1 \times
+    \cdots \times \mathcal{X}_{i-1} \to \mathcal{A}_i \to
+    \mathcal{A}_{i-1}$.
+  \end{itemize}
+  For $X_i \in \mathcal{X}^*_i$, $1 \leq i \leq n$, its components
+  form $\Psi_{\Theta} = \Psi_{\Theta}^1$, where
+  \[ \begin{array}{rclr}
+    \Psi_{\Theta}^i{\scriptstyle (x_1,\ldots,x_{i-1})}(X_i,\ldots,X_n) & = & \left( g_i{\scriptstyle (x_1,\ldots,x_{i-1})} \comp \GNP^i{\scriptstyle (x_1,\ldots,x_{i-1})} \right) (X_i,\ldots,X_n), & 1 \leq i \leq n, \\
+    \GNP^i{\scriptstyle (x_1,\ldots,x_{i-1})}(X_i,\ldots,X_n) & = & \displaystyle \OpCurry{i}{\scriptstyle (x_1,\ldots,x_{i-1})}_{x_i \in X_i(x_1,\ldots,x_{i-1})} \Psi_{\Theta}^{i+1}{\scriptstyle (x_1,\ldots,x_i)} (X_{i+1},\ldots,X_n), & 1 \leq i < n, \\
+    \GNP^n{\scriptstyle (x_1,\ldots,x_{n-1})}(X_n) & = & \displaystyle \OpCurry{n}{\scriptstyle (x_1,\ldots,x_{n-1})}_{x_n \in X_n(x_1,\ldots,x_{n-1})} f(x_1,\ldots,x_n).
+  \end{array} \]
+  The above is alternately represented as $\Psi_{\Theta}(X_1,\ldots,X_n) =$
+  \[
+  g_1 \left( \Op{1}_{x_1 \in X_1} g_2{\scriptstyle (x_1)} \left( \OpCurry{2}{\scriptstyle (x_1)}_{x_2 \in X_2(x_1)} \cdots g_n{\scriptstyle (x_1,\ldots,x_{n-1})} \left( \OpCurry{n}{\scriptstyle (x_1,\ldots,x_{n-1})}_{x_n \in X_n(x_1,\ldots,x_{n-1})} f(x_1,\ldots,x_n) \right) \cdots \right) \right) .
+  \]
+\end{definition}
+\noindent The results of high-order reduce problems may be found
+na\"{\i}vely through nested iteration.  If involved functions are
+constant time and each $X_i(x_1,\ldots,x_{i-1})$ is $O(N)$, this
+method of computation is $O(N^n)$, which is infeasible for large $N$
+even when $n = 2$.  An example of a high-order reduce problem is the
+log-likelihood of a mixture of Gaussians: $\sum_{x \in X} \log \sum_{k
+\in C} \omega_k \phi(x \mid \mu_k, \Sigma_k)$.
+
+In our effort to diminish computational complexity, it is difficult to
+deal with the full generality of the above.  We will introduce
+transforms that assist in expanding the reach of our methods later,
+but for now we constrain the class of considered problems.
+\begin{definition}
+  A high-order reduce problem $\Theta$ is {\em regular} if
+  $\mathcal{X}^*_i$ is input-invariant (i.e.~just a data set),
+  $\op{i}$ is curried-input-invariant, and $g_i$ is the identity for
+  $2 \leq i \leq n$.  For $X_i \subset \mathcal{X}_i$, $1 \leq i \leq
+  n$, its components form $\Psi_{\Theta} = g \comp \GNP$, where
+  $\GNP(X_1,\ldots,X_n) = \Op{1}_{x_1 \in X_1}\cdots\Op{n}_{x_n \in
+  X_n} f(x_1,\ldots,x_n)$.
+\end{definition}
+\noindent To conserve space, we will show only arguments of interest
+when working with $\GNP$, $\GNP^i$, and other functions with many
+arguments, e.g.~$\GNP^i(X_j,X_k) \equiv \GNP^i{\scriptstyle
+(x_1,\ldots,x_{i-1})}(X_i,\ldots,X_j,\ldots,X_k,\ldots,X_n)$.
+\begin{definition}
+  A regular reduce problem $\Theta$ is {\em block decomposable} if,
+  for all selected splits $1 \leq i \leq n$, all nonempty $X_1 \subset
+  \mathcal{X}_1,\ldots,X_n \subset \mathcal{X}_n$, and all nonempty
+  partitions $X^L_i \cup X^R_i = X_i$,
+  \[
+  \GNP(X_i) = \GNP(X^L_i) \op{i} \GNP(X^R_i).
+  \]
+  Such a problem is known as a {\em Generalized $N$-body
+  Problem (GNP)}.
+\end{definition}
+
+% \subsection{The Map Operator}
+
+{\bf The Map Operator.}  High-order function map is suitable for all
+problems that have separate query and reference data and may come in
+hand for some problems that do not.  Simple reduce problems subsume
+the functionality of map with $\map_{x \in X} f(x) \equiv \bigcup_{x
+\in X} \{(x,f(x))\}$ for arbitrary $f$.  We extend this key-value pair
+interpretation of map to regular reduce problems with the following.
+\begin{lemma}
+  Key-value pair formation may be distributed to the inner function by
+  vectorizing the operators following map.  I.e.~high-order reduce
+  problem $\Theta$ with $\op{i} = \map$ is equivalent to
+  $\overrightarrow{\Theta}$ with
+  \[ \begin{array}{rclr}
+    \overrightarrow{f}(x_1,\ldots,x_n) & = & \{(x_i, f(x_1,\ldots,x_n))\}, \\
+    \overrightarrow{g_j}(A) & = & \{(x_i, g_j{\scriptstyle (x_i)}(v)) \mid (x_i,v) \in A\}, & i < j \leq n, \\
+    A \vecop{j} B & = & \{(x_i, u \opcurry{j}{\scriptstyle (x_i)} v) \mid (x_i,u) \in A, (x_i,v) \in B\}, & i < j \leq n, \\
+    A \vecop{i} B & = & A \cup B.
+  \end{array} \]
+\end{lemma}
+\begin{proof}
+  Observe that, during na\"{\i}ve computation and for $i < j \leq n$,
+  each $A$ and $B$ presented to $\vecop{j}$ and each $A$ presented to
+  $\overrightarrow{g_j}$ is a singleton set for the current element of
+  $X_i$.  Vector operations are then trivially equivalent to the
+  original version of the algorithm, but maintain keys as desired.
+\end{proof}
+\noindent Vectorized operations become more interesting after the
+application of block decomposition.
+
+% \subsection{Exchangeable Operators}
+
+{\bf Exchangeable Operators.}  It is cumbersome to show block
+decomposability for each considered problem.  For this, we provide an
+alternate but equivalent test that is often be easier to demonstrate.
+\begin{definition}
+  Operators $\op{i}$ and $\op{j}$ are {\em exchangeable} if, for all
+  nonempty $X_1 \subset \mathcal{X}_1,\ldots,X_n \subset
+  \mathcal{X}_n$ and all nonempty partitions $X^L_i \cup X^R_i = X_i$
+  and $X^L_j \cup X^R_j = X_j$,
+  \begin{eqnarray*}
+    \lefteqn{\left( \GNP(X^L_i,X^L_j) \op{j} \GNP(X^L_i,X^R_j) \right) \op{i} \left( \GNP(X^R_i,X^L_j) \op{j} \GNP(X^R_i,X^R_j) \right)} \\
+    & = & \left( \GNP(X^L_i,X^L_j) \op{i} \GNP(X^R_i,X^L_j) \right) \op{j} \left( \GNP(X^L_i,X^R_j) \op{i} \GNP(X^R_i,X^R_j) \right) .
+  \end{eqnarray*}
+  A regular reduce problem is {\em pairwise exchangeable} if operators
+  $\op{i}$ and $\op{j}$ are exchangeable for all $1 \leq i < j \leq
+  n$.
+\end{definition}
+\begin{theorem}
+  Pairwise exchangeability is logically equivalent to block
+  decomposability.
+\end{theorem}
+\begin{proof}
+  ($\Rightarrow$) Observe that, for regular reduce problems, trivial
+  subsets of inputs may be decomposed
+  \[ \begin{array}{rclclcl}
+    \multicolumn{3}{l}{\GNP(\{x_1\},\ldots,\{x_{j-1}\},X_j)} & = & \GNP^j(X_j) & = & \Op{j}_{x_j \in X_j}\cdots\Op{n}_{x_n \in X_n}f(x_1,\ldots,x_n) \\
+    & = & \multicolumn{5}{l}{\Op{j}_{x_j \in X^L_j}\cdots\Op{n}_{x_n \in X_n}f(x_1,\ldots,x_n) \op{j} \Op{j}_{x_j \in X^R_j}\cdots\Op{n}_{x_n \in X_n}f(x_1,\ldots,x_n)} \\
+    & = & \multicolumn{5}{l}{\GNP^j(X^L_j) \op{j} \GNP^j(X^R_j).}
+  \end{array} \]
+  Thus, for all selected splits $1 \leq j < i \leq n$ and all
+  partitions $X^L_i \cup X^R_i = X'_i$, with $x^t_j$ denoting
+  successive elements of $X_j$ and $X^t_j = \{x^1_j,\ldots,x^t_j\}$,
+  $1 \leq t \leq |X_j|$, we have
+  \begin{eqnarray*}
+    \lefteqn{\left( \GNP^j(X^t_j,X^L_i) \op{i} \GNP^j(X^t_j,X^R_i) \right) \op{j} \left( \GNP^j(\{x^{t+1}_j\},X^L_i) \op{i} \GNP^j(\{x^{t+1}_j\},X^R_i) \right)} \\
+    & = & \left( \GNP^j(X^t_j,X^L_i) \op{j} \GNP^j(\{x^{t+1}_j\},X^L_i) \right) \op{i} \left( \GNP^j(X^t_j,X^R_i) \op{j} \GNP^j(\{x^{t+1}_j\},X^R_i) \right) \\
+    & = & \GNP^j(X^{t+1}_j,X^L_i) \op{i} \GNP^j(X^{t+1}_j,X^R_i).
+  \end{eqnarray*}
+  Induction over $t$ from $1$ to $|X_j| - 1$ yields
+  \[
+  \Op{j}_{x_j \in X_j} \left( \GNP^j(\{x_j\},X^L_i) \op{i} \GNP^j(\{x_j\},X^R_i) \right) = \GNP^j(X'_j,X^L_i) \op{i} \GNP^j(X'_j,X^R_i).
+  \]
+  Further induction over $j$ from $i-1$ down to $1$ yields
+  \[
+  \GNP(X_i) = \Op{1}_{x_1 \in X_1}\cdots\Op{i-1}_{x_{i-1} \in X_{i-1}} \left( \GNP^i(X^L_i) \op{i} \GNP^i(X^R_i) \right) = \GNP(X^L_i) \op{i} \GNP(X^R_i).
+  \]
+  ($\Leftarrow$) Given selected splits $i$ and $j$ and partitions
+  $X^L_i \cup X^R_i = X'_i$ and $X^L_j \cup X^R_j = X'_j$, we have
+  \[ \begin{array}{rclclcl}
+    \lefteqn{\left( \GNP(X^L_i,X^L_j) \op{j} \GNP(X^L_i,X^R_j) \right) \op{i} \left( \GNP(X^R_i,X^L_j) \op{j} \GNP(X^R_i,X^R_j) \right)} \\
+    & = & \GNP(X^L_i,X_j) \op{i} \GNP(X^R_i,X_j) & = & \GNP(X_i,X_j) & = & \GNP(X_i,X^L_j) \op{j} \GNP(X_i,X^R_j) \\
+    & = & \multicolumn{5}{l}{\left( \GNP(X^L_i,X^L_j) \op{i} \GNP(X^R_i,X^L_j) \right) \op{j} \left( \GNP(X^L_i,X^R_j) \op{i} \GNP(X^R_i,X^R_j) \right) .}
+  \end{array} \]
+\end{proof}
+
+Exchangeability is not common, but two important classes of
+exchangeable operator pairs exist.
+\begin{lemma}
+  All commutative, associative operators are exchangeable with
+  themselves.
+\end{lemma}
+\begin{proof}
+  Obvious given definition of exchangeability.
+\end{proof}
+\begin{lemma}\label{lem:map}
+  A leading $\map$ operator is exchangeable with all trailing
+  operators.
+\end{lemma}
+\begin{proof}
+  Given a regular reduce problem leading with map, $\GNP(X_1,\ldots,X_n) =$
+  \[
+  \map_{x_1 \in X_1}\Op{2}_{x_2 \in X_2}\cdots\Op{n}_{x_n \in X_n} f(x_1,\ldots,x_n) \equiv \bigcup_{x_1 \in X_1}\VecOp{2}_{x_2 \in X_2}\cdots\VecOp{n}_{x_n \in X_n} \{x_1,f(x_1,\ldots,x_n)\},
+  \]
+  observe that $\map_{x \in X} f(x) \vecop{i} \map_{x \in X} g(x) =
+  \map_{x \in X} (f(x) \op{i} g(x))$ for arbitrary $f$ and $g$.  Thus,
+  \[ \begin{array}{rclcl}
+    \lefteqn{\left( \GNP(X^L_1,X^L_i) \vecop{i} \GNP(X^L_1,X^R_i) \right) \cup \left(\GNP(X^R_1,X^L_i) \vecop{i} \GNP(X^R_1,X^R_i) \right)} \\
+    & = & \multicolumn{3}{l}{\left( \bigcup_{x_1 \in X^L_1} \GNP^2(X^L_i) \vecop{i} \bigcup_{x_1 \in X^L_1} \GNP^2(X^R_i) \right) \cup \left( \bigcup_{x_1 \in X^R_1} \GNP^2(X^L_i) \vecop{i} \bigcup_{x_1 \in X^R_1} \GNP^2(X^R_i) \right)} \\
+    & = & \multicolumn{3}{l}{\bigcup_{x_1 \in X^L_1} \left( \GNP^2(X^L_i) \vecop{i} \GNP^2(X^R_i) \right) \cup \bigcup_{x_1 \in X^R_1} \left( \GNP^2(X^L_i) \vecop{i} \GNP^2(X^R_i) \right)} \\
+    & = & \bigcup_{x_1 \in X_1} \left( \GNP^2(X^L_i) \vecop{i} \GNP^2(X^R_i) \right) & = & \bigcup_{x_1 \in X_1} \GNP^2(X^L_i) \vecop{i} \bigcup_{x_1 \in X_1} \GNP^2(X^R_i) \\
+    & = & \multicolumn{3}{l}{\left( \bigcup_{x_1 \in X^L_1} \GNP^2(X^L_i) \cup \bigcup_{x_1 \in X^R_1} \GNP^2(X^L_i) \right) \vecop{i} \left( \bigcup_{x_1 \in X^L_1} \GNP^2(X^R_i) \cup \bigcup_{x_1 \in X^R_1} \GNP^2(X^R_i) \right)} \\
+    & = & \multicolumn{3}{l}{\left( \GNP(X^L_1,X^L_i) \cup \GNP(X^R_1,X^L_i) \right) \vecop{i} \left( \GNP(X^L_1,X^R_i) \cup \GNP(X^R_1,X^R_i) \right) .}
+  \end{array} \]
+\end{proof}
+
+% \subsection{Transforming Problems into GNPs}
+
+{\bf Transforming Problems into GNPs.}  Many high-order reduce
+problems that are not GNPs may be transformed into GNPs.  The most
+straightforward approach is to segment the problem into portions that
+are regular and pairwise exchangeable.
+\begin{lemma}
+  A high-order reduce problem $\Theta$ may be transformed into nested,
+  high-order reduce problems $\Theta^k$, $1 \leq k \leq m$, with:
+  \[ \begin{array}{rclr}
+    \Theta^k & = & (\Psi_{\Theta^{k+1}},[\theta_{t_k},\ldots,\theta_{t_{k+1}}]) & 1 \leq k < m \\
+    \Theta^m & = & (f,[\theta_{t_m,\ldots,\theta_n}]),
+  \end{array} \]
+  where $t_k = 1 + \sum_{i=1}^{k-1} n_k$.
+
+  Given high-order reduce problem $\Theta$, construct GNPs $\Theta_k$,
+  $1 \leq k \leq m$, with $f_k = \Psi_{\Theta_{k+1}}$ for $1 \leq k <
+  m$ and $f_m = f$, by greedily adding consecutive element of
+  $\Theta$'s list of triples to the current $\Theta_k$ until
+  encountering sensitivity to curried input from within $\Theta_k$, a
+  non-identity $g_i$, or an $\op{i}$ not exchangeable with each
+  operator in $\Theta_k$, at which point moving to $\Theta_{k+1}$.
+\end{lemma}
+\begin{proof}
+  The construction rules enforce that each $\Theta_k$ is regular and
+  pairwise exchangeable, and is thus a GNP.  Further, the fully
+  expanded computational expression formed by $\Theta_1$ through
+  $\Theta_m$ is syntactically equivalent to the original problem, and
+  is thus correct.
+\end{proof}
+In the worst case, all segments consist of only one operator.  While
+computation may still be accelerated via the algorithm presented in
+the next section, this case does not truly permit GNPs to shine.
+Fortunately, we can do better.
+
+
+
+Simple algebra can often distribute or factor the $g_i$ into
+less obstructive positions, but failing that (or failing
+exchangeability) we have the following.
+\begin{lemma}
+  Given high-order reduce problem $\Theta$, we may transform
+  $\Psi_{\Theta}^i(X_i) =$
+  \[
+  g_i \left( \Op{i}_{x_i \in X_i} \left( g_{i+1}{\scriptstyle (x_i)} \comp \GNP^{i+1}{\scriptstyle (x_i)} \right) (X_{i+1}) \right) \equiv g_i \comp \Op{i} \comp \overrightarrow{g_{i+1}} \left( \map_{x_i \in X_i} \GNP^{i+1}{\scriptstyle (x_i)}(X_{i+1}) \right) ,
+  \]
+  where unsubscripted $\Op{i}$ is understood to reduce the values in a
+  set of key-value pairs.
+\end{lemma}
+\begin{proof}
+  Observe that $\Op{}_{x \in X} f(x) = \Op{} \map_{x \in X} f(x)$ for
+  arbitrary $f$ and $\Op{}$.  Further, observe that $\map_{x \in X}
+  g{\scriptstyle (x)}(f(x)) = \overrightarrow{g} \left( \map_{x \in X}
+  f(x) \right)$ for arbitrary $f$ and $g$.  Applying these in
+  succession to the left-hand side of the above demonstrates its
+  equality to the right.
+\end{proof}
+\noindent While $\Psi_{\Theta}^i$ might not constitute a GNP due to
+non-identity $g_{i+1}$ or lacking exchangeability between $\op{i}$ and
+some other operator, its transformed version does not face these
+problems.  It is still necessary for $\GNP^{i+1}$ to be regular and
+pairwise exchangeable.  In the case that it is not, we may repeate 
+
+Entire reduce problems may occupy the position of inner function $f$,
+permitting the formation of nested GNPs for particularly involved
+problems.
+\begin{lemma}
+  Given appropriate requirements on each $X_i$'s invariance to input,
+  we may greedily segment a reduce problem from left to right into
+  nested GNPs
+  \[
+  f_k(x_1,\ldots,x^{k-1}_{n_{k-1}}) = \left\{ \begin{array}{l}
+      \displaystyle g^k_1 \left( \Op[k]{1}_{x^k_1 \in X^k_1}\cdots\Op[k]{n_k}_{x^k_{n_k} \in X^k_{n_k}} f_{k+1}(x_1,\ldots,x^k_{n_k}) \right) \\
+      \displaystyle g^k_1 \comp \Op[k]{1} \comp \widetilde{g^k_2} \left( \map_{x^k_1 \in X^k_1} \Op[k]{2}_{x^k_2 \in X^k_2}\cdots\Op[k]{n_k}_{x^k_{n_k} \in X^k_{n_k}} f_{k+1}(x_1,\ldots,x^k_{n_k}) \right)
+    \end{array} \right.
+  \]
+  by successively selecting either the next $n_k \geq 2$ mutually
+  exchangeable operators separated by identity postprocessing
+  functions or the next operator and the $n_k - 1 \geq 1$ such
+  operators following it.  The $X^k_i$ are permitted to depend on
+  $x_1,\ldots,x^{k-1}_{n_{k-1}}$, and the final $f_k$ may reduce over
+  a single operator.
+\end{lemma}
+
+[[Perhaps mention that GNPs can also be done in ``parallel'' for
+expressions such as
+\[
+\Op{a}_{x \in X} \left( \Op{b}_{y \in Y} f(x,y) \op{d} \Op{c}_{z \in Z} g(x,z) \right) .
+\]
+This involves forming a specialized $\op{b,c}$ operator that performs
+both operations on a pair, etc., and treating $\op{d}$ as a
+postprocessing function.  The machinery above that injects map can
+then convert this into a GNP.  Unfortunately, I don't quite know the
+extent of this opportunity, and dealing with approximations,
+recursion, etc., can become so complicted I'm tempted to sweep this
+under the rug for now.]]
+
+\section{The Generalized $N$-body Algorithm}
+
+The block decomposable nature of GNPs immediately suggests a recursive
+alternative to the na\"{\i}ve computation,
+\[
+\GNP(X'_1,\ldots,X'_n) = \left\{ \begin{array}{lr}
+  f(x_1,\ldots,x_n) & \mbox{if } X'_i = \{x_i\} \mbox{ for all } 1 \leq i \leq n, \\
+  \multicolumn{2}{l}{\GNP(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP(X'_1,\ldots,X^R_i,\ldots,X'_n).}
+\end{array} \right.
+\]
+Recursion forms a binary tree with one leaf per combination of data
+points.  Exhuastive computation thus requires time $O(N^n)$, as with
+na\"{\i}ve.  It may be possible, however, to obtain results for some
+components of the recursive block decomposition without computing them
+exhaustively.  Exploiting this, we hope to drive the expected running
+time down with recursive algorithm
+\[
+\GNP(X'_1,\ldots,X'_n) = \left\{ \begin{array}{lr}
+  a \in \GNP^A(X'_1,\ldots,X'_n) & \mbox{if prune possible}, \\
+  f(x_1,\ldots,x_n) & \mbox{if } X'_i = \{x_i\} \mbox{ for all } 1 \leq i \leq n, \\
+  \multicolumn{2}{l}{\GNP(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP(X'_1,\ldots,X^R_i,\ldots,X'_n).}
+\end{array} \right.
+\]
+
+[[The above too closely ties itself to depth-first expansion.  I need
+to formulate this in a manner more friendly to expansion patterns,
+that better captures the idea of accumulating abstract results and
+making pruning decisions based upon them.]]
+
+\subsection{Abstraction}
+
+We denote abstract results with the set $\GNP^A(X'_1,\ldots,X'_n)$ of
+all possible results of $\GNP(X'_1,\ldots,X'_n)$ given some selection
+of descriptive statistics on input $X'_i$, $1 \leq i \leq n$.  This
+set must contain the exact result; accordingly, it cannot be empty.
+Operations on abstract results yield the set of all possible outcomes
+\[
+\begin{array}{rcl}
+  \lefteqn{\GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n)} \\
+  & \equiv & \{a \op{i} b \mid a \in \GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n), b \in \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n)\} \\
+  & & \cap \GNP^A(X'_1,\ldots,X^L_i \cup X^R_i,\ldots,X'_n).
+\end{array}
+\]
+[[Intersecting with abstract results for the composed region is
+optional, as the composed abstract results for the subregions is
+almost always tighter.  Perhaps also indicate that exact results
+composed with abstract results work how you'd expect.]]
+
+\subsection{The Algorithm}
+
+[[Initialize frontier $\GNP^F$ to $\GNP^A(X_1,\ldots,X_n)$.  Then
+perform the following update procedure until all abstract results have
+been elminated:]]
+
+\begin{itemize}
+\item Select some $\GNP^A(X'_1,\ldots,X'_n)$ from $\GNP^F$
+\item If prune possible, replace with $a \in \GNP^A(X'_1,\ldots,X'_n)$
+\item If leaf, replace with $f(x_1,\ldots,x_n)$
+\item Otherwise, replace with $\GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n)$
+\end{itemize}
+
+\[
+\begin{array}{rcl}
+  \lefteqn{\GNP^A(X'_1,\ldots,X'_n)} \\
+  & \leftarrow & \left\{
+  \begin{array}{lr}
+    a \in \GNP^A(X'_1,\ldots,X'_n) & \mbox{ if prune} \\
+    f(x'_1,\ldots,x'_n) & \mbox{ if leaf} \\
+    \GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n) & \mbox{ otherwise}
+  \end{array}
+  \right.
+\end{array}
+\]
+
+\section{Exact Pruning}
+
+\subsection{Intrinsic}
+
+\subsection{Extrinsic}
+
+\subsection{Global}
+
+\section{Approximate Pruning}
+
+\subsection{Global}
+
+\subsection{Intrinsic}
+
+\subsection{Extrinsic}
+
+\section{Practical Considertaions}
+
+[[Abstract results must be represented somehow.  When intermediate
+results form a lattice, upper and lower bounds may be used.  Further
+conditions on operators allow for easy maintenance of bounds.]]
+
+[[Too expensive to decide how to decompose blocks on an individual
+basis, so reused precomputed tree splits when breaking up work.  Trees
+also handy to find bottom-up statistics and store intermediate
+results.]]
+
+[[We can't afford to recompute the global bounds on $\GNP^F$ after
+each update from scratch, but instead need some means of updating a
+running total, so to speak.  For invertible operators, it is
+sufficient to apply and undo changes directly to some globally
+accessible value.  Some noninvertible operators (such as min) don't
+need to be undone, but others can pose a challenge (resolved below).]]
+
+[[Any expansion pattern may be used for choosing the next abstract
+result to refine in $\GNP^F$.  Which to use is a trade-off between
+overhead and improved pruning information.  Also, some expansion
+patterns (e.g.~depth-first) can eliminate the ``undo'' problem by
+allowing partial results to be stored at low cost.]]
+
+\appendix
+
+% \section{Full Permutability}
+% 
+% \begin{definition}
+%   A regular reduce problem is {\em fully permutable} if, for all
+%   permutations $p_1,\ldots,p_n$ of the numbers $1,\ldots,n$,
+%   \[
+%   \Op{1}_{x_1 \in X'_1}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) = \Op{p_1}_{x_{p_1} \in X'_{p_1}}\cdots\Op{p_n}_{x_{p_n} \in X'_{p_n}}f(x_1,\ldots,x_n).
+%   \]
+% \end{definition}
+% 
+% \begin{theorem}
+%   Full permutability is logically equivalent to exchangeability (and
+%   thus block decomposability).
+% \end{theorem}
+% 
+% \begin{proof}
+%   ($\Rightarrow$) Given selected split $i$ and partitions $X^L_i \cup
+%   X^R_i = X_i$, we have
+%   \[
+%   \begin{array}{rcl}
+%     \lefteqn{\GNP(X'_1,\ldots,X'_i,\ldots,X'_n)} \\
+%     & = & \displaystyle \Op{1}_{x_1 \in X'_1}\cdots\Op{i}_{x_i \in X'_i}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & = & \displaystyle \Op{i}_{x_i \in X'_i}\Op{1}_{x_1 \in X'_i}\cdots\Op{i-1}_{x_{i-1} \in X'_{i-1}}\Op{i+1}_{x_{i+1} \in X'_{i+1}}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & = & \displaystyle \Op{i}_{x_i \in X^L_i}\Op{1}_{x_1 \in X'_i}\cdots\Op{i-1}_{x_{i-1} \in X'_{i-1}}\Op{i+1}_{x_{i+1} \in X'_{i+1}}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & & \displaystyle \mbox{} \op{i} \Op{i}_{x_i \in X^R_i}\Op{1}_{x_1 \in X'_i}\cdots\Op{i-1}_{x_{i-1} \in X'_{i-1}}\Op{i+1}_{x_{i+1} \in X'_{i+1}}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & = & \displaystyle \Op{1}_{x_1 \in X'_i}\cdots\Op{i}_{x_i \in X^L_i}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & & \displaystyle \mbox{} \op{i} \Op{1}_{x_1 \in X'_i}\cdots\Op{i}_{x_i \in X^R_i}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & = & \displaystyle \GNP(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP(X'_1,\ldots,X^R_i,\ldots,X'_n).
+%   \end{array}
+%   \]
+%   ($\Leftarrow$) Given permutation $p_1,\ldots,p_n$ of the numbers
+%   $1,\ldots,n$, with $x^t_{p_i}$ denoting successive elements of
+%   $X'_{p_1}$ and $X^t_{p_i} = \{x^1_{p_i},\ldots,x^t_{p_i}\}$, $1 \leq
+%   t \leq |X'_{p_i}|$, and the understanding that permuted inputs are
+%   mapped to the appropriate arguments of $\GNP$, we have
+%   \[
+%   \begin{array}{rcl}
+%     \lefteqn{\GNP(\{x_{p_1}\},\ldots,\{x_{p_{i-1}}\},X'_1,\ldots,X^t_{p_i},\ldots,X'_n)} \\
+%     & = & \GNP(\{x_{p_1}\},\ldots,\{x_{p_{i-1}}\},X'_1,\ldots,X^{t-1}_{p_i},\ldots,X'_n) \\
+%     & & \mbox{} \op{p_i} \GNP(\{x_{p_1}\},\ldots,\{x_{p_{i-1}}\},X'_1,\ldots,\{x^t_{p_i}\},\ldots,X'_n).
+%   \end{array}
+%   \]
+%   Induction over $t$ from $|X_{p_i}|$ down to $2$ yields
+%   \[
+%   \begin{array}{rcl}
+%     \lefteqn{\GNP(\{x_{p_1}\},\ldots,\{x_{p_{i-1}}\},X'_1,\ldots,X'_{p_i},\ldots,X'_n)} \\
+%     & = & \displaystyle \Op{p_i}_{x_{p_i} \in X'_{p_i}}\GNP(\{x_{p_1}\},\ldots,\{x_{p_i}\},X'_1,\ldots,X'_{p_{i+1}},\ldots,X'_n).
+%   \end{array}
+%   \]
+%   Further induction over $i$ from $1$ to $n$ yields
+%   \[
+%   \begin{array}{rcl}
+%     \lefteqn{\Op{1}_{x_1 \in X'_1}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n)} \\
+%     & = & \GNP(X'_1,\ldots,X'_n) \\
+%     & = & \displaystyle \Op{p_1}_{x_{p_1} \in X'_{p_1}}\cdots\Op{p_n}_{x_{p_n} \in X'_{p_n}}\GNP(\{x_{p_1}\},\ldots,\{x_{p_n}\}) \\
+%     & = & \displaystyle \Op{p_1}_{x_{p_1} \in X'_{p_1}}\cdots\Op{p_n}_{x_{p_n} \in X'_{p_n}}f(x_1,\ldots,x_n).
+%   \end{array}
+%   \]
+% \end{proof}
+
+\subsubsection*{Acknowledgments}
+
+Use unnumbered third level headings for the acknowledgments. All
+acknowledgments go at the end of the paper.
+
+\subsubsection*{References}
+
+References follow the acknowledgments. Use unnumbered third level heading for
+the references. Any choice of citation style is acceptable as long as you are
+consistent. It is permissible to reduce the font size to `small' (9-point) 
+when listing the references.
+
+\small{
+[1] Alexander, J.A. \& Mozer, M.C. (1995) Template-based algorithms
+for connectionist rule extraction. In G. Tesauro, D. S. Touretzky
+and T.K. Leen (eds.), {\it Advances in Neural Information Processing
+Systems 7}, pp. 609-616. Cambridge, MA: MIT Press.
+
+[2] Bower, J.M. \& Beeman, D. (1995) {\it The Book of GENESIS: Exploring
+Realistic Neural Models with the GEneral NEural SImulation System.}
+New York: TELOS/Springer-Verlag.
+
+[3] Hasselmo, M.E., Schnell, E. \& Barkai, E. (1995) Dynamics of learning
+and recall at excitatory recurrent synapses and cholinergic modulation
+in rat hippocampal region CA3. {\it Journal of Neuroscience}
+{\bf 15}(7):5249-5262.
+}
+
+\end{document}
