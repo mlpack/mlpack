@@ -526,7 +526,7 @@ class Loader:
       # (source, headers, cflags)
       longname = pathify_fake(name)
       if sources:
-        lib = librule(name = longname + "__auto",
+        lib = librule(name = name + "__auto",
             sources = sources, headers = headers, deplibs = deplibs,
             cflags = cflags)
         deplibs = deplibs + [lib]
