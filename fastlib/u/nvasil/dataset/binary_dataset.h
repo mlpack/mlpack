@@ -63,7 +63,7 @@ class BinaryDataset {
 			it.current_pos_+=i;
 			DEBUG_ASSERT_MSG(it.current_pos_<set_.get_num_of_points(),
 					             "iterator out of bounds "LI">="LI"\n",
-											 it.current_pos_, set_.get_num_of_points());
+											 it.current_pos_, set_->get_num_of_points());
 			return it;
 		}
 		Iterator operator--() {

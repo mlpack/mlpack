@@ -21,7 +21,7 @@
 
 #include "fastlib/fastlib.h"
 #include "u/nvasil/dataset/binary_dataset.h"
-#include "hyper_rectangle.h"
+#include "u/nvasil/tree/hyper_rectangle.h"
 using namespace std;
 template<typename TYPELIST, bool diagnostic>
 class KdPivoter2 {
@@ -50,7 +50,7 @@ class KdPivoter2 {
 		}
 		bool operator()(const CompletePoint<Precision_t> &p1,
 			              const CompletePoint<Precision_t> &p2) const {
-		  return p1[pivot_dimension_]<p2[pivot_dimension_]'
+		  return p1[pivot_dimension_]<p2[pivot_dimension_];
 		}
 	 private:		
 		index_t pivot_dimension_;
@@ -61,38 +61,28 @@ class KdPivoter2 {
 	
   pair<PivotInfo*, PivotInfo*> operator()(PivotInfo *pivot) {	
 		int32 dimension = data_->get_dimension();	
-    int32 max_range_dimension = pivot->box_.get_pivot_dimension();
 		index_t left_points  = pivot->num_of_points_/2;
 		index_t right_points = pivot->num_of_points_ - left_points;
-		BinaryDataset<Precision_t>::Iterator it=data_.Begin()+left_points;
+		typename BinaryDataset<Precision_t>::Iterator it=
+			  data_->Begin()+pivot_->start_+left_points;
 		Comparator comp;
-		comp.Init(pivot->box.get_pivot_dimension());
-		std::nth_element(data_->Begin(), it, data_->End(), comp);
-		hr_left.Init(dimension);
-    hr_right.Init(dimension);
+		comp.Init(pivot->box_.get_pivot_dimension());
+		std::nth_element(data_->Begin()+pivot->start_, it, 
+				             data_->Begin()+pivot->start_+pivot->num_of_points_, comp);
 
-	  index_t left_start = pivot->start_;
-	  index_t right_start = pivot->start_ + pivot->num_of_points_-1;
-    int32 dimension = data_->get_dimension();	
-    int32 max_range_dimension = pivot->box_.get_pivot_dimension();
-    Precision_t pivot_value = pivot->box_.get_pivot_value();                  
-    Precision_t *point_left = data_->At(left_start);
-    Precision_t *point_right = data_->At(right_start); 
-    index_t left_points=0;
-    index_t right_points=0;   
-    HyperRectangle_t  hr_left;
+	  HyperRectangle_t  hr_left;
 	  HyperRectangle_t  hr_right;
     hr_left.Init(dimension);
     hr_right.Init(dimension);
-    for(index_t i=0; i<left_points; i++) {
+    index_t left_start=pivot->start_;
+		for(index_t i=left_start; i<left_start+left_points; i++) {
 		  UpdateHyperRectangle(data_->At(i), hr_left);
 		}
-    for(index_t i=left_points; i<num_of_points; i++) {
+    for(index_t i=left_start+left_points; i<left_start+pivot->num_of_points_; i++) {
 		  UpdateHyperRectangle(data_->At(i), hr_right);
 		} 
 		FindPivotDimensionValue(hr_left);
     FindPivotDimensionValue(hr_right);  
-  
     PivotInfo* pv_left  =  new PivotInfo();
 		pv_left->Init(left_start, left_points, hr_left);
 	  PivotInfo* pv_right =  new PivotInfo();

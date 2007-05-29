@@ -314,7 +314,10 @@ struct NodeParameters2 {
 	typedef NullStatistics<Loki::NullType> NodeCachedStatistics_t;
   typedef SimpleDiscriminator PointIdDiscriminator_t;
 };
-
+struct TreeParameters2 {
+  typedef Node<NodeParameters2, false> Node_t;
+  typedef KdPivoter1<BasicTypes2, false> Pivot_t; 
+};
 struct TreeParameters3 {
   typedef Node<NodeParameters1, false> Node_t;
   typedef KdPivoter2<BasicTypes1, false> Pivot_t; 
@@ -328,7 +331,7 @@ struct TreeParameters4 {
 typedef BinaryTreeTest<TreeParameters1, false> BinaryTreeTest1_t;
 typedef BinaryTreeTest<TreeParameters2, false> BinaryTreeTest2_t;
 typedef BinaryTreeTest<TreeParameters3, false> BinaryTreeTest3_t;
-typedef BinaryTreeTest<TreeParameters4, false> BinaryTreeTest4_t;
+//typedef BinaryTreeTest<TreeParameters4, false> BinaryTreeTest4_t;
 
 int main(int argc, char *argv[]) {
   BinaryTreeTest1_t test1;

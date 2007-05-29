@@ -1,7 +1,14 @@
 binrule(
-		name="memcomp",
+		name="memcomp1",
     sources=["main.cc"],
-		linkables = ["fastlib:fastlib", "u/nvasil/mmanager:mmapmm",
-		             "u/nvasil/mmanager_with_tpie:tpiemm",
-							   "u/nvasil/tree:binarytree"]
+		deplibs = ["fastlib:fastlib", "u/nvasil/mmanager:mmapmm",
+		           "u/nvasil/mmanager_with_tpie:tpiemm",
+							 "u/nvasil/tree:binarytree"]
+		)
+binrule(
+		name="memcomp2",
+    sources=["main.cc"],
+		deplibss = ["fastlib:fastlib", "u/nvasil/mmanager:mmapmm",
+		            "u/nvasil/mmanager_with_tpie:tpiemm",
+							  "u/nvasil/tree:binarytree"]
 		)
