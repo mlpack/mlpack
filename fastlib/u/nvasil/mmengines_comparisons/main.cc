@@ -76,6 +76,11 @@ int main(int argc, char *argv[]) {
   args.memory_file_ = fx_param_str(fx_root, "memory_file", "temp_mem"); 
   args.memory_engine_ = fx_param_str(fx_root, "memory_engine", "mmapmm");
 	args.specialized_for_knns_ = fx_param_bool(fx_root, "specialized_for_knns", false);
+	
+	if (args.memory_engine_=="tpiemm") {
+	 	unlink(args.memory_file_.c_str());
+	}
+
 	printf("Creating swap file...\n");
  	if (sizeof(index_t)==sizeof(int32)) {
 	  NONFATAL("index_t is int32, good for small scale problems");
@@ -133,7 +138,10 @@ int main(int argc, char *argv[]) {
 	}
 	fx_format_result(fx_root, "success", "%d", 1);
 	fx_done();
-  unlink(args.memory_file_.c_str());
+	if (args.memory_engine_=="tpiemm") {
+	 	unlink(args.memory_file_.c_str());
+	}
+
 }
 
 template<typename TREE>
