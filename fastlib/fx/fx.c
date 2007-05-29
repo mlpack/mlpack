@@ -325,7 +325,7 @@ long long int fx_param_int(struct datanode *module, const char *name, long long 
   struct datanode *node = fx__param(module, name, 1);
 
   if (!node->val) {
-    char buf[3 * sizeof(int) + 2];
+    char buf[3 * sizeof(long long int) + 2];
     sprintf(buf, "%lli", def);
     node->val = strdup(buf);
   } else {
@@ -340,7 +340,7 @@ long long int fx_param_int(struct datanode *module, const char *name, long long 
 long long int fx_param_int_req(struct datanode *module, const char *name)
 {
   const char *val = fx_param_str_req(module, name);
-  int res;
+  long long int res;
 
   if (sscanf(val, "%lli", &res) != 1) {
     FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
