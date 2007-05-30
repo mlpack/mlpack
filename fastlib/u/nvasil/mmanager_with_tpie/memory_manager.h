@@ -336,7 +336,10 @@ class MemoryManager {
 	// so the cache can accommodate up to kMaxNumOfPages
 	// but only cache_size_/page_size_ can be in the main memory
 	// so if the pages are not in the main memory they point to null
-  char **page_address_;
+  char **page_address_ptr_;
+	// for speedups this is the same as above but instead of pointers it 
+	// keeps the cache page number
+	int32 *page_address_;
   // This is an array that maps a page of the cache to the absolute
 	// page
 	index_t *cache_to_page_;

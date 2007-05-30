@@ -8,7 +8,15 @@ binrule(
 binrule(
 		name="memcomp2",
     sources=["main.cc"],
-		deplibss = ["fastlib:fastlib", "u/nvasil/mmanager:mmapmm",
+		deplibs = ["fastlib:fastlib", "u/nvasil/mmanager:mmapmm",
+		            "u/nvasil/mmanager_with_tpie:tpiemm",
+							  "u/nvasil/tree:binarytree"]
+		)
+
+binrule(
+		name="memcomp3",
+    sources=["main.cc"],
+		deplibs = ["fastlib:fastlib", "u/nvasil/mmanager:mmapmm",
 		            "u/nvasil/mmanager_with_tpie:tpiemm",
 							  "u/nvasil/tree:binarytree"]
 		)
