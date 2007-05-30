@@ -282,43 +282,50 @@ void DualTreeDepthFirst<GNP>::Pair_(
       index_t r_child2_i = r_node->child(1);
       const typename GNP::RNode *r_child1 = r_nodes_.StartRead(r_child1_i);
       const typename GNP::RNode *r_child2 = r_nodes_.StartRead(r_child2_i);
-      
-      double r_child1_h = GNP::Algorithm::Heuristic(
-          param_, *q_node, *r_child1);
-      double r_child2_h = GNP::Algorithm::Heuristic(
-          param_, *q_node, *r_child2);
-
-      if (unlikely(r_child2_h < r_child1_h)) {
-        const typename GNP::RNode *r_child_t = r_child1;
-        r_child1 = r_child2;
-        r_child2 = r_child_t;
-        
-        index_t r_child_t_i = r_child1_i;
-        r_child1_i = r_child2_i;
-        r_child2_i = r_child_t_i;
-      }
-
       typename GNP::Delta delta1;
       typename GNP::Delta delta2;
+      typename const GNP::Delta *second_delta;
+      double heur1;
+      double heur2;
 
       delta1.Init(param_);
       delta2.Init(param_);
 
-      bool do_r2 = GNP::Algorithm::ConsiderPairIntrinsic(
-          param_, *q_node, *r_child2, &delta2,
-          &global_result_, &q_node_mut->postponed);
-      
-      if (GNP::Algorithm::ConsiderPairIntrinsic(
+      if (!GNP::Algorithm::ConsiderPairIntrinsic(
           param_, *q_node, *r_child1, &delta1,
           &global_result_, &q_node_mut->postponed)) {
+        r_child1 = NULL;
+        heur1 = DBL_MAX;
+      } else {
+        heur1 = GNP::Algorithm::Heuristic(param_, *q_node, *r_child2, *delta1);
+      }
+      if (!GNP::Algorithm::ConsiderPairIntrinsic(
+          param_, *q_node, *r_child2, &delta2,
+          &global_result_, &q_node_mut->postponed)) {
+        r_child2 = NULL;
+        heur2 = DBL_MAX;
+      } else {
+        heur2 = GNP::Algorithm::Heuristic(param_, *q_node, *r_child2, *delta2);
+      }
+
+      if (unlikely(heur2 < heur1)) {
+        const typename GNP::RNode *r_child_t = r_child1;
+        r_child1 = r_child2;
+        r_child2 = r_child_t;
+        second_delta = &delta1;
+      } else {
+        second_delta = &delta2;
+      }
+      
+      if (r_child1 != NULL) {
         typename GNP::QMassResult exclusive_unvisited_for_r1(
             exclusive_unvisited);
-        if (do_r2) {
-          exclusive_unvisited_for_r1.ApplyDelta(param_, delta2);
+        if (r_child2 != NULL) {
+          exclusive_unvisited_for_r1.ApplyDelta(param_, *second_delta);
         }
         Pair_(q_node, r_child1, delta1, exclusive_unvisited_for_r1, q_node_mut);
       }
-      if (do_r2) {
+      if (r_child2 != NULL) {
         Pair_(q_node, r_child2, delta2, exclusive_unvisited, q_node_mut);
       }
       
@@ -380,5 +387,46 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
   q_node_mut->mass_result.FinishReaccumulate(param_, *q_node);
   q_node_mut->postponed.Reset(param_);
 }
+
+//       
+//       double r_child1_h = GNP::Algorithm::Heuristic(
+//           param_, *q_node, *r_child1);
+//       double r_child2_h = GNP::Algorithm::Heuristic(
+//           param_, *q_node, *r_child2);
+// 
+//       if (unlikely(r_child2_h < r_child1_h)) {
+//         const typename GNP::RNode *r_child_t = r_child1;
+//         r_child1 = r_child2;
+//         r_child2 = r_child_t;
+//         
+//         index_t r_child_t_i = r_child1_i;
+//         r_child1_i = r_child2_i;
+//         r_child2_i = r_child_t_i;
+//       }
+// 
+//       typename GNP::Delta delta1;
+//       typename GNP::Delta delta2;
+// 
+//       delta1.Init(param_);
+//       delta2.Init(param_);
+// 
+//       bool do_r2 = GNP::Algorithm::ConsiderPairIntrinsic(
+//           param_, *q_node, *r_child2, &delta2,
+//           &global_result_, &q_node_mut->postponed);
+//       
+//       if (GNP::Algorithm::ConsiderPairIntrinsic(
+//           param_, *q_node, *r_child1, &delta1,
+//           &global_result_, &q_node_mut->postponed)) {
+//         typename GNP::QMassResult exclusive_unvisited_for_r1(
+//             exclusive_unvisited);
+//         if (do_r2) {
+//           exclusive_unvisited_for_r1.ApplyDelta(param_, delta2);
+//         }
+//         Pair_(q_node, r_child1, delta1, exclusive_unvisited_for_r1, q_node_mut);
+//       }
+//       if (do_r2) {
+//         Pair_(q_node, r_child2, delta2, exclusive_unvisited, q_node_mut);
+//       }
+      
 
 #endif

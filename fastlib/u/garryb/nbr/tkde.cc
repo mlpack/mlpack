@@ -611,7 +611,8 @@ class Tkde {
     static double Heuristic(
         const Param& param,
         const QNode& q_node,
-        const RNode& r_node) {
+        const RNode& r_node,
+        const Delta& delta) {
       return q_node.bound().MidDistanceSqToBound(r_node.bound());
     }
   };

@@ -20,7 +20,7 @@ extern Mutex global_mpi_lock;
 /**
  * This class is your interface to an object that's somewhere else.
  */
-template<class Request, class Response>
+template<class RequestObject, class ResponseObject>
 class RemoteObjectStub {
   FORBID_COPY(RemoteObjectStub);
 
@@ -44,7 +44,7 @@ class RemoteObjectStub {
     DEBUG_ONLY(locked_ = false);
   }
 
-  const Response *Request(const Request& request) {
+  const ResponseObject *Request(const RequestObject& request) {
     DEBUG_ASSERT(locked_ == true);
 
     global_mpi_lock.Lock();
@@ -63,7 +63,7 @@ class RemoteObjectStub {
 
     global_mpi_lock.Unlock();
 
-    return ot::PointerThaw<Response>(data_.begin());
+    return ot::PointerThaw<ResponseObject>(data_.begin());
   }
 
   void Lock() {
@@ -99,7 +99,7 @@ class RawRemoteObjectBackend {
 /**
  * This is how you define the network object on the server.
  */
-template<typename Request, typename Response>
+template<typename RequestObject, typename ResponseObject>
 class RemoteObjectBackend
     : public RawRemoteObjectBackend {
  public:
@@ -107,15 +107,15 @@ class RemoteObjectBackend
 
   virtual void HandleRequestRaw(ArrayList<char> *raw_request,
       ArrayList<char> *raw_response) {
-    const Request* real_request =
-        ot::PointerThaw<Request>(raw_request->begin());
-    Response real_response;
+    const RequestObject* real_request =
+        ot::PointerThaw<RequestObject>(raw_request->begin());
+    ResponseObject real_response;
     HandleRequest(*real_request, &real_response);
     raw_response->Resize(ot::PointerFrozenSize(real_response));
     ot::PointerFreeze(real_response, raw_response->begin());
   }
 
-  virtual void HandleRequest(const Request& request, Response *response) = 0;
+  virtual void HandleRequest(const RequestObject& request, ResponseObject *response) = 0;
 };
 
 class RemoteObjectServer {
@@ -159,7 +159,7 @@ struct BlockRequest {
   BlockDevice::blockid_t blockid;
   BlockDevice::offset_t begin;
   BlockDevice::offset_t end;
-  enum { READ, WRITE, ALLOC, INFO } operation;
+  enum Operation { READ, WRITE, ALLOC, INFO } operation;
   ArrayList<char> payload;
 
   OT_DEF(BlockRequest) {
@@ -172,7 +172,7 @@ struct BlockRequest {
 };
 
 struct DataGetterRequest {
-  enum { GET_DATA } operation;
+  enum Operation { GET_DATA } operation;
   
   OT_DEF(DataGetterRequest) {
     OT_MY_OBJECT(operation);
@@ -246,10 +246,15 @@ class RemoteBlockDeviceBackend
     : public RemoteObjectBackend<BlockRequest, BlockResponse> {
  private:
   BlockDevice *blockdev_;
+  uint64 n_reads_;
+  uint64 n_read_bytes_;
+  uint64 n_writes_;
+  uint64 n_write_bytes_;
 
  public:
   void Init(BlockDevice *device);
   void HandleRequest(const BlockRequest& request, BlockResponse *response);
+  void Report(datanode *module);
 };
 
 /**

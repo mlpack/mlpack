@@ -223,7 +223,7 @@ class Allnn {
         const Param& param,
         const QNode& q_node,
         const RNode& r_node) {
-      return q_node.bound().MidDistanceSqToBound(r_node.bound());
+      return q_node.bound().MinDistanceSqToBound(r_node.bound());
     }
   };
 };

@@ -211,6 +211,7 @@ void ThreadedDualTreeMain(datanode *module, const char *gnp_name) {
       n_threads == 1 ? 1 : (n_threads * 3));
   SimpleWorkQueue<typename GNP::QNode> work_queue;
   work_queue.Init(&q_nodes, n_grains);
+  fx_format_result(module, "n_grains_actual", work_queue.n_grains());
 
   ThreadedDualTreeSolver<GNP, Solver> solver;
   solver.InitSolve(
@@ -229,6 +230,19 @@ void ThreadedDualTreeMain(datanode *module, const char *gnp_name) {
 
 #ifdef USE_MPI
 
+struct MpiDualTreeConfig {
+  int n_threads;
+  bool monochromatic;
+  
+  void Copy(const MpiDualTreeConfig& other) {
+    *this = other;
+  }
+
+  OT_DEF(MpiDualTreeConfig) {
+    OT_MY_OBJECT(n_threads);
+  }
+};
+
 template<typename GNP, typename Solver>
 void MpiDualTreeMain(datanode *module, const char *gnp_name) {
   const int MASTER_RANK = 0;
@@ -239,20 +253,16 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
   const int R_POINTS_CHANNEL = 6;
   const int R_NODES_CHANNEL = 7;
   const int Q_RESULTS_CHANNEL = 8;
+  const int CONFIG_CHANNEL = 9;
   typename GNP::Param param;
   int my_rank;
   int n_machines;
   int n_workers_total;
-  int n_threads;
-  int n_grains;
 
   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
   MPI_Comm_size(MPI_COMM_WORLD, &n_machines);
 
   n_workers_total = n_machines - 1;
-  n_threads = fx_param_int(module, "n_threads", 1);
-  n_grains = fx_param_int(module, "n_grains",
-      n_threads * n_workers_total * 3);
 
   if (my_rank == MASTER_RANK) {
     param.Init(fx_submodule(module, gnp_name, gnp_name));
@@ -268,13 +278,21 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     nbr_utils::LoadKdTree(fx_submodule(module, "r", "r"),
         &param, &r_points, &r_nodes);
 
+    MpiDualTreeConfig config;
+    config.n_threads = fx_param_int(module, "n_threads", 1);
+    config.monochromatic = fx_param_bool(module, "monochromatic", 1);
+    
     typename GNP::QResult default_result;
     default_result.Init(param);
     q_results.Init(default_result, q_points.end_index(),
         q_points.n_block_elems());
 
     SimpleWorkQueue<typename GNP::QNode> work_queue;
+    int n_grains = fx_param_int(module, "n_grains",
+        config.n_threads * n_workers_total * 3);
     work_queue.Init(&q_nodes, n_grains);
+    fx_format_result(module, "n_grains_actual", "%d", work_queue.n_grains());
+    
 
     RemoteWorkQueueBackend work_queue_backend;
     work_queue_backend.Init(&work_queue);
@@ -293,6 +311,9 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     DataGetterBackend<typename GNP::Param> param_backend;
     param_backend.Init(&param);
 
+    DataGetterBackend<MpiDualTreeConfig> config_backend;
+    config_backend.Init(&config);
+
     RemoteObjectServer server;
     server.Init();
 
@@ -303,10 +324,17 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     server.Register(R_POINTS_CHANNEL, &r_points_backend);;
     server.Register(R_NODES_CHANNEL, &r_nodes_backend);;
     server.Register(Q_RESULTS_CHANNEL, &q_results_backend);;
+    server.Register(CONFIG_CHANNEL, &config_backend);
 
     fx_timer_start(module, "server");
     server.Loop(n_workers_total);
     fx_timer_stop(module, "server");
+    
+    q_points_backend.Report(fx_submodule(module, NULL, "backends/q_points"));
+    q_nodes_backend.Report(fx_submodule(module, NULL, "backends/q_nodes"));
+    r_points_backend.Report(fx_submodule(module, NULL, "backends/r_points"));
+    r_nodes_backend.Report(fx_submodule(module, NULL, "backends/r_nodes"));
+    q_results_backend.Report(fx_submodule(module, NULL, "backends/q_results"));
   } else {
     String my_fx_scope;
 
@@ -314,6 +342,11 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     fx_scope(my_fx_scope.c_str());
     
     RemoteObjectServer::Connect(MASTER_RANK);
+
+    RemoteDataGetter<MpiDualTreeConfig> config_getter;
+    MpiDualTreeConfig config;
+    config_getter.Init(CONFIG_CHANNEL, MASTER_RANK);
+    config_getter.GetData(&config);
     
     RemoteDataGetter<typename GNP::Param> param_getter;
     param_getter.Init(PARAM_CHANNEL, MASTER_RANK);
@@ -336,7 +369,7 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
 
     SmallCache q_points_cache;
     SmallCache q_nodes_cache;
-    SmallCache r_points_cache;
+    SmallCache *r_points_cache;
     SmallCache r_nodes_cache;
     SmallCache q_results_cache;
 
@@ -346,9 +379,14 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     q_nodes_cache.Init(&q_nodes_device,
         new CacheArrayBlockActionHandler<typename GNP::QNode>,
         BlockDevice::READ);
-    r_points_cache.Init(&r_points_device,
-        new CacheArrayBlockActionHandler<typename GNP::Point>,
-        BlockDevice::READ);
+    if (!config.monochromatic) {
+      r_points_cache = new SmallCache();
+      r_points_cache->Init(&r_points_device,
+          new CacheArrayBlockActionHandler<typename GNP::Point>,
+          BlockDevice::READ);
+    } else {
+      r_points_cache = &q_points_cache;
+    }
     r_nodes_cache.Init(&r_nodes_device,
         new CacheArrayBlockActionHandler<typename GNP::RNode>,
         BlockDevice::READ);
@@ -359,12 +397,16 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     ThreadedDualTreeSolver<GNP, Solver> solver;
     solver.InitSolve(
         fx_submodule(module, "solver", "solver"), param,
-        n_threads, &work_queue,
+        config.n_threads, &work_queue,
         &q_points_cache, &q_nodes_cache,
-        &r_points_cache, &r_nodes_cache,
+        r_points_cache, &r_nodes_cache,
         &q_results_cache);
 
     RemoteObjectServer::Disconnect(MASTER_RANK);
+    
+    if (!config.monochromatic) {
+      delete r_points_cache;
+    }
   }
 }
 #endif

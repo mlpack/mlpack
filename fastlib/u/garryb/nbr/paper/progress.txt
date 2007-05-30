@@ -25,10 +25,13 @@ totals:
   ?- Probably jump on to tomorrow's material...
   ?- Decide if I need to write a new I/O framework...
 - Thursday May 24
+- Friday May 25
   ?- Re-assemble old paper
   ?- Fix paper's contents
   ?- If time permits: read papers
-- Friday May 25
+
+
+- Saturday May 26
   ?- WHAT I WILL DO for coding:
     - Make it easier to change block sizes on the fly
     - Insert read/write instrumentation
@@ -38,7 +41,6 @@ totals:
   ?- Run warp experiments
   ?- Make code faster
   ?- When time permits: read papers
-- Saturday May 26
   ?- Decide algorithms to implement
   ?- Implement a new algorithm
 - Sunday May 27

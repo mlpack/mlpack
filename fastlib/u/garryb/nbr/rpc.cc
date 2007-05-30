@@ -69,6 +69,10 @@ void RemoteObjectServer::Loop(int n_workers_total) {
 
 void RemoteBlockDeviceBackend::Init(BlockDevice *device) {
   blockdev_ = device;
+  n_reads_ = 0;
+  n_read_bytes_ = 0;
+  n_writes_ = 0;
+  n_write_bytes_ = 0;
 }
 
 void RemoteBlockDeviceBackend::HandleRequest(
@@ -80,11 +84,17 @@ void RemoteBlockDeviceBackend::HandleRequest(
     blockdev_->Write(request.blockid, request.begin, request.end,
         request.payload.begin());
     response->blockid = request.blockid;
+    
+    n_writes_++;
+    n_write_bytes_ += request.end - request.begin;
   } else if (request.operation == BlockRequest::READ) {
     response->payload.Init(request.end - request.begin);
     blockdev_->Read(request.blockid, request.begin, request.end,
         response->payload.begin());
     response->blockid = request.blockid;
+
+    n_reads_++;
+    n_read_bytes_ += request.end - request.begin;
   } else if (request.operation == BlockRequest::ALLOC) {
     response->payload.Init();
     response->blockid = blockdev_->AllocBlock();
@@ -94,6 +104,21 @@ void RemoteBlockDeviceBackend::HandleRequest(
   } else {
     FATAL("Unknown block operation %d.", request.operation);
   }
+}
+
+void RemoteBlockDeviceBackend::Report(datanode *module) {
+  fx_format_result(module, "n_reads", "%"L64"u", n_reads_);
+  fx_format_result(module, "n_read_bytes", "%"L64"u", n_read_bytes_);
+  fx_format_result(module, "read_ratio", "%f",
+      1.0 * n_read_bytes_ / blockdev_->n_blocks() / blockdev_->n_block_bytes());
+  fx_format_result(module, "n_writes", "%"L64"u", n_writes_);
+  fx_format_result(module, "n_write_bytes", "%"L64"u", n_write_bytes_);
+  fx_format_result(module, "write_ratio", "%f",
+      1.0 * n_write_bytes_ / blockdev_->n_blocks() / blockdev_->n_block_bytes());
+  fx_format_result(module, "n_block_bytes", "%"L64"u",
+      uint64(blockdev_->n_block_bytes()));
+  fx_format_result(module, "size", "%"L64"u",
+      uint64(blockdev_->n_blocks()) * blockdev_->n_block_bytes());
 }
 
 //-------------------------------------------------------------------------

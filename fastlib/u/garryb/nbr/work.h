@@ -39,6 +39,10 @@ class SimpleWorkQueue
   virtual ~SimpleWorkQueue() {}
 
   void Init(CacheArray<Node> *array, index_t n_grains);
+  
+  index_t n_grains() const {
+    return tasks_.size();
+  }
 
   virtual void GetWork(ArrayList<index_t> *work);
 
@@ -86,7 +90,7 @@ void SimpleWorkQueue<Node>::AddWork_(
 #include "rpc.h"
 
 struct WorkRequest {
-  enum { GIVE_ME_WORK } operation;
+  enum Operation { GIVE_ME_WORK } operation;
 
   OT_DEF(WorkRequest) {
     OT_MY_OBJECT(operation);

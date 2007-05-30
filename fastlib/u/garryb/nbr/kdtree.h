@@ -164,7 +164,6 @@ void KdTreeMidpointBuilder<TNode, TParam>::KdTreeMidpointBuilder::Build_(
       }
     }
 
-    double split_val = node->bound().get(split_dim).mid();
     
     DEBUG_ASSERT_MSG(max_width != 0,
         "There is probably a bug somewhere else - your points are all identical.");
@@ -175,10 +174,18 @@ void KdTreeMidpointBuilder<TNode, TParam>::KdTreeMidpointBuilder::Build_(
       Node *left = nodes_->StartWrite(left_i);
       Node *right = nodes_->StartWrite(right_i);
 
-      index_t split_col = Partition_(split_dim, split_val,
-          node->begin(), node->count(),
-          &left->bound(),
-          &right->bound());
+      index_t split_col;
+      double split_val = node->bound().get(split_dim).mid();
+      
+      do {
+        left->bound().Reset();
+        right->bound().Reset();
+        split_col = Partition_(split_dim, split_val,
+            node->begin(), node->count(),
+            &left->bound(),
+            &right->bound());
+        partition intelligently
+      };
       
       DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)",
           node->begin(), split_col,

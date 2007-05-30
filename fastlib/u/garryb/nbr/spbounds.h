@@ -198,6 +198,24 @@ struct SpRange {
     return result;
   }
   
+  void MaxWith(const SpRange& range) {
+    if (unlikely(range.lo > lo)) {
+      lo = range.lo;
+    }
+    if (unlikely(range.hi > hi)) {
+      hi = range.hi;
+    }
+  }
+  
+  void MinWith(const SpRange& range) {
+    if (unlikely(range.lo < lo)) {
+      lo = range.lo;
+    }
+    if (unlikely(range.hi < hi)) {
+      hi = range.hi;
+    }
+  }
+  
   friend bool operator < (const SpRange& a, const SpRange& b) {
     return a.hi < b.lo;
   }
@@ -252,11 +270,14 @@ class SpHrectBound {
 
     bounds_ = mem::Alloc<SpRange>(dimension);
 
-    for (index_t i = 0; i < dimension; i++) {
+    dim_ = dimension;
+    Reset();
+  }
+  
+  void Reset() {
+    for (index_t i = 0; i < dim_; i++) {
       bounds_[i].InitEmptySet();
     }
-
-    dim_ = dimension;
   }
   
   bool Contains(const Vector& point) const {
