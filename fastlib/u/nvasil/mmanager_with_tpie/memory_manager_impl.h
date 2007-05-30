@@ -46,16 +46,19 @@ void MEMORY_MANAGER__::Init() {
   current_offset_ = 0;
   current_page_ = 0;
   // register all the pages
-  page_address_  = new char*[kMaxNumOfPages];
+  page_address_ptr_  = new char*[kMaxNumOfPages];
+	page_address_ = new int32[kMaxNumOfPages];
   for(int32 i=0; i < kMaxNumOfPages; i++) {
-    page_address_[i] = NULL;
+    page_address_ptr_[i] = NULL;
+		page_address_[i] = -1;
   }	
   cache_to_page_ = new index_t[num_of_pages_];  
   for(int32 i=0; i < num_of_pages_; i++) {
     cache_to_page_[i] = -1;
   }	
   for(index_t i=0 ; i<num_of_pages_; i++){
-    page_address_[i] = cache_ + i * page_size_;
+    page_address_ptr_[i] = cache_ + i * page_size_;
+		page_address_[i]=i;
     cache_to_page_[i] = i;
   }
   // Init the page timestamps
@@ -170,16 +173,19 @@ void MEMORY_MANAGER__::Load() {
   memset(cache_, 0, cache_size_);
   
   // register all the pages
-  page_address_  = new char*[kMaxNumOfPages];
+  page_address_ptr_  = new char*[kMaxNumOfPages];
+	page_address_ = new int32[kMaxNumOfPages];
   for(int32 i=0; i < kMaxNumOfPages; i++) {
-     page_address_[i] = NULL;
+     page_address_ptr_[i] = NULL;
+		 page_address_[i]=-1;
   }	
   cache_to_page_ = new index_t[num_of_pages_];  
   for(index_t i=0; i < num_of_pages_; i++) {
     cache_to_page_[i] = -2;
   }	
   for(index_t i=0 ; i<num_of_pages_; i++){
-    page_address_[i] = cache_ + i * page_size_;
+    page_address_ptr_[i] = cache_ + i * page_size_;
+		page_address_[i]=i;
     MoveToCache(i, i);
     cache_to_page_[i] = i;
   }
@@ -206,7 +212,8 @@ void MEMORY_MANAGER__::Destruct() {
   // delete the memory allocated for the page timestamps
   delete []page_timestamp_;
   // delete other help variables;
-  delete []page_address_;
+  delete []page_address_ptr_;
+	delete []page_address_;
   delete []cache_to_page_;
   delete []page_locks_; 
   // delete cache
@@ -303,12 +310,12 @@ inline char *MEMORY_MANAGER__::Access(index_t address) {
   }
   index_t page=address/page_size_;
 	index_t offset=address%page_size_;
-  if (unlikely(page_address_[page] == NULL)) {
+  if (unlikely(page_address_ptr_[page] == NULL)) {
   	HandlePageFault(page);
   	total_num_of_page_faults_++;
   }
   page_timestamp_[PageToCachePage(page)]=page_timer_;
-  char *access_ptr_ = page_address_[page] + offset;
+  char *access_ptr_ = page_address_ptr_[page] + offset;
   
   return access_ptr_;
 }
@@ -334,12 +341,12 @@ inline char *MEMORY_MANAGER__::LockAndAccess(index_t address) {
   }
   index_t page=address/page_size_;
 	index_t offset=address%page_size_;
-  if (unlikely(page_address_[page] == NULL)) {
+  if (unlikely(page_address_ptr_[page] == NULL)) {
   	HandlePageFault(page);
   	total_num_of_page_faults_++;
   }
   page_timestamp_[PageToCachePage(page)]=page_timer_;
-  char *access_ptr_ = page_address_[page] + offset;
+  char *access_ptr_ = page_address_ptr_[page] + offset;
   Lock(page);  
   return access_ptr_;
 }
@@ -347,7 +354,7 @@ inline char *MEMORY_MANAGER__::LockAndAccess(index_t address) {
 // Moves to disk a page that has universal address paddress
 TEMPLATE__
 inline void MEMORY_MANAGER__::MoveToDisk(index_t paddress){
-  if (page_address_[paddress] == NULL) {
+  if (page_address_ptr_[paddress] == NULL) {
 		const char *temp="Attempt to move a page to disk that doesn't exist"
                      " or is not in cache\n";
     FATAL(temp);
@@ -362,7 +369,7 @@ inline void MEMORY_MANAGER__::MoveToDisk(index_t paddress){
 		}
     FATAL("Unable to seek to %llu \n", (unsigned long long)disk_offset);
 	}	
- 	if ((ae=disk_->write_array((Page *)(page_address_[paddress]), 
+ 	if ((ae=disk_->write_array((Page *)(page_address_ptr_[paddress]), 
 					                  page_size_/kTPIEPageSize))!=AMI_ERROR_NO_ERROR) {
 	  cout << "AMI ERROR " << ae << " while transfering block to disk\n";
 		FATAL(" An error occured whule trying to write on disk\n");
@@ -415,7 +422,8 @@ inline index_t MEMORY_MANAGER__::GetObjectAddress(void *pointer) {
 TEMPLATE__
 inline void MEMORY_MANAGER__::MapNewAddress(index_t paddress, 
 		                                     index_t cache_ram_address) {
-  page_address_[paddress] = cache_ + cache_ram_address * page_size_;
+  page_address_ptr_[paddress] = cache_ + cache_ram_address * page_size_;
+	page_address_[paddress]=cache_ram_address;
   cache_to_page_[cache_ram_address] = paddress; 
 }
 
@@ -423,8 +431,9 @@ inline void MEMORY_MANAGER__::MapNewAddress(index_t paddress,
 TEMPLATE__
 inline void MEMORY_MANAGER__::UnMapAddress(index_t cache_address) {
   index_t paddress = CachePageToPage(cache_address);
-  page_address_[paddress] = NULL; 
-  cache_to_page_[cache_address] = -2; 
+  page_address_ptr_[paddress] = NULL; 
+  page_address_[paddress]=-1;
+	cache_to_page_[cache_address] = -2; 
 }
 
 // Clears the modification status of a page with cache_page address
@@ -509,12 +518,13 @@ inline void MEMORY_MANAGER__::HandlePageFault(index_t page_requested) {
 
 TEMPLATE__
 inline index_t MEMORY_MANAGER__::PageToCachePage(index_t paddress) {
-  const char *temp="You are trying to access a page that "
-			               "is not in Cache\n"
-										 "Page number %i\n";
 
-	DEBUG_ASSERT_MSG(page_address_[paddress] != NULL, temp, paddress);
-  return  ((ptrdiff_t)(page_address_[paddress] - cache_)) / page_size_;
+	DEBUG_ASSERT_MSG(page_address_ptr_[paddress] != NULL,
+			             "You are trying to access a page that "
+			             "is not in Cache\n Page number %i\n",
+			              paddress);
+   return page_address_[paddress];
+	// return  ((ptrdiff_t)(page_address_ptr_[paddress] - cache_)) / page_size_;
 }
 
 TEMPLATE__
@@ -533,7 +543,7 @@ TEMPLATE__
 inline index_t MEMORY_MANAGER__::GetLastObjectAddress(char *ptr) {
   index_t oaddress;
   oaddress = current_page_ * page_size_ +
-             (ptrdiff_t)(ptr - page_address_[current_page_]);
+             (ptrdiff_t)(ptr - page_address_ptr_[current_page_]);
   return oaddress;
 }
 

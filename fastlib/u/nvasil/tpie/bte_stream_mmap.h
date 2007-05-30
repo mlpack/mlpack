@@ -44,11 +44,11 @@
 #endif
 
 // Get the BTE_stream_base class and other definitions.
-#include <bte_stream_base.h>
+#include "u/nvasil/tpie/bte_stream_base.h"
 
 // This code makes assertions and logs errors.
-#include <tpie_assert.h>
-#include <tpie_log.h>
+#include "u/nvasil/tpie/tpie_assert.h"
+#include "u/nvasil/tpie/tpie_log.h"
 
 #ifndef  BTE_STREAM_MMAP_BLOCK_FACTOR
 #  define BTE_STREAM_MMAP_BLOCK_FACTOR 8

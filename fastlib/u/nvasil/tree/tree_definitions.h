@@ -50,12 +50,12 @@ TREE_PARAMETERS(MMAPMM,
 								false); 
 struct BasicTypes1 {
   typedef float32 Precision_t;
-	typedef tpiemm::MemoryManager<falsei,65536> Allocator_t;
+	typedef tpiemm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 };
 struct NodeParameters1 {
   typedef float32 Precision_t;
-	typedef tpiemm::MemoryManager<false,65536> Allocator_t;
+	typedef tpiemm::MemoryManager<false> Allocator_t;
 	typedef EuclideanMetric<float32> Metric_t;
 	typedef HyperRectangle<BasicTypes1, false> BoundingBox_t;
 	typedef NullStatistics<Loki::NullType> NodeCachedStatistics_t;
