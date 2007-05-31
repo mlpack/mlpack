@@ -183,34 +183,25 @@ class Allnn {
      * updated.  q_postponed is not touched.
      * - If this returns false, delta is not touched.
      */
-    static bool ConsiderPairIntrinsic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node,
+    static bool ConsiderPairIntrinsic(const Param& param,
+        const QNode& q_node, const RNode& r_node,
         Delta* delta,
-        GlobalResult* global_result,
-        QPostponed* q_postponed) {
+        GlobalResult* global_result, QPostponed* q_postponed) {
       return true;
     }
 
-    static bool ConsiderPairExtrinsic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node,
-        const Delta& delta,
-        const QMassResult& q_mass_result,
-        const GlobalResult& global_result,
+    static bool ConsiderPairExtrinsic(const Param& param,
+        const QNode& q_node, const RNode& r_node, const Delta& delta,
+        const QMassResult& q_mass_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       double distance_sq_lo =
           q_node.bound().MinDistanceSqToBound(r_node.bound());
       return distance_sq_lo <= q_mass_result.distance_sq_hi;
     }
 
-    static bool ConsiderQueryTermination(
-        const Param& param,
+    static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
-        const QMassResult& q_mass_result,
-        const GlobalResult& global_result,
+        const QMassResult& q_mass_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
     }
@@ -219,10 +210,8 @@ class Allnn {
      * Computes a heuristic for how early a computation should occur -- smaller
      * values are earlier.
      */
-    static double Heuristic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node) {
+    static double Heuristic(const Param& param,
+        const QNode& q_node,  const RNode& r_node, const Delta& delta) {
       return q_node.bound().MinDistanceSqToBound(r_node.bound());
     }
   };

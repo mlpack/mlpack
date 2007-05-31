@@ -2,21 +2,19 @@
 struct AffinityCommon {
   /** The bounding type. Required by NBR. */
   typedef SpHrectBound<2> Bound;
-  /** The type of point in use. Required by NBR. */
-  typedef Vector Point;
-  
+
   struct Alpha {
    public:
     double max1;
     double max2;
     index_t max1_index;
-   
+
     OT_DEF(Alpha) {
       OT_MY_OBJECT(max1);
       OT_MY_OBJECT(max2);
       OT_MY_OBJECT(max1_index);
     }
-    
+
    public:
     double get(index_t i) {
       if (unlikely(i == max1_index)) {
@@ -30,7 +28,7 @@ struct AffinityCommon {
   struct AlphaInfo {
     Alpha alpha;
 
-    OT_DEF(QPointInfo) {
+    OT_DEF(AlphaInfo) {
       OT_MY_OBJECT(alpha);
     }
   };
@@ -38,10 +36,13 @@ struct AffinityCommon {
   struct RhoInfo {
     double rho;
 
-    OT_DEF(QPointInfo) {
+    OT_DEF(RhoInfo) {
       OT_MY_OBJECT(rho);
     }
   };
+  
+  typedef SpVectorPoint<AlphaInfo> AlphaPoint;
+  typedef SpVectorPoint<RhoInfo> RhoPoint;
 
   struct Param {
    public:
@@ -69,28 +70,34 @@ struct AffinityCommon {
       eps = fx_param_double(module, "eps", 1.0e-2);
     }
 
-    void AnalyzePoint(const Point& q_point) {
+    void AnalyzePoint(const AlphaPoint& q) {
       if (dim == -1) {
-        dim = q_point.length();
-        thresh.hi = t * (1.0 + 1.0e-4);
+        dim = q.vec().length();
       } else {
-        DEBUG_ASSERT_MSG(dim == q_point.length(), "Differing dimensionality");
+        DEBUG_ASSERT_MSG(dim == q.length(), "Differing dimensionality");
+      }
+    }
+    void AnalyzePoint(const RhoPoint& r) {
+      if (dim == -1) {
+        dim = q.vec().length();
+      } else {
+        DEBUG_ASSERT_MSG(dim == q.length(), "Differing dimensionality");
       }
     }
 
    public:
-    double Similarity(const Point& q, const Point& r) const {
+    double Similarity(const Vector& q, const Vector& r) const {
       return 1.0 / sqrt(la::EuclideanDistanceSq(a, b));
     }
     double Similarity(
-        const Point& q, const QPointInfo& q_info, index_t q_index,
-        const Point& r, index_t r_index) const {
+        const Vector& q, index_t q_index,
+        const Vector& r, index_t r_index) const {
       if (unlikely(q_index == r_index)) {
         return pref;
       }
       return Similarity(q, r);
     }
-    double SimilarityHi(const QNode& a, const QNode& b) const {
+    double SimilarityHi(const AlphaNode& a, const AlphaNode& b) const {
       double dist = sqrt(a->bound().MinDistanceSqToBound(b->bound()));
       double hi = 1.0 / dist;
       if (q->begin() < r->end() && r->begin() < q->end() && pref > upper_bound) {
@@ -117,12 +124,11 @@ struct AffinityCommon {
     void Init(const Param& param) {
       alpha.InitEmptySet();
     }
-    void Accumulate(const Param& param,
-        const Point& point, const QPointInfo& info) {
-      alpha |= SpRange(info.max2, info.max1);
+    void Accumulate(const Param& param, const AlphaPoint& point) {
+      alpha |= SpRange(point.info().max2, point.info().max1);
     }
     void Accumulate(const Param& param,
-        const QStat& stat, const Bound& bound, index_t n) {
+        const AlphaStat& stat, const Bound& bound, index_t n) {
       alpha |= stat.alpha;
     }
     void Postprocess(const Param& param, const Bound& bound, index_t n) {}
@@ -140,33 +146,32 @@ struct AffinityCommon {
     void Init(const Param& param) {
       rhos.InitEmptySet();
     }
-    void Accumulate(const Param& param,
-        const Point& point, const RPointInfo& info) {
-      rhos |= SpRange(info.rho);
+    void Accumulate(const Param& param, const RhoPoint& point) {
+      rhos |= SpRange(point.info().rho);
     }
     void Accumulate(const Param& param,
-        const QStat& stat, const Bound& bound, index_t n) {
+        const RhoStat& stat, const Bound& bound, index_t n) {
       rhos |= stat.rhos;
     }
     void Postprocess(const Param& param, const Bound& bound, index_t n) {}
   };
+
+  typedef SpNode<Bound, AlphaStat> AlphaNode;
+  typedef SpNode<Bound, RhoStat> RhoNode;
 };
 
 class AffinityAlpha {
  public:
-  typedef AffinityCommon::Bound Bound;
-  typedef AffinityCommon::Point Point;
-
-  typedef AffinityCommon::AlphaInfo QPointInfo;
-  typedef AffinityCommon::RhoInfo RPointInfo;
+  typedef AffinityCommon::AlphaPoint QPoint;
+  typedef AffinityCommon::RhoPoint RPoint;
 
   typedef AffinityCommon::Param Param;
 
   typedef AffinityCommon::AlphaStat QStat;
   typedef AffinityCommon::RhoStat RStat;
 
-  typedef SpNode<Bound, RStat> RNode;
-  typedef SpNode<Bound, QStat> QNode;
+  typedef AffinityCommon::AlphaNode QNode;
+  typedef AffinityCommon::RhoNode RNode;
 
   typedef BlankGlobalResult GlobalResult;
 
@@ -200,10 +205,9 @@ class AffinityAlpha {
       alpha.max1_index = -1;
     }
     void Postprocess(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
-        const RNode& r_root) {}
+        const QPoint& q, const RNode& r_root) {}
     void ApplyPostponed(const Param& param,
-        const QPostponed& postponed, const Vector& q_point) {}
+        const QPostponed& postponed, const QPoint& q) {}
   };
 
   struct QMassResult {
@@ -241,10 +245,6 @@ class AffinityAlpha {
     void FinishReaccumulate(const Param& param, const QNode& q_node) {}
   };
 
-  /**
-   * Abstract out the inner loop in a way that allows temporary variables
-   * to be register-allocated.
-   */
   struct PairVisitor {
    public:
     Alpha alpha;
@@ -253,22 +253,22 @@ class AffinityAlpha {
     void Init(const Param& param) {}
 
     bool StartVisitingQueryPoint(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
+        const Point& q,
         const RNode& r_node, const QMassResult& unapplied_mass_results,
         QResult* q_result, GlobalResult* global_result) {
       alpha = q_result->alpha;
     }
     void VisitPair(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info, index_t q_index,
-        const Vector& r_point, const RPointInfo& r_info, index_t r_index) {
+        const QPoint& q, index_t q_index,
+        const RPoint& r, index_t r_index) {
       double cur_alpha;
       
       if (unlikely(q_index == r_index)) {
-        cur_alpha = r_info.rho + q_info.alpha.get(r_index);
+        cur_alpha = r.info().rho + q.info().alpha.get(r_index);
       } else {
-        double sim = param.Similarity(q_point, r_point);
+        double sim = param.Similarity(q.vec(), r.vec());
         cur_alpha = min(
-            min(sim, q_info.alpha.get(r_index)) + r_info.rho,
+            min(sim, q.info().alpha.get(r_index)) + r.info().rho,
             sim);
       }
       
@@ -283,7 +283,7 @@ class AffinityAlpha {
       }
     }
     void FinishVisitingQueryPoint(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
+        const QPoint& q,
         const RNode& r_node, const QMassResult& unapplied_mass_results,
         QResult* q_result, GlobalResult* global_result) {
       q_result->alpha = alpha;
@@ -332,19 +332,18 @@ class AffinityAlpha {
 
 class AffinityRho {
  public:
-  typedef AffinityCommon::Bound Bound;
-  typedef AffinityCommon::Point Point;
+  typedef AffinityCommon::Alpha Alpha;
 
-  typedef AffinityCommon::RhoInfo QPointInfo;
-  typedef AffinityCommon::AlphaInfo RPointInfo;
+  typedef AffinityCommon::RhoPoint QPoint;
+  typedef AffinityCommon::AlphaPoint RPoint;
 
   typedef AffinityCommon::Param Param;
 
   typedef AffinityCommon::RhoStat QStat;
   typedef AffinityCommon::AlphaStat RStat;
 
-  typedef SpNode<Bound, RStat> RNode;
-  typedef SpNode<Bound, QStat> QNode;
+  typedef AffinityCommon::AlphaNode QNode;
+  typedef AffinityCommon::RhoNode RNode;
 
   typedef BlankGlobalResult GlobalResult;
 
@@ -403,10 +402,9 @@ class AffinityRho {
       abs_error_used = 0;
     }
     void Postprocess(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
-        const RNode& r_root) {}
+        const QPoint& q, const RNode& r_root) {}
     void ApplyPostponed(const Param& param,
-        const QPostponed& postponed, const Vector& q_point) {
+        const QPostponed& postponed, const QPoint& q) {
       rho += postponed.d_rho;
       abs_error_used += postponed.abs_error_used;
     }
@@ -419,6 +417,7 @@ class AffinityRho {
 
     OT_DEF(QMassResult) {
       OT_MY_OBJECT(rho);
+      OT_MY_OBJECT(abs_error_used);
     }
 
    public:
@@ -454,35 +453,32 @@ class AffinityRho {
     void FinishReaccumulate(const Param& param, const QNode& q_node) {}
   };
 
-  /**
-   * Abstract out the inner loop in a way that allows temporary variables
-   * to be register-allocated.
-   */
   struct PairVisitor {
    public:
     double rho;
 
    public:
     void Init(const Param& param) {}
-
     bool StartVisitingQueryPoint(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
+        const QPoint& q,
         const RNode& r_node, const QMassResult& unapplied_mass_results,
         QResult* q_result, GlobalResult* global_result) {
       rho = q_result->rho;
     }
     void VisitPair(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info, index_t q_index,
-        const Vector& r_point, const RPointInfo& r_info, index_t r_index) {
-      double sim = param.Similarity(q_point, r_point)
-          - r_point.alpha.get(r_index);
+        const QPoint& q, index_t q_index,
+        const RPoint& r, index_t r_index) {
+      double sim = param.Similarity(q.vec(), r.vec())
+          - r.info().alpha.get(r_index);
 
       if (sim < 0 && likely(q_index != r_index)) {
         sim = 0;
       }
+      
+      rho += sim;
     }
     void FinishVisitingQueryPoint(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
+        const QPoint& q,
         const RNode& r_node, const QMassResult& unapplied_mass_results,
         QResult* q_result, GlobalResult* global_result) {
       q_result->rho = rho;
@@ -499,9 +495,7 @@ class AffinityRho {
       double sim_lo = param.SimilarityLo(q_node, r_node);
 
       delta->rho.lo = (sim_lo - r_node.stat().alpha.hi) * r_node.count();
-      delta->rho.hi =
-          (math::ClampNonPositive(sim_hi - r_node.stat().alpha.lo))
-          * r_node.count();
+      delta->rho.hi = max(0, sim_hi - r_node.stat().alpha.lo) * r_node.count();
 
       return true;
     }
@@ -528,7 +522,36 @@ class AffinityRho {
     }
     static double Heuristic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta) {
-      return -delta.sim_hi;
+      // favor whatever brings our lower bound up the fastest
+      return -delta.d_rho_lo;
     }
   };
 };
+
+
+void AffinityMain(datanode *module, const char *gnp_name) {
+  typename GNP::Param param;
+
+  param.Init(fx_submodule(module, gnp_name, gnp_name));
+
+  TempCacheArray<typename GNP::QData> q_points;
+  TempCacheArray<typename GNP::QNode> q_nodes;
+  TempCacheArray<typename GNP::RData> r_points;
+  TempCacheArray<typename GNP::RNode> r_nodes;
+  TempCacheArray<typename GNP::QResult> q_results;
+
+  nbr_utils::LoadKdTree(fx_submodule(module, "q", "q"),
+      &param, &q_points, &q_nodes);
+  nbr_utils::LoadKdTree(fx_submodule(module, "r", "r"),
+      &param, &r_points, &r_nodes);
+
+  typename GNP::QResult default_result;
+  default_result.Init(param);
+  q_results.Init(default_result, q_points.end_index(),
+      q_points.n_block_elems());
+
+  Solver solver;
+  solver.InitSolve(fx_submodule(module, "solver", "solver"), param, 0,
+      q_points.cache(), q_nodes.cache(),
+      r_points.cache(), r_nodes.cache(), q_results.cache());
+}

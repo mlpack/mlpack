@@ -22,16 +22,17 @@
 
 /* Implementation */
 
-template<typename TNode, typename TParam>
+template<typename TPoint, typename TNode, typename TParam>
 class KdTreeMidpointBuilder {
  public:
   typedef TNode Node;
+  typedef TPoint Point;
   typedef typename TNode::Bound Bound;
   typedef TParam Param;
 
  private:
   const Param* param_;
-  CacheArray<Vector> points_;
+  CacheArray<Point> points_;
   CacheArray<Node>* nodes_;
   index_t leaf_size_;
   index_t dim_;
@@ -40,18 +41,16 @@ class KdTreeMidpointBuilder {
   void InitBuild(
       struct datanode *module,
       const Param* param_in_,
-      CacheArray<Vector> *points_inout,
+      CacheArray<Point> *points_inout,
       CacheArray<Node> *nodes_out) {
     param_ = param_in_;
 
     points_.Init(points_inout, BlockDevice::MODIFY);
     nodes_ = nodes_out;
-    //nodes_.Init(nodes_out, BlockDevice::CREATE);
 
-    const Vector *first_point = points_.StartRead(points_.begin_index());
-    dim_ = first_point->length();
-    points_.StopRead(points_.begin_index());
-    
+    CacheRead<Point> first_point(&points_, points_.begin_index());
+    dim_ = first_point->vec().length();
+
     leaf_size_ = fx_param_int(module, "leaf_size", 20);
 
     Build_();
@@ -73,75 +72,61 @@ class KdTreeMidpointBuilder {
 template<typename TNode, typename TParam>
 void KdTreeMidpointBuilder<TNode, TParam>::FindBoundingBox_(
     index_t first, index_t count, Bound *bound) {
+  CacheReadIterator<Point> point(&points_, i);
   index_t end = first + count;
-  for (index_t i = first; i < end; i++) {
-    const Vector *v = points_.StartRead(i);
-    *bound |= *v;
-    points_.StopRead(i);
+  for (index_t i = first; i < end; i++, point.Next()) {
+    *bound |= point->vec();
   }
 }
 template<typename TNode, typename TParam>
 index_t KdTreeMidpointBuilder<TNode, TParam>::Partition_(
     index_t split_dim, double splitvalue,
-    index_t first, index_t count,
+    index_t begin, index_t count,
     Bound* left_bound, Bound* right_bound) {
-  index_t left = first;
-  index_t right = first + count - 1;
+  index_t left_i = begin;
+  index_t right_i = begin + count - 1;
 
   /* At any point:
    *
-   *   everything < left is correct
-   *   everything > right is correct
+   *   everything < left_i is correct
+   *   everything > right_i is correct
    */
   for (;;) {
-    Vector *left_v;
-    Vector *right_v;
-
     while (1) {
-      left_v = points_.StartWrite(left);
-      if (left_v->get(split_dim) >= splitvalue || unlikely(left > right)) {
+      CacheRead<Point> left_v(&points_, left_i);
+      if (left_v->vec().get(split_dim) >= splitvalue
+          || unlikely(left_i > right_i)) {
+        *right_bound |= left_v->vec();
         break;
       }
-      *left_bound |= *left_v;;
-      points_.StopWrite(left);
-      left++;
+      *left_bound |= left_v->vec();
+      left_i++;
     }
 
     while (1) {
-      right_v = points_.StartWrite(right);
-      if (right_v->get(split_dim) < splitvalue || unlikely(left > right)) {
+      CacheRead<Point> right_v(&points, right_i);
+      if (right_v->get(split_dim) < splitvalue
+          || unlikely(left_i > right_i)) {
+        *left_bound |= right_v->vec();
         break;
       }
-      *right_bound |= *right_v;
-      points_.StopWrite(right);
-      right--;
+      *right_bound |= right_v->vec();
+      right_i--;
     }
 
-    if (unlikely(left > right)) {
-      /* left == right + 1 */
-      points_.StopWrite(left);
-      points_.StopWrite(right);
+    if (unlikely(left_i > right_i)) {
       break;
     }
 
+    points_.Swap(left_i, right_i);
 
-    left_v->SwapValues(right_v);
-    *left_bound |= *left_v;
-    *right_bound |= *right_v;
-    points_.StopWrite(left);
-    points_.StopWrite(right);
-    
-    //index_t t = old_from_new_indices_[left];
-    //old_from_new_indices_[left] = old_from_new_indices_[right];
-    //old_from_new_indices_[right] = t;
-
-    DEBUG_ASSERT(left <= right);
-    right--;
+    DEBUG_ASSERT(left_i <= right_i);
+    right_i--;
   }
 
-  DEBUG_ASSERT(left == right + 1);
+  DEBUG_ASSERT(left_i == right_i + 1);
 
-  return left;
+  return left_i;
 }
 
 template<typename TNode, typename TParam>
@@ -177,15 +162,12 @@ void KdTreeMidpointBuilder<TNode, TParam>::KdTreeMidpointBuilder::Build_(
       index_t split_col;
       double split_val = node->bound().get(split_dim).mid();
       
-      do {
-        left->bound().Reset();
-        right->bound().Reset();
-        split_col = Partition_(split_dim, split_val,
+      left->bound().Reset();
+      right->bound().Reset();
+      split_col = Partition_(split_dim, split_val,
             node->begin(), node->count(),
             &left->bound(),
             &right->bound());
-        partition intelligently
-      };
       
       DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)",
           node->begin(), split_col,
@@ -222,9 +204,8 @@ void KdTreeMidpointBuilder<TNode, TParam>::KdTreeMidpointBuilder::Build_(
     node->set_leaf();
   
     for (index_t i = node->begin(); i < node->end(); i++) {
-      const Vector *point = points_.StartRead(i);
+      CacheRead<Point> point(&points_, i);
       node->stat().Accumulate(*param_, *point);
-      points_.StopRead(i);
     }
     node->stat().Postprocess(*param_, node->bound(), node->count());
   }
