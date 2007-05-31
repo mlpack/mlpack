@@ -18,6 +18,53 @@
 #include "la/la.h"
 
 /**
+ * A point-bound combination for vector spaces.
+ */
+template<typename PointInfo>
+class SpVectorPoint {
+ private:
+  /**
+   * In case PointInfo is blank, we take advantage of the only way C++
+   * standard allows us to make sure that PointInfo doesn't take up any space.
+   *
+   * C++ standard dictates that if a base class has no member fields, it need
+   * not take up any bytes when it is a base class.
+   */
+  struct Internal : public PointInfo {
+    Vector v;
+  };
+ 
+ private:
+  Internal internal_;
+ 
+ public:
+  /**
+   * Gets the underlying vector.
+   */
+  const Vector& vec() const {
+    return internal_.v;
+  }
+  /**
+   * Gets the underlying vector.
+   */
+  Vector& vec() {
+    return internal_.v;
+  }
+  /**
+   * Gets the associated information for this point.
+   */
+  const PointInfo& info() const {
+    return internal_;
+  }
+  /**
+   * Gets the associated information for this point.
+   */
+  PointInfo& info() {
+    return internal_;
+  }
+};
+
+/**
  * A 
  */
 template<typename TValue>

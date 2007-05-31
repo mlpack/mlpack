@@ -10,6 +10,38 @@
 
 namespace nbr_utils {
 
+/*
+ TODO:
+
+  - Array iterators (for when you know the code fits)
+  - ArrayForall(visitor, range)
+  - ArrayForall2(visitor, range)
+
+  - TreeForall(preop, postop)
+  - TreeForall2(preop, postop)
+
+  - ParallelTree class
+
+NECESSITIES
+  - Mutable information can be easily keyed on the tree
+    - 1: Index
+    - 2: Explicit structure induction
+
+XXX Assume no index structure:
+XXX    BAD BAD BAD 
+XXX    Tree<NodeType> tree;
+XXX 
+XXX    TreeNode<NodeType> handle(tree.Root());
+XXX    TreeNode<NodeType> handle(handle.child(i));
+XXX    handle.child(j);
+XXX    tree.AllocChild(existing_node);
+
+Assume index structure:
+   - Looks like what we have now
+   - Index structure is good
+
+*/
+
 success_t Load(const char *fname, TempCacheArray<Vector> *cache_out,
     index_t vectors_per_block);
 
@@ -211,7 +243,7 @@ void ThreadedDualTreeMain(datanode *module, const char *gnp_name) {
       n_threads == 1 ? 1 : (n_threads * 3));
   SimpleWorkQueue<typename GNP::QNode> work_queue;
   work_queue.Init(&q_nodes, n_grains);
-  fx_format_result(module, "n_grains_actual", work_queue.n_grains());
+  fx_format_result(module, "n_grains_actual", "%"LI"d", work_queue.n_grains());
 
   ThreadedDualTreeSolver<GNP, Solver> solver;
   solver.InitSolve(
