@@ -110,7 +110,7 @@ class BinaryDataset {
 		index_file_="";
 		data_=NULL;
 		index_=NULL;
-
+		page_size_ = getpagesize();
 	}
 	~BinaryDataset() {
 	}
@@ -167,6 +167,19 @@ class BinaryDataset {
 		it.current_pos_=num_of_points_;
 		return it;
 	}
+  inline void AdviseWillNeed(index_t start, index_t end) {
+		index_t num_of_bytes1 = (end-start)*dimension_*sizeof(Precision_t);
+		index_t num_of_bytes2 = (end-start)*sizeof(index_t);
+		Advise1(data_, start*dimension_*sizeof(Precision_t), num_of_bytes1);
+    Advise2(index_, start*sizeof(index_t), num_of_bytes2);
+	}
+	inline void AdviseWillNotNeed(index_t start, index_t end) {
+    index_t num_of_bytes1 = (end-start)*dimension_*sizeof(Precision_t);
+		index_t num_of_bytes2 = (end-start)*sizeof(index_t);
+		Advise2(data_, start*dimension_*sizeof(Precision_t), num_of_bytes1);
+    Advise2(index_, start*sizeof(index_t), num_of_bytes2);
+	}
+  
 	
   // Use this to swap the points of a dataset
 	// swaps the index values as well
@@ -211,12 +224,13 @@ class BinaryDataset {
 	}
 	// returns a reference on the i,j element
 	inline Precision_t &At(uint64 i, int32 j) {
-   	static const char *temp="Attempt to acces data out of range "LI">"LI"";
-		DEBUG_ASSERT_MSG(i<num_of_points_, temp, i, num_of_points_);
-    static const char *temp1="Attempt to access element greater that the "
-			                "dimension "LI">"L32"";
-
-		DEBUG_ASSERT_MSG(j<dimension_, temp1, j, dimension_);
+		DEBUG_ASSERT_MSG(i<num_of_points_, 
+				"Attempt to acces data out of range "LI">"LI"",
+				, i, num_of_points_);
+		DEBUG_ASSERT_MSG(j<dimension_, 
+				"Attempt to access element greater that the "
+			  "dimension "LI">"L32""
+				, j, dimension_);
 	  return data_[i*dimension_+j];
 	}
 	// get the index at i point
@@ -245,6 +259,8 @@ class BinaryDataset {
 	}
  
  private:
+	// system page size 
+	index_t page_size_;
 	// number of points on the data set
 	uint64 num_of_points_;
 	// dimension of the data
@@ -368,7 +384,33 @@ class BinaryDataset {
 					 strerror(errno), file_name.c_str());
 		}
 		fclose(fp);
-	}	
+	}
+
+ void Advise1(void *feed, index_t start, index_t num_of_bytes) {
+	  index_t num_of_pages = (index_t)ceil(1.0*num_of_bytes/page_size_);
+		if (num_of_pages<1) {
+		  return;
+		}
+		char *ptr =(char *)feed+start;
+		char *temp=NULL;
+		ptr =temp + ((ptrdiff_t)feed/page_size_)*page_size_;
+	  if (unlikely(madvise(ptr, num_of_pages, MADV_WILLNEED)==-1)) {
+		  FATAL("Failed to advise, error %s", strerror(errno));
+		}
+	}
+  void Advise2(void *feed, index_t start, index_t num_of_bytes) {
+	  index_t num_of_pages = (index_t)floor(1.0*num_of_bytes/page_size_);
+		if (num_of_pages<1) {
+		  return;
+		}
+		char *ptr =(char*)feed+start;
+		char *temp=NULL;
+		ptr =temp + (ptrdiff_t)ceil((ptrdiff_t)feed/page_size_)*page_size_;
+	  if (unlikely(madvise(ptr, num_of_pages, MADV_WILLNEED)==-1)) {
+		  FATAL("Failed to advise, error %s", strerror(errno));
+		}
+	}
+
 };
 
 #endif // BINARY_DATASET_H_

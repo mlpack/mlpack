@@ -36,7 +36,8 @@ struct Parameters {
 	std::string memory_file_;
   BinaryDataset<float32> data_;	
 	uint64 capacity_;
-  bool specialized_for_knns_;	
+  bool specialized_for_knns_;
+  bool generate_points_only_;	
 };
 
 template<typename TREE>
@@ -69,6 +70,10 @@ int main(int argc, char *argv[]) {
 			}
 		}
 	}	
+	if (fx_param_exists(NULL, "gen_only")==1) {
+	  NONFATAL("Generated random points only, no tree testing...\n");
+		return 1;
+	}
 	args.out_file_ = fx_param_str(fx_root, "out_file", "allnn");
   args.capacity_ = fx_param_int(fx_root, "capacity", 134217728);
 	args.knns_ = fx_param_int(fx_root, "knns", 2);
@@ -81,7 +86,6 @@ int main(int argc, char *argv[]) {
 	 	unlink(args.memory_file_.c_str());
 	}
 
-	printf("Creating swap file...\n");
  	if (sizeof(index_t)==sizeof(int32)) {
 	  NONFATAL("index_t is int32, good for small scale problems");
 	} else {
@@ -89,6 +93,8 @@ int main(int argc, char *argv[]) {
 	    NONFATAL("index_t is int64, good for large scale problems");
 		}	 
 	}
+
+	printf("Creating swap file...\n");
 	if (args.memory_engine_ == "mmapmm") {
 		mmapmm::MemoryManager<false>::allocator_ = 
 		    new mmapmm::MemoryManager<false>();
@@ -151,17 +157,19 @@ void DuallTreeAllNearestNeighbors(Parameters &args) {
 	fflush(stdout);
 	tree.Init(&args.data_);
 
-	fx_timer_start(fx_root, "build");	
+	fx_timer_start(fx_root, "build");
 	tree.BuildDepthFirst();
 	fx_timer_stop(fx_root, "build");
-  printf("Memory usage: %llu\n",
+  NONFATAL("Memory usage: %llu\n",
 	        (unsigned long long)TREE::Allocator_t::allocator_->get_usage());
-	printf("%s\n", tree.Statistics().c_str());
+	NONFATAL("%s\n", tree.Statistics().c_str());
 	fflush(stdout);
 	args.data_.Destruct();
 	printf("Initializing all nearest neighbor output...\n");
-  tree.InitAllKNearestNeighborOutput(args.out_file_, 
+  fx_timer_start(fx_root, "init_knn");
+	tree.InitAllKNearestNeighborOutput(args.out_file_, 
 				                              args.knns_);
+	fx_timer_stop(fx_root, "init_knn");
 	printf("Computing all nearest neighbors...\n");
 	fflush(stdout);
   fx_timer_start(fx_root, "dualltree");	
@@ -175,15 +183,16 @@ template<typename TREE>
 void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args) {
   TREE tree;
 	printf("Procceding with the specialized method for knn node..\n");
-	printf("Building the tree...");
 	tree.Init(&args.data_);
 	tree.set_knns(args.knns_);
 	fx_timer_start(fx_root, "build");	
+  printf("Building the tree...\n");
+	fflush(stdout);
 	tree.BuildDepthFirst();
 	fx_timer_stop(fx_root, "build");
-  printf("Memory usage: %llu\n",
+  NONFATAL("Memory usage: %llu\n",
 	        (unsigned long long)TREE::Allocator_t::allocator_->get_usage());
-	printf("%s\n", tree.Statistics().c_str());
+	NONFATAL("%s\n", tree.Statistics().c_str());
 	args.data_.Destruct();
 	printf("Computing all nearest neighbors...\n");
 	fflush(stdout);

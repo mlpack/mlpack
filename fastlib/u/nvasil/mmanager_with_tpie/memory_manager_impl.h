@@ -27,9 +27,15 @@ void MEMORY_MANAGER__::Init() {
   DefaultInitializations();
 	// Allocate one page of memory by mapping /dev/zero. Map the memory
   // as write-only, initially.
-  fd = open ("/dev/zero", O_RDONLY);
+  /*fd = open ("/dev/zero", O_RDONLY);
   cache_ = (char *)mmap (NULL, alloc_size_, 
-		                   PROT_WRITE, MAP_PRIVATE, fd, 0);
+		                   PROT_WRITE, MAP_PRIVATE, fd, 0);*/
+	cache_ = (char *)mmap(NULL, alloc_size_, PROT_READ | PROT_WRITE,
+			                 MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	if (cache_==MAP_FAILED) {
+	  FATAL("Couldn't allocate memory for the cache, error: %s\n",
+				  strerror(errno));
+	}
  /* if (mlock(cache_, alloc_size_) == -1) {
     NONFATAL("Could not lock memory manger's cache, error %s\n",
   	         strerror(errno));

@@ -113,6 +113,7 @@ void TREE__::BuildDepthFirst() {
 	current_level_=0;
 	progress_.Reset();
   parent_.Reset(new Node_t());
+	data_->AdviseWillNeed(0, num_of_points_);
 	BuildDepthFirst(parent_, pivoter_(num_of_points_));
   if (log_progress_==true) {
   	printf("\n");
@@ -171,7 +172,15 @@ void TREE__::BuildDepthFirst(typename TREE__::NodePtr_t ptr,
 		NodePtr_t left  = ptr->get_left();
 		NodePtr_t right = ptr->get_right(); 
 		ptr.Unlock();
+		data_->AdviseWillNeed(pivot_pair.first->start_,
+				   pivot_pair.second->num_of_points_);
+		data_->AdviseWillNotNeed(pivot_pair.second->start_,
+				   pivot_pair.second->num_of_points_);
 		BuildDepthFirst(left, pivot_pair.first);
+		data_->AdviseWillNotNeed(pivot_pair.first->start_,
+				   pivot_pair.second->num_of_points_);
+		data_->AdviseWillNeed(pivot_pair.second->start_,
+				   pivot_pair.second->num_of_points_);
   	BuildDepthFirst(right, pivot_pair.second);
 		current_level_--; 
   } else {
