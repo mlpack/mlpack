@@ -29,6 +29,13 @@ class KdTreeMidpointBuilder {
   typedef TPoint Point;
   typedef typename TNode::Bound Bound;
   typedef TParam Param;
+  
+ public:
+  static void Build(struct datanode *module, const Param &param,
+      CacheArray<Point> *points_inout, CacheArray<Node> *nodes_create) {
+    KdTreeMidpointBuilder builder;
+    builder.InitBuild_(module, &param, points_inout, nodes_create);
+  }
 
  private:
   const Param* param_;
@@ -37,49 +44,52 @@ class KdTreeMidpointBuilder {
   index_t leaf_size_;
   index_t dim_;
 
- public:
-  void InitBuild(
+ private:
+  void InitBuild_(
       struct datanode *module,
       const Param* param_in_,
       CacheArray<Point> *points_inout,
-      CacheArray<Node> *nodes_out) {
+      CacheArray<Node> *nodes_create) {
     param_ = param_in_;
 
     points_.Init(points_inout, BlockDevice::MODIFY);
-    nodes_ = nodes_out;
+    nodes_ = nodes_create;
 
-    CacheRead<Point> first_point(&points_, points_.begin_index());
-    dim_ = first_point->vec().length();
+    {
+      CacheRead<Point> first_point(&points_, points_.begin_index());
+      dim_ = first_point->vec().length();
+    }
 
     leaf_size_ = fx_param_int(module, "leaf_size", 20);
 
+    fx_timer_start(module, "tree_build");
     Build_();
+    fx_timer_stop(module, "tree_build");
     
     points_.Flush();
     nodes_->Flush();
   }
-  
- private:
   index_t Partition_(
       index_t split_dim, double splitvalue,
-      index_t first, index_t count,
+      index_t begin, index_t count,
       Bound* left_bound, Bound* right_bound);
-  void FindBoundingBox_(index_t first, index_t count, Bound *bound);
+  void FindBoundingBox_(index_t begin, index_t count, Bound *bound);
   void Build_(index_t node_i);
   void Build_();
 };
 
-template<typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TNode, TParam>::FindBoundingBox_(
-    index_t first, index_t count, Bound *bound) {
-  CacheReadIterator<Point> point(&points_, i);
-  index_t end = first + count;
-  for (index_t i = first; i < end; i++, point.Next()) {
+template<typename TPoint, typename TNode, typename TParam>
+void KdTreeMidpointBuilder<TPoint, TNode, TParam>::FindBoundingBox_(
+    index_t begin, index_t count, Bound *bound) {
+  CacheReadIterator<Point> point(&points_, begin);
+  index_t end = begin + count;
+  for (index_t i = begin; i < end; i++, point.Next()) {
     *bound |= point->vec();
   }
 }
-template<typename TNode, typename TParam>
-index_t KdTreeMidpointBuilder<TNode, TParam>::Partition_(
+
+template<typename TPoint, typename TNode, typename TParam>
+index_t KdTreeMidpointBuilder<TPoint, TNode, TParam>::Partition_(
     index_t split_dim, double splitvalue,
     index_t begin, index_t count,
     Bound* left_bound, Bound* right_bound) {
@@ -92,10 +102,10 @@ index_t KdTreeMidpointBuilder<TNode, TParam>::Partition_(
    *   everything > right_i is correct
    */
   for (;;) {
-    while (1) {
+    for (;;) {
+      if (unlikely(left_i > right_i)) return left_i;
       CacheRead<Point> left_v(&points_, left_i);
-      if (left_v->vec().get(split_dim) >= splitvalue
-          || unlikely(left_i > right_i)) {
+      if (left_v->vec().get(split_dim) >= splitvalue) {
         *right_bound |= left_v->vec();
         break;
       }
@@ -103,19 +113,15 @@ index_t KdTreeMidpointBuilder<TNode, TParam>::Partition_(
       left_i++;
     }
 
-    while (1) {
-      CacheRead<Point> right_v(&points, right_i);
-      if (right_v->get(split_dim) < splitvalue
-          || unlikely(left_i > right_i)) {
+    for (;;) {
+      if (unlikely(left_i > right_i)) return left_i;
+      CacheRead<Point> right_v(&points_, right_i);
+      if (right_v->vec().get(split_dim) < splitvalue) {
         *left_bound |= right_v->vec();
         break;
       }
       *right_bound |= right_v->vec();
       right_i--;
-    }
-
-    if (unlikely(left_i > right_i)) {
-      break;
     }
 
     points_.Swap(left_i, right_i);
@@ -124,13 +130,11 @@ index_t KdTreeMidpointBuilder<TNode, TParam>::Partition_(
     right_i--;
   }
 
-  DEBUG_ASSERT(left_i == right_i + 1);
-
-  return left_i;
+  abort();
 }
 
-template<typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TNode, TParam>::KdTreeMidpointBuilder::Build_(
+template<typename TPoint, typename TNode, typename TParam>
+void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
     index_t node_i) {
   Node *node = nodes_->StartWrite(node_i);
   bool leaf = true;
@@ -213,8 +217,8 @@ void KdTreeMidpointBuilder<TNode, TParam>::KdTreeMidpointBuilder::Build_(
   nodes_->StopWrite(node_i);
 }
 
-template<typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TNode, TParam>::Build_() {
+template<typename TPoint, typename TNode, typename TParam>
+void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_() {
   index_t node_i = nodes_->Alloc();
   Node *node = nodes_->StartWrite(node_i);
   

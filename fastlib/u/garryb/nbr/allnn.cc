@@ -12,10 +12,9 @@ class Allnn {
   /** The bounding type. Required by NBR. */
   typedef SpHrectBound<2> Bound;
   /** The type of point in use. Required by NBR. */
-  typedef Vector Point;
 
-  typedef BlankPointInfo QPointInfo;
-  typedef BlankPointInfo RPointInfo;
+  typedef SpVectorPoint QPoint;
+  typedef SpVectorPoint RPoint;
 
   /**
    * All parameters required by the execution of the algorithm.
@@ -43,13 +42,19 @@ class Allnn {
       dim = -1;
     }
     
-    void AnalyzePoint(const Point& q_point) {
-      DEBUG_ASSERT(dim == -1 || dim == q_point.length());
-      dim = q_point.length();
+    void BootstrapMonochromatic(QPoint* point, index_t count) {
+      dim = point->vec().length();
+    }
+
+    void BootstrapQueries(QPoint* point, index_t count) {
+      dim = point->vec().length();
+    }
+
+    void BootstrapReferences(RPoint* point, index_t count) {
+      dim = point->vec().length();
     }
   };
 
-  
   typedef BlankStat QStat;
   typedef BlankStat RStat;
 
@@ -79,11 +84,11 @@ class Allnn {
     }
 
     void Postprocess(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
+        const QPoint& q_point,
         const RNode& r_root) {}
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
-        const Vector& q_point) {}
+        const QPoint& q_point) {}
   };
 
   struct QMassResult {
@@ -137,8 +142,7 @@ class Allnn {
     void Init(const Param& param) {}
 
     bool StartVisitingQueryPoint(const Param& param,
-        const Vector& q_point,
-        const QPointInfo& q_info,
+        const QPoint& q_point,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
@@ -146,13 +150,14 @@ class Allnn {
       /* ignore horizontal join operator */
       distance_sq = q_result->distance_sq;
       neighbor_i = q_result->neighbor_i;
-      return r_node.bound().MinDistanceSqToPoint(q_point) <= distance_sq;
+      return r_node.bound().MinDistanceSqToPoint(q_point.vec()) <= distance_sq;
     }
 
     void VisitPair(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info, index_t q_index,
-        const Vector& r_point, const RPointInfo& r_info, index_t r_index) {
-      double trial_distance_sq = la::DistanceSqEuclidean(q_point, r_point);
+        const QPoint& q_point, index_t q_index,
+        const RPoint& r_point, index_t r_index) {
+      double trial_distance_sq = la::DistanceSqEuclidean(
+          q_point.vec(), r_point.vec()	);
       if (unlikely(trial_distance_sq <= distance_sq)) {
         // TODO: Is this a hack?
         if (likely(trial_distance_sq != 0)) {
@@ -163,8 +168,7 @@ class Allnn {
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const Vector& q_point,
-        const QPointInfo& q_info,
+        const QPoint& q_point,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
@@ -226,7 +230,7 @@ int main(int argc, char *argv[]) {
       fx_root, "allnn");
   MPI_Finalize();
 #else
-  nbr_utils::ThreadedDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+  nbr_utils::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
 #endif
   

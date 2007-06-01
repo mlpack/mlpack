@@ -8,30 +8,24 @@ class DualTreeDepthFirst {
   FORBID_COPY(DualTreeDepthFirst);
   
  private:
-  struct QMutableInfo {
+  struct QMutables {
     typename GNP::QMassResult mass_result;
     typename GNP::QPostponed postponed;
     
-    OT_DEF(QMutableInfo) {
+    OT_DEF(QMutables) {
       OT_MY_OBJECT(mass_result);
       OT_MY_OBJECT(postponed);
     }
   };
   
  private:
-  /*
-  KdTreeMidpointBuilder<typename GNP::QPointInfo, typename GNP::QNode,
-      typename GNP::Param> q_tree_;
-  KdTreeMidpointBuilder<typename GNP::RPointInfo, typename GNP::RNode,
-      typename GNP::Param> r_tree_;
-  */
   typename GNP::Param param_;
   typename GNP::GlobalResult global_result_;
 
   CacheArray<typename GNP::QPoint> q_points_;
   CacheArray<typename GNP::QNode> q_nodes_;
   CacheArray<typename GNP::QResult> q_results_;
-  TempCacheArray<QMutableInfo> q_mutables_;
+  TempCacheArray<QMutables> q_mutables_;
   
   CacheArray<typename GNP::RPoint> r_points_;
   CacheArray<typename GNP::RNode> r_nodes_;
@@ -68,13 +62,13 @@ class DualTreeDepthFirst {
       const typename GNP::RNode *r_node,
       const typename GNP::Delta& delta,
       const typename GNP::QMassResult& exclusive_unvisited,
-      QMutableInfo *q_node_mut);
+      QMutables *q_node_mut);
   void BaseCase_(
       const typename GNP::QNode *q_node,
       const typename GNP::RNode *r_node,
       const typename GNP::QMassResult& exclusive_unvisited,
-      QMutableInfo *q_node_mut);
-  void PushDown_(index_t q_node_i, QMutableInfo *q_node_mut);
+      QMutables *q_node_mut);
+  void PushDown_(index_t q_node_i, QMutables *q_node_mut);
 };
 
 template<typename GNP>
@@ -112,7 +106,7 @@ void DualTreeDepthFirst<GNP>::InitSolve(
   q_nodes_.StopRead(q_root_index);
   
   
-  QMutableInfo default_mutable;
+  QMutables default_mutable;
   default_mutable.mass_result.Init(param_);
   default_mutable.postponed.Init(param_);
   q_mutables_.Init(default_mutable, q_nodes_.end_index(),
@@ -132,7 +126,7 @@ template<typename GNP>
 void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   typename GNP::Delta delta;
   const typename GNP::QNode *q_root = q_nodes_.StartRead(q_root_index);
-  QMutableInfo *q_root_mut = q_mutables_.StartWrite(q_root_index);
+  QMutables *q_root_mut = q_mutables_.StartWrite(q_root_index);
 
   fx_timer_start(datanode_, "execute");
 
@@ -182,24 +176,23 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
 
 template<typename GNP>
 void DualTreeDepthFirst<GNP>::PushDown_(
-    index_t q_node_i, QMutableInfo *q_node_mut) {
+    index_t q_node_i, QMutables *q_node_mut) {
   const typename GNP::QNode *q_node = q_nodes_.StartRead(q_node_i);
 
   if (q_node->is_leaf()) {
     for (index_t q_i = q_node->begin(); q_i < q_node->end(); q_i++) {
       typename GNP::QResult *q_result = q_results_.StartWrite(q_i);
       const typename GNP::QPoint *q_point = q_points_.StartRead(q_i);
-      const typename GNP::QPointInfo *q_info = NULL;
       
       q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point);
-      q_result->Postprocess(param_, *q_point, *q_info, *r_root_);
+      q_result->Postprocess(param_, *q_point, *r_root_);
       q_results_.StopWrite(q_i);
       q_points_.StopRead(q_i);
     }
   } else {
     for (index_t k = 0; k < 2; k++) {
       index_t q_child_i = q_node->child(k);
-      QMutableInfo *q_child_mut = q_mutables_.StartWrite(q_child_i);
+      QMutables *q_child_mut = q_mutables_.StartWrite(q_child_i);
       
       q_child_mut->postponed.ApplyPostponed(param_, q_node_mut->postponed);
       
@@ -217,7 +210,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
     const typename GNP::RNode *r_node,
     const typename GNP::Delta& delta,
     const typename GNP::QMassResult& exclusive_unvisited,
-    QMutableInfo *q_node_mut) {
+    QMutables *q_node_mut) {
   DEBUG_MSG(1.0, "Checking (%d,%d) x (%d,%d)",
       q_node->begin(), q_node->end(),
       r_node->begin(), r_node->end());
@@ -253,7 +246,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
         typename GNP::Delta child_delta;
         index_t q_child_i = q_node->child(k);
         const typename GNP::QNode *q_child = q_nodes_.StartRead(q_child_i);
-        QMutableInfo *q_child_mut = q_mutables_.StartWrite(q_child_i);
+        QMutables *q_child_mut = q_mutables_.StartWrite(q_child_i);
         q_child_mut->postponed.ApplyPostponed(
             param_, q_node_mut->postponed);
         child_delta.Init(param_);
@@ -309,6 +302,9 @@ void DualTreeDepthFirst<GNP>::Pair_(
         heur2 = DBL_MAX;
       }
 
+      // TOOD:
+      // Instead of pointer-swapping, consider just writing the code twice.
+
       if (unlikely(heur2 < heur1)) {
         const typename GNP::RNode *r_child_t = r_child1;
         r_child1 = r_child2;
@@ -343,7 +339,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     const typename GNP::QNode *q_node,
     const typename GNP::RNode *r_node,
     const typename GNP::QMassResult& exclusive_unvisited,
-    QMutableInfo *q_node_mut) {
+    QMutables *q_node_mut) {
   typename GNP::PairVisitor visitor;
 
   DEBUG_ONLY(n_pre_naive_ += q_node->count() * r_node->count());
@@ -361,7 +357,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point);
 
     if (unlikely(
-        visitor.StartVisitingQueryPoint(param_, *q_point, *q_info, *r_node,
+        visitor.StartVisitingQueryPoint(param_, *q_point, *r_node,
           exclusive_unvisited, q_result, &global_result_))) {
       CacheReadIterator<typename GNP::RPoint> r_iter(&r_points_, r_node->begin());
       index_t r_end = r_node->end();
@@ -372,7 +368,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
         visitor.VisitPair(param_, *q_point, q_i, *r_point, r_i);
       }
 
-      visitor.FinishVisitingQueryPoint(param_, *q_point, *q_info, *r_node,
+      visitor.FinishVisitingQueryPoint(param_, *q_point, *r_node,
           exclusive_unvisited, q_result, &global_result_);
       
       DEBUG_ONLY(n_naive_ += r_node->count());
@@ -387,7 +383,8 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
   q_node_mut->postponed.Reset(param_);
 }
 
-//       
+// The old version -- doesn't allow delta re-use for heuristics
+//
 //       double r_child1_h = GNP::Algorithm::Heuristic(
 //           param_, *q_node, *r_child1);
 //       double r_child2_h = GNP::Algorithm::Heuristic(

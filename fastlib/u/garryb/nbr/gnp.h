@@ -6,45 +6,6 @@
 
 #include "fastlib/fastlib.h"
 
-template<
-  typename TParam, typename TAlgorithm,
-  typename TPoint, typename TBound,
-  typename TQPointInfo, typename TQStat,
-  typename TRPointInfo, typename TRStat,
-  typename TPairVisitor, typename TDelta,
-  typename TQResult, typename TQMassResult, typename TQPostponed,
-  typename TGlobalResult>
-class DualTreeGNP {
- public:
-  typedef TParam Param;
-  typedef TAlgorithm Algorithm;
-
-  typedef TPoint Point;
-  typedef TBound Bound;
-
-  typedef TQPointInfo QPointInfo;
-  typedef TQStat QStat;
-
-  typedef TRPointInfo RPointInfo;
-  typedef TRStat RStat;
-
-  typedef TPairVisitor PairVisitor;
-  typedef TDelta Delta;
-
-  typedef TQResult QResult;
-  typedef TQMassResult QMassResult;
-  typedef TQPostponed QPostponed;
-
-  typedef TGlobalResult GlobalResult;
-
-  typedef SpNode<Bound, QStat> QNode;
-  typedef SpNode<Bound, RStat> RNode;
-};
-
-struct BlankPointInfo {
-  OT_DEF(BlankPointInfo) {}
-};
-
 struct BlankDelta {
  public:
   OT_DEF(BlankDelta) {}
