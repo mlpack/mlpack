@@ -59,10 +59,19 @@ class MinHeap {
   }
 
   /**
+   * Detects whether this queue is empty.
+   */
+  bool is_empty() const {
+    return entries_.size() == 0;
+  }
+  
+  /**
    * Serializes this heap.
    *
    * Currently only works for things that are bit-copiable, containing no
    * pointers.
+   *
+   * @deprecated Use otrav instead.
    */
   template<typename Serializer>
   void Serialize(Serializer *s) const {
@@ -71,6 +80,8 @@ class MinHeap {
 
   /**
    * Initializes this heap, deserializing from the given source.
+   *
+   * @deprecated Use otrav instead.
    */
   template<typename Deserializer>
   void Deserialize(Deserializer *s) {
@@ -128,6 +139,13 @@ class MinHeap {
     return entries_[0].value;
   }
 
+  /**
+   * Gets the key at the top of the heap.
+   */
+  Key top_key() const {
+    return entries_[0].key;
+  }
+  
   /**
    * Replaces the top item on the heap.
    */

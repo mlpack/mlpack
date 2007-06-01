@@ -13,7 +13,9 @@ namespace cc__private {
 class CCInformDebug {
  public:
   CCInformDebug() {
-    DEBUG_MSG(0.0, "Running in debug mode; performance is sub-optimal.");
+#ifdef DEBUG
+    fprintf(stderr, "Program is being run with debugging checks on.\n");
+#endif
   }
   ~CCInformDebug() {
 #ifdef PROFILE
@@ -21,7 +23,7 @@ class CCInformDebug {
     fprintf(stderr, "[*] -> gprof $this_binary >profile.out && less profile.out\n");
 #endif
 #ifdef DEBUG
-    fprintf(stderr, "Program is being run with debugging checks on.");
+    fprintf(stderr, "Program was run with debugging checks on.\n");
 #endif
   }
 };

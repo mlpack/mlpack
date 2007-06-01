@@ -153,6 +153,7 @@ typedef enum {
   SUCCESS_FAIL = 10
 } success_t;
 
+
 /**
  * Asserts that a particular operation passes, otherwise terminates
  * the program.
@@ -161,8 +162,18 @@ typedef enum {
  * for handling functions that return error codes, where it is not worth
  * trying to recover.
  */
-#define ASSERT_PASS(x) (likely((x) >= SUCCESS_PASS) ? NOP \
-        : FATAL("ASSERT_PASS failed: " #x))
+#define MUST_PASS(x) ((likely(x >= SUCCESS_PASS)) ? NOP \
+         : FATAL("MUST_PASS failed: %s", #x))
+
+/**
+ * @deprecated
+ *
+ * The terminology of this is confusing, because this looks like it's
+ * for debug-mode, but it is not.
+ *
+ * Instead use MUST_PASS which acts exactly the same.
+ */
+#define ASSERT_PASS(x) MUST_PASS(x)
 
 /**
  * Turns return values from most C standard library functions into a
