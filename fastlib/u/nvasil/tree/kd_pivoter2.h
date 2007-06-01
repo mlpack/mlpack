@@ -64,7 +64,7 @@ class KdPivoter2 {
 		index_t left_points  = pivot->num_of_points_/2;
 		index_t right_points = pivot->num_of_points_ - left_points;
 		typename BinaryDataset<Precision_t>::Iterator it=
-			  data_->Begin()+pivot_->start_+left_points;
+			  data_->Begin()+pivot->start_+left_points;
 		Comparator comp;
 		comp.Init(pivot->box_.get_pivot_dimension());
 		std::nth_element(data_->Begin()+pivot->start_, it, 
