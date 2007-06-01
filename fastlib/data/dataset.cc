@@ -248,6 +248,7 @@ success_t DatasetInfo::InitFromFile(TextLineReader *reader,
   
   if (!first_line) {
     Init();
+    reader->Error("Could not parse the first line.");
     return SUCCESS_FAIL;
   } else if (*first_line == '@') {
     /* Okay, it's ARFF. */
@@ -446,6 +447,7 @@ success_t Dataset::InitFromFile(const char *fname) {
   } else {
     matrix_.Init(0, 0);
     info_.Init();
+    NONFATAL("Could not open file '%s' for reading.", fname);
     return SUCCESS_FAIL;
   }
 }
@@ -469,6 +471,7 @@ success_t Dataset::WriteCsv(const char *fname, bool header) const {
   TextWriter writer;
   
   if (!PASSED(writer.Open(fname))) {
+    NONFATAL("Couldn't open '%s' for writing.", fname);
     return SUCCESS_FAIL;
   } else {
     if (header) {
@@ -483,6 +486,7 @@ success_t Dataset::WriteArff(const char *fname) const {
   TextWriter writer;
   
   if (!PASSED(writer.Open(fname))) {
+    NONFATAL("Couldn't open '%s' for writing.", fname);
     return SUCCESS_FAIL;
   } else {
     info_.WriteArffHeader(&writer);

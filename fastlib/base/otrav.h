@@ -683,69 +683,78 @@ namespace ot_private {
     }
   };
 
-  class OTPointerThawer {
-   private:
-    ptrdiff_t offset_;
-    
-   public:
-    template<typename T>
-    T* InitBegin(char *data, ptrdiff_t offset_in) {
-      offset_ = offset_in;
-      T* dest = reinterpret_cast<T*>(data);
-      TraverseObject(dest, this);
-      return dest;
-    }
-    
-    template<typename T>
-    T* InitBegin(char *data) {
-      return InitBegin<T>(data, reinterpret_cast<ptrdiff_t>(data));
-    }
+//  class OTPointerThawer {
+//   private:
+//    ptrdiff_t offset_;
+//    
+//   public:
+//    template<typename T>
+//    T* InitBegin(char *data, ptrdiff_t offset_in) {
+//      offset_ = offset_in;
+//      T* dest = reinterpret_cast<T*>(data);
+//      TraverseObject(dest, this);
+//      return dest;
+//    }
+//    
+//    template<typename T>
+//    T* InitBegin(char *data) {
+//      return InitBegin<T>(data, reinterpret_cast<ptrdiff_t>(data));
+//    }
+//
+//    /** Receives the nanme of the upcoming object -- we ignore this. */
+//    void Name(const char *s) {}
+//    
+//    /** visits an object with no OT implementation */
+//    template<typename T> void Primitive(T& x) {}
+//    /** visits an internal object */
+//    template<typename T> void MyObject(T& x) {
+//      TraverseObject(&x, this);
+//    }
+//    /** visits an array */
+//    template<typename T> void MyArray(T* x, index_t len) {
+//      TraverseArray(x, len, this);
+//    }
+//    /** visits an object pointed to, allocated with new */
+//    template<typename T> void Ptr(T*& x, bool nullable) {
+//      if (!nullable || x != NULL) {
+//        x = mem::PointerAdd(x, offset_);
+//        TraverseObject(x, this);
+//      }
+//    }
+//    /** visits an array pointed to, allocated with new[] */
+//    template<typename T> void Array(T*& x, index_t len, bool nullable) {
+//      if (!nullable || x != NULL) {
+//        x = mem::PointerAdd(x, offset_);
+//        TraverseArray(x, len, this);
+//      }
+//    }
+//    /** visits an array pointed to, allocated with malloc */
+//    template<typename T> void MallocArray(T*& x, index_t len, bool nullable) {
+//      Array(x, len, nullable);
+//    }
+//  };
 
-    /** Receives the nanme of the upcoming object -- we ignore this. */
-    void Name(const char *s) {}
-    
-    /** visits an object with no OT implementation */
-    template<typename T> void Primitive(T& x) {}
-    /** visits an internal object */
-    template<typename T> void MyObject(T& x) {
-      TraverseObject(&x, this);
-    }
-    /** visits an array */
-    template<typename T> void MyArray(T* x, index_t len) {
-      TraverseArray(x, len, this);
-    }
-    /** visits an object pointed to, allocated with new */
-    template<typename T> void Ptr(T*& x, bool nullable) {
-      if (!nullable || x != NULL) {
-        x = mem::PointerAdd(x, offset_);
-        TraverseObject(x, this);
-      }
-    }
-    /** visits an array pointed to, allocated with new[] */
-    template<typename T> void Array(T*& x, index_t len, bool nullable) {
-      if (!nullable || x != NULL) {
-        x = mem::PointerAdd(x, offset_);
-        TraverseArray(x, len, this);
-      }
-    }
-    /** visits an array pointed to, allocated with malloc */
-    template<typename T> void MallocArray(T*& x, index_t len, bool nullable) {
-      Array(x, len, nullable);
-    }
-  };
-
-  class OTPointerRefreezer {
+  class OTPointerRelocator {
    private:
-    // This is the offset that allows for the object being fixed to have been
-    // memcopied from a prior location.
     ptrdiff_t pre_offset_;
     ptrdiff_t post_offset_;
     
    public:
+    /**
+     * Fixes pointers.
+     *
+     * @param pre_offset_in the offset between where the pointers are
+     *        currently pointing, and where they would need to point in
+     *        order to recurse on the data structure (no modifications made)
+     * @param post_offset_in the offset between where the pointers are
+     *        currently pointing, and the new address space they are relocated
+     *        to
+     * @param dest the object to recurse on
+     */
     template<typename T>
-    T* InitBegin(const T* src, T *dest) {
-      pre_offset_ = mem::PointerDiff(dest, src);
-      post_offset_ = -reinterpret_cast<size_t>(src);
+    T* InitBegin(ptrdiff_t pre_offset_in, ptrdiff_t post_offset_in, T *dest) {
+      pre_offset_ = pre_offset_in;
+      post_offset_ = post_offset_in;
       TraverseObject(dest, this);
       return dest;
     }
@@ -818,8 +827,10 @@ namespace ot {
    */
   template<typename T>
   void PointerRefreeze(T* obj) {
-    ot_private::OTPointerRefreezer fixer;
-    fixer.InitBegin<T>(obj, obj);
+    ot_private::OTPointerRelocator fixer;
+    fixer.InitBegin<T>(
+        0, -mem::PointerAbsoluteAddress(obj),
+        reinterpret_cast<T*>(obj));
   }
 
   /**
@@ -834,8 +845,10 @@ namespace ot {
    */
   template<typename T>
   void PointerRefreeze(const T* src, char* dest) {
-    ot_private::OTPointerRefreezer fixer;
-    fixer.InitBegin<T>(src, reinterpret_cast<T*>(dest));
+    ot_private::OTPointerRelocator fixer;
+    fixer.InitBegin<T>(
+        mem::PointerDiff(dest, src), -mem::PointerAbsoluteAddress(src),
+        reinterpret_cast<T*>(dest));
   }
 
   /**
@@ -844,18 +857,25 @@ namespace ot {
    */
   template<typename T>
   T* PointerThaw(char *block) {
-    ot_private::OTPointerThawer fixer;
-    return fixer.InitBegin<T>(block);
+    ot_private::OTPointerRelocator fixer;
+    return fixer.InitBegin<T>(
+        mem::PointerAbsoluteAddress(block),
+        mem::PointerAbsoluteAddress(block),
+        reinterpret_cast<T*>(block));
   }
-  
+
   /**
-   * Takes an object that is laid out serially with all its pointers
-   * normalized to zero, and makes all the pointers live again.
+   * Relocates an object from a previous location to a new location.
+   *
+   * Call this to fix pointers after swapping or memcopying an object.
    */
   template<typename T>
-  T* PointerRelocate(char *block, ptrdiff_t offset) {
-    ot_private::OTPointerThawer fixer;
-    return fixer.InitBegin<T>(block, offset);
+  void PointerRelocate(const char *old_location, char *new_location) {
+    ot_private::OTPointerRelocator fixer;
+    fixer.InitBegin<T>(
+        mem::PointerDiff(new_location, old_location),
+        mem::PointerDiff(new_location, old_location),
+        reinterpret_cast<T*>(new_location));
   }
 };
 
