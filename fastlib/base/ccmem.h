@@ -395,8 +395,11 @@ namespace mem {
    */
   template<typename T>
   inline T* PointerAdd(T* x, ptrdiff_t difference_in_bytes) {
-    return reinterpret_cast<T*>(reinterpret_cast<char*>(x)
-        + difference_in_bytes);
+    return
+        reinterpret_cast<T*>(
+            const_cast<char*>(
+                reinterpret_cast<const char*>(x)
+                + difference_in_bytes));
   }
 
   /**
