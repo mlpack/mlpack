@@ -45,7 +45,6 @@ static void fx__report_system(struct datanode *node)
   uname(&info);
 
   fx_set_result(node, "./node/name", info.nodename);
-  fx_set_result(node, "./node/name", info.nodename);
   fx_set_result(node, "./arch/name", info.machine);
   fx_set_result(node, "./kernel/name", info.sysname);
   fx_set_result(node, "./kernel/release", info.release);
