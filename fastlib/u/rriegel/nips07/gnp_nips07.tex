@@ -520,16 +520,26 @@ to the na\"{\i}ve computation,
 \[
 \GNP(Y,X) = \left\{ \begin{array}{lrr}
   f(x,y) & \multicolumn{2}{r}{\mbox{if } X = \{x\} \mbox{ and } Y = \{y\},} \\
-  \multicolumn{2}{l}{\GNP(Y^L,X) \odot \GNP(Y^R,X)} & \mbox{if } |Y| > |X|, \\
+  \multicolumn{2}{l}{\GNP(Y^L,X) \odot \GNP(Y^R,X)} & \mbox{if } |Y| \geq |X|, \\
   \multicolumn{2}{l}{\GNP(Y,X^L) \otimes \GNP(Y,X^R)} & \mbox{otherwise}.
 \end{array} \right.
 \]
 Recursion forms a binary tree with one leaf per element of $X \times
-Y$.  Exhuastive computation thus requires time $O(N^2)$, as with
-na\"{\i}ve.  It may be possible, however, to obtain results for some
-components of the recursive block decomposition without computing them
-exhaustively.  Exploiting this, we hope to drive the expected running
-time down.
+Y$.  Exhuastive computation thus requires time $O(N^2)$, the same as
+the na\"{\i}ve algorithm.  It may be possible, however, to obtain
+results for some components of the recursive block decomposition
+without computing them exhaustively.  Exploiting this, we hope to
+drive the expected running time down.
+
+% \subsection{Summaries and Statistics}
+
+{\bf Summaries and Statistics} 
+
+% \subsection{Expansion Patterns}
+
+% \subsection{All Manner of Pruning}
+
+% \subsection{Practical Considerations: Trees, Bounds}
 
 \subsection{Abstraction}
 
@@ -542,7 +552,7 @@ Operations on abstract results yield the set of all possible outcomes
 \begin{array}{rcl}
   \lefteqn{\GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n)} \\
   & \equiv & \{a \op{i} b | a \in \GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n), b \in \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n)\} \\
-  & & \cap \GNP^A(X'_1,\ldots,X^L_i \cup X^R_i,\ldots,X'_n).
+  & & \mbox{} \cap \GNP^A(X'_1,\ldots,X^L_i \cup X^R_i,\ldots,X'_n).
 \end{array}
 \]
 [[Intersecting with abstract results for the composed region is
