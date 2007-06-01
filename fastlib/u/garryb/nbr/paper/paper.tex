@@ -23,16 +23,11 @@
 \DeclareMathOperator{\hrect}{hrect}
 \DeclareMathOperator{\dfs}{dfs}
 \DeclareMathOperator{\child}{child}
-\DeclareMathOperator{\all}{all}
 \DeclareMathOperator{\visited}{visited}
 \DeclareMathOperator{\unvisited}{unvisited}
 \DeclareMathOperator{\prune}{prune}
 \DeclareMathOperator{\IF}{if}
 \DeclareMathOperator{\ATDISCRETION}{}
-\newcommand{\muv}{\union^{\oplus}}
-\newcommand{\bigmuv}{\union^{\oplus}}
-\newcommand{\muh}{\oplus^{\union}}
-\newcommand{\bigmuh}{\bigoplus^{\union}}
 \newcommand{\dist}{d}
 \newcommand{\wholeR}{\mathcal{R}}
 \newcommand{\wholeQ}{\mathcal{Q}}
@@ -40,7 +35,7 @@
 \newcommand{\xx}{\hspace{0.3in}}
 \newcommand{\xxx}{\hspace{0.45in}}
 
-\newcommand{\nbody}{$n$-body}
+\newcommand{\nbody}{$N$-body}
 
 \newcommand{\kdleft}{\hspace{-0.02in}^L}
 \newcommand{\kdright}{\hspace{-0.02in}^R}
@@ -49,21 +44,23 @@
 \newcommand{\myOp}[1]{\mathop{\bigotimes\nolimits\hspace{-0.045in}_{#1}}}
 \newcommand{\myop}[1]{\otimes\hspace{-0.04in}_{#1}\hspace{0.03in}}
 
-\newcommand{\allpsi}{\Psi}
-\newcommand{\Oppsi}{\myOp{\Psi}}
-\newcommand{\oppsi}{\myop{\Psi}}
-\newcommand{\fpsi}{f_{\Psi}}
-\newcommand{\gpsi}{g_{\Psi}}
-\newcommand{\canprunepsi}{C_{\Psi}}
-\newcommand{\deltapsi}{\delta_{\Psi}}
+\newcommand{\allpsi}{\psi}
+\newcommand{\inpsi}{\psi}
+\newcommand{\Oppsi}{\myOp{\psi}}
+\newcommand{\oppsi}{\myop{\psi}}
+\newcommand{\fpsi}{f_{\psi}}
+\newcommand{\gpsi}{g_{\psi}}
+\newcommand{\canprunepsi}{C_{\psi}}
+\newcommand{\deltapsi}{\delta_{\psi}}
 
 \newcommand{\allpi}{\pi}
-\newcommand{\Oppi}{\myOp{\pi}}
-\newcommand{\oppi}{\myop{\pi}}
-\newcommand{\fpi}{f_{\pi}}
-\newcommand{\gpi}{g_{\pi}}
-\newcommand{\canprunepi}{C_{\pi}}
-\newcommand{\deltapi}{\delta_{\pi}}
+\newcommand{\Oppi}{\myOp{\allpi}}
+\newcommand{\oppi}{\myop{\allpi}}
+\newcommand{\fpi}{f_{\allpi}}
+\newcommand{\gpi}{g_{\allpi}}
+\newcommand{\canprunepi}{C_{\allpi}}
+\newcommand{\deltapi}{\delta_{\allpi}}
+\newcommand{\gpiworst}{g_{\allpi}^{\worst}}
 
 \newcommand{\allrho}{\rho}
 \newcommand{\Oprho}{\myOp{\rho}}
@@ -76,6 +73,15 @@
 \newcommand{\opmu}{\myop{\mu}}
 \newcommand{\fmu}{f_{\mu}}
 \newcommand{\gmu}{g_{\mu}}
+\newcommand{\deltamu}{\delta_{\mu}}
+
+\newcommand{\muparent}{\allmu_{\text{coarse}}}
+\newcommand{\muchild}{\allmu_{\text{children}}}
+\newcommand{\muvisit}{\allmu_{\text{visited}}}
+\newcommand{\muall}{\allmu_{\text{all}}}
+
+\newcommand{\hatpi}{\hat{\allpi}}
+\newcommand{\piparent}{\allpi_{\text{parent}}}
 
 \newcommand{\allsigma}{\sigma}
 \newcommand{\Opsigma}{\myOp{\sigma}}
@@ -205,10 +211,10 @@ Although we briefly mention strategies for massive parallelization, this paper f
 
 \section{Background}
 
-\subsection{Parallel \nbody Simulations}
+\subsection{Parallel \nbody\ Simulations}
 
-Among the most extensively studied parallelization problem for tree-based algorithms is the \nbody force approximation algorithm developed by Barnes and Hut in \cite{barneshut}, and to some extent, the Greengard's Fast Multipole Method in \cite{fmm}.
-The \nbody simulation problem attempts to model the movement of $N$ particles in an evolving system, during which each particle exerts a certain amount of force on all of the other particles.
+Among the most extensively studied parallelization problem for tree-based algorithms is the \nbody\ force approximation algorithm developed by Barnes and Hut in \cite{barneshut}, and to some extent, the Greengard's Fast Multipole Method in \cite{fmm}.
+The \nbody\ simulation problem attempts to model the movement of $N$ particles in an evolving system, during which each particle exerts a certain amount of force on all of the other particles.
 Computational solutions break the simulation into many discrete time steps, during which the total force exerted upon each particle is calculated:
 
  $$\map_{q \in D} \sum_{r \in D} f(q, r)$$
@@ -223,7 +229,7 @@ Unfortunately, the parallelization community has shied away from this algorithm 
 
 end
 
-The algorithm by Barnes and Hut, presented in \cite{barneshut}, is order $O(N log N)$.
+The algorithm by Barnes and Hut, presented in \cite{barneshut}, is order $O(N log N)$ for uniform distributions\footnote{Uniform?}.
 For each query point $q$, the force contribution is approximated by recursively traversing an oct-tree\footnote{An oct-tree recursively divides all 3 dimensions in half spatially until the node is sufficiently small.}.
 When recursing, if the point $q$ is further than parameter $\theta$ times the spatial width of the node, the force calculation is approximated by placing all points at the node's center of mass.
 Greengard's Fast Multipole Method \cite{greengard_fmm} has some elements of dual-tree computation in its downwards pass, in which the force contribution for an entire node of queries is estimated for an entire node of references.
@@ -252,7 +258,8 @@ It is therefore suitable to distribute the points among the processors.
 
 \section{Dual-Tree Algorithm Framework}
 
-Here, we characterize most dual tree algorithms as belonging to one of two categories, and show how each category can be generalized.
+Ongoing unpublished research attempts to characterize all generalized N-body problems with rigorous mathematical formality; however, such rigorous formalization is outside the scope of this paper.
+Here, we postulate that all dual-tree algorithms fall into one or both of two categories: a single scalar or vector result summarizing all pairs of inputs, or an independent result for each query point computed against the entire reference set.
 
 A global reduction computes a single scalar or a vector of results that is constant with the number of data points.
 This type of problem is typically characterized by a single commutative, associative operator applied to pairs of inputs.
@@ -262,9 +269,17 @@ On the other hand, a query-reference problem requires a result for each point in
 For each point in the query set, execute a commutative, associative operator over every element in a reference set.
 These problems include such fundamental problems as all-nearest-neighbors, kernel density estimation, the testing phase of most nonparametric classification methods, matrix-vector multiplication, and many more.
 
-In the next subsections, we formalize a mathematical framework for solving both of these types of problems, and briefly explain how these two types of problems can be unified.
+First, we introduce some formalities, which we will then extend further.
 
-\subsection{Just the math}
+\subsection{Simple Reduce Problem}
+
+We introduce the concept of a \textit{reduce problem}.
+Reduce problem $\allx$ is defined:
+$$\allx(p, V) \gx \left( \Opx_{v \in V} f(p, v) \right)$$
+
+\where $\allx$ is the reduction problem, $p$ is an invariant {\it parameter} ....
+
+\subsection{Global Reductions}
 
 % WALDO: MIssing background: twopoint
 
@@ -334,7 +349,7 @@ A query-reference problem performs a computation over an entire reference $R$ se
 \allrho(q, R) = \grho \left( \Oprho_{r \in R} \frho (q, r) \right)
 \end{equation}
 
-\noindent This type of problem includes, in addition to the classic \nbody force calculation, the problems of all-nearest-neighbors, k-nearest-neighbors classification, kernel density estimation, and more.
+\noindent This type of problem includes, in addition to the classic \nbody\ force calculation, the problems of all-nearest-neighbors, k-nearest-neighbors classification, kernel density estimation, and more.
 Although each query is independent, speedup is achievable by looking at queries {\it en masse}.
 For instance, one the contribution of one set of references on an entire set of queries might be known exactly, or easily approximated.
 
@@ -402,16 +417,22 @@ Expressed recursively, we have:
 
 \noindent However, it is not necessary we have the exact value of $\allmu$.
 Instead, we only need a worst-case bound for it, and thus can bound $\allmu$ at any stage during computation.
-If we know $\allmu$ for two different references, we can use the worst-case value in each, composing them in a way analagous to the original $\Oprho$:
+In the same spirit in which we avoided direct maximum-distance computation for $\TWOPT$, we may bound $\allmu(Q, R)$ for arbitrary query and reference points:
 \begin{equation}
-\allmu(Q, R) \leq \allmu(Q, R\kdleft) \Opmu \allmu(Q, R\kdright)
+\allmu(Q, R) \leq \deltamu(\sigma(Q), \sigma(R))
+\label{eqn:approxmu}
+\end{equation}
+
+\noindent If we know $\allmu$ for two different references, we can use the worst-case value in each, composing them in a way analagous to the original $\Oprho$:
+\begin{equation}
+\allmu(Q, R) \leq \allmu(Q, R\kdleft) \opmu \allmu(Q, R\kdright)
 \label{eqn:combinemu}
 \end{equation}
 
 \noindent Although the above seems obvious due to commutativity and associativity, it is overly pessimistic: the worst-case value for $R\kdleft$ may occur at a different query point from that for $R\kdright$.
 Next, if a prune occured and $\pi(Q, R)$ is defined, then we may bound its worst-case contribution:
 \begin{equation}
-\allmu(Q, R) \leq \gpi^{\worst}(\allsigma(Q), \allpi(Q, R))
+\allmu(Q, R) \leq \gpiworst(\allsigma(Q), \allpi(Q, R))
 \label{eqn:pimu}
 \end{equation}
 
@@ -452,61 +473,62 @@ DFS meta-algorithm for query-reference problems:
 
 \begin{equation*}
   \begin{array}{l}
-    \text{for all nodes/points } Q \in \wholeQ, \hatmu(Q, \wholeR) \gets 0_{\Opmu}
+    \text{for all nodes/points } Q \in \wholeQ, \muchild(Q) \gets 0_{\allmu}
     \\
-    \text{for all nodes/points } Q \in \wholeQ, \hatpi(Q, \prune) \gets 0_{\Oppi}
+    \text{for all nodes/points } Q \in \wholeQ, \hatpi(Q) \gets 0_{\allpi}
     \\
-    \mbox{procedure dfs}(Q, R, \hatmu\kdparent)
+    \mbox{procedure dfs}(Q, R, \muparent)
     \\
-    \x \muvisit \gets \muchild \opmu \deltapi(\allsigma(Q), \pi(Q, \prune))
+    \x \muall \gets \muchild(C) \opmu \gpiworst(\allsigma(Q), \hatpi(Q))
+    \\ \x \qquad \opmu \deltamu(\allsigma(Q), \allsigma(R)) \opmu \muparent
     \\
-    \x \hatmu(Q, \all) \gets \hatmu(Q, \visited) \opmu \delta(\allsigma(Q), \allsigma(R) \opmu \mu\kdparent
+    \x \text{if } \canprunepi(\allsigma(Q), \allsigma(R), \muall)
     \\
-    \x \mbox{if } C(\allsigma(Q), \allsigma(R), \hatmu(Q, \all)))
+    \xx \hatpi(Q) \gets \hatpi(Q) \oppi \deltapi(\allsigma(Q), \allsigma(R), \muall)
     \\
-    \xx \pi(Q, \prune) \gets \pi(Q, \prune) \oplus^{1} F^{1}(\allsigma(Q), \allsigma(R))
+    \x \text{elif } |Q| \geq |R| \text{ (heuristic)}
     \\
-    \x \mbox{elif } |Q| \geq |R|
+    \xx \text{for } Q' = Q\kdleft, Q\kdright
     \\
-    \xx \mbox{for } c = L, R
+    \xxx \hatpi(Q') \gets \hatpi(Q') \oppi \hatpi(Q)
     \\
-    \xxx \pi(Q_c, \prune) \gets \pi(Q_c, \prune) \oplus^{1} \pi(Q, \prune)
+    \xxx \text{dfs}(Q', R, \muparent)
     \\
-    \xxx \mbox{dfs}(Q_c, R, \mu^{*})
+    \xxx \muvisit(Q') \gets \muchild(Q') \opmu \gpiworst(\sigma(Q'), \hatpi(Q'))
     \\
-    \xx \mbox{end for}
+    \xx \text{end for}
     \\
-    \xx \mu(Q, \child) \gets \mu(Q_L, \visited) \muv \mu(Q_R, \visited)
+    \xx \muchild(Q) \gets \worst(\muvisit(Q\kdleft), \muvisit(Q\kdright))
     \\
-    \xx \pi(Q, \prune) \gets 0^{\oplus^{1}}
+    \xx \hatpi(Q) \gets 0_{\allpi}
     \\
     \x \mbox{else}
     \\
     \xx (R_a, R_b) \gets \mbox{prioritize}(\allsigma(Q), R_L, R_R)
     \\
-    \xx \dfs(Q, R_a, \mu^{*} \muh \delta(\allsigma(Q), \allsigma(R_b))
+    \xx \dfs(Q, R_a, \muparent \opmu \deltamu(\allsigma(Q), \allsigma(R_b))
     \\
-    \xx \dfs(Q, R_b, \mu^{*})
+    \xx \dfs(Q, R_b, \muparent)
+    \\
+    \x \text{end if}
+    \\
+    \text{end dfs}
+    \\
+    \text{function fixup}(Q, \piparent)
+    \\
+    \x \hatpi(Q) \gets \hatpi(Q) \oppi \piparent
+    \\
+    \x \text{if } |Q| = 1 \text{, i.e. } Q = \{q\}
+    \\
+    \xx \allrho(q) \gets \gpi(q, \hatpi(Q))
+    \\
+    \x \text{else}
+    \\
+    \xx \text{fixup}(Q\kdleft, \hatpi(Q))
+    \\
+    \xx \text{fixup}(Q\kdleft, \hatpi(Q))
     \\
     \x \mbox{end if}
-    \\
-    \mbox{end dfs}
-    \\
-    \mbox{function fixup}(Q, \pi^{*})
-    \\
-    \x \pi(Q, \all) \gets \pi^{*} \oplus^{1} \pi(Q, \prune)
-    \\
-    \x \mbox{if } |Q| = 1
-    \\
-    \xx \allrho(q) \gets f^{2}(q, \pi(Q, \all))
-    \\
-    \x \mbox{else}
-    \\
-    \xx \mbox{fixup}(Q_L, \pi(Q, \all))
-    \\
-    \xx \mbox{fixup}(Q_R, \pi(Q, \all))
-    \\
-    \x \mbox{fi}
     \\
     \mbox{end fixup}
   \end{array}
@@ -514,243 +536,220 @@ DFS meta-algorithm for query-reference problems:
 
 \section{Parallel Execution}
 
-We have already shown the general character of 
-
-
-
-----------------------------------------------------------------------------
-
-P05 Are we better than mapreduce?
-
-----------------------------------------------------------------------------
-
-
-
-
-Ongoing unpublished research attempts to
-characterize all generalized N-body problems with rigorous mathematical
-formality; however, such rigorous formalization is outside the scope of this
-paper.  Here, we postulate that all dual-tree algorithms fall into one or
-both of two categories: a single scalar or vector result summarizing all
-pairs of inputs, or an independent result for each query point computed
-against the entire reference set.
-
-The former category can be generalized by a few custom functions that are
-unique to the problem at hand, with many possible implementations.
 
 
 
 
 
 
-\subsection{Global Reductions}
-
-A global reduce computes a single scalar or relatively small vector of results, which are the application of an aggregate commutative and associative operator to all pairs of inputs.
-The simplest form of global reduce can be expressed as a recurrence relation, where all subcomputations are entirely independent.
-A notable example is the two-point correlation problem:
-\begin{equation*}
-  \TWOPT(X, r) = \sum_{(x, y) \in X \times X} I(d(x, y) < r)
-\end{equation*}
-
-\noindent where $I$ is the indicator function, $r$ is a constant radius, and $d(x, y)$ is a distance metric.
-Suppose then we can partition any set $X$ into two subsets $X_L$ and $X_R$ both of cardinality $\Theta(|X|)$, such as in a balanced $kd$-tree.
-A simple yet over-specified recurrence relation exists for $\TWOPT$, if we allow ourselves to think of $\TWOPT$ as finding the correlation between two different data sets (omitting the radius):
-\begin{equation}
- \begin{array}{ll}
-  \lefteqn{\TWOPT(X, Y) =}
-  \\
-  & \left\{
-    \begin{array}{lr}
-      0 & \IF d^{\min}(X, Y) \geq r
-      \\
-      |X||Y| & \IF d^{\max}(X, Y) \leq r
-      \vspace{0.07in}
-      \\
-      \multicolumn{2}{l}{\TWOPT(X_L, Y) + \TWOPT(X_R, Y)}
-      \\
-      \multicolumn{2}{c}{\scriptstyle{\mbox{\small{or}}}}
-      \\
-      \multicolumn{2}{l}{\TWOPT(X, Y_L) + \TWOPT(X, Y_R)}
-    \end{array}
-  \right.
- \end{array}
-\end{equation}
-
-\noindent where $d^{\max}(X, Y)$ is the maximum distance between any two points in $X$ and $Y$, likewise for $d^{\min}$.
-Unfortunately, direct computation of actual the maximum distance not practical.
-Summary statistics to allow the constant-time\footnote{with respect to number of points, not dimensions} computation of an upper bound for the actual maximum distance.
-In a $kd$-tree, one suitable summary statistic is the bounding hyper-rectangle for each node:
-\begin{equation}
-d^{\max}(X, Y) \leq d^{\max}_{\hrect}(\allsigma_{\hrect}(X), \allsigma_{\hrect}(Y))
-\end{equation}
-
-\noindent The meta-function $\allsigma$ corresponds to any relevant summary statistic, which can vary from problem to problem.
-In addition to the commonplace statistic $\allsigma_{\hrect}$, two-point correlation additionally uses the cardinality statistic $\allsigma_{\cardinality}(X) = |X|$.
-Algorithms that utilize multipole expansions may require the mean, variance, or other moment statistics.
-
-We can now generalize the entire recurrence relation for simple global reduce problems.
-We claim that problems of the form:
-\begin{equation}
-  \gamma(X, Y) = \bigoplus_{(x, y) \in X \times Y} f(a,b)
-\end{equation}
-
-\noindent where $\bigoplus$ is any commutative and associative operator, can be expressed as:
-\begin{equation}
-\label{eqn:global_intrinsic}
- \begin{array}{ll}
-  \lefteqn{\gamma(X, Y) =}
-  \\
-  & \left\{
-    \begin{array}{lr}
-      \delta \left( \allsigma(X), \allsigma(Y) \right) & \IF C(\allsigma(X), \allsigma(Y))
-      \\
-      \gamma(X_L, Y) \oplus \gamma(X_R, Y) & \mbox{if convenient}
-      \\
-      \gamma(X, Y_L) \oplus  \gamma(X, Y_R) & \mbox{if convenient}
-    \end{array}
-  \right.
- \end{array}
-\end{equation}
-
-\noindent under the following model:
-\begin{itemize}
-  \item $\gamma(X, Y)$ - The result of the global reduce, on the entire problem or on a subproblem.
-  \item $\allsigma(X)$ - Summary statistics over a range of data.
-  \item $\delta(\allsigma(X), \allsigma(Y))$ - The estimated contribution of a sub-computation using only summary statistics.
-  \item $C(\allsigma(X), \allsigma(Y))$ - An indicator if a prune is possible, and that the subproblem $\gamma(X, Y)$ can be substituted by $\delta(\allsigma(X), \allsigma(Y))$.
-  \item $\bigoplus$ - The reduce operator.
-\end{itemize}
-
-\noindent We also note that in most cases $\allsigma$ is in the form:
-\begin{equation}
-  \allsigma(X) = \bigoplus^{\allsigma}_{x \in X} f^{\allsigma}(x)
-\end{equation}
-
-\noindent for some commutative, associative $\bigoplus^{\allsigma}$, and can be calculated efficiently in a bottom-up pass while building a $kd$-tree:
-\begin{equation}
-\label{eqn:sigma}
- \begin{array}{ll}
-  \lefteqn{\allsigma(X) =}
-  \\
-  & \left\{
-    \begin{array}{lr}
-      f^{\allsigma}(X) & \IF |X| = 1
-      \\
-      \allsigma(X_L) \oplus^{\allsigma} \allsigma(X_R) & \mbox{otherwise}
-    \end{array}
-  \right.
- \end{array}
-\end{equation}
-
-\noindent The previous functions define the execution of some generalized $N$-body problems in a form that is easily implemented as a dual-tree algorithm\footnote{In practice, very small subsets may be computed exhaustively to reduce the overhead of treating individual points as entire subsets.}.
-
-There is significant freedom in how to compute the thse recurrence relationships.
-The $\gamma$ recurrence permits many types of expansion, such as depth-first, breadth-first, and importantly, parallel expansions.
-Thus, by separating the computation of the recurrence relationship from the problem-specific details, parallelization of all these algorithms requires only the up-front cost of a single parallel execution mechanism.
-
-The model shown so far is limited to very simple dual-tree algorithms.
-First, we later discuss additions to allow for efficient computation of query-reference problems such as all-nearest-neighbors and density estimation.
-Additionally, many algorithms, such as nearest-neighbor, classification problems, and approximate density estimates, require information about previous pairwise computation in order to determine whether pruning is possible.
-Nonetheless, this simple model leads to effective parallelization of problems such as two-point correlation\footnote{WALDO list more}.
-
-\subsection{Query-Reference Problems}
-
-% Depends: Global Reductions
-
-A query-reference problem considers computes a result independently for each point in a query set.
-These problems take on the general form:
- 
-  $$\map_{q \in Q} \bigoplus_{r \in R} f(q, r)$$
-
-Although each query is independent, speedup can still be achieved by looking at queries {\it en masse}.
-It may be possible to show that one set of references is irrelevant to an entire set of queries within a computation, and thus prune the subproblem.
-
-We define $\allrho(q, R)$ as each element of the map, i.e. $\allrho(q, R) = \bigoplus_{r \in R} f(q, r)$.
-Next, we decompose $f$ into two separate functions $f^1$ and $f^2$ such that $f^2(q, f^1(q, r)) = f(q, r)$.
-We make this decomposition to allow us to take advantage of distributivity for problems where $f(\cdot, \cdot)$ distributes over $\bigoplus$.
-In the dual-tree algorithm, $\allrho$ can be computed as follows:
-\begin{equation}
-  \label{eqn:rho}
-  \allrho(q, R) = f^{2}(q, \bigoplus^{1}_{r \in R} f^{1}(q, R)) = f^{2}(q, \pi(\{q\}, R))
-  \end{equation}
-  
-\noindent where $\pi$ is the {\it postponed information} from prunes and/or exhaustive computations:
-\begin{equation}
-\label{eqn:pi}
- \begin{array}{ll}
-  \lefteqn{\pi(Q, R) = f^{2}(q, \bigoplus^{1}_{r \in R} f^{1}(q, R))}
-  \\
-  & \left\{
-    \begin{array}{lr}
-      F^{1}(\allsigma(Q), \allsigma(R)) & \IF C(\allsigma(Q), \allsigma(R), \mu(Q))
-      \\
-      \pi(Q^{*}, R) & \mbox{if defined for } Q^{*} \supset Q
-      \\
-      \pi(Q, R_L) \oplus^{1} \pi(Q, R_R) & \mbox{otherwise}
-    \end{array}
-  \right.
- \end{array}
-\end{equation}
-
-\noindent where the {\it on-line per-query-node pruning information} is defined:
-\begin{equation}
-\label{eqn:mu}
- \begin{array}{ll}
-  \lefteqn{\mu(Q, R) =}
-  \\
-  & \left\{
-    \begin{array}{lr}
-      f(q, r) & \IF Q = \{q\} \mbox{ and } R = \{r\}
-      \\
-      \delta(\allsigma(Q), \allsigma(R)) & \mbox{if convenient}
-      \\
-      F^2(\allsigma(Q), \pi(Q, R)) & \mbox{if defined}
-      \\
-      \mu(Q_L, R) \muv \mu(Q_R, R) & \mbox{if convenient}
-      \\
-      \mu(Q, R_L) \muh \mu(Q, R_R) & \mbox{if convenient}
-      \\
-      \mu(Q^{*}, R) & \mbox{otherwise, for } Q^{*} \supset Q
-    \end{array}
-  \right.
- \end{array}
-\end{equation}
-
-under the model\footnote{In practice for Equation \ref{eqn:mu}, rules 1 and 4 are most accurate but only used in depth-first expansions, rule 6 is used only when no other information is available, and rule 5 is used primarily in breadth-first expansions.}:
-\begin{itemize}
-  \item $F^1(\allsigma(Q), \allsigma(R))$ - A pairwise function to allow for distributivity only valid when pruning is possible, identical to $f^1(\cdot, \cdot)$ when $|Q| = |R| = 1$.
-  If $f(\cdot, \cdot)$ distributes over $\bigoplus$, then $f^1(\allsigma(R))$ is often the same as $\allsigma(R)$.
-  Otherwise, it usually corresponds to a value whose effect on the overall problem is indistinguishable from $\forall_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
-  \item $F^2(\allsigma(Q), \pi(Q, R))$ - A post-processing function that determines the bounds of the effects of $\pi$ on a region of queries.
-  \item $\bigoplus^{1}$ - A commutative and associative operator that operates on the results of $f^1$ before $f^2$ is applied, simulating the effects of the original $\bigoplus$ as specified in Equation \ref{eqn:rho}.
-  \item $\delta(\allsigma(Q), \allsigma(R))$ - A function that computes pessimistic bounds on the contribution of all of $R$ to any element of $Q$.
-  Formally, succinct information bounding the set of results $\union_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
-  For kernel density estimation, this is the pair $(\min_{q \in Q} \sum_{r \in R} K(q, r), \max_{q \in Q} \sum_{r \in R} K(q, r))$.
-  \item $\muv$ - An operator to relax the bounds for a query region.
-  Given $\mu(Q_L, R)$ and $\mu(Q_R, R)$, we can create more pessimistic pruning information for the worst-case effect of $R$ on any of the query points $Q$.
-  In many algorithms, this operator takes the minimum of some lower bound and maximum of some upper bound.
-  \item $\bigmuh$ - An operator that pessimistically merges the contributions of two disjoint reference subsets on the same query subset.
-  For kernel summation problems, this sums the lower and upper bounds.
-  \item $C$ - A Boolean function indicating if a prune is possible, using information from $\mu$.
-  The operators applied in order to compute $\mu$ depend on the expansion pattern and the sequence of node pairs that have already been visited.
-  It is entirely dependent on the type of problem being solved which expansion pattern, whether it be depth-first or breadth-first, favors the most pruning.
- For some problems such as exact kernel density estimation, $C$ does not use $\mu$ at all, and any expansion pattern can be used.
-\end{itemize}
-
-It is necessary to clarify in Equation \ref{eqn:pi} the ``if defined'' comment for the second rule.
-The recurrence relationship only defines a base case if the prune check $C$ is true; thus, $\pi$ is not defined if the second rule is invoked improperly.
-
-{\bf Theorem}\footnote{use LaTeX to do this}: If the prune check $C(\allsigma(Q), \allsigma(R), \cdot)$ is always true for the base case $|Q| = |R| = 1$, then the recurrence of Equation \ref{eqn:pi} invoked via Equation \ref{eqn:rho} must must be defined even if the second rule is not invoked.
-
-{\bf Proof}: The initial invokation, per Equation \ref{eqn:rho}, begins with $Q$ being the singleton set $\{q\}$.  Further invokations will retain $|Q| = 1$ since $Q$ is not modified by the third rule.  However, invoking on $R_L$ and $R_R$ always decreases the reference set by at least one.  Therefore, $|R| = 1$ eventually, and since $|Q| = 1$ always, the first rule will eventually define the result.
-
-In fact, evaluating $\allrho$ in Equations \ref{eqn:rho} and \ref{eqn:pi} as such is identical to the single-tree algorithm -- recursive subdivision along the reference tree until a prune is possible.
-However, dual-tree algorithms may prune multiple queries at once, prompting the existence of the second rule in Equation \ref{eqn:pi}.
-
-It is also noteworthy that Equation \ref{eqn:mu} may evaluate to very different values during the course of the dual-tree computation.
-As more of the tree is expanded, it becomes ``convenient'' to expand $\mu$ in a manner more advantageous to pruning.
-
-MOTIVATION FOR THIS MODEL: Every type of information transfer is accounted for.
+%  \subsection{Global Reductions}
+%  
+%  A global reduce computes a single scalar or relatively small vector of results, which are the application of an aggregate commutative and associative operator to all pairs of inputs.
+%  The simplest form of global reduce can be expressed as a recurrence relation, where all subcomputations are entirely independent.
+%  A notable example is the two-point correlation problem:
+%  \begin{equation*}
+%    \TWOPT(X, r) = \sum_{(x, y) \in X \times X} I(d(x, y) < r)
+%  \end{equation*}
+%  
+%  \noindent where $I$ is the indicator function, $r$ is a constant radius, and $d(x, y)$ is a distance metric.
+%  Suppose then we can partition any set $X$ into two subsets $X_L$ and $X_R$ both of cardinality $\Theta(|X|)$, such as in a balanced $kd$-tree.
+%  A simple yet over-specified recurrence relation exists for $\TWOPT$, if we allow ourselves to think of $\TWOPT$ as finding the correlation between two different data sets (omitting the radius):
+%  \begin{equation}
+%   \begin{array}{ll}
+%    \lefteqn{\TWOPT(X, Y) =}
+%    \\
+%    & \left\{
+%      \begin{array}{lr}
+%        0 & \IF d^{\min}(X, Y) \geq r
+%        \\
+%        |X||Y| & \IF d^{\max}(X, Y) \leq r
+%        \vspace{0.07in}
+%        \\
+%        \multicolumn{2}{l}{\TWOPT(X_L, Y) + \TWOPT(X_R, Y)}
+%        \\
+%        \multicolumn{2}{c}{\scriptstyle{\mbox{\small{or}}}}
+%        \\
+%        \multicolumn{2}{l}{\TWOPT(X, Y_L) + \TWOPT(X, Y_R)}
+%      \end{array}
+%    \right.
+%   \end{array}
+%  \end{equation}
+%  
+%  \noindent where $d^{\max}(X, Y)$ is the maximum distance between any two points in $X$ and $Y$, likewise for $d^{\min}$.
+%  Unfortunately, direct computation of actual the maximum distance not practical.
+%  Summary statistics to allow the constant-time\footnote{with respect to number of points, not dimensions} computation of an upper bound for the actual maximum distance.
+%  In a $kd$-tree, one suitable summary statistic is the bounding hyper-rectangle for each node:
+%  \begin{equation}
+%  d^{\max}(X, Y) \leq d^{\max}_{\hrect}(\allsigma_{\hrect}(X), \allsigma_{\hrect}(Y))
+%  \end{equation}
+%  
+%  \noindent The meta-function $\allsigma$ corresponds to any relevant summary statistic, which can vary from problem to problem.
+%  In addition to the commonplace statistic $\allsigma_{\hrect}$, two-point correlation additionally uses the cardinality statistic $\allsigma_{\cardinality}(X) = |X|$.
+%  Algorithms that utilize multipole expansions may require the mean, variance, or other moment statistics.
+%  
+%  We can now generalize the entire recurrence relation for simple global reduce problems.
+%  We claim that problems of the form:
+%  \begin{equation}
+%    \gamma(X, Y) = \bigoplus_{(x, y) \in X \times Y} f(a,b)
+%  \end{equation}
+%  
+%  \noindent where $\bigoplus$ is any commutative and associative operator, can be expressed as:
+%  \begin{equation}
+%  \label{eqn:global_intrinsic}
+%   \begin{array}{ll}
+%    \lefteqn{\gamma(X, Y) =}
+%    \\
+%    & \left\{
+%      \begin{array}{lr}
+%        \delta \left( \allsigma(X), \allsigma(Y) \right) & \IF C(\allsigma(X), \allsigma(Y))
+%        \\
+%        \gamma(X_L, Y) \oplus \gamma(X_R, Y) & \mbox{if convenient}
+%        \\
+%        \gamma(X, Y_L) \oplus  \gamma(X, Y_R) & \mbox{if convenient}
+%      \end{array}
+%    \right.
+%   \end{array}
+%  \end{equation}
+%  
+%  \noindent under the following model:
+%  \begin{itemize}
+%    \item $\gamma(X, Y)$ - The result of the global reduce, on the entire problem or on a subproblem.
+%    \item $\allsigma(X)$ - Summary statistics over a range of data.
+%    \item $\delta(\allsigma(X), \allsigma(Y))$ - The estimated contribution of a sub-computation using only summary statistics.
+%    \item $C(\allsigma(X), \allsigma(Y))$ - An indicator if a prune is possible, and that the subproblem $\gamma(X, Y)$ can be substituted by $\delta(\allsigma(X), \allsigma(Y))$.
+%    \item $\bigoplus$ - The reduce operator.
+%  \end{itemize}
+%  
+%  \noindent We also note that in most cases $\allsigma$ is in the form:
+%  \begin{equation}
+%    \allsigma(X) = \bigoplus^{\allsigma}_{x \in X} f^{\allsigma}(x)
+%  \end{equation}
+%  
+%  \noindent for some commutative, associative $\bigoplus^{\allsigma}$, and can be calculated efficiently in a bottom-up pass while building a $kd$-tree:
+%  \begin{equation}
+%  \label{eqn:sigma}
+%   \begin{array}{ll}
+%    \lefteqn{\allsigma(X) =}
+%    \\
+%    & \left\{
+%      \begin{array}{lr}
+%        f^{\allsigma}(X) & \IF |X| = 1
+%        \\
+%        \allsigma(X_L) \oplus^{\allsigma} \allsigma(X_R) & \mbox{otherwise}
+%      \end{array}
+%    \right.
+%   \end{array}
+%  \end{equation}
+%  
+%  \noindent The previous functions define the execution of some generalized $N$-body problems in a form that is easily implemented as a dual-tree algorithm\footnote{In practice, very small subsets may be computed exhaustively to reduce the overhead of treating individual points as entire subsets.}.
+%  
+%  There is significant freedom in how to compute the thse recurrence relationships.
+%  The $\gamma$ recurrence permits many types of expansion, such as depth-first, breadth-first, and importantly, parallel expansions.
+%  Thus, by separating the computation of the recurrence relationship from the problem-specific details, parallelization of all these algorithms requires only the up-front cost of a single parallel execution mechanism.
+%  
+%  The model shown so far is limited to very simple dual-tree algorithms.
+%  First, we later discuss additions to allow for efficient computation of query-reference problems such as all-nearest-neighbors and density estimation.
+%  Additionally, many algorithms, such as nearest-neighbor, classification problems, and approximate density estimates, require information about previous pairwise computation in order to determine whether pruning is possible.
+%  Nonetheless, this simple model leads to effective parallelization of problems such as two-point correlation\footnote{WALDO list more}.
+%  
+%  \subsection{Query-Reference Problems}
+%  
+%  % Depends: Global Reductions
+%  
+%  A query-reference problem considers computes a result independently for each point in a query set.
+%  These problems take on the general form:
+%   
+%    $$\map_{q \in Q} \bigoplus_{r \in R} f(q, r)$$
+%  
+%  Although each query is independent, speedup can still be achieved by looking at queries {\it en masse}.
+%  It may be possible to show that one set of references is irrelevant to an entire set of queries within a computation, and thus prune the subproblem.
+%  
+%  We define $\allrho(q, R)$ as each element of the map, i.e. $\allrho(q, R) = \bigoplus_{r \in R} f(q, r)$.
+%  Next, we decompose $f$ into two separate functions $f^1$ and $f^2$ such that $f^2(q, f^1(q, r)) = f(q, r)$.
+%  We make this decomposition to allow us to take advantage of distributivity for problems where $f(\cdot, \cdot)$ distributes over $\bigoplus$.
+%  In the dual-tree algorithm, $\allrho$ can be computed as follows:
+%  \begin{equation}
+%    \label{eqn:rho}
+%    \allrho(q, R) = f^{2}(q, \bigoplus^{1}_{r \in R} f^{1}(q, R)) = f^{2}(q, \pi(\{q\}, R))
+%    \end{equation}
+%    
+%  \noindent where $\pi$ is the {\it postponed information} from prunes and/or exhaustive computations:
+%  \begin{equation}
+%  \label{eqn:pi}
+%   \begin{array}{ll}
+%    \lefteqn{\pi(Q, R) = f^{2}(q, \bigoplus^{1}_{r \in R} f^{1}(q, R))}
+%    \\
+%    & \left\{
+%      \begin{array}{lr}
+%        F^{1}(\allsigma(Q), \allsigma(R)) & \IF C(\allsigma(Q), \allsigma(R), \mu(Q))
+%        \\
+%        \pi(Q^{*}, R) & \mbox{if defined for } Q^{*} \supset Q
+%        \\
+%        \pi(Q, R_L) \oplus^{1} \pi(Q, R_R) & \mbox{otherwise}
+%      \end{array}
+%    \right.
+%   \end{array}
+%  \end{equation}
+%  
+%  \noindent where the {\it on-line per-query-node pruning information} is defined:
+%  \begin{equation}
+%  \label{eqn:mu}
+%   \begin{array}{ll}
+%    \lefteqn{\mu(Q, R) =}
+%    \\
+%    & \left\{
+%      \begin{array}{lr}
+%        f(q, r) & \IF Q = \{q\} \mbox{ and } R = \{r\}
+%        \\
+%        \delta(\allsigma(Q), \allsigma(R)) & \mbox{if convenient}
+%        \\
+%        F^2(\allsigma(Q), \pi(Q, R)) & \mbox{if defined}
+%        \\
+%        \mu(Q_L, R) \worst \mu(Q_R, R) & \mbox{if convenient}
+%        \\
+%        \mu(Q, R_L) \opmu \mu(Q, R_R) & \mbox{if convenient}
+%        \\
+%        \mu(Q^{*}, R) & \mbox{otherwise, for } Q^{*} \supset Q
+%      \end{array}
+%    \right.
+%   \end{array}
+%  \end{equation}
+%  
+%  under the model\footnote{In practice for Equation \ref{eqn:mu}, rules 1 and 4 are most accurate but only used in depth-first expansions, rule 6 is used only when no other information is available, and rule 5 is used primarily in breadth-first expansions.}:
+%  \begin{itemize}
+%    \item $F^1(\allsigma(Q), \allsigma(R))$ - A pairwise function to allow for distributivity only valid when pruning is possible, identical to $f^1(\cdot, \cdot)$ when $|Q| = |R| = 1$.
+%    If $f(\cdot, \cdot)$ distributes over $\bigoplus$, then $f^1(\allsigma(R))$ is often the same as $\allsigma(R)$.
+%    Otherwise, it usually corresponds to a value whose effect on the overall problem is indistinguishable from $\forall_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
+%    \item $F^2(\allsigma(Q), \pi(Q, R))$ - A post-processing function that determines the bounds of the effects of $\pi$ on a region of queries.
+%    \item $\bigoplus^{1}$ - A commutative and associative operator that operates on the results of $f^1$ before $f^2$ is applied, simulating the effects of the original $\bigoplus$ as specified in Equation \ref{eqn:rho}.
+%    \item $\delta(\allsigma(Q), \allsigma(R))$ - A function that computes pessimistic bounds on the contribution of all of $R$ to any element of $Q$.
+%    Formally, succinct information bounding the set of results $\union_{q \in Q} \bigoplus_{r \in R} f(q, r)$.
+%    For kernel density estimation, this is the pair $(\min_{q \in Q} \sum_{r \in R} K(q, r), \max_{q \in Q} \sum_{r \in R} K(q, r))$.
+%    \item $\worst$ - An operator to relax the bounds for a query region.
+%    Given $\mu(Q_L, R)$ and $\mu(Q_R, R)$, we can create more pessimistic pruning information for the worst-case effect of $R$ on any of the query points $Q$.
+%    In many algorithms, this operator takes the minimum of some lower bound and maximum of some upper bound.
+%    \item $\Opmu$ - An operator that pessimistically merges the contributions of two disjoint reference subsets on the same query subset.
+%    For kernel summation problems, this sums the lower and upper bounds.
+%    \item $C$ - A Boolean function indicating if a prune is possible, using information from $\mu$.
+%    The operators applied in order to compute $\mu$ depend on the expansion pattern and the sequence of node pairs that have already been visited.
+%    It is entirely dependent on the type of problem being solved which expansion pattern, whether it be depth-first or breadth-first, favors the most pruning.
+%   For some problems such as exact kernel density estimation, $C$ does not use $\mu$ at all, and any expansion pattern can be used.
+%  \end{itemize}
+%  
+%  It is necessary to clarify in Equation \ref{eqn:pi} the ``if defined'' comment for the second rule.
+%  The recurrence relationship only defines a base case if the prune check $C$ is true; thus, $\pi$ is not defined if the second rule is invoked improperly.
+%  
+%  {\bf Theorem}\footnote{use LaTeX to do this}: If the prune check $C(\allsigma(Q), \allsigma(R), \cdot)$ is always true for the base case $|Q| = |R| = 1$, then the recurrence of Equation \ref{eqn:pi} invoked via Equation \ref{eqn:rho} must must be defined even if the second rule is not invoked.
+%  
+%  {\bf Proof}: The initial invokation, per Equation \ref{eqn:rho}, begins with $Q$ being the singleton set $\{q\}$.  Further invokations will retain $|Q| = 1$ since $Q$ is not modified by the third rule.  However, invoking on $R_L$ and $R_R$ always decreases the reference set by at least one.  Therefore, $|R| = 1$ eventually, and since $|Q| = 1$ always, the first rule will eventually define the result.
+%  
+%  In fact, evaluating $\allrho$ in Equations \ref{eqn:rho} and \ref{eqn:pi} as such is identical to the single-tree algorithm -- recursive subdivision along the reference tree until a prune is possible.
+%  However, dual-tree algorithms may prune multiple queries at once, prompting the existence of the second rule in Equation \ref{eqn:pi}.
+%  
+%  It is also noteworthy that Equation \ref{eqn:mu} may evaluate to very different values during the course of the dual-tree computation.
+%  As more of the tree is expanded, it becomes ``convenient'' to expand $\mu$ in a manner more advantageous to pruning.
+%  
+%  MOTIVATION FOR THIS MODEL: Every type of information transfer is accounted for.
 
 
 \nocite{ex1,ex2}

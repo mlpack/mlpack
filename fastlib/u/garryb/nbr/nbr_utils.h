@@ -10,106 +10,6 @@
 
 namespace nbr_utils {
 
-/*
- TODO:
-
-  - Array iterators (for when you know the code fits)
-  - ArrayForall(visitor, range)
-  - ArrayForall2(visitor, range)
-
-  - TreeForall(preop, postop)
-  - TreeForall2(preop, postop)
-
-  - ParallelTree class
-
-NECESSITIES
-  - Mutable information can be easily keyed on the tree
-    - 1: Index
-    - 2: Explicit structure induction
-
-XXX Assume no index structure:
-XXX    BAD BAD BAD 
-XXX    Tree<NodeType> tree;
-XXX 
-XXX    TreeNode<NodeType> handle(tree.Root());
-XXX    TreeNode<NodeType> handle(handle.child(i));
-XXX    handle.child(j);
-XXX    tree.AllocChild(existing_node);
-
-Assume index structure:
-   - Looks like what we have now
-   - Index structure is good
-
-*/
-
-success_t Load(const char *fname, TempCacheArray<Vector> *cache_out,
-    index_t vectors_per_block);
-
-template<typename Node, typename Param>
-success_t LoadKdTree(struct datanode *module,
-    Param* param,
-    TempCacheArray<Vector> *points_out,
-    TempCacheArray<Node> *nodes_out) {
-  index_t vectors_per_block = fx_param_int(
-      module, "vectors_per_block", 4096);
-  index_t nodes_per_block = fx_param_int(
-      module, "nodes_per_block", 2048);
-  success_t success;
-
-  fx_timer_start(module, "read");
-  success = nbr_utils::Load(fx_param_str_req(module, ""), points_out,
-      vectors_per_block);
-  fx_timer_stop(module, "read");
-
-  if (success != SUCCESS_PASS) {
-    // WALDO: Do something better?
-    abort();
-  }
-
-  const Vector* first_point = points_out->StartRead(0);
-  param->AnalyzePoint(*first_point);
-  Node *example_node = new Node();
-  example_node->Init(first_point->length(), *param);
-  nodes_out->Init(*example_node, 0, nodes_per_block);
-  delete example_node;
-  points_out->StopRead(0);
-
-  fx_timer_start(module, "tree");
-  KdTreeMidpointBuilder<Node, Param> builder;
-  builder.InitBuild(module, param, points_out, nodes_out);
-  fx_timer_stop(module, "tree");
-
-  return SUCCESS_PASS;
-}
-
-template<typename GNP, typename Solver>
-void SerialDualTreeMain(datanode *module, const char *gnp_name) {
-  typename GNP::Param param;
-
-  param.Init(fx_submodule(module, gnp_name, gnp_name));
-
-  TempCacheArray<typename GNP::Point> q_points;
-  TempCacheArray<typename GNP::QNode> q_nodes;
-  TempCacheArray<typename GNP::Point> r_points;
-  TempCacheArray<typename GNP::RNode> r_nodes;
-  TempCacheArray<typename GNP::QResult> q_results;
-
-  nbr_utils::LoadKdTree(fx_submodule(module, "q", "q"),
-      &param, &q_points, &q_nodes);
-  nbr_utils::LoadKdTree(fx_submodule(module, "r", "r"),
-      &param, &r_points, &r_nodes);
-
-  typename GNP::QResult default_result;
-  default_result.Init(param);
-  q_results.Init(default_result, q_points.end_index(),
-      q_points.n_block_elems());
-
-  Solver solver;
-  solver.InitSolve(fx_submodule(module, "solver", "solver"), param, 0,
-      q_points.cache(), q_nodes.cache(),
-      r_points.cache(), r_nodes.cache(), q_results.cache());
-}
-
 template<typename GNP, typename Solver>
 class ThreadedDualTreeSolver {
  private:
@@ -146,9 +46,9 @@ class ThreadedDualTreeSolver {
           base_->mutex_.Unlock();
 
           solver.InitSolve(submodule, *base_->param_, q_root_index,
-              base_->q_points_cache_, base_->q_nodes_cache_,
-              base_->r_points_cache_, base_->r_nodes_cache_,
-              base_->q_results_cache_);
+              base_->q_points_array_, base_->q_nodes_array_,
+              base_->r_points_array_, base_->r_nodes_array_,
+              base_->q_results_array_);
 
           base_->mutex_.Lock();
           base_->global_result_.Accumulate(
@@ -164,35 +64,60 @@ class ThreadedDualTreeSolver {
   datanode *module_;
   const typename GNP::Param *param_;
   WorkQueueInterface *work_queue_;
-  SmallCache *q_points_cache_;
-  SmallCache *q_nodes_cache_;
-  SmallCache *r_points_cache_;
-  SmallCache *r_nodes_cache_;
-  SmallCache *q_results_cache_;
+  SmallCache *q_points_array_;
+  SmallCache *q_nodes_array_;
+  SmallCache *r_points_array_;
+  SmallCache *r_nodes_array_;
+  SmallCache *q_results_array_;
   typename GNP::GlobalResult global_result_;
   Mutex mutex_;
 
  public:
+  static void Solve(
+      datanode *module,
+      const typename GNP::Param& param_in,
+      CacheArray<typename GNP::QPoint> *q_points_array_in,
+      CacheArray<typename GNP::QNode> *q_nodes_array_in,
+      CacheArray<typename GNP::RPoint> *r_points_array_in,
+      CacheArray<typename GNP::RNode> *r_nodes_array_in,
+      CacheArray<typename GNP::QResult> *q_results_array_in) {
+    index_t n_threads = fx_param_int(module, "n_threads", 1);
+    index_t n_grains = fx_param_int(module, "n_grains",
+        n_threads == 1 ? 1 : (n_threads * 3));
+    SimpleWorkQueue<typename GNP::QNode> simple_work_queue;
+    simple_work_queue.Init(q_nodes_array_in, n_grains);
+    fx_format_result(module, "n_grains_actual", "%"LI"d",
+        simple_work_queue.n_grains());
+
+    ThreadedDualTreeSolver solver;
+    solver.InitSolve(module,
+        n_threads, &simple_work_queue,
+        param_in,
+        q_points_array_in->cache(), q_nodes_array_in->cache(),
+        r_points_array_in->cache(), r_nodes_array_in->cache(),
+        q_results_array_in->cache());
+  }
+
   void InitSolve(
       datanode *module,
+      index_t n_threads,
+      WorkQueueInterface *work_queue_in,
       const typename GNP::Param& param,
-      int n_threads,
-      WorkQueueInterface *work_queue,
-      SmallCache *q_points_cache_in,
-      SmallCache *q_nodes_cache_in,
-      SmallCache *r_points_cache_in,
-      SmallCache *r_nodes_cache_in,
-      SmallCache *q_results_cache_in
+      SmallCache *q_points_array_in,
+      SmallCache *q_nodes_array_in,
+      SmallCache *r_points_array_in,
+      SmallCache *r_nodes_array_in,
+      SmallCache *q_results_array_in
       ) {
     module_ = module;
     param_ = &param;
-    work_queue_ = work_queue;
+    work_queue_ = work_queue_in;
 
-    q_points_cache_ = q_points_cache_in;
-    q_nodes_cache_ = q_nodes_cache_in;
-    r_points_cache_ = r_points_cache_in;
-    r_nodes_cache_ = r_nodes_cache_in;
-    q_results_cache_ = q_results_cache_in;
+    q_points_array_ = q_points_array_in;
+    q_nodes_array_ = q_nodes_array_in;
+    r_points_array_ = r_points_array_in;
+    r_nodes_array_ = r_nodes_array_in;
+    q_results_array_ = q_results_array_in;
 
     ArrayList<Thread*> threads;
     threads.Init(n_threads);
@@ -216,42 +141,62 @@ class ThreadedDualTreeSolver {
   }
 };
 
-template<typename GNP, typename Solver>
-void ThreadedDualTreeMain(datanode *module, const char *gnp_name) {
+/**
+ * Dual-tree main for monochromatic problems.
+ *
+ * A bichromatic main isn't that much harder to write, it's just kind of
+ * tedious -- we will save this for later.
+ */
+template<typename GNP, typename SerialSolver>
+void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   typename GNP::Param param;
 
   param.Init(fx_submodule(module, gnp_name, gnp_name));
 
-  TempCacheArray<typename GNP::Point> q_points;
-  TempCacheArray<typename GNP::QNode> q_nodes;
-  TempCacheArray<typename GNP::Point> r_points;
-  TempCacheArray<typename GNP::RNode> r_nodes;
+  TempCacheArray<typename GNP::QPoint> data_points;
+  TempCacheArray<typename GNP::QNode> data_nodes;
   TempCacheArray<typename GNP::QResult> q_results;
 
-  nbr_utils::LoadKdTree(fx_submodule(module, "q", "q"),
-      &param, &q_points, &q_nodes);
-  nbr_utils::LoadKdTree(fx_submodule(module, "r", "r"),
-      &param, &r_points, &r_nodes);
+  index_t n_block_points = fx_param_int(
+      module, "n_block_points", 1024);
+  index_t n_block_nodes = fx_param_int(
+      module, "n_block_nodes", 128);
 
+  datanode *data_module = fx_submodule(module, "data", "data");
+
+  fx_timer_start(data_module, "read");
+
+  Matrix data_matrix;
+  MUST_PASS(data::Load(fx_param_str_req(data_module, ""), &data_matrix));
+  typename GNP::QPoint default_point;
+  default_point.vec().Init(data_matrix.n_rows());
+  param.BootstrapMonochromatic(&default_point, data_matrix.n_cols());
+  data_points.Init(default_point, data_matrix.n_cols(), n_block_points);
+  for (index_t i = 0; i < data_matrix.n_cols(); i++) {
+    CacheWrite<typename GNP::QPoint> point(&data_points, i);
+    point->vec().CopyValues(data_matrix.GetColumnPtr(i));
+  }
+
+  fx_timer_stop(data_module, "read");
+
+  typename GNP::QNode data_example_node;
+  data_example_node.Init(data_matrix.n_rows(), param);
+  data_nodes.Init(data_example_node, 0, n_block_nodes);
+  KdTreeMidpointBuilder
+      <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
+      ::Build(data_module, param, &data_points, &data_nodes);
+
+  // Create our array of results.
   typename GNP::QResult default_result;
   default_result.Init(param);
-  q_results.Init(default_result, q_points.end_index(),
-      q_points.n_block_elems());
+  q_results.Init(default_result, data_points.end_index(),
+      data_points.n_block_elems());
 
-  index_t n_threads = fx_param_int(module, "n_threads", 1);
-  index_t n_grains = fx_param_int(module, "n_grains",
-      n_threads == 1 ? 1 : (n_threads * 3));
-  SimpleWorkQueue<typename GNP::QNode> work_queue;
-  work_queue.Init(&q_nodes, n_grains);
-  fx_format_result(module, "n_grains_actual", "%"LI"d", work_queue.n_grains());
-
-  ThreadedDualTreeSolver<GNP, Solver> solver;
-  solver.InitSolve(
-      fx_submodule(module, "solver", "solver"), param,
-      n_threads, &work_queue,
-      q_points.cache(), q_nodes.cache(),
-      r_points.cache(), r_nodes.cache(),
-      q_results.cache());
+  ThreadedDualTreeSolver<GNP, SerialSolver>::Solve(
+      module, param,
+      &data_points, &data_nodes,
+      &data_points, &data_nodes,
+      &q_results);
 }
 
 /*
@@ -265,10 +210,10 @@ void ThreadedDualTreeMain(datanode *module, const char *gnp_name) {
 struct MpiDualTreeConfig {
   int n_threads;
   bool monochromatic;
-  
+
   void Copy(const MpiDualTreeConfig& other) {
     *this = other;
-  }
+KK  }
 
   OT_DEF(MpiDualTreeConfig) {
     OT_MY_OBJECT(n_threads);
@@ -313,7 +258,7 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     MpiDualTreeConfig config;
     config.n_threads = fx_param_int(module, "n_threads", 1);
     config.monochromatic = fx_param_bool(module, "monochromatic", 1);
-    
+
     typename GNP::QResult default_result;
     default_result.Init(param);
     q_results.Init(default_result, q_points.end_index(),
@@ -324,7 +269,7 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
         config.n_threads * n_workers_total * 3);
     work_queue.Init(&q_nodes, n_grains);
     fx_format_result(module, "n_grains_actual", "%d", work_queue.n_grains());
-    
+
 
     RemoteWorkQueueBackend work_queue_backend;
     work_queue_backend.Init(&work_queue);
@@ -361,7 +306,7 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     fx_timer_start(module, "server");
     server.Loop(n_workers_total);
     fx_timer_stop(module, "server");
-    
+
     q_points_backend.Report(fx_submodule(module, NULL, "backends/q_points"));
     q_nodes_backend.Report(fx_submodule(module, NULL, "backends/q_nodes"));
     r_points_backend.Report(fx_submodule(module, NULL, "backends/r_points"));
@@ -372,14 +317,14 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
 
     my_fx_scope.InitSprintf("rank%d", my_rank);
     fx_scope(my_fx_scope.c_str());
-    
+
     RemoteObjectServer::Connect(MASTER_RANK);
 
     RemoteDataGetter<MpiDualTreeConfig> config_getter;
     MpiDualTreeConfig config;
     config_getter.Init(CONFIG_CHANNEL, MASTER_RANK);
     config_getter.GetData(&config);
-    
+
     RemoteDataGetter<typename GNP::Param> param_getter;
     param_getter.Init(PARAM_CHANNEL, MASTER_RANK);
     param_getter.GetData(&param);
@@ -399,30 +344,30 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     r_nodes_device.Init(R_NODES_CHANNEL, MASTER_RANK);
     q_results_device.Init(Q_RESULTS_CHANNEL, MASTER_RANK);
 
-    SmallCache q_points_cache;
-    SmallCache q_nodes_cache;
-    SmallCache *r_points_cache;
-    SmallCache r_nodes_cache;
-    SmallCache q_results_cache;
+    SmallCache q_points_array;
+    SmallCache q_nodes_array;
+    SmallCache *r_points_array;
+    SmallCache r_nodes_array;
+    SmallCache q_results_array;
 
-    q_points_cache.Init(&q_points_device,
+    q_points_array.Init(&q_points_device,
         new CacheArrayBlockActionHandler<typename GNP::Point>,
         BlockDevice::READ);
-    q_nodes_cache.Init(&q_nodes_device,
+    q_nodes_array.Init(&q_nodes_device,
         new CacheArrayBlockActionHandler<typename GNP::QNode>,
         BlockDevice::READ);
     if (!config.monochromatic) {
-      r_points_cache = new SmallCache();
-      r_points_cache->Init(&r_points_device,
+      r_points_array = new SmallCache();
+      r_points_array->Init(&r_points_device,
           new CacheArrayBlockActionHandler<typename GNP::Point>,
           BlockDevice::READ);
     } else {
-      r_points_cache = &q_points_cache;
+      r_points_array = &q_points_array;
     }
-    r_nodes_cache.Init(&r_nodes_device,
+    r_nodes_array.Init(&r_nodes_device,
         new CacheArrayBlockActionHandler<typename GNP::RNode>,
         BlockDevice::READ);
-    q_results_cache.Init(&q_results_device,
+    q_results_array.Init(&q_results_device,
         new CacheArrayBlockActionHandler<typename GNP::QResult>,
         BlockDevice::MODIFY);
 
@@ -430,18 +375,119 @@ void MpiDualTreeMain(datanode *module, const char *gnp_name) {
     solver.InitSolve(
         fx_submodule(module, "solver", "solver"), param,
         config.n_threads, &work_queue,
-        &q_points_cache, &q_nodes_cache,
-        r_points_cache, &r_nodes_cache,
-        &q_results_cache);
+        &q_points_array, &q_nodes_array,
+        r_points_array, &r_nodes_array,
+        &q_results_array);
 
     RemoteObjectServer::Disconnect(MASTER_RANK);
-    
+
     if (!config.monochromatic) {
-      delete r_points_cache;
+      delete r_points_array;
     }
   }
 }
 #endif
+
+//  /**
+//   * Loads vectors from a file into a point array.
+//   *
+//   * @param module the parameter "" is the file name, and timers will be stored
+//   *        here
+//   * @param default_point_inout a point object, in which everything EXCEPT
+//   *        vec() is initialized
+//   * @param cache_out this will be initialized to store all the loaded points
+//   * @param n_block_vectors the number of vectors in the block
+//   */
+//  template<typename Point>
+//  success_t nbr_utils::LoadVectors(fx_submodule *module,
+//      Point* default_point_inout,
+//      TempCacheArray<SpVectorPoint> *cache_out,
+//      index_t n_block_vectors) {
+//    Matrix matrix;
+//    SpVectorPoint first_row;
+//    success_t success;
+//  
+//    fx_timer_start(module, "read_matrix");
+//    success = data::Load(fx_param_str_req(module, ""), &matrix);
+//    fx_timer_stop(module, "read_matrix");
+//  
+//    default_point_inout->vec().Init(matrix.n_rows());
+//    cache_out->Init(*default_point_inout, matrix.n_cols(), n_block_vectors);
+//  
+//    fx_timer_start(module, "copy_into_cache");
+//    for (index_t i = 0; i < matrix.n_cols(); i++) {
+//      CacheWrite<SpVectorPoint> dest_vector(&cache_out, i);
+//      dest_vector->vec().CopyValues(matrix.GetColumnPtr(i));
+//    }
+//    fx_timer_stop(module, "copy_into_cache");
+//  
+//    return success;
+//  }
+
+//  template<typename Point, typename Node, typename Param>
+//  success_t LoadKdTree(struct datanode *module,
+//      Param* param,
+//      TempCacheArray<Vector> *points_out,
+//      TempCacheArray<Node> *nodes_out) {
+//    index_t vectors_per_block = fx_param_int(
+//        module, "vectors_per_block", 4096);
+//    index_t nodes_per_block = fx_param_int(
+//        module, "nodes_per_block", 2048);
+//    success_t success;
+//  
+//    success = nbr_utils::Load(module, points_out,
+//        vectors_per_block);
+//  
+//    if (success != SUCCESS_PASS) {
+//      // WALDO: Do something better?
+//      abort();
+//    }
+//  
+//    const Vector* first_point = points_out->StartRead(0);
+//    param->AnalyzePoint(*first_point);
+//    Node *example_node = new Node();
+//    example_node->Init(first_point->length(), *param);
+//    nodes_out->Init(*example_node, 0, nodes_per_block);
+//    delete example_node;
+//    points_out->StopRead(0);
+//  
+//    KdTreeMidpointBuilder<Point, Node, Param>::Build(
+//        module, param, points_out, nodes_out);
+//  
+//    return SUCCESS_PASS;
+//  }
+
+/*
+ TODO:
+
+  - Array iterators (for when you know the code fits)
+  - ArrayForall(visitor, range)
+  - ArrayForall2(visitor, range)
+
+  - TreeForall(preop, postop)
+  - TreeForall2(preop, postop)
+
+  - ParallelTree class
+
+NECESSITIES
+  - Mutable information can be easily keyed on the tree
+    - 1: Index
+    - 2: Explicit structure induction
+
+XXX Assume no index structure:
+XXX    BAD BAD BAD
+XXX    Tree<NodeType> tree;
+XXX
+XXX    TreeNode<NodeType> handle(tree.Root());
+XXX    TreeNode<NodeType> handle(handle.child(i));
+XXX    handle.child(j);
+XXX    tree.AllocChild(existing_node);
+
+Assume index structure:
+   - Looks like what we have now
+   - Index structure is good
+
+*/
 
   /*
   template<typename GNP, typename Solver>

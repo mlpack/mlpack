@@ -1,0 +1,2 @@
+
+- copy constructors don't work in any resonable way

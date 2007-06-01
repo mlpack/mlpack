@@ -281,6 +281,8 @@ class CacheArray {
     char *a = reinterpret_cast<char*>(CheckoutElement_(index_a));
     char *b = reinterpret_cast<char*>(CheckoutElement_(index_b));
     mem::Swap(a, b, n_elem_bytes_);
+    ot::PointerRelocate<Element>(a, b);
+    ot::PointerRelocate<Element>(b, a);
     ReleaseElement_(index_a);
     ReleaseElement_(index_b);
   }
@@ -292,6 +294,7 @@ class CacheArray {
     const char *src = reinterpret_cast<char*>(CheckoutElement_(index_src));
     char *dest = reinterpret_cast<char*>(CheckoutElement_(index_dest));
     mem::Copy(dest, src, n_elem_bytes_);
+    ot::PointerRelocate<Element>(src, dest);
     ReleaseElement_(index_src);
     ReleaseElement_(index_dest);
   }
@@ -319,6 +322,10 @@ class CacheArray {
  private:
   void BoundsCheck_(index_t element_id) {
     DEBUG_BOUNDS(element_id - begin_, end_ - begin_);
+  }
+
+  BlockDevice::blockid_t Blockid_(index_t element_id) {
+    return element_id >> n_block_elems_log_;
   }
 
   COMPILER_NOINLINE
@@ -455,6 +462,8 @@ class TempCacheArray : public CacheArray<TElement> {
 
 template<typename Element>
 class CacheRead {
+  FORBID_COPY(CacheRead);
+
  private:
   const Element *element_;
 #ifdef DEBUG
@@ -463,12 +472,12 @@ class CacheRead {
 #endif
 
  public:
-  Read(CacheArray<Element>* cache_in, index_t id) {
+  CacheRead(CacheArray<Element>* cache_in, index_t id) {
     element_ = cache_in->StartRead(id);
     DEBUG_ONLY(cache_ = cache_in);
-    DEBUG_ONLY(blockid_ = blockid_);
+    DEBUG_ONLY(blockid_ = cache_->Blockid_(id));
   }
-  ~Read() {
+  ~CacheRead() {
     DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
   }
 
@@ -485,23 +494,34 @@ class CacheRead {
 
 template<typename Element>
 class CacheWrite {
+  FORBID_COPY(CacheWrite);
+
  private:
-  const Element *element_;
+  Element *element_;
 #ifdef DEBUG
   CacheArray<Element> *cache_;
   BlockDevice::blockid_t blockid_;
 #endif
 
  public:
-  Write(CacheArray<Element>* cache_in, index_t id) {
+  CacheWrite(CacheArray<Element>* cache_in, index_t id) {
     element_ = cache_in->StartWrite(id);
     DEBUG_ONLY(cache_ = cache_in);
-    DEBUG_ONLY(blockid_ = blockid_);
+    DEBUG_ONLY(blockid_ = cache_->Blockid_(id));
   }
-  ~Write() {
+  ~CacheWrite() {
     DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
   }
 
+  operator const Element * () const {
+    return element_;
+  }
+  const Element * operator -> () const {
+    return element_;
+  }
+  const Element & operator * () const {
+    return *element_;
+  }
   operator Element * () {
     return element_;
   }
@@ -515,23 +535,26 @@ class CacheWrite {
 
 template<typename Element>
 class CacheReadIterator {
+  FORBID_COPY(CacheReadIterator);
+
  private:
   const Element *element_;
-  uint left_;
   uint stride_;
+  uint left_;
   CacheArray<Element> *cache_;
   BlockDevice::blockid_t blockid_;
 
  public:
-  ReadIterator(CacheArray<Element>* cache_in, index_t begin_index) {
+  CacheReadIterator(CacheArray<Element>* cache_in, index_t begin_index) {
     cache_ = cache_in;
     blockid_ = begin_index >> cache_->n_block_elems_log_;
     element_ = cache_->StartRead(begin_index);
     stride_ = cache_->n_elem_bytes();
     unsigned int mask = cache_->n_block_elems_mask_;
+    // equivalent to: block_size - (begin_index % block_size) - 1
     left_ = (begin_index & mask) ^ mask;
   }
-  ~ReadIterator() {
+  ~CacheReadIterator() {
     DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
   }
 

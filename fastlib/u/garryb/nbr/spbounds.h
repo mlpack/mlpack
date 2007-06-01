@@ -17,50 +17,73 @@
 #include "la/matrix.h"
 #include "la/la.h"
 
+#include "gnp.h"
+
 /**
- * A point-bound combination for vector spaces.
+ * A point in vector-space.
+ *
+ * This is a wrapper around Vector which implements the vec() method, because
+ * that is what the NBR tree-builders expect.
  */
-template<typename PointInfo>
 class SpVectorPoint {
  private:
-  /**
-   * In case PointInfo is blank, we take advantage of the only way C++
-   * standard allows us to make sure that PointInfo doesn't take up any space.
-   *
-   * C++ standard dictates that if a base class has no member fields, it need
-   * not take up any bytes when it is a base class.
-   */
-  struct Internal : public PointInfo {
-    Vector v;
-  };
- 
+  Vector vec_;
+  
+  OT_DEF(SpVectorPoint) {
+    OT_MY_OBJECT(vec_);
+  }
+  
+ public:
+   const Vector& vec() const {
+     return vec_;
+   }
+   Vector& vec() {
+     return vec_;
+   }
+};
+
+/**
+ * A point in a vector space with extra associated information, for use
+ * in NBR.
+ */
+template<typename TPointInfo>
+class SpVectorInfoPoint {
+ public:
+  typedef TPointInfo PointInfo;
+
  private:
-  Internal internal_;
- 
+  Vector vec_;
+  TPointInfo info_;
+  
+  OT_DEF(SpVectorInfoPoint) {
+    OT_MY_OBJECT(vec_);
+    OT_MY_OBJECT(info_);
+  }
+
  public:
   /**
    * Gets the underlying vector.
    */
   const Vector& vec() const {
-    return internal_.v;
+    return vec_;
   }
   /**
    * Gets the underlying vector.
    */
   Vector& vec() {
-    return internal_.v;
+    return vec_;
   }
   /**
    * Gets the associated information for this point.
    */
   const PointInfo& info() const {
-    return internal_;
+    return info_;
   }
   /**
    * Gets the associated information for this point.
    */
   PointInfo& info() {
-    return internal_;
+    return info_;
   }
 };
 
