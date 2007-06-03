@@ -47,15 +47,15 @@ struct BlankQResult {
  public:
   OT_DEF(BlankQResult) {}
  public:
-  template<typename Param, typename Point, typename QPointInfo, typename RNode>
+  template<typename Param, typename Point, typename RNode>
   void Init(const Param& param,
-      const Point& q_point, const QPointInfo& q_info,
+      const Point& q_point,
       const RNode& r_root) {}
-  template<typename Param, typename Point, typename QPointInfo, typename RNode>
+  template<typename Param, typename Point, typename RNode>
   void Postprocess(const Param& param,
-      const Point& q_point, const QPointInfo& q_info,
+      const Point& q_point,
       const RNode& r_root) {}
-  template<typename Param, typename QPostponed, typename QPointInfo, typename Point>
+  template<typename Param, typename QPostponed, typename Point>
   void ApplyPostponed(const Param& param,
       const QPostponed& postponed,
       const Point& q_point) {}

@@ -84,7 +84,7 @@ class Allnn {
     }
 
     void Postprocess(const Param& param,
-        const QPoint& q_point,
+        const QPoint& q_point, index_t q_index,
         const RNode& r_root) {}
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,

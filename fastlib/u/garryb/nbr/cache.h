@@ -352,13 +352,13 @@ class CacheArray {
   }
   
   void ReleaseBlock_(BlockDevice::blockid_t blockid) {
-    DEBUG_ONLY(--metadatas_[blockid].lock_count);
+    DEBUG_ONLY(--metadatas_[blockid - begin_block_fake_].lock_count);
   }
   
   void ReleaseElement_(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
     DEBUG_ONLY(
-        ReleaseBlock_((element_id >> n_block_elems_log_) - begin_block_fake_));
+        ReleaseBlock_((element_id >> n_block_elems_log_)));
   }
 };
 

@@ -41,18 +41,14 @@ class Tkde {
  public:
   /** The bounding type. Required by NBR. */
   typedef SpHrectBound<2> Bound;
-  /** The type of point in use. Required by NBR. */
-  typedef Vector Point;
+
+  typedef SpVectorPoint QPoint;
+  typedef SpVectorPoint RPoint;
 
   /** The type of kernel in use.  NOT required by NBR. */
   typedef EpanKernel Kernel;
 
-  /** Per-query statistic.  Required by NBR. */
-  typedef BlankStat QStat;
   typedef BlankGlobalResult GlobalResult;
-  
-  typedef BlankPointInfo QPointInfo;
-  typedef BlankPointInfo RPointInfo;
 
   /**
    * All parameters required by the execution of the algorithm.
@@ -62,21 +58,25 @@ class Tkde {
   struct Param {
    public:
     /**
-     * The threshold in use.
-     * This is a range to allow for epsilon checking.
+     * The threshold in use, with upper and lower bounds to prevent
+     * roundoff error.
+     *
+     * This is also normalized for dimensionality and the number of reference
+     * points.
      */
     SpRange thresh;
     /** The kernel in use. */
     Kernel kernel;
     /** The dimensionality of the data sets. */
     index_t dim;
-    /** The original threshold */
-    double threshold_orig;
+    /** The original threshold, before normalization. */
+    double nominal_threshold;
 
     OT_DEF(Param) {
-      OT_MY_OBJECT(kernel);
       OT_MY_OBJECT(thresh);
+      OT_MY_OBJECT(kernel);
       OT_MY_OBJECT(dim);
+      OT_MY_OBJECT(nominal_threshold);
     }
 
    public:
@@ -90,20 +90,16 @@ class Tkde {
      * Initialize parameters from a data node (Req NBR).
      */
     void Init(datanode *module) {
-      dim = -1;
       kernel.Init(fx_param_double_req(module, "h"));
-      threshold_orig = fx_param_double_req(module, "threshold");
+      nominal_threshold = fx_param_double_req(module, "threshold");
     }
 
-    void AnalyzePoint(const Point& q_point) {
-      if (dim == -1) {
-        dim = q_point.length();
-        double t = threshold_orig * kernel.CalcNormConstant(dim);
-        thresh.lo = t * (1.0 - 1.0e-4);
-        thresh.hi = t * (1.0 + 1.0e-4);
-      } else {
-        DEBUG_ASSERT_MSG(dim == q_point.length(), "Differing dimensionality");
-      }
+    void BootstrapMonochromatic(QPoint* point, index_t count) {
+      dim = point->vec().length();
+      double normalized_threshold =
+          nominal_threshold * kernel.CalcNormConstant(dim) * count;
+      thresh.lo = normalized_threshold * (1.0 - 1.0e5);
+      thresh.hi = normalized_threshold * (1.0 + 1.0e5);
     }
 
    public:
@@ -114,11 +110,11 @@ class Tkde {
      * the actual query point (not NBR).
      */
     double ComputeKernelSum(
-        const Vector& q_point,
+        const Vector& q,
         index_t r_count, const Vector& r_mass, double r_sumsq) const {
       double quadratic_term =
-          + r_count * la::Dot(q_point, q_point)
-          - 2.0 * la::Dot(q_point, r_mass)
+          + r_count * la::Dot(q, q)
+          - 2.0 * la::Dot(q, r_mass)
           + r_sumsq;
       return r_count - quadratic_term * kernel.inv_bandwidth_sq();
     }
@@ -245,8 +241,8 @@ class Tkde {
     /**
      * Accumulate data from a single point (Req NBR).
      */
-    void Accumulate(const Param& param, const Vector& point) {
-      moment_info.Add(1, point, la::Dot(point, point));
+    void Accumulate(const Param& param, const QPoint& point) {
+      moment_info.Add(1, point.vec(), la::Dot(point.vec(), point.vec()));
     }
 
     /**
@@ -264,8 +260,18 @@ class Tkde {
     void Postprocess(const Param& param, const Bound& bound, index_t n) {
     }
   };
-  
-  
+
+  /**
+   * Query-tree statistic.
+   *
+   * Note that this statistic is not actually needed and a blank statistic
+   * is fine, but QStat must equal RStat in order for us to allow
+   * monochromatic execution.
+   *
+   * This limitation may be removed in a further version of NBR.
+   */
+  typedef RStat QStat;
+ 
   /**
    * Query node.
    */
@@ -350,7 +356,7 @@ class Tkde {
     }
 
     void Postprocess(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info,
+        const QPoint& q,
         const RNode& r_root) {
       if (density > param.thresh.hi) {
         label &= LAB_HI;
@@ -362,12 +368,13 @@ class Tkde {
 
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
-        const Vector& q_point) {
+        const QPoint& q) {
       label &= postponed.label; /* bitwise OR */
       DEBUG_ASSERT(label != LAB_NEITHER);
 
       if (!postponed.moment_info.is_empty()) {
-        density += postponed.moment_info.ComputeKernelSum(param, q_point);
+        density += postponed.moment_info.ComputeKernelSum(
+            param, q.vec());
       }
     }
   };
@@ -463,8 +470,7 @@ class Tkde {
     // - this function must assume that global_result is incomplete (which is
     // reasonable in allnn)
     bool StartVisitingQueryPoint(const Param& param,
-        const Vector& q_point,
-        const QPointInfo& q_info,
+        const QPoint& q,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
@@ -473,17 +479,17 @@ class Tkde {
         return false;
       }
 
-      double distance_sq_lo = r_node.bound().MinDistanceSqToPoint(q_point);
+      double distance_sq_lo = r_node.bound().MinDistanceSqToPoint(q.vec());
 
       if (unlikely(distance_sq_lo > param.kernel.bandwidth_sq())) {
         return false;
       }
 
-      double distance_sq_hi = r_node.bound().MaxDistanceSqToPoint(q_point);
+      double distance_sq_hi = r_node.bound().MaxDistanceSqToPoint(q.vec());
 
       if (unlikely(distance_sq_hi < param.kernel.bandwidth_sq())) {
         q_result->density += r_node.stat().moment_info.ComputeKernelSum(
-            param, q_point);
+            param, q.vec());
         return false;
       }
 
@@ -493,15 +499,14 @@ class Tkde {
     }
 
     void VisitPair(const Param& param,
-        const Vector& q_point, const QPointInfo& q_info, index_t q_index,
-        const Vector& r_point, const RPointInfo& r_info, index_t r_index) {
-      double distance = la::DistanceSqEuclidean(q_point, r_point);
+        const QPoint& q, index_t q_index,
+        const RPoint& r, index_t r_index) {
+      double distance = la::DistanceSqEuclidean(q.vec(), r.vec());
       density += param.kernel.EvalUnnormOnSq(distance);
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const Vector& q_point,
-        const QPointInfo& q_info,
+        const QPoint& q,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
@@ -627,7 +632,7 @@ int main(int argc, char *argv[]) {
       fx_root, "tkde");
   MPI_Finalize();
 #else
-  nbr_utils::ThreadedDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+  nbr_utils::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
       fx_root, "tkde");
 #endif
   
