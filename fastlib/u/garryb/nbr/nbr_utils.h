@@ -10,6 +10,68 @@
 
 namespace nbr_utils {
 
+template<typename Param, typename Point, typename Node>
+class StatFixer {
+ public:
+  static void Fix(const Param &param,
+      CacheArray<Point> *points, CacheArray<Node> *nodes) {
+    StatFixer fixer;
+    fixer.InitFix(&param, points, nodes);
+  }
+  
+ private:
+  const Param *param_;
+  CacheArray<Point> points_;
+  CacheArray<Node> nodes_;
+  
+ public:
+  void InitFix(const Param *param,
+      CacheArray<Point> *points, CacheArray<Node> *nodes);
+  
+ private:
+  void FixRecursively_(index_t node_index);
+};
+
+template<typename Param, typename Point, typename Node>
+void StatFixer<Param, Point, Node>::InitFix(
+    const Param *param, CacheArray<Point> *points, CacheArray<Node> *nodes) {
+  param_ = param;
+  points_.Init(points, BlockDevice::READ);
+  nodes_.Init(nodes, BlockDevice::MODIFY);
+  FixRecursively_(0);
+  nodes_.Flush();
+  points_.Flush();
+}
+
+template<typename Param, typename Point, typename Node>
+void StatFixer<Param, Point, Node>::FixRecursively_(index_t node_index) {
+  CacheWrite<Node> node(&nodes_, node_index);
+
+  node->stat().Reset(*param_);
+
+  if (!node->is_leaf()) {
+    for (index_t k = 0; k < 2; k++) {
+      index_t child_index = node->child(k);
+
+      FixRecursively_(child_index);
+
+      CacheRead<Node> child(&nodes_, child_index);
+      node->stat().Accumulate(*param_, child->stat(),
+          child->bound(), child->count());
+    }
+    node->stat().Postprocess(*param_, node->bound(),
+        node->count());
+  } else {
+    CacheReadIterator<Point> point(&points_, node->begin());
+    
+    for (index_t i = 0; i < node->count(); i++, point.Next()) {
+      node->stat().Accumulate(*param_, *point);
+    }
+  }
+
+  node->stat().Postprocess(*param_, node->bound(), node->count());
+}
+
 template<typename GNP, typename Solver>
 class ThreadedDualTreeSolver {
  private:
@@ -42,7 +104,7 @@ class ThreadedDualTreeSolver {
           name.InitSprintf("grain_%d", work[i]);
           base_->mutex_.Lock();
           struct datanode *submodule = fx_submodule(base_->module_,
-              name.c_str(), name.c_str());
+              name.c_str(), "solver");
           base_->mutex_.Unlock();
 
           solver.InitSolve(submodule, *base_->param_, q_root_index,
@@ -213,7 +275,7 @@ struct MpiDualTreeConfig {
 
   void Copy(const MpiDualTreeConfig& other) {
     *this = other;
-KK  }
+  }
 
   OT_DEF(MpiDualTreeConfig) {
     OT_MY_OBJECT(n_threads);
