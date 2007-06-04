@@ -201,7 +201,8 @@ void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args) {
 	fx_timer_stop(fx_root, "dualltree");
 	printf("Collecting results....\n");
 	fx_timer_start(fx_root, "collecting_results");
-  tree.CollectKNearestNeighborWithMMAP(args.out_file_.c_str());
+  //tree.CollectKNearestNeighborWithMMAP(args.out_file_.c_str());
+	tree.CollectKNearestNeighborWithFwrite(args.out_file_.c_str());
 	fx_timer_stop(fx_root, "collecting_results");
 	unlink(args.out_file_.c_str());	
 }
