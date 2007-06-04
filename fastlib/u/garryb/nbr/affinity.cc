@@ -135,8 +135,8 @@ struct AffinityCommon {
     static double Similarity(const Vector& a, const Vector& b) {
       //uint32 anum = (mem::PointerAbsoluteAddress(a.ptr()) * 315187727);
       //uint32 bnum = (mem::PointerAbsoluteAddress(b.ptr()) * 210787727);
-      //uint32 val = ((anum ^ bnum) >> 16) & 0xfff;
-      //double noise = (1.0e-6 / 4096) * val;
+      //uint32 val = ((anum - bnum) >> 16) & 0xfff;
+      //double noise = (1.0e-5 / 4096) * val;
       return Similarity(la::DistanceSqEuclidean(a, b));
     }
     static double Similarity(
@@ -297,6 +297,7 @@ class AffinityAlpha {
         const QPoint& q,
         const RNode& r_node, const QMassResult& unapplied_mass_results,
         QResult* q_result, GlobalResult* global_result) {
+      // We could add a pruning rule here to speed things up quite a bit.
       alpha = q_result->alpha;
       return true;
     }
@@ -309,10 +310,6 @@ class AffinityAlpha {
         candidate_alpha = min(
             min(sim, q.info().alpha.get(r_index)) + r.info().rho,
             sim);
-        //double availability = 
-        //    r.info().rho - math::ClampNonNegative(
-        //        sim - q.info().alpha.get(r_index));
-        //candidate_alpha = math::ClampNonPositive(availability) + sim;
       } else {
         candidate_alpha = r.info().rho + q.info().alpha.get(r_index);
       }
@@ -630,6 +627,68 @@ void FindExemplars(index_t dimensionality, index_t n_points,
   data::Save("exemplars.txt", m);
 }
 
+void FindCovariance(const Matrix& dataset) {
+  Matrix m;
+  Vector sums;
+
+  m.Init(dataset.n_rows()-1, dataset.n_cols());
+  sums.Init(dataset.n_rows() - 1);
+  sums.SetZero();
+
+  for (index_t i = 0; i < dataset.n_cols(); i++) {
+    Vector s;
+    Vector d;
+    dataset.MakeColumnSubvector(i, 0, dataset.n_rows()-1, &s);
+    m.MakeColumnVector(i, &d);
+    d.CopyValues(s);
+    la::AddTo(s, &sums);
+  }
+  
+  la::Scale(-1.0 / dataset.n_cols(), &sums);
+  for (index_t i = 0; i < dataset.n_cols(); i++) {
+    Vector d;
+    m.MakeColumnVector(i, &d);
+    la::AddTo(sums, &d);
+  }
+  
+  Matrix cov;
+
+  la::MulTransBInit(m, m, &cov);
+  la::Scale(1.0 / (dataset.n_cols() - 1), &cov);
+
+  cov.PrintDebug("covariance");
+
+  Vector d;
+  Matrix u; // eigenvectors
+  Matrix ui; // the inverse of eigenvectors
+
+  //cov.PrintDebug("cov");
+  la::EigenvectorsInit(cov, &d, &u);
+  d.PrintDebug("covariance_eigenvectors");
+  la::TransposeInit(u, &ui);
+
+//
+//  for (index_t i = 0; i < d.length(); i++) {
+//    d[i] = 1.0 / sqrt(d[i]);
+//  }
+//
+//  la::ScaleRows(d, &ui);
+//
+//  Matrix cov_inv_half;
+//  la::MulInit(u, ui, &cov_inv_half);
+//
+//  Matrix final;
+//  la::MulInit(cov_inv_half, m, &final);
+//
+//  for (index_t i = 0; i < dataset.n_cols(); i++) {
+//    Vector s;
+//    Vector d;
+//    dataset.MakeColumnSubvector(i, 0, dataset.n_rows()-1, &d);
+//    final.MakeColumnVector(i, &s);
+//    d.CopyValues(s);
+//  }
+}
+
 void AffinityMain(datanode *module, const char *gnp_name) {
   AffinityAlpha::Param param;
 
@@ -659,6 +718,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
     point->vec().CopyValues(data_matrix.GetColumnPtr(i));
   }
+  FindCovariance(data_matrix);
   data_matrix.Destruct();
   data_matrix.Init(0, 0);
 
@@ -675,12 +735,34 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   // else.  Now, time for the iteration.
   int n_iter = fx_param_int(module, "n_iter", 1000);
   int stable_iterations = 0;
-  index_t n_changed = n_points;
+  index_t n_changed = n_points / 2;
 
-  for (int iter = 0; iter < n_iter && stable_iterations < 50; iter++) {
+  ArrayList<char> is_exemplar;
+  is_exemplar.Init(n_points);
+  
+  fprintf(stderr, " --- killing alpha ---\n");
+  for (index_t i = 0; i < n_points; i++) {
+    CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
+    point->info().alpha.max1 = 0;
+    point->info().alpha.max2 = param.pref;
+    point->info().alpha.max1_index = i;
+    point->info().rho = 0;
+    is_exemplar[i] = 0;
+  }
+
+  for (int iter = 0; iter < n_iter && stable_iterations < 50; iter++)
+  {
+    double temperature = 0;//1.0 * n_changed / n_points / (n_iter + 1);
+    double lambda = param.lambda * (1.0 - temperature) + 0.5 * temperature;
+    double nonlambda = 1.0 - lambda;
+    //double nonlambda2 = nonlambda * nonlambda;
+    //double lambda2 = 1.0 - nonlambda2;
+    index_t n_alpha_changed = 0;
+    index_t n_exemplars = 0;
+
     {
       TempCacheArray<AffinityAlpha::QResult> q_results_alpha;
-      
+
       AffinityAlpha::QResult default_result_alpha;
       default_result_alpha.Init(param);
       q_results_alpha.Init(default_result_alpha, data_points.end_index(),
@@ -695,7 +777,15 @@ void AffinityMain(datanode *module, const char *gnp_name) {
       for (index_t i = 0; i < n_points; i++) {
         CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
         CacheRead<AffinityAlpha::QResult> alpha(&q_results_alpha, i);
+
+        if (point->info().alpha.max1_index != alpha->alpha.max1_index) {
+          n_alpha_changed++;
+        }
+
         point->info().alpha = alpha->alpha;
+
+        //Re-implement damping
+        //Look at the original algorithm
       }
       nbr_utils::StatFixer<
           AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
@@ -710,41 +800,51 @@ void AffinityMain(datanode *module, const char *gnp_name) {
       q_results_rho.Init(default_result_rho, data_points.end_index(),
           data_points.n_block_elems());
 
-      nbr_utils::ThreadedDualTreeSolver
-               < AffinityRho, DualTreeDepthFirst<AffinityRho> >::Solve(
+      nbr_utils::ThreadedDualTreeSolver< AffinityRho, DualTreeDepthFirst<AffinityRho> >::Solve(
           fx_submodule(module, "threads", "iter%d_rho", iter), param,
           &data_points, &data_nodes, &data_points, &data_nodes,
           &q_results_rho);
 
-      double temperature = 0;//1.0 * n_changed / n_points;
-      double lambda = param.lambda * (1.0 - temperature) + 0.6 * temperature;
-      double nonlambda = 1.0 - lambda;
       n_changed = 0;
 
       for (index_t i = 0; i < n_points; i++) {
         CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
         CacheRead<AffinityRho::QResult> compute_rho(&q_results_rho, i);
         double old_rho = point->info().rho;
-        
-        point->info().rho = old_rho*lambda + compute_rho->rho*nonlambda;
-        
-        if ((old_rho > 0) != (point->info().rho > 0)) {
-          n_changed++;
+        double new_rho = old_rho*lambda + compute_rho->rho*nonlambda;
+
+        if (1) {
+          point->info().rho = new_rho;
+        } else {
+          new_rho = point->info().rho;
+        }
+
+        if ((old_rho > 0) != (new_rho > 0)) {
+          point->info().rho *= math::Random(0.99, 1.01);
+           n_changed++;
+        }
+
+        if (new_rho > 0) {
+          is_exemplar[i] = 1;
+          n_exemplars++;
+        } else {
+          is_exemplar[i] = 0;
         }
       }
-      
+
       if (n_changed == 0) {
         stable_iterations++;
       } else {
         stable_iterations = 0;
       }
-      
-      fprintf(stderr, "------------- Changed = %"LI"d\n", n_changed);
-      
+
       nbr_utils::StatFixer<
           AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
           ::Fix(param, &data_points, &data_nodes);
     }
+
+    fprintf(stderr, "------------- iter %04d: %"LI"d rhos changed, (%"LI"d exemplars), %d alphas\n",
+        iter, n_changed, n_exemplars, n_alpha_changed);
   }
 
   FindExemplars(dimensionality, n_points, &data_points);

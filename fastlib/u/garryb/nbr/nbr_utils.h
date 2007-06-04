@@ -100,11 +100,9 @@ class ThreadedDualTreeSolver {
           index_t q_root_index = work[i];
           Solver solver;
 
-          String name;
-          name.InitSprintf("grain_%d", work[i]);
           base_->mutex_.Lock();
           struct datanode *submodule = fx_submodule(base_->module_,
-              name.c_str(), "solver");
+              "solver", "grain_%d", work[i]);
           base_->mutex_.Unlock();
 
           solver.InitSolve(submodule, *base_->param_, q_root_index,
