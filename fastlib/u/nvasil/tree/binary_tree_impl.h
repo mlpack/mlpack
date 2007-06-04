@@ -608,8 +608,8 @@ void TREE__::CollectKNearestNeighborWithMMAP(string file) {
 
 TEMPLATE__
 void TREE__::CollectKNearestNeighborWithFwrite(string file) {
-  LOKI_STATIC_CHECK(!NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForKnnInitializationi,
-	    You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
+  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForKnnInitialization,
+	      You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
 
 	FILE *fp=fopen(file.c_str(), "w");
 	if (unlikely(fp==NULL)) {
@@ -626,27 +626,34 @@ void TREE__::CollectKNearestNeighbor(NodePtr_t ptr,
 	ptr.Lock();
   if (ptr->IsLeaf()) {
 	  ptr->OutputNeighbors(out, knns_);
+		out+=ptr->get_num_of_points()*knns_;
 		ptr.Unlock();
 	} else {
 		NodePtr_t left = ptr->get_left();
-		left.Lock();
+		ptr.Unlock();
 	  CollectKNearestNeighbor(left, out);
-		left.Unlock();
+		ptr.Lock();
 		NodePtr_t right = ptr->get_right();
-		right.Lock();
+		ptr.Unlock();
     CollectKNearestNeighbor(right, out);
-		right.Unlock();
 	}
 }
 
 TEMPLATE__
 void TREE__::CollectKNearestNeighbor(NodePtr_t ptr, 
 		                                 FILE *out) {
-  if (ptr->IsLeaf()) {
+  ptr.Lock();
+	if (ptr->IsLeaf()) {
 	  ptr->OutputNeighbors(out, knns_);
+		ptr.Unlock();
 	} else {
-	  CollectKNearestNeighbor(ptr->get_left(), out);
-    CollectKNearestNeighbor(ptr->get_right(), out);
+    NodePtr_t left = ptr->get_left();
+		ptr.Unlock();
+	  CollectKNearestNeighbor(left, out);
+		ptr.Lock();
+		NodePtr_t right = ptr->get_right();
+		ptr.Unlock();
+    CollectKNearestNeighbor(right, out);
 	}
 }
 

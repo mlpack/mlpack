@@ -39,6 +39,7 @@ class BinaryDataset {
 	template<typename > friend class BinaryDatasetTest;
  public:
 	typedef PRECISION Precision_t;
+	static const int32 kMinimumPagesToAdvise=10;
 	friend class Iterator;
 	class Iterator {
 	 public:
@@ -225,7 +226,7 @@ class BinaryDataset {
 	// returns a reference on the i,j element
 	inline Precision_t &At(uint64 i, int32 j) {
 		DEBUG_ASSERT_MSG(i<num_of_points_, 
-				"Attempt to acces data out of range "LI">"LI"",
+				"Attempt to acces data out of range "LI">"LI""
 				, i, num_of_points_);
 		DEBUG_ASSERT_MSG(j<dimension_, 
 				"Attempt to access element greater that the "
@@ -388,7 +389,7 @@ class BinaryDataset {
 
  void Advise1(void *feed, index_t start, index_t num_of_bytes) {
 	  index_t num_of_pages = (index_t)ceil(1.0*num_of_bytes/page_size_);
-		if (num_of_pages<1) {
+		if (num_of_pages<kMinimumPagesToAdvise) {
 		  return;
 		}
 		char *ptr =(char *)feed+start;
@@ -400,7 +401,7 @@ class BinaryDataset {
 	}
   void Advise2(void *feed, index_t start, index_t num_of_bytes) {
 	  index_t num_of_pages = (index_t)floor(1.0*num_of_bytes/page_size_);
-		if (num_of_pages<1) {
+		if (num_of_pages<kMinimumPagesToAdvise) {
 		  return;
 		}
 		char *ptr =(char*)feed+start;
