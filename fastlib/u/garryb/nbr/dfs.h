@@ -147,8 +147,8 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
       BaseCase_(q_root, r_root_, empty_mass_result, q_root_mut);
     } else {
       Pair_(q_root, r_root_, delta, empty_mass_result, q_root_mut);
-      PushDown_(q_root_index, q_root_mut);
     }
+    PushDown_(q_root_index, q_root_mut);
   }
 
   q_nodes_.StopRead(q_root_index);
