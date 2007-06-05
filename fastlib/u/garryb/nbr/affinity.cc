@@ -171,7 +171,7 @@ struct AffinityCommon {
       }
       return lo;
     }
-    
+
     static double ErrorShare(const Param& param,
         double abs_error_used, const CombinedNode& r_node) {
       return (param.eps - abs_error_used) * r_node.count() / param.n_points;
@@ -185,7 +185,7 @@ class AffinityAlpha {
   typedef AffinityCommon::CombinedPoint RPoint;
 
   typedef AffinityCommon::Alpha Alpha;
-  
+
   typedef AffinityCommon::Param Param;
 
   typedef AffinityCommon::CombinedNode QNode;
@@ -211,15 +211,15 @@ class AffinityAlpha {
   struct QResult {
    public:
     Alpha alpha;
-    
+
     OT_DEF(QResult) {
       OT_MY_OBJECT(alpha);
     }
 
    public:
     void Init(const Param& param) {
-      alpha.max1 = param.pref;
-      alpha.max2 = param.pref;
+      alpha.max1 = -DBL_MAX;
+      alpha.max2 = -DBL_MAX;
       alpha.max1_index = -1;
     }
     void Postprocess(const Param& param,
@@ -238,7 +238,7 @@ class AffinityAlpha {
 
    public:
     void Init(const Param& param) {
-      alpha.InitUniversalSet();
+      alpha.Init(-DBL_MAX, -DBL_MAX);
     }
     void ApplyMassResult(const Param& param, const QMassResult& mass_result) {
       alpha.MaxWith(mass_result.alpha);
@@ -263,19 +263,19 @@ class AffinityAlpha {
 
 
   /*
-  
+
   As two-variable functions:
-  
+
   \rho(i, k) = \sum_{j != i, j != k} max(0, S(j,k) - \alpha(j,k))
-  
+
   \alpha(i, k) = min(0, \max_{j != k} S(j,j) + \alpha(j,j) + \rho(i,j))
-  
+
   As one-variable rho:
-  
+
   \rho(k) = \sum_{j != k} max(0, S(j,k) - \alpha(j,k))
-  
+
   \sum max(0, S(j,k) - \alpha(j,k)) - max(0, S(k,k) - alpha(k,k))
-  
+
   \alpha(i, k) = min(0, \max_{j != k} S(j,j) + \alpha(j,j)
        + \rho(i) - max(0, S(i, j) - \alpha(i, j)))
 
@@ -288,8 +288,9 @@ class AffinityAlpha {
 
   struct PairVisitor {
    public:
+    Alpha old_alpha;
     Alpha alpha;
-    
+
    public:
     void Init(const Param& param) {}
 
@@ -299,6 +300,7 @@ class AffinityAlpha {
         QResult* q_result, GlobalResult* global_result) {
       // We could add a pruning rule here to speed things up quite a bit.
       alpha = q_result->alpha;
+      old_alpha = q.info().alpha;
       return true;
     }
     void VisitPair(const Param& param,
@@ -308,12 +310,11 @@ class AffinityAlpha {
       if (likely(q_index != r_index)) {
         double sim = AffinityCommon::Helpers::Similarity(q.vec(), r.vec());
         candidate_alpha = min(
-            min(sim, q.info().alpha.get(r_index)) + r.info().rho,
+            min(sim, old_alpha.get(r_index)) + r.info().rho,
             sim);
       } else {
-        candidate_alpha = r.info().rho + q.info().alpha.get(r_index);
+        candidate_alpha = r.info().rho + old_alpha.get(r_index);
       }
-
       if (unlikely(candidate_alpha > alpha.max2)) {
         if (unlikely(candidate_alpha > alpha.max1)) {
           alpha.max2 = alpha.max1;
@@ -399,12 +400,12 @@ class AffinityRho {
    public:
     double d_rho;
     double abs_error_used;
-    
+
     OT_DEF(QPostponed) {
       OT_MY_OBJECT(d_rho);
       OT_MY_OBJECT(abs_error_used);
     }
-    
+
    public:
     void Init(const Param& param) {
       Reset(param);
@@ -438,7 +439,7 @@ class AffinityRho {
    public:
     double rho;
     double abs_error_used;
-    
+
     OT_DEF(QResult) {
       OT_MY_OBJECT(rho);
       OT_MY_OBJECT(abs_error_used);
@@ -451,12 +452,12 @@ class AffinityRho {
     }
     void Postprocess(const Param& param,
         const QPoint& q, index_t q_index, const RNode& r_root) {
-      double responsibility =
+      double self_responsibility =
           param.pref - q.info().alpha.get(q_index);
 
       // Make sure we count ourselves regardless of sign.
-      if (responsibility < 0) {
-        rho += responsibility;
+      if (self_responsibility < 0) {
+        rho += self_responsibility;
       }
     }
     void ApplyPostponed(const Param& param,
@@ -528,7 +529,7 @@ class AffinityRho {
       double responsibility =
           AffinityCommon::Helpers::Similarity(
               param, q.vec(), q_index, r.vec(), r_index)
-          - r.info().alpha.get(r_index);
+          - r.info().alpha.get(q_index);
 
       if (responsibility > 0) {
         rho += responsibility;
@@ -572,7 +573,7 @@ class AffinityRho {
       /*
       double abs_error = delta.d_rho.width() / 2;
       double rel_error_hi = abs_error / q_mass_result.rho.lo;
-      
+
       if (rel_error_hi < AffinityCommon::Helpers::ErrorShare(
           param, q_mass_result.abs_error_used, r_node)) {
         q_postponed->abs_error_used += abs_error;
@@ -582,7 +583,7 @@ class AffinityRho {
         return true;
       }
       */
-      
+
       return true;
     }
     static bool ConsiderQueryTermination(const Param& param,
@@ -607,12 +608,11 @@ void FindExemplars(index_t dimensionality, index_t n_points,
   exemplars.Init();
 
   for (index_t point_i = 0; point_i < n_points; point_i++, point.Next()) {
-    //ot::Print(point->info());
     if (point->info().rho > 0) {
       exemplars.AddBack()->Copy(point->vec());
     }
   }
-  
+
   ot::Print(exemplars);
 
   Matrix m;
@@ -643,14 +643,14 @@ void FindCovariance(const Matrix& dataset) {
     d.CopyValues(s);
     la::AddTo(s, &sums);
   }
-  
+
   la::Scale(-1.0 / dataset.n_cols(), &sums);
   for (index_t i = 0; i < dataset.n_cols(); i++) {
     Vector d;
     m.MakeColumnVector(i, &d);
     la::AddTo(sums, &d);
   }
-  
+
   Matrix cov;
 
   la::MulTransBInit(m, m, &cov);
@@ -687,6 +687,10 @@ void FindCovariance(const Matrix& dataset) {
 //    final.MakeColumnVector(i, &s);
 //    d.CopyValues(s);
 //  }
+}
+
+inline double damp(double lambda, double prev, double next) {
+  return lambda * prev + (1 - lambda) * next;
 }
 
 void AffinityMain(datanode *module, const char *gnp_name) {
@@ -731,34 +735,43 @@ void AffinityMain(datanode *module, const char *gnp_name) {
       <AffinityAlpha::QPoint, AffinityAlpha::QNode, AffinityAlpha::Param>
       ::Build(data_module, param, &data_points, &data_nodes);
 
+
+  // ---------------------------------------------------------------
+  // The algorithm follows -----------------------------------------
+
   // All the above is not any different for affinity than for anything
   // else.  Now, time for the iteration.
-  int n_iter = fx_param_int(module, "n_iter", 1000);
+  int n_iter = fx_param_int(module, "n_iter", 10000);
   int stable_iterations = 0;
   index_t n_changed = n_points / 2;
 
   ArrayList<char> is_exemplar;
+  ArrayList<double> alpha_d;
+  ArrayList<double> alpha_dd;
   is_exemplar.Init(n_points);
-  
+  alpha_d.Init(n_points);
+  alpha_dd.Init(n_points);
+
   fprintf(stderr, " --- killing alpha ---\n");
   for (index_t i = 0; i < n_points; i++) {
     CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
     point->info().alpha.max1 = 0;
     point->info().alpha.max2 = param.pref;
     point->info().alpha.max1_index = i;
+    alpha_d[i] = 0;
+    alpha_dd[i] = 0;
     point->info().rho = 0;
     is_exemplar[i] = 0;
   }
 
   for (int iter = 0; iter < n_iter && stable_iterations < 50; iter++)
   {
-    double temperature = 0;//1.0 * n_changed / n_points / (n_iter + 1);
-    double lambda = param.lambda * (1.0 - temperature) + 0.5 * temperature;
-    double nonlambda = 1.0 - lambda;
-    //double nonlambda2 = nonlambda * nonlambda;
-    //double lambda2 = 1.0 - nonlambda2;
+    double lambda = param.lambda;
     index_t n_alpha_changed = 0;
     index_t n_exemplars = 0;
+    double sum_alpha = 0;
+    double sum_alpha2 = 0;
+    double sum_rho = 0;
 
     {
       TempCacheArray<AffinityAlpha::QResult> q_results_alpha;
@@ -776,17 +789,26 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
       for (index_t i = 0; i < n_points; i++) {
         CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
-        CacheRead<AffinityAlpha::QResult> alpha(&q_results_alpha, i);
+        CacheRead<AffinityAlpha::QResult> result(&q_results_alpha, i);
 
-        if (point->info().alpha.max1_index != alpha->alpha.max1_index) {
+        if (point->info().alpha.max1_index != result->alpha.max1_index) {
           n_alpha_changed++;
         }
 
-        point->info().alpha = alpha->alpha;
+/*
+        double max1 = damp(lambda, alpha_d[i], result->alpha.max1);
+        //double max1 = damp(lambda, point->info().alpha.max1, result->alpha.max1);
+        max1 = max(result->alpha.max2, max1);
+        alpha_d[i] = max1;
+        
+        point->info().alpha.max1 = max1;
+*/
+        point->info().alpha = result->alpha;
 
-        //Re-implement damping
-        //Look at the original algorithm
+        sum_alpha += result->alpha.max1;
+        sum_alpha2 += result->alpha.max2;
       }
+      
       nbr_utils::StatFixer<
           AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
           ::Fix(param, &data_points, &data_nodes);
@@ -809,19 +831,16 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
       for (index_t i = 0; i < n_points; i++) {
         CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
-        CacheRead<AffinityRho::QResult> compute_rho(&q_results_rho, i);
+        CacheRead<AffinityRho::QResult> result(&q_results_rho, i);
         double old_rho = point->info().rho;
-        double new_rho = old_rho*lambda + compute_rho->rho*nonlambda;
+        double new_rho = damp(lambda, old_rho, result->rho);
 
-        if (1) {
-          point->info().rho = new_rho;
-        } else {
-          new_rho = point->info().rho;
-        }
+        point->info().rho = new_rho;
+        sum_rho += new_rho;
 
         if ((old_rho > 0) != (new_rho > 0)) {
-          point->info().rho *= math::Random(0.99, 1.01);
-           n_changed++;
+          point->info().rho *= math::Random(0.2, 1.8);
+          n_changed++;
         }
 
         if (new_rho > 0) {
@@ -842,9 +861,18 @@ void AffinityMain(datanode *module, const char *gnp_name) {
           AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
           ::Fix(param, &data_points, &data_nodes);
     }
+/*
+    for (index_t i = 0; i < n_points; i++) {
+      CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
 
-    fprintf(stderr, "------------- iter %04d: %"LI"d rhos changed, (%"LI"d exemplars), %d alphas\n",
-        iter, n_changed, n_exemplars, n_alpha_changed);
+      double max1 = damp(lambda, alpha_dd[i], alpha_d[i]);
+      max1 = max(point->info().alpha.max2, max1);
+      alpha_dd[i] = max1;
+      point->info().alpha.max1 = max1;
+    }
+*/
+    fprintf(stderr, "------------- iter %04d: %"LI"d rhos changed, (%"LI"d exemplars), %d alphas, sum_alpha = %f, sum_alpha2 = %f, sum_rho = %f\n",
+        iter, n_changed, n_exemplars, n_alpha_changed, sum_alpha, sum_alpha2, sum_rho);
   }
 
   FindExemplars(dimensionality, n_points, &data_points);
