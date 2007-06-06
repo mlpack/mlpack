@@ -27,7 +27,7 @@ The computation involves iterative refinement of the responsibility message $\re
 \begin{eqnarray*}
   \respo{i}{j} \eqspace&\gets&\eqspace \simil{i}{j} - \max_{j' \neq j} (\avail{i}{j'} + \simil{i}{j'})
   \\
-  \avail{i}{j} \eqspace&\gets&\eqspace \min \! \left(\! 0, \respo{j}{j} + \sum_{i' \neq i,j} max(0, \respo{i'}{j})\!\right)
+  \avail{i}{j} \eqspace&\gets&\eqspace \min \! \left(\! 0, \respo{j}{j} + \sum_{i' \neq i,j} \max(0, \respo{i'}{j})\!\right)
   \\
   \avail{j}{j} \eqspace&\gets&\eqspace \sum_{i' \neq j} \max(0, \respo{i'}{k})
 \end{eqnarray*}
@@ -57,9 +57,9 @@ Note $\falpha{i}{j}$ requires argument $j$ only for exclusion from the $\max$; c
 After a bit of algebraic substitution, we can define $\falpha{i}{}$ and $\frho{j}$ in terms of each other:
 
 \begin{eqnarray*}
-  \vecrho \eqspace&\gets&\eqspace \map_{i} \sum_{j} \left( \cposij(\simil{i}{j} + \falpha{i}{j}) \right)
+  \vecrho \eqspace&\gets&\eqspace \map_{j} \sum_{i} \left( \cposij(\simil{i}{j} + \falpha{i}{j}) \right)
   \\
-  \vecalpha \eqspace&\gets&\eqspace \map_{j} \min^2_{i} \left( \cposij(\cposij(\simil{i}{j} + \falpha{i}{j}) - \frho{j}) - \simil{i}{j} \right)
+  \vecalpha \eqspace&\gets&\eqspace \map_{i} \min^2_{j} \left( \cposij(\cposij(\simil{i}{j} + \falpha{i}{j}) - \frho{j}) - \simil{i}{j} \right)
 \end{eqnarray*}
 
 \noindent where $\cposij(x)$ is $x$ when $i=j$, and $\max(x,0)$ otherwise.
@@ -77,9 +77,12 @@ First, we build a tree on the data points, assuming they are in a metric space\f
 Notationally, we denote $Q'$ a subset or node of points that are being $\map$ed over, and $R'$ as a subset or node of points for the inner operator.
 
 For $\vecrho$, there is a simple intrinsic prune.
-For subsets $Q'$ and $R'$, can show that $R'$ contributes nothing to the summation for all of $Q'$ and prune accordingly in the following case:
+We can show $\Sigma_{\Theta_{\vecrho}}(Q', R') = \{\vec{0}\}$ when $R'$ contributes nothing to the summation for all of $Q'$ and allows a prune:
+$$\forall_{j \in Q'}, \min_{i \in R'} \left( \simil{i}{j} + \alpha{i}{j} \right) < 0$$
 
-$$\min{i \in Q', j \in R'} \left( \simil{i}{j} + \alpha{i}{j} \right) < 0$$
+A suitable upper bound for the minimum
+
+\noindent This is the case where .
 
 For $\vecalpha$, we use an extrinsic prune.
 For each node of queries $Q'$, we keep track of the largest candidate second-minimum found.
