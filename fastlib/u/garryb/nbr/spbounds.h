@@ -285,6 +285,24 @@ struct SpRange {
       hi = range.hi;
     }
   }
+
+  void MaxWith(double v) {
+    if (unlikely(v > lo)) {
+      lo = v;
+      if (unlikely(v > hi)) {
+        hi = v;
+      }
+    }
+  }
+  
+  void MinWith(double v) {
+    if (unlikely(v < hi)) {
+      hi = v;
+      if (unlikely(v < lo)) {
+        lo = v;
+      }
+    }
+  }
   
   friend bool operator < (const SpRange& a, const SpRange& b) {
     return a.hi < b.lo;

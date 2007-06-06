@@ -567,6 +567,14 @@ class CacheReadIterator {
   const Element & operator * () const {
     return *element_;
   }
+  
+  void SetIndex(index_t begin_index) {
+    DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
+    blockid_ = begin_index >> cache_->n_block_elems_log_;
+    element_ = cache_->StartRead(begin_index);
+    unsigned int mask = cache_->n_block_elems_mask_;
+    left_ = (begin_index & mask) ^ mask;
+  }
 
   void Next() {
     element_ = mem::PointerAdd(element_, stride_);
