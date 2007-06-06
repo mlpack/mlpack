@@ -1,0 +1,89 @@
+\documentclass[times, 10pt]{article}
+\usepackage{times}
+\usepackage{amsmath}
+
+\DeclareMathOperator*{\map}{map}
+
+\newcommand{\eqspace}{\!\!\!\!}
+\newcommand{\cposij}{c^{+}_{ij}}
+
+\newcommand{\intersect}{\cap}
+
+\newcommand{\respo}[2]{R_{#1#2}}
+\newcommand{\avail}[2]{A_{#1#2}}
+\newcommand{\simil}[2]{S_{#1#2}}
+
+\newcommand{\vecrho}{\vec{\rho}}
+\newcommand{\vecalpha}{\vec{\alpha}}
+\newcommand{\frho}[1]{\rho_{#1}}
+\newcommand{\falpha}[2]{\alpha_{#1#2}}
+
+\begin{document}
+
+Affinity propagation\cite{affinity} is a recent clustering technique that minimizes a metric the authors deem {\it net similarity}.
+The similarity between points $x_i$ and $x_k$ is labeled $\simil{i}{j}$, which is often the negative squared Euclidean distance $-||x_i - x_j||^2$, with the special case that $\simil{i}{i}$ is a parameter $p$.
+The goal is to find a set of exemplars that maximizes the sum of similarities from each exemplar to all its cluster members, including itself; the number of clusters is determined by the penalty $p$ imposes on cluster creation.
+The computation involves iterative refinement of the responsibility message $\respo{i}{j}$ and availability message $\avail{i}{j}$, whose update steps are defined:
+\begin{eqnarray*}
+  \respo{i}{j} \eqspace&\gets&\eqspace \simil{i}{j} - \max_{j' \neq j} (\avail{i}{j'} + \simil{i}{j'})
+  \\
+  \avail{i}{j} \eqspace&\gets&\eqspace \min \! \left(\! 0, \respo{j}{j} + \sum_{i' \neq i,j} max(0, \respo{i'}{j})\!\right)
+  \\
+  \avail{j}{j} \eqspace&\gets&\eqspace \sum_{i' \neq j} \max(0, \respo{i'}{k})
+\end{eqnarray*}
+
+% Ryan, I am defining \alpha as the negative max, because it makes things look much prettier.
+
+\noindent Trivially, $\respo{}{}$ and $\avail{}{}$ can be stored as matrices.
+However, it is not necessary to store the entirety of $\respo{}{}$ and $\avail{}{}$; instead, only a sum and a maximum is needed.
+We define single-argument $\frho{j}$ and $\falpha{i}{}$ as the aggregate operations in use\footnote{
+Note $\falpha{i}{j}$ requires argument $j$ only for exclusion from the $\max$; computationally, one finds the first and second maximum, and chooses the first or second maximum depending on $j$.}:
+\begin{eqnarray*}
+  \falpha{i}{j} \eqspace&\gets&\eqspace - \max_{j' \neq i,j} (\avail{i}{j'} + \simil{i}{j'})
+  \\
+  \frho{j} \eqspace&\gets&\eqspace \respo{j}{j} + \sum_{i' \neq j} \left( \max(0, \respo{i'}{j}) \right)
+\end{eqnarray*}
+
+\noindent from which we can easily compute the original expressions:
+\begin{eqnarray*}
+  \respo{i}{j} \eqspace&\gets&\eqspace \simil{i}{j} + \falpha{i}{j}
+  \\
+  \avail{i}{j} \eqspace&\gets&\eqspace \min \left(0, \frho{j} - \max(0, \respo{i}{j}) \right)
+  \\
+  \avail{j}{j} \eqspace&\gets&\eqspace \frho{j} - \respo{j}{j}
+\end{eqnarray*}
+
+\noindent 
+After a bit of algebraic substitution, we can define $\falpha{i}{}$ and $\frho{j}$ in terms of each other:
+
+\begin{eqnarray*}
+  \vecrho \eqspace&\gets&\eqspace \map_{i} \sum_{j} \left( \cposij(\simil{i}{j} + \falpha{i}{j}) \right)
+  \\
+  \vecalpha \eqspace&\gets&\eqspace \map_{j} \min^2_{i} \left( \cposij(\cposij(\simil{i}{j} + \falpha{i}{j}) - \frho{j}) - \simil{i}{j} \right)
+\end{eqnarray*}
+
+\noindent where $\cposij(x)$ is $x$ when $i=j$, and $\max(x,0)$ otherwise.
+We now have a problem nearly\footnote{To aid convergence, affinity propagation adds noise to the similarity matrix and dampens both $\respo{}{}$ and $\avail{}{}$ between time-steps.  Since we store no matrices, we both dampen and add noise to $\vecrho$.} indentical to traditional affinity propagation.
+However, we can show that this is a generalized $N$-body problem.
+
+{\bf Proposition}.
+The computations of both $\vecrho$ and $\vecalpha$ are generalized $N$-body problems.
+
+{\bf Proof}.
+Ryan, prove this please.
+
+We may now develop a dual-tree algorithm.
+First, we build a tree on the data points, assuming they are in a metric space\footnote{Euclidean distance over real vectors is the example we implemented.}.
+Notationally, we denote $Q'$ a subset or node of points that are being $\map$ed over, and $R'$ as a subset or node of points for the inner operator.
+
+For $\vecrho$, there is a simple intrinsic prune.
+For subsets $Q'$ and $R'$, can show that $R'$ contributes nothing to the summation for all of $Q'$ and prune accordingly in the following case:
+
+$$\min{i \in Q', j \in R'} \left( \simil{i}{j} + \alpha{i}{j} \right) < 0$$
+
+For $\vecalpha$, we use an extrinsic prune.
+For each node of queries $Q'$, we keep track of the largest candidate second-minimum found.
+Next, we provide a lower bound candidate minimum between $Q'$ and $R'$.
+
+
+\end{document}
