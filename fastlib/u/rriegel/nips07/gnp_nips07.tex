@@ -10,23 +10,25 @@
 \newtheorem{corollary} {Corollary}
 \newtheorem{definition} {Definition}
 
-\newcommand{\OpSym}{\mathrm{O\!p}}
-\newcommand{\opsym}{{\scriptstyle \mathrm{o\!p}}}
-% \newcommand{\OpSym}{\bigoplus\nolimits}
-% \newcommand{\opsym}{\oplus}
-\newcommand{\OpCurry}[3][]{\mathop{\OpSym^{#1}_{#2}{#3}}}
-\newcommand{\opcurry}[3][]{\mathop{\opsym^{#1}_{#2}{#3}}}
-\newcommand{\Op}[2][]{\OpCurry[#1]{#2}{}}
-\newcommand{\op}[2][]{\opcurry[#1]{#2}{}}
-\newcommand{\VecOp}[2][]{\mathop{\overrightarrow{\OpSym^{#1}_{#2}}}}
-\newcommand{\vecop}[2][]{\mathop{\overrightarrow{\opsym^{#1}_{#2}}}}
 
-\newcommand{\comp}{\mathop{\circ}\nolimits}
-\newcommand{\GNP}{\psi_{\Theta}}
+\newcommand{\GNP}[1][\psi]{{#1}_{\Theta}}
+\newcommand{\GNPvec}[1][\psi]{{#1}_{\overrightarrow{\Theta}}}
+
+\newcommand{\otimesvec}{\mathbin{\overrightarrow{\otimes}}}
+\newcommand{\bigotimesvec}{\mathop{\overrightarrow{\bigotimes}}}
+\newcommand{\otimeshat}{\mathbin{\widehat{\otimes}}}
+\newcommand{\odothat}{\mathbin{\widehat{\odot}}}
+\newcommand{\otimestilde}{\mathbin{\widetilde{\otimes}}}
+\newcommand{\odottilde}{\mathbin{\widetilde{\odot}}}
+\newcommand{\bigotimestilde}{\mathop{\widetilde{\bigotimes}}}
+\newcommand{\bigodottilde}{\mathop{\widetilde{\bigodot}}}
 
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\map}{map}
+
+\newcommand{\comp}{\mathbin{\circ}}
+\newcommand{\st}{{\rm~s.t.~}}
 
 
 \title{Some Awesome Title}
@@ -363,18 +365,18 @@ presented in the next section, though we will later introduce a
 transform to help work around them.
 \begin{definition}
   A second-order reduce problem $\Theta$ is {\em regular} if $g(y,a) =
-  a$ for all $y \in \mathcal{Y}$ and $a \in \mathcal{A}$.  Such a
-  problem is given by $\Psi_{\Theta} = h \comp \psi_{\Theta}$, where
+  a$ for all $y \in \mathcal{Y}$ and $a \in \mathcal{A}$, and is thus
+  given by $\Psi_{\Theta} = h \comp \psi_{\Theta}$, where
   $\psi_{\Theta}(Y,X) = \bigodot_{y \in Y} \bigotimes_{x \in X}
-  f(x,y)$.
+  f(x,y)$.  Note that $\mathcal{B} = \mathcal{A}$.
 \end{definition}
 \begin{definition}
   A regular second-order reduce problem $\Theta$ is {\em block
-  decomposable} if, for all nonempty partitions $X^L \cup X^R = X
+  decomposable} if, for all nonempty partitions $X^{\!L} \cup X^{\!R} = X
   \subset \mathcal{X}$ and nonempty $Y \in \mathcal{Y}$, $\GNP(Y,X) =
-  \GNP(Y,X^L) \otimes \GNP(Y,X^R)$.  Such a problem\footnote{Observe
+  \GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})$.  Such a problem\footnote{Observe
   that commutativity and associativity ensure that $\GNP(Y,X) =
-  \GNP(Y^L,X) \odot \GNP(Y^R,X)$.} is known as a {\em second-order
+  \GNP(Y^{\!L},X) \odot \GNP(Y^{\!R},X)$.} is known as a {\em second-order
   generalized $N$-body problem}.
 \end{definition}
 
@@ -392,14 +394,13 @@ vectorization.
   equivalent to $\overrightarrow{\Theta}$ with
   \[ \begin{array}{rclrcl}
     \overrightarrow{f}(x,y) & = & \{(y, f(x,y))\}, & \overrightarrow{g}(A) & = & \{(y, g(y,v)) | (y,v) \in A\}, \\
-    A \mathop{\overrightarrow{\otimes}}\nolimits B & = & \{(y, u \otimes v) | (y,u) \in A, (y,v) \in B\}, & A \odot B & = & A \cup B.
+    A \otimesvec B & = & \{(y, u \otimes v) | (y,u) \in A, (y,v) \in B\}, & A \odot B & = & A \cup B.
   \end{array} \]
 \end{lemma}
 \begin{proof}
-  During na\"{\i}ve computation, arguments presented to
-  $\mathop{\overrightarrow{\otimes}}\nolimits$ and
-  $\overrightarrow{g}$ are singleton sets for some $y \in Y$.  Vector
-  operations then trivially match the original version of the
+  During na\"{\i}ve computation, arguments presented to $\otimesvec$
+  and $\overrightarrow{g}$ are singleton sets for some $y \in Y$.
+  Vector operations then trivially match the original version of the
   algorithm.
 \end{proof}
 \noindent Vectorized operations become more interesting after the
@@ -420,11 +421,11 @@ regions, possibly with permuted orderings of rows or columns.
   \begin{eqnarray*}
     \begin{array}{ccccccccc}
       \scriptstyle ( \!\!\!&\scriptstyle\!\!\! f(x_1,y_1) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_2,y_1) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! \cdots \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_N,y_1) \!\!\!&\scriptstyle\!\!\! ) \\
-      &\scriptstyle \odot \\
+      \multicolumn{9}{c}{\scriptstyle \odot} \\
       \scriptstyle ( \!\!\!&\scriptstyle\!\!\! f(x_1,y_2) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_2,y_2) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! \cdots \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_N,y_2) \!\!\!&\scriptstyle\!\!\! ) \\
-      &\scriptstyle \odot \\
-      &\scriptstyle \vdots \\
-      &\scriptstyle \odot \\
+      \multicolumn{9}{c}{\scriptstyle \odot} \\
+      \multicolumn{9}{c}{\scriptstyle \vdots} \\
+      \multicolumn{9}{c}{\scriptstyle \odot} \\
       \scriptstyle ( \!\!\!&\scriptstyle\!\!\! f(x_1,y_M) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_2,y_M) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! \cdots \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_N,y_M) \!\!\!&\scriptstyle\!\!\! )
     \end{array}
     & = &
@@ -441,11 +442,11 @@ regions, possibly with permuted orderings of rows or columns.
       \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\!\!\!
       \left( \begin{array}{ccccccc}
 	\scriptstyle ( \!\!\!&\scriptstyle\!\!\! f(x_2,y_1) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! \cdots \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_N,y_1) \!\!\!&\scriptstyle\!\!\! ) \\
-	&\scriptstyle \odot \\
+	\multicolumn{7}{c}{\scriptstyle \odot} \\
 	\scriptstyle ( \!\!\!&\scriptstyle\!\!\! f(x_2,y_2) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! \cdots \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_N,y_2) \!\!\!&\scriptstyle\!\!\! ) \\
-	&\scriptstyle \odot \\
-	&\scriptstyle \vdots \\
-	&\scriptstyle \odot \\
+	\multicolumn{7}{c}{\scriptstyle \odot} \\
+	\multicolumn{7}{c}{\scriptstyle \vdots} \\
+	\multicolumn{7}{c}{\scriptstyle \odot} \\
 	\scriptstyle ( \!\!\!&\scriptstyle\!\!\! f(x_2,y_M) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! \cdots \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_N,y_M) \!\!\!&\scriptstyle\!\!\! )
       \end{array} \right)
     \end{array}
@@ -466,8 +467,8 @@ operator pairs that gaurantee block decomposability.
 \begin{proof}
   By commutativity and associativity, we may rearrange
   \[ \begin{array}{ll}
-    \multicolumn{2}{l}{\displaystyle \GNP(Y,X) = \bigotimes_{y \in Y} \bigotimes_{x \in X} f(x,y) = \bigotimes_{x \in X} \bigotimes_{y \in Y} f(x,y) = \bigotimes_{x \in X^L} \bigotimes_{y \in Y} f(x,y) \otimes \bigotimes_{x \in X^R} \bigotimes_{y \in Y} f(x,y)} \\
-    & \displaystyle = \bigotimes_{y \in Y} \bigotimes_{x \in X^L} f(x,y) \otimes \bigotimes_{y \in Y} \bigotimes_{x \in X^R} f(x,y) = \GNP(Y,X^L) \otimes \GNP(Y,X^R).
+    \multicolumn{2}{l}{\displaystyle \GNP(Y,X) = \bigotimes_{y \in Y} \bigotimes_{x \in X} f(x,y) = \bigotimes_{x \in X} \bigotimes_{y \in Y} f(x,y) = \bigotimes_{x \in X^{\!L}} \bigotimes_{y \in Y} f(x,y) \otimes \bigotimes_{x \in X^{\!R}} \bigotimes_{y \in Y} f(x,y)} \\
+    & \displaystyle = \bigotimes_{y \in Y} \bigotimes_{x \in X^{\!L}} f(x,y) \otimes \bigotimes_{y \in Y} \bigotimes_{x \in X^{\!R}} f(x,y) = \GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R}).
   \end{array} \]
 \end{proof}
 \begin{lemma}\label{lem:map}
@@ -475,13 +476,13 @@ operator pairs that gaurantee block decomposability.
   $\odot = \map$.
 \end{lemma}
 \begin{proof}
-  For $\psi_{\Theta}(Y,X) = \map_{y \in Y} \bigotimes_{x \in X} f(x,y)
-  \equiv \bigcup_{y \in Y} \mathop{\overrightarrow{\bigotimes}}_{x \in
-  X} \{(y,f(x,y))\} = \psi_{\overrightarrow{\Theta}}(Y,X)$ and by
-  commutativity, associativity, and the definition of map, we have
+  For $\GNP(Y,X) = \map_{y \in Y} \bigotimes_{x \in X} f(x,y) \equiv
+  \bigcup_{y \in Y} \bigotimesvec_{x \in X} \{(y,f(x,y))\} =
+  \GNPvec(Y,X)$ and by commutativity, associativity, and the
+  definition of map, we have
   \[ \begin{array}{ll}
-    \multicolumn{2}{l}{\displaystyle \psi_{\overrightarrow{\Theta}}(Y,X) \equiv \Big\{ \!\Big( y,\bigotimes_{x \in X} f(x,y) \Big)\! \Big| y \in Y \Big\} = \Big\{ \!\Big( y,\bigotimes_{x \in X^L} f(x,y) \otimes \bigotimes_{x \in X^R} f(x,y) \Big)\! \Big| y \in Y \Big\}} \\
-    & \displaystyle = \Big\{ \!\Big( y,\bigotimes_{x \in X^L} f(x,y) \Big)\! \Big| y \in Y \Big\} \mathop{\overrightarrow{\otimes}}\nolimits \Big\{ \!\Big( y,\bigotimes_{x \in X^R} f(x,y) \Big)\! \Big| y \in Y \Big\} \equiv \psi_{\overrightarrow{\Theta}}(Y,X^L) \mathop{\overrightarrow{\otimes}}\nolimits \psi_{\overrightarrow{\Theta}}(Y,X^R).
+    \multicolumn{2}{l}{\displaystyle \GNPvec(Y,X) \equiv \Big\{ \!\Big( y,\bigotimes_{x \in X} f(x,y) \Big)\! \Big| y \in Y \Big\} = \Big\{ \!\Big( y,\bigotimes_{x \in X^{\!L}} f(x,y) \otimes \bigotimes_{x \in X^{\!R}} f(x,y) \Big)\! \Big| y \in Y \Big\}} \\
+    & \displaystyle = \Big\{ \!\Big( y,\bigotimes_{x \in X^{\!L}} f(x,y) \Big)\! \Big| y \in Y \Big\} \otimesvec \Big\{ \!\Big( y,\bigotimes_{x \in X^{\!R}} f(x,y) \Big)\! \Big| y \in Y \Big\} \equiv \GNPvec(Y,X^{\!L}) \otimesvec \GNPvec(Y,X^{\!R}).
   \end{array} \]
 \end{proof}
 
@@ -520,111 +521,229 @@ to the na\"{\i}ve computation,
 \[
 \GNP(Y,X) = \left\{ \begin{array}{lrr}
   f(x,y) & \multicolumn{2}{r}{\mbox{if } X = \{x\} \mbox{ and } Y = \{y\},} \\
-  \multicolumn{2}{l}{\GNP(Y^L,X) \odot \GNP(Y^R,X)} & \mbox{if } |Y| \geq |X|, \\
-  \multicolumn{2}{l}{\GNP(Y,X^L) \otimes \GNP(Y,X^R)} & \mbox{otherwise}.
+  \multicolumn{2}{l}{\GNP(Y^{\!L},X) \odot \GNP(Y^{\!R},X)} & \mbox{if } Y \succ X, \\
+  \multicolumn{2}{l}{\GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})} & \mbox{otherwise},
 \end{array} \right.
 \]
-Recursion forms a binary tree with one leaf per element of $X \times
-Y$.  Exhuastive computation thus requires time $O(N^2)$, the same as
-the na\"{\i}ve algorithm.  It may be possible, however, to obtain
-results for some components of the recursive block decomposition
-without computing them exhaustively.  Exploiting this, we hope to
-drive the expected running time down.
+where $Y \succ X$ is some means of deciding what to split first, such
+as $|Y| \geq |X|$.  Recursion forms a binary tree with one leaf per
+element of $X \times Y$.  Exhuastive computation thus requires time
+$O(N^2)$, the same as the na\"{\i}ve algorithm.  It may be possible,
+however, to obtain results for some components of the recursive block
+decomposition without computing them exhaustively (i.e.~to {\em prune}
+them).  Exploiting this, we hope to drive the expected running time
+down.
 
 % \subsection{Summaries and Statistics}
 
-{\bf Summaries and Statistics} 
+{\bf Summaries and Statistics.}  In order to accelerate computation,
+we need some quick means of summarizing the possible results of
+$\GNP(Y,X)$.  This typically involves consideration of $X$ and $Y$ at
+the abstract level formed by a concise (and ideally precomputed) set
+of statistics on the two.
+\begin{definition}
+  Given statistics functions $\sigma_x \colon 2^{\mathcal{X}} \to
+  \mathcal{S}_x$ and $\sigma_y \colon 2^{\mathcal{Y}} \to
+  \mathcal{S}_y$, let summary function $\GNP[\sigma] \colon
+  \mathcal{S}_y \times \mathcal{S}_x \to 2^\mathcal{A}$ be such that
+  \[
+  \GNP[\sigma](\sigma_y(Y),\sigma_x(X)) \supseteq \{\GNP(Y^*,X^*) | X^* \st \sigma(X^*) = \sigma(X), Y^* \st \sigma(Y^*) = \sigma(Y)\}.
+  \]
+\end{definition}
+\noindent Intuitively, $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$
+represents all possible results of $\GNP(Y,X)$ given what we know
+about $X$ and $Y$.  It is permitted to be a superset of such results
+because the exact set may be costly or impossible to represent.  Note
+that functions $\sigma_x$, $\sigma_y$, and $\GNP[\sigma]$ are not
+unique for a given GNP; indeed, chosing the right statistics can
+significantly impact running time.  A common example of statistics is
+finding bounding boxes of data in Euclidean space.  Summaries computed
+from these may be represented with upper and lower bounds on distances
+between points in $X$ and $Y$.
 
-% \subsection{Expansion Patterns}
+% \subsection{Intrinsic Pruning}
 
-% \subsection{All Manner of Pruning}
+{\bf Intrinsic Pruning.}  Summarization leads directly to our first
+form of pruning.
+\begin{lemma}
+  We may perform {\em intrinsic pruning} when summary results form a
+  singleton set.
+\end{lemma}
+\begin{proof}
+  Setting $X^* = X$ and $Y^* = Y$ meets the requirements for inclusion
+  in $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$.  Thus, summary results
+  contain the exact result.  Thus, singleton
+  $\GNP[\sigma](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are
+  free to shortcut all further computation on $X$ and $Y$ with this
+  value.
+\end{proof}
+
+\begin{corollary}
+  We may perform intrinsic pruning for the 2-point correlation.
+\end{corollary}
+\begin{proof}
+  Let $\sigma_x$ and $\sigma_y$ find bounding boxes for points in $X$
+  and $Y$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower bounds
+  between bounding boxes.  For $x \in X$ and $y \in Y$, the bounds on
+  $I(d(x,y) \leq r)$ are then $\left[
+  I(D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r),
+  I(D^{\!L}(\sigma_x(X),\sigma_y(Y)) \leq r) \right]$.  We may thus
+  define
+  \[
+  \GNP[\sigma](Y,X) = \left[ |Y| \cdot |X| \cdot I(D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r), |Y| \cdot |X| \cdot I(D^{\!L}(\sigma_x(X),\sigma_y(Y)) \leq r) \right].
+  \]
+  This set is $\{|Y| \cdot |X|\}$ when
+  $D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r$ and $\{0\}$ when
+  $D^{\!L}(\sigma_x(X),\sigma_y(Y)) > r$.
+\end{proof}
+
+% \subsection{Iterative Refinement.}
+
+{\bf Iterative Refinement.}  Further pruning is possible in some
+problems by considering results gathered from other parts of
+computation.  This is assisted by the ability to compose summary
+results.
+\begin{definition}
+  Given summary results $A, B \subset \mathcal{A}$, let operators
+  $\otimeshat, \odothat \colon 2^{\mathcal{A}} \times 2^{\mathcal{A}}
+  \to 2^{\mathcal{A}}$ be such that
+  \[ \begin{array}{rcl}
+    A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\} & \mbox{ and, likewise, } & A \odothat B \supseteq \{a \odot b | a \in A, b \in B\}.
+  \end{array} \]
+\end{definition}
+\noindent We develope a notion of itertive refinement by means of
+replacing summary result sets for the various components of
+computation with composed summary results for their left and right
+subcomponents.
+\begin{definition}
+  To perform {\em iterative refinement}, first initialize
+  $\GNP[\Sigma](Y,X) \leftarrow
+  \GNP[\sigma](\sigma_y(Y),\sigma_x(X))$, and then repeatedly select
+  some $\GNP[\sigma](\sigma_y(Y'),\sigma_x(X'))$ present in
+  $\GNP[\Sigma](Y,X)$ and replace it with
+  \[
+  \GNP[\sigma](\sigma_y(Y'),\sigma_x(X')) \leftarrow \left\{ \begin{array}{lrr}
+    \{f(x,y)\} & \multicolumn{2}{r}{\mbox{if } X' = \{x\} \mbox{ and } Y' = \{y\},} \\
+    \multicolumn{2}{l}{\GNP[\sigma](\sigma_y(Y^{\!L}),\sigma_x(X')) \odothat \GNP[\sigma](\sigma_y(Y^{\!R}),\sigma_x(X'))} & \mbox{if } Y \succ X, \\
+    \multicolumn{2}{l}{\GNP[\sigma](\sigma_y(Y'),\sigma_x(X^{\!L})) \otimeshat \GNP[\sigma](\sigma_y(Y'),\sigma_x(X^{\!R}))} & \mbox{otherwise}.
+  \end{array} \right.
+  \]
+  Futher, define $\GNP[\Sigma](Y',X')$ to refer to any component
+  $\GNP[\sigma](\sigma_y(Y'),\sigma_x(X'))$ having been introduced or
+  updated during refinement.  The values of all $\GNP[\Sigma](Y',X')$
+  are understood to reflect any changes made to their subcomponents.
+\end{definition}
+\noindent Like the recursive formulation, iterative refinement
+constructs a binary tree that grows by one node per replacement, and
+thus must terminate after $O(N^2)$ steps.  It is useful to speak of
+this tree directly, with nodes $\GNP[\Sigma](Y',X')$ and functions
+$left$, $right$, $op$, $parent$, and $sibling$ defined intuitively.
+
+Refinement need not be performed in any particular pattern.
+Depth-first is often a good choice due to its low overhead, though
+pruning in some problems strongly favors other expansion patterns.
+
+% \subsection{Extrinsic Pruning}
+
+{\bf Extrinsic Pruning.}  Iterative refinement allows us to prune
+components when more precise knowledge of their results cannot affect
+the global result.
+\begin{lemma}
+  For node $\GNP[\Sigma](Y',X')$ at depth $D$ of tree
+  $\GNP[\Sigma](Y,X)$ and path $A_0,\ldots,A_D$ given by $A_D =
+  \GNP[\Sigma](Y',X')$ and $A_{d-1} = parent(A_{d})$ for $1 \leq d
+  \leq D$, construct sets of summary result sets
+  \[ \begin{array}{rcl}
+    R_D = \{\GNP[\Sigma](Y',X')\} & \mbox{ and } & R_{d-1} = \{\{a\} \mathbin{op(A_{d-1})} B | a \in sibling(A_d), B \in R_d\}
+  \end{array} \]
+  for $1 \leq d \leq D$.  We may then perform {\em extrinsic pruning}
+  if $B$ is singleton for all $B \in R_0$.
+\end{lemma}
+\begin{proof}
+  As constructed, $R_0$ is the set of all possible summary result sets
+  for $\GNP[\Sigma](Y,X)$ given summary results of
+  $\GNP[\Sigma](Y',X')$ and one possible result of all other
+  components.  Singleton $B \in R_0$ then implies that all possible
+  results of $\GNP[\Sigma](Y',X')$ lead to the same global result
+  under some valuation of the other components.  If all such $B$ are
+  singleton, then any $p \in \GNP[\Sigma](Y',X')$ must lead to the
+  same global result as any other regardless of the valuation of the
+  other components and we are free to shortcut all further compuation
+  on $X'$ and $Y'$ with this value.
+\end{proof}
+
+\begin{corellary}
+  We may perform extrinsic pruning for all-nearest-neighbors.
+\end{corellary}
+\begin{proof}
+  
+\end{proof}
+
+% \subsection{Thresholded Pruning}
+
+{\bf Thresholded Pruning.}  Postprocessing function $h$ introduces a
+third form of pruning.
+\begin{lemma}
+  We may perform {\em thresholded pruning} if $\{h(b) | b \in B\}$ is
+  singleton for all $B \in R_0$.
+\end{lemma}
+\begin{proof}
+  Similar to the above, with all $p \in \GNP[\Sigma](Y',X')$ leading
+  to the same postprocesed result.
+\end{proof}
+
+% \subsection{Approximation Pruning}
+
+% {\bf Approximation Pruning.}  Some problems do not lend themselves to
+% any of the above forms of pruning.  For these, we may still be able to
+% find approximate results with bounded error more quickly than
+% exhaustive computation.  We must first establish a notion of error.
+% \begin{definition}
+%   Let $div \colon 2^\mathcal{A} \to \mathcal{A} \times \mathcal{A} \to
+%   \mathbb{R}$ be some measure of divergence between results given the
+%   summary results of the full computation, written $div(a,b |
+%   \GNP[\Sigma](Y,X))$.  Define $err \colon 2^\mathcal{A} \to
+%   2^\mathcal{A} \to \mathbb{R}$ to be $err(\GNP[\Sigma](Y',X') |
+%   \GNP[\Sigma](Y,X)) = \min_{\widehat{a} \in \mathcal{A}} \max_{b \in
+%   \GNP[\Sigma](Y',X')} div(\widehat{a},b | \GNP[\Sigma](Y,X))$.
+% \end{definition}
+% \noindent For example, we might have $div(a,b | \GNP[\Sigma](Y,X)) =
+% |a - b| / \min_{c \in \GNP[\Sigma](Y,X)} |c|$, or relative error.
+% 
+% Given a desired $\epsilon$, iterative refinement may terminate once
+% $err(\GNP[\Sigma](Y,X) | \GNP[\Sigma](Y,Z)) < \epsilon$, returning the
+% minimizing $\widehat{a}$ found for $err$.  A simple algorithm might
+% then check the error of $\GNP[\Sigma](Y,X)$ after each step, refining
+% components in the order of descending error in attempt to make the
+% most of its work.  This approach must use a priority queue to manage
+% expansion, incuring significant overhead.
+% 
+% An alternate approach distributes error to the various components of
+% computation.
+% \begin{lemma}
+%   Given summary results $A, B \subset \mathcal{A}$, let operators
+%   $\otimestilde, \odottilde \colon \mathbb{R} \times \mathbb{R}
+%   \to \mathbb{R}$ be such that
+%   \begin{eqnarray*}
+%     err(A | \GNP[\Sigma](Y,X)) \otimestilde err(B | \GNP[\Sigma](Y,X)) & = & err(A \otimeshat B | \GNP[\Sigma](Y,X)) \\
+%     err(A | \GNP[\Sigma](Y,X)) \odottilde err(B | \GNP[\Sigma](Y,X)) & = & err(A \odothat B | \GNP[\Sigma](Y,X)).
+%   \end{eqnarray*}
+%   Given some desired $\epsilon$, let $\epsilon^*$ be such that
+%   $\bigodottilde_{y \in Y} \bigotimestilde_{x \in X} \epsilon^* =
+%   \epsilon$ and let $\epsilon' = \bigodottilde_{y \in Y'}
+%   \bigotimestilde_{x \in X'} \epsilon^*$.  We may perform {\em
+%   approximation pruning} when $err(\GNP[\Sigma](Y',X') |
+%   \GNP[\Sigma](Y,X)) < \epsilon'$.
+% \end{lemma}
 
 % \subsection{Practical Considerations: Trees, Bounds}
 
-\subsection{Abstraction}
-
-We denote abstract results with the set $\GNP^A(X'_1,\ldots,X'_n)$ of
-all possible results of $\GNP(X'_1,\ldots,X'_n)$ given some selection
-of descriptive statistics on input $X'_i$, $1 \leq i \leq n$.  This
-set must contain the exact result; accordingly, it cannot be empty.
-Operations on abstract results yield the set of all possible outcomes
-\[
-\begin{array}{rcl}
-  \lefteqn{\GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n)} \\
-  & \equiv & \{a \op{i} b | a \in \GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n), b \in \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n)\} \\
-  & & \mbox{} \cap \GNP^A(X'_1,\ldots,X^L_i \cup X^R_i,\ldots,X'_n).
-\end{array}
-\]
-[[Intersecting with abstract results for the composed region is
-optional, as the composed abstract results for the subregions is
-almost always tighter.  Perhaps also indicate that exact results
-composed with abstract results work how you'd expect.]]
-
-\subsection{The Algorithm}
-
-[[Initialize frontier $\GNP^F$ to $\GNP^A(X_1,\ldots,X_n)$.  Then
-perform the following update procedure until all abstract results have
-been elminated:]]
-
-\begin{itemize}
-\item Select some $\GNP^A(X'_1,\ldots,X'_n)$ from $\GNP^F$
-\item If prune possible, replace with $a \in \GNP^A(X'_1,\ldots,X'_n)$
-\item If leaf, replace with $f(x_1,\ldots,x_n)$
-\item Otherwise, replace with $\GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n)$
-\end{itemize}
-
-\[
-\begin{array}{rcl}
-  \lefteqn{\GNP^A(X'_1,\ldots,X'_n)} \\
-  & \leftarrow & \left\{
-  \begin{array}{lr}
-    a \in \GNP^A(X'_1,\ldots,X'_n) & \mbox{ if prune} \\
-    f(x'_1,\ldots,x'_n) & \mbox{ if leaf} \\
-    \GNP^A(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP^A(X'_1,\ldots,X^R_i,\ldots,X'_n) & \mbox{ otherwise}
-  \end{array}
-  \right.
-\end{array}
-\]
-
-\section{Exact Pruning}
-
-\subsection{Intrinsic}
-
-\subsection{Extrinsic}
-
-\subsection{Global}
-
-\section{Approximate Pruning}
-
-\subsection{Global}
-
-\subsection{Intrinsic}
-
-\subsection{Extrinsic}
-
 \section{Practical Considertaions}
-
-[[Abstract results must be represented somehow.  When intermediate
-results form a lattice, upper and lower bounds may be used.  Further
-conditions on operators allow for easy maintenance of bounds.]]
 
 [[Too expensive to decide how to decompose blocks on an individual
 basis, so reused precomputed tree splits when breaking up work.  Trees
 also handy to find bottom-up statistics and store intermediate
 results.]]
-
-[[We can't afford to recompute the global bounds on $\GNP^F$ after
-each update from scratch, but instead need some means of updating a
-running total, so to speak.  For invertible operators, it is
-sufficient to apply and undo changes directly to some globally
-accessible value.  Some noninvertible operators (such as min) don't
-need to be undone, but others can pose a challenge (resolved below).]]
-
-[[Any expansion pattern may be used for choosing the next abstract
-result to refine in $\GNP^F$.  Which to use is a trade-off between
-overhead and improved pruning information.  Also, some expansion
-patterns (e.g.~depth-first) can eliminate the ``undo'' problem by
-allowing partial results to be stored at low cost.]]
 
 \appendix
 
@@ -644,18 +763,18 @@ allowing partial results to be stored at low cost.]]
 % \end{theorem}
 % 
 % \begin{proof}
-%   ($\Rightarrow$) Given selected split $i$ and partitions $X^L_i \cup
-%   X^R_i = X_i$, we have
+%   ($\Rightarrow$) Given selected split $i$ and partitions $X^{\!L}_i \cup
+%   X^{\!R}_i = X_i$, we have
 %   \[
 %   \begin{array}{rcl}
 %     \lefteqn{\GNP(X'_1,\ldots,X'_i,\ldots,X'_n)} \\
 %     & = & \displaystyle \Op{1}_{x_1 \in X'_1}\cdots\Op{i}_{x_i \in X'_i}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
 %     & = & \displaystyle \Op{i}_{x_i \in X'_i}\Op{1}_{x_1 \in X'_i}\cdots\Op{i-1}_{x_{i-1} \in X'_{i-1}}\Op{i+1}_{x_{i+1} \in X'_{i+1}}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
-%     & = & \displaystyle \Op{i}_{x_i \in X^L_i}\Op{1}_{x_1 \in X'_i}\cdots\Op{i-1}_{x_{i-1} \in X'_{i-1}}\Op{i+1}_{x_{i+1} \in X'_{i+1}}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
-%     & & \displaystyle \mbox{} \op{i} \Op{i}_{x_i \in X^R_i}\Op{1}_{x_1 \in X'_i}\cdots\Op{i-1}_{x_{i-1} \in X'_{i-1}}\Op{i+1}_{x_{i+1} \in X'_{i+1}}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
-%     & = & \displaystyle \Op{1}_{x_1 \in X'_i}\cdots\Op{i}_{x_i \in X^L_i}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
-%     & & \displaystyle \mbox{} \op{i} \Op{1}_{x_1 \in X'_i}\cdots\Op{i}_{x_i \in X^R_i}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
-%     & = & \displaystyle \GNP(X'_1,\ldots,X^L_i,\ldots,X'_n) \op{i} \GNP(X'_1,\ldots,X^R_i,\ldots,X'_n).
+%     & = & \displaystyle \Op{i}_{x_i \in X^{\!L}_i}\Op{1}_{x_1 \in X'_i}\cdots\Op{i-1}_{x_{i-1} \in X'_{i-1}}\Op{i+1}_{x_{i+1} \in X'_{i+1}}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & & \displaystyle \mbox{} \op{i} \Op{i}_{x_i \in X^{\!R}_i}\Op{1}_{x_1 \in X'_i}\cdots\Op{i-1}_{x_{i-1} \in X'_{i-1}}\Op{i+1}_{x_{i+1} \in X'_{i+1}}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & = & \displaystyle \Op{1}_{x_1 \in X'_i}\cdots\Op{i}_{x_i \in X^{\!L}_i}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & & \displaystyle \mbox{} \op{i} \Op{1}_{x_1 \in X'_i}\cdots\Op{i}_{x_i \in X^{\!R}_i}\cdots\Op{n}_{x_n \in X'_n}f(x_1,\ldots,x_n) \\
+%     & = & \displaystyle \GNP(X'_1,\ldots,X^{\!L}_i,\ldots,X'_n) \op{i} \GNP(X'_1,\ldots,X^{\!R}_i,\ldots,X'_n).
 %   \end{array}
 %   \]
 %   ($\Leftarrow$) Given permutation $p_1,\ldots,p_n$ of the numbers
