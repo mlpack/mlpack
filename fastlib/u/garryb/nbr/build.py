@@ -36,7 +36,9 @@ binrule(name = "affinity",
    sources = ["affinity.cc"],
    deplibs = [":nbr"])
 
-
+binrule(name = "apcluster",
+   sources = ["apcluster.cc"],
+   deplibs = ["fastlib:fastlib"])
 
 binrule(name = "cache_test",
    sources = ["cache_test.cc"],
