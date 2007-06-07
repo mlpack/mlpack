@@ -32,6 +32,10 @@ binrule(name = "allnn",
    sources = ["allnn.cc"],
    deplibs = [":nbr"])
 
+binrule(name = "tpc",
+   sources = ["tpc.cc"],
+   deplibs = [":nbr"])
+
 binrule(name = "affinity",
    sources = ["affinity.cc"],
    deplibs = [":nbr"])

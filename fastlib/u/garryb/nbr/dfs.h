@@ -184,7 +184,7 @@ void DualTreeDepthFirst<GNP>::PushDown_(
       typename GNP::QResult *q_result = q_results_.StartWrite(q_i);
       const typename GNP::QPoint *q_point = q_points_.StartRead(q_i);
       
-      q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point);
+      q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
       q_result->Postprocess(param_, *q_point, q_i, *r_root_);
       q_results_.StopWrite(q_i);
       q_points_.StopRead(q_i);
@@ -354,7 +354,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     const typename GNP::QPoint *q_point = q_iter;
     typename GNP::QResult *q_result = q_results_.StartWrite(q_i);
 
-    q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point);
+    q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
 
     if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, *r_node,
           exclusive_unvisited, q_result, &global_result_)) {

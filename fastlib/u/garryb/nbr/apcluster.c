@@ -276,6 +276,7 @@ int main (int argc, char **argv)
     }
   }
   fx_timer_stop(fx_root, "all_iter");
+  
   /* If clusters were identified, find the assignments and output them */
   if (K > 0) {
     for (j = 0; j < m; j++)
@@ -349,6 +350,12 @@ int main (int argc, char **argv)
     fprintf (stderr, "  Similarities of data points to exemplars: %f\n", dpsim);
     fprintf (stderr, "  Preferences of selected exemplars: %f\n", expref);
     fprintf (stderr, "Number of iterations: %d\n\n", it);
+
+    struct timer *timer_all_iter = fx_timer(fx_root, "all_iter");
+    fx_format_result(fx_root, "n_points", "%ld",  n);
+    fx_format_result(fx_root, "avg", "%f", timer_all_iter->total.micros / 1.0e6 / it);
+    fx_format_result(fx_root, "n_iterations", "%d", it);
+    fx_format_result(fx_root, "netsim", "%f", netsim);
   }
   else
     fprintf (stderr, "\nDid not identify any clusters\n");
