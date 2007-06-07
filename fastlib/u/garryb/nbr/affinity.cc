@@ -1,99 +1,3 @@
-
-/*
-
-
-
-
-
-Things to do
-
-- Apply Ryan's double-damping
-- Investigate bugs in dual-tree algorithm: with a1k, naive does weird stuff
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
 #include "spbounds.h"
 #include "gnp.h"
 #include "dfs.h"
@@ -823,14 +727,14 @@ void FindCovariance(const Matrix& dataset) {
   Matrix m;
   Vector sums;
 
-  m.Init(dataset.n_rows()-1, dataset.n_cols());
-  sums.Init(dataset.n_rows() - 1);
+  m.Init(dataset.n_rows(), dataset.n_cols());
+  sums.Init(dataset.n_rows());
   sums.SetZero();
 
   for (index_t i = 0; i < dataset.n_cols(); i++) {
     Vector s;
     Vector d;
-    dataset.MakeColumnSubvector(i, 0, dataset.n_rows()-1, &s);
+    dataset.MakeColumnSubvector(i, 0, dataset.n_rows(), &s);
     m.MakeColumnVector(i, &d);
     d.CopyValues(s);
     la::AddTo(s, &sums);
@@ -882,6 +786,39 @@ void FindCovariance(const Matrix& dataset) {
 inline double damp(double lambda, double prev, double next) {
   return lambda * prev + (1 - lambda) * next;
 }
+
+void TimeStats(datanode *module, const ArrayList<double>& list) {
+  double v_avg;
+  MinHeap<double, char> heap;
+
+  heap.Init();
+  v_avg = 0;
+  for (index_t i = 0; i < list.size(); i++) {
+    v_avg += list[i];
+    heap.Put(list[i], 0);
+  }
+  v_avg /= list.size();
+
+  double v_min;
+  double v_med;
+  double v_max;
+
+  v_min = heap.top_key();
+  while (heap.size() > list.size() / 2) {
+    heap.PopOnly();
+  }
+  v_med = heap.top_key();
+  while (heap.size() > 1) {
+    heap.PopOnly();
+  }
+  v_max = heap.top_key();
+
+  fx_format_result(module, "min", "%f", v_min/1e6);
+  fx_format_result(module, "med", "%f", v_med/1e6);
+  fx_format_result(module, "max", "%f", v_max/1e6);
+  fx_format_result(module, "avg", "%f", v_avg/1e6);
+}
+
 
 void AffinityMain(datanode *module, const char *gnp_name) {
   AffinityAlpha::Param param;
@@ -956,6 +893,13 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
   ArrayList<char> is_exemplar;
   is_exemplar.Init(n_points);
+  
+  ArrayList<double> iter_times_rho;
+  ArrayList<double> iter_times_alpha;
+  ArrayList<double> iter_times_total;
+  iter_times_rho.Init();
+  iter_times_alpha.Init();
+  iter_times_total.Init();
 
   for (index_t i = 0; i < n_points; i++) {
     is_exemplar[i] = 0;
@@ -969,6 +913,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     double sum_alpha2 = 0;
     double sum_rho = 0;
     index_t unclassifieds;
+    double last_rho_time = timer_rho->total.micros;
+    double last_alpha_time = timer_alpha->total.micros;
 
     n_exemplars = 0;
     unclassifieds = 0;
@@ -1073,6 +1019,11 @@ void AffinityMain(datanode *module, const char *gnp_name) {
         sum_rho, param.eps,
         timer_rho->total.micros / 1.0e6);
 
+    *iter_times_rho.AddBack() = timer_rho->total.micros - last_rho_time;
+    *iter_times_alpha.AddBack() = timer_alpha->total.micros - last_alpha_time;
+    *iter_times_total.AddBack() = (timer_rho->total.micros - last_rho_time)
+        + (timer_alpha->total.micros - last_alpha_time);
+
     if (n_changed < convergence_thresh) {
       stable_iter++;
     } else {
@@ -1086,6 +1037,13 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
   fx_format_result(module, "n_iterations", "%d", iter);
   fx_format_result(module, "n_exemplars", "%d", n_exemplars);
+
+  TimeStats(fx_submodule(module, "iter_times_rho", "iter_times_rho"),
+      iter_times_rho);
+  TimeStats(fx_submodule(module, "iter_times_alpha", "iter_times_alpha"),
+      iter_times_alpha);
+  TimeStats(fx_submodule(module, "iter_times_total", "iter_times_total"),
+      iter_times_total);
 
   // This will take too long if there are too many exemplars.
   if (n_exemplars >= 10000) {

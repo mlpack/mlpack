@@ -570,6 +570,17 @@ static struct datanode *fx__timer(struct datanode *module, const char *name,
   return node;
 }
 
+struct timer *fx_timer(struct datanode *module, const char *name) {
+  struct datanode *node = fx__timer(module, name, 1);
+
+  if (!node->val) {
+    node->val = malloc(sizeof(struct timer));
+    timer_init(node->val);
+  }
+  
+  return (struct timer *)node->val;
+}
+
 void fx_timer_start(struct datanode *module, const char *name)
 {
   struct datanode *node = fx__timer(module, name, 1);

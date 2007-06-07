@@ -322,7 +322,7 @@ class TextWriter {
    */
   ~TextWriter() {
     if (f_) {
-      ASSERT_PASS(::fclose(f_));
+      MUST_PASS(SUCCESS_FROM_INT(::fclose(f_)));
     }
     DEBUG_POISON_PTR(f_);
   }
