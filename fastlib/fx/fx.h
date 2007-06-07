@@ -21,6 +21,7 @@
 #define FX_H
 
 #include "datastore.h"
+#include "timer.h"
 
 #include "base/compiler.h"
 #include "base/common.h"
@@ -281,6 +282,14 @@ void fx_timer_start(struct datanode *module, const char *name);
  * @param name the timer name, or NULL for the default timer
  */
 void fx_timer_stop(struct datanode *module, const char *name);
+/**
+ * Gets the particular timer so you can read it's information.
+ *
+ * @param module the timer's containing module, or NULL for global
+ * @param name the timer name, or NULL for the default timer
+ */
+struct timer *fx_timer(struct datanode *module, const char *name);
+
 
 /**
  * Obtain a sub-module, optionally copying parameters into it.

@@ -7,9 +7,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <fastlib/fastlib.h>
 /*#include <values.h>*/
+
+#include "fx/fx.h"
 
 #ifndef MINDOUBLE
 #define MINDOUBLE 2.2250e-308
@@ -20,70 +20,72 @@
 
 int main (int argc, char **argv)
 {
-  int flag, dn, it, conv, decit, maxits, convits;
-  unsigned long i1, i2, j, *i, *k, m, n, l, **dec, *decsum, *idx, K;
-  double tmp, *s, *a, *r, *p, *mx1, *mx2, *srp, netsim, dpsim, expref, lam;
+  int flag, dn, it, conv = 0, decit, maxits, convits;
+  unsigned long i1, i2, j, *i, *k, m, n, **dec, *decsum, *idx, K;
+  double tmp, *s, *a, *r, *mx1, *mx2, *srp, netsim, dpsim, expref, lam;
   FILE *f;
 
   /* Usage */
-  if ((argc != 4) && (argc != 7)) {
-    printf ("\nUsage:\n\n");
+  fx_init(argc, argv);
+  
+  if (0) {
+    fprintf (stderr, "\nUsage:\n\n");
     printf
       ("apcluster <Similarity file> <Preference file> <Output: Index file>\n");
-    printf ("          [ <maxits> <convits> <dampfact> ]\n\n");
-    printf ("\nAPCLUSTER uses the affinity propagation algorithm by\n");
-    printf ("BJ Frey and D Dueck (Science 315, 972-976, Feb 16, 2007)\n");
-    printf ("to identify data clusters, using a set of real-valued\n");
-    printf ("pair-wise data point similarities as input. Each cluster is\n");
-    printf ("represented by a data point called a cluster center, and the\n");
-    printf ("method searches for clusters so as to maximize a fitness\n");
-    printf ("function called net similarity. The method is iterative and\n");
+    fprintf (stderr, "          [ <maxits> <convits> <dampfact> ]\n\n");
+    fprintf (stderr, "\nAPCLUSTER uses the affinity propagation algorithm by\n");
+    fprintf (stderr, "BJ Frey and D Dueck (Science 315, 972-976, Feb 16, 2007)\n");
+    fprintf (stderr, "to identify data clusters, using a set of real-valued\n");
+    fprintf (stderr, "pair-wise data point similarities as input. Each cluster is\n");
+    fprintf (stderr, "represented by a data point called a cluster center, and the\n");
+    fprintf (stderr, "method searches for clusters so as to maximize a fitness\n");
+    fprintf (stderr, "function called net similarity. The method is iterative and\n");
     printf
       ("stops after maxits iterations (default: 500) or when the cluster\n");
     printf
       ("centers stay constant for convits iterations (default: 50).\n\n");
-    printf ("For N data points, there may be as many as N^2-N pair-wise\n");
-    printf ("similarities (note that the similarity of data point i to k\n");
-    printf ("need not be equal to the similarity of data point k to i).\n");
-    printf ("APCLUSTER can work with this full set of similarities or\n");
-    printf ("a smaller subset (which is helpful when N is large). The\n");
-    printf ("similarities should be in the input similarity file, where\n");
-    printf ("each line should be of the form <i k s> where i and k are\n");
-    printf ("data point indices and s is a real number corresponding\n");
-    printf ("to the similarity of data point i to data point k.\n\n");
-    printf ("APCLUSTER automatically determines the number of clusters,\n");
-    printf ("based on numbers called preferences -- there is one such\n");
-    printf ("number for each data point and data points with large\n");
-    printf ("preferences are more likely to be chosen as centers. Values\n");
-    printf ("of the prefences should be in the input preference file and\n");
-    printf ("the jth entry in this file should be the preference of the\n");
+    fprintf (stderr, "For N data points, there may be as many as N^2-N pair-wise\n");
+    fprintf (stderr, "similarities (note that the similarity of data point i to k\n");
+    fprintf (stderr, "need not be equal to the similarity of data point k to i).\n");
+    fprintf (stderr, "APCLUSTER can work with this full set of similarities or\n");
+    fprintf (stderr, "a smaller subset (which is helpful when N is large). The\n");
+    fprintf (stderr, "similarities should be in the input similarity file, where\n");
+    fprintf (stderr, "each line should be of the form <i k s> where i and k are\n");
+    fprintf (stderr, "data point indices and s is a real number corresponding\n");
+    fprintf (stderr, "to the similarity of data point i to data point k.\n\n");
+    fprintf (stderr, "APCLUSTER automatically determines the number of clusters,\n");
+    fprintf (stderr, "based on numbers called preferences -- there is one such\n");
+    fprintf (stderr, "number for each data point and data points with large\n");
+    fprintf (stderr, "preferences are more likely to be chosen as centers. Values\n");
+    fprintf (stderr, "of the prefences should be in the input preference file and\n");
+    fprintf (stderr, "the jth entry in this file should be the preference of the\n");
     printf
       ("jth data point. How should you choose the preferences? A good\n");
-    printf ("choice is to set all preference values to the median of the\n");
+    fprintf (stderr, "choice is to set all preference values to the median of the\n");
     printf
       ("similarity values. Then, the number of identified clusters can\n");
     printf
       ("be increased or decreased  by changing this value accordingly.\n\n");
-    printf ("The fitness function (net similarity) used to search for\n");
-    printf ("solutions equals the sum of the preferences of the the data\n");
-    printf ("centers plus the sum of the similarities of the other data\n");
-    printf ("points to their cluster centers.\n\n");
-    printf ("The identified cluster centers and the assignments of other\n");
-    printf ("data points to these centers are stored in the output index\n");
-    printf ("file. The jth entry in this file is the index of the data\n");
-    printf ("point that is the cluster center for data point j. If the\n");
-    printf ("jth entry equals j, then data point j is itself a cluster\n");
-    printf ("center. The sum of the similarities of the data points to\n");
-    printf ("their cluster centers, the  sum of the preferences of the\n");
+    fprintf (stderr, "The fitness function (net similarity) used to search for\n");
+    fprintf (stderr, "solutions equals the sum of the preferences of the the data\n");
+    fprintf (stderr, "centers plus the sum of the similarities of the other data\n");
+    fprintf (stderr, "points to their cluster centers.\n\n");
+    fprintf (stderr, "The identified cluster centers and the assignments of other\n");
+    fprintf (stderr, "data points to these centers are stored in the output index\n");
+    fprintf (stderr, "file. The jth entry in this file is the index of the data\n");
+    fprintf (stderr, "point that is the cluster center for data point j. If the\n");
+    fprintf (stderr, "jth entry equals j, then data point j is itself a cluster\n");
+    fprintf (stderr, "center. The sum of the similarities of the data points to\n");
+    fprintf (stderr, "their cluster centers, the  sum of the preferences of the\n");
     printf
       ("identified cluster centers, and the fitness or net similarity\n");
-    printf ("(sum of the data point similarities and preferences) are\n");
-    printf ("printed to the screen.\n\n");
-    printf ("See http://www.psi.toronto.edu/affinitypropagation for test\n");
-    printf ("files and MATLAB software.\n\n");
-    printf ("Copyright 2007, BJ Frey and D Dueck. This software may be\n");
-    printf ("freely distributed and used for non-commercial purposes.\n\n");
-    return;
+    fprintf (stderr, "(sum of the data point similarities and preferences) are\n");
+    fprintf (stderr, "printed to the screen.\n\n");
+    fprintf (stderr, "See http://www.psi.toronto.edu/affinitypropagation for test\n");
+    fprintf (stderr, "files and MATLAB software.\n\n");
+    fprintf (stderr, "Copyright 2007, BJ Frey and D Dueck. This software may be\n");
+    fprintf (stderr, "freely distributed and used for non-commercial purposes.\n\n");
+    return 0;
   }
 
   if (MINDOUBLE == 0.0) {
@@ -97,48 +99,33 @@ int main (int argc, char **argv)
     maxits = 500;
     convits = 50;
   }
-  else {
-    flag = sscanf (argv[4], "%d", &maxits);
-    if (flag == 1) {
-      flag = sscanf (argv[5], "%d", &convits);
-      if (flag == 1) {
-	flag = sscanf (argv[6], "%lf", &lam);
-	if (flag == 0) {
-	  printf ("\n\n*** Error in <damping factor> argument\n\n");
-	  return;
-	}
-      }
-      else {
-	printf ("\n\n*** Error in <convergence iterations> argument\n\n");
-	return;
-      }
-    }
-    else {
-      printf ("\n\n*** Error in <maximum iterations> argument\n\n");
-      return;
-    }
-  }
+  lam = fx_param_double(fx_root, "lam", 0.5);
+  maxits = fx_param_int(fx_root, "maxits", 500);
+  convits = fx_param_int(fx_root, "convits", 50);
   if (maxits < 1) {
     printf
       ("\n\n*** Error: maximum number of iterations must be at least 1\n\n");
-    return;
+    return 0;
   }
   if (convits < 1) {
     printf
       ("\n\n*** Error: number of iterations to test convergence must be at least 1\n\n");
-    return;
+    return 0;
   }
   if ((lam < 0.5) || (lam >= 1)) {
-    printf ("\n\n*** Error: damping factor must be between 0.5 and 1\n\n");
-    return;
+    fprintf (stderr, "\n\n*** Error: damping factor must be between 0.5 and 1\n\n");
+    return 0;
   }
-  printf ("\nmaxits=%d, convits=%d, dampfact=%lf\n", maxits, convits, lam);
+  fprintf (stderr, "\nmaxits=%d, convits=%d, dampfact=%lf\n", maxits, convits, lam);
 
+  const char *sim_file = fx_param_str_req(fx_root, "sim");
+  const char *pref_file = fx_param_str_req(fx_root, "pref");
+  
   /* Find out how many data points and similarities there are */
-  f = fopen (argv[1], "r");
+  f = fopen (sim_file, "r");
   if (f == NULL) {
-    printf ("\n\n*** Error opening similarities file\n\n");
-    return;
+    fprintf (stderr, "\n\n*** Error opening similarities file\n\n");
+    return 0;
   }
   m = 0;
   n = 0;
@@ -169,18 +156,18 @@ int main (int argc, char **argv)
   idx = (unsigned long *) calloc (n, sizeof (unsigned long));
 
   /* Read similarities and preferences */
-  f = fopen (argv[1], "r");
+  f = fopen (sim_file, "r");
   for (j = 0; j < m; j++) {
     fscanf (f, "%lu %lu %lf", &(i[j]), &(k[j]), &(s[j]));
     i[j]--;
     k[j]--;
   }
   fclose (f);
-  f = fopen (argv[2], "r");
+  f = fopen (pref_file, "r");
   if (f == NULL) {
-    printf ("\n\n*** Error opening preferences file\n\n");
+    fprintf (stderr, "\n\n*** Error opening preferences file\n\n");
     goto freememory;
-    return;
+    return 0;
   }
   for (j = 0; j < n; j++) {
     i[m + j] = j;
@@ -189,10 +176,10 @@ int main (int argc, char **argv)
   }
   fclose (f);
   if (flag == EOF) {
-    printf ("\n*** Error: Number of entries in the preferences file is\n");
-    printf ("    less than number of data points\n\n");
+    fprintf (stderr, "\n*** Error: Number of entries in the preferences file is\n");
+    fprintf (stderr, "    less than number of data points\n\n");
     goto freememory;
-    return;
+    return 0;
   }
   m = m + n;
 
@@ -213,7 +200,9 @@ int main (int argc, char **argv)
   dn = 0;
   it = 0;
   decit = convits;
+  fx_timer_start(fx_root, "all_iter");
   while (dn == 0) {
+    fprintf(stderr, "Iteration %d beginning\n", it);
     it++;			/* Increase iteration index */
 
     /* Compute responsibilities */
@@ -286,6 +275,7 @@ int main (int argc, char **argv)
 	dn = 1;
     }
   }
+  fx_timer_stop(fx_root, "all_iter");
   /* If clusters were identified, find the assignments and output them */
   if (K > 0) {
     for (j = 0; j < m; j++)
@@ -340,7 +330,7 @@ int main (int argc, char **argv)
     /*
     f = fopen (argv[3], "w");
     for (j = 0; j < n; j++)
-      fprintf (f, "%lu\n", idx[j] + 1);
+      ffprintf (stderr, f, "%lu\n", idx[j] + 1);
     fclose (f);
     */
     dpsim = 0.0;
@@ -354,33 +344,23 @@ int main (int argc, char **argv)
       }
     }
     netsim = dpsim + expref;
-    printf ("\nNumber of identified clusters: %d\n", K);
-    printf ("Fitness (net similarity): %f\n", netsim);
-    printf ("  Similarities of data points to exemplars: %f\n", dpsim);
-    printf ("  Preferences of selected exemplars: %f\n", expref);
-    printf ("Number of iterations: %d\n\n", it);
+    fprintf (stderr, "\nNumber of identified clusters: %lu\n", K);
+    fprintf (stderr, "Fitness (net similarity): %f\n", netsim);
+    fprintf (stderr, "  Similarities of data points to exemplars: %f\n", dpsim);
+    fprintf (stderr, "  Preferences of selected exemplars: %f\n", expref);
+    fprintf (stderr, "Number of iterations: %d\n\n", it);
   }
   else
-    printf ("\nDid not identify any clusters\n");
+    fprintf (stderr, "\nDid not identify any clusters\n");
   if (conv == 0) {
     printf
       ("\n*** Warning: Algorithm did not converge. Consider increasing\n");
     printf
       ("    maxits to enable more iterations. It may also be necessary\n");
-    printf ("    to increase damping (increase dampfact).\n\n");
+    fprintf (stderr, "    to increase damping (increase dampfact).\n\n");
   }
 freememory:
-  free (i);
-  free (k);
-  free (s);
-  free (a);
-  free (r);
-  free (mx1);
-  free (mx2);
-  free (srp);
-  for (j = 0; j < convits; j++)
-    free (dec[j]);
-  free (dec);
-  free (decsum);
-  free (idx);
+  fx_done();
+  
+  return 0;
 }

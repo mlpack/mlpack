@@ -77,7 +77,7 @@ else:
 fx.param_default("cflags", "")
 fx.param_default("mode", "check")
 fx.param_default("compiler", "gcc")
-fx.param_default("j", "1")
+fx.param_default("j", "2")
 target_name = fx.extra_args[0]
 
 implicit = False
