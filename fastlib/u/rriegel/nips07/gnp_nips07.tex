@@ -26,6 +26,7 @@
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\map}{map}
+\DeclareMathOperator{\sign}{sign}
 
 \newcommand{\comp}{\mathbin{\circ}}
 \newcommand{\st}{{\rm~s.t.~}}
@@ -616,7 +617,7 @@ to the na\"{\i}ve computation,
 \[
 \GNP(Y,X) = \left\{ \begin{array}{lrr}
   f(x,y) & \multicolumn{2}{r}{\mbox{if } X = \{x\} \mbox{ and } Y = \{y\},} \\
-  \multicolumn{2}{l}{\GNP(Y^{\!L},X) \odot \GNP(Y^{\!R},X)} & \mbox{if } Y \succ X, \\
+  \multicolumn{2}{l}{\GNP(Y^{\!L}\!,X) \odot \GNP(Y^{\!R}\!,X)} & \mbox{if } Y \succ X, \\
   \multicolumn{2}{l}{\GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})} & \mbox{otherwise},
 \end{array} \right.
 \]
@@ -677,19 +678,19 @@ form of pruning.
   We may perform intrinsic pruning for the 2-point correlation.
 \end{corollary}
 \begin{proof}
-  Let $\sigma_x$ and $\sigma_y$ find bounding boxes for points in $X$
-  and $Y$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower bounds
-  between bounding boxes.  For $x \in X$ and $y \in Y$, the bounds on
+  Let $\sigma_x$ find bounding boxes for points in $\mathcal{X}$ and
+  let $D^{\!U}$ and $D^{\!L}$ find upper and lower bound distances
+  between bounding boxes.  For $x \in X$ and $y \in Y$, bounds on
   $I(d(x,y) \leq r)$ are then $\left[
-  I(D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r),
-  I(D^{\!L}(\sigma_x(X),\sigma_y(Y)) \leq r) \right]$.  We may thus
+  I(D^{\!U}(\sigma_x(X),\sigma_x(Y)) \leq r),
+  I(D^{\!L}(\sigma_x(X),\sigma_x(Y)) \leq r) \right]$.  We may thus
   define
   \[
-  \GNP[\sigma](Y,X) = \left[ |Y| \cdot |X| \cdot I(D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r), |Y| \cdot |X| \cdot I(D^{\!L}(\sigma_x(X),\sigma_y(Y)) \leq r) \right].
+  \GNP[\sigma](Y,X) = \left[ |Y| \cdot |X| \cdot I(D^{\!U}(\sigma_x(X),\sigma_x(Y)) \leq r), |Y| \cdot |X| \cdot I(D^{\!L}(\sigma_x(X),\sigma_x(Y)) \leq r) \right].
   \]
   This set is $\{|Y| \cdot |X|\}$ when
-  $D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r$ and $\{0\}$ when
-  $D^{\!L}(\sigma_x(X),\sigma_y(Y)) > r$.
+  $D^{\!U}(\sigma_x(X),\sigma_x(Y)) \leq r$ and $\{0\}$ when
+  $D^{\!L}(\sigma_x(X),\sigma_x(Y)) > r$.
 \end{proof}
 
 % \subsection{Iterative Refinement.}
@@ -705,35 +706,35 @@ results.
   \[ \begin{array}{rcl}
     A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\} & \mbox{ and, likewise, } & A \odothat B \supseteq \{a \odot b | a \in A, b \in B\}.
   \end{array} \]
-  For singleton $A$ and $B$, we require $A \otimeshat B$ and $A
-  \odothat B$ to be singleton.
+  Further, for singleton $A$ and $B$, we require $A \otimeshat B$ and
+  $A \odothat B$ to be singleton.
 \end{definition}
 \noindent We develope a notion of itertive refinement by means of
 replacing summary result sets for the various components of
 computation with composed summary results for their left and right
 subcomponents.
 \begin{definition}
-  To perform {\em iterative refinement}, first initialize
-  $\GNP[\Sigma](Y,X) \leftarrow
-  \GNP[\sigma](\sigma_y(Y),\sigma_x(X))$, and then repeatedly select
-  some $\GNP[\sigma](\sigma_y(Y'),\sigma_x(X'))$ present in
-  $\GNP[\Sigma](Y,X)$ and replace it with
+  To perform {\em iterative refinement}, initialize
+  $\GNP[\Sigma](Y_{root},X_{root}) \leftarrow
+  \GNP[\sigma](\sigma_y(Y),\sigma_x(X))$ and then repeatedly replace
+  $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$ present in
+  $\GNP[\Sigma](Y_{root},X_{root})$ with
   \[
-  \GNP[\sigma](\sigma_y(Y'),\sigma_x(X')) \leftarrow \left\{ \begin{array}{lrr}
-    \{f(x,y)\} & \multicolumn{2}{r}{\mbox{if } X' = \{x\} \mbox{ and } Y' = \{y\},} \\
-    \multicolumn{2}{l}{\GNP[\sigma](\sigma_y(Y^{\!L}),\sigma_x(X')) \odothat \GNP[\sigma](\sigma_y(Y^{\!R}),\sigma_x(X'))} & \mbox{if } Y \succ X, \\
-    \multicolumn{2}{l}{\GNP[\sigma](\sigma_y(Y'),\sigma_x(X^{\!L})) \otimeshat \GNP[\sigma](\sigma_y(Y'),\sigma_x(X^{\!R}))} & \mbox{otherwise}.
+  \GNP[\sigma](\sigma_y(Y),\sigma_x(X)) \leftarrow \left\{ \begin{array}{lrr}
+    \{f(x,y)\} & \multicolumn{2}{r}{\mbox{if } X = \{x\} \mbox{ and } Y = \{y\},} \\
+    \multicolumn{2}{l}{\GNP[\sigma](\sigma_y(Y^{\!L}),\sigma_x(X)) \odothat \GNP[\sigma](\sigma_y(Y^{\!R}),\sigma_x(X))} & \mbox{if } Y \succ X, \\
+    \multicolumn{2}{l}{\GNP[\sigma](\sigma_y(Y),\sigma_x(X^{\!L})) \otimeshat \GNP[\sigma](\sigma_y(Y),\sigma_x(X^{\!R}))} & \mbox{otherwise}.
   \end{array} \right.
   \]
-  Futher, define $\GNP[\Sigma](Y',X')$ to refer to any component
-  $\GNP[\sigma](\sigma_y(Y'),\sigma_x(X'))$ having been introduced or
-  updated during refinement.  The values of all $\GNP[\Sigma](Y',X')$
-  are understood to reflect any changes made to their subcomponents.
+  Let $\GNP[\Sigma](Y,X)$ refer to component
+  $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$ having been introduced or
+  updated during refinement.  The value of $\GNP[\Sigma](Y,X)$ is
+  understood to reflect changes made to its subcomponents.
 \end{definition}
 \noindent Like the recursive formulation, iterative refinement
 constructs a binary tree that grows by one node per replacement, and
 thus must terminate after $O(N^2)$ steps.  It is useful to speak of
-this tree directly, with nodes $\GNP[\Sigma](Y',X')$ and functions
+this tree directly, with nodes $\GNP[\Sigma](Y,X)$ and functions
 $left$, $right$, $op$, $parent$, and $sibling$ defined intuitively.
 
 Refinement need not be performed in any particular pattern.
@@ -746,53 +747,62 @@ pruning in some problems strongly favors other expansion patterns.
 components when more precise knowledge of their results cannot affect
 the global result.
 \begin{lemma}
-  For node $\GNP[\Sigma](Y',X')$ at depth $D$ of tree
-  $\GNP[\Sigma](Y,X)$ and path $A_0,\ldots,A_D$ given by $A_D =
-  \GNP[\Sigma](Y',X')$ and $A_{d-1} = parent(A_{d})$ for $1 \leq d
-  \leq D$, construct sets of summary result sets
+  For node $\GNP[\Sigma](Y,X)$ at depth $D$ of tree
+  $\GNP[\Sigma](Y_{root},X_{root})$ and path $A_0,\ldots,A_D$ given by
+  $A_D = \GNP[\Sigma](Y,X)$ and $A_{d-1} = parent(A_{d})$ for $1 \leq
+  d \leq D$, construct sets of summary result sets
   \[ \begin{array}{rcl}
-    R_D = \{\GNP[\Sigma](Y',X')\} & \mbox{ and } & R_{d-1} \supseteq \{\{a\} \mathbin{op(A_{d-1})} B | a \in sibling(A_d), B \in R_d\}
+    S_D = \{\GNP[\Sigma](Y,X)\} & \mbox{ and } & S_{d-1} \supseteq \{\{a\} \mathbin{op(A_{d-1})} B | a \in sibling(A_d), B \in S_d\}
   \end{array} \]
   for $1 \leq d \leq D$.  We may then perform {\em extrinsic pruning}
-  if $B$ is singleton for all $B \in R_0$.
+  if $B$ is singleton for all $B \in S_0$.
 \end{lemma}
 \begin{proof}
-  As constructed, $R_0$ contains all possible summary result sets for
-  $\GNP[\Sigma](Y,X)$ given summary results of $\GNP[\Sigma](Y',X')$
-  and one possible result of all other components.  Singleton $B \in
-  R_0$ then implies that all possible results of $\GNP[\Sigma](Y',X')$
-  lead to the same global result under some valuation of the other
-  components.  If all such $B$ are singleton, then any $p \in
-  \GNP[\Sigma](Y',X')$ must lead to the same global result as any
-  other regardless of the valuation of the other components and we are
-  free to shortcut all further compuation on $X'$ and $Y'$ with this
-  value.
+  As constructed, $S_0$ contains all possible summary result sets for
+  $\GNP[\Sigma](Y_{root},X_{root})$ given summary results of
+  $\GNP[\Sigma](Y,X)$ and one possible result of all other components.
+  Singleton $B \in S_0$ then implies that all possible results of
+  $\GNP[\Sigma](Y,X)$ lead to the same global result under some
+  valuation of the other components.  If all such $B$ are singleton,
+  then any $p \in \GNP[\Sigma](Y,X)$ must lead to the same global
+  result as any other, regardless of the valuation of the other
+  components, and we are free to shortcut all further compuation on
+  $X$ and $Y$ with this value.
 \end{proof}
 
 \begin{corollary}
   We may perform extrinsic pruning for all-nearest-neighbors.
 \end{corollary}
 \begin{proof}
-  Again, let $\sigma_x$ and $\sigma_y$ find bounding boxes for points in $X$
-  and $Y$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower bounds
-  between bounding boxes.  Define
+  Again, let $\sigma_x$ find bounding boxes for points in
+  $\mathcal{X}$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower
+  bound distances between bounding boxes.  We represent summary
+  results with
   \begin{eqnarray*}
-    \GNP[\sigma](\sigma_y(Y'),\sigma_x(X')) & = & \{(y,[D^{\!L}(\sigma_y(Y'),\sigma_x(X')), D^{\!U}(\sigma_y(Y'),\sigma_x(X'))]) | y \in Y'\}, \\
-    A \otimeshat B & = & \{(y,[\min(L_1,L_2),\min(U_1,U_2))]) | (y,[L_1,U_1]) \in A, (y,[L_2,U_2]) \in B\}, \\
-    A \odothat B & = & A \cup B.
+    \GNP[\sigma](\sigma_x(Q),\sigma_x(R)) & = & \eta(\{(q,[D^{\!L}(\sigma_x(Q),\sigma_x(R)), D^{\!U}(\sigma_x(Q),\sigma_x(R))]) | q \in Q\}), \\
+    \eta(A) \otimeshat \eta(B) & = & \eta(\{(q,[\min(l_a,l_b),\min(u_a,u_b))]) | (q,[l_a,u_a]) \in A, (q,[l_b,u_b]) \in B\}), \\
+    \eta(A) \odothat \eta(B) & = & \eta(A \cup B),
   \end{eqnarray*}
-  We can obtain $R_0$ from $\GNP[\Sigma](Y,X)$ with
-For $x \in X$ and $y \in Y$, the bounds on
-  $I(d(x,y) \leq r)$ are then $\left[
-  I(D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r),
-  I(D^{\!L}(\sigma_x(X),\sigma_y(Y)) \leq r) \right]$.  We may thus
-  define
+  where $\eta$ intuitively converts\footnote{We only need $\eta$
+  because the most convenient representation of All-NN's summary
+  results is not the same type as is needed by the generalized math.}
+  a set of key-range pairs into the set of all sets of key-value pairs
+  with values within their corresponding ranges.  Because $\min(v,v) =
+  v$ and because, for $Q' \subseteq Q^{\!L}$,
   \[
-  \GNP[\sigma](Y,X) = \left[ |Y| \cdot |X| \cdot I(D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r), |Y| \cdot |X| \cdot I(D^{\!L}(\sigma_x(X),\sigma_y(Y)) \leq r) \right].
+  (\GNP[\Sigma](Q^{\!L},R) \odothat \GNP[\Sigma](Q^{\!R},R)) \otimeshat \GNP[\Sigma](Q',R) = \GNP[\Sigma](Q^{\!L},R) \otimeshat \GNP[\Sigma](Q',R),
   \]
-  This set is $\{|Y| \cdot |X|\}$ when
-  $D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r$ and $\{0\}$ when
-  $D^{\!L}(\sigma_x(X),\sigma_y(Y)) > r$.
+  we may directly obtain $S_0 = \{\{a\} \otimeshat \GNP[\Sigma](Q,R) |
+  a \in \GNP[\Sigma](Q_{root},R_{root})\}$.  Elements of this set are
+  singleton if, for all matching $(q,v) \in a$ and $(q,[l,u]) \in B$,
+  with $\eta(B) = \GNP[\Sigma](Q,R)$, we have $v < l$.  Thus, all
+  elements of $S_0$ are singleton if, for all matching $(q,[l_a,u_a])
+  \in A$ and $(q,[l_b,u_b]) \in B$, with $\eta(A) =
+  \GNP[\Sigma](Q_{root},R_{root})$ and $\eta(B) = \GNP[\Sigma](Q,R)$, we
+  have $u_a < l_b$.  In words, we may prune when when the lower bound
+  distance between the queries and references is greater than the
+  greatest of the queries' candidate nearest-neighbor distance found
+  so far.
 \end{proof}
 
 % \subsection{Thresholded Pruning}
@@ -801,11 +811,41 @@ For $x \in X$ and $y \in Y$, the bounds on
 third form of pruning.
 \begin{lemma}
   We may perform {\em thresholded pruning} if $\{h(b) | b \in B\}$ is
-  singleton for all $B \in R_0$.
+  singleton for all $B \in S_0$.
 \end{lemma}
 \begin{proof}
-  Similar to the above, with all $p \in \GNP[\Sigma](Y',X')$ leading
-  to the same postprocesed result.
+  Similar to extrinsic pruning.
+\end{proof}
+
+\begin{corollary}
+  We may perform thresholded pruning for nonparametric Bayes
+  classification.
+\end{corollary}
+\begin{proof}
+  Yet again, let $\sigma_x$ find bounding boxes for points in
+  $\mathcal{X}$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower
+  bound distances between bounding boxes.  We represent summary
+  results with
+  \begin{eqnarray*}
+    \GNP[\sigma](\sigma_x(Q),\sigma_x(R)) & = & \eta \left( \left\{ \left.\! \left( q, \left[ \begin{array}{ll}
+	\lefteqn{|R^+| \cdot \pi^+ K(D^{\!U}(\sigma_x(Q),\sigma_x(R)))} \\
+	& \mbox{} + |R^-| \cdot \pi^- K(D^{\!L}(\sigma_x(Q),\sigma_x(R))), \\
+	\lefteqn{|R^+| \cdot \pi^+ K(D^{\!L}(\sigma_x(Q),\sigma_x(R)))} \\
+	& \mbox{} + |R^-| \cdot \pi^- K(D^{\!U}(\sigma_x(Q),\sigma_x(R)))
+    \end{array} \right] \right) \right| q \in Q \right\} \right) , \\
+    \eta(A) \otimeshat \eta(B) & = & \eta(\{(q,[l_a + l_b,u_a + u_b)]) | (q,[l_a,u_a]) \in A, (q,[l_b,u_b]) \in B\}), \\
+    \eta(A) \odothat \eta(B) & = & \eta(A \cup B),
+  \end{eqnarray*}
+  where $\eta$ converts types as before.  We may reason about $S_0$
+  directly from $\GNP[\Sigma](Q_{root},R_{root})$.  If, for all
+  $(q,[l,u]) \in A$, with $P(A) = \GNP[\Sigma](Q_{root},R_{root})$ and
+  $q \in Q$, we have $l > 0$, $u < 0$, or $l = u = 0$, then no $p \in
+  \GNP[\Sigma](Q,R)$ can yield distinct results of postprocessing
+  function $\sign$ regardless of the valuation of all other components
+  of computation.  In words, when bounds on the kernel sums for some
+  selection of queries restrict results to be positive, negative, or
+  zero, we may prune further computation on those queries for all
+  remaining references.
 \end{proof}
 
 % \subsection{Approximation Pruning}
