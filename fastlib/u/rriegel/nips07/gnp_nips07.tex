@@ -705,6 +705,8 @@ results.
   \[ \begin{array}{rcl}
     A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\} & \mbox{ and, likewise, } & A \odothat B \supseteq \{a \odot b | a \in A, b \in B\}.
   \end{array} \]
+  For singleton $A$ and $B$, we require $A \otimeshat B$ and $A
+  \odothat B$ to be singleton.
 \end{definition}
 \noindent We develope a notion of itertive refinement by means of
 replacing summary result sets for the various components of
@@ -749,29 +751,48 @@ the global result.
   \GNP[\Sigma](Y',X')$ and $A_{d-1} = parent(A_{d})$ for $1 \leq d
   \leq D$, construct sets of summary result sets
   \[ \begin{array}{rcl}
-    R_D = \{\GNP[\Sigma](Y',X')\} & \mbox{ and } & R_{d-1} = \{\{a\} \mathbin{op(A_{d-1})} B | a \in sibling(A_d), B \in R_d\}
+    R_D = \{\GNP[\Sigma](Y',X')\} & \mbox{ and } & R_{d-1} \supseteq \{\{a\} \mathbin{op(A_{d-1})} B | a \in sibling(A_d), B \in R_d\}
   \end{array} \]
   for $1 \leq d \leq D$.  We may then perform {\em extrinsic pruning}
   if $B$ is singleton for all $B \in R_0$.
 \end{lemma}
 \begin{proof}
-  As constructed, $R_0$ is the set of all possible summary result sets
-  for $\GNP[\Sigma](Y,X)$ given summary results of
-  $\GNP[\Sigma](Y',X')$ and one possible result of all other
-  components.  Singleton $B \in R_0$ then implies that all possible
-  results of $\GNP[\Sigma](Y',X')$ lead to the same global result
-  under some valuation of the other components.  If all such $B$ are
-  singleton, then any $p \in \GNP[\Sigma](Y',X')$ must lead to the
-  same global result as any other regardless of the valuation of the
-  other components and we are free to shortcut all further compuation
-  on $X'$ and $Y'$ with this value.
+  As constructed, $R_0$ contains all possible summary result sets for
+  $\GNP[\Sigma](Y,X)$ given summary results of $\GNP[\Sigma](Y',X')$
+  and one possible result of all other components.  Singleton $B \in
+  R_0$ then implies that all possible results of $\GNP[\Sigma](Y',X')$
+  lead to the same global result under some valuation of the other
+  components.  If all such $B$ are singleton, then any $p \in
+  \GNP[\Sigma](Y',X')$ must lead to the same global result as any
+  other regardless of the valuation of the other components and we are
+  free to shortcut all further compuation on $X'$ and $Y'$ with this
+  value.
 \end{proof}
 
 \begin{corollary}
   We may perform extrinsic pruning for all-nearest-neighbors.
 \end{corollary}
 \begin{proof}
-  
+  Again, let $\sigma_x$ and $\sigma_y$ find bounding boxes for points in $X$
+  and $Y$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower bounds
+  between bounding boxes.  Define
+  \begin{eqnarray*}
+    \GNP[\sigma](\sigma_y(Y'),\sigma_x(X')) & = & \{(y,[D^{\!L}(\sigma_y(Y'),\sigma_x(X')), D^{\!U}(\sigma_y(Y'),\sigma_x(X'))]) | y \in Y'\}, \\
+    A \otimeshat B & = & \{(y,[\min(L_1,L_2),\min(U_1,U_2))]) | (y,[L_1,U_1]) \in A, (y,[L_2,U_2]) \in B\}, \\
+    A \odothat B & = & A \cup B.
+  \end{eqnarray*}
+  We can obtain $R_0$ from $\GNP[\Sigma](Y,X)$ with
+For $x \in X$ and $y \in Y$, the bounds on
+  $I(d(x,y) \leq r)$ are then $\left[
+  I(D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r),
+  I(D^{\!L}(\sigma_x(X),\sigma_y(Y)) \leq r) \right]$.  We may thus
+  define
+  \[
+  \GNP[\sigma](Y,X) = \left[ |Y| \cdot |X| \cdot I(D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r), |Y| \cdot |X| \cdot I(D^{\!L}(\sigma_x(X),\sigma_y(Y)) \leq r) \right].
+  \]
+  This set is $\{|Y| \cdot |X|\}$ when
+  $D^{\!U}(\sigma_x(X),\sigma_y(Y)) \leq r$ and $\{0\}$ when
+  $D^{\!L}(\sigma_x(X),\sigma_y(Y)) > r$.
 \end{proof}
 
 % \subsection{Thresholded Pruning}
