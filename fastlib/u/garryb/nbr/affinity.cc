@@ -946,7 +946,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   // else.  Now, time for the iteration.
   int n_iter = fx_param_int(module, "n_iter", 10000);
   int iter;
-  int n_convergence_iter = fx_param_int(module, "n_convergence_iter", 8);;
+  int n_convergence_iter = fx_param_int(module, "n_convergence_iter", 16);
+  int convergence_thresh = fx_param_int(module, "convergence_thresh", 8);
   int stable_iter = 0;
   index_t n_changed = n_points / 2;
   index_t n_exemplars = 0;
@@ -960,7 +961,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     is_exemplar[i] = 0;
   }
 
-  for (iter = 0; iter < n_iter && stable_iter < n_convergence_iter; iter++)
+  for (iter = 0; iter < n_iter; iter++)
   {
     double lambda = param.lambda;
     index_t n_alpha_changed = 0;
@@ -1057,11 +1058,6 @@ void AffinityMain(datanode *module, const char *gnp_name) {
         point->info().rho = new_rho;
       }
 
-      if (n_changed == 0) {
-        stable_iter++;
-      } else {
-        stable_iter = 0;
-      }
 
       nbr_utils::StatFixer<
           AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
@@ -1076,6 +1072,16 @@ void AffinityMain(datanode *module, const char *gnp_name) {
         iter, n_changed, n_exemplars,
         sum_rho, param.eps,
         timer_rho->total.micros / 1.0e6);
+
+    if (n_changed < convergence_thresh) {
+      stable_iter++;
+    } else {
+      stable_iter = 0;
+    }
+    
+    if (stable_iter >= n_convergence_iter && iter > 20) {
+      break;
+    }
   }
 
   fx_format_result(module, "n_iterations", "%d", iter);
