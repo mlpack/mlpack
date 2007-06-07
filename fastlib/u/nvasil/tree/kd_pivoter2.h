@@ -49,8 +49,8 @@ class KdPivoter2 {
 		  pivot_dimension_=pivot_dimension;
 		}
 		bool operator()(const CompletePoint<Precision_t> &p1,
-			              const CompletePoint<Precision_t> &p2) const {
-		  return p1[pivot_dimension_]<p2[pivot_dimension_];
+			              const  CompletePoint<Precision_t> &p2)  const {
+		  return p1.At(pivot_dimension_)<p2.At(pivot_dimension_);
 		}
 	 private:		
 		index_t pivot_dimension_;
