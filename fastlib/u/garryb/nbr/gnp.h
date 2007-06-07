@@ -47,18 +47,16 @@ struct BlankQResult {
  public:
   OT_DEF(BlankQResult) {}
  public:
-  template<typename Param, typename Point, typename RNode>
-  void Init(const Param& param,
-      const Point& q_point,
-      const RNode& r_root) {}
+  template<typename Param>
+  void Init(const Param& param) {}
   template<typename Param, typename Point, typename RNode>
   void Postprocess(const Param& param,
-      const Point& q_point,
+      const Point& q_point, index_t q_index,
       const RNode& r_root) {}
   template<typename Param, typename QPostponed, typename Point>
   void ApplyPostponed(const Param& param,
       const QPostponed& postponed,
-      const Point& q_point) {}
+      const Point& q_point, index_t q_index) {}
 };
 
 class BlankGlobalResult {
@@ -75,6 +73,7 @@ class BlankGlobalResult {
   void UndoDelta(const Param& param, const Delta& delta) {}
   template<typename Param>
   void Postprocess(const Param& param) {}
+  void Report(datanode *datanode) {}
 };
 
 struct BlankQMassResult {

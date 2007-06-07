@@ -267,7 +267,7 @@ class AffinityAlpha {
     void Postprocess(const Param& param,
         const QPoint& q, index_t q_index, const RNode& r_root) {}
     void ApplyPostponed(const Param& param,
-        const QPostponed& postponed, const QPoint& q) {}
+        const QPostponed& postponed, const QPoint& q, index_t q_i) {}
   };
 
   struct QMassResult {
@@ -490,7 +490,7 @@ class AffinityRho {
       rho += self_responsibility;
     }
     void ApplyPostponed(const Param& param,
-        const QPostponed& postponed, const QPoint& q) {
+        const QPostponed& postponed, const QPoint& q, index_t q_index) {
       #ifdef APPRLX
       rho += postponed.d_rho;
       error_buffer += postponed.error_buffer;
@@ -817,6 +817,7 @@ void TimeStats(datanode *module, const ArrayList<double>& list) {
   fx_format_result(module, "med", "%f", v_med/1e6);
   fx_format_result(module, "max", "%f", v_max/1e6);
   fx_format_result(module, "avg", "%f", v_avg/1e6);
+  fx_format_result(module, "sum", "%f", v_avg*list.size()/1e6);
 }
 
 
@@ -864,7 +865,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     point->info().alpha.max1 = 0;
     point->info().alpha.max2 = param.pref;
     point->info().alpha.max1_index = i;
-    if (rand() % 16 == 0) {
+    if (rand() % 2 == 0) {
       point->info().rho = -param.pref / 2;
     } else {
       point->info().rho = 0;
@@ -1044,6 +1045,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
       iter_times_alpha);
   TimeStats(fx_submodule(module, "iter_times_total", "iter_times_total"),
       iter_times_total);
+  fx_format_result(module, "n_points", "%"LI"d", n_points);
 
   // This will take too long if there are too many exemplars.
   if (n_exemplars >= 10000) {
