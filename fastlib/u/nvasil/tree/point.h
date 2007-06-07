@@ -154,8 +154,9 @@ class CompletePoint {
 	}
   CompletePoint_t &operator=(const CompletePoint_t &other) {
 	  DEBUG_ASSERT_MSG(this->dimension_==other.dimension_, 
-				             "Points have different dimensions "LI"!="LI"", 
-										  this->dimension_, other.dimension_);
+				             "Points have different dimensions %lli !=%lli", 
+										 (signed long long)this->dimension_, 
+										 (signed long long)other.dimension_);
 		memcpy(this->p_, other.p_, dimension_*sizeof(Precision_t));
 		this->id_=other.id_;
 	}
@@ -163,6 +164,12 @@ class CompletePoint {
 	  p_=ptr;
 		id_=id;
 		dimension_=dimension;
+	}
+	Precision_t &operator[](index_t i) {
+	  return p_[i];
+	}
+	Precision_t At(index_t i) const {
+	  return p_[i];
 	}
  private:
 	Precision_t *p_;

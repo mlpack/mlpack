@@ -43,6 +43,11 @@ class BinaryDataset {
 	friend class Iterator;
 	class Iterator {
 	 public:
+		typedef random_access_iterator_tag iterator_category;
+		typedef CompletePoint<Precision_t> value_type;
+		typedef index_t difference_type;
+		typedef CompletePoint<Precision_t>* pointer;
+		typedef CompletePoint<Precision_t>& reference;
 		Iterator(){
 		} 
 		Iterator(BinaryDataset<Precision_t> *dataset) {
@@ -52,27 +57,68 @@ class BinaryDataset {
 		Iterator &operator=(const Iterator &other) {
 		  this->set_=other.set_;
 			this->current_pos_=other.current_pos_;
+			return *this;
 		}
 		Iterator operator++() {
       current_pos_++;
-      DEBUG_ASSERT_MSG(current_pos_>set_->get_num_of_points(),
-					             "Iterator out of bounds "LI">"LI"", 
-											 current_pos_, set_->get_num_of_points());			
+      DEBUG_ASSERT_MSG(current_pos_>(signed long long)set_->get_num_of_points(),
+					             "Iterator out of bounds %lli>%lli", 
+											 (signed long long)current_pos_, 
+											 (signed long long)set_->get_num_of_points());			
 		}
 		Iterator operator+(index_t i) {
 		  Iterator it(*this);
 			it.current_pos_+=i;
-			DEBUG_ASSERT_MSG(it.current_pos_<set_.get_num_of_points(),
-					             "iterator out of bounds "LI">="LI"\n",
-											 it.current_pos_, set_->get_num_of_points());
+			DEBUG_ASSERT_MSG(it.current_pos_<(signed long long)set_->get_num_of_points() 
+					             && it.current_pos_>=0,
+					             "iterator out of bounds %lli>=%lli\n",
+											 (signed long long)it.current_pos_,
+											 (signed long long)set_->get_num_of_points());
 			return it;
+		}
+		Iterator operator+(const Iterator &other) {
+		  Iterator it(*this);
+			it.current_pos_+=other.current_pos_;
+			DEBUG_ASSERT_MSG(it.current_pos_<(signed long long)set_->get_num_of_points() 
+					             && it.current_pos_>=0,
+					             "iterator out of bounds %lli>=%lli\n",
+											 (signed long long)it.current_pos_, 
+											 (signed long long)set_->get_num_of_points());
+			return it;
+
 		}
 		Iterator operator--() {
 		  current_pos_--;
       DEBUG_ASSERT_MSG(current_pos_<0,
-					             "Iterator out of bounds "LI"<0", 
-											 current_pos_ );			
+					             "Iterator out of bounds %lli <0", 
+											 (signed long long)current_pos_ );			
 
+		}
+		Iterator operator-(index_t i) {
+		  Iterator it(*this);
+			it.current_pos_-=i;
+			DEBUG_ASSERT_MSG(it.current_pos_<(signed long long)set_->get_num_of_points() 
+					             && it.current_pos_>=0,
+					             "iterator out of bounds %lli>=%lli\n",
+											 (unsigned long long)it.current_pos_, 
+											 (unsigned long long)set_->get_num_of_points());
+			return it;
+
+		}
+    index_t  operator-(const Iterator &other) {
+		  index_t diff = current_pos_-other.current_pos_;
+			DEBUG_ASSERT_MSG(current_pos_<(signed long long)set_->get_num_of_points() 
+					             && current_pos_>=0,
+					             "iterator out of bounds %lli>=%lli\n",
+											 (unsigned long long)current_pos_, 
+											 (unsigned long long)set_->get_num_of_points());
+			return diff;
+
+		}
+		Iterator operator/(const int divider) {
+		  Iterator it(*this);
+			it.current_pos_/=divider;
+			return it;
 		}
 		bool operator==(const Iterator &other) {
 		  if (likely(other.set_==set_)) {
@@ -88,14 +134,35 @@ class BinaryDataset {
 			  return true;
 			}
 		}
-		CompletePoint<Precision_t> operator*() {
+		bool operator<=(const Iterator &other) {
+		  if (likely(other.set_==set_)) {
+			  return current_pos_<=other.current_pos_;
+			} else {
+			  return false;
+			}
+		}
+    bool operator>(const Iterator &other) {
+		  if (likely(other.set_==set_)) {
+			  return current_pos_>other.current_pos_;
+			} else {
+			  return false;
+			}
+		}
+    bool operator<(const Iterator &other) {
+		  if (likely(other.set_==set_)) {
+			  return current_pos_<other.current_pos_;
+			} else {
+			  return false;
+			}
+		}
+		CompletePoint<Precision_t> &operator*() {
 		  CompletePoint<Precision_t> point;
 			point.Alias(set_->At(current_pos_), 
 					        set_->get_id(current_pos_),
 									set_->get_dimension());
 			return point;
 		}
-    CompletePoint<Precision_t> operator->() {
+    CompletePoint<Precision_t> &operator->() {
 		  CompletePoint<Precision_t> point;
 			point.Alias(set_->At(current_pos_), 
 					        set_->get_id(current_pos_),
@@ -226,12 +293,13 @@ class BinaryDataset {
 	// returns a reference on the i,j element
 	inline Precision_t &At(uint64 i, int32 j) {
 		DEBUG_ASSERT_MSG(i<num_of_points_, 
-				"Attempt to acces data out of range "LI">"LI""
-				, i, num_of_points_);
+				"Attempt to acces data out of range %lli>%lli", 
+				 (unsigned long long)i, 
+				 (unsigned long long)num_of_points_);
 		DEBUG_ASSERT_MSG(j<dimension_, 
-				"Attempt to access element greater that the "
-			  "dimension "LI">"L32""
-				, j, dimension_);
+				"Attempt to access element greater that the dimension %lli>%lli",
+			  (unsigned long long)j, 
+				(unsigned long long)dimension_);
 	  return data_[i*dimension_+j];
 	}
 	// get the index at i point
