@@ -906,7 +906,7 @@ $\avail{i}{j}$ with
   & \text{ and } &
   \avail{i}{j} \gets \cneg{i}{j}( \sum_{i' \neq i} ( \cpos{i'}{j}(\respo{i'}{j}) ) )
 \end{array} \]
-\noindent where $\cpos{i}{j}(x) = \max(I(i = j)x,x)$ clamps $x$ to be non-negative when $i \neq j$ and $\cneg{i}{j}$
+\noindent where $\cpos{i}{j}(x)$ is $x$ if $i = j$ and $\max(0,x)$ otherwise and $\cneg{i}{j}(x)$ is similar for $\min(0,x)$.
 
 \noindent where $\cpos{i}{j}(x)$ equals $x$ when $i=j$, and $\max(x,0)$ otherwise; likewise, $\cneg{i}{j}$ for $\min(x, 0)$.
 Trivially, $\respo{}{}$ and $\avail{}{}$ are $N \times N$ matrices, where $N$ is the number of points.
