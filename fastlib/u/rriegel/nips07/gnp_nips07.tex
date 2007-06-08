@@ -569,9 +569,10 @@ is $O(N^2)$.
   decomposable} if, for all nonempty partitions $\kdleft{X} \cup \kdright{X}
   = X \subset \mathcal{X}$ and nonempty $Y \in \mathcal{Y}$,
   $\GNP(Y,X) = \GNP(Y,\kdleft{X}) \otimes \GNP(Y,\kdright{X})$.  Such a
-  problem\footnote{Observe that commutativity and associativity ensure
-  that $\GNP(Y,X) = \GNP(\kdleft{Y},X) \odot \GNP(\kdright{Y},X)$.} is known
+  problem is known
   as a {\bf second-order generalized $N$-body problem}.
+  Observe that commutativity and associativity ensure
+  that $\GNP(Y,X) = \GNP(\kdleft{Y},X) \odot \GNP(\kdright{Y},X)$.
 \end{definition}
 
 % \subsection{The Map Operator}
@@ -1197,22 +1198,18 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
 \killspace
 %It is possible to employ depth-first iterative refinement to compute $\vecalpha$ and simple depth-first expansion to compute $\vecrho$, with pseudocode for these algorithms shown in Figure~\ref{fig:alpharho}.
 From the above, we use depth-first iterative refinement and expansion to derive the algorithms in Figure~\ref{fig:alpharho}.
-Combined, these computations perform the core update of affinity propagation.
+Combined, these computations perform the core update of exact affinity propagation.
 Our rearrangements of the computation require damping in a different manner from \cite{affinity}.
 In our method, $\rho$ is damped.
 The relationship between the two damping methods requires further investigation, but we achieve in our experiments near-identical results with a similar number of iterations.
 %either a full history of result vectors or the matrices $R$ and $A$.
 
-We implmented algorithms {\bf rho} and {\bf alpha} in C++ and directly compared to Frey and Dueck's quadratic C implementation.
+{\bf Experiments.} We implemented algorithms {\bf rho} and {\bf alpha} in C++ and directly compared to Frey and Dueck's quadratic C implementation.
 Our data are points in $\mathbb{R}^3$ from a large-scale gravitational $N$-body particle simulation.
 Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$ with an extrapolated three-hundred-fold speedup at one million points.
 %Factoring in the number of iterations, we empircally have $O(N^{1.5})$ overall running time.
 %The quadratic algorithm unfortunately does not support large enough data sets to observe such a trend in the number of iterations
 Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
-
-As defined, affinity propagation works for arbitrary and potentially sparse similarity graphs, whereas we require a metric space and fully utilize similarities between all point pairs.
-Second, data sets with unusually high intrinsic dimensionality may diminish the asymptotic gains of our algorithm.
-Nonetheless, we demonstrate the value of the generalized $N$-body approach for deriving new efficient algorithms that display orders of magnitude speedup for a wide range of practical problems.
 
 \begin{figure}
   \begin{minipage}{2.6in}
@@ -1224,13 +1221,21 @@ Nonetheless, we demonstrate the value of the generalized $N$-body approach for d
 %    &
 %    \includegraphics[width=2.6in,height=1.8in]{r-total.ps}
 %  \end{tabular}
-      \caption{\label{fig:speed}\footnotesize Mean per-iteration and total run-times for affinity propagation.
+      \caption{\label{fig:speed}\footnotesize Mean per-iteration run-times for affinity propagation.
 	Although Frey-Dueck's code runs out of memory after 10,000 points, we extrapolate their algorithm quadratically, assuming optimistically a constant number of iterations.
 	We set $p$ to the median similarity, calculated as the negative squared radius having a $50\%$ two-point correlation.
 	System: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
   \end{minipage}
   \killspace
 \end{figure}
+
+As defined, affinity propagation works for arbitrary and potentially sparse similarity graphs, whereas we require a metric space in our example and fully utilize similarities between all point pairs.
+Second, data sets with high intrinsic dimensionality diminish the asymptotic gains of our algorithm.
+Nonetheless, we demonstrate the value of the generalized $N$-body approach for deriving new efficient algorithms that display orders of magnitude speedup for a wide range of practical problems.
+
+\mysection{Discussion}
+
+WALDO
 
 \appendix
 
