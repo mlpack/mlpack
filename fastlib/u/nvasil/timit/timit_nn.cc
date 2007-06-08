@@ -86,6 +86,7 @@ void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args) {
   if (args.train_file_!=args.test_file_) {
 	  args.train_data_.Init(args.train_file_);
 	  train_tree.Init(&args.train_data_);
+		train_tree.set_knns(0);
 	  fx_timer_start(fx_root, "train_tree_build");	
     NONFATAL("Building the training (reference) tree...\n");
 	  fflush(stdout);
@@ -161,7 +162,7 @@ std::string Usage() {
 
 std::string PrintArgs(Parameters &args) {
   char temp[8192];
-	sprintf(temp, "\n train_file : %s\n"
+	sprintf(temp, "\ntrain_file : %s\n"
 			          "test_file  : %s\n"
 								"out_file   : %s\n"
 								"memory_file: %s\n"
