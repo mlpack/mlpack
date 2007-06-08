@@ -812,7 +812,7 @@ pruning in some problems strongly favors other expansion patterns.
 
 {\bf Pruning.}  The simplest form of pruning arises directly from
 summarization.
-\begin{lemma}[Intrinsic Pruning]
+\begin{lemma}[Intrinsic Pruning]\label{lem:intrinsic}
   We may prune when summary results form a singleton set.
 \end{lemma}
 \killspace
@@ -824,9 +824,9 @@ summarization.
 \end{proof}
 \killspace
 \begin{exampletheorem}[The Two-point Correlation Algorithm]
-  
-  We may perform intrinsic pruning when considering regions shown to
-  be completely inside or outside radius $r$ of one another.
+  The two-point correlation algorithm in Figure~\ref{fig:allnntpc} is
+  derived from the GNA and intrinsicly prunes when considering regions
+  shown to be completely inside or outside radius $r$ of one another.
 \end{exampletheorem}
 \killspace
 \killspace
@@ -842,14 +842,12 @@ summarization.
   \]
   This set is $\{|Y| \cdot |X|\}$ when
   $\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r$ and $\{0\}$ when
-  $\disthrectmin(\sigma_x(Y),\sigma_x(X)) > r$.
+  $\disthrectmin(\sigma_x(Y),\sigma_x(X)) > r$.  Thus, by
+  Lemma~\ref{lem:intrinsic}, we may prune in these cases.  In order to
+  use the GNA, we may trivially define $\otimeshat$ and $\odothat$ to
+  return the universal set until they have singleton arguments,
+  whereupon they simply sum those arguments.
 \end{proof}
-\killspace
-\begin{exampletheorem}[The Two-point Correlation Algorithm]
-  By Lemma~\ref{lem:2pt}, we may evaluate the two-point correlation
-  via recursive expansion with pruning as shown in the {\bf tpc}
-  function of Figure~\ref{fig:allnntpc}.
-\end{exampletheorem}
 \maybekillspace
 % \subsection{Iterative Refinement.}
 
