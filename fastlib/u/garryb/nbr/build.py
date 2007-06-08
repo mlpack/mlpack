@@ -40,6 +40,10 @@ binrule(name = "affinity",
    sources = ["affinity.cc"],
    deplibs = [":nbr"])
 
+binrule(name = "affinity2",
+   sources = ["affinity2.cc"],
+   deplibs = [":nbr"])
+
 binrule(name = "apcluster",
    sources = ["apcluster.c"],
    deplibs = ["fastlib:fastlib"])
