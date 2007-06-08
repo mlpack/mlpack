@@ -25,8 +25,6 @@
 #include "u/nvasil/tree/binary_kd_tree_mmapmm.h"
 
 struct Parameters {
-  int32 dimension_;
-	int64 num_of_points_;
 	std::string train_file_;
 	std::string test_file_;
 	std::string out_file_;	
@@ -36,7 +34,7 @@ struct Parameters {
   BinaryDataset<float32> test_data_;
 	uint64 capacity_;
 };
-
+std::string Usage();
 template<typename TREE>
 void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args);
 
@@ -44,11 +42,15 @@ int main(int argc, char *argv[]) {
 	Parameters args;
 	// initialize command line parameter
 	fx_init(argc, argv);
-  args.train_file_=fx_param_str_req(NULL, "train_file");
-  args.test_file_=fx_param_str_req(NULL, "test_file");
+	if (fx_param_exists(NULL, "help")) {
+	  printf("%s\n", Usage().c_str());
+		return -1;
+	}
+  args.train_file_=fx_param_str(NULL, "train_file", "");
+  args.test_file_=fx_param_str(NULL, "test_file", "");
   args.knns_=fx_param_int(NULL, "knns",5);
-	args.out_file_=fx_param_str_req(NULL, "out_file");
-  args.memory_file_=fx_param_str_req(NULL, "memory_file");
+	args.out_file_=fx_param_str(NULL, "out_file", "allnn");
+  args.memory_file_=fx_param_str(NULL, "memory_file", "temp_mem");
 	args.capacity_=fx_param_int(NULL, "capacity", 16777216);
  	if (sizeof(index_t)==sizeof(int32)) {
 	  NONFATAL("index_t is int32, good for small scale problems");
@@ -140,5 +142,17 @@ void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args) {
 	  train_tree.CollectKNearestNeighborWithFwriteText(args.out_file_.c_str());
 	  fx_timer_stop(fx_root, "collecting_results");
 	}
+}
+std::string Usage() {
+  std::string ret =
+		string("Computing all k-nearest neighbors with dual tree method...\n") +
+		string("timit_nn --option=value\n")+
+	  string("--train_file :  the dataset that contains the training data (reference)\n")+
+	  string("--test_file  :  the dataset that contains the test data (query)\n")+
+		string("--out_file   :  stores the results in a text file, usually big\n")+
+		string("--memory_file:  the file wher the tree will be stored\n")+
+		string("--knns       :  number of neighbors default is 5\n")+
+		string("--capacity   :  the capacity of the memory file, keep it big enough\n");
+	 return ret;
 }
 
