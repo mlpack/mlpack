@@ -1134,7 +1134,7 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
     & |I| \cdot \ocpos{\true}(\simhrectmax(\sigma(J),\sigma(I)) + \falphamax(\sigma(I)))
   \end{array} \right] \right) \right| j \in J \right\} \right)\! .
   \]
-  This set is singleton with vaule $\{\{(j,0) | j \in J\}\}$ when
+  This set is singleton with value $\{\{(j,0) | j \in J\}\}$ when
   $\simhrectmax(\sigma(J),\sigma(I)) + \falphamax(\sigma(I)) \leq 0$.
 \end{proof}
 
@@ -1187,7 +1187,8 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
   \end{minipage}
 \end{figure}
 \killspace
-It is possible to employ depth-first iterative refinement to compute $\vecalpha$ and simple depth-first expansion to compute $\vecrho$, with pseudocode for these algorithms shown in Figure~\ref{fig:alpharho}.
+%It is possible to employ depth-first iterative refinement to compute $\vecalpha$ and simple depth-first expansion to compute $\vecrho$, with pseudocode for these algorithms shown in Figure~\ref{fig:alpharho}.
+From the above, we use depth-first iterative refinement and expansion to derive the algorithms in Figure~\ref{fig:alpharho}.
 Combined, these computations perform the core update of affinity propagation.
 Our rearrangements of the computation require damping in a different manner from \cite{affinity}.
 In our method, $\rho$ is damped.
