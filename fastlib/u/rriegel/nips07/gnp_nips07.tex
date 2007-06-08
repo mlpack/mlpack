@@ -11,6 +11,9 @@
 \newtheorem{definition} {Definition}
 \newtheorem{example} {Example}
 
+\newcommand{\maybekillspace}{\vspace{-0.05in}}
+\newcommand{\killspace}{\vspace{-0.1in}}
+\newcommand{\killproofspace}{\vspace{-0.2in}}
 
 \newcommand{\GNP}[1][\psi]{{#1}_{\Theta}}
 \newcommand{\GNPvec}[1][\psi]{{#1}_{\overrightarrow{\Theta}}}
@@ -20,6 +23,7 @@
 \newcommand{\bigotimesvec}{\mathop{\overrightarrow{\bigotimes}}}
 \newcommand{\bigodotvec}{\mathop{\overrightarrow{\bigodot}}}
 
+\newcommand{\sigmahat}{\mathbin{\widehat{\sigma}}}
 \newcommand{\otimeshat}{\mathbin{\widehat{\otimes}}}
 \newcommand{\odothat}{\mathbin{\widehat{\odot}}}
 \newcommand{\bigotimeshat}{\mathop{\widehat{\bigotimes}}}
@@ -218,19 +222,20 @@ approximate speedup approaches.
       \hspace{-0.17in}
       \begin{array}{l}
         \begin{array}{l}
-          \text{function tpc}(Q, R)
+          \text{{\bf tpc} - Two-point correlation.}
+          \\ \text{function tpc}(Q, R)
           \x \text{if }\disthrectmax(X_1, X_2) < r\text{: return }0
           \x \text{if }\disthrectmin(X_1, X_1) > r\text{: return } |X_1| \cdot |X_2|
           \x \text{elif }|X_1| \geq |X_2|\text{:}
           \xx \text{return tpc}(\kdleft{X_1}, X_2, r) + \text{tpc}(\kdright{X_1}, X_2, r)
           \x \text{else:}
           \xx \text{return tpc}(X_1, \kdleft{X_2}, r) + \text{tpc}(X_1, \kdright{X_2}, r)
-          %\\ \\ \\ \\
         \end{array}
         \\
         \\
         \begin{array}{l}
-          \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
+          \text{{\bf allnn} - All-nearest-neighbors.}
+          \\ \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
           \\ \text{procedure allnn}(Q,R)\text{:}
           \x \text{if }a(Q) < \disthrectmin(Q, R)\text{: return}
           \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
@@ -242,8 +247,10 @@ approximate speedup approaches.
           \xx \text{allnn}(Q, \kdleft{R}); \text{ allnn}(Q, \kdright{R})
         \end{array}
       \end{array}
-      & \hspace{-0.2in}
+      &
+      \hspace{-0.2in}
       \begin{array}{l}
+        \text{{\bf nbc} - Nonparametric Bayes classification}
         \\ \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets (0, 0)
         \\ P \gets \text{new priority queue};~\text{postpone}(\kdroot{Q}, \kdroot{R})
         \\ \text{while } P \text{ not empty}
@@ -256,16 +263,20 @@ approximate speedup approaches.
         \xx \text{recursively, }a(Q') \gets a(Q') - (\dl, \du)
         \xx \text{postpone}(\kdleft{Q}, \kdleft{R}); \text{ postpone}(\kdleft{Q}, \kdright{R})
         \xx \text{postpone}(\kdright{Q}, \kdleft{R}); \text{ postpone}(\kdright{Q}, \kdright{R})
+        \\
         \\ \text{procedure postpone}(Q, R)\text{:}
         \x \dl \gets \pi\spos|R\spos|K^{u}(Q, R\spos) + \pi\sneg|R\sneg|K^{l}(Q, R\sneg)
         \x \du \gets \pi\spos|R\spos|K^{l}(Q, R\spos) + \pi\sneg|R\sneg|K^{u}(Q, R\sneg)
         \x \forall Q' \subset Q,~ a(Q') \gets a(Q') + (\dl, \du)
         \x \text{place }(Q, R, \dl, \du)\text{ in }P\text{ at priority }(\du-\dl)
+        \\
+        \\
       \end{array}
     \end{array}
+    \vspace{-0.2in}
   \end{displaymath}
   \label{fig:allnntpc}
-  \caption{Pseudocode for three simple dual-tree algorithms: two-point correlation (tpc), all-nearest-neighbors (allnn), and nonparametric Bayes classification.}
+  \caption{Pseudocode for three simple dual-tree algorithms.}
 \end{figure}
 
 Here, we present three canonical dual-tree algorithms: two-point correlation, all-nearest-neighbors, and nonparametric Bayes classification.
@@ -294,7 +305,7 @@ A simple kernel-based classifier labels each point in $Q$ positive or negative b
 \end{equation*}
 \noindent for distance-based kernel $K$.
 Each subset of queries maintains an upper and lower bound on the difference of the sums, and is labelled when this range no longer contains zero.
-A simple non-recursive algorithm uses a priority queue, relying on the fact that iterating over all children is amortized linear in quite inexpensive compared to the recursion\footnote{In practice, some of these updates may be performed lazily.}.
+A simple non-recursive algorithm uses a priority queue, relying on the fact that iterating over all children is quite inexpensive compared to the recursion\footnote{In practice, some of these updates may be performed lazily.}.
 
 %  The all-nearest-neighbors problem (All-NN) aims to find for each
 %  point in some set $Q$ of queries the nearest point from a set $R$ of
@@ -369,9 +380,9 @@ A simple non-recursive algorithm uses a priority queue, relying on the fact that
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Generalized $N$-body Problems}
 
-The class of Generalized $N$-body Problems (GNPs), or problems
-solvable by means similar to those shown above, is a subset of the
-problems representable as nested applications of high-order function
+The class of Generalized $N$-body Problems (GNPs), exemplified above,
+%or problems solvable by means similar to those shown above,
+is a subset of the problems representable as nested applications of high-order function
 reduce.  Reduce is a long-standing and highly versatile feature of
 functional programming languages, traditionally operating over a list
 from beginning to end or vice versa.  We pose reduce as a function on
@@ -390,6 +401,7 @@ allow for pre- and postprocessing functions.
   \psi_{\theta}$, where $\psi_{\theta}(X) = \bigotimes_{x \in X} f(x)$
   for nonempty $X \subset \mathcal{X}$.
 \end{definition}
+\killspace
 \noindent The operators involved in reduce problems form abelian
 semigroups; frequently, they also have identities and inverses in
 $\mathcal{A}$, thereby forming abelian groups.
@@ -398,7 +410,7 @@ $\mathcal{A}$, thereby forming abelian groups.
   The expected value of a function under a sampled distribution,
   $\frac{1}{N} \sum_{x \in X} f(x)$, is a first-order reduce problem.
 \end{example}
-
+\killspace
 The inner functions of reduce problems may themselves be reduce
 problems, for example with $f_1(x) = \Psi_{\theta_2}(X_2)$.  While the
 methods presented below can potentially extend to arbitrary nesting
@@ -418,17 +430,18 @@ operators.
   \in X} f(x,y) \right)$ for nonempty $X \subset \mathcal{X}$ and $Y
   \subset \mathcal{Y}$.
 \end{definition}
+\killspace
 \noindent The results of second-order reduce problems may be found
 na\"{\i}vely through nested iteration.  If involved functions are
 constant time and $X$ and $Y$ are $O(N)$, this method of computation
-is $O(N^2)$, which is infeasible for large $N$.
-
+is $O(N^2)$.
+% which is infeasible for large $N$.
 \begin{example}
   The log-likelihood of a mixture of Gaussians, $\sum_{x \in X} \log
   \sum_{k \in C} \omega_k \phi(x | \mu_k, \Sigma_k)$ is a second-order
   reduce problem.
 \end{example}
-
+\killspace
 Certain constraints are required by the algorithmic technique
 presented in the next section, though we will later introduce a
 transform to help work around them.
@@ -450,7 +463,7 @@ transform to help work around them.
 \end{definition}
 
 % \subsection{The Map Operator}
-
+\maybekillspace
 {\bf The Map Operator.}  High-order function map is suitable for all
 problems that compute separate results for some set of queries and may
 help with some problems that do not.  Reduce problems subsume the
@@ -466,19 +479,21 @@ formation of key-value pairs in order to form regular reduce problems.
     A \otimesvec B & = & \{(y, u \otimes v) | (y,u) \in A, (y,v) \in B\}, & A \odotvec B & = & A \cup B.
   \end{array} \]
 \end{lemma}
+\killspace
 \begin{proof}
   During na\"{\i}ve computation, arguments presented to $\otimesvec$
   and $\overrightarrow{g}$ are singleton sets for some $y \in Y$.
   Vector operations then trivially match the original version of the
   algorithm.
 \end{proof}
+\killspace
 \noindent Vectorized operations become more interesting after the
 application of block decomposition.
 
 % \subsection{Block Decomposability}
 
 {\bf Block Decomposable Problems.} The primary advantage of GNPs is
-the significant ability to rearrange their order of computation.  The
+the significant ability to rearrange the order of computation.  The
 na\"{\i}ve computation of a second-order GNP forms a grid of
 evaluations of $f$ connected with $\otimes$ and $\odot$ as shown in
 the left half of Figure~\ref{fig:grid}.  A single application of block
@@ -525,14 +540,13 @@ regions, possibly with permuted orderings of rows or columns.
   decomposition restructures computation.}
 \end{figure}
 
-While $\mathcal{X}$, $\mathcal{Y}$, and $f$ may have some effect on
-whether a problem is block decomposable, the most significant players
-are $\otimes$ and $\odot$.  There are two important classes of
+While $\mathcal{X}$, $\mathcal{Y}$, and $f$ may have properties that allow block decomposability, the operators are the prime determinant.  There are two important classes of
 operator pairs that gaurantee block decomposability.
 \begin{lemma}\label{lem:self}
   A regular second-order reduce problem is block decomposable if
   $\odot = \otimes$.
 \end{lemma}
+\killspace
 \begin{proof}
   By commutativity and associativity, we may rearrange
   \[ \begin{array}{ll}
@@ -550,6 +564,7 @@ operator pairs that gaurantee block decomposability.
   A regular second-order reduce problem is block decomposable if
   $\odot = \map$.
 \end{lemma}
+\killspace
 \begin{proof}
   For $\GNP(Y,X) = \map_{y \in Y} \bigotimes_{x \in X} f(x,y) \equiv
   \bigcup_{y \in Y} \bigotimesvec_{x \in X} \{(y,f(x,y))\} =
@@ -569,11 +584,9 @@ operator pairs that gaurantee block decomposability.
 % \subsection{Transforming Problems into GNPs}
 
 {\bf Transforming Problems into GNPs.}  All second-order reduce
-problems that are not GNPs may be transformed into GNPs.  Simple
-algebra can often distribute or factor non-identity $g$ into less
-obstructive positions, but failing that (or failing block
-decomposability if $g$ is not a problem), we may form a GNP by
-injecting map.
+problems that are not GNPs can be transformed into GNPs.
+Although simple algebra may sometimes evict a non-identity $g$ into $h$, one can always form a GNP by injecting $\map$, even for problems that are not block decomposable.
+%but failing that (or failing block decomposability if $g$ is not a problem), we may form a GNP by injecting map.
 \begin{lemma}
   Second-order reduce problem $\Theta$ is equivalent to GNP
   $\breve{\Theta}$ with
@@ -583,6 +596,7 @@ injecting map.
   where unsubscripted $\bigodot$ is understood to reduce the values in
   a set of key-value pairs.
 \end{lemma}
+\killspace
 \begin{proof}
   Observe that $\bigodot_{x \in X} f(x) = \bigodot{} \map_{x \in X}
   f(x)$ for arbitrary $f$ and $\bigodot$.  Further, observe that
@@ -608,77 +622,71 @@ to the na\"{\i}ve computation,
   \multicolumn{2}{l}{\GNP(Y^{\!L}\!,X) \odot \GNP(Y^{\!R}\!,X)} & \mbox{\rm otherwise},
 \end{array} \right.
 \]
-where $X \succ Y$ is some means of deciding what to split first, such
-as $|X| \geq |Y|$.  Recursion forms a binary tree with one leaf per
+where $X \succ Y$ prescribes how to recurse,
+%is a means means of deciding what to split first,
+for example, $|X| \geq |Y|$.
+Complete recursion forms a binary tree with one leaf per
 element of $X \times Y$.  Exhuastive computation thus requires time
-$O(N^2)$, the same as the na\"{\i}ve algorithm.  It may be possible,
-however, to obtain results for some components of the recursive block
-decomposition without computing them exhaustively (i.e.~to {\em prune}
-them).  Exploiting this, we hope to drive the expected running time
-down.
+$O(N^2)$, the same as the na\"{\i}ve algorithm.
+%It may be possible, however, to obtain results for some components of the recursive block decomposition without computing them exhaustively (i.e.~to {\em prune} them).
+However, it is often possible to substitute a result for a subproblem without exhaustive computation -- in other words, to {\it prune} the computation.
+Exploiting this, we hope to drive the expected running time down.
 
 % \subsection{Summaries and Statistics}
 
-{\bf Summaries Results.}  In order to accelerate computation, we need
-some quick means of summarizing the possible results of $\GNP(Y,X)$.
-This typically involves consideration of $X$ and $Y$ at the abstract
-level formed by a concise (and ideally precomputed) set of statistics
-on the two.
+{\bf Summary results.}
+To accelerate computation, we need some quick means of summarizing the possible results of $\GNP(Y,X)$.
+This typically involves consideration of $X$ and $Y$ at the abstract level formed by a concise, and ideally precomputed, set of statistics on the two.
 \begin{definition}
   For descriptive statistics $\sigma_x \colon 2^{\mathcal{X}} \to
   \mathcal{S}_x$ and $\sigma_y \colon 2^{\mathcal{Y}} \to
-  \mathcal{S}_y$, let {\bf summary results} $\GNP[\sigma] \colon
+  \mathcal{S}_y$, let {\bf summary results} $\GNP[\sigmahat] \colon
   \mathcal{S}_y \times \mathcal{S}_x \to 2^\mathcal{A}$ be such that
   \[
-  \GNP[\sigma](\sigma_y(Y),\sigma_x(X)) \supseteq \{\GNP(Y',X') | X' \st \sigma(X') = \sigma(X), Y' \st \sigma(Y') = \sigma(Y)\}.
+  \GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) \supseteq \{\GNP(Y',X') | X' \st \sigma(X') = \sigma(X), Y' \st \sigma(Y') = \sigma(Y)\}.
   \]
 \end{definition}
-\noindent Intuitively, $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$
-represents all possible results of $\GNP(Y,X)$ given what we know
-about $X$ and $Y$.  It is permitted to be a superset of such results
-because the exact set may be costly or impossible to represent.  Note
-that functions $\sigma_x$, $\sigma_y$, and $\GNP[\sigma]$ are not
-unique for a given GNP; indeed, chosing the right statistics can
-significantly impact running time.  A common example of statistics is
-finding bounding boxes of data in Euclidean space.  Summaries computed
-from these may be represented with upper and lower bounds on distances
-between points in $X$ and $Y$.
+
+\noindent Intuitively, $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$ represents all possible results of $\GNP(Y,X)$ given what we know about $X$ and $Y$.
+Since the exact set may be costly or impossible to represent, a superset of such results is acceptable.
+%It is permitted to be a usperset of such results because the exact set may be costly or impossible to represent
+Note that functions $\sigma_x$, $\sigma_y$, and $\GNP[\sigmahat]$ are not unique for a given GNP; indeed, choosing the right statistics can significantly impact running time.
+A common statistic is the bounding hyper-rectangle of data in a vector space, from which the summary set of all possible distances between points in $X$ and $Y$ may be computed as upper and lower bounds.
+%Summaries computed from these may be represented as upper and lower bounds on distances between points in $X$ and $Y$.
+Summarization directly leads to a simple pruning technique.
 
 % \subsection{Intrinsic Pruning}
 
-Summarization leads directly to our first form of pruning.
 \begin{lemma}[Intrinsic Pruning]
   We may prune when summary results form a singleton set.
 \end{lemma}
+\killspace
 \begin{proof}
-  Setting $X' = X$ and $Y' = Y$ meets the requirements for inclusion
-  in $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$.  Thus, summary results
-  contain the exact result.  Thus, singleton
-  $\GNP[\sigma](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are
-  free to shortcut all further computation on $\GNP(Y,X)$ with this
-  value.
+  Setting $X' = X$ and $Y' = Y$ meets the requirements for inclusion in $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$.
+  Thus, summary results contain the exact result.
+  Thus, singleton $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are free to shortcut all further computation on $\GNP(Y,X)$ with this value.
 \end{proof}
-
-\begin{example}[Pruning in the 2-point Correlation]
+\killspace
+\begin{example}[Pruning in the two-point correlation]
   We may perform intrinsic pruning when considering regions shown to
   be completely inside or outside radius $r$ of one another.
 \end{example}
+\killspace
 \begin{proof}
   Let $\sigma_x$ find bounding boxes for points in $\mathcal{X}$ and
-  let $\disthrectmax$ and $\disthrectmin$ find upper and lower bound
-  distances between bounding boxes.  For $x \in X$ and $y \in Y$,
-  bounds on $I(d(x,y) \leq r)$ are then $\left[
-  I(\disthrectmax(\sigma_x(X),\sigma_x(Y)) \leq r),
-  I(\disthrectmin(\sigma_x(X),\sigma_x(Y)) \leq r) \right]$.  We may thus
-  define
+  let $\disthrectmax$ and $\disthrectmin$ find upper and lower bound distances between bounding boxes.
+  For $x \in X$ and $y \in Y$, bounds on $I(d(x,y) \leq r)$ are then $\left[
+  I(\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r),
+  I(\disthrectmin(\sigma_x(Y),\sigma_x(X)) \leq r) \right]$.
+  We may thus define
   \[
-  \GNP[\sigma](Y,X) = \left[ |Y| \cdot |X| \cdot I(\disthrectmax(\sigma_x(X),\sigma_x(Y)) \leq r), |Y| \cdot |X| \cdot I(\disthrectmin(\sigma_x(X),\sigma_x(Y)) \leq r) \right].
+  \GNP[\sigmahat](Y,X) = \left[ |Y| \cdot |X| \cdot I(\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r), |Y| \cdot |X| \cdot I(\disthrectmin(\sigma_x(Y),\sigma_x(X)) \leq r) \right].
   \]
   This set is $\{|Y| \cdot |X|\}$ when
-  $D^{\!U}(\sigma_x(X),\sigma_x(Y)) \leq r$ and $\{0\}$ when
-  $D^{\!L}(\sigma_x(X),\sigma_x(Y)) > r$.
+  $D^{\!U}(\sigma_x(Y),\sigma_x(X)) \leq r$ and $\{0\}$ when
+  $D^{\!L}(\sigma_x(Y),\sigma_x(X)) > r$.
 \end{proof}
-
+\maybekillspace
 % \subsection{Iterative Refinement.}
 
 {\bf Iterative Refinement.}  Further pruning is possible in some
@@ -696,7 +704,7 @@ results.
   and $B$, we require $A \otimeshat B$ and $A \odothat B$ to be
   singleton.
 \end{definition}
-\noindent We develope a notion of itertive refinement by means of
+\noindent We develope a notion of iterative refinement by means of
 replacing summary result sets for the various components of
 computation with composed summary results for their left and right
 subcomponents.
@@ -705,9 +713,9 @@ subcomponents.
   node $\GNP[\Sigma](Y,X)$ represents composed summary results for a
   component of computation introduced via block decomposition.  First,
   initialize $\GNP[\Sigma](Y_{root},X_{root}) \gets
-  \GNP[\sigma](\sigma_y(Y_{root}),\sigma_x(X_{root}))$.  Then,
+  \GNP[\sigmahat](\sigma_y(Y_{root}),\sigma_x(X_{root}))$.  Then,
   repeatedly select some node $\GNP[\Sigma](Y,X) =
-  \GNP[\sigma](\sigma_y(Y),\sigma_x(X))$ and replace it with
+  \GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$ and replace it with
   \[
   \GNP[\Sigma](Y,X) \gets \left\{ \begin{array}{lrr}
     \{f(x,y)\} & \multicolumn{2}{r}{\mbox{\rm if } X = \{x\} \mbox{ \rm and } Y = \{y\}} \\
@@ -716,7 +724,7 @@ subcomponents.
   \end{array} \right.
   \]
   where newly introduced child nodes are initialized
-  $\GNP[\Sigma](Y',X') \gets \GNP[\sigma](\sigma_y(Y'),\sigma_x(X')$.
+  $\GNP[\Sigma](Y',X') \gets \GNP[\sigmahat](\sigma_y(Y'),\sigma_x(X')$.
   The value of each ancestor $\GNP[\Sigma](Y,X)$ is understood to
   reflect changes made to its descendents.
 \end{definition}
@@ -765,7 +773,7 @@ knowledge of their results cannot affect the global result.
   lower bound distances between bounding boxes.  We represent summary
   results with
   \begin{eqnarray*}
-    \GNP[\sigma](\sigma_x(Q),\sigma_x(R)) & = & \eta(\{(q,[\disthrectmin(\sigma_x(Q),\sigma_x(R)), \disthrectmax(\sigma_x(Q),\sigma_x(R))]) | q \in Q\}), \\
+    \GNP[\sigmahat](\sigma_x(Q),\sigma_x(R)) & = & \eta(\{(q,[\disthrectmin(\sigma_x(Q),\sigma_x(R)), \disthrectmax(\sigma_x(Q),\sigma_x(R))]) | q \in Q\}), \\
     \eta(A) \otimeshat \eta(B) & = & \eta(\{(q,[\min(l_a,l_b),\min(u_a,u_b))]) | (q,[l_a,u_a]) \in A, (q,[l_b,u_b]) \in B\}), \\
     \eta(A) \odothat \eta(B) & = & \eta(A \cup B),
   \end{eqnarray*}
@@ -818,7 +826,7 @@ third form of pruning.
   bound distances between bounding boxes.  We represent summary
   results with
   \begin{eqnarray*}
-    \GNP[\sigma](\sigma_x(Q),\sigma_x(R)) & = & \eta \left( \left\{ \left.\! \left( q, \left[ \begin{array}{ll}
+    \GNP[\sigmahat](\sigma_x(Q),\sigma_x(R)) & = & \eta \left( \left\{ \left.\! \left( q, \left[ \begin{array}{ll}
 	\lefteqn{|R^+| \cdot \pi^+ K(D^{\!U}(\sigma_x(Q),\sigma_x(R)))} \\
 	& \mbox{} + |R^-| \cdot \pi^- K(D^{\!L}(\sigma_x(Q),\sigma_x(R))), \\
 	\lefteqn{|R^+| \cdot \pi^+ K(D^{\!L}(\sigma_x(Q),\sigma_x(R)))} \\
