@@ -82,6 +82,7 @@
 
 % Variables for affinity propagation
 \newcommand{\eqspace}{\!\!\!\!}
+\newcommand{\true}{\text{true}}
 \newcommand{\ocpos}[1]{c^{+}_{#1}}
 \newcommand{\ocneg}[1]{c^{-}_{#1}}
 \newcommand{\cpos}[2]{\ocpos{#1 \neq #2}}
@@ -980,10 +981,10 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
 \end{lemma}
 \killspace
 \begin{proof}
-  Let $\sigma$ find bounding radii for points in $\mathcal{X}$ as well as bounds on the points' corresponding values of $\vecalpha$ and $\vecrho$.
+  Let $\sigma$ find bounding radii for points in $\mathcal{X}$ as well as bounds on the points' previous values of $\vecalpha$ and $\vecrho$.
   Let $\simhrectmax$ and $\simhrectmin$ find upper and lower bound similarities
   between bounding radii and let $\falphamax$, $\falphamin$, $\frhomax$, and
-  $\frhomin$ extract the bounds on their respective vectors.
+  $\frhomin$ extract the bounds on their respective vectors, with $i \in Q$ queries, and $j \in R$ references.
   Summary results\footnote{Shown ranges are squared because summary results must be found for both minima.} are then
   \[
   \sigmahat_{\alpha}(\sigma(Q),\sigma(R)) = \left\{ \begin{array}{lrr}
@@ -991,11 +992,10 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
     \multicolumn{2}{l}{\eta(\{(q,[\falphamin(\sigma(Q)) - \frhomax(\sigma(Q)), u]^2) | q \in Q\})} & \mbox{otherwise}
   \end{array} \right. \\
   \]
-  for $\eta$ defined similarly to that from all-nearest-neighbors and
-  with
+  for $\eta$ defined similarly to that from all-nearest-neighbors, with
   \begin{eqnarray*}
-    l & = & \ocpos{1}(\ocpos{1}(\simhrectmax(\sigma(Q),\sigma(R)) + \falphamin(\sigma(Q))) - \frhomax(\sigma(Q))) - \simhrectmax(\sigma(Q),\sigma(R)), \\
-    u & = & \ocpos{1}(\ocpos{1}(\simhrectmin(\sigma(Q),\sigma(R)) + \falphamax(\sigma(Q))) - \frhomin(\sigma(Q))) - \simhrectmin(\sigma(Q),\sigma(R)).
+    l & = & \ocpos{\true}(\ocpos{\true}(\simhrectmax(\sigma(Q),\sigma(R)) + \falphamin(\sigma(Q))) - \frhomax(\sigma(Q))) - \simhrectmax(\sigma(Q),\sigma(R)), \\
+    u & = & \ocpos{\true}(\ocpos{\true}(\simhrectmin(\sigma(Q),\sigma(R)) + \falphamax(\sigma(Q))) - \frhomin(\sigma(Q))) - \simhrectmin(\sigma(Q),\sigma(R)).
   \end{eqnarray*}
   The rest of the proof is nearly identical to that of
   all-nearest-neighbors, but $\otimeshat$ maintains both minima and
@@ -1005,21 +1005,20 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
 \end{proof}
 
 \begin{lemma}[Pruning in $\vecrho$]
-  We may perform intrinsic pruning when bounds on a component's
-  results render it to have zero contribution to the sum.
+  We may perform intrinsic pruning when bounds on a subcomputation's summary results render it to have zero contribution to the sum.
 \end{lemma}
 \killspace
 \begin{proof}
-  We will compute $\vecrho \gets \map_j \sum_i ( \max(0,\simil{i}{j} +
-  \falphaj{i}{j}) ) + \map_j \min(0,\simil(j)(j) + \falphaj{j}{j})$,
-  which introduces a postprocessing function but has simpler bounds
-  and is still a GNP.  Let $\sigma$, $\simhrectmax$, $\simhrectmin$,
-  $\falphamax$, and $\falphamin$ be defined as above.  Summary results
+  We will compute $\vecrho \gets \map_j \sum_i ( \ocpos{\true}(\simil{i}{j} +
+  \falphaj{i}{j}) ) + \map_j \ocneg{\true}(\simil{j}{j} + \falphaj{j}{j})$,
+  which introduces a postprocessing function but has simpler bounds.
+  Let $\sigma$, $\simhrectmax$, $\simhrectmin$,
+  $\falphamax$, and $\falphamin$ be defined as above, and $j \in Q$ be queries and $i \in R$ references.  Summary results
   are
   \[
   \sigmahat_{\rho}(Q,R) = \eta \!\left( \left\{ \left.\! \left( q, \left[ \begin{array}{ll}
-    \lefteqn{|R| \cdot \max(0,\simhrectmin(\sigma(Q),\sigma(R)) + \falphamin(\sigma(R)),} \\
-    & |R| \cdot \max(0,\simhrectmax(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)))
+    \lefteqn{|R| \cdot \ocpos{\true}(\simhrectmin(\sigma(Q),\sigma(R)) + \falphamin(\sigma(R)),} \\
+    & |R| \cdot \ocpos{\true}(\simhrectmax(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)))
   \end{array} \right] \right) \right| q \in Q \right\} \right)\! .
   \]
   This set is singleton with vaule $\{\{(q,0) | q \in Q\}\}$ when
@@ -1067,14 +1066,14 @@ $\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
       \begin{array}{l}
         \text{{\bf rho} - The }\vecrho\text{ dual-tree algorithm.}
         \X \text{init all points }q \in \kdroot{Q}\text{: }
-        \x \frho{q}'\gets c^{-}(\simil{q}{q} + \falphaj{q}{q})
+        \x \frho{q}'\gets \ocneg{\true}(\simil{q}{q} + \falphaj{q}{q})
         %\X \text{rho}(\kdroot{Q}, \kdroot{R})
         %\X
         \X \text{procedure rho}(Q,R)\text{:}
         \x \text{if }S^u(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)) \leq 0\text{:}
         \xx \text{return}
         \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
-        \xx \frho{q}' \gets \frho{q}' + c^{+}(\simil{r}{q} + \falphaj{r}{q})
+        \xx \frho{q}' \gets \frho{q}' + \ocpos{\true}(\simil{r}{q} + \falphaj{r}{q})
         \x \text{elif }|Q| \geq |R|\text{:}
         \xx \text{rho}(\kdleft{Q}, R); \text{ rho}(\kdright{Q}, R)
         \x \text{else:}
