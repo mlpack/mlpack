@@ -11,9 +11,9 @@
 \newtheorem{definition} {Definition}
 \newtheorem{example} {Example}
 
-\newcommand{\maybekillspace}{\vspace{-0.05in}}
-\newcommand{\killspace}{\vspace{-0.1in}}
-\newcommand{\killproofspace}{\vspace{-0.2in}}
+\newcommand{\maybekillspace}{\vspace{-0.08in}}
+\newcommand{\killspace}{\vspace{-0.08in}}
+\newcommand{\killproofspace}{\vspace{-0.08in}}
 
 \newcommand{\GNP}[1][\psi]{{#1}_{\Theta}}
 \newcommand{\GNPvec}[1][\psi]{{#1}_{\overrightarrow{\Theta}}}
@@ -651,7 +651,7 @@ This typically involves consideration of $X$ and $Y$ at the abstract level forme
 Since the exact set may be costly or impossible to represent, a superset of such results is acceptable.
 %It is permitted to be a usperset of such results because the exact set may be costly or impossible to represent
 Note that functions $\sigma_x$, $\sigma_y$, and $\GNP[\sigmahat]$ are not unique for a given GNP; indeed, choosing the right statistics can significantly impact running time.
-A common statistic is the bounding hyper-rectangle of data in a vector space, from which the summary set of all possible distances between points in $X$ and $Y$ may be computed as upper and lower bounds.
+A common statistic is the bounding radius, from which the summary set of all possible distances between points in $X$ and $Y$ may be computed as upper and lower bounds.
 %Summaries computed from these may be represented as upper and lower bounds on distances between points in $X$ and $Y$.
 Summarization directly leads to a simple pruning technique.
 
@@ -704,9 +704,10 @@ results.
   and $B$, we require $A \otimeshat B$ and $A \odothat B$ to be
   singleton.
 \end{definition}
+\killspace
 \noindent We develope a notion of iterative refinement by means of
-replacing summary result sets for the various components of
-computation with composed summary results for their left and right
+replacing summary result sets for a component of
+computation with composed summary results for some left and right
 subcomponents.
 \begin{definition}
   {\bf Iterative refinement} constructs a binary tree wherein each
@@ -728,12 +729,10 @@ subcomponents.
   The value of each ancestor $\GNP[\Sigma](Y,X)$ is understood to
   reflect changes made to its descendents.
 \end{definition}
-\noindent Iterative refinement adds one node to the tree per
-replacement, and thus must terminate after $O(N^2)$ steps.  It is
-useful to navigate this tree, with functions $\leftchild$,
-$\rightchild$, $\parent$, and $\sibling$ defined intuitively.
-Further, let $\op(\GNP[\Sigma](Y,X))$ return $\otimes$ or $\odot$
-depending on $X \succ Y$.
+\killspace
+\noindent Iterative refinement adds one node to the tree per replacement resulting in $X \times Y$ leaves, and thus must terminate after $O(N^2)$ steps.
+It is useful to navigate this tree, with functions $\leftchild$, $\rightchild$, $\parent$, and $\sibling$ defined intuitively.
+Further, let $\op(\GNP[\Sigma](Y,X))$ return $\otimes$ or $\odot$ depending on $X \succ Y$.
 
 Refinement need not be performed in any particular pattern.
 Depth-first is often a good choice due to its low overhead, though
@@ -754,6 +753,7 @@ knowledge of their results cannot affect the global result.
   where $s_D = b$ and $s_{d-1} = a_d \mathbin{\op(A_{d-1})} s_d$ for $1 \leq d
     \leq D$.
 \end{lemma}
+\killspace
 \begin{proof}
   Because $\GNP[\Sigma](Y,X)$ containts the exact result for the
   represented region of computation, the logical condition given above
@@ -767,11 +767,10 @@ knowledge of their results cannot affect the global result.
   We may perform extrinsic pruning when references are shown to be
   farther away than queries' nearest-neighbors found so far.
 \end{example}
+\killspace
 \begin{proof}
-  Again, let $\sigma_x$ find bounding boxes for points in
-  $\mathcal{X}$ and let $\disthrectmax$ and $\disthrectmin$ find upper and
-  lower bound distances between bounding boxes.  We represent summary
-  results with
+  Again, let $\sigma_x$ find the bounding radius for points in $\mathcal{X}$ and let $\disthrectmax$ and $\disthrectmin$ find upper and lower bound distances between bounding boxes.
+  We represent summary results with
   \begin{eqnarray*}
     \GNP[\sigmahat](\sigma_x(Q),\sigma_x(R)) & = & \eta(\{(q,[\disthrectmin(\sigma_x(Q),\sigma_x(R)), \disthrectmax(\sigma_x(Q),\sigma_x(R))]) | q \in Q\}), \\
     \eta(A) \otimeshat \eta(B) & = & \eta(\{(q,[\min(l_a,l_b),\min(u_a,u_b))]) | (q,[l_a,u_a]) \in A, (q,[l_b,u_b]) \in B\}), \\
@@ -805,21 +804,21 @@ knowledge of their results cannot affect the global result.
 \end{proof}
 
 % \subsection{Thresholded Pruning}
-
-Postprocessing function $h$ introduces a
-third form of pruning.
+\killspace
+Postprocessing function $h$ introduces a third form of pruning.
 \begin{lemma}[Thresholded Pruning]
   We may prune if $\{h(b) | b \in B\}$ is singleton for all $B \in
   S_0$.
 \end{lemma}
+\killspace
 \begin{proof}
   Similar to extrinsic pruning.
 \end{proof}
 
 \begin{example}[Pruning in Nonparametric Bayes Classification]
-  We may perform thresholded pruning when bounds on queries' kernel
-  sums restrict their values to be positive, negative, or zero.
+  We may perform thresholded pruning when bounds on queries' kernel sums restrict their values to be positive, negative, or zero.
 \end{example}
+\killspace
 \begin{proof}
   Yet again, let $\sigma_x$ find bounding boxes for points in
   $\mathcal{X}$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower
