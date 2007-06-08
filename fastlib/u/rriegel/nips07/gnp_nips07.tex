@@ -823,9 +823,10 @@ summarization.
 \end{proof}
 \killspace
 \begin{exampletheorem}[The Two-point Correlation Algorithm]
-  The two-point correlation algorithm in Figure~\ref{fig:allnntpc} is
-  derived from the GNA and intrinsicly prunes when considering regions
-  shown to be completely inside or outside radius $r$ of one another.
+  The two-point correlation algorithm in Figure~\ref{fig:allnntpc} may
+  be derived from the GNA and intrinsicly prunes when considering
+  regions shown to be completely inside or outside radius $r$ of one
+  another.
 \end{exampletheorem}
 \killspace
 \killspace
@@ -852,8 +853,8 @@ summarization.
 
 % \subsection{Extrinsic Pruning}
 
-Iterative refinement allows us to prune components when more precise
-knowledge of their results cannot affect the global result.
+The GNA allows us to prune components when more precise knowledge of
+their results cannot affect the global result.
 \begin{lemma}[Extrinsic Pruning]
   For node $\GNP[\Sigma](Y,X)$ at depth $D$ of tree
   $\GNP[\Sigma](\kdroot{Y},\kdroot{X})$ and path $A_0,\ldots,A_D$ given by
@@ -876,10 +877,12 @@ knowledge of their results cannot affect the global result.
   $\GNP(Y,X)$ with any $b \in \GNP[\Sigma](Y,X)$.
 \end{proof}
 
-\begin{examplelemma}[Pruning in All-nearest-neighbors]\label{lem:allnn}
-  We may perform extrinsic pruning when references are shown to be
-  farther away than queries' nearest-neighbors found so far.
-\end{examplelemma}
+\begin{exampletheorem}[Pruning in All-nearest-neighbors]
+  The all-nearest-neighbors algorithm is Figure~\ref{fig:allnntpc} may
+  be derived from the GNA and extrinsically prunes when references are
+  shown to be farther away than queries' nearest-neighbors found so
+  far.
+\end{exampletheorem}
 \killspace
 \killspace
 \begin{proof}
