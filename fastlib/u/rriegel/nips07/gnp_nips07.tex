@@ -77,10 +77,10 @@
 
 % Spacing for standardized pseudocode
 \newcommand{\X}{\\ \scriptstyle}
-\newcommand{\x}{\\ \hspace{0.15in} \scriptstyle}
-\newcommand{\xx}{\\ \hspace{0.3in} \scriptstyle}
-\newcommand{\xxx}{\\ \hspace{0.45in} \scriptstyle}
-\newcommand{\xxxx}{\\ \hspace{0.6in} \scriptstyle}
+\newcommand{\x}{\\ \hspace{0.13in} \scriptstyle}
+\newcommand{\xx}{\\ \hspace{0.26in} \scriptstyle}
+\newcommand{\xxx}{\\ \hspace{0.39in} \scriptstyle}
+\newcommand{\xxxx}{\\ \hspace{0.52in} \scriptstyle}
 
 % Variables for affinity propagation
 \newcommand{\eqspace}{\!\!\!\!}
@@ -200,6 +200,19 @@ a unique advantage of this algorithmic approach is the ability to
 specify and achieve rigorous relative error tolerances when
 approximation is necessary, contrary to virtually all other
 approximate speedup approaches.
+
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+
 %
 %Nando de Freitas, Yang Wang, Maryam Mahdaviani and Dustin Lang. Fast
 %Krylov Methods for N-Body Learning . NIPS 2005.
@@ -227,8 +240,28 @@ approximate speedup approaches.
 % Begin figure
 
 \begin{figure}
-  \begin{displaymath}
-    \begin{array}{ll}
+  \begin{minipage}{1.8in}
+    \begin{minipage}{0.8in}
+      \includegraphics[width=0.75in,height=1.0in]{kdtree-level2.ps}
+    \end{minipage}
+    \begin{minipage}{0.8in}
+      \includegraphics[width=0.75in,height=1.0in]{kdtree-level4.ps}
+    \end{minipage}
+    \\
+    \begin{minipage}{1.6in}
+      \footnotesize{\caption{A two-dimensional $kd$-tree at (left) level 2 and (right) level 4.}}
+    \end{minipage}
+  \end{minipage}
+  \label{fig:kdtree}
+\end{figure}
+\begin{figure}
+  \vspace{-1.85in}
+  \hspace{1.8in}
+  %\begin{minipage}{2.8in}
+  %\end{minipage}
+  \begin{minipage}{3.88in}
+    \begin{minipage}{1.8in}
+      \begin{displaymath}
       %\hspace{-0.17in}
       %\begin{array}{l}
         \begin{array}{l}
@@ -240,11 +273,12 @@ approximate speedup approaches.
           \xx \text{return tpc}(\kdleft{X_1}, X_2, r) + \text{tpc}(\kdright{X_1}, X_2, r)
           \x \text{else:}
           \xx \text{return tpc}(X_1, \kdleft{X_2}, r) + \text{tpc}(X_1, \kdright{X_2}, r)
-          \X
-          \X
-          \X
         \end{array}
-        &
+       \end{displaymath}
+       \caption{\label{fig:allnntpc}\footnotesize Pseudocode for two simple dual-tree algorithms.}
+      \end{minipage}
+      \begin{minipage}{2.0in}
+       \begin{displaymath}
         \begin{array}{l}
           \text{{\bf allnn} - All-nearest-neighbors.}
           \X \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
@@ -258,6 +292,8 @@ approximate speedup approaches.
           \x \text{else prioritize by min distance:}
           \xx \text{allnn}(Q, \kdleft{R}); \text{ allnn}(Q, \kdright{R})
         \end{array}
+       \end{displaymath}
+      \end{minipage}
       %\end{array}
 %       &
 %       \hspace{-0.2in}
@@ -284,15 +320,13 @@ approximate speedup approaches.
 %         \\
 %         \\
 %       \end{array}
-    \end{array}
-    \vspace{-0.2in}
-  \end{displaymath}
-  \caption{\label{fig:allnntpc}\footnotesize Pseudocode for two simple dual-tree algorithms.}
+  \end{minipage}
+  \vspace{-.2in}
 \end{figure}
-
-Here, we present two canonical dual-tree algorithms, the two-point correlation the all-nearest-neighbors.
+Here, we present two simple dual-tree algorithms, two-point correlation and all-nearest-neighbors.
 %, and nonparametric Bayes classification.
 We use spatial trees, where every node $X$ in tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \cup \kdright{X} = X$, with each leaf a single point $\{x\}$.
+For example, a $kd$-tree, as in Figure~\ref{fig:kdtree}, recursively partitions the data along coordinate dimensions.
 We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to upper and lower bounds.
 
 {\bf The Two-point Correlation.} As a member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation\footnote{For simplicity, we do not exclude redundant pairs; this is trivially handled algebraicly.} of data set $X$ for radius $r$ is:
