@@ -840,12 +840,12 @@ summarization.
   Thus, singleton $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are free to shortcut all further computation on $\GNP(Y,X)$ with this value.
 \end{proof}
 \killspace
-\begin{exampletheorem}[The Two-point Correlation Algorithm]
+\begin{theorem}[The Two-point Correlation Algorithm]
   The two-point correlation algorithm in Figure~\ref{fig:allnntpc} may
   be derived from the GNA and intrinsicly prunes when considering
   regions shown to be completely inside or outside radius $r$ of one
   another.
-\end{exampletheorem}
+\end{theorem}
 \killspace
 \killspace
 \begin{proof}
@@ -861,8 +861,8 @@ summarization.
   This set is $\{|Y| \cdot |X|\}$ when
   $\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r$ and $\{0\}$ when
   $\disthrectmin(\sigma_x(Y),\sigma_x(X)) > r$.  Thus, by
-  Lemma~\ref{lem:intrinsic}, we may prune in these cases.  In order to
-  use the GNA, we may trivially define $\otimeshat$ and $\odothat$ to
+  Lemma~\ref{lem:intrinsic}, we may prune in these cases.  To
+  use the GNA, we may define $\otimeshat$ and $\odothat$ to
   return the universal set until they have singleton arguments,
   whereupon they simply sum those arguments.
 \end{proof}
@@ -873,7 +873,7 @@ summarization.
 
 The GNA allows us to prune components when more precise knowledge of
 their results cannot affect the global result.
-\begin{lemma}[Extrinsic Pruning]
+\begin{lemma}[Extrinsic Pruning]\label{lem:extrinsic}
   For node $\GNP[\Sigma](Y,X)$ at depth $D$ of tree
   $\GNP[\Sigma](\kdroot{Y},\kdroot{X})$ and path $A_0,\ldots,A_D$ given by
   $A_D = \GNP[\Sigma](Y,X)$ and $A_{d-1} = parent(A_{d})$ for $1 \leq
@@ -895,8 +895,8 @@ their results cannot affect the global result.
   $\GNP(Y,X)$ with any $b \in \GNP[\Sigma](Y,X)$.
 \end{proof}
 
-\begin{exampletheorem}[Pruning in All-nearest-neighbors]
-  The all-nearest-neighbors algorithm is Figure~\ref{fig:allnntpc} may
+\begin{exampletheorem}[The All-nearest-neighbors Algorithm]
+  The all-nearest-neighbors algorithm in Figure~\ref{fig:allnntpc} may
   be derived from the GNA and extrinsically prunes when references are
   shown to be farther away than queries' nearest-neighbors found so
   far.
@@ -923,26 +923,22 @@ their results cannot affect the global result.
 %  \]
 %  we have $s_0 = \overrightarrow{\min}(s_0,b)$.  Because $s_0$
 %  represents a final result,
-  $
+  \[
   \forall a \in \GNP[\Sigma](\kdroot{Y},\kdroot{X})~~ \exists r \st~ \forall b \in \GNP[\Sigma](Y,X)~~ \overrightarrow{\min}(a,b) = r
-  $
+  \]
   is equivalent\footnote{This claim deserves a proof, but we omit it
   for brevity.} to the extrinsic prune test.  If, for all matching
   $(q,v_a) \in a$ and $(q,v_b) \in b$, we have $v_a < v_b$, then
   $\overrightarrow{\min}(a,b) = a$.  Thus, if for all matching
   $(q,[l_a,u_a]) \in A$ and $(q,[l_b,u_b]) \in B$, with $\eta(A) =
-  \GNP[\Sigma](\kdroot{Q},\kdroot{R})$ and $\eta(B) = \GNP[\Sigma](Q,R)$,
-  we have $u_a \leq l_b$, then we may always choose $r = a$.  In
-  words, we may prune when the lower bound distance between the
-  queries and references is greater than the greatest of the queries'
-  candidate nearest-neighbor distance found so far.
+  \GNP[\Sigma](\kdroot{Q},\kdroot{R})$ and $\eta(B) =
+  \GNP[\Sigma](Q,R)$, we have $u_a \leq l_b$, then we may always
+  choose $r = a$.  Thus, by Lemma~\ref{lem:extrinsic}, we may prune
+  when the lower bound distance between the queries and references is
+  greater than the greatest of the queries' candidate nearest-neighbor
+  distances.  Further, we've already defined the operators needed for
+  the GNA.
 \end{proof}
-\killspace
-\begin{exampletheorem}[The All-nearest-neighbors Algorithm]
-  By Lemma~\ref{lem:allnn}, we may evaluate all-nearest-neighbors via
-  iterative refinement with pruning as shown in the {\bf all-nn}
-  function of Figure~\ref{fig:allnntpc}.
-\end{exampletheorem}
 \killspace
 % \subsection{Thresholded Pruning}
 % \killspace
@@ -1092,9 +1088,12 @@ Both $\vecalpha$ and $\vecrho$ are GNPs by Lemma~\ref{lem:map}.
 When points lie in a metric space, thereby permitting bounding radii, a similarity function monotonically decreasing with distance can be bounded.
 We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$, respectively.
 
-\begin{lemma}[Pruning in $\vecalpha$]
-  We may perform extrinsic pruning when bounds on a subcomputation's summary results are all greater than the best second minimum found so far.
-\end{lemma}
+\begin{theorem}[An Algorithm for $\vecalpha$]
+  The GNA-based algorithm for $\vecalpha$ shown in
+  Figure~\ref{fig:alpharho} computes the correct result and prunes
+  when bounds on a subcomputation's summary results are all greater
+  than the greatest second minimum found so far.
+\end{theorem}
 \killspace
 \killspace
 \begin{proof}
@@ -1115,14 +1114,15 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
   \end{eqnarray*}
   The rest of the proof is nearly identical to that of
   all-nearest-neighbors, but $\otimeshat$ maintains both minima and
-  compared upper bounds pertain to the second minimum.  In short, we
-  may prune when the lower bound of ranges for $\GNP[\Sigma](I,J)$ is
-  greater than the greatest second minimum found so far.
+  compared upper bounds pertain to the second minimum.
 \end{proof}
 
-\begin{lemma}[Pruning in $\vecrho$]
-  We may perform intrinsic pruning when bounds on a subcomputation's summary results render it to have zero contribution to the sum.
-\end{lemma}
+\begin{theorem}[An Algorithm for $\vecrho$]
+  The GNA-based algorithm for $\vecrho$ showin in
+  Figure~\ref{fig:alpharho} computes the correct result and prunes
+  when bounds on a subcomputation's summary results render it to have
+  zero contribution to the sum.
+\end{theorem}
 \killspace
 \killspace
 \begin{proof}
@@ -1141,6 +1141,9 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
   \]
   This set is singleton with value $\{\{(j,0) | j \in J\}\}$ when
   $\simhrectmax(\sigma(J),\sigma(I)) + \falphamax(\sigma(I)) \leq 0$.
+  Thus, Lemma~\ref{lem:intrinsic}, we may prune in this case.  To use
+  the GNA, $\otimeshat$ and $\odothat$ are defined as they are for the
+  two-point correlation.
 \end{proof}
 
 \begin{figure}
