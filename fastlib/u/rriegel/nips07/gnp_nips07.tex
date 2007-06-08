@@ -33,6 +33,7 @@
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\map}{map}
+\DeclareMathOperator*{\minmax}{minmax}
 \DeclareMathOperator{\sign}{sign}
 
 \DeclareMathOperator{\leftchild}{left}
@@ -44,19 +45,25 @@
 \newcommand{\comp}{\mathbin{\circ}}
 \newcommand{\st}{{\rm~s.t.~}}
 
+% Useful commands
+\newcommand{\fig}[1]{Figure~\ref{fig:#1}}
+
 % Standardized pseudocode functions
 %\newcommand{\dist}[2]{||#1-#2||}
-\newcommand{\disthrectmin}{d^{\min}}
-\newcommand{\disthrectmax}{d^{\max}}
+\newcommand{\spos}{^{{\scriptscriptstyle +\!}}}
+\newcommand{\sneg}{^{{\scriptscriptstyle -\!}}}
+
+\newcommand{\disthrectmin}{d^{l}}
+\newcommand{\disthrectmax}{d^{u}}
 \newcommand{\dist}[2]{d(#1,#2)}
 \newcommand{\kdroot}[1]{#1^{\!\text{root}}}
 \newcommand{\kdleft}[1]{#1^{\!L}}
 \newcommand{\kdright}[1]{#1^{\!R}}
 
-\newcommand{\al}{a_l}
-\newcommand{\au}{a_u}
-\newcommand{\dl}{d_l}
-\newcommand{\du}{d_u}
+\newcommand{\al}{a^l}
+\newcommand{\au}{a^u}
+\newcommand{\dl}{d^l}
+\newcommand{\du}{d^u}
 
 % Spacing for standardized pseudocode
 \newcommand{\x}{\\ \hspace{0.15in}}
@@ -67,6 +74,7 @@
 % Variables for affinity propagation
 \newcommand{\eqspace}{\!\!\!\!}
 \newcommand{\cpos}[2]{c^{+}_{#1 \neq #2}}
+\newcommand{\cneg}[2]{c^{-}_{#1 \neq #2}}
 
 \newcommand{\intersect}{\cap}
 
@@ -79,6 +87,15 @@
 \newcommand{\frho}[1]{\rho_{#1}}
 \newcommand{\falpha}[1]{\alpha_{#1}}
 \newcommand{\falphaj}[2]{\alpha_{#1[#2]}}
+
+\newcommand{\falphamax}{\alpha^{u}}
+\newcommand{\falphamin}{\alpha^{l}}
+\newcommand{\frhomax}{\rho^{u}}
+\newcommand{\frhomin}{\rho^{l}}
+
+\newcommand{\alphacand}{v}
+
+\newcommand{\ignoreall}[1]{}
 
 \title{Some Awesome Title}
 
@@ -272,144 +289,158 @@ its straightforward $O(N^2)$ runtime.
 
 % Begin figure
 
+\begin{figure}
+  \begin{displaymath}
+    \begin{array}{ll}
+      \hspace{-0.17in}
+      \begin{array}{l}
+        \begin{array}{l}
+          \text{function tpc}(Q, R)
+          \x \text{if }\disthrectmax(X_1, X_2) < r\text{: return }0
+          \x \text{if }\disthrectmin(X_1, X_1) > r\text{: return } |X_1| \cdot |X_2|
+          \x \text{elif }|X_1| \geq |X_2|\text{:}
+          \xx \text{return tpc}(\kdleft{X_1}, X_2, r) + \text{tpc}(\kdright{X_1}, X_2, r)
+          \x \text{else:}
+          \xx \text{return tpc}(X_1, \kdleft{X_2}, r) + \text{tpc}(X_1, \kdright{X_2}, r)
+          %\\ \\ \\ \\
+        \end{array}
+        \\
+        \begin{array}{l}
+          \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
+          \\ \text{procedure allnn}(Q,R)\text{:}
+          \x \text{if }a(Q) < \disthrectmin(Q, R)\text{: return}
+          \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
+          \xx a(\{q\}) \gets \min(a(q), \dist{Q}{R})
+          \x \text{elif }|Q| \geq |R|\text{:}
+          \xx \text{allnn}(\kdleft{Q}, R); \text{ allnn}(\kdright{Q}, R)
+          \xx a(Q) \gets \max(a(\kdleft{Q}), a(\kdright{Q}))
+          \x \text{else prioritize by min distance:}
+          \xx \text{allnn}(Q, \kdleft{R}); \text{ allnn}(Q, \kdright{R})
+        \end{array}
+      \end{array}
+      & \hspace{-0.2in}
+      \begin{array}{l}
+        \\ \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets (0, 0)
+        \\ P \gets \text{new priority queue};~\text{postpone}(\kdroot{Q}, \kdroot{R})
+        \\ \text{while } P \text{ not empty}
+        \x (Q, R, \dl, \du) \gets \text{pop maximum from }P
+        \x \forall Q' \subseteq Q,~ \au(Q') \gets \max(\au(\kdleft{Q}), \au(\kdright{Q}))
+        \x \forall Q' \subseteq Q,~ \al(Q') \gets \min(\al(\kdleft{Q}), \al(\kdright{Q}))
+        \x \text{if }\al(Q) > 0\text{: label all points in }Q\text{ positive}
+        \x \text{elif }\au(Q) < 0\text{: label all points in }Q\text{ negative}
+        \x \text{else:}
+        \xx \text{recursively, }a(Q') \gets a(Q') - (\dl, \du)
+        \xx \text{postpone}(\kdleft{Q}, \kdleft{R}); \text{ postpone}(\kdleft{Q}, \kdright{R})
+        \xx \text{postpone}(\kdright{Q}, \kdleft{R}); \text{ postpone}(\kdright{Q}, \kdright{R})
+        \\ \text{procedure postpone}(Q, R)\text{:}
+        \x \dl \gets \pi\spos|R\spos|K^{u}(Q, R\spos) + \pi\sneg|R\sneg|K^{l}(Q, R\sneg)
+        \x \du \gets \pi\spos|R\spos|K^{l}(Q, R\spos) + \pi\sneg|R\sneg|K^{u}(Q, R\sneg)
+        \x \forall Q' \subset Q,~ a(Q') \gets a(Q') + (\dl, \du)
+        \x \text{place }(Q, R, \dl, \du)\text{ in }P\text{ at priority }(\du-\dl)
+      \end{array}
+    \end{array}
+  \end{displaymath}
+  \label{fig:allnntpc}
+  \caption{Simple dual-tree algorithms: two-point correlation (tpc) and all-nearest-neighbors (allnn).}
+\end{figure}
+
+Here, we present two canonical dual-tree algorithms: two-point correlation, and all-nearest-neighbors.
+We use spatial trees, where every node $X$ in tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \cup \kdright{X} = X$, with each leaf a single point $\{x\}$.
+We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to upper and lower bounds.
+
+{\bf Two-point correlation.} As a member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two point correlation\footnote{For simplicity, we do not exclude redundant pairs; this is trivially handled algebraicly.} on data set $X$ for radius $r$ is:
 \begin{equation*}
-\begin{array}{ll}
-  \begin{array}{l}
-     \begin{array}{l}
-      \text{tpc}(\kdroot{Q}, \kdroot{R})
-      \\ \text{function tpc}(X, Y, r)
-      \x \text{if }\disthrectmax(X, Y) < r\text{: return }0
-      \x \text{if }\disthrectmin(X, Y) > r\text{: return } |X| \cdot |Y|
-      \x \text{elif }|X| \geq |Y|\text{:}
-      \xx \text{return tpc}(\kdleft{X}, Y, r) + \text{tpc}(\kdright{X}, Y, r)
-      \x \text{else:}
-      \xx \text{return tpc}(X, \kdleft{Y}, r) + \text{tpc}(X, \kdright{Y}, r)
-    \end{array}
-    \\
-    \\
-    \begin{array}{l}
-      \text{for all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
-      \\ \text{allnn}(\kdroot{Q}, \kdroot{R})
-      \\ \text{procedure allnn}(Q,R)\text{:}
-      \x \text{if }a(Q) < \disthrectmin(Q, R)\text{: return}
-      \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
-      \xx a(\{q\}) \gets \min(a(q), \dist{Q}{R})
-      \x \text{elif }|Q| \geq |R|\text{:}
-      \xx \text{allnn}(\kdleft{Q}, R); \text{ allnn}(\kdright{Q}, R)
-      \xx a(Q) \gets \max(a(\kdleft{Q}), a(\kdright{Q}))
-      \x \text{else prioritize by min distance:}
-      \xxx \text{allnn}(Q, \kdleft{R}); \text{ allnn}(Q, \kdright{R})
-    \end{array}
-  \end{array}
-  &
-  \begin{array}{l}
-    \text{for all nodes }Q \subseteq \kdroot{Q}\text{: }\al(Q) \gets 0; \au(Q) \gets 0
-    \\ P \gets \text{new FIFO queue}
-    \\ \text{put}(\kdroot{Q}, \kdroot{R})
-    \\ \text{while } P \text{ not empty}
-    \x (Q, R, \dl, \du) \gets \text{dequeue}(P)
-    \x \text{if }\al(Q) > 0\text{: label all points in }Q\text{ positive}
-    \x \text{elif }\au(Q) < 0\text{: label all points in }Q\text{ negative}
-    \x \text{else:}
-    \xx \text{apply}(Q, -\dl, -\du)
-    \xx \text{put}(\kdleft{Q}, \kdleft{R}); \text{ put}(\kdleft{Q}, \kdright{R})
-    \xx \text{put}(\kdright{Q}, \kdleft{R}); \text{ put}(\kdright{Q}, \kdright{R})
-    \\
-    \\ \text{procedure put}(Q, R)\text{:}
-    \x \dl \gets \pi^+|R^+|K^{\max}(Q, R^+) + \pi^-|R^-|K^{\min}(Q, R^-)
-    \x \du \gets \pi^+|R^+|K^{\min}(Q, R^+) + \pi^-|R^-|K^{\max}(Q, R^-)
-    \x \text{apply}(Q, \dl, \du)
-    \x P \gets P + \{(Q, R, \dl, \du)\}
-    \\
-    \\ \text{procedure apply}(Q, \dl, \du)\text{:}
-    \x \text{for all nodes }Q' \subseteq Q\text{: } \al(Q) \gets \al(Q) - \dl
-    \x \text{for all nodes }Q' \subseteq Q\text{: } \au(Q) \gets \au(Q) - \du
-  \end{array}
-\end{array}
+\sum_{x_1 \in X} \sum_{x_2 \in X} I(d(x_1, x_2) \leq r)
 \end{equation*}
+\noindent for indicator function $I$.
+\fig{allnntpc} shows a formulation that recursively considers a subset pair $X_1$ and $X_2$, returning immediately if all points in $X_1$ and $X_2$ are completely inside or outside the radius.
 
-% End figure
+{\bf All nearest neighbors.} In applications from manifold learning to computational physics, it is often desirable to find for a batch of queries $Q$ the nearest neighbors from reference set $R$:
+\begin{equation*}
+\sum_{q \in Q} \argmin_{r \in R} d(q,r)
+\end{equation*}
+\noindent with the exception $d(q,q) = \infty$.
+To achieve speedup, one maintains for each recursive subset of queries the furthest candidate neighbor found.
+If a considered set of references is farther away than this distance, no further exploration is required.
 
-There exist many problems that initially appear to be quadratic or
-worse in nature, involving consideration of all pairs or larger
-groupings of inputs, but are later seen to have efficient algorithms.
-These algorithms exploit a high-order formulation of
-divide-and-conqure, often representing inputs in spatial trees and
-using distance bounds between regions to guide the order of
-computation.  Some examples include all-nearest-neighbors,
-nonparametric Bayes classification, and the $n$-point correlation.
+{\bf Nonparametric Bayes classification.}
+A simple kernel-based classifier labels each point in $Q$ positive or negative by weighing the density generated by a kernel at each training example in $R\spos$ and $R\sneg$, weighed respectively by priors $\pi\spos$ and $\pi\sneg$:
+\begin{equation*}
+\map_{q \in Q} I\!\!\left(\sum_{r \in R\spos} \pi\spos K(q,r) - \sum_{r \in R\sneg} \pi\sneg K(q,r) \geq 0 \right)
+\end{equation*}
+\noindent for distance-based kernel $K$.
+Each subset of queries maintains an upper and lower bound on the difference of the sums, and is labelled when this range no longer contains zero.
+A simple non-recursive algorithm uses a priority queue, relying on the fact that iterating over all children is amortized linear in quite inexpensive compared to the recursion\footnote{In practice, some of these updates may be performed lazily.}.
 
-\subsection{All-nearest-neighbors}
-
-The all-nearest-neighbors problem (All-NN) aims to find for each
-point in some set $Q$ of queries the nearest point from a set $R$ of
-references, possibly identical to $Q$.  The problem is represented
-mathematically as
-\[
-\map_{1 \leq i \leq |Q|}\argmin_{1 \leq j \leq |R|} d(q_i,r_j),
-\]
-where metric $d(q_i,r_i) \equiv \infty$ if $Q = R$.
-
-[[Examples of uses.]]
-
-All-NN is solved efficiently by Algorithm~\ref{alg:all-nn}, which
-works on trees formed for both queries and references.  It maintains
-for each query node an upper bound on the distance to any of its
-points' nearest neighbors; in short, the maximum distance to any
-candidate nearest neighbor seen so far.  When a pair of query and
-reference nodes have a lower-bound distance greater than the query
-node's stored upper bound, it is impossible for the reference node to
-contribute any of the contained queries' nearest neighbors and all
-work between the nodes may be pruned.
-
-\subsection{Kernel Density Estimation}
-
-Kernel Density Estimation (KDE) wraps a small probability density
-function around each point in some data set in order to estimate that
-set's distribution.  It is then of interest to determine each point's
-density in order to detect outliers.  Alternately, we may find
-densities for a set of queries not from the original data set.
-\[
-\map_{q \in Q} \sum_{r \in R} K_h(q,r).
-\]
-[[Perhaps mention fitting bandwidth with LOO and L2E, etc.]]
-
-\subsection{Nonparametric Bayes Classification}
-
-Nonparametric Bayes classification (NBC) applies Bayes' Rule to the
-results of kernel density estimation in order to predict the class of
-each of some set of queries $Q$ given sets of references $R_k$ for
-classes $C_k$, $1 \leq k \leq M$.  The problem is given by
-\[
-\map_{1 \leq i \leq |Q|} \argmax_{1 \leq k \leq M} \sum_{1 \leq j \leq |R_k|} K_{h_k}(q_i,r_j),
-\]
-where $K(q_i,r_i) \equiv 0$ if $Q = R$, permitting computation for
-leave-one-out cross-validation.
-
-[[Examples of uses.]]
-
-Algorithm~\ref{alg:nbc} demonstrate an efficient means of computing
-NBC in the two-class case.  It forms trees for all involved sets and
-maintains at query nodes both upper and lower bounds on density
-contributions from the various classes.  When one class's lower-bound
-joint probability (found by multiplying the class's lower-bound
-density and prior) is greater than all other's upper-bounds, then we
-may safely conclude that all queries within the node should be
-attributed to that class.
-
-\subsection{Multi-radius $n$-point Correlation}
-
-The $n$-point correlation is found by counting all unique $n$-tuples
-of points within some radius $r$ of one another.  It is found with
-\[
-\sum_{x_{i_1} \in X} \cdots \sum_{x_{i_n} \in X} I(d(x_{i_j},x_{i_k}) < r \forall j,k),
-\]
-where $I(d(x_{i_j},x_{i_k}) < r \forall j,k) \equiv 0$ unless $i_1 <
-\cdots < i_n$.
-
-[[Examples of uses.]]
-
-[[Description of algorithm.]]
+%  The all-nearest-neighbors problem (All-NN) aims to find for each
+%  point in some set $Q$ of queries the nearest point from a set $R$ of
+%  references, possibly identical to $Q$.  The problem is represented
+%  mathematically as
+%  \[
+%  \map_{1 \leq i \leq |Q|}\argmin_{1 \leq j \leq |R|} d(q_i,r_j),
+%  \]
+%  where metric $d(q_i,r_i) \equiv \infty$ if $Q = R$.
+%  
+%  [[Examples of uses.]]
+%  
+%  All-NN is solved efficiently by Algorithm~\ref{alg:all-nn}, which
+%  works on trees formed for both queries and references.  It maintains
+%  for each query node an upper bound on the distance to any of its
+%  points' nearest neighbors; in short, the maximum distance to any
+%  candidate nearest neighbor seen so far.  When a pair of query and
+%  reference nodes have a lower-bound distance greater than the query
+%  node's stored upper bound, it is impossible for the reference node to
+%  contribute any of the contained queries' nearest neighbors and all
+%  work between the nodes may be pruned.
+%  
+%  \subsection{Kernel Density Estimation}
+%  
+%  Kernel Density Estimation (KDE) wraps a small probability density
+%  function around each point in some data set in order to estimate that
+%  set's distribution.  It is then of interest to determine each point's
+%  density in order to detect outliers.  Alternately, we may find
+%  densities for a set of queries not from the original data set.
+%  \[
+%  \map_{q \in Q} \sum_{r \in R} K_h(q,r).
+%  \]
+%  [[Perhaps mention fitting bandwidth with LOO and L2E, etc.]]
+%  
+%  \subsection{Nonparametric Bayes Classification}
+%  
+%  Nonparametric Bayes classification (NBC) applies Bayes' Rule to the
+%  results of kernel density estimation in order to predict the class of
+%  each of some set of queries $Q$ given sets of references $R_k$ for
+%  classes $C_k$, $1 \leq k \leq M$.  The problem is given by
+%  \[
+%  \map_{1 \leq i \leq |Q|} \argmax_{1 \leq k \leq M} \sum_{1 \leq j \leq |R_k|} K_{h_k}(q_i,r_j),
+%  \]
+%  where $K(q_i,r_i) \equiv 0$ if $Q = R$, permitting computation for
+%  leave-one-out cross-validation.
+%  
+%  [[Examples of uses.]]
+%  
+%  Algorithm~\ref{alg:nbc} demonstrate an efficient means of computing
+%  NBC in the two-class case.  It forms trees for all involved sets and
+%  maintains at query nodes both upper and lower bounds on density
+%  contributions from the various classes.  When one class's lower-bound
+%  joint probability (found by multiplying the class's lower-bound
+%  density and prior) is greater than all other's upper-bounds, then we
+%  may safely conclude that all queries within the node should be
+%  attributed to that class.
+%  
+%  \subsection{Multi-radius $n$-point Correlation}
+%  
+%  The $n$-point correlation is found by counting all unique $n$-tuples
+%  of points within some radius $r$ of one another.  It is found with
+%  \[
+%  \sum_{x_{i_1} \in X} \cdots \sum_{x_{i_n} \in X} I(d(x_{i_j},x_{i_k}) < r \forall j,k),
+%  \]
+%  where $I(d(x_{i_j},x_{i_k}) < r \forall j,k) \equiv 0$ unless $i_1 <
+%  \cdots < i_n$.
+%  
+%  [[Examples of uses.]]
+%  
+%  [[Description of algorithm.]]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Generalized $N$-body Problems}
@@ -941,49 +972,51 @@ results.]]
 
 %--------- Affinity Propagation Starts
 
-Affinity propagation\cite{affinity} is a recent clustering technique that minimizes a metric the authors deem {\it net similarity}.
-The similarity between points $x_i$ and $x_k$ is labeled $\simil{i}{j}$, which is often the negative squared Euclidean distance $-||x_i - x_j||^2$, with the special case that $\simil{i}{i}$ is a parameter $p$.
+Affinity propagation\cite{affinity} is a recent clustering technique that minimizes a metric called {\it net similarity}.
+The metric $\simil{i}{j}$ defines the similarity between points $x_i$ and $x_j$, with the special case that $\simil{i}{i}$ is a non-zero parameter $p$.
 The goal is to find a set of exemplars that maximizes the sum of similarities from each exemplar to all its cluster members, including itself; the number of clusters is determined by the penalty $p$ imposes on cluster creation.
-The computation involves iterative refinement of the responsibility message $\respo{i}{j}$ and availability message $\avail{i}{j}$, whose update steps are defined:
-\begin{eqnarray*}
-  \respo{i}{j} \eqspace&\gets&\eqspace \simil{i}{j} - \max_{j' \neq j} (\avail{i}{j'} + \simil{i}{j'})
-  \\
-  \avail{i}{j} \eqspace&\gets&\eqspace \min \! \left(\! 0, \respo{j}{j} + \sum_{i' \neq i,j} \max(0, \respo{i'}{j})\!\right)
-  \\
-  \avail{j}{j} \eqspace&\gets&\eqspace \sum_{i' \neq j} \max(0, \respo{i'}{k})
-\end{eqnarray*}
+The algorithm iteratively refines a responsibility message $\respo{i}{j}$ and an availability message $\avail{i}{j}$, whose update steps are defined:
+\begin{equation*}
+  \begin{array}{lcr}
+    \respo{i}{j} \gets \simil{i}{j} - \max_{j' \neq j} (\avail{i}{j'} + \simil{i}{j'})
+    &\quad&
+    \avail{i}{j} \gets \cneg{i}{j}( \sum_{i' \neq i} ( \cpos{i'}{j}(\respo{i'}{j}) ) )
+  \end{array}
+\end{equation*}
 
 % Ryan, I am defining \alpha as the negative max, because it makes things look much prettier.
 
-\noindent Trivially, $\respo{}{}$ and $\avail{}{}$ can be stored as matrices.
-However, it is not necessary to store the entirety of $\respo{}{}$ and $\avail{}{}$; instead, only a sum and a maximum is needed.
-We define single-argument $\frho{j}$ and $\falpha{i}$ as the aggregate operations in use\footnote{
-Note $\falphaj{i}{j}$ requires argument $j$ only for exclusion from the $\max$; computationally, one finds the first and second maximum, and chooses the first or second maximum depending on $j$.}:
-\begin{eqnarray*}
-  \falphaj{i}{j} \eqspace&\gets&\eqspace - \max_{j' \neq i,j} (\avail{i}{j'} + \simil{i}{j'})
-  \\
-  \frho{j} \eqspace&\gets&\eqspace \respo{j}{j} + \sum_{i' \neq j} \left( \max(0, \respo{i'}{j}) \right)
-\end{eqnarray*}
+\noindent where $\cpos{i}{j}(x)$ equals $x$ when $i=j$, and $\max(x,0)$ otherwise; likewise, $\cneg{i}{j}$ for $\min(x, 0)$.
+Trivially, $\respo{}{}$ and $\avail{}{}$ are $N \times N$ matrices, where $N$ is the number of points.
+To create a sub-quadratic GNP, we define vectors $\vecalpha$ and $\vecrho$, which we compute instead:
+\begin{equation*}
+  \begin{array}{lcr}
+    \falphaj{i}{j} \gets \min_{j' \neq j} (-\avail{i}{j'} - \simil{i}{j'})
+    &\quad&
+    \frho{j} \gets \sum_{i'} ( \cpos{i'}{j}(\respo{i'}{j}) )
+  \end{array}
+\end{equation*}
 
-\noindent from which we can easily compute the original expressions:
-\begin{eqnarray*}
-  \respo{i}{j} \eqspace&\gets&\eqspace \simil{i}{j} + \falphaj{i}{j}
-  \\
-  \avail{i}{j} \eqspace&\gets&\eqspace \min \left(0, \frho{j} - \max(0, \respo{i}{j}) \right)
-  \\
-  \avail{j}{j} \eqspace&\gets&\eqspace \frho{j} - \respo{j}{j}
-\end{eqnarray*}
+\noindent Note $\falphaj{i}{j}$ depends on $j$ only for exclusion from $\min$; computationally, one finds the first and second minimum, and chooses the first or second depending on $j$.
+Substituting, $\respo{}{}$ and $\avail{}{}$ are:
+\begin{equation*}
+  \begin{array}{lcccr}
+    \respo{i}{j} = \simil{i}{j} + \falphaj{i}{j}
+    &\quad&
+    \avail{i}{j} = \cneg{i}{j} (\frho{j} - \cpos{i}{j}(\respo{i}{j}) )
+  \end{array}
+\end{equation*}
 
 \noindent 
-After a bit of algebraic substitution, we can define $\falpha{i}$ and $\frho{j}$ in terms of each other:
+A bit of algebraic substitution defines $\vecalpha$ and $\vecrho$ in terms of each other:
+\begin{equation*}
+  \begin{array}{lr}
+    \vecalpha \gets \map_{i} \argmin^2_{j} \left( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} \right)
+    &~
+    \vecrho \gets \map_{j} \sum_{i} \left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)
+  \end{array}
+\end{equation*}
 
-\begin{eqnarray*}
-  \vecrho \eqspace&\gets&\eqspace \map_{j} \sum_{i} \left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)
-  \\
-  \vecalpha \eqspace&\gets&\eqspace \map_{i} \min^2_{j} \left( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} \right)
-\end{eqnarray*}
-
-\noindent where $\cpos{i}{j}(x)$ is $x$ when $i=j$, and $\max(x,0)$ otherwise.
 We now have a problem nearly\footnote{To aid convergence, affinity propagation adds noise to the similarity matrix and dampens both $\respo{}{}$ and $\avail{}{}$ between time-steps.  Since we store no matrices, we both dampen and add noise to $\vecrho$.} indentical to traditional affinity propagation.
 However, we can show that this is a generalized $N$-body problem.
 
@@ -997,17 +1030,87 @@ We may now develop a dual-tree algorithm.
 First, we build a tree on the data points, assuming they are in a metric space\footnote{Euclidean distance over real vectors is the example we implemented.}.
 Notationally, we denote $Q'$ a subset or node of points that are being $\map$ed over, and $R'$ as a subset or node of points for the inner operator.
 
-For $\vecrho$, there is a simple intrinsic prune.
-We can show $\Sigma_{\Theta_{\vecrho}}(Q', R') = \{\vec{0}\}$ when $R'$ contributes nothing to the summation for all of $Q'$ and allows a prune:
-$$\forall_{j \in Q'}, \min_{i \in R'} \left( \simil{i}{j} + \falphaj{i}{j} \right) < 0$$
+Stub: For $\vecrho$, there is a simple intrinsic prune.
+We can bound the contribution to the summation as follows:
+$$
+  \begin{array}{rcl}
+    \sigma_{\rho}(Q,R) &=& \minmax_{j \in Q} \sum_{i \in R} ( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) )
+    \\ &=& [|R|(S^l(\sigma(Q),\sigma(R)) + \falphamin(\sigma(R))),
+            |R|c^{+}(S^u(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)))]
+  \end{array}
+$$
 
-A suitable upper bound for the minimum
+\noindent where $\falphamin$ is the least first minimum $\alpha$, $\falphamax$ is the greatest second minimum $\alpha$, $S^l$ and $S^u$ are the bounds on the similarity matrix.
+Both $\falphamin$ and $\falphamax$ can be computed in a linear-time bottom-up pass, whereas $S^l$ and $S^u$ computed using bounding boxes, and parameter $p$ if the nodes overlap.
 
-\noindent This is the case where .
+Stub: For $\vecalpha$:
+$$
+  \begin{array}{rcl}
+    \sigma_{\alpha}(Q,R) &=& \minmax_{i \in Q} \min^2_{j \in R} ( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} )
+    \\
+        &=& [
+        \falphamin(\sigma(Q)) + \frhomin(\sigma(R)),
+    \\ && \text{  }
+          c^{+}(c^{+}(S^u(\sigma(Q), \sigma(R)) + \falphamax(\sigma(Q))) - \frhomin(\sigma(R))) - \falphamax(\sigma(Q))
+        ]
+  \end{array}
+$$
 
-For $\vecalpha$, we use an extrinsic prune.
-For each node of queries $Q'$, we keep track of the largest candidate second-minimum found.
-Next, we provide a lower bound candidate minimum between $Q'$ and $R'$.
+\begin{figure}
+  \begin{equation*}
+    \begin{array}{ll}
+      \begin{array}{l}
+        \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }\falphamax{'}(Q) \gets \infty
+        \\ \text{init all points }q \in \kdroot{Q}\text{: }\falphaj{q}{1\text{ and }2}' \gets (\emptyset, \infty)
+        %\\ \text{alpha}(\kdroot{Q}, \kdroot{R})
+        %\\
+        \\ \text{let }\falphamin_{\text{cand}}(Q, R) = \falphamin(\sigma(Q)) + \frhomin(\sigma(R))
+        \\ \text{procedure alpha}(Q,R)\text{:}
+        \x \text{if }\falphamax{'}(Q) < \falphamin_{\text{cand}}(Q, R)\text{: return}
+        \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
+        \xx \alphacand \gets \cpos{q}{r}(\cpos{q}{r}(\simil{q}{r} + \falphaj{q}{r}) - \frho{r}) - \simil{q}{r}
+        \xx \text{if }\alphacand < \falphaj{q}{1}'\text{: } \falphaj{q}{2}' \!\gets\! \falphaj{q}{1}'; \falphaj{q}{1} \!\gets\! (r, \alphacand))
+        \xx \text{elif }\alphacand < \falphaj{q}{2}'\text{: } \falphaj{q}{2}' \!\gets\! (r, \alphacand)
+        \xx \falphamax{'}(\{q\}) \gets \falphaj{q}{2}'
+        \x \text{elif }|Q| \geq |R|\text{:}
+        \xx \text{alpha}(\kdleft{Q}, R); \text{ alpha}(\kdright{Q}, R)
+        \xx \falphamax{'}(Q) \gets \max(\falphamax{'}(\kdleft{Q}), \falphamax{'}(\kdright{Q}))
+        \x \text{else prioritize by min }\falphamin_{\text{cand}}(Q,\{\kdleft{R}, \kdright{R}\}){:}
+        \xx \text{alpha}(Q, \kdleft{R}); \text{ alpha}(Q, \kdright{R})
+      \end{array}
+      &
+      \begin{array}{l}
+        \text{init all points }q \in \kdroot{Q}\text{: }
+        \x \frho{q}'\gets c^{-}(\simil{q}{q} + \falphaj{q}{q})
+        %\\ \text{rho}(\kdroot{Q}, \kdroot{R})
+        %\\
+        \\ \text{procedure rho}(Q,R)\text{:}
+        \x \text{if }S^u(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)) \leq 0\text{:}
+        \xx \text{return}
+        \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
+        \xx \frho{q}' \gets \frho{q}' + c^{+}(\simil{r}{q} + \falphaj{r}{q})
+        \x \text{elif }|Q| \geq |R|\text{:}
+        \xx \text{rho}(\kdleft{Q}, R); \text{ rho}(\kdright{Q}, R)
+        \x \text{else:}
+        \xx \text{rho}(Q, \kdleft{R}); \text{ rho}(Q, \kdright{R})
+      \end{array}
+    \end{array}
+  \end{equation*}
+  \label{fig:alpharho}
+\end{figure}
+
+{\bf Speed.}
+
+We implemented the above algorithms for computing $\vecalpha$ and $\vecrho$ in C++ and compare to the C code provided by Frey and Dueck.
+
+
+We compare our algorithm to the C code provided by Frey and Dueck\cite{frey_dueck_code}.
+Their code implements 
+
+\fig{affinity_speed}.
+
+
+ for even a million points, two trillion single-precision floating-point numbers are required -- eight terabytes of RAM.
 
 
 \appendix
