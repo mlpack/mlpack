@@ -305,6 +305,7 @@ its straightforward $O(N^2)$ runtime.
           %\\ \\ \\ \\
         \end{array}
         \\
+        \\
         \begin{array}{l}
           \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
           \\ \text{procedure allnn}(Q,R)\text{:}
@@ -341,10 +342,10 @@ its straightforward $O(N^2)$ runtime.
     \end{array}
   \end{displaymath}
   \label{fig:allnntpc}
-  \caption{Simple dual-tree algorithms: two-point correlation (tpc) and all-nearest-neighbors (allnn).}
+  \caption{Pseudocode for three simple dual-tree algorithms: two-point correlation (tpc), all-nearest-neighbors (allnn), and nonparametric Bayes classification.}
 \end{figure}
 
-Here, we present two canonical dual-tree algorithms: two-point correlation, and all-nearest-neighbors.
+Here, we present three canonical dual-tree algorithms: two-point correlation, all-nearest-neighbors, and nonparametric Bayes classification.
 We use spatial trees, where every node $X$ in tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \cup \kdright{X} = X$, with each leaf a single point $\{x\}$.
 We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to upper and lower bounds.
 
