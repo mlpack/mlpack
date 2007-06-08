@@ -28,7 +28,7 @@ struct Parameters {
 	std::string train_file_;
 	std::string test_file_;
 	std::string out_file_;	
-	int32 knns_;
+	index_t knns_;
 	std::string memory_file_;
   BinaryDataset<float32> train_data_;	
   BinaryDataset<float32> test_data_;
