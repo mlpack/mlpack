@@ -191,7 +191,7 @@ of well-known statistical learning methods, each representing certain
 unique challenges for the strategy, including
 all-$k$-nearest-neighbors (a generalization of $k$-nearest-neighbors)
 \cite{nips2000paper}, kernel density estimation \cite{nips2000paper,
-kde-siamdm, kde-aistats, kde-nips-dong, kde-uai-dong},
+kde-siamdm, kde-nips-dong, kde-uai-dong},
 $k$-nearest-neighbor classification \cite{ting-liu}, kernel discriminant
 analysis (or nonparametric Bayes classification) [[nbc-phystat,
 \cite{nbc-compstat}]], and $n$-point correlation functions [[\cite{nips2000paper,
@@ -201,8 +201,8 @@ results, e.g.~\cite{science03, nature05}.  For each of these
 problems, no overall faster algorithms are known.  Other machine
 learning problems which have been treated using this strategy include
 dimensionality reduction methods \cite{hochreiter00beyond}, nonparametric
-belief propagation \cite{alex-ihler}, multiple tracking \cite{kbc:stch}, linear algebraic machine learning methods \cite{freitas_fast},
-and particle filters \cite{klaas_fast, klaas-toward, klaas-fast}.
+belief propagation \cite{alex-ihler}, linear algebraic machine learning methods \cite{freitas_fast},
+and particle filters \cite{klaas-toward}.
 Many other current and future machine learning methods remain to be
 treated in depth with this strategy, not to mention a large array of
 related fundamental problems in computational geometry, physics, and
@@ -536,10 +536,9 @@ is $O(N^2)$.
   \sum_{k \in C} \omega_k \phi(x | \mu_k, \Sigma_k)$ is a second-order
   reduce problem.
 \end{example}
-\killspace
-Certain constraints are required by the algorithmic technique
-presented in the next section, though we will later introduce a
-transform to help work around them.
+%Certain constraints are required by the algorithmic technique
+%presented in the next section, though we will later introduce a
+%transform to help work around them.
 \begin{definition}
   Second-order reduce problem $\Theta$ is {\bf regular} if $g(y,a) =
   a$ for all $y \in \mathcal{Y}$ and $a \in \mathcal{A}$, and is thus
@@ -625,7 +624,7 @@ regions, possibly with permuted orderings of rows or columns.
 	\multicolumn{7}{c}{\scriptstyle \odot} \\
 	\scriptstyle ( \!\!\!&\scriptstyle\!\!\! f(x_2,y_2) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! \cdots \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_N,y_2) \!\!\!&\scriptstyle\!\!\! ) \\
 	\multicolumn{7}{c}{\scriptstyle \odot} \\
-	\multicolumn{7}{c}{\scriptstyle \vdots} \\
+	\multicolumn{7}{c}{\scriptscriptstyle \vdots} \\
 	\multicolumn{7}{c}{\scriptstyle \odot} \\
 	\scriptstyle ( \!\!\!&\scriptstyle\!\!\! f(x_2,y_M) \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! \cdots \!\!\!&\scriptstyle\!\!\! \otimes \!\!\!&\scriptstyle\!\!\! f(x_N,y_M) \!\!\!&\scriptstyle\!\!\! )
       \end{array} \right)
@@ -1126,6 +1125,7 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
   postprocessing function but has simpler bounds.  Let $\sigma$,
   $\simhrectmax$, $\simhrectmin$, $\falphamax$, and $\falphamin$ be
   defined as above.  Summary results are
+  \killspace
   \[
   \sigmahat_{\rho}(J,I) = \eta \!\left( \left\{ \left.\! \left( j, \left[ \begin{array}{ll}
     \lefteqn{|I| \cdot \ocpos{\true}(\simhrectmin(\sigma(J),\sigma(I)) + \falphamin(\sigma(I)),} \\
@@ -1205,10 +1205,10 @@ Second, data sets with unusually high intrinsic dimensionality may diminish the 
 Nonetheless, we demonstrate the value of the generalized $N$-body approach for deriving new efficient algorithms that display orders of magnitude speedup for a wide range of practical problems.
 
 \begin{figure}
-  \begin{minipage}{2.8in}
-    \includegraphics[width=2.6in,height=1.8in]{r-speed.ps}
+  \begin{minipage}{2.6in}
+    \includegraphics[width=2.2in,height=1.4in]{r-speed.ps}
   \end{minipage}
-  \begin{minipage}{2.5in}
+  \begin{minipage}{2.6in}
 %  \begin{tabular}{lr}
 %    \includegraphics[width=2.6in,height=1.8in]{r-speed.ps}
 %    &
@@ -1219,6 +1219,7 @@ Nonetheless, we demonstrate the value of the generalized $N$-body approach for d
 	We set $p$ to the median similarity, calculated as the negative squared radius having a $50\%$ two-point correlation.
 	System: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
   \end{minipage}
+  \killspace
 \end{figure}
 
 \appendix
@@ -1283,7 +1284,7 @@ Nonetheless, we demonstrate the value of the generalized $N$-body approach for d
 %   \]
 % \end{proof}
 
-\small{
+\footnotesize{
 \bibliographystyle{abbrv}
 \bibliography{gnp_nips07}
 }
