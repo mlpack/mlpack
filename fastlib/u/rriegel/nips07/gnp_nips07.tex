@@ -64,6 +64,9 @@
 \newcommand{\kdleft}[1]{#1^{\!L}}
 \newcommand{\kdright}[1]{#1^{\!R}}
 
+\newcommand{\simhrectmin}{S^{l}}
+\newcommand{\simhrectmax}{S^{u}}
+
 \newcommand{\al}{a^l}
 \newcommand{\au}{a^u}
 \newcommand{\dl}{d^l}
@@ -821,20 +824,23 @@ Postprocessing function $h$ introduces a third form of pruning.
 \killspace
 \begin{proof}
   Yet again, let $\sigma_x$ find bounding boxes for points in
-  $\mathcal{X}$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower
-  bound distances between bounding boxes.  We represent summary
-  results with
+  $\mathcal{X}$ and let $\disthrectmax$ and $\disthrectmin$ find upper
+  and lower bound distances between bounding boxes.  We represent
+  summary results with
   \begin{eqnarray*}
-    \GNP[\sigmahat](\sigma_x(Q),\sigma_x(R)) & = & \eta \left( \left\{ \left.\! \left( q, \left[ \begin{array}{ll}
-	\lefteqn{|R^+| \cdot \pi^+ K(D^{\!U}(\sigma_x(Q),\sigma_x(R)))} \\
-	& \mbox{} + |R^-| \cdot \pi^- K(D^{\!L}(\sigma_x(Q),\sigma_x(R))), \\
-	\lefteqn{|R^+| \cdot \pi^+ K(D^{\!L}(\sigma_x(Q),\sigma_x(R)))} \\
-	& \mbox{} + |R^-| \cdot \pi^- K(D^{\!U}(\sigma_x(Q),\sigma_x(R)))
-    \end{array} \right] \right) \right| q \in Q \right\} \right) , \\
+    \GNP[\sigmahat](\sigma_x(Q),\sigma_x(R)) & = & \eta \!\left( \left\{ \left.\! \left( q, \left[ \begin{array}{ll}
+	\lefteqn{|R^+| \cdot \pi^+ \cdot K(\disthrectmax(\sigma_x(Q),\sigma_x(R)))} \\
+	& \mbox{} + |R^-| \cdot \pi^- \cdot K(\disthrectmin(\sigma_x(Q),\sigma_x(R))), \\
+	\lefteqn{|R^+| \cdot \pi^+ \cdot K(\disthrectmin(\sigma_x(Q),\sigma_x(R)))} \\
+	& \mbox{} + |R^-| \cdot \pi^- \cdot K(\disthrectmax(\sigma_x(Q),\sigma_x(R)))
+    \end{array} \right] \right) \right| q \in Q \right\} \right)\! , \\
     \eta(A) \otimeshat \eta(B) & = & \eta(\{(q,[l_a + l_b,u_a + u_b)]) | (q,[l_a,u_a]) \in A, (q,[l_b,u_b]) \in B\}), \\
     \eta(A) \odothat \eta(B) & = & \eta(A \cup B),
   \end{eqnarray*}
-  where $\eta$ converts types as before.  We may reason about $S_0$
+  where $\eta$ converts types as before.
+
+  
+  We may reason about $S_0$
   directly from $\GNP[\Sigma](Q_{root},R_{root})$.  If, for all
   $(q,[l,u]) \in A$, with $P(A) = \GNP[\Sigma](Q_{root},R_{root})$ and
   $q \in Q$, we have $l > 0$, $u < 0$, or $l = u = 0$, then no $p \in
@@ -892,19 +898,20 @@ Postprocessing function $h$ introduces a third form of pruning.
 
 % \subsection{Practical Considerations: Trees, Bounds}
 
-\section{Derivation of Example Algorithms}
+% \section{Derivation of Example Algorithms}
 
 \section{Affinity Propagation}
 
 %--------- Affinity Propagation Starts
 
 Affinity propagation \cite{affinity} is a recent clustering technique
-that chooses {\em exemplars} from the data such in attempt to maximize
-the sum of similarities between all points and their nearest exemplar.
-Two points $x_i$ and $x_j$ have similarity $\simil{i}{j}$, and special
-case $\simil{i}{i}$ is set to parameter $p$, the {\em preference} of
-points to be exemplars.  The number of clusters to find is not
-explicitly specified, but is positively correlated with $p$.
+that chooses {\em exemplars} from a data set $X \subset \mathcal{X}$
+such in attempt to maximize the sum of similarities between all points
+and their nearest exemplar.  Two points $x_i$ and $x_j$ have
+similarity $\simil{i}{j}$, and special case $\simil{i}{i}$ is set to
+parameter $p$, the {\em preference} of points to be exemplars.  The
+number of clusters to find is not explicitly specified, but is
+positively correlated with $p$.
 
 The algorithm alternateingly updates messages $\respo{i}{j}$ and
 $\avail{i}{j}$ with
@@ -936,50 +943,78 @@ first.  We further substitute
   &
   \vecrho \gets \map_{j} \sum_{i} \!\left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)\! .
 \end{array} \]
-Both $\vecalpha$ and $\vecrho$ are GNPs by Lemma~\ref{lem:map}.  They
-support extrinsic and intrinsic prunes, respectively.
+Both $\vecalpha$ and $\vecrho$ are GNPs by Lemma~\ref{lem:map}.  When
+points are in a metric space, thereby permitting bounding radii, and
+similarity is a monotonically decreasing function of distance, thereby
+allowing us to bound it given bounding radii, $\vecalpha$ and
+$\vecrho$ support extrinsic and intrinsic prunes, respectively.
 
 \begin{lemma}[Pruning in $\vecalpha$]
+  We may perform extrinsic pruning when bounds on a component's
+  results render them greater than the greatest second minimum found
+  so far.
 \end{lemma}
+\begin{proof}
+  Let $\sigma$ find bounding radii for points in $\mathcal{X}$ as well
+  as bounds on the current values of $\vecalpha$ and $\vecrho$
+  corresponding to the points.  Let $\simhrectmax$ and $\simhrectmin$
+  find upper and lower bound similarities between bounding radii and
+  let $\falphamax$, $\falphamin$, $\frhomax$, and $\frhomin$ extract
+  the bounds on their respective vectors.  Summary
+  results\footnote{Shown ranges are squared because summary results
+  must be found for both minima.} are
+  \[
+  \sigmahat_{\alpha}(\sigma(Q),\sigma(R)) = \left\{ \begin{array}{lrr}
+    \eta(\{(q,[l, u]^2) | q \in Q\}) & \multicolumn{2}{r}{\mbox{if } Q \cap R = \emptyset,} \\
+    \multicolumn{2}{l}{\eta(\{(q,[\falphamin(\sigma(Q)) - \frhomax(\sigma(Q)), u]^2) | q \in Q\})} & \mbox{otherwise}
+  \end{array} \right. \\
+  \]
+  for $\eta$ defined similarly to that from all-nearest-neighbors and
+  with
+  \begin{eqnarray*}
+    l & = & \max(0,\max(0,\simhrectmax(\sigma(Q),\sigma(R)) + \falphamin(\sigma(Q))) - \frhomax(\sigma(Q))) - \simhrectmax(\sigma(Q),\sigma(R)), \\
+    u & = & \max(0,\max(0,\simhrectmin(\sigma(Q),\sigma(R)) + \falphamax(\sigma(Q))) - \frhomin(\sigma(Q))) - \simhrectmin(\sigma(Q),\sigma(R)).
+  \end{eqnarray*}
+  The rest of the proof is nearly identical to that of
+  all-nearest-neighbors, but $\otimeshat$ maintains both minima and
+  compared upper bounds pertain to the second minimum.  In short, we
+  may prune when the lower bound of ranges for $\GNP[\Sigma](Q,R)$ is
+  greater than the greatest second minimum found so far.
+\end{proof}
 
-We now have a problem nearly\footnote{To aid convergence, affinity propagation adds noise to the similarity matrix and dampens both $\respo{}{}$ and $\avail{}{}$ between time-steps.  Since we store no matrices, we both dampen and add noise to $\vecrho$.} indentical to traditional affinity propagation.
-However, we can show that this is a generalized $N$-body problem.
+\begin{lemma}[Pruning in $\vecrho$]
+  We may perform intrinsic pruning when bounds on a component's
+  results render it to have zero contribution to the sum.
+\end{lemma}
+\begin{proof}
+  We will compute $\vecrho \gets \map_j \sum_i ( \max(0,\simil{i}{j} +
+  \falphaj{i}{j}) ) + \map_j \min(0,\simil(j)(j) + \falphaj{j}{j})$,
+  which introduces a postprocessing function but has simpler bounds
+  and is still a GNP.  Let $\sigma$, $\simhrectmax$, $\simhrectmin$,
+  $\falphamax$, and $\falphamin$ be defined as above.  Summary results
+  are
+  \[
+  \sigmahat_{\rho}(Q,R) = \eta \!\left( \left\{ \left.\! \left( q, \left[ \begin{array}{ll}
+    \lefteqn{|R| \cdot \max(0,\simhrectmin(\sigma(Q),\sigma(R)) + \falphamin(\sigma(R)),} \\
+    & |R| \cdot \max(0,\simhrectmax(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)))
+  \end{array} \right] \right) \right| q \in Q \right\} \right)\! .
+  \]
+  This set is singleton with vaule $\{\{(q,0) | q \in Q\}\}$ when
+  $\simhrectmax(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)) \leq 0$.
+\end{proof}
 
-{\bf Proposition}.
-The computations of both $\vecrho$ and $\vecalpha$ are generalized $N$-body problems.
-
-{\bf Proof}.
-Ryan, prove this please.
+We now have a problem nearly\footnote{To aid convergence, affinity
+propagation adds noise to the similarity matrix and dampens both
+$\respo{}{}$ and $\avail{}{}$ between time-steps.  Since we store no
+matrices, we both dampen and add noise to $\vecrho$.} indentical to
+traditional affinity propagation.  However, we can show that this is a
+generalized $N$-body problem.
 
 We may now develop a dual-tree algorithm.
 First, we build a tree on the data points, assuming they are in a metric space\footnote{Euclidean distance over real vectors is the example we implemented.}.
 Notationally, we denote $Q'$ a subset or node of points that are being $\map$ed over, and $R'$ as a subset or node of points for the inner operator.
 
-Stub: For $\vecrho$, there is a simple intrinsic prune.
-We can bound the contribution to the summation as follows:
-$$
-  \begin{array}{rcl}
-    \sigma_{\rho}(Q,R) &=& \minmax_{j \in Q} \sum_{i \in R} ( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) )
-    \\ &=& [|R|(S^l(\sigma(Q),\sigma(R)) + \falphamin(\sigma(R))),
-            |R|c^{+}(S^u(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)))]
-  \end{array}
-$$
-
-\noindent where $\falphamin$ is the least first minimum $\alpha$, $\falphamax$ is the greatest second minimum $\alpha$, $S^l$ and $S^u$ are the bounds on the similarity matrix.
 Both $\falphamin$ and $\falphamax$ can be computed in a linear-time bottom-up pass, whereas $S^l$ and $S^u$ computed using bounding boxes, and parameter $p$ if the nodes overlap.
-
-Stub: For $\vecalpha$:
-$$
-  \begin{array}{rcl}
-    \sigma_{\alpha}(Q,R) &=& \minmax_{i \in Q} \min^2_{j \in R} ( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} )
-    \\
-        &=& [
-        \falphamin(\sigma(Q)) + \frhomin(\sigma(R)),
-    \\ && \text{  }
-          c^{+}(c^{+}(S^u(\sigma(Q), \sigma(R)) + \falphamax(\sigma(Q))) - \frhomin(\sigma(R))) - \falphamax(\sigma(Q))
-        ]
-  \end{array}
-$$
 
 \begin{figure}
   \begin{equation*}
@@ -1021,7 +1056,8 @@ $$
       \end{array}
     \end{array}
   \end{equation*}
-  \label{fig:alpharho}
+  \caption{\label{fig:alpharho}Pseudocode for the computation of
+  $\vecalpha$ and $\vecrho$.}
 \end{figure}
 
 {\bf Speed.}
