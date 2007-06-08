@@ -17,6 +17,7 @@
 \newcommand{\maybekillspace}{\vspace{-0.08in}}
 \newcommand{\killspace}{\vspace{-0.08in}}
 \newcommand{\killproofspace}{\vspace{-0.08in}}
+\newcommand{\mysection}[1]{\vspace{-0.04in}\section{#1}\killspace}
 
 \newcommand{\GNP}[1][\psi]{{#1}_{\Theta}}
 \newcommand{\GNPvec}[1][\psi]{{#1}_{\overrightarrow{\Theta}}}
@@ -161,7 +162,7 @@ demonstrate the use of this mathematical framework for deriving a fast
 algorithm for the recent affinity propagation method.
 \end{abstract}
 
-\section{Introduction}
+\mysection{Introduction}
 
 The ability to apply machine learning methods to large datasets is
 increasingly important for many applications.  Unfortunately,
@@ -288,7 +289,7 @@ demonstrate its efficiency.
 %fast algorithm for it allowing it to scale to large datasets despite
 %its straightforward $O(N^2)$ runtime.
 
-\section{Examples}
+\mysection{Examples}
 
 % Begin figure
 
@@ -472,7 +473,7 @@ If a considered set of references is farther away than this distance, no further
 %  [[Description of algorithm.]]
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Generalized $N$-body Problems}
+\mysection{Generalized $N$-body Problems}
 
 The class of Generalized $N$-body Problems (GNPs), exemplified above,
 %or problems solvable by means similar to those shown above,
@@ -574,6 +575,7 @@ formation of key-value pairs in order to form regular reduce problems.
   \end{array} \]
 \end{lemma}
 \killspace
+\killspace
 \begin{proof}
   During na\"{\i}ve computation, arguments presented to $\otimesvec$
   and $\overrightarrow{g}$ are singleton sets for some $y \in Y$.
@@ -642,6 +644,7 @@ operator pairs that gaurantee block decomposability.
   $\odot = \otimes$.
 \end{lemma}
 \killspace
+\killspace
 \begin{proof}
   By commutativity and associativity, we may rearrange
   \[ \begin{array}{ll}
@@ -660,6 +663,7 @@ operator pairs that gaurantee block decomposability.
   $\odot = \map$.
 \end{lemma}
 \killspace
+\killspace
 \begin{proof}
   For $\GNP(Y,X) = \map_{y \in Y} \bigotimes_{x \in X} f(x,y) \equiv
   \bigcup_{y \in Y} \bigotimesvec_{x \in X} \{(y,f(x,y))\} =
@@ -670,7 +674,7 @@ operator pairs that gaurantee block decomposability.
     & \displaystyle = \Big\{ \!\Big( y,\bigotimes_{x \in \kdleft{X}} f(x,y) \Big)\! \Big| y \in Y \Big\} \otimesvec \Big\{ \!\Big( y,\bigotimes_{x \in \kdright{X}} f(x,y) \Big)\! \Big| y \in Y \Big\} \equiv \GNPvec(Y,\kdleft{X}) \otimesvec \GNPvec(Y,\kdright{X}).
   \end{array} \]
 \end{proof}
-
+\killspace
 \begin{example}[All-nearest-neighbors]
   By Lemma~\ref{lem:map}, $\map_{q \in Q} \argmin_{r \in R} d(q,r)$ is
   a GNP.
@@ -678,35 +682,35 @@ operator pairs that gaurantee block decomposability.
 
 % \subsection{Transforming Problems into GNPs}
 
-{\bf Transforming Problems into GNPs.}  All second-order reduce
-problems that are not GNPs can be transformed into GNPs.
-Although simple algebra may sometimes evict a non-identity $g$ into $h$, one can always form a GNP by injecting $\map$, even for problems that are not block decomposable.
+{\bf Transforming Problems into GNPs.}
+All second-order reduce problems that are not GNPs can be transformed into GNPs by inserting $\map$ and applying a vectorized $g$.
+%Although simple algebra may sometimes evict a non-identity $g$ into $h$, one can always form a GNP by injecting $\map$, even for problems that are not block decomposable.
 %but failing that (or failing block decomposability if $g$ is not a problem), we may form a GNP by injecting map.
-\begin{lemma}
-  Second-order reduce problem $\Theta$ is equivalent to GNP
-  $\breve{\Theta}$ with
-  \[
-  \Psi_{\Theta}(Y,X) = h \Big( \bigodot_{y \in Y} g \Big( \bigotimes_{x \in X} f(x,y) \Big) \Big) \equiv h \comp {\textstyle \bigodot} \comp \overrightarrow{g} \Big( \map_{y \in Y} \bigotimes_{x \in X} f(x,y) \Big) = \Psi_{\breve{\Theta}}(Y,X),
-  \]
-  where unsubscripted $\bigodot$ is understood to reduce the values in
-  a set of key-value pairs.
-\end{lemma}
-\killspace
-\begin{proof}
-  Observe that $\bigodot_{x \in X} f(x) = \bigodot{} \map_{x \in X}
-  f(x)$ for arbitrary $f$ and $\bigodot$.  Further, observe that
-  $\map_{x \in X} g(x,f(x)) = \overrightarrow{g} \left( \map_{x \in X}
-  f(x) \right)$ for arbitrary $f$ and $g$.  Applying these in
-  succession to the left-hand side of the above demonstrates its
-  equality to the right.  By Lemma~\ref{lem:map}, $\breve{\Theta}$ is
-  a GNP.
-\end{proof}
+%\begin{lemma}
+%  Second-order reduce problem $\Theta$ is equivalent to GNP
+%  $\breve{\Theta}$ with
+%  \[
+%  \Psi_{\Theta}(Y,X) = h \Big( \bigodot_{y \in Y} g \Big( \bigotimes_{x \in X} f(x,y) \Big) \Big) \equiv h \comp {\textstyle \bigodot} \comp \overrightarrow{g} \Big( \map_{y \in Y} \bigotimes_{x \in X} f(x,y) \Big) = \Psi_{\breve{\Theta}}(Y,X),
+%  \]
+%  where unsubscripted $\bigodot$ is understood to reduce the values in
+%  a set of key-value pairs.
+%\end{lemma}
+%\killspace
+%\begin{proof}
+%  Observe that $\bigodot_{x \in X} f(x) = \bigodot{} \map_{x \in X}
+%  f(x)$ for arbitrary $f$ and $\bigodot$.  Further, observe that
+%  $\map_{x \in X} g(x,f(x)) = \overrightarrow{g} \left( \map_{x \in X}
+%  f(x) \right)$ for arbitrary $f$ and $g$.  Applying these in
+%  succession to the left-hand side of the above demonstrates its
+%  equality to the right.  By Lemma~\ref{lem:map}, $\breve{\Theta}$ is
+%  a GNP.
+%\end{proof}
 % 
 % \begin{example}[Nonparametric Bayes Classification]
 % \end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The Generalized $N$-body Algorithm}
+\mysection{The Generalized $N$-body Algorithm}
 
 The block decomposable nature of GNPs suggests a recursive alternative
 to the na\"{\i}ve computation,
@@ -742,7 +746,7 @@ This typically involves consideration of $X$ and $Y$ at the abstract level forme
   \GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) \supseteq \{\GNP(Y',X') | X' \st \sigma(X') = \sigma(X), Y' \st \sigma(Y') = \sigma(Y)\}.
   \]
 \end{definition}
-
+\killspace
 \noindent Intuitively, $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$ represents all possible results of $\GNP(Y,X)$ given what we know about $X$ and $Y$.
 Since the exact set may be costly or impossible to represent, a superset of such results is acceptable.
 %It is permitted to be a superset of such results because the exact set may be costly or impossible to represent
@@ -768,7 +772,7 @@ It is often useful to gather summary results from the various components of comp
 \end{definition}
 \killspace
 
-{\bf The Algorighm.}  We develope a notion of iterative refinement by
+{\bf The Algorithm.}  We develope a notion of iterative refinement by
 means of replacing summary result sets for a component of computation
 with composed summary results for its left and right subcomponents.
 \begin{definition}
@@ -812,6 +816,7 @@ summarization.
   We may prune when summary results form a singleton set.
 \end{lemma}
 \killspace
+\killspace
 \begin{proof}
   Setting $X' = X$ and $Y' = Y$ meets the requirements for inclusion in $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$.
   Thus, summary results contain the exact result.
@@ -823,6 +828,7 @@ summarization.
   We may perform intrinsic pruning when considering regions shown to
   be completely inside or outside radius $r$ of one another.
 \end{exampletheorem}
+\killspace
 \killspace
 \begin{proof}
   Let $\sigma_x$ find bounding boxes for points in $\mathcal{X}$ and
@@ -863,6 +869,7 @@ knowledge of their results cannot affect the global result.
     \leq D$.
 \end{lemma}
 \killspace
+\killspace
 \begin{proof}
   Because $\GNP[\Sigma](Y,X)$ containts the exact result for the
   represented region of computation, the logical condition given above
@@ -876,6 +883,7 @@ knowledge of their results cannot affect the global result.
   We may perform extrinsic pruning when references are shown to be
   farther away than queries' nearest-neighbors found so far.
 \end{examplelemma}
+\killspace
 \killspace
 \begin{proof}
   Again, let $\sigma_x$ find the bounding radius for points in $\mathcal{X}$ and let $\disthrectmax$ and $\disthrectmin$ find upper and lower bound distances between bounding boxes.
@@ -897,9 +905,9 @@ knowledge of their results cannot affect the global result.
 %  \]
 %  we have $s_0 = \overrightarrow{\min}(s_0,b)$.  Because $s_0$
 %  represents a final result,
-  \[
-  \forall a \in \GNP[\Sigma](\kdroot{Y},\kdroot{X})~~ \exists r \st~ \forall b \in \GNP[\Sigma](Y,X)~~ \overrightarrow{\min}(a,b) = r.
-  \]
+  $
+  \forall a \in \GNP[\Sigma](\kdroot{Y},\kdroot{X})~~ \exists r \st~ \forall b \in \GNP[\Sigma](Y,X)~~ \overrightarrow{\min}(a,b) = r
+  $
   is equivalent\footnote{This claim deserves a proof, but we omit it
   for brevity.} to the extrinsic prune test.  If, for all matching
   $(q,v_a) \in a$ and $(q,v_b) \in b$, we have $v_a < v_b$, then
@@ -1026,6 +1034,7 @@ involves trees formed on the inputs sets.
   trees to obtain $\kdleft{X} \cup \kdright{X} = X$ and $\kdleft{Y}
   \cup \kdright{Y} = Y$.
 \end{definition}
+\killspace
 \noindent It is clear that partitioning data in this manner will be
 fast, and for problems involving points in a metric space, spatially
 informed trees formed on the input sets tend to yield useful bounds.
@@ -1034,9 +1043,9 @@ Trees built for the inputs sets may also serve other useful purposes,
 such as facilitating rapid, bottom-up precomputation of statistics and
 storing summary results during the process of iterative refinement.
 
-% \section{Derivation of Example Algorithms}
+% \mysection{Derivation of Example Algorithms}
 
-\section{Affinity Propagation}
+\mysection{Affinity Propagation}
 
 %--------- Affinity Propagation Starts
 
@@ -1049,8 +1058,7 @@ $p$, the {\em preference} of points to be exemplars.  The number of
 clusters to find is not explicitly specified, but is positively
 correlated with $p$.  A typical value of $p$ is the median of the
 similarities between all pairs of points.
-
-The algorithm alternateingly updates messages $\respo{i}{j}$ and
+The algorithm alternatingly updates messages $\respo{i}{j}$ and
 $\avail{i}{j}$ with
 \[ \begin{array}{rcl}
   \respo{i}{j} \gets \simil{i}{j} - \max_{j' \neq j} (\avail{i}{j'} + \simil{i}{j'})
@@ -1084,6 +1092,7 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
   We may perform extrinsic pruning when bounds on a subcomputation's summary results are all greater than the best second minimum found so far.
 \end{lemma}
 \killspace
+\killspace
 \begin{proof}
   Let $\sigma$ find bounding radii for points in $\mathcal{X}$ as well as bounds on the points' previous values of $\vecalpha$ and $\vecrho$.
   Let $\simhrectmax$ and $\simhrectmin$ find upper and lower bound similarities
@@ -1110,6 +1119,7 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
 \begin{lemma}[Pruning in $\vecrho$]
   We may perform intrinsic pruning when bounds on a subcomputation's summary results render it to have zero contribution to the sum.
 \end{lemma}
+\killspace
 \killspace
 \begin{proof}
   We will compute $\vecrho \gets \map_j \sum_i (
@@ -1176,39 +1186,24 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
       $\vecalpha$ and $\vecrho$.}
   \end{minipage}
 \end{figure}
+\killspace
+It is possible to employ depth-first iterative refinement to compute $\vecalpha$ and simple depth-first expansion to compute $\vecrho$, with pseudocode for these algorithms shown in Figure~\ref{fig:alpharho}.
+Combined, these computations perform the core update of affinity propagation.
+Our rearrangements of the computation require damping in a different manner from \cite{affinity}.
+In our method, $\rho$ is damped.
+The relationship between the two damping methods requires further investigation, but we achieve in our experiments near-identical results with a similar number of iterations.
+%either a full history of result vectors or the matrices $R$ and $A$.
 
-We employ depth-first iterative refinement to compute $\vecalpha$ and
-simple depth-first expansion to compute $\vecrho$, with pseudocode for
-these algorithms shown in Figure~\ref{fig:alpharho}.  Combined, these
-computations perform the core update of affinity propagation, but they
-do not accomplish the damping procedure, which would require storing
-either a full history of result vectors or the matrices $R$ and $A$.
-To achieve convergeance, we damp the computed values of $\vecrho$.  In
-practice, we must use a higher damping factor $\lambda$, and we
-observe a slight drop in the quality of results.  Future lines of
-research include investigation of more effective means of damping.
+We implmented algorithms {\bf rho} and {\bf alpha} in C++ and directly compared to Frey and Dueck's quadratic C implementation.
+Our data are points in $\mathbb{R}^3$ from a large-scale gravitational $N$-body particle simulation.
+Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$ with an extrapolated three-hundred-fold speedup at one million points.
+%Factoring in the number of iterations, we empircally have $O(N^{1.5})$ overall running time.
+%The quadratic algorithm unfortunately does not support large enough data sets to observe such a trend in the number of iterations
+Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
 
-INTEGRATE. {\bf Comparison.}  We implement the above algorithms for
-$\vecalpha$ and $\vecrho$ in C++ and compare to Frey and Dueck's
-quadratic C implementation.  Our data are points in $\mathbb{R}^3$
-from the Millenium Simulation, a large-scale gravitational $N$-body
-particle simulation\cite{simulation}.  Although our algorithm produces
-identical results when no damping or noise addition is performed, we
-must use different values of $\lambda$ due to the $\vecalpha,\vecrho$
-transformation.  In the end, our algorithm produces nearly identical
-numbers of clusters, with net similarities up to $5\%$ worse.
-Figure~\ref{fig:speed} demonstrates an asymptotic speedup per
-iteration, with runtime empirically scaling $O(N^{1.3})$.  Considering
-the number of iterations, we empircally have $O(N^{1.5})$ overall
-running time; unfortunately, the quadratic algorithm cannot handle
-large enough data sets to measure such scaling\footnote{Indeed, one
-million points requires at minimum $2 \cdot 10^{12}$ single-precision
-floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to
-eight terabytes of memory.}.
-
-Although we demonstrate the effectiveness of deriving new efficient algorithms using a generalized $N$-body framework, there are a few disadvantages.
-Since we require that data points lie metric space with a computable distance measure, the original algorithm is preferable for sparse similarity measures on arbitrary graphs.
-Second, in a high number of dimensions, the quadratic run-time may be unavoidable -- for a 50-dimensional data set we measured $O(N^{1.9})$ per-iteration scaling.
+As defined, affinity propagation works for arbitrary and potentially sparse similarity graphs, whereas we require a metric space and fully utilize similarities between all point pairs.
+Second, data sets with unusually high intrinsic dimensionality may diminish the asymptotic gains of our algorithm.
+Nonetheless, we demonstrate the value of the generalized $N$-body approach for deriving new efficient algorithms that display orders of magnitude speedup for a wide range of practical problems.
 
 \begin{figure}
   \begin{minipage}{2.8in}
@@ -1229,7 +1224,7 @@ Second, in a high number of dimensions, the quadratic run-time may be unavoidabl
 
 \appendix
 
-% \section{Full Permutability}
+% \mysection{Full Permutability}
 % 
 % \begin{definition}
 %   A regular reduce problem is {\em fully permutable} if, for all
