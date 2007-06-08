@@ -35,6 +35,8 @@ struct Parameters {
 	uint64 capacity_;
 };
 std::string Usage();
+std::string PrintArgs(Parameters &args);
+
 template<typename TREE>
 void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args);
 
@@ -52,6 +54,7 @@ int main(int argc, char *argv[]) {
 	args.out_file_=fx_param_str(NULL, "out_file", "allnn");
   args.memory_file_=fx_param_str(NULL, "memory_file", "temp_mem");
 	args.capacity_=fx_param_int(NULL, "capacity", 16777216);
+	NONFATAL("%s\n", PrintArgs(args).c_str());
  	if (sizeof(index_t)==sizeof(int32)) {
 	  NONFATAL("index_t is int32, good for small scale problems");
 	} else {
@@ -156,3 +159,20 @@ std::string Usage() {
 	 return ret;
 }
 
+std::string PrintArgs(Parameters &args) {
+  char temp[8192];
+	sprintf(temp, "train_file : %s\n"
+			          "test_file  : %s\n"
+								"out_file   : %s\n"
+								"memory_file: %s\n"
+								"knns       : %lli\n"
+								"capacity   : %lli\n",
+								args.train_file_.c_str(),
+								args.test_file_.c_str(),
+								args.out_file_.c_str(),
+								args.memory_file_.c_str(),
+								(signed long long)args.knns_,
+								(signed long long)args.capacity_);
+	return string(temp);							
+
+}
