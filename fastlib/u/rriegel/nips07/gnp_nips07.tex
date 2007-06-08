@@ -60,7 +60,7 @@
 \newcommand{\disthrectmin}{d^{l}}
 \newcommand{\disthrectmax}{d^{u}}
 \newcommand{\dist}[2]{d(#1,#2)}
-\newcommand{\kdroot}[1]{#1^{\!\text{root}}}
+\newcommand{\kdroot}[1]{#1^{\!\text{\rm root}}}
 \newcommand{\kdleft}[1]{#1^{\!L}}
 \newcommand{\kdright}[1]{#1^{\!R}}
 
@@ -461,11 +461,11 @@ transform to help work around them.
 \end{definition}
 \begin{definition}
   Regular second-order reduce problem $\Theta$ is {\bf block
-  decomposable} if, for all nonempty partitions $X^{\!L} \cup X^{\!R}
+  decomposable} if, for all nonempty partitions $\kdleft{X} \cup \kdright{X}
   = X \subset \mathcal{X}$ and nonempty $Y \in \mathcal{Y}$,
-  $\GNP(Y,X) = \GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})$.  Such a
+  $\GNP(Y,X) = \GNP(Y,\kdleft{X}) \otimes \GNP(Y,\kdright{X})$.  Such a
   problem\footnote{Observe that commutativity and associativity ensure
-  that $\GNP(Y,X) = \GNP(Y^{\!L},X) \odot \GNP(Y^{\!R},X)$.} is known
+  that $\GNP(Y,X) = \GNP(\kdleft{Y},X) \odot \GNP(\kdright{Y},X)$.} is known
   as a {\bf second-order generalized $N$-body problem}.
 \end{definition}
 
@@ -557,8 +557,8 @@ operator pairs that gaurantee block decomposability.
 \begin{proof}
   By commutativity and associativity, we may rearrange
   \[ \begin{array}{ll}
-    \multicolumn{2}{l}{\displaystyle \GNP(Y,X) = \bigotimes_{y \in Y} \bigotimes_{x \in X} f(x,y) = \bigotimes_{x \in X} \bigotimes_{y \in Y} f(x,y) = \bigotimes_{x \in X^{\!L}} \bigotimes_{y \in Y} f(x,y) \otimes \bigotimes_{x \in X^{\!R}} \bigotimes_{y \in Y} f(x,y)} \\
-    & \displaystyle = \bigotimes_{y \in Y} \bigotimes_{x \in X^{\!L}} f(x,y) \otimes \bigotimes_{y \in Y} \bigotimes_{x \in X^{\!R}} f(x,y) = \GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R}).
+    \multicolumn{2}{l}{\displaystyle \GNP(Y,X) = \bigotimes_{y \in Y} \bigotimes_{x \in X} f(x,y) = \bigotimes_{x \in X} \bigotimes_{y \in Y} f(x,y) = \bigotimes_{x \in \kdleft{X}} \bigotimes_{y \in Y} f(x,y) \otimes \bigotimes_{x \in \kdright{X}} \bigotimes_{y \in Y} f(x,y)} \\
+    & \displaystyle = \bigotimes_{y \in Y} \bigotimes_{x \in \kdleft{X}} f(x,y) \otimes \bigotimes_{y \in Y} \bigotimes_{x \in \kdright{X}} f(x,y) = \GNP(Y,\kdleft{X}) \otimes \GNP(Y,\kdright{X}).
   \end{array} \]
 \end{proof}
 
@@ -578,8 +578,8 @@ operator pairs that gaurantee block decomposability.
   \GNPvec(Y,X)$ and by commutativity, associativity, and the
   definition of map, we have
   \[ \begin{array}{ll}
-    \multicolumn{2}{l}{\displaystyle \GNPvec(Y,X) \equiv \Big\{ \!\Big( y,\bigotimes_{x \in X} f(x,y) \Big)\! \Big| y \in Y \Big\} = \Big\{ \!\Big( y,\bigotimes_{x \in X^{\!L}} f(x,y) \otimes \bigotimes_{x \in X^{\!R}} f(x,y) \Big)\! \Big| y \in Y \Big\}} \\
-    & \displaystyle = \Big\{ \!\Big( y,\bigotimes_{x \in X^{\!L}} f(x,y) \Big)\! \Big| y \in Y \Big\} \otimesvec \Big\{ \!\Big( y,\bigotimes_{x \in X^{\!R}} f(x,y) \Big)\! \Big| y \in Y \Big\} \equiv \GNPvec(Y,X^{\!L}) \otimesvec \GNPvec(Y,X^{\!R}).
+    \multicolumn{2}{l}{\displaystyle \GNPvec(Y,X) \equiv \Big\{ \!\Big( y,\bigotimes_{x \in X} f(x,y) \Big)\! \Big| y \in Y \Big\} = \Big\{ \!\Big( y,\bigotimes_{x \in \kdleft{X}} f(x,y) \otimes \bigotimes_{x \in \kdright{X}} f(x,y) \Big)\! \Big| y \in Y \Big\}} \\
+    & \displaystyle = \Big\{ \!\Big( y,\bigotimes_{x \in \kdleft{X}} f(x,y) \Big)\! \Big| y \in Y \Big\} \otimesvec \Big\{ \!\Big( y,\bigotimes_{x \in \kdright{X}} f(x,y) \Big)\! \Big| y \in Y \Big\} \equiv \GNPvec(Y,\kdleft{X}) \otimesvec \GNPvec(Y,\kdright{X}).
   \end{array} \]
 \end{proof}
 
@@ -625,8 +625,8 @@ to the na\"{\i}ve computation,
 \[
 \GNP(Y,X) = \left\{ \begin{array}{lrr}
   f(x,y) & \multicolumn{2}{r}{\mbox{\rm if } X = \{x\} \mbox{ \rm and } Y = \{y\},} \\
-  \multicolumn{2}{l}{\GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})} & \mbox{\rm if } X \succ Y, \\
-  \multicolumn{2}{l}{\GNP(Y^{\!L}\!,X) \odot \GNP(Y^{\!R}\!,X)} & \mbox{\rm otherwise},
+  \multicolumn{2}{l}{\GNP(Y,\kdleft{X}) \otimes \GNP(Y,\kdright{X})} & \mbox{\rm if } X \succ Y, \\
+  \multicolumn{2}{l}{\GNP(\kdleft{Y}\!,X) \odot \GNP(\kdright{Y}\!,X)} & \mbox{\rm otherwise},
 \end{array} \right.
 \]
 where $X \succ Y$ prescribes how to recurse,
@@ -690,8 +690,8 @@ Summarization directly leads to a simple pruning technique.
   \GNP[\sigmahat](Y,X) = \left[ |Y| \cdot |X| \cdot I(\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r), |Y| \cdot |X| \cdot I(\disthrectmin(\sigma_x(Y),\sigma_x(X)) \leq r) \right].
   \]
   This set is $\{|Y| \cdot |X|\}$ when
-  $D^{\!U}(\sigma_x(Y),\sigma_x(X)) \leq r$ and $\{0\}$ when
-  $D^{\!L}(\sigma_x(Y),\sigma_x(X)) > r$.
+  $\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r$ and $\{0\}$ when
+  $\disthrectmin(\sigma_x(Y),\sigma_x(X)) > r$.
 \end{proof}
 \maybekillspace
 % \subsection{Iterative Refinement.}
@@ -720,15 +720,15 @@ subcomponents.
   {\bf Iterative refinement} constructs a binary tree wherein each
   node $\GNP[\Sigma](Y,X)$ represents composed summary results for a
   component of computation introduced via block decomposition.  First,
-  initialize $\GNP[\Sigma](Y_{root},X_{root}) \gets
-  \GNP[\sigmahat](\sigma_y(Y_{root}),\sigma_x(X_{root}))$.  Then,
+  initialize $\GNP[\Sigma](\kdroot{Y},\kdroot{X}) \gets
+  \GNP[\sigmahat](\sigma_y(\kdroot{Y}),\sigma_x(\kdroot{X}))$.  Then,
   repeatedly select some node $\GNP[\Sigma](Y,X) =
   \GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$ and replace it with
   \[
   \GNP[\Sigma](Y,X) \gets \left\{ \begin{array}{lrr}
     \{f(x,y)\} & \multicolumn{2}{r}{\mbox{\rm if } X = \{x\} \mbox{ \rm and } Y = \{y\}} \\
-    \multicolumn{2}{l}{\GNP[\Sigma](Y,X^{\!L}) \otimeshat \GNP[\Sigma](Y,X^{\!R})} & \mbox{\rm if } X \succ Y, \\
-    \multicolumn{2}{l}{\GNP[\Sigma](Y^{\!L}\!,X) \odothat \GNP[\Sigma](Y^{\!R}\!,X)} & \mbox{\rm otherwise},
+    \multicolumn{2}{l}{\GNP[\Sigma](Y,\kdleft{X}) \otimeshat \GNP[\Sigma](Y,\kdright{X})} & \mbox{\rm if } X \succ Y, \\
+    \multicolumn{2}{l}{\GNP[\Sigma](\kdleft{Y}\!,X) \odothat \GNP[\Sigma](\kdright{Y}\!,X)} & \mbox{\rm otherwise},
   \end{array} \right.
   \]
   where newly introduced child nodes are initialized
@@ -751,7 +751,7 @@ Iterative refinement allows us to prune components when more precise
 knowledge of their results cannot affect the global result.
 \begin{lemma}[Extrinsic Pruning]
   For node $\GNP[\Sigma](Y,X)$ at depth $D$ of tree
-  $\GNP[\Sigma](Y_{root},X_{root})$ and path $A_0,\ldots,A_D$ given by
+  $\GNP[\Sigma](\kdroot{Y},\kdroot{X})$ and path $A_0,\ldots,A_D$ given by
   $A_D = \GNP[\Sigma](Y,X)$ and $A_{d-1} = parent(A_{d})$ for $1 \leq
   d \leq D$, we may prune if
   \[
@@ -796,14 +796,14 @@ knowledge of their results cannot affect the global result.
 %  we have $s_0 = \overrightarrow{\min}(s_0,b)$.  Because $s_0$
 %  represents a final result,
   \[
-  \forall a \in \GNP[\Sigma](Y_{root},X_{root})~~ \exists r \st~ \forall b \in \GNP[\Sigma](Y,X)~~ \overrightarrow{\min}(a,b) = r.
+  \forall a \in \GNP[\Sigma](\kdroot{Y},\kdroot{X})~~ \exists r \st~ \forall b \in \GNP[\Sigma](Y,X)~~ \overrightarrow{\min}(a,b) = r.
   \]
   is equivalent\footnote{This claim deserves a proof, but we omit it
   for brevity.} to the extrinsic prune test.  If, for all matching
   $(q,v_a) \in a$ and $(q,v_b) \in b$, we have $v_a < v_b$, then
   $\overrightarrow{\min}(a,b) = a$.  Thus, if for all matching
   $(q,[l_a,u_a]) \in A$ and $(q,[l_b,u_b]) \in B$, with $\eta(A) =
-  \GNP[\Sigma](Q_{root},R_{root})$ and $\eta(B) = \GNP[\Sigma](Q,R)$,
+  \GNP[\Sigma](\kdroot{Q},\kdroot{R})$ and $\eta(B) = \GNP[\Sigma](Q,R)$,
   we have $u_a \leq l_b$, then we may always choose $r = a$.  In
   words, we may prune when the lower bound distance between the
   queries and references is greater than the greatest of the queries'
@@ -901,6 +901,26 @@ knowledge of their results cannot affect the global result.
 % \end{lemma}
 
 % \subsection{Practical Considerations: Trees, Bounds}
+
+{\bf Dual-tree Algorithms.}  In all of the above, our ability to find
+tight summary statistics and, by extension, to employ pruning is
+highly dependent upon the partitions $\kdleft{X} \cup \kdright{X} = X$
+and $\kdleft{Y} \cup \kdright{Y} = Y$ chosen during computation.
+While it is possible to decide these partitions on the fly and to use
+different partitions for the same sets $X$ and $Y$ occuring in
+different parts of computation, it is often computationally intensive
+or inconvenient to do so.  A compromise to these two constraints
+involves trees formed on the inputs sets.
+\begin{definition}
+  A {\bf dual-tree algorithm} approaches the task of partitioning
+  input sets $X$ and $Y$ throughout computation by precomputing trees
+  for $\kdroot{X}$ and $\kdroot{Y}$ and reusing splits from those
+  trees to obtain $\kdleft{X} \cup \kdright{X} = X$ and $\kdleft{Y}
+  \cup \kdright{Y} = Y$.
+\end{definition}
+Trees built for the inputs sets may also serve other useful purposes,
+such as facilitating rapid, bottom-up precomputation of statistics and
+storing summary results during the process of iterative refinement.
 
 % \section{Derivation of Example Algorithms}
 
