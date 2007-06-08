@@ -789,9 +789,11 @@ with composed summary results for its left and right subcomponents.
   \end{array} \right.
   \]
   where newly introduced child nodes are initialized
-  $\GNP[\Sigma](Y',X') \gets \GNP[\sigmahat](\sigma_y(Y'),\sigma_x(X')$.
-  The value of each ancestor $\GNP[\Sigma](Y,X)$ is understood to
-  reflect changes made to its descendents.
+  $\GNP[\Sigma](Y',X') \gets
+  \GNP[\sigmahat](\sigma_y(Y'),\sigma_x(X')$ and function $\prunes$
+  tests whether computation can be shortcutted.  The value of each
+  ancestor $\GNP[\Sigma](Y,X)$ is understood to reflect changes made
+  to its descendents.
 \end{definition}
 \killspace
 \noindent The GNA adds one node to the tree per replacement resulting in $X \times Y$ leaves, and thus must terminate after $O(N^2)$ steps.
@@ -804,7 +806,8 @@ pruning in some problems strongly favors other expansion patterns.
 
 % \subsection{Intrinsic Pruning}
 
-{\bf Pruning.} Summarization directly leads to a simple pruning technique.
+{\bf Pruning.}  The simplest form of pruning arises directly from
+summarization.
 \begin{lemma}[Intrinsic Pruning]
   We may prune when summary results form a singleton set.
 \end{lemma}
@@ -815,7 +818,8 @@ pruning in some problems strongly favors other expansion patterns.
   Thus, singleton $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are free to shortcut all further computation on $\GNP(Y,X)$ with this value.
 \end{proof}
 \killspace
-\begin{examplelemma}[Pruning in the Two-point Correlation]\label{lem:2pt}
+\begin{exampletheorem}[The Two-point Correlation Algorithm]
+  
   We may perform intrinsic pruning when considering regions shown to
   be completely inside or outside radius $r$ of one another.
 \end{examplelemma}
