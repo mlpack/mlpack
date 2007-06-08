@@ -222,8 +222,8 @@ approximate speedup approaches.
 \begin{figure}
   \begin{displaymath}
     \begin{array}{ll}
-      \hspace{-0.17in}
-      \begin{array}{l}
+      %\hspace{-0.17in}
+      %\begin{array}{l}
         \begin{array}{l}
           \text{{\bf tpc} - Two-point correlation.}
           \\ \text{function tpc}(Q, R)
@@ -233,9 +233,12 @@ approximate speedup approaches.
           \xx \text{return tpc}(\kdleft{X_1}, X_2, r) + \text{tpc}(\kdright{X_1}, X_2, r)
           \x \text{else:}
           \xx \text{return tpc}(X_1, \kdleft{X_2}, r) + \text{tpc}(X_1, \kdright{X_2}, r)
+          \\
+          \\
+          \\
+          \\
         \end{array}
-        \\
-        \\
+        &
         \begin{array}{l}
           \text{{\bf allnn} - All-nearest-neighbors.}
           \\ \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
@@ -249,7 +252,7 @@ approximate speedup approaches.
           \x \text{else prioritize by min distance:}
           \xx \text{allnn}(Q, \kdleft{R}); \text{ allnn}(Q, \kdright{R})
         \end{array}
-      \end{array}
+      %\end{array}
 %       &
 %       \hspace{-0.2in}
 %       \begin{array}{l}
@@ -279,10 +282,11 @@ approximate speedup approaches.
     \vspace{-0.2in}
   \end{displaymath}
   \label{fig:allnntpc}
-  \caption{Pseudocode for three simple dual-tree algorithms.}
+  \caption{Pseudocode for two simple dual-tree algorithms.}
 \end{figure}
 
-Here, we present three canonical dual-tree algorithms: two-point correlation, all-nearest-neighbors, and nonparametric Bayes classification.
+Here, we present two canonical dual-tree algorithms, the two-point correlation the all-nearest-neighbors.
+%, and nonparametric Bayes classification.
 We use spatial trees, where every node $X$ in tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \cup \kdright{X} = X$, with each leaf a single point $\{x\}$.
 We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to upper and lower bounds.
 
@@ -298,7 +302,7 @@ We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refe
 \sum_{q \in Q} \argmin_{r \in R} d(q,r)
 \end{equation*}
 \noindent with the exception $d(q,q) = \infty$.
-To achieve speedup, one maintains for each recursive subset of queries the furthest candidate neighbor found.
+To achieve speedup, one maintains for each recursive subset of queries the furthest candidate neighbor distance found.
 If a considered set of references is farther away than this distance, no further exploration is required.
 
 % {\bf Nonparametric Bayes Classification.}
@@ -1074,7 +1078,6 @@ We compare our algorithm to the C code provided by Frey and Dueck\cite{frey_duec
 Their code implements 
 
 \fig{affinity_speed}.
-
 
  for even a million points, two trillion single-precision floating-point numbers are required -- eight terabytes of RAM.
 
