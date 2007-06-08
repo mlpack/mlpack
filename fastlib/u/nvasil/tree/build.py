@@ -13,17 +13,17 @@ librule(name="fortests",
 binrule(
 		name="hrect_test",
 		sources=["hyper_rectangle_unit.cc"],
-		linkables=[":binarytree", ":fortests"],	
+		deplibs=[":binarytree", ":fortests"],	
 		);
 binrule(
 		name="node_test",
 		sources=["node_unit.cc"],
-		linkables=[":binarytree", ":fortests"]
+		deplibs=[":binarytree", ":fortests"]
 		);
 binrule(
 		name="tree_test",
 		sources=["binary_tree_unit.cc"],
-		linkables=[":binarytree", ":fortests"]
+		deplibs=[":binarytree", ":fortests"]
 		);
 
 

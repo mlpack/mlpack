@@ -125,8 +125,8 @@ class BinaryTree {
 		                           typename Node_t::NNResult *out);
   void CollectKNearestNeighborWithFwrite(string file); 
 	void CollectKNearestNeighbor(NodePtr_t ptr, FILE *out);
-
-
+  void CollectKNearestNeighborWithFwriteText(string file); 
+  void CollectKNearestNeighborText(NodePtr_t ptr, FILE *out);
 	// Print the tree depth first
 	void Print();
   void RecursivePrint(NodePtr_t ptr);  
@@ -140,9 +140,12 @@ class BinaryTree {
   int32 get_current_level() {
     return current_level_;
   };
-  uint64 get_num_of_points(){
+  uint64 get_num_of_points() {
   	return num_of_points_;
   }
+	int32 get_dimension() {
+	  return dimension_;
+	}
   NodePtr_t get_parent() {
   	return parent_;
   }

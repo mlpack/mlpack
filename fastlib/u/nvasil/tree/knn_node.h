@@ -134,7 +134,8 @@ class KnnNode {
 
   void OutputNeighbors(NNResult *out, index_t knns); 
 	void OutputNeighbors(FILE *fp, index_t knns); 	
-	
+	void OutputNeighborsText(FILE *fp, index_t knns); 	
+
 	Precision_t get_min_dist_so_far() {
 	  return min_dist_so_far_;
 	}
