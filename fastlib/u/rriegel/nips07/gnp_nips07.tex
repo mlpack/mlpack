@@ -9,15 +9,22 @@
 \newtheorem{lemma}{Lemma}
 \newtheorem{corollary} {Corollary}
 \newtheorem{definition} {Definition}
+\newtheorem{example} {Example}
 
 
 \newcommand{\GNP}[1][\psi]{{#1}_{\Theta}}
 \newcommand{\GNPvec}[1][\psi]{{#1}_{\overrightarrow{\Theta}}}
 
 \newcommand{\otimesvec}{\mathbin{\overrightarrow{\otimes}}}
+\newcommand{\odotvec}{\mathbin{\overrightarrow{\odot}}}
 \newcommand{\bigotimesvec}{\mathop{\overrightarrow{\bigotimes}}}
+\newcommand{\bigodotvec}{\mathop{\overrightarrow{\bigodot}}}
+
 \newcommand{\otimeshat}{\mathbin{\widehat{\otimes}}}
 \newcommand{\odothat}{\mathbin{\widehat{\odot}}}
+\newcommand{\bigotimeshat}{\mathop{\widehat{\bigotimes}}}
+\newcommand{\bigodothat}{\mathop{\widehat{\bigodot}}}
+
 \newcommand{\otimestilde}{\mathbin{\widetilde{\otimes}}}
 \newcommand{\odottilde}{\mathbin{\widetilde{\odot}}}
 \newcommand{\bigotimestilde}{\mathop{\widetilde{\bigotimes}}}
@@ -27,6 +34,12 @@
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\map}{map}
 \DeclareMathOperator{\sign}{sign}
+
+\DeclareMathOperator{\leftchild}{left}
+\DeclareMathOperator{\rightchild}{right}
+\DeclareMathOperator{\parent}{parent}
+\DeclareMathOperator{\sibling}{sibling}
+\DeclareMathOperator{\op}{op}
 
 \newcommand{\comp}{\mathbin{\circ}}
 \newcommand{\st}{{\rm~s.t.~}}
@@ -413,8 +426,8 @@ identical values; alternately, data sets may store a distinct index
 for each entry, rendering all entries unique.} rather than lists, and
 allow for pre- and postprocessing functions.
 \begin{definition}
-  A {\em first-order reduce problem} is a tuple $\theta =
-  (\mathcal{X},\otimes,f,g)$ of set of possible inputs $\mathcal{X}$,
+  A {\bf first-order reduce problem} $\theta$ is a tuple
+  $(\mathcal{X},\otimes,f,g)$ of set of possible inputs $\mathcal{X}$,
   commmutative, associative operator $\otimes \colon \mathcal{A}
   \times \mathcal{A} \to \mathcal{A}$, and functions $f \colon
   \mathcal{X} \to \mathcal{A}$ and $g \colon \mathcal{A} \to
@@ -424,10 +437,12 @@ allow for pre- and postprocessing functions.
 \end{definition}
 \noindent The operators involved in reduce problems form abelian
 semigroups; frequently, they also have identities and inverses in
-$\mathcal{A}$, thereby forming abelian groups.  An example of a
-first-order reduce problem is finding the expected value of some
-function under a sampled distribution: $\frac{1}{N} \sum_{x \in X}
-f(x)$.
+$\mathcal{A}$, thereby forming abelian groups.
+
+\begin{example}
+  The expected value of a function under a sampled distribution,
+  $\frac{1}{N} \sum_{x \in X} f(x)$, is a first-order reduce problem.
+\end{example}
 
 The inner functions of reduce problems may themselves be reduce
 problems, for example with $f_1(x) = \Psi_{\theta_2}(X_2)$.  While the
@@ -435,8 +450,8 @@ methods presented below can potentially extend to arbitrary nesting
 depth, this paper focuses on second-order problems, or problems of two
 operators.
 \begin{definition}
-  A {\em second-order reduce problem} is a tuple $\Theta =
-  (\mathcal{X},\mathcal{Y},\otimes,\odot,f,g,h)$ of sets of possible
+  A {\bf second-order reduce problem} $\Theta$ is a tuple
+  $(\mathcal{X},\mathcal{Y},\otimes,\odot,f,g,h)$ of sets of possible
   inputs $\mathcal{X}$ and $\mathcal{Y}$, commutative, associative
   operators $\otimes \colon \mathcal{A} \times \mathcal{A} \to
   \mathcal{A}$ and $\odot \colon \mathcal{B} \times \mathcal{B} \to
@@ -451,29 +466,32 @@ operators.
 \noindent The results of second-order reduce problems may be found
 na\"{\i}vely through nested iteration.  If involved functions are
 constant time and $X$ and $Y$ are $O(N)$, this method of computation
-is $O(N^2)$, which is infeasible for large $N$.  An example of a
-second-order reduce problem is the log-likelihood of a mixture of
-Gaussians: $\sum_{x \in X} \log \sum_{k \in C} \omega_k \phi(x |
-\mu_k, \Sigma_k)$.
+is $O(N^2)$, which is infeasible for large $N$.
+
+\begin{example}
+  The log-likelihood of a mixture of Gaussians, $\sum_{x \in X} \log
+  \sum_{k \in C} \omega_k \phi(x | \mu_k, \Sigma_k)$ is a second-order
+  reduce problem.
+\end{example}
 
 Certain constraints are required by the algorithmic technique
 presented in the next section, though we will later introduce a
 transform to help work around them.
 \begin{definition}
-  A second-order reduce problem $\Theta$ is {\em regular} if $g(y,a) =
+  Second-order reduce problem $\Theta$ is {\bf regular} if $g(y,a) =
   a$ for all $y \in \mathcal{Y}$ and $a \in \mathcal{A}$, and is thus
   given by $\Psi_{\Theta} = h \comp \psi_{\Theta}$, where
   $\psi_{\Theta}(Y,X) = \bigodot_{y \in Y} \bigotimes_{x \in X}
   f(x,y)$.  Note that $\mathcal{B} = \mathcal{A}$.
 \end{definition}
 \begin{definition}
-  A regular second-order reduce problem $\Theta$ is {\em block
-  decomposable} if, for all nonempty partitions $X^{\!L} \cup X^{\!R} = X
-  \subset \mathcal{X}$ and nonempty $Y \in \mathcal{Y}$, $\GNP(Y,X) =
-  \GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})$.  Such a problem\footnote{Observe
-  that commutativity and associativity ensure that $\GNP(Y,X) =
-  \GNP(Y^{\!L},X) \odot \GNP(Y^{\!R},X)$.} is known as a {\em second-order
-  generalized $N$-body problem}.
+  Regular second-order reduce problem $\Theta$ is {\bf block
+  decomposable} if, for all nonempty partitions $X^{\!L} \cup X^{\!R}
+  = X \subset \mathcal{X}$ and nonempty $Y \in \mathcal{Y}$,
+  $\GNP(Y,X) = \GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})$.  Such a
+  problem\footnote{Observe that commutativity and associativity ensure
+  that $\GNP(Y,X) = \GNP(Y^{\!L},X) \odot \GNP(Y^{\!R},X)$.} is known
+  as a {\bf second-order generalized $N$-body problem}.
 \end{definition}
 
 % \subsection{The Map Operator}
@@ -482,15 +500,15 @@ transform to help work around them.
 problems that compute separate results for some set of queries and may
 help with some problems that do not.  Reduce problems subsume the
 functionality of map with $\map_{x \in X} f(x) \equiv \bigcup_{x \in
-X} \{(x,f(x))\} = \{(x,f(x)) | x \in X\}$.  We extend this key-value
-pair interpretation of map to regular reduce problems via
-vectorization.
+X} \{(x,f(x))\} = \{(x,f(x)) | x \in X\}$.  We distribute the
+formation of key-value pairs in order to form regular reduce problems.
+%Talk about distibution
 \begin{lemma}
   Second-order reduce problem $\Theta$ with $\odot = \map$ is
   equivalent to $\overrightarrow{\Theta}$ with
   \[ \begin{array}{rclrcl}
     \overrightarrow{f}(x,y) & = & \{(y, f(x,y))\}, & \overrightarrow{g}(A) & = & \{(y, g(y,v)) | (y,v) \in A\}, \\
-    A \otimesvec B & = & \{(y, u \otimes v) | (y,u) \in A, (y,v) \in B\}, & A \odot B & = & A \cup B.
+    A \otimesvec B & = & \{(y, u \otimes v) | (y,u) \in A, (y,v) \in B\}, & A \odotvec B & = & A \cup B.
   \end{array} \]
 \end{lemma}
 \begin{proof}
@@ -504,8 +522,8 @@ application of block decomposition.
 
 % \subsection{Block Decomposability}
 
-{\bf Block Decomposability.} The primary advantage of GNPs is the
-significant ability to rearrange their order of computation.  The
+{\bf Block Decomposable Problems.} The primary advantage of GNPs is
+the significant ability to rearrange their order of computation.  The
 na\"{\i}ve computation of a second-order GNP forms a grid of
 evaluations of $f$ connected with $\otimes$ and $\odot$ as shown in
 the left half of Figure~\ref{fig:grid}.  A single application of block
@@ -556,7 +574,7 @@ While $\mathcal{X}$, $\mathcal{Y}$, and $f$ may have some effect on
 whether a problem is block decomposable, the most significant players
 are $\otimes$ and $\odot$.  There are two important classes of
 operator pairs that gaurantee block decomposability.
-\begin{lemma}
+\begin{lemma}\label{lem:self}
   A regular second-order reduce problem is block decomposable if
   $\odot = \otimes$.
 \end{lemma}
@@ -567,6 +585,12 @@ operator pairs that gaurantee block decomposability.
     & \displaystyle = \bigotimes_{y \in Y} \bigotimes_{x \in X^{\!L}} f(x,y) \otimes \bigotimes_{y \in Y} \bigotimes_{x \in X^{\!R}} f(x,y) = \GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R}).
   \end{array} \]
 \end{proof}
+
+\begin{example}[The 2-point Correlation]
+  By Lemma~\ref{lem:self}, $\sum_{y \in X} \sum_{x \in X} I(d(x,y)
+  \leq r)$ is a GNP.
+\end{example}
+
 \begin{lemma}\label{lem:map}
   A regular second-order reduce problem is block decomposable if
   $\odot = \map$.
@@ -582,6 +606,11 @@ operator pairs that gaurantee block decomposability.
   \end{array} \]
 \end{proof}
 
+\begin{example}[All-nearest-neighbors]
+  By Lemma~\ref{lem:map}, $\map_{q \in Q} \argmin_{r \in R} d(q,r)$ is
+  a GNP.
+\end{example}
+
 % \subsection{Transforming Problems into GNPs}
 
 {\bf Transforming Problems into GNPs.}  All second-order reduce
@@ -591,8 +620,8 @@ obstructive positions, but failing that (or failing block
 decomposability if $g$ is not a problem), we may form a GNP by
 injecting map.
 \begin{lemma}
-  Second-order reduce problem $\Theta$ is equivalent to
-  GNP $\breve{\Theta}$ with
+  Second-order reduce problem $\Theta$ is equivalent to GNP
+  $\breve{\Theta}$ with
   \[
   \Psi_{\Theta}(Y,X) = h \Big( \bigodot_{y \in Y} g \Big( \bigotimes_{x \in X} f(x,y) \Big) \Big) \equiv h \comp {\textstyle \bigodot} \comp \overrightarrow{g} \Big( \map_{y \in Y} \bigotimes_{x \in X} f(x,y) \Big) = \Psi_{\breve{\Theta}}(Y,X),
   \]
@@ -609,6 +638,9 @@ injecting map.
   a GNP.
 \end{proof}
 
+\begin{example}[Nonparametric Bayes Classification]
+\end{example}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{The Generalized $N$-body Algorithm}
 
@@ -616,13 +648,13 @@ The block decomposable nature of GNPs suggests a recursive alternative
 to the na\"{\i}ve computation,
 \[
 \GNP(Y,X) = \left\{ \begin{array}{lrr}
-  f(x,y) & \multicolumn{2}{r}{\mbox{if } X = \{x\} \mbox{ and } Y = \{y\},} \\
-  \multicolumn{2}{l}{\GNP(Y^{\!L}\!,X) \odot \GNP(Y^{\!R}\!,X)} & \mbox{if } Y \succ X, \\
-  \multicolumn{2}{l}{\GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})} & \mbox{otherwise},
+  f(x,y) & \multicolumn{2}{r}{\mbox{\rm if } X = \{x\} \mbox{ \rm and } Y = \{y\},} \\
+  \multicolumn{2}{l}{\GNP(Y,X^{\!L}) \otimes \GNP(Y,X^{\!R})} & \mbox{\rm if } X \succ Y, \\
+  \multicolumn{2}{l}{\GNP(Y^{\!L}\!,X) \odot \GNP(Y^{\!R}\!,X)} & \mbox{\rm otherwise},
 \end{array} \right.
 \]
-where $Y \succ X$ is some means of deciding what to split first, such
-as $|Y| \geq |X|$.  Recursion forms a binary tree with one leaf per
+where $X \succ Y$ is some means of deciding what to split first, such
+as $|X| \geq |Y|$.  Recursion forms a binary tree with one leaf per
 element of $X \times Y$.  Exhuastive computation thus requires time
 $O(N^2)$, the same as the na\"{\i}ve algorithm.  It may be possible,
 however, to obtain results for some components of the recursive block
@@ -632,18 +664,18 @@ down.
 
 % \subsection{Summaries and Statistics}
 
-{\bf Summaries and Statistics.}  In order to accelerate computation,
-we need some quick means of summarizing the possible results of
-$\GNP(Y,X)$.  This typically involves consideration of $X$ and $Y$ at
-the abstract level formed by a concise (and ideally precomputed) set
-of statistics on the two.
+{\bf Summaries Results.}  In order to accelerate computation, we need
+some quick means of summarizing the possible results of $\GNP(Y,X)$.
+This typically involves consideration of $X$ and $Y$ at the abstract
+level formed by a concise (and ideally precomputed) set of statistics
+on the two.
 \begin{definition}
-  Given statistics functions $\sigma_x \colon 2^{\mathcal{X}} \to
+  For descriptive statistics $\sigma_x \colon 2^{\mathcal{X}} \to
   \mathcal{S}_x$ and $\sigma_y \colon 2^{\mathcal{Y}} \to
-  \mathcal{S}_y$, let summary function $\GNP[\sigma] \colon
+  \mathcal{S}_y$, let {\bf summary results} $\GNP[\sigma] \colon
   \mathcal{S}_y \times \mathcal{S}_x \to 2^\mathcal{A}$ be such that
   \[
-  \GNP[\sigma](\sigma_y(Y),\sigma_x(X)) \supseteq \{\GNP(Y^*,X^*) | X^* \st \sigma(X^*) = \sigma(X), Y^* \st \sigma(Y^*) = \sigma(Y)\}.
+  \GNP[\sigma](\sigma_y(Y),\sigma_x(X)) \supseteq \{\GNP(Y',X') | X' \st \sigma(X') = \sigma(X), Y' \st \sigma(Y') = \sigma(Y)\}.
   \]
 \end{definition}
 \noindent Intuitively, $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$
@@ -659,34 +691,33 @@ between points in $X$ and $Y$.
 
 % \subsection{Intrinsic Pruning}
 
-{\bf Intrinsic Pruning.}  Summarization leads directly to our first
-form of pruning.
-\begin{lemma}
-  We may perform {\em intrinsic pruning} when summary results form a
-  singleton set.
+Summarization leads directly to our first form of pruning.
+\begin{lemma}[Intrinsic Pruning]
+  We may prune when summary results form a singleton set.
 \end{lemma}
 \begin{proof}
-  Setting $X^* = X$ and $Y^* = Y$ meets the requirements for inclusion
+  Setting $X' = X$ and $Y' = Y$ meets the requirements for inclusion
   in $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$.  Thus, summary results
   contain the exact result.  Thus, singleton
   $\GNP[\sigma](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are
-  free to shortcut all further computation on $X$ and $Y$ with this
+  free to shortcut all further computation on $\GNP(Y,X)$ with this
   value.
 \end{proof}
 
-\begin{corollary}
-  We may perform intrinsic pruning for the 2-point correlation.
-\end{corollary}
+\begin{example}[Pruning in the 2-point Correlation]
+  We may perform intrinsic pruning when considering regions shown to
+  be completely inside or outside radius $r$ of one another.
+\end{example}
 \begin{proof}
   Let $\sigma_x$ find bounding boxes for points in $\mathcal{X}$ and
-  let $D^{\!U}$ and $D^{\!L}$ find upper and lower bound distances
-  between bounding boxes.  For $x \in X$ and $y \in Y$, bounds on
-  $I(d(x,y) \leq r)$ are then $\left[
-  I(D^{\!U}(\sigma_x(X),\sigma_x(Y)) \leq r),
-  I(D^{\!L}(\sigma_x(X),\sigma_x(Y)) \leq r) \right]$.  We may thus
+  let $\disthrectmax$ and $\disthrectmin$ find upper and lower bound
+  distances between bounding boxes.  For $x \in X$ and $y \in Y$,
+  bounds on $I(d(x,y) \leq r)$ are then $\left[
+  I(\disthrectmax(\sigma_x(X),\sigma_x(Y)) \leq r),
+  I(\disthrectmin(\sigma_x(X),\sigma_x(Y)) \leq r) \right]$.  We may thus
   define
   \[
-  \GNP[\sigma](Y,X) = \left[ |Y| \cdot |X| \cdot I(D^{\!U}(\sigma_x(X),\sigma_x(Y)) \leq r), |Y| \cdot |X| \cdot I(D^{\!L}(\sigma_x(X),\sigma_x(Y)) \leq r) \right].
+  \GNP[\sigma](Y,X) = \left[ |Y| \cdot |X| \cdot I(\disthrectmax(\sigma_x(X),\sigma_x(Y)) \leq r), |Y| \cdot |X| \cdot I(\disthrectmin(\sigma_x(X),\sigma_x(Y)) \leq r) \right].
   \]
   This set is $\{|Y| \cdot |X|\}$ when
   $D^{\!U}(\sigma_x(X),\sigma_x(Y)) \leq r$ and $\{0\}$ when
@@ -700,42 +731,46 @@ problems by considering results gathered from other parts of
 computation.  This is assisted by the ability to compose summary
 results.
 \begin{definition}
-  Given summary results $A, B \subset \mathcal{A}$, let operators
-  $\otimeshat, \odothat \colon 2^{\mathcal{A}} \times 2^{\mathcal{A}}
-  \to 2^{\mathcal{A}}$ be such that
+  Let {\bf summary composition operators} $\otimeshat, \odothat \colon
+  2^{\mathcal{A}} \times 2^{\mathcal{A}} \to 2^{\mathcal{A}}$ be such
+  that
   \[ \begin{array}{rcl}
-    A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\} & \mbox{ and, likewise, } & A \odothat B \supseteq \{a \odot b | a \in A, b \in B\}.
+    A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\} & \mbox{ and, likewise, } & A \odothat B \supseteq \{a \odot b | a \in A, b \in B\}
   \end{array} \]
-  Further, for singleton $A$ and $B$, we require $A \otimeshat B$ and
-  $A \odothat B$ to be singleton.
+  for summary results $A,B \subset \mathcal{A}$.  For singleton $A$
+  and $B$, we require $A \otimeshat B$ and $A \odothat B$ to be
+  singleton.
 \end{definition}
 \noindent We develope a notion of itertive refinement by means of
 replacing summary result sets for the various components of
 computation with composed summary results for their left and right
 subcomponents.
 \begin{definition}
-  To perform {\em iterative refinement}, initialize
-  $\GNP[\Sigma](Y_{root},X_{root}) \leftarrow
-  \GNP[\sigma](\sigma_y(Y),\sigma_x(X))$ and then repeatedly replace
-  $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$ present in
-  $\GNP[\Sigma](Y_{root},X_{root})$ with
+  {\bf Iterative refinement} constructs a binary tree wherein each
+  node $\GNP[\Sigma](Y,X)$ represents composed summary results for a
+  component of computation introduced via block decomposition.  First,
+  initialize $\GNP[\Sigma](Y_{root},X_{root}) \gets
+  \GNP[\sigma](\sigma_y(Y_{root}),\sigma_x(X_{root}))$.  Then,
+  repeatedly select some node $\GNP[\Sigma](Y,X) =
+  \GNP[\sigma](\sigma_y(Y),\sigma_x(X))$ and replace it with
   \[
-  \GNP[\sigma](\sigma_y(Y),\sigma_x(X)) \leftarrow \left\{ \begin{array}{lrr}
-    \{f(x,y)\} & \multicolumn{2}{r}{\mbox{if } X = \{x\} \mbox{ and } Y = \{y\},} \\
-    \multicolumn{2}{l}{\GNP[\sigma](\sigma_y(Y^{\!L}),\sigma_x(X)) \odothat \GNP[\sigma](\sigma_y(Y^{\!R}),\sigma_x(X))} & \mbox{if } Y \succ X, \\
-    \multicolumn{2}{l}{\GNP[\sigma](\sigma_y(Y),\sigma_x(X^{\!L})) \otimeshat \GNP[\sigma](\sigma_y(Y),\sigma_x(X^{\!R}))} & \mbox{otherwise}.
+  \GNP[\Sigma](Y,X) \gets \left\{ \begin{array}{lrr}
+    \{f(x,y)\} & \multicolumn{2}{r}{\mbox{\rm if } X = \{x\} \mbox{ \rm and } Y = \{y\}} \\
+    \multicolumn{2}{l}{\GNP[\Sigma](Y,X^{\!L}) \otimeshat \GNP[\Sigma](Y,X^{\!R})} & \mbox{\rm if } X \succ Y, \\
+    \multicolumn{2}{l}{\GNP[\Sigma](Y^{\!L}\!,X) \odothat \GNP[\Sigma](Y^{\!R}\!,X)} & \mbox{\rm otherwise},
   \end{array} \right.
   \]
-  Let $\GNP[\Sigma](Y,X)$ refer to component
-  $\GNP[\sigma](\sigma_y(Y),\sigma_x(X))$ having been introduced or
-  updated during refinement.  The value of $\GNP[\Sigma](Y,X)$ is
-  understood to reflect changes made to its subcomponents.
+  where newly introduced child nodes are initialized
+  $\GNP[\Sigma](Y',X') \gets \GNP[\sigma](\sigma_y(Y'),\sigma_x(X')$.
+  The value of each ancestor $\GNP[\Sigma](Y,X)$ is understood to
+  reflect changes made to its descendents.
 \end{definition}
-\noindent Like the recursive formulation, iterative refinement
-constructs a binary tree that grows by one node per replacement, and
-thus must terminate after $O(N^2)$ steps.  It is useful to speak of
-this tree directly, with nodes $\GNP[\Sigma](Y,X)$ and functions
-$left$, $right$, $op$, $parent$, and $sibling$ defined intuitively.
+\noindent Iterative refinement adds one node to the tree per
+replacement, and thus must terminate after $O(N^2)$ steps.  It is
+useful to navigate this tree, with functions $\leftchild$,
+$\rightchild$, $\parent$, and $\sibling$ defined intuitively.
+Further, let $\op(\GNP[\Sigma](Y,X))$ return $\otimes$ or $\odot$
+depending on $X \succ Y$.
 
 Refinement need not be performed in any particular pattern.
 Depth-first is often a good choice due to its low overhead, though
@@ -743,43 +778,39 @@ pruning in some problems strongly favors other expansion patterns.
 
 % \subsection{Extrinsic Pruning}
 
-{\bf Extrinsic Pruning.}  Iterative refinement allows us to prune
-components when more precise knowledge of their results cannot affect
-the global result.
-\begin{lemma}
+Iterative refinement allows us to prune components when more precise
+knowledge of their results cannot affect the global result.
+\begin{lemma}[Extrinsic Pruning]
   For node $\GNP[\Sigma](Y,X)$ at depth $D$ of tree
   $\GNP[\Sigma](Y_{root},X_{root})$ and path $A_0,\ldots,A_D$ given by
   $A_D = \GNP[\Sigma](Y,X)$ and $A_{d-1} = parent(A_{d})$ for $1 \leq
-  d \leq D$, construct sets of summary result sets
-  \[ \begin{array}{rcl}
-    S_D = \{\GNP[\Sigma](Y,X)\} & \mbox{ and } & S_{d-1} \supseteq \{\{a\} \mathbin{op(A_{d-1})} B | a \in sibling(A_d), B \in S_d\}
-  \end{array} \]
-  for $1 \leq d \leq D$.  We may then perform {\em extrinsic pruning}
-  if $B$ is singleton for all $B \in S_0$.
+  d \leq D$, we may prune if
+  \[
+  \forall a_1 \in \sibling(A_1),\ldots,a_D \in \sibling(A_D)~~ \exists r \st~ \forall b \in \GNP[\Sigma](Y,X)~~ s_0 = r,
+  \]
+  where $s_D = b$ and $s_{d-1} = a_d \mathbin{\op(A_{d-1})} s_d$ for $1 \leq d
+    \leq D$.
 \end{lemma}
 \begin{proof}
-  As constructed, $S_0$ contains all possible summary result sets for
-  $\GNP[\Sigma](Y_{root},X_{root})$ given summary results of
-  $\GNP[\Sigma](Y,X)$ and one possible result of all other components.
-  Singleton $B \in S_0$ then implies that all possible results of
-  $\GNP[\Sigma](Y,X)$ lead to the same global result under some
-  valuation of the other components.  If all such $B$ are singleton,
-  then any $p \in \GNP[\Sigma](Y,X)$ must lead to the same global
-  result as any other, regardless of the valuation of the other
-  components, and we are free to shortcut all further compuation on
-  $X$ and $Y$ with this value.
+  Because $\GNP[\Sigma](Y,X)$ containts the exact result for the
+  represented region of computation, the logical condition given above
+  implies that all $b \in GNP[\Sigma](Y,X)$ yield the same final
+  result as $\GNP(Y,X)$, regardless of the results of the rest of the
+  problem.  Thus, we are free to shortcut all further computation on
+  $\GNP(Y,X)$ with any $b \in \GNP[\Sigma](Y,X)$.
 \end{proof}
 
-\begin{corollary}
-  We may perform extrinsic pruning for all-nearest-neighbors.
-\end{corollary}
+\begin{example}[Pruning in All-nearest-neighbors]
+  We may perform extrinsic pruning when references are shown to be
+  farther away than queries' nearest-neighbors found so far.
+\end{example}
 \begin{proof}
   Again, let $\sigma_x$ find bounding boxes for points in
-  $\mathcal{X}$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower
-  bound distances between bounding boxes.  We represent summary
+  $\mathcal{X}$ and let $\disthrectmax$ and $\disthrectmin$ find upper and
+  lower bound distances between bounding boxes.  We represent summary
   results with
   \begin{eqnarray*}
-    \GNP[\sigma](\sigma_x(Q),\sigma_x(R)) & = & \eta(\{(q,[D^{\!L}(\sigma_x(Q),\sigma_x(R)), D^{\!U}(\sigma_x(Q),\sigma_x(R))]) | q \in Q\}), \\
+    \GNP[\sigma](\sigma_x(Q),\sigma_x(R)) & = & \eta(\{(q,[\disthrectmin(\sigma_x(Q),\sigma_x(R)), \disthrectmax(\sigma_x(Q),\sigma_x(R))]) | q \in Q\}), \\
     \eta(A) \otimeshat \eta(B) & = & \eta(\{(q,[\min(l_a,l_b),\min(u_a,u_b))]) | (q,[l_a,u_a]) \in A, (q,[l_b,u_b]) \in B\}), \\
     \eta(A) \odothat \eta(B) & = & \eta(A \cup B),
   \end{eqnarray*}
@@ -787,40 +818,45 @@ the global result.
   because the most convenient representation of All-NN's summary
   results is not the same type as is needed by the generalized math.}
   a set of key-range pairs into the set of all sets of key-value pairs
-  with values within their corresponding ranges.  Because $\min(v,v) =
-  v$ and because, for $Q' \subseteq Q^{\!L}$,
+  with values within their corresponding ranges.  Due to properties of
+  $\min$ and $\map$,
+%  Because $\min(v,v) = v$ and because, for $Q' \subseteq Q^{\!L}$,
+%  \[
+%  \overrightarrow{\min}(\GNP(\kdleft{Q},R) \cup \GNP(\kdright{Q},R),\GNP(Q',R)) = \overrightarrow{\min}(\GNP(\kdleft{Q},R),\GNP(Q',R'))
+%  \]
+%  we have $s_0 = \overrightarrow{\min}(s_0,b)$.  Because $s_0$
+%  represents a final result,
   \[
-  (\GNP[\Sigma](Q^{\!L},R) \odothat \GNP[\Sigma](Q^{\!R},R)) \otimeshat \GNP[\Sigma](Q',R) = \GNP[\Sigma](Q^{\!L},R) \otimeshat \GNP[\Sigma](Q',R),
+  \forall a \in \GNP[\Sigma](Y_{root},X_{root})~~ \exists r \st~ \forall b \in \GNP[\Sigma](Y,X)~~ \overrightarrow{\min}(a,b) = r.
   \]
-  we may directly obtain $S_0 = \{\{a\} \otimeshat \GNP[\Sigma](Q,R) |
-  a \in \GNP[\Sigma](Q_{root},R_{root})\}$.  Elements of this set are
-  singleton if, for all matching $(q,v) \in a$ and $(q,[l,u]) \in B$,
-  with $\eta(B) = \GNP[\Sigma](Q,R)$, we have $v < l$.  Thus, all
-  elements of $S_0$ are singleton if, for all matching $(q,[l_a,u_a])
-  \in A$ and $(q,[l_b,u_b]) \in B$, with $\eta(A) =
-  \GNP[\Sigma](Q_{root},R_{root})$ and $\eta(B) = \GNP[\Sigma](Q,R)$, we
-  have $u_a < l_b$.  In words, we may prune when when the lower bound
-  distance between the queries and references is greater than the
-  greatest of the queries' candidate nearest-neighbor distance found
-  so far.
+  is equivalent\footnote{This claim deserves a proof, but we omit it
+  for brevity.} to the extrinsic prune test.  If, for all matching
+  $(q,v_a) \in a$ and $(q,v_b) \in b$, we have $v_a < v_b$, then
+  $\overrightarrow{\min}(a,b) = a$.  Thus, if for all matching
+  $(q,[l_a,u_a]) \in A$ and $(q,[l_b,u_b]) \in B$, with $\eta(A) =
+  \GNP[\Sigma](Q_{root},R_{root})$ and $\eta(B) = \GNP[\Sigma](Q,R)$,
+  we have $u_a \leq l_b$, then we may always choose $r = a$.  In
+  words, we may prune when the lower bound distance between the
+  queries and references is greater than the greatest of the queries'
+  candidate nearest-neighbor distance found so far.
 \end{proof}
 
 % \subsection{Thresholded Pruning}
 
-{\bf Thresholded Pruning.}  Postprocessing function $h$ introduces a
+Postprocessing function $h$ introduces a
 third form of pruning.
-\begin{lemma}
-  We may perform {\em thresholded pruning} if $\{h(b) | b \in B\}$ is
-  singleton for all $B \in S_0$.
+\begin{lemma}[Thresholded Pruning]
+  We may prune if $\{h(b) | b \in B\}$ is singleton for all $B \in
+  S_0$.
 \end{lemma}
 \begin{proof}
   Similar to extrinsic pruning.
 \end{proof}
 
-\begin{corollary}
-  We may perform thresholded pruning for nonparametric Bayes
-  classification.
-\end{corollary}
+\begin{example}[Pruning in Nonparametric Bayes Classification]
+  We may perform thresholded pruning when bounds on queries' kernel
+  sums restrict their values to be positive, negative, or zero.
+\end{example}
 \begin{proof}
   Yet again, let $\sigma_x$ find bounding boxes for points in
   $\mathcal{X}$ and let $D^{\!U}$ and $D^{\!L}$ find upper and lower
