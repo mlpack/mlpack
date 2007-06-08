@@ -5,6 +5,11 @@
 
 #include "fastlib/fastlib.h"
 
+#include <string.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
+
 /*
 
 As two-variable functions:
@@ -638,7 +643,11 @@ class AffinityRho {
     static double Heuristic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta) {
       // TODO: If approximating, favor upper bound
+      #ifdef APPROX
       return -delta.d_rho.hi;
+      #else
+      return 0;
+      #endif
     }
   };
 };
@@ -790,6 +799,7 @@ inline double damp(double lambda, double prev, double next) {
 void TimeStats(datanode *module, const ArrayList<double>& list) {
   double v_avg;
   MinHeap<double, char> heap;
+  double f = 1.0 / sysconf(_SC_CLK_TCK);
 
   heap.Init();
   v_avg = 0;
@@ -813,11 +823,11 @@ void TimeStats(datanode *module, const ArrayList<double>& list) {
   }
   v_max = heap.top_key();
 
-  fx_format_result(module, "min", "%f", v_min/1e6);
-  fx_format_result(module, "med", "%f", v_med/1e6);
-  fx_format_result(module, "max", "%f", v_max/1e6);
-  fx_format_result(module, "avg", "%f", v_avg/1e6);
-  fx_format_result(module, "sum", "%f", v_avg*list.size()/1e6);
+  fx_format_result(module, "min", "%f", v_min*f);
+  fx_format_result(module, "med", "%f", v_med*f);
+  fx_format_result(module, "max", "%f", v_max*f);
+  fx_format_result(module, "avg", "%f", v_avg*f);
+  fx_format_result(module, "sum", "%f", v_avg*list.size()*f);
 }
 
 
@@ -865,7 +875,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     point->info().alpha.max1 = 0;
     point->info().alpha.max2 = param.pref;
     point->info().alpha.max1_index = i;
-    if (rand() % 2 == 0) {
+    if (rand() % 8 == 0) {
       point->info().rho = -param.pref / 2;
     } else {
       point->info().rho = 0;
@@ -914,8 +924,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     double sum_alpha2 = 0;
     double sum_rho = 0;
     index_t unclassifieds;
-    double last_rho_time = timer_rho->total.micros;
-    double last_alpha_time = timer_alpha->total.micros;
+    double last_rho_time = timer_rho->total.cpu.tms_utime;
+    double last_alpha_time = timer_alpha->total.cpu.tms_utime;
 
     n_exemplars = 0;
     unclassifieds = 0;
@@ -988,7 +998,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
         double new_rho = damp(lambda, old_rho, result->rho);
 
         if ((old_rho > 0) != (new_rho > 0)) {
-          new_rho *= math::Random(0.4, 1.6);
+          new_rho *= math::Random(0.4, 1.4);
           n_changed++;
         }
 
@@ -1020,10 +1030,10 @@ void AffinityMain(datanode *module, const char *gnp_name) {
         sum_rho, param.eps,
         timer_rho->total.micros / 1.0e6);
 
-    *iter_times_rho.AddBack() = timer_rho->total.micros - last_rho_time;
-    *iter_times_alpha.AddBack() = timer_alpha->total.micros - last_alpha_time;
-    *iter_times_total.AddBack() = (timer_rho->total.micros - last_rho_time)
-        + (timer_alpha->total.micros - last_alpha_time);
+    *iter_times_rho.AddBack() = timer_rho->total.cpu.tms_utime - last_rho_time;
+    *iter_times_alpha.AddBack() = timer_alpha->total.cpu.tms_utime - last_alpha_time;
+    *iter_times_total.AddBack() = (timer_rho->total.cpu.tms_utime - last_rho_time)
+        + (timer_alpha->total.cpu.tms_utime - last_alpha_time);
 
     if (n_changed < convergence_thresh) {
       stable_iter++;

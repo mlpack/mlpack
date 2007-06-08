@@ -73,7 +73,8 @@ class BlankGlobalResult {
   void UndoDelta(const Param& param, const Delta& delta) {}
   template<typename Param>
   void Postprocess(const Param& param) {}
-  void Report(datanode *datanode) {}
+  template<typename Param>
+  void Report(const Param& param, datanode *datanode) {}
 };
 
 struct BlankQMassResult {

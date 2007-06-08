@@ -199,7 +199,8 @@ class ThreadedDualTreeSolver {
 
     fx_timer_stop(module, "all_threads");
     
-    global_result_.Report(fx_submodule(module, NULL, "global_result"));
+    global_result_.Report(*param_,
+        fx_submodule(module, NULL, "global_result"));
   }
 };
 
