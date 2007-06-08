@@ -827,7 +827,7 @@ Refinement need not be performed in any particular pattern.
 Depth-first is often a good choice due to its low overhead, though
 pruning in some problems strongly favors other expansion patterns.
 
-\begin{lemma}[Correctness of the GNA]
+\begin{lemma}[Correctness]
   The GNA terminates with $\GNP[\Sigma](\kdroot{Y},\kdroot{X}) =
   \{\GNP(\kdroot{Y},\kdroot{X})\}$.
 \end{lemma}
@@ -839,8 +839,7 @@ pruning in some problems strongly favors other expansion patterns.
   that values introduced by $\prunes$ ultimately yeild the exact
   result.  Otherwise, by induction and by the definition of composed
   summary results, all nodes must represent singleton summary sets
-  containing values equivalent to what exhaustive recursion would have
-  found.
+  containing values equivalent to exhaustive recursion.
 \end{proof}
 \killspace
 % \subsection{Intrinsic Pruning}
