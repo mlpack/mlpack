@@ -42,6 +42,7 @@
 \DeclareMathOperator*{\map}{map}
 \DeclareMathOperator*{\minmax}{minmax}
 \DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\prunes}{prunes}
 
 \DeclareMathOperator{\leftchild}{left}
 \DeclareMathOperator{\rightchild}{right}
@@ -771,17 +772,18 @@ It is often useful to gather summary results from the various components of comp
 means of replacing summary result sets for a component of computation
 with composed summary results for its left and right subcomponents.
 \begin{definition}
-  The {\bf }
-  {\bf Iterative refinement} constructs a binary tree wherein each
-  node $\GNP[\Sigma](Y,X)$ represents composed summary results for a
-  component of computation introduced via block decomposition.  First,
-  initialize $\GNP[\Sigma](\kdroot{Y},\kdroot{X}) \gets
+  The {\bf Generalized $N$-body Algorithm (GNA)} constructs and maintains a
+  binary tree wherein each node $\GNP[\Sigma](Y,X)$ represents
+  composed summary results for a component of computation introduced
+  via block decomposition.  It initializes
+  $\GNP[\Sigma](\kdroot{Y},\kdroot{X}) \gets
   \GNP[\sigmahat](\sigma_y(\kdroot{Y}),\sigma_x(\kdroot{X}))$.  Then,
-  repeatedly select some node $\GNP[\Sigma](Y,X) =
-  \GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$ and replace it with
+  it repeatedly selects some node $\GNP[\Sigma](Y,X) =
+  \GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$ and replaces it with
   \[
   \GNP[\Sigma](Y,X) \gets \left\{ \begin{array}{lrr}
-    \{f(x,y)\} & \multicolumn{2}{r}{\mbox{\rm if } X = \{x\} \mbox{ \rm and } Y = \{y\}} \\
+    \{p\} & \multicolumn{2}{r}{\mbox{\rm if } \prunes(\GNP[\Sigma](Y,X)) \mbox{ \rm to } p,} \\
+    \{f(x,y)\} & \multicolumn{2}{r}{\mbox{\rm if } X = \{x\} \mbox{ \rm and } Y = \{y\},} \\
     \multicolumn{2}{l}{\GNP[\Sigma](Y,\kdleft{X}) \otimeshat \GNP[\Sigma](Y,\kdright{X})} & \mbox{\rm if } X \succ Y, \\
     \multicolumn{2}{l}{\GNP[\Sigma](\kdleft{Y}\!,X) \odothat \GNP[\Sigma](\kdright{Y}\!,X)} & \mbox{\rm otherwise},
   \end{array} \right.
@@ -792,7 +794,7 @@ with composed summary results for its left and right subcomponents.
   reflect changes made to its descendents.
 \end{definition}
 \killspace
-\noindent Iterative refinement adds one node to the tree per replacement resulting in $X \times Y$ leaves, and thus must terminate after $O(N^2)$ steps.
+\noindent The GNA adds one node to the tree per replacement resulting in $X \times Y$ leaves, and thus must terminate after $O(N^2)$ steps.
 It is useful to navigate this tree, with functions $\leftchild$, $\rightchild$, $\parent$, and $\sibling$ defined intuitively.
 Further, let $\op(\GNP[\Sigma](Y,X))$ return $\otimes$ or $\odot$ depending on $X \succ Y$.
 
@@ -802,7 +804,7 @@ pruning in some problems strongly favors other expansion patterns.
 
 % \subsection{Intrinsic Pruning}
 
-Summarization directly leads to a simple pruning technique.
+{\bf Pruning.} Summarization directly leads to a simple pruning technique.
 \begin{lemma}[Intrinsic Pruning]
   We may prune when summary results form a singleton set.
 \end{lemma}
