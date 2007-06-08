@@ -930,13 +930,13 @@ storing summary results during the process of iterative refinement.
 
 Affinity propagation \cite{affinity} is a recent clustering technique
 that chooses {\em exemplars} from a data set $X \subset \mathcal{X}$
-such in attempt to maximize the sum of similarities between all points
-and their nearest exemplar.  Two points $x_i$ and $x_j$ have
-similarity $\simil{i}{j}$, and special case $\simil{i}{i}$ is set to
-parameter $p$, the {\em preference} of points to be exemplars.  The
-number of clusters to find is not explicitly specified, but is
-positively correlated with $p$.  A typical value of $p$ is the median
-of the similarities between all pairs of points.
+in attempt to maximize the sum of similarities between all points and
+their nearest exemplar.  Two points $x_i$ and $x_j$ have similarity
+$\simil{i}{j}$, and special case $\simil{i}{i}$ is set to parameter
+$p$, the {\em preference} of points to be exemplars.  The number of
+clusters to find is not explicitly specified, but is positively
+correlated with $p$.  A typical value of $p$ is the median of the
+similarities between all pairs of points.
 
 The algorithm alternateingly updates messages $\respo{i}{j}$ and
 $\avail{i}{j}$ with
