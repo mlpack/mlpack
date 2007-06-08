@@ -1043,7 +1043,7 @@ clusters to find is not explicitly specified, but is positively
 correlated with $p$.  A typical value of $p$ is the median of the
 similarities between all pairs of points.
 
-The algorithm alternateingly updates messages $\respo{i}{j}$ and
+The algorithm alternatingly updates messages $\respo{i}{j}$ and
 $\avail{i}{j}$ with
 \[ \begin{array}{rcl}
   \respo{i}{j} \gets \simil{i}{j} - \max_{j' \neq j} (\avail{i}{j'} + \simil{i}{j'})
@@ -1057,7 +1057,7 @@ For $N$ points, $R$ and $A$ are size $N \times N$, but may be sparse with simila
 While sparsity permits larger data sets, in a metric space it is preferable to consider all pairs.
 
 We observe that the undamped affinity propagation may be posed as two second-order GNPs, $\vecalpha$ and $\vecrho$, derived as follows.
-Rearrange computation of $A$ and $R$ with
+We rearrange computation of $A$ and $R$ with
 \[ \begin{array}{ll}
     \respo{i}{j} = \simil{i}{j} + \falphaj{i}{j}, & \falphaj{i}{j} \gets \min_{j' \neq j} (-\avail{i}{j'} - \simil{i}{j'}), \\
     \avail{i}{j} = \cneg{i}{j} (\frho{j} - \cpos{i}{j}(\respo{i}{j}) ), & \frho{j} \gets \sum_{i'} ( \cpos{i'}{j}(\respo{i'}{j}) ) .
@@ -1170,38 +1170,22 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
   \end{minipage}
 \end{figure}
 
-We employ depth-first iterative refinement to compute $\vecalpha$ and
-simple depth-first expansion to compute $\vecrho$, with pseudocode for
-these algorithms shown in Figure~\ref{fig:alpharho}.  Combined, these
-computations perform the core update of affinity propagation, but they
-do not accomplish the damping procedure, which would require storing
-either a full history of result vectors or the matrices $R$ and $A$.
-To achieve convergeance, we damp the computed values of $\vecrho$.  In
-practice, we must use a higher damping factor $\lambda$, and we
-observe a slight drop in the quality of results.  Future lines of
-research include investigation of more effective means of damping.
+It is possible to employ depth-first iterative refinement to compute $\vecalpha$ and simple depth-first expansion to compute $\vecrho$, with pseudocode for these algorithms shown in Figure~\ref{fig:alpharho}.
+Combined, these computations perform the core update of affinity propagation.
+Our rearrangements of the computation require damping in a different manner from \cite{affinity}.
+In our method, $\rho$ is damped.
+The relationship between the two damping methods requires further investigation, but we achieve near-identical results in our experiments.
+%either a full history of result vectors or the matrices $R$ and $A$.
 
-INTEGRATE. {\bf Comparison.}  We implement the above algorithms for
-$\vecalpha$ and $\vecrho$ in C++ and compare to Frey and Dueck's
-quadratic C implementation.  Our data are points in $\mathbb{R}^3$
-from the Millenium Simulation, a large-scale gravitational $N$-body
-particle simulation\cite{simulation}.  Although our algorithm produces
-identical results when no damping or noise addition is performed, we
-must use different values of $\lambda$ due to the $\vecalpha,\vecrho$
-transformation.  In the end, our algorithm produces nearly identical
-numbers of clusters, with net similarities up to $5\%$ worse.
-Figure~\ref{fig:speed} demonstrates an asymptotic speedup per
-iteration, with runtime empirically scaling $O(N^{1.3})$.  Considering
-the number of iterations, we empircally have $O(N^{1.5})$ overall
-running time; unfortunately, the quadratic algorithm cannot handle
-large enough data sets to measure such scaling\footnote{Indeed, one
-million points requires at minimum $2 \cdot 10^{12}$ single-precision
-floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to
-eight terabytes of memory.}.
+We implmented algorithms {\bf rho} and {\bf alpha} in C++ and directly compared to Frey and Dueck's quadratic C implementation.
+Our data are points in $\mathbb{R}^3$ from a large-scale gravitational $N$-body particle simulation.
+Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$ with a three-hundred-fold speedup at one million points.
+Factoring in the number of iterations, we empircally have $O(N^{1.5})$ overall running time.
+The quadratic algorithm unfortunately does not support large enough data sets to observe such a trend in the number of iterations -- indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
 
-Although we demonstrate the effectiveness of deriving new efficient algorithms using a generalized $N$-body framework, there are a few disadvantages.
-Since we require that data points lie metric space with a computable distance measure, the original algorithm is preferable for sparse similarity measures on arbitrary graphs.
-Second, in a high number of dimensions, the quadratic run-time may be unavoidable -- for a 50-dimensional data set we measured $O(N^{1.9})$ per-iteration scaling.
+As defined, affinity propagation works for arbitrary and potentially sparse similarity graphs, whereas we require a metric space and fully utilize similarities between all point pairs.
+Second, data sets with unusually high intrinsic dimensionality may diminish the asymptotic gains of our algorithm.
+Nonetheless, we demonstrate the value of the generalized $N$-body approach for deriving new efficient algorithms that display orders of magnitude speedup for a wide range of practical problems.
 
 \begin{figure}
   \begin{minipage}{2.8in}
@@ -1215,6 +1199,7 @@ Second, in a high number of dimensions, the quadratic run-time may be unavoidabl
 %  \end{tabular}
       \caption{\label{fig:speed}\footnotesize Mean per-iteration and total run-times for affinity propagation.
 	Although Frey-Dueck's code runs out of memory after 10,000 points, we extrapolate their algorithm quadratically, assuming optimistically a constant number of iterations.
+	Our distance metric is negative squared Euclidean distance.
 	We set $p$ to the median similarity, calculated as the negative squared radius having a $50\%$ two-point correlation.
 	System: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
   \end{minipage}
