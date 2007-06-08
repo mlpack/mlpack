@@ -161,7 +161,7 @@ std::string Usage() {
 
 std::string PrintArgs(Parameters &args) {
   char temp[8192];
-	sprintf(temp, "train_file : %s\n"
+	sprintf(temp, "\n train_file : %s\n"
 			          "test_file  : %s\n"
 								"out_file   : %s\n"
 								"memory_file: %s\n"
