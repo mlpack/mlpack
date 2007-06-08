@@ -1,0 +1,12 @@
+We present mathematical foundations for a highly successful
+algorithmic strategy that has resulted in the fastest algorithms for
+many machine learning methods and is broadly applicable to scaling
+many future methods up to large datasets.  We formalize for the first
+time a class of computational problems which are common in machine
+learning, called generalized N-body problems (GNP's), and
+provide a calculus for simplification of GNP's in various ways.  We
+then present a template generalized N-body algorithm applying
+to any GNP, which can be specialized to mathematically derive
+efficient problem-dependent algorithms using the calculus.  We
+demonstrate the use of this mathematical framework for deriving a fast
+algorithm for the recent affinity propagation method.
