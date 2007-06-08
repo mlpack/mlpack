@@ -621,6 +621,39 @@ void TREE__::CollectKNearestNeighborWithFwrite(string file) {
 }
 
 TEMPLATE__
+void TREE__::CollectKNearestNeighborWithFwriteText(string file) {
+  LOKI_STATIC_CHECK(NodeInitializerTrait<Node_t::kSpecialId>::IsItGoodForKnnInitialization,
+	      You_are_using_the_wrong_node_probably_KnnNode_instead_of_Node);
+
+	FILE *fp=fopen(file.c_str(), "w");
+	if (unlikely(fp==NULL)) {
+	  FATAL("Unable to open file %s, error: %s\n", 
+				  file.c_str(), strerror(errno));
+	}
+	CollectKNearestNeighborText(parent_, fp);
+	fclose(fp);
+}
+
+TEMPLATE__
+void TREE__::CollectKNearestNeighborText(NodePtr_t ptr, 
+		                                     FILE *out) {
+	ptr.Lock();
+  if (ptr->IsLeaf()) {
+	  ptr->OutputNeighborsText(out, knns_);
+		out+=ptr->get_num_of_points()*knns_;
+		ptr.Unlock();
+	} else {
+		NodePtr_t left = ptr->get_left();
+		ptr.Unlock();
+	  CollectKNearestNeighborText(left, out);
+		ptr.Lock();
+		NodePtr_t right = ptr->get_right();
+		ptr.Unlock();
+    CollectKNearestNeighborText(right, out);
+	}
+}
+
+TEMPLATE__
 void TREE__::CollectKNearestNeighbor(NodePtr_t ptr, 
 		                                 typename Node_t::NNResult *out) {
 	ptr.Lock();

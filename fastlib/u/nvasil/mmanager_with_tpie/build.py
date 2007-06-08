@@ -1,12 +1,11 @@
 librule(name="tpiemm",
 		    headers=lglob("*.h"),
 				deplibs=["fastlib:fastlib",
-				         "u/nvasil/tpie:tpie", 
-								 "libsigsegv.a"]
+							   "libsigsegv.a"]
 		);
 binrule(
 		name="test",
 		sources=["memory_manager_unit.cc"],
 		headers=lglob("*.h"),
-		linkables=[":tpiemm"]
+		deplibs=[":tpiemm"]
 		);

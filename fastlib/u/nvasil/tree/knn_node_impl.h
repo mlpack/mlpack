@@ -259,6 +259,26 @@ void KNN_NODE__::OutputNeighbors(FILE *fp, index_t knns) {
 	}	
 
 TEMPLATE__
+void KNN_NODE__::OutputNeighborsText(FILE *fp, index_t knns) {
+    kneighbors_.Lock();
+	  distances_.Lock();
+		index_.Lock();
+		NNResult result;
+    for(index_t i=0; i<num_of_points_; i++) {
+		  for(index_t j=0; j<knns; j++) {
+				fprintf(fp, "%lli %lli %lg\n",
+					      (signed long long)index_[i],
+					      (signed long long)kneighbors_[i*knns+j].get_id(),
+						    (double) distances_[i*knns+j]);
+			}
+		}
+		index_.Unlock();
+	  kneighbors_.Unlock();
+	  distances_.Unlock();	
+	}	
+
+
+TEMPLATE__
 string KNN_NODE__::Print(int32 dimension) {
   points_.Lock();
 	index_.Lock();
