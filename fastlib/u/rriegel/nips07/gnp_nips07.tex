@@ -255,7 +255,7 @@ One paragraph more text more text more text more text mroe text more text.
   \label{fig:kdtree}
 \end{figure}
 \begin{figure}
-  \vspace{-1.87in}
+  \vspace{-1.89in}
   \hspace{1.8in}
   %\begin{minipage}{2.8in}
   %\end{minipage}
@@ -329,20 +329,13 @@ Here, we present two simple dual-tree algorithms, two-point correlation and all-
 %, and nonparametric Bayes classification.
 We use spatial trees, where every node $X$ in tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \cup \kdright{X} = X$, with each leaf a single point $\{x\}$.
 For example, a $kd$-tree, as in Figure~\ref{fig:kdtree}, recursively partitions the data along coordinate dimensions.
-We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to upper and lower bounds.
+We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to lower and upper bounds.
 
-{\bf The Two-point Correlation.} As a member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation\footnote{For simplicity, we do not exclude redundant pairs; this is trivially handled algebraicly.} of data set $X$ for radius $r$ is:
-\begin{equation*}
-\sum_{x_1 \in X} \sum_{x_2 \in X} I(d(x_1, x_2) \leq r)
-\end{equation*}
-\noindent for indicator function $I$.
+{\bf The Two-point Correlation.} As a member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation\footnote{The number of non-redundant pairs may be computed as an algebraic post-processing step.} of data set $X$ for radius $r$ is
+$\sum_{x_1 \in X} \sum_{x_2 \in X} I(d(x_1, x_2) \leq r)$ for the indicator function $I$.
 \fig{allnntpc} shows a formulation that recursively considers a subset pair $X_1$ and $X_2$, returning immediately if all points in $X_1$ and $X_2$ are completely inside or outside the radius.
 
-{\bf All-nearest-neighbors.} In applications from manifold learning to computational physics, it is often desirable to find for a batch of queries $Q$ the nearest neighbors from reference set $R$:
-\begin{equation*}
-\sum_{q \in Q} \argmin_{r \in R} d(q,r)
-\end{equation*}
-\noindent with the exception $d(q,q) = \infty$.
+{\bf All-nearest-neighbors.} In applications from manifold learning to computational physics, it is often desirable to find for a batch of queries $Q$ the nearest neighbors from reference set $R$, as $\sum_{q \in Q} \argmin_{r \in R} d(q,r)$, with the exception $d(q,q) = \infty$.
 To achieve speedup, one maintains for each recursive subset of queries the furthest candidate neighbor distance found.
 If a considered set of references is farther away than this distance, no further exploration is required.
 
@@ -583,6 +576,7 @@ regions, possibly with permuted orderings of rows or columns.
       \end{array} \right)
     \end{array}
   \end{eqnarray*}
+  \vspace{-.1in}
   \caption{\label{fig:grid}\footnotesize {\em (Left)} Na\"{i}ve computation of a
   second-order GNP.  {\em (Right)} An application of block
   decomposition restructures computation.}
