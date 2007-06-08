@@ -914,38 +914,35 @@ $\avail{i}{j}$ with
   & \text{ and } &
   \avail{i}{j} \gets \cneg{i}{j}( \sum_{i' \neq i} ( \cpos{i'}{j}(\respo{i'}{j}) ) )
 \end{array} \]
-\noindent where $\cpos{i}{j}(x)$ is $x$ if $i = j$ and $\max(0,x)$ otherwise and $\cneg{i}{j}(x)$ is similar for $\min(0,x)$.
+where $\cpos{i}{j}(x)$ is $x$ if $i = j$ and $\max(0,x)$
+otherwise; likewise, $\cneg{i}{j}(x)$ for $\min(0,x)$.  For $N$
+points, $R$ and $A$ are size $N \times N$, but can be sparse if we
+restrict consideration of most of $S$.  While this permits the most
+straightforward means of computation to scale to large data sets, it
+lessens the significance of results.
 
-\noindent where $\cpos{i}{j}(x)$ equals $x$ when $i=j$, and $\max(x,0)$ otherwise; likewise, $\cneg{i}{j}$ for $\min(x, 0)$.
-Trivially, $\respo{}{}$ and $\avail{}{}$ are $N \times N$ matrices, where $N$ is the number of points.
-To create a sub-quadratic GNP, we define vectors $\vecalpha$ and $\vecrho$, which we compute instead:
-\begin{equation*}
-  \begin{array}{lcr}
-    \falphaj{i}{j} \gets \min_{j' \neq j} (-\avail{i}{j'} - \simil{i}{j'})
-    &\quad&
-    \frho{j} \gets \sum_{i'} ( \cpos{i'}{j}(\respo{i'}{j}) )
-  \end{array}
-\end{equation*}
+We observe that affinity propagation may be posed as two second-order
+GNPs, $\vecalpha$ and $\vecrho$, derived as follows.  Rearrange computation
+of $A$ and $R$ with
+\[ \begin{array}{ll}
+    \respo{i}{j} = \simil{i}{j} + \falphaj{i}{j}, & \falphaj{i}{j} \gets \min_{j' \neq j} (-\avail{i}{j'} - \simil{i}{j'}), \\
+    \avail{i}{j} = \cneg{i}{j} (\frho{j} - \cpos{i}{j}(\respo{i}{j}) ), & \frho{j} \gets \sum_{i'} ( \cpos{i'}{j}(\respo{i'}{j}) ) .
+\end{array} \]
+Note that $\falphaj{i}{j}$ depends on $j$ only for exclusion from
+$\min$.  This is achieved computationally by finding the first and
+second minima and returning the later if $j$ is the index of the
+first.  We further substitute
+\[ \begin{array}{rcl}
+  \vecalpha \gets \map_{i} \argmin^2_{j} \!\left( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} \right)\! ,
+  &
+  \vecrho \gets \map_{j} \sum_{i} \!\left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)\! .
+\end{array} \]
+Both $\vecalpha$ and $\vecrho$ are GNPs by Lemma~\ref{lem:map}.  They
+support extrinsic and intrinsic prunes, respectively.
 
-\noindent Note $\falphaj{i}{j}$ depends on $j$ only for exclusion from $\min$; computationally, one finds the first and second minimum, and chooses the first or second depending on $j$.
-Substituting, $\respo{}{}$ and $\avail{}{}$ are:
-\begin{equation*}
-  \begin{array}{lcccr}
-    \respo{i}{j} = \simil{i}{j} + \falphaj{i}{j}
-    &\quad&
-    \avail{i}{j} = \cneg{i}{j} (\frho{j} - \cpos{i}{j}(\respo{i}{j}) )
-  \end{array}
-\end{equation*}
-
-\noindent 
-A bit of algebraic substitution defines $\vecalpha$ and $\vecrho$ in terms of each other:
-\begin{equation*}
-  \begin{array}{lr}
-    \vecalpha \gets \map_{i} \argmin^2_{j} \left( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} \right)
-    &~
-    \vecrho \gets \map_{j} \sum_{i} \left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)
-  \end{array}
-\end{equation*}
+\begin{lemma}[Pruning in $\vecalpha$]
+  $$
+\end{lemma}
 
 We now have a problem nearly\footnote{To aid convergence, affinity propagation adds noise to the similarity matrix and dampens both $\respo{}{}$ and $\avail{}{}$ between time-steps.  Since we store no matrices, we both dampen and add noise to $\vecrho$.} indentical to traditional affinity propagation.
 However, we can show that this is a generalized $N$-body problem.
