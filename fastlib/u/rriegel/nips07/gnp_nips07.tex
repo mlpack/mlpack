@@ -135,8 +135,7 @@ machine learning, called {\em generalized $N$-body problems}, and
 subsequently present a template {\em generalized $N$-body algorithm},
 which can be specialized to produce efficient problem-dependent
 algorithms.  We demonstrate the use of this mathematical framework for
-deriving algorithms for new machine learning methods, including the
-recent affinity propagation method.
+deriving the recent affinity propagation method.
 \end{abstract}
 
 \section{Introduction}
@@ -208,82 +207,6 @@ approximate speedup approaches.
 %    pages = "535-541",
 %    year = "2000",
 %    url = "citeseer.ist.psu.edu/541475.html" }
-
-Some fundamental problems to which the multi-tree strategy is
-applicable are shown in Figure~\ref{tab:probs}, including some canonical
-problems in theoretical computer science [[preparata-shamos]].  These
-problems commonly occur in many guises in many fields, including many
-machine learning methods, both classical and modern, such as recent
-manifold learning [[lle, isomap]] methods.
-
-\begin{table}[t]
-\caption{Various generalized $N$-body problems.}
-\label{tab:probs}
-\vskip 0.15in
-\begin{center}
-\begin{small}
-\begin{sc}
-\begin{tabular}{lr}
-\hline
-Problem & Expression \\
-\hline
-All-nn & $\displaystyle \map_{q \in Q} \argmin_{r \in R} d(q,r)$ \\
-$n$-point cor. & $\displaystyle \sum_{x_1 \in X} \cdots \sum_{x_n \in X} I(\forall x_i, \forall x_j, d(x_i,x_j) \leq r)$ \\
-KDE & $\displaystyle \map_{q \in Q} \sum_{r \in R} K(d(q,r))$ \\
-\hline
-\end{tabular}
-\end{sc}
-\end{small}
-\end{center}
-\vskip -0.1in
-\end{table}
-
-\begin{table}[t]
-\caption{Sample table title}
-\label{sample-table}
-\begin{center}
-\begin{tabular}{ll}
-\multicolumn{1}{c}{\bf PART}  &\multicolumn{1}{c}{\bf DESCRIPTION}
-\\ \hline \\
-Dendrite         &Input terminal \\
-Axon             &Output terminal \\
-Soma             &Cell body (contains cell nucleus) \\
-\end{tabular}
-\end{center}
-\end{table}
-
-In this paper we begin to investigate the scope of this successful
-algorithmic approach.  For the first time, we mathematically formalize
-the class of {\em generalized $N$-body problems}.  We also formalize
-the algorithmic approach as a single generic algorithm, {\em the
-generalized $N$-body algorithm}, which applies to any problem in the
-class.  We elucidate some of the mathematical properties of such
-problems that can be exploited to achieve computational efficiency.
-These mathematical foundations facilitate the application of the ideas
-we have developed over many problem examples by researchers wishing to
-design fast algorithms for new problems in the class.  These
-foundations also open up the possibility of automatic derivation of
-algorithms for new problems [[autobayes]], as did the specification of
-the generic EM algorithm by [[dempster et al.]].
-
-In the next section, to make the ideas concrete, we present one of the
-more easily understood problems in our class and an efficient
-multi-tree method for it.  We then define generalized $N$-body
-problems, and show that they have a decomposability property which
-ultimately admits a general recursive formulation, the generalized
-$N$-body algorithm.  Making the generalized $N$-body algorithm
-efficient requires a problem-dependent pruning step.  The following
-two sections discuss problem-dependent properties which admit
-efficient pruning steps in the cases of exact and approximate
-computation, respectively.  We conclude with examples of designing
-fast algorithms for machine learning problems, starting with the
-problem of nonparametric density thresholding, a common folk method
-for anomaly detection.  Finally, as a demonstration of the practical
-relevance of this methodology to state-of-the-art machine learning
-methods, we considered the most recent method we could find, affinity
-propagation [[affinity]], and designed and implemented in one day a
-fast algorithm for it allowing it to scale to large datasets despite
-its straightforward $O(N^2)$ runtime.
 
 \section{Examples}
 
