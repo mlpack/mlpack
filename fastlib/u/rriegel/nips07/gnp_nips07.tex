@@ -111,7 +111,7 @@
 
 \newcommand{\ignoreall}[1]{}
 
-\title{A Mathematical Theory for Scalable Learning}
+\title{Some Awesome Title}
 
 \author{
 Ryan N.~Riegel \\
@@ -119,12 +119,6 @@ College of Computiong \\
 Georgia Institute of Technology \\
 Atlanta, GA 30332 \\
 \texttt{rriegel@cc.gatech.edu} \\
-\And
-Garrett F.~Boyer \\
-College of Computiong \\
-Georgia Institute of Technology \\
-Atlanta, GA 30332 \\
-\texttt{garryb@cc.gatech.edu} \\
 \And
 Alexander G.~Gray \\
 College of Computiong \\
@@ -150,96 +144,76 @@ We present mathematical foundations for a highly successful
 algorithmic strategy that has resulted in the fastest algorithms for
 many machine learning methods and is broadly applicable to scaling
 many future methods up to large datasets.  We formalize for the first
-time a class of computational problems which are common in machine
-learning, called {\em generalized $N$-body problems} (GNP's), and
-provide a calculus for simplification of GNP's in various ways.  We
-then present a template {\em generalized $N$-body algorithm} applying
-to any GNP, which can be specialized to mathematically derive
-efficient problem-dependent algorithms using the calculus.  We
-demonstrate the use of this mathematical framework for deriving a fast
-algorithm for the recent affinity propagation method.
+time a class of computational problems which are very common in
+machine learning, called {\em generalized $N$-body problems}, and
+subsequently present a template {\em generalized $N$-body algorithm},
+which can be specialized to produce efficient problem-dependent
+algorithms.  We demonstrate the use of this mathematical framework for
+deriving the recent affinity propagation method.
 \end{abstract}
 
 \section{Introduction}
 
 The ability to apply machine learning methods to large datasets is
 increasingly important for many applications.  Unfortunately,
-powerful nonparametric methods are commonly $O(N^2)$ or
+generally speaking, the more accurate the method, the greater its
+computational cost; most nonparametric methods are $O(N^2)$ or
 $O(N^3)$, where there are $O(N)$ test (or query) points and training
 (or reference) points.
-The authors of \cite{nips2000paper} presented a new algorithmic strategy
+
+The authors of [[nips2000paper]] presented a new algorithmic strategy
 based on the simultaneous traversal of multiple space-partitioning
 trees, which applies to a number of machine learning methods.  The set
 of problems to which this strategy is applicable was informally named
-{\em generalized $N$-body problems}, in reference to breakthrough
-methods for computational physics problems \cite{appel2,barnes_hut,grngard}
-which can be seen as special cases.
-%all of which have the same
-%characteristic form.  This algorithmic strategy generalizes other
-%successful algorithms for specific problems in addition to these
-%physics problems, such as computing the well-separated pair
-%decomposition in theoretical computer science [[wspd]], computing the
-%spatial join in databases [[spatial join]], and computing set
-%intersections [[baeza-yates]].  In each of these problems no superior
-%algorithmic strategy is known.
+{\em generalized $N$-body problems}, in analogy to breakthrough
+methods for computational physics problems [[Appel's algorithm,
+Barnes-Hut, Fast Multipole Method]], all of which have the same
+characteristic form.  This algorithmic strategy generalizes other
+successful algorithms for specific problems in addition to these
+physics problems, such as computing the well-separated pair
+decomposition in theoretical computer science [[wspd]], computing the
+spatial join in databases [[spatial join]], and computing set
+intersections [[baeza-yates]].  In each of these problems no superior
+algorithmic strategy is known.
 % also a kind of dual-tree method in graphics for object collision
 % detection, but we need the reference
+
 This multi-tree algorithmic strategy has been applied to a succession
 of well-known statistical learning methods, each representing certain
 unique challenges for the strategy, including
 all-$k$-nearest-neighbors (a generalization of $k$-nearest-neighbors)
-\cite{nips2000paper}, kernel density estimation \cite{nips2000paper,
-kde-siamdm, kde-aistats, kde-nips-dong, kde-uai-dong},
-$k$-nearest-neighbor classification \cite{ting-liu}, kernel discriminant
+[[nips2000paper]], kernel density estimation [[nips2000paper,
+kde-siamdm, kde-aistats, kde-nips-dong, kde-uai-dong]],
+$k$-nearest-neighbor classification [[ting-liu]], kernel discriminant
 analysis (or nonparametric Bayes classification) [[nbc-phystat,
-\cite{nbc-compstat}]], and $n$-point correlation functions [[\cite{nips2000paper,
-moore-npt}, npt-2004]].  These algorithms have been demonstrated on
-large scientific datasets, producing first-of-a-kind high-profile
-results, e.g.~\cite{science03, nature05}.  For each of these
-problems, no overall faster algorithms are known.  Other machine
-learning problems which have been treated using this strategy include
-dimensionality reduction methods \cite{hochreiter00beyond}, nonparametric
-belief propagation \cite{alex-ihler}, multiple tracking \cite{kbc:stch}, linear algebraic machine learning methods \cite{freitas_fast},
-and particle filters \cite{klaas_fast, klaas-toward, klaas-fast}.
-Many other current and future machine learning methods remain to be
-treated in depth with this strategy, not to mention a large array of
-related fundamental problems in computational geometry, physics, and
-applied mathematics.  
+nbc-compstat]], and $n$-point correlation functions [[nips2000paper,
+moore-npt, npt-2004]].  These algorithms have been demonstrated on
+large scientific datasets, producing numerous high-profile results,
+e.g.~[[science 2003, nature 2005]].  For each of these problems, no
+overall faster algorithms are known.  In addition, other authors have
+directed the strategy toward other machine learning problems,
+including dimensionality reduction methods [[hochreiter00beyond]],
+nonparametric belief propagation [[alex ihler]], multiple tracking
+[[jeremy kubica]], linear algebraic machine learning methods [[nando,
+below]], particle filters [[klaas papers, below]].  Aside from speed,
+a unique advantage of this algorithmic approach is the ability to
+specify and achieve rigorous relative error tolerances when
+approximation is necessary, contrary to virtually all other
+approximate speedup approaches.
 
-This paper treats two basic questions: 1) What
-is the scope of the problems to which this methodology can be applied? 2)
-How can the successful ideas which have been developed over many problem 
-examples be expertly applied by new researchers wishing to
-design fast algorithms for future machine learning methods?
-To make the ideas concrete, we begin with examples of some problems
-and corresponding algorithms resulting from our approach.  We then
-mathematically formalize the class of {\em generalized $N$-body
-problems} (GNP's) for the first time.  We also formalize the
-algorithmic approach as a single generic algorithm, {\em the
-generalized $N$-body algorithm}, which can be specialized to any problem in the
-class, possibly automatically \cite{autobayes}.
-We elucidate some of
-the abstract mathematical properties of such problems that can be
-exploited to achieve computational efficiency, through a number of
-lemmas forming a calculus of transformations of GNP's.  We then return
-to our examples and demonstrate the derivation of each algorithm using
-our calculus.  As a more sophisticated final example, we apply the
-theory to derive a fast algorithm for as recent a method as we could
-find, the affinity propagation method of clustering \cite{affinity}, and
-demonstrate its efficiency.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
+One paragraph more text more text more text more text mroe text more text.
 
-%\footnote{Beyond facilitating application by
-%humans to new problems, we strive for a level of precise specification
-%which goes even farther, opening up the possibility of automatic
-%derivation of algorithms for new problems [[autobayes]], as did the
-%specification of the generic EM algorithm by [[dempster et al.]].}
-
-%Aside from speed,
-%a unique advantage of this algorithmic approach is the ability to
-%specify and achieve rigorous relative error tolerances when
-%approximation is necessary, contrary to virtually all other
-%approximate speedup approaches.  
-
+%
 %Nando de Freitas, Yang Wang, Maryam Mahdaviani and Dustin Lang. Fast
 %Krylov Methods for N-Body Learning . NIPS 2005.
 %
@@ -260,32 +234,6 @@ demonstrate its efficiency.
 %    pages = "535-541",
 %    year = "2000",
 %    url = "citeseer.ist.psu.edu/541475.html" }
-
-%Some fundamental problems to which the multi-tree strategy is
-%applicable are shown in Figure~\ref{tab:probs}, including some canonical
-%problems in theoretical computer science [[preparata-shamos]].  These
-%problems commonly occur in many guises in many fields, including many
-%machine learning methods, both classical and modern, such as recent
-%manifold learning [[lle, isomap]] methods.
-
-%In the next section, to make the ideas concrete, we present one of the
-%more easily understood problems in our class and an efficient
-%multi-tree method for it.  We then define generalized $N$-body
-%problems, and show that they have a decomposability property which
-%ultimately admits a general recursive formulation, the generalized
-%$N$-body algorithm.  Making the generalized $N$-body algorithm
-%efficient requires a problem-dependent pruning step.  The following
-%two sections discuss problem-dependent properties which admit
-%efficient pruning steps in the cases of exact and approximate
-%computation, respectively.  We conclude with examples of designing
-%fast algorithms for machine learning problems, starting with the
-%problem of nonparametric density thresholding, a common folk method
-%for anomaly detection.  Finally, as a demonstration of the practical
-%relevance of this methodology to state-of-the-art machine learning
-%methods, we considered the most recent method we could find, affinity
-%propagation [[affinity]], and designed and implemented in one day a
-%fast algorithm for it allowing it to scale to large datasets despite
-%its straightforward $O(N^2)$ runtime.
 
 \section{Examples}
 
@@ -734,9 +682,8 @@ This typically involves consideration of $X$ and $Y$ at the abstract level forme
 \begin{definition}
   For descriptive statistics $\sigma_x \colon 2^{\mathcal{X}} \to
   \mathcal{S}_x$ and $\sigma_y \colon 2^{\mathcal{Y}} \to
-  \mathcal{S}_y$, let initial {\bf summary results} $\GNP[\sigmahat]
-  \colon \mathcal{S}_y \times \mathcal{S}_x \to 2^\mathcal{A}$ be such
-  that
+  \mathcal{S}_y$, let {\bf summary results} $\GNP[\sigmahat] \colon
+  \mathcal{S}_y \times \mathcal{S}_x \to 2^\mathcal{A}$ be such that
   \[
   \GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) \supseteq \{\GNP(Y',X') | X' \st \sigma(X') = \sigma(X), Y' \st \sigma(Y') = \sigma(Y)\}.
   \]
@@ -748,12 +695,46 @@ Since the exact set may be costly or impossible to represent, a superset of such
 Note that functions $\sigma_x$, $\sigma_y$, and $\GNP[\sigmahat]$ are not unique for a given GNP; indeed, choosing the right statistics can significantly impact running time.
 A common statistic is the bounding radius, from which the summary set of all possible distances between points in $X$ and $Y$ may be computed as upper and lower bounds.
 %Summaries computed from these may be represented as upper and lower bounds on distances between points in $X$ and $Y$.
+Summarization directly leads to a simple pruning technique.
 
-It is often useful to gather summary results from the various components of computation, ultimately composing them into a summary for the entire computation.
-% {\bf Iterative Refinement.}  Further pruning is possible in some
-% problems by considering results gathered from other parts of
-% computation.  This is assisted by the ability to compose summary
-% results.
+% \subsection{Intrinsic Pruning}
+
+\begin{lemma}[Intrinsic Pruning]
+  We may prune when summary results form a singleton set.
+\end{lemma}
+\killspace
+\begin{proof}
+  Setting $X' = X$ and $Y' = Y$ meets the requirements for inclusion in $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$.
+  Thus, summary results contain the exact result.
+  Thus, singleton $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are free to shortcut all further computation on $\GNP(Y,X)$ with this value.
+\end{proof}
+\killspace
+\begin{example}[Pruning in the Two-point Correlation]
+  We may perform intrinsic pruning when considering regions shown to
+  be completely inside or outside radius $r$ of one another.
+\end{example}
+\killspace
+\begin{proof}
+  Let $\sigma_x$ find bounding boxes for points in $\mathcal{X}$ and
+  let $\disthrectmax$ and $\disthrectmin$ find upper and lower bound distances between bounding boxes.
+  For $x \in X$ and $y \in Y$, bounds on $I(d(x,y) \leq r)$ are then $\left[
+  I(\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r),
+  I(\disthrectmin(\sigma_x(Y),\sigma_x(X)) \leq r) \right]$.
+  We may thus define
+  \[
+  \GNP[\sigmahat](Y,X) = \left[ |Y| \cdot |X| \cdot I(\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r), |Y| \cdot |X| \cdot I(\disthrectmin(\sigma_x(Y),\sigma_x(X)) \leq r) \right].
+  \]
+  This set is $\{|Y| \cdot |X|\}$ when
+  $\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r$ and $\{0\}$ when
+  $\disthrectmin(\sigma_x(Y),\sigma_x(X)) > r$.
+\end{proof}
+\maybekillspace
+% \subsection{Iterative Refinement.}
+
+{\bf Iterative Refinement.}  Further pruning is possible in some
+problems by considering results gathered from other parts of
+computation.  This is assisted by the ability to compose summary
+results.
 \begin{definition}
   Let {\bf summary composition operators} $\otimeshat, \odothat \colon
   2^{\mathcal{A}} \times 2^{\mathcal{A}} \to 2^{\mathcal{A}}$ be such
@@ -799,47 +780,6 @@ Refinement need not be performed in any particular pattern.
 Depth-first is often a good choice due to its low overhead, though
 pruning in some problems strongly favors other expansion patterns.
 
-% \subsection{Intrinsic Pruning}
-
-Summarization directly leads to a simple pruning technique.
-\begin{lemma}[Intrinsic Pruning]
-  We may prune when summary results form a singleton set.
-\end{lemma}
-\killspace
-\begin{proof}
-  Setting $X' = X$ and $Y' = Y$ meets the requirements for inclusion in $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$.
-  Thus, summary results contain the exact result.
-  Thus, singleton $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are free to shortcut all further computation on $\GNP(Y,X)$ with this value.
-\end{proof}
-\killspace
-\begin{examplelemma}[Pruning in the Two-point Correlation]\label{lem:2pt}
-  We may perform intrinsic pruning when considering regions shown to
-  be completely inside or outside radius $r$ of one another.
-\end{examplelemma}
-\killspace
-\begin{proof}
-  Let $\sigma_x$ find bounding boxes for points in $\mathcal{X}$ and
-  let $\disthrectmax$ and $\disthrectmin$ find upper and lower bound distances between bounding boxes.
-  For $x \in X$ and $y \in Y$, bounds on $I(d(x,y) \leq r)$ are then $\left[
-  I(\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r),
-  I(\disthrectmin(\sigma_x(Y),\sigma_x(X)) \leq r) \right]$.
-  We may thus define
-  \[
-  \GNP[\sigmahat](Y,X) = \left[ |Y| \cdot |X| \cdot I(\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r), |Y| \cdot |X| \cdot I(\disthrectmin(\sigma_x(Y),\sigma_x(X)) \leq r) \right].
-  \]
-  This set is $\{|Y| \cdot |X|\}$ when
-  $\disthrectmax(\sigma_x(Y),\sigma_x(X)) \leq r$ and $\{0\}$ when
-  $\disthrectmin(\sigma_x(Y),\sigma_x(X)) > r$.
-\end{proof}
-\killspace
-\begin{exampletheorem}[The Two-point Correlation Algorithm]
-  By Lemma~\ref{lem:2pt}, we may evaluate the two-point correlation
-  via recursive expansion with pruning as shown in the {\bf tpc}
-  function of Figure~\ref{fig:allnntpc}.
-\end{exampletheorem}
-\maybekillspace
-% \subsection{Iterative Refinement.}
-
 % \subsection{Extrinsic Pruning}
 
 Iterative refinement allows us to prune components when more precise
@@ -865,10 +805,10 @@ knowledge of their results cannot affect the global result.
   $\GNP(Y,X)$ with any $b \in \GNP[\Sigma](Y,X)$.
 \end{proof}
 
-\begin{examplelemma}[Pruning in All-nearest-neighbors]\label{lem:allnn}
+\begin{example}[Pruning in All-nearest-neighbors]
   We may perform extrinsic pruning when references are shown to be
   farther away than queries' nearest-neighbors found so far.
-\end{examplelemma}
+\end{example}
 \killspace
 \begin{proof}
   Again, let $\sigma_x$ find the bounding radius for points in $\mathcal{X}$ and let $\disthrectmax$ and $\disthrectmin$ find upper and lower bound distances between bounding boxes.
@@ -904,12 +844,6 @@ knowledge of their results cannot affect the global result.
   queries and references is greater than the greatest of the queries'
   candidate nearest-neighbor distance found so far.
 \end{proof}
-\killspace
-\begin{exampletheorem}[The All-nearest-neighbors Algorithm]
-  By Lemma~\ref{lem:allnn}, we may evaluate all-nearest-neighbors via
-  iterative refinement with pruning as shown in the {\bf all-nn}
-  function of Figure~\ref{fig:allnntpc}.
-\end{exampletheorem}
 \killspace
 % \subsection{Thresholded Pruning}
 % \killspace
@@ -1174,14 +1108,15 @@ It is possible to employ depth-first iterative refinement to compute $\vecalpha$
 Combined, these computations perform the core update of affinity propagation.
 Our rearrangements of the computation require damping in a different manner from \cite{affinity}.
 In our method, $\rho$ is damped.
-The relationship between the two damping methods requires further investigation, but we achieve near-identical results in our experiments.
+The relationship between the two damping methods requires further investigation, but we achieve in our experiments near-identical results with a similar number of iterations.
 %either a full history of result vectors or the matrices $R$ and $A$.
 
 We implmented algorithms {\bf rho} and {\bf alpha} in C++ and directly compared to Frey and Dueck's quadratic C implementation.
 Our data are points in $\mathbb{R}^3$ from a large-scale gravitational $N$-body particle simulation.
-Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$ with a three-hundred-fold speedup at one million points.
-Factoring in the number of iterations, we empircally have $O(N^{1.5})$ overall running time.
-The quadratic algorithm unfortunately does not support large enough data sets to observe such a trend in the number of iterations -- indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
+Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$ with an extrapolated three-hundred-fold speedup at one million points.
+%Factoring in the number of iterations, we empircally have $O(N^{1.5})$ overall running time.
+%The quadratic algorithm unfortunately does not support large enough data sets to observe such a trend in the number of iterations
+Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
 
 As defined, affinity propagation works for arbitrary and potentially sparse similarity graphs, whereas we require a metric space and fully utilize similarities between all point pairs.
 Second, data sets with unusually high intrinsic dimensionality may diminish the asymptotic gains of our algorithm.
