@@ -918,6 +918,8 @@ involves trees formed on the inputs sets.
   trees to obtain $\kdleft{X} \cup \kdright{X} = X$ and $\kdleft{Y}
   \cup \kdright{Y} = Y$.
 \end{definition}
+\noindent It is clear that partitioning data in this manner will be fast, but 
+
 Trees built for the inputs sets may also serve other useful purposes,
 such as facilitating rapid, bottom-up precomputation of statistics and
 storing summary results during the process of iterative refinement.
@@ -961,10 +963,10 @@ Rearrange computation of $A$ and $R$ with
     \respo{i}{j} = \simil{i}{j} + \falphaj{i}{j}, & \falphaj{i}{j} \gets \min_{j' \neq j} (-\avail{i}{j'} - \simil{i}{j'}), \\
     \avail{i}{j} = \cneg{i}{j} (\frho{j} - \cpos{i}{j}(\respo{i}{j}) ), & \frho{j} \gets \sum_{i'} ( \cpos{i'}{j}(\respo{i'}{j}) ) .
 \end{array} \]
-Note that $\falphaj{i}{j}$ depends on $j$ only for exclusion from
-$\min$.  This is achieved computationally by finding the first and
-second minima and returning the later if $j$ is the index of the
-first.  We further substitute
+Because $\falphaj{i}{j}$ depends on $j$ only for exclusion from
+$\min$, we may achieve its behavior by finding the first and second
+minima, returning the later if $j$ is the index of the first.  We
+further substitute
 \[ \begin{array}{rcl}
   \vecalpha \gets \map_{i} \argmin^2_{j} \!\left( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} \right)\! ,
   &
@@ -983,14 +985,13 @@ $\vecrho$ support extrinsic and intrinsic prunes, respectively.
 \end{lemma}
 \begin{proof}
   Let $\sigma$ find bounding radii for points in $\mathcal{X}$ as well
-  as bounds on the current values of $\vecalpha$ and $\vecrho$
-  corresponding to the points.  Let $\simhrectmax$ and $\simhrectmin$
-  find upper and lower bound similarities between bounding radii and
-  let $\falphamax$, $\falphamin$, $\frhomax$, and $\frhomin$ extract
-  the bounds on their respective vectors.  Summary
-  results\footnote{Shown ranges are squared because summary results
-  must be found for both minima.  Similarly, $\falphamax$ and
-  $\falphamin$ form bound for both minima.} are
+  as bounds on the points' corresponding values of $\vecalpha$ and
+  $\vecrho$.  Let $\simhrectmax$ and $\simhrectmin$ find upper and
+  lower bound similarities between bounding radii and let
+  $\falphamax$, $\falphamin$, $\frhomax$, and $\frhomin$ extract the
+  bounds on their respective vectors.  Summary results\footnote{Shown
+  ranges are squared because summary results must be found for both
+  minima.} are then
   \[
   \sigmahat_{\alpha}(\sigma(Q),\sigma(R)) = \left\{ \begin{array}{lrr}
     \eta(\{(q,[l, u]^2) | q \in Q\}) & \multicolumn{2}{r}{\mbox{if } Q \cap R = \emptyset,} \\
@@ -1163,11 +1164,6 @@ Their code implements
 %   \end{array}
 %   \]
 % \end{proof}
-
-\subsubsection*{Acknowledgments}
-
-Use unnumbered third level headings for the acknowledgments. All
-acknowledgments go at the end of the paper.
 
 \subsubsection*{References}
 
