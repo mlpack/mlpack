@@ -79,7 +79,7 @@ void DuallTreeAllNearestNeighborsSpecializedForKnn(Parameters &args) {
 	TREE test_tree;
 	NONFATAL("Procceding with the specialized method for knn node..\n");
   if (args.train_file_!=args.test_file_) {
-	  args.train_data_.Init(args.test_file_);
+	  args.train_data_.Init(args.train_file_);
 	  train_tree.Init(&args.train_data_);
 	  fx_timer_start(fx_root, "train_tree_build");	
     NONFATAL("Building the training (reference) tree...\n");
