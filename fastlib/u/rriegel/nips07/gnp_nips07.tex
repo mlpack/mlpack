@@ -82,8 +82,10 @@
 
 % Variables for affinity propagation
 \newcommand{\eqspace}{\!\!\!\!}
-\newcommand{\cpos}[2]{c^{+}_{#1 \neq #2}}
-\newcommand{\cneg}[2]{c^{-}_{#1 \neq #2}}
+\newcommand{\ocpos}[1]{c^{+}_{#1}}
+\newcommand{\ocneg}[1]{c^{-}_{#1}}
+\newcommand{\cpos}[2]{\ocpos{#1 \neq #2}}
+\newcommand{\cneg}[2]{\ocneg{#1 \neq #2}}
 
 \newcommand{\intersect}{\cap}
 
@@ -950,45 +952,35 @@ $\avail{i}{j}$ with
   & \text{ and } &
   \avail{i}{j} \gets \cneg{i}{j}( \sum_{i' \neq i} ( \cpos{i'}{j}(\respo{i'}{j}) ) )
 \end{array} \]
-where $\cpos{i}{j}(x)$ is $x$ if $i = j$ and $\max(0,x)$ otherwise;
-likewise, $\cneg{i}{j}(x)$ for $\min(0,x)$.  To stem oscillations, it
-is customary to mix the updated values of $R$ and $A$ and their
-previous values according to some damping factor $\lambda$.  For $N$
-points, $R$ and $A$ are size $N \times N$, but can be sparse if we
-restrict consideration of most of $S$.  While this permits the most
-straightforward means of computation to scale to large data sets, it
-lessens the significance of results.
+where $\ocpos{v}(x)$ is $\max(0,x)$ for $v$ true and $x$ otherwise;
+likewise, $\ocneg{v}(x)$ for $\min(0,x)$.
+To stem oscillations, one customary mixes computed values of $R$ and $A$ with previous values according to some damping factor $\lambda$.
+For $N$ points, $R$ and $A$ are size $N \times N$, but may be sparse with similarities of $-\infty$.
+While sparsity permits larger data sets, in a metric space it is preferable to consider all pairs.
 
-We observe that the undamped affinity propagation may be posed as two
-second-order GNPs, $\vecalpha$ and $\vecrho$, derived as follows.
+We observe that the undamped affinity propagation may be posed as two second-order GNPs, $\vecalpha$ and $\vecrho$, derived as follows.
 Rearrange computation of $A$ and $R$ with
 \[ \begin{array}{ll}
     \respo{i}{j} = \simil{i}{j} + \falphaj{i}{j}, & \falphaj{i}{j} \gets \min_{j' \neq j} (-\avail{i}{j'} - \simil{i}{j'}), \\
     \avail{i}{j} = \cneg{i}{j} (\frho{j} - \cpos{i}{j}(\respo{i}{j}) ), & \frho{j} \gets \sum_{i'} ( \cpos{i'}{j}(\respo{i'}{j}) ) .
 \end{array} \]
-Because $\falphaj{i}{j}$ depends on $j$ only for exclusion from
-$\min$, we may achieve its behavior by finding the first and second
-minima, returning the later if $j$ is the index of the first.  We
-further substitute
+Because $\falphaj{i}{j}$ depends on $j$ only for exclusion from $\min$, we may achieve its behavior by finding the first and second minima, returning the latter if $j$ is the index of the first.
+We further substitute
 \[ \begin{array}{rcl}
   \vecalpha \gets \map_{i} \argmin^2_{j} \!\left( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} \right)\! ,
   &
   \vecrho \gets \map_{j} \sum_{i} \!\left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)\! .
 \end{array} \]
-Both $\vecalpha$ and $\vecrho$ are GNPs by Lemma~\ref{lem:map}.  When
-points are in a metric space, thereby permitting bounding radii, and
-similarity is a monotonically decreasing function of distance, thereby
-allowing us to bound it given bounding radii, $\vecalpha$ and
-$\vecrho$ support extrinsic and intrinsic prunes, respectively.
+Both $\vecalpha$ and $\vecrho$ are GNPs by Lemma~\ref{lem:map}.
+When points lie in a metric space, thereby permitting bounding radii, a similarity function monotonically decreasing with distance can be bounded.
+We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$, respectively.
 
 \begin{lemma}[Pruning in $\vecalpha$]
-  We may perform extrinsic pruning when bounds on a component's
-  results render them greater than the greatest second minimum found
-  so far.
+  We may perform extrinsic pruning when bounds on a subcomputation's summary results are all greater than the best second minimum found so far.
 \end{lemma}
+\killspace
 \begin{proof}
-  Let $\sigma$ find bounding radii for points in $\mathcal{X}$ as well
-  as bounds on the points' corresponding values of $\vecalpha$ and
+  Let $\sigma$ find bounding radii for points in $\mathcal{X}$ as well as bounds on the points' corresponding values of $\vecalpha$ and
   $\vecrho$.  Let $\simhrectmax$ and $\simhrectmin$ find upper and
   lower bound similarities between bounding radii and let
   $\falphamax$, $\falphamin$, $\frhomax$, and $\frhomin$ extract the
@@ -1018,6 +1010,7 @@ $\vecrho$ support extrinsic and intrinsic prunes, respectively.
   We may perform intrinsic pruning when bounds on a component's
   results render it to have zero contribution to the sum.
 \end{lemma}
+\killspace
 \begin{proof}
   We will compute $\vecrho \gets \map_j \sum_i ( \max(0,\simil{i}{j} +
   \falphaj{i}{j}) ) + \map_j \min(0,\simil(j)(j) + \falphaj{j}{j})$,
@@ -1090,11 +1083,24 @@ $\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
         \xx \text{rho}(Q, \kdleft{R}); \text{ rho}(Q, \kdright{R})
       \end{array}
     \end{array}
+    \vspace{-0.1in}
   \end{equation*}
   \caption{\label{fig:alpharho}Pseudocode for the computation of
   $\vecalpha$ and $\vecrho$.}
 \end{figure}
 
+
+INTEGRATE. {\bf Comparison.}
+We implement the above algorithms for $\vecalpha$ and $\vecrho$ in C++ and compare to the quadratic C code provided by Frey and Dueck provided from \cite{affinity}.
+Our data are points in $\mathbb{R}^3$ from the Millenium Simulation, a large-scale gravitational $N$-body particle simulation\cite{simulation}.
+Although our algorithm produces identical results when no damping or noise addition is performed, we must use different values of $\lambda$ due to the $\vecalpha,\vecrho$ transformation.
+In the end, our algorithm produces nearly identical numbers of clusters, with net similarities up to $5\%$ worse.
+Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$.
+Considering the number of iterations, we empircally have $O(N^{1.5})$ overall running time; unfortunately, the quadratic algorithm cannot handle large enough data sets to measure such scaling\footnote{Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.}.
+
+Although we demonstrate the effectiveness of deriving new efficient algorithms using a generalized $N$-body framework, there are a few disadvantages.
+Since we require that data points lie metric space with a computable distance measure, the original algorithm is preferable for sparse similarity measures on arbitrary graphs.
+Second, in a high number of dimensions, the quadratic run-time may be unavoidable -- for a 50-dimensional data set we measured $O(N^{1.9})$ per-iteration scaling.
 
 \begin{figure}
   \begin{tabular}{lr}
@@ -1108,18 +1114,6 @@ $\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
       System: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
   \label{fig:speed}
 \end{figure}
-
-INTEGRATE. {\bf Comparison.}
-We implement the above algorithms for $\vecalpha$ and $\vecrho$ in C++ and compare to the quadratic C code provided by Frey and Dueck provided from \cite{affinity}.
-Our data are points in $\mathbb{R}^3$ from the Millenium Simulation, a large-scale gravitational $N$-body particle simulation\cite{simulation}.
-Although our algorithm produces identical results when no damping or noise addition is performed, we must use different values of $\lambda$ due to the $\vecalpha,\vecrho$ transformation.
-In the end, our algorithm produces nearly identical numbers of clusters, with net similarities up to $5\%$ worse.
-Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$.
-Considering the number of iterations, we empircally have $O(N^{1.5})$ overall running time; unfortunately, the quadratic algorithm cannot handle large enough data sets to measure such scaling\footnote{Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.}.
-
-Although we demonstrate the effectiveness of deriving new efficient algorithms using a generalized $N$-body framework, there are a few disadvantages.
-Since we require that data points lie metric space with a computable distance measure, the original algorithm is preferable for sparse similarity measures on arbitrary graphs.
-Second, in a high number of dimensions, the quadratic run-time may be unavoidable -- for a 50-dimensional data set we measured $O(N^{1.9})$ per-iteration scaling.
 
 \appendix
 
