@@ -841,8 +841,8 @@ summarization.
 \end{proof}
 \killspace
 \begin{theorem}[The Two-point Correlation Algorithm]
-  The two-point correlation algorithm in Figure~\ref{fig:allnntpc} may
-  be derived from the GNA and intrinsicly prunes when considering
+  The GNA-based algorithm for the two-point correlation shown in
+  Figure~\ref{fig:allnntpc} is correct and prunes when considering
   regions shown to be completely inside or outside radius $r$ of one
   another.
 \end{theorem}
@@ -895,12 +895,12 @@ their results cannot affect the global result.
   $\GNP(Y,X)$ with any $b \in \GNP[\Sigma](Y,X)$.
 \end{proof}
 
-\begin{exampletheorem}[The All-nearest-neighbors Algorithm]
-  The all-nearest-neighbors algorithm in Figure~\ref{fig:allnntpc} may
-  be derived from the GNA and extrinsically prunes when references are
+\begin{theorem}[The All-nearest-neighbors Algorithm]
+  The GNA-based algorithm for all-nearest-neighbors shown in
+  Figure~\ref{fig:allnntpc} is correct and prunes when references are
   shown to be farther away than queries' nearest-neighbors found so
   far.
-\end{exampletheorem}
+\end{theorem}
 \killspace
 \killspace
 \begin{proof}
@@ -1089,7 +1089,7 @@ When points lie in a metric space, thereby permitting bounding radii, a similari
 We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$, respectively.
 
 \begin{theorem}[An Algorithm for $\vecalpha$]
-  The GNA-based algorithm for $\vecalpha$ shown in
+  The GNA-based algorithm for $\vecalpha$ in shown
   Figure~\ref{fig:alpharho} computes the correct result and prunes
   when bounds on a subcomputation's summary results are all greater
   than the greatest second minimum found so far.
@@ -1118,7 +1118,7 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
 \end{proof}
 
 \begin{theorem}[An Algorithm for $\vecrho$]
-  The GNA-based algorithm for $\vecrho$ showin in
+  The GNA-based algorithm for $\vecrho$ shown in
   Figure~\ref{fig:alpharho} computes the correct result and prunes
   when bounds on a subcomputation's summary results render it to have
   zero contribution to the sum.
