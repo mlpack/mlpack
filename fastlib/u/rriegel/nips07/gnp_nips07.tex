@@ -11,6 +11,8 @@
 \newtheorem{corollary} {Corollary}
 \newtheorem{definition} {Definition}
 \newtheorem{example} {Example}
+\newtheorem{examplelemma} {Example Lemma}
+\newtheorem{exampletheorem} {Example Theorem}
 
 \newcommand{\maybekillspace}{\vspace{-0.08in}}
 \newcommand{\killspace}{\vspace{-0.08in}}
@@ -61,7 +63,7 @@
 \newcommand{\disthrectmin}{d^{l}}
 \newcommand{\disthrectmax}{d^{u}}
 \newcommand{\dist}[2]{d(#1,#2)}
-\newcommand{\kdroot}[1]{#1^{\!\text{\rm root}}}
+\newcommand{\kdroot}[1]{#1^{\text{\rm root}}}
 \newcommand{\kdleft}[1]{#1^{\!L}}
 \newcommand{\kdright}[1]{#1^{\!R}}
 
@@ -285,8 +287,7 @@ approximate speedup approaches.
     \end{array}
     \vspace{-0.2in}
   \end{displaymath}
-  \label{fig:allnntpc}
-  \caption{Pseudocode for two simple dual-tree algorithms.}
+  \caption{\label{fig:allnntpc}\footnotesize Pseudocode for two simple dual-tree algorithms.}
 \end{figure}
 
 Here, we present two canonical dual-tree algorithms, the two-point correlation the all-nearest-neighbors.
@@ -294,7 +295,7 @@ Here, we present two canonical dual-tree algorithms, the two-point correlation t
 We use spatial trees, where every node $X$ in tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \cup \kdright{X} = X$, with each leaf a single point $\{x\}$.
 We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to upper and lower bounds.
 
-{\bf Two-point Correlation.} As a member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two point correlation\footnote{For simplicity, we do not exclude redundant pairs; this is trivially handled algebraicly.} of data set $X$ for radius $r$ is:
+{\bf The Two-point Correlation.} As a member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation\footnote{For simplicity, we do not exclude redundant pairs; this is trivially handled algebraicly.} of data set $X$ for radius $r$ is:
 \begin{equation*}
 \sum_{x_1 \in X} \sum_{x_2 \in X} I(d(x_1, x_2) \leq r)
 \end{equation*}
@@ -546,7 +547,7 @@ regions, possibly with permuted orderings of rows or columns.
       \end{array} \right)
     \end{array}
   \end{eqnarray*}
-  \caption{\label{fig:grid}{\em (Left)} Na\"{i}ve computation of a
+  \caption{\label{fig:grid}\footnotesize {\em (Left)} Na\"{i}ve computation of a
   second-order GNP.  {\em (Right)} An application of block
   decomposition restructures computation.}
 \end{figure}
@@ -566,7 +567,7 @@ operator pairs that gaurantee block decomposability.
   \end{array} \]
 \end{proof}
 
-\begin{example}[The 2-point Correlation]
+\begin{example}[The Two-point Correlation]
   By Lemma~\ref{lem:self}, $\sum_{y \in X} \sum_{x \in X} I(d(x,y)
   \leq r)$ is a GNP.
 \end{example}
@@ -678,7 +679,7 @@ Summarization directly leads to a simple pruning technique.
   Thus, singleton $\GNP[\sigmahat](\sigma_y(Y),\sigma_x(X)) = \{\GNP(Y,X)\}$ and we are free to shortcut all further computation on $\GNP(Y,X)$ with this value.
 \end{proof}
 \killspace
-\begin{example}[Pruning in the two-point correlation]
+\begin{example}[Pruning in the Two-point Correlation]
   We may perform intrinsic pruning when considering regions shown to
   be completely inside or outside radius $r$ of one another.
 \end{example}
@@ -813,7 +814,7 @@ knowledge of their results cannot affect the global result.
   queries and references is greater than the greatest of the queries'
   candidate nearest-neighbor distance found so far.
 \end{proof}
-
+\killspace
 % \subsection{Thresholded Pruning}
 % \killspace
 % Postprocessing function $h$ introduces a third form of pruning.
@@ -984,23 +985,22 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
   Let $\sigma$ find bounding radii for points in $\mathcal{X}$ as well as bounds on the points' previous values of $\vecalpha$ and $\vecrho$.
   Let $\simhrectmax$ and $\simhrectmin$ find upper and lower bound similarities
   between bounding radii and let $\falphamax$, $\falphamin$, $\frhomax$, and
-  $\frhomin$ extract the bounds on their respective vectors, with $i \in Q$ queries, and $j \in R$ references.
-  Summary results\footnote{Shown ranges are squared because summary results must be found for both minima.} are then
+  $\frhomin$ extract the bounds on their respective vectors.  Summary results\footnote{Shown ranges are squared because summary results must be found for both minima.} are then
   \[
-  \sigmahat_{\alpha}(\sigma(Q),\sigma(R)) = \left\{ \begin{array}{lrr}
-    \eta(\{(q,[l, u]^2) | q \in Q\}) & \multicolumn{2}{r}{\mbox{if } Q \cap R = \emptyset,} \\
-    \multicolumn{2}{l}{\eta(\{(q,[\falphamin(\sigma(Q)) - \frhomax(\sigma(Q)), u]^2) | q \in Q\})} & \mbox{otherwise}
+  \sigmahat_{\alpha}(\sigma(I),\sigma(J)) = \left\{ \begin{array}{lrr}
+    \eta(\{(i,[l, u]^2) | i \in I\}) & \multicolumn{2}{r}{\mbox{if } I \cap J = \emptyset,} \\
+    \multicolumn{2}{l}{\eta(\{(i,[\falphamin(\sigma(I)) - \frhomax(\sigma(I)), u]^2) | i \in I\})} & \mbox{otherwise}
   \end{array} \right. \\
   \]
   for $\eta$ defined similarly to that from all-nearest-neighbors, with
   \begin{eqnarray*}
-    l & = & \ocpos{\true}(\ocpos{\true}(\simhrectmax(\sigma(Q),\sigma(R)) + \falphamin(\sigma(Q))) - \frhomax(\sigma(Q))) - \simhrectmax(\sigma(Q),\sigma(R)), \\
-    u & = & \ocpos{\true}(\ocpos{\true}(\simhrectmin(\sigma(Q),\sigma(R)) + \falphamax(\sigma(Q))) - \frhomin(\sigma(Q))) - \simhrectmin(\sigma(Q),\sigma(R)).
+    l & = & \ocpos{\true}(\ocpos{\true}(\simhrectmax(\sigma(I),\sigma(J)) + \falphamin(\sigma(I))) - \frhomax(\sigma(I))) - \simhrectmax(\sigma(I),\sigma(J)), \\
+    u & = & \ocpos{\true}(\ocpos{\true}(\simhrectmin(\sigma(I),\sigma(J)) + \falphamax(\sigma(I))) - \frhomin(\sigma(I))) - \simhrectmin(\sigma(I),\sigma(J)).
   \end{eqnarray*}
   The rest of the proof is nearly identical to that of
   all-nearest-neighbors, but $\otimeshat$ maintains both minima and
   compared upper bounds pertain to the second minimum.  In short, we
-  may prune when the lower bound of ranges for $\GNP[\Sigma](Q,R)$ is
+  may prune when the lower bound of ranges for $\GNP[\Sigma](I,J)$ is
   greater than the greatest second minimum found so far.
 \end{proof}
 
@@ -1009,39 +1009,25 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
 \end{lemma}
 \killspace
 \begin{proof}
-  We will compute $\vecrho \gets \map_j \sum_i ( \ocpos{\true}(\simil{i}{j} +
-  \falphaj{i}{j}) ) + \map_j \ocneg{\true}(\simil{j}{j} + \falphaj{j}{j})$,
-  which introduces a postprocessing function but has simpler bounds.
-  Let $\sigma$, $\simhrectmax$, $\simhrectmin$,
-  $\falphamax$, and $\falphamin$ be defined as above, and $j \in Q$ be queries and $i \in R$ references.  Summary results
-  are
+  We will compute $\vecrho \gets \map_j \sum_i (
+  \ocpos{\true}(\simil{i}{j} + \falphaj{i}{j}) ) + \map_j
+  \ocneg{\true}(\simil{j}{j} + \falphaj{j}{j})$, which introduces a
+  postprocessing function but has simpler bounds.  Let $\sigma$,
+  $\simhrectmax$, $\simhrectmin$, $\falphamax$, and $\falphamin$ be
+  defined as above.  Summary results are
   \[
-  \sigmahat_{\rho}(Q,R) = \eta \!\left( \left\{ \left.\! \left( q, \left[ \begin{array}{ll}
-    \lefteqn{|R| \cdot \ocpos{\true}(\simhrectmin(\sigma(Q),\sigma(R)) + \falphamin(\sigma(R)),} \\
-    & |R| \cdot \ocpos{\true}(\simhrectmax(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)))
-  \end{array} \right] \right) \right| q \in Q \right\} \right)\! .
+  \sigmahat_{\rho}(J,I) = \eta \!\left( \left\{ \left.\! \left( j, \left[ \begin{array}{ll}
+    \lefteqn{|I| \cdot \ocpos{\true}(\simhrectmin(\sigma(J),\sigma(I)) + \falphamin(\sigma(I)),} \\
+    & |I| \cdot \ocpos{\true}(\simhrectmax(\sigma(J),\sigma(I)) + \falphamax(\sigma(I)))
+  \end{array} \right] \right) \right| j \in J \right\} \right)\! .
   \]
-  This set is singleton with vaule $\{\{(q,0) | q \in Q\}\}$ when
-  $\simhrectmax(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)) \leq 0$.
+  This set is singleton with vaule $\{\{(j,0) | j \in J\}\}$ when
+  $\simhrectmax(\sigma(J),\sigma(I)) + \falphamax(\sigma(I)) \leq 0$.
 \end{proof}
 
-We employ depth-first iterative refinement to compute $\vecalpha$ and
-simple depth-first expansion to compute $\vecrho$, with pseudocode for
-these algorithms shown in Figure~\ref{fig:alpharho}.  Combined, these
-computations perform the core update of affinity propagation, but they
-do not accomplish the damping procedure, which would require storing
-either a full history of result vectors or the matrices $R$ and $A$.
-To achieve convergeance, we damp the computed values of $\vecrho$.  In
-practice, we must use a higher damping factor $\lambda$, and we
-observe a slight drop in the quality of results.  Future lines of
-research include investigation of more effective means of damping.
-
-Something about use of trees?  Fast bottom-up statistics for
-$\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
-
 \begin{figure}
-  \begin{equation*}
-    \begin{array}{ll}
+  \begin{minipage}{2.8in}
+    \begin{equation*}
       \begin{array}{l}
         \text{{\bf alpha} - The }\vecalpha\text{ dual-tree algorithm.}
         \X \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }\falphamax{'}(Q) \gets \infty
@@ -1062,7 +1048,10 @@ $\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
         \x \text{else prioritize by min }\falphamin_{\text{cand}}(Q,\{\kdleft{R}, \kdright{R}\}){:}
         \xx \text{alpha}(Q, \kdleft{R}); \text{ alpha}(Q, \kdright{R})
       \end{array}
-      &
+    \end{equation*}
+  \end{minipage}
+  \begin{minipage}{2.5in}
+    \begin{equation*}
       \begin{array}{l}
         \text{{\bf rho} - The }\vecrho\text{ dual-tree algorithm.}
         \X \text{init all points }q \in \kdroot{Q}\text{: }
@@ -1072,44 +1061,67 @@ $\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
         \X \text{procedure rho}(Q,R)\text{:}
         \x \text{if }S^u(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)) \leq 0\text{:}
         \xx \text{return}
-        \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
+        \x \text{elif }Q = \{q\} \text{ and } R = \{r\}\text{:}
         \xx \frho{q}' \gets \frho{q}' + \ocpos{\true}(\simil{r}{q} + \falphaj{r}{q})
         \x \text{elif }|Q| \geq |R|\text{:}
         \xx \text{rho}(\kdleft{Q}, R); \text{ rho}(\kdright{Q}, R)
         \x \text{else:}
         \xx \text{rho}(Q, \kdleft{R}); \text{ rho}(Q, \kdright{R})
       \end{array}
-    \end{array}
-    \vspace{-0.1in}
-  \end{equation*}
-  \caption{\label{fig:alpharho}Pseudocode for the computation of
-  $\vecalpha$ and $\vecrho$.}
+    \end{equation*}
+    \caption{\label{fig:alpharho}\footnotesize Pseudocode for the computation of
+      $\vecalpha$ and $\vecrho$.}
+  \end{minipage}
 \end{figure}
 
+We employ depth-first iterative refinement to compute $\vecalpha$ and
+simple depth-first expansion to compute $\vecrho$, with pseudocode for
+these algorithms shown in Figure~\ref{fig:alpharho}.  Combined, these
+computations perform the core update of affinity propagation, but they
+do not accomplish the damping procedure, which would require storing
+either a full history of result vectors or the matrices $R$ and $A$.
+To achieve convergeance, we damp the computed values of $\vecrho$.  In
+practice, we must use a higher damping factor $\lambda$, and we
+observe a slight drop in the quality of results.  Future lines of
+research include investigation of more effective means of damping.
 
-INTEGRATE. {\bf Comparison.}
-We implement the above algorithms for $\vecalpha$ and $\vecrho$ in C++ and compare to the quadratic C code provided by Frey and Dueck provided from \cite{affinity}.
-Our data are points in $\mathbb{R}^3$ from the Millenium Simulation, a large-scale gravitational $N$-body particle simulation\cite{simulation}.
-Although our algorithm produces identical results when no damping or noise addition is performed, we must use different values of $\lambda$ due to the $\vecalpha,\vecrho$ transformation.
-In the end, our algorithm produces nearly identical numbers of clusters, with net similarities up to $5\%$ worse.
-Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$.
-Considering the number of iterations, we empircally have $O(N^{1.5})$ overall running time; unfortunately, the quadratic algorithm cannot handle large enough data sets to measure such scaling\footnote{Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.}.
+INTEGRATE. {\bf Comparison.}  We implement the above algorithms for
+$\vecalpha$ and $\vecrho$ in C++ and compare to Frey and Dueck's
+quadratic C implementation.  Our data are points in $\mathbb{R}^3$
+from the Millenium Simulation, a large-scale gravitational $N$-body
+particle simulation\cite{simulation}.  Although our algorithm produces
+identical results when no damping or noise addition is performed, we
+must use different values of $\lambda$ due to the $\vecalpha,\vecrho$
+transformation.  In the end, our algorithm produces nearly identical
+numbers of clusters, with net similarities up to $5\%$ worse.
+Figure~\ref{fig:speed} demonstrates an asymptotic speedup per
+iteration, with runtime empirically scaling $O(N^{1.3})$.  Considering
+the number of iterations, we empircally have $O(N^{1.5})$ overall
+running time; unfortunately, the quadratic algorithm cannot handle
+large enough data sets to measure such scaling\footnote{Indeed, one
+million points requires at minimum $2 \cdot 10^{12}$ single-precision
+floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to
+eight terabytes of memory.}.
 
 Although we demonstrate the effectiveness of deriving new efficient algorithms using a generalized $N$-body framework, there are a few disadvantages.
 Since we require that data points lie metric space with a computable distance measure, the original algorithm is preferable for sparse similarity measures on arbitrary graphs.
 Second, in a high number of dimensions, the quadratic run-time may be unavoidable -- for a 50-dimensional data set we measured $O(N^{1.9})$ per-iteration scaling.
 
 \begin{figure}
-  \begin{tabular}{lr}
+  \begin{minipage}{2.8in}
     \includegraphics[width=2.6in,height=1.8in]{r-speed.ps}
-    &
-    \includegraphics[width=2.6in,height=1.8in]{r-total.ps}
-  \end{tabular}
-  \caption{Mean per-iteration and total run-times for affinity propagation.
-      Although Frey-Dueck's code runs out of memory after 10,000 points, we extrapolate their algorithm quadratically, assuming optimistically a constant number of iterations.
-      We set $p$ to the median similarity, calculated as the negative squared radius having a $50\%$ two-point correlation.
-      System: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
-  \label{fig:speed}
+  \end{minipage}
+  \begin{minipage}{2.5in}
+%  \begin{tabular}{lr}
+%    \includegraphics[width=2.6in,height=1.8in]{r-speed.ps}
+%    &
+%    \includegraphics[width=2.6in,height=1.8in]{r-total.ps}
+%  \end{tabular}
+      \caption{\label{fig:speed}\footnotesize Mean per-iteration and total run-times for affinity propagation.
+	Although Frey-Dueck's code runs out of memory after 10,000 points, we extrapolate their algorithm quadratically, assuming optimistically a constant number of iterations.
+	We set $p$ to the median similarity, calculated as the negative squared radius having a $50\%$ two-point correlation.
+	System: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
+  \end{minipage}
 \end{figure}
 
 \appendix
@@ -1176,25 +1188,9 @@ Second, in a high number of dimensions, the quadratic run-time may be unavoidabl
 
 \subsubsection*{References}
 
-References follow the acknowledgments. Use unnumbered third level heading for
-the references. Any choice of citation style is acceptable as long as you are
-consistent. It is permissible to reduce the font size to `small' (9-point) 
-when listing the references.
-
 \small{
-[1] Alexander, J.A. \& Mozer, M.C. (1995) Template-based algorithms
-for connectionist rule extraction. In G. Tesauro, D. S. Touretzky
-and T.K. Leen (eds.), {\it Advances in Neural Information Processing
-Systems 7}, pp. 609-616. Cambridge, MA: MIT Press.
-
-[2] Bower, J.M. \& Beeman, D. (1995) {\it The Book of GENESIS: Exploring
-Realistic Neural Models with the GEneral NEural SImulation System.}
-New York: TELOS/Springer-Verlag.
-
-[3] Hasselmo, M.E., Schnell, E. \& Barkai, E. (1995) Dynamics of learning
-and recall at excitatory recurrent synapses and cholinergic modulation
-in rat hippocampal region CA3. {\it Journal of Neuroscience}
-{\bf 15}(7):5249-5262.
+\bibliographystyle{abbrv}
+\bibliography{gnp_nips07}
 }
 
 \end{document}
