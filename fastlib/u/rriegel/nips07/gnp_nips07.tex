@@ -994,8 +994,8 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
   for $\eta$ defined similarly to that from all-nearest-neighbors and
   with
   \begin{eqnarray*}
-    l & = & \max(0,\max(0,\simhrectmax(\sigma(Q),\sigma(R)) + \falphamin(\sigma(Q))) - \frhomax(\sigma(Q))) - \simhrectmax(\sigma(Q),\sigma(R)), \\
-    u & = & \max(0,\max(0,\simhrectmin(\sigma(Q),\sigma(R)) + \falphamax(\sigma(Q))) - \frhomin(\sigma(Q))) - \simhrectmin(\sigma(Q),\sigma(R)).
+    l & = & \ocpos{1}(\ocpos{1}(\simhrectmax(\sigma(Q),\sigma(R)) + \falphamin(\sigma(Q))) - \frhomax(\sigma(Q))) - \simhrectmax(\sigma(Q),\sigma(R)), \\
+    u & = & \ocpos{1}(\ocpos{1}(\simhrectmin(\sigma(Q),\sigma(R)) + \falphamax(\sigma(Q))) - \frhomin(\sigma(Q))) - \simhrectmin(\sigma(Q),\sigma(R)).
   \end{eqnarray*}
   The rest of the proof is nearly identical to that of
   all-nearest-neighbors, but $\otimeshat$ maintains both minima and
