@@ -3,6 +3,7 @@
 %\documentstyle[nips07submit_09,times]{article}
 
 \usepackage{amsmath,amsthm,amssymb}
+\usepackage{graphicx}
 
 
 \newtheorem{theorem}{Theorem}
@@ -73,10 +74,11 @@
 \newcommand{\du}{d^u}
 
 % Spacing for standardized pseudocode
-\newcommand{\x}{\\ \hspace{0.15in}}
-\newcommand{\xx}{\\ \hspace{0.3in}}
-\newcommand{\xxx}{\\ \hspace{0.45in}}
-\newcommand{\xxxx}{\\ \hspace{0.6in}}
+\newcommand{\X}{\\ \scriptstyle}
+\newcommand{\x}{\\ \hspace{0.15in} \scriptstyle}
+\newcommand{\xx}{\\ \hspace{0.3in} \scriptstyle}
+\newcommand{\xxx}{\\ \hspace{0.45in} \scriptstyle}
+\newcommand{\xxxx}{\\ \hspace{0.6in} \scriptstyle}
 
 % Variables for affinity propagation
 \newcommand{\eqspace}{\!\!\!\!}
@@ -226,23 +228,22 @@ approximate speedup approaches.
       %\begin{array}{l}
         \begin{array}{l}
           \text{{\bf tpc} - Two-point correlation.}
-          \\ \text{function tpc}(Q, R)
+          \X \text{function tpc}(Q, R)
           \x \text{if }\disthrectmax(X_1, X_2) < r\text{: return }0
           \x \text{if }\disthrectmin(X_1, X_1) > r\text{: return } |X_1| \cdot |X_2|
           \x \text{elif }|X_1| \geq |X_2|\text{:}
           \xx \text{return tpc}(\kdleft{X_1}, X_2, r) + \text{tpc}(\kdright{X_1}, X_2, r)
           \x \text{else:}
           \xx \text{return tpc}(X_1, \kdleft{X_2}, r) + \text{tpc}(X_1, \kdright{X_2}, r)
-          \\
-          \\
-          \\
-          \\
+          \X
+          \X
+          \X
         \end{array}
         &
         \begin{array}{l}
           \text{{\bf allnn} - All-nearest-neighbors.}
-          \\ \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
-          \\ \text{procedure allnn}(Q,R)\text{:}
+          \X \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
+          \X \text{procedure allnn}(Q,R)\text{:}
           \x \text{if }a(Q) < \disthrectmin(Q, R)\text{: return}
           \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
           \xx a(\{q\}) \gets \min(a(\{q\}), \dist{Q}{R})
@@ -1050,12 +1051,13 @@ $\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
   \begin{equation*}
     \begin{array}{ll}
       \begin{array}{l}
-        \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }\falphamax{'}(Q) \gets \infty
-        \\ \text{init all points }q \in \kdroot{Q}\text{: }\falphaj{q}{1\text{ and }2}' \gets (\emptyset, \infty)
+        \text{{\bf alpha} - The }\vecalpha\text{ dual-tree algorithm.}
+        \X \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }\falphamax{'}(Q) \gets \infty
+        \X \text{init all points }q \in \kdroot{Q}\text{: }\falphaj{q}{1\text{ and }2}' \gets (\emptyset, \infty)
         %\\ \text{alpha}(\kdroot{Q}, \kdroot{R})
         %\\
-        \\ \text{let }\falphamin_{\text{cand}}(Q, R) = \falphamin(\sigma(Q)) + \frhomin(\sigma(R))
-        \\ \text{procedure alpha}(Q,R)\text{:}
+        \X \text{let }\falphamin_{\text{cand}}(Q, R) = \falphamin(\sigma(Q)) + \frhomin(\sigma(R))
+        \X \text{procedure alpha}(Q,R)\text{:}
         \x \text{if }\falphamax{'}(Q) < \falphamin_{\text{cand}}(Q, R)\text{: return}
         \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
         \xx \alphacand \gets \cpos{q}{r}(\cpos{q}{r}(\simil{q}{r} + \falphaj{q}{r}) - \frho{r}) - \simil{q}{r}
@@ -1070,11 +1072,12 @@ $\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
       \end{array}
       &
       \begin{array}{l}
-        \text{init all points }q \in \kdroot{Q}\text{: }
+        \text{{\bf rho} - The }\vecrho\text{ dual-tree algorithm.}
+        \X \text{init all points }q \in \kdroot{Q}\text{: }
         \x \frho{q}'\gets c^{-}(\simil{q}{q} + \falphaj{q}{q})
-        %\\ \text{rho}(\kdroot{Q}, \kdroot{R})
-        %\\
-        \\ \text{procedure rho}(Q,R)\text{:}
+        %\X \text{rho}(\kdroot{Q}, \kdroot{R})
+        %\X
+        \X \text{procedure rho}(Q,R)\text{:}
         \x \text{if }S^u(\sigma(Q),\sigma(R)) + \falphamax(\sigma(R)) \leq 0\text{:}
         \xx \text{return}
         \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
@@ -1090,18 +1093,31 @@ $\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
   $\vecalpha$ and $\vecrho$.}
 \end{figure}
 
-{\bf Speed.}
 
-We implemented the above algorithms for computing $\vecalpha$ and $\vecrho$ in C++ and compare to the C code provided by Frey and Dueck.
+\begin{figure}
+  \begin{tabular}{lr}
+    \includegraphics[width=2.6in,height=1.8in]{r-speed.ps}
+    &
+    \includegraphics[width=2.6in,height=1.8in]{r-total.ps}
+  \end{tabular}
+  \caption{Mean per-iteration and total run-times for affinity propagation.
+      Although Frey-Dueck's code runs out of memory after 10,000 points, we extrapolate their algorithm quadratically, assuming optimistically a constant number of iterations.
+      We set $p$ to the median similarity, calculated as the negative squared radius having a $50\%$ two-point correlation.
+      System: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
+  \label{fig:speed}
+\end{figure}
 
+INTEGRATE. {\bf Comparison.}
+We implement the above algorithms for $\vecalpha$ and $\vecrho$ in C++ and compare to the quadratic C code provided by Frey and Dueck provided from \cite{affinity}.
+Our data are points in $\mathbb{R}^3$ from the Millenium Simulation, a large-scale gravitational $N$-body particle simulation\cite{simulation}.
+Although our algorithm produces identical results when no damping or noise addition is performed, we must use different values of $\lambda$ due to the $\vecalpha,\vecrho$ transformation.
+In the end, our algorithm produces nearly identical numbers of clusters, with net similarities up to $5\%$ worse.
+Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$.
+Considering the number of iterations, we empircally have $O(N^{1.5})$ overall running time; unfortunately, the quadratic algorithm cannot handle large enough data sets to measure such scaling\footnote{Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.}.
 
-We compare our algorithm to the C code provided by Frey and Dueck\cite{frey_dueck_code}.
-Their code implements 
-
-\fig{affinity_speed}.
-
- for even a million points, two trillion single-precision floating-point numbers are required -- eight terabytes of RAM.
-
+Although we demonstrate the effectiveness of deriving new efficient algorithms using a generalized $N$-body framework, there are a few disadvantages.
+Since we require that data points lie metric space with a computable distance measure, the original algorithm is preferable for sparse similarity measures on arbitrary graphs.
+Second, in a high number of dimensions, the quadratic run-time may be unavoidable -- for a 50-dimensional data set we measured $O(N^{1.9})$ per-iteration scaling.
 
 \appendix
 
