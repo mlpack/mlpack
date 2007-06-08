@@ -239,7 +239,7 @@ approximate speedup approaches.
           \\ \text{procedure allnn}(Q,R)\text{:}
           \x \text{if }a(Q) < \disthrectmin(Q, R)\text{: return}
           \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
-          \xx a(\{q\}) \gets \min(a(q), \dist{Q}{R})
+          \xx a(\{q\}) \gets \min(a(\{q\}), \dist{Q}{R})
           \x \text{elif }|Q| \geq |R|\text{:}
           \xx \text{allnn}(\kdleft{Q}, R); \text{ allnn}(\kdright{Q}, R)
           \xx a(Q) \gets \max(a(\kdleft{Q}), a(\kdright{Q}))
