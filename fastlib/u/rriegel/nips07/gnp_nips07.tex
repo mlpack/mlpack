@@ -815,7 +815,8 @@ with composed summary results for its left and right subcomponents.
   \GNP[\sigmahat](\sigma_y(Y'),\sigma_x(X')$ and function $\prunes$
   tests whether computation can be shortcutted.  The value of each
   ancestor $\GNP[\Sigma](Y,X)$ is understood to reflect changes made
-  to its descendents.
+  to its descendents.  The algorithm terminates when no replaceable
+  $\GNP[\Sigma](Y,X)$ remain.
 \end{definition}
 \killspace
 \noindent The GNA adds one node to the tree per replacement resulting in $X \times Y$ leaves, and thus must terminate after $O(N^2)$ steps.
@@ -826,6 +827,22 @@ Refinement need not be performed in any particular pattern.
 Depth-first is often a good choice due to its low overhead, though
 pruning in some problems strongly favors other expansion patterns.
 
+\begin{lemma}[Correctness of the GNA]
+  The GNA terminates with $\GNP[\Sigma](\kdroot{Y},\kdroot{X}) =
+  \{\GNP(\kdroot{Y},\kdroot{X})\}$.
+\end{lemma}
+\killspace
+\killspace
+\begin{proof}
+  After termination, all nodes represent composed summary results,
+  singleton calls to $f$, and singleton prunes.  We will show later
+  that values introduced by $\prune$ ultimately yeild the exact
+  result.  Otherwise, by induction and by the definition of composed
+  summary results, all nodes must represent singleton summary sets
+  containing values equivalent to what exhaustive recursion would have
+  found.
+\end{proof}
+\killspace
 % \subsection{Intrinsic Pruning}
 
 {\bf Pruning.}  The simplest form of pruning arises directly from
