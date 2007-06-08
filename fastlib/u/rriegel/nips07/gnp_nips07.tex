@@ -915,7 +915,8 @@ and their nearest exemplar.  Two points $x_i$ and $x_j$ have
 similarity $\simil{i}{j}$, and special case $\simil{i}{i}$ is set to
 parameter $p$, the {\em preference} of points to be exemplars.  The
 number of clusters to find is not explicitly specified, but is
-positively correlated with $p$.
+positively correlated with $p$.  A typical value of $p$ is the median
+of the similarities between all pairs of points.
 
 The algorithm alternateingly updates messages $\respo{i}{j}$ and
 $\avail{i}{j}$ with
@@ -924,16 +925,18 @@ $\avail{i}{j}$ with
   & \text{ and } &
   \avail{i}{j} \gets \cneg{i}{j}( \sum_{i' \neq i} ( \cpos{i'}{j}(\respo{i'}{j}) ) )
 \end{array} \]
-where $\cpos{i}{j}(x)$ is $x$ if $i = j$ and $\max(0,x)$
-otherwise; likewise, $\cneg{i}{j}(x)$ for $\min(0,x)$.  For $N$
+where $\cpos{i}{j}(x)$ is $x$ if $i = j$ and $\max(0,x)$ otherwise;
+likewise, $\cneg{i}{j}(x)$ for $\min(0,x)$.  To stem oscillations, it
+is customary to mix the updated values of $R$ and $A$ and their
+previous values according to some damping factor $\lambda$.  For $N$
 points, $R$ and $A$ are size $N \times N$, but can be sparse if we
 restrict consideration of most of $S$.  While this permits the most
 straightforward means of computation to scale to large data sets, it
 lessens the significance of results.
 
-We observe that affinity propagation may be posed as two second-order
-GNPs, $\vecalpha$ and $\vecrho$, derived as follows.  Rearrange computation
-of $A$ and $R$ with
+We observe that the undamped affinity propagation may be posed as two
+second-order GNPs, $\vecalpha$ and $\vecrho$, derived as follows.
+Rearrange computation of $A$ and $R$ with
 \[ \begin{array}{ll}
     \respo{i}{j} = \simil{i}{j} + \falphaj{i}{j}, & \falphaj{i}{j} \gets \min_{j' \neq j} (-\avail{i}{j'} - \simil{i}{j'}), \\
     \avail{i}{j} = \cneg{i}{j} (\frho{j} - \cpos{i}{j}(\respo{i}{j}) ), & \frho{j} \gets \sum_{i'} ( \cpos{i'}{j}(\respo{i'}{j}) ) .
@@ -1010,20 +1013,17 @@ $\vecrho$ support extrinsic and intrinsic prunes, respectively.
 
 We employ depth-first iterative refinement to compute $\vecalpha$ and
 simple depth-first expansion to compute $\vecrho$, with pseudocode for
-these algorithms shown in Figure~\ref{fig:alpharho}.  Combined, these computations 
+these algorithms shown in Figure~\ref{fig:alpharho}.  Combined, these
+computations perform the core update of affinity propagation, but they
+do not accomplish the damping procedure, which would require storing
+either a full history of result vectors or the matrices $R$ and $A$.
+To achieve convergeance, we damp the computed values of $\vecrho$.  In
+practice, we must use a higher damping factor $\lambda$, and we
+observe a slight drop in the quality of results.  Future lines of
+research include investigation of more effective means of damping.
 
-We now have a problem nearly\footnote{To aid convergence, affinity
-propagation adds noise to the similarity matrix and dampens both
-$\respo{}{}$ and $\avail{}{}$ between time-steps.  Since we store no
-matrices, we both dampen and add noise to $\vecrho$.} indentical to
-traditional affinity propagation.  However, we can show that this is a
-generalized $N$-body problem.
-
-We may now develop a dual-tree algorithm.
-First, we build a tree on the data points, assuming they are in a metric space\footnote{Euclidean distance over real vectors is the example we implemented.}.
-Notationally, we denote $Q'$ a subset or node of points that are being $\map$ed over, and $R'$ as a subset or node of points for the inner operator.
-
-Both $\falphamin$ and $\falphamax$ can be computed in a linear-time bottom-up pass, whereas $S^l$ and $S^u$ computed using bounding boxes, and parameter $p$ if the nodes overlap.
+Something about use of trees?  Fast bottom-up statistics for
+$\falphamax$ and $\falphamin$, etc.  Use of 2-point correlation to find $p$.
 
 \begin{figure}
   \begin{equation*}
