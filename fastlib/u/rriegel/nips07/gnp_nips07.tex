@@ -228,7 +228,7 @@ to our examples and demonstrate the derivation of each algorithm using
 our calculus.  As a more sophisticated final example, we apply the
 theory to derive a fast algorithm for as recent a method as we could
 find, the affinity propagation method of clustering \cite{affinity}, and
-demonstrate its efficiency.
+demonstrate its efficiency experimentally.
 
 %\footnote{Beyond facilitating application by
 %humans to new problems, we strive for a level of precise specification
@@ -320,9 +320,9 @@ demonstrate its efficiency.
       %\begin{array}{l}
         \begin{array}{l}
           \text{{\bf tpc} - Two-point correlation.}
-          \X \text{function tpc}(Q, R)
+          \X \text{function tpc}(Y, X)
           \x \text{if }\disthrectmax(Y, X) < r\text{: return }0
-          \x \text{if }\disthrectmin(Y, Y) > r\text{: return } |Y| \cdot |X|
+          \x \text{if }\disthrectmin(Y, X) > r\text{: return } |Y| \cdot |X|
           \x \text{elif }|Y| \geq |X|\text{:}
           \xx \text{return tpc}(\kdleft{Y}, X, r) + \text{tpc}(\kdright{Y}, X, r)
           \x \text{else:}
@@ -379,18 +379,34 @@ demonstrate its efficiency.
   \end{minipage}
   \vspace{-.2in}
 \end{figure}
-Here, we present two simple dual-tree algorithms, two-point correlation and all-nearest-neighbors.
+Here, we present dual-tree algorithms for two simple problems.
 %, and nonparametric Bayes classification.
 We use spatial trees, where every node $X$ in tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \cup \kdright{X} = X$, with each leaf a single point $\{x\}$.
 For example, a $kd$-tree, as in Figure~\ref{fig:kdtree}, recursively partitions the data along coordinate dimensions.
-We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to lower and upper bounds.
+We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to lower and upper bounds, which are easily obtained from bounding boxes of points.
+Each node can also store summary statistics such as means and other moments.
+%WALDO
+%{\bf Dual-tree Algorithms.}  In all of the above, our ability to find
+%tight summary statistics and, by extension, to employ pruning is
+%highly dependent upon the partitions $\kdleft{X} \cup \kdright{X} = X$
+%and $\kdleft{Y} \cup \kdright{Y} = Y$ chosen during computation.
+%While it is possible to decide these partitions on the fly and to use
+%different partitions for the same sets $X$ and $Y$ occuring in
+%different parts of computation, it is often computationally intensive
+%or inconvenient to do so.  A compromise to these two constraints
+%involves trees formed on the inputs sets.
+A {\bf dual-tree algorithm} approaches the task of partitioning
+input sets $X$ and $Y$ throughout computation by precomputing trees
+for $\kdroot{X}$ and $\kdroot{Y}$ and reusing splits from those
+trees to obtain $\kdleft{X} \cup \kdright{X} = X$ and $\kdleft{Y}
+\cup \kdright{Y} = Y$.
 
-{\bf The Two-point Correlation.} As a member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation\footnote{The number of non-redundant pairs may be computed as an algebraic post-processing step.} of data set $X$ for radius $r$ is
+{\bf The Two-point Correlation.} A member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation of data set $X$ for radius $r$ is
 $\sum_{y \in X} \sum_{x \in X} I(d(y, x) \leq r)$ for the indicator function $I$.
 \fig{allnntpc} shows a formulation that recursively considers a subset pair $Y$ and $X$, returning immediately if all points in $Y$ and $X$ are completely inside or outside the radius.
 
-{\bf All-nearest-neighbors.} In applications from manifold learning to computational physics, it is often desirable to find for a batch of queries $Q$ the nearest neighbors from reference set $R$, as $\map_{q \in Q} \argmin_{r \in R} d(q,r)$, with the exception $d(q,q) = \infty$.
-To achieve speedup, one maintains for each recursive subset of queries the furthest candidate neighbor distance found.
+{\bf All-nearest-neighbors.} In applications from manifold learning to classification, it is often desirable to find for a batch of queries $Q$ the nearest neighbors from reference set $R$, as $\map_{q \in Q} \argmin_{r \in R} d(q,r)$, with the exception $d(q,q) = \infty$.
+To achieve speedup, one maintains for each recursive subset of queries the furthest candidate neighbor distance found for a query node, $a(Q)$.
 If a considered set of references is farther away than this distance, no further exploration is required.
 
 % {\bf Nonparametric Bayes Classification.}
@@ -481,10 +497,12 @@ is a subset of the problems representable as nested applications of high-order f
 reduce.  Reduce is a long-standing and highly versatile feature of
 functional programming languages, traditionally operating over a list
 from beginning to end or vice versa.  We pose reduce as a function on
-unordered input multisets\footnote{Unless otherwise noted, data sets
-are understood to be finite multisets, thereby permitting entries with
-identical values; alternately, data sets may store a distinct index
-for each entry, rendering all entries unique.} rather than lists, and
+unordered input multisets
+%\footnote{Unless otherwise noted, data sets
+%are understood to be finite multisets, thereby permitting entries with
+%identical values; alternately, data sets may store a distinct index
+%for each entry, rendering all entries unique.}
+rather than lists, and
 allow for pre- and postprocessing functions.
 \begin{definition}
   A {\bf first-order reduce problem} $\theta$ is a tuple
@@ -1018,23 +1036,9 @@ their results cannot affect the global result.
 
 % \subsection{Practical Considerations: Trees, Bounds}
 
-{\bf Dual-tree Algorithms.}  In all of the above, our ability to find
-tight summary statistics and, by extension, to employ pruning is
-highly dependent upon the partitions $\kdleft{X} \cup \kdright{X} = X$
-and $\kdleft{Y} \cup \kdright{Y} = Y$ chosen during computation.
-While it is possible to decide these partitions on the fly and to use
-different partitions for the same sets $X$ and $Y$ occuring in
-different parts of computation, it is often computationally intensive
-or inconvenient to do so.  A compromise to these two constraints
-involves trees formed on the inputs sets.
-\begin{definition}
-  A {\bf dual-tree algorithm} approaches the task of partitioning
-  input sets $X$ and $Y$ throughout computation by precomputing trees
-  for $\kdroot{X}$ and $\kdroot{Y}$ and reusing splits from those
-  trees to obtain $\kdleft{X} \cup \kdright{X} = X$ and $\kdleft{Y}
-  \cup \kdright{Y} = Y$.
-\end{definition}
-\killspace
+%\begin{definition}
+%\end{definition}
+
 \noindent It is clear that partitioning data in this manner will be
 fast, and for problems involving points in a metric space, spatially
 informed trees formed on the input sets tend to yield useful bounds.
