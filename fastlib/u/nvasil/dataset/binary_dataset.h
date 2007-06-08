@@ -272,11 +272,11 @@ class BinaryDataset {
 		return matrix;
 	}
 	// returns a vector on the index
-	inline Vector get_index_vector() {
+	/*inline Vector get_index_vector() {
 		Vector vector;
 		vector.Alias(index_, num_of_points_);
 		return vector;
-	}
+	}*/
 	inline Point<Precision_t, Loki::NullType> get_point(index_t i) {
 		Point<Precision_t, Loki::NullType> point;
 		point.Alias(At(i), get_id(i));
