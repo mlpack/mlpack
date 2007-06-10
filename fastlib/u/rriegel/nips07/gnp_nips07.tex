@@ -1180,9 +1180,9 @@ We can thus derive extrninsic and intrinsic prunes for $\vecalpha$ and $\vecrho$
         \X \text{let }\falphamin_{\text{cand}}(Q, R) = \falphamin(\sigma(Q)) + \frhomin(\sigma(R))
         \X \text{procedure alpha}(Q,R)\text{:}
         \x \text{if }\falphamax{'}(Q) < \falphamin_{\text{cand}}(Q, R)\text{: return}
-        \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
+        \x \text{elif }Q = \{q\} \text{ and } R = \{r\}\text{:}
         \xx \alphacand \gets \cpos{q}{r}(\cpos{q}{r}(\simil{q}{r} + \falphaj{q}{r}) - \frho{r}) - \simil{q}{r}
-        \xx \text{if }\alphacand < \falphaj{q}{1}'\text{: } \falphaj{q}{2}' \!\gets\! \falphaj{q}{1}'; \falphaj{q}{1} \!\gets\! (r, \alphacand))
+        \xx \text{if }\alphacand < \falphaj{q}{1}'\text{: } \falphaj{q}{2}' \!\gets\! \falphaj{q}{1}'; \falphaj{q}{1}' \!\gets\! (r, \alphacand)
         \xx \text{elif }\alphacand < \falphaj{q}{2}'\text{: } \falphaj{q}{2}' \!\gets\! (r, \alphacand)
         \xx \falphamax{'}(\{q\}) \gets \falphaj{q}{2}'
         \x \text{elif }|Q| \geq |R|\text{:}
@@ -1225,16 +1225,7 @@ In our method, $\rho$ is damped.
 The relationship between the two damping methods requires further investigation, but we achieve in our experiments near-identical results with a similar number of iterations.
 %either a full history of result vectors or the matrices $R$ and $A$.
 
-{\bf Experiments.} We implemented algorithms {\bf rho} and {\bf alpha} in C++ and directly compared to Frey and Dueck's quadratic C implementation.
-Our data are points in $\mathbb{R}^3$ from a large-scale gravitational $N$-body particle simulation.
-Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$ with an extrapolated three-hundred-fold speedup at one million points.
-%Factoring in the number of iterations, we empircally have $O(N^{1.5})$ overall running time.
-%The quadratic algorithm unfortunately does not support large enough data sets to observe such a trend in the number of iterations
-Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
-Note that, as defined, affinity propagation works for arbitrary and potentially sparse similarity graphs, whereas we require a metric space in our example and fully utilize similarities between all point pairs.
-Also, data sets with high intrinsic dimensionality diminish the asymptotic gains of our algorithm.
-
-\begin{figure}
+\begin{figure}[b]
   \begin{minipage}{2.6in}
     \includegraphics[width=2.2in,height=1.4in]{r-speed.ps}
   \end{minipage}
@@ -1245,18 +1236,27 @@ Also, data sets with high intrinsic dimensionality diminish the asymptotic gains
 %    \includegraphics[width=2.6in,height=1.8in]{r-total.ps}
 %  \end{tabular}
       \caption{\label{fig:speed}\footnotesize Mean per-iteration run-times for affinity propagation.
-	Although Frey-Dueck's code runs out of memory after 10,000 points, we extrapolate their algorithm quadratically, assuming optimistically a constant number of iterations.
+	Although Frey-Dueck's code runs out of memory after 10,000 points, we extrapolate their algorithm quadratically.
 	We set $p$ to the median similarity, calculated as the negative squared radius having a $50\%$ two-point correlation.
-	System: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
+	Settings: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
   \end{minipage}
   \killspace
 \end{figure}
 
-\mysection{Discussion}
+{\bf Experiments.} We implemented algorithms {\bf rho} and {\bf alpha} in C++ and directly compared to Frey and Dueck's quadratic C implementation.
+Our data are points in $\mathbb{R}^3$ from a large-scale gravitational $N$-body particle simulation.
+Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$ with an extrapolated three-hundred-fold speedup at one million points.
+%Factoring in the number of iterations, we empircally have $O(N^{1.5})$ overall running time.
+%The quadratic algorithm unfortunately does not support large enough data sets to observe such a trend in the number of iterations
+Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
+Note that, as defined, affinity propagation works for arbitrary and potentially sparse similarity graphs, whereas we require a metric space in our example and fully utilize similarities between all point pairs.
+Also, data sets with high intrinsic dimensionality diminish the asymptotic gains of our algorithm.
+
+\mysection{Conclusion}
 
 %We demonstrate the value of the generalized $N$-body approach for deriving new efficient algorithms that display orders of magnitude speedup for a wide range of practical problems.
 We have shown the beginnings of a calculus of generalized $N$-body problems which permits derivation of scalable algorithms for a large class of machine learning methods.
-In future work we will demonstrate extensions of the theory to incorporate approximation, multiple operators, and demonstrate non-metric examples.
+In future work we will demonstrate extensions of the theory to incorporate approximation and multiple operators, and demonstrate non-metric examples.
 
 \appendix
 
@@ -1319,6 +1319,7 @@ In future work we will demonstrate extensions of the theory to incorporate appro
 %   \end{array}
 %   \]
 % \end{proof}
+
 
 \footnotesize{
 \bibliographystyle{abbrv}
