@@ -12,18 +12,18 @@ __EOF__
 
 gnuplot <<__EOF__
 
-set title "Scalability for a Single Iteration"
+set title "Affinity Propagation Runtime"
 set xlabel "Number of Points"
 set logscale x
 set logscale y
 set xrange [1000:1000000]
-set ylabel "Time per Iteration (s)"
+set ylabel "Mean Time per Iteration (sec)"
 set yrange [0.01:100000]
 plot "r-ap.csv" using 1:5 with linespoints pt 6 title "Frey-Dueck", \
      "r-ap-ext.csv" using 1:5 with linespoints lt 2 pt 6 title "(extrapolated)", \
      "r-lcdm.csv" using 1:5 with linespoints lt 1 pt 8 title "Dual-Tree"
 
-set size 1.0, 0.5
+set size 0.7, 0.35
 set terminal postscript portrait enhanced mono dashed lw 1 "Helvetica" 14
 set output "r-speed.ps"
 replot
@@ -43,7 +43,7 @@ plot "r-ap.csv" using 1:6 with linespoints pt 6 title "Frey-Dueck", \
      "r-ap-ext.csv" using 1:6 with linespoints lt 2 pt 6 title "(extrapolated)", \
      "r-lcdm.csv" using 1:6 with linespoints lt 1 pt 8 title "Dual-Tree"
 
-set size 1.0, 0.5
+set size 0.7, 0.35
 set terminal postscript portrait enhanced mono dashed lw 1 "Helvetica" 14
 set output "r-total.ps"
 replot
