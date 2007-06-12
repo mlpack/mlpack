@@ -1236,7 +1236,7 @@ The relationship between the two damping methods requires further investigation,
 %    \includegraphics[width=2.6in,height=1.8in]{r-total.ps}
 %  \end{tabular}
       \caption{\label{fig:speed}\footnotesize Mean per-iteration run-times for affinity propagation.
-	Although Frey-Dueck's code runs out of memory after 10,000 points, we extrapolate their algorithm quadratically.
+	Although the Frey-Dueck implementation runs out of memory after 10,000 points, we optimistically extrapolate their algorithm quadratically.
 	We set $p$ to the median similarity, calculated as the negative squared radius having a $50\%$ two-point correlation.
 	Settings: gcc 3.4.6 on a NetBurst-class Intel Xeon 3.0GHz with 8GB RAM running Linux 2.6.9.}
   \end{minipage}
