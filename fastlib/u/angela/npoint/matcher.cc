@@ -7,6 +7,7 @@
  
 #include "matcher.h"
 #include "metrics.h"
+#include "globals.h"
 #include "fastlib/fastlib.h"
 
 success_t Matcher::InitFromFile(const int size, const char *file) {

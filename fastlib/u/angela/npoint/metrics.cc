@@ -7,6 +7,7 @@
 **/
 
 #include "metrics.h"
+#include "globals.h"
 #include "fastlib/fastlib.h"
 
 void Metric::Init(const int size) {
