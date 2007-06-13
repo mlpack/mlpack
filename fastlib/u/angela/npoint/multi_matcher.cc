@@ -7,6 +7,7 @@
  */
 
 #include "multi_matcher.h"
+#include "globals.h"
 
 void estimate_multi_matcher_list(const Matrix data, const Metric metric) {
 	double est_diam = estimate_diameter(data,metric);

@@ -1,5 +1,6 @@
 #include "metrics.h"
 #include "matcher.h"
+#include "globals.h"
 #include "fastlib/fastlib.h"
 
 
