@@ -3,15 +3,15 @@
 
 #include "fastlib/fastlib_int.h"
 
-class BlockActionHandler {
-  FORBID_COPY(BlockActionHandler);
+class Schema {
+  FORBID_COPY(Schema);
  public:
-  BlockActionHandler() {}
-  virtual ~BlockActionHandler() {}
+  Schema() {}
+  virtual ~Schema() {}
 
   virtual void InitFromHeader(size_t header_size, char *header) = 0;
   virtual void WriteHeader(size_t header_size, char *header) = 0;
-  
+
   virtual void BlockInitFrozen(size_t bytes, char *block) = 0;
   virtual void BlockRefreeze(
       size_t bytes, const char *old_location, char *block) = 0;
@@ -115,10 +115,12 @@ class BlockDeviceWrapper : public BlockDevice {
   
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data) {
+    n_blocks_ = max(n_blocks_, blockid+1);
     inner_->Read(blockid, begin, end, data);
   }
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data) {
+    n_blocks_ = max(n_blocks_, blockid+1);
     inner_->Write(blockid, begin, end, data);
   }
   virtual blockid_t AllocBlock() {
@@ -151,12 +153,14 @@ class DiskBlockDevice : public BlockDevice {
   FORBID_COPY(DiskBlockDevice);
 
  private:
+  mode_t mode_;
   RandomAccessFile file_;
+  String path_;
 
  public:
   DiskBlockDevice() {}
-  ~DiskBlockDevice() {}
-  
+  virtual ~DiskBlockDevice();
+
   void Init(const char *fname, mode_t mode, offset_t block_size = 131072);
 
   void Read(blockid_t blockid, offset_t begin, offset_t end,
@@ -166,8 +170,40 @@ class DiskBlockDevice : public BlockDevice {
      const char *data);
 
   blockid_t AllocBlock();
+};
 
-  void Close();
+class MemBlockDevice : public BlockDevice {
+ private:
+  struct Metadata {
+    char *data;
+    
+    Metadata() {
+      data = NULL;
+    }
+  };
+  
+ private:
+  ArrayList<Metadata> blocks_;
+
+ public:
+  MemBlockDevice() {}
+  virtual ~MemBlockDevice();
+  
+  void Init(offset_t block_size);
+  
+  virtual void Read(blockid_t blockid,
+      offset_t begin, offset_t end, char *data) = 0;
+  virtual void Write(blockid_t blockid,
+      offset_t begin, offset_t end, const char *data) = 0;
+  virtual blockid_t AllocBlock() = 0;
+  
+ private:
+  void CheckSize_(blockid_t blockid) {
+    if (blockid <= n_blocks_) {
+      n_blocks_ = blockid + 1;
+      blocks_.GrowTo(n_blocks_);
+    }
+  }
 };
 
 #endif

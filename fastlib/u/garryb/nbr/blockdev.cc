@@ -8,6 +8,8 @@
 void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   int octal_mode;
   
+  path_.Copy(fname);
+  
   switch(mode) {
    case BlockDevice::READ:
     octal_mode = O_RDONLY;
@@ -86,18 +88,31 @@ off_t RandomAccessFile::FindSize() const {
   fstat(fd_, &s);
   return s.st_size;
 }
+  
+DiskBlockDevice::~DiskBlockDevice() {
+  file_.Close();
+  if (mode_ == BlockDevice::TEMP) {
+    unlink(path_.c_str());
+  }
+}
 
 void DiskBlockDevice::Init(
-    const char *fname, mode_t mode, offset_t block_size) {
-  file_.Init(fname, mode);
+    const char *fname, mode_t mode_in, offset_t block_size) {
+  mode_ = mode_in;
+  
+  file_.Init(fname, mode_);
   
   n_block_bytes_ = block_size;
   n_blocks_ = (file_.FindSize() + n_block_bytes_ - 1) / n_block_bytes_;
+  
+  path_.Copy(fname);
 }
 
 void DiskBlockDevice::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
-  DEBUG_ASSERT(blockid <= n_blocks_);
+  if (unlikely(blockid >= n_blocks_)) {
+    n_blocks_ = blockid + 1;
+  }
   DEBUG_BOUNDS(end, n_block_bytes_ + 1);
   DEBUG_BOUNDS(begin, end + 1);
   file_.Read(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
@@ -105,7 +120,9 @@ void DiskBlockDevice::Read(blockid_t blockid,
 
 void DiskBlockDevice::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *data) {
-  DEBUG_ASSERT(blockid <= n_blocks_);
+  if (unlikely(blockid >= n_blocks_)) {
+    n_blocks_ = blockid + 1;
+  }
   DEBUG_BOUNDS(end, n_block_bytes_ + 1);
   DEBUG_BOUNDS(begin, end + 1);
   file_.Write(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
@@ -117,6 +134,41 @@ DiskBlockDevice::blockid_t DiskBlockDevice::AllocBlock() {
   return blockid;
 }
 
-void DiskBlockDevice::Close() {
-  file_.Close();
+
+void MemBlockDevice::Init(offset_t block_size) {
+  n_blocks_ = 0;
+  n_block_bytes_ = block_size;
+  blocks_.Init();
+}
+
+void MemBlockDevice::Read(blockid_t blockid,
+    offset_t begin, offset_t end, char *data) {
+  CheckSize_(blockid);
+  char *mydata = blocks_[blockid].data;
+  
+  if (likely(mydata != NULL)) {
+    mem::Copy(data, end - begin, mydata + begin);
+  } else {
+    // initialize with random garbage
+  }
+}
+
+void MemBlockDevice::Write(blockid_t blockid,
+    offset_t begin, offset_t end, const char *data) {
+  CheckSize_(blockid);
+  char *mydata = blocks_[blockid].data;
+
+  if (unlikely(data == NULL)) {
+    blocks_[blockid] = data = mem::Alloc<char>(n_block_bytes_);
+  }
+
+  mem::Copy(mydata + begin, end - begin, data);
+}
+
+blockid_t MemBlockDevice::AllocBlock() {
+  CheckSize_(n_blocks_);
+  return n_blocks_ - 1;
+}
+
+MemBlockDevice::~MemBlockDevice() {
 }

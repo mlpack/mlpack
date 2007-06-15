@@ -1,5 +1,9 @@
 #include "work.h"
 
+void LockedWorkQueue::GetWork(ArrayList<index_t> *work) {
+  inner_->GetWork(work);
+}
+
 #ifdef USE_MPI
 void RemoteWorkQueueBackend::Init(WorkQueueInterface *inner_work_queue) {
   inner_ = inner_work_queue;
@@ -13,16 +17,14 @@ void RemoteWorkQueueBackend::HandleRequest(
 
 
 void RemoteWorkQueue::Init(int channel, int destination) {
-  stub_.Init(channel, destination);
+  channel_ = channel;
+  destination_ = destination;
 }
 
 void RemoteWorkQueue::GetWork(ArrayList<index_t> *work_items) {
   WorkRequest request;
   request.operation = WorkRequest::GIVE_ME_WORK;
-
-  stub_.Lock();
-  const WorkResponse *response = stub_.Request(request);
+  Rpc<WorkResponse> response(channel_, destination_, request);
   work_items->Copy(response->work_items);
-  stub_.Unlock();
 }
 #endif

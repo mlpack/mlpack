@@ -18,38 +18,39 @@
 extern Mutex global_mpi_lock;
 
 /**
- * This class is your interface to an object that's somewhere else.
+ * A single remote procedure call transaction.
+ *
+ * This automatically handles all the memory management that is involved
+ * with marshalling and unmarshalling, freeing memory when the Rpc object
+ * is destructed.
  */
-template<class RequestObject, class ResponseObject>
-class RemoteObjectStub {
-  FORBID_COPY(RemoteObjectStub);
-
+template<class ResponseObject>
+class Rpc {
  private:
-  ArrayList<char> data_;
+  char *data_;
   int channel_;
   int destination_;
-  Mutex mutex_;
-#ifdef DEBUG
-  bool locked_; // for debug mode
-#endif
-
+  bool should_free_;
+ 
  public:
-  RemoteObjectStub() {}
-  ~RemoteObjectStub() {}
-  
-  void Init(int channel_in, int destination_in) {
-    data_.Init();
-    channel_ = channel_in;
-    destination_ = destination_in;
-    DEBUG_ONLY(locked_ = false);
+  template<typename RequestObject>
+  Rpc(int channel, int destination, const RequestObject& request) {
+    Request(channel, destination, request);
+  }
+  Rpc() {
+    should_free_ = false;
+  }
+  ~Rpc() {
+    if (should_free_) {
+      mem::Free(data_);
+    }
   }
 
-  const ResponseObject *Request(const RequestObject& request) {
-    DEBUG_ASSERT(locked_ == true);
-
-    global_mpi_lock.Lock();
-
-    data_.Resize(ot::PointerFrozenSize(request));
+  template<typename RequestObject>
+  ResponseObject *Request(
+      int channel, int destination, const RequestObject& request) {
+    should_free_ = true;
+    data_ = mem::Alloc(ot::PointerFrozenSize(request));
     ot::PointerFreeze(request, data_.begin());
     MPI_Send(data_.begin(), data_.size(), MPI_CHAR,
         destination_, channel_, MPI_COMM_WORLD);
@@ -57,25 +58,91 @@ class RemoteObjectStub {
     MPI_Probe(MPI_ANY_SOURCE, channel_, MPI_COMM_WORLD, &status);
     int length;
     MPI_Get_count(&status, MPI_CHAR, &length);
-    data_.Resize(length);
+    data_ = mem::Resize(data_, length);
     MPI_Recv(data_.begin(), data_.size(), MPI_CHAR,
         destination_, channel_, MPI_COMM_WORLD, &status);
-
-    global_mpi_lock.Unlock();
-
     return ot::PointerThaw<ResponseObject>(data_.begin());
   }
 
-  void Lock() {
-    mutex_.Lock();
-    DEBUG_ONLY(locked_ = true);
+  operator ResponseObject *() {
+    return reinterpret_cast<ResponseObject*>(data_);
   }
-
-  void Unlock() {
-    DEBUG_ONLY(locked_ = false);
-    mutex_.Unlock();
+  ResponseObject* operator ->() {
+    return reinterpret_cast<ResponseObject*>(data_);
+  }
+  ResponseObject& operator *() {
+    return reinterpret_cast<ResponseObject*>(data_);
+  }
+  operator const ResponseObject *() const {
+    return reinterpret_cast<ResponseObject*>(data_);
+  }
+  const ResponseObject* operator ->() const {
+    return reinterpret_cast<ResponseObject*>(data_);
+  }
+  const ResponseObject& operator *() const {
+    return reinterpret_cast<ResponseObject*>(data_);
   }
 };
+
+// /**
+//  * This class is your interface to an object that's somewhere else.
+//  */
+// template<class RequestObject, class ResponseObject>
+// class RemoteObjectStub {
+//   FORBID_COPY(RemoteObjectStub);
+// 
+//  private:
+//   ArrayList<char> data_;
+//   int channel_;
+//   int destination_;
+//   Mutex mutex_;
+// #ifdef DEBUG
+//   bool locked_; // for debug mode
+// #endif
+// 
+//  public:
+//   RemoteObjectStub() {}
+//   ~RemoteObjectStub() {}
+//   
+//   void Init(int channel_in, int destination_in) {
+//     data_.Init();
+//     channel_ = channel_in;
+//     destination_ = destination_in;
+//     DEBUG_ONLY(locked_ = false);
+//   }
+// 
+//   const ResponseObject *Request(const RequestObject& request) {
+//     DEBUG_ASSERT(locked_ == true);
+// 
+//     global_mpi_lock.Lock();
+// 
+//     data_.Resize(ot::PointerFrozenSize(request));
+//     ot::PointerFreeze(request, data_.begin());
+//     MPI_Send(data_.begin(), data_.size(), MPI_CHAR,
+//         destination_, channel_, MPI_COMM_WORLD);
+//     MPI_Status status;
+//     MPI_Probe(MPI_ANY_SOURCE, channel_, MPI_COMM_WORLD, &status);
+//     int length;
+//     MPI_Get_count(&status, MPI_CHAR, &length);
+//     data_.Resize(length);
+//     MPI_Recv(data_.begin(), data_.size(), MPI_CHAR,
+//         destination_, channel_, MPI_COMM_WORLD, &status);
+// 
+//     global_mpi_lock.Unlock();
+// 
+//     return ot::PointerThaw<ResponseObject>(data_.begin());
+//   }
+// 
+//   void Lock() {
+//     mutex_.Lock();
+//     DEBUG_ONLY(locked_ = true);
+//   }
+// 
+//   void Unlock() {
+//     DEBUG_ONLY(locked_ = false);
+//     mutex_.Unlock();
+//   }
+// };
 
 class RawRemoteObjectBackend {
  private:
@@ -152,25 +219,6 @@ class RemoteObjectServer {
   void Loop(int n_workers_total);
 };
 
-/**
- * Protocol request for networked block devices.
- */
-struct BlockRequest {
-  BlockDevice::blockid_t blockid;
-  BlockDevice::offset_t begin;
-  BlockDevice::offset_t end;
-  enum Operation { READ, WRITE, ALLOC, INFO } operation;
-  ArrayList<char> payload;
-
-  OT_DEF(BlockRequest) {
-    OT_MY_OBJECT(blockid);
-    OT_MY_OBJECT(begin);
-    OT_MY_OBJECT(end);
-    OT_MY_OBJECT(operation);
-    OT_MY_OBJECT(payload);
-  }
-};
-
 struct DataGetterRequest {
   enum Operation { GET_DATA } operation;
   
@@ -206,76 +254,12 @@ class DataGetterBackend
 };
 
 template<typename T>
-class RemoteDataGetter {
- private:
-  RemoteObjectStub<DataGetterRequest, DataGetterResponse<T> > stub_;
- 
- public:
-  void Init(int channel, int destination) {
-    stub_.Init(channel, destination);
-  }
-  
-  void GetData(T *result) {
-    DataGetterRequest request;
-    
-    request.operation = DataGetterRequest::GET_DATA;
-    
-    stub_.Lock();
-    const DataGetterResponse<T> *response = stub_.Request(request);
-    result->Copy(response->data);
-    stub_.Unlock();
-  }
-};
-
-/**
- * Protocol response for networked block devices.
- */
-struct BlockResponse {
-  unsigned int n_block_bytes;
-  BlockDevice::blockid_t blockid;
-  ArrayList<char> payload;
-
-  OT_DEF(BlockResponse) {
-    OT_MY_OBJECT(n_block_bytes);
-    OT_MY_OBJECT(blockid);
-    OT_MY_OBJECT(payload);
-  }
-};
-
-class RemoteBlockDeviceBackend
-    : public RemoteObjectBackend<BlockRequest, BlockResponse> {
- private:
-  BlockDevice *blockdev_;
-  uint64 n_reads_;
-  uint64 n_read_bytes_;
-  uint64 n_writes_;
-  uint64 n_write_bytes_;
-
- public:
-  void Init(BlockDevice *device);
-  void HandleRequest(const BlockRequest& request, BlockResponse *response);
-  void Report(datanode *module);
-};
-
-/**
- * A block device sitting on another computer.
- *
- * Individual instances of this object are not
- * thread safe?
- */
-class RemoteBlockDevice
-    : public BlockDevice {
- private:
-  RemoteObjectStub<BlockRequest, BlockResponse> stub_;
-
- public:
-  void Init(int channel_in, int destination_in);
-  virtual void Read(blockid_t blockid,
-      offset_t begin, offset_t end, char *data);
-  virtual void Write(blockid_t blockid,
-      offset_t begin, offset_t end, const char *data);
-  virtual blockid_t AllocBlock();
-};
+void GetRemoteData(int channel, int destination, T* result) {
+  DataGetterRequest request;
+  request.operation = DataGetterRequest::GET_DATA;
+  Rpc<DataGetterResponse<T> > response(channel, destination, request);
+  result->Copy(*response);
+}
 
 #endif
 

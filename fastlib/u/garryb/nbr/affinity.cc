@@ -857,7 +857,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   param.BootstrapMonochromatic(&default_point, data_matrix.n_cols());
   data_points.Init(default_point, n_points, n_block_points);
   for (index_t i = 0; i < data_matrix.n_cols(); i++) {
-    CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
+    AffinityAlpha::QPoint *point = &data_points[i];
     point->vec().CopyValues(data_matrix.GetColumnPtr(i));
   }
   FindCovariance(data_matrix);
@@ -946,8 +946,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
           &q_results_alpha);
 
       for (index_t i = 0; i < n_points; i++) {
-        CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
-        CacheRead<AffinityAlpha::QResult> result(&q_results_alpha, i);
+        AffinityAlpha::QPoint *point = &data_points[i];
+        AffinityAlpha::QResult *result = &q_results_alpha[i];
 
         if (point->info().alpha.max1_index != result->alpha.max1_index) {
           n_alpha_changed++;
@@ -992,8 +992,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
       n_changed = 0;
 
       for (index_t i = 0; i < n_points; i++) {
-        CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
-        CacheRead<AffinityRho::QResult> result(&q_results_rho, i);
+        AffinityAlpha::QPoint *point = &data_points[i];
+        AffinityRho::QResult *result = &q_results_rho[i];
         double old_rho = point->info().rho;
         double new_rho = damp(lambda, old_rho, result->rho);
 
