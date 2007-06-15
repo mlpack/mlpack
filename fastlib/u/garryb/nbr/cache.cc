@@ -4,7 +4,7 @@ void SmallCache::Init(
     BlockDevice *inner_in, BlockActionHandler *handler_in, mode_t mode_in) {
   BlockDeviceWrapper::Init(inner_in); // sets inner_, n_block_bytes_, etc
 
-  metadatas_.Init(inner_->n_blocks());
+  metadatas_.Init(n_blocks_);
   handler_ = handler_in;
   mode_ = mode_in;
 
@@ -24,6 +24,28 @@ void SmallCache::Init(
   }
 }
 
+SmallCache::~SmallCache() {
+  for (index_t i = 0; i < metadatas_.size(); i++) {
+    Metadata *metadata = &metadatas_[i];
+    mem::Free(metadata->data);
+    DEBUG_SAME_INT(metadatas_[i].lock_count, 0);
+    DEBUG_POISON_PTR(metadata->data);
+  }
+  delete handler_;
+}
+
+void SmallCache::Clear(mode_t new_mode) {
+  for (index_t i = 0; i < metadatas_.size(); i++) {
+    Metadata *metadata = &metadatas_[i];
+    DEBUG_SAME_INT(metadata->lock_count, 0);
+    mem::Free(metadata->data);
+    metadata->data = NULL;
+    metadata->lock_count = 0;
+  }
+
+  mode_ = new_mode;
+}
+
 char *SmallCache::StartRead(blockid_t blockid) {
   Lock();
 
@@ -40,7 +62,6 @@ char *SmallCache::StartWrite(blockid_t blockid) {
 
   Metadata *metadata = GetBlock_(blockid);
   metadata->lock_count++;
-  metadata->is_dirty = 1;
   
   Unlock();
 
@@ -64,6 +85,11 @@ void SmallCache::StopWrite(blockid_t blockid) {
 void SmallCache::PerformCacheMiss_(blockid_t blockid) {
   char *data;
   Metadata *metadata = &metadatas_[blockid];
+
+  if (unlikely(blockid >= n_blocks_)) {
+    n_blocks_ = blockid + 1;
+    metadatas_.Resize(n_blocks_);
+  }
 
   data = mem::Alloc<char>(n_block_bytes());
   if (mode_ == BlockDevice::READ || mode_ == BlockDevice::MODIFY) {
@@ -146,14 +172,4 @@ void SmallCache::Write(blockid_t blockid,
   mem::CopyBytes(dest_buffer, buf, n_bytes);
   handler_->BlockThaw(n_bytes, dest_buffer);
   StopWrite(blockid);
-}
-
-SmallCache::~SmallCache() {
-  for (index_t i = 0; i < metadatas_.size(); i++) {
-    Metadata *metadata = &metadatas_[i];
-    mem::Free(metadata->data);
-    DEBUG_SAME_INT(metadatas_[i].lock_count, 0);
-    DEBUG_POISON_PTR(metadata->data);
-  }
-  delete handler_;
 }

@@ -26,6 +26,19 @@ class WorkQueueInterface {
   virtual void GetWork(ArrayList<index_t> *work) = 0;
 };
 
+class LockedWorkQueue {
+  FORBID_COPY(LockedWorkQueue);
+
+ private:
+  WorkQueueInterface *inner_;
+  
+ public:
+  LockedWorkQueue(WorkQueueInterface *inner) : inner_(inner) {}
+  ~LockedWorkQueue() { delete inner_; }
+
+  virtual void GetWork(ArrayList<index_t> *work);
+};
+
 template<typename Node>
 class SimpleWorkQueue
     : public WorkQueueInterface {
@@ -122,7 +135,8 @@ class RemoteWorkQueue
   FORBID_COPY(RemoteWorkQueue);
 
  private:
-  RemoteObjectStub<WorkRequest, WorkResponse> stub_;
+  int channel_;
+  int destination_;
 
  public:
   RemoteWorkQueue() {}

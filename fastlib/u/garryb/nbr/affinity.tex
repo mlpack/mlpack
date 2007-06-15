@@ -16,7 +16,7 @@
 \newcommand{\vecrho}{\vec{\rho}}
 \newcommand{\vecalpha}{\vec{\alpha}}
 \newcommand{\frho}[1]{\rho_{#1}}
-\newcommand{\falpha}[2]{\alpha_{#1#2}}
+\newcommand{\falpha}[2]{\alpha_{#1[#2]}}
 
 \begin{document}
 
@@ -78,7 +78,7 @@ Notationally, we denote $Q'$ a subset or node of points that are being $\map$ed 
 
 For $\vecrho$, there is a simple intrinsic prune.
 We can show $\Sigma_{\Theta_{\vecrho}}(Q', R') = \{\vec{0}\}$ when $R'$ contributes nothing to the summation for all of $Q'$ and allows a prune:
-$$\forall_{j \in Q'}, \min_{i \in R'} \left( \simil{i}{j} + \alpha{i}{j} \right) < 0$$
+$$\forall_{j \in Q'}, \min_{i \in R'} \left( \simil{i}{j} + \falpha{i}{j} \right) < 0$$
 
 A suitable upper bound for the minimum
 
