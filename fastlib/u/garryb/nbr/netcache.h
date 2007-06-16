@@ -1,6 +1,8 @@
 #ifndef NBR_NETCACHE_H
 #define NBR_NETCACHE_H
 
+#include "cache.h"
+#include "cachearray.h"
 #include "rpc.h"
 
 /**
@@ -62,12 +64,13 @@ class HashedRemoteBlockDevice
     : public BlockDevice {
  private:
   int channel_;
+  int my_rank_;
   int n_machines_;
   BlockDevice *local_device_;
   RemoteBlockDeviceBackend server_;
 
  public:
-  const int MASTER_RANK = 0;
+  static const int MASTER_RANK = 0;
 
  public:
   HashedRemoteBlockDevice() {
@@ -96,12 +99,12 @@ class HashedRemoteBlockDevice
 
 template<typename T>
 class SimpleDistributedCacheArray : public CacheArray<T> {
- public:
+ private:
   SmallCache small_cache_;
   HashedRemoteBlockDevice remote_device_;
   MemBlockDevice local_device_;
 
- private:
+ public:
   void Configure(int channel, int rank, int n_machines) {
     remote_device_.Init(channel, rank, n_machines);
   }
@@ -111,23 +114,23 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
     CacheArraySchema<T> *handler = new CacheArraySchema<T>;
     handler->Init(default_obj);
     local_device_.Init(n_block_elems * handler->n_elem_bytes());
-    remote_device_.SetLocalDevice(&local_device);
+    remote_device_.SetLocalDevice(&local_device_);
     small_cache_.Init(&remote_device_, handler, BlockDevice::CREATE);
-    CacheArray<T>::Init(&small_cache_, BlockDevice::CREATE, 0, n_elem);
+    CacheArray<T>::Init(&small_cache_, BlockDevice::CREATE, 0, n_elems);
   }
 
   void InitWorker() {
     remote_device_.ConnectToMaster();
     local_device_.Init(remote_device_.n_block_bytes());
-    remote_device_.SetLocalDevice(&local_device);
+    remote_device_.SetLocalDevice(&local_device_);
     small_cache_.Init(&remote_device_, new CacheArraySchema<T>,
         BlockDevice::MODIFY);
     CacheArray<T>::Init(&small_cache_, BlockDevice::MODIFY);
   }
 
   void FlushClear(BlockDevice::mode_t mode) {
-    Flush();
-    mode_ = mode;
+    CacheArray<T>::Flush();
+    CacheArray<T>::mode_ = mode;
     small_cache_.Clear(mode);
   }
 };

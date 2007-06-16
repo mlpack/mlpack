@@ -27,7 +27,7 @@ class WorkQueueInterface {
   virtual void GetWork(ArrayList<index_t> *work) = 0;
 };
 
-class LockedWorkQueue {
+class LockedWorkQueue : public WorkQueueInterface {
   FORBID_COPY(LockedWorkQueue);
 
  private:
