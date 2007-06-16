@@ -8,8 +8,6 @@
 void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   int octal_mode;
   
-  path_.Copy(fname);
-  
   switch(mode) {
    case BlockDevice::READ:
     octal_mode = O_RDONLY;
@@ -99,12 +97,14 @@ DiskBlockDevice::~DiskBlockDevice() {
 void DiskBlockDevice::Init(
     const char *fname, mode_t mode_in, offset_t block_size) {
   mode_ = mode_in;
-  
+
+  path_.Copy(fname);
+
   file_.Init(fname, mode_);
-  
+
   n_block_bytes_ = block_size;
   n_blocks_ = (file_.FindSize() + n_block_bytes_ - 1) / n_block_bytes_;
-  
+
   path_.Copy(fname);
 }
 
@@ -147,7 +147,7 @@ void MemBlockDevice::Read(blockid_t blockid,
   char *mydata = blocks_[blockid].data;
   
   if (likely(mydata != NULL)) {
-    mem::Copy(data, end - begin, mydata + begin);
+    mem::Copy(data, mydata + begin, end - begin);
   } else {
     // initialize with random garbage
   }
@@ -159,13 +159,13 @@ void MemBlockDevice::Write(blockid_t blockid,
   char *mydata = blocks_[blockid].data;
 
   if (unlikely(data == NULL)) {
-    blocks_[blockid] = data = mem::Alloc<char>(n_block_bytes_);
+    blocks_[blockid].data = mydata = mem::Alloc<char>(n_block_bytes_);
   }
 
-  mem::Copy(mydata + begin, end - begin, data);
+  mem::Copy(mydata + begin, data, end - begin);
 }
 
-blockid_t MemBlockDevice::AllocBlock() {
+BlockDevice::blockid_t MemBlockDevice::AllocBlock() {
   CheckSize_(n_blocks_);
   return n_blocks_ - 1;
 }

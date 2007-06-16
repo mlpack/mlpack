@@ -325,13 +325,14 @@ class MpiMonochromaticDualTreeRunner {
     }
   }
 
+  void Main(datanode *module, const char *gnp_name);
+
  private:
   // insert prototypes
   void Preinit_();
   void ReadData_();
   void MakeTree_();
   void SetupMaster_();
-  void Main_();
 };
 
 template<typename GNP, typename Solver>
@@ -414,7 +415,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
 }
 
 template<typename GNP, typename Solver>
-void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main_(
+void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
     datanode *module, const char *gnp_name) {
   Preinit_();
 
@@ -475,6 +476,14 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main_(
   MPI_Barrier();
   fx_timer_stop(module_, "flush_results");
 }
+
+template<typename GNP, typename Solver>
+void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
+  MpiMonochromaticDualTreeRunner<GNP, Solver> runner;
+  runner.Main(module, gnp_name);
+}
+
+#endif
 
 // template<typename GNP, typename Solver>
 // void MpiDualTreeMain(datanode *module, const char *gnp_name) {

@@ -1,6 +1,8 @@
 #ifndef NBR_CACHEARRAY_H
 #define NBR_CACHEARRAY_H
 
+#include "cache.h"
+
 /**
  * Array elements may vary in size from run to run.  However, we place the
  * constraint that each array element must be the same size, derived all

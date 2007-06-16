@@ -2,6 +2,7 @@
 #define NBR_DFS_H
 
 #include "gnp.h"
+#include "cachearray.h"
 
 template<typename GNP>
 class DualTreeDepthFirst {

@@ -8,6 +8,7 @@
 #define NBR_WORK_H
 
 #include "cache.h"
+#include "cachearray.h"
 
 #include "base/cc.h"
 #include "col/arraylist.h"
@@ -34,7 +35,7 @@ class LockedWorkQueue {
   
  public:
   LockedWorkQueue(WorkQueueInterface *inner) : inner_(inner) {}
-  ~LockedWorkQueue() { delete inner_; }
+  virtual ~LockedWorkQueue() { delete inner_; }
 
   virtual void GetWork(ArrayList<index_t> *work);
 };
