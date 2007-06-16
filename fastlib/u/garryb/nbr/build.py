@@ -1,17 +1,15 @@
 
 librule(name = "nbr",
    sources = ["blockdev.cc", "nbr_utils.cc", "cache.cc", "work.cc"],
-   headers = ["blockdev.h", "dfs.h", "nbr_utils.h", "spbounds.h",
-              "cache.h", "gnp.h", "kdtree.h", "spnode.h", "work.h"],
+   headers = ["blockdev.h", "cache.h", "cachearray.h",
+              "dfs.h", "gnp.h", "kdtree.h", "nbr_utils.h",
+              "spbounds.h", "spnode.h", "work.h"],
    deplibs = ["fastlib:fastlib_int"])
 
 librule(name = "nbr_mpi",
-   sources = ["blockdev.cc", "nbr_utils.cc",
-              "cache.cc", "work.cc", "rpc.cc"],
-   headers = ["blockdev.h", "dfs.h", "nbr_utils.h", "spbounds.h",
-              "cache.h", "gnp.h", "kdtree.h", "spnode.h", "work.h",
-              "rpc.h"],
-   deplibs = ["fastlib:fastlib_int"],
+   sources = ["rpc.cc", "netcache.cc"],
+   headers = ["rpc.h", "netcache.h"],
+   deplibs = [":nbr"],
    cflags = "-DUSE_MPI")
 
 binrule(name = "tkde",

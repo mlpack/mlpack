@@ -1,4 +1,4 @@
-#include "netblock.h"
+#include "netcache.h"
 
 void RemoteBlockDeviceBackend::Init(BlockDevice *device) {
   blockdev_ = device;
@@ -135,7 +135,7 @@ void HashedRemoteBlockDevice::Write(blockid_t blockid,
     request.operation = BlockRequest::WRITE;
     request.payload.Copy(data, end - begin);
 
-    Rpc<BlockResponse> response(channel_, GetOwner_(blockid), request);
+    Rpc<BlockResponse> response(channel_, RankHash_(blockid), request);
   }
 }
 

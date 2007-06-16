@@ -227,7 +227,7 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
   datanode *data_module = fx_submodule(module, "data", "data");
 
-  fx_timer_start(data_module, "read");
+  fx_timer_start(module, "read");
 
   Matrix data_matrix;
   MUST_PASS(data::Load(fx_param_str_req(data_module, ""), &data_matrix));
@@ -240,14 +240,14 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
     point->vec().CopyValues(data_matrix.GetColumnPtr(i));
   }
 
-  fx_timer_stop(data_module, "read");
+  fx_timer_stop(module, "read");
 
   typename GNP::QNode data_example_node;
   data_example_node.Init(data_matrix.n_rows(), param);
   data_nodes.Init(data_example_node, 0, n_block_nodes);
   KdTreeMidpointBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-      ::Build(data_module, param, &data_points, &data_nodes);
+      ::Build(module, param, &data_points, &data_nodes);
 
   // Create our array of results.
   typename GNP::QResult default_result;
@@ -270,6 +270,7 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
 #ifdef USE_MPI
 
+#include "netcache.h"
 
 template<typename GNP, typename Solver>
 class MpiMonochromaticDualTreeRunner {
@@ -277,39 +278,41 @@ class MpiMonochromaticDualTreeRunner {
   struct Config {
     int n_threads;
 
-    void Copy(const MpiDualTreeConfig& other) {
+    void Copy(const Config& other) {
       *this = other;
     }
 
-    OT_DEF(MpiDualTreeConfig) {
+    OT_DEF(Config) {
       OT_MY_OBJECT(n_threads);
     }
   };
 
   struct Master {
-    ParamGetterBackend<Config> config_backend;
-    DataGetterBackend<Param> param_backend;
+    DataGetterBackend<Config> config_backend;
+    DataGetterBackend<typename GNP::Param> param_backend;
     RemoteWorkQueueBackend work_backend;
   };
 
  private:
-  const int MASTER_RANK = 0;
-  const int PARAM_CHANNEL = 20;
-  const int CONFIG_CHANNEL = 21;
-  const int WORK_CHANNEL = 22;
+  static const int MASTER_RANK = 0;
+  static const int PARAM_CHANNEL = 20;
+  static const int CONFIG_CHANNEL = 21;
+  static const int WORK_CHANNEL = 22;
 
  private:
   datanode *module_;
+  const char *gnp_name_;
+
   typename GNP::Param param_;
-  MpiDualTreeConfig config_;
-  WorkQueue *work_queue_;
+  Config config_;
+  WorkQueueInterface *work_queue_;
   int my_rank_;
   int n_machines_;
   index_t n_points_;
   Master *master_;
-  SimpleDistributedCacheArray<typename GNP::QPoint> data_points;
-  SimpleDistributedCacheArray<typename GNP::QNode> data_nodes;
-  SimpleDistributedCacheArray<typename GNP::QResult> q_results;
+  SimpleDistributedCacheArray<typename GNP::QPoint> data_points_;
+  SimpleDistributedCacheArray<typename GNP::QNode> data_nodes_;
+  SimpleDistributedCacheArray<typename GNP::QResult> q_results_;
 
  public:
   MpiMonochromaticDualTreeRunner() {
@@ -351,8 +354,6 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Preinit_() {
 template<typename GNP, typename Solver>
 void MpiMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
   index_t n_block_points = fx_param_int(module_, "n_block_points", 1024);
-  index_t n_block_nodes = fx_param_int(module_, "n_block_nodes", 128);
-
   datanode *data_module = fx_submodule(module_, "data", "data");
 
   fx_timer_start(module_, "read");
@@ -365,7 +366,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
   fx_timer_start(module_, "copy");
   typename GNP::QPoint default_point;
   default_point.vec().Init(data_matrix.n_rows());
-  param.BootstrapMonochromatic(&default_point, n_points_);
+  param_.BootstrapMonochromatic(&default_point, n_points_);
   data_points_.InitMaster(default_point, data_matrix.n_cols(), n_block_points);
 
   for (index_t i = 0; i < n_points_; i++) {
@@ -377,13 +378,16 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
 
 template<typename GNP, typename Solver>
 void MpiMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
+  index_t n_block_nodes = fx_param_int(module_, "n_block_nodes", 128);
+  datanode *data_module = fx_submodule(module_, "data", "data");
+
   fx_timer_start(module_, "tree");
   typename GNP::QNode data_example_node;
-  data_example_node.Init(n_data_, param);
-  data_nodes.Init(data_example_node, 0, n_block_nodes);
+  data_example_node.Init(n_points_, param_);
+  data_nodes_.InitMaster(data_example_node, 0, n_block_nodes);
   KdTreeMidpointBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-      ::Build(data_module, param, &data_points, &data_nodes);
+      ::Build(data_module, param_, &data_points_, &data_nodes_);
   fx_timer_stop(module_, "tree");
 }
 
@@ -392,88 +396,91 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
   master_ = new Master();
 
   // Set up and export the config object
-  config_.n_threads = n_threads;
-  master_->config_backend.Init(&config);
-  master_->config_backend.RemoteObjectInit(my_rank);
+  config_.n_threads = fx_param_int(module_, "n_threads", 1);
+  master_->config_backend.Init(&config_);
+  master_->config_backend.RemoteObjectInit(my_rank_);
 
   // Set up and export the dual-tree algorithm Param object
-  master_->param_backend.Init(&param);
-  master_->param_backend.RemoteObjectInit(my_rank);
+  master_->param_backend.Init(&param_);
+  master_->param_backend.RemoteObjectInit(my_rank_);
 
   // Make a static work queue
   SimpleWorkQueue<typename GNP::QNode> *simple_work_queue =
       new SimpleWorkQueue<typename GNP::QNode>;
-  int n_grains = fx_param_int(module, "n_grains",
-      config.n_threads * n_workers_total * 3);
-  simple_work_queue->Init(&q_nodes, n_grains);
-  fx_format_result(module, "n_grains_actual", "%"LI"d",
+  int n_grains = fx_param_int(module_, "n_grains",
+      config_.n_threads * n_machines_ * 3);
+  simple_work_queue->Init(&data_nodes_, n_grains);
+  fx_format_result(module_, "n_grains_actual", "%"LI"d",
       simple_work_queue->n_grains());
   work_queue_ = new LockedWorkQueue(simple_work_queue);
 
-  master_->work_backend.Init(work_queue);
+  master_->work_backend.Init(work_queue_);
   master_->work_backend.RemoteObjectInit(WORK_CHANNEL);
 }
 
 template<typename GNP, typename Solver>
 void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
     datanode *module, const char *gnp_name) {
+  module_ = module;
+  gnp_name_ = gnp_name;
+
   Preinit_();
 
   data_points_.Configure(1, my_rank_, n_machines_);
   data_nodes_.Configure(2, my_rank_, n_machines_);
   q_results_.Configure(3, my_rank_, n_machines_);
 
-  if (my_rank == MASTER_RANK) {
-    param_.Init(fx_submodule(module, gnp_name, gnp_name));
+  if (my_rank_ == MASTER_RANK) {
+    param_.Init(fx_submodule(module_, gnp_name_, gnp_name_));
     ReadData_();
     MakeTree_();
 
     typename GNP::QResult default_result;
-    default_result.Init(param);
-    q_results.Init(default_result, n_points_, data_points.n_block_elems());
+    default_result.Init(param_);
+    q_results_.InitMaster(default_result, n_points_, data_points_.n_block_elems());
 
     SetupMaster_();
-  } else if (my_rank != MASTER_RANK) {
-    data_points.InitWorker();
-    data_nodes.InitWorker();
-    q_results.InitWorker();
+  } else if (my_rank_ != MASTER_RANK) {
+    data_points_.InitWorker();
+    data_nodes_.InitWorker();
+    q_results_.InitWorker();
   }
 
-  MPI_Barrier();
+  MPI_Barrier(MPI_COMM_WORLD);
 
   fx_timer_start(module_, "flush_data");
   data_points_.FlushClear(BlockDevice::READ);
   data_nodes_.FlushClear(BlockDevice::READ);
   q_results_.FlushClear(BlockDevice::MODIFY);
-  MPI_Barrier();
+  MPI_Barrier(MPI_COMM_WORLD);
   fx_timer_stop(module_, "flush_data");
 
   fx_timer_start(module_, "distribute_config");
-  if (my_rank != MASTER_RANK) {
+  if (my_rank_ != MASTER_RANK) {
     GetRemoteData(CONFIG_CHANNEL, MASTER_RANK, &config_);
     GetRemoteData(PARAM_CHANNEL, MASTER_RANK, &param_);
 
     RemoteWorkQueue *remote_work_queue = new RemoteWorkQueue();
     remote_work_queue->Init(WORK_CHANNEL, MASTER_RANK);
-    work_queue = remote_work_queue;
+    work_queue_ = remote_work_queue;
   }
-  MPI_Barrier();
+  MPI_Barrier(MPI_COMM_WORLD);
   fx_timer_stop(module_, "distribute_config");
 
   fx_timer_start(module_, "all_machines");
   ThreadedDualTreeSolver<GNP, Solver> solver;
   solver.InitSolve(
-      fx_submodule(module_, "solver", "solver"), param_,
-      config_.n_threads, work_queue_,
+      fx_submodule(module_, "solver", "solver"),
+      config_.n_threads, work_queue_, param_,
       data_points_.cache(), data_nodes_.cache(),
       data_points_.cache(), data_nodes_.cache(),
       q_results_.cache());
-  MPI_Barrier();
+  MPI_Barrier(MPI_COMM_WORLD);
   fx_timer_stop(module_, "all_machines");
 
   fx_timer_start(module_, "flush_results");
   q_results_.FlushClear(BlockDevice::READ);
-  MPI_Barrier();
+  MPI_Barrier(MPI_COMM_WORLD);
   fx_timer_stop(module_, "flush_results");
 }
 
@@ -497,23 +504,23 @@ void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 //   const int Q_RESULTS_CHANNEL = 8;
 //   const int CONFIG_CHANNEL = 9;
 //   typename GNP::Param param;
-//   int my_rank;
+//   int my_rank_;
 //   int n_machines;
 //   int n_workers_total;
 //
-//   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+//   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank_);
 //   MPI_Comm_size(MPI_COMM_WORLD, &n_machines);
 //
 //   n_workers_total = n_machines - 1;
 //
-//   if (my_rank == MASTER_RANK) {
+//   if (my_rank_ == MASTER_RANK) {
 //     param.Init(fx_submodule(module, gnp_name, gnp_name));
 //
 //     TempCacheArray<typename GNP::Point> q_points;
 //     TempCacheArray<typename GNP::QNode> q_nodes;
 //     TempCacheArray<typename GNP::Point> r_points;
 //     TempCacheArray<typename GNP::RNode> r_nodes;
-//     TempCacheArray<typename GNP::QResult> q_results;
+//     TempCacheArray<typename GNP::QResult> q_results_;
 //
 //     nbr_utils::LoadKdTree(fx_submodule(module, "q", "q"),
 //         &param, &q_points, &q_nodes);
@@ -526,7 +533,7 @@ void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 //
 //     typename GNP::QResult default_result;
 //     default_result.Init(param);
-//     q_results.Init(default_result, q_points.end_index(),
+//     q_results_.Init(default_result, q_points.end_index(),
 //         q_points.n_block_elems());
 //
 //     SimpleWorkQueue<typename GNP::QNode> work_queue;
@@ -548,7 +555,7 @@ void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 //     RemoteBlockDeviceBackend r_nodes_backend;
 //     r_nodes_backend.Init(r_nodes.cache());
 //     RemoteBlockDeviceBackend q_results_backend;
-//     q_results_backend.Init(q_results.cache());
+//     q_results_backend.Init(q_results_.cache());
 //
 //     DataGetterBackend<typename GNP::Param> param_backend;
 //     param_backend.Init(&param);
@@ -576,11 +583,11 @@ void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 //     q_nodes_backend.Report(fx_submodule(module, NULL, "backends/q_nodes"));
 //     r_points_backend.Report(fx_submodule(module, NULL, "backends/r_points"));
 //     r_nodes_backend.Report(fx_submodule(module, NULL, "backends/r_nodes"));
-//     q_results_backend.Report(fx_submodule(module, NULL, "backends/q_results"));
+//     q_results_backend.Report(fx_submodule(module, NULL, "backends/q_results_"));
 //   } else {
 //     String my_fx_scope;
 //
-//     my_fx_scope.InitSprintf("rank%d", my_rank);
+//     my_fx_scope.InitSprintf("rank%d", my_rank_);
 //     fx_scope(my_fx_scope.c_str());
 //
 //     RemoteObjectServer::Connect(MASTER_RANK);
@@ -776,7 +783,7 @@ Assume index structure:
       TempCacheArray<typename GNP::QNode> q_nodes;
       TempCacheArray<typename GNP::Point> r_points;
       TempCacheArray<typename GNP::RNode> r_nodes;
-      TempCacheArray<typename GNP::QResult> q_results;
+      TempCacheArray<typename GNP::QResult> q_results_;
 
       export all of these arrays to the network
 
@@ -791,12 +798,12 @@ Assume index structure:
 
       typename GNP::QResult default_result;
       default_result.Init(param);
-      q_results.Init(default_result, q_points.end_index(),
+      q_results_.Init(default_result, q_points.end_index(),
           q_points.n_block_elems());
 
       server.Loop();
     } else if (worker) {
-      MPI_Barrier();
+      MPI_Barrier(MPI_COMM_WORLD);
 
       initialize them all with default elements
 
@@ -808,14 +815,14 @@ Assume index structure:
       r_points.Init(r_points_channel, BlockDevice::READ);
       NetCacheArray<typename GNP::RNode> r_nodes;
       r_nodes.Init(r_nodes_channel, BlockDevice::READ);
-      NetCacheArray<typename GNP::QResult> q_results;
-      q_results.Init(q_results_channel, BlockDevice::CREATE);
+      NetCacheArray<typename GNP::QResult> q_results_;
+      q_results_.Init(q_results_channel, BlockDevice::CREATE);
 
       while (work) {
         Solver solver;
         solver.Init(fx_submodule(module, "solver", "solver"), param,
             &q_points, &q_point_infos, &q_nodes,
-            &r_points, &r_point_infos, &r_nodes, &q_results);
+            &r_points, &r_point_infos, &r_nodes, &q_results_);
         solver.Begin();
       }
     }

@@ -49,19 +49,19 @@ class Rpc {
   template<typename RequestObject>
   ResponseObject *Request(
       int channel, int destination, const RequestObject& request) {
+    int length;
     should_free_ = true;
-    data_ = mem::Alloc(ot::PointerFrozenSize(request));
-    ot::PointerFreeze(request, data_.begin());
-    MPI_Send(data_.begin(), data_.size(), MPI_CHAR,
-        destination_, channel_, MPI_COMM_WORLD);
+    length = ot::PointerFrozenSize(request);
+    data_ = mem::Alloc<char>(length);
+    ot::PointerFreeze(request, data_);
+    MPI_Send(data_, length, MPI_CHAR, destination_, channel_, MPI_COMM_WORLD);
     MPI_Status status;
     MPI_Probe(MPI_ANY_SOURCE, channel_, MPI_COMM_WORLD, &status);
-    int length;
     MPI_Get_count(&status, MPI_CHAR, &length);
     data_ = mem::Resize(data_, length);
-    MPI_Recv(data_.begin(), data_.size(), MPI_CHAR,
+    MPI_Recv(data_, length, MPI_CHAR,
         destination_, channel_, MPI_COMM_WORLD, &status);
-    return ot::PointerThaw<ResponseObject>(data_.begin());
+    return ot::PointerThaw<ResponseObject>(data_);
   }
 
   operator ResponseObject *() {
@@ -71,16 +71,16 @@ class Rpc {
     return reinterpret_cast<ResponseObject*>(data_);
   }
   ResponseObject& operator *() {
-    return reinterpret_cast<ResponseObject*>(data_);
+    return *reinterpret_cast<ResponseObject*>(data_);
   }
   operator const ResponseObject *() const {
-    return reinterpret_cast<ResponseObject*>(data_);
+    return *reinterpret_cast<ResponseObject*>(data_);
   }
   const ResponseObject* operator ->() const {
     return reinterpret_cast<ResponseObject*>(data_);
   }
   const ResponseObject& operator *() const {
-    return reinterpret_cast<ResponseObject*>(data_);
+    return *reinterpret_cast<ResponseObject*>(data_);
   }
 };
 
@@ -228,17 +228,8 @@ struct DataGetterRequest {
 };
 
 template<typename T>
-struct DataGetterResponse {
-  T data;
-  
-  OT_DEF(DataGetterResponse) {
-    OT_MY_OBJECT(data);
-  }
-};
-
-template<typename T>
 class DataGetterBackend
-    : public RemoteObjectBackend<DataGetterRequest, DataGetterResponse<T> > {
+    : public RemoteObjectBackend<DataGetterRequest, T> {
  private:
   const T* data_;
 
@@ -248,8 +239,8 @@ class DataGetterBackend
   }
 
   void HandleRequest(
-      const DataGetterRequest& request, DataGetterResponse<T> *response) {
-    response->data.Copy(*data_);
+      const DataGetterRequest& request, T *response) {
+    response->Copy(*data_);
   }
 };
 
@@ -257,7 +248,7 @@ template<typename T>
 void GetRemoteData(int channel, int destination, T* result) {
   DataGetterRequest request;
   request.operation = DataGetterRequest::GET_DATA;
-  Rpc<DataGetterResponse<T> > response(channel, destination, request);
+  Rpc<T> response(channel, destination, request);
   result->Copy(*response);
 }
 

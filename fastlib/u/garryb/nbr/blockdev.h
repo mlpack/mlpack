@@ -192,10 +192,10 @@ class MemBlockDevice : public BlockDevice {
   void Init(offset_t block_size);
   
   virtual void Read(blockid_t blockid,
-      offset_t begin, offset_t end, char *data) = 0;
+      offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
-      offset_t begin, offset_t end, const char *data) = 0;
-  virtual blockid_t AllocBlock() = 0;
+      offset_t begin, offset_t end, const char *data);
+  virtual blockid_t AllocBlock();
   
  private:
   void CheckSize_(blockid_t blockid) {
