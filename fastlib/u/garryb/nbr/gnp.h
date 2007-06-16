@@ -1,9 +1,6 @@
 #ifndef NBR_GNP_H
 #define NBR_GNP_H
 
-#include "kdtree.h"
-#include "spnode.h"
-
 #include "fastlib/fastlib.h"
 
 struct BlankDelta {

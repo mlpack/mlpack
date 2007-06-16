@@ -13,7 +13,7 @@
 
 #include "spnode.h"
 #include "spbounds.h"
-#include "cache.h"
+#include "cachearray.h"
 
 #include "base/common.h"
 #include "col/arraylist.h"

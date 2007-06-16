@@ -1,7 +1,7 @@
 #include "cache.h"
 
 void SmallCache::Init(
-    BlockDevice *inner_in, BlockActionHandler *handler_in, mode_t mode_in) {
+    BlockDevice *inner_in, Schema *handler_in, mode_t mode_in) {
   BlockDeviceWrapper::Init(inner_in); // sets inner_, n_block_bytes_, etc
 
   metadatas_.Init(n_blocks_);

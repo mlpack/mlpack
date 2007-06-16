@@ -88,7 +88,8 @@ class Allnn {
         const RNode& r_root) {}
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
-        const QPoint& q_point) {}
+        const QPoint& q_point,
+        index_t q_index) {}
   };
 
   struct QMassResult {
@@ -143,6 +144,7 @@ class Allnn {
 
     bool StartVisitingQueryPoint(const Param& param,
         const QPoint& q_point,
+        index_t q_index,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
@@ -169,6 +171,7 @@ class Allnn {
 
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q_point,
+        index_t q_index,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
@@ -226,7 +229,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef USE_MPI  
   MPI_Init(&argc, &argv);
-  nbr_utils::MpiDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+  nbr_utils::MpiMonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
   MPI_Finalize();
 #else

@@ -25,7 +25,7 @@ class SmallCache : public BlockDeviceWrapper {
  private:
   Mutex mutex_;
   ArrayList<Metadata> metadatas_;
-  BlockActionHandler *handler_;
+  Schema *handler_;
   mode_t mode_;
 
  public:
@@ -45,7 +45,7 @@ class SmallCache : public BlockDeviceWrapper {
    * If the mode is WRITE or TEMP, the handler is assumed to be initialized,
    * and its WriteMetadata will be called.
    */
-  void Init(BlockDevice *inner_in, BlockActionHandler *handler_in,
+  void Init(BlockDevice *inner_in, Schema *handler_in,
      mode_t mode_in);
 
   char *StartRead(blockid_t blockid);
@@ -68,7 +68,7 @@ class SmallCache : public BlockDeviceWrapper {
   
   void Clear(mode_t new_mode);
 
-  BlockActionHandler *block_action_handler() const {
+  Schema *block_action_handler() const {
     return handler_;
   }
 
