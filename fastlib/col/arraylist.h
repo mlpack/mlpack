@@ -266,6 +266,24 @@ class ArrayList {
     }
     size_ = size_in;
   }
+
+  /**
+   * Explicitly increases the size of the list.
+   */
+  void GrowTo(index_t size_in) {
+    DEBUG_ASSERT(size_in >= size_);
+    IncreaseSizeHelper_(size_in);
+    size_ = size_in;
+  }
+
+  /**
+   * Grows size if the current size isn't big enough.
+   */
+  void EnsureSizeAtLeast(index_t size_min) {
+    if (unlikely(size_min > size_min)) {
+      GrowTo(size_min);
+    }
+  }
   
   /**
    * Serializes this arraylist.
