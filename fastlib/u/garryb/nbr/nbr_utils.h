@@ -268,6 +268,8 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 - write code that detects and runs the server
 */
 
+//problem problem - no network thread!
+
 #ifdef USE_MPI
 
 #include "netcache.h"

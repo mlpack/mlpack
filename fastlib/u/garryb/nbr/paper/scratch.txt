@@ -1,0 +1,126 @@
+
+Intro
+
+- What dual-tree algorithms are for, what they're good at
+  - Generalized N-body problems
+- Parallelization important; with 80 cores, an 80x speedup on a serial algorithm no longer looks so promising
+- Dual tree algorithms are an extension of single tree algorithms
+- (lead-in) Dual tree came from single tree from N-body problem
+- N-body problem parallelized
+- We repeat the formal definition of generalized N-body problems and show the class of problems we intend to accomodate
+- We discuss parallelization of these
+
+Fast multi-tree algorithms
+
+- Basics
+  - Brief definition multi-tree algorithms
+  - KD-tree and oct tree: two spatial trees
+  - Single tree algorithms achieve speedup by excluding parts of the tree whenrecursing
+  - Dual tree algorithms look at pairs of nodes (cells) 
+- Example algorithms
+  - Nearest neighbors
+  - Two-point
+  - KDE
+  - Affinity
+
+Parallel N-Body Work
+
+- The phyiscal N-body problem
+  - Single tree algorithms
+  - Pose a hypothetical dual-tree algorithm
+- Explain the main issues in parallelization.  The paper requires me to discuss:
+  - (Motivate the comparison here)
+  - Work decomposition - ABILITY for parallelization
+  - Load balance - Difficulties
+  - Data transfer
+  - Shared memory versus non-shared memory
+  - Highlight that data transfer is less of an issue in small-scale
+  shared-memory systems
+- Motivate the comparison
+  - Compare similarities between the algorithms
+    - Highlight issues of parallel N-body problems: "sufficient sets" for data and cells/nodes
+  - Highlight contrasts - should be clear BEFORE seeing past work
+    - Timestep
+    - Single-tree
+- Approaches and Applicability
+  - How I can format this:
+    - Chronologically
+    - Concepts (Load Balance, Data Transfer, Co-design)
+    - Approaches (Push/Pull, shared/nonshared)
+    - Intersperse applicability or talk about it later?
+  - Salmon early 90's - ORB tree
+  - Singh 93 - Shared memory or (potentially-maybemaybe) pull-based systems easier
+  - Singh later - ORB, costzones, measuring estimated time
+  - Salmon 97+ - Extended to disk
+  - Queue up requests versus larger extended pages
+  - UWash - KD trees
+- Closing notes
+  - Possibilities
+    - Adopted techniques and applicability
+    - Recap of *contrast*, or move the contrast here
+
+Parallel Models
+
+- The model idea
+  - Map reduce: computational model automatically parallel
+  - We hope to emulate this
+  - Allusion: Formal claims onto what problems we can solve
+
+The N-Body Parallel Model
+
+- Prerequisite: what is a tree, and what is our notation
+- Quickly, what are generalized N-body problems
+  - Yes, I have formal backing for what I'm going to do
+  - Second-order reduce problem
+    - Borrow some of Ryan's rhetoric
+  - Block decomposability
+    - This is the core of dual-tree algorithms vs. single-tree
+    - Explain the work grid
+  - Easy BD: Problems that are two of the same operator, such as tpc
+  - Otherwise: define the "map" operator and show it can always be used
+    - Relate this to the single tree approach, but say dual tree can still do better
+  - The GNA
+    - What are statistics
+    - What is a prune (conceptually)
+    - Intrinsic prunes, formally
+    - Extrinsic prunes, informally, say we'll get back
+    - Subsumes single-tree, depth-first, breadth-first, etc
+    - Caveat: Distributive property -- is this relegated as a "trick?"
+  - Syntactic clarification: Note "map_x reduce_x" is not map-reduce -- map-reduce is key-based, and the reduce happens *after* the map
+  - Finale (perhaps save this for end \section): NBR solves all second-order reduce problems!!!
+- Global result with intrinsic prunes
+  - Breeeeze through the model
+  - How statistics are computed
+  - How the value is computed for intrinsic prunes
+  - A parallel system applies these rules
+- Query-reference problems
+  - Pi-decomposition
+  - Mass result
+  - How pi is computed
+    - Single tree and dual tree; my current discourse is probably pretty good
+  - Intrinsic prunes
+- Query-reference extrinsic prunes
+  - Concept: GNA considers the effect of a subresult in the context of all other branches of the work decomposition
+  - Summary sets, and why we "approximate" them by finding the loosest bounds on individual post-processed values
+    - LOOSEST BOUNDS ON *INDIVIDUAL* POST-PROCESSED RESULTS -- Good idea
+  - How do we build up this information
+
+Implementation
+
+- Thread-level and cluster parallelism
+  - Thread level: primary concern: work decomposition and load balancing
+- Cluster parallelism
+  - Primary concern: data transfer
+
+Experiments
+
+- Silly details
+  - C++
+  - Machine type
+  - Pthreads
+  - MPI
+- The nice-looking scalability graph for each algorithm on sufficiently "hard" data
+- Page size
+
+
+

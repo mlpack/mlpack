@@ -30,7 +30,6 @@ class Rpc {
   char *data_;
   int channel_;
   int destination_;
-  bool should_free_;
  
  public:
   template<typename RequestObject>
@@ -38,19 +37,15 @@ class Rpc {
     Request(channel, destination, request);
   }
   Rpc() {
-    should_free_ = false;
   }
   ~Rpc() {
-    if (should_free_) {
-      mem::Free(data_);
-    }
+    mem::Free(data_);
   }
 
   template<typename RequestObject>
   ResponseObject *Request(
       int channel, int destination, const RequestObject& request) {
     int length;
-    should_free_ = true;
     length = ot::PointerFrozenSize(request);
     data_ = mem::Alloc<char>(length);
     ot::PointerFreeze(request, data_);
