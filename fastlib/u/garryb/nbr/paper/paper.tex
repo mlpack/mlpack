@@ -300,13 +300,16 @@ Directly computing the sum takes $O(N^2)$, but speedup may be achieved by approx
 The earliest tree-based algorithm by Appel \cite{appel} that approximates these force contributions in an approach closely resembling the dual-tree approach.
 However, the later popular Barnes-Hut algorithm\cite{barneshut} and Fast Multipole Method\cite{greengard_fmm} received attention from the parallelization community, with the former receiving the most extensive attention.
 
-
-
 The algorithm by Barnes and Hut, presented in \cite{barneshut}, is order $O(N log N)$ for uniform distributions\authornote{Uniform?}.
 For each query point $q$, the force contribution is approximated by recursively traversing an oct-tree\footnote{An oct-tree recursively divides all 3 dimensions in half spatially until the node is sufficiently small.}.
 When recursing, if the point $q$ is further than parameter $\theta$ times the spatial width of the node, the force calculation is approximated by placing all points at the node's center of mass.
-Greengard's Fast Multipole Method \cite{greengard_fmm} has some elements of dual-tree computation in its downwards pass, in which the force contribution for an entire node of queries is estimated for an entire node of references.
-The Fast Multipole Method is considered to have a higher constant factor; thus, most research focuses on the single-tree Barnes-Hut\cite{fmm_slower}.
+%Greengard's Fast Multipole Method \cite{greengard_fmm} has some elements of dual-tree computation in its downwards pass, in which the force contribution for an entire node of queries is estimated for an entire node of references.
+%The Fast Multipole Method is considered to have a higher constant factor; thus, most research focuses on the single-tree Barnes-Hut\cite{fmm_slower}.
+
+{\bf Parallelization.}
+The effective parallelization of any algorithm requires three important considerations: work decomposition, load balancing, and minimized communication.
+
+
 
 --------
 

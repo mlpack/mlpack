@@ -247,7 +247,7 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   data_nodes.Init(data_example_node, 0, n_block_nodes);
   KdTreeMidpointBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-      ::Build(module, param, &data_points, &data_nodes);
+      ::Build(data_module, param, &data_points, &data_nodes);
 
   // Create our array of results.
   typename GNP::QResult default_result;
