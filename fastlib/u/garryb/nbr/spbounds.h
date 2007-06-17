@@ -336,7 +336,6 @@ template<int t_pow = 2>
 class SpHrectBound {
  private:
   SpRange *bounds_;
-  //double diagonal_sq_;
   index_t dim_;
 
   OT_DEF(SpHrectBound) {
