@@ -25,9 +25,7 @@ class Gravity {
    public:
     /** The dimensionality of the data sets. */
     index_t dim;
-    /** Barnes-Hut parameter */
     double theta;
-    /** Weird squared thing that I'm trying */
     double theta_factor;
 
     OT_DEF(Param) {
@@ -48,8 +46,10 @@ class Gravity {
      */
     void Init(datanode *datanode) {
       dim = -1;
-      theta = fx_param_double(datanode, "theta", 0.01);
-      theta_factor = (1.0 + theta) * (1.0 + theta);
+      theta = fx_param_double_req(datanode, "theta");
+      //theta_factor = math::Sqr(1.0 + theta);
+      //theta_factor = math::Sqr(1.0 / (1.0 / theta + sqrt(3)));
+      theta_factor = math::Sqr(theta + 1);
     }
     
     void BootstrapMonochromatic(QPoint* point, index_t count) {
@@ -69,11 +69,38 @@ class Gravity {
     }
   };
 
-  typedef BlankStat QStat;
-  typedef BlankStat RStat;
+  struct CombinedStat {
+   public:
+    double diagsq;
+    Vector centroid;
 
-  typedef SpNode<Bound, BlankStat> RNode;
-  typedef SpNode<Bound, BlankStat> QNode;
+    OT_DEF(CombinedStat) {
+      OT_MY_OBJECT(diagsq);
+      OT_MY_OBJECT(centroid);
+    }
+
+   public:
+    void Init(const Param& param) {
+      centroid.Init(param.dim);
+    }
+    void Reset(const Param& param) {
+      centroid.SetZero();
+    }
+    void Accumulate(const Param& param, const QPoint& point) {
+      la::AddTo(point.vec(), &centroid);
+    }
+    void Accumulate(const Param& param,
+        const CombinedStat& stat, const Bound& bound, index_t n) {
+      la::AddTo(stat.centroid, &centroid);
+    }
+    void Postprocess(const Param& param, const Bound& bound, index_t n) {
+      diagsq = bound.MaxDistanceSqToBound(bound);
+      la::Scale(1.0 / n, &centroid);
+    }
+  };
+
+  typedef SpNode<Bound, CombinedStat> RNode;
+  typedef SpNode<Bound, CombinedStat> QNode;
 
   typedef BlankDelta Delta;
   
@@ -158,6 +185,15 @@ class Gravity {
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
         GlobalResult* global_result) {
+      /*double dhi = r_node.bound().MaxDistanceSqToPoint(q_point.vec());
+      double dlo = r_node.bound().MinDistanceSqToPoint(q_point.vec());
+      if (dhi > dlo * param.theta_factor) {
+        force = 0;
+        return true;
+      } else {
+        q_result->force += param.Force((dhi + dlo) / 2);
+        return false;
+      }*/
       force = 0;
       return true;
     }
@@ -165,9 +201,17 @@ class Gravity {
     void VisitPair(const Param& param,
         const QPoint& q_point, index_t q_index,
         const RPoint& r_point, index_t r_index) {
-      double distsq = la::DistanceSqEuclidean(
-          q_point.vec(), r_point.vec());
-      force += param.Force(distsq);
+      //double distsq = la::DistanceSqEuclidean(
+      //    q_point.vec(), r_point.vec());
+      const double *a = q_point.vec().ptr();
+      const double *b = r_point.vec().ptr();
+      double x = a[0]-b[0];
+      double y = a[1]-b[1];
+      double z = a[2]-b[2];
+      double distsq = x*x + y*y + z*z;
+      if (likely(distsq != 0)) {
+        force += param.Force(distsq);
+      }
     }
 
     void FinishVisitingQueryPoint(const Param& param,
@@ -194,16 +238,21 @@ class Gravity {
         const QNode& q_node, const RNode& r_node,
         Delta* delta,
         GlobalResult* global_result, QPostponed* q_postponed) {
-      double distsq_lo =
-          q_node.bound().MinDistanceSqToBound(r_node.bound());
-      double distsq_hi =
-          q_node.bound().MaxDistanceSqToBound(r_node.bound());
-      // (sqrt(distsq_hi) - sqrt(distsq_lo)) / sqrt(distsq_lo) <= theta
-      // sqrt(distsq_hi) / sqrt(distsq_lo) - 1 <= theta
-      // sqrt(distsq_hi) / sqrt(distsq_lo) <= theta + 1
-      // sqrt(distsq_hi) / sqrt(distsq_lo) <= theta + 1
-      // distsq_hi / distsq_lo <= (theta + 1)^2
-      return distsq_hi <= distsq_lo * param.theta_factor;
+      double distsq_lo = q_node.bound().MinDistanceSqToBound(r_node.bound());
+      double distsq_hi = q_node.bound().MaxDistanceSqToBound(r_node.bound());
+      //double distsq_mid = q_node.bound().MidDistanceSqToBound(r_node.bound());
+      //double diagsq = q_node.stat().diagsq + r_node.stat().diagsq;
+      // (sqrt(distsq_hi) - sqrt(distsq_lo)) / sqrt(distsq_lo) < theta
+      // sqrt(distsq_hi) / sqrt(distsq_lo) - 1 < theta
+      // sqrt(distsq_hi) / sqrt(distsq_lo) < theta + 1
+      // sqrt(distsq_hi) / sqrt(distsq_lo) < theta + 1
+      // distsq_hi / distsq_lo < (theta + 1)^2
+      bool should_explore = (distsq_hi >= distsq_lo * param.theta_factor);
+      if (!should_explore) {
+        double distsq_centroid = la::DistanceSqEuclidean(q_node.stat().centroid, r_node.stat().centroid);
+        q_postponed->force += r_node.count() * param.Force(distsq_centroid);
+      }
+      return should_explore;
     }
 
     static bool ConsiderPairExtrinsic(const Param& param,

@@ -277,8 +277,8 @@ void DualTreeDepthFirst<GNP>::Pair_(
       const typename GNP::RNode *r_child2 = r_nodes_.StartRead(r_child2_i);
       typename GNP::Delta delta1;
       typename GNP::Delta delta2;
-      const typename GNP::Delta *pdelta1;
-      const typename GNP::Delta *pdelta2;
+      //const typename GNP::Delta *pdelta1;
+      //const typename GNP::Delta *pdelta2;
       double heur1;
       double heur2;
 
@@ -305,6 +305,44 @@ void DualTreeDepthFirst<GNP>::Pair_(
       // TOOD:
       // Instead of pointer-swapping, consider just writing the code twice.
 
+      if (likely(heur1 <= heur2)) {
+        if (r_child1 != NULL) {
+          typename GNP::QMassResult exclusive_unvisited_for_r1(
+              exclusive_unvisited);
+          if (r_child2 != NULL) {
+            exclusive_unvisited_for_r1.ApplyDelta(param_, delta2);
+          }
+          Pair_(q_node, r_child1, delta1, exclusive_unvisited_for_r1, q_node_mut);
+        }
+        if (r_child2 != NULL) {
+          Pair_(q_node, r_child2, delta2, exclusive_unvisited, q_node_mut);
+        }
+      } else {
+        if (r_child2 != NULL) {
+          typename GNP::QMassResult exclusive_unvisited_for_r1(
+              exclusive_unvisited);
+          if (r_child1 != NULL) {
+            exclusive_unvisited_for_r1.ApplyDelta(param_, delta1);
+          }
+          Pair_(q_node, r_child2, delta2, exclusive_unvisited_for_r1, q_node_mut);
+        }
+        if (r_child1 != NULL) {
+          Pair_(q_node, r_child1, delta1, exclusive_unvisited, q_node_mut);
+        }
+      }
+/*
+      if (r_child1 != NULL) {
+        typename GNP::QMassResult exclusive_unvisited_for_r1(
+            exclusive_unvisited);
+        if (r_child2 != NULL) {
+          exclusive_unvisited_for_r1.ApplyDelta(param_, *pdelta2);
+        }
+        Pair_(q_node, r_child1, *pdelta1, exclusive_unvisited_for_r1, q_node_mut);
+      }
+      if (r_child2 != NULL) {
+        Pair_(q_node, r_child2, *pdelta2, exclusive_unvisited, q_node_mut);
+      }
+
       if (unlikely(heur2 < heur1)) {
         const typename GNP::RNode *r_child_t = r_child1;
         r_child1 = r_child2;
@@ -327,7 +365,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
       if (r_child2 != NULL) {
         Pair_(q_node, r_child2, *pdelta2, exclusive_unvisited, q_node_mut);
       }
-
+*/
       r_nodes_.StopRead(r_child1_i);
       r_nodes_.StopRead(r_child2_i);
     }

@@ -193,9 +193,11 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       
       node->stat().Accumulate(*param_, left->stat(),
           left->bound(), left->count());
+      left->stat().Postprocess(*param_, node->bound(),
+          node->count());
       node->stat().Accumulate(*param_, right->stat(),
           right->bound(), right->count());
-      node->stat().Postprocess(*param_, node->bound(),
+      right->stat().Postprocess(*param_, node->bound(),
           node->count());
       
       leaf = false;
@@ -211,7 +213,6 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       CacheRead<Point> point(&points_, i);
       node->stat().Accumulate(*param_, *point);
     }
-    node->stat().Postprocess(*param_, node->bound(), node->count());
   }
   
   nodes_->StopWrite(node_i);
@@ -229,6 +230,7 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_() {
   FindBoundingBox_(node->begin(), node->end(), &node->bound());
 
   Build_(node_i);
+  node->stat().Postprocess(*param_, node->bound(), node->count());
   
   nodes_->StopWrite(node_i);
 }
