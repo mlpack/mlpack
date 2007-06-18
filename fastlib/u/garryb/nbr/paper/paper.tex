@@ -291,35 +291,75 @@ Empirical $O(N^{1.3})$ scaling was achieved on three-dimensional points from a g
 
 \subsection{Parallel \nbody\ Simulations}
 
-The classic physical $N$-body particle simulation problem models the movement of $N$ particles in an evolving system where each particle exerts force on all other particles.
+Some of the largest parallel computing efforts in history are $N$-body particle simuations.
+Algorithms for efficient simulation typically use trees and offer indispensible insight into parallelizing the generalized $N$-body problems.
+The physical $N$-body problem models $N$ particles in an evolving system where each particle exerts force on all other particles.
 Computational solutions break the simulation into discrete time steps, during which force is calculated,
 \[\map_{q \in D} \sum_{r \in D} f(q,r)\]
 \noindent where $f(q,r)$ is often an inverse-squared-distance gravitational or Coulombic force.
 Directly computing the sum takes $O(N^2)$, but speedup may be achieved by approximating distant interactions.
 
-The earliest tree-based algorithm by Appel \cite{appel} that approximates these force contributions in an approach closely resembling the dual-tree approach.
-However, the later popular Barnes-Hut algorithm\cite{barneshut} and Fast Multipole Method\cite{greengard_fmm} received attention from the parallelization community, with the former receiving the most extensive attention.
+The earliest tree-based algorithm by Appel \cite{appel} approximates these force contributions in an approach closely resembling the dual-tree approach.
+However, the later popular Barnes-Hut algorithm\cite{barneshut} and Fast Multipole Method\cite{greengard_fmm} received attention from the parallelization community.
 
 The algorithm by Barnes and Hut, presented in \cite{barneshut}, is order $O(N log N)$ for uniform distributions\authornote{Uniform?}.
-For each query point $q$, the force contribution is approximated by recursively traversing an oct-tree\footnote{An oct-tree recursively divides all 3 dimensions in half spatially until the node is sufficiently small.}.
-When recursing, if the point $q$ is further than parameter $\theta$ times the spatial width of the node, the force calculation is approximated by placing all points at the node's center of mass.
+For each query point $q$, the force contribution is approximated by recursively traversing an oct-tree\footnote{An oct-tree hierarchically divides all 3 dimensions at the midpoint.} of points that have a potential force interaction on it.
+If the $q$ is further than parameter $\theta$ times the spatial width of the considered node, the force calculation is approximated by the node's center of mass.
+
+The Fast Multiple Method \cite{greengard_fmm} achieves closer to $O(N)$, but with a higher constant factor, by considering node-node interactions like dual-tree algorithms.
+However, it is not a dual-tree algorithm in our definition, because it predetermines which node-node interactions to compute via a set of specialized rules involving the tree structure itself rather than using bounding information inferred by recursive exploration of node pairs.
+The multipole method is rarely treated beyond extensions of techniques used for Barnes-Hut \cite{singh95load} or as a demonstration of fully dynamic auto-parallelization, for instance using a data-parallel programming language \cite{nyland93dataparallel} \cite{washington_nesl}; thus, we devote our discussion mainly to the extensively studied Barnes-Hut\authornote{Something else I could do is just talk about BH, and at the end give a short spiel on how FMM is usually treated.}.
+
 %Greengard's Fast Multipole Method \cite{greengard_fmm} has some elements of dual-tree computation in its downwards pass, in which the force contribution for an entire node of queries is estimated for an entire node of references.
 %The Fast Multipole Method is considered to have a higher constant factor; thus, most research focuses on the single-tree Barnes-Hut\cite{fmm_slower}.
 
-{\bf Parallelization.}
-The effective parallelization of any algorithm requires three important considerations: work decomposition, load balancing, and minimized communication.
+{\bf History of $N$-Body Parallelization.}
+Parallelization of the Barnes-Hut algorithm hinges on the fact that each query point is independent and arbitrary partitions over the queries are possible.
+In a small-scale implementation with the assumption that all processors can quickly access all the data, only a decent load balancing strategy is required.
+Since distributions are rarely uniform, a {\it dry run} is typically performed to find the number of interactions for each query.
+The estimated runtime is to partitioning the queries.
+The cost of the dry run is amortized, since the simulation changes slowly and the load balance may be used for many time steps.
+The orthogonal recursive bisection (ORB) technique of partitioning recursively bisects the data along a plane such that each side has an identical sum of computational cost, somewhat like a $kd$-tree \cite{singh95load, liu94experiences, salmon93parallel}.
+The cost-zones technique alternatively uses the existing oct-tree used by the simulation and sequentially orders all points following a Morton or Hilber-Peano pattern.
+The points are then partitioned into sequential chunks that are roughly equal size.
 
+Both techniques attempt to solve the problems for larger scale parallelization -- communication cost.
+By approximating distant computations with the center of mass, the $N$-body problem inherently translates spatial locality into data locality, exploited successfully by both the ORB and cost-zones technique.
+Typically each processor is responsible for the set of particles it calculates forces for, and must get information about other particles from remote processors -- combined, these data form what is called a processor's {\it locally essntial tree}.
+The ORB technique was succesfully employed in cluster computing nearly two decades ago by Warren and Salmon \cite{warren92astrophysical}, with the reasoning that the the tree makes it straightforward to find which processor has which data, and imposes a convenient tree-based structure over the processors.
+Each processor initially computes which parts of its own tree are locally essential to other processor and immediately sends this information to other processors before any force computation begins, and thus no communication is necessary during the actual force computation.
 
+A strikingly different approach popularized in the nineties is to retrieve needed data on demand.
+The simpler-to-implement cost-zones technique then provides somewhat better correlation between spatial and data locality.
+Singh et. al.\authornote{Et al? -- check the reference.} \cite{singh95load, singh_architecture} argue that the $N$-body problem is best suited for shared-memory systems with hardware-based data transfer via caches.
+However, Warren and Salmon later \cite{warren93,warren97} show succesful implementations on commodity uniprocessor-with-ethernet clusters.
+In fact, \cite{warren97} extends parallelization to include disk-resident data pulled from caches, showing that the same principles that lead to efficient disk algorithms lead directly to efficient parallel algorithms.
 
---------
+{\bf Relation to Dual-Tree.}
+The issues of $N$-body force calculation largely mirror that for all interesting generalized $N$-body problems.
+In all-nearest-neighbors, a locally essential tree is typically not much larger than than set of queries itself.
+In contrast, two-point correlation cares most about points that are very close to the chosen radius, which may or may not span a region much larger than the queries.
+Nonetheless, the locally essential tree is highly correlated for nearby trees, and although more communication may be needed, this corresponds with a similar increase in computation.\authornote{A figure might be nice.  Show a filled circle in the middle, and a thick ring around the circle showing the intersection of all the boundary regions.}.
 
-Effective parallelization of an algorithm requires a problem decomposition coupled with load balancing, along with minimized communication.
+However, work balancing and load decomposition for a dual-tree algorithm differ fundamentally.
+A dual-tree algorithm's unit of work is not a single query but a pair of nodes, which we later show is practically done by dividing the tree into subtrees of queries.
+It is possible to use cost-zones in this manner -- a contiguous Morton ordering\footnote{A Morton ordering on a $kd$-tree is a depth-first left-to-right traversal (leaves only); a Peano-Hilbert ordering has no meaning for a $kd$-tree.} of leaves is in fact a union of an small $O(log N)$ number of subtrees.
+Unfortunately, both the ORB and cost-zones techniques require that we estimate the relative costs beforehand -- not only do costs per query no longer have meaning, but to be fully general we cannot assume there is a way to perform a dry run efficiently nor even that the algorithm consists of sequential time-steps.
 
-Parallelization on particule simulations have several strengths that aid in parallelism.
-Since each force calculation step is part of a larger time series, points move little in each step.
-It is therefore suitable to distribute the points among the processors.
+\section{Parallel Models}
+
+Efforts have been made in all fronts on making parallelization accessible to the general programmer.
+One technique offered by the programming languages community is the parallelization inherent in functional languages -- in fact, numerous papers have parallelized Barnes-Hut and the Fast Multipole Method algorithms this way \cite{nesl, parallel_fmm}.
+Using such a language, however, can sometimes put unintended constraints on development, especially since compiler technologies cannot automatically derive the wealth of parallelization techniques that have been used in past state-of-the-art parallel $N$-body simulations.
+
+The development of specialized programming model form another aspect.
+Great care is taken to ensure that all programs in this model can be executed efficiently in parallel, such that a person with little parallelization knowledge can write a parallel program.
+The Map-Reduce framework introduced by Google in \cite{mapreduce} combines research in all fronts of high-performance computing to efficiently solve a wide variety of problems.
+We later show that $N$-body problems are largely incompatible with Map-Reduce and propose a similar framework for dual-tree algorithms.
 
 \section{Dual-Tree Algorithm Framework}
+
+
 
 Ongoing research attempts to characterize all generalized N-body problems with rigorous mathematical formality; however, such rigorous formalization is outside the scope of this paper.
 Here, we postulate that all dual-tree algorithms fall into one or both of two categories: a single scalar or vector result summarizing all pairs of inputs, or an independent result for each query point computed against the entire reference set.
