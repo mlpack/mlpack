@@ -105,6 +105,10 @@ The N-Body Parallel Model
     - LOOSEST BOUNDS ON *INDIVIDUAL* POST-PROCESSED RESULTS -- Good idea
   - How do we build up this information
 
+Bringing N-body to Parallel
+
+
+
 Implementation
 
 - Thread-level and cluster parallelism
@@ -119,7 +123,10 @@ Experiments
   - Machine type
   - Pthreads
   - MPI
+- Show overhead of using NBR versus hand-tuned code
 - The nice-looking scalability graph for each algorithm on sufficiently "hard" data
+  - For two point correlation, also show what happens when the dataset
+  expands spatially with the number of computers
 - Page size
 
 
