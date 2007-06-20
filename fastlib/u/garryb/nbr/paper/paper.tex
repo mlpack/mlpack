@@ -1,4 +1,3 @@
-
 %
 %  $Description: Author guidelines and sample document in LaTeX 2.09$ 
 %
@@ -13,9 +12,21 @@
 \usepackage{amsmath}
 
 \newcommand{\authornote}[1]{\footnote{Note to self: #1}}
+\newcommand{\authorsnote}[1]{\authornote{#1}}
+\newcommand{\com}[1]{{\small \textit{((#1))}}}
 
 \newcommand{\union}{\cup}
 \newcommand{\intersect}{\cap}
+\newcommand{\Union}{\bigcup}
+\newcommand{\Intersect}{\bigcap}
+\newcommand{\bigvec}[1]{\mathop{\overrightarrow{#1}}}
+
+\newcommand{\otimeshat}{\widehat{\otimes}}
+\newcommand{\odothat}{\widehat{\odot}}
+
+\newcommand{\prefsplit}[2]{#1 \succ #2}
+\newcommand{\summary}{\hat{\sigma}}
+
 \DeclareMathOperator*{\map}{map}
 \DeclareMathOperator*{\worst}{worst}
 \DeclareMathOperator*{\argmin}{argmin}
@@ -23,7 +34,6 @@
 \DeclareMathOperator{\TWOPT}{TWOPOINT}
 \DeclareMathOperator{\cardinality}{cardinality}
 \DeclareMathOperator{\hrect}{hrect}
-\DeclareMathOperator{\dfs}{dfs}
 \DeclareMathOperator{\child}{child}
 \DeclareMathOperator{\visited}{visited}
 \DeclareMathOperator{\unvisited}{unvisited}
@@ -33,14 +43,16 @@
 
 \newcommand{\fig}[1]{Figure~\ref{fig:#1}}
 
-\newcommand{\wholeR}{\mathcal{R}}
-\newcommand{\wholeQ}{\mathcal{Q}}
+\newcommand{\Gnp}{\Psi_{\Theta}}
+\newcommand{\gnp}{\psi_{\Theta}}
 
-\newcommand{\X}{\\ \scriptstyle}
-\newcommand{\x}{\\ \hspace{0.13in} \scriptstyle}
-\newcommand{\xx}{\\ \hspace{0.26in} \scriptstyle}
-\newcommand{\xxx}{\\ \hspace{0.39in} \scriptstyle}
-\newcommand{\xxxx}{\\ \hspace{0.52in} \scriptstyle}
+%\newcommand{\psty}{\scriptstyle}
+\newcommand{\psty}{}
+\newcommand{\X}{\\ \psty}
+\newcommand{\x}{\X \hspace{0.13in}}
+\newcommand{\xx}{\X \hspace{0.26in}}
+\newcommand{\xxx}{\X \hspace{0.39in}}
+\newcommand{\xxxx}{\X \hspace{0.52in}}
 
 \newcommand{\defterm}[1]{{\bf #1}}
 \newcommand{\nbody}{$N$-body}
@@ -52,92 +64,80 @@
 
 \newcommand{\lo}[1]{#1^{l}}
 \newcommand{\up}[1]{#1^{u}}
-\newcommand{\distlo}[1]{\lo{d_{\text{hrect}}}}
-\newcommand{\distup}[1]{\up{d_{\text{hrect}}}}
+\newcommand{\distlo}{\lo{d}}
+\newcommand{\distup}{\up{d}}
 \newcommand{\dist}[2]{d(#1,#2)}
 
 %\newcommand{\myOp}[1]{\mathop{\bigotimes\nolimits\hspace{-0.045in}_{#1}}}
-\newcommand{\myOp}[1]{\mathop{\bigotimes\nolimits\!\!_{#1}}}
+\newcommand{\nameOp}[2]{\mathop{#1\nolimits\!\!_{#2}}}
+\newcommand{\nameop}[2]{{\scriptstyle\:}#1_{\!#2}}
+\newcommand{\myOp}[1]{\nameOp{\bigotimes}{#1}}
 %\newcommand{\myop}[1]{\otimes\hspace{-0.04in}_{#1}\hspace{0.03in}}
-\newcommand{\myop}[1]{{\scriptstyle\:}\otimes_{\!#1}}
-\newcommand{\myOutop}[1]{\mathop{\bigodot\nolimits\!\!_{#1}}}
-\newcommand{\myoutop}[1]{\mathop{\bigodot\nolimits\!\!_{#1}}}
+\newcommand{\myop}[1]{\nameop{\otimes}{#1}}
+\newcommand{\myOutop}[1]{\nameOp{\bigodot}{#1}}
+\newcommand{\myoutop}[1]{\nameop{\odot}{#1}}
 
-\newcommand{\letterglob}{\psi}
-\newcommand{\outglob}{\Psi}
-\newcommand{\inglob}{\psi}
+\newcommand{\letterglob}{\gamma}
+\newcommand{\outglob}{\Gamma}
+\newcommand{\inglob}{\gamma}
 \newcommand{\Opglob}{\myOp{\letterglob}}
 \newcommand{\opglob}{\myop{\letterglob}}
-\newcommand{\fglob}{f_{\letterglob}}
-\newcommand{\gglob}{g_{\letterglob}}
-\newcommand{\canpruneglob}{C_{\letterglob}}
-\newcommand{\deltaglob}{\delta_{\letterglob}}
+\newcommand{\fglob}{f_{\!\letterglob}}
+\newcommand{\gglob}{g_{\!\letterglob}}
+\newcommand{\canpruneglob}{C_{\!\letterglob}}
+\newcommand{\deltaglob}{\summary_{\!\letterglob}}
 
-\newcommand{\outpi}{\Pi}
-\newcommand{\Oppi}{\myOp{\outpi}}
-\newcommand{\oppi}{\myop{\outpi}}
-\newcommand{\fpi}{f_{\outpi}}
-\newcommand{\gpi}{g_{\outpi}}
-\newcommand{\canprunepi}{C_{\outpi}}
-\newcommand{\deltapi}{\delta_{\outpi}}
-\newcommand{\gpiworst}{g_{\outpi}^{\worst}}
-
-%\newcommand{\letterrho}{\rho}
-%\newcommand{\inrho}{\rho}
-%\newcommand{\outrho}{\rho}
-%\newcommand{\Oprho}{\myOp{\rho}}
-%\newcommand{\oprho}{\myop{\rho}}
-%\newcommand{\frho}{f_{\rho}}
-%\newcommand{\grho}{g_{\rho}}
-
-\newcommand{\letterqr}{\pi}
-\newcommand{\outqr}{\Pi}
-\newcommand{\inqr}{\pi}
+\newcommand{\letterqr}{\rho}
+\newcommand{\outqr}{\varrho}
+\newcommand{\inqr}{\rho}
 \newcommand{\Opqr}{\myOp{\letterqr}}
 \newcommand{\opqr}{\myop{\letterqr}}
-\newcommand{\fqr}{f_{\letterqr}}
-\newcommand{\gqr}{g_{\letterqr}}
-\newcommand{\deltaqr}{\delta_{\letterqr}}
+\newcommand{\fqr}{f_{\!\letterqr}}
+\newcommand{\gqr}{g_{\!\letterqr}}
 
-\newcommand{\letterqrv}{\vec{\pi}}
+\newcommand{\letterqrv}{\vec{\rho}}
 %\newcommand{\outqrv}{\vec{\rho}}
-\newcommand{\inqrv}{\vec{\pi}}
-\newcommand{\Opqrv}{\myOp{\letterqrv}}
-\newcommand{\opqrv}{\myop{\letterqrv}}
-\newcommand{\fqrv}{f_{\letterqrv}}
+\newcommand{\inqrv}{\vec{\rho}}
+%\newcommand{\fqrv}{f_{\letterqrv}}
 %\newcommand{\gqrv}{g_{\letterqrv}}
-\newcommand{\deltaqrv}{\delta_{\letterqrv}}
-\newcommand{\canpruneqrv}{C_{\letterqrv}}
+\newcommand{\deltaqrv}{\summary_{\!\letterqrv}}
+\newcommand{\canpruneqrv}{C_{\!\letterqrv}}
+\newcommand{\identqr}{0_{\!\letterqrv}}
+\newcommand{\varqrv}{\letterqrv^{\:C\!}}
+\newcommand{\varqrvparent}{\letterqrv^{\:P\!}}
 
 \newcommand{\lettermu}{\mu}
 %\newcommand{\inmu}{\mu}
 \newcommand{\inmu}{\mu}
-\newcommand{\Outopmu}{\myOutop{\mu}}
-\newcommand{\outopmu}{\myoutop{\mu}}
-\newcommand{\Opmu}{\myOp{\mu}}
-\newcommand{\opmu}{\myop{\mu}}
-\newcommand{\fmu}{f_{\mu}}
-\newcommand{\fmuv}{\vec{f_{\mu}}}
-%\newcommand{\gmu}{g_{\mu}}
-\newcommand{\deltamu}{\delta_{\mu}}
-\newcommand{\canprunemu}{C_{\mu}}
-\newcommand{\allowmu}{\preceq}
+\newcommand{\Outopmu}{\widehat{\nameOp{\bigodot}{\lettermu}}}%\mathop{\widehat{\bigodot\nolimits}\!\scriptstyle{\mu}}}
+\newcommand{\outopmu}{\:\widehat{\odot}_{\!\mu}\:}
+\newcommand{\Opmu}{\myOp{\lettermu}}
+\newcommand{\opmu}{\myop{\lettermu}}
+\newcommand{\fmu}{f_{\!\lettermu}}
+\newcommand{\fmuv}{\vec{f_{\!\lettermu}}}
+\newcommand{\deltamu}{\summary_{\!\lettermu}}
+\newcommand{\canprunemu}{C_{\!\lettermu}}
+\newcommand{\heurqr}{H}
+\newcommand{\identmu}{0_{\lettermu}}
+\newcommand{\varmuchild}{\lettermu^{\!C}}
+\newcommand{\varmuparent}{\lettermu^{\!P}}
 
-\newcommand{\muparent}{\inmu_{\text{coarse}}}
-\newcommand{\muchild}{\inmu_{\text{children}}}
-\newcommand{\muvisit}{\inmu_{\text{visited}}}
-\newcommand{\muall}{\inmu_{\text{all}}}
+%\newcommand{\muparent}{\inmu_{\text{coarse}}}
+%\newcommand{\muchild}{\inmu_{\text{children}}}
+%\newcommand{\muvisit}{\inmu_{\text{visited}}}
+%\newcommand{\muall}{\inmu_{\text{all}}}
 
-\newcommand{\hatpi}{\hat{\outpi}}
-\newcommand{\piparent}{\outpi_{\text{parent}}}
+%\newcommand{\hatpi}{\hat{\outpi}}
+%\newcommand{\piparent}{\outpi_{\text{parent}}}
 
-\newcommand{\namestat}[1]{\Sigma_{\text{#1}}}
-\newcommand{\outstat}{\Sigma}
-\newcommand{\instat}{\sigma}
-\newcommand{\Opstat}{\myOp{\instat}}
-\newcommand{\opstat}{\myop{\instat}}
-\newcommand{\fstat}{f_{\instat}}
-\newcommand{\gstat}{g_{\instat}}
+\newcommand{\letterstat}{s}
+\newcommand{\namestat}[1]{\sigma_{\text{#1}}}
+\newcommand{\outstat}{\sigma}
+\newcommand{\instat}{s}
+\newcommand{\Opstat}{\myOp{\letterstat}}
+\newcommand{\opstat}{\myop{\letterstat}}
+\newcommand{\fstat}{f_{\!\letterstat}}
+\newcommand{\gstat}{g_{\!\letterstat}}
 
 % Affinity propagation
 
@@ -176,7 +176,8 @@
 %------------------------------------------------------------------------- 
 \begin{document}
 
-\title{Framework for Fast Parallel Generalized N-Body Methods}
+%\title{Framework for Fast Parallel Generalized N-Body Methods}
+\title{Towards Effortless Parallelization of Generalized $N$-Body Methods}
 
 \author{Garrett F. Boyer, Ryan N. Riegel, Alexander G. Gray
 \\ Georgia Institute of Technology
@@ -214,30 +215,30 @@ The multi-tree approach treats these problems by recursively dividing the proble
 Nonetheless, as multi-core processors begin to dominate even commodity markets, even the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
 Fortunately, multi-tree algorithms are in fact quite parallel, and we show how the techniques that have long been used to parallelize the physical $N$-body force calculation problems can be extended to encompass this broader class of problems.
 
-\section{Fast multi-tree algorithms}
+\section{Fast Multi-Tree Algorithms}
 
 \authornote{KD-tree figure goes here}
 
 \begin{figure*}
-  \begin{minipage}{3.88in}
-    \begin{minipage}{1.8in}
+  \begin{minipage}{6in}
+    \begin{minipage}{2.5in}
       \begin{displaymath}
-        \begin{array}{l}
+        \begin{array}[t]{l}
           \text{{\bf tpc} - Two-point correlation.}
           \X \text{function tpc}(Y, X)
-          \x \text{if }\distup(Y, X) < r\text{: return }0
-          \x \text{if }\distlo(Y, X) > r\text{: return } |Y| \cdot |X|
+          \x \text{if }\distup(Y, X) < h\text{: return }0
+          \x \text{if }\distlo(Y, X) > h\text{: return } |Y| \cdot |X|
           \x \text{elif }|Y| \geq |X|\text{:}
-          \xx \text{return tpc}(\kdleft{Y}, X, r) + \text{tpc}(\kdright{Y}, X, r)
+          \xx \text{return tpc}(\kdleft{Y}, X, h) + \text{tpc}(\kdright{Y}, X, h)
           \x \text{else:}
-          \xx \text{return tpc}(Y, \kdleft{X}, r) + \text{tpc}(Y, \kdright{X}, r)
+          \xx \text{return tpc}(Y, \kdleft{X}, h) + \text{tpc}(Y, \kdright{X}, h)
         \end{array}
        \end{displaymath}
        \caption{\footnotesize \label{fig:allnntpc} Pseudocode for two simple dual-tree algorithms.}
       \end{minipage}
-      \begin{minipage}{2.0in}
+      \begin{minipage}{3.0in}
        \begin{displaymath}
-        \begin{array}{l}
+        \begin{array}[t]{l}
           \text{{\bf allnn} - All-nearest-neighbors.}
           \X \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
           \X \text{procedure allnn}(Q,R)\text{:}
@@ -249,16 +250,14 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
           \xx a(Q) \gets \max(a(\kdleft{Q}), a(\kdright{Q}))
           \x \text{else prioritize by min distance:}
           \xx \text{allnn}(Q, \kdleft{R}); \text{ allnn}(Q, \kdright{R})
-          \\
         \end{array}
        \end{displaymath}
       \end{minipage}
   \end{minipage}
-  \vspace{-.2in}
 \end{figure*}
 
 Core to dual-tree algorithms is the concepts of trees and bounds.
-Every node $X$ in a spatial tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \union \kdright{X} = X$, with each leaf a single point $\{x\}$.
+Every node $X$ in a spatial tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \union \kdright{X} = X$ with parent $\kdparent{X}$, and each leaf a single point $\{x\}$\footnote{In practice, leaves contain multiple points to avoid recursive overhead.}.
 For example, a $kd$-tree\cite{kdtree}, as in \fig{kdtree}, recursively partitions the data along coordinate dimensions.
 Each node has a bounding box can also store summary statistics such as means and other moments.
 We denote $\dist{\cdot}{\cdot}$ to be a distance metric.
@@ -268,8 +267,8 @@ Superscripts $l$ and $u$ to refer respectively to lower and upper bounds, which 
 A dual-tree algorithm takes this concept further by looking at pairs of nodes, each time partitioning the Cartesian product of data in half.
 Whereas a single-tree algorithm must consider every level of the tree for each query point and is at best $O(N \log N)$, a dual-tree algorithm considers the upper-level nodes of the tree only with other upper-level nodes, sometimes resulting in empirical linear performance.
 
-{\bf The Two-point Correlation.} A member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation of data set $X$ for radius $r$ is
-$\sum_{y \in X} \sum_{x \in X} I(d(y, x) \leq r)$ for the indicator function $I$.
+{\bf The Two-point Correlation.} A member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation of data set $X$ for radius $h$ is
+$\sum_{y \in X} \sum_{x \in X} I(d(y, x) \leq h)$ for the indicator function $I$.
 Figure~\ref{fig:allnntpc} shows a formulation that recursively considers a subset pair $Y$ and $X$, returning immediately if all points in $Y$ and $X$ are completely inside or outside the radius.
 
 {\bf All-nearest-neighbors.} In applications from manifold learning to classification, it is often desirable to find for a batch of queries $Q$ the nearest neighbors from reference set $R$, as $\map_{q \in Q} \argmin_{r \in R} d(q,r)$, with the exception $d(q,q) = \infty$.
@@ -278,8 +277,8 @@ If a set of references is farther away than this distance, no further exploratio
 
 {\bf Affinity propagation.}
 Affinity propagation is a recent clustering technique that identifies exemplars in a data set, taking into account all point-to-point similarities\cite{frey_dueck}.
-The similaritiy $\simil{i}{j}$ between points $x_i$ and $x_j$ is the negative squared distance or some other quantity to be maximized, with diagonals $\simil{i}{i}$ set to a parameter that penalizes creation of clusters.
-The algorithm maximizes the sum of similarities between each point and its exemplar.
+The similaritiy $\simil{i}{j}$ between points $x_i$ and $x_j$ is the negative squared distance or some other quantity to be maximized, with diagonals $\simil{i}{i}$ set to a parameter that controls the number of clusters.
+The algorithm maximizes the sum of similarities between each point and its chosen exemplar.
 If a metric space is defined over the points, one may use the dual-tree algorithm in \cite{ryan_nips} to solve the modified problems,
 \[ \begin{array}{l}
   \vecalpha \gets \map_{i} \argmin^2_{j} \!\left( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} \right)\! ,
@@ -287,9 +286,9 @@ If a metric space is defined over the points, one may use the dual-tree algorith
   \vecrho \gets \map_{j} \sum_{i} \!\left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)\!,
 \end{array} \]
 \noindent which are repeated iteratively with damping until convergence, with $\ocpos{v}(x)$ being $\min(x, 0)$ for $v$ true and $x$ otherwise.
-Empirical $O(N^{1.3})$ scaling was achieved on three-dimensional points from a gravitational $N$-body particle simulation.
+Empirical $O(N^{1.3})$ scaling was achieved on three-dimensional points from a gravitational $N$-body particle simulation, compared to the existing $O(N^2)$ time and space method.
 
-\subsection{Parallel \nbody\ Simulations}
+\section{Parallel $N$-Body Simulations}
 
 Some of the largest parallel computing efforts in history are $N$-body particle simuations.
 Algorithms for efficient simulation typically use trees and offer indispensible insight into parallelizing the generalized $N$-body problems.
@@ -303,7 +302,7 @@ The earliest tree-based algorithm by Appel \cite{appel} approximates these force
 However, the later popular Barnes-Hut algorithm\cite{barneshut} and Fast Multipole Method\cite{greengard_fmm} received attention from the parallelization community.
 
 The algorithm by Barnes and Hut, presented in \cite{barneshut}, is order $O(N log N)$ for uniform distributions\authornote{Uniform?}.
-For each query point $q$, the force contribution is approximated by recursively traversing an oct-tree\footnote{An oct-tree hierarchically divides all 3 dimensions at the midpoint.} of points that have a potential force interaction on it.
+For each query point $q$, the force contribution is approximated by recursively traversing an oct-tree\footnote{An oct-tree hierarchically divides all 3 dimensions at the midpoint.} of points that interact on it.
 If the $q$ is further than parameter $\theta$ times the spatial width of the considered node, the force calculation is approximated by the node's center of mass.
 
 The Fast Multiple Method \cite{greengard_fmm} achieves closer to $O(N)$, but with a higher constant factor, by considering node-node interactions like dual-tree algorithms.
@@ -313,15 +312,16 @@ The multipole method is rarely treated beyond extensions of techniques used for 
 %Greengard's Fast Multipole Method \cite{greengard_fmm} has some elements of dual-tree computation in its downwards pass, in which the force contribution for an entire node of queries is estimated for an entire node of references.
 %The Fast Multipole Method is considered to have a higher constant factor; thus, most research focuses on the single-tree Barnes-Hut\cite{fmm_slower}.
 
-{\bf History of $N$-Body Parallelization.}
-Parallelization of the Barnes-Hut algorithm hinges on the fact that each query point is independent and arbitrary partitions over the queries are possible.
+{\bf Brief History of $N$-Body Parallelization.}
+Parallelization of the Barnes-Hut algorithm hinges on the fact that each query point is independent and arbitrary decompositions over the queries are permissible.
 In a small-scale implementation with the assumption that all processors can quickly access all the data, only a decent load balancing strategy is required.
-Since distributions are rarely uniform, a {\it dry run} is typically performed to find the number of interactions for each query.
-The estimated runtime is to partitioning the queries.
-The cost of the dry run is amortized, since the simulation changes slowly and the load balance may be used for many time steps.
-The orthogonal recursive bisection (ORB) technique of partitioning recursively bisects the data along a plane such that each side has an identical sum of computational cost, somewhat like a $kd$-tree \cite{singh95load, liu94experiences, salmon93parallel}.
+Since distributions are rarely uniform, a {\it dry run} is typically performed to find the relative run time for each query.
+The cost of the dry run is amortized, since the simulation changes slowly and the same information may be used for many time steps.
+
+The estimated runtime is then used for the domain decomposition.
+Orthogonal recursive bisection (ORB) decomposition hierarchically bisects the data along a plane, somewhat like a $kd$-tree, but such that each side has an equal total computational cost \cite{singh95load, liu94experiences, salmon93parallel}.
 The cost-zones technique alternatively uses the existing oct-tree used by the simulation and sequentially orders all points following a Morton or Hilber-Peano pattern.
-The points are then partitioned into sequential chunks that are roughly equal size.
+The data are then cut into sequential chunks o roughly equal size.
 
 Both techniques attempt to solve the problems for larger scale parallelization -- communication cost.
 By approximating distant computations with the center of mass, the $N$-body problem inherently translates spatial locality into data locality, exploited successfully by both the ORB and cost-zones technique.
@@ -330,10 +330,10 @@ The ORB technique was succesfully employed in cluster computing nearly two decad
 Each processor initially computes which parts of its own tree are locally essential to other processor and immediately sends this information to other processors before any force computation begins, and thus no communication is necessary during the actual force computation.
 
 A strikingly different approach popularized in the nineties is to retrieve needed data on demand.
-The simpler-to-implement cost-zones technique then provides somewhat better correlation between spatial and data locality.
-Singh et. al.\authornote{Et al? -- check the reference.} \cite{singh95load, singh_architecture} argue that the $N$-body problem is best suited for shared-memory systems with hardware-based data transfer via caches.
+In this scenario, the simpler-to-implement cost-zones technique then provides somewhat better correlation between spatial and data locality.
+Singh et. al.\authornote{Et al? -- check the reference.} \cite{singh95load, singh_architecture} argue that the hierarchial $N$-body algorithms are best suited for shared-memory systems with hardware-based data transfer via caches.
 However, Warren and Salmon later \cite{warren93,warren97} show succesful implementations on commodity uniprocessor-with-ethernet clusters.
-In fact, \cite{warren97} extends parallelization to include disk-resident data pulled from caches, showing that the same principles that lead to efficient disk algorithms lead directly to efficient parallel algorithms.
+In fact, \cite{warren97} extends parallelization to include disk-resident data with software caching, showing that the same principles that lead to efficient disk algorithms lead directly to efficient parallel algorithms.
 
 {\bf Relation to Dual-Tree.}
 The issues of $N$-body force calculation largely mirror that for all interesting generalized $N$-body problems.
@@ -341,14 +341,15 @@ In all-nearest-neighbors, a locally essential tree is typically not much larger 
 In contrast, two-point correlation cares most about points that are very close to the chosen radius, which may or may not span a region much larger than the queries.
 Nonetheless, the locally essential tree is highly correlated for nearby trees, and although more communication may be needed, this corresponds with a similar increase in computation.\authornote{A figure might be nice.  Show a filled circle in the middle, and a thick ring around the circle showing the intersection of all the boundary regions.}.
 
-However, work balancing and load decomposition for a dual-tree algorithm differ fundamentally.
+However, work decomposition and load balancing for a dual-tree algorithm differ fundamentally.
 A dual-tree algorithm's unit of work is not a single query but a pair of nodes, which we later show is practically done by dividing the tree into subtrees of queries.
-It is possible to use cost-zones in this manner -- a contiguous Morton ordering\footnote{A Morton ordering on a $kd$-tree is a depth-first left-to-right traversal (leaves only); a Peano-Hilbert ordering has no meaning for a $kd$-tree.} of leaves is in fact a union of an small $O(log N)$ number of subtrees.
-Unfortunately, both the ORB and cost-zones techniques require that we estimate the relative costs beforehand -- not only do costs per query no longer have meaning, but to be fully general we cannot assume there is a way to perform a dry run efficiently nor even that the algorithm consists of sequential time-steps.
+It is possible to use cost-zones in this manner -- a contiguous Morton ordering\footnote{A Morton ordering on a $kd$-tree is a depth-first left-to-right traversal (leaves only).  A Peano-Hilbert ordering has no meaning for a $kd$-tree.} of leaves is in fact a union of an small $O(log N)$ number of subtrees.
+Unfortunately, both the ORB and cost-zones techniques require that we estimate the relative costs beforehand.
+Not only do costs per query have no meaning for dual-tree algorithms, but to be fully general we cannot assume there is a practical way to perform a dry run nor even that the algorithm consists of sequential time-steps.
 
-\section{Parallel Models}
+\section{Parallel Programming Models}
 
-Efforts have been made in all fronts on making parallelization accessible to the general programmer.
+Efforts\authornote{This section is a {\it stub}. I can help myself by {\it expanding it}.} have been made in all fronts on making parallelization accessible to the general programmer.
 One technique offered by the programming languages community is the parallelization inherent in functional languages -- in fact, numerous papers have parallelized Barnes-Hut and the Fast Multipole Method algorithms this way \cite{nesl, parallel_fmm}.
 Using such a language, however, can sometimes put unintended constraints on development, especially since compiler technologies cannot automatically derive the wealth of parallelization techniques that have been used in past state-of-the-art parallel $N$-body simulations.
 
@@ -359,249 +360,497 @@ We later show that $N$-body problems are largely incompatible with Map-Reduce an
 
 \section{Dual-Tree Algorithm Framework}
 
+\cite{ryan_nips} characterizes the class of generalized $N$-body problems and shows how they lead naturally to dual-tree algorithms.
+We summarize key points in order to motivate the design choices behind our computational model.
 
+A \defterm{second-order reduce problem} is a tuple $\Theta = (\mathcal{X}, \mathcal{Y}, \bigotimes, \bigodot, f, g, h)$ with $\bigotimes$ and $\bigodot$ both commutative and associative, such that for problem instance $X \subset {\mathcal{X}}, Y \subset {\mathcal{Y}}$, one computes
+\[\begin{array}{l}
+  \displaystyle \Gnp(X, Y) = h(\gnp(X, Y)),
+  \\
+  \displaystyle \gnp(X, Y) = \bigodot_{x \in X} g\!\left(x, \bigotimes_{y \in Y} f(x, y) \right).
+\end{array}\]
+\noindent A second-order reduce problem is \defterm{regular} if $g(x, a) = a$.
+It is also \defterm{block decomposable} if for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$, $\gnp(X,Y) = \gnp(X,\kdleft{Y}) \otimes \gnp(X,\kdright{Y})$.
+Note the equivalent statement for partitioning $X$ is trivial from commutativity and associativity of $\bigodot$ alone.
+A second-order reduce problem with both qualities is a second-order \defterm{generalized $N$-body problem}\authorsnote{Later, I require abelian monoid}\authorsnote{Fix X, Y ordering.}.
 
-Ongoing research attempts to characterize all generalized N-body problems with rigorous mathematical formality; however, such rigorous formalization is outside the scope of this paper.
-Here, we postulate that all dual-tree algorithms fall into one or both of two categories: a single scalar or vector result summarizing all pairs of inputs, or an independent result for each query point computed against the entire reference set.
+Two major types of regular reduce problems are block decomposable.
+If $\bigodot = \bigotimes$ then associativity trivially leads to block decomposability; we call this a \defterm{singular second-order reduce problem}.
+If $\bigodot$ is the special higher-order operator $\map$, then we modify the problem to a key value pair problem such that
+\[\begin{array}{c}
+  \displaystyle \map_{y \in Y} \bigotimes_{x \in X} f(x, y) = \Union_{y \in Y} \bigvec{\bigotimes}_{x \in X} \{(y, f(x, y))\},
+  \\
+  A \bigvec{\otimes} B = \{(y, u \otimes v) | (y,u) \in A, (y,v) \in B\},
+\end{array}\]
+\noindent which is block-decomposable.
+A problem for which $\bigodot$ is $\map$ is a \defterm{query-reference problem}.
 
-A global reduction computes a single scalar or a vector of results that is constant with the number of data points.
-This type of problem is typically characterized by a single commutative, associative operator applied to pairs of inputs.
-Such problems include 2-point correlation, kernel-based data likelihood estimates, and the closest-pair problem.
+A claim critical to the computational model we show is that any second-order reduce problem may be transformed into a GNP by replacing the outer operator with $\map$, and treating both $g$ and $\odot$ as a postprocessing step\authorsnote{Work into paper: In a small handful of problems, especially approximation problems, introducing $\map$ avoids some potential for speedup; nonetheless, dual-tree algorithms have little trouble with the $\map$ operator.}.
+Thus, our paper focuses on only two cases -- second-order singular reduce problems and query-reference problems.
 
-A query-reference problem alternatively computes a result for each point in a query set.
-For each point in the query set, execute a commutative, associative operator over every element in a reference set.
-These problems include such fundamental problems as all-nearest-neighbors, kernel density estimation, the testing phase of most nonparametric classification methods, matrix-vector multiplication, and many more.
+{\bf The Generalized $N$-Body Algorithm.}
+Block decomposition implies a hierarchical computation,
+\[
+\gnp(X,Y) = \left\{ \begin{array}{lrr}
+    f(x,y) & \multicolumn{2}{r}{\text{if }X = \{x\}\text{ and }Y = \{y\}\text{,}}
+    \\
+    \multicolumn{2}{l}{\gnp(\kdleft{X},Y) \otimes \gnp(\kdright{X}, Y)} & \text{if }\prefsplit{X}{Y}\text{,}
+    \\
+    \multicolumn{2}{l}{\gnp(X,\kdleft{Y}) \odot \gnp(X,\kdright{Y})} & \text{otherwise,}
+  \end{array}
+\right.
+\]
+\noindent where $\prefsplit{X}{Y}$ specifies a recursion preference.
+This hierarchical computation motivates the popular use of trees in generalized $N$-body problems.
+A single-tree execution has $\prefsplit{X}{Y} = |X| > 1$, that is, $X$ is split until individual points in $X$ are considered.
+A dual-tree execution may use a heuristic such as $|X| \geq |Y|$.
+The \defterm{generalized $N$-body algorithm} initially considers the expression $\gnp(\kdroot{X}, \kdroot{Y})$, continually replacing any subexpression $\gnp(X, Y)$ with its expansion as mentioned above.
+The final expression forms an \defterm{expression tree} where leaves are of the form $f(x,y)$ and internal nodes are either $\odot$ or $\otimes$.
 
-First, we introduce some formalities, which we will then extend further.
+For efficient computation, each node in the data tree has a statistic $\outstat(X)$ that may contain arbitrary problem-specific information, such as bounding box, mean, or variance.
+Using these statistics, GNP's often can efficiently bound the results for $\gnp(X,Y)$ using a conceptual set \defterm{initial summary results} $\summary(\outstat_X,\outstat_Y) \supseteq \{\gnp(X',Y') | \outstat(X')\!\!=\!\!\outstat_X, \outstat(Y')\!\!=\!\!\outstat_Y\}$, that is, all results possible given a pair of statistics.
+If this set is singleton, only one result is possible, and an \defterm{intrinsic prune} may be performed; this result becomes a leaf in the expression tree.
 
-\subsection{Simple Reduce Problem}
+Sometimes the summary results of the entire problem imply that a subproblem needs no further consideration.
+%In nearest neighbors, $\infty$\authorsnote{Actually, a vectorized infinity.} may be returned if the bounding boxes are farther away than the worst candidate neighbor found.
+Summary results can be aggregated bottom-up in the same manner the problem has been decomposed using some summary composition operator $A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\}$ and likewise for $\odothat$.
+For all-nearest-neighbors, this set is the set of all sets of possible key-value pairs representing query points and the corresponding possible nearest neighbor distances, each of which ranges continuously from 0 (the best distance possible) to the best candidate nearest neighbor distance.
+A prune is made by intersecting this with the similar set returned by $\summary(\outstat(X),\outstat(Y))$, and if the summary result set is unaffected, $(X,Y)$ may be skipped entirely.
+Unfortunately, it is infeasible to represent this construct directly in practice, so typically a single upper and/or lower bound is stored to summarize worst-case bounds.
 
-\subsection{Global Reductions}
+%The generalized $N$-body algorithm begins with $\gnp(\kdroot{X},\kdroot{Y})$, and repeatedly replacing some $\gnp(X,Y)$ with one of its expansions.
+%There is no one required exploration pattern.
+It is worth noting that if there is no extrinsic pruning rule, then $\prefsplit{X}{Y}$ solely determines the pruning behavior, with any expansion pattern behaving similarly.
+Some problems that use extrinsic pruning may prefer a depth-first expansion with a heuristic on whether to expand left or right first, whereas some others work best by continually refining the "frontier" of the problem in a breadth-first manner.
+The choice of expansion pattern is solely to aid the ability of the algorithm to prune as much computation as possible.
+We shall later\authorsnote{Empirically or theoretically?} show how to expand the expression in parallel.
 
-A \defterm{global reduction} computes a single scalar or relatively small vector of results, taking as input two data sets and applying an aggregate commutative and associative operator to all pairs:
+%Ongoing research attempts to characterize all generalized N-body problems with rigorous mathematical formality; however, such rigorous formalization is outside the scope of this paper.
+%Here, we postulate that all dual-tree algorithms fall into one or both of two categories: a single scalar or vector result summarizing all pairs of inputs, or an independent result for each query point computed against the entire reference set.
+
+%A global reduction computes a single scalar or a vector of results that is constant with the number of data points.
+%This type of problem is typically characterized by a single commutative, associative operator applied to pairs of inputs.
+%Such problems include 2-point correlation, kernel-based data likelihood estimates, and the closest-pair problem.
+
+%A query-reference problem alternatively computes a result for each point in a query set.
+%For each point in the query set, execute a commutative, associative operator over every element in a reference set.
+%These problems include such fundamental problems as all-nearest-neighbors, kernel density estimation, the testing phase of most nonparametric classification methods, matrix-vector multiplication, and many more.
+
+\subsection{Singular Reduce Problems}
+
+A \defterm{singular reduce problem} computes a single scalar or relatively small vector of results, taking as input two data sets and applying an aggregate commutative and associative operator to all pairs,
 \begin{eqnarray*}
-\outglob(X, Y) &=& \gglob(\inglob(X, Y))
+\outglob(X, Y) &=& \gglob(\inglob(X, Y)),
 \\
-\inglob(X, Y) &=& \Opglob_{(x, y) \in X \times Y} \fglob(x, y)
+\inglob(X, Y) &=& \Opglob_{(x, y) \in X \times Y} \fglob(x, y).
 \label{eqn:defglob}
 \end{eqnarray*}
 
-\noindent where $\inglob$ is the result, $\gglob$ a post-processing function (usually identity), $\Opglob$ is a commutative and associative operator, and $\fglob$ is the inner function.
-For instance, the two-point correlation problem $\TWOPT(X, r) = \sum_{(x, y) \in X \times X} I(d(x, y) < r)$ can be expressed with $TWOPT(X, r) = \inglob_r(X, X)$, $\Opglob = \sum$, and $\fglob(x, y) = I(d(x, y) < r)$.
-%WALDO: Missing: abelian monoid
-
-Since $\Opglob$ is commutative and associative, we can break its computation arbitrarily.
-Consider a tree decomposition by partitioning set $X$ into subsets $\kdleft{X}$ and $\kdright{X}$.
-Using this decomposition, we can decompose $\inglob$ using one of two identities:
-\begin{eqnarray}
-\inglob(X, Y) &=& \inglob(\kdleft{X}, Y) \opglob \inglob(\kdright{X}, Y)
+\noindent where $\gglob$ is a post-processing function (usually identity), $\Opglob$ is a commutative and associative operator, and $\fglob$ is an inner function.
+We can express two-point correlation,
+\[\begin{array}{rcl}
+\TWOPT(X, r) &\equiv& \inglob_r(X, X),
 \\
-\inglob(X, Y) &=& \inglob(X, \kdleft{Y}) \opglob \inglob(X, \kdright{Y})
+\opglob &\equiv& +
+\\
+\fglob(x, y) &\equiv& I(d(x, y) < h).
+\end{array}\]
+
+\noindent We decompose $\inglob$ with the identities,
+\begin{eqnarray*}
+\inglob(X, Y) &=& \inglob(\kdleft{X}, Y) \opglob \inglob(\kdright{X}, Y),
+\\
+\inglob(X, Y) &=& \inglob(X, \kdleft{Y}) \opglob \inglob(X, \kdright{Y}).
 \label{eqn:divideglob}
-\end{eqnarray}
+\end{eqnarray*}
 
-\noindent Dual-tree algorithms often apply both simultaneously; that is, both $X$ and $Y$ are divided into subtrees.
-
-A common feature is the ability to bounding the inner function $\fglob$ for an entire subproblem, sometimes leading to the ability to {\it prune} a sub-computation.
-In two-point correlation, if $\left(\min_{(x, y) \in X \times Y} d(x, y)\right) > r$, i.e. all pairs of points are farther away than the radius, then $\inglob_{\TWOPT}(X, Y) = |X| \times |Y|$.
-Since this maximum distance is difficult to compute directly, it is reasonable to compute an upper bound for this distance pessimistically using the node's bounding box: $\left(\max_{(x, y) \in X \times Y} d(x, y)\right) < \distlo(\namestat{hrect}(X), \namestat{hrect}(Y))$.
-
-To allow efficient computations on a coarse granularity, each node $X$ has statistics $\outstat(X)$.
-In addition to the commonplace statistic $\namestat{hrect}$, two-point correlation additionally uses the cardinality statistic $\namestat{cardinality}(X) = |X|$ if two subsets are within a radius.
-Algorithms that utilize multipole expansions may require the mean, variance, and other moment statistics.
-Statistics are often a function of commutative and associative operators,
-\begin{eqnarray}
-\outstat(X) &=& \gstat(\instat(X))
+\noindent Summary statistics are commonly also built from commutative-associative operators,
+\begin{eqnarray*}
+\outstat(X) &=& \gstat(\instat(X)),
 \\
-\instat(X) &=& \Opstat_{x \in X} \fstat(x)
+\instat(X) &=& \Opstat_{x \in X} \fstat(x),
 \label{eqn:defstat}
-\end{eqnarray}
-\noindent and can be computed bottom-up via $\instat(X) = \instat(\kdleft{X}) \opstat \instat(\kdright{X})$.
-
-Pruning based solely on summary statistics is called an \defterm{intrinsic prune}, under the rule
-\begin{equation}
-\text{if } \canpruneglob(\outstat(X), \outstat(Y)) \text{, then } \inglob(X, Y) = \deltaglob(X, Y)
+\end{eqnarray*}
+\noindent and can be computed bottom-up $\instat(X) = \instat(\kdleft{X}) \opstat \instat(\kdright{X})$.
+Intrinsic prunes are applied with the following rule,
+\begin{equation*}
+\text{if } \canpruneglob(\outstat(X), \outstat(Y)) \text{, then } \inglob(X, Y) = \deltaglob(\outstat(X), \outstat(Y))
 \label{eqn:intrinsic}
-\end{equation}
-\noindent where $\canpruneglob$ is a Boolean indicator that a prune is possible, and $\deltaglob$ summarizes the result of a subproblem.
+\end{equation*}
+\noindent where $\canpruneglob$ is a Boolean indicator that a prune is possible i.e. the initial summary set is singleton, and $\deltaglob$ is the summary set's only element.
 
-\noindent The previous substitution rules are sufficient for the dual-tree execution of some generalized $N$-body problems.
-A depth-first recursive execution will apply both rules in Equation \ref{eqn:divideglob} until both sets are sufficiently small that a prune or direct computation is possible.
-However, many other executions, including parallel, are permitted by these rules.
-By separating the computation of the recurrence relationship from the problem-specific details, parallelization of all these algorithms requires only the up-front cost of a single parallel execution mechanism.
+The rules shown so far allow some software system to execute singular reduce problems with intrinsic prunes given definitions for the relevant functions and operators.
+For instance, a $kd$-tree-based two-point correlation $\TWOPT(X, h)= \outglob(X,X)$ is defined:
+\begin{eqnarray*}
+\label{eqn:tpc_gglob}
+\gglob(\inglob) &\equiv& \inglob
+\\
+\label{eqn:tpc_opglob}
+\opglob &\equiv& +
+\\
+\label{eqn:tpc_fglob}
+\fglob(x,y) &\equiv& I(\dist{x}{y} < h)
+\\
+\label{eqn:tpc_canpruneglob}
+\canpruneglob(\sigma(X), \sigma(Y))
+&\equiv&
+\begin{array}{l}\distup(\outstat(X),\outstat(Y)) < h \\ \vee \distlo(\outstat(X),\outstat(Y)) \geq h\end{array}
+\\
+\label{eqn:tpc_deltaglob}
+\deltaglob(\outstat(X),\outstat(Y)) &\equiv& \left\{ \begin{array}{l} 0 \text{ if } \distup(\outstat(X),\outstat(Y)) < h \\ |X|\cdot|Y| \text{ if } \distlo(\outstat(X),\outstat(Y)) \geq h \end{array}\right.
+\\
+\label{eqn:tpc_fstat}
+\fstat(x) &\equiv& (x,x)
+\\
+\label{eqn:tpc_opstat}
+\opstat(x) &\equiv& \left( \bigvec{\min} , \bigvec{\max} \right)
+\end{eqnarray*}
+\noindent The first three summarize the problem itself, with the next two specifying the pruning condition.
+The last two specify the construction of a bounding box, although this is automatic with $kd$-trees.
+Given a parallel execution system, the above is all the programmer needs to specify to have a fully parallelized two-point correlation.
+
 
 %The model shown so far is limited to very simple dual-tree algorithms.
 %First, we later discuss additions to allow for efficient computation of query-reference problems such as all-nearest-neighbors and density estimation.
 %Additionally, many algorithms, such as nearest-neighbor, classification problems, and approximate density estimates, require information about previous pairwise computation in order to determine whether pruning is possible.
 %Nonetheless, this simple model leads to effective parallelization of problems such as two-point correlation\footnote{WALDO list more}.
 
-\subsection{Simple query-reference problems}
-
-A query-reference problem performs a computation over an entire reference $R$ set independently for each point $q$ in a query set $Q$,
-\begin{eqnarray}
-\outqr(q, R) &=& \gqr(q, \inqr(q, R))
+\subsection{Simple Query-Reference Problems}
+A query-reference problem computes for each query $q$,
+\begin{eqnarray*}
+\outqr(q, R) &=& \gqr(q, \inqr(q, R)),
 \\
 \inqr(q, R) &=& \Opqr_{r \in R} \fqr(q, r).
-\end{eqnarray}
+\end{eqnarray*}
 
 \noindent where $R$ is initially $\kdroot{R}$.
-In addition to the classic \nbody\ force calculation problem, this encompasses all-nearest-neighbors, k-nearest-neighbors classification, kernel density estimation, vectorized affinity propagation, and more.
-Although each query is independent, speedup is achievable by considering queries {\it en masse}; for instance, a set of references might be shown to have zero relevance to an entire distant set of queries.
-We define a \defterm{mass result} $\inqrv$ such that
-\begin{equation}
-\forall q \in Q,~~ \gqr(q, \inqrv(Q, R)) = \outqr(q, R).
-\end{equation}
-\noindent Note $\inqrv(Q,R)$ is undefined if different queries have different values after the postprocessing function is applied, although for a single query $\inqrv(\{q\}, R)$ can always be computed $\inqr(q, R)$.
+In addition to the classic \nbody\ force calculation problem, this encompasses all-nearest-neighbors, k-nearest-neighbors classification, kernel density estimation, affinity propagation, and more.
+ Although each query is independent, speedup is achievable by considering queries {\it en masse}; that is, the contribution of a set of references might be shown to have an exact value for an entire distant set of queries.
+A \defterm{mass result} $\inqrv(Q, R)$ is defined if it is acceptable to treat
+\[
+\forall q \in Q,~~ \inqr(q, R) \gets \inqrv(Q, R)
+\]
+\noindent within the context of the entire computation.
+Otherwise, $\inqrv(Q,R)$ is undefined.
+%different queries have different values after the postprocessing function is applied, although for a single query $\inqrv(\{q\}, R)$ can always be computed $\inqr(q, R)$.
 In a dual-tree algorithm, we may take advantage of $\inqrv$,
-\begin{equation}
+\begin{equation*}
 \text{if prune occurs for } \kdparent{Q} \supset Q \text{, then } \inqrv(Q, R) = \inqrv(\kdparent{Q}, R).
 \label{eqn:parentqrv}
-\end{equation}
+\end{equation*}
 
 \noindent
 A single-tree algorithm treats each query as a separate computation and does not distinguish $\inqrv$ and $\inqr$.
 Both algorithms, though, compute values by dividing along the reference tree,
-\begin{equation}
-\inqrv(Q, R) = \inqrv(Q, \kdleft{R}) \opqrv \inqrv(Q, \kdright{R}),
+\begin{equation*}
+\inqrv(Q, R) = \inqrv(Q, \kdleft{R}) \opqr \inqrv(Q, \kdright{R}),
 \label{eqn:dividepi}
-\end{equation}
+\end{equation*}
 \noindent perhaps with an intrinsic prune,
-\begin{equation}
+\begin{equation*}
 \text{if } \canpruneqrv(\outstat(Q), \outstat(R)) \text{, then } \inqrv(Q, R) = \deltaqrv(\outstat(Q), \outstat(R)).
 \label{eqn:prunepi}
-\end{equation}
-
-\subsection{Query-reference extrinsic prunes}
-
-Query-reference problems may also prune computations based on previous results computed for a query\footnote{Global reduction problems have this kind of prune too, but since it is less common, we have omitted it for brevity.}.
-\footnote{Define this in terms of the GNA.}
-
-We define the abstract $\inmu(Q, R)$ as a summary of the results of a node of query points for an arbitrary set of references,
-
-\begin{equation}
-\inmu(Q, R) = \Outopmu_{q \in Q} \fmu(q, \inqr(q, R))
-\label{eqn:defmu}
-\end{equation}
-
-\noindent where $\Outopmu$ is a commutative and associative operator, which, along with $\fmu$, summarizes pruning-relevant aspects of the results.
-One strategy is to treat $\inmu$ as the set of all results, $\fmu(x) = \{x\}$ and $\Outopmu \equiv \union$.
-In real-valued problems, such a set may succinctly but slightly inaccurately be represented as a pair of real-valued numbers for the lower and upper bounds.
-Expressed recursively, we have,
-\begin{equation}
-\inmu(Q, R) = \inmu(\kdleft{Q}, R) \outopmu \inmu(\kdright{Q}, R).
-\label{eqn:dividemu}
-\end{equation}
-
-The value of $\inmu(Q, \kdroot{R})$ is used to make pruning decisions in the modified $\canprunemu(\outstat(Q), \outstat(R), \inmu(Q, \kdroot{R}))$.
-Unfortunately, this value is not attainable without the value of $\inqr$ for each query, in fact requiring the computation to have completed.
-%Since this is not feasible, we allow for values of $\lettermu$ which do not produce any false positive in the detection of prunes.
-To get around this, we define $\allowmu$ such that $\inmu(Q,R) \allowmu v$ if using some value $v$ in the place of $\inmu(Q, R)$ will never result in pruning when it would actually be invalid to do so.
-\authornote{This is the same concept that allows use of bounding boxes to compute maximum pairwise distance.}
-One may bound $\inmu$ using summary statistics,
-\begin{equation}
-\inmu(Q, R) \allowmu \deltamu(\outstat(Q), \outstat(R)).
-\label{eqn:approxmu}
-\end{equation}
-
-\noindent Next, if we know $\inmu$ for two different references, we may compose them in a way analagous to the original $\Opqr$,
-\begin{equation}
-\inmu(Q, R) \allowmu \inmu(Q, \kdleft{R}) \opmu \inmu(Q, \kdright{R}).
-\label{eqn:combinemu}
-\end{equation}
-
-\noindent It is important to note that the above may be quite pessimistic.
-For example, if $\inmu$ is an upper bound on a probability density contribution, summing the upper bounds neglects the possibility of having the upper bound appear at different query points for the two subcomputations.
-\authornote{Elaborate more, or make less comments.  Actually, this might want a proof.}
-Next, if $\pi(Q, R)$ is defined because this computation was pruned, then we may bound its worst-case contribution,
-\begin{equation}
-\inmu(Q, R) \allowmu \fmuv(\outstat(Q), \inqrv(Q, R)).
-\label{eqn:pimu}
-\end{equation}
-
-\noindent 
-If information is not available at a particular granularity of queries, we may always use a coarser granularity.
-That is, if a fact can be proven about a large set of queries, no false positives are introduced by using the same information about a subset of those queries,
-\authornote{This probably requires proof, or we must somehow build this into the definition of $\Outopmu$.  I might also define this in terms of ``pessimism''.}
-
-\begin{equation}
-\inmu(Q, R) \allowmu \inmu(\kdparent{Q}, R) \text{ if } \kdparent{Q} \supset Q
-\end{equation}
-
-\noindent In the end, we have defined several different rules that allow the computation of bounding information on the results for a set of queries.
-
-\section{Recursion Patterns}
-
-DFS meta-algorithm for query-reference problems:
-(Maybe I should show global reduce problems instead since it's simpler)
-
-\begin{equation*}
-  \begin{array}{l}
-    \text{for all nodes/points } Q \in \wholeQ, \muchild(Q) \gets 0_{\inmu}
-    \\
-    \text{for all nodes/points } Q \in \wholeQ, \hatpi(Q) \gets 0_{\outpi}
-    \\
-    \mbox{procedure dfs}(Q, R, \muparent)
-    \\
-    \x \muall \gets \muchild(C) \opmu \gpiworst(\outstat(Q), \hatpi(Q))
-    \\ \x \qquad \opmu \deltamu(\outstat(Q), \outstat(R)) \opmu \muparent
-    \\
-    \x \text{if } \canprunepi(\outstat(Q), \outstat(R), \muall)
-    \\
-    \xx \hatpi(Q) \gets \hatpi(Q) \oppi \deltapi(\outstat(Q), \outstat(R), \muall)
-    \\
-    \x \text{elif } |Q| \geq |R| \text{ (heuristic)}
-    \\
-    \xx \text{for } Q' = \kdleft{Q}, \kdright{Q}
-    \\
-    \xxx \hatpi(Q') \gets \hatpi(Q') \oppi \hatpi(Q)
-    \\
-    \xxx \text{dfs}(Q', R, \muparent)
-    \\
-    \xxx \muvisit(Q') \gets \muchild(Q') \opmu \gpiworst(\outstat(Q'), \hatpi(Q'))
-    \\
-    \xx \text{end for}
-    \\
-    \xx \muchild(Q) \gets \worst(\muvisit(\kdleft{Q}), \muvisit(\kdright{Q}))
-    \\
-    \xx \hatpi(Q) \gets 0_{\outpi}
-    \\
-    \x \mbox{else}
-    \\
-    \xx (R_a, R_b) \gets \mbox{prioritize}(\outstat(Q), R_L, R_R)
-    \\
-    \xx \dfs(Q, R_a, \muparent \opmu \deltamu(\outstat(Q), \outstat(R_b))
-    \\
-    \xx \dfs(Q, R_b, \muparent)
-    \\
-    \x \text{end if}
-    \\
-    \text{end dfs}
-    \\
-    \text{function fixup}(Q, \piparent)
-    \\
-    \x \hatpi(Q) \gets \hatpi(Q) \oppi \piparent
-    \\
-    \x \text{if } |Q| = 1 \text{, i.e. } Q = \{q\}
-    \\
-    \xx \outqr(q) \gets \gpi(q, \hatpi(Q))
-    \\
-    \x \text{else}
-    \\
-    \xx \text{fixup}(\kdleft{Q}, \hatpi(Q))
-    \\
-    \xx \text{fixup}(\kdleft{Q}, \hatpi(Q))
-    \\
-    \x \mbox{end if}
-    \\
-    \mbox{end fixup}
-  \end{array}
 \end{equation*}
 
+\noindent Range count, the query-reference analog to two-point correlation $\map_{q \in Q} \sum_{r \in R} I(\dist{q}{r} < h)$ is\footnote{When I use deltas, make sure I consistently put the sigmas as the arguments.}:
+\begin{eqnarray*}
+\gqr(q, \inqr) &\equiv& \inqr
+\\
+\opqr &\equiv& +
+\\
+\fqr(q,r) &\equiv& I(\dist{q}{r} < h)
+\\
+\canpruneqrv(\sigma(Q), \sigma(R))
+&\equiv&
+\begin{array}{l}\distup(\outstat(Q),\outstat(R)) < h \\ \vee \distlo(\outstat(Q),\outstat(R)) \geq h\end{array}
+\\
+\deltaqrv(\outstat(Q),\outstat(R)) &\equiv& \left\{ \begin{array}{l} 0 \text{ if } \distup(\outstat(Q),\outstat(R)) < h \\ |R| \text{ if } \distlo(\outstat(Q),\outstat(R)) \geq h \end{array}\right.
+\end{eqnarray*}
+
+\subsection{Query-Reference Extrinsic Prunes}
+
+Extrinsic pruning in a query-reference problems is a more complex process but still leads to an overarching model\footnote{Singular reduce problems have this kind of prune too, but since it is less common, we have omitted it for brevity.}.
+We define the abstract $\inmu(Q, R)$ as a compact representation of the summary results for the computation $(Q,R)$.
+At completion, we desire the ideal value $\inmu(Q, \kdroot{R})$ for each query node with
+\begin{equation*}
+\inmu(Q, R) \gets \Outopmu_{q \in Q} \fmu(q, \inqr(q, R)).
+\end{equation*}
+
+\noindent where $\Outopmu$ is a commutative and associative operator that merges representative summary results among queries, such as finding the worst candidate nearest neighbor distance in all-nearest-neighbors.
+Although the generalized $N$-body algorithm states that summary results are built in the same structure as the refinement pattern, practical considerations encourage storing at each query node the best possible bounds for that node; for this reason, we start with this rather contrived definition.
+We can merge two subcomponents trivially\authorsnote{Emphasize that we're not necessarily talking about tree structures, just disjoint parts of the tree.},
+\begin{equation*}
+\inmu(Q, R) \gets \inmu(\kdleft{Q}, R) \outopmu \inmu(\kdright{Q}, R).
+\label{eqn:dividemu}
+\end{equation*}
+
+\noindent The value of $\inmu(Q, \kdroot{R})$ is used to make pruning decisions via the modified $\canprunemu(\outstat(Q), \outstat(R), \inmu(Q, \kdroot{R}))$.
+During computation, it is more realistic to compute $\inmu$ from statistics, or from other estimations of $\inmu$.
+One may bound $\inmu$ using summary statistics,
+\begin{equation*}
+\inmu(Q, R) \gets \deltamu(\outstat(Q), \outstat(R)).
+\label{eqn:approxmu}
+\end{equation*}
+
+\noindent Next, if we know $\inmu$ for two different references, we may compose them in a way analagous to the original $\Opqr$,
+\begin{equation*}
+\inmu(Q, R) \gets \inmu(Q, \kdleft{R}) \opmu \inmu(Q, \kdright{R}).
+\label{eqn:combinemu}
+\end{equation*}
+
+\noindent It is important to note that the above may be quite pessimistic.
+Since it treats all the queries in the node as one, it cannot for instance realize that the ``worst'' result for one set of references occurs at a particular query point, whereas the ``best'' result occurs at the same query point for another set of references.
+%For example, if $\inmu$ is an upper bound on a probability density contribution, summing the upper bounds neglects the possibility of having the upper bound appear at different query points for the two subcomputations.
+%\authornote{Elaborate more, or make less comments.  Actually, this might want a proof.}
+Next, if $\inqrv(Q, R)$ is defined because this computation was pruned, then we may bound its worst-case contribution until the value of $\inqrv$ is propagated to $\inqr$ for all points in $Q$,
+\begin{equation*}
+\inmu(Q, R) \gets \fmuv(\outstat(Q), \inqrv(Q, R)).
+\label{eqn:pimu}
+\end{equation*}
+
+\noindent 
+Finally, the summary information for any set of queries must necessary reflect all contained queries, and thus be valid for all its children.
+When no other information is available, we must resort to this rule, especially when performing depth-first expansions,
+\begin{equation*}
+\inmu(Q, R) \gets \inmu(\kdparent{Q}, R) \text{ if } \kdparent{Q} \supset Q.
+\end{equation*}
+
+\noindent A final note is that extrinsic pruning requires ``high-quality'' values of $\inmu$, that is, values that approach the aforementioned ideal value.
+The quality of $\inmu$ generally increases as more node pairs are explored\authorsnote{In reality, exploring a node pair should never decrease the quality, although uninformed implementations that use ball-trees might exhibit this condition.}, but the exploration pattern is extremely important.
+The distribution over node pairs of information yield potential is highly non-uniform in efficient dual-tree problems, and thus prioritization is used to focus on node pairs with higher potential information yield.
+A heuristic function $\heurqr(\outstat(Q),\outstat(R))$ returns a real value where lower values are explored first.
+Finding all nearest neighbor distances then becomes,
+\begin{eqnarray*}
+\gqr(q, \inqr) &\equiv& \inqr
+\\
+\opqr &\equiv& \min
+\\
+\fqr(q,r) &\equiv& \dist{q}{r}
+\\
+\heurqr(\outstat(Q),\outstat(R)) &\equiv& \distlo(\outstat(Q), \outstat(R))
+\\
+\canprunemu(\sigma(Q), \sigma(R), \lettermu)
+&\equiv&
+\lettermu < \distlo(\outstat(Q), \outstat(R))
+\\
+\deltaqrv(\outstat(Q),\outstat(R)) &\equiv& \infty
+\\
+\outopmu &\equiv& \max
+\\
+\opmu &\equiv& \min
+\\
+\fmu(q, \letterqr) &\equiv& \letterqr
+\\
+\fmuv(\outstat(Q), \letterqrv) &\equiv& \letterqrv
+\\
+\deltamu(\outstat(Q),\outstat(R)) &\equiv& \distlo(\outstat(Q),\outstat(R))
+\end{eqnarray*}
+
+\noindent One small note is that in depth-first implementations, $\deltamu$ is typically ignored, i.e. treated as $\infty$, such that unvisited references are ignored.
+However, in breadth-first and other patterns, $\deltamu$ is essential\authorsnote{Does $\deltaqrv$ want to take in $\lettermu$ as a parameter?}.
+
+
+
+\subsection{Examples}
+
+Note to self: I could put an examples section, and talk about how we handle things like the fast multipole method (which is really the distributive property of $\fqr$ with $\opqr$).
+
+\subsection{Execution}
+
+We show in \fig{dfe} a depth-first implementation of the query-reference with extrinsic prune rules.
+The input to the algorithm is the data to operate on, and the functions required for an effective dual-tree algorithm.
+Via the power of $\map$, we have shown that this code can solve any second-order reduce problem.
+A breadth-first implementation is also possible, which makes substantial use of $\opmu$ to compose sibling results.
+
+\begin{figure}
+\[
+  \begin{array}[t]{l}
+    \\ \text{Input:}\left(
+        \begin{array}[c]{l}\kdroot{Q}, \kdroot{R}, \gqr, \opqr, \fqr, \deltaqrv, \\ \heurqr, \canprunemu, \outopmu, \opmu, \fmuv, \deltamu\end{array}\right)
+    \X \text{for all nodes } Q \in \kdroot{Q}\text{: } \varmuchild(Q) \gets \text{identity of }\Opmu
+    \X \text{for all nodes } Q \in \kdroot{Q}\text{: } \varqrv(Q) \gets \text{identity of }\Opqr%\identqr
+    \X \text{dfe}(\kdroot{Q}, \kdroot{R}, \text{identity of }\Opmu)
+    \X \text{fixup}(\kdroot{Q}, \identqr)
+    \X
+    \X \text{procedure dfe}(Q, R, \varmuparent)\text{:}
+    \x \!\!\!\begin{array}{lllll}
+         \psty\inmu(Q,\kdroot{R}) &\psty\!\!\gets\!\!& \psty\varmuchild(Q) &\psty\!\!\opmu\!\!& \psty\fmuv(\outstat(Q), \varqrv(Q))
+         \\              &\psty\!\!\opmu\!\!& \psty\varmuparent   &\psty\!\!\opmu\!\!& \psty\deltamu(\outstat(Q), \outstat(R))
+       \end{array}
+    \x \text{if } \exists q \exists r ~ Q = \{q\} \wedge R = \{r\}\text{: \com{base case}}
+    \xx \varqrv(\{q\}) \gets \varqrv(\{Q\}) \opqr \fqr(q, r)
+    \x \text{elif } \canprunemu(\outstat(Q), \outstat(R), \inmu(Q,\kdroot{R}))\text{: \com{prune}}
+    \xx \varqrv(Q) \gets \varqrv(Q) \opqr \deltaqrv(\outstat(Q), \outstat(R))
+    \x \text{elif } |Q| \geq |R|\text{: \com{explore queries}}
+    \xx \text{for } Q' \in \{\kdleft{Q}, \kdright{Q}\}\text{:}
+    \xxx \varqrv(Q') \gets \varqrv(Q') \opqr \varqrv(Q)
+    \xxx \text{dfe}(Q', R, \varmuparent)
+    %\xx \text{let }\muvisit(Q') \gets \muchild(Q') \opmu \gpiworst(\outstat(Q'), \hatpi(Q'))
+    \xx \varqrv(Q) \gets \text{identity of }\Opqr
+    \xx \!\!\!\begin{array}{lll}
+         \psty \varmuchild(Q) &\psty\!\!\gets\!\!&\psty (\varmuchild(\kdleft{Q})  \opmu \fmuv(\kdleft{Q}, \varqrv(\kdleft{Q})))
+         \\          &\psty\!\!\outopmu\!\!&\psty (\varmuchild(\kdright{Q}) \opmu \fmuv(\kdright{Q}, \varqrv(\kdright{Q})))
+        \end{array}
+    \x \text{else: \com{explore references}}
+    \xx (R_a, R_b) \gets \text{sort }(\kdleft{R}, \kdright{R})\text{ by }\lambda v ~ \heurqr(\sigma(Q), \sigma(v))
+    \xx \text{dfe}(Q, R_a, \varmuparent \opmu \deltamu(\outstat(Q), \outstat(R_b))
+    \xx \text{dfe}(Q, R_b, \varmuparent)
+    \X
+    \X \text{function fixup}(Q, \varqrvparent)\text{:}
+    \x \varqrv(Q) \gets \varqrv(Q) \opqr \varqrvparent
+    \x \text{if } \exists q ~ Q = \{q\}\text{:}
+    \xx \outqr(q, \kdroot{R}) \gets \gqr(q, \varqrv(Q))
+    \x \text{else:}
+    \xx \text{fixup}(\kdleft{Q}, \varqrv(Q))
+    \xx \text{fixup}(\kdright{Q}, \varqrv(Q))
+  \end{array}
+\]
+\caption{\label{fig:dfe} The depth-first expansion algorithm for query-reference problems.
+Although we omit the code for singular second-order reduce problems, it is substantially simpler.}
+\end{figure}
+
 \section{Parallel Execution}
+
+Goal: PARALLELIZE EVERYTHING!
+
+\subsection{Decomposition}
+
+Decomposability is the key to parallelization, and a generalized $N$-body problem, by definition alone, is decomposable in two orthogonal ways.
+In fact, parallelization is simply one variant of expansion allowed by the generalized $N$-body algorithm.
+It is possible to expand $\gnp(\kdroot{X}, \kdroot{Y})$ into subproblems $(X_1,Y_1), (X_2,Y_2), ..., (X_k, Y_k)$ such that $\Union_{1 \leq i \leq k} (X_i \times Y_i) = \kdroot{X} \times \kdroot{Y}$, merging the results using $\odot$ and $\otimes$\authorsnote{There are some restrictions on the types of divisions possible.}.
+For now, we restrict our discussion of decomposition in terms of tree node pairs since they are natural units of work for dual-tree algorithms.
+
+Since intrinsic pruning is agnostic to expansion pattern, any reasonable decomposition would have little effect on serial performance.
+However, for query-reference problems with extrinsic pruning, expansion pattern is critical to the quality of $\inmu(Q, \kdroot{R})$ used for pruning decisions.
+Consider a decomposition over the reference tree in a query-reference problem, i.e. $(\kdroot{Q}, R_1), (\kdroot{Q}, R_2), ..., (\kdroot{Q}, R_k)$.
+Each processor refines its value of $\inmu(\kdroot{Q}, R_i)$, yet $\inmu(Q, \kdroot{R})$ is needed for pruning.
+To circumvent this, processors may periodically exchange values of $\mu$.
+However, dividing work by queries $(Q_1, \kdroot{R}), (Q_2, \kdroot{R}), ..., (Q_k, \kdroot{R})$ can keep all pruning information local, as $\inmu(Q_i, \kdroot{R})$ needs to know nothing about other queries.
+Information transfer is only needed to obtain locally essential portions of the data and communicate the final results.
+
+Continuing, consider decomposing both trees for intrinsic-prune-only problems.
+Without loss of generality, we label the trees query and reference even for singular reduce problems.
+When all pairs must be examined exhaustively, this technique is in fact optimal.
+Given $p$ processors, each processor considers $\frac{N}{\sqrt{p}}$ queries and $\frac{N}{\sqrt{p}}$ references, with the total communication cost for the entire system $O(N\sqrt{P})$ points.
+In practical dual-tree codes far-separated node pairs tend to require orders of magnitude less computation than nearby node pairs, and such wildly varying runtimes significantly complicate scheduling.
+However, the run time for a work item $(Q, \kdroot{R})$ is typically within a constant factor directly proportional to $|Q|$ unless the spatial distribution of points is pathologically non-uniform.
+Similarly, the size of the locally essential tree for $(Q, \kdroot{R})$ also tends to be $O(|Q|)$, since distant references typically do not require exploration.
+For a sufficiently large number of processors, $O(\frac{N}{p})$ fares significantly better than the alternative $O(\frac{N}{\sqrt{p}})$ points per processor.
+Although future research may show certain cases to the contrary, in this paper, we here only decompose on the query tree.
+
+\subsection{Load Balancing}
+
+In earlier sections, we declared that a software system attempting to parallelize {\it any} generalized $N$-body problem cannot assume the ability to predict run times with the accuracy available via a dry run, when a dry run may take as much time as an actual computation.
+Instead, we dynamically assign tasks to processors during the course of computation.
+Our initial demonstrations use simple bag-of-tasks scheduling algorithm that adapts to problems where the execution time is bounded $a|Q| \leq t \leq aw|Q|$ where $a$ is the minimum ratio of query tree size to execution time, and $w$ is the maximum constant factor deviance from proportionality.
+
+In a bag-of-tasks system, each worker requests a new item of work from a central scheduler every time it becomes idle.
+Given identically sized subtrees of the query tree, the worst-case scenario is that $k - 1$ tasks taking time $t$ each are executed in perfect parallelism and terminate these at the same time, until the last task of length $wt$.
+The total time is then $\frac{(k-1)t}{p}+wt$, compared to the ideal run time $\frac{(k-1+w)t}{p}$.
+%The utilization $u$ is then $\frac{k-1+w}{k-1+wp}$.
+For a minimum utilization of $u$, one needs at least $k = \frac{w+wpu}{1-u}+1$ tasks, asymptotically $\frac{wp}{1-u}$.
+For 50\% utilization with run times deviating from proportionality by a factor no more than 10, one needs a few more than $20p$ tasks.
+In practice, utilization is far better given this number of tasks.
+
+Extending the bag of tasks system, we attempt to minimize the amount of extra information a processor requires to take on its next work item.
+Since spatial locality mirrors data locality, we present a simple greedy algorithm.
+When a machine requests a work item, the next work item is the closest chunk of the query tree to the work items it has already performed.
+
+- haven't really implemented this, i'll get back as to the effectiveness
+
+%- link spatial locality with data locality
+%- phrase locality nicely
+%The next query node that is assigned to a worker .
+
+So far, we have detailed in entirety the functionality of our multithreaded parallel software.
+However, communication presents further problems for a cluster implementation.
+
+\subsection{Communication}
+
+In our proof-of-concept cluster implementation, we take advantage of Salmon and Warren's observation in \cite{salmon97parallel} that for treecodes, efficiency for disk-resident out-of-core implementations mirrors communication efficiency in a parallel system\footnote{Out-of-core generalized $N$-body execution systems are in fact part of our future goals.}.
+By far, the greatest amount of communication is distributing data points and tree nodes to machines that need them.
+Our software automatically serializes user data into blocks, forming the fundamental unit of communication.
+Workers request blocks of data on demand.
+
+In this paper we focus on convenentional use cases where the data originates on one machine, the tree is quickly built locally, and then the blocks representing the tree and data are distributed.
+Such an implementation is not suitable for massive datacenter\authorsnote{i.e. ``Google''} scenarios where data is distributed to begin with; however, the existence of efficient parallel tree-building algorithms \cite{paralleltrees} makes such an implementation inevitable.
+
+Ideally, each block should reside on the computer most likely to use it.
+Unfortunately, such an implementation requires significant cooperation between the scheduler and data distribution.
+With a small loss in performance, we instead distribute blocks randomly by taking the block ID number modulo the number of machines\authorsnote{I should consistently use terms \defterm{processor} and \defterm{machine}, or some other scheme, to distinguish threads and address spaces}.
+We find that this scales to (insert size here)-sized clusters.
+
+\subsection{Experimentation}
 
 \nocite{ex1,ex2}
 \bibliographystyle{latex8}
 \bibliography{icdm07}
+
+\begin{appendix}
+
+\section{Notation}
+
+We're still working on our notation (in fact, all of the symbols we use are a user-defined in LaTeX).
+
+\begin{table*}
+\begin{tabular}{|l|l|l|}
+\hline
+Symbol & Macro & Description, Rationale
+\\ \hline $\kdroot{X}$ & kdroot & root node of spatial tree
+\\ $\kdleft{X}$ & kdleft & left child of spatial tree node
+\\ $\kdright{X}$ & kdright & right child of spatial tree node
+\\ $\kdparent{X}$ & kdparent & parent of spatial tree node
+\\ \hline $\Theta$ & Theta & a second-order reduce problem
+\\ $\Gnp$ & Gnp & postprocessed second-order reduce problem
+\\ $\gnp$ & gnp & second-order reduce problem computation before postprocess
+\\ $\summary$ & summary & initial summary results
+\\ \hline $\letterglob$ & letterglob & singular reduce 'problem space'
+\\ $\outglob$ & outglob & singular reduce after postprocessing
+\\ $\inglob$ & inglob & singular reduce before postprocessing
+\\ $\Opglob$ & Opglob & singular reduce operator
+\\ $\fglob$ & fglob & singular reduce inner function
+\\ $\gglob$ & gglob & singular reduce postprocess
+\\ $\canpruneglob$ & canpruneglob & singular reduce prune function
+\\ $\deltaglob$ & deltaglob & singular reduce prune value
+\\ \hline $\letterqr$ & letterqr & query-reference 'problem space'
+\\ $\outqr$ & outqr & query-reference after postprocessing
+\\ $\inqr$ & inqr & query-reference before postprocessing
+\\ $\Opqr$ & Opqr & query-reference operator
+\\ $\fqr$ & fqr & query-reference inner function
+\\ $\gqr$ & gqr & query-reference postprocess
+\\ $\identqr$ & identqr & identity element of abelian monoid $\Opqr$
+\\ $\letterqrv$ & letterqrv & mass result 'problem space'
+\\ $\inqrv$ & inqrv & mass result function
+\\ $\deltaqrv$ & deltaqrv & mass result prune value
+\\ $\canpruneqrv$ & canpruneqrv & query-reference prune check
+\\ $\varqrv$ & varqrv & accumulator to build up $\inqrv$
+\\ $\varqrvparent$ & varqrvparent & 'parent' values of $\inqrv$ from upwards prunes
+\\ \hline $\lettermu$ & lettermu & query-reference summary values
+\\ && 'problem space'
+\\ $\inmu$ & inmu & summary result function
+\\ $\Outopmu$ & Outopmu & summary result query-summarization
+\\ $\Opmu$ & Opmu & summary result reference-joining
+\\ $\fmu$ & fmu & inner function converting $\inqr$ to $\inmu$
+\\ $\fmuv$ & fmuv & inner function converting $\inqrv$ to $\inmu$
+\\ $\deltamu$ & deltamu & 'initial' summary results
+\\ $\canprunemu$ & canprunemu & prune check for extrinsic prunes
+\\ $\identmu$ & identmu & identity element of abelian monoid $\Opmu$
+\\ $\heurqr$ & heurqr & expansion heuristic
+\\ $\varmuchild$ & varmuchild & high-quality, built bottom-up with $\Outopmu$
+\\ $\varmuparent$ & varmuparent & low-quality, built top-down with $\Opmu$
+\\ \hline $\letterstat$ & letterstat & statistic 'problem space'
+\\ $\outstat$ & outstat & statistic after postprocessing
+\\ $\instat$ & instat & statistic before postprocessing
+\\ $\Opstat$ & Opstat & combining statistics
+\\ $\fstat$ & fstat & statistic inner function
+\\ $\gstat$ & gstat & statistic postprocessing function
+\\ \hline
+\end{tabular}
+\caption{Notation used throughout the paper.}
+\label{tab:notation}
+\end{table*}
+
+\end{appendix}
 
 \end{document}
 
