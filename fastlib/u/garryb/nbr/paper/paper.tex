@@ -206,18 +206,15 @@ We present how these algorithms yield an elegant strategy for parallelizing the 
 
 \section{Introduction}
 
-\authornote{Use ``element'' instead of ``point''}
-\authornote{Make some definitions}
-
-Many problems in spatial statistics and data mining nominally require an all-$n$-tuples analysis of data points but may be able to take advantage of overall spatial structure for asymptotic computational gain.
-Recent research has characterized these {\it generalized $N$-body problems} and shown how a multi-tree algorithmic approach directly follows.
+Many problems in spatial statistics and data mining, especially nonparametric methods, nominally require an all-$n$-tuples analysis of data points.
+Recent work\cite{ryan_nips} has characterized these {\it generalized $N$-body problems} and shown how a multi-tree algorithmic approach directly follows, leading quite often to asymptotically faster algorithms approaching empirical linear-time performance.
 The multi-tree approach treats these problems by recursively dividing the problem over the Cartesian product of points, resulting in the fastest practical serial algorithms for many statistical and physical problems, such as kernel density estimation, $n$-point correlation, nearest neighbors, Gaussian process and local polynomial regression, and several others.
+
 Nonetheless, as multi-core processors begin to dominate even commodity markets, even the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
+Additionally, multi-tree algorithms excel in fields of nonparametric learning, and since nonparametric learning often performs exceptionally well with massive data, it is only natural to conceive of data mining the {\it entire Web} with efficient dual-tree algorithms.
 Fortunately, multi-tree algorithms are in fact quite parallel, and we show how the techniques that have long been used to parallelize the physical $N$-body force calculation problems can be extended to encompass this broader class of problems.
 
 \section{Fast Multi-Tree Algorithms}
-
-\authornote{KD-tree figure goes here}
 
 \begin{figure*}
   \begin{minipage}{6in}
@@ -226,8 +223,8 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
         \begin{array}[t]{l}
           \text{{\bf tpc} - Two-point correlation.}
           \X \text{function tpc}(Y, X)
-          \x \text{if }\distup(Y, X) < h\text{: return }0
-          \x \text{if }\distlo(Y, X) > h\text{: return } |Y| \cdot |X|
+          \x \text{if }\distup(Y, X) > h\text{: return }0
+          \x \text{if }\distlo(Y, X) \leq h\text{: return } |Y| \cdot |X|
           \x \text{elif }|Y| \geq |X|\text{:}
           \xx \text{return tpc}(\kdleft{Y}, X, h) + \text{tpc}(\kdright{Y}, X, h)
           \x \text{else:}
@@ -256,23 +253,25 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
   \end{minipage}
 \end{figure*}
 
+\authornote{KD-tree figure goes here}
 Core to dual-tree algorithms is the concepts of trees and bounds.
 Every node $X$ in a spatial tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \union \kdright{X} = X$ with parent $\kdparent{X}$, and each leaf a single point $\{x\}$\footnote{In practice, leaves contain multiple points to avoid recursive overhead.}.
 For example, a $kd$-tree\cite{kdtree}, as in \fig{kdtree}, recursively partitions the data along coordinate dimensions.
-Each node has a bounding box can also store summary statistics such as means and other moments.
-We denote $\dist{\cdot}{\cdot}$ to be a distance metric.
-Superscripts $l$ and $u$ to refer respectively to lower and upper bounds, which are often, as in the case of distance, obtained from bounding boxes of points.
+Each node has a bounding box and can also store summary statistics such as means and other moments.
+Notationally, we denote $\dist{\cdot}{\cdot}$ to be a distance metric; superscripts $l$ and $u$ to refer respectively to lower and upper bounds, which are often, as in the case of distance, obtained from bounding boxes of points.
 
-\authornote{This paragraph needs some work.}A single-tree algorithm accelerates computation by partitioning the data in half along the tree branches, terminating at pruning at internal nodes when possible, often repeating this traversal for many query points.
-A dual-tree algorithm takes this concept further by looking at pairs of nodes, each time partitioning the Cartesian product of data in half.
-Whereas a single-tree algorithm must consider every level of the tree for each query point and is at best $O(N \log N)$, a dual-tree algorithm considers the upper-level nodes of the tree only with other upper-level nodes, sometimes resulting in empirical linear performance.
+\authornote{This paragraph needs some work.}A single-tree algorithm accelerates computation by partitioning the data in half along the tree branches.
+Some parts of the tree need no further exploration, and the subcomputation is pruned.
+Often, this traversal is repeated for many query points.
+A dual-tree algorithm extends this concept by looking at {\it pairs} of nodes, each time partitioning the Cartesian product of data in half.
+Whereas a single-tree algorithm must consider every level of the tree for each query point and is at best $O(N \log N)$, a dual-tree algorithm considers the upper-level nodes of the tree only with other upper-level nodes, leading at times to linear performance.
 
 {\bf The Two-point Correlation.} A member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation of data set $X$ for radius $h$ is
 $\sum_{y \in X} \sum_{x \in X} I(d(y, x) \leq h)$ for the indicator function $I$.
 Figure~\ref{fig:allnntpc} shows a formulation that recursively considers a subset pair $Y$ and $X$, returning immediately if all points in $Y$ and $X$ are completely inside or outside the radius.
 
 {\bf All-nearest-neighbors.} In applications from manifold learning to classification, it is often desirable to find for a batch of queries $Q$ the nearest neighbors from reference set $R$, as $\map_{q \in Q} \argmin_{r \in R} d(q,r)$, with the exception $d(q,q) = \infty$.
-To achieve speedup, one maintains for each recursive subset of queries the furthest candidate neighbor distance found for a query node, $a(Q)$.
+To achieve speedup, one maintains for each tree node $Q$ of queries the furthest candidate neighbor distance, $a(Q)$.
 If a set of references is farther away than this distance, no further exploration is required.
 
 {\bf Affinity propagation.}
@@ -290,13 +289,13 @@ Empirical $O(N^{1.3})$ scaling was achieved on three-dimensional points from a g
 
 \section{Parallel $N$-Body Simulations}
 
-Some of the largest parallel computing efforts in history are $N$-body particle simuations.
-Algorithms for efficient simulation typically use trees and offer indispensible insight into parallelizing the generalized $N$-body problems.
+Some of the largest parallel computing efforts in history are $N$-body particle simulations.
+Algorithms for efficient simulation typically use trees, and their parallelization offers indispensible insight into that for generalized $N$-body problems.
 The physical $N$-body problem models $N$ particles in an evolving system where each particle exerts force on all other particles.
 Computational solutions break the simulation into discrete time steps, during which force is calculated,
 \[\map_{q \in D} \sum_{r \in D} f(q,r)\]
 \noindent where $f(q,r)$ is often an inverse-squared-distance gravitational or Coulombic force.
-Directly computing the sum takes $O(N^2)$, but speedup may be achieved by approximating distant interactions.
+Directly computing the sum takes $O(N^2)$ time, but speedup is achieved by approximating distant interactions.
 
 The earliest tree-based algorithm by Appel \cite{appel} approximates these force contributions in an approach closely resembling the dual-tree approach.
 However, the later popular Barnes-Hut algorithm\cite{barneshut} and Fast Multipole Method\cite{greengard_fmm} received attention from the parallelization community.
@@ -615,7 +614,7 @@ When no other information is available, we must resort to this rule, especially 
 \inmu(Q, R) \gets \inmu(\kdparent{Q}, R) \text{ if } \kdparent{Q} \supset Q.
 \end{equation*}
 
-\noindent A final note is that extrinsic pruning requires ``high-quality'' values of $\inmu$, that is, values that approach the aforementioned ideal value.
+\noindent {\bf Quality.} A final note is that extrinsic pruning requires ``high-quality'' values of $\inmu$, that is, values that approach the aforementioned ideal value.
 The quality of $\inmu$ generally increases as more node pairs are explored\authorsnote{In reality, exploring a node pair should never decrease the quality, although uninformed implementations that use ball-trees might exhibit this condition.}, but the exploration pattern is extremely important.
 The distribution over node pairs of information yield potential is highly non-uniform in efficient dual-tree problems, and thus prioritization is used to focus on node pairs with higher potential information yield.
 A heuristic function $\heurqr(\outstat(Q),\outstat(R))$ returns a real value where lower values are explored first.
@@ -767,20 +766,26 @@ However, communication presents further problems for a cluster implementation.
 
 \subsection{Communication}
 
-In our proof-of-concept cluster implementation, we take advantage of Salmon and Warren's observation in \cite{salmon97parallel} that for treecodes, efficiency for disk-resident out-of-core implementations mirrors communication efficiency in a parallel system\footnote{Out-of-core generalized $N$-body execution systems are in fact part of our future goals.}.
-By far, the greatest amount of communication is distributing data points and tree nodes to machines that need them.
+In our proof-of-concept cluster implementation, we take advantage of Salmon and Warren's observation in \cite{salmon97parallel} that for treecodes, efficiency for disk-resident out-of-core implementations mirrors communication efficiency in a parallel implementation\footnote{Out-of-core generalized $N$-body execution systems are in fact part of our future goals.}.
+By far, the greatest communication cost is sending data points and tree nodes to machines that need them.
 Our software automatically serializes user data into blocks, forming the fundamental unit of communication.
 Workers request blocks of data on demand.
 
 In this paper we focus on convenentional use cases where the data originates on one machine, the tree is quickly built locally, and then the blocks representing the tree and data are distributed.
-Such an implementation is not suitable for massive datacenter\authorsnote{i.e. ``Google''} scenarios where data is distributed to begin with; however, the existence of efficient parallel tree-building algorithms \cite{paralleltrees} makes such an implementation inevitable.
+Such an implementation is not suitable for massive datacenter\authorsnote{i.e. ``Google''} scenarios where data originates distributed among machines; however, the existence of efficient parallel tree-building algorithms \cite{paralleltrees} makes such an implementation inevitable.
 
 Ideally, each block should reside on the computer most likely to use it.
-Unfortunately, such an implementation requires significant cooperation between the scheduler and data distribution.
+Unfortunately, such an implementation requires significant cooperation between the scheduler and data distribution and presents a formidable theoretical and technical challenges.
 With a small loss in performance, we instead distribute blocks randomly by taking the block ID number modulo the number of machines\authorsnote{I should consistently use terms \defterm{processor} and \defterm{machine}, or some other scheme, to distinguish threads and address spaces}.
 We find that this scales to (insert size here)-sized clusters.
 
-\subsection{Experimentation}
+\section{Experimentation}
+
+We ran our experiments on (insert type of machine here).
+
+Multithreaded performance goes here.
+
+Cluster performance goes here.
 
 \nocite{ex1,ex2}
 \bibliographystyle{latex8}
@@ -790,7 +795,7 @@ We find that this scales to (insert size here)-sized clusters.
 
 \section{Notation}
 
-We're still working on our notation (in fact, all of the symbols we use are a user-defined in LaTeX).
+We're still working on our notation (in fact, all of the symbols we use are a user-defined command in LaTeX).
 
 \begin{table*}
 \begin{tabular}{|l|l|l|}
