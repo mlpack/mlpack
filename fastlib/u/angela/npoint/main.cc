@@ -1,3 +1,20 @@
+/**
+ * @author: Angela N Grigoroaia
+ * @file: main.cc
+ *
+ * @description:
+ * Main file that reads the arguments and decides what part of the code to call.
+ *
+ * Input data and a matcher must be specified by:
+ * 	--data=[csv or arff file containing the input data]
+ * 	--matcher=[csv file containing the matcher(s)]
+ * The following arguments are optional:
+ * 	--n=[size of n-tuple (default 2)]
+ * 	--nweights=[number of weights (default 0)]
+ * 	--metric=[csv file containing the desired metric]
+ * etc. 	
+ */
+
 #include "metrics.h"
 #include "matcher.h"
 #include "globals.h"
@@ -10,9 +27,10 @@ int main(int argc, char *argv[])
  fx_init(argc,argv);
 
  const char *data_file = fx_param_str_req(NULL, "data");
- const char *matcher_file = fx_param_str(NULL, "matcher", NULL);
+ const char *matcher_file = fx_param_str_req(NULL, "matcher", NULL);
  const char *metric_file = fx_param_str(NULL, "metric",NULL);
  const int n = fx_param_int(NULL,"n",2);
+ const int nweights = fx_param_int(NULL,"nweights",0);
 
  Dataset data;
  Matcher matcher;
@@ -24,7 +42,7 @@ int main(int argc, char *argv[])
 
  if (!PASSED(data.InitFromFile(data_file))) {
 	 fprintf(stderr, "%s: Couldn't open file '%s'. No datapoints available.\n", argv[0], data_file);
-	 return 1;
+	 exit(1);
 	}
  dim = data.n_features();
  n_points = data.n_points();

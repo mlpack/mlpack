@@ -8,17 +8,17 @@
  * here  is just for show.
  */
 
+#ifndef GLOBALS_H
+#define GLOBALS_H
 
 #define INCLUDE 10
 #define EXCLUDE -10
 #define RECURSE 0
 
 #define LEAF_SIZE 20
-#ifndef LEAF_SIZE
-	extern int leaf_size;
-#endif
 
 extern int use_permutes;
 extern int use_symmetry;
-extern int nweights;
 extern char *format;
+
+#endif

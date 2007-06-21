@@ -18,8 +18,13 @@ matcher.cc
 matcher.h
 	- read general type matchers
 	- test matcher for n-tuples of points
-	- test matcher for n-tuples of nodes ???
+	- test matcher for n-tuples of nodes 
 	+ depends on: metrics, fastlib, globals
+
+datapack.h
+datapack.cc
+	- store the input coordinates and weights
+	+ depends on: fastlib, globals
 
 naive.cc
 naive.h
