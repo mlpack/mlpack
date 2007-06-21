@@ -1,10 +1,9 @@
 #include "metrics.h"
 #include "matcher.h"
 #include "globals.h"
+#include "naive.h"
 #include "fastlib/fastlib.h"
 
-
-double naive_npoint(Matrix data, Matcher matcher, Metric metric);
 
 int main(int argc, char *argv[])
 {
@@ -64,6 +63,7 @@ int main(int argc, char *argv[])
  fx_done();
 }
 
+#if 0
 double naive_npoint(Matrix data, Matcher matcher, Metric metric)
 {
  double count = 0;
@@ -104,4 +104,4 @@ double naive_npoint(Matrix data, Matcher matcher, Metric metric)
  while (1);
 }
 
-
+#endif

@@ -152,11 +152,22 @@ class Matcher {
 	 * matches the matcher when using the given distance metric. The following
 	 * situations can occur:
 	 * 	- SUCCES_PASS => the matcher is satisfied.
-	 * 	- SUCCESS_FAIL => the lo bound check failed first
-	 * 	- SUCCESS_WARN => the hi bound check failed first
+	 * 	- SUCCESS_FAIL => the lo or hi bound check failed
   **/
 	public:
 	success_t Matches(const Matrix X, const Vector index, Metric metric) const;
+
+	/**
+	 * Checks if an n-tuple matches the matcher without having to specify any of
+	 * the points. We only need to specify the distances (or pseudodistances) in a
+	 * matrix.
+	 *
+	 * Note:
+	 * To be used for knodes when the max and min distances between different
+	 * knodes are known.
+	 */
+	public:
+	success_t Matches(const Matrix distances) const;
 };
 
 #endif

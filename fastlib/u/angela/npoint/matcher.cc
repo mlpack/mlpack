@@ -71,7 +71,13 @@ success_t Matcher::IsValid() const {
 
 
 success_t Matcher::Matches(const Matrix X, const Vector index, const Metric M) const {
- index_t i, j;  
+ index_t i, j; 
+
+ if (index.length() != n ) {
+	 printf("ERROR: Matcher and n-tuple dimensions don't agree!\n");
+	 exit(1);
+ }
+
  for (i=0;i<n;i++) {
 	 for (j=i+1;j<n;j++) {
 		 index_t index_i = index[i], index_j = index[j];
@@ -88,3 +94,24 @@ success_t Matcher::Matches(const Matrix X, const Vector index, const Metric M) c
  return SUCCESS_PASS; 
 }
 
+
+success_t Matcher::Matches(const Matrix distances) const {
+	index_t i,j;
+
+	if (distances.n_rows() != n || distances.n_cols() != n ) {
+		printf("ERROR: Matcher and n-tuple dimensions don't agree!\n");
+		exit(1);
+	}
+
+	for (i=0;i<n;i++) {
+		for (j=0;j<n;j++) {
+			if ( distances.get(i,j) < lo.get(i,j) ) {
+				return SUCCESS_FAIL;
+			}
+			if ( distances.get(i,j) > hi.get(i,j) ) {
+				return SUCCESS_FAIL;
+			}
+		}
+	}
+	return SUCCESS_PASS;
+}

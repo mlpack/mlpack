@@ -13,15 +13,22 @@ librule(
 )
 
 librule(
+	name = "naive",
+	sources = ["naive.cc"],
+	headers = ["naive.h","globals.h"],
+	deplibs = ["fastlib:fastlib",":metrics",":matcher"]
+)
+
+librule(
 	name = "multi_matcher",
 	sources = ["multi_matcher.cc"],
 	headers = ["multi_matcher.h","globals.h"],
-	deplibs = ["fastlib:fastlib",":matcher",":metrics"]
+	deplibs = ["fastlib:fastlib",":metrics",":matcher"]
 )
 
 binrule(
-	name = "naive_test",
-	sources = ["naive_test.cc"],
+	name = "npoint",
+	sources = ["main.cc"],
 	headers = ["globals.h"],
-	deplibs = ["fastlib:fastlib",":metrics",":matcher"]
+	deplibs = ["fastlib:fastlib",":metrics",":matcher",":naive"]
 )
