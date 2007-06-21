@@ -1,11 +1,6 @@
 /**
- * @author: Angela N Grigoroaia
- * @date: 13.06.2007
+ * @author: Angela N. Grigoroaia
  * @file: naive.cc
- *
- * @description:
- * Helper functions for the naive (base case) single matcher n-point
- * correlation.
  */
 
 #include "fastlib/fastlib.h"
@@ -13,12 +8,17 @@
 #include "matcher.h"
 #include "globals.h"
 
-double naive_npoint(Matrix data, Matcher matcher, Metric metric)
+double naive_npoint(DataPack data, Matcher matcher, Metric metric)
 {
  double count = 0;
  index_t i, top;
- int n_points = data.n_cols(), n = matcher.n;
+ int n_points, n, n_weights, dim;
+ Matrix coord, weights;
  Vector index;
+
+ if (!PASSED(data.GetCoordinates(&coord)) || !PASSED(data.GetWeights(&weights))) {
+	 /*BUBU!!!*/
+ }
  index.Init(n);
 
  /* Initializing the n-tuple index */

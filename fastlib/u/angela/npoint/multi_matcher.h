@@ -1,9 +1,8 @@
 /**
  * @author: Angela N Grigoroaia
- * @date: 15.05.2007
  * @file: multi_matcher.h
  *
- * Description: Useful functions for the multi-matcher problem.
+ * @description: Useful functions for the multi-matcher problem.
  */
 
 #ifndef MULTI_MATCHER_H

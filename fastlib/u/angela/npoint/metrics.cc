@@ -1,9 +1,6 @@
 /**
-  * @file metrics.cc
   * @author Angela N. Grigoroaia
-  * @date 2007.03.15
-	*
-  * Description: Stuff that takes care of distance computations.
+  * @file: metrics.cc
 **/
 
 #include "metrics.h"

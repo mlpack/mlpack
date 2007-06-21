@@ -1,11 +1,8 @@
 /**
- * @author: Angela N Grigoroaia
- * @date: 12.06.2007
+ * @author: Angela N. Grigoroaia
  * @file: globals.h
  *
- * @description:
- * Definitions for global variables and constants. Currently most of the stuff
- * here  is just for show.
+ * @description: Definitions for global variables and constants. 
  */
 
 #ifndef GLOBALS_H

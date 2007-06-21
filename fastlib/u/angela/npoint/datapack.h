@@ -1,15 +1,18 @@
 /**
- * @author: Angela N Grigoroaia
- * @date: 21.06.2007
- * @file: simple_data.h
+ * @author: Angela N. Grigoroaia
+ * @file: datapack.h
  *
- * @description:
- * Read, store and manipulate coordinates and weights.
+ * @description: Read, store and manipulate coordinates and weights.
+ */
+
+/**
  * The main class is called 'DataPack' and it will contain a matrix that stores
  * all the relevant information about the given points (including their weights
  * if any are given). The first 'dimension' features represent the coordinates
  * and the following 'nweights' features are the weights of a particular point.
- *
+ */
+
+/** 
  * Note:
  * Although everything is stored in a single matrix, the actual representation 
  * is abstracted by aliasing the coordinates and weights as two separate
@@ -46,12 +49,17 @@ class DataPack {
 		void SetWeights(const int weights);
 
 	/**
-	 * Obtain aliases for the coordinates and weights. This is the only method in
-	 * which this class should interact with other parts of the code.
+	 * Obtain aliases for the coordinates and weights. If the data is not
+	 * initialized or there are no weights the functions will return SUCCESS_FAIL.
+	 * This is the only method in which this class should interact with other
+	 * parts of the code.
+	 *
+	 * Note:
+	 * *Always* check the return value before using the alias!
 	 */
 	public: 
-		Matrix GetCoordinates();
-		Matrix GetWeights();
-}
+		success_t GetCoordinates(Matrix &coordinates);
+		success_t GetWeights(Matrix &weights);
+};
 
 #endif

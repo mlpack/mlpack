@@ -1,9 +1,6 @@
 /**
  * @author: Angela N Grigoroaia
- * @date: 15.05.2007
  * @file: multi_matcher.cc
- *
- * Description: Generally useful function for the multi-matcher problem.
  */
 
 #include "multi_matcher.h"
