@@ -27,10 +27,11 @@
  * with fast distance computation  enabled.
 **/
 
-#ifndef METRICS
-#define METRICS
+#ifndef METRICS_H
+#define METRICS_H
 
 #include "fastlib/fastlib.h"
+#include "globals.h"
 
 class Metric {
 	public:
@@ -70,7 +71,7 @@ class Metric {
 };
 
 /** 
- * Basic sanity check for the metric that only take into account the actual
+ * Basic sanity check for the metric that only takes into account the actual
  * matrix.
  */
 success_t is_positive_definite(const Matrix M);

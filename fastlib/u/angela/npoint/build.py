@@ -13,6 +13,13 @@ librule(
 )
 
 librule(
+		name = "datapack",
+		sources = ["datapack.cc"],
+		headers = ["datapack.h","globals.h"],
+		deplibs = ["fastlib:fastlib"]
+)
+
+librule(
 	name = "naive",
 	sources = ["naive.cc"],
 	headers = ["naive.h","globals.h"],
