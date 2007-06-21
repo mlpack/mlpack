@@ -1,9 +1,8 @@
 /**
  * @author Angela N. Grigoroaia
- * @date 2007.03.15
  * @file metrics.h
  *
- * Description: Stuff that takes care of distance computations.
+ * @description: Stuff that takes care of distance computations.
 **/
 
 /**
@@ -11,9 +10,9 @@
  * 	- Structure that stores the actual metric (norm) used
  *	- Functions that validate the fact that this is actually a metric (norm)
  *	- Functions that compute the distance between two points
-**/
+ */
 
-/**
+/** 
  * Metric description and considerations:
  *	- Stored as a class that contains a matrix and a flag. The flag triggers the
  *	use of a faster way of computing the distance for the euclidean metric. 

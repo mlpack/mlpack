@@ -1,8 +1,6 @@
 /** 
-  * @file matcher.cc	
-  * @author Angela Grigoroaia
-	*
-  * Description Matcher code for n-point correlation computations
+  * @author Angela N. Grigoroaia
+	* @file matcher.cc	
  **/
  
 #include "matcher.h"

@@ -1,10 +1,8 @@
 /**
  * @author: Angela N Grigoroaia
- * @date: 13.06.2007
  * @file: naive.h
  *
- * @description:
- * Helper functions for the naive (base case) implementation.
+ * @description: Helper functions for the naive (base case) implementation.
  */
 
 #ifndef NAIVE_H
@@ -14,7 +12,7 @@
 #include "metrics.h"
 #include "matcher.h"
 
-double naive_npoint(Matrix data, Matcher matcher, Metric metric);
+double naive_npoint(DataPack data, Matcher matcher, Metric metric);
 
 #endif
 

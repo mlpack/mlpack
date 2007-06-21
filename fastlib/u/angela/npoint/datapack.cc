@@ -1,13 +1,20 @@
 /**
- * @author: Angela N Grigoroaia
- * @date: 21.06.2007
- * @file: simple_data.cc
+ * @author: Angela N. Grigoroaia
+ * @file: datapack.cc
  */
+
+#include "fastlib/fastlib.h"
+#include "globals.h"
+#include "datapack.h"
 
 void DataPack::Init() {
 	nweights = 0;
 	dimension = 0;
-	data = NULL;
+	/** 
+	 * TODO ~> Cannot init data to NULL so I any reference to data will cause
+	 * trouble. Should find a way to fix this. Maybe try something like:
+	 * 		data.Init(0,0) ?
+	 */
 }
 
 
@@ -22,12 +29,12 @@ success_t DataPack::InitFromFile(const char *file) {
 	
 	dimension = in.n_features();
 	nweights = 0;
-	data.Copy(in.Matrix());
-	return SUCCESS_PASS
+	data.Copy(in.matrix());
+	return SUCCESS_PASS;
 }
 
 
-success_t DataPack::InitFromFile(const char *file, const char weights) {
+success_t DataPack::InitFromFile(const char *file, const int weights) {
 	if( PASSED(InitFromFile(file)) ) {
 		if (weights > 0) {
 			SetWeights(weights);
@@ -43,14 +50,25 @@ void DataPack::SetWeights(const int weights) {
 }
 
 
-Matrix DataPack::GetCoordinates() {
+success_t DataPack::GetCoordinates(Matrix &coordinates) {	
 	if(dimension <= 0) {
-		return NULL;
+		return SUCCESS_FAIL;
 	}
+
+	coordinates.Alias(data.ptr(),data.n_rows(),dimension);
+	return SUCCESS_PASS;
 }
 
-Matrix DataPack::GetWeights() {
-	if (nweights <=0) {
-		return NULL;
+
+success_t DataPack::GetWeights(Matrix &weights) {	
+	index_t start_col = dimension;
+	index_t n_cols = nweights;
+		
+	if (nweights <= 0) {
+		return SUCCESS_FAIL;
 	}
+
+	data.MakeColumnSlice(start_col,n_cols,&weights);
+	return SUCCESS_PASS;
 }
+
