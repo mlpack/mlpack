@@ -30,6 +30,7 @@ class DataPack {
 		Matrix data;
 		int nweights;
 		int dimension;
+		int npoints;
 
 	public:
 		DataPack() {}

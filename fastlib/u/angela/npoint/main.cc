@@ -24,18 +24,17 @@
 #include "naive.h"
 
 
-
 int main(int argc, char *argv[])
 {
  fx_init(argc,argv);
 
  const char *data_file = fx_param_str_req(NULL, "data");
- const char *matcher_file = fx_param_str_req(NULL, "matcher", NULL);
+ const char *matcher_file = fx_param_str(NULL, "matcher", NULL);
  const char *metric_file = fx_param_str(NULL, "metric",NULL);
  const int n = fx_param_int(NULL,"n",2);
  const int nweights = fx_param_int(NULL,"nweights",0);
 
- Dataset data;
+ DataPack data;
  Matcher matcher;
  Metric metric;
  index_t i, j;
@@ -43,13 +42,13 @@ int main(int argc, char *argv[])
  double count = 0;
 
 
- if (!PASSED(data.InitFromFile(data_file))) {
+ if (!PASSED(data.InitFromFile(data_file,nweights))) {
 	 fprintf(stderr, "%s: Couldn't open file '%s'. No datapoints available.\n", argv[0], data_file);
 	 exit(1);
 	}
- dim = data.n_features();
- n_points = data.n_points();
- fprintf(stderr, "Successfully loaded %d points in %d dimensions from %s.\n", n_points, dim, data_file);
+ dim = data.dimension;
+ n_points = data.npoints;
+ fprintf(stderr, "Successfully loaded %d points in %d dimensions and %d weights from %s.\n",n_points,dim,nweights,data_file);
 
  fprintf(stderr,"Loading metric\n");
  metric.InitFromFile(dim, metric_file);
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
 	}
 
  fprintf(stderr,"Running naive n-point\n");
- count = naive_npoint(data.matrix(), matcher, metric);
+ count = naive_npoint(data, matcher, metric);
  fprintf(stderr,"\nThere are %f distinct matching %d-tuples\n\n", count, n);
 
  fx_done();
