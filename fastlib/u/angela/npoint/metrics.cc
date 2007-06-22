@@ -3,9 +3,11 @@
   * @file: metrics.cc
 **/
 
-#include "metrics.h"
-#include "globals.h"
 #include "fastlib/fastlib.h"
+#include "globals.h"
+
+#include "metrics.h"
+
 
 void Metric::Init(const int size) {
 	Vector v;

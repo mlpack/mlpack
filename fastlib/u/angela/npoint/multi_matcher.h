@@ -9,6 +9,7 @@
 #define MULTI_MATCHER_H
 
 #include "fastlib/fastlib.h"
+#include "globals.h"
 #include "matcher.h"
 #include "metrics.h"
 

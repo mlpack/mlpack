@@ -23,7 +23,7 @@ librule(
 	name = "naive",
 	sources = ["naive.cc"],
 	headers = ["naive.h","globals.h"],
-	deplibs = ["fastlib:fastlib",":metrics",":matcher"]
+	deplibs = ["fastlib:fastlib",":metrics",":matcher",":datapack"]
 )
 
 librule(
@@ -37,5 +37,5 @@ binrule(
 	name = "npoint",
 	sources = ["main.cc"],
 	headers = ["globals.h"],
-	deplibs = ["fastlib:fastlib",":metrics",":matcher",":naive"]
+	deplibs = ["fastlib:fastlib",":metrics",":matcher",":naive",":datapack"]
 )

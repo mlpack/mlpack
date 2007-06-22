@@ -5,6 +5,7 @@
 
 #include "fastlib/fastlib.h"
 #include "globals.h"
+
 #include "datapack.h"
 
 void DataPack::Init() {
@@ -58,6 +59,7 @@ success_t DataPack::GetCoordinates(Matrix &coordinates) {
 	coordinates.Alias(data.ptr(),data.n_rwos(),dimension);
 	return SUCCESS_PASS;
 }
+
 
 success_t DataPack::GetWeights(Matrix &weights) {	
 	index_t start_col = dimension;

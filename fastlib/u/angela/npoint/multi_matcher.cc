@@ -3,12 +3,13 @@
  * @file: multi_matcher.cc
  */
 
-#include "multi_matcher.h"
-#include "globals.h"
 #include "fastlib/fastlib.h"
+#include "globals.h"
 #include "metrics.h"
 #include "matcher.h"
-#include "naive.h"
+
+#include "multi_matcher.h"
+
 
 void estimate_multi_matcher_list(const Matrix data, const Metric metric) {
 	double est_diam = estimate_diameter(data,metric);

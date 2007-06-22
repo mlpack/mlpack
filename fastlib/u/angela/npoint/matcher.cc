@@ -2,11 +2,13 @@
   * @author Angela N. Grigoroaia
 	* @file matcher.cc	
  **/
- 
-#include "matcher.h"
-#include "metrics.h"
-#include "globals.h"
+
 #include "fastlib/fastlib.h"
+#include "globals.h"
+#include "metrics.h"
+
+#include "matcher.h"
+
 
 success_t Matcher::InitFromFile(const int size, const char *file) {
 	Dataset data;
