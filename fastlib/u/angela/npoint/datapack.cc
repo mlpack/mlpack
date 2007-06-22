@@ -55,10 +55,9 @@ success_t DataPack::GetCoordinates(Matrix &coordinates) {
 		return SUCCESS_FAIL;
 	}
 
-	coordinates.Alias(data.ptr(),data.n_rows(),dimension);
+	coordinates.Alias(data.ptr(),data.n_rwos(),dimension);
 	return SUCCESS_PASS;
 }
-
 
 success_t DataPack::GetWeights(Matrix &weights) {	
 	index_t start_col = dimension;
