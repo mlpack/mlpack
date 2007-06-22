@@ -4,9 +4,13 @@
  */
 
 #include "fastlib/fastlib.h"
+#include "globals.h"
 #include "metrics.h"
 #include "matcher.h"
-#include "globals.h"
+#include "datapack.h"
+
+#include "naive.h"
+
 
 double naive_npoint(DataPack data, Matcher matcher, Metric metric)
 {
@@ -16,9 +20,19 @@ double naive_npoint(DataPack data, Matcher matcher, Metric metric)
  Matrix coord, weights;
  Vector index;
 
- if (!PASSED(data.GetCoordinates(&coord)) || !PASSED(data.GetWeights(&weights))) {
-	 /*BUBU!!!*/
+ if ( !PASSED(data.GetCoordinates(coord)) ) {
+	 printf("Failed to get coordinates. Cannot continue.\n");
+	 return -1;
  }
+ if ( data.nweights > 0 && !PASSED(data.GetWeights(weights)) ) {
+	 printf("failed to get weights.\n");
+	 return -1;
+ }
+
+ n_points = data.data.n_rows();
+ n = matcher.n;
+ n_weights = data.nweights;
+ dim = data.dimension;
  index.Init(n);
 
  /* Initializing the n-tuple index */
@@ -28,7 +42,7 @@ double naive_npoint(DataPack data, Matcher matcher, Metric metric)
  top = n-1;
  /* Running the actual naive loop */
  do {
-	 if (PASSED(matcher.Matches(data, index, metric))) {
+	 if (PASSED(matcher.Matches(coord, index, metric))) {
 		 count = count + 1;
 	 }
 

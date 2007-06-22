@@ -90,6 +90,7 @@
 #define MATCHER_H
 
 #include "fastlib/fastlib.h"
+#include "globals.h"
 #include "metrics.h"
 
 class Matcher {
