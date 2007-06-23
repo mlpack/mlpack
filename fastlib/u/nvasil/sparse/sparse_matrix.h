@@ -233,7 +233,7 @@ class Matrix {
 // solves the problem A*x=b
 // where A is sparse semipositive definite 
 template<typename T> 
-void ConjugateGradient(Matrix<T> &A, T *b, T* x);
+void ConjugateGradient(Matrix<T> &A, T *b, T* x, T tolerance);
 template<typename T>
 inline T VectorDotProduct(T* a, T* b, index_t size) {
   T result=0;
@@ -298,7 +298,8 @@ T *ReadVectorFromFile(string filename) {
 	FILE *fp;
 	fp=fopen(filename.c_str(), "r");
   if (fp==NULL) {
-	  FATAL("Error %s while trying to open %s\n", strerror(errno));
+	  FATAL("Error %s while trying to open %s\n", strerror(errno), 
+				   filename.c_str());
 	}
 	long long size;
 	fscanf(fp, "%lli\n", &size);
@@ -313,7 +314,7 @@ T *ReadVectorFromFile(string filename) {
   fclose(fp);
 	return ptr;
 }
-
-
 };
+
+#include "u/nvasil/sparse/conjugate_gradient_impl.h"
 #endif // SPARSE_MATRIX_H_

@@ -35,6 +35,7 @@ class MatrixTest {
 		matrixfile_="sparse_matrix.txt";
 		xfile_="xfile.txt";
 		bfile_="bfile.txt";
+		tolerance_=0.01;
 	};
 	void Destruct(){
 	  matrix_.Destruct();
@@ -53,7 +54,7 @@ class MatrixTest {
 		T *b=ReadVectorFromFile<T>(bfile_);
 		T *x=ReadVectorFromFile<T>(xfile_);
 	  T *xconjg=NewVector<T>(size_);	
-	  ConjugateGradient(matrix_, b,  xconjg);
+	  ConjugateGradient(matrix_, b,  xconjg, tolerance_);
 		for(index_t i=0; i<size_; i++) {
 		  TEST_DOUBLE_APPROX(xconjg[i], x[i], 0.0001);
 		}
@@ -73,6 +74,7 @@ class MatrixTest {
   string matrixfile_;
   string xfile_;
   string bfile_;	
+	T tolerance_;
 };
 };
 
