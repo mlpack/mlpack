@@ -11,6 +11,7 @@
 void DataPack::Init() {
 	nweights = 0;
 	dimension = 0;
+	npoints = 0;
 	/** 
 	 * TODO ~> Cannot init data to NULL so I any reference to data will cause
 	 * trouble. Should find a way to fix this. Maybe try something like:
@@ -19,30 +20,20 @@ void DataPack::Init() {
 }
 
 
-success_t DataPack::InitFromFile(const char *file) {
+success_t DataPack::InitFromFile(const char *file, const int weights) {
 	Dataset in;
 
 	if ( !PASSED(in.InitFromFile(file)) ) {
 		Init();
-		fprintf(stderr,"Could not open '%s'. No datapoints available.\n",file);
+		fprintf(output,"Could not open '%s'. No datapoints available.\n",file);
 		return SUCCESS_FAIL;
 	}
 	
-	dimension = in.n_features();
-	nweights = 0;
+	dimension = in.n_features() - weights;
+	nweights = weights;
+	npoints = in.n_points();
 	data.Copy(in.matrix());
 	return SUCCESS_PASS;
-}
-
-
-success_t DataPack::InitFromFile(const char *file, const int weights) {
-	if( PASSED(InitFromFile(file)) ) {
-		if (weights > 0) {
-			SetWeights(weights);
-			return SUCCESS_PASS;
-		}
-	}
-	return SUCCESS_FAIL;
 }
 
 
@@ -51,25 +42,22 @@ void DataPack::SetWeights(const int weights) {
 }
 
 
-success_t DataPack::GetCoordinates(Matrix &coordinates) {	
-	if(dimension <= 0) {
+success_t DataPack::GetCoordinates(const index_t index, Vector &coordinates) 
+	const {
+	if (dimension < 1 || index < 0 || index > npoints) {
 		return SUCCESS_FAIL;
 	}
-
-	coordinates.Alias(data.ptr(),data.n_rows(),dimension);
+	data.MakeColumnSubvector(index,0,dimension, &coordinates);
 	return SUCCESS_PASS;
 }
 
 
-success_t DataPack::GetWeights(Matrix &weights) {	
-	index_t start_col = dimension;
-	index_t n_cols = nweights;
-		
-	if (nweights <= 0) {
+success_t DataPack::GetWeights(const index_t index, Vector &weights)
+	const {
+	if (nweights < 0 || index < 0 || index > npoints) {
 		return SUCCESS_FAIL;
 	}
-
-	data.MakeColumnSlice(start_col,n_cols,&weights);
+	data.MakeColumnSubvector(index,dimension,nweights, &weights);
 	return SUCCESS_PASS;
 }
 

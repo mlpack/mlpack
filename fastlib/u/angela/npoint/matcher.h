@@ -91,6 +91,7 @@
 
 #include "fastlib/fastlib.h"
 #include "globals.h"
+#include "datapack.h"
 #include "metrics.h"
 
 class Matcher {
@@ -111,14 +112,7 @@ class Matcher {
    * we create it.
    */
 	public:
-  void Init(const int size) {
-		n = size;
-		simple = 1;
-		lo.Init(n,n);
-		lo.SetZero();
-		hi.Init(n,n);
-		hi.SetZero();
- 	}
+	  void Init(const int size);
 
 	/**
 	 * The most general matcher maker. It needs one input file containing both
@@ -131,7 +125,7 @@ class Matcher {
 	 * 		ordered, comma-separated values.
 	 */
 	public:
-	success_t InitFromFile(const int size, const char *file);
+		success_t InitFromFile(const int size, const char *file);
 
   /**
 	 * Check if 'matcher' is a valid matcher. This implies that:
@@ -145,7 +139,7 @@ class Matcher {
 	 *	- if the matcher is a between type lo[i,j] <= hi[i,j] for all possible i,j
 	**/
 	private:
-  success_t IsValid() const;
+	  success_t IsValid() const;
 	
   /**
    * Checks if the n-tuple composed of the colums of 'X' specified by 'index' 
@@ -155,7 +149,16 @@ class Matcher {
 	 * 	- SUCCESS_FAIL => the lo or hi bound check failed
   **/
 	public:
-	success_t Matches(const Matrix X, const Vector index, Metric metric) const;
+		success_t Matches(const Matrix X, const Vector index, Metric metric) const;
+
+	/**
+	 * Same as above except we have a datapack instead of a matrix and we need to
+	 * get aliases for the coordinates instead of aliases for the entire
+	 * corresponding columns.
+	 */
+	public:
+		success_t Matches(const DataPack data, const Vector index, Metric metric)
+			const;
 
 	/**
 	 * Checks if an n-tuple matches the matcher without having to specify any of
@@ -167,7 +170,12 @@ class Matcher {
 	 * knodes are known.
 	 */
 	public:
-	success_t Matches(const Matrix distances) const;
+		success_t Matches(const Matrix distances) const;
+
+	/* Printing tools for debugging */
+	public:
+		void Print2File(FILE *file) const;
+		void Print() const;
 };
 
 #endif

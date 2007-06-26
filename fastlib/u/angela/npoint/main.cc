@@ -4,7 +4,9 @@
  *
  * @description:
  * Main file that reads the arguments and decides what part of the code to call.
- *
+ */
+
+/**
  * Input data and a matcher must be specified by:
  * 	--data=[csv or arff file containing the input data]
  * 	--matcher=[csv file containing the matcher(s)]
@@ -23,105 +25,59 @@
 #include "datapack.h"
 #include "naive.h"
 
+/* Initiale any global variables here. */
+
+FILE *output = stderr;
+
+/* End initialization for global variables. */
+
 
 int main(int argc, char *argv[])
 {
  fx_init(argc,argv);
 
- const char *data_file = fx_param_str_req(NULL, "data");
- const char *matcher_file = fx_param_str(NULL, "matcher", NULL);
- const char *metric_file = fx_param_str(NULL, "metric",NULL);
+ const char *metric_file = fx_param_str(NULL,"metric",NULL);
+ const char *data_file = fx_param_str_req(NULL,"data");
+ const char *matcher_file = fx_param_str(NULL,"matcher",NULL);
  const int n = fx_param_int(NULL,"n",2);
  const int nweights = fx_param_int(NULL,"nweights",0);
 
  DataPack data;
  Matcher matcher;
  Metric metric;
- index_t i, j;
- int dim, n_points;
- double count = 0;
+ Vector count;
+ int i;
 
-
- if (!PASSED(data.InitFromFile(data_file,nweights))) {
-	 fprintf(stderr, "%s: Couldn't open file '%s'. No datapoints available.\n", argv[0], data_file);
+ fprintf(output,"\nLoading the data.\n");
+ if ( !PASSED(data.InitFromFile(data_file,nweights)) ) {
+	 fprintf(output,"Unable to load data. Exiting program.\n");
 	 exit(1);
-	}
- dim = data.dimension;
- n_points = data.npoints;
- fprintf(stderr, "Successfully loaded %d points in %d dimensions and %d weights from %s.\n",n_points,dim,nweights,data_file);
+ }
+ fprintf(output, "Successfully loaded %d points in %d dimensions and %d weights from %s.\n",
+		 data.npoints, data.dimension, nweights, data_file);
+ if (data.dimension < 1) {
+	 fprintf(output,"The file contains only weights! Aborting run!\n\n");
+	 exit(1);
+ }
 
- fprintf(stderr,"Loading metric\n");
- metric.InitFromFile(dim, metric_file);
- fprintf(stderr,"The following metric was created:\n");
- for (i=0;i<dim;i++) {
-	 for (j=0;j<dim;j++) {
-		 fprintf(stderr,"%f  ", metric.M.get(i,j));
-	 }
-	 fprintf(stderr,"\n");
-	}
-
- fprintf(stderr,"Loading matcher\n");
+ fprintf(output,"\nLoading the matcher.\n");
  matcher.InitFromFile(n, matcher_file);
- fprintf(stderr,"The following matcher was created:\n");
- for  (i=0;i<n;i++) {
-         for (j=0;j<n;j++) {
-					 fprintf(stderr,"%f  ", matcher.lo.get(i,j));
-				 }
-         fprintf(stderr,"\n");
-        }
- for  (i=0;i<n;i++) {
-	 for (j=0;j<n;j++) {
-		 fprintf(stderr,"%f  ", matcher.hi.get(i,j));
-	 }
-	 fprintf(stderr,"\n");
-	}
+ fprintf(output,"The following matcher was created:\n");
+ matcher.Print2File(output);
 
- fprintf(stderr,"Running naive n-point\n");
- count = naive_npoint(data, matcher, metric);
- fprintf(stderr,"\nThere are %f distinct matching %d-tuples\n\n", count, n);
+ fprintf(output,"\nLoading the metric.\n");
+ metric.InitFromFile(data.dimension, metric_file);
+ fprintf(output,"The following metric was created:\n");
+ metric.Print2File(output);
+
+ fprintf(output,"\nRunning naive n-point\n");
+ count.Copy(naive_npoint(data, matcher, metric));
+ fprintf(output,"\n\nThere are %f distinct matching %d-tuples\n", count[0], n);
+ for (i = 1; i <= nweights; i++) {
+ 	fprintf(output,"The %d-th weighted count is %f \n", i, count[i]);
+ }
+ fprintf(output,"\n\n");
 
  fx_done();
 }
 
-#if 0
-double naive_npoint(Matrix data, Matcher matcher, Metric metric)
-{
- double count = 0;
- index_t i, top;
- int n_points = data.n_cols(), n = matcher.n;
- Vector index;
- index.Init(n);
-
- /* Initializing the n-tuple index */
- for (i = 0; i < n; i++) {
-	 index[i] = i;
- }
- top = n-1;
- /* Running the actual naive loop */
- do {
-	 if (PASSED(matcher.Matches(data, index, metric))) {
-		 count = count + 1;
-	 }
-
-	 /* Generating a new valid n-tuple index */
-	 index[top] = index[top] + 1;
-	 while (index[top] > (n_points - n + top)) {
-		 index[top] = top-1;
-		 top--;
-		 /* If we can't make a new index we're done. Yupiii!!! */
-		 if (top < 0) {
-			 return count;
-		 }
-		 index[top] = index[top] + 1;
-	 }
-	 for (i=1;i<n;i++) {
-		 if (index[i] <= index[i-1]) {
-			 index[i] = index[i-1] + 1;
-		 }
-	 }	 
-	 top = n-1;
- } 
- while (1);
-}
-
-#endif

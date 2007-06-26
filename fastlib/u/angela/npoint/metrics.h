@@ -31,6 +31,7 @@
 
 #include "fastlib/fastlib.h"
 #include "globals.h"
+#include "datapack.h"
 
 class Metric {
 	public:
@@ -44,7 +45,7 @@ class Metric {
 
 	/* This makes the default Euclidean metric with fast computation enabled. */
 	public:
-	void Init(const int size);
+		void Init(const int size);
 
 	/**
 	 * This reads a metric from file. If the file cannot be accessed or there is a
@@ -63,10 +64,17 @@ class Metric {
 
 	/* Distance computations */
 	public:
-	double ComputeDistance(const Vector a, const Vector b) const;
-	double ComputeDistance(const Matrix data, const index_t x, const index_t y)
-		const;
-	double ComputeNorm(const Vector v) const;
+		double ComputeDistance(const Vector a, const Vector b) const;
+		double ComputeDistance(const Matrix data, const index_t x, const index_t y)	
+			const;
+		double ComputeDistance(const DataPack data, const index_t x, const index_t y)
+			const;
+		double ComputeNorm(const Vector v) const;
+
+	/* Printing tools for debugging */
+	public:
+		void Print2File(FILE *file) const;
+		void Print() const;
 };
 
 /** 

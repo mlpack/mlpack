@@ -5,6 +5,7 @@
 
 #include "fastlib/fastlib.h"
 #include "globals.h"
+#include "datapack.h"
 
 #include "metrics.h"
 
@@ -127,6 +128,17 @@ double Metric::ComputeDistance(const Matrix data, const index_t x,
 }
 
 
+double Metric::ComputeDistance(const DataPack data, const index_t x, 
+		const index_t	y) const {
+	Vector a,b;
+
+	data.GetCoordinates(x,a);
+	data.GetCoordinates(y,b);
+
+	return (ComputeDistance(a,b));
+}
+
+
 double Metric::ComputeNorm(const Vector v) const {
 	Vector w;
 	
@@ -135,3 +147,28 @@ double Metric::ComputeNorm(const Vector v) const {
 	
 	return (ComputeDistance(v,w)); 
 }
+
+
+void Metric::Print2File(FILE *file) const {
+	index_t i,j;
+	
+	for (i=0; i<dimension; i++) {
+		for (j=0; j<dimension; j++) {
+			fprintf(file," %f", M.get(i,j));
+		}
+		fprintf(file,"\n");
+	}
+}
+
+
+void Metric::Print() const {
+	index_t i,j;
+	
+	for (i=0; i<dimension; i++) {
+		for (j=0; j<dimension; j++) {
+			printf(" %f", M.get(i,j));
+		}
+		printf("\n");
+	}
+}
+
