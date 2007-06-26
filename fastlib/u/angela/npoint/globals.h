@@ -14,8 +14,6 @@
 
 #define LEAF_SIZE 20
 
-extern int use_permutes;
-extern int use_symmetry;
-extern char *format;
+extern FILE *output;
 
 #endif

@@ -40,9 +40,6 @@ class DataPack {
 		/* Create an empty datapack. */
 		void Init();
 
-		/* Read the data from a file. The number of weights is assumed to be 0. */
-		success_t InitFromFile(const char *file);
-
 		/* Read the data from a file and specify the number of weights. */
 		success_t InitFromFile(const char *file, const int weights);
 
@@ -50,17 +47,15 @@ class DataPack {
 		void SetWeights(const int weights);
 
 	/**
-	 * Obtain aliases for the coordinates and weights. If the data is not
-	 * initialized or there are no weights the functions will return SUCCESS_FAIL.
+	 * Obtain aliases for the coordinates and weights of a given point. If the
+	 * data is not initialized or there are no weights the functions will return
+	 * SUCCESS_FAIL.
 	 * This is the only method in which this class should interact with other
 	 * parts of the code.
-	 *
-	 * Note:
-	 * *Always* check the return value before using the alias!
 	 */
 	public: 
-		success_t GetCoordinates(Matrix &coordinates);
-		success_t GetWeights(Matrix &weights);
+		success_t GetCoordinates(const index_t index, Vector &coordinates) const;
+		success_t GetWeights(const index_t index, Vector &weights) const;
 };
 
 #endif

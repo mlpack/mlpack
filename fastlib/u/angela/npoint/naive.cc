@@ -12,28 +12,21 @@
 #include "naive.h"
 
 
-double naive_npoint(DataPack data, Matcher matcher, Metric metric)
+Vector naive_npoint(DataPack data, Matcher matcher, Metric metric)
 {
- double count = 0;
  index_t i, top;
- int n_points, n, n_weights, dim;
- Matrix coord, weights;
+ int npoints, n, nweights, dim;
  Vector index;
+ Vector results;
 
- if ( !PASSED(data.GetCoordinates(coord)) ) {
-	 printf("Failed to get coordinates. Cannot continue.\n");
-	 return -1;
- }
- if ( data.nweights > 0 && !PASSED(data.GetWeights(weights)) ) {
-	 printf("failed to get weights.\n");
-	 return -1;
- }
-
- n_points = data.data.n_rows();
+ npoints = data.npoints;
  n = matcher.n;
- n_weights = data.nweights;
+ nweights = data.nweights;
  dim = data.dimension;
+
  index.Init(n);
+ results.Init(dim + nweights);
+ results.SetZero();
 
  /* Initializing the n-tuple index */
  for (i = 0; i < n; i++) {
@@ -42,18 +35,46 @@ double naive_npoint(DataPack data, Matcher matcher, Metric metric)
  top = n-1;
  /* Running the actual naive loop */
  do {
-	 if (PASSED(matcher.Matches(coord, index, metric))) {
-		 count = count + 1;
+	 if (PASSED(matcher.Matches(data, index, metric))) {
+/*
+		 fprintf(output,"Found a match for indexes:");
+		 for (i = 0; i < n; i++) {
+			 fprintf(output," %3.0f", index[i]);
+		 }
+		 fprintf(output,"\n");
+*/
+		 results[0] += 1.0;
+
+		 /* Updating the weighted count(s) if needed. */
+		 if (nweights > 0) { 
+			 Vector tmp_wcount;
+			 tmp_wcount.Init(nweights);
+			 tmp_wcount.SetAll(1.0);
+
+			 for(i = 0; i < n; i++) {
+				 index_t j, index_i = index[i];
+				 Vector weights;
+				 data.GetWeights(index_i,weights);
+
+				 for (j = 0; j < nweights; j++) {
+					 tmp_wcount[j] *= weights[j];
+				 }
+			 }
+
+			 for (i = 0; i < nweights; i++) {
+				 results[i+1] += tmp_wcount[i];
+			 }
+		 }
 	 }
 
 	 /* Generating a new valid n-tuple index */
 	 index[top] = index[top] + 1;
-	 while (index[top] > (n_points - n + top)) {
+	 while (index[top] > (npoints - n + top)) {
 		 index[top] = top-1;
 		 top--;
 		 /* If we can't make a new index we're done. Yupiii!!! */
 		 if (top < 0) {
-			 return count;
+			 return results;
 		 }
 		 index[top] = index[top] + 1;
 	 }
