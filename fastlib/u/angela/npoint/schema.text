@@ -6,46 +6,46 @@ globals.h
 	- define global variables and handy constants
 	+ depends on: none
 
+datapack.h
+datapack.cc
+	- store the input coordinates and weights
+	+ depends on: fastlib, globals
+
 metrics.cc
 metrics.h
 	- read pseudo-distance metrics 
 	- get distances between points 
 	- get norms for vectors
 	- get distances between nodes ???
-	+ depends on: fastlib, globals
+	+ depends on: fastlib, globals, datapack
 
 matcher.cc
 matcher.h
 	- read general type matchers
 	- test matcher for n-tuples of points
 	- test matcher for n-tuples of nodes 
-	+ depends on: metrics, fastlib, globals
-
-datapack.h
-datapack.cc
-	- store the input coordinates and weights
-	+ depends on: fastlib, globals
+	+ depends on: fastlib, globals, datapack, metrics
 
 naive.cc
 naive.h
 	- first 'useful' implementation of the program
 	- must be modular so it can be used for the base case of the recursion
-	+ depends on: matcher, metrics, fastlib, globals
+	+ depends on: fastlib, globals, datapack, metrics, matcher
 
 trees.cc
 trees.h
 	- tree building and indexing
-	+ depends on: fastlib, globals
+	+ depends on: fastlib, globals, datapack
 
 single_matcher.cc
 single_matcher.h
 	- helper functions for the general single-matcher problem
 	- the actual recursion for the single-matcher case
-	+ depends on: naive, matcher, metrics, trees, fastlib, globals
+	+ depends on: fastlib, globals, datapack, trees, metrics, matcher, naive
 
 multi_matcher.cc
 multi_matcher.h
 	- helper functions for the general multi-matcher problem
 	- the actual multi-matcher implementation
-	+ depends on: single matcher, naive, matcher, metrics, trees, fastlib, globals
+	+ depends on: fastlib, globals, datapack, trees, metrics, matcher, naive,	single_matcher
 

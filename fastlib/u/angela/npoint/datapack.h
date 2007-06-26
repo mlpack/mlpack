@@ -26,7 +26,7 @@
 #include "globals.h"
 
 class DataPack {
-	public:
+	private:
 		Matrix data;
 		int nweights;
 		int dimension;
@@ -46,16 +46,29 @@ class DataPack {
 		/* Modify the number of columns that are seen as weights. */
 		void SetWeights(const int weights);
 
-	/**
-	 * Obtain aliases for the coordinates and weights of a given point. If the
-	 * data is not initialized or there are no weights the functions will return
-	 * SUCCESS_FAIL.
-	 * This is the only method in which this class should interact with other
-	 * parts of the code.
-	 */
-	public: 
+		/**
+		 * Obtain aliases for the coordinates and weights of a given point. If the
+		 * data is not initialized or there are no weights the functions will return
+		 * SUCCESS_FAIL.
+		 * This is the only method in which this class should interact with other
+		 * parts of the code.
+		 */
 		success_t GetCoordinates(const index_t index, Vector &coordinates) const;
 		success_t GetWeights(const index_t index, Vector &weights) const;
+
+	/* Get useful values stored in the class */
+	public:
+		int num_weights() const {
+			return nweights;
+		}
+
+		int num_dimensions() const {
+			return dimension;
+		}
+
+		int num_points() const {
+			return npoints;
+		}	
 };
 
 #endif

@@ -50,23 +50,28 @@ int main(int argc, char *argv[])
 
  fprintf(output,"\nLoading the data.\n");
  if ( !PASSED(data.InitFromFile(data_file,nweights)) ) {
-	 fprintf(output,"Unable to load data. Exiting program.\n");
+	 fprintf(output,"Fatal error: Unable to load data.\n\n");
 	 exit(1);
  }
  fprintf(output, "Successfully loaded %d points in %d dimensions and %d weights from %s.\n",
-		 data.npoints, data.dimension, nweights, data_file);
- if (data.dimension < 1) {
-	 fprintf(output,"The file contains only weights! Aborting run!\n\n");
+		 data.num_points(), data.num_dimensions(), nweights, data_file);
+ if (data.num_dimensions() < 1) {
+	 fprintf(output,"Fatal error: The file contains only weights! No matching is possible. \n\n");
 	 exit(1);
  }
 
  fprintf(output,"\nLoading the matcher.\n");
- matcher.InitFromFile(n, matcher_file);
+ if ( !PASSED(matcher.InitFromFile(n, matcher_file)) ) {
+	 fprintf(output,"Fatal error: Could not load matcher.\n\n");
+	 exit(1);
+ }
  fprintf(output,"The following matcher was created:\n");
  matcher.Print2File(output);
 
  fprintf(output,"\nLoading the metric.\n");
- metric.InitFromFile(data.dimension, metric_file);
+ if ( !PASSED(metric.InitFromFile(data.num_dimensions(), metric_file)) ) {
+	 fprintf(output,"Error: Could not load metric. Trying to use the default metric.\n");
+ }
  fprintf(output,"The following metric was created:\n");
  metric.Print2File(output);
 
