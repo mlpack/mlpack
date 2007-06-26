@@ -34,7 +34,7 @@
 #include "datapack.h"
 
 class Metric {
-	public:
+	private:
 		Matrix M;
 		int dimension;
 	  int fast_euclid;
@@ -60,7 +60,7 @@ class Metric {
 	 * 	If one of the sanity checks fails the return value is set to SUCCESS_WARN.
 	 */
 	public:
-	success_t InitFromFile(const int size, const char *file);
+		success_t InitFromFile(const int size, const char *file);
 
 	/* Distance computations */
 	public:
@@ -75,6 +75,16 @@ class Metric {
 	public:
 		void Print2File(FILE *file) const;
 		void Print() const;
+
+	/* Getting useful info stored in the class */
+	public:
+		int num_dimensions() const {
+			return dimension;
+		}
+
+		int is_fast() const {
+			return fast_euclid;
+		}
 };
 
 /** 

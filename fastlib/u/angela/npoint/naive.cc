@@ -19,10 +19,10 @@ Vector naive_npoint(DataPack data, Matcher matcher, Metric metric)
  Vector index;
  Vector results;
 
- npoints = data.npoints;
- n = matcher.n;
- nweights = data.nweights;
- dim = data.dimension;
+ npoints = data.num_points();
+ n = matcher.size();
+ nweights = data.num_weights();
+ dim = data.num_dimensions();
 
  index.Init(n);
  results.Init(dim + nweights);

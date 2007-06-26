@@ -95,7 +95,7 @@
 #include "metrics.h"
 
 class Matcher {
-	public:
+	private:
 	  int n;		/* This is the n in 'n-point' */
 	  int simple;	/* This is 1 is we have a simple matcher */
 	  Matrix lo; 	/* Compound lower bound */
@@ -176,6 +176,16 @@ class Matcher {
 	public:
 		void Print2File(FILE *file) const;
 		void Print() const;
+
+	/* Get info stored in the class */
+	public:
+		int size() {
+			return n;
+		}
+
+		int is_simple() {
+			return simple;
+		}
 };
 
 #endif
