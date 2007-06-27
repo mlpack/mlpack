@@ -9,6 +9,7 @@ globals.h
 datapack.h
 datapack.cc
 	- store the input coordinates and weights
+	- deal with formats
 	+ depends on: fastlib, globals
 
 metrics.cc
