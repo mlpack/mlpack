@@ -50,9 +50,9 @@ int main(int argc, char *argv[])
  String tmp;
  int i;
 
- fprintf(output,"Trying to open '%s'.\n",output_file);
  tmp.Copy(output_file);
  if ( tmp.CompareTo("stderr") ) {
+	 fprintf(output,"Trying to open '%s'.\n",output_file);
 	 FILE *tmp_file = fopen(output_file,"w");
 	 if (tmp_file != NULL) {
 		 fprintf(output,"Successfully opened '%s'. Subsequent messages and results will be written here.\n\n",output_file);
