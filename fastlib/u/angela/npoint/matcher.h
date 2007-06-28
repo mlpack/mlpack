@@ -97,7 +97,7 @@
 class Matcher {
 	private:
 	  int n;		/* This is the n in 'n-point' */
-	  int simple;	/* This is 1 is we have a simple matcher */
+	  int simple;	/* This is 1 if we have a simple matcher */
 	  Matrix lo; 	/* Compound lower bound */
 	  Matrix hi; 	/* Compound upper bound */
 
@@ -142,35 +142,36 @@ class Matcher {
 	  success_t IsValid() const;
 	
   /**
-   * Checks if the n-tuple composed of the colums of 'X' specified by 'index' 
-	 * matches the matcher when using the given distance metric. The following
-	 * situations can occur:
-	 * 	- SUCCES_PASS => the matcher is satisfied.
-	 * 	- SUCCESS_FAIL => the lo or hi bound check failed
-  **/
+	 * Wrappers for matching with different sets of parameters. The return value
+	 * is SUCCESS_PASS if a match was found or SUCCESS_FAIL if no match was found.
+	 * The actual functions that test for the match are divided into the 'simple'
+	 * functions that check only the given permutation and the more complex ones
+	 * that try all possible permutations.
+	 */
 	public:
 		success_t Matches(const Matrix X, const Vector index, Metric metric) const;
-
-	/**
-	 * Same as above except we have a datapack instead of a matrix and we need to
-	 * get aliases for the coordinates instead of aliases for the entire
-	 * corresponding columns.
-	 */
-	public:
-		success_t Matches(const DataPack data, const Vector index, Metric metric)
-			const;
-
-	/**
-	 * Checks if an n-tuple matches the matcher without having to specify any of
-	 * the points. We only need to specify the distances (or pseudodistances) in a
-	 * matrix.
-	 *
-	 * Note:
-	 * To be used for knodes when the max and min distances between different
-	 * knodes are known.
-	 */
-	public:
+		success_t Matches(const DataPack data, const Vector index, Metric metric)	const;
 		success_t Matches(const Matrix distances) const;
+
+	/**
+	 * These check if any permutation of the current points generates a matching
+	 * n-tuple. The return value is SUCCESS_PASS if a matching permutation is
+	 * found and SUCCESS_FAIL if all n! permutations failed to match.
+	 */
+	private:
+		success_t AnyMatch(const DataPack data, const Vector index, Metric metric) const;
+		success_t AnyMatch(const Matrix data, const Vector index, const Metric metric) const;
+		success_t AnyMatch(const Matrix distances) const;
+
+	/**
+	 * These check if the given permutation of the current points matches. The
+	 * return value is SUCCESS_PASS if we have a match and SUCCESS_FAIL if we
+	 * don't.
+	 */
+	private:
+		success_t SingleMatch(const DataPack data, const Vector index, const Metric	metric) const;
+		success_t SingleMatch(const Matrix data, const Vector index, const Metric	metric) const;
+		success_t SingleMatch(const Matrix distances);
 
 	/* Printing tools for debugging */
 	public:

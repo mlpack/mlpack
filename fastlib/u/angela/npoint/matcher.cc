@@ -11,6 +11,7 @@
 #include "matcher.h"
 
 
+/*****************************************************************************/
 void Matcher::Init(const int size) {
 	n = size;
 	simple = 1;
@@ -88,34 +89,42 @@ success_t Matcher::IsValid() const {
 	}
  return SUCCESS_PASS;
 }
+/*****************************************************************************/
 
 
-success_t Matcher::Matches(const Matrix X, const Vector index, const Metric M) const {
- index_t i, j; 
-
- if (index.length() != n ) {
-	 fprintf(output,"Fatal error: Matcher and n-tuple dimensions don't agree!\n");
-	 exit(1);
- }
-
- for (i=0;i<n;i++) {
-	 for (j=i+1;j<n;j++) {
-		 index_t index_i = index[i], index_j = index[j];
-		 double dist = M.ComputeDistance(X,index_i,index_j);
-
-		 if (dist < lo.get(i,j)) {
-			 return SUCCESS_FAIL;
-		 }
-		 if (dist > hi.get(i,j)) {
-			 return SUCCESS_FAIL;
-		 }
-		}
+/*****************************************************************************/
+success_t Matcher::Matches(const DataPack data, const Vector index, const Metric metric) const {
+	if (simple) {
+		return SingleMatch(data,index,metric);
 	}
- return SUCCESS_PASS; 
+	else {
+		return AnyMatch(data,index,metric);
+	}
 }
 
 
-success_t Matcher::Matches(const DataPack data, const Vector index, const Metric M) const {
+succes_t Matcher::Matches(const Matrix data, const Vector index, const Metric metric) const {
+	if (simple) {
+		return SingleMatch(data,index,metric);
+	}
+	else {
+		return AnyMatch(data,index,metric);
+	}
+}
+
+
+success_t Matcher::Matches(const Matrix distances) const {
+	if (simple) {
+		return SingleMatch(distances);
+	}
+	else {
+		return AnyMatch(distances);
+	}
+}
+/*****************************************************************************/
+
+
+success_t Matcher::SingleMatch(const DataPack data, const Vector index, const Metric M) const {
  index_t i, j; 
 
  if (index.length() != n ) {
@@ -140,7 +149,32 @@ success_t Matcher::Matches(const DataPack data, const Vector index, const Metric
 }
 
 
-success_t Matcher::Matches(const Matrix distances) const {
+success_t Matcher::SingleMatch(const Matrix X, const Vector index, const Metric M) const {
+ index_t i, j; 
+
+ if (index.length() != n ) {
+	 fprintf(output,"Fatal error: Matcher and n-tuple dimensions don't agree!\n");
+	 exit(1);
+ }
+
+ for (i=0;i<n;i++) {
+	 for (j=i+1;j<n;j++) {
+		 index_t index_i = index[i], index_j = index[j];
+		 double dist = M.ComputeDistance(X,index_i,index_j);
+
+		 if (dist < lo.get(i,j)) {
+			 return SUCCESS_FAIL;
+		 }
+		 if (dist > hi.get(i,j)) {
+			 return SUCCESS_FAIL;
+		 }
+		}
+	}
+ return SUCCESS_PASS; 
+}
+
+
+success_t Matcher::SingleMatch(const Matrix distances) const {
 	index_t i,j;
 
 	if (distances.n_rows() != n || distances.n_cols() != n ) {
@@ -160,8 +194,26 @@ success_t Matcher::Matches(const Matrix distances) const {
 	}
 	return SUCCESS_PASS;
 }
+/*****************************************************************************/
 
 
+success_t Matcher::AnyMatch(const DataPack data, const Vector index, const Metric metric) const {
+	return SUCCESS_FAIL;
+}
+
+
+success_t Matcher::AnyMatch(const Matrix data, const Vector index, const Metric metric) const {
+	return SUCCESS_FAIL;
+}
+
+
+success_t Matcher::AnyMatch(const Matrix distances) const {
+	return SUCCESS_FAIL;
+}
+/*****************************************************************************/
+
+
+/*****************************************************************************/
 void Matcher::Print2File(FILE *file) const {
 	index_t i,j;
 
@@ -212,4 +264,5 @@ void Matcher::Print() const {
 		printf("\n");
 	}
 }
+/*****************************************************************************/
 

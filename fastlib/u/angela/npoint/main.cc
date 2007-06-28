@@ -25,9 +25,10 @@
 #include "datapack.h"
 #include "naive.h"
 
-/* Initiale any global variables here. */
+/* Initialize any global variables here. */
 
 FILE *output = stderr;
+int count_all_permutations = 0;
 
 /* End initialization for global variables. */
 
@@ -42,6 +43,8 @@ int main(int argc, char *argv[])
  const char *output_file = fx_param_str(NULL,"output","stderr");
  const int n = fx_param_int(NULL,"n",2);
  const int nweights = fx_param_int(NULL,"nweights",0);
+ 
+ count_all_permutations = fx_param_int(NULL,"count_all_permutations",0);
 
  DataPack data;
  Matcher matcher;

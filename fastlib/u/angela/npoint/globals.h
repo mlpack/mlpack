@@ -13,7 +13,9 @@
 #define RECURSE 0
 
 #define LEAF_SIZE 20
+#define MAX_N 25
 
 extern FILE *output;
+extern int count_all_permutations;
 
 #endif
