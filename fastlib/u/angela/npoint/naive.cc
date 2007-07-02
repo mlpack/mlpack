@@ -172,7 +172,7 @@ Vector asymmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric)
 		 index[top] += 1; // increment the top value
 
 		 if (index[top] > (npoints-1)) { // if top value is invalid
-			 top--; // go back one level
+			 top -= 1; // go back one level
 			 if (top < 0) { // if previous level doesn't exist
 				 return results; // we're can't make new indexes and we can return
 			 }

@@ -9,9 +9,8 @@
  *	- representation for a generic matcher 
  *	- check if a given n-tuple verifies a given matcher
  *	- NEW: structure to return detailed results from the matcher test
-**/
-   
-/**
+ *
+ *	
  * OLD AUTON EXPLANATION
  *
  * Various types of matchers are:
@@ -58,9 +57,8 @@
  *  this is that in the general case with different thresholds for different 
  *  pairs within the tuple, then even if (a,b,c) matches the predicate, (b,a,c)
  *  (for example) might not.
-**/
-
-/**
+ *  
+ *
  * Current implementation notes:
  *
  * We will store all matchers as compound between matchers because all other 
@@ -171,7 +169,7 @@ class Matcher {
 	private:
 		success_t SingleMatch(const DataPack data, const Vector index, const Metric	metric) const;
 		success_t SingleMatch(const Matrix data, const Vector index, const Metric	metric) const;
-		success_t SingleMatch(const Matrix distances);
+		success_t SingleMatch(const Matrix distances) const;
 
 	/* Printing tools for debugging */
 	public:
@@ -189,6 +187,10 @@ class Matcher {
 		}
 };
 
-#endif
+/* Helper functions for the AnyMatch() series */
+success_t generate_next_permutation(Vector &tau);
+success_t generate_first_permutation(Vector &tau);
+success_t generate_next_permutation(Matrix dist, Vector &tau, Matrix &new_dist);
 
+#endif
 
