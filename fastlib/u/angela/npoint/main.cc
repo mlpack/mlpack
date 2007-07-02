@@ -101,6 +101,13 @@ int main(int argc, char *argv[])
  fprintf(output,"The following metric was created:\n");
  metric.Print2File(output);
 
+ if (count_all_permutations) {
+	 fprintf(output,"We will be counting all the distinct permutations of an n-tuple that match.\n");
+ }
+ else {
+	 fprintf(output,"We will only an n-tuple once, regardless of how many of its permutations match.\n");
+ }
+
  fprintf(output,"\nRunning naive n-point\n");
  count.Copy(naive_npoint(data, matcher, metric));
  fprintf(output,"\n\nThere are %f distinct matching %d-tuples\n", count[0], n);

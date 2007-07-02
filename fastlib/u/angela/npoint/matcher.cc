@@ -25,6 +25,7 @@ void Matcher::Init(const int size) {
 success_t Matcher::InitFromFile(const int size, const char *file) {
 	Dataset data;
 	index_t i,j;
+	double test_simple_lo, test_simple_hi;
 
 	if ( !PASSED(data.InitFromFile(file)) ) {
 		Init(size);
@@ -51,15 +52,25 @@ success_t Matcher::InitFromFile(const int size, const char *file) {
 		return SUCCESS_WARN;
 	}
 
-	simple = 0;
+	simple = 1;
 	n = size;
 	lo.Init(n,n);
 	hi.Init(n,n);
+	test_simple_lo = data.matrix().get(0,1);
+	test_simple_hi = data.matrix().get(0,1+n);
 
 	for (i=0;i<n;i++) {
 		for (j=0;j<n;j++) {
-			lo.set(i,j,data.matrix().get(i,j));
-			hi.set(i,j,data.matrix().get(i,j+n));
+			double tmp_lo = data.matrix().get(i,j);
+			double tmp_hi = data.matrix().get(i,j+n);
+
+			if ( (tmp_lo != test_simple_lo || 
+						tmp_hi != test_simple_hi) 
+					&& i!=j) {
+				simple = 0;
+			}
+			lo.set(i,j,tmp_lo);
+			hi.set(i,j,tmp_hi);
 		}
 	}
 
@@ -103,7 +114,7 @@ success_t Matcher::Matches(const DataPack data, const Vector index, const Metric
 }
 
 
-succes_t Matcher::Matches(const Matrix data, const Vector index, const Metric metric) const {
+success_t Matcher::Matches(const Matrix data, const Vector index, const Metric metric) const {
 	if (simple) {
 		return SingleMatch(data,index,metric);
 	}
@@ -125,72 +136,72 @@ success_t Matcher::Matches(const Matrix distances) const {
 
 
 success_t Matcher::SingleMatch(const DataPack data, const Vector index, const Metric M) const {
- index_t i, j; 
-
  if (index.length() != n ) {
 	 fprintf(output,"Fatal error: Matcher and n-tuple dimensions don't agree!\n");
 	 exit(1);
  }
-
- for (i=0;i<n;i++) {
-	 for (j=i+1;j<n;j++) {
-		 index_t index_i = index[i], index_j = index[j];
-		 double dist = M.ComputeDistance(data,index_i,index_j);
-
-		 if (dist < lo.get(i,j)) {
-			 return SUCCESS_FAIL;
+ else {
+	 index_t i, j;
+	 for (i=0;i<n;i++) {
+		 for (j=i+1;j<n;j++) {
+			 index_t index_i = index[i], index_j = index[j];
+			 double dist = M.ComputeDistance(data,index_i,index_j);
+	
+			 if (dist < lo.get(i,j)) {
+				 return SUCCESS_FAIL;
+			 }
+			 if (dist > hi.get(i,j)) {
+				 return SUCCESS_FAIL;
+			 }
 		 }
-		 if (dist > hi.get(i,j)) {
-			 return SUCCESS_FAIL;
-		 }
-		}
-	}
+	 }
+ }
  return SUCCESS_PASS; 
 }
 
 
 success_t Matcher::SingleMatch(const Matrix X, const Vector index, const Metric M) const {
- index_t i, j; 
-
  if (index.length() != n ) {
 	 fprintf(output,"Fatal error: Matcher and n-tuple dimensions don't agree!\n");
 	 exit(1);
  }
-
- for (i=0;i<n;i++) {
-	 for (j=i+1;j<n;j++) {
-		 index_t index_i = index[i], index_j = index[j];
-		 double dist = M.ComputeDistance(X,index_i,index_j);
-
-		 if (dist < lo.get(i,j)) {
-			 return SUCCESS_FAIL;
+ else {
+	 index_t i,j;
+	 for (i=0;i<n;i++) {
+		 for (j=i+1;j<n;j++) {
+			 index_t index_i = index[i], index_j = index[j];
+			 double dist = M.ComputeDistance(X,index_i,index_j);
+	
+			 if (dist < lo.get(i,j)) {
+				 return SUCCESS_FAIL;
+			 }
+			 if (dist > hi.get(i,j)) {
+				 return SUCCESS_FAIL;
+			 }
 		 }
-		 if (dist > hi.get(i,j)) {
-			 return SUCCESS_FAIL;
-		 }
-		}
-	}
+	 }
+ }
  return SUCCESS_PASS; 
 }
 
 
 success_t Matcher::SingleMatch(const Matrix distances) const {
-	index_t i,j;
-
 	if (distances.n_rows() != n || distances.n_cols() != n ) {
 		fprintf(output,"Fatal error: Matcher and n-tuple dimensions don't agree!\n");
 		exit(1);
 	}
-
-	for (i=0;i<n;i++) {
-		for (j=0;j<n;j++) {
-			if ( distances.get(i,j) < lo.get(i,j) ) {
-				return SUCCESS_FAIL;
+	else {
+		index_t i,j;
+		for (i=0;i<n;i++) {
+			for (j=0;j<n;j++) {
+				if ( distances.get(i,j) < lo.get(i,j) ) {
+					return SUCCESS_FAIL;
+				}
+				if ( distances.get(i,j) > hi.get(i,j) ) {
+					return SUCCESS_FAIL;
+				}
 			}
-			if ( distances.get(i,j) > hi.get(i,j) ) {
-				return SUCCESS_FAIL;
-			}
-		}
+		}	
 	}
 	return SUCCESS_PASS;
 }
@@ -198,17 +209,160 @@ success_t Matcher::SingleMatch(const Matrix distances) const {
 
 
 success_t Matcher::AnyMatch(const DataPack data, const Vector index, const Metric metric) const {
-	return SUCCESS_FAIL;
+ if (index.length() != n ) {
+	 fprintf(output,"Fatal error: Matcher and n-tuple dimensions don't agree!\n");
+	 exit(1);
+ }
+ else {
+	 int ready = 0;
+	 success_t match = SUCCESS_PASS;
+	 Vector tau;
+	 tau.Init(n);
+
+	 if ( !PASSED(generate_first_permutation(tau)) ) {
+		 fprintf(output,"Fatal error: could not generate the first permutation\n");
+		 exit(1);
+	 }
+/*
+	 for (i=0;i<n;i++) {
+		 tau[i] = i;
+	 }
+*/
+	 do {
+		 index_t i,j;
+		 ready = 1; // be optimistic about the current permutation
+		 
+		 for (i=0;i<n;i++) {
+			 for (j=i+1;j<n && PASSED(match);j++) {
+				 index_t index_i = index[tau[i]], index_j = index[tau[j]];
+				 double dist = metric.ComputeDistance(data,index_i,index_j);
+	
+				 if (dist < lo.get(i,j)) {
+					 match = SUCCESS_FAIL;
+				 }
+				 if (dist > hi.get(i,j)) {
+					 match =  SUCCESS_FAIL;
+				 }
+			 }
+		 }
+
+		 if ( PASSED(match) ) { // we got a match... yupii
+			 return SUCCESS_PASS; 
+		 }
+		 else { // gotta try something new
+			 success_t can_make_new_permutation = generate_next_permutation(tau);
+			 ready = 0;
+			 if ( !PASSED(can_make_new_permutation) ) { // we're out of permutations
+				 return SUCCESS_FAIL; // report that no match could be found
+			 }
+		 }
+	 }
+	 while (!ready);
+ }
+ return SUCCESS_WARN;
 }
 
 
 success_t Matcher::AnyMatch(const Matrix data, const Vector index, const Metric metric) const {
-	return SUCCESS_FAIL;
+ if (index.length() != n ) {
+	 fprintf(output,"Fatal error: Matcher and n-tuple dimensions don't agree!\n");
+	 exit(1);
+ }
+ else {
+	 int ready = 0;
+	 success_t match = SUCCESS_PASS;
+	 Vector tau;
+	 tau.Init(n);
+
+	 if ( !PASSED(generate_first_permutation(tau)) ) {
+		 fprintf(output,"Fatal error: could not generate the first permutation\n");
+		 exit(1);
+	 }
+/*
+	 for (i=0;i<n;i++) {
+		 tau[i] = i;
+	 }
+*/
+	 do {
+		 index_t i,j;
+		 ready = 1; // be optimistic about the current permutation
+		 
+		 for (i=0;i<n;i++) {
+			 for (j=i+1;j<n && PASSED(match);j++) {
+				 index_t index_i = index[tau[i]], index_j = index[tau[j]];
+				 double dist = metric.ComputeDistance(data,index_i,index_j);
+	
+				 if (dist < lo.get(i,j)) {
+					 match = SUCCESS_FAIL;
+				 }
+				 if (dist > hi.get(i,j)) {
+					 match =  SUCCESS_FAIL;
+				 }
+			 }
+		 }
+
+		 if ( PASSED(match) ) { // we got a match... yupii
+			 return SUCCESS_PASS;
+		 }
+		 else { // gotta try something new
+			 success_t can_make_new_permutation = generate_next_permutation(tau);
+			 ready = 0;
+			 if ( !PASSED(can_make_new_permutation) ) { // out of permutations
+				 return SUCCESS_FAIL; // report that no match was found
+			 }
+		 }
+	 }
+	 while (!ready);
+ }
+ return SUCCESS_WARN;
 }
 
 
 success_t Matcher::AnyMatch(const Matrix distances) const {
-	return SUCCESS_FAIL;
+ if (distances.n_cols() != n || distances.n_rows() != n) {
+	 fprintf(output,"Fatal error: Matcher and n-tuple dimensions don't agree!\n");
+	 exit(1);
+ }
+ else {
+	 int ready = 0;
+	 success_t match = SUCCESS_PASS;
+	 Vector tau;
+	 Matrix dist;
+	 tau.Init(n);
+	 dist.Copy(distances);
+
+	 if ( !PASSED(generate_first_permutation(tau)) ) {
+		 fprintf(output,"Fatal error: could not generate the first permutation\n");
+		 exit(1);
+	 }
+	 do {
+		 index_t i,j;
+		 ready = 1; // be optimistic about the current permutation
+		 
+		 for (i=0;i<n;i++) {
+			 for (j=i+1;j<n && PASSED(match);j++) {
+				 if (dist.get(i,j) < lo.get(i,j)) {
+					 match = SUCCESS_FAIL;
+				 }
+				 if (dist.get(i,j) > hi.get(i,j)) {
+					 match =  SUCCESS_FAIL;
+				 }
+			 }
+		 }
+
+		 if ( PASSED(match) ) { // we got a match... yupii
+			 return SUCCESS_PASS;
+		 }
+		 else { // gotta try something new
+			 ready = 0;
+			 if ( !PASSED(generate_next_permutation(distances,tau,dist) ) ) { // out of permutations
+				 return SUCCESS_FAIL; // report that no match was found
+			 }
+		 }
+	 }
+	 while (!ready);
+ }
+ return SUCCESS_WARN;
 }
 /*****************************************************************************/
 
@@ -263,6 +417,73 @@ void Matcher::Print() const {
 		}
 		printf("\n");
 	}
+}
+/*****************************************************************************/
+
+
+/*****************************************************************************/
+success_t generate_first_permutation(Vector &tau) {
+	index_t i, n = tau.length();
+
+	for (i=0;i<n;i++) {
+		tau[i] = i;
+	}
+
+	return SUCCESS_PASS;
+}
+
+
+success_t generate_next_permutation(Vector &tau) {
+	index_t i;
+	index_t n = tau.length();
+	index_t top = n - 1;
+	int is_valid = 1;
+
+	do {
+		if ( is_valid && top < (n-1) ) {
+			top += 1;
+			tau[top] = -1;
+		}
+
+		is_valid = 1;
+		tau[top] += 1;
+
+		if ( tau[top] > (n-1) ) {
+			top -= 1;
+			if (top < 0) {
+				return SUCCESS_FAIL;
+			}
+		}
+
+		for (i=0;i<top;i++) {
+			if (tau[i] == tau[top]) {
+				is_valid = 0;
+			}
+		}
+	}
+	while ( top < (n-1) && !is_valid );
+
+	return SUCCESS_PASS;
+}
+
+
+success_t generate_next_permutation(Matrix dist, Vector &tau, Matrix &new_dist) {
+	if ( !PASSED(generate_next_permutation(tau)) ) {
+		return SUCCESS_FAIL;
+	}
+	else {
+		index_t i,j;
+		int n = tau.length();
+
+		for (i=0;i<n;i++) {
+			/* Copy column tau[i] in dist to column i in new_dist element by element */
+			for (j=0;j<n;j++) {
+				new_dist.set(i,j,dist.get(tau[i],j));
+			}
+		}
+		return SUCCESS_PASS;
+	}
+	return SUCCESS_WARN;
 }
 /*****************************************************************************/
 
