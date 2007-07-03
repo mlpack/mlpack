@@ -34,10 +34,10 @@ OPTIONAL COMMAND LINE OPTIONS
   --j={1|2|3...} = number of CPU's to compile with
 """
 
+import buildsys # buildsys.py contains the build system
 import os
 import sys
 import fx
-import buildsys
 import util
 
 # figure out where fastlib is

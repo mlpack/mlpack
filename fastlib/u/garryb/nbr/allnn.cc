@@ -159,7 +159,7 @@ class Allnn {
         const QPoint& q_point, index_t q_index,
         const RPoint& r_point, index_t r_index) {
       double trial_distance_sq = la::DistanceSqEuclidean(
-          q_point.vec(), r_point.vec()	);
+          q_point.vec(), r_point.vec());
       if (unlikely(trial_distance_sq <= distance_sq)) {
         // TODO: Is this a hack?
         if (likely(trial_distance_sq != 0)) {
