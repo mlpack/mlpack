@@ -1,7 +1,10 @@
 /**
- * @file otrav.cpp
+ * @file otrav.cc
  *
  * Definitions for object-traversal.
+ *
+ * Very little is defined here since pretty much every part of OT is
+ * templated.
  */
 
 #include "otrav.h"

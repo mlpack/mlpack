@@ -787,6 +787,14 @@ Multithreaded performance goes here.
 
 Cluster performance goes here.
 
+\section{Future Work}
+
+Future work mainly focuses on higher-quality and specialized implementations.
+A future implementation may be aware of its cache and postpone tree traversals on parts of the tree that are not in cache.
+Also, scalability to many more processors may be possible given specialized knowledge of the cluster, whether it is a datacenter environment with replicated distributed data, a large shared-memory system, or a multi-core\authorsnote{Elaborate some more.}.
+
+Also, algorithms with more than two trees should parallelize in a manner similar to the existing ones.
+
 \nocite{ex1,ex2}
 \bibliographystyle{latex8}
 \bibliography{icdm07}

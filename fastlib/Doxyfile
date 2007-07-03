@@ -96,8 +96,8 @@ EXCLUDE_PATTERNS       = */auton/* \
                          *blas.h \
                          *_impl.h \
                          *_impl.cc \
+                         */u/* \
                          *test.cc
-#                         */u/* \
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO

@@ -1134,7 +1134,7 @@ double ttn(int b,int n,knode **kns)
     }
     else
     {
-      bool jdiff = -1; /* undefined... will eventually point to the
+      int jdiff = -1; /* undefined... will eventually point to the
                           lowest j > b such that kns[j] is different from
                           bkn */
       
@@ -1425,7 +1425,7 @@ dyv *mk_weighted_ttn(int b,int n,knode **kns) {
 						else { /* We computed a valid contribution */
 							/* I don't understand why the next check is useful
 						  if ((dyv_max(result) != 0.0) || (dyv_min(result) != 0.0)) {
-						    dyv *tmp_result = mk_weighted_ttn(jdiff,n,kns);
+ 						    dyv *tmp_result = mk_weighted_ttn(jdiff,n,kns);
 						    dyv_mult(result,tmp_result,result);
 						    free_dyv(tmp_result);
 						  }
