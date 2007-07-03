@@ -101,7 +101,7 @@ def filemap_to_files(filemap):
   return util.collapse_once(
       [file_collection.to_files() for file_collection in filemap.values()])
 
-class Rule:
+class Metarule:
   """
   Generic rule.
   
@@ -168,7 +168,7 @@ class Rule:
         dep.run(sys, params, my_continuation_for(dep_class))
       
       check_done()
-  def doit(self, sysentry, dep_files, params):
+  def doit(self, realrule, dep_files, params):
     """
     The doit function is called for all subclasses of this.  The doit
     function doesn't necessarily perform the action, but is required to
@@ -179,7 +179,7 @@ class Rule:
     The following are sent to an implementors' doit:
       - dep_files: the files "generated" by all rules it depends on.  The rules
       are grouped into the label of the rule (given when you called
-      Rule.__init__) and then into the type of the file (like file
+      Metarule.__init__) and then into the type of the file (like file
       extension).  The rules you are dependent on were the ones responsible
       for assigning the file extension.  Each file has a "simple" name and
       an "absolute" name.  The simple name should be used for generating
@@ -196,7 +196,7 @@ class Rule:
           TODO: Remember why this is here, it doesn't seem to be used anywhere
       - systentry: a single entry in thie build system.  This is equivalent
       to a Makefile rule waiting for you to put actions into it.
-      Unlike this Rule class, this object wants exact specific commands
+      Unlike this Metarule class, this object wants exact specific commands
       for a specific parameterization, like a Makefile rule with real
       filenames and commands.
     You must return:
@@ -206,9 +206,9 @@ class Rule:
     # TODO: Implement me in subclasses
     return util.map_values(FileCollection.to_pairs, dep_files)
 
-class CustomRule(Rule):
+class CustomRule(Metarule):
   def __init__(self, dep_map, doit_fn):
-    Rule.__init__(self, **dep_map)
+    Metarule.__init__(self, **dep_map)
     self.doit_fn = doit_fn
-  def doit(self, sysentry, dep_files, params):
-    return self.doit_fn(sysentry, dep_files, params)
+  def doit(self, realrule, dep_files, params):
+    return self.doit_fn(realrule, dep_files, params)

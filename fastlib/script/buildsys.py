@@ -1,3 +1,11 @@
+"""The build system is in this file.
+
+Skip to the end (class Loader, function load) for all available
+build rule types.
+
+See dep.py for information on the non-intuitive way these classes
+as "metarules" link together and generate real code.
+"""
 
 import dep
 import util
@@ -132,8 +140,8 @@ class MakeBuildSys(dep.DepSys):
     self.entries = []
   def begin(self, state):
     return MakeBuildSysEntry(self, state)
-  def add_entry(self, entry):
-    self.entries.append(entry)
+  def add_realrule(self, realrule):
+    self.entries.append(realrule)
   def to_makefile(self):
     def shorten(fname):
       if "/bin/" in fname:
@@ -205,34 +213,34 @@ class MakeBuildSysEntry(dep.DepSysEntry):
     for file in dep.filemap_to_files(self.state.files):
       infiles[file.name] = None
     outfiles = [file.name for (classname, file) in files]
-    self.sys.add_entry((outfiles, list(infiles.keys()), self.commands))
+    self.sys.add_realrule((outfiles, list(infiles.keys()), self.commands))
 
-class SourceRule(dep.Rule):
+class SourceRule(dep.Metarule):
   def __init__(self, type, real_path, fake_path):
-    dep.Rule.__init__(self)
+    dep.Metarule.__init__(self)
     self.real_path = real_path
     self.fake_path = fake_path
     self.type = type
-  def doit(self, sysentry, files, params):
-    return [(self.type, sysentry.source_file(self.real_path, self.fake_path))]
+  def doit(self, realrule, files, params):
+    return [(self.type, realrule.source_file(self.real_path, self.fake_path))]
 
-class CompileRule(dep.Rule):
+class CompileRule(dep.Metarule):
   def __init__(self, source, headers, cflags):
-    dep.Rule.__init__(self, source=[source], headers=headers)
+    dep.Metarule.__init__(self, source=[source], headers=headers)
     self.cflags = cflags
-  def doit(self, sysentry, files, params):
+  def doit(self, realrule, files, params):
     compiler = compilers[params["compiler"]]
     source = files["source"].single(Types.GCC_SOURCE)
     dot = source.simplename.rindex(".")
     sourceextension = source.simplename[dot+1:]
     simplename = source.simplename[:dot] + ".o"
-    object = sysentry.file("obj/" + simplename.replace("/", "_"),
+    object = realrule.file("obj/" + simplename.replace("/", "_"),
         "arch", "kernel", "mode", "compiler", "cflags")
     # TODO: -I flags
     my_includes = "-I%s -I%s -I%s" % (
-        sq(sysentry.bin_dir("arch", "kernel", "compiler")),
-        sq(sysentry.bin_dir("arch", "kernel", "compiler", "cflags")),
-        sq(sysentry.sys.source_dir))
+        sq(realrule.bin_dir("arch", "kernel", "compiler")),
+        sq(realrule.bin_dir("arch", "kernel", "compiler", "cflags")),
+        sq(realrule.sys.source_dir))
     mode = params["mode"]
     my_flags = my_includes + " " + compiler.mode_dictionary[params["mode"]] \
         + " " + self.cflags + " " + params["cflags"]
@@ -241,18 +249,18 @@ class CompileRule(dep.Rule):
     command_template = compiler.command_from_ext[sourceextension]
     (source_dirname, source_basename) = os.path.split(source.name)
     compile_cmd = command_template % (my_flags, sq(source_basename), sq(object.name))
-    sysentry.command("cd " + sq(source_dirname) + " && " + compile_cmd)
+    realrule.command("cd " + sq(source_dirname) + " && " + compile_cmd)
     return [(Types.OBJECT, object)]
 
-class ArchiveRule(dep.Rule):
+class ArchiveRule(dep.Metarule):
   def __init__(self, name, objects):
-    dep.Rule.__init__(self, objects=objects)
+    dep.Metarule.__init__(self, objects=objects)
     self.name = name
-  def doit(self, sysentry, files, params):
+  def doit(self, realrule, files, params):
     objects = files["objects"].many(Types.OBJECT)
     if len(objects) != 0:
-      libfile = sysentry.file("lib" + self.name + ".a", "arch", "kernel", "mode", "compiler")
-      sysentry.command("ar r %s %s" % (sq(libfile),
+      libfile = realrule.file("lib" + self.name + ".a", "arch", "kernel", "mode", "compiler")
+      realrule.command("ar r %s %s" % (sq(libfile),
           " ".join([sq(x.name) for x in objects])))
       return [(Types.LINKABLE, libfile)]
     else:
@@ -260,16 +268,16 @@ class ArchiveRule(dep.Rule):
       return []
     #return [(Types.OBJECT, object) for object in objects]
 
-class HeaderSummaryRule(dep.Rule):
+class HeaderSummaryRule(dep.Metarule):
   def __init__(self, name, objects):
-    dep.Rule.__init__(self, objects=objects)
+    dep.Metarule.__init__(self, objects=objects)
     self.name = name
-  def doit(self, sysentry, files, params):
-    libfile = sysentry.file("lib" + self.name + ".h")
-    sysentry.command("touch %s" % (sq(libfile)))
+  def doit(self, realrule, files, params):
+    libfile = realrule.file("lib" + self.name + ".h")
+    realrule.command("touch %s" % (sq(libfile)))
     return [(Types.PLACEHOLDER, libfile)]
 
-class LibRule(dep.Rule):
+class LibRule(dep.Metarule):
   """LibRule returns all relevant archive files for this library and libraries
   it depends on.
   
@@ -287,43 +295,43 @@ class LibRule(dep.Rule):
     self.compile_rules = [CompileRule(source_rule, self.header_rules, cflags)
         for source_rule in source_rules]
     self.archive_rule = ArchiveRule(name, self.compile_rules)
-    dep.Rule.__init__(self, archive=[self.archive_rule], deplibs=deplibs)
-  def doit(self, sysentry, files, params):
+    dep.Metarule.__init__(self, archive=[self.archive_rule], deplibs=deplibs)
+  def doit(self, realrule, files, params):
     return files["deplibs"].to_pairs() + files["archive"].to_pairs()
 
-class BinRule(dep.Rule):
+class BinRule(dep.Metarule):
   def __init__(self, name, deplibs):
     self.name = name
-    dep.Rule.__init__(self, deplibs=deplibs)
-  def doit(self, sysentry, files, params):
+    dep.Metarule.__init__(self, deplibs=deplibs)
+  def doit(self, realrule, files, params):
     compiler = compilers[params["compiler"]]
-    binfile = sysentry.file(self.name, "arch", "kernel", "mode", "compiler")
+    binfile = realrule.file(self.name, "arch", "kernel", "mode", "compiler")
     # TO-DO: Link flags necessary?
     lflags_start = compiler.lflags_start
     lflags_end = compiler.lflags_end
     cflags = compiler.mode_dictionary[params["mode"]]
     reversed_libs = list(files["deplibs"].to_names())
     reversed_libs.reverse()
-    sysentry.command(compiler.linker + " -o %s %s %s %s %s" % (
+    realrule.command(compiler.linker + " -o %s %s %s %s %s" % (
         sq(binfile.name), cflags,
         lflags_start, " ".join(sq(reversed_libs)), lflags_end))
     return [(Types.BINFILE, binfile)]
 
-class MakefileRule(dep.Rule):
+class MakefileRule(dep.Metarule):
   """
   Plug created so that symlinks are re-created whenever the Makefile changes.
   """
   def __init__(self):
-    dep.Rule.__init__(self)
-  def doit(self, sysentry, files, params):
-    file = sysentry.makefile()
+    dep.Metarule.__init__(self)
+  def doit(self, realrule, files, params):
+    file = realrule.makefile()
     return [(Types.MISC, file)]
 
-class SymlinkRule(dep.Rule):
+class SymlinkRule(dep.Metarule):
   def __init__(self, filerules, dest_dir):
-    dep.Rule.__init__(self, filerules=filerules, makefile=[MakefileRule()])
+    dep.Metarule.__init__(self, filerules=filerules, makefile=[MakefileRule()])
     self.dest_dir = dest_dir
-  def doit(self, sysentry, files, params):
+  def doit(self, realrule, files, params):
     all = []
     pairs = files["filerules"].to_pairs()
     for (classname, file) in pairs:
@@ -331,26 +339,26 @@ class SymlinkRule(dep.Rule):
       shortname = os.path.basename(file.name)
       destname = os.path.join(self.dest_dir, shortname)
       # the symlink's simplename will be the same as the original's
-      destfile = sysentry.source_file(destname, shortname)
-      sysentry.command("rm -f %s" % sq(destname))
-      sysentry.command("ln -s -f %s %s" % (sq(sourcename), sq(destname)))
+      destfile = realrule.source_file(destname, shortname)
+      realrule.command("rm -f %s" % sq(destname))
+      realrule.command("ln -s -f %s %s" % (sq(sourcename), sq(destname)))
       all.append((classname, destfile))
-    sysentry.command("echo '*** Created %d symlinks in %s.'" % (len(pairs), self.dest_dir))
+    realrule.command("echo '*** Created %d symlinks in %s.'" % (len(pairs), self.dest_dir))
     return all
 
-class WgetRule(dep.Rule):
+class WgetRule(dep.Metarule):
   def __init__(self, url, type, real_path, fake_path):
     self.real_path = real_path
     self.fake_path = fake_path
     self.url = url
     self.type = type
-    dep.Rule.__init__(self)
-  def doit(self, sysentry, files, params):
+    dep.Metarule.__init__(self)
+  def doit(self, realrule, files, params):
     (real_dir, filename) = os.path.split(self.real_path)
-    sysentry.command("echo 'Downloading the file using curl...'")
-    sysentry.command("cd %s && curl -L -o %s %s" % (
+    realrule.command("echo 'Downloading the file using curl...'")
+    realrule.command("cd %s && curl -L -o %s %s" % (
         sq(real_dir), sq(filename), sq(self.url)))
-    return [(self.type, sysentry.source_file(self.real_path, self.fake_path))]
+    return [(self.type, realrule.source_file(self.real_path, self.fake_path))]
 
 # Parameter loader
 

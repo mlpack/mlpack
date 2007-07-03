@@ -323,7 +323,7 @@ namespace ot_private {
   OTPRINTER__SPECIAL(double, "double = %f");
 
   /**
-   * Takes an OT-compatible object and prints it to screen.
+   * Utility class to take an OT-compatible object and prints it to screen.
    */
   class OTPrinter {
    private:
@@ -795,6 +795,11 @@ namespace ot_private {
 
 namespace ot {
 
+  /**
+   * Prints any object.
+   *
+   * Perfect for debugging.
+   */
   template<typename T>
   void Print(const T& object, FILE *stream = stderr) {
     ot_private::OTPrinter printer;
