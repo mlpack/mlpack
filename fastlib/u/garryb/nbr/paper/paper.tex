@@ -206,9 +206,9 @@ We present how these algorithms yield an elegant strategy for parallelizing the 
 
 \section{Introduction}
 
-Many problems in spatial statistics and data mining, especially nonparametric methods, nominally require an all-$n$-tuples analysis of data points.
+Many problems in spatial statistics and data mining, especially nonparametric methods, nominally require an all-$n$-tuples analysis of data points that lie in a metric space.
 Recent work\cite{ryan_nips} has characterized these {\it generalized $N$-body problems} and shown how a multi-tree algorithmic approach directly follows, leading quite often to asymptotically faster algorithms approaching empirical linear-time performance.
-The multi-tree approach treats these problems by recursively dividing the problem over the Cartesian product of points, resulting in the fastest practical serial algorithms for many statistical and physical problems, such as kernel density estimation, $n$-point correlation, nearest neighbors, Gaussian process and local polynomial regression, and several others.
+The multi-tree approach treats these problems by recursively dividing the problem over the Cartesian product of points, resulting in the fastest practical serial algorithms for many statistical and physical problems, such as kernel density estimation, $n$-point correlation, nearest neighbors, Gaussian process regression, and more.
 
 Nonetheless, as multi-core processors begin to dominate even commodity markets, even the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
 Additionally, multi-tree algorithms excel in fields of nonparametric learning, and since nonparametric learning often performs exceptionally well with massive data, it is only natural to conceive of data mining the {\it entire Web} with efficient dual-tree algorithms.
@@ -255,10 +255,10 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
 
 \authornote{KD-tree figure goes here}
 Core to dual-tree algorithms is the concepts of trees and bounds.
-Every node $X$ in a spatial tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \union \kdright{X} = X$ with parent $\kdparent{X}$, and each leaf a single point $\{x\}$\footnote{In practice, leaves contain multiple points to avoid recursive overhead.}.
+Every node $X$ in a spatial tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \union \kdright{X} = X$ with parent $\kdparent{X}$, with each leaf a single point $\{x\}$\footnote{In practice, leaves contain multiple points to avoid recursive overhead.}.
 For example, a $kd$-tree\cite{kdtree}, as in \fig{kdtree}, recursively partitions the data along coordinate dimensions.
 Each node has a bounding box and can also store summary statistics such as means and other moments.
-Notationally, we denote $\dist{\cdot}{\cdot}$ to be a distance metric; superscripts $l$ and $u$ to refer respectively to lower and upper bounds, which are often, as in the case of distance, obtained from bounding boxes of points.
+Notationally, we denote $\dist{\cdot}{\cdot}$ to be a distance metric; superscripts $l$ and $u$ refer respectively to lower and upper bounds, which are often, as in the case of distance, obtained from bounding boxes of points.
 
 \authornote{This paragraph needs some work.}A single-tree algorithm accelerates computation by partitioning the data in half along the tree branches.
 Some parts of the tree need no further exploration, and the subcomputation is pruned.
@@ -275,7 +275,7 @@ To achieve speedup, one maintains for each tree node $Q$ of queries the furthest
 If a set of references is farther away than this distance, no further exploration is required.
 
 {\bf Affinity propagation.}
-Affinity propagation is a recent clustering technique that identifies exemplars in a data set, taking into account all point-to-point similarities\cite{frey_dueck}.
+Affinity propagation is a recent clustering technique that identifies exemplars in a data set, taking into account all point-to-point similarities\cite{frey_dueck}\authorsnote{Am I implementing parallel Affinity Propagation?}.
 The similaritiy $\simil{i}{j}$ between points $x_i$ and $x_j$ is the negative squared distance or some other quantity to be maximized, with diagonals $\simil{i}{i}$ set to a parameter that controls the number of clusters.
 The algorithm maximizes the sum of similarities between each point and its chosen exemplar.
 If a metric space is defined over the points, one may use the dual-tree algorithm in \cite{ryan_nips} to solve the modified problems,
@@ -284,13 +284,14 @@ If a metric space is defined over the points, one may use the dual-tree algorith
   \\
   \vecrho \gets \map_{j} \sum_{i} \!\left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)\!,
 \end{array} \]
-\noindent which are repeated iteratively with damping until convergence, with $\ocpos{v}(x)$ being $\min(x, 0)$ for $v$ true and $x$ otherwise.
+\noindent with $\ocpos{v}(x)$ being $\min(x, 0)$ for $v$ true and $x$ otherwise, and $\falphaj{i}{j}$ being the first minimum of $\falpha{i}$ when $i \neq j$ and the second otherwise.
+These vectors are computed iteratively until convergence.
 Empirical $O(N^{1.3})$ scaling was achieved on three-dimensional points from a gravitational $N$-body particle simulation, compared to the existing $O(N^2)$ time and space method.
 
 \section{Parallel $N$-Body Simulations}
 
 Some of the largest parallel computing efforts in history are $N$-body particle simulations.
-Algorithms for efficient simulation typically use trees, and their parallelization offers indispensible insight into that for generalized $N$-body problems.
+Algorithms for efficient simulation almost universally use trees, and parallelization of these tree codes offers indispensible insight into that of generalized $N$-body problems.
 The physical $N$-body problem models $N$ particles in an evolving system where each particle exerts force on all other particles.
 Computational solutions break the simulation into discrete time steps, during which force is calculated,
 \[\map_{q \in D} \sum_{r \in D} f(q,r)\]
@@ -305,8 +306,8 @@ For each query point $q$, the force contribution is approximated by recursively 
 If the $q$ is further than parameter $\theta$ times the spatial width of the considered node, the force calculation is approximated by the node's center of mass.
 
 The Fast Multiple Method \cite{greengard_fmm} achieves closer to $O(N)$, but with a higher constant factor, by considering node-node interactions like dual-tree algorithms.
-However, it is not a dual-tree algorithm in our definition, because it predetermines which node-node interactions to compute via a set of specialized rules involving the tree structure itself rather than using bounding information inferred by recursive exploration of node pairs.
-The multipole method is rarely treated beyond extensions of techniques used for Barnes-Hut \cite{singh95load} or as a demonstration of fully dynamic auto-parallelization, for instance using a data-parallel programming language \cite{nyland93dataparallel} \cite{washington_nesl}; thus, we devote our discussion mainly to the extensively studied Barnes-Hut\authornote{Something else I could do is just talk about BH, and at the end give a short spiel on how FMM is usually treated.}.
+However, it is not a dual-tree algorithm in our definition, because it predetermines which node-node interactions to compute via specialized rules involving the tree structure itself rather than using bounding information inferred by recursive exploration of node pairs.
+The multipole method is rarely treated beyond small extensions of techniques used for Barnes-Hut \cite{singh95load} or in the context of auto-parallelization, such as data-parallel programming languages \cite{nyland93dataparallel} \cite{washington_nesl}; thus, we devote our discussion mainly to the extensively studied Barnes-Hut\authornote{Something else I could do is just talk about BH, and at the end give a short spiel on how FMM is usually treated.}.
 
 %Greengard's Fast Multipole Method \cite{greengard_fmm} has some elements of dual-tree computation in its downwards pass, in which the force contribution for an entire node of queries is estimated for an entire node of references.
 %The Fast Multipole Method is considered to have a higher constant factor; thus, most research focuses on the single-tree Barnes-Hut\cite{fmm_slower}.
@@ -320,7 +321,7 @@ The cost of the dry run is amortized, since the simulation changes slowly and th
 The estimated runtime is then used for the domain decomposition.
 Orthogonal recursive bisection (ORB) decomposition hierarchically bisects the data along a plane, somewhat like a $kd$-tree, but such that each side has an equal total computational cost \cite{singh95load, liu94experiences, salmon93parallel}.
 The cost-zones technique alternatively uses the existing oct-tree used by the simulation and sequentially orders all points following a Morton or Hilber-Peano pattern.
-The data are then cut into sequential chunks o roughly equal size.
+The data are then cut into sequential chunks of roughly equal size.
 
 Both techniques attempt to solve the problems for larger scale parallelization -- communication cost.
 By approximating distant computations with the center of mass, the $N$-body problem inherently translates spatial locality into data locality, exploited successfully by both the ORB and cost-zones technique.
@@ -335,16 +336,17 @@ However, Warren and Salmon later \cite{warren93,warren97} show succesful impleme
 In fact, \cite{warren97} extends parallelization to include disk-resident data with software caching, showing that the same principles that lead to efficient disk algorithms lead directly to efficient parallel algorithms.
 
 {\bf Relation to Dual-Tree.}
-The issues of $N$-body force calculation largely mirror that for all interesting generalized $N$-body problems.
+The issues of $N$-body force calculation largely mirror that for all generalized $N$-body problems with efficient dual-tree algorithms.
 In all-nearest-neighbors, a locally essential tree is typically not much larger than than set of queries itself.
-In contrast, two-point correlation cares most about points that are very close to the chosen radius, which may or may not span a region much larger than the queries.
-Nonetheless, the locally essential tree is highly correlated for nearby trees, and although more communication may be needed, this corresponds with a similar increase in computation.\authornote{A figure might be nice.  Show a filled circle in the middle, and a thick ring around the circle showing the intersection of all the boundary regions.}.
+In contrast, two-point correlation cares most about points that are very close to the chosen radius, which may or may not span a region much larger than the queries\authorsnote{A figure might be nice.  Show a blob of points and its locally essential tree in two-dimensional space.}.
+Nonetheless, the locally essential tree is highly correlated for nearby trees, and although more communication may be needed, this corresponds with a similar increase in computation.
 
-However, work decomposition and load balancing for a dual-tree algorithm differ fundamentally.
+However, work decomposition and load balancing for a dual-tree algorithm differ fundamentally from single-tree particle simulations.
 A dual-tree algorithm's unit of work is not a single query but a pair of nodes, which we later show is practically done by dividing the tree into subtrees of queries.
-It is possible to use cost-zones in this manner -- a contiguous Morton ordering\footnote{A Morton ordering on a $kd$-tree is a depth-first left-to-right traversal (leaves only).  A Peano-Hilbert ordering has no meaning for a $kd$-tree.} of leaves is in fact a union of an small $O(log N)$ number of subtrees.
-Unfortunately, both the ORB and cost-zones techniques require that we estimate the relative costs beforehand.
-Not only do costs per query have no meaning for dual-tree algorithms, but to be fully general we cannot assume there is a practical way to perform a dry run nor even that the algorithm consists of sequential time-steps.
+It is possible to use cost-zones along subtrees of queries; in fact, a contiguous Morton ordering\footnote{A Morton ordering on a $kd$-tree is a depth-first left-to-right traversal (leaves only).  A Peano-Hilbert ordering has no meaning for a $kd$-tree.} of leaves is in fact a union of an small $O(log N)$ number of subtrees, which can be treated as independent problems.
+Unfortunately, both the ORB and cost-zones techniques require an estimate of relative computational cost.
+Not only is cost per individual query a foreign concept for dual-tree algorithms, but to be fully general we cannot assume there is a practical way to perform a dry run nor even that the algorithm consists of sequential time-steps.
+This paper focuses on techniques that apply universally to {\it all} dual-tree algorithms solving generalized $N$-body problems.
 
 \section{Parallel Programming Models}
 
@@ -353,14 +355,14 @@ One technique offered by the programming languages community is the parallelizat
 Using such a language, however, can sometimes put unintended constraints on development, especially since compiler technologies cannot automatically derive the wealth of parallelization techniques that have been used in past state-of-the-art parallel $N$-body simulations.
 
 The development of specialized programming model form another aspect.
-Great care is taken to ensure that all programs in this model can be executed efficiently in parallel, such that a person with little parallelization knowledge can write a parallel program.
+Great care is taken to ensure that all programs in this model can be executed efficiently in parallel, so that a developer with little parallelization knowledge can write a parallel program.
 The Map-Reduce framework introduced by Google in \cite{mapreduce} combines research in all fronts of high-performance computing to efficiently solve a wide variety of problems.
 We later show that $N$-body problems are largely incompatible with Map-Reduce and propose a similar framework for dual-tree algorithms.
 
 \section{Dual-Tree Algorithm Framework}
 
-\cite{ryan_nips} characterizes the class of generalized $N$-body problems and shows how they lead naturally to dual-tree algorithms.
-We summarize key points in order to motivate the design choices behind our computational model.
+\cite{ryan_nips} formalizes the class of generalized $N$-body problems and shows how they lead naturally to dual-tree algorithms.
+We summarize key points in order to motivate a unified computational model for generalized $N$-body problems.
 
 A \defterm{second-order reduce problem} is a tuple $\Theta = (\mathcal{X}, \mathcal{Y}, \bigotimes, \bigodot, f, g, h)$ with $\bigotimes$ and $\bigodot$ both commutative and associative, such that for problem instance $X \subset {\mathcal{X}}, Y \subset {\mathcal{Y}}$, one computes
 \[\begin{array}{l}
@@ -368,7 +370,8 @@ A \defterm{second-order reduce problem} is a tuple $\Theta = (\mathcal{X}, \math
   \\
   \displaystyle \gnp(X, Y) = \bigodot_{x \in X} g\!\left(x, \bigotimes_{y \in Y} f(x, y) \right).
 \end{array}\]
-\noindent A second-order reduce problem is \defterm{regular} if $g(x, a) = a$.
+\noindent For example, three-dimensional two-point correlation with radius $h$ is the tuple $(\mathcal{R}^3, \mathcal{R}^3, +, +, \lambda x,y ~ I(\dist{x}{y} < h), \lambda x,a ~ a, \lambda b ~ b)$.
+A second-order reduce problem is \defterm{regular} if $g(x, a) = a$.
 It is also \defterm{block decomposable} if for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$, $\gnp(X,Y) = \gnp(X,\kdleft{Y}) \otimes \gnp(X,\kdright{Y})$.
 Note the equivalent statement for partitioning $X$ is trivial from commutativity and associativity of $\bigodot$ alone.
 A second-order reduce problem with both qualities is a second-order \defterm{generalized $N$-body problem}\authorsnote{Later, I require abelian monoid}\authorsnote{Fix X, Y ordering.}.
@@ -384,8 +387,8 @@ If $\bigodot$ is the special higher-order operator $\map$, then we modify the pr
 \noindent which is block-decomposable.
 A problem for which $\bigodot$ is $\map$ is a \defterm{query-reference problem}.
 
-A claim critical to the computational model we show is that any second-order reduce problem may be transformed into a GNP by replacing the outer operator with $\map$, and treating both $g$ and $\odot$ as a postprocessing step\authorsnote{Work into paper: In a small handful of problems, especially approximation problems, introducing $\map$ avoids some potential for speedup; nonetheless, dual-tree algorithms have little trouble with the $\map$ operator.}.
-Thus, our paper focuses on only two cases -- second-order singular reduce problems and query-reference problems.
+Note that {\it any} second-order reduce problem can be transformed into a query-reference GNP by replacing the outer operator with $\map$, treating both $g$ and $\odot$ as a postprocessing step.
+Therefore, any parallelization framework that solves query-reference problems can solve any second-order reduce problem.
 
 {\bf The Generalized $N$-Body Algorithm.}
 Block decomposition implies a hierarchical computation,
