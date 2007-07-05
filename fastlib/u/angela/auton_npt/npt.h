@@ -31,6 +31,8 @@ extern double max_num_matches;
 extern double total_num_base_cases;
 extern double total_num_iterative_base_cases;
 extern double total_num_missing_ntuples;
+extern double sum_total_ntuples;
+extern double theoretical_total_ntuples;
 
 extern int iterative;
 

@@ -37,6 +37,8 @@ double max_num_matches = 0;
 double total_num_base_cases = 0;
 double total_num_iterative_base_cases = 0;
 double total_num_missing_ntuples = 0;
+double sum_total_ntuples = 0;
+double theoretical_total_ntuples = 0;
 
 int iterative = 0;
 /* End debugging section */
