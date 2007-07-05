@@ -491,7 +491,7 @@ double slow_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,
 
   if ( matcher_n(ma) > MAX_N ) my_error("MAX_N too small");
 
-	if (iterative) {
+	if (iterative && 0) {
 		result = iterative_slow_npt_helper(ms,xs,ws,ma,use_symmetry,projection,projmethod,
 		                         rows,rowsets,wresult,wsum,wsumsq);
 	}
@@ -1101,6 +1101,7 @@ double two_ttn(int b,int n,knode **kns,int i)
    time looking here, but you might check out the comments about it in the 
    sum weighted version of this function, mk_weighted_sum_ttn().
 */
+
 double ttn(int b,int n,knode **kns)
 {
   knode *bkn = kns[b];
@@ -1125,8 +1126,7 @@ double ttn(int b,int n,knode **kns)
         simple_product = FALSE;
     }
 
-    if ( conflict )
-      result = 0.0;
+    if ( conflict ) result = 0.0;
     else if ( simple_product )
     {
       for ( j = b+1 ; j < n ; j++ )
@@ -1168,6 +1168,129 @@ double ttn(int b,int n,knode **kns)
   }
   return result;
 }
+
+/* Iterative ttn-like counter.. probably very slow */
+double iterative_ttn(int n, knode **kns) {
+	double result = 0.0;
+	int i;
+
+	for (i=0;i<n;) {
+		bool conflict = FALSE;
+		bool simple_product = TRUE;
+		knode *kni = kns[i];
+		int j;
+		double tmp_result = (double) kni->num_points;
+
+		/* Test for conflicts and overlapping knodes */
+		for (j=i+1;j<n && !conflict; j++) {
+	 		if (kni->lo_index >= kns[j]->hi_index) conflict = TRUE;
+			else if (kns[j-1]->hi_index > kns[j]->lo_index) simple_product = FALSE;
+		}
+
+		if (conflict) { /* bad ordering... not counting anything */
+			return 0.0;
+		}
+    else {
+			if (simple_product) { /* non-overlapping knodes... easy to give a result */
+				
+				for (j=i+1;j<n;j++) { /* compute the contribution of the last knodes */
+					tmp_result *= kns[j]->num_points;
+				}
+				
+				/* Combine this with the contribution of previous knodes */
+				if (i==0)	result = tmp_result; /* no previous knodes => this is it */
+				else result *= tmp_result; 				
+
+				/* Since we accounted for all knodes we're done */
+				return result;
+			}
+			else { /* some knodes overlap or are identical */
+				int first_overlap = -1;    
+				
+				j = i+1;
+	      do {
+	        if (kni->lo_index != kns[j]->lo_index || 
+							kni->hi_index !=	kns[j]->hi_index ) {
+						first_overlap = j;
+					}
+					j++;
+				}
+				while (j < n && first_overlap < 0);
+      
+	      if (first_overlap < 0) { /* all remaining knodes are identical */
+					tmp_result = careful_n_choose_m(kni->num_points,n-i);
+
+					/* Combine this with the contribution of the previous knodes */
+					if (i==0) result = tmp_result; /* no previous knodes => this is it */
+					else result *= tmp_result;
+					
+					/* Since we accounted for all knodes we're done */
+					return result;
+				}
+				
+	      else { /* we identified the first overlapping knode */
+	        knode *kno = kns[first_overlap];
+	        if ( kno->lo_index >= kni->hi_index ) {
+						/* Computing the contribution of knodes i -> first_overlap-1 */
+						tmp_result = careful_n_choose_m(kni->num_points,first_overlap-i);
+
+						/* Only do more work if it's needed to get the answer */
+						if (tmp_result > 0.0) {					
+							/* Combine this with the contribution of the previous knodes */
+							if (i==0) result = tmp_result;
+							else result *= tmp_result;
+							
+							/* Jump the current knode (i) to the overlapping knode */
+							i = first_overlap;
+						}
+					}
+					
+	        else { /* one of the overlapping knodes is a parent of the other */
+						
+						if ( as_indexes_strictly_surround_bs(kni,kno) ) { /* i is bigger */
+							knode *tmp_kn = kns[i];
+							
+							/* computing the count for the left child */
+							kns[i] = tmp_kn->left;
+							result = iterative_ttn(n,kns);
+							/* computing the count for the right child */
+							kns[i] = tmp_kn->right;
+							result += iterative_ttn(n,kns);
+							/* restoring the knode list */
+							kns[i] = tmp_kn;
+
+							/* We're done */
+							return result;
+						}
+		        else { /* i is not bigger */
+							if ( as_indexes_strictly_surround_bs(kno,kni) ) { /* i is smaller */
+								knode *tmp_kn = kns[first_overlap];
+
+								/* computing the count for the left child */
+								kns[first_overlap] = tmp_kn->left;
+								result = iterative_ttn(n,kns);
+								/* copmuting the count for the right child */
+								kns[first_overlap] = tmp_kn->right;
+								result += iterative_ttn(n,kns);
+								/* restoring the knode list */
+								kns[first_overlap] = tmp_kn;
+
+								/* We're done */
+								return result;
+							}
+				      else my_error("osdncocsndsn"); /* i is in fact the same as
+																								first_overlap => ERROR */
+						}
+					}
+				}
+			}
+		}
+	}	
+
+	abort();
+	return result;
+}
+
 
 /* Just used for checking ttn (a slow implementation thereof) */
 double vst(imat *constraints,int k,int n,int *vals)
@@ -1226,25 +1349,29 @@ double careful_total_num_ntuples_symmetric(int n,knode **kns)
   }
 
 	result = ttn(0,n,kns);
-  slowres = very_slow_ttn(im);
-
-  if ( slowres != result )
-  {
-	  pimat(im);
-    printf("Counting problem!\nslow = %f and fast = %f\n",slowres, result);
+//  slowres = very_slow_ttn(im);
+//
+//  if ( -1 < (slowres-result) || (slowres-result) > 1 )
+//  {
+//	  pimat(im);
+//    printf("Counting problem!\nslow = %f and fast = %f\n",slowres, result);
 //    my_breakpoint();
 //    (void) ttn(0,n,kns);
 //    my_error("slow and fast ttn disagree");
-  }
+//  }
 
   free_imat(im);
 
-  return slowres;
+  return result;
 }
 
 double fast_total_num_ntuples_symmetric(int n,knode **kns)
 {
-  double result = ttn(0,n,kns);
+  double result;
+
+	if (iterative) result = iterative_ttn(n,kns);
+	else result = ttn(0,n,kns);
+
   return result;
 }
 
@@ -1425,7 +1552,7 @@ dyv *mk_weighted_ttn(int b,int n,knode **kns) {
 						else { /* We computed a valid contribution */
 							/* I don't understand why the next check is useful
 						  if ((dyv_max(result) != 0.0) || (dyv_min(result) != 0.0)) {
- 						    dyv *tmp_result = mk_weighted_ttn(jdiff,n,kns);
+						    dyv *tmp_result = mk_weighted_ttn(jdiff,n,kns);
 						    dyv_mult(result,tmp_result,result);
 						    free_dyv(tmp_result);
 						  }
@@ -1911,8 +2038,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
   bool not_worth_it = (ntuples <= thresh_ntuples);
 */
 	bool not_worth_it = FALSE;
-	int fishy = 0;
-
+	
 	/* ANG ~> Maybe take this out for debugging */
   ivec *permute_status = (permutation_cache) ?  mk_constant_ivec(imat_rows(permutation_cache),SUBSUME) : NULL;
 
@@ -1920,13 +2046,16 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
 	/* ANG ~> Taking this out for debugging would be nice but we segfault :( */
   imat *num_incons = (permutation_cache) ? mk_zero_imat(imat_rows(permutation_cache),n) : NULL;
 
-	/* Debugging ~> probably obsolete right now */
-	if (weighted_ntuples && dyv_max(weighted_ntuples) == 0 && ntuples != 0) {
-		printf("Possible error.\n");
-		printf("There are matching ntuples but the max weighted count	is 0.\n\n");
-		fishy = 1;
+	/* ANG ~> counting all the possible ntuples to make sure the recursion is ok */
+	int tmp_i;
+	double tmp_product;
+	
+	for (tmp_i=0, tmp_product = 1.0;tmp_i<n;tmp_i++) {
+		tmp_product *= kns[tmp_i]->num_points;	
 	}
-
+//	sum_total_ntuples += tmp_product;
+	
+	
 	/* More debugging */
 	if (ntuples <= 0) {
 		/* The total number of ntuples is 0... We'll prune right away and count the
@@ -1934,6 +2063,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
 		 */
 		total_num_missing_ntuples += 1;
 		result = 0.0;
+		sum_total_ntuples += tmp_product;
 		return result;
 	}
 	
@@ -2076,6 +2206,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
     if ( Verbosity >= 0.0 )
       printf("Number of possible matches zero or below thresh. Prune without decreasing hibound!! \n");
     /* Note we should NOT decrease hi bound in this case */
+		sum_total_ntuples += tmp_product;
     return result;
   }
   else { 
@@ -2087,6 +2218,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
       if (do_weights) {
         dyv_subtract(whibound,weighted_ntuples,whibound);
       }
+			sum_total_ntuples += tmp_product;
       return result;
     }
     else {
@@ -2113,6 +2245,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
           dyv_plus(wsumsq,tmp,wsumsq);
           free_dyv(tmp);
         }
+				sum_total_ntuples += tmp_product;							
         return result;
       }
       else { /* Can't prune so we need to recurse */
@@ -2209,6 +2342,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
             dyv_plus(wsumsq,wtemp_sumsq,wsumsq);
             free_dyv(wtemp_sumsq);
           }
+		
         }
         else { /* There's someone waiting to be splitted... */					
           /* We will choose a single knode to split on */
@@ -2277,6 +2411,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
   if (permute_status) free_ivec(permute_status);
   if (num_incons) free_imat(num_incons);
 
+	sum_total_ntuples += tmp_product;
   return result;
 }
 
@@ -2927,12 +3062,24 @@ void npt_main(int argc,char *argv[])
 		}
 		
 		/* Debugging info */
+		theoretical_total_ntuples = tp->dp_data->mr->root->num_points;
+		theoretical_total_ntuples *= tp->dp_random->mr->root->num_points;
+		theoretical_total_ntuples *= tp->dp_random->mr->root->num_points;
+			
 		printf("total inclusions = %f\n", total_num_inclusions);
 		printf("total exclusions = %f\n", total_num_exclusions);
 		printf("total base cases = %f\n", total_num_base_cases);
 		printf("total recursions = %f\n", total_num_recursions);
 		printf("total number of 'missing' n-tuples = %f\n",	total_num_missing_ntuples);
 		printf("total iterative base cases = %f\n", total_num_iterative_base_cases);
+		printf("\ntotal points in the first dataset =	%d\n", 
+				tp->dp_data->mr->root->num_points);
+		printf("total points in the second dataset = %d\n", 
+				tp->dp_random->mr->root->num_points);
+		printf("total number of ntuples seen in the recursion = %f\n", 
+				sum_total_ntuples);
+		printf("total theoretical number of ntuples (n1*n2*n2) = %f\n",
+				theoretical_total_ntuples);
 		
     explain_nout(no);
     free_nout(no);
