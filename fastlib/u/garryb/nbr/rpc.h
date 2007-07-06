@@ -7,15 +7,11 @@
 #ifndef NBR_RPC_H
 #define NBR_RPC_H
 
-#ifdef USE_MPI
-
 #include "blockdev.h"
 
 #include "fastlib/fastlib_int.h"
 
-#include <mpi.h>
-
-extern Mutex global_mpi_lock;
+#include "rpc_sock.h"
 
 /**
  * A single remote procedure call transaction.
@@ -27,7 +23,7 @@ extern Mutex global_mpi_lock;
 template<class ResponseObject>
 class Rpc {
  private:
-  char *data_;
+  ArrayList<char> data_;
   int channel_;
   int destination_;
  
@@ -39,105 +35,36 @@ class Rpc {
   Rpc() {
   }
   ~Rpc() {
-    mem::Free(data_);
   }
 
   template<typename RequestObject>
   ResponseObject *Request(
       int channel, int destination, const RequestObject& request) {
     int length;
-    length = ot::PointerFrozenSize(request);
-    data_ = mem::Alloc<char>(length);
-    ot::PointerFreeze(request, data_);
-    MPI_Send(data_, length, MPI_CHAR, destination_, channel_, MPI_COMM_WORLD);
-    MPI_Status status;
-    MPI_Probe(MPI_ANY_SOURCE, channel_, MPI_COMM_WORLD, &status);
-    MPI_Get_count(&status, MPI_CHAR, &length);
-    data_ = mem::Resize(data_, length);
-    MPI_Recv(data_, length, MPI_CHAR,
-        destination_, channel_, MPI_COMM_WORLD, &status);
-    return ot::PointerThaw<ResponseObject>(data_);
+    data_.Init(ot::PointerFrozenSize(request));
+    data_ = RpcImpl::SendReceive(channel_, destination_, &data_);
+    return ot::PointerThaw<ResponseObject>(data_.ptr());
   }
 
   operator ResponseObject *() {
-    return reinterpret_cast<ResponseObject*>(data_);
+    return reinterpret_cast<ResponseObject*>(data_.ptr());
   }
   ResponseObject* operator ->() {
-    return reinterpret_cast<ResponseObject*>(data_);
+    return reinterpret_cast<ResponseObject*>(data_.ptr());
   }
   ResponseObject& operator *() {
-    return *reinterpret_cast<ResponseObject*>(data_);
+    return *reinterpret_cast<ResponseObject*>(data_.ptr());
   }
   operator const ResponseObject *() const {
-    return *reinterpret_cast<ResponseObject*>(data_);
+    return *reinterpret_cast<ResponseObject*>(data_.ptr());
   }
   const ResponseObject* operator ->() const {
-    return reinterpret_cast<ResponseObject*>(data_);
+    return reinterpret_cast<ResponseObject*>(data_.ptr());
   }
   const ResponseObject& operator *() const {
-    return *reinterpret_cast<ResponseObject*>(data_);
+    return *reinterpret_cast<ResponseObject*>(data_.ptr());
   }
 };
-
-// /**
-//  * This class is your interface to an object that's somewhere else.
-//  */
-// template<class RequestObject, class ResponseObject>
-// class RemoteObjectStub {
-//   FORBID_COPY(RemoteObjectStub);
-// 
-//  private:
-//   ArrayList<char> data_;
-//   int channel_;
-//   int destination_;
-//   Mutex mutex_;
-// #ifdef DEBUG
-//   bool locked_; // for debug mode
-// #endif
-// 
-//  public:
-//   RemoteObjectStub() {}
-//   ~RemoteObjectStub() {}
-//   
-//   void Init(int channel_in, int destination_in) {
-//     data_.Init();
-//     channel_ = channel_in;
-//     destination_ = destination_in;
-//     DEBUG_ONLY(locked_ = false);
-//   }
-// 
-//   const ResponseObject *Request(const RequestObject& request) {
-//     DEBUG_ASSERT(locked_ == true);
-// 
-//     global_mpi_lock.Lock();
-// 
-//     data_.Resize(ot::PointerFrozenSize(request));
-//     ot::PointerFreeze(request, data_.begin());
-//     MPI_Send(data_.begin(), data_.size(), MPI_CHAR,
-//         destination_, channel_, MPI_COMM_WORLD);
-//     MPI_Status status;
-//     MPI_Probe(MPI_ANY_SOURCE, channel_, MPI_COMM_WORLD, &status);
-//     int length;
-//     MPI_Get_count(&status, MPI_CHAR, &length);
-//     data_.Resize(length);
-//     MPI_Recv(data_.begin(), data_.size(), MPI_CHAR,
-//         destination_, channel_, MPI_COMM_WORLD, &status);
-// 
-//     global_mpi_lock.Unlock();
-// 
-//     return ot::PointerThaw<ResponseObject>(data_.begin());
-//   }
-// 
-//   void Lock() {
-//     mutex_.Lock();
-//     DEBUG_ONLY(locked_ = true);
-//   }
-// 
-//   void Unlock() {
-//     DEBUG_ONLY(locked_ = false);
-//     mutex_.Unlock();
-//   }
-// };
 
 class RawRemoteObjectBackend {
  private:
@@ -239,7 +166,5 @@ void GetRemoteData(int channel, int destination, T* result) {
   Rpc<T> response(channel, destination, request);
   result->Copy(*response);
 }
-
-#endif
 
 #endif
