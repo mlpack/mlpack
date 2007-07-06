@@ -88,6 +88,13 @@ class HashedRemoteBlockDevice
       offset_t begin, offset_t end, const char *data);
   virtual blockid_t AllocBlock();
 
+  RawRemoteObjectBackend *server() {
+    return &server_;
+  }
+  int channel() const {
+    return channel_;
+  }
+
  private:
   int RankHash_(blockid_t block) {
     return block % n_machines_;
@@ -132,6 +139,14 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
     CacheArray<T>::Flush();
     CacheArray<T>::mode_ = mode;
     small_cache_.Clear(mode);
+  }
+  
+  RawRemoteObjectBackend *server() {
+    return remote_device_.server();
+  }
+  
+  int channel() const {
+    return remote_device_.channel();
   }
 };
 

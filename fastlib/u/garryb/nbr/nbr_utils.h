@@ -8,6 +8,10 @@
 #include "par/thread.h"
 #include "par/task.h"
 
+#ifdef USE_MPI
+#include "netcache.h"
+#endif
+
 namespace nbr_utils {
 
 template<typename Param, typename Point, typename Node>
@@ -272,7 +276,6 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
 #ifdef USE_MPI
 
-#include "netcache.h"
 
 template<typename GNP, typename Solver>
 class MpiMonochromaticDualTreeRunner {
@@ -297,6 +300,9 @@ class MpiMonochromaticDualTreeRunner {
 
  private:
   static const int MASTER_RANK = 0;
+  static const int DATA_POINTS_CHANNEL = 10;
+  static const int DATA_NODES_CHANNEL = 11;
+  static const int Q_RESULTS_CHANNEL = 12;
   static const int PARAM_CHANNEL = 20;
   static const int CONFIG_CHANNEL = 21;
   static const int WORK_CHANNEL = 22;
@@ -315,6 +321,7 @@ class MpiMonochromaticDualTreeRunner {
   SimpleDistributedCacheArray<typename GNP::QPoint> data_points_;
   SimpleDistributedCacheArray<typename GNP::QNode> data_nodes_;
   SimpleDistributedCacheArray<typename GNP::QResult> q_results_;
+  RpcServer server_;
 
  public:
   MpiMonochromaticDualTreeRunner() {
@@ -400,11 +407,11 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
   // Set up and export the config object
   config_.n_threads = fx_param_int(module_, "n_threads", 1);
   master_->config_backend.Init(&config_);
-  master_->config_backend.RemoteObjectInit(my_rank_);
+  server_.Register(CONFIG_CHANNEL, &master_->config_backend);
 
   // Set up and export the dual-tree algorithm Param object
   master_->param_backend.Init(&param_);
-  master_->param_backend.RemoteObjectInit(my_rank_);
+  server_.Register(PARAM_CHANNEL, &master_->param_backend);
 
   // Make a static work queue
   SimpleWorkQueue<typename GNP::QNode> *simple_work_queue =
@@ -417,7 +424,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
   work_queue_ = new LockedWorkQueue(simple_work_queue);
 
   master_->work_backend.Init(work_queue_);
-  master_->work_backend.RemoteObjectInit(WORK_CHANNEL);
+  server_.Register(WORK_CHANNEL, &master_->work_backend);
 }
 
 template<typename GNP, typename Solver>
@@ -428,10 +435,17 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
 
   Preinit_();
 
-  data_points_.Configure(1, my_rank_, n_machines_);
-  data_nodes_.Configure(2, my_rank_, n_machines_);
-  q_results_.Configure(3, my_rank_, n_machines_);
+  server_.Init();
+  server_.Start();
 
+  data_points_.Configure(DATA_POINTS_CHANNEL, my_rank_, n_machines_);
+  server_.Register(data_points_.channel(), data_points_.server());
+  data_nodes_.Configure(DATA_NODES_CHANNEL, my_rank_, n_machines_);
+  server_.Register(data_nodes_.channel(), data_nodes_.server());
+  q_results_.Configure(Q_RESULTS_CHANNEL, my_rank_, n_machines_);
+  server_.Register(q_results_.channel(), q_results_.server());
+
+  fx_timer_start(module_, "master_init");
   if (my_rank_ == MASTER_RANK) {
     param_.Init(fx_submodule(module_, gnp_name_, gnp_name_));
     ReadData_();
@@ -442,13 +456,20 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
     q_results_.InitMaster(default_result, n_points_, data_points_.n_block_elems());
 
     SetupMaster_();
-  } else if (my_rank_ != MASTER_RANK) {
+  }
+
+  MPI_Barrier(MPI_COMM_WORLD);
+  fx_timer_stop(module_, "master_init");
+
+  fx_timer_start(module_, "worker_init");
+  if (my_rank_ != MASTER_RANK) {
     data_points_.InitWorker();
     data_nodes_.InitWorker();
     q_results_.InitWorker();
   }
 
   MPI_Barrier(MPI_COMM_WORLD);
+  fx_timer_stop(module_, "worker_init");
 
   fx_timer_start(module_, "flush_data");
   data_points_.FlushClear(BlockDevice::READ);
@@ -484,6 +505,8 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
   q_results_.FlushClear(BlockDevice::READ);
   MPI_Barrier(MPI_COMM_WORLD);
   fx_timer_stop(module_, "flush_results");
+
+  server_.Stop();
 }
 
 template<typename GNP, typename Solver>

@@ -146,12 +146,12 @@ class RawRemoteObjectBackend {
  public:
   virtual ~RawRemoteObjectBackend() {}
 
+  virtual void HandleRequestRaw(ArrayList<char> *request,
+      ArrayList<char> *response) = 0;
+
   void RemoteObjectInit(int channel_in) {
     channel_ = channel_in;
   }
-
-  virtual void HandleRequestRaw(ArrayList<char> *request,
-      ArrayList<char> *response) = 0;
 
   int channel() const {
     return channel_;
@@ -180,38 +180,31 @@ class RemoteObjectBackend
   virtual void HandleRequest(const RequestObject& request, ResponseObject *response) = 0;
 };
 
-class RemoteObjectServer {
-  FORBID_COPY(RemoteObjectServer);
+class RpcServer {
+  FORBID_COPY(RpcServer);
+  friend class RpcServerTask;
 
  public:
   ArrayList<RawRemoteObjectBackend*> channels_;
-  int last_tag_;
+  Thread thread_;
+  bool should_stop_;
 
  public:
   static const int TAG_BORN = 0;
   static const int TAG_DONE = 1;
-  static const int TAG_FIRST_AVAILABLE = 0;
 
  public:
-  static void Connect(int destination);
-  static void Disconnect(int destination);
-
- public:
-  RemoteObjectServer() {}
-  ~RemoteObjectServer() {}
+  RpcServer() {}
+  ~RpcServer() {}
   
   void Init();
 
-  /**
-   * Returns a new tag for use.
-   *
-   * All machines have to use NewTag in an exactly identical way.
-   */
-  int NewTag();
-
   void Register(int channel, RawRemoteObjectBackend *backend);
-
-  void Loop(int n_workers_total);
+  void Start();
+  void Stop();
+  
+ private:
+  void Loop_();
 };
 
 struct DataGetterRequest {

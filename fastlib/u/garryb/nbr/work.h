@@ -32,12 +32,17 @@ class LockedWorkQueue : public WorkQueueInterface {
 
  private:
   WorkQueueInterface *inner_;
+  Mutex mutex_;
   
  public:
   LockedWorkQueue(WorkQueueInterface *inner) : inner_(inner) {}
   virtual ~LockedWorkQueue() { delete inner_; }
 
-  virtual void GetWork(ArrayList<index_t> *work);
+  virtual void GetWork(ArrayList<index_t> *work) {
+    mutex_.Lock();
+    inner_->GetWork(work);
+    mutex_.Unlock();
+  }
 };
 
 template<typename Node>

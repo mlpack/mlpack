@@ -282,6 +282,11 @@ namespace mem {
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(unsigned long long)
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(float)
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(double)
+
+  // need a class to do this
+  //template<typename T> inline T** ConstructAll<T*>(T** m, size_t elems) {
+  //  return m;
+  //}
   
 #undef BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR
   
