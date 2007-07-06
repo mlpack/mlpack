@@ -2063,6 +2063,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
 		 */
 		total_num_missing_ntuples += 1;
 		result = 0.0;
+		
 		sum_total_ntuples += tmp_product;
 		return result;
 	}
@@ -2206,6 +2207,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
     if ( Verbosity >= 0.0 )
       printf("Number of possible matches zero or below thresh. Prune without decreasing hibound!! \n");
     /* Note we should NOT decrease hi bound in this case */
+		
 		sum_total_ntuples += tmp_product;
     return result;
   }
@@ -2218,6 +2220,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
       if (do_weights) {
         dyv_subtract(whibound,weighted_ntuples,whibound);
       }
+			
 			sum_total_ntuples += tmp_product;
       return result;
     }
@@ -2245,6 +2248,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
           dyv_plus(wsumsq,tmp,wsumsq);
           free_dyv(tmp);
         }
+				
 				sum_total_ntuples += tmp_product;							
         return result;
       }
@@ -2411,7 +2415,6 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
   if (permute_status) free_ivec(permute_status);
   if (num_incons) free_imat(num_incons);
 
-	sum_total_ntuples += tmp_product;
   return result;
 }
 
@@ -3063,8 +3066,14 @@ void npt_main(int argc,char *argv[])
 		
 		/* Debugging info */
 		theoretical_total_ntuples = tp->dp_data->mr->root->num_points;
-		theoretical_total_ntuples *= tp->dp_random->mr->root->num_points;
-		theoretical_total_ntuples *= tp->dp_random->mr->root->num_points;
+		if (tp->dp_random) {
+			theoretical_total_ntuples *= tp->dp_random->mr->root->num_points;
+			theoretical_total_ntuples *= tp->dp_random->mr->root->num_points;	
+		}
+		else {
+			theoretical_total_ntuples *= tp->dp_data->mr->root->num_points;
+			theoretical_total_ntuples *= tp->dp_data->mr->root->num_points;
+		}
 			
 		printf("total inclusions = %f\n", total_num_inclusions);
 		printf("total exclusions = %f\n", total_num_exclusions);
@@ -3074,12 +3083,16 @@ void npt_main(int argc,char *argv[])
 		printf("total iterative base cases = %f\n", total_num_iterative_base_cases);
 		printf("\ntotal points in the first dataset =	%d\n", 
 				tp->dp_data->mr->root->num_points);
+		if (tp->dp_random) {
 		printf("total points in the second dataset = %d\n", 
 				tp->dp_random->mr->root->num_points);
-		printf("total number of ntuples seen in the recursion = %f\n", 
+		}
+		printf("total number of ntuples seen in the recursion =  %f\n", 
 				sum_total_ntuples);
 		printf("total theoretical number of ntuples (n1*n2*n2) = %f\n",
 				theoretical_total_ntuples);
+		printf("the extra number of ntuples seen in the recursion = %f\n",
+				sum_total_ntuples - theoretical_total_ntuples);
 		
     explain_nout(no);
     free_nout(no);
