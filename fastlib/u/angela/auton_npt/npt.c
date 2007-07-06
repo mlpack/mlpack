@@ -2202,18 +2202,21 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
 
   /* Okay, now we're in a position to go ahead and prune if we can */
   if ( not_worth_it ) { /* We can do an approximate exclude prune */
+		sum_total_ntuples += tmp_product;
+	
     result = 0.0;  /* and don't bother updating wresult */
     total_num_exclusions += 1;
     if ( Verbosity >= 0.0 )
       printf("Number of possible matches zero or below thresh. Prune without decreasing hibound!! \n");
     /* Note we should NOT decrease hi bound in this case */
 		
-		sum_total_ntuples += tmp_product;
     return result;
   }
   else { 
     if ( answer_is_zero ) { /* We can do an exact exclude prune */
-      result = 0.0; /* We will have to decrease the highbound */
+			sum_total_ntuples += tmp_product;
+
+			result = 0.0; /* We will have to decrease the highbound */
       total_num_exclusions += 1;
       /* Decrease the hibound and, eventually, the weighted hibound */
       *hibound -= ntuples;
@@ -2221,12 +2224,13 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
         dyv_subtract(whibound,weighted_ntuples,whibound);
       }
 			
-			sum_total_ntuples += tmp_product;
       return result;
     }
     else {
       if ( all_subsume ) { /* We can do an exact include prune */
-        result = ntuples;
+				sum_total_ntuples += tmp_product;
+
+				result = ntuples;
         total_num_inclusions += 1;
 //		    printf("All tuples match. Prune. Increases lobound by %g\n", ntuples);
         
@@ -2249,7 +2253,6 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
           free_dyv(tmp);
         }
 				
-				sum_total_ntuples += tmp_product;							
         return result;
       }
       else { /* Can't prune so we need to recurse */
@@ -2294,7 +2297,8 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
         if ( split_index < 0 ) { /* All the nodes are leaves. Do base-case. */
           ivec *rowsets[MAX_N];
           int base_case_error_flag = 0;
-
+	
+					sum_total_ntuples += tmp_product;							
           total_num_base_cases += 1;
 
           for ( i = 0 ; i < n ; i++ ) {
