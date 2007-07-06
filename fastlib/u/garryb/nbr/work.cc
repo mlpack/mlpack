@@ -1,9 +1,5 @@
 #include "work.h"
 
-void LockedWorkQueue::GetWork(ArrayList<index_t> *work) {
-  inner_->GetWork(work);
-}
-
 #ifdef USE_MPI
 void RemoteWorkQueueBackend::Init(WorkQueueInterface *inner_work_queue) {
   inner_ = inner_work_queue;

@@ -92,7 +92,6 @@ void HashedRemoteBlockDevice::SetLocalDevice(BlockDevice *device) {
   }
 
   server_.Init(this);
-  server_.RemoteObjectInit(channel_);
 }
 
 void HashedRemoteBlockDevice::Read(blockid_t blockid,

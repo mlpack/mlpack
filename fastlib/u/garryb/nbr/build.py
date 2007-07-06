@@ -9,8 +9,7 @@ librule(name = "nbr",
 librule(name = "nbr_mpi",
    sources = ["rpc.cc", "netcache.cc"],
    headers = ["rpc.h", "netcache.h"],
-   deplibs = [":nbr"],
-   cflags = "-DUSE_MPI")
+   deplibs = [":nbr"])
 
 binrule(name = "tkde",
    sources = ["tkde.cc"],
@@ -18,13 +17,11 @@ binrule(name = "tkde",
 
 binrule(name = "tkde_mpi",
    sources = ["tkde.cc"],
-   deplibs = [":nbr_mpi"],
-   cflags = "-DUSE_MPI")
+   deplibs = [":nbr_mpi"])
 
 binrule(name = "allnn_mpi",
    sources = ["allnn.cc"],
-   deplibs = [":nbr_mpi"],
-   cflags = "-DUSE_MPI")
+   deplibs = [":nbr_mpi"])
 
 binrule(name = "allnn",
    sources = ["allnn.cc"],
