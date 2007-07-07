@@ -31,8 +31,8 @@ extern double max_num_matches;
 extern double total_num_base_cases;
 extern double total_num_iterative_base_cases;
 extern double total_num_missing_ntuples;
-extern double sum_total_ntuples;
-extern double theoretical_total_ntuples;
+extern long double sum_total_ntuples;
+extern long double theoretical_total_ntuples;
 
 extern int iterative;
 
@@ -58,16 +58,16 @@ dyv *mk_weighted_sum_ntuples(int n, bool use_symmetry, bool sq, knode **kns);
    Note this invariant: kn->num_points == kn->hi_index - kn->lo_index */ 
 void mrkd_set_search_indexes(mrkd *mr);
 
-double slow_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,
+long double slow_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,
                 bool use_symmetry,int projection,int projmethod,ivec **rowsets,
                 dyv *wresult, dyv *wsum,dyv *wsumsq);
-double slow_permute_npt(mapshape *ms, dym **xs,dym **ws, matcher *ma, 
+long double slow_permute_npt(mapshape *ms, dym **xs,dym **ws, matcher *ma, 
                         int projection, int projmethod,ivec **rowsets,
                         imat *permutation_cache,dyv *wresult,
                         dyv *wsum, dyv *wsumsq);
 
 /* Returns 0 (instead of aborting) if m is -ve or > n */
-double careful_n_choose_m(int n,int m);
+long double careful_n_choose_m(int n,int m);
 
 /* Returns TRUE if and only if "b" is a descendant of "a", AND
    "a" owns at least one other datapoint that is not owned by "b".
@@ -87,7 +87,7 @@ bool as_indexes_strictly_surround_bs(knode *a,knode *b);
      +
     ttn(b,n,kns[0],{kns[1] ... ,kns[i]->right, ... kns[n-1]})
 */
-double two_ttn(int b,int n,knode **kns,int i);
+long double two_ttn(int b,int n,knode **kns,int i);
 
 /* Let q == b-n.
 
@@ -117,7 +117,7 @@ double two_ttn(int b,int n,knode **kns,int i);
 
 
 */
-double ttn(int b,int n,knode **kns);
+long double ttn(int b,int n,knode **kns);
 
 
 /* Returns the number of distinct n-tuples of strictly sorted labels such that
@@ -131,12 +131,12 @@ double ttn(int b,int n,knode **kns);
    this set of knodes that could possibly match a symmetric (scalar) matcher.
    If the knodes are out of order the answer will come back zero.
 */
-double total_num_ntuples_symmetric(int n,knode **kns);
+long double total_num_ntuples_symmetric(int n,knode **kns);
 
 /* If we're using a compound matcher, it's easy. It's always
    the product of the number of points in the knodes because all
    orderings (permutations) can be counted. */
-double total_num_ntuples_assymmetric(int n,knode **kns);
+long double total_num_ntuples_assymmetric(int n,knode **kns);
 
 /* If I give you an estimate of some number V* as Vhat where
    Vhat = (lo + hi)/2, and assuming that lo <= V* <= hi,
@@ -148,13 +148,13 @@ double total_num_ntuples_assymmetric(int n,knode **kns);
            V*
 
    be? */
-double total_num_ntuples(int n,bool use_symmetry,knode **kns);
+long double total_num_ntuples(int n,bool use_symmetry,knode **kns);
 
 dyv *mk_weighted_total_ntuples(int n,bool use_symmetry,knode **kns);
 
-double compute_errfrac(double lo,double hi);
+long double compute_errfrac(long double lo,long double hi);
 
-double total_2pt_tuples(twinpack *tp);
+long double total_2pt_tuples(twinpack *tp);
 
 //nout *mk_run_npt_from_twinpack(twinpack *tp,params *ps,matcher *ma);
 nout *mk_run_npt_from_twinpack(twinpack *tp,params *ps,matcher *ma,matcher *ma2);

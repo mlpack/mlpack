@@ -42,7 +42,7 @@ double ntuples_seen_so_far = 0.0;  /* AG
 double total_ntuples = 0.0;
 double num_not_worth_it_prunes = 0.0;
 
-typedef unsigned long long result_t;
+typedef long double result_t;
 
 /* Used by the "rdraw t" command line option, but not relevant to
    the basic algorithm.... */
@@ -206,7 +206,7 @@ void special_weighted_symmetric_debugging_test(dym **xs,dym **ws,matcher *ma,
  * This is how we check that the matching process is finished.
  */
 
-double iterative_slow_npt_helper(mapshape *ms,dym **xs,dym **ws, matcher *ma, 
+long double iterative_slow_npt_helper(mapshape *ms,dym **xs,dym **ws, matcher *ma, 
                        bool use_symmetry, int projection, int projmethod,
                        int *row_indexes,ivec **rowsets,dyv *wresult,
                        dyv *wsum, dyv *wsumsq)
@@ -214,7 +214,7 @@ double iterative_slow_npt_helper(mapshape *ms,dym **xs,dym **ws, matcher *ma,
 {
   int n = matcher_n(ma);
   int k = 0;
-  double result = 0.0;
+  long double result = 0.0;
 
 	total_num_iterative_base_cases += 1.0;
 	/* Initializing the first point */
@@ -370,7 +370,7 @@ double iterative_slow_npt_helper(mapshape *ms,dym **xs,dym **ws, matcher *ma,
 
    Implementation: Recursive (induction on k).
 */                  
-double slow_npt_helper(mapshape *ms,dym **xs,dym **ws, matcher *ma, 
+long double slow_npt_helper(mapshape *ms,dym **xs,dym **ws, matcher *ma, 
                        bool use_symmetry, int projection, int projmethod,
                        int k,int *row_indexes,ivec **rowsets,dyv *wresult,
                        dyv *wsum, dyv *wsumsq)
@@ -378,7 +378,7 @@ double slow_npt_helper(mapshape *ms,dym **xs,dym **ws, matcher *ma,
   int n = matcher_n(ma);
   int i;
   ivec *rowset_k = rowsets[k];
-  double result = 0.0;
+  long double result = 0.0;
   bool cutoff = FALSE;
 
   /* The following loop iterates over all choices for the k'th
@@ -481,13 +481,13 @@ double slow_npt_helper(mapshape *ms,dym **xs,dym **ws, matcher *ma,
 
 /* Same comments as the helper function above, except "with k == 0": i.e.
    we are searching through all sets of points, finding which ones match. */
-double slow_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,
+long double slow_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,
                 bool use_symmetry,int projection,int projmethod,ivec **rowsets,
                 dyv *wresult, dyv *wsum,dyv *wsumsq)
 {
   int rows[MAX_N];
   int i;
-  double result;
+  long double result;
 
   if ( matcher_n(ma) > MAX_N ) my_error("MAX_N too small");
 
@@ -547,7 +547,7 @@ double slow_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,
  * This is how we check that the matching process is finished.
  */
 
-double iterative_slow_permute_npt_helper(mapshape *ms,dym **xs,dym **ws,matcher *ma,
+long double iterative_slow_permute_npt_helper(mapshape *ms,dym **xs,dym **ws,matcher *ma,
                                int projection,int projmethod,
                                int *row_indexes,ivec **rowsets,
                                imat *permutation_cache,ivec *permutes_ok,
@@ -555,7 +555,7 @@ double iterative_slow_permute_npt_helper(mapshape *ms,dym **xs,dym **ws,matcher 
 {
   int n = matcher_n(ma);
   int k = 0;
-  double result = 0.0;
+  long double result = 0.0;
 
 	total_num_iterative_base_cases += 1.0;
 	/* Initializing the first point */
@@ -726,7 +726,7 @@ Consider all tuples in which
 
    Implementation: Recursive (induction on k).  
 */
-double slow_permute_npt_helper(mapshape *ms,dym **xs,dym **ws,matcher *ma,
+long double slow_permute_npt_helper(mapshape *ms,dym **xs,dym **ws,matcher *ma,
                                int projection,int projmethod,int k,
                                int *row_indexes,ivec **rowsets,
                                imat *permutation_cache,ivec *permutes_ok,
@@ -735,7 +735,7 @@ double slow_permute_npt_helper(mapshape *ms,dym **xs,dym **ws,matcher *ma,
   int n = matcher_n(ma);
   int i;
   ivec *rowset_k = rowsets[k];
-  double result = 0.0;
+  long double result = 0.0;
   bool cutoff = FALSE;
   ivec *permutes_ok_copy = mk_copy_ivec(permutes_ok);
 
@@ -886,14 +886,14 @@ double slow_permute_npt_helper(mapshape *ms,dym **xs,dym **ws,matcher *ma,
       order (as in the symmetric case), but loses it by testing each tuple
       against all permutations of the template.
 */
-double slow_permute_npt(mapshape *ms, dym **xs,dym **ws, matcher *ma, 
+long double slow_permute_npt(mapshape *ms, dym **xs,dym **ws, matcher *ma, 
                         int projection, int projmethod, ivec **rowsets,
                         imat *permutation_cache,dyv *wresult,
                         dyv *wsum, dyv *wsumsq)
 {
   int rows[MAX_N];
   int i;
-  double result;
+  long double result;
   int num_permutes = 1;
   ivec *permutes_ok;
 
@@ -928,9 +928,9 @@ double slow_permute_npt(mapshape *ms, dym **xs,dym **ws, matcher *ma,
 /* Returns the combinatoric function "n choose m". Implementation cost
    is O(m). Conceivably could be worth accelrating by means of a lookup
    table. */
-double n_choose_m(int n,int m)
+long double n_choose_m(int n,int m)
 {
-  double result = 1.0;
+  long double result = 1.0;
   int i;
 
   if ( m < 0 || m > n ) my_error("n_choose_m");
@@ -942,7 +942,7 @@ double n_choose_m(int n,int m)
 }
 
 /* Returns 0 (instead of aborting) if m is -ve or > n */
-double careful_n_choose_m(int n,int m)
+long double careful_n_choose_m(int n,int m)
 {
   return ( m < 0 ) ? 0 : ( m > n ) ? 0 : n_choose_m(n,m);
 }
@@ -1055,12 +1055,12 @@ bool as_indexes_strictly_surround_bs(knode *a,knode *b)
      +
     ttn(b,n,kns[0],{kns[1] ... ,kns[i]->right, ... kns[n-1]})
 */
-extern double ttn(int b,int n,knode **kns);
+extern long double ttn(int b,int n,knode **kns);
 
-double two_ttn(int b,int n,knode **kns,int i)
+long double two_ttn(int b,int n,knode **kns,int i)
 {
 
-  double result = 0.0;
+  long double result = 0.0;
   knode *kni = kns[i];
   if ( knode_is_leaf(kni) ) my_error("Can't happen");
   kns[i] = kni->left;
@@ -1102,20 +1102,20 @@ double two_ttn(int b,int n,knode **kns,int i)
    sum weighted version of this function, mk_weighted_sum_ttn().
 */
 
-double ttn(int b,int n,knode **kns)
+long double ttn(int b,int n,knode **kns)
 {
   knode *bkn = kns[b];
-  double result;
+  long double result;
 
   if ( b == n-1 )
-    result = (double) bkn->num_points;
+    result = (long double) bkn->num_points;
   else
   {
     int j;
     bool conflict = FALSE;
     bool simple_product = TRUE;
 
-    result = (double) bkn->num_points;
+    result = (long double) bkn->num_points;
 
     for ( j = b+1 ; j < n && !conflict ; j++ )
     {
@@ -1170,8 +1170,8 @@ double ttn(int b,int n,knode **kns)
 }
 
 /* Iterative ttn-like counter.. probably very slow */
-double iterative_ttn(int n, knode **kns) {
-	double result = 0.0;
+long double iterative_ttn(int n, knode **kns) {
+	long double result = 0.0;
 	int i;
 
 	for (i=0;i<n;) {
@@ -1179,7 +1179,7 @@ double iterative_ttn(int n, knode **kns) {
 		bool simple_product = TRUE;
 		knode *kni = kns[i];
 		int j;
-		double tmp_result = (double) kni->num_points;
+		long double tmp_result = (long double) kni->num_points;
 
 		/* Test for conflicts and overlapping knodes */
 		for (j=i+1;j<n && !conflict; j++) {
@@ -1293,9 +1293,9 @@ double iterative_ttn(int n, knode **kns) {
 
 
 /* Just used for checking ttn (a slow implementation thereof) */
-double vst(imat *constraints,int k,int n,int *vals)
+long double vst(imat *constraints,int k,int n,int *vals)
 {
-  double result = 0;
+  long double result = 0;
 
   if ( k == n )
   {
@@ -1325,7 +1325,7 @@ void weighted_vst()
 }
 
 /* Just used for checking ttn (a slow implementation thereof) */
-double very_slow_ttn(imat *constraints)
+long double very_slow_ttn(imat *constraints)
 {
   int size = imat_rows(constraints);
   int vals[MAX_N];
@@ -1336,10 +1336,10 @@ double very_slow_ttn(imat *constraints)
 /* A version of total_num_ntuples_symmetric(...) declared below
    that does some very very slow checking to ensure that ttn is
    implemented correctly */
-double careful_total_num_ntuples_symmetric(int n,knode **kns)
+long double careful_total_num_ntuples_symmetric(int n,knode **kns)
 {
-  double result;
-  double slowres;
+  long double result;
+  long double slowres;
   imat *im = mk_imat(n,2);
   int i;
   for ( i = 0 ; i < n ; i++ )
@@ -1365,9 +1365,9 @@ double careful_total_num_ntuples_symmetric(int n,knode **kns)
   return result;
 }
 
-double fast_total_num_ntuples_symmetric(int n,knode **kns)
+long double fast_total_num_ntuples_symmetric(int n,knode **kns)
 {
-  double result;
+  long double result;
 
 	if (iterative) result = iterative_ttn(n,kns);
 	else result = ttn(0,n,kns);
@@ -1386,9 +1386,9 @@ double fast_total_num_ntuples_symmetric(int n,knode **kns)
    this set of knodes that could possibly match a symmetric (scalar) matcher.
    If the knodes are out of order the answer will come back zero.
 */
-double total_num_ntuples_symmetric(int n,knode **kns)
+long double total_num_ntuples_symmetric(int n,knode **kns)
 {
-  double result = fast_total_num_ntuples_symmetric(n,kns);
+  long double result = fast_total_num_ntuples_symmetric(n,kns);
 	
 #ifdef NEVER
 #ifndef AMFAST
@@ -1403,14 +1403,14 @@ double total_num_ntuples_symmetric(int n,knode **kns)
 /* If we're using a compound matcher, it's easy. It's always
    the product of the number of points in the knodes because all
    orderings (permutations) can be counted. */
-double total_num_ntuples_assymmetric(int n,knode **kns)
+long double total_num_ntuples_assymmetric(int n,knode **kns)
 {
   int i;
-  double result = 1.0;
+  long double result = 1.0;
   for ( i = 0 ; i < n ; i++ )
   { 
     knode *kni = kns[i];
-    result *= (double) (kni->num_points);
+    result *= (long double) (kni->num_points);
   }
   return result;
 }
@@ -1419,9 +1419,9 @@ double total_num_ntuples_assymmetric(int n,knode **kns)
    count? */
 /* WARNING For this function to work, the lo_index and hi_index
    fields of all the knodes should be set correctly */
-double total_num_ntuples(int n,bool use_symmetry,knode **kns)
+long double total_num_ntuples(int n,bool use_symmetry,knode **kns)
 {
-  double result;
+  long double result;
 
   if ( use_symmetry ) {
 /*
@@ -1510,7 +1510,7 @@ dyv *mk_weighted_ttn(int b,int n,knode **kns) {
 				 */
   	  }
 	    else { /* There is no conflict but there may be overlaps */
-	      bool jdiff = -1; 
+	      int jdiff = -1; 
 				/* undefined... will eventually point to the lowest 
            j > b such that kns[j] is different from bkn */
   	    for ( j = b+1 ; jdiff < 0 && j < n ; j++ ) {
@@ -1793,7 +1793,7 @@ dyv *mk_weighted_sum_ttn(int b, int n, knode **kns, bool sq, int *count)
 	knode *dkn = kns[jdiff];
 	if ( dkn->lo_index >= bkn->hi_index )  /* case 4 */
 	{
-	  double count_cur = careful_n_choose_m(bkn->num_points,jdiff-b);
+	  long double count_cur = careful_n_choose_m(bkn->num_points,jdiff-b);
 	  if (sq) result = mk_copy_dyv(bkn->sumsq_weights);
 	  else    result = mk_copy_dyv(bkn->sum_weights);
 	  dyv_scalar_mult(result,
@@ -1846,9 +1846,9 @@ dyv *mk_weighted_sum_ntuples(int n, bool use_symmetry, bool sq, knode **kns)
            V*
 
    be? */
-double compute_errfrac(double lo,double hi)
+long double compute_errfrac(long double lo,long double hi)
 {
-  double maxerr = fabs(hi-lo)/2.0;
+  long double maxerr = fabs(hi-lo)/2.0;
   return maxerr / real_max(1.0,lo);
 }
 
@@ -1982,17 +1982,17 @@ int depth:         just for people who want to make nicely formatted debugging
                    prints.          
    
 */
-double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
+long double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
                 bool use_permutes,knode **kns,
                 double thresh_ntuples,double connolly_thresh,
-                double *lobound,double *hibound, dyv *wlobound, dyv *whibound,
+                long double *lobound,long double *hibound, dyv *wlobound, dyv *whibound,
                 dyv *wresult,dyv *wsum,dyv *wsumsq,
                 imat *permutation_cache,int depth, 
                 int projection, int projmethod)
 {
   bool do_weights = (wresult && wlobound && whibound && kns[0]->sum_weights);
   int n = matcher_n(ma);
-  double result = -7.777e77; /* Set to a wild value so we'll detect a problem
+  long double result = -7.777e77; /* Set to a wild value so we'll detect a problem
                                 if some path through the code neglects to set
                                 result to a value */
   dyv *wtemp_result = NULL;
@@ -2018,7 +2018,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
   bool recursed = FALSE; /* Flag used only for deciding when to printf
                             stuff */
 
-  double ntuples = total_num_ntuples(n,(use_symmetry || use_permutes),kns);
+  long double ntuples = total_num_ntuples(n,(use_symmetry || use_permutes),kns);
             /* The maximum possible increment to the count that could be
                obtained from this knode tuple. Note that if the matcher
                 is symmetric and the nodes are in the wrong order,
@@ -2048,7 +2048,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
 
 	/* ANG ~> counting all the possible ntuples to make sure the recursion is ok */
 	int tmp_i;
-	double tmp_product;
+	long double tmp_product;
 	
 	for (tmp_i=0, tmp_product = 1.0;tmp_i<n;tmp_i++) {
 		tmp_product *= kns[tmp_i]->num_points;	
@@ -2357,7 +2357,7 @@ double fast_npt(mapshape *ms,dym **xs,dym **ws,matcher *ma,bool use_symmetry,
           knode *parent = kns[split_index];
           knode *child1 = parent->right;
           knode *child2 = parent->left;
-          double tmp_result;
+          long double tmp_result;
 
           recursed = TRUE;
           total_num_recursions += 1;
@@ -2513,7 +2513,7 @@ void mrkd_fast_npt_with_thresh_ntuples(twinpack *tp,matcher *ma,
                                        matcher *ma2,
                                        double thresh_ntuples,
                                        double connolly_thresh,
-                                       double *lobound,double *hibound,
+                                       long double *lobound,long double *hibound,
                                        dyv *wlobound, dyv *whibound,
                                        dyv *wresult, dyv *wsum, dyv *wsumsq)
 //void mrkd_fast_npt_with_thresh_ntuples(twinpack *tp,matcher *ma,
@@ -2526,7 +2526,7 @@ void mrkd_fast_npt_with_thresh_ntuples(twinpack *tp,matcher *ma,
   knode *kns[MAX_N];
   dym *xs[MAX_N];
   dym *ws[MAX_N];
-  double result;
+  long double result;
   bool use_symmetry = can_use_symmetry(tp,ma);
   imat *permutation_cache = NULL;
 
@@ -2681,8 +2681,8 @@ void mrkd_fast_npt_with_thresh_ntuples(twinpack *tp,matcher *ma,
 
   if (Verbosity >= 0.5)
   {
-    printf("Final lobound = %g\n",*lobound);
-    printf("Final hibound = %g\n",*hibound);
+    printf("Final lobound = %Lf\n",*lobound);
+    printf("Final hibound = %Lf\n",*hibound);
 
     if (wlobound) fprintf_dyv(stdout,"Weighted lower bound",wlobound,"\n");
     if (whibound) fprintf_dyv(stdout,"Weighted upper bound",whibound,"\n");
@@ -2693,7 +2693,7 @@ void mrkd_fast_npt_with_thresh_ntuples(twinpack *tp,matcher *ma,
 
 /* WARNING For this function to work, the lo_index and hi_index
    fields of all the knodes should be set correctly */
-double compute_total_ntuples(twinpack *tp,matcher *ma)
+long double compute_total_ntuples(twinpack *tp,matcher *ma)
 {
   knode *kns[MAX_N];
   dym *xs[MAX_N];
@@ -2705,12 +2705,12 @@ double compute_total_ntuples(twinpack *tp,matcher *ma)
 
 /* WARNING For this function to work, the lo_index and hi_index
    fields of all the knodes should be set correctly */
-double total_2pt_tuples(twinpack *tp)
+long double total_2pt_tuples(twinpack *tp)
 {
   matcher *ma = mk_symmetric_simple_matcher(twinpack_n(tp),
 					    twinpack_metric(tp),
 					    9e19);
-  double result = compute_total_ntuples(tp,ma);
+  long double result = compute_total_ntuples(tp,ma);
   free_matcher(ma);
   return result;
 }
@@ -2726,7 +2726,7 @@ double total_2pt_tuples(twinpack *tp)
 */
 void mrkd_fast_npt_autofind(twinpack *tp,matcher *ma,matcher *ma2,
                             double thresh_errfrac,
-                            double *lobound,double *hibound,
+     												long double *lobound,long double *hibound,
                             dyv *wlobound, dyv *whibound, dyv *wresult,
                             dyv *wsum, dyv *wsumsq)
 //void mrkd_fast_npt_autofind(twinpack *tp,matcher *ma,
@@ -2765,7 +2765,7 @@ nout *mk_run_npt_from_twinpack(twinpack *tp,params *ps,matcher *ma,matcher *ma2)
   extern bool Do_rectangle_animation;
   //int start_secs = global_time();  /* AG */
   nout *no = AM_MALLOC(nout);
-  double lo,hi;
+  long double lo,hi;
   FILE *s;
   char *save_name = (ps->autofind) ? "autofind.txt" : "results.txt";
   dyv *wlobound = NULL;
@@ -3069,7 +3069,7 @@ void npt_main(int argc,char *argv[])
 		}
 		
 		/* Debugging info */
-		theoretical_total_ntuples = tp->dp_data->mr->root->num_points;
+		theoretical_total_ntuples = (long double) tp->dp_data->mr->root->num_points;
 		if (tp->dp_random) {
 			theoretical_total_ntuples *= tp->dp_random->mr->root->num_points;
 			theoretical_total_ntuples *= tp->dp_random->mr->root->num_points;	
@@ -3091,11 +3091,11 @@ void npt_main(int argc,char *argv[])
 		printf("total points in the second dataset = %d\n", 
 				tp->dp_random->mr->root->num_points);
 		}
-		printf("total number of ntuples seen in the recursion =  %f\n", 
+		printf("total number of ntuples seen in the recursion =  %Lf\n", 
 				sum_total_ntuples);
-		printf("total theoretical number of ntuples (n1*n2*n2) = %f\n",
+		printf("total theoretical number of ntuples (n1*n2*n2) = %Lf\n",
 				theoretical_total_ntuples);
-		printf("the extra number of ntuples seen in the recursion = %f\n",
+		printf("the extra number of ntuples seen in the recursion = %Lf\n",
 				sum_total_ntuples - theoretical_total_ntuples);
 		
     explain_nout(no);
