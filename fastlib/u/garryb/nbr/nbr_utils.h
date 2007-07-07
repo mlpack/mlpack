@@ -8,9 +8,7 @@
 #include "par/thread.h"
 #include "par/task.h"
 
-#ifdef USE_MPI
 #include "netcache.h"
-#endif
 
 namespace nbr_utils {
 
@@ -274,11 +272,8 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
 //problem problem - no network thread!
 
-#ifdef USE_MPI
-
-
 template<typename GNP, typename Solver>
-class MpiMonochromaticDualTreeRunner {
+class RpcMonochromaticDualTreeRunner {
  private:
   struct Config {
     int n_threads;
@@ -314,8 +309,6 @@ class MpiMonochromaticDualTreeRunner {
   typename GNP::Param param_;
   Config config_;
   WorkQueueInterface *work_queue_;
-  int my_rank_;
-  int n_machines_;
   index_t n_points_;
   Master *master_;
   SimpleDistributedCacheArray<typename GNP::QPoint> data_points_;
@@ -324,11 +317,11 @@ class MpiMonochromaticDualTreeRunner {
   RpcServer server_;
 
  public:
-  MpiMonochromaticDualTreeRunner() {
+  RpcMonochromaticDualTreeRunner() {
     master_ = NULL;
     work_queue_ = NULL;
   }
-  ~MpiMonochromaticDualTreeRunner() {
+  ~RpcMonochromaticDualTreeRunner() {
     if (master_) {
       delete master_;
     }
@@ -348,20 +341,17 @@ class MpiMonochromaticDualTreeRunner {
 };
 
 template<typename GNP, typename Solver>
-void MpiMonochromaticDualTreeRunner<GNP, Solver>::Preinit_() {
-  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank_);
-  MPI_Comm_size(MPI_COMM_WORLD, &n_machines_);
-
-  if (my_rank_ != MASTER_RANK) {
+void RpcMonochromaticDualTreeRunner<GNP, Solver>::Preinit_() {
+  if (RpcImpl::rank() != MASTER_RANK) {
     String my_fx_scope;
 
-    my_fx_scope.InitSprintf("rank%d", my_rank_);
+    my_fx_scope.InitSprintf("rank%d", RpcImpl::rank());
     fx_scope(my_fx_scope.c_str());
   }
 }
 
 template<typename GNP, typename Solver>
-void MpiMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
+void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
   index_t n_block_points = fx_param_int(module_, "n_block_points", 1024);
   datanode *data_module = fx_submodule(module_, "data", "data");
 
@@ -386,7 +376,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
 }
 
 template<typename GNP, typename Solver>
-void MpiMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
+void RpcMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
   index_t n_block_nodes = fx_param_int(module_, "n_block_nodes", 128);
   datanode *data_module = fx_submodule(module_, "data", "data");
 
@@ -401,7 +391,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
 }
 
 template<typename GNP, typename Solver>
-void MpiMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
+void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
   master_ = new Master();
 
   // Set up and export the config object
@@ -417,7 +407,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
   SimpleWorkQueue<typename GNP::QNode> *simple_work_queue =
       new SimpleWorkQueue<typename GNP::QNode>;
   int n_grains = fx_param_int(module_, "n_grains",
-      config_.n_threads * n_machines_ * 3);
+      config_.n_threads * RpcImpl::n_peers() * 3);
   simple_work_queue->Init(&data_nodes_, n_grains);
   fx_format_result(module_, "n_grains_actual", "%"LI"d",
       simple_work_queue->n_grains());
@@ -428,7 +418,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
 }
 
 template<typename GNP, typename Solver>
-void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
+void RpcMonochromaticDualTreeRunner<GNP, Solver>::Main(
     datanode *module, const char *gnp_name) {
   module_ = module;
   gnp_name_ = gnp_name;
@@ -438,15 +428,15 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
   server_.Init();
   server_.Start();
 
-  data_points_.Configure(DATA_POINTS_CHANNEL, my_rank_, n_machines_);
+  data_points_.Configure(DATA_POINTS_CHANNEL);
   server_.Register(data_points_.channel(), data_points_.server());
-  data_nodes_.Configure(DATA_NODES_CHANNEL, my_rank_, n_machines_);
+  data_nodes_.Configure(DATA_NODES_CHANNEL);
   server_.Register(data_nodes_.channel(), data_nodes_.server());
-  q_results_.Configure(Q_RESULTS_CHANNEL, my_rank_, n_machines_);
+  q_results_.Configure(Q_RESULTS_CHANNEL);
   server_.Register(q_results_.channel(), q_results_.server());
 
   fx_timer_start(module_, "master_init");
-  if (my_rank_ == MASTER_RANK) {
+  if (RpcImpl::rank() == MASTER_RANK) {
     param_.Init(fx_submodule(module_, gnp_name_, gnp_name_));
     ReadData_();
     MakeTree_();
@@ -462,7 +452,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
   fx_timer_stop(module_, "master_init");
 
   fx_timer_start(module_, "worker_init");
-  if (my_rank_ != MASTER_RANK) {
+  if (RpcImpl::rank() != MASTER_RANK) {
     data_points_.InitWorker();
     data_nodes_.InitWorker();
     q_results_.InitWorker();
@@ -479,7 +469,7 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
   fx_timer_stop(module_, "flush_data");
 
   fx_timer_start(module_, "distribute_config");
-  if (my_rank_ != MASTER_RANK) {
+  if (RpcImpl::rank() != MASTER_RANK) {
     GetRemoteData(CONFIG_CHANNEL, MASTER_RANK, &config_);
     GetRemoteData(PARAM_CHANNEL, MASTER_RANK, &param_);
 
@@ -510,15 +500,13 @@ void MpiMonochromaticDualTreeRunner<GNP, Solver>::Main(
 }
 
 template<typename GNP, typename Solver>
-void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
-  MpiMonochromaticDualTreeRunner<GNP, Solver> runner;
+void RpcMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
+  RpcMonochromaticDualTreeRunner<GNP, Solver> runner;
   runner.Main(module, gnp_name);
 }
 
-#endif
-
 // template<typename GNP, typename Solver>
-// void MpiDualTreeMain(datanode *module, const char *gnp_name) {
+// void RpcDualTreeMain(datanode *module, const char *gnp_name) {
 //   const int MASTER_RANK = 0;
 //   const int PARAM_CHANNEL = 2;
 //   const int WORK_CHANNEL = 3;
@@ -529,16 +517,16 @@ void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 //   const int Q_RESULTS_CHANNEL = 8;
 //   const int CONFIG_CHANNEL = 9;
 //   typename GNP::Param param;
-//   int my_rank_;
+//   int RpcImpl::rank();
 //   int n_machines;
 //   int n_workers_total;
 //
-//   MPI_Comm_rank(MPI_COMM_WORLD, &my_rank_);
+//   MPI_Comm_rank(MPI_COMM_WORLD, &RpcImpl::rank());
 //   MPI_Comm_size(MPI_COMM_WORLD, &n_machines);
 //
 //   n_workers_total = n_machines - 1;
 //
-//   if (my_rank_ == MASTER_RANK) {
+//   if (RpcImpl::rank() == MASTER_RANK) {
 //     param.Init(fx_submodule(module, gnp_name, gnp_name));
 //
 //     TempCacheArray<typename GNP::Point> q_points;
@@ -552,7 +540,7 @@ void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 //     nbr_utils::LoadKdTree(fx_submodule(module, "r", "r"),
 //         &param, &r_points, &r_nodes);
 //
-//     MpiDualTreeConfig config;
+//     RpcDualTreeConfig config;
 //     config.n_threads = fx_param_int(module, "n_threads", 1);
 //     config.monochromatic = fx_param_bool(module, "monochromatic", 1);
 //
@@ -585,7 +573,7 @@ void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 //     DataGetterBackend<typename GNP::Param> param_backend;
 //     param_backend.Init(&param);
 //
-//     DataGetterBackend<MpiDualTreeConfig> config_backend;
+//     DataGetterBackend<RpcDualTreeConfig> config_backend;
 //     config_backend.Init(&config);
 //
 //     RemoteObjectServer server;
@@ -612,13 +600,13 @@ void MpiMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 //   } else {
 //     String my_fx_scope;
 //
-//     my_fx_scope.InitSprintf("rank%d", my_rank_);
+//     my_fx_scope.InitSprintf("rank%d", RpcImpl::rank());
 //     fx_scope(my_fx_scope.c_str());
 //
 //     RemoteObjectServer::Connect(MASTER_RANK);
 //
-//     RemoteDataGetter<MpiDualTreeConfig> config_getter;
-//     MpiDualTreeConfig config;
+//     RemoteDataGetter<RpcDualTreeConfig> config_getter;
+//     RpcDualTreeConfig config;
 //     config_getter.Init(CONFIG_CHANNEL, MASTER_RANK);
 //     config_getter.GetData(&config);
 //
@@ -788,7 +776,7 @@ Assume index structure:
 
   /*
   template<typename GNP, typename Solver>
-  void MpiDualTreeMain(datanode *module, const char *gnp_name) {
+  void RpcDualTreeMain(datanode *module, const char *gnp_name) {
     RemoteObjectServer server;
 
     server.Init();

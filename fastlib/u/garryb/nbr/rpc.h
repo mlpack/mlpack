@@ -24,6 +24,7 @@ template<class ResponseObject>
 class Rpc {
  private:
   ArrayList<char> data_;
+  ResponseObject *response_object_;
   int channel_;
   int destination_;
  
@@ -41,28 +42,32 @@ class Rpc {
   ResponseObject *Request(
       int channel, int destination, const RequestObject& request) {
     int length;
-    data_.Init(ot::PointerFrozenSize(request));
+    data_.Init(ot::PointerFrozenSize(request)
+        + RpcImpl::request_header_size);
+    ot::PointerFreeze(request, data_.begin() + RpcImpl::request_header_size);
     data_ = RpcImpl::SendReceive(channel_, destination_, &data_);
-    return ot::PointerThaw<ResponseObject>(data_.ptr());
+    response_object_ = ot::PointerThaw<ResponseObject>(
+        data_.ptr() + RpcImpl::response_header_size);
+    return response_object_;
   }
 
   operator ResponseObject *() {
-    return reinterpret_cast<ResponseObject*>(data_.ptr());
+    return response_object_;
   }
   ResponseObject* operator ->() {
-    return reinterpret_cast<ResponseObject*>(data_.ptr());
+    return response_object_;
   }
   ResponseObject& operator *() {
-    return *reinterpret_cast<ResponseObject*>(data_.ptr());
+    return *response_object_;
   }
   operator const ResponseObject *() const {
-    return *reinterpret_cast<ResponseObject*>(data_.ptr());
+    return response_objet_;
   }
   const ResponseObject* operator ->() const {
-    return reinterpret_cast<ResponseObject*>(data_.ptr());
+    return response_object_;
   }
   const ResponseObject& operator *() const {
-    return *reinterpret_cast<ResponseObject*>(data_.ptr());
+    return *response_object_;
   }
 };
 
@@ -73,8 +78,9 @@ class RawRemoteObjectBackend {
  public:
   virtual ~RawRemoteObjectBackend() {}
 
-  virtual void HandleRequestRaw(ArrayList<char> *request,
-      ArrayList<char> *response) = 0;
+  virtual void HandleRequestRaw(
+      ArrayList<char> *buffer,
+      size_t in_header_size, size_t out_header_size);
 
   void RemoteObjectInit(int channel_in) {
     channel_ = channel_in;
@@ -94,18 +100,25 @@ class RemoteObjectBackend
  public:
   virtual ~RemoteObjectBackend() {}
 
-  virtual void HandleRequestRaw(ArrayList<char> *raw_request,
-      ArrayList<char> *raw_response) {
-    const RequestObject* real_request =
-        ot::PointerThaw<RequestObject>(raw_request->begin());
-    ResponseObject real_response;
-    HandleRequest(*real_request, &real_response);
-    raw_response->Resize(ot::PointerFrozenSize(real_response));
-    ot::PointerFreeze(real_response, raw_response->begin());
-  }
-
-  virtual void HandleRequest(const RequestObject& request, ResponseObject *response) = 0;
+  virtual void HandleRequestRaw(
+      ArrayList<char> *buffer,
+      size_t in_header_size, size_t out_header_size);
+  virtual void HandleRequest(const RequestObject& request,
+      ResponseObject *response) = 0;
 };
+
+template<typename RequestObject, typename ResponseObject>
+void RemoteObjectBackend<RequestObject, ResponseObject>::HandleRequestRaw(
+    ArrayList<char> *buffer,
+    size_t in_header_size, size_t out_header_size) {
+  const RequestObject* real_request =
+      ot::PointerThaw<RequestObject>(buffer->begin() + in_header_size);
+  ResponseObject real_response;
+  HandleRequest(*real_request, &real_response);
+  buffer->Resize(out_header_size + ot::PointerFrozenSize(real_response));
+  ot::PointerFreeze(real_response, raw_response->begin() + out_header_size);
+}
+
 
 class RpcServer {
   FORBID_COPY(RpcServer);
