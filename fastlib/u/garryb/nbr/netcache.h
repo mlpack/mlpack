@@ -112,8 +112,8 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
   MemBlockDevice local_device_;
 
  public:
-  void Configure(int channel, int rank, int n_machines) {
-    remote_device_.Init(channel, rank, n_machines);
+  void Configure(int channel) {
+    remote_device_.Init(channel, RpcImpl::rank(), RpcImpl::n_peers());
   }
 
   void InitMaster(const T& default_obj,
@@ -140,11 +140,11 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
     CacheArray<T>::mode_ = mode;
     small_cache_.Clear(mode);
   }
-  
+
   RawRemoteObjectBackend *server() {
     return remote_device_.server();
   }
-  
+
   int channel() const {
     return remote_device_.channel();
   }
