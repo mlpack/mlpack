@@ -22,32 +22,70 @@
  */
 template<class ResponseObject>
 class Rpc {
+  FORBID_COPY(Rpc);
  private:
-  ArrayList<char> data_;
+  struct RpcRequestTransaction : public Transaction {
+    FORBID_COPY(RpcRequestTransaction);
+
+   public:
+    Message* response;
+    Mutex mutex;
+    WaitCondition cond;
+
+   public:
+    RpcRequestTransaction() {}
+    ~RpcRequestTransaction() {}
+
+    Message *Doit(int channel, int peer, const RequestObject& request) {
+      Transaction::Init(channel);
+      Message *message = CreateMessage(peer, channel,
+          ot::PointerFrozenSize(request));
+      ot::PointerFreeze(request, message->data());
+      mutex.Lock();
+      Send(message);
+      response = NULL;
+      do {
+        cond.Wait(&mutex);
+      } while (response == NULL);
+      mutex.Unlock();
+      return response;
+    }
+
+    void HandleMessage(Message *message) {
+      mutex.Lock();
+      response = message;
+      mutex.Unlock();
+      cond.Signal();
+      // TODO: Handle done
+      Done();
+    }
+  };
+  
+ private:
+  Message *response_;
   ResponseObject *response_object_;
-  int channel_;
-  int destination_;
- 
+
  public:
   template<typename RequestObject>
-  Rpc(int channel, int destination, const RequestObject& request) {
-    Request(channel, destination, request);
+  Rpc(int channel, int peer, const RequestObject& request) {
+    Request(channel, peer, request);
   }
   Rpc() {
   }
   ~Rpc() {
+    delete response_;
+  }
+
+  void HandleMessage(Message *message) {
+    
   }
 
   template<typename RequestObject>
   ResponseObject *Request(
-      int channel, int destination, const RequestObject& request) {
-    int length;
-    data_.Init(ot::PointerFrozenSize(request)
-        + RpcImpl::request_header_size);
-    ot::PointerFreeze(request, data_.begin() + RpcImpl::request_header_size);
-    data_ = RpcImpl::SendReceive(channel_, destination_, &data_);
-    response_object_ = ot::PointerThaw<ResponseObject>(
-        data_.ptr() + RpcImpl::response_header_size);
+      int channel, int peer, const RequestObject& request) {
+    RpcRequestTransaction transaction;
+    response_ = transaction.Doit(channel, peer, request);
+    response_object_ = ot::PointerThaw<ResponseObject>(response_.data());
     return response_object_;
   }
 
@@ -71,81 +109,55 @@ class Rpc {
   }
 };
 
-class RawRemoteObjectBackend {
- private:
-  int channel_;
-
- public:
-  virtual ~RawRemoteObjectBackend() {}
-
-  virtual void HandleRequestRaw(
-      ArrayList<char> *buffer,
-      size_t in_header_size, size_t out_header_size);
-
-  void RemoteObjectInit(int channel_in) {
-    channel_ = channel_in;
-  }
-
-  int channel() const {
-    return channel_;
-  }
-};
-
 /**
  * This is how you define the network object on the server.
  */
 template<typename RequestObject, typename ResponseObject>
-class RemoteObjectBackend
-    : public RawRemoteObjectBackend {
+class RemoteObjectBackend : public Channel {
+ public:
+  // Simple request-response transaction
+  class RemoteObjectTransaction() {
+    FORBID_COPY(RemoteObjectTransaction);
+   private:
+    RemoteObjectBackend *inner_;
+
+   public:
+    RemoteObjectTransaction(RemoteObjectBackend *inner_in)
+     : inner_(inner_in)
+     {}
+
+    void HandleMessage(Message *request);
+  }
+
  public:
   virtual ~RemoteObjectBackend() {}
 
-  virtual void HandleRequestRaw(
-      ArrayList<char> *buffer,
-      size_t in_header_size, size_t out_header_size);
   virtual void HandleRequest(const RequestObject& request,
       ResponseObject *response) = 0;
+
+  RemoteObjectTransaction *GetTransaction(Message *message); {
+    return new RemoteObjectTransaction(this);
+  }
+  
+  void Register(int channel_num) {
+    RpcImpl::Register(channel_num, this);
+  }
 };
 
 template<typename RequestObject, typename ResponseObject>
-void RemoteObjectBackend<RequestObject, ResponseObject>::HandleRequestRaw(
-    ArrayList<char> *buffer,
-    size_t in_header_size, size_t out_header_size) {
+void RemoteObjectBackend<RequestObject, ResponseObject>
+    ::RemoteObjectTransaction::HandleMessage(Message *request) {
   const RequestObject* real_request =
-      ot::PointerThaw<RequestObject>(buffer->begin() + in_header_size);
+      ot::PointerThaw<RequestObject>(request->buffer());
   ResponseObject real_response;
-  HandleRequest(*real_request, &real_response);
-  buffer->Resize(out_header_size + ot::PointerFrozenSize(real_response));
-  ot::PointerFreeze(real_response, raw_response->begin() + out_header_size);
+  inner_->HandleRequest(*real_request, &real_response);
+  Message *response = CreateMessage(
+      request->peer(), ot::PointerFrozenSize(real_response));
+  ot::PointerFreeze(real_response, response->buffer());
+  Send(response);
+  Done();
+  delete this;
 }
-
-
-class RpcServer {
-  FORBID_COPY(RpcServer);
-  friend class RpcServerTask;
-
- public:
-  ArrayList<RawRemoteObjectBackend*> channels_;
-  Thread thread_;
-  bool should_stop_;
-
- public:
-  static const int TAG_BORN = 0;
-  static const int TAG_DONE = 1;
-
- public:
-  RpcServer() {}
-  ~RpcServer() {}
-  
-  void Init();
-
-  void Register(int channel, RawRemoteObjectBackend *backend);
-  void Start();
-  void Stop();
-  
- private:
-  void Loop_();
-};
 
 struct DataGetterRequest {
   enum Operation { GET_DATA } operation;
@@ -173,10 +185,10 @@ class DataGetterBackend
 };
 
 template<typename T>
-void GetRemoteData(int channel, int destination, T* result) {
+void GetRemoteData(int channel, int peer, T* result) {
   DataGetterRequest request;
   request.operation = DataGetterRequest::GET_DATA;
-  Rpc<T> response(channel, destination, request);
+  Rpc<T> response(channel, peer, request);
   result->Copy(*response);
 }
 

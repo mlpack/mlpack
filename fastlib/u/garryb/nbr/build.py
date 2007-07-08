@@ -1,9 +1,10 @@
 
 librule(name = "nbr",
-   sources = ["blockdev.cc", "nbr_utils.cc", "cache.cc", "work.cc"],
+   sources = ["blockdev.cc", "nbr_utils.cc",
+              "cache.cc", "work.cc", "rpc_sock.cc"],
    headers = ["blockdev.h", "cache.h", "cachearray.h",
               "dfs.h", "gnp.h", "kdtree.h", "nbr_utils.h",
-              "spbounds.h", "spnode.h", "work.h"],
+              "spbounds.h", "spnode.h", "work.h", "rpc_sock.h"],
    deplibs = ["fastlib:fastlib_int"])
 
 librule(name = "nbr_mpi",

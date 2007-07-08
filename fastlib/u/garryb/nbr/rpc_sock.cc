@@ -2,6 +2,8 @@
 /*
 tasks to complete that must work
  - integrate with rest of code
+   - rpc calls
+   - rpc servers
  - barriers - birth and death
  /- name resolution
    /- REQUIRE IP ADDRESS - Duhh! :-)
@@ -29,16 +31,17 @@ resolve address - getaddrinfo
 register port numbers
 */
 
-RpcSockImpl RpcSockImpl::instance;
 
-RpcSockImpl::Peer::~Peer() {
-  if (out_fd >= 0) {
-    (void) close(out_fd);
-  }
-  if (in_fd >= 0) {
-    (void) close(out_fd);
-  }
+
+//-------------------------------------------------------------------------
+
+void MakeSocketNonBlocking(int fd) {
+  fcntl(fd, F_SETFL, O_NONBLOCK);
 }
+
+//-------------------------------------------------------------------------
+
+RpcSockImpl RpcSockImpl::instance;
 
 void RpcSockImpl::Init_() {
   module_ = fx_submodule(fx_root, "rpc", "rpc");
@@ -47,6 +50,8 @@ void RpcSockImpl::Init_() {
   port_ = fax_param_int(module_, "port", 31415);
   barrier_id = -1;
   barrier_registrants = -1;
+  channels_.Init();
+  channels_.default_value() = NULL;
 
   CreatePeers_();
   CalcChildren_();
@@ -60,15 +65,9 @@ void RpcSockImpl::CreatePeers_() {
 
   peers_.Init(n_peers_);
   reader.Open(fx_param_str_req(module_, "peers"));
-  
+
   for (index_t i = 0; i < peers_.size(); i++) {
     Peer *peer = &peers_[i];
-
-    peer->out_fd = -1;
-    peer->in_fd = -1;
-    peer->in_status = IDLE;
-    peer->in_buffer.Init();
-    peer->in_buffer_pos = 0;
 
     // parse the IP address
     mem::DebugPoison(&peer->in_header);
@@ -94,9 +93,15 @@ void RpcSockImpl::CalcChildren_() {
 }
 
 void RpcSockImpl::Listen_() {
+  int sv[2];
   struct sockaddr_in my_address;
 
+  socketpair(AF_LOCAL, SOCK_STREAM, 0, sv);
+  alert_signal_fd_ = sv[0];
+  alert_slot_fd_ = sv[1];
+
   listen_fd_ = socket(AF_INET, SOCK_STREAM, PF_INET); // last param 0?
+  MakeSocketNonBlocking(listen_fd_);
   mem::Zero(&my_address);
   my_address.sin_family = AF_INET;
   my_address.sin_port = htons(port_);
@@ -118,235 +123,39 @@ void RpcSockImpl::StartPollingThread_() {
   polling_thread_.Start();
 }
 
-void RpcSockImpl::InfectChildren_() {
-  open machine file
-  for (int i = children_.size(); --i;) {
-    int child_rank = children_[i];
-    const char *machinename = machines[i];
-    create ssh string to execute
-    fork process
-    if ssh fails, send a signal to the main process
-  }
-}
-
-void RpcSockImpl::Cleanup_() {
-  should_stop_ = true;
-  polling_thread_.WaitStop();
-  close(listen_fd_);
-  peers_.Resize(0); // automatically calls their destructors
-}
-
-void RpcSockImpl::Barrier_(int id) {
-  AckBarrier_(id);
-  PropBarrierDown_();
-}
-
-void RpcSockImpl::AckBarrier_(int id) {
-  if (barrier_registrants_ == -1) {
-    barrier_registrants_ = 1;
-    barrier_id_ = id;
-  } else if (barrier_id_ != id) {
-    FATAL("Barrier mismatch: %d != %d", id, barrier_id_);
-  } else {
-    ++barrier_registrants_;
-  }
-  
-  if (barrier_registrants_ == 1 + children_.size()) {
-    BarrierReady_();
-  }
-}
-
-void RpcSockImpl::BarrierReady_() {
-  if (parent_ != rank_) {
-    Header header;
-
-    DEBUG_ASSERT(barrier_registrants_ == 1 + children_.size());
-    header.magic = MAGIC;
-    header.channel = CHANNEL_BARRIER;
-    header.payload_size = 0;
-    header.extra = barrier_id_;
-
-    BlockingWrite_(peers_[parent_].out_fd, );
-
-    barrier_registrants_ = -1;
-  }
-}
-
-
-class Channel {
- public:
-  virtual Transaction *CreateTransaction(Message *message) = 0;
-};
-
-class Message {
- private:
-  index_t peer_;
-  index_t channel_;
-  index_t id_;
-  char *contents_;
-
- public:
-  void Send();
-
-  char *data() const {
-    DEBUG_ASSERT(sizeof(SockConnection::Header) % 16 == 0);
-    return contents_ + sizeof(SockConnection::Header);
-  }
-};
-
-void Message::Send() {
-  enqueue the message
-}
-
-class Transaction {
- private:
-  SockConnection *connection_;
-
- protected:
-  Message *CreateMessage(int destination, size_t size);
-
- public:
-  virtual void HandleMessage(Message *message) = 0;
-};
-
-class SockConnection {
-  FORBID_COPY(SockConnection);
-
- private:
-  struct Header {
-    int32 magic;
-    int32 channel;
-    int32 transaction_id;
-    int32 payload_size;
-  };
-
- private:
-  Mutex mutex_;
-  int fd_;
-
-  char *read_buffer_;
-  size_t read_buffer_pos_;
-  size_t read_buffer_size_;
-  Header read_header_;
-
-  char *write_buffer_;
-  size_t write_buffer_pos_;
-  size_t write_buffer_size_;
-
-  ArrayList<Transaction*> incoming_transactions_;
-  ArrayList<Transaction*> outgoing_transactions_;
-
- public:
-  SockConnection() {}
-  ~SockConnection();
-
-  void Init(int fd);
-};
-
-~SockConnection() {
-  // TODO: There are more socket functions I might have to call
-  (void) close(fd_);
-}
-
-void SockConnection::Init(int fd) {
-  fd_ = fd;
-}
-
-void RpcSockImpl::TryWrite() {
-  DEBUG_ASSERT(status_ == WRITING);
-  ssize_t bytes_written = write(fd,
-      buffer_.begin() + buffer_pos_, buffer_.size() - buffer_pos_);
-  if (bytes_written < 0) {
-    FATAL("Error writing");
-  }
-  buffer_pos_ += bytes_written;
-  if (buffer_pos_ == buffer_.size()) {
-    status_ = IDLE;
-    buffer_.Resize(0);
-  }
-}
-
-bool SockConnection::TryRead() {
-  if (!read_buffer_) {
-    ssize_t header_bytes = read(fd,
-        reinterpret_cast<char*>(&read_header_), sizeof(Header));
-    if (header_bytes != sizeof(Header)) {
-      FATAL("Error reading packet header: only %d bytes",
-          int(header_bytes));
-    }
-    DEBUG_ASSERT(read_header_.magic == MAGIC);
-    read_buffer_ = mem::Alloc(header_.payload_size);
-    read_buffer_pos_ = 0;
-  }
-
-  DEBUG_ASSERT(status_ == READING);
-  ssize_t bytes_read = read(fd,
-      read_buffer_ + read_buffer_pos_, read_buffer_size_ - buffer_pos_);
-
-  if (bytes_read < 0) {
-    FATAL("Error reading");
-  }
-
-  buffer_pos_ += bytes_read;
-
-  if (buffer_pos_ == buffer_.size()) {
-    // how do we handle incoming messages?
-    Message message;
-    message.Init();
-    read_buffer_pos_ = 0;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-    int channel = peer->in_header.channel;
-    if (channel == CHANNEL_BARRIER) {
-      BarrierAck_(peer->in_header.extra);
-    } else {
-      if (channel >= channels_.size()) {
-        FATAL("Unknown channel %d -- maybe we want to block on channels",
-            header.channel);
-      }
-      RawRemoteObjectBackend *backend = channels_[header.channel];
-      if (backend == NULL) {
-        FATAL("Unknown channel %d -- maybe we want to block on channels",
-            header.channel);
-      }
-      backend->HandleRequestRaw(&peer->in_buffer, 0, sizeof(Header));
-      Header *header = reinterpret_cast<Header*>(peer->in_buffer.begin());
-      header->magic = MAGIC;
-      header->channel = peer->in_header.channel;
-      header->payload_size = peer->in_buffer.size() - sizeof(Header);
-      peer->status = Peer::WRITING;
-      HandleWrite_(peer);
-    }
-
-
 void RpcSockImpl::PollingLoop_() {
+  ArrayList<WorkItem> work_items;
   fd_set read_fds;
   fd_set write_fds;
   fd_set error_fds;
 
-  while (!should_stop_) {
-    int maxfd = 0;
+  work_items.Init();
 
-    // identify file descriptors we are listening for
+  while (!should_stop_) {
+    int maxfd;
+
     FD_ZERO(&read_fds);
     FD_ZERO(&write_fds);
     FD_ZERO(&error_fds);
+
     FD_SET(&read_fds, listen_fd_);
-    for (index_t i = 0; i < connections_.size(); i++) {
-      SockConnection *connection = connections_[i].fd;
-      if (connection->fd >= 0) {
-        if (connection->status == Peer::WRITING) {
-          FD_SET(&write_fds, connection->fd);
-        } else {
-          FD_SET(&read_fds, connection->fd);
-        }
-        FD_SET(&error_fds, connection->fd);
-        maxfd = max(connection->fd, maxfd);
+    FD_SET(&read_fds, alert_signal_fd_);
+    maxfd = max(listen_fd_, alert_signal_fd_);
+
+    for (index_t i = 0; i < peers_.size(); i++) {
+      Peer *peer = &peers_[i];
+      peer->mutex.Lock();
+      if (peer->outgoing_connection) {
+        peer->outgoing_connection->PrepareSelect(
+            &read_fds, &write_fds, &error_fds);
+        maxfd = max(maxfd, peer->outgoing_connection->fd());
       }
+      if (peer->incoming_connection) {
+        peer->incoming_connection->PrepareSelect(
+            &read_fds, &write_fds, &error_fds);
+        maxfd = max(maxfd, peer->incoming_connection->fd());
+      }
+      peer->mutex.Unlock();
     }
 
     // Use a one-second timeout so we can poll for should_stop_ to allow
@@ -365,6 +174,13 @@ void RpcSockImpl::PollingLoop_() {
       continue;
     }
 
+    if (FD_ISSET(&read_fds, alert_signal_fd_)) {
+      // just read whatever is available, most likely 8 signals haven't all
+      // been sent
+      char buf[8];
+      read(alert_signal_fd_, buf, sizeof(buf));
+    }
+
     if (FD_ISSET(&read_fds, listen_fd_)) {
       sockaddr_in addr;
       socklen_t len = sizeof(addr);
@@ -372,13 +188,14 @@ void RpcSockImpl::PollingLoop_() {
 
       mem::Zero(&addr);
       new_fd = accept(listen_fd_, (struct sockaddr*)&addr, &len);
+      MakeSocketNonBlocking(new_fd);
 
       if (new_fd >= 0) {
         int i;
 
         for (i = 0; i < peers_.size(); i++) {
           Peer *peer = &peers_[i];
-          if (addr.sin_addr.s_addr == peer->out_addr.sin_addr.s_addr) {
+          if (addr.sin_addr.s_addr == peer->addr.sin_addr.s_addr) {
             break;
           }
         }
@@ -386,98 +203,358 @@ void RpcSockImpl::PollingLoop_() {
           NONFATAL("Incomming connection from unknown machine");
           (void)close(new_fd);
         } else {
+          DEBUG_ASSERT(peers_[i].incoming_connection == NULL);
           SockConnection *connection = new SockConnection();
           connection->Init(new_fd);
-          *connections_.AddBack() = connection;
-          peers_[i].connection = connection;
+          peers_[i].incoming_connection = connection;
         }
       }
     }
 
+    work_items.Resize(0);
+
+    // Gather available messages
     for (index_t i = 0; i < peers_.size(); i++) {
       Peer *peer = &peers_[i];
-      int fd = peers->in_fd;
-      if (fd >= 0) {
-        if (FD_ISSET(&error_fds, fd)) {
-          // Poor man's way to terminate all processes
-          FATAL("Socket error");
+
+      // TODO: This loop is probably quite slow.
+      // We should look for a faster way of scanning file descriptors --
+      // how about a DenseIntMap?
+      processable.Init();
+      peer->mutex_.Lock()
+      if (peer->incoming_connection) {
+        peer->incoming_connection->HandleSocketEvents(
+            &read_fds, &write_fds, &error_fds);
+      }
+      if (peer->outgoing_connection) {
+        peer->outgoing_connection->HandleSocketEvents(
+            &read_fds, &write_fds, &error_fds);
+      }
+      GatherReadyMessages(peer, peer->incoming_connection, &processable);
+      peer->mutex_.Unlock();
+    }
+
+    // Execute work items while we aren't holding any mutexes
+    for (index_t i = 0; i < work_items.size(); i++) {
+      WorkItem *item = &work_items[i];
+      item->transaction->TransactionPreexamineMessage_(item->message);
+      // it is transaction's responsibility to delete the message
+      item->transaction->HandleMessage(item->message);
+    }
+  }
+}
+
+void RpcSockImpl::Register_(int channel_num, Channel *channel) {
+  mutex_.Lock()
+  channels_[channel_num] = channel;
+  mutex_.Unlock();
+}
+
+void RpcSockImpl::GatherReadyMessages(Peer *peer,
+    SockConnection *connection, ArrayList<WorkItem*> *work_items) {
+  ArrayList<Message*>* queue = &connection->read_queue();
+  int j = 0;
+
+  processable.Init();
+
+  for (index_t i = 0; i < queue->size(); i++) {
+    Message *message = (*queue)[i];
+    int id = message->transaction_id();
+    Transaction *transaction;
+
+    if (message->channel() < 0) {
+      transaction = peer->outgoing_transactions[id];
+    } else {
+      transaction = peer->incoming_transactions[id];
+      if (!transaction) {
+        // Someone might be registering channels in the background
+        mutex_.Lock();
+        Channel *channel = channels_[message->channel()];
+        if (channel) {
+          transaction = channel->GetTransaction(message);
+          peer->incoming_transactions[id] = transaction;
         }
-        if (FD_ISSET(&write_fds, fd)) {
-          HandleWrite_(peer);
-        }
-        if (FD_ISSET(&read_fds, fd)) {
-          HandleRead_(peer);
+        mutex_.Unlock();
+      }
+    }
+
+    if (transaction != NULL) {
+      WorkItem *item = processable.AddBack();
+      item->message = message;
+      item->transcation = transaction;
+    } else {
+      (*queue)[j++] = message;
+    }
+  }
+  if (j != i) {
+    queue->Resize(j);
+  }
+}
+
+void RpcSockImpl::Cleanup_() {
+  should_stop_ = true;
+  polling_thread_.WaitStop();
+  close(listen_fd_);
+  peers_.Resize(0); // automatically calls their destructors
+}
+
+Message *RpcSockImpl::CreateMessage_(
+    int peer, int channel, int transaction_id, size_t size) {
+  Message *message = new Message();
+  message->Init(peer, channel, transaction_id,
+      mem::Alloc<char>(sizeof(SockConnection::Header) + size),
+      sizeof(SockConnection::Header), size);
+  return message;
+}
+
+int RpcSockImpl::DestroyTransaction_(int peer_id, int channel, int id) {
+  Peer *peer = &peers_[peer_id];
+
+  mutex_.Lock();
+  peer->mutex.Lock();
+  if (channel < 0) {
+    peer->outgoing_transactions[id] = NULL;
+  } else {
+    channels_[channel]->CleanupTransaction(incoming_transactions[id]);
+    peer->incoming_transactions[id] = NULL;
+  }
+  peer->mutex.Unlock();
+  mutex_.Unlock();
+
+  return id;
+}
+
+//-------------------------------------------------------------------------
+
+RpcSockImpl::Peer::Peer() {
+  outgoing_connection = NULL;
+  incoming_connection = NULL;
+  incoming_transactions.Init();
+  incoming_transactions.default_value() = NULL;
+  outgoing_transactions.Init();
+  outgoing_transactions.default_value() = NULL;
+}
+
+RpcSockImpl::Peer::~Peer() {
+  mutex.Lock();
+  if (outgoing_connection) {
+    delete outgoing_connection; 
+  }
+  if (incoming_connection) {
+    delete incoming_connection; 
+  }
+  mutex.Unlock();
+}
+
+void RpcSockImpl::Peer::Send(Message *message) {
+  mutex.Lock();
+  if (outgoing_connection == NULL) {
+    outgoing_connection = new SockConnection();
+    outgoing_connection->InitConnect(out_addr);
+  }
+  outgoing_connection->Send(message);
+  mutex.Unlock();
+}
+
+int RpcSockImpl::Peer::AssignTransaction(Transaction *transaction) {
+  int id;
+  mutex.Lock();
+  for (id = 0; outgoing_transactions[id] != NULL; id++) {}
+  outgoing_transactions[id] = transaction;
+  mutex.Unlock();
+  return id;
+}
+
+//-------------------------------------------------------------------------
+
+void Transaction::Init(int channel_in) {
+  channel_ = channel_in;
+  peers_.Init();
+}
+
+Message *Transaction::CreateMessage(int peer, size_t size) {
+  Message *message;
+  int i;
+  int transaction_id;
+
+  for (i = 0; i < peers_.size(); i++) {
+    if (peers_[i].peer == peer) {
+      break;
+    }
+  }
+
+  if (i == peers_.size()) {
+    peers_.AddBack();
+    // TODO: mutex?
+    transaction_id = RpcSockImpl::instance.peers_[peer].AssignTransaction
+        (peer, this);
+    peers_[i].peer = peer;
+    peers_[i].channel = channel;
+    peers_[i].transaction_id = transaction_id;
+  }
+
+  message = RpcSockImpl::CreateMessage(
+      peers_[i].peer, peers_[i].channel, peers_[i].transaction_id, size);
+
+  return message;
+}
+
+void Transaction::TransactionPreexamineMessage_(Message *message) {
+  for (i = 0; i < peers_.size(); i++) {
+    if (peers_[i].peer == peer) {
+      break;
+    }
+  }
+
+  if (i == peers_.size()) {
+    peers_.AddBack();
+    peers_[i].peer = peer;
+    peers_[i].channel = -1;
+    peers_[i].transaction_id = message->transaction_id();
+  }
+
+  DEBUG_ASSERT(peers_[i].peer == peer);
+  DEBUG_ASSERT(peers_[i].transaction_id == message->transaction_id());
+}
+
+void Transaction::Send(Message *message) {
+  // TODO: Demeter
+  RpcSockImpl::instance.peers_[message->peer()].Send(message);
+}
+
+void Transaction::Done() {
+  for (index_t i = 0; i < peers_.size(); i++) {
+    // TODO: Demeter?
+    RpcSockImpl::instance.peers_[peers[i].peer].DestroyTransaction(
+        peers[i].channel, peers[i].transaction_id);
+  }
+}
+
+//-------------------------------------------------------------------------
+
+~SockConnection() {
+  // TODO: There are more socket functions I might have to call
+  (void) close(fd_);
+}
+
+void SockConnection::InitConnect(const struct sockaddr_in &dest) {
+  int fd = socket(AF_INET, SOCK_STREAM, PF_INET);
+
+  MakeSocketNonBlocking(fd);
+
+  // make socket non-blocking
+  if (0 > connect(fd, &dest, sizeof(struct sockaddr_in))) {
+    FATAL("connect failed");
+  }
+
+  Init(fd_);
+}
+
+void SockConnection::Init(int fd) {
+  read_total_ = 0;
+  read_message_ = NULL;
+  read_buffer_pos_ = 0;
+  read_queue_.Init();
+
+  write_total_ = 0;
+  write_message_ = NULL;
+  write_buffer_pos_ = 0;
+  write_queue_.Init();
+}
+
+void SockConnection::Send(Message *message) {
+  ++write_total;
+  Header *header = reinterpret_cast<Header*>(message->buffer());
+  header->magic = MAGIC;
+  header->channel = message->channel();
+  header->transaction_id = message->transaction_id();
+  header->data_size = message->data_size();
+  if (write_message_ == NULL) {
+    write_message_ = message;
+  } else {
+    write_queue_.Put(write_total_, message);
+  }
+
+  wake up network thread
+}
+
+void SockConnection::TryWrite() {
+  if (write_message_ != NULL) {
+    DEBUG_ASSERT(status_ == WRITING);
+    ssize_t bytes_written = write(fd,
+        write_message_.buffer() + write_buffer_pos_,
+        write_message_.buffer_size() - write_buffer_pos_);
+    if (bytes_written < 0) {
+      if (errno != EAGAIN && errno != EINTR) {
+        FATAL("Error writing");
+      }
+    } else {
+      write_buffer_pos_ += bytes_written;
+      if (write_buffer_pos_ == write_message_.buffer_size()) {
+        delete write_message_;
+        if (write_queue_.is_empty()) {
+          write_message_ = NULL;
+        } else {
+          write_message_ = write_queue_.Pop();
         }
       }
     }
   }
 }
 
-
-void RpcSockImpl::BlockingWrite_(int fd, size_t len, const char *in_buffer) {
-  for (;;) {
-    ssize_t written = write(fd, in_buffer, len);
-
-    len -= written;
-    if (len == 0) {
-      break;
+void SockConnection::TryRead() {
+  if (!read_message_) {
+    Header header;
+    ssize_t header_bytes = read(fd,
+        reinterpret_cast<char*>(&header), sizeof(Header));
+    if (header_bytes < 0 && (errno == EINTR || errno == EAGAIN)) {
+      return;
     }
-    DEBUG_ASSERT_MSG(written > 0, "error writing");
-    in_buffer += written;
+    if (header_bytes != sizeof(Header)) {
+      FATAL("Error reading packet header: read returned %d bytes",
+          int(header_bytes));
+    }
+    DEBUG_ASSERT(header.magic == MAGIC);
+    read_message_ = new Message();
+    read_message_->Init(peer_, header.channel, header.transaction_id,
+        mem::Alloc<char>(header.data_size), 0, header.data_size);
+  }
+  ssize_t bytes_read = read(fd,
+      read_message_.buffer() + read_buffer_pos_,
+      read_message_.buffer_size() - read_buffer_pos_);
+  if (bytes_read < 0) {
+    if (errno != EAGAIN && errno != EINTR) {
+      FATAL("Error reading");
+    }
+  } else {
+    read_buffer_pos_ += bytes_read; 
+    if (read_buffer_pos_ == read_message_.buffer_size()) {
+      ++read_total;
+      *read_queue_.AddBack() = message;
+
+      read_message_ = NULL;
+      read_buffer_pos_ = 0;
+    }
   }
 }
 
-void RpcSockImpl::BlockingRead_(int fd, size_t len, char *in_buffer) {
-  for (;;) {
-    if (len == 0) {
-      break;
-    }
-    ssize_t amount_read = read(fd, in_buffer, len);
-    len -= amount_read;
-    if (amount_read <= 0) {
-      assert(amount_read == 0);
-      /* end-of-file, fill with zeros */
-      memset(in_buffer, 0, len);
-      break;
-    }
-    in_buffer += amount_read;
+void SockConnection::HandleSocketEvents(
+    fd_set *read_fds, fd_set *write_fds, fd_set *error_fds) {
+  if (FD_ISSET(&error_fds, fd_)) {
+    // Poor man's way to terminate all processes
+    FATAL("Socket error");
+  }
+  if (FD_ISSET(&write_fds, fd_)) {
+    TryWrite();
+  }
+  if (FD_ISSET(&read_fds, fd_)) {
+    TryRead();
   }
 }
 
-void RpcSockImpl::SendReceive_(int channel, int destination,
-    ArrayList<char>* data) {
-  Peer *peer = &peers_[destination];
-  Header header = reinterpret_cast<Header*>(peer->in_buffer.begin());
-
-  peer->out_mutex.Lock();
-
-  if (peer->out_fd < 0) {
-    peer->out_fd = socket(AF_INET, SOCK_STREAM, PF_INET);
-
-    if (0 > connect(peer->out_fd, &peer->out_addr, sizeof(peer->out_addr))) {
-      FATAL("connect failed");
-    }
-  }
-
-  DEBUG_ASSERT_MSG(sizeof(Header) % 16 == 0,
-     "Header must be multiple of 16 bytes, or RISC processors won't work due to alignment problems!");
-
-  // Requests must have space preallocated for the header
-  header->magic = MAGIC;
-  header->channel = channel;
-  header->payload_size = data->size();
-  BlockingWrite_(peer->out_fd, data->begin(), data->size());
-
-  ssize_t bytes_read = read(peer->out_fd, data->begin(), sizeof(Header));
-  if (bytes_read < sizeof(Header)) {
-    FATAL("Read error");
-  }
-
-  // Responses will just have their header overwritten.
-  DEBUG_ASSERT(header->magic == MAGIC);
-  DEBUG_ASSERT(header->channel == channel);
-  data->Resize(header->payload_size);
-  BlockingRead_(fd, header->payload_size, data->begin());
-
-  peer->out_mutex.Unlock();
+void SockConnection::PrepareSelect(
+    fd_set *read_fds, fd_set *write_fds, fd_set *error_fds) {
+  FD_SET(read_fds, fd_);
+  FD_SET(write_fds, fd_);
+  FD_SET(error_fds, fd_);
 }
