@@ -76,10 +76,6 @@ class Rpc {
     delete response_;
   }
 
-  void HandleMessage(Message *message) {
-    
-  }
-
   template<typename RequestObject>
   ResponseObject *Request(
       int channel, int peer, const RequestObject& request) {
@@ -184,12 +180,16 @@ class DataGetterBackend
   }
 };
 
-template<typename T>
-void GetRemoteData(int channel, int peer, T* result) {
-  DataGetterRequest request;
-  request.operation = DataGetterRequest::GET_DATA;
-  Rpc<T> response(channel, peer, request);
-  result->Copy(*response);
-}
+namespace rpc {
+  template<typename T>
+  void GetRemoteData(int channel, int peer, T* result) {
+    DataGetterRequest request;
+    request.operation = DataGetterRequest::GET_DATA;
+    Rpc<T> response(channel, peer, request);
+    result->Copy(*response);
+  }
+
+  void Barrier(int channel_num);
+};
 
 #endif
