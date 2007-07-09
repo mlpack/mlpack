@@ -1,3 +1,8 @@
+/**
+ * @file rpc_sock.cc
+ *
+ * Implementation of transaction API using TCP.
+ */
 
 /*
 tasks to complete that must work
@@ -31,8 +36,6 @@ resolve address - getaddrinfo
 register port numbers
 */
 
-
-
 //-------------------------------------------------------------------------
 
 void MakeSocketNonBlocking(int fd) {
@@ -43,7 +46,7 @@ void MakeSocketNonBlocking(int fd) {
 
 RpcSockImpl RpcSockImpl::instance;
 
-void RpcSockImpl::Init_() {
+void RpcSockImpl::Init() {
   module_ = fx_submodule(fx_root, "rpc", "rpc");
   rank_ = fx_param_int(module_, "rank", "0");
   n_peers_ = fx_param_int_req(module_, "n");
@@ -57,8 +60,82 @@ void RpcSockImpl::Init_() {
   CalcChildren_();
   Listen_();
   StartPollingThread_();
-  Barrier_();
 }
+
+void RpcSockImpl::Done() {
+  should_stop_ = true;
+  polling_thread_.WaitStop();
+  close(listen_fd_);
+  peers_.Resize(0); // automatically calls their destructors
+}
+
+void RpcSockImpl::Register(int channel_num, Channel *channel) {
+  mutex_.Lock()
+  channels_[channel_num] = channel;
+  mutex_.Unlock();
+  // Inform the polling loop about the new channel so that it can process
+  // any events that have been queued
+  WakeUpPollingLoop_();
+}
+
+void RpcSockImpl::Unregister(int channel_num) {
+  mutex_.Lock()
+  channels_[channel_num] = NULL;
+  mutex_.Unlock();
+}
+
+void RpcSockImpl::Send(Message *message) {
+  Peer *peer = &peers_[message->peer()];
+  peer->mutex.Lock();
+  if (peer->outgoing_connection == NULL) {
+    peer->outgoing_connection = new SockConnection();
+    peer->outgoing_connection->InitConnect(out_addr);
+    // Inform polling loop that we have a new socket
+    WakeUpPollingLoop_();
+  }
+  peer->outgoing_connection->Send(message);
+  peer->mutex.Unlock();
+}
+
+//-- helpers for transaction stuff ----------------------------------------
+
+Message *RpcSockImpl::CreateMessage_(
+    int peer, int channel, int transaction_id, size_t size) {
+  Message *message = new Message();
+  message->Init(peer, channel, transaction_id,
+      mem::Alloc<char>(sizeof(SockConnection::Header) + size),
+      sizeof(SockConnection::Header), size);
+  return message;
+}
+
+int RpcSockImpl::DestroyTransaction_(int peer_id, int channel, int id) {
+  Peer *peer = &peers_[peer_id];
+
+  mutex_.Lock();
+  peer->mutex.Lock();
+  if (channel < 0) {
+    peer->outgoing_transactions[id] = NULL;
+  } else {
+    channels_[channel]->CleanupTransaction(incoming_transactions[id]);
+    peer->incoming_transactions[id] = NULL;
+  }
+  peer->mutex.Unlock();
+  mutex_.Unlock();
+
+  return id;
+}
+
+int RpcSockImpl::AssignTransaction_(int peer_num, Transaction *transaction) {
+  Peer *peer = &peers_[peer_num];
+  int id;
+  mutex.Lock();
+  for (id = 0; outgoing_transactions[id] != NULL; id++) {}
+  outgoing_transactions[id] = transaction;
+  mutex.Unlock();
+  return id;
+}
+
+//-- helper functions for initialization and the main loop
 
 void RpcSockImpl::CreatePeers_() {
   TextLineReader reader;
@@ -84,9 +161,12 @@ void RpcSockImpl::CreatePeers_() {
 void RpcSockImpl::CalcChildren_() {
   int m = 1 +
       min(unsigned(n_peers_ - rank_ - 1), unsigned((~rank_) & (rank_-1)));
+  int i;
 
-  for (int i = 1; i < m; i *= 2) {
-    *children_.AddBack() = rank_ + m;
+  for (i = 1; i < m; i *= 2) {}
+  while (i > 1) {
+    i /= 2;
+    *children_.AddBack() = rank_ + i;
   }
 
   parent_ = rank_ - ((~rank_) & (rank_-1)) - 1;
@@ -99,6 +179,8 @@ void RpcSockImpl::Listen_() {
   socketpair(AF_LOCAL, SOCK_STREAM, 0, sv);
   alert_signal_fd_ = sv[0];
   alert_slot_fd_ = sv[1];
+  MakeSocketNonblocking(alert_signal_fd_);
+  MakeSocketNonblocking(alert_slot_fd_);
 
   listen_fd_ = socket(AF_INET, SOCK_STREAM, PF_INET); // last param 0?
   MakeSocketNonBlocking(listen_fd_);
@@ -123,6 +205,10 @@ void RpcSockImpl::StartPollingThread_() {
   polling_thread_.Start();
 }
 
+void RpcSockImpl::WakeUpPollingLoop_() {
+  (void) write(alert_signal_fd_, "x", 1);
+}
+
 void RpcSockImpl::PollingLoop_() {
   ArrayList<WorkItem> work_items;
   fd_set read_fds;
@@ -139,8 +225,8 @@ void RpcSockImpl::PollingLoop_() {
     FD_ZERO(&error_fds);
 
     FD_SET(&read_fds, listen_fd_);
-    FD_SET(&read_fds, alert_signal_fd_);
-    maxfd = max(listen_fd_, alert_signal_fd_);
+    FD_SET(&read_fds, alert_slot_fd_);
+    maxfd = max(listen_fd_, alert_slot_fd_);
 
     for (index_t i = 0; i < peers_.size(); i++) {
       Peer *peer = &peers_[i];
@@ -175,10 +261,9 @@ void RpcSockImpl::PollingLoop_() {
     }
 
     if (FD_ISSET(&read_fds, alert_signal_fd_)) {
-      // just read whatever is available, most likely 8 signals haven't all
-      // been sent
+      // Read as much as possible
       char buf[8];
-      read(alert_signal_fd_, buf, sizeof(buf));
+      while (read(alert_signal_fd_, buf, sizeof(buf)) > 0) {}
     }
 
     if (FD_ISSET(&read_fds, listen_fd_)) {
@@ -221,7 +306,7 @@ void RpcSockImpl::PollingLoop_() {
       // We should look for a faster way of scanning file descriptors --
       // how about a DenseIntMap?
       processable.Init();
-      peer->mutex_.Lock()
+      peer->mutex.Lock()
       if (peer->incoming_connection) {
         peer->incoming_connection->HandleSocketEvents(
             &read_fds, &write_fds, &error_fds);
@@ -231,7 +316,7 @@ void RpcSockImpl::PollingLoop_() {
             &read_fds, &write_fds, &error_fds);
       }
       GatherReadyMessages(peer, peer->incoming_connection, &processable);
-      peer->mutex_.Unlock();
+      peer->mutex.Unlock();
     }
 
     // Execute work items while we aren't holding any mutexes
@@ -244,13 +329,7 @@ void RpcSockImpl::PollingLoop_() {
   }
 }
 
-void RpcSockImpl::Register_(int channel_num, Channel *channel) {
-  mutex_.Lock()
-  channels_[channel_num] = channel;
-  mutex_.Unlock();
-}
-
-void RpcSockImpl::GatherReadyMessages(Peer *peer,
+void RpcSockImpl::GatherReadyMessages_(Peer *peer,
     SockConnection *connection, ArrayList<WorkItem*> *work_items) {
   ArrayList<Message*>* queue = &connection->read_queue();
   int j = 0;
@@ -291,39 +370,6 @@ void RpcSockImpl::GatherReadyMessages(Peer *peer,
   }
 }
 
-void RpcSockImpl::Cleanup_() {
-  should_stop_ = true;
-  polling_thread_.WaitStop();
-  close(listen_fd_);
-  peers_.Resize(0); // automatically calls their destructors
-}
-
-Message *RpcSockImpl::CreateMessage_(
-    int peer, int channel, int transaction_id, size_t size) {
-  Message *message = new Message();
-  message->Init(peer, channel, transaction_id,
-      mem::Alloc<char>(sizeof(SockConnection::Header) + size),
-      sizeof(SockConnection::Header), size);
-  return message;
-}
-
-int RpcSockImpl::DestroyTransaction_(int peer_id, int channel, int id) {
-  Peer *peer = &peers_[peer_id];
-
-  mutex_.Lock();
-  peer->mutex.Lock();
-  if (channel < 0) {
-    peer->outgoing_transactions[id] = NULL;
-  } else {
-    channels_[channel]->CleanupTransaction(incoming_transactions[id]);
-    peer->incoming_transactions[id] = NULL;
-  }
-  peer->mutex.Unlock();
-  mutex_.Unlock();
-
-  return id;
-}
-
 //-------------------------------------------------------------------------
 
 RpcSockImpl::Peer::Peer() {
@@ -344,25 +390,6 @@ RpcSockImpl::Peer::~Peer() {
     delete incoming_connection; 
   }
   mutex.Unlock();
-}
-
-void RpcSockImpl::Peer::Send(Message *message) {
-  mutex.Lock();
-  if (outgoing_connection == NULL) {
-    outgoing_connection = new SockConnection();
-    outgoing_connection->InitConnect(out_addr);
-  }
-  outgoing_connection->Send(message);
-  mutex.Unlock();
-}
-
-int RpcSockImpl::Peer::AssignTransaction(Transaction *transaction) {
-  int id;
-  mutex.Lock();
-  for (id = 0; outgoing_transactions[id] != NULL; id++) {}
-  outgoing_transactions[id] = transaction;
-  mutex.Unlock();
-  return id;
 }
 
 //-------------------------------------------------------------------------
@@ -386,14 +413,13 @@ Message *Transaction::CreateMessage(int peer, size_t size) {
   if (i == peers_.size()) {
     peers_.AddBack();
     // TODO: mutex?
-    transaction_id = RpcSockImpl::instance.peers_[peer].AssignTransaction
-        (peer, this);
+    transaction_id = RpcSockImpl::instance.AssignTransaction(peer, this);
     peers_[i].peer = peer;
     peers_[i].channel = channel;
     peers_[i].transaction_id = transaction_id;
   }
 
-  message = RpcSockImpl::CreateMessage(
+  message = RpcSockImpl::CreateMessage_(
       peers_[i].peer, peers_[i].channel, peers_[i].transaction_id, size);
 
   return message;
@@ -418,8 +444,7 @@ void Transaction::TransactionPreexamineMessage_(Message *message) {
 }
 
 void Transaction::Send(Message *message) {
-  // TODO: Demeter
-  RpcSockImpl::instance.peers_[message->peer()].Send(message);
+  RpcSockImpl::Send(message);
 }
 
 void Transaction::Done() {
@@ -427,6 +452,18 @@ void Transaction::Done() {
     // TODO: Demeter?
     RpcSockImpl::instance.peers_[peers[i].peer].DestroyTransaction(
         peers[i].channel, peers[i].transaction_id);
+  }
+}
+
+void Transaction::Done(int peer) {
+  for (index_t i = 0; i < peers_.size(); i++) {
+    // TODO: Demeter?
+    if (peer == peers_[i].peer) {
+      RpcSockImpl::instance.peers_[peers[i].peer].DestroyTransaction(
+          peers[i].channel, peers[i].transaction_id);
+      peers_[i] = peers_[peers_.size()-1];
+      peers_.PopBack();
+    }
   }
 }
 

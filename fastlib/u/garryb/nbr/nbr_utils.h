@@ -448,7 +448,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Main(
     SetupMaster_();
   }
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  rpc::Barrier(50);
   fx_timer_stop(module_, "master_init");
 
   fx_timer_start(module_, "worker_init");
@@ -458,14 +458,14 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Main(
     q_results_.InitWorker();
   }
 
-  MPI_Barrier(MPI_COMM_WORLD);
+  rpc::Barrier(51);
   fx_timer_stop(module_, "worker_init");
 
   fx_timer_start(module_, "flush_data");
   data_points_.FlushClear(BlockDevice::READ);
   data_nodes_.FlushClear(BlockDevice::READ);
   q_results_.FlushClear(BlockDevice::MODIFY);
-  MPI_Barrier(MPI_COMM_WORLD);
+  rpc::Barrier(52);
   fx_timer_stop(module_, "flush_data");
 
   fx_timer_start(module_, "distribute_config");
@@ -477,7 +477,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Main(
     remote_work_queue->Init(WORK_CHANNEL, MASTER_RANK);
     work_queue_ = remote_work_queue;
   }
-  MPI_Barrier(MPI_COMM_WORLD);
+  rpc::Barrier(53);
   fx_timer_stop(module_, "distribute_config");
 
   fx_timer_start(module_, "all_machines");
@@ -488,12 +488,12 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Main(
       data_points_.cache(), data_nodes_.cache(),
       data_points_.cache(), data_nodes_.cache(),
       q_results_.cache());
-  MPI_Barrier(MPI_COMM_WORLD);
+  rpc::Barrier(54);
   fx_timer_stop(module_, "all_machines");
 
   fx_timer_start(module_, "flush_results");
   q_results_.FlushClear(BlockDevice::READ);
-  MPI_Barrier(MPI_COMM_WORLD);
+  rpc::Barrier(55);
   fx_timer_stop(module_, "flush_results");
 
   server_.Stop();
