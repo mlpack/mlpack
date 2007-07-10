@@ -39,26 +39,25 @@ class Rpc {
 
     Message *Doit(int channel, int peer, const RequestObject& request) {
       Transaction::Init(channel);
-      Message *message = CreateMessage(peer, channel,
-          ot::PointerFrozenSize(request));
+      Message *message = CreateMessage(peer, ot::PointerFrozenSize(request));
       ot::PointerFreeze(request, message->data());
-      mutex.Lock();
-      Send(message);
       response = NULL;
-      do {
+      Send(message);
+      mutex.Lock();
+      while (response == NULL) {
         cond.Wait(&mutex);
-      } while (response == NULL);
+      }
       mutex.Unlock();
       return response;
     }
 
     void HandleMessage(Message *message) {
+      Done();
       mutex.Lock();
       response = message;
       cond.Signal();
       mutex.Unlock();
       // TODO: Handle done
-      Done();
     }
   };
   
@@ -110,32 +109,57 @@ class Rpc {
  * This is how you define the network object on the server.
  */
 template<typename RequestObject, typename ResponseObject>
-class RemoteObjectBackend : public Channel {
+class RemoteObjectBackend : public Channel { 
+  FORBID_COPY(RemoteObjectBackend);
+
  public:
   // Simple request-response transaction
   class RemoteObjectTransaction : public Transaction {
     FORBID_COPY(RemoteObjectTransaction);
+
    private:
     RemoteObjectBackend *inner_;
 
    public:
-    RemoteObjectTransaction(RemoteObjectBackend *inner_in)
-     : inner_(inner_in)
-     {}
+    RemoteObjectTransaction() {}
+    virtual ~RemoteObjectTransaction() {}
+    
+    void Init(int channel_num, RemoteObjectBackend *inner_in) { 
+      Transaction::Init(channel_num);
+      inner_ = inner_in;
+    }
 
-    void HandleMessage(Message *request);
+    virtual void HandleMessage(Message *request);
+    // {
+    //  const RequestObject* real_request =
+    //      ot::PointerThaw<RequestObject>(request->data());
+    //  ResponseObject real_response;
+    //  inner_->HandleRequest(*real_request, &real_response);
+    //  delete request;
+    //  Message *response = CreateMessage(
+    //      request->peer(), ot::PointerFrozenSize(real_response));
+    //  ot::PointerFreeze(real_response, response->data());
+    //  Send(response);
+    //  Done();
+    //  delete this;
+    //}
   };
 
  public:
+  RemoteObjectBackend() {}
   virtual ~RemoteObjectBackend() {}
 
   virtual void HandleRequest(const RequestObject& request,
-      ResponseObject *response) = 0;
-
-  RemoteObjectTransaction *GetTransaction(Message *message) {
-    return new RemoteObjectTransaction(this);
+      ResponseObject *response) {
+    FATAL("Virtuality sucks");
   }
-  
+
+  virtual Transaction *GetTransaction(Message *message) {
+    RemoteObjectTransaction *t = new RemoteObjectTransaction();
+    t->Init(message->channel(), this);
+    return t;
+  }
+
   void Register(int channel_num) {
     rpc::Register(channel_num, this);
   }
@@ -145,12 +169,13 @@ template<typename RequestObject, typename ResponseObject>
 void RemoteObjectBackend<RequestObject, ResponseObject>
     ::RemoteObjectTransaction::HandleMessage(Message *request) {
   const RequestObject* real_request =
-      ot::PointerThaw<RequestObject>(request->buffer());
+      ot::PointerThaw<RequestObject>(request->data());
   ResponseObject real_response;
   inner_->HandleRequest(*real_request, &real_response);
   Message *response = CreateMessage(
       request->peer(), ot::PointerFrozenSize(real_response));
-  ot::PointerFreeze(real_response, response->buffer());
+  delete request;
+  ot::PointerFreeze(real_response, response->data());
   Send(response);
   Done();
   delete this;
@@ -175,11 +200,14 @@ class DataGetterBackend
     data_ = data_in;
   }
 
-  void HandleRequest(
-      const DataGetterRequest& request, T *response) {
-    response->Copy(*data_);
-  }
+  virtual void HandleRequest(const DataGetterRequest& request, T *response);
 };
+
+template<typename T>
+void DataGetterBackend<T>::HandleRequest(const DataGetterRequest& request,
+    T* response) {
+  response->Copy(*data_);
+}
 
 namespace rpc {
   template<typename T>
