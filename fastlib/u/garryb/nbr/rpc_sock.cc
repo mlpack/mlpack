@@ -15,15 +15,18 @@
 
 /*
 tasks to complete that must work
- - startup and shutdown
- - integrate with rest of code
-   - rpc calls
-   - rpc servers
- - barriers - birth and death
- /- name resolution
-   /- REQUIRE IP ADDRESS - Duhh! :-)
+ - smarter transaction lookup so barriers can all share the same number
+ - smarter fd_set usage (perhaps a simple linear scan,
+     with fd-lookup table?)
  - ssh-bootstrapping
    - start with manual bootstrapping
+ /- startup and shutdown
+ /- integrate with rest of code
+   /- rpc calls
+   /- rpc servers
+ /- barriers - birth and death
+ /- name resolution
+   /- REQUIRE IP ADDRESS - Duhh! :-)
 
 near future
  - abstract reduce operation that uses the tree structure
@@ -577,7 +580,7 @@ void SockConnection::TryWrite() {
     ssize_t bytes_written = write(write_fd_,
         write_message_->buffer() + write_buffer_pos_,
         write_message_->buffer_size() - write_buffer_pos_);
-    fprintf(stderr, "WRITE %d bytes\n", bytes_written);
+    //fprintf(stderr, "WRITE %d bytes\n", bytes_written);
     if (bytes_written < 0) {
       // Okay, we weren't able to write anything.
       if (errno != EAGAIN && errno != EINTR) {
@@ -622,7 +625,7 @@ void SockConnection::TryRead() {
       read_message_->Init(peer_, header.channel, header.transaction_id,
           mem::Alloc<char>(header.data_size), 0, header.data_size);
       read_buffer_pos_ = 0;
-      fprintf(stderr, "Read header %d bytes\n", header_bytes);
+      //fprintf(stderr, "Read header %d bytes\n", header_bytes);
       //fprintf(stderr, "Got a valid header.\n");
     }
     // Second, see if we're done with the packet.  (Note some packets have
@@ -641,7 +644,7 @@ void SockConnection::TryRead() {
         read_message_->buffer() + read_buffer_pos_,
         read_message_->buffer_size() - read_buffer_pos_);
     //fprintf(stderr, "Got %d data bytes.\n", (int)bytes_read);
-    fprintf(stderr, "Read payload %d bytes\n", bytes_read);
+    //fprintf(stderr, "Read payload %d bytes\n", bytes_read);
     if (bytes_read > 0) {
       read_buffer_pos_ += bytes_read; 
     } else {
@@ -659,14 +662,14 @@ void SockConnection::TryRead() {
 void SockConnection::HandleSocketEvents(
     fd_set *read_fds, fd_set *write_fds, fd_set *error_fds,
     bool allow_errors) {
-/*
- code to read socket errors:
-    int sockError = 0;
-    socklen_t sockErrorLen = sizeof(sockError);
-    if (getsockopt(sock, SOL_SOCKET, SO_ERROR,
-      &sockError, &sockErrorLen) == -1) {
-    ...
-*/
+  /*
+   code to read socket errors:
+      int sockError = 0;
+      socklen_t sockErrorLen = sizeof(sockError);
+      if (getsockopt(sock, SOL_SOCKET, SO_ERROR,
+        &sockError, &sockErrorLen) == -1)
+      ...
+  */
   if (unlikely(is_read_open())) {
     if (FD_ISSET(read_fd_, error_fds)) {
       // Poor man's way to terminate all processes

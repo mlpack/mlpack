@@ -139,34 +139,41 @@ void MemBlockDevice::Init(offset_t block_size) {
   n_blocks_ = 0;
   n_block_bytes_ = block_size;
   blocks_.Init();
+  blocks_.default_value() = NULL;
 }
 
 void MemBlockDevice::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
-  CheckSize_(blockid);
-  char *mydata = blocks_[blockid].data;
-  
-  if (likely(mydata != NULL)) {
-    mem::Copy(data, mydata + begin, end - begin);
-  } else {
-    // initialize with random garbage
+  if (likely(blockid < n_blocks_)) {
+    char *mydata = blocks_.get(blockid);
+    if (likely(mydata != NULL)) {
+      printf("%p READING %d, %d\n", this, blockid, n_blocks_);
+      mem::Copy(data, mydata + begin, end - begin);
+      return;
+    }
   }
+  printf("%p NOT READING %d, %d\n", this, blockid, n_blocks_);
+  // randomize with garbage otherwise
 }
 
 void MemBlockDevice::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *data) {
-  CheckSize_(blockid);
-  char *mydata = blocks_[blockid].data;
+  char *mydata = blocks_[blockid];
 
-  if (unlikely(data == NULL)) {
-    blocks_[blockid].data = mydata = mem::Alloc<char>(n_block_bytes_);
+  if (unlikely(mydata == NULL)) {
+    blocks_[blockid] = mydata = mem::Alloc<char>(n_block_bytes_);
+    if (unlikely(blockid >= n_blocks_)) {
+      n_blocks_ = blockid + 1;
+    }
+    printf("%p WRITING first time %d, %d\n", this, blockid, n_blocks_);
   }
 
+  printf("%p WRITING %d, %d\n", this, blockid, n_blocks_);
   mem::Copy(mydata + begin, data, end - begin);
 }
 
 BlockDevice::blockid_t MemBlockDevice::AllocBlock() {
-  CheckSize_(n_blocks_);
+  n_blocks_++;
   return n_blocks_ - 1;
 }
 

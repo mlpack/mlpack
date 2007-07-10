@@ -227,11 +227,9 @@ class Allnn {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-#ifdef USE_MPI  
-  MPI_Init(&argc, &argv);
-  nbr_utils::MpiMonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+#ifdef USE_RPC
+  nbr_utils::RpcMonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
-  MPI_Finalize();
 #else
   nbr_utils::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");

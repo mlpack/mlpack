@@ -113,7 +113,7 @@ void HashedRemoteBlockDevice::Read(blockid_t blockid,
 
     Rpc<BlockResponse> response(channel_, dest, request);
     memcpy(data, response->payload.begin(), response->payload.size());
-    DEBUG_SAME_INT(response->payload.size(), end - begin);
+    DEBUG_SAME_INT(size_t(response->payload.size()), size_t(end - begin));
   }
 }
 

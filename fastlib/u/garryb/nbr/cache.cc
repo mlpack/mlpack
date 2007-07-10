@@ -84,12 +84,14 @@ void SmallCache::StopWrite(blockid_t blockid) {
 
 void SmallCache::PerformCacheMiss_(blockid_t blockid) {
   char *data;
-  Metadata *metadata = &metadatas_[blockid];
+  Metadata *metadata;
 
   if (unlikely(blockid >= n_blocks_)) {
     n_blocks_ = blockid + 1;
     metadatas_.Resize(n_blocks_);
   }
+
+  metadata = &metadatas_[blockid];
 
   data = mem::Alloc<char>(n_block_bytes());
   if (mode_ == BlockDevice::READ || mode_ == BlockDevice::MODIFY) {
@@ -112,17 +114,17 @@ void SmallCache::Writeback_(blockid_t blockid, offset_t begin, offset_t end) {
   if (begin != end) {
     Metadata *metadata = &metadatas_[blockid];
     char *data = metadata->data;
-    
+
     DEBUG_BOUNDS(begin, end + 1);
-    
+
     if (data) {
       size_t n_bytes = end - begin;
       char *buf = data + begin;
-      
+
       //if (unlikely(metadata->lock_count)) {
       //  FATAL("Cannot flush a range that is currently in use.");
       //}
-      
+
       if (likely(blockid != HEADER_BLOCKID)) {
         handler_->BlockRefreeze(n_bytes, buf, buf);
       }
@@ -137,11 +139,15 @@ void SmallCache::Flush(blockid_t begin_block, offset_t begin_offset,
   DEBUG_ASSERT(mode_ != BlockDevice::READ);
 
   if (unlikely(mode_ == BlockDevice::MODIFY || mode_ == BlockDevice::CREATE)) {
+    if (unlikely(last_block >= n_blocks_)) {
+      n_blocks_ = last_block + 1;
+      metadatas_.Resize(n_blocks_);
+    }
     if (begin_block == last_block) {
       Writeback_(begin_block, begin_offset, end_offset);
     } else {
       Writeback_(begin_block, begin_offset, n_block_bytes_);
-      for (blockid_t i = begin_block + 1; i < last_block - 1; i++) {
+      for (blockid_t i = begin_block + 1; i < last_block; i++) {
         Writeback_(i, 0, n_block_bytes_);
       }
       Writeback_(last_block, 0, end_offset);

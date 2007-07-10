@@ -211,6 +211,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
     const typename GNP::Delta& delta,
     const typename GNP::QMassResult& exclusive_unvisited,
     QMutables *q_node_mut) {
+  //printf("pair(%d:%d) at (%d:%d)\n", q_node->begin(), q_node->count(), r_node->begin(), r_node->count());
   DEBUG_MSG(1.0, "Checking (%d,%d) x (%d,%d)",
       q_node->begin(), q_node->end(),
       r_node->begin(), r_node->end());

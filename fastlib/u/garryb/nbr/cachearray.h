@@ -221,16 +221,11 @@ class CacheArray {
   void Flush();
 
   index_t Alloc() {
+    BlockDevice::blockid_t block_computed = end_ >> n_block_elems_log_;
     end_++;
-    BlockDevice::blockid_t block_computed = 
-        (end_ + n_block_elems_ - 1) >> n_block_elems_log_;
-    if (block_computed != end_block_fake_) {
-      end_block_fake_ = cache_->AllocBlock() - BLOCK_OFFSET;
+    if (block_computed >= end_block_fake_) {
+      end_block_fake_ = block_computed + 1;
       metadatas_.Resize(end_block_fake_ - begin_block_fake_);
-      // Okay, notify the lower layers we're allocating.
-      DEBUG_ASSERT_MSG(block_computed == end_block_fake_,
-          "Distributed data structure creation "
-          "is not yet supported by CacheArray.");
     }
     return end_ - 1;
   }
@@ -320,9 +315,9 @@ void CacheArray<TElement>::Flush() {
     // TODO: flushing isn't really done the way it needs to be done
     cache_->Flush(
         (begin_ >> n_block_elems_log_) + BLOCK_OFFSET,
-        (begin_ & (n_block_elems_mask_)) * n_elem_bytes_,
+        (begin_ & n_block_elems_mask_) * n_elem_bytes_,
         (end_ >> n_block_elems_log_) + BLOCK_OFFSET,
-        (end_ & (n_block_elems_mask_)) * n_elem_bytes_);
+        (end_ & n_block_elems_mask_) * n_elem_bytes_);
   }
 }
 
