@@ -1,6 +1,5 @@
 #include "work.h"
 
-#ifdef USE_MPI
 void RemoteWorkQueueBackend::Init(WorkQueueInterface *inner_work_queue) {
   inner_ = inner_work_queue;
 }
@@ -23,4 +22,3 @@ void RemoteWorkQueue::GetWork(ArrayList<index_t> *work_items) {
   Rpc<WorkResponse> response(channel_, destination_, request);
   work_items->Copy(response->work_items);
 }
-#endif

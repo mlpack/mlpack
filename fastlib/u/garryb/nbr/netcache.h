@@ -124,6 +124,7 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
     remote_device_.SetLocalDevice(&local_device_);
     small_cache_.Init(&remote_device_, handler, BlockDevice::CREATE);
     CacheArray<T>::Init(&small_cache_, BlockDevice::CREATE, 0, n_elems);
+    rpc::Register(channel(), server());
   }
 
   void InitWorker() {
@@ -133,6 +134,7 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
     small_cache_.Init(&remote_device_, new CacheArraySchema<T>,
         BlockDevice::MODIFY);
     CacheArray<T>::Init(&small_cache_, BlockDevice::MODIFY);
+    rpc::Register(channel(), server());
   }
 
   void FlushClear(BlockDevice::mode_t mode) {

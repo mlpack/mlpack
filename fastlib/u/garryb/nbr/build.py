@@ -2,11 +2,11 @@
 librule(name = "nbr",
    sources = ["blockdev.cc", "nbr_utils.cc",
               "cache.cc", "work.cc",
-              "rpc.cc", "rpc_sock.cc"],
+              "rpc.cc", "rpc_sock.cc", "netcache.cc"],
    headers = ["blockdev.h", "cache.h", "cachearray.h",
               "dfs.h", "gnp.h", "kdtree.h", "nbr_utils.h",
               "spbounds.h", "spnode.h", "work.h",
-              "rpc.h", "rpc_sock.h"],
+              "rpc.h", "rpc_sock.h", "netcache.h"],
    deplibs = ["fastlib:fastlib_int"])
 
 binrule(name = "rpc_sock_test",
@@ -27,9 +27,10 @@ binrule(name = "tkde",
 #   sources = ["tkde.cc"],
 #   deplibs = [":nbr_mpi"])
 
-#binrule(name = "allnn_mpi",
-#   sources = ["allnn.cc"],
-#   deplibs = [":nbr_mpi"])
+binrule(name = "allnn_rpc",
+   sources = ["allnn.cc"],
+   deplibs = [":nbr"],
+   cflags = "-DUSE_RPC")
 
 binrule(name = "allnn",
    sources = ["allnn.cc"],

@@ -58,7 +58,7 @@ class BlockDevice {
   void Write(blockid_t blockid, const char *data) {
     Write(blockid, 0, n_block_bytes_, data);
   }
-  
+
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data) = 0;
   virtual void Write(blockid_t blockid,
@@ -124,10 +124,10 @@ class BlockDeviceWrapper : public BlockDevice {
     inner_->Write(blockid, begin, end, data);
   }
   virtual blockid_t AllocBlock() {
-    blockid_t blockid = inner_->AllocBlock();
-    DEBUG_ASSERT(blockid >= n_blocks_);
-    n_blocks_ = blockid + 1;
-    return blockid;
+    // TODO: Do we create blocks on demand or not?
+    //DEBUG_ASSERT_MSG(blockid >= n_blocks_, "blockid %u should be >= %u n_blocks_",
+    //    blockid, n_blocks_);
+    return n_blocks_++;
   }
 };
 
@@ -174,16 +174,7 @@ class DiskBlockDevice : public BlockDevice {
 
 class MemBlockDevice : public BlockDevice {
  private:
-  struct Metadata {
-    char *data;
-    
-    Metadata() {
-      data = NULL;
-    }
-  };
-  
- private:
-  ArrayList<Metadata> blocks_;
+  DenseIntMap<char*> blocks_;
 
  public:
   MemBlockDevice() {}
@@ -196,14 +187,6 @@ class MemBlockDevice : public BlockDevice {
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data);
   virtual blockid_t AllocBlock();
-  
- private:
-  void CheckSize_(blockid_t blockid) {
-    if (blockid <= n_blocks_) {
-      n_blocks_ = blockid + 1;
-      blocks_.GrowTo(n_blocks_);
-    }
-  }
 };
 
 #endif

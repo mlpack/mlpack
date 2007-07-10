@@ -7,6 +7,7 @@
 #ifndef NBR_WORK_H
 #define NBR_WORK_H
 
+#include "rpc.h"
 #include "cache.h"
 #include "cachearray.h"
 
@@ -104,9 +105,6 @@ void SimpleWorkQueue<Node>::AddWork_(
   array->StopRead(node_i);
 }
 
-// Making work queues work over the net.
-#ifdef USE_MPI
-#include "rpc.h"
 
 struct WorkRequest {
   enum Operation { GIVE_ME_WORK } operation;
@@ -152,6 +150,5 @@ class RemoteWorkQueue
 
   void GetWork(ArrayList<index_t> *work_items);
 };
-#endif
 
 #endif
