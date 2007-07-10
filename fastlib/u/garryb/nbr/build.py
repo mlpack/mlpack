@@ -6,7 +6,7 @@ librule(name = "nbr",
    headers = ["blockdev.h", "cache.h", "cachearray.h",
               "dfs.h", "gnp.h", "kdtree.h", "nbr_utils.h",
               "spbounds.h", "spnode.h", "work.h",
-              "rpc.cc", "rpc_sock.h"],
+              "rpc.h", "rpc_sock.h"],
    deplibs = ["fastlib:fastlib_int"])
 
 binrule(name = "rpc_sock_test",

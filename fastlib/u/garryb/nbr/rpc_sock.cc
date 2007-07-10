@@ -577,6 +577,7 @@ void SockConnection::TryWrite() {
     ssize_t bytes_written = write(write_fd_,
         write_message_->buffer() + write_buffer_pos_,
         write_message_->buffer_size() - write_buffer_pos_);
+    fprintf(stderr, "WRITE %d bytes\n", bytes_written);
     if (bytes_written < 0) {
       // Okay, we weren't able to write anything.
       if (errno != EAGAIN && errno != EINTR) {
@@ -614,13 +615,14 @@ void SockConnection::TryRead() {
               int(header_bytes), strerror(errno));
         }
       }
-      DEBUG_ASSERT(header.magic == MAGIC);
+      DEBUG_SAME_INT(header.magic, MAGIC);
       // When we read in a message, we don't need to allocate space for the
       // header (since we have already read it successfully).
       read_message_ = new Message();
       read_message_->Init(peer_, header.channel, header.transaction_id,
           mem::Alloc<char>(header.data_size), 0, header.data_size);
       read_buffer_pos_ = 0;
+      fprintf(stderr, "Read header %d bytes\n", header_bytes);
       //fprintf(stderr, "Got a valid header.\n");
     }
     // Second, see if we're done with the packet.  (Note some packets have
@@ -636,9 +638,10 @@ void SockConnection::TryRead() {
     }
     // Finally, read as much payload as we can for this message.
     ssize_t bytes_read = read(read_fd_,
-        read_message_->data() + read_buffer_pos_,
-        read_message_->data_size() - read_buffer_pos_);
+        read_message_->buffer() + read_buffer_pos_,
+        read_message_->buffer_size() - read_buffer_pos_);
     //fprintf(stderr, "Got %d data bytes.\n", (int)bytes_read);
+    fprintf(stderr, "Read payload %d bytes\n", bytes_read);
     if (bytes_read > 0) {
       read_buffer_pos_ += bytes_read; 
     } else {

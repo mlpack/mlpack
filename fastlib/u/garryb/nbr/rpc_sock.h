@@ -117,7 +117,12 @@ class Transaction {
 
 class Channel {
  public:
-  virtual Transaction *GetTransaction(Message *message) = 0;
+  Channel() {}
+  virtual ~Channel() {}
+
+  virtual Transaction *GetTransaction(Message *message) {
+    FATAL("GetTransaction not implemented?");
+  }
 };
 
 /**
