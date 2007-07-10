@@ -6,6 +6,8 @@
  * Includes all of fastlib.
  */
 
+#ifndef FASTLIB_FASTLIB_H
+#define FASTLIB_FASTLIB_H
 
 #include "base/common.h"
 #include "base/cc.h"
@@ -27,6 +29,7 @@
 #include "tree/statistic.h"
 #include "tree/kdtree.h"
 
+#endif
 
 /** @mainpage FASTlib Documentation
  *

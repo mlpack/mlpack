@@ -1,6 +1,7 @@
 #include "arraylist.h"
 #include "heap.h"
 #include "fastalloc.h"
+#include "intmap.h"
 
 #include "base/test.h"
 
@@ -120,5 +121,21 @@ void TestFastAlloc() {
   fast_delete(b);
 }
 
-TEST_SUITE_END(col, TestArrayListInt, TestMinHeap, TestFastAlloc)
+void TestIntMap() {
+  DenseIntMap<double> map;
+  map.Init();
+  map.default_value() = 0.0;
+  map[31] = 31;
+  map[41] = 41;
+  map[59] = 59;
+  map[26] = 26;
+  TEST_DOUBLE_EXACT(map[0], 0);
+  TEST_DOUBLE_EXACT(map[499], 0);
+  TEST_DOUBLE_EXACT(map[31], 31);
+  TEST_DOUBLE_EXACT(map[41], 41);
+  TEST_DOUBLE_EXACT(map[59], 59);
+}
+
+TEST_SUITE_END(col, TestArrayListInt, TestMinHeap,
+    TestFastAlloc, TestIntMap)
 

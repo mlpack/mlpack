@@ -65,12 +65,12 @@ class ArrayList {
   Element* ptr_;
   index_t size_;
   index_t cap_;
-  
+
   OT_DEF(ArrayList) {
     OT_MY_OBJECT(size_);
     OT_MALLOC_ARRAY_NULLABLE(ptr_, size_);
   }
-  
+
   OT_FIX(ArrayList) {
     cap_ = size_;
   }
@@ -89,7 +89,7 @@ class ArrayList {
   ~ArrayList() {
     Destruct();
   }
-  
+
   /**
    * Returns this to an invalid state so it can be re-initialized.
    *
@@ -124,7 +124,7 @@ class ArrayList {
     size_ = 0;
     cap_ = 0;
   }
-  
+
   /**
    * Initializes to a given size.
    *
@@ -134,7 +134,7 @@ class ArrayList {
   void Init(index_t size_in) {
     Init(size_in, size_in);
   }
-  
+
   /**
    * Initializes with a given size, but with a perhaps larger allocation.
    *
@@ -144,16 +144,16 @@ class ArrayList {
   void Init(index_t size_in, index_t cap_in) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");
     DEBUG_ASSERT(size_in <= cap_in);
-    
+
     size_ = size_in;
     cap_ = cap_in;
-    
+
     ptr_ = mem::Alloc<Element>(cap_);
     // TODO: Default integer constructor initializes to zero; is there
     // a way to avoid this?
     mem::ConstructAll<Element>(ptr_, size_);
   }
-  
+
   /**
    * Copies from another ArrayList.
    *
@@ -162,7 +162,7 @@ class ArrayList {
   void Copy(const ArrayList& other) {
     Copy(other.ptr_, other.size_);
   }
-  
+
   /**
    * Copies bit-for-bit from another array.
    *
@@ -171,14 +171,17 @@ class ArrayList {
    */
   void Copy(const Element *ptr, index_t size) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");
-    
+
     ptr_ = mem::DupConstruct<Element>(ptr, size);
     cap_ = size;
     size_ = size;
   }
-  
+
   /**
-   * Resets to zero size.
+   * Resets to zero size and frees RAM.
+   *
+   * This is slower than Resize(0), since Resize(0) will hold onto the RAM
+   * that was previously in use.
    */
   void Clear() {
     mem::Free(ptr_);
@@ -186,14 +189,14 @@ class ArrayList {
     size_ = 0;
     cap_ = 0;
   }
-  
+
   /**
    * Steals the contents of another ArrayList, initializing this ArrayList and
    * making the other array list zero in size.
    */
   void Steal(ArrayList* other) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");
-    
+
     ptr_ = other->ptr_;
     size_ = other->size_;
     cap_ = other->cap_;
@@ -201,21 +204,21 @@ class ArrayList {
     other->size_ = 0;
     other->cap_ = 0;
   }
-  
+
   /**
    * Steals the contents of another ArrayList, initializing this ArrayList and
    * destructing the other ArrayList.
    */
   void StealDestruct(ArrayList* other) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");
-    
+
     ptr_ = other->ptr_;
     size_ = other->size_;
     cap_ = other->cap_;
-    
+
     DEBUG_ONLY(other->Invalidate_());
   }
-  
+
   /**
    * Initializes this to a pointer allocated with mem::Alloc.
    *
@@ -228,12 +231,12 @@ class ArrayList {
    */
   void Steal(Element *ptr, index_t len, index_t capacity) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");
-    
+
     ptr_ = ptr;
     size_ = len;
     cap_ = capacity;
   }
-  
+
   /**
    * Returns the pointer to the beginning of the array, and reinitializes this
    * list to empty.
@@ -245,14 +248,24 @@ class ArrayList {
     cap_ = 0;
     return retval;
   }
-  
+
   /**
    * Switches the arrays pointed to by each array.
    */
   void Swap(ArrayList *other) {
-    mem::Swap(this, other);
+    Element *t_ptr = other->ptr_;
+    other->ptr_ = ptr_;
+    ptr_ = t_ptr;
+
+    index_t t_size = other->size_;
+    other->size_ = size_;
+    size_ = t_size;
+
+    index_t t_cap = other->cap_;
+    other->cap_ = cap_;
+    cap_ = t_cap;
   }
-  
+
   /**
    * Explicitly sets the size of the list.
    *
@@ -284,7 +297,7 @@ class ArrayList {
       GrowTo(size_min);
     }
   }
-  
+
   /**
    * Serializes this arraylist.
    *
@@ -296,7 +309,7 @@ class ArrayList {
     s->Put(size_);
     s->Put(ptr_, size_);
   }
-  
+
   /**
    * Initializes this list, deserializing from the given source.
    */
@@ -307,7 +320,7 @@ class ArrayList {
     ptr_ = mem::Alloc<Element>(cap_);
     s->Get(ptr_, size_);
   }
-  
+
   /**
    * Use this to shrink the ArrayList.
    */
@@ -315,7 +328,7 @@ class ArrayList {
     DecreaseSizeHelper_(size_in);
     size_ = size_in;
   }
-  
+
   /**
    * Use this to grow the ArrayList.
    */
@@ -323,7 +336,7 @@ class ArrayList {
     IncreaseSizeHelper_(size_in);
     size_ = size_in;
   }
-  
+
   /**
    * Use this to grow the size by a specified amount, returning a pointer
    * to the beginning of the chunk.
@@ -332,16 +345,16 @@ class ArrayList {
     if (unlikely(size_ + size_increment > cap_)) {
       IncreaseCap_(cap_ * 2 + size_increment);
     }
-    
+
     Element* chunk = ptr_ + size_;
-    
+
     size_ += size_increment;
-    
+
     mem::ConstructAll(chunk, size_increment);
-    
+
     return chunk;
   }
-  
+
   /**
    * Adds one new element to the back, and returns the pointer to it.
    *
@@ -364,15 +377,15 @@ class ArrayList {
     if (unlikely(size_ == cap_)) {
       IncreaseCap_((cap_ + 1) * 2);
     }
-    
+
     Element* elem = ptr_ + size_;
-    
+
     ++size_;
     mem::Construct(elem); // call default constructor
-    
+
     return elem;
   }
-  
+
   /**
    * Removes the last element of the list.
    */
@@ -381,19 +394,22 @@ class ArrayList {
     --size_;
     mem::Destruct(ptr_ + size_);
   }
-  
+
   /**
    * Returns a pointer to the last element, and decreases the size.
    *
-   * Note that it is *your* responsibility to call the destructor of this
-   * object if it is not a structable (mem::Destruct).
+   * Note that it is *your* responsibility to call the destructor (using
+   * mem::Destruct or the destructor explicitly) of this
+   * object if it is not a primitive.
+   *
+   * This will be invalidated if the ArrayList is subsequently trimmed.
    */
   Element* PopBackPtr() {
     --size_;
-    
+
     return ptr_ + size_;
   }
-  
+
   /**
    * Reallocates to the minimum memory usage to hold the data in the array.
    *
@@ -402,7 +418,7 @@ class ArrayList {
   void Trim() {
     DecreaseCap_(size_);
   }
-  
+
   /**
    * Gets a constant element out of a constant ArrayList.
    */
@@ -418,7 +434,7 @@ class ArrayList {
     DEBUG_BOUNDS(i, size_);
     return ptr_[i];
   }
-  
+
  public:
   /**
    * Gets the number of elements.
@@ -426,7 +442,7 @@ class ArrayList {
   index_t size() const {
     return size_;
   }
-  
+
   /**
    * Gets the number of elements this can hold without performing any
    * additional reallocations.
@@ -434,49 +450,49 @@ class ArrayList {
   index_t capacity() const {
     return cap_;
   }
-  
+
   /**
    * Returns a pointer to the first element.
    */
   const Element* begin() const {
     return ptr_;
   }
-  
+
   /**
    * Returns a pointer one beyond the last element.
    */
   const Element* end() const {
     return ptr_ + size_;
   }
-  
+
   /**
    * Returns a pointer to the last element.
    */
   const Element* last() const {
     return ptr_ + size_ - 1;
   }
-  
+
   /**
    * Returns a pointer to the first element.
    */
   Element* begin() {
     return ptr_;
   }
-  
+
   /**
    * Returns a pointer one beyond the last element.
    */
   Element* end() {
     return ptr_ + size_;
   }
-  
+
   /**
    * Returns a pointer to the last element.
    */
   Element* last() {
     return ptr_ + size_ - 1;
   }
-  
+
  private:
   /**
    * Increases the size by reallocating intelligently.
@@ -488,7 +504,7 @@ class ArrayList {
     }
     mem::ConstructAll(ptr_ + size_, size_in - size_);
   }
-  
+
   /**
    * Decreases the size, but doesn't actually resize.
    */
@@ -496,14 +512,14 @@ class ArrayList {
     DEBUG_ASSERT(size_in <= size_);
     mem::DestructAll(ptr_ + size_in, size_ - size_in);
   }
-  
+
   /**
    * Increases the array to be a larger size.
    *
    * This should not be inlined, because it is an unlikely case.
    */
   void IncreaseCap_(index_t cap_in);
-  
+
   /**
    * Reallocates the array to be smaller.
    */
@@ -511,7 +527,7 @@ class ArrayList {
     ptr_ = mem::Resize(ptr_, cap_in);
     cap_ = cap_in;
   }
-  
+
   /**
    * Sets fields to invalid values to ensure earliest possible catching of
    * debugging problems.
