@@ -136,7 +136,7 @@ class RemoteObjectBackend : public Channel {
   }
   
   void Register(int channel_num) {
-    RpcImpl::Register(channel_num, this);
+    rpc::Register(channel_num, this);
   }
 };
 
