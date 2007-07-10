@@ -1,0 +1,38 @@
+#!/usr/bin/env python
+
+USAGE="""
+fx-rpc -- run programs written with garry's makeshift sockets api thing
+"""
+
+import os
+import sys
+import util
+
+# note: we're not using fx for parameter parsing right now...
+
+n = int(sys.args[0])
+if n <= 0:
+  print "error: n must be positive"
+  exit 1
+
+peers = sys.args[1]
+
+port = int(sys.args[2])
+
+peerlist = util.readlines(peers)
+
+pids = []
+
+for i = range(n):
+  machinename = peerlist[i]
+  pid = os.fork()
+  if not pid:
+    args = ["ssh", machinename,
+        "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
+        "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
+        ]+sys.args[3:]
+    os.execvp(args[0], args)
+  pids.append(pid)
+
+for pid in pids:
+  os.waitpid(pid, 0)
