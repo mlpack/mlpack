@@ -80,7 +80,8 @@ class BarrierChannel : public Channel {
       if (unlikely(!IsValidSender(message->peer()))) {
         FATAL("Message from %d unexpected during barrier #%d with n_received=%d",
             message->peer(), channel(), n_received_);
-      }r
+      }
+      delete message;
       n_received_++;
       CheckCompletion();
     }
