@@ -270,7 +270,8 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 - write code that detects and runs the server
 */
 
-//problem problem - no network thread!
+#warning "RPC is currently disabled"
+#if 0
 
 template<typename GNP, typename Solver>
 class RpcMonochromaticDualTreeRunner {
@@ -504,7 +505,9 @@ void RpcMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   RpcMonochromaticDualTreeRunner<GNP, Solver> runner;
   runner.Main(module, gnp_name);
 }
+#endif
 
 };
+
 
 #endif

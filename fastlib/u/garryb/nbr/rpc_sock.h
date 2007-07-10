@@ -7,6 +7,8 @@
 #ifndef RPC_SOCK_H
 #define RPC_SOCK_H
 
+#include "fastlib/fastlib_int.h"
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/select.h>
@@ -56,7 +58,7 @@ class Message {
     return buffer_;
   }
   int peer() const {
-    return peer_in_;
+    return peer_;
   }
   int channel() const {
     return channel_;
@@ -67,6 +69,8 @@ class Message {
 };
 
 class Transaction {
+  FORBID_COPY(Transaction);
+
  private:
   int channel_;
   struct PeerInfo {
@@ -76,10 +80,10 @@ class Transaction {
   };
   ArrayList<PeerInfo> peers_;
 
- public:
-  static Message *CreateMessage(int peer, size_t size);
-
  protected:
+  /** Create a message of a specified size, which you will later Send(). */
+  Message *CreateMessage(int peer, size_t size);
+  /** Send a message */
   void Send(Message *message);
   /** Unregister the transaction from all peers */
   void Done();
@@ -87,6 +91,9 @@ class Transaction {
   void Done(int peer);
 
  public:
+  Transaction() {}
+  virtual ~Transaction() {}
+  
   void Init(int channel_num);
 
   int channel() const {
@@ -140,17 +147,17 @@ class SockConnection {
       int peer, int channel, int transaction_id, size_t size);
 
  private:
-  WALDO
+  int peer_;
   int read_fd_;
   int write_fd_;
   struct sockaddr_in peer_addr_;
 
-  int read_total;
+  int read_total_;
   Message *read_message_;
   size_t read_buffer_pos_;
   ArrayList<Message*> read_queue_;
 
-  int write_total;
+  int write_total_;
   Message *write_message_;
   size_t write_buffer_pos_;
   MinHeap<int, Message*> write_queue_;
@@ -160,7 +167,7 @@ class SockConnection {
   ~SockConnection();
 
   /** Creates an unopened SocketConnection placeholder. */
-  void Init(const char *ip_address, int port);
+  void Init(int peer, const char *ip_address, int port);
   /** Create an outgoing connection for sending messages. */
   void OpenOutgoing();
   /** Accept an incoming connection for receiving messages. */
@@ -260,7 +267,7 @@ class RpcSockImpl {
   /**
    * Task structure just so we can run the polling loop in another thread.
    */
-  class PollingTask : Task {
+  class PollingTask : public Task {
    private:
     RpcSockImpl *main_object_;
    public:
@@ -333,7 +340,7 @@ class RpcSockImpl {
   void Listen_();
   void StartPollingThread_();
   void PollingLoop_();
-  void GatherReadyMessages_(Peer *peer, ArrayList<WorkItem*>* work_items);
+  void GatherReadyMessages_(Peer *peer, ArrayList<WorkItem>* work_items);
 };
 
 namespace rpc {

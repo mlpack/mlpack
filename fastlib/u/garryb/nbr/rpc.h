@@ -24,6 +24,7 @@ template<class ResponseObject>
 class Rpc {
   FORBID_COPY(Rpc);
  private:
+  template<class RequestObject>
   struct RpcRequestTransaction : public Transaction {
     FORBID_COPY(RpcRequestTransaction);
 
@@ -34,7 +35,7 @@ class Rpc {
 
    public:
     RpcRequestTransaction() {}
-    ~RpcRequestTransaction() {}
+    virtual ~RpcRequestTransaction() {}
 
     Message *Doit(int channel, int peer, const RequestObject& request) {
       Transaction::Init(channel);
@@ -54,8 +55,8 @@ class Rpc {
     void HandleMessage(Message *message) {
       mutex.Lock();
       response = message;
-      mutex.Unlock();
       cond.Signal();
+      mutex.Unlock();
       // TODO: Handle done
       Done();
     }
@@ -79,9 +80,9 @@ class Rpc {
   template<typename RequestObject>
   ResponseObject *Request(
       int channel, int peer, const RequestObject& request) {
-    RpcRequestTransaction transaction;
+    RpcRequestTransaction<RequestObject> transaction;
     response_ = transaction.Doit(channel, peer, request);
-    response_object_ = ot::PointerThaw<ResponseObject>(response_.data());
+    response_object_ = ot::PointerThaw<ResponseObject>(response_->data());
     return response_object_;
   }
 
@@ -95,7 +96,7 @@ class Rpc {
     return *response_object_;
   }
   operator const ResponseObject *() const {
-    return response_objet_;
+    return response_object_;
   }
   const ResponseObject* operator ->() const {
     return response_object_;
@@ -112,7 +113,7 @@ template<typename RequestObject, typename ResponseObject>
 class RemoteObjectBackend : public Channel {
  public:
   // Simple request-response transaction
-  class RemoteObjectTransaction() {
+  class RemoteObjectTransaction : public Transaction {
     FORBID_COPY(RemoteObjectTransaction);
    private:
     RemoteObjectBackend *inner_;
@@ -123,7 +124,7 @@ class RemoteObjectBackend : public Channel {
      {}
 
     void HandleMessage(Message *request);
-  }
+  };
 
  public:
   virtual ~RemoteObjectBackend() {}
@@ -131,7 +132,7 @@ class RemoteObjectBackend : public Channel {
   virtual void HandleRequest(const RequestObject& request,
       ResponseObject *response) = 0;
 
-  RemoteObjectTransaction *GetTransaction(Message *message); {
+  RemoteObjectTransaction *GetTransaction(Message *message) {
     return new RemoteObjectTransaction(this);
   }
   

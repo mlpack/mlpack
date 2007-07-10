@@ -28,31 +28,33 @@ class BarrierChannel : public Channel {
     }
 
     void CheckState_() {
-      if (n_received_ >= RpcImpl::children().size()) {
-        if (RpcImpl::is_root() || n_received_ > RpcImpl::children().size()) {
+      if (n_received_ >= rpc::children().size()) {
+        if (rpc::is_root() || n_received_ > rpc::children().size()) {
           // Tell the kids that the root is ready
-          for (int i = 0; i < RpcImpl::children().size(); i++) {
-            DoMessage_(RpcImpl::children()[i]);
+          for (int i = 0; i < rpc::children().size(); i++) {
+            //fprintf(stderr, "barrier: Message to %d\n", rpc::children()[i]);
+            DoMessage_(rpc::children()[i]);
           }
           Done();
-          RpcImpl::Unregister(channel());
+          rpc::Unregister(channel());
           mutex_.Lock();
           done_ = true;
           cond_.Signal();
           mutex_.Unlock();
         } else {
           // Tell parent that all my kids are ready
-          DoMessage_(RpcImpl::parent());
+          //fprintf(stderr, "barrier: Message to parent %d\n", rpc::parent());
+          DoMessage_(rpc::parent());
         }
       }
     }
 
     bool IsValidSender_(int peer) {
-      if (n_received_ == RpcImpl::children().size()) {
-        return peer == RpcImpl::parent();
+      if (n_received_ == rpc::children().size()) {
+        return peer == rpc::parent();
       } else {
-        for (int i = 0; i < RpcImpl::children().size(); i++) {
-          if (peer == RpcImpl::children()[i]) {
+        for (int i = 0; i < rpc::children().size(); i++) {
+          if (peer == rpc::children()[i]) {
             return true;
           }
         }
@@ -62,7 +64,7 @@ class BarrierChannel : public Channel {
 
    public:
     BarrierTransaction() {}
-    ~BarrierTransaction() {}
+    virtual ~BarrierTransaction() {}
 
     void Doit(int channel_num) {
       Transaction::Init(channel_num);
@@ -77,23 +79,28 @@ class BarrierChannel : public Channel {
     }
 
     void HandleMessage(Message *message) { 
-      if (unlikely(!IsValidSender(message->peer()))) {
+      //fprintf(stderr, "barrier: Message from %d\n", message->peer());
+      if (unlikely(!IsValidSender_(message->peer()))) {
         FATAL("Message from %d unexpected during barrier #%d with n_received=%d",
             message->peer(), channel(), n_received_);
       }
       delete message;
       n_received_++;
-      CheckCompletion();
+      CheckState_();
     }
   };
 
  private:
-  BarrierTransaction transaction;
+  BarrierTransaction transaction_;
 
  public:
+  BarrierChannel() {}
+  virtual ~BarrierChannel() {}
+
   void Doit(int channel_num) {
-    RpcImpl::Register(channel_num, this);
-    transaction.Doit(channel_num);
+    //fprintf(stderr, "barrier: I exist\n");
+    rpc::Register(channel_num, this);
+    transaction_.Doit(channel_num);
   }
 
   Transaction *GetTransaction(Message *message) {
