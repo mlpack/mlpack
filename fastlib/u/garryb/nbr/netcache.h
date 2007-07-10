@@ -88,7 +88,7 @@ class HashedRemoteBlockDevice
       offset_t begin, offset_t end, const char *data);
   virtual blockid_t AllocBlock();
 
-  RawRemoteObjectBackend *server() {
+  Channel *server() {
     return &server_;
   }
   int channel() const {
@@ -113,7 +113,7 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
 
  public:
   void Configure(int channel) {
-    remote_device_.Init(channel, RpcImpl::rank(), RpcImpl::n_peers());
+    remote_device_.Init(channel, rpc::rank(), rpc::n_peers());
   }
 
   void InitMaster(const T& default_obj,
@@ -141,7 +141,7 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
     small_cache_.Clear(mode);
   }
 
-  RawRemoteObjectBackend *server() {
+  Channel *server() {
     return remote_device_.server();
   }
 
