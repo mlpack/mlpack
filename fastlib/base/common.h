@@ -14,6 +14,8 @@
 #ifndef BASE_COMMON_H
 #define BASE_COMMON_H
 
+#define _REENTRANT
+
 #ifdef __cplusplus
 #include "cc.h"
 #endif

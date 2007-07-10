@@ -25,7 +25,7 @@ class Thread {
   
  private:
 #ifdef DEBUG
-  enum {UNINIT, READY, ATTACHED, DETACHED, DONE} status;
+  enum {UNINIT, READY, ATTACHED, DETACHED, DONE} status_;
 #endif
   pthread_t thread_;
   Task *task_;
@@ -44,30 +44,30 @@ class Thread {
   
  public:
   Thread() {
-    DEBUG_ONLY(status = UNINIT);
+    DEBUG_ONLY(status_ = UNINIT);
   }
   ~Thread() {
-    DEBUG_ASSERT(status == DETACHED || status == READY || status == DONE);
-    DEBUG_ONLY(status = UNINIT);
+    DEBUG_ASSERT(status_ == DETACHED || status_ == READY || status_ == DONE);
+    DEBUG_ONLY(status_ = UNINIT);
   }
   
   /**
    * Initializes, given a task to run.
    */
   void Init(Task* task_in) {
-    DEBUG_ASSERT(status == UNINIT);
+    DEBUG_ASSERT(status_ == UNINIT);
     task_ = task_in;
-    DEBUG_ONLY(status = READY);
+    DEBUG_ONLY(status_ = READY);
   }
   
   /**
    * Starts the thread running.
    */
   void Start() {
-    DEBUG_ASSERT(status == READY);
+    DEBUG_ASSERT(status_ == READY);
     pthread_create(&thread_, NULL,
         ThreadMain_, reinterpret_cast<void*>(this));
-    DEBUG_ONLY(status = ATTACHED);
+    DEBUG_ONLY(status_ = ATTACHED);
   }
   
   /**
@@ -75,9 +75,9 @@ class Thread {
    * completes.  You may not call WaitStop on this thread afterwards.
    */
   void Detach() {
-    DEBUG_ASSERT(status == ATTACHED);
+    DEBUG_ASSERT(status_ == ATTACHED);
     pthread_detach(thread_);
-    DEBUG_ONLY(status = DETACHED);
+    DEBUG_ONLY(status_ = DETACHED);
   }
   
   /**
@@ -86,9 +86,9 @@ class Thread {
    * Failure to do this may cause your program to hang when it is done.
    */
   void WaitStop() {
-    DEBUG_ASSERT(status == ATTACHED);
+    DEBUG_ASSERT(status_ == ATTACHED);
     pthread_join(thread_, NULL);
-    DEBUG_ONLY(status = DONE);
+    DEBUG_ONLY(status_ = DONE);
   }
   
   /**

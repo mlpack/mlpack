@@ -1,5 +1,5 @@
-# This first part is dedicated to compiling and installing LAPACK.
-# Scroll down later...
+# Scroll down to see the main part
+# (This first part is dedicated to compiling and installing LAPACK.)
 
 wgetrule(
     name = "blaspack_tgz",

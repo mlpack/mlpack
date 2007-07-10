@@ -37,7 +37,7 @@ template<typename TGrain, typename TContext = int>
 class MPIGrainRunner {
   FORBID_COPY(MPIGrainRunner);
   friend class MPIDispatcher;
-  
+
  public:
   typedef TGrain Grain;
   typedef TContext Context;
@@ -45,34 +45,34 @@ class MPIGrainRunner {
   class Dispatcher {
     FORBID_COPY(Dispatcher);
     friend class MPIGrainRunner;
-    
+
    private:
     class MPIMasterTask : public Task {
      private:
       struct MPIGrainRunner *runner_;
-      
+
      public:
       MPIMasterTask(MPIGrainRunner *runner_in) {
         runner_ = runner_in;
       }
-      
+
       void Run() {
         int rank;
         int message;
         int n_slaves_alive = 0;
         int n_slaves_busy = 0;
-        
+
         DEBUG_MSG(1.0, "DISPATCH: Firing up the cannons.");
         DEBUG_MSG(1.0, "DISPATCH: We will accomplish %u tasks.",
             unsigned(runner_->dispatcher_->queue_->size()));
-        
+
         for (;;) {
           runner_->RecvInt_(&rank, &message);
-          
+
           runner_->mutex_.Lock();
           Grain* grain = runner_->dispatcher_->queue_->Pop();
           runner_->mutex_.Unlock();
-          
+
           if (message == BIRTH) {
             DEBUG_MSG(1.0, "DISPATCH: Received birth message.");
             n_slaves_alive++;
@@ -81,14 +81,14 @@ class MPIGrainRunner {
             DEBUG_ASSERT(message == GIVE_ME_WORK);
             DEBUG_MSG(1.0, "DISPATCH: Somebody wants more work.");
           }
-          
+
           if (grain) {
             char buf[sizeof(Grain) + 1];
-            
+
             buf[0] = 1; // data is available
             mem::CopyBytes(buf + 1, grain, sizeof(*grain));
             delete grain;
-          
+
             DEBUG_MSG(1.0, "DISPATCH: Sending work on over.");
             MPI_Send(buf, sizeof(buf), MPI_CHAR, rank,
                 runner_->tag_, MPI_COMM_WORLD);
@@ -98,21 +98,21 @@ class MPIGrainRunner {
             break;
           }
         }
-        
+
         DEBUG_MSG(1.0, "DISPATCH: Waiting for workers to die...");
 
-        
+
         /* Wait for all to die */
         while (n_slaves_alive != 0) {
           // we received a message from the last loop
-          
+
           if (message == GIVE_ME_WORK) {
             char buf[1];
-            
+
             buf[0] = 0; // tell them to die
             MPI_Send(buf, sizeof(buf), MPI_CHAR, rank,
                 runner_->tag_, MPI_COMM_WORLD);
-            
+
             DEBUG_MSG(1.0, "DISPATCH: I told a worker to die.");
             n_slaves_busy--;
           } else if (message == DEATH) {
@@ -122,35 +122,35 @@ class MPIGrainRunner {
             DEBUG_ASSERT_MSG(0, "DISPATCHED: Message was %d??",
                 message);
           }
-          
+
           if (n_slaves_alive != 0) {
             runner_->RecvInt_(&rank, &message);
           }
         }
-        
+
         DEBUG_MSG(1.0, "DISPATCH: All workers have died.");
-        
+
         delete this;
       }
     };
-    
+
    private:
     MPIGrainRunner *runner_;
     GrainQueue<Grain> *queue_;
-    
+
    public:
     Dispatcher() {}
     ~Dispatcher() {}
-    
+
     void Init(MPIGrainRunner *runner_in) {
       queue_ = NULL;
       runner_ = runner_in;
     }
-    
+
     void set_queue(GrainQueue<Grain> *queue_in) {
       queue_ = queue_in;
     }
-   
+
    private:
     void MasterLoop_() {
       if (runner_->n_slaves_ > 0) {
@@ -159,19 +159,19 @@ class MPIGrainRunner {
       }
     }
   };
- 
+
  private:
   class ConsumerTask : public Task {
     FORBID_COPY(ConsumerTask);
-    
+
    private:
     struct MPIGrainRunner *runner_;
-    
+
    public:
     ConsumerTask(MPIGrainRunner *runner_in) {
       runner_ = runner_in;
     }
-    
+
     void Run() {
       int my_grains = 0;
       for (;;) {
@@ -200,18 +200,18 @@ class MPIGrainRunner {
   int n_nodes_;
   int n_slaves_;
   Dispatcher *dispatcher_;
-  
+
   WaitCondition need_work_cond_;
   volatile int need_work_;
   WaitCondition have_work_cond_;
   volatile int have_work_;
   Mutex mutex_;
   ArrayList<Grain *> slave_grains_;
-  
+
  public:
   MPIGrainRunner() {}
   ~MPIGrainRunner() {}
-  
+
   /**
    * Initialize this.
    *
@@ -240,11 +240,11 @@ class MPIGrainRunner {
     slave_grains_.Init();
     xrun_subparam_set(name, "n_nodes", "%d", n_nodes_);
   }
-  
+
   Dispatcher *dispatcher() const {
     return dispatcher_;
   }
-  
+
   Thread *SpawnThread() {
     ConsumerTask *task = new ConsumerTask(this);
     Thread *thread = new Thread();
@@ -252,7 +252,7 @@ class MPIGrainRunner {
     thread->Start();
     return thread;
   }
-  
+
   /**
    * Creates the specified number of threads, and uses those to execute
    * all grains of work.
@@ -263,7 +263,7 @@ class MPIGrainRunner {
     DEBUG_MSG(1.0, "Rank %d is ready to roll.", my_rank_);
     ArrayList<Thread*> threads;
     int num_worker_threads = num_threads;
-    
+
     if (num_worker_threads != 2) abort();
     threads.Init(num_worker_threads);
 
@@ -287,7 +287,7 @@ class MPIGrainRunner {
     }
     DEBUG_MSG(1.0, "Rank %d killed all threads.", my_rank_);
   }
-  
+
  private:
   void SendInt_(int dest_rank, int num) {
     MPI_Send(&num, 1,
@@ -295,7 +295,7 @@ class MPIGrainRunner {
       tag_ + 1,
       MPI_COMM_WORLD);
   }
-  
+
   void RecvInt_(int *send_rank, int *num_ptr) {
     MPI_Status status;
     MPI_Recv(num_ptr, 1,
@@ -306,10 +306,10 @@ class MPIGrainRunner {
       &status);
     *send_rank = status.MPI_SOURCE;
   }
-  
+
   Grain *NextGrain_() {
     Grain *grain;
-    
+
     if (dispatcher_) {
       DEBUG_ASSERT((my_rank_ == master_rank_));
       mutex_.Lock();
@@ -323,7 +323,7 @@ class MPIGrainRunner {
       mutex_.Unlock();
 
       need_work_cond_.Signal();
-      
+
       mutex_.Lock();
       while (!have_work_) {
         have_work_cond_.Wait(&mutex_);
@@ -337,16 +337,16 @@ class MPIGrainRunner {
       mutex_.Unlock();
       DEBUG_MSG(2.0, "Slave gave me stuff!");
     }
-    
+
     return grain;
   }
-  
+
   void SlaveLoop_() {
     bool done = false;
-    
+
     DEBUG_MSG(1.0, "%d, WORKER: Announcing birth...", my_rank_);
     SendInt_(master_rank_, BIRTH);
-    
+
     while (!done) {
       char buf[sizeof(Grain) + 1] = "q";
       MPI_Status status;
@@ -356,13 +356,13 @@ class MPIGrainRunner {
         MPI_CHAR, MPI_ANY_SOURCE,
         tag_,
         MPI_COMM_WORLD, &status);
-      
+
       Grain *grain = NULL;
-      
+
       if (buf[0] == 1) {
         DEBUG_MSG(1.0, "%d, WORKER: Got some work.  There are %d waiting.",
             my_rank_, need_work_);
-        
+
         grain = new Grain();
         mem::CopyBytes(grain, buf+1, sizeof(Grain));
 
@@ -384,13 +384,13 @@ class MPIGrainRunner {
         done = true;
       }
     }
-    
+
     DEBUG_MSG(1.0, "%d, WORKER: Duly dying !!!!!!!!!!!!!!!!!!!", my_rank_);
-    
+
     mutex_.Lock();
     have_work_ = -1;
     mutex_.Unlock();
-    
+
     have_work_cond_.Broadcast();
   }
 };

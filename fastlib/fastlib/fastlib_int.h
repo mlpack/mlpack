@@ -6,6 +6,8 @@
  * Internal FASTlib header file
  */
 
+#ifndef FASTLIB_FASTLIB_INT_H
+#define FASTLIB_FASTLIB_INT_H
 
 #include "base/common.h"
 #include "base/cc.h"
@@ -14,6 +16,7 @@
 #include "col/arraylist.h"
 #include "col/heap.h"
 #include "col/string.h"
+#include "col/intmap.h"
 #include "data/dataset.h"
 #include "data/crossvalidation.h"
 #include "math/math.h"
@@ -29,3 +32,5 @@
 #include "tree/kdtree.h"
 
 #include "base/otrav.h"
+
+#endif
