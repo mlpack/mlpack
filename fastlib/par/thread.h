@@ -128,7 +128,7 @@ class Mutex {
   
   /** Tries to lock, returns false if doing so would require waiting. */
   bool TryLock() {
-    return likely(!pthread_mutex_trylock(&mutex_));
+    return likely(pthread_mutex_trylock(&mutex_) != 0);
   }
   
   /** Releases the lock. */
