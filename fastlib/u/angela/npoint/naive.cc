@@ -13,14 +13,14 @@
 
 
 Vector naive_npoint(DataPack data, Matcher matcher, Metric metric) {
-	if ( count_all_permutations && matcher.is_simple() ) {
+	if (count_all_permutations && matcher.is_simple()) {
 		Vector tmp;
 		tmp.Copy(symmetric_naive_npoint(data,matcher,metric));
 		la::Scale(math::Factorial(matcher.size()),&tmp);
 		return tmp;
 	}
 
-	if ( count_all_permutations ) {
+	if (count_all_permutations) {
 		return asymmetric_naive_npoint(data,matcher,metric);
 	}
 
@@ -52,13 +52,6 @@ Vector symmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric)
  /* Running the actual naive loop */
  do {
 	 if (PASSED(matcher.Matches(data, index, metric))) {
-/*
-		 fprintf(output,"Found a match for indexes:");
-		 for (i = 0; i < n; i++) {
-			 fprintf(output," %3.0f", index[i]);
-		 }
-		 fprintf(output,"\n");
-*/
 		 results[0] += 1.0;
 
 		 /* Updating the weighted count(s) if needed. */
@@ -130,13 +123,6 @@ Vector asymmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric)
  do {
 	 int is_valid = 1;
 	 if (PASSED(matcher.Matches(data, index, metric))) {
-/*
-		 fprintf(output,"Found a match for indexes:");
-		 for (i = 0; i < n; i++) {
-			 fprintf(output," %3.0f", index[i]);
-		 }
-		 fprintf(output,"\n");
-*/
 		 results[0] += 1.0;
 
 		 /* Updating the weighted count(s) if needed. */

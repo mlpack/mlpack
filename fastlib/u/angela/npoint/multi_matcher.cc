@@ -16,7 +16,7 @@ void estimate_multi_matcher_list(const Matrix data, const Metric metric) {
 	}
 
 
-double estimate_diameter(const Matrix data, const Metric metric) const {
+double estimate_diameter(const Matrix data, const Metric metric) {
 	double diam = -1;
 	index_t x,y,z;
 
@@ -31,7 +31,7 @@ double estimate_diameter(const Matrix data, const Metric metric) const {
 
 
 index_t find_farthest_neighbor(const Matrix data, const index_t x, 
-		const Metric metric) const {
+		const Metric metric) {
 	double max_dist_so_far = -1;
 	index_t result = -1, i;
 

@@ -33,9 +33,17 @@ librule(
 	deplibs = ["fastlib:fastlib",":datapack",":metrics",":matcher"]
 )
 
+librule(
+	name = "unit_test",
+	sources = ["tests.cc"],
+	headers = ["tests.h"],
+	deplibs =
+	["fastlib:fastlib",":datapack",":metrics",":matcher",":naive",":multi_matcher"]
+)
+
 binrule(
 	name = "npoint",
 	sources = ["main.cc"],
 	headers = ["globals.h"],
-	deplibs = ["fastlib:fastlib",":datapack",":metrics",":matcher",":naive"]
+	deplibs = ["fastlib:fastlib",":datapack",":metrics",":matcher",":naive",":unit_test"]
 )
