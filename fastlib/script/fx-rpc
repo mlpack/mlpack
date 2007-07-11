@@ -5,34 +5,45 @@ fx-rpc -- run programs written with garry's makeshift sockets api thing
 """
 
 import os
+import signal
 import sys
 import util
+import time
 
 # note: we're not using fx for parameter parsing right now...
 
-n = int(sys.args[0])
+n = int(sys.argv[1])
 if n <= 0:
   print "error: n must be positive"
-  exit 1
+  os.exit(1)
 
-peers = sys.args[1]
+peers = sys.argv[2]
 
-port = int(sys.args[2])
+port = int(sys.argv[3])
 
 peerlist = util.readlines(peers)
 
 pids = []
 
-for i = range(n):
-  machinename = peerlist[i]
-  pid = os.fork()
-  if not pid:
-    args = ["ssh", machinename,
-        "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
-        "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
-        ]+sys.args[3:]
-    os.execvp(args[0], args)
-  pids.append(pid)
+try:
+  for i in range(n):
+    machinename = peerlist[i]
+    print "****** CONNECTING TO %s ******" % machinename
+    pid = os.fork()
+    if not pid:
+      argv = ["ssh", machinename] + sys.argv[4:] + [
+          "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
+          "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
+          ]
+      os.execvp(argv[0], argv)
+    time.sleep(1)
+    pids.append(pid)
 
-for pid in pids:
-  os.waitpid(pid, 0)
+  for pid in pids:
+    os.waitpid(pid, 0)
+except:
+  for pid in pids:
+    try:
+      os.kill(pid, signal.SIGTERM)
+    except:
+      print "Kill failed"
