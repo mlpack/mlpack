@@ -2,6 +2,11 @@ main.cc
 	- figure out the arguments and call appropriate part of the code
 	+ depends on: all
 
+tests.c
+tests.cc
+	- unit tests to ensure proper behavior of all code 
+	+ depends on: all
+
 globals.h
 	- define global variables and handy constants
 	+ depends on: none

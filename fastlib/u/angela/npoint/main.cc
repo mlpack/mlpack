@@ -14,6 +14,7 @@
  * 	--n=[size of n-tuple (default 2)]
  * 	--nweights=[number of weights (default 0)]
  * 	--metric=[csv file containing the desired metric]
+ * 	--test=[test name]
  * etc. 	
  */
 
@@ -24,8 +25,10 @@
 #include "matcher.h"
 #include "datapack.h"
 #include "naive.h"
+#include "tests.h"
 
 /* Initialize any global variables here. */
+/* Note: Probably useless. */
 
 FILE *output = stderr;
 int count_all_permutations = 0;
@@ -37,6 +40,29 @@ int main(int argc, char *argv[])
 {
  fx_init(argc,argv);
 
+ /* First we check if we want to run a test */
+ const char *test = fx_param_str(NULL,"test","none");
+ String tmp;
+
+ tmp.Copy(test);
+ if ( tmp.CompareTo("none") ) { 
+	 if ( !tmp.CompareTo("permutations") ) {
+		 const int n = fx_param_int(NULL,"n",2);
+
+		 if ( !PASSED(test_permutation_generator(n)) ) {
+			 fprintf(output,"\n\nPermutation generator failed for n = %d.\n\n",n);
+		 }
+		 else {
+			 fprintf(output,"\n\nPermutation generator worked for n = %d.\n\n",n);
+		 }
+	 }
+
+	 fx_done();
+	 exit(1); 
+ }
+ tmp.Destruct();
+
+ /* After the tests are done get the parameters and run the actual program */
  const char *data_file = fx_param_str_req(NULL,"data");
  const char *matcher_file = fx_param_str_req(NULL,"matcher");
  const char *metric_file = fx_param_str(NULL,"metric","default");
@@ -50,7 +76,6 @@ int main(int argc, char *argv[])
  Matcher matcher;
  Metric metric;
  Vector count;
- String tmp;
  int i;
 
  tmp.Copy(output_file);

@@ -215,6 +215,7 @@ success_t Matcher::AnyMatch(const DataPack data, const Vector index, const Metri
  }
  else {
 	 int ready = 0;
+	 index_t i;
 	 success_t match = SUCCESS_PASS;
 	 Vector tau;
 	 tau.Init(n);
@@ -223,15 +224,11 @@ success_t Matcher::AnyMatch(const DataPack data, const Vector index, const Metri
 		 fprintf(output,"Fatal error: could not generate the first permutation\n");
 		 exit(1);
 	 }
-/*
-	 for (i=0;i<n;i++) {
-		 tau[i] = i;
-	 }
-*/
+
 	 do {
-		 index_t i,j;
+		 index_t j;
 		 ready = 1; // be optimistic about the current permutation
-		 
+
 		 for (i=0;i<n;i++) {
 			 for (j=i+1;j<n && PASSED(match);j++) {
 				 index_t index_i = index[tau[i]], index_j = index[tau[j]];
@@ -253,6 +250,7 @@ success_t Matcher::AnyMatch(const DataPack data, const Vector index, const Metri
 			 success_t can_make_new_permutation = generate_next_permutation(tau);
 			 ready = 0;
 			 if ( !PASSED(can_make_new_permutation) ) { // we're out of permutations
+				 fprintf(output,"No new permutation avaliable\n\n");
 				 return SUCCESS_FAIL; // report that no match could be found
 			 }
 		 }
@@ -278,11 +276,7 @@ success_t Matcher::AnyMatch(const Matrix data, const Vector index, const Metric 
 		 fprintf(output,"Fatal error: could not generate the first permutation\n");
 		 exit(1);
 	 }
-/*
-	 for (i=0;i<n;i++) {
-		 tau[i] = i;
-	 }
-*/
+
 	 do {
 		 index_t i,j;
 		 ready = 1; // be optimistic about the current permutation
@@ -335,9 +329,10 @@ success_t Matcher::AnyMatch(const Matrix distances) const {
 		 fprintf(output,"Fatal error: could not generate the first permutation\n");
 		 exit(1);
 	 }
+
 	 do {
 		 index_t i,j;
-		 ready = 1; // be optimistic about the current permutation
+		 ready = 1;
 		 
 		 for (i=0;i<n;i++) {
 			 for (j=i+1;j<n && PASSED(match);j++) {
@@ -350,13 +345,13 @@ success_t Matcher::AnyMatch(const Matrix distances) const {
 			 }
 		 }
 
-		 if ( PASSED(match) ) { // we got a match... yupii
+		 if ( PASSED(match) ) {
 			 return SUCCESS_PASS;
 		 }
-		 else { // gotta try something new
+		 else {
 			 ready = 0;
-			 if ( !PASSED(generate_next_permutation(distances,tau,dist) ) ) { // out of permutations
-				 return SUCCESS_FAIL; // report that no match was found
+			 if ( !PASSED(generate_next_permutation(distances,tau,dist) ) ) {
+				 return SUCCESS_FAIL;
 			 }
 		 }
 	 }
@@ -436,32 +431,32 @@ success_t generate_first_permutation(Vector &tau) {
 success_t generate_next_permutation(Vector &tau) {
 	index_t i;
 	index_t n = tau.length();
-	index_t top = n - 1;
-	int is_valid = 1;
+	index_t top = n-1;
+	int ok_so_far = 0;
 
 	do {
-		if ( is_valid && top < (n-1) ) {
+		if (ok_so_far) {
 			top += 1;
-			tau[top] = -1;
 		}
 
-		is_valid = 1;
 		tau[top] += 1;
+		ok_so_far = 1;
 
-		if ( tau[top] > (n-1) ) {
+		if (tau[top] > n-1) { 
+			ok_so_far = 0;
+			tau[top] = -1;
 			top -= 1;
-			if (top < 0) {
-				return SUCCESS_FAIL;
-			}
+		} 
+		if (top < 0) {
+			return SUCCESS_FAIL;
 		}
-
-		for (i=0;i<top;i++) {
-			if (tau[i] == tau[top]) {
-				is_valid = 0;
+		for (i=0;i<top;i++) { 
+			if (tau[top] == tau[i]) {
+				ok_so_far = 0;
 			}
 		}
 	}
-	while ( top < (n-1) && !is_valid );
+	while (top < (n-1) || !ok_so_far);
 
 	return SUCCESS_PASS;
 }

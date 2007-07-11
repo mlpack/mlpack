@@ -20,7 +20,7 @@
  * matchers over which we wil run naive or single tree n-point. We can also use
  * it for a divide & conquer approach (dual-tree, multi-matcher n-point).
  */
-void estimate_multi_matcher_list(const Matrix data, const Metric metric) const;
+void estimate_multi_matcher_list(const Matrix data, const Metric metric);
 
 /** 
  * Estimate the largest distance between any two points. This should be useful
@@ -31,7 +31,7 @@ void estimate_multi_matcher_list(const Matrix data, const Metric metric) const;
  * 		3. Find z such that dist(y,z) is maximized
  * 		4. Return dist (y,z)
  */
-double estimate_diameter(const Matrix data, const Metric metric) const;
+double estimate_diameter(const Matrix data, const Metric metric);
 
 /** 
  * Given x, find y such that dist(x,y) is maximum. 
@@ -40,7 +40,7 @@ double estimate_diameter(const Matrix data, const Metric metric) const;
  * the index of y.
  */
 index_t find_farthest_neighbor(const Matrix data, const index_t x, 
-		const Metric metric) const;
+		const Metric metric);
 
 
 #endif

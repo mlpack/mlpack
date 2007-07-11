@@ -1,6 +1,6 @@
 /**
- * @author Angela N. Grigoroaia
- * @file metrics.h
+ * @author: Angela N. Grigoroaia
+ * @file: metrics.h
  *
  * @description: Stuff that takes care of distance computations.
 **/
