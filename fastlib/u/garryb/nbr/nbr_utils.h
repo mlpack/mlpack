@@ -303,6 +303,7 @@ class RpcMonochromaticDualTreeRunner {
 
  private:
   datanode *module_;
+  datanode *data_module_;
   const char *gnp_name_;
 
   typename GNP::Param param_;
@@ -352,11 +353,12 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Preinit_() {
 template<typename GNP, typename Solver>
 void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
   index_t n_block_points = fx_param_int(module_, "n_block_points", 1024);
-  datanode *data_module = fx_submodule(module_, "data", "data");
+  
+  data_module_ = fx_submodule(module_, "data", "data");
 
   fx_timer_start(module_, "read");
   Matrix data_matrix;
-  MUST_PASS(data::Load(fx_param_str_req(data_module, ""), &data_matrix));
+  MUST_PASS(data::Load(fx_param_str_req(data_module_, ""), &data_matrix));
   fx_timer_stop(module_, "read");
 
   n_points_ = data_matrix.n_cols();
@@ -378,7 +380,6 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
 template<typename GNP, typename Solver>
 void RpcMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
   index_t n_block_nodes = fx_param_int(module_, "n_block_nodes", 128);
-  datanode *data_module = fx_submodule(module_, "data", "data");
 
   fx_timer_start(module_, "tree");
   typename GNP::QNode data_example_node;
@@ -386,7 +387,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
   data_nodes_.InitMaster(data_example_node, 0, n_block_nodes);
   KdTreeMidpointBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-      ::Build(data_module, param_, &data_points_, &data_nodes_);
+      ::Build(data_module_, param_, &data_points_, &data_nodes_);
   fx_timer_stop(module_, "tree");
 }
 
@@ -442,6 +443,10 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
     q_results_.InitMaster(default_result, n_points_, data_points_.n_block_elems());
 
     SetupMaster_();
+
+    data_points_.FixBoundaries();
+    data_nodes_.FixBoundaries();
+    q_results_.FixBoundaries();
   } else {
     data_points_.InitWorker();
     data_nodes_.InitWorker();

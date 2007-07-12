@@ -220,6 +220,13 @@ class CacheArray {
    */
   void Flush();
 
+  /**
+   * Flushes unclaimed parts of the first and last block to avoid fringe
+   * cases.  To know why this is necessary, please contact Garry, or
+   * experience the hard-to-track bug yourself.
+   */
+  void FixBoundaries();
+
   index_t Alloc() {
     BlockDevice::blockid_t block_computed = end_ >> n_block_elems_log_;
     end_++;
@@ -318,6 +325,28 @@ void CacheArray<TElement>::Flush() {
         (begin_ & n_block_elems_mask_) * n_elem_bytes_,
         (end_ >> n_block_elems_log_) + BLOCK_OFFSET,
         (end_ & n_block_elems_mask_) * n_elem_bytes_);
+  }
+}
+
+template<typename TElement>
+void CacheArray<TElement>::FixBoundaries() {
+  if (mode_ == BlockDevice::CREATE && begin_block_fake_ < end_block_fake_) {
+    if ((begin_ & n_block_elems_mask_) != 0) {
+      BlockDevice::blockid_t b = (begin_ >> n_block_elems_log_) + BLOCK_OFFSET;
+      // Load the block full of the default element and flush the boundary.
+      cache_->StartWrite(b);
+      cache_->StopWrite(b);
+      cache_->Flush(b, 0,
+        b, (begin_ & n_block_elems_mask_) * n_elem_bytes_);
+    }
+    if ((end_ & n_block_elems_mask_) != 0) {
+      BlockDevice::blockid_t b = (end_ >> n_block_elems_log_) + BLOCK_OFFSET;
+      // Load the block full of the default element and flush the boundary.
+      cache_->StartWrite(b);
+      cache_->StopWrite(b);
+      cache_->Flush(b, (end_ & n_block_elems_mask_) * n_elem_bytes_,
+        b, n_block_elems_ * n_elem_bytes_);
+    }
   }
 }
 
