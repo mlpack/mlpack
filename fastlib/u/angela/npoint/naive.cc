@@ -20,11 +20,16 @@ Vector naive_npoint(DataPack data, Matcher matcher, Metric metric) {
 		return tmp;
 	}
 
-	if (count_all_permutations) {
+	if (count_all_permutations && !matcher.is_simple()) {
 		return asymmetric_naive_npoint(data,matcher,metric);
 	}
 
-	return symmetric_naive_npoint(data,matcher,metric);
+	if (!count_all_permutations) {
+		return symmetric_naive_npoint(data,matcher,metric);
+	}
+
+	fprintf(output,"\nMy error: Could not select matching scheme... Aborting!\n");
+	exit(1);
 }
 
 
@@ -119,9 +124,10 @@ Vector asymmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric)
 	 index[i] = i;
  }
  top = n-1;
+
  /* Running the actual naive loop */
  do {
-	 int is_valid = 1;
+	 int ok_so_far = 1;
 	 if (PASSED(matcher.Matches(data, index, metric))) {
 		 results[0] += 1.0;
 
@@ -148,29 +154,33 @@ Vector asymmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric)
 	 }
 
 	 /* Generating a new valid n-tuple index */
-	 do { // and test if the index is valid
-		 if ( is_valid && top < (n-1) ) { // if we have a valid partial index
-			 top += 1; // go to the next level
-			 index[top] = -1; // and restart the count
-		 }
+	 top = n-1;
+	 do {
+		 index[top] += 1;
+		 ok_so_far = 1;
 
-		 is_valid = 1; // be optimistic about our chances
-		 index[top] += 1; // increment the top value
-
-		 if (index[top] > (npoints-1)) { // if top value is invalid
-			 top -= 1; // go back one level
-			 if (top < 0) { // if previous level doesn't exist
-				 return results; // we're can't make new indexes and we can return
+		 if (index[top] >= npoints) {
+			 index[top] = -1;
+			 top -= 1;
+			 ok_so_far = 0;
+			 if (top < 0) { // can't make new index => done
+				 return results;
 			 }
 		 }
 
-		 for (i=1;i<top;i++) { // iterate through all previous values
-			 if (index[i] == index[top]) { // if another value equals the current one
-				 is_valid = 0; // the current (partial) n-tuple is not valid
-			 }
-		 }
+		for (i=0;i<top && ok_so_far;i++) {
+			if (index[top] == index[i]) {
+				ok_so_far = 0;
+			}
+		}
+
+		if(ok_so_far) {
+			top += 1;
+		}
+
 	 }
-	 while ( top < (n-1) && !is_valid);
+	 while (top < n);
+
  } 
  while (1);
 }
