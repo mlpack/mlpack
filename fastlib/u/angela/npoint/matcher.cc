@@ -105,7 +105,7 @@ success_t Matcher::IsValid() const {
 
 /*****************************************************************************/
 success_t Matcher::Matches(const DataPack data, const Vector index, const Metric metric) const {
-	if (simple) {
+	if ( simple || (!simple && count_all_permutations) ) {
 		return SingleMatch(data,index,metric);
 	}
 	else {
@@ -115,7 +115,7 @@ success_t Matcher::Matches(const DataPack data, const Vector index, const Metric
 
 
 success_t Matcher::Matches(const Matrix data, const Vector index, const Metric metric) const {
-	if (simple) {
+	if (simple || (!simple && count_all_permutations) ) {
 		return SingleMatch(data,index,metric);
 	}
 	else {
@@ -125,7 +125,7 @@ success_t Matcher::Matches(const Matrix data, const Vector index, const Metric m
 
 
 success_t Matcher::Matches(const Matrix distances) const {
-	if (simple) {
+	if (simple || (!simple && count_all_permutations) ) {
 		return SingleMatch(distances);
 	}
 	else {
