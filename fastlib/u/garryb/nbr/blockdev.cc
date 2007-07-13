@@ -5,24 +5,49 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+BlockDevice::blockid_t BlockDevice::AllocBlocks(blockid_t num) {
+  blockid_t tmp = n_blocks_;
+  n_blocks_ += diff;
+  return n_blocks_;
+}
+
+//------------------------------------------------------------------------
+
+void BlockDeviceWrapper::Read(blockid_t blockid,
+    offset_t begin, offset_t end, char *data) {
+  n_blocks_ = max(n_blocks_, blockid+1);
+  inner_->Read(blockid, begin, end, data);
+}
+void BlockDeviceWrapper::Write(blockid_t blockid,
+    offset_t begin, offset_t end, const char *data) {
+  n_blocks_ = max(n_blocks_, blockid+1);
+  inner_->Write(blockid, begin, end, data);
+}
+BlockDevice::blockid_t BlockDeviceWrapper::AllocBlocks(blockid_t i) {
+  blockid_t tmp = inner_->AllocBlocks(i);
+  n_blocks_ = tmp + i;
+  return tmp;
+}
+
+//------------------------------------------------------------------------
+
 void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   int octal_mode;
   
-  switch(mode) {
-   case BlockDevice::READ:
-    octal_mode = O_RDONLY;
-    break;
-   case BlockDevice::MODIFY:
+  if (BlockDevice::can_write(mode)) {
     octal_mode = O_RDWR;
-    break;
-   case BlockDevice::CREATE:
-   case BlockDevice::TEMP:
-    octal_mode = O_RDWR|O_CREAT|O_TRUNC;
-    break;
-   default: abort();
+  } else {
+    octal_mode = O_RDONLY;
   }
-  
+  if (BlockDevice::need_init(mode)) {
+    octal_mode |= O_TRUNC;
+  }
+  if (!BlockDevice::need_read(mode)) {
+    octal_mode |= O_CREAT;
+  }
+
   fd_ = open(fname, octal_mode, 0666);
+
   if (fd_ <= 0) {
     FATAL("Could not open file '%s'.", fname);
   }
@@ -86,6 +111,8 @@ off_t RandomAccessFile::FindSize() const {
   fstat(fd_, &s);
   return s.st_size;
 }
+
+//------------------------------------------------------------------------
   
 DiskBlockDevice::~DiskBlockDevice() {
   file_.Close();
@@ -110,9 +137,7 @@ void DiskBlockDevice::Init(
 
 void DiskBlockDevice::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
-  if (unlikely(blockid >= n_blocks_)) {
-    n_blocks_ = blockid + 1;
-  }
+  DEBUG_BOUNDS(blockid, n_blocks_);
   DEBUG_BOUNDS(end, n_block_bytes_ + 1);
   DEBUG_BOUNDS(begin, end + 1);
   file_.Read(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
@@ -120,20 +145,13 @@ void DiskBlockDevice::Read(blockid_t blockid,
 
 void DiskBlockDevice::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *data) {
-  if (unlikely(blockid >= n_blocks_)) {
-    n_blocks_ = blockid + 1;
-  }
+  DEBUG_BOUNDS(blockid, n_blocks_);
   DEBUG_BOUNDS(end, n_block_bytes_ + 1);
   DEBUG_BOUNDS(begin, end + 1);
   file_.Write(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
 }
 
-DiskBlockDevice::blockid_t DiskBlockDevice::AllocBlock() {
-  blockid_t blockid = n_blocks_;
-  n_blocks_ = blockid + 1;
-  return blockid;
-}
-
+//------------------------------------------------------------------------
 
 void MemBlockDevice::Init(offset_t block_size) {
   n_blocks_ = 0;
@@ -144,37 +162,22 @@ void MemBlockDevice::Init(offset_t block_size) {
 
 void MemBlockDevice::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
-  if (likely(blockid < n_blocks_)) {
-    char *mydata = blocks_.get(blockid);
-    if (likely(mydata != NULL)) {
-      //printf("%p READING %d, %d\n", this, blockid, n_blocks_);
-      mem::Copy(data, mydata + begin, end - begin);
-      return;
-    }
+  char *mydata = blocks_.get(blockid);
+  if (likely(mydata != NULL)) {
+    mem::Copy(data, mydata + begin, end - begin);
+    return;
   }
-  //printf("%p NOT READING %d, %d\n", this, blockid, n_blocks_);
-  // randomize with garbage otherwise
 }
 
 void MemBlockDevice::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *data) {
-  char *mydata = blocks_[blockid];
+  char *mydata = blocks_.get(blockid);
 
   if (unlikely(mydata == NULL)) {
     blocks_[blockid] = mydata = mem::Alloc<char>(n_block_bytes_);
-    if (unlikely(blockid >= n_blocks_)) {
-      n_blocks_ = blockid + 1;
-    }
-    //printf("%p WRITING first time %d, %d\n", this, blockid, n_blocks_);
   }
 
-  //printf("%p WRITING %d, %d\n", this, blockid, n_blocks_);
   mem::Copy(mydata + begin, data, end - begin);
-}
-
-BlockDevice::blockid_t MemBlockDevice::AllocBlock() {
-  n_blocks_++;
-  return n_blocks_ - 1;
 }
 
 MemBlockDevice::~MemBlockDevice() {

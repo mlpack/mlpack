@@ -24,12 +24,98 @@ class BlockDevice {
  public:
   typedef uint32 blockid_t;
   typedef uint32 offset_t;
-  enum mode_t {
-    READ,
-    MODIFY,
-    CREATE,
-    TEMP
+
+  enum modeflag_t {
+    F_READ      = 0x01,
+    F_WRITABLE  = 0x02,
+    F_WRITE     = 0x04|F_WRITABLE,
+    F_DYNAMIC   = 0x08,
+    F_INIT      = 0x10,
   };
+  enum mode_t {
+    /** Read existing data. */
+    M_READ = F_READ,
+    /** Overwrite existing data, as if the original data didn't exist. */
+    M_OVERWRITE = F_WRITE,
+    /** Modify existing data. */
+    M_MODIFY = F_READ|F_WRITE,
+    /** Create from scratch. */
+    M_CREATE = F_INIT|F_WRITE|F_DYNAMIC,
+    /** Add new data to the end. */
+    M_APPEND = F_WRITE|F_DYNAMIC,
+    /** Use the block device only as temporary storage. */
+    M_TEMP = F_INIT|F_WRITABLE|F_DYNAMIC,
+    /** Use prexisting data, but allow data to be used as scratch space. */
+    M_DESTROY = F_READ|F_WRITABLE,
+  };
+
+  /**
+   * Checks if a mode is creating a brand new "file," and header information
+   * must be written.
+   *
+   * @param mode the mode to check
+   */  
+  static bool need_init(mode_t mode) {
+    return (mode & F_INIT) != 0;
+  }
+  /**
+   * Checks if a mode requires reads.
+   *
+   * If a mode does not require reads, block devices may return garbage, and
+   * caches should initialize the block to its default values.
+   *
+   * @param mode the mode to check
+   */
+  static bool need_read(mode_t mode) {
+    return (mode & F_READ) != 0;
+  }
+  /**
+   * Check if a mode requires writes.
+   *
+   * In modes that require writes, data must be saved at the end of lifetime.
+   * Modes may allow writes but not require them (see below).
+   *
+   * @param mode the mode to check
+   */
+  static bool need_write(mode_t mode) {
+    return (mode & F_WRITE) != 0;
+  }
+  /**
+   * Checks if a mode allows writes.
+   *
+   * In modes that allow writes and allows reads, data that is written must
+   * be preserved if it is flushed from cache and read back again.
+   * However it need not be stored after the cache is closed unless need_write
+   * is true.
+   *
+   * @param mode the mode to check
+   */
+  static bool can_write(mode_t mode) {
+    return (mode & F_WRITABLE) != 0;
+  }
+  /**
+   * Checks if a mode requires read-after-write to be true.
+   *
+   * Effectively checks can_write && need_read.
+   *
+   * @param mode the mode to check
+   */
+  static bool need_writeread(mode_t mode) {
+    return (mode & (F_READ|F_WRITABLE)) == (F_READ|F_WRITABLE);
+  }
+  /**
+   * Checks if a mode is a dynamic mode.
+   *
+   * In dnyamic modes (create, append, temp), resizing is possible, and
+   * writes are always performed on the entire-block granularity.  In static
+   * modes, writes are confined to contiguous regions on a sub-block
+   * granularity.
+   *
+   * @param mode the mode to check
+   */
+  static bool is_dynamic(mode_t mode) {
+    return (mode & F_DYNAMIC) != 0;
+  }
 
  protected:
   blockid_t n_blocks_;
@@ -63,11 +149,14 @@ class BlockDevice {
       offset_t begin, offset_t end, char *data) = 0;
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data) = 0;
-  virtual blockid_t AllocBlock() = 0;
+  virtual blockid_t AllocBlocks(blockid_t diff);
 
  public:
   void Lock() { mutex_.Lock(); }
   void Unlock() { mutex_.Unlock(); }
+  
+ protected:
+  virtual void HandleGrowth() {}
 };
 
 class NullBlockDevice : public BlockDevice {
@@ -90,11 +179,6 @@ class NullBlockDevice : public BlockDevice {
       offset_t begin, offset_t end, const char *data) {
     // ignore the data
   }
-  virtual blockid_t AllocBlock() {
-    blockid_t blockid = n_blocks_;
-    n_blocks_ = blockid + 1;
-    return blockid;
-  }
 };
 
 class BlockDeviceWrapper : public BlockDevice {
@@ -114,21 +198,10 @@ class BlockDeviceWrapper : public BlockDevice {
   }
   
   virtual void Read(blockid_t blockid,
-      offset_t begin, offset_t end, char *data) {
-    n_blocks_ = max(n_blocks_, blockid+1);
-    inner_->Read(blockid, begin, end, data);
-  }
+      offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
-      offset_t begin, offset_t end, const char *data) {
-    n_blocks_ = max(n_blocks_, blockid+1);
-    inner_->Write(blockid, begin, end, data);
-  }
-  virtual blockid_t AllocBlock() {
-    // TODO: Do we create blocks on demand or not?
-    //DEBUG_ASSERT_MSG(blockid >= n_blocks_, "blockid %u should be >= %u n_blocks_",
-    //    blockid, n_blocks_);
-    return n_blocks_++;
-  }
+      offset_t begin, offset_t end, const char *data);
+  virtual blockid_t AllocBlocks(blockid_t i);
 };
 
 class RandomAccessFile {
@@ -179,9 +252,9 @@ class MemBlockDevice : public BlockDevice {
  public:
   MemBlockDevice() {}
   virtual ~MemBlockDevice();
-  
+
   void Init(offset_t block_size);
-  
+
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
