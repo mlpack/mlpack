@@ -25,7 +25,7 @@ class SmallCache : public BlockDeviceWrapper {
  private:
   Mutex mutex_;
   ArrayList<Metadata> metadatas_;
-  Schema *handler_;
+  Schema *schema_;
   mode_t mode_;
 
  public:
@@ -40,38 +40,54 @@ class SmallCache : public BlockDeviceWrapper {
 
   /**
    * Create a SmallCache.
-   *
-   * If mode is READ or MODIFY, the incoming handler's InitFromMetadata method
-   * will be called.
-   *
-   * If the mode is WRITE or TEMP, the handler is assumed to be initialized,
-   * and its WriteMetadata will be called.
    */
-  void Init(BlockDevice *inner_in, Schema *handler_in,
+  void Init(BlockDevice *inner_in, Schema *schema_in,
      mode_t mode_in);
 
   char *StartRead(blockid_t blockid);
   char *StartWrite(blockid_t blockid);
   void StopRead(blockid_t blockid);
   void StopWrite(blockid_t blockid);
+
+  /**
+   * Flush method for static (range-based) use cases.
+   */
   void Flush(blockid_t begin_block, offset_t begin_offset,
-    blockid_t last_block, offset_t end_offset);
+      blockid_t last_block, offset_t end_offset);
+  /**
+   * Flush method for dynamic use cases.
+   */
+  void Flush();
+  /**
+   * Invalidates all current blocks, requiring them to be fetched from the
+   * underlying block device.
+   *
+   * Any un-flushed writes will be lost -- be careful that blocks aren't
+   * left partly-uninitialized.
+   *
+   * Useful in parallel usage where parts of the underlying data might have
+   * changed elsewhere.
+   *
+   * TODO: Consider marking some blocks as "invalidate candidates" so we
+   * only need to invalidate blocks at range boundaries.
+   */
+  void Clear(mode_t new_mode);
+  /**
+   * Change mode without invalidating.
+   *
+   * Useful 
+   */
+  void Remode(mode_t new_mode);
 
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data);
 
-  virtual blockid_t AllocBlock() {
+  virtual blockid_t AllocBlocks(blockid_t n_to_alloc) {
     blockid_t blockid = BlockDeviceWrapper::AllocBlock();
     metadatas_.Resize(n_blocks());
     return blockid;
-  }
-  
-  void Clear(mode_t new_mode);
-
-  Schema *block_action_handler() const {
-    return handler_;
   }
 
  private:
