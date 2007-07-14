@@ -207,7 +207,7 @@ We present how these algorithms yield an elegant strategy for parallelizing the 
 \section{Introduction}
 
 Many problems in spatial statistics and data mining, especially nonparametric methods, nominally require an all-$n$-tuples analysis of data points that lie in a metric space.
-Recent work\cite{ryan_nips} has characterized these {\it generalized $N$-body problems} and shown how a multi-tree algorithmic approach directly follows, leading quite often to asymptotically faster algorithms approaching empirical linear-time performance.
+Recent work\authorsnote{not yet officially published}\cite{ryan_nips} has characterized these {\it generalized $N$-body problems} and shown how a multi-tree algorithmic approach directly follows, leading quite often to asymptotically faster algorithms approaching empirical linear-time performance.
 The multi-tree approach treats these problems by recursively dividing the problem over the Cartesian product of points, resulting in the fastest practical serial algorithms for many statistical and physical problems, such as kernel density estimation, $n$-point correlation, nearest neighbors, Gaussian process regression, and more.
 
 Nonetheless, as multi-core processors begin to dominate even commodity markets, even the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
@@ -256,7 +256,7 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
 \authornote{KD-tree figure goes here}
 Core to dual-tree algorithms is the concepts of trees and bounds.
 Every node $X$ in a spatial tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \union \kdright{X} = X$ with parent $\kdparent{X}$, with each leaf a single point $\{x\}$\footnote{In practice, leaves contain multiple points to avoid recursive overhead.}.
-For example, a $kd$-tree\cite{kdtree}, as in \fig{kdtree}, recursively partitions the data along coordinate dimensions.
+For example, a $kd$-tree\cite{preparata_kdtrees}, as in \fig{kdtree}, recursively partitions the data along coordinate dimensions.
 Each node has a bounding box and can also store summary statistics such as means and other moments.
 Notationally, we denote $\dist{\cdot}{\cdot}$ to be a distance metric; superscripts $l$ and $u$ refer respectively to lower and upper bounds, which are often, as in the case of distance, obtained from bounding boxes of points.
 
@@ -275,7 +275,7 @@ To achieve speedup, one maintains for each tree node $Q$ of queries the furthest
 If a set of references is farther away than this distance, no further exploration is required.
 
 {\bf Affinity propagation.}
-Affinity propagation is a recent clustering technique that identifies exemplars in a data set, taking into account all point-to-point similarities\cite{frey_dueck}\authorsnote{Am I implementing parallel Affinity Propagation?}.
+Affinity propagation is a recent clustering technique that identifies exemplars in a data set, taking into account all point-to-point similarities\cite{affinity}\authorsnote{I might not actually implement this in parallel}.
 The similaritiy $\simil{i}{j}$ between points $x_i$ and $x_j$ is the negative squared distance or some other quantity to be maximized, with diagonals $\simil{i}{i}$ set to a parameter that controls the number of clusters.
 The algorithm maximizes the sum of similarities between each point and its chosen exemplar.
 If a metric space is defined over the points, one may use the dual-tree algorithm in \cite{ryan_nips} to solve the modified problems,
@@ -298,10 +298,10 @@ Computational solutions break the simulation into discrete time steps, during wh
 \noindent where $f(q,r)$ is often an inverse-squared-distance gravitational or Coulombic force.
 Directly computing the sum takes $O(N^2)$ time, but speedup is achieved by approximating distant interactions.
 
-The earliest tree-based algorithm by Appel \cite{appel} approximates these force contributions in an approach closely resembling the dual-tree approach.
-However, the later popular Barnes-Hut algorithm\cite{barneshut} and Fast Multipole Method\cite{greengard_fmm} received attention from the parallelization community.
+The earliest tree-based algorithm by Appel \cite{appel_alg} approximates these force contributions in an approach closely resembling the dual-tree approach.
+However, the later popular Barnes-Hut algorithm\cite{barnes_hut} and Fast Multipole Method\cite{greengard_fmm} received attention from the parallelization community.
 
-The algorithm by Barnes and Hut, presented in \cite{barneshut}, is order $O(N log N)$ for uniform distributions\authornote{Uniform?}.
+The algorithm by Barnes and Hut, presented in \cite{barnes_hut}, is order $O(N log N)$ for uniform distributions\authornote{Uniform?}.
 For each query point $q$, the force contribution is approximated by recursively traversing an oct-tree\footnote{An oct-tree hierarchically divides all 3 dimensions at the midpoint.} of points that interact on it.
 If the $q$ is further than parameter $\theta$ times the spatial width of the considered node, the force calculation is approximated by the node's center of mass.
 
@@ -319,21 +319,21 @@ Since distributions are rarely uniform, a {\it dry run} is typically performed t
 The cost of the dry run is amortized, since the simulation changes slowly and the same information may be used for many time steps.
 
 The estimated runtime is then used for the domain decomposition.
-Orthogonal recursive bisection (ORB) decomposition hierarchically bisects the data along a plane, somewhat like a $kd$-tree, but such that each side has an equal total computational cost \cite{singh95load, liu94experiences, salmon93parallel}.
+Orthogonal recursive bisection (ORB) decomposition hierarchically bisects the data along a plane, somewhat like a $kd$-tree, but such that each side has an equal total computational cost \cite{singh95load, liu94experiences, warren93parallel}.
 The cost-zones technique alternatively uses the existing oct-tree used by the simulation and sequentially orders all points following a Morton or Hilber-Peano pattern.
 The data are then cut into sequential chunks of roughly equal size.
 
 Both techniques attempt to solve the problems for larger scale parallelization -- communication cost.
 By approximating distant computations with the center of mass, the $N$-body problem inherently translates spatial locality into data locality, exploited successfully by both the ORB and cost-zones technique.
 Typically each processor is responsible for the set of particles it calculates forces for, and must get information about other particles from remote processors -- combined, these data form what is called a processor's {\it locally essntial tree}.
-The ORB technique was succesfully employed in cluster computing nearly two decades ago by Warren and Salmon \cite{warren92astrophysical}, with the reasoning that the the tree makes it straightforward to find which processor has which data, and imposes a convenient tree-based structure over the processors.
+The ORB technique was succesfully employed in cluster computing nearly two decades ago by Warren and Salmon \cite{warren92astrophysical}, since the tree makes it straightforward to find which processor has which data, and imposing a convenient structure over the processors.
 Each processor initially computes which parts of its own tree are locally essential to other processor and immediately sends this information to other processors before any force computation begins, and thus no communication is necessary during the actual force computation.
 
 A strikingly different approach popularized in the nineties is to retrieve needed data on demand.
 In this scenario, the simpler-to-implement cost-zones technique then provides somewhat better correlation between spatial and data locality.
-Singh et. al.\authornote{Et al? -- check the reference.} \cite{singh95load, singh_architecture} argue that the hierarchial $N$-body algorithms are best suited for shared-memory systems with hardware-based data transfer via caches.
-However, Warren and Salmon later \cite{warren93,warren97} show succesful implementations on commodity uniprocessor-with-ethernet clusters.
-In fact, \cite{warren97} extends parallelization to include disk-resident data with software caching, showing that the same principles that lead to efficient disk algorithms lead directly to efficient parallel algorithms.
+Singh et. al.\authornote{Et al? -- check the reference.} \cite{singh95load, singh92implications} argue that the hierarchial $N$-body algorithms are best suited for shared-memory systems with hardware-based data transfer via caches.
+However, Warren and Salmon later \cite{warren93parallel,salmon97parallel} show succesful implementations on commodity uniprocessor-with-ethernet clusters.
+In fact, \cite{salmon97parallel} extends parallelization to include disk-resident data with software caching, showing that the same principles that lead to efficient disk algorithms lead directly to efficient parallel algorithms.
 
 {\bf Relation to Dual-Tree.}
 The issues of $N$-body force calculation largely mirror that for all generalized $N$-body problems with efficient dual-tree algorithms.
@@ -351,7 +351,7 @@ This paper focuses on techniques that apply universally to {\it all} dual-tree a
 \section{Parallel Programming Models}
 
 Efforts\authornote{This section is a {\it stub}. I can help myself by {\it expanding it}.} have been made in all fronts on making parallelization accessible to the general programmer.
-One technique offered by the programming languages community is the parallelization inherent in functional languages -- in fact, numerous papers have parallelized Barnes-Hut and the Fast Multipole Method algorithms this way \cite{nesl, parallel_fmm}.
+One technique offered by the programming languages community is the parallelization inherent in functional languages -- in fact, numerous papers have parallelized Barnes-Hut and the Fast Multipole Method algorithms this way \cite{hu-implementing, more}.
 Using such a language, however, can sometimes put unintended constraints on development, especially since compiler technologies cannot automatically derive the wealth of parallelization techniques that have been used in past state-of-the-art parallel $N$-body simulations.
 
 The development of specialized programming model form another aspect.
@@ -775,7 +775,7 @@ Our software automatically serializes user data into blocks, forming the fundame
 Workers request blocks of data on demand.
 
 In this paper we focus on convenentional use cases where the data originates on one machine, the tree is quickly built locally, and then the blocks representing the tree and data are distributed.
-Such an implementation is not suitable for massive datacenter\authorsnote{i.e. ``Google''} scenarios where data originates distributed among machines; however, the existence of efficient parallel tree-building algorithms \cite{paralleltrees} makes such an implementation inevitable.
+Such an implementation is not suitable for massive datacenter\authorsnote{i.e. ``Google''} scenarios where data originates distributed among machines; however, the existence of efficient parallel tree-building algorithms \cite{alfuraih00parallel} makes such an implementation inevitable.
 
 Ideally, each block should reside on the computer most likely to use it.
 Unfortunately, such an implementation requires significant cooperation between the scheduler and data distribution and presents a formidable theoretical and technical challenges.
@@ -798,9 +798,9 @@ Also, scalability to many more processors may be possible given specialized know
 
 Also, algorithms with more than two trees should parallelize in a manner similar to the existing ones.
 
-\nocite{ex1,ex2}
-\bibliographystyle{latex8}
-\bibliography{icdm07}
+%\nocite{ex1,ex2}
+\bibliographystyle{abbrv}
+\bibliography{paper}
 
 \begin{appendix}
 
