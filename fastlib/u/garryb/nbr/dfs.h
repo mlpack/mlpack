@@ -76,11 +76,11 @@ template<typename GNP>
 DualTreeDepthFirst<GNP>::~DualTreeDepthFirst() {
   r_nodes_.StopRead(0);
 
-  q_points_.Flush();
-  q_nodes_.Flush();
-  r_points_.Flush();
-  r_nodes_.Flush();
-  q_results_.Flush();
+  q_points_.Flush(true);
+  q_nodes_.Flush(true);
+  r_points_.Flush(true);
+  r_nodes_.Flush(true);
+  q_results_.Flush(true);
 }
 
 template<typename GNP>
@@ -95,14 +95,14 @@ void DualTreeDepthFirst<GNP>::InitSolve(
     SmallCache *q_results) {
   param_.Copy(param_in);
 
-  q_nodes_.Init(q_nodes, BlockDevice::READ);
-  r_points_.Init(r_points, BlockDevice::READ);
-  r_nodes_.Init(r_nodes, BlockDevice::READ);
+  q_nodes_.Init(q_nodes, BlockDevice::M_READ);
+  r_points_.Init(r_points, BlockDevice::M_READ);
+  r_nodes_.Init(r_nodes, BlockDevice::M_READ);
 
   const typename GNP::QNode *q_root = q_nodes_.StartRead(q_root_index);
-  q_results_.Init(q_results, BlockDevice::CREATE,
+  q_results_.Init(q_results, BlockDevice::M_OVERWRITE,
       q_root->begin(), q_root->end());
-  q_points_.Init(q_points, BlockDevice::READ,
+  q_points_.Init(q_points, BlockDevice::M_READ,
       q_root->begin(), q_root->end());
   q_nodes_.StopRead(q_root_index);
 
@@ -387,17 +387,20 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
 
   q_node_mut->mass_result.StartReaccumulate(param_, *q_node);
 
-  CacheReadIterator<typename GNP::QPoint> q_iter(&q_points_, q_node->begin());
+  CacheReadIter<typename GNP::QPoint> q_iter(&q_points_, q_node->begin());
+  CacheWriteIter<typename GNP::QResult> q_result_iter(
+      &q_results_, q_node->begin());
 
-  for (index_t q_i = q_node->begin(); q_i < q_node->end(); ++q_i, q_iter.Next()) {
+  for (index_t q_i = q_node->begin(); q_i < q_node->end();
+      ++q_i, q_iter.Next(), q_result_iter.Next()) {
     const typename GNP::QPoint *q_point = q_iter;
-    typename GNP::QResult *q_result = q_results_.StartWrite(q_i);
+    typename GNP::QResult *q_result = q_result_iter;
 
     q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
 
     if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, *r_node,
           exclusive_unvisited, q_result, &global_result_)) {
-      CacheReadIterator<typename GNP::RPoint> r_iter(&r_points_, r_node->begin());
+      CacheReadIter<typename GNP::RPoint> r_iter(&r_points_, r_node->begin());
 
       for (index_t r_i = r_node->begin(); r_i < r_node->end(); ++r_i,
           r_iter.Next()) {
@@ -413,8 +416,6 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     }
 
     q_node_mut->mass_result.Accumulate(param_, *q_result);
-
-    q_results_.StopWrite(q_i);
   }
 
   q_node_mut->mass_result.FinishReaccumulate(param_, *q_node);

@@ -38,8 +38,8 @@ template<typename Param, typename Point, typename Node>
 void StatFixer<Param, Point, Node>::InitFix(
     const Param *param, CacheArray<Point> *points, CacheArray<Node> *nodes) {
   param_ = param;
-  points_.Init(points, BlockDevice::READ);
-  nodes_.Init(nodes, BlockDevice::MODIFY);
+  points_.Init(points, BlockDevice::M_READ);
+  nodes_.Init(nodes, BlockDevice::M_MODIFY);
   FixRecursively_(0);
   nodes_.Flush();
   points_.Flush();
@@ -64,7 +64,7 @@ void StatFixer<Param, Point, Node>::FixRecursively_(index_t node_index) {
     node->stat().Postprocess(*param_, node->bound(),
         node->count());
   } else {
-    CacheReadIterator<Point> point(&points_, node->begin());
+    CacheReadIter<Point> point(&points_, node->begin());
 
     for (index_t i = 0; i < node->count(); i++, point.Next()) {
       node->stat().Accumulate(*param_, *point);
@@ -249,7 +249,8 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   data_nodes.Init(data_example_node, 0, n_block_nodes);
   KdTreeMidpointBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-      ::Build(data_module, param, &data_points, &data_nodes);
+      ::Build(data_module, param, 0, data_matrix.n_cols(),
+          &data_points, &data_nodes);
 
   // Create our array of results.
   typename GNP::QResult default_result;
@@ -368,7 +369,8 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
   typename GNP::QPoint default_point;
   default_point.vec().Init(dim_);
   param_.BootstrapMonochromatic(&default_point, n_points_);
-  data_points_.InitMaster(default_point, n_points_, n_block_points);
+  data_points_.InitMaster(default_point, n_block_points);
+  data_points_.Alloc(n_points_);
 
   for (index_t i = 0; i < n_points_; i++) {
     CacheWrite<typename GNP::QPoint> point(&data_points_, i);
@@ -384,10 +386,11 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
   fx_timer_start(module_, "tree");
   typename GNP::QNode data_example_node;
   data_example_node.Init(dim_, param_);
-  data_nodes_.InitMaster(data_example_node, 0, n_block_nodes);
+  data_nodes_.InitMaster(data_example_node, n_block_nodes);
   KdTreeMidpointBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-      ::Build(data_module_, param_, &data_points_, &data_nodes_);
+      ::Build(data_module_, param_, 0, n_points_,
+          &data_points_, &data_nodes_);
   fx_timer_stop(module_, "tree");
 }
 
@@ -440,13 +443,10 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
 
     typename GNP::QResult default_result;
     default_result.Init(param_);
-    q_results_.InitMaster(default_result, n_points_, data_points_.n_block_elems());
+    q_results_.InitMaster(default_result, data_points_.n_block_elems());
+    q_results_.Alloc(n_points_);
 
     SetupMaster_();
-
-    data_points_.FixBoundaries();
-    data_nodes_.FixBoundaries();
-    q_results_.FixBoundaries();
   } else {
     data_points_.InitWorker();
     data_nodes_.InitWorker();
@@ -464,9 +464,9 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   fx_timer_stop(module_, "configure");
 
   fx_timer_start(module_, "flush_data");
-  data_points_.FlushClear(BlockDevice::READ);
-  data_nodes_.FlushClear(BlockDevice::READ);
-  q_results_.FlushClear(BlockDevice::CREATE);
+  data_points_.Sync(BlockDevice::M_READ);
+  data_nodes_.Sync(BlockDevice::M_READ);
+  q_results_.Sync(BlockDevice::M_OVERWRITE);
   rpc::Barrier(BARRIER_CHANNEL+1);
   fx_timer_stop(module_, "flush_data");
 
@@ -482,7 +482,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   fx_timer_stop(module_, "all_machines");
 
   fx_timer_start(module_, "flush_results");
-  q_results_.FlushClear(BlockDevice::READ);
+  q_results_.Sync(BlockDevice::M_READ);
   rpc::Barrier(BARRIER_CHANNEL+3);
   fx_timer_stop(module_, "flush_results");
 

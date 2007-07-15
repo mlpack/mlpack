@@ -28,9 +28,8 @@ binrule(name = "tkde",
 #   deplibs = [":nbr_mpi"])
 
 binrule(name = "allnn_rpc",
-   sources = ["allnn.cc"],
-   deplibs = [":nbr"],
-   cflags = "-DUSE_RPC")
+   sources = ["allnn_rpc.cc"],
+   deplibs = [":nbr"])
 
 binrule(name = "allnn",
    sources = ["allnn.cc"],

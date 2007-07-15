@@ -86,7 +86,7 @@ class HashedRemoteBlockDevice
       offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data);
-  virtual blockid_t AllocBlock();
+  virtual blockid_t AllocBlocks(blockid_t n_blocks_to_alloc);
 
   Channel *server() {
     return &server_;
@@ -116,31 +116,33 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
     remote_device_.Init(channel, rpc::rank(), rpc::n_peers());
   }
 
-  void InitMaster(const T& default_obj,
-      index_t n_elems, unsigned int n_block_elems) {
-    CacheArraySchema<T> *handler = new CacheArraySchema<T>;
+  void InitMaster(const T& default_obj, unsigned int n_block_elems) {
+    CacheArrayBlockHandler<T> *handler = new CacheArrayBlockHandler<T>();
     handler->Init(default_obj);
     local_device_.Init(n_block_elems * handler->n_elem_bytes());
     remote_device_.SetLocalDevice(&local_device_);
-    small_cache_.Init(&remote_device_, handler, BlockDevice::CREATE);
-    CacheArray<T>::Init(&small_cache_, BlockDevice::CREATE, 0, n_elems);
+    small_cache_.Init(&remote_device_, handler, BlockDevice::M_CREATE);
+    CacheArray<T>::Init(&small_cache_, BlockDevice::M_CREATE);
     rpc::Register(channel(), server());
   }
 
   void InitWorker() {
+    CacheArrayBlockHandler<T> *handler = new CacheArrayBlockHandler<T>();
     remote_device_.ConnectToMaster();
     local_device_.Init(remote_device_.n_block_bytes());
     remote_device_.SetLocalDevice(&local_device_);
-    small_cache_.Init(&remote_device_, new CacheArraySchema<T>,
-        BlockDevice::MODIFY);
-    CacheArray<T>::Init(&small_cache_, BlockDevice::MODIFY);
+    handler->InitFromDevice(&remote_device_);
+    small_cache_.Init(&remote_device_, handler, BlockDevice::M_APPEND);
+    CacheArray<T>::Init(&small_cache_, BlockDevice::M_APPEND);
     rpc::Register(channel(), server());
   }
 
-  void FlushClear(BlockDevice::mode_t mode) {
-    CacheArray<T>::Flush();
-    CacheArray<T>::mode_ = mode;
-    small_cache_.Clear(mode);
+  void Sync(BlockDevice::mode_t mode) {
+    CacheArray<T>::Flush(true);
+    (void) small_cache_.AllocBlocks(0);
+    CacheArray<T>::Grow();
+    small_cache_.Remode(mode);
+    CacheArray<T>::Remode(mode);
   }
 
   Channel *server() {

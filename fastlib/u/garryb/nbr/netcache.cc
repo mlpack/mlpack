@@ -17,7 +17,7 @@ void RemoteBlockDeviceBackend::HandleRequest(
     blockdev_->Write(request.blockid, request.begin, request.end,
         request.payload.begin());
     response->blockid = request.blockid;
-    
+
     n_writes_++;
     n_write_bytes_ += request.end - request.begin;
   } else if (request.operation == BlockRequest::READ) {
@@ -30,7 +30,7 @@ void RemoteBlockDeviceBackend::HandleRequest(
     n_read_bytes_ += request.end - request.begin;
   } else if (request.operation == BlockRequest::ALLOC) {
     response->payload.Init();
-    response->blockid = blockdev_->AllocBlock();
+    response->blockid = blockdev_->AllocBlocks(request.blockid);
   } else if (request.operation == BlockRequest::INFO) {
     response->payload.Init();
     response->blockid = blockdev_->n_blocks();
@@ -76,8 +76,8 @@ void HashedRemoteBlockDevice::ConnectToMaster() {
     request.payload.Init();
 
     Rpc<BlockResponse> response(channel_, MASTER_RANK, request);
-    n_block_bytes_ = response->n_block_bytes;
     n_blocks_ = response->blockid;
+    n_block_bytes_ = response->n_block_bytes;
   }
 }
 
@@ -138,7 +138,8 @@ void HashedRemoteBlockDevice::Write(blockid_t blockid,
   }
 }
 
-BlockDevice::blockid_t HashedRemoteBlockDevice::AllocBlock() {
+BlockDevice::blockid_t HashedRemoteBlockDevice::AllocBlocks(
+    BlockDevice::blockid_t n_blocks_to_alloc) {
   BlockDevice::blockid_t blockid;
   int dest = MASTER_RANK;
 
@@ -147,7 +148,7 @@ BlockDevice::blockid_t HashedRemoteBlockDevice::AllocBlock() {
   } else {
     BlockRequest request;
 
-    request.blockid = 0;
+    request.blockid = n_blocks_to_alloc;
     request.begin = 0;
     request.end = 0;
     request.operation = BlockRequest::ALLOC;

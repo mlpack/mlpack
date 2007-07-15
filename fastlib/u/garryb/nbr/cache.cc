@@ -1,28 +1,12 @@
 #include "cache.h"
 
 void SmallCache::Init(
-    BlockDevice *inner_in, Schema *schema_in, mode_t mode_in) {
+    BlockDevice *inner_in, BlockHandler *block_handler_in, mode_t mode_in) {
   BlockDeviceWrapper::Init(inner_in); // sets inner_, n_block_bytes_, etc
 
   metadatas_.Init(n_blocks_);
-  schema_ = schema_in;
+  block_handler_ = block_handler_in;
   mode_ = mode_in;
-/*
-  ArrayList<char> header_data;
-  header_data.Init(inner_->n_block_bytes());
-
-  if (mode_ == CREATE || mode_ == TEMP) {
-    char *data = StartWrite(HEADER_BLOCKID);
-    schema_->WriteHeader(n_block_bytes_, data);
-    StopWrite(HEADER_BLOCKID);
-  } else if (mode_ == READ || mode_ == MODIFY) {
-    char *data = StartRead(HEADER_BLOCKID);
-    schema_->InitFromHeader(n_block_bytes_, data);
-    StopRead(HEADER_BLOCKID);
-  } else {
-    FATAL("Unknown mode");
-  }
-*/
 }
 
 SmallCache::~SmallCache() {
@@ -32,10 +16,10 @@ SmallCache::~SmallCache() {
     DEBUG_SAME_INT(metadatas_[i].lock_count, 0);
     DEBUG_POISON_PTR(metadata->data);
   }
-  delete schema_;
+  delete block_handler_;
 }
 
-void SmallCache::Clear(mode_t new_mode) {
+void SmallCache::Clear() {
   for (index_t i = 0; i < metadatas_.size(); i++) {
     Metadata *metadata = &metadatas_[i];
     DEBUG_SAME_INT(metadata->lock_count, 0);
@@ -43,7 +27,10 @@ void SmallCache::Clear(mode_t new_mode) {
     metadata->data = NULL;
     metadata->lock_count = 0;
   }
+}
 
+void SmallCache::Remode(mode_t new_mode) {
+  // TODO: Assert that no blocks are open
   mode_ = new_mode;
 }
 
@@ -83,6 +70,21 @@ void SmallCache::StopWrite(blockid_t blockid) {
   Unlock();
 }
 
+SmallCache::Metadata *SmallCache::GetBlock_(blockid_t blockid) {
+  if (unlikely(blockid >= n_blocks_)) {
+    PerformCacheMiss_(blockid);
+  }
+
+  Metadata *metadata = &metadatas_[blockid];
+  char *data = metadata->data;
+
+  if (unlikely(data == NULL)) {
+    PerformCacheMiss_(blockid);
+  }
+
+  return metadata;
+}
+
 void SmallCache::PerformCacheMiss_(blockid_t blockid) {
   char *data;
   Metadata *metadata;
@@ -97,18 +99,19 @@ void SmallCache::PerformCacheMiss_(blockid_t blockid) {
   data = mem::Alloc<char>(n_block_bytes());
   if (BlockDevice::need_read(mode_)) {
     inner_->Read(blockid, data);
-    schema_->BlockThaw(blockid, 0, n_block_bytes_, data);
+    block_handler_->BlockThaw(blockid, 0, n_block_bytes_, data);
   } else {
-    // In a real cache implementation, we'd only do this if we knew the block
-    // was brand-new.
-    schema_->BlockInitFrozen(blockid, 0, n_block_bytes_, data);
-    schema_->BlockThaw(blockid, 0, n_block_bytes_, data);
+    // If a replacement policy were used, we'd have to make sure the block
+    // hadn't been written back previously.
+    block_handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, data);
+    block_handler_->BlockThaw(blockid, 0, n_block_bytes_, data);
   }
   metadata->data = data;
 }
 
-void SmallCache::Writeback_(blockid_t blockid, offset_t begin, offset_t end) {
-  if (begin != end) {
+void SmallCache::Writeback_(bool clear,
+    blockid_t blockid, offset_t begin, offset_t end) {
+  if (likely(begin != end) && likely(blockid < n_blocks_)) {
     Metadata *metadata = &metadatas_[blockid];
     char *data = metadata->data;
 
@@ -118,46 +121,45 @@ void SmallCache::Writeback_(blockid_t blockid, offset_t begin, offset_t end) {
       size_t n_bytes = end - begin;
       char *buf = data + begin;
 
-      //if (unlikely(metadata->lock_count)) {
-      //  FATAL("Cannot flush a range that is currently in use.");
-      //}
-
-      if (likely(blockid != HEADER_BLOCKID)) {
-        schema_->BlockRefreeze(blockid, 0, n_bytes, buf, buf);
-      }
+      block_handler_->BlockFreeze(blockid, 0, n_bytes, buf, buf);
       inner_->Write(blockid, begin, end, buf);
-      schema_->BlockThaw(blockid, 0, n_bytes, buf, buf);
+
+      if (clear && metadata->lock_count == 0) {
+        // block is not in use, get rid of it
+        mem::Free(metadata->data);
+        metadata->data = NULL;
+      } else {
+        // we must re-thaw the contents
+        block_handler_->BlockThaw(blockid, 0, n_bytes, buf);
+      }
     }
   }
 }
 
-void SmallCache::Flush(blockid_t begin_block, offset_t begin_offset,
+void SmallCache::Flush(bool clear,
+    blockid_t begin_block, offset_t begin_offset,
     blockid_t last_block, offset_t end_offset) {
   DEBUG_ASSERT(BlockDevice::can_write(mode_));
 
-  if (BlockDevice::must_write(mode_)) {
-    if (unlikely(last_block >= n_blocks_)) {
-      n_blocks_ = last_block + 1;
-      metadatas_.Resize(n_blocks_);
-    }
+  if (BlockDevice::need_write(mode_)) {
     if (begin_block == last_block) {
-      Writeback_(begin_block, begin_offset, end_offset);
+      Writeback_(clear, begin_block, begin_offset, end_offset);
     } else {
-      Writeback_(begin_block, begin_offset, n_block_bytes_);
+      Writeback_(clear, begin_block, begin_offset, n_block_bytes_);
       for (blockid_t i = begin_block + 1; i < last_block; i++) {
-        Writeback_(i, 0, n_block_bytes_);
+        Writeback_(clear, i, 0, n_block_bytes_);
       }
-      Writeback_(last_block, 0, end_offset);
+      Writeback_(clear, last_block, 0, end_offset);
     }
   }
 }
 
-void SmallCache::Flush() {
+void SmallCache::Flush(bool clear) {
   DEBUG_ASSERT(BlockDevice::can_write(mode_));
 
-  if (BlockDevice::must_write(mode_)) {
+  if (BlockDevice::need_write(mode_)) {
     for (blockid_t i = 0; i < n_blocks_; i++) {
-      Writeback_(i, 0, n_block_bytes_);
+      Writeback_(clear, i, 0, n_block_bytes_);
     }
   }
 }
@@ -168,7 +170,8 @@ void SmallCache::Read(blockid_t blockid,
   size_t n_bytes = end - begin;
 
   // TODO: consider read-through
-  schema_->BlockRefreeze(blockid, begin, n_bytes, src + begin, buf);
+  mem::Copy(buf, src + begin, n_bytes);
+  block_handler_->BlockFreeze(blockid, begin, n_bytes, src + begin, buf);
 
   StopRead(blockid);
 }
@@ -180,12 +183,25 @@ void SmallCache::Write(blockid_t blockid,
   // TODO: Consider skipping the read when entire block is written (though
   // still may consider keeping block in cache)
   // TODO: This behavior may be necessary due to the specious behavior of
-  // Flush et al.
+  // Flush et al.  It's assumed though anyone using this as a block device
+  // is well aware of the behavior under Flush and is willing to live with
+  // the consequences -- i.e. this would probably have to be the ONLY
+  // cache accessing the underlying block device.
+
   char *dest = StartWrite(blockid);
   size_t n_bytes = end - begin;
 
   mem::CopyBytes(dest + begin, buf, n_bytes);
-  schema_->BlockThaw(blockid, begin, n_bytes, dest + begin);
+  block_handler_->BlockThaw(blockid, begin, n_bytes, dest + begin);
 
   StopWrite(blockid);
+}
+
+BlockDevice::blockid_t SmallCache::AllocBlocks(blockid_t n_to_alloc) {
+  Lock();
+  blockid_t blockid = BlockDeviceWrapper::AllocBlocks(n_to_alloc);
+  metadatas_.Resize(n_blocks());
+  Unlock();
+
+  return blockid;
 }

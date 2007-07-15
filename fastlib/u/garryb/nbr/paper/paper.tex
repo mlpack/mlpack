@@ -659,7 +659,8 @@ Note to self: I could put an examples section, and talk about how we handle thin
 
 \subsection{Execution}
 
-We show in \fig{dfe} a depth-first implementation of the query-reference with extrinsic prune rules.
+We show in \fig{dfe} a depth-first implementation of the query-reference with extrinsic prune rules for query-reference problems.
+(The version for singular problems is much simpler, and both types of problems could even be computed simultaneous using the same expansion pattern.)
 The input to the algorithm is the data to operate on, and the functions required for an effective dual-tree algorithm.
 Via the power of $\map$, we have shown that this code can solve any second-order reduce problem.
 A breadth-first implementation is also possible, which makes substantial use of $\opmu$ to compose sibling results.

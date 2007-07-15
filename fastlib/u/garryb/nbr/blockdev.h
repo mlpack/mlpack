@@ -3,21 +3,6 @@
 
 #include "fastlib/fastlib_int.h"
 
-class Schema {
-  FORBID_COPY(Schema);
- public:
-  Schema() {}
-  virtual ~Schema() {}
-
-  virtual void InitFromHeader(size_t header_size, char *header) = 0;
-  virtual void WriteHeader(size_t header_size, char *header) = 0;
-
-  virtual void BlockInitFrozen(size_t bytes, char *block) = 0;
-  virtual void BlockRefreeze(
-      size_t bytes, const char *old_location, char *block) = 0;
-  virtual void BlockThaw(size_t bytes, char *block) = 0;
-};
-
 class BlockDevice {
   FORBID_COPY(BlockDevice);
 
@@ -196,12 +181,26 @@ class BlockDeviceWrapper : public BlockDevice {
     n_blocks_ = inner_->n_blocks();
     n_block_bytes_ = inner_->n_block_bytes();
   }
-  
+
   virtual void Read(blockid_t blockid,
       offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data);
+
+  void ReadBypass(blockid_t blockid,
+      offset_t begin, offset_t end, char *data);
+  void WriteBypass(blockid_t blockid,
+      offset_t begin, offset_t end, const char *data);
+
   virtual blockid_t AllocBlocks(blockid_t i);
+
+  /**
+   * The inner block device, in case you need to circumvent for some reason.
+   *
+   * (This is used for example so that a cache-array can read the header
+   * block in a write-only mode.)
+   */
+  BlockDevice *inner() const { return inner_; }
 };
 
 class RandomAccessFile {
@@ -241,8 +240,6 @@ class DiskBlockDevice : public BlockDevice {
 
   void Write(blockid_t blockid, offset_t begin, offset_t end,
      const char *data);
-
-  blockid_t AllocBlock();
 };
 
 class MemBlockDevice : public BlockDevice {
@@ -259,7 +256,6 @@ class MemBlockDevice : public BlockDevice {
       offset_t begin, offset_t end, char *data);
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data);
-  virtual blockid_t AllocBlock();
 };
 
 #endif
