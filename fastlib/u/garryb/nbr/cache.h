@@ -4,6 +4,26 @@
 #include "blockdev.h"
 
 /**
+ * Handles events associated with a cache pulling blocks in and out of memory.
+ */
+class BlockHandler {
+  FORBID_COPY(BlockHandler);
+ public:
+  BlockHandler() {}
+  virtual ~BlockHandler() {}
+
+  virtual void BlockInitFrozen(BlockDevice::blockid_t blockid,
+      BlockDevice::offset_t begin,
+      BlockDevice::offset_t bytes, char *block) = 0;
+  virtual void BlockFreeze(BlockDevice::blockid_t blockid,
+      BlockDevice::offset_t begin, BlockDevice::offset_t bytes,
+      const char *old_location, char *block) = 0;
+  virtual void BlockThaw(BlockDevice::blockid_t blockid,
+      BlockDevice::offset_t begin, BlockDevice::offset_t bytes,
+      char *block) = 0;
+};
+
+/**
  * Extra-simple cache for when everything fits in RAM.
  *
  * All methods here must be locked by a mutex.
@@ -13,20 +33,20 @@ class SmallCache : public BlockDeviceWrapper {
 
  private:
   struct Metadata {
-    Metadata() : data(NULL), lock_count(0) {}
+    Metadata() : data(NULL), lock_count(0) { }
     /** current version of the data, can be NULL */
     char *data;
     int lock_count;
   };
-  
+
  private:
   static const BlockDevice::blockid_t HEADER_BLOCKID = 0;
 
  private:
   Mutex mutex_;
   ArrayList<Metadata> metadatas_;
-  Schema *schema_;
   mode_t mode_;
+  BlockHandler *block_handler_;
 
  public:
   SmallCache() {
@@ -37,11 +57,15 @@ class SmallCache : public BlockDeviceWrapper {
   mode_t mode() const {
     return mode_;
   }
+  
+  BlockHandler *block_handler() const {
+    return block_handler_;
+  }
 
   /**
    * Create a SmallCache.
    */
-  void Init(BlockDevice *inner_in, Schema *schema_in,
+  void Init(BlockDevice *inner_in, BlockHandler *block_handler_in,
      mode_t mode_in);
 
   char *StartRead(blockid_t blockid);
@@ -51,31 +75,33 @@ class SmallCache : public BlockDeviceWrapper {
 
   /**
    * Flush method for static (range-based) use cases.
+   *
+   * Flushes [ begin_block:begin_offset , last_block:endoffset )
+   *
+   * @param clear free up all blocks that are no longer in use -- this is
+   *        DANGEROUS when used improperly -- only use when you are sure
+   *        any active block is marked as "locked", i.e. the CacheArray
+   *        class with no replacement policy would be absolutely fine
    */
-  void Flush(blockid_t begin_block, offset_t begin_offset,
+  void Flush(bool clear, blockid_t begin_block, offset_t begin_offset,
       blockid_t last_block, offset_t end_offset);
   /**
    * Flush method for dynamic use cases.
+   *
+   * Flushes all contents of all blocks that are currently active.
+   * Optionally removes them from the cache.
+   *
+   * Flushes [ begin_block:begin_offset , last_block:endoffset )
+   *
+   * @param cache whether to remove from cache
    */
-  void Flush();
+  void Flush(bool clear);
   /**
-   * Invalidates all current blocks, requiring them to be fetched from the
-   * underlying block device.
-   *
-   * Any un-flushed writes will be lost -- be careful that blocks aren't
-   * left partly-uninitialized.
-   *
-   * Useful in parallel usage where parts of the underlying data might have
-   * changed elsewhere.
-   *
-   * TODO: Consider marking some blocks as "invalidate candidates" so we
-   * only need to invalidate blocks at range boundaries.
+   * Frees up all blocks.
    */
-  void Clear(mode_t new_mode);
+  void Clear();
   /**
-   * Change mode without invalidating.
-   *
-   * Useful 
+   * Changes mode.
    */
   void Remode(mode_t new_mode);
 
@@ -84,30 +110,14 @@ class SmallCache : public BlockDeviceWrapper {
   virtual void Write(blockid_t blockid,
       offset_t begin, offset_t end, const char *data);
 
-  virtual blockid_t AllocBlocks(blockid_t n_to_alloc) {
-    blockid_t blockid = BlockDeviceWrapper::AllocBlock();
-    metadatas_.Resize(n_blocks());
-    return blockid;
-  }
+  virtual blockid_t AllocBlocks(blockid_t n_to_alloc);
 
  private:
   void PerformCacheMiss_(blockid_t blockid);
-  void Writeback_(blockid_t blockid, offset_t begin, offset_t end);
+  void Writeback_(bool clear,
+      blockid_t blockid, offset_t begin, offset_t end);
 
-  Metadata *GetBlock_(blockid_t blockid) {
-    if (unlikely(blockid >= n_blocks_)) {
-      PerformCacheMiss_(blockid);
-    }
-
-    Metadata *metadata = &metadatas_[blockid];
-    char *data = metadata->data;
-
-    if (unlikely(data == NULL)) {
-      PerformCacheMiss_(blockid);
-    }
-
-    return metadata;
-  }
+  Metadata *GetBlock_(blockid_t blockid);
 };
 
 #endif

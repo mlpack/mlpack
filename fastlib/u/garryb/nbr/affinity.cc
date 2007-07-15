@@ -665,7 +665,7 @@ void FindExemplars(datanode *module, const AffinityCommon::Param& param,
 
   ArrayList<Cluster> clusters;
   ArrayList<index_t> assignments;
-  CacheReadIterator<AffinityAlpha::QPoint> point(data_points, 0);
+  CacheIter<AffinityAlpha::QPoint>::Read point(data_points, 0);
 
   clusters.Init();
 

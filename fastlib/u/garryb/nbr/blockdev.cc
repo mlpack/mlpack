@@ -5,24 +5,36 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-BlockDevice::blockid_t BlockDevice::AllocBlocks(blockid_t num) {
-  blockid_t tmp = n_blocks_;
-  n_blocks_ += diff;
-  return n_blocks_;
+BlockDevice::blockid_t BlockDevice::AllocBlocks(blockid_t n_blocks_to_alloc) {
+  blockid_t blockid = n_blocks_;
+  n_blocks_ += n_blocks_to_alloc;
+  return blockid;
 }
 
 //------------------------------------------------------------------------
 
-void BlockDeviceWrapper::Read(blockid_t blockid,
+void BlockDeviceWrapper::ReadBypass(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
   n_blocks_ = max(n_blocks_, blockid+1);
   inner_->Read(blockid, begin, end, data);
 }
-void BlockDeviceWrapper::Write(blockid_t blockid,
+
+void BlockDeviceWrapper::WriteBypass(blockid_t blockid,
     offset_t begin, offset_t end, const char *data) {
   n_blocks_ = max(n_blocks_, blockid+1);
   inner_->Write(blockid, begin, end, data);
 }
+
+void BlockDeviceWrapper::Read(blockid_t blockid,
+    offset_t begin, offset_t end, char *data) {
+  ReadBypass(blockid, begin, end, data);
+}
+
+void BlockDeviceWrapper::Write(blockid_t blockid,
+    offset_t begin, offset_t end, const char *data) {
+  WriteBypass(blockid, begin, end, data);
+}
+
 BlockDevice::blockid_t BlockDeviceWrapper::AllocBlocks(blockid_t i) {
   blockid_t tmp = inner_->AllocBlocks(i);
   n_blocks_ = tmp + i;
@@ -116,7 +128,7 @@ off_t RandomAccessFile::FindSize() const {
   
 DiskBlockDevice::~DiskBlockDevice() {
   file_.Close();
-  if (mode_ == BlockDevice::TEMP) {
+  if (mode_ == BlockDevice::M_TEMP) {
     unlink(path_.c_str());
   }
 }
