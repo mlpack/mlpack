@@ -138,8 +138,12 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
   }
 
   void Sync(BlockDevice::mode_t mode) {
+    fprintf(stderr, "%p old blocks = %d\n", this, small_cache_.n_blocks());
+    fprintf(stderr, "old rpc blocks = %d\n", remote_device_.n_blocks());
     CacheArray<T>::Flush(true);
     (void) small_cache_.AllocBlocks(0);
+    fprintf(stderr, "new blocks = %d\n", small_cache_.n_blocks());
+    fprintf(stderr, "new rpc blocks = %d\n", remote_device_.n_blocks());
     CacheArray<T>::Grow();
     small_cache_.Remode(mode);
     CacheArray<T>::Remode(mode);

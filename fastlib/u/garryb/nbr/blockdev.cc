@@ -8,6 +8,7 @@
 BlockDevice::blockid_t BlockDevice::AllocBlocks(blockid_t n_blocks_to_alloc) {
   blockid_t blockid = n_blocks_;
   n_blocks_ += n_blocks_to_alloc;
+  //fprintf(stderr, "BD Alloc %d, get %d, n_blocks %d\n", n_blocks_to_alloc, blockid, n_blocks());
   return blockid;
 }
 
@@ -35,10 +36,12 @@ void BlockDeviceWrapper::Write(blockid_t blockid,
   WriteBypass(blockid, begin, end, data);
 }
 
-BlockDevice::blockid_t BlockDeviceWrapper::AllocBlocks(blockid_t i) {
-  blockid_t tmp = inner_->AllocBlocks(i);
-  n_blocks_ = tmp + i;
-  return tmp;
+BlockDevice::blockid_t BlockDeviceWrapper::AllocBlocks(
+    blockid_t n_blocks_to_alloc) {
+  blockid_t blockid = inner_->AllocBlocks(n_blocks_to_alloc);
+  n_blocks_ = blockid + n_blocks_to_alloc;
+  //fprintf(stderr, "BDW Alloc %d, get %d, n_blocks %d\n", n_blocks_to_alloc, blockid, n_blocks());
+  return blockid;
 }
 
 //------------------------------------------------------------------------

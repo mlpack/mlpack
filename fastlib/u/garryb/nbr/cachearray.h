@@ -67,34 +67,40 @@ class CacheArrayBlockHandler : public BlockHandler {
 
   void BlockInitFrozen(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin, BlockDevice::offset_t bytes, char *block) {
-    DEBUG_ASSERT((begin % default_elem_.size()) == 0);
-    index_t elems = bytes / default_elem_.size();
-    for (index_t i = 0; i < elems; i++) {
-      mem::CopyBytes(block, default_elem_.begin(), default_elem_.size());
-      block += default_elem_.size();
+    if (blockid != HEADER_BLOCKID) {
+      DEBUG_ASSERT((begin % default_elem_.size()) == 0);
+      index_t elems = bytes / default_elem_.size();
+      for (index_t i = 0; i < elems; i++) {
+        mem::CopyBytes(block, default_elem_.begin(), default_elem_.size());
+        block += default_elem_.size();
+      }
     }
   }
 
   void BlockFreeze(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin, BlockDevice::offset_t bytes,
       const char *old_location, char *block) {
-    DEBUG_ASSERT((begin % default_elem_.size()) == 0);
-    index_t elems = bytes / default_elem_.size();
-    for (index_t i = 0; i < elems; i++) {
-      ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), block);
-      block += default_elem_.size();
-      old_location += default_elem_.size();
+    if (blockid != HEADER_BLOCKID) {
+      DEBUG_ASSERT((begin % default_elem_.size()) == 0);
+      index_t elems = bytes / default_elem_.size();
+      for (index_t i = 0; i < elems; i++) {
+        ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), block);
+        block += default_elem_.size();
+        old_location += default_elem_.size();
+      }
     }
   }
 
   void BlockThaw(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin, BlockDevice::offset_t bytes,
       char *block) {
-    DEBUG_ASSERT(begin % default_elem_.size() == 0);
-    index_t elems = bytes / default_elem_.size();
-    for (index_t i = 0; i < elems; i++) {
-      ot::PointerThaw<T>(block);
-      block += default_elem_.size();
+    if (blockid != HEADER_BLOCKID) {
+      DEBUG_ASSERT(begin % default_elem_.size() == 0);
+      index_t elems = bytes / default_elem_.size();
+      for (index_t i = 0; i < elems; i++) {
+        ot::PointerThaw<T>(block);
+        block += default_elem_.size();
+      }
     }
   }
 
@@ -137,7 +143,7 @@ class CacheArray {
    * Within CacheArray all block ID's refer to "logical" not "physical"
    * block ID's, i.e. offset by one to account for metadata.
    */
-  static const int HEADER_BLOCKS = 1;
+  static const BlockDevice::blockid_t HEADER_BLOCKS = 1;
 
  protected:
   unsigned int n_block_elems_log_;
@@ -188,7 +194,9 @@ class CacheArray {
    * Grows to at least the specified size.
    */
   void Grow(index_t end_element) {
-    DEBUG_ASSERT(end_element >= end_);
+    DEBUG_ASSERT_MSG(end_element >= end_,
+        "end_element [%"LI"d] >= end_ [%"LI"d]",
+        end_element, end_);
     end_ = end_element;
     next_alloc_ = end_element;
     metadatas_.Resize(((end_ + n_block_elems_ - 1) >> n_block_elems_log_)
@@ -368,8 +376,7 @@ class CacheArray {
 
   void ReleaseElement_(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    DEBUG_ONLY(
-        ReleaseBlock_((element_id >> n_block_elems_log_)));
+    DEBUG_ONLY(ReleaseBlock_(Blockid_(element_id)));
   }
 };
 
@@ -398,6 +405,7 @@ void CacheArray<TElement>::Init(
 
   if (BlockDevice::need_init(mode_)) {
     handler->WriteHeader(cache_->inner());
+    (void) cache_->AllocBlocks(0);
   }
 
   metadatas_.Init(((end_ + n_block_elems_ - 1) >> n_block_elems_log_)
