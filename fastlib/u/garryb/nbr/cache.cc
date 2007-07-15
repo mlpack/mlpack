@@ -202,6 +202,7 @@ BlockDevice::blockid_t SmallCache::AllocBlocks(blockid_t n_to_alloc) {
   blockid_t blockid = BlockDeviceWrapper::AllocBlocks(n_to_alloc);
   metadatas_.Resize(n_blocks());
   Unlock();
+  //fprintf(stderr, "Alloc %d, get %d, n_blocks %d\n", n_to_alloc, blockid, n_blocks());
 
   return blockid;
 }

@@ -87,7 +87,7 @@ void HashedRemoteBlockDevice::SetLocalDevice(BlockDevice *device) {
   if (my_rank_ != MASTER_RANK) {
     DEBUG_ASSERT(n_block_bytes_ == local_device_->n_block_bytes());
   } else {
-    n_blocks_ = local_device_->n_blocks();
+    n_blocks_ = 0;
     n_block_bytes_ = local_device_->n_block_bytes();
   }
 
@@ -97,8 +97,6 @@ void HashedRemoteBlockDevice::SetLocalDevice(BlockDevice *device) {
 void HashedRemoteBlockDevice::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
   int dest = RankHash_(blockid);
-
-  n_blocks_ = max(blockid + 1, blockid);
 
   if (dest == my_rank_) {
     local_device_->Read(LocalBlockId_(blockid), begin, end, data);
@@ -120,8 +118,6 @@ void HashedRemoteBlockDevice::Read(blockid_t blockid,
 void HashedRemoteBlockDevice::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *data) {
   int dest = RankHash_(blockid);
-
-  n_blocks_ = max(blockid + 1, blockid);
 
   if (dest == my_rank_) {
     local_device_->Write(LocalBlockId_(blockid), begin, end, data);
@@ -158,8 +154,8 @@ BlockDevice::blockid_t HashedRemoteBlockDevice::AllocBlocks(
     blockid = response->blockid;
   }
 
-  DEBUG_ASSERT(n_blocks_ < blockid + 1);
-  n_blocks_ = blockid + 1;
+  fprintf(stderr, "Blocks: %d to %d\n", n_blocks_, blockid + n_blocks_to_alloc);
+  n_blocks_ = blockid + n_blocks_to_alloc;
 
   return blockid;
 }
