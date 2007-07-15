@@ -591,16 +591,27 @@ class CacheIterImpl_ {
     element_ = mem::PointerAdd(element_, stride_);
     DEBUG_BOUNDS(left_, cache_->n_block_elems() + 1);
     if (unlikely(left_ == 0)) {
-      left_ = cache_->n_block_elems();
-      DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
-      ++blockid_;
-
-      index_t elem_id = cache_->FirstBlockElement_(blockid_);
-      element_ = Helperclass::MyStartAccess_(cache_, elem_id);
+      NextBlock_();
+      return;
     }
     --left_;
   }
+  
+ private:
+  COMPILER_NOINLINE
+  void NextBlock_();
 };
+
+template<typename Helperclass, typename Element, typename BaseElement>
+void CacheIterImpl_<Helperclass, Element, BaseElement>::NextBlock_() {
+  left_ = cache_->n_block_elems();
+  DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
+  ++blockid_;
+
+  index_t elem_id = cache_->FirstBlockElement_(blockid_);
+  element_ = Helperclass::MyStartAccess_(cache_, elem_id);
+  --left_;
+}
 
 template<typename Element>
 class CacheReadIterHelperclass_ {
@@ -627,7 +638,11 @@ template<typename Element>
 class CacheWriteIterHelperclass_ {
  public:
   static Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
-    return a->StartWrite(i);
+    if (i < a->end_index()) {
+      return a->StartWrite(i);
+    } else {
+      return NULL;
+    }
   }
 };
 
