@@ -63,6 +63,7 @@ void RpcSockImpl::Init() {
   module_ = fx_submodule(fx_root, "rpc", "rpc");
   n_peers_ = fx_param_int_req(module_, "n");
   rank_ = fx_param_int(module_, "rank", 0);
+  DEBUG_ASSERT(rank_ < n_peers_);
   port_ = fx_param_int(module_, "port", 31415);
   channels_.Init();
   channels_.default_value() = NULL;
@@ -90,6 +91,7 @@ void RpcSockImpl::Done() {
 
 void RpcSockImpl::Register(int channel_num, Channel *channel) {
   mutex_.Lock();
+  //fprintf(stderr, "Registering %d\n", channel_num);
   channels_[channel_num] = channel;
   mutex_.Unlock();
   // Inform the polling loop about the new channel so that it can process
@@ -119,13 +121,13 @@ void RpcSockImpl::UnregisterTransaction(int peer_id, int channel, int id) {
 
   peer->mutex.Lock(); // Lock peer's mutex
   if (channel < 0) {
-    peer->outgoing_transactions[id] = NULL;
+    peer->incoming_transactions[id] = NULL;
   } else {
     // Old idea -- not really necessary
     //mutex_.Lock(); // Lock mutex -- we are accessing channels
     //channels_[channel]->CleanupTransaction(incoming_transactions[id]);
     //mutex_.Unlock();
-    peer->incoming_transactions[id] = NULL;
+    peer->outgoing_transactions[id] = NULL;
   }
   peer->mutex.Unlock();
 }
@@ -332,6 +334,7 @@ void RpcSockImpl::PollingLoop_() {
     // Execute work items while we aren't holding any mutexes
     for (index_t i = 0; i < work_items.size(); i++) {
       WorkItem *item = &work_items[i];
+      //fprintf(stderr, "Executing %d:%d\n", item->message->channel(), item->message->transaction_id());
       // it is transaction's responsibility to delete the message
       item->transaction->HandleMessage(item->message);
     }
@@ -353,6 +356,7 @@ void RpcSockImpl::GatherReadyMessages_(Peer *peer,
       // When the channel ID is invalid, this means that I was the initiator
       // of the transaction.
       transaction = peer->outgoing_transactions[id];
+      DEBUG_ASSERT(transaction != NULL);
     } else {
       // When the channel ID is valid, it means the remote host initiated
       // the transaction and was picked up by my channel server.
@@ -364,6 +368,9 @@ void RpcSockImpl::GatherReadyMessages_(Peer *peer,
           transaction = channel->GetTransaction(message);
           transaction->TransactionHandleNewSender_(message);
           peer->incoming_transactions[id] = transaction;
+          //fprintf(stderr, "channel %d found, %p\n", message->channel(), transaction);
+        } else {
+          //fprintf(stderr, "channel %d not found, msg %p\n", message->channel(), message);
         }
       }
     }
@@ -567,6 +574,7 @@ void SockConnection::TryWrite() {
   while (is_writing()) {
     if (write_buffer_pos_ == write_message_->buffer_size()) {
       // Looks like we successfully wrote the whole message.
+      //fprintf(stderr, "Wrote packet %d\n", write_message_->transaction_id());
       delete write_message_;
       if (write_queue_.is_empty()) {
         write_message_ = NULL;
@@ -581,14 +589,15 @@ void SockConnection::TryWrite() {
         write_message_->buffer() + write_buffer_pos_,
         write_message_->buffer_size() - write_buffer_pos_);
     //fprintf(stderr, "WRITE %d bytes\n", bytes_written);
-    if (bytes_written < 0) {
+    if (bytes_written <= 0) {
       // Okay, we weren't able to write anything.
-      if (errno != EAGAIN && errno != EINTR) {
+      if (bytes_written < 0 && errno != EAGAIN && errno != EINTR) {
         // It turns out the error is not just a non-blocking type error,
         // so we die and let the entire team die out too.
         FATAL("Error writing");
       }
-    } else {
+      return;
+    } else if (bytes_written != 0) {
       // We successfully wrote something, update our position.
       write_buffer_pos_ += bytes_written;
     }
@@ -634,6 +643,7 @@ void SockConnection::TryRead() {
       // We've read a whole message.  Put it on the queue to be serviced.
       ++read_total_;
       *read_queue_.AddBack() = read_message_;
+      //fprintf(stderr, "Got packet %d:%d\n", read_message_->channel(), read_message_->transaction_id());
 
       read_message_ = NULL;
       read_buffer_pos_ = 0;
