@@ -48,7 +48,8 @@ class CacheArrayBlockHandler : public BlockHandler {
     BlockDevice::blockid_t blockid = inner_device->AllocBlocks(1);
     (void) blockid;
     DEBUG_ASSERT_MSG(blockid == HEADER_BLOCKID, "Header block already exists");
-    inner_device->Write(HEADER_BLOCKID, 0, 0, buffer.begin());
+    inner_device->Write(HEADER_BLOCKID, 0,
+        inner_device->n_block_bytes(), buffer.begin());
   }
 
   /**
@@ -61,8 +62,11 @@ class CacheArrayBlockHandler : public BlockHandler {
 
     buffer.Init(inner_device->n_block_bytes());
     // Read the first block, the header
-    inner_device->Read(HEADER_BLOCKID, 0, inner_device->n_block_bytes(), buffer.begin());
-    default_elem_.Copy(*ot::PointerThaw< ArrayList<char> >(buffer.begin()));
+    inner_device->Read(HEADER_BLOCKID, 0,
+        inner_device->n_block_bytes(), buffer.begin());
+    ArrayList<char> *default_elem_stored =
+        ot::PointerThaw< ArrayList<char> >(buffer.begin());
+    default_elem_.Copy(*default_elem_stored);
   }
 
   void BlockInitFrozen(BlockDevice::blockid_t blockid,

@@ -154,7 +154,6 @@ BlockDevice::blockid_t HashedRemoteBlockDevice::AllocBlocks(
     blockid = response->blockid;
   }
 
-  fprintf(stderr, "Blocks: %d to %d\n", n_blocks_, blockid + n_blocks_to_alloc);
   n_blocks_ = blockid + n_blocks_to_alloc;
 
   return blockid;
