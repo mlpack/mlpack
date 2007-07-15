@@ -160,7 +160,7 @@ extern int print_warnings;
  * @param cond the condition that must be true to proceed
  */
 #define DEBUG_ASSERT(cond) \
-    DEBUG_ASSERT_MSG(cond, "assertion failure: " #cond)
+    DEBUG_ASSERT_MSG(cond, "assertion failure: %s", #cond)
 
 /**
  * An easy-to-spot invalid number, for use with debugging tools.
