@@ -28,7 +28,7 @@
  */
 
 /**
- * Wrapper function for n-aive npoint. This will select the appropriate function
+ * Wrapper function for naive npoint. This will select the appropriate function
  * to use by checking to see if we have a simple matcher and if we want to
  * caount all the permutations that match. The following cases are treated
  * separately:
@@ -50,7 +50,6 @@
  * 	permutations actually match we will still call the symmetric version. The
  * 	matching procedure will try new permutations of the current n-tuple until it
  * 	finds a match or it runs out of possible permutations.
- * 	NOT PROPERLY IMPLEMENTED YET!!!
  */
 Vector naive_npoint(DataPack data, Matcher matcher, Metric metric);
 
@@ -83,5 +82,11 @@ Vector symmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric);
  */
 Vector asymmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric);
 
+/**
+ * Helper functions that take care of generating valid ntuple indexes.
+ */
+success_t generate_new_index(Vector &index, index_t npoints);
+success_t generate_next_symmetric_index(Vector &index, index_t npoints);
+success_t generate_next_asymmetric_index(Vector &index, index_t npoints);
 #endif
 

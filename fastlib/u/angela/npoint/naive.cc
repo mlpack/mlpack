@@ -11,6 +11,7 @@
 
 #include "naive.h"
 
+/*****************************************************************************/
 
 Vector naive_npoint(DataPack data, Matcher matcher, Metric metric) {
 	if (count_all_permutations && matcher.is_simple()) {
@@ -32,156 +33,199 @@ Vector naive_npoint(DataPack data, Matcher matcher, Metric metric) {
 	exit(1);
 }
 
+/*****************************************************************************/
 
-Vector symmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric)
-{
- index_t i, top;
- int npoints, n, nweights, dim;
- Vector index;
- Vector results;
+Vector symmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric) {
+	index_t i, top, npoints;
+	int n, nweights, dim;
+	Vector index;
+	Vector results;
 
- npoints = data.num_points();
- n = matcher.size();
- nweights = data.num_weights();
- dim = data.num_dimensions();
+  npoints = data.num_points();
+  n = matcher.size();
+  nweights = data.num_weights();
+  dim = data.num_dimensions();
 
- index.Init(n);
- results.Init(dim + nweights);
- results.SetZero();
+  index.Init(n);
+  results.Init(dim + nweights);
+  results.SetZero();
+  if ( !PASSED(generate_new_index(index,npoints)) ) {
+	  fprintf(output,"Error: could not generate new index\n\n");
+	  return results;
+  }
 
- /* Initializing the n-tuple index */
- for (i = 0; i < n; i++) {
-	 index[i] = i;
- }
- top = n-1;
- /* Running the actual naive loop */
- do {
-	 if (PASSED(matcher.Matches(data, index, metric))) {
-		 results[0] += 1.0;
+  /* Running the actual naive loop */
+  do {
+	  if (PASSED(matcher.Matches(data, index, metric))) {
+		  results[0] += 1.0;
 
-		 /* Updating the weighted count(s) if needed. */
-		 if (nweights > 0) { 
-			 Vector tmp_wcount;
-			 tmp_wcount.Init(nweights);
-			 tmp_wcount.SetAll(1.0);
+		  /* Updating the weighted count(s) if needed. */
+		  if (nweights > 0) { 
+			  Vector tmp_wcount;
+			  tmp_wcount.Init(nweights);
+			  tmp_wcount.SetAll(1.0);
 
-			 for(i = 0; i < n; i++) {
-				 index_t j, index_i = index[i];
-				 Vector weights;
-				 data.GetWeights(index_i,weights);
+			  for(i = 0; i < n; i++) {
+				  index_t j, index_i = index[i];
+				  Vector weights;
+				  data.GetWeights(index_i,weights);
 
-				 for (j = 0; j < nweights; j++) {
-					 tmp_wcount[j] *= weights[j];
-				 }
-			 }
+				  for (j = 0; j < nweights; j++) {
+					  tmp_wcount[j] *= weights[j];
+				  }
+			  }
 
-			 for (i = 0; i < nweights; i++) {
-				 results[i+1] += tmp_wcount[i];
-			 }
-		 }
-	 }
+			  for (i = 0; i < nweights; i++) {
+				  results[i+1] += tmp_wcount[i];
+			  }
+		  }
+		}
 
-	 /* Generating a new valid n-tuple index */
-	 index[top] = index[top] + 1;
-	 while (index[top] > (npoints - n + top)) {
-		 index[top] = top-1;
-		 top--;
-		 /* If we can't make a new index we're done. Yupiii!!! */
-		 if (top < 0) {
-			 return results;
-		 }
-		 index[top] = index[top] + 1;
-	 }
-	 for (i=1;i<n;i++) {
-		 if (index[i] <= index[i-1]) {
-			 index[i] = index[i-1] + 1;
-		 }
-	 }	 
-	 top = n-1;
- } 
- while (1);
+	  /* Generating a new valid n-tuple index */
+	  if ( !PASSED(generate_next_symmetric_index(index,npoints)) ) {
+		  return results; // can't make new index => done
+		}
+	} 
+  while (1);
 }
 
 
-Vector asymmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric)
-{
- index_t i, top;
- int npoints, n, nweights, dim;
- Vector index;
- Vector results;
+Vector asymmetric_naive_npoint(DataPack data, Matcher matcher, Metric metric) {
+	index_t i, npoints;
+	int n, nweights, dim;
+  Vector index;
+  Vector results;
 
- npoints = data.num_points();
- n = matcher.size();
- nweights = data.num_weights();
- dim = data.num_dimensions();
+  npoints = data.num_points();
+  n = matcher.size();
+  nweights = data.num_weights();
+  dim = data.num_dimensions();
 
- index.Init(n);
- results.Init(dim + nweights);
- results.SetZero();
+  index.Init(n);
+  results.Init(dim + nweights);
+  results.SetZero();
+  index.Init(n);
+  if ( !PASSED(generate_new_index(index,npoints)) ) {
+	  fprintf(output,"Error: could not generate new index\n\n");
+	  return results;
+  }
 
- /* Initializing the n-tuple index */
- for (i = 0; i < n; i++) {
+  /* Running the actual naive loop */
+  do {
+	  if (PASSED(matcher.Matches(data, index, metric))) {
+		  results[0] += 1.0;
+
+		  /* Updating the weighted count(s) if needed. */
+		  if (nweights > 0) { 
+			  Vector tmp_wcount;
+			  tmp_wcount.Init(nweights);
+			  tmp_wcount.SetAll(1.0);
+
+			  for(i = 0; i < n; i++) {
+				  index_t j, index_i = index[i];
+				  Vector weights;
+				  data.GetWeights(index_i,weights);
+
+				  for (j = 0; j < nweights; j++) {
+					  tmp_wcount[j] *= weights[j];
+				  }
+			  }
+
+ 			  for (i = 0; i < nweights; i++) {
+				  results[i+1] += tmp_wcount[i];
+			  }
+			}
+		}
+
+		/* Generating a new valid n-tuple index */
+		if ( !PASSED(generate_next_asymmetric_index(index,npoints)) ) {
+		  return results; // can't make new index => done
+	  }
+  } 
+	while (1);
+}
+
+/*****************************************************************************/
+
+success_t generate_new_index(Vector &index, index_t npoints) {
+	int i, n = index.length();
+
+	if (npoints < n) {
+		fprintf(output,"Error: npoints < n\n\n");
+		return SUCCESS_FAIL;
+	}
+
+	for (i = 0; i < n; i++) {
 	 index[i] = i;
- }
- top = n-1;
+	}
+	return SUCCESS_PASS;
+}
 
- /* Running the actual naive loop */
- do {
-	 int ok_so_far = 1;
-	 if (PASSED(matcher.Matches(data, index, metric))) {
-		 results[0] += 1.0;
 
-		 /* Updating the weighted count(s) if needed. */
-		 if (nweights > 0) { 
-			 Vector tmp_wcount;
-			 tmp_wcount.Init(nweights);
-			 tmp_wcount.SetAll(1.0);
+success_t generate_next_symmetric_index(Vector &index, index_t npoints) {
+	int i, ok_so_far;
+	int n = index.length();
+	int top = n-1;
+	
+	do {
+		index[top] += 1;
+		ok_so_far = 1;
+		
+		if (index[top] >= npoints) {
+			index[top] = -1;
+			top -= 1;
+			ok_so_far = 0;
 
-			 for(i = 0; i < n; i++) {
-				 index_t j, index_i = index[i];
-				 Vector weights;
-				 data.GetWeights(index_i,weights);
+			if (top < 0) { 
+				return SUCCESS_FAIL;
+			}
+		}
+		for (i = 0; i < top && ok_so_far; i++) {
+			if (index[top] <= index[i]) {
+				ok_so_far = 0;
+			}
+		}
+		if(ok_so_far) {
+			top += 1;
+		}
+	}
+	while (top < n);
 
-				 for (j = 0; j < nweights; j++) {
-					 tmp_wcount[j] *= weights[j];
-				 }
-			 }
+	return SUCCESS_PASS;
+}
 
-			 for (i = 0; i < nweights; i++) {
-				 results[i+1] += tmp_wcount[i];
-			 }
-		 }
-	 }
 
-	 /* Generating a new valid n-tuple index */
-	 top = n-1;
-	 do {
-		 index[top] += 1;
-		 ok_so_far = 1;
+success_t generate_next_asymmetric_index(Vector &index, index_t npoints) {
+	int i, ok_so_far;
+	int n = index.length();
+	int top = n-1;
+	
+	do {
+		index[top] += 1;
+		ok_so_far = 1;
+		
+		if (index[top] >= npoints) {
+			index[top] = -1;
+			top -= 1;
+			ok_so_far = 0;
 
-		 if (index[top] >= npoints) {
-			 index[top] = -1;
-			 top -= 1;
-			 ok_so_far = 0;
-			 if (top < 0) { // can't make new index => done
-				 return results;
-			 }
-		 }
-
-		for (i=0;i<top && ok_so_far;i++) {
+			if (top < 0) { 
+				return SUCCESS_FAIL;
+			}
+		}
+		for (i = 0; i < top && ok_so_far; i++) {
 			if (index[top] == index[i]) {
 				ok_so_far = 0;
 			}
 		}
-
 		if(ok_so_far) {
 			top += 1;
 		}
+	}
+	while (top < n);
 
-	 }
-	 while (top < n);
-
- } 
- while (1);
+	return SUCCESS_PASS;
 }
+
+/*****************************************************************************/
 
