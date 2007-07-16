@@ -28,7 +28,11 @@
 #include "tests.h"
 
 /* Initialize any global variables here. */
-/* Note: Probably useless. */
+/**
+ * Note: Probably useless since all global variables are currently treated as
+ * parameters and, thus, get initilaized when parameters are read. Leaving this
+ * for extra safety.
+ */
 
 FILE *output = stderr;
 int count_all_permutations = 0;
@@ -40,43 +44,10 @@ int main(int argc, char *argv[])
 {
  fx_init(argc,argv);
 
- /* First we check if we want to run a test */
- const char *test = fx_param_str(NULL,"test","none");
+ /* Get optional parameters that control both tests and actual code */
  String tmp;
-
- tmp.Copy(test);
- if ( tmp.CompareTo("none") ) { 
-	 if ( !tmp.CompareTo("permutations") ) {
-		 const int n = fx_param_int(NULL,"n",2);
-
-		 if ( !PASSED(test_permutation_generator(n)) ) {
-			 fprintf(output,"\n\nPermutation generator failed for n = %d.\n\n",n);
-		 }
-		 else {
-			 fprintf(output,"\n\nPermutation generator worked for n = %d.\n\n",n);
-		 }
-	 }
-
-	 fx_done();
-	 exit(1); 
- }
- tmp.Destruct();
-
- /* After the tests are done get the parameters and run the actual program */
- const char *data_file = fx_param_str_req(NULL,"data");
- const char *matcher_file = fx_param_str_req(NULL,"matcher");
- const char *metric_file = fx_param_str(NULL,"metric","default");
  const char *output_file = fx_param_str(NULL,"output","stderr");
- const int n = fx_param_int(NULL,"n",2);
- const int nweights = fx_param_int(NULL,"nweights",0);
- 
  count_all_permutations = fx_param_int(NULL,"count_all_permutations",0);
-
- DataPack data;
- Matcher matcher;
- Metric metric;
- Vector count;
- int i;
 
  tmp.Copy(output_file);
  if ( tmp.CompareTo("stderr") ) {
@@ -91,6 +62,31 @@ int main(int argc, char *argv[])
 	 }
  }
  tmp.Destruct();
+
+ /* Do we want to test or to run? */
+ const char *test = fx_param_str(NULL,"test","none");
+
+ tmp.Copy(test);
+ if ( tmp.CompareTo("none") ) {
+	 /* Switch to tests and exit when done */
+	 test_main(tmp);
+	 fx_done();
+	 return 0; 
+ }
+ tmp.Destruct();
+
+ /* Get other parameters and run the actual program */
+ const char *data_file = fx_param_str_req(NULL,"data");
+ const char *matcher_file = fx_param_str_req(NULL,"matcher");
+ const char *metric_file = fx_param_str(NULL,"metric","default");
+ const int n = fx_param_int(NULL,"n",2);
+ const int nweights = fx_param_int(NULL,"nweights",0);
+ 
+ DataPack data;
+ Matcher matcher;
+ Metric metric;
+ Vector count;
+ int i;
 
  fprintf(output,"\nLoading the data.\n");
  if ( !PASSED(data.InitFromFile(data_file,nweights)) ) {
