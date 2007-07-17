@@ -35,6 +35,18 @@ binrule(name = "allnn",
    sources = ["allnn.cc"],
    deplibs = [":nbr"])
 
+#--------
+
+binrule(name = "range_rpc",
+   sources = ["range_rpc.cc"],
+   deplibs = [":nbr"])
+
+binrule(name = "range",
+   sources = ["range.cc"],
+   deplibs = [":nbr"])
+
+#--------
+
 binrule(name = "gravity",
    sources = ["gravity.cc"],
    deplibs = [":nbr"])

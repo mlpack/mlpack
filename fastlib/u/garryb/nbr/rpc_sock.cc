@@ -13,6 +13,8 @@
 #include <errno.h>
 #include <string.h>
 
+//-------------------------------------------------------------------------
+
 /*
 tasks to complete that must work
  - smarter transaction lookup so barriers can all share the same number
