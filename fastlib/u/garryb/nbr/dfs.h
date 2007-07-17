@@ -128,7 +128,7 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   const typename GNP::QNode *q_root = q_nodes_.StartRead(q_root_index);
   QMutables *q_root_mut = q_mutables_.StartWrite(q_root_index);
 
-  fx_timer_start(datanode_, "execute");
+  //fx_timer_start(datanode_, "execute");
 
   DEBUG_ONLY(n_naive_ = 0);
   DEBUG_ONLY(n_pre_naive_ = 0);
@@ -154,7 +154,7 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   q_nodes_.StopRead(q_root_index);
   q_mutables_.StopWrite(q_root_index);
 
-  fx_timer_stop(datanode_, "execute");
+  //fx_timer_stop(datanode_, "execute");
 
   DEBUG_ONLY(fx_format_result(datanode_, "naive_ratio", "%f",
       1.0 * n_naive_ / q_root->count() / r_root_->count()));

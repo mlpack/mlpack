@@ -107,6 +107,8 @@ class ThreadedDualTreeSolver {
               "solver", "grain_%d", work[i]);
           base_->mutex_.Unlock();
 
+          fprintf(stderr, "Grain %d\n", work[i]);
+
           solver.InitSolve(submodule, *base_->param_, q_root_index,
               base_->q_points_cache_, base_->q_nodes_cache_,
               base_->r_points_cache_, base_->r_nodes_cache_,
@@ -204,6 +206,10 @@ class ThreadedDualTreeSolver {
     global_result_.Report(*param_,
         fx_submodule(module, NULL, "global_result"));
   }
+  
+  const typename GNP::GlobalResult& global_result() {
+    return global_result_;
+  }
 };
 
 /**
@@ -228,7 +234,6 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
       module, "n_block_nodes", 128);
 
   datanode *data_module = fx_submodule(module, "data", "data");
-
   fx_timer_start(module, "read");
 
   Matrix data_matrix;
@@ -258,6 +263,7 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   q_results.Init(default_result, data_points.end_index(),
       data_points.n_block_elems());
 
+  // TODO: Send global result
   ThreadedDualTreeSolver<GNP, SerialSolver>::Solve(
       module, param,
       &data_points, &data_nodes,
