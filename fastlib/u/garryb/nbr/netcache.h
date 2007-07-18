@@ -43,15 +43,19 @@ class RemoteBlockDeviceBackend
     : public RemoteObjectBackend<BlockRequest, BlockResponse> {
  private:
   BlockDevice *blockdev_;
-  uint64 n_reads_;
-  uint64 n_read_bytes_;
-  uint64 n_writes_;
-  uint64 n_write_bytes_;
+  IoStats stats_;
 
  public:
   void Init(BlockDevice *device);
   void HandleRequest(const BlockRequest& request, BlockResponse *response);
   void Report(datanode *module);
+
+  const IoStats& stats() const {
+    return stats_;
+  }
+  IoStats& stats() {
+    return stats_;
+  }
 };
 
 /**
@@ -68,6 +72,7 @@ class HashedRemoteBlockDevice
   int n_machines_;
   BlockDevice *local_device_;
   RemoteBlockDeviceBackend server_;
+  IoStats stats_;
 
  public:
   static const int MASTER_RANK = 0;
@@ -93,6 +98,13 @@ class HashedRemoteBlockDevice
   }
   int channel() const {
     return channel_;
+  }
+
+  const IoStats& stats() const {
+    return stats_;
+  }
+  IoStats& stats() {
+    return stats_;
   }
 
  private:
@@ -155,6 +167,28 @@ class SimpleDistributedCacheArray : public CacheArray<T> {
 
   int channel() const {
     return remote_device_.channel();
+  }
+
+  const HashedRemoteBlockDevice& remote_device() const {
+    return remote_device_;
+  }
+  HashedRemoteBlockDevice& remote_device() {
+    return remote_device_;
+  }
+
+  const IoStats& stats() const {
+    return remote_device_.stats();
+  }
+  IoStats& stats() {
+    return remote_device_.stats();
+  }
+
+  void ReportStats(bool reset_stats, datanode *node) {
+    stats().Report(remote_device_.n_block_bytes(), remote_device_.n_blocks(),
+        node);
+    if (reset_stats) {
+      stats().Reset();
+    }
   }
 };
 

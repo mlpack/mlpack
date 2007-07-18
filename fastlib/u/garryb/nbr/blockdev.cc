@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+//------------------------------------------------------------------------
+
 BlockDevice::blockid_t BlockDevice::AllocBlocks(blockid_t n_blocks_to_alloc) {
   blockid_t blockid = n_blocks_;
   n_blocks_ += n_blocks_to_alloc;
@@ -196,4 +198,28 @@ void MemBlockDevice::Write(blockid_t blockid,
 }
 
 MemBlockDevice::~MemBlockDevice() {
+}
+
+//------------------------------------------------------------------------
+
+void IoStats::Report(datanode *module) const {
+  fx_format_result(module, "n_reads", "%u", n_reads_);
+  fx_format_result(module, "n_read_bytes", "%"L64"u", n_read_bytes_);
+  fx_format_result(module, "n_writes", "%u", n_writes_);
+  fx_format_result(module, "n_write_bytes", "%"L64"u", n_write_bytes_);
+}
+
+void IoStats::Report(BlockDevice::offset_t n_block_bytes,
+    BlockDevice::blockid_t n_blocks,
+    datanode *module) const {
+  Report(module);
+
+  fx_format_result(module, "read_ratio", "%.4f",
+      n_read_bytes_ / (double(n_block_bytes) * n_blocks));
+  fx_format_result(module, "write_ratio", "%.4f",
+      n_write_bytes_ / (double(n_block_bytes) * n_blocks));
+  fx_format_result(module, "n_block_bytes", "%u", n_block_bytes);
+  fx_format_result(module, "n_blocks", "%u", n_blocks);
+  fx_format_result(module, "size", "%"L64"u",
+      uint64(n_blocks) * n_block_bytes);
 }

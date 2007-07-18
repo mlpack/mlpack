@@ -172,6 +172,13 @@ struct SpRange {
     return (hi + lo) / 2;
   }
   
+  /**
+   * Interpolates (factor) * hi + (1 - factor) * lo.
+   */
+  double interpolate(double factor) const {
+    return factor * width() + lo;
+  }
+  
   const SpRange& operator |= (double d) {
     if (unlikely(d < lo)) {
       lo = d;
