@@ -258,4 +258,74 @@ class MemBlockDevice : public BlockDevice {
       offset_t begin, offset_t end, const char *data);
 };
 
+class IoStats {
+ private:
+  uint64 n_read_bytes_;
+  uint64 n_write_bytes_;
+  uint n_reads_;
+  uint n_writes_;
+  
+  OT_DEF(IoStats) {
+    OT_MY_OBJECT(n_read_bytes_);
+    OT_MY_OBJECT(n_write_bytes_);
+    OT_MY_OBJECT(n_reads_);
+    OT_MY_OBJECT(n_writes_);
+  }
+
+ public:
+  void Init() {
+    Reset();
+  }
+
+  uint n_reads() const {
+    return n_reads_;
+  }
+  uint64 n_read_bytes() const {
+    return n_read_bytes_;
+  }
+  uint n_io() const {
+    return n_reads_ + n_writes_;
+  }
+  uint64 n_io_bytes() const {
+    return n_read_bytes_ + n_write_bytes_;
+  }
+
+  void Add(const IoStats& other) {
+    n_reads_ += other.n_reads_;
+    n_writes_ += other.n_writes_;
+    n_read_bytes_ += other.n_read_bytes_;
+    n_write_bytes_ += other.n_write_bytes_;
+  }
+
+  void RecordRead(uint64 n_bytes) {
+    n_read_bytes_ += n_bytes;
+    n_reads_++;
+  }
+
+  void RecordWrite(uint64 n_bytes) {
+    n_write_bytes_ += n_bytes;
+    n_writes_++;
+  }
+  
+  /**
+   * Reset all counts to zero.
+   */
+  void Reset() {
+    n_reads_ = n_writes_ = 0;
+    n_read_bytes_ = n_write_bytes_ = 0;
+  }
+  
+  /**
+   * Reports the statistics gathered, and include information based on the
+   * percentage of total data.
+   */
+  void Report(BlockDevice::offset_t n_block_bytes,
+      BlockDevice::blockid_t n_blocks,
+      datanode *module) const;
+  /**
+   * Reports only the tallies.
+   */
+  void Report(datanode *module) const;
+};
+
 #endif

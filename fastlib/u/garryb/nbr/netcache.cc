@@ -2,10 +2,7 @@
 
 void RemoteBlockDeviceBackend::Init(BlockDevice *device) {
   blockdev_ = device;
-  n_reads_ = 0;
-  n_read_bytes_ = 0;
-  n_writes_ = 0;
-  n_write_bytes_ = 0;
+  stats_.Init();
 }
 
 void RemoteBlockDeviceBackend::HandleRequest(
@@ -18,16 +15,14 @@ void RemoteBlockDeviceBackend::HandleRequest(
         request.payload.begin());
     response->blockid = request.blockid;
 
-    n_writes_++;
-    n_write_bytes_ += request.end - request.begin;
+    stats_.RecordWrite(request.end - request.begin);
   } else if (request.operation == BlockRequest::READ) {
     response->payload.Init(request.end - request.begin);
     blockdev_->Read(request.blockid, request.begin, request.end,
         response->payload.begin());
     response->blockid = request.blockid;
 
-    n_reads_++;
-    n_read_bytes_ += request.end - request.begin;
+    stats_.RecordRead(request.end - request.begin);
   } else if (request.operation == BlockRequest::ALLOC) {
     response->payload.Init();
     response->blockid = blockdev_->AllocBlocks(request.blockid);
@@ -39,21 +34,6 @@ void RemoteBlockDeviceBackend::HandleRequest(
   }
 }
 
-void RemoteBlockDeviceBackend::Report(datanode *module) {
-  fx_format_result(module, "n_reads", "%"L64"u", n_reads_);
-  fx_format_result(module, "n_read_bytes", "%"L64"u", n_read_bytes_);
-  fx_format_result(module, "read_ratio", "%f",
-      1.0 * n_read_bytes_ / blockdev_->n_blocks() / blockdev_->n_block_bytes());
-  fx_format_result(module, "n_writes", "%"L64"u", n_writes_);
-  fx_format_result(module, "n_write_bytes", "%"L64"u", n_write_bytes_);
-  fx_format_result(module, "write_ratio", "%f",
-      1.0 * n_write_bytes_ / blockdev_->n_blocks() / blockdev_->n_block_bytes());
-  fx_format_result(module, "n_block_bytes", "%"L64"u",
-      uint64(blockdev_->n_block_bytes()));
-  fx_format_result(module, "size", "%"L64"u",
-      uint64(blockdev_->n_blocks()) * blockdev_->n_block_bytes());
-}
-
 //-------------------------------------------------------------------------
 
 void HashedRemoteBlockDevice::Init(int channel_in,
@@ -63,6 +43,7 @@ void HashedRemoteBlockDevice::Init(int channel_in,
   n_machines_ = n_machines_in;
   n_block_bytes_ = BIG_BAD_NUMBER;
   n_blocks_ = BIG_BAD_NUMBER;
+  stats_.Init();
 }
 
 void HashedRemoteBlockDevice::ConnectToMaster() {
@@ -103,6 +84,8 @@ void HashedRemoteBlockDevice::Read(blockid_t blockid,
   } else {
     BlockRequest request;
 
+    stats_.RecordRead(end - begin);
+
     request.blockid = blockid;
     request.begin = begin;
     request.end = end;
@@ -120,9 +103,16 @@ void HashedRemoteBlockDevice::Write(blockid_t blockid,
   int dest = RankHash_(blockid);
 
   if (dest == my_rank_) {
-    local_device_->Write(LocalBlockId_(blockid), begin, end, data);
+    blockid_t local_blockid = LocalBlockId_(blockid);
+    if (local_blockid >= local_device_->n_blocks()) {
+      local_device_->AllocBlocks(local_blockid + 1 - local_device_->n_blocks());
+    }
+    DEBUG_ASSERT(local_blockid < local_device_->n_blocks());
+    local_device_->Write(local_blockid, begin, end, data);
   } else {
     BlockRequest request;
+
+    stats_.RecordWrite(end - begin);
 
     request.blockid = blockid;
     request.begin = begin;

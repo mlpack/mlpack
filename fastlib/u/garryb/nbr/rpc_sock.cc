@@ -77,7 +77,7 @@ void RpcSockImpl::Init() {
 
   //fprintf(stderr, "%d: Starting initial barrier\n", rank_);
   rpc::Barrier(0);
-  //fprintf(stderr, "%d: Initial barrier over!\n", rank_);
+  fprintf(stderr, "rpc_sock: All computers are alive -- starting!\n", rank_);
 }
 
 void RpcSockImpl::Done() {
@@ -313,9 +313,6 @@ void RpcSockImpl::PollingLoop_() {
       }
     }
 
-    work_items.Resize(0);
-
-    mutex_.Lock(); // we'll be accessing channels during this time
     // Gather available messages
     for (index_t i = 0; i < peers_.size(); i++) {
       Peer *peer = &peers_[i];
@@ -327,69 +324,68 @@ void RpcSockImpl::PollingLoop_() {
       peer->mutex.Lock();
       // we'll allow errors to occur if we're shutting down.
       peer->connection.HandleSocketEvents(&read_fds, &write_fds, &error_fds,
-        status_ != RUN);
+         status_ != RUN);
       GatherReadyMessages_(peer, &work_items);
       peer->mutex.Unlock();
     }
-    mutex_.Unlock();
 
     // Execute work items while we aren't holding any mutexes
+    index_t j = 0;
     for (index_t i = 0; i < work_items.size(); i++) {
-      WorkItem *item = &work_items[i];
-      //fprintf(stderr, "Executing %d:%d\n", item->message->channel(), item->message->transaction_id());
-      // it is transaction's responsibility to delete the message
-      item->transaction->HandleMessage(item->message);
+      Message *message = work_items[i].message;
+      Peer *peer = work_items[i].peer;
+      int id = message->transaction_id();
+      Transaction *transaction;
+
+      peer->mutex.Lock();
+      if (message->channel() < 0) {
+        // When the channel ID is invalid, this means that I was the initiator
+        // of the transaction.
+        transaction = peer->outgoing_transactions[id];
+        DEBUG_ASSERT(transaction != NULL);
+      } else {
+        // When the channel ID is valid, it means the remote host initiated
+        // the transaction and was picked up by my channel server.
+        transaction = peer->incoming_transactions[id];
+        if (!transaction) {
+          // No existing transaction.  We use the channel number to create one.
+          mutex_.Lock();
+          Channel *channel = channels_[message->channel()];
+          mutex_.Unlock();
+          if (channel) {
+            transaction = channel->GetTransaction(message);
+            transaction->TransactionHandleNewSender_(message);
+            peer->incoming_transactions[id] = transaction;
+          }
+        }
+      }
+      peer->mutex.Unlock();
+
+      if (transaction) {
+        transaction->HandleMessage(message);
+      } else {
+        // unknown channel - keep this on the queue
+        work_items[j] = work_items[i];
+        j++;
+      }
     }
+    
+    work_items.Resize(j);
   }
 }
 
 void RpcSockImpl::GatherReadyMessages_(Peer *peer,
     ArrayList<WorkItem> *work_items) {
   ArrayList<Message*>* queue = &peer->connection.read_queue();
-  index_t j = 0;
   index_t i;
 
   for (i = 0; i < queue->size(); i++) {
     Message *message = (*queue)[i];
-    int id = message->transaction_id();
-    Transaction *transaction;
-
-    if (message->channel() < 0) {
-      // When the channel ID is invalid, this means that I was the initiator
-      // of the transaction.
-      transaction = peer->outgoing_transactions[id];
-      DEBUG_ASSERT(transaction != NULL);
-    } else {
-      // When the channel ID is valid, it means the remote host initiated
-      // the transaction and was picked up by my channel server.
-      transaction = peer->incoming_transactions[id];
-      if (!transaction) {
-        // No existing transaction.  We use the channel number to create one.
-        Channel *channel = channels_[message->channel()];
-        if (channel) {
-          transaction = channel->GetTransaction(message);
-          transaction->TransactionHandleNewSender_(message);
-          peer->incoming_transactions[id] = transaction;
-          //fprintf(stderr, "channel %d found, %p\n", message->channel(), transaction);
-        } else {
-          //fprintf(stderr, "channel %d not found, msg %p\n", message->channel(), message);
-        }
-      }
-    }
-
-    if (transaction != NULL) {
-      // This work item is processable, add it to the transactions
-      WorkItem *item = work_items->AddBack();
-      item->message = message;
-      item->transaction = transaction;
-    } else {
-      // No good... we have to enqueue it.
-      (*queue)[j++] = message;
-    }
+    WorkItem *item = work_items->AddBack();
+    item->message = message;
+    item->peer = peer;
   }
-  if (j != i) {
-    queue->Resize(j);
-  }
+  queue->Resize(0);
 }
 
 //-------------------------------------------------------------------------

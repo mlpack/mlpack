@@ -69,7 +69,10 @@ class KdTreeMidpointBuilder {
       dim_ = first_point->vec().length();
     }
 
-    leaf_size_ = fx_param_int(module, "leaf_size", 20);
+    leaf_size_ = fx_param_int(module, "leaf_size", 32);
+    if (!math::IsPowerTwo(leaf_size_)) {
+      NONFATAL("With NBR, it's best to have leaf_size be a power of 2.");
+    }
 
     fx_timer_start(module, "tree_build");
     Build_();
@@ -162,25 +165,64 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       }
     }
 
-    DEBUG_ASSERT_MSG(max_width != 0,
-        "There is probably a bug somewhere else - %"LI"d points are all identical.",
-            node->count());
-
     if (max_width != 0) {
       index_t left_i = nodes_->Alloc();
       index_t right_i = nodes_->Alloc();
       Node *left = nodes_->StartWrite(left_i);
       Node *right = nodes_->StartWrite(right_i);
 
-      index_t split_col;
-      double split_val = node->bound().get(split_dim).mid();
-
       left->bound().Reset();
       right->bound().Reset();
-      split_col = Partition_(split_dim, split_val,
-            node->begin(), node->count(),
-            &left->bound(),
-            &right->bound());
+
+      index_t split_col;
+      index_t begin_col = node->begin();
+      index_t end_col = node->end();
+      // attempt to make all leaves of identical size
+      index_t goal_col = (begin_col + end_col + leaf_size_) / leaf_size_ / 2 * leaf_size_;
+      double split_val;
+      SpRange current_range = node->bound().get(split_dim);
+      typename Node::Bound left_bound;
+      typename Node::Bound right_bound;
+      left_bound.Init(dim_);
+      right_bound.Init(dim_);
+
+      for (;;) {
+        split_val = current_range.interpolate(
+            (goal_col - begin_col) / double(end_col - begin_col));
+        //fprintf(stderr, "(%d..(%d..%d..%d)..%d) (%f..%f) %f\n",
+        //    node->begin(), begin_col, goal_col, end_col, node->end(),
+        //    current_range.lo, current_range.hi, split_val);
+
+        left_bound.Reset();
+        right_bound.Reset();
+        split_col = Partition_(split_dim, split_val,
+              begin_col, end_col - begin_col,
+              &left_bound, &right_bound);
+
+        // To do midpoint-based tree-building, make the following branch
+        // always happen.
+        if (split_col == goal_col) {
+          left->bound() |= left_bound;
+          right->bound() |= right_bound;
+          break;
+        } else if (split_col < goal_col) {
+          left->bound() |= left_bound;
+          current_range = right_bound.get(split_dim);
+          if (current_range.width() == 0) {
+            right->bound() |= right_bound;
+            break;
+          }
+          begin_col = split_col;
+        } else if (split_col > goal_col) {
+          right->bound() |= right_bound;
+          current_range = left_bound.get(split_dim);
+          if (current_range.width() == 0) {
+            left->bound() |= left_bound;
+            break;
+          }
+          end_col = split_col;
+        }
+      }
 
       DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)",
           node->begin(), split_col,
@@ -212,6 +254,9 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       leaf = false;
       nodes_->StopWrite(left_i);
       nodes_->StopWrite(right_i);
+    } else {
+      NONFATAL("There is probably a bug somewhere else - %"LI"d points are all identical.",
+              node->count());
     }
   }
 
@@ -222,6 +267,8 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       CacheRead<Point> point(&points_, i);
       node->stat().Accumulate(*param_, *point);
     }
+
+    //fprintf(stderr, "leaf %d..%d (%d)\n", node->begin(), node->end(), node->count());
   }
 
   nodes_->StopWrite(node_i);

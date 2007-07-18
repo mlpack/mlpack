@@ -265,7 +265,7 @@ class RpcSockImpl {
    * the mutexes, and then release all mutexes while we do the actual work.
    */
   struct WorkItem {
-    Transaction *transaction;
+    Peer *peer;
     Message *message;
   };
 
@@ -367,9 +367,13 @@ namespace rpc {
   inline int n_peers() {
     return RpcSockImpl::instance.n_peers();
   }
-  /** Peer ID numbers of 'children' in the broadcast tree topology. */
-  inline const ArrayList<int>& children() {
-    return RpcSockImpl::instance.children();
+  /** Get the i'th child. */
+  inline const int child(int i) {
+    return RpcSockImpl::instance.children()[i];
+  }
+  /** Number of broadcast-tree children. */
+  inline const index_t n_children() {
+    return RpcSockImpl::instance.children().size();
   }
   /** Whether the root of the tree. */
   inline bool is_root() {

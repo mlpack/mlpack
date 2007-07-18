@@ -207,7 +207,10 @@ class ThreadedDualTreeSolver {
         fx_submodule(module, NULL, "global_result"));
   }
   
-  const typename GNP::GlobalResult& global_result() {
+  const typename GNP::GlobalResult& global_result() const {
+    return global_result_;
+  }
+  typename GNP::GlobalResult& global_result() {
     return global_result_;
   }
 };
@@ -307,6 +310,13 @@ class RpcMonochromaticDualTreeRunner {
   static const int PARAM_CHANNEL = 120;
   static const int CONFIG_CHANNEL = 121;
   static const int WORK_CHANNEL = 122;
+
+  static const int IOSTATS_POINTS_CHANNEL = 130;
+  static const int IOSTATS_NODES_CHANNEL = 131;
+  static const int IOSTATS_RESULTS_CHANNEL = 132;
+
+  static const int GLOBAL_RESULT_CHANNEL = 135;
+  
 
  private:
   datanode *module_;
@@ -427,6 +437,29 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
   rpc::Register(WORK_CHANNEL, &master_->work_backend);
 }
 
+class IoStatsReductor {
+ public:
+  void Reduce(const IoStats& right, IoStats* left) const {
+    left->Add(right);
+  }
+};
+
+template<typename GNP>
+class GlobalResultReductor {
+ private:
+  const typename GNP::Param *param_;
+
+ public:
+  void Init(const typename GNP::Param* param_in) {
+    param_ = param_in;
+  }
+
+  void Reduce(typename GNP::GlobalResult& right,
+      typename GNP::GlobalResult* left) const {
+    left->Accumulate(*param_, right);
+  }
+};
+
 template<typename GNP, typename Solver>
 void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
     datanode *module, const char *gnp_name) {
@@ -474,12 +507,15 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   data_nodes_.Sync(BlockDevice::M_READ);
   q_results_.Sync(BlockDevice::M_OVERWRITE);
   rpc::Barrier(BARRIER_CHANNEL+1);
+  data_points_.ReportStats(true, fx_submodule(module_, NULL, "config_points"));
+  data_nodes_.ReportStats(true, fx_submodule(module_, NULL, "config_nodes"));
+  q_results_.ReportStats(true, fx_submodule(module_, NULL, "config_results"));
   fx_timer_stop(module_, "flush_data");
 
   fx_timer_start(module_, "all_machines");
   ThreadedDualTreeSolver<GNP, Solver> solver;
   solver.InitSolve(
-      fx_submodule(module_, "solver", "solver"),
+      fx_submodule(module_, "solver", "local"),
       config_.n_threads, work_queue_, param_,
       data_points_.cache(), data_nodes_.cache(),
       data_points_.cache(), data_nodes_.cache(),
@@ -491,6 +527,22 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   q_results_.Sync(BlockDevice::M_READ);
   rpc::Barrier(BARRIER_CHANNEL+3);
   fx_timer_stop(module_, "flush_results");
+
+  rpc::Reduce(IOSTATS_POINTS_CHANNEL, IoStatsReductor(), &data_points_.stats());
+  rpc::Reduce(IOSTATS_NODES_CHANNEL, IoStatsReductor(), &data_nodes_.stats());
+  rpc::Reduce(IOSTATS_RESULTS_CHANNEL, IoStatsReductor(), &q_results_.stats());
+
+  GlobalResultReductor<GNP> global_result_reductor;
+  global_result_reductor.Init(&param_);
+  rpc::Reduce(GLOBAL_RESULT_CHANNEL,
+      global_result_reductor, &solver.global_result());
+
+  data_points_.ReportStats(true, fx_submodule(module_, NULL, "gnp_points"));
+  data_nodes_.ReportStats(true, fx_submodule(module_, NULL, "gnp_nodes"));
+  q_results_.ReportStats(true, fx_submodule(module_, NULL, "gnp_results"));
+
+  solver.global_result().Report(param_,
+      fx_submodule(module_, NULL, "global_result"));
 
   rpc::Done();
 }

@@ -16,9 +16,7 @@ class BarrierChannel : public Channel {
 
    private:
     int n_received_;
-    bool done_;
-    Mutex mutex_;
-    WaitCondition cond_;
+    DoneCondition cond_;
 
    private:
     void DoMessage_(int peer) {
@@ -28,19 +26,16 @@ class BarrierChannel : public Channel {
     }
 
     void CheckState_() {
-      if (n_received_ >= rpc::children().size()) {
-        if (rpc::is_root() || n_received_ > rpc::children().size()) {
+      if (n_received_ >= rpc::n_children()) {
+        if (rpc::is_root() || n_received_ > rpc::n_children()) {
           // Tell the kids that the root is ready
-          for (int i = 0; i < rpc::children().size(); i++) {
-            //fprintf(stderr, "barrier: Message to %d\n", rpc::children()[i]);
-            DoMessage_(rpc::children()[i]);
-          }
           Done();
           rpc::Unregister(channel());
-          mutex_.Lock();
-          done_ = true;
-          cond_.Signal();
-          mutex_.Unlock();
+          for (int i = 0; i < rpc::n_children(); i++) {
+            //fprintf(stderr, "barrier: Message to %d\n", rpc::children()[i]);
+            DoMessage_(rpc::child(i));
+          }
+          cond_.Done();
         } else {
           // Tell parent that all my kids are ready
           //fprintf(stderr, "barrier: Message to parent %d\n", rpc::parent());
@@ -50,11 +45,11 @@ class BarrierChannel : public Channel {
     }
 
     bool IsValidSender_(int peer) {
-      if (n_received_ == rpc::children().size()) {
+      if (n_received_ == rpc::n_children()) {
         return peer == rpc::parent();
       } else {
-        for (int i = 0; i < rpc::children().size(); i++) {
-          if (peer == rpc::children()[i]) {
+        for (int i = 0; i < rpc::n_children(); i++) {
+          if (peer == rpc::child(i)) {
             return true;
           }
         }
@@ -66,16 +61,14 @@ class BarrierChannel : public Channel {
     BarrierTransaction() {}
     virtual ~BarrierTransaction() {}
 
-    void Doit(int channel_num) {
+    void Init(int channel_num) {
       Transaction::Init(channel_num);
       n_received_ = 0;
-      done_ = false;
       CheckState_();
-      mutex_.Lock();
-      while (!done_) {
-        cond_.Wait(&mutex_);
-      }
-      mutex_.Unlock();
+    }
+
+    void Wait() {
+      cond_.Wait();
     }
 
     void HandleMessage(Message *message) { 
@@ -99,8 +92,9 @@ class BarrierChannel : public Channel {
 
   void Doit(int channel_num) {
     //fprintf(stderr, "barrier: I exist\n");
+    transaction_.Init(channel_num);
     rpc::Register(channel_num, this);
-    transaction_.Doit(channel_num);
+    transaction_.Wait();
   }
 
   Transaction *GetTransaction(Message *message) {
