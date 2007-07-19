@@ -15,6 +15,8 @@
 #include "col/arraylist.h"
 #include "col/heap.h"
 
+//------------------------------------------------------------------------
+
 /**
  * Generic work-queue interface.
  */
@@ -25,8 +27,10 @@ class WorkQueueInterface {
   WorkQueueInterface() {}
   virtual ~WorkQueueInterface() {}
 
-  virtual void GetWork(ArrayList<index_t> *work) = 0;
+  virtual void GetWork(int process, ArrayList<index_t> *work) = 0;
 };
+
+//------------------------------------------------------------------------
 
 class LockedWorkQueue : public WorkQueueInterface {
   FORBID_COPY(LockedWorkQueue);
@@ -39,12 +43,14 @@ class LockedWorkQueue : public WorkQueueInterface {
   LockedWorkQueue(WorkQueueInterface *inner) : inner_(inner) {}
   virtual ~LockedWorkQueue() { delete inner_; }
 
-  virtual void GetWork(ArrayList<index_t> *work) {
+  virtual void GetWork(int process, ArrayList<index_t> *work) {
     mutex_.Lock();
-    inner_->GetWork(work);
+    inner_->GetWork(process, work);
     mutex_.Unlock();
   }
 };
+
+//------------------------------------------------------------------------
 
 template<typename Node>
 class SimpleWorkQueue
@@ -64,7 +70,7 @@ class SimpleWorkQueue
     return tasks_.size();
   }
 
-  virtual void GetWork(ArrayList<index_t> *work);
+  virtual void GetWork(int process, ArrayList<index_t> *work);
 
  private:
   void AddWork_(CacheArray<Node> *array, index_t grain_size, index_t node_i);
@@ -80,7 +86,7 @@ void SimpleWorkQueue<Node>::Init(CacheArray<Node> *array, index_t n_grains) {
 }
 
 template<typename Node>
-void SimpleWorkQueue<Node>::GetWork(ArrayList<index_t> *work) {
+void SimpleWorkQueue<Node>::GetWork(int process, ArrayList<index_t> *work) {
   if (tasks_.size() == 0) {
     work->Init(0);
   } else {
@@ -105,12 +111,77 @@ void SimpleWorkQueue<Node>::AddWork_(
   array->StopRead(node_i);
 }
 
+//------------------------------------------------------------------------
+
+template<typename Node>
+class CentroidWorkQueue
+    : public WorkQueueInterface {
+  FORBID_COPY(CentroidWorkQueue);
+
+ private:
+  struct ProcessWorkQueue {
+    index_t n_centers;
+    Vector sum_centers;
+    MinHeap<double, index_t> work_items;
+  };
+
+ private:
+  CacheArray<Node> *tree_;
+  ArrayList<ProcessWorkQueue> processes_;
+  index_t max_grain_size_;
+
+ public:
+  CentroidWorkQueue() {}
+  virtual ~CentroidWorkQueue() {}
+
+  void Init(CacheArray<Node> *tree_in, index_t n_grains);
+
+  index_t n_grains() const {
+    return tasks_.size();
+  }
+
+  virtual void GetWork(int process_num, ArrayList<index_t> *work);
+
+ private:
+  void AddWork_(CacheArray<Node> *array, index_t grain_size, index_t node_i);
+};
+
+template<typename Node>
+void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree) {
+  tree_ = tree_in;
+  processes_.Init(rpc::n_peers());
+}
+
+template<typename Node>
+void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<index_t> *work) {
+  ProcessWorkQueue *queue = &processes_[process];
+  Vector center;
+
+  center.Copy(queue->sum_centers);
+  centroid.Scale(1.0 / queue->n_centers);
+
+  find work item
+
+  Vector midpoint;
+  node->bound().CalculateMidpoint(&midpoint);
+  la::Add(midpoint, &queue->sum_centers);
+  queue->n_centers++;
+}
+
+template<typename Node>
+void CentroidWorkQueue<Node>::AddWork_(
+    CacheArray<Node> *array, index_t grain_size, index_t node_i) {
+}
+
+//------------------------------------------------------------------------
 
 struct WorkRequest {
   enum Operation { GIVE_ME_WORK } operation;
+  int process;
 
   OT_DEF(WorkRequest) {
     OT_MY_OBJECT(operation);
+    OT_MY_OBJECT(process);
   }
 }; 
 
@@ -148,7 +219,7 @@ class RemoteWorkQueue
   
   void Init(int channel, int destination);
 
-  void GetWork(ArrayList<index_t> *work_items);
+  void GetWork(int process, ArrayList<index_t> *work_items);
 };
 
 #endif

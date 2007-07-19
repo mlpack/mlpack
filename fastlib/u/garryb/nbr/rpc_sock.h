@@ -139,6 +139,7 @@ class SockConnection {
 
  public:
   enum { MAGIC = 314159265 };
+  enum { BIRTH_CHANNEL = -60001 };
 
   struct Header {
     int32 magic;
@@ -174,7 +175,7 @@ class SockConnection {
   /** Creates an unopened SocketConnection placeholder. */
   void Init(int peer, const char *ip_address, int port);
   /** Create an outgoing connection for sending messages. */
-  void OpenOutgoing();
+  void OpenOutgoing(bool blocking);
   /** Accept an incoming connection for receiving messages. */
   void AcceptIncoming(int fd);
 
@@ -212,10 +213,47 @@ class SockConnection {
   }
 
   // the next functions have to do with non-blocking I/O
-  void PrepareSelect(fd_set *read_fds, fd_set *write_fds, fd_set *error_fds);
+  /**
+   * A lock-less FD-set setter.
+   */
+  void FastPrepareSelect(
+      fd_set *read_fds, fd_set *write_fds, fd_set *error_fds) {
+    // No locking needed: read_fd_ will never close on us unexpectedly
+    if (is_read_open()) {
+      FD_SET(read_fd_, read_fds);
+      FD_SET(read_fd_, error_fds);
+    }
+    // No locking needed: write_fd_ will never close on us unexpectedly
+    if (is_write_open()) {
+      if (is_writing()) {
+        FD_SET(write_fd_, write_fds);
+      }
+      FD_SET(write_fd_, error_fds);
+    }    
+  }
+  /** A lock-less FD-set checker. */
+  bool FastCheckEvents(
+      fd_set *read_fds, fd_set *write_fds, fd_set *error_fds) {
+    if (unlikely(is_read_open())) {
+      if (unlikely(FD_ISSET(read_fd_, read_fds))
+          || unlikely(FD_ISSET(read_fd_, error_fds))) {
+        return true;
+      }
+    }
+    if (unlikely(is_write_open())) {
+      if (unlikely(FD_ISSET(write_fd_, write_fds))
+          || unlikely(FD_ISSET(write_fd_, error_fds))) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /** Handle socket events, given that FastCheckEvents yielded events. */
   void HandleSocketEvents(fd_set *read_fds, fd_set *write_fds,
       fd_set *error_fds, bool allow_errors);
+  /** Try reading something from the queue. */
   void TryRead();
+  /** Try writing something from the queue. */
   void TryWrite();
 };
 
@@ -303,6 +341,8 @@ class RpcSockImpl {
   int listen_fd_;
   ArrayList<Peer> peers_;
 
+  ArrayList<int> unknown_connections_;
+
   DenseIntMap<Channel*> channels_;
 
   /**
@@ -346,6 +386,7 @@ class RpcSockImpl {
   void StartPollingThread_();
   void PollingLoop_();
   void GatherReadyMessages_(Peer *peer, ArrayList<WorkItem>* work_items);
+  void TryAcceptConnection_(int fd);
 };
 
 namespace rpc {

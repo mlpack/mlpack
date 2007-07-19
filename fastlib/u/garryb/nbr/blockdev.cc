@@ -198,6 +198,9 @@ void MemBlockDevice::Write(blockid_t blockid,
 }
 
 MemBlockDevice::~MemBlockDevice() {
+  for (index_t i = 0; i < blocks_.size(); i++) {
+    mem::Free(blocks_.get(i));
+  }
 }
 
 //------------------------------------------------------------------------

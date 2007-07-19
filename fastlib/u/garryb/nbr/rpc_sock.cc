@@ -69,15 +69,16 @@ void RpcSockImpl::Init() {
   port_ = fx_param_int(module_, "port", 31415);
   channels_.Init();
   channels_.default_value() = NULL;
+  unknown_connections_.Init();
 
   CreatePeers_();
   CalcChildren_();
   Listen_();
   StartPollingThread_();
 
-  //fprintf(stderr, "%d: Starting initial barrier\n", rank_);
+  fprintf(stderr, "rpc_sock(%d): Ready, listening on port %d\n", rpc::rank(), port_);
   rpc::Barrier(0);
-  fprintf(stderr, "rpc_sock: All computers are alive -- starting!\n", rank_);
+  fprintf(stderr, "rpc_sock(%d): All computers are alive -- starting!\n", rpc::rank());
 }
 
 void RpcSockImpl::Done() {
@@ -224,6 +225,7 @@ void RpcSockImpl::PollingLoop_() {
   work_items.Init();
 
   while (status_ != STOP) {
+    index_t j = 0;
     int maxfd;
 
     FD_ZERO(&read_fds);
@@ -236,11 +238,14 @@ void RpcSockImpl::PollingLoop_() {
 
     for (index_t i = 0; i < peers_.size(); i++) {
       Peer *peer = &peers_[i];
-      peer->mutex.Lock();
-      peer->connection.PrepareSelect(&read_fds, &write_fds, &error_fds);
-      peer->mutex.Unlock();
+      peer->connection.FastPrepareSelect(&read_fds, &write_fds, &error_fds);
       maxfd = max(maxfd, peer->connection.read_fd());
       maxfd = max(maxfd, peer->connection.write_fd());
+    }
+
+    for (index_t i = 0; i < unknown_connections_.size(); i++) {
+      FD_SET(unknown_connections_[i], &read_fds);
+      maxfd = max(maxfd, unknown_connections_[i]);
     }
 
     FD_ZERO(&error_fds);
@@ -275,41 +280,31 @@ void RpcSockImpl::PollingLoop_() {
       while (read(alert_slot_fd_, buf, sizeof(buf)) > 0) {}
     }
 
+    // Survey any connections that we accepted on faith.
+    j = 0;
+    for (index_t i = 0; i < unknown_connections_.size(); i++) {
+      int fd = unknown_connections_[i];
+      
+      if (FD_ISSET(fd, &read_fds)) {
+        TryAcceptConnection_(fd);
+      } else {
+        unknown_connections_[j++] = unknown_connections_[i];
+      }
+    }
+    unknown_connections_.Resize(j);
+
     if (FD_ISSET(listen_fd_, &read_fds)) {
-      //fprintf(stderr, "%d: Connection.\n", rank_);
       // Accept incoming connections
       for (;;) {
-        sockaddr_in addr;
-        socklen_t len = sizeof(addr);
         int new_fd;
 
-        mem::Zero(&addr);
-        new_fd = accept(listen_fd_, (struct sockaddr*)&addr, &len);
+        new_fd = accept(listen_fd_, NULL, NULL);
 
         if (new_fd < 0) {
           break;
         }
 
-        index_t i;
-
-        for (i = 0; i < peers_.size(); i++) {
-          Peer *peer = &peers_[i];
-          // We don't have to lock here since sin_addr is not locked
-          // TODO: Consider moving the locks elsewhere
-          if (addr.sin_addr.s_addr
-              == peer->connection.peer_addr().sin_addr.s_addr) {
-            peer->mutex.Lock();
-            peer->connection.AcceptIncoming(new_fd);
-            peer->mutex.Unlock();
-            //fprintf(stderr, "%d: accepted rank %d on fd %d\n", rank_, i, new_fd);
-            break;
-          }
-        }
-        if (i == peers_.size()) {
-          NONFATAL("Incomming connection from unknown machine, %s.",
-              inet_ntoa(addr.sin_addr));
-          (void)close(new_fd);
-        }
+        *unknown_connections_.AddBack() = new_fd;
       }
     }
 
@@ -317,20 +312,20 @@ void RpcSockImpl::PollingLoop_() {
     for (index_t i = 0; i < peers_.size(); i++) {
       Peer *peer = &peers_[i];
 
-      // We should look for a faster way of scanning file descriptors,
-      // especially not having to lock all the mutexes.
-      // How about a DenseIntMap?  Or, we can have the mutex be part of the
-      // connection itself?
-      peer->mutex.Lock();
-      // we'll allow errors to occur if we're shutting down.
-      peer->connection.HandleSocketEvents(&read_fds, &write_fds, &error_fds,
-         status_ != RUN);
-      GatherReadyMessages_(peer, &work_items);
-      peer->mutex.Unlock();
+      if (unlikely(peer->connection.FastCheckEvents(
+          &read_fds, &write_fds, &error_fds))) {
+        peer->mutex.Lock();
+        // we'll allow errors to occur if we're shutting down.
+        peer->connection.HandleSocketEvents(&read_fds, &write_fds, &error_fds,
+           status_ != RUN);
+        GatherReadyMessages_(peer, &work_items);
+        peer->mutex.Unlock();
+      }
     }
 
     // Execute work items while we aren't holding any mutexes
-    index_t j = 0;
+    j = 0;
+
     for (index_t i = 0; i < work_items.size(); i++) {
       Message *message = work_items[i].message;
       Peer *peer = work_items[i].peer;
@@ -372,6 +367,34 @@ void RpcSockImpl::PollingLoop_() {
     
     work_items.Resize(j);
   }
+}
+
+void RpcSockImpl::TryAcceptConnection_(int fd) {
+  SockConnection::Header preheader;
+
+  if (read(fd, &preheader, sizeof(preheader)) != sizeof(preheader)) {
+    NONFATAL("Rejected connection -- incomplete header.");
+  } else if (preheader.magic != SockConnection::MAGIC) {
+    NONFATAL("Rejected connection -- bad magic number.");
+  } else if (preheader.channel != SockConnection::BIRTH_CHANNEL) {
+    NONFATAL("Rejected connection -- channel is not the birth channel.");
+  } else if (preheader.data_size != 0) {
+    NONFATAL("Rejected connection -- bad payload size for birth message.");
+  } else if (preheader.transaction_id < 0
+      || preheader.transaction_id >= n_peers_) {
+    NONFATAL("Rejected connection -- peer number (trans ID) is out of range.");
+  } else {
+    int peer_num = preheader.transaction_id; // use trans ID for peer #
+    Peer *peer = &peers_[peer_num];
+
+    peer->mutex.Lock();
+    peer->connection.AcceptIncoming(fd);
+    peer->mutex.Unlock();
+
+    return;
+  }
+
+  (void) close(fd);
 }
 
 void RpcSockImpl::GatherReadyMessages_(Peer *peer,
@@ -528,32 +551,59 @@ void SockConnection::Init(int peer_num, const char *ip_address, int port) {
   write_fd_ = -1;
 }
 
-void SockConnection::OpenOutgoing() {
+void SockConnection::OpenOutgoing(bool blocking) {
   write_fd_ = socket(AF_INET, SOCK_STREAM, 0);
 
-  MakeSocketNonBlocking(write_fd_);
+  if (blocking) {
+    int sleeptime = 1;
+    int tries = 0;
+    while (0 > connect(write_fd_, (struct sockaddr*)&peer_addr_, sizeof(struct sockaddr_in))) {
+      if (++tries == 1) {
+        fprintf(stderr,
+            "rpc_sock(%d): Connection to parent %d failed, we'll a few more times.\n",
+            rpc::rank(), peer_);
+      }
+      (void) close(write_fd_);
+      sleep(sleeptime);
+      write_fd_ = socket(AF_INET, SOCK_STREAM, 0);
+    }
 
-  //fprintf(stderr, "connect to peer %d, %s\n", peer_, inet_ntoa(peer_addr_.sin_addr));
-  if (0 > connect(write_fd_, (struct sockaddr*)&peer_addr_, sizeof(struct sockaddr_in))
-      && errno != EINTR && errno != EINPROGRESS) {
-    FATAL("connect failed: %s", strerror(errno));
+    MakeSocketNonBlocking(write_fd_);
+  } else {
+    MakeSocketNonBlocking(write_fd_);
+
+    //fprintf(stderr, "connect to peer %d, %s\n", peer_, inet_ntoa(peer_addr_.sin_addr));
+    if (0 > connect(write_fd_, (struct sockaddr*)&peer_addr_, sizeof(struct sockaddr_in))
+        && errno != EINTR && errno != EINPROGRESS) {
+      FATAL("connect failed: %s", strerror(errno));
+    }
   }
 
+  // Send the initial birth message
+  write_buffer_pos_ = 0;
+  write_message_ = CreateMessage(peer_, BIRTH_CHANNEL, rpc::rank(), 0);
+
   // We'd nominally have to wake up the polling loop here to inform the
-  // loop that we've just made a connection -- however, no need, because
+  // loop that we've just made a new socket -- however, no need, because
   // Send will wake up the polling loop since write_message_ is currently
   // NULL.
 }
 
 void SockConnection::AcceptIncoming(int accepted_fd) {
+  if (read_fd_ >= 0) {
+    FATAL("Two incoming connections from rank %d!\n", peer_);
+  }
   read_fd_ = accepted_fd;
   MakeSocketNonBlocking(read_fd_);
 }
 
 void SockConnection::Send(Message *message) {
   if (!is_write_open()) {
-    // Open our outgoing link if one doesn't exist
-    OpenOutgoing();
+    // Open our outgoing link if one doesn't exist.
+
+    // If we're connecting to our parent for the first
+    // time, we should block until we can connect.
+    OpenOutgoing(peer_ == rpc::parent());
   }
 
   ++write_total_;
@@ -671,7 +721,7 @@ void SockConnection::HandleSocketEvents(
     fd_set *read_fds, fd_set *write_fds, fd_set *error_fds,
     bool allow_errors) {
   /*
-   code to read socket errors:
+   code to get a socket error:
       int sockError = 0;
       socklen_t sockErrorLen = sizeof(sockError);
       if (getsockopt(sock, SOL_SOCKET, SO_ERROR,
@@ -703,19 +753,5 @@ void SockConnection::HandleSocketEvents(
     if (FD_ISSET(write_fd_, write_fds)) {
       TryWrite();
     }
-  }
-}
-
-void SockConnection::PrepareSelect(
-    fd_set *read_fds, fd_set *write_fds, fd_set *error_fds) {
-  if (is_read_open()) {
-    FD_SET(read_fd_, read_fds);
-    FD_SET(read_fd_, error_fds);
-  }
-  if (is_write_open()) {
-    if (is_writing()) {
-      FD_SET(write_fd_, write_fds);
-    }
-    FD_SET(write_fd_, error_fds);
   }
 }

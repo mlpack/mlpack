@@ -44,6 +44,7 @@ class KdTreeMidpointBuilder {
   CacheArray<Point> points_;
   CacheArray<Node>* nodes_;
   index_t leaf_size_;
+  index_t chunk_size_;
   index_t dim_;
   index_t begin_index_;
   index_t end_index_;
@@ -70,8 +71,9 @@ class KdTreeMidpointBuilder {
     }
 
     leaf_size_ = fx_param_int(module, "leaf_size", 32);
-    if (!math::IsPowerTwo(leaf_size_)) {
-      NONFATAL("With NBR, it's best to have leaf_size be a power of 2.");
+    chunk_size_ = fx_param_int(module, "chunk_size", 512);
+    if (!math::IsPowerTwo(chunk_size_)) {
+      NONFATAL("With NBR, it's best to have chunk_size be a power of 2.");
     }
 
     fx_timer_start(module, "tree_build");
@@ -178,49 +180,56 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       index_t begin_col = node->begin();
       index_t end_col = node->end();
       // attempt to make all leaves of identical size
-      index_t goal_col = (begin_col + end_col + leaf_size_) / leaf_size_ / 2 * leaf_size_;
       double split_val;
       SpRange current_range = node->bound().get(split_dim);
-      typename Node::Bound left_bound;
-      typename Node::Bound right_bound;
-      left_bound.Init(dim_);
-      right_bound.Init(dim_);
 
-      for (;;) {
-        split_val = current_range.interpolate(
-            (goal_col - begin_col) / double(end_col - begin_col));
-        //fprintf(stderr, "(%d..(%d..%d..%d)..%d) (%f..%f) %f\n",
-        //    node->begin(), begin_col, goal_col, end_col, node->end(),
-        //    current_range.lo, current_range.hi, split_val);
-
-        left_bound.Reset();
-        right_bound.Reset();
+      if (node->count() < chunk_size_ * 3 / 2) {
+        split_val = current_range.mid();
         split_col = Partition_(split_dim, split_val,
               begin_col, end_col - begin_col,
-              &left_bound, &right_bound);
+              &left->bound(), &right->bound());
+      } else {
+        index_t goal_col = (begin_col + end_col + chunk_size_)
+            / chunk_size_ / 2 * chunk_size_;
+        typename Node::Bound left_bound;
+        typename Node::Bound right_bound;
+        left_bound.Init(dim_);
+        right_bound.Init(dim_);
 
-        // To do midpoint-based tree-building, make the following branch
-        // always happen.
-        if (split_col == goal_col) {
-          left->bound() |= left_bound;
-          right->bound() |= right_bound;
-          break;
-        } else if (split_col < goal_col) {
-          left->bound() |= left_bound;
-          current_range = right_bound.get(split_dim);
-          if (current_range.width() == 0) {
+        for (;;) {
+          split_val = current_range.interpolate(
+              (goal_col - begin_col) / double(end_col - begin_col));
+          //fprintf(stderr, "(%d..(%d..%d..%d)..%d) (%f..%f) %f\n",
+          //    node->begin(), begin_col, goal_col, end_col, node->end(),
+          //    current_range.lo, current_range.hi, split_val);
+
+          left_bound.Reset();
+          right_bound.Reset();
+          split_col = Partition_(split_dim, split_val,
+                begin_col, end_col - begin_col,
+                &left_bound, &right_bound);
+
+          if (split_col == goal_col) {
+            left->bound() |= left_bound;
             right->bound() |= right_bound;
             break;
-          }
-          begin_col = split_col;
-        } else if (split_col > goal_col) {
-          right->bound() |= right_bound;
-          current_range = left_bound.get(split_dim);
-          if (current_range.width() == 0) {
+          } else if (split_col < goal_col) {
             left->bound() |= left_bound;
-            break;
+            current_range = right_bound.get(split_dim);
+            if (current_range.width() == 0) {
+              right->bound() |= right_bound;
+              break;
+            }
+            begin_col = split_col;
+          } else if (split_col > goal_col) {
+            right->bound() |= right_bound;
+            current_range = left_bound.get(split_dim);
+            if (current_range.width() == 0) {
+              left->bound() |= left_bound;
+              break;
+            }
+            end_col = split_col;
           }
-          end_col = split_col;
         }
       }
 
