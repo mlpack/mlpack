@@ -383,7 +383,14 @@ class SpHrectBound {
     
     return true;
   }
-  
+
+  void CalculateMidpoint(Vector *centroid) const {
+    centroid->Init(dim_);
+    for (index_t i = 0; i < dim_; i++) {
+      centroid->set(i, bounds_[i].mid());
+    }
+  }
+
   double MinDistanceSqToPoint(const Vector& point) const {
     DEBUG_ASSERT(point.length() == dim_);
     double sumsq = 0;

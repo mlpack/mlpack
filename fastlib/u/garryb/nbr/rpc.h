@@ -73,7 +73,9 @@ class Rpc {
   Rpc() {
   }
   ~Rpc() {
-    delete response_;
+    if (response_ != NULL) {
+      delete response_;
+    }
   }
 
   template<typename RequestObject>
@@ -196,7 +198,7 @@ class ReduceChannel : public Channel {
         if (!rpc::is_root()) {
           // Send my subtree's results to my parent.
           Message *message_to_send = CreateMessage(rpc::parent(),
-              ot::PointerFrozenSize(data_));
+              ot::PointerFrozenSize(*data_));
           ot::PointerFreeze(*data_, message_to_send->data());
           Send(message_to_send);
         }
@@ -245,6 +247,7 @@ class ReduceChannel : public Channel {
             message->channel(), received_[i]->channel());
       }
       received_[i] = message;
+      Done(message->peer());
 
       n_received_++;
 

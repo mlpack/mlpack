@@ -107,7 +107,7 @@ class ThreadedDualTreeSolver {
               "solver", "grain_%d", work[i]);
           base_->mutex_.Unlock();
 
-          fprintf(stderr, "Grain %d\n", work[i]);
+          fprintf(stderr, "- Grain %d\n", work[i]);
 
           solver.InitSolve(submodule, *base_->param_, q_root_index,
               base_->q_points_cache_, base_->q_nodes_cache_,
@@ -120,6 +120,7 @@ class ThreadedDualTreeSolver {
           base_->mutex_.Unlock();
         }
       }
+      fprintf(stderr, "- Thread Done\n");
       delete this;
     }
   };
@@ -303,6 +304,7 @@ class RpcMonochromaticDualTreeRunner {
 
  private:
   static const int MASTER_RANK = 0;
+
   static const int BARRIER_CHANNEL = 100;
   static const int DATA_POINTS_CHANNEL = 110;
   static const int DATA_NODES_CHANNEL = 111;
@@ -359,7 +361,7 @@ class RpcMonochromaticDualTreeRunner {
 
 template<typename GNP, typename Solver>
 void RpcMonochromaticDualTreeRunner<GNP, Solver>::Preinit_() {
-  if (rpc::rank() != MASTER_RANK) {
+  if (!rpc::is_root()) {
     String my_fx_scope;
 
     my_fx_scope.InitSprintf("rank%d", rpc::rank());
@@ -475,7 +477,9 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   q_results_.Configure(Q_RESULTS_CHANNEL);
 
   fx_timer_start(module_, "configure");
-  if (rpc::rank() == MASTER_RANK) {
+  if (rpc::is_root()) {
+    fprintf(stderr, "nbr_utils(%d): start master init\n", rpc::rank());
+
     param_.Init(fx_submodule(module_, gnp_name_, gnp_name_));
     ReadData_();
     MakeTree_();
@@ -485,8 +489,12 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
     q_results_.InitMaster(default_result, data_points_.n_block_elems());
     q_results_.Alloc(n_points_);
 
+    fprintf(stderr, "nbr_utils(%d): master is done\n", rpc::rank());
+
     SetupMaster_();
   } else {
+    fprintf(stderr, "nbr_utils(%d): start worker init\n", rpc::rank());
+
     data_points_.InitWorker();
     data_nodes_.InitWorker();
     q_results_.InitWorker();
@@ -502,6 +510,8 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   rpc::Barrier(BARRIER_CHANNEL+0);
   fx_timer_stop(module_, "configure");
 
+  fprintf(stderr, "nbr_utils(%d): start flushing\n", rpc::rank());
+  
   fx_timer_start(module_, "flush_data");
   data_points_.Sync(BlockDevice::M_READ);
   data_nodes_.Sync(BlockDevice::M_READ);
@@ -511,6 +521,8 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   data_nodes_.ReportStats(true, fx_submodule(module_, NULL, "config_nodes"));
   q_results_.ReportStats(true, fx_submodule(module_, NULL, "config_results"));
   fx_timer_stop(module_, "flush_data");
+
+  fprintf(stderr, "nbr_utils(%d): start the gnp\n", rpc::rank());
 
   fx_timer_start(module_, "all_machines");
   ThreadedDualTreeSolver<GNP, Solver> solver;
