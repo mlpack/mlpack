@@ -77,9 +77,9 @@
 \newcommand{\myOutop}[1]{\nameOp{\bigodot}{#1}}
 \newcommand{\myoutop}[1]{\nameop{\odot}{#1}}
 
-\newcommand{\letterglob}{\gamma}
-\newcommand{\outglob}{\Gamma}
-\newcommand{\inglob}{\gamma}
+\newcommand{\letterglob}{\psi}
+\newcommand{\outglob}{\Psi}
+\newcommand{\inglob}{\psi}
 \newcommand{\Opglob}{\myOp{\letterglob}}
 \newcommand{\opglob}{\myop{\letterglob}}
 \newcommand{\fglob}{f_{\!\letterglob}}
@@ -199,9 +199,9 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-The multi-tree approach to accelerating data mining methods has proven successful at making practical a large class of fundamental methods previously considered computationally intractable for massive datasets in many cases, including kernel density estimation, all-nearest-neighbor search, spatial statistics, and many others.
-In this paper we pursue further acceleration by parallelizing this class of efficient serial algorithms by first developing a framework for characterizing these algorithms, and demonstrating the effectiveness of a parallel implementation of the framework.
-We present how these algorithms yield an elegant strategy for parallelizing the workload and demonstrate their added efficiency on massive synthetic and real datasets for both shared-memory and cluster implementations.
+The multi-tree approach for accelerating data mining methods has resulted some of the fastest known solutions for a large class of fundamental methods previously considered intractable for massive datasets, including kernel density estimation, all-nearest-neighbor search, spatial statistics, and many others.
+In this paper further scale these efficient serial algorithms via parallelization by first generalizing these to a standard framework.
+With the framework, we derive a strategy for parallelization and demonstrate the added efficiency on massive synthetic and real datasets for both shared-memory and cluster implementations.
 \end{abstract}
 
 \section{Introduction}
@@ -348,9 +348,9 @@ Unfortunately, both the ORB and cost-zones techniques require an estimate of rel
 Not only is cost per individual query a foreign concept for dual-tree algorithms, but to be fully general we cannot assume there is a practical way to perform a dry run nor even that the algorithm consists of sequential time-steps.
 This paper focuses on techniques that apply universally to {\it all} dual-tree algorithms solving generalized $N$-body problems.
 
-\section{Parallel Programming Models}
+\section{Parallel Programming via Models}
 
-Efforts\authornote{This section is a {\it stub}. I can help myself by {\it expanding it}.} have been made in all fronts on making parallelization accessible to the general programmer.
+Making parallelization accessible to programmers without parallelization expertise has been a common goal in parallelization communities.
 One technique offered by the programming languages community is the parallelization inherent in functional languages -- in fact, numerous papers have parallelized Barnes-Hut and the Fast Multipole Method algorithms this way \cite{hu-implementing, more}.
 Using such a language, however, can sometimes put unintended constraints on development, especially since compiler technologies cannot automatically derive the wealth of parallelization techniques that have been used in past state-of-the-art parallel $N$-body simulations.
 
@@ -377,7 +377,7 @@ Note the equivalent statement for partitioning $X$ is trivial from commutativity
 A second-order reduce problem with both qualities is a second-order \defterm{generalized $N$-body problem}\authorsnote{Later, I require abelian monoid}\authorsnote{Fix X, Y ordering.}.
 
 Two major types of regular reduce problems are block decomposable.
-If $\bigodot = \bigotimes$ then associativity trivially leads to block decomposability; we call this a \defterm{singular second-order reduce problem}.
+If $\bigodot = \bigotimes$ then associativity trivially leads to block decomposability; we call this a \defterm{single-operator second-order reduce problem}.
 If $\bigodot$ is the special higher-order operator $\map$, then we modify the problem to a key value pair problem such that
 \[\begin{array}{c}
   \displaystyle \map_{y \in Y} \bigotimes_{x \in X} f(x, y) = \Union_{y \in Y} \bigvec{\bigotimes}_{x \in X} \{(y, f(x, y))\},
@@ -440,7 +440,7 @@ We shall later\authorsnote{Empirically or theoretically?} show how to expand the
 
 \subsection{Singular Reduce Problems}
 
-A \defterm{singular reduce problem} computes a single scalar or relatively small vector of results, taking as input two data sets and applying an aggregate commutative and associative operator to all pairs,
+A \defterm{single-operator reduce problem} computes a single scalar or relatively small vector of results, taking as input two data sets and applying an aggregate commutative and associative operator to all pairs,
 \begin{eqnarray*}
 \outglob(X, Y) &=& \gglob(\inglob(X, Y)),
 \\
@@ -481,7 +481,7 @@ Intrinsic prunes are applied with the following rule,
 \end{equation*}
 \noindent where $\canpruneglob$ is a Boolean indicator that a prune is possible i.e. the initial summary set is singleton, and $\deltaglob$ is the summary set's only element.
 
-The rules shown so far allow some software system to execute singular reduce problems with intrinsic prunes given definitions for the relevant functions and operators.
+The rules shown so far allow some software system to execute single-operator reduce problems with intrinsic prunes given definitions for the relevant functions and operators.
 For instance, a $kd$-tree-based two-point correlation $\TWOPT(X, h)= \outglob(X,X)$ is defined:
 \begin{eqnarray*}
 \label{eqn:tpc_gglob}
@@ -660,7 +660,7 @@ Note to self: I could put an examples section, and talk about how we handle thin
 \subsection{Execution}
 
 We show in \fig{dfe} a depth-first implementation of the query-reference with extrinsic prune rules for query-reference problems.
-(The version for singular problems is much simpler, and both types of problems could even be computed simultaneous using the same expansion pattern.)
+(The version for single-operator problems is much simpler, and both types of problems could even be computed simultaneous using the same expansion pattern.)
 The input to the algorithm is the data to operate on, and the functions required for an effective dual-tree algorithm.
 Via the power of $\map$, we have shown that this code can solve any second-order reduce problem.
 A breadth-first implementation is also possible, which makes substantial use of $\opmu$ to compose sibling results.
@@ -709,7 +709,7 @@ A breadth-first implementation is also possible, which makes substantial use of 
   \end{array}
 \]
 \caption{\label{fig:dfe} The depth-first expansion algorithm for query-reference problems.
-Although we omit the code for singular second-order reduce problems, it is substantially simpler.}
+Although we omit the code for single-operator second-order reduce problems, it is substantially simpler.}
 \end{figure}
 
 \section{Parallel Execution}
@@ -732,7 +732,7 @@ However, dividing work by queries $(Q_1, \kdroot{R}), (Q_2, \kdroot{R}), ..., (Q
 Information transfer is only needed to obtain locally essential portions of the data and communicate the final results.
 
 Continuing, consider decomposing both trees for intrinsic-prune-only problems.
-Without loss of generality, we label the trees query and reference even for singular reduce problems.
+Without loss of generality, we label the trees query and reference even for single-operator reduce problems.
 When all pairs must be examined exhaustively, this technique is in fact optimal.
 Given $p$ processors, each processor considers $\frac{N}{\sqrt{p}}$ queries and $\frac{N}{\sqrt{p}}$ references, with the total communication cost for the entire system $O(N\sqrt{P})$ points.
 In practical dual-tree codes far-separated node pairs tend to require orders of magnitude less computation than nearby node pairs, and such wildly varying runtimes significantly complicate scheduling.
@@ -821,14 +821,14 @@ Symbol & Macro & Description, Rationale
 \\ $\Gnp$ & Gnp & postprocessed second-order reduce problem
 \\ $\gnp$ & gnp & second-order reduce problem computation before postprocess
 \\ $\summary$ & summary & initial summary results
-\\ \hline $\letterglob$ & letterglob & singular reduce 'problem space'
-\\ $\outglob$ & outglob & singular reduce after postprocessing
-\\ $\inglob$ & inglob & singular reduce before postprocessing
-\\ $\Opglob$ & Opglob & singular reduce operator
-\\ $\fglob$ & fglob & singular reduce inner function
-\\ $\gglob$ & gglob & singular reduce postprocess
-\\ $\canpruneglob$ & canpruneglob & singular reduce prune function
-\\ $\deltaglob$ & deltaglob & singular reduce prune value
+\\ \hline $\letterglob$ & letterglob & single-operator reduce 'problem space'
+\\ $\outglob$ & outglob & single-operator reduce after postprocessing
+\\ $\inglob$ & inglob & single-operator reduce before postprocessing
+\\ $\Opglob$ & Opglob & single-operator reduce operator
+\\ $\fglob$ & fglob & single-operator reduce inner function
+\\ $\gglob$ & gglob & single-operator reduce postprocess
+\\ $\canpruneglob$ & canpruneglob & single-operator reduce prune function
+\\ $\deltaglob$ & deltaglob & single-operator reduce prune value
 \\ \hline $\letterqr$ & letterqr & query-reference 'problem space'
 \\ $\outqr$ & outqr & query-reference after postprocessing
 \\ $\inqr$ & inqr & query-reference before postprocessing
