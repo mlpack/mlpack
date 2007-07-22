@@ -1,5 +1,10 @@
 #include "work.h"
 
+void WorkQueueInterface::Report(struct datanode *module) {
+}
+
+//--------------------------------------------------------------
+
 void RemoteWorkQueueBackend::Init(WorkQueueInterface *inner_work_queue) {
   inner_ = inner_work_queue;
 }

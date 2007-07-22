@@ -187,6 +187,39 @@ class WaitCondition {
 };
 
 /**
+ * Reliable wait condition to signal readiness.
+ *
+ * I think this has semantics almost identical to the regular wait conditions
+ * except it will wake up only exactly one process.
+ */
+class DoneCondition {
+  Mutex mutex_;
+  WaitCondition cond_;
+  bool done_;
+
+ public:
+  DoneCondition() { done_ = false; }
+  ~DoneCondition() {}
+
+  void Wait() {
+    mutex_.Lock();
+    while (!done_) {
+      cond_.Wait(&mutex_);
+    }
+    done_ = false;
+    mutex_.Unlock();
+  }
+
+  void Done() {
+    mutex_.Lock();
+    DEBUG_ASSERT_MSG(done_ == false, "Doesn't do a counter -- should it?");
+    done_ = true;
+    cond_.Signal();
+    mutex_.Unlock();
+  }
+};
+
+/**
  * Mix-in to make a version of an existing object that can be locked.
  *
  * Your object must have default constructors and use Init methods.
@@ -195,7 +228,7 @@ class WaitCondition {
 template<class TContained>
 class Lockable : public TContained, public Mutex {
   FORBID_COPY(Lockable);
-  
+
   Lockable() {}
   ~Lockable() {}
 };

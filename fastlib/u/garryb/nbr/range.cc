@@ -261,7 +261,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef USE_RPC
   nbr_utils::RpcMonochromaticDualTreeMain<Range, DualTreeDepthFirst<Range> >(
-      fx_root, "range");
+      fx_root, "range");      
 #else
   nbr_utils::MonochromaticDualTreeMain<Range, DualTreeDepthFirst<Range> >(
       fx_root, "range");

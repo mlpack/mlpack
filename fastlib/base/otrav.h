@@ -631,8 +631,7 @@ namespace ot_private {
    public:
     template<typename T>
     void InitBegin(const T& obj) {
-      pos_ = 0;
-      PretendLayout_<T>(1);
+      pos_ = sizeof(T);
       TraverseObject(const_cast<T*>(&obj), this);
     }
 

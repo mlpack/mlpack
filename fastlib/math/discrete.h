@@ -82,6 +82,11 @@ namespace math {
     MakeInversePermutation(original.size(), original.begin(), reverse->begin());
   }
   
+  template<typename TAnyIntegerType>
+  inline bool IsPowerTwo(TAnyIntegerType i) {
+    return (i & (i - 1)) == 0;
+  }
+  
   /**
    * Finds the log base 2 of an integer.
    *
