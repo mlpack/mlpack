@@ -67,33 +67,6 @@ class Range {
 
   typedef BlankDelta Delta;
 
-  struct GlobalResult {
-   public:
-    uint64 count;
-
-   public:
-    void Init(const Param& param) {
-      count = 0;
-    }
-    void Accumulate(const Param& param, const GlobalResult& other) {
-      count += other.count;
-    }
-    void ApplyDelta(const Param& param, const Delta& delta) {}
-    void UndoDelta(const Param& param, const Delta& delta) {}
-    void Postprocess(const Param& param) {}
-    void Report(const Param& param, datanode *datanode) {
-      fx_format_result(datanode, "per_point_avg", "%g",
-          count / double(param.count));
-      fx_format_result(datanode, "per_pair_avg", "%g",
-          count / (double(param.count) * double(param.count)));
-    }
-
-   public:
-    void Add(index_t q_count, index_t r_count) {
-      count += uint64(q_count) * r_count;
-    }
-  };
-
   /**
    * Coarse result on a region.
    */
@@ -146,6 +119,36 @@ class Range {
   };
 
   typedef BlankQMassResult QMassResult;
+
+  struct GlobalResult {
+   public:
+    uint64 count;
+
+   public:
+    void Init(const Param& param) {
+      count = 0;
+    }
+    void Accumulate(const Param& param, const GlobalResult& other) {
+      count += other.count;
+    }
+    void ApplyDelta(const Param& param, const Delta& delta) {}
+    void UndoDelta(const Param& param, const Delta& delta) {}
+    void Postprocess(const Param& param) {}
+    void Report(const Param& param, datanode *datanode) {
+      fx_format_result(datanode, "per_point_avg", "%g",
+          count / double(param.count));
+      fx_format_result(datanode, "per_pair_avg", "%g",
+          count / (double(param.count) * double(param.count)));
+    }
+    void ApplyResult(const Param& param,
+        const QPoint& q_point, index_t q_i,
+        const QResult& result) {}
+
+   public:
+    void Add(index_t q_count, index_t r_count) {
+      count += uint64(q_count) * r_count;
+    }
+  };
 
   /**
    * Abstract out the inner loop in a way that allows temporary variables

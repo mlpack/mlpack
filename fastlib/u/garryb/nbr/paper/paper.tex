@@ -225,7 +225,7 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
           \X \text{function tpc}(Y, X)
           \x \text{if }\distup(Y, X) > h\text{: return }0
           \x \text{if }\distlo(Y, X) \leq h\text{: return } |Y| \cdot |X|
-          \x \text{elif }|Y| \geq |X|\text{:}
+          \x \text{else if }|Y| \geq |X|\text{:}
           \xx \text{return tpc}(\kdleft{Y}, X, h) + \text{tpc}(\kdright{Y}, X, h)
           \x \text{else:}
           \xx \text{return tpc}(Y, \kdleft{X}, h) + \text{tpc}(Y, \kdright{X}, h)
@@ -240,9 +240,9 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
           \X \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
           \X \text{procedure allnn}(Q,R)\text{:}
           \x \text{if }a(Q) < \distlo(Q, R)\text{: return}
-          \x \text{elif }Q = \{q\} \text{ and } R = \{r\}
+          \x \text{else if }Q = \{q\} \text{ and } R = \{r\}
           \xx a(\{q\}) \gets \min(a(\{q\}), \dist{Q}{R})
-          \x \text{elif }|Q| \geq |R|\text{:}
+          \x \text{else if }|Q| \geq |R|\text{:}
           \xx \text{allnn}(\kdleft{Q}, R); \text{ allnn}(\kdright{Q}, R)
           \xx a(Q) \gets \max(a(\kdleft{Q}), a(\kdright{Q}))
           \x \text{else prioritize by min distance:}
@@ -286,6 +286,7 @@ If a metric space is defined over the points, one may use the dual-tree algorith
 \end{array} \]
 \noindent with $\ocpos{v}(x)$ being $\min(x, 0)$ for $v$ true and $x$ otherwise, and $\falphaj{i}{j}$ being the first minimum of $\falpha{i}$ when $i \neq j$ and the second otherwise.
 These vectors are computed iteratively until convergence.
+Exemplars are those points $j$ with $\frho{j}$ positive and each point belongs to the cluster defined by the exemplar closest to it.
 Empirical $O(N^{1.3})$ scaling was achieved on three-dimensional points from a gravitational $N$-body particle simulation, compared to the existing $O(N^2)$ time and space method.
 
 \section{Parallel $N$-Body Simulations}
@@ -682,9 +683,9 @@ A breadth-first implementation is also possible, which makes substantial use of 
        \end{array}
     \x \text{if } \exists q \exists r ~ Q = \{q\} \wedge R = \{r\}\text{: \com{base case}}
     \xx \varqrv(\{q\}) \gets \varqrv(\{Q\}) \opqr \fqr(q, r)
-    \x \text{elif } \canprunemu(\outstat(Q), \outstat(R), \inmu(Q,\kdroot{R}))\text{: \com{prune}}
+    \x \text{else if } \canprunemu(\outstat(Q), \outstat(R), \inmu(Q,\kdroot{R}))\text{: \com{prune}}
     \xx \varqrv(Q) \gets \varqrv(Q) \opqr \deltaqrv(\outstat(Q), \outstat(R))
-    \x \text{elif } |Q| \geq |R|\text{: \com{explore queries}}
+    \x \text{else if } |Q| \geq |R|\text{: \com{explore queries}}
     \xx \text{for } Q' \in \{\kdleft{Q}, \kdright{Q}\}\text{:}
     \xxx \varqrv(Q') \gets \varqrv(Q') \opqr \varqrv(Q)
     \xxx \text{dfe}(Q', R, \varmuparent)
@@ -732,7 +733,7 @@ However, dividing work by queries $(Q_1, \kdroot{R}), (Q_2, \kdroot{R}), ..., (Q
 Information transfer is only needed to obtain locally essential portions of the data and communicate the final results.
 
 Continuing, consider decomposing both trees for intrinsic-prune-only problems.
-Without loss of generality, we label the trees query and reference even for single-operator reduce problems.
+(Without loss of generality, we label the trees query and reference even for single-operator reduce problems.)
 When all pairs must be examined exhaustively, this technique is in fact optimal.
 Given $p$ processors, each processor considers $\frac{N}{\sqrt{p}}$ queries and $\frac{N}{\sqrt{p}}$ references, with the total communication cost for the entire system $O(N\sqrt{P})$ points.
 In practical dual-tree codes far-separated node pairs tend to require orders of magnitude less computation than nearby node pairs, and such wildly varying runtimes significantly complicate scheduling.
@@ -741,39 +742,19 @@ Similarly, the size of the locally essential tree for $(Q, \kdroot{R})$ also ten
 For a sufficiently large number of processors, $O(\frac{N}{p})$ fares significantly better than the alternative $O(\frac{N}{\sqrt{p}})$ points per processor.
 Although future research may show certain cases to the contrary, in this paper, we here only decompose on the query tree.
 
-\subsection{Load Balancing}
-
-In earlier sections, we declared that a software system attempting to parallelize {\it any} generalized $N$-body problem cannot assume the ability to predict run times with the accuracy available via a dry run, when a dry run may take as much time as an actual computation.
-Instead, we dynamically assign tasks to processors during the course of computation.
-Our initial demonstrations use simple bag-of-tasks scheduling algorithm that adapts to problems where the execution time is bounded $a|Q| \leq t \leq aw|Q|$ where $a$ is the minimum ratio of query tree size to execution time, and $w$ is the maximum constant factor deviance from proportionality.
-
-In a bag-of-tasks system, each worker requests a new item of work from a central scheduler every time it becomes idle.
-Given identically sized subtrees of the query tree, the worst-case scenario is that $k - 1$ tasks taking time $t$ each are executed in perfect parallelism and terminate these at the same time, until the last task of length $wt$.
-The total time is then $\frac{(k-1)t}{p}+wt$, compared to the ideal run time $\frac{(k-1+w)t}{p}$.
-%The utilization $u$ is then $\frac{k-1+w}{k-1+wp}$.
-For a minimum utilization of $u$, one needs at least $k = \frac{w+wpu}{1-u}+1$ tasks, asymptotically $\frac{wp}{1-u}$.
-For 50\% utilization with run times deviating from proportionality by a factor no more than 10, one needs a few more than $20p$ tasks.
-In practice, utilization is far better given this number of tasks.
-
-Extending the bag of tasks system, we attempt to minimize the amount of extra information a processor requires to take on its next work item.
-Since spatial locality mirrors data locality, we present a simple greedy algorithm.
-When a machine requests a work item, the next work item is the closest chunk of the query tree to the work items it has already performed.
-
-- haven't really implemented this, i'll get back as to the effectiveness
-
-%- link spatial locality with data locality
-%- phrase locality nicely
-%The next query node that is assigned to a worker .
-
-So far, we have detailed in entirety the functionality of our multithreaded parallel software.
-However, communication presents further problems for a cluster implementation.
-
 \subsection{Communication}
 
-In our proof-of-concept cluster implementation, we take advantage of Salmon and Warren's observation in \cite{salmon97parallel} that for treecodes, efficiency for disk-resident out-of-core implementations mirrors communication efficiency in a parallel implementation\footnote{Out-of-core generalized $N$-body execution systems are in fact part of our future goals.}.
-By far, the greatest communication cost is sending data points and tree nodes to machines that need them.
-Our software automatically serializes user data into blocks, forming the fundamental unit of communication.
+In our proof-of-concept cluster implementation, we take advantage of Salmon and Warren's observation in \cite{salmon97parallel} that for treecodes, efficiency for disk-resident out-of-core implementations mirrors communication efficiency in a parallel implementation\footnote{In fact, our software is intended eventually to support out-of-core execution.}.
+By far, the greatest communication cost is sending data points to machines that need them.
+Our software automatically serializes points, tree nodes, results, and user data into equal-sized blocks, forming the fundamental unit of communication.
 Workers request blocks of data on demand.
+
+To assist block decomposition, our tree-building algorithm recursively partitions data points on the block-rounded median of the dimension with the greatest range, until the number of points fits in a block.
+Since splits are rounded to block boundaries, eventually, the splits lead to tree nodes that are exactly a single block of points and cannot be split further this way.
+This node is then recursively partitioned into leaves based on the midpoint of the dimension with the greatest range.
+The median-based splits simplify scheduling and assist the dual-tree algorithm at a coarser granularity, whereas the midpoint-based splits at a finer granularity allow better pruning in the face of local outliers.
+A typical block size \authorsnote{Note that the optimal block size is intimately related to the ratio of transfer time to latency on the communications medium} is 512 points, with a maximum 32 points per leaf.
+Note that with 32 points per leaf, there are relatively few tree nodes compared to points, ensuring that points, not tree nodes, dominate communication cost.
 
 In this paper we focus on convenentional use cases where the data originates on one machine, the tree is quickly built locally, and then the blocks representing the tree and data are distributed.
 Such an implementation is not suitable for massive datacenter\authorsnote{i.e. ``Google''} scenarios where data originates distributed among machines; however, the existence of efficient parallel tree-building algorithms \cite{alfuraih00parallel} makes such an implementation inevitable.
@@ -782,6 +763,61 @@ Ideally, each block should reside on the computer most likely to use it.
 Unfortunately, such an implementation requires significant cooperation between the scheduler and data distribution and presents a formidable theoretical and technical challenges.
 With a small loss in performance, we instead distribute blocks randomly by taking the block ID number modulo the number of machines\authorsnote{I should consistently use terms \defterm{processor} and \defterm{machine}, or some other scheme, to distinguish threads and address spaces}.
 We find that this scales to (insert size here)-sized clusters.
+
+\subsection{Scheduling}
+
+In earlier sections, we declared that a software system attempting to parallelize {\it any} generalized $N$-body problem cannot assume the ability to predict run times with the accuracy available via a dry run, when a dry run may take as much time as an actual computation.
+Instead, we dynamically assign tasks to processors during the course of computation.
+Each worker requests an item of work rom a central scheduler upon becoming idle.
+
+The query tree is divided into a number of work items of roughly equal cardinality.
+This is done quickly by choosing a minimum number of items $\hat{k}$, and performing a depth-first recursion until a subtree with at most $\frac{n}{\hat{k}}$ points is found.
+We choose $\hat{k}$ to be a small constant factor times the total number of threads.
+
+We then present two dynamic scheduling algorithms based on this model.
+The first algorithm, which we call random-assignment, simply assigns a random task to a processor.
+%If the tree is not balanced, it may also be beneficial to assign the largest-cardinality items first such that the smaller items can act as a buffer towards the end to increase balance.
+The overhead of this scheduler is small -- $O(\hat{k})$ for the decomposition, and $O(\hat{k})$ for the work assignment.
+
+Our second algorithm, which we call centroid tree-decomposition, attempts to manage communication cost by taking advantage of the fact that spatial locality mirrors data locality.
+We start with an initial tree-based decomposition to assign preferred work items to machines, and provide a separate scheme to satisfy workers that have completed all initial tasks.
+
+In a manner similar to the ORB dissection, we use the $kd$-tree itself starting at the root to assign each branch to a subset of machines, until we reach a single machine\authorsnote{Picture and-or pseudocode.  I promise that the algorithm is very simple.}.
+We then further divide the subtree into pieces of cardinality at most $\frac{n}{\hat{k}}$, and assign all of these to the machine.
+When a machine requests work, a task is assigned from this list if possible, but if it is exhausted, an overflow heuristic is used.
+The goal of such a heuristic is to find a work item whose locally essential tree has the most data in common with previous work items, but also expected future work items.
+
+One such heuristic is to find an unassigned work item closest to a centroid computed from the tasks a machine has already completed.
+In severely nonuniform load, this centroid should gradually migrate to the new tasks that are assigned.
+Optimally the set of work should have relatively low "surface area" compared to its "volume" -- a centroid that migrates too slowly opportunistically finds further and further "holes," but a centroid that migrates too quickly carves a finger-like path.
+Our implmentation takes the mean of the midpoint of each task that has already been assigned to a machine.
+Better heuristics may be possible, especially ones which take into account a more accurate model of correlation between locally essential trees for the particlar algorithm -- for instance, algorithms whose locally essential tree is almost exactly the same as the query tree would benefit only from extremely close work items, whereas the difference between somewhat or extremely distant work items is negligible.
+
+The centroid scheduler has overhead $O(\hat{k})$ for tree decomposition, since it is also just a simple tree recursion.
+To accelerate work assignment, which is worst-case $O(\hat{k}$ per assignment or $O(\hat{k}^2)$ total, we use a single-tree nearest-neighbor search.
+However, since scheduling is such a small cost compared to the dual-tree computation, we are unable to measure this overhead.
+
+%Our initial demonstrations use simple bag-of-tasks scheduling algorithm that adapts to problems where the execution time is bounded $a|Q| \leq t \leq aw|Q|$ where $a$ is the minimum ratio of query tree size to execution time, and $w$ is the maximum constant factor deviance from proportionality.
+
+%In a bag-of-tasks system, each worker requests a new item of work from a central scheduler every time it becomes idle.
+%Given identically sized subtrees of the query tree, the worst-case scenario is that $k - 1$ tasks taking time $t$ each are executed in perfect parallelism and terminate these at the same time, until the last task of length $wt$.
+%The total time is then $\frac{(k-1)t}{p}+wt$, compared to the ideal run time $\frac{(k-1+w)t}{p}$.
+%The utilization $u$ is then $\frac{k-1+w}{k-1+wp}$.
+%For a minimum utilization of $u$, one needs at least $k = \frac{w+wpu}{1-u}+1$ tasks, asymptotically $\frac{wp}{1-u}$.
+%For 50\% utilization with run times deviating from proportionality by a factor no more than 10, one needs a few more than $20p$ tasks.
+%In practice, utilization is far better given this number of tasks.
+
+%Extending the bag of tasks system, we attempt to minimize the amount of extra information a processor requires to take on its next work item.
+%Since spatial locality mirrors data locality, we present a simple greedy algorithm.
+%When a machine requests a work item, the next work item is the closest chunk of the query tree to the work items it has already performed.
+
+%- haven't really implemented this, i'll get back as to the effectiveness
+
+%- link spatial locality with data locality
+%- phrase locality nicely
+%The next query node that is assigned to a worker .
+
+%So far, we have detailed in entirety the functionality of our multithreaded parallel software.
 
 \section{Experimentation}
 

@@ -72,6 +72,9 @@ class BlankGlobalResult {
   void Postprocess(const Param& param) {}
   template<typename Param>
   void Report(const Param& param, datanode *datanode) {}
+  template<typename Param, typename QPoint, typename QResult>
+  void ApplyResult(const Param& param,
+      const QPoint& q_point, index_t q_index, const QResult& q_result) {}
 };
 
 struct BlankQMassResult {
