@@ -1,0 +1,976 @@
+
+%% Note: If you are using this template for a proposal, pass the proposal option to
+%% the class.  Then the toplevel section will be \section, not \chapter.  In either case
+%% the \appendix command, which should only be used in the EndMatter environment, can be considered
+%% to be at the same toplevel (either section or chapter}.
+
+%% NOTE: Hyperref package doesn't yet completely work with the proposal option.  It compiles
+%% but the pdf bookmarks aren't correct.
+
+%% Please report bugs/problems to djallred@gmail.com
+
+%% Begin Preamble Info
+\documentclass[12pt,letterpaper,doublespaced,ETD,dvips,proposal]{gtthesis}
+
+\title{Nearest Neighbor methods in machine learning with applications to speech}
+\author{Nikolaos Vasiloglou II}
+\copyrightyear{2007}
+\graddate{August 2007} %Appears at bottom of title page
+\approvaldate{July 2007} %Appears on signature page (not needed for a proposal)
+
+% Add people to signature list (not needed for a proposal)
+\addadvisor{David Anderson}{Assoc. Professor, School of ECE}{Georgia
+Institute of Technology}
+
+\addadvisor{Alexander Gray}{Assist. Professor, School of CS}{Georgia
+Institute of Technology}
+
+\addchair{Dr. Sitting Bull}{Professor, School of ECE}{Georgia
+Institute of Technology}
+
+\addreader{Dr. Wayne Geronimo}{Asst. Professor, School of
+ECE}{Georgia Institute of Technology}
+
+\addreader{Dr. David Goliath}{Asst. Professor, School of
+ECE}{Georgia Institute of Technology} \addreader{Dr. Marky
+Mark}{Asst. Professor, School of ECE}{Georgia Institute of
+Technology}
+
+\addreader{Dr. Larry A. Stooge}{Asst. Professor, School of
+ECE}{Georgia Institute of Technology}
+\bibfiles{template}
+
+%%Packages to use
+\usepackage{graphicx}
+\usepackage{insfig}
+\usepackage{hyperref}
+
+%%%% These commands set the default depth the TOC should be expanded
+%%   out to for the chapters and appendices
+%%
+\setchaptertocdepth{2}
+\setappendixtocdepth{2}
+
+%%%% To rename different sections of the document use these
+%%   set???string{ ...string...} commands where ??? is replaced
+%%   by one of the following three letter codes
+%%
+%%   toc = table of contents   chp = chapter
+%%   lof = list of figures     app = appendix
+%%   lot = list of tables      prt = part (i.e. volume)
+%%   bib = bibliography        abs = abstract
+%%   ind = index               los = list of symbols
+%%   ded = dedication          ack = acknowledgement
+%%   glo = glossary,list of terms
+%%
+%%   Regardless of capitalization all will become capitalized in
+%%   the final document.
+%%
+\settocstring{Table of Contents}
+\setlofstring{List of Figures}
+\setlotstring{List of Tables}
+\setbibstring{References}
+\setindstring{Index}
+\setdedstring{Dedication}
+\setglostring{List of Terms}
+\setchpstring{Chapter}
+\setappstring{Appendix}
+\setprtstring{Volume}
+\setabsstring{Summary}
+\setlosstring{List of Symbols}
+\setackstring{Acknowledgment}
+
+%%%% Set the default page style for each main enviroment
+%%
+\setfrontpagestyle{plain}
+\setbodypagestyle{plain}
+\setendpagestyle{plain}
+
+\begin{document}
+\pagestyle{plain}
+
+\begin{FrontMatter}
+\contents %Generates the TOC, LOF, and LOT, glossary and LOS
+%% Below are some optional environments that can be used here
+\end{FrontMatter}
+
+\begin{Body}
+\section{Introduction}
+\label{intro}
+The start of stuff. \par
+
+\section{Origin and history of the problem}
+\label{origin}
+%\inssssfig{campanile.eps}{campanile.eps}{campanile.eps}{Test
+%side-by-side-by-side figure}{3cm}{3cm}{3cm}
+\section{Preliminary Research}
+\label{prelim}
+\subsection{The Nearest Neighbor Problem}
+One of the classical problems in statistics and in machine learning
+as is the nearest neighbor problem. Given a set of points in $S =
+{x_i, x_i\in\Re^d, i=0\dots N}$ and a distance metric $M(x_i, y_i),
+x_i, y_i \in S$  the nearest neighbor of $x_i \in \Re^d$ is
+$argmin(M(x, y_i)), y_i \in S$. In many cases the problem of finding
+all nearest neighbors appears. This problem can be formalized as
+find $argmin(M(x, y_i)), y_i \in S, \forall x \in S'$. The problem
+of finding nearest neighbor is can be solved in a "naive" way, by
+computing all the distances between the query point and the
+reference points. The complexity is $O(N)$. Assuming that the number
+of the query points $N$ is the same as the number of reference
+points then the complexity of the naive method is $O(N^2)$. An
+efficient way to reduce the complexity is to use multidimensional
+trees. In the next sections we present kd-trees and ball-trees that
+tend to be the most successful.
+
+As a clarification we mention that this is the problem of the exact
+nearest neighbor. There are algorithms addressing the problem of
+approximate neighbor. Local Sensitivity Hashing is one of the
+algorithms that deal with this problem.
+
+\subsubsection{Multidimensional Trees}
+The purpose of of multidimensional trees is to create a hierarchical
+partition of a dataset so that data points are grouped close to
+their neighbors, which are usually the points of interest, and far
+away enough from other points. It has been proven that there is not
+a globally optimal partition strategy and it is heavily dependant on
+the distribution of the data points as well as on the dimension. In
+this section we present a particular class of multidimensional
+trees, the binary trees and more specifically kd-trees and ball or
+metric trees. The key concept in binary trees is partitioning a set
+recursively in two sets at every step.
+
+\subsubsection{Kd trees}
+The first multidimensional tree in the literature was Kd-tree. After
+30 years it still has comparable performance and in some case even
+better with modern trees. At every level a partition (pivot)
+dimension is chosen according to a user defined criterion and the
+data is split in two subsets according to this dimension. Kd trees
+are off-line trees. In order to build a Kd-tree all the data must be
+available before building the tree in contrast to other trees that
+can dynamically add or delete points.
+
+Several strategies have been recommended for finding the splitting
+dimension. The most popular are splitting on the dimension with the
+maximum variance or maximum range. Both of them are heuristics and
+there is no underlying theory behind it that guarantees better
+performance of the trees. Another issue once the splitting dimension
+is found, is the actual numeric value of split value. In other words
+the ratio of the points going in the two resulting sets. The mid
+value of the range or the mid value of the variance will in general
+give two sets that in most of the cases will have different number
+of points. Another strategy is to find the value that gives equally
+sized sets. This strategy in general gives balanced trees, while the
+first one leads to unbalanced trees. In the following sections we
+show that empirically it is more preferable to have unbalance splits
+on the tree, since it favors pruning in the process of finding the
+nearest neighbors.
+
+\emph{Data structures for Kd trees}
+
+ Kd-tree consists of two types of data structures, the nodes and the
+ leafs. The basic data needed for the nodes are the
+ hyper-rectangles. Hyper-rectangles are the k-dimensional rectangles
+ that describe the minimum bounding box  for a given set of points.
+ Leafs hold additionally the data points. The number of points on a
+ leaf is user defined. As we will see in the following sections the
+ tree method for finding the nearest neighbor is faster than naive
+ only after a threshold of points, (experimentally it has been found
+ to be 30). This threshold is used as the maximum number of points
+ per leaf. Bounding boxes (Hyper-rectangles) and points are the minimum amount
+ of data required to be stored on nodes on the leaf. Extra
+ information about the data such as the centroid of the box, higher
+ order moments, etc also called Cached Statistics can speed up
+ tremendously algorithms other than nearest neighbor.
+
+
+\subsubsection{Ball trees}
+One of the main disadvantage of kd-trees is that they can only
+handle problems associated with the euclidian metric, or metrics
+that can be casted in euclidian metric such as the hamming distance.
+In many cases although the data are expressed in cartesian
+coordinates the notion of similarity is beyond the euclidian sense.
+For example the cosine distance is used in many applications of
+machine learning such as document retrieval.
+
+Metric or Ball trees give solution to this problem. Instead of using
+hyper-rectangles, we use hyper-spheres. Hyper-spheres are
+generalized k-dimensional spheres:
+\begin{equation}
+x,x_0 \in \Re^k , d(x,x0)=r, r\in \Re
+\end{equation}
+where $d(x, y)$ defines a metric in a k dimensional space.
+
+At every split two points that are far away are chosen as anchor
+points. Every other point of the initial set is classified according
+to the minimum distance from the anchor points. The choice of anchor
+points is done heuristically. One method that works in practice is
+choosing a point randomly and then find the furthest point. This is
+the first anchor point. The next anchor point is chosen as the
+furthest point from the first.
+\subsubsection{Nearest Neighbor Algorithm}
+The purpose of using a tree in the nearest neighbor problem is to
+gradually find bounds for the neighbor distance and prune parts of
+the search space. In general trees give bounds for data partitions
+that can be used in other problems that we will see in future
+sections, such as fast gaussian summation.
+
+Initially we start the search from the root node. At each step we
+follow recurse down to the child node that contains the query point.
+In kd-trees we check the pivot dimension of the query point and if
+it is smaller than the pivot value we recurse on the left child
+otherwise on the right. In ball trees we recurse to the child that
+is closer to the query point. The recursion continues until we reach
+a leaf. Then the distances of the query point and the points on the
+leaf are computed. The closest point is a candidate nearest
+neighbor. Moreover we know that the actual nearest neighbor can not
+be further than the current nearest neighbor. So in the end of the
+top down recursion we have an upper bound for the nearest neighbor.
+Note that the top down recursion is logarithmic to the number of
+points assuming a balanced tree. The nest step is to backtrack. At
+each step in backtracking we check if the candidate nearest neighbor
+is in the current leaf/node. There are two ways to check that. First
+of all when we are on a leaf we check weather the hyper-sphere
+centered around the query point with radius equal to the distance
+ between the query point and the candidate nearest neighbor
+ $d_{min}$ intersects the bounding box. If not then this means it is
+ the nearest neighbor. If it does then we have to check all the
+ bounding boxes that intersect the hyper-sphere. For kd-trees and
+ ball trees it is fairly easy to show detect that.
+
+ In general for natural data-sets where data tend to cluster it is
+ possible to prune very well  and achieve logarithmic performance in
+ search. In some cases when the partitioning is not very good, trees
+ behave poorly and eventually have to search almost the whole
+ data-set and they behave worse than the naive method since they
+ have extra recursion overhead.
+\subsubsection{All nearest Neighbors}
+The problem of computing all nearest neighbors appears often in many
+machine learning problems, usually in the training phase. As we will
+see in the following sections computation of the kernel matrix
+involves all nearest neighbor computations. The all-nearest neighbor
+problem is a special case of a more general class of problems called
+N-body problems.
+
+Having in mind the tree based algorithm it is natural to assume that
+finding all nearest neighbors can be solved by executing N nearest
+neighbor queries resulting in an $O(N\log )$ complexity. We will
+call this as the single tree all nearest neighbor algorithm. However
+it is not difficult to notice that there are redundant computations.
+For example consider we have a query set stored on a kd tree and a
+reference set stored on another kd-tree as well. If we do the top
+down recursion for a point then we notice that most likely this top
+down recursion might be exactly the same for all the points in the
+same query leaf. It is also possible that the top down recursion
+might be the same for a whole query subtree.
+
+This observation leads us to the conclusion that instead of
+comparing distances between points in the search it is more useful
+to compare bounding boxes. The algorithm is  a four-way recursion.
+In general the dual tree algorithm as we call it since the query and
+the reference set lie on trees (they might share the same tree if
+the query and the reference set are the same), gives linear
+complexity over the number of data. This is empirical complexity and
+\subsubsection{Fast kernel summation with trees}
+Kernel summation is on of the most common tasks in kernel methods.
+The general formula
+\begin{equation}
+\label{kernel_sum}
+  G(x)=\sum_{q=0}^{N} w_i\exp(\frac{(x-x_q)^2}{\sigma^2})
+\end{equation}
+
+appears in many cases, with the most interesting case the
+eigenvalue/eigenvector computation. The kernel summation is a very
+computationally intensive. For Gaussian kernels there are
+approximations that can speed up computations orders of magnitude.
+We will briefly discuss them here. Besides computation saving we can
+save memory as well. The gaussian kernel has infinite support so the
+kernel matrix $K, K(x,y)=\exp(\frac{(x-y)^2}{\sigma^2}$ is not
+sparse. Numerical iterative methods for eigenvector computation are
+based on the general iteration $x_n=x_{n-1}+\lambda Kx_{n-1}$, where
+the multiplication of each row of $K$ with $x_{n-1}$ is a kernel
+summation problem. So we don't really need to store the kernel
+matrix, we just have to compute the kernel sum for every row using
+$x_{n-1}$ as a the wight vector.
+
+The gaussian can be approximated with the help of Hermite
+polynomials. The Hermite polynomials $H_n(t)$ are defined by the
+Rodrigues formula:
+\begin{equation}
+  H_n(t)=(-1)^n\exp(t^2)D^n\exp(-t^2), t\in \Re
+\end{equation}
+where $D=d/dt$.
+
+The gaussian can now be expressed as
+\begin{equation}
+\exp^(-(t-s)^2)=\sum_{n=0}^{\inf}\frac{s^n}{n!}h_n(t)
+\end{equation}
+
+where $h_n(t)$ is defined by
+\begin{equation}
+h_n(t)=\exp(-t^2)H_n(t).
+\end{equation}
+
+
+\subsection{Kernel methods}
+The kernel or Gram matrix is an informational representation for a
+set of data. There are a different interpretations for the kernel
+matrix. The most mathematical interpretation is the dot product
+matrix. Every element of the kernel matrix is the dot product
+between the two data points. It is a positive semidefinite matrix
+and it can be considered as the adjacency matrix of a graph where
+the points are nodes. This graph can also be considered as an
+approximation of the surface that data lie on. Positive
+semidefinitness is the only property required for the gram matrix.
+In most of the methods that we discuss in this section, we prefer
+the interpretation of the dot product matrix, in the general Hilbert
+sense. The dot products in most of the cases are non-linear.
+\subsubsection{Kernel principal component analysis}
+Kernel Principal Component Analysis (KPCA), is an extension of
+principal component analysis where the data are mapped into a
+different feature space through the kernel. In Principal Component
+Analysis the goal is to find the principal components for  the
+covariance matrix $C$ for a given dataset $S={x_j, x_j\in \Re^d, j=1
+\dots M}$, where $C=\frac{1}{M}\sum_{j=1}^{M}x_j x_j^T$. If we
+define a mapping
+\begin{equation}
+\Phi : x \rightarrow X , x \in \Re^d, X\in \Re^f
+\end{equation}
+
+usually $f>>d$. So usually the nonlinear mapping, maps the data in a
+higher dimensional space sometimes in an infinite dimensional space.
+At this point it should be clarified that the mapping increases the
+extrinsic dimension of the data not the intrinsic. In kernel PCA we
+want to find the principal components of the covariance matrix
+\begin{equation}
+\tilde{C} = \frac{1}{M}\sum_{j=1}^{M}\phi(x_j)\phi(x_j)^T
+\end{equation}
+
+It turns out that the mapping $\Phi$ doesn't have to be known
+explicitly, all we need is the kernel that represents the dot
+product.
+\begin{equation}
+k(x, y) = \phi(x)\phi(y)^T
+\end{equation}
+For some kernels there is an analytic factorization while for others
+there is not. Not every function can be a valid kernel (dot
+product). There are conditions that must be fulfilled. Basically for
+every dataset they  must give a valid kernel matrix as described in
+previous sections.
+
+Kernel PCA has many cousins such as Laplacian eigenmaps, Diffusion
+maps Isomap, Local Linear embedding
+
+\subsubsection{Customized Kernels}
+As we described in the previous section there are infinite functions
+that can act as valid kernels. The most popular kernels are:
+\begin{enumerate}
+  \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
+  \item The polynomial kernel $k(x, y)=(xy)^n$
+  \item The epanechnikov kernel $k(x, y)=1-||x-y||^2/\sigma^2, ||x-y||<\sigma, else 0$
+  \item The k-nearest neighbor kernel
+\end{enumerate}
+
+Although these are valid kernels for any kernel method including
+Kernel PCA they are not appropriate for every task. In some cases we
+want to map data in higher dimensional spaces preserving distances
+(isometry) while in other cases we want to make small distances
+smaller and send high distances to infinity (clustering). The
+gaussian kernel for example tends to behave better in clustering
+since it fades out very quickly. On the other hand it fails to
+unfold the data manifold so that the intrinsic dimension can be
+estimated. Manifold unfolding is a very important procedure since it
+can reveal the true dimension of the dataset.
+
+In [?] the authors introduced the idea of building the kernel matrix
+from scratch without using any fixed kernel. As we have already
+mentioned the kernel matrix has to be a positive semidefinite
+matrix. Initially we have to define a k neighborhood  for every
+point. So at first we have to connect points to their neighbors and
+build a initialize the non zero values of the matrix to 1. Then we
+maximize the trace of the kernel matrix under the constraint that
+the the distances in the kernel matrix are preserved. This leads to
+a semidefinite programming problem.
+\subsubsection{Stochastic optimization}
+Stochastic optimization or on line learning. On line svd is one key
+aspect.
+\subsubsection{Support Vector Machines}
+\section{Proposed Research}
+\label{proposed}
+
+The goal of this thesis is to make kernel methods scalable.
+Efficient computation of the kernel matrix for large amounts of
+data. Special emphasis is given in high dimensional data $d>30$. One
+of the goals is to use Kernel PCA for unfolding the speech manifold.
+In other words estimate the intrinsic dimensionality of speech by
+using big databases like timit, wall street journal and broadcast
+news. Implicitly dimensionality reduction will lead to new feature
+generation we will explain it in the following sections. The
+ultimate goal is to do speech recognition by nearest neighbor
+search.
+\subsection{Large scale trees, for out of core memory}
+Kd-trees have been proven to be be quite successful in
+multidimensional indexing and turn out outperform several other
+trees in statistical processing of data mainly in all nearest
+neighbor problem, n-point correlation etc. In this paper we address
+different implementations of kd-trees for data that don't fit in the
+RAM. We show whether virtual memory behaves better   than paging of
+nodes on the disk.
+
+Kd trees have been used quite successfully in statistics for
+speeding up statistical algorithms (nearest neighbor, 2 point
+correlation  over large dataset. Many other trees like ball-trees,
+vantage trees, cover trees etc have been developed as a rivalry but
+they haven't really shown any significant improvement, their
+performance is most of the times comparable to the kd-trees. After
+30 years they still remain the state of the art for developing
+statistical algorithms. In most of the cases kd trees have been used
+for datasets that fit in the main memory.
+
+During the same period the database community developed structures
+for multidimensional indexing mainly used for database applications.
+Some examples of successful tree structures are R-trees,
+$R^{*}$-trees, X-trees and TV-trees. The main incentive for these
+trees was to handle large volumes of data, dynamic insertions,
+deletions and random accesses.
+
+The size of the datasets for statistical processing is increasing
+faster than the availability of  main memory so it is necessary to
+investigate the performance of kd trees and various optimizations
+over cached implementations. Unfortunately R-tree like structures
+cannot be used or even compared to kd-trees since they are optimized
+for different problems. It turns out that batch loading of spatial
+trees can improve their performance. There are splitting strategies
+in some of them (X-trees) that can guarantee non overlapping
+hyper-rectangles which is considered to be a good thing for the
+nearest neighbor performance. Eventually kd-trees can be considered
+as a special case of spatial trees, so there is no point in
+comparing to them.
+
+In this paper we consider some caching implementation strategies for
+kd-trees. The first approach is the use of virtual memory through
+memory mapped files. The basic advantage is the the programming
+simplicity, since data can be accessed through normal pointers. The
+operating system takes care of the page faults. The second approach
+is to take care of the cache so that we can use bigger page sizes
+than the default 4096 in Linux. Page fault is handled on the
+application level. In order to minimize the io cost between disk and
+main memory we used the TPIE library that does efficient block
+transfers.
+
+Another parameter that affects the performance of the trees is the
+layout of the tree on the memory, that has to be in such a way that
+it guarantees good locality in terms of the access pattern of some
+basic kd tree algorithms, such as all  nearest neighbors, n-point
+correlation. There are different ways to build a kd-tree: a)Depth
+first b)Breadth first and c)The combination of them building k-depth
+trees breadth first. It has been shown experimentally that
+unbalanced kd-trees tend to give better pruning performance, we also
+consider balanced tree splits since they can give better locality.
+
+The last implementational issue is prefetching.  Queries in
+databases are random most of the time so prefetching doesn't really
+make sense. On the other hand statistical algorithms on trees
+generate queries that are highly correlated, so we can take
+advantage of that. Taking advantage of the multicore architecture it
+is possible to do non blocking system call for prefetching.
+
+In this paper we do not address the problem of building cache
+efficiently trees since this issue has been extensively addressed in
+the literature, with the most successful algorithm the buffer tree.
+
+\subsection{Memory layout of Kd-trees} There are many ways to build a
+kd tree, depth first, breadth first and the combination for both. It
+turns out that breadth first does not give good locality for
+dual-tree algorithms. We will show experimentally that the hybrid
+method gives the best results in terms of page faults and depth
+first has comparable performance. Another parameter of kd-trees that
+has effect in the cache performance is the splitting algorithm.
+Mid-point splits  guarantee balanced trees, but do not always give
+good performance in terms of punning.
+
+\subsection{System architecture} There are several ways to implement
+a disk kd-tree. As it has been stated above, speed is an essential
+feature that we are particularly interested as well ass portability.
+Since building the tree for large scale data might take a lot of
+time it is very important to be able to reload the tree and perform
+other operations. Although it is desirable to keep the tree as
+generic as possible so that we can use it for different applications
+this might sacrifice the performance. In our implementation we
+avoided virtual functions, structures that require memory
+reallocations. In order to keep it generic we used simple concepts
+of C++ template programming. Another issue that is of great
+importance is memory locality. There are five basic memory
+structures involved in a kd tree, nodes, leafs, data points node
+cached statistics and hyper-rectangles. Some of them can be combined
+but it is always good to preserve the abstraction hierarchy Tree,
+Node, bounding Box, Node Statistics, and Points. There is also
+another one which can be treated separately, the result. This can be
+the nearest neighbor(s), the kernel density estimation etc. They can
+be stored either on the tree or on external structures linked from
+the tree nodes. There are two major ways to lay out the tree on the
+memory. The first method is to use a separate cache for each data
+structure and the other one is to use  a single cache for
+everything. In some cases the output of the algorithm might as well
+be orders of magnitude larger than the actual tree. For example
+k/range nearest neighbors can give pretty big result sets for large
+k or range.
+
+\subsection{Memory Manager Architecture} In order to test different
+memory manager strategies, we used smart pointers that would
+collaborate with their corresponding memory allocators. Memory
+Allocators implement a set of basic functions such as malloc. One of
+the fundamental issues is to make sure the allocated memory for each
+structure had the correct alignment. It is widely known that wrong
+memory alignment can decrease the performance or even cause a
+program crash. an easy and portable way to compute the memory
+alignment is to use the simple macro depicted in ??. Another issue
+that has to be addressed is page fault handling. In the following
+section we describe two different memory managers we implemented and
+in section ? we compare their performance.
+
+\subsection{Memory Mapped Files} In this approach we used a single
+memory mapped file big enough to fit the tree. The length of the
+file has to be known ahead, but it is not hard to estimate it. The
+memory is allocated linearly and since there are no reallocations or
+deletions there is no need to worry about memory fragmentation.
+Paging is taken care by the operating system. The page size is fixed
+4096B for Linux. Customizing the page size is something desirable
+but this shouldn't be of great worry since very soon Linux will
+accommodate for variable page size [?]. This implementation is
+pretty simple and memory access is achieved with normal pointers. It
+is also efficient since all the paging is done in lower levels of
+the operating system
+
+\subsection{User defined cache, with TPIE} In this implementation a
+block of memory is preallocated and page faults are handled in an
+LRU sense, while the block transfers between main memory and the
+disk are done with the TPIE engine. TPIE is a portable library for
+efficient block transfers. It 's highly abstracted to accommodate
+for different transfer models. It is currently implementing memory
+mapped mode, Linux read/write and C fread/fwrite. In the future it
+will implement the parallel disk model as well. The advantage of
+this memory manager is that we can control/define several features,
+such as page size, page replacement algorithm and disk/memory
+transfers. The main disadvantage is the address translation that has
+to be done on the application level and slows down the system. In
+order to minimize this effect we sacrificed a little bit of the
+programming interface simplicity. So the address translation is
+explicitly done in the initialization of the pointer. So the pointer
+includes a universal address (integer) and a pointer to the main
+memory. Upon request the internal pointer p points to the data in
+the main memory. As it is obvious this particular memory segment
+might be paged out during the execution. To avoid that the
+programmer explicitly locks the particular page as long as the
+pointer is in use and then it is explicitly unlocked when the data
+pointing to is not necessary anymore. This is  policy is always
+prone to deadlocks if the cache size is small and the page size is
+large. Another possible case of deadlock is when the tree building
+algorithm does not guarantee good locality in the access pattern of
+the dual-tree algorithm. In practice we never came across a
+deadlock, since depth first and kdepth first give good enough
+locality for N-body algorithms. But even in the case of bad locally
+we could make local copies of the data and not lock the pages,
+sacrificing the performance of the algorithm. It turns out though
+that the locking/unlocking strategy is quite efficient because it
+avoids copies and it minimizes the cost of address translation. This
+coding scheme is sensitive to bugs because the programmer might
+accidently keep pages locked, which can have an immediate effect in
+the program performance in the same way memory leaks behave. For
+this reason we trace locks/unlocks in debug mode to ensure that the
+program is free of this type of bugs. Another important issue is
+marking the modified pages so that we save unnecessary copies from
+main memory to disk. We used the SIGSEGV library along with mprotect
+to address efficiently this. Pages are write protected in memory and
+if a write occurs a signal is raised and the page is marked as
+modified.
+
+\subsection{Customizing Kernels with fast
+gradient descent}
+
+As we described in section ? it is possible to customize the kernel
+for a given dataset, through semidefinite programming. Although this
+method is very promising and gives very good results it is not
+scalable. Semidefinite programming is solved with the intrinsic
+point method which is of polynomial complexity.
+
+\subsection{Scalable Support Vector Machines}
+\subsection{Computing Gaussian Kernel Matrix with trees}
+\subsection{Intrinsic dimension of speech}
+
+
+\subsection{Speech recognition with nearest neighbor search}
+
+In this paper we present a computationally efficient means of
+characterizing different features for speech processing tasks. The
+presented method can be used to compare the performance of features
+free of interference from back-end recognition engines that might be
+skewed to favor a particular feature. Understanding the intrinsic
+characteristics of features would enable us to make the right choice
+of features for a given task.
+\subsection{Introduction} Many features have been proposed for speech
+recognition, with Mel Frequency Cepstrum Coefficients (MFCC)
+\cite{quatieri2002dts} being the most popular. Other features have
+also been developed claiming better performance than MFCC in limited
+tests over different data sets. The most common metric is the speech
+recognition word accuracy over TIMIT or any other data set.
+Unfortunately most of the speech recognition systems are
+specifically tuned for MFCCs and it is difficult to have objective
+comparison since systems always tend to favor them. In this paper we
+will introduce statistical algorithms that can scale easily for
+large data sets. One very interesting statistical measure for
+features that can be the basis for many machine learning algorithms
+is all nearest neighbors, which is a special case for the general
+N-body problem. The brute force method is of $O(N^2)$  complexity
+and virtually impossible to scale for large data sets. One way to
+speed up computations is to order the features on a multidimensional
+tree, such as kd or ball tree \cite{bentley1975bst},
+\cite{moore2000ahu} which provide on the average $O(N\log_2N)$
+complexity for all nearest neighbor search. A faster algorithm using
+2 trees has made it possible to compute all nearest neighbors in
+linear time \cite{gray2000nbp}.  In this paper we demonstrate the
+performance of the fast all nearest neighbor algorithm over the
+whole TIMIT database using two different features, MFCC and Noise
+Robust Auditory Features (NRAF) \cite{ravindran:inr}. Since the data
+are phonetically labeled, the results are used for evaluating the
+k-nearest neighbor classifier performance. This is also a good
+measure for the compactness and separability of the phonetic classes
+for these two features.
+
+Another fundamental problem in speech generation theory is the
+estimation of the intrinsic dimension of the speech manifold. Recent
+theories have proven that although speech is described with high
+dimensional representations, it is actually embedded on a low
+dimensional subspace \cite{jansen2006ifa}. The most easy but
+inaccurate method to estimate the embedding of speech in a low
+dimensional space is Principal Component Analysis (PCA), which
+suffers from many problems, specially because of the presence of
+non-linearities on the data. On the contrary many other methods for
+dimensionality reduction have been proposed. These are kernel PCA
+\cite{scholkopf:nca}, diffusion maps, Laplacian eigenmaps
+\cite{coifman2006dm} etc. All these methods operate on a local level
+and require the computation of the nearest (range or k) neighbors of
+every point. The brute force and single tree methods have made the
+cost prohibitive for large data sets, but the dual tree method makes
+possible to evaluate the proximity graph between the points and
+apply any of the above mentioned methods.
+
+\subsection{Speech features} In our implementation, MFCC features
+were extracted using the freely available code from \emph{Voicebox}.
+The speech signal was divided into frames of length 25 msec, with 50
+\% overlap and 13 MFCC coefficients (including the zeroth
+coefficient) where extracted from each frame. Twenty-seven filters
+were used to group the frequency bins into critical bands.
+
+The NRAF features were derived from a model of the early auditory
+system~\cite{shamma_main}. The input signal was passed through a
+bandpass filter bank. We then performed a difference operation
+between adjacent frequency channels. This is followed by a half-wave
+rectification and a smoothing filter. We compute a discrete cosine
+transform (DCT) of the logarithm of the output of the smoothing
+filter to obtain the NRAFs. The filter bank consisted of 27
+1/4$^{th}$ octave filters tuned from 76 Hz to 6887 Hz. The smoothing
+(temporal integration) was done over 25 msec and sampled at a rate
+of 80 Hz (in order to match MFCCs). As in the case of MFCCs, the
+first 13 coefficients were used for further processing.
+
+In both cases the delta and acceleration coefficients were extracted
+and appended to each feature vector, increasing the dimensionality
+from 13 to 39.
+
+\subsection{Fast N-body methods for feature comparison} One of the
+fundamental problems in statistics is the nearest neighbor
+computation for every point in a dataset. The brute force also known
+as the naive method requires $O(N^2)$ computations. Ordering the
+multidimensional data on a binary tree, gives $O(\log (N)$ search
+time per point and $O(N\log N)$ in total. There is a plethora of
+binary multidimensional trees ball tree, kd tree, cover tree etc. In
+our experiments we used the kd tree. A detailed description of kd
+trees can be found at \cite{moore-tutorial}. The main concept is to
+recursively partition data in disjoint rectangles. Each tree node
+contains a k-dimensional rectangle (hyper rectangle) that bounds all
+the points that are contained in the subtree. Only leafs contain
+points. In Fig.~\ref{kdtree} an example of a kd tree in 2 dimensions
+is given, while the algorithm for computing the nearest neighbor for
+a test point is depicted in table Fig.~\ref{dualtree_algorithm}. The
+main idea is to recursively find the leaf that contains the query
+point then compute a candidate nearest neighbor on the leaf. As the
+algorithm back tracks it determines if it is necessary to search
+other subtrees for a nearest neighbor.
+
+The use of dual trees in the all nearest neighbor search has proven
+to give significant speed-up in all-nearest neighbor computations.
+The basic idea is that the whole query set is structured on a tree.
+In our case the query tree and the reference tree are the same. The
+core of the algorithm relies on the fact that if the current maximum
+nearest neighbor distance in the query node is smaller than the
+distance between the query and the reference node distance then the
+reference node can be pruned. This saves a huge amount of
+computation in most of the cases since whole  subtrees can be pruned
+out for a large subset of points at once. The all nearest neighbor
+search is described algorithmically in Table
+\ref{dualtree_algorithm}. The complexity of the algorithm, on
+average, turns out to be linear.
+
+\begin{table}
+\begin{verbatim}
+recurse(q : KdTree, r : KdTree) {
+  if (can_prune(q, r)) {
+    summarize(q, r) /* prune */
+  } else if (IsLeaf(q) and IsLeaf(r)) {
+    do_all_pairs(q, r)
+    /* at leaves we must resort to n^2 */
+  } else if (<should recurse on q>) {
+    recurse(q.left, r)
+    recurse(q.right, r)
+  } else {
+    recurse(q, r.left)
+    recurse(q, r.right)
+  }
+}
+\end{verbatim}
+\caption{Pseudo-code for the dual-tree all nearest neighbor
+algorithm} \label{dualtree_algorithm}
+\end{table}
+
+
+
+\insfig[kdtree]{kdtree.eps}{A two dimensional kd-tree}{8cm}
+
+
+\insfig[dualkdtree]{dualtree_recursion.eps}{Simulation of the dual
+tree algorithm}{8cm}
+
+
+\subsection{Kernel PCA on a manifold} Let  $(\Gamma,\mu)$ be a
+measure space, where $\Gamma$ is a finite set of $N$-dimensional
+points and $\mu$ is a counting measure that represents the
+distribution of the points on the data set. In other words $\Gamma$
+is a submanifold of $\Re^{n}$. Assume that the geometry of $\Gamma$
+is defined by a kernel $k(x,y)$. The kernel $k(x,y)$ measures the
+degree of similarity between two points $x,y$. The kernel satisfies
+the following conditions:
+\begin{itemize}
+    \item   $k$ is symmetric: $k(x,y)=k(y,x)$,
+    \item   $k$ is positivity-preserving: for all $x,y$ in
+$\Gamma, k(x,y)\geq 0$
+    \item   $k$ is positive semi-definite: for all bounded
+functions $f$ defined on  $\Gamma$,
+\[
+\int_{\Gamma} \int_{\Gamma} k(x,y)f(x)f(y)d\mu(x)d\mu(y)\geq 0\]
+\end{itemize}
+In this paper it is assumed that $\Gamma$ is a subset of the
+Euclidean space $\Re^{n}$. So for $x,y\ni\Gamma$ the kernel
+(similarity measure) is a function of the Euclidean distance
+$\parallel x-y\parallel:$
+\[
+ k(x,y)=\eta(\frac{\parallel x-y\parallel}{h})
+\]
+The eigenvalue analysis of the graph with the adjacency matrix
+$k(x,y)$ is the basis for embedding the data to a lower dimensional
+space.
+\[
+    k(x,y)=\sum_{j=0}^{M} \lambda_{j}\phi_{j}(x)\phi_{j}(y)
+\]
+
+where $M$ is the number of data points, $x$ and $y$ are nodes of the
+graph and $\phi_j$ is the $jth$ eigenvector that corresponds to the
+$\lambda_j$ eigenvalue.
+
+One problem is that exhaustive computation of the kernel will lead
+to a full matrix, which makes the computation of the eigenvector
+$O(N^2)$. Fortunately very few $(x,y)$ pairs have a non zero kernel
+product since it depends on their proximity. So again the
+computational bottleneck for kernel PCA is the computation of
+nearest neighbors which can be solved by the dual tree algorithm in
+linear time.
+
+\subsection{Experimental Results} In order to illustrate the
+applicability of the algorithms described above, the TIMIT and Noisy
+TIMIT (NTIMIT) database were chosen. Our goal is to test our
+algorithms in terms of scalability and time. Phoneme classification
+with the nearest neighbor classifiers was chosen as the evaluation
+task. The task was repeated for both set of features, namely, MFCC
+and NRAF. We also illustrate the spectrum of kernel PCA for the two
+different features.
+\subsection{All nearest neighbor performance}
+The timing results are illustrated in table \ref{timing}. The all
+20-nearest neighbor method with the dual tree algorithm on kd-trees
+is 30 to 50 times faster than naive in terms of time. It took about
+3.6 hours for MFCCs and 2.2 hours for NRAF for all 20-nearest
+neighbors. It is well known that the pruning performance of the
+trees depends on the intrinsic dimension of the dataset. A simple
+way to get an estimation of the intrinsic dimension is the
+eigenvalue distribution of the Principal Component Analysis. As seen
+from Fig.~\ref{pca} NRAFs have a more compact distribution than
+MFCCs.
+\subsection{Comparison of NRAF and MFCC}
+Two types of experiments were done for the comparison of the
+features. The first one is the Leave One feature Cross Validation.
+So for every feature we find the k-nearest neighbors and check
+whether the majority has the same label as it \footnote{Instead of
+using the 61 different phonetic classes of TIMIT we used the 39
+categories of the CMU dictionary}. In tables \ref{kneighborTIMIT}
+and \ref{kneighborNTIMIT}, we demonstrate the performance of MFCC
+and NRAF for TIMIT and NTIMIT for various k. NRAF perform better
+than MFCC, specially in the noisy case.
+
+In the second experiment we do Leave-One-Speaker-Out cross
+validation. For every feature we find the k-nearest neighbors that
+don't belong to the same speaker and check if the majority has the
+same label as it. The results are illustrated again in
+\ref{kneighborLOOCVTIMIT} and \ref{kneighborLOOCVNTIMIT}. The
+results drop significantly and it interesting that MFCCs perform
+better than NRAFs. The reason why the performance drops
+significantly is because we haven't done any covariance
+normalization on the data. It is well known in the speech
+recognition literature that mean and variance normalization improves
+recognition as it removes the speaker bias. It turns out that
+variance normalization broadens significantly the PCA spectrum which
+is tightly connected with the performance of kd-trees. We tried
+variance normalization but the all nearest neighbor performance was
+very slow. Another option is the Mahalanobis distance on a metric
+tree, but again the covariance normalization would have an immediate
+effect on the performance.
+
+It turns out that variance normalization is a way of decorrelating
+the MFCC/NRAF dimensions, which breaks the manifold structure. This
+is a suggestion that we should move on with higher dimensional
+transformations that remove the speaker bias intrinsically.
+
+In fig.~\ref{kernel_pca} the kernel PCA spectrum is illustrated. The
+Gaussian kernel with adaptive local bandwidth was used for the
+20-nearest neighbors. The bandwidth is proportional to the nearest
+neighbor distance and every point is connected with its 20 nearest
+neighbors. It turns out that the kernel PCA spectrum is very wide.
+This is a result of the fact that 20 nearest neighbors are not
+enough to model correctly the manifold. It is an indication that
+more neighbors should be used. We experimented with the bandwidths
+and it turns out that no further improvement can be achieved by
+tuning it. High bandwidths tend to give more compact spectrum, so
+even in the extreme case of infinite bandwidth no more significant
+improvement is shown for 10 nearest neighbors.
+
+\subsection{Discussion}
+It has been shown previously that NRAFs tend to be more robust to
+noise compared to MFCCs~\cite{ravindran:inr}. From
+Tables~\ref{kneighborTIMIT} and~\ref{kneighborNTIMIT} it is clear
+that NRAFs do provide substantial improvement over MFCCs specially
+in noisy environments. However, it is very interesting to note that
+MFCCs outperform NRAFs in all Leave-One-Speaker-Out cross validation
+tests. This would suggest that MFCCs are better than NRAFs at
+removing inter-speaker variability. Inter-speaker variability
+usually is the result of incorporating pitch information (usually
+encoded in the higher coefficients of the decorrelation transform)
+and it is very much possible that in ensuring NRAFs and MFCCs have
+the same number of channels we may have introduced pitch information
+into the NRAF features. Perhaps using lesser number of NRAF
+coefficients or different filter spacing, the inter-speaker
+variability could be removed.
+
+
+\instbfig[pca]{timit_pca.eps}{ntimit_pca.eps}{Principal Component
+Analysis of TIMIT (top) and NTIMIT (bottom) for MFCC (solid line)
+and for NRAF (dashed line).}{8cm}{8cm}
+
+
+\insfig[kernel_pca]{kernel_pca.eps}{Kernel PCA spectrum for TIMIT
+MFCC features}{8cm}
+
+\begin{table}[h!]
+\footnotesize{ \centering
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & Naive & Single Tree & Dual Tree \\
+  \hline
+  MFCC & 100 & 4.3 & 3.6 \\
+  NRAF & 100 & 2.9 & 2.2 \\
+  \hline
+\end{tabular}
+ \caption {CPU time (in hours) for evaluating all 20 nearest neighbors on
+  TIMIT database}
+  }
+  \label{timing}
+\end{table}
+
+\begin{table}[htb]
+\footnotesize{ \centering
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & 1-nearest & 3-nearest & 4-nearest & 7-nearest & 10-nearest \\
+  \hline
+  MFCC & 62.2\% & 70.4\% & 69.7\% & 65.3\% & 63.4\% \\
+  NRAF & 66.9\% & 74.1\% & 73.2\% & 67.3\% & 64.7\% \\
+  \hline
+\end{tabular}
+\caption{Nearest k-neighbor classfier for TIMIT database} }
+\label{kneighborTIMIT}
+\end{table}
+
+\begin{table}[htb]
+\footnotesize{ \centering
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & 1-nearest & 3-nearest & 4-nearest & 7-nearest & 10-nearest \\
+  \hline
+  MFCC & 41.4\% & 55.5\% & 54.5\% & 50.7\% & 49.4\% \\
+  NRAF & 55.0\% & 65.1\% & 64.0\% & 57.5\% & 54.5\% \\
+  \hline
+\end{tabular}
+\caption{Nearest k-neighbor classfier for NTIMIT database} }
+\label{kneighborNTIMIT}
+\end{table}
+
+\begin{table}[htb]
+\footnotesize{ \centering
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & 1-nearest & 3-nearest & 4-nearest & 7-nearest & 10-nearest \\
+  \hline
+  MFCC & 44.0\% & 56.3\% & 56.3\% & 54.7\% & 54.6\% \\
+  NRAF & 42.2\% & 53.5\% & 53.7\% & 52.4\% & 52.4\% \\
+  \hline
+\end{tabular}
+\caption{Nearest k-neighbor classfier for
+  Leave One Speaker out Cross Validation in TIMIT database}
+} \label{kneighborLOOCVTIMIT}
+\end{table}
+
+\begin{table}[htb]
+\footnotesize{ \centering
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & 1-nearest & 3-nearest & 4-nearest & 7-nearest & 10-nearest \\
+  \hline
+  MFCC & 32.0\% & 46.7\% & 46.5\% & ?44.3\% & 43.8\% \\
+  NRAF & 30.1\% & 42.9\% & 42.9\% & 41.2\% & 40.1\% \\
+  \hline
+\end{tabular}
+  \caption{Nearest k-neighbor classfier for Leave One Speaker Out
+  Cross validation in  NTIMIT database}
+} \label{kneighborLOOCVNTIMIT}
+\end{table}
+
+\subsection{Acoustic Environment adaptation}
+
+\section{Work remaining to be done}
+\label{remains}
+
+\section{Facilities and Equipment Needed}
+\label{facitlies}
+\end{Body}
+
+\begin{EndMatter}
+\appendix{This is my first appendix}
+\appendix{This is my second appendix}
+%% Below are some optional environments that can be used here
+\bibliographystyle{ieeetr}
+\references % Generates the bibliography page
+\index % Generates the index - should be last
+\end{EndMatter}
+
+\end{document}

@@ -1,0 +1,46 @@
+v1.0 - 2004/08/02 
+	Initial Public Release
+
+v1.1 - 2005/01/11
+	Fixed footnote line spacing bug - Done!
+	Add support for hyperref package (for both thesis and proposal modes).
+		Thesis Mode - Done!
+		Proposal Mode - Not Done!
+	Add new command for titles that want to use explicit line breaks.
+		Added command \multiLineTitle{<Title>} but explicit capitalization is required
+		by the author.
+	Update documentation
+		Add info on tools and common problems (particular margin sizes, A4 paper problems, page scaling in Acrobat)
+		Add section describing some common packages that might come in handy (including hyperref)
+		Add changelog info
+	Addressed some issues about the spelling of acknowledgment (with or without extra e)
+	Made Default major Electrical and Computer Engineering (not Electrical Engineering)
+	Changed campanile graphic to use vector form (Thanks to Michael Shell)
+	Also added pdf campanile graphic (also thanks to Michael Shell)
+
+v1.2 - 2005/03/23
+	Fixed problem with dedication
+		Removed dedication heading, but left in pdf bookmarks when using hyperref
+
+	Added the FrontMatter environment, Epigraph, used for theme quote.
+
+	Added option proposalwithchap, which allows proposal to appear on the title page while formatting the document
+		as if it were a complete dissertation. (desired by Chris Twigg and Paul Hasler's students). Added on 7/11/2005.
+
+v1.2a - 2006/01/09
+	Fixed continuouscount option so that it actually works to turn on and off counter resets.
+		Works in thesis mode and in proposal mode.
+
+v1.3 - 2006/06/21
+	Modified the options available by converting all if based toggles to class options.  This was
+		done in conjucntion with the removal of the dependency on report.cls.  This also allowed 
+		me to remove the dependency on the changectr class.
+	Finished support for index creation (use the index option passed to the class in conjuction with 
+		the \indexitem command within the text, and finally the \index command to print the index within
+		the endmatter).
+	Added new code for glossary creation and list of symbols creation.  Also added the batch files to
+		assist in the creation of the glossary and list of symbols.
+	
+	To do:
+		Check out hyperref in proposal mode - fix it if needed.
+		Verify compliance with the latest OGS guidelines.
