@@ -4,12 +4,40 @@
 #include "dfs.h"
 #include "nbr_utils.h"
 
+/*
+
+I spent about a day chasing an elusive bug.  The bug is due to the sloppy
+semantics of ConsiderPairTermination and ConsiderPairExtrinsic.
+
+Here's a proposal:
+
+In an extrinsic prune, it is assumed ANY side-effects (such as the delta)
+are applied by ConsiderPairExtrinsic to the postponed, rather than by NBR.
+On the other hand, a termination prune needs to mark whatever the final
+result was.
+
+The bug I found was when I was "horizonally merging" values of Postponed
+results, which is really when a postponed result is pushed down to the child.
+If there is a postponed "label assignment" (i.e. it was decided the entire
+tree had the same label), then it wouldn't apply the kernel sums as it would
+seem unnecessary.  Unfortunately, the vertical join operator on mu cares a
+lot about the actual densities involved -- it doesn't special-case the
+situation when it realizes it has a label assigned and realize not to
+care about the density.
+
+The way I solved it ensures that as-correct-as-possible densities reach all
+the way down to the points, by forwarding queued-up moment information EVEN
+IF a label is already obvious.  It would probably be faster that, in case
+a label is propagated, to hard-code the density to conform; i.e. if it
+is assigned a label of "LO", then setting the upper and lower bound to
+something smaller than threshold.
+
+*/
+
 /**
- * Approximate kernel density estimation.
- *
- * Uses Epanechnikov kernels and the inclusion rule.
+ * An N-Body-Reduce problem.
  */
-class Tkde {
+class Akde {
  public:
   /** The bounding type. Required by NBR. */
   typedef SpHrectBound<2> Bound;
@@ -20,8 +48,6 @@ class Tkde {
   /** The type of kernel in use.  NOT required by NBR. */
   typedef EpanKernel Kernel;
 
-  typedef BlankGlobalResult GlobalResult;
-
   /**
    * All parameters required by the execution of the algorithm.
    *
@@ -29,33 +55,32 @@ class Tkde {
    */
   struct Param {
    public:
-    /**
-     * The threshold in use, with upper and lower bounds to prevent
-     * roundoff error.
-     *
-     * This is also normalized for dimensionality and the number of reference
-     * points.
-     */
-    SpRange thresh;
     /** The kernel in use. */
     Kernel kernel;
     /** The dimensionality of the data sets. */
     index_t dim;
-    /** The original threshold, before normalization. */
-    double nominal_threshold;
+    /** The epsilon used for error computation. */
+    double epsilon;
+    /** The epsilon used for error computation, divided evenly. */
+    double epsilon_divided;
+    /** Normalization factor to be multiplied by later. */
+    double post_factor;
 
     OT_DEF(Param) {
-      OT_MY_OBJECT(thresh);
       OT_MY_OBJECT(kernel);
       OT_MY_OBJECT(dim);
-      OT_MY_OBJECT(nominal_threshold);
+      OT_MY_OBJECT(epsilon);
+      OT_MY_OBJECT(epsilon_divided);
+      OT_MY_OBJECT(post_factor);
     }
 
    public:
     void Copy(const Param& other) {
       kernel.Copy(other.kernel);
-      thresh = other.thresh;
       dim = other.dim;
+      epsilon = other.epsilon;
+      epsilon_divided = other.epsilon_divided;
+      post_factor = other.post_factor;
     }
 
     /**
@@ -63,19 +88,22 @@ class Tkde {
      */
     void Init(datanode *module) {
       kernel.Init(fx_param_double_req(module, "h"));
-      nominal_threshold = fx_param_double_req(module, "threshold");
+      epsilon = fx_param_double_req(module, "epsilon");
     }
 
     void BootstrapMonochromatic(QPoint* point, index_t count) {
       dim = point->vec().length();
-      double normalized_threshold =
-          nominal_threshold * kernel.CalcNormConstant(dim) * count;
-      thresh.lo = normalized_threshold * (1.0 - 1.0e5);
-      thresh.hi = normalized_threshold * (1.0 + 1.0e5);
+      epsilon_divided = 2 * epsilon / count;
+      post_factor = 1.0 / kernel.CalcNormConstant(dim) / count / (count - 1);
     }
 
    public:
-    // Convenience methods for purpose of thresholded KDE
+
+    double TwiceEpsilonFor(index_t count) const {
+      return epsilon_divided * count;
+    }
+    
+    // Convenience methods
 
     /**
      * Compute kernel sum for a region of reference points assuming we have
@@ -116,7 +144,6 @@ class Tkde {
       return -quadratic_term * kernel.inv_bandwidth_sq() + r_count;
     }
   };
-
 
   /**
    * Moment information used by thresholded KDE.
@@ -253,43 +280,28 @@ class Tkde {
    */
   typedef SpNode<Bound, QStat> QNode;
 
-  enum Label {
-    LAB_NEITHER = 0,
-    LAB_LO = 2,
-    LAB_HI = 1,
-    LAB_EITHER = 3
-  };
-
   /**
    * Coarse result on a region.
    */
   struct QPostponed {
    public:
-    /** Moments of pruned things. */
-    MomentInfo moment_info;
-    /** We pruned an entire part of the tree with a particular label. */
-    int label;
+    SpRange d_density;
 
     OT_DEF(QPostponed) {
-      OT_MY_OBJECT(moment_info);
-      OT_MY_OBJECT(label);
+      OT_MY_OBJECT(d_density);
     }
 
    public:
     void Init(const Param& param) {
-      moment_info.Init(param);
-      label = LAB_EITHER;
+      d_density.Init(0, 0);
     }
 
     void Reset(const Param& param) {
-      moment_info.Reset();
-      label = LAB_EITHER;
+      d_density.Reset(0, 0);
     }
 
     void ApplyPostponed(const Param& param, const QPostponed& other) {
-      label &= other.label;
-      DEBUG_ASSERT_MSG(label != LAB_NEITHER, "Conflicting labels?");
-      moment_info.Add(other.moment_info);
+      d_density += other.d_density;
     }
   };
 
@@ -313,41 +325,74 @@ class Tkde {
   // rho
   struct QResult {
    public:
-    double density;
-    int label;
+    SpRange density;
 
     OT_DEF(QResult) {
       OT_MY_OBJECT(density);
-      OT_MY_OBJECT(label);
     }
 
    public:
     void Init(const Param& param) {
-      density = 0;
-      label = LAB_EITHER;
+      density.Init(0, 0);
     }
 
     void Postprocess(const Param& param,
-        const QPoint& q,
+        const QPoint& q, index_t q_index,
         const RNode& r_root) {
-      if (density > param.thresh.hi) {
-        label &= LAB_HI;
-      } else if (density < param.thresh.lo) {
-        label &= LAB_LO;
-      }
-      DEBUG_ASSERT(label != LAB_NEITHER);
+      density.hi -= 1; // leave-one-out
+      density.lo -= 1; // leave-one-out
+      density.hi *= param.post_factor;
+      density.lo *= param.post_factor;
     }
 
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
-        const QPoint& q) {
-      label &= postponed.label; /* bitwise OR */
-      DEBUG_ASSERT(label != LAB_NEITHER);
+        const QPoint& q, index_t q_i) {
+      //if (!postponed.moment_info.is_empty()) {
+      //  density += postponed.moment_info.ComputeKernelSum(
+      //      param, q.vec());
+      //}
+      density += postponed.d_density;
+    }
+  };
 
-      if (!postponed.moment_info.is_empty()) {
-        density += postponed.moment_info.ComputeKernelSum(
-            param, q.vec());
-      }
+  struct GlobalResult {
+   public:
+    SpRange log_likelihood;
+    SpRange sum;
+
+   public:
+    void Init(const Param& param) {
+      log_likelihood.Init(0, 0);
+      sum.Init(0, 0);
+    }
+    void Accumulate(const Param& param, const GlobalResult& other) {
+      log_likelihood += other.log_likelihood;
+      sum += other.sum;
+    }
+    void ApplyDelta(const Param& param, const Delta& delta) {}
+    void UndoDelta(const Param& param, const Delta& delta) {}
+    void Postprocess(const Param& param) {}
+    void Report(const Param& param, datanode *datanode) {
+      fx_format_result(datanode, "log_likelihood_min", "%g",
+          log_likelihood.lo);
+      fx_format_result(datanode, "log_likelihood", "%g",
+          log_likelihood.mid());
+      fx_format_result(datanode, "log_likelihood_max", "%g",
+          log_likelihood.hi);
+      fx_format_result(datanode, "log_type", "natural_log");
+      fx_format_result(datanode, "sum", "%g", sum.mid());
+      fx_format_result(datanode, "sum_min", "%g", sum.lo);
+      fx_format_result(datanode, "sum_max", "%g", sum.hi);
+    }
+    /**
+     * Used for post-map reductions.
+     */
+    void ApplyResult(const Param& param,
+        const QPoint& q_point, index_t q_i, const QResult& result) {
+      log_likelihood.lo += log(result.density.lo);
+      log_likelihood.hi += log(result.density.hi);
+      sum += result.density;
     }
   };
 
@@ -355,39 +400,31 @@ class Tkde {
    public:
     /** Bound on density from leaves. */
     SpRange density;
-    int label;
 
     OT_DEF(QMassResult) {
       OT_MY_OBJECT(density);
-      OT_MY_OBJECT(label);
     }
 
    public:
     void Init(const Param& param) {
       /* horizontal init */
       density.Init(0, 0);
-      label = LAB_EITHER;
     }
 
     void StartReaccumulate(const Param& param, const QNode& q_node) {
       /* vertical init */
       density.InitEmptySet();
-      label = LAB_NEITHER;
     }
 
     void Accumulate(const Param& param, const QResult& result) {
       // TODO: applying to single result could be made part of QResult,
       // but in some cases may require a copy/undo stage
       density |= result.density;
-      label |= result.label;
-      DEBUG_ASSERT(result.label != LAB_NEITHER);
     }
 
     void Accumulate(const Param& param,
         const QMassResult& result, index_t n_points) {
       density |= result.density;
-      label |= result.label;
-      DEBUG_ASSERT(result.label != LAB_NEITHER);
     }
 
     void FinishReaccumulate(const Param& param,
@@ -399,8 +436,6 @@ class Tkde {
     void ApplyMassResult(const Param& param,
         const QMassResult& mass_result) {
       density += mass_result.density;
-      label &= mass_result.label;
-      DEBUG_ASSERT(label != LAB_NEITHER);
     }
 
     void ApplyDelta(const Param& param,
@@ -410,20 +445,15 @@ class Tkde {
 
     bool ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QNode& q_node) {
-      bool change_made;
+      //if (unlikely(!postponed.moment_info.is_empty())) {
+      //  density += postponed.moment_info.ComputeKernelSumRange
+      //            (param, q_node.bound());
+      //        return true;
+      // }
+      // return false;
+      density += postponed.d_density;
 
-      if (unlikely(postponed.label != LAB_EITHER)) {
-        label &= postponed.label;
-        DEBUG_ASSERT(label != LAB_NEITHER);
-        change_made = true;
-      }
-      if (unlikely(!postponed.moment_info.is_empty())) {
-        density += postponed.moment_info.ComputeKernelSumRange
-            (param, q_node.bound());
-        change_made = true;
-      }
-
-      return change_made;
+      return true;
     }
   };
 
@@ -442,28 +472,25 @@ class Tkde {
     // - this function must assume that global_result is incomplete (which is
     // reasonable in allnn)
     bool StartVisitingQueryPoint(const Param& param,
-        const QPoint& q,
+        const QPoint& q, index_t q_index,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
         GlobalResult* global_result) {
-      if (unlikely(q_result->label != LAB_EITHER)) {
-        return false;
-      }
-
+      // Perform intrinsic prunes here.
+      // Don't bother with the error distribution here.
       double distance_sq_lo = r_node.bound().MinDistanceSqToPoint(q.vec());
 
       if (unlikely(distance_sq_lo > param.kernel.bandwidth_sq())) {
         return false;
       }
 
-      double distance_sq_hi = r_node.bound().MaxDistanceSqToPoint(q.vec());
-
-      if (unlikely(distance_sq_hi < param.kernel.bandwidth_sq())) {
-        q_result->density += r_node.stat().moment_info.ComputeKernelSum(
-            param, q.vec());
-        return false;
-      }
+      //double distance_sq_hi = r_node.bound().MaxDistanceSqToPoint(q.vec());
+      //if (unlikely(distance_sq_hi < param.kernel.bandwidth_sq())) {
+      //  q_result->density += r_node.stat().moment_info.ComputeKernelSum(
+      //            param, q.vec());
+      //        return false;
+      //}
 
       density = 0;
 
@@ -478,21 +505,12 @@ class Tkde {
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q,
+        const QPoint& q, index_t q_index,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
         GlobalResult* global_result) {
       q_result->density += density;
-      
-      SpRange total_density =
-          unapplied_mass_results.density + q_result->density;
-
-      if (unlikely(total_density > param.thresh)) {
-        q_result->label = LAB_HI;
-      } else if (unlikely(total_density < param.thresh)) {
-        q_result->label = LAB_LO;
-      }
     }
   };
 
@@ -516,31 +534,26 @@ class Tkde {
           q_node.bound().MinDistanceSqToBound(r_node.bound());
       bool need_expansion;
       
-      DEBUG_MSG(1.0, "tkde: ConsiderPairIntrinsic");
       
       if (distance_sq_lo > param.kernel.bandwidth_sq()) {
-        DEBUG_MSG(1.0, "tkde: Exclusion");
         need_expansion = false;
       } else {
         double distance_sq_hi =
             q_node.bound().MaxDistanceSqToBound(r_node.bound());
 
-        if (distance_sq_hi < param.kernel.bandwidth_sq()) {
-          DEBUG_MSG(1.0, "tkde: Inclusion");
-          q_postponed->moment_info.Add(r_node.stat().moment_info);
-          need_expansion = false;
-        } else {
-          DEBUG_MSG(1.0, "tkde: Overlap - need explore");
-          //delta->d_density = r_node.stat().moment_info.ComputeKernelSumRange(
-          //    param, q_node.bound());
-          //max(delta->d_density.lo, 0.0);
-          // this method seemed like a good idea, but the upper bound it
-          // computes is unfortunately bogus
-          delta->d_density.lo = 0;
-          delta->d_density.hi = r_node.count() *
-              param.kernel.EvalUnnormOnSq(distance_sq_lo);
-          need_expansion = true;
-        }
+        //if (distance_sq_hi < param.kernel.bandwidth_sq()) {
+        //  DEBUG_MSG(1.0, "tkde: Inclusion");
+        //  q_postponed->moment_info.Add(r_node.stat().moment_info);
+        //  need_expansion = false;
+        //} else {
+        //  .. set delta lo to 0, hi to squared
+        //}
+
+        delta->d_density.lo = r_node.count() *
+            param.kernel.EvalUnnormOnSq(distance_sq_hi);
+        delta->d_density.hi = r_node.count() *
+            param.kernel.EvalUnnormOnSq(distance_sq_lo);
+        need_expansion = true;
       }
 
       return need_expansion;
@@ -554,6 +567,10 @@ class Tkde {
         const QMassResult& q_mass_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
+      if (delta.d_density.width() <
+          param.TwiceEpsilonFor(r_node.count()) * q_mass_result.density.lo) {
+        q_postponed->d_density += delta.d_density;
+      }
       return true;
     }
 
@@ -563,22 +580,7 @@ class Tkde {
         const QMassResult& q_mass_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      bool need_expansion = false;
-
-      DEBUG_ASSERT(q_mass_result.density.lo < q_mass_result.density.hi);
-
-      if (unlikely(q_mass_result.label != LAB_EITHER)) {
-        DEBUG_ASSERT((q_mass_result.label & q_postponed->label) != LAB_NEITHER);
-        q_postponed->label = q_mass_result.label;
-      } else if (unlikely(q_mass_result.density > param.thresh)) {
-        q_postponed->label = LAB_HI;
-      } else if (unlikely(q_mass_result.density < param.thresh)) {
-        q_postponed->label = LAB_LO;
-      } else {
-        need_expansion = true;
-      }
-
-      return need_expansion;
+      return true;
     }
 
     /**
@@ -600,12 +602,12 @@ int main(int argc, char *argv[]) {
 
 #ifdef USE_MPI  
   MPI_Init(&argc, &argv);
-  nbr_utils::MpiDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
-      fx_root, "tkde");
+  nbr_utils::MpiDualTreeMain<Akde, DualTreeDepthFirst<Akde> >(
+      fx_root, "akde");
   MPI_Finalize();
 #else
-  nbr_utils::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
-      fx_root, "tkde");
+  nbr_utils::MonochromaticDualTreeMain<Akde, DualTreeDepthFirst<Akde> >(
+      fx_root, "akde");
 #endif
   
   fx_done();

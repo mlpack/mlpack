@@ -59,7 +59,7 @@ void MakeSocketNonBlocking(int fd) {
 
 //-------------------------------------------------------------------------
 
-RpcSockImpl RpcSockImpl::instance;
+RpcSockImpl *RpcSockImpl::instance = NULL;
 
 void RpcSockImpl::Init() {
   module_ = fx_submodule(fx_root, "rpc", "rpc");
@@ -457,7 +457,7 @@ Message *Transaction::CreateMessage(int peer, size_t size) {
     // We haven't sent or received from this peer, so we need to send the
     // channel number to it so that the channel can create a new transaction.
     peers_.AddBack();
-    transaction_id = RpcSockImpl::instance.AssignTransaction(peer, this);
+    transaction_id = RpcSockImpl::instance->AssignTransaction(peer, this);
     peers_[i].peer = peer;
     peers_[i].channel = channel();
     peers_[i].transaction_id = transaction_id;
@@ -484,12 +484,12 @@ void Transaction::TransactionHandleNewSender_(Message *message) {
 
 void Transaction::Send(Message *message) {
   // RpcSockImpl knows how to send messages, we don't need to bother with it.
-  RpcSockImpl::instance.Send(message);
+  RpcSockImpl::instance->Send(message);
 }
 
 void Transaction::Done() {
   for (index_t i = 0; i < peers_.size(); i++) {
-    RpcSockImpl::instance.UnregisterTransaction(
+    RpcSockImpl::instance->UnregisterTransaction(
         peers_[i].peer, peers_[i].channel, peers_[i].transaction_id);
   }
   peers_.Clear();
@@ -499,7 +499,7 @@ void Transaction::Done(int peer) {
   for (index_t i = 0; i < peers_.size(); i++) {
     // TODO: Demeter?
     if (peer == peers_[i].peer) {
-      RpcSockImpl::instance.UnregisterTransaction(
+      RpcSockImpl::instance->UnregisterTransaction(
           peers_[i].peer, peers_[i].channel, peers_[i].transaction_id);
       peers_[i] = peers_[peers_.size()-1];
       peers_.PopBack();
@@ -620,7 +620,7 @@ void SockConnection::Send(Message *message) {
     // If we're not writing anything now, set our current message.
     write_buffer_pos_ = 0;
     write_message_ = message;
-    RpcSockImpl::instance.WakeUpPollingLoop();
+    RpcSockImpl::instance->WakeUpPollingLoop();
   } else {
     // We're already writing something, put it on the priority queue
     write_queue_.Put(write_total_, message);
