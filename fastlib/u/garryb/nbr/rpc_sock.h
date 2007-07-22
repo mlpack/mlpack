@@ -337,7 +337,7 @@ class RpcSockImpl {
   static const int response_header_size = 0;
 
  public:
-  static RpcSockImpl instance;
+  static RpcSockImpl *instance;
 
  private:
   struct datanode *module_;
@@ -404,47 +404,47 @@ namespace rpc {
 
   /** Initialize everything. */
   inline void Init() {
-    RpcSockImpl::instance.Init();
+    RpcSockImpl::instance->Init();
   }
   /** Close all connections, etc */
   inline void Done() {
-    RpcSockImpl::instance.Done();
+    RpcSockImpl::instance->Done();
   }
   /** Gets the rank of the current machine */
   inline int rank() {
-    return RpcSockImpl::instance.rank();
+    return RpcSockImpl::instance->rank();
   }
   /** Gets the total number of peers. */
   inline int n_peers() {
-    return RpcSockImpl::instance.n_peers();
+    return RpcSockImpl::instance->n_peers();
   }
   /** Get the i'th child. */
   inline const int child(int i) {
-    return RpcSockImpl::instance.children()[i];
+    return RpcSockImpl::instance->children()[i];
   }
   /** Number of broadcast-tree children. */
   inline const index_t n_children() {
-    return RpcSockImpl::instance.children().size();
+    return RpcSockImpl::instance->children().size();
   }
   /** Whether the root of the tree. */
   inline bool is_root() {
-    return RpcSockImpl::instance.is_root();
+    return RpcSockImpl::instance->is_root();
   }
   /** The parent in the broadcast tree topology. */
   inline int parent() {
-    return RpcSockImpl::instance.parent();
+    return RpcSockImpl::instance->parent();
   }
   /** Register a channel for new transactions. */
   inline void Register(int channel_num, Channel *channel) {
-    RpcSockImpl::instance.Register(channel_num, channel);
+    RpcSockImpl::instance->Register(channel_num, channel);
   }
   /** Unregister a channel for new transactions. */
   inline void Unregister(int channel_num) {
-    RpcSockImpl::instance.Unregister(channel_num);
+    RpcSockImpl::instance->Unregister(channel_num);
   }
   /** Deliver a message */
   inline void Send(Message *message) {
-    RpcSockImpl::instance.Send(message);
+    RpcSockImpl::instance->Send(message);
   }
 };
 

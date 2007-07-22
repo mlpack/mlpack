@@ -4,40 +4,12 @@
 #include "dfs.h"
 #include "nbr_utils.h"
 
-/*
-
-I spent about a day chasing an elusive bug.  The bug is due to the sloppy
-semantics of ConsiderPairTermination and ConsiderPairExtrinsic.
-
-Here's a proposal:
-
-In an extrinsic prune, it is assumed ANY side-effects (such as the delta)
-are applied by ConsiderPairExtrinsic to the postponed, rather than by NBR.
-On the other hand, a termination prune needs to mark whatever the final
-result was.
-
-The bug I found was when I was "horizonally merging" values of Postponed
-results, which is really when a postponed result is pushed down to the child.
-If there is a postponed "label assignment" (i.e. it was decided the entire
-tree had the same label), then it wouldn't apply the kernel sums as it would
-seem unnecessary.  Unfortunately, the vertical join operator on mu cares a
-lot about the actual densities involved -- it doesn't special-case the
-situation when it realizes it has a label assigned and realize not to
-care about the density.
-
-The way I solved it ensures that as-correct-as-possible densities reach all
-the way down to the points, by forwarding queued-up moment information EVEN
-IF a label is already obvious.  It would probably be faster that, in case
-a label is propagated, to hard-code the density to conform; i.e. if it
-is assigned a label of "LO", then setting the upper and lower bound to
-something smaller than threshold.
-
-*/
-
 /**
- * An N-Body-Reduce problem.
+ * Approximate kernel density estimation.
+ *
+ * Uses Epanechnikov kernels and the inclusion rule.
  */
-class Akde {
+class Tkde {
  public:
   /** The bounding type. Required by NBR. */
   typedef SpHrectBound<2> Bound;
@@ -48,6 +20,8 @@ class Akde {
   /** The type of kernel in use.  NOT required by NBR. */
   typedef EpanKernel Kernel;
 
+  typedef BlankGlobalResult GlobalResult;
+
   /**
    * All parameters required by the execution of the algorithm.
    *
@@ -55,28 +29,33 @@ class Akde {
    */
   struct Param {
    public:
+    /**
+     * The threshold in use, with upper and lower bounds to prevent
+     * roundoff error.
+     *
+     * This is also normalized for dimensionality and the number of reference
+     * points.
+     */
+    SpRange thresh;
     /** The kernel in use. */
     Kernel kernel;
     /** The dimensionality of the data sets. */
     index_t dim;
-    /** The epsilon used for error computation. */
-    double epsilon;
-    /** The epsilon used for error computation, divided evenly. */
-    double epsilon_divided;
+    /** The original threshold, before normalization. */
+    double nominal_threshold;
 
     OT_DEF(Param) {
+      OT_MY_OBJECT(thresh);
       OT_MY_OBJECT(kernel);
       OT_MY_OBJECT(dim);
-      OT_MY_OBJECT(epsilon);
-      OT_MY_OBJECT(epsilon_divided);
+      OT_MY_OBJECT(nominal_threshold);
     }
 
    public:
     void Copy(const Param& other) {
       kernel.Copy(other.kernel);
+      thresh = other.thresh;
       dim = other.dim;
-      epsilon = other.epsilon;
-      epsilon_divided = other.epsilon_divided;
     }
 
     /**
@@ -84,21 +63,19 @@ class Akde {
      */
     void Init(datanode *module) {
       kernel.Init(fx_param_double_req(module, "h"));
-      epsilon = fx_param_double_req(module, "epsilon");
+      nominal_threshold = fx_param_double_req(module, "threshold");
     }
 
     void BootstrapMonochromatic(QPoint* point, index_t count) {
       dim = point->vec().length();
-      epsilon_divided = 2 * epsilon / count;
+      double normalized_threshold =
+          nominal_threshold * kernel.CalcNormConstant(dim) * count;
+      thresh.lo = normalized_threshold * (1.0 - 1.0e5);
+      thresh.hi = normalized_threshold * (1.0 + 1.0e5);
     }
 
    public:
-    
-    double TwiceEpsilonFor(index_t count) {
-      return epsilon_divided * count;
-    }
-    
-    // Convenience methods
+    // Convenience methods for purpose of thresholded KDE
 
     /**
      * Compute kernel sum for a region of reference points assuming we have
@@ -139,6 +116,7 @@ class Akde {
       return -quadratic_term * kernel.inv_bandwidth_sq() + r_count;
     }
   };
+
 
   /**
    * Moment information used by thresholded KDE.
@@ -275,28 +253,43 @@ class Akde {
    */
   typedef SpNode<Bound, QStat> QNode;
 
+  enum Label {
+    LAB_NEITHER = 0,
+    LAB_LO = 2,
+    LAB_HI = 1,
+    LAB_EITHER = 3
+  };
+
   /**
    * Coarse result on a region.
    */
   struct QPostponed {
    public:
-    DRange d_density;
+    /** Moments of pruned things. */
+    MomentInfo moment_info;
+    /** We pruned an entire part of the tree with a particular label. */
+    int label;
 
     OT_DEF(QPostponed) {
-      OT_MY_OBJECT(d_density);
+      OT_MY_OBJECT(moment_info);
+      OT_MY_OBJECT(label);
     }
 
    public:
     void Init(const Param& param) {
-      d_density.Init(0, 0);
+      moment_info.Init(param);
+      label = LAB_EITHER;
     }
 
     void Reset(const Param& param) {
-      d_density.Reset(0, 0);
+      moment_info.Reset();
+      label = LAB_EITHER;
     }
 
     void ApplyPostponed(const Param& param, const QPostponed& other) {
-      d_density += other.d_density;
+      label &= other.label;
+      DEBUG_ASSERT_MSG(label != LAB_NEITHER, "Conflicting labels?");
+      moment_info.Add(other.moment_info);
     }
   };
 
@@ -320,63 +313,41 @@ class Akde {
   // rho
   struct QResult {
    public:
-    SpRange density;
+    double density;
+    int label;
 
     OT_DEF(QResult) {
       OT_MY_OBJECT(density);
+      OT_MY_OBJECT(label);
     }
 
    public:
     void Init(const Param& param) {
-      density.Init(0, 0);
+      density = 0;
+      label = LAB_EITHER;
     }
 
     void Postprocess(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q,
         const RNode& r_root) {
+      if (density > param.thresh.hi) {
+        label &= LAB_HI;
+      } else if (density < param.thresh.lo) {
+        label &= LAB_LO;
+      }
+      DEBUG_ASSERT(label != LAB_NEITHER);
     }
 
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
-        const QPoint& q, index_t q_i) {
-      //if (!postponed.moment_info.is_empty()) {
-      //  density += postponed.moment_info.ComputeKernelSum(
-      //      param, q.vec());
-      //}
-      density += postponed.d_density;
-    }
-  };
+        const QPoint& q) {
+      label &= postponed.label; /* bitwise OR */
+      DEBUG_ASSERT(label != LAB_NEITHER);
 
-  struct GlobalResult {
-   public:
-    SpRange log_likelihood;
-
-   public:
-    void Init(const Param& param) {
-      log_likelihood.Init(0, 0);
-    }
-    void Accumulate(const Param& param, const GlobalResult& other) {
-      log_likelihood += other.log_likelihood;
-    }
-    void ApplyDelta(const Param& param, const Delta& delta) {}
-    void UndoDelta(const Param& param, const Delta& delta) {}
-    void Postprocess(const Param& param) {}
-    void Report(const Param& param, datanode *datanode) {
-      fx_format_result(datanode, "log_likelihood_min", "%g",
-          log_likelihood.lo);
-      fx_format_result(datanode, "log_likelihood", "%g",
-          log_likelihood.mid());
-      fx_format_result(datanode, "log_likelihood_max", "%g",
-          log_likelihood.hi);
-      fx_format_result(datanode, "log_type", "natural_log");
-    }
-    /**
-     * Used for post-map reductions.
-     */
-    void ApplyResult(const Param& param,
-        const QPoint& q_point, index_t q_i, const QResult& result) {
-      log_likelihood.lo += log(result.density.lo);
-      log_likelihood.hi += log(result.density.hi);
+      if (!postponed.moment_info.is_empty()) {
+        density += postponed.moment_info.ComputeKernelSum(
+            param, q.vec());
+      }
     }
   };
 
@@ -384,31 +355,39 @@ class Akde {
    public:
     /** Bound on density from leaves. */
     SpRange density;
+    int label;
 
     OT_DEF(QMassResult) {
       OT_MY_OBJECT(density);
+      OT_MY_OBJECT(label);
     }
 
    public:
     void Init(const Param& param) {
       /* horizontal init */
       density.Init(0, 0);
+      label = LAB_EITHER;
     }
 
     void StartReaccumulate(const Param& param, const QNode& q_node) {
       /* vertical init */
       density.InitEmptySet();
+      label = LAB_NEITHER;
     }
 
     void Accumulate(const Param& param, const QResult& result) {
       // TODO: applying to single result could be made part of QResult,
       // but in some cases may require a copy/undo stage
       density |= result.density;
+      label |= result.label;
+      DEBUG_ASSERT(result.label != LAB_NEITHER);
     }
 
     void Accumulate(const Param& param,
         const QMassResult& result, index_t n_points) {
       density |= result.density;
+      label |= result.label;
+      DEBUG_ASSERT(result.label != LAB_NEITHER);
     }
 
     void FinishReaccumulate(const Param& param,
@@ -420,6 +399,8 @@ class Akde {
     void ApplyMassResult(const Param& param,
         const QMassResult& mass_result) {
       density += mass_result.density;
+      label &= mass_result.label;
+      DEBUG_ASSERT(label != LAB_NEITHER);
     }
 
     void ApplyDelta(const Param& param,
@@ -429,15 +410,20 @@ class Akde {
 
     bool ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QNode& q_node) {
-      //if (unlikely(!postponed.moment_info.is_empty())) {
-      //  density += postponed.moment_info.ComputeKernelSumRange
-      //            (param, q_node.bound());
-      //        return true;
-      // }
-      // return false;
-      density += postponed.d_density;
+      bool change_made;
 
-      return true;
+      if (unlikely(postponed.label != LAB_EITHER)) {
+        label &= postponed.label;
+        DEBUG_ASSERT(label != LAB_NEITHER);
+        change_made = true;
+      }
+      if (unlikely(!postponed.moment_info.is_empty())) {
+        density += postponed.moment_info.ComputeKernelSumRange
+            (param, q_node.bound());
+        change_made = true;
+      }
+
+      return change_made;
     }
   };
 
@@ -456,13 +442,15 @@ class Akde {
     // - this function must assume that global_result is incomplete (which is
     // reasonable in allnn)
     bool StartVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
         GlobalResult* global_result) {
-      // Perform intrinsic prunes here.
-      // Don't bother with the error distribution here.
+      if (unlikely(q_result->label != LAB_EITHER)) {
+        return false;
+      }
+
       double distance_sq_lo = r_node.bound().MinDistanceSqToPoint(q.vec());
 
       if (unlikely(distance_sq_lo > param.kernel.bandwidth_sq())) {
@@ -490,12 +478,21 @@ class Akde {
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q,
         const RNode& r_node,
         const QMassResult& unapplied_mass_results,
         QResult* q_result,
         GlobalResult* global_result) {
       q_result->density += density;
+      
+      SpRange total_density =
+          unapplied_mass_results.density + q_result->density;
+
+      if (unlikely(total_density > param.thresh)) {
+        q_result->label = LAB_HI;
+      } else if (unlikely(total_density < param.thresh)) {
+        q_result->label = LAB_LO;
+      }
     }
   };
 
@@ -519,26 +516,31 @@ class Akde {
           q_node.bound().MinDistanceSqToBound(r_node.bound());
       bool need_expansion;
       
+      DEBUG_MSG(1.0, "tkde: ConsiderPairIntrinsic");
       
       if (distance_sq_lo > param.kernel.bandwidth_sq()) {
+        DEBUG_MSG(1.0, "tkde: Exclusion");
         need_expansion = false;
       } else {
         double distance_sq_hi =
             q_node.bound().MaxDistanceSqToBound(r_node.bound());
 
-        //if (distance_sq_hi < param.kernel.bandwidth_sq()) {
-        //  DEBUG_MSG(1.0, "tkde: Inclusion");
-        //  q_postponed->moment_info.Add(r_node.stat().moment_info);
-        //  need_expansion = false;
-        //} else {
-        //  .. set delta lo to 0, hi to squared
-        //}
-
-        delta->d_density.lo = r_node.count() *
-            param.kernel.EvalUnnormOnSq(distance_sq_hi);
-        delta->d_density.hi = r_node.count() *
-            param.kernel.EvalUnnormOnSq(distance_sq_lo);
-        need_expansion = true;
+        if (distance_sq_hi < param.kernel.bandwidth_sq()) {
+          DEBUG_MSG(1.0, "tkde: Inclusion");
+          q_postponed->moment_info.Add(r_node.stat().moment_info);
+          need_expansion = false;
+        } else {
+          DEBUG_MSG(1.0, "tkde: Overlap - need explore");
+          //delta->d_density = r_node.stat().moment_info.ComputeKernelSumRange(
+          //    param, q_node.bound());
+          //max(delta->d_density.lo, 0.0);
+          // this method seemed like a good idea, but the upper bound it
+          // computes is unfortunately bogus
+          delta->d_density.lo = 0;
+          delta->d_density.hi = r_node.count() *
+              param.kernel.EvalUnnormOnSq(distance_sq_lo);
+          need_expansion = true;
+        }
       }
 
       return need_expansion;
@@ -552,10 +554,7 @@ class Akde {
         const QMassResult& q_mass_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      if (delta.d_density.wid() <
-          param.TwiceEpsilonFor(r_node.count()) * q_mass_result.density.lo) {
-        q_postponed->d_density += delta.d_density;
-      }
+      return true;
     }
 
     static bool ConsiderQueryTermination(
@@ -564,7 +563,22 @@ class Akde {
         const QMassResult& q_mass_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      return true;
+      bool need_expansion = false;
+
+      DEBUG_ASSERT(q_mass_result.density.lo < q_mass_result.density.hi);
+
+      if (unlikely(q_mass_result.label != LAB_EITHER)) {
+        DEBUG_ASSERT((q_mass_result.label & q_postponed->label) != LAB_NEITHER);
+        q_postponed->label = q_mass_result.label;
+      } else if (unlikely(q_mass_result.density > param.thresh)) {
+        q_postponed->label = LAB_HI;
+      } else if (unlikely(q_mass_result.density < param.thresh)) {
+        q_postponed->label = LAB_LO;
+      } else {
+        need_expansion = true;
+      }
+
+      return need_expansion;
     }
 
     /**
@@ -586,12 +600,12 @@ int main(int argc, char *argv[]) {
 
 #ifdef USE_MPI  
   MPI_Init(&argc, &argv);
-  nbr_utils::MpiDualTreeMain<Akde, DualTreeDepthFirst<Akde> >(
-      fx_root, "akde");
+  nbr_utils::MpiDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+      fx_root, "tkde");
   MPI_Finalize();
-#eLab tests done by Publix on the contaminated Mountain Dew confirmed the sodalse
-  nbr_utils::MonochromaticDualTreeMain<Akde, DualTreeDepthFirst<Akde> >(
-      fx_root, "akde");
+#else
+  nbr_utils::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+      fx_root, "tkde");
 #endif
   
   fx_done();
