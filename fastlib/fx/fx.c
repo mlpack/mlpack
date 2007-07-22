@@ -24,6 +24,7 @@
 #endif
 
 static struct datanode *fx__real_root;
+static int fx__silent = 0;
 
 struct datanode *fx_root;
 
@@ -221,10 +222,12 @@ void fx_done(void) {
       datanode_get_path(fx_root, "info/rusage/self", NODETYPE_RESULT));
   fx__report_usage(RUSAGE_CHILDREN,
       datanode_get_path(fx_root, "info/rusage/children", NODETYPE_RESULT));
-  fx__write(fx__real_root);
+  if (!fx__silent) {
+    fx__write(fx__real_root);
+  }
 
-  datanode_destroy(fx_root);
-  free(fx_root);
+  datanode_destroy(fx__real_root);
+  free(fx__real_root);
   fx_root = NULL;
   fx__real_root = NULL;
 
@@ -261,7 +264,9 @@ static struct datanode *fx__param(struct datanode *module, const char *name,
 
 int fx_param_exists(struct datanode *module, const char *name)
 {
-  struct datanode *node = fx__param(module, name, 0);
+  struct datanode *node;
+  
+  node = fx__param(module, name, 0);
 
   return node && (node->val || node->children);
 }
@@ -269,7 +274,9 @@ int fx_param_exists(struct datanode *module, const char *name)
 const char *fx_param_str(struct datanode *module, const char *name,
 			 const char *def)
 {
-  struct datanode *node = fx__param(module, name, 1);
+  struct datanode *node;
+  
+  node = fx__param(module, name, 1);
 
   if (!node->val) {
     if (!def) {
@@ -290,7 +297,9 @@ const char *fx_param_str_req(struct datanode *module, const char *name)
 
 double fx_param_double(struct datanode *module, const char *name, double def)
 {
-  struct datanode *node = fx__param(module, name, 1);
+  struct datanode *node;
+
+  node = fx__param(module, name, 1);
 
   if (!node->val) {
     char buf[32];
@@ -667,3 +676,6 @@ void fx_scope(const char *scope_name) {
   fx__real_root->children = old_root;
 }
 
+void fx_silence() {
+  fx__silent = 1;
+}

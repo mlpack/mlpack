@@ -125,11 +125,6 @@ void RpcSockImpl::UnregisterTransaction(int peer_id, int channel, int id) {
   peer->mutex.Lock(); // Lock peer's mutex
   if (channel < 0) {
     peer->incoming_transactions[id] = NULL;
-  } else {
-    // Old idea -- not really necessary
-    //mutex_.Lock(); // Lock mutex -- we are accessing channels
-    //channels_[channel]->CleanupTransaction(incoming_transactions[id]);
-    //mutex_.Unlock();
     peer->outgoing_transactions[id] = NULL;
   }
   peer->mutex.Unlock();
@@ -253,7 +248,7 @@ void RpcSockImpl::PollingLoop_() {
     // Use a one-second timeout so we can poll for should_stop_ to allow
     // graceful shutdown.
     struct timeval tv;
-    tv.tv_sec = 1;
+    tv.tv_sec = 60;
     tv.tv_usec = 0;
     int n_events = select(maxfd + 1, &read_fds, &write_fds, &error_fds, &tv);
     //fprintf(stderr, "%d: select() returns %d\n", rank_, n_events);
@@ -307,6 +302,13 @@ void RpcSockImpl::PollingLoop_() {
         *unknown_connections_.AddBack() = new_fd;
       }
     }
+
+    // TODO: For absolute correctness (and some added efficiency)
+    // we actually have to enqueue initiating messages whose channels don't
+    // yet exist, because a channel might appear during the middle of
+    // our internal loop.  But on the other hand, a channel might appear
+    // in the middle of the loop because of our own doing.  We might just
+    // use a recursive mutex instead?
 
     // Gather available messages
     for (index_t i = 0; i < peers_.size(); i++) {
@@ -364,7 +366,7 @@ void RpcSockImpl::PollingLoop_() {
         j++;
       }
     }
-    
+
     work_items.Resize(j);
   }
 }

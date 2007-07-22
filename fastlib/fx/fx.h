@@ -335,6 +335,11 @@ struct datanode *fx_submodule(struct datanode *module, const char *param,
  */
 void fx_scope(const char *scope_name);
 
+/**
+ * Cause the current process not to output any fastexec results.
+ */
+void fx_silence();
+
 EXTERN_C_END
 
 #endif

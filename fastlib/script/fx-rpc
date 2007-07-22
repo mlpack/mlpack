@@ -17,7 +17,8 @@ if n <= 0:
   print "error: n must be positive"
   os.exit(1)
 
-peers = sys.argv[2]
+peers = os.path.abspath(sys.argv[2])
+executable = os.path.abspath(sys.argv[4])
 
 port = int(sys.argv[3])
 
@@ -31,17 +32,18 @@ try:
     print "****** CONNECTING TO %s ******" % machinename
     pid = os.fork()
     if not pid:
-      argv = ["ssh", machinename] + sys.argv[4:] + [
+      argv = ["ssh", "-x", machinename, executable] + sys.argv[5:] + [
           "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
           "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
           ]
+      print " ".join(argv)
       os.execvp(argv[0], argv)
-    time.sleep(1)
     pids.append(pid)
 
   for pid in pids:
     os.waitpid(pid, 0)
 except:
+  print "Exception!!"
   for pid in pids:
     try:
       os.kill(pid, signal.SIGTERM)

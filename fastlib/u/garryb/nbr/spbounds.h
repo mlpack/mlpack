@@ -374,6 +374,12 @@ class SpHrectBound {
     }
   }
   
+  void Copy(const SpHrectBound& other) {
+    DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
+    bounds_ = mem::Dup(other.bounds_, other.dim_);
+    dim_ = other.dim_;
+  }
+  
   bool Contains(const Vector& point) const {
     for (index_t i = 0; i < point.length(); i++) {
       if (!bounds_[i].Contains(point[i])) {
@@ -384,10 +390,14 @@ class SpHrectBound {
     return true;
   }
 
+  index_t dim() const {
+    return dim_;
+  }
+
   void CalculateMidpoint(Vector *centroid) const {
     centroid->Init(dim_);
     for (index_t i = 0; i < dim_; i++) {
-      centroid->set(i, bounds_[i].mid());
+      (*centroid)[i] = bounds_[i].mid();
     }
   }
 

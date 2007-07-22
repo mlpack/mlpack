@@ -38,6 +38,10 @@ class DenseIntMap {
     return default_value_;
   }
 
+  index_t size() const {
+    return size_;
+  }
+
   Value& operator [] (index_t index) {
     if (unlikely(index >= size_)) {
       index_t old_size = size_;
