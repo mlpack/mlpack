@@ -1,0 +1,19 @@
+This is BibTeX, Version 0.99cThe top-level auxiliary file: proposal.aux
+The style file: ieeetr.bst
+I couldn't open database file template.bib
+---line 111 of file proposal.aux
+ : \bibdata{template
+ :                  }
+I'm skipping whatever remains of this command
+I found no database files---while reading file proposal.aux
+Warning--I didn't find a database entry for "quatieri2002dts"
+Warning--I didn't find a database entry for "bentley1975bst"
+Warning--I didn't find a database entry for "moore2000ahu"
+Warning--I didn't find a database entry for "gray2000nbp"
+Warning--I didn't find a database entry for "ravindran:inr"
+Warning--I didn't find a database entry for "jansen2006ifa"
+Warning--I didn't find a database entry for "scholkopf:nca"
+Warning--I didn't find a database entry for "coifman2006dm"
+Warning--I didn't find a database entry for "shamma_main"
+Warning--I didn't find a database entry for "moore-tutorial"
+(There were 2 error messages)

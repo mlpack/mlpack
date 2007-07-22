@@ -1,0 +1,459 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Macros for Incorporation of .eps figures into LaTeX documents
+%      Macros started by Paul Hasler, 
+%            originally developed at Caltech in 1995, 
+%            and continued to be updated at Georgia Tech
+%
+%      Revision History: current version - March 2, 2004
+%
+%      1. Additions / improvements by Jeff Dugger. 
+%	   2. Encapsulation into insfig package, addition
+%	      of optional label parameter, and the  
+%	      addition of starred forms by Daniel Allred
+%         on 2004/03/02.
+%      3. Addition of side-by-side-by-side figure placement command
+%         on 2004/11/04.
+%
+%  Captions are in a font size one less than normal text font
+%      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  USAGE:
+%  All starred form of the commands will span over muliple columns
+%  when you are in two column format.  If the optional label is not
+%  included then the figure label will be {fig:filename1}.  If you
+%  to simplify how you use figure names, you should use the following 
+%  lines in your document after \usepackage{graphicx}:
+%     \graphicspath{{eps/},{pdf/}}
+%     \DeclareGraphicsExtensions{.eps,.pdf}
+%     \usepackage{insfig} %this package
+%  The first line will tells where the graphicx (or graphics) package
+%  to look for your files (i.e. what subdirectories of the current 
+%  directory).  The second line tells what extensions to try to append 
+%  to the filename you give it, so you don't need to specify the file
+%  extension.  The example above will look in two directories and will
+%  try two different file extensions (.eps and .pdf) in order to locate 
+%  the file you want.
+%
+%  There is a naming convention for these commands to make them easy to remember.
+%  Each command begins with ``ins'' and is then followed by some letters, then ``fig''
+%  and then sometimes an optional 'l'.  The letters between ``ins'' and ``fig'' determine
+%  the figures will be be placed.  so for example if the letters are ``sss'' then the command 
+%  is for placing three figures Side-by-Side-by-Side.  If the letters were ``tss'' then it
+%  would be for placing a figure on Top and then two figures Side-by-Side below.  If the
+%  letters were ``ssb'' then it would be for two figures Side-by-Side with a single figure Below.
+%  Hopefully that all makes sense.
+%
+%
+%  Basic figure placement macros for ONE FIGURE
+%    1.Place a single figure (top or bottom)
+%        insfig[optional label]{filename1}{caption}{width1}
+%        insfig*[optional label]{filename1}{caption}{width1} 
+%    2.Single figure that has caption on left side of figure
+%        insfigl[optional label]{filename1}{caption}{width1}{width of caption}
+%        insfigl*[optional label]{filename1}{caption}{width1}{width of caption}
+%    3.Force figure on a separate,empty column/page 
+%        insefig[optional label]{filename}{caption}{width} --- separate column (spanning only one column)
+%        insefig*[optional label]{filename}{caption}{width} --- separate page spanning both columns
+%
+%  Figure placement macros for TWO FIGURES
+%    4.Two side by side figures, caption below
+%        insssfig[optional label]{filename1}{filename2}{caption}{width1}{width2}
+%        insssfig*[optional label]{filename1}{filename2}{caption}{width1}{width2}
+%    5.Two side by side figures, caption on left (side-by-side-by-side)
+%        insssfigl[optional label]{filename1}{filename2}{caption}{width1}{width2}{caption width}
+%        insssfigl*[optional label]{filename1}{filename2}{caption}{width1}{width2}{caption width}
+%    6.Two figures one above the other, caption below
+%        instbfig[optional label]{filename1}{filename2}{caption}{width1}{width2}
+%        instbfig*[optional label]{filename1}{filename2}{caption}{width1}{width2}
+%
+%  More complex figure placement macro for THREE FIGURES
+%    7.One wide figure above two side-by-side figures, caption below
+%        instssfig[optional label]{filename1}{filename2}{filename3}{caption}{width1}{width2}{width3}
+%        instssfig*[optional label]{filename1}{filename2}{filename3}{caption}{width1}{width2}{width3}
+%	 8.Two side-by-side figures above one single wide figure, caption below
+%        insssbfig[optional label]{filename1}{filename2}{filename3}{caption}{width1}{width2}{width3}
+%        insssbfig*[optional label]{filename1}{filename2}{filename3}{caption}{width1}{width2}{width3}
+%    9.Three figures side-by-side-by-side, caption below
+%        inssssfig[optional label]{filename1}{filename2}{filename3}{caption}{width1}{width2}{width3}
+%        inssssfig*[optional label]{filename1}{filename2}{filename3}{caption}{width1}{width2}{width3}
+%	10.Three figures top-center-bottom, caption below
+%        instcbfig[optional label]{filename1}{filename2}{filename3}{caption}{width1}{width2}{width3}
+%        instcbfig*[optional label]{filename1}{filename2}{filename3}{caption}{width1}{width2}{width3}
+%  EVEN More complex figure placement macro for FOUR FIGURES
+%   11.Four figures in rectangle top row left to right followed by bottom row left to right
+%        insrectfig[optional label]{filename1}{filename2}{filename3}{filename4}{caption}{width_col1}{width_col2}
+%        insrectfig*[optional label]{filename1}{filename2}{filename3}{filename4}{caption}{width_col1}{width_col2}
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{insfig}[2004/11/04 insfig Package]
+
+\RequirePackage{graphicx} 
+\RequirePackage{ifthen}
+
+\newcommand{\insfig}{\@ifstar\@insfiga\@insfig}
+\newcommand{\@insfig}[4][def]{
+   \begin{figure}[!htb]                         
+      \begin{center}
+         \makebox{\includegraphics[width=#4]{#2}}                       
+         \caption{#3}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}                        
+   \end{figure}
+}% end insfig
+\newcommand{\@insfiga}[4][def]{
+   \begin{figure*}[!htb]                         
+      \begin{center}
+         \makebox{\includegraphics[width=#4]{#2}}
+         \caption{#3}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}                        
+   \end{figure*}
+}% end insfiga
+
+\newcommand{\insfigl}{\@ifstar\@insfigla\@insfigl}
+\newcommand{\@insfigl}[5][def]{
+   \begin{figure}[!htb]
+      \begin{center}%
+         \parbox{#5}{%
+            \caption{#3}%
+            \ifthenelse{\equal{#1}{def}}%
+               {\label{fig:#2}}%
+               {\label{#1}}%
+         }%
+         \hskip 0.2in%
+         \parbox{#4}{%
+            \includegraphics[width=#4]{#2}%
+         }%
+      \end{center}%
+   \end{figure}%
+}% end insfigl
+\newcommand{\@insfigla}[5][def]{
+   \begin{figure*}[!htb]
+      \begin{center}%
+         \parbox{#5}{%
+            \caption{#3}%
+            \ifthenelse{\equal{#1}{def}}%
+               {\label{fig:#2}}%
+               {\label{#1}}%
+         }%
+         \hskip 0.2in%
+         \parbox{#4}{%
+            \includegraphics[width=#4]{#2}%
+         }%
+      \end{center}%
+   \end{figure*}%
+}% end insfigla
+
+\newcommand{\insefig}{\@ifstar\@insefiga\@insefig}
+\newcommand{\@insefig}[4][def]{ 
+   \begin{figure}[p]
+      \begin{center}%
+         \makebox{\includegraphics[width=#4]{#2}}%
+         \caption{#3}%
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}                       
+   \end{figure}
+}% end insefig
+\newcommand{\@insefiga}[4][def]{ 
+   \begin{figure*}[p]
+      \begin{center}%
+         \makebox{\includegraphics[width=#4]{#2}}%
+         \caption{#3}%
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}                       
+   \end{figure*}
+}% end insefig
+
+\newcommand{\insssfig}{\@ifstar\@insssfig\@insssfiga}
+\newcommand{\@insssfig}[6][def]{
+   \begin{figure}[tbp]
+      \begin{center}
+         \begin{tabular}{cc}
+            \includegraphics[width=#5]{#2} &
+            \includegraphics[width=#6]{#3} \\
+            (a) & (b) 
+         \end{tabular}
+         \caption{#4}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}%
+      \end{center}
+   \end{figure}
+}% end insssfig
+\newcommand{\@insssfiga}[6][def]{
+   \begin{figure*}[tbp]
+      \begin{center}
+         \begin{tabular}{cc}
+            \includegraphics[width=#5]{#2} &
+            \includegraphics[width=#6]{#3} \\
+            (a) & (b) 
+         \end{tabular}
+         \caption{#4}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}%
+      \end{center}
+   \end{figure*}
+}% end insssfiga
+
+\newcommand{\insssfigl}{\@ifstar\@insssfigla\@insssfigl}
+\newcommand{\@insssfigl}[7][def]{%
+   \begin{figure}[tb]%
+      \begin{center}%
+         \parbox{#7}{%
+            \caption{#4}%
+            \ifthenelse{\equal{#1}{def}}%
+               {\label{fig:#2}}%
+               {\label{#1}}%
+         }%
+         \hskip 0.2in%
+         \parbox{#5}{%
+            \includegraphics[width=#5]{#2}%
+         }%
+         \hskip 0.2in%
+         \parbox{#6}{%
+            \includegraphics[width=#6]{#3}%
+         }%
+      \end{center}%
+   \end{figure}%
+}% end insssfigl
+\newcommand{\@insssfigla}[7][def]{%
+   \begin{figure*}[tb]%
+      \begin{center}%
+         \parbox{#7}{%
+            \caption{#4}%
+            \ifthenelse{\equal{#1}{def}}%
+               {\label{fig:#2}}%
+               {\label{#1}}%
+         }%
+         \hskip 0.2in%
+         \parbox{#5}{%
+            \includegraphics[width=#5]{#2}%
+         }%
+         \hskip 0.2in%
+         \parbox{#6}{%
+            \includegraphics[width=#6]{#3}%
+         }%
+      \end{center}%
+   \end{figure*}%
+}% end insssfigl
+
+\newcommand{\instbfig}{\@ifstar\@instbfiga\@instbfig}
+\newcommand{\@instbfig}[6][def]{
+   \begin{figure}[tb]
+      \begin{center}
+         \makebox{\includegraphics[width=#5]{#2}} 
+         \\ (a)\\
+         \makebox{\includegraphics[width=#6]{#3}} 
+         \\ (b)\\
+         \caption{#4}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}
+   \end{figure}
+}% end instbfig
+\newcommand{\@instbfiga}[6][def]{
+   \begin{figure*}[tb]
+      \begin{center}
+         \makebox{\includegraphics[width=#5]{#2}} 
+         \\ (a)\\
+         \makebox{\includegraphics[width=#6]{#3}} 
+         \\ (b)\\
+         \caption{#4}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}
+   \end{figure*}
+}% end instbfiga
+
+\newcommand{\instcbfig}{\@ifstar\@instcbfiga\@instcbfig}
+\newcommand{\@instcbfig}[8][def]{
+   \begin{figure}[!htb]
+      \begin{center}
+         \makebox{\includegraphics[width=#6]{#2}} 
+         \\ (a)\\
+         \makebox{\includegraphics[width=#7]{#3}} 
+         \\ (b)\\
+         \makebox{\includegraphics[width=#8]{#4}} 
+         \\ (c)\\
+         \caption{#5}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}
+   \end{figure}
+}% end instcbfig
+\newcommand{\@instcbfiga}[8][def]{
+   \begin{figure*}[!htb]
+      \begin{center}
+         \makebox{\includegraphics[width=#6]{#2}} 
+         \\ (a)\\
+         \makebox{\includegraphics[width=#7]{#3}} 
+         \\ (b)\\
+         \makebox{\includegraphics[width=#8]{#4}} 
+         \\ (c)\\
+         \caption{#5}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}
+   \end{figure*}
+}% end instcbfiga
+
+\newcommand{\instssfig}{\@ifstar\@instssfiga\@instssfig}
+\newcommand{\@instssfig}[8][def]{%
+   \begin{figure}[!htbp]%
+      \begin{center}%
+         \includegraphics[width=#6]{#2} \\%
+         (a) \\%
+         \begin{tabular}{cc}%
+            \includegraphics[width=#7]{#3} &%
+            \includegraphics[width=#8]{#4} \\%
+            (b) & (c)%
+         \end{tabular}%
+         \caption{#5}%
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}%                                              
+   \end{figure}%
+}% end instssfig
+\newcommand{\@instssfiga}[8][def]{%
+   \begin{figure*}[!htbp]%
+      \begin{center}%
+         \includegraphics[width=#6]{#2} \\%
+         (a) \\%
+         \begin{tabular}{cc}%
+            \includegraphics[width=#7]{#3} &%
+            \includegraphics[width=#8]{#4} \\%
+            (b) & (c)%
+         \end{tabular}%
+         \caption{#5}%
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}%                                              
+   \end{figure*}%
+}% end instssfiga
+
+\newcommand{\insssbfig}{\@ifstar\@insssbfiga\@insssbfig}
+\newcommand{\@insssbfig}[8][def]{%
+   \begin{figure}[!htbp]%
+      \begin{center}%
+         \begin{tabular}{cc}%
+            \includegraphics[width=#6]{#2} &%
+            \includegraphics[width=#7]{#3} \\%
+            (a) & (b)%
+         \end{tabular} \\%
+         \includegraphics[width=#8]{#4} \\%
+         (c)%
+         \caption{#5}%
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}%                                              
+   \end{figure}%
+}% end insssbfig
+\newcommand{\@insssbfiga}[8][def]{%
+   \begin{figure*}[!htbp]%
+      \begin{center}%
+         \begin{tabular}{cc}%
+            \includegraphics[width=#6]{#2} &%
+            \includegraphics[width=#7]{#3} \\%
+            (a) & (b)%
+         \end{tabular} \\%
+         \includegraphics[width=#8]{#4} \\%
+         (c)%         
+         \caption{#5}%
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}%                                              
+   \end{figure*}%
+}% end insssbfiga
+
+\newcommand{\inssssfig}{\@ifstar\@inssssfig\@inssssfiga}
+\newcommand{\@inssssfig}[8][def]{
+   \begin{figure}[!htbp]
+      \begin{center}
+         \begin{tabular}{ccc}
+            \includegraphics[width=#6]{#2} &
+            \includegraphics[width=#7]{#3} &
+			\includegraphics[width=#8]{#4} \\
+            (a) & (b) & (c) 
+         \end{tabular}
+         \caption{#5}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}%
+      \end{center}
+   \end{figure}
+}% end inssssfig
+\newcommand{\@inssssfiga}[8][def]{
+   \begin{figure*}[!htbp]
+      \begin{center}
+         \begin{tabular}{ccc}
+            \includegraphics[width=#6]{#2} &
+            \includegraphics[width=#7]{#3} &
+			\includegraphics[width=#8]{#4} \\
+            (a) & (b) & (c) 
+         \end{tabular}
+         \caption{#5}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}%
+      \end{center}
+   \end{figure*}
+}% end inssssfiga
+
+\newcommand{\insrectfig}{\@ifstar\@insrectfiga\@insrectfig}
+\newcommand{\@insrectfig}[8][def]{%
+   \begin{figure}[!htbp]%
+      \begin{center}%
+         \begin{tabular}{cc}%
+            \includegraphics[width=#7]{#2} &%
+            \includegraphics[width=#8]{#3} \\%
+            (a) & (b) \\%
+            \includegraphics[width=#7]{#4} &%
+            \includegraphics[width=#8]{#5} \\%
+            (c) & (d)%
+         \end{tabular} \\%
+         \caption{#6}%
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}%                                              
+   \end{figure}%
+}% end insrectfig
+\newcommand{\@insrectfiga}[8][def]{%
+   \begin{figure*}[!htbp]%
+      \begin{center}%
+         \begin{tabular}{cc}%
+            \includegraphics[width=#7]{#2} &%
+            \includegraphics[width=#8]{#3} \\%
+            (a) & (b) \\%
+            \includegraphics[width=#7]{#4} &%
+            \includegraphics[width=#8]{#5} \\%
+            (c) & (d)%
+         \end{tabular} \\%
+         \caption{#6}%
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}%                                              
+   \end{figure*}%
+}% end insrectfiga
+

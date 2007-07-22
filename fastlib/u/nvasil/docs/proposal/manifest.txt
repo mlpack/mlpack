@@ -1,0 +1,14 @@
+gtthesis.cls - The main class file
+gtthesis-gloss.ist - The makeindex style file used to generate the glossary
+gtthesis-los.ist - The makeindex style file used to generate the list of symbols
+gtthesis-template.tex - An example template file to get the user started
+makeindexall.bat - A windows batch file to automatically run the makeindex command
+needed to generate the glossary and list of symbols files
+makeindexall.sh - A unix shell script to do the same
+gtthesis-manual.pdf - A pdf manual on how to use this class
+Changelog.txt - Version history of template
+campanile.eps - eps version of campanile graphic
+campanile.pdf - pdf version of campanile graphic
+insfig.sty - Helper package used to insert figures
+manifest.txt - This file
+Readme.txt - readme file
