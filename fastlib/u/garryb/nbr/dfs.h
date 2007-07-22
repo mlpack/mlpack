@@ -186,6 +186,7 @@ void DualTreeDepthFirst<GNP>::PushDown_(
 
       q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
       q_result->Postprocess(param_, *q_point, q_i, *r_root_);
+      global_result_.ApplyResult(param_, *q_point, q_i, *q_result);
       q_results_.StopWrite(q_i);
       q_points_.StopRead(q_i);
     }

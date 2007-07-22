@@ -47,6 +47,16 @@ binrule(name = "range",
 
 #--------
 
+binrule(name = "akde_rpc",
+   sources = ["akde_rpc.cc"],
+   deplibs = [":nbr"])
+
+binrule(name = "akde",
+   sources = ["akde.cc"],
+   deplibs = [":nbr"])
+
+#--------
+
 binrule(name = "gravity",
    sources = ["gravity.cc"],
    deplibs = [":nbr"])

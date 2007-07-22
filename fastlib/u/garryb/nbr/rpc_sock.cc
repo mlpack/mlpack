@@ -83,10 +83,10 @@ void RpcSockImpl::Init() {
 
 void RpcSockImpl::Done() {
   status_ = STOP_SYNC;
-  //fprintf(stderr, "%d: Starting final barrier\n", rank_);
+  // Synchronize all machines, to make sure that they're all ready to stop.
   rpc::Barrier(1);
-  //fprintf(stderr, "%d: Finished final barrier!\n", rank_);
   status_ = STOP;
+  WakeUpPollingLoop();
   polling_thread_.WaitStop();
   close(listen_fd_);
   peers_.Resize(0); // automatically calls their destructors
@@ -116,6 +116,7 @@ void RpcSockImpl::Send(Message *message) {
 }
 
 void RpcSockImpl::WakeUpPollingLoop() {
+  // Write anything to our alert socket to wake up the network thread.
   (void) write(alert_signal_fd_, "x", 1);
 }
 
@@ -165,38 +166,50 @@ void RpcSockImpl::CalcChildren_() {
   int i;
 
   children_.Init();
+
+  // okay, all peers between my rank and my rank + m - 1 are my direct or
+  // indirect children.  the ones that have a power of two difference from
+  // me are my direct children.
+
+  // Find the largest power of two difference.
   for (i = 1; i < m; i *= 2) {}
+
   while (i > 1) {
     i /= 2;
     *children_.AddBack() = rank_ + i;
-    //fprintf(stderr, "children: %d child: %d\n", rank_, rank_ + i);
   }
 
   parent_ = rank_ - ((~rank_) & (rank_-1)) - 1;
-  //fprintf(stderr, "parent = %d\n", parent_);
 }
 
 void RpcSockImpl::Listen_() {
   int sv[2];
   struct sockaddr_in my_address;
 
+  // Open a point-to-point unix socket to myself.
+  // We'll use this socket for waking up the network thread.
   socketpair(AF_LOCAL, SOCK_STREAM, 0, sv);
   alert_signal_fd_ = sv[0];
   alert_slot_fd_ = sv[1];
   MakeSocketNonBlocking(alert_signal_fd_);
   MakeSocketNonBlocking(alert_slot_fd_);
 
-  listen_fd_ = socket(AF_INET, SOCK_STREAM, 0); // last param 0?
+  // Create a file descriptor we'll use to listen to sockets.
+  listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
   mem::Zero(&my_address);
   my_address.sin_family = AF_INET;
   my_address.sin_port = htons(port_);
   my_address.sin_addr.s_addr = htonl(INADDR_ANY);
 
   if (0 > bind(listen_fd_, (struct sockaddr*)&my_address, sizeof(my_address))) {
+    // This will fail if the port is in use.
+    // TODO: A higher-quality implementation would automatically select a port
+    // based on availability, and send this to the master machine.
     FATAL("Could not bind to selected port %d on fd %d: %s",
         port_, listen_fd_, strerror(errno));
   }
 
+  // Try to listen.  This shouldn't ever fail.
   if (0 > listen(listen_fd_, 10)) {
     FATAL("listen() failed, port %d", port_);
   }
@@ -245,8 +258,6 @@ void RpcSockImpl::PollingLoop_() {
 
     FD_ZERO(&error_fds);
 
-    // Use a one-second timeout so we can poll for should_stop_ to allow
-    // graceful shutdown.
     struct timeval tv;
     tv.tv_sec = 60;
     tv.tv_usec = 0;
@@ -303,13 +314,6 @@ void RpcSockImpl::PollingLoop_() {
       }
     }
 
-    // TODO: For absolute correctness (and some added efficiency)
-    // we actually have to enqueue initiating messages whose channels don't
-    // yet exist, because a channel might appear during the middle of
-    // our internal loop.  But on the other hand, a channel might appear
-    // in the middle of the loop because of our own doing.  We might just
-    // use a recursive mutex instead?
-
     // Gather available messages
     for (index_t i = 0; i < peers_.size(); i++) {
       Peer *peer = &peers_[i];
@@ -328,6 +332,10 @@ void RpcSockImpl::PollingLoop_() {
     // Execute work items while we aren't holding any mutexes
     j = 0;
 
+    // We have to lock channels here.
+    // Since we might modify the channels while executing work items, this
+    // mutex has to be recursive.
+    mutex_.Lock();
     for (index_t i = 0; i < work_items.size(); i++) {
       Message *message = work_items[i].message;
       Peer *peer = work_items[i].peer;
@@ -346,9 +354,7 @@ void RpcSockImpl::PollingLoop_() {
         transaction = peer->incoming_transactions[id];
         if (!transaction) {
           // No existing transaction.  We use the channel number to create one.
-          mutex_.Lock();
           Channel *channel = channels_[message->channel()];
-          mutex_.Unlock();
           if (channel) {
             transaction = channel->GetTransaction(message);
             transaction->TransactionHandleNewSender_(message);
@@ -366,6 +372,7 @@ void RpcSockImpl::PollingLoop_() {
         j++;
       }
     }
+    mutex_.Unlock();
 
     work_items.Resize(j);
   }

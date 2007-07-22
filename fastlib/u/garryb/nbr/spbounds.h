@@ -163,6 +163,11 @@ struct SpRange {
     lo = lo_in;
     hi = hi_in;
   }
+
+  void Reset(double lo_in, double hi_in) {
+    lo = lo_in;
+    hi = hi_in;
+  }
   
   double width() const {
     return hi - lo;

@@ -115,6 +115,16 @@ class Transaction {
   virtual void HandleMessage(Message *message) = 0;
 };
 
+/**
+ * A Channel is the mechanism for listening for new messages and starting
+ * new transactions.
+ *
+ * A channel must have a number that is unique and the same for all
+ * machines.  Do not use channels less than 100 (these are reserved for the
+ * implementation).  Re-using channels right after another is usually a bad
+ * idea, so if you have two barriers in a row, use different channels. 
+ * Fixing this bug correctly is a possible future task :-)
+ */
 class Channel {
  public:
   Channel() {}
@@ -356,7 +366,7 @@ class RpcSockImpl {
   int barrier_id_;
   int barrier_registrants_;
 
-  Mutex mutex_;
+  RecursiveMutex mutex_;
   
   /** File descriptor for generating alerts */
   int alert_signal_fd_;
