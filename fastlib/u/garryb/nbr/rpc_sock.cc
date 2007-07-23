@@ -75,15 +75,16 @@ void RpcSockImpl::Init() {
 
   CreatePeers_();
   CalcChildren_();
-
-  if (!rpc::is_root()) {
-    peers_[rpc::parent()].connection.OpenOutgoing(true);
-  }
-
   Listen_();
   StartPollingThread_();
 
   fprintf(stderr, "rpc_sock(%d): Ready, listening on port %d\n", rpc::rank(), port_);
+
+  if (!rpc::is_root()) {
+    peers_[rpc::parent()].mutex.Lock();
+    peers_[rpc::parent()].connection.OpenOutgoing(true);
+    peers_[rpc::parent()].mutex.Unlock();
+  }
 
   // Have an initial barrier to make sure all processors are alive.
   // Place a timeout on this (ALARM_TIME).

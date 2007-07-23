@@ -107,7 +107,7 @@ class ThreadedDualTreeSolver {
               "solver", "grain_%d", work[i]);
           base_->mutex_.Unlock();
 
-          fprintf(stderr, "- Grain %d\n");
+          fprintf(stderr, "- Grain %"LI"d\n", work[i]);
 
           solver.InitSolve(submodule, *base_->param_, q_root_index,
               base_->q_points_cache_, base_->q_nodes_cache_,
