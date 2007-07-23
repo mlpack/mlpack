@@ -126,7 +126,6 @@ class Mutex {
   }
   Mutex(Recursive v) {
     mutex_ = recursive_mutex_;
-    //pthread_mutex_init(&mutex_, );
   }
   
   ~Mutex() {

@@ -262,9 +262,13 @@ class SockConnection {
   void HandleSocketEvents(fd_set *read_fds, fd_set *write_fds,
       fd_set *error_fds, bool allow_errors);
   /** Try reading something from the queue. */
-  void TryRead();
+  bool TryRead();
   /** Try writing something from the queue. */
   void TryWrite();
+  
+  int peer() const {
+    return peer_;
+  }
 };
 
 class RpcSockImpl {
@@ -397,6 +401,7 @@ class RpcSockImpl {
   void PollingLoop_();
   void GatherReadyMessages_(Peer *peer, ArrayList<WorkItem>* work_items);
   void TryAcceptConnection_(int fd);
+  void Ping_(int peer_num);
 };
 
 namespace rpc {

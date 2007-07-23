@@ -31,7 +31,7 @@ tasks to complete that must work
    /- REQUIRE IP ADDRESS - Duhh! :-)
 
 near future
- - abstract reduce operation that uses the tree structure
+ /- abstract reduce operation that uses the tree structure
 
 things to think about
  - how to shut down cleanly and respond to signals
@@ -41,7 +41,7 @@ things to think about
      - use ssh to detect return code
      - if ssh fails, emit an error message and kill yourself
  - fastexec integration
- - accept() - send me your rank? or just ignore rank altogether?
+ /- accept() - send me your rank? or just ignore rank altogether?
 
 in the far future, abstract out:
  - topology with scatter/gather/reduce mechanics
@@ -59,6 +59,8 @@ void MakeSocketNonBlocking(int fd) {
 
 //-------------------------------------------------------------------------
 
+#define ALARM_TIME 120
+
 RpcSockImpl *RpcSockImpl::instance = NULL;
 
 void RpcSockImpl::Init() {
@@ -73,11 +75,22 @@ void RpcSockImpl::Init() {
 
   CreatePeers_();
   CalcChildren_();
+
+  if (!rpc::is_root()) {
+    peers_[rpc::parent()].connection.OpenOutgoing(true);
+  }
+
   Listen_();
   StartPollingThread_();
 
   fprintf(stderr, "rpc_sock(%d): Ready, listening on port %d\n", rpc::rank(), port_);
+
+  // Have an initial barrier to make sure all processors are alive.
+  // Place a timeout on this (ALARM_TIME).
+  alarm(ALARM_TIME);
   rpc::Barrier(0);
+  alarm(0);
+
   fprintf(stderr, "rpc_sock(%d): All computers are alive -- starting!\n", rpc::rank());
 }
 
@@ -126,6 +139,7 @@ void RpcSockImpl::UnregisterTransaction(int peer_id, int channel, int id) {
   peer->mutex.Lock(); // Lock peer's mutex
   if (channel < 0) {
     peer->incoming_transactions[id] = NULL;
+  } else {
     peer->outgoing_transactions[id] = NULL;
   }
   peer->mutex.Unlock();
@@ -195,11 +209,20 @@ void RpcSockImpl::Listen_() {
   MakeSocketNonBlocking(alert_slot_fd_);
 
   // Create a file descriptor we'll use to listen to sockets.
-  listen_fd_ = socket(AF_INET, SOCK_STREAM, 0);
+  listen_fd_ = socket(PF_INET, SOCK_STREAM, 0);
   mem::Zero(&my_address);
   my_address.sin_family = AF_INET;
   my_address.sin_port = htons(port_);
   my_address.sin_addr.s_addr = htonl(INADDR_ANY);
+
+  // Ports normally stay "ghosted" for a specified amount of time after a
+  // process finishes.  This allows us to reuse the port immediately instead
+  // so you don't have to manually rotate ports.
+  int sol_value = 1;
+  if (0 > setsockopt(listen_fd_, SOL_SOCKET, SO_REUSEADDR,
+      &sol_value, sizeof(sol_value))) {
+    NONFATAL("Could not set socket to allow reuse.");
+  }
 
   if (0 > bind(listen_fd_, (struct sockaddr*)&my_address, sizeof(my_address))) {
     // This will fail if the port is in use.
@@ -259,24 +282,34 @@ void RpcSockImpl::PollingLoop_() {
     FD_ZERO(&error_fds);
 
     struct timeval tv;
-    tv.tv_sec = 60;
+    tv.tv_sec = 10;
     tv.tv_usec = 0;
     int n_events = select(maxfd + 1, &read_fds, &write_fds, &error_fds, &tv);
-    //fprintf(stderr, "%d: select() returns %d\n", rank_, n_events);
 
     //for (int i = 0; i < maxfd; i++) {
-    //  if (FD_ISSET(i, &read_fds)) { //fprintf(stderr, "%d: read on %d\n", rank_, i); }
-    //  if (FD_ISSET(i, &write_fds)) { //fprintf(stderr, "%d: write on %d\n", rank_, i); }
-    //  if (FD_ISSET(i, &error_fds)) { //fprintf(stderr, "%d: error on %d\n", rank_, i); }
+    //  if (FD_ISSET(i, &read_fds)) { fprintf(stderr, "%d: read on %d\n", rank_, i); }
+    //  if (FD_ISSET(i, &write_fds)) { fprintf(stderr, "%d: write on %d\n", rank_, i); }
+    //  if (FD_ISSET(i, &error_fds)) { fprintf(stderr, "%d: error on %d\n", rank_, i); }
     //}
 
     if (n_events < 0) {
-      NONFATAL("Select failed");
-      continue;
+      FATAL("Select failed %s", strerror(errno));
     }
     if (n_events == 0) {
-      // Select timed out, let's try again
+      // Select timed out, send ping messages to test the connection
+      if (!rpc::is_root()) {
+        Ping_(rpc::parent());
+      }
+      for (index_t i = 0; i < rpc::n_children(); i++) {
+        Ping_(rpc::child(i));
+      }
       continue;
+    }
+
+    for (int i = 0; i <= maxfd; i++) {
+      if (FD_ISSET(i, &error_fds)) {
+        NONFATAL("Found an error on %d\n", i);
+      }
     }
 
     if (FD_ISSET(alert_slot_fd_, &read_fds)) {
@@ -286,6 +319,7 @@ void RpcSockImpl::PollingLoop_() {
       while (read(alert_slot_fd_, buf, sizeof(buf)) > 0) {}
     }
 
+
     // Survey any connections that we accepted on faith.
     j = 0;
     for (index_t i = 0; i < unknown_connections_.size(); i++) {
@@ -293,6 +327,7 @@ void RpcSockImpl::PollingLoop_() {
       
       if (FD_ISSET(fd, &read_fds)) {
         TryAcceptConnection_(fd);
+        FD_CLR(fd, &read_fds);
       } else {
         unknown_connections_[j++] = unknown_connections_[i];
       }
@@ -342,34 +377,40 @@ void RpcSockImpl::PollingLoop_() {
       int id = message->transaction_id();
       Transaction *transaction;
 
-      peer->mutex.Lock();
-      if (message->channel() < 0) {
-        // When the channel ID is invalid, this means that I was the initiator
-        // of the transaction.
-        transaction = peer->outgoing_transactions[id];
-        DEBUG_ASSERT(transaction != NULL);
-      } else {
-        // When the channel ID is valid, it means the remote host initiated
-        // the transaction and was picked up by my channel server.
-        transaction = peer->incoming_transactions[id];
-        if (!transaction) {
-          // No existing transaction.  We use the channel number to create one.
-          Channel *channel = channels_[message->channel()];
-          if (channel) {
-            transaction = channel->GetTransaction(message);
-            transaction->TransactionHandleNewSender_(message);
-            peer->incoming_transactions[id] = transaction;
+      // Ignore ping messages (negative transaction ID)
+      if (id >= 0) {
+        peer->mutex.Lock();
+
+        if (message->channel() < 0) {
+          // When the channel ID is invalid, this means that I was the initiator
+          // of the transaction.
+          transaction = peer->outgoing_transactions[id];
+          DEBUG_ASSERT_MSG(transaction != NULL,
+             "Transaction null, channel %d, id %d, me %d",
+             message->channel(), id, rpc::rank());
+        } else {
+          // When the channel ID is valid, it means the remote host initiated
+          // the transaction and was picked up by my channel server.
+          transaction = peer->incoming_transactions[id];
+          if (!transaction) {
+            // No existing transaction.  We use the channel number to create one.
+            Channel *channel = channels_[message->channel()];
+            if (channel) {
+              transaction = channel->GetTransaction(message);
+              transaction->TransactionHandleNewSender_(message);
+              peer->incoming_transactions[id] = transaction;
+            }
           }
         }
-      }
-      peer->mutex.Unlock();
+        peer->mutex.Unlock();
 
-      if (transaction) {
-        transaction->HandleMessage(message);
-      } else {
-        // unknown channel - keep this on the queue
-        work_items[j] = work_items[i];
-        j++;
+        if (transaction) {
+          transaction->HandleMessage(message);
+        } else {
+          // unknown channel - keep this on the queue
+          work_items[j] = work_items[i];
+          j++;
+        }
       }
     }
     mutex_.Unlock();
@@ -418,6 +459,17 @@ void RpcSockImpl::GatherReadyMessages_(Peer *peer,
     item->peer = peer;
   }
   queue->Resize(0);
+}
+
+void RpcSockImpl::Ping_(int peer_num) {
+  Peer *peer = &peers_[peer_num];
+  
+  peer->mutex.Lock();
+  if (peer->connection.is_write_open()) {
+    peer->connection.Send(
+        peer->connection.CreateMessage(peer_num, -1, -1, 0));
+  }
+  peer->mutex.Unlock();
 }
 
 //-------------------------------------------------------------------------
@@ -561,32 +613,40 @@ void SockConnection::Init(int peer_num, const char *ip_address, int port) {
 }
 
 void SockConnection::OpenOutgoing(bool blocking) {
-  write_fd_ = socket(AF_INET, SOCK_STREAM, 0);
+  int temp_fd = socket(PF_INET, SOCK_STREAM, 0);
 
   if (blocking) {
     int sleeptime = 1;
     int tries = 0;
-    while (0 > connect(write_fd_, (struct sockaddr*)&peer_addr_, sizeof(struct sockaddr_in))) {
+    while (0 > connect(temp_fd, (struct sockaddr*)&peer_addr_,
+        sizeof(struct sockaddr_in))) {
+      ++tries;
+      (void) close(temp_fd);
       if (++tries == 1) {
         fprintf(stderr,
             "rpc_sock(%d): Connection to parent %d failed, we'll a few more times.\n",
             rpc::rank(), peer_);
       }
-      (void) close(write_fd_);
+      if (tries >= 100) {
+        FATAL("Over 100 connection attempts failed to rank %d, bailing out.",
+            peer_);
+      }
       sleep(sleeptime);
-      write_fd_ = socket(AF_INET, SOCK_STREAM, 0);
+      temp_fd = socket(PF_INET, SOCK_STREAM, 0);
     }
 
-    MakeSocketNonBlocking(write_fd_);
+    MakeSocketNonBlocking(temp_fd);
   } else {
-    MakeSocketNonBlocking(write_fd_);
+    MakeSocketNonBlocking(temp_fd);
 
     //fprintf(stderr, "connect to peer %d, %s\n", peer_, inet_ntoa(peer_addr_.sin_addr));
-    if (0 > connect(write_fd_, (struct sockaddr*)&peer_addr_, sizeof(struct sockaddr_in))
+    if (0 > connect(temp_fd, (struct sockaddr*)&peer_addr_, sizeof(struct sockaddr_in))
         && errno != EINTR && errno != EINPROGRESS) {
       FATAL("connect failed: %s", strerror(errno));
     }
   }
+
+  write_fd_ = temp_fd;
 
   // Send the initial birth message
   write_buffer_pos_ = 0;
@@ -612,7 +672,7 @@ void SockConnection::Send(Message *message) {
 
     // If we're connecting to our parent for the first
     // time, we should block until we can connect.
-    OpenOutgoing(peer_ == rpc::parent());
+    OpenOutgoing(false);
   }
 
   ++write_total_;
@@ -661,8 +721,10 @@ void SockConnection::TryWrite() {
   }
 }
 
-void SockConnection::TryRead() {
+bool SockConnection::TryRead() {
   //fprintf(stderr, "Trying to read!\n");
+  bool anything_done = false;
+
   for (;;) {
     // First, read a header if we have to.
     if (!read_message_) {
@@ -678,7 +740,7 @@ void SockConnection::TryRead() {
         if (header_bytes == 0 || errno == EINTR || errno == EAGAIN) {
           // okay, it looks like there isn't any data
           //fprintf(stderr, "Looks like we don't actually have data...\n");
-          return;
+          return anything_done;
         } else {
           FATAL("Error reading packet header: read returned %d bytes: %s",
               int(header_bytes), strerror(errno));
@@ -691,8 +753,7 @@ void SockConnection::TryRead() {
       read_message_->Init(peer_, header.channel, header.transaction_id,
           mem::Alloc<char>(header.data_size), 0, header.data_size);
       read_buffer_pos_ = 0;
-      //fprintf(stderr, "Read header %d bytes\n", header_bytes);
-      //fprintf(stderr, "Got a valid header.\n");
+      anything_done = true;
     }
     // Second, see if we're done with the packet.  (Note some packets have
     // a null message length!)
@@ -700,7 +761,6 @@ void SockConnection::TryRead() {
       // We've read a whole message.  Put it on the queue to be serviced.
       ++read_total_;
       *read_queue_.AddBack() = read_message_;
-      //fprintf(stderr, "Got packet %d:%d\n", read_message_->channel(), read_message_->transaction_id());
 
       read_message_ = NULL;
       read_buffer_pos_ = 0;
@@ -710,9 +770,9 @@ void SockConnection::TryRead() {
     ssize_t bytes_read = read(read_fd_,
         read_message_->buffer() + read_buffer_pos_,
         read_message_->buffer_size() - read_buffer_pos_);
-    //fprintf(stderr, "Got %d data bytes.\n", (int)bytes_read);
-    //fprintf(stderr, "Read payload %d bytes\n", bytes_read);
+
     if (bytes_read > 0) {
+      anything_done = true;
       read_buffer_pos_ += bytes_read; 
     } else {
       // Couldn't read anything.
@@ -724,6 +784,8 @@ void SockConnection::TryRead() {
       break;
     }
   }
+  
+  return anything_done;
 }
 
 void SockConnection::HandleSocketEvents(
@@ -747,7 +809,10 @@ void SockConnection::HandleSocketEvents(
       }
     }
     if (FD_ISSET(read_fd_, read_fds)) {
-      TryRead();
+      bool anything_done = TryRead();
+      if (!allow_errors && !anything_done) {
+        FATAL("End of file on read fd!");
+      }       
     }
   }
   if (unlikely(is_write_open())) {
@@ -756,7 +821,7 @@ void SockConnection::HandleSocketEvents(
       if (allow_errors) {
         write_fd_ = -1;
       } else {
-        FATAL("Socket error on out fd");
+        FATAL("Socket error on write fd");
       }
     }
     if (FD_ISSET(write_fd_, write_fds)) {
