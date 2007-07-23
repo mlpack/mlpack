@@ -283,15 +283,8 @@ class Gravity {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-#ifdef USE_MPI  
-  MPI_Init(&argc, &argv);
-  nbr_utils::MpiMonochromaticDualTreeMain<Gravity, DualTreeDepthFirst<Gravity> >(
+  nbr_utils::RpcMonochromaticDualTreeMain<Gravity, DualTreeDepthFirst<Gravity> >(
       fx_root, "gravity");
-  MPI_Finalize();
-#else
-  nbr_utils::MonochromaticDualTreeMain<Gravity, DualTreeDepthFirst<Gravity> >(
-      fx_root, "gravity");
-#endif
   
   fx_done();
 }

@@ -265,6 +265,11 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
             end_col = split_col;
           }
         }
+
+        // Don't accept no for an answer.  Block bounadaries are very
+        // important, so if we straddle a boundary because there are
+        // duplicates, just have the duplicate on both sides.
+        split_col = goal_col;
       }
 
       DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)",

@@ -53,13 +53,49 @@ register port numbers
 
 //-------------------------------------------------------------------------
 
+/**
+ * The timeout to establish initial connections.
+ *
+ * This should be on the order of the maximum startup time, inclusing SSH,
+ * NFS, and all other goodies -- which can be quite slow at times.
+ * If it takes too long to start up, one of the machines is probably dead,
+ * and we need to make sure we don't leave ghost processes on random machines.
+ */
+#define TIMEOUT_INITIAL 90
+/**
+ * The maximum amount of time to process messages.
+ *
+ * Message processing should never really do any I/O
+ * (except for disk accesses) or do anything that might take a long time,
+ * because this blocks other requests from being serviced.
+ * This mandates that even if an infinite loop occurs while servicing a
+ * request, a ghost process won't be left on the machine.
+ */
+#define TIMEOUT_MESSAGE 30
+/**
+ * The maximum amount of time to connect to the parent.
+ *
+ * This should be on the order of the maximum amount of time it should take
+ * a process to start up.
+ * This ensures that if the parent dies before we can connect to it, our
+ * process will eventually die (and cause others to die cascading with it).
+ */
+#define TIMEOUT_CONNECT 90
+/**
+ * The maximum amount of idle time after which pings should be sent to see if
+ * our neighbors have died, and this also corresponds to the maximum ping
+ * timeout.
+ *
+ * Ensures that if other processes die, we cascade and also die too -- the
+ * tree structure results in all processes dying.
+ */
+#define TIMEOUT_SELECT 15
+
 void MakeSocketNonBlocking(int fd) {
   fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
 }
 
 //-------------------------------------------------------------------------
-
-#define ALARM_TIME 120
 
 RpcSockImpl *RpcSockImpl::instance = NULL;
 
@@ -72,13 +108,20 @@ void RpcSockImpl::Init() {
   channels_.Init();
   channels_.default_value() = NULL;
   unknown_connections_.Init();
+  live_pings_ = 0;
+  peer_from_fd_.Init();
+  peer_from_fd_.default_value() = -1;
+  max_fd_ = 0;
+  FD_ZERO(&error_fd_set_);
+  FD_ZERO(&read_fd_set_);
+  FD_ZERO(&write_fd_set_);
 
   CreatePeers_();
   CalcChildren_();
   Listen_();
-  StartPollingThread_();
-
   fprintf(stderr, "rpc_sock(%d): Ready, listening on port %d\n", rpc::rank(), port_);
+
+  status_ = INIT;
 
   if (!rpc::is_root()) {
     peers_[rpc::parent()].mutex.Lock();
@@ -86,11 +129,12 @@ void RpcSockImpl::Init() {
     peers_[rpc::parent()].mutex.Unlock();
   }
 
+  StartPollingThread_();
+
+
   // Have an initial barrier to make sure all processors are alive.
-  // Place a timeout on this (ALARM_TIME).
-  alarm(ALARM_TIME);
   rpc::Barrier(0);
-  alarm(0);
+  status_ = RUN;
 
   fprintf(stderr, "rpc_sock(%d): All computers are alive -- starting!\n", rpc::rank());
 }
@@ -208,6 +252,7 @@ void RpcSockImpl::Listen_() {
   alert_slot_fd_ = sv[1];
   MakeSocketNonBlocking(alert_signal_fd_);
   MakeSocketNonBlocking(alert_slot_fd_);
+  RegisterReadFd(-1, alert_slot_fd_);
 
   // Create a file descriptor we'll use to listen to sockets.
   listen_fd_ = socket(PF_INET, SOCK_STREAM, 0);
@@ -239,10 +284,10 @@ void RpcSockImpl::Listen_() {
   }
 
   MakeSocketNonBlocking(listen_fd_);
+  RegisterReadFd(-1, listen_fd_);
 }
 
 void RpcSockImpl::StartPollingThread_() {
-  status_ = RUN;
   polling_task_.Init(this);
   polling_thread_.Init(&polling_task_);
   polling_thread_.Start();
@@ -253,170 +298,187 @@ void RpcSockImpl::PollingLoop_() {
   fd_set read_fds;
   fd_set write_fds;
   fd_set error_fds;
+  int initialization_seconds = 0;
 
   work_items.Init();
 
   while (status_ != STOP) {
     index_t j = 0;
-    int maxfd;
 
-    FD_ZERO(&read_fds);
-    FD_ZERO(&write_fds);
-    FD_ZERO(&error_fds);
-
-    FD_SET(listen_fd_, &read_fds);
-    FD_SET(alert_slot_fd_, &read_fds);
-    maxfd = max(listen_fd_, alert_slot_fd_);
-
-    for (index_t i = 0; i < peers_.size(); i++) {
-      Peer *peer = &peers_[i];
-      peer->connection.FastPrepareSelect(&read_fds, &write_fds, &error_fds);
-      maxfd = max(maxfd, peer->connection.read_fd());
-      maxfd = max(maxfd, peer->connection.write_fd());
-    }
-
-    for (index_t i = 0; i < unknown_connections_.size(); i++) {
-      FD_SET(unknown_connections_[i], &read_fds);
-      maxfd = max(maxfd, unknown_connections_[i]);
-    }
-
-    FD_ZERO(&error_fds);
+    fd_mutex_.Lock();
+    read_fds = read_fd_set_;
+    write_fds = write_fd_set_;
+    error_fds = error_fd_set_;
+    //mem::CopyBytes(&read_fds, &read_fd_set_, sizeof(read_fd_set_));
+    //mem::CopyBytes(&write_fds, &write_fd_set_, sizeof(write_fd_set_));
+    //mem::CopyBytes(&error_fds, &error_fd_set_, sizeof(error_fd_set_));
+    fd_mutex_.Unlock();
 
     struct timeval tv;
-    tv.tv_sec = 10;
+    tv.tv_sec = TIMEOUT_SELECT;
     tv.tv_usec = 0;
-    int n_events = select(maxfd + 1, &read_fds, &write_fds, &error_fds, &tv);
-
-    //for (int i = 0; i < maxfd; i++) {
-    //  if (FD_ISSET(i, &read_fds)) { fprintf(stderr, "%d: read on %d\n", rank_, i); }
-    //  if (FD_ISSET(i, &write_fds)) { fprintf(stderr, "%d: write on %d\n", rank_, i); }
-    //  if (FD_ISSET(i, &error_fds)) { fprintf(stderr, "%d: error on %d\n", rank_, i); }
-    //}
+    int n_events = select(max_fd_ + 1, &read_fds, &write_fds, &error_fds, &tv);
 
     if (n_events < 0) {
-      FATAL("Select failed %s", strerror(errno));
-    }
-    if (n_events == 0) {
-      // Select timed out, send ping messages to test the connection
-      if (!rpc::is_root()) {
-        Ping_(rpc::parent());
-      }
-      for (index_t i = 0; i < rpc::n_children(); i++) {
-        Ping_(rpc::child(i));
+      FATAL("select() failed: %s", strerror(errno));
+    } else if (n_events == 0) {
+      // Select timed out, send ping messages to test the connections
+      if (status_ == INIT) {
+        initialization_seconds += TIMEOUT_SELECT;
+        if (initialization_seconds >= TIMEOUT_INITIAL) {
+          FATAL("Initialization took longer than %d seconds, dying.",
+              TIMEOUT_INITIAL);
+        }
+      } else {
+        // The ping method isn't really sophisticated -- if some of our peers
+        // are still alive, we probably won't bother to start pinging anyone.
+        // Chances are though that the death of another machine would cause
+        // things to crawl to a halt, and we'll eventually start sending
+        // pings.
+        if (live_pings_ != 0) {
+          FATAL("rpc_sock(%d): Ping timeout to %d peers.",
+              rpc::rank(), live_pings_);
+        }
+        if (!rpc::is_root()) {
+          Ping_(rpc::parent(), MSG_PING);
+        }
+        for (index_t i = 0; i < rpc::n_children(); i++) {
+          Ping_(rpc::child(i), MSG_PING);
+        }
       }
       continue;
     }
 
-    for (int i = 0; i <= maxfd; i++) {
-      if (FD_ISSET(i, &error_fds)) {
-        NONFATAL("Found an error on %d\n", i);
-      }
-    }
-
     if (FD_ISSET(alert_slot_fd_, &read_fds)) {
-      // We got a wake-up signal.  Clear the buffer so we won't receive the
-      // signal twice.
-      char buf[8];
+      // We got a wake-up signal.  Clear the OS buffer.
+      char buf[32];
       while (read(alert_slot_fd_, buf, sizeof(buf)) > 0) {}
     }
 
+    if (unlikely(unknown_connections_.size() != 0)) {
+      // Survey any connections that we accepted on faith.
+      j = 0;
+      for (index_t i = 0; i < unknown_connections_.size(); i++) {
+        int fd = unknown_connections_[i];
 
-    // Survey any connections that we accepted on faith.
-    j = 0;
-    for (index_t i = 0; i < unknown_connections_.size(); i++) {
-      int fd = unknown_connections_[i];
-      
-      if (FD_ISSET(fd, &read_fds)) {
-        TryAcceptConnection_(fd);
-        FD_CLR(fd, &read_fds);
-      } else {
-        unknown_connections_[j++] = unknown_connections_[i];
-      }
-    }
-    unknown_connections_.Resize(j);
-
-    if (FD_ISSET(listen_fd_, &read_fds)) {
-      // Accept incoming connections
-      for (;;) {
-        int new_fd;
-
-        new_fd = accept(listen_fd_, NULL, NULL);
-
-        if (new_fd < 0) {
-          break;
-        }
-
-        *unknown_connections_.AddBack() = new_fd;
-      }
-    }
-
-    // Gather available messages
-    for (index_t i = 0; i < peers_.size(); i++) {
-      Peer *peer = &peers_[i];
-
-      if (unlikely(peer->connection.FastCheckEvents(
-          &read_fds, &write_fds, &error_fds))) {
-        peer->mutex.Lock();
-        // we'll allow errors to occur if we're shutting down.
-        peer->connection.HandleSocketEvents(&read_fds, &write_fds, &error_fds,
-           status_ != RUN);
-        GatherReadyMessages_(peer, &work_items);
-        peer->mutex.Unlock();
-      }
-    }
-
-    // Execute work items while we aren't holding any mutexes
-    j = 0;
-
-    // We have to lock channels here.
-    // Since we might modify the channels while executing work items, this
-    // mutex has to be recursive.
-    mutex_.Lock();
-    for (index_t i = 0; i < work_items.size(); i++) {
-      Message *message = work_items[i].message;
-      Peer *peer = work_items[i].peer;
-      int id = message->transaction_id();
-      Transaction *transaction;
-
-      // Ignore ping messages (negative transaction ID)
-      if (id >= 0) {
-        peer->mutex.Lock();
-
-        if (message->channel() < 0) {
-          // When the channel ID is invalid, this means that I was the initiator
-          // of the transaction.
-          transaction = peer->outgoing_transactions[id];
-          DEBUG_ASSERT_MSG(transaction != NULL,
-             "Transaction null, channel %d, id %d, me %d",
-             message->channel(), id, rpc::rank());
+        if (FD_ISSET(fd, &read_fds)) {
+          TryAcceptConnection_(fd);
+          FD_CLR(fd, &read_fds);
         } else {
-          // When the channel ID is valid, it means the remote host initiated
-          // the transaction and was picked up by my channel server.
-          transaction = peer->incoming_transactions[id];
-          if (!transaction) {
-            // No existing transaction.  We use the channel number to create one.
-            Channel *channel = channels_[message->channel()];
-            if (channel) {
-              transaction = channel->GetTransaction(message);
-              transaction->TransactionHandleNewSender_(message);
-              peer->incoming_transactions[id] = transaction;
+          unknown_connections_[j++] = unknown_connections_[i];
+        }
+      }
+      unknown_connections_.Resize(j);
+    }
+
+    if (unlikely(FD_ISSET(listen_fd_, &read_fds))) {
+      // Accept incoming connections
+      int new_fd;
+      while ((new_fd = accept(listen_fd_, NULL, NULL)) >= 0) {
+        *unknown_connections_.AddBack() = new_fd;
+        RegisterReadFd(-1, new_fd);
+      }
+    }
+
+    if (n_events > 0) {
+      bool errors_ok = (status_ == STOP) || (status_ == STOP_SYNC);
+
+      for (int i = max_fd_; i >= 0; i--) {
+        if (unlikely(FD_ISSET(i, &error_fds))) {
+          if (!errors_ok) {
+            FATAL("Unexpected error on file descriptor %d\n", i);
+          }
+          FD_CLR(i, &error_fd_set_);
+          FD_CLR(i, &read_fd_set_);
+          FD_CLR(i, &write_fd_set_);
+        }
+        if (unlikely(FD_ISSET(i, &read_fds))) {
+          int peer_num = peer_from_fd_[i];
+          if (peer_num >= 0) {
+            Peer *peer = &peers_[peer_num];
+            peer->mutex.Lock();
+            if (!peer->connection.TryRead() && !errors_ok) {
+              FATAL("Unexpected end of file for peer %d", i);
+            }
+            GatherReadyMessages_(peer, &work_items);
+            peer->mutex.Unlock();
+          }
+        }
+        if (FD_ISSET(i, &write_fds)) {
+          int peer_num = peer_from_fd_[i];
+          if (peer_num >= 0) {
+            Peer *peer = &peers_[peer_num];
+            peer->mutex.Lock();
+            peer->connection.TryWrite();
+            peer->mutex.Unlock();
+          }
+        }
+      }
+
+      mutex_.Lock();
+      if (work_items.size() != 0) {
+        j = 0;
+
+        // Set a time limit on message processing.
+        // In parallel situations, runaway processes are extremely hard to
+        // clean up.
+        alarm(TIMEOUT_MESSAGE);
+
+        for (index_t i = 0; i < work_items.size(); i++) {
+          Message *message = work_items[i].message;
+          Peer *peer = work_items[i].peer;
+          int id = message->transaction_id();
+          Transaction *transaction;
+
+          if (id < 0) {
+            // We're getting a control message
+            if (message->channel() == MSG_PONG) {
+              live_pings_--;
+            } else if (message->channel() == MSG_PING) {
+              Ping_(peer->connection.peer(), MSG_PONG);
+            } else {
+              FATAL("Unknown control message: %d", message->channel());
+            }
+          } else {
+            peer->mutex.Lock();
+
+            if (message->channel() < 0) {
+              // When the channel ID is invalid, this means that I was the initiator
+              // of the transaction.
+              transaction = peer->outgoing_transactions[id];
+              DEBUG_ASSERT_MSG(transaction != NULL,
+                 "Transaction null, channel %d, id %d, me %d",
+                 message->channel(), id, rpc::rank());
+            } else {
+              // When the channel ID is valid, it means the remote host initiated
+              // the transaction and was picked up by my channel server.
+              transaction = peer->incoming_transactions[id];
+              if (!transaction) {
+                // No existing transaction.  We use the channel number to create one.
+                Channel *channel = channels_[message->channel()];
+                if (channel) {
+                  transaction = channel->GetTransaction(message);
+                  transaction->TransactionHandleNewSender_(message);
+                  peer->incoming_transactions[id] = transaction;
+                }
+              }
+            }
+            peer->mutex.Unlock();
+
+            if (transaction) {
+              transaction->HandleMessage(message);
+            } else {
+              // unknown channel - keep this on the queue
+              work_items[j] = work_items[i];
+              j++;
             }
           }
         }
-        peer->mutex.Unlock();
-
-        if (transaction) {
-          transaction->HandleMessage(message);
-        } else {
-          // unknown channel - keep this on the queue
-          work_items[j] = work_items[i];
-          j++;
-        }
+        alarm(0);
+        work_items.Resize(j);
       }
+      mutex_.Unlock();
     }
-    mutex_.Unlock();
-
-    work_items.Resize(j);
   }
 }
 
@@ -442,6 +504,8 @@ void RpcSockImpl::TryAcceptConnection_(int fd) {
     peer->connection.AcceptIncoming(fd);
     peer->mutex.Unlock();
 
+    RegisterReadFd(peer_num, fd);
+
     return;
   }
 
@@ -462,15 +526,54 @@ void RpcSockImpl::GatherReadyMessages_(Peer *peer,
   queue->Resize(0);
 }
 
-void RpcSockImpl::Ping_(int peer_num) {
+void RpcSockImpl::Ping_(int peer_num, int message) {
   Peer *peer = &peers_[peer_num];
-  
   peer->mutex.Lock();
-  if (peer->connection.is_write_open()) {
+  // Only ping machines we're open both ways with.  We don't want to try
+  // pinging a machine that we're in the process of connecting to, but might
+  // be waiting for a connection to its parent.
+  if (peer->connection.is_write_open() && peer->connection.is_read_open()) {
     peer->connection.Send(
-        peer->connection.CreateMessage(peer_num, -1, -1, 0));
+        peer->connection.CreateMessage(peer_num, message, -1, 0));
+    if (message == MSG_PING) {
+      live_pings_++;
+    }
   }
   peer->mutex.Unlock();
+}
+
+void RpcSockImpl::RegisterReadFd(int peer, int fd) {
+  fd_mutex_.Lock();
+  FD_SET(fd, &read_fd_set_);
+  FD_SET(fd, &error_fd_set_);
+  max_fd_.MaxWith(fd);
+  if (peer >= 0) {
+    peer_from_fd_[fd] = peer;
+  }
+  fd_mutex_.Unlock();
+}
+
+void RpcSockImpl::RegisterWriteFd(int peer, int fd) {
+  fd_mutex_.Lock();
+  FD_SET(fd, &write_fd_set_);
+  FD_SET(fd, &error_fd_set_);
+  max_fd_.MaxWith(fd);
+  if (peer >= 0) {
+    peer_from_fd_[fd] = peer;
+  }
+  fd_mutex_.Unlock();
+}
+
+void RpcSockImpl::ActivateWriteFd(int fd) {
+  fd_mutex_.Lock();
+  FD_SET(fd, &write_fd_set_);
+  fd_mutex_.Unlock();
+}
+
+void RpcSockImpl::DeactivateWriteFd(int fd) {
+  fd_mutex_.Lock();
+  FD_CLR(fd, &write_fd_set_);
+  fd_mutex_.Unlock();
 }
 
 //-------------------------------------------------------------------------
@@ -591,7 +694,7 @@ Message *SockConnection::CreateMessage(
 
 void SockConnection::Init(int peer_num, const char *ip_address, int port) {
   peer_ = peer_num;
-  
+
   mem::Zero(&peer_addr_);
   peer_addr_.sin_family = AF_INET;
   peer_addr_.sin_port = htons(port);
@@ -616,23 +719,29 @@ void SockConnection::Init(int peer_num, const char *ip_address, int port) {
 void SockConnection::OpenOutgoing(bool blocking) {
   int temp_fd = socket(PF_INET, SOCK_STREAM, 0);
 
+  if (temp_fd < 0) {
+    FATAL("Too many sockets");
+  }
+
   if (blocking) {
     int sleeptime = 1;
-    int tries = 0;
+    int elapsed_time = 0;
     while (0 > connect(temp_fd, (struct sockaddr*)&peer_addr_,
         sizeof(struct sockaddr_in))) {
-      ++tries;
       (void) close(temp_fd);
-      if (++tries == 1) {
-        fprintf(stderr,
-            "rpc_sock(%d): Connection to parent %d failed, we'll a few more times.\n",
-            rpc::rank(), peer_);
+
+      if (elapsed_time == 0) {
+        NONFATAL(
+            "rpc_sock(%d): Connection to parent %d failed, we'll try for %d seconds.\n",
+            rpc::rank(), peer_, TIMEOUT_CONNECT);
       }
-      if (tries >= 100) {
-        FATAL("Over 100 connection attempts failed to rank %d, bailing out.",
-            peer_);
+      elapsed_time += sleeptime;
+      if (elapsed_time >= TIMEOUT_CONNECT) {
+        FATAL("Tried connecting to rank %d for %d seconds, bailing out.",
+            TIMEOUT_CONNECT, peer_);
       }
       sleep(sleeptime);
+
       temp_fd = socket(PF_INET, SOCK_STREAM, 0);
     }
 
@@ -653,10 +762,7 @@ void SockConnection::OpenOutgoing(bool blocking) {
   write_buffer_pos_ = 0;
   write_message_ = CreateMessage(peer_, BIRTH_CHANNEL, rpc::rank(), 0);
 
-  // We'd nominally have to wake up the polling loop here to inform the
-  // loop that we've just made a new socket -- however, no need, because
-  // Send will wake up the polling loop since write_message_ is currently
-  // NULL.
+  RpcSockImpl::instance->RegisterWriteFd(peer_, write_fd_);
 }
 
 void SockConnection::AcceptIncoming(int accepted_fd) {
@@ -670,55 +776,68 @@ void SockConnection::AcceptIncoming(int accepted_fd) {
 void SockConnection::Send(Message *message) {
   if (!is_write_open()) {
     // Open our outgoing link if one doesn't exist.
-
-    // If we're connecting to our parent for the first
-    // time, we should block until we can connect.
     OpenOutgoing(false);
+    // Alert network thread that there's a new file descriptor
+    RpcSockImpl::instance->WakeUpPollingLoop();
   }
 
   ++write_total_;
-  if (likely(write_message_ == NULL)) {
-    // If we're not writing anything now, set our current message.
+  if (!is_writing()) {
+    // If we're not writing anything currently, set our current message, and
+    // try to write it immediately without blocking.
     write_buffer_pos_ = 0;
     write_message_ = message;
-    RpcSockImpl::instance->WakeUpPollingLoop();
+    TryWrite();
+    if (is_writing()) {
+      // We couldn't write the whole message without blocking,
+      // so wake up polling loop so we can select on the socket
+      // to become writable.
+      RpcSockImpl::instance->ActivateWriteFd(write_fd_);
+      RpcSockImpl::instance->WakeUpPollingLoop();
+    }
   } else {
-    // We're already writing something, put it on the priority queue
+    // We're already writing something, put it on the priority queue.
+    // No need to wake up the polling loop, because it's already quite aware
+    // that we want to check if this socket is readable.
     write_queue_.Put(write_total_, message);
   }
 }
 
 void SockConnection::TryWrite() {
-  while (is_writing()) {
-    if (write_buffer_pos_ == write_message_->buffer_size()) {
-      // Looks like we successfully wrote the whole message.
-      //fprintf(stderr, "Wrote packet %d\n", write_message_->transaction_id());
-      delete write_message_;
-      if (write_queue_.is_empty()) {
-        write_message_ = NULL;
-        break;
-      } else {
-        write_buffer_pos_ = 0;
-        write_message_ = write_queue_.Pop();
+  if (is_writing()) {
+    for (;;) {
+      if (write_buffer_pos_ == write_message_->buffer_size()) {
+        // Looks like we successfully wrote the whole message.
+        delete write_message_;
+        if (write_queue_.is_empty()) {
+          write_message_ = NULL;
+          RpcSockImpl::instance->DeactivateWriteFd(write_fd_);
+          return;
+        } else {
+          write_buffer_pos_ = 0;
+          write_message_ = write_queue_.Pop();
+          DEBUG_ASSERT(write_message_->buffer_size() != 0);
+        }
+      }
+      // Try to write something.
+      ssize_t bytes_written = write(write_fd_,
+          write_message_->buffer() + write_buffer_pos_,
+          write_message_->buffer_size() - write_buffer_pos_);
+      if (bytes_written <= 0) {
+        // Okay, we weren't able to write anything.
+        if (bytes_written < 0 && errno != EAGAIN && errno != EINTR) {
+          // It turns out the error is not just a non-blocking type error,
+          // so we die and let the entire team die out too.
+          FATAL("Error writing");
+        }
+        return;
+      } else if (bytes_written != 0) {
+        // We successfully wrote something, update our position.
+        write_buffer_pos_ += bytes_written;
       }
     }
-    // Try to write something.
-    ssize_t bytes_written = write(write_fd_,
-        write_message_->buffer() + write_buffer_pos_,
-        write_message_->buffer_size() - write_buffer_pos_);
-    //fprintf(stderr, "WRITE %d bytes\n", bytes_written);
-    if (bytes_written <= 0) {
-      // Okay, we weren't able to write anything.
-      if (bytes_written < 0 && errno != EAGAIN && errno != EINTR) {
-        // It turns out the error is not just a non-blocking type error,
-        // so we die and let the entire team die out too.
-        FATAL("Error writing");
-      }
-      return;
-    } else if (bytes_written != 0) {
-      // We successfully wrote something, update our position.
-      write_buffer_pos_ += bytes_written;
-    }
+  } else {
+    RpcSockImpl::instance->DeactivateWriteFd(write_fd_);
   }
 }
 
@@ -789,9 +908,7 @@ bool SockConnection::TryRead() {
   return anything_done;
 }
 
-void SockConnection::HandleSocketEvents(
-    fd_set *read_fds, fd_set *write_fds, fd_set *error_fds,
-    bool allow_errors) {
+
   /*
    code to get a socket error:
       int sockError = 0;
@@ -800,33 +917,3 @@ void SockConnection::HandleSocketEvents(
         &sockError, &sockErrorLen) == -1)
       ...
   */
-  if (unlikely(is_read_open())) {
-    if (FD_ISSET(read_fd_, error_fds)) {
-      // Poor man's way to terminate all processes
-      if (allow_errors) {
-        read_fd_ = -1;
-      } else {
-        FATAL("Socket error on read fd");
-      }
-    }
-    if (FD_ISSET(read_fd_, read_fds)) {
-      bool anything_done = TryRead();
-      if (!allow_errors && !anything_done) {
-        FATAL("End of file on read fd!");
-      }       
-    }
-  }
-  if (unlikely(is_write_open())) {
-    if (FD_ISSET(write_fd_, error_fds)) {
-      // Poor man's way to terminate all processes
-      if (allow_errors) {
-        write_fd_ = -1;
-      } else {
-        FATAL("Socket error on write fd");
-      }
-    }
-    if (FD_ISSET(write_fd_, write_fds)) {
-      TryWrite();
-    }
-  }
-}

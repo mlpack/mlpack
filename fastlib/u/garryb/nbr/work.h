@@ -412,7 +412,7 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<index_t> *work)
     if ((n_assigned_points_ - found_node->count) * interval / root_->count
         != n_assigned_points_ * interval / root_->count) {
       fprintf(stderr,
-          "---------- %02d%% of work has been scheduled --------\n",
+          "--------------- %02d%% of work has been scheduled --------------\n",
           n_assigned_points_ * 100 / root_->count);
     }
 
@@ -464,6 +464,8 @@ void CentroidWorkQueue<Node>::Report(struct datanode *module) {
 struct WorkRequest {
   enum Operation { GIVE_ME_WORK } operation;
   int process;
+
+  bool requires_response() const { return true; }
 
   OT_DEF(WorkRequest) {
     OT_MY_OBJECT(operation);

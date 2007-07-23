@@ -39,12 +39,15 @@ class Rpc {
     RpcRequestTransaction() {}
     virtual ~RpcRequestTransaction() {}
 
-    Message *Doit(int channel, int peer, const RequestObject& request) {
+    void Start(int channel, int peer, const RequestObject& request) {
       Transaction::Init(channel);
       Message *message = CreateMessage(peer, ot::PointerFrozenSize(request));
       ot::PointerFreeze(request, message->data());
       response = NULL;
       Send(message);
+    }
+    
+    Message *Wait() {
       mutex.Lock();
       while (response == NULL) {
         cond.Wait(&mutex);
@@ -92,8 +95,14 @@ class Rpc {
   ResponseObject *Request(
       int channel, int peer, const RequestObject& request) {
     RpcRequestTransaction<RequestObject> transaction;
-    response_ = transaction.Doit(channel, peer, request);
-    response_object_ = ot::PointerThaw<ResponseObject>(response_->data());
+    transaction.Start(channel, peer, request);
+    if (request.requires_response()) {
+      response_ = transaction.Wait();
+      response_object_ = ot::PointerThaw<ResponseObject>(response_->data());
+    } else {
+      response_ = NULL;
+      response_object_ = NULL;
+    }
     return response_object_;
   }
 
@@ -171,12 +180,14 @@ void RemoteObjectBackend<RequestObject, ResponseObject>
       ot::PointerThaw<RequestObject>(request->data());
   ResponseObject real_response;
   inner_->HandleRequest(*real_request, &real_response);
-  Message *response = CreateMessage(
+  if (real_request->requires_response()) {
+    Message *response = CreateMessage(
       request->peer(), ot::PointerFrozenSize(real_response));
-  delete request;
-  ot::PointerFreeze(real_response, response->data());
-  Send(response);
+    ot::PointerFreeze(real_response, response->data());
+    Send(response);
+  }
   Done();
+  delete request;
   delete this;
 }
 
@@ -295,7 +306,9 @@ class ReduceChannel : public Channel {
 
 struct DataGetterRequest {
   enum Operation { GET_DATA } operation;
-  
+
+  bool requires_response() const { return true; }
+
   OT_DEF(DataGetterRequest) {
     OT_MY_OBJECT(operation);
   }
