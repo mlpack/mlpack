@@ -22,6 +22,23 @@
 
 /* Implementation */
 
+/**
+ * Single-threaded kd-tree builder.
+ *
+ * Rearranges points in place and attempts to take advantage of the block
+ * structure.
+ *
+ * The algorithm uses a combination of midpoint and median splits.
+ * At the higher levels of the tree, a median-like split is done such that
+ * the split falls on the block boundary (or otherwise specified chunk_size)
+ * that is closest to the middle index.  Once the number of points
+ * considered is smaller than the chunk size, midpoint splits are done.
+ * The median splits simplify load balancing and allow more efficient
+ * storage of data, and actually help the dual-tree algorithm in the
+ * initial few layers -- however, the midpoint splits help to separate
+ * outliers from the rest of the data.  Leaves are created once the number
+ * of points is at most leaf_size.
+ */
 template<typename TPoint, typename TNode, typename TParam>
 class KdTreeMidpointBuilder {
  public:
@@ -31,11 +48,25 @@ class KdTreeMidpointBuilder {
   typedef TParam Param;
 
  public:
+  /**
+   * Builds a kd-tree.
+   *
+   * See class comments.
+   *
+   * @param module module for tuning parameters: leaf_size (maximum
+   *        number of points per leaf), and chunk_size (rounding granularity
+   *        for median splits)
+   * @param param parameters needed by the bound or other structures
+   * @param begin_index the first index that I'm building
+   * @param end_index one beyond the last index
+   * @param points_inout the points, to be reordered
+   * @param nodes_create the nodes, which will be allocated one by one
+   */
   static void Build(struct datanode *module, const Param &param,
       index_t begin_index, index_t end_index,
       CacheArray<Point> *points_inout, CacheArray<Node> *nodes_create) {
     KdTreeMidpointBuilder builder;
-    builder.InitBuild_(module, &param, begin_index, end_index,
+    builder.Doit(module, &param, begin_index, end_index,
         points_inout, nodes_create);
   }
 
@@ -49,8 +80,8 @@ class KdTreeMidpointBuilder {
   index_t begin_index_;
   index_t end_index_;
 
- private:
-  void InitBuild_(
+ public:
+  void Doit(
       struct datanode *module,
       const Param* param_in_,
       index_t begin_index,
@@ -71,7 +102,9 @@ class KdTreeMidpointBuilder {
     }
 
     leaf_size_ = fx_param_int(module, "leaf_size", 32);
-    chunk_size_ = fx_param_int(module, "chunk_size", 512);
+    chunk_size_ = fx_param_int(module, "chunk_size",
+        points_inout->n_block_elems());
+
     if (!math::IsPowerTwo(chunk_size_)) {
       NONFATAL("With NBR, it's best to have chunk_size be a power of 2.");
     }
@@ -96,8 +129,7 @@ template<typename TPoint, typename TNode, typename TParam>
 void KdTreeMidpointBuilder<TPoint, TNode, TParam>::FindBoundingBox_(
     index_t begin, index_t count, Bound *bound) {
   CacheReadIter<Point> point(&points_, begin);
-  index_t end = begin + count;
-  for (index_t i = begin; i < end; i++, point.Next()) {
+  for (index_t i = count; i--; point.Next()) {
     *bound |= point->vec();
   }
 }
@@ -184,11 +216,14 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       SpRange current_range = node->bound().get(split_dim);
 
       if (node->count() < chunk_size_ * 3 / 2) {
+        // perform a midpoint split
         split_val = current_range.mid();
         split_col = Partition_(split_dim, split_val,
               begin_col, end_col - begin_col,
               &left->bound(), &right->bound());
       } else {
+        // perform a block-rounded median split.  goal_col is the
+        // block-rounded index that we want to serve as the boundary.
         index_t goal_col = (begin_col + end_col + chunk_size_)
             / chunk_size_ / 2 * chunk_size_;
         typename Node::Bound left_bound;
@@ -197,11 +232,10 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
         right_bound.Init(dim_);
 
         for (;;) {
+          // use linear interpolation to guess the value to split on.
+          // this to lead to convergence rather quickly.
           split_val = current_range.interpolate(
               (goal_col - begin_col) / double(end_col - begin_col));
-          //fprintf(stderr, "(%d..(%d..%d..%d)..%d) (%f..%f) %f\n",
-          //    node->begin(), begin_col, goal_col, end_col, node->end(),
-          //    current_range.lo, current_range.hi, split_val);
 
           left_bound.Reset();
           right_bound.Reset();
@@ -238,12 +272,11 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
           node->begin() + node->count(), split_dim, split_val,
           node->bound().get(split_dim).lo,
           node->bound().get(split_dim).hi);
+      // This should never happen if max_width > 0
+      DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 
       left->set_range(node->begin(), split_col - node->begin());
       right->set_range(split_col, node->end() - split_col);
-
-      // This should never happen if max_width > 0
-      DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 
       Build_(left_i);
       Build_(right_i);
@@ -264,8 +297,9 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       nodes_->StopWrite(left_i);
       nodes_->StopWrite(right_i);
     } else {
-      NONFATAL("There is probably a bug somewhere else - %"LI"d points are all identical.",
-              node->count());
+      NONFATAL("There is probably a bug somewhere else - "
+          "%"LI"d points are all identical.",
+          node->count());
     }
   }
 
@@ -276,8 +310,6 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       CacheRead<Point> point(&points_, i);
       node->stat().Accumulate(*param_, *point);
     }
-
-    //fprintf(stderr, "leaf %d..%d (%d)\n", node->begin(), node->end(), node->count());
   }
 
   nodes_->StopWrite(node_i);

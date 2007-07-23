@@ -34,9 +34,15 @@ class SpVectorPoint {
   }
   
  public:
+   /**
+    * Gets the vector.
+    */
    const Vector& vec() const {
      return vec_;
    }
+   /**
+    * Gets the vector.
+    */
    Vector& vec() {
      return vec_;
    }
@@ -88,14 +94,20 @@ class SpVectorInfoPoint {
 };
 
 /**
- * A 
+ * A value which is the min or max of multiple other values.
+ *
+ * Comes with a highly optimized version of x = max(x, y).
+ *
+ * The template argument should be something like double, with greater-than,
+ * less-than, and equals operators.
  */
 template<typename TValue>
 class MinMaxVal {
  public:
   typedef TValue Value;
-  
+
  public:
+  /** The underlying value. */
   Value val;
   
   OT_DEF(MinMaxVal) {
@@ -105,19 +117,37 @@ class MinMaxVal {
  public:
   MinMaxVal(Value val_in) : val(val_in) {}
   MinMaxVal() {}
-  
+
+  /**
+   * Converts implicitly to the value.
+   */
   operator Value() const { return val; }
-  
+
+  /**
+   * Sets the value.
+   */
   const Value& operator = (Value val_in) {
     return (val = val_in);
   }
-  
+
+  /**
+   * Efficiently performs this->val = min(this->val, incoming_val).
+   *
+   * The expectation is that it is higly unlikely for the incoming
+   * value to be the new minimum.
+   */
   void MinWith(Value incoming_val) {
     if (unlikely(incoming_val < val)) {
       val = incoming_val;
     }
   }
   
+  /**
+   * Efficiently performs this->val = min(this->val, incoming_val).
+   *
+   * The expectation is that it is higly unlikely for the incoming
+   * value to be the new maximum.
+   */
   void MaxWith(Value incoming_val) {
     if (unlikely(incoming_val > val)) {
       val = incoming_val;
@@ -135,7 +165,13 @@ class HiBound {
  */
 struct SpRange {
  public:
+  /**
+   * The lower bound.
+   */
   double lo;
+  /**
+   * The upper bound.
+   */
   double hi;
   
   OT_DEF(SpRange) {
@@ -144,35 +180,52 @@ struct SpRange {
   }
   
  public:
+  /** Doesn't initialize anything. */
   SpRange() {}
+  /** Initializes to specified values. */
   SpRange(double lo_in, double hi_in)
       : lo(lo_in), hi(hi_in)
       {}
-  
+
+  /** Initialize to an empty set, where lo > hi. */
   void InitEmptySet() {
     lo = DBL_MAX;
     hi = -DBL_MAX;
   }
-  
+
+  /** Initializes to -infinity to infinity. */
   void InitUniversalSet() {
     lo = -DBL_MAX;
     hi = DBL_MAX;
   }
   
+  /** Initializes to a range of values. */
   void Init(double lo_in, double hi_in) {
     lo = lo_in;
     hi = hi_in;
   }
 
+  /**
+   * Resets to a range of values.
+   *
+   * Since there is no dynamic memory this is the same as Init, but calling
+   * Reset instead of Init probably looks more similar to surrounding code.
+   */
   void Reset(double lo_in, double hi_in) {
     lo = lo_in;
     hi = hi_in;
   }
-  
+
+  /**
+   * Gets the span of the range, hi - lo.
+   */  
   double width() const {
     return hi - lo;
   }
-  
+
+  /**
+   * Gets the midpoint of this range.
+   */  
   double mid() const {
     return (hi + lo) / 2;
   }
@@ -183,7 +236,10 @@ struct SpRange {
   double interpolate(double factor) const {
     return factor * width() + lo;
   }
-  
+
+  /**
+   * Simulate an union by growing the range if necessary.
+   */
   const SpRange& operator |= (double d) {
     if (unlikely(d < lo)) {
       lo = d;
@@ -193,17 +249,24 @@ struct SpRange {
     }
     return *this;
   }
-  
+
+  /**
+   * Sets this range to include only the specified value, or
+   * becomes an empty set if the range does not contain the number.
+   */
   const SpRange& operator &= (double d) {
-    if (unlikely(d > lo)) {
+    if (likely(d > lo)) {
       lo = d;
     }
-    if (unlikely(d < hi)) {
+    if (likely(d < hi)) {
       hi = d;
     }
     return *this;
   }
-  
+
+  /**
+   * Expands range to include the other range.
+   */
   const SpRange& operator |= (const SpRange& other) {
     if (unlikely(other.lo < lo)) {
       lo = other.lo;
@@ -214,6 +277,10 @@ struct SpRange {
     return *this;
   }
   
+  /**
+   * Shrinks range to be the overlap with another range, becoming an empty
+   * set if there is no overlap.
+   */
   const SpRange& operator &= (const SpRange& other) {
     if (unlikely(other.lo > lo)) {
       lo = other.lo;
@@ -224,34 +291,34 @@ struct SpRange {
     return *this;
   }
   
-  /** Accumulates a bound difference. */
+  /** Sums the upper and lower independently. */
   const SpRange& operator += (const SpRange& other) {
     lo += other.lo;
     hi += other.hi;
     return *this;
   }
   
-  /** Reverses a bound difference. */
+  /** Subtracts from the upper and lower independently. */
   const SpRange& operator -= (const SpRange& other) {
     lo -= other.lo;
     hi -= other.hi;
     return *this;
   }
   
-  /** Uniformly increases both lower and upper bounds. */
+  /** Adds to the upper and lower independently. */
   const SpRange& operator += (double d) {
     lo += d;
     hi += d;
     return *this;
   }
   
-  /** Uniformly decreases both upper and lower bounds. */
+  /** Subtracts from the upper and lower independently. */
   const SpRange& operator -= (double d) {
     lo -= d;
     hi -= d;
     return *this;
   }
-  
+
   friend SpRange operator + (const SpRange& a, const SpRange& b) {
     SpRange result;
     result.lo = a.lo + b.lo;
@@ -279,7 +346,10 @@ struct SpRange {
     result.hi = a.hi - b;
     return result;
   }
-  
+
+  /**
+   * Takes the maximum of upper and lower bounds independently.
+   */
   void MaxWith(const SpRange& range) {
     if (unlikely(range.lo > lo)) {
       lo = range.lo;
@@ -289,6 +359,9 @@ struct SpRange {
     }
   }
   
+  /**
+   * Takes the minimum of upper and lower bounds independently.
+   */
   void MinWith(const SpRange& range) {
     if (unlikely(range.lo < lo)) {
       lo = range.lo;
@@ -298,6 +371,9 @@ struct SpRange {
     }
   }
 
+  /**
+   * Takes the maximum of upper and lower bounds independently.
+   */
   void MaxWith(double v) {
     if (unlikely(v > lo)) {
       lo = v;
@@ -307,6 +383,9 @@ struct SpRange {
     }
   }
   
+  /**
+   * Takes the minimum of upper and lower bounds independently.
+   */
   void MinWith(double v) {
     if (unlikely(v < hi)) {
       hi = v;
@@ -315,23 +394,38 @@ struct SpRange {
       }
     }
   }
-  
+
+  /**
+   * Compares if this is STRICTLY less than another range.
+   */  
   friend bool operator < (const SpRange& a, const SpRange& b) {
     return a.hi < b.lo;
   }
+  /**
+   * Compares if this is STRICTLY equal to another range.
+   */  
   friend bool operator == (const SpRange& a, const SpRange& b) {
     return a.lo == b.lo && a.hi == b.hi;
   }
   DEFINE_ALL_COMPARATORS(SpRange);
   
+  /**
+   * Compares if this is STRICTLY less than a value.
+   */  
   friend bool operator < (const SpRange& a, double b) {
     return a.hi < b;
   }
+  /**
+   * Compares if a value is STRICTLY less than this range.
+   */  
   friend bool operator < (double a, const SpRange& b) {
     return a < b.lo;
   }
   DEFINE_INEQUALITY_COMPARATORS_HETERO(SpRange, double);
-  
+
+  /**
+   * Determines if a point is contained within the range.
+   */  
   bool Contains(double d) const {
     return d >= lo || d <= hi;
   }
@@ -346,6 +440,9 @@ struct SpRange {
  */
 template<int t_pow = 2>
 class SpHrectBound {
+ public:
+  static const int PREFERRED_POWER = t_pow;
+
  private:
   SpRange *bounds_;
   index_t dim_;
@@ -364,6 +461,10 @@ class SpHrectBound {
     mem::Free(bounds_);
   }
 
+  /**
+   * Initializes to specified dimensionality with each dimension the empty
+   * set.
+   */
   void Init(index_t dimension) {
     DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
 
@@ -372,19 +473,28 @@ class SpHrectBound {
     dim_ = dimension;
     Reset();
   }
-  
+
+  /**
+   * Resets all dimensions to the empty set.
+   */
   void Reset() {
     for (index_t i = 0; i < dim_; i++) {
       bounds_[i].InitEmptySet();
     }
   }
-  
+
+  /**
+   * Initializes as a copy of another.
+   */
   void Copy(const SpHrectBound& other) {
     DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
     bounds_ = mem::Dup(other.bounds_, other.dim_);
     dim_ = other.dim_;
   }
-  
+
+  /**
+   * Determines if a point is within this bound.
+   */
   bool Contains(const Vector& point) const {
     for (index_t i = 0; i < point.length(); i++) {
       if (!bounds_[i].Contains(point[i])) {
@@ -395,10 +505,20 @@ class SpHrectBound {
     return true;
   }
 
+  /** Gets the dimensionality */
   index_t dim() const {
     return dim_;
   }
 
+  /**
+   * Gets the range for a particular dimension.
+   */  
+  const SpRange& get(index_t i) const {
+    DEBUG_BOUNDS(i, dim_);
+    return bounds_[i];
+  }
+
+  /** Calculates the midpoint of the range */
   void CalculateMidpoint(Vector *centroid) const {
     centroid->Init(dim_);
     for (index_t i = 0; i < dim_; i++) {
@@ -406,7 +526,11 @@ class SpHrectBound {
     }
   }
 
-  double MinDistanceSqToPoint(const Vector& point) const {
+  /**
+   * Calculates minimum bound-to-point squared distance,
+   * to the specified power.
+   */
+  double MinDistanceSq(const Vector& point) const {
     DEBUG_ASSERT(point.length() == dim_);
     double sumsq = 0;
     const double *mpoint = point.ptr();
@@ -429,8 +553,12 @@ class SpHrectBound {
     
     return math::Pow<2, t_pow>(sumsq) / 4;
   }
-  
-  double MaxDistanceSqToPoint(const Vector& point) const {
+
+  /**
+   * Calculates maximum bound-to-point squared distance,
+   * to the specified power.
+   */
+  double MaxDistanceSq(const Vector& point) const {
     double sumsq = 0;
 
     DEBUG_ASSERT(point.length() == dim_);
@@ -442,15 +570,20 @@ class SpHrectBound {
 
     return math::Pow<2, t_pow>(sumsq);
   }
-  
-  double MinDistanceSqToBound(const SpHrectBound& other) const {
+
+  /**
+   * Calculates minimum bound-to-point squared distance,
+   * to the specified power.
+   *
+   * Example: bound1.MinDistanceSq(other) for minimum squared distance.
+   */
+  double MinDistanceSq(const SpHrectBound& other) const {
     double sumsq = 0;
     const SpRange *a = this->bounds_;
     const SpRange *b = other.bounds_;
     index_t mdim = dim_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
-
 
     for (index_t d = 0; d < mdim; d++) {
       double v1 = b[d].lo - a[d].hi;
@@ -466,7 +599,11 @@ class SpHrectBound {
     return math::Pow<2, t_pow>(sumsq) / 4;
   }
 
-  double MinDistanceSqToBoundFarEnd(const SpHrectBound& other) const {
+  /**
+   * Computes minimax distance, where the other node is trying to avoid me,
+   * to the specified power.
+   */
+  double MinimaxDistanceSq(const SpHrectBound& other) const {
     double sumsq = 0;
     const SpRange *a = this->bounds_;
     const SpRange *b = other.bounds_;
@@ -485,7 +622,11 @@ class SpHrectBound {
     return math::Pow<2, t_pow>(sumsq) / 4;
   }
 
-  double MaxDistanceSqToBound(const SpHrectBound& other) const {
+  /**
+   * Computes maximum distance,
+   * to the specified power.
+   */
+  double MaxDistanceSq(const SpHrectBound& other) const {
     double sumsq = 0;
     const SpRange *a = this->bounds_;
     const SpRange *b = other.bounds_;
@@ -500,7 +641,11 @@ class SpHrectBound {
     return math::Pow<2, t_pow>(sumsq);
   }
 
-  double MidDistanceSqToBound(const SpHrectBound& other) const {
+  /**
+   * Calculates midpoint-to-midpoint bounding box distance,
+   * to the specified power.
+   */
+  double MidDistanceSq(const SpHrectBound& other) const {
     double sumsq = 0;
     const SpRange *a = this->bounds_;
     const SpRange *b = other.bounds_;
@@ -514,6 +659,9 @@ class SpHrectBound {
     return math::Pow<2, t_pow>(sumsq) / 4;
   }
   
+  /**
+   * Expands this region to include a new point.
+   */
   SpHrectBound& operator |= (const Vector& vector) {
     DEBUG_SAME_INT(vector.length(), dim_);
     
@@ -524,6 +672,9 @@ class SpHrectBound {
     return *this;
   }
 
+  /**
+   * Expands this region to encompass another bound.
+   */
   SpHrectBound& operator |= (const SpHrectBound& other) {
     DEBUG_SAME_INT(other.dim_, dim_);
     
@@ -532,11 +683,6 @@ class SpHrectBound {
     }
     
     return *this;
-  }
-  
-  const SpRange& get(index_t i) const {
-    DEBUG_BOUNDS(i, dim_);
-    return bounds_[i];
   }
 };
 

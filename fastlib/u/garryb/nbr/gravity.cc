@@ -153,17 +153,17 @@ class Gravity {
     }
   };
 
-  struct QMassResult {
+  struct QSummaryResult {
    public:
     void Init(const Param& param) {}
     void ApplyDelta(const Param& param, const Delta& delta) {}
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QNode& q_node) {}
-    void ApplyMassResult(const Param& param, const QMassResult& mass_result) {}
+    void ApplySummaryResult(const Param& param, const QSummaryResult& summary_result) {}
     void StartReaccumulate(const Param& param, const QNode& q_node) {}
     void Accumulate(const Param& param, const QResult& result) {}
     void Accumulate(const Param& param,
-        const QMassResult& result, index_t n_points) {}
+        const QSummaryResult& result, index_t n_points) {}
     void FinishReaccumulate(const Param& param, const QNode& q_node) {}
   };
 
@@ -182,7 +182,7 @@ class Gravity {
         const QPoint& q_point,
         index_t q_index,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       /*double dhi = r_node.bound().MaxDistanceSqToPoint(q_point.vec());
@@ -218,7 +218,7 @@ class Gravity {
         const QPoint& q_point,
         index_t q_index,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       q_result->force += force;
@@ -257,14 +257,14 @@ class Gravity {
 
     static bool ConsiderPairExtrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
     }
 
     static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
     }

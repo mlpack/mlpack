@@ -158,6 +158,8 @@ void SimpleWorkQueue<Node>::AddWork_(
 
 //------------------------------------------------------------------------
 
+#include "spbounds.h"
+
 template<typename Node>
 class CentroidWorkQueue
     : public WorkQueueInterface {
@@ -326,7 +328,7 @@ void CentroidWorkQueue<Node>::DistributeInitialWork_(
     // that we start at the center and work outwards.
     while (node_stack.size() != 0) {
       InternalNode *cur = *node_stack.PopBackPtr();
-      double distance = sqrt(cur->bound.MinDistanceSqToPoint(center));
+      double distance = cur->bound.MinDistanceSq(center);
 
       if (IsSmallEnough_(cur)) {
         queue->work_items.Put(distance, cur);
@@ -388,7 +390,7 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<index_t> *work)
           DEBUG_ASSERT(!node->is_leaf);
           for (int i = 0; i < 2; i++) {
             InternalNode *child = node->children[i];
-            prio.Put(node->bound.MinDistanceSqToPoint(center), child);
+            prio.Put(node->bound.MinDistanceSq(center), child);
           }
         }
       }

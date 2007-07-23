@@ -77,9 +77,9 @@ class BlankGlobalResult {
       const QPoint& q_point, index_t q_index, const QResult& q_result) {}
 };
 
-struct BlankQMassResult {
+struct BlankQSummaryResult {
  public:
-  OT_DEF(BlankQMassResult) {}
+  OT_DEF(BlankQSummaryResult) {}
  public:
   template<typename Param>
   void Init(const Param& param) {}
@@ -89,13 +89,13 @@ struct BlankQMassResult {
   void ApplyPostponed(const Param& param,
       const QPostponed& postponed, const QNode& q_node) {}
   template<typename Param>
-  void ApplyMassResult(const Param& param, const BlankQMassResult& other) {}
+  void ApplySummaryResult(const Param& param, const BlankQSummaryResult& other) {}
   template<typename Param, typename QNode>
   void StartReaccumulate(const Param& param, const QNode& q_node) {}
   template<typename Param, typename QResult>
   void Accumulate(const Param& param, const QResult& result) {}
   template<typename Param>
-  void Accumulate(const Param& param, const BlankQMassResult& result,
+  void Accumulate(const Param& param, const BlankQSummaryResult& result,
       index_t n_points) {}
   template<typename Param, typename QNode>
   void FinishReaccumulate(const Param& param, const QNode& q_node) {}
@@ -116,26 +116,26 @@ class BlankAlgorithm {
   }
 
   template<typename Param, typename QNode, typename RNode,
-      typename Delta, typename QMassResult, typename QPostponed,
+      typename Delta, typename QSummaryResult, typename QPostponed,
       typename GlobalResult>
   static bool ConsiderPairExtrinsic(
       const Param& param,
       const QNode& q_node,
       const RNode& r_node,
       const Delta& delta,
-      const QMassResult& q_mass_result,
+      const QSummaryResult& q_summary_result,
       const GlobalResult& global_result,
       QPostponed* q_postponed) {
     return true;
   }
 
   template<typename Param, typename QNode,
-      typename QMassResult, typename QPostponed,
+      typename QSummaryResult, typename QPostponed,
       typename GlobalResult>
   static bool ConsiderQueryTermination(
       const Param& param,
       const QNode& q_node,
-      const QMassResult& q_mass_result,
+      const QSummaryResult& q_summary_result,
       const GlobalResult& global_result,
       QPostponed* q_postponed) {
     return true;

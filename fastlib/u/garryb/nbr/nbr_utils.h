@@ -10,6 +10,8 @@
 
 #include "netcache.h"
 
+// TODO: These classes all need comments
+
 namespace nbr_utils {
 
 template<typename Param, typename Point, typename Node>
@@ -18,7 +20,7 @@ class StatFixer {
   static void Fix(const Param &param,
       CacheArray<Point> *points, CacheArray<Node> *nodes) {
     StatFixer fixer;
-    fixer.InitFix(&param, points, nodes);
+    fixer.Doit(&param, points, nodes);
   }
 
  private:
@@ -27,7 +29,7 @@ class StatFixer {
   CacheArray<Node> nodes_;
 
  public:
-  void InitFix(const Param *param,
+  void Doit(const Param *param,
       CacheArray<Point> *points, CacheArray<Node> *nodes);
 
  private:
@@ -35,7 +37,7 @@ class StatFixer {
 };
 
 template<typename Param, typename Point, typename Node>
-void StatFixer<Param, Point, Node>::InitFix(
+void StatFixer<Param, Point, Node>::Doit(
     const Param *param, CacheArray<Point> *points, CacheArray<Node> *nodes) {
   param_ = param;
   points_.Init(points, BlockDevice::M_READ);
@@ -109,7 +111,7 @@ class ThreadedDualTreeSolver {
 
           fprintf(stderr, "- Grain %"LI"d\n", work[i]);
 
-          solver.InitSolve(submodule, *base_->param_, q_root_index,
+          solver.Doit(submodule, *base_->param_, q_root_index,
               base_->q_points_cache_, base_->q_nodes_cache_,
               base_->r_points_cache_, base_->r_nodes_cache_,
               base_->q_results_cache_);
@@ -156,7 +158,7 @@ class ThreadedDualTreeSolver {
         simple_work_queue.n_grains());
 
     ThreadedDualTreeSolver solver;
-    solver.InitSolve(module,
+    solver.Doit(module,
         n_threads, 0, &simple_work_queue,
         param_in,
         q_points_array_in->cache(), q_nodes_array_in->cache(),
@@ -164,7 +166,7 @@ class ThreadedDualTreeSolver {
         q_results_array_in->cache());
   }
 
-  void InitSolve(
+  void Doit(
       datanode *module,
       index_t n_threads,
       int process,
@@ -524,7 +526,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
 
   fx_timer_start(module_, "all_machines");
   ThreadedDualTreeSolver<GNP, Solver> solver;
-  solver.InitSolve(
+  solver.Doit(
       fx_submodule(module_, "solver", "local"),
       config_.n_threads, rpc::rank(), work_queue_, param_,
       data_points_.cache(), data_nodes_.cache(),
