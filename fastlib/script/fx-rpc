@@ -9,6 +9,7 @@ import signal
 import sys
 import util
 import time
+import random
 
 # note: we're not using fx for parameter parsing right now...
 
@@ -18,34 +19,48 @@ if n <= 0:
   os.exit(1)
 
 peers = os.path.abspath(sys.argv[2])
-executable = os.path.abspath(sys.argv[4])
+executable = os.path.abspath(sys.argv[3])
 
-port = int(sys.argv[3])
+port = random.randrange(10000, 64000)
 
 peerlist = util.readlines(peers)
 
-pids = []
+pids = {}
+log = sys.stderr
 
 try:
   for i in range(n):
     machinename = peerlist[i]
-    print "****** CONNECTING TO %s ******" % machinename
+    print >> log, "****** CONNECTING TO %s ******" % machinename
     pid = os.fork()
+    argv = ["ssh", "-x", "-T", "-n", machinename, executable] + sys.argv[4:] + [
+        "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
+        "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
+        ]
+    print >> log, " ".join(argv)
     if not pid:
-      argv = ["ssh", "-x", machinename, executable] + sys.argv[5:] + [
-          "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
-          "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
-          ]
-      print " ".join(argv)
+      # We'll close standard input so ssh can't do that.
+      #os.close(0)
+      #fd = os.open("/dev/random", os.O_RDONLY)
+      #os.dup2(fd, 0)
       os.execvp(argv[0], argv)
-    pids.append(pid)
+    pids[pid] = 1
 
-  for pid in pids:
-    os.waitpid(pid, 0)
-except:
-  print "Exception!!"
+  while pids:
+    (pid, status) = os.wait()
+    pids.pop(pid)
+    print >> log, "*********** PID %d done!" % pid
+
+finally:
   for pid in pids:
     try:
-      os.kill(pid, signal.SIGTERM)
+      os.kill(pid, signal.SIGINT)
+      print >> log, "Kill successful for %d" % pid
     except:
-      print "Kill failed"
+      try:
+        os.kill(pid, signal.SIGTERM)
+      except:
+        try:
+          os.kill(pid, signal.SIGKILL)
+        except:
+          print >> log, "Kill failed for %d" % pid

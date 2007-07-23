@@ -201,6 +201,7 @@ class CentroidWorkQueue
   index_t n_overflows_;
   index_t n_preferred_;
   index_t n_overflow_points_;
+  index_t n_assigned_points_;
 
  public:
   CentroidWorkQueue() {}
@@ -286,6 +287,7 @@ void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree, index_t n_grains) {
   n_tasks_ = 0;
   n_overflows_ = 0;
   n_overflow_points_ = 0;
+  n_assigned_points_ = 0;
   n_preferred_ = 0;
 
   DistributeInitialWork_(root_, 0, rpc::n_peers());
@@ -401,6 +403,16 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<index_t> *work)
     ArrayList<InternalNode*> stack;
     stack.Init();
     *stack.AddBack() = found_node;
+
+    // Show user-friendly status messages every 5% increment
+    n_assigned_points_ += found_node->count;
+    int interval = 20;
+    if ((n_assigned_points_ - found_node->count) * interval / root_->count
+        != n_assigned_points_ * interval / root_->count) {
+      fprintf(stderr,
+          "---------- %02d%% of work has been scheduled --------\n",
+          n_assigned_points_ * 100 / root_->count);
+    }
 
     // Mark all children as complete
     while (stack.size() != 0) {
