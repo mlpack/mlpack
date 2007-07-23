@@ -404,10 +404,13 @@ namespace rpc {
 
   /** Initialize everything. */
   inline void Init() {
+    DEBUG_ASSERT(RpcSockImpl::instance == NULL);
+    RpcSockImpl::instance = new RpcSockImpl();
     RpcSockImpl::instance->Init();
   }
   /** Close all connections, etc */
   inline void Done() {
+    DEBUG_ASSERT(RpcSockImpl::instance != NULL);
     RpcSockImpl::instance->Done();
   }
   /** Gets the rank of the current machine */

@@ -385,7 +385,7 @@ class ArrayList {
 
     return elem;
   }
-
+  
   /**
    * Removes the last element of the list.
    */

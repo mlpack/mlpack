@@ -47,7 +47,7 @@ class Thread {
     DEBUG_ONLY(status_ = UNINIT);
   }
   ~Thread() {
-    DEBUG_ASSERT(status_ == DETACHED || status_ == READY || status_ == DONE);
+    DEBUG_ASSERT(status_ == DETACHED || status_ == READY || status_ == DONE || status_ == UNINIT);
     DEBUG_ONLY(status_ = UNINIT);
   }
   
@@ -105,7 +105,14 @@ class Thread {
 class Mutex {
   FORBID_COPY(Mutex);
   friend class WaitCondition;
-  
+ 
+ public:
+  struct Recursive {};
+
+ private:
+  static pthread_mutex_t fast_mutex_;
+  static pthread_mutex_t recursive_mutex_;
+
  private:
   pthread_mutex_t mutex_;
  
@@ -114,7 +121,12 @@ class Mutex {
  
  public:
   Mutex() {
-    pthread_mutex_init(&mutex_, NULL);
+    mutex_ = fast_mutex_;
+    //pthread_mutex_init(&mutex_, NULL);
+  }
+  Mutex(Recursive v) {
+    mutex_ = recursive_mutex_;
+    //pthread_mutex_init(&mutex_, );
   }
   
   ~Mutex() {
@@ -135,6 +147,15 @@ class Mutex {
   void Unlock() {
     pthread_mutex_unlock(&mutex_);
   }
+};
+/**
+ * Mutual exclusion lock to prevent threads from clobbering results.
+ */
+class RecursiveMutex : public Mutex {
+  FORBID_COPY(RecursiveMutex);
+
+ public:
+  RecursiveMutex() : Mutex(Recursive()) {}
 };
 
 /**
