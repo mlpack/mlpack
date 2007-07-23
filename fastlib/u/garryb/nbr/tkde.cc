@@ -351,13 +351,13 @@ class Tkde {
     }
   };
 
-  struct QMassResult {
+  struct QSummaryResult {
    public:
     /** Bound on density from leaves. */
     SpRange density;
     int label;
 
-    OT_DEF(QMassResult) {
+    OT_DEF(QSummaryResult) {
       OT_MY_OBJECT(density);
       OT_MY_OBJECT(label);
     }
@@ -384,7 +384,7 @@ class Tkde {
     }
 
     void Accumulate(const Param& param,
-        const QMassResult& result, index_t n_points) {
+        const QSummaryResult& result, index_t n_points) {
       density |= result.density;
       label |= result.label;
       DEBUG_ASSERT(result.label != LAB_NEITHER);
@@ -396,10 +396,10 @@ class Tkde {
     }
 
     /** horizontal join operator */
-    void ApplyMassResult(const Param& param,
-        const QMassResult& mass_result) {
-      density += mass_result.density;
-      label &= mass_result.label;
+    void ApplySummaryResult(const Param& param,
+        const QSummaryResult& summary_result) {
+      density += summary_result.density;
+      label &= summary_result.label;
       DEBUG_ASSERT(label != LAB_NEITHER);
     }
 
@@ -444,7 +444,7 @@ class Tkde {
     bool StartVisitingQueryPoint(const Param& param,
         const QPoint& q,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       if (unlikely(q_result->label != LAB_EITHER)) {
@@ -480,13 +480,13 @@ class Tkde {
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       q_result->density += density;
       
       SpRange total_density =
-          unapplied_mass_results.density + q_result->density;
+          unapplied_summary_results.density + q_result->density;
 
       if (unlikely(total_density > param.thresh)) {
         q_result->label = LAB_HI;
@@ -551,7 +551,7 @@ class Tkde {
         const QNode& q_node,
         const RNode& r_node,
         const Delta& delta,
-        const QMassResult& q_mass_result,
+        const QSummaryResult& q_summary_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
@@ -560,19 +560,19 @@ class Tkde {
     static bool ConsiderQueryTermination(
         const Param& param,
         const QNode& q_node,
-        const QMassResult& q_mass_result,
+        const QSummaryResult& q_summary_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
       bool need_expansion = false;
 
-      DEBUG_ASSERT(q_mass_result.density.lo < q_mass_result.density.hi);
+      DEBUG_ASSERT(q_summary_result.density.lo < q_summary_result.density.hi);
 
-      if (unlikely(q_mass_result.label != LAB_EITHER)) {
-        DEBUG_ASSERT((q_mass_result.label & q_postponed->label) != LAB_NEITHER);
-        q_postponed->label = q_mass_result.label;
-      } else if (unlikely(q_mass_result.density > param.thresh)) {
+      if (unlikely(q_summary_result.label != LAB_EITHER)) {
+        DEBUG_ASSERT((q_summary_result.label & q_postponed->label) != LAB_NEITHER);
+        q_postponed->label = q_summary_result.label;
+      } else if (unlikely(q_summary_result.density > param.thresh)) {
         q_postponed->label = LAB_HI;
-      } else if (unlikely(q_mass_result.density < param.thresh)) {
+      } else if (unlikely(q_summary_result.density < param.thresh)) {
         q_postponed->label = LAB_LO;
       } else {
         need_expansion = true;

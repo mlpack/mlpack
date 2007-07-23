@@ -193,7 +193,7 @@ struct AffinityCommon {
     static double SimilarityHi(
         const Param& param,
         const CombinedNode& a, const CombinedNode& b) {
-      double distsq = a.bound().MinDistanceSqToBound(b.bound());
+      double distsq = a.bound().MinDistance<2>(b.bound());
       double hi = Similarity(distsq);
       if (a.begin() < b.end() && b.begin() < a.end()
           && param.pref > hi) {
@@ -204,7 +204,7 @@ struct AffinityCommon {
     static double SimilarityLo(
         const Param& param,
         const CombinedNode& a, const CombinedNode& b) {
-      double distsq = a.bound().MaxDistanceSqToBound(b.bound());
+      double distsq = a.bound().MaxDistance<2>(b.bound());
       double lo = Similarity(distsq);
       if (a.begin() < b.end() && b.begin() < a.end()
           && param.pref < lo) {
@@ -215,7 +215,7 @@ struct AffinityCommon {
     static double SimilarityHi(
         const Param& param,
         const Vector& a, index_t a_index, const CombinedNode& b) {
-      double distsq = b.bound().MinDistanceSqToPoint(a);
+      double distsq = b.bound().MinDistance<2>(a);
       double hi = Similarity(distsq);
       if (a_index < b.end() && a_index >= b.begin()
           && param.pref > hi) {
@@ -275,11 +275,11 @@ class AffinityAlpha {
         const QPostponed& postponed, const QPoint& q, index_t q_i) {}
   };
 
-  struct QMassResult {
+  struct QSummaryResult {
    public:
     SpRange alpha;
 
-    OT_DEF(QMassResult) {
+    OT_DEF(QSummaryResult) {
       OT_MY_OBJECT(alpha);
     }
 
@@ -287,8 +287,8 @@ class AffinityAlpha {
     void Init(const Param& param) {
       alpha.Init(-DBL_MAX, -DBL_MAX);
     }
-    void ApplyMassResult(const Param& param, const QMassResult& mass_result) {
-      alpha.MaxWith(mass_result.alpha);
+    void ApplySummaryResult(const Param& param, const QSummaryResult& summary_result) {
+      alpha.MaxWith(summary_result.alpha);
     }
     void ApplyDelta(const Param& param, const Delta& delta) {
       alpha.MaxWith(delta.alpha);
@@ -303,7 +303,7 @@ class AffinityAlpha {
       alpha |= SpRange(result.alpha.max2, result.alpha.max1);
     }
     void Accumulate(const Param& param,
-        const QMassResult& result, index_t n_points) {
+        const QSummaryResult& result, index_t n_points) {
       alpha |= result.alpha;
     }
     void FinishReaccumulate(const Param& param, const QNode& q_node) {}
@@ -319,7 +319,7 @@ class AffinityAlpha {
 
     bool StartVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
-        const RNode& r_node, const QMassResult& unapplied_mass_results,
+        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
       double alpha_hi;
 
@@ -330,7 +330,7 @@ class AffinityAlpha {
         alpha_hi = r_node.stat().rho.hi + old_alpha.max1;
       } else {
         double sim = AffinityCommon::Helpers::Similarity(
-            r_node.bound().MinDistanceSqToPoint(q.vec()));
+            r_node.bound().MinDistance<2>(q.vec()));
         alpha_hi = min(
             min(sim, old_alpha.max1) + r_node.stat().rho.hi,
             sim);
@@ -363,7 +363,7 @@ class AffinityAlpha {
     }
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
-        const RNode& r_node, const QMassResult& unapplied_mass_results,
+        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
       q_result->alpha = alpha;
     }
@@ -385,7 +385,7 @@ class AffinityAlpha {
             q_node.stat().alpha.hi + r_node.stat().rho.hi;
       } else {
         double sim_hi = AffinityCommon::Helpers::Similarity(
-            q_node.bound().MinDistanceSqToBound(r_node.bound()));
+            q_node.bound().MinDistance<2>(r_node.bound()));
         delta->alpha.hi = min(min(q_node.stat().alpha.hi, sim_hi)
             + r_node.stat().rho.hi, sim_hi);
       }
@@ -394,13 +394,13 @@ class AffinityAlpha {
     }
     static bool ConsiderPairExtrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      return (delta.alpha.hi > q_mass_result.alpha.lo);
+      return (delta.alpha.hi > q_summary_result.alpha.lo);
     }
     static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
     }
@@ -504,12 +504,12 @@ class AffinityRho {
   };
 
 #ifdef APPROX
-  struct QMassResult {
+  struct QSummaryResult {
    public:
     SpRange rho;
     double error_buffer;
 
-    OT_DEF(QMassResult) {
+    OT_DEF(QSummaryResult) {
       OT_MY_OBJECT(rho);
       OT_MY_OBJECT(error_buffer);
     }
@@ -519,9 +519,9 @@ class AffinityRho {
       rho.Init(0, 0);
       error_buffer = 0;
     }
-    void ApplyMassResult(const Param& param, const QMassResult& mass_result) {
-      rho += mass_result.rho;
-      error_buffer += mass_result.error_buffer;
+    void ApplySummaryResult(const Param& param, const QSummaryResult& summary_result) {
+      rho += summary_result.rho;
+      error_buffer += summary_result.error_buffer;
     }
     void ApplyDelta(const Param& param, const Delta& delta) {
       rho += delta.d_rho;
@@ -540,14 +540,14 @@ class AffinityRho {
       error_buffer = min(error_buffer, result.error_buffer);
     }
     void Accumulate(const Param& param,
-        const QMassResult& result, index_t n_points) {
+        const QSummaryResult& result, index_t n_points) {
       rho |= result.rho;
       error_buffer = min(error_buffer, result.error_buffer);
     }
     void FinishReaccumulate(const Param& param, const QNode& q_node) {}
   };
 #else
-  typedef BlankQMassResult QMassResult;
+  typedef BlankQSummaryResult QSummaryResult;
 #endif
 
   struct PairVisitor {
@@ -558,7 +558,7 @@ class AffinityRho {
     void Init(const Param& param) {}
     bool StartVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
-        const RNode& r_node, const QMassResult& unapplied_mass_results,
+        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
       // do the point-node prune check
       double sim_hi = AffinityCommon::Helpers::SimilarityHi(
@@ -587,7 +587,7 @@ class AffinityRho {
     }
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
-        const RNode& r_node, const QMassResult& unapplied_mass_results,
+        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
       q_result->rho = rho;
     }
@@ -613,15 +613,15 @@ class AffinityRho {
     }
     static bool ConsiderPairExtrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       #ifdef APPROX
       double my_abs_error = delta.d_rho.width() * 0.5;
       double allotted_error = param.eps_per_point * r_node.count();
-      double allowed_error = allotted_error + q_mass_result.error_buffer;
+      double allowed_error = allotted_error + q_summary_result.error_buffer;
       
       //if (param.eps != 0)
-      //fprintf(stderr, "%g %g %g %g\n", my_abs_error, param.eps_per_point, allotted_error, q_mass_result.error_buffer);
+      //fprintf(stderr, "%g %g %g %g\n", my_abs_error, param.eps_per_point, allotted_error, q_summary_result.error_buffer);
       
       if (my_abs_error <= allowed_error) {
         q_postponed->error_buffer += allotted_error - my_abs_error;
@@ -636,7 +636,7 @@ class AffinityRho {
     }
     static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
     }

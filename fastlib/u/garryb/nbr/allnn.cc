@@ -92,11 +92,11 @@ class Allnn {
         index_t q_index) {}
   };
 
-  struct QMassResult {
+  struct QSummaryResult {
    public:
     MinMaxVal<double> distance_sq_hi;
 
-    OT_DEF(QMassResult) {
+    OT_DEF(QSummaryResult) {
       OT_MY_OBJECT(distance_sq_hi);
     }
 
@@ -109,8 +109,8 @@ class Allnn {
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QNode& q_node) {}
 
-    void ApplyMassResult(const Param& param, const QMassResult& mass_result) {
-      distance_sq_hi.MinWith(mass_result.distance_sq_hi);
+    void ApplySummaryResult(const Param& param, const QSummaryResult& summary_result) {
+      distance_sq_hi.MinWith(summary_result.distance_sq_hi);
     }
 
     void StartReaccumulate(const Param& param, const QNode& q_node) {
@@ -122,7 +122,7 @@ class Allnn {
     }
 
     void Accumulate(const Param& param,
-        const QMassResult& result, index_t n_points) {
+        const QSummaryResult& result, index_t n_points) {
       distance_sq_hi.MaxWith(result.distance_sq_hi);
     }
 
@@ -145,13 +145,13 @@ class Allnn {
         const QPoint& q_point,
         index_t q_index,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       /* ignore horizontal join operator */
       distance_sq = q_result->distance_sq;
       neighbor_i = q_result->neighbor_i;
-      return r_node.bound().MinDistanceSqToPoint(q_point.vec()) <= distance_sq;
+      return r_node.bound().MinDistanceSq(q_point.vec()) <= distance_sq;
     }
 
     void VisitPair(const Param& param,
@@ -172,7 +172,7 @@ class Allnn {
         const QPoint& q_point,
         index_t q_index,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       q_result->distance_sq = distance_sq;
@@ -198,16 +198,16 @@ class Allnn {
 
     static bool ConsiderPairExtrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       double distance_sq_lo =
-          q_node.bound().MinDistanceSqToBound(r_node.bound());
-      return distance_sq_lo <= q_mass_result.distance_sq_hi;
+          q_node.bound().MinDistanceSq(r_node.bound());
+      return distance_sq_lo <= q_summary_result.distance_sq_hi;
     }
 
     static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
     }
@@ -218,7 +218,7 @@ class Allnn {
      */
     static double Heuristic(const Param& param,
         const QNode& q_node,  const RNode& r_node, const Delta& delta) {
-      return q_node.bound().MinDistanceSqToBound(r_node.bound());
+      return q_node.bound().MinDistanceSq(r_node.bound());
     }
   };
 };

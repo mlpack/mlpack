@@ -118,7 +118,7 @@ class Range {
     }
   };
 
-  typedef BlankQMassResult QMassResult;
+  typedef BlankQSummaryResult QSummaryResult;
 
   struct GlobalResult {
    public:
@@ -165,16 +165,16 @@ class Range {
         const QPoint& q_point,
         index_t q_index,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       double distance_sq_lo =
-          r_node.bound().MinDistanceSqToPoint(q_point.vec());
+          r_node.bound().MinDistanceSq(q_point.vec());
       if (unlikely(distance_sq_lo > param.h_sq)) {
         return false;
       }
       double distance_sq_hi =
-          r_node.bound().MaxDistanceSqToPoint(q_point.vec());
+          r_node.bound().MaxDistanceSq(q_point.vec());
       if (unlikely(distance_sq_hi <= param.h_sq)) {
         q_result->count += r_node.count();
         global_result->count += r_node.count();
@@ -198,7 +198,7 @@ class Range {
         const QPoint& q_point,
         index_t q_index,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       q_result->count += count;
@@ -220,12 +220,12 @@ class Range {
         Delta* delta,
         GlobalResult* global_result, QPostponed* q_postponed) {
       double distance_sq_lo =
-          q_node.bound().MinDistanceSqToBound(r_node.bound());
+          q_node.bound().MinDistanceSq(r_node.bound());
       if (unlikely(distance_sq_lo > param.h_sq)) {
         return false;
       }
       double distance_sq_hi =
-          q_node.bound().MaxDistanceSqToBound(r_node.bound());
+          q_node.bound().MaxDistanceSq(r_node.bound());
       if (unlikely(distance_sq_hi <= param.h_sq)) {
         q_postponed->count += r_node.count();
         global_result->Add(q_node.count(), r_node.count());
@@ -236,14 +236,14 @@ class Range {
 
     static bool ConsiderPairExtrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
     }
 
     static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
-        const QMassResult& q_mass_result, const GlobalResult& global_result,
+        const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
     }

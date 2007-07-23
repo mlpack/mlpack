@@ -14,11 +14,13 @@
 #include "rpc_sock.h"
 
 /**
- * A single remote procedure call transaction.
+ * A single remote procedure call.
  *
  * This automatically handles all the memory management that is involved
  * with marshalling and unmarshalling, freeing memory when the Rpc object
  * is destructed.
+ *
+ * This implicitly converts to a pointer of the response object type.
  */
 template<class ResponseObject>
 class Rpc {
@@ -66,10 +68,12 @@ class Rpc {
   ResponseObject *response_object_;
 
  public:
+  /** Concenience constructor that performs the request. */
   template<typename RequestObject>
   Rpc(int channel, int peer, const RequestObject& request) {
     Request(channel, peer, request);
   }
+  /** Default constructor -- you must call Request later. */
   Rpc() {
   }
   ~Rpc() {
@@ -78,6 +82,12 @@ class Rpc {
     }
   }
 
+  /**
+   * Initializes this by making a request.
+   *
+   * Returns the response.  This Rpc object will also implicitly cast to
+   * a pointer of the response object type.
+   */
   template<typename RequestObject>
   ResponseObject *Request(
       int channel, int peer, const RequestObject& request) {
@@ -291,15 +301,22 @@ struct DataGetterRequest {
   }
 };
 
+/**
+ * Server that serves a copiable object to any other machine that requests
+ * it v ia GetRmoteData.
+ */
 template<typename T>
 class DataGetterBackend
     : public RemoteObjectBackend<DataGetterRequest, T> {
  private:
-  const T* data_;
+  T data_;
 
  public:
+  void Init(const T& data_in) {
+    data_.Copy(data_in);
+  }
   void Init(const T* data_in) {
-    data_ = data_in;
+    data_.Copy(*data_in);
   }
 
   virtual void HandleRequest(const DataGetterRequest& request, T *response);
@@ -308,10 +325,17 @@ class DataGetterBackend
 template<typename T>
 void DataGetterBackend<T>::HandleRequest(const DataGetterRequest& request,
     T* response) {
-  response->Copy(*data_);
+  response->Copy(data_);
 }
 
+/**
+ * Remote procedure call namespace.
+ */
 namespace rpc {
+  /**
+   * Gets data from a peer which has a DataGetterBackend registered
+   * on the specified channel.
+   */
   template<typename T>
   void GetRemoteData(int channel, int peer, T* result) {
     DataGetterRequest request;
@@ -320,6 +344,12 @@ namespace rpc {
     result->Copy(*response);
   }
 
+  /**
+   * Synchronizes all machines at a particular barrier.
+   *
+   * This is implemented by sending messages up the tree until the root,
+   * and sending messages down the tree to all machines.
+   */
   void Barrier(int channel_num);
 
   /**

@@ -396,12 +396,12 @@ class Akde {
     }
   };
 
-  struct QMassResult {
+  struct QSummaryResult {
    public:
     /** Bound on density from leaves. */
     SpRange density;
 
-    OT_DEF(QMassResult) {
+    OT_DEF(QSummaryResult) {
       OT_MY_OBJECT(density);
     }
 
@@ -423,7 +423,7 @@ class Akde {
     }
 
     void Accumulate(const Param& param,
-        const QMassResult& result, index_t n_points) {
+        const QSummaryResult& result, index_t n_points) {
       density |= result.density;
     }
 
@@ -433,9 +433,9 @@ class Akde {
     }
 
     /** horizontal join operator */
-    void ApplyMassResult(const Param& param,
-        const QMassResult& mass_result) {
-      density += mass_result.density;
+    void ApplySummaryResult(const Param& param,
+        const QSummaryResult& summary_result) {
+      density += summary_result.density;
     }
 
     void ApplyDelta(const Param& param,
@@ -474,7 +474,7 @@ class Akde {
     bool StartVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       // Perform intrinsic prunes here.
@@ -507,7 +507,7 @@ class Akde {
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
         const RNode& r_node,
-        const QMassResult& unapplied_mass_results,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
       q_result->density += density;
@@ -564,11 +564,11 @@ class Akde {
         const QNode& q_node,
         const RNode& r_node,
         const Delta& delta,
-        const QMassResult& q_mass_result,
+        const QSummaryResult& q_summary_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
       if (delta.d_density.width() <
-          param.TwiceEpsilonFor(r_node.count()) * q_mass_result.density.lo) {
+          param.TwiceEpsilonFor(r_node.count()) * q_summary_result.density.lo) {
         q_postponed->d_density += delta.d_density;
       }
       return true;
@@ -577,7 +577,7 @@ class Akde {
     static bool ConsiderQueryTermination(
         const Param& param,
         const QNode& q_node,
-        const QMassResult& q_mass_result,
+        const QSummaryResult& q_summary_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
       return true;
