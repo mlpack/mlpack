@@ -238,7 +238,7 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   TempCacheArray<typename GNP::QResult> q_results;
 
   index_t n_block_points = fx_param_int(
-      module, "n_block_points", 1024);
+      module, "n_block_points", 512);
   index_t n_block_nodes = fx_param_int(
       module, "n_block_nodes", 128);
 
@@ -437,7 +437,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
   CentroidWorkQueue<typename GNP::QNode> *actual_work_queue =
       new CentroidWorkQueue<typename GNP::QNode>;
   int n_grains = fx_param_int(module_, "n_grains",
-      config_.n_threads * rpc::n_peers() * 5);
+      config_.n_threads * rpc::n_peers() * 12);
   actual_work_queue->Init(&data_nodes_, n_grains);
   fx_format_result(module_, "n_grains_actual", "%"LI"d",
       actual_work_queue->n_grains());

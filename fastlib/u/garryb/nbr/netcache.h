@@ -14,6 +14,8 @@ struct BlockRequest {
   BlockDevice::offset_t end;
   enum Operation { READ, WRITE, ALLOC, INFO } operation;
   ArrayList<char> payload;
+  
+  bool requires_response() const { return operation != WRITE; }
 
   OT_DEF(BlockRequest) {
     OT_MY_OBJECT(blockid);

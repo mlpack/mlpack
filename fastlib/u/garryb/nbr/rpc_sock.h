@@ -7,6 +7,8 @@
 #ifndef RPC_SOCK_H
 #define RPC_SOCK_H
 
+#include "spbounds.h"
+
 #include "fastlib/fastlib_int.h"
 
 #include <sys/socket.h>
@@ -222,45 +224,6 @@ class SockConnection {
     return peer_addr_;
   }
 
-  // the next functions have to do with non-blocking I/O
-  /**
-   * A lock-less FD-set setter.
-   */
-  void FastPrepareSelect(
-      fd_set *read_fds, fd_set *write_fds, fd_set *error_fds) {
-    // No locking needed: read_fd_ will never close on us unexpectedly
-    if (is_read_open()) {
-      FD_SET(read_fd_, read_fds);
-      FD_SET(read_fd_, error_fds);
-    }
-    // No locking needed: write_fd_ will never close on us unexpectedly
-    if (is_write_open()) {
-      if (is_writing()) {
-        FD_SET(write_fd_, write_fds);
-      }
-      FD_SET(write_fd_, error_fds);
-    }    
-  }
-  /** A lock-less FD-set checker. */
-  bool FastCheckEvents(
-      fd_set *read_fds, fd_set *write_fds, fd_set *error_fds) {
-    if (unlikely(is_read_open())) {
-      if (unlikely(FD_ISSET(read_fd_, read_fds))
-          || unlikely(FD_ISSET(read_fd_, error_fds))) {
-        return true;
-      }
-    }
-    if (unlikely(is_write_open())) {
-      if (unlikely(FD_ISSET(write_fd_, write_fds))
-          || unlikely(FD_ISSET(write_fd_, error_fds))) {
-        return true;
-      }
-    }
-    return false;
-  }
-  /** Handle socket events, given that FastCheckEvents yielded events. */
-  void HandleSocketEvents(fd_set *read_fds, fd_set *write_fds,
-      fd_set *error_fds, bool allow_errors);
   /** Try reading something from the queue. */
   bool TryRead();
   /** Try writing something from the queue. */
@@ -274,7 +237,7 @@ class SockConnection {
 class RpcSockImpl {
  private:
   /* Standard packet header */
-  enum { MSG_BIRTH=-1, MSG_DONE=-2 };
+  enum { MSG_BIRTH=-1, MSG_DONE=-2, MSG_PING=-3, MSG_PONG=-4 };
   enum { CHANNEL_BARRIER=-1 };
 
   /** This must be a multiple of 16 bytes or else alignment might break! */
@@ -347,6 +310,7 @@ class RpcSockImpl {
   struct datanode *module_;
   int rank_;
   int n_peers_;
+  int live_pings_;
   uint16 port_;
 
   int parent_;
@@ -363,7 +327,7 @@ class RpcSockImpl {
    * Status: running, synchronizing all other machines to get ready for a
    * stop, and actually stopping.
    */
-  enum { RUN, STOP_SYNC, STOP } status_;
+  enum { INIT, RUN, STOP_SYNC, STOP } status_;
   PollingTask polling_task_;
   Thread polling_thread_;
 
@@ -371,11 +335,25 @@ class RpcSockImpl {
   int barrier_registrants_;
 
   RecursiveMutex mutex_;
-  
+
   /** File descriptor for generating alerts */
   int alert_signal_fd_;
   /** File descriptor listening to alerts */
   int alert_slot_fd_;
+
+  /** Mutex on the fd-sets and peer maps. */
+  RecursiveMutex fd_mutex_;
+  /** Our read file-descriptor set. */
+  fd_set read_fd_set_;
+  /** Our write file-descriptor set. */
+  fd_set write_fd_set_;
+  /** Our error file-descriptor set. */
+  fd_set error_fd_set_;
+
+  /** Maps file descriptors to peer. */
+  DenseIntMap<int> peer_from_fd_;
+  /** Largest file descriptor. */
+  MinMaxVal<int> max_fd_;
 
  public:
   void Init();
@@ -386,6 +364,11 @@ class RpcSockImpl {
   void WakeUpPollingLoop();
   void UnregisterTransaction(int peer, int channel, int transaction_id);
   int AssignTransaction(int peer_num, Transaction *transaction);
+
+  void RegisterReadFd(int peer, int fd);
+  void RegisterWriteFd(int peer, int fd);
+  void ActivateWriteFd(int fd);
+  void DeactivateWriteFd(int fd);
 
   int rank() const { return rank_; }
   int n_peers() const { return n_peers_; }
@@ -401,7 +384,7 @@ class RpcSockImpl {
   void PollingLoop_();
   void GatherReadyMessages_(Peer *peer, ArrayList<WorkItem>* work_items);
   void TryAcceptConnection_(int fd);
-  void Ping_(int peer_num);
+  void Ping_(int peer_num, int message);
 };
 
 namespace rpc {
