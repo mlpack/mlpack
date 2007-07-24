@@ -882,7 +882,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     }
   }
   data_nodes.Init(data_example_node, 0, n_block_nodes);
-  KdTreeMidpointBuilder
+  KdTreeHybridBuilder
       <AffinityAlpha::QPoint, AffinityAlpha::QNode, AffinityAlpha::Param>
       ::Build(data_module, param, &data_points, &data_nodes);
 

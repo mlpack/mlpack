@@ -94,7 +94,7 @@ class Gravity {
       la::AddTo(stat.centroid, &centroid);
     }
     void Postprocess(const Param& param, const Bound& bound, index_t n) {
-      diagsq = bound.MaxDistanceSqToBound(bound);
+      diagsq = bound.MaxDistanceSq(bound);
       la::Scale(1.0 / n, &centroid);
     }
   };
@@ -185,8 +185,8 @@ class Gravity {
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
-      /*double dhi = r_node.bound().MaxDistanceSqToPoint(q_point.vec());
-      double dlo = r_node.bound().MinDistanceSqToPoint(q_point.vec());
+      /*double dhi = r_node.bound().MaxDistanceSq(q_point.vec());
+      double dlo = r_node.bound().MinDistanceSq(q_point.vec());
       if (dhi > dlo * param.theta_factor) {
         force = 0;
         return true;
@@ -238,9 +238,9 @@ class Gravity {
         const QNode& q_node, const RNode& r_node,
         Delta* delta,
         GlobalResult* global_result, QPostponed* q_postponed) {
-      double distsq_lo = q_node.bound().MinDistanceSqToBound(r_node.bound());
-      double distsq_hi = q_node.bound().MaxDistanceSqToBound(r_node.bound());
-      //double distsq_mid = q_node.bound().MidDistanceSqToBound(r_node.bound());
+      double distsq_lo = q_node.bound().MinDistanceSq(r_node.bound());
+      double distsq_hi = q_node.bound().MaxDistanceSq(r_node.bound());
+      //double distsq_mid = q_node.bound().MidDistanceSq(r_node.bound());
       //double diagsq = q_node.stat().diagsq + r_node.stat().diagsq;
       // (sqrt(distsq_hi) - sqrt(distsq_lo)) / sqrt(distsq_lo) < theta
       // sqrt(distsq_hi) / sqrt(distsq_lo) - 1 < theta
