@@ -82,7 +82,7 @@ class Transaction {
   };
   ArrayList<PeerInfo> peers_;
 
- protected:
+ public:
   /** Create a message of a specified size, which you will later Send(). */
   Message *CreateMessage(int peer, size_t size);
   /** Send a message */
