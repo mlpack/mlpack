@@ -361,26 +361,30 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
 
   q_node_mut->summary_result.StartReaccumulate(param_, *q_node);
 
-  CacheReadIter<typename GNP::QPoint> q_iter(&q_points_, q_node->begin());
-  CacheWriteIter<typename GNP::QResult> q_result_iter(
-      &q_results_, q_node->begin());
+  CacheRead<typename GNP::QPoint> first_q_point(&q_points_, q_node->begin());
+  CacheWrite<typename GNP::QResult> first_q_result(&q_results_, q_node->begin());
+  CacheRead<typename GNP::RPoint> first_r_point(&r_points_, r_node->begin());
+  size_t q_point_stride = q_points_.n_elem_bytes();
+  size_t q_result_stride = q_results_.n_elem_bytes();
+  const typename GNP::QPoint *q_point = first_q_point;
+  typename GNP::QResult *q_result = first_q_result;
 
-  for (index_t q_i = q_node->begin(); q_i < q_node->end();
-      ++q_i, q_iter.Next(), q_result_iter.Next()) {
-    const typename GNP::QPoint *q_point = q_iter;
-    typename GNP::QResult *q_result = q_result_iter;
-
+  for (index_t q_i = q_node->begin(); q_i < q_node->end(); ++q_i) {
     q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
 
     if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, *r_node,
           unvisited, q_result, &global_result_)) {
-      CacheReadIter<typename GNP::RPoint> r_iter(&r_points_, r_node->begin());
+      const typename GNP::RPoint *r_point = first_r_point;
+      size_t r_point_stride = r_points_.n_elem_bytes();
+      index_t r_end = r_node->end();
+      index_t r_i = r_node->begin();
 
-      for (index_t r_i = r_node->begin(); r_i < r_node->end(); ++r_i,
-          r_iter.Next()) {
-        const typename GNP::RPoint *r_point = r_iter;
-
+      for (;;) {
         visitor.VisitPair(param_, *q_point, q_i, *r_point, r_i);
+        if (++r_i >= r_end) {
+          break;
+        }
+        r_point = mem::PointerAdd(r_point, r_point_stride);
       }
 
       visitor.FinishVisitingQueryPoint(param_, *q_point, q_i, *r_node,
@@ -390,6 +394,9 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     }
 
     q_node_mut->summary_result.Accumulate(param_, *q_result);
+
+    q_point = mem::PointerAdd(q_point, q_point_stride);
+    q_result = mem::PointerAdd(q_result, q_result_stride);
   }
 
   q_node_mut->summary_result.FinishReaccumulate(param_, *q_node);

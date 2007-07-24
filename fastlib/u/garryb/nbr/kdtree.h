@@ -40,7 +40,7 @@
  * of points is at most leaf_size.
  */
 template<typename TPoint, typename TNode, typename TParam>
-class KdTreeMidpointBuilder {
+class KdTreeHybridBuilder {
  public:
   typedef TNode Node;
   typedef TPoint Point;
@@ -65,7 +65,7 @@ class KdTreeMidpointBuilder {
   static void Build(struct datanode *module, const Param &param,
       index_t begin_index, index_t end_index,
       CacheArray<Point> *points_inout, CacheArray<Node> *nodes_create) {
-    KdTreeMidpointBuilder builder;
+    KdTreeHybridBuilder builder;
     builder.Doit(module, &param, begin_index, end_index,
         points_inout, nodes_create);
   }
@@ -104,7 +104,7 @@ class KdTreeMidpointBuilder {
     leaf_size_ = fx_param_int(module, "leaf_size", 32);
     chunk_size_ = fx_param_int(module, "chunk_size",
         points_inout->n_block_elems());
-
+    DEBUG_ASSERT(points_inout->n_block_elems() % chunk_size_ == 0);
     if (!math::IsPowerTwo(chunk_size_)) {
       NONFATAL("With NBR, it's best to have chunk_size be a power of 2.");
     }
@@ -126,7 +126,7 @@ class KdTreeMidpointBuilder {
 };
 
 template<typename TPoint, typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TPoint, TNode, TParam>::FindBoundingBox_(
+void KdTreeHybridBuilder<TPoint, TNode, TParam>::FindBoundingBox_(
     index_t begin, index_t count, Bound *bound) {
   CacheReadIter<Point> point(&points_, begin);
   for (index_t i = count; i--; point.Next()) {
@@ -135,7 +135,7 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::FindBoundingBox_(
 }
 
 template<typename TPoint, typename TNode, typename TParam>
-index_t KdTreeMidpointBuilder<TPoint, TNode, TParam>::Partition_(
+index_t KdTreeHybridBuilder<TPoint, TNode, TParam>::Partition_(
     index_t split_dim, double splitvalue,
     index_t begin, index_t count,
     Bound* left_bound, Bound* right_bound) {
@@ -180,7 +180,7 @@ index_t KdTreeMidpointBuilder<TPoint, TNode, TParam>::Partition_(
 }
 
 template<typename TPoint, typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
+void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
     index_t node_i) {
   Node *node = nodes_->StartWrite(node_i);
   bool leaf = true;
@@ -215,7 +215,7 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
       double split_val;
       SpRange current_range = node->bound().get(split_dim);
 
-      if (node->count() < chunk_size_ * 3 / 2) {
+      if (node->count() <= chunk_size_) {
         // perform a midpoint split
         split_val = current_range.mid();
         split_col = Partition_(split_dim, split_val,
@@ -270,6 +270,7 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
         // important, so if we straddle a boundary because there are
         // duplicates, just have the duplicate on both sides.
         split_col = goal_col;
+        DEBUG_ASSERT(split_col % points_.n_block_elems() == 0);
       }
 
       DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)",
@@ -310,7 +311,9 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
 
   if (leaf) {
     node->set_leaf();
-
+    // ensure leaves don't straddle block boundaries
+    DEBUG_SAME_INT(node->begin() / points_.n_block_elems(),
+        (node->end() - 1) / points_.n_block_elems());
     for (index_t i = node->begin(); i < node->end(); i++) {
       CacheRead<Point> point(&points_, i);
       node->stat().Accumulate(*param_, *point);
@@ -321,7 +324,7 @@ void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_(
 }
 
 template<typename TPoint, typename TNode, typename TParam>
-void KdTreeMidpointBuilder<TPoint, TNode, TParam>::Build_() {
+void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_() {
   index_t node_i = nodes_->Alloc();
   Node *node = nodes_->StartWrite(node_i);
 

@@ -261,7 +261,7 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   typename GNP::QNode data_example_node;
   data_example_node.Init(data_matrix.n_rows(), param);
   data_nodes.Init(data_example_node, 0, n_block_nodes);
-  KdTreeMidpointBuilder
+  KdTreeHybridBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
       ::Build(data_module, param, 0, data_matrix.n_cols(),
           &data_points, &data_nodes);
@@ -413,7 +413,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
   typename GNP::QNode data_example_node;
   data_example_node.Init(dim_, param_);
   data_nodes_.InitMaster(data_example_node, n_block_nodes);
-  KdTreeMidpointBuilder
+  KdTreeHybridBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
       ::Build(data_module_, param_, 0, n_points_,
           &data_points_, &data_nodes_);

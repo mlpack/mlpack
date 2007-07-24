@@ -26,7 +26,6 @@ template<class ResponseObject>
 class Rpc {
   FORBID_COPY(Rpc);
  private:
-  template<class RequestObject>
   struct RpcRequestTransaction : public Transaction {
     FORBID_COPY(RpcRequestTransaction);
 
@@ -37,8 +36,13 @@ class Rpc {
 
    public:
     RpcRequestTransaction() {}
-    virtual ~RpcRequestTransaction() {}
+    virtual ~RpcRequestTransaction() {
+      if (response != NULL) {
+        delete response;
+      }
+    }
 
+    template<class RequestObject>
     void Start(int channel, int peer, const RequestObject& request) {
       Transaction::Init(channel);
       Message *message = CreateMessage(peer, ot::PointerFrozenSize(request));
@@ -47,13 +51,12 @@ class Rpc {
       Send(message);
     }
     
-    Message *Wait() {
+    void Wait() {
       mutex.Lock();
       while (response == NULL) {
         cond.Wait(&mutex);
       }
       mutex.Unlock();
-      return response;
     }
 
     void HandleMessage(Message *message) {
@@ -67,7 +70,7 @@ class Rpc {
   };
   
  private:
-  Message *response_;
+  RpcRequestTransaction transaction_;
   ResponseObject *response_object_;
 
  public:
@@ -80,9 +83,6 @@ class Rpc {
   Rpc() {
   }
   ~Rpc() {
-    if (response_ != NULL) {
-      delete response_;
-    }
   }
 
   /**
@@ -94,15 +94,38 @@ class Rpc {
   template<typename RequestObject>
   ResponseObject *Request(
       int channel, int peer, const RequestObject& request) {
-    RpcRequestTransaction<RequestObject> transaction;
-    transaction.Start(channel, peer, request);
+    transaction_.Start(channel, peer, request);
     if (request.requires_response()) {
-      response_ = transaction.Wait();
-      response_object_ = ot::PointerThaw<ResponseObject>(response_->data());
+      transaction_.Wait();
+      response_object_ = ot::PointerThaw<ResponseObject>(transaction_.response->data());
     } else {
-      response_ = NULL;
+      transaction_.response = NULL;
       response_object_ = NULL;
     }
+    return response_object_;
+  }
+
+  /**
+   * Initializes this by making a request.
+   *
+   * Returns the response.  This Rpc object will also implicitly cast to
+   * a pointer of the response object type.
+   */
+  template<typename RequestObject>
+  void RequestAsync(
+      int channel, int peer, const RequestObject& request) {
+    transaction_.Start(channel, peer, request);
+    if (!request.requires_response()) {
+      transaction_.response = NULL;
+      response_object_ = NULL;
+    }
+    return response_object_;
+  }
+  
+  ResponseObject *Wait() {
+    transaction_.Wait();
+    response_object_ = ot::PointerThaw<ResponseObject>(
+        transaction_.response->data());
     return response_object_;
   }
 
