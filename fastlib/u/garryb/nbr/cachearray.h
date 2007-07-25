@@ -13,9 +13,6 @@ class CacheArrayBlockHandler : public BlockHandler {
   FORBID_COPY(CacheArrayBlockHandler);
 
  private:
-  enum { HEADER_BLOCKID = 0 };
-
- private:
   ArrayList<char> default_elem_;
 
  public:
@@ -33,78 +30,79 @@ class CacheArrayBlockHandler : public BlockHandler {
     ot::PointerFreeze(default_obj, default_elem_.begin());
   }
   
-  void WriteHeader(BlockDevice *inner_device) {
-    // Next, we store the ArrayList in another ArrayList because we can't
-    // get away with storing just the object (we would lose the size).
-    ArrayList<char> buffer;
-    buffer.Init(inner_device->n_block_bytes());
-    size_t array_size = ot::PointerFrozenSize(default_elem_);
-    (void) array_size;
-    DEBUG_ASSERT_MSG(array_size <= inner_device->n_block_bytes(),
-        "Too small of a block size, must be at least %ld bytes (obj is %ld)",
-        long(array_size), long(default_elem_.size()));
-    ot::PointerFreeze(default_elem_, buffer.begin());
-
-    BlockDevice::blockid_t blockid = inner_device->AllocBlocks(1);
-    (void) blockid;
-    DEBUG_ASSERT_MSG(blockid == HEADER_BLOCKID, "Header block already exists");
-    inner_device->Write(HEADER_BLOCKID, 0,
-        inner_device->n_block_bytes(), buffer.begin());
+  void Serialize(ArrayList<char>* data) const {
+    data->Copy(default_elem_);
   }
+  
+  void Deserialize(const ArrayList<char>& data) {
+    default_elem_->Copy(*data);
+  }
+
+//  void WriteHeader(BlockDevice *inner_device) {
+//    // Next, we store the ArrayList in another ArrayList because we can't
+//    // get away with storing just the object (we would lose the size).
+//    ArrayList<char> buffer;
+//    buffer.Init(inner_device->n_block_bytes());
+//    size_t array_size = ot::PointerFrozenSize(default_elem_);
+//    (void) array_size;
+//    DEBUG_ASSERT_MSG(array_size <= inner_device->n_block_bytes(),
+//        "Too small of a block size, must be at least %ld bytes (obj is %ld)",
+//        long(array_size), long(default_elem_.size()));
+//    ot::PointerFreeze(default_elem_, buffer.begin());
+//
+//    BlockDevice::blockid_t blockid = inner_device->AllocBlocks(1);
+//    (void) blockid;
+//    DEBUG_ASSERT_MSG(blockid == HEADER_BLOCKID, "Header block already exists");
+//    inner_device->Write(HEADER_BLOCKID, 0,
+//        inner_device->n_block_bytes(), buffer.begin());
+//  }
 
   /**
    * Inits from a block device -- using this on the cache itself will
    * probably cause lots of trouble (especially in non-read modes) so please
    * use it on the underlying block device.
    */
-  void InitFromDevice(BlockDevice *inner_device) {
-    ArrayList<char> buffer;
-
-    buffer.Init(inner_device->n_block_bytes());
-    // Read the first block, the header
-    inner_device->Read(HEADER_BLOCKID, 0,
-        inner_device->n_block_bytes(), buffer.begin());
-    ArrayList<char> *default_elem_stored =
-        ot::PointerThaw< ArrayList<char> >(buffer.begin());
-    default_elem_.Copy(*default_elem_stored);
-  }
+//  void InitFromDevice(BlockDevice *inner_device) {
+//    ArrayList<char> buffer;
+//
+//    buffer.Init(inner_device->n_block_bytes());
+//    // Read the first block, the header
+//    inner_device->Read(HEADER_BLOCKID, 0,
+//        inner_device->n_block_bytes(), buffer.begin());
+//    ArrayList<char> *default_elem_stored =
+//        ot::PointerThaw< ArrayList<char> >(buffer.begin());
+//    default_elem_.Copy(*default_elem_stored);
+//  }
 
   void BlockInitFrozen(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin, BlockDevice::offset_t bytes, char *block) {
-    if (blockid != HEADER_BLOCKID) {
-      DEBUG_ASSERT((begin % default_elem_.size()) == 0);
-      index_t elems = bytes / default_elem_.size();
-      for (index_t i = 0; i < elems; i++) {
-        mem::CopyBytes(block, default_elem_.begin(), default_elem_.size());
-        block += default_elem_.size();
-      }
+    DEBUG_ASSERT((begin % default_elem_.size()) == 0);
+    index_t elems = bytes / default_elem_.size();
+    for (index_t i = 0; i < elems; i++) {
+      mem::CopyBytes(block, default_elem_.begin(), default_elem_.size());
+      block += default_elem_.size();
     }
   }
 
   void BlockFreeze(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin, BlockDevice::offset_t bytes,
       const char *old_location, char *block) {
-    if (blockid != HEADER_BLOCKID) {
-      DEBUG_ASSERT((begin % default_elem_.size()) == 0);
-      index_t elems = bytes / default_elem_.size();
-      for (index_t i = 0; i < elems; i++) {
-        ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), block);
-        block += default_elem_.size();
-        old_location += default_elem_.size();
-      }
+    index_t elems = bytes / default_elem_.size();
+    for (index_t i = 0; i < elems; i++) {
+      ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), block);
+      block += default_elem_.size();
+      old_location += default_elem_.size();
     }
   }
 
   void BlockThaw(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin, BlockDevice::offset_t bytes,
       char *block) {
-    if (blockid != HEADER_BLOCKID) {
-      DEBUG_ASSERT(begin % default_elem_.size() == 0);
-      index_t elems = bytes / default_elem_.size();
-      for (index_t i = 0; i < elems; i++) {
-        ot::PointerThaw<T>(block);
-        block += default_elem_.size();
-      }
+    DEBUG_ASSERT(begin % default_elem_.size() == 0);
+    index_t elems = bytes / default_elem_.size();
+    for (index_t i = 0; i < elems; i++) {
+      ot::PointerThaw<T>(block);
+      block += default_elem_.size();
     }
   }
 
@@ -147,7 +145,7 @@ class CacheArray {
    * Within CacheArray all block ID's refer to "logical" not "physical"
    * block ID's, i.e. offset by one to account for metadata.
    */
-  static const BlockDevice::blockid_t HEADER_BLOCKS = 1;
+  static const BlockDevice::blockid_t HEADER_BLOCKS = 0;
 
  protected:
   unsigned int n_block_elems_log_;

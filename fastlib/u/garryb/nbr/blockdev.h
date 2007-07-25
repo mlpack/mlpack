@@ -7,8 +7,8 @@ class BlockDevice {
   FORBID_COPY(BlockDevice);
 
  public:
-  typedef uint32 blockid_t;
-  typedef uint32 offset_t;
+  typedef int32 blockid_t;
+  typedef int32 offset_t;
 
   enum modeflag_t {
     F_READ      = 0x01,
