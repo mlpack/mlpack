@@ -24,110 +24,170 @@ void DistributedCache::HandleStatusInformation_(
     BlockDevice::blockid_t blockid, const BlockStatus& status) {
   BlockMetadata *block = &blocks_[blockid];
   if (unlikely(status.owner == my_rank_)) {
-    if (block->is_owner) {
+    if (block->is_owner()) {
       // was owner, still am owner
       return;
     } else {
+      // TODO: These assumptions assume we're not dynamically moving blocks.
+      // If we want to support block ownership movement, we have to handle
+      // the case where we suddenly become owner of a block that we're
+      // holding.
+      DEBUG_ASSERT(!block->is_busy());
+      DEBUG_ASSERT(!block->is_in_core());
+      DEBUG_ASSERT(!block->is_dirty());
+      // block is not in cache
       block->pointer = NULL;
-      block->state = NEW;
-      block->value = -1; /* Not in cache */
+      // block is new, so set special flag
+      block->dirty_ranges = NOT_DIRTY_NEW;
+      // block is not in use
+      block->locks = 0;
+      // block's disk ID is meaningless if it's either in memory or 'new'
+      block->value = 0;
     }
   } else {
-    block->value = status.owner;
+    block->value = ~status.owner;
   }
+}
+
+//----
+
+char *DistributedCache::StartWrite(BlockDevice::blockid blockid) {
+  mutex_.Lock();
+  BlockMetadata *block = &blocks_[blockid];
+  LockBlock_(blockid);
+  MarkDirty_(block);
+  mutex_.Unlock();
+  return block->data;
 }
 
 char *DistributedCache::StartWrite(BlockDevice::blockid blockid,
     BlockDevice::offset_t begin_offset, BlockDevice::offset_t end_offset) {
+  mutex_.Lock();
   BlockMetadata *block = &blocks_[blockid];
-  MarkUse_(blockid);
-  block->is_new = false;
+  LockBlock_(blockid);
+  MarkDirty_(block, begin_offset, end_offset);
+  mutex_.Unlock();
   return block->data;
 }
 
 char *DistributedCache::StartRead(BlockDevice::blockid blockid) {
+  mutex_.Lock();
   BlockMetadata *block = &blocks_[blockid];
-  MarkUse_(blockid);
+  LockBlock_(blockid);
+  mutex_.Unlock();
   return block->data;
 }
 
-void DistributedCache::MarkUse_(BlockDevice::blockid blockid) {
-  MarkUse_(blockid);
+//----
+
+void DistributedCache::StopRead(BlockDevice::blockid_t blockid) {
+  mutex_.Lock();
+  UnlockBlock_(blockid);
+  mutex_.Unlock();
 }
+
+void DistributedCache::StopWrite(BlockDevice::blockid_t blockid) {
+  mutex_.Lock();
+  UnlockBlock_(blockid);
+  mutex_.Unlock();
+}
+
+void DistributedCache::LockBlock_(BlockDevice::blockid_t blockid) {
+  if (block->data) {
+    block->locks++;
+  } else {
+    check to see if it's in the cache (hash by global block id)
+    if not,
+    HandleMiss_(blockid);
+  }
+}
+
+void DistributedCache::UnlockBlock_(BlockDevice::blockid_t blockid) {
+  BlockMetadata *block = &blocks_[blockid];
+  if (--block->locks == 0) {
+    do all your cache magic here
+    Evict_(bad_block);
+  }
+}
+
+//----
 
 void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
-  DEBUG_ASSERT(block->data == NULL);
-  block->data = mem::Alloc<char*>(n_block_bytes_);
+  FIND A BLOCK TO EVICT!
 
-  if (likely(block->is_new)) {
+  DEBUG_ASSERT(block->data == NULL);
+  block->data = mem::Alloc<char>(n_block_bytes_);
+  DEBUG_ASSERT(block->data != NULL);
+
+  if (block->is_new()) {
+    DEBUG_ASSERT_MSG(block->dirty_ranges == NOT_DIRTY_NEW,
+        "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
     block_handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
     block_handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
-  } else if (block->is_owner) {
+  } else if (block->is_owner()) {
     HandleLocalMiss_(blockid);
+    block->dirty_ranges = NOT_DIRTY_OLD;
   } else {
     HandleRemoteMiss_(blockid);
+    block->dirty_ranges = NOT_DIRTY_OLD;
   }
-  block->dirty_ranges = NOT_DIRTY;
+
+  block->locks = 0;
 }
 
 void DistributedCache::HandleLocalMiss_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
-  DEBUG_ASSERT(block->is_owner);
-  block->data = mem::Alloc<char*>(n_block_bytes_);
-  DEBUG_ASSERT(block->value >= 0);
-  overflow_device_->Read(block->value, 0, n_block_bytes_, block->data);
+  DEBUG_ASSERT(block->is_owner());
+  overflow_device_->Read(block->local_blockid(),
+      0, n_block_bytes_, block->data);
 }
 
 void DistributedCache::HandleRemoteMiss_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
-  DEBUG_ASSERT(!block->is_owner);
+  DEBUG_ASSERT(!block->is_owner());
   ReadTransaction read_transaction;
   read_transaction.Doit(channel_num_, block->value,
       blockid, 0, n_block_bytes_, block->data);
 }
 
-void DistributedCache::MarkDirty_(BlockMetadata *block,
-    BlockDevice::blockid_t begin, BlockDevice::blockid_t end) {
-}
+char *DistributedCache::Evict_(BlockDevice::blockid blockid) {
+  BlockMetadata *block = &blocks_[blockid];
 
-void DistributedCache::MarkDirty_(BlockMetadata *block) {
-  FreeDirtyList_(block);
+  DEBUG_ASSERT(block->is_in_core());
+  DEBUG_ASSERT_MSG(!block->is_busy(), "Trying to evict a busy block");
 
-  block->dirty_ranges = FULLY_DIRTY;
+  if (block->is_dirty()) {
+    if (block->is_owner()) {
+      WritebackDirtyLocal_(blockid);
+    } else {
+      WritebackDirtyRemote_(blockid);
+    }
+  }
+
+  mem::Free(block->data);
+  block->data = NULL;
 }
 
 void DistributedCache::WritebackDirtyLocal_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
-  DEBUG_ASSERT(block->is_owner);
-  DEBUG_ASSERT(block->dirty_ranges != NOT_DIRTY);
+  DEBUG_ASSERT(block->is_owner());
+  DEBUG_ASSERT_MSG(block->dirty_ranges == FULLY_DIRTY,
+      "Local blocks should only be fully dirty or not dirty at all");
 
-  local_device_
-
-  FreeDirtyList_(block);
-  block->dirty_ranges = NOT_DIRTY;
-}
-
-void DistributedCache::FreeDirtyList_(BlockMetadata *block) {
-  int rangeid = block->dirty_ranges;
-  while (rangeid >= 0) {
-    RangeLink *range = &ranges_[range];
-    rangeid = range->next;
-    range->next = free_range_;
-    free_range_ = rangeid;
-  }
+  local_device_.Write(blockid, 0, n_block_bytes_, block->data);
 }
 
 void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
   int rangeid = block->dirty_ranges;
 
-  DEBUG_ASSERT(!block->is_owner);
-  DEBUG_ASSERT(block->diry_ranges != NOT_DIRTY);
+  DEBUG_ASSERT(!block->is_owner());
+  DEBUG_ASSERT(block->is_dirty());
 
   if (rangeid == FULLY_DIRTY) {
     // The entire block is dirty
@@ -147,8 +207,46 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
           range->begin, range->end, block->data + range->begin);
     }
   }
+}
 
-  block->dirty_ranges = NOT_DIRTY;
+void DistributedCache::MarkDirty_(BlockMetadata *block) {
+  FreeDirtyList_(block);
+
+  block->dirty_ranges = FULLY_DIRTY;
+}
+
+void DistributedCache::MarkDirty_(BlockMetadata *block,
+    BlockDevice::blockid_t begin, BlockDevice::blockid_t end) {
+  if (block->dirty_ranges != FULLY_DIRTY) {
+    if (block->is_owner) {
+      block->dirty_ranges = FULLY_DIRTY;
+    } else {
+      int rangeid = free_range_;
+      Range *range;
+
+      if (rangeid < 0) {
+        rangeid = ranges_.size();
+        range_ = ranges_.AddBack();
+        free_range_ = -1;
+      } else {
+        free_range_ = range->next;
+        range = &range_[rangeid];
+      }
+
+      range->next = block->dirty_ranges;
+      block->dirty_ranges = rangeid;
+    }
+  }
+}
+
+void DistributedCache::FreeDirtyList_(BlockMetadata *block) {
+  int rangeid = block->dirty_ranges;
+  while (unlikely(rangeid >= 0)) {
+    RangeLink *range = &ranges_[range];
+    rangeid = range->next;
+    range->next = free_range_;
+    free_range_ = rangeid;
+  }
 }
 
 
