@@ -117,51 +117,45 @@ template<typename TElement>
 class CacheArray {
   FORBID_COPY(CacheArray);
 
-  template<typename T> friend class CacheRead;
-  template<typename T> friend class CacheWrite;
-  template<typename T, typename Q, typename R> friend class CacheIterImpl_;
-
  public:
   typedef TElement Element;
 
  protected:
   struct Metadata {
-    Metadata()
-     : data(NULL) {
-      DEBUG_ONLY(lock_count = 0);
+    Metadata() : data(NULL) {
+      lock_count = 0;
     }
     char *data;
-#ifdef DEBUG
-    // lock count will be useful when we start using a FIFO layer
-    char lock_count;
-#endif
+    int lock_count;
   };
 
  protected:
   /**
-   * When dealing with the underlying cache, we must take into account
-   * the metadata block.
+   * Number of pages in the thread-local FIFO cache.
    *
-   * Within CacheArray all block ID's refer to "logical" not "physical"
-   * block ID's, i.e. offset by one to account for metadata.
+   * At least 32 is needed for decent tree-descent performance.
    */
-  static const BlockDevice::blockid_t HEADER_BLOCKS = 0;
+  static const int FIFO_SIZE = 64;
 
  protected:
+  Metadata *adjusted_metadatas_;
   unsigned int n_block_elems_log_;
   unsigned int n_block_elems_mask_;
-  ArrayList<Metadata> metadatas_;
-  unsigned int n_elem_bytes_;
-  BlockDevice::blockid_t skip_blocks_;
 
+  ArrayList<Metadata> metadatas_;
+
+  ArrayList<BlockDevice::blockid_t> fifo_;
+
+  unsigned int n_elem_bytes_;
   index_t begin_;
   index_t next_alloc_;
   index_t end_;
-  unsigned int n_block_elems_;
 
+  BlockDevice::blockid_t skip_blocks_;
+#warning "mode is bull"
   BlockDevice::mode_t mode_;
 
-  SmallCache *cache_;
+  DistribtedCache *cache_;
 
  public:
   CacheArray() {}
@@ -182,6 +176,10 @@ class CacheArray {
   void Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
       index_t begin_index_in, index_t end_index_in);
 
+#error no correct support for distributed allocation
+#error need to register with the cache
+#error the distributed cache is not complete
+
   /**
    * Opens an existing SmallCache, a sub-range only.
    *
@@ -201,12 +199,13 @@ class CacheArray {
         end_element, end_);
     end_ = end_element;
     next_alloc_ = end_element;
-    metadatas_.Resize(((end_ + n_block_elems_ - 1) >> n_block_elems_log_)
+    metadatas_.Resize(((end_ + n_block_elems_mask()) >> n_block_elems_log())
         - skip_blocks_);
+    adjusted_metadatas_ = metadatas_.begin() - skip_blocks_;
   }
 
   void Grow() {
-    Grow((cache_->n_blocks() - HEADER_BLOCKS) << n_block_elems_log_);
+    Grow(cache_->n_blocks() << n_block_elems_log());
   }
 
   index_t begin_index() const {
@@ -220,8 +219,14 @@ class CacheArray {
     return n_elem_bytes_;
   }
 
+  unsigned int n_block_elems_log() const {
+    return n_block_elems_log_;
+  }
   unsigned int n_block_elems() const {
-    return n_block_elems_;
+    return 1 << n_block_elems_log_;
+  }
+  unsigned int n_block_elems_mask() const {
+    return n_block_elems_mask_;
   }
 
   SmallCache *cache() const {
@@ -286,25 +291,26 @@ class CacheArray {
     mode_ = new_mode;
   }
 
-  index_t Alloc(index_t count) {
+  index_t AllocD(int owner, index_t count) {
     DEBUG_ASSERT(BlockDevice::is_dynamic(mode_));
 
     if (unlikely(next_alloc_ + count > end_)) {
       BlockDevice::blockid_t blocks_to_alloc =
-          (count + n_block_elems_mask_) >> n_block_elems_log_;
-      BlockDevice::blockid_t blockid = cache_->AllocBlocks(blocks_to_alloc);
+          (count + n_block_elems_mask()) >> n_block_elems_log();
+      BlockDevice::blockid_t blockid = cache_->AllocBlocks(
+          blocks_to_alloc, peer);
 
-      metadatas_.Resize(blockid + blocks_to_alloc
-          - skip_blocks_ - HEADER_BLOCKS);
+      metadatas_.Resize(blockid + blocks_to_alloc - skip_blocks_);
+      adjusted_metadatas_ = metadatas_.begin() - skip_blocks_;
 
-      next_alloc_ = (blockid - HEADER_BLOCKS) << n_block_elems_log_;
-      end_ = next_alloc_ + (blocks_to_alloc << n_block_elems_log_);
+      next_alloc_ = blockid << n_block_elems_log();
+      end_ = next_alloc_ + (blocks_to_alloc << n_block_elems_log());
 
       // If we straddle a block boundary, force the last block to be
       // dirty, so we avoid edge cases where part of the block is
       // initialized and the other isn't, and a crash occurs within
       // the block-handler when pulling in a block.
-      if ((next_alloc_ & n_block_elems_mask_) != 0) {
+      if ((next_alloc_ & n_block_elems_mask()) != 0) {
         HandleCacheMiss_(end_ - 1);
       }
     }
@@ -315,16 +321,17 @@ class CacheArray {
     return ret_pos;
   }
 
-  index_t Alloc() {
+  index_t AllocD(int owner) {
     DEBUG_ASSERT(BlockDevice::is_dynamic(mode_));
 
     if (unlikely(next_alloc_ >= end_)) {
-      BlockDevice::blockid_t blockid = cache_->AllocBlocks(1);
+      BlockDevice::blockid_t blockid = cache_->AllocBlocks(1, owner);
 
-      metadatas_.Resize(blockid - skip_blocks_ + (1 - HEADER_BLOCKS));
+      metadatas_.Resize(blockid - skip_blocks_ + 1);
+      adjusted_metadatas_ = metadatas_.begin() - skip_blocks_;
 
-      next_alloc_ = (blockid - HEADER_BLOCKS) << n_block_elems_log_;
-      end_ = next_alloc_ + n_block_elems_;
+      next_alloc_ = blockid << n_block_elems_log();
+      end_ = next_alloc_ + n_block_elems();
 
       // Force this block to be dirty.
       HandleCacheMiss_(next_alloc_);
@@ -341,44 +348,49 @@ class CacheArray {
     DEBUG_BOUNDS(element_id - begin_, end_ - begin_);
   }
 
-  BlockDevice::blockid_t Blockid_(index_t element_id) {
-    return (element_id >> n_block_elems_log_) - skip_blocks_;
-  }
-
-  index_t FirstBlockElement_(BlockDevice::blockid_t fakeid) {
-    return (fakeid + skip_blocks_) << n_block_elems_log_;
-  }
-
   COMPILER_NOINLINE
   Element *HandleCacheMiss_(index_t element_id);
 
+  // TODO: Think about how this affects register pressure
   Element *CheckoutElement_(index_t element_id) {
+    Metadata *metadata = (element_id >> n_block_elems_log())
+        + adjusted_metadatas_;
+    char *data = metadata->data;
+    BlockDevice::offset_t offset = Offset(element_id);
+
     DEBUG_ONLY(BoundsCheck_(element_id));
 
-    BlockDevice::offset_t offset =
-        (element_id & n_block_elems_mask_) * n_elem_bytes_;
-    BlockDevice::blockid_t fakeid =
-        Blockid_(element_id);
+    ++metadata->lock_count;
 
-    Metadata *metadata = &metadatas_[fakeid];
-
-    DEBUG_ONLY(metadata->lock_count++);
-
-    if (unlikely(!metadata->data)) {
-      return HandleCacheMiss_(element_id);
+    if (likely(data != NULL)) {
+      return reinterpret_cast<Element*>(data + offset);
     } else {
-      Element *ptr = reinterpret_cast<Element*>(metadata->data + offset);
-      return ptr;
+      return HandleCacheMiss_(element_id);
     }
   }
 
-  void ReleaseBlock_(BlockDevice::blockid_t fakeid) {
-    DEBUG_ONLY(--metadatas_[fakeid].lock_count);
+ public:
+  /* these are public so various classes can use them efficiently */
+
+  void ReleaseBlock(BlockDevice::blockid_t blockid) {
+    DEBUG_ONLY(--adjusted_metadatas_[fakeid].lock_count);
   }
 
-  void ReleaseElement_(index_t element_id) {
+  index_t BlockElement(BlockDevice::blockid_t blockid) {
+    return blockid << n_block_elems_log();
+  }
+
+  BlockDevice::blockid_t Blockid(index_t element_id) {
+    return element_id >> n_block_elems_log();
+  }
+  
+  BlockDevice::offset_t Offset(index element_id) {
+    return (element_id & n_block_elems_mask()) * n_elem_bytes_;
+  }
+
+  void ReleaseElement(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    DEBUG_ONLY(ReleaseBlock_(Blockid_(element_id)));
+    ReleaseBlock_(Blockid_(element_id));
   }
 };
 
@@ -397,66 +409,71 @@ void CacheArray<TElement>::Init(
   mode_ = mode_in;
 
   n_elem_bytes_ = handler->n_elem_bytes();
-  n_block_elems_ = cache_->n_block_bytes() / n_elem_bytes_;
+  unsigned n_block_elems_calc = cache_->n_block_bytes() / n_elem_bytes_;
   // Cache size must be a power of 2.
-  n_block_elems_log_ = math::IntLog2(n_block_elems_);
-  n_block_elems_mask_ = n_block_elems_ - 1;
-  skip_blocks_ = begin_ / n_block_elems_;
+  n_block_elems_log_ = math::IntLog2(n_block_elems_calc);
+  n_block_elems_mask_ = n_block_elems_calc - 1;
+  skip_blocks_ = begin_ / n_block_elems_calc;
   DEBUG_ASSERT_MSG(cache_->n_block_bytes() % n_elem_bytes_ == 0,
       "Block size must be a multiple of element size.");
 
-  if (BlockDevice::need_init(mode_)) {
-    handler->WriteHeader(cache_->inner());
-    (void) cache_->AllocBlocks(0);
-  }
-
-  metadatas_.Init(((end_ + n_block_elems_ - 1) >> n_block_elems_log_)
+  metadatas_.Init(((end_ + n_block_elems_mask()) >> n_block_elems_log())
       - skip_blocks_);
 }
 
 template<typename TElement>
-void CacheArray<TElement>::Flush(bool clear) {
-  for (index_t fakeid = 0;
-      fakeid < metadatas_.size(); fakeid++) {
-    Metadata *metadata = &metadatas_[fakeid];
-    BlockDevice::blockid_t blockid = fakeid + HEADER_BLOCKS + skip_blocks_;
+void CacheArray<TElement>::Flush() {
+  for (int i = 0; i < FIFO_SIZE; i++) {
+    BlockDevice::blockid_t blockid = fifo_[i];
+    Metadata *metadata = adjusted_metadatas_ + blockid;
 
-    if (metadata->data != NULL) {
-      if (BlockDevice::can_write(mode_)) {
-        cache_->StopWrite(blockid);
-      } else {
-        cache_->StopRead(blockid);
-      }
-      DEBUG_SAME_INT(metadata->lock_count, 0);
-      metadata->data = NULL;
+    if (BlockDevice::can_write(mode_)) {
+      cache_->StopWrite(blockid);
+    } else {
+      cache_->StopRead(blockid);
     }
-  }
-  if (BlockDevice::need_write(mode_)) {
-    // TODO: flushing isn't really done the way it needs to be done
-    cache_->Flush(
-        clear,
-        (begin_ >> n_block_elems_log_) + HEADER_BLOCKS,
-        (begin_ & n_block_elems_mask_) * n_elem_bytes_,
-        (end_ >> n_block_elems_log_) + HEADER_BLOCKS,
-        (end_ & n_block_elems_mask_) * n_elem_bytes_);
+
+    DEBUG_SAME_INT(metadata->lock_count, 0);
+    metadata->data = NULL;
+    fifo_[i] = -1;
   }
 }
 
 template<typename TElement>
 typename CacheArray<TElement>::Element* CacheArray<TElement>::HandleCacheMiss_(
     index_t element_id) {
-  BlockDevice::blockid_t fakeid = Blockid_(element_id);
-  BlockDevice::blockid_t blockid = fakeid + HEADER_BLOCKS + skip_blocks_;
-  Metadata *metadata = &metadatas_[fakeid];
+  BlockDevice::blockid_t victim;
+  Metadata *victim_metadata;
+
+#error make sure adjusted_metadatas[-1] always has zero lock count
+  do {
+    fifo_index_ = (fifo_index_+1) & FIFO_MASK;
+    victim = fifo_[fifo_index_];
+    victim_metadata = adjusted_metadats_ + victim;
+  } while (victim_metadata->lock_count != 0);
+
+  if (likely(victim >= 0)) {
+    DEBUG_ASSERT(victim_metadata->data != NULL);
+    if (BlockDevice::can_write(mode_)) {
+      cache_->StopWrite(victim);
+    } else {
+      cache_->StopRead(victim);
+    }
+    victim_metadata->data = NULL;
+  }
+
+  BlockDevice::blockid_t blockid = Blockid_(element_id);
+  Metadata *metadata = adjusted_metadatas_ + blockid;
 
   if (BlockDevice::can_write(mode_)) {
-    metadata->data = cache_->StartWrite(blockid);
+    metadata->data = cache_->StartWrite(blockid,
+        !BlockDevice::is_dynamic(mode_));
   } else {
     metadata->data = cache_->StartRead(blockid);
   }
 
   BlockDevice::offset_t offset =
-      uint(element_id & (n_block_elems_mask_)) * n_elem_bytes_;
+      uint(element_id & (n_block_elems_mask())) * n_elem_bytes_;
 
   return reinterpret_cast<Element*>(metadata->data + offset);
 }
@@ -469,19 +486,17 @@ class CacheRead {
 
  private:
   const Element *element_;
-#ifdef DEBUG
   CacheArray<Element> *cache_;
   BlockDevice::blockid_t blockid_;
-#endif
 
  public:
   CacheRead(CacheArray<Element>* cache_in, index_t id) {
     element_ = cache_in->StartRead(id);
-    DEBUG_ONLY(cache_ = cache_in);
-    DEBUG_ONLY(blockid_ = cache_->Blockid_(id));
+    cache_ = cache_in;
+    blockid_ = cache_->Blockid(id);
   }
   ~CacheRead() {
-    DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
+    cache_->ReleaseBlock(blockid_);
   }
 
   operator const Element * () const {
@@ -503,19 +518,17 @@ class CacheWrite {
 
  private:
   Element *element_;
-#ifdef DEBUG
   CacheArray<Element> *cache_;
   BlockDevice::blockid_t blockid_;
-#endif
 
  public:
   CacheWrite(CacheArray<Element>* cache_in, index_t id) {
     element_ = cache_in->StartWrite(id);
-    DEBUG_ONLY(cache_ = cache_in);
-    DEBUG_ONLY(blockid_ = cache_->Blockid_(id));
+    cache_ = cache_in;
+    blockid_ = cache_->Blockid(id);
   }
   ~CacheWrite() {
-    DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
+    cache_->ReleaseBlock(blockid_);
   }
 
   operator const Element * () const {
@@ -557,13 +570,13 @@ class CacheIterImpl_ {
     blockid_ = cache_->Blockid_(begin_index);
     element_ = Helperclass::MyStartAccess_(cache_, begin_index);
     stride_ = cache_->n_elem_bytes();
-    unsigned int mask = cache_->n_block_elems_mask_;
+    unsigned int mask = cache_->n_block_elems_mask();
     // equivalent to: block_size - (begin_index % block_size) - 1
-    left_ = (begin_index & mask) ^ mask;
+    left_ = (begin_index ^ mask) & mask;
   }
   ~CacheIterImpl_() {
     if (likely(element_ != NULL)) {
-      cache_->ReleaseBlock_(blockid_);
+      cache_->ReleaseBlock(blockid_);
     }
   }
 
@@ -578,23 +591,23 @@ class CacheIterImpl_ {
   }
 
   void SetIndex(index_t begin_index) {
-    DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
-    blockid_ = cache_->Blockid_(begin_index);
+    cache_->ReleaseBlock(blockid_);
+    blockid_ = cache_->Blockid(begin_index);
     element_ = Helperclass::MyStartAccess_(cache_, begin_index);
-    unsigned int mask = cache_->n_block_elems_mask_;
-    left_ = (begin_index & mask) ^ mask;
+    unsigned int mask = cache_->n_block_elems_mask();
+    left_ = (begin_index ^ mask) & mask;
   }
 
   void Next() {
-    element_ = mem::PointerAdd(element_, stride_);
     DEBUG_BOUNDS(left_, cache_->n_block_elems() + 1);
+    element_ = mem::PointerAdd(element_, stride_);
     if (unlikely(left_ == 0)) {
       NextBlock_();
       return;
     }
     --left_;
   }
-  
+
  private:
   COMPILER_NOINLINE
   void NextBlock_();
@@ -602,24 +615,22 @@ class CacheIterImpl_ {
 
 template<typename Helperclass, typename Element, typename BaseElement>
 void CacheIterImpl_<Helperclass, Element, BaseElement>::NextBlock_() {
-  left_ = cache_->n_block_elems();
-  DEBUG_ONLY(cache_->ReleaseBlock_(blockid_));
+  left_ = cache_->n_block_elems_mask();
+  cache_->ReleaseBlock(blockid_);
   ++blockid_;
 
-  index_t elem_id = cache_->FirstBlockElement_(blockid_);
-  element_ = Helperclass::MyStartAccess_(cache_, elem_id);
-  --left_;
+  index_t elem_id = cache_->FirstBlockElement(blockid_);
+  DEBUG_POISON_PTR(element_);
+  if (likely(elem_id < cache_->end_index())) {
+    element_ = Helperclass::MyStartAccess_(cache_, elem_id);
+  }
 }
 
 template<typename Element>
 class CacheReadIterHelperclass_ {
  public:
   static const Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
-    if (i < a->end_index()) {
-      return a->StartRead(i);
-    } else {
-      return NULL;
-    }
+    return a->StartRead(i);
   }
 };
 
@@ -636,11 +647,7 @@ template<typename Element>
 class CacheWriteIterHelperclass_ {
  public:
   static Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
-    if (i < a->end_index()) {
-      return a->StartWrite(i);
-    } else {
-      return NULL;
-    }
+    return a->StartWrite(i);
   }
 };
 
