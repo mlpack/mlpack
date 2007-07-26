@@ -22,12 +22,6 @@ to-do
 //-- THE DISTRIBUTED CACHE ------------------------------------------------
 //-------------------------------------------------------------------------
 
-IMPORTANT TO-DO:
-
- - Hold a lock when performing barrier synchronization so the network thread
- can't bug us -- or unregister our network channel temporarily (to avoid
- locking the network thread)
-
 void DistributedCache::InitMaster(int channel_num_in,
     BlockDevice::offset_t n_block_bytes_in,
     size_t total_ram,
@@ -64,9 +58,8 @@ void DistributedCache::InitCommon_(
   blocks_.Init();
   handler_ = NULL;
 
-  write_ranges_.Init();
-  free_range_ = -1;
-  
+  //write_ranges_.Init();
+
   overflow_free_ = -1;
   overflow_metadata_.Init();
   overflow_device_ = NULL;
@@ -75,10 +68,11 @@ void DistributedCache::InitCommon_(
 }
 
 void DistributedCache::InitCache_(size_t total_ram) {
-  slots_.Init
-  n_sets_
-  assoc_
-  log_assoc_
+  ASSOC = 8;
+  LOG_ASSOC = 3;
+  // give enough cache sets, but rounded up
+  n_sets_ = (total_ram + ASSOC*n_block_bytes_ - 1) / (ASSOC*n_block_bytes_);
+  slots_.Init(n_sets_ << LOG_ASSOC);
 }
 
 void DistributedCache::HandleStatusInformation_(
@@ -103,38 +97,63 @@ void DistributedCache::HandleStatusInformation_(
       block->value = ~status->owner;
     }
     if (!block->is_dirty()) {
-      block->dirty_ranges = status->is_new ? NOT_DIRTY_NEW : NOT_DIRTY_OLD;
+      block->status = status->is_new ? NOT_DIRTY_NEW : NOT_DIRTY_OLD;
     }
   }
+}
+
+void DistributedCache::BestEffortFlush() {
+  mutex_.Lock();
+  Slot *slot = slots_.ptr();
+  index_t i = slots_.size();
+  BlockMetadata *blocks = blocks_.ptr();
+
+  // Might want to software-pipeline this loop, because of the really nasty
+  // indirect load going on.
+  do {
+    i--;
+    blockid_t blockid = slot->blockid;
+    BlockMetadata *block = &blocks[blockid];
+    if (unlikely(block->is_dirty()) && unlikely(!block->is_owner())) {
+      DEBUG_ASSERT_MSG(block->locks == 0, "Why is a locked block in LRU?");
+      WritebackDirtyRemote_(blockid);
+    }
+    slot++;
+  } while (i != 0);
+  mutex_.Unlock();
 }
 
 void DistributedCache::PreBarrierSync() {
   // We'll assume everything we have locally is no longer valid.
   mutex_.Lock();
-  for (index_t i = 0; i < blocks_.size(); i++) {
-    BlockMetadata *block = &blocks_[i];
-    if (block->data) {
-      DEBUG_ASSERT(block->locks == 0);
-      if (block->is_owner()) {
-        force eviction from cache
-      }
-    } else if (!block->is_owner()) {
-      // force block to become old
-      block->dirty_ranges = NOT_DIRTY_OLD;
+  Slot *slot = slots_.ptr();
+  index_t i = slots_.size();
+  BlockMetadata *blocks = blocks_.ptr();
+
+  // Might want to software-pipeline this loop, because of the really nasty
+  // indirect load going on.
+  do {
+    i--;
+    blockid_t blockid = slot->blockid;
+    BlockMetadata *block = &blocks[blockid];
+    slot++;
+    if (unlikely(!block->is_owner())) {
+      slot->blockid = -1;
+      DEBUG_ASSERT_MSG(block->locks == 0, "Why is a locked block in LRU?");
+      Purge_(blockid);
     }
-    DEBUG_ASSERT(block->dirty_ranges != NOT_DIRTY_NEW);
-  }
+  } while (i != 0);
   mutex_.Unlock();
 }
 
 void DistributedCache::PostBarrierSync() {
-  mutex_.Lock();
   if (my_rank_ != MASTER_RANK) {
     QueryTransaction qt;
     QueryResponse *response = qt.Doit(channel_num_in, MASTER_RANK);
+    mutex_.Lock();
     HandleStatusInformation_(response->statuses);
+    mutex_.Unlock();
   }
-  mutex_.Unlock();
 }
 
 //----
@@ -179,23 +198,38 @@ void DistributedCache::RemoteWrite(blockid_t blockid,
   Write(blockid, begin, end, buf);
 }
 
-//----
+BlockDevice::blockid_t DistributedCache::AllocBlocks(
+    blockid_t n_blocks_to_alloc, int owner) {
+  blockid_t blockid;
 
-char *DistributedCache::StartWrite(BlockDevice::blockid blockid) {
-  mutex_.Lock();
-  BlockMetadata *block = &blocks_[blockid];
-  if (likely(block->locks)) {
-    block->locks++;
+  if (likely(my_rank_ == MASTER_RANK)) {
+    mutex_.Lock();
+    // Append some blocks to the end
+    blockid = n_blocks_;
+    n_blocks_ += n_blocks_to_alloc;
+    // Now, mark the owner of all these blocks.
+    BlockMetadata *block = blocks_.AddBack(n_blocks_to_alloc);
+    int32 value = (owner == my_rank_) ? SELF_OWNER_UNALLOCATED : (~owner);
+    for (blockid_t i = 0; i < n_blocks_to_alloc; i++) {
+      block[i].value = value;
+    }
+    mutex_.Unlock();
   } else {
-    DecacheBlock_(blockid);
+    AllocTransacation t;
+    blockid = t.Doit(channel_, MASTER_RANK, n_blocks_to_alloc, owner);
+    mutex_.Lock();
+    n_blocks_ = blockid + n_blocks_to_alloc;
+    blocks_.GrowTo(n_blocks_);
+    mutex_.Unlock();
   }
-  MarkDirty_(block);
-  mutex_.Unlock();
-  return block->data;
+
+  return blockid;
 }
 
+//----
+
 char *DistributedCache::StartWrite(BlockDevice::blockid blockid,
-    BlockDevice::offset_t begin_offset, BlockDevice::offset_t end_offset) {
+    bool partial) {
   mutex_.Lock();
   BlockMetadata *block = &blocks_[blockid];
   if (likely(block->locks)) {
@@ -203,7 +237,11 @@ char *DistributedCache::StartWrite(BlockDevice::blockid blockid,
   } else {
     DecacheBlock_(blockid);
   }
-  MarkDirty_(block, begin_offset, end_offset);
+  if (partial) {
+    block->status &= PARTIALLY_DIRTY;
+  } else {
+    block->status = FULLY_DIRTY;
+  }
   mutex_.Unlock();
   return block->data;
 }
@@ -225,7 +263,7 @@ char *DistributedCache::StartRead(BlockDevice::blockid blockid) {
 void DistributedCache::StopRead(BlockDevice::blockid_t blockid) {
   mutex_.Lock();
   if (unlikely(--block->locks == 0)) {
-    Enqueue_(blockid);
+    EncacheBlock_(blockid);
   }
   mutex_.Unlock();
 }
@@ -233,54 +271,59 @@ void DistributedCache::StopRead(BlockDevice::blockid_t blockid) {
 void DistributedCache::StopWrite(BlockDevice::blockid_t blockid) {
   mutex_.Lock();
   if (unlikely(--block->locks == 0)) {
-    Enqueue_(blockid);
+    EncacheBlock_(blockid);
   }
   mutex_.Unlock();
 }
 
 void DistributedCache::DecacheBlock_(BlockDevice::blockid_t blockid) {
-  // not busy, bring it out of the LRU
-  index_t slot = (unsigned(blockid) % unsigned(n_sets_)) << log_assoc_;
+  BlockMetadata *block = &blocks_[blockid];
+  index_t slot = (unsigned(blockid) % unsigned(n_sets_)) << LOG_ASSOC;
   Slot *base_slot = &slots_[slot];
-  index_t i = assoc_ - 1;
 
+  DEBUG_ASSERT(block->locks == 0);
   block->locks = 1;
 
-  do {
-    if (unlikely(base_slot[i].blockid == blockid)) {
-      base_slot[i].blockid = -1;
-      return;
+  if (likely(block->is_in_core())) {
+    // It's in core, but its lock count was zero, so that means it's
+    // definitely definitely in cache and in this line.
+    for (int i = 0;; i++) {
+      if (unlikely(base_slot[i].blockid == blockid)) {
+        base_slot[i].blockid = -1;
+        break;
+      }
+      DEBUG_ASSERT(i != ASSOC);
     }
-  } while (--i >= 0);
-
-  HandleMiss_(blockid);
+  } else {
+    HandleMiss_(blockid);
+  }
 }
 
 void DistributedCache::EncacheBlock_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
-  index_t slot = (blockid % n_sets_) << log_assoc_;
+  index_t slot = (unsigned(blockid) % unsigned(n_sets_)) << LOG_ASSOC;
   Slot *base_slot = &slots_[slot];
-  index_t assocm1 = assoc_ - 1;
-  index_t i = assocm1;
+  int i;
 
-  do {
+  // Find first unused slot and move to front.
+  i = 0;
+
+  for (;;) {
     if (unlikely(base_slot[i].blockid < 0)) {
-      while (i != assocm1) {
-        base_slot[i] = base_slot[i+1];
-        i++;
-      }
-      base_slot[assocm1].blockid = blockid;
+      break;
     }
-  } while (--i >= 0);
+    if (unlikely(++i == ASSOC)) {
+      Purge_(base_slot->blockid);
+      i--;
+      break;
+    }
+  }
 
-  Writeback_(base_slot->blockid);
+  for (; i != 0; i--) {
+    base_slot[i] = base_slot[i-1];
+  }
 
-  do {
-    base_slot[i] = base_slot[i+1];
-    i++;
-  } while (i != assocm1);
-
-  base_slot[assocm1].blockid = blockid;
+  base_slot->blockid = blockid;
 }
 
 //----
@@ -293,15 +336,15 @@ void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
   DEBUG_ASSERT(block->data != NULL);
 
   if (block->is_new()) {
-    DEBUG_ASSERT_MSG(block->dirty_ranges == NOT_DIRTY_NEW,
+    DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
         "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
     block_handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
     block_handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
   } else if (block->is_owner()) {
-    DEBUG_ASSERT(block->dirty_ranges == NOT_DIRTY_OLD);
+    DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
     HandleLocalMiss_(blockid);
   } else {
-    DEBUG_ASSERT(block->dirty_ranges == NOT_DIRTY_OLD);
+    DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
     HandleRemoteMiss_(blockid);
   }
 }
@@ -327,7 +370,7 @@ void DistributedCache::HandleRemoteMiss_(BlockDevice::blockid_t blockid) {
 
 #warning "consider making encache and decache fast for the first block"
 
-char *DistributedCache::Writeback_(BlockDevice::blockid blockid) {
+char *DistributedCache::Purge_(BlockDevice::blockid blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(block->is_in_core());
@@ -342,8 +385,6 @@ char *DistributedCache::Writeback_(BlockDevice::blockid blockid) {
   }
 
   mem::Free(block->data);
-  // INVALIDATE
-  block->dirty_ranges = NOT_DIRTY_OLD;
   block->data = NULL;
 }
 
@@ -351,8 +392,9 @@ void DistributedCache::WritebackDirtyLocal_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(block->is_owner());
-  DEBUG_ASSERT_MSG(block->dirty_ranges == FULLY_DIRTY,
-      "Local blocks should only be fully dirty or not dirty at all");
+  //DEBUG_ASSERT_MSG(block->status == FULLY_DIRTY,
+  //    "Local blocks should only be fully dirty or not dirty at all");
+  //  local blocks can be fully or partially dirty, we simply don't care
   // Ignore the block's actual block ID, it's not important -- we assign
   // these only when we write them back.
 
@@ -366,99 +408,25 @@ void DistributedCache::WritebackDirtyLocal_(BlockDevice::blockid_t blockid) {
   block->value = local_blockid;
 
   local_device_.Write(local_blockid, 0, n_block_bytes_, block->data);
+  block->status = NOT_DIRTY_OLD;
 }
 
 void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
-  int rangeid = block->dirty_ranges;
 
   DEBUG_ASSERT(!block->is_owner());
   DEBUG_ASSERT(block->is_dirty());
 
-  if (rangeid == FULLY_DIRTY) {
+  if (block->status == FULLY_DIRTY) {
     // The entire block is dirty
     WriteTransaction write_transaction;
     write_transaction.Doit(channel_num, block->value, blockid,
         0, n_block_bytes_, block->data);
-  } else if (rangeid >= 0) {
-    // Flush each independent dirty range
-    WriteRanges *ranges = &ranges_[rangeid];
-    for (index_t i = 0; i < ranges->ranges.size(); i++) { 
-      Range *range = &ranges->ranges[i];
-      WriteTransaction write_transaction;
-      write_transaction.Doit(channel_num, block->value, blockid,
-          range->begin, range->end, block->data + range->begin);
-    }
-    ranges->next = free_range_;
-    ranges->ranges.Resize(0);
-    free_range_ = rangeid;
+  } else {
+    DEBUG_ASSERT(block->status == PARTIALLY_DIRTY);
+    #error compute range stuff
   }
-}
-
-void DistributedCache::MarkDirty_(BlockMetadata *block) {
-  todo: not done properly
-  FreeDirtyList_(block);
-
-  block->dirty_ranges = FULLY_DIRTY;
-}
-
-void DistributedCache::MarkDirty_(BlockMetadata *block,
-    offset_t begin, offset_t end) {
-  // TODO: This method is kind of complicated and is probably slow.
-  // Can we make it simpler?  The good side is, however, that the FIFO
-  // cache probably won't call this too often (since, well, it is a cache!)
-  if (block->dirty_ranges != FULLY_DIRTY) {
-    if (block->is_owner || (begin == 0 && end == n_block_bytes_)) {
-      block->dirty_ranges = FULLY_DIRTY;
-    } else {
-      int rangeid = block->dirty_ranges;
-      WriteRanges *ranges;
-
-      // Allocate a range ID
-      if (unlikely(rangeid < 0)) {
-        rangeid = free_range_;
-        if (unlikely(rangeid < 0)) {
-          rangeid = write_ranges_.size();
-          ranges = write_ranges_.AddBack();
-          block->dirty_ranges = rangeid;
-        } else {
-          ranges = &write_ranges_[rangeid];
-          free_range_ = rangeid;
-          block->dirty_ranges = rangeid;
-        }
-      } else {
-        range = &write_ranges[rangeid];
-      }
-
-      // Try to merge the range, or add it to the list
-      Range *first_range = ranges->ranges.ptr();
-      index_t size = ranges->ranges.size();
-
-      for (index_t i = 0; i < size; i++) {
-        range = &first_range[i];
-        if (begin <= range->end) {
-          if (end >= range->begin) {
-            range->begin = min(begin, range->begin);
-            range->end = max(end, range->end);
-            return;
-          } else {
-            range = ranges->ranges.AddBack();
-            for (index_t j = ranges->ranges.size() - i - 1; j != 0; j--) {
-              range[0] = range[-1];
-              range--;
-            }
-            range->begin = begin;
-            range->end = end;
-            return;
-          }
-        }
-      }
-
-      range = ranges->ranges.AddBack();
-      range->begin = begin;
-      range->end = end;
-    }
-  }
+  block->status = NOT_DIRTY_OLD;
 }
 
 //-------------------------------------------------------------------------
@@ -472,6 +440,7 @@ struct DCRequest {
   BlockDevice::blockid_t blockid;
   BlockDevice::offset_t begin;
   BlockDevice::offset_t end;
+  int rank;
 };
 
 /** Net-transferable write operation */
@@ -500,6 +469,7 @@ void DistributedCache::ReadTransaction::Doit(
   request->blockid = blockid;
   request->begin = begin;
   request->end = end;
+  request->rank = 0;
   response = NULL;
   Send(message);
   cond.Wait();
@@ -526,6 +496,7 @@ void DistributedCache::WriteTransaction::Doit(
   request->blockid = blockid;
   request->begin = begin;
   request->end = end;
+  request->rank = 0;
   mem::Copy(request->data(), response->data(), end - begin);
   Send(message);
   Done();
@@ -547,6 +518,7 @@ DistributedCache::ConfigResponse *r = DistributedCache::ConfigTransaction::Doit(
   request->blockid = 0;
   request->begin = 0;
   request->end = 0;
+  request->rank = 0;
   Send(message);
   cond.Wait();
   return ot::PointerThaw<ConfigResponse>(response->data());
@@ -569,6 +541,7 @@ DistributedCache::QueryResponse *r = DistributedCache::QueryTransaction::Doit(
   request->blockid = 0;
   request->begin = 0;
   request->end = 0;
+  request->rank = 0;
   Send(message);
   cond.Wait();
   return ot::PointerThaw<QueryResponse>(response->data());
@@ -608,7 +581,7 @@ void DistributedCache::ResponseTransaction::HandleMessage(
         BlockStatus *status = &query_response.statuses[i];
         BlockMetadata *owner = &cache_->blocks_[i];
         status->owner = block->owner(cache_);
-        status->is_new = (block->dirty_ranges == NOT_DIRTY_NEW);
+        status->is_new = block->is_new();
       }
       Message *response = CreateMessage(message->peer(),
           ot::PointerFrozenSize(query_response));
@@ -627,6 +600,13 @@ void DistributedCache::ResponseTransaction::HandleMessage(
     case DCRequest::WRITE: {
       cache_->RemoteWrite(request->blockid, request->begin, request->end,
           static_cast<DCWriteRequest*>(request)->data());
+    }
+    case DCRequest::ALLOC: {
+      DEBUG_ASSERT(cache_->my_rank_ == MASTER_RANK);
+      Message *response = CreateMessage(message->peer(), sizeof(blockid_t));
+      *reinterpret_cast<blockid_t>(message->data()) =
+          cache_->AllocBlocks(blockid, request->rank);
+      Send(response);
     }
     break;
    default:
@@ -647,3 +627,75 @@ Transaction *DistributedCache::CacheChannel::GetTransaction(
   t->Init(cache);
   return t;
 }
+
+/*
+  // TODO: This method is kind of complicated and is probably slow.
+  // Can we make it simpler?  The good side is, however, that the FIFO
+  // cache probably won't call this too often (since, well, it is a cache!)
+  int rangeid = block->dirty_ranges;
+
+#error this range stuff is too complicated, fix it
+
+  if (unlikely(rangeid < 0)) {
+    if (block->is_owner()) {
+      block->dirty_ranges = FULLY_DIRTY;
+    } else if (end - begin == n_block_bytes_) {
+      MarkDirty_(block);
+    } else {
+      rangeid = free_range_;
+
+      if (unlikely(rangeid < 0)) {
+        rangeid = write_ranges_.size();
+        ranges = write_ranges_.AddBack();
+        block->dirty_ranges = rangeid;
+      } else {
+        ranges = &write_ranges_[rangeid];
+        free_range_ = rangeid;
+        block->dirty_ranges = rangeid;
+      }
+
+      Range *range = ranges->ranges.AddBack();
+      range->begin = begin;
+      range->end = end;
+    }
+  } else {
+    // Try to merge the range, or add it to the list
+    Range *first_range = ranges->ranges.ptr();
+    index_t size = ranges->ranges.size();
+
+    for (index_t i = 0; i < size; i++) {
+      range = &first_range[i];
+      if (begin <= range->end) {
+        if (end >= range->begin) {
+          range->begin = min(begin, range->begin);
+          range->end = max(end, range->end);
+          return;
+        } else {
+          range = ranges->ranges.AddBack();
+          for (index_t j = ranges->ranges.size() - i - 1; j != 0; j--) {
+            range[0] = range[-1];
+            range--;
+          }
+          range->begin = begin;
+          range->end = end;
+          return;
+        }
+      }
+  }
+*/
+//    // Flush each independent dirty range
+//    WriteRanges *ranges = &ranges_[rangeid];
+//    offset_t begin = 0;
+//    for (index_t i = 0; i < ranges->ranges.size(); i++) { 
+//      Range *range = &ranges->ranges[i];
+//      WriteTransaction write_transaction;
+//      begin = max(begin, range->begin);
+//      if (begin != range->end) {
+//        write_transaction.Doit(channel_num, block->value, blockid,
+//            begin, range->end, block->data + range->begin);
+//      }
+//      begin = max(begin, range->end);
+//    }
+//    ranges->next = free_range_;
+//    ranges->ranges.Resize(0);
+//    free_range_ = rangeid;

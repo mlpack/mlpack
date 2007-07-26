@@ -10,6 +10,7 @@
      mapped to myself or may even be mapped to another machine
      - 2. someone else writes a block to me and i didn't realize I was an
      owner
+   - blocks can't change mapping once allocated
  - Block state
    - Concurrent reads
    - Concurrent writes to even the same block as long as they
@@ -18,6 +19,7 @@
    - Copies of remote blocks invalidated at barriers
  - Cache
    - Each machine caches nodes.
+
 
 */
 
@@ -76,6 +78,19 @@ class DistributedCache : public BlockDevice {
     void HandleMessage(Message *message);
   };
 
+  /** How to query information about the overall state */
+  struct AllocTransaction {
+   public:
+    DoneCondition cond;
+    Message *response;
+   public:
+    ~AllocTransaction() { delete response; }
+
+    blockid_t Doit(int channel_num, int peer, blockid_t n_blocks_to_alloc,
+        int owner);
+    void HandleMessage(Message *message);
+  };
+
   /** How to initiate a read messages */
   struct ReadTransaction {
    public:
@@ -125,19 +140,29 @@ class DistributedCache : public BlockDevice {
  public:
   enum {
     /** The entire block is dirty. */
-    FULLY_DIRTY = -1,
+    FULLY_DIRTY = 0,
+    /** Part of the block is dirty, check the ranges. */
+    PARTIALLY_DIRTY = 1,
     /** Block is not dirty, or end of a dirty-list. */
-    NOT_DIRTY_OLD = -2,
+    NOT_DIRTY_OLD = 3,
     /** Block is new. */
-    NOT_DIRTY_NEW = -3
+    NOT_DIRTY_NEW = 5
   };
-  
+
   enum {
     /** The owner of this block is unknown */
     UNKNOWN_OWNER = -32767,
     /** I'm the owner of this block, but I haven't assigned it a page. */
     SELF_OWNER_UNALLOCATED = 16777216
   };
+  
+  /** Rank of the master machine, which contains a valid directory. */
+  static const int MASTER_RANK = 0;
+
+  /** Log of the set associativity, i.e. 3 means 2^3 = 8-way */
+  static const int LOG_ASSOC = 4;
+  /** The set associativity of the cache. */
+  static const int ASSOC = (1 << LOG_ASSOC);
 
   /**
    * Information we keep about the block.
@@ -176,7 +201,7 @@ class DistributedCache : public BlockDevice {
      */
     int32 value;
     /** Linked list of ranges that we've written. */
-    int16 dirty_ranges;
+    int16 status;
     /** Number of locks, or negative if block is new. */
     int16 locks;
 
@@ -194,11 +219,11 @@ class DistributedCache : public BlockDevice {
     }
     /** Dirtiness check. */
     bool is_dirty() const {
-      return dirty_ranges >= FULLY_DIRTY;
+      return status <= PARTIALLY_DIRTY;
     }
     /** Determines whether the block should be treated as blank. */
     bool is_new() const {
-      return dirty_ranges == NOT_DIRTY_NEW;
+      return status == NOT_DIRTY_NEW;
     }
     /** Determines if the block is busy. */
     bool is_busy() const {
@@ -277,6 +302,15 @@ class DistributedCache : public BlockDevice {
    */
   void InitWorker(int channel_num_in,
      size_t total_ram, BlockHandler *initialized_handler_in);
+  /**
+   * Flushes all dirty blocks that live on other machines, but leaves
+   * them in cache.
+   *
+   * It may be possible for a performance benefit from calling this
+   * periodically -- maybe mostly due to the ability to avoid lots of
+   * extra reads.
+   */
+  void BestEffortFlush();
   /** Call this before a rpc::Barrier to initiate synchronization. */
   void PreBarrierSync();
   /** Call this after a rpc::Barrier to complete synchronization. */
@@ -296,13 +330,25 @@ class DistributedCache : public BlockDevice {
       const char *buf);
 
   /* our bread-and-butter cache methods, called by the FIFO */
+  /** Start a write access to the whole page. */
   char *StartWrite(blockid_t blockid);
+  /** Start a write access to part of a page. */
   char *StartWrite(blockid_t blockid,
       offset_t begin, offset_t end);
+  /** Start a read to a page. */
   char *StartRead(blockid_t blockid);
+  /** End a read access. */
   void StopRead(blockid_t blockid);
+  /** End a write access. */
   void StopWrite(blockid_t blockid);
- 
+  
+  /** Allocates blocks, becoming myself the owner of these blocks. */
+  blockid_t AllocBlocks(blockid_t n_blocks_to_alloc) {
+    return AllocBlocks(n_blocks_to_alloc, my_rank_);
+  }
+  /** Allocates blocks, but assign ownership to a specified machine. */
+  blockid_t AllocBlocks(blockid_t n_blocks_to_alloc, int owner);
+
  private:
   void InitChannel_(int channel_num_in);
   void InitCommon_(offset_t n_block_bytes_);
@@ -330,25 +376,22 @@ class DistributedCache : public BlockDevice {
   /** Grabs a block from another machine. */
   void HandleRemoteMiss_(blockid_t blockid);
   /**
-   * Writes a block back to the appropriate device, if it's dirty -- does
+   * Removes a block's memory, if it's dirty -- does
    * nothing if it's not dirty.
    */
-  void Writeback_(blockid_t blockid);
-  /** Writes back a dirty block to our local disk. */
+  void Purge_(blockid_t blockid);
+  /**
+   * Writes back a dirty block to our local disk.
+   * Resets the status to clean but does not clear data.
+   */
   void WritebackDirtyLocal_(blockid_t blockid);
-  /** Writes back a dirty block to the proper machine. */
+  /**
+   * Writes back a dirty block to the proper machine.
+   * Resets status to clean but does not clear the data.
+   */
   void WritebackDirtyRemote_(blockid_t blockid);
   /** Marks a block as ENTIRELY dirty. */
   void MarkDirty_(BlockMetadata *block);
   /** Marks a block as partially dirty. */
   void MarkDirty_(BlockMetadata *block, offset_t begin, offset_t end);
-
- private:
-  void MarkDirty_(BlockMetadata *block,
-      BlockDevice::blockid_t begin, BlockDevice::blockid_t end);
-  void MarkDirty_(BlockMetadata *block);
-  void FreeDirtyList_(BlockMetadata *block);
-  void WritebackDirtyRemote_(BlockDevice::blockid_t blockid);
-  void WritebackDirtyLocal_(BlockDevice::blockid_t blockid);
-  void HandleStatusInformation_(const ArrayList<BlockStatus>& statuses);
 };
