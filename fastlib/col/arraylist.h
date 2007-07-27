@@ -385,7 +385,39 @@ class ArrayList {
 
     return elem;
   }
-  
+
+  /**
+   * Adds one specified element to the back, and returns the pointer to it.
+   */
+  Element* AddBack(const Element& value) {
+    if (unlikely(size_ == cap_)) {
+      IncreaseCap_((cap_ + 1) * 2);
+    }
+
+    Element* elem = ptr_ + size_;
+
+    ++size_;
+    new(elem)Element(value); // COPY CONSTRUCTOR! WOOT!
+
+    return elem;
+  }
+
+  /**
+   * Adds one specified element to the back,
+   * BUT YOU MUST CALL ITS CONSTRUCTOR!
+   */
+  Element* AddBackUnconstructed() {
+    if (unlikely(size_ == cap_)) {
+      IncreaseCap_((cap_ + 1) * 2);
+    }
+
+    Element* elem = ptr_ + size_;
+
+    ++size_;
+
+    return elem;
+  }
+
   /**
    * Removes the last element of the list.
    */

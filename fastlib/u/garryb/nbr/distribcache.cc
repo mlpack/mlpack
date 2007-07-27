@@ -2,9 +2,9 @@
 to-do
 
 - Init functions
-- the protocol
-  - nothing is initialized in my version yet
-  - alloc() ?
+/- the protocol
+  /- nothing is initialized in my version yet
+  /- alloc() ?
 - dynamic depth
 /- the replacement policy
   /- copy from old code (old-cache.c)
@@ -81,7 +81,8 @@ void DistributedCache::InitCommon_(
   handler_ = NULL;
 
   overflow_free_ = -1;
-  overflow_metadata_.Init();
+  overflow_next_.Init();
+  overflow_next_.default_value() = BIG_BAD_NUMBER;
   overflow_device_ = NULL;
 
   my_rank_ = rpc::Rank();
@@ -267,12 +268,15 @@ BlockDevice::blockid_t DistributedCache::AllocBlocks(
     // Append some blocks to the end
     blockid = n_blocks_;
     n_blocks_ += n_blocks_to_alloc;
+
     // Now, mark the owner of all these blocks.
     BlockMetadata *block = blocks_.AddBack(n_blocks_to_alloc);
     int32 value = (owner == my_rank_) ? SELF_OWNER_UNALLOCATED : (~owner);
+
     for (blockid_t i = 0; i < n_blocks_to_alloc; i++) {
       block[i].value = value;
     }
+
     mutex_.Unlock();
   } else {
     AllocTransacation t;
@@ -284,6 +288,25 @@ BlockDevice::blockid_t DistributedCache::AllocBlocks(
   }
 
   return blockid;
+}
+
+void DistributedCache::GiveOwnership(blockid_t my_blockid, int new_owner) {
+  if (likely(new_owner != my_rank_)) {
+    // mark whole block as dirty and change its owner.
+    StartWrite(my_blockid, false);
+    mutex_.Lock();
+    BlockMetadata *block = &blocks_[blockid];
+    DEBUG_ASSERT(block->is_owner());
+    if (block->local_blockid() != SELF_OWNER_UNALLOCATED) {
+      // this block has a location on disk -- since it's not ours anymore,
+      // recycle its allocated disk space.
+      overflow_next_[block->local_blockid()] = overflow_free_;
+      overflow_free_ = block->local_blockid();
+    }
+    block->value = ~new_owner;
+    mutex_.Unlock();
+    StopWrite(my_blockid);
+  }
 }
 
 //----
@@ -450,23 +473,16 @@ void DistributedCache::PurgeDirtyLocal_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(block->is_owner());
-  DEBUG_ASSERT_MSG(block->value == SELF_OWNER_UNALLOCATED,
-      "Blocks that are written back locally are purged.");
-  // First, inore the block's actual block ID, it's not important -- we
-  // assign these only when we write them back.
-  // Second, always write back the entire block.  Since we only assign block
-  // ID's at writeback time, we're overwriting completely unrelated data :-)
 
   BlockDevice::blockid_t local_blockid = block->value;
 
-  if (block->value == SELF_OWNER_UNALLOCATED) {
+  if (local_blockid == SELF_OWNER_UNALLOCATED) {
     local_blockid = overflow_free_;
     if (local_blockid < 0) {
       local_blockid = overflow_device_->AllocBlocks(1);
     } else {
-      // TODO: The free list is not used in the current code, but it would
-      // become useful if it were possible for data to move dynamically.
-      overflow_free_ = overflow_next_[local_blockid];
+      // free blocks come from calls to GiveOwnership
+      overflow_free_ = overflow_next_.get(local_blockid);
     }
     block->value = local_blockid;
   }
@@ -519,47 +535,16 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
         "A block marked partially dirty has no overlapping write ranges.");
   }
   block->status = NOT_DIRTY_OLD;
-}
 
 void AddPartialDirtyRange(blockid_t begin_block, offset_t begin_offset,
     blockid_t last_block, offset_t end_offset) {
-  // This is a range-merge algorithm.  I tried to make it very simple --
-  // it's not very efficient, but this function is very rarely called.
-  ArrayList<Range> new_list;
-  index_t i;
-  Range new_range;
-
-  new_range.begin_block = begin_block;
-  new_range.begin = begin_offset;
-  new_range.last_block = last_block;
-  new_range.end_block = end_block;
-
-  new_list.Init();
-  
-  i = 0;
-
-  // add everything that strictly precedes the new one to add
-  while (i < ranges_.size() && !new_range.BeginsBeforeEnd(ranges_[i])) {
-    *new_list.AddBack() = ranges_[i];
-    i++;
-  }
-
-  // merge all ranges that overlap into this range
-  while (i < ranges_.size() && ranges_[i].BeginsBeforeEnd(new_range)) {
-    new_range.Merge(ranges_[i]);
-    i++;
-  }
-
-  // add the resulting range
-  *new_list.AddBack() = new_range;
-
-  // add everything that comes after
-  for (; i < ranges_.size(); j++) {
-    *new_list.AddBack() = ranges_[i];
-  }
-
-  // replace the list
-  ranges_.Swap(&new_list);
+  Position begin;
+  Position end;
+  begin.block = begin_block;
+  begin.offset = begin_offset;
+  end.block = last_block;
+  end.offset = end_offset;
+  ranges_.Union(begin, end);
 }
 
 //-------------------------------------------------------------------------
@@ -871,75 +856,3 @@ Transaction *DistributedCache::CacheChannel::GetTransaction(
     return t;
   }
 }
-
-/*
-  // TODO: This method is kind of complicated and is probably slow.
-  // Can we make it simpler?  The good side is, however, that the FIFO
-  // cache_ probably won't call this too often (since, well, it is a cache_!)
-  int rangeid = block->dirty_ranges;
-
-#error this range stuff is too complicated, fix it
-
-  if (unlikely(rangeid < 0)) {
-    if (block->is_owner()) {
-      block->dirty_ranges = FULLY_DIRTY;
-    } else if (end - begin == n_block_bytes_) {
-      MarkDirty_(block);
-    } else {
-      rangeid = free_range_;
-
-      if (unlikely(rangeid < 0)) {
-        rangeid = write_ranges_.size();
-        ranges = write_ranges_.AddBack();
-        block->dirty_ranges = rangeid;
-      } else {
-        ranges = &write_ranges_[rangeid];
-        free_range_ = rangeid;
-        block->dirty_ranges = rangeid;
-      }
-
-      Range *range = ranges->ranges.AddBack();
-      range->begin = begin;
-      range->end = end;
-    }
-  } else {
-    // Try to merge the range, or add it to the list
-    Range *first_range = ranges->ranges.ptr();
-    index_t size = ranges->ranges.size();
-
-    for (index_t i = 0; i < size; i++) {
-      range = &first_range[i];
-      if (begin <= range->end) {
-        if (end >= range->begin) {
-          range->begin = min(begin, range->begin);
-          range->end = max(end, range->end);
-          return;
-        } else {
-          range = ranges->ranges.AddBack();
-          for (index_t j = ranges->ranges.size() - i - 1; j != 0; j--) {
-            range[0] = range[-1];
-            range--;
-          }
-          range->begin = begin;
-          range->end = end;
-          return;
-        }
-      }
-  }
-*/
-//    // Flush each independent dirty range
-//    WriteRanges *ranges = &ranges_[rangeid];
-//    offset_t begin = 0;
-//    for (index_t i = 0; i < ranges->ranges.size(); i++) { 
-//      Range *range = &ranges->ranges[i];
-//      WriteTransaction write_transaction;
-//      begin = max(begin, range->begin);
-//      if (begin != range->end) {
-//        write_transaction.Doit(channel_num, block->value, blockid,
-//            begin, range->end, block->data + range->begin);
-//      }
-//      begin = max(begin, range->end);
-//    }
-//    ranges->next = free_range_;
-//    ranges->ranges.Resize(0);
-//    free_range_ = rangeid;
