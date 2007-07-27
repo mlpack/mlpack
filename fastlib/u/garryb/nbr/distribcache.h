@@ -71,7 +71,7 @@ class DistributedCache : public BlockDevice {
     }
 
     static size_t size(size_t data_size) {
-      return sizeof(Request) + data_size - sizeof(long_data);
+      return sizeof(Request) + data_size - sizeof(long);
     }
   };
 
@@ -98,19 +98,19 @@ class DistributedCache : public BlockDevice {
   };
 
   /** How to query information about the overall state */
-  struct ConfigTransaction {
+  struct ConfigTransaction : public Transaction {
    public:
     DoneCondition cond;
     Message *response;
    public:
     ~ConfigTransaction() { delete response; }
 
-    void Doit(int channel_num, int peer);
+    ConfigResponse *Doit(int channel_num, int peer);
     void HandleMessage(Message *message);
   };
 
   /** How to query information about the overall state */
-  struct AllocTransaction {
+  struct AllocTransaction : public Transaction {
    public:
     DoneCondition cond;
     Message *response;
@@ -123,7 +123,7 @@ class DistributedCache : public BlockDevice {
   };
 
   /** How to initiate a read messages */
-  struct ReadTransaction {
+  struct ReadTransaction : public Transaction {
    public:
     DoneCondition cond;
     Message *response;
@@ -137,7 +137,7 @@ class DistributedCache : public BlockDevice {
   };
 
   /** How to initiate a write message */
-  struct WriteTransaction {
+  struct WriteTransaction : public Transaction  {
    public:
     void Doit(int channel_num, int peer, BlockDevice::blockid_t blockid,
         BlockDevice::offset_t begin, BlockDevice::offset_t end,
@@ -160,7 +160,7 @@ class DistributedCache : public BlockDevice {
    * along with a reduction and scatter so each machine knows the updated
    * block owner information.
    */
-  struct SyncTransaction {
+  struct SyncTransaction : public Transaction  {
    private:
     enum State {
       /** My children and I are flushing data. */
@@ -332,14 +332,14 @@ class DistributedCache : public BlockDevice {
       *this = other;
     }
     
-    bool operator < (const Position& other) {
+    bool operator < (const Position& other) const {
       if (unlikely(block == other.block)) {
         return offset < other.offset;
       } else {
         return block < other.block;
       }
     }
-    bool operator == (const Position& other) {
+    bool operator == (const Position& other) const {
       return block == other.block && offset == other.offset;
     }
     DEFINE_ALL_COMPARATORS(Position);
@@ -351,7 +351,7 @@ class DistributedCache : public BlockDevice {
   BlockHandler *handler_;
 
   /* ranges that apply for partial writes */
-  ArrayList<Range> write_ranges_;
+  RangeSet<Position> write_ranges_;
 
   /* local device */
   BlockDevice *overflow_device_;
@@ -360,17 +360,20 @@ class DistributedCache : public BlockDevice {
 
   /* remote stuff */
   int channel_num_;
-  Channel channel_;
+  CacheChannel channel_;
 
   int my_rank_;
   
   /* cache stuff */
   ArrayList<Slot> slots_;
   unsigned n_sets_;
-  int assoc_;
-  int log_assoc_;
+
+  Mutex mutex_;
 
  public:
+  DistributedCache() {}
+  virtual ~DistributedCache();
+
   /**
    * Initializes me as the master.
    *
@@ -393,8 +396,12 @@ class DistributedCache : public BlockDevice {
    * It may be possible for a performance benefit from calling this
    * periodically -- maybe mostly due to the ability to avoid lots of
    * extra reads.
+   *
+   * @param portion the portion (out of 1.0) to attempt flushing, in case
+   *        a "soft flush" is desired -- i.e. a flush of 0.5 will flush out
+   *        only old blocks
    */
-  void BestEffortFlush();
+  void BestEffortWriteback(double portion = 1.0);
   /** Starts syncing. */
   void StartSync();
   /** Ensures that the sync point has passed before returning. */
@@ -429,10 +436,7 @@ class DistributedCache : public BlockDevice {
 
   /* our bread-and-butter cache methods, called by the FIFO */
   /** Start a write access to the whole page. */
-  char *StartWrite(blockid_t blockid);
-  /** Start a write access to part of a page. */
-  char *StartWrite(blockid_t blockid,
-      offset_t begin, offset_t end);
+  char *StartWrite(blockid_t blockid, bool is_partial);
   /** Start a read to a page. */
   char *StartRead(blockid_t blockid);
   /** End a read access. */
@@ -461,10 +465,14 @@ class DistributedCache : public BlockDevice {
   }
   /** Allocates blocks, but assign ownership to a specified machine. */
   blockid_t AllocBlocks(blockid_t n_blocks_to_alloc, int owner);
+  /** Gets the underlying block handler. */
+  BlockHandler *block_handler() const {
+    return handler_;
+  }
 
  private:
   void InitChannel_(int channel_num_in);
-  void InitCommon_(offset_t n_block_bytes_);
+  void InitCommon_();
   void InitCache_(size_t total_ram);
   void InitFile_(const char *fname);
   /**
