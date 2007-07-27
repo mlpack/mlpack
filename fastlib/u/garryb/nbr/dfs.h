@@ -57,11 +57,11 @@ class DualTreeDepthFirst {
       datanode *datanode_in,
       const typename GNP::Param& param_in,
       index_t q_root_index,
-      SmallCache *q_points,
-      SmallCache *q_nodes,
-      SmallCache *r_points,
-      SmallCache *r_nodes,
-      SmallCache *q_results);
+      DistributedCache *q_points,
+      DistributedCache *q_nodes,
+      DistributedCache *r_points,
+      DistributedCache *r_nodes,
+      DistributedCache *q_results);
 
   /**
    * Gets the global result after computation.
@@ -102,11 +102,11 @@ void DualTreeDepthFirst<GNP>::Doit(
     struct datanode *datanode_in,
     const typename GNP::Param& param_in,
     index_t q_root_index,
-    SmallCache *q_points,
-    SmallCache *q_nodes,
-    SmallCache *r_points,
-    SmallCache *r_nodes,
-    SmallCache *q_results) {
+    DistributedCache *q_points,
+    DistributedCache *q_nodes,
+    DistributedCache *r_points,
+    DistributedCache *r_nodes,
+    DistributedCache *q_results) {
   param_.Copy(param_in);
 
   q_nodes_.Init(q_nodes, BlockDevice::M_READ);
