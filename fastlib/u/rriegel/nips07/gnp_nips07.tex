@@ -302,10 +302,10 @@ demonstrate its efficiency experimentally.
     \end{minipage}
     \\
     \begin{minipage}{1.6in}
-      \footnotesize{\caption{A two-dimensional $kd$-tree at (left) level 2 and (right) level 4.}}
+      \footnotesize{\caption{\label{fig:kdtree} A two-dimensional
+	  $kd$-tree at (left) level 2 and (right) level 4.}}
     \end{minipage}
   \end{minipage}
-  \label{fig:kdtree}
 \end{figure}
 \begin{figure}
   \vspace{-1.89in}
@@ -319,7 +319,7 @@ demonstrate its efficiency experimentally.
       %\begin{array}{l}
         \begin{array}{l}
           \text{{\bf tpc} - Two-point correlation.}
-          \X \text{function tpc}(Y, X)
+          \X \text{function tpc}(Y, X, r)
           \x \text{if }\disthrectmax(Y, X) < r\text{: return }0
           \x \text{if }\disthrectmin(Y, X) > r\text{: return } |Y| \cdot |X|
           \x \text{elif }|Y| \geq |X|\text{:}
@@ -381,7 +381,7 @@ demonstrate its efficiency experimentally.
 Here, we present dual-tree algorithms for two simple problems.
 %, and nonparametric Bayes classification.
 We use spatial trees, where every node $X$ in tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \cup \kdright{X} = X$, with each leaf a single point $\{x\}$.
-For example, a $kd$-tree\cite{kde-uai-dong}, as in Figure~\ref{fig:kdtree}, recursively partitions the data along coordinate dimensions.
+For example, a $kd$-tree \cite{kde-uai-dong}, as in Figure~\ref{fig:kdtree}, recursively partitions the data along coordinate dimensions.
 We also denote $d$ to be a distance metric, and superscripts $l$ and $u$ to refer respectively to lower and upper bounds, which are easily obtained from bounding boxes of points.
 Each node can also store summary statistics such as means and other moments.
 %WALDO
@@ -492,17 +492,17 @@ If a set of references is farther away than this distance, no further exploratio
 
 The class of Generalized $N$-body Problems (GNPs), exemplified above,
 %or problems solvable by means similar to those shown above,
-is a subset of the problems representable as nested applications of high-order function
-reduce.  Reduce is a long-standing and highly versatile feature of
-functional programming languages, traditionally operating over a list
-from beginning to end or vice versa.  We pose reduce as a function on
-input unordered finite multisets
+is a subset of the problems representable as nested applications of
+high-order function reduce.  Reduce is a long-standing and highly
+versatile feature of functional programming languages, traditionally
+operating over a list from beginning to end or vice versa.  We pose
+reduce as operating over finite multisets
 %\footnote{Unless otherwise noted, data sets
 %are understood to be finite multisets, thereby permitting entries with
 %identical values; alternately, data sets may store a distinct index
 %for each entry, rendering all entries unique.}
-rather than lists, and
-allow for pre- and postprocessing functions.
+rather than ordered lists, and allow for pre- and postprocessing
+functions.
 \begin{definition}
   A {\bf first-order reduce problem} $\theta$ is a tuple
   $(\mathcal{X},\otimes,f,g)$ of set of possible inputs $\mathcal{X}$,
@@ -782,11 +782,11 @@ It is often useful to gather summary results from the various components of comp
   2^{\mathcal{A}} \times 2^{\mathcal{A}} \to 2^{\mathcal{A}}$ be such
   that
   \[ \begin{array}{rcl}
-    A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\} & \mbox{ and, likewise, } & A \odothat B \supseteq \{a \odot b | a \in A, b \in B\}
+    A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\} & \mbox{ and likewise } & A \odothat B \supseteq \{a \odot b | a \in A, b \in B\}
   \end{array} \]
-  for summary results $A,B \subset \mathcal{A}$.  For singleton $A$
-  and $B$, we require $A \otimeshat B$ and $A \odothat B$ to be
-  singleton.
+  for summary results $A,B \subset \mathcal{A}$.  Further, we require
+  $\{a\} \otimeshat \{b\} = \{a \otimes b\}$ and likewise for
+  $\odothat$.
 \end{definition}
 \killspace
 
@@ -794,14 +794,15 @@ It is often useful to gather summary results from the various components of comp
 means of replacing summary result sets for a component of computation
 with composed summary results for its left and right subcomponents.
 \begin{definition}
-  The {\bf Generalized $N$-body Algorithm (GNA)} constructs and maintains a
-  binary tree wherein each node $\GNP[\Sigma](Y,X)$ represents
-  composed summary results for a component of computation introduced
-  via block decomposition.  It initializes
+  The {\bf Generalized $N$-body Algorithm (GNA)} constructs and
+  maintains a binary tree wherein each node $\GNP[\Sigma](Y,X)$
+  represents composed summary results for a component of computation
+  introduced via block decomposition.  It initializes
   $\GNP[\Sigma](\kdroot{Y},\kdroot{X}) \gets
   \GNP[\sigmahat](\sigma_y(\kdroot{Y}),\sigma_x(\kdroot{X}))$.  Then,
-  it repeatedly selects some node $\GNP[\Sigma](Y,X) =
+  it repeatedly selects some unexpanded node $\GNP[\Sigma](Y,X) =
   \GNP[\sigmahat](\sigma_y(Y),\sigma_x(X))$ and replaces it with
+  expansion
   \[
   \GNP[\Sigma](Y,X) \gets \left\{ \begin{array}{lrr}
     \{p\} & \multicolumn{2}{r}{\mbox{\rm if } \prunes(\GNP[\Sigma](Y,X)) \mbox{ \rm to } p,} \\
@@ -815,7 +816,7 @@ with composed summary results for its left and right subcomponents.
   \GNP[\sigmahat](\sigma_y(Y'),\sigma_x(X')$ and function $\prunes$
   tests whether computation can be shortcutted.  The value of each
   ancestor $\GNP[\Sigma](Y,X)$ is understood to reflect changes made
-  to its descendents.  The algorithm terminates when no replaceable
+  to its descendents.  The algorithm terminates when no unexpanded
   $\GNP[\Sigma](Y,X)$ remain.
 \end{definition}
 \killspace
@@ -1089,7 +1090,7 @@ $\avail{i}{j}$ with
 \end{array} \]
 where $\ocpos{v}(x)$ is $\max(0,x)$ for $v$ true and $x$ otherwise;
 likewise, $\ocneg{v}(x)$ for $\min(0,x)$.
-To stem oscillations, one customary mixes computed values of $R$ and $A$ with previous values according to some damping factor $\lambda$.
+To stem oscillations, one customarily mixes computed values of $R$ and $A$ with previous values according to some damping factor $\lambda$.
 For $N$ points, $R$ and $A$ are size $N \times N$, but may be sparse with similarities of $-\infty$.
 While sparsity permits larger data sets, in a metric space it is preferable to consider all pairs.
 
@@ -1248,7 +1249,7 @@ Our data are points in $\mathbb{R}^3$ from a large-scale gravitational $N$-body 
 Figure~\ref{fig:speed} demonstrates an asymptotic speedup per iteration, with runtime empirically scaling $O(N^{1.3})$ with an extrapolated three-hundred-fold speedup at one million points.
 %Factoring in the number of iterations, we empircally have $O(N^{1.5})$ overall running time.
 %The quadratic algorithm unfortunately does not support large enough data sets to observe such a trend in the number of iterations
-Indeed, one million points requires at minimum $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
+Indeed, one million points requires at least $2 \cdot 10^{12}$ single-precision floating point numbers for $\respo{}{}$ and $\avail{}{}$, amounting to eight terabytes of memory.
 Note that, as defined, affinity propagation works for arbitrary and potentially sparse similarity graphs, whereas we require a metric space in our example and fully utilize similarities between all point pairs.
 Also, data sets with high intrinsic dimensionality diminish the asymptotic gains of our algorithm.
 
