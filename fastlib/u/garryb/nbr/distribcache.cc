@@ -1,5 +1,5 @@
-/*
-to-do
+
+/*to-do
 
 - Init functions
 /- the protocol
@@ -57,17 +57,12 @@ void DistributedCache::InitWorker(
 DistributedCache::~DistributedCache() {
   delete handler_;
   delete overflow_device_;
+  rpc::Unregister(channel_num_);
 }
 
 void DistributedCache::InitFile_(const char *filename) {
-  String filename_str;
-  if (filename == NULL) {
-    filename_str.Copy(tmpnam(NULL));
-  } else {
-    filename_str.Copy(filename);
-  }
   DiskBlockDevice *db = new DiskBlockDevice();
-  db->Init(filename_str.c_str(),
+  db->Init(filename,
       BlockDevice::M_TEMP, n_block_bytes_);
   overflow_device_ = db;
 }
@@ -75,9 +70,15 @@ void DistributedCache::InitFile_(const char *filename) {
 void DistributedCache::InitChannel_(int channel_num_in) {
   channel_num_ = channel_num_in;
   channel_.Init(this);
+  rpc::Register(channel_num_, &channel_):
 }
 
 void DistributedCache::InitCommon_() {
+  disk_stats_.Init();
+  net_stats_.Init();
+  world_disk_stats_.Init();
+  world_net_stats_.Init();
+
   blocks_.Init();
   handler_ = NULL;
 
@@ -95,6 +96,12 @@ void DistributedCache::InitCache_(size_t total_ram) {
   // give enough cache sets, but rounded up
   n_sets_ = (total_ram + ASSOC*n_block_bytes_ - 1) / (ASSOC*n_block_bytes_);
   slots_.Init(n_sets_ << LOG_ASSOC);
+}
+
+void DistributedCache::HandleSyncInfo_(const SyncInfo& info) {
+  HandleStatusInformation_(info.statuses);
+  world_disk_stats_ = info.disk_stats;
+  world_net_stats_ = info.net_stats;
 }
 
 void DistributedCache::HandleStatusInformation_(
@@ -142,7 +149,7 @@ void DistributedCache::HandleStatusInformation_(
 }
 
 void DistributedCache::ComputeStatusInformation_(
-    ArrayList<BlockStatus> *statuses) {
+    ArrayList<BlockStatus> *statuses) const {
   mutex_.Lock();
   statuses->Init(n_blocks());
   for (index_t i = 0; i < statuses->size(); i++) {
@@ -221,14 +228,32 @@ void DistributedCache::WaitSync() {
 
 void DistributedCache::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *buf) {
-  const char *src = StartRead(blockid);
-  size_t n_bytes = end - begin;
+  mutex_.Lock();
+  BlockMetadata *block = &blocks_[blockid];
+  if (unlikely(block->locks == 0)) {
+    DecacheBlock_(blockid);
+    block->locks = 0;
+  }
+  offset_t n_bytes = end - begin;
+  mem::Copy(buf, block->data + begin, n_bytes);
+  handler_->BlockFreeze(blockid, begin, n_bytes, block->data + begin, buf);
+  if (unlikely(block->locks == 0)) {
+    EncacheBlock_(blockid);
+  }
+  mutex_.Unlock();
+}
 
-  // TODO: consider read-through
-  mem::Copy(buf, src + begin, n_bytes);
-  handler_->BlockFreeze(blockid, begin, n_bytes, src + begin, buf);
-
-  StopRead(blockid);
+void DistributedCache::RemoteRead(blockid_t blockid,
+    offset_t begin, offset_t end, char *buf) {
+#ifdef DEBUG
+  mutex_.Lock();
+  DEBUG_ASSERT_MSG(blocks_[blockid]->is_owner(),
+      "Remote reads must be sent to the block's owner -- it looks like the "
+      "block mapping has gotten out of sync.  Remember to sync all machines "
+      "after a number of block mapping changes.");
+  mutex_.Unlock();
+#endif
+  Read(blockid, begin, end, buf);
 }
 
 void DistributedCache::Write(blockid_t blockid,
@@ -238,7 +263,6 @@ void DistributedCache::Write(blockid_t blockid,
   size_t n_bytes = end - begin;
 
   mem::CopyBytes(dest + begin, buf, n_bytes);
-  handler_->BlockThaw(blockid, begin, n_bytes, dest + begin);
 
   StopWrite(blockid);
 }
@@ -675,7 +699,7 @@ void DistributedCache::ResponseTransaction::HandleMessage(
     case Request::READ: {
       Message *response = CreateMessage(
           message->peer(), request->end - request->begin);
-      cache_->Read(request->blockid, request->begin, request->end,
+      cache_->RemoteRead(request->blockid, request->begin, request->end,
           response->data());
       Send(response);
     }
@@ -705,6 +729,35 @@ void DistributedCache::ResponseTransaction::HandleMessage(
 
 //-------------------------------------------------------------------------
 
+void DistributedCache::SyncInfo::Init(const DistributedCache& cache) {
+  disk_stats = cache.disk_stats();
+  net_stats = cache.net_stats();
+  cache.ComputeStatusInformation_(&statuses)
+}
+
+void DistributedCache::SyncInfo::MergeWith(const SyncInfo& other) {
+  index_t old_size = statuses.size();
+
+  for (index_t i = 0; i < old_size; i++) {
+    BlockStatus *orig = &statuses[i];
+    BlockStatus *in = &other.statuses[i];
+    if (in->owner >= 0) {
+      DEBUG_ASSERT(orig->owner < 0);
+      *orig = *in;
+    }
+  }
+  if (old_size < other.statuses.size()) {
+    statuses.Resize(other.statuses.size());
+    mem::Copy(&statuses_[old_size], &other.statuses[old_size],
+        statuses.size() - old_size);
+  }
+  n++;
+  disk_stats.Add(other.disk_stats);
+  net_stats.Add(other.net_stats);
+}
+
+//-------------------------------------------------------------------------
+
 void DistributedCache::SyncTransaction::Init(DistributedCache *cache_in) {
   cache_ = cache_in;
   state_ = CHILDREN_FLUSHING;
@@ -721,14 +774,14 @@ void DistributedCache::SyncTransaction::HandleMessage(Message *message) {
       ParentFlushed_();
       break;
     case CHILDREN_ACCUMULATING:
-      AccumulateChild_(message);
+      char *data = message->data_as<Request>()->data_as<char>();
+      AccumulateChild_(*info);
       break;
     case OTHERS_ACCUMULATING: {
       DEBUG_ASSERT(message->peer() == rpc::parent());
       char *data = message->data_as<Request>()->data_as<char>();
-      ArrayList<BlockStatus> *in_statuses =
-          ot::PointerThaw< ArrayList<BlockStatus> >(data);
-      ParentAccumulated_(*in_statuses);
+      SyncInfo *info = ot::PointerThaw<SyncInfo>(data);
+      ParentAccumulated_(*info);
     }
     break;
     default:
@@ -765,27 +818,14 @@ void DistributedCache::SyncTransaction::ParentFlushed_() {
   }
   // Now we are absolutely certain ALL machines have finished flushing.
   // Thus, our block ownership is accurate.
-  cache_->ComputeStatusInformation_(&statuses);
+  sync_info_.Init(cache_);
   state_ = CHILDREN_ACCUMULATING;
   CheckAccumulation_();
 }
 
 void DistributedCache::SyncTransaction::AccumulateChild_(Message *message) {
-  index_t old_size = statuses_.size();
-  for (index_t i = 0; i < old_size; i++) {
-    BlockStatus *orig = &statuses_[i];
-    BlockStatus *in = &(*in_statuses)[i];
-    if (in->owner >= 0) {
-      DEBUG_ASSERT(orig->owner < 0);
-      *orig = *in;
-    }
-  }
-  if (old_size < in_statuses->size()) {
-    statuses_.Resize(in_statuses->size());
-    mem::Copy(&statuses_[old_size], &(*in_statuses)[old_size],
-        statuses_.size() - old_size);
-  }
-  n++;
+  SyncInfo *info = ot::PointerThaw<SyncInfo>(data);
+  sync_info_.MergeWith(*info);
   CheckAccumulation_();
 }
 
@@ -793,7 +833,7 @@ void DistributedCache::SyncTransaction::CheckAccumulation_() {
   // only need to accumulate children, since i myself am a given
   if (n == rpc::n_children()) {
     if (rpc::is_root()) {
-      ParentAccumulated_(statuses_);
+      ParentAccumulated_(sync_info_);
     } else {
       state_ = OTHERS_ACCUMULATING;
       SendStatusInformation_(rpc::parent());
@@ -801,9 +841,10 @@ void DistributedCache::SyncTransaction::CheckAccumulation_() {
   }
 }
 
-void DistributedCache::SyncTransaction::ParentAccumulated_(const ArrayList<BlockStatus&> statuses_in) {
+void DistributedCache::SyncTransaction::ParentAccumulated_(
+    const SyncInfo& info) {
   cache_->channel_.SyncDone();
-  cache_->HandleStatusInformation_(statuses_in);
+  cache_->HandleSyncInfo_(info);
   for (index_t i = 0; i < rpc::n_children(); i++) {
     SendStatusInformation_(rpc::child(i));
   }

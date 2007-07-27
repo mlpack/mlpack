@@ -64,7 +64,7 @@ class KdTreeHybridBuilder {
    */
   static void Build(struct datanode *module, const Param &param,
       index_t begin_index, index_t end_index,
-      CacheArray<Point> *points_inout, CacheArray<Node> *nodes_create) {
+      DistributedCache *points_inout, DistributedCache *nodes_create) {
     KdTreeHybridBuilder builder;
     builder.Doit(module, &param, begin_index, end_index,
         points_inout, nodes_create);
@@ -73,12 +73,13 @@ class KdTreeHybridBuilder {
  private:
   const Param* param_;
   CacheArray<Point> points_;
-  CacheArray<Node>* nodes_;
+  CacheArray<Node> nodes_;
   index_t leaf_size_;
   index_t chunk_size_;
   index_t dim_;
   index_t begin_index_;
   index_t end_index_;
+  index_t n_points_;
 
  public:
   void Doit(
@@ -86,15 +87,15 @@ class KdTreeHybridBuilder {
       const Param* param_in_,
       index_t begin_index,
       index_t end_index,
-      CacheArray<Point> *points_inout,
-      CacheArray<Node> *nodes_create) {
+      DistributedCache *points_inout,
+      DistributedCache *nodes_create) {
     param_ = param_in_;
     begin_index_ = begin_index;
     end_index_ = end_index;
+    n_points_ = end_index_ - begin_index_;
 
     points_.Init(points_inout, BlockDevice::M_MODIFY);
-
-    nodes_ = nodes_create;
+    nodes_.Init(nodes_create, BlockDevice::M_CREATE);
 
     {
       CacheRead<Point> first_point(&points_, points_.begin_index());
@@ -102,26 +103,25 @@ class KdTreeHybridBuilder {
     }
 
     leaf_size_ = fx_param_int(module, "leaf_size", 32);
-    chunk_size_ = fx_param_int(module, "chunk_size",
-        points_inout->n_block_elems());
-    DEBUG_ASSERT(points_inout->n_block_elems() % chunk_size_ == 0);
-    if (!math::IsPowerTwo(chunk_size_)) {
-      NONFATAL("With NBR, it's best to have chunk_size be a power of 2.");
-    }
+    // NOTE: Chunk size is now required to be same as n_block_elems, so that
+    // each block of points corresponds to exactly one node in the tree.
+    chunk_size_ = points_inout->n_block_elems();
 
     fx_timer_start(module, "tree_build");
     Build_();
     fx_timer_stop(module, "tree_build");
-
-    points_.Flush(false);
-    nodes_->Flush(false);
   }
+
   index_t Partition_(
       index_t split_dim, double splitvalue,
       index_t begin, index_t count,
       Bound* left_bound, Bound* right_bound);
   void FindBoundingBox_(index_t begin, index_t count, Bound *bound);
-  void Build_(index_t node_i);
+  /**
+   * Builds the tree, assigning this portion of the tree to a subset of
+   * machines.
+   */
+  void Build_(index_t node_i, int begin_rank, int end_rank);
   void Build_();
 };
 
@@ -181,8 +181,8 @@ index_t KdTreeHybridBuilder<TPoint, TNode, TParam>::Partition_(
 
 template<typename TPoint, typename TNode, typename TParam>
 void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
-    index_t node_i) {
-  Node *node = nodes_->StartWrite(node_i);
+    index_t node_i, int begin_rank, int end_rank) {
+  Node *node = nodes_.StartWrite(node_i);
   bool leaf = true;
 
   if (node->count() > leaf_size_) {
@@ -200,13 +200,13 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
     }
 
     if (max_width != 0) {
-      index_t left_i = nodes_->Alloc();
-      index_t right_i = nodes_->Alloc();
-      Node *left = nodes_->StartWrite(left_i);
-      Node *right = nodes_->StartWrite(right_i);
+      // Let's try to divide the machines in half at this point.
+      int split_rank = (begin_rank + end_rank) / 2;
+      typename Node::Bound final_left_bound;
+      typename Node::Bound final_right_bound;
 
-      left->bound().Reset();
-      right->bound().Reset();
+      final_left_bound.Reset();
+      final_right_bound.Reset();
 
       index_t split_col;
       index_t begin_col = node->begin();
@@ -215,21 +215,41 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
       double split_val;
       SpRange current_range = node->bound().get(split_dim);
 
+      if (node->count() == points_.n_block_elems()) {
+        // We got one block of points!  Let's give away ownership.
+        points_.cache()->GiveOwnership(
+            points_.cache()->Blockid(node->begin()),
+            begin_rank);
+      }
+
       if (node->count() <= chunk_size_) {
         // perform a midpoint split
         split_val = current_range.mid();
         split_col = Partition_(split_dim, split_val,
               begin_col, end_col - begin_col,
-              &left->bound(), &right->bound());
+              &final_left_bound, &final_right_bound);
       } else {
-        // perform a block-rounded median split.  goal_col is the
-        // block-rounded index that we want to serve as the boundary.
-        index_t goal_col = (begin_col + end_col + chunk_size_)
-            / chunk_size_ / 2 * chunk_size_;
+        index_t goal_col;
         typename Node::Bound left_bound;
         typename Node::Bound right_bound;
         left_bound.Init(dim_);
         right_bound.Init(dim_);
+
+        if (likely(begin_rank - end_rank <= 1)) {
+          // All points will go on the same machine, so do median split.
+          goal_col = (begin_col + end_col) / 2;
+        } else {
+          // We're distributing these between machines.  Let's make sure
+          // we give roughly even work to the machines.  What we do is
+          // pretend the points are distributed as equally as possible, by
+          // using the global number of machines and points, to avoid errors
+          // interoduced by doing this split computation recursively.
+          goal_col = (uint64(split_rank) * 2 * n_points_ + rpc::n_peers())
+              / rpc::n_peers() / 2;
+        }
+
+        // Round the goal to the nearest block.
+        goal_col = (goal_col + chunk_size_ / 2) / chunk_size_ * chunk_size_;
 
         for (;;) {
           // use linear interpolation to guess the value to split on.
@@ -244,64 +264,70 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
                 &left_bound, &right_bound);
 
           if (split_col == goal_col) {
-            left->bound() |= left_bound;
-            right->bound() |= right_bound;
+            final_left_bound |= left_bound;
+            final_right_bound |= right_bound;
             break;
           } else if (split_col < goal_col) {
-            left->bound() |= left_bound;
+            final_left_bound |= left_bound;
             current_range = right_bound.get(split_dim);
             if (current_range.width() == 0) {
-              right->bound() |= right_bound;
+              // right_bound straddles the boundary, force it to break up
+              rinal_right_bound |= right_bound;
+              rinal_left_bound |= right_bound;
+              split_col = goal_col;
               break;
             }
             begin_col = split_col;
           } else if (split_col > goal_col) {
-            right->bound() |= right_bound;
+            final_right_bound |= right_bound;
             current_range = left_bound.get(split_dim);
             if (current_range.width() == 0) {
-              left->bound() |= left_bound;
+              // left_bound straddles the boundary, force it to break up
+              final_left_bound |= left_bound;
+              final_right_bound |= left_bound;
+              split_col = goal_col;
               break;
             }
             end_col = split_col;
           }
         }
 
-        // Don't accept no for an answer.  Block bounadaries are very
-        // important, so if we straddle a boundary because there are
-        // duplicates, just have the duplicate on both sides.
-        split_col = goal_col;
         DEBUG_ASSERT(split_col % points_.n_block_elems() == 0);
       }
 
-      DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)",
-          node->begin(), split_col,
+      DEBUG_MSG(3.0,"split (%d,[%d],%d) split_dim %d on %f (between %f, %f)"    node->begin(), split_col,
           node->begin() + node->count(), split_dim, split_val,
           node->bound().get(split_dim).lo,
           node->bound().get(split_dim).hi);
-      // This should never happen if max_width > 0
-      DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 
+      index_t left_i = nodes_.AllocD(begin_rank);
+      Node *left = nodes_.StartWrite(left_i);
+      left->bound().Reset();
+      left->bound() |= final_left_bound;
       left->set_range(node->begin(), split_col - node->begin());
-      right->set_range(split_col, node->end() - split_col);
+      Build_(left_i, begin_rank, split_rank);
+      left->stat().Postprocess(*param_, node->bound(),
+          node->count());
+      node->stat().Accumulate(*param_, left->stat(),
+          left->bound(), left->count());
+      nodes_.StopWrite(left_i);
 
-      Build_(left_i);
-      Build_(right_i);
+      index_t right_i = nodes_.AllocD(split_rank);
+      Node *right = nodes_.StartWrite(right_i);
+      right->bound().Reset();
+      right->bound() |= final_right_bound;
+      right->set_range(split_col, node->end() - split_col);
+      Build_(right_i, split_rank, end_rank);
+      right->stat().Postprocess(*param_, node->bound(),
+          node->count());
+      node->stat().Accumulate(*param_, right->stat(),
+          right->bound(), right->count());
+      nodes_.StopWrite(right_i);
 
       node->set_child(0, left_i);
       node->set_child(1, right_i);
 
-      node->stat().Accumulate(*param_, left->stat(),
-          left->bound(), left->count());
-      left->stat().Postprocess(*param_, node->bound(),
-          node->count());
-      node->stat().Accumulate(*param_, right->stat(),
-          right->bound(), right->count());
-      right->stat().Postprocess(*param_, node->bound(),
-          node->count());
-
       leaf = false;
-      nodes_->StopWrite(left_i);
-      nodes_->StopWrite(right_i);
     } else {
       NONFATAL("There is probably a bug somewhere else - "
           "%"LI"d points are all identical.",
@@ -320,13 +346,15 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
     }
   }
 
-  nodes_->StopWrite(node_i);
+  nodes_.StopWrite(node_i);
 }
 
 template<typename TPoint, typename TNode, typename TParam>
 void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_() {
-  index_t node_i = nodes_->Alloc();
-  Node *node = nodes_->StartWrite(node_i);
+  int begin_rank = 0;
+  int end_rank = rpc::n_peers();
+  index_t node_i = nodes_.AllocD(begin_rank);
+  Node *node = nodes_.StartWrite(node_i);
 
   DEBUG_SAME_INT(node_i, 0);
 
@@ -334,10 +362,10 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_() {
 
   FindBoundingBox_(node->begin(), node->end(), &node->bound());
 
-  Build_(node_i);
+  Build_(node_i, begin_rank, end_rank);
   node->stat().Postprocess(*param_, node->bound(), node->count());
 
-  nodes_->StopWrite(node_i);
+  nodes_.StopWrite(node_i);
 }
 
 #endif

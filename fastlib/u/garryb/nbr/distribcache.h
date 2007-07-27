@@ -155,6 +155,24 @@ class DistributedCache : public BlockDevice {
     void HandleMessage(Message *message);
   };
 
+  /** Information that is distributed during a sync. */
+  struct SyncInfo {
+   public:
+    IoStats disk_stats;
+    IoStats net_stats;
+    ArrayList<BlockStatus> statuses;
+    
+    OT_DEF(SyncInfo) {
+      OT_MY_OBJECT(disk_stats);
+      OT_MY_OBJECT(net_stats);
+      OT_MY_OBJECT(statuses);
+    }
+    
+   public:
+    void Init(const DistributedCache& cache);
+    void MergeWith(const SyncInfo& other);
+  }
+
   /**
    * A sync transaction is a barrier to make sure everyone flushes writes,
    * along with a reduction and scatter so each machine knows the updated
@@ -237,8 +255,12 @@ class DistributedCache : public BlockDevice {
     /** I'm the owner of this block, but I haven't assigned it a page. */
     SELF_OWNER_UNALLOCATED = 16777216
   };
-  
-  /** Rank of the master machine, which contains a valid directory. */
+
+  /**
+   * Rank of the master machine, which is configured with the block handler
+   * and the number of bytes in a block, and maybe other setup parameters
+   * (this is the destination of ConfigTransaction).
+   */
   static const int MASTER_RANK = 0;
 
   /** Log of the set associativity, i.e. 3 means 2^3 = 8-way */
@@ -369,6 +391,11 @@ class DistributedCache : public BlockDevice {
   unsigned n_sets_;
 
   Mutex mutex_;
+  
+  IoStats disk_stats_;
+  IoStats net_stats_;
+  IoStats world_disk_stats_;
+  IoStats world_net_stats_;
 
  public:
   DistributedCache() {}
@@ -426,10 +453,17 @@ class DistributedCache : public BlockDevice {
   void Write(blockid_t blockid, offset_t begin, offset_t end,
       const char *buf);
   /**
+   * Read data as bytes for a remote machine.
+   *
+   * Currently, this differs from Read only that it fails out if we're not
+   * the block's actual owner.
+   */
+  void RemoteRead(blockid_t blockid, offset_t begin, offset_t end, char *buf);
+  /**
    * Writes data from a remote machine.
    *
-   * This version of write VERY SPECIFICALLY assumes that if it is receiving
-   * a write request, it is AUTOMATICALLY the master.
+   * This version of write assumes that if it is receiving
+   * a write request, it is now the block's owner.
    */
   void RemoteWrite(blockid_t blockid, offset_t begin, offset_t end,
       const char *buf);
@@ -470,6 +504,19 @@ class DistributedCache : public BlockDevice {
     return handler_;
   }
 
+  const IoStats& disk_stats() const {
+    return disk_stats_;
+  }
+  const IoStats& net_stats() const {
+    return net_stats_;
+  }
+  const IoStats& world_disk_stats() const {
+    return world_disk_stats_;
+  }
+  const IoStats& world_net_stats() const {
+    return world_net_stats_;
+  }
+
  private:
   void InitChannel_(int channel_num_in);
   void InitCommon_();
@@ -483,7 +530,7 @@ class DistributedCache : public BlockDevice {
   /**
    * Marks me as owner of blocks I own and marks other blocks as null.
    */
-  void ComputeStatusInformation_(ArrayList<BlockStatus>* statuses);
+  void ComputeStatusInformation_(ArrayList<BlockStatus>* statuses) const;
   /**
    * Tries to grab a block from cache, if it fails, this pulls it from the
    * proper source by calling HandleMiss_.
