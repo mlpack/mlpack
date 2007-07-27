@@ -132,22 +132,20 @@ class CacheArray {
         new CacheArrayBlockHandler<Element>();
     handler->Init(default_elem);
     cache->InitMaster(channel, n_block_elems * handler->n_elem_bytes(),
-        total_ram, default_elem);
+        total_ram, handler);
   }
   /** Helper to help you connect a DistributedCache to master. */
   static void InitDistributedCacheWorker(int channel,
       size_t total_ram, DistributedCache *cache) {
     CacheArrayBlockHandler<Element> *handler =
         new CacheArrayBlockHandler<Element>();
-    cache->InitWorker(channel, total_ram, default_elem);
+    cache->InitWorker(channel, total_ram, handler);
   }
 
  public:
   CacheArray() {}
   ~CacheArray() {
-    if (BlockDevice::need_write(mode_)) {
-      Flush();
-    }
+    Flush();
     mem::Free(fifo_);
   }
 
@@ -333,12 +331,13 @@ class CacheArray {
 
   // TODO: Think about how this affects register pressure
   Element *CheckoutElement_(index_t element_id) {
+    DEBUG_ONLY(BoundsCheck_(element_id));
+
     Metadata *metadata = (element_id >> n_block_elems_log())
         + adjusted_metadatas_;
     char *data = metadata->data;
     BlockDevice::offset_t offset = Offset(element_id);
 
-    DEBUG_ONLY(BoundsCheck_(element_id));
 
     ++metadata->lock_count;
 
@@ -353,7 +352,7 @@ class CacheArray {
   /* these are public so various classes can use them efficiently */
 
   void ReleaseBlock(BlockDevice::blockid_t blockid) {
-    DEBUG_ONLY(--adjusted_metadatas_[blockid].lock_count);
+    --adjusted_metadatas_[blockid].lock_count;
   }
 
   index_t BlockElement(BlockDevice::blockid_t blockid) {
@@ -370,7 +369,7 @@ class CacheArray {
 
   void ReleaseElement(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
-    ReleaseBlock_(Blockid(element_id));
+    ReleaseBlock(Blockid(element_id));
   }
 };
 
@@ -389,6 +388,7 @@ void CacheArray<TElement>::Init(
   mode_ = mode_in;
   n_elem_bytes_ = handler->n_elem_bytes();
   fifo_ = mem::Alloc<BlockDevice::blockid_t>(FIFO_SIZE);
+  mem::ConstructAll(fifo_, -1, FIFO_SIZE);
   fifo_index_ = 0;
 
   unsigned n_block_elems_calc = cache_->n_block_bytes() / n_elem_bytes_;
@@ -407,23 +407,27 @@ void CacheArray<TElement>::Init(
 
   metadatas_.Init(((end_ + n_block_elems_mask()) >> n_block_elems_log())
       - skip_blocks_);
+  adjusted_metadatas_ = metadatas_.begin() - skip_blocks_;
 }
 
 template<typename TElement>
 void CacheArray<TElement>::Flush() {
   for (int i = 0; i < FIFO_SIZE; i++) {
     BlockDevice::blockid_t blockid = fifo_[i];
-    Metadata *metadata = adjusted_metadatas_ + blockid;
 
-    if (BlockDevice::can_write(mode_)) {
-      cache_->StopWrite(blockid);
-    } else {
-      cache_->StopRead(blockid);
+    if (blockid >= 0) {
+      Metadata *metadata = adjusted_metadatas_ + blockid;
+
+      if (BlockDevice::can_write(mode_)) {
+        cache_->StopWrite(blockid);
+      } else {
+        cache_->StopRead(blockid);
+      }
+
+      DEBUG_SAME_INT(metadata->lock_count, 0);
+      metadata->data = NULL;
+      fifo_[i] = -1;
     }
-
-    DEBUG_SAME_INT(metadata->lock_count, 0);
-    metadata->data = NULL;
-    fifo_[i] = -1;
   }
 }
 
@@ -458,6 +462,8 @@ typename CacheArray<TElement>::Element* CacheArray<TElement>::HandleCacheMiss_(
 
   BlockDevice::blockid_t blockid = Blockid(element_id);
   Metadata *metadata = adjusted_metadatas_ + blockid;
+  
+  fifo_[fifo_index_] = blockid;
 
   if (BlockDevice::can_write(mode_)) {
     metadata->data = cache_->StartWrite(blockid,
@@ -561,7 +567,7 @@ class CacheIterImpl_ {
  public:
   CacheIterImpl_(CacheArray<BaseElement>* cache_in, index_t begin_index) {
     cache_ = cache_in;
-    blockid_ = cache_->Blockid_(begin_index);
+    blockid_ = cache_->Blockid(begin_index);
     element_ = Helperclass::MyStartAccess_(cache_, begin_index);
     stride_ = cache_->n_elem_bytes();
     unsigned int mask = cache_->n_block_elems_mask();
@@ -613,7 +619,7 @@ void CacheIterImpl_<Helperclass, Element, BaseElement>::NextBlock_() {
   cache_->ReleaseBlock(blockid_);
   ++blockid_;
 
-  index_t elem_id = cache_->FirstBlockElement(blockid_);
+  index_t elem_id = cache_->BlockElement(blockid_);
   DEBUG_POISON_PTR(element_);
   if (likely(elem_id < cache_->end_index())) {
     element_ = Helperclass::MyStartAccess_(cache_, elem_id);
@@ -656,42 +662,95 @@ class CacheWriteIter
 
 //------------------------------------------------------------------------
 
-#error what *is* a TempCache now?
 /**
- * Specialed cache-array to simplify the creation/cleanup process.
+ * Condensed-RAM array, .
  */
 template<typename TElement>
-class TempCacheArray : public CacheArray<TElement> {
- private:
-  DistributedCache underlying_cache_;
-  NullBlockDevice null_device_;
+class SubsetArray {
+  FORBID_COPY(SubsetArray);
 
  public:
-  ~TempCacheArray() {
-    CacheArray<TElement>::Flush(true);
+  typedef TElement Element;
+
+ private:
+  size_t n_elem_bytes_;
+  char *adjusted_;
+  index_t begin_;
+  index_t end_;
+
+ public:
+  SubsetArray() {}
+  ~SubsetArray() {
+    mem::Free(&(*this)[begin_]);
   }
 
-  /** Creates a blank, temporary cached array */
-  void Init(const TElement& default_obj,
-      index_t n_elems_in,
-      unsigned int n_block_elems_in,
-      size_t total_ram = 16777216) {
-    CacheArrayBlockHandler<TElement> *handler =
-        new CacheArrayBlockHandler<TElement>;
-    handler->Init(default_obj);
-
-    null_device_.Init(0, n_block_elems_in * handler->n_elem_bytes());
-    underlying_cache_.InitMaster(&null_device_, handler, BlockDevice::M_TEMP);
-
-    CacheArray<TElement>::Init(&underlying_cache_, BlockDevice::M_TEMP, 0, 0);
-
-    if (n_elems_in != 0) {
-      // Allocate a bunch of space.
-      CacheArray<TElement>::Alloc(n_elems_in);
+  void Init(const Element& default_elem, index_t begin, index_t end) {
+    n_elem_bytes_ = ot::PointerFrozenSize(default_elem);
+    begin_ = begin;
+    end_ = end;
+    adjusted_ = NULL;
+    if (begin_ < end_) {
+      char *base = mem::Alloc<char>(n_elem_bytes_ * (end - begin));
+      char *adjusted = base - (begin * n_elem_bytes_);
+      ot::PointerFreeze(default_elem, base);
+      for (index_t i = begin + 1; i < end; i++) {
+        char *ptr = adjusted + i * n_elem_bytes_;
+        mem::CopyBytes(ptr, base, n_elem_bytes_);
+        ot::PointerThaw<Element>(ptr);
+      }
+      ot::PointerThaw<Element>(base);
+      adjusted_ = adjusted;
     }
+  }
+  
+  index_t n_elem_bytes() const {
+    return n_elem_bytes_;
+  }
+  
+  const Element& operator[] (index_t i) const {
+    return *reinterpret_cast<Element*>(adjusted_ + i * n_elem_bytes_);
+  }
+
+  Element& operator[] (index_t i) {
+    return *reinterpret_cast<Element*>(adjusted_ + i * n_elem_bytes_);
   }
 };
 
+//#error what *is* a TempCache now?
+///**
+// * Specialed cache-array to simplify the creation/cleanup process.
+// */
+//template<typename TElement>
+//class TempCacheArray : public CacheArray<TElement> {
+// private:
+//  DistributedCache underlying_cache_;
+//  NullBlockDevice null_device_;
+//
+// public:
+//  ~TempCacheArray() {
+//    CacheArray<TElement>::Flush(true);
+//  }
+//
+//  /** Creates a blank, temporary cached array */
+//  void Init(const TElement& default_obj,
+//      index_t n_elems_in,
+//      unsigned int n_block_elems_in,
+//      size_t total_ram = 16777216) {
+//    CacheArrayBlockHandler<TElement> *handler =
+//        new CacheArrayBlockHandler<TElement>;
+//    handler->Init(default_obj);
+//
+//    null_device_.Init(0, n_block_elems_in * handler->n_elem_bytes());
+//    underlying_cache_.InitMaster(&null_device_, handler, BlockDevice::M_TEMP);
+//
+//    CacheArray<TElement>::Init(&underlying_cache_, BlockDevice::M_TEMP, 0, 0);
+//
+//    if (n_elems_in != 0) {
+//      // Allocate a bunch of space.
+//      CacheArray<TElement>::Alloc(n_elems_in);
+//    }
+//  }
+//};
 
 #endif
 

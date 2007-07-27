@@ -58,7 +58,7 @@ class DistributedCache : public BlockDevice {
   /** Net-transferable request operation */
   struct Request {
    public:
-    enum { CONFIG, QUERY, READ, WRITE, ALLOC } type;
+    enum { CONFIG, READ, WRITE, ALLOC, SYNC } type;
     BlockDevice::blockid_t blockid;
     BlockDevice::offset_t begin;
     BlockDevice::offset_t end;
@@ -171,7 +171,7 @@ class DistributedCache : public BlockDevice {
    public:
     void Init(const DistributedCache& cache);
     void MergeWith(const SyncInfo& other);
-  }
+  };
 
   /**
    * A sync transaction is a barrier to make sure everyone flushes writes,
@@ -198,18 +198,19 @@ class DistributedCache : public BlockDevice {
     State state_;
     int n_;
     Mutex mutex_;
-    ArrayList<BlockStatus> statuses_;
+    SyncInfo sync_info_;
 
    public:
     void Init(DistributedCache *cache);
     void HandleMessage(Message *message);
+    void StartSyncFlushDone();
 
    private:
     void ChildFlushed_();
     void ParentFlushed_();
     void AccumulateChild_(Message *message);
     void CheckAccumulation_();
-    void ParentAccumulated_(const ArrayList<BlockStatus&> statuses_in);
+    void ParentAccumulated_(const SyncInfo& info);
     void SendBlankSyncMessage_(int peer);
     void SendStatusInformation_(int peer);
   };
@@ -340,7 +341,6 @@ class DistributedCache : public BlockDevice {
     BlockDevice::blockid_t local_blockid() const {
       // A block's ID is invalid if...
       DEBUG_ASSERT_MSG(is_owner(), "no local blockid: it's not mine");
-      DEBUG_ASSERT_MSG(!is_in_core(), "no local blockid: it's in RAM!");
       DEBUG_ASSERT_MSG(!is_new(), "no local blockid: it's newly allocated");
       return value;
     }
@@ -516,6 +516,9 @@ class DistributedCache : public BlockDevice {
   const IoStats& world_net_stats() const {
     return world_net_stats_;
   }
+  int channel_num() const {
+    return channel_num_;
+  }
 
  private:
   void InitChannel_(int channel_num_in);
@@ -527,6 +530,10 @@ class DistributedCache : public BlockDevice {
    * This is one of the most important parts of our coherency mechanisms.
    */
   void HandleStatusInformation_(const ArrayList<BlockStatus>& statuses);
+  /**
+   * After a sync point, handles synchronization information.
+   */
+  void DistributedCache::HandleSyncInfo_(const SyncInfo& info);
   /**
    * Marks me as owner of blocks I own and marks other blocks as null.
    */

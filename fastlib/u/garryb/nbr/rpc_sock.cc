@@ -13,6 +13,8 @@
 #include <errno.h>
 #include <string.h>
 
+#warning "there's a race condition involving single-message transactions"
+
 //-------------------------------------------------------------------------
 
 /*

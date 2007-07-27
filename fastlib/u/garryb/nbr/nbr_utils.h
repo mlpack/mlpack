@@ -8,7 +8,7 @@
 #include "par/thread.h"
 #include "par/task.h"
 
-#include "netcache.h"
+#include "distribcache.h"
 
 // TODO: These classes all need comments
 
@@ -90,7 +90,7 @@ class ThreadedDualTreeSolver {
 
     void Run() {
       while (1) {
-        ArrayList<index_t> work;
+        ArrayList<WorkQueueInterface::Grain> work;
 
         base_->mutex_.Lock();
         base_->work_queue_->GetWork(base_->process_, &work);
@@ -101,17 +101,19 @@ class ThreadedDualTreeSolver {
         }
 
         for (index_t i = 0; i < work.size(); i++) {
-          index_t q_root_index = work[i];
           Solver solver;
 
           base_->mutex_.Lock();
           struct datanode *submodule = fx_submodule(base_->module_,
-              "solver", "grain_%d", work[i]);
+              "solver", "grain_%d", work[i].point_begin_index);
           base_->mutex_.Unlock();
 
-          fprintf(stderr, "- Grain %"LI"d\n", work[i]);
+          fprintf(stderr, "- Grain %"LI"d with %d points, %d..%d\n",
+              work[i].point_begin_index, work[i].n_points(),
+              work[i].node_index, work[i].node_end_index);
 
-          solver.Doit(submodule, *base_->param_, q_root_index,
+          solver.Doit(submodule, *base_->param_,
+              work[i].node_index, work[i].node_end_index,
               base_->q_points_cache_, base_->q_nodes_cache_,
               base_->r_points_cache_, base_->r_nodes_cache_,
               base_->q_results_cache_);
@@ -122,6 +124,7 @@ class ThreadedDualTreeSolver {
           base_->mutex_.Unlock();
         }
       }
+
       fprintf(stderr, "- Thread Done\n");
       delete this;
     }
@@ -293,7 +296,7 @@ class RpcMonochromaticDualTreeRunner {
    * The configuration of the problem.
    */
   struct Config {
-    Param param;
+    typename GNP::Param param;
     int n_threads;
     int data_points_mb;
     int data_nodes_mb;
@@ -372,6 +375,7 @@ class RpcMonochromaticDualTreeRunner {
   void ReadData_();
   void MakeTree_();
   void SetupMaster_();
+  void SetupConfig_();
 };
 
 template<typename GNP, typename Solver>
@@ -409,12 +413,12 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
       DATA_POINTS_CHANNEL, n_block_points,
       config_.data_points_mb * MEGABYTE, default_point,
       &data_points_);
-  CacheArray<typename GNP::QPoint> data_points_cache;
-  data_points_cache.Init(&data_points_, BlockDevice::M_CREATE);
-  data_points_cache.AllocD(n_points_);
+  CacheArray<typename GNP::QPoint> data_points_array;
+  data_points_array.Init(&data_points_, BlockDevice::M_CREATE);
+  data_points_array.AllocD(rpc::rank(), n_points_);
 
   for (index_t i = 0; i < n_points_; i++) {
-    CacheWrite<typename GNP::QPoint> point(&data_points_cache, i);
+    CacheWrite<typename GNP::QPoint> point(&data_points_array, i);
     point->vec().CopyValues(data_matrix.GetColumnPtr(i));
   }
   fx_timer_stop(module_, "copy");
@@ -426,9 +430,9 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
       Q_RESULTS_CHANNEL, n_block_points,
       config_.q_results_mb * MEGABYTE, default_result,
       &q_results_);
-  CacheArray<typename GNP::QResult> q_results_cache;
-  q_results_cache.Init(&q_results_, BlockDevice::M_CREATE);
-  q_results_.Alloc(MASTER_RANK, n_points_);
+  CacheArray<typename GNP::QResult> q_results_array;
+  q_results_array.Init(&q_results_, BlockDevice::M_CREATE);
+  q_results_array.AllocD(rpc::rank(), n_points_);
 }
 
 template<typename GNP, typename Solver>
@@ -438,27 +442,30 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
   fprintf(stderr, "master: Building tree\n");
   fx_timer_start(module_, "tree");
   typename GNP::QNode data_example_node;
-  data_example_node.Init(dim_, config.param_);
+  data_example_node.Init(dim_, config_.param);
   CacheArray<typename GNP::QNode>::InitDistributedCacheMaster(
       DATA_NODES_CHANNEL, n_block_nodes,
       config_.data_nodes_mb * MEGABYTE, data_example_node,
       &data_nodes_);
   KdTreeHybridBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-      ::Build(data_module_, config.param_, 0, n_points_,
+      ::Build(data_module_, config_.param, 0, n_points_,
           &data_points_, &data_nodes_);
   fx_timer_stop(module_, "tree");
 }
 
 template<typename GNP, typename Solver>
-void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
-  master_ = new Master();
-
+void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupConfig_() {
   // Set up and export the config object
   config_.n_threads = fx_param_int(module_, "n_threads", 1);
-  config_.data_points_mb = fx_param_int(module_, "data_points_mb", 400);
-  config_.data_nodes_mb = fx_param_int(module_, "data_nodes_mb", 100);
-  config_.q_results_mb = fx_param_int(module_, "q_results_mb", 100);
+  config_.data_points_mb = fx_param_int(module_, "data_points_mb", 20);
+  config_.data_nodes_mb = fx_param_int(module_, "data_nodes_mb", 10);
+  config_.q_results_mb = fx_param_int(module_, "q_results_mb", 10);
+}
+
+template<typename GNP, typename Solver>
+void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
+  master_ = new Master();
   master_->config_backend.Init(&config_);
   rpc::Register(CONFIG_CHANNEL, &master_->config_backend);
 
@@ -467,7 +474,9 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
       new CentroidWorkQueue<typename GNP::QNode>;
   int n_grains = fx_param_int(module_, "n_grains",
       config_.n_threads * rpc::n_peers() * 12);
-  actual_work_queue->Init(&data_nodes_, n_grains);
+  CacheArray<typename GNP::QNode> data_nodes_array;
+  data_nodes_array.Init(&data_nodes_, BlockDevice::M_READ);
+  actual_work_queue->Init(&data_nodes_array, n_grains);
   fx_format_result(module_, "n_grains_actual", "%"LI"d",
       actual_work_queue->n_grains());
   work_queue_ = new LockedWorkQueue(actual_work_queue);
@@ -510,6 +519,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
 
   fx_timer_start(module_, "load_data");
   if (rpc::is_root()) {
+    SetupConfig_();
     fprintf(stderr, "nbr_utils(%d): reading in data, making tree, and distributing data\n",
         rpc::rank());
     config_.param.Init(fx_submodule(module_, gnp_name_, gnp_name_));
@@ -554,9 +564,9 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   solver.Doit(
       fx_submodule(module_, "solver", "local"),
       config_.n_threads, rpc::rank(), work_queue_, config_.param,
-      data_points_.cache(), data_nodes_.cache(),
-      data_points_.cache(), data_nodes_.cache(),
-      q_results_.cache());
+      &data_points_, &data_nodes_,
+      &data_points_, &data_nodes_,
+      &q_results_);
   q_results_.StartSync();
   q_results_.WaitSync();
   fx_timer_stop(module_, "all_machines");

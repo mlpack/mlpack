@@ -105,7 +105,7 @@ class KdTreeHybridBuilder {
     leaf_size_ = fx_param_int(module, "leaf_size", 32);
     // NOTE: Chunk size is now required to be same as n_block_elems, so that
     // each block of points corresponds to exactly one node in the tree.
-    chunk_size_ = points_inout->n_block_elems();
+    chunk_size_ = points_.n_block_elems();
 
     fx_timer_start(module, "tree_build");
     Build_();
@@ -198,15 +198,15 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
         split_dim = d;
       }
     }
-
+    
     if (max_width != 0) {
       // Let's try to divide the machines in half at this point.
       int split_rank = (begin_rank + end_rank) / 2;
       typename Node::Bound final_left_bound;
       typename Node::Bound final_right_bound;
 
-      final_left_bound.Reset();
-      final_right_bound.Reset();
+      final_left_bound.Init(dim_);
+      final_right_bound.Init(dim_);
 
       index_t split_col;
       index_t begin_col = node->begin();
@@ -215,10 +215,10 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
       double split_val;
       SpRange current_range = node->bound().get(split_dim);
 
-      if (node->count() == points_.n_block_elems()) {
+      if (index_t(node->count()) == index_t(points_.n_block_elems())) {
         // We got one block of points!  Let's give away ownership.
         points_.cache()->GiveOwnership(
-            points_.cache()->Blockid(node->begin()),
+            points_.Blockid(node->begin()),
             begin_rank);
       }
 
@@ -272,8 +272,8 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
             current_range = right_bound.get(split_dim);
             if (current_range.width() == 0) {
               // right_bound straddles the boundary, force it to break up
-              rinal_right_bound |= right_bound;
-              rinal_left_bound |= right_bound;
+              final_right_bound |= right_bound;
+              final_left_bound |= right_bound;
               split_col = goal_col;
               break;
             }

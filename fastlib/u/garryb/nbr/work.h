@@ -25,6 +25,35 @@ class WorkQueueInterface {
   FORBID_COPY(WorkQueueInterface);
 
  public:
+  /**
+   * A single work item.
+   */
+  struct Grain {
+    /** The root node index, also the first node in the contiguous sequence. */
+    index_t node_index;
+    /** One past the last node in the contiguous node sequence. */
+    index_t node_end_index;
+    /** The first point. */
+    index_t point_begin_index;
+    /** One past the last point. */
+    index_t point_end_index;
+
+    index_t n_points() const {
+      return point_end_index - point_begin_index;
+    }
+    index_t n_nodes() const {
+      return node_end_index - node_index;
+    }
+
+    OT_DEF(Grain) {
+      OT_MY_OBJECT(node_index);
+      OT_MY_OBJECT(node_end_index);
+      OT_MY_OBJECT(point_begin_index);
+      OT_MY_OBJECT(point_end_index);
+    }
+  };
+
+ public:
   WorkQueueInterface() {}
   virtual ~WorkQueueInterface() {}
 
@@ -35,7 +64,7 @@ class WorkQueueInterface {
    * this is probably the index in the array of tree nodes of the
    * node to operate on.
    */
-  virtual void GetWork(int process, ArrayList<index_t> *work) = 0;
+  virtual void GetWork(int process, ArrayList<Grain> *work) = 0;
 
   /**
    * Report any relevant statistics to fastexec.
@@ -65,7 +94,7 @@ class LockedWorkQueue : public WorkQueueInterface {
   LockedWorkQueue(WorkQueueInterface *inner) : inner_(inner) {}
   virtual ~LockedWorkQueue() { delete inner_; }
 
-  virtual void GetWork(int process, ArrayList<index_t> *work) {
+  virtual void GetWork(int process, ArrayList<Grain> *work) {
     mutex_.Lock();
     inner_->GetWork(process, work);
     mutex_.Unlock();
@@ -90,7 +119,7 @@ class SimpleWorkQueue
   FORBID_COPY(SimpleWorkQueue);
 
  private:
-  MinHeap<double, index_t> tasks_;
+  MinHeap<double, Grain> tasks_;
 
  public:
   SimpleWorkQueue() {}
@@ -108,12 +137,13 @@ class SimpleWorkQueue
     return tasks_.size();
   }
 
-  virtual void GetWork(int process, ArrayList<index_t> *work);
+  virtual void GetWork(int process, ArrayList<Grain> *work);
   
   void Report(struct datanode *module);
 
  private:
-  void AddWork_(CacheArray<Node> *array, index_t grain_size, index_t node_i);
+  void AddWork_(CacheArray<Node> *array, index_t grain_size, index_t node_i,
+      index_t node_end_i);
 };
 
 template<typename Node>
@@ -126,12 +156,13 @@ void SimpleWorkQueue<Node>::Init(CacheArray<Node> *array, index_t n_grains) {
   index_t root_index = 0;
   const Node *root = array->StartRead(root_index);
   tasks_.Init();
-  AddWork_(array, (root->count() + n_grains - 1) / n_grains, root_index);
+  AddWork_(array, (root->count() + n_grains - 1) / n_grains,
+      root_index, array->end_index());
   array->StopRead(root_index);
 }
 
 template<typename Node>
-void SimpleWorkQueue<Node>::GetWork(int process, ArrayList<index_t> *work) {
+void SimpleWorkQueue<Node>::GetWork(int process, ArrayList<Grain> *work) {
   if (tasks_.size() == 0) {
     work->Init(0);
   } else {
@@ -142,14 +173,22 @@ void SimpleWorkQueue<Node>::GetWork(int process, ArrayList<index_t> *work) {
 
 template<typename Node>
 void SimpleWorkQueue<Node>::AddWork_(
-    CacheArray<Node> *array, index_t grain_size, index_t node_i) {
+    CacheArray<Node> *array, index_t grain_size,
+    index_t node_i, index_t node_end_i) {
   const Node *node = array->StartRead(node_i);
 
   if (node->count() <= grain_size || node->is_leaf()) {
-    tasks_.Put(-1.0 * node->count(), node_i);
+    Grain grain;
+    grain.node_index = node_i;
+    grain.node_end_index = node_end_i;
+    grain.point_begin_index = node->begin();
+    grain.point_end_index = node->end();
+    tasks_.Put(-1.0 * node->count(), grain);
   } else {
-    for (index_t k = 0; k < 2; k++) {
-      AddWork_(array, grain_size, node->child(k));
+    index_t end = node_end_i;
+    for (index_t k = 2; k--;) {
+      AddWork_(array, grain_size, node->child(k), end);
+      end = node->child(k);
     }
   }
 
@@ -171,7 +210,7 @@ class CentroidWorkQueue
     typename Node::Bound bound;
     enum { NONE, SOME, ALL } assignment;
     bool is_leaf;
-    index_t index;
+    Grain grain;
     index_t count;
     index_t child_indices[2];
     InternalNode *children[2];
@@ -224,7 +263,7 @@ class CentroidWorkQueue
     return n_tasks_;
   }
 
-  virtual void GetWork(int process_num, ArrayList<index_t> *work);
+  virtual void GetWork(int process_num, ArrayList<Grain> *work);
 
   index_t n_overflows() const {
     return n_overflows_;
@@ -248,23 +287,30 @@ class CentroidWorkQueue
 
   InternalNode *Child_(InternalNode *node, int i) {
     if (!node->is_leaf && node->children[i] == NULL) {
-      node->children[i] = MakeNode_(node->child_indices[i], node);
+      index_t end_index = (i + 1 == Node::CARDINALITY) ?
+          node->grain.node_end_index : node->child_indices[i+1];
+      node->children[i] = MakeNode_(node->child_indices[i], end_index, node);
     }
     return node->children[i];
   }
 
-  InternalNode *MakeNode_(index_t index, InternalNode *parent);
+  InternalNode *MakeNode_(index_t index, index_t end_index,
+      InternalNode *parent);
   
 };
 
 template<typename Node>
 typename CentroidWorkQueue<Node>::InternalNode *
-    CentroidWorkQueue<Node>::MakeNode_(index_t index, InternalNode *parent) {
+    CentroidWorkQueue<Node>::MakeNode_(index_t index,
+        index_t end_index, InternalNode *parent) {
   const Node *orig_node = tree_->StartRead(index);
   InternalNode *node = new InternalNode();
   node->bound.Copy(orig_node->bound());
   node->is_leaf = orig_node->is_leaf();
-  node->index = index;
+  node->grain.node_index = index;
+  node->grain.node_end_index = end_index;
+  node->grain.point_begin_index = orig_node->begin();
+  node->grain.point_end_index = orig_node->end();
   node->count = orig_node->count();
   for (int i = 0; i < 2; i++) {
     node->child_indices[i] = node->is_leaf ? -1 : orig_node->child(i);
@@ -283,7 +329,7 @@ typename CentroidWorkQueue<Node>::InternalNode *
 template<typename Node>
 void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree, index_t n_grains) {
   tree_ = tree;
-  root_ = MakeNode_(0, NULL);
+  root_ = MakeNode_(tree->begin_index(), tree->end_index(), NULL);
   max_grain_size_ = root_->count / n_grains;
   processes_.Init(rpc::n_peers());
   n_tasks_ = 0;
@@ -294,9 +340,7 @@ void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree, index_t n_grains) {
 
   DistributeInitialWork_(root_, 0, rpc::n_peers());
 
-  // Ensure we don't access the tree after we start the algorithm -- if we
-  // do, we risk making a call out to the network while within the network
-  // thread (which will cause the program to hang).
+  // Ensure we don't access the tree after we start the algorithm.
   tree_ = NULL;
 }
 
@@ -349,7 +393,7 @@ void CentroidWorkQueue<Node>::DistributeInitialWork_(
 }
 
 template<typename Node>
-void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<index_t> *work) {
+void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<Grain> *work) {
   InternalNode *found_node;
   ProcessWorkQueue *queue = &processes_[process_num];
 
@@ -438,7 +482,7 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<index_t> *work)
     }
 
     work->Init(1);
-    (*work)[0] = found_node->index;
+    (*work)[0] = found_node->grain;
 
     Vector midpoint;
     found_node->bound.CalculateMidpoint(&midpoint);
@@ -474,7 +518,7 @@ struct WorkRequest {
 }; 
 
 struct WorkResponse {
-  ArrayList<index_t> work_items;
+  ArrayList<WorkQueueInterface::Grain> work_items;
 
   OT_DEF(WorkResponse) {
     OT_MY_OBJECT(work_items);
@@ -507,7 +551,7 @@ class RemoteWorkQueue
   
   void Init(int channel, int destination);
 
-  void GetWork(int process, ArrayList<index_t> *work_items);
+  void GetWork(int process, ArrayList<Grain> *work_items);
 };
 
 #endif

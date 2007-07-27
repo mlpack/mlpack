@@ -65,7 +65,7 @@ void fl_msg_header(char type, const char *file, const char *func, int line)
 {
   fprintf(stderr, "[%c] %s:%s:%d: ", type, fl_filename(file), func, line);
 }
-
+	
 void fatal(const char *file, const char *func, int line,
 	   const char *format, ...)
 {
@@ -79,6 +79,7 @@ void fatal(const char *file, const char *func, int line,
 
   fprintf(stderr, "\n");
 
+  *(int*)NULL = 0;
   abort();
 }
 
@@ -96,6 +97,7 @@ void nonfatal(const char *file, const char *func, int line,
   fprintf(stderr, "\n");
 
   if (abort_on_nonfatal) {
+    *(int*)NULL = 0;
     abort();
   } else if (pause_on_nonfatal) {
     fl_pause();

@@ -229,7 +229,6 @@ class DiskBlockDevice : public BlockDevice {
  private:
   mode_t mode_;
   RandomAccessFile file_;
-  String path_;
 
  public:
   DiskBlockDevice() {}

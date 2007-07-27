@@ -23,7 +23,7 @@ void RemoteWorkQueue::Init(int channel, int destination) {
 }
 
 void RemoteWorkQueue::GetWork(
-    int process, ArrayList<index_t> *work_items) {
+    int process, ArrayList<Grain> *work_items) {
   WorkRequest request;
   request.operation = WorkRequest::GIVE_ME_WORK;
   request.process = process;

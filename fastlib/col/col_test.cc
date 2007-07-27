@@ -144,16 +144,16 @@ void TestRangeSet() {
   set.Union(1, 4);
   set.Union(10, 16);
   set.Union(4, 10);
-  DEBUG_SAME_INT(set.ranges().size(), 1);
+  DEBUG_SAME_INT(set.size(), 1);
   DEBUG_SAME_INT(set.ranges()[0].begin, 1);
   DEBUG_SAME_INT(set.ranges()[0].end, 16);
   
   set.Reset();
-  DEBUG_SAME_INT(set.ranges().size(), 0);
+  DEBUG_SAME_INT(set.size(), 0);
   set.Union(3, 7);
   set.Union(50, 100);
   set.Union(4, 8);
-  DEBUG_SAME_INT(set.ranges().size(), 2);
+  DEBUG_SAME_INT(set.size(), 2);
   DEBUG_SAME_INT(set.ranges()[0].begin, 3);
   DEBUG_SAME_INT(set.ranges()[0].end, 8);
   DEBUG_SAME_INT(set.ranges()[1].begin, 50);
@@ -170,7 +170,7 @@ void TestRangeSet() {
   set.Union(18, 19);
   set.Union(42, 48);
   set.Union(5, 6);
-  DEBUG_SAME_INT(set.ranges().size(), 1);
+  DEBUG_SAME_INT(set.size(), 1);
   DEBUG_SAME_INT(set.ranges()[0].begin, 1);
   DEBUG_SAME_INT(set.ranges()[0].end, 79);
   set.Union(-55, -52);
@@ -180,14 +180,14 @@ void TestRangeSet() {
   set.Union(-400, -200);
   set.Union(6, 81);
   DEBUG_SAME_INT(set.ranges().size(), 4);
-  DEBUG_SAME_INT(set.ranges()[0].begin, -400);
-  DEBUG_SAME_INT(set.ranges()[0].end, -200);
-  DEBUG_SAME_INT(set.ranges()[1].begin, -55);
-  DEBUG_SAME_INT(set.ranges()[1].end, -52);
-  DEBUG_SAME_INT(set.ranges()[2].begin, 1);
-  DEBUG_SAME_INT(set.ranges()[2].end, 81);
-  DEBUG_SAME_INT(set.ranges()[3].begin, 500);
-  DEBUG_SAME_INT(set.ranges()[3].end, 900);
+  DEBUG_SAME_INT(set[0].begin, -400);
+  DEBUG_SAME_INT(set[0].end, -200);
+  DEBUG_SAME_INT(set[1].begin, -55);
+  DEBUG_SAME_INT(set[1].end, -52);
+  DEBUG_SAME_INT(set[2].begin, 1);
+  DEBUG_SAME_INT(set[2].end, 81);
+  DEBUG_SAME_INT(set[3].begin, 500);
+  DEBUG_SAME_INT(set[3].end, 900);
 }
 
 TEST_SUITE_END(col, TestArrayListInt, TestMinHeap,

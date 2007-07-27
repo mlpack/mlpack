@@ -114,7 +114,7 @@ class Mutex {
   static pthread_mutex_t recursive_mutex_;
 
  private:
-  pthread_mutex_t mutex_;
+  mutable pthread_mutex_t mutex_;
  
  public:
   static Mutex global;
@@ -133,17 +133,17 @@ class Mutex {
   }
   
   /** Obtains the lock. */
-  void Lock() {
+  void Lock() const {
     pthread_mutex_lock(&mutex_);
   }
   
   /** Tries to lock, returns false if doing so would require waiting. */
-  bool TryLock() {
+  bool TryLock() const {
     return likely(pthread_mutex_trylock(&mutex_) != 0);
   }
   
   /** Releases the lock. */
-  void Unlock() {
+  void Unlock() const {
     pthread_mutex_unlock(&mutex_);
   }
 };

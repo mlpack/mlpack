@@ -32,6 +32,7 @@ class SpNode {
  public:
   typedef TBound Bound;
   typedef TStat Stat;
+  enum { CARDINALITY = t_cardinality };
   
   enum {
     /** The root node of a tree is always at index zero. */
