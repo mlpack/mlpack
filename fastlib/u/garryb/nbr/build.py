@@ -1,12 +1,12 @@
 
 librule(name = "nbr",
-   sources = ["blockdev.cc", "nbr_utils.cc",
+   sources = ["distribcache.cc", "blockdev.cc", "nbr_utils.cc",
               "work.cc",
-              "rpc.cc", "rpc_sock.cc", "netcache.cc", "distribcache.cc"],
+              "rpc.cc", "rpc_sock.cc"],
    headers = ["blockdev.h", "cachearray.h",
               "dfs.h", "gnp.h", "kdtree.h", "nbr_utils.h",
               "spbounds.h", "spnode.h", "work.h",
-              "rpc.h", "rpc_sock.h", "netcache.h", "distribcache.h",
+              "rpc.h", "rpc_sock.h", "distribcache.h",
               "cache.h"],
    deplibs = ["fastlib:fastlib_int"])
 

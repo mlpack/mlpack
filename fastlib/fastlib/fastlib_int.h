@@ -17,6 +17,7 @@
 #include "col/heap.h"
 #include "col/string.h"
 #include "col/intmap.h"
+#include "col/rangeset.h"
 #include "data/dataset.h"
 #include "data/crossvalidation.h"
 #include "math/math.h"

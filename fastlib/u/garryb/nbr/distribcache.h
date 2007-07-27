@@ -1,6 +1,7 @@
 #ifndef NBR_DISTRIBCACHE_H
 #define NBR_DISTRIBCACHE_H
 
+#include "rpc.h"
 #include "cache.h"
 #include "blockdev.h"
 
@@ -9,6 +10,7 @@
  Coherency model:
 
  - Block mapping
+   - this section is old so it's probably wrong
    - invalid state exists -- we don't know where the block is
    - state is updated globally at explicit barriers
    - state is updated locally at allocations in two cases
@@ -32,8 +34,25 @@ FEATURES
  - data distribution
  - as-needed dynamic allocation of disk blocks
 
+FUTURE POSSIBILITIES
+- if it's useful for the cache to grow or shrink, it would make little sense
+to change the number of sets (that'd be really hard) -- however, it might
+make sense to tune the associativity.  i.e. the cache is nominally 16-way
+associative, but at runtime you may tune the associativity smaller or larger
+depending on memory pressure.
+
 */
 
+/**
+ * A distributed cache that allows overflow onto disk.
+ *
+ * This is probably the most complicated class that ever existed.  There
+ * are lots of helper structures.  They're all really really important.
+ * If for some reason the documentation seems to be lacking in the
+ * specific details, the ASSERT statements and comments scattered in
+ * distribcache.cc should clarify some of the tricky details (such as
+ * how a synchronization works).
+ */
 class DistributedCache : public BlockDevice {
  private:
   /** Net-transferable request operation */
@@ -52,7 +71,7 @@ class DistributedCache : public BlockDevice {
     }
 
     static size_t size(size_t data_size) {
-      return sizeof(DCWriteRequest) + data_size - sizeof(long_data);
+      return sizeof(Request) + data_size - sizeof(long_data);
     }
   };
 
@@ -157,14 +176,14 @@ class DistributedCache : public BlockDevice {
     };
 
    private:
-    Cache *cache_;
+    DistributedCache *cache_;
     State state_;
     int n_;
     Mutex mutex_;
     ArrayList<BlockStatus> statuses_;
 
    public:
-    void Init(Cache *cache);
+    void Init(DistributedCache *cache);
     void HandleMessage(Message *message);
 
    private:
@@ -246,7 +265,7 @@ class DistributedCache : public BlockDevice {
       // but we have no idea who owns it"
       data = NULL;
       value = UNKNOWN_OWNER;
-      dirty_ranges = NOT_DIRTY_NEW;
+      status = NOT_DIRTY_NEW;
       locks = 0;
     }
     ~BlockMetadata() {
@@ -305,39 +324,25 @@ class DistributedCache : public BlockDevice {
     }
   };
 
-  /** An offset range. */
-  struct Range {
-    blockid_t begin_block;
-    offset_t begin;
-    blockid_t last_block;
-    offset_t end;
+  struct Position {
+    blockid_t block;
+    offset_t offset;
     
-    bool BeginsBeforeEnd(const Range& other) const {
-      if (begin_block == other.begin_block) {
-        return begin <= other.end;
+    void Copy(const Position& other) {
+      *this = other;
+    }
+    
+    bool operator < (const Position& other) {
+      if (unlikely(block == other.block)) {
+        return offset < other.offset;
       } else {
-        return begin_block < other.end_block;
+        return block < other.block;
       }
     }
-    
-    void Merge(const Range& other) {
-      if (other.begin_block <= begin_block) {
-        if (other.begin_block == begin_block) {
-          begin = min(begin, other.begin);
-        } else {
-          begin = other.begin;
-          begin_block = other.begin_block;
-        }
-      }
-      if (other.last_block >= last_block) {
-        if (other.last_block == last_block) {
-          end = max(end, other.end);
-        } else {
-          end = other.end;
-          last_block = other.last_block;
-        }
-      }
+    bool operator == (const Position& other) {
+      return block == other.block && offset == other.offset;
     }
+    DEFINE_ALL_COMPARATORS(Position);
   };
 
  public:
@@ -441,6 +446,14 @@ class DistributedCache : public BlockDevice {
    */
   void AddPartialDirtyRange(blockid_t begin_block, offset_t begin_offset,
       blockid_t last_block, offset_t end_offset);
+  /**
+   * Gives ownership of my block to a new owner.
+   *
+   * What this does is resets the block's owner to the new owner and marks
+   * it as fully dirty, so a flush or synchronization will complete the
+   * ownership transfer.
+   */
+  void GiveOwnership(blockid_t my_block, int new_owner);
 
   /** Allocates blocks, becoming myself the owner of these blocks. */
   blockid_t AllocBlocks(blockid_t n_blocks_to_alloc) {
