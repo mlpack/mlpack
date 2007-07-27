@@ -1,3 +1,9 @@
+#ifndef NBR_DISTRIBCACHE_H
+#define NBR_DISTRIBCACHE_H
+
+#include "cache.h"
+#include "blockdev.h"
+
 /*
 
  Coherency model:
@@ -20,14 +26,40 @@
  - Cache
    - Each machine caches nodes.
 
+FEATURES
+ - fast set associative cache
+ - handles any identically-sized data structure, even with pointers
+ - data distribution
+ - as-needed dynamic allocation of disk blocks
 
 */
 
 class DistributedCache : public BlockDevice {
  private:
+  /** Net-transferable request operation */
+  struct Request {
+   public:
+    enum { CONFIG, QUERY, READ, WRITE, ALLOC } type;
+    BlockDevice::blockid_t blockid;
+    BlockDevice::offset_t begin;
+    BlockDevice::offset_t end;
+    int rank;
+    long long_data[1];
+
+    template<typename T>
+    T *data_as() {
+      return reinterpret_cast<T*>(long_data);
+    }
+
+    static size_t size(size_t data_size) {
+      return sizeof(DCWriteRequest) + data_size - sizeof(long_data);
+    }
+  };
+
   /** A network-sendable version of block information. */
   struct BlockStatus {
-    uint32 owner;
+   public:
+    int32 owner;
     bool is_new;
 
     OT_DEF(BlockStatus) {
@@ -46,14 +78,6 @@ class DistributedCache : public BlockDevice {
     }
   };
 
-  struct QueryResponse {
-    ArrayList<BlockStatus> statuses;
-
-    OT_DEF(QueryResponse) {
-      OT_MY_OBJECT(statuses);
-    }
-  };
-
   /** How to query information about the overall state */
   struct ConfigTransaction {
    public:
@@ -61,18 +85,6 @@ class DistributedCache : public BlockDevice {
     Message *response;
    public:
     ~ConfigTransaction() { delete response; }
-
-    void Doit(int channel_num, int peer);
-    void HandleMessage(Message *message);
-  };
-
-  /** How to query information about the overall state */
-  struct QueryTransaction {
-   public:
-    DoneCondition cond;
-    Message *response;
-   public:
-    ~QueryTransaction() { delete response; }
 
     void Doit(int channel_num, int peer);
     void HandleMessage(Message *message);
@@ -116,7 +128,7 @@ class DistributedCache : public BlockDevice {
 
   /** Server-side transaction */
   struct ResponseTransaction : public Transaction {
-   public:
+   private:
     DistributedCache* cache_;
 
    public:
@@ -124,10 +136,61 @@ class DistributedCache : public BlockDevice {
     void HandleMessage(Message *message);
   };
 
+  /**
+   * A sync transaction is a barrier to make sure everyone flushes writes,
+   * along with a reduction and scatter so each machine knows the updated
+   * block owner information.
+   */
+  struct SyncTransaction {
+   private:
+    enum State {
+      /** My children and I are flushing data. */
+      CHILDREN_FLUSHING,
+      /** Others are still flushing. */
+      OTHERS_FLUSHING,
+      /** My children and I are getting accumulating which blocks we own. */
+      CHILDREN_ACCUMULATING,
+      /** Parent hasn't yet sent me the authoritative blocks. */
+      OTHERS_ACCUMULATING,
+      /** Okay, synced and done! */
+      DONE
+    };
+
+   private:
+    Cache *cache_;
+    State state_;
+    int n_;
+    Mutex mutex_;
+    ArrayList<BlockStatus> statuses_;
+
+   public:
+    void Init(Cache *cache);
+    void HandleMessage(Message *message);
+
+   private:
+    void ChildFlushed_();
+    void ParentFlushed_();
+    void AccumulateChild_(Message *message);
+    void CheckAccumulation_();
+    void ParentAccumulated_(const ArrayList<BlockStatus&> statuses_in);
+    void SendBlankSyncMessage_(int peer);
+    void SendStatusInformation_(int peer);
+  };
+
   /** Server-side channel */
   struct CacheChannel : public Channel {
-    DistributedCache *cache;
+   private:
+    DistributedCache *cache_;
+    SyncTransaction *sync_transaction_;
+    Mutex mutex_;
+    DoneCondition sync_done_;
+
+   public:
+    void Init(DistributedCache *cache_in);
     Transaction *GetTransaction(Message *message);
+    void SyncDone();
+    void StartSyncFlushDone();
+    void WaitSync();
   };
 
   /** Cache associative entry. */
@@ -244,21 +307,37 @@ class DistributedCache : public BlockDevice {
 
   /** An offset range. */
   struct Range {
+    blockid_t begin_block;
     offset_t begin;
+    blockid_t last_block;
     offset_t end;
-  };
-
-  /**
-   * Write ranges.
-   */
-  struct WriteRanges {
-    ArrayList<Range> ranges;
-    int next;
-  };
-
-  struct OverflowMetadata {
-    /** Next free local block */
-    BlockDevice::blockid_t next_free_local;
+    
+    bool BeginsBeforeEnd(const Range& other) const {
+      if (begin_block == other.begin_block) {
+        return begin <= other.end;
+      } else {
+        return begin_block < other.end_block;
+      }
+    }
+    
+    void Merge(const Range& other) {
+      if (other.begin_block <= begin_block) {
+        if (other.begin_block == begin_block) {
+          begin = min(begin, other.begin);
+        } else {
+          begin = other.begin;
+          begin_block = other.begin_block;
+        }
+      }
+      if (other.last_block >= last_block) {
+        if (other.last_block == last_block) {
+          end = max(end, other.end);
+        } else {
+          end = other.end;
+          last_block = other.last_block;
+        }
+      }
+    }
   };
 
  public:
@@ -266,12 +345,12 @@ class DistributedCache : public BlockDevice {
   ArrayList<BlockMetadata> blocks_;
   BlockHandler *handler_;
 
-  ArrayList<WriteRanges> write_ranges_;
-  int free_range_;
+  /* ranges that apply for partial writes */
+  ArrayList<Range> write_ranges_;
 
   /* local device */
   BlockDevice *overflow_device_;
-  ArrayList<OverflowMetadata> overflow_metadata_;
+  DenseIntMap<blockid_t> overflow_next_;
   int32 overflow_free_;
 
   /* remote stuff */
@@ -311,10 +390,24 @@ class DistributedCache : public BlockDevice {
    * extra reads.
    */
   void BestEffortFlush();
-  /** Call this before a rpc::Barrier to initiate synchronization. */
-  void PreBarrierSync();
-  /** Call this after a rpc::Barrier to complete synchronization. */
-  void PostBarrierSync();
+  /** Starts syncing. */
+  void StartSync();
+  /** Ensures that the sync point has passed before returning. */
+  void WaitSync();
+  /**
+   * Synchronizes status with all machines.
+   *
+   * What this does is writes back all blocks (StartSync), and then in
+   * a tree-like manner, reconciles all the block ownership information.
+   *
+   * To hide the sync latency somewhat, you can StartSync several
+   * synchronizations, optionally do some stuff in between, and
+   * then StopSync all of the synchronizations instead.
+   */
+  void Sync() {
+    StartSync();
+    WaitSync();
+  }
   /** Read data as bytes. */
   void Read(blockid_t blockid, offset_t begin, offset_t end, char *buf);
   /** Write data as bytes. */
@@ -341,7 +434,14 @@ class DistributedCache : public BlockDevice {
   void StopRead(blockid_t blockid);
   /** End a write access. */
   void StopWrite(blockid_t blockid);
-  
+  /**
+   * Adds a partial dirty range.
+   *
+   * The only way to remove a dirty range is by a sync barrier.
+   */
+  void AddPartialDirtyRange(blockid_t begin_block, offset_t begin_offset,
+      blockid_t last_block, offset_t end_offset);
+
   /** Allocates blocks, becoming myself the owner of these blocks. */
   blockid_t AllocBlocks(blockid_t n_blocks_to_alloc) {
     return AllocBlocks(n_blocks_to_alloc, my_rank_);
@@ -353,11 +453,16 @@ class DistributedCache : public BlockDevice {
   void InitChannel_(int channel_num_in);
   void InitCommon_(offset_t n_block_bytes_);
   void InitCache_(size_t total_ram);
+  void InitFile_(const char *fname);
   /**
    * After a sync point, handles the change in ownership info.
    * This is one of the most important parts of our coherency mechanisms.
    */
   void HandleStatusInformation_(const ArrayList<BlockStatus>& statuses);
+  /**
+   * Marks me as owner of blocks I own and marks other blocks as null.
+   */
+  void ComputeStatusInformation_(ArrayList<BlockStatus>* statuses);
   /**
    * Tries to grab a block from cache, if it fails, this pulls it from the
    * proper source by calling HandleMiss_.
@@ -395,3 +500,5 @@ class DistributedCache : public BlockDevice {
   /** Marks a block as partially dirty. */
   void MarkDirty_(BlockMetadata *block, offset_t begin, offset_t end);
 };
+
+#endif

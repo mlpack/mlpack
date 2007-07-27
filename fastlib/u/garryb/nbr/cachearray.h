@@ -1,7 +1,7 @@
 #ifndef NBR_CACHEARRAY_H
 #define NBR_CACHEARRAY_H
 
-#include "cache.h"
+#include "distribcache.h"
 
 /**
  * Array elements may vary in size from run to run.  However, we place the
@@ -57,11 +57,11 @@ class CacheArrayBlockHandler : public BlockHandler {
 //        inner_device->n_block_bytes(), buffer.begin());
 //  }
 
-  /**
-   * Inits from a block device -- using this on the cache itself will
-   * probably cause lots of trouble (especially in non-read modes) so please
-   * use it on the underlying block device.
-   */
+//  /**
+//   * Inits from a block device -- using this on the cache itself will
+//   * probably cause lots of trouble (especially in non-read modes) so please
+//   * use it on the underlying block device.
+//   */
 //  void InitFromDevice(BlockDevice *inner_device) {
 //    ArrayList<char> buffer;
 //
@@ -136,6 +136,8 @@ class CacheArray {
    * At least 32 is needed for decent tree-descent performance.
    */
   static const int FIFO_SIZE = 64;
+  /** Bitmask for doing modulo FIFO_SIZE. */
+  static const int FIFO_MASK = (FIFO_SIZE-1);
 
  protected:
   Metadata *adjusted_metadatas_;
@@ -144,7 +146,7 @@ class CacheArray {
 
   ArrayList<Metadata> metadatas_;
 
-  ArrayList<BlockDevice::blockid_t> fifo_;
+  BlockDevice::blockid_t *fifo_;
 
   unsigned int n_elem_bytes_;
   index_t begin_;
@@ -152,14 +154,18 @@ class CacheArray {
   index_t end_;
 
   BlockDevice::blockid_t skip_blocks_;
-#warning "mode is bull"
   BlockDevice::mode_t mode_;
 
   DistribtedCache *cache_;
 
  public:
   CacheArray() {}
-  ~CacheArray() {}
+  ~CacheArray() {
+    if (BlockDevice::need_write(mode_) {
+      Flush();
+    }
+    mem::Free(fifo_);
+  }
 
   /** Reopens another cache array, the same range */
   void Init(CacheArray *other, BlockDevice::mode_t mode_in) {
@@ -176,9 +182,8 @@ class CacheArray {
   void Init(SmallCache *cache_in, BlockDevice::mode_t mode_in,
       index_t begin_index_in, index_t end_index_in);
 
-#error no correct support for distributed allocation
+#error need the static domain decomposition code
 #error need to register with the cache
-#error the distributed cache is not complete
 
   /**
    * Opens an existing SmallCache, a sub-range only.
@@ -242,6 +247,8 @@ class CacheArray {
     return CheckoutElement_(element_id);
   }
 
+  void Flush();
+
   void StopRead(index_t element_id) {
     DEBUG_ONLY(BoundsCheck_(element_id));
     ReleaseElement_(element_id);
@@ -278,19 +285,6 @@ class CacheArray {
     ReleaseElement_(index_dest);
   }
 
-  /**
-   * Flushes all changes.
-   */
-  void Flush(bool clear);
-
-  /**
-   * Change the mdoe.
-   */
-  void Remode(BlockDevice::mode_t new_mode) {
-    // TODO: Assert no blocks are open.
-    mode_ = new_mode;
-  }
-
   index_t AllocD(int owner, index_t count) {
     DEBUG_ASSERT(BlockDevice::is_dynamic(mode_));
 
@@ -306,13 +300,17 @@ class CacheArray {
       next_alloc_ = blockid << n_block_elems_log();
       end_ = next_alloc_ + (blocks_to_alloc << n_block_elems_log());
 
-      // If we straddle a block boundary, force the last block to be
-      // dirty, so we avoid edge cases where part of the block is
-      // initialized and the other isn't, and a crash occurs within
-      // the block-handler when pulling in a block.
-      if ((next_alloc_ & n_block_elems_mask()) != 0) {
-        HandleCacheMiss_(end_ - 1);
-      }
+//      // If we straddle a block boundary, force the last block to be
+//      // dirty, so we avoid edge cases where part of the block is
+//      // initialized and the other isn't, and a crash occurs within
+//      // the block-handler when pulling in a block.
+//
+// NOTE: This is not necessary anymore since the distributed cache accurately
+// tracks block status, where the owner always complete initializes the block.
+//      
+//      if ((next_alloc_ & n_block_elems_mask()) != 0) {
+//        HandleCacheMiss_(end_ - 1);
+//      }
     }
 
     index_t ret_pos = next_alloc_;
@@ -333,8 +331,9 @@ class CacheArray {
       next_alloc_ = blockid << n_block_elems_log();
       end_ = next_alloc_ + n_block_elems();
 
-      // Force this block to be dirty.
-      HandleCacheMiss_(next_alloc_);
+//      // Force this block to be dirty.
+// NOTE: No longer necessary (see above)
+//      HandleCacheMiss_(next_alloc_);
     }
 
     index_t ret_pos = next_alloc_;
@@ -407,8 +406,9 @@ void CacheArray<TElement>::Init(
   end_ = end_index_in;
   next_alloc_ = end_;
   mode_ = mode_in;
-
   n_elem_bytes_ = handler->n_elem_bytes();
+  fifo_ = mem::Alloc<BlockDevice::blockid_t>(FIFO_SIZE);
+
   unsigned n_block_elems_calc = cache_->n_block_bytes() / n_elem_bytes_;
   // Cache size must be a power of 2.
   n_block_elems_log_ = math::IntLog2(n_block_elems_calc);
@@ -416,6 +416,11 @@ void CacheArray<TElement>::Init(
   skip_blocks_ = begin_ / n_block_elems_calc;
   DEBUG_ASSERT_MSG(cache_->n_block_bytes() % n_elem_bytes_ == 0,
       "Block size must be a multiple of element size.");
+
+  if (!BlockDevice::is_dynamic(mode_)) {
+    FOO
+    cache_->AddPartialDirtyRange();
+  }
 
   metadatas_.Init(((end_ + n_block_elems_mask()) >> n_block_elems_log())
       - skip_blocks_);
@@ -445,14 +450,19 @@ typename CacheArray<TElement>::Element* CacheArray<TElement>::HandleCacheMiss_(
   BlockDevice::blockid_t victim;
   Metadata *victim_metadata;
 
-#error make sure adjusted_metadatas[-1] always has zero lock count
-  do {
+  // warning, this isn't very readable... basically, look for the first
+  // unlocked item -- the most likely case is that the first item in the
+  // fifo is non-negative (i.e. it exists) and it's most likely not locked
+  for (;;) {
     fifo_index_ = (fifo_index_+1) & FIFO_MASK;
     victim = fifo_[fifo_index_];
+    if (unlikely(victim < 0)) {
+      break;
+    }
     victim_metadata = adjusted_metadats_ + victim;
-  } while (victim_metadata->lock_count != 0);
-
-  if (likely(victim >= 0)) {
+    if (unlikely(victim_metadata->lock_count != 0)) {
+      continue;
+    }
     DEBUG_ASSERT(victim_metadata->data != NULL);
     if (BlockDevice::can_write(mode_)) {
       cache_->StopWrite(victim);
@@ -460,6 +470,7 @@ typename CacheArray<TElement>::Element* CacheArray<TElement>::HandleCacheMiss_(
       cache_->StopRead(victim);
     }
     victim_metadata->data = NULL;
+    break;
   }
 
   BlockDevice::blockid_t blockid = Blockid_(element_id);
@@ -679,7 +690,8 @@ class TempCacheArray : public CacheArray<TElement> {
   /** Creates a blank, temporary cached array */
   void Init(const TElement& default_obj,
       index_t n_elems_in,
-      unsigned int n_block_elems_in) {
+      unsigned int n_block_elems_in,
+      size_t total_ram = 16777216) {
     CacheArrayBlockHandler<TElement> *handler =
         new CacheArrayBlockHandler<TElement>;
     handler->Init(default_obj);

@@ -68,10 +68,16 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   if (fd_ <= 0) {
     FATAL("Could not open file '%s'.", fname);
   }
+  
+  mode_ = mode;
+  fname_.Copy(fname);
 }
 
 void RandomAccessFile::Close() {
   close(fd_);
+  if (BlockDevice::M_TEMP == mode_) {
+    unlink(fname);
+  }
 }
 
 void RandomAccessFile::Write(off_t pos, size_t len, const char *buffer) {
