@@ -10,15 +10,6 @@ librule(name = "nbr",
               "cache.h"],
    deplibs = ["fastlib:fastlib_int"])
 
-librule(name = "dc",
-   sources = ["distribcache.cc"],
-   headers = ["blockdev.h", "cachearray.h",
-              "dfs.h", "gnp.h", "kdtree.h", "nbr_utils.h",
-              "spbounds.h", "spnode.h", "work.h",
-              "rpc.h", "rpc_sock.h", "distribcache.h",
-              "cache.h"],
-   deplibs = ["fastlib:fastlib_int"])
-
 binrule(name = "rpc_sock_test",
    sources = ["rpc_sock_test.cc"],
    deplibs = [":nbr"])

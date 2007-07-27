@@ -6,7 +6,10 @@
 /**
  * A set of [begin,end) ranges.
  *
- * The copy constructor and inequality operators must be defined.
+ * The copy constructor and inequality operators must be defined of the
+ * template class.
+ *
+ * This is O(N) insertion, so not efficient for large sets.
  */
 template<typename TBoundary>
 class RangeSet {
@@ -51,7 +54,7 @@ class RangeSet {
 
     // add everything that strictly precedes the new one to add
     while (i < ranges_.size() && !(begin <= ranges_[i].end)) {
-      new_list.AddBack(ranges_[i]);
+      new_list.AddBackItem(ranges_[i]);
       i++;
     }
 
@@ -75,7 +78,7 @@ class RangeSet {
 
     // add everything that comes after
     for (; i < ranges_.size(); i++) {
-      new_list.AddBack(ranges_[i]);
+      new_list.AddBackItem(ranges_[i]);
     }
 
     // replace the list
@@ -85,6 +88,18 @@ class RangeSet {
   const ArrayList<Range>& ranges() const {
     return ranges_;
   }
+
+  /**
+   * Gets a constant range element.
+   */
+  const Range& operator[] (index_t i) const {
+    return ranges_[i];
+  }
+  
+  const index_t size() const {
+    return ranges_.size();
+  }
+
 };
 
 #endif

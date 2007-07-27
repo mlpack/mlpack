@@ -389,7 +389,7 @@ class ArrayList {
   /**
    * Adds one specified element to the back, and returns the pointer to it.
    */
-  Element* AddBack(const Element& value) {
+  Element* AddBackItem(const Element& value) {
     if (unlikely(size_ == cap_)) {
       IncreaseCap_((cap_ + 1) * 2);
     }
