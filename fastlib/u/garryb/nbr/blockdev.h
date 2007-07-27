@@ -235,6 +235,12 @@ class DiskBlockDevice : public BlockDevice {
   DiskBlockDevice() {}
   virtual ~DiskBlockDevice();
 
+  /**
+   * Opens a disk file with the given mode.
+   *
+   * If fname is NULL and mode is M_TEMP, then a filename is automatically
+   * generated, and the file is cleaned up (even if the process dies).
+   */
   void Init(const char *fname, mode_t mode, offset_t block_size);
 
   void Read(blockid_t blockid, offset_t begin, offset_t end,

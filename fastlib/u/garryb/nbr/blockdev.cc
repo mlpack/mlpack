@@ -49,35 +49,46 @@ BlockDevice::blockid_t BlockDeviceWrapper::AllocBlocks(
 //------------------------------------------------------------------------
 
 void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
-  int octal_mode;
-  
-  if (BlockDevice::can_write(mode)) {
-    octal_mode = O_RDWR;
+  if (fname == NULL) {
+    DEBUG_ASSERT_MSG(mode == BlockDevice::M_TEMP,
+        "Null filenames are only valid for temporary files.");
+    char new_fname[] = "/tmp/nbr_gnp_XXXXXXXXXXXX.image";
+    fd_ = mkstemp(new_fname);
+    fname_.Copy(new_fname);
   } else {
-    octal_mode = O_RDONLY;
-  }
-  if (BlockDevice::need_init(mode)) {
-    octal_mode |= O_TRUNC;
-  }
-  if (!BlockDevice::need_read(mode)) {
-    octal_mode |= O_CREAT;
-  }
+    int octal_mode;
+    
+    if (BlockDevice::can_write(mode)) {
+      octal_mode = O_RDWR;
+    } else {
+      octal_mode = O_RDONLY;
+    }
+    if (BlockDevice::need_init(mode)) {
+      octal_mode |= O_TRUNC;
+    }
+    if (!BlockDevice::need_read(mode)) {
+      octal_mode |= O_CREAT;
+    }
 
-  fd_ = open(fname, octal_mode, 0666);
+    fd_ = open(fname, octal_mode, 0666);
+    fname_.Copy(fname);
+  }
+  
+  if (octal_mode == BlockDevice::M_TEMP) {
+    // UNIX filesystem semantics: you can access an unlinked file, it will
+    // just automatically be cleaned up later.
+    unlink(fname_.c_str());
+  }
 
   if (fd_ <= 0) {
     FATAL("Could not open file '%s'.", fname);
   }
   
   mode_ = mode;
-  fname_.Copy(fname);
 }
 
 void RandomAccessFile::Close() {
   close(fd_);
-  if (BlockDevice::M_TEMP == mode_) {
-    unlink(fname);
-  }
 }
 
 void RandomAccessFile::Write(off_t pos, size_t len, const char *buffer) {
