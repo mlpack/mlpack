@@ -206,6 +206,8 @@ class BlockDeviceWrapper : public BlockDevice {
 class RandomAccessFile {
  private:
   int fd_;
+  mode_t mode_;
+  String fname_;
 
  public:
   RandomAccessFile() {}
@@ -233,7 +235,7 @@ class DiskBlockDevice : public BlockDevice {
   DiskBlockDevice() {}
   virtual ~DiskBlockDevice();
 
-  void Init(const char *fname, mode_t mode, offset_t block_size = 131072);
+  void Init(const char *fname, mode_t mode, offset_t block_size);
 
   void Read(blockid_t blockid, offset_t begin, offset_t end,
      char *data);

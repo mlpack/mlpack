@@ -56,6 +56,10 @@ class Message {
   char *data() const {
     return data_;
   }
+  template<typename T>
+  T *data_as() const {
+    return reinterpret_cast<T*>(data_);
+  }
   char *buffer() const {
     return buffer_;
   }

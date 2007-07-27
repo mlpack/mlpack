@@ -30,6 +30,7 @@ class BlockHandler {
       char *block) = 0;
 };
 
+#if 0
 /**
  * Extra-simple cache for when everything fits in RAM.
  *
@@ -126,5 +127,6 @@ class SmallCache : public BlockDeviceWrapper {
 
   Metadata *GetBlock_(blockid_t blockid);
 };
+#endif
 
 #endif
