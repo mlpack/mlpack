@@ -143,6 +143,9 @@ void DistributedCache::HandleStatusInformation_(
       // be the owner.
       DEBUG_ASSERT_MSG(status->owner != my_rank_,
           "Received ownership unexpectedly");
+      DEBUG_ASSERT_MSG(status->owner >= 0,
+          "It looks like block %"LI"d is owned by %d (i'm %d)\n",
+          i, status->owner, rpc::rank());
       DEBUG_ASSERT_MSG(!block->is_dirty(),
           "Remote blocks shouldn't be dirty during a sync.");
       block->value = ~status->owner;
@@ -154,7 +157,8 @@ void DistributedCache::HandleStatusInformation_(
 void DistributedCache::ComputeStatusInformation_(
     ArrayList<BlockStatus> *statuses) const {
   mutex_.Lock();
-  statuses->Init(n_blocks());
+  DEBUG_ASSERT(n_blocks_ == blocks_.size());
+  statuses->Init(n_blocks_);
   for (index_t i = 0; i < statuses->size(); i++) {
     BlockStatus *status = &(*statuses)[i];
     const BlockMetadata *block = &blocks_[i];
@@ -162,7 +166,7 @@ void DistributedCache::ComputeStatusInformation_(
       status->owner = my_rank_;
       status->is_new = block->is_new();
     } else {
-      status->owner = -1;
+      status->owner = -BIG_BAD_NUMBER;
       status->is_new = false;
     }
   }
@@ -351,6 +355,7 @@ void DistributedCache::GiveOwnership(blockid_t my_blockid, int new_owner) {
       overflow_free_ = block->local_blockid();
     }
     block->value = ~new_owner;
+    DEBUG_ASSERT(block->status == FULLY_DIRTY); // set by StartWrite
     mutex_.Unlock();
     StopWrite(my_blockid);
   }
@@ -467,7 +472,6 @@ void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
   DEBUG_ASSERT(block->data != NULL);
 
   if (block->is_new()) {
-    fprintf(stderr, "%d: New block %d\n", rpc::rank(), blockid);
     DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
         "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
     handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
@@ -866,7 +870,8 @@ void DistributedCache::SyncTransaction::ParentFlushed_() {
 }
 
 void DistributedCache::SyncTransaction::AccumulateChild_(Message *message) {
-  SyncInfo *info = ot::PointerThaw<SyncInfo>(message->data());
+  SyncInfo *info = ot::PointerThaw<SyncInfo>(
+      message->data_as<Request>()->data_as<char>());
   sync_info_.MergeWith(*info);
   n_++;
   CheckAccumulation_();
