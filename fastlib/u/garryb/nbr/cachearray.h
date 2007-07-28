@@ -97,7 +97,11 @@ class CacheArray {
   /**
    * Number of pages in the thread-local FIFO cache.
    *
-   * At least 32 is needed for decent tree-descent performance.
+   * This absolutely cannot be less than the maximum number of concurrent
+   * "locked" blocks!  This maximum should be 32 for most use cases, with 64
+   * giving a nice balance between efficiency and memory usage -- given the
+   * worst-case of 32 used blocks, the mean search time for an empty FIFO
+   * entry is two, and only 64 blocks are forced into RAM.
    */
   static const int FIFO_SIZE = 64;
   /** Bitmask for doing modulo FIFO_SIZE. */
@@ -468,8 +472,10 @@ typename CacheArray<TElement>::Element* CacheArray<TElement>::HandleCacheMiss_(
   if (BlockDevice::can_write(mode_)) {
     metadata->data = cache_->StartWrite(blockid,
         !BlockDevice::is_dynamic(mode_));
+    //putchar('#');
   } else {
     metadata->data = cache_->StartRead(blockid);
+    //putchar('.');
   }
 
   BlockDevice::offset_t offset =
