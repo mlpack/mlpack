@@ -458,9 +458,9 @@ template<typename GNP, typename Solver>
 void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupConfig_() {
   // Set up and export the config object
   config_.n_threads = fx_param_int(module_, "n_threads", 1);
-  config_.data_points_mb = fx_param_int(module_, "data_points_mb", 20);
-  config_.data_nodes_mb = fx_param_int(module_, "data_nodes_mb", 10);
-  config_.q_results_mb = fx_param_int(module_, "q_results_mb", 10);
+  config_.data_points_mb = fx_param_int(module_, "data_points_mb", 400);
+  config_.data_nodes_mb = fx_param_int(module_, "data_nodes_mb", 100);
+  config_.q_results_mb = fx_param_int(module_, "q_results_mb", 100);
 }
 
 template<typename GNP, typename Solver>

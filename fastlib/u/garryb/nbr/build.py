@@ -29,6 +29,7 @@ binrule(name = "tkde",
 #   deplibs = [":nbr_mpi"])
 
 binrule(name = "allnn_rpc",
+   headers = ["allnn.cc"],
    sources = ["allnn_rpc.cc"],
    deplibs = [":nbr"])
 

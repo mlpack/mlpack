@@ -140,6 +140,7 @@ class DistributedCache : public BlockDevice {
   struct WriteTransaction : public Transaction  {
    public:
     void Doit(int channel_num, int peer, BlockDevice::blockid_t blockid,
+        BlockHandler *handler,
         BlockDevice::offset_t begin, BlockDevice::offset_t end,
         const char *buffer);
     void HandleMessage(Message *message);
@@ -533,7 +534,7 @@ class DistributedCache : public BlockDevice {
   /**
    * After a sync point, handles synchronization information.
    */
-  void DistributedCache::HandleSyncInfo_(const SyncInfo& info);
+  void HandleSyncInfo_(const SyncInfo& info);
   /**
    * Marks me as owner of blocks I own and marks other blocks as null.
    */
@@ -562,9 +563,10 @@ class DistributedCache : public BlockDevice {
   void Purge_(blockid_t blockid);
   /**
    * Writes back a dirty block to our local disk.
-   * Resets the status to clean but does not clear data.
+   * Resets the status to clean -- although this does not clear the data, this
+   * will freeze the data!
    */
-  void WritebackDirtyLocal_(blockid_t blockid);
+  void WritebackDirtyLocalFreeze_(blockid_t blockid);
   /**
    * Writes back a dirty block to the proper machine.
    * Resets status to clean but does not clear the data.
