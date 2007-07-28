@@ -224,6 +224,9 @@ class DistributedCache : public BlockDevice {
     Mutex mutex_;
     DoneCondition sync_done_;
 
+   private:
+    SyncTransaction *GetSyncTransaction_();
+
    public:
     void Init(DistributedCache *cache_in);
     Transaction *GetTransaction(Message *message);
@@ -314,6 +317,10 @@ class DistributedCache : public BlockDevice {
     /** Determines the block's owner. */
     int owner(const struct DistributedCache *cache) const {
       return unlikely(value >= 0) ? cache->my_rank_ : (~value);
+    }
+    int owner() const {
+      DEBUG_ASSERT_MSG(!is_owner(), "owner() doesn't work if i'm the owner");
+      return ~value;
     }
     /** Determines whether I am the owner. */
     bool is_owner() const {

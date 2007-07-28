@@ -141,8 +141,8 @@ void DistributedCache::HandleStatusInformation_(
       // performing the sync barrier and couldn't have written to the block
       // myself, and if some other machine had written it, I'd actually
       // be the owner.
-      DEBUG_ASSERT_MSG(!block->is_owner(),
-          "Lost ownership unexpectedly");
+      DEBUG_ASSERT_MSG(status->owner != my_rank_,
+          "Received ownership unexpectedly");
       DEBUG_ASSERT_MSG(!block->is_dirty(),
           "Remote blocks shouldn't be dirty during a sync.");
       block->value = ~status->owner;
@@ -163,7 +163,7 @@ void DistributedCache::ComputeStatusInformation_(
       status->is_new = block->is_new();
     } else {
       status->owner = -1;
-      status->is_new = NOT_DIRTY_NEW;
+      status->is_new = false;
     }
   }
   mutex_.Unlock();
@@ -209,14 +209,27 @@ void DistributedCache::StartSync() {
     blockid_t blockid = slot->blockid;
     if (blockid >= 0) {
       BlockMetadata *block = &blocks[blockid];
-      slot++;
-      if (unlikely(!block->is_owner())) {
+      if (!block->is_owner()) {
         slot->blockid = -1;
         DEBUG_ASSERT_MSG(block->locks == 0, "Why is a locked block in LRU?");
         Purge_(blockid);
+        DEBUG_ASSERT_MSG(!block->is_dirty(),
+            "We purged a block and it's still marked as dirty?");
       }
     }
+    slot++;
   } while (i != 0);
+
+#ifdef DEBUG
+  for (index_t i = 0; i < n_blocks_; i++) {
+    BlockMetadata *block = &blocks[i];
+    DEBUG_ASSERT_MSG(!block->is_busy(), "A block is busy during sync.");
+    if (block->is_dirty()) {
+      DEBUG_ASSERT(block->is_in_core());
+      DEBUG_ASSERT(block->is_owner());
+    }
+  }
+#endif
 
   // TODO: Make absolutely certain nobody is currently accessesing the cache
   write_ranges_.Reset();
@@ -240,7 +253,7 @@ void DistributedCache::Read(blockid_t blockid,
     block->locks = 0;
   }
   offset_t n_bytes = end - begin;
-  mem::Copy(buf, block->data + begin, n_bytes);
+  mem::CopyBytes(buf, block->data + begin, n_bytes);
   handler_->BlockFreeze(blockid, begin, n_bytes, block->data + begin, buf);
   if (unlikely(block->locks == 0)) {
     EncacheBlock_(blockid);
@@ -263,11 +276,12 @@ void DistributedCache::RemoteRead(blockid_t blockid,
 
 void DistributedCache::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *buf) {
-  // hmm, i have to be the owner of the block
-  char *dest = StartWrite(blockid, true);
+  // i have to be the owner of the block
+  char *dest = StartWrite(blockid, true) + begin;
   size_t n_bytes = end - begin;
 
-  mem::CopyBytes(dest + begin, buf, n_bytes);
+  mem::CopyBytes(dest, buf, n_bytes);
+  handler_->BlockThaw(blockid, begin, n_bytes, dest);
 
   StopWrite(blockid);
 }
@@ -284,6 +298,7 @@ void DistributedCache::RemoteWrite(blockid_t blockid,
   if (!block->is_owner()) {
     // when we receive a remote write, we are always the owner
     block->value = SELF_OWNER_UNALLOCATED; // mark as owner
+    block->status = NOT_DIRTY_NEW;
   }
   mutex_.Unlock();
   Write(blockid, begin, end, buf);
@@ -452,6 +467,7 @@ void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
   DEBUG_ASSERT(block->data != NULL);
 
   if (block->is_new()) {
+    fprintf(stderr, "%d: New block %d\n", rpc::rank(), blockid);
     DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
         "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
     handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
@@ -470,7 +486,8 @@ void DistributedCache::HandleLocalMiss_(BlockDevice::blockid_t blockid) {
   blockid_t local_blockid = block->local_blockid();
 
   DEBUG_ASSERT(block->is_owner());
-  fprintf(stderr, "DISK: reading %d from %d\n", blockid, local_blockid);
+  fprintf(stderr, "DISK: reading %d from %d (%d bytes)\n",
+      blockid, local_blockid, n_block_bytes_);
   overflow_device_->Read(local_blockid,
       0, n_block_bytes_, block->data);
 }
@@ -480,7 +497,7 @@ void DistributedCache::HandleRemoteMiss_(BlockDevice::blockid_t blockid) {
 
   DEBUG_ASSERT(!block->is_owner());
   ReadTransaction read_transaction;
-  read_transaction.Doit(channel_num_, block->value,
+  read_transaction.Doit(channel_num_, block->owner(),
       blockid, 0, n_block_bytes_, block->data);
 }
 
@@ -510,7 +527,7 @@ void DistributedCache::WritebackDirtyLocalFreeze_(
 
   DEBUG_ASSERT(block->is_owner());
 
-  BlockDevice::blockid_t local_blockid = block->value;
+  BlockDevice::blockid_t local_blockid = block->local_blockid();
 
   if (local_blockid == SELF_OWNER_UNALLOCATED) {
     local_blockid = overflow_free_;
@@ -524,7 +541,8 @@ void DistributedCache::WritebackDirtyLocalFreeze_(
   }
 
   handler_->BlockFreeze(blockid, 0, n_block_bytes_, block->data, block->data);
-  fprintf(stderr, "DISK: writing %d to %d\n", blockid, local_blockid);
+  fprintf(stderr, "DISK: writing %d to %d (%d bytes)\n",
+      blockid, local_blockid, n_block_bytes_);
   overflow_device_->Write(local_blockid, 0, n_block_bytes_, block->data);
   block->status = NOT_DIRTY_OLD;
 }
@@ -538,7 +556,7 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
   if (block->status == FULLY_DIRTY) {
     // The entire block is dirty
     WriteTransaction write_transaction;
-    write_transaction.Doit(channel_num_, block->value, blockid, handler_,
+    write_transaction.Doit(channel_num_, block->owner(), blockid, handler_,
         0, n_block_bytes_, block->data);
   } else {
     DEBUG_ASSERT(block->status == PARTIALLY_DIRTY);
@@ -561,8 +579,9 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
           end_offset = end.offset;
         }
         WriteTransaction write_transaction;
-        write_transaction.Doit(channel_num_, block->value, blockid, handler_,
-            begin_offset, end_offset, block->data);
+        write_transaction.Doit(channel_num_, block->owner(), blockid,
+            handler_,
+            begin_offset, end_offset, block->data + begin_offset);
         DEBUG_ONLY(anything_done = true);
       }
     }
@@ -603,7 +622,7 @@ void DistributedCache::ReadTransaction::Doit(
   response = NULL;
   Send(message);
   cond.Wait();
-  mem::Copy(buffer, response->data(), end - begin);
+  mem::CopyBytes(buffer, response->data(), end - begin);
   delete response;
 }
 
@@ -654,7 +673,7 @@ void DistributedCache::WriteTransaction::Doit(
   request->begin = begin;
   request->end = end;
   request->rank = 0;
-  mem::Copy(request->data_as<char>(), buffer, end - begin);
+  mem::CopyBytes(request->data_as<char>(), buffer, end - begin);
   handler->BlockFreeze(blockid, begin, end, buffer, request->data_as<char>());
   Send(message);
   Done();
@@ -693,6 +712,7 @@ void DistributedCache::ConfigTransaction::HandleMessage(Message *message) {
 void DistributedCache::ResponseTransaction::Init(
     DistributedCache *cache_in) {
   cache_ = cache_in;
+  Transaction::Init(cache_->channel_num());
 }
 
 void DistributedCache::ResponseTransaction::HandleMessage(
@@ -751,8 +771,9 @@ void DistributedCache::SyncInfo::Init(const DistributedCache& cache) {
 
 void DistributedCache::SyncInfo::MergeWith(const SyncInfo& other) {
   index_t old_size = statuses.size();
+  index_t min_size = min(statuses.size(), other.statuses.size());
 
-  for (index_t i = 0; i < old_size; i++) {
+  for (index_t i = 0; i < min_size; i++) {
     BlockStatus *orig = &statuses[i];
     const BlockStatus *in = &other.statuses[i];
     if (in->owner >= 0) {
@@ -801,9 +822,10 @@ void DistributedCache::SyncTransaction::HandleMessage(Message *message) {
     default:
       FATAL("Unknown state");
   }
+  bool is_done = (state_ == DONE);
   mutex_.Unlock();
   delete message;
-  if (state_ == DONE) {
+  if (is_done) {
     delete this;
   }
 }
@@ -811,8 +833,9 @@ void DistributedCache::SyncTransaction::HandleMessage(Message *message) {
 void DistributedCache::SyncTransaction::StartSyncFlushDone() {
   mutex_.Lock();
   ChildFlushed_();
+  bool is_done = (state_ == DONE);
   mutex_.Unlock();
-  if (state_ == DONE) {
+  if (is_done) {
     delete this;
   }
 }
@@ -904,14 +927,7 @@ void DistributedCache::CacheChannel::Init(DistributedCache *cache_in) {
 }
 
 void DistributedCache::CacheChannel::StartSyncFlushDone() {
-  SyncTransaction *t;
-  mutex_.Lock();
-  if (sync_transaction_ == NULL) {
-    sync_transaction_ = new SyncTransaction();
-    sync_transaction_->Init(cache_);
-  }
-  t = sync_transaction_;
-  mutex_.Unlock();
+  SyncTransaction *t = GetSyncTransaction_();;
   t->StartSyncFlushDone();
 }
 
@@ -927,18 +943,24 @@ void DistributedCache::CacheChannel::SyncDone() {
   sync_done_.Done();
 }
 
+DistributedCache::SyncTransaction *
+DistributedCache::CacheChannel::GetSyncTransaction_() {
+  SyncTransaction *t;
+  mutex_.Lock();
+  if (sync_transaction_ == NULL) {
+    sync_transaction_ = new SyncTransaction();
+    sync_transaction_->Init(cache_);
+  }
+  t = sync_transaction_;
+  mutex_.Unlock();
+  return t;
+}
+
 Transaction *DistributedCache::CacheChannel::GetTransaction(
     Message *message) {
   Request *request = reinterpret_cast<Request*>(message->data());
   if (unlikely(request->type == Request::SYNC)) {
-    Transaction *t;
-    mutex_.Lock();
-    if (sync_transaction_ == NULL) {
-      sync_transaction_ = new SyncTransaction();
-      sync_transaction_->Init(cache_);
-    }
-    t = sync_transaction_;
-    mutex_.Unlock();
+    Transaction *t = GetSyncTransaction_();
     return t;
   } else {
     ResponseTransaction *t = new ResponseTransaction();
