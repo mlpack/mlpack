@@ -296,7 +296,6 @@ class RpcMonochromaticDualTreeRunner {
    * The configuration of the problem.
    */
   struct Config {
-    typename GNP::Param param;
     int n_threads;
     int data_points_mb;
     int data_nodes_mb;
@@ -307,7 +306,6 @@ class RpcMonochromaticDualTreeRunner {
     }
 
     OT_DEF(Config) {
-      OT_MY_OBJECT(param);
       OT_MY_OBJECT(n_threads);
       OT_MY_OBJECT(data_points_mb);
       OT_MY_OBJECT(data_nodes_mb);
@@ -317,6 +315,7 @@ class RpcMonochromaticDualTreeRunner {
 
   struct Master {
     DataGetterBackend<Config> config_backend;
+    DataGetterBackend<typename GNP::Param> param_backend;
     RemoteWorkQueueBackend work_backend;
   };
 
@@ -344,6 +343,7 @@ class RpcMonochromaticDualTreeRunner {
   datanode *data_module_;
   const char *gnp_name_;
 
+  typename GNP::Param param_;
   Config config_;
   WorkQueueInterface *work_queue_;
   index_t n_points_;
@@ -407,7 +407,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
   fx_timer_start(module_, "copy");
   typename GNP::QPoint default_point;
   default_point.vec().Init(dim_);
-  config_.param.BootstrapMonochromatic(&default_point, n_points_);
+  param_.BootstrapMonochromatic(&default_point, n_points_);
 
   CacheArray<typename GNP::QPoint>::InitDistributedCacheMaster(
       DATA_POINTS_CHANNEL, n_block_points,
@@ -425,7 +425,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
 
   // also, set up the results array
   typename GNP::QResult default_result;
-  default_result.Init(config_.param);
+  default_result.Init(param_);
   CacheArray<typename GNP::QResult>::InitDistributedCacheMaster(
       Q_RESULTS_CHANNEL, n_block_points,
       config_.q_results_mb * MEGABYTE, default_result,
@@ -442,14 +442,14 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::MakeTree_() {
   fprintf(stderr, "master: Building tree\n");
   fx_timer_start(module_, "tree");
   typename GNP::QNode data_example_node;
-  data_example_node.Init(dim_, config_.param);
+  data_example_node.Init(dim_, param_);
   CacheArray<typename GNP::QNode>::InitDistributedCacheMaster(
       DATA_NODES_CHANNEL, n_block_nodes,
       config_.data_nodes_mb * MEGABYTE, data_example_node,
       &data_nodes_);
   KdTreeHybridBuilder
       <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-      ::Build(data_module_, config_.param, 0, n_points_,
+      ::Build(data_module_, param_, 0, n_points_,
           &data_points_, &data_nodes_);
   fx_timer_stop(module_, "tree");
 }
@@ -459,15 +459,19 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupConfig_() {
   // Set up and export the config object
   config_.n_threads = fx_param_int(module_, "n_threads", 1);
   config_.data_points_mb = fx_param_int(module_, "data_points_mb", 400);
-  config_.data_nodes_mb = fx_param_int(module_, "data_nodes_mb", 100);
-  config_.q_results_mb = fx_param_int(module_, "q_results_mb", 100);
+  config_.data_nodes_mb = fx_param_int(module_, "data_nodes_mb", 150);
+  config_.q_results_mb = fx_param_int(module_, "q_results_mb", 200);
+
+  master_ = new Master();
+  master_->config_backend.Init(&config_);
+  rpc::Register(CONFIG_CHANNEL, &master_->config_backend);
 }
 
 template<typename GNP, typename Solver>
 void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
-  master_ = new Master();
-  master_->config_backend.Init(&config_);
-  rpc::Register(CONFIG_CHANNEL, &master_->config_backend);
+  master_->param_backend.Init(&param_);
+  rpc::Register(PARAM_CHANNEL, &master_->param_backend);
+
 
   // Make a static work queue
   CentroidWorkQueue<typename GNP::QNode> *actual_work_queue =
@@ -522,12 +526,14 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
     SetupConfig_();
     fprintf(stderr, "nbr_utils(%d): reading in data, making tree, and distributing data\n",
         rpc::rank());
-    config_.param.Init(fx_submodule(module_, gnp_name_, gnp_name_));
+    param_.Init(fx_submodule(module_, gnp_name_, gnp_name_));
     ReadData_();
     MakeTree_();
 
     SetupMaster_();
   } else {
+    rpc::GetRemoteData(CONFIG_CHANNEL, MASTER_RANK, &config_);
+
     data_points_.InitWorker(DATA_POINTS_CHANNEL,
         config_.data_points_mb * MEGABYTE,
         new CacheArrayBlockHandler<typename GNP::QPoint>);
@@ -538,7 +544,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
         config_.q_results_mb * MEGABYTE,
         new CacheArrayBlockHandler<typename GNP::QResult>);
 
-    rpc::GetRemoteData(CONFIG_CHANNEL, MASTER_RANK, &config_);
+    rpc::GetRemoteData(PARAM_CHANNEL, MASTER_RANK, &param_);
 
     RemoteWorkQueue *remote_work_queue = new RemoteWorkQueue();
     remote_work_queue->Init(WORK_CHANNEL, MASTER_RANK);
@@ -563,7 +569,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   ThreadedDualTreeSolver<GNP, Solver> solver;
   solver.Doit(
       fx_submodule(module_, "solver", "local"),
-      config_.n_threads, rpc::rank(), work_queue_, config_.param,
+      config_.n_threads, rpc::rank(), work_queue_, param_,
       &data_points_, &data_nodes_,
       &data_points_, &data_nodes_,
       &q_results_);
@@ -576,7 +582,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   //rpc::Reduce(IOSTATS_RESULTS_CHANNEL, IoStatsReductor(), &q_results_.stats());
 
   GlobalResultReductor<GNP> global_result_reductor;
-  global_result_reductor.Init(&config_.param);
+  global_result_reductor.Init(&param_);
   rpc::Reduce(GLOBAL_RESULT_CHANNEL,
       global_result_reductor, &solver.global_result());
 
@@ -585,7 +591,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   //q_results_.ReportStats(true, fx_submodule(module_, NULL, "gnp_results"));
 
   work_queue_->Report(fx_submodule(module_, NULL, "work_queue"));
-  solver.global_result().Report(config_.param,
+  solver.global_result().Report(param_,
       fx_submodule(module_, NULL, "global_result"));
 
   rpc::Done();

@@ -400,7 +400,7 @@ void RpcSockImpl::PollingLoop_() {
             Peer *peer = &peers_[peer_num];
             peer->mutex.Lock();
             if (!peer->connection.TryRead() && !errors_ok) {
-              FATAL("Unexpected end of file for peer %d", i);
+              FATAL("Unexpected end of file for peer %d", peer_num);
             }
             GatherReadyMessages_(peer, &work_items);
             peer->mutex.Unlock();
