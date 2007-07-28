@@ -39,6 +39,7 @@ void DistributedCache::InitMaster(int channel_num_in,
   InitChannel_(channel_num_in);
 }
 
+
 void DistributedCache::InitWorker(
     int channel_num_in, size_t total_ram, BlockHandler *handler_in) {
   InitCommon_();
@@ -242,8 +243,20 @@ void DistributedCache::StartSync() {
   channel_.StartSyncFlushDone();
 }
 
-void DistributedCache::WaitSync() {
+void DistributedCache::WaitSync(datanode *node) {
   channel_.WaitSync();
+  if (node) {
+    disk_stats().Report(n_block_bytes_, n_blocks_,
+        fx_submodule(node, NULL, "disk_stats"));
+    net_stats().Report(n_block_bytes_, n_blocks_, 
+        fx_submodule(node, NULL, "net_stats"));
+    world_disk_stats().Report(n_block_bytes_, n_blocks_, 
+        fx_submodule(node, NULL, "world_disk_stats"));
+    world_net_stats().Report(n_block_bytes_, n_blocks_, 
+        fx_submodule(node, NULL, "world_net_stats"));
+  }
+  disk_stats_.Reset();
+  net_stats_.Reset();
 }
 
 //----
@@ -398,7 +411,6 @@ void DistributedCache::StopRead(BlockDevice::blockid_t blockid) {
   mutex_.Lock();
   BlockMetadata *block = &blocks_[blockid];
   if (unlikely(--block->locks == 0)) {
-    //fprintf(stderr, "Encaching\n");
     EncacheBlock_(blockid);
   }
   mutex_.Unlock();
@@ -408,7 +420,6 @@ void DistributedCache::StopWrite(BlockDevice::blockid_t blockid) {
   mutex_.Lock();
   BlockMetadata *block = &blocks_[blockid];
   if (unlikely(--block->locks == 0)) {
-    //fprintf(stderr, "Encaching (WRITE)\n");
     EncacheBlock_(blockid);
   }
   mutex_.Unlock();
@@ -544,6 +555,7 @@ void DistributedCache::WritebackDirtyLocalFreeze_(
     block->value = local_blockid;
   }
 
+  DEBUG_ASSERT(block->is_dirty());
   handler_->BlockFreeze(blockid, 0, n_block_bytes_, block->data, block->data);
   fprintf(stderr, "DISK: writing %d to %d (%d bytes)\n",
       blockid, local_blockid, n_block_bytes_);
@@ -583,14 +595,13 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
           end_offset = end.offset;
         }
         WriteTransaction write_transaction;
-        write_transaction.Doit(channel_num_, block->owner(), blockid,
-            handler_,
+        write_transaction.Doit(channel_num_, block->owner(), blockid, handler_,
             begin_offset, end_offset, block->data + begin_offset);
         DEBUG_ONLY(anything_done = true);
       }
     }
     DEBUG_ASSERT_MSG(anything_done,
-        "A block marked partially dirty has no overlapping write ranges.");
+        "A block marked partially-dirty has no overlapping write ranges.");
   }
   block->status = NOT_DIRTY_OLD;
 }

@@ -65,7 +65,8 @@ class GCCCompiler(CompilerInfo):
       "fast": "-O2 -finline-functions -fomit-frame-pointer -g -DNDEBUG",
       "unsafe": "-O3 -ffast-math -g -fomit-frame-pointer -DNDEBUG",
       "profile" : "-O2 -pg -finline-limit=12 -DPROFILE -DNDEBUG",
-      "small": "-Os -DNDEBUG"
+      "small": "-Os -DNDEBUG",
+      "trace": "-g -DNDEBUG"
     }
     self.command_from_ext = {
       "c" : "gcc %s -c %s -o %s -Wall",

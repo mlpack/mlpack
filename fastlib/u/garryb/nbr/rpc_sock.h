@@ -174,15 +174,17 @@ class SockConnection {
   int write_fd_;
   struct sockaddr_in peer_addr_;
 
-  int read_total_;
+  int64 read_total_;
   Message *read_message_;
   size_t read_buffer_pos_;
-  ArrayList<Message*> read_queue_;
+  // TODO: Implement a dequeue instead of using a heap
+  MinHeap<int64, Message*> read_queue_;
 
-  int write_total_;
+  int64 write_total_;
   Message *write_message_;
   size_t write_buffer_pos_;
-  MinHeap<int, Message*> write_queue_;
+  // TODO: Implement a dequeue instead of using a heap
+  MinHeap<int64, Message*> write_queue_;
 
  public:
   SockConnection() {}
@@ -218,10 +220,10 @@ class SockConnection {
   int write_fd() const {
     return write_fd_;
   }
-  ArrayList<Message*>& read_queue() {
+  MinHeap<int64, Message*>& read_queue() {
     return read_queue_;
   }
-  const ArrayList<Message*>& read_queue() const {
+  const MinHeap<int64, Message*>& read_queue() const {
     return read_queue_;
   }
   const struct sockaddr_in& peer_addr() const {
@@ -273,6 +275,7 @@ class RpcSockImpl {
      * channel number.
      */
     DenseIntMap<Transaction*> outgoing_transactions;
+    bool pending;
 
    public:
     Peer();
@@ -386,7 +389,7 @@ class RpcSockImpl {
   void Listen_();
   void StartPollingThread_();
   void PollingLoop_();
-  void GatherReadyMessages_(Peer *peer, ArrayList<WorkItem>* work_items);
+  void ExecuteReadyMessages_(Peer *peer);
   void TryAcceptConnection_(int fd);
   void Ping_(int peer_num, int message);
 };

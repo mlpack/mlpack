@@ -370,23 +370,15 @@ class RpcMonochromaticDualTreeRunner {
   void Doit(datanode *module, const char *gnp_name);
 
  private:
-  // insert prototypes
-  void Preinit_();
   void ReadData_();
   void MakeTree_();
   void SetupMaster_();
   void SetupConfig_();
 };
 
-template<typename GNP, typename Solver>
-void RpcMonochromaticDualTreeRunner<GNP, Solver>::Preinit_() {
   if (!rpc::is_root()) {
-    //String my_fx_scope;
-    //my_fx_scope.InitSprintf("rank%d", rpc::rank());
-    //fx_scope(my_fx_scope.c_str());
     fx_silence();
   }
-}
 
 template<typename GNP, typename Solver>
 void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
@@ -395,19 +387,18 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
   data_module_ = fx_submodule(module_, "data", "data");
 
   fprintf(stderr, "master: Reading data\n");
+
   fx_timer_start(module_, "read");
-  Matrix data_matrix;
-  MUST_PASS(data::Load(fx_param_str_req(data_module_, ""), &data_matrix));
-  fx_timer_stop(module_, "read");
+  TextLineReader reader;
+  if (FAILED(reader.Open(fx_param_str_req(data_module_, "")))) {
+    FATAL("Could not open data file '%s'", fx_param_str_req(data_module_, ""));
+  }
+  DatasetInfo schema;
+  schema.InitFromFile(reader, "data");
+  dim_ = schema.n_features();
 
-  n_points_ = data_matrix.n_cols();
-  dim_ = data_matrix.n_rows();
-
-  fprintf(stderr, "master: Copying data to the cache\n");
-  fx_timer_start(module_, "copy");
   typename GNP::QPoint default_point;
   default_point.vec().Init(dim_);
-  param_.BootstrapMonochromatic(&default_point, n_points_);
 
   CacheArray<typename GNP::QPoint>::InitDistributedCacheMaster(
       DATA_POINTS_CHANNEL, n_block_points,
@@ -415,14 +406,29 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::ReadData_() {
       &data_points_);
   CacheArray<typename GNP::QPoint> data_points_array;
   data_points_array.Init(&data_points_, BlockDevice::M_CREATE);
-  data_points_array.AllocD(rpc::rank(), n_points_);
+  index_t i;
 
-  for (index_t i = 0; i < n_points_; i++) {
+  for (index_t i;;) {
+    i = data_points_array.AllocD(rpc::rank(), 1);
     CacheWrite<typename GNP::QPoint> point(&data_points_array, i);
-    point->vec().CopyValues(data_matrix.GetColumnPtr(i));
+    bool is_done;
+    success_t rv = schema.ReadPoint(&reader, point->vec().ptr(), &is_done);
+    if (unlikely(FAILED(rv))) {
+      FATAL("Data file has problems");
+    }
+    if (is_done) {
+      break;
+    }
   }
-  fx_timer_stop(module_, "copy");
+  n_points_ = i;
 
+  fx_timer_stop(module_, "read");
+
+  param_.BootstrapMonochromatic(&default_point, n_points_);
+}
+
+template<typename GNP, typename Solver>
+void RpcMonochromaticDualTreeRunner<GNP, Solver>::InitResults_() {
   // also, set up the results array
   typename GNP::QResult default_result;
   default_result.Init(param_);
@@ -489,13 +495,6 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::SetupMaster_() {
   rpc::Register(WORK_CHANNEL, &master_->work_backend);
 }
 
-class IoStatsReductor {
- public:
-  void Reduce(const IoStats& right, IoStats* left) const {
-    left->Add(right);
-  }
-};
-
 template<typename GNP>
 class GlobalResultReductor {
  private:
@@ -518,8 +517,10 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Doit(
   module_ = module;
   gnp_name_ = gnp_name;
 
+  if (!rpc::is_root()) {
+    fx_silence();
+  }
   rpc::Init();
-  Preinit_();
 
   fx_timer_start(module_, "load_data");
   if (rpc::is_root()) {
