@@ -439,8 +439,16 @@ class DistributedCache : public BlockDevice {
   void BestEffortWriteback(double portion = 1.0);
   /** Starts syncing. */
   void StartSync();
-  /** Ensures that the sync point has passed before returning. */
-  void WaitSync();
+  /**
+   * Ensures that the sync point has passed before returning.
+   *
+   * At this point, you can optionally store I/O statistics in a module.
+   * Local I/O statistics are cleared after they are stored!  However, we
+   * don't clear world statistics until the next sync.  If you want your disk
+   * stats to be 100% accurate you need to place a barrier right after all
+   * of your WaitSyncs before other machines start writing.
+   */
+  void WaitSync(datanode *node = NULL);
   /**
    * Synchronizes status with all machines.
    *

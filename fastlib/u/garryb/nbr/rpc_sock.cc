@@ -14,6 +14,7 @@
 #include <string.h>
 
 #warning "there's a race condition involving single-message transactions"
+   // i think it's now fixed
 
 //-------------------------------------------------------------------------
 
@@ -311,9 +312,6 @@ void RpcSockImpl::PollingLoop_() {
     read_fds = read_fd_set_;
     write_fds = write_fd_set_;
     error_fds = error_fd_set_;
-    //mem::CopyBytes(&read_fds, &read_fd_set_, sizeof(read_fd_set_));
-    //mem::CopyBytes(&write_fds, &write_fd_set_, sizeof(write_fd_set_));
-    //mem::CopyBytes(&error_fds, &error_fd_set_, sizeof(error_fd_set_));
     fd_mutex_.Unlock();
 
     struct timeval tv;
@@ -348,41 +346,29 @@ void RpcSockImpl::PollingLoop_() {
           Ping_(rpc::child(i), MSG_PING);
         }
       }
-      continue;
-    }
+    } else {
+      if (FD_ISSET(alert_slot_fd_, &read_fds)) {
+        // We got a wake-up signal.  Clear the buffer to avoid re-trigger.
+        char buf[32];
+        while (read(alert_slot_fd_, buf, sizeof(buf)) > 0) {}
+      }
 
-    if (FD_ISSET(alert_slot_fd_, &read_fds)) {
-      // We got a wake-up signal.  Clear the OS buffer.
-      char buf[32];
-      while (read(alert_slot_fd_, buf, sizeof(buf)) > 0) {}
-    }
+      if (unlikely(unknown_connections_.size() != 0)) {
+        // Survey any connections that we accepted on faith.
+        j = 0;
+        for (index_t i = 0; i < unknown_connections_.size(); i++) {
+          int fd = unknown_connections_[i];
 
-    if (unlikely(unknown_connections_.size() != 0)) {
-      // Survey any connections that we accepted on faith.
-      j = 0;
-      for (index_t i = 0; i < unknown_connections_.size(); i++) {
-        int fd = unknown_connections_[i];
-
-        if (FD_ISSET(fd, &read_fds)) {
-          TryAcceptConnection_(fd);
-          FD_CLR(fd, &read_fds);
-        } else {
-          unknown_connections_[j++] = unknown_connections_[i];
+          if (FD_ISSET(fd, &read_fds)) {
+            TryAcceptConnection_(fd);
+            FD_CLR(fd, &read_fds);
+          } else {
+            unknown_connections_[j++] = unknown_connections_[i];
+          }
         }
+        unknown_connections_.Resize(j);
       }
-      unknown_connections_.Resize(j);
-    }
 
-    if (unlikely(FD_ISSET(listen_fd_, &read_fds))) {
-      // Accept incoming connections
-      int new_fd;
-      while ((new_fd = accept(listen_fd_, NULL, NULL)) >= 0) {
-        *unknown_connections_.AddBack() = new_fd;
-        RegisterReadFd(-1, new_fd);
-      }
-    }
-
-    if (n_events > 0) {
       bool errors_ok = (status_ == STOP) || (status_ == STOP_SYNC);
 
       for (int i = max_fd_; i >= 0; i--) {
@@ -394,6 +380,7 @@ void RpcSockImpl::PollingLoop_() {
           FD_CLR(i, &read_fd_set_);
           FD_CLR(i, &write_fd_set_);
         }
+
         if (unlikely(FD_ISSET(i, &read_fds))) {
           int peer_num = peer_from_fd_[i];
           if (peer_num >= 0) {
@@ -402,10 +389,11 @@ void RpcSockImpl::PollingLoop_() {
             if (!peer->connection.TryRead() && !errors_ok) {
               FATAL("Unexpected end of file for peer %d", peer_num);
             }
-            GatherReadyMessages_(peer, &work_items);
+            peer->pending = true;
             peer->mutex.Unlock();
           }
         }
+
         if (FD_ISSET(i, &write_fds)) {
           int peer_num = peer_from_fd_[i];
           if (peer_num >= 0) {
@@ -418,68 +406,26 @@ void RpcSockImpl::PollingLoop_() {
       }
 
       mutex_.Lock();
-      if (work_items.size() != 0) {
-        j = 0;
-
-        // Set a time limit on message processing.
-        // In parallel situations, runaway processes are extremely hard to
-        // clean up.
-        alarm(TIMEOUT_MESSAGE);
-
-        for (index_t i = 0; i < work_items.size(); i++) {
-          Message *message = work_items[i].message;
-          Peer *peer = work_items[i].peer;
-          int id = message->transaction_id();
-          Transaction *transaction;
-
-          if (id < 0) {
-            // We're getting a control message
-            if (message->channel() == MSG_PONG) {
-              live_pings_--;
-            } else if (message->channel() == MSG_PING) {
-              Ping_(peer->connection.peer(), MSG_PONG);
-            } else {
-              FATAL("Unknown control message: %d", message->channel());
-            }
-          } else {
-            peer->mutex.Lock();
-
-            if (message->channel() < 0) {
-              // When the channel ID is invalid, this means that I was the initiator
-              // of the transaction.
-              transaction = peer->outgoing_transactions[id];
-              DEBUG_ASSERT_MSG(transaction != NULL,
-                 "Transaction null, channel %d, id %d, me %d",
-                 message->channel(), id, rpc::rank());
-            } else {
-              // When the channel ID is valid, it means the remote host initiated
-              // the transaction and was picked up by my channel server.
-              transaction = peer->incoming_transactions[id];
-              if (!transaction) {
-                // No existing transaction.  We use the channel number to create one.
-                Channel *channel = channels_[message->channel()];
-                if (channel) {
-                  transaction = channel->GetTransaction(message);
-                  transaction->TransactionHandleNewSender_(message);
-                  peer->incoming_transactions[id] = transaction;
-                }
-              }
-            }
-            peer->mutex.Unlock();
-
-            if (transaction) {
-              transaction->HandleMessage(message);
-            } else {
-              // unknown channel - keep this on the queue
-              work_items[j] = work_items[i];
-              j++;
-            }
-          }
+      alarm(TIMEOUT_MESSAGE);
+      for (index_t i = 0; i < peers_.size(); i++) {
+        // no mutexes required here - the 'pending' field is only modified
+        // by the network thread
+        Peer *peer = &peers_[i];
+        if (unlikely(peer->pending)) {
+          ExecuteReadyMessages_(peer);
         }
-        alarm(0);
-        work_items.Resize(j);
       }
+      alarm(0);
       mutex_.Unlock();
+
+      if (unlikely(FD_ISSET(listen_fd_, &read_fds))) {
+        // Accept incoming connections
+        int new_fd;
+        while ((new_fd = accept(listen_fd_, NULL, NULL)) >= 0) {
+          *unknown_connections_.AddBack() = new_fd;
+          RegisterReadFd(-1, new_fd);
+        }
+      }
     }
   }
 }
@@ -514,18 +460,62 @@ void RpcSockImpl::TryAcceptConnection_(int fd) {
   (void) close(fd);
 }
 
-void RpcSockImpl::GatherReadyMessages_(Peer *peer,
-    ArrayList<WorkItem> *work_items) {
-  ArrayList<Message*>* queue = &peer->connection.read_queue();
-  index_t i;
+void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
+  for (;;) {
+    peer->mutex.Lock();
+    if (peer->connection.read_queue().is_empty()) {
+      peer->mutex.Unlock();
+      break;
+    }
+    Message *message = peer->connection.read_queue().top();
+    int id = message->transaction_id();
+    Transaction *transaction;
 
-  for (i = 0; i < queue->size(); i++) {
-    Message *message = (*queue)[i];
-    WorkItem *item = work_items->AddBack();
-    item->message = message;
-    item->peer = peer;
+    if (id < 0) {
+      peer->mutex.Unlock();
+      // We're getting a control message
+      if (message->channel() == MSG_PONG) {
+        live_pings_--;
+      } else if (message->channel() == MSG_PING) {
+        Ping_(peer->connection.peer(), MSG_PONG);
+      } else {
+        FATAL("Unknown control message: %d", message->channel());
+      }
+    } else {
+      if (message->channel() < 0) {
+        // When the channel ID is invalid, this means that I was the initiator
+        // of the transaction.
+        transaction = peer->outgoing_transactions[id];
+        DEBUG_ASSERT_MSG(transaction != NULL,
+           "Transaction null, channel %d, id %d, me %d",
+           message->channel(), id, rpc::rank());
+      } else {
+        // When the channel ID is valid, it means the remote host initiated
+        // the transaction and was picked up by my channel server.
+        transaction = peer->incoming_transactions[id];
+        if (!transaction) {
+          // No existing transaction.  We use the channel number to create one.
+          Channel *channel = channels_[message->channel()];
+          if (channel) {
+            transaction = channel->GetTransaction(message);
+            transaction->TransactionHandleNewSender_(message);
+            peer->incoming_transactions[id] = transaction;
+          }
+        }
+      }
+      
+      if (!transaction) {
+        peer->mutex.Unlock();
+        peer->pending = true;
+        return;
+      }
+
+      peer->connection.read_queue().PopOnly();
+      peer->mutex.Unlock();
+      transaction->HandleMessage(message);
+    }
   }
-  queue->Resize(0);
+  peer->pending = false;
 }
 
 void RpcSockImpl::Ping_(int peer_num, int message) {
@@ -585,6 +575,7 @@ RpcSockImpl::Peer::Peer() {
   incoming_transactions.default_value() = NULL;
   outgoing_transactions.Init();
   outgoing_transactions.default_value() = NULL;
+  pending = false;
 }
 
 RpcSockImpl::Peer::~Peer() {
@@ -882,7 +873,7 @@ bool SockConnection::TryRead() {
     if (read_buffer_pos_ == read_message_->buffer_size()) {
       // We've read a whole message.  Put it on the queue to be serviced.
       ++read_total_;
-      *read_queue_.AddBack() = read_message_;
+      read_queue_.Put(read_total_, read_message_);
 
       read_message_ = NULL;
       read_buffer_pos_ = 0;

@@ -173,30 +173,30 @@ class DatasetFeature {
  */
 class DatasetInfo {
   FORBID_COPY(DatasetInfo);
- 
+
  private:
   String name_;
   ArrayList<DatasetFeature> features_;
-  
+
   OT_DEF(DatasetInfo) {
     OT_MY_OBJECT(name_);
     OT_MY_OBJECT(features_);
   }
-  
+
  public:
   DatasetInfo() {}
   ~DatasetInfo() {}
-  
+
   /** Gets a mutable list of all features. */
   ArrayList<DatasetFeature>& features() {
     return features_;
   }
-  
+
   /** Gets information about a particular feature. */
   const DatasetFeature& feature(index_t attrib_num) const {
     return features_[attrib_num];
   }
-  
+
   /** Gets the number of features. */
   index_t n_features() const {
     return features_.size();
@@ -292,7 +292,7 @@ class DatasetInfo {
   success_t InitFromFile(TextLineReader *reader,
       const char *filename = "dataset");
   /**
-   * Populate a matrix from a file, given the internal data model.
+   * Populates a matrix from a file, given the internal data model.
    *
    * ARFF LIMITATIONS: Values cannot have spaces or commas, even with quotes;
    * 'string' data type not supported (nominal is supported).
@@ -301,7 +301,20 @@ class DatasetInfo {
    * @param matrix the matrix to store text into
    */
   success_t ReadMatrix(TextLineReader *reader, Matrix *matrix) const;
-  
+
+  /**
+   * Reads a single vector.
+   *
+   * @param reader the line reader being used
+   * @param point an array of length n_features()
+   * @param is_done set to true if we have finished reading the file
+   *        successfully -- the value of is_done is undefined if the
+   *        function returns failure!
+   * @return whether reading the line was successful
+   */
+  success_t ReadPoint(TextLineReader *reader, double *point,
+      bool *is_done) const;
+
   /**
    * Initializes to be a copy.
    * @param other data set feature information to copy
