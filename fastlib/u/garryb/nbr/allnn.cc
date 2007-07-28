@@ -218,7 +218,7 @@ class Allnn {
      */
     static double Heuristic(const Param& param,
         const QNode& q_node,  const RNode& r_node, const Delta& delta) {
-      return q_node.bound().MidDistanceSq(r_node.bound());
+      return r_node.bound().MinToMidSq(q_node.bound());
     }
   };
 };
