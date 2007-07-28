@@ -555,6 +555,40 @@ class SpHrectBound {
   }
 
   /**
+   * Calculates closest-to-their-midpoint bounding box distance,
+   * i.e. calculates their midpoint and finds the minimum box-to-point
+   * distance.
+   *
+   * Equivalent to:
+   * <code>
+   * other.CalcMidpoint(&other_midpoint)
+   * return MinDistanceSqToPoint(other_midpoint)
+   * </code>
+   */
+  double MinToMidSq(const SpHrectBound& other) const {
+    double sumsq = 0;
+    const SpRange *a = this->bounds_;
+    const SpRange *b = other.bounds_;
+
+    DEBUG_ASSERT(dim_ == other.dim_);
+
+    for (index_t d = 0; d < dim_; d++) {
+      double v = b->mid();
+      double v1 = a->lo - v;
+      double v2 = v - a->hi;
+      
+      v = (v1 + fabs(v1)) + (v2 + fabs(v2));
+      
+      a++;
+      b++;
+      
+      sumsq += math::Pow<t_pow, 1>(v);
+    }
+
+    return math::Pow<2, t_pow>(sumsq) / 4;
+  }
+
+  /**
    * Calculates maximum bound-to-point squared distance,
    * to the specified power.
    */
