@@ -708,7 +708,7 @@ class SubsetArray {
       adjusted_ = adjusted;
     }
   }
-  
+
   index_t n_elem_bytes() const {
     return n_elem_bytes_;
   }
