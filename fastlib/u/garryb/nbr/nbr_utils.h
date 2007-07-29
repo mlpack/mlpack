@@ -428,8 +428,8 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::InitResults_(
   typename GNP::QResult default_result;
   default_result.Init(*param_);
   CacheArray<typename GNP::QResult>::InitDistributedCacheMaster(
-      Q_RESULTS_CHANNEL, data_.points_block(),
-      size_t(q_results_mb) * MEGABYTE, default_result,
+      Q_RESULTS_CHANNEL, data_.points_block(), default_result,
+      size_t(q_results_mb) * MEGABYTE,
       &q_results_);
   CacheArray<typename GNP::QResult> q_results_array;
   q_results_array.Init(&q_results_, BlockDevice::M_CREATE);
@@ -492,7 +492,6 @@ void RpcMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   RpcMonochromaticDualTreeRunner<GNP, Solver> runner;
   runner.Doit(module, gnp_name);
 }
-
 
 };
 

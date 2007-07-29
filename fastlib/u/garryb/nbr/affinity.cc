@@ -120,14 +120,17 @@ struct AffinityCommon {
       lambda = fx_param_double(module, "lambda", 0.8);
     }
 
-    void BootstrapMonochromatic(CombinedPoint *point, index_t count) {
-      dim = point->vec().length();
-      n_points = count;
-      // NOTE: These values are manually assigned to be different later.
+    void InitPointExtra(int tag, CombinedPoint *point) {
       point->info().rho = DBL_NAN;
       point->info().alpha.max1 = DBL_NAN;
       point->info().alpha.max2 = DBL_NAN;
       point->info().alpha.max1_index = -1;
+    }
+
+    void Bootstrap(int tag, index_t dim_in, index_t count) {
+      dim = dim_in;
+      n_points = count;
+      // NOTE: These values are manually assigned to be different later.
       eps_per_point = eps / n_points;
     }
     
@@ -875,18 +878,27 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   param = new AffinityParam();
   param->Init(fx_submodule(module, gnp_name, gnp_name));
 
-  SpKdTree<AffinityCommon::Param, AffinityCommon::Point, AffinityCommon::Node> tree;
+  SpKdTree<AffinityCommon::Param,
+      AffinityCommon::Point, AffinityCommon::Node> tree;
   DistributedCache alphas;
   DistributedCache rhos;
 
-  tree.Load(&param, 0, fx_submodule(fx_root, "data", "data"));
+  // One thing to note: alpha and rho are never taking up
+  // RAM at the same time!
+  size_t alpha_mb = fx_param_int("alpha_mb", 200);
+  size_t rho_mb = fx_param_int("rho_mb", 100);
 
-  CacheArray<AffinityAlpha::QResult>::InitDistributedCacheMasterWorker(
-      fx_submodule(fx_root, "alphas", "alphas"),
-      tree.n_points(), &alphas);
-  CacheArray<AffinityRho::QResult>::InitDistributedCacheMasterWorker(
-      fx_submodule(fx_root, "rhos", "rhos"),
-      tree.n_points(), &rhos);
+  tree.Load(&param, 0, 300, fx_submodule(fx_root, "data", "data"));
+
+  AffinityAlpha::QResult alpha_default;
+  alpha_default.Init(*param);
+  tree.SetupPointArray(310, alpha_default,
+      fx_submodule(fx_root, "alphas", "alphas"), &alphas);
+
+  AffinityRho::QResult rho_default;
+  rho_default.Init(*param);
+  tree.SetupPointArray(320, rho_default,
+      fx_submodule(fx_root, "rhos", "rhos"),&rhos);
 
   for (;;) {
     {
