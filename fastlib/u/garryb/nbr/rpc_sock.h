@@ -325,7 +325,7 @@ class RpcSockImpl {
   int rank_;
   int n_peers_;
   int live_pings_;
-  uint16 port_;
+  int port_;
 
   int parent_;
   ArrayList<int> children_;

@@ -471,7 +471,6 @@ void DistributedCache::DecacheBlock_(BlockDevice::blockid_t blockid) {
   Slot *base_slot = &slots_[slot];
 
   DEBUG_ASSERT(!block->is_busy());
-  block->locks = 1;
 
   if (likely(block->is_in_core())) {
     // It's in core, but its lock count was zero, so that means it's
@@ -483,9 +482,72 @@ void DistributedCache::DecacheBlock_(BlockDevice::blockid_t blockid) {
         break;
       }
     }
+    block->locks = 1;
   } else {
     HandleMiss_(blockid);
   }
+}
+
+void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
+  BlockMetadata *block = &blocks_[blockid];
+
+  DEBUG_ASSERT(block->data == NULL);
+
+  if (block->is_new()) {
+    block->data = mem::Alloc<char>(n_block_bytes_);
+    DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
+        "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
+    handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
+    handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
+    block->locks = 1;
+  } else if (block->is_owner()) {
+    DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
+    HandleLocalMiss_(blockid);
+  } else {
+    DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
+    HandleRemoteMiss_(blockid);
+  }
+}
+
+void DistributedCache::HandleLocalMiss_(BlockDevice::blockid_t blockid) {
+  BlockMetadata *block = &blocks_[blockid];
+  blockid_t local_blockid = block->local_blockid();
+
+  DEBUG_ASSERT(block->is_owner());
+  block->data = mem::Alloc<char>(n_block_bytes_);
+  fprintf(stderr, "DISK: reading %d from %d (%d bytes)\n",
+      blockid, local_blockid, n_block_bytes_);
+  overflow_device_->Read(local_blockid,
+      0, n_block_bytes_, block->data);
+  handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
+  block->locks = 1;
+}
+
+void DistributedCache::HandleRemoteMiss_(BlockDevice::blockid_t blockid) {
+  BlockMetadata *block = &blocks_[blockid];
+  DEBUG_ASSERT(!block->is_owner());
+
+  // We're going to go through a lot of work to avoid the mutex.
+  int owner = block->owner();
+  mutex_.Unlock();
+
+  char *data = NULL;
+
+  io_mutex_.Lock();
+  if (block->locks == 0) {
+    ReadTransaction read_transaction;
+    data = mem::Alloc<char>(n_block_bytes_);
+    read_transaction.Doit(channel_num_, owner,
+        blockid, 0, n_block_bytes_, data);
+    handler_->BlockThaw(blockid, 0, n_block_bytes_, data);
+  }
+  // Overlapping locks.... it's all we can do folks!
+  mutex_.Lock();
+  block->locks++;
+  if (data) {
+    block->data = data;
+  }
+  io_mutex_.Unlock();
 }
 
 void DistributedCache::EncacheBlock_(BlockDevice::blockid_t blockid) {
@@ -511,49 +573,6 @@ void DistributedCache::EncacheBlock_(BlockDevice::blockid_t blockid) {
   }
 
   base_slot->blockid = blockid;
-}
-
-//----
-
-void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
-  BlockMetadata *block = &blocks_[blockid];
-
-  DEBUG_ASSERT(block->data == NULL);
-  block->data = mem::Alloc<char>(n_block_bytes_);
-  DEBUG_ASSERT(block->data != NULL);
-
-  if (block->is_new()) {
-    DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
-        "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
-    handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
-  } else if (block->is_owner()) {
-    DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
-    HandleLocalMiss_(blockid);
-  } else {
-    DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
-    HandleRemoteMiss_(blockid);
-  }
-  handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
-}
-
-void DistributedCache::HandleLocalMiss_(BlockDevice::blockid_t blockid) {
-  BlockMetadata *block = &blocks_[blockid];
-  blockid_t local_blockid = block->local_blockid();
-
-  DEBUG_ASSERT(block->is_owner());
-  fprintf(stderr, "DISK: reading %d from %d (%d bytes)\n",
-      blockid, local_blockid, n_block_bytes_);
-  overflow_device_->Read(local_blockid,
-      0, n_block_bytes_, block->data);
-}
-
-void DistributedCache::HandleRemoteMiss_(BlockDevice::blockid_t blockid) {
-  BlockMetadata *block = &blocks_[blockid];
-
-  DEBUG_ASSERT(!block->is_owner());
-  ReadTransaction read_transaction;
-  read_transaction.Doit(channel_num_, block->owner(),
-      blockid, 0, n_block_bytes_, block->data);
 }
 
 void DistributedCache::Purge_(blockid_t blockid) {

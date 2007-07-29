@@ -200,8 +200,10 @@ void RpcSockImpl::UnregisterTransaction(int peer_id, int channel, int id) {
 
   peer->mutex.Lock(); // Lock peer's mutex
   if (channel < 0) {
+    DEBUG_ASSERT(peer->incoming_transactions[id] != NULL);
     peer->incoming_transactions[id] = NULL;
   } else {
+    DEBUG_ASSERT(peer->outgoing_transactions[id] != NULL);
     peer->outgoing_transactions[id] = NULL;
   }
   peer->mutex.Unlock();
@@ -482,9 +484,7 @@ void RpcSockImpl::TryAcceptConnection_(int fd) {
 
 void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
   for (;;) {
-    peer->mutex.Lock();
-    if (!peer->connection.read_queue().is_empty()) {
-      peer->mutex.Unlock();
+    if (peer->connection.read_queue().is_empty()) {
       break;
     }
     Message *message = peer->connection.read_queue().Pop();
@@ -504,6 +504,7 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
     } else if (message->channel() < 0) {
       // When the channel ID is invalid, this means that I was the initiator
       // of the transaction.
+      peer->mutex.Lock();
       transaction = peer->outgoing_transactions[id];
       DEBUG_ASSERT_MSG(transaction != NULL,
          "Transaction null, channel %d, id %d, me %d",
@@ -511,7 +512,6 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
       peer->mutex.Unlock();
       transaction->HandleMessage(message);
     } else {
-      peer->mutex.Unlock();
       peer->pending.Add(message);
     }
   }

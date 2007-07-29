@@ -407,6 +407,7 @@ class DistributedCache : public BlockDevice {
   unsigned n_sets_;
 
   Mutex mutex_;
+  Mutex io_mutex_;
   
   IoStats disk_stats_;
   IoStats net_stats_;
