@@ -135,3 +135,21 @@ char *tsprintf(const char *format, ...) {
   
   return s;
 }
+
+void percent_indicator(const char *what, uint64 numerator, uint64 denominator) {
+  char buf[51];
+  int percent = (int)(numerator * 100 / denominator);
+  int i = 0;
+  
+  for (i = 0; i < percent * (sizeof(buf)-1) / 100; i++) {
+    buf[i] = '#';
+  }
+  for (; i < sizeof(buf) - 1; i++) {
+    buf[i] = '.';
+  }
+
+  buf[i] = '\0';
+
+  fprintf(stderr, "\033[1;34mSTATUS: [%s] %02d%% %s\033[0m\n",
+      buf, percent, what);
+}

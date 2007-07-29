@@ -50,6 +50,11 @@ EXTERN_C_START
 void fl_pause(void);
 
 /**
+ * Prints out a blue-colored percentage status indicator.
+ */
+void percent_indicator(const char *what, uint64 numerator, uint64 denominator);
+
+/**
  * Obtains a more concise filename from a full path.
  *
  * If the file is in the FASTlib directories, this will shorten the
