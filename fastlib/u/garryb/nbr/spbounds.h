@@ -617,7 +617,7 @@ class SpHrectBound {
     const SpRange *b = other.bounds_;
     index_t mdim = dim_;
 
-    DEBUG_ASSERT(dim_ == other.dim_);
+    DEBUG_SAME_INT(dim_, other.dim_);
 
     for (index_t d = 0; d < mdim; d++) {
       double v1 = b[d].lo - a[d].hi;

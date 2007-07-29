@@ -345,7 +345,7 @@ class Broadcaster : public Channel {
    private:
     void SendToChildren_() {
       for (index_t i = 0; i < rpc::n_children(); i++) {
-        Message *m = CreateMessage(rpc::parent(), received->data_size());
+        Message *m = CreateMessage(rpc::child(i), received->data_size());
         mem::CopyBytes(m->data(), received->data(), received->data_size());
         Send(m);
       }
