@@ -494,8 +494,8 @@ void SpKdTree<TParam, TPoint, TNode>::MasterLoadData_(
   param->InitPointExtras(tag, &default_point);
 
   CacheArray<Point>::InitDistributedCacheMaster(
-      points_channel_, config->points_block,
-      size_t(points_mb_) * MEGABYTE, default_point,
+      points_channel_, config->points_block, default_point,
+      size_t(points_mb_) * MEGABYTE,
       &points_);
   CacheArray<Point> points_array;
   points_array.Init(&points_, BlockDevice::M_CREATE);
@@ -530,8 +530,8 @@ void SpKdTree<TParam, TPoint, TNode>::MasterBuildTree_(
   Node example_node;
   example_node.Init(config->dim, *param);
   CacheArray<Node>::InitDistributedCacheMaster(
-      nodes_channel_, config->nodes_block,
-      size_t(nodes_mb_) * MEGABYTE, example_node,
+      nodes_channel_, config->nodes_block, example_node,
+      size_t(nodes_mb_) * MEGABYTE,
       &nodes_);
   KdTreeHybridBuilder<Point, Node, Param>
       ::Build(module, *param, 0, config->n_points,

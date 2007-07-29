@@ -58,7 +58,7 @@ class DistributedCache : public BlockDevice {
   /** Net-transferable request operation */
   struct Request {
    public:
-    enum { CONFIG, READ, WRITE, ALLOC, SYNC } type;
+    enum { CONFIG, READ, WRITE, ALLOC, ALLOCNOTICE, SYNC } type;
     BlockDevice::blockid_t blockid;
     BlockDevice::offset_t begin;
     BlockDevice::offset_t end;

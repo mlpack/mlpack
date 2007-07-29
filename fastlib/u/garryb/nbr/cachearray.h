@@ -130,7 +130,7 @@ class CacheArray {
  public:
   /** Helper to help you create a DistributedCache. */
   static void InitDistributedCacheMaster(int channel,
-      index_t n_block_elems, size_t total_ram, const Element& default_elem,
+      index_t n_block_elems, const Element& default_elem, size_t total_ram,
       DistributedCache *cache) {
     CacheArrayBlockHandler<Element> *handler =
         new CacheArrayBlockHandler<Element>();
