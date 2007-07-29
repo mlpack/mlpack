@@ -830,8 +830,102 @@ void TimeStats(datanode *module, const ArrayList<double>& list) {
   fx_format_result(module, "sum", "%f", v_avg*list.size()*f);
 }
 
+struct ApplyAlphas {
+  double sum_alpha1;
+  double sum_alpha2;
+
+  void Init() {
+    sum_alpha1 = 0;
+    sum_alpha2 = 0;
+  }
+
+  void Modify(const AffinityAlpha::QResult& qresult, AffinityCommon::Point *point) {
+    point->info().alpha = qresult.alpha;
+    sum_alpha += result->alpha.max1;
+    sum_alpha2 += result->alpha.max2;
+  }
+
+  void Apply(const ApplyAlphas& other) {
+    sum_alpha1 += other.sum_alpha1;
+    sum_alpha2 += other.sum_alpha2;
+  }
+};
+
+struct ApplyRhos {
+  index_t n_changed;
+
+  void Init() {
+    n_changed = 0;
+  }
+
+  void Modify(const AffinityAlpha::QResult& qresult, AffinityCommon::Point *point) {
+    point->info().alpha = qresult.alpha;
+    sum_alpha += result->alpha.max1;
+    sum_alpha2 += result->alpha.max2;
+  }
+
+  void Apply(const ApplyAlphas& other) {
+    n_changed += other.n_changed;
+  }
+};
 
 void AffinityMain(datanode *module, const char *gnp_name) {
+  AffinityParam *param;
+
+  param = new AffinityParam();
+  param->Init(fx_submodule(module, gnp_name, gnp_name));
+
+  SpKdTree<AffinityCommon::Param, AffinityCommon::Point, AffinityCommon::Node> tree;
+  DistributedCache alphas;
+  DistributedCache rhos;
+
+  tree.Load(&param, 0, fx_submodule(fx_root, "data", "data"));
+
+  CacheArray<AffinityAlpha::QResult>::InitDistributedCacheMasterWorker(
+      fx_submodule(fx_root, "alphas", "alphas"),
+      tree.n_points(), &alphas);
+  CacheArray<AffinityRho::QResult>::InitDistributedCacheMasterWorker(
+      fx_submodule(fx_root, "rhos", "rhos"),
+      tree.n_points(), &rhos);
+
+  for (;;) {
+    {
+      tree.DualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
+          &alphas);
+      ApplyAlphas apply_alphas;
+      apply_alphas.Init();
+      tree.Modify<AffinityAlpha::QResult>(&apply_alphas, &alphas);
+      alphas.ResetElements();
+    }
+
+    {
+      tree.DualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
+          &rhos);
+      tree.Modify<AffinityRho::QResult>(&apply_rhos, &rhos);
+      rhos.ResetElements();
+    }
+
+    Broadcaster<bool> done;
+
+    if (rpc::is_root()) {
+      done.SetData(true);
+    }
+
+    done.Doit(404);
+
+    if (done->get()) {
+      break;
+    }
+  }
+
+  delete param;
+}
+
+
+
+
+
+
   AffinityAlpha::Param param;
 
   param.Init(fx_submodule(module, gnp_name, gnp_name));

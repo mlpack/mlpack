@@ -13,8 +13,7 @@
 #include <errno.h>
 #include <string.h>
 
-#warning "there's a race condition involving single-message transactions"
-   // i think it's now fixed
+#warning "make sure i fixed the single-message-transaction race condition"
 
 //-------------------------------------------------------------------------
 
@@ -103,11 +102,6 @@ void MakeSocketNonBlocking(int fd) {
 RpcSockImpl *RpcSockImpl::instance = NULL;
 
 void RpcSockImpl::Init() {
-  module_ = fx_submodule(fx_root, "rpc", "rpc");
-  n_peers_ = fx_param_int_req(module_, "n");
-  rank_ = fx_param_int(module_, "rank", 0);
-  DEBUG_ASSERT(rank_ < n_peers_);
-  port_ = fx_param_int(module_, "port", 31415);
   channels_.Init();
   channels_.default_value() = NULL;
   unknown_connections_.Init();
@@ -119,38 +113,55 @@ void RpcSockImpl::Init() {
   FD_ZERO(&read_fd_set_);
   FD_ZERO(&write_fd_set_);
 
-  CreatePeers_();
-  CalcChildren_();
-  Listen_();
-  fprintf(stderr, "rpc_sock(%d): Ready, listening on port %d\n", rpc::rank(), port_);
+  module_ = fx_submodule(fx_root, "rpc", "rpc");
 
-  status_ = INIT;
-
-  if (!rpc::is_root()) {
-    peers_[rpc::parent()].mutex.Lock();
-    peers_[rpc::parent()].connection.OpenOutgoing(true);
-    peers_[rpc::parent()].mutex.Unlock();
+  if (!fx_param_exists(module_, "n")) {
+    n_peers_ = 1;
+    rank_ = 0;
+    port_ = -1;
+  } else {
+    n_peers_ = fx_param_int_req(module_, "n");
+    rank_ = fx_param_int(module_, "rank", 0);
+    DEBUG_ASSERT(rank_ < n_peers_);
+    port_ = fx_param_int(module_, "port", 31415);
   }
 
-  StartPollingThread_();
+  CreatePeers_();
+  CalcChildren_();
 
+  if (n_peers_ != 1) {
+    Listen_();
+    fprintf(stderr, "rpc_sock(%d): Ready, listening on port %d\n", rpc::rank(), port_);
 
-  // Have an initial barrier to make sure all processors are alive.
-  rpc::Barrier(0);
-  status_ = RUN;
+    status_ = INIT;
 
-  fprintf(stderr, "rpc_sock(%d): All computers are alive -- starting!\n", rpc::rank());
+    if (!rpc::is_root()) {
+      peers_[rpc::parent()].mutex.Lock();
+      peers_[rpc::parent()].connection.OpenOutgoing(true);
+      peers_[rpc::parent()].mutex.Unlock();
+    }
+
+    StartPollingThread_();
+
+    // Have an initial barrier to make sure all processors are alive.
+    rpc::Barrier(0);
+    status_ = RUN;
+
+    fprintf(stderr, "rpc_sock(%d): All computers are alive -- starting!\n", rpc::rank());
+  }
 }
 
 void RpcSockImpl::Done() {
   status_ = STOP_SYNC;
-  // Synchronize all machines, to make sure that they're all ready to stop.
-  rpc::Barrier(1);
-  status_ = STOP;
-  WakeUpPollingLoop();
-  polling_thread_.WaitStop();
-  close(listen_fd_);
-  peers_.Resize(0); // automatically calls their destructors
+  if (n_peers_ != 1) {
+    // Synchronize all machines, to make sure that they're all ready to stop.
+    rpc::Barrier(1);
+    status_ = STOP;
+    WakeUpPollingLoop();
+    polling_thread_.WaitStop();
+    close(listen_fd_);
+    peers_.Resize(0); // automatically calls their destructors
+  }
 }
 
 void RpcSockImpl::Register(int channel_num, Channel *channel) {
@@ -170,6 +181,7 @@ void RpcSockImpl::Unregister(int channel_num) {
 }
 
 void RpcSockImpl::Send(Message *message) {
+  DEBUG_ASSERT(n_peers_ != 1);
   Peer *peer = &peers_[message->peer()];
   peer->mutex.Lock();
   peer->connection.Send(message);
@@ -178,7 +190,9 @@ void RpcSockImpl::Send(Message *message) {
 
 void RpcSockImpl::WakeUpPollingLoop() {
   // Write anything to our alert socket to wake up the network thread.
-  (void) write(alert_signal_fd_, "x", 1);
+  if (n_peers_ != 1) {
+    (void) write(alert_signal_fd_, "x", 1);
+  }
 }
 
 void RpcSockImpl::UnregisterTransaction(int peer_id, int channel, int id) {
@@ -209,16 +223,22 @@ int RpcSockImpl::AssignTransaction(int peer_num, Transaction *transaction) {
 //-- helper functions for initialization and the main loop
 
 void RpcSockImpl::CreatePeers_() {
-  TextLineReader reader;
 
   peers_.Init(n_peers_);
-  reader.Open(fx_param_str_req(module_, "peers"));
 
-  for (index_t i = 0; i < peers_.size(); i++) {
-    Peer *peer = &peers_[i];
+  if (n_peers_ == 1) {
+    Peer *peer = &peers_[0];
+    peer->connection.Init(0, "127.0.0.1", -1);
+  } else {
+    TextLineReader reader;
+    reader.Open(fx_param_str_req(module_, "peers"));
 
-    peer->connection.Init(i, reader.Peek().c_str(), port_);
-    reader.Gobble();
+    for (index_t i = 0; i < peers_.size(); i++) {
+      Peer *peer = &peers_[i];
+
+      peer->connection.Init(i, reader.Peek().c_str(), port_);
+      reader.Gobble();
+    }
   }
 }
 

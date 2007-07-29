@@ -463,6 +463,10 @@ class DistributedCache : public BlockDevice {
     StartSync();
     WaitSync();
   }
+  /**
+   * Sets the entire cache to the default values.
+   */
+  void ResetElements();
   /** Read data as bytes. */
   void Read(blockid_t blockid, offset_t begin, offset_t end, char *buf);
   /** Write data as bytes. */

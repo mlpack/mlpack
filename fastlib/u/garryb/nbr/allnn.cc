@@ -42,16 +42,10 @@ class Allnn {
       dim = -1;
     }
     
-    void BootstrapMonochromatic(QPoint* point, index_t count) {
-      dim = point->vec().length();
-    }
-
-    void BootstrapQueries(QPoint* point, index_t count) {
-      dim = point->vec().length();
-    }
-
-    void BootstrapReferences(RPoint* point, index_t count) {
-      dim = point->vec().length();
+    void InitPointExtras(int tag, SpVectorPoint *point) {}
+    
+    void Bootstrap(int tag, index_t dim_in, index_t count) {
+      dim = dim_in;
     }
   };
 

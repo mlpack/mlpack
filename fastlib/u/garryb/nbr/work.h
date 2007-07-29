@@ -455,9 +455,7 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<Grain> *work) {
     int interval = 20;
     if ((n_assigned_points_ - found_node->count) * interval / root_->count
         != n_assigned_points_ * interval / root_->count) {
-      fprintf(stderr,
-          "--------------- %02d%% of work has been scheduled --------------\n",
-          n_assigned_points_ * 100 / root_->count);
+      percent_indicator("scheduled", n_assigned_points_, root_->count);
     }
 
     // Mark all children as complete
