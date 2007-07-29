@@ -53,8 +53,10 @@ class Range {
       h_sq = h_orig * h_orig;
     }
 
-    void BootstrapMonochromatic(QPoint* point, index_t count_in) {
-      dim = point->vec().length();
+    void InitPointExtras(int tag, SpVectorPoint *point) {}
+    
+    void Bootstrap(int tag, index_t dim_in, index_t count_in) {
+      dim = dim_in;
       count = count_in;
     }
   };

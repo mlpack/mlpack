@@ -42,6 +42,10 @@ void DistributedCache::InitMaster(int channel_num_in,
 
 void DistributedCache::InitWorker(
     int channel_num_in, size_t total_ram, BlockHandler *handler_in) {
+  if (total_ram < 65536) {
+    FATAL("total_ram for a cache is unusually low (%ld) -- remember this is in bytes!",
+        long(total_ram));
+  }
   InitCommon_();
   // connect to master and figure out specs
   ConfigTransaction ct;
@@ -257,6 +261,24 @@ void DistributedCache::WaitSync(datanode *node) {
   }
   disk_stats_.Reset();
   net_stats_.Reset();
+}
+
+void DistributedCache::ResetElements() {
+  mutex_.Lock();
+  for (index_t blockid = 0; blockid < n_blocks_; blockid++) {
+    BlockMetadata *block = &blocks_[blockid];
+
+    DEBUG_ASSERT_MSG(!block->is_busy(),
+        "Cannot reset elements if some blocks are busy.");
+    // TODO: Now could be a good time to reset the local block ID's, but
+    // keeping the old ones ain't going to hurt anything.i
+    if (block->is_in_core()) {
+      mem::Free(block->data);
+      block->data = NULL;
+    }
+    block->status = NOT_DIRTY_NEW;
+  }
+  mutex_.Unlock();
 }
 
 //----

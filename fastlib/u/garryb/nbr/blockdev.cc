@@ -88,7 +88,10 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
 }
 
 void RandomAccessFile::Close() {
-  close(fd_);
+  if (fd_ >= 0) {
+    close(fd_);
+    fd_ = -1;
+  }
 }
 
 void RandomAccessFile::Write(off_t pos, size_t len, const char *buffer) {
@@ -149,7 +152,6 @@ off_t RandomAccessFile::FindSize() const {
 //------------------------------------------------------------------------
 
 DiskBlockDevice::~DiskBlockDevice() {
-  file_.Close();
 }
 
 void DiskBlockDevice::Init(

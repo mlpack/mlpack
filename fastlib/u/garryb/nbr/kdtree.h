@@ -198,7 +198,7 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
         split_dim = d;
       }
     }
-    
+
     if (max_width != 0) {
       // Let's try to divide the machines in half at this point.
       int split_rank = (begin_rank + end_rank) / 2;
@@ -366,6 +366,177 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_() {
   node->stat().Postprocess(*param_, node->bound(), node->count());
 
   nodes_.StopWrite(node_i);
+}
+
+template<typename TParam, typename TPoint, typename TNode>
+class SpKdTree {
+ public:
+  typedef TParam Param;
+  typedef TPoint Point;
+  typedef TNode Node;
+
+ private:
+  struct Config {
+    Param *param;
+    int nodes_block;
+    int points_block;
+    int n_points;
+    int dim;
+
+    OT_DEF(Config) {
+      OT_PTR(param);
+      OT_MY_OBJECT(param);
+      OT_MY_OBJECT(nodes_block);
+      OT_MY_OBJECT(points_block);
+      OT_MY_OBJECT(n_points);
+      OT_MY_OBJECT(dim);
+    }
+  };
+  
+  enum { MEGABYTE = 1048576 };
+
+ private:
+  DistributedCache points_;
+  DistributedCache nodes_;
+  datanode *points_module_;
+  datanode *nodes_module_;
+  int points_channel_;
+  int nodes_channel_;
+  int nodes_mb_;
+  int points_mb_;
+  Config *config_;
+
+ public:
+  SpKdTree() {}
+  ~SpKdTree() {
+    delete config_;
+  }
+
+  /**
+   * Loads a tree and initializes.
+   *
+   * @param parampp a double-pointer to a heap-allocated param object.
+   *        this will detelete *parampp and set *parampp to an object
+   *        allocated with 'new'
+   * @param param_tag this tag is sent to param when doing the initialization
+   * @param base_channel the base channel number -- must give use a region
+   *        of 10 free channels, so if base_channel is 400, then 400 to 409
+   *        will be used
+   */
+  void Init(Param **parampp, int param_tag,
+      int base_channel, datanode *module);
+
+  DistributedCache& points() { return points_; }
+  DistributedCache& nodes() { return nodes_; }
+  
+  index_t nodes_block() const { return config_->nodes_block; }
+  index_t points_block() const { return config_->points_block; }
+  index_t n_points() const { return config_->n_points; }
+
+ private:
+  void MasterLoadData_(
+      Config *config, Param *param, int tag, datanode *module);
+  void MasterBuildTree_(
+      Config *config, Param *param, int tag, datanode *module);
+};
+
+template<typename TParam, typename TPoint, typename TNode>
+void SpKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
+    int base_channel, datanode *module) {
+  points_module_ = fx_submodule(module, "points", "points");
+  nodes_module_ = fx_submodule(module, "nodes", "nodes");
+  points_channel_ = base_channel + 0;
+  nodes_channel_ = base_channel + 1;
+  points_mb_ = fx_param_int(points_module_, "mb", 400);
+  nodes_mb_ = fx_param_int(nodes_module_, "mb", 100);
+  Broadcaster<Config> broadcaster;
+  if (rpc::is_root()) {
+    Config config;
+    MasterLoadData_(&config, *parampp, param_tag, module);
+    MasterBuildTree_(&config, *parampp, param_tag, module);
+    config.param = *parampp;
+    broadcaster.SetData(config);
+  } else {
+    CacheArray<Point>::InitDistributedCacheWorker(points_channel_,
+       size_t(points_mb_) * MEGABYTE, &points_);
+    CacheArray<Node>::InitDistributedCacheWorker(nodes_channel_,
+       size_t(nodes_mb_) * MEGABYTE, &nodes_);
+  }
+  points_.StartSync();
+  nodes_.StartSync();
+  points_.WaitSync();
+  nodes_.WaitSync();
+  broadcaster.Doit(base_channel + 2);
+  config_ = new Config(broadcaster.get());
+  delete *parampp;
+  *parampp = new Param(*config_->param);
+}
+
+template<typename TParam, typename TPoint, typename TNode>
+void SpKdTree<TParam, TPoint, TNode>::MasterLoadData_(
+    Config *config, Param *param, int tag, datanode *module) {
+  config->points_block = fx_param_int(points_module_, "block", 1024);
+
+  fprintf(stderr, "master: Reading data\n");
+
+  fx_timer_start(module, "read");
+  TextLineReader reader;
+  if (FAILED(reader.Open(fx_param_str_req(module, "")))) {
+    FATAL("Could not open data file '%s'", fx_param_str_req(module, ""));
+  }
+  DatasetInfo schema;
+  schema.InitFromFile(&reader, "data");
+  config->dim = schema.n_features();
+
+  TPoint default_point;
+  default_point.vec().Init(config->dim);
+  default_point.vec().SetZero();
+  param->InitPointExtras(tag, &default_point);
+
+  CacheArray<Point>::InitDistributedCacheMaster(
+      points_channel_, config->points_block,
+      size_t(points_mb_) * MEGABYTE, default_point,
+      &points_);
+  CacheArray<Point> points_array;
+  points_array.Init(&points_, BlockDevice::M_CREATE);
+  index_t i = 0;
+
+  for (;;) {
+    i = points_array.AllocD(rpc::rank(), 1);
+    CacheWrite<Point> point(&points_array, i);
+    bool is_done;
+    success_t rv = schema.ReadPoint(&reader, point->vec().ptr(), &is_done);
+    if (unlikely(FAILED(rv))) {
+      FATAL("Data file has problems");
+    }
+    if (is_done) {
+      break;
+    }
+  }
+
+  config->n_points = i;
+  param->Bootstrap(tag, config->dim, config->n_points);
+
+  fx_timer_stop(module, "read");
+}
+
+template<typename TParam, typename TPoint, typename TNode>
+void SpKdTree<TParam, TPoint, TNode>::MasterBuildTree_(
+    Config *config, Param *param, int tag, datanode *module) {
+  config->nodes_block = fx_param_int(nodes_module_, "block", 512);
+
+  fprintf(stderr, "master: Building tree\n");
+  fx_timer_start(module, "tree");
+  Node example_node;
+  example_node.Init(config->dim, *param);
+  CacheArray<Node>::InitDistributedCacheMaster(
+      nodes_channel_, config->nodes_block,
+      size_t(nodes_mb_) * MEGABYTE, example_node,
+      &nodes_);
+  KdTreeHybridBuilder<Point, Node, Param>
+      ::Build(module, *param, 0, config->n_points,
+          &points_, &nodes_);
+  fx_timer_stop(module, "tree");
 }
 
 #endif

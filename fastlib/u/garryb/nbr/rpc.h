@@ -327,6 +327,94 @@ class ReduceChannel : public Channel {
 
 //--------------------------------------------------------------------------
 
+template<typename TData>
+class Broadcaster : public Channel {
+  FORBID_COPY(Broadcaster);
+
+ public:
+  typedef TData Data;
+
+ private:
+  class BroadcastTransaction : public Transaction {
+    FORBID_COPY(BroadcastTransaction);
+
+   public:
+    Message *received;
+    DoneCondition cond;
+
+   private:
+    void SendToChildren_() {
+      for (index_t i = 0; i < rpc::n_children(); i++) {
+        Message *m = CreateMessage(rpc::parent(), received->data_size());
+        mem::CopyBytes(m->data(), received->data(), received->data_size());
+        Send(m);
+      }
+      Done();
+      cond.Done();
+    }
+
+   public:
+    BroadcastTransaction() {}
+    virtual ~BroadcastTransaction() { delete received; }
+
+    void SetData(const Data& data) {
+      size_t size = ot::PointerFrozenSize(data);
+      char *buf = mem::Alloc<char>(size);
+      ot::PointerFreeze(data, buf);
+      received = new Message();
+      received->Init(0, 0, 0, buf, 0, size);
+    }
+
+    void DoMaster() {
+      SendToChildren_();
+    }
+
+    void DoWorker() {
+      cond.Wait();
+    }
+
+    void HandleMessage(Message *message) {
+      DEBUG_ASSERT(message->peer() == rpc::parent());
+      received = message;
+      SendToChildren_();
+    }
+  };
+
+ private:
+  BroadcastTransaction transaction_;
+  Data *data_;
+
+ public:
+  Broadcaster() {}
+  ~Broadcaster() {}
+
+  void SetData(const Data& data) {
+    transaction_.SetData(data);
+  }
+
+  void Doit(int channel_num) {
+    transaction_.Init(channel_num);
+    if (!rpc::is_root()) {
+      rpc::Register(channel_num, this);
+      transaction_.DoWorker();
+      rpc::Unregister(channel_num);
+    } else {
+      transaction_.DoMaster();
+    }
+    data_ = ot::PointerThaw<Data>(transaction_.received->data());
+  }
+
+  Data &get() const {
+    return *data_;
+  }
+
+  Transaction *GetTransaction(Message *message) {
+    return &transaction_;
+  }
+};
+
+//--------------------------------------------------------------------------
+
 struct DataGetterRequest {
   enum Operation { GET_DATA } operation;
 

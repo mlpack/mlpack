@@ -209,9 +209,10 @@ class RandomAccessFile {
   mode_t mode_;
   String fname_;
 
+
  public:
   RandomAccessFile() {}
-  ~RandomAccessFile() {}
+  ~RandomAccessFile() { Close(); }
   
   void Init(const char *fname, BlockDevice::mode_t mode);
 
