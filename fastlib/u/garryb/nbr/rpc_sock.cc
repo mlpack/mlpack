@@ -409,7 +409,7 @@ void RpcSockImpl::PollingLoop_() {
             if (!peer->connection.TryRead() && !errors_ok) {
               FATAL("Unexpected end of file for peer %d", peer_num);
             }
-            peer->pending = true;
+            peer->is_pending = true;
             peer->mutex.Unlock();
           }
         }
@@ -431,7 +431,7 @@ void RpcSockImpl::PollingLoop_() {
         // no mutexes required here - the 'pending' field is only modified
         // by the network thread
         Peer *peer = &peers_[i];
-        if (unlikely(peer->pending)) {
+        if (unlikely(peer->is_pending)) {
           ExecuteReadyMessages_(peer);
         }
       }
@@ -483,11 +483,11 @@ void RpcSockImpl::TryAcceptConnection_(int fd) {
 void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
   for (;;) {
     peer->mutex.Lock();
-    if (peer->connection.read_queue().is_empty()) {
+    if (!peer->connection.read_queue().is_empty()) {
       peer->mutex.Unlock();
       break;
     }
-    Message *message = peer->connection.read_queue().top();
+    Message *message = peer->connection.read_queue().Pop();
     int id = message->transaction_id();
     Transaction *transaction;
 
@@ -501,41 +501,47 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
       } else {
         FATAL("Unknown control message: %d", message->channel());
       }
-    } else {
-      if (message->channel() < 0) {
-        // When the channel ID is invalid, this means that I was the initiator
-        // of the transaction.
-        transaction = peer->outgoing_transactions[id];
-        DEBUG_ASSERT_MSG(transaction != NULL,
-           "Transaction null, channel %d, id %d, me %d",
-           message->channel(), id, rpc::rank());
-      } else {
-        // When the channel ID is valid, it means the remote host initiated
-        // the transaction and was picked up by my channel server.
-        transaction = peer->incoming_transactions[id];
-        if (!transaction) {
-          // No existing transaction.  We use the channel number to create one.
-          Channel *channel = channels_[message->channel()];
-          if (channel) {
-            transaction = channel->GetTransaction(message);
-            transaction->TransactionHandleNewSender_(message);
-            peer->incoming_transactions[id] = transaction;
-          }
-        }
-      }
-      
-      if (!transaction) {
-        peer->mutex.Unlock();
-        peer->pending = true;
-        return;
-      }
-
-      peer->connection.read_queue().PopOnly();
+    } else if (message->channel() < 0) {
+      // When the channel ID is invalid, this means that I was the initiator
+      // of the transaction.
+      transaction = peer->outgoing_transactions[id];
+      DEBUG_ASSERT_MSG(transaction != NULL,
+         "Transaction null, channel %d, id %d, me %d",
+         message->channel(), id, rpc::rank());
       peer->mutex.Unlock();
       transaction->HandleMessage(message);
+    } else {
+      peer->mutex.Unlock();
+      peer->pending.Add(message);
     }
   }
-  peer->pending = false;
+
+  peer->is_pending = false;
+
+  while (!peer->pending.is_empty()) {
+    Message *message = peer->pending.top();
+    int id = message->transaction_id();
+    // When the channel ID is valid, it means the remote host initiated
+    // the transaction.
+    peer->mutex.Lock();
+    Transaction *transaction = peer->incoming_transactions[id];
+    if (!transaction) {
+      // No existing transaction.  We use the channel number to create one.
+      Channel *channel = channels_[message->channel()];
+      if (channel) {
+        transaction = channel->GetTransaction(message);
+        transaction->TransactionHandleNewSender_(message);
+        peer->incoming_transactions[id] = transaction;
+      }
+    }
+    peer->mutex.Unlock();
+    if (!transaction) {
+      peer->is_pending = true;
+      break;
+    }
+    transaction->HandleMessage(message);
+    peer->pending.Pop();
+  }
 }
 
 void RpcSockImpl::Ping_(int peer_num, int message) {
@@ -595,7 +601,8 @@ RpcSockImpl::Peer::Peer() {
   incoming_transactions.default_value() = NULL;
   outgoing_transactions.Init();
   outgoing_transactions.default_value() = NULL;
-  pending = false;
+  is_pending = false;
+  pending.Init();
 }
 
 RpcSockImpl::Peer::~Peer() {
@@ -812,7 +819,7 @@ void SockConnection::Send(Message *message) {
     // We're already writing something, put it on the priority queue.
     // No need to wake up the polling loop, because it's already quite aware
     // that we want to check if this socket is readable.
-    write_queue_.Put(write_total_, message);
+    write_queue_.Add(message);
   }
 }
 
@@ -893,7 +900,7 @@ bool SockConnection::TryRead() {
     if (read_buffer_pos_ == read_message_->buffer_size()) {
       // We've read a whole message.  Put it on the queue to be serviced.
       ++read_total_;
-      read_queue_.Put(read_total_, read_message_);
+      read_queue_.Add(read_message_);
 
       read_message_ = NULL;
       read_buffer_pos_ = 0;

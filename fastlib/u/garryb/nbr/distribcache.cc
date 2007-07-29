@@ -345,34 +345,52 @@ void DistributedCache::RemoteWrite(blockid_t blockid,
 
 BlockDevice::blockid_t DistributedCache::AllocBlocks(
     blockid_t n_blocks_to_alloc, int owner) {
+  index_t blockid = RemoteAllocBlocks(n_blocks_to_alloc, owner, my_rank_);
+  if (owner != my_rank_) {
+    OwnerTransaction t;
+    t.Doit(channel_num_, owner, blockid, blockid + n_blocks_to_alloc);
+  }
+  return blockid;
+}
+
+void DistributedCache::MarkOwner_(int owner,
+    blockid_t begin, blockid_t end) {
+  int32 value = (owner == my_rank_) ? SELF_OWNER_UNALLOCATED : (~owner);
+
+  for (blockid_t i = begin; i < end; i++) {
+    blocks_[i].value = value;
+  }
+}
+
+BlockDevice::blockid_t DistributedCache::RemoteAllocBlocks(
+    blockid_t n_blocks_to_alloc, int owner, int sender) {
   blockid_t blockid;
 
   if (likely(my_rank_ == MASTER_RANK)) {
-    mutex_.Lock();
     // Append some blocks to the end
+    mutex_.Lock();
     blockid = n_blocks_;
-    n_blocks_ += n_blocks_to_alloc;
-
-    // Now, mark the owner of all these blocks.
-    BlockMetadata *block = blocks_.AddBack(n_blocks_to_alloc);
-    DEBUG_ASSERT(blocks_.size() == n_blocks_);
-    int32 value = (owner == my_rank_) ? SELF_OWNER_UNALLOCATED : (~owner);
-
-    for (blockid_t i = 0; i < n_blocks_to_alloc; i++) {
-      block[i].value = value;
-    }
-
-    mutex_.Unlock();
   } else {
     AllocTransaction t;
     blockid = t.Doit(channel_num_, MASTER_RANK, n_blocks_to_alloc, owner);
     mutex_.Lock();
-    n_blocks_ = blockid + n_blocks_to_alloc;
-    blocks_.GrowTo(n_blocks_);
-    mutex_.Unlock();
   }
 
+  n_blocks_ = blockid + n_blocks_to_alloc;
+  blocks_.GrowTo(n_blocks_);
+  
+  MarkOwner_(owner, blockid, n_blocks_);
+  mutex_.Unlock();
+
   return blockid;
+}
+
+void DistributedCache::HandleRemoteOwner_(blockid_t block, blockid_t end) {
+  mutex_.Lock();
+  n_blocks_ = max(n_blocks_, end);
+  blocks_.Resize(n_blocks_);
+  MarkOwner_(my_rank_, block, end);
+  mutex_.Unlock();
 }
 
 void DistributedCache::GiveOwnership(blockid_t my_blockid, int new_owner) {
@@ -723,6 +741,28 @@ void DistributedCache::WriteTransaction::HandleMessage(Message *message) {
 
 //-------------------------------------------------------------------------
 
+void DistributedCache::OwnerTransaction::Doit(
+    int channel_num, int peer,
+    BlockDevice::blockid_t blockid, BlockDevice::blockid_t end_block) {
+  Transaction::Init(channel_num);
+  Message *message = CreateMessage(peer, sizeof(Request));
+  Request *request = message->data_as<Request>();
+  request->type = Request::OWNER;
+  request->blockid = blockid;
+  request->begin = 0;
+  request->end = end_block;
+  request->rank = 0;
+  Send(message);
+  Done();
+  // no wait necessary
+}
+
+void DistributedCache::OwnerTransaction::HandleMessage(Message *message) {
+  FATAL("No response to DistributedCache::WriteTransaction expected");
+}
+
+//-------------------------------------------------------------------------
+
 DistributedCache::ConfigResponse *DistributedCache::ConfigTransaction::Doit(
     int channel_num, int peer) {
   Transaction::Init(channel_num);
@@ -780,11 +820,16 @@ void DistributedCache::ResponseTransaction::HandleMessage(
           request->data_as<char>());
     }
     break;
+    case Request::OWNER: {
+      cache_->HandleRemoteOwner_(request->blockid, request->end);
+    }
+    break;
     case Request::ALLOC: {
       DEBUG_ASSERT(cache_->my_rank_ == MASTER_RANK);
       Message *response = CreateMessage(message->peer(), sizeof(blockid_t));
       *message->data_as<blockid_t>() =
-          cache_->AllocBlocks(request->blockid, request->rank);
+          cache_->RemoteAllocBlocks(request->blockid, request->rank,
+          message->peer());
       Send(response);
     }
     break;
@@ -940,6 +985,7 @@ void DistributedCache::SyncTransaction::SendBlankSyncMessage_(int peer) {
   request->blockid = 0;
   request->begin = 0;
   request->end = 0;
+  request->rank = 0;
   Send(request_msg);
 }
 
@@ -954,6 +1000,7 @@ void DistributedCache::SyncTransaction::SendStatusInformation_(int peer) {
   request->blockid = 0;
   request->begin = 0;
   request->end = 0;
+  request->rank = 0;
   Send(request_msg);
 }
 
