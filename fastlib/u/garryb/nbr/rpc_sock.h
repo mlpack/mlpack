@@ -178,13 +178,13 @@ class SockConnection {
   Message *read_message_;
   size_t read_buffer_pos_;
   // TODO: Implement a dequeue instead of using a heap
-  MinHeap<int64, Message*> read_queue_;
+  Queue<Message*> read_queue_;
 
   int64 write_total_;
   Message *write_message_;
   size_t write_buffer_pos_;
   // TODO: Implement a dequeue instead of using a heap
-  MinHeap<int64, Message*> write_queue_;
+  Queue<Message*> write_queue_;
 
  public:
   SockConnection() {}
@@ -220,10 +220,16 @@ class SockConnection {
   int write_fd() const {
     return write_fd_;
   }
-  MinHeap<int64, Message*>& read_queue() {
+  int64 read_total() const {
+    return read_total_;
+  }
+  int64 write_total() const {
+    return write_total_;
+  }
+  Queue<Message*>& read_queue() {
     return read_queue_;
   }
-  const MinHeap<int64, Message*>& read_queue() const {
+  const Queue<Message*>& read_queue() const {
     return read_queue_;
   }
   const struct sockaddr_in& peer_addr() const {
@@ -275,7 +281,8 @@ class RpcSockImpl {
      * channel number.
      */
     DenseIntMap<Transaction*> outgoing_transactions;
-    bool pending;
+    bool is_pending;
+    Queue<Message*> pending;
 
    public:
     Peer();

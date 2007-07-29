@@ -58,20 +58,20 @@ class DistributedCache : public BlockDevice {
   /** Net-transferable request operation */
   struct Request {
    public:
-    enum { CONFIG, READ, WRITE, ALLOC, ALLOCNOTICE, SYNC } type;
-    BlockDevice::blockid_t blockid;
-    BlockDevice::offset_t begin;
-    BlockDevice::offset_t end;
-    int rank;
-    long long_data[1];
+    enum { CONFIG, READ, WRITE, ALLOC, OWNER, SYNC } type;
+    int32 blockid;
+    int32 begin;
+    int32 end;
+    int32 rank;
+    uint64 long_aligned_data_[1];
 
     template<typename T>
     T *data_as() {
-      return reinterpret_cast<T*>(long_data);
+      return reinterpret_cast<T*>(long_aligned_data_);
     }
 
     static size_t size(size_t data_size) {
-      return sizeof(Request) + data_size - sizeof(long);
+      return sizeof(Request) + data_size - sizeof(uint64);
     }
   };
 
@@ -143,6 +143,14 @@ class DistributedCache : public BlockDevice {
         BlockHandler *handler,
         BlockDevice::offset_t begin, BlockDevice::offset_t end,
         const char *buffer);
+    void HandleMessage(Message *message);
+  };
+
+  /** How to initiate a write message */
+  struct OwnerTransaction : public Transaction  {
+   public:
+    void Doit(int channel_num, int peer,
+        BlockDevice::blockid_t blockid, BlockDevice::blockid_t end_block);
     void HandleMessage(Message *message);
   };
 
@@ -258,7 +266,7 @@ class DistributedCache : public BlockDevice {
     /** The owner of this block is unknown */
     UNKNOWN_OWNER = -32767,
     /** I'm the owner of this block, but I haven't assigned it a page. */
-    SELF_OWNER_UNALLOCATED = 16777216
+    SELF_OWNER_UNALLOCATED = (1 << 30)
   };
 
   /**
@@ -519,6 +527,9 @@ class DistributedCache : public BlockDevice {
   }
   /** Allocates blocks, but assign ownership to a specified machine. */
   blockid_t AllocBlocks(blockid_t n_blocks_to_alloc, int owner);
+  /** Backend for AllocBlocks. */
+  blockid_t RemoteAllocBlocks(
+      blockid_t n_blocks_to_alloc, int owner, int sender);
   /** Gets the underlying block handler. */
   BlockHandler *block_handler() const {
     return handler_;
@@ -595,6 +606,10 @@ class DistributedCache : public BlockDevice {
   void MarkDirty_(BlockMetadata *block);
   /** Marks a block as partially dirty. */
   void MarkDirty_(BlockMetadata *block, offset_t begin, offset_t end);
+  /** Mark a particular owner for a region of blocks. */
+  void MarkOwner_(int owner, blockid_t begin, blockid_t end);
+  /** Handle the fact that I'm suddenly the owner of these blocks. */
+  void HandleRemoteOwner_(blockid_t block, blockid_t end);
 };
 
 #endif
