@@ -3,6 +3,7 @@
 #include "fastalloc.h"
 #include "intmap.h"
 #include "rangeset.h"
+#include "queue.h"
 
 #include "base/test.h"
 
@@ -190,6 +191,30 @@ void TestRangeSet() {
   DEBUG_SAME_INT(set[3].end, 900);
 }
 
+void TestQueue() {
+  Queue<int> q;
+  q.Init();
+  *q.Add() = 3;
+  q.Add(1);
+  q.Add(4);
+  q.Add(1);
+  q.Add(5);
+  *q.Add() = 9;
+  DEBUG_ASSERT(!q.is_empty());
+  DEBUG_SAME_INT(q.top(), 3); q.Pop();
+  DEBUG_SAME_INT(q.top(), 1); q.Pop();
+  DEBUG_SAME_INT(q.top(), 4); q.PopOnly();
+  DEBUG_SAME_INT(q.Pop(), 1);
+  DEBUG_SAME_INT(q.Pop(), 5);
+  DEBUG_ASSERT(!q.is_empty());
+  DEBUG_SAME_INT(q.top(), 9); q.Pop();
+  DEBUG_ASSERT(q.is_empty());
+  *q.Add() = 551;
+  DEBUG_ASSERT(!q.is_empty());
+  DEBUG_SAME_INT(q.top(), 551); q.PopOnly();
+  DEBUG_ASSERT(q.is_empty());
+}
+
 TEST_SUITE_END(col, TestArrayListInt, TestMinHeap,
-    TestFastAlloc, TestIntMap, TestRangeSet)
+    TestFastAlloc, TestIntMap, TestRangeSet, TestQueue)
 
