@@ -3,32 +3,31 @@
 \BOOKMARK [1][-]{section*.4}{List of Tables}{}
 \BOOKMARK [1][-]{section*.6}{List of Figures}{}
 \BOOKMARK [1][-]{section.8}{Section 1 \204 Introduction}{}
-\BOOKMARK [1][-]{section.9}{Section 2 \204 Origin and history of the problem}{}
-\BOOKMARK [1][-]{section.10}{Section 3 \204 Preliminary Research}{}
-\BOOKMARK [2][-]{subsection.11}{The Nearest Neighbor Problem}{section.10}
-\BOOKMARK [2][-]{subsection.23}{Kernel methods}{section.10}
-\BOOKMARK [1][-]{section.35}{Section 4 \204 Proposed Research}{}
-\BOOKMARK [2][-]{subsection.36}{Large scale trees, for out of core memory}{section.35}
-\BOOKMARK [2][-]{subsection.37}{Memory layout of Kd-trees}{section.35}
-\BOOKMARK [2][-]{subsection.38}{System architecture}{section.35}
-\BOOKMARK [2][-]{subsection.39}{Memory Manager Architecture}{section.35}
-\BOOKMARK [2][-]{subsection.40}{Memory Mapped Files}{section.35}
-\BOOKMARK [2][-]{subsection.41}{User defined cache, with TPIE}{section.35}
-\BOOKMARK [2][-]{subsection.42}{Customizing Kernels with fast gradient descent}{section.35}
-\BOOKMARK [2][-]{subsection.43}{Scalable Support Vector Machines}{section.35}
-\BOOKMARK [2][-]{subsection.44}{Computing Gaussian Kernel Matrix with trees}{section.35}
-\BOOKMARK [2][-]{subsection.45}{Intrinsic dimension of speech}{section.35}
-\BOOKMARK [2][-]{subsection.46}{Speech recognition with nearest neighbor search}{section.35}
-\BOOKMARK [1][-]{section*.47}{Summary}{}
-\BOOKMARK [2][-]{subsection.49}{Introduction}{section*.47}
-\BOOKMARK [2][-]{subsection.50}{Speech features}{section*.47}
-\BOOKMARK [2][-]{subsection.51}{Fast N-body methods for feature comparison}{section*.47}
-\BOOKMARK [2][-]{subsection.55}{Kernel PCA on a manifold}{section*.47}
-\BOOKMARK [2][-]{subsection.56}{Experimental Results}{section*.47}
-\BOOKMARK [2][-]{subsection.57}{All nearest neighbor performance}{section*.47}
-\BOOKMARK [2][-]{subsection.58}{Comparison of NRAF and MFCC}{section*.47}
-\BOOKMARK [2][-]{subsection.60}{Discussion}{section*.47}
-\BOOKMARK [2][-]{subsection.68}{Acoustic Environment adaptation}{section*.47}
+\BOOKMARK [1][-]{section.11}{Section 2 \204 Origin and history of the problem}{}
+\BOOKMARK [1][-]{section.12}{Section 3 \204 Preliminary Research}{}
+\BOOKMARK [2][-]{subsection.13}{The Nearest Neighbor Problem}{section.12}
+\BOOKMARK [2][-]{subsection.25}{Kernel methods}{section.12}
+\BOOKMARK [1][-]{section.37}{Section 4 \204 Proposed Research}{}
+\BOOKMARK [2][-]{subsection.38}{Large scale trees, for out of core memory}{section.37}
+\BOOKMARK [2][-]{subsection.39}{Memory layout of Kd-trees}{section.37}
+\BOOKMARK [2][-]{subsection.40}{System architecture}{section.37}
+\BOOKMARK [2][-]{subsection.41}{Memory Manager Architecture}{section.37}
+\BOOKMARK [2][-]{subsection.42}{Memory Mapped Files}{section.37}
+\BOOKMARK [2][-]{subsection.43}{User defined cache, with TPIE}{section.37}
+\BOOKMARK [2][-]{subsection.44}{Customizing Kernels with fast gradient descent}{section.37}
+\BOOKMARK [2][-]{subsection.45}{Scalable Support Vector Machines}{section.37}
+\BOOKMARK [2][-]{subsection.46}{Computing Gaussian Kernel Matrix with trees}{section.37}
+\BOOKMARK [2][-]{subsection.47}{Intrinsic dimension of speech}{section.37}
+\BOOKMARK [2][-]{subsection.48}{Speech recognition with nearest neighbor search}{section.37}
+\BOOKMARK [2][-]{subsection.49}{Introduction}{section.37}
+\BOOKMARK [2][-]{subsection.50}{Speech features}{section.37}
+\BOOKMARK [2][-]{subsection.51}{Fast N-body methods for feature comparison}{section.37}
+\BOOKMARK [2][-]{subsection.55}{Kernel PCA on a manifold}{section.37}
+\BOOKMARK [2][-]{subsection.56}{Experimental Results}{section.37}
+\BOOKMARK [2][-]{subsection.57}{All nearest neighbor performance}{section.37}
+\BOOKMARK [2][-]{subsection.58}{Comparison of NRAF and MFCC}{section.37}
+\BOOKMARK [2][-]{subsection.60}{Discussion}{section.37}
+\BOOKMARK [2][-]{subsection.68}{Acoustic Environment adaptation}{section.37}
 \BOOKMARK [1][-]{section.69}{Section 5 \204 Work remaining to be done}{}
 \BOOKMARK [1][-]{section.70}{Section 6 \204 Facilities and Equipment Needed}{}
 \BOOKMARK [1][-]{section.71}{Appendix A \204 This is my first appendix}{}

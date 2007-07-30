@@ -1,7 +1,7 @@
-This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5) (preloaded format=latex 2007.2.26)  20 JUL 2007 10:42
+This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5) (preloaded format=latex 2007.2.26)  30 JUL 2007 18:04
 entering extended mode
-**D:/nick/proposal/proposal.tex
-(D:\nick\proposal\proposal.tex
+**D:/nick/fastlib/u/nvasil/docs/proposal/proposal.tex
+(D:\nick\fastlib\u\nvasil\docs\proposal\proposal.tex
 LaTeX2e <2005/12/01>
 Babel <v3.8g> and hyphenation patterns for english, dumylang, nohyphenation, ge
 rman, ngerman, french, loaded.
@@ -528,8 +528,6 @@ File: utxsyc.fd 2000/12/15 v3.1
 ******** FrontMatter Ends ********
 ******** Body Begins ********
 Section 1.
-Section 2.
-Section 3.
 
 Underfull \hbox (badness 10000) has occurred while \output is active
 [][][][][][][] 
@@ -540,65 +538,70 @@ Underfull \hbox (badness 10000) has occurred while \output is active
  
  []
 
-[1] [2] [3] [4] [5] [6] [7]
+[1]
+Section 2.
+[2]
+Overfull \hbox (3.30002pt too wide) in paragraph at lines 181--190
+\OT1/txr/m/n/12 true di-men-sion of speech. Many rep-re-sen-ta-tions have been 
+rec-om-mended for speech MFCC,
+ []
+
+Section 3.
+[3] [4] [5] [6] [7] [8] [9] [10]
 Section 4.
-[8] [9] [10] [11] [12] [13]
-***************** Abstract ******************
-[14]
+[11] [12] [13] [14] [15]
 
-LaTeX Warning: Citation `quatieri2002dts' on page 15 undefined on input line 60
-6.
+LaTeX Warning: Citation `quatieri2002dts' on page 16 undefined on input line 70
+0.
 
 
-LaTeX Warning: Citation `bentley1975bst' on page 15 undefined on input line 620
+LaTeX Warning: Citation `bentley1975bst' on page 16 undefined on input line 714
 .
 
 
-LaTeX Warning: Citation `moore2000ahu' on page 15 undefined on input line 621.
+LaTeX Warning: Citation `moore2000ahu' on page 16 undefined on input line 715.
 
 
-LaTeX Warning: Citation `gray2000nbp' on page 15 undefined on input line 624.
+LaTeX Warning: Citation `gray2000nbp' on page 16 undefined on input line 718.
 
 
-LaTeX Warning: Citation `ravindran:inr' on page 15 undefined on input line 627.
+LaTeX Warning: Citation `ravindran:inr' on page 16 undefined on input line 721.
 
-
-
-LaTeX Warning: Citation `jansen2006ifa' on page 15 undefined on input line 637.
-
-
-
-LaTeX Warning: Citation `scholkopf:nca' on page 15 undefined on input line 643.
-
-
-
-LaTeX Warning: Citation `coifman2006dm' on page 15 undefined on input line 644.
-
-
-[15
-
-
-]
-
-LaTeX Warning: Citation `shamma_main' on page 16 undefined on input line 659.
 
 [16]
 
-LaTeX Warning: Citation `moore-tutorial' on page 17 undefined on input line 682
+LaTeX Warning: Citation `jansen2006ifa' on page 17 undefined on input line 731.
+
+
+
+LaTeX Warning: Citation `scholkopf:nca' on page 17 undefined on input line 737.
+
+
+
+LaTeX Warning: Citation `coifman2006dm' on page 17 undefined on input line 738.
+
+
+[17]
+
+LaTeX Warning: Citation `shamma_main' on page 18 undefined on input line 753.
+
+
+LaTeX Warning: Citation `moore-tutorial' on page 18 undefined on input line 776
 .
 
-LaTeX Font Info:    Try loading font information for OT1+txtt on input line 709
+[18]
+LaTeX Font Info:    Try loading font information for OT1+txtt on input line 803
 .
-("C:\Program Files\MiKTeX 2.5\tex\latex\txfonts\ot1txtt.fd"
+ ("C:\Program Files\MiKTeX 2.5\tex\latex\txfonts\ot1txtt.fd"
 File: ot1txtt.fd 2000/12/15 v3.1
 )
 File: kdtree.eps Graphic file (type eps)
  <kdtree.eps>
 File: dualtree_recursion.eps Graphic file (type eps)
 
-<dualtree_recursion.eps> [17] [18] [19] [20]
+<dualtree_recursion.eps> [19] [20] [21] [22]
 
-LaTeX Warning: Citation `ravindran:inr' on page 21 undefined on input line 849.
+LaTeX Warning: Citation `ravindran:inr' on page 23 undefined on input line 943.
 
 
 File: timit_pca.eps Graphic file (type eps)
@@ -607,26 +610,23 @@ File: ntimit_pca.eps Graphic file (type eps)
  <ntimit_pca.eps>
 File: kernel_pca.eps Graphic file (type eps)
  <kernel_pca.eps>
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 Section 5.
 Section 6.
-[21] [22]
+[23] [24]
 Overfull \vbox (11.8856pt too high) has occurred while \output is active []
 
 
-[23]
+[25]
 ******** Body Ends ********
 ******** EndMatter Begins ********
-[24]
+[26]
 Appendix A.
-[25
+[27
 
 ]
 Appendix B.
 ***************** References ******************
-[26
+[28
 
 ] (proposal.bbl
 
@@ -634,7 +634,7 @@ LaTeX Warning: Empty ``thebibliography'' environment on input line 3.
 
 )
 ******** EndMatter Ends ********
-[27
+[29
 
 
 ] (proposal.aux)
@@ -643,12 +643,12 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 5350 strings out of 95420
- 68593 string characters out of 1187320
- 129511 words of memory out of 1126043
- 8214 multiletter control sequences out of 60000
+ 5349 strings out of 95420
+ 68647 string characters out of 1187320
+ 129426 words of memory out of 1125958
+ 8213 multiletter control sequences out of 60000
  28619 words of font info for 89 fonts, out of 1000000 for 2000
  14 hyphenation exceptions out of 8191
- 34i,8n,36p,319b,521s stack positions out of 5000i,500n,10000p,200000b,32768s
+ 34i,8n,36p,341b,521s stack positions out of 5000i,500n,10000p,200000b,32768s
 
-Output written on proposal.dvi (32 pages, 125224 bytes).
+Output written on proposal.dvi (34 pages, 135100 bytes).

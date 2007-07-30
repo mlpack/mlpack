@@ -96,13 +96,71 @@ ECE}{Georgia Institute of Technology}
 
 \begin{Body}
 \section{Introduction}
-\label{intro}
-The start of stuff. \par
+\label{intro} Information explosion during the last decades has
+created data volumes of extraordinary size and high dimension. There
+is great demand for analysis and information extraction from data.
+Two approaches are common in machine learning parametric and
+non-parametric. In the parametric case there is an underlying model
+assumption. The concept is to estimate the model parameters given
+the data. In the non-parametric case the data is the model.
+
+In the parametric case we start with a very large amount of data $N$
+and we train a model that is described with $k$ parameters, where
+$k<<N$. So evaluation of the model for new data is quite fast, since
+it involves operations that have to do with $k$ parameters. In
+practice parametric models lead to non-convex optimization problems,
+so it is difficult to find the best parameters given the data. The
+most difficult part is to find the right number of the parameters
+that best fit the data. For example the number of neurons and the
+topology of a neural network is something that can only been
+estimated experimentally after testing different combinations given
+a dataset. In any case the value of parametric models should not be
+underestimated since it can achieve very good performance in
+practice even if the best parameters have not been chosen.
+
+In the parametric case the model is the model. The model has $N$
+parameters plus one or two that have to be estimated. For example in
+the Kernel Density Estimation problem, the bandwidth $h$ of the
+kernel has to be tuned, i.e.
+\begin{equation}
+\hat{f}(x)=\sum_{i}^{N}e^{\frac{-||x-x_i||}{h}}
+\end{equation}
+There are case that the bandwidth depends on the point so the above
+equation gets the form
+\begin{equation}
+\hat{f}(x)=\sum_{i}^{N}e^{-||x-x_i||/h_i}
+\end{equation}
+In contrast to parametric cases a single evaluation of a non
+parametric model requires evaluation of $N$ parameters. Naively
+speaking training can be avoided at all if we set the parameter
+ad-hoc. If we want to find the single parameter with cross
+validation then that would require $N^2$ operations per candidate
+value of $h$. It turns out that if we arrange data in a clever way
+it is possible to reduce the training of the non-parametric model to
+linear time and evaluation of a new point in logarithmic time.
+Estimation of the few parameters of a non-parametric model can be
+casted as an optimization problem which in most of the case can be
+convex. We will see how non-parametric Kernel Principal Component
+Analysis can be computed with the help of semidefinite programming.
 
 \section{Origin and history of the problem}
 \label{origin}
-%\inssssfig{campanile.eps}{campanile.eps}{campanile.eps}{Test
-%side-by-side-by-side figure}{3cm}{3cm}{3cm}
+
+After the information explosion the problem of reducing/estimating
+the real dimensionality also known as the intrinsic dimension of a
+given dataset has been an active problem. It is well known that many
+machine learning algorithms starting from the very fundamental, the
+nearest neighbor grow exponentially on the intrinsic dimension. This
+is also known as the curse of dimensionality. In many cases in the
+literature dimensionality is used without the prefix intrinsic or
+extrinsic, causing confusion. The extrinsic dimensionality is just
+the number of variables needed to describe a point, i.e. the
+extrinsic dimensionality of $x\in \Re^d$ is just $d$. Each variable
+of the d-dimensional vector will be called dimension $1\dots d$
+
+
+
+
 \section{Preliminary Research}
 \label{prelim}
 \subsection{The Nearest Neighbor Problem}
@@ -586,11 +644,20 @@ modified.
 
 \subsection{Customizing Kernels with fast
 gradient descent}
+
+As we described in section ? it is possible to customize the kernel
+for a given dataset, through semidefinite programming. Although this
+method is very promising and gives very good results it is not
+scalable. Semidefinite programming is solved with the intrinsic
+point method which is of polynomial complexity.
+
 \subsection{Scalable Support Vector Machines}
 \subsection{Computing Gaussian Kernel Matrix with trees}
 \subsection{Intrinsic dimension of speech}
+
+
 \subsection{Speech recognition with nearest neighbor search}
-\begin{abstract}
+
 In this paper we present a computationally efficient means of
 characterizing different features for speech processing tasks. The
 presented method can be used to compare the performance of features
@@ -598,9 +665,6 @@ free of interference from back-end recognition engines that might be
 skewed to favor a particular feature. Understanding the intrinsic
 characteristics of features would enable us to make the right choice
 of features for a given task.
-\end{abstract}
-
-
 \subsection{Introduction} Many features have been proposed for speech
 recognition, with Mel Frequency Cepstrum Coefficients (MFCC)
 \cite{quatieri2002dts} being the most popular. Other features have
