@@ -7,9 +7,9 @@
 \end{center}
 
 \textbf{Goal:} Compute the intrinsic dimension of several speech
-representation. Fast computation for kernel matrix. Fast
+representations. Fast computation for kernel matrix. Fast
 optimization of the kernel matrix. Nearest neighbor speech
-recognition. On-line kernel adaptive filters.
+recognition.
 
 \textbf{Contributions:}
 \begin{enumerate}
@@ -18,31 +18,56 @@ recognition. On-line kernel adaptive filters.
   \item On-line kernel adaptive filters.
 \end{enumerate}
 
-\textbf{Specific tasks:}
+\textbf{Specific tasks (Done):}
 \begin{enumerate}
-  \item The Nearest Neighbor Problem
-  \item Multidimensional Trees
-  \item Kd trees
-  \item Ball trees
-  \item Nearest Neighbor Algorithm
-  \item All nearest Neighbors
-  \item Fast kernel summation with trees
-  \item Fast kernel summation with trees
+  \item \textit{The Nearest Neighbor Problem} Approached the problem
+  with trees that give the exact nearest neighbor. We could have also
+  considered the approximate nearest neighbor problem that can be
+  solved with other methods. But still trees is the best approach
+  and also it is not yet known whether approximate nearest neighbor
+  gives better performance.
+  \item \textit{Multidimensional Trees} Studied developed and
+  optimized kd-trees and ball trees. We didn't consider other types
+  since comparative study has shown that they are still the state of
+  the art.
+  \item \textit{All nearest Neighbors} Implemented the best
+  algorithm (dual tree) algorithm.
+  \item \textit{Large scale trees, for out of core memory} Followed
+  different caching practices for trees that don't fit in the main
+  memory. Optimized code. Showed that the dual tree algorithm has
+  very good locality structure.
+  \item \textit{Fast k-nearest neighbor kernel computation} It is
+  based on direct application of the all-nearest neighbor algorithm
+  \item \textit{tuning the kernel bandwidth} Developed and algorithm
+  for tuning non-parametrically the gaussian kernel in spectral
+  clustering algorithms such as kernel-pca and diffusion mapping
+  \item \textit{Phoneme classification with nearest neighbor
+  classifier} Experimented with MFCC and NRAF features on the whole
+  TIMIT database and managed to get up to 60\% correct phoneme
+  classification only by looking at the nearest neighbor. The method
+  can scale up linearly.
 \end{enumerate}
 
-\textbf{Specific tasks:}
+\textbf{Specific tasks (To do):}
 \begin{enumerate}
-  \item Large scale trees, for out of core memory
-  \item Customizing Kernels with fast gradient descent
-  \item
-\end{enumerate}
-
-\textbf{Scope:}
-\begin{enumerate}
-  \item Computing Gaussian Kernel Matrix with trees
-  \item Customized Kernels
-  \item Stochastic optimization
-  \item Speech recognition with nearest neighbor search
+  \item \textit{Customizing Kernels with semidefinite programming}
+  There is an existing method for optimizing the kernel matrix based
+  on semidefinite programming. There are certain optimizations that
+  can be done along with the dual tree algorithm for linear scaling,
+  such as application of stochastic optimization
+  \item \textit{Fast kernel summation with trees, Kernel Matrix
+  inversion} Direct computation of the kernel(Gaussian) kernel leads
+  to a non-sparse matrix. There is a way though to compute the
+  inverse/eigenvalues without explicitly computing the kernel
+  matrix. Several optimizations can be done for high dimensions
+  \item \textit{Speech recognition with nearest neighbor search}
+  Implement a merge reduce scheme to create different descriptions
+  of speech. Use nearest neighbor algorithms to replace gaussian
+  mixtures in hidden markov models.
+  \item \textit{Parallelize the code to handle larger datasets} The
+  goal is to measure the intrinsic dimension of the broadcast news
+  dataset. Test it with fast gaussian summation and with optimized
+  kernels.
 \end{enumerate}
 
 \end{document}
