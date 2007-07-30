@@ -60,7 +60,7 @@ class GCCCompiler(CompilerInfo):
     self.name = "gcc"
     self.mode_dictionary = {
       "verbose": "-g -DDEBUG -DVERBOSE",
-      "debug": "-g3 -DDEBUG",
+      "debug": "-g3 -DDEBUG -O0",
       "check": "-O2 -finline-functions -g -DDEBUG",
       "fast": "-O2 -finline-functions -fomit-frame-pointer -g -DNDEBUG",
       "unsafe": "-O3 -ffast-math -g -fomit-frame-pointer -DNDEBUG",
@@ -70,7 +70,7 @@ class GCCCompiler(CompilerInfo):
     }
     self.command_from_ext = {
       "c" : "gcc %s -c %s -o %s -Wall",
-      "cc" : "g++ %s -c %s -o %s -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions",
+      "cc" : "g++ -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions %s -c %s -o %s",
       "f" : "g77 %s -c %s -o %s -Wall -Wno-uninitialized"
     }
     self.linker = "g++"

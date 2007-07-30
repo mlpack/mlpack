@@ -109,6 +109,7 @@ void RpcSockImpl::Init() {
   peer_from_fd_.Init();
   peer_from_fd_.default_value() = -1;
   max_fd_ = 0;
+  writers_ = 0;
   FD_ZERO(&error_fd_set_);
   FD_ZERO(&read_fd_set_);
   FD_ZERO(&write_fd_set_);
@@ -162,6 +163,14 @@ void RpcSockImpl::Done() {
     close(listen_fd_);
     peers_.Resize(0); // automatically calls their destructors
   }
+}
+
+void RpcSockImpl::WriteFlush() {
+  fd_mutex_.Lock();
+  while (writers_ != 0) {
+    writers_cond_.Wait(&fd_mutex_);
+  }
+  fd_mutex_.Unlock();
 }
 
 void RpcSockImpl::Register(int channel_num, Channel *channel) {
@@ -334,6 +343,9 @@ void RpcSockImpl::PollingLoop_() {
     read_fds = read_fd_set_;
     write_fds = write_fd_set_;
     error_fds = error_fd_set_;
+    if (writers_ == 0) {
+      writers_cond_.Broadcast();
+    }
     fd_mutex_.Unlock();
 
     struct timeval tv;
@@ -400,7 +412,7 @@ void RpcSockImpl::PollingLoop_() {
           }
           FD_CLR(i, &error_fd_set_);
           FD_CLR(i, &read_fd_set_);
-          FD_CLR(i, &write_fd_set_);
+          DeactivateWriteFd(i);
         }
 
         if (unlikely(FD_ISSET(i, &read_fds))) {
@@ -572,8 +584,8 @@ void RpcSockImpl::RegisterReadFd(int peer, int fd) {
 }
 
 void RpcSockImpl::RegisterWriteFd(int peer, int fd) {
+  ActivateWriteFd(fd);
   fd_mutex_.Lock();
-  FD_SET(fd, &write_fd_set_);
   FD_SET(fd, &error_fd_set_);
   max_fd_.MaxWith(fd);
   if (peer >= 0) {
@@ -584,13 +596,19 @@ void RpcSockImpl::RegisterWriteFd(int peer, int fd) {
 
 void RpcSockImpl::ActivateWriteFd(int fd) {
   fd_mutex_.Lock();
-  FD_SET(fd, &write_fd_set_);
+  if (!FD_ISSET(fd, &write_fd_set_)) {
+    FD_SET(fd, &write_fd_set_);
+    writers_++;
+  }
   fd_mutex_.Unlock();
 }
 
 void RpcSockImpl::DeactivateWriteFd(int fd) {
   fd_mutex_.Lock();
-  FD_CLR(fd, &write_fd_set_);
+  if (FD_ISSET(fd, &write_fd_set_)) {
+    FD_CLR(fd, &write_fd_set_);
+    writers_--;
+  }
   fd_mutex_.Unlock();
 }
 

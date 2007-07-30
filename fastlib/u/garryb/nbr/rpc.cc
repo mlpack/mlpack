@@ -105,6 +105,7 @@ class BarrierChannel : public Channel {
 
 void rpc::Barrier(int channel_num) {
   BarrierChannel barrier;
+  rpc::WriteFlush();
   barrier.Doit(channel_num);
 }
 

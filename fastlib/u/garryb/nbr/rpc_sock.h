@@ -97,8 +97,10 @@ class Transaction {
   void Done(int peer);
 
  public:
-  Transaction() {}
-  virtual ~Transaction() {}
+  Transaction() {
+    channel_ = BIG_BAD_NUMBER;
+  }
+  virtual ~Transaction() { channel_ = BIG_BAD_NUMBER; }
   
   void Init(int channel_num);
 
@@ -369,6 +371,11 @@ class RpcSockImpl {
   /** Largest file descriptor. */
   MinMaxVal<int> max_fd_;
 
+  /** Number of active writers. */
+  int writers_;
+  /** Mutex that is locked when writes are pending. */
+  WaitCondition writers_cond_;
+
  public:
   void Init();
   void Done();
@@ -383,6 +390,7 @@ class RpcSockImpl {
   void RegisterWriteFd(int peer, int fd);
   void ActivateWriteFd(int fd);
   void DeactivateWriteFd(int fd);
+  void WriteFlush();
 
   int rank() const { return rank_; }
   int n_peers() const { return n_peers_; }
@@ -450,6 +458,10 @@ namespace rpc {
   /** Deliver a message */
   inline void Send(Message *message) {
     RpcSockImpl::instance->Send(message);
+  }
+  /** Waits for all pending writes to be sent -- important for barriers! */
+  inline void WriteFlush() {
+    RpcSockImpl::instance->WriteFlush();
   }
 };
 
