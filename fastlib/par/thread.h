@@ -240,6 +240,47 @@ class DoneCondition {
 };
 
 /**
+ * Waits for a variable to take on a certain value.
+ */
+class ValueCondition {
+  Mutex mutex_;
+  WaitCondition cond_;
+  int value_;
+
+ public:
+  ValueCondition() { value_ = 0; }
+  ~ValueCondition() {}
+
+  /**
+   * Wait for this to become a particular value.
+   */
+  void Wait(int v) {
+    mutex_.Lock();
+    while (value_ != v) {
+      cond_.Wait(&mutex_);
+    }
+    mutex_.Unlock();
+  }
+
+  void WaitNot(int v) {
+    mutex_.Lock();
+    while (value_ == v) {
+      cond_.Wait(&mutex_);
+    }
+    mutex_.Unlock();
+  }
+
+  void Set(int v) {
+    mutex_.Lock();
+    if (value_ != v) {
+      value_ = v;
+      cond_.Broadcast();
+    }
+    mutex_.Unlock();
+  }
+};
+
+/**
  * Mix-in to make a version of an existing object that can be locked.
  *
  * Your object must have default constructors and use Init methods.

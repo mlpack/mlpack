@@ -379,6 +379,8 @@ void RpcDualTree(
   } else {
     *global_result = NULL;
   }
+
+  delete work_queue;
 }
 
 template<typename GNP, typename Solver>
@@ -410,6 +412,7 @@ class RpcMonochromaticDualTreeRunner {
   RpcMonochromaticDualTreeRunner() {
   }
   ~RpcMonochromaticDualTreeRunner() {
+    delete param_;
   }
 
   void Doit(datanode *module, const char *gnp_name);

@@ -221,7 +221,7 @@ class DistributedCache : public BlockDevice {
     void CheckAccumulation_();
     void ParentAccumulated_(const SyncInfo& info);
     void SendBlankSyncMessage_(int peer);
-    void SendStatusInformation_(int peer);
+    void SendStatusInformation_(int peer, const SyncInfo& info);
   };
 
   /** Server-side channel */
