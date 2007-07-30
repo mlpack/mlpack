@@ -298,10 +298,13 @@ class DistributedCache : public BlockDevice {
     BlockMetadata() {
       // Initialize into a state where "We know the block is fresh and new
       // but we have no idea who owns it"
+      DEBUG_ASSERT_MSG(sizeof(BlockMetadata) <= 16,
+          "Don't make the metadata take too much RAM!");
       data = NULL;
       value = UNKNOWN_OWNER;
-      status = NOT_DIRTY_NEW;
       locks = 0;
+      status = NOT_DIRTY_NEW;
+      is_reading = false;
     }
     ~BlockMetadata() {
       if (data != NULL) {
@@ -317,10 +320,12 @@ class DistributedCache : public BlockDevice {
      * unlike negation, ~0 is not 0.
      */
     int32 value;
-    /** Linked list of ranges that we've written. */
-    int16 status;
-    /** Number of locks, or negative if block is new. */
+    /** Number of FIFO's that are currently accessing this. */
     int16 locks;
+    /** Linked list of ranges that we've written. */
+    uint8 status;
+    /** Whether the block is currently being read asynchronously. */
+    uint8 is_reading;
 
     /** Determines the block's owner. */
     int owner(const struct DistributedCache *cache) const {
@@ -407,7 +412,7 @@ class DistributedCache : public BlockDevice {
   unsigned n_sets_;
 
   Mutex mutex_;
-  Mutex io_mutex_;
+  WaitCondition io_cond_;
   
   IoStats disk_stats_;
   IoStats net_stats_;

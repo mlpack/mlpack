@@ -109,7 +109,7 @@ void RpcSockImpl::Init() {
   peer_from_fd_.Init();
   peer_from_fd_.default_value() = -1;
   max_fd_ = 0;
-  writers_ = 0;
+  unacknowledged_ = 0;
   FD_ZERO(&error_fd_set_);
   FD_ZERO(&read_fd_set_);
   FD_ZERO(&write_fd_set_);
@@ -167,8 +167,8 @@ void RpcSockImpl::Done() {
 
 void RpcSockImpl::WriteFlush() {
   fd_mutex_.Lock();
-  while (writers_ != 0) {
-    writers_cond_.Wait(&fd_mutex_);
+  while (unacknowledged_ != 0) {
+    flush_cond_.Wait(&fd_mutex_);
   }
   fd_mutex_.Unlock();
 }
@@ -193,7 +193,10 @@ void RpcSockImpl::Send(Message *message) {
   DEBUG_ASSERT(n_peers_ != 1);
   Peer *peer = &peers_[message->peer()];
   peer->mutex.Lock();
-  peer->connection.Send(message);
+  if (likely(message->transaction_id() != TID_CONTROL)) {
+    peer->unacknowledged++;
+  }
+  peer->connection.RawSend(message);
   peer->mutex.Unlock();
 }
 
@@ -343,9 +346,6 @@ void RpcSockImpl::PollingLoop_() {
     read_fds = read_fd_set_;
     write_fds = write_fd_set_;
     error_fds = error_fd_set_;
-    if (writers_ == 0) {
-      writers_cond_.Broadcast();
-    }
     fd_mutex_.Unlock();
 
     struct timeval tv;
@@ -408,7 +408,8 @@ void RpcSockImpl::PollingLoop_() {
       for (int i = max_fd_; i >= 0; i--) {
         if (unlikely(FD_ISSET(i, &error_fds))) {
           if (!errors_ok) {
-            FATAL("Unexpected error on file descriptor %d\n", i);
+            FATAL("Unexpected error on file descriptor %d (i'm %d)\n",
+                i, rpc::rank());
           }
           FD_CLR(i, &error_fd_set_);
           FD_CLR(i, &read_fd_set_);
@@ -421,7 +422,8 @@ void RpcSockImpl::PollingLoop_() {
             Peer *peer = &peers_[peer_num];
             peer->mutex.Lock();
             if (!peer->connection.TryRead() && !errors_ok) {
-              FATAL("Unexpected end of file for peer %d", peer_num);
+              FATAL("Unexpected end of file for peer %d (i'm %d)",
+                  peer_num, rpc::rank());
             }
             peer->is_pending = true;
             peer->mutex.Unlock();
@@ -439,6 +441,8 @@ void RpcSockImpl::PollingLoop_() {
         }
       }
 
+      int tmp_unacknowledged = 0;
+
       mutex_.Lock();
       alarm(TIMEOUT_MESSAGE);
       for (index_t i = 0; i < peers_.size(); i++) {
@@ -448,9 +452,17 @@ void RpcSockImpl::PollingLoop_() {
         if (unlikely(peer->is_pending)) {
           ExecuteReadyMessages_(peer);
         }
+        tmp_unacknowledged += peer->unacknowledged;
       }
       alarm(0);
       mutex_.Unlock();
+
+      fd_mutex_.Lock();
+      unacknowledged_ = tmp_unacknowledged;
+      if (tmp_unacknowledged == 0) {
+        flush_cond_.Broadcast();
+      }
+      fd_mutex_.Unlock();
 
       if (unlikely(FD_ISSET(listen_fd_, &read_fds))) {
         // Accept incoming connections
@@ -467,6 +479,9 @@ void RpcSockImpl::PollingLoop_() {
 void RpcSockImpl::TryAcceptConnection_(int fd) {
   SockConnection::Header preheader;
 
+  // TODO: This protocol message is unusual in that the transaction ID is
+  // being misused as the peer number.  Ideally, the peer number should
+  // be stored as data() in the message.
   if (read(fd, &preheader, sizeof(preheader)) != sizeof(preheader)) {
     NONFATAL("Rejected connection -- incomplete header.");
   } else if (preheader.magic != SockConnection::MAGIC) {
@@ -495,27 +510,34 @@ void RpcSockImpl::TryAcceptConnection_(int fd) {
 }
 
 void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
-  for (;;) {
-    if (peer->connection.read_queue().is_empty()) {
-      break;
-    }
+  int handled = 0;
+
+  // no mutex required on read_queue, pending, or is_pending, because the
+  // network thread is the only one that deals with these
+
+  while (!peer->connection.read_queue().is_empty()) {
     Message *message = peer->connection.read_queue().Pop();
     int id = message->transaction_id();
     Transaction *transaction;
 
     if (id < 0) {
+      DEBUG_ASSERT_MSG(id == TID_CONTROL,
+          "Negative transaction ID's should correspond to control messages.");
       peer->mutex.Unlock();
-      // We're getting a control message
       if (message->channel() == MSG_PONG) {
         live_pings_--;
       } else if (message->channel() == MSG_PING) {
         Ping_(peer->connection.peer(), MSG_PONG);
+      } else if (message->channel() == MSG_ACK) {
+        peer->unacknowledged -= *message->data_as<int32>();
+        DEBUG_ASSERT_MSG(peer->unacknowledged >= 0,
+            "Received more acknowledgements than messages sent.");
       } else {
         FATAL("Unknown control message: %d", message->channel());
       }
     } else if (message->channel() < 0) {
       // When the channel ID is invalid, this means that I was the initiator
-      // of the transaction.
+      // of the transaction.  Let's handle this immediately.
       peer->mutex.Lock();
       transaction = peer->outgoing_transactions[id];
       DEBUG_ASSERT_MSG(transaction != NULL,
@@ -523,6 +545,7 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
          message->channel(), id, rpc::rank());
       peer->mutex.Unlock();
       transaction->HandleMessage(message);
+      handled++;
     } else {
       peer->pending.Add(message);
     }
@@ -551,21 +574,31 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
       peer->is_pending = true;
       break;
     }
+    handled++;
     transaction->HandleMessage(message);
     peer->pending.Pop();
   }
+  
+  if (handled != 0) {
+    // send acknowledgement of the messages we've processed
+    peer->mutex.Lock();
+    Message *ack = peer->connection.CreateMessage(MSG_ACK, TID_CONTROL,
+        sizeof(int32));
+    *ack->data_as<int32>() = handled;
+    Send(ack);
+  }
 }
 
-void RpcSockImpl::Ping_(int peer_num, int message) {
+void RpcSockImpl::Ping_(int peer_num, int number) {
   Peer *peer = &peers_[peer_num];
   peer->mutex.Lock();
   // Only ping machines we're open both ways with.  We don't want to try
   // pinging a machine that we're in the process of connecting to, but might
   // be waiting for a connection to its parent.
   if (peer->connection.is_write_open() && peer->connection.is_read_open()) {
-    peer->connection.Send(
-        peer->connection.CreateMessage(peer_num, message, -1, 0));
-    if (message == MSG_PING) {
+    peer->connection.RawSend(
+        peer->connection.CreateMessage(number, TID_CONTROL, 0));
+    if (number == MSG_PING) {
       live_pings_++;
     }
   }
@@ -596,19 +629,13 @@ void RpcSockImpl::RegisterWriteFd(int peer, int fd) {
 
 void RpcSockImpl::ActivateWriteFd(int fd) {
   fd_mutex_.Lock();
-  if (!FD_ISSET(fd, &write_fd_set_)) {
-    FD_SET(fd, &write_fd_set_);
-    writers_++;
-  }
+  FD_SET(fd, &write_fd_set_);
   fd_mutex_.Unlock();
 }
 
 void RpcSockImpl::DeactivateWriteFd(int fd) {
   fd_mutex_.Lock();
-  if (FD_ISSET(fd, &write_fd_set_)) {
-    FD_CLR(fd, &write_fd_set_);
-    writers_--;
-  }
+  FD_CLR(fd, &write_fd_set_);
   fd_mutex_.Unlock();
 }
 
@@ -621,6 +648,7 @@ RpcSockImpl::Peer::Peer() {
   outgoing_transactions.default_value() = NULL;
   is_pending = false;
   pending.Init();
+  unacknowledged = 0;
 }
 
 RpcSockImpl::Peer::~Peer() {
@@ -811,7 +839,7 @@ void SockConnection::AcceptIncoming(int accepted_fd) {
   MakeSocketNonBlocking(read_fd_);
 }
 
-void SockConnection::Send(Message *message) {
+void SockConnection::RawSend(Message *message) {
   if (!is_write_open()) {
     // Open our outgoing link if one doesn't exist.
     OpenOutgoing(false);
@@ -866,7 +894,7 @@ void SockConnection::TryWrite() {
         if (bytes_written < 0 && errno != EAGAIN && errno != EINTR) {
           // It turns out the error is not just a non-blocking type error,
           // so we die and let the entire team die out too.
-          FATAL("Error writing");
+          FATAL("%d: Error writing", rpc::rank());
         }
         return;
       } else if (bytes_written != 0) {
@@ -892,17 +920,18 @@ bool SockConnection::TryRead() {
       // Read the packet's header.
       ssize_t header_bytes = read(read_fd_, &header, sizeof(Header));
       // Error out if we got the wrong number of bytes.
-      // In theory, we probably can't always assume the headers won't be be
-      // chopped up.
-      if (header_bytes != sizeof(Header)) {
-        if (header_bytes == 0 || errno == EINTR || errno == EAGAIN) {
+      // TODO: In theory, a header might be chopped up across multiple
+      // reads.  I should handle this correctly.
+      if (header_bytes <= 0) {
+        if (header_bytes == 0 || (header_bytes < 0 && (errno == EINTR || errno == EAGAIN))) {
           // okay, it looks like there isn't any data
-          //fprintf(stderr, "Looks like we don't actually have data...\n");
           return anything_done;
         } else {
           FATAL("Error reading packet header: read returned %d bytes: %s",
               int(header_bytes), strerror(errno));
         }
+      } else if (header_bytes != sizeof(Header)) {
+        
       }
       DEBUG_SAME_INT(header.magic, MAGIC);
       // When we read in a message, we don't need to allocate space for the

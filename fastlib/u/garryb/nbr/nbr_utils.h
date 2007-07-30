@@ -340,6 +340,8 @@ void RpcDualTree(
     work_queue = remote_work_queue;
   }
 
+  rpc::Barrier(base_channel + 1);
+  
   fx_timer_start(fx_submodule(module, NULL, "gnp"), "all_machines");
   ThreadedDualTreeSolver<GNP, SerialSolver> solver;
   solver.Doit(
@@ -348,6 +350,13 @@ void RpcDualTree(
       &q->points(), &q->nodes(),
       &r->points(), &r->nodes(),
       q_results);
+  rpc::Barrier(base_channel + 1);
+  fx_timer_stop(fx_submodule(module, NULL, "gnp"), "all_machines");
+  if (rpc::is_root()) {
+    fprintf(stderr, "nbr_utils(%d): All results computed, writing results\n");
+  }
+  fx_timer_start(fx_submodule(module, NULL, "gnp"), "write_results");
+
   q->points().StartSync();
   q->nodes().StartSync();
   if (r != q) {
@@ -362,11 +371,11 @@ void RpcDualTree(
     r->nodes().WaitSync(fx_submodule(module, NULL, "io/gnp/r_nodes"));
   }
   q_results->WaitSync(fx_submodule(module, NULL, "io/gnp/q_results"));
-  fx_timer_stop(fx_submodule(module, NULL, "gnp"), "all_machines");
+  fx_timer_stop(fx_submodule(module, NULL, "gnp"), "write_results");
 
   GlobalResultReductor<GNP> global_result_reductor;
   global_result_reductor.Init(&param);
-  rpc::Reduce(base_channel + 1,
+  rpc::Reduce(base_channel + 5,
       global_result_reductor, &solver.global_result());
 
   work_queue->Report(fx_submodule(module, NULL, "work_queue"));
@@ -423,7 +432,6 @@ class RpcMonochromaticDualTreeRunner {
   void InitResults_(size_t q_results_mb);
 };
 
-
 template<typename GNP, typename Solver>
 void RpcMonochromaticDualTreeRunner<GNP, Solver>::InitResults_(
     size_t q_results_mb) {
@@ -444,7 +452,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Init(
     datanode *module, const char *gnp_name) {
   module_ = module;
   gnp_name_ = gnp_name;
-  
+
   size_t q_results_mb = fx_param_int(module_, "q_results_mb", 200);
   fx_submodule(module_, NULL, "io"); // influnce output order
 

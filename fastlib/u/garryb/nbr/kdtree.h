@@ -217,8 +217,6 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
 
       if (index_t(node->count()) == index_t(points_.n_block_elems())) {
         // We got one block of points!  Let's give away ownership.
-        fprintf(stderr, "%d: giving %d to %d\n", rpc::rank(),
-            points_.Blockid(node->begin()), begin_rank);
         points_.cache()->GiveOwnership(
             points_.Blockid(node->begin()),
             begin_rank);

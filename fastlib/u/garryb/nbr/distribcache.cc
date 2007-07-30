@@ -339,6 +339,9 @@ void DistributedCache::RemoteWrite(blockid_t blockid,
   BlockMetadata *block = &blocks_[blockid];
   if (!block->is_owner()) {
     // when we receive a remote write, we are always the owner
+    DEBUG_ASSERT_MSG(!block->is_reading,
+        "One machine is reading a block, but simultaneously received ownership.\n"
+        "Please sync between ownership changes and further reads!");
     block->value = SELF_OWNER_UNALLOCATED; // mark as owner
     block->status = NOT_DIRTY_NEW;
   }
@@ -476,19 +479,42 @@ void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
 
   DEBUG_ASSERT(block->data == NULL);
 
-  if (block->is_new()) {
-    block->data = mem::Alloc<char>(n_block_bytes_);
-    DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
-        "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
-    handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
+  if (block->is_reading) {
+    // The block is currently being read.
+    // Note instead of storing a whole mutex for each block, we store
+    // is_reading and have a global I/O condition, which together
+    // simulate a mutex.
+    while (block->is_reading) {
+      io_cond_.Wait(&mutex_);
+    }
+
+    // We're starting from scratch, recursively calling DecacheBlock.
+    // In the time that we received the signal, practically anything could
+    // have happened to the block -- it might even be gone completely from
+    // cache!
+    if (likely(block->locks)) {
+      block->locks++;
+    } else {
+      return DecacheBlock_(blockid); // tail call
+    }
+  } else {
+    // We're exclusive now -- nobody else is reading the block.
+
+    if (block->is_new()) {
+      block->data = mem::Alloc<char>(n_block_bytes_);
+      DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
+          "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
+      handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
+    } else if (block->is_owner()) {
+      DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
+      HandleLocalMiss_(blockid);
+    } else {
+      DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
+      HandleRemoteMiss_(blockid);
+    }
+
     handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
     block->locks = 1;
-  } else if (block->is_owner()) {
-    DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
-    HandleLocalMiss_(blockid);
-  } else {
-    DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
-    HandleRemoteMiss_(blockid);
   }
 }
 
@@ -503,7 +529,6 @@ void DistributedCache::HandleLocalMiss_(BlockDevice::blockid_t blockid) {
   disk_stats_.RecordRead(n_block_bytes_);
   overflow_device_->Read(local_blockid,
       0, n_block_bytes_, block->data);
-  handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
   block->locks = 1;
 }
 
@@ -511,46 +536,22 @@ void DistributedCache::HandleRemoteMiss_(BlockDevice::blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
   DEBUG_ASSERT(!block->is_owner());
 
-  // We're going to go through a lot of work to avoid the mutex.
   int owner = block->owner();
+
+  block->is_reading = true;
+  net_stats_.RecordRead(n_block_bytes_);
+  char *data = mem::Alloc<char>(n_block_bytes_);
   mutex_.Unlock();
 
-  char *data = NULL;
+  ReadTransaction read_transaction;
+  read_transaction.Doit(channel_num_, owner,
+     blockid, 0, n_block_bytes_, data);
 
-  // TODO: There's a race condition possibility if somebody writes this
-  // block and gives ownership to us while we're reading it, but this would
-  // be forbidden by our concurrency model.
-  // NOTE: We use a separate mutex here because it's possible to get in
-  // deadlock if two machines request data from each other and both use
-  // the same mutex (the mutex_ one).
-  io_mutex_.Lock();
-  if (!block->is_in_core()) {
-    net_stats_.RecordRead(n_block_bytes_);
-    ReadTransaction read_transaction;
-    data = mem::Alloc<char>(n_block_bytes_);
-    read_transaction.Doit(channel_num_, owner,
-        blockid, 0, n_block_bytes_, data);
-    handler_->BlockThaw(blockid, 0, n_block_bytes_, data);
-  }
-  // Overlapping locks.... it's all we can do folks!
   mutex_.Lock();
-  if (data) {
-    // I was the one who loaded it!
-    DEBUG_ASSERT(block->locks == 0);
-    block->locks = 1;
-    block->data = data;
-  } else {
-    // We have to make sure the block wasn't freed in the meantime.
-    if (likely(block->locks)) {
-      block->locks++;
-    } else {
-      DecacheBlock_(blockid);
-    }
-  }
-  io_mutex_.Unlock();
+  block->is_reading = false;
+  block->data = data;
+  io_cond_.Broadcast();
 }
-
-
 
 void DistributedCache::StopRead(BlockDevice::blockid_t blockid) {
   mutex_.Lock();

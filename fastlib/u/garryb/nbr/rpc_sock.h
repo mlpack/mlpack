@@ -169,6 +169,9 @@ class SockConnection {
  public:
   static Message* CreateMessage(
       int peer, int channel, int transaction_id, size_t size);
+  Message* CreateMessage(int channel, int transaction_id, size_t size) {
+    return CreateMessage(peer_, channel, transaction_id, size);
+  }
 
  private:
   int peer_;
@@ -200,7 +203,7 @@ class SockConnection {
   void AcceptIncoming(int fd);
 
   /** Sends a message. */
-  void Send(Message *message);
+  void RawSend(Message *message);
 
   // some accessors following
 
@@ -250,9 +253,19 @@ class SockConnection {
 
 class RpcSockImpl {
  private:
-  /* Standard packet header */
-  enum { MSG_BIRTH=-1, MSG_DONE=-2, MSG_PING=-3, MSG_PONG=-4 };
-  enum { CHANNEL_BARRIER=-1 };
+  enum {
+    /** Transaction ID associated with control messages. */
+    TID_CONTROL = -1
+  };
+
+  enum {
+    /** Channel associated with ping control messages. */
+    MSG_PING=-102,
+    /** Channel associated with pong control messages. */
+    MSG_PONG=-103,
+    /** Channel associated with acknowledgement control messages. */
+    MSG_ACK=-104
+  };
 
   /** This must be a multiple of 16 bytes or else alignment might break! */
   struct Header {
@@ -283,8 +296,21 @@ class RpcSockImpl {
      * channel number.
      */
     DenseIntMap<Transaction*> outgoing_transactions;
+    /**
+     * Whether there are any messages that are pending locally because
+     * the associated channel does not yet exist.
+     */
     bool is_pending;
+    /**
+     * Any pending incoming messages.  The pending queue is stalled if
+     * the channel they're intended for hasn't been found.
+     */
     Queue<Message*> pending;
+    /**
+     * Number of my messges that haven't yet been processed by the remote
+     * host, either because they failed to register a channel or because
+     */
+    int unacknowledged;
 
    public:
     Peer();
@@ -372,9 +398,9 @@ class RpcSockImpl {
   MinMaxVal<int> max_fd_;
 
   /** Number of active writers. */
-  int writers_;
+  int unacknowledged_;
   /** Mutex that is locked when writes are pending. */
-  WaitCondition writers_cond_;
+  WaitCondition flush_cond_;
 
  public:
   void Init();
