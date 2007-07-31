@@ -7,28 +7,15 @@
 \BOOKMARK [1][-]{section.12}{Section 3 \204 Preliminary Research}{}
 \BOOKMARK [2][-]{subsection.13}{The Nearest Neighbor Problem}{section.12}
 \BOOKMARK [2][-]{subsection.20}{Large scale trees, for out of core memory}{section.12}
-\BOOKMARK [2][-]{subsection.21}{Memory layout of Kd-trees}{section.12}
-\BOOKMARK [2][-]{subsection.22}{System architecture}{section.12}
-\BOOKMARK [2][-]{subsection.23}{Memory Manager Architecture}{section.12}
-\BOOKMARK [2][-]{subsection.24}{Memory Mapped Files}{section.12}
-\BOOKMARK [2][-]{subsection.25}{User defined cache, with TPIE}{section.12}
 \BOOKMARK [2][-]{subsection.26}{Kernel methods}{section.12}
-\BOOKMARK [2][-]{subsection.36}{Forming manifolds from data for clustering through non-parametric density estimation}{section.12}
-\BOOKMARK [2][-]{subsection.37}{Speech recognition with nearest neighbor search}{section.12}
-\BOOKMARK [2][-]{subsection.38}{Introduction}{section.12}
-\BOOKMARK [2][-]{subsection.39}{Speech features}{section.12}
-\BOOKMARK [2][-]{subsection.40}{Fast N-body methods for feature comparison}{section.12}
-\BOOKMARK [2][-]{subsection.44}{Kernel PCA on a manifold}{section.12}
-\BOOKMARK [2][-]{subsection.45}{Experimental Results}{section.12}
-\BOOKMARK [2][-]{subsection.46}{All nearest neighbor performance}{section.12}
-\BOOKMARK [2][-]{subsection.47}{Comparison of NRAF and MFCC}{section.12}
-\BOOKMARK [2][-]{subsection.49}{Discussion}{section.12}
-\BOOKMARK [1][-]{section.57}{Section 4 \204 Proposed Research}{}
-\BOOKMARK [2][-]{subsection.58}{Customizing Kernels with fast gradient descent}{section.57}
-\BOOKMARK [2][-]{subsection.64}{Computing Gaussian Kernel Matrix with trees}{section.57}
-\BOOKMARK [2][-]{subsection.65}{Intrinsic dimension of speech}{section.57}
-\BOOKMARK [2][-]{subsection.66}{Speech recognition with nearest neighbor search}{section.57}
-\BOOKMARK [2][-]{subsection.67}{Acoustic Environment adaptation}{section.57}
-\BOOKMARK [1][-]{section.68}{Section 5 \204 Work remaining to be done}{}
-\BOOKMARK [1][-]{section.69}{Appendix A \204 This is my first appendix}{}
-\BOOKMARK [1][-]{section*.70}{References}{}
+\BOOKMARK [2][-]{subsection.36}{Parameter estimation for manifold learning, through density estimation}{section.12}
+\BOOKMARK [2][-]{subsection.54}{Speech recognition with nearest neighbor search}{section.12}
+\BOOKMARK [1][-]{section.74}{Section 4 \204 Proposed Research}{}
+\BOOKMARK [2][-]{subsection.75}{Customizing Kernels with fast gradient descent}{section.74}
+\BOOKMARK [2][-]{subsection.81}{Computing Gaussian Kernel Matrix with trees}{section.74}
+\BOOKMARK [2][-]{subsection.82}{Intrinsic dimension of speech}{section.74}
+\BOOKMARK [2][-]{subsection.83}{Speech recognition with nearest neighbor search}{section.74}
+\BOOKMARK [2][-]{subsection.84}{Acoustic Environment adaptation}{section.74}
+\BOOKMARK [1][-]{section.85}{Section 5 \204 Work remaining to be done}{}
+\BOOKMARK [1][-]{section.86}{Appendix A \204 This is my first appendix}{}
+\BOOKMARK [1][-]{section*.87}{References}{}

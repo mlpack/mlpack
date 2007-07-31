@@ -1,4 +1,10 @@
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.1}{\ignorespaces A two dimensional kd-tree}}{18}{figure.42}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.2}{\ignorespaces Simulation of the dual tree algorithm}}{18}{figure.43}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.3}{\ignorespaces Principal Component Analysis of TIMIT (top) and NTIMIT (bottom) for MFCC (solid line) and for NRAF (dashed line).}}{22}{figure.50}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.4}{\ignorespaces Kernel PCA spectrum for TIMIT MFCC features}}{23}{figure.51}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.1}{\ignorespaces The same data with fig.\nobreakspace {}\ref {fig1}a analyzed with a larger global bandwidth. (a) The estimated density, (b) The first non-trivial eigenvector}}{22}{figure.48}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.2}{\ignorespaces (a) Two clusters of uniformly distributed 2-D points, (b) The estimated density, (c) The first non-trivial eigenvector}}{22}{figure.49}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.3}{\ignorespaces (a) Two clusters of non-uniformly distributed 2-D points, (b)The estimated density, (c) The first non-trivial eigenvector}}{23}{figure.50}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.4}{\ignorespaces The same data set with fig.\nobreakspace {}\ref {fig2} processed with a bandwidth one order of magnitude larger. Although the first eigenvector still separates the two classes, the classes are closer and not compact (a) Two clusters of non-uniformly distributes 2-D points, (b)The estimated density, (c) The first non trivial eigenvector}}{23}{figure.51}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.5}{\ignorespaces (a) The 3 phoneme classes after the dimensionality reduction with the optimal bandwidth, plotted in two dimensions, (b) The 3 phoneme classes with a larger bandwidth,(c) The 3 phoneme classes with a smaller bandwidth}}{23}{figure.52}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.6}{\ignorespaces The diffusion graph for three different local bandwidths (a)Optimal, (b)An order of magnitude larger, (c)An order of magnitude smaller}}{24}{figure.53}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.7}{\ignorespaces A two dimensional kd-tree}}{27}{figure.59}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.8}{\ignorespaces Simulation of the dual tree algorithm}}{27}{figure.60}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.9}{\ignorespaces Principal Component Analysis of TIMIT (top) and NTIMIT (bottom) for MFCC (solid line) and for NRAF (dashed line).}}{31}{figure.67}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.10}{\ignorespaces Kernel PCA spectrum for TIMIT MFCC features}}{32}{figure.68}
