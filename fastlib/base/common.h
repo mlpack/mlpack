@@ -208,4 +208,8 @@ typedef enum {
 
 EXTERN_C_END
 
+#define ANSI_SEQ(str) "\033["str"m"
+#define ANSI_BOLD ANSI_SEQ("1")
+#define ANSI_BYELLOW ANSI_SEQ("1;")
+
 #endif

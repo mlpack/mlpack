@@ -232,8 +232,7 @@ void DistributedCache::StartSync() {
 #ifdef DEBUG
   for (index_t i = 0; i < n_blocks_; i++) {
     BlockMetadata *block = &blocks[i];
-    DEBUG_ASSERT_MSG(!block->is_busy(), "A block is busy during sync.");
-    if (block->is_dirty()) {
+    if (block->is_busy() || block->is_dirty()) {
       DEBUG_ASSERT(block->is_in_core());
       DEBUG_ASSERT(block->is_owner());
     }
@@ -580,6 +579,8 @@ void DistributedCache::EncacheBlock_(BlockDevice::blockid_t blockid) {
   i = 0;
 
   while (base_slot[i].blockid >= 0) {
+    // Make sure a block isn't in cache twice
+    DEBUG_ASSERT(base_slot[i].blockid != blockid);
     if (unlikely(i == ASSOC-1)) {
       Purge_(base_slot[i].blockid);
       DEBUG_ONLY(base_slot[i].blockid = -1);
@@ -661,12 +662,12 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
     // Find the intersection between this block and all dirty ranges we
     // know about.
     #ifdef DEBUG
-    bool anything_done = false;
+    offset_t bytes_total = 0;
     #endif
     for (index_t i = 0; i < write_ranges_.size(); i++) {
       Position begin = write_ranges_[i].begin;
       Position end = write_ranges_[i].end;
-      if (blockid >= begin.block || blockid <= end.block) {
+      if (blockid >= begin.block && blockid <= end.block) {
         // We found a partial range that overlaps.  Write it.
         offset_t begin_offset = 0;
         offset_t end_offset = n_block_bytes_;
@@ -680,11 +681,14 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
         net_stats_.RecordWrite(end_offset - begin_offset);
         write_transaction.Doit(channel_num_, block->owner(), blockid, handler_,
             begin_offset, end_offset, block->data + begin_offset);
-        DEBUG_ONLY(anything_done = true);
+        DEBUG_ONLY(bytes_total += end_offset - begin_offset);
       }
     }
-    DEBUG_ASSERT_MSG(anything_done,
+    DEBUG_ASSERT_MSG(bytes_total != 0,
         "A block marked partially-dirty has no overlapping write ranges.");
+    DEBUG_ASSERT_MSG(bytes_total <= n_block_bytes_,
+        "A block marked partially-dirty was written more than once: %d > %d.",
+        bytes_total, n_block_bytes_);
   }
   block->status = NOT_DIRTY_OLD;
 }
@@ -1013,8 +1017,8 @@ void DistributedCache::SyncTransaction::CheckAccumulation_() {
 
 void DistributedCache::SyncTransaction::ParentAccumulated_(
     const SyncInfo& info) {
-  cache_->channel_.SyncDone();
   cache_->HandleSyncInfo_(info);
+  cache_->channel_.SyncDone();
   for (index_t i = 0; i < rpc::n_children(); i++) {
     SendStatusInformation_(rpc::child(i), info);
   }

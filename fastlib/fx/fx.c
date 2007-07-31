@@ -23,6 +23,8 @@
 #define FX_SHOW_RESULTS_TIMERS
 #endif
 
+int fx__show_results_timers = 0;
+
 static struct datanode *fx__real_root;
 static int fx__silent = 0;
 
@@ -87,6 +89,7 @@ static void fx__read_debug_params(struct datanode *node)
   abort_on_nonfatal = fx_param_bool(node, "./abort_on_nonfatal", 0);
   pause_on_nonfatal = fx_param_bool(node, "./pause_on_nonfatal", 0);
   print_notify_headers = fx_param_bool(node, "./print_notify_headers", 1);
+  fx__show_results_timers = !fx_param_bool(node, "./quiet", 0);
 }
 
 static void fx__attempt_speedup()
@@ -521,8 +524,9 @@ void fx_set_result(struct datanode *module, const char *name, const char *val)
   node->val = strdup(val);
 
 #ifdef FX_SHOW_RESULTS_TIMERS
-  fprintf(stderr, "Result [%s] in [%s] set to [%s].\n",
-      name, module->key, val);
+  if (unlikely(fx__show_results_timers))
+    fprintf(stderr, "Result [%s] in [%s] set to [%s].\n",
+        name, module->key, val);
 #endif
 }
 
@@ -595,8 +599,9 @@ void fx_timer_start(struct datanode *module, const char *name)
   struct datanode *node = fx__timer(module, name, 1);
 
 #ifdef FX_SHOW_RESULTS_TIMERS
-  fprintf(stderr, "Timer [%s] in [%s] started.\n", name,
-      fx__module_name(module));
+  if (unlikely(fx__show_results_timers))
+    fprintf(stderr, "Timer [%s] in [%s] started.\n", name,
+        fx__module_name(module));
 #endif
 
   /*DEBUG_MSG(0.0, "Timer \"%s\" in module \"%s\" started.",
@@ -622,9 +627,10 @@ void fx_timer_stop(struct datanode *module, const char *name)
   if (node) {
     timer_stop(node->val, &now);
 #ifdef FX_SHOW_RESULTS_TIMERS
-    fprintf(stderr, "Timer [%s] in [%s] stopped, totalling %.3f wall-secs.\n",
-        name, module->key,
-        (int)((struct timer *)node->val)->total.micros / 1.0e6);
+    if (unlikely(fx__show_results_timers))
+      fprintf(stderr, "Timer [%s] in [%s] stopped, totalling %.3f wall-secs.\n",
+          name, module->key,
+          (int)((struct timer *)node->val)->total.micros / 1.0e6);
 #endif
   } else {
     NONFATAL("No timer named \"%s\" in module \"%s\".",

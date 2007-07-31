@@ -1,3 +1,5 @@
+
+
 /**
  * @file rpc_sock.cc
  *
@@ -91,7 +93,7 @@ register port numbers
  * Ensures that if other processes die, we cascade and also die too -- the
  * tree structure results in all processes dying.
  */
-#define TIMEOUT_SELECT 15
+#define TIMEOUT_SELECT 30
 
 void MakeSocketNonBlocking(int fd) {
   fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
@@ -212,10 +214,10 @@ void RpcSockImpl::UnregisterTransaction(int peer_id, int channel, int id) {
 
   peer->mutex.Lock(); // Lock peer's mutex
   if (channel < 0) {
-    DEBUG_ASSERT(peer->incoming_transactions[id] != NULL);
+    DEBUG_ASSERT(peer->incoming_transactions.get(id) != NULL);
     peer->incoming_transactions[id] = NULL;
   } else {
-    DEBUG_ASSERT(peer->outgoing_transactions[id] != NULL);
+    DEBUG_ASSERT(peer->outgoing_transactions.get(id) != NULL);
     peer->outgoing_transactions[id] = NULL;
   }
   peer->mutex.Unlock();
@@ -354,7 +356,7 @@ void RpcSockImpl::PollingLoop_() {
     int n_events = select(max_fd_ + 1, &read_fds, &write_fds, &error_fds, &tv);
 
     if (n_events < 0) {
-      FATAL("select() failed: %s", strerror(errno));
+      FATAL("%d: select() failed: %s", rank_, strerror(errno));
     } else if (n_events == 0) {
       // Select timed out, send ping messages to test the connections
       if (status_ == INIT) {
@@ -482,17 +484,19 @@ void RpcSockImpl::TryAcceptConnection_(int fd) {
   // TODO: This protocol message is unusual in that the transaction ID is
   // being misused as the peer number.  Ideally, the peer number should
   // be stored as data() in the message.
-  if (read(fd, &preheader, sizeof(preheader)) != sizeof(preheader)) {
-    NONFATAL("Rejected connection -- incomplete header.");
+  ssize_t read_result = read(fd, &preheader, sizeof(preheader));
+  
+  if (read_result != sizeof(preheader)) {
+    NONFATAL("%d: Rejected connection -- incomplete header - %d.", rank_, int(read_result));
   } else if (preheader.magic != SockConnection::MAGIC) {
-    NONFATAL("Rejected connection -- bad magic number.");
+    NONFATAL("%d: Rejected connection -- bad magic number.", rank_);
   } else if (preheader.channel != SockConnection::BIRTH_CHANNEL) {
-    NONFATAL("Rejected connection -- channel is not the birth channel.");
+    NONFATAL("%d: Rejected connection -- channel is not the birth channel.", rank_);
   } else if (preheader.data_size != 0) {
-    NONFATAL("Rejected connection -- bad payload size for birth message.");
+    NONFATAL("%d: Rejected connection -- bad payload size for birth message.", rank_);
   } else if (preheader.transaction_id < 0
       || preheader.transaction_id >= n_peers_) {
-    NONFATAL("Rejected connection -- peer number (trans ID) is out of range.");
+    NONFATAL("%d: Rejected connection -- peer number (trans ID) is out of range.", rank_);
   } else {
     int peer_num = preheader.transaction_id; // use trans ID for peer #
     Peer *peer = &peers_[peer_num];
@@ -523,13 +527,14 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
     if (id < 0) {
       DEBUG_ASSERT_MSG(id == TID_CONTROL,
           "Negative transaction ID's should correspond to control messages.");
-      peer->mutex.Unlock();
       if (message->channel() == MSG_PONG) {
         live_pings_--;
       } else if (message->channel() == MSG_PING) {
         Ping_(peer->connection.peer(), MSG_PONG);
       } else if (message->channel() == MSG_ACK) {
+        peer->mutex.Lock();
         peer->unacknowledged -= *message->data_as<int32>();
+        peer->mutex.Unlock();
         DEBUG_ASSERT_MSG(peer->unacknowledged >= 0,
             "Received more acknowledgements than messages sent.");
       } else {
@@ -581,7 +586,6 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
   
   if (handled != 0) {
     // send acknowledgement of the messages we've processed
-    peer->mutex.Lock();
     Message *ack = peer->connection.CreateMessage(MSG_ACK, TID_CONTROL,
         sizeof(int32));
     *ack->data_as<int32>() = handled;
@@ -770,12 +774,12 @@ void SockConnection::Init(int peer_num, const char *ip_address, int port) {
 
   read_total_ = 0;
   read_message_ = NULL;
-  read_buffer_pos_ = BIG_BAD_NUMBER;
+  read_buffer_pos_ = 0;
   read_queue_.Init();
 
   write_total_ = 0;
   write_message_ = NULL;
-  write_buffer_pos_ = BIG_BAD_NUMBER;
+  write_buffer_pos_ = 0;
   write_queue_.Init();
 
   read_fd_ = -1;
@@ -792,20 +796,24 @@ void SockConnection::OpenOutgoing(bool blocking) {
   if (blocking) {
     int sleeptime = 1;
     int elapsed_time = 0;
+
     while (0 > connect(temp_fd, (struct sockaddr*)&peer_addr_,
         sizeof(struct sockaddr_in))) {
       (void) close(temp_fd);
 
-      if (elapsed_time == 0) {
+      if (elapsed_time % 10 == 0) {
         NONFATAL(
-            "rpc_sock(%d): Connection to parent %d failed, we'll try for %d seconds.\n",
-            rpc::rank(), peer_, TIMEOUT_CONNECT);
+            "rpc_sock(%d): Connection to parent %d failed, we'll try for %d more seconds.\n",
+            rpc::rank(), peer_, TIMEOUT_CONNECT - elapsed_time);
       }
+
       elapsed_time += sleeptime;
+
       if (elapsed_time >= TIMEOUT_CONNECT) {
         FATAL("Tried connecting to rank %d for %d seconds, bailing out.",
             TIMEOUT_CONNECT, peer_);
       }
+
       sleep(sleeptime);
 
       temp_fd = socket(PF_INET, SOCK_STREAM, 0);
@@ -894,7 +902,7 @@ void SockConnection::TryWrite() {
         if (bytes_written < 0 && errno != EAGAIN && errno != EINTR) {
           // It turns out the error is not just a non-blocking type error,
           // so we die and let the entire team die out too.
-          FATAL("%d: Error writing", rpc::rank());
+          FATAL("%d: Error writing to %d: %s", rpc::rank(), peer_, strerror(errno));
         }
         return;
       } else if (bytes_written != 0) {
@@ -914,33 +922,34 @@ bool SockConnection::TryRead() {
   for (;;) {
     // First, read a header if we have to.
     if (!read_message_) {
-      // It looks like we weren't in the process of reading another packet, so
-      // this is a new packet.
-      Header header;
-      // Read the packet's header.
-      ssize_t header_bytes = read(read_fd_, &header, sizeof(Header));
-      // Error out if we got the wrong number of bytes.
-      // TODO: In theory, a header might be chopped up across multiple
-      // reads.  I should handle this correctly.
-      if (header_bytes <= 0) {
-        if (header_bytes == 0 || (header_bytes < 0 && (errno == EINTR || errno == EAGAIN))) {
-          // okay, it looks like there isn't any data
-          return anything_done;
+      ssize_t bytes = read(read_fd_,
+          reinterpret_cast<char*>(&read_header_) + read_buffer_pos_,
+          sizeof(Header) - read_buffer_pos_);
+
+      if (bytes <= 0) {
+        if (bytes == 0 || (bytes < 0 && (errno == EINTR || errno == EAGAIN))) {
+          // not really an error, just no data
+          break;
         } else {
           FATAL("Error reading packet header: read returned %d bytes: %s",
-              int(header_bytes), strerror(errno));
+              int(bytes), strerror(errno));
         }
-      } else if (header_bytes != sizeof(Header)) {
-        
       }
-      DEBUG_SAME_INT(header.magic, MAGIC);
-      // When we read in a message, we don't need to allocate space for the
-      // header (since we have already read it successfully).
-      read_message_ = new Message();
-      read_message_->Init(peer_, header.channel, header.transaction_id,
-          mem::Alloc<char>(header.data_size), 0, header.data_size);
-      read_buffer_pos_ = 0;
+
       anything_done = true;
+      read_buffer_pos_ += bytes;
+      
+      if (read_buffer_pos_ == sizeof(Header)) {
+        DEBUG_SAME_INT(read_header_.magic, MAGIC);
+        // When we read in a message, we don't need to allocate space for the
+        // read_header_ (since we have already read it successfully).
+        read_message_ = new Message();
+        read_message_->Init(peer_, read_header_.channel, read_header_.transaction_id,
+            mem::Alloc<char>(read_header_.data_size), 0, read_header_.data_size);
+        read_buffer_pos_ = 0;
+      } else {
+        break;
+      }
     }
     // Second, see if we're done with the packet.  (Note some packets have
     // a null message length!)
@@ -960,7 +969,7 @@ bool SockConnection::TryRead() {
 
     if (bytes_read > 0) {
       anything_done = true;
-      read_buffer_pos_ += bytes_read; 
+      read_buffer_pos_ += bytes_read;
     } else {
       // Couldn't read anything.
       if (bytes_read != 0 && errno != EAGAIN && errno != EINTR) {
