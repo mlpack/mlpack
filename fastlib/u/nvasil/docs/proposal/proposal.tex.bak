@@ -156,7 +156,37 @@ literature dimensionality is used without the prefix intrinsic or
 extrinsic, causing confusion. The extrinsic dimensionality is just
 the number of variables needed to describe a point, i.e. the
 extrinsic dimensionality of $x\in \Re^d$ is just $d$. Each variable
-of the d-dimensional vector will be called dimension $1\dots d$
+of the d-dimensional vector will be called dimension $1\dots d$. In
+reality some of the dimensions might be linearly or non-linearly
+dependent on other dimensions. So less than $d$ dimensions are
+sufficient to describe a point. We can define the intrinsic
+dimensionality of a dataset as the minimum number of "independent"
+variables needed to describe a point in space. Still the term is not
+very clear, for the scope of this thesis we mean that there is no
+algorithm that can predict a dimension from the others. Principal
+Component Analysis for example finds the most important dimensions
+on a dataset that are linearly independent. In practice because of
+noise all dimensions appear to be strictly independent.  Modern
+kernel methods can capture non-lineal dependencies between
+dimensions. Kernel PCA is the father of non-linear dimensionality
+reduction methods.
+
+Although Kernel PCA seems to be a very powerful tool it suffers from
+polynomial complexity. It requires $O(N^2)$ kernel computations,
+which make it unsuitable for large scale problems. In this thesis we
+will show how we are going to use multidimensional trees to reduce
+the complexity, along with other approximations to bring it down to
+linear.
+
+The driving force for investigating dimensionality reduction was the
+estimation of the true dimension of speech. Many representations
+have been recommended for speech MFCC, NRAFF, LPC, etc. The true
+dimension is yet unknown. Meanwhile there is theoretical evidence
+that speech signals are embedded in high dimensional manifolds. In
+this thesis we will attempt to estimate the true dimensionality of
+speech based on several representations. We will see in the future
+sections how this can help in developing new directions in speech
+recognition.
 
 
 
@@ -328,143 +358,7 @@ In general the dual tree algorithm as we call it since the query and
 the reference set lie on trees (they might share the same tree if
 the query and the reference set are the same), gives linear
 complexity over the number of data. This is empirical complexity and
-\subsubsection{Fast kernel summation with trees}
-Kernel summation is on of the most common tasks in kernel methods.
-The general formula
-\begin{equation}
-\label{kernel_sum}
-  G(x)=\sum_{q=0}^{N} w_i\exp(\frac{(x-x_q)^2}{\sigma^2})
-\end{equation}
 
-appears in many cases, with the most interesting case the
-eigenvalue/eigenvector computation. The kernel summation is a very
-computationally intensive. For Gaussian kernels there are
-approximations that can speed up computations orders of magnitude.
-We will briefly discuss them here. Besides computation saving we can
-save memory as well. The gaussian kernel has infinite support so the
-kernel matrix $K, K(x,y)=\exp(\frac{(x-y)^2}{\sigma^2}$ is not
-sparse. Numerical iterative methods for eigenvector computation are
-based on the general iteration $x_n=x_{n-1}+\lambda Kx_{n-1}$, where
-the multiplication of each row of $K$ with $x_{n-1}$ is a kernel
-summation problem. So we don't really need to store the kernel
-matrix, we just have to compute the kernel sum for every row using
-$x_{n-1}$ as a the wight vector.
-
-The gaussian can be approximated with the help of Hermite
-polynomials. The Hermite polynomials $H_n(t)$ are defined by the
-Rodrigues formula:
-\begin{equation}
-  H_n(t)=(-1)^n\exp(t^2)D^n\exp(-t^2), t\in \Re
-\end{equation}
-where $D=d/dt$.
-
-The gaussian can now be expressed as
-\begin{equation}
-\exp^(-(t-s)^2)=\sum_{n=0}^{\inf}\frac{s^n}{n!}h_n(t)
-\end{equation}
-
-where $h_n(t)$ is defined by
-\begin{equation}
-h_n(t)=\exp(-t^2)H_n(t).
-\end{equation}
-
-
-\subsection{Kernel methods}
-The kernel or Gram matrix is an informational representation for a
-set of data. There are a different interpretations for the kernel
-matrix. The most mathematical interpretation is the dot product
-matrix. Every element of the kernel matrix is the dot product
-between the two data points. It is a positive semidefinite matrix
-and it can be considered as the adjacency matrix of a graph where
-the points are nodes. This graph can also be considered as an
-approximation of the surface that data lie on. Positive
-semidefinitness is the only property required for the gram matrix.
-In most of the methods that we discuss in this section, we prefer
-the interpretation of the dot product matrix, in the general Hilbert
-sense. The dot products in most of the cases are non-linear.
-\subsubsection{Kernel principal component analysis}
-Kernel Principal Component Analysis (KPCA), is an extension of
-principal component analysis where the data are mapped into a
-different feature space through the kernel. In Principal Component
-Analysis the goal is to find the principal components for  the
-covariance matrix $C$ for a given dataset $S={x_j, x_j\in \Re^d, j=1
-\dots M}$, where $C=\frac{1}{M}\sum_{j=1}^{M}x_j x_j^T$. If we
-define a mapping
-\begin{equation}
-\Phi : x \rightarrow X , x \in \Re^d, X\in \Re^f
-\end{equation}
-
-usually $f>>d$. So usually the nonlinear mapping, maps the data in a
-higher dimensional space sometimes in an infinite dimensional space.
-At this point it should be clarified that the mapping increases the
-extrinsic dimension of the data not the intrinsic. In kernel PCA we
-want to find the principal components of the covariance matrix
-\begin{equation}
-\tilde{C} = \frac{1}{M}\sum_{j=1}^{M}\phi(x_j)\phi(x_j)^T
-\end{equation}
-
-It turns out that the mapping $\Phi$ doesn't have to be known
-explicitly, all we need is the kernel that represents the dot
-product.
-\begin{equation}
-k(x, y) = \phi(x)\phi(y)^T
-\end{equation}
-For some kernels there is an analytic factorization while for others
-there is not. Not every function can be a valid kernel (dot
-product). There are conditions that must be fulfilled. Basically for
-every dataset they  must give a valid kernel matrix as described in
-previous sections.
-
-Kernel PCA has many cousins such as Laplacian eigenmaps, Diffusion
-maps Isomap, Local Linear embedding
-
-\subsubsection{Customized Kernels}
-As we described in the previous section there are infinite functions
-that can act as valid kernels. The most popular kernels are:
-\begin{enumerate}
-  \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
-  \item The polynomial kernel $k(x, y)=(xy)^n$
-  \item The epanechnikov kernel $k(x, y)=1-||x-y||^2/\sigma^2, ||x-y||<\sigma, else 0$
-  \item The k-nearest neighbor kernel
-\end{enumerate}
-
-Although these are valid kernels for any kernel method including
-Kernel PCA they are not appropriate for every task. In some cases we
-want to map data in higher dimensional spaces preserving distances
-(isometry) while in other cases we want to make small distances
-smaller and send high distances to infinity (clustering). The
-gaussian kernel for example tends to behave better in clustering
-since it fades out very quickly. On the other hand it fails to
-unfold the data manifold so that the intrinsic dimension can be
-estimated. Manifold unfolding is a very important procedure since it
-can reveal the true dimension of the dataset.
-
-In [?] the authors introduced the idea of building the kernel matrix
-from scratch without using any fixed kernel. As we have already
-mentioned the kernel matrix has to be a positive semidefinite
-matrix. Initially we have to define a k neighborhood  for every
-point. So at first we have to connect points to their neighbors and
-build a initialize the non zero values of the matrix to 1. Then we
-maximize the trace of the kernel matrix under the constraint that
-the the distances in the kernel matrix are preserved. This leads to
-a semidefinite programming problem.
-\subsubsection{Stochastic optimization}
-Stochastic optimization or on line learning. On line svd is one key
-aspect.
-\subsubsection{Support Vector Machines}
-\section{Proposed Research}
-\label{proposed}
-
-The goal of this thesis is to make kernel methods scalable.
-Efficient computation of the kernel matrix for large amounts of
-data. Special emphasis is given in high dimensional data $d>30$. One
-of the goals is to use Kernel PCA for unfolding the speech manifold.
-In other words estimate the intrinsic dimensionality of speech by
-using big databases like timit, wall street journal and broadcast
-news. Implicitly dimensionality reduction will lead to new feature
-generation we will explain it in the following sections. The
-ultimate goal is to do speech recognition by nearest neighbor
-search.
 \subsection{Large scale trees, for out of core memory}
 Kd-trees have been proven to be be quite successful in
 multidimensional indexing and turn out outperform several other
@@ -642,19 +536,93 @@ to address efficiently this. Pages are write protected in memory and
 if a write occurs a signal is raised and the page is marked as
 modified.
 
-\subsection{Customizing Kernels with fast
-gradient descent}
 
-As we described in section ? it is possible to customize the kernel
-for a given dataset, through semidefinite programming. Although this
-method is very promising and gives very good results it is not
-scalable. Semidefinite programming is solved with the intrinsic
-point method which is of polynomial complexity.
 
-\subsection{Scalable Support Vector Machines}
-\subsection{Computing Gaussian Kernel Matrix with trees}
-\subsection{Intrinsic dimension of speech}
 
+\subsection{Kernel methods}
+The kernel or Gram matrix is an informational representation for a
+set of data. There are a different interpretations for the kernel
+matrix. The most mathematical interpretation is the dot product
+matrix. Every element of the kernel matrix is the dot product
+between the two data points. It is a positive semidefinite matrix
+and it can be considered as the adjacency matrix of a graph where
+the points are nodes. This graph can also be considered as an
+approximation of the surface that data lie on. Positive
+semidefinitness is the only property required for the gram matrix.
+In most of the methods that we discuss in this section, we prefer
+the interpretation of the dot product matrix, in the general Hilbert
+sense. The dot products in most of the cases are non-linear.
+\subsubsection{Kernel principal component analysis}
+Kernel Principal Component Analysis (KPCA), is an extension of
+principal component analysis where the data are mapped into a
+different feature space through the kernel. In Principal Component
+Analysis the goal is to find the principal components for  the
+covariance matrix $C$ for a given dataset $S={x_j, x_j\in \Re^d, j=1
+\dots M}$, where $C=\frac{1}{M}\sum_{j=1}^{M}x_j x_j^T$. If we
+define a mapping
+\begin{equation}
+\Phi : x \rightarrow X , x \in \Re^d, X\in \Re^f
+\end{equation}
+
+usually $f>>d$. So usually the nonlinear mapping, maps the data in a
+higher dimensional space sometimes in an infinite dimensional space.
+At this point it should be clarified that the mapping increases the
+extrinsic dimension of the data not the intrinsic. In kernel PCA we
+want to find the principal components of the covariance matrix
+\begin{equation}
+\tilde{C} = \frac{1}{M}\sum_{j=1}^{M}\phi(x_j)\phi(x_j)^T
+\end{equation}
+
+It turns out that the mapping $\Phi$ doesn't have to be known
+explicitly, all we need is the kernel that represents the dot
+product.
+\begin{equation}
+k(x, y) = \phi(x)\phi(y)^T
+\end{equation}
+For some kernels there is an analytic factorization while for others
+there is not. Not every function can be a valid kernel (dot
+product). There are conditions that must be fulfilled. Basically for
+every dataset they  must give a valid kernel matrix as described in
+previous sections.
+
+Kernel PCA has many cousins such as Laplacian eigenmaps, Diffusion
+maps Isomap, Local Linear embedding
+
+\subsubsection{Customized Kernels}
+As we described in the previous section there are infinite functions
+that can act as valid kernels. The most popular kernels are:
+\begin{enumerate}
+  \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
+  \item The polynomial kernel $k(x, y)=(xy)^n$
+  \item The epanechnikov kernel $k(x, y)=1-||x-y||^2/\sigma^2, ||x-y||<\sigma, else 0$
+  \item The k-nearest neighbor kernel
+\end{enumerate}
+
+Although these are valid kernels for any kernel method including
+Kernel PCA they are not appropriate for every task. In some cases we
+want to map data in higher dimensional spaces preserving distances
+(isometry) while in other cases we want to make small distances
+smaller and send high distances to infinity (clustering). The
+gaussian kernel for example tends to behave better in clustering
+since it fades out very quickly. On the other hand it fails to
+unfold the data manifold so that the intrinsic dimension can be
+estimated. Manifold unfolding is a very important procedure since it
+can reveal the true dimension of the dataset.
+
+In [?] the authors introduced the idea of building the kernel matrix
+from scratch without using any fixed kernel. As we have already
+mentioned the kernel matrix has to be a positive semidefinite
+matrix. Initially we have to define a k neighborhood  for every
+point. So at first we have to connect points to their neighbors and
+build a initialize the non zero values of the matrix to 1. Then we
+maximize the trace of the kernel matrix under the constraint that
+the the distances in the kernel matrix are preserved. This leads to
+a semidefinite programming problem.
+
+
+
+\subsection{Forming manifolds from data for clustering through
+non-parametric density estimation}
 
 \subsection{Speech recognition with nearest neighbor search}
 
@@ -1013,18 +981,91 @@ MFCC features}{8cm}
 } \label{kneighborLOOCVNTIMIT}
 \end{table}
 
+
+\section{Proposed Research}
+\label{proposed}
+
+The goal of this thesis is to make kernel methods scalable.
+Efficient computation of the kernel matrix for large amounts of
+data. Special emphasis is given in high dimensional data $d>30$. One
+of the goals is to use Kernel PCA for unfolding the speech manifold.
+In other words estimate the intrinsic dimensionality of speech by
+using big databases like timit, wall street journal and broadcast
+news. Implicitly dimensionality reduction will lead to new feature
+generation we will explain it in the following sections. The
+ultimate goal is to do speech recognition by nearest neighbor
+search.
+
+\subsection{Customizing Kernels with fast
+gradient descent}
+
+As we described in section ? it is possible to customize the kernel
+for a given dataset, through semidefinite programming. Although this
+method is very promising and gives very good results it is not
+scalable. Semidefinite programming is solved with the intrinsic
+point method which is of polynomial complexity.
+
+\subsubsection{Fast kernel summation with trees}
+Kernel summation is on of the most common tasks in kernel methods.
+The general formula
+\begin{equation}
+\label{kernel_sum}
+  G(x)=\sum_{q=0}^{N} w_i\exp(\frac{(x-x_q)^2}{\sigma^2})
+\end{equation}
+
+appears in many cases, with the most interesting case the
+eigenvalue/eigenvector computation. The kernel summation is a very
+computationally intensive. For Gaussian kernels there are
+approximations that can speed up computations orders of magnitude.
+We will briefly discuss them here. Besides computation saving we can
+save memory as well. The gaussian kernel has infinite support so the
+kernel matrix $K, K(x,y)=\exp(\frac{(x-y)^2}{\sigma^2}$ is not
+sparse. Numerical iterative methods for eigenvector computation are
+based on the general iteration $x_n=x_{n-1}+\lambda Kx_{n-1}$, where
+the multiplication of each row of $K$ with $x_{n-1}$ is a kernel
+summation problem. So we don't really need to store the kernel
+matrix, we just have to compute the kernel sum for every row using
+$x_{n-1}$ as a the wight vector.
+
+The gaussian can be approximated with the help of Hermite
+polynomials. The Hermite polynomials $H_n(t)$ are defined by the
+Rodrigues formula:
+\begin{equation}
+  H_n(t)=(-1)^n\exp(t^2)D^n\exp(-t^2), t\in \Re
+\end{equation}
+where $D=d/dt$.
+
+The gaussian can now be expressed as
+\begin{equation}
+\exp^(-(t-s)^2)=\sum_{n=0}^{\inf}\frac{s^n}{n!}h_n(t)
+\end{equation}
+
+where $h_n(t)$ is defined by
+\begin{equation}
+h_n(t)=\exp(-t^2)H_n(t).
+\end{equation}
+\subsection{Computing Gaussian Kernel Matrix with trees}
+Direct computation of the kernel(Gaussian) kernel leads to a
+non-sparse matrix. There is a way though to compute the
+inverse/eigenvalues without explicitly computing the kernel matrix.
+Several optimizations can be done for high dimensions
+\subsection{Intrinsic dimension of speech}
+
+\subsection{Speech recognition with nearest neighbor search}
+Implement a merge reduce scheme to create different descriptions of
+speech. Use nearest neighbor algorithms to replace gaussian mixtures
+in hidden markov models.
+
 \subsection{Acoustic Environment adaptation}
 
 \section{Work remaining to be done}
 \label{remains}
 
-\section{Facilities and Equipment Needed}
-\label{facitlies}
 \end{Body}
 
 \begin{EndMatter}
 \appendix{This is my first appendix}
-\appendix{This is my second appendix}
+
 %% Below are some optional environments that can be used here
 \bibliographystyle{ieeetr}
 \references % Generates the bibliography page

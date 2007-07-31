@@ -15,42 +15,37 @@
 \contentsline {subsubsection}{\numberline {3.1.3}Ball trees}{5}{subsubsection.16}
 \contentsline {subsubsection}{\numberline {3.1.4}Nearest Neighbor Algorithm}{6}{subsubsection.18}
 \contentsline {subsubsection}{\numberline {3.1.5}All nearest Neighbors}{7}{subsubsection.19}
-\contentsline {subsubsection}{\numberline {3.1.6}Fast kernel summation with trees}{8}{subsubsection.20}
-\contentsline {subsection}{\numberline {3.2}Kernel methods}{8}{subsection.25}
-\contentsline {subsubsection}{\numberline {3.2.1}Kernel principal component analysis}{9}{subsubsection.26}
-\contentsline {subsubsection}{\numberline {3.2.2}Customized Kernels}{10}{subsubsection.30}
-\contentsline {subsubsection}{\numberline {3.2.3}Stochastic optimization}{11}{subsubsection.35}
-\contentsline {subsubsection}{\numberline {3.2.4}Support Vector Machines}{11}{subsubsection.36}
+\contentsline {subsection}{\numberline {3.2}Large scale trees, for out of core memory}{8}{subsection.20}
+\contentsline {subsection}{\numberline {3.3}Memory layout of Kd-trees}{9}{subsection.21}
+\contentsline {subsection}{\numberline {3.4}System architecture}{10}{subsection.22}
+\contentsline {subsection}{\numberline {3.5}Memory Manager Architecture}{10}{subsection.23}
+\contentsline {subsection}{\numberline {3.6}Memory Mapped Files}{11}{subsection.24}
+\contentsline {subsection}{\numberline {3.7}User defined cache, with TPIE}{11}{subsection.25}
+\contentsline {subsection}{\numberline {3.8}Kernel methods}{12}{subsection.26}
+\contentsline {subsubsection}{\numberline {3.8.1}Kernel principal component analysis}{13}{subsubsection.27}
+\contentsline {subsubsection}{\numberline {3.8.2}Customized Kernels}{14}{subsubsection.31}
+\contentsline {subsection}{\numberline {3.9}Forming manifolds from data for clustering through non-parametric density estimation}{15}{subsection.36}
+\contentsline {subsection}{\numberline {3.10}Speech recognition with nearest neighbor search}{15}{subsection.37}
+\contentsline {subsection}{\numberline {3.11}Introduction}{15}{subsection.38}
+\contentsline {subsection}{\numberline {3.12}Speech features}{16}{subsection.39}
+\contentsline {subsection}{\numberline {3.13}Fast N-body methods for feature comparison}{17}{subsection.40}
+\contentsline {subsection}{\numberline {3.14}Kernel PCA on a manifold}{18}{subsection.44}
+\contentsline {subsection}{\numberline {3.15}Experimental Results}{19}{subsection.45}
+\contentsline {subsection}{\numberline {3.16}All nearest neighbor performance}{20}{subsection.46}
+\contentsline {subsection}{\numberline {3.17}Comparison of NRAF and MFCC}{20}{subsection.47}
+\contentsline {subsection}{\numberline {3.18}Discussion}{21}{subsection.49}
 \setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Section} 4}\MakeUppercase {Proposed Research}}{11}{section.37}
-\contentsline {subsection}{\numberline {4.1}Large scale trees, for out of core memory}{11}{subsection.38}
-\contentsline {subsection}{\numberline {4.2}Memory layout of Kd-trees}{13}{subsection.39}
-\contentsline {subsection}{\numberline {4.3}System architecture}{13}{subsection.40}
-\contentsline {subsection}{\numberline {4.4}Memory Manager Architecture}{14}{subsection.41}
-\contentsline {subsection}{\numberline {4.5}Memory Mapped Files}{14}{subsection.42}
-\contentsline {subsection}{\numberline {4.6}User defined cache, with TPIE}{15}{subsection.43}
-\contentsline {subsection}{\numberline {4.7}Customizing Kernels with fast gradient descent}{16}{subsection.44}
-\contentsline {subsection}{\numberline {4.8}Scalable Support Vector Machines}{16}{subsection.45}
-\contentsline {subsection}{\numberline {4.9}Computing Gaussian Kernel Matrix with trees}{16}{subsection.46}
-\contentsline {subsection}{\numberline {4.10}Intrinsic dimension of speech}{16}{subsection.47}
-\contentsline {subsection}{\numberline {4.11}Speech recognition with nearest neighbor search}{16}{subsection.48}
-\contentsline {subsection}{\numberline {4.12}Introduction}{17}{subsection.49}
-\contentsline {subsection}{\numberline {4.13}Speech features}{18}{subsection.50}
-\contentsline {subsection}{\numberline {4.14}Fast N-body methods for feature comparison}{18}{subsection.51}
-\contentsline {subsection}{\numberline {4.15}Kernel PCA on a manifold}{20}{subsection.55}
-\contentsline {subsection}{\numberline {4.16}Experimental Results}{21}{subsection.56}
-\contentsline {subsection}{\numberline {4.17}All nearest neighbor performance}{21}{subsection.57}
-\contentsline {subsection}{\numberline {4.18}Comparison of NRAF and MFCC}{22}{subsection.58}
-\contentsline {subsection}{\numberline {4.19}Discussion}{23}{subsection.60}
-\contentsline {subsection}{\numberline {4.20}Acoustic Environment adaptation}{25}{subsection.68}
+\contentsline {section}{\numberline {\MakeUppercase {Section} 4}\MakeUppercase {Proposed Research}}{22}{section.57}
+\contentsline {subsection}{\numberline {4.1}Customizing Kernels with fast gradient descent}{23}{subsection.58}
+\contentsline {subsubsection}{\numberline {4.1.1}Fast kernel summation with trees}{24}{subsubsection.59}
+\contentsline {subsection}{\numberline {4.2}Computing Gaussian Kernel Matrix with trees}{25}{subsection.64}
+\contentsline {subsection}{\numberline {4.3}Intrinsic dimension of speech}{25}{subsection.65}
+\contentsline {subsection}{\numberline {4.4}Speech recognition with nearest neighbor search}{25}{subsection.66}
+\contentsline {subsection}{\numberline {4.5}Acoustic Environment adaptation}{25}{subsection.67}
 \setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Section} 5}\MakeUppercase {Work remaining to be done}}{25}{section.69}
+\contentsline {section}{\numberline {\MakeUppercase {Section} 5}\MakeUppercase {Work remaining to be done}}{25}{section.68}
 \setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Section} 6}\MakeUppercase {Facilities and Equipment Needed}}{25}{section.70}
-\setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Appendix} A}\MakeUppercase {This is my first appendix}}{27}{section.71}
-\setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Appendix} B}\MakeUppercase {This is my second appendix}}{28}{section.72}
+\contentsline {section}{\numberline {\MakeUppercase {Appendix} A}\MakeUppercase {This is my first appendix}}{26}{section.69}
 \setcounter {tocdepth}{3}
-\contentsline {section}{\MakeUppercase {References}}{29}{section*.73}
+\contentsline {section}{\MakeUppercase {References}}{27}{section*.70}
 \setcounter {tocdepth}{2}
