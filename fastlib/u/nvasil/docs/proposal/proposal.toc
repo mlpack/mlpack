@@ -12,47 +12,46 @@
 \contentsline {subsection}{\numberline {3.1}The Nearest Neighbor Problem}{3}{subsection.13}
 \contentsline {subsubsection}{\numberline {3.1.1}Multidimensional Trees}{4}{subsubsection.14}
 \contentsline {subsubsection}{\numberline {3.1.2}Kd trees}{4}{subsubsection.15}
-\contentsline {subsubsection}{\numberline {3.1.3}Ball trees}{5}{subsubsection.16}
-\contentsline {subsubsection}{\numberline {3.1.4}Nearest Neighbor Algorithm}{6}{subsubsection.18}
-\contentsline {subsubsection}{\numberline {3.1.5}All nearest Neighbors}{7}{subsubsection.19}
-\contentsline {subsection}{\numberline {3.2}Large scale trees, for out of core memory}{8}{subsection.20}
-\contentsline {subsubsection}{\numberline {3.2.1}Memory layout of Kd-trees}{9}{subsubsection.21}
-\contentsline {subsubsection}{\numberline {3.2.2}System architecture}{10}{subsubsection.22}
-\contentsline {subsubsection}{\numberline {3.2.3}Memory Manager Architecture}{10}{subsubsection.23}
-\contentsline {paragraph}{Memory Mapped Files}{11}{section*.24}
-\contentsline {paragraph}{User defined cache, with TPIE}{11}{section*.25}
-\contentsline {subsection}{\numberline {3.3}Kernel methods}{12}{subsection.26}
-\contentsline {subsubsection}{\numberline {3.3.1}Kernel principal component analysis}{13}{subsubsection.27}
-\contentsline {subsubsection}{\numberline {3.3.2}Customized Kernels}{13}{subsubsection.31}
-\contentsline {subsection}{\numberline {3.4}Parameter estimation for manifold learning, through density estimation}{14}{subsection.36}
-\contentsline {subsubsection}{\numberline {3.4.1}INTRODUCTION}{15}{subsubsection.37}
-\contentsline {subsubsection}{\numberline {3.4.2}Geometric diffusion on a manifold}{16}{subsubsection.38}
-\contentsline {subsubsection}{\numberline {3.4.3}Non parametric density estimation}{17}{subsubsection.40}
-\contentsline {subsubsection}{\numberline {3.4.4}Eigenvalue analysis of the diffusion graph}{19}{subsubsection.43}
-\contentsline {subsubsection}{\numberline {3.4.5}Kernel choice}{19}{subsubsection.44}
-\contentsline {subsubsection}{\numberline {3.4.6}Examples}{19}{subsubsection.46}
-\contentsline {subsubsection}{\numberline {3.4.7}Discussion}{21}{subsubsection.47}
-\contentsline {subsection}{\numberline {3.5}Speech recognition with nearest neighbor search}{21}{subsection.54}
-\contentsline {subsubsection}{\numberline {3.5.1}Introduction}{22}{subsubsection.55}
-\contentsline {subsubsection}{\numberline {3.5.2}Speech features}{25}{subsubsection.56}
-\contentsline {subsubsection}{\numberline {3.5.3}Fast N-body methods for feature comparison}{26}{subsubsection.57}
-\contentsline {subsubsection}{\numberline {3.5.4}Kernel PCA on a manifold}{26}{subsubsection.61}
-\contentsline {subsubsection}{\numberline {3.5.5}Experimental Results}{28}{subsubsection.62}
-\contentsline {subsubsection}{\numberline {3.5.6}All nearest neighbor performance}{28}{subsubsection.63}
-\contentsline {subsubsection}{\numberline {3.5.7}Comparison of NRAF and MFCC}{29}{subsubsection.64}
-\contentsline {subsubsection}{\numberline {3.5.8}Discussion}{30}{subsubsection.66}
+\contentsline {paragraph}{Data structures for Kd trees}{5}{section*.16}
+\contentsline {subsubsection}{\numberline {3.1.3}Ball trees}{5}{subsubsection.17}
+\contentsline {subsubsection}{\numberline {3.1.4}Nearest Neighbor Algorithm}{6}{subsubsection.19}
+\contentsline {subsubsection}{\numberline {3.1.5}All nearest Neighbors}{7}{subsubsection.20}
+\contentsline {subsection}{\numberline {3.2}Large scale trees, for out of core memory}{8}{subsection.21}
+\contentsline {subsubsection}{\numberline {3.2.1}Memory layout of Kd-trees}{9}{subsubsection.22}
+\contentsline {subsubsection}{\numberline {3.2.2}System architecture}{10}{subsubsection.23}
+\contentsline {subsubsection}{\numberline {3.2.3}Memory Manager Architecture}{10}{subsubsection.24}
+\contentsline {paragraph}{Memory Mapped Files}{11}{section*.25}
+\contentsline {paragraph}{User defined cache, with TPIE}{11}{section*.26}
+\contentsline {subsection}{\numberline {3.3}Kernel methods}{12}{subsection.27}
+\contentsline {subsubsection}{\numberline {3.3.1}Kernel principal component analysis}{13}{subsubsection.28}
+\contentsline {subsubsection}{\numberline {3.3.2}Geometric diffusion on a manifold}{14}{subsubsection.32}
+\contentsline {subsubsection}{\numberline {3.3.3}Kernel PCA on a manifold}{15}{subsubsection.34}
+\contentsline {subsection}{\numberline {3.4}Parameter estimation for manifold learning, through density estimation}{16}{subsection.35}
+\contentsline {subsubsection}{\numberline {3.4.1}Non parametric density estimation}{17}{subsubsection.36}
+\contentsline {subsubsection}{\numberline {3.4.2}Eigenvalue analysis of the diffusion graph}{19}{subsubsection.39}
+\contentsline {subsubsection}{\numberline {3.4.3}Kernel choice}{19}{subsubsection.40}
+\contentsline {subsubsection}{\numberline {3.4.4}Examples}{19}{subsubsection.42}
+\contentsline {subsubsection}{\numberline {3.4.5}Discussion}{21}{subsubsection.43}
+\contentsline {subsection}{\numberline {3.5}Speech recognition with nearest neighbor search}{22}{subsection.50}
+\contentsline {subsubsection}{\numberline {3.5.1}Introduction}{24}{subsubsection.51}
+\contentsline {subsubsection}{\numberline {3.5.2}Speech features}{25}{subsubsection.52}
+\contentsline {subsubsection}{\numberline {3.5.3}Fast N-body methods for feature comparison}{26}{subsubsection.53}
+\contentsline {subsubsection}{\numberline {3.5.4}Experimental Results}{27}{subsubsection.57}
+\contentsline {subsubsection}{\numberline {3.5.5}All nearest neighbor performance}{28}{subsubsection.58}
+\contentsline {subsubsection}{\numberline {3.5.6}Comparison of NRAF and MFCC}{28}{subsubsection.59}
+\contentsline {subsubsection}{\numberline {3.5.7}Discussion}{29}{subsubsection.61}
 \setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Section} 4}\MakeUppercase {Proposed Research}}{31}{section.74}
-\contentsline {subsection}{\numberline {4.1}Customizing Kernels with fast gradient descent}{32}{subsection.75}
-\contentsline {subsubsection}{\numberline {4.1.1}Fast kernel summation with trees}{32}{subsubsection.76}
-\contentsline {subsection}{\numberline {4.2}Computing Gaussian Kernel Matrix with trees}{34}{subsection.81}
-\contentsline {subsection}{\numberline {4.3}Intrinsic dimension of speech}{34}{subsection.82}
-\contentsline {subsection}{\numberline {4.4}Speech recognition with nearest neighbor search}{34}{subsection.83}
-\contentsline {subsection}{\numberline {4.5}Acoustic Environment adaptation}{34}{subsection.84}
+\contentsline {section}{\numberline {\MakeUppercase {Section} 4}\MakeUppercase {Proposed Research}}{30}{section.69}
+\contentsline {subsection}{\numberline {4.1}Customized Kernels}{31}{subsection.70}
+\contentsline {subsection}{\numberline {4.2}Fast kernel summation with trees}{32}{subsection.75}
+\contentsline {subsection}{\numberline {4.3}Computing Gaussian Kernel Matrix with trees}{33}{subsection.80}
+\contentsline {subsection}{\numberline {4.4}Intrinsic dimension of speech}{33}{subsection.81}
+\contentsline {subsection}{\numberline {4.5}Speech recognition with nearest neighbor search}{33}{subsection.82}
+\contentsline {subsection}{\numberline {4.6}Acoustic Environment adaptation}{34}{subsection.83}
 \setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Section} 5}\MakeUppercase {Work remaining to be done}}{34}{section.85}
+\contentsline {section}{\numberline {\MakeUppercase {Section} 5}\MakeUppercase {Work remaining to be done}}{34}{section.84}
 \setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Appendix} A}\MakeUppercase {This is my first appendix}}{35}{section.86}
+\contentsline {section}{\numberline {\MakeUppercase {Appendix} A}\MakeUppercase {This is my first appendix}}{35}{section.85}
 \setcounter {tocdepth}{3}
-\contentsline {section}{\MakeUppercase {References}}{36}{section*.87}
+\contentsline {section}{\MakeUppercase {References}}{36}{section*.86}
 \setcounter {tocdepth}{2}

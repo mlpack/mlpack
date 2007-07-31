@@ -1,4 +1,4 @@
-This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5) (preloaded format=latex 2007.2.26)  31 JUL 2007 11:43
+This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5) (preloaded format=latex 2007.2.26)  31 JUL 2007 15:56
 entering extended mode
 **D:/nick/fastlib/u/nvasil/docs/proposal/proposal.tex
 (D:\nick\fastlib\u\nvasil\docs\proposal\proposal.tex
@@ -546,44 +546,44 @@ rec-om-mended for speech MFCC,
  []
 
 Section 3.
-[3] [4] [5] [6] [7] [8] [9] [10] [11] [12] [13] [14]
+[3] [4] [5] [6] [7] [8] [9] [10] [11] [12]
 
-LaTeX Warning: Citation `Lafon' on page 15 undefined on input line 642.
-
-
-LaTeX Warning: Citation `Belkin' on page 15 undefined on input line 642.
+LaTeX Warning: Citation `Lafon' on page 13 undefined on input line 590.
 
 
-LaTeX Warning: Citation `jenssen17lpd' on page 15 undefined on input line 652.
+LaTeX Warning: Citation `Belkin' on page 13 undefined on input line 590.
 
 
-LaTeX Warning: Citation `Silverman' on page 15 undefined on input line 657.
+LaTeX Warning: Citation `jenssen17lpd' on page 13 undefined on input line 600.
 
 
-LaTeX Warning: Citation `girolami2002osd' on page 15 undefined on input line 66
-4.
+LaTeX Warning: Citation `Silverman' on page 13 undefined on input line 605.
+
+[13]
+
+LaTeX Warning: Citation `girolami2002osd' on page 14 undefined on input line 61
+2.
 
 
-LaTeX Warning: Citation `Lafon' on page 15 undefined on input line 670.
+LaTeX Warning: Citation `Lafon' on page 14 undefined on input line 618.
 
-[15] [16]
+[14] [15] [16]
 
-LaTeX Warning: Citation `Silverman' on page 17 undefined on input line 738.
+LaTeX Warning: Citation `Silverman' on page 17 undefined on input line 748.
 
-[17]
+[17] [18]
 
-LaTeX Warning: Citation `Cvetkovic' on page 18 undefined on input line 811.
+LaTeX Warning: Citation `Cvetkovic' on page 19 undefined on input line 821.
 
-[18]
 
-LaTeX Warning: Citation `Silverman' on page 19 undefined on input line 828.
+LaTeX Warning: Citation `Silverman' on page 19 undefined on input line 838.
 
 [19] [20]
 
-LaTeX Warning: Citation `jenssen17lpd' on page 21 undefined on input line 914.
+LaTeX Warning: Citation `jenssen17lpd' on page 21 undefined on input line 924.
 
 
-LaTeX Warning: Citation `gray2001nbp' on page 21 undefined on input line 922.
+LaTeX Warning: Citation `gray2001nbp' on page 21 undefined on input line 932.
 
 File: fig1.1b.eps Graphic file (type eps)
 <fig1.1b.eps>
@@ -602,7 +602,7 @@ File: fig2b.eps Graphic file (type eps)
 <fig2b.eps>
 File: fig2c.eps Graphic file (type eps)
  <fig2c.eps>
-Overfull \hbox (114.52956pt too wide) in paragraph at lines 951--951
+Overfull \hbox (114.52956pt too wide) in paragraph at lines 961--961
  [][] 
  []
 
@@ -612,7 +612,7 @@ File: fig3b.eps Graphic file (type eps)
  <fig3b.eps>
 File: fig3c.eps Graphic file (type eps)
  <fig3c.eps>
-Overfull \hbox (114.52956pt too wide) in paragraph at lines 968--968
+Overfull \hbox (114.52956pt too wide) in paragraph at lines 978--978
  [][] 
  []
 
@@ -622,7 +622,7 @@ File: fig4c.eps Graphic file (type eps)
  <fig4c.eps>
 File: fig4e.eps Graphic file (type eps)
  <fig4e.eps>
-Overfull \hbox (114.52956pt too wide) in paragraph at lines 987--987
+Overfull \hbox (114.52956pt too wide) in paragraph at lines 997--997
  [][] 
  []
 
@@ -632,64 +632,63 @@ File: fig4d.eps Graphic file (type eps)
  <fig4d.eps>
 File: fig4f.eps Graphic file (type eps)
  <fig4f.eps>
-Overfull \hbox (114.52956pt too wide) in paragraph at lines 1003--1003
+Overfull \hbox (114.52956pt too wide) in paragraph at lines 1013--1013
  [][] 
  []
 
 [21]
 
 LaTeX Warning: Citation `quatieri2002dts' on page 22 undefined on input line 10
-28.
+38.
 
 
-LaTeX Warning: Citation `bentley1975bst' on page 22 undefined on input line 104
+LaTeX Warning: Citation `bentley1975bst' on page 22 undefined on input line 105
 3.
 
 
-LaTeX Warning: Citation `moore2000ahu' on page 22 undefined on input line 1043.
+LaTeX Warning: Citation `moore2000ahu' on page 22 undefined on input line 1053.
 
 
 
-LaTeX Warning: Citation `gray2000nbp' on page 22 undefined on input line 1046.
+LaTeX Warning: Citation `gray2000nbp' on page 22 undefined on input line 1056.
 
 
-LaTeX Warning: Citation `ravindran:inr' on page 22 undefined on input line 1050
+LaTeX Warning: Citation `ravindran:inr' on page 22 undefined on input line 1060
 .
 
-[22] [23]
+[22] [23] [24]
 
-LaTeX Warning: Citation `jansen2006ifa' on page 24 undefined on input line 1059
-.
-
-
-LaTeX Warning: Citation `scholkopf:nca' on page 24 undefined on input line 1065
+LaTeX Warning: Citation `jansen2006ifa' on page 25 undefined on input line 1069
 .
 
 
-LaTeX Warning: Citation `coifman2006dm' on page 24 undefined on input line 1066
+LaTeX Warning: Citation `scholkopf:nca' on page 25 undefined on input line 1075
 .
 
-[24]
 
-LaTeX Warning: Citation `shamma_main' on page 25 undefined on input line 1081.
+LaTeX Warning: Citation `coifman2006dm' on page 25 undefined on input line 1076
+.
 
 
-LaTeX Warning: Citation `moore-tutorial' on page 25 undefined on input line 110
-4.
+LaTeX Warning: Citation `shamma_main' on page 25 undefined on input line 1091.
 
 [25]
-LaTeX Font Info:    Try loading font information for OT1+txtt on input line 113
+
+LaTeX Warning: Citation `moore-tutorial' on page 26 undefined on input line 111
+4.
+
+LaTeX Font Info:    Try loading font information for OT1+txtt on input line 114
 1.
- ("C:\Program Files\MiKTeX 2.5\tex\latex\txfonts\ot1txtt.fd"
+("C:\Program Files\MiKTeX 2.5\tex\latex\txfonts\ot1txtt.fd"
 File: ot1txtt.fd 2000/12/15 v3.1
 )
 File: kdtree.eps Graphic file (type eps)
  <kdtree.eps>
 File: dualtree_recursion.eps Graphic file (type eps)
 
-<dualtree_recursion.eps> [26] [27] [28] [29]
+<dualtree_recursion.eps> [26] [27] [28]
 
-LaTeX Warning: Citation `ravindran:inr' on page 30 undefined on input line 1273
+LaTeX Warning: Citation `ravindran:inr' on page 29 undefined on input line 1242
 .
 
 File: timit_pca.eps Graphic file (type eps)
@@ -698,10 +697,13 @@ File: ntimit_pca.eps Graphic file (type eps)
  <ntimit_pca.eps>
 File: kernel_pca.eps Graphic file (type eps)
  <kernel_pca.eps>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
 Section 4.
-[30] [31] [32] [33]
+[29] [30] [31] [32]
 Section 5.
-[34]
+[33] [34]
 ******** Body Ends ********
 ******** EndMatter Begins ********
 Appendix A.
@@ -723,12 +725,12 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 5436 strings out of 95420
- 69144 string characters out of 1187320
- 128775 words of memory out of 1125819
- 8232 multiletter control sequences out of 60000
+ 5437 strings out of 95420
+ 69159 string characters out of 1187320
+ 129371 words of memory out of 1125903
+ 8233 multiletter control sequences out of 60000
  28619 words of font info for 89 fonts, out of 1000000 for 2000
  14 hyphenation exceptions out of 8191
  34i,9n,42p,565b,515s stack positions out of 5000i,500n,10000p,200000b,32768s
 
-Output written on proposal.dvi (40 pages, 165840 bytes).
+Output written on proposal.dvi (40 pages, 165976 bytes).
