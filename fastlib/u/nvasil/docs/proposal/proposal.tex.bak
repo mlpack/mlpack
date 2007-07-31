@@ -253,7 +253,7 @@ show that empirically it is more preferable to have unbalance splits
 on the tree, since it favors pruning in the process of finding the
 nearest neighbors.
 
-\emph{Data structures for Kd trees}
+\paragraph{Data structures for Kd trees}
 
  Kd-tree consists of two types of data structures, the nodes and the
  leafs. The basic data needed for the nodes are the
@@ -430,27 +430,27 @@ In this paper we do not address the problem of building cache
 efficiently trees since this issue has been extensively addressed in
 the literature, with the most successful algorithm the buffer tree.
 
-\subsection{Memory layout of Kd-trees} There are many ways to build a
-kd tree, depth first, breadth first and the combination for both. It
-turns out that breadth first does not give good locality for
-dual-tree algorithms. We will show experimentally that the hybrid
-method gives the best results in terms of page faults and depth
-first has comparable performance. Another parameter of kd-trees that
-has effect in the cache performance is the splitting algorithm.
-Mid-point splits  guarantee balanced trees, but do not always give
-good performance in terms of punning.
+\subsubsection{Memory layout of Kd-trees} There are many ways to
+build a kd tree, depth first, breadth first and the combination for
+both. It turns out that breadth first does not give good locality
+for dual-tree algorithms. We will show experimentally that the
+hybrid method gives the best results in terms of page faults and
+depth first has comparable performance. Another parameter of
+kd-trees that has effect in the cache performance is the splitting
+algorithm. Mid-point splits  guarantee balanced trees, but do not
+always give good performance in terms of punning.
 
-\subsection{System architecture} There are several ways to implement
-a disk kd-tree. As it has been stated above, speed is an essential
-feature that we are particularly interested as well ass portability.
-Since building the tree for large scale data might take a lot of
-time it is very important to be able to reload the tree and perform
-other operations. Although it is desirable to keep the tree as
-generic as possible so that we can use it for different applications
-this might sacrifice the performance. In our implementation we
-avoided virtual functions, structures that require memory
-reallocations. In order to keep it generic we used simple concepts
-of C++ template programming. Another issue that is of great
+\subsubsection{System architecture} There are several ways to
+implement a disk kd-tree. As it has been stated above, speed is an
+essential feature that we are particularly interested as well ass
+portability. Since building the tree for large scale data might take
+a lot of time it is very important to be able to reload the tree and
+perform other operations. Although it is desirable to keep the tree
+as generic as possible so that we can use it for different
+applications this might sacrifice the performance. In our
+implementation we avoided virtual functions, structures that require
+memory reallocations. In order to keep it generic we used simple
+concepts of C++ template programming. Another issue that is of great
 importance is memory locality. There are five basic memory
 structures involved in a kd tree, nodes, leafs, data points node
 cached statistics and hyper-rectangles. Some of them can be combined
@@ -467,9 +467,9 @@ be orders of magnitude larger than the actual tree. For example
 k/range nearest neighbors can give pretty big result sets for large
 k or range.
 
-\subsection{Memory Manager Architecture} In order to test different
-memory manager strategies, we used smart pointers that would
-collaborate with their corresponding memory allocators. Memory
+\subsubsection{Memory Manager Architecture} In order to test
+different memory manager strategies, we used smart pointers that
+would collaborate with their corresponding memory allocators. Memory
 Allocators implement a set of basic functions such as malloc. One of
 the fundamental issues is to make sure the allocated memory for each
 structure had the correct alignment. It is widely known that wrong
@@ -480,61 +480,59 @@ that has to be addressed is page fault handling. In the following
 section we describe two different memory managers we implemented and
 in section ? we compare their performance.
 
-\subsection{Memory Mapped Files} In this approach we used a single
-memory mapped file big enough to fit the tree. The length of the
-file has to be known ahead, but it is not hard to estimate it. The
-memory is allocated linearly and since there are no reallocations or
-deletions there is no need to worry about memory fragmentation.
-Paging is taken care by the operating system. The page size is fixed
-4096B for Linux. Customizing the page size is something desirable
-but this shouldn't be of great worry since very soon Linux will
-accommodate for variable page size [?]. This implementation is
-pretty simple and memory access is achieved with normal pointers. It
-is also efficient since all the paging is done in lower levels of
-the operating system
+\paragraph{Memory Mapped Files} In this approach we used a single memory
+mapped file big enough to fit the tree. The length of the file has
+to be known ahead, but it is not hard to estimate it. The memory is
+allocated linearly and since there are no reallocations or deletions
+there is no need to worry about memory fragmentation. Paging is
+taken care by the operating system. The page size is fixed 4096B for
+Linux. Customizing the page size is something desirable but this
+shouldn't be of great worry since very soon Linux will accommodate
+for variable page size [?]. This implementation is pretty simple and
+memory access is achieved with normal pointers. It is also efficient
+since all the paging is done in lower levels of the operating system
 
-\subsection{User defined cache, with TPIE} In this implementation a
-block of memory is preallocated and page faults are handled in an
-LRU sense, while the block transfers between main memory and the
-disk are done with the TPIE engine. TPIE is a portable library for
-efficient block transfers. It 's highly abstracted to accommodate
-for different transfer models. It is currently implementing memory
-mapped mode, Linux read/write and C fread/fwrite. In the future it
-will implement the parallel disk model as well. The advantage of
-this memory manager is that we can control/define several features,
-such as page size, page replacement algorithm and disk/memory
-transfers. The main disadvantage is the address translation that has
-to be done on the application level and slows down the system. In
-order to minimize this effect we sacrificed a little bit of the
-programming interface simplicity. So the address translation is
-explicitly done in the initialization of the pointer. So the pointer
-includes a universal address (integer) and a pointer to the main
-memory. Upon request the internal pointer p points to the data in
-the main memory. As it is obvious this particular memory segment
-might be paged out during the execution. To avoid that the
-programmer explicitly locks the particular page as long as the
-pointer is in use and then it is explicitly unlocked when the data
-pointing to is not necessary anymore. This is  policy is always
-prone to deadlocks if the cache size is small and the page size is
-large. Another possible case of deadlock is when the tree building
-algorithm does not guarantee good locality in the access pattern of
-the dual-tree algorithm. In practice we never came across a
-deadlock, since depth first and kdepth first give good enough
-locality for N-body algorithms. But even in the case of bad locally
-we could make local copies of the data and not lock the pages,
-sacrificing the performance of the algorithm. It turns out though
-that the locking/unlocking strategy is quite efficient because it
-avoids copies and it minimizes the cost of address translation. This
-coding scheme is sensitive to bugs because the programmer might
-accidently keep pages locked, which can have an immediate effect in
-the program performance in the same way memory leaks behave. For
-this reason we trace locks/unlocks in debug mode to ensure that the
-program is free of this type of bugs. Another important issue is
-marking the modified pages so that we save unnecessary copies from
-main memory to disk. We used the SIGSEGV library along with mprotect
-to address efficiently this. Pages are write protected in memory and
-if a write occurs a signal is raised and the page is marked as
-modified.
+\paragraph{User defined cache, with TPIE} In this implementation a block of
+memory is preallocated and page faults are handled in an LRU sense,
+while the block transfers between main memory and the disk are done
+with the TPIE engine. TPIE is a portable library for efficient block
+transfers. It 's highly abstracted to accommodate for different
+transfer models. It is currently implementing memory mapped mode,
+Linux read/write and C fread/fwrite. In the future it will implement
+the parallel disk model as well. The advantage of this memory
+manager is that we can control/define several features, such as page
+size, page replacement algorithm and disk/memory transfers. The main
+disadvantage is the address translation that has to be done on the
+application level and slows down the system. In order to minimize
+this effect we sacrificed a little bit of the programming interface
+simplicity. So the address translation is explicitly done in the
+initialization of the pointer. So the pointer includes a universal
+address (integer) and a pointer to the main memory. Upon request the
+internal pointer p points to the data in the main memory. As it is
+obvious this particular memory segment might be paged out during the
+execution. To avoid that the programmer explicitly locks the
+particular page as long as the pointer is in use and then it is
+explicitly unlocked when the data pointing to is not necessary
+anymore. This is  policy is always prone to deadlocks if the cache
+size is small and the page size is large. Another possible case of
+deadlock is when the tree building algorithm does not guarantee good
+locality in the access pattern of the dual-tree algorithm. In
+practice we never came across a deadlock, since depth first and
+kdepth first give good enough locality for N-body algorithms. But
+even in the case of bad locally we could make local copies of the
+data and not lock the pages, sacrificing the performance of the
+algorithm. It turns out though that the locking/unlocking strategy
+is quite efficient because it avoids copies and it minimizes the
+cost of address translation. This coding scheme is sensitive to bugs
+because the programmer might accidently keep pages locked, which can
+have an immediate effect in the program performance in the same way
+memory leaks behave. For this reason we trace locks/unlocks in debug
+mode to ensure that the program is free of this type of bugs.
+Another important issue is marking the modified pages so that we
+save unnecessary copies from main memory to disk. We used the
+SIGSEGV library along with mprotect to address efficiently this.
+Pages are write protected in memory and if a write occurs a signal
+is raised and the page is marked as modified.
 
 
 
@@ -588,39 +586,6 @@ previous sections.
 Kernel PCA has many cousins such as Laplacian eigenmaps, Diffusion
 maps Isomap, Local Linear embedding
 
-\subsubsection{Customized Kernels}
-As we described in the previous section there are infinite functions
-that can act as valid kernels. The most popular kernels are:
-\begin{enumerate}
-  \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
-  \item The polynomial kernel $k(x, y)=(xy)^n$
-  \item The epanechnikov kernel $k(x, y)=1-||x-y||^2/\sigma^2, ||x-y||<\sigma, else 0$
-  \item The k-nearest neighbor kernel
-\end{enumerate}
-
-Although these are valid kernels for any kernel method including
-Kernel PCA they are not appropriate for every task. In some cases we
-want to map data in higher dimensional spaces preserving distances
-(isometry) while in other cases we want to make small distances
-smaller and send high distances to infinity (clustering). The
-gaussian kernel for example tends to behave better in clustering
-since it fades out very quickly. On the other hand it fails to
-unfold the data manifold so that the intrinsic dimension can be
-estimated. Manifold unfolding is a very important procedure since it
-can reveal the true dimension of the dataset.
-
-In [?] the authors introduced the idea of building the kernel matrix
-from scratch without using any fixed kernel. As we have already
-mentioned the kernel matrix has to be a positive semidefinite
-matrix. Initially we have to define a k neighborhood  for every
-point. So at first we have to connect points to their neighbors and
-build a initialize the non zero values of the matrix to 1. Then we
-maximize the trace of the kernel matrix under the constraint that
-the the distances in the kernel matrix are preserved. This leads to
-a semidefinite programming problem.
-
-
-
 \subsection{Parameter estimation for manifold learning, through density estimation}
 
 Manifold learning turns out to be a very useful tool for many
@@ -638,7 +603,7 @@ introduced. The results show that the automatic bandwidth selection
 leads to improved clustering performance and reduces the
 computational load versus ad hoc selection.
 
-\subsection{INTRODUCTION}
+\subsubsection{INTRODUCTION}
 
 Manifold learning has been active recently through the work of
 \cite{Lafon} and \cite{Belkin}. Both works present algorithms for
@@ -673,14 +638,14 @@ of Lafon \cite{Lafon}. Section 3 outlines the adaptive kernel
 estimation algorithm. The last section presents examples of the
 diffusion operator when the kernel bandwidth is trained.
 
-\subsection{Geometric diffusion on a manifold} Let  $(\Gamma,\mu)$ be
-a measure space, where $\Gamma$ is a finite set of $d$-dimensional
-points and $\mu$ is a counting measure that represents the
-distribution of the points on the  data set. In other words $\Gamma$
-is a submanifold of $\Re^{d}$. Assume that the geometry of $\Gamma$
-is defined by a kernel $k(x,y)$. The kernel $k(x,y)$ measures the
-degree of similarity between two points $x,y$. The kernel satisfies
-the following conditions:
+\subsubsection{Geometric diffusion on a manifold} Let  $(\Gamma,\mu)$
+be a measure space, where $\Gamma$ is a finite set of
+$d$-dimensional points and $\mu$ is a counting measure that
+represents the distribution of the points on the  data set. In other
+words $\Gamma$ is a submanifold of $\Re^{d}$. Assume that the
+geometry of $\Gamma$ is defined by a kernel $k(x,y)$. The kernel
+$k(x,y)$ measures the degree of similarity between two points $x,y$.
+The kernel satisfies the following conditions:
 \begin{itemize}
     \item   $k$ is symmetric: $k(x,y)=k(y,x)$,
     \item   $k$ is positivity-preserving: for all $x,y$ in
@@ -727,14 +692,13 @@ and $\phi_j$ is the $j_{th}$ eigenvector of $a$ that corresponds to
 the $\lambda_j$ eigenvalue.
 
 
-\section{Non parametric  density estimation}
-The problem of density estimation of finite data set is very
-significant for most of the well known machine learning algorithms.
-Lafon has proven that the Laplace Beltrami operator on a manifold
-can be computed without the knowledge of the density. Although the
-density is not necessary for the computation of the operator it can
-be useful in the estimation of the parameters of the kernel
-[\ref{kernel}].
+\subsubsection{Non parametric  density estimation} The problem of
+density estimation of finite data set is very significant for most
+of the well known machine learning algorithms. Lafon has proven that
+the Laplace Beltrami operator on a manifold can be computed without
+the knowledge of the density. Although the density is not necessary
+for the computation of the operator it can be useful in the
+estimation of the parameters of the kernel [\ref{kernel}].
 
 The  density estimate $f$ of a finite set of data $X={x_i\ni
 \Re^n,i=1,\dots,M}$ can be expressed with the following equation
@@ -803,23 +767,24 @@ values of $\lambda_i$. The adaptive kernel estimate can be improved
 if we iterate the above procedure by replacing in every iteration
 the pilot density estimate with the adaptive kernel estimate
 computed in the last step.
-\section{Eigenvalue analysis of the diffusion graph}
-In the previous section we saw that the non-parametric estimation
-can  define the local bandwidth for every point. This information
-can be used in the construction of the adjacency matrix $G$. The
-local bandwidths as derived from the previous section will usually
-give a graph that has connected components, or equivalently the
-manifold is connected. A  safe test to prove that is to look into
-the eigenvalues also known as the spectrum of the graph. According
-to \cite{Cvetkovic} the multiplicity of the first eigenvalue
-reflects the number of disconnected components in the graph. There
-are cases where the local bandwidths might not give a connected
-manifold, then it is necessary to increase $h$ until the
-multiplicity of the first eigenvalue becomes 1.
+\subsubsection{Eigenvalue analysis of the diffusion graph}
+In the previous section we saw that the
+non-parametric estimation can  define the local bandwidth for every
+point. This information can be used in the construction of the
+adjacency matrix $G$. The local bandwidths as derived from the
+previous section will usually give a graph that has connected
+components, or equivalently the manifold is connected. A  safe test
+to prove that is to look into the eigenvalues also known as the
+spectrum of the graph. According to \cite{Cvetkovic} the
+multiplicity of the first eigenvalue reflects the number of
+disconnected components in the graph. There are cases where the
+local bandwidths might not give a connected manifold, then it is
+necessary to increase $h$ until the multiplicity of the first
+eigenvalue becomes 1.
 
-\subsection{Kernel choice}
-There are many classes of kernels that can be used for the diffusion
-operator on the manifold. The most popular is the Gaussian kernel:
+\subsubsection{Kernel choice} There are many classes of kernels that
+can be used for the diffusion operator on the manifold. The most
+popular is the Gaussian kernel:
 \[
     k(x)=\frac{1}{(2\pi)^{\frac{-d}{2}}}e^{(\frac{-1}{2}xx^T)}
 \]
@@ -837,25 +802,25 @@ popular one is the Epanechnikov kernel \cite{Silverman}:
  \right.
 \end{equation}
 
-\subsection{Examples}
-In this section two examples illustrated in the two dimensional
-space are presented and a third one on real speech data. The first
-example fig.~\ref{fig1} contains two clusters of data. Each cluster
-contains 300 points uniformly distributed in a unity area square.
-The Average Nearest Neighbor Distance (ANND) as a choice for the
-bandwidth for the Epanechnikov kernel turns out to be inadequate
-since it leads to a disconnected graph with 4 disjoint components.
-This is probably because the two classes are sparsely sampled. The
-AKDE based on maximization of LOOCV gives on the average local
-bandwidths that are an order of magnitude higher than the ANND, and
-lead to a smoother density. As it is shown in fig.~\ref{fig1}b the
-density is not flat as it was expected to be and this is because of
-the fact that the number of points that sample the manifold is
-small. In fig.~\ref{fig1}c the first non trivial eigenvector is
-depicted discriminating very sharply the two classes. In
-fig.~\ref{fig1.1} the same data set is analyzed with a higher global
-bandwidth. The results are very poor since there is high intra-class
-deviation and the centroids of the two classes are closer.
+\subsubsection{Examples} In this section two examples illustrated in
+the two dimensional space are presented and a third one on real
+speech data. The first example fig.~\ref{fig1} contains two clusters
+of data. Each cluster contains 300 points uniformly distributed in a
+unity area square. The Average Nearest Neighbor Distance (ANND) as a
+choice for the bandwidth for the Epanechnikov kernel turns out to be
+inadequate since it leads to a disconnected graph with 4 disjoint
+components. This is probably because the two classes are sparsely
+sampled. The AKDE based on maximization of LOOCV gives on the
+average local bandwidths that are an order of magnitude higher than
+the ANND, and lead to a smoother density. As it is shown in
+fig.~\ref{fig1}b the density is not flat as it was expected to be
+and this is because of the fact that the number of points that
+sample the manifold is small. In fig.~\ref{fig1}c the first non
+trivial eigenvector is depicted discriminating very sharply the two
+classes. In fig.~\ref{fig1.1} the same data set is analyzed with a
+higher global bandwidth. The results are very poor since there is
+high intra-class deviation and the centroids of the two classes are
+closer.
 
 The second example fig.~\ref{fig2} illustrates two classes of data
 that lie on two halves of a circle, slightly separated. The clusters
@@ -897,20 +862,19 @@ connected.
 
 
 
-\section{Discussion}
-In this paper the problem of constructing the diffusion graph of a
-manifold defined by data points in $\Re^d$ was addressed. The
-parameters of the kernel that define the geometry over the manifold
-were automatically trained through the estimation of the adaptive
-kernel based density  algorithm. Experiments on synthetic and real
-data showed that  if the global bandwidth is smaller than the one
-that maximizes the LOOCV, then the graph that represents the
-manifold is disconnected into  many spurious clusters. On the other
-hand if the bandwidth is higher, then the diffusion operator will
-still identify the clusters, but their distance is smaller and they
-are not as compact compared to the optimal bandwidth. Moreover high
-bandwidth lead to dense graphs and as a consequence more
-computations.
+\subsubsection{Discussion} In this paper the problem of constructing
+the diffusion graph of a manifold defined by data points in $\Re^d$
+was addressed. The parameters of the kernel that define the geometry
+over the manifold were automatically trained through the estimation
+of the adaptive kernel based density  algorithm. Experiments on
+synthetic and real data showed that  if the global bandwidth is
+smaller than the one that maximizes the LOOCV, then the graph that
+represents the manifold is disconnected into  many spurious
+clusters. On the other hand if the bandwidth is higher, then the
+diffusion operator will still identify the clusters, but their
+distance is smaller and they are not as compact compared to the
+optimal bandwidth. Moreover high bandwidth lead to dense graphs and
+as a consequence more computations.
 
 The approach followed is still  heuristic, although it has  an
 underlying theoretical justification on the work described at
@@ -924,73 +888,98 @@ fall under the general case of N-body problem computations. The
 speed can be significantly improved by using KD-trees as described
 in \cite{gray2001nbp} and reduce the complexity up to $O(n)$.
 
-\begin{figure}[h!]
-  \centerline{\includegraphics[height=4.5cm]{fig1.1b.eps}(a)}
-  \centerline{\includegraphics[height=4.5cm]{fig1.1c.eps}(b)}
-  \caption{The same data with fig.~\ref{fig1}a analyzed with a
-  larger global bandwidth. (a) The estimated density, (b) The first
-  non-trivial eigenvector }
-  \label{fig1.1}
-\end{figure}
+\instbfig[fig1.1]{fig1.1b.eps}{fig1.1c.eps}{The same data with
+fig.~\ref{fig1}a analyzed with a  larger global bandwidth. (a) The
+estimated density, (b) The first non-trivial
+eigenvector}{4.5cm}{4.5cm}
+%\begin{figure}[h!]
+%  \centerline{\includegraphics[height=4.5cm]{fig1.1b.eps}(a)}
+%  \centerline{\includegraphics[height=4.5cm]{fig1.1c.eps}(b)}
+%  \caption{The same data with fig.~\ref{fig1}a analyzed with a
+%  larger global bandwidth. (a) The estimated density, (b) The first
+%  non-trivial eigenvector }
+%  \label{fig1.1}
+%\end{figure}
 
-\bibliographystyle{IEEEbib}
-\bibliography{main}
+\inssssfig[fig1]{fig1a.eps}{fig1b.eps}{fig1c.eps}{(a) Two clusters
+of uniformly distributed 2-D points, (b) The estimated density, (c)
+The first non-trivial eigenvector}{4.5cm}{4.5cm}{4.5cm}
+%\begin{figure}[tb]
+% \centerline{\includegraphics[height=4.4cm]{fig1a.eps}(a)}
+% \centerline{\includegraphics[height=4.4cm]{fig1b.eps}(b)}
+% \centerline{\includegraphics[height=4.4cm]{fig1c.eps}(c)}
+% \caption{(a) Two clusters of uniformly distributed 2-D points,
+%(b) The estimated density, (c) The first non-trivial eigenvector }
+%  \label{fig1}
+%\end{figure}
+
+\inssssfig[fig2]{fig2a.eps}{fig2b.eps}{fig2c.eps}{(a) Two clusters
+of non-uniformly distributed 2-D points, (b)The estimated density,
+(c) The first non-trivial eigenvector}{6cm}{6cm}{6cm}
+%
+%\begin{figure}[tb]
+% \centerline{\includegraphics[height=6.0cm]{fig2a.eps}(a)}
+% \centerline{\includegraphics[height=6.0cm]{fig2b.eps}(b)}
+% \centerline{\includegraphics[height=6.0cm]{fig2c.eps}(c)}
+%\caption{(a) Two clusters of non-uniformly distributed 2-D points,
+%(b)The estimated density, (c) The first non-trivial eigenvector
+%\vspace{1.2cm}}
+%  \label{fig2}
+%\end{figure}
+
+\inssssfig[fig3]{fig3a.eps}{fig3b.eps}{fig3c.eps}{The same data set
+with fig.~\ref{fig2} processed with a bandwidth one order of
+magnitude larger. Although the first eigenvector still separates the
+two classes, the classes are closer and not compact (a) Two clusters
+of non-uniformly distributes 2-D points, (b)The estimated density,
+(c) The first non trivial eigenvector}{6cm}{6cm}{6cm}
+
+%\begin{figure}[tb]
+% \centerline{\includegraphics[height=6cm]{fig3a.eps}(a)}
+% \centerline{\includegraphics[height=6cm]{fig3b.eps}(b)}
+% \centerline{\includegraphics[height=6cm]{fig3c.eps}(c)}
+%\caption{The same data set with fig.~\ref{fig2} processed with a
+%bandwidth one order of magnitude larger. Although the first
+%eigenvector still separates the two classes, the classes are closer
+%and not compact (a) Two clusters of non-uniformly distributes 2-D
+%points, (b)The estimated density, (c) The first non trivial
+%eigenvector }
+%  \label{fig3}
+%\end{figure}
+
+\inssssfig[fig4]{fig4a.eps}{fig4c.eps}{fig4e.eps}{(a) The 3 phoneme
+classes after the dimensionality reduction with the optimal
+bandwidth, plotted in two dimensions, (b) The 3 phoneme classes with
+a larger bandwidth,(c) The 3 phoneme classes with a smaller
+bandwidth}{6cm}{6cm}{6cm}
+
+%\begin{figure}[tb]
+% \centerline{\includegraphics[height=6cm]{fig4a.eps}(a)}
+% \centerline{\includegraphics[height=6cm]{fig4c.eps}(b)}
+%\centerline{\includegraphics[height=6cm]{fig4e.eps}(c)}
+% \caption{(a) The 3 phoneme classes after the dimensionality reduction
+%with the optimal bandwidth, plotted in two dimensions, (b) The 3
+%phoneme classes with a larger bandwidth,(c) The 3 phoneme classes
+%with a smaller bandwidth}
+%  \label{fig4}
+%\end{figure}
+
+\inssssfig[fig5]{fig4b.eps}{fig4d.eps}{fig4f.eps}{The diffusion
+graph for three different local bandwidths (a)Optimal, (b)An order
+of magnitude larger, (c)An order of magnitude
+smaller}{6cm}{6cm}{6cm}
+
+%\begin{figure}[tb]
+% \centerline{\includegraphics[height=6cm]{fig4b.eps}(a)}
+%\centerline{\includegraphics[height=6cm]{fig4d.eps}(b)}
+%\centerline{\includegraphics[height=6cm]{fig4f.eps}(c)}
+% \caption{The diffusion graph for three different local bandwidths
+%(a)Optimal, (b)An order of magnitude larger, (c)An order of
+%magnitude smaller}
+%  \label{fig5}
+%\end{figure}
 
 
-\begin{figure}[tb]
- \centerline{\includegraphics[height=4.4cm]{fig1a.eps}(a)}
- \centerline{\includegraphics[height=4.4cm]{fig1b.eps}(b)}
- \centerline{\includegraphics[height=4.4cm]{fig1c.eps}(c)}
- \caption{(a) Two clusters of uniformly distributed 2-D points,
-(b) The estimated density, (c) The first non-trivial eigenvector }
-  \label{fig1}
-\end{figure}
-
-
-\begin{figure}[tb]
- \centerline{\includegraphics[height=6.0cm]{fig2a.eps}(a)}
- \centerline{\includegraphics[height=6.0cm]{fig2b.eps}(b)}
- \centerline{\includegraphics[height=6.0cm]{fig2c.eps}(c)}
-\caption{(a) Two clusters of non-uniformly distributed 2-D points,
-(b)The estimated density, (c) The first non-trivial eigenvector
-\vspace{1.2cm}}
-  \label{fig2}
-\end{figure}
-
-\begin{figure}[tb]
- \centerline{\includegraphics[height=6cm]{fig3a.eps}(a)}
- \centerline{\includegraphics[height=6cm]{fig3b.eps}(b)}
- \centerline{\includegraphics[height=6cm]{fig3c.eps}(c)}
-\caption{The same data set with fig.~\ref{fig2} processed with a
-bandwidth one order of magnitude larger. Although the first
-eigenvector still separates the two classes, the classes are closer
-and not compact (a) Two clusters of non-uniformly distributes 2-D
-points, (b)The estimated density, (c) The first non trivial
-eigenvector }
-  \label{fig3}
-\end{figure}
-
-
-\begin{figure}[tb]
- \centerline{\includegraphics[height=6cm]{fig4a.eps}(a)}
- \centerline{\includegraphics[height=6cm]{fig4c.eps}(b)}
-\centerline{\includegraphics[height=6cm]{fig4e.eps}(c)}
- \caption{(a) The 3 phoneme classes after the dimensionality reduction
-with the optimal bandwidth, plotted in two dimensions, (b) The 3
-phoneme classes with a larger bandwidth,(c) The 3 phoneme classes
-with a smaller bandwidth}
-  \label{fig4}
-\end{figure}
-
-\begin{figure}[tb]
- \centerline{\includegraphics[height=6cm]{fig4b.eps}(a)}
-\centerline{\includegraphics[height=6cm]{fig4d.eps}(b)}
-\centerline{\includegraphics[height=6cm]{fig4f.eps}(c)}
- \caption{The diffusion graph for three different local bandwidths
-(a)Optimal, (b)An order of magnitude larger, (c)An order of
-magnitude smaller}
-  \label{fig5}
-\end{figure}
 \subsection{Speech recognition with nearest neighbor search}
 
 In this paper we present a computationally efficient means of
@@ -1000,34 +989,35 @@ free of interference from back-end recognition engines that might be
 skewed to favor a particular feature. Understanding the intrinsic
 characteristics of features would enable us to make the right choice
 of features for a given task.
-\subsection{Introduction} Many features have been proposed for speech
-recognition, with Mel Frequency Cepstrum Coefficients (MFCC)
-\cite{quatieri2002dts} being the most popular. Other features have
-also been developed claiming better performance than MFCC in limited
-tests over different data sets. The most common metric is the speech
-recognition word accuracy over TIMIT or any other data set.
-Unfortunately most of the speech recognition systems are
-specifically tuned for MFCCs and it is difficult to have objective
-comparison since systems always tend to favor them. In this paper we
-will introduce statistical algorithms that can scale easily for
-large data sets. One very interesting statistical measure for
-features that can be the basis for many machine learning algorithms
-is all nearest neighbors, which is a special case for the general
-N-body problem. The brute force method is of $O(N^2)$  complexity
-and virtually impossible to scale for large data sets. One way to
-speed up computations is to order the features on a multidimensional
-tree, such as kd or ball tree \cite{bentley1975bst},
-\cite{moore2000ahu} which provide on the average $O(N\log_2N)$
-complexity for all nearest neighbor search. A faster algorithm using
-2 trees has made it possible to compute all nearest neighbors in
-linear time \cite{gray2000nbp}.  In this paper we demonstrate the
-performance of the fast all nearest neighbor algorithm over the
-whole TIMIT database using two different features, MFCC and Noise
-Robust Auditory Features (NRAF) \cite{ravindran:inr}. Since the data
-are phonetically labeled, the results are used for evaluating the
-k-nearest neighbor classifier performance. This is also a good
-measure for the compactness and separability of the phonetic classes
-for these two features.
+
+\subsubsection{Introduction}
+Many features have been proposed for speech recognition, with Mel
+Frequency Cepstrum Coefficients (MFCC) \cite{quatieri2002dts} being
+the most popular. Other features have also been developed claiming
+better performance than MFCC in limited tests over different data
+sets. The most common metric is the speech recognition word accuracy
+over TIMIT or any other data set. Unfortunately most of the speech
+recognition systems are specifically tuned for MFCCs and it is
+difficult to have objective comparison since systems always tend to
+favor them. In this paper we will introduce statistical algorithms
+that can scale easily for large data sets. One very interesting
+statistical measure for features that can be the basis for many
+machine learning algorithms is all nearest neighbors, which is a
+special case for the general N-body problem. The brute force method
+is of $O(N^2)$  complexity and virtually impossible to scale for
+large data sets. One way to speed up computations is to order the
+features on a multidimensional tree, such as kd or ball tree
+\cite{bentley1975bst}, \cite{moore2000ahu} which provide on the
+average $O(N\log_2N)$ complexity for all nearest neighbor search. A
+faster algorithm using 2 trees has made it possible to compute all
+nearest neighbors in linear time \cite{gray2000nbp}.  In this paper
+we demonstrate the performance of the fast all nearest neighbor
+algorithm over the whole TIMIT database using two different
+features, MFCC and Noise Robust Auditory Features (NRAF)
+\cite{ravindran:inr}. Since the data are phonetically labeled, the
+results are used for evaluating the k-nearest neighbor classifier
+performance. This is also a good measure for the compactness and
+separability of the phonetic classes for these two features.
 
 Another fundamental problem in speech generation theory is the
 estimation of the intrinsic dimension of the speech manifold. Recent
@@ -1047,7 +1037,7 @@ cost prohibitive for large data sets, but the dual tree method makes
 possible to evaluate the proximity graph between the points and
 apply any of the above mentioned methods.
 
-\subsection{Speech features} In our implementation, MFCC features
+\subsubsection{Speech features} In our implementation, MFCC features
 were extracted using the freely available code from \emph{Voicebox}.
 The speech signal was divided into frames of length 25 msec, with 50
 \% overlap and 13 MFCC coefficients (including the zeroth
@@ -1070,7 +1060,7 @@ In both cases the delta and acceleration coefficients were extracted
 and appended to each feature vector, increasing the dimensionality
 from 13 to 39.
 
-\subsection{Fast N-body methods for feature comparison} One of the
+\subsubsection{Fast N-body methods for feature comparison} One of the
 fundamental problems in statistics is the nearest neighbor
 computation for every point in a dataset. The brute force also known
 as the naive method requires $O(N^2)$ computations. Ordering the
@@ -1134,7 +1124,7 @@ algorithm} \label{dualtree_algorithm}
 tree algorithm}{8cm}
 
 
-\subsection{Kernel PCA on a manifold} Let  $(\Gamma,\mu)$ be a
+\subsubsection{Kernel PCA on a manifold} Let  $(\Gamma,\mu)$ be a
 measure space, where $\Gamma$ is a finite set of $N$-dimensional
 points and $\mu$ is a counting measure that represents the
 distribution of the points on the data set. In other words $\Gamma$
@@ -1177,7 +1167,7 @@ computational bottleneck for kernel PCA is the computation of
 nearest neighbors which can be solved by the dual tree algorithm in
 linear time.
 
-\subsection{Experimental Results} In order to illustrate the
+\subsubsection{Experimental Results} In order to illustrate the
 applicability of the algorithms described above, the TIMIT and Noisy
 TIMIT (NTIMIT) database were chosen. Our goal is to test our
 algorithms in terms of scalability and time. Phoneme classification
@@ -1185,7 +1175,8 @@ with the nearest neighbor classifiers was chosen as the evaluation
 task. The task was repeated for both set of features, namely, MFCC
 and NRAF. We also illustrate the spectrum of kernel PCA for the two
 different features.
-\subsection{All nearest neighbor performance}
+
+\subsubsection{All nearest neighbor performance}
 The timing results are illustrated in table \ref{timing}. The all
 20-nearest neighbor method with the dual tree algorithm on kd-trees
 is 30 to 50 times faster than naive in terms of time. It took about
@@ -1196,16 +1187,17 @@ way to get an estimation of the intrinsic dimension is the
 eigenvalue distribution of the Principal Component Analysis. As seen
 from Fig.~\ref{pca} NRAFs have a more compact distribution than
 MFCCs.
-\subsection{Comparison of NRAF and MFCC}
-Two types of experiments were done for the comparison of the
-features. The first one is the Leave One feature Cross Validation.
-So for every feature we find the k-nearest neighbors and check
-whether the majority has the same label as it \footnote{Instead of
-using the 61 different phonetic classes of TIMIT we used the 39
-categories of the CMU dictionary}. In tables \ref{kneighborTIMIT}
-and \ref{kneighborNTIMIT}, we demonstrate the performance of MFCC
-and NRAF for TIMIT and NTIMIT for various k. NRAF perform better
-than MFCC, specially in the noisy case.
+
+\subsubsection{Comparison of NRAF and MFCC} Two types of
+experiments were done for the comparison of the features. The first
+one is the Leave One feature Cross Validation. So for every feature
+we find the k-nearest neighbors and check whether the majority has
+the same label as it \footnote{Instead of using the 61 different
+phonetic classes of TIMIT we used the 39 categories of the CMU
+dictionary}. In tables \ref{kneighborTIMIT} and
+\ref{kneighborNTIMIT}, we demonstrate the performance of MFCC and
+NRAF for TIMIT and NTIMIT for various k. NRAF perform better than
+MFCC, specially in the noisy case.
 
 In the second experiment we do Leave-One-Speaker-Out cross
 validation. For every feature we find the k-nearest neighbors that
@@ -1243,22 +1235,22 @@ tuning it. High bandwidths tend to give more compact spectrum, so
 even in the extreme case of infinite bandwidth no more significant
 improvement is shown for 10 nearest neighbors.
 
-\subsection{Discussion}
-It has been shown previously that NRAFs tend to be more robust to
-noise compared to MFCCs~\cite{ravindran:inr}. From
-Tables~\ref{kneighborTIMIT} and~\ref{kneighborNTIMIT} it is clear
-that NRAFs do provide substantial improvement over MFCCs specially
-in noisy environments. However, it is very interesting to note that
-MFCCs outperform NRAFs in all Leave-One-Speaker-Out cross validation
-tests. This would suggest that MFCCs are better than NRAFs at
-removing inter-speaker variability. Inter-speaker variability
-usually is the result of incorporating pitch information (usually
-encoded in the higher coefficients of the decorrelation transform)
-and it is very much possible that in ensuring NRAFs and MFCCs have
-the same number of channels we may have introduced pitch information
-into the NRAF features. Perhaps using lesser number of NRAF
-coefficients or different filter spacing, the inter-speaker
-variability could be removed.
+\subsubsection{Discussion} It has been shown previously that NRAFs
+tend to be more robust to noise compared to
+MFCCs~\cite{ravindran:inr}. From Tables~\ref{kneighborTIMIT}
+and~\ref{kneighborNTIMIT} it is clear that NRAFs do provide
+substantial improvement over MFCCs specially in noisy environments.
+However, it is very interesting to note that MFCCs outperform NRAFs
+in all Leave-One-Speaker-Out cross validation tests. This would
+suggest that MFCCs are better than NRAFs at removing inter-speaker
+variability. Inter-speaker variability usually is the result of
+incorporating pitch information (usually encoded in the higher
+coefficients of the decorrelation transform) and it is very much
+possible that in ensuring NRAFs and MFCCs have the same number of
+channels we may have introduced pitch information into the NRAF
+features. Perhaps using lesser number of NRAF coefficients or
+different filter spacing, the inter-speaker variability could be
+removed.
 
 
 \instbfig[pca]{timit_pca.eps}{ntimit_pca.eps}{Principal Component
@@ -1362,6 +1354,37 @@ news. Implicitly dimensionality reduction will lead to new feature
 generation we will explain it in the following sections. The
 ultimate goal is to do speech recognition by nearest neighbor
 search.
+
+\subsubsection{Customized Kernels}
+As we described in the previous section there are infinite functions
+that can act as valid kernels. The most popular kernels are:
+\begin{enumerate}
+  \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
+  \item The polynomial kernel $k(x, y)=(xy)^n$
+  \item The epanechnikov kernel $k(x, y)=1-||x-y||^2/\sigma^2, ||x-y||<\sigma, else 0$
+  \item The k-nearest neighbor kernel
+\end{enumerate}
+
+Although these are valid kernels for any kernel method including
+Kernel PCA they are not appropriate for every task. In some cases we
+want to map data in higher dimensional spaces preserving distances
+(isometry) while in other cases we want to make small distances
+smaller and send high distances to infinity (clustering). The
+gaussian kernel for example tends to behave better in clustering
+since it fades out very quickly. On the other hand it fails to
+unfold the data manifold so that the intrinsic dimension can be
+estimated. Manifold unfolding is a very important procedure since it
+can reveal the true dimension of the dataset.
+
+In [?] the authors introduced the idea of building the kernel matrix
+from scratch without using any fixed kernel. As we have already
+mentioned the kernel matrix has to be a positive semidefinite
+matrix. Initially we have to define a k neighborhood  for every
+point. So at first we have to connect points to their neighbors and
+build a initialize the non zero values of the matrix to 1. Then we
+maximize the trace of the kernel matrix under the constraint that
+the the distances in the kernel matrix are preserved. This leads to
+a semidefinite programming problem.
 
 \subsection{Customizing Kernels with fast
 gradient descent}

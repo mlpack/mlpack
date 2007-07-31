@@ -253,7 +253,7 @@ show that empirically it is more preferable to have unbalance splits
 on the tree, since it favors pruning in the process of finding the
 nearest neighbors.
 
-\emph{Data structures for Kd trees}
+\paragraph{Data structures for Kd trees}
 
  Kd-tree consists of two types of data structures, the nodes and the
  leafs. The basic data needed for the nodes are the
@@ -586,58 +586,6 @@ previous sections.
 Kernel PCA has many cousins such as Laplacian eigenmaps, Diffusion
 maps Isomap, Local Linear embedding
 
-\subsubsection{Customized Kernels}
-As we described in the previous section there are infinite functions
-that can act as valid kernels. The most popular kernels are:
-\begin{enumerate}
-  \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
-  \item The polynomial kernel $k(x, y)=(xy)^n$
-  \item The epanechnikov kernel $k(x, y)=1-||x-y||^2/\sigma^2, ||x-y||<\sigma, else 0$
-  \item The k-nearest neighbor kernel
-\end{enumerate}
-
-Although these are valid kernels for any kernel method including
-Kernel PCA they are not appropriate for every task. In some cases we
-want to map data in higher dimensional spaces preserving distances
-(isometry) while in other cases we want to make small distances
-smaller and send high distances to infinity (clustering). The
-gaussian kernel for example tends to behave better in clustering
-since it fades out very quickly. On the other hand it fails to
-unfold the data manifold so that the intrinsic dimension can be
-estimated. Manifold unfolding is a very important procedure since it
-can reveal the true dimension of the dataset.
-
-In [?] the authors introduced the idea of building the kernel matrix
-from scratch without using any fixed kernel. As we have already
-mentioned the kernel matrix has to be a positive semidefinite
-matrix. Initially we have to define a k neighborhood  for every
-point. So at first we have to connect points to their neighbors and
-build a initialize the non zero values of the matrix to 1. Then we
-maximize the trace of the kernel matrix under the constraint that
-the the distances in the kernel matrix are preserved. This leads to
-a semidefinite programming problem.
-
-
-
-\subsection{Parameter estimation for manifold learning, through density estimation}
-
-Manifold learning turns out to be a very useful tool for many
-applications of machine learning, such as classification.
-Unfortunately the existing algorithms use ad hoc selection of the
-parameters that define the geometry of the manifold. The parameter
-choice affects significantly the performance of manifold learning
-algorithms. Recent theoretical work has proven the equivalence
-between the Mercer kernel learning methods and the kernel in kernel
-density estimation. Based on this fact the problem of kernel
-parameter estimation for manifold learning is addressed based on the
-nonparametric statistical theory estimation. An automatic way of
-determining the local bandwidths that define the geometry is
-introduced. The results show that the automatic bandwidth selection
-leads to improved clustering performance and reduces the
-computational load versus ad hoc selection.
-
-\subsubsection{INTRODUCTION}
-
 Manifold learning has been active recently through the work of
 \cite{Lafon} and \cite{Belkin}. Both works present algorithms for
 computing the Laplace-Beltrami operator on a submanifold $\Gamma$
@@ -659,8 +607,8 @@ was chosen. The proposed algorithm is a partial solution because it
 doesn't deal with the final objective function directly, which in
 some applications of manifold learning it could be clustering or
 dimensionality reduction.
- The connection between manifold
-learning and Kernel Density Estimation (KDE) has also been addressed
+
+ The connection between manifold learning and Kernel Density Estimation (KDE) has also been addressed
 in \cite{girolami2002osd} where the connection between manifold
 learning and density estimation was also considered by using
 orthogonal series density estimation rather than kernel density
@@ -723,6 +671,68 @@ data to a lower dimensional space.
 where $M$ is the number of data points, $x,y$ are nodes of the graph
 and $\phi_j$ is the $j_{th}$ eigenvector of $a$ that corresponds to
 the $\lambda_j$ eigenvalue.
+
+
+\subsubsection{Kernel PCA on a manifold} Let  $(\Gamma,\mu)$ be a
+measure space, where $\Gamma$ is a finite set of $N$-dimensional
+points and $\mu$ is a counting measure that represents the
+distribution of the points on the data set. In other words $\Gamma$
+is a submanifold of $\Re^{n}$. Assume that the geometry of $\Gamma$
+is defined by a kernel $k(x,y)$. The kernel $k(x,y)$ measures the
+degree of similarity between two points $x,y$. The kernel satisfies
+the following conditions:
+\begin{itemize}
+    \item   $k$ is symmetric: $k(x,y)=k(y,x)$,
+    \item   $k$ is positivity-preserving: for all $x,y$ in
+$\Gamma, k(x,y)\geq 0$
+    \item   $k$ is positive semi-definite: for all bounded
+functions $f$ defined on  $\Gamma$,
+\[
+\int_{\Gamma} \int_{\Gamma} k(x,y)f(x)f(y)d\mu(x)d\mu(y)\geq 0\]
+\end{itemize}
+In this paper it is assumed that $\Gamma$ is a subset of the
+Euclidean space $\Re^{n}$. So for $x,y\ni\Gamma$ the kernel
+(similarity measure) is a function of the Euclidean distance
+$\parallel x-y\parallel:$
+\[
+ k(x,y)=\eta(\frac{\parallel x-y\parallel}{h})
+\]
+The eigenvalue analysis of the graph with the adjacency matrix
+$k(x,y)$ is the basis for embedding the data to a lower dimensional
+space.
+\[
+    k(x,y)=\sum_{j=0}^{M} \lambda_{j}\phi_{j}(x)\phi_{j}(y)
+\]
+
+where $M$ is the number of data points, $x$ and $y$ are nodes of the
+graph and $\phi_j$ is the $jth$ eigenvector that corresponds to the
+$\lambda_j$ eigenvalue.
+
+One problem is that exhaustive computation of the kernel will lead
+to a full matrix, which makes the computation of the eigenvector
+$O(N^2)$. Fortunately very few $(x,y)$ pairs have a non zero kernel
+product since it depends on their proximity. So again the
+computational bottleneck for kernel PCA is the computation of
+nearest neighbors which can be solved by the dual tree algorithm in
+linear time.
+
+\subsection{Parameter estimation for manifold learning, through density estimation}
+
+Manifold learning turns out to be a very useful tool for many
+applications of machine learning, such as classification.
+Unfortunately the existing algorithms use ad hoc selection of the
+parameters that define the geometry of the manifold. The parameter
+choice affects significantly the performance of manifold learning
+algorithms. Recent theoretical work has proven the equivalence
+between the Mercer kernel learning methods and the kernel in kernel
+density estimation. Based on this fact the problem of kernel
+parameter estimation for manifold learning is addressed based on the
+nonparametric statistical theory estimation. An automatic way of
+determining the local bandwidths that define the geometry is
+introduced. The results show that the automatic bandwidth selection
+leads to improved clustering performance and reduces the
+computational load versus ad hoc selection.
+
 
 
 \subsubsection{Non parametric  density estimation} The problem of
@@ -1157,48 +1167,7 @@ algorithm} \label{dualtree_algorithm}
 tree algorithm}{8cm}
 
 
-\subsubsection{Kernel PCA on a manifold} Let  $(\Gamma,\mu)$ be a
-measure space, where $\Gamma$ is a finite set of $N$-dimensional
-points and $\mu$ is a counting measure that represents the
-distribution of the points on the data set. In other words $\Gamma$
-is a submanifold of $\Re^{n}$. Assume that the geometry of $\Gamma$
-is defined by a kernel $k(x,y)$. The kernel $k(x,y)$ measures the
-degree of similarity between two points $x,y$. The kernel satisfies
-the following conditions:
-\begin{itemize}
-    \item   $k$ is symmetric: $k(x,y)=k(y,x)$,
-    \item   $k$ is positivity-preserving: for all $x,y$ in
-$\Gamma, k(x,y)\geq 0$
-    \item   $k$ is positive semi-definite: for all bounded
-functions $f$ defined on  $\Gamma$,
-\[
-\int_{\Gamma} \int_{\Gamma} k(x,y)f(x)f(y)d\mu(x)d\mu(y)\geq 0\]
-\end{itemize}
-In this paper it is assumed that $\Gamma$ is a subset of the
-Euclidean space $\Re^{n}$. So for $x,y\ni\Gamma$ the kernel
-(similarity measure) is a function of the Euclidean distance
-$\parallel x-y\parallel:$
-\[
- k(x,y)=\eta(\frac{\parallel x-y\parallel}{h})
-\]
-The eigenvalue analysis of the graph with the adjacency matrix
-$k(x,y)$ is the basis for embedding the data to a lower dimensional
-space.
-\[
-    k(x,y)=\sum_{j=0}^{M} \lambda_{j}\phi_{j}(x)\phi_{j}(y)
-\]
 
-where $M$ is the number of data points, $x$ and $y$ are nodes of the
-graph and $\phi_j$ is the $jth$ eigenvector that corresponds to the
-$\lambda_j$ eigenvalue.
-
-One problem is that exhaustive computation of the kernel will lead
-to a full matrix, which makes the computation of the eigenvector
-$O(N^2)$. Fortunately very few $(x,y)$ pairs have a non zero kernel
-product since it depends on their proximity. So again the
-computational bottleneck for kernel PCA is the computation of
-nearest neighbors which can be solved by the dual tree algorithm in
-linear time.
 
 \subsubsection{Experimental Results} In order to illustrate the
 applicability of the algorithms described above, the TIMIT and Noisy
@@ -1388,18 +1357,41 @@ generation we will explain it in the following sections. The
 ultimate goal is to do speech recognition by nearest neighbor
 search.
 
-\subsection{Customizing Kernels with fast
-gradient descent}
+\subsection{Customized Kernels} As we described in the previous
+section there are infinite functions that can act as valid kernels.
+The most popular kernels are:
+\begin{enumerate}
+  \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
+  \item The polynomial kernel $k(x, y)=(xy)^n$
+  \item The epanechnikov kernel $k(x, y)=1-||x-y||^2/\sigma^2, ||x-y||<\sigma, else 0$
+  \item The k-nearest neighbor kernel
+\end{enumerate}
 
-As we described in section ? it is possible to customize the kernel
-for a given dataset, through semidefinite programming. Although this
-method is very promising and gives very good results it is not
-scalable. Semidefinite programming is solved with the intrinsic
-point method which is of polynomial complexity.
+Although these are valid kernels for any kernel method including
+Kernel PCA they are not appropriate for every task. In some cases we
+want to map data in higher dimensional spaces preserving distances
+(isometry) while in other cases we want to make small distances
+smaller and send high distances to infinity (clustering). The
+gaussian kernel for example tends to behave better in clustering
+since it fades out very quickly. On the other hand it fails to
+unfold the data manifold so that the intrinsic dimension can be
+estimated. Manifold unfolding is a very important procedure since it
+can reveal the true dimension of the dataset.
 
-\subsubsection{Fast kernel summation with trees}
-Kernel summation is on of the most common tasks in kernel methods.
-The general formula
+In [?] the authors introduced the idea of building the kernel matrix
+from scratch without using any fixed kernel. As we have already
+mentioned the kernel matrix has to be a positive semidefinite
+matrix. Initially we have to define a k neighborhood  for every
+point. So at first we have to connect points to their neighbors and
+build a initialize the non zero values of the matrix to 1. Then we
+maximize the trace of the kernel matrix under the constraint that
+the the distances in the kernel matrix are preserved. This leads to
+a semidefinite programming problem.
+
+
+
+\subsection{Fast kernel summation with trees} Kernel summation is
+on of the most common tasks in kernel methods. The general formula
 \begin{equation}
 \label{kernel_sum}
   G(x)=\sum_{q=0}^{N} w_i\exp(\frac{(x-x_q)^2}{\sigma^2})
