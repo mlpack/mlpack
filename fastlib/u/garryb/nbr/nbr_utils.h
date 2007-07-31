@@ -453,7 +453,7 @@ void RpcMonochromaticDualTreeRunner<GNP, Solver>::Init(
   module_ = module;
   gnp_name_ = gnp_name;
 
-  size_t q_results_mb = fx_param_int(module_, "q_results_mb", 200);
+  size_t q_results_mb = fx_param_int(module_, "q_results_mb", 1000);
   fx_submodule(module_, NULL, "io"); // influnce output order
 
   param_ = new typename GNP::Param();

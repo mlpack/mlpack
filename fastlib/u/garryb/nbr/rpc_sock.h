@@ -179,6 +179,7 @@ class SockConnection {
   int write_fd_;
   struct sockaddr_in peer_addr_;
 
+  Header read_header_;
   int64 read_total_;
   Message *read_message_;
   size_t read_buffer_pos_;

@@ -189,6 +189,11 @@ void TestRangeSet() {
   DEBUG_SAME_INT(set[2].end, 81);
   DEBUG_SAME_INT(set[3].begin, 500);
   DEBUG_SAME_INT(set[3].end, 900);
+  set.Reset();
+  set.Union(3, 5);
+  set.Union(3, 5);
+  set.Union(3, 5);
+  DEBUG_SAME_INT(set.size(), 1);
 }
 
 void TestQueue() {

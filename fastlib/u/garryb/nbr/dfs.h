@@ -126,7 +126,11 @@ void DualTreeDepthFirst<GNP>::Doit(
   r_root_ = r_nodes_.StartRead(0);
 
   datanode_ = datanode_in;
-  do_naive_ = fx_param_bool(datanode_, "do_naive", false);
+  if (fx_param_exists(datanode_, "do_naive")) {
+    do_naive_ = fx_param_bool(datanode_, "do_naive", false);
+  } else {
+    do_naive_ = false;
+  }
 
   Begin_(q_root_index);
 }
@@ -164,7 +168,8 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
 
   //fx_timer_stop(datanode_, "execute");
 
-  DEBUG_ONLY(fx_format_result(datanode_, "naive_ratio", "%f",
+#warning collect statistics such as naive_ratio globally instead
+  /*DEBUG_ONLY(fx_format_result(datanode_, "naive_ratio", "%f",
       1.0 * n_naive_ / q_root->count() / r_root_->count()));
   DEBUG_ONLY(fx_format_result(datanode_, "naive_per_query", "%f",
       1.0 * n_naive_ / q_root->count()));
@@ -175,7 +180,7 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   DEBUG_ONLY(fx_format_result(datanode_, "recurse_ratio", "%f",
       1.0 * n_recurse_ / q_root->count() / r_root_->count()));
   DEBUG_ONLY(fx_format_result(datanode_, "recurse_per_query", "%f",
-      1.0 * n_recurse_ / q_root->count()));
+      1.0 * n_recurse_ / q_root->count()));*/
 
 /*  if (fx_param_bool(datanode_, "print", 0)) {
     ot::Print(q_results_);

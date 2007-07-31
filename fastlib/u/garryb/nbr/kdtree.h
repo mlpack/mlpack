@@ -447,8 +447,8 @@ void SpKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
   nodes_module_ = fx_submodule(module, "nodes", "nodes");
   points_channel_ = base_channel + 0;
   nodes_channel_ = base_channel + 1;
-  points_mb_ = fx_param_int(points_module_, "mb", 400);
-  nodes_mb_ = fx_param_int(nodes_module_, "mb", 100);
+  points_mb_ = fx_param_int(points_module_, "mb", 2000);
+  nodes_mb_ = fx_param_int(nodes_module_, "mb", 1000);
   Broadcaster<Config> broadcaster;
   if (rpc::is_root()) {
     Config config;

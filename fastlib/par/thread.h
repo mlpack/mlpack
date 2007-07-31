@@ -134,7 +134,9 @@ class Mutex {
   
   /** Obtains the lock. */
   void Lock() const {
-    pthread_mutex_lock(&mutex_);
+    int t = pthread_mutex_lock(&mutex_);
+    (void)t;
+    DEBUG_ASSERT_MSG(t == 0, "Error locking mutex -- relocking a non-recursive mutex?");
   }
   
   /** Tries to lock, returns false if doing so would require waiting. */
