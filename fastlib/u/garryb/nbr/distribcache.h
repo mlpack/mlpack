@@ -368,9 +368,16 @@ class DistributedCache : public BlockDevice {
   };
 
   struct Position {
+   public:
     blockid_t block;
     offset_t offset;
     
+    OT_DEF(Position) {
+      OT_MY_OBJECT(block);
+      OT_MY_OBJECT(offset);
+    }
+
+   public:
     void Copy(const Position& other) {
       *this = other;
     }

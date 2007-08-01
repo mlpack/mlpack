@@ -684,8 +684,14 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
         DEBUG_ONLY(bytes_total += end_offset - begin_offset);
       }
     }
+#ifdef DEBUG
+    if (unlikely(bytes_total == 0)) {
+      ot::Print(write_ranges_);
+    }
+#endif
     DEBUG_ASSERT_MSG(bytes_total != 0,
-        "A block marked partially-dirty has no overlapping write ranges.");
+        "%d: A block marked partially-dirty has no overlapping write ranges: block %d, %d blocks total, %d bytes per block.",
+        my_rank_, blockid, n_blocks_, n_block_bytes_);
     DEBUG_ASSERT_MSG(bytes_total <= n_block_bytes_,
         "A block marked partially-dirty was written more than once: %d > %d.",
         bytes_total, n_block_bytes_);

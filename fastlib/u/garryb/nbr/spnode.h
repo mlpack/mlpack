@@ -99,11 +99,11 @@ class SpNode {
     return stat_;
   }
 
-  index_t child(index_t child_number) const {
+  index_t child(int child_number) const {
     return children_[child_number];
   }
 
-  void set_child(index_t child_number, index_t child_index) {
+  void set_child(int child_number, index_t child_index) {
     DEBUG_BOUNDS(child_number, t_cardinality);
     children_[child_number] = child_index;
   }
@@ -181,9 +181,19 @@ class SpSkeletonNode {
     OT_MY_OBJECT(index_);
     OT_MY_OBJECT(info_);
     OT_MY_OBJECT(node_);
-    OT_PTR_NULLABLE(parent_);
-    for (index_t i = 0; i < Node::CARDINALITY; i++) {
-      OT_PTR_NULLABLE(children_[i]);
+    for (int k = 0; k < Node::CARDINALITY; k++) {
+      OT_PTR_NULLABLE(children_[k]);
+    }
+  }
+
+  OT_FIX(SpSkeletonNode) {
+    parent_ = NULL;
+    
+    for (int k = 0; k < Node::CARDINALITY; k++) {
+      SpSkeletonNode *c = children_[k];
+      if (c) {
+        c->parent_ = this;
+      }
     }
   }
 
@@ -207,14 +217,14 @@ class SpSkeletonNode {
         , node_(*array->StartRead(node_index_in))
         , parent_(parent_in) {
     array->StopRead(node_index_in);
-    for (index_t i = 0; i < Node::CARDINALITY; i++) {
-      children_[i] = NULL;
+    for (int k = 0; k < Node::CARDINALITY; k++) {
+      children_[k] = NULL;
     }
   }
   ~SpSkeletonNode() {
-    for (index_t i = 0; i < Node::CARDINALITY; i++) {
-      if (children_[i] != NULL) {
-        delete children_[i];
+    for (int k = 0; k < Node::CARDINALITY; k++) {
+      if (children_[k] != NULL) {
+        delete children_[k];
       }
     }
   }
@@ -250,12 +260,12 @@ class SpSkeletonNode {
     return node_.count();
   }
 
-  void set_child(index_t i, SpSkeletonNode *child) {	
+  void set_child(int k, SpSkeletonNode *child) {	
     DEBUG_ASSERT(child->parent_ == NULL);
-    DEBUG_ASSERT(children_[i] == NULL);
-    DEBUG_ASSERT(node_.child(i) == child->index());
+    DEBUG_ASSERT(children_[k] == NULL);
+    DEBUG_ASSERT(node_.child(k) == child->index());
     child->parent_ = this;
-    children_[i] = child;
+    children_[k] = child;
   }
 
   /**
@@ -263,20 +273,20 @@ class SpSkeletonNode {
    *
    * @param array the array to read information from if the node is not
    *        already in the skeleton tree
-   * @param i child number (i.e. 0 for left and 1 for right)
+   * @param k child number (k.e. 0 for left and 1 for right)
    */
-  SpSkeletonNode *GetChild(CacheArray<Node> *array, index_t i) {
-    if (children_[i] == NULL && !node_.is_leaf()) {
+  SpSkeletonNode *GetChild(CacheArray<Node> *array, int k) {
+    if (children_[k] == NULL && !node_.is_leaf()) {
       index_t child_end_index; // compute end index based on pre-order
-      if (i + 1 == Node::CARDINALITY) {
+      if (k + 1 == Node::CARDINALITY) {
         child_end_index = end_index_;
       } else {
-        child_end_index = node_.child(i+1);
+        child_end_index = node_.child(k+1);
       }
-      children_[i] = new SpSkeletonNode(info_, array, node_.child(i),
+      children_[k] = new SpSkeletonNode(info_, array, node_.child(k),
           child_end_index, this);
     }
-    return children_[i];
+    return children_[k];
   }
 
   /**
@@ -287,15 +297,15 @@ class SpSkeletonNode {
    * NULL.  Use is_leaf(), which in turn calls node().is_leaf(), to check
    * for leafness.
    */
-  SpSkeletonNode *child(index_t i) const {
-    return children_[i];
+  SpSkeletonNode *child(int k) const {
+    return children_[k];
   }
   /**
    * Returns whether all children exist statically.
    */
   bool is_complete() const {
-    for (index_t i = 0; i < Node::CARDINALITY; i++) {
-      if (!children_[i]) {
+    for (int k = 0; k < Node::CARDINALITY; k++) {
+      if (!children_[k]) {
         return false;
       }
     }
