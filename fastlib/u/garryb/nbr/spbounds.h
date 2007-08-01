@@ -457,6 +457,11 @@ class SpHrectBound {
     DEBUG_POISON_PTR(bounds_);
     DEBUG_ONLY(dim_ = BIG_BAD_NUMBER);
   }
+  SpHrectBound(const SpHrectBound& other) {
+    DEBUG_POISON_PTR(bounds_);
+    DEBUG_ONLY(dim_ = BIG_BAD_NUMBER);
+    Copy(other);
+  }
   ~SpHrectBound() {
     mem::Free(bounds_);
   }
