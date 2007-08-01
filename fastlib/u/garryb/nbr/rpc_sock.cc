@@ -15,8 +15,6 @@
 #include <errno.h>
 #include <string.h>
 
-#warning "make sure i fixed the single-message-transaction race condition"
-
 //-------------------------------------------------------------------------
 
 /*

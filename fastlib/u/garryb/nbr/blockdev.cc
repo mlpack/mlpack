@@ -52,9 +52,9 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   if (fname == NULL) {
     DEBUG_ASSERT_MSG(mode == BlockDevice::M_TEMP,
         "Null filenames are only valid for temporary files.");
-    char new_fname[] = "/tmp/nbr_gnp_XXXXXXXXXXXX";
-    fd_ = mkstemp(new_fname);
-    fname_.Copy(new_fname);
+    const char *tmpdir = fx_param_str(fx_root, "tmpdir", "/tmp");
+    fname_.InitSprintf("%s/nbr_gnp_XXXXXXXXX", tmpdir);
+    fd_ = mkstemp(fname_.c_str());
   } else {
     int octal_mode;
 
@@ -77,6 +77,7 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   if (mode == BlockDevice::M_TEMP) {
     // UNIX filesystem semantics: you can access an unlinked file, it will
     // just automatically be cleaned up later.
+    // NOTE: The file will be completely hidden from ls.
     unlink(fname_.c_str());
   }
 

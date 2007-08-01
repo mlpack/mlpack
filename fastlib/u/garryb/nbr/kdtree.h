@@ -22,6 +22,51 @@
 
 /* Implementation */
 
+template<typename PartitionCondition, typename PointCache, typename Bound>
+index_t Partition(
+    PartitionCondition splitcond,
+    index_t begin, index_t count,
+    PointCache *points,
+    Bound* left_bound, Bound* right_bound) {
+  index_t left_i = begin;
+  index_t right_i = begin + count - 1;
+
+  /* At any point:
+   *   every thing that strictly precedes left_i is correct
+   *   every thing that strictly succeeds right_i is correct
+   */
+  for (;;) {
+    for (;;) {
+      if (unlikely(left_i > right_i)) return left_i;
+      CacheRead<typename PointCache::Element> left_v(points, left_i);
+      if (!splitcond.is_left(left_v->vec())) {
+        *right_bound |= left_v->vec();
+        break;
+      }
+      *left_bound |= left_v->vec();
+      left_i++;
+    }
+
+    for (;;) {
+      if (unlikely(left_i > right_i)) return left_i;
+      CacheRead<typename PointCache::Element> right_v(points, right_i);
+      if (splitcond.is_left(right_v->vec())) {
+        *left_bound |= right_v->vec();
+        break;
+      }
+      *right_bound |= right_v->vec();
+      right_i--;
+    }
+
+    points->Swap(left_i, right_i);
+
+    DEBUG_ASSERT(left_i <= right_i);
+    right_i--;
+  }
+
+  abort();
+}
+
 /**
  * Single-threaded kd-tree builder.
  *
@@ -46,6 +91,33 @@ class KdTreeHybridBuilder {
   typedef TPoint Point;
   typedef typename TNode::Bound Bound;
   typedef TParam Param;
+  typedef SpTreeDecomposition<Node> TreeDecomposition;
+  typedef typename TreeDecomposition::DecompNode DecompNode;
+
+ private:
+  struct HrectPartitionCondition {
+    int dimension;
+    double value;
+
+    HrectPartitionCondition(int dimension_in, double value_in)
+      : dimension(dimension_in)
+      , value(value_in) {}
+
+    bool is_left(const Vector& vector) const {
+      return vector.get(dimension) < value;
+    }
+  };
+
+ private:
+  const Param* param_;
+  CacheArray<Point> points_;
+  CacheArray<Node> nodes_;
+  index_t leaf_size_;
+  index_t chunk_size_;
+  index_t dim_;
+  index_t begin_index_;
+  index_t end_index_;
+  index_t n_points_;
 
  public:
   /**
@@ -62,33 +134,14 @@ class KdTreeHybridBuilder {
    * @param points_inout the points, to be reordered
    * @param nodes_create the nodes, which will be allocated one by one
    */
-  static void Build(struct datanode *module, const Param &param,
-      index_t begin_index, index_t end_index,
-      DistributedCache *points_inout, DistributedCache *nodes_create) {
-    KdTreeHybridBuilder builder;
-    builder.Doit(module, &param, begin_index, end_index,
-        points_inout, nodes_create);
-  }
-
- private:
-  const Param* param_;
-  CacheArray<Point> points_;
-  CacheArray<Node> nodes_;
-  index_t leaf_size_;
-  index_t chunk_size_;
-  index_t dim_;
-  index_t begin_index_;
-  index_t end_index_;
-  index_t n_points_;
-
- public:
   void Doit(
       struct datanode *module,
       const Param* param_in_,
       index_t begin_index,
       index_t end_index,
       DistributedCache *points_inout,
-      DistributedCache *nodes_create) {
+      DistributedCache *nodes_create,
+      TreeDecomposition *decomposition) {
     param_ = param_in_;
     begin_index_ = begin_index;
     end_index_ = end_index;
@@ -103,26 +156,17 @@ class KdTreeHybridBuilder {
     }
 
     leaf_size_ = fx_param_int(module, "leaf_size", 32);
-    // NOTE: Chunk size is now required to be same as n_block_elems, so that
-    // each block of points corresponds to exactly one node in the tree.
     chunk_size_ = points_.n_block_elems();
 
     fx_timer_start(module, "tree_build");
-    Build_();
+    Build_(decomposition);
     fx_timer_stop(module, "tree_build");
   }
 
-  index_t Partition_(
-      index_t split_dim, double splitvalue,
-      index_t begin, index_t count,
-      Bound* left_bound, Bound* right_bound);
   void FindBoundingBox_(index_t begin, index_t count, Bound *bound);
-  /**
-   * Builds the tree, assigning this portion of the tree to a subset of
-   * machines.
-   */
-  void Build_(index_t node_i, int begin_rank, int end_rank);
-  void Build_();
+  DecompNode *Build_(index_t node_i, int begin_rank, int end_rank,
+      const Bound& bound, Node *parent);
+  void Build_(TreeDecomposition *decomposition);
 };
 
 template<typename TPoint, typename TNode, typename TParam>
@@ -135,55 +179,21 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::FindBoundingBox_(
 }
 
 template<typename TPoint, typename TNode, typename TParam>
-index_t KdTreeHybridBuilder<TPoint, TNode, TParam>::Partition_(
-    index_t split_dim, double splitvalue,
-    index_t begin, index_t count,
-    Bound* left_bound, Bound* right_bound) {
-  index_t left_i = begin;
-  index_t right_i = begin + count - 1;
-
-  /* At any point:
-   *
-   *   everything < left_i is correct
-   *   everything > right_i is correct
-   */
-  for (;;) {
-    for (;;) {
-      if (unlikely(left_i > right_i)) return left_i;
-      CacheRead<Point> left_v(&points_, left_i);
-      if (left_v->vec().get(split_dim) >= splitvalue) {
-        *right_bound |= left_v->vec();
-        break;
-      }
-      *left_bound |= left_v->vec();
-      left_i++;
-    }
-
-    for (;;) {
-      if (unlikely(left_i > right_i)) return left_i;
-      CacheRead<Point> right_v(&points_, right_i);
-      if (right_v->vec().get(split_dim) < splitvalue) {
-        *left_bound |= right_v->vec();
-        break;
-      }
-      *right_bound |= right_v->vec();
-      right_i--;
-    }
-
-    points_.Swap(left_i, right_i);
-
-    DEBUG_ASSERT(left_i <= right_i);
-    right_i--;
-  }
-
-  abort();
-}
-
-template<typename TPoint, typename TNode, typename TParam>
-void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
-    index_t node_i, int begin_rank, int end_rank) {
+typename KdTreeHybridBuilder<TPoint, TNode, TParam>::DecompNode *
+KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
+    index_t node_i, int begin_rank, int end_rank, const Bound& bound,
+    Node *parent) {
+  // TODO: Split this into smaller functions!  This keeps on growing
+  // and growing... Proposal: (1) a non-leaf subfunction, (2) a function
+  // responsible for the quantile-find
   Node *node = nodes_.StartWrite(node_i);
   bool leaf = true;
+  DecompNode *left_decomp = NULL;
+  DecompNode *right_decomp = NULL;
+  bool single_machine = (end_rank <= begin_rank + 1);
+
+  node->bound().Reset();
+  node->bound() |= bound;
 
   if (node->count() > leaf_size_) {
     index_t split_dim = BIG_BAD_NUMBER;
@@ -225,9 +235,10 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
       if (node->count() <= chunk_size_) {
         // perform a midpoint split
         split_val = current_range.mid();
-        split_col = Partition_(split_dim, split_val,
-              begin_col, end_col - begin_col,
-              &final_left_bound, &final_right_bound);
+        split_col = Partition(
+            HrectPartitionCondition(split_dim, split_val),
+            begin_col, end_col - begin_col,
+            &points_, &final_left_bound, &final_right_bound);
       } else {
         index_t goal_col;
         typename Node::Bound left_bound;
@@ -235,7 +246,7 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
         left_bound.Init(dim_);
         right_bound.Init(dim_);
 
-        if (likely(begin_rank - end_rank <= 1)) {
+        if (single_machine) {
           // All points will go on the same machine, so do median split.
           goal_col = (begin_col + end_col) / 2;
         } else {
@@ -259,9 +270,10 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
 
           left_bound.Reset();
           right_bound.Reset();
-          split_col = Partition_(split_dim, split_val,
-                begin_col, end_col - begin_col,
-                &left_bound, &right_bound);
+          split_col = Partition(
+              HrectPartitionCondition(split_dim, split_val),
+              begin_col, end_col - begin_col,
+              &points_, &left_bound, &right_bound);
 
           if (split_col == goal_col) {
             final_left_bound |= left_bound;
@@ -302,26 +314,16 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
 
       index_t left_i = nodes_.AllocD(begin_rank);
       Node *left = nodes_.StartWrite(left_i);
-      left->bound().Reset();
-      left->bound() |= final_left_bound;
       left->set_range(node->begin(), split_col - node->begin());
-      Build_(left_i, begin_rank, split_rank);
-      left->stat().Postprocess(*param_, node->bound(),
-          node->count());
-      node->stat().Accumulate(*param_, left->stat(),
-          left->bound(), left->count());
+      left_decomp = Build_(left_i, begin_rank, split_rank,
+          final_left_bound, node);
       nodes_.StopWrite(left_i);
 
       index_t right_i = nodes_.AllocD(split_rank);
       Node *right = nodes_.StartWrite(right_i);
-      right->bound().Reset();
-      right->bound() |= final_right_bound;
       right->set_range(split_col, node->end() - split_col);
-      Build_(right_i, split_rank, end_rank);
-      right->stat().Postprocess(*param_, node->bound(),
-          node->count());
-      node->stat().Accumulate(*param_, right->stat(),
-          right->bound(), right->count());
+      right_decomp = Build_(right_i, split_rank,
+          single_machine ? split_rank : end_rank, final_right_bound, node);
       nodes_.StopWrite(right_i);
 
       node->set_child(0, left_i);
@@ -346,11 +348,39 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
     }
   }
 
+  if (parent) {
+    parent->stat().Accumulate(*param_,
+        node->stat(), node->bound(), node->count());
+  }
+  node->stat().Postprocess(*param_, node->bound(), node->count());
+
+  // now store tree decomposition
+  DecompNode *decomp = NULL;
+
+  if (unlikely(end_rank > begin_rank)) {
+    decomp = new DecompNode(
+        typename TreeDecomposition::Info(begin_rank, end_rank),
+        &nodes_, node_i, nodes_.end_index());
+    DEBUG_ASSERT((left_decomp == NULL) == (right_decomp == NULL));
+    if (left_decomp != NULL) {
+      decomp->set_child(0, left_decomp);
+      decomp->set_child(1, right_decomp);
+    }
+    decomp->info().begin_rank = begin_rank;
+    decomp->info().end_rank = end_rank;
+  } else {
+    DEBUG_ASSERT(left_decomp == NULL);
+    DEBUG_ASSERT(right_decomp == NULL);
+  }
+
   nodes_.StopWrite(node_i);
+
+  return decomp;
 }
 
 template<typename TPoint, typename TNode, typename TParam>
-void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_() {
+void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
+    TreeDecomposition *decomposition) {
   int begin_rank = 0;
   int end_rank = rpc::n_peers();
   index_t node_i = nodes_.AllocD(begin_rank);
@@ -360,10 +390,17 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_() {
 
   node->set_range(begin_index_, end_index_);
 
-  FindBoundingBox_(node->begin(), node->end(), &node->bound());
+  Bound bound;
+  bound.Init(dim_);
+  FindBoundingBox_(node->begin(), node->end(), &bound);
 
-  Build_(node_i, begin_rank, end_rank);
-  node->stat().Postprocess(*param_, node->bound(), node->count());
+  DecompNode *decomp_root = Build_(node_i, begin_rank, end_rank,
+      bound, NULL);
+  if (decomposition) {
+    decomposition->Init(decomp_root);
+  } else {
+    delete decomp_root;
+  }
 
   nodes_.StopWrite(node_i);
 }
@@ -377,6 +414,7 @@ class SpKdTree {
 
  private:
   struct Config {
+    SpTreeDecomposition<Node> decomp;
     Param *param;
     int nodes_block;
     int points_block;
@@ -384,6 +422,7 @@ class SpKdTree {
     int dim;
 
     OT_DEF(Config) {
+      OT_MY_OBJECT(decomp);
       OT_PTR(param);
       OT_MY_OBJECT(param);
       OT_MY_OBJECT(nodes_block);
@@ -392,7 +431,7 @@ class SpKdTree {
       OT_MY_OBJECT(dim);
     }
   };
-  
+
   enum { MEGABYTE = 1048576 };
 
  private:
@@ -404,13 +443,12 @@ class SpKdTree {
   int nodes_channel_;
   int nodes_mb_;
   int points_mb_;
+  Broadcaster<Config> config_broadcaster_;
   Config *config_;
 
  public:
   SpKdTree() {}
-  ~SpKdTree() {
-    delete config_;
-  }
+  ~SpKdTree() {}
 
   /**
    * Loads a tree and initializes.
@@ -428,10 +466,14 @@ class SpKdTree {
 
   DistributedCache& points() { return points_; }
   DistributedCache& nodes() { return nodes_; }
-  
+
   index_t nodes_block() const { return config_->nodes_block; }
   index_t points_block() const { return config_->points_block; }
   index_t n_points() const { return config_->n_points; }
+
+  SpTreeDecomposition<Node>& decomposition() const {
+    return config_->decomp;
+  }
 
  private:
   void MasterLoadData_(
@@ -449,13 +491,12 @@ void SpKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
   nodes_channel_ = base_channel + 1;
   points_mb_ = fx_param_int(points_module_, "mb", 2000);
   nodes_mb_ = fx_param_int(nodes_module_, "mb", 1000);
-  Broadcaster<Config> broadcaster;
   if (rpc::is_root()) {
     Config config;
     MasterLoadData_(&config, *parampp, param_tag, module);
     MasterBuildTree_(&config, *parampp, param_tag, module);
     config.param = *parampp;
-    broadcaster.SetData(config);
+    config_broadcaster_.SetData(config);
   } else {
     CacheArray<Point>::InitDistributedCacheWorker(points_channel_,
        size_t(points_mb_) * MEGABYTE, &points_);
@@ -466,8 +507,8 @@ void SpKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
   nodes_.StartSync();
   points_.WaitSync();
   nodes_.WaitSync();
-  broadcaster.Doit(base_channel + 2);
-  config_ = new Config(broadcaster.get());
+  config_broadcaster_.Doit(base_channel + 2);
+  config_ = &config_broadcaster_.get();
   delete *parampp;
   *parampp = new Param(*config_->param);
 }
@@ -533,9 +574,9 @@ void SpKdTree<TParam, TPoint, TNode>::MasterBuildTree_(
       nodes_channel_, config->nodes_block, example_node,
       size_t(nodes_mb_) * MEGABYTE,
       &nodes_);
-  KdTreeHybridBuilder<Point, Node, Param>
-      ::Build(module, *param, 0, config->n_points,
-          &points_, &nodes_);
+  KdTreeHybridBuilder<Point, Node, Param> builder;
+  builder.Doit(module, param, 0, config->n_points,
+          &points_, &nodes_, &config->decomp);
   fx_timer_stop(module, "tree");
 }
 

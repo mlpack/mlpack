@@ -328,7 +328,8 @@ void RpcDualTree(
         n_threads * rpc::n_peers() * 12);
     CacheArray<typename GNP::QNode> q_nodes_array;
     q_nodes_array.Init(&q->nodes(), BlockDevice::M_READ);
-    actual_work_queue->Init(&q_nodes_array, n_grains);
+    actual_work_queue->Init(&q_nodes_array,
+        q->decomposition().root(), n_grains);
     work_queue = new LockedWorkQueue(actual_work_queue);
 
     work_backend = new RemoteWorkQueueBackend();
@@ -353,7 +354,8 @@ void RpcDualTree(
   rpc::Barrier(base_channel + 1);
   fx_timer_stop(fx_submodule(module, NULL, "gnp"), "all_machines");
   if (rpc::is_root()) {
-    fprintf(stderr, "nbr_utils(%d): All results computed, writing results\n");
+    fprintf(stderr, "nbr_utils(%d): All results computed, writing results\n",
+        rpc::rank());
   }
   fx_timer_start(fx_submodule(module, NULL, "gnp"), "write_results");
 

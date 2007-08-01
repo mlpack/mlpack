@@ -10,6 +10,7 @@
 #include "rpc.h"
 #include "cache.h"
 #include "cachearray.h"
+#include "spnode.h"
 
 #include "fastlib/fastlib_int.h"
 
@@ -205,27 +206,9 @@ class CentroidWorkQueue
   FORBID_COPY(CentroidWorkQueue);
 
  private:
-  struct InternalNode {
-   public:
-    typename Node::Bound bound;
-    enum { NONE, SOME, ALL } assignment;
-    bool is_leaf;
-    Grain grain;
-    index_t count;
-    index_t child_indices[2];
-    InternalNode *children[2];
-    InternalNode *parent;
-   
-   public:
-    ~InternalNode() {
-      if (children[0]) {
-        delete children[0];
-      }
-      if (children[1]) {
-        delete children[1];
-      }
-    }
-  };
+  typedef typename SpTreeDecomposition<Node>::DecompNode DecompNode;
+  enum Status { NONE, SOME, ALL };
+  typedef SpSkeletonNode<Node, Status> InternalNode;
 
   struct ProcessWorkQueue {
     index_t n_centers;
@@ -257,7 +240,8 @@ class CentroidWorkQueue
    * This *WILL* keep a referenece to the tree.  Do not call
    * GetWork after the tree has been destroyed.
    */
-  void Init(CacheArray<Node> *tree_in, index_t n_grains);
+  void Init(CacheArray<Node> *tree_in, const DecompNode *decomp_root,
+      index_t n_grains);
 
   index_t n_grains() const {
     return n_tasks_;
@@ -278,67 +262,32 @@ class CentroidWorkQueue
   void AddWork_(CacheArray<Node> *array, index_t grain_size, index_t node_i);
 
   /** Creates the domain decomposition */
-  void DistributeInitialWork_(
-      InternalNode *node, int process_begin, int process_end);
-  
+  void DistributeInitialWork_(const DecompNode *decomp_node,
+      InternalNode *node);
+
   bool IsSmallEnough_(const InternalNode *node) {
-    return node->count <= max_grain_size_ || node->is_leaf;
+    return node->count() <= max_grain_size_ || node->is_leaf();
   }
-
-  InternalNode *Child_(InternalNode *node, int i) {
-    if (!node->is_leaf && node->children[i] == NULL) {
-      index_t end_index = (i + 1 == Node::CARDINALITY) ?
-          node->grain.node_end_index : node->child_indices[i+1];
-      node->children[i] = MakeNode_(node->child_indices[i], end_index, node);
-    }
-    return node->children[i];
-  }
-
-  InternalNode *MakeNode_(index_t index, index_t end_index,
-      InternalNode *parent);
-  
 };
 
 template<typename Node>
-typename CentroidWorkQueue<Node>::InternalNode *
-    CentroidWorkQueue<Node>::MakeNode_(index_t index,
-        index_t end_index, InternalNode *parent) {
-  const Node *orig_node = tree_->StartRead(index);
-  InternalNode *node = new InternalNode();
-  node->bound.Copy(orig_node->bound());
-  node->is_leaf = orig_node->is_leaf();
-  node->grain.node_index = index;
-  node->grain.node_end_index = end_index;
-  node->grain.point_begin_index = orig_node->begin();
-  node->grain.point_end_index = orig_node->end();
-  node->count = orig_node->count();
-  for (int i = 0; i < 2; i++) {
-    node->child_indices[i] = node->is_leaf ? -1 : orig_node->child(i);
-    node->children[i] = NULL;
-  }
-  node->parent = parent;
-  if (parent) {
-    node->assignment = parent->assignment;
-  } else {
-    node->assignment = InternalNode::NONE;
-  }
-  tree_->StopRead(index);
-  return node;
-}
-
-template<typename Node>
-void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree, index_t n_grains) {
+void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree,
+    const DecompNode *decomp_root, index_t n_grains) {
   tree_ = tree;
-  root_ = MakeNode_(tree->begin_index(), tree->end_index(), NULL);
-  max_grain_size_ = root_->count / n_grains;
+  root_ = new InternalNode(NONE, tree,
+      decomp_root->index(), decomp_root->end_index());
+  max_grain_size_ = root_->count() / n_grains;
   processes_.Init(rpc::n_peers());
+  DEBUG_ASSERT_MSG(decomp_root->info().begin_rank == 0
+      && decomp_root->info().end_rank == rpc::n_peers(),
+      "Can't handle incomplete decompositions (yet)");
   n_tasks_ = 0;
   n_overflows_ = 0;
   n_overflow_points_ = 0;
   n_assigned_points_ = 0;
   n_preferred_ = 0;
 
-  DistributeInitialWork_(root_, 0, rpc::n_peers());
+  DistributeInitialWork_(decomp_root, root_);
 
   // Ensure we don't access the tree after we start the algorithm.
   tree_ = NULL;
@@ -346,49 +295,50 @@ void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree, index_t n_grains) {
 
 template<typename Node>
 void CentroidWorkQueue<Node>::DistributeInitialWork_(
-    InternalNode *node, int process_begin, int process_end) {
-  int n_processs = process_end - process_begin;
+    const DecompNode *decomp_node, InternalNode *node) {
+  int begin_rank = decomp_node->info().begin_rank;
+  int end_rank = decomp_node->info().end_rank;
+  int n_processs = end_rank - begin_rank;
 
-  if (n_processs == 1 || node->is_leaf) {
+  if (n_processs == 1 || node->is_leaf()) {
     // Prime each processor's centroid with the centroid of this block.
     // Note there will probably only be 1 processor unless the pathological
     // case where we're trying to subdivide a leaf between processors.
+    // If we're subdividing a leaf between processors, then some processors
+    // won't have any work to do...
     Vector center;
-    node->bound.CalculateMidpoint(&center);
+    node->node().bound().CalculateMidpoint(&center);
 
-    for (int i = process_begin; i < process_end; i++) {
-      ProcessWorkQueue *queue = &processes_[process_begin];
+    for (int i = begin_rank; i < end_rank; i++) {
+      ProcessWorkQueue *queue = &processes_[i];
       queue->n_centers = 1;
       queue->sum_centers.Copy(center);
       queue->work_items.Init();
     }
 
-    ProcessWorkQueue *queue = &processes_[process_begin];
+    ProcessWorkQueue *queue = &processes_[begin_rank];
     ArrayList<InternalNode*> node_stack;
     node_stack.Init();
     *node_stack.AddBack() = node;
 
-    // In this queue, prioritize by distance from the center of the node so
-    // that we start at the center and work outwards.
+    // Subdivide the node further if possible.
     while (node_stack.size() != 0) {
       InternalNode *cur = *node_stack.PopBackPtr();
-      double distance = cur->bound.MinDistanceSq(center);
+      double distance = cur->node().bound().MinDistanceSq(center);
 
       if (IsSmallEnough_(cur)) {
         queue->work_items.Put(distance, cur);
         n_tasks_++;
       } else {
-        *node_stack.AddBack() = Child_(cur, 0);
-        *node_stack.AddBack() = Child_(cur, 1);
+        for (index_t k = 0; k < Node::CARDINALITY; k++) {
+          *node_stack.AddBack() = cur->GetChild(tree_, k);
+        }
       }
     }
   } else {
-    InternalNode *left = Child_(node, 0);
-    InternalNode *right = Child_(node, 1);
-    int process_boundary = process_begin +
-        int(nearbyint(double(n_processs) * left->count / node->count));
-    DistributeInitialWork_(left, process_begin, process_boundary);
-    DistributeInitialWork_(right, process_boundary, process_end);
+    for (index_t k = 0; k < Node::CARDINALITY; k++) {
+      DistributeInitialWork_(decomp_node->child(k), node->GetChild(tree_, k));
+    }
   }
 }
 
@@ -401,7 +351,7 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<Grain> *work) {
 
   while (found_node == NULL && !queue->work_items.is_empty()) {
     InternalNode *node = queue->work_items.Pop();
-    if (node->assignment == InternalNode::NONE) {
+    if (node->info() == NONE) {
       found_node = node;
     }
   }
@@ -419,22 +369,21 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<Grain> *work) {
     // Single-tree nearest-node search
     while (!prio.is_empty()) {
       InternalNode *node = prio.Pop();
-      if (node->assignment != InternalNode::ALL) {
-        if (node->count <= max_grain_size_
-            || !node->children[0] || !node->children[1]) {
+      if (node->info() != ALL) {
+        if (node->count() <= max_grain_size_ || node->is_complete()) {
           // We can't explore a node that is missing children or whose
           // count is too large.
-          if (node->assignment == InternalNode::NONE) {
+          if (node->info() == NONE) {
             found_node = node;
-            n_overflow_points_ += found_node->count;
+            n_overflow_points_ += found_node->count();
             n_overflows_++;
             break;
           }
         } else {
-          DEBUG_ASSERT(!node->is_leaf);
-          for (int i = 0; i < 2; i++) {
-            InternalNode *child = node->children[i];
-            prio.Put(node->bound.MinDistanceSq(center), child);
+          DEBUG_ASSERT(node->is_complete());
+          for (int i = 0; i < Node::CARDINALITY; i++) {
+            InternalNode *child = node->child(i);
+            prio.Put(child->node().bound().MinDistanceSq(center), child);
           }
         }
       }
@@ -446,44 +395,51 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<Grain> *work) {
   if (found_node == NULL) {
     work->Init();
   } else {
+    // Show user-friendly status messages every 5% increment
+    index_t count = found_node->count();
+    n_assigned_points_ += count;
+    int interval = 20;
+    if ((n_assigned_points_ - count) * interval / root_->count()
+        != n_assigned_points_ * interval / root_->count()) {
+      percent_indicator("scheduled", n_assigned_points_, root_->count());
+    }
+
+    // Mark all children as complete (non-recursive version)
     ArrayList<InternalNode*> stack;
     stack.Init();
     *stack.AddBack() = found_node;
-
-    // Show user-friendly status messages every 5% increment
-    n_assigned_points_ += found_node->count;
-    int interval = 20;
-    if ((n_assigned_points_ - found_node->count) * interval / root_->count
-        != n_assigned_points_ * interval / root_->count) {
-      percent_indicator("scheduled", n_assigned_points_, root_->count);
-    }
-
-    // Mark all children as complete
     while (stack.size() != 0) {
       InternalNode *c = *stack.PopBackPtr();
-      c->assignment = InternalNode::ALL;
-      if (c->children[0]) {
-        *stack.AddBack() = c->children[0];
-        *stack.AddBack() = c->children[1];
+      c->info() = ALL;
+      for (index_t k = 0; k < Node::CARDINALITY; k++) {
+        InternalNode *c_child = c->child(k);
+        if (c_child) {
+          *stack.AddBack() = c_child;
+        }
       }
     }
 
     // Mark my parents as partially or fully complete
-    for (InternalNode *p = found_node->parent; p != NULL; p = p->parent) {
-      DEBUG_ASSERT(!p->is_leaf);
-      if (p->children[0]->assignment == InternalNode::ALL
-          && p->children[1]->assignment == InternalNode::ALL) {
-        p->assignment = InternalNode::ALL;
-      } else {
-        p->assignment = InternalNode::SOME;
+    for (InternalNode *p = found_node->parent(); p != NULL; p = p->parent()) {
+      DEBUG_ASSERT(p->is_complete());
+      p->info() = ALL;
+      for (int k = 0; k < Node::CARDINALITY; k++) {
+        if (p->child(k)->info() != ALL) {
+          p->info() = SOME;
+          break;
+        }
       }
     }
 
     work->Init(1);
-    (*work)[0] = found_node->grain;
+    Grain *grain = &(*work)[0];
+    grain->node_index = found_node->index();
+    grain->node_end_index = found_node->end_index();
+    grain->point_begin_index = found_node->node().begin();
+    grain->point_end_index = found_node->node().end();
 
     Vector midpoint;
-    found_node->bound.CalculateMidpoint(&midpoint);
+    found_node->node().bound().CalculateMidpoint(&midpoint);
     la::AddTo(midpoint, &queue->sum_centers);
     queue->n_centers++;
   }
@@ -498,7 +454,7 @@ void CentroidWorkQueue<Node>::Report(struct datanode *module) {
   fx_format_result(module, "n_overflows", "%"LI"d",
       n_overflows_);
   fx_format_result(module, "overflow_point_ratio", "%.4f",
-      1.0 * n_overflow_points_ / root_->count);
+      1.0 * n_overflow_points_ / root_->count());
 }
 
 //------------------------------------------------------------------------

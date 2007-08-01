@@ -11,6 +11,8 @@
 #ifndef SUPERPAR_KD_H
 #define SUPERPAR_KD_H
 
+#include "cachearray.h"
+
 #include "fastlib/fastlib.h"
 #include "base/otrav.h"
 
@@ -61,7 +63,7 @@ class SpNode {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
     mem::DebugPoison(children_, t_cardinality);
-  }  
+  }
 
   ~SpNode() {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
@@ -145,6 +147,209 @@ class SpNode {
   void PrintSelf() const {
     printf("node: %d to %d: %d points total\n",
        begin_, begin_ + count_ - 1, count_);
+  }
+};
+
+/**
+ * A skeleton of a huge tree.
+ *
+ * The skeleton is just a pointer-type version of SpNode, though it's too
+ * space-inefficient to use as a tree itself since it wastes space on
+ * indices.  Instead, this begins as the root of a cached tree and can be
+ * expanded on demand.
+ *
+ * This can be associated with extra bookkeeping information, useful for
+ * instance for .
+ */
+template<typename TNode, typename TInfo>
+class SpSkeletonNode {
+  FORBID_COPY(SpSkeletonNode); // TODO: otrav might provide a copy constructor
+
+ public:
+  typedef TNode Node;
+  typedef TInfo Info;
+
+ private:
+  index_t index_;
+  index_t end_index_;
+  Info info_;
+  Node node_;
+  SpSkeletonNode *parent_;
+  SpSkeletonNode *children_[Node::CARDINALITY];
+
+  OT_DEF(SpSkeletonNode) {
+    OT_MY_OBJECT(index_);
+    OT_MY_OBJECT(info_);
+    OT_MY_OBJECT(node_);
+    OT_PTR_NULLABLE(parent_);
+    for (index_t i = 0; i < Node::CARDINALITY; i++) {
+      OT_PTR_NULLABLE(children_[i]);
+    }
+  }
+
+ public:
+  /**
+   * Constructs this.
+   *
+   * We're using constructors because it lets us use primitives.
+   *
+   * @param info_in the info object to use
+   * @param array where to get tree information from
+   * @param index_in the index of the node in the tree
+   * @param parent_in the parent node, or NULL if this is the root
+   */
+  SpSkeletonNode(const Info& info_in, CacheArray<Node> *array,
+      index_t node_index_in, index_t end_index_in,
+      SpSkeletonNode *parent_in = NULL)
+        : index_(node_index_in)
+        , end_index_(end_index_in)
+        , info_(info_in)
+        , node_(*array->StartRead(node_index_in))
+        , parent_(parent_in) {
+    array->StopRead(node_index_in);
+    for (index_t i = 0; i < Node::CARDINALITY; i++) {
+      children_[i] = NULL;
+    }
+  }
+  ~SpSkeletonNode() {
+    for (index_t i = 0; i < Node::CARDINALITY; i++) {
+      if (children_[i] != NULL) {
+        delete children_[i];
+      }
+    }
+  }
+
+  Info& info() {
+    return info_;
+  }
+  const Info& info() const {
+    return info_;
+  }
+  Node& node() {
+    return node_;
+  }
+  const Node& node() const {
+    return node_;
+  }
+  index_t index() const {
+    return index_;
+  }
+  bool is_leaf() const {
+    return node_.is_leaf();;
+  }
+  SpSkeletonNode *parent() const {
+    return parent_;
+  }
+  bool is_root() const {
+    return parent_ == NULL;
+  }
+  index_t end_index() const {
+    return end_index_;
+  }
+  index_t count() const {
+    return node_.count();
+  }
+
+  void set_child(index_t i, SpSkeletonNode *child) {	
+    DEBUG_ASSERT(child->parent_ == NULL);
+    DEBUG_ASSERT(children_[i] == NULL);
+    DEBUG_ASSERT(node_.child(i) == child->index());
+    child->parent_ = this;
+    children_[i] = child;
+  }
+
+  /**
+   * Gets a child node, copying over info from parent.
+   *
+   * @param array the array to read information from if the node is not
+   *        already in the skeleton tree
+   * @param i child number (i.e. 0 for left and 1 for right)
+   */
+  SpSkeletonNode *GetChild(CacheArray<Node> *array, index_t i) {
+    if (children_[i] == NULL && !node_.is_leaf()) {
+      index_t child_end_index; // compute end index based on pre-order
+      if (i + 1 == Node::CARDINALITY) {
+        child_end_index = end_index_;
+      } else {
+        child_end_index = node_.child(i+1);
+      }
+      children_[i] = new SpSkeletonNode(info_, array, node_.child(i),
+          child_end_index, this);
+    }
+    return children_[i];
+  }
+
+  /**
+   * Gets a child of the node.
+   *
+   * This may return NULL even if the node isn't a leaf!  This is because
+   * this tree is only a skeleton, and unexplored parts of the tree are
+   * NULL.  Use is_leaf(), which in turn calls node().is_leaf(), to check
+   * for leafness.
+   */
+  SpSkeletonNode *child(index_t i) const {
+    return children_[i];
+  }
+  /**
+   * Returns whether all children exist statically.
+   */
+  bool is_complete() const {
+    for (index_t i = 0; i < Node::CARDINALITY; i++) {
+      if (!children_[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+};
+
+/**
+ * A distributed decomposition of an SpTree.
+ */
+template<typename TNode>
+class SpTreeDecomposition {
+  FORBID_COPY(SpTreeDecomposition);
+
+ public:
+  typedef TNode Node;
+  struct Info {
+    int begin_rank;
+    int end_rank;
+
+    Info(int begin_rank_in, int end_rank_in)
+        : begin_rank(begin_rank_in), end_rank(end_rank_in) {}
+
+    bool is_singleton() const {
+      return end_rank - begin_rank == 1;
+    }
+
+    OT_DEF(Info) {
+      OT_MY_OBJECT(begin_rank);
+      OT_MY_OBJECT(end_rank);
+    }
+  };
+  typedef SpSkeletonNode<Node, Info> DecompNode;
+ 
+ private:
+  /**
+   * The tree decomposition.
+   */
+  DecompNode *root_;
+
+  OT_DEF(SpTreeDecomposition) {
+    OT_PTR(root_);
+  }
+
+ public:
+  SpTreeDecomposition() { DEBUG_POISON_PTR(root_); }
+  ~SpTreeDecomposition() { delete root_; }
+
+  void Init(DecompNode *root_in) {
+    root_ = root_in;
+  }
+
+  DecompNode *root() const {
+    return root_;
   }
 };
 
