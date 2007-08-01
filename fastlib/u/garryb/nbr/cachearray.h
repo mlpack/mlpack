@@ -282,18 +282,6 @@ class CacheArray {
 
       next_alloc_ = blockid << n_block_elems_log();
       end_ = next_alloc_ + (blocks_to_alloc << n_block_elems_log());
-
-//      // If we straddle a block boundary, force the last block to be
-//      // dirty, so we avoid edge cases where part of the block is
-//      // initialized and the other isn't, and a crash occurs within
-//      // the block-handler when pulling in a block.
-//
-// NOTE: This is not necessary anymore since the distributed cache accurately
-// tracks block status, where the owner always complete initializes the block.
-//      
-//      if ((next_alloc_ & n_block_elems_mask()) != 0) {
-//        HandleCacheMiss_(end_ - 1);
-//      }
     }
 
     index_t ret_pos = next_alloc_;
@@ -313,10 +301,6 @@ class CacheArray {
 
       next_alloc_ = blockid << n_block_elems_log();
       end_ = next_alloc_ + n_block_elems();
-
-//      // Force this block to be dirty.
-// NOTE: No longer necessary (see above)
-//      HandleCacheMiss_(next_alloc_);
     }
 
     index_t ret_pos = next_alloc_;
@@ -405,7 +389,7 @@ void CacheArray<TElement>::Init(
 
   if (!BlockDevice::is_dynamic(mode_)) {
     cache_->AddPartialDirtyRange(
-        Blockid(begin_), Offset(end_),
+        Blockid(begin_), Offset(begin_),
         Blockid(end_), Offset(end_));
   }
 
