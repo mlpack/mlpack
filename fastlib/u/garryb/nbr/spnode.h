@@ -314,6 +314,45 @@ class SpSkeletonNode {
 };
 
 /**
+ * A single work item.
+ */
+struct TreeGrain {
+  /** The root node index, also the first node in the contiguous sequence. */
+  index_t node_index;
+  /** One past the last node in the contiguous node sequence. */
+  index_t node_end_index;
+  /** The first point. */
+  index_t point_begin_index;
+  /** One past the last point. */
+  index_t point_end_index;
+
+  TreeGrain()
+      : node_index(-1)
+      , node_end_index(-1)
+      , point_begin_index(-1)
+      , point_end_index(-1)
+   {}
+
+  bool is_valid() const {
+    return node_index >= 0;
+  }
+
+  index_t n_points() const {
+    return point_end_index - point_begin_index;
+  }
+  index_t n_nodes() const {
+    return node_end_index - node_index;
+  }
+
+  OT_DEF(TreeGrain) {
+    OT_MY_OBJECT(node_index);
+    OT_MY_OBJECT(node_end_index);
+    OT_MY_OBJECT(point_begin_index);
+    OT_MY_OBJECT(point_end_index);
+  }
+};
+
+/**
  * A distributed decomposition of an SpTree.
  */
 template<typename TNode>
@@ -332,7 +371,7 @@ class SpTreeDecomposition {
     bool is_singleton() const {
       return end_rank - begin_rank == 1;
     }
-    
+
     bool contains(int rank) const {
       return rank >= begin_rank && rank < end_rank;
     }
@@ -343,15 +382,17 @@ class SpTreeDecomposition {
     }
   };
   typedef SpSkeletonNode<Node, Info> DecompNode;
- 
+
  private:
   /**
    * The tree decomposition.
    */
   DecompNode *root_;
+  ArrayList<TreeGrain> grain_by_owner_;
 
   OT_DEF(SpTreeDecomposition) {
     OT_PTR(root_);
+    OT_MY_OBJECT(grain_by_owner_);
   }
 
  public:
@@ -360,10 +401,34 @@ class SpTreeDecomposition {
 
   void Init(DecompNode *root_in) {
     root_ = root_in;
+    DEBUG_ASSERT(root_->info().begin_rank == 0);
+    grain_by_owner_.Init(root_->info().end_rank);
+    FillInfo_(root_);
   }
 
   DecompNode *root() const {
     return root_;
+  }
+
+  const TreeGrain& grain_by_owner(int rank) const {
+    return grain_by_owner_[rank];
+  }
+  
+ private:
+  void FillInfo_(DecompNode *node) {
+    TreeGrain *grain;
+
+    if (node->info().is_singleton() || !node->is_complete()) {
+      grain = &grain_by_owner_[node->info().begin_rank];
+      grain->node_index = node->index();
+      grain->node_end_index = node->end_index();
+      grain->point_begin_index = node->node().begin();
+      grain->point_end_index = node->node().end();
+    } else {
+      for (int k = 0; k < Node::CARDINALITY; k++) {
+        FillInfo_(node->child(k));
+      }
+    }
   }
 };
 

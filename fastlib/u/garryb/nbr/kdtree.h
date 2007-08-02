@@ -456,42 +456,38 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
     DistributedCache *points_cache, DistributedCache *nodes_cache) {
   bool is_main_machine = (my_rank == decomp.root()->info().begin_rank);
 
+  nodes_cache->StartSync();
+  points_cache->StartSync();
+  nodes_cache->WaitSync();
+  points_cache->WaitSync();
+
   param_ = param;
   visitor_ = visitor;
 
-  if (is_main_machine) {
-    fprintf(stderr, "Updating (distributed part)...\n");
-  }
-
   // Find my machine by searching the tree
-  const DecompNode *my_node = decomp.root();
-  while (my_node->is_complete() && !my_node->info().is_singleton()) {
-    int k;
-    for (k = 0; !my_node->child(k)->info().contains(my_rank); k++) {
-      DEBUG_ASSERT_MSG(k != Node::CARDINALITY-1,
-          "Machine rank %d was left out of the decomposition (see %s)",
-          my_rank, ot::PrintMsg(decomp, "decomposition"));
-    }
-    my_node = my_node->child(k);
-  }
+  TreeGrain my_grain = decomp.grain_by_owner(my_rank);
 
-  if (my_node->info().begin_rank == my_rank) {
+  if (my_grain.is_valid()) {
     // I get a work item (this is always the case unlses for some reason
     // the tree is incredibly small)
     results_ = new CacheArray<Result>();
-    results_->Init(results_cache, BlockDevice::M_READ,
-        my_node->node().begin(), my_node->node().end());
+    results_->Init(results_cache, BlockDevice::M_MODIFY,
+        my_grain.point_begin_index, my_grain.point_end_index);
     points_ = new CacheArray<Point>();
     points_->Init(points_cache, BlockDevice::M_MODIFY,
-        my_node->node().begin(), my_node->node().end());
+        my_grain.point_begin_index, my_grain.point_end_index);
     nodes_ = new CacheArray<Node>();
     nodes_->Init(nodes_cache, BlockDevice::M_MODIFY,
-        my_node->index(), my_node->end_index());
-    Recurse_(my_node->index(), NULL);
+        my_grain.node_index, my_grain.node_end_index);
+    Recurse_(my_grain.node_index, NULL);
     delete results_;
     delete nodes_;
     delete points_;
   }
+
+  nodes_ = NULL;
+  points_ = NULL;
+  results_ = NULL;
 
   nodes_cache->StartSync();
   points_cache->StartSync();
@@ -499,10 +495,10 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
   points_cache->WaitSync();
 
   if (is_main_machine) {
-    fprintf(stderr, "Updating root (serial portion)...\n");
     // I'm the master machine!  I update the top part of the tree! WOOT!
     nodes_ = new CacheArray<Node>();
-    nodes_->Init(nodes_cache, BlockDevice::M_MODIFY);
+    // NOTE: M_APPEND actually means that writes to blocks are exclusive
+    nodes_->Init(nodes_cache, BlockDevice::M_APPEND);
     Assemble_(decomp.root(), NULL);
     delete nodes_;
   }
@@ -514,28 +510,26 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
 template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
 void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Assemble_(
     const DecompNode *decomp, Node *parent) {
-  if (decomp->is_complete()) {
+  // We're at a leaf in the decomposition tree.  Just update our parent.
+  CacheWrite<Node> node(nodes_, decomp->index());
+  DEBUG_ASSERT(decomp->index() >= 0);
+
+  if (decomp->is_complete() && !decomp->info().is_singleton()) {
     // The node has children in the decomposition tree, so they haven't been
     // updated.
-    CacheWrite<Node> node(nodes_, decomp->index());
     node->stat().Reset(*param_);
 
     for (int k = 0; k < Node::CARDINALITY; k++) {
       Assemble_(decomp->child(k), node);
     }
-    if (likely(parent != NULL)) {
-      parent->stat().Accumulate(*param_,
-          node->stat(), node->bound(), node->count());
-    }
-    node->stat().Postprocess(*param_, node->bound(), node->count());
-  } else {
-    // We're at a leaf in the decomposition tree.  Just update our parent.
-    CacheRead<Node> node(nodes_, decomp->index());
-    if (likely(parent != NULL)) {
-      parent->stat().Accumulate(*param_,
-          node->stat(), node->bound(), node->count());
-    }
   }
+
+  if (likely(parent != NULL)) {
+    parent->stat().Accumulate(*param_,
+        node->stat(), node->bound(), node->count());
+  }
+
+  node->stat().Postprocess(*param_, node->bound(), node->count());
 }
 
 template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
@@ -550,11 +544,11 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Recurse_(
       Recurse_(node->child(k), node);
     }
   } else {
-    CacheReadIter<Result> result(results_, node->begin());
+    CacheWriteIter<Result> result(results_, node->begin());
     CacheWriteIter<Point> point(points_, node->begin());
 
-    for (index_t i = 0; i < node->count(); i++, point.Next()) {
-      visitor_->Update(*result, point);
+    for (index_t i = 0; i < node->count(); i++, point.Next(), result.Next()) {
+      visitor_->Update(point, result);
       node->stat().Accumulate(*param_, *point);
     }
   }
@@ -562,9 +556,8 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Recurse_(
   if (likely(parent != NULL)) {
     parent->stat().Accumulate(
         *param_, node->stat(), node->bound(), node->count());
+    node->stat().Postprocess(*param_, node->bound(), node->count());
   }
-
-  node->stat().Postprocess(*param_, node->bound(), node->count());
 }
 
 //--------------------------------------------------------------------------
@@ -660,23 +653,21 @@ class SpKdTree {
     index_t block_size = config_->points_block;
     CacheArray<Result>::InitDistributedCacheMaster(channel,
         block_size, default_result, total_ram, results);
-    
-    ArrayList<const DecompNode*> stack;
-    *stack.AddBack() = config_->decomp.root();
-    while (stack.size() != 0) {
-      const DecompNode *node = *stack.PopBackPtr();
-      if (!node->is_complete() || node->info().is_singleton()) {
+
+    for (int i = 0; i < rpc::n_peers(); i++) {
+      const TreeGrain *grain = &config_->decomp.grain_by_owner(i);
+      if (grain->is_valid()) {
         BlockDevice::blockid_t begin_block =
-            (node->node().begin() + block_size - 1) / block_size;
+            (grain->point_begin_index + block_size - 1) / block_size;
         BlockDevice::blockid_t end_block =
-            (node->node().end() + block_size - 1) / block_size;
-        results->AllocBlocks(end_block - begin_block, node->info().begin_rank);
-      } else {
-        for (int k = 0; k < Node::CARDINALITY; k++) {
-          *stack.AddBack() = node->child(k);
-        }
+            (grain->point_end_index + block_size - 1) / block_size;
+        DEBUG_ASSERT(results->n_blocks() == begin_block);
+        results->AllocBlocks(end_block - begin_block, i);
       }
     }
+
+    results->StartSync();
+    results->WaitSync();
   }
 
   /**
@@ -793,6 +784,7 @@ void SpKdTree<TParam, TPoint, TNode>::MasterLoadData_(
     CacheWrite<Point> point(&points_array, i);
     bool is_done;
     success_t rv = schema.ReadPoint(&reader, point->vec().ptr(), &is_done);
+    param->SetPointExtras(tag, i, point);
     if (unlikely(FAILED(rv))) {
       FATAL("Data file has problems");
     }
@@ -810,7 +802,7 @@ void SpKdTree<TParam, TPoint, TNode>::MasterLoadData_(
 template<typename TParam, typename TPoint, typename TNode>
 void SpKdTree<TParam, TPoint, TNode>::MasterBuildTree_(
     Config *config, Param *param, int tag, datanode *module) {
-  config->nodes_block = fx_param_int(nodes_module_, "block", 512);
+  config->nodes_block = fx_param_int(nodes_module_, "block", 256);
 
   fprintf(stderr, "master: Building tree\n");
   fx_timer_start(module, "tree");

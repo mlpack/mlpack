@@ -44,6 +44,11 @@ class RangeSet {
   }
 
   void Union(const Boundary& begin, const Boundary& end) {
+    if (unlikely(!(begin < end))) {
+      // Merging with empty range?
+      return;
+    }
+    
     // Not really efficient, but easy to follow.
     ArrayList<Range> new_list;
     index_t i;

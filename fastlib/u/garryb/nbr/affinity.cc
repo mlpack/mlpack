@@ -81,10 +81,12 @@ struct AffinityCommon {
 
   struct Param {
    public:
+#ifdef APPROX
     /** The epsilon for approximation for rho - ABSOLUTE error. */
     double eps;
     /** Epsilon per point. */
     double eps_per_point;
+#endif
     /** The dimensionality of the data sets. */
     index_t dim;
     /** Number of points */
@@ -95,8 +97,10 @@ struct AffinityCommon {
     double lambda;
 
     OT_DEF(Param) {
+#ifdef APPROX
       OT_MY_OBJECT(eps);
       OT_MY_OBJECT(eps_per_point);
+#endif
       OT_MY_OBJECT(dim);
       OT_MY_OBJECT(n_points);
       OT_MY_OBJECT(pref);
@@ -105,8 +109,10 @@ struct AffinityCommon {
 
    public:
     void Copy(const Param& other) {
+#ifdef APPROX
       eps = other.eps;
       eps_per_point = other.eps_per_point;
+#endif
       dim = other.dim;
       n_points = other.n_points;
       pref = other.pref;
@@ -115,28 +121,45 @@ struct AffinityCommon {
 
     void Init(datanode *module) {
       dim = -1;
+#ifdef APPROX
       eps = fx_param_double(module, "eps", 0.0);
+#endif
       pref = fx_param_double_req(module, "pref");
-      lambda = fx_param_double(module, "lambda", 0.8);
+      lambda = fx_param_double(module, "lambda", 0.9);
     }
 
-    void InitPointExtras(int tag, Point *point) {
+    void InitPointExtras(int tag, Point *point) const {
       point->info().rho = DBL_NAN;
       point->info().alpha.max1 = DBL_NAN;
       point->info().alpha.max2 = DBL_NAN;
       point->info().alpha.max1_index = -1;
     }
 
+    void SetPointExtras(int tag, index_t index, Point *point) const {
+      point->info().alpha.max1 = 0;
+      point->info().alpha.max2 = pref;
+      point->info().alpha.max1_index = index;
+      if (math::RandInt(4) == 0) {
+        point->info().rho = -pref / 2;
+      } else {
+        point->info().rho = 0;
+      }
+    }
+
     void Bootstrap(int tag, index_t dim_in, index_t count) {
       dim = dim_in;
       n_points = count;
       // NOTE: These values are manually assigned to be different later.
+#ifdef APPROX
       eps_per_point = eps / n_points;
+#endif
     }
-    
+
     void SetEpsilon(double eps_in) {
+#ifdef APPROX
       eps = eps_in;
       eps_per_point = eps / n_points;
+#endif
     }
   };
 
@@ -268,6 +291,9 @@ class AffinityAlpha {
 
    public:
     void Init(const Param& param) {
+      Reset();
+    }
+    void Reset() {
       alpha.max1 = -DBL_MAX;
       alpha.max2 = -DBL_MAX;
       alpha.max1_index = -1;
@@ -487,6 +513,9 @@ class AffinityRho {
 
    public:
     void Init(const Param& param) {
+      Reset();
+    }
+    void Reset() {
       rho = 0;
       #ifdef APPROX
       error_buffer = 0;
@@ -660,179 +689,6 @@ struct Cluster {
   Vector centroid;
   index_t count;
 };
-/*
-void FindExemplars(datanode *module, const AffinityCommon::Param& param,
-    index_t dimensionality, index_t n_points,
-    CacheArray<AffinityAlpha::QPoint> *data_points) {
-  fx_timer_start(module, "exemplars");
-
-  ArrayList<Cluster> clusters;
-  ArrayList<index_t> assignments;
-  CacheReadIter<AffinityAlpha::QPoint> point(data_points, 0);
-
-  clusters.Init();
-
-  for (index_t point_i = 0; point_i < n_points; point_i++, point.Next()) {
-    if (point->info().rho > 0) {
-      Cluster *cluster = clusters.AddBack();
-      cluster->exemplar.Copy(point->vec());
-      cluster->centroid.Init(dimensionality);
-      cluster->centroid.SetZero();
-      cluster->count = 0;
-    }
-  }
-
-  // Run all nearest neighbors to assign clusters and find centroids
-  assignments.Init(n_points);
-
-  point.SetIndex(0);
-  for (index_t point_i = 0; point_i < n_points; point_i++, point.Next()) {
-    double best_distsq = DBL_MAX;
-    index_t best_k = -1;
-
-    for (index_t k = 0; k < clusters.size(); k++) {
-      double distsq = la::DistanceSqEuclidean(
-          clusters[k].exemplar, point->vec());
-      if (unlikely(distsq < best_distsq)) {
-        best_distsq = distsq;
-        best_k = k;
-      }
-    }
-
-    assignments[point_i] = best_k;
-    clusters[best_k].count++;
-    la::AddTo(point->vec(), &clusters[best_k].centroid);
-  }
-
-  // Divide centroids by size
-  for (index_t i = 0; i < clusters.size(); i++) {
-    la::Scale(1.0 / clusters[i].count, &clusters[i].centroid);
-  }
-
-  // Calculate net similarity
-  double netsim = param.pref * clusters.size();
-
-  point.SetIndex(0);
-  for (index_t point_i = 0; point_i < n_points; point_i++, point.Next()) {
-    Cluster *cluster = &clusters[assignments[point_i]];
-    double distsq = la::DistanceSqEuclidean(cluster->exemplar, point->vec());
-    netsim -= distsq;
-  }
-
-  fx_timer_start(module, "exemplars");
-  fx_format_result(module, "netsim", "%f", netsim);
-
-  // Make a matrix of exemplars so we can save it to file
-  Matrix m;
-  m.Init(dimensionality, clusters.size());
-
-  for (index_t i = 0; i < clusters.size(); i++) {
-    Vector dest;
-    m.MakeColumnVector(i, &dest);
-    dest.CopyValues(clusters[i].exemplar);
-  }
-
-  data::Save("exemplars.txt", m);
-}
-
-void FindCovariance(const Matrix& dataset) {
-  Matrix m;
-  Vector sums;
-
-  m.Init(dataset.n_rows(), dataset.n_cols());
-  sums.Init(dataset.n_rows());
-  sums.SetZero();
-
-  for (index_t i = 0; i < dataset.n_cols(); i++) {
-    Vector s;
-    Vector d;
-    dataset.MakeColumnSubvector(i, 0, dataset.n_rows(), &s);
-    m.MakeColumnVector(i, &d);
-    d.CopyValues(s);
-    la::AddTo(s, &sums);
-  }
-
-  la::Scale(-1.0 / dataset.n_cols(), &sums);
-  for (index_t i = 0; i < dataset.n_cols(); i++) {
-    Vector d;
-    m.MakeColumnVector(i, &d);
-    la::AddTo(sums, &d);
-  }
-
-  Matrix cov;
-
-  la::MulTransBInit(m, m, &cov);
-  la::Scale(1.0 / (dataset.n_cols() - 1), &cov);
-
-  cov.PrintDebug("covariance");
-
-  Vector d;
-  Matrix u; // eigenvectors
-  Matrix ui; // the inverse of eigenvectors
-
-  la::EigenvectorsInit(cov, &d, &u);
-  d.PrintDebug("covariance_eigenvectors");
-  la::TransposeInit(u, &ui);
-
-//  for (index_t i = 0; i < d.length(); i++) {
-//    d[i] = 1.0 / sqrt(d[i]);
-//  }
-//
-//  la::ScaleRows(d, &ui);
-//
-//  Matrix cov_inv_half;
-//  la::MulInit(u, ui, &cov_inv_half);
-//
-//  Matrix final;
-//  la::MulInit(cov_inv_half, m, &final);
-//
-//  for (index_t i = 0; i < dataset.n_cols(); i++) {
-//    Vector s;
-//    Vector d;
-//    dataset.MakeColumnSubvector(i, 0, dataset.n_rows()-1, &d);
-//    final.MakeColumnVector(i, &s);
-//    d.CopyValues(s);
-//  }
-}
-
-inline double damp(double lambda, double prev, double next) {
-  return lambda * prev + (1 - lambda) * next;
-}
-
-void TimeStats(datanode *module, const ArrayList<double>& list) {
-  double v_avg;
-  MinHeap<double, char> heap;
-  double f = 1.0 / sysconf(_SC_CLK_TCK);
-
-  heap.Init();
-  v_avg = 0;
-  for (index_t i = 0; i < list.size(); i++) {
-    v_avg += list[i];
-    heap.Put(list[i], 0);
-  }
-  v_avg /= list.size();
-
-  double v_min;
-  double v_med;
-  double v_max;
-
-  v_min = heap.top_key();
-  while (heap.size() > list.size() / 2) {
-    heap.PopOnly();
-  }
-  v_med = heap.top_key();
-  while (heap.size() > 1) {
-    heap.PopOnly();
-  }
-  v_max = heap.top_key();
-
-  fx_format_result(module, "min", "%f", v_min*f);
-  fx_format_result(module, "med", "%f", v_med*f);
-  fx_format_result(module, "max", "%f", v_max*f);
-  fx_format_result(module, "avg", "%f", v_avg*f);
-  fx_format_result(module, "sum", "%f", v_avg*list.size()*f);
-}
-*/
 
 template<typename Visitor>
 struct VisitorReductor {
@@ -850,10 +706,10 @@ struct ApplyAlphas {
     sum_alpha2 = 0;
   }
 
-  void Update(const AffinityAlpha::QResult& qresult, AffinityCommon::Point *point) {
-    point->info().alpha = qresult.alpha;
-    sum_alpha1 += qresult.alpha.max1;
-    sum_alpha2 += qresult.alpha.max2;
+  void Update(AffinityCommon::Point *point, AffinityAlpha::QResult* result) {
+    point->info().alpha = result->alpha;
+    sum_alpha1 += result->alpha.max1;
+    sum_alpha2 += result->alpha.max2;
   }
 
   void Accumulate(const ApplyAlphas& other) {
@@ -862,28 +718,75 @@ struct ApplyAlphas {
   }
 };
 
+inline double damp(double lambda, double prev, double next) {
+  return lambda * prev + (1 - lambda) * next;
+}
+
 struct ApplyRhos {
+ public:
+  const AffinityCommon::Param *param;
   index_t n_changed;
   index_t n_exemplars;
+  double squared_difference;
+  double sum;
 
-  void Init() {
-    n_changed = 0;
-    n_exemplars = 0;
+  OT_DEF(ApplyRhos) {
+    OT_MY_OBJECT(n_changed);
+    OT_MY_OBJECT(n_exemplars);
+    OT_MY_OBJECT(squared_difference);
+    OT_MY_OBJECT(sum);
   }
 
-  void Update(const AffinityRho::QResult& qresult, AffinityCommon::Point *point) {
-    point->info().rho = qresult.rho;
+  OT_FIX(ApplyRhos) {
+    // the pointer shall not be sent over the internet
+    param = NULL;
+  }
+
+ public:
+  void Init(const AffinityCommon::Param *param_in) {
+    param = param_in;
+    n_changed = 0;
+    n_exemplars = 0;
+    squared_difference = 0;
+  }
+
+  void Update(AffinityCommon::Point *point, AffinityRho::QResult* result) {
+    double old_rho = point->info().rho;
+    double new_rho = damp(param->lambda, old_rho, result->rho);
+
+    if ((old_rho > 0) != (new_rho > 0)) {
+      new_rho *= math::Random(0.4, 1.4);
+      n_changed++;
+    }
+
+    squared_difference += math::Sqr(new_rho - old_rho);
+    sum += new_rho;
+
+    if (new_rho > 0) {
+      n_exemplars++;
+    }
+
+    point->info().rho = new_rho;
   }
 
   void Accumulate(const ApplyRhos& other) {
     n_changed += other.n_changed;
     n_exemplars += other.n_exemplars;
+    squared_difference += other.squared_difference;
+    sum += other.sum;
   }
 };
 
 void AffinityMain(datanode *module, const char *gnp_name) {
   AffinityCommon::Param *param;
   const int MEGABYTE = 1048576;
+  const int TREE_CHANNEL = 300;
+  const int ALPHA_CHANNEL = 350;
+  const int RHO_CHANNEL = 360;
+  const int REDUCE_CHANNEL = 370;
+  const int BARRIER_CHANNEL = 380;
+  const int DONE_CHANNEL = 390;
+  int stable_iterations = 0;
 
   param = new AffinityCommon::Param();
   param->Init(fx_submodule(module, gnp_name, gnp_name));
@@ -898,24 +801,24 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   size_t alpha_mb = fx_param_int(fx_root, "alpha_mb", 200);
   size_t rho_mb = fx_param_int(fx_root, "rho_mb", 100);
 
-  tree.Init(&param, 0, 300, fx_submodule(fx_root, "data", "data"));
+  tree.Init(&param, 0, TREE_CHANNEL, fx_submodule(fx_root, "data", "data"));
 
   if (rpc::is_root()) {
     AffinityAlpha::QResult alpha_default;
     alpha_default.Init(*param);
-    tree.InitDistributedCacheMaster(310, alpha_default,
+    tree.InitDistributedCacheMaster(ALPHA_CHANNEL, alpha_default,
         alpha_mb * MEGABYTE, &alphas);
     AffinityRho::QResult rho_default;
     rho_default.Init(*param);
-    tree.InitDistributedCacheMaster(320, rho_default,
+    tree.InitDistributedCacheMaster(RHO_CHANNEL, rho_default,
         rho_mb * MEGABYTE, &rhos);
   } else {
     tree.InitDistributedCacheWorker<AffinityAlpha::QResult>(
-        310, alpha_mb * MEGABYTE, &alphas);
+        ALPHA_CHANNEL, alpha_mb * MEGABYTE, &alphas);
     tree.InitDistributedCacheWorker<AffinityRho::QResult>(
-        320, rho_mb * MEGABYTE, &rhos);
+        RHO_CHANNEL, rho_mb * MEGABYTE, &rhos);
   }
-  
+
   index_t n_points = tree.n_points();
 
   for (int iter = 0;; iter++) {
@@ -925,26 +828,29 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     ApplyAlphas apply_alphas;
     apply_alphas.Init();
     tree.Update<AffinityAlpha::QResult>(&alphas, &apply_alphas);
-    rpc::Reduce(330, VisitorReductor<ApplyAlphas>(), &apply_alphas);
+    rpc::Reduce(REDUCE_CHANNEL+0, VisitorReductor<ApplyAlphas>(), &apply_alphas);
     if (rpc::rank() == 0) {
-      fprintf(stderr, ANSI_RED"--- alpha: max1=%f, max2=%f"ANSI_CLEAR"\n",
+      fprintf(stderr, ANSI_RED"--- %4d: alpha: max1=%f, max2=%f"ANSI_CLEAR"\n",
+          iter,
           apply_alphas.sum_alpha1 / n_points,
           apply_alphas.sum_alpha2 / n_points);
     }
     alphas.ResetElements();
 
-    rpc::Barrier(250);
+    rpc::Barrier(BARRIER_CHANNEL);
 
     nbr_utils::RpcDualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
-        fx_submodule(fx_root, "nbr", "iter/%d/alpha", iter), 200,
+        fx_submodule(fx_root, "nbr", "iter/%d/rho", iter), 200,
         *param, &tree, &tree, &rhos, NULL);
     ApplyRhos apply_rhos;
-    apply_rhos.Init();
+    apply_rhos.Init(param);
     tree.Update<AffinityRho::QResult>(&rhos, &apply_rhos);
-    rpc::Reduce(330, VisitorReductor<ApplyRhos>(), &apply_rhos);
+    rpc::Reduce(REDUCE_CHANNEL+1, VisitorReductor<ApplyRhos>(), &apply_rhos);
     if (rpc::rank() == 0) {
-      fprintf(stderr, ANSI_GREEN"---   rho: changed=%"LI"d, exemplars=%"LI"d"ANSI_CLEAR"\n",
-          apply_rhos.n_changed, apply_rhos.n_exemplars);
+      fprintf(stderr, ANSI_GREEN"--- %4d:  rho: %"LI"d exemplars (%"LI"d changed, rms diff=%f, avg=%f)"ANSI_CLEAR"\n",
+          iter, apply_rhos.n_exemplars, apply_rhos.n_changed,
+          sqrt(apply_rhos.squared_difference / n_points),
+          apply_rhos.sum / n_points);
     }
     rhos.ResetElements();
 
@@ -952,16 +858,21 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
     if (rpc::is_root()) {
       // TODO: Better termination condition
-      done.SetData(apply_rhos.n_changed < 10);
+      if (apply_rhos.n_changed < 10) {
+        stable_iterations++;
+      } else {
+        stable_iterations = 0;
+      }
+      done.SetData(stable_iterations >= 10);
     }
 
-    done.Doit(340);
+    done.Doit(DONE_CHANNEL);
 
     if (done.get()) {
       break;
     }
 
-    rpc::Barrier(250);
+    rpc::Barrier(BARRIER_CHANNEL+1);
   }
 
   delete param;
@@ -1094,7 +1005,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 //        }
 //
 //        point->info().alpha = result->alpha;
-//
+///
 //        sum_alpha += result->alpha.max1;
 //        sum_alpha2 += result->alpha.max2;
 //
@@ -1206,14 +1117,189 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 //  }
 //}
 //
+///*
+//void FindExemplars(datanode *module, const AffinityCommon::Param& param,
+//    index_t dimensionality, index_t n_points,
+//    CacheArray<AffinityAlpha::QPoint> *data_points) {
+//  fx_timer_start(module, "exemplars");
+//
+//  ArrayList<Cluster> clusters;
+//  ArrayList<index_t> assignments;
+//  CacheReadIter<AffinityAlpha::QPoint> point(data_points, 0);
+//
+//  clusters.Init();
+//
+//  for (index_t point_i = 0; point_i < n_points; point_i++, point.Next()) {
+//    if (point->info().rho > 0) {
+//      Cluster *cluster = clusters.AddBack();
+//      cluster->exemplar.Copy(point->vec());
+//      cluster->centroid.Init(dimensionality);
+//      cluster->centroid.SetZero();
+//      cluster->count = 0;
+//    }
+//  }
+//
+//  // Run all nearest neighbors to assign clusters and find centroids
+//  assignments.Init(n_points);
+//
+//  point.SetIndex(0);
+//  for (index_t point_i = 0; point_i < n_points; point_i++, point.Next()) {
+//    double best_distsq = DBL_MAX;
+//    index_t best_k = -1;
+//
+//    for (index_t k = 0; k < clusters.size(); k++) {
+//      double distsq = la::DistanceSqEuclidean(
+//          clusters[k].exemplar, point->vec());
+//      if (unlikely(distsq < best_distsq)) {
+//        best_distsq = distsq;
+//        best_k = k;
+//      }
+//    }
+//
+//    assignments[point_i] = best_k;
+//    clusters[best_k].count++;
+//    la::AddTo(point->vec(), &clusters[best_k].centroid);
+//  }
+//
+//  // Divide centroids by size
+//  for (index_t i = 0; i < clusters.size(); i++) {
+//    la::Scale(1.0 / clusters[i].count, &clusters[i].centroid);
+//  }
+//
+//  // Calculate net similarity
+//  double netsim = param.pref * clusters.size();
+//
+//  point.SetIndex(0);
+//  for (index_t point_i = 0; point_i < n_points; point_i++, point.Next()) {
+//    Cluster *cluster = &clusters[assignments[point_i]];
+//    double distsq = la::DistanceSqEuclidean(cluster->exemplar, point->vec());
+//    netsim -= distsq;
+//  }
+//
+//  fx_timer_start(module, "exemplars");
+//  fx_format_result(module, "netsim", "%f", netsim);
+//
+//  // Make a matrix of exemplars so we can save it to file
+//  Matrix m;
+//  m.Init(dimensionality, clusters.size());
+//
+//  for (index_t i = 0; i < clusters.size(); i++) {
+//    Vector dest;
+//    m.MakeColumnVector(i, &dest);
+//    dest.CopyValues(clusters[i].exemplar);
+//  }
+//
+//  data::Save("exemplars.txt", m);
+//}
+//
+//void FindCovariance(const Matrix& dataset) {
+//  Matrix m;
+//  Vector sums;
+//
+//  m.Init(dataset.n_rows(), dataset.n_cols());
+//  sums.Init(dataset.n_rows());
+//  sums.SetZero();
+//
+//  for (index_t i = 0; i < dataset.n_cols(); i++) {
+//    Vector s;
+//    Vector d;
+//    dataset.MakeColumnSubvector(i, 0, dataset.n_rows(), &s);
+//    m.MakeColumnVector(i, &d);
+//    d.CopyValues(s);
+//    la::AddTo(s, &sums);
+//  }
+//
+//  la::Scale(-1.0 / dataset.n_cols(), &sums);
+//  for (index_t i = 0; i < dataset.n_cols(); i++) {
+//    Vector d;
+//    m.MakeColumnVector(i, &d);
+//    la::AddTo(sums, &d);
+//  }
+//
+//  Matrix cov;
+//
+//  la::MulTransBInit(m, m, &cov);
+//  la::Scale(1.0 / (dataset.n_cols() - 1), &cov);
+//
+//  cov.PrintDebug("covariance");
+//
+//  Vector d;
+//  Matrix u; // eigenvectors
+//  Matrix ui; // the inverse of eigenvectors
+//
+//  la::EigenvectorsInit(cov, &d, &u);
+//  d.PrintDebug("covariance_eigenvectors");
+//  la::TransposeInit(u, &ui);
+//
+//  for (index_t i = 0; i < d.length(); i++) {
+//    d[i] = 1.0 / sqrt(d[i]);
+//  }
+//
+//  la::ScaleRows(d, &ui);
+//
+//  Matrix cov_inv_half;
+//  la::MulInit(u, ui, &cov_inv_half);
+//
+//  Matrix final;
+//  la::MulInit(cov_inv_half, m, &final);
+//
+//  for (index_t i = 0; i < dataset.n_cols(); i++) {
+//    Vector s;
+//    Vector d;
+//    dataset.MakeColumnSubvector(i, 0, dataset.n_rows()-1, &d);
+//    final.MakeColumnVector(i, &s);
+//    d.CopyValues(s);
+//  }
+//}
+//
+//inline double damp(double lambda, double prev, double next) {
+//  return lambda * prev + (1 - lambda) * next;
+//}
+//
+//void TimeStats(datanode *module, const ArrayList<double>& list) {
+//  double v_avg;
+//  MinHeap<double, char> heap;
+//  double f = 1.0 / sysconf(_SC_CLK_TCK);
+//
+//  heap.Init();
+//  v_avg = 0;
+//  for (index_t i = 0; i < list.size(); i++) {
+//    v_avg += list[i];
+//    heap.Put(list[i], 0);
+//  }
+//  v_avg /= list.size();
+//
+//  double v_min;
+//  double v_med;
+//  double v_max;
+//
+//  v_min = heap.top_key();
+//  while (heap.size() > list.size() / 2) {
+//    heap.PopOnly();
+//  }
+//  v_med = heap.top_key();
+//  while (heap.size() > 1) {
+//    heap.PopOnly();
+//  }
+//  v_max = heap.top_key();
+//
+//  fx_format_result(module, "min", "%f", v_min*f);
+//  fx_format_result(module, "med", "%f", v_med*f);
+//  fx_format_result(module, "max", "%f", v_max*f);
+//  fx_format_result(module, "avg", "%f", v_avg*f);
+//  fx_format_result(module, "sum", "%f", v_avg*list.size()*f);
+//}
+//*/
 #endif
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
+  rpc::Init();
 
   srand(time(NULL));
 
   AffinityMain(fx_root, "affinity");
 
+  rpc::Done();
   fx_done();
 }

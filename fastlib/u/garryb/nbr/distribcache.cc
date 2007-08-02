@@ -73,8 +73,7 @@ DistributedCache::~DistributedCache() {
 
 void DistributedCache::InitFile_(const char *filename) {
   DiskBlockDevice *db = new DiskBlockDevice();
-  db->Init(filename,
-      BlockDevice::M_TEMP, n_block_bytes_);
+  db->Init(filename, BlockDevice::M_TEMP, n_block_bytes_);
   overflow_device_ = db;
 }
 
@@ -221,6 +220,7 @@ void DistributedCache::StartSync() {
       if (!block->is_owner()) {
         slot->blockid = -1;
         DEBUG_ASSERT_MSG(block->locks == 0, "Why is a locked block in LRU?");
+        DEBUG_ASSERT(!block->is_reading);
         Purge_(blockid);
         DEBUG_ASSERT_MSG(!block->is_dirty(),
             "We purged a block and it's still marked as dirty?");
@@ -272,6 +272,7 @@ void DistributedCache::ResetElements() {
 
     DEBUG_ASSERT_MSG(!block->is_busy(),
         "Cannot reset elements if some blocks are busy.");
+    DEBUG_ASSERT(!block->is_reading);
     // TODO: Now could be a good time to reset the local block ID's, but
     // keeping the old ones ain't going to hurt anything.i
     if (block->is_in_core()) {
@@ -280,6 +281,10 @@ void DistributedCache::ResetElements() {
     }
     block->status = NOT_DIRTY_NEW;
   }
+  for (index_t i = slots_.size(); i--;) {
+    slots_[i].blockid = -1;
+  }
+  write_ranges_.Reset();
   mutex_.Unlock();
 }
 
@@ -318,7 +323,7 @@ void DistributedCache::RemoteRead(blockid_t blockid,
 void DistributedCache::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *buf) {
   // i have to be the owner of the block
-  char *dest = StartWrite(blockid, true) + begin;
+  char *dest = StartWrite(blockid, false) + begin;
   size_t n_bytes = end - begin;
 
   mem::CopyBytes(dest, buf, n_bytes);
@@ -580,7 +585,9 @@ void DistributedCache::EncacheBlock_(BlockDevice::blockid_t blockid) {
 
   while (base_slot[i].blockid >= 0) {
     // Make sure a block isn't in cache twice
-    DEBUG_ASSERT(base_slot[i].blockid != blockid);
+    DEBUG_ASSERT_MSG(base_slot[i].blockid != blockid,
+        "Block re-cached: block %d, cache block size %d",
+        blockid, n_block_bytes_);
     if (unlikely(i == ASSOC-1)) {
       Purge_(base_slot[i].blockid);
       DEBUG_ONLY(base_slot[i].blockid = -1);
@@ -677,10 +684,13 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
         if (blockid == end.block) {
           end_offset = end.offset;
         }
-        WriteTransaction write_transaction;
         net_stats_.RecordWrite(end_offset - begin_offset);
-        write_transaction.Doit(channel_num_, block->owner(), blockid, handler_,
-            begin_offset, end_offset, block->data + begin_offset);
+        if (end_offset > begin_offset) {
+          WriteTransaction write_transaction;
+          write_transaction.Doit(channel_num_, block->owner(), blockid, handler_,
+              begin_offset, end_offset, block->data + begin_offset);
+        }
+        DEBUG_ASSERT(end_offset >= begin_offset);
         DEBUG_ONLY(bytes_total += end_offset - begin_offset);
       }
     }
@@ -702,6 +712,7 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
 void DistributedCache::AddPartialDirtyRange(
     blockid_t begin_block, offset_t begin_offset,
     blockid_t last_block, offset_t end_offset) {
+  mutex_.Lock();
   Position begin;
   Position end;
   begin.block = begin_block;
@@ -709,6 +720,7 @@ void DistributedCache::AddPartialDirtyRange(
   end.block = last_block;
   end.offset = end_offset;
   write_ranges_.Union(begin, end);
+  mutex_.Unlock();
 }
 
 //-------------------------------------------------------------------------
@@ -775,15 +787,16 @@ void DistributedCache::WriteTransaction::Doit(
     BlockDevice::offset_t begin, BlockDevice::offset_t end,
     const char *buffer) {
   Transaction::Init(channel_num);
-  Message *message = CreateMessage(peer, Request::size(end - begin));
+  BlockDevice::offset_t n_bytes = end - begin;
+  Message *message = CreateMessage(peer, Request::size(n_bytes));
   Request *request = message->data_as<Request>();
   request->type = Request::WRITE;
   request->blockid = blockid;
   request->begin = begin;
   request->end = end;
   request->rank = 0;
-  mem::CopyBytes(request->data_as<char>(), buffer, end - begin);
-  handler->BlockFreeze(blockid, begin, end, buffer, request->data_as<char>());
+  mem::CopyBytes(request->data_as<char>(), buffer, n_bytes);
+  handler->BlockFreeze(blockid, begin, n_bytes, buffer, request->data_as<char>());
   Send(message);
   Done();
   // no wait necessary
