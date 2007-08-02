@@ -36,7 +36,7 @@ class DualTreeDepthFirst {
   const typename GNP::RNode *r_root_;
 
   bool do_naive_;
-  datanode *datanode_;
+  //datanode *datanode_;
   uint64 n_naive_;
   uint64 n_pre_naive_;
   uint64 n_recurse_;
@@ -54,7 +54,6 @@ class DualTreeDepthFirst {
    * All the other arguments are the GNP input, and are not modified.
    */
   void Doit(
-      datanode *datanode_in,
       const typename GNP::Param& param_in,
       index_t q_root_index,
       index_t q_node_end_index,
@@ -94,7 +93,6 @@ DualTreeDepthFirst<GNP>::~DualTreeDepthFirst() {
 
 template<typename GNP>
 void DualTreeDepthFirst<GNP>::Doit(
-    struct datanode *datanode_in,
     const typename GNP::Param& param_in,
     index_t q_root_index,
     index_t q_end_index,
@@ -125,12 +123,8 @@ void DualTreeDepthFirst<GNP>::Doit(
 
   r_root_ = r_nodes_.StartRead(0);
 
-  datanode_ = datanode_in;
-  if (fx_param_exists(datanode_, "do_naive")) {
-    do_naive_ = fx_param_bool(datanode_, "do_naive", false);
-  } else {
-    do_naive_ = false;
-  }
+  //datanode_ = datanode_in;
+  do_naive_ = false;
 
   Begin_(q_root_index);
 }
@@ -168,7 +162,7 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
 
   //fx_timer_stop(datanode_, "execute");
 
-#warning collect statistics such as naive_ratio globally instead
+#warning we should collect statistics
   /*DEBUG_ONLY(fx_format_result(datanode_, "naive_ratio", "%f",
       1.0 * n_naive_ / q_root->count() / r_root_->count()));
   DEBUG_ONLY(fx_format_result(datanode_, "naive_per_query", "%f",
