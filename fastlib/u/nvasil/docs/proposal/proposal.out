@@ -3,20 +3,20 @@
 \BOOKMARK [1][-]{section*.4}{List of Tables}{}
 \BOOKMARK [1][-]{section*.6}{List of Figures}{}
 \BOOKMARK [1][-]{section.8}{Section 1 \204 Introduction}{}
-\BOOKMARK [1][-]{section.11}{Section 2 \204 Origin and history of the problem}{}
-\BOOKMARK [1][-]{section.12}{Section 3 \204 Preliminary Research}{}
-\BOOKMARK [2][-]{subsection.13}{The Nearest Neighbor Problem}{section.12}
-\BOOKMARK [2][-]{subsection.21}{Large scale trees, for out of core memory}{section.12}
-\BOOKMARK [2][-]{subsection.27}{Kernel methods}{section.12}
-\BOOKMARK [2][-]{subsection.35}{Parameter estimation for manifold learning, through density estimation}{section.12}
-\BOOKMARK [2][-]{subsection.50}{Speech recognition with nearest neighbor search}{section.12}
-\BOOKMARK [1][-]{section.69}{Section 4 \204 Proposed Research}{}
-\BOOKMARK [2][-]{subsection.70}{Customized Kernels}{section.69}
-\BOOKMARK [2][-]{subsection.75}{Fast kernel summation with trees}{section.69}
-\BOOKMARK [2][-]{subsection.80}{Computing Gaussian Kernel Matrix with trees}{section.69}
-\BOOKMARK [2][-]{subsection.81}{Intrinsic dimension of speech}{section.69}
-\BOOKMARK [2][-]{subsection.82}{Speech recognition with nearest neighbor search}{section.69}
-\BOOKMARK [2][-]{subsection.83}{Acoustic Environment adaptation}{section.69}
-\BOOKMARK [1][-]{section.84}{Section 5 \204 Work remaining to be done}{}
-\BOOKMARK [1][-]{section.85}{Appendix A \204 This is my first appendix}{}
-\BOOKMARK [1][-]{section*.86}{References}{}
+\BOOKMARK [1][-]{section.12}{Section 2 \204 Origin and history of the problem}{}
+\BOOKMARK [1][-]{section.13}{Section 3 \204 Preliminary Research}{}
+\BOOKMARK [2][-]{subsection.14}{The Nearest Neighbor Problem}{section.13}
+\BOOKMARK [2][-]{subsection.22}{Large scale trees, for out of core memory}{section.13}
+\BOOKMARK [2][-]{subsection.28}{Kernel methods}{section.13}
+\BOOKMARK [2][-]{subsection.36}{Parameter estimation for manifold learning, through density estimation}{section.13}
+\BOOKMARK [2][-]{subsection.51}{Speech recognition with nearest neighbor search}{section.13}
+\BOOKMARK [1][-]{section.70}{Section 4 \204 Proposed Research}{}
+\BOOKMARK [2][-]{subsection.71}{Customized Kernels}{section.70}
+\BOOKMARK [2][-]{subsection.76}{Fast kernel summation with trees}{section.70}
+\BOOKMARK [2][-]{subsection.81}{Computing Gaussian Kernel Matrix with trees}{section.70}
+\BOOKMARK [2][-]{subsection.82}{Intrinsic dimension of speech}{section.70}
+\BOOKMARK [2][-]{subsection.83}{Speech recognition with nearest neighbor search}{section.70}
+\BOOKMARK [2][-]{subsection.84}{Acoustic Environment adaptation}{section.70}
+\BOOKMARK [1][-]{section.85}{Section 5 \204 Work remaining to be done}{}
+\BOOKMARK [1][-]{section.86}{Appendix A \204 This is my first appendix}{}
+\BOOKMARK [1][-]{section*.87}{References}{}
