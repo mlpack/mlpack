@@ -150,6 +150,9 @@ void percent_indicator(const char *what, uint64 numerator, uint64 denominator) {
 
   buf[i] = '\0';
 
-  fprintf(stderr, "\033[1;34mSTATUS: [%s] %02d%% %s\033[0m\n",
+  fprintf(stderr, ANSI_BLUE"STATUS: [%s] %02d%% %s"ANSI_CLEAR"\r",
       buf, percent, what);
+  if (numerator == denominator) {
+    fprintf(stderr, "\n");
+  }
 }

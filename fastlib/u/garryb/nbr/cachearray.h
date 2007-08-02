@@ -51,6 +51,7 @@ class CacheArrayBlockHandler : public BlockHandler {
   void BlockFreeze(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin, BlockDevice::offset_t bytes,
       const char *old_location, char *block) {
+    DEBUG_ASSERT(begin % default_elem_.size() == 0);
     index_t elems = bytes / default_elem_.size();
     for (index_t i = 0; i < elems; i++) {
       ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), block);
@@ -190,6 +191,7 @@ class CacheArray {
     metadatas_.Resize(((end_ + n_block_elems_mask()) >> n_block_elems_log())
         - skip_blocks_);
     adjusted_metadatas_ = metadatas_.begin() - skip_blocks_;
+    MarkRanges_();
   }
 
   void Grow() {
@@ -282,6 +284,7 @@ class CacheArray {
 
       next_alloc_ = blockid << n_block_elems_log();
       end_ = next_alloc_ + (blocks_to_alloc << n_block_elems_log());
+      MarkRanges_();
     }
 
     index_t ret_pos = next_alloc_;
@@ -301,6 +304,7 @@ class CacheArray {
 
       next_alloc_ = blockid << n_block_elems_log();
       end_ = next_alloc_ + n_block_elems();
+      MarkRanges_();
     }
 
     index_t ret_pos = next_alloc_;
@@ -333,6 +337,14 @@ class CacheArray {
       return reinterpret_cast<Element*>(data + offset);
     } else {
       return HandleCacheMiss_(element_id);
+    }
+  }
+
+  void MarkRanges_() {
+    if (!BlockDevice::is_dynamic(mode_)) {
+      cache_->AddPartialDirtyRange(
+          Blockid(begin_), Offset(begin_),
+          Blockid(end_), Offset(end_));
     }
   }
 
@@ -372,6 +384,8 @@ void CacheArray<TElement>::Init(
   cache_ = cache_in;
   begin_ = begin_index_in;
   end_ = end_index_in;
+  DEBUG_ASSERT(end_ >= begin_);
+  DEBUG_ASSERT(begin_ >= 0);
   next_alloc_ = end_;
   mode_ = mode_in;
   n_elem_bytes_ = handler->n_elem_bytes();
@@ -387,11 +401,7 @@ void CacheArray<TElement>::Init(
   DEBUG_ASSERT_MSG(cache_->n_block_bytes() % n_elem_bytes_ == 0,
       "Block size must be a multiple of element size.");
 
-  if (!BlockDevice::is_dynamic(mode_)) {
-    cache_->AddPartialDirtyRange(
-        Blockid(begin_), Offset(begin_),
-        Blockid(end_), Offset(end_));
-  }
+  MarkRanges_();
 
   metadatas_.Init(((end_ + n_block_elems_mask()) >> n_block_elems_log())
       - skip_blocks_);
@@ -489,6 +499,9 @@ class CacheRead {
     cache_->ReleaseBlock(blockid_);
   }
 
+  const Element *get() const {
+    return element_;
+  }
   operator const Element * () const {
     return element_;
   }
@@ -610,9 +623,10 @@ void CacheIterImpl_<Helperclass, Element, BaseElement>::NextBlock_() {
   ++blockid_;
 
   index_t elem_id = cache_->BlockElement(blockid_);
-  DEBUG_POISON_PTR(element_);
   if (likely(elem_id < cache_->end_index())) {
     element_ = Helperclass::MyStartAccess_(cache_, elem_id);
+  } else {
+    element_ = NULL;
   }
 }
 

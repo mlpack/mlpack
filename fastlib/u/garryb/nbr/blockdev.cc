@@ -235,7 +235,4 @@ void IoStats::Report(BlockDevice::offset_t n_block_bytes,
   fx_format_result(module, "write_ratio", "%.4f",
       n_write_bytes_ / (double(n_block_bytes) * n_blocks));
   fx_format_result(module, "n_block_bytes", "%u", n_block_bytes);
-  fx_format_result(module, "n_blocks", "%u", n_blocks);
-  fx_format_result(module, "size", "%"L64"u",
-      uint64(n_blocks) * n_block_bytes);
 }

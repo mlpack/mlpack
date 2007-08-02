@@ -26,33 +26,7 @@ class WorkQueueInterface {
   FORBID_COPY(WorkQueueInterface);
 
  public:
-  /**
-   * A single work item.
-   */
-  struct Grain {
-    /** The root node index, also the first node in the contiguous sequence. */
-    index_t node_index;
-    /** One past the last node in the contiguous node sequence. */
-    index_t node_end_index;
-    /** The first point. */
-    index_t point_begin_index;
-    /** One past the last point. */
-    index_t point_end_index;
-
-    index_t n_points() const {
-      return point_end_index - point_begin_index;
-    }
-    index_t n_nodes() const {
-      return node_end_index - node_index;
-    }
-
-    OT_DEF(Grain) {
-      OT_MY_OBJECT(node_index);
-      OT_MY_OBJECT(node_end_index);
-      OT_MY_OBJECT(point_begin_index);
-      OT_MY_OBJECT(point_end_index);
-    }
-  };
+  typedef TreeGrain Grain;
 
  public:
   WorkQueueInterface() {}
@@ -226,6 +200,7 @@ class CentroidWorkQueue
   index_t n_preferred_;
   index_t n_overflow_points_;
   index_t n_assigned_points_;
+  bool no_overflow_;
 
  public:
   CentroidWorkQueue() {}
@@ -237,11 +212,10 @@ class CentroidWorkQueue
    * Creates a work-queue with the specified minimum number of
    * grains (k-hat).
    *
-   * This *WILL* keep a referenece to the tree.  Do not call
-   * GetWork after the tree has been destroyed.
+   * This will NOT keep a permanent reference to the tree.
    */
   void Init(CacheArray<Node> *tree_in, const DecompNode *decomp_root,
-      index_t n_grains);
+      int n_threads, datanode *module);
 
   index_t n_grains() const {
     return n_tasks_;
@@ -272,7 +246,11 @@ class CentroidWorkQueue
 
 template<typename Node>
 void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree,
-    const DecompNode *decomp_root, index_t n_grains) {
+    const DecompNode *decomp_root, int n_threads, datanode *module) {
+  int n_grains = fx_param_int(module, "granularity", 12)
+      * n_threads * rpc::n_peers();
+
+  no_overflow_ = fx_param_bool(module, "no_overflow", false);
   tree_ = tree;
   root_ = new InternalNode(NONE, tree,
       decomp_root->index(), decomp_root->end_index());
@@ -357,33 +335,35 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<Grain> *work) {
   }
 
   if (!found_node) {
-    Vector center;
-    center.Copy(queue->sum_centers);
-    la::Scale(1.0 / queue->n_centers, &center);
+    if (!no_overflow_) {
+      Vector center;
+      center.Copy(queue->sum_centers);
+      la::Scale(1.0 / queue->n_centers, &center);
 
-    MinHeap<double, InternalNode*> prio;
+      MinHeap<double, InternalNode*> prio;
 
-    prio.Init();
-    prio.Put(0, root_);
+      prio.Init();
+      prio.Put(0, root_);
 
-    // Single-tree nearest-node search
-    while (!prio.is_empty()) {
-      InternalNode *node = prio.Pop();
-      if (node->info() != ALL) {
-        if (node->count() <= max_grain_size_ || !node->is_complete()) {
-          // We can't explore a node that is missing children or whose
-          // count is too large.
-          if (node->info() == NONE) {
-            found_node = node;
-            n_overflow_points_ += found_node->count();
-            n_overflows_++;
-            break;
-          }
-        } else {
-          DEBUG_ASSERT(node->is_complete());
-          for (int i = 0; i < Node::CARDINALITY; i++) {
-            InternalNode *child = node->child(i);
-            prio.Put(child->node().bound().MinDistanceSq(center), child);
+      // Single-tree nearest-node search
+      while (!prio.is_empty()) {
+        InternalNode *node = prio.Pop();
+        if (node->info() != ALL) {
+          if (!node->is_complete()) {
+            // We can't explore a node that is missing children or whose
+            // count is too large.
+            if (node->info() == NONE) {
+              found_node = node;
+              n_overflow_points_ += found_node->count();
+              n_overflows_++;
+              break;
+            }
+          } else {
+            DEBUG_ASSERT(node->is_complete());
+            for (int i = 0; i < Node::CARDINALITY; i++) {
+              InternalNode *child = node->child(i);
+              prio.Put(child->node().bound().MinDistanceSq(center), child);
+            }
           }
         }
       }

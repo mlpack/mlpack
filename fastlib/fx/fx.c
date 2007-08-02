@@ -89,7 +89,7 @@ static void fx__read_debug_params(struct datanode *node)
   abort_on_nonfatal = fx_param_bool(node, "./abort_on_nonfatal", 0);
   pause_on_nonfatal = fx_param_bool(node, "./pause_on_nonfatal", 0);
   print_notify_headers = fx_param_bool(node, "./print_notify_headers", 1);
-  fx__show_results_timers = !fx_param_bool(node, "./quiet", 0);
+  fx__show_results_timers = !(fx_param_bool(node, "./quiet", 0));
 }
 
 static void fx__attempt_speedup()

@@ -151,6 +151,10 @@
  * An example is ArrayList - it has both a length and capacity.  The capacity
  * need not be stored, but upon deserialization, the capacity must be
  * initialized to a valid value, such as the length.
+ *
+ * This is only called when the object has valid pointers.  However, this
+ * must not allocate any resources, because OT_FIX on the class may be called
+ * multiple times.
  */
 #define OT_FIX(AClass) \
  public: \
@@ -593,7 +597,6 @@ namespace ot_private {
       freeze_offset_ = mem::PointerDiff(dest, source_region);
       // Recurse on the object.
       TraverseObject(source_region, this);
-      TraverseObjectPostprocess(dest);
       // Revert to the old freeze offset.
       freeze_offset_ = freeze_offset_tmp;
     }
@@ -617,7 +620,6 @@ namespace ot_private {
       // Recurse over each object
       for (index_t i = 0; i < len; i++) {
         TraverseObject(&source_region[i], this);
-        TraverseObjectPostprocess(&dest[i]);
       }
       // Restore old freeze offset because we have returned to the old object
       freeze_offset_ = freeze_offset_tmp;
@@ -682,56 +684,59 @@ namespace ot_private {
     }
   };
 
-//  class OTPointerThawer {
-//   private:
-//    ptrdiff_t offset_;
-//    
-//   public:
-//    template<typename T>
-//    T* InitBegin(char *data, ptrdiff_t offset_in) {
-//      offset_ = offset_in;
-//      T* dest = reinterpret_cast<T*>(data);
-//      TraverseObject(dest, this);
-//      return dest;
-//    }
-//    
-//    template<typename T>
-//    T* InitBegin(char *data) {
-//      return InitBegin<T>(data, reinterpret_cast<ptrdiff_t>(data));
-//    }
-//
-//    /** Receives the nanme of the upcoming object -- we ignore this. */
-//    void Name(const char *s) {}
-//    
-//    /** visits an object with no OT implementation */
-//    template<typename T> void Primitive(T& x) {}
-//    /** visits an internal object */
-//    template<typename T> void MyObject(T& x) {
-//      TraverseObject(&x, this);
-//    }
-//    /** visits an array */
-//    template<typename T> void MyArray(T* x, index_t len) {
-//      TraverseArray(x, len, this);
-//    }
-//    /** visits an object pointed to, allocated with new */
-//    template<typename T> void Ptr(T*& x, bool nullable) {
-//      if (!nullable || x != NULL) {
-//        x = mem::PointerAdd(x, offset_);
-//        TraverseObject(x, this);
-//      }
-//    }
-//    /** visits an array pointed to, allocated with new[] */
-//    template<typename T> void Array(T*& x, index_t len, bool nullable) {
-//      if (!nullable || x != NULL) {
-//        x = mem::PointerAdd(x, offset_);
-//        TraverseArray(x, len, this);
-//      }
-//    }
-//    /** visits an array pointed to, allocated with malloc */
-//    template<typename T> void MallocArray(T*& x, index_t len, bool nullable) {
-//      Array(x, len, nullable);
-//    }
-//  };
+  class OTPointerThawer {
+   private:
+    ptrdiff_t offset_;
+    
+   public:
+    template<typename T>
+    T* InitBegin(ptrdiff_t offset_in, char *data) {
+      offset_ = offset_in;
+      T* dest = reinterpret_cast<T*>(data);
+      MyObject(*dest);
+      return dest;
+    }
+    
+    template<typename T>
+    T* InitBegin(char *data) {
+      return InitBegin<T>(data, reinterpret_cast<ptrdiff_t>(data));
+    }
+
+    /** Receives the nanme of the upcoming object -- we ignore this. */
+    void Name(const char *s) {}
+    
+    /** visits an object with no OT implementation */
+    template<typename T> void Primitive(T& x) {}
+    /** visits an internal object */
+    template<typename T> void MyObject(T& x) {
+      TraverseObject(&x, this);
+      TraverseObjectPostprocess(&x);
+    }
+    /** visits an array */
+    template<typename T> void MyArray(T* x, index_t len) {
+      for (index_t i = 0; i < len; i++) {
+        MyObject(x[i]);
+      }
+    }
+    /** visits an object pointed to, allocated with new */
+    template<typename T> void Ptr(T*& x, bool nullable) {
+      if (!nullable || x != NULL) {
+        x = mem::PointerAdd(x, offset_);
+        MyObject(*x);
+      }
+    }
+    /** visits an array pointed to, allocated with new[] */
+    template<typename T> void Array(T*& x, index_t len, bool nullable) {
+      if (!nullable || x != NULL) {
+        x = mem::PointerAdd(x, offset_);
+        MyArray(x, len);
+      }
+    }
+    /** visits an array pointed to, allocated with malloc */
+    template<typename T> void MallocArray(T*& x, index_t len, bool nullable) {
+      Array(x, len, nullable);
+    }
+  };
 
   class OTPointerRelocator {
    private:
@@ -806,6 +811,26 @@ namespace ot {
   }
 
   /**
+   * Prints any object, for use in print statements.
+   *
+   * What this does is return the message you provide it, so that it is
+   * reasonable to put this in the variable-arguments list of a printf
+   * messge:
+   *
+   * @code
+   * DEBUG_ASSERT_MSG(!cat.is_wet(), "Cat is wet (see below %s)!",
+   *    ot::PrintMsg(cat, "cat"));
+   * @endcode
+   */
+  template<typename T>
+  const char *PrintMsg(const T& object, const char *message) {
+    ot_private::OTPrinter printer;
+    fprintf(stderr, ANSI_HRED"---- PRINTING %s ----"ANSI_CLEAR"\n", message);
+    printer.InitBegin(object, stderr);
+    return message;
+  }
+
+  /**
    * Finds the number of bytes required to freeze an object.
    */
   template<typename T>
@@ -858,14 +883,16 @@ namespace ot {
   /**
    * Takes an object that is laid out serially with all its pointers
    * normalized to zero, and makes all the pointers live again.
+   *
+   * Note that this is the function which calls the postprocess function
+   * (OT_FIX)!
    */
   template<typename T>
   T* PointerThaw(char *block) {
-    ot_private::OTPointerRelocator fixer;
+    ot_private::OTPointerThawer fixer;
     return fixer.InitBegin<T>(
         mem::PointerAbsoluteAddress(block),
-        mem::PointerAbsoluteAddress(block),
-        reinterpret_cast<T*>(block));
+        block);
   }
 
   /**

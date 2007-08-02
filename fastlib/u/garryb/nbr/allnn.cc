@@ -42,7 +42,8 @@ class Allnn {
       dim = -1;
     }
     
-    void InitPointExtras(int tag, SpVectorPoint *point) {}
+    void InitPointExtras(int tag, SpVectorPoint *point) const {}
+    void SetPointExtras(int tag, index_t index, SpVectorPoint *point) const {}
     
     void Bootstrap(int tag, index_t dim_in, index_t count) {
       dim = dim_in;

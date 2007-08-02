@@ -53,7 +53,9 @@ class Range {
       h_sq = h_orig * h_orig;
     }
 
-    void InitPointExtras(int tag, SpVectorPoint *point) {}
+    void InitPointExtras(int tag, SpVectorPoint *point) const {}
+
+    void SetPointExtras(int tag, index_t index, SpVectorPoint *point) const {}
     
     void Bootstrap(int tag, index_t dim_in, index_t count_in) {
       dim = dim_in;
