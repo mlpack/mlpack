@@ -1,6 +1,6 @@
-\contentsline {table}{\numberline {Table\nobreakspace 3.1}{\ignorespaces Pseudo-code for the dual-tree all nearest neighbor algorithm}}{28}{table.55}
-\contentsline {table}{\numberline {Table\nobreakspace 3.2}{\ignorespaces CPU time (in hours) for evaluating all 20 nearest neighbors on TIMIT database}}{30}{table.65}
-\contentsline {table}{\numberline {Table\nobreakspace 3.3}{\ignorespaces Nearest k-neighbor classfier for TIMIT database}}{32}{table.66}
-\contentsline {table}{\numberline {Table\nobreakspace 3.4}{\ignorespaces Nearest k-neighbor classfier for NTIMIT database}}{32}{table.67}
-\contentsline {table}{\numberline {Table\nobreakspace 3.5}{\ignorespaces Nearest k-neighbor classfier for Leave One Speaker out Cross Validation in TIMIT database}}{33}{table.68}
-\contentsline {table}{\numberline {Table\nobreakspace 3.6}{\ignorespaces Nearest k-neighbor classfier for Leave One Speaker Out Cross validation in NTIMIT database}}{33}{table.69}
+\contentsline {table}{\numberline {Table\nobreakspace 3.1}{\ignorespaces Pseudo-code for the dual-tree all nearest neighbor algorithm}}{31}{table.61}
+\contentsline {table}{\numberline {Table\nobreakspace 3.2}{\ignorespaces CPU time (in hours) for evaluating all 20 nearest neighbors on TIMIT database}}{34}{table.71}
+\contentsline {table}{\numberline {Table\nobreakspace 3.3}{\ignorespaces Nearest k-neighbor classfier for TIMIT database}}{34}{table.72}
+\contentsline {table}{\numberline {Table\nobreakspace 3.4}{\ignorespaces Nearest k-neighbor classfier for NTIMIT database}}{34}{table.73}
+\contentsline {table}{\numberline {Table\nobreakspace 3.5}{\ignorespaces Nearest k-neighbor classfier for Leave One Speaker out Cross Validation in TIMIT database}}{36}{table.74}
+\contentsline {table}{\numberline {Table\nobreakspace 3.6}{\ignorespaces Nearest k-neighbor classfier for Leave One Speaker Out Cross validation in NTIMIT database}}{36}{table.75}

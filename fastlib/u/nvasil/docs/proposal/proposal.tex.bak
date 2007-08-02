@@ -130,6 +130,12 @@ equation gets the form
 \begin{equation}
 \hat{f}(x)=\sum_{i}^{N}e^{\frac{-||x-x_i||}{h_i}}
 \end{equation}
+
+\insfig[2d_kernel_density_estimation]{2d_kernel_density_estimation.eps}{Kernel
+Density of 2 dimensional points. Over every point a kernel is set.
+In areas with with high concentration of points there is more
+overlap on the kernels which shows higher probablility}{8cm}
+
 In contrast to parametric cases a single evaluation of a non
 parametric model requires evaluation of $N$ parameters. Naively
 speaking training can be avoided at all if we set the parameter
@@ -194,6 +200,8 @@ recognition.
 \section{Preliminary Research}
 \label{prelim}
 \subsection{The Nearest Neighbor Problem}
+\label{The_Nearest_Neighbor_Problem}
+
 One of the classical problems in statistics and in machine learning
 as is the nearest neighbor problem. Given a set of points in $S =
 {x_i, x_i\in\Re^d, i=0\dots N}$ and a distance metric $M(x_i, y_i),
@@ -216,7 +224,9 @@ approximate neighbor. Local Sensitivity Hashing is one of the
 algorithms that deal with this problem.
 
 \subsubsection{Multidimensional Trees}
-The purpose of of multidimensional trees is to create a hierarchical
+\label{Multidimensional_Trees}
+
+The purpose of multidimensional trees is to create a hierarchical
 partition of a dataset so that data points are grouped close to
 their neighbors, which are usually the points of interest, and far
 away enough from other points. It has been proven that there is not
@@ -228,6 +238,8 @@ metric trees. The key concept in binary trees is partitioning a set
 recursively in two sets at every step.
 
 \subsubsection{Kd trees}
+\label{Kd_trees}
+
 The first multidimensional tree in the literature was Kd-tree. After
 30 years it still has comparable performance and in some case even
 better with modern trees. At every level a partition (pivot)
@@ -260,15 +272,43 @@ nearest neighbors.
  hyper-rectangles. Hyper-rectangles are the k-dimensional rectangles
  that describe the minimum bounding box  for a given set of points.
  Leafs hold additionally the data points. The number of points on a
- leaf is user defined. As we will see in the following sections the
- tree method for finding the nearest neighbor is faster than naive
+ leaf is user defined. As stated in ? the tree method for finding the nearest neighbor is faster than naive
  only after a threshold of points, (experimentally it has been found
  to be 30). This threshold is used as the maximum number of points
  per leaf. Bounding boxes (Hyper-rectangles) and points are the minimum amount
- of data required to be stored on nodes on the leaf. Extra
+ of data required to be stored on nodes on the leaf fig.~\ref{parent_kd_node}. Extra
  information about the data such as the centroid of the box, higher
  order moments, etc also called Cached Statistics can speed up
- tremendously algorithms other than nearest neighbor.
+ tremendously algorithms other than nearest neighbor. The algorithm
+ of nearest neighbor search can be described in the following steps
+ also depicted in fig.~\ref{nearest_neighbor_searchon_kd}
+ \begin{itemize}
+   \item Recurse to the leaf that contains the point. To do that
+   just compare at every node the split value of the splitting
+   dimension of the point and recurse to the right direction
+   \item 
+   \item 
+ \end{itemize}
+
+
+\insfig[parent_kd_node]{parent_kd_node.eps}{The parent node of a 2
+dimensional kd-tree}{8cm}
+
+\insfig[2_kd_node.eps]{2_kd_node.eps}{A two node 2 dimensional
+kd-tree}{8cm}
+
+\insfig[nearest_neighbor_searchon_kd]{nearest_neighbor_searchon_kd.eps}{Nearest
+neighbor with pruning}{8cm}
+
+\insfig[nearest_neighbor_searchon_kd_true_neighbor]{nearest_neighbor_searchon_kd_true_neighbor.eps}
+{True nearest neighbor is out of the leaf}{8cm}
+
+\insfig[nearest_neighbor_searchon_kd_no_prune]{nearest_neighbor_searchon_kd_no_prune.eps}{
+Kd tree with no possible pruning}{8cm}
+
+\insfig[kd_pathological_points]{kd_pathological_points.eps}{A two
+dimensional pathological kd-tree}{8cm}
+
 
 
 \subsubsection{Ball trees}
