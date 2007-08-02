@@ -14,68 +14,6 @@
 
 namespace nbr_utils {
 
-template<typename Param, typename Point, typename Node>
-class StatFixer {
- public:
-  static void Fix(const Param &param,
-      CacheArray<Point> *points, CacheArray<Node> *nodes) {
-    StatFixer fixer;
-    fixer.Doit(&param, points, nodes);
-  }
-
- private:
-  const Param *param_;
-  CacheArray<Point> points_;
-  CacheArray<Node> nodes_;
-
- public:
-  void Doit(const Param *param,
-      CacheArray<Point> *points, CacheArray<Node> *nodes);
-
- private:
-  void FixRecursively_(index_t node_index);
-};
-
-template<typename Param, typename Point, typename Node>
-void StatFixer<Param, Point, Node>::Doit(
-    const Param *param, CacheArray<Point> *points, CacheArray<Node> *nodes) {
-  param_ = param;
-  points_.Init(points, BlockDevice::M_READ);
-  nodes_.Init(nodes, BlockDevice::M_MODIFY);
-  FixRecursively_(0);
-  nodes_.Flush();
-  points_.Flush();
-}
-
-template<typename Param, typename Point, typename Node>
-void StatFixer<Param, Point, Node>::FixRecursively_(index_t node_index) {
-  CacheWrite<Node> node(&nodes_, node_index);
-
-  node->stat().Reset(*param_);
-
-  if (!node->is_leaf()) {
-    for (index_t k = 0; k < 2; k++) {
-      index_t child_index = node->child(k);
-
-      FixRecursively_(child_index);
-
-      CacheRead<Node> child(&nodes_, child_index);
-      node->stat().Accumulate(*param_, child->stat(),
-          child->bound(), child->count());
-    }
-    node->stat().Postprocess(*param_, node->bound(),
-        node->count());
-  } else {
-    CacheReadIter<Point> point(&points_, node->begin());
-
-    for (index_t i = 0; i < node->count(); i++, point.Next()) {
-      node->stat().Accumulate(*param_, *point);
-    }
-  }
-
-  node->stat().Postprocess(*param_, node->bound(), node->count());
-}
-
 template<typename GNP, typename Solver>
 class ThreadedDualTreeSolver {
  private:
@@ -103,16 +41,11 @@ class ThreadedDualTreeSolver {
         for (index_t i = 0; i < work.size(); i++) {
           Solver solver;
 
-          base_->mutex_.Lock();
-          struct datanode *submodule = fx_submodule(base_->module_,
-              "solver", "grain_%d", work[i].point_begin_index);
-          base_->mutex_.Unlock();
+          //fprintf(stderr, "- Grain with %"LI"d points starting at %"LI"d\n",
+          //    work[i].n_points(),
+          //    work[i].point_begin_index);
 
-          fprintf(stderr, "- Grain with %"LI"d points starting at %"LI"d\n",
-              work[i].n_points(),
-              work[i].point_begin_index);
-
-          solver.Doit(submodule, *base_->param_,
+          solver.Doit(*base_->param_,
               work[i].node_index, work[i].node_end_index,
               base_->q_points_cache_, base_->q_nodes_cache_,
               base_->r_points_cache_, base_->r_nodes_cache_,
@@ -124,14 +57,11 @@ class ThreadedDualTreeSolver {
           base_->mutex_.Unlock();
         }
       }
-
-      fprintf(stderr, "- Thread Done\n");
       delete this;
     }
   };
 
  private:
-  datanode *module_;
   int process_;
   const typename GNP::Param *param_;
   WorkQueueInterface *work_queue_;
@@ -160,17 +90,20 @@ class ThreadedDualTreeSolver {
     fx_format_result(module, "n_grains_actual", "%"LI"d",
         simple_work_queue.n_grains());
 
+    fx_timer_start(module, "all_threads");
+
     ThreadedDualTreeSolver solver;
-    solver.Doit(module,
+    solver.Doit(
         n_threads, 0, &simple_work_queue,
         param_in,
         q_points_array_in->cache(), q_nodes_array_in->cache(),
         r_points_array_in->cache(), r_nodes_array_in->cache(),
         q_results_array_in->cache());
+
+    fx_timer_stop(module, "all_threads");
   }
 
   void Doit(
-      datanode *module,
       index_t n_threads,
       int process,
       WorkQueueInterface *work_queue_in,
@@ -181,7 +114,6 @@ class ThreadedDualTreeSolver {
       DistributedCache *r_nodes_cache_in,
       DistributedCache *q_results_cache_in
       ) {
-    module_ = module;
     param_ = &param;
     work_queue_ = work_queue_in;
     process_ = process;
@@ -197,8 +129,6 @@ class ThreadedDualTreeSolver {
 
     global_result_.Init(*param_);
 
-    fx_timer_start(module, "all_threads");
-
     for (index_t i = 0; i < n_threads; i++) {
       threads[i] = new Thread();
       threads[i]->Init(new WorkerTask(this));
@@ -209,13 +139,8 @@ class ThreadedDualTreeSolver {
       threads[i]->WaitStop();
       delete threads[i];
     }
-
-    fx_timer_stop(module, "all_threads");
-
-    global_result_.Report(*param_,
-        fx_submodule(module, NULL, "global_result"));
   }
-  
+
   const typename GNP::GlobalResult& global_result() const {
     return global_result_;
   }
@@ -305,6 +230,19 @@ class GlobalResultReductor {
   }
 };
 
+
+/**
+ * Does a distributed dual-tree computation.
+ *
+ * @param module where to get tuning parameters from and store results in
+ * @param base_channel the begin of a range of 10 free channels
+ * @param param the gnp parameters
+ * @param q the query tree
+ * @param r the reference tree
+ * @param q_results the query results
+ * @param global_result (output) if non-NULL, the global result will be
+ *        allocated via new() and stored here only on the master machine
+ */
 template<typename GNP, typename SerialSolver, typename QTree, typename RTree>
 void RpcDualTree(
     datanode *module,
@@ -316,7 +254,6 @@ void RpcDualTree(
     typename GNP::GlobalResult **global_result) {
   fprintf(stderr, "nbr_utils(%d): starting the GNP\n", rpc::rank());
   int n_threads = fx_param_int(module, "n_threads", 1);
-  datanode *local_module = fx_submodule(module, "solver", "gnp/local");
   RemoteWorkQueueBackend *work_backend = NULL;
   WorkQueueInterface *work_queue;
 
@@ -342,11 +279,10 @@ void RpcDualTree(
   }
 
   rpc::Barrier(base_channel + 1);
-  
+
   fx_timer_start(fx_submodule(module, NULL, "gnp"), "all_machines");
   ThreadedDualTreeSolver<GNP, SerialSolver> solver;
   solver.Doit(
-      local_module,
       n_threads, rpc::rank(), work_queue, param,
       &q->points(), &q->nodes(),
       &r->points(), &r->nodes(),
@@ -386,9 +322,13 @@ void RpcDualTree(
 
   if (rpc::is_root()) {
     delete work_backend;
-    *global_result = new typename GNP::GlobalResult(solver.global_result());
+    if (global_result) {
+      *global_result = new typename GNP::GlobalResult(solver.global_result());
+    }
   } else {
-    *global_result = NULL;
+    if (global_result) {
+      *global_result = NULL;
+    }
   }
 
   delete work_queue;

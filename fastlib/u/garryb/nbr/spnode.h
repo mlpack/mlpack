@@ -332,6 +332,10 @@ class SpTreeDecomposition {
     bool is_singleton() const {
       return end_rank - begin_rank == 1;
     }
+    
+    bool contains(int rank) const {
+      return rank >= begin_rank && rank < end_rank;
+    }
 
     OT_DEF(Info) {
       OT_MY_OBJECT(begin_rank);

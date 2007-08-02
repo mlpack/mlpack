@@ -405,16 +405,185 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
   nodes_.StopWrite(node_i);
 }
 
+//--------------------------------------------------------------------------
+
+/**
+ * A parallelizable tree-updater.
+ *
+ * What this is useful for is applying QResults to update query points.
+ * Also, the visitor itself gets to accumulate information over the
+ * tree itself for its own purposes.
+ */
+template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
+class SpUpdate {
+ public:
+  typedef TParam Param;
+  typedef TPoint Point;
+  typedef TNode Node;
+  typedef TResult Result;
+  typedef TVisitor Visitor;
+  typedef SpTreeDecomposition<Node> TreeDecomposition;
+  typedef typename TreeDecomposition::DecompNode DecompNode;
+
+ private:
+  CacheArray<Point> *points_;
+  CacheArray<Node> *nodes_;
+  CacheArray<Result> *results_;
+  Visitor *visitor_;
+  const Param *param_;
+
+ public:
+  /**
+   * Perform the tree update for just one machine.
+   *
+   * Note that this will *not* perform a reduction.
+   *
+   * See class-level comments.
+   */
+  void Doit(int my_rank, const Param *param, const TreeDecomposition& decomp,
+      Visitor *visitor, DistributedCache *results_cache,
+      DistributedCache *points_cache, DistributedCache *nodes_cache);
+
+ private:
+  void Assemble_(const DecompNode *decomp, Node *parent);
+  void Recurse_(index_t node_index, Node *parent);
+};
+
+template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
+void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
+    int my_rank, const Param *param, const TreeDecomposition& decomp,
+    Visitor *visitor, DistributedCache *results_cache,
+    DistributedCache *points_cache, DistributedCache *nodes_cache) {
+  bool is_main_machine = (my_rank == decomp.root()->info().begin_rank);
+
+  param_ = param;
+  visitor_ = visitor;
+
+  if (is_main_machine) {
+    fprintf(stderr, "Updating (distributed part)...\n");
+  }
+
+  // Find my machine by searching the tree
+  const DecompNode *my_node = decomp.root();
+  while (my_node->is_complete() && !my_node->info().is_singleton()) {
+    int k;
+    for (k = 0; !my_node->child(k)->info().contains(my_rank); k++) {
+      DEBUG_ASSERT_MSG(k != Node::CARDINALITY-1,
+          "Machine rank %d was left out of the decomposition (see %s)",
+          my_rank, ot::PrintMsg(decomp, "decomposition"));
+    }
+    my_node = my_node->child(k);
+  }
+
+  if (my_node->info().begin_rank == my_rank) {
+    // I get a work item (this is always the case unlses for some reason
+    // the tree is incredibly small)
+    results_ = new CacheArray<Result>();
+    results_->Init(results_cache, BlockDevice::M_READ,
+        my_node->node().begin(), my_node->node().end());
+    points_ = new CacheArray<Point>();
+    points_->Init(points_cache, BlockDevice::M_MODIFY,
+        my_node->node().begin(), my_node->node().end());
+    nodes_ = new CacheArray<Node>();
+    nodes_->Init(nodes_cache, BlockDevice::M_MODIFY,
+        my_node->index(), my_node->end_index());
+    Recurse_(my_node->index(), NULL);
+    delete results_;
+    delete nodes_;
+    delete points_;
+  }
+
+  nodes_cache->StartSync();
+  points_cache->StartSync();
+  nodes_cache->WaitSync();
+  points_cache->WaitSync();
+
+  if (is_main_machine) {
+    fprintf(stderr, "Updating root (serial portion)...\n");
+    // I'm the master machine!  I update the top part of the tree! WOOT!
+    nodes_ = new CacheArray<Node>();
+    nodes_->Init(nodes_cache, BlockDevice::M_MODIFY);
+    Assemble_(decomp.root(), NULL);
+    delete nodes_;
+  }
+
+  nodes_cache->StartSync();
+  nodes_cache->WaitSync();
+}
+
+template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
+void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Assemble_(
+    const DecompNode *decomp, Node *parent) {
+  if (decomp->is_complete()) {
+    // The node has children in the decomposition tree, so they haven't been
+    // updated.
+    CacheWrite<Node> node(nodes_, decomp->index());
+    node->stat().Reset(*param_);
+
+    for (int k = 0; k < Node::CARDINALITY; k++) {
+      Assemble_(decomp->child(k), node);
+    }
+    if (likely(parent != NULL)) {
+      parent->stat().Accumulate(*param_,
+          node->stat(), node->bound(), node->count());
+    }
+    node->stat().Postprocess(*param_, node->bound(), node->count());
+  } else {
+    // We're at a leaf in the decomposition tree.  Just update our parent.
+    CacheRead<Node> node(nodes_, decomp->index());
+    if (likely(parent != NULL)) {
+      parent->stat().Accumulate(*param_,
+          node->stat(), node->bound(), node->count());
+    }
+  }
+}
+
+template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
+void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Recurse_(
+    index_t node_index, Node *parent) {
+  CacheWrite<Node> node(nodes_, node_index);
+
+  node->stat().Reset(*param_);
+
+  if (!node->is_leaf()) {
+    for (int k = 0; k < Node::CARDINALITY; k++) {
+      Recurse_(node->child(k), node);
+    }
+  } else {
+    CacheReadIter<Result> result(results_, node->begin());
+    CacheWriteIter<Point> point(points_, node->begin());
+
+    for (index_t i = 0; i < node->count(); i++, point.Next()) {
+      visitor_->Update(*result, point);
+      node->stat().Accumulate(*param_, *point);
+    }
+  }
+
+  if (likely(parent != NULL)) {
+    parent->stat().Accumulate(
+        *param_, node->stat(), node->bound(), node->count());
+  }
+
+  node->stat().Postprocess(*param_, node->bound(), node->count());
+}
+
+//--------------------------------------------------------------------------
+
+/**
+ * A distributed kd-tree (works non-distributed too).
+ */
 template<typename TParam, typename TPoint, typename TNode>
 class SpKdTree {
  public:
   typedef TParam Param;
   typedef TPoint Point;
   typedef TNode Node;
+  typedef SpTreeDecomposition<Node> TreeDecomposition;
+  typedef typename SpTreeDecomposition<Node>::DecompNode DecompNode;
 
  private:
   struct Config {
-    SpTreeDecomposition<Node> decomp;
+    TreeDecomposition decomp;
     Param *param;
     int nodes_block;
     int points_block;
@@ -464,8 +633,85 @@ class SpKdTree {
   void Init(Param **parampp, int param_tag,
       int base_channel, datanode *module);
 
+  /**
+   * Performs a distributed tree-update.
+   *
+   * Note that this does NOT broadcast or reduce the visitor -- you must
+   * take care of it if you need to store data in the visitor!
+   */
+  template<typename Result, typename Visitor>
+  void Update(
+      DistributedCache *results_cache, Visitor *visitor) {
+    SpUpdate<Param, Point, Node, Result, Visitor> updater;
+    updater.Doit(rpc::rank(), &param(), config_->decomp,
+        visitor, results_cache, &points_, &nodes_);
+  }
+
+  /**
+   * Creates a cache that's suitable for storing results or anything else.
+   *
+   * This array will be decomposed in the exact same way the points
+   * array is decomposed (same block size and everything).
+   */
+  template<typename Result>
+  void InitDistributedCacheMaster(int channel, const Result& default_result,
+      size_t total_ram, DistributedCache *results) {
+    DEBUG_ASSERT_MSG(rpc::rank() == 0, "Only master calls this");
+    index_t block_size = config_->points_block;
+    CacheArray<Result>::InitDistributedCacheMaster(channel,
+        block_size, default_result, total_ram, results);
+    
+    ArrayList<const DecompNode*> stack;
+    *stack.AddBack() = config_->decomp.root();
+    while (stack.size() != 0) {
+      const DecompNode *node = *stack.PopBackPtr();
+      if (!node->is_complete() || node->info().is_singleton()) {
+        BlockDevice::blockid_t begin_block =
+            (node->node().begin() + block_size - 1) / block_size;
+        BlockDevice::blockid_t end_block =
+            (node->node().end() + block_size - 1) / block_size;
+        results->AllocBlocks(end_block - begin_block, node->info().begin_rank);
+      } else {
+        for (int k = 0; k < Node::CARDINALITY; k++) {
+          *stack.AddBack() = node->child(k);
+        }
+      }
+    }
+  }
+
+  /**
+   * The worker version of create-a-new-distributed-cache.
+   */
+  template<typename Result>
+  void InitDistributedCacheWorker(int channel, size_t total_ram,
+      DistributedCache *results) {
+    DEBUG_ASSERT_MSG(rpc::rank() != 0, "Only workers call this");
+    CacheArray<Result>::InitDistributedCacheWorker(channel, total_ram, results);
+    results->StartSync();
+    results->WaitSync();
+  }
+
   DistributedCache& points() { return points_; }
   DistributedCache& nodes() { return nodes_; }
+
+  /**
+   * Gets the known parameter object.
+   *
+   * This object is not updated except when the tree is created.
+   * If you need to update this, then use a broadcaster to relay the
+   * new param object between machines, and use set_param!
+   */
+  Param& param() const {
+    return *config_->param;
+  }
+
+  /**
+   * Sets the parameter objct.
+   */
+  void set_param(Param &new_param) {
+    delete *config_->param;
+    config_->param = new Param(new_param);
+  }
 
   index_t nodes_block() const { return config_->nodes_block; }
   index_t points_block() const { return config_->points_block; }

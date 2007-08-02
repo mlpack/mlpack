@@ -77,7 +77,7 @@ struct AffinityCommon {
     }
   };
 
-  typedef SpVectorInfoPoint<CombinedInfo> CombinedPoint;
+  typedef SpVectorInfoPoint<CombinedInfo> Point;
 
   struct Param {
    public:
@@ -120,7 +120,7 @@ struct AffinityCommon {
       lambda = fx_param_double(module, "lambda", 0.8);
     }
 
-    void InitPointExtra(int tag, CombinedPoint *point) {
+    void InitPointExtras(int tag, Point *point) {
       point->info().rho = DBL_NAN;
       point->info().alpha.max1 = DBL_NAN;
       point->info().alpha.max2 = DBL_NAN;
@@ -158,7 +158,7 @@ struct AffinityCommon {
       alpha.InitEmptySet();
       rho.InitEmptySet();
     }
-    void Accumulate(const Param& param, const CombinedPoint& point) {
+    void Accumulate(const Param& param, const Point& point) {
       alpha |= SpRange(point.info().alpha.max2, point.info().alpha.max1);
       rho |= point.info().rho;
     }
@@ -170,7 +170,7 @@ struct AffinityCommon {
     void Postprocess(const Param& param, const Bound& bound, index_t n) {}
   };
 
-  typedef SpNode<Bound, CombinedStat> CombinedNode;
+  typedef SpNode<Bound, CombinedStat> Node;
 
   struct Helpers {
     static double Similarity(double distsq) {
@@ -195,8 +195,8 @@ struct AffinityCommon {
     }
     static double SimilarityHi(
         const Param& param,
-        const CombinedNode& a, const CombinedNode& b) {
-      double distsq = a.bound().MinDistance<2>(b.bound());
+        const Node& a, const Node& b) {
+      double distsq = a.bound().MinDistanceSq(b.bound());
       double hi = Similarity(distsq);
       if (a.begin() < b.end() && b.begin() < a.end()
           && param.pref > hi) {
@@ -206,8 +206,8 @@ struct AffinityCommon {
     }
     static double SimilarityLo(
         const Param& param,
-        const CombinedNode& a, const CombinedNode& b) {
-      double distsq = a.bound().MaxDistance<2>(b.bound());
+        const Node& a, const Node& b) {
+      double distsq = a.bound().MaxDistanceSq(b.bound());
       double lo = Similarity(distsq);
       if (a.begin() < b.end() && b.begin() < a.end()
           && param.pref < lo) {
@@ -217,8 +217,8 @@ struct AffinityCommon {
     }
     static double SimilarityHi(
         const Param& param,
-        const Vector& a, index_t a_index, const CombinedNode& b) {
-      double distsq = b.bound().MinDistance<2>(a);
+        const Vector& a, index_t a_index, const Node& b) {
+      double distsq = b.bound().MinDistanceSq(a);
       double hi = Similarity(distsq);
       if (a_index < b.end() && a_index >= b.begin()
           && param.pref > hi) {
@@ -231,15 +231,15 @@ struct AffinityCommon {
 
 class AffinityAlpha {
  public:
-  typedef AffinityCommon::CombinedPoint QPoint;
-  typedef AffinityCommon::CombinedPoint RPoint;
+  typedef AffinityCommon::Point QPoint;
+  typedef AffinityCommon::Point RPoint;
 
   typedef AffinityCommon::Alpha Alpha;
 
   typedef AffinityCommon::Param Param;
 
-  typedef AffinityCommon::CombinedNode QNode;
-  typedef AffinityCommon::CombinedNode RNode;
+  typedef AffinityCommon::Node QNode;
+  typedef AffinityCommon::Node RNode;
 
   typedef BlankGlobalResult GlobalResult;
 
@@ -333,7 +333,7 @@ class AffinityAlpha {
         alpha_hi = r_node.stat().rho.hi + old_alpha.max1;
       } else {
         double sim = AffinityCommon::Helpers::Similarity(
-            r_node.bound().MinDistance<2>(q.vec()));
+            r_node.bound().MinDistanceSq(q.vec()));
         alpha_hi = min(
             min(sim, old_alpha.max1) + r_node.stat().rho.hi,
             sim);
@@ -388,7 +388,7 @@ class AffinityAlpha {
             q_node.stat().alpha.hi + r_node.stat().rho.hi;
       } else {
         double sim_hi = AffinityCommon::Helpers::Similarity(
-            q_node.bound().MinDistance<2>(r_node.bound()));
+            q_node.bound().MinDistanceSq(r_node.bound()));
         delta->alpha.hi = min(min(q_node.stat().alpha.hi, sim_hi)
             + r_node.stat().rho.hi, sim_hi);
       }
@@ -418,13 +418,13 @@ class AffinityRho {
  public:
   typedef AffinityCommon::Alpha Alpha;
 
-  typedef AffinityCommon::CombinedPoint QPoint;
-  typedef AffinityCommon::CombinedPoint RPoint;
+  typedef AffinityCommon::Point QPoint;
+  typedef AffinityCommon::Point RPoint;
 
   typedef AffinityCommon::Param Param;
 
-  typedef AffinityCommon::CombinedNode QNode;
-  typedef AffinityCommon::CombinedNode RNode;
+  typedef AffinityCommon::Node QNode;
+  typedef AffinityCommon::Node RNode;
 
   typedef BlankGlobalResult GlobalResult;
 
@@ -660,7 +660,7 @@ struct Cluster {
   Vector centroid;
   index_t count;
 };
-
+/*
 void FindExemplars(datanode *module, const AffinityCommon::Param& param,
     index_t dimensionality, index_t n_points,
     CacheArray<AffinityAlpha::QPoint> *data_points) {
@@ -668,7 +668,7 @@ void FindExemplars(datanode *module, const AffinityCommon::Param& param,
 
   ArrayList<Cluster> clusters;
   ArrayList<index_t> assignments;
-  CacheIter<AffinityAlpha::QPoint>::Read point(data_points, 0);
+  CacheReadIter<AffinityAlpha::QPoint> point(data_points, 0);
 
   clusters.Init();
 
@@ -832,6 +832,14 @@ void TimeStats(datanode *module, const ArrayList<double>& list) {
   fx_format_result(module, "avg", "%f", v_avg*f);
   fx_format_result(module, "sum", "%f", v_avg*list.size()*f);
 }
+*/
+
+template<typename Visitor>
+struct VisitorReductor {
+  void Reduce(const Visitor& right, Visitor *left) const {
+    left->Accumulate(right);
+  }
+};
 
 struct ApplyAlphas {
   double sum_alpha1;
@@ -842,13 +850,13 @@ struct ApplyAlphas {
     sum_alpha2 = 0;
   }
 
-  void Modify(const AffinityAlpha::QResult& qresult, AffinityCommon::Point *point) {
+  void Update(const AffinityAlpha::QResult& qresult, AffinityCommon::Point *point) {
     point->info().alpha = qresult.alpha;
-    sum_alpha += result->alpha.max1;
-    sum_alpha2 += result->alpha.max2;
+    sum_alpha1 += qresult.alpha.max1;
+    sum_alpha2 += qresult.alpha.max2;
   }
 
-  void Apply(const ApplyAlphas& other) {
+  void Accumulate(const ApplyAlphas& other) {
     sum_alpha1 += other.sum_alpha1;
     sum_alpha2 += other.sum_alpha2;
   }
@@ -856,26 +864,28 @@ struct ApplyAlphas {
 
 struct ApplyRhos {
   index_t n_changed;
+  index_t n_exemplars;
 
   void Init() {
     n_changed = 0;
+    n_exemplars = 0;
   }
 
-  void Modify(const AffinityAlpha::QResult& qresult, AffinityCommon::Point *point) {
-    point->info().alpha = qresult.alpha;
-    sum_alpha += result->alpha.max1;
-    sum_alpha2 += result->alpha.max2;
+  void Update(const AffinityRho::QResult& qresult, AffinityCommon::Point *point) {
+    point->info().rho = qresult.rho;
   }
 
-  void Apply(const ApplyAlphas& other) {
+  void Accumulate(const ApplyRhos& other) {
     n_changed += other.n_changed;
+    n_exemplars += other.n_exemplars;
   }
 };
 
 void AffinityMain(datanode *module, const char *gnp_name) {
-  AffinityParam *param;
+  AffinityCommon::Param *param;
+  const int MEGABYTE = 1048576;
 
-  param = new AffinityParam();
+  param = new AffinityCommon::Param();
   param->Init(fx_submodule(module, gnp_name, gnp_name));
 
   SpKdTree<AffinityCommon::Param,
@@ -885,49 +895,73 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
   // One thing to note: alpha and rho are never taking up
   // RAM at the same time!
-  size_t alpha_mb = fx_param_int("alpha_mb", 200);
-  size_t rho_mb = fx_param_int("rho_mb", 100);
+  size_t alpha_mb = fx_param_int(fx_root, "alpha_mb", 200);
+  size_t rho_mb = fx_param_int(fx_root, "rho_mb", 100);
 
-  tree.Load(&param, 0, 300, fx_submodule(fx_root, "data", "data"));
+  tree.Init(&param, 0, 300, fx_submodule(fx_root, "data", "data"));
 
-  AffinityAlpha::QResult alpha_default;
-  alpha_default.Init(*param);
-  tree.SetupPointArray(310, alpha_default,
-      fx_submodule(fx_root, "alphas", "alphas"), &alphas);
+  if (rpc::is_root()) {
+    AffinityAlpha::QResult alpha_default;
+    alpha_default.Init(*param);
+    tree.InitDistributedCacheMaster(310, alpha_default,
+        alpha_mb * MEGABYTE, &alphas);
+    AffinityRho::QResult rho_default;
+    rho_default.Init(*param);
+    tree.InitDistributedCacheMaster(320, rho_default,
+        rho_mb * MEGABYTE, &rhos);
+  } else {
+    tree.InitDistributedCacheWorker<AffinityAlpha::QResult>(
+        310, alpha_mb * MEGABYTE, &alphas);
+    tree.InitDistributedCacheWorker<AffinityRho::QResult>(
+        320, rho_mb * MEGABYTE, &rhos);
+  }
+  
+  index_t n_points = tree.n_points();
 
-  AffinityRho::QResult rho_default;
-  rho_default.Init(*param);
-  tree.SetupPointArray(320, rho_default,
-      fx_submodule(fx_root, "rhos", "rhos"),&rhos);
-
-  for (;;) {
-    {
-      tree.DualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
-          &alphas);
-      ApplyAlphas apply_alphas;
-      apply_alphas.Init();
-      tree.Modify<AffinityAlpha::QResult>(&apply_alphas, &alphas);
-      alphas.ResetElements();
+  for (int iter = 0;; iter++) {
+    nbr_utils::RpcDualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
+        fx_submodule(fx_root, "nbr", "iter/%d/alpha", iter), 200,
+        *param, &tree, &tree, &alphas, NULL);
+    ApplyAlphas apply_alphas;
+    apply_alphas.Init();
+    tree.Update<AffinityAlpha::QResult>(&alphas, &apply_alphas);
+    rpc::Reduce(330, VisitorReductor<ApplyAlphas>(), &apply_alphas);
+    if (rpc::rank() == 0) {
+      fprintf(stderr, ANSI_RED"--- alpha: max1=%f, max2=%f"ANSI_CLEAR"\n",
+          apply_alphas.sum_alpha1 / n_points,
+          apply_alphas.sum_alpha2 / n_points);
     }
+    alphas.ResetElements();
 
-    {
-      tree.DualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
-          &rhos);
-      tree.Modify<AffinityRho::QResult>(&apply_rhos, &rhos);
-      rhos.ResetElements();
+    rpc::Barrier(250);
+
+    nbr_utils::RpcDualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
+        fx_submodule(fx_root, "nbr", "iter/%d/alpha", iter), 200,
+        *param, &tree, &tree, &rhos, NULL);
+    ApplyRhos apply_rhos;
+    apply_rhos.Init();
+    tree.Update<AffinityRho::QResult>(&rhos, &apply_rhos);
+    rpc::Reduce(330, VisitorReductor<ApplyRhos>(), &apply_rhos);
+    if (rpc::rank() == 0) {
+      fprintf(stderr, ANSI_GREEN"---   rho: changed=%"LI"d, exemplars=%"LI"d"ANSI_CLEAR"\n",
+          apply_rhos.n_changed, apply_rhos.n_exemplars);
     }
+    rhos.ResetElements();
 
     Broadcaster<bool> done;
 
     if (rpc::is_root()) {
-      done.SetData(true);
+      // TODO: Better termination condition
+      done.SetData(apply_rhos.n_changed < 10);
     }
 
-    done.Doit(404);
+    done.Doit(340);
 
-    if (done->get()) {
+    if (done.get()) {
       break;
     }
+
+    rpc::Barrier(250);
   }
 
   delete param;
@@ -936,241 +970,243 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
 
 
-
-
-  AffinityAlpha::Param param;
-
-  param.Init(fx_submodule(module, gnp_name, gnp_name));
-
-  TempCacheArray<AffinityAlpha::QPoint> data_points;
-  TempCacheArray<AffinityAlpha::QNode> data_nodes;
-
-  index_t n_block_points = fx_param_int(
-      module, "n_block_points", 1024);
-  index_t n_block_nodes = fx_param_int(
-      module, "n_block_nodes", 128);
-
-  datanode *data_module = fx_submodule(module, "data", "data");
-
-  fx_timer_start(data_module, "read");
-
-  Matrix data_matrix;
-  MUST_PASS(data::Load(fx_param_str_req(data_module, ""), &data_matrix));
-  index_t n_points = data_matrix.n_cols();
-  index_t dimensionality = data_matrix.n_rows();
-  AffinityAlpha::QPoint default_point;
-  default_point.vec().Init(data_matrix.n_rows());
-  param.BootstrapMonochromatic(&default_point, data_matrix.n_cols());
-  data_points.Init(default_point, n_points, n_block_points);
-  for (index_t i = 0; i < data_matrix.n_cols(); i++) {
-    AffinityAlpha::QPoint *point = &data_points[i];
-    point->vec().CopyValues(data_matrix.GetColumnPtr(i));
-  }
-  FindCovariance(data_matrix);
-  data_matrix.Destruct();
-  data_matrix.Init(0, 0);
-
-  fx_timer_stop(data_module, "read");
-
-  AffinityAlpha::QNode data_example_node;
-  data_example_node.Init(dimensionality, param);
-
-  // Initial conditions for alpha
-  for (index_t i = 0; i < n_points; i++) {
-    CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
-    point->info().alpha.max1 = 0;
-    point->info().alpha.max2 = param.pref;
-    point->info().alpha.max1_index = i;
-    if (rand() % 8 == 0) {
-      point->info().rho = -param.pref / 2;
-    } else {
-      point->info().rho = 0;
-    }
-  }
-  data_nodes.Init(data_example_node, 0, n_block_nodes);
-  KdTreeHybridBuilder
-      <AffinityAlpha::QPoint, AffinityAlpha::QNode, AffinityAlpha::Param>
-      ::Build(data_module, param, &data_points, &data_nodes);
-
-
-  // ---------------------------------------------------------------
-  // The algorithm follows -----------------------------------------
-
-  // All the above is not any different for affinity than for anything
-  // else.  Now, time for the iteration.
-  int n_iter = fx_param_int(module, "n_iter", 10000);
-  int iter;
-  int n_convergence_iter = fx_param_int(module, "n_convergence_iter", 16);
-  int convergence_thresh = fx_param_int(module, "convergence_thresh", 8);
-  int stable_iter = 0;
-  index_t n_changed = n_points / 2;
-  index_t n_exemplars = 0;
-  timer *timer_rho = fx_timer(module, "all_rho");
-  timer *timer_alpha = fx_timer(module, "all_alpha");
-
-  ArrayList<char> is_exemplar;
-  is_exemplar.Init(n_points);
-  
-  ArrayList<double> iter_times_rho;
-  ArrayList<double> iter_times_alpha;
-  ArrayList<double> iter_times_total;
-  iter_times_rho.Init();
-  iter_times_alpha.Init();
-  iter_times_total.Init();
-
-  for (index_t i = 0; i < n_points; i++) {
-    is_exemplar[i] = 0;
-  }
-
-  for (iter = 0; iter < n_iter; iter++)
-  {
-    double lambda = param.lambda;
-    index_t n_alpha_changed = 0;
-    double sum_alpha = 0;
-    double sum_alpha2 = 0;
-    double sum_rho = 0;
-    index_t unclassifieds;
-    double last_rho_time = timer_rho->total.cpu.tms_utime;
-    double last_alpha_time = timer_alpha->total.cpu.tms_utime;
-
-    n_exemplars = 0;
-    unclassifieds = 0;
-
-    fx_timer_start(module, "all_alpha");
-    {
-      TempCacheArray<AffinityAlpha::QResult> q_results_alpha;
-
-      AffinityAlpha::QResult default_result_alpha;
-      default_result_alpha.Init(param);
-      q_results_alpha.Init(default_result_alpha, data_points.end_index(),
-          data_points.n_block_elems());
-
-      nbr_utils::ThreadedDualTreeSolver
-               < AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >::Solve(
-          fx_submodule(module, "threads", "iters/%d/alpha", iter), param,
-          &data_points, &data_nodes, &data_points, &data_nodes,
-          &q_results_alpha);
-
-      for (index_t i = 0; i < n_points; i++) {
-        AffinityAlpha::QPoint *point = &data_points[i];
-        AffinityAlpha::QResult *result = &q_results_alpha[i];
-
-        if (point->info().alpha.max1_index != result->alpha.max1_index) {
-          n_alpha_changed++;
-        }
-
-        point->info().alpha = result->alpha;
-
-        sum_alpha += result->alpha.max1;
-        sum_alpha2 += result->alpha.max2;
-
-        if (!is_exemplar[result->alpha.max1_index] && point->info().rho <= 0) {
-          unclassifieds++;
-        }
-      }
-
-      nbr_utils::StatFixer<
-          AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
-          ::Fix(param, &data_points, &data_nodes);
-    }
-    fx_timer_stop(module, "all_alpha");
-
-    fprintf(stderr,
-        "\033[31m     -------- %04d alpha: sum_alpha = %f, sum_alpha2 = %f, %"LI"d alphas changed, %"LI"d unclassifieds, %.3fsec cum. alpha\033[0m\n",
-        iter, sum_alpha, sum_alpha2, n_alpha_changed, unclassifieds,
-        timer_alpha->total.micros / 1.0e6);
-
-    fx_timer_start(module, "all_rho");
-    {
-      double rho_squared_difference = 0;
-      TempCacheArray<AffinityRho::QResult> q_results_rho;
-
-      AffinityRho::QResult default_result_rho;
-      default_result_rho.Init(param);
-      q_results_rho.Init(default_result_rho, data_points.end_index(),
-          data_points.n_block_elems());
-
-      nbr_utils::ThreadedDualTreeSolver< AffinityRho, DualTreeDepthFirst<AffinityRho> >::Solve(
-          fx_submodule(module, "threads", "iters/%d/rho", iter), param,
-          &data_points, &data_nodes, &data_points, &data_nodes,
-          &q_results_rho);
-
-      n_changed = 0;
-
-      for (index_t i = 0; i < n_points; i++) {
-        AffinityAlpha::QPoint *point = &data_points[i];
-        AffinityRho::QResult *result = &q_results_rho[i];
-        double old_rho = point->info().rho;
-        double new_rho = damp(lambda, old_rho, result->rho);
-
-        if ((old_rho > 0) != (new_rho > 0)) {
-          new_rho *= math::Random(0.4, 1.4);
-          n_changed++;
-        }
-
-        rho_squared_difference += math::Sqr(new_rho - old_rho);
-        sum_rho += new_rho;
-
-        if (new_rho > 0) {
-          is_exemplar[i] = 1;
-          n_exemplars++;
-        } else {
-          is_exemplar[i] = 0;
-        }
-
-        point->info().rho = new_rho;
-      }
-
-
-      nbr_utils::StatFixer<
-          AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
-          ::Fix(param, &data_points, &data_nodes);
-
-      param.SetEpsilon(sqrt(rho_squared_difference / n_points));
-      //param.SetEpsilon(0);
-    }
-    fx_timer_stop(module, "all_rho");
-
-    fprintf(stderr, "\033[32m------------- %04d rho: %"LI"d rhos changed, (%"LI"d exemplars), sum_rho = %f, eps = %f, %.3fsec cum. rho\033[0m\n",
-        iter, n_changed, n_exemplars,
-        sum_rho, param.eps,
-        timer_rho->total.micros / 1.0e6);
-
-    *iter_times_rho.AddBack() = timer_rho->total.cpu.tms_utime - last_rho_time;
-    *iter_times_alpha.AddBack() = timer_alpha->total.cpu.tms_utime - last_alpha_time;
-    *iter_times_total.AddBack() = (timer_rho->total.cpu.tms_utime - last_rho_time)
-        + (timer_alpha->total.cpu.tms_utime - last_alpha_time);
-
-    if (n_changed < convergence_thresh) {
-      stable_iter++;
-    } else {
-      stable_iter = 0;
-    }
-    
-    if (stable_iter >= n_convergence_iter && iter > 20) {
-      break;
-    }
-  }
-
-  fx_format_result(module, "n_iterations", "%d", iter);
-  fx_format_result(module, "n_exemplars", "%d", n_exemplars);
-
-  TimeStats(fx_submodule(module, "iter_times_rho", "iter_times_rho"),
-      iter_times_rho);
-  TimeStats(fx_submodule(module, "iter_times_alpha", "iter_times_alpha"),
-      iter_times_alpha);
-  TimeStats(fx_submodule(module, "iter_times_total", "iter_times_total"),
-      iter_times_total);
-  fx_format_result(module, "n_points", "%"LI"d", n_points);
-
-  // This will take too long if there are too many exemplars.
-  if (n_exemplars >= 10000) {
-    NONFATAL("Too many exemplars (%"LI"d >= 10000), NOT performing clustering.\n",
-        n_exemplars);
-  } else {
-    FindExemplars(module, param, dimensionality, n_points, &data_points);
-  }
-}
+#if 0
+//
+//  AffinityAlpha::Param param;
+//
+//  param.Init(fx_submodule(module, gnp_name, gnp_name));
+//
+//  TempCacheArray<AffinityAlpha::QPoint> data_points;
+//  TempCacheArray<AffinityAlpha::QNode> data_nodes;
+//
+//  index_t n_block_points = fx_param_int(
+//      module, "n_block_points", 1024);
+//  index_t n_block_nodes = fx_param_int(
+//      module, "n_block_nodes", 128);
+//
+//  datanode *data_module = fx_submodule(module, "data", "data");
+//
+//  fx_timer_start(data_module, "read");
+//
+//  Matrix data_matrix;
+//  MUST_PASS(data::Load(fx_param_str_req(data_module, ""), &data_matrix));
+//  index_t n_points = data_matrix.n_cols();
+//  index_t dimensionality = data_matrix.n_rows();
+//  AffinityAlpha::QPoint default_point;
+//  default_point.vec().Init(data_matrix.n_rows());
+//  param.BootstrapMonochromatic(&default_point, data_matrix.n_cols());
+//  data_points.Init(default_point, n_points, n_block_points);
+//  for (index_t i = 0; i < data_matrix.n_cols(); i++) {
+//    AffinityAlpha::QPoint *point = &data_points[i];
+//    point->vec().CopyValues(data_matrix.GetColumnPtr(i));
+//  }
+//  FindCovariance(data_matrix);
+//  data_matrix.Destruct();
+//  data_matrix.Init(0, 0);
+//
+//  fx_timer_stop(data_module, "read");
+//
+//  AffinityAlpha::QNode data_example_node;
+//  data_example_node.Init(dimensionality, param);
+//
+//  // Initial conditions for alpha
+//  for (index_t i = 0; i < n_points; i++) {
+//    CacheWrite<AffinityAlpha::QPoint> point(&data_points, i);
+//    point->info().alpha.max1 = 0;
+//    point->info().alpha.max2 = param.pref;
+//    point->info().alpha.max1_index = i;
+//    if (rand() % 8 == 0) {
+//      point->info().rho = -param.pref / 2;
+//    } else {
+//      point->info().rho = 0;
+//    }
+//  }
+//  data_nodes.Init(data_example_node, 0, n_block_nodes);
+//  KdTreeHybridBuilder
+//      <AffinityAlpha::QPoint, AffinityAlpha::QNode, AffinityAlpha::Param>
+//      ::Build(data_module, param, &data_points, &data_nodes);
+//
+//
+//  // ---------------------------------------------------------------
+//  // The algorithm follows -----------------------------------------
+//
+//  // All the above is not any different for affinity than for anything
+//  // else.  Now, time for the iteration.
+//  int n_iter = fx_param_int(module, "n_iter", 10000);
+//  int iter;
+//  int n_convergence_iter = fx_param_int(module, "n_convergence_iter", 16);
+//  int convergence_thresh = fx_param_int(module, "convergence_thresh", 8);
+//  int stable_iter = 0;
+//  index_t n_changed = n_points / 2;
+//  index_t n_exemplars = 0;
+//  timer *timer_rho = fx_timer(module, "all_rho");
+//  timer *timer_alpha = fx_timer(module, "all_alpha");
+//
+//  ArrayList<char> is_exemplar;
+//  is_exemplar.Init(n_points);
+//  
+//  ArrayList<double> iter_times_rho;
+//  ArrayList<double> iter_times_alpha;
+//  ArrayList<double> iter_times_total;
+//  iter_times_rho.Init();
+//  iter_times_alpha.Init();
+//  iter_times_total.Init();
+//
+//  for (index_t i = 0; i < n_points; i++) {
+//    is_exemplar[i] = 0;
+//  }
+//
+//  for (iter = 0; iter < n_iter; iter++)
+//  {
+//    double lambda = param.lambda;
+//    index_t n_alpha_changed = 0;
+//    double sum_alpha = 0;
+//    double sum_alpha2 = 0;
+//    double sum_rho = 0;
+//    index_t unclassifieds;
+//    double last_rho_time = timer_rho->total.cpu.tms_utime;
+//    double last_alpha_time = timer_alpha->total.cpu.tms_utime;
+//
+//    n_exemplars = 0;
+//    unclassifieds = 0;
+//
+//    fx_timer_start(module, "all_alpha");
+//    {
+//      TempCacheArray<AffinityAlpha::QResult> q_results_alpha;
+//
+//      AffinityAlpha::QResult default_result_alpha;
+//      default_result_alpha.Init(param);
+//      q_results_alpha.Init(default_result_alpha, data_points.end_index(),
+//          data_points.n_block_elems());
+//
+//      nbr_utils::ThreadedDualTreeSolver
+//               < AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >::Solve(
+//          fx_submodule(module, "threads", "iters/%d/alpha", iter), param,
+//          &data_points, &data_nodes, &data_points, &data_nodes,
+//          &q_results_alpha);
+//
+//      for (index_t i = 0; i < n_points; i++) {
+//        AffinityAlpha::QPoint *point = &data_points[i];
+//        AffinityAlpha::QResult *result = &q_results_alpha[i];
+//
+//        if (point->info().alpha.max1_index != result->alpha.max1_index) {
+//          n_alpha_changed++;
+//        }
+//
+//        point->info().alpha = result->alpha;
+//
+//        sum_alpha += result->alpha.max1;
+//        sum_alpha2 += result->alpha.max2;
+//
+//        if (!is_exemplar[result->alpha.max1_index] && point->info().rho <= 0) {
+//          unclassifieds++;
+//        }
+//      }
+//
+//      nbr_utils::StatFixer<
+//          AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
+//          ::Fix(param, &data_points, &data_nodes);
+//    }
+//    fx_timer_stop(module, "all_alpha");
+//
+//    fprintf(stderr,
+//        "\033[31m     -------- %04d alpha: sum_alpha = %f, sum_alpha2 = %f, %"LI"d alphas changed, %"LI"d unclassifieds, %.3fsec cum. alpha\033[0m\n",
+//        iter, sum_alpha, sum_alpha2, n_alpha_changed, unclassifieds,
+//        timer_alpha->total.micros / 1.0e6);
+//
+//    fx_timer_start(module, "all_rho");
+//    {
+//      double rho_squared_difference = 0;
+//      TempCacheArray<AffinityRho::QResult> q_results_rho;
+//
+//      AffinityRho::QResult default_result_rho;
+//      default_result_rho.Init(param);
+//      q_results_rho.Init(default_result_rho, data_points.end_index(),
+//          data_points.n_block_elems());
+//
+//      nbr_utils::ThreadedDualTreeSolver< AffinityRho, DualTreeDepthFirst<AffinityRho> >::Solve(
+//          fx_submodule(module, "threads", "iters/%d/rho", iter), param,
+//          &data_points, &data_nodes, &data_points, &data_nodes,
+//          &q_results_rho);
+//
+//      n_changed = 0;
+//
+//      for (index_t i = 0; i < n_points; i++) {
+//        AffinityAlpha::QPoint *point = &data_points[i];
+//        AffinityRho::QResult *result = &q_results_rho[i];
+//        double old_rho = point->info().rho;
+//        double new_rho = damp(lambda, old_rho, result->rho);
+//
+//        if ((old_rho > 0) != (new_rho > 0)) {
+//          new_rho *= math::Random(0.4, 1.4);
+//          n_changed++;
+//        }
+//
+//        rho_squared_difference += math::Sqr(new_rho - old_rho);
+//        sum_rho += new_rho;
+//
+//        if (new_rho > 0) {
+//          is_exemplar[i] = 1;
+//          n_exemplars++;
+//        } else {
+//          is_exemplar[i] = 0;
+//        }
+//
+//        point->info().rho = new_rho;
+//      }
+//
+//
+//      nbr_utils::StatFixer<
+//          AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
+//          ::Fix(param, &data_points, &data_nodes);
+//
+//      param.SetEpsilon(sqrt(rho_squared_difference / n_points));
+//      //param.SetEpsilon(0);
+//    }
+//    fx_timer_stop(module, "all_rho");
+//
+//    fprintf(stderr, "\033[32m------------- %04d rho: %"LI"d rhos changed, (%"LI"d exemplars), sum_rho = %f, eps = %f, %.3fsec cum. rho\033[0m\n",
+//        iter, n_changed, n_exemplars,
+//        sum_rho, param.eps,
+//        timer_rho->total.micros / 1.0e6);
+//
+//    *iter_times_rho.AddBack() = timer_rho->total.cpu.tms_utime - last_rho_time;
+//    *iter_times_alpha.AddBack() = timer_alpha->total.cpu.tms_utime - last_alpha_time;
+//    *iter_times_total.AddBack() = (timer_rho->total.cpu.tms_utime - last_rho_time)
+//        + (timer_alpha->total.cpu.tms_utime - last_alpha_time);
+//
+//    if (n_changed < convergence_thresh) {
+//      stable_iter++;
+//    } else {
+//      stable_iter = 0;
+//    }
+//    
+//    if (stable_iter >= n_convergence_iter && iter > 20) {
+//      break;
+//    }
+//  }
+//
+//  fx_format_result(module, "n_iterations", "%d", iter);
+//  fx_format_result(module, "n_exemplars", "%d", n_exemplars);
+//
+//  TimeStats(fx_submodule(module, "iter_times_rho", "iter_times_rho"),
+//      iter_times_rho);
+//  TimeStats(fx_submodule(module, "iter_times_alpha", "iter_times_alpha"),
+//      iter_times_alpha);
+//  TimeStats(fx_submodule(module, "iter_times_total", "iter_times_total"),
+//      iter_times_total);
+//  fx_format_result(module, "n_points", "%"LI"d", n_points);
+//
+//  // This will take too long if there are too many exemplars.
+//  if (n_exemplars >= 10000) {
+//    NONFATAL("Too many exemplars (%"LI"d >= 10000), NOT performing clustering.\n",
+//        n_exemplars);
+//  } else {
+//    FindExemplars(module, param, dimensionality, n_points, &data_points);
+//  }
+//}
+//
+#endif
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);

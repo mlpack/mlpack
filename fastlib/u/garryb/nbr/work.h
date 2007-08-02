@@ -370,7 +370,7 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<Grain> *work) {
     while (!prio.is_empty()) {
       InternalNode *node = prio.Pop();
       if (node->info() != ALL) {
-        if (node->count() <= max_grain_size_ || node->is_complete()) {
+        if (node->count() <= max_grain_size_ || !node->is_complete()) {
           // We can't explore a node that is missing children or whose
           // count is too large.
           if (node->info() == NONE) {
