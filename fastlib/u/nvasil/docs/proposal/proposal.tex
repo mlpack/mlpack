@@ -128,8 +128,14 @@ kernel has to be tuned, i.e.
 There are cases that the bandwidth depends on the point so the above
 equation gets the form
 \begin{equation}
-\hat{f}(x)=\sum_{i}^{N}e^{-||x-x_i||/h_i}
+\hat{f}(x)=\sum_{i}^{N}e^{\frac{-||x-x_i||}{h_i}}
 \end{equation}
+
+\insfig[2d_kernel_density_estimation]{2d_kernel_density_estimation.eps}{Kernel
+Density of 2 dimensional points. Over every point a kernel is set.
+In areas with with high concentration of points there is more
+overlap on the kernels which shows higher probablility}{8cm}
+
 In contrast to parametric cases a single evaluation of a non
 parametric model requires evaluation of $N$ parameters. Naively
 speaking training can be avoided at all if we set the parameter
