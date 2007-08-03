@@ -32,17 +32,13 @@ try:
   for i in range(n):
     machinename = peerlist[i]
     print >> log, "****** CONNECTING TO %s ******" % machinename
-    pid = os.fork()
     argv = ["ssh", "-x", "-T", "-n", machinename, executable] + sys.argv[4:] + [
         "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
         "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
         ]
     print >> log, " ".join(argv)
+    pid = os.fork()
     if not pid:
-      # We'll close standard input so ssh can't do that.
-      #os.close(0)
-      #fd = os.open("/dev/random", os.O_RDONLY)
-      #os.dup2(fd, 0)
       os.execvp(argv[0], argv)
     pids[pid] = 1
 

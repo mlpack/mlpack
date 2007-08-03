@@ -67,7 +67,8 @@ const char *fl_filename(const char* name);
 /**
  * Prints a message header for a specified location in code.
  */
-void fl_msg_header(char type, const char *file, const char *func, int line);
+void fl_msg_header(char type, const char *color,
+    const char *file, const char *func, int line);
 
 /** Whether to treat nonfatal warnings as fatal. */
 extern int abort_on_nonfatal;

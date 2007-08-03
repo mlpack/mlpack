@@ -186,6 +186,7 @@ class CentroidWorkQueue
 
   struct ProcessWorkQueue {
     index_t n_centers;
+    index_t max_grain_size;
     Vector sum_centers;
     MinHeap<double, InternalNode*> work_items;
   };
@@ -194,8 +195,9 @@ class CentroidWorkQueue
   CacheArray<Node> *tree_;
   ArrayList<ProcessWorkQueue> processes_;
   InternalNode *root_;
-  index_t max_grain_size_;
-  index_t n_tasks_;
+  int n_threads_;
+  double granularity_;
+  index_t n_grains_;
   index_t n_overflows_;
   index_t n_preferred_;
   index_t n_overflow_points_;
@@ -218,7 +220,7 @@ class CentroidWorkQueue
       int n_threads, datanode *module);
 
   index_t n_grains() const {
-    return n_tasks_;
+    return n_grains_;
   }
 
   virtual void GetWork(int process_num, ArrayList<Grain> *work);
@@ -238,28 +240,22 @@ class CentroidWorkQueue
   /** Creates the domain decomposition */
   void DistributeInitialWork_(const DecompNode *decomp_node,
       InternalNode *node);
-
-  bool IsSmallEnough_(const InternalNode *node) {
-    return node->count() <= max_grain_size_ || node->is_leaf();
-  }
 };
 
 template<typename Node>
 void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree,
     const DecompNode *decomp_root, int n_threads, datanode *module) {
-  int n_grains = fx_param_int(module, "granularity", 12)
-      * n_threads * rpc::n_peers();
-
+  granularity_ = fx_param_double(module, "granularity", 12);
   no_overflow_ = fx_param_bool(module, "no_overflow", false);
   tree_ = tree;
+  n_threads_ = n_threads;
   root_ = new InternalNode(NONE, tree,
       decomp_root->index(), decomp_root->end_index());
-  max_grain_size_ = root_->count() / n_grains;
   processes_.Init(rpc::n_peers());
   DEBUG_ASSERT_MSG(decomp_root->info().begin_rank == 0
       && decomp_root->info().end_rank == rpc::n_peers(),
       "Can't handle incomplete decompositions (yet)");
-  n_tasks_ = 0;
+  n_grains_ = 0;
   n_overflows_ = 0;
   n_overflow_points_ = 0;
   n_assigned_points_ = 0;
@@ -286,9 +282,12 @@ void CentroidWorkQueue<Node>::DistributeInitialWork_(
     // won't have any work to do...
     Vector center;
     node->node().bound().CalculateMidpoint(&center);
+    index_t max_grain_size = int(nearbyint(
+        node->count() / granularity_ / n_threads_));
 
     for (int i = begin_rank; i < end_rank; i++) {
       ProcessWorkQueue *queue = &processes_[i];
+      queue->max_grain_size = max_grain_size;
       queue->n_centers = 1;
       queue->sum_centers.Copy(center);
       queue->work_items.Init();
@@ -304,9 +303,9 @@ void CentroidWorkQueue<Node>::DistributeInitialWork_(
       InternalNode *cur = *node_stack.PopBackPtr();
       double distance = cur->node().bound().MinDistanceSq(center);
 
-      if (IsSmallEnough_(cur)) {
+      if (cur->is_leaf() || cur->count() <= max_grain_size) {
         queue->work_items.Put(distance, cur);
-        n_tasks_++;
+        n_grains_++;
       } else {
         for (index_t k = 0; k < Node::CARDINALITY; k++) {
           *node_stack.AddBack() = cur->GetChild(tree_, k);

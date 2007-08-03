@@ -227,6 +227,11 @@ KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
 
       if (index_t(node->count()) == index_t(points_.n_block_elems())) {
         // We got one block of points!  Let's give away ownership.
+        // This is also a convenient time to display status.
+        // TODO: There's a slight bug -- the last block might not be a
+        // "full" block and its ownership will be given to the first
+        // machine even though this is incorrect.
+        percent_indicator("tree built", node->end(), n_points_);
         points_.cache()->GiveOwnership(
             points_.Blockid(node->begin()),
             begin_rank);
@@ -456,11 +461,6 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
     DistributedCache *points_cache, DistributedCache *nodes_cache) {
   bool is_main_machine = (my_rank == decomp.root()->info().begin_rank);
 
-  nodes_cache->StartSync();
-  points_cache->StartSync();
-  nodes_cache->WaitSync();
-  points_cache->WaitSync();
-
   param_ = param;
   visitor_ = visitor;
 
@@ -492,7 +492,6 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
   nodes_cache->StartSync();
   points_cache->StartSync();
   nodes_cache->WaitSync();
-  points_cache->WaitSync();
 
   if (is_main_machine) {
     // I'm the master machine!  I update the top part of the tree! WOOT!
@@ -505,6 +504,7 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
 
   nodes_cache->StartSync();
   nodes_cache->WaitSync();
+  points_cache->WaitSync();
 }
 
 template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
@@ -727,7 +727,7 @@ void SpKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
   points_channel_ = base_channel + 0;
   nodes_channel_ = base_channel + 1;
   points_mb_ = fx_param_int(points_module_, "mb", 2000);
-  nodes_mb_ = fx_param_int(nodes_module_, "mb", 1000);
+  nodes_mb_ = fx_param_int(nodes_module_, "mb", 500);
   if (rpc::is_root()) {
     Config config;
     MasterLoadData_(&config, *parampp, param_tag, module);

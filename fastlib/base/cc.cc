@@ -14,16 +14,16 @@ class CCInformDebug {
  public:
   CCInformDebug() {
 #ifdef DEBUG
-    fprintf(stderr, ANSI_BLUE"Program is being run with debugging checks on."ANSI_CLEAR"\n");
+    fprintf(stderr, ANSI_HBLACK"Program is being run with debugging checks on."ANSI_CLEAR"\n");
 #endif
   }
   ~CCInformDebug() {
 #ifdef PROFILE
-    fprintf(stderr, "[*] To collect profiling information:\n");
-    fprintf(stderr, "[*] -> gprof $this_binary >profile.out && less profile.out\n");
+    fprintf(stderr, ANSI_HBLACK"[*] To collect profiling information:\n");
+    fprintf(stderr, "[*] -> gprof $this_binary >profile.out && less profile.out"ANSI_CLEAR"\n");
 #endif
 #ifdef DEBUG
-    fprintf(stderr, ANSI_BLUE"Program was run with debugging checks on."ANSI_CLEAR"\n");
+    fprintf(stderr, ANSI_HBLACK"Program was run with debugging checks on."ANSI_CLEAR"\n");
 #endif
   }
 };

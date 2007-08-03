@@ -81,12 +81,6 @@ struct AffinityCommon {
 
   struct Param {
    public:
-#ifdef APPROX
-    /** The epsilon for approximation for rho - ABSOLUTE error. */
-    double eps;
-    /** Epsilon per point. */
-    double eps_per_point;
-#endif
     /** The dimensionality of the data sets. */
     index_t dim;
     /** Number of points */
@@ -97,10 +91,6 @@ struct AffinityCommon {
     double lambda;
 
     OT_DEF(Param) {
-#ifdef APPROX
-      OT_MY_OBJECT(eps);
-      OT_MY_OBJECT(eps_per_point);
-#endif
       OT_MY_OBJECT(dim);
       OT_MY_OBJECT(n_points);
       OT_MY_OBJECT(pref);
@@ -109,10 +99,6 @@ struct AffinityCommon {
 
    public:
     void Copy(const Param& other) {
-#ifdef APPROX
-      eps = other.eps;
-      eps_per_point = other.eps_per_point;
-#endif
       dim = other.dim;
       n_points = other.n_points;
       pref = other.pref;
@@ -121,9 +107,6 @@ struct AffinityCommon {
 
     void Init(datanode *module) {
       dim = -1;
-#ifdef APPROX
-      eps = fx_param_double(module, "eps", 0.0);
-#endif
       pref = fx_param_double_req(module, "pref");
       lambda = fx_param_double(module, "lambda", 0.9);
     }
@@ -139,7 +122,7 @@ struct AffinityCommon {
       point->info().alpha.max1 = 0;
       point->info().alpha.max2 = pref;
       point->info().alpha.max1_index = index;
-      if (math::RandInt(4) == 0) {
+      if (math::RandInt(4096) == 0) {
         point->info().rho = -pref / 2;
       } else {
         point->info().rho = 0;
@@ -150,16 +133,9 @@ struct AffinityCommon {
       dim = dim_in;
       n_points = count;
       // NOTE: These values are manually assigned to be different later.
-#ifdef APPROX
-      eps_per_point = eps / n_points;
-#endif
     }
 
     void SetEpsilon(double eps_in) {
-#ifdef APPROX
-      eps = eps_in;
-      eps_per_point = eps / n_points;
-#endif
     }
   };
 
@@ -435,7 +411,8 @@ class AffinityAlpha {
     }
     static double Heuristic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta) {
-      return -delta.alpha.hi;
+      //return -delta.alpha.hi;
+      return r_node.bound().MinToMidSq(q_node.bound());
     }
   };
 };
@@ -454,35 +431,7 @@ class AffinityRho {
 
   typedef BlankGlobalResult GlobalResult;
 
-#ifdef APPROX
-  struct QPostponed {
-   public:
-    double d_rho;
-    double error_buffer;
-
-    OT_DEF(QPostponed) {
-      OT_MY_OBJECT(d_rho);
-      OT_MY_OBJECT(error_buffer);
-    }
-
-   public:
-    void Init(const Param& param) {
-      Reset(param);
-    }
-
-    void Reset(const Param& param) {
-      d_rho = 0;
-      error_buffer = 0;
-    }
-
-    void ApplyPostponed(const Param& param, const QPostponed& other) {
-      d_rho += other.d_rho;
-      error_buffer += other.error_buffer;
-    }
-  };
-#else
   typedef BlankQPostponed QPostponed;
-#endif
 
   struct Delta {
    public:
@@ -500,15 +449,9 @@ class AffinityRho {
   struct QResult {
    public:
     double rho;
-    #ifdef APPROX
-    double error_buffer;
-    #endif
 
     OT_DEF(QResult) {
       OT_MY_OBJECT(rho);
-      #ifdef APPROX
-      OT_MY_OBJECT(error_buffer);
-      #endif
     }
 
    public:
@@ -517,70 +460,23 @@ class AffinityRho {
     }
     void Reset() {
       rho = 0;
-      #ifdef APPROX
-      error_buffer = 0;
-      #endif
     }
     void Postprocess(const Param& param,
         const QPoint& q, index_t q_index, const RNode& r_root) {
+      // Subtract out the improperly computed rho and substitute a new one
+      double responsibility =
+         AffinityCommon::Helpers::Similarity(q.vec(), q.vec())
+         - q.info().alpha.get(q_index);
+      rho -= (responsibility + fabs(responsibility)) / 2;
       double self_responsibility = param.pref - q.info().alpha.get(q_index);
       rho += self_responsibility;
     }
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QPoint& q, index_t q_index) {
-      #ifdef APPRLX
-      rho += postponed.d_rho;
-      error_buffer += postponed.error_buffer;
-      #endif
     }
   };
 
-#ifdef APPROX
-  struct QSummaryResult {
-   public:
-    SpRange rho;
-    double error_buffer;
-
-    OT_DEF(QSummaryResult) {
-      OT_MY_OBJECT(rho);
-      OT_MY_OBJECT(error_buffer);
-    }
-
-   public:
-    void Init(const Param& param) {
-      rho.Init(0, 0);
-      error_buffer = 0;
-    }
-    void ApplySummaryResult(const Param& param, const QSummaryResult& summary_result) {
-      rho += summary_result.rho;
-      error_buffer += summary_result.error_buffer;
-    }
-    void ApplyDelta(const Param& param, const Delta& delta) {
-      rho += delta.d_rho;
-    }
-    void ApplyPostponed(const Param& param,
-        const QPostponed& postponed, const QNode& q_node) {
-      rho += postponed.d_rho;
-      error_buffer += postponed.error_buffer;
-    }
-    void StartReaccumulate(const Param& param, const QNode& q_node) {
-      rho.InitEmptySet();
-      error_buffer = DBL_MAX;
-    }
-    void Accumulate(const Param& param, const QResult& result) {
-      rho |= result.rho;
-      error_buffer = min(error_buffer, result.error_buffer);
-    }
-    void Accumulate(const Param& param,
-        const QSummaryResult& result, index_t n_points) {
-      rho |= result.rho;
-      error_buffer = min(error_buffer, result.error_buffer);
-    }
-    void FinishReaccumulate(const Param& param, const QNode& q_node) {}
-  };
-#else
   typedef BlankQSummaryResult QSummaryResult;
-#endif
 
   struct PairVisitor {
    public:
@@ -595,33 +491,26 @@ class AffinityRho {
       // do the point-node prune check
       double sim_hi = AffinityCommon::Helpers::SimilarityHi(
           param, q.vec(), q_index, r_node);
-      #ifdef APPROX
-      q_result->error_buffer += param.eps_per_point * r_node.count();
-      #endif
       if (sim_hi < r_node.stat().alpha.lo) {
         return false;
       } else {
-        rho = q_result->rho;
+        rho = 0;
         return true;
       }
     }
     void VisitPair(const Param& param,
         const QPoint& q, index_t q_index,
         const RPoint& r, index_t r_index) {
-      if (likely(q_index != r_index)) {
-        double responsibility =
-            AffinityCommon::Helpers::Similarity(q.vec(), r.vec())
-            - r.info().alpha.get(q_index);
-        if (responsibility > 0) {
-          rho += responsibility;
-        }
-      }
+      double responsibility =
+          AffinityCommon::Helpers::Similarity(q.vec(), r.vec())
+          - r.info().alpha.get(q_index);
+      rho += (responsibility + fabs(responsibility));
     }
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
         const RNode& r_node, const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
-      q_result->rho = rho;
+      q_result->rho += rho / 2;
     }
   };
 
@@ -636,9 +525,9 @@ class AffinityRho {
       double sim_lo = AffinityCommon::Helpers::SimilarityLo(
           param, q_node, r_node);
 
-      delta->d_rho.lo = max(0.0, sim_lo - r_node.stat().alpha.hi)
+      delta->d_rho.lo = math::ClampNonNegative(sim_lo - r_node.stat().alpha.hi)
           * r_node.count();
-      delta->d_rho.hi = max(0.0, sim_hi - r_node.stat().alpha.lo)
+      delta->d_rho.hi = math::ClampNonNegative(sim_hi - r_node.stat().alpha.lo)
           * r_node.count();
 
       return delta->d_rho.hi != 0;
@@ -647,24 +536,7 @@ class AffinityRho {
         const QNode& q_node, const RNode& r_node, const Delta& delta,
         const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      #ifdef APPROX
-      double my_abs_error = delta.d_rho.width() * 0.5;
-      double allotted_error = param.eps_per_point * r_node.count();
-      double allowed_error = allotted_error + q_summary_result.error_buffer;
-      
-      //if (param.eps != 0)
-      //fprintf(stderr, "%g %g %g %g\n", my_abs_error, param.eps_per_point, allotted_error, q_summary_result.error_buffer);
-      
-      if (my_abs_error <= allowed_error) {
-        q_postponed->error_buffer += allotted_error - my_abs_error;
-        q_postponed->d_rho += delta.d_rho.mid();
-        return false;
-      } else {
-        return true;
-      }
-      #else
       return true;
-      #endif
     }
     static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
@@ -675,11 +547,7 @@ class AffinityRho {
     static double Heuristic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta) {
       // TODO: If approximating, favor upper bound
-      #ifdef APPROX
-      return -delta.d_rho.hi;
-      #else
       return 0;
-      #endif
     }
   };
 };
@@ -748,14 +616,18 @@ struct ApplyRhos {
     n_changed = 0;
     n_exemplars = 0;
     squared_difference = 0;
+    sum = 0;
   }
 
   void Update(AffinityCommon::Point *point, AffinityRho::QResult* result) {
     double old_rho = point->info().rho;
     double new_rho = damp(param->lambda, old_rho, result->rho);
+    bool was_exemplar = (old_rho > 0);
+    bool now_exemplar = (new_rho > 0);
 
-    if ((old_rho > 0) != (new_rho > 0)) {
-      new_rho *= math::Random(0.4, 1.4);
+    if (was_exemplar != now_exemplar) {
+      // damp it again if it changed sign, but randomly
+      new_rho = damp(math::Random(0.0, 1.0), old_rho, new_rho);
       n_changed++;
     }
 
@@ -777,8 +649,46 @@ struct ApplyRhos {
   }
 };
 
+class AffinityTimer {
+ private:
+  double last_alpha_micros_;
+  double last_rho_micros_;
+  double sum_times_;
+  ArrayList<double> iteration_times_;
+  
+  static const int M = 1000000;
+
+ public:
+  void Init();
+  void RecordTimes(timer *alpha_timer, timer *rho_timer);  
+  void Report(datanode *module){} 
+};
+
+void AffinityTimer::Init() {
+  iteration_times_.Init();
+  last_alpha_micros_ = 0;
+  last_rho_micros_ = 0;
+  sum_times_ = 0;
+}
+
+void AffinityTimer::RecordTimes(timer *alpha_timer, timer *rho_timer) {
+  double alpha_micros = alpha_timer->total.micros;
+  double rho_micros = rho_timer->total.micros;
+  double elapsed_alpha = alpha_micros - last_alpha_micros_;
+  double elapsed_rho = rho_micros - last_rho_micros_;
+  double elapsed = elapsed_alpha + elapsed_rho;
+  *iteration_times_.AddBack() = elapsed;
+  sum_times_ += elapsed;
+  last_alpha_micros_ = alpha_micros;
+  last_rho_micros_ = rho_micros;
+  fprintf(stderr, " -- time: %.3f = %.3f a + %.3f r; mean is %.3f\n",
+      elapsed/M, elapsed_alpha/M, elapsed_rho/M,
+      sum_times_/iteration_times_.size()/M);
+}
+
 void AffinityMain(datanode *module, const char *gnp_name) {
   AffinityCommon::Param *param;
+  AffinityTimer timestats;
   const int MEGABYTE = 1048576;
   const int TREE_CHANNEL = 300;
   const int ALPHA_CHANNEL = 350;
@@ -787,6 +697,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   const int BARRIER_CHANNEL = 380;
   const int DONE_CHANNEL = 390;
   int stable_iterations = 0;
+
+  timestats.Init();
 
   param = new AffinityCommon::Param();
   param->Init(fx_submodule(module, gnp_name, gnp_name));
@@ -798,10 +710,12 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
   // One thing to note: alpha and rho are never taking up
   // RAM at the same time!
-  size_t alpha_mb = fx_param_int(fx_root, "alpha_mb", 200);
-  size_t rho_mb = fx_param_int(fx_root, "rho_mb", 100);
+  size_t alpha_mb = fx_param_int(module, "alpha_mb", 200);
+  size_t rho_mb = fx_param_int(module, "rho_mb", 100);
+  timer *timer_alpha = fx_timer(module, "all_alpha");
+  timer *timer_rho = fx_timer(module, "all_rho");
 
-  tree.Init(&param, 0, TREE_CHANNEL, fx_submodule(fx_root, "data", "data"));
+  tree.Init(&param, 0, TREE_CHANNEL, fx_submodule(module, "data", "data"));
 
   if (rpc::is_root()) {
     AffinityAlpha::QResult alpha_default;
@@ -822,37 +736,43 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   index_t n_points = tree.n_points();
 
   for (int iter = 0;; iter++) {
+    fx_timer_start(module, "all_alpha");
     nbr_utils::RpcDualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
-        fx_submodule(fx_root, "nbr", "iter/%d/alpha", iter), 200,
+        fx_submodule(module, "nbr", "iter/%d/alpha", iter), 200,
         *param, &tree, &tree, &alphas, NULL);
     ApplyAlphas apply_alphas;
     apply_alphas.Init();
     tree.Update<AffinityAlpha::QResult>(&alphas, &apply_alphas);
     rpc::Reduce(REDUCE_CHANNEL+0, VisitorReductor<ApplyAlphas>(), &apply_alphas);
-    if (rpc::rank() == 0) {
-      fprintf(stderr, ANSI_RED"--- %4d: alpha: max1=%f, max2=%f"ANSI_CLEAR"\n",
+    if (rpc::is_root()) {
+      fprintf(stderr, ANSI_RED"--- %3d: alpha: max1=%f, max2=%f"ANSI_CLEAR"\n",
           iter,
           apply_alphas.sum_alpha1 / n_points,
           apply_alphas.sum_alpha2 / n_points);
     }
     alphas.ResetElements();
+    fx_timer_stop(module, "all_alpha");
 
-    rpc::Barrier(BARRIER_CHANNEL);
-
+    fx_timer_start(module, "all_rho");
     nbr_utils::RpcDualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
-        fx_submodule(fx_root, "nbr", "iter/%d/rho", iter), 200,
+        fx_submodule(module, "nbr", "iter/%d/rho", iter), 200,
         *param, &tree, &tree, &rhos, NULL);
     ApplyRhos apply_rhos;
     apply_rhos.Init(param);
     tree.Update<AffinityRho::QResult>(&rhos, &apply_rhos);
     rpc::Reduce(REDUCE_CHANNEL+1, VisitorReductor<ApplyRhos>(), &apply_rhos);
-    if (rpc::rank() == 0) {
-      fprintf(stderr, ANSI_GREEN"--- %4d:  rho: %"LI"d exemplars (%"LI"d changed, rms diff=%f, avg=%f)"ANSI_CLEAR"\n",
+    if (rpc::is_root()) {
+      fprintf(stderr, ANSI_GREEN"--- %3d:  rho: %"LI"d exemplars (%"LI"d changed, rms diff=%f, avg=%f)"ANSI_CLEAR"\n",
           iter, apply_rhos.n_exemplars, apply_rhos.n_changed,
           sqrt(apply_rhos.squared_difference / n_points),
           apply_rhos.sum / n_points);
     }
     rhos.ResetElements();
+    fx_timer_stop(module, "all_rho");
+
+    if (rpc::is_root()) {
+      timestats.RecordTimes(timer_alpha, timer_rho);
+    }
 
     Broadcaster<bool> done;
 
@@ -871,9 +791,9 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     if (done.get()) {
       break;
     }
-
-    rpc::Barrier(BARRIER_CHANNEL+1);
   }
+
+  timestats.Report(module);
 
   delete param;
 }
