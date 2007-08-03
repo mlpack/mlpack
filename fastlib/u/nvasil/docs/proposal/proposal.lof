@@ -1,17 +1,19 @@
 \contentsline {figure}{\numberline {Figure\nobreakspace 1.1}{\ignorespaces Kernel Density of 2 dimensional points. Over every point a kernel is set. In areas with with high concentration of points there is more overlap on the kernels which shows higher probablility}}{2}{figure.11}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.1}{\ignorespaces The parent node of a 2 dimensional kd-tree}}{7}{figure.18}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.2}{\ignorespaces A two node 2 dimensional kd-tree}}{8}{figure.19}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.3}{\ignorespaces Nearest neighbor with pruning}}{9}{figure.20}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.4}{\ignorespaces True nearest neighbor is out of the leaf}}{10}{figure.21}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.5}{\ignorespaces Kd tree with no possible pruning}}{11}{figure.22}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.6}{\ignorespaces A two dimensional pathological kd-tree}}{12}{figure.23}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.7}{\ignorespaces The same data with fig.\nobreakspace {}\ref {fig1}a analyzed with a larger global bandwidth. (a) The estimated density, (b) The first non-trivial eigenvector}}{27}{figure.51}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.8}{\ignorespaces (a) Two clusters of uniformly distributed 2-D points, (b) The estimated density, (c) The first non-trivial eigenvector}}{27}{figure.52}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.9}{\ignorespaces (a) Two clusters of non-uniformly distributed 2-D points, (b)The estimated density, (c) The first non-trivial eigenvector}}{28}{figure.53}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.10}{\ignorespaces The same data set with fig.\nobreakspace {}\ref {fig2} processed with a bandwidth one order of magnitude larger. Although the first eigenvector still separates the two classes, the classes are closer and not compact (a) Two clusters of non-uniformly distributes 2-D points, (b)The estimated density, (c) The first non trivial eigenvector}}{28}{figure.54}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.11}{\ignorespaces (a) The 3 phoneme classes after the dimensionality reduction with the optimal bandwidth, plotted in two dimensions, (b) The 3 phoneme classes with a larger bandwidth,(c) The 3 phoneme classes with a smaller bandwidth}}{28}{figure.55}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.12}{\ignorespaces The diffusion graph for three different local bandwidths (a)Optimal, (b)An order of magnitude larger, (c)An order of magnitude smaller}}{29}{figure.56}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.13}{\ignorespaces A two dimensional kd-tree}}{32}{figure.62}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.14}{\ignorespaces Simulation of the dual tree algorithm}}{32}{figure.63}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.15}{\ignorespaces Principal Component Analysis of TIMIT (top) and NTIMIT (bottom) for MFCC (solid line) and for NRAF (dashed line).}}{35}{figure.69}
-\contentsline {figure}{\numberline {Figure\nobreakspace 3.16}{\ignorespaces Kernel PCA spectrum for TIMIT MFCC features}}{36}{figure.70}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.1}{\ignorespaces The parent node of a 2 dimensional kd-tree}}{6}{figure.18}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.2}{\ignorespaces A two node 2 dimensional kd-tree}}{7}{figure.19}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.3}{\ignorespaces Nearest neighbor with pruning}}{8}{figure.20}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.4}{\ignorespaces True nearest neighbor is out of the leaf}}{9}{figure.21}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.5}{\ignorespaces Kd tree with no possible pruning}}{10}{figure.22}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.6}{\ignorespaces A two dimensional pathological kd-tree}}{11}{figure.23}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.7}{\ignorespaces In this case the partition is very bad and almost for every point pruning is not feasible}}{12}{figure.24}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.8}{\ignorespaces The query node in red after top down recursion ends up in a leaf of the reference tree. Then every point in the query node (red) finds with the naive method its candidate nearest neighbor. Then for all of them we compare all the candidate nearest distances and find the maximum $r_{max}$. Now we know that if there is any node in distance greater than $r_max$ there is no point in checking for candidate nearest neighbors. As we see in the right figure the dashed box doesn't intersect with the bounding box of the leaf. This means that we can prune the yellow boxes.}}{36}{figure.29}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.9}{\ignorespaces The same data with fig.\nobreakspace {}\ref {fig1}a analyzed with a larger global bandwidth. (a) The estimated density, (b) The first non-trivial eigenvector}}{37}{figure.53}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.10}{\ignorespaces (a) Two clusters of uniformly distributed 2-D points, (b) The estimated density, (c) The first non-trivial eigenvector}}{37}{figure.54}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.11}{\ignorespaces (a) Two clusters of non-uniformly distributed 2-D points, (b)The estimated density, (c) The first non-trivial eigenvector}}{38}{figure.55}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.12}{\ignorespaces The same data set with fig.\nobreakspace {}\ref {fig2} processed with a bandwidth one order of magnitude larger. Although the first eigenvector still separates the two classes, the classes are closer and not compact (a) Two clusters of non-uniformly distributes 2-D points, (b)The estimated density, (c) The first non trivial eigenvector}}{38}{figure.56}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.13}{\ignorespaces (a) The 3 phoneme classes after the dimensionality reduction with the optimal bandwidth, plotted in two dimensions, (b) The 3 phoneme classes with a larger bandwidth,(c) The 3 phoneme classes with a smaller bandwidth}}{38}{figure.57}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.14}{\ignorespaces The diffusion graph for three different local bandwidths (a)Optimal, (b)An order of magnitude larger, (c)An order of magnitude smaller}}{39}{figure.58}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.15}{\ignorespaces A two dimensional kd-tree}}{39}{figure.64}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.16}{\ignorespaces Simulation of the dual tree algorithm}}{39}{figure.65}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.17}{\ignorespaces Principal Component Analysis of TIMIT (top) and NTIMIT (bottom) for MFCC (solid line) and for NRAF (dashed line).}}{40}{figure.71}
+\contentsline {figure}{\numberline {Figure\nobreakspace 3.18}{\ignorespaces Kernel PCA spectrum for TIMIT MFCC features}}{40}{figure.72}
