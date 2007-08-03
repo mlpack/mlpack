@@ -1,13 +1,13 @@
 This is BibTeX, Version 0.99cThe top-level auxiliary file: proposal.aux
 The style file: ieeetr.bst
 I couldn't open database file template.bib
----line 151 of file proposal.aux
+---line 158 of file proposal.aux
  : \bibdata{template
  :                  }
 I'm skipping whatever remains of this command
 I found no database files---while reading file proposal.aux
-Warning--I didn't find a database entry for "Lafon"
 Warning--I didn't find a database entry for "Belkin"
+Warning--I didn't find a database entry for "Lafon"
 Warning--I didn't find a database entry for "jenssen17lpd"
 Warning--I didn't find a database entry for "Silverman"
 Warning--I didn't find a database entry for "girolami2002osd"

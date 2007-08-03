@@ -269,32 +269,25 @@ nearest neighbors.
 
  Kd-tree consists of two types of data structures, the nodes and the
  leafs. The basic data needed for the nodes are the
- hyper-rectangles. Hyper-rectangles are the k-dimensional rectangles
+ hyper-rectangles fig.~\ref{parent_kd_node}. Hyper-rectangles are the k-dimensional rectangles
  that describe the minimum bounding box  for a given set of points.
- Leafs hold additionally the data points. The number of points on a
+ Leafs hold additionally the data points  fig.~\ref{2_kd_node}. The number of points on a
  leaf is user defined. As stated in ? the tree method for finding the nearest neighbor is faster than naive
  only after a threshold of points, (experimentally it has been found
  to be 30). This threshold is used as the maximum number of points
  per leaf. Bounding boxes (Hyper-rectangles) and points are the minimum amount
- of data required to be stored on nodes on the leaf fig.~\ref{parent_kd_node}. Extra
+ of data required to be stored on nodes on the leaf. Extra
  information about the data such as the centroid of the box, higher
  order moments, etc also called Cached Statistics can speed up
  tremendously algorithms other than nearest neighbor. The algorithm
- of nearest neighbor search can be described in the following steps
- also depicted in fig.~\ref{nearest_neighbor_searchon_kd}
- \begin{itemize}
-   \item Recurse to the leaf that contains the point. To do that
-   just compare at every node the split value of the splitting
-   dimension of the point and recurse to the right direction
-   \item 
-   \item 
- \end{itemize}
+ of nearest neighbor search with kd-trees will be described  in the following section,
+ fig.~\ref{nearest_neighbor_searchon_kd}.
 
 
 \insfig[parent_kd_node]{parent_kd_node.eps}{The parent node of a 2
 dimensional kd-tree}{8cm}
 
-\insfig[2_kd_node.eps]{2_kd_node.eps}{A two node 2 dimensional
+\insfig[2_kd_node]{2_kd_node.eps}{A two node 2 dimensional
 kd-tree}{8cm}
 
 \insfig[nearest_neighbor_searchon_kd]{nearest_neighbor_searchon_kd.eps}{Nearest
@@ -308,6 +301,10 @@ Kd tree with no possible pruning}{8cm}
 
 \insfig[kd_pathological_points]{kd_pathological_points.eps}{A two
 dimensional pathological kd-tree}{8cm}
+
+\insfig[pathological_kd_tree]{pathological_kd_tree.eps}{In this case
+the partition is very bad and almost for every point pruning is not
+feasible}{8cm}
 
 
 
@@ -335,6 +332,7 @@ points is done heuristically. One method that works in practice is
 choosing a point randomly and then find the furthest point. This is
 the first anchor point. The next anchor point is chosen as the
 furthest point from the first.
+
 \subsubsection{Nearest Neighbor Algorithm}
 The purpose of using a tree in the nearest neighbor problem is to
 gradually find bounds for the neighbor distance and prune parts of
@@ -371,6 +369,27 @@ centered around the query point with radius equal to the distance
  behave poorly and eventually have to search almost the whole
  data-set and they behave worse than the naive method since they
  have extra recursion overhead.
+
+\begin{itemize}
+   \item Recurse to the leaf that contains the point. To do that
+   just compare at every node the split value of the splitting
+   dimension of the point and recurse to the right direction
+   \item On the leaf compute the nearest neighbor with the naive
+   method. The distance to the nearest point on the leaf (candidate nearest neighbor)
+   is the upper bound for the nearest neighbor distance $r_{max}$,
+   fig~\ref{nearest_neighbor_searchon_kd}.
+   \item If the sphere centered on the query point and radius
+   $r_{max}$ doesn't intersect the bounding box terminate. The
+   candidate nearest neighbor is the actual nearest neighbor.
+   \item If not, then backtrack and visit all subtrees recursively
+   to the leaf and update the candidate nearest neighbor if you find
+   a point that is closer than $r_{max}$, fig~\ref{nearest_neighbor_searchon_kd_no_prune}.
+   \item Every time you backtrack check if the sphere centered on
+   the query point with the radius $r_{max}$ doesn't intersect the
+   bounding box terminate.
+ \end{itemize}
+
+
 \subsubsection{All nearest Neighbors}
 The problem of computing all nearest neighbors appears often in many
 machine learning problems, usually in the training phase. As we will

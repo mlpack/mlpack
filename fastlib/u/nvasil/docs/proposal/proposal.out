@@ -6,17 +6,16 @@
 \BOOKMARK [1][-]{section.12}{Section 2 \204 Origin and history of the problem}{}
 \BOOKMARK [1][-]{section.13}{Section 3 \204 Preliminary Research}{}
 \BOOKMARK [2][-]{subsection.14}{The Nearest Neighbor Problem}{section.13}
-\BOOKMARK [2][-]{subsection.28}{Large scale trees, for out of core memory}{section.13}
-\BOOKMARK [2][-]{subsection.34}{Kernel methods}{section.13}
-\BOOKMARK [2][-]{subsection.42}{Parameter estimation for manifold learning, through density estimation}{section.13}
-\BOOKMARK [2][-]{subsection.57}{Speech recognition with nearest neighbor search}{section.13}
-\BOOKMARK [1][-]{section.76}{Section 4 \204 Proposed Research}{}
-\BOOKMARK [2][-]{subsection.77}{Customized Kernels}{section.76}
-\BOOKMARK [2][-]{subsection.82}{Fast kernel summation with trees}{section.76}
-\BOOKMARK [2][-]{subsection.87}{Computing Gaussian Kernel Matrix with trees}{section.76}
-\BOOKMARK [2][-]{subsection.88}{Intrinsic dimension of speech}{section.76}
-\BOOKMARK [2][-]{subsection.89}{Speech recognition with nearest neighbor search}{section.76}
-\BOOKMARK [2][-]{subsection.90}{Acoustic Environment adaptation}{section.76}
-\BOOKMARK [1][-]{section.91}{Section 5 \204 Work remaining to be done}{}
-\BOOKMARK [1][-]{section.92}{Appendix A \204 This is my first appendix}{}
-\BOOKMARK [1][-]{section*.93}{References}{}
+\BOOKMARK [2][-]{subsection.30}{Large scale trees, for out of core memory}{section.13}
+\BOOKMARK [2][-]{subsection.36}{Kernel methods}{section.13}
+\BOOKMARK [2][-]{subsection.44}{Parameter estimation for manifold learning, through density estimation}{section.13}
+\BOOKMARK [2][-]{subsection.59}{Speech recognition with nearest neighbor search}{section.13}
+\BOOKMARK [1][-]{section.78}{Section 4 \204 Proposed Research}{}
+\BOOKMARK [2][-]{subsection.79}{Customized Kernels}{section.78}
+\BOOKMARK [2][-]{subsection.84}{Fast kernel summation with trees}{section.78}
+\BOOKMARK [2][-]{subsection.89}{Computing Gaussian Kernel Matrix with trees}{section.78}
+\BOOKMARK [2][-]{subsection.90}{Speech recognition with nearest neighbor search}{section.78}
+\BOOKMARK [2][-]{subsection.91}{Acoustic Environment adaptation}{section.78}
+\BOOKMARK [1][-]{section.92}{Section 5 \204 Work remaining to be done}{}
+\BOOKMARK [1][-]{section.93}{Appendix A \204 This is my first appendix}{}
+\BOOKMARK [1][-]{section*.94}{References}{}
