@@ -525,7 +525,7 @@ void fx_set_result(struct datanode *module, const char *name, const char *val)
 
 #ifdef FX_SHOW_RESULTS_TIMERS
   if (unlikely(fx__show_results_timers))
-    fprintf(stderr, "Result [%s] in [%s] set to [%s].\n",
+    fprintf(stderr, ANSI_HBLACK"Result [%s] in [%s] set to [%s]."ANSI_CLEAR"\n",
         name, module->key, val);
 #endif
 }
@@ -600,7 +600,7 @@ void fx_timer_start(struct datanode *module, const char *name)
 
 #ifdef FX_SHOW_RESULTS_TIMERS
   if (unlikely(fx__show_results_timers))
-    fprintf(stderr, "Timer [%s] in [%s] started.\n", name,
+    fprintf(stderr, ANSI_HBLACK"Timer [%s] in [%s] started."ANSI_CLEAR"\n", name,
         fx__module_name(module));
 #endif
 
@@ -628,7 +628,7 @@ void fx_timer_stop(struct datanode *module, const char *name)
     timer_stop(node->val, &now);
 #ifdef FX_SHOW_RESULTS_TIMERS
     if (unlikely(fx__show_results_timers))
-      fprintf(stderr, "Timer [%s] in [%s] stopped, totalling %.3f wall-secs.\n",
+      fprintf(stderr, ANSI_HBLACK"Timer [%s] in [%s] stopped, totalling %.3f wall-secs."ANSI_CLEAR"\n",
           name, module->key,
           (int)((struct timer *)node->val)->total.micros / 1.0e6);
 #endif

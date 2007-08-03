@@ -77,6 +77,29 @@ class GCCCompiler(CompilerInfo):
     self.lflags_start = ""
     self.lflags_end = "-lm -lpthread %s" % (self.lflags_fortran)
 
+class GCC4Compiler(CompilerInfo):
+  def __init__(self):
+    CompilerInfo.__init__(self)
+    self.name = "gcc4"
+    self.mode_dictionary = {
+      "verbose": "-g -DDEBUG -DVERBOSE",
+      "debug": "-g3 -DDEBUG -O0",
+      "check": "-O2 -finline-functions -g -DDEBUG",
+      "fast": "-O2 -finline-functions -fomit-frame-pointer -g -DNDEBUG",
+      "unsafe": "-O3 -ffast-math -g -fomit-frame-pointer -DNDEBUG",
+      "profile" : "-O2 -pg -finline-limit=12 -DPROFILE -DNDEBUG",
+      "small": "-Os -DNDEBUG",
+      "trace": "-g -DNDEBUG"
+    }
+    self.command_from_ext = {
+      "c" : "gcc4 %s -c %s -o %s -Wall",
+      "cc" : "g++4 -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions %s -c %s -o %s",
+      "f" : "g77 %s -c %s -o %s -Wall -Wno-uninitialized"
+    }
+    self.linker = "g++"
+    self.lflags_start = ""
+    self.lflags_end = "-lm -lpthread %s" % (self.lflags_fortran)
+
 class ICCCompiler(CompilerInfo):
   def __init__(self):
     CompilerInfo.__init__(self)
@@ -121,7 +144,7 @@ class MPICompiler(CompilerInfo):
     self.lflags_start = ""
     self.lflags_end = "-lm -lpthread %s" % (self.lflags_fortran)
 
-compiler_choices = [GCCCompiler(), MPICompiler(), ICCCompiler()]
+compiler_choices = [GCCCompiler(), GCC4Compiler(), MPICompiler(), ICCCompiler()]
 compilers = dict([(c.name, c) for c in compiler_choices])
 
 class MakeBuildSys(dep.DepSys):

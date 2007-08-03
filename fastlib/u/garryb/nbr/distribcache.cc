@@ -589,6 +589,16 @@ void DistributedCache::EncacheBlock_(BlockDevice::blockid_t blockid) {
         "Block re-cached: block %d, cache block size %d",
         blockid, n_block_bytes_);
     if (unlikely(i == ASSOC-1)) {
+      const int remote_preference = ASSOC/2;
+      for (;;) {
+        if (!blocks_[base_slot[i].blockid].is_owner()) {
+          break;
+        }
+        if (--i = remote_preference) {
+          i = ASSOC-1;
+          break;
+        }
+      }
       Purge_(base_slot[i].blockid);
       DEBUG_ONLY(base_slot[i].blockid = -1);
       break;

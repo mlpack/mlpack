@@ -21,7 +21,7 @@
 #define COMPILER_CAST__impl(cast, type, var) ((type)(var))
 #endif
 
-#ifdef __GNUC__
+#if defined(__GNUC__) || defined(__INTEL_COMPILER)
 #define expect__impl(expr, value) (__builtin_expect((expr), (value)))
 #define likely__impl(x) (__builtin_expect(!!(x), 1))
 #define unlikely__impl(x) (__builtin_expect(!!(x), 0))
@@ -32,6 +32,7 @@
 #define COMPILER_NOINLINE__IMPL __attribute__((noinline))
 #define IS_CONSTANT_EXPRESSION__impl(x) (__builtin_constant_p(x))
 #else
+#warning unknown compiler -- not using special compiler optimizations
 #define expect__impl(expr, value) (expr)
 #define likely__impl(x) (x)
 #define unlikely__impl(x) (x)

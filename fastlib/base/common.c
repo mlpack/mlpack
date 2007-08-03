@@ -61,9 +61,11 @@ const char *fl_filename(const char *name)
   }
 }
 
-void fl_msg_header(char type, const char *file, const char *func, int line)
+void fl_msg_header(char type, const char *color,
+    const char *file, const char *func, int line)
 {
-  fprintf(stderr, "[%c] %s:%s:%d: ", type, fl_filename(file), func, line);
+  fprintf(stderr, "%s[%c]%s %s:%s:%d: ",
+      color, type, ANSI_CLEAR, fl_filename(file), func, line);
 }
 	
 void fatal(const char *file, const char *func, int line,
@@ -71,7 +73,7 @@ void fatal(const char *file, const char *func, int line,
 {
   va_list vl;
 
-  fl_msg_header('X', file, func, line);
+  fl_msg_header('X', ANSI_HRED, file, func, line);
 
   va_start(vl, format);
   vfprintf(stderr, format, vl);
@@ -88,7 +90,7 @@ void nonfatal(const char *file, const char *func, int line,
 {
   va_list vl;
 
-  fl_msg_header('!', file, func, line);
+  fl_msg_header('!', ANSI_HYELLOW, file, func, line);
 
   va_start(vl, format);
   vfprintf(stderr, format, vl);
@@ -110,7 +112,7 @@ void notify(const char *file, const char *func, int line,
   va_list vl;
 
   if (print_notify_headers) {
-    fl_msg_header('.', file, func, line);
+    fl_msg_header('.', ANSI_BLUE, file, func, line);
   }
 
   va_start(vl, format);
@@ -137,22 +139,29 @@ char *tsprintf(const char *format, ...) {
 }
 
 void percent_indicator(const char *what, uint64 numerator, uint64 denominator) {
-  char buf[51];
-  int percent = (int)(numerator * 100 / denominator);
+  char buf[80];
+  int length = 50;
   int i = 0;
-  
-  for (i = 0; i < percent * (sizeof(buf)-1) / 100; i++) {
-    buf[i] = '#';
-  }
-  for (; i < sizeof(buf) - 1; i++) {
-    buf[i] = '.';
-  }
 
-  buf[i] = '\0';
-
-  fprintf(stderr, ANSI_BLUE"STATUS: [%s] %02d%% %s"ANSI_CLEAR"\r",
-      buf, percent, what);
   if (numerator == denominator) {
-    fprintf(stderr, "\n");
+    for (; i < sizeof(buf) - 1; i++) {
+      buf[i] = ' ';
+    }
+    buf[i] = '\0';
+    fprintf(stderr, "%s\r", buf);
+  } else {
+    int percent = (int)(numerator * 100 / denominator);
+    
+    for (i = 0; i < percent * length / 100; i++) {
+      buf[i] = '#';
+    }
+    for (; i < length; i++) {
+      buf[i] = '.';
+    }
+
+    buf[i] = '\0';
+
+    fprintf(stderr, ANSI_BLUE"STATUS: [%s] %02d%% %s"ANSI_CLEAR"\r",
+        buf, percent, what);
   }
 }

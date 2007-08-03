@@ -82,7 +82,7 @@ class ThreadedDualTreeSolver {
       CacheArray<typename GNP::RPoint> *r_points_array_in,
       CacheArray<typename GNP::RNode> *r_nodes_array_in,
       CacheArray<typename GNP::QResult> *q_results_array_in) {
-    index_t n_threads = fx_param_int(module, "n_threads", 1);
+    index_t n_threads = fx_param_int(module, "n_threads", 2);
     index_t n_grains = fx_param_int(module, "n_grains",
         n_threads == 1 ? 1 : (n_threads * 3));
     SimpleWorkQueue<typename GNP::QNode> simple_work_queue;
@@ -252,7 +252,7 @@ void RpcDualTree(
     RTree *r,
     DistributedCache *q_results,
     typename GNP::GlobalResult **global_result) {
-  int n_threads = fx_param_int(module, "n_threads", 1);
+  int n_threads = fx_param_int(module, "n_threads", 2);
   RemoteWorkQueueBackend *work_backend = NULL;
   WorkQueueInterface *work_queue;
 
