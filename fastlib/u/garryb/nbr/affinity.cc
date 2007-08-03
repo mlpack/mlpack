@@ -480,7 +480,8 @@ class AffinityRho {
 
   struct PairVisitor {
    public:
-    double rho;
+    double prho;
+    double arho;
 
    public:
     void Init(const Param& param) {}
@@ -494,7 +495,7 @@ class AffinityRho {
       if (sim_hi < r_node.stat().alpha.lo) {
         return false;
       } else {
-        rho = 0;
+        prho = arho = 0;
         return true;
       }
     }
@@ -504,13 +505,14 @@ class AffinityRho {
       double responsibility =
           AffinityCommon::Helpers::Similarity(q.vec(), r.vec())
           - r.info().alpha.get(q_index);
-      rho += (responsibility + fabs(responsibility));
+      prho += responsibility;
+      arho += fabs(responsibility);
     }
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
         const RNode& r_node, const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
-      q_result->rho += rho / 2;
+      q_result->rho += (prho + arho) / 2;
     }
   };
 
@@ -623,11 +625,19 @@ struct ApplyRhos {
     double old_rho = point->info().rho;
     double new_rho = damp(param->lambda, old_rho, result->rho);
     bool was_exemplar = (old_rho > 0);
+    bool wants_exemplar = (result->rho > 0);
+
+    if (was_exemplar != wants_exemplar) {
+      // if exemplar status is trying to change, damp it again
+      // (because when a point changes exemplar status it invokes a chain
+      // reaction causing other points to change).  but, damp it randomly,
+      // as a form of symmetry-breaking
+      new_rho = damp(math::Random(0.0, 1.0), old_rho, new_rho);
+    }
+
     bool now_exemplar = (new_rho > 0);
 
     if (was_exemplar != now_exemplar) {
-      // damp it again if it changed sign, but randomly
-      new_rho = damp(math::Random(0.0, 1.0), old_rho, new_rho);
       n_changed++;
     }
 
@@ -694,7 +704,6 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   const int ALPHA_CHANNEL = 350;
   const int RHO_CHANNEL = 360;
   const int REDUCE_CHANNEL = 370;
-  const int BARRIER_CHANNEL = 380;
   const int DONE_CHANNEL = 390;
   int stable_iterations = 0;
 
@@ -783,7 +792,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
       } else {
         stable_iterations = 0;
       }
-      done.SetData(stable_iterations >= 10);
+      done.SetData(stable_iterations >= 16);
     }
 
     done.Doit(DONE_CHANNEL);
