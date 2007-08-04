@@ -1426,19 +1426,19 @@ MFCC features}{8cm}
 \label{proposed}
 
 The goal of this thesis is to make kernel methods scalable.
-Efficient computation of the kernel matrix for large amounts of
+Efficient computation of the kernel matrix for large volumes of
 data. Special emphasis is given in high dimensional data $d>30$. One
 of the goals is to use Kernel PCA for unfolding the speech manifold.
 In other words estimate the intrinsic dimensionality of speech by
 using big databases like timit, wall street journal and broadcast
 news. Implicitly dimensionality reduction will lead to new feature
-generation we will explain it in the following sections. The
-ultimate goal is to do speech recognition by nearest neighbor
-search.
+generation . The ultimate goal is to use these new features along
+with kd-trees do speech recognition by nearest neighbor search.
 
-\subsection{Customized Kernels} As we described in the previous
-section there are infinite functions that can act as valid kernels.
-The most popular kernels are:
+\subsection{Customized Kernels}
+
+As we described in the previous section there are infinite functions
+that can act as valid kernels. The most popular kernels are:
 \begin{enumerate}
   \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
   \item The polynomial kernel $k(x, y)=(xy)^n$
@@ -1453,9 +1453,9 @@ want to map data in higher dimensional spaces preserving distances
 smaller and send high distances to infinity (clustering). The
 gaussian kernel for example tends to behave better in clustering
 since it fades out very quickly. On the other hand it fails to
-unfold the data manifold so that the intrinsic dimension can be
-estimated. Manifold unfolding is a very important procedure since it
-can reveal the true dimension of the dataset.
+unfold the data manifold properly so that the intrinsic dimension
+can be estimated. Manifold unfolding is a very important procedure
+since it can reveal the true dimension of the dataset.
 
 In [?] the authors introduced the idea of building the kernel matrix
 from scratch without using any fixed kernel. As we have already
@@ -1465,9 +1465,46 @@ point. So at first we have to connect points to their neighbors and
 build a initialize the non zero values of the matrix to 1. Then we
 maximize the trace of the kernel matrix under the constraint that
 the the distances in the kernel matrix are preserved. This leads to
-a semidefinite programming problem.
+a semidefinite programming problem. Here is the algorithm they
+suggest:
 
+\fbox{
+\begin{minipage}[c]{0.6\linewidth}
+  Maximize $Trace(K)$ subject to:
+\begin{enumerate}
+  \item $K \geq 0$
+  \item $\sum_{i=1}^{N}\sum_{j=1}^{N} K_{ij}=0$
+  \item $K_{ii}+K_{jj}-K_{ij}-K_{ji}=G_{ii}+G_{jj}-G_{ij}-G_{ji}$
+  for all $i, j$ such that  i point is in the  neighborhood of j point
+\end{enumerate}
+\end{minipage}
+}
 
+where $K$ is the kernel matrix, $G$ is the linear kernel matrix,
+$G_{ij}=x_i x_j^T, x_i,x_j\in \Re^d$ and
+$Trace(K)=\sum_{i=0}^{N}K_{ii}$
+
+This is a typical semidefinite programming problem it can also be
+posed as
+
+\fbox{
+\begin{minipage}[c]{0.6\linewidth}
+maximize $Trace(K)$
+\begin{itemize}
+  \item subject to $Trace(F_iK)=c_i, i=1,\dots,kN$
+  \item $K\geq 0$
+\end{itemize}
+where $F_i$ is a positive semidefinite matrix and in this case
+\begin{itemize}
+  \item $F_0=\mathbf{1}$, where $\mathbf{1}$ is an $NxN$ matrix filled
+  with ones,
+  \item $F_i$ is a sparse matrix with nonzero values (set to 1)
+  the $\{n, n\}, \{m,m\}, \{n, m\}, \{m, n\}$ elements. In other words
+  $F_i$ represents the link between the $n$ point and its neighbor $m$
+  \item $c_i =G_{ii}+G_{jj}-G_{ij}-G_{ji}$
+\end{itemize}
+\end{minipage}
+}
 
 \subsection{Fast kernel summation with trees} Kernel summation is
 on of the most common tasks in kernel methods. The general formula
