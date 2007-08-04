@@ -1,4 +1,4 @@
-This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5) (preloaded format=latex 2007.2.26)  4 AUG 2007 10:38
+This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5) (preloaded format=latex 2007.2.26)  4 AUG 2007 12:12
 entering extended mode
 **D:/nick/fastlib/u/nvasil/docs/proposal/proposal.tex
 (D:\nick\fastlib\u\nvasil\docs\proposal\proposal.tex
@@ -728,15 +728,21 @@ File: ntimit_pca.eps Graphic file (type eps)
 File: kernel_pca.eps Graphic file (type eps)
  <kernel_pca.eps>
 Section 4.
-[32] [33] [34] [35]
+[32] [33]
+Underfull \hbox (badness 2229) in paragraph at lines 1511--1511
+[]$\OML/txmi/m/it/12 F[]$ \OT1/txr/m/n/12 is a sparse ma-trix with nonzero val-
+ues (set to 1) the
+ []
+
+[34] [35] [36] [37]
 Section 5.
-[36]
+[38]
 ******** Body Ends ********
 ******** EndMatter Begins ********
-[37] [38] [39] [40] [41]
+[39] [40] [41] [42] [43]
 Appendix A.
 ***************** References ******************
-[42
+[44
 
 ] (proposal.bbl
 
@@ -744,7 +750,7 @@ LaTeX Warning: Empty ``thebibliography'' environment on input line 3.
 
 )
 ******** EndMatter Ends ********
-[43
+[45
 
 
 ] (proposal.aux)
@@ -754,11 +760,11 @@ LaTeX Warning: There were undefined references.
  ) 
 Here is how much of TeX's memory you used:
  5504 strings out of 95420
- 70450 string characters out of 1187320
- 136048 words of memory out of 1128484
+ 70456 string characters out of 1187320
+ 136051 words of memory out of 1128487
  8260 multiletter control sequences out of 60000
  29797 words of font info for 91 fonts, out of 1000000 for 2000
  14 hyphenation exceptions out of 8191
  34i,9n,42p,795b,515s stack positions out of 5000i,500n,10000p,200000b,32768s
 
-Output written on proposal.dvi (48 pages, 187720 bytes).
+Output written on proposal.dvi (50 pages, 196244 bytes).
