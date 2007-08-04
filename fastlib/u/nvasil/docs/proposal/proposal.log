@@ -1,4 +1,4 @@
-This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5) (preloaded format=latex 2007.2.26)  2 AUG 2007 20:10
+This is pdfeTeX, Version 3.141592-1.30.6-2.2 (MiKTeX 2.5) (preloaded format=latex 2007.2.26)  4 AUG 2007 10:38
 entering extended mode
 **D:/nick/fastlib/u/nvasil/docs/proposal/proposal.tex
 (D:\nick\fastlib\u\nvasil\docs\proposal\proposal.tex
@@ -728,15 +728,15 @@ File: ntimit_pca.eps Graphic file (type eps)
 File: kernel_pca.eps Graphic file (type eps)
  <kernel_pca.eps>
 Section 4.
-[32] [33] [34]
+[32] [33] [34] [35]
 Section 5.
-[35]
+[36]
 ******** Body Ends ********
 ******** EndMatter Begins ********
-[36] [37] [38] [39] [40]
+[37] [38] [39] [40] [41]
 Appendix A.
 ***************** References ******************
-[41
+[42
 
 ] (proposal.bbl
 
@@ -744,7 +744,7 @@ LaTeX Warning: Empty ``thebibliography'' environment on input line 3.
 
 )
 ******** EndMatter Ends ********
-[42
+[43
 
 
 ] (proposal.aux)
@@ -753,12 +753,12 @@ LaTeX Warning: There were undefined references.
 
  ) 
 Here is how much of TeX's memory you used:
- 5502 strings out of 95420
- 70422 string characters out of 1187320
- 136049 words of memory out of 1128485
- 8258 multiletter control sequences out of 60000
- 28619 words of font info for 89 fonts, out of 1000000 for 2000
+ 5504 strings out of 95420
+ 70450 string characters out of 1187320
+ 136048 words of memory out of 1128484
+ 8260 multiletter control sequences out of 60000
+ 29797 words of font info for 91 fonts, out of 1000000 for 2000
  14 hyphenation exceptions out of 8191
  34i,9n,42p,795b,515s stack positions out of 5000i,500n,10000p,200000b,32768s
 
-Output written on proposal.dvi (47 pages, 184264 bytes).
+Output written on proposal.dvi (48 pages, 187720 bytes).
