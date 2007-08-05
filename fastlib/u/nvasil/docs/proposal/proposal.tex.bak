@@ -1468,6 +1468,8 @@ the the distances in the kernel matrix are preserved. This leads to
 a semidefinite programming problem. Here is the algorithm they
 suggest:
 
+\vspace{1cm}
+
 \fbox{
 \begin{minipage}[c]{0.6\linewidth}
   Maximize $Trace(K)$ subject to:
@@ -1480,70 +1482,265 @@ suggest:
 \end{minipage}
 }
 
+\vspace{1cm}
+
 where $K$ is the kernel matrix, $G$ is the linear kernel matrix,
-$G_{ij}=x_i x_j^T, x_i,x_j\in \Re^d$ and
-$Trace(K)=\sum_{i=0}^{N}K_{ii}$
+$G_{ij}=x_i x_j^T,\quad x_i,x_j\in \Re^d$ and
+$Trace(K)=\sum_{i=0}^{N}K_{ii}$.
 
 This is a typical semidefinite programming problem it can also be
 posed as
 
 \fbox{
-\begin{minipage}[c]{0.6\linewidth}
+\begin{minipage}[c]{0.8\linewidth}
 maximize $Trace(K)$
 \begin{itemize}
-  \item subject to $Trace(F_iK)=c_i, i=1,\dots,kN$
+  \item subject to $Trace(F_nK)=c_n, n=1,\dots,kN$
   \item $K\geq 0$
 \end{itemize}
 where $F_i$ is a positive semidefinite matrix and in this case
-$F_0=\mathbf{1}, F_{ki+j}=\mathbf{0}+ \{i,j\}=1, c_i
-=G_{ii}+G_{jj}-G_{ij}-G_{ji}$
+\begin{itemize}
+  \item $F_0=\mathbf{1}$, where $\mathbf{1}$ is an $NxN$ matrix filled
+  with ones,
+  \item $F_n$ is a sparse matrix with nonzero values (set to 1)
+  the $\{i, j\}, \{j,j\}, \{i, j\}, \{j, i\}$ elements. In other words
+  $F_n$ represents the link between the $n$ point and its neighbor $m$
+  \item $c_n =G_{ii}+G_{jj}-G_{ij}-G_{ji}$
+\end{itemize}
 \end{minipage}
 }
+
+\vspace{1cm}
+
+The inventors of this method named it Semidefinite PCA (SDPCA),
+which is the term we will use form now on.
+
+\subsubsection{Speeding up SDPCA}
+Semidefinite problems are solved with the interior point method. The
+basic concept of interior point method is to build a barrier
+function that penalize solutions that violate the inequality
+constraints. The ideal function would be:
+
+\begin{equation}
+I_{-}(u)= \left\{
+               \begin{array}{cc}
+                 0    & u\leq 0 \\
+                 \infty & u>0
+                \end{array}
+          \right.
+\end{equation}
+
+
+It turns out that a good approximation of this functions is
+
+\begin{equation}
+\hat{I_{-}(u)} = -\frac{1}{t}\log(-u), u\leq 0,
+\end{equation}
+
+It turns out that
+
+\begin{equation}
+\lim_{t\rightarrow \inf} \hat{I_{-}} = I_{-}
+\end{equation}
+
+It turns out that a good barrier function for Semidefinite
+programming is
+\begin{equation}
+\phi(x)=\log \det(K)
+\end{equation}
+
+At this stage here it is important to mention that there is a dual
+form of the semidefinite programming posed above which eliminates
+the equality constraint:
+
+\vspace{1cm}
+
+\fbox{
+\begin{minipage}[c]{0.6\linewidth}
+ minimize $c^Tx$ \\
+ subject to $F(x)=x_0F_0(x)+x_1F_1+\dots+x_nF_n+I\leq 0$
+ \end{minipage}
+ }
+
+\vspace{1cm}
+
+The barrier function for this form is
+
+\begin{equation}
+\phi(x)=\frac{1}{t}\log\det(-F(x)^{-1})
+\end{equation}
+
+The nice of this function is that the gradient has the form:
+
+\begin{equation}
+\frac{\partial\phi(x)}{\partial x_{n}} = Trace(-F(x)^{-1}F_n)
+\end{equation}
+
+The function that we want to minimize including the barrier
+(penalty) function is
+
+\begin{equation}
+f(x)=c^Tx+\phi(x)
+\end{equation}
+
+and the derivative:
+
+\begin{equation}
+\frac{\partial f(x_n)}{\partial x_{n}} = c_n
++\frac{1}{t}Trace(-F(x)^{-1}F_n)
+\end{equation}
+
+If we follow a gradient descent method then we need to compute at
+every iteration $F(x)^{-1}$ since the update of x will be given by
+
+\begin{equation}
+x_{n}^{new}=x_{n}^{old}+\lambda (c_n
++\frac{1}{t}Trace(-F(x)^{-1}F_n)
+\end{equation}
+
+where $\lambda$ is the learning rate.
+
+There are two approaches on that:
+\begin{enumerate}
+  \item Compute $F(x)^{-1}$ once and then do the updates directly on
+  $F(x)^{-1}$ using the approximation $(F+ \sigma^2\partial F)^{-1}
+  = F^{-1} + \sigma^2 F^{-1}\partial F F^{-1}$, provided $\sigma^2$
+  is smaller compared to the Frobenius norms of $Q, \partial F$
+  \item As we can see there is no need to compute all the elements
+  of $F(x)^{-1}$ since only the trace of $F(x)^{-1}F_n$ is required.
+  This means that for every $n$ only a few columns of $F(x)^{-1}$
+  are required. They can be computed very quickly by the conjugate
+  gradient method which is specially designed for sparse positive
+  definite matrices. This is also a stochastic gradient approach as
+  we show next.
+\end{enumerate}
 
 \subsection{Fast kernel summation with trees} Kernel summation is
 on of the most common tasks in kernel methods. The general formula
 \begin{equation}
 \label{kernel_sum}
-  G(x)=\sum_{q=0}^{N} w_i\exp(\frac{(x-x_q)^2}{\sigma^2})
+  G(x)=\sum_{r=0}^{N} w_i e^{-\frac{||x-x_r||}{\sigma^2}}
 \end{equation}
 
 appears in many cases, with the most interesting case the
 eigenvalue/eigenvector computation. The kernel summation is a very
-computationally intensive. For Gaussian kernels there are
+computationally intensive task. For Gaussian kernels there are
 approximations that can speed up computations orders of magnitude.
 We will briefly discuss them here. Besides computation saving we can
 save memory as well. The gaussian kernel has infinite support so the
-kernel matrix $K, K(x,y)=\exp(\frac{(x-y)^2}{\sigma^2}$ is not
+kernel matrix $K, K(x,y)=e^{-\frac{||x-y||}{\sigma^2}}$ is not
 sparse. Numerical iterative methods for eigenvector computation are
-based on the general iteration $x_n=x_{n-1}+\lambda Kx_{n-1}$, where
-the multiplication of each row of $K$ with $x_{n-1}$ is a kernel
+based on the general iteration $w^n=w^{n-1}+\lambda Kw^{n-1}$, where
+the multiplication of each row of $K$ with $w^{n-1}$ is a kernel
 summation problem. So we don't really need to store the kernel
 matrix, we just have to compute the kernel sum for every row using
-$x_{n-1}$ as a the wight vector.
+$w^{n-1}$ as a the weight vector. The term $Kw^{n-1}$ can be
+expanded as
+
+\begin{equation}
+K_i\footnote{$K_i$ is the $ith$ row of the K matrix} w^{n-1} =
+\sum_{j=1}^{N} K(i,j) w^{n-1}_{j}
+\end{equation}
+
+which is the gaussian summation if we replace $K(i,j)$ with the
+Gaussian kernel
+\begin{equation}
+\sum_{j=1}^{N}w^{n-1}_j  e^{-\frac{||x_i-x_j||}{\sigma^2}}
+\end{equation}
+
+\subsubsection{Gaussian Kernel factorization}
+In general the kernel computation speedup is achieved by factorizing
+the kernel in the form
+\begin{equation}
+k(x_r, x_q)=\sum_{k=1}^{p}\Phi_k(x_r)\Psi_k(x_q)+error
+\end{equation}
+Assuming that $x_r$ stands for the reference points and $x_q$ for
+the query points, the terms that depend on the reference point can
+be precomputed and be used for every query point. This essentially
+reduces the computational complexity to $O(pN+pM)$, where $N$ is the
+number of reference points and $M$ is the number of query points.
+
+\paragraph{Factorization with Hermite Polynomials}
 
 The gaussian can be approximated with the help of Hermite
 polynomials. The Hermite polynomials $H_n(t)$ are defined by the
 Rodrigues formula:
 \begin{equation}
-  H_n(t)=(-1)^n\exp(t^2)D^n\exp(-t^2), t\in \Re
+  H_n(t)=(-1)^ne^{t^2}D^n e^{-t^2}, t\in \Re
 \end{equation}
-where $D=d/dt$.
+where $D=\frac{d}{dt}$.
 
 The gaussian can now be expressed as
 \begin{equation}
-\exp^(-(t-s)^2)=\sum_{n=0}^{\inf}\frac{s^n}{n!}h_n(t)
+e^{-(t-s)^2}=\sum_{n=0}^{\infty}\frac{s^n}{n!}h_n(t)
 \end{equation}
 
 where $h_n(t)$ is defined by
 \begin{equation}
-h_n(t)=\exp(-t^2)H_n(t).
+h_n(t)=e^{-t^2}H_n(t).
 \end{equation}
 
+Eventually the Gaussian summation
+\begin{equation}
+G(x_q)=\sum_{i=1}^{N}w_i e^{-\frac{||x_r-x_q||}{\sigma^2}}
+\end{equation}
+
+can be expressed as
+\begin{equation}
+  G(x_q)=\sum_{\alpha\geq 0} A_{\alpha} h_{\alpha}
+  \left(\frac{x_r-x_0}{\sigma}\right)
+\end{equation}
+
+where
+
+\begin{equation}
+  A_{\alpha} = \frac{1}{\alpha!}
+  \sum_{r=1}^{N}w_r\left(\frac{x_r-x_0}{\sigma}\right)
+\end{equation}
+
+The error $E_H(p)$ due to truncating the series after $p^d$ terms os
+bounded by
+
+\begin{equation}
+|E_H(p)|\leq (1.09)d\left(\frac{1}{p!}\right)^{\frac{d}{2}}
+\left(\frac{\epsilon^{p+1}}{1-\epsilon}\right)^d
+\end{equation}
+
+The basic problem of this method and essentially of any analytical
+factorization method that we know is that the error bound grows
+exponentially to the dimension.
+
+Moreover there is another issue. Let's say we want to compute Kernel
+PCA. The goal of KPCA or any other spectral method is to find the
+eigen-spectrum of a kernel matrix
+
+\begin{equation}
+K = \sum_{i=1}^{N}\lambda_i ww^T
+\end{equation}
+or to be more specific the $(i, j)$ element of the kernel matrix
+\begin{equation}
+k(i,j)=\sum_{i=1}^{N}\lamba_i w_i w_j
+\end{equation}
+
+and since $i$ corresponds to point $x$ and $j$ corresponds to $y$
+then we can rewrite it as
+
+\begin{equation}
+k(x,y)=\sum_{i=1}^{N}w(x)w(y)
+\end{equation}
+
+where $w(x)$ is the $ith$ element of $w$ and $w(y)$ the $jth$ of $w$
+It turns out that  Kernel PCA does the same thing with analytic
+kernel factorization, with the difference that the factorization on
+KPCA is done on a lower dimension since the kernel matrix is
+evaluated on the data that lie on a lower dimensional manifold.
+
+So there is no point in using analytic kernel expansion methods when
+dealing with high dimensional data to speed up KPCA since we do many
+redundant computations.
+
+
 \subsection{Computing Gaussian Kernel Matrix with trees}
-Direct computation of the kernel(Gaussian) kernel leads to a
-non-sparse matrix. There is a way though to compute the
-inverse/eigenvalues without explicitly computing the kernel matrix.
-Several optimizations can be done for high dimensions
 
 
 \subsection{Speech recognition with nearest neighbor search}
