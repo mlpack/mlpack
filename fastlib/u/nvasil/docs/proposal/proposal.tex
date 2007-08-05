@@ -1619,46 +1619,160 @@ There are two approaches on that:
 on of the most common tasks in kernel methods. The general formula
 \begin{equation}
 \label{kernel_sum}
-  G(x)=\sum_{q=0}^{N} w_i\exp(\frac{(x-x_q)^2}{\sigma^2})
+  G(x)=\sum_{r=0}^{N} w_i e^{-\frac{||x-x_r||}{\sigma^2}}
 \end{equation}
 
 appears in many cases, with the most interesting case the
 eigenvalue/eigenvector computation. The kernel summation is a very
-computationally intensive. For Gaussian kernels there are
+computationally intensive task. For Gaussian kernels there are
 approximations that can speed up computations orders of magnitude.
 We will briefly discuss them here. Besides computation saving we can
 save memory as well. The gaussian kernel has infinite support so the
-kernel matrix $K, K(x,y)=\exp(\frac{(x-y)^2}{\sigma^2}$ is not
+kernel matrix $K, K(x,y)=e^{-\frac{||x-y||}{\sigma^2}}$ is not
 sparse. Numerical iterative methods for eigenvector computation are
-based on the general iteration $x_n=x_{n-1}+\lambda Kx_{n-1}$, where
-the multiplication of each row of $K$ with $x_{n-1}$ is a kernel
+based on the general iteration $w^n=w^{n-1}+\lambda Kw^{n-1}$, where
+the multiplication of each row of $K$ with $w^{n-1}$ is a kernel
 summation problem. So we don't really need to store the kernel
 matrix, we just have to compute the kernel sum for every row using
-$x_{n-1}$ as a the wight vector.
+$w^{n-1}$ as a the weight vector. The term $Kw^{n-1}$ can be
+expanded as
+
+\begin{equation}
+K_i\footnote{$K_i$ is the $ith$ row of the K matrix} w^{n-1} =
+\sum_{j=1}^{N} K(i,j) w^{n-1}_{j}
+\end{equation}
+
+which is the gaussian summation if we replace $K(i,j)$ with the
+Gaussian kernel
+\begin{equation}
+\sum_{j=1}^{N}w^{n-1}_j  e^{-\frac{||x_i-x_j||}{\sigma^2}}
+\end{equation}
+
+\subsubsection{Gaussian Kernel factorization}
+In general the kernel computation speedup is achieved by factorizing
+the kernel in the form
+\begin{equation}
+k(x_r, x_q)=\sum_{k=1}^{p}\Phi_k(x_r)\Psi_k(x_q)+error
+\end{equation}
+Assuming that $x_r$ stands for the reference points and $x_q$ for
+the query points, the terms that depend on the reference point can
+be precomputed and be used for every query point. This essentially
+reduces the computational complexity to $O(pN+pM)$, where $N$ is the
+number of reference points and $M$ is the number of query points.
+
+\paragraph{Factorization with Hermite Polynomials}
 
 The gaussian can be approximated with the help of Hermite
 polynomials. The Hermite polynomials $H_n(t)$ are defined by the
 Rodrigues formula:
 \begin{equation}
-  H_n(t)=(-1)^n\exp(t^2)D^n\exp(-t^2), t\in \Re
+  H_n(t)=(-1)^ne^{t^2}D^n e^{-t^2}, t\in \Re
 \end{equation}
-where $D=d/dt$.
+where $D=\frac{d}{dt}$.
 
 The gaussian can now be expressed as
 \begin{equation}
-\exp^(-(t-s)^2)=\sum_{n=0}^{\inf}\frac{s^n}{n!}h_n(t)
+e^{-(t-s)^2}=\sum_{n=0}^{\infty}\frac{s^n}{n!}h_n(t)
 \end{equation}
 
 where $h_n(t)$ is defined by
 \begin{equation}
-h_n(t)=\exp(-t^2)H_n(t).
+h_n(t)=e^{-t^2}H_n(t).
 \end{equation}
 
-\subsection{Computing Gaussian Kernel Matrix with trees}
-Direct computation of the kernel(Gaussian) kernel leads to a
-non-sparse matrix. There is a way though to compute the
-inverse/eigenvalues without explicitly computing the kernel matrix.
-Several optimizations can be done for high dimensions
+Eventually the Gaussian summation
+\begin{equation}
+G(x_q)=\sum_{i=1}^{N}w_i e^{-\frac{||x_r-x_q||}{\sigma^2}}
+\end{equation}
+
+can be expressed as
+\begin{equation}
+  G(x_q)=\sum_{\alpha\geq 0} A_{\alpha} h_{\alpha}
+  \left(\frac{x_r-x_0}{\sigma}\right)
+\end{equation}
+
+where
+
+\begin{equation}
+  A_{\alpha} = \frac{1}{\alpha!}
+  \sum_{r=1}^{N}w_r\left(\frac{x_r-x_0}{\sigma}\right)
+\end{equation}
+
+The error $E_H(p)$ due to truncating the series after $p^d$ terms os
+bounded by
+
+\begin{equation}
+|E_H(p)|\leq (1.09)d\left(\frac{1}{p!}\right)^{\frac{d}{2}}
+\left(\frac{\epsilon^{p+1}}{1-\epsilon}\right)^d
+\end{equation}
+
+The basic problem of this method and essentially of any analytical
+factorization method that we know is that the error bound grows
+exponentially to the dimension.
+
+Moreover there is another issue. Let's say we want to compute Kernel
+PCA. The goal of KPCA or any other spectral method is to find the
+eigen-spectrum of a kernel matrix
+
+\begin{equation}
+K = \sum_{i=1}^{N}\lambda_i ww^T
+\end{equation}
+or to be more specific the $(i, j)$ element of the kernel matrix
+\begin{equation}
+k(i,j)=\sum_{i=1}^{N}\lambda_i w_i w_j
+\end{equation}
+
+and since $i$ corresponds to point $x$ and $j$ corresponds to $y$
+then we can rewrite it as
+
+\begin{equation}
+k(x,y)=\sum_{i=1}^{N}w(x)w(y)
+\end{equation}
+
+where $w(x)$ is the $ith$ element of $w$ and $w(y)$ the $jth$ of $w$
+It turns out that  Kernel PCA does the same thing with analytic
+kernel factorization, with the difference that the factorization on
+KPCA is done on a lower dimension since the kernel matrix is
+evaluated on the data that lie on a lower dimensional manifold.
+
+So there is no point in using analytic kernel expansion methods when
+dealing with high dimensional data to speed up KPCA since we do many
+redundant computations.
+
+
+\subsubsection{Computing Gaussian Kernel Matrix with trees}
+Instead of using analytic kernel expansion we revert to the original
+idea of fast kernel summation. The initial approach to fast kernel
+summation with trees was based on a nearest neighbor approach. Find
+the range-$\epsilon$ nearest neighbors for the query point, evaluate
+the kernel on them and sum. This method scales better than analytic
+kernel factorization since it depends on the nearest neighbor
+algorithm which depends on the intrinsic dimensionality and not on
+the extrinsic.
+
+An interesting issue on KPCA that hasn't really been touched is the
+effect of the truncation error on the Kernel matrix by setting all
+the values less than $k(\epsilon)$ to zero. After searching the
+literature it was found that there is an implicit method to find it.
+
+Assume $K$ the exact kernel matrix which is positive definite matrix
+and $\tilde{K}=K+E$ the perturbed matrix. Then let $\lambda_i$ be
+the eigenvalues of $K$ and $\tilde{\lambda}_i$ the eigenvalues of
+$\tilde{K}$. It turns out that
+
+\begin{equation}
+\sqrt{\sum_{i=1}^{N}(\lambda_i-\tilde{\lambda}_i)^2}\leq ||E||_F
+\end{equation}
+
+where $||E||_F=\sqrt{\sum_{i=1}^{N}\sum_{j=1}^{N}e_{ij}^2}$, is the
+Frobenious norm of $E$
+
+So we need a good estimate of $||E||_F$. A simple approach would be
+to set all nonzero elements of $E$ which are the zero elements of
+$K$ as $k(\epsilon)$.  An open problem is to estimate a better bound
+for the kernel sum of the furthest neighbors. Trees can give  a good
+estimate on that, by just getting information from the bounding
+boxes that are pruned.
 
 
 \subsection{Speech recognition with nearest neighbor search}
