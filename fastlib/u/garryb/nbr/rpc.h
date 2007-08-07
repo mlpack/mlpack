@@ -4,8 +4,8 @@
  * Remote procedure call support for FASTlib.  Yay!
  */
 
-#ifndef NBR_RPC_H
-#define NBR_RPC_H
+#ifndef THOR_RPC_H
+#define THOR_RPC_H
 
 #include "blockdev.h"
 

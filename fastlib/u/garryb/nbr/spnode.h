@@ -30,7 +30,7 @@
  */
 template<class TBound, class TStat,
          int t_cardinality = 2>
-class SpNode {
+class ThorNode {
  public:
   typedef TBound Bound;
   typedef TStat Stat;
@@ -50,7 +50,7 @@ class SpNode {
 
   index_t children_[t_cardinality];
   
-  OT_DEF(SpNode) {
+  OT_DEF(ThorNode) {
     OT_MY_OBJECT(begin_);
     OT_MY_OBJECT(count_);
     OT_MY_OBJECT(bound_);
@@ -59,13 +59,13 @@ class SpNode {
   }
   
  public:
-  SpNode() {
+  ThorNode() {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
     mem::DebugPoison(children_, t_cardinality);
   }
 
-  ~SpNode() {
+  ~ThorNode() {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
     mem::DebugPoison(children_, t_cardinality);
@@ -153,7 +153,7 @@ class SpNode {
 /**
  * A skeleton of a huge tree.
  *
- * The skeleton is just a pointer-type version of SpNode, though it's too
+ * The skeleton is just a pointer-type version of ThorNode, though it's too
  * space-inefficient to use as a tree itself since it wastes space on
  * indices.  Instead, this begins as the root of a cached tree and can be
  * expanded on demand.
@@ -162,8 +162,8 @@ class SpNode {
  * instance for .
  */
 template<typename TNode, typename TInfo>
-class SpSkeletonNode {
-  FORBID_COPY(SpSkeletonNode); // TODO: otrav might provide a copy constructor
+class ThorSkeletonNode {
+  FORBID_COPY(ThorSkeletonNode); // TODO: otrav might provide a copy constructor
 
  public:
   typedef TNode Node;
@@ -174,10 +174,10 @@ class SpSkeletonNode {
   index_t end_index_;
   Info info_;
   Node node_;
-  SpSkeletonNode *parent_;
-  SpSkeletonNode *children_[Node::CARDINALITY];
+  ThorSkeletonNode *parent_;
+  ThorSkeletonNode *children_[Node::CARDINALITY];
 
-  OT_DEF(SpSkeletonNode) {
+  OT_DEF(ThorSkeletonNode) {
     OT_MY_OBJECT(index_);
     OT_MY_OBJECT(info_);
     OT_MY_OBJECT(node_);
@@ -186,11 +186,11 @@ class SpSkeletonNode {
     }
   }
 
-  OT_FIX(SpSkeletonNode) {
+  OT_FIX(ThorSkeletonNode) {
     parent_ = NULL;
     
     for (int k = 0; k < Node::CARDINALITY; k++) {
-      SpSkeletonNode *c = children_[k];
+      ThorSkeletonNode *c = children_[k];
       if (c) {
         c->parent_ = this;
       }
@@ -208,9 +208,9 @@ class SpSkeletonNode {
    * @param index_in the index of the node in the tree
    * @param parent_in the parent node, or NULL if this is the root
    */
-  SpSkeletonNode(const Info& info_in, CacheArray<Node> *array,
+  ThorSkeletonNode(const Info& info_in, CacheArray<Node> *array,
       index_t node_index_in, index_t end_index_in,
-      SpSkeletonNode *parent_in = NULL)
+      ThorSkeletonNode *parent_in = NULL)
         : index_(node_index_in)
         , end_index_(end_index_in)
         , info_(info_in)
@@ -221,7 +221,7 @@ class SpSkeletonNode {
       children_[k] = NULL;
     }
   }
-  ~SpSkeletonNode() {
+  ~ThorSkeletonNode() {
     for (int k = 0; k < Node::CARDINALITY; k++) {
       if (children_[k] != NULL) {
         delete children_[k];
@@ -247,7 +247,7 @@ class SpSkeletonNode {
   bool is_leaf() const {
     return node_.is_leaf();;
   }
-  SpSkeletonNode *parent() const {
+  ThorSkeletonNode *parent() const {
     return parent_;
   }
   bool is_root() const {
@@ -260,7 +260,7 @@ class SpSkeletonNode {
     return node_.count();
   }
 
-  void set_child(int k, SpSkeletonNode *child) {	
+  void set_child(int k, ThorSkeletonNode *child) {	
     DEBUG_ASSERT(child->parent_ == NULL);
     DEBUG_ASSERT(children_[k] == NULL);
     DEBUG_ASSERT(node_.child(k) == child->index());
@@ -275,7 +275,7 @@ class SpSkeletonNode {
    *        already in the skeleton tree
    * @param k child number (k.e. 0 for left and 1 for right)
    */
-  SpSkeletonNode *GetChild(CacheArray<Node> *array, int k) {
+  ThorSkeletonNode *GetChild(CacheArray<Node> *array, int k) {
     if (children_[k] == NULL && !node_.is_leaf()) {
       index_t child_end_index; // compute end index based on pre-order
       if (k + 1 == Node::CARDINALITY) {
@@ -283,7 +283,7 @@ class SpSkeletonNode {
       } else {
         child_end_index = node_.child(k+1);
       }
-      children_[k] = new SpSkeletonNode(info_, array, node_.child(k),
+      children_[k] = new ThorSkeletonNode(info_, array, node_.child(k),
           child_end_index, this);
     }
     return children_[k];
@@ -297,7 +297,7 @@ class SpSkeletonNode {
    * NULL.  Use is_leaf(), which in turn calls node().is_leaf(), to check
    * for leafness.
    */
-  SpSkeletonNode *child(int k) const {
+  ThorSkeletonNode *child(int k) const {
     return children_[k];
   }
   /**
@@ -353,11 +353,11 @@ struct TreeGrain {
 };
 
 /**
- * A distributed decomposition of an SpTree.
+ * A distributed decomposition of an ThorTree.
  */
 template<typename TNode>
-class SpTreeDecomposition {
-  FORBID_COPY(SpTreeDecomposition);
+class ThorTreeDecomposition {
+  FORBID_COPY(ThorTreeDecomposition);
 
  public:
   typedef TNode Node;
@@ -381,7 +381,7 @@ class SpTreeDecomposition {
       OT_MY_OBJECT(end_rank);
     }
   };
-  typedef SpSkeletonNode<Node, Info> DecompNode;
+  typedef ThorSkeletonNode<Node, Info> DecompNode;
 
  private:
   /**
@@ -390,14 +390,14 @@ class SpTreeDecomposition {
   DecompNode *root_;
   ArrayList<TreeGrain> grain_by_owner_;
 
-  OT_DEF(SpTreeDecomposition) {
+  OT_DEF(ThorTreeDecomposition) {
     OT_PTR(root_);
     OT_MY_OBJECT(grain_by_owner_);
   }
 
  public:
-  SpTreeDecomposition() { DEBUG_POISON_PTR(root_); }
-  ~SpTreeDecomposition() { delete root_; }
+  ThorTreeDecomposition() { DEBUG_POISON_PTR(root_); }
+  ~ThorTreeDecomposition() { delete root_; }
 
   void Init(DecompNode *root_in) {
     root_ = root_in;

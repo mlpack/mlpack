@@ -1,5 +1,5 @@
-#ifndef NBR_GNP_H
-#define NBR_GNP_H
+#ifndef THOR_GNP_H
+#define THOR_GNP_H
 
 #include "fastlib/fastlib.h"
 

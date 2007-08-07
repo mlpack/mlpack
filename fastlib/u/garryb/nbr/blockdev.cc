@@ -53,7 +53,7 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
     DEBUG_ASSERT_MSG(mode == BlockDevice::M_TEMP,
         "Null filenames are only valid for temporary files.");
     const char *tmpdir = fx_param_str(fx_root, "tmpdir", "/tmp");
-    fname_.InitSprintf("%s/nbr_gnp_XXXXXXXXX", tmpdir);
+    fname_.InitSprintf("%s/thor_gnp_XXXXXXXXX", tmpdir);
     fd_ = mkstemp(fname_.c_str());
   } else {
     int octal_mode;

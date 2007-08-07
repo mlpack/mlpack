@@ -1,5 +1,5 @@
-#ifndef NBR_DFS_H
-#define NBR_DFS_H
+#ifndef THOR_DFS_H
+#define THOR_DFS_H
 
 #include "gnp.h"
 #include "cachearray.h"

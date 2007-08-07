@@ -91,7 +91,7 @@ class KdTreeHybridBuilder {
   typedef TPoint Point;
   typedef typename TNode::Bound Bound;
   typedef TParam Param;
-  typedef SpTreeDecomposition<Node> TreeDecomposition;
+  typedef ThorTreeDecomposition<Node> TreeDecomposition;
   typedef typename TreeDecomposition::DecompNode DecompNode;
 
  private:
@@ -183,7 +183,7 @@ typename KdTreeHybridBuilder<TPoint, TNode, TParam>::DecompNode *
 KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
     index_t node_i, int begin_rank, int end_rank, const Bound& bound,
     Node *parent) {
-  // TODO: Split this into smaller functions!  This keeps on growing
+  // TODO: Thorlit this into smaller functions!  This keeps on growing
   // and growing... Proposal: (1) a non-leaf subfunction, (2) a function
   // responsible for the quantile-find
   Node *node = nodes_.StartWrite(node_i);
@@ -223,7 +223,7 @@ KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
       index_t end_col = node->end();
       // attempt to make all leaves of identical size
       double split_val;
-      SpRange current_range = node->bound().get(split_dim);
+      ThorRange current_range = node->bound().get(split_dim);
 
       if (index_t(node->count()) == index_t(points_.n_block_elems())) {
         // We got one block of points!  Let's give away ownership.
@@ -420,14 +420,14 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
  * tree itself for its own purposes.
  */
 template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
-class SpUpdate {
+class ThorUpdate {
  public:
   typedef TParam Param;
   typedef TPoint Point;
   typedef TNode Node;
   typedef TResult Result;
   typedef TVisitor Visitor;
-  typedef SpTreeDecomposition<Node> TreeDecomposition;
+  typedef ThorTreeDecomposition<Node> TreeDecomposition;
   typedef typename TreeDecomposition::DecompNode DecompNode;
 
  private:
@@ -455,7 +455,7 @@ class SpUpdate {
 };
 
 template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
-void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
+void ThorUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
     int my_rank, const Param *param, const TreeDecomposition& decomp,
     Visitor *visitor, DistributedCache *results_cache,
     DistributedCache *points_cache, DistributedCache *nodes_cache) {
@@ -508,7 +508,7 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Doit(
 }
 
 template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
-void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Assemble_(
+void ThorUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Assemble_(
     const DecompNode *decomp, Node *parent) {
   // We're at a leaf in the decomposition tree.  Just update our parent.
   CacheWrite<Node> node(nodes_, decomp->index());
@@ -533,7 +533,7 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Assemble_(
 }
 
 template<class TParam, class TPoint, class TNode, class TResult, class TVisitor>
-void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Recurse_(
+void ThorUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Recurse_(
     index_t node_index, Node *parent) {
   CacheWrite<Node> node(nodes_, node_index);
 
@@ -566,13 +566,13 @@ void SpUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Recurse_(
  * A distributed kd-tree (works non-distributed too).
  */
 template<typename TParam, typename TPoint, typename TNode>
-class SpKdTree {
+class ThorKdTree {
  public:
   typedef TParam Param;
   typedef TPoint Point;
   typedef TNode Node;
-  typedef SpTreeDecomposition<Node> TreeDecomposition;
-  typedef typename SpTreeDecomposition<Node>::DecompNode DecompNode;
+  typedef ThorTreeDecomposition<Node> TreeDecomposition;
+  typedef typename ThorTreeDecomposition<Node>::DecompNode DecompNode;
 
  private:
   struct Config {
@@ -609,8 +609,8 @@ class SpKdTree {
   Config *config_;
 
  public:
-  SpKdTree() {}
-  ~SpKdTree() {}
+  ThorKdTree() {}
+  ~ThorKdTree() {}
 
   /**
    * Loads a tree and initializes.
@@ -635,7 +635,7 @@ class SpKdTree {
   template<typename Result, typename Visitor>
   void Update(
       DistributedCache *results_cache, Visitor *visitor) {
-    SpUpdate<Param, Point, Node, Result, Visitor> updater;
+    ThorUpdate<Param, Point, Node, Result, Visitor> updater;
     updater.Doit(rpc::rank(), &param(), config_->decomp,
         visitor, results_cache, &points_, &nodes_);
   }
@@ -708,7 +708,7 @@ class SpKdTree {
   index_t points_block() const { return config_->points_block; }
   index_t n_points() const { return config_->n_points; }
 
-  SpTreeDecomposition<Node>& decomposition() const {
+  ThorTreeDecomposition<Node>& decomposition() const {
     return config_->decomp;
   }
 
@@ -720,7 +720,7 @@ class SpKdTree {
 };
 
 template<typename TParam, typename TPoint, typename TNode>
-void SpKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
+void ThorKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
     int base_channel, datanode *module) {
   points_module_ = fx_submodule(module, "points", "points");
   nodes_module_ = fx_submodule(module, "nodes", "nodes");
@@ -751,7 +751,7 @@ void SpKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
 }
 
 template<typename TParam, typename TPoint, typename TNode>
-void SpKdTree<TParam, TPoint, TNode>::MasterLoadData_(
+void ThorKdTree<TParam, TPoint, TNode>::MasterLoadData_(
     Config *config, Param *param, int tag, datanode *module) {
   config->points_block = fx_param_int(points_module_, "block", 1024);
 
@@ -800,7 +800,7 @@ void SpKdTree<TParam, TPoint, TNode>::MasterLoadData_(
 }
 
 template<typename TParam, typename TPoint, typename TNode>
-void SpKdTree<TParam, TPoint, TNode>::MasterBuildTree_(
+void ThorKdTree<TParam, TPoint, TNode>::MasterBuildTree_(
     Config *config, Param *param, int tag, datanode *module) {
   config->nodes_block = fx_param_int(nodes_module_, "block", 256);
 

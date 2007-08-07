@@ -1,5 +1,5 @@
-#ifndef NBR_BLOCKDEV_H
-#define NBR_BLOCKDEV_H
+#ifndef THOR_BLOCKDEV_H
+#define THOR_BLOCKDEV_H
 
 #include "fastlib/fastlib_int.h"
 

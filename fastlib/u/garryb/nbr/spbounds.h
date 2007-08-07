@@ -23,13 +23,13 @@
  * A point in vector-space.
  *
  * This is a wrapper around Vector which implements the vec() method, because
- * that is what the NBR tree-builders expect.
+ * that is what the THOR tree-builders expect.
  */
-class SpVectorPoint {
+class ThorVectorPoint {
  private:
   Vector vec_;
   
-  OT_DEF(SpVectorPoint) {
+  OT_DEF(ThorVectorPoint) {
     OT_MY_OBJECT(vec_);
   }
   
@@ -50,10 +50,10 @@ class SpVectorPoint {
 
 /**
  * A point in a vector space with extra associated information, for use
- * in NBR.
+ * in THOR.
  */
 template<typename TPointInfo>
-class SpVectorInfoPoint {
+class ThorVectorInfoPoint {
  public:
   typedef TPointInfo PointInfo;
 
@@ -61,7 +61,7 @@ class SpVectorInfoPoint {
   Vector vec_;
   TPointInfo info_;
   
-  OT_DEF(SpVectorInfoPoint) {
+  OT_DEF(ThorVectorInfoPoint) {
     OT_MY_OBJECT(vec_);
     OT_MY_OBJECT(info_);
   }
@@ -163,7 +163,7 @@ class HiBound {
  *
  * @experimental
  */
-struct SpRange {
+struct ThorRange {
  public:
   /**
    * The lower bound.
@@ -174,16 +174,16 @@ struct SpRange {
    */
   double hi;
   
-  OT_DEF(SpRange) {
+  OT_DEF(ThorRange) {
     OT_MY_OBJECT(lo);
     OT_MY_OBJECT(hi);
   }
   
  public:
   /** Doesn't initialize anything. */
-  SpRange() {}
+  ThorRange() {}
   /** Initializes to specified values. */
-  SpRange(double lo_in, double hi_in)
+  ThorRange(double lo_in, double hi_in)
       : lo(lo_in), hi(hi_in)
       {}
 
@@ -240,7 +240,7 @@ struct SpRange {
   /**
    * Simulate an union by growing the range if necessary.
    */
-  const SpRange& operator |= (double d) {
+  const ThorRange& operator |= (double d) {
     if (unlikely(d < lo)) {
       lo = d;
     }
@@ -254,7 +254,7 @@ struct SpRange {
    * Sets this range to include only the specified value, or
    * becomes an empty set if the range does not contain the number.
    */
-  const SpRange& operator &= (double d) {
+  const ThorRange& operator &= (double d) {
     if (likely(d > lo)) {
       lo = d;
     }
@@ -267,7 +267,7 @@ struct SpRange {
   /**
    * Expands range to include the other range.
    */
-  const SpRange& operator |= (const SpRange& other) {
+  const ThorRange& operator |= (const ThorRange& other) {
     if (unlikely(other.lo < lo)) {
       lo = other.lo;
     }
@@ -281,7 +281,7 @@ struct SpRange {
    * Shrinks range to be the overlap with another range, becoming an empty
    * set if there is no overlap.
    */
-  const SpRange& operator &= (const SpRange& other) {
+  const ThorRange& operator &= (const ThorRange& other) {
     if (unlikely(other.lo > lo)) {
       lo = other.lo;
     }
@@ -292,56 +292,56 @@ struct SpRange {
   }
   
   /** Sums the upper and lower independently. */
-  const SpRange& operator += (const SpRange& other) {
+  const ThorRange& operator += (const ThorRange& other) {
     lo += other.lo;
     hi += other.hi;
     return *this;
   }
   
   /** Subtracts from the upper and lower independently. */
-  const SpRange& operator -= (const SpRange& other) {
+  const ThorRange& operator -= (const ThorRange& other) {
     lo -= other.lo;
     hi -= other.hi;
     return *this;
   }
   
   /** Adds to the upper and lower independently. */
-  const SpRange& operator += (double d) {
+  const ThorRange& operator += (double d) {
     lo += d;
     hi += d;
     return *this;
   }
   
   /** Subtracts from the upper and lower independently. */
-  const SpRange& operator -= (double d) {
+  const ThorRange& operator -= (double d) {
     lo -= d;
     hi -= d;
     return *this;
   }
 
-  friend SpRange operator + (const SpRange& a, const SpRange& b) {
-    SpRange result;
+  friend ThorRange operator + (const ThorRange& a, const ThorRange& b) {
+    ThorRange result;
     result.lo = a.lo + b.lo;
     result.hi = a.hi + b.hi;
     return result;
   }
 
-  friend SpRange operator - (const SpRange& a, const SpRange& b) {
-    SpRange result;
+  friend ThorRange operator - (const ThorRange& a, const ThorRange& b) {
+    ThorRange result;
     result.lo = a.lo - b.lo;
     result.hi = a.hi - b.hi;
     return result;
   }
   
-  friend SpRange operator + (const SpRange& a, double b) {
-    SpRange result;
+  friend ThorRange operator + (const ThorRange& a, double b) {
+    ThorRange result;
     result.lo = a.lo + b;
     result.hi = a.hi + b;
     return result;
   }
 
-  friend SpRange operator - (const SpRange& a, double b) {
-    SpRange result;
+  friend ThorRange operator - (const ThorRange& a, double b) {
+    ThorRange result;
     result.lo = a.lo - b;
     result.hi = a.hi - b;
     return result;
@@ -350,7 +350,7 @@ struct SpRange {
   /**
    * Takes the maximum of upper and lower bounds independently.
    */
-  void MaxWith(const SpRange& range) {
+  void MaxWith(const ThorRange& range) {
     if (unlikely(range.lo > lo)) {
       lo = range.lo;
     }
@@ -362,7 +362,7 @@ struct SpRange {
   /**
    * Takes the minimum of upper and lower bounds independently.
    */
-  void MinWith(const SpRange& range) {
+  void MinWith(const ThorRange& range) {
     if (unlikely(range.lo < lo)) {
       lo = range.lo;
     }
@@ -398,30 +398,30 @@ struct SpRange {
   /**
    * Compares if this is STRICTLY less than another range.
    */  
-  friend bool operator < (const SpRange& a, const SpRange& b) {
+  friend bool operator < (const ThorRange& a, const ThorRange& b) {
     return a.hi < b.lo;
   }
   /**
    * Compares if this is STRICTLY equal to another range.
    */  
-  friend bool operator == (const SpRange& a, const SpRange& b) {
+  friend bool operator == (const ThorRange& a, const ThorRange& b) {
     return a.lo == b.lo && a.hi == b.hi;
   }
-  DEFINE_ALL_COMPARATORS(SpRange);
+  DEFINE_ALL_COMPARATORS(ThorRange);
   
   /**
    * Compares if this is STRICTLY less than a value.
    */  
-  friend bool operator < (const SpRange& a, double b) {
+  friend bool operator < (const ThorRange& a, double b) {
     return a.hi < b;
   }
   /**
    * Compares if a value is STRICTLY less than this range.
    */  
-  friend bool operator < (double a, const SpRange& b) {
+  friend bool operator < (double a, const ThorRange& b) {
     return a < b.lo;
   }
-  DEFINE_INEQUALITY_COMPARATORS_HETERO(SpRange, double);
+  DEFINE_INEQUALITY_COMPARATORS_HETERO(ThorRange, double);
 
   /**
    * Determines if a point is contained within the range.
@@ -439,30 +439,30 @@ struct SpRange {
  * @experimental
  */
 template<int t_pow = 2>
-class SpHrectBound {
+class ThorHrectBound {
  public:
   static const int PREFERRED_POWER = t_pow;
 
  private:
-  SpRange *bounds_;
+  ThorRange *bounds_;
   index_t dim_;
 
-  OT_DEF(SpHrectBound) {
+  OT_DEF(ThorHrectBound) {
     OT_MY_OBJECT(dim_);
     OT_MALLOC_ARRAY(bounds_, dim_);
   }
   
  public:
-  SpHrectBound() {
+  ThorHrectBound() {
     DEBUG_POISON_PTR(bounds_);
     DEBUG_ONLY(dim_ = BIG_BAD_NUMBER);
   }
-  SpHrectBound(const SpHrectBound& other) {
+  ThorHrectBound(const ThorHrectBound& other) {
     DEBUG_POISON_PTR(bounds_);
     DEBUG_ONLY(dim_ = BIG_BAD_NUMBER);
     Copy(other);
   }
-  ~SpHrectBound() {
+  ~ThorHrectBound() {
     mem::Free(bounds_);
   }
 
@@ -473,7 +473,7 @@ class SpHrectBound {
   void Init(index_t dimension) {
     DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
 
-    bounds_ = mem::Alloc<SpRange>(dimension);
+    bounds_ = mem::Alloc<ThorRange>(dimension);
 
     dim_ = dimension;
     Reset();
@@ -491,7 +491,7 @@ class SpHrectBound {
   /**
    * Initializes as a copy of another.
    */
-  void Copy(const SpHrectBound& other) {
+  void Copy(const ThorHrectBound& other) {
     DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
     bounds_ = mem::Dup(other.bounds_, other.dim_);
     dim_ = other.dim_;
@@ -518,7 +518,7 @@ class SpHrectBound {
   /**
    * Gets the range for a particular dimension.
    */  
-  const SpRange& get(index_t i) const {
+  const ThorRange& get(index_t i) const {
     DEBUG_BOUNDS(i, dim_);
     return bounds_[i];
   }
@@ -539,7 +539,7 @@ class SpHrectBound {
     DEBUG_ASSERT(point.length() == dim_);
     double sumsq = 0;
     const double *mpoint = point.ptr();
-    const SpRange *mbound = bounds_;
+    const ThorRange *mbound = bounds_;
     
     index_t d = dim_;
     
@@ -570,10 +570,10 @@ class SpHrectBound {
    * return MinDistanceSqToPoint(other_midpoint)
    * </code>
    */
-  double MinToMidSq(const SpHrectBound& other) const {
+  double MinToMidSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const SpRange *a = this->bounds_;
-    const SpRange *b = other.bounds_;
+    const ThorRange *a = this->bounds_;
+    const ThorRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
 
@@ -616,10 +616,10 @@ class SpHrectBound {
    *
    * Example: bound1.MinDistanceSq(other) for minimum squared distance.
    */
-  double MinDistanceSq(const SpHrectBound& other) const {
+  double MinDistanceSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const SpRange *a = this->bounds_;
-    const SpRange *b = other.bounds_;
+    const ThorRange *a = this->bounds_;
+    const ThorRange *b = other.bounds_;
     index_t mdim = dim_;
 
     DEBUG_SAME_INT(dim_, other.dim_);
@@ -642,10 +642,10 @@ class SpHrectBound {
    * Computes minimax distance, where the other node is trying to avoid me,
    * to the specified power.
    */
-  double MinimaxDistanceSq(const SpHrectBound& other) const {
+  double MinimaxDistanceSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const SpRange *a = this->bounds_;
-    const SpRange *b = other.bounds_;
+    const ThorRange *a = this->bounds_;
+    const ThorRange *b = other.bounds_;
     index_t mdim = dim_;
     
     DEBUG_ASSERT(dim_ == other.dim_);
@@ -665,10 +665,10 @@ class SpHrectBound {
    * Computes maximum distance,
    * to the specified power.
    */
-  double MaxDistanceSq(const SpHrectBound& other) const {
+  double MaxDistanceSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const SpRange *a = this->bounds_;
-    const SpRange *b = other.bounds_;
+    const ThorRange *a = this->bounds_;
+    const ThorRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
     
@@ -684,10 +684,10 @@ class SpHrectBound {
    * Calculates midpoint-to-midpoint bounding box distance,
    * to the specified power.
    */
-  double MidDistanceSq(const SpHrectBound& other) const {
+  double MidDistanceSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const SpRange *a = this->bounds_;
-    const SpRange *b = other.bounds_;
+    const ThorRange *a = this->bounds_;
+    const ThorRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
     
@@ -701,7 +701,7 @@ class SpHrectBound {
   /**
    * Expands this region to include a new point.
    */
-  SpHrectBound& operator |= (const Vector& vector) {
+  ThorHrectBound& operator |= (const Vector& vector) {
     DEBUG_SAME_INT(vector.length(), dim_);
     
     for (index_t i = 0; i < dim_; i++) {
@@ -714,7 +714,7 @@ class SpHrectBound {
   /**
    * Expands this region to encompass another bound.
    */
-  SpHrectBound& operator |= (const SpHrectBound& other) {
+  ThorHrectBound& operator |= (const ThorHrectBound& other) {
     DEBUG_SAME_INT(other.dim_, dim_);
     
     for (index_t i = 0; i < dim_; i++) {

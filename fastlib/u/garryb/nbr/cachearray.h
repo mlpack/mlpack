@@ -1,5 +1,5 @@
-#ifndef NBR_CACHEARRAY_H
-#define NBR_CACHEARRAY_H
+#ifndef THOR_CACHEARRAY_H
+#define THOR_CACHEARRAY_H
 
 #include "distribcache.h"
 

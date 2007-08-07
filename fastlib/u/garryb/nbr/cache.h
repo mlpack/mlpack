@@ -1,5 +1,5 @@
-#ifndef NBR_CACHE_H
-#define NBR_CACHE_H
+#ifndef THOR_CACHE_H
+#define THOR_CACHE_H
 
 #include "blockdev.h"
 
