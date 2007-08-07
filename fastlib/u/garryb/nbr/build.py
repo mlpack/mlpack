@@ -1,10 +1,10 @@
 
 librule(name = "nbr",
-   sources = ["distribcache.cc", "blockdev.cc", "nbr_utils.cc",
+   sources = ["distribcache.cc", "blockdev.cc", "thor_utils.cc",
               "work.cc",
               "rpc.cc", "rpc_sock.cc"],
    headers = ["blockdev.h", "cachearray.h",
-              "dfs.h", "gnp.h", "kdtree.h", "nbr_utils.h",
+              "dfs.h", "gnp.h", "kdtree.h", "thor_utils.h",
               "spbounds.h", "spnode.h", "work.h",
               "rpc.h", "rpc_sock.h", "distribcache.h",
               "cache.h"],
@@ -15,7 +15,7 @@ binrule(name = "rpc_sock_test",
    deplibs = [":nbr"])
 
 # No more MPI
-#librule(name = "nbr_mpi",
+#librule(name = "thor_mpi",
 #   sources = ["rpc.cc", "netcache.cc"],
 #   headers = ["rpc.h", "netcache.h"],
 #   deplibs = [":nbr"])
@@ -23,10 +23,6 @@ binrule(name = "rpc_sock_test",
 binrule(name = "tkde",
    sources = ["tkde.cc"],
    deplibs = [":nbr"])
-
-#binrule(name = "tkde_mpi",
-#   sources = ["tkde.cc"],
-#   deplibs = [":nbr_mpi"])
 
 binrule(name = "allnn_rpc",
    headers = ["allnn.cc"],
@@ -39,19 +35,11 @@ binrule(name = "allnn",
 
 #--------
 
-binrule(name = "range_rpc",
-   sources = ["range_rpc.cc"],
-   deplibs = [":nbr"])
-
 binrule(name = "range",
    sources = ["range.cc"],
    deplibs = [":nbr"])
 
 #--------
-
-binrule(name = "akde_rpc",
-   sources = ["akde_rpc.cc"],
-   deplibs = [":nbr"])
 
 binrule(name = "akde",
    sources = ["akde.cc"],

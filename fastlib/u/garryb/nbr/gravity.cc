@@ -28,19 +28,13 @@ class Gravity {
     double theta;
     double theta_factor;
 
-    OT_DEF(Param) {
+    OT_DEF_BASIC(Param) {
       OT_MY_OBJECT(dim);
       OT_MY_OBJECT(theta);
       OT_MY_OBJECT(theta_factor);
     }
 
    public:
-    void Copy(const Param& other) {
-      dim = other.dim;
-      theta = other.theta;
-      theta_factor = other.theta_factor;
-    }
-   
     /**
      * Initialize parameters from a data node (Req THOR).
      */
@@ -74,7 +68,7 @@ class Gravity {
     double diagsq;
     Vector centroid;
 
-    OT_DEF(CombinedStat) {
+    OT_DEF_BASIC(CombinedStat) {
       OT_MY_OBJECT(diagsq);
       OT_MY_OBJECT(centroid);
     }
@@ -110,7 +104,7 @@ class Gravity {
    public:
     double force;
 
-    OT_DEF(QPostponed) {
+    OT_DEF_BASIC(QPostponed) {
       OT_MY_OBJECT(force);
     }
 
@@ -133,7 +127,7 @@ class Gravity {
    public:
     double force;
 
-    OT_DEF(QResult) {
+    OT_DEF_BASIC(QResult) {
       OT_MY_OBJECT(force);
     }
 
