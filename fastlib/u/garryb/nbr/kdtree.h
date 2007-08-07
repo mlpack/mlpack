@@ -223,7 +223,7 @@ KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
       index_t end_col = node->end();
       // attempt to make all leaves of identical size
       double split_val;
-      ThorRange current_range = node->bound().get(split_dim);
+      DRange current_range = node->bound().get(split_dim);
 
       if (index_t(node->count()) == index_t(points_.n_block_elems())) {
         // We got one block of points!  Let's give away ownership.
@@ -567,6 +567,8 @@ void ThorUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Recurse_(
  */
 template<typename TParam, typename TPoint, typename TNode>
 class ThorKdTree {
+  FORBID_COPY(ThorKdTree);
+
  public:
   typedef TParam Param;
   typedef TPoint Point;
@@ -586,7 +588,6 @@ class ThorKdTree {
     OT_DEF(Config) {
       OT_MY_OBJECT(decomp);
       OT_PTR(param);
-      OT_MY_OBJECT(param);
       OT_MY_OBJECT(nodes_block);
       OT_MY_OBJECT(points_block);
       OT_MY_OBJECT(n_points);

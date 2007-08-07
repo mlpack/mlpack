@@ -36,7 +36,7 @@ class Tkde {
      * This is also normalized for dimensionality and the number of reference
      * points.
      */
-    ThorRange thresh;
+    DRange thresh;
     /** The kernel in use. */
     Kernel kernel;
     /** The dimensionality of the data sets. */
@@ -44,7 +44,7 @@ class Tkde {
     /** The original threshold, before normalization. */
     double nominal_threshold;
 
-    OT_DEF(Param) {
+    OT_DEF_BASIC(Param) {
       OT_MY_OBJECT(thresh);
       OT_MY_OBJECT(kernel);
       OT_MY_OBJECT(dim);
@@ -52,12 +52,6 @@ class Tkde {
     }
 
    public:
-    void Copy(const Param& other) {
-      kernel.Copy(other.kernel);
-      thresh = other.thresh;
-      dim = other.dim;
-    }
-
     /**
      * Initialize parameters from a data node (Req THOR).
      */
@@ -129,7 +123,7 @@ class Tkde {
     double sumsq;
     index_t count;
 
-    OT_DEF(MomentInfo) {
+    OT_DEF_BASIC(MomentInfo) {
       OT_MY_OBJECT(mass);
       OT_MY_OBJECT(sumsq);
       OT_MY_OBJECT(count);
@@ -164,9 +158,9 @@ class Tkde {
       return param.ComputeKernelSum(point, count, mass, sumsq);
     }
 
-    ThorRange ComputeKernelSumRange(const Param& param,
+    DRange ComputeKernelSumRange(const Param& param,
         const Bound& query_bound) const {
-      ThorRange density_bound;
+      DRange density_bound;
       Vector center;
 
       param.ComputeCenter(count, mass, &center);
@@ -196,7 +190,7 @@ class Tkde {
    public:
     MomentInfo moment_info;
 
-    OT_DEF(RStat) {
+    OT_DEF_BASIC(RStat) {
       OT_MY_OBJECT(moment_info);
     }
 
@@ -270,7 +264,7 @@ class Tkde {
     /** We pruned an entire part of the tree with a particular label. */
     int label;
 
-    OT_DEF(QPostponed) {
+    OT_DEF_BASIC(QPostponed) {
       OT_MY_OBJECT(moment_info);
       OT_MY_OBJECT(label);
     }
@@ -299,9 +293,9 @@ class Tkde {
   struct Delta {
    public:
     /** Density update to apply to children's bound. */
-    ThorRange d_density;
+    DRange d_density;
 
-    OT_DEF(Delta) {
+    OT_DEF_BASIC(Delta) {
       OT_MY_OBJECT(d_density);
     }
 
@@ -316,7 +310,7 @@ class Tkde {
     double density;
     int label;
 
-    OT_DEF(QResult) {
+    OT_DEF_BASIC(QResult) {
       OT_MY_OBJECT(density);
       OT_MY_OBJECT(label);
     }
@@ -354,10 +348,10 @@ class Tkde {
   struct QSummaryResult {
    public:
     /** Bound on density from leaves. */
-    ThorRange density;
+    DRange density;
     int label;
 
-    OT_DEF(QSummaryResult) {
+    OT_DEF_BASIC(QSummaryResult) {
       OT_MY_OBJECT(density);
       OT_MY_OBJECT(label);
     }
@@ -485,7 +479,7 @@ class Tkde {
         GlobalResult* global_result) {
       q_result->density += density;
       
-      ThorRange total_density =
+      DRange total_density =
           unapplied_summary_results.density + q_result->density;
 
       if (unlikely(total_density > param.thresh)) {

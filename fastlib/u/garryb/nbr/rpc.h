@@ -420,7 +420,7 @@ struct DataGetterRequest {
 
   bool requires_response() const { return true; }
 
-  OT_DEF(DataGetterRequest) {
+  OT_DEF_BASIC(DataGetterRequest) {
     OT_MY_OBJECT(operation);
   }
 };
@@ -437,10 +437,10 @@ class DataGetterBackend
 
  public:
   void Init(const T& data_in) {
-    data_.Copy(data_in);
+    ot::Copy(data_in, &data);
   }
   void Init(const T* data_in) {
-    data_.Copy(*data_in);
+    ot::Copy(*data_in, &data);
   }
 
   virtual void HandleRequest(const DataGetterRequest& request, T *response);
@@ -449,7 +449,7 @@ class DataGetterBackend
 template<typename T>
 void DataGetterBackend<T>::HandleRequest(const DataGetterRequest& request,
     T* response) {
-  response->Copy(data_);
+  ot::Copy(data_, response);
 }
 
 /**
@@ -465,7 +465,7 @@ namespace rpc {
     DataGetterRequest request;
     request.operation = DataGetterRequest::GET_DATA;
     Rpc<T> response(channel, peer, request);
-    result->Copy(*response);
+    ot::Copy(*response, result);
   }
 
   /**

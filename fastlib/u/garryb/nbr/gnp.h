@@ -5,7 +5,7 @@
 
 struct BlankDelta {
  public:
-  OT_DEF(BlankDelta) {}
+  OT_DEF_BASIC(BlankDelta) {}
  public:
   template<typename Param>
   void Init(const Param& param) {}
@@ -15,7 +15,7 @@ struct BlankDelta {
 
 struct BlankQPostponed {
  public:
-  OT_DEF(BlankQPostponed) {}
+  OT_DEF_BASIC(BlankQPostponed) {}
  public:
   template<typename Param>
   void Init(const Param& param) {}
@@ -27,7 +27,7 @@ struct BlankQPostponed {
 
 class BlankStat {
  public:
-  OT_DEF(BlankStat) {}
+  OT_DEF_BASIC(BlankStat) {}
  public:
   template<typename Param>
   void Init(const Param& param) {}
@@ -42,7 +42,7 @@ class BlankStat {
 
 struct BlankQResult {
  public:
-  OT_DEF(BlankQResult) {}
+  OT_DEF_BASIC(BlankQResult) {}
  public:
   template<typename Param>
   void Init(const Param& param) {}
@@ -58,7 +58,7 @@ struct BlankQResult {
 
 class BlankGlobalResult {
  public:
-  OT_DEF(BlankGlobalResult) {}
+  OT_DEF_BASIC(BlankGlobalResult) {}
  public:
   template<typename Param>
   void Init(const Param& param) {}
@@ -79,7 +79,7 @@ class BlankGlobalResult {
 
 struct BlankQSummaryResult {
  public:
-  OT_DEF(BlankQSummaryResult) {}
+  OT_DEF_BASIC(BlankQSummaryResult) {}
  public:
   template<typename Param>
   void Init(const Param& param) {}

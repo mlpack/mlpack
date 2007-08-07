@@ -444,7 +444,7 @@ struct WorkRequest {
 
   bool requires_response() const { return true; }
 
-  OT_DEF(WorkRequest) {
+  OT_DEF_BASIC(WorkRequest) {
     OT_MY_OBJECT(operation);
     OT_MY_OBJECT(process);
   }
@@ -453,7 +453,7 @@ struct WorkRequest {
 struct WorkResponse {
   ArrayList<WorkQueueInterface::Grain> work_items;
 
-  OT_DEF(WorkResponse) {
+  OT_DEF_BASIC(WorkResponse) {
     OT_MY_OBJECT(work_items);
   }
 };
