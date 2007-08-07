@@ -698,7 +698,14 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   const int RHO_CHANNEL = 360;
   const int REDUCE_CHANNEL = 370;
   const int DONE_CHANNEL = 390;
+  int convergence = fx_param_int(module, "affinity/convergence", 30);
   int stable_iterations = 0;
+  int maxit = fx_param_int(module, "affinity/maxit", 1000);
+
+  if (!rpc::is_root()) {
+    // turn off fastexec output
+    fx_silence();
+  }
 
   timestats.Init();
 
@@ -712,8 +719,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
   // One thing to note: alpha and rho are never taking up
   // RAM at the same time!
-  size_t alpha_mb = fx_param_int(module, "alpha_mb", 200);
-  size_t rho_mb = fx_param_int(module, "rho_mb", 100);
+  size_t alpha_mb = fx_param_int(module, "alpha/mb", 200);
+  size_t rho_mb = fx_param_int(module, "rho/mb", 100);
   timer *timer_alpha = fx_timer(module, "all_alpha");
   timer *timer_rho = fx_timer(module, "all_rho");
 
@@ -737,7 +744,9 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
   index_t n_points = tree.n_points();
 
-  for (int iter = 0;; iter++) {
+  for (int iter = 0;;) {
+    iter++;
+
     fx_timer_start(module, "all_alpha");
     thor_utils::RpcDualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
         fx_submodule(module, "thor", "iter/%d/alpha", iter), 200,
@@ -748,8 +757,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     rpc::Reduce(REDUCE_CHANNEL+0, VisitorReductor<ApplyAlphas>(), &apply_alphas);
     if (rpc::is_root()) {
       fprintf(stderr, ANSI_RED"--- %3d: alpha: max1=%f, max2=%f"ANSI_CLEAR"\n",
-          iter,
-          apply_alphas.sum_alpha1 / n_points,
+          iter, apply_alphas.sum_alpha1 / n_points,
           apply_alphas.sum_alpha2 / n_points);
     }
     alphas.ResetElements();
@@ -785,7 +793,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
       } else {
         stable_iterations = 0;
       }
-      done.SetData(stable_iterations >= 16);
+      done.SetData(iter >= maxit || stable_iterations >= convergence);
     }
 
     done.Doit(DONE_CHANNEL);
@@ -801,9 +809,23 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 }
 
 
+int main(int argc, char *argv[]) {
+  fx_init(argc, argv);
+  rpc::Init();
+
+  srand(time(NULL));
+
+  AffinityMain(fx_root, "affinity");
+
+  rpc::Done();
+  fx_done();
+}
+
 
 
 #if 0
+// The old source code!
+
 //
 //  AffinityAlpha::Param param;
 //
@@ -1213,15 +1235,3 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 //}
 //*/
 #endif
-
-int main(int argc, char *argv[]) {
-  fx_init(argc, argv);
-  rpc::Init();
-
-  srand(time(NULL));
-
-  AffinityMain(fx_root, "affinity");
-
-  rpc::Done();
-  fx_done();
-}

@@ -139,29 +139,35 @@ char *tsprintf(const char *format, ...) {
 }
 
 void percent_indicator(const char *what, uint64 numerator, uint64 denominator) {
+  static int last_percent = -1;
   char buf[80];
   int length = 50;
   int i = 0;
+  int percent = (int)(numerator * 100 / denominator);
 
-  if (numerator == denominator) {
-    for (; i < sizeof(buf) - 1; i++) {
-      buf[i] = ' ';
-    }
-    buf[i] = '\0';
-    fprintf(stderr, "%s\r", buf);
-  } else {
-    int percent = (int)(numerator * 100 / denominator);
-    
-    for (i = 0; i < percent * length / 100; i++) {
-      buf[i] = '#';
-    }
-    for (; i < length; i++) {
-      buf[i] = '.';
+  if (unlikely(percent != last_percent)) {
+    int num_ticks = percent * length / 100;
+    if (percent == 100) {
+      for (; i < sizeof(buf) - 1; i++) {
+        buf[i] = ' ';
+      }
+      buf[i] = '\0';
+      fprintf(stderr, "%s\r", buf);
+    } else {
+      for (i = 0; i < num_ticks; i++) {
+        buf[i] = '#';
+      }
+      for (; i < length; i++) {
+        buf[i] = '.';
+      }
+
+      buf[i] = '\0';
+
+      fprintf(stderr, "\r"ANSI_BLUE"STATUS: [%s] %02d%% %s"ANSI_CLEAR"  \r",
+          buf, percent, what);
     }
 
-    buf[i] = '\0';
-
-    fprintf(stderr, ANSI_BLUE"STATUS: [%s] %02d%% %s"ANSI_CLEAR"\r",
-        buf, percent, what);
+    last_percent = percent;
   }
+
 }

@@ -220,9 +220,9 @@ MemBlockDevice::~MemBlockDevice() {
 
 void IoStats::Report(datanode *module) const {
   fx_format_result(module, "n_reads", "%u", n_reads_);
-  fx_format_result(module, "n_read_bytes", "%"L64"u", n_read_bytes_);
+  //fx_format_result(module, "n_read_bytes", "%"L64"u", n_read_bytes_);
   fx_format_result(module, "n_writes", "%u", n_writes_);
-  fx_format_result(module, "n_write_bytes", "%"L64"u", n_write_bytes_);
+  //fx_format_result(module, "n_write_bytes", "%"L64"u", n_write_bytes_);
 }
 
 void IoStats::Report(BlockDevice::offset_t n_block_bytes,
@@ -235,4 +235,5 @@ void IoStats::Report(BlockDevice::offset_t n_block_bytes,
   fx_format_result(module, "write_ratio", "%.4f",
       n_write_bytes_ / (double(n_block_bytes) * n_blocks));
   fx_format_result(module, "n_block_bytes", "%u", n_block_bytes);
+  fx_format_result(module, "n_blocks", "%u", n_blocks);
 }

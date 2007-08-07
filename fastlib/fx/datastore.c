@@ -192,6 +192,72 @@ struct datanode *datanode_get_paths(struct datanode *node,
   return node;
 }
 
+static int datanode__unhex_char(char c) {
+  c = (c & ~0x20);
+  if (c <= '9') {
+    return c - '0';
+  } else {
+    return c - 'A' + 10;
+  }
+}
+
+static char *datanode__unhex(char *s) {
+  char *d = s;
+  while (*s) {
+    if (*s == '%' && isxdigit(s[1]) && isxdigit(s[2])) {
+      *d = datanode__unhex_char(s[1]) * 16 + datanode__unhex_char(s[2]);
+      s += 2;
+    } else {
+      *d = *s;
+    }
+    s++;
+    d++;
+  }
+  *d = '\0';
+  return d;
+}
+
+void datanode_read(struct datanode *node, nodetype_t type, FILE *stream) {
+  char buf[4096];
+
+  while (fgets(buf, sizeof(buf), stream) != NULL) {
+    int len;
+    char *key;
+    char *value;
+    struct datanode *result;
+    
+    // strip whitespace
+    for (len = strlen(buf); len >= 0 && isspace(buf[len-1]); len--) {}
+    buf[len] = '\0';
+    key = buf;
+
+    if (len == 0 || buf[0] == '#') {
+      // ignore blank lines and #comments
+      continue;
+    }
+
+    value = strchr(key, ' ');
+    if (!value) {
+      NONFATAL("Unrecognized line: %s", buf);
+      break;
+    }
+
+    *value = '\0';
+    while (isspace(*++value)) {}
+
+    datanode__unhex(key);
+    datanode__unhex(value);
+
+    result = datanode_get_path(node, key, type);
+    if (result->val) {
+      NONFATAL("Overwriting [%s] - old value [%s], new [%s].",
+          key, (char*)result->val, value);
+      free(result->val);
+    }
+    result->val = strdup(value);
+  }
+}
+
 static char *datanode__hex(char *dest, const char *src, int remaining)
 {
   int c;
@@ -233,7 +299,7 @@ static void datanode__write_buf_backwards(struct datanode *node, FILE *f,
 static void datanode__write_buf(struct datanode *node, FILE *f,
 				char *prefix, char *buf)
 {
-  	if (node->val) {
+  if (node->val) {
     buf[0] = ' ';
     datanode__hex(buf + 1, node->val, 4096 - (buf - prefix) - 1);
     fprintf(f, "%s\n", prefix);

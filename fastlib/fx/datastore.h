@@ -96,6 +96,11 @@ struct datanode *datanode_get_paths(struct datanode *node,
  */
 void datanode_write(struct datanode *node, FILE *f);
 
+/**
+ * Populates a datanode from a file.
+ */
+void datanode_read(struct datanode *node, nodetype_t type, FILE *stream);
+
 EXTERN_C_END
 
 #endif
