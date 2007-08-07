@@ -2,19 +2,19 @@
 #include "spbounds.h"
 #include "gnp.h"
 #include "dfs.h"
-#include "nbr_utils.h"
+#include "thor_utils.h"
 
 /**
  * An N-Body-Reduce problem.
  */
 class Allnn {
  public:
-  /** The bounding type. Required by NBR. */
-  typedef SpHrectBound<2> Bound;
-  /** The type of point in use. Required by NBR. */
+  /** The bounding type. Required by THOR. */
+  typedef ThorHrectBound<2> Bound;
+  /** The type of point in use. Required by THOR. */
 
-  typedef SpVectorPoint QPoint;
-  typedef SpVectorPoint RPoint;
+  typedef ThorVectorPoint QPoint;
+  typedef ThorVectorPoint RPoint;
 
   /**
    * All parameters required by the execution of the algorithm.
@@ -36,14 +36,14 @@ class Allnn {
     }
    
     /**
-     * Initialize parameters from a data node (Req NBR).
+     * Initialize parameters from a data node (Req THOR).
      */
     void Init(datanode *datanode) {
       dim = -1;
     }
     
-    void InitPointExtras(int tag, SpVectorPoint *point) const {}
-    void SetPointExtras(int tag, index_t index, SpVectorPoint *point) const {}
+    void InitPointExtras(int tag, ThorVectorPoint *point) const {}
+    void SetPointExtras(int tag, index_t index, ThorVectorPoint *point) const {}
     
     void Bootstrap(int tag, index_t dim_in, index_t count) {
       dim = dim_in;
@@ -53,8 +53,8 @@ class Allnn {
   typedef BlankStat QStat;
   typedef BlankStat RStat;
 
-  typedef SpNode<Bound, BlankStat> RNode;
-  typedef SpNode<Bound, BlankStat> QNode;
+  typedef ThorNode<Bound, BlankStat> RNode;
+  typedef ThorNode<Bound, BlankStat> QNode;
 
   typedef BlankQPostponed QPostponed;
   typedef BlankDelta Delta;
@@ -222,10 +222,10 @@ int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
 #ifdef USE_RPC
-  nbr_utils::RpcMonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+  thor_utils::RpcMonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
 #else
-  nbr_utils::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+  thor_utils::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
 #endif
   

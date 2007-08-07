@@ -2,7 +2,7 @@
 #include "spbounds.h"
 #include "gnp.h"
 #include "dfs.h"
-#include "nbr_utils.h"
+#include "thor_utils.h"
 
 /*
 
@@ -12,7 +12,7 @@ semantics of ConsiderPairTermination and ConsiderPairExtrinsic.
 Here's a proposal:
 
 In an extrinsic prune, it is assumed ANY side-effects (such as the delta)
-are applied by ConsiderPairExtrinsic to the postponed, rather than by NBR.
+are applied by ConsiderPairExtrinsic to the postponed, rather than by THOR.
 On the other hand, a termination prune needs to mark whatever the final
 result was.
 
@@ -39,13 +39,13 @@ something smaller than threshold.
  */
 class Akde {
  public:
-  /** The bounding type. Required by NBR. */
-  typedef SpHrectBound<2> Bound;
+  /** The bounding type. Required by THOR. */
+  typedef ThorHrectBound<2> Bound;
 
-  typedef SpVectorPoint QPoint;
-  typedef SpVectorPoint RPoint;
+  typedef ThorVectorPoint QPoint;
+  typedef ThorVectorPoint RPoint;
 
-  /** The type of kernel in use.  NOT required by NBR. */
+  /** The type of kernel in use.  NOT required by THOR. */
   typedef EpanKernel Kernel;
 
   /**
@@ -84,7 +84,7 @@ class Akde {
     }
 
     /**
-     * Initialize parameters from a data node (Req NBR).
+     * Initialize parameters from a data node (Req THOR).
      */
     void Init(datanode *module) {
       kernel.Init(fx_param_double_req(module, "h"));
@@ -107,7 +107,7 @@ class Akde {
 
     /**
      * Compute kernel sum for a region of reference points assuming we have
-     * the actual query point (not NBR).
+     * the actual query point (not THOR).
      */
     double ComputeKernelSum(
         const Vector& q,
@@ -120,7 +120,7 @@ class Akde {
     }
 
     /**
-     * Divides a vector by an integer (not NBR).
+     * Divides a vector by an integer (not THOR).
      */
     static void ComputeCenter(
         index_t count, const Vector& mass, Vector* center) {
@@ -130,7 +130,7 @@ class Akde {
     }
 
     /**
-     * Compute kernel sum given only a squared distance (not NBR).
+     * Compute kernel sum given only a squared distance (not THOR).
      */
     double ComputeKernelSum(
         double distance_squared,
@@ -148,7 +148,7 @@ class Akde {
   /**
    * Moment information used by thresholded KDE.
    *
-   * NOT required by NBR, but used within other classes.
+   * NOT required by THOR, but used within other classes.
    */
   struct MomentInfo {
    public:
@@ -191,9 +191,9 @@ class Akde {
       return param.ComputeKernelSum(point, count, mass, sumsq);
     }
 
-    SpRange ComputeKernelSumRange(const Param& param,
+    ThorRange ComputeKernelSumRange(const Param& param,
         const Bound& query_bound) const {
-      SpRange density_bound;
+      ThorRange density_bound;
       Vector center;
 
       param.ComputeCenter(count, mass, &center);
@@ -229,7 +229,7 @@ class Akde {
 
    public:
     /**
-     * Initialize to a default zero value, as if no data is seen (Req NBR).
+     * Initialize to a default zero value, as if no data is seen (Req THOR).
      *
      * This is the only method in which memory allocation can occur.
      */
@@ -238,14 +238,14 @@ class Akde {
     }
 
     /**
-     * Accumulate data from a single point (Req NBR).
+     * Accumulate data from a single point (Req THOR).
      */
     void Accumulate(const Param& param, const QPoint& point) {
       moment_info.Add(1, point.vec(), la::Dot(point.vec(), point.vec()));
     }
 
     /**
-     * Accumulate data from one of your children (Req NBR).
+     * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param,
         const RStat& stat, const Bound& bound, index_t n) {
@@ -267,25 +267,25 @@ class Akde {
    * is fine, but QStat must equal RStat in order for us to allow
    * monochromatic execution.
    *
-   * This limitation may be removed in a further version of NBR.
+   * This limitation may be removed in a further version of THOR.
    */
   typedef RStat QStat;
  
   /**
    * Query node.
    */
-  typedef SpNode<Bound, RStat> RNode;
+  typedef ThorNode<Bound, RStat> RNode;
   /**
    * Reference node.
    */
-  typedef SpNode<Bound, QStat> QNode;
+  typedef ThorNode<Bound, QStat> QNode;
 
   /**
    * Coarse result on a region.
    */
   struct QPostponed {
    public:
-    SpRange d_density;
+    ThorRange d_density;
 
     OT_DEF(QPostponed) {
       OT_MY_OBJECT(d_density);
@@ -311,7 +311,7 @@ class Akde {
   struct Delta {
    public:
     /** Density update to apply to children's bound. */
-    SpRange d_density;
+    ThorRange d_density;
 
     OT_DEF(Delta) {
       OT_MY_OBJECT(d_density);
@@ -325,7 +325,7 @@ class Akde {
   // rho
   struct QResult {
    public:
-    SpRange density;
+    ThorRange density;
 
     OT_DEF(QResult) {
       OT_MY_OBJECT(density);
@@ -358,8 +358,8 @@ class Akde {
 
   struct GlobalResult {
    public:
-    SpRange log_likelihood;
-    SpRange sum;
+    ThorRange log_likelihood;
+    ThorRange sum;
 
    public:
     void Init(const Param& param) {
@@ -399,7 +399,7 @@ class Akde {
   struct QSummaryResult {
    public:
     /** Bound on density from leaves. */
-    SpRange density;
+    ThorRange density;
 
     OT_DEF(QSummaryResult) {
       OT_MY_OBJECT(density);
@@ -602,11 +602,11 @@ int main(int argc, char *argv[]) {
 
 #ifdef USE_MPI  
   MPI_Init(&argc, &argv);
-  nbr_utils::MpiDualTreeMain<Akde, DualTreeDepthFirst<Akde> >(
+  thor_utils::MpiDualTreeMain<Akde, DualTreeDepthFirst<Akde> >(
       fx_root, "akde");
   MPI_Finalize();
 #else
-  nbr_utils::MonochromaticDualTreeMain<Akde, DualTreeDepthFirst<Akde> >(
+  thor_utils::MonochromaticDualTreeMain<Akde, DualTreeDepthFirst<Akde> >(
       fx_root, "akde");
 #endif
   

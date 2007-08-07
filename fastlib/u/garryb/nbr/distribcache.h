@@ -1,5 +1,5 @@
-#ifndef NBR_DISTRIBCACHE_H
-#define NBR_DISTRIBCACHE_H
+#ifndef THOR_DISTRIBCACHE_H
+#define THOR_DISTRIBCACHE_H
 
 #include "rpc.h"
 #include "cache.h"

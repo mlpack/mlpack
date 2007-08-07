@@ -4,8 +4,8 @@
  * Work-queues, load balancing, and the like.
  */
 
-#ifndef NBR_WORK_H
-#define NBR_WORK_H
+#ifndef THOR_WORK_H
+#define THOR_WORK_H
 
 #include "rpc.h"
 #include "cache.h"
@@ -180,9 +180,9 @@ class CentroidWorkQueue
   FORBID_COPY(CentroidWorkQueue);
 
  private:
-  typedef typename SpTreeDecomposition<Node>::DecompNode DecompNode;
+  typedef typename ThorTreeDecomposition<Node>::DecompNode DecompNode;
   enum Status { NONE, SOME, ALL };
-  typedef SpSkeletonNode<Node, Status> InternalNode;
+  typedef ThorSkeletonNode<Node, Status> InternalNode;
 
   struct ProcessWorkQueue {
     index_t n_centers;

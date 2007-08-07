@@ -1,5 +1,5 @@
-#ifndef NBR_UTILS_H
-#define NBR_UTILS_H
+#ifndef THOR_UTILS_H
+#define THOR_UTILS_H
 
 #include "kdtree.h"
 #include "work.h"
@@ -12,7 +12,7 @@
 
 // TODO: These classes all need comments
 
-namespace nbr_utils {
+namespace thor_utils {
 
 template<typename GNP, typename Solver>
 class ThreadedDualTreeSolver {
@@ -349,7 +349,7 @@ class RpcMonochromaticDualTreeRunner {
 
   typename GNP::Param *param_;
   index_t dim_;
-  SpKdTree<typename GNP::Param, typename GNP::QPoint, typename GNP::QNode> data_;
+  ThorKdTree<typename GNP::Param, typename GNP::QPoint, typename GNP::QNode> data_;
   DistributedCache q_results_;
 
  public:

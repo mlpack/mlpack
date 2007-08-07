@@ -2,19 +2,19 @@
 #include "spbounds.h"
 #include "gnp.h"
 #include "dfs.h"
-#include "nbr_utils.h"
+#include "thor_utils.h"
 
 /**
  * An N-Body-Reduce problem.
  */
 class Gravity {
  public:
-  /** The bounding type. Required by NBR. */
-  typedef SpHrectBound<2> Bound;
-  /** The type of point in use. Required by NBR. */
+  /** The bounding type. Required by THOR. */
+  typedef ThorHrectBound<2> Bound;
+  /** The type of point in use. Required by THOR. */
 
-  typedef SpVectorPoint QPoint;
-  typedef SpVectorPoint RPoint;
+  typedef ThorVectorPoint QPoint;
+  typedef ThorVectorPoint RPoint;
 
   /**
    * All parameters required by the execution of the algorithm.
@@ -42,7 +42,7 @@ class Gravity {
     }
    
     /**
-     * Initialize parameters from a data node (Req NBR).
+     * Initialize parameters from a data node (Req THOR).
      */
     void Init(datanode *datanode) {
       dim = -1;
@@ -99,8 +99,8 @@ class Gravity {
     }
   };
 
-  typedef SpNode<Bound, CombinedStat> RNode;
-  typedef SpNode<Bound, CombinedStat> QNode;
+  typedef ThorNode<Bound, CombinedStat> RNode;
+  typedef ThorNode<Bound, CombinedStat> QNode;
 
   typedef BlankDelta Delta;
   
@@ -283,7 +283,7 @@ class Gravity {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-  nbr_utils::RpcMonochromaticDualTreeMain<Gravity, DualTreeDepthFirst<Gravity> >(
+  thor_utils::RpcMonochromaticDualTreeMain<Gravity, DualTreeDepthFirst<Gravity> >(
       fx_root, "gravity");
   
   fx_done();

@@ -1,7 +1,7 @@
 #include "spbounds.h"
 #include "gnp.h"
 #include "dfs.h"
-#include "nbr_utils.h"
+#include "thor_utils.h"
 
 #include "fastlib/fastlib.h"
 
@@ -37,8 +37,8 @@ As one-variable rho:
 #define SIMILARITY_MAX 0
 
 struct AffinityCommon {
-  /** The bounding type. Required by NBR. */
-  typedef SpHrectBound<2> Bound;
+  /** The bounding type. Required by THOR. */
+  typedef ThorHrectBound<2> Bound;
 
   /**
    * Alpha corresponds to "maximum availability" with the != k condition.
@@ -77,7 +77,7 @@ struct AffinityCommon {
     }
   };
 
-  typedef SpVectorInfoPoint<CombinedInfo> Point;
+  typedef ThorVectorInfoPoint<CombinedInfo> Point;
 
   struct Param {
    public:
@@ -141,8 +141,8 @@ struct AffinityCommon {
 
   struct CombinedStat {
    public:
-    SpRange alpha;
-    SpRange rho;
+    ThorRange alpha;
+    ThorRange rho;
 
     OT_DEF(CombinedStat) {
       OT_MY_OBJECT(alpha);
@@ -158,7 +158,7 @@ struct AffinityCommon {
       rho.InitEmptySet();
     }
     void Accumulate(const Param& param, const Point& point) {
-      alpha |= SpRange(point.info().alpha.max2, point.info().alpha.max1);
+      alpha |= ThorRange(point.info().alpha.max2, point.info().alpha.max1);
       rho |= point.info().rho;
     }
     void Accumulate(const Param& param,
@@ -169,7 +169,7 @@ struct AffinityCommon {
     void Postprocess(const Param& param, const Bound& bound, index_t n) {}
   };
 
-  typedef SpNode<Bound, CombinedStat> Node;
+  typedef ThorNode<Bound, CombinedStat> Node;
 
   struct Helpers {
     static double Similarity(double distsq) {
@@ -246,7 +246,7 @@ class AffinityAlpha {
 
   struct Delta {
    public:
-    SpRange alpha;
+    ThorRange alpha;
 
     OT_DEF(Delta) {
       OT_MY_OBJECT(alpha);
@@ -282,7 +282,7 @@ class AffinityAlpha {
 
   struct QSummaryResult {
    public:
-    SpRange alpha;
+    ThorRange alpha;
 
     OT_DEF(QSummaryResult) {
       OT_MY_OBJECT(alpha);
@@ -305,7 +305,7 @@ class AffinityAlpha {
       alpha.InitEmptySet();
     }
     void Accumulate(const Param& param, const QResult& result) {
-      alpha |= SpRange(result.alpha.max2, result.alpha.max1);
+      alpha |= ThorRange(result.alpha.max2, result.alpha.max1);
     }
     void Accumulate(const Param& param,
         const QSummaryResult& result, index_t n_points) {
@@ -435,7 +435,7 @@ class AffinityRho {
 
   struct Delta {
    public:
-    SpRange d_rho;
+    ThorRange d_rho;
 
     OT_DEF(Delta) {
       OT_MY_OBJECT(d_rho);
@@ -712,7 +712,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   param = new AffinityCommon::Param();
   param->Init(fx_submodule(module, gnp_name, gnp_name));
 
-  SpKdTree<AffinityCommon::Param,
+  ThorKdTree<AffinityCommon::Param,
       AffinityCommon::Point, AffinityCommon::Node> tree;
   DistributedCache alphas;
   DistributedCache rhos;
@@ -746,8 +746,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
   for (int iter = 0;; iter++) {
     fx_timer_start(module, "all_alpha");
-    nbr_utils::RpcDualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
-        fx_submodule(module, "nbr", "iter/%d/alpha", iter), 200,
+    thor_utils::RpcDualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
+        fx_submodule(module, "thor", "iter/%d/alpha", iter), 200,
         *param, &tree, &tree, &alphas, NULL);
     ApplyAlphas apply_alphas;
     apply_alphas.Init();
@@ -763,8 +763,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     fx_timer_stop(module, "all_alpha");
 
     fx_timer_start(module, "all_rho");
-    nbr_utils::RpcDualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
-        fx_submodule(module, "nbr", "iter/%d/rho", iter), 200,
+    thor_utils::RpcDualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
+        fx_submodule(module, "thor", "iter/%d/rho", iter), 200,
         *param, &tree, &tree, &rhos, NULL);
     ApplyRhos apply_rhos;
     apply_rhos.Init(param);
@@ -919,7 +919,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 //      q_results_alpha.Init(default_result_alpha, data_points.end_index(),
 //          data_points.n_block_elems());
 //
-//      nbr_utils::ThreadedDualTreeSolver
+//      thor_utils::ThreadedDualTreeSolver
 //               < AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >::Solve(
 //          fx_submodule(module, "threads", "iters/%d/alpha", iter), param,
 //          &data_points, &data_nodes, &data_points, &data_nodes,
@@ -943,7 +943,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 //        }
 //      }
 //
-//      nbr_utils::StatFixer<
+//      thor_utils::StatFixer<
 //          AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
 //          ::Fix(param, &data_points, &data_nodes);
 //    }
@@ -964,7 +964,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 //      q_results_rho.Init(default_result_rho, data_points.end_index(),
 //          data_points.n_block_elems());
 //
-//      nbr_utils::ThreadedDualTreeSolver< AffinityRho, DualTreeDepthFirst<AffinityRho> >::Solve(
+//      thor_utils::ThreadedDualTreeSolver< AffinityRho, DualTreeDepthFirst<AffinityRho> >::Solve(
 //          fx_submodule(module, "threads", "iters/%d/rho", iter), param,
 //          &data_points, &data_nodes, &data_points, &data_nodes,
 //          &q_results_rho);
@@ -996,7 +996,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 //      }
 //
 //
-//      nbr_utils::StatFixer<
+//      thor_utils::StatFixer<
 //          AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
 //          ::Fix(param, &data_points, &data_nodes);
 //

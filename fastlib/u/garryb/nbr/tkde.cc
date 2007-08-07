@@ -2,7 +2,7 @@
 #include "spbounds.h"
 #include "gnp.h"
 #include "dfs.h"
-#include "nbr_utils.h"
+#include "thor_utils.h"
 
 /**
  * Approximate kernel density estimation.
@@ -11,13 +11,13 @@
  */
 class Tkde {
  public:
-  /** The bounding type. Required by NBR. */
-  typedef SpHrectBound<2> Bound;
+  /** The bounding type. Required by THOR. */
+  typedef ThorHrectBound<2> Bound;
 
-  typedef SpVectorPoint QPoint;
-  typedef SpVectorPoint RPoint;
+  typedef ThorVectorPoint QPoint;
+  typedef ThorVectorPoint RPoint;
 
-  /** The type of kernel in use.  NOT required by NBR. */
+  /** The type of kernel in use.  NOT required by THOR. */
   typedef EpanKernel Kernel;
 
   typedef BlankGlobalResult GlobalResult;
@@ -36,7 +36,7 @@ class Tkde {
      * This is also normalized for dimensionality and the number of reference
      * points.
      */
-    SpRange thresh;
+    ThorRange thresh;
     /** The kernel in use. */
     Kernel kernel;
     /** The dimensionality of the data sets. */
@@ -59,7 +59,7 @@ class Tkde {
     }
 
     /**
-     * Initialize parameters from a data node (Req NBR).
+     * Initialize parameters from a data node (Req THOR).
      */
     void Init(datanode *module) {
       kernel.Init(fx_param_double_req(module, "h"));
@@ -79,7 +79,7 @@ class Tkde {
 
     /**
      * Compute kernel sum for a region of reference points assuming we have
-     * the actual query point (not NBR).
+     * the actual query point (not THOR).
      */
     double ComputeKernelSum(
         const Vector& q,
@@ -92,7 +92,7 @@ class Tkde {
     }
 
     /**
-     * Divides a vector by an integer (not NBR).
+     * Divides a vector by an integer (not THOR).
      */
     static void ComputeCenter(
         index_t count, const Vector& mass, Vector* center) {
@@ -102,7 +102,7 @@ class Tkde {
     }
 
     /**
-     * Compute kernel sum given only a squared distance (not NBR).
+     * Compute kernel sum given only a squared distance (not THOR).
      */
     double ComputeKernelSum(
         double distance_squared,
@@ -121,7 +121,7 @@ class Tkde {
   /**
    * Moment information used by thresholded KDE.
    *
-   * NOT required by NBR, but used within other classes.
+   * NOT required by THOR, but used within other classes.
    */
   struct MomentInfo {
    public:
@@ -164,9 +164,9 @@ class Tkde {
       return param.ComputeKernelSum(point, count, mass, sumsq);
     }
 
-    SpRange ComputeKernelSumRange(const Param& param,
+    ThorRange ComputeKernelSumRange(const Param& param,
         const Bound& query_bound) const {
-      SpRange density_bound;
+      ThorRange density_bound;
       Vector center;
 
       param.ComputeCenter(count, mass, &center);
@@ -202,7 +202,7 @@ class Tkde {
 
    public:
     /**
-     * Initialize to a default zero value, as if no data is seen (Req NBR).
+     * Initialize to a default zero value, as if no data is seen (Req THOR).
      *
      * This is the only method in which memory allocation can occur.
      */
@@ -211,14 +211,14 @@ class Tkde {
     }
 
     /**
-     * Accumulate data from a single point (Req NBR).
+     * Accumulate data from a single point (Req THOR).
      */
     void Accumulate(const Param& param, const QPoint& point) {
       moment_info.Add(1, point.vec(), la::Dot(point.vec(), point.vec()));
     }
 
     /**
-     * Accumulate data from one of your children (Req NBR).
+     * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param,
         const RStat& stat, const Bound& bound, index_t n) {
@@ -240,18 +240,18 @@ class Tkde {
    * is fine, but QStat must equal RStat in order for us to allow
    * monochromatic execution.
    *
-   * This limitation may be removed in a further version of NBR.
+   * This limitation may be removed in a further version of THOR.
    */
   typedef RStat QStat;
  
   /**
    * Query node.
    */
-  typedef SpNode<Bound, RStat> RNode;
+  typedef ThorNode<Bound, RStat> RNode;
   /**
    * Reference node.
    */
-  typedef SpNode<Bound, QStat> QNode;
+  typedef ThorNode<Bound, QStat> QNode;
 
   enum Label {
     LAB_NEITHER = 0,
@@ -299,7 +299,7 @@ class Tkde {
   struct Delta {
    public:
     /** Density update to apply to children's bound. */
-    SpRange d_density;
+    ThorRange d_density;
 
     OT_DEF(Delta) {
       OT_MY_OBJECT(d_density);
@@ -354,7 +354,7 @@ class Tkde {
   struct QSummaryResult {
    public:
     /** Bound on density from leaves. */
-    SpRange density;
+    ThorRange density;
     int label;
 
     OT_DEF(QSummaryResult) {
@@ -485,7 +485,7 @@ class Tkde {
         GlobalResult* global_result) {
       q_result->density += density;
       
-      SpRange total_density =
+      ThorRange total_density =
           unapplied_summary_results.density + q_result->density;
 
       if (unlikely(total_density > param.thresh)) {
@@ -600,11 +600,11 @@ int main(int argc, char *argv[]) {
 
 #ifdef USE_MPI  
   MPI_Init(&argc, &argv);
-  nbr_utils::MpiDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+  thor_utils::MpiDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
       fx_root, "tkde");
   MPI_Finalize();
 #else
-  nbr_utils::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+  thor_utils::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
       fx_root, "tkde");
 #endif
   
