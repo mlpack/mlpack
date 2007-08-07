@@ -44,16 +44,13 @@
 \contentsline {section}{\numberline {\MakeUppercase {Section} 4}\MakeUppercase {Proposed Research}}{32}{section.78}
 \contentsline {subsection}{\numberline {4.1}Customized Kernels}{33}{subsection.79}
 \contentsline {subsubsection}{\numberline {4.1.1}Speeding up SDPCA}{35}{subsubsection.87}
-\contentsline {subsection}{\numberline {4.2}Fast kernel summation with trees}{37}{subsection.99}
-\contentsline {subsubsection}{\numberline {4.2.1}Gaussian Kernel factorization}{38}{subsubsection.104}
-\contentsline {paragraph}{Factorization with Hermite Polynomials}{38}{section*.106}
-\contentsline {subsubsection}{\numberline {4.2.2}Computing Gaussian Kernel Matrix with trees}{39}{subsubsection.117}
-\contentsline {subsection}{\numberline {4.3}Speech recognition with nearest neighbor search}{40}{subsection.119}
-\contentsline {subsection}{\numberline {4.4}Acoustic Environment adaptation}{41}{subsection.120}
-\setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Section} 5}\MakeUppercase {Work remaining to be done}}{41}{section.121}
-\setcounter {tocdepth}{2}
-\contentsline {section}{\numberline {\MakeUppercase {Appendix} A}\MakeUppercase {This is my first appendix}}{47}{section.122}
+\contentsline {subsubsection}{\numberline {4.1.2}Accelerating Semidefinite PCA with domain decomposition}{37}{subsubsection.99}
+\contentsline {subsection}{\numberline {4.2}Fast kernel summation with trees}{38}{subsection.103}
+\contentsline {subsubsection}{\numberline {4.2.1}Gaussian Kernel factorization}{38}{subsubsection.108}
+\contentsline {paragraph}{Factorization with Hermite Polynomials}{39}{section*.110}
+\contentsline {subsubsection}{\numberline {4.2.2}Computing Gaussian Kernel Matrix with trees}{40}{subsubsection.121}
+\contentsline {subsection}{\numberline {4.3}Speech recognition with nearest neighbor search}{41}{subsection.123}
+\contentsline {subsection}{\numberline {4.4}Adaptive kernel Filters}{41}{subsection.124}
 \setcounter {tocdepth}{3}
-\contentsline {section}{\MakeUppercase {References}}{48}{section*.123}
+\contentsline {section}{\MakeUppercase {References}}{48}{section*.126}
 \setcounter {tocdepth}{2}
