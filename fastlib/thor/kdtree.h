@@ -14,10 +14,11 @@
 #include "thortree.h"
 #include "cachearray.h"
 
+#include "file/textfile.h"
+#include "data/dataset.h"
 #include "tree/bounds.h"
 #include "base/common.h"
 #include "col/arraylist.h"
-#include "file/serialize.h"
 #include "fx/fx.h"
 
 /* Implementation */

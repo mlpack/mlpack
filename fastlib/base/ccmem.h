@@ -68,7 +68,7 @@ namespace mem {
    * @param elems number of *elements*
    */
   template<typename T>
-  void DebugPoison(T* array, size_t elems) {
+  void DebugPoison(T* array, size_t elems = 1) {
     DEBUG_ONLY(DebugPoisonBytes(array, elems * sizeof(T)));
   }
   
@@ -332,55 +332,35 @@ namespace mem {
   inline T* CopyConstruct(T* dest, const T* src, size_t elems = 1) {
      for (size_t i = 0; i < elems; i++) new(dest+i)T(src[i]); return dest;
   }
-  template<>
-  inline char* CopyConstruct<char>(char* dest, const char* src, size_t elems) {
-     ::memcpy(dest, src, elems); return dest;
-  }
+#define BASE_CCMEM__FAST_COPY(T) \
+  template<> inline T* CopyConstruct<T>(T* dest, const T* src, size_t elems) \
+   { ::memcpy(dest, src, elems * sizeof(T)); return dest; }
+  BASE_CCMEM__FAST_COPY(char)
+  BASE_CCMEM__FAST_COPY(short)
+  BASE_CCMEM__FAST_COPY(int)
+  BASE_CCMEM__FAST_COPY(long)
+  BASE_CCMEM__FAST_COPY(long long)
+  BASE_CCMEM__FAST_COPY(unsigned char)
+  BASE_CCMEM__FAST_COPY(unsigned short)
+  BASE_CCMEM__FAST_COPY(unsigned int)
+  BASE_CCMEM__FAST_COPY(unsigned long)
+  BASE_CCMEM__FAST_COPY(unsigned long long)
+  BASE_CCMEM__FAST_COPY(float)
+  BASE_CCMEM__FAST_COPY(double)
+#undef BASE_CCMEM__FAST_COPY
+
   template<typename T>
   inline T* DupConstruct(const T* src, size_t elems = 1) {
      return CopyConstruct(Alloc<T>(elems), src, elems);
   }
 
-  inline void SwapBytes__Chars(long *a_lp_in, long *b_lp_in, size_t remaining) {
-    char *a_cp = reinterpret_cast<char*>(a_lp_in);
-    char *b_cp = reinterpret_cast<char*>(b_lp_in);
-    
-    while (remaining) {
-      char ta = *a_cp;
-      char tb = *b_cp;
-      remaining--;
-      *b_cp = ta;
-      b_cp++;
-      *a_cp = tb;
-      a_cp++;
-    }
-  }
+  void SwapBytes__Chars(long *a_lp_in, long *b_lp_in, ssize_t remaining);
+  void SwapBytes__Impl(long *a_lp_in, long *b_lp_in, ssize_t remaining);
 
   template<typename T>
   void SwapBytes(T* a, T* b, size_t bytes) {
-    long *a_lp = reinterpret_cast<long*>(a);
-    long *b_lp = reinterpret_cast<long*>(b);
-    ssize_t remaining = bytes;
-
-    //DEBUG_MSG(3.0,"Swapping %d bytes, %d left", int(elems), int(remaining));
-    
-    // TODO: Not as good as an MMX memcpy, but still good...
-    // TODO: replace 'remaining' decrement with end pointer
-    while (likely((remaining -= sizeof(long)) >= 0)) {
-      long ta = *a_lp;
-      long tb = *b_lp;
-      *b_lp = ta;
-      b_lp++;
-      *a_lp = tb;
-      a_lp++;
-      
-    }
-    
-    remaining += sizeof(long);
-    
-    if (unlikely(remaining != 0)) {
-      SwapBytes__Chars(a_lp, b_lp, remaining);
-    }
+    SwapBytes__Impl(reinterpret_cast<long*>(a), reinterpret_cast<long*>(b),
+        bytes);
   }
 
   template<typename T>

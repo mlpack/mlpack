@@ -101,7 +101,7 @@ struct AffinityCommon {
     void Init(datanode *module) {
       dim = -1;
       pref = fx_param_double_req(module, "pref");
-      lambda = fx_param_double(module, "lambda", 0.9);
+      lambda = fx_param_double(module, "lambda", 0.6);
     }
 
     void InitPointExtras(int tag, Point *point) const {
@@ -115,11 +115,7 @@ struct AffinityCommon {
       point->info().alpha.max1 = 0;
       point->info().alpha.max2 = pref;
       point->info().alpha.max1_index = index;
-      if (math::RandInt(4096) == 0) {
-        point->info().rho = -pref / 2;
-      } else {
-        point->info().rho = 0;
-      }
+      point->info().rho = 0;
     }
 
     void Bootstrap(int tag, index_t dim_in, index_t count) {

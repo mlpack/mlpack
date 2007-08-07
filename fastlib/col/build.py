@@ -9,11 +9,11 @@ librule(
 binrule(
     name = "col_test",
     sources = ["col_test.cc"],
-    linkables = [":col"])
+    deplibs = [":col"])
 
 
 binrule(
     name = "timing_test",
     sources = ["timing_test.cc"],
-    linkables = [":col", "fx:fx"])
+    deplibs = [":col", "fx:fx"])
 

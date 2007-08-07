@@ -30,19 +30,11 @@ class String {
  private:
   ArrayList<char> array_;
 
-  OT_DEF(String) {
+  OT_DEF_BASIC(String) {
     OT_MY_OBJECT(array_);
   }
    
  public:
-  String() {}
-  ~String() {}
-
-  String(const String& other) {
-    Copy(other);
-  }
-  CC_ASSIGNMENT_OPERATOR(String);
-
   /**
    * Implicit conversion constructor.
    */
@@ -73,11 +65,6 @@ class String {
    */
   COMPILER_PRINTF(2, 3)
   const String& InitSprintf(const char *format, ...);
-  
-  /** Copies another string. */
-  void Copy(const String& other) {
-    array_.Copy(other.array_);
-  }
   
   /**
    * Initializes as a copy of an existing region of characters.

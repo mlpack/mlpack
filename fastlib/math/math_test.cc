@@ -88,8 +88,8 @@ void TestPow() {
   TEST_DOUBLE_EXACT((math::Pow<2, 1>(3.0)), 9.0);
   TEST_DOUBLE_EXACT((math::Pow<1, 2>(9.0)), 3.0);
   TEST_DOUBLE_EXACT((math::Pow<3, 3>(9.0)), 9.0);
-  TEST_DOUBLE_EXACT((math::Pow<1, 3>(8.0)), 2.0);
-  TEST_DOUBLE_EXACT((math::PowAbs<1, 3>(-8.0)), 2.0);
+  TEST_DOUBLE_APPROX((math::Pow<1, 3>(8.0)), 2.0, 1.0e-6);
+  TEST_DOUBLE_APPROX((math::PowAbs<1, 3>(-8.0)), 2.0, 1.0e-6);
   TEST_DOUBLE_EXACT((math::PowAbs<1, 1>(-8.0)), 8.0);
   TEST_DOUBLE_EXACT((math::PowAbs<2, 1>(-8.0)), 64.0);
 }

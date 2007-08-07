@@ -50,10 +50,10 @@ librule(
 binrule(
     name = "uselapack_test",
     sources = ["uselapack_test.cc"],
-    linkables = [":la"])
+    deplibs = [":la"])
 
 binrule(
     name = "la_test",
     sources = ["la_test.cc"],
     headers = [],
-    linkables = [":la"])
+    deplibs = [":la"])

@@ -10,9 +10,12 @@
 #include "rpc.h"
 #include "cache.h"
 #include "cachearray.h"
-#include "spnode.h"
+#include "thortree.h"
 
-#include "fastlib/fastlib_int.h"
+#include "col/heap.h"
+#include "col/arraylist.h"
+#include "la/uselapack.h"
+#include "tree/bounds.h"
 
 //------------------------------------------------------------------------
 
@@ -172,7 +175,6 @@ void SimpleWorkQueue<Node>::AddWork_(
 
 //------------------------------------------------------------------------
 
-#include "spbounds.h"
 
 template<typename Node>
 class CentroidWorkQueue

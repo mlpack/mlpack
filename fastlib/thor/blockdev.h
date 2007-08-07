@@ -1,7 +1,13 @@
 #ifndef THOR_BLOCKDEV_H
 #define THOR_BLOCKDEV_H
 
-#include "fastlib/fastlib_int.h"
+#include "base/common.h"
+#include "base/otrav.h"
+#include "col/intmap.h"
+#include "col/string.h"
+#include "fx/fx.h"
+#include "par/thread.h"
+
 
 class BlockDevice {
   FORBID_COPY(BlockDevice);

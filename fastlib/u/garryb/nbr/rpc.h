@@ -432,15 +432,17 @@ struct DataGetterRequest {
 template<typename T>
 class DataGetterBackend
     : public RemoteObjectBackend<DataGetterRequest, T> {
+  FORBID_COPY(DataGetterBackend);
+
  private:
   T data_;
 
  public:
   void Init(const T& data_in) {
-    ot::Copy(data_in, &data);
+    ot::Copy(data_in, &data_);
   }
   void Init(const T* data_in) {
-    ot::Copy(*data_in, &data);
+    ot::Copy(*data_in, &data_);
   }
 
   virtual void HandleRequest(const DataGetterRequest& request, T *response);

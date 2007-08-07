@@ -21,7 +21,7 @@ class RangeSet {
     Boundary begin;
     Boundary end;
     
-    OT_DEF(Range) {
+    OT_DEF_BASIC(Range) {
       OT_MY_OBJECT(begin);
       OT_MY_OBJECT(end);
     }
@@ -89,7 +89,7 @@ class RangeSet {
     // replace the list
     ranges_.Swap(&new_list);
   }
-  
+
   const ArrayList<Range>& ranges() const {
     return ranges_;
   }

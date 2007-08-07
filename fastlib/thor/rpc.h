@@ -8,10 +8,10 @@
 #define THOR_RPC_H
 
 #include "blockdev.h"
-
-#include "fastlib/fastlib_int.h"
-
 #include "rpc_sock.h"
+
+#include "base/common.h"
+#include "col/arraylist.h"
 
 /**
  * A single remote procedure call.

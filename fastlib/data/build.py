@@ -7,5 +7,5 @@ librule(
 binrule(
   name = "dataset_test",
   sources = ["dataset_test.cc"],
-  linkables = [":data", "fx:fx", "math:math"])
+  deplibs = [":data", "fx:fx", "math:math"])
 

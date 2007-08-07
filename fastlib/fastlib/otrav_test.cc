@@ -38,4 +38,16 @@ void TestDatasetLayout() {
   d3->WriteArff("test_dataset_layout.arff");
 }
 
-TEST_SUITE_END(otrav, TestDatasetPrint, TestDatasetLayout)
+void TestCopy() {
+  Dataset *d = new Dataset;
+  
+  d->InitFromFile("fake.arff");
+
+  Dataset d2(*d);
+
+  delete d;
+
+  d2.WriteArff("test_dataset_copy.arff");
+}
+
+TEST_SUITE_END(otrav, TestDatasetPrint, TestDatasetLayout, TestCopy)

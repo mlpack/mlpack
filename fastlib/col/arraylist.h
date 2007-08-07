@@ -66,9 +66,9 @@ class ArrayList {
   index_t size_;
   index_t cap_;
 
-  OT_DEF(ArrayList) {
+  OT_DEF_ONLY(ArrayList) {
     OT_MY_OBJECT(size_);
-    OT_MALLOC_ARRAY_NULLABLE(ptr_, size_);
+    OT_MALLOC_ARRAY(ptr_, size_);
   }
 
   OT_FIX(ArrayList) {
@@ -296,29 +296,6 @@ class ArrayList {
     if (unlikely(size_min > size_min)) {
       GrowTo(size_min);
     }
-  }
-
-  /**
-   * Serializes this arraylist.
-   *
-   * Currently only works for things that are bit-copiable, containing no
-   * pointers.
-   */
-  template<typename Serializer>
-  void Serialize(Serializer *s) const {
-    s->Put(size_);
-    s->Put(ptr_, size_);
-  }
-
-  /**
-   * Initializes this list, deserializing from the given source.
-   */
-  template<typename Deserializer>
-  void Deserialize(Deserializer *s) {
-    s->Get(&size_);
-    cap_ = size_;
-    ptr_ = mem::Alloc<Element>(cap_);
-    s->Get(ptr_, size_);
   }
 
   /**

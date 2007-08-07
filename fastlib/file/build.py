@@ -1,6 +1,6 @@
 librule(
-    sources = ["textfile.cc", "serialize.cc"],
-    headers = ["textfile.h", "serialize.h"],
+    sources = ["textfile.cc"],
+    headers = ["textfile.h"],
     deplibs = ["base:base", "col:col"],
     )
 
@@ -14,7 +14,7 @@ librule(
 binrule(
     name = "textfile_test",
     sources = ["textfile_test.cc"],
-    linkables = [":file", "fx:fx"]
+    deplibs = [":file", "fx:fx"]
     )
 
 

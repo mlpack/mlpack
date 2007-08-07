@@ -3,6 +3,8 @@
 
 template<typename T>
 class Queue {
+  FORBID_COPY(Queue); // No copy constructor defined (yet)
+
  private:
   struct Node {
     T data;
