@@ -1618,9 +1618,42 @@ There are two approaches on that:
 \subsubsection{Accelerating Semidefinite PCA with domain
 decomposition}
 
+Zhang and Zha proposed a domain decomposition method for fast
+manifold learning. This is a general decomposition method for
+dividing the problem in subdomains, evaluating the spectral
+decomposition and and then glue them. The algorithm is described
+below:
+
+\vspace{1cm}
+
+\fbox{
+\begin{minipage}[c]{0.8\linewidth}
+Let $K$ be the k-neighborhood matrix. Let $I$ be the set of all
+points. Partition the $K$ into $K_{1}=K(:,I_1)$, $K_{2}=K(:, I_2)$
+so that $I_1 \bigcup I_2 = I$ and $I_1 \bigcap I_2 = I_0
+\neq\emptyset$. Let $K_{01}, K_{02}$ be the the parts of $K_1, K_2$
+that contain the overlap points corresponding to $I_0$
+\begin{enumerate}
+  \item Compute the least squares problem $\min_w||K_{01}-W[e,
+  K_{02}^T]^T||_F$.
+  \item Affinely transform $K_2$ to $\hat{K}_2=W[e,K_{2}^T]^T$.
+  \item Set the global coordinate matrix $K$ by  \\ $K(:,I_1\backslash I_0)=K_{11}, K(:,I_0)= \alpha
+        K_{01}+(1-\alpha)\hat{K}_{02}, K(:, I_2\backslash I_0)=\hat{K}_{12}$
+\end{enumerate}
+\end{minipage}
+}
+
+\vspace{1cm}
+
+The only restriction of the algorithm is that the spectral method
+has to be affine invariant, which is the case in SDPCA.
+
+As we can see this method makes SDPCA parallelizable, since we can
+implemented in a recursive way.
+
 
 \subsection{Fast kernel summation with trees} Kernel summation is
-on of the most common tasks in kernel methods. The general formula
+one of the most common tasks in kernel methods. The general formula
 \begin{equation}
 \label{kernel_sum}
   G(x)=\sum_{r=0}^{N} w_i e^{-\frac{||x-x_r||}{\sigma^2}}

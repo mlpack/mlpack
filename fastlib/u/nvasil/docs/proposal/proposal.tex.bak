@@ -1615,6 +1615,10 @@ There are two approaches on that:
   we show next.
 \end{enumerate}
 
+\subsubsection{Accelerating Semidefinite PCA with domain
+decomposition}
+
+
 \subsection{Fast kernel summation with trees} Kernel summation is
 on of the most common tasks in kernel methods. The general formula
 \begin{equation}
