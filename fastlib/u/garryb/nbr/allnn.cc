@@ -26,15 +26,11 @@ class Allnn {
     /** The dimensionality of the data sets. */
     index_t dim;
 
-    OT_DEF(Param) {
+    OT_DEF_BASIC(Param) {
       OT_MY_OBJECT(dim);
     }
 
    public:
-    void Copy(const Param& other) {
-      dim = other.dim;
-    }
-   
     /**
      * Initialize parameters from a data node (Req THOR).
      */
@@ -67,7 +63,7 @@ class Allnn {
     double distance_sq;
     index_t neighbor_i;
 
-    OT_DEF(QResult) {
+    OT_DEF_BASIC(QResult) {
       OT_MY_OBJECT(distance_sq);
       OT_MY_OBJECT(neighbor_i);
     }
@@ -91,7 +87,7 @@ class Allnn {
    public:
     MinMaxVal<double> distance_sq_hi;
 
-    OT_DEF(QSummaryResult) {
+    OT_DEF_BASIC(QSummaryResult) {
       OT_MY_OBJECT(distance_sq_hi);
     }
 
@@ -221,13 +217,8 @@ class Allnn {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-#ifdef USE_RPC
   thor_utils::RpcMonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
-#else
-  thor_utils::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
-      fx_root, "allnn");
-#endif
   
   fx_done();
 }

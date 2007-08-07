@@ -149,71 +149,6 @@ class ThreadedDualTreeSolver {
   }
 };
 
-///**
-// * Dual-tree main for monochromatic problems.
-// *
-// * A bichromatic main isn't that much harder to write, it's just kind of
-// * tedious -- we will save this for later.
-// */
-//template<typename GNP, typename SerialSolver>
-//void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
-//  typename GNP::Param param;
-//
-//  param.Init(fx_submodule(module, gnp_name, gnp_name));
-//
-//  TempCacheArray<typename GNP::QPoint> data_points;
-//  TempCacheArray<typename GNP::QNode> data_nodes;
-//  TempCacheArray<typename GNP::QResult> q_results;
-//
-//  index_t n_block_points = fx_param_int(
-//      module, "n_block_points", 512);
-//  index_t n_block_nodes = fx_param_int(
-//      module, "n_block_nodes", 128);
-//
-//  datanode *data_module = fx_submodule(module, "data", "data");
-//  fx_timer_start(module, "read");
-//
-//  Matrix data_matrix;
-//  MUST_PASS(data::Load(fx_param_str_req(data_module, ""), &data_matrix));
-//  typename GNP::QPoint default_point;
-//  default_point.vec().Init(data_matrix.n_rows());
-//  param.BootstrapMonochromatic(&default_point, data_matrix.n_cols());
-//  data_points.Init(default_point, data_matrix.n_cols(), n_block_points);
-//  for (index_t i = 0; i < data_matrix.n_cols(); i++) {
-//    CacheWrite<typename GNP::QPoint> point(&data_points, i);
-//    point->vec().CopyValues(data_matrix.GetColumnPtr(i));
-//  }
-//
-//  fx_timer_stop(module, "read");
-//
-//  typename GNP::QNode data_example_node;
-//  data_example_node.Init(data_matrix.n_rows(), param);
-//  data_nodes.Init(data_example_node, 0, n_block_nodes);
-//  KdTreeHybridBuilder
-//      <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
-//      ::Build(data_module, param, 0, data_matrix.n_cols(),
-//          &data_points, &data_nodes);
-//
-//  // Create our array of results.
-//  typename GNP::QResult default_result;
-//  default_result.Init(param);
-//  q_results.Init(default_result, data_points.end_index(),
-//      data_points.n_block_elems());
-//
-//  // TODO: Send global result
-//  ThreadedDualTreeSolver<GNP, SerialSolver>::Solve(
-//      module, param,
-//      &data_points, &data_nodes,
-//      &data_points, &data_nodes,
-//      &q_results);
-//}
-//
-///*
-//- add the code for loading the tree
-//- standardize channel numbers
-//- write code that detects and runs the server
-//*/
-
 template<typename GNP>
 class GlobalResultReductor {
  private:
@@ -441,5 +376,70 @@ void RpcMonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
 };
 
+
+///**
+// * Dual-tree main for monochromatic problems.
+// *
+// * A bichromatic main isn't that much harder to write, it's just kind of
+// * tedious -- we will save this for later.
+// */
+//template<typename GNP, typename SerialSolver>
+//void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
+//  typename GNP::Param param;
+//
+//  param.Init(fx_submodule(module, gnp_name, gnp_name));
+//
+//  TempCacheArray<typename GNP::QPoint> data_points;
+//  TempCacheArray<typename GNP::QNode> data_nodes;
+//  TempCacheArray<typename GNP::QResult> q_results;
+//
+//  index_t n_block_points = fx_param_int(
+//      module, "n_block_points", 512);
+//  index_t n_block_nodes = fx_param_int(
+//      module, "n_block_nodes", 128);
+//
+//  datanode *data_module = fx_submodule(module, "data", "data");
+//  fx_timer_start(module, "read");
+//
+//  Matrix data_matrix;
+//  MUST_PASS(data::Load(fx_param_str_req(data_module, ""), &data_matrix));
+//  typename GNP::QPoint default_point;
+//  default_point.vec().Init(data_matrix.n_rows());
+//  param.BootstrapMonochromatic(&default_point, data_matrix.n_cols());
+//  data_points.Init(default_point, data_matrix.n_cols(), n_block_points);
+//  for (index_t i = 0; i < data_matrix.n_cols(); i++) {
+//    CacheWrite<typename GNP::QPoint> point(&data_points, i);
+//    point->vec().CopyValues(data_matrix.GetColumnPtr(i));
+//  }
+//
+//  fx_timer_stop(module, "read");
+//
+//  typename GNP::QNode data_example_node;
+//  data_example_node.Init(data_matrix.n_rows(), param);
+//  data_nodes.Init(data_example_node, 0, n_block_nodes);
+//  KdTreeHybridBuilder
+//      <typename GNP::QPoint, typename GNP::QNode, typename GNP::Param>
+//      ::Build(data_module, param, 0, data_matrix.n_cols(),
+//          &data_points, &data_nodes);
+//
+//  // Create our array of results.
+//  typename GNP::QResult default_result;
+//  default_result.Init(param);
+//  q_results.Init(default_result, data_points.end_index(),
+//      data_points.n_block_elems());
+//
+//  // TODO: Send global result
+//  ThreadedDualTreeSolver<GNP, SerialSolver>::Solve(
+//      module, param,
+//      &data_points, &data_nodes,
+//      &data_points, &data_nodes,
+//      &q_results);
+//}
+//
+///*
+//- add the code for loading the tree
+//- standardize channel numbers
+//- write code that detects and runs the server
+//*/
 
 #endif

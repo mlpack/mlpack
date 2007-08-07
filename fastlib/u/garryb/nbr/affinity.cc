@@ -98,13 +98,6 @@ struct AffinityCommon {
     }
 
    public:
-    void Copy(const Param& other) {
-      dim = other.dim;
-      n_points = other.n_points;
-      pref = other.pref;
-      lambda = other.lambda;
-    }
-
     void Init(datanode *module) {
       dim = -1;
       pref = fx_param_double_req(module, "pref");

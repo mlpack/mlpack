@@ -8,8 +8,8 @@
  * @experimental
  */
 
-#ifndef TREE_SPKDTREE_H
-#define TREE_SPKDTREE_H
+#ifndef TREE_KDTREE_H
+#define TREE_KDTREE_H
 
 #include "spnode.h"
 #include "spbounds.h"
