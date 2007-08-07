@@ -1,7 +1,6 @@
 
 librule(name = "nbr",
-   sources = ["distribcache.cc", "blockdev.cc", "thor_utils.cc",
-              "work.cc",
+   sources = ["distribcache.cc", "blockdev.cc", "work.cc",
               "rpc.cc", "rpc_sock.cc"],
    headers = ["blockdev.h", "cachearray.h",
               "dfs.h", "gnp.h", "kdtree.h", "thor_utils.h",
