@@ -1,26 +1,13 @@
 
-/*to-do
-
-- Init functions
-/- the protocol
-  /- nothing is initialized in my version yet
-  /- alloc() ?
-- dynamic depth
-/- the replacement policy
-  /- copy from old code (old-cache.c)
-  - use static width with tunable depth (that might be based on external
-  pressure)
-  /- think if it's possible to skip the fifo
-    /- no, not possible, no buffer size guarantees
-  /- how do we check items out of the n-way cache?
-    /- once we start using it, we can just leave a "hole" in the cache set
-    which can be filled later, like a victim cache
-/- dirty marking needs to be improved
-*/
-
 #include "distribcache.h"
 
 #include <stdio.h>
+/*to-do
+
+- dynamic depth
+  - use static width with tunable depth (that might be based on external
+  pressure)
+*/
 
 //-------------------------------------------------------------------------
 //-- THE DISTRIBUTED CACHE ------------------------------------------------

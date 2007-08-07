@@ -48,9 +48,6 @@ class DatasetFeature {
   }
   
  public:
-  DatasetFeature() {}
-  ~DatasetFeature() {}
-  
   /**
    * Initialize to be a continuous feature.
    *
@@ -172,8 +169,6 @@ class DatasetFeature {
  * Information describing a dataset and its features.
  */
 class DatasetInfo {
-  FORBID_COPY(DatasetInfo);
-
  private:
   String name_;
   ArrayList<DatasetFeature> features_;
@@ -184,9 +179,6 @@ class DatasetInfo {
   }
 
  public:
-  DatasetInfo() {}
-  ~DatasetInfo() {}
-
   /** Gets a mutable list of all features. */
   ArrayList<DatasetFeature>& features() {
     return features_;
@@ -315,17 +307,7 @@ class DatasetInfo {
   success_t ReadPoint(TextLineReader *reader, double *point,
       bool *is_done) const;
 
-  /**
-   * Initializes to be a copy.
-   * @param other data set feature information to copy
-   */
-  void Copy(const DatasetInfo& other) {
-    name_.Copy(other.name_);
-    features_.Copy(other.features_);
-  }
-
  private:
-
   char *SkipSpace_(char *s);
 
   char *SkipNonspace_(char *s);
@@ -347,8 +329,6 @@ class DatasetInfo {
  * may be an issue, especially if this is Boolean data.)
  */
 class Dataset {
-  FORBID_COPY(Dataset);
-  
  private:
   Matrix matrix_;
   DatasetInfo info_;
@@ -359,9 +339,6 @@ class Dataset {
   }
   
  public:
-  Dataset() {}
-  ~Dataset() {}
-  
   /**
    * Metadata about the feature types and names for the dataset.
    *

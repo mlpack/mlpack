@@ -378,10 +378,6 @@ class DistributedCache : public BlockDevice {
     }
 
    public:
-    void Copy(const Position& other) {
-      *this = other;
-    }
-    
     bool operator < (const Position& other) const {
       if (unlikely(block == other.block)) {
         return offset < other.offset;

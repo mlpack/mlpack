@@ -66,7 +66,6 @@ class ThorNode {
   }
   
   void set_range(index_t begin_in, index_t count_in) {
-    DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     begin_ = begin_in;
     count_ = count_in;
   }
@@ -151,8 +150,6 @@ class ThorNode {
  */
 template<typename TNode, typename TInfo>
 class ThorSkeletonNode {
-  FORBID_COPY(ThorSkeletonNode); // TODO: otrav might provide a copy constructor
-
  public:
   typedef TNode Node;
   typedef TInfo Info;
@@ -307,12 +304,12 @@ struct TreeGrain {
   /** One past the last point. */
   index_t point_end_index;
 
-  TreeGrain()
-      : node_index(-1)
-      , node_end_index(-1)
-      , point_begin_index(-1)
-      , point_end_index(-1)
-   {}
+  void InitBlank() {
+    node_index = -1;
+    node_end_index = -1;
+    point_begin_index = -1;
+    point_end_index = -1;
+  }
 
   bool is_valid() const {
     return node_index >= 0;
@@ -338,8 +335,6 @@ struct TreeGrain {
  */
 template<typename TNode>
 class ThorTreeDecomposition {
-  FORBID_COPY(ThorTreeDecomposition);
-
  public:
   typedef TNode Node;
   struct Info {
@@ -380,7 +375,11 @@ class ThorTreeDecomposition {
   void Init(DecompNode *root_in) {
     root_ = root_in;
     DEBUG_ASSERT(root_->info().begin_rank == 0);
-    grain_by_owner_.Init(root_->info().end_rank);
+    int n = root_->info().end_rank;
+    grain_by_owner_.Init(n);
+    for (int i = 0; i < n; i++) {
+      grain_by_owner_[i].InitBlank();
+    }
     FillInfo_(root_);
   }
 

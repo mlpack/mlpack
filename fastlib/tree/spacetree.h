@@ -12,7 +12,6 @@
 #define TREE_SPACETREE_H
 
 #include "base/cc.h"
-#include "file/serialize.h"
 #include "statistic.h"
 
 /**
@@ -34,7 +33,7 @@ class BinarySpaceTree {
   typedef TBound Bound;
   typedef TDataset Dataset;
   typedef TStatistic Statistic;
-  
+
  private:
   Bound bound_;
   BinarySpaceTree *left_;
@@ -42,7 +41,7 @@ class BinarySpaceTree {
   index_t begin_;
   index_t count_;
   Statistic stat_;
-  
+
  public:
   BinarySpaceTree() {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
@@ -50,7 +49,6 @@ class BinarySpaceTree {
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
   }
-  
 
   ~BinarySpaceTree() {
     if (!is_leaf()) {
@@ -62,7 +60,7 @@ class BinarySpaceTree {
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
   }
-  
+
   void Init(index_t begin_in, index_t count_in) {
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);
@@ -70,7 +68,7 @@ class BinarySpaceTree {
     begin_ = begin_in;
     count_ = count_in;
   }
-  
+
   /**
    * Find a node in this tree by its begin and count.
    *
@@ -121,75 +119,6 @@ class BinarySpaceTree {
     } else {
       return right_->FindByBeginCount(begin_q, count_q);
     }
-  }
-  
-  /**
-   * Serializes the tree _structure_ only.
-   * Statistics are not stored (this allows you to re-load the tree
-   * for problems that require different statistics).
-   */
-  template<typename Serializer>
-  void Serialize(Serializer *s) const {
-    bound_.Serialize(s);
-    s->Put(begin_);
-    s->Put(count_);
-    
-    bool children = !is_leaf();
-    s->Put(children);
-    
-    if (children) {
-      left_->Serialize(s);
-      right_->Serialize(s);
-    }
-  }
-  
-  /**
-   * Deserializes the tree from its structure, and re-calculates bottom-up
-   * statistics.
-   */
-  template<typename Deserializer>
-  void Deserialize(const Dataset& data, Deserializer *s) {
-    DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
-    
-    bound_.Deserialize(s);
-    s->Get(&begin_);
-    s->Get(&count_);
-    
-    bool children;
-    
-    s->Get(&children);
-    
-    BinarySpaceTree *l = NULL;
-    BinarySpaceTree *r = NULL;
-    
-    if (children) {
-      l = new BinarySpaceTree();
-      l->Deserialize(data, s);
-      r = new BinarySpaceTree();
-      r->Deserialize(data, s);
-    }
-    
-    set_children(data, l, r);
-  }
-  
-  template<typename Serializer>
-  void SerializeAll(const Dataset& data, Serializer *s) const {
-    // can't use BinarySpaceTree as a magic number, because we want to be
-    // able to deserialize this class with another statistic
-    s->PutMagic(file::CreateMagic("spacetree")
-        + MAGIC_NUMBER(TDataset) + MAGIC_NUMBER(TBound));
-    data.Serialize(s);
-    Serialize(s);
-  }
-  
-  template<typename Deserializer>
-  void DeserializeAll(Dataset* data, Deserializer *s) {
-    // can't use BinarySpaceTree as a magic number, because we want to be
-    // able to deserialize this class with another statistic
-    s->AssertMagic(file::CreateMagic("spacetree")
-        + MAGIC_NUMBER(TDataset) + MAGIC_NUMBER(TBound));
-    data->Deserialize(s);
-    Deserialize(*data, s);
   }
   
   // TODO: Not const correct

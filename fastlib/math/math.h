@@ -209,6 +209,65 @@ namespace math {
   }
 };
 
+/**
+ * A value which is the min or max of multiple other values.
+ *
+ * Comes with a highly optimized version of x = max(x, y).
+ *
+ * The template argument should be something like double, with greater-than,
+ * less-than, and equals operators.
+ */
+template<typename TValue>
+class MinMaxVal {
+ public:
+  typedef TValue Value;
+
+ public:
+  /** The underlying value. */
+  Value val;
+
+  OT_DEF_BASIC(MinMaxVal) {
+    OT_MY_OBJECT(val);
+  }
+
+ public:
+  /**
+   * Converts implicitly to the value.
+   */
+  operator Value() const { return val; }
+
+  /**
+   * Sets the value.
+   */
+  const Value& operator = (Value val_in) {
+    return (val = val_in);
+  }
+
+  /**
+   * Efficiently performs this->val = min(this->val, incoming_val).
+   *
+   * The expectation is that it is higly unlikely for the incoming
+   * value to be the new minimum.
+   */
+  void MinWith(Value incoming_val) {
+    if (unlikely(incoming_val < val)) {
+      val = incoming_val;
+    }
+  }
+  
+  /**
+   * Efficiently performs this->val = min(this->val, incoming_val).
+   *
+   * The expectation is that it is higly unlikely for the incoming
+   * value to be the new maximum.
+   */
+  void MaxWith(Value incoming_val) {
+    if (unlikely(incoming_val > val)) {
+      val = incoming_val;
+    }
+  }
+};
+
 #include "discrete.h"
 #include "kernel.h"
 #include "geometry.h"

@@ -1,5 +1,3 @@
-
-
 /**
  * @file rpc_sock.cc
  *
@@ -9,7 +7,7 @@
 #include "rpc.h"
 #include "rpc_sock.h"
 
-#include "fastlib/fastlib.h"
+#include "file/textfile.h"
 
 #include <fcntl.h>
 #include <errno.h>

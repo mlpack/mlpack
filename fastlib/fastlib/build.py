@@ -21,4 +21,4 @@ librule(
 binrule(
     name = "otrav_test",
     sources = ["otrav_test.cc"],
-    linkables = [":fastlib_int"])
+    deplibs = [":fastlib_int"])

@@ -7,9 +7,9 @@
 #ifndef RPC_SOCK_H
 #define RPC_SOCK_H
 
-#include "spbounds.h"
-
-#include "fastlib/fastlib_int.h"
+#include "col/arraylist.h"
+#include "col/queue.h"
+#include "math/math.h"
 
 #include <sys/socket.h>
 #include <sys/types.h>

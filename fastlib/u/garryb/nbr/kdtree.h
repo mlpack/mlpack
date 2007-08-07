@@ -8,8 +8,8 @@
  * @experimental
  */
 
-#ifndef TREE_KDTREE_H
-#define TREE_KDTREE_H
+#ifndef THOR_KDTREE_H
+#define THOR_KDTREE_H
 
 #include "spnode.h"
 #include "spbounds.h"
@@ -733,7 +733,7 @@ void ThorKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
     Config config;
     MasterLoadData_(&config, *parampp, param_tag, module);
     MasterBuildTree_(&config, *parampp, param_tag, module);
-    config.param = *parampp;
+    config.param = new Param(**parampp);
     config_broadcaster_.SetData(config);
   } else {
     CacheArray<Point>::InitDistributedCacheWorker(points_channel_,

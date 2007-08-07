@@ -1,7 +1,8 @@
 #ifndef THOR_GNP_H
 #define THOR_GNP_H
 
-#include "fastlib/fastlib.h"
+#include "base/otrav.h"
+#include "fx/fx.h"
 
 struct BlankDelta {
  public:

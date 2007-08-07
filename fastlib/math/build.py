@@ -8,5 +8,5 @@ librule(
 binrule(
     name = "math_test",
     sources = ["math_test.cc"],
-    linkables = [":math"])
+    deplibs = [":math"])
 

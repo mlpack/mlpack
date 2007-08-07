@@ -51,7 +51,7 @@ class Vector {
   /** Whether this should be freed, i.e. it is not an alias. */
   bool should_free_;
   
-  OT_DEF(Vector) {
+  OT_DEF_ONLY(Vector) {
     OT_MY_OBJECT(length_);
     OT_MALLOC_ARRAY(ptr_, length_);
   }
@@ -198,21 +198,6 @@ class Vector {
     
     ptr_ = in_ptr;
     length_ = in_length;
-    should_free_ = true;
-  }
-  
-  template<typename Serializer>
-  void Serialize(Serializer *s) const {
-    s->Put(length_);
-    s->Put(ptr_, length_);
-  }
-  
-  template<typename Deserializer>
-  void Deserialize(Deserializer *s) {
-    DEBUG_ONLY(AssertUninitialized_());
-    s->Get(&length_);
-    ptr_ = mem::Alloc<double>(length_);
-    s->Get(ptr_, length_);
     should_free_ = true;
   }
   
@@ -365,13 +350,13 @@ class Matrix {
   index_t n_cols_;
   /** Whether I am a strong copy (not an alias). */
   bool should_free_;
-  
-  OT_DEF(Matrix) {
+
+  OT_DEF_ONLY(Matrix) {
     OT_MY_OBJECT(n_rows_);
     OT_MY_OBJECT(n_cols_);
     OT_MALLOC_ARRAY(ptr_, n_elements());
   }
-  
+
   OT_FIX(Matrix) {
     should_free_ = true;
   }
@@ -577,24 +562,7 @@ class Matrix {
     n_cols_ = n_cols_in;
     should_free_ = true;
   }
-  
-  template<typename Serializer>
-  void Serialize(Serializer *s) const {
-    s->Put(n_rows_);
-    s->Put(n_cols_);
-    s->Put(ptr_, n_elements());
-  }
-  
-  template<typename Deserializer>
-  void Deserialize(Deserializer *s) {
-    DEBUG_ONLY(AssertUninitialized_());
-    s->Get(&n_rows_);
-    s->Get(&n_cols_);
-    ptr_ = mem::Alloc<double>(n_elements());
-    s->Get(ptr_, n_elements());
-    should_free_ = true;
-  }
-  
+
   /**
    * Make a matrix that is an alias of a particular slice of my columns.
    *

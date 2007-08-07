@@ -1,6 +1,9 @@
 #ifndef THOR_DISTRIBCACHE_H
 #define THOR_DISTRIBCACHE_H
 
+#include "col/arraylist.h"
+#include "col/rangeset.h"
+
 #include "rpc.h"
 #include "cache.h"
 #include "blockdev.h"

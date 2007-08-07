@@ -25,7 +25,7 @@ struct GaussianKernel {
  private:
   double inv_bandwidth_2sq_;
   
-  OT_DEF(GaussianKernel) {
+  OT_DEF_BASIC(GaussianKernel) {
     OT_MY_OBJECT(inv_bandwidth_2sq_);
   }
   
@@ -33,10 +33,6 @@ struct GaussianKernel {
   static const bool HAS_CUTOFF = false;
  
  public:
-  GaussianKernel() {}
-  ~GaussianKernel() {}
-  
-  
   /**
    * Initializes to a specific bandwidth.
    *
@@ -44,10 +40,6 @@ struct GaussianKernel {
    */
   void Init(double bandwidth_in) {
     inv_bandwidth_2sq_ = 1.0 / (2.0 * bandwidth_in * bandwidth_in);
-  }
-  
-  void Copy(const GaussianKernel& other) {
-    inv_bandwidth_2sq_ = other.inv_bandwidth_2sq_;
   }
   
   /**
@@ -93,7 +85,7 @@ struct EpanKernel {
   double inv_bandwidth_sq_;
   double bandwidth_sq_;
 
-  OT_DEF(EpanKernel) {
+  OT_DEF_BASIC(EpanKernel) {
     OT_MY_OBJECT(inv_bandwidth_sq_);
     OT_MY_OBJECT(bandwidth_sq_);
   }
@@ -102,20 +94,12 @@ struct EpanKernel {
   static const bool HAS_CUTOFF = true;
   
  public:
-  EpanKernel() {}
-  ~EpanKernel() {}
-  
   /**
    * Initializes to a specific bandwidth.
    */
   void Init(double bandwidth_in) {
     bandwidth_sq_ = (bandwidth_in * bandwidth_in);
     inv_bandwidth_sq_ = 1.0 / bandwidth_sq_;
-  }
-  
-  void Copy(const EpanKernel& other) {
-    bandwidth_sq_ = other.bandwidth_sq_;
-    inv_bandwidth_sq_ = other.inv_bandwidth_sq_;
   }
   
   /**

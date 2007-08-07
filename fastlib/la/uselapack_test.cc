@@ -273,9 +273,10 @@ void TestVector() {
   TEST_ASSERT(v8[3] == 3);
   MakeConstantVector(10, 3.5, &v9);
   TEST_ASSERT(v9[0] == 3.5);
+  TEST_ASSERT(v1[0] == 0.0);
   v9.SwapValues(&v1);
+  TEST_DOUBLE_EXACT(v1[0], 3.5);
   TEST_ASSERT(v9[0] == 0.0);
-  TEST_ASSERT(v1[0] == 3.5);
   TEST_ASSERT(v2[0] == 3.5);
   TEST_ASSERT(v3[0] == 3.5);
   TEST_ASSERT(v4[0] != 3.5);

@@ -22,7 +22,6 @@
 #include "data/dataset.h"
 #include "data/crossvalidation.h"
 #include "math/math.h"
-#include "file/serialize.h"
 #include "file/textfile.h"
 #include "fx/fx.h"
 

@@ -35,22 +35,11 @@ class MinHeap {
 
   ArrayList<Entry> entries_;
 
-  OT_DEF(MinHeap) {
+  OT_DEF_BASIC(MinHeap) {
     OT_MY_OBJECT(entries_);
   }
 
  public:
-  MinHeap() {}
-  ~MinHeap() {}
-
-  /**
-   * Copy constructor (for use in collections only!).
-   */
-  MinHeap(const MinHeap& other) {
-    Copy(other);
-  }
-  CC_ASSIGNMENT_OPERATOR(MinHeap);
-
   /**
    * Initializes an empty priority queue.
    */
@@ -63,29 +52,6 @@ class MinHeap {
    */
   bool is_empty() const {
     return entries_.size() == 0;
-  }
-  
-  /**
-   * Serializes this heap.
-   *
-   * Currently only works for things that are bit-copiable, containing no
-   * pointers.
-   *
-   * @deprecated Use otrav instead.
-   */
-  template<typename Serializer>
-  void Serialize(Serializer *s) const {
-    entries_.Serialize(s);
-  }
-
-  /**
-   * Initializes this heap, deserializing from the given source.
-   *
-   * @deprecated Use otrav instead.
-   */
-  template<typename Deserializer>
-  void Deserialize(Deserializer *s) {
-    entries_.Deserialize(s);
   }
 
   /**
@@ -158,13 +124,6 @@ class MinHeap {
    */
   index_t size() const {
     return entries_.size();
-  }
-
-  /**
-   * Copies another MinHeap.
-   */
-  void Copy(const MinHeap& other) {
-    entries_.Copy(other.entries_);
   }
 
  private:

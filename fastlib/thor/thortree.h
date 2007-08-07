@@ -9,7 +9,7 @@
 
 #include "cachearray.h"
 
-#include "fastlib/fastlib.h"
+#include "la/matrix.h"
 #include "base/otrav.h"
 
 /**
