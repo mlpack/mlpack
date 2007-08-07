@@ -1615,6 +1615,10 @@ There are two approaches on that:
   we show next.
 \end{enumerate}
 
+\subsubsection{Accelerating Semidefinite PCA with domain
+decomposition}
+
+
 \subsection{Fast kernel summation with trees} Kernel summation is
 on of the most common tasks in kernel methods. The general formula
 \begin{equation}
@@ -1780,15 +1784,47 @@ Implement a merge reduce scheme to create different descriptions of
 speech. Use nearest neighbor algorithms to replace gaussian mixtures
 in hidden markov models.
 
-\subsection{Acoustic Environment adaptation}
+\subsection{Adaptive kernel Filters}
+One of the problems of spectral methods is the out of sample
+extension. In practice this means that once we found the new
+dimensions (eigenvectors of the kernel matrix) we need to find a way
+to compute the new dimensions of a test point $x$. The most common
+method is the one based on Nystr\"{o}m's formula, which requires an
+expression or at least a way to compute the kernel product of the
+test point and it's nearest neighbors.
 
-\section{Work remaining to be done}
-\label{remains}
+\begin{equation}
+y_k(x) = \frac{1}{\lambda_k}\sum_{i=1}^{N} w_{ik}K(x, x_i)
+\end{equation}
+where
+\begin{itemize}
+  \item $y_k(x)$ is the $kth$ embedded dimension of $x$, in other
+  words if $x$ was the $N+1$ point of the kernel matrix $K$, then
+  $y_k(x)$ would have been the $w_{(N+1)k}$.
+  \item $\lambda_k$ is the $kth$ eigenvalue
+  \item $w_k$ is the $kth$ eigenvector
+\end{itemize}
+
+Unfortunately for methods like Semidefinite PCA there is no
+expression for the kernel.
+
+One other approach has been to keep a certain size kernel matrix and
+after the arrival of a new test point we remove the oldest from the
+kernel and we add the new one. The kernel looks like a sliding
+window over the data. There is a fast way to compute the eigenvalues
+and eigenvectors of the updated matrix.
+
+We propose an alternative approach to the problem. As we noticed in
+Semidefinite PCA the optimization step is iterative. Addition of an
+extra line/column in the kernel matrix will require one or two
+iterations for convergence. Meanwhile the computation of the
+eigenvalues/eigenvectors can be done with the  online algorithm that
+converges fast.
 
 \end{Body}
 
 \begin{EndMatter}
-\appendix{This is my first appendix}
+%\appendix{This is my first appendix}
 
 %% Below are some optional environments that can be used here
 \bibliographystyle{ieeetr}
