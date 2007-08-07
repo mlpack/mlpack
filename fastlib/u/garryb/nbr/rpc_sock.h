@@ -459,11 +459,11 @@ namespace rpc {
     return RpcSockImpl::instance->n_peers();
   }
   /** Get the i'th child. */
-  inline const int child(int i) {
+  inline int child(int i) {
     return RpcSockImpl::instance->children()[i];
   }
   /** Number of broadcast-tree children. */
-  inline const index_t n_children() {
+  inline index_t n_children() {
     return RpcSockImpl::instance->children().size();
   }
   /** Whether the root of the tree. */

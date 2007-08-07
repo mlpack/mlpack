@@ -799,7 +799,7 @@ void SockConnection::OpenOutgoing(bool blocking) {
         sizeof(struct sockaddr_in))) {
       (void) close(temp_fd);
 
-      if (elapsed_time % 10 == 0) {
+      if (elapsed_time % 10 == 0 && elapsed_time >= 10) {
         NONFATAL(
             "rpc_sock(%d): Connection to parent %d failed, we'll try for %d more seconds.\n",
             rpc::rank(), peer_, TIMEOUT_CONNECT - elapsed_time);

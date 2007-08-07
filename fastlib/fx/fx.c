@@ -70,7 +70,17 @@ static void fx__parse_cmd_line(struct datanode *node, int argc, char *argv[])
         *val++ = '\0';
       }
 
-      datanode_get_path(node, path, NODETYPE_PARAM)->val = strdup(val);
+      if (strcmp(path, "fx/load") == 0) {
+        FILE *stream = fopen(val, "r");
+        if (stream == NULL) {
+          FATAL("File not found (in --fx/load): [%s].", val);
+        } else {
+          datanode_read(node, NODETYPE_PARAM, stream);
+          (void)fclose(stream);
+        }
+      } else {
+        datanode_get_path(node, path, NODETYPE_PARAM)->val = strdup(val);
+      }
 
       free(s);
     } else {
@@ -89,7 +99,7 @@ static void fx__read_debug_params(struct datanode *node)
   abort_on_nonfatal = fx_param_bool(node, "./abort_on_nonfatal", 0);
   pause_on_nonfatal = fx_param_bool(node, "./pause_on_nonfatal", 0);
   print_notify_headers = fx_param_bool(node, "./print_notify_headers", 1);
-  fx__show_results_timers = !(fx_param_bool(node, "./quiet", 0));
+  fx__show_results_timers = fx_param_bool(node, "./noisy", 0);
 }
 
 static void fx__attempt_speedup()

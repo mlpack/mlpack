@@ -42,10 +42,6 @@ void DistributedCache::InitMaster(int channel_num_in,
 
 void DistributedCache::InitWorker(
     int channel_num_in, size_t total_ram, BlockHandler *handler_in) {
-  if (total_ram < 65536) {
-    FATAL("total_ram for a cache is unusually low (%ld) -- remember this is in bytes!",
-        long(total_ram));
-  }
   InitCommon_();
   // connect to master and figure out specs
   ConfigTransaction ct;
@@ -103,6 +99,10 @@ void DistributedCache::InitCommon_() {
 }
 
 void DistributedCache::InitCache_(size_t total_ram) {
+  if (total_ram < 65536) {
+    FATAL("total_ram for a cache is unusually low (%ld BYTES)!",
+        long(total_ram));
+  }
   // give enough cache sets, but rounded up
   n_sets_ = (total_ram + ASSOC*n_block_bytes_ - 1) / (ASSOC*n_block_bytes_);
   slots_.Init(n_sets_ << LOG_ASSOC);
@@ -252,14 +252,17 @@ void DistributedCache::StartSync() {
 void DistributedCache::WaitSync(datanode *node) {
   channel_.WaitSync();
   if (node) {
-    disk_stats().Report(n_block_bytes_, n_blocks_,
+    /*disk_stats().Report(n_block_bytes_, n_blocks_,
         fx_submodule(node, NULL, "disk_stats"));
     net_stats().Report(n_block_bytes_, n_blocks_, 
-        fx_submodule(node, NULL, "net_stats"));
+        fx_submodule(node, NULL, "net_stats"));*/
     world_disk_stats().Report(n_block_bytes_, n_blocks_, 
         fx_submodule(node, NULL, "world_disk_stats"));
-    world_net_stats().Report(n_block_bytes_, n_blocks_, 
-        fx_submodule(node, NULL, "world_net_stats"));
+    if (rpc::n_peers() > 1) {
+      // net stats are only interesting if there's at least two machines
+      world_net_stats().Report(n_block_bytes_, n_blocks_, 
+          fx_submodule(node, NULL, "world_net_stats"));
+    }
   }
   disk_stats_.Reset();
   net_stats_.Reset();
@@ -403,12 +406,16 @@ void DistributedCache::HandleRemoteOwner_(blockid_t block, blockid_t end) {
   mutex_.Unlock();
 }
 
-void DistributedCache::GiveOwnership(blockid_t my_blockid, int new_owner) {
+void DistributedCache::GiveOwnership(blockid_t blockid, int new_owner) {
   if (likely(new_owner != my_rank_)) {
     // mark whole block as dirty and change its owner.
-    StartWrite(my_blockid, false);
     mutex_.Lock();
-    BlockMetadata *block = &blocks_[my_blockid];
+    BlockMetadata *block = &blocks_[blockid];
+    if (unlikely(block->locks == 0)) {
+      DecacheBlock_(blockid);
+      block->locks = 0;
+    }
+    block->status = FULLY_DIRTY;
     DEBUG_ASSERT_MSG(block->is_owner(),
         "Can only give ownership if I'm the owner");
     if (block->local_blockid() != SELF_OWNER_UNALLOCATED) {
@@ -418,9 +425,10 @@ void DistributedCache::GiveOwnership(blockid_t my_blockid, int new_owner) {
       overflow_free_ = block->local_blockid();
     }
     block->value = ~new_owner;
-    DEBUG_ASSERT(block->status == FULLY_DIRTY); // set by StartWrite
+    if (unlikely(block->locks == 0)) {
+      EncacheBlock_(blockid);
+    }
     mutex_.Unlock();
-    StopWrite(my_blockid);
   }
 }
 
@@ -528,8 +536,8 @@ void DistributedCache::HandleLocalMiss_(BlockDevice::blockid_t blockid) {
 
   DEBUG_ASSERT(block->is_owner());
   block->data = mem::Alloc<char>(n_block_bytes_);
-  fprintf(stderr, "DISK: reading %d from %d (%d bytes)\n",
-      blockid, local_blockid, n_block_bytes_);
+  //fprintf(stderr, "DISK: reading %d from %d (%d bytes)\n",
+  //    blockid, local_blockid, n_block_bytes_);
   disk_stats_.RecordRead(n_block_bytes_);
   overflow_device_->Read(local_blockid,
       0, n_block_bytes_, block->data);
@@ -594,7 +602,8 @@ void DistributedCache::EncacheBlock_(BlockDevice::blockid_t blockid) {
         if (!blocks_[base_slot[i].blockid].is_owner()) {
           break;
         }
-        if (--i = remote_preference) {
+        i--;
+        if (i == remote_preference) {
           i = ASSOC-1;
           break;
         }
@@ -655,8 +664,8 @@ void DistributedCache::WritebackDirtyLocalFreeze_(
 
   DEBUG_ASSERT(block->is_dirty());
   handler_->BlockFreeze(blockid, 0, n_block_bytes_, block->data, block->data);
-  fprintf(stderr, "DISK: writing %d to %d (%d bytes)\n",
-      blockid, local_blockid, n_block_bytes_);
+  //fprintf(stderr, "DISK: writing %d to %d (%d bytes)\n",
+  //    blockid, local_blockid, n_block_bytes_);
   disk_stats_.RecordWrite(n_block_bytes_);
   overflow_device_->Write(local_blockid, 0, n_block_bytes_, block->data);
   block->status = NOT_DIRTY_OLD;

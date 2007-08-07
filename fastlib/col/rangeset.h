@@ -101,7 +101,7 @@ class RangeSet {
     return ranges_[i];
   }
   
-  const index_t size() const {
+  index_t size() const {
     return ranges_.size();
   }
 
