@@ -50,7 +50,7 @@ class ThorNode {
 
   index_t children_[t_cardinality];
   
-  OT_DEF(ThorNode) {
+  OT_DEF_BASIC(ThorNode) {
     OT_MY_OBJECT(begin_);
     OT_MY_OBJECT(count_);
     OT_MY_OBJECT(bound_);
@@ -59,18 +59,6 @@ class ThorNode {
   }
   
  public:
-  ThorNode() {
-    DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
-    DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
-    mem::DebugPoison(children_, t_cardinality);
-  }
-
-  ~ThorNode() {
-    DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
-    DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
-    mem::DebugPoison(children_, t_cardinality);
-  }
-  
   template<typename Param>
   void Init(index_t dim, const Param& param) {
     bound_.Init(dim);
@@ -221,13 +209,6 @@ class ThorSkeletonNode {
       children_[k] = NULL;
     }
   }
-  ~ThorSkeletonNode() {
-    for (int k = 0; k < Node::CARDINALITY; k++) {
-      if (children_[k] != NULL) {
-        delete children_[k];
-      }
-    }
-  }
 
   Info& info() {
     return info_;
@@ -344,7 +325,7 @@ struct TreeGrain {
     return node_end_index - node_index;
   }
 
-  OT_DEF(TreeGrain) {
+  OT_DEF_BASIC(TreeGrain) {
     OT_MY_OBJECT(node_index);
     OT_MY_OBJECT(node_end_index);
     OT_MY_OBJECT(point_begin_index);
@@ -376,7 +357,7 @@ class ThorTreeDecomposition {
       return rank >= begin_rank && rank < end_rank;
     }
 
-    OT_DEF(Info) {
+    OT_DEF_BASIC(Info) {
       OT_MY_OBJECT(begin_rank);
       OT_MY_OBJECT(end_rank);
     }
@@ -396,9 +377,6 @@ class ThorTreeDecomposition {
   }
 
  public:
-  ThorTreeDecomposition() { DEBUG_POISON_PTR(root_); }
-  ~ThorTreeDecomposition() { delete root_; }
-
   void Init(DecompNode *root_in) {
     root_ = root_in;
     DEBUG_ASSERT(root_->info().begin_rank == 0);

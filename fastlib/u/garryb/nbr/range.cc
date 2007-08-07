@@ -28,7 +28,7 @@ class Range {
     double h_orig;
     double h_sq;
 
-    OT_DEF(Param) {
+    OT_DEF_BASIC(Param) {
       OT_MY_OBJECT(dim);
       OT_MY_OBJECT(count);
       OT_MY_OBJECT(h_sq);
@@ -36,13 +36,6 @@ class Range {
     }
 
    public:
-    void Copy(const Param& other) {
-      dim = other.dim;
-      count = other.count;
-      h_sq = other.h_sq;
-      h_orig = other.h_orig;
-    }
-
     /**
      * Initialize parameters from a data node (Req THOR).
      */
@@ -78,7 +71,7 @@ class Range {
    public:
     int count;
 
-    OT_DEF(QPostponed) {
+    OT_DEF_BASIC(QPostponed) {
       OT_MY_OBJECT(count);
     }
 
@@ -102,7 +95,7 @@ class Range {
    public:
     index_t count;
 
-    OT_DEF(QResult) {
+    OT_DEF_BASIC(QResult) {
       OT_MY_OBJECT(count);
     }
 

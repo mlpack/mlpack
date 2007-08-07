@@ -134,8 +134,8 @@ struct AffinityCommon {
 
   struct CombinedStat {
    public:
-    ThorRange alpha;
-    ThorRange rho;
+    DRange alpha;
+    DRange rho;
 
     OT_DEF(CombinedStat) {
       OT_MY_OBJECT(alpha);
@@ -151,7 +151,7 @@ struct AffinityCommon {
       rho.InitEmptySet();
     }
     void Accumulate(const Param& param, const Point& point) {
-      alpha |= ThorRange(point.info().alpha.max2, point.info().alpha.max1);
+      alpha |= DRange(point.info().alpha.max2, point.info().alpha.max1);
       rho |= point.info().rho;
     }
     void Accumulate(const Param& param,
@@ -239,7 +239,7 @@ class AffinityAlpha {
 
   struct Delta {
    public:
-    ThorRange alpha;
+    DRange alpha;
 
     OT_DEF(Delta) {
       OT_MY_OBJECT(alpha);
@@ -275,7 +275,7 @@ class AffinityAlpha {
 
   struct QSummaryResult {
    public:
-    ThorRange alpha;
+    DRange alpha;
 
     OT_DEF(QSummaryResult) {
       OT_MY_OBJECT(alpha);
@@ -298,7 +298,7 @@ class AffinityAlpha {
       alpha.InitEmptySet();
     }
     void Accumulate(const Param& param, const QResult& result) {
-      alpha |= ThorRange(result.alpha.max2, result.alpha.max1);
+      alpha |= DRange(result.alpha.max2, result.alpha.max1);
     }
     void Accumulate(const Param& param,
         const QSummaryResult& result, index_t n_points) {
@@ -428,7 +428,7 @@ class AffinityRho {
 
   struct Delta {
    public:
-    ThorRange d_rho;
+    DRange d_rho;
 
     OT_DEF(Delta) {
       OT_MY_OBJECT(d_rho);

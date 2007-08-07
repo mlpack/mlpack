@@ -29,7 +29,7 @@ class ThorVectorPoint {
  private:
   Vector vec_;
   
-  OT_DEF(ThorVectorPoint) {
+  OT_DEF_BASIC(ThorVectorPoint) {
     OT_MY_OBJECT(vec_);
   }
   
@@ -61,7 +61,7 @@ class ThorVectorInfoPoint {
   Vector vec_;
   TPointInfo info_;
   
-  OT_DEF(ThorVectorInfoPoint) {
+  OT_DEF_BASIC(ThorVectorInfoPoint) {
     OT_MY_OBJECT(vec_);
     OT_MY_OBJECT(info_);
   }
@@ -110,7 +110,7 @@ class MinMaxVal {
   /** The underlying value. */
   Value val;
   
-  OT_DEF(MinMaxVal) {
+  OT_DEF_BASIC(MinMaxVal) {
     OT_MY_OBJECT(val);
   }
   
@@ -163,7 +163,7 @@ class HiBound {
  *
  * @experimental
  */
-struct ThorRange {
+struct DRange {
  public:
   /**
    * The lower bound.
@@ -174,16 +174,16 @@ struct ThorRange {
    */
   double hi;
   
-  OT_DEF(ThorRange) {
+  OT_DEF_BASIC(DRange) {
     OT_MY_OBJECT(lo);
     OT_MY_OBJECT(hi);
   }
   
  public:
   /** Doesn't initialize anything. */
-  ThorRange() {}
+  DRange() {}
   /** Initializes to specified values. */
-  ThorRange(double lo_in, double hi_in)
+  DRange(double lo_in, double hi_in)
       : lo(lo_in), hi(hi_in)
       {}
 
@@ -240,7 +240,7 @@ struct ThorRange {
   /**
    * Simulate an union by growing the range if necessary.
    */
-  const ThorRange& operator |= (double d) {
+  const DRange& operator |= (double d) {
     if (unlikely(d < lo)) {
       lo = d;
     }
@@ -254,7 +254,7 @@ struct ThorRange {
    * Sets this range to include only the specified value, or
    * becomes an empty set if the range does not contain the number.
    */
-  const ThorRange& operator &= (double d) {
+  const DRange& operator &= (double d) {
     if (likely(d > lo)) {
       lo = d;
     }
@@ -267,7 +267,7 @@ struct ThorRange {
   /**
    * Expands range to include the other range.
    */
-  const ThorRange& operator |= (const ThorRange& other) {
+  const DRange& operator |= (const DRange& other) {
     if (unlikely(other.lo < lo)) {
       lo = other.lo;
     }
@@ -281,7 +281,7 @@ struct ThorRange {
    * Shrinks range to be the overlap with another range, becoming an empty
    * set if there is no overlap.
    */
-  const ThorRange& operator &= (const ThorRange& other) {
+  const DRange& operator &= (const DRange& other) {
     if (unlikely(other.lo > lo)) {
       lo = other.lo;
     }
@@ -292,56 +292,56 @@ struct ThorRange {
   }
   
   /** Sums the upper and lower independently. */
-  const ThorRange& operator += (const ThorRange& other) {
+  const DRange& operator += (const DRange& other) {
     lo += other.lo;
     hi += other.hi;
     return *this;
   }
   
   /** Subtracts from the upper and lower independently. */
-  const ThorRange& operator -= (const ThorRange& other) {
+  const DRange& operator -= (const DRange& other) {
     lo -= other.lo;
     hi -= other.hi;
     return *this;
   }
   
   /** Adds to the upper and lower independently. */
-  const ThorRange& operator += (double d) {
+  const DRange& operator += (double d) {
     lo += d;
     hi += d;
     return *this;
   }
   
   /** Subtracts from the upper and lower independently. */
-  const ThorRange& operator -= (double d) {
+  const DRange& operator -= (double d) {
     lo -= d;
     hi -= d;
     return *this;
   }
 
-  friend ThorRange operator + (const ThorRange& a, const ThorRange& b) {
-    ThorRange result;
+  friend DRange operator + (const DRange& a, const DRange& b) {
+    DRange result;
     result.lo = a.lo + b.lo;
     result.hi = a.hi + b.hi;
     return result;
   }
 
-  friend ThorRange operator - (const ThorRange& a, const ThorRange& b) {
-    ThorRange result;
+  friend DRange operator - (const DRange& a, const DRange& b) {
+    DRange result;
     result.lo = a.lo - b.lo;
     result.hi = a.hi - b.hi;
     return result;
   }
   
-  friend ThorRange operator + (const ThorRange& a, double b) {
-    ThorRange result;
+  friend DRange operator + (const DRange& a, double b) {
+    DRange result;
     result.lo = a.lo + b;
     result.hi = a.hi + b;
     return result;
   }
 
-  friend ThorRange operator - (const ThorRange& a, double b) {
-    ThorRange result;
+  friend DRange operator - (const DRange& a, double b) {
+    DRange result;
     result.lo = a.lo - b;
     result.hi = a.hi - b;
     return result;
@@ -350,7 +350,7 @@ struct ThorRange {
   /**
    * Takes the maximum of upper and lower bounds independently.
    */
-  void MaxWith(const ThorRange& range) {
+  void MaxWith(const DRange& range) {
     if (unlikely(range.lo > lo)) {
       lo = range.lo;
     }
@@ -362,7 +362,7 @@ struct ThorRange {
   /**
    * Takes the minimum of upper and lower bounds independently.
    */
-  void MinWith(const ThorRange& range) {
+  void MinWith(const DRange& range) {
     if (unlikely(range.lo < lo)) {
       lo = range.lo;
     }
@@ -398,30 +398,30 @@ struct ThorRange {
   /**
    * Compares if this is STRICTLY less than another range.
    */  
-  friend bool operator < (const ThorRange& a, const ThorRange& b) {
+  friend bool operator < (const DRange& a, const DRange& b) {
     return a.hi < b.lo;
   }
   /**
    * Compares if this is STRICTLY equal to another range.
    */  
-  friend bool operator == (const ThorRange& a, const ThorRange& b) {
+  friend bool operator == (const DRange& a, const DRange& b) {
     return a.lo == b.lo && a.hi == b.hi;
   }
-  DEFINE_ALL_COMPARATORS(ThorRange);
+  DEFINE_ALL_COMPARATORS(DRange);
   
   /**
    * Compares if this is STRICTLY less than a value.
    */  
-  friend bool operator < (const ThorRange& a, double b) {
+  friend bool operator < (const DRange& a, double b) {
     return a.hi < b;
   }
   /**
    * Compares if a value is STRICTLY less than this range.
    */  
-  friend bool operator < (double a, const ThorRange& b) {
+  friend bool operator < (double a, const DRange& b) {
     return a < b.lo;
   }
-  DEFINE_INEQUALITY_COMPARATORS_HETERO(ThorRange, double);
+  DEFINE_INEQUALITY_COMPARATORS_HETERO(DRange, double);
 
   /**
    * Determines if a point is contained within the range.
@@ -444,7 +444,7 @@ class ThorHrectBound {
   static const int PREFERRED_POWER = t_pow;
 
  private:
-  ThorRange *bounds_;
+  DRange *bounds_;
   index_t dim_;
 
   OT_DEF(ThorHrectBound) {
@@ -453,19 +453,6 @@ class ThorHrectBound {
   }
   
  public:
-  ThorHrectBound() {
-    DEBUG_POISON_PTR(bounds_);
-    DEBUG_ONLY(dim_ = BIG_BAD_NUMBER);
-  }
-  ThorHrectBound(const ThorHrectBound& other) {
-    DEBUG_POISON_PTR(bounds_);
-    DEBUG_ONLY(dim_ = BIG_BAD_NUMBER);
-    Copy(other);
-  }
-  ~ThorHrectBound() {
-    mem::Free(bounds_);
-  }
-
   /**
    * Initializes to specified dimensionality with each dimension the empty
    * set.
@@ -473,7 +460,7 @@ class ThorHrectBound {
   void Init(index_t dimension) {
     DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
 
-    bounds_ = mem::Alloc<ThorRange>(dimension);
+    bounds_ = mem::Alloc<DRange>(dimension);
 
     dim_ = dimension;
     Reset();
@@ -518,7 +505,7 @@ class ThorHrectBound {
   /**
    * Gets the range for a particular dimension.
    */  
-  const ThorRange& get(index_t i) const {
+  const DRange& get(index_t i) const {
     DEBUG_BOUNDS(i, dim_);
     return bounds_[i];
   }
@@ -539,7 +526,7 @@ class ThorHrectBound {
     DEBUG_ASSERT(point.length() == dim_);
     double sumsq = 0;
     const double *mpoint = point.ptr();
-    const ThorRange *mbound = bounds_;
+    const DRange *mbound = bounds_;
     
     index_t d = dim_;
     
@@ -572,8 +559,8 @@ class ThorHrectBound {
    */
   double MinToMidSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const ThorRange *a = this->bounds_;
-    const ThorRange *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
 
@@ -618,8 +605,8 @@ class ThorHrectBound {
    */
   double MinDistanceSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const ThorRange *a = this->bounds_;
-    const ThorRange *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
     index_t mdim = dim_;
 
     DEBUG_SAME_INT(dim_, other.dim_);
@@ -644,8 +631,8 @@ class ThorHrectBound {
    */
   double MinimaxDistanceSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const ThorRange *a = this->bounds_;
-    const ThorRange *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
     index_t mdim = dim_;
     
     DEBUG_ASSERT(dim_ == other.dim_);
@@ -667,8 +654,8 @@ class ThorHrectBound {
    */
   double MaxDistanceSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const ThorRange *a = this->bounds_;
-    const ThorRange *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
     
@@ -686,8 +673,8 @@ class ThorHrectBound {
    */
   double MidDistanceSq(const ThorHrectBound& other) const {
     double sumsq = 0;
-    const ThorRange *a = this->bounds_;
-    const ThorRange *b = other.bounds_;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
     
