@@ -50,7 +50,7 @@
 \contentsline {paragraph}{Factorization with Hermite Polynomials}{39}{section*.110}
 \contentsline {subsubsection}{\numberline {4.2.2}Computing Gaussian Kernel Matrix with trees}{40}{subsubsection.121}
 \contentsline {subsection}{\numberline {4.3}Speech recognition with nearest neighbor search}{41}{subsection.123}
-\contentsline {subsection}{\numberline {4.4}Adaptive kernel Filters}{41}{subsection.124}
+\contentsline {subsection}{\numberline {4.4}Adaptive kernel Filters}{42}{subsection.124}
 \setcounter {tocdepth}{3}
 \contentsline {section}{\MakeUppercase {References}}{48}{section*.126}
 \setcounter {tocdepth}{2}
