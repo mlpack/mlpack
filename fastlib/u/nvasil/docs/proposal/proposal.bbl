@@ -1,3 +1,100 @@
 \begin{thebibliography}{}
+\bibitem{Lafon}
+Stephane~S. Lafon,
+\newblock ``Diffusion maps and geometric harmonics,''
+\newblock in {\em PhD Thesis}, Yale University, 2004.
 
+\bibitem{Belkin}
+Mikhail Belkin,
+\newblock ``Problems of learning on manifolds,''
+\newblock in {\em PhD Thesis}, University of Chicago, 2003.
+
+\bibitem{jenssen17lpd}
+R.~Jenssen, D.~Erdogmus, JC~Principe, and T.~Eltoft,
+\newblock ``{The Laplacian PDF Distance: A Cost Function for Clustering in a
+  Kernel Feature Space},''
+\newblock {\em Advances in Neural Information Processing Systems}, vol. 17, pp.
+  625--632.
+
+\bibitem{Silverman}
+B.W. Silverman,
+\newblock {\em Density Estimation for Statistics and Data Analysis},
+\newblock CRC Publications, 1998.
+
+\bibitem{girolami2002osd}
+M.~Girolami and N.~Computation,
+\newblock ``{Orthogonal Series Density Estimation and the Kernel Eigenvalue
+  Problem},''
+\newblock {\em Neural Computation}, vol. 14, pp. 669--688, 2002.
+
+\bibitem{Cvetkovic}
+Cvetkovic Dragos,
+\newblock {\em Spectra of graphs : theory and application},
+\newblock Academic Press, 1980.
+
+\bibitem{gray2001nbp}
+A.~Gray and A.W. Moore,
+\newblock ``{N-Body problems in statistical learning},''
+\newblock {\em Advances in Neural Information Processing Systems}, vol. 13,
+  2001.
+\bibitem{quatieri2002dts}
+T.F. Quatieri,
+\newblock {\em {Discrete-time speech signal processing}},
+\newblock Prentice Hall Upper Saddle River, NJ, 2002.
+
+\bibitem{gray2000nbp}
+A.~Gray and A.W. Moore,
+\newblock ``{N-Body’problems in statistical learning},''
+\newblock {\em NIPS}, vol. 4, pp. 521--527, 2000.
+
+\bibitem{bentley1975bst}
+J.L. Bentley,
+\newblock ``{Binary Search Trees Used for Associative Searching},''
+\newblock {\em Communications}, 1975.
+
+\bibitem{moore2000ahu}
+A.W. Moore,
+\newblock {\em {The Anchors Hierarchy: Using the Triangle Inequality to Survive
+  High Dimensional Data}},
+\newblock Carnegie Mellon University, the Robotics Institute, 2000.
+
+\bibitem{ravindran:inr}
+S.~Ravindran, D.V. Anderson, and M.~Slaney,
+\newblock ``{Improving the Noise-Robustness of Mel-Frequency Cepstral
+  Coefficients for Speech Processing},''
+\newblock .
+
+\bibitem{scholkopf:nca}
+B.~Scholkopf, A.~Smola, and K.R. Muller,
+\newblock ``{Nonlinear Component Analysis as a Kernel Eigenvalue Problem},''
+\newblock {\em Neural Computation}.
+
+\bibitem{coifman2006dm}
+R.R. Coifman and S.~Lafon,
+\newblock ``{Diffusion maps},''
+\newblock {\em Applied and Computational Harmonic Analysis}, 2006.
+
+\bibitem{jansen2006ifa}
+A.~Jansen and P.~Niyogi,
+\newblock ``{Intrinsic Fourier Analysis on the Manifold of Speech Sounds},''
+\newblock {\em Acoustics, Speech and Signal Processing, 2006. ICASSP 2006
+  Proceedings. 2006 IEEE International Conference on}, vol. 1, 2006.
+
+\bibitem{shamma_main}
+Kuansan Wang and Shihab Shamma,
+\newblock ``Self-normalization and noise-robustness in early auditory
+  representations,''
+\newblock {\em IEEE Transactions on Speech and Audio Processing}, vol. 2, no.
+  3, pp. 421--435, July 1994.
+
+\bibitem{moore-tutorial}
+Andrew Moore,
+\newblock ``A tutorial on kd-trees,'' Extract from PhD Thesis, 1991,
+\newblock Available from http://www.cs.cmu.edu/$sim$awm/papers.html.
+
+\bibitem{hastie1996dan}
+T.~Hastie and R.~Tibshirani,
+\newblock ``{Discriminant adaptive nearest neighbor classification},''
+\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  vol. 18, no. 6, pp. 607--616, 1996.
 \end{thebibliography}

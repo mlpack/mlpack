@@ -1812,10 +1812,16 @@ estimate on that, by just getting information from the bounding
 boxes that are pruned.
 
 
-\subsection{Speech recognition with nearest neighbor search}
-Implement a merge reduce scheme to create different descriptions of
-speech. Use nearest neighbor algorithms to replace gaussian mixtures
-in hidden markov models.
+\subsection{Speech recognition with nearest neighbor search, Dimensional Analysis of Speech}
+The initial motivation for this thesis has been to develop a speech recognition engine based on nearest neighbor search. In the age of information explosion it is very easy to collect large collections of annotated speech. Most of the tv broadcasts are captioned. Although there are errors and misalignment, it is always possible to reduce them, with an open source Viterbi decoder, by force aligning them. So it is possible to extract the audio from the tv signal segment it in word or phoneme level and then generate features such as MFCC or NRAF or any other customized features. Then we can index the features with kd trees associated with the caption. The problem of speech recognition now can be casted as a search problem. This is a simplistic approach that requires the solution of other problems. 
+
+First of all it is necessary to estimate the intrinsic dimension of the features representing speech. This is why we focused our interest in dimensionality reduction algorithms. This is important for "compressing" the data and saving space. The second issue is to build a cache for trees that don't fit in the main memory already addressed. The last step is to generate features on different time scales. 
+
+(Remember to put a link bout  speech embedding in a lower dimensional space)
+
+This is probably the most interesting step. Initially we start with features of a minimum durations, let's say 20msec MFCC 39 coefficients. After bringing it down to a certain dimension $d$ with KPCA or SDPCA. Then we merge the features creating vectors of $2d$. We keep repeating this until we reach a stage where the dimensionality cannot be decreased to a value that is beyond the strength of kd-trees.
+
+Our goal is to apply this algorithm on the whole broadcast news database.
 
 \subsection{Adaptive kernel Filters}
 One of the problems of spectral methods is the out of sample
@@ -1824,7 +1830,7 @@ dimensions (eigenvectors of the kernel matrix) we need to find a way
 to compute the new dimensions of a test point $x$. The most common
 method is the one based on Nystr\"{o}m's formula, which requires an
 expression or at least a way to compute the kernel product of the
-test point and it's nearest neighbors.
+test point and it's nearest neighbors. 
 
 \begin{equation}
 y_k(x) = \frac{1}{\lambda_k}\sum_{i=1}^{N} w_{ik}K(x, x_i)
