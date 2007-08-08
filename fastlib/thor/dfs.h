@@ -367,7 +367,6 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
           unvisited, q_result, &global_result_)) {
       const typename GNP::RPoint *r_point = first_r_point;
       index_t r_i = r_node->begin();
-      //index_t r_end = r_node->end();
       index_t r_left = r_node->count();
 
       for (;;) {
