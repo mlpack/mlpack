@@ -33,7 +33,7 @@ namespace tree_kdtree_private {
       Vector col;
 
       matrix.MakeColumnVector(i, &col);
-      bounds->Update(col);
+      *bounds |= col;
     }
   }
 
@@ -55,14 +55,14 @@ namespace tree_kdtree_private {
       while (matrix.get(dim, left) < splitvalue && likely(left <= right)) {
         Vector left_vector;
         matrix.MakeColumnVector(left, &left_vector);
-        left_bound->Update(left_vector);
+        *left_bound |= left_vector;
         left++;
       }
 
       while (matrix.get(dim, right) >= splitvalue && likely(left <= right)) {
         Vector right_vector;
         matrix.MakeColumnVector(right, &right_vector);
-        right_bound->Update(right_vector);
+        *right_bound |= right_vector;
         right--;
       }
 
