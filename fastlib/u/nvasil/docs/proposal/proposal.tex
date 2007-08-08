@@ -99,8 +99,9 @@ ECE}{Georgia Institute of Technology}
 \label{intro} Information explosion during the last decades has
 created data volumes of extraordinary size and high dimension. There
 is great demand for analysis and information extraction from data.
-Two approaches are common in machine learning parametric and
-non-parametric. In the parametric case there is an underlying model
+Two approaches are common in machine learning parametric 
+\cite{bishop2006pra, hastie2001esl, haykin1994nnc} and
+non-parametric \cite{wasserman2006ans}. In the parametric case there is an underlying model
 assumption. The concept is to estimate the model parameters given
 the data. In the non-parametric case the data is the model.
 
@@ -120,7 +121,7 @@ practice even if the best parameters have not been chosen.
 
 In the parametric case the model is the model. The model has $N$
 parameters plus one or two that have to be estimated. For example in
-the Kernel Density Estimation problem, the bandwidth $h$ of the
+the Kernel Density Estimation problem \cite{Silverman}, the bandwidth $h$ of the
 kernel has to be tuned, i.e.
 \begin{equation}
 \hat{f}(x)=\sum_{i}^{N}e^{\frac{-||x-x_i||}{h}}
@@ -134,7 +135,7 @@ equation gets the form
 \insfig[2d_kernel_density_estimation]{2d_kernel_density_estimation.eps}{Kernel
 Density of 2 dimensional points. Over every point a kernel is set.
 In areas with with high concentration of points there is more
-overlap on the kernels which shows higher probablility}{8cm}
+overlap on the kernels which shows higher probability}{8cm}
 
 In contrast to parametric cases a single evaluation of a non
 parametric model requires evaluation of $N$ parameters. Naively
@@ -146,18 +147,21 @@ it is possible to reduce the training of the non-parametric model to
 linear time and evaluation of a new point in logarithmic time.
 Estimation of the few parameters of a non-parametric model can be
 casted as an optimization problem which in most of the case can be
-convex. We will see how non-parametric Kernel Principal Component
-Analysis can be computed with the help of semidefinite programming.
+convex. We will see how non-parametric Kernel Principal Component 
+Analysis \cite{scholkopf1998nca} can be computed with the help 
+of semidefinite programming \cite{vandenberghe1996sp}.
 
 \section{Origin and history of the problem}
 \label{origin}
 
 After the information explosion the problem of reducing/estimating
 the real dimensionality also known as the intrinsic dimension of a
-given dataset has been an active problem. It is well known that many
+given dataset has been an active problem \cite{kegl2003ide}, \cite{costa2003egm}. 
+It is well known that many
 machine learning algorithms starting from the very fundamental, the
 nearest neighbor grow exponentially on the intrinsic dimension. This
-is also known as the curse of dimensionality. In many cases in the
+is also known as the curse of dimensionality \cite{donoho2000hdd}.
+In many cases in the
 literature dimensionality is used without the prefix intrinsic or
 extrinsic, causing confusion. The extrinsic dimensionality is just
 the number of variables needed to describe a point, i.e. the
@@ -170,25 +174,26 @@ dimensionality of a dataset as the minimum number of "independent"
 variables needed to describe a point in space. Still the term is not
 very clear, for the scope of this thesis we mean that there is no
 algorithm that can predict a dimension from the others. Principal
-Component Analysis for example finds the most important dimensions
+Component Analysis for example \cite{jolliffe2002pca}, finds the most important dimensions
 on a dataset that are linearly independent. In practice because of
 noise all dimensions appear to be strictly independent.  Modern
 kernel methods can capture non-lineal dependencies between
 dimensions. Kernel PCA is the father of non-linear dimensionality
-reduction methods.
+reduction methods \cite{scholkopf2002lks}.
 
 Although Kernel PCA seems to be a very powerful tool it suffers from
 polynomial complexity. It requires $O(N^2)$ kernel computations,
 which make it unsuitable for large scale problems. In this thesis we
 will show how we are going to use multidimensional trees to reduce
 the complexity, along with other approximations to bring it down to
-linear.
+linear \cite{gray2000nbp}.
 
 The driving force for investigating dimensionality reduction was the
 estimation of the true dimension of speech. Many representations
-have been recommended for speech MFCC, NRAFF, LPC, etc. The true
+have been recommended for speech MFCC, LPC, NRAFF etc, \cite{quatieri2002dts, ravindran:inr}. The true
 dimension is yet unknown. Meanwhile there is theoretical evidence
-that speech signals are embedded in high dimensional manifolds. In
+that speech signals are embedded in high dimensional manifolds 
+\cite{alder1991dss, sciamarella1999tsc, kumar1990ade, tishby1990dsa, jansen2006ifa}. In
 this thesis we will attempt to estimate the true dimensionality of
 speech based on several representations. We will see in the future
 sections how this can help in developing new directions in speech
@@ -215,13 +220,13 @@ reference points. The complexity is $O(N)$. Assuming that the number
 of the query points $N$ is the same as the number of reference
 points then the complexity of the naive method is $O(N^2)$. An
 efficient way to reduce the complexity is to use multidimensional
-trees. In the next sections we present kd-trees and ball-trees that
-tend to be the most successful.
+trees. In the next sections we present kd-trees \cite{moore-tutorial} 
+and ball-trees \cite{moore2000ahu} that tend to be the most successful.
 
 As a clarification we mention that this is the problem of the exact
 nearest neighbor. There are algorithms addressing the problem of
 approximate neighbor. Local Sensitivity Hashing is one of the
-algorithms that deal with this problem.
+algorithms that deal with this problem \cite{datar2004lsh}.
 
 \subsubsection{Multidimensional Trees}
 \label{Multidimensional_Trees}
@@ -230,8 +235,9 @@ The purpose of multidimensional trees is to create a hierarchical
 partition of a dataset so that data points are grouped close to
 their neighbors, which are usually the points of interest, and far
 away enough from other points. It has been proven that there is not
-a globally optimal partition strategy and it is heavily dependant on
-the distribution of the data points as well as on the dimension. In
+a globally optimal partition strategy \cite{gyorfi2002dft} 
+and it is heavily dependant on the distribution of the data points 
+as well as on the dimension. In
 this section we present a particular class of multidimensional
 trees, the binary trees and more specifically kd-trees and ball or
 metric trees. The key concept in binary trees is partitioning a set
@@ -240,7 +246,7 @@ recursively in two sets at every step.
 \subsubsection{Kd trees}
 \label{Kd_trees}
 
-The first multidimensional tree in the literature was Kd-tree. After
+The first multidimensional tree in the literature was Kd-tree \cite{bentley1975bst}. After
 30 years it still has comparable performance and in some case even
 better with modern trees. At every level a partition (pivot)
 dimension is chosen according to a user defined criterion and the
@@ -272,7 +278,7 @@ nearest neighbors.
  hyper-rectangles fig.~\ref{parent_kd_node}. Hyper-rectangles are the k-dimensional rectangles
  that describe the minimum bounding box  for a given set of points.
  Leafs hold additionally the data points  fig.~\ref{2_kd_node}. The number of points on a
- leaf is user defined. As stated in ? the tree method for finding the nearest neighbor is faster than naive
+ leaf is user defined. The tree method for finding the nearest neighbor is faster than naive
  only after a threshold of points, (experimentally it has been found
  to be 30). This threshold is used as the maximum number of points
  per leaf. Bounding boxes (Hyper-rectangles) and points are the minimum amount
@@ -317,7 +323,7 @@ coordinates the notion of similarity is beyond the euclidian sense.
 For example the cosine distance is used in many applications of
 machine learning such as document retrieval.
 
-Metric or Ball trees give solution to this problem. Instead of using
+Metric or Ball trees \cite{moore2000ahu} give solution to this problem. Instead of using
 hyper-rectangles, we use hyper-spheres. Hyper-spheres are
 generalized k-dimensional spheres:
 \begin{equation}
@@ -400,7 +406,7 @@ N-body problems.
 
 Having in mind the tree based algorithm it is natural to assume that
 finding all nearest neighbors can be solved by executing N nearest
-neighbor queries resulting in an $O(N\log )$ complexity. We will
+neighbor queries resulting in an $O(N\log N)$ complexity. We will
 call this as the single tree all nearest neighbor algorithm. However
 it is not difficult to notice that there are redundant computations.
 For example consider we have a query set stored on a kd tree and a
@@ -566,7 +572,7 @@ memory access is achieved with normal pointers. It is also efficient
 since all the paging is done in lower levels of the operating system
 
 \paragraph{User defined cache, with TPIE} In this implementation a block of
-memory is preallocated and page faults are handled in an LRU sense,
+memory is pre-allocated and page faults are handled in an LRU sense,
 while the block transfers between main memory and the disk are done
 with the TPIE engine. TPIE is a portable library for efficient block
 transfers. It 's highly abstracted to accommodate for different
@@ -1437,8 +1443,8 @@ with kd-trees do speech recognition by nearest neighbor search.
 
 \subsection{Customized Kernels}
 
-As we described in the previous section there are infinite functions
-that can act as valid kernels. The most popular kernels are:
+There are infinite functions
+that can act as valid kernels \cite{shawetaylor2004kmp}. The most popular kernels are:
 \begin{enumerate}
   \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2)}}$
   \item The polynomial kernel $k(x, y)=(xy)^n$
@@ -1457,7 +1463,7 @@ unfold the data manifold properly so that the intrinsic dimension
 can be estimated. Manifold unfolding is a very important procedure
 since it can reveal the true dimension of the dataset.
 
-In [?] the authors introduced the idea of building the kernel matrix
+In \cite{weinberger2004lkm} the authors introduced the idea of building the kernel matrix
 from scratch without using any fixed kernel. As we have already
 mentioned the kernel matrix has to be a positive semidefinite
 matrix. Initially we have to define a k neighborhood  for every
@@ -1517,7 +1523,7 @@ which is the term we will use form now on.
 
 \subsubsection{Speeding up SDPCA}
 Semidefinite problems are solved with the interior point method. The
-basic concept of interior point method is to build a barrier
+basic concept of interior point method \cite{nesterov1994ipp} is to build a barrier
 function that penalize solutions that violate the inequality
 constraints. The ideal function would be:
 
@@ -1618,7 +1624,7 @@ There are two approaches on that:
 \subsubsection{Accelerating Semidefinite PCA with domain
 decomposition}
 
-Zhang and Zha proposed a domain decomposition method for fast
+Zhang and Zha  \cite{zhang:ddm} proposed a domain decomposition method for fast
 manifold learning. This is a general decomposition method for
 dividing the problem in subdomains, evaluating the spectral
 decomposition and and then glue them. The algorithm is described
@@ -1687,7 +1693,7 @@ Gaussian kernel
 
 \subsubsection{Gaussian Kernel factorization}
 In general the kernel computation speedup is achieved by factorizing
-the kernel in the form
+the kernel \cite{raykar2005fcs} in the form
 \begin{equation}
 k(x_r, x_q)=\sum_{k=1}^{p}\Phi_k(x_r)\Psi_k(x_q)+error
 \end{equation}
@@ -1700,7 +1706,7 @@ number of reference points and $M$ is the number of query points.
 \paragraph{Factorization with Hermite Polynomials}
 
 The gaussian can be approximated with the help of Hermite
-polynomials. The Hermite polynomials $H_n(t)$ are defined by the
+polynomials \cite{strain1991fgt}. The Hermite polynomials $H_n(t)$ are defined by the
 Rodrigues formula:
 \begin{equation}
   H_n(t)=(-1)^ne^{t^2}D^n e^{-t^2}, t\in \Re
@@ -1782,7 +1788,7 @@ Instead of using analytic kernel expansion we revert to the original
 idea of fast kernel summation. The initial approach to fast kernel
 summation with trees was based on a nearest neighbor approach. Find
 the range-$\epsilon$ nearest neighbors for the query point, evaluate
-the kernel on them and sum. This method scales better than analytic
+the kernel on them and sum \cite{gray2003rem}. This method scales better than analytic
 kernel factorization since it depends on the nearest neighbor
 algorithm which depends on the intrinsic dimensionality and not on
 the extrinsic.
@@ -1795,7 +1801,7 @@ literature it was found that there is an implicit method to find it.
 Assume $K$ the exact kernel matrix which is positive definite matrix
 and $\tilde{K}=K+E$ the perturbed matrix. Then let $\lambda_i$ be
 the eigenvalues of $K$ and $\tilde{\lambda}_i$ the eigenvalues of
-$\tilde{K}$. It turns out that
+$\tilde{K}$. It turns out \cite{stewart1990mpt} that
 
 \begin{equation}
 \sqrt{\sum_{i=1}^{N}(\lambda_i-\tilde{\lambda}_i)^2}\leq ||E||_F
@@ -1847,7 +1853,7 @@ where
 Unfortunately for methods like Semidefinite PCA there is no
 expression for the kernel.
 
-One other approach has been to keep a certain size kernel matrix and
+One other approach \cite{vanvaerenbergh2006swk} has been to keep a certain size kernel matrix and
 after the arrival of a new test point we remove the oldest from the
 kernel and we add the new one. The kernel looks like a sliding
 window over the data. There is a fast way to compute the eigenvalues
@@ -1858,7 +1864,7 @@ Semidefinite PCA the optimization step is iterative. Addition of an
 extra line/column in the kernel matrix will require one or two
 iterations for convergence. Meanwhile the computation of the
 eigenvalues/eigenvectors can be done with the  online algorithm that
-converges fast.
+converges fast \cite{gorrell2006gha}.
 
 \end{Body}
 
@@ -1867,7 +1873,8 @@ converges fast.
 
 %% Below are some optional environments that can be used here
 \bibliographystyle{ieeetr}
-\references % Generates the bibliography page
+\bibliography{proposal}
+%\references % Generates the bibliography page
 \index % Generates the index - should be last
 \end{EndMatter}
 
