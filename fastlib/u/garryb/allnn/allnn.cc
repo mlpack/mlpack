@@ -115,7 +115,7 @@ class AllNNDualTree : public AllNN {
     }
   };
 
-  typedef BinarySpaceTree<DHrectBound, Matrix, Stat> Tree;
+  typedef BinarySpaceTree<DHrectBound<2>, Matrix, Stat> Tree;
 
  private:
   /**
@@ -166,10 +166,10 @@ class AllNNDualTree : public AllNN {
   void DualAllNN(Tree *q, const Tree *r, double closest_offer);
   
   void SplitReference(Tree *q, const Tree *r1, const Tree *r2) {
-    double m1 = q->bound().MidDistanceSqToBound(r1->bound());
-    double m2 = q->bound().MidDistanceSqToBound(r2->bound());
-    double d1 = q->bound().MinDistanceSqToBound(r1->bound());
-    double d2 = q->bound().MinDistanceSqToBound(r2->bound());
+    double m1 = q->bound().MidDistanceSq(r1->bound());
+    double m2 = q->bound().MidDistanceSq(r2->bound());
+    double d1 = q->bound().MinDistanceSq(r1->bound());
+    double d2 = q->bound().MinDistanceSq(r2->bound());
     
     if (m1 < m2) {
       DualAllNN(q, r1, d1);
@@ -292,7 +292,7 @@ void AllNNDualTree::BaseCase(Tree *q, const Tree *r, double closest_offer) {
     double q_best_dist = results_[q_i].dist;
     
     if (closest_offer <= q_best_dist
-        && r->bound().MinDistanceSqToPoint(q_col) <= q_best_dist) {
+        && r->bound().MinDistanceSq(q_col) <= q_best_dist) {
       for (index_t r_i = r->begin(); r_i < r_end; r_i++) {
         const double *r_col = r_matrix_.GetColumnPtr(r_i);
         double dist = la::DistanceSqEuclidean(
@@ -325,9 +325,9 @@ void AllNNDualTree::DualAllNN(Tree *q, const Tree *r, double closest_offer) {
     BaseCase(q, r, closest_offer);
   } else if ((q->count() >= r->count() && !q->is_leaf()) || r->is_leaf()) {
     DualAllNN(q->left(), r,
-        q->left()->bound().MinDistanceSqToBound(r->bound()));
+        q->left()->bound().MinDistanceSq(r->bound()));
     DualAllNN(q->right(), r,
-        q->right()->bound().MinDistanceSqToBound(r->bound()));
+        q->right()->bound().MinDistanceSq(r->bound()));
     q->stat().dist_upper = max(
         q->left()->stat().dist_upper, q->right()->stat().dist_upper);
   } else {

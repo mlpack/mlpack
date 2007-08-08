@@ -226,7 +226,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
 
   /* begin prune checks */
   typename GNP::QSummaryResult mu(q_node_mut->summary_result);
-  mu.ApplyPostponed(param_, q_node_mut->postponed, *q_node);
+  //mu.ApplyPostponed(param_, q_node_mut->postponed, *q_node);
   mu.ApplySummaryResult(param_, unvisited);
   mu.ApplyDelta(param_, delta);
 
@@ -278,10 +278,8 @@ void DualTreeDepthFirst<GNP>::Pair_(
       q_node_mut->postponed.Reset(param_);
     } else {
       DEBUG_MSG(1.0, "Splitting R");
-      index_t r_child1_i = r_node->child(0);
-      index_t r_child2_i = r_node->child(1);
-      const typename GNP::RNode *r_child1 = r_nodes_.StartRead(r_child1_i);
-      const typename GNP::RNode *r_child2 = r_nodes_.StartRead(r_child2_i);
+      const typename GNP::RNode *r_child1 = r_nodes_.StartRead(r_node->child(0));
+      const typename GNP::RNode *r_child2 = r_nodes_.StartRead(r_node->child(1));
       typename GNP::Delta delta1;
       typename GNP::Delta delta2;
       double heur1;
@@ -298,6 +296,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
         r_child1 = NULL;
         heur1 = DBL_MAX;
       }
+
       if (GNP::Algorithm::ConsiderPairIntrinsic(
           param_, *q_node, *r_child2, &delta2,
           &global_result_, &q_node_mut->postponed)) {
@@ -307,33 +306,32 @@ void DualTreeDepthFirst<GNP>::Pair_(
         heur2 = DBL_MAX;
       }
 
-      if (likely(heur1 <= heur2)) {
-        if (r_child1 != NULL) {
-          typename GNP::QSummaryResult unvisited_for_r1(
-              unvisited);
-          if (r_child2 != NULL) {
+      if (heur1 <= heur2) {
+        if (likely(r_child1 != NULL)) {
+          typename GNP::QSummaryResult unvisited_for_r1(unvisited);
+          if (likely(r_child2 != NULL)) {
             unvisited_for_r1.ApplyDelta(param_, delta2);
           }
           Pair_(q_node, r_child1, delta1, unvisited_for_r1, q_node_mut);
         }
-        if (r_child2 != NULL) {
+        if (likely(r_child2 != NULL)) {
           Pair_(q_node, r_child2, delta2, unvisited, q_node_mut);
         }
       } else {
-        if (r_child2 != NULL) {
-          typename GNP::QSummaryResult unvisited_for_r1(
-              unvisited);
-          if (r_child1 != NULL) {
+        if (likely(r_child2 != NULL)) {
+          typename GNP::QSummaryResult unvisited_for_r1(unvisited);
+          if (likely(r_child1 != NULL)) {
             unvisited_for_r1.ApplyDelta(param_, delta1);
           }
           Pair_(q_node, r_child2, delta2, unvisited_for_r1, q_node_mut);
         }
-        if (r_child1 != NULL) {
+        if (likely(r_child1 != NULL)) {
           Pair_(q_node, r_child1, delta1, unvisited, q_node_mut);
         }
       }
-      r_nodes_.StopRead(r_child1_i);
-      r_nodes_.StopRead(r_child2_i);
+
+      r_nodes_.StopRead(r_node->child(0));
+      r_nodes_.StopRead(r_node->child(1));
     }
   }
 }
@@ -344,37 +342,40 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     const typename GNP::RNode *r_node,
     const typename GNP::QSummaryResult& unvisited,
     QMutables *q_node_mut) {
-  typename GNP::PairVisitor visitor;
 
   DEBUG_ONLY(n_pre_naive_ += q_node->count() * r_node->count());
 
-  visitor.Init(param_);
-
   q_node_mut->summary_result.StartReaccumulate(param_, *q_node);
+
+  typename GNP::PairVisitor visitor;
+  visitor.Init(param_);
 
   CacheRead<typename GNP::QPoint> first_q_point(&q_points_, q_node->begin());
   CacheWrite<typename GNP::QResult> first_q_result(&q_results_, q_node->begin());
   CacheRead<typename GNP::RPoint> first_r_point(&r_points_, r_node->begin());
   size_t q_point_stride = q_points_.n_elem_bytes();
   size_t q_result_stride = q_results_.n_elem_bytes();
+  size_t r_point_stride = r_points_.n_elem_bytes();
+  index_t q_end = q_node->end();
   const typename GNP::QPoint *q_point = first_q_point;
   typename GNP::QResult *q_result = first_q_result;
 
-  for (index_t q_i = q_node->begin(); q_i < q_node->end(); ++q_i) {
+  for (index_t q_i = q_node->begin(); q_i < q_end; ++q_i) {
     q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
 
     if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, *r_node,
           unvisited, q_result, &global_result_)) {
       const typename GNP::RPoint *r_point = first_r_point;
-      size_t r_point_stride = r_points_.n_elem_bytes();
-      index_t r_end = r_node->end();
       index_t r_i = r_node->begin();
+      //index_t r_end = r_node->end();
+      index_t r_left = r_node->count();
 
       for (;;) {
         visitor.VisitPair(param_, *q_point, q_i, *r_point, r_i);
-        if (++r_i >= r_end) {
+        if (unlikely(--r_left == 0)) {
           break;
         }
+        r_i++;
         r_point = mem::PointerAdd(r_point, r_point_stride);
       }
 

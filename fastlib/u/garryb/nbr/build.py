@@ -1,66 +1,28 @@
 
-librule(name = "nbr",
-   sources = ["distribcache.cc", "blockdev.cc", "work.cc",
-              "rpc.cc", "rpc_sock.cc"],
-   headers = ["blockdev.h", "cachearray.h",
-              "dfs.h", "gnp.h", "kdtree.h", "thor_utils.h",
-              "spbounds.h", "spnode.h", "work.h",
-              "rpc.h", "rpc_sock.h", "distribcache.h",
-              "cache.h"],
-   deplibs = ["fastlib:fastlib_int"])
-
-binrule(name = "rpc_sock_test",
-   sources = ["rpc_sock_test.cc"],
-   deplibs = [":nbr"])
-
-# No more MPI
-#librule(name = "thor_mpi",
-#   sources = ["rpc.cc", "netcache.cc"],
-#   headers = ["rpc.h", "netcache.h"],
-#   deplibs = [":nbr"])
-
 binrule(name = "tkde",
    sources = ["tkde.cc"],
-   deplibs = [":nbr"])
+   deplibs = ["thor:thor"])
 
 binrule(name = "allnn_rpc",
    headers = ["allnn.cc"],
    sources = ["allnn_rpc.cc"],
-   deplibs = [":nbr"])
+   deplibs = ["thor:thor"])
 
 binrule(name = "allnn",
    sources = ["allnn.cc"],
-   deplibs = [":nbr"])
-
-#--------
+   deplibs = ["thor:thor"])
 
 binrule(name = "range",
    sources = ["range.cc"],
-   deplibs = [":nbr"])
-
-#--------
-
-binrule(name = "akde",
-   sources = ["akde.cc"],
-   deplibs = [":nbr"])
-
-#--------
+   deplibs = ["thor:thor"])
 
 binrule(name = "gravity",
    sources = ["gravity.cc"],
-   deplibs = [":nbr"])
-
-binrule(name = "tpc",
-   sources = ["tpc.cc"],
-   deplibs = [":nbr"])
+   deplibs = ["thor:thor"])
 
 binrule(name = "affinity",
    sources = ["affinity.cc"],
-   deplibs = [":nbr"])
-
-binrule(name = "affinity2",
-   sources = ["affinity2.cc"],
-   deplibs = [":nbr"])
+   deplibs = ["thor:thor"])
 
 binrule(name = "apcluster",
    sources = ["apcluster.c"],
@@ -69,10 +31,3 @@ binrule(name = "apcluster",
 binrule(name = "makesim",
    sources = ["makesim.cc"],
    deplibs = ["fastlib:fastlib"])
-
-binrule(name = "cache_test",
-   sources = ["cache_test.cc"],
-   headers = ["cache.h", "blockdev.h"],
-   deplibs = ["fastlib:fastlib_int"])
-
-

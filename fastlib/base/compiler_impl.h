@@ -45,13 +45,20 @@
 
 #ifdef __cplusplus
 template <typename T>
-struct base_compiler_h__Tchar {
-  T t;
-  char c;
+struct base_c__stride {
+  struct S { T t; char c; };
+  // this is the stride that the compiler will give to it in a struct
+  static const int NATURAL_STRIDE = 
+      (sizeof(S) > sizeof(T)) ? (sizeof(S) - sizeof(T)) : sizeof(T);
+  // this is the power-of-two stride that is more likely to be faster
+  static const int PREFERRED_STRIDE =
+      sizeof(T) >= 8 ? 8 : sizeof(T) >= 4 ? 4 : 0;
+  // we'll take the larger of two
+  enum { STRIDE = NATURAL_STRIDE > PREFERRED_STRIDE ?
+      NATURAL_STRIDE : PREFERRED_STRIDE };
 };
-#define strideof__impl(T)                             \
-   ((sizeof(base_compiler_h__Tchar<T>) > sizeof(T)) ?            \
-   sizeof(base_compiler_h__Tchar<T>)-sizeof(T) : sizeof(T))
+#undef BASE_C__FULLY_ALIGN
+#define strideof__impl(T) (base_c__stride<T>::STRIDE)
 #else
 #define strideof__impl(T) (sizeof(struct {T x;char c;})-sizeof(T))
 #endif

@@ -1,8 +1,4 @@
-#include "spbounds.h"
-#include "gnp.h"
-#include "dfs.h"
-#include "thor_utils.h"
-
+#include "thor/thor.h"
 #include "fastlib/fastlib.h"
 
 #include <string.h>
@@ -38,7 +34,7 @@ As one-variable rho:
 
 struct AffinityCommon {
   /** The bounding type. Required by THOR. */
-  typedef ThorHrectBound<2> Bound;
+  typedef DHrectBound<2> Bound;
 
   /**
    * Alpha corresponds to "maximum availability" with the != k condition.

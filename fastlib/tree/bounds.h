@@ -369,10 +369,8 @@ class DHrectBound {
    * Calculates minimum bound-to-point squared distance,
    * to the specified power.
    */
-  double MinDistanceSq(const Vector& point) const {
-    DEBUG_ASSERT(point.length() == dim_);
+  double MinDistanceSq(const double *mpoint) const {
     double sumsq = 0;
-    const double *mpoint = point.ptr();
     const DRange *mbound = bounds_;
     
     index_t d = dim_;
@@ -391,6 +389,15 @@ class DHrectBound {
     } while (--d);
     
     return math::Pow<2, t_pow>(sumsq) / 4;
+  }
+
+  /**
+   * Calculates minimum bound-to-point squared distance,
+   * to the specified power.
+   */
+  double MinDistanceSq(const Vector& point) const {
+    DEBUG_ASSERT(point.length() == dim_);
+    return MinDistanceSq(point.ptr());
   }
 
   /**
