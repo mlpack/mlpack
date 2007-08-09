@@ -630,7 +630,54 @@ SIGSEGV library along with mprotect to address efficiently this.
 Pages are write protected in memory and if a write occurs a signal
 is raised and the page is marked as modified.
 
+\begin{table}[!h]
+\footnotesize{ \centering
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  number of points & dimensions & dual-tree time(sec)& collecting time (sec)\\ 
+  140000000        & 2          & 2711               & 1730\\
+  100000000        & 3          & 4885               & 1338\\
+  5000000          & 5          & 8376               & 650\\
+  \hline
+\end{tabular}
+\caption{Cache performance for storing results in separate space. Memory mapped files}
+}
+\end{table}
 
+\begin{table}[!h]
+\footnotesize{ \centering
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  number of points & dimensions & dual-tree time(sec)& initialization time (sec)\\ 
+  140000000 & 2 & 2039 & 836\\
+  100000000 & 3 & 2648 & 711\\
+  5000000   & 5 & 4131 & 430\\
+  \hline
+\end{tabular}
+\caption{Performance for cache that stores everything on the tree. Memory mapped files}
+}
+\end{table}
+
+\begin{table}[!h]
+\footnotesize{ \centering
+\begin{tabular}{|c|c|c|c|c|}
+  \hline
+   number of points dimension & page size & dual-tree(sec) &collecting time(sec) \\
+   140000000 & 2 & 65536   & 25432 & 2482 \\
+   140000000 & 2 & 524288  & 4978  & 2026 \\
+   140000000 & 2 & 1048576 & 4438  & 1901 \\
+   140000000 & 2 & 4194304 & 4543  & 1819 \\ 
+   100000000 & 3 & 65536   & 8163  & 1603 \\
+   100000000 & 3 & 524288  & 6542  & 1499 \\
+   100000000 & 3 & 1048576 & 6094  & 1386 \\
+   100000000 & 3 & 4194304 & 6618  & 1283 \\
+ \hline
+\end{tabular}
+\caption{Cache performance for different page size and different datasets. Custom made cache}
+}
+\end{table}
 
 
 \subsection{Kernel methods}
