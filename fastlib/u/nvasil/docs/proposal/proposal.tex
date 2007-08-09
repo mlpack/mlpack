@@ -44,6 +44,8 @@ ECE}{Georgia Institute of Technology}
 \usepackage{graphicx}
 \usepackage{insfig}
 \usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{boxedminipage}
 
 %%%% These commands set the default depth the TOC should be expanded
 %%   out to for the chapters and appendices
@@ -113,7 +115,7 @@ practice parametric models lead to non-convex optimization problems,
 so it is difficult to find the best parameters given the data. The
 most difficult part is to find the right number of the parameters
 that best fit the data. For example the number of neurons and the
-topology of a neural network is something that can only been
+topology of a neural network is something that can only be
 estimated experimentally after testing different combinations given
 a dataset. In any case the value of parametric models should not be
 underestimated since it can achieve very good performance in
@@ -142,14 +144,14 @@ parametric model requires evaluation of $N$ parameters. Naively
 speaking training can be avoided at all if we set the parameter
 ad-hoc. If we want to find the single parameter with cross
 validation then that would require $N^2$ operations per candidate
-value of $h$. It turns out that if we arrange data in a clever way
+value of $h$. It turns out that if we arrange data in a more sophisticated way
 it is possible to reduce the training of the non-parametric model to
 linear time and evaluation of a new point in logarithmic time.
 Estimation of the few parameters of a non-parametric model can be
 casted as an optimization problem which in most of the case can be
 convex. We will see how non-parametric Kernel Principal Component 
 Analysis \cite{scholkopf1998nca} can be computed with the help 
-of semidefinite programming \cite{vandenberghe1996sp}.
+of semidefinite programming \cite{vandenberghe1996sp, boyd2004co}.
 
 \section{Origin and history of the problem}
 \label{origin}
@@ -161,8 +163,7 @@ It is well known that many
 machine learning algorithms starting from the very fundamental, the
 nearest neighbor grow exponentially on the intrinsic dimension. This
 is also known as the curse of dimensionality \cite{donoho2000hdd}.
-In many cases in the
-literature dimensionality is used without the prefix intrinsic or
+In literature dimensionality is used without the prefix intrinsic or
 extrinsic, causing confusion. The extrinsic dimensionality is just
 the number of variables needed to describe a point, i.e. the
 extrinsic dimensionality of $x\in \Re^d$ is just $d$. Each variable
@@ -181,7 +182,7 @@ kernel methods can capture non-lineal dependencies between
 dimensions. Kernel PCA is the father of non-linear dimensionality
 reduction methods \cite{scholkopf2002lks}.
 
-Although Kernel PCA seems to be a very powerful tool it suffers from
+Although Kernel PCA (Put t more for spectral methods) seems to be a very powerful tool it suffers from
 polynomial complexity. It requires $O(N^2)$ kernel computations,
 which make it unsuitable for large scale problems. In this thesis we
 will show how we are going to use multidimensional trees to reduce
@@ -190,7 +191,7 @@ linear \cite{gray2000nbp}.
 
 The driving force for investigating dimensionality reduction was the
 estimation of the true dimension of speech. Many representations
-have been recommended for speech MFCC, LPC, NRAFF etc, \cite{quatieri2002dts, ravindran:inr}. The true
+have been recommended for speech MFCC, LPC, NRAFF etc, \cite{quatieri2002dts,rabiner1978dps, ravindran:inr}. The true
 dimension is yet unknown. Meanwhile there is theoretical evidence
 that speech signals are embedded in high dimensional manifolds 
 \cite{alder1991dss, sciamarella1999tsc, kumar1990ade, tishby1990dsa, jansen2006ifa}. In
@@ -207,14 +208,14 @@ recognition.
 \subsection{The Nearest Neighbor Problem}
 \label{The_Nearest_Neighbor_Problem}
 
-One of the classical problems in statistics and in machine learning
-as is the nearest neighbor problem. Given a set of points in $S =
+One of the classical problems in statistics and in machine learning 
+is the nearest neighbor problem. Given a set of points in $S =
 {x_i, x_i\in\Re^d, i=0\dots N}$ and a distance metric $M(x_i, y_i),
 x_i, y_i \in S$  the nearest neighbor of $x_i \in \Re^d$ is
 $argmin(M(x, y_i)), y_i \in S$. In many cases the problem of finding
 all nearest neighbors appears. This problem can be formalized as
 find $argmin(M(x, y_i)), y_i \in S, \forall x \in S'$. The problem
-of finding nearest neighbor is can be solved in a "naive" way, by
+of finding nearest neighbor can be solved in a "naive" way, by
 computing all the distances between the query point and the
 reference points. The complexity is $O(N)$. Assuming that the number
 of the query points $N$ is the same as the number of reference
@@ -250,7 +251,7 @@ The first multidimensional tree in the literature was Kd-tree \cite{bentley1975b
 30 years it still has comparable performance and in some case even
 better with modern trees. At every level a partition (pivot)
 dimension is chosen according to a user defined criterion and the
-data is split in two subsets according to this dimension. Kd trees
+data is split in two subsets according to this dimension. Kd-trees
 are off-line trees. In order to build a Kd-tree all the data must be
 available before building the tree in contrast to other trees that
 can dynamically add or delete points.
@@ -271,18 +272,17 @@ show that empirically it is more preferable to have unbalance splits
 on the tree, since it favors pruning in the process of finding the
 nearest neighbors.
 
-\paragraph{Data structures for Kd trees}
+\paragraph{Data structures for -d trees}
 
  Kd-tree consists of two types of data structures, the nodes and the
  leafs. The basic data needed for the nodes are the
- hyper-rectangles fig.~\ref{parent_kd_node}. Hyper-rectangles are the k-dimensional rectangles
- that describe the minimum bounding box  for a given set of points.
+ hyper-rectangles fig.~\ref{parent_kd_node}. Hyper-rectangles are the k-dimensional rectangles that describe the minimum bounding box  for a given set of points.
  Leafs hold additionally the data points  fig.~\ref{2_kd_node}. The number of points on a
  leaf is user defined. The tree method for finding the nearest neighbor is faster than naive
  only after a threshold of points, (experimentally it has been found
  to be 30). This threshold is used as the maximum number of points
  per leaf. Bounding boxes (Hyper-rectangles) and points are the minimum amount
- of data required to be stored on nodes on the leaf. Extra
+ of information required to be stored on nodes on the leaf. Extra
  information about the data such as the centroid of the box, higher
  order moments, etc also called Cached Statistics can speed up
  tremendously algorithms other than nearest neighbor. The algorithm
@@ -399,7 +399,7 @@ centered around the query point with radius equal to the distance
 \subsubsection{All nearest Neighbors}
 The problem of computing all nearest neighbors appears often in many
 machine learning problems, usually in the training phase. As we will
-see in the following sections computation of the kernel matrix
+see in the following sections the formation of the kernel matrix
 involves all nearest neighbor computations. The all-nearest neighbor
 problem is a special case of a more general class of problems called
 N-body problems.
@@ -409,7 +409,7 @@ finding all nearest neighbors can be solved by executing N nearest
 neighbor queries resulting in an $O(N\log N)$ complexity. We will
 call this as the single tree all nearest neighbor algorithm. However
 it is not difficult to notice that there are redundant computations.
-For example consider we have a query set stored on a kd tree and a
+For example consider we have a query set stored on a kd-tree and a
 reference set stored on another kd-tree as well. If we do the top
 down recursion for a point then we notice that most likely this top
 down recursion might be exactly the same for all the points in the
@@ -423,7 +423,7 @@ In general the dual tree algorithm as we call it since the query and
 the reference set lie on trees (they might share the same tree if
 the query and the reference set are the same), gives linear
 complexity over the number of data. This is empirical complexity. In
-figure we give an example of dual-tree pruning.
+fig.~\ref{dual_tree} we give an example of dual-tree pruning.
 
 \instbfig[dual_tree]{dual_tree_box_pruning1.eps}{dual_tree_box_pruning.eps}
 {The query node in red after top down recursion ends up in a leaf of
@@ -447,10 +447,10 @@ address different implementations of kd-trees for data that don't
 fit in the RAM. We show whether virtual memory behaves better   than
 paging of nodes on the disk.
 
-Kd trees have been used quite successfully in statistics for
+Kd-trees have been used quite successfully in statistics for
 speeding up statistical algorithms (nearest neighbor, 2 point
-correlation  over large dataset. Many other trees like ball-trees,
-vantage trees, cover trees etc have been developed as a rivalry but
+correlation) over large datasets \cite{gray2000nbp}. Many other trees like ball-trees,
+vantage trees, cover trees etc \cite{samet2005fma} have been developed as a rivalry but
 they haven't really shown any significant improvement, their
 performance is most of the times comparable to the kd-trees. After
 30 years they still remain the state of the art for developing
@@ -460,13 +460,13 @@ for datasets that fit in the main memory.
 During the same period the database community developed structures
 for multidimensional indexing mainly used for database applications.
 Some examples of successful tree structures are R-trees,
-$R^{*}$-trees, X-trees and TV-trees. The main incentive for these
+$R^{*}$-trees, X-trees and TV-trees \cite{samet2005fma}. The main incentive for these
 trees was to handle large volumes of data, dynamic insertions,
 deletions and random accesses.
 
 The size of the datasets for statistical processing is increasing
 faster than the availability of  main memory so it is necessary to
-investigate the performance of kd trees and various optimizations
+investigate the performance of kd-trees and various optimizations
 over cached implementations. Unfortunately R-tree like structures
 cannot be used or even compared to kd-trees since they are optimized
 for different problems. It turns out that batch loading of spatial
@@ -477,7 +477,7 @@ nearest neighbor performance. Eventually kd-trees can be considered
 as a special case of spatial trees, so there is no point in
 comparing to them.
 
-In this paper we consider some caching implementation strategies for
+In this section we consider some caching implementation strategies for
 kd-trees. The first approach is the use of virtual memory through
 memory mapped files. The basic advantage is the the programming
 simplicity, since data can be accessed through normal pointers. The
@@ -491,7 +491,7 @@ transfers.
 Another parameter that affects the performance of the trees is the
 layout of the tree on the memory, that has to be in such a way that
 it guarantees good locality in terms of the access pattern of some
-basic kd tree algorithms, such as all  nearest neighbors, n-point
+basic kd-tree algorithms, such as all  nearest neighbors, n-point
 correlation. There are different ways to build a kd-tree: a)Depth
 first b)Breadth first and c)The combination of them building k-depth
 trees breadth first. It has been shown experimentally that
@@ -505,23 +505,22 @@ generate queries that are highly correlated, so we can take
 advantage of that. Taking advantage of the multicore architecture it
 is possible to do non blocking system call for prefetching.
 
-In this paper we do not address the problem of building cache
+We do not address the problem of building cache
 efficiently trees since this issue has been extensively addressed in
-the literature, with the most successful algorithm the buffer tree.
+the literature, with the most successful algorithm the buffer tree 
+\cite{arge2003btt}.
 
 \subsubsection{Memory layout of Kd-trees} There are many ways to
-build a kd tree, depth first, breadth first and the combination for
+build a kd-tree, depth first, breadth first and the combination for
 both. It turns out that breadth first does not give good locality
-for dual-tree algorithms. We will show experimentally that the
-hybrid method gives the best results in terms of page faults and
-depth first has comparable performance. Another parameter of
+for dual-tree algorithms. Another parameter of
 kd-trees that has effect in the cache performance is the splitting
 algorithm. Mid-point splits  guarantee balanced trees, but do not
 always give good performance in terms of punning.
 
 \subsubsection{System architecture} There are several ways to
 implement a disk kd-tree. As it has been stated above, speed is an
-essential feature that we are particularly interested as well ass
+essential feature that we are particularly interested as well as
 portability. Since building the tree for large scale data might take
 a lot of time it is very important to be able to reload the tree and
 perform other operations. Although it is desirable to keep the tree
@@ -531,7 +530,7 @@ implementation we avoided virtual functions, structures that require
 memory reallocations. In order to keep it generic we used simple
 concepts of C++ template programming. Another issue that is of great
 importance is memory locality. There are five basic memory
-structures involved in a kd tree, nodes, leafs, data points node
+structures involved in a kd-tree, nodes, leafs, data points node
 cached statistics and hyper-rectangles. Some of them can be combined
 but it is always good to preserve the abstraction hierarchy Tree,
 Node, bounding Box, Node Statistics, and Points. There is also
@@ -549,15 +548,33 @@ k or range.
 \subsubsection{Memory Manager Architecture} In order to test
 different memory manager strategies, we used smart pointers that
 would collaborate with their corresponding memory allocators. Memory
-Allocators implement a set of basic functions such as malloc. One of
-the fundamental issues is to make sure the allocated memory for each
+Allocators implement a set of basic functions such as 
+{\verb"malloc" }.
+One of the fundamental issues is to make sure the allocated memory for each
 structure had the correct alignment. It is widely known that wrong
 memory alignment can decrease the performance or even cause a
 program crash. an easy and portable way to compute the memory
 alignment is to use the simple macro depicted in ??. Another issue
 that has to be addressed is page fault handling. In the following
 section we describe two different memory managers we implemented and
-in section ? we compare their performance.
+we compare their performance.
+
+\begin{figure}[!H]
+\label{Alignment}
+\begin{boxedminipage}[c]{\linewidth}
+\begin{verbatim}
+template <typename T>
+   struct Tchar {
+       T t;
+       char c;
+   } ;
+   #define strideof(T)                             \
+      ((sizeof(Tchar<T>) > sizeof(T)) ?            \
+        sizeof(Tchar<T>)-sizeof(T) : sizeof(T))
+\end{verbatim}
+\end{boxedminipage}
+\caption{Computing the alignment of a struct}
+\end{figure}
 
 \paragraph{Memory Mapped Files} In this approach we used a single memory
 mapped file big enough to fit the tree. The length of the file has
@@ -567,7 +584,7 @@ there is no need to worry about memory fragmentation. Paging is
 taken care by the operating system. The page size is fixed 4096B for
 Linux. Customizing the page size is something desirable but this
 shouldn't be of great worry since very soon Linux will accommodate
-for variable page size [?]. This implementation is pretty simple and
+for variable page size \cite{winwood2002mps}. This implementation is pretty simple and
 memory access is achieved with normal pointers. It is also efficient
 since all the paging is done in lower levels of the operating system
 
@@ -619,7 +636,7 @@ is raised and the page is marked as modified.
 \subsection{Kernel methods}
 \label{Kernel_methods}
 
- The kernel or Gram matrix is an informational representation
+The kernel or Gram matrix is an informational representation
 for a set of data. There are a different interpretations for the
 kernel matrix. The most mathematical interpretation is the dot
 product matrix. Every element of the kernel matrix is the dot
@@ -635,7 +652,7 @@ sense. The dot products in most of the cases are non-linear.
 \subsubsection{Kernel principal component analysis}
 \label{Kernel_principal_component_analysis}
 
-Kernel Principal Component Analysis (KPCA), is an extension of
+Kernel Principal Component Analysis (KPCA) \cite{scholkopf2002lks}, is an extension of
 principal component analysis where the data are mapped into a
 different feature space through the kernel. In Principal Component
 Analysis the goal is to find the principal components for  the
@@ -668,8 +685,9 @@ every dataset they  must give a valid kernel matrix as described in
 previous sections.
 
 Kernel PCA has many cousins such as Laplacian eigenmaps
-\cite{Belkin}, Diffusion maps  \cite{Lafon}, Isomap, Local Linear
-embedding, etc.
+\cite{Belkin}, Diffusion maps  \cite{Lafon}, Isomap \cite{tenenbaum2000ggf}, 
+Local Linear Embedding \cite{roweis1993ndr}, 
+Local Tangent Space Alignment \cite{zhang2002pma} etc.
 
 Both works present algorithms for computing the Laplace-Beltrami
 operator on a submanifold $\Gamma$ embedded in $\Re^d$. Lafon has
@@ -692,8 +710,7 @@ with the final objective function directly, which in some
 applications of manifold learning it could be clustering or
 dimensionality reduction.
 
- The connection between manifold learning and Kernel Density Estimation (KDE) has also been addressed
-in \cite{girolami2002osd} where the connection between manifold
+ The connection between manifold learning and Kernel Density Estimation (KDE) has also been addressed in \cite{girolami2002osd} where the connection between manifold
 learning and density estimation was also considered by using
 orthogonal series density estimation rather than kernel density
 estimation
@@ -817,8 +834,6 @@ determining the local bandwidths that define the geometry is
 introduced. The results show that the automatic bandwidth selection
 leads to improved clustering performance and reduces the
 computational load versus ad hoc selection.
-
-
 
 \subsubsection{Non parametric  density estimation} The problem of
 density estimation of finite data set is very significant for most
@@ -990,7 +1005,7 @@ connected.
 
 
 
-\subsubsection{Discussion} In this paper the problem of constructing
+\subsubsection{Discussion} In this section the problem of constructing
 the diffusion graph of a manifold defined by data points in $\Re^d$
 was addressed. The parameters of the kernel that define the geometry
 over the manifold were automatically trained through the estimation
@@ -1108,9 +1123,9 @@ smaller}{6cm}{6cm}{6cm}
 %\end{figure}
 
 
-\subsection{Speech recognition with nearest neighbor search}
+\subsection{Preliminary Investigation in Nearest Neighbor research for speech recognition}
 
-In this paper we present a computationally efficient means of
+In this section we present a computationally efficient means of
 characterizing different features for speech processing tasks. The
 presented method can be used to compare the performance of features
 free of interference from back-end recognition engines that might be
@@ -1188,41 +1203,42 @@ In both cases the delta and acceleration coefficients were extracted
 and appended to each feature vector, increasing the dimensionality
 from 13 to 39.
 
-\subsubsection{Fast N-body methods for feature comparison} One of the
-fundamental problems in statistics is the nearest neighbor
-computation for every point in a dataset. The brute force also known
-as the naive method requires $O(N^2)$ computations. Ordering the
-multidimensional data on a binary tree, gives $O(\log (N)$ search
-time per point and $O(N\log N)$ in total. There is a plethora of
-binary multidimensional trees ball tree, kd tree, cover tree etc. In
-our experiments we used the kd tree. A detailed description of kd
-trees can be found at \cite{moore-tutorial}. The main concept is to
-recursively partition data in disjoint rectangles. Each tree node
-contains a k-dimensional rectangle (hyper rectangle) that bounds all
-the points that are contained in the subtree. Only leafs contain
-points. In Fig.~\ref{kdtree} an example of a kd tree in 2 dimensions
-is given, while the algorithm for computing the nearest neighbor for
-a test point is depicted in table Fig.~\ref{dualtree_algorithm}. The
-main idea is to recursively find the leaf that contains the query
-point then compute a candidate nearest neighbor on the leaf. As the
-algorithm back tracks it determines if it is necessary to search
-other subtrees for a nearest neighbor.
+%\subsubsection{Fast N-body methods for feature comparison} One of the
+%fundamental problems in statistics is the nearest neighbor
+%computation for every point in a dataset. The brute force also known
+%as the naive method requires $O(N^2)$ computations. Ordering the
+%multidimensional data on a binary tree, gives $O(\log (N)$ search
+%time per point and $O(N\log N)$ in total. There is a plethora of
+%binary multidimensional trees ball tree, kd tree, cover tree etc. In
+%our experiments we used the kd tree. A detailed description of kd
+%trees can be found at \cite{moore-tutorial}. The main concept is to
+%recursively partition data in disjoint rectangles. Each tree node
+%contains a k-dimensional rectangle (hyper rectangle) that bounds all
+%the points that are contained in the subtree. Only leafs contain
+%points. In Fig.~\ref{kdtree} an example of a kd tree in 2 dimensions
+%is given, while the algorithm for computing the nearest neighbor for
+%a test point is depicted in table Fig.~\ref{dualtree_algorithm}. The
+%main idea is to recursively find the leaf that contains the query
+%point then compute a candidate nearest neighbor on the leaf. As the
+%algorithm back tracks it determines if it is necessary to search
+%other subtrees for a nearest neighbor.
+%
+%The use of dual trees in the all nearest neighbor search has proven
+%to give significant speed-up in all-nearest neighbor computations.
+%The basic idea is that the whole query set is structured on a tree.
+%In our case the query tree and the reference tree are the same. The
+%core of the algorithm relies on the fact that if the current maximum
+%nearest neighbor distance in the query node is smaller than the
+%distance between the query and the reference node distance then the
+%reference node can be pruned. This saves a huge amount of
+%computation in most of the cases since whole  subtrees can be pruned
+%out for a large subset of points at once. The all nearest neighbor
+%search is described algorithmically in Table
+%\ref{dualtree_algorithm}. The complexity of the algorithm, on
+%average, turns out to be linear.
 
-The use of dual trees in the all nearest neighbor search has proven
-to give significant speed-up in all-nearest neighbor computations.
-The basic idea is that the whole query set is structured on a tree.
-In our case the query tree and the reference tree are the same. The
-core of the algorithm relies on the fact that if the current maximum
-nearest neighbor distance in the query node is smaller than the
-distance between the query and the reference node distance then the
-reference node can be pruned. This saves a huge amount of
-computation in most of the cases since whole  subtrees can be pruned
-out for a large subset of points at once. The all nearest neighbor
-search is described algorithmically in Table
-\ref{dualtree_algorithm}. The complexity of the algorithm, on
-average, turns out to be linear.
-
-\begin{table}
+\begin{figure}[!H]
+\begin{boxedminipage}[c]{\linewidth}
 \begin{verbatim}
 recurse(q : KdTree, r : KdTree) {
   if (can_prune(q, r)) {
@@ -1239,9 +1255,10 @@ recurse(q : KdTree, r : KdTree) {
   }
 }
 \end{verbatim}
+\end{boxedminipage}
 \caption{Pseudo-code for the dual-tree all nearest neighbor
 algorithm} \label{dualtree_algorithm}
-\end{table}
+\end{figure}
 
 
 
@@ -1250,8 +1267,6 @@ algorithm} \label{dualtree_algorithm}
 
 \insfig[dualkdtree]{dualtree_recursion.eps}{Simulation of the dual
 tree algorithm}{8cm}
-
-
 
 
 \subsubsection{Experimental Results} In order to illustrate the
@@ -1422,7 +1437,7 @@ MFCC features}{8cm}
   NRAF & 30.1\% & 42.9\% & 42.9\% & 41.2\% & 40.1\% \\
   \hline
 \end{tabular}
-  \caption{Nearest k-neighbor classfier for Leave One Speaker Out
+  \caption{Nearest k-neighbor classifier for Leave One Speaker Out
   Cross validation in  NTIMIT database}
 } \label{kneighborLOOCVNTIMIT}
 \end{table}
@@ -1437,7 +1452,7 @@ data. Special emphasis is given in high dimensional data $d>30$. One
 of the goals is to use Kernel PCA for unfolding the speech manifold.
 In other words estimate the intrinsic dimensionality of speech by
 using big databases like timit, wall street journal and broadcast
-news. Implicitly dimensionality reduction will lead to new feature
+news [?]. Implicitly dimensionality reduction will lead to new feature
 generation . The ultimate goal is to use these new features along
 with kd-trees do speech recognition by nearest neighbor search.
 
@@ -1822,8 +1837,6 @@ boxes that are pruned.
 The initial motivation for this thesis has been to develop a speech recognition engine based on nearest neighbor search. In the age of information explosion it is very easy to collect large collections of annotated speech. Most of the tv broadcasts are captioned. Although there are errors and misalignment, it is always possible to reduce them, with an open source Viterbi decoder, by force aligning them. So it is possible to extract the audio from the tv signal segment it in word or phoneme level and then generate features such as MFCC or NRAF or any other customized features. Then we can index the features with kd trees associated with the caption. The problem of speech recognition now can be casted as a search problem. This is a simplistic approach that requires the solution of other problems. 
 
 First of all it is necessary to estimate the intrinsic dimension of the features representing speech. This is why we focused our interest in dimensionality reduction algorithms. This is important for "compressing" the data and saving space. The second issue is to build a cache for trees that don't fit in the main memory already addressed. The last step is to generate features on different time scales. 
-
-(Remember to put a link bout  speech embedding in a lower dimensional space)
 
 This is probably the most interesting step. Initially we start with features of a minimum durations, let's say 20msec MFCC 39 coefficients. After bringing it down to a certain dimension $d$ with KPCA or SDPCA. Then we merge the features creating vectors of $2d$. We keep repeating this until we reach a stage where the dimensionality cannot be decreased to a value that is beyond the strength of kd-trees.
 
