@@ -1,44 +1,44 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  Macros for Incorporation of .eps figures into LaTeX documents
-%      Macros started by Paul Hasler, 
-%            originally developed at Caltech in 1995, 
+%      Macros started by Paul Hasler,
+%            originally developed at Caltech in 1995,
 %            and continued to be updated at Georgia Tech
 %
 %      Revision History: current version - March 2, 2004
 %
-%      1. Additions / improvements by Jeff Dugger. 
+%      1. Additions / improvements by Jeff Dugger.
 %	   2. Encapsulation into insfig package, addition
-%	      of optional label parameter, and the  
+%	      of optional label parameter, and the
 %	      addition of starred forms by Daniel Allred
 %         on 2004/03/02.
 %      3. Addition of side-by-side-by-side figure placement command
 %         on 2004/11/04.
 %
 %  Captions are in a font size one less than normal text font
-%      
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  USAGE:
-%  All starred form of the commands will span over muliple columns
+%  All starred form of the commands will span over multiple columns
 %  when you are in two column format.  If the optional label is not
 %  included then the figure label will be {fig:filename1}.  If you
-%  to simplify how you use figure names, you should use the following 
+%  to simplify how you use figure names, you should use the following
 %  lines in your document after \usepackage{graphicx}:
 %     \graphicspath{{eps/},{pdf/}}
 %     \DeclareGraphicsExtensions{.eps,.pdf}
 %     \usepackage{insfig} %this package
 %  The first line will tells where the graphicx (or graphics) package
-%  to look for your files (i.e. what subdirectories of the current 
-%  directory).  The second line tells what extensions to try to append 
+%  to look for your files (i.e. what subdirectories of the current
+%  directory).  The second line tells what extensions to try to append
 %  to the filename you give it, so you don't need to specify the file
 %  extension.  The example above will look in two directories and will
-%  try two different file extensions (.eps and .pdf) in order to locate 
+%  try two different file extensions (.eps and .pdf) in order to locate
 %  the file you want.
 %
 %  There is a naming convention for these commands to make them easy to remember.
 %  Each command begins with ``ins'' and is then followed by some letters, then ``fig''
 %  and then sometimes an optional 'l'.  The letters between ``ins'' and ``fig'' determine
-%  the figures will be be placed.  so for example if the letters are ``sss'' then the command 
+%  the figures will be be placed.  so for example if the letters are ``sss'' then the command
 %  is for placing three figures Side-by-Side-by-Side.  If the letters were ``tss'' then it
 %  would be for placing a figure on Top and then two figures Side-by-Side below.  If the
 %  letters were ``ssb'' then it would be for two figures Side-by-Side with a single figure Below.
@@ -48,11 +48,11 @@
 %  Basic figure placement macros for ONE FIGURE
 %    1.Place a single figure (top or bottom)
 %        insfig[optional label]{filename1}{caption}{width1}
-%        insfig*[optional label]{filename1}{caption}{width1} 
+%        insfig*[optional label]{filename1}{caption}{width1}
 %    2.Single figure that has caption on left side of figure
 %        insfigl[optional label]{filename1}{caption}{width1}{width of caption}
 %        insfigl*[optional label]{filename1}{caption}{width1}{width of caption}
-%    3.Force figure on a separate,empty column/page 
+%    3.Force figure on a separate,empty column/page
 %        insefig[optional label]{filename}{caption}{width} --- separate column (spanning only one column)
 %        insefig*[optional label]{filename}{caption}{width} --- separate page spanning both columns
 %
@@ -90,30 +90,30 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{insfig}[2004/11/04 insfig Package]
 
-\RequirePackage{graphicx} 
+\RequirePackage{graphicx}
 \RequirePackage{ifthen}
 
 \newcommand{\insfig}{\@ifstar\@insfiga\@insfig}
 \newcommand{\@insfig}[4][def]{
-   \begin{figure}[!htb]                         
-      \begin{center}
-         \makebox{\includegraphics[width=#4]{#2}}                       
-         \caption{#3}
-         \ifthenelse{\equal{#1}{def}}%
-            {\label{fig:#2}}%
-            {\label{#1}}
-      \end{center}                        
-   \end{figure}
-}% end insfig
-\newcommand{\@insfiga}[4][def]{
-   \begin{figure*}[!htb]                         
+   \begin{figure}[!htb]
       \begin{center}
          \makebox{\includegraphics[width=#4]{#2}}
          \caption{#3}
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}                        
+      \end{center}
+   \end{figure}
+}% end insfig
+\newcommand{\@insfiga}[4][def]{
+   \begin{figure*}[!htb]
+      \begin{center}
+         \makebox{\includegraphics[width=#4]{#2}}
+         \caption{#3}
+         \ifthenelse{\equal{#1}{def}}%
+            {\label{fig:#2}}%
+            {\label{#1}}
+      \end{center}
    \end{figure*}
 }% end insfiga
 
@@ -152,7 +152,7 @@
 }% end insfigla
 
 \newcommand{\insefig}{\@ifstar\@insefiga\@insefig}
-\newcommand{\@insefig}[4][def]{ 
+\newcommand{\@insefig}[4][def]{
    \begin{figure}[p]
       \begin{center}%
          \makebox{\includegraphics[width=#4]{#2}}%
@@ -160,10 +160,10 @@
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}                       
+      \end{center}
    \end{figure}
 }% end insefig
-\newcommand{\@insefiga}[4][def]{ 
+\newcommand{\@insefiga}[4][def]{
    \begin{figure*}[p]
       \begin{center}%
          \makebox{\includegraphics[width=#4]{#2}}%
@@ -171,7 +171,7 @@
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}                       
+      \end{center}
    \end{figure*}
 }% end insefig
 
@@ -182,7 +182,7 @@
          \begin{tabular}{cc}
             \includegraphics[width=#5]{#2} &
             \includegraphics[width=#6]{#3} \\
-            (a) & (b) 
+            (a) & (b)
          \end{tabular}
          \caption{#4}
          \ifthenelse{\equal{#1}{def}}%
@@ -197,7 +197,7 @@
          \begin{tabular}{cc}
             \includegraphics[width=#5]{#2} &
             \includegraphics[width=#6]{#3} \\
-            (a) & (b) 
+            (a) & (b)
          \end{tabular}
          \caption{#4}
          \ifthenelse{\equal{#1}{def}}%
@@ -253,9 +253,9 @@
 \newcommand{\@instbfig}[6][def]{
    \begin{figure}[tb]
       \begin{center}
-         \makebox{\includegraphics[width=#5]{#2}} 
+         \makebox{\includegraphics[width=#5]{#2}}
          \\ (a)\\
-         \makebox{\includegraphics[width=#6]{#3}} 
+         \makebox{\includegraphics[width=#6]{#3}}
          \\ (b)\\
          \caption{#4}
          \ifthenelse{\equal{#1}{def}}%
@@ -267,9 +267,9 @@
 \newcommand{\@instbfiga}[6][def]{
    \begin{figure*}[tb]
       \begin{center}
-         \makebox{\includegraphics[width=#5]{#2}} 
+         \makebox{\includegraphics[width=#5]{#2}}
          \\ (a)\\
-         \makebox{\includegraphics[width=#6]{#3}} 
+         \makebox{\includegraphics[width=#6]{#3}}
          \\ (b)\\
          \caption{#4}
          \ifthenelse{\equal{#1}{def}}%
@@ -283,11 +283,11 @@
 \newcommand{\@instcbfig}[8][def]{
    \begin{figure}[!htb]
       \begin{center}
-         \makebox{\includegraphics[width=#6]{#2}} 
+         \makebox{\includegraphics[width=#6]{#2}}
          \\ (a)\\
-         \makebox{\includegraphics[width=#7]{#3}} 
+         \makebox{\includegraphics[width=#7]{#3}}
          \\ (b)\\
-         \makebox{\includegraphics[width=#8]{#4}} 
+         \makebox{\includegraphics[width=#8]{#4}}
          \\ (c)\\
          \caption{#5}
          \ifthenelse{\equal{#1}{def}}%
@@ -299,11 +299,11 @@
 \newcommand{\@instcbfiga}[8][def]{
    \begin{figure*}[!htb]
       \begin{center}
-         \makebox{\includegraphics[width=#6]{#2}} 
+         \makebox{\includegraphics[width=#6]{#2}}
          \\ (a)\\
-         \makebox{\includegraphics[width=#7]{#3}} 
+         \makebox{\includegraphics[width=#7]{#3}}
          \\ (b)\\
-         \makebox{\includegraphics[width=#8]{#4}} 
+         \makebox{\includegraphics[width=#8]{#4}}
          \\ (c)\\
          \caption{#5}
          \ifthenelse{\equal{#1}{def}}%
@@ -328,7 +328,7 @@
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}%                                              
+      \end{center}%
    \end{figure}%
 }% end instssfig
 \newcommand{\@instssfiga}[8][def]{%
@@ -345,7 +345,7 @@
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}%                                              
+      \end{center}%
    \end{figure*}%
 }% end instssfiga
 
@@ -364,7 +364,7 @@
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}%                                              
+      \end{center}%
    \end{figure}%
 }% end insssbfig
 \newcommand{\@insssbfiga}[8][def]{%
@@ -376,12 +376,12 @@
             (a) & (b)%
          \end{tabular} \\%
          \includegraphics[width=#8]{#4} \\%
-         (c)%         
+         (c)%
          \caption{#5}%
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}%                                              
+      \end{center}%
    \end{figure*}%
 }% end insssbfiga
 
@@ -393,7 +393,7 @@
             \includegraphics[width=#6]{#2} &
             \includegraphics[width=#7]{#3} &
 			\includegraphics[width=#8]{#4} \\
-            (a) & (b) & (c) 
+            (a) & (b) & (c)
          \end{tabular}
          \caption{#5}
          \ifthenelse{\equal{#1}{def}}%
@@ -409,7 +409,7 @@
             \includegraphics[width=#6]{#2} &
             \includegraphics[width=#7]{#3} &
 			\includegraphics[width=#8]{#4} \\
-            (a) & (b) & (c) 
+            (a) & (b) & (c)
          \end{tabular}
          \caption{#5}
          \ifthenelse{\equal{#1}{def}}%
@@ -435,7 +435,7 @@
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}%                                              
+      \end{center}%
    \end{figure}%
 }% end insrectfig
 \newcommand{\@insrectfiga}[8][def]{%
@@ -453,7 +453,7 @@
          \ifthenelse{\equal{#1}{def}}%
             {\label{fig:#2}}%
             {\label{#1}}
-      \end{center}%                                              
+      \end{center}%
    \end{figure*}%
 }% end insrectfiga
 
