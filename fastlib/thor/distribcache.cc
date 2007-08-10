@@ -2,12 +2,6 @@
 #include "distribcache.h"
 
 #include <stdio.h>
-/*to-do
-
-- dynamic depth
-  - use static width with tunable depth (that might be based on external
-  pressure)
-*/
 
 //-------------------------------------------------------------------------
 //-- THE DISTRIBUTED CACHE ------------------------------------------------
@@ -70,10 +64,9 @@ void DistributedCache::DoConfigRequest_() {
   Request *request = message->data_as<Request>();
 
   request->type = Request::CONFIG;
-  request->blockid = 0;
-  request->begin = 0;
-  request->end = 0;
-  request->rank = 0;
+  request->field1 = 0;
+  request->field2 = 0;
+  request->field3 = 0;
   transaction.Send(message);
   transaction.WaitDone();
   ConfigResponse *response = ot::PointerThaw<ConfigResponse>(
@@ -383,10 +376,9 @@ void DistributedCache::DoOwnerRequest_(int owner,
   Message *message = transaction.CreateMessage(owner, sizeof(Request));
   Request *request = message->data_as<Request>();
   request->type = Request::OWNER;
-  request->blockid = blockid;
-  request->begin = 0;
-  request->end = end_block;
-  request->rank = 0;
+  request->field1 = blockid;
+  request->field2 = end_block;
+  request->field3 = 0;
   transaction.Send(message);
   transaction.Done();
 }
@@ -430,10 +422,9 @@ BlockDevice::blockid_t DistributedCache::DoAllocRequest_(
   Message *message = transaction.CreateMessage(MASTER_RANK, sizeof(Request));
   Request *request = message->data_as<Request>();
   request->type = Request::ALLOC;
-  request->blockid = n_blocks_to_alloc;
-  request->begin = 0;
-  request->end = 0;
-  request->rank = owner;
+  request->field1 = n_blocks_to_alloc;
+  request->field2 = owner;
+  request->field3 = 0;
   transaction.Send(message);
   transaction.WaitDone();
   blockid_t retval = *transaction.response()->data_as<blockid_t>();
@@ -616,10 +607,9 @@ void DistributedCache::DoReadRequest_(int peer, blockid_t blockid,
   Message *message = transaction.CreateMessage(peer, sizeof(Request));
   Request *request = message->data_as<Request>();
   request->type = Request::READ;
-  request->blockid = blockid;
-  request->begin = begin;
-  request->end = end;
-  request->rank = 0;
+  request->field1 = blockid;
+  request->field2 = begin;
+  request->field3 = end;
   transaction.Send(message);
   transaction.WaitDone();
   mem::CopyBytes(buffer, transaction.response()->data(), end - begin);
@@ -794,10 +784,9 @@ void DistributedCache::DoWriteRequest_(
   Message *message = transaction.CreateMessage(peer, Request::size(n_bytes));
   Request *request = message->data_as<Request>();
   request->type = Request::WRITE;
-  request->blockid = blockid;
-  request->begin = begin;
-  request->end = end;
-  request->rank = 0;
+  request->field1 = blockid;
+  request->field2 = begin;
+  request->field3 = end;
   mem::CopyBytes(request->data_as<char>(), buffer, n_bytes);
   handler_->BlockFreeze(blockid, begin, n_bytes, buffer, request->data_as<char>());
   transaction.Send(message);
@@ -845,28 +834,34 @@ void DistributedCache::ResponseTransaction::HandleMessage(
     }
     break;
     case Request::READ: {
-      Message *response = CreateMessage(
-          message->peer(), request->end - request->begin);
-      cache_->RemoteRead(request->blockid, request->begin, request->end,
-          response->data());
+      blockid_t blockid = request->field1;
+      offset_t begin = request->field2;
+      offset_t end = request->field3;
+      Message *response = CreateMessage(message->peer(), end - begin);
+      cache_->RemoteRead(blockid, begin, end, response->data());
       Send(response);
     }
     break;
     case Request::WRITE: {
-      cache_->RemoteWrite(request->blockid, request->begin, request->end,
-          request->data_as<char>());
+      blockid_t blockid = request->field1;
+      offset_t begin = request->field2;
+      offset_t end = request->field3;
+      cache_->RemoteWrite(blockid, begin, end, request->data_as<char>());
     }
     break;
     case Request::OWNER: {
-      cache_->HandleRemoteOwner_(request->blockid, request->end);
+      blockid_t blockid = request->field1;
+      blockid_t end_blockid = request->field2;
+      cache_->HandleRemoteOwner_(blockid, end_blockid);
     }
     break;
     case Request::ALLOC: {
+      blockid_t blockid = request->field1;
+      blockid_t rank = request->field2;
       DEBUG_ASSERT(cache_->my_rank_ == MASTER_RANK);
       Message *response = CreateMessage(message->peer(), sizeof(blockid_t));
       *message->data_as<blockid_t>() =
-          cache_->RemoteAllocBlocks(request->blockid, request->rank,
-          message->peer());
+          cache_->RemoteAllocBlocks(blockid, rank, message->peer());
       Send(response);
     }
     break;
@@ -1019,10 +1014,9 @@ void DistributedCache::SyncTransaction::SendBlankSyncMessage_(int peer) {
   Message *request_msg = CreateMessage(peer, sizeof(Request));
   Request *request = request_msg->data_as<Request>();
   request->type = Request::SYNC;
-  request->blockid = 0;
-  request->begin = 0;
-  request->end = 0;
-  request->rank = 0;
+  request->field1 = 0;
+  request->field2 = 0;
+  request->field3 = 0;
   Send(request_msg);
 }
 
@@ -1035,10 +1029,9 @@ void DistributedCache::SyncTransaction::SendStatusInformation_(int peer,
   Request *request = request_msg->data_as<Request>();
   ot::PointerFreeze(info, request->data_as<char>());
   request->type = Request::SYNC;
-  request->blockid = 0;
-  request->begin = 0;
-  request->end = 0;
-  request->rank = 0;
+  request->field1 = 0;
+  request->field2 = 0;
+  request->field3 = 0;
   Send(request_msg);
 }
 

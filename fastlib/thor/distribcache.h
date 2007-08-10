@@ -60,21 +60,29 @@ class DistributedCache : public BlockDevice {
   /** Net-transferable request operation */
   struct Request {
    public:
-    /** Message type.  See corresponding transaction classes. */
-    enum { CONFIG, READ, WRITE, ALLOC, OWNER, SYNC } type;
-    int32 blockid;
-    int32 begin;
-    int32 end;
-    int32 rank;
-    uint64 long_aligned_data_[1];
+    /** Request type.  See corresponding transaction classes. */
+    enum {
+      CONFIG, //< Request for configuration
+      READ, //< Request for a block's contents
+      WRITE, //< Request to write to a block
+      ALLOC, //< Request to master to allocate a block
+      OWNER, //< Inform a remote host that they are the owner of a block
+      SYNC //< Special synchronization message
+    } type;
+    /** General purpose argument 1 */
+    int32 field1;
+    /** General purpose argument 2 */
+    int32 field2;
+    /** General purpose argument 3 */
+    int32 field3;
 
     template<typename T>
     T *data_as() {
-      return reinterpret_cast<T*>(long_aligned_data_);
+      return reinterpret_cast<T*>(reinterpret_cast<char*>(this) + size(0));
     }
 
     static size_t size(size_t data_size) {
-      return sizeof(Request) + data_size - sizeof(uint64);
+      return stride_align_max(sizeof(Request)) + data_size;
     }
   };
 
@@ -304,9 +312,10 @@ class DistributedCache : public BlockDevice {
    * out of core.
    */
   struct BlockMetadata {
+    /** Initializes to an unknown state. */
     BlockMetadata() {
       // Initialize into a state where "We know the block is fresh and new
-      // but we have no idea who owns it"
+      // but we have no idea who owns it".
       DEBUG_ASSERT_MSG(sizeof(BlockMetadata) <= 16,
           "Don't make the metadata take too much RAM!");
       data = NULL;
@@ -368,6 +377,7 @@ class DistributedCache : public BlockDevice {
     bool is_unknown() const {
       return value == UNKNOWN_OWNER;
     }
+    /** Gets the block ID on the local disk. */
     BlockDevice::blockid_t local_blockid() const {
       // A block's ID is invalid if...
       DEBUG_ASSERT_MSG(is_owner(), "no local blockid: it's not mine");
@@ -376,26 +386,31 @@ class DistributedCache : public BlockDevice {
     }
   };
 
+  /**
+   * Stores a specific block:offset position, which is comparable.
+   */
   struct Position {
    public:
+    /** The block address. */
     blockid_t block;
+    /** The position. */
     offset_t offset;
-    
-    OT_DEF(Position) {
+
+    OT_DEF_BASIC(Position) {
       OT_MY_OBJECT(block);
       OT_MY_OBJECT(offset);
     }
 
    public:
-    bool operator < (const Position& other) const {
-      if (unlikely(block == other.block)) {
-        return offset < other.offset;
+    friend bool operator < (const Position& a, const Position& b) {
+      if (unlikely(a.block == b.block)) {
+        return a.offset < b.offset;
       } else {
-        return block < other.block;
+        return a.block < b.block;
       }
     }
-    bool operator == (const Position& other) const {
-      return block == other.block && offset == other.offset;
+    friend bool operator == (const Position& a, const Position& b) {
+      return a.block == b.block && a.offset == b.offset;
     }
     DEFINE_ALL_COMPARATORS(Position);
   };
@@ -444,6 +459,10 @@ class DistributedCache : public BlockDevice {
   IoStats world_net_stats_;
 
  public:
+  //-----------------------------------------------------------------------
+  //-- PUBLIC API
+  //-----------------------------------------------------------------------
+
   DistributedCache() {}
   virtual ~DistributedCache();
 
@@ -593,6 +612,10 @@ class DistributedCache : public BlockDevice {
   }
 
  private:
+  //-----------------------------------------------------------------------
+  //-- PRIVATE HELPERS
+  //-----------------------------------------------------------------------
+
   /** Sets up the channel to listen for remote requests. */
   void InitChannel_(int channel_num_in);
   /** Initializes things in common for masters and workers. */

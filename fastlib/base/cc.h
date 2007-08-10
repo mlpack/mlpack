@@ -90,7 +90,7 @@ inline T max(T a, Q b) {
 #define ALLOW_COPY(cl) \
         public: cl(const cl& other) { Copy(other); } \
         CC_ASSIGNMENT_OPERATOR(cl)
-                
+
 /**
  * Defines inequality comparators for this class, given the friend
  * operator less-than has already been defined.
