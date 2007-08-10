@@ -41,11 +41,14 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#define OT__NAME(x) v_OT->Name( #x )
+#define OT__NAME(x) (v_OT->Name( #x ))
 
 /**
  * Within OT_DEF, declare a sub-object (or primitive) that is directly
  * contained, NOT pointed to.
+ *
+ * (For those reading the definition: v_OT is the parameter, the visitor,
+ * passed to the object traverse member function).
  */
 #define OT_MY_OBJECT(x) (OT__NAME(x), v_OT->MyObject(this->x))
 /**
@@ -93,7 +96,7 @@
  * Automatically generate a copy constructor based on the object traversal.
  */
 #define OT_GEN_COPY_CONSTRUCTOR(AClass) \
- public: AClass(const AClass& other) { ot_private::DeepCopyImplementation(other, this); } private:
+ public: AClass(const AClass& other) { ot_private::OTDeepCopier::Doit(other, this); } private:
 
 /**
  * Automatically create a dstructor based on object traversal.
@@ -809,6 +812,13 @@ namespace ot_private {
 
   struct OTDeepCopier {
    public:
+    template<typename T>
+    static void Doit(const T& src, T *dest) {
+      ot_private::OTDeepCopier d;
+      mem::Copy(dest, &src, 1);
+      d.MyObject(*dest);
+    }
+
     /** Receives the nanme of the upcoming object -- we ignore this. */
     void Name(const char *s) {}
 
@@ -817,6 +827,7 @@ namespace ot_private {
     /** visits an internal object */
     template<typename T> void MyObject(T& x) {
       TraverseObject(&x, this);
+      TraverseObjectPostprocess(&x);
     }
     /** visits an array */
     template<typename T> void MyArray(T* x, index_t len) {
@@ -879,13 +890,6 @@ namespace ot_private {
     ot_private::OTDestructor d;
     TraverseObject(dest, &d);
     // can't poison this because of destructor chanining
-  }
-
-  template<typename T>
-  void DeepCopyImplementation(const T& src, T *dest) {
-    ot_private::OTDeepCopier d;
-    mem::Copy(dest, &src, 1);
-    TraverseObject(dest, &d);
   }
 }; // namespace ot_private
 

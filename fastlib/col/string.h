@@ -403,9 +403,8 @@ class String {
    */
   int CompareTo(const char* s) const
    { return strcmp(begin(), s); }
-  
+
   friend bool operator < (const String& a, const String& b) {
-     // >
      return strcmp(a.begin(), b.begin()) < 0;
   }
   friend bool operator == (const String& a, const String& b) {
