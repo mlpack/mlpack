@@ -1,8 +1,5 @@
+#include "thor/thor.h"
 #include "fastlib/fastlib.h"
-#include "spbounds.h"
-#include "gnp.h"
-#include "dfs.h"
-#include "thor_utils.h"
 
 /**
  * An N-Body-Reduce problem.
@@ -10,7 +7,7 @@
 class Range {
  public:
   /** The bounding type. Required by THOR. */
-  typedef ThorHrectBound<2> Bound;
+  typedef DHrectBound<2> Bound;
   /** The type of point in use. Required by THOR. */
 
   typedef ThorVectorPoint QPoint;
@@ -259,13 +256,8 @@ class Range {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-#ifdef USE_RPC
-  thor_utils::RpcMonochromaticDualTreeMain<Range, DualTreeDepthFirst<Range> >(
-      fx_root, "range");      
-#else
   thor_utils::MonochromaticDualTreeMain<Range, DualTreeDepthFirst<Range> >(
-      fx_root, "range");
-#endif
+      fx_root, "range");      
   
   fx_done();
   

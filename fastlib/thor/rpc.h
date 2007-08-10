@@ -13,6 +13,42 @@
 #include "base/common.h"
 #include "col/arraylist.h"
 
+//--------------------------------------------------------------------------
+
+struct BasicTransaction : public Transaction {
+  FORBID_COPY(BasicTransaction);
+
+ private:
+  Message *response_;
+  DoneCondition cond_;
+
+ public:
+  BasicTransaction() {}
+  ~BasicTransaction() {
+    delete response_;
+  }
+
+  void Init(int channel_num) {
+    Transaction::Init(channel_num);
+    response_ = NULL;
+  }
+
+  void WaitDone() {
+    cond_.Wait();
+  }
+
+  void HandleMessage(Message *m) {
+    response_ = m;
+    Done();
+    cond_.Done();
+  }
+  
+ public:
+  Message *response() const {
+    return response_;
+  }
+};
+
 /**
  * A single remote procedure call.
  *
@@ -25,52 +61,9 @@
 template<class ResponseObject>
 class Rpc {
   FORBID_COPY(Rpc);
+
  private:
-  struct RpcRequestTransaction : public Transaction {
-    FORBID_COPY(RpcRequestTransaction);
-
-   public:
-    Message* response;
-    Mutex mutex;
-    WaitCondition cond;
-
-   public:
-    RpcRequestTransaction() {}
-    virtual ~RpcRequestTransaction() {
-      if (response != NULL) {
-        delete response;
-      }
-    }
-
-    template<class RequestObject>
-    void Start(int channel, int peer, const RequestObject& request) {
-      Transaction::Init(channel);
-      Message *message = CreateMessage(peer, ot::PointerFrozenSize(request));
-      ot::PointerFreeze(request, message->data());
-      response = NULL;
-      Send(message);
-    }
-    
-    void Wait() {
-      mutex.Lock();
-      while (response == NULL) {
-        cond.Wait(&mutex);
-      }
-      mutex.Unlock();
-    }
-
-    void HandleMessage(Message *message) {
-      Done();
-      mutex.Lock();
-      response = message;
-      cond.Signal();
-      mutex.Unlock();
-      // TODO: Handle done
-    }
-  };
-  
- private:
-  RpcRequestTransaction transaction_;
+  BasicTransaction transaction_;
   ResponseObject *response_object_;
 
  public:
@@ -94,38 +87,20 @@ class Rpc {
   template<typename RequestObject>
   ResponseObject *Request(
       int channel, int peer, const RequestObject& request) {
-    transaction_.Start(channel, peer, request);
-    if (request.requires_response()) {
-      transaction_.Wait();
-      response_object_ = ot::PointerThaw<ResponseObject>(transaction_.response->data());
-    } else {
-      transaction_.response = NULL;
-      response_object_ = NULL;
-    }
-    return response_object_;
-  }
+    transaction_.Init(channel);
+    Message *request_msg = transaction_.CreateMessage(
+        peer, ot::PointerFrozenSize(request));
+    ot::PointerFreeze(request, request_msg->data());
 
-  /**
-   * Initializes this by making a request.
-   *
-   * Returns the response.  This Rpc object will also implicitly cast to
-   * a pointer of the response object type.
-   */
-  template<typename RequestObject>
-  void RequestAsync(
-      int channel, int peer, const RequestObject& request) {
-    transaction_.Start(channel, peer, request);
-    if (!request.requires_response()) {
-      transaction_.response = NULL;
+    if (request.requires_response()) {
+      transaction_.WaitDone();
+      response_object_ = ot::PointerThaw<ResponseObject>(
+          transaction_.response()->data());
+    } else {
+      transaction_.Done();
       response_object_ = NULL;
     }
-    return response_object_;
-  }
-  
-  ResponseObject *Wait() {
-    transaction_.Wait();
-    response_object_ = ot::PointerThaw<ResponseObject>(
-        transaction_.response->data());
+
     return response_object_;
   }
 

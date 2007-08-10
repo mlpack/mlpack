@@ -9,28 +9,6 @@
 #include "blockdev.h"
 
 /*
-
- Coherency model:
-
- - Block mapping
-   - this section is old so it's probably wrong
-   - invalid state exists -- we don't know where the block is
-   - state is updated globally at explicit barriers
-   - state is updated locally at allocations in two cases
-     - 1. I allocate a block and start writing to it -- the block may be
-     mapped to myself or may even be mapped to another machine
-     - 2. someone else writes a block to me and i didn't realize I was an
-     owner
-   - blocks can't change mapping once allocated
- - Block state
-   - Concurrent reads
-   - Concurrent writes to even the same block as long as they
-   *don't have overlapping ranges*
-   - Blocks are write-back to the owner when the block falls out of cache
-   - Copies of remote blocks invalidated at barriers
- - Cache
-   - Each machine caches nodes.
-
 FEATURES
  - fast set associative cache
  - handles any identically-sized data structure, even with pointers
@@ -49,18 +27,40 @@ depending on memory pressure.
 /**
  * A distributed cache that allows overflow onto disk.
  *
- * This is probably the most complicated class that ever existed.  There
- * are lots of helper structures.  They're all really really important.
- * If for some reason the documentation seems to be lacking in the
- * specific details, the ASSERT statements and comments scattered in
- * distribcache.cc should clarify some of the tricky details (such as
- * how a synchronization works).
+ * This is probably the most complicated class in THOR or FASTlib.  There
+ * are lots of helper structures.  They're all really really important.  If
+ * for some reason the documentation seems to be lacking in the specific
+ * details, the ASSERT statements and comments scattered in distribcache.cc
+ * should clarify some of the tricky details (such as how a synchronization
+ * works).
+ *
+ * The API of this class is about "checking out" blocks for reading, writing,
+ * etc.  When a block is checked out, if the block is already checked out
+ * by another process, the lock count is only increased.  If not, first the
+ * cache is searched, otherwise it is obtained from another machine or from
+ * disk.  When writes are performed, they may be to the entire block
+ * (a "fully dirty" block) or they may be marked as "partial" (to a
+ * contiguous region).  Contiguous regions are marked as "partially
+ * dirty ranges" to the entire array.
+ *
+ * A lot of the code is dedicated to the protocol.  The different kinds
+ * of messages are documented at the class level inside.
+ *
+ * Consistency model: Data that is being written to is only consistent if
+ * you are the thread that is writing the data, or if a global sync point
+ * has been reached.  Concurrent reads and writes are allowed to the same
+ * block as long as they are in disjoint ranges.  See above for the
+ * distinction between "fully dirty" (such as a block that has been
+ * allocated, and is not subject to any masking by partially dirty ranges)
+ * and "partially dirty", to which writes are constrained by a set of
+ * contiguous regions.
  */
 class DistributedCache : public BlockDevice {
  private:
   /** Net-transferable request operation */
   struct Request {
    public:
+    /** Message type.  See corresponding transaction classes. */
     enum { CONFIG, READ, WRITE, ALLOC, OWNER, SYNC } type;
     int32 blockid;
     int32 begin;
@@ -78,20 +78,46 @@ class DistributedCache : public BlockDevice {
     }
   };
 
-  /** A network-sendable version of block information. */
+  /**
+   * A network-sendable version of block information.
+   *
+   * In a synchronization event, each machine indicates status about all
+   * blocks it owns.  The only piece of information needed other than the
+   * owner is whether the block is new.
+   */
   struct BlockStatus {
    public:
+    /** Indicates who is the owner of this block. */
     int32 owner;
+    /**
+     * Indicates if the block's contents have been set to anything
+     * other than the initial value -- this can save unnecessary
+     * READs in many cases.  For instance, the "results" array usually
+     * follows this behavior.
+     */
     bool is_new;
 
-    OT_DEF(BlockStatus) {
+    OT_DEF_BASIC(BlockStatus) {
       OT_MY_OBJECT(owner);
       OT_MY_OBJECT(is_new);
     }
   };
 
+  /**
+   * Response to a configuration request.
+   *
+   * This contains all information needed for workers to initialize their
+   * distributed cache.
+   */
   struct ConfigResponse {
+    /**
+     * The block size, in bytes.
+     */
     BlockDevice::offset_t n_block_bytes;
+    /**
+     * Information the block handler (or "schema") needs to initialize itself
+     * with.
+     */
     ArrayList<char> block_handler_data;
 
     OT_DEF(ConfigResponse) {
@@ -100,64 +126,10 @@ class DistributedCache : public BlockDevice {
     }
   };
 
-  /** How to query information about the overall state */
-  struct ConfigTransaction : public Transaction {
-   public:
-    DoneCondition cond;
-    Message *response;
-   public:
-    ~ConfigTransaction() { delete response; }
-
-    ConfigResponse *Doit(int channel_num, int peer);
-    void HandleMessage(Message *message);
-  };
-
-  /** How to query information about the overall state */
-  struct AllocTransaction : public Transaction {
-   public:
-    DoneCondition cond;
-    Message *response;
-   public:
-    ~AllocTransaction() { delete response; }
-
-    blockid_t Doit(int channel_num, int peer, blockid_t n_blocks_to_alloc,
-        int owner);
-    void HandleMessage(Message *message);
-  };
-
-  /** How to initiate a read messages */
-  struct ReadTransaction : public Transaction {
-   public:
-    DoneCondition cond;
-    Message *response;
-   public:
-    ~ReadTransaction() {}
-
-    void Doit(int channel_num, int peer, BlockDevice::blockid_t blockid,
-        BlockDevice::offset_t begin, BlockDevice::offset_t end,
-        char *buffer);
-    void HandleMessage(Message *message);
-  };
-
-  /** How to initiate a write message */
-  struct WriteTransaction : public Transaction  {
-   public:
-    void Doit(int channel_num, int peer, BlockDevice::blockid_t blockid,
-        BlockHandler *handler,
-        BlockDevice::offset_t begin, BlockDevice::offset_t end,
-        const char *buffer);
-    void HandleMessage(Message *message);
-  };
-
-  /** How to initiate a write message */
-  struct OwnerTransaction : public Transaction  {
-   public:
-    void Doit(int channel_num, int peer,
-        BlockDevice::blockid_t blockid, BlockDevice::blockid_t end_block);
-    void HandleMessage(Message *message);
-  };
-
-  /** Server-side transaction */
+  /**
+   * The transaction used on the listening side to respond to any
+   * incoming messages.
+   */
   struct ResponseTransaction : public Transaction {
    private:
     DistributedCache* cache_;
@@ -167,7 +139,10 @@ class DistributedCache : public BlockDevice {
     void HandleMessage(Message *message);
   };
 
-  /** Information that is distributed during a sync. */
+  /**
+   * Information that is transmitted to all machines during a
+   * synchronization point.
+   */
   struct SyncInfo {
    public:
     IoStats disk_stats;
@@ -189,6 +164,12 @@ class DistributedCache : public BlockDevice {
    * A sync transaction is a barrier to make sure everyone flushes writes,
    * along with a reduction and scatter so each machine knows the updated
    * block owner information.
+   *
+   * In this, in the first step, all machines make sure that all of the
+   * others have finished writing and reached the synchronization point,
+   * like in a barrier.  Next, all machines relay in a tree structure to
+   * the root (like a reduction) the blocks that they own and the status,
+   * and the root broadcasts to all machines (in a tree topology) .
    */
   struct SyncTransaction : public Transaction  {
    private:
@@ -227,27 +208,52 @@ class DistributedCache : public BlockDevice {
     void SendStatusInformation_(int peer, const SyncInfo& info);
   };
 
-  /** Server-side channel */
+  /** Server-side channel, listening for asynchronous requests. */
   struct CacheChannel : public Channel {
    private:
+    /** The distributed cache backing this. */
     DistributedCache *cache_;
+    /** The synchronization event, non-null if one is occurring. */
     SyncTransaction *sync_transaction_;
+    /** A mutual exclusion lock */
     Mutex mutex_;
+    /** Condition indicating when the current sync is done. */
     DoneCondition sync_done_;
 
    private:
+    /** Gets the current sync transaction, creating one if necessary. */
     SyncTransaction *GetSyncTransaction_();
 
    public:
+    /** Initializes this channel to listen to message for this cache. */
     void Init(DistributedCache *cache_in);
+    /**
+     * Returns the proper transaction for the message, either a new
+     * ResponseTransaction or the current sync transaction.
+     */
     Transaction *GetTransaction(Message *message);
+    /**
+     * Called by SyncTransaction, indicates that syncing is done.
+     * (The wait condition doesn't exist in SyncTransaction since
+     * SyncTransaction must promptly delete itself to avoid race
+     * conditions.)
+     */
     void SyncDone();
+    /**
+     * Locally indicates that synchronization should start, that we have
+     * already flushed all our data and emptied all the write queues.
+     */
     void StartSyncFlushDone();
+    /** Waits until synchronization is finished. */
     void WaitSync();
   };
 
-  /** Cache associative entry. */
+  /** An entry in the set-associative LRU cache. */
   struct Slot {
+    /**
+     * The block ID associated with this entry, or -1 if this slot is
+     * currently unused.
+     */
     BlockDevice::blockid_t blockid;
 
     Slot() { blockid = -1; }
@@ -275,7 +281,7 @@ class DistributedCache : public BlockDevice {
   /**
    * Rank of the master machine, which is configured with the block handler
    * and the number of bytes in a block, and maybe other setup parameters
-   * (this is the destination of ConfigTransaction).
+   * (this is the destination of the CONFIG message).
    */
   static const int MASTER_RANK = 0;
 
@@ -395,34 +401,46 @@ class DistributedCache : public BlockDevice {
   };
 
  public:
-  /* local structures */
+  /** A block-to-metadata mapping, keeping track of each block's status. */
   ArrayList<BlockMetadata> blocks_;
+  /** A schema that regards how to freeze, thaw, and initialize blocks. */
   BlockHandler *handler_;
 
-  /* ranges that apply for partial writes */
-  RangeSet<Position> write_ranges_;
-
-  /* local device */
-  BlockDevice *overflow_device_;
-  DenseIntMap<blockid_t> overflow_next_;
-  int32 overflow_free_;
-
-  /* remote stuff */
-  int channel_num_;
-  CacheChannel channel_;
-
-  int my_rank_;
+  /** Mutual exclusion lock to serialize all metadata access. */
+  Mutex mutex_;
   
-  /* cache stuff */
+  /** The associtive cache. */
   ArrayList<Slot> slots_;
+  /** The number of cache sets, same as slots_.size() / ASSOC. */
   unsigned n_sets_;
 
-  Mutex mutex_;
+  /** The rank of the current machine, same as rpc::rank(). */
+  int my_rank_;
+
+  /** Contiguous regions that are marked as dirty. */
+  RangeSet<Position> write_ranges_;
+
+  /** A larger device to overflow blocks if there isn't enough room. */
+  BlockDevice *overflow_device_;
+  /** Maintains a freelist of local blocks. */
+  DenseIntMap<blockid_t> overflow_next_;
+  /** The head of the freelist for local blocks. */
+  int32 overflow_free_;
+
+  /** The channel number associated with this cache. */
+  int channel_num_;
+  /** The channel listening for remote requests. */
+  CacheChannel channel_;
+  /** Wait condition used to listen for responses to read requests. */
   WaitCondition io_cond_;
-  
+
+  /** I/O stats for our own disk. */
   IoStats disk_stats_;
+  /** I/O stats for our own network requests. */
   IoStats net_stats_;
+  /** I/O stats for all disks. */
   IoStats world_disk_stats_;
+  /** I/O stats for all network requests. */
   IoStats world_net_stats_;
 
  public:
@@ -462,11 +480,17 @@ class DistributedCache : public BlockDevice {
   /**
    * Ensures that the sync point has passed before returning.
    *
-   * At this point, you can optionally store I/O statistics in a module.
+   * At this point, you can optionally report I/O statistics to a module.
    * Local I/O statistics are cleared after they are stored!  However, we
    * don't clear world statistics until the next sync.  If you want your disk
    * stats to be 100% accurate you need to place a barrier right after all
    * of your WaitSyncs before other machines start writing.
+   *
+   * Food for thought: Currently this doesn't report local stats (because
+   * they're typically not very interesting), and since remote stats are
+   * not cleared, it might make more sense to have a separate function
+   * that just reports world stats.  However, a sync point is a nice natural
+   * place to put this anyway.
    */
   void WaitSync(datanode *node = NULL);
   /**
@@ -539,7 +563,7 @@ class DistributedCache : public BlockDevice {
   }
   /** Allocates blocks, but assign ownership to a specified machine. */
   blockid_t AllocBlocks(blockid_t n_blocks_to_alloc, int owner);
-  /** Backend for AllocBlocks. */
+  /** The back-end for AllocBlocks. */
   blockid_t RemoteAllocBlocks(
       blockid_t n_blocks_to_alloc, int owner, int sender);
   /** Gets the underlying block handler. */
@@ -547,26 +571,35 @@ class DistributedCache : public BlockDevice {
     return handler_;
   }
 
+  /** IO statistics for local disk. */
   const IoStats& disk_stats() const {
     return disk_stats_;
   }
+  /** IO statistics for my machine accessing remote machines. */
   const IoStats& net_stats() const {
     return net_stats_;
   }
+  /** IO statistics for all machines using disk. */
   const IoStats& world_disk_stats() const {
     return world_disk_stats_;
   }
+  /** IO statistics for current machine using disk. */
   const IoStats& world_net_stats() const {
     return world_net_stats_;
   }
+  /** The channel number associated with this cache. */
   int channel_num() const {
     return channel_num_;
   }
 
  private:
+  /** Sets up the channel to listen for remote requests. */
   void InitChannel_(int channel_num_in);
+  /** Initializes things in common for masters and workers. */
   void InitCommon_();
+  /** Creates the associative cache array. */
   void InitCache_(size_t total_ram);
+  /** Opens up the overflow file. */
   void InitFile_(const char *fname);
   /**
    * After a sync point, handles the change in ownership info.
@@ -622,6 +655,48 @@ class DistributedCache : public BlockDevice {
   void MarkOwner_(int owner, blockid_t begin, blockid_t end);
   /** Handle the fact that I'm suddenly the owner of these blocks. */
   void HandleRemoteOwner_(blockid_t block, blockid_t end);
+  /** Recycles a local block ID for use later. */
+  void RecycleLocalBlock_(blockid_t blockid);	
+
+  /**
+   * Requests configuration from the master.
+   *
+   * This determines the number of bytes in a block, and the contents
+   * of the default initial element (i.e. the information the
+   * BlockHandler needs to do its job).
+   */
+  void DoConfigRequest_();
+  /**
+   * Requests a block allocation from the master.
+   *
+   * This just sends a message to the master asking for a block and responds
+   * with a free block.
+   */
+  blockid_t DoAllocRequest_(blockid_t n_blocks_to_alloc, int owner);
+  /**
+   * Informs a peer that it has become the owner of a block.
+   *
+   * Whenever we allocate a block but declare someone else the owner, we
+   * must inform them that they are the owner, so that in a synchronization
+   * point, the remote host will correctly be able to identify the block
+   * as their own.
+   */
+  void DoOwnerRequest_(int owner, blockid_t blockid, blockid_t end_block);
+  /**
+   * Sends out a write to be executed.
+   *
+   * This has to freeze the data inside to avoid mucking up the data that's
+   * stored in RAM.
+   */
+  void DoWriteRequest_(int peer, blockid_t blockid,
+      offset_t begin, offset_t end, const char *buffer);
+  /**
+   * Sends a read request and reads the data into the buffer.
+   *
+   * Doesn't thaw the data, leaves it up to the caller.
+   */
+  void DoReadRequest_(int peer, blockid_t blockid,
+      offset_t begin, offset_t end, char *buffer);
 };
 
 #endif

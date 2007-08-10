@@ -16,12 +16,15 @@
 //-------------------------------------------------------------------------
 
 /*
+in the future:
+ - fault tolerance
+ - smarter "initialize" that doesn't require the port to be chosen in
+ advance
+
 tasks to complete that must work
- - smarter transaction lookup so barriers can all share the same number
- - smarter fd_set usage (perhaps a simple linear scan,
+ /- smarter transaction lookup so barriers can all share the same number
+ /- smarter fd_set usage (perhaps a simple linear scan,
      with fd-lookup table?)
- - ssh-bootstrapping
-   - start with manual bootstrapping
  /- startup and shutdown
  /- integrate with rest of code
    /- rpc calls
@@ -43,9 +46,6 @@ things to think about
  - fastexec integration
  /- accept() - send me your rank? or just ignore rank altogether?
 
-in the far future, abstract out:
- - topology with scatter/gather/reduce mechanics
- - fault tolerance
 
 resolve address - getaddrinfo
 register port numbers
