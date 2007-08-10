@@ -99,11 +99,11 @@ ECE}{Georgia Institute of Technology}
 \begin{Body}
 \section{Introduction}
 \label{intro} Information explosion during the last decades has
-created data volumes of extraordinary size and high dimension. There
+created data volumes of extraordinary size and dimensionality. There
 is great demand for analysis and information extraction from data.
-Two approaches are common in machine learning parametric 
+Two approaches are common in machine learning, the parametric one
 \cite{bishop2006pra, hastie2001esl, haykin1994nnc} and
-non-parametric \cite{wasserman2006ans}. In the parametric case there is an underlying model
+the non-parametric one \cite{wasserman2006ans}. In the parametric case there is an underlying model
 assumption. The concept is to estimate the model parameters given
 the data. In the non-parametric case the data is the model.
 
@@ -163,7 +163,7 @@ It is well known that many
 machine learning algorithms starting from the very fundamental, the
 nearest neighbor grow exponentially on the intrinsic dimension. This
 is also known as the curse of dimensionality \cite{donoho2000hdd}.
-In literature dimensionality is used without the prefix intrinsic or
+In the literature, dimensionality is used without the prefix intrinsic or
 extrinsic, causing confusion. The extrinsic dimensionality is just
 the number of variables needed to describe a point, i.e. the
 extrinsic dimensionality of $x\in \Re^d$ is just $d$. Each variable
@@ -182,7 +182,7 @@ kernel methods can capture non-lineal dependencies between
 dimensions. Kernel PCA is the father of non-linear dimensionality
 reduction methods \cite{scholkopf2002lks}.
 
-Although Kernel PCA (Put t more for spectral methods) seems to be a very powerful tool it suffers from
+Although Kernel PCA  seems to be a very powerful tool it suffers from
 polynomial complexity. It requires $O(N^2)$ kernel computations,
 which make it unsuitable for large scale problems. In this thesis we
 will show how we are going to use multidimensional trees to reduce
@@ -200,9 +200,6 @@ speech based on several representations. We will see in the future
 sections how this can help in developing new directions in speech
 recognition.
 
-
-
-
 \section{Preliminary Research}
 \label{prelim}
 \subsection{The Nearest Neighbor Problem}
@@ -210,8 +207,8 @@ recognition.
 
 One of the classical problems in statistics and in machine learning 
 is the nearest neighbor problem. Given a set of points in $S =
-{x_i, x_i\in\Re^d, i=0\dots N}$ and a distance metric $M(x_i, y_i),
-x_i, y_i \in S$  the nearest neighbor of $x_i \in \Re^d$ is
+\{x_i, x_i\in\Re^d, i=0\dots N\}$ and a distance metric $M(x_i, y_i),
+x_i, y_i \in S$,  the nearest neighbor of $x_i \in \Re^d$ is
 $argmin(M(x, y_i)), y_i \in S$. In many cases the problem of finding
 all nearest neighbors appears. This problem can be formalized as
 find $argmin(M(x, y_i)), y_i \in S, \forall x \in S'$. The problem
@@ -222,7 +219,7 @@ of the query points $N$ is the same as the number of reference
 points then the complexity of the naive method is $O(N^2)$. An
 efficient way to reduce the complexity is to use multidimensional
 trees. In the next sections we present kd-trees \cite{moore-tutorial} 
-and ball-trees \cite{moore2000ahu} that tend to be the most successful.
+and ball-trees \cite{moore2000ahu}.
 
 As a clarification we mention that this is the problem of the exact
 nearest neighbor. There are algorithms addressing the problem of
@@ -238,17 +235,17 @@ their neighbors, which are usually the points of interest, and far
 away enough from other points. It has been proven that there is not
 a globally optimal partition strategy \cite{gyorfi2002dft} 
 and it is heavily dependant on the distribution of the data points 
-as well as on the dimension. In
-this section we present a particular class of multidimensional
+as well as on the dimensionality. In this section we present a particular
+ class of multidimensional
 trees, the binary trees and more specifically kd-trees and ball or
 metric trees. The key concept in binary trees is partitioning a set
 recursively in two sets at every step.
 
-\subsubsection{Kd trees}
+\subsubsection{Kd-trees}
 \label{Kd_trees}
 
-The first multidimensional tree in the literature was Kd-tree \cite{bentley1975bst}. After
-30 years it still has comparable performance and in some case even
+The first multidimensional tree in the literature was kd-tree \cite{bentley1975bst}. After
+30 years it still has comparable performance and in some cases even
 better with modern trees. At every level a partition (pivot)
 dimension is chosen according to a user defined criterion and the
 data is split in two subsets according to this dimension. Kd-trees
@@ -279,8 +276,7 @@ nearest neighbors.
  hyper-rectangles fig.~\ref{parent_kd_node}. Hyper-rectangles are the k-dimensional rectangles that describe the minimum bounding box  for a given set of points.
  Leafs hold additionally the data points  fig.~\ref{2_kd_node}. The number of points on a
  leaf is user defined. The tree method for finding the nearest neighbor is faster than naive
- only after a threshold of points, (experimentally it has been found
- to be 30). This threshold is used as the maximum number of points
+ only after a threshold of points. This threshold is used as the maximum number of points
  per leaf. Bounding boxes (Hyper-rectangles) and points are the minimum amount
  of information required to be stored on nodes on the leaf. Extra
  information about the data such as the centroid of the box, higher
@@ -373,7 +369,7 @@ generalized k-dimensional spheres:
 \begin{equation}
 x,x_0 \in \Re^k , d(x,x0)=r, r\in \Re
 \end{equation}
-where $d(x, y)$ defines a metric in a k dimensional space.
+where $d(x, y)$ defines a distance metric in a k dimensional space.
 
 At every split two points that are far away are chosen as anchor
 points. Every other point of the initial set is classified according
@@ -402,16 +398,16 @@ neighbor. Moreover we know that the actual nearest neighbor can not
 be further than the current nearest neighbor. So in the end of the
 top down recursion we have an upper bound for the nearest neighbor.
 Note that the top down recursion is logarithmic to the number of
-points assuming a balanced tree. The nest step is to backtrack. At
+points assuming a balanced tree. The next step is to backtrack. At
 each step in backtracking we check if the candidate nearest neighbor
 is in the current leaf/node. There are two ways to check that. First
-of all when we are on a leaf we check weather the hyper-sphere
+of all when we are on a leaf we check whether the hyper-sphere
 centered around the query point with radius equal to the distance
  between the query point and the candidate nearest neighbor
  $d_{min}$ intersects the bounding box. If not then this means it is
- the nearest neighbor. If it does then we have to check all the
+ the nearest neighbor. If it does, then we have to check all the
  bounding boxes that intersect the hyper-sphere. For kd-trees and
- ball trees it is fairly easy to show detect that.
+ ball trees it is fairly easy to detect that.
 
  In general for natural data-sets where data tend to cluster it is
  possible to prune very well  and achieve logarithmic performance in
@@ -508,7 +504,7 @@ paging of nodes on the disk.
 
 Kd-trees have been used quite successfully in statistics for
 speeding up statistical algorithms (nearest neighbor, 2 point
-correlation) over large datasets \cite{gray2000nbp}. Many other trees like ball-trees,
+correlation) over large datasets \cite{gray2000nbp}. Many other trees like ball trees,
 vantage trees, cover trees etc \cite{samet2005fma} have been developed as a rivalry but
 they haven't really shown any significant improvement, their
 performance is most of the times comparable to the kd-trees. After
@@ -613,7 +609,7 @@ One of the fundamental issues is to make sure the allocated memory for each
 structure had the correct alignment. It is widely known that wrong
 memory alignment can decrease the performance or even cause a
 program crash. an easy and portable way to compute the memory
-alignment is to use the simple macro depicted in ??. Another issue
+alignment is to use the simple macro depicted in \ref{Alignment}. Another issue
 that has to be addressed is page fault handling. In the following
 section we describe two different memory managers we implemented and
 we compare their performance.
@@ -689,6 +685,7 @@ SIGSEGV library along with mprotect to address efficiently this.
 Pages are write protected in memory and if a write occurs a signal
 is raised and the page is marked as modified.
 
+\subsubsection{Results}
 \begin{table}[!htb]
 \footnotesize{ \centering
 \begin{tabular}{|c|c|c|c|}
@@ -795,18 +792,18 @@ Kernel PCA has many cousins such as Laplacian eigenmaps
 Local Linear Embedding \cite{roweis1993ndr}, 
 Local Tangent Space Alignment \cite{zhang2002pma} etc.
 
-Both works present algorithms for computing the Laplace-Beltrami
-operator on a submanifold $\Gamma$ embedded in $\Re^d$. Lafon has
-also introduced a diffusion process on the manifold based on a
+%Both works present algorithms for computing the Laplace-Beltrami
+%operator on a submanifold $\Gamma$ embedded in $\Re^d$. 
+Lafon has introduced a diffusion process on the manifold based on a
 kernel $k(x,y)$ that defines the local geometry on the points that
 belong to the manifold. The choice of the kernel affects essentially
 the results of the diffusion process, since it affects the notion of
 the neighborhood around the points which is critical for the
 creation of the proximity graph of the manifold. In their work
-Belkin and Lafon don't deal with the problem of training the local
+Belkin \cite{Belkin} and Lafon don't deal with the problem of training the local
 bandwidth of the kernel, assuming that the manifold has been
-sufficiently sampled. Jenssen \cite{jenssen17lpd} have proven  that
-there is theoretical equivalence between the Mercer kernel and the
+sufficiently sampled. Jenssen \cite{jenssen17lpd} has proven  that
+there is a theoretical equivalence between the Mercer kernel and the
 kernel in kernel density estimation. Based on that fact we performed
 several experiments using the optimal bandwidth for kernel density
 estimation. In this paper the Adaptive Kernel Based Density
@@ -816,17 +813,18 @@ with the final objective function directly, which in some
 applications of manifold learning it could be clustering or
 dimensionality reduction.
 
- The connection between manifold learning and Kernel Density Estimation (KDE) has also been addressed in \cite{girolami2002osd} where the connection between manifold
+The connection between manifold learning and Kernel Density Estimation (KDE) has also been addressed in \cite{girolami2002osd} where the connection between manifold
 learning and density estimation was also considered by using
 orthogonal series density estimation rather than kernel density
 estimation
 
-In  section 2 the diffusion operator is reviewed based on the work
-of Lafon \cite{Lafon}. Section 3 outlines the adaptive kernel
-estimation algorithm. The last section presents examples of the
-diffusion operator when the kernel bandwidth is trained.
+%In  section 2 the diffusion operator is reviewed based on the work
+%of Lafon \cite{Lafon}. Section 3 outlines the adaptive kernel
+%estimation algorithm. The last section presents examples of the
+%diffusion operator when the kernel bandwidth is trained.
 
-\subsubsection{Geometric diffusion on a manifold} Let  $(\Gamma,\mu)$
+\subsubsection{Geometric diffusion on a manifold} 
+Let  $(\Gamma,\mu)$
 be a measure space, where $\Gamma$ is a finite set of
 $d$-dimensional points and $\mu$ is a counting measure that
 represents the distribution of the points on the  data set. In other
@@ -903,7 +901,7 @@ It is assumed that $\Gamma$ is a subset of the Euclidean space
 $\Re^{n}$. So for $x,y\ni\Gamma$ the kernel (similarity measure) is
 a function of the Euclidean distance $\parallel x-y\parallel:$
 \[
- k(x,y)=\eta(\frac{\parallel x-y\parallel}{h})
+ k(x,y)=\eta\left(\frac{\parallel x-y\parallel}{h}\right)
 \]
 The eigenvalue analysis of the graph with the adjacency matrix
 $k(x,y)$ is the basis for embedding the data to a lower dimensional
@@ -947,7 +945,7 @@ of the well known machine learning algorithms. Lafon has proven that
 the Laplace Beltrami operator on a manifold can be computed without
 the knowledge of the density. Although the density is not necessary
 for the computation of the operator it can be useful in the
-estimation of the parameters of the kernel [\ref{kernel}].
+estimation of the parameters of the kernel eq.~\ref{kernel}.
 
 The  density estimate $f$ of a finite set of data $X={x_i\ni
 \Re^n,i=1,\dots,M}$ can be expressed with the following equation
