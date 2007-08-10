@@ -642,6 +642,7 @@ class ThorKdTree {
         visitor, results_cache, &points_, &nodes_);
   }
 
+
   /**
    * Creates a cache that's suitable for storing results or anything else.
    *
@@ -682,6 +683,25 @@ class ThorKdTree {
     CacheArray<Result>::InitDistributedCacheWorker(channel, total_ram, results);
     results->StartSync();
     results->WaitSync();
+  }
+
+  /**
+   * Initializes a distributed cache all initialized to a particular value,
+   * with the same topography as the original.
+   *
+   * Automatically dispatches between the master and worker method.
+   *
+   * If only the master machine can create a default result, it's probably
+   * better not to call this method.
+   */
+  template<typename Result>
+  void InitDistributedCache(int channel, const Result& default_result,
+      size_t total_ram, DistributedCache *results) {
+    if (rpc::rank() == 0) {
+      InitDistributedCacheMaster(channel, default_result, total_ram, results);
+    } else {
+      InitDistributedCacheWorker<Result>(channel, total_ram, results);
+    }
   }
 
   DistributedCache& points() { return points_; }

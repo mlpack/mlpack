@@ -13,6 +13,8 @@
 //-- THE DISTRIBUTED CACHE ------------------------------------------------
 //-------------------------------------------------------------------------
 
+#warning perform randomized syncing to avoid contention
+
 void DistributedCache::InitMaster(int channel_num_in,
     BlockDevice::offset_t n_block_bytes_in,
     size_t total_ram,
@@ -26,17 +28,12 @@ void DistributedCache::InitMaster(int channel_num_in,
   InitChannel_(channel_num_in);
 }
 
-
 void DistributedCache::InitWorker(
     int channel_num_in, size_t total_ram, BlockHandler *handler_in) {
   InitCommon_();
   // connect to master and figure out specs
-  ConfigTransaction ct;
-  ConfigResponse *response = ct.Doit(channel_num_in, MASTER_RANK);
-  n_blocks_ = 0;
-  n_block_bytes_ = response->n_block_bytes;
   handler_ = handler_in;
-  handler_->Deserialize(response->block_handler_data);
+  DoConfigRequest_();
   InitFile_(NULL);
   InitCache_(total_ram);
   InitChannel_(channel_num_in);
@@ -64,6 +61,27 @@ void DistributedCache::InitChannel_(int channel_num_in) {
   channel_num_ = channel_num_in;
   channel_.Init(this);
   rpc::Register(channel_num_, &channel_);
+}
+
+void DistributedCache::DoConfigRequest_() {
+  BasicTransaction transaction;
+  transaction.Init(channel_num_);
+  Message *message = transaction.CreateMessage(MASTER_RANK, sizeof(Request));
+  Request *request = message->data_as<Request>();
+
+  request->type = Request::CONFIG;
+  request->blockid = 0;
+  request->begin = 0;
+  request->end = 0;
+  request->rank = 0;
+  transaction.Send(message);
+  transaction.WaitDone();
+  ConfigResponse *response = ot::PointerThaw<ConfigResponse>(
+      transaction.response()->data());
+
+  n_blocks_ = 0;
+  n_block_bytes_ = response->n_block_bytes;
+  handler_->Deserialize(response->block_handler_data);
 }
 
 void DistributedCache::InitCommon_() {
@@ -221,7 +239,8 @@ void DistributedCache::StartSync() {
     BlockMetadata *block = &blocks[i];
     if (block->is_busy() || block->is_dirty()) {
       DEBUG_ASSERT(block->is_in_core());
-      DEBUG_ASSERT(block->is_owner());
+      DEBUG_ASSERT_MSG(block->is_owner(),
+          "During a sync point, all busy blocks can only be local blocks.");
     }
   }
 #endif
@@ -263,12 +282,16 @@ void DistributedCache::ResetElements() {
     DEBUG_ASSERT_MSG(!block->is_busy(),
         "Cannot reset elements if some blocks are busy.");
     DEBUG_ASSERT(!block->is_reading);
-    // TODO: Now could be a good time to reset the local block ID's, but
-    // keeping the old ones ain't going to hurt anything.i
+
     if (block->is_in_core()) {
       mem::Free(block->data);
       block->data = NULL;
     }
+    if (block->is_owner()) {
+      RecycleLocalBlock_(block->local_blockid());
+    }
+    
+    
     block->status = NOT_DIRTY_NEW;
   }
   for (index_t i = slots_.size(); i--;) {
@@ -347,9 +370,47 @@ BlockDevice::blockid_t DistributedCache::AllocBlocks(
     blockid_t n_blocks_to_alloc, int owner) {
   index_t blockid = RemoteAllocBlocks(n_blocks_to_alloc, owner, my_rank_);
   if (owner != my_rank_) {
-    OwnerTransaction t;
-    t.Doit(channel_num_, owner, blockid, blockid + n_blocks_to_alloc);
+    // Tell the owner that I've allocated a block in their name.
+    DoOwnerRequest_(owner, blockid, blockid + n_blocks_to_alloc);
   }
+  return blockid;
+}
+
+void DistributedCache::DoOwnerRequest_(int owner,
+    blockid_t blockid, blockid_t end_block) {
+  BasicTransaction transaction;
+  transaction.Init(channel_num_);
+  Message *message = transaction.CreateMessage(owner, sizeof(Request));
+  Request *request = message->data_as<Request>();
+  request->type = Request::OWNER;
+  request->blockid = blockid;
+  request->begin = 0;
+  request->end = end_block;
+  request->rank = 0;
+  transaction.Send(message);
+  transaction.Done();
+}
+
+BlockDevice::blockid_t DistributedCache::RemoteAllocBlocks(
+    blockid_t n_blocks_to_alloc, int owner, int sender) {
+  blockid_t blockid;
+
+  if (likely(my_rank_ == MASTER_RANK)) {
+    // Append some blocks to the end
+    mutex_.Lock();
+    blockid = n_blocks_;
+  } else {
+    blockid = DoAllocRequest_(n_blocks_to_alloc, owner);
+    mutex_.Lock();
+  }
+
+  n_blocks_ = blockid + n_blocks_to_alloc;
+  blocks_.GrowTo(n_blocks_);
+  // these blocks are marked as NOT_DIRTY_NEW
+  
+  MarkOwner_(owner, blockid, n_blocks_);
+  mutex_.Unlock();
+
   return blockid;
 }
 
@@ -362,27 +423,21 @@ void DistributedCache::MarkOwner_(int owner,
   }
 }
 
-BlockDevice::blockid_t DistributedCache::RemoteAllocBlocks(
-    blockid_t n_blocks_to_alloc, int owner, int sender) {
-  blockid_t blockid;
-
-  if (likely(my_rank_ == MASTER_RANK)) {
-    // Append some blocks to the end
-    mutex_.Lock();
-    blockid = n_blocks_;
-  } else {
-    AllocTransaction t;
-    blockid = t.Doit(channel_num_, MASTER_RANK, n_blocks_to_alloc, owner);
-    mutex_.Lock();
-  }
-
-  n_blocks_ = blockid + n_blocks_to_alloc;
-  blocks_.GrowTo(n_blocks_);
-  
-  MarkOwner_(owner, blockid, n_blocks_);
-  mutex_.Unlock();
-
-  return blockid;
+BlockDevice::blockid_t DistributedCache::DoAllocRequest_(
+    blockid_t n_blocks_to_alloc, int owner) {
+  BasicTransaction transaction;
+  transaction.Init(channel_num_);
+  Message *message = transaction.CreateMessage(MASTER_RANK, sizeof(Request));
+  Request *request = message->data_as<Request>();
+  request->type = Request::ALLOC;
+  request->blockid = n_blocks_to_alloc;
+  request->begin = 0;
+  request->end = 0;
+  request->rank = owner;
+  transaction.Send(message);
+  transaction.WaitDone();
+  blockid_t retval = *transaction.response()->data_as<blockid_t>();
+  return retval;
 }
 
 void DistributedCache::HandleRemoteOwner_(blockid_t block, blockid_t end) {
@@ -405,17 +460,21 @@ void DistributedCache::GiveOwnership(blockid_t blockid, int new_owner) {
     block->status = FULLY_DIRTY;
     DEBUG_ASSERT_MSG(block->is_owner(),
         "Can only give ownership if I'm the owner");
-    if (block->local_blockid() != SELF_OWNER_UNALLOCATED) {
-      // this block has a location on disk -- since it's not ours anymore,
-      // recycle its allocated disk space.
-      overflow_next_[block->local_blockid()] = overflow_free_;
-      overflow_free_ = block->local_blockid();
-    }
+    RecycleLocalBlock_(block->local_blockid());
     block->value = ~new_owner;
     if (unlikely(block->locks == 0)) {
       EncacheBlock_(blockid);
     }
     mutex_.Unlock();
+  }
+}
+
+void DistributedCache::RecycleLocalBlock_(blockid_t local_blockid) {
+  // this block has a location on disk -- since it's not ours anymore,
+  // recycle its allocated disk space.
+  if (local_blockid != SELF_OWNER_UNALLOCATED) {
+    overflow_next_[local_blockid] = overflow_free_;
+    overflow_free_ = local_blockid;
   }
 }
 
@@ -490,7 +549,7 @@ void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
     // We're starting from scratch, recursively calling DecacheBlock.
     // In the time that we received the signal, practically anything could
     // have happened to the block -- it might even be gone completely from
-    // cache!
+    // cache and gone back to the remote host (though very unlikely).
     if (likely(block->locks)) {
       block->locks++;
     } else {
@@ -542,14 +601,28 @@ void DistributedCache::HandleRemoteMiss_(BlockDevice::blockid_t blockid) {
   char *data = mem::Alloc<char>(n_block_bytes_);
   mutex_.Unlock();
 
-  ReadTransaction read_transaction;
-  read_transaction.Doit(channel_num_, owner,
-     blockid, 0, n_block_bytes_, data);
+  DoReadRequest_(owner, blockid, 0, n_block_bytes_, data);
 
   mutex_.Lock();
   block->is_reading = false;
   block->data = data;
   io_cond_.Broadcast();
+}
+
+void DistributedCache::DoReadRequest_(int peer, blockid_t blockid,
+    offset_t begin, offset_t end, char *buffer) {
+  BasicTransaction transaction;
+  transaction.Init(channel_num_);
+  Message *message = transaction.CreateMessage(peer, sizeof(Request));
+  Request *request = message->data_as<Request>();
+  request->type = Request::READ;
+  request->blockid = blockid;
+  request->begin = begin;
+  request->end = end;
+  request->rank = 0;
+  transaction.Send(message);
+  transaction.WaitDone();
+  mem::CopyBytes(buffer, transaction.response()->data(), end - begin);
 }
 
 void DistributedCache::StopRead(BlockDevice::blockid_t blockid) {
@@ -666,9 +739,7 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
 
   if (block->status == FULLY_DIRTY) {
     // The entire block is dirty
-    WriteTransaction write_transaction;
-    net_stats_.RecordWrite(n_block_bytes_);
-    write_transaction.Doit(channel_num_, block->owner(), blockid, handler_,
+    DoWriteRequest_(block->owner(), blockid,
         0, n_block_bytes_, block->data);
   } else {
     DEBUG_ASSERT(block->status == PARTIALLY_DIRTY);
@@ -690,10 +761,8 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
         if (blockid == end.block) {
           end_offset = end.offset;
         }
-        net_stats_.RecordWrite(end_offset - begin_offset);
         if (end_offset > begin_offset) {
-          WriteTransaction write_transaction;
-          write_transaction.Doit(channel_num_, block->owner(), blockid, handler_,
+          DoWriteRequest_(block->owner(), blockid,
               begin_offset, end_offset, block->data + begin_offset);
         }
         DEBUG_ASSERT(end_offset >= begin_offset);
@@ -715,6 +784,26 @@ void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
   block->status = NOT_DIRTY_OLD;
 }
 
+void DistributedCache::DoWriteRequest_(
+    int peer, blockid_t blockid, offset_t begin, offset_t end,
+    const char *buffer) {
+  net_stats_.RecordWrite(end - begin);
+  BasicTransaction transaction;
+  transaction.Init(channel_num_);
+  BlockDevice::offset_t n_bytes = end - begin;
+  Message *message = transaction.CreateMessage(peer, Request::size(n_bytes));
+  Request *request = message->data_as<Request>();
+  request->type = Request::WRITE;
+  request->blockid = blockid;
+  request->begin = begin;
+  request->end = end;
+  request->rank = 0;
+  mem::CopyBytes(request->data_as<char>(), buffer, n_bytes);
+  handler_->BlockFreeze(blockid, begin, n_bytes, buffer, request->data_as<char>());
+  transaction.Send(message);
+  transaction.Done();
+}
+
 void DistributedCache::AddPartialDirtyRange(
     blockid_t begin_block, offset_t begin_offset,
     blockid_t last_block, offset_t end_offset) {
@@ -732,131 +821,6 @@ void DistributedCache::AddPartialDirtyRange(
 //-------------------------------------------------------------------------
 //-- PROTOCOL MESSAGES ----------------------------------------------------
 //-------------------------------------------------------------------------
-
-void DistributedCache::ReadTransaction::Doit(
-    int channel_num, int peer, BlockDevice::blockid_t blockid,
-    BlockDevice::offset_t begin, BlockDevice::offset_t end,
-    char *buffer) {
-  Transaction::Init(channel_num);
-  Message *message = CreateMessage(peer, sizeof(Request));
-  Request *request = message->data_as<Request>();
-  request->type = Request::READ;
-  request->blockid = blockid;
-  request->begin = begin;
-  request->end = end;
-  request->rank = 0;
-  response = NULL;
-  Send(message);
-  cond.Wait();
-  mem::CopyBytes(buffer, response->data(), end - begin);
-  delete response;
-}
-
-void DistributedCache::ReadTransaction::HandleMessage(Message *message) {
-  DEBUG_ASSERT(response == NULL);
-  response = message;
-  Done();
-  cond.Done();
-}
-
-//-------------------------------------------------------------------------
-
-BlockDevice::blockid_t DistributedCache::AllocTransaction::Doit(
-    int channel_num, int peer, blockid_t n_blocks_to_alloc, int owner) {
-  Transaction::Init(channel_num);
-  Message *message = CreateMessage(peer, sizeof(Request));
-  Request *request = message->data_as<Request>();
-  request->type = Request::ALLOC;
-  request->blockid = n_blocks_to_alloc;
-  request->begin = 0;
-  request->end = 0;
-  request->rank = owner;
-  response = NULL;
-  Send(message);
-  cond.Wait();
-  blockid_t retval = *message->data_as<blockid_t>();
-  delete response;
-  return retval;
-}
-
-void DistributedCache::AllocTransaction::HandleMessage(Message *message) {
-  response = message;
-  Done();
-  cond.Done();
-}
-
-//-------------------------------------------------------------------------
-
-void DistributedCache::WriteTransaction::Doit(
-    int channel_num, int peer,
-    BlockDevice::blockid_t blockid, BlockHandler *handler,
-    BlockDevice::offset_t begin, BlockDevice::offset_t end,
-    const char *buffer) {
-  Transaction::Init(channel_num);
-  BlockDevice::offset_t n_bytes = end - begin;
-  Message *message = CreateMessage(peer, Request::size(n_bytes));
-  Request *request = message->data_as<Request>();
-  request->type = Request::WRITE;
-  request->blockid = blockid;
-  request->begin = begin;
-  request->end = end;
-  request->rank = 0;
-  mem::CopyBytes(request->data_as<char>(), buffer, n_bytes);
-  handler->BlockFreeze(blockid, begin, n_bytes, buffer, request->data_as<char>());
-  Send(message);
-  Done();
-  // no wait necessary
-}
-
-void DistributedCache::WriteTransaction::HandleMessage(Message *message) {
-  FATAL("No response to DistributedCache::WriteTransaction expected");
-}
-
-//-------------------------------------------------------------------------
-
-void DistributedCache::OwnerTransaction::Doit(
-    int channel_num, int peer,
-    BlockDevice::blockid_t blockid, BlockDevice::blockid_t end_block) {
-  Transaction::Init(channel_num);
-  Message *message = CreateMessage(peer, sizeof(Request));
-  Request *request = message->data_as<Request>();
-  request->type = Request::OWNER;
-  request->blockid = blockid;
-  request->begin = 0;
-  request->end = end_block;
-  request->rank = 0;
-  Send(message);
-  Done();
-  // no wait necessary
-}
-
-void DistributedCache::OwnerTransaction::HandleMessage(Message *message) {
-  FATAL("No response to DistributedCache::WriteTransaction expected");
-}
-
-//-------------------------------------------------------------------------
-
-DistributedCache::ConfigResponse *DistributedCache::ConfigTransaction::Doit(
-    int channel_num, int peer) {
-  Transaction::Init(channel_num);
-  Message *message = CreateMessage(peer, sizeof(Request));
-  Request *request = message->data_as<Request>();
-  request->type = Request::CONFIG;
-  request->blockid = 0;
-  request->begin = 0;
-  request->end = 0;
-  request->rank = 0;
-  Send(message);
-  cond.Wait();
-  return ot::PointerThaw<ConfigResponse>(response->data());
-}
-
-void DistributedCache::ConfigTransaction::HandleMessage(Message *message) {
-  response = message;
-  Done();
-  cond.Done();
-}
-
 //-------------------------------------------------------------------------
 
 void DistributedCache::ResponseTransaction::Init(

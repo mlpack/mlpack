@@ -111,7 +111,11 @@ struct AffinityCommon {
       point->info().alpha.max1 = 0;
       point->info().alpha.max2 = pref;
       point->info().alpha.max1_index = index;
-      point->info().rho = 0;
+      if (rand() % 256 == 0) {
+        point->info().rho = -pref * 0.25;
+      } else {
+        point->info().rho = 0;
+      }
     }
 
     void Bootstrap(int tag, index_t dim_in, index_t count) {
@@ -617,7 +621,7 @@ struct ApplyRhos {
       // (because when a point changes exemplar status it invokes a chain
       // reaction causing other points to change).  but, damp it randomly,
       // as a form of symmetry-breaking
-      new_rho = damp(math::Random(0.0, 1.0), old_rho, new_rho);
+      new_rho = damp(math::Random(0.5, 1.0), old_rho, new_rho);
     }
 
     bool now_exemplar = (new_rho > 0);
@@ -690,7 +694,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   const int RHO_CHANNEL = 360;
   const int REDUCE_CHANNEL = 370;
   const int DONE_CHANNEL = 390;
-  int convergence = fx_param_int(module, "affinity/convergence", 30);
+  int convergence = fx_param_int(module, "affinity/convergence", 40);
   int stable_iterations = 0;
   int maxit = fx_param_int(module, "affinity/maxit", 1000);
 

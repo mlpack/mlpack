@@ -83,7 +83,10 @@ class DualTreeDepthFirst {
       const typename GNP::RNode *r_node,
       const typename GNP::QSummaryResult& unvisited,
       QMutables *q_node_mut);
-  void PushDown_(index_t q_node_i, QMutables *q_node_mut);
+  /**
+   * Postprocesses results and pushes down any postponed prunes.
+   */
+  void PushDownPostprocess_(index_t q_node_i, QMutables *q_node_mut);
 };
 
 template<typename GNP>
@@ -155,7 +158,7 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
     } else {
       Pair_(q_root, r_root_, delta, empty_summary_result, q_root_mut);
     }
-    PushDown_(q_root_index, q_root_mut);
+    PushDownPostprocess_(q_root_index, q_root_mut);
   }
 
   q_nodes_.StopRead(q_root_index);
@@ -182,7 +185,7 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
 }
 
 template<typename GNP>
-void DualTreeDepthFirst<GNP>::PushDown_(
+void DualTreeDepthFirst<GNP>::PushDownPostprocess_(
     index_t q_node_i, QMutables *q_node_mut) {
   const typename GNP::QNode *q_node = q_nodes_.StartRead(q_node_i);
 
@@ -204,7 +207,7 @@ void DualTreeDepthFirst<GNP>::PushDown_(
 
       q_child_mut->postponed.ApplyPostponed(param_, q_node_mut->postponed);
 
-      PushDown_(q_child_i, q_child_mut);
+      PushDownPostprocess_(q_child_i, q_child_mut);
     }
   }
 

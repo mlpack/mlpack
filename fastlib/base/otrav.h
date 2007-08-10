@@ -472,6 +472,9 @@ namespace ot_private {
    * The code here is far more complex than I expected it to be -- please
    * read the comments!
    *
+   * TODO: Consider making frozen points relative to the pointer's address
+   * rather than relative to the base address.
+   *
    * ANY MODIFICATIONS TO THIS MUST ALSO BE MADE TO THE SIZE CALCULATOR!
    */
   class OTPointerFreezer {

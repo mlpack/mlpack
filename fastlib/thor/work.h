@@ -379,11 +379,8 @@ void CentroidWorkQueue<Node>::GetWork(int process_num, ArrayList<Grain> *work) {
     // Show user-friendly status messages every 5% increment
     index_t count = found_node->count();
     n_assigned_points_ += count;
-    int interval = 20;
-    if ((n_assigned_points_ - count) * interval / root_->count()
-        != n_assigned_points_ * interval / root_->count()) {
-      percent_indicator("scheduled", n_assigned_points_, root_->count());
-    }
+
+    percent_indicator("scheduled", n_assigned_points_, root_->count());
 
     // Mark all children as complete (non-recursive version)
     ArrayList<InternalNode*> stack;

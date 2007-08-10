@@ -8,15 +8,15 @@ class Allnn {
  public:
   /** The bounding type. Required by THOR. */
   typedef DHrectBound<2> Bound;
-  /** The type of point in use. Required by THOR. */
 
+  /** The type of point in use. Required by THOR. */
   typedef ThorVectorPoint QPoint;
   typedef ThorVectorPoint RPoint;
 
   /**
    * All parameters required by the execution of the algorithm.
    *
-   * Required by N-Body Reduce.
+   * Required by THOR.
    */
   struct Param {
    public:
@@ -171,11 +171,7 @@ class Allnn {
   class Algorithm {
    public:
     /**
-     * Calculates a delta....
-     *
-     * - If this returns true, delta is calculated, and global_result is
-     * updated.  q_postponed is not touched.
-     * - If this returns false, delta is not touched.
+     * Calculates a delta and intrinsic pruning.
      */
     static bool ConsiderPairIntrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node,
@@ -184,6 +180,9 @@ class Allnn {
       return true;
     }
 
+    /**
+     * Attempts extrinsic pruning.
+     */
     static bool ConsiderPairExtrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node, const Delta& delta,
         const QSummaryResult& q_summary_result, const GlobalResult& global_result,
@@ -193,6 +192,9 @@ class Allnn {
       return distance_sq_lo <= q_summary_result.distance_sq_hi;
     }
 
+    /**
+     * Attempts termination pruning.
+     */
     static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
         const QSummaryResult& q_summary_result, const GlobalResult& global_result,
@@ -214,7 +216,7 @@ class Allnn {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-  thor_utils::RpcMonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+  thor_utils::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
   
   fx_done();
