@@ -296,9 +296,9 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
   typename GNP::GlobalResult *global_result;
   RpcDualTree<GNP, Solver>(module, GNP_CHANNEL, *param,
-      &data, &data, &q_results,
-      &global_result);
+      &data, &data, &q_results, &global_result);
   delete global_result;
+  delete param;
 
   rpc::Done();
 }

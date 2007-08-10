@@ -15,6 +15,8 @@
 
 //-------------------------------------------------------------------------
 
+RpcSockImpl::Cleanup RpcSockImpl::cleanup_;
+
 /*
 in the future:
  - fault tolerance

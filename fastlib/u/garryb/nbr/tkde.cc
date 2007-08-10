@@ -12,7 +12,7 @@
 class Tkde {
  public:
   /** The bounding type. Required by THOR. */
-  typedef ThorHrectBound<2> Bound;
+  typedef HrectBound<2> Bound;
 
   typedef ThorVectorPoint QPoint;
   typedef ThorVectorPoint RPoint;
