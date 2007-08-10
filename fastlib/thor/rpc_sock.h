@@ -341,6 +341,12 @@ class RpcSockImpl {
       main_object_->PollingLoop_();
     }
   };
+  
+  struct Cleanup {
+    ~Cleanup() {
+      delete RpcSockImpl::instance;
+    }
+  };
 
  public:
   static const int request_header_size = sizeof(Header);
@@ -348,6 +354,9 @@ class RpcSockImpl {
 
  public:
   static RpcSockImpl *instance;
+ 
+ private:
+  static Cleanup cleanup_;
 
  private:
   struct datanode *module_;
@@ -445,7 +454,6 @@ namespace rpc {
     RpcSockImpl::instance = new RpcSockImpl();
     RpcSockImpl::instance->Init();
   }
-  /** Close all connections, etc */
   inline void Done() {
     DEBUG_ASSERT(RpcSockImpl::instance != NULL);
     RpcSockImpl::instance->Done();
