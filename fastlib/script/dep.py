@@ -74,6 +74,7 @@ class BadResult:
 class FileCollection:
   def __init__(self, pairs):
     self.files_by_type = {}
+    # use seen_pairs to avoid adding same file twice
     seen_pairs = {}
     for (typename, file) in pairs:
       if not (typename, file) in seen_pairs:

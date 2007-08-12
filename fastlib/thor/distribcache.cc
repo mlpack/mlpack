@@ -678,7 +678,7 @@ void DistributedCache::Purge_(blockid_t blockid) {
 
   DEBUG_ASSERT(block->is_in_core());
   DEBUG_ASSERT_MSG(!block->is_busy(),
-      "Trying to evict a busy block (non-zero lock count of %d)",
+      "Trying to evict a busy block (non-zero lock count %d)",
       int(block->locks));
 
   if (block->is_dirty()) {

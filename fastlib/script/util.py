@@ -514,6 +514,30 @@ class UtilTest(unittest.TestCase):
     self.assertEqual(["1", "2", "3", "4"],
         typeconvert_list([1, 2, 3, "4"], (int, str)))
 
+def ansi_seq(str):
+  return "\033[" + str + "m"
+
+class ansi:
+  CLEAR = ansi_seq("0")
+  BOLD = ansi_seq("1")
+  HBLACK = ansi_seq("1;30")
+  HRED = ansi_seq("1;31")
+  HGREEN = ansi_seq("1;32")
+  HYELLOW = ansi_seq("1;33")
+  HBLUE = ansi_seq("1;34")
+  HMAGENTA = ansi_seq("1;35")
+  HCYAN = ansi_seq("1;35")
+  HWHITE = ansi_seq("1;36")
+  BLACK = ansi_seq("30")
+  RED = ansi_seq("31")
+  GREEN = ansi_seq("32")
+  YELLOW = ansi_seq("33")
+  BLUE = ansi_seq("34")
+  MAGENTA = ansi_seq("35")
+  CYAN = ansi_seq("35")
+  WHITE = ansi_seq("36")
+
+
 if __name__ == "__main__":
   unittest.main()
   test_matching()

@@ -45,15 +45,5 @@ customrule(
 librule(
     sources = ["uselapack.cc"],
     headers = ["matrix.h", "la.h", "uselapack.h", "clapack.h", "blas.h"],
+    tests = ["uselapack_test.cc"],
     deplibs = ["base:base", "col:col", ":libblaspack"])
-
-binrule(
-    name = "uselapack_test",
-    sources = ["uselapack_test.cc"],
-    deplibs = [":la"])
-
-binrule(
-    name = "la_test",
-    sources = ["la_test.cc"],
-    headers = [],
-    deplibs = [":la"])
