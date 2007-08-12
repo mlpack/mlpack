@@ -175,15 +175,21 @@ class MakeBuildSys(dep.DepSys):
     lines = []
     self.entries.reverse()
     i = 0
-    for (outfiles, infiles, commands) in self.entries:
+    for (outfiles_orig, infiles, commands) in self.entries:
       i += 1
+      outfiles = []
+      for outfile in outfiles_orig:
+        if not (outfile in infiles):
+          outfiles.append(outfile)
+      if not outfiles:
+        outfiles = [("pseudo_%d" % i)]
       if commands:
         lines.append("%s: %s" % (" ".join(mq(outfiles)), " ".join(mq(infiles))))
         outfiles_short = [shorten(outfile) for outfile in outfiles]
         lines.extend(["\t@echo '... Making %s'" % (" ".join(outfiles_short))])
         lines.extend(["\t@" + c for c in commands])
       elif infiles:
-        lines.append("pseudo_%d: %s" % (i, " ".join(sq(infiles))))
+        lines.append("%s: %s" % (" ".join(mq(outfiles)), " ".join(mq(infiles))))
         lines.extend(["\t@echo '*** Done with %s'" % (" ".join(infiles))])
     self.entries.reverse()
     lines.append("clean:")
@@ -301,6 +307,24 @@ class HeaderSummaryRule(dep.Metarule):
     realrule.command("touch %s" % (sq(libfile)))
     return [(Types.PLACEHOLDER, libfile)]
 
+class BinRule(dep.Metarule):
+  def __init__(self, name, deplibs):
+    self.name = name
+    dep.Metarule.__init__(self, deplibs=deplibs)
+  def doit(self, realrule, files, params):
+    compiler = compilers[params["compiler"]]
+    binfile = realrule.file(self.name, "arch", "kernel", "mode", "compiler")
+    # TO-DO: Link flags necessary?
+    lflags_start = compiler.lflags_start
+    lflags_end = compiler.lflags_end
+    cflags = compiler.mode_dictionary[params["mode"]]
+    reversed_libs = list(files["deplibs"].to_names())
+    reversed_libs.reverse()
+    realrule.command(compiler.linker + " -o %s %s %s %s %s" % (
+        sq(binfile.name), cflags,
+        lflags_start, " ".join(sq(reversed_libs)), lflags_end))
+    return [(Types.BINFILE, binfile)]
+
 class LibRule(dep.Metarule):
   """LibRule returns all relevant archive files for this library and libraries
   it depends on.
@@ -322,24 +346,6 @@ class LibRule(dep.Metarule):
     dep.Metarule.__init__(self, archive=[self.archive_rule], deplibs=deplibs)
   def doit(self, realrule, files, params):
     return files["deplibs"].to_pairs() + files["archive"].to_pairs()
-
-class BinRule(dep.Metarule):
-  def __init__(self, name, deplibs):
-    self.name = name
-    dep.Metarule.__init__(self, deplibs=deplibs)
-  def doit(self, realrule, files, params):
-    compiler = compilers[params["compiler"]]
-    binfile = realrule.file(self.name, "arch", "kernel", "mode", "compiler")
-    # TO-DO: Link flags necessary?
-    lflags_start = compiler.lflags_start
-    lflags_end = compiler.lflags_end
-    cflags = compiler.mode_dictionary[params["mode"]]
-    reversed_libs = list(files["deplibs"].to_names())
-    reversed_libs.reverse()
-    realrule.command(compiler.linker + " -o %s %s %s %s %s" % (
-        sq(binfile.name), cflags,
-        lflags_start, " ".join(sq(reversed_libs)), lflags_end))
-    return [(Types.BINFILE, binfile)]
 
 class MakefileRule(dep.Metarule):
   """
@@ -523,29 +529,22 @@ class Loader:
     def customrule(name, dependencies, doit_fn):
       return register(name, dep.CustomRule(dependencies, doit_fn))
     def librule(name = selfname,
-        sources = [], headers = [], deplibs = [], cflags = ""):
-      return register(name, LibRule(pathify_fake(name).replace("/", "_"),
+        sources = [], headers = [], deplibs = [], tests = [], cflags = ""):
+      long_name = pathify_fake(name).replace("/", "_")
+      lib = LibRule(long_name,
           sourcerules(Types.GCC_SOURCE, sources),
           sourcerules(Types.HEADER , headers),
           sourcerules(Types.LINKABLE, deplibs),
-          cflags))
-    #def unittest(name = selfname + "_unittest",
-    #    lib = ":" + selfname,
-    #    sources = []):
-    #  """Unit tests for the purpose of testing one library.
-    #  
-    #  All .c or .cc files are compiled and run as unit tests.
-    #  
-    #  (TODO: Unit test framework)
-    #  """
-    #  assert sources
-    #def inttest(name = selfname + "_inttest",
-    #    libs = [],
-    #    sources = []):
-    #  """Integration tests for testing multiple libraries.
-    #  """
-    #  assert libs
-    #  assert sources
+          cflags)
+      register(name, lib)
+      for test_source in tests:
+        # TO-DO: Recursively run tests
+        test_name = test_source[:test_source.rindex(".")]
+        test_lib = LibRule(long_name + "_" + test_name,
+            [sourcerule(Types.GCC_SOURCE, test_source)], [], [lib], cflags)
+        test_bin = BinRule(pathify_fake(test_name), [test_lib])
+        register(test_name, test_bin)
+      return lib
     def wgetrule(name, url, type = Types.ANY, fname = None):
       if fname == None:
         fname = url[url.rindex('/')+1:]

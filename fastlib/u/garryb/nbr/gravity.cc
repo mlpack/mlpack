@@ -1,16 +1,16 @@
+#include "thor/thor.h"
 #include "fastlib/fastlib.h"
-#include "spbounds.h"
-#include "gnp.h"
-#include "dfs.h"
-#include "thor_utils.h"
 
 /**
  * An N-Body-Reduce problem.
  */
 class Gravity {
  public:
+  /** Gravity simulators only make sense in 3 dimensions. */
+  enum { DIM = 3 };
+
   /** The bounding type. Required by THOR. */
-  typedef ThorHrectBound<2> Bound;
+  typedef DHrectBound<2> Bound;
   /** The type of point in use. Required by THOR. */
 
   typedef ThorVectorPoint QPoint;
@@ -23,13 +23,10 @@ class Gravity {
    */
   struct Param {
    public:
-    /** The dimensionality of the data sets. */
-    index_t dim;
     double theta;
     double theta_factor;
 
     OT_DEF_BASIC(Param) {
-      OT_MY_OBJECT(dim);
       OT_MY_OBJECT(theta);
       OT_MY_OBJECT(theta_factor);
     }
@@ -39,25 +36,19 @@ class Gravity {
      * Initialize parameters from a data node (Req THOR).
      */
     void Init(datanode *datanode) {
-      dim = -1;
       theta = fx_param_double_req(datanode, "theta");
       //theta_factor = math::Sqr(1.0 + theta);
       //theta_factor = math::Sqr(1.0 / (1.0 / theta + sqrt(3)));
       theta_factor = math::Sqr(theta + 1);
     }
-    
-    void BootstrapMonochromatic(QPoint* point, index_t count) {
-      dim = point->vec().length();
-    }
 
-    void BootstrapQueries(QPoint* point, index_t count) {
-      dim = point->vec().length();
+    void InitPointExtras(int tag, QPoint* point) {
     }
-
-    void BootstrapReferences(RPoint* point, index_t count) {
-      dim = point->vec().length();
+    void SetPointExtras(int tag, index_t index, QPoint* point) {
     }
-
+    void Bootstrap(int tag, index_t dim_in, index_t count) {
+      DEBUG_ASSERT(dim_in == DIM);
+    }
     double Force(double distsq) const {
       return 1.0/distsq;
     }
@@ -66,30 +57,31 @@ class Gravity {
   struct CombinedStat {
    public:
     double diagsq;
-    Vector centroid;
+    double centroid[DIM];
 
     OT_DEF_BASIC(CombinedStat) {
       OT_MY_OBJECT(diagsq);
-      OT_MY_OBJECT(centroid);
+      OT_MY_ARRAY(centroid);
     }
 
    public:
     void Init(const Param& param) {
-      centroid.Init(param.dim);
     }
     void Reset(const Param& param) {
-      centroid.SetZero();
+      for (int i = 0; i < DIM; i++) {
+        centroid[i] = 0;
+      }
     }
     void Accumulate(const Param& param, const QPoint& point) {
-      la::AddTo(point.vec(), &centroid);
+      la::AddTo(DIM, point.vec().ptr(), centroid);
     }
     void Accumulate(const Param& param,
         const CombinedStat& stat, const Bound& bound, index_t n) {
-      la::AddTo(stat.centroid, &centroid);
+      la::AddTo(DIM, stat.centroid, centroid);
     }
     void Postprocess(const Param& param, const Bound& bound, index_t n) {
       diagsq = bound.MaxDistanceSq(bound);
-      la::Scale(1.0 / n, &centroid);
+      la::Scale(DIM, 1.0 / n, centroid);
     }
   };
 
@@ -179,24 +171,21 @@ class Gravity {
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
-      /*double dhi = r_node.bound().MaxDistanceSq(q_point.vec());
-      double dlo = r_node.bound().MinDistanceSq(q_point.vec());
-      if (dhi > dlo * param.theta_factor) {
-        force = 0;
-        return true;
-      } else {
-        q_result->force += param.Force((dhi + dlo) / 2);
-        return false;
-      }*/
+      double distsq_lo = r_node.bound().MinDistanceSq(q_point.vec());
+      double distsq_hi = r_node.bound().MaxDistanceSq(q_point.vec());
+      bool should_explore = (distsq_hi >= distsq_lo * param.theta_factor);
       force = 0;
-      return true;
+      if (!should_explore) {
+        double distsq_centroid = la::DistanceSqEuclidean(
+            DIM, q_point.vec().ptr(), r_node.stat().centroid);
+        q_result->force += param.Force(distsq_centroid);
+      }
+      return should_explore;
     }
 
     void VisitPair(const Param& param,
         const QPoint& q_point, index_t q_index,
         const RPoint& r_point, index_t r_index) {
-      //double distsq = la::DistanceSqEuclidean(
-      //    q_point.vec(), r_point.vec());
       const double *a = q_point.vec().ptr();
       const double *b = r_point.vec().ptr();
       double x = a[0]-b[0];
@@ -232,18 +221,12 @@ class Gravity {
         const QNode& q_node, const RNode& r_node,
         Delta* delta,
         GlobalResult* global_result, QPostponed* q_postponed) {
-      double distsq_lo = q_node.bound().MinDistanceSq(r_node.bound());
-      double distsq_hi = q_node.bound().MaxDistanceSq(r_node.bound());
-      //double distsq_mid = q_node.bound().MidDistanceSq(r_node.bound());
-      //double diagsq = q_node.stat().diagsq + r_node.stat().diagsq;
-      // (sqrt(distsq_hi) - sqrt(distsq_lo)) / sqrt(distsq_lo) < theta
-      // sqrt(distsq_hi) / sqrt(distsq_lo) - 1 < theta
-      // sqrt(distsq_hi) / sqrt(distsq_lo) < theta + 1
-      // sqrt(distsq_hi) / sqrt(distsq_lo) < theta + 1
-      // distsq_hi / distsq_lo < (theta + 1)^2
+      double distsq_lo = r_node.bound().MinDistanceSq(q_node.bound());
+      double distsq_hi = r_node.bound().MaxDistanceSq(q_node.bound());
       bool should_explore = (distsq_hi >= distsq_lo * param.theta_factor);
       if (!should_explore) {
-        double distsq_centroid = la::DistanceSqEuclidean(q_node.stat().centroid, r_node.stat().centroid);
+        double distsq_centroid = la::DistanceSqEuclidean(
+            DIM, q_node.stat().centroid, r_node.stat().centroid);
         q_postponed->force += r_node.count() * param.Force(distsq_centroid);
       }
       return should_explore;
@@ -277,7 +260,7 @@ class Gravity {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-  thor_utils::RpcMonochromaticDualTreeMain<Gravity, DualTreeDepthFirst<Gravity> >(
+  thor_utils::MonochromaticDualTreeMain<Gravity, DualTreeDepthFirst<Gravity> >(
       fx_root, "gravity");
   
   fx_done();
