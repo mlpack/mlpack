@@ -1,13 +1,17 @@
 /**
  * @file rpc.h
  *
- * Remote procedure call support for FASTlib.  Yay!
+ * FASTlib's message-passing system.
+ *
+ * RPC is intended to be in interface for which multiple implmentations can
+ * exist.
  */
 
 #ifndef THOR_RPC_H
 #define THOR_RPC_H
 
 #include "blockdev.h"
+#include "rpc_base.h"
 #include "rpc_sock.h"
 
 #include "base/common.h"
@@ -15,6 +19,13 @@
 
 //--------------------------------------------------------------------------
 
+/**
+ * A BasicTransaction is meant to be used externally (rather than inherited
+ * from), and has the capability to store in it a single message and wait.
+ *
+ * A BasicTransaction is very useful for one-way or synchronous
+ * message-passing.
+ */
 struct BasicTransaction : public Transaction {
   FORBID_COPY(BasicTransaction);
 

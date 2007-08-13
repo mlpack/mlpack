@@ -4,6 +4,62 @@
 #include "base/otrav.h"
 #include "fx/fx.h"
 
+/**
+ * A point in vector-space.
+ *
+ * This is a wrapper around Vector which implements the vec() method, because
+ * that is what the THOR tree-builders expect.
+ *
+ * A side note, it's possible to have a THOR problem that doesn't use vectors
+ * at all.  Instead, define your own point, and you have to make your own
+ * tree-builder.
+ */
+class ThorVectorPoint {
+ private:
+  Vector vec_;
+
+  OT_DEF_BASIC(ThorVectorPoint) {
+    OT_MY_OBJECT(vec_);
+  }
+
+ public:
+  /**
+   * Gets the vector.
+   */
+  const Vector& vec() const {
+    return vec_;
+  }
+  /**
+   * Gets the vector.
+   */
+  Vector& vec() {
+    return vec_;
+  }
+  /**
+   * Initializes a "default element" from a dataset schema.
+   *
+   * This is the only function that allows allocation.
+   */
+  template<typename Param>
+  void Init(const Param& param, const DatasetInfo& schema) {
+    vec_.Init(schema.n_features());
+    vec_.SetZero();
+  }
+  /**
+   * Sets the values of this object, not allocating any memory.
+   *
+   * If memory needs to be allocated it must be allocated at the beginning
+   * with Init.
+   *
+   * @param param ignored
+   * @param data the vector data read from file
+   */
+  template<typename Param>
+  void Set(const Param& param, const Vector& data) {
+    vec_.CopyValues(data);
+  }
+};
+
 struct BlankDelta {
  public:
   OT_DEF_BASIC(BlankDelta) {}
@@ -72,7 +128,7 @@ class BlankGlobalResult {
   template<typename Param>
   void Postprocess(const Param& param) {}
   template<typename Param>
-  void Report(const Param& param, datanode *datanode) {}
+  void Report(const Param& param, datanode *datanode) const {}
   template<typename Param, typename QPoint, typename QResult>
   void ApplyResult(const Param& param,
       const QPoint& q_point, index_t q_index, const QResult& q_result) {}

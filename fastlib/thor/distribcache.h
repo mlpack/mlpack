@@ -15,12 +15,20 @@ FEATURES
  - data distribution
  - as-needed dynamic allocation of disk blocks
 
-FUTURE POSSIBILITIES
+TODO: FUTURE POSSIBILITIES (listed below)
 - if it's useful for the cache to grow or shrink, it would make little sense
 to change the number of sets (that'd be really hard) -- however, it might
 make sense to tune the associativity.  i.e. the cache is nominally 16-way
 associative, but at runtime you may tune the associativity smaller or larger
 depending on memory pressure.
+- instead of "startread" and "startwrite", just "lock" a page, and determine
+whether it was a read or write when unlocking the page.  this allows pages
+that are not written to be marked as such.  in our current cachearray
+infrastructure, this doesn't really matter (as one would likely define
+a separate read-only and read-write cache array for the two use cases), but
+it's something to think about.
+- global caching -- one giant cache pool that is maintained.  this requires
+us to throw out the efficiency that set associativity buys us :-(
 
 */
 
@@ -96,14 +104,14 @@ class DistributedCache : public BlockDevice {
   struct BlockStatus {
    public:
     /** Indicates who is the owner of this block. */
-    int32 owner;
+    int16 owner;
     /**
      * Indicates if the block's contents have been set to anything
      * other than the initial value -- this can save unnecessary
      * READs in many cases.  For instance, the "results" array usually
      * follows this behavior.
      */
-    bool is_new;
+    char is_new;
 
     OT_DEF_BASIC(BlockStatus) {
       OT_MY_OBJECT(owner);

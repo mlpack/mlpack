@@ -4,8 +4,10 @@
  * Remote transaction API using sockets.
  */
 
-#ifndef RPC_SOCK_H
-#define RPC_SOCK_H
+#ifndef THOR_RPC_SOCK_H
+#define THOR_RPC_SOCK_H
+
+#include "rpc_base.h"
 
 #include "col/arraylist.h"
 #include "col/queue.h"
@@ -19,138 +21,16 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-class Message {
- private:
-  int peer_;
-  int channel_;
-  int transaction_id_;
-  char *buffer_;
-  char *data_;
-  size_t data_size_;
-
- public:
-  Message() {}
-  ~Message() {
-    mem::Free(buffer_);
-  }
-
-  void Init(int peer_in, int channel_in, int transaction_id_in,
-      char *buffer_in, size_t header_size_in, size_t data_size_in) {
-    peer_ = peer_in;
-    channel_ = channel_in;
-    transaction_id_ = transaction_id_in;
-    buffer_ = buffer_in;
-    data_ = buffer_ + header_size_in;
-    data_size_ = data_size_in;
-  }
-
-  size_t data_size() const {
-    return data_size_;
-  }
-  size_t header_size() const {
-    return data_ - buffer_;
-  }
-  size_t buffer_size() const {
-    return (data_ + data_size_) - buffer_;
-  }
-  char *data() const {
-    return data_;
-  }
-  template<typename T>
-  T *data_as() const {
-    return reinterpret_cast<T*>(data_);
-  }
-  char *buffer() const {
-    return buffer_;
-  }
-  int peer() const {
-    return peer_;
-  }
-  int channel() const {
-    return channel_;
-  }
-  int transaction_id() const {
-    return transaction_id_;
-  }
-};
-
-class Transaction {
-  FORBID_COPY(Transaction);
-
- private:
-  int channel_;
-  struct PeerInfo {
-    int peer;
-    int channel;
-    int transaction_id;
-  };
-  ArrayList<PeerInfo> peers_;
-
- public:
-  /** Create a message of a specified size, which you will later Send(). */
-  Message *CreateMessage(int peer, size_t size);
-  /** Send a message */
-  void Send(Message *message);
-  /** Unregister the transaction from all peers */
-  void Done();
-  /** Unregister the transaction from just this peer */
-  void Done(int peer);
-
- public:
-  Transaction() {
-    channel_ = BIG_BAD_NUMBER;
-  }
-  virtual ~Transaction() { channel_ = BIG_BAD_NUMBER; }
-  
-  void Init(int channel_num);
-
-  int channel() const {
-    return channel_;
-  }
-
-  /**
-   * The transaction needs to know about the message before HandleMessage
-   * is called -- do not call this directly.
-   */
-  void TransactionHandleNewSender_(Message *message);
-
-  /**
-   * Handles an incoming message and changes internal state.
-   *
-   * @param message incoming message - DELETE THIS WHEN YOU'RE DONE, IT
-   *        WILL NOT BE DELETED FOR YOU
-   */
-  virtual void HandleMessage(Message *message) = 0;
-};
-
 /**
- * A Channel is the mechanism for listening for new messages and starting
- * new transactions.
+ * A two-way socket connection.
  *
- * A channel must have a number that is unique and the same for all
- * machines.  Do not use channels less than 100 (these are reserved for the
- * implementation).  Re-using channels right after another is usually a bad
- * idea, so if you have two barriers in a row, use different channels. 
- * Fixing this bug correctly is a possible future task :-)
- */
-class Channel {
- public:
-  Channel() {}
-  virtual ~Channel() {}
-
-  virtual Transaction *GetTransaction(Message *message) {
-    FATAL("GetTransaction not implemented?");
-  }
-};
-
-/**
- * Two-way socket connection.
+ * Due race conditions, we use one socket for incoming messages and one
+ * for outgoing.  If one had the time and desire, they could resolve the
+ * race condition where both sides simultaneously attempt to connect and
+ * reject one of the connections.
  *
- * Due to possible race conditions, this currently requires a separate
- * incoming and outgoing socket.
- *
- * This class is not thread-safe because it is assumed it will be called
- * from another class in a thread-safe manner.
+ * This class is, by design, not thread-safe because it is assumed it will
+ * be protected by a mutex.
  */
 class SockConnection {
   FORBID_COPY(SockConnection);
@@ -207,37 +87,47 @@ class SockConnection {
   void RawSend(Message *message);
 
   // some accessors following
-
+  /** Do we have an incoming socket open? */
   bool is_read_open() const {
     return read_fd_ >= 0;
   }
+  /** Do we have an outgoing socket open? */
   bool is_write_open() const {
     return write_fd_ >= 0;
   }
+  /** Are we in the process of reading something? */
   bool is_reading() const {
     return read_message_ != NULL;
   }
+  /** Are we in the process of writing something? */
   bool is_writing() const {
     return write_message_ != NULL;
   }
+  /** The incoming socket file descriptor. */
   int read_fd() const {
     return read_fd_;
   }
+  /** The outgoing socket file descriptor. */
   int write_fd() const {
     return write_fd_;
   }
+  /** The total number of messages read. */
   int64 read_total() const {
     return read_total_;
   }
+  /** The total number of messages written. */
   int64 write_total() const {
     return write_total_;
   }
+  /** Messages which have been read but not been processed. */
   Queue<Message*>& read_queue() {
     return read_queue_;
   }
+  /** Messages which have been read but not been processed. */
   const Queue<Message*>& read_queue() const {
     return read_queue_;
   }
+  /** The socket address of the peer. */
   const struct sockaddr_in& peer_addr() const {
     return peer_addr_;
   }
@@ -247,6 +137,7 @@ class SockConnection {
   /** Try writing something from the queue. */
   void TryWrite();
   
+  /** The rank of the peer. */
   int peer() const {
     return peer_;
   }

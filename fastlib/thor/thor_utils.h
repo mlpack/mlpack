@@ -17,48 +17,10 @@ namespace thor_utils {
 template<typename GNP, typename Solver>
 class ThreadedDualTreeSolver {
  private:
-  class WorkerTask : public Task {
-   private:
-    ThreadedDualTreeSolver *base_;
-
-   public:
-    WorkerTask(ThreadedDualTreeSolver *base_solver)
-        : base_(base_solver)
-      { }
-
-    void Run() {
-      while (1) {
-        ArrayList<WorkQueueInterface::Grain> work;
-
-        base_->mutex_.Lock();
-        base_->work_queue_->GetWork(base_->process_, &work);
-        base_->mutex_.Unlock();
-
-        if (work.size() == 0) {
-          break;
-        }
-
-        for (index_t i = 0; i < work.size(); i++) {
-          Solver solver;
-
-          //fprintf(stderr, "- Grain with %"LI"d points starting at %"LI"d\n",
-          //    work[i].n_points(),
-          //    work[i].point_begin_index);
-
-          solver.Doit(*base_->param_,
-              work[i].node_index, work[i].node_end_index,
-              base_->q_points_cache_, base_->q_nodes_cache_,
-              base_->r_points_cache_, base_->r_nodes_cache_,
-              base_->q_results_cache_);
-
-          base_->mutex_.Lock();
-          base_->global_result_.Accumulate(
-              *base_->param_, solver.global_result());
-          base_->mutex_.Unlock();
-        }
-      }
-      delete this;
-    }
+  struct WorkerTask : public Task {
+    ThreadedDualTreeSolver *solver;
+    WorkerTask(ThreadedDualTreeSolver *solver_in) : solver(solver_in) { }
+    void Run() { solver->ThreadBody_(); delete this; }
   };
 
  private:
@@ -74,38 +36,8 @@ class ThreadedDualTreeSolver {
   Mutex mutex_;
 
  public:
-  static void Solve(
-      datanode *module,
-      const typename GNP::Param& param_in,
-      CacheArray<typename GNP::QPoint> *q_points_array_in,
-      CacheArray<typename GNP::QNode> *q_nodes_array_in,
-      CacheArray<typename GNP::RPoint> *r_points_array_in,
-      CacheArray<typename GNP::RNode> *r_nodes_array_in,
-      CacheArray<typename GNP::QResult> *q_results_array_in) {
-    index_t n_threads = fx_param_int(module, "n_threads", 2);
-    index_t n_grains = fx_param_int(module, "n_grains",
-        n_threads == 1 ? 1 : (n_threads * 3));
-    SimpleWorkQueue<typename GNP::QNode> simple_work_queue;
-    simple_work_queue.Init(q_nodes_array_in, n_grains);
-    fx_format_result(module, "n_grains_actual", "%"LI"d",
-        simple_work_queue.n_grains());
-
-    fx_timer_start(module, "all_threads");
-
-    ThreadedDualTreeSolver solver;
-    solver.Doit(
-        n_threads, 0, &simple_work_queue,
-        param_in,
-        q_points_array_in->cache(), q_nodes_array_in->cache(),
-        r_points_array_in->cache(), r_nodes_array_in->cache(),
-        q_results_array_in->cache());
-
-    fx_timer_stop(module, "all_threads");
-  }
-
   void Doit(
-      index_t n_threads,
-      int process,
+      index_t n_threads, int process,
       WorkQueueInterface *work_queue_in,
       const typename GNP::Param& param,
       DistributedCache *q_points_cache_in, DistributedCache *q_nodes_cache_in,
@@ -121,20 +53,18 @@ class ThreadedDualTreeSolver {
     r_nodes_cache_ = r_nodes_cache_in;
     q_results_cache_ = q_results_cache_in;
 
-    ArrayList<Thread*> threads;
-    threads.Init(n_threads);
-
     global_result_.Init(*param_);
 
+    ArrayList<Thread> threads;
+    threads.Init(n_threads);
+
     for (index_t i = 0; i < n_threads; i++) {
-      threads[i] = new Thread();
-      threads[i]->Init(new WorkerTask(this));
+      threads[i].Init(new WorkerTask(this));
       threads[i]->Start();
     }
 
     for (index_t i = 0; i < n_threads; i++) {
-      threads[i]->WaitStop();
-      delete threads[i];
+      threads[i].WaitStop();
     }
   }
 
@@ -142,8 +72,33 @@ class ThreadedDualTreeSolver {
     return global_result_;
   }
 
-  typename GNP::GlobalResult& global_result() {
-    return global_result_;
+ private:
+  void ThreadBody_() {
+    while (1) {
+      ArrayList<WorkQueueInterface::Grain> work;
+
+      mutex_.Lock();
+      work_queue_->GetWork(base_->process_, &work);
+      mutex_.Unlock();
+
+      if (work.size() == 0) {
+        break;
+      }
+
+      for (index_t i = 0; i < work.size(); i++) {
+        Solver solver;
+
+        solver.Doit(*base_->param_,
+            work[i].node_index, work[i].node_end_index,
+            base_->q_points_cache_, base_->q_nodes_cache_,
+            base_->r_points_cache_, base_->r_nodes_cache_,
+            base_->q_results_cache_);
+
+        mutex_.Lock();
+        global_result_.Accumulate(*base_->param_, solver.global_result());
+        mutex_.Unlock();
+      }
+    }
   }
 };
 
@@ -173,7 +128,7 @@ class GlobalResultReductor {
  * @param q the query tree
  * @param r the reference tree
  * @param q_results the query results
- * @param global_result (output) if non-NULL, the global result will be
+ * @param global_result_pp (output) if non-NULL, the global result will be
  *        allocated via new() and stored here only on the master machine
  */
 template<typename GNP, typename SerialSolver, typename QTree, typename RTree>
@@ -184,10 +139,12 @@ void RpcDualTree(
     QTree *q,
     RTree *r,
     DistributedCache *q_results,
-    typename GNP::GlobalResult **global_result) {
+    typename GNP::GlobalResult **global_result_pp) {
   int n_threads = fx_param_int(module, "n_threads", 2);
   RemoteWorkQueueBackend *work_backend = NULL;
   WorkQueueInterface *work_queue;
+  datanode *io_module = fx_submodule(module, NULL, "io");
+  datanode *work_module = fx_submodule(module, NULL, "scheduler");
 
   if (rpc::is_root()) {
     // Make a static work queue
@@ -210,7 +167,7 @@ void RpcDualTree(
 
   rpc::Barrier(base_channel + 1);
 
-  fx_timer_start(fx_submodule(module, NULL, "gnp"), "all_machines");
+  fx_timer_start(module, "gnp");
   ThreadedDualTreeSolver<GNP, SerialSolver> solver;
   solver.Doit(
       n_threads, rpc::rank(), work_queue, param,
@@ -218,9 +175,9 @@ void RpcDualTree(
       &r->points(), &r->nodes(),
       q_results);
   rpc::Barrier(base_channel + 1);
-  fx_timer_stop(fx_submodule(module, NULL, "gnp"), "all_machines");
+  fx_timer_stop(module, "gnp");
 
-  fx_timer_start(fx_submodule(module, NULL, "gnp"), "write_results");
+  fx_timer_start(module, "write_results");
   q->points().StartSync();
   q->nodes().StartSync();
   if (r != q) {
@@ -228,32 +185,32 @@ void RpcDualTree(
     r->nodes().StartSync();
   }
   q_results->StartSync();
-  q->points().WaitSync(fx_submodule(module, NULL, "io/gnp/q_points"));
-  q->nodes().WaitSync(fx_submodule(module, NULL, "io/gnp/q_nodes"));
+  q->points().WaitSync(fx_submodule(io_module, NULL, "q_points"));
+  q->nodes().WaitSync(fx_submodule(io_module, NULL, "q_nodes"));
   if (r != q) {
-    r->points().WaitSync(fx_submodule(module, NULL, "io/gnp/r_points"));
-    r->nodes().WaitSync(fx_submodule(module, NULL, "io/gnp/r_nodes"));
+    r->points().WaitSync(fx_submodule(io_module, NULL, "r_points"));
+    r->nodes().WaitSync(fx_submodule(io_module, NULL, "r_nodes"));
   }
-  q_results->WaitSync(fx_submodule(module, NULL, "io/gnp/q_results"));
-  fx_timer_stop(fx_submodule(module, NULL, "gnp"), "write_results");
+  q_results->WaitSync(fx_submodule(io_module, NULL, "q_results"));
+  fx_timer_stop(module, "write_results");
 
   GlobalResultReductor<GNP> global_result_reductor;
+  GlobalResult my_global_result = solver.global_result();
   global_result_reductor.Init(&param);
-  rpc::Reduce(base_channel + 5,
-      global_result_reductor, &solver.global_result());
+  rpc::Reduce(base_channel + 5, global_result_reductor, &my_global_result);
 
-  work_queue->Report(fx_submodule(module, NULL, "work_queue"));
-  solver.global_result().Report(param,
+  work_queue->Report(work_module);
+  my_global_result.Report(param,
       fx_submodule(module, NULL, "global_result"));
 
   if (rpc::is_root()) {
     delete work_backend;
-    if (global_result) {
-      *global_result = new typename GNP::GlobalResult(solver.global_result());
+    if (global_result_pp) {
+      *global_result_pp = new typename GNP::GlobalResult(my_global_result);
     }
   } else {
-    if (global_result) {
-      *global_result = NULL;
+    if (global_result_pp) {
+      *global_result_pp = NULL;
     }
   }
 
@@ -295,7 +252,8 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
         size_t(q_results_mb) * MEGABYTE, &q_results);
 
   typename GNP::GlobalResult *global_result;
-  RpcDualTree<GNP, Solver>(module, GNP_CHANNEL, *param,
+  RpcDualTree<GNP, Solver>(
+      fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, *param,
       &data, &data, &q_results, &global_result);
   delete global_result;
   delete param;
