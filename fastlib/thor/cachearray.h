@@ -3,6 +3,8 @@
 
 #include "distribcache.h"
 
+#warning "initialize in terms of kb per block, not elements per block"
+
 /**
  * Array elements may vary in size from run to run.  However, we place the
  * constraint that each array element must be the same size, derived all
@@ -130,7 +132,7 @@ class CacheArray {
 
  public:
   /** Helper to help you create a DistributedCache. */
-  static void InitDistributedCacheMaster(int channel,
+  static void MakeDistributedCacheMaster(int channel,
       index_t n_block_elems, const Element& default_elem, size_t total_ram,
       DistributedCache *cache) {
     CacheArrayBlockHandler<Element> *handler =
@@ -140,7 +142,7 @@ class CacheArray {
         total_ram, handler);
   }
   /** Helper to help you connect a DistributedCache to master. */
-  static void InitDistributedCacheWorker(int channel,
+  static void MakeDistributedCacheWorker(int channel,
       size_t total_ram, DistributedCache *cache) {
     CacheArrayBlockHandler<Element> *handler =
         new CacheArrayBlockHandler<Element>();
@@ -212,8 +214,8 @@ class CacheArray {
   unsigned int n_block_elems_log() const {
     return n_block_elems_log_;
   }
-  unsigned int n_block_elems() const {
-    return 1 << n_block_elems_log_;
+  index_t n_block_elems() const {
+    return index_t(1) << n_block_elems_log_;
   }
   unsigned int n_block_elems_mask() const {
     return n_block_elems_mask_;
