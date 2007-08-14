@@ -12,7 +12,85 @@
 
 // TODO: These classes all need comments
 
-namespace thor_utils {
+namespace thor {
+
+template<typename Point, typename Param>
+index_t ReadPointsMaster(
+    const Param& param, int points_channel,
+    const char *filename, int block_size_kb, double megs,
+    DistributedCache *points_cache) {
+  Point default_point;
+  TextLineReader reader;
+  DatasetInfo schema;
+  int dimension;
+  Vector vector;
+  index_t n_points;
+
+  if (FAILED(reader.Open(filename))) {
+    FATAL("Could not open data file '%s'", filename);
+  }
+
+  schema.InitFromFile(&reader, "data");
+  dimension = schema.n_features();
+
+  default_point.Init(param, schema);
+
+  CacheArray<Point> points_array;
+  points_array.InitCreate(points_channel,
+      CacheArray<Point>::ConvertBlockSize(default_point, block_size_kb),
+      default_point, megs, points_cache);
+
+  vector.Init(schema.n_features());
+
+  n_points = 0;
+
+  for (;;) {
+    bool is_done;
+    success_t rv = schema.ReadPoint(&reader, vector.ptr(), &is_done);
+
+    if (unlikely(FAILED(rv))) {
+      FATAL("Data file has problems");
+    } else if (is_done) {
+      break;
+    } else {
+      CacheWrite<Point> point(&points_array,
+          points_array.AllocD(rpc::rank(), 1));
+      point->Set(param, vector);
+      n_points++;
+    }
+  }
+
+  return n_points;
+}
+
+template<typename Point, typename Param>
+index_t ReadPoints(
+    const Param& param, int points_channel,
+    int extra_channel, datanode *module,
+    DistributedCache *points_cache) {
+  double megs = fx_param_int(module, "megs", 2000);
+  Broadcaster<index_t> broadcaster;
+
+  fx_timer_start(module, "read");
+
+  if (rpc::is_root()) {
+    const char *filename = fx_param_str_req(module, "");
+    int block_size_kb = fx_param_int(module, "block_size_kb", 256);
+    index_t n_points = ReadPointsMaster<Point>(param, points_channel,
+        filename, block_size_kb, megs, points_cache);
+    broadcaster.SetData(n_points);
+  } else {
+    CacheArray<Point>::CreateCacheWorker(points_channel, megs, points_cache);
+  }
+
+  broadcaster.Doit(extra_channel);
+  points_cache->StartSync();
+  points_cache->WaitSync();
+
+  fx_timer_stop(module, "read");
+
+  return broadcaster.get();
+}
 
 template<typename GNP, typename Solver>
 class ThreadedDualTreeSolver {
@@ -60,7 +138,7 @@ class ThreadedDualTreeSolver {
 
     for (index_t i = 0; i < n_threads; i++) {
       threads[i].Init(new WorkerTask(this));
-      threads[i]->Start();
+      threads[i].Start();
     }
 
     for (index_t i = 0; i < n_threads; i++) {
@@ -78,7 +156,7 @@ class ThreadedDualTreeSolver {
       ArrayList<WorkQueueInterface::Grain> work;
 
       mutex_.Lock();
-      work_queue_->GetWork(base_->process_, &work);
+      work_queue_->GetWork(process_, &work);
       mutex_.Unlock();
 
       if (work.size() == 0) {
@@ -88,14 +166,14 @@ class ThreadedDualTreeSolver {
       for (index_t i = 0; i < work.size(); i++) {
         Solver solver;
 
-        solver.Doit(*base_->param_,
+        solver.Doit(*param_,
             work[i].node_index, work[i].node_end_index,
-            base_->q_points_cache_, base_->q_nodes_cache_,
-            base_->r_points_cache_, base_->r_nodes_cache_,
-            base_->q_results_cache_);
+            q_points_cache_, q_nodes_cache_,
+            r_points_cache_, r_nodes_cache_,
+            q_results_cache_);
 
         mutex_.Lock();
-        global_result_.Accumulate(*base_->param_, solver.global_result());
+        global_result_.Accumulate(*param_, solver.global_result());
         mutex_.Unlock();
       }
     }
@@ -153,7 +231,7 @@ void RpcDualTree(
     CacheArray<typename GNP::QNode> q_nodes_array;
     q_nodes_array.Init(&q->nodes(), BlockDevice::M_READ);
     actual_work_queue->Init(&q_nodes_array,
-        q->decomposition().root(), n_threads, module);
+        q->decomp().root(), n_threads, module);
     work_queue = new LockedWorkQueue(actual_work_queue);
 
     work_backend = new RemoteWorkQueueBackend();
@@ -180,14 +258,14 @@ void RpcDualTree(
   fx_timer_start(module, "write_results");
   q->points().StartSync();
   q->nodes().StartSync();
-  if (r != q) {
+  if (!mem::PointersEqual(q, r)) {
     r->points().StartSync();
     r->nodes().StartSync();
   }
   q_results->StartSync();
   q->points().WaitSync(fx_submodule(io_module, NULL, "q_points"));
   q->nodes().WaitSync(fx_submodule(io_module, NULL, "q_nodes"));
-  if (r != q) {
+  if (!mem::PointersEqual(q, r)) {
     r->points().WaitSync(fx_submodule(io_module, NULL, "r_points"));
     r->nodes().WaitSync(fx_submodule(io_module, NULL, "r_nodes"));
   }
@@ -195,7 +273,7 @@ void RpcDualTree(
   fx_timer_stop(module, "write_results");
 
   GlobalResultReductor<GNP> global_result_reductor;
-  GlobalResult my_global_result = solver.global_result();
+  typename GNP::GlobalResult my_global_result = solver.global_result();
   global_result_reductor.Init(&param);
   rpc::Reduce(base_channel + 5, global_result_reductor, &my_global_result);
 
@@ -222,10 +300,15 @@ void RpcDualTree(
  */
 template<typename GNP, typename Solver>
 void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
-  const size_t MEGABYTE = 1048576;
   const int DATA_CHANNEL = 110;
   const int Q_RESULTS_CHANNEL = 120;
   const int GNP_CHANNEL = 200;
+  double results_megs = fx_param_double(module, "results/megs", 1000);
+  DistributedCache *points_cache;
+  index_t n_points;
+  ThorTree<typename GNP::Param, typename GNP::QPoint, typename GNP::QNode> tree;
+  DistributedCache q_results;
+  typename GNP::Param param;
 
   rpc::Init();
 
@@ -233,30 +316,38 @@ void MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
     fx_silence();
   }
 
-  size_t q_results_mb = fx_param_int(module, "q_results_mb", 1000);
   fx_submodule(module, NULL, "io"); // influnce output order
 
-  ThorKdTree<typename GNP::Param, typename GNP::QPoint, typename GNP::QNode>
-      data;
-  DistributedCache q_results;
-  typename GNP::Param *param = new typename GNP::Param();
-  param->Init(fx_submodule(module, gnp_name, gnp_name));
+  param.Init(fx_submodule(module, gnp_name, gnp_name));
 
-  fx_timer_start(module, "data");
-  data.Init(&param, 0, DATA_CHANNEL, fx_submodule(module, "data", "data"));
-  fx_timer_stop(module, "data");
+  fx_timer_start(module, "read");
+  points_cache = new DistributedCache();
+  n_points = ReadPoints<typename GNP::QPoint>(
+      param, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
+      fx_submodule(module, "data", "data"), points_cache);
+  fx_timer_stop(module, "read");
+
+  typename GNP::QPoint default_point;
+  CacheArray<typename GNP::QPoint>::GetDefaultElement(
+      points_cache, &default_point);
+  param.SetDimensions(default_point.vec().length(), n_points);
+
+  fx_timer_start(module, "tree");
+  CreateKdTree<typename GNP::QPoint, typename GNP::QNode>(
+      param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
+      fx_submodule(module, "tree", "tree"), n_points, points_cache, &tree);
+  fx_timer_stop(module, "tree");
 
   typename GNP::QResult default_result;
-  default_result.Init(*param);
-  data.InitDistributedCache(Q_RESULTS_CHANNEL, default_result,
-        size_t(q_results_mb) * MEGABYTE, &q_results);
+  default_result.Init(param);
+  tree.CreateResultCache(Q_RESULTS_CHANNEL, default_result,
+        results_megs, &q_results);
 
   typename GNP::GlobalResult *global_result;
   RpcDualTree<GNP, Solver>(
-      fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, *param,
-      &data, &data, &q_results, &global_result);
+      fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, param,
+      &tree, &tree, &q_results, &global_result);
   delete global_result;
-  delete param;
 
   rpc::Done();
 }

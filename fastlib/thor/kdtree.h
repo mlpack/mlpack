@@ -11,6 +11,7 @@
 #ifndef THOR_KDTREE_H
 #define THOR_KDTREE_H
 
+#include "kdtree_builder.h"
 #include "thortree.h"
 #include "cachearray.h"
 
@@ -21,216 +22,92 @@
 #include "col/arraylist.h"
 #include "fx/fx.h"
 
-/* Implementation */
+namespace thor {
+/**
+ * Creates a THOR kd-tree.
+ *
+ * @param param the parameter object for initializations
+ * @param nodes_channel the channel for the nodes cache
+ * @param block_size_kb the upper-limit block size in kilobytes
+ * @param megs the number of megabytes dedicated to the nodes cache
+ * @param n_points the number of data points
+ * @param points_cache the cache of points to reorder
+ * @param nodes_cache the cache of nodes to initialize and create
+ * @param decomposition the resulting tree decomposition
+ */
+template<typename Point, typename Node, typename Param>
+void CreateKdTreeMaster(const Param& param,
+    int nodes_channel, int block_size_kb, double megs, datanode *module,
+    index_t n_points,
+    DistributedCache *points_cache, DistributedCache *nodes_cache,
+    ThorTreeDecomposition<Node> *decomposition);
 
 /**
- * A distributed kd-tree (works non-distributed too).
+ * Creates a THOR kd-tree from an existing cache.
+ *
+ * @param param parameter object
+ * @param base_channel the first of a contiguous group of 5 channels
+ * @param module the module to load config parameters from
+ * @param n_points the number of points
+ * @param points_cache the data points to reorder, must be allocated via
+ *        the new operator
+ * @param tree_out the tree encapsulation to create
  */
-template<typename TParam, typename TPoint, typename TNode>
-class ThorKdTree {
-  FORBID_COPY(ThorKdTree);
-
- public:
-  typedef TParam Param;
-  typedef TPoint Point;
-  typedef TNode Node;
-  typedef ThorTreeDecomposition<Node> TreeDecomposition;
-  typedef typename ThorTreeDecomposition<Node>::DecompNode DecompNode;
-
- private:
-  DistributedCache points_;
-  DistributedCache nodes_;
-  Param param_;
-  TreeDecomposition *decomp_;
-
- public:
-  ThorKdTree() {}
-  ~ThorKdTree() {}
-
-  create an init method
-
-  /**
-   * Performs a distributed tree-update.
-   *
-   * Note that this does NOT broadcast or reduce the visitor -- you must
-   * take care of it if you need to store data in the visitor!
-   */
-  template<typename Result, typename Visitor>
-  void Update(DistributedCache *results_cache, Visitor *visitor);
-
-  /**
-   * Creates a cache that's suitable for storing results or anything else.
-   *
-   * This array will be decomposed in the exact same way the points
-   * array is decomposed (same block size and everything).
-   */
-  template<typename Result>
-  void MakeDistributedCacheMaster(int channel, const Result& default_result,
-      size_t total_ram, DistributedCache *results);
-
-  /**
-   * The worker version of create-a-new-distributed-cache.
-   */
-  template<typename Result>
-  void MakeDistributedCacheWorker(int channel, size_t total_ram,
-      DistributedCache *results);
-
-  /**
-   * Initializes a distributed cache all initialized to a particular value,
-   * with the same topography as the original.
-   *
-   * Automatically dispatches between the master and worker method.
-   *
-   * If only the master machine can create a default result, it's probably
-   * better not to call this method.
-   */
-  template<typename Result>
-  void MakeDistributedCache(int channel, const Result& default_result,
-      size_t total_ram, DistributedCache *results);
-
-  /**
-   * Gets the distributed cache associated with points.
-   */
-  DistributedCache& points() {
-    return points_;
-  }
-  /**
-   * Gets the distributed cache associated with nodes.
-   */
-  DistributedCache& nodes() { return nodes_; }
-
-  /**
-   * Gets the known parameter object.
-   *
-   * This object is not updated except when the tree is created.
-   * If you need to update this, then use a broadcaster to relay the
-   * new param object between machines, and use set_param!
-   */
-  Param& param() const {
-    return *config_->param;
-  }
-
-  /**
-   * Sets the parameter objct.
-   */
-  void set_param(Param &new_param) {
-    delete *config_->param;
-    config_->param = new Param(new_param);
-  }
-
-  index_t nodes_block() const { return config_->nodes_block; }
-  index_t points_block() const { return config_->points_block; }
-  index_t n_points() const { return config_->n_points; }
-
-  ThorTreeDecomposition<Node>& decomposition() const {
-    return config_->decomp;
-  }
-
-  void MasterBuildTree(int tag, datanode *module);
-
- private:
-  void MasterLoadData(
-      Config *config, Param *param, int tag, datanode *module);
+template<typename Point, typename Node, typename Param>
+void CreateKdTree(const Param& param,
+    int nodes_channel, int extra_channel,
+    datanode *module, index_t n_points,
+    DistributedCache *points_cache,
+    ThorTree<Param, Point, Node> *tree_out);
 };
 
-template<typename TParam, typename TPoint, typename TNode>
-void ThorKdTree<TParam, TPoint, TNode>::Init(Param **parampp, int param_tag,
-    int base_channel, datanode *module) {
-  datanode *nodes_module = fx_submodule(module, "nodes", "nodes");
-
-  points_channel_ = base_channel + 0;
-  nodes_channel_ = base_channel + 1;
-
-  points_mb_ = fx_param_int(points_module_, "mb", 2000);
-  nodes_mb_ = fx_param_int(nodes_module_, "mb", 500);
-  if (rpc::is_root()) {
-    Config config;
-    MasterLoadData_(&config, *parampp, param_tag, module);
-    MasterBuildTree_(&config, *parampp, param_tag, module);
-    config.param = new Param(**parampp);
-    config_broadcaster_.SetData(config);
-  } else {
-    CacheArray<Point>::MakeDistributedCacheWorker(points_channel_,
-       size_t(points_mb_) * MEGABYTE, &points_);
-    CacheArray<Node>::MakeDistributedCacheWorker(nodes_channel_,
-       size_t(nodes_mb_) * MEGABYTE, &nodes_);
-  }
-  points_.StartSync();
-  nodes_.StartSync();
-  points_.WaitSync();
-  nodes_.WaitSync();
-  config_broadcaster_.Doit(base_channel + 2);
-  config_ = &config_broadcaster_.get();
-  delete *parampp;
-  *parampp = new Param(*config_->param);
-}
-
-template<typename TParam, typename TPoint, typename TNode>
-void ThorKdTree<TParam, TPoint, TNode>::MasterLoadData_(
-    Config *config, Param *param, int tag, datanode *module) {
-  config->points_block = fx_param_int(points_module_, "block", 1024);
-
-  fprintf(stderr, "master: Reading data\n");
-
-  fx_timer_start(module, "read");
-  TextLineReader reader;
-  if (FAILED(reader.Open(fx_param_str_req(module, "")))) {
-    FATAL("Could not open data file '%s'", fx_param_str_req(module, ""));
-  }
-  DatasetInfo schema;
-  schema.InitFromFile(&reader, "data");
-  config->dim = schema.n_features();
-
-  TPoint default_point;
-  default_point.vec().Init(config->dim);
-  default_point.vec().SetZero();
-  param->InitPointExtras(tag, &default_point);
-
-  CacheArray<Point>::MakeDistributedCacheMaster(
-      points_channel_, config->points_block, default_point,
-      size_t(points_mb_) * MEGABYTE,
-      &points_);
-  CacheArray<Point> points_array;
-  points_array.Init(&points_, BlockDevice::M_CREATE);
-  index_t i = 0;
-
-  for (;;) {
-    i = points_array.AllocD(rpc::rank(), 1);
-    CacheWrite<Point> point(&points_array, i);
-    bool is_done;
-    success_t rv = schema.ReadPoint(&reader, point->vec().ptr(), &is_done);
-    param->SetPointExtras(tag, i, point);
-    if (unlikely(FAILED(rv))) {
-      FATAL("Data file has problems");
-    }
-    if (is_done) {
-      break;
-    }
-  }
-
-  config->n_points = i;
-  param->Bootstrap(tag, config->dim, config->n_points);
-
-  fx_timer_stop(module, "read");
-}
-
-template<typename TParam, typename TPoint, typename TNode>
-void ThorKdTree<TParam, TPoint, TNode>::BuildTree(
-    Config *config, Param *param, int tag, datanode *module) {
-  config->nodes_block = fx_param_int(nodes_module_, "block", 256);
-
-  fprintf(stderr, "master: Building tree\n");
-  fx_timer_start(module, "tree");
+template<typename Point, typename Node, typename Param>
+void thor::CreateKdTreeMaster(const Param& param,
+    int nodes_channel, int block_size_kb, double megs, datanode *module,
+    index_t n_points,
+    DistributedCache *points_cache, DistributedCache *nodes_cache,
+    ThorTreeDecomposition<Node> *decomposition) {
   Node example_node;
-  example_node.Init(config->dim, *param);
-  CacheArray<Node>::MakeDistributedCacheMaster(
-      nodes_channel_, config->nodes_block, example_node,
-      size_t(nodes_mb_) * MEGABYTE,
-      &nodes_);
+
+  example_node.stat().Init(param);
+  Point example_point;
+  CacheArray<Point>::GetDefaultElement(points_cache, &example_point);
+  example_node.bound().Init(example_point.vec().length());
+
+  CacheArray<Node>::CreateCacheMaster(nodes_channel,
+      CacheArray<Node>::ConvertBlockSize(example_node, block_size_kb),
+      example_node, megs, nodes_cache);
   KdTreeHybridBuilder<Point, Node, Param> builder;
-  builder.Doit(module, param, 0, config->n_points,
-          &points_, &nodes_, &config->decomp);
-  fx_timer_stop(module, "tree");
+  builder.Doit(module, &param, 0, n_points, points_cache, nodes_cache,
+      decomposition);
+}
+
+template<typename Point, typename Node, typename Param>
+void thor::CreateKdTree(const Param& param,
+    int nodes_channel, int extra_channel,
+    datanode *module, index_t n_points,
+    DistributedCache *points_cache,
+    ThorTree<Param, Point, Node> *tree_out) {
+  double megs = fx_param_double(module, "megs", 1000);
+  DistributedCache *nodes_cache = new DistributedCache();
+  Broadcaster<ThorTreeDecomposition<Node> > broadcaster;
+
+  if (rpc::is_root()) {
+    ThorTreeDecomposition<Node> decomposition;
+    int block_size_kb = fx_param_int(module, "block_size_kb", 64);
+    CreateKdTreeMaster<Point, Node>(param,
+        nodes_channel, block_size_kb, megs, module, n_points,
+        points_cache, nodes_cache, &decomposition);
+    broadcaster.SetData(decomposition);
+  } else {
+    CacheArray<Node>::CreateCacheWorker(nodes_channel, megs, nodes_cache);
+  }
+
+  points_cache->Sync();
+  nodes_cache->Sync();
+  broadcaster.Doit(extra_channel); // broadcast the decomposition
+
+  tree_out->Init(param, broadcaster.get(), points_cache, nodes_cache);
 }
 
 #endif

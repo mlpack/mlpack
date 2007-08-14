@@ -207,8 +207,6 @@ typedef enum {
  */
 #define FAILED(x) (unlikely((x) <= SUCCESS_FAIL))
 
-EXTERN_C_END
-
 /** ANSI color sequence wrapper */
 #define ANSI_SEQ(str) "\033["str"m"
 /** Clears ANSI colors */
@@ -249,5 +247,10 @@ EXTERN_C_END
 #define ANSI_CYAN ANSI_SEQ("35")
 /** Color code: White */
 #define ANSI_WHITE ANSI_SEQ("36")
+
+/** The number of bytes in a megabyte, i.e. 1,048,576. */
+#define MEGABYTE (((size_t)1) << 20)
+
+EXTERN_C_END
 
 #endif

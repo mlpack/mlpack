@@ -7,6 +7,8 @@
 #ifndef THOR_THORSTRUCT_H
 #define THOR_THORSTRUCT_H
 
+#include "cachearray.h"
+
 #include "la/matrix.h"
 #include "base/otrav.h"
 
@@ -53,12 +55,6 @@ class ThorNode {
   }
 
  public:
-  template<typename Param>
-  void Init(index_t dim, const Param& param) {
-    bound_.Init(dim);
-    stat_.Init(param);
-  }
-
   void set_range(index_t begin_in, index_t count_in) {
     begin_ = begin_in;
     count_ = count_in;

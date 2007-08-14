@@ -103,12 +103,8 @@ void timer_emit_results(struct timer *timer, struct datanode *node)
   fx_format_result(node, "./wall/cycles", "%"LT"u", timer->total.cycles);
 #endif
   fx_format_result(node, "./wall/sec", "%f", timer->total.micros / 1e6);
-  fx_format_result(node, "./self/user", "%f",
+  fx_format_result(node, "./user", "%f",
 		   timer->total.cpu.tms_utime * clockrate);
-  fx_format_result(node, "./self/sys", "%f",
+  fx_format_result(node, "./sys", "%f",
 		   timer->total.cpu.tms_stime * clockrate);
-  fx_format_result(node, "./children/user", "%f",
-		   timer->total.cpu.tms_cutime * clockrate);
-  fx_format_result(node, "./children/sys", "%f",
-		   timer->total.cpu.tms_cstime * clockrate);
 }

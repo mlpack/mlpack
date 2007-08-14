@@ -466,6 +466,9 @@ class DistributedCache : public BlockDevice {
   /** I/O stats for all network requests. */
   IoStats world_net_stats_;
 
+  /** Indicates whether a sync event is going on. */
+  bool syncing_;
+
  public:
   //-----------------------------------------------------------------------
   //-- PUBLIC API

@@ -137,7 +137,7 @@ class KdTreeHybridBuilder {
  
  private:
   /** Determines the bounding box for a range of points. */
-  void FindBoundingBox_(index_t begin, index_t count, Bound* bound);
+  void FindBoundingBox_(index_t begin_index, index_t end_index, Bound* bound);
 
   /** Builds a specific node in the tree. */
   index_t Build_(index_t begin_col, index_t end_col,
@@ -146,6 +146,7 @@ class KdTreeHybridBuilder {
 
   /** Splits a node in the tree. */
   void Split_(Node* node, int begin_rank, int end_rank, int split_dim,
+      Node *parent,
       DecompNode** left_decomp_pp, DecompNode** right_decomp_pp);
 };
 
@@ -170,34 +171,36 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Doit(
 
   leaf_size_ = fx_param_int(module, "leaf_size", 32);
   chunk_size_ = points_.n_block_elems();
+  DEBUG_ASSERT_MSG(leaf_size_ < chunk_size_,
+      "Leaf size (%d) must be larger than chunk size (%d)",
+      int(leaf_size_), int(chunk_size_));
 
   fx_timer_start(module, "tree_build");
   DecompNode* decomp_root;
   Bound bound;
   bound.Init(dimension);
-  FindBoundingBox_(node->begin(), node->end(), &bound);
-  Build_(begin_index, end_index, 0, rpc::rank(), bound, NULL, &decomp_root);
+  FindBoundingBox_(begin_index, end_index, &bound);
+  Build_(begin_index, end_index, 0, rpc::n_peers(), bound, NULL, &decomp_root);
   decomposition->Init(decomp_root);
   fx_timer_stop(module, "tree_build");
 }
 
 template<typename TPoint, typename TNode, typename TParam>
 void KdTreeHybridBuilder<TPoint, TNode, TParam>::FindBoundingBox_(
-    index_t begin, index_t count, Bound* bound) {
-  CacheReadIter<Point> point(&points_, begin);
-  for (index_t i = count; i--; point.Next()) {
+    index_t begin_index, index_t end_index, Bound* bound) {
+  CacheReadIter<Point> point(&points_, begin_index);
+  for (index_t i = end_index - begin_index; i--; point.Next()) {
     *bound |= point->vec();
   }
 }
 
 template<typename TPoint, typename TNode, typename TParam>
-void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
+index_t KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
     index_t begin_col, index_t end_col,
     int begin_rank, int end_rank, const Bound& bound,
     Node* parent, DecompNode** decomp_pp) {
-  index_t node_i = nodes_.AllocD(begin_rank);
+  index_t node_i = nodes_.AllocD(begin_rank, 1);
   Node* node = nodes_.StartWrite(node_i);
-  bool leaf = (node->count() <= leaf_size_);
   DecompNode* left_decomp = NULL;
   DecompNode* right_decomp = NULL;
 
@@ -205,12 +208,12 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
   node->bound().Reset();
   node->bound() |= bound;
 
-  if (!leaf) {
+  if (node->count() > leaf_size_) {
     index_t split_dim = BIG_BAD_NUMBER;
     double max_width = -1;
 
     // Short loop to find widest dimension
-    for (index_t d = 0; d < dim_; d++) {
+    for (index_t d = 0; d < node->bound().dim(); d++) {
       double w = node->bound().get(d).width();
 
       if (unlikely(w > max_width)) {
@@ -219,8 +222,11 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
       }
     }
 
+    DEBUG_ASSERT_MSG(max_width >= 0, "max_width = %f, dim = %"LI"d, n = %"LI"d",
+        max_width, node->bound().dim(), node->count());
+
     // even if the max width is zero, we still* must* split it!
-    Split_(node, begin_rank, end_rank, split_dim,
+    Split_(node, begin_rank, end_rank, split_dim, parent,
         &left_decomp, &right_decomp);
   } else {
     node->set_leaf();
@@ -254,13 +260,13 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
 
   nodes_.StopWrite(node_i);
 
-  return decomp;
+  return node_i;
 }
 
 template<typename TPoint, typename TNode, typename TParam>
 void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
-    Node* node, int begin_rank, int end_rank, int split_dim,
-    DecompNode** left_decomp_pp, DecompNode *right_decomp_pp) {
+    Node* node, int begin_rank, int end_rank, int split_dim, Node *parent,
+    DecompNode** left_decomp_pp, DecompNode** right_decomp_pp) {
   index_t split_col;
   index_t begin_col = node->begin();
   index_t end_col = node->end();
@@ -270,8 +276,8 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
   typename Node::Bound final_left_bound;
   typename Node::Bound final_right_bound;
 
-  final_left_bound.Init(dim_);
-  final_right_bound.Init(dim_);
+  final_left_bound.Init(node->bound().dim());
+  final_right_bound.Init(node->bound().dim());
 
   if ((node->begin() & points_.n_block_elems_mask()) == 0
       && (!parent || parent->begin() != node->begin())) {
@@ -279,12 +285,12 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
     points_.cache()->GiveOwnership(
         points_.Blockid(node->begin()), begin_rank);
     // This is also a convenient time to display status.
-    percent_indicator("tree built", node->end(), n_points_);
+    percent_indicator("tree built", node->begin(), n_points_);
   }
 
   if (node->count() <= chunk_size_) {
     split_val = current_range.mid();
-    if (current_range.wid() == 0) {
+    if (current_range.width() == 0) {
       // All points are equal.  As a point of diligence, we still divide it,
       // into two overlapping nodes.
       split_col = (node->begin() + node->end()) / 2;
@@ -299,8 +305,9 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
     index_t goal_col;
     typename Node::Bound left_bound;
     typename Node::Bound right_bound;
-    left_bound.Init(dim_);
-    right_bound.Init(dim_);
+
+    left_bound.Init(node->bound().dim());
+    right_bound.Init(node->bound().dim());
 
     if (end_rank <= begin_rank + 1) {
       // All points will go on the same machine, so do median split.
@@ -366,9 +373,9 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
     left_decomp_pp = right_decomp_pp = NULL;
   }
 
-  node->set_child(0, Build_(begin_col, split_col,
+  node->set_child(0, Build_(node->begin(), split_col,
       begin_rank, split_rank, final_left_bound, node, left_decomp_pp));
-  node->set_child(1, Build_(split_col, end_col,
+  node->set_child(1, Build_(split_col, node->end(),
       split_rank, end_rank, final_right_bound, node, right_decomp_pp));
 }
 
