@@ -60,7 +60,8 @@ void DistributedCache::InitChannel_(int channel_num_in) {
 void DistributedCache::DoConfigRequest_() {
   BasicTransaction transaction;
   transaction.Init(channel_num_);
-  Message *message = transaction.CreateMessage(MASTER_RANK, sizeof(Request));
+  // WALDO -- This used to be sent to MASTER_RANK
+  Message *message = transaction.CreateMessage(rpc::parent(), sizeof(Request));
   Request *request = message->data_as<Request>();
 
   request->type = Request::CONFIG;
@@ -78,6 +79,7 @@ void DistributedCache::DoConfigRequest_() {
 }
 
 void DistributedCache::InitCommon_() {
+  syncing_ = false;
   disk_stats_.Init();
   net_stats_.Init();
   world_disk_stats_.Init();
@@ -168,7 +170,7 @@ void DistributedCache::ComputeStatusInformation_(
       status->owner = my_rank_;
       status->is_new = block->is_new();
     } else {
-      status->owner = -BIG_BAD_NUMBER;
+      status->owner = -1;
       status->is_new = false;
     }
   }
@@ -208,6 +210,8 @@ void DistributedCache::StartSync() {
   index_t i = slots_.size();
   BlockMetadata *blocks = blocks_.begin();
 
+  DEBUG_ASSERT_MSG(!syncing_, "Called StartSync twice before WaitSync!");
+
   // Might want to software-pipeline this loop, because of the really nasty
   // indirect load going on.
   do {
@@ -240,6 +244,7 @@ void DistributedCache::StartSync() {
 
   // TODO: Make absolutely certain nobody is currently accessesing the cache
   write_ranges_.Reset();
+  syncing_ = true;
   mutex_.Unlock();
 
   // make sure none of these writes are still in flight
@@ -250,6 +255,9 @@ void DistributedCache::StartSync() {
 
 void DistributedCache::WaitSync(datanode *node) {
   channel_.WaitSync();
+
+  mutex_.Lock();
+  syncing_ = false;
   if (node) {
     /*disk_stats().Report(n_block_bytes_, n_blocks_,
         fx_submodule(node, NULL, "disk_stats"));
@@ -265,6 +273,7 @@ void DistributedCache::WaitSync(datanode *node) {
   }
   disk_stats_.Reset();
   net_stats_.Reset();
+  mutex_.Unlock();
 }
 
 void DistributedCache::ResetElements() {

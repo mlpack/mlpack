@@ -41,7 +41,14 @@ namespace math {
   inline T Sqr(T v) {
     return v * v;
   }
-  
+
+  /**
+   * Rounds a double-precision to an integer, casting it too.
+   */
+  inline int RoundInt(double d) {
+    return int(nearbyint(d));
+  }
+
   /**
    * Forces a number to be non-negative, turning negative numbers into zero.
    *

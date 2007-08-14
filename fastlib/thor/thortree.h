@@ -9,8 +9,7 @@
 #ifndef SUPERPAR_KD_H
 #define SUPERPAR_KD_H
 
-#include "cachearray.h"
-#include "thorstruct.h"
+#include "thortree_algs.h"
 
 /**
  * A ThorTree is a distributed tree of any point and node type.
@@ -30,7 +29,7 @@ class ThorTree {
 
  private:
   Param param_;
-  ThorTreeDecomposition decomp_;
+  ThorTreeDecomposition<Node> decomp_;
   DistributedCache *points_;
   DistributedCache *nodes_;
 
@@ -41,7 +40,8 @@ class ThorTree {
     delete nodes_;
   }
 
-  void Init(const Param& param_in, const ThorTreeDecomposition &decomp_in,
+  void Init(const Param& param_in,
+      const ThorTreeDecomposition<Node> &decomp_in,
       DistributedCache *points_in, DistributedCache *nodes_in) {
     param_.Copy(param_in);
     decomp_.Copy(decomp_in);
@@ -52,10 +52,7 @@ class ThorTree {
   void set_param(const Param& param_in) {
     param_ = param_in;
   }
-  void set_decomp(const ThorTreeDecomposition& decomp_in) {
-    decomp_ = decomp_in;
-  }
-  void set_decomp(const ThorTreeDecomposition& decomp_in) {
+  void set_decomp(const ThorTreeDecomposition<Node>& decomp_in) {
     decomp_ = decomp_in;
   }
 
@@ -64,7 +61,7 @@ class ThorTree {
   /** Gets the parameter object characterizing this tree. */
   Param& param() { return param_; }
   /** Gets the decomposition dividing this tree. */
-  const ThorTreeDecomposition& decomp() const { return decomp_; }
+  const ThorTreeDecomposition<Node>& decomp() const { return decomp_; }
   /** Gets the array of points comporising this tree. */
   DistributedCache& points() { return *points_; }
   /** Gets the array of nodes dividing this tree. */
@@ -77,7 +74,7 @@ class ThorTree {
   }
   /** Gets the number of points. */
   index_t n_points() const {
-    return root_node().count();
+    return root().count();
   }
 
   /**
@@ -87,8 +84,36 @@ class ThorTree {
   void Update(DistributedCache *results_cache, Visitor *visitor) {
     ThorUpdate<Param, Point, Node, Result, Visitor> updater;
     updater.Doit(rpc::rank(), &param_, decomp_,
-        visitor, results_cache, &points_, &nodes_);
+        visitor, results_cache, points_, nodes_);
   }
+
+  /**
+   * Creates a new cache that has one element per point in the original
+   * cache, distributed among the machines in the same way the points
+   * are.
+   *
+   * This automatically calls the master or worker version of this depending
+   * on rank.
+   */
+  template<typename Result>
+  void CreateResultCache(int channel, const Result& default_result,
+      double megs, DistributedCache *results);
+  /**
+   * Same as CreateResultCache, but only the master calls this.
+   *
+   * This actually does the initialization.
+   */
+  template<typename Result>
+  void CreateResultCacheMaster(int channel, const Result& default_result,
+      double megs, DistributedCache *results);
+  /**
+   * Same as CreateResultCache, but only the workers calls this.
+   *
+   * This just waits for the master to sync up.
+   */
+  template<typename Result>
+  void CreateResultCacheWorker(int channel,
+      double megs, DistributedCache *results);
 };
 
 //-------------------------------------------------------------------------
@@ -97,17 +122,18 @@ class ThorTree {
 
 //-- ThorTree
 
-template<typename TParam, typename TPoint, typename TNode, typename Result>
-void ThorKdTree<TParam, TPoint, TNode>::InitDistributedCacheMaster(
+template<typename TParam, typename TPoint, typename TNode>
+template<typename Result>
+void ThorTree<TParam, TPoint, TNode>::CreateResultCacheMaster(
     int channel, const Result& default_result,
-    size_t total_ram, DistributedCache *results) {
+    double megs, DistributedCache *results) {
   DEBUG_ASSERT_MSG(rpc::rank() == 0, "Only master calls this");
-  index_t block_size = config_->points_block;
-  CacheArray<Result>::InitDistributedCacheMaster(channel,
-      block_size, default_result, total_ram, results);
+  index_t block_size = CacheArray<Point>::GetNumBlockElements(points_);
+  CacheArray<Result>::CreateCacheMaster(channel,
+      block_size, default_result, megs, results);
 
   for (int i = 0; i < rpc::n_peers(); i++) {
-    const TreeGrain *grain = &config_->decomp.grain_by_owner(i);
+    const TreeGrain *grain = &decomp_.grain_by_owner(i);
     if (grain->is_valid()) {
       BlockDevice::blockid_t begin_block =
           (grain->point_begin_index + block_size - 1) / block_size;
@@ -122,25 +148,26 @@ void ThorKdTree<TParam, TPoint, TNode>::InitDistributedCacheMaster(
   results->WaitSync();
 }
 
-template<typename TParam, typename TPoint, typename TNode, typename Result>
-void ThorKdTree<TParam, TPoint, TNode>::InitDistributedCacheWorker(
-    int channel, size_t total_ram, DistributedCache *results) {
+template<typename TParam, typename TPoint, typename TNode>
+template<typename Result>
+void ThorTree<TParam, TPoint, TNode>::CreateResultCacheWorker(
+    int channel, double megs, DistributedCache *results) {
   DEBUG_ASSERT_MSG(rpc::rank() != 0, "Only workers call this");
-  CacheArray<Result>::InitDistributedCacheWorker(channel, total_ram, results);
+  CacheArray<Result>::CreateCacheWorker(channel, megs, results);
   results->StartSync();
   results->WaitSync();
 }
 
-template<typename TParam, typename TPoint, typename TNode, typename Result>
-void ThorKdTree<TParam, TPoint, TNode>::InitDistributedCache(
+template<typename TParam, typename TPoint, typename TNode>
+template<typename Result>
+void ThorTree<TParam, TPoint, TNode>::CreateResultCache(
     int channel, const Result& default_result,
-    size_t total_ram, DistributedCache *results) {
+    double megs, DistributedCache *results) {
   if (rpc::rank() == 0) {
-    InitDistributedCacheMaster(channel, default_result, total_ram, results);
+    CreateResultCacheMaster(channel, default_result, megs, results);
   } else {
-    InitDistributedCacheWorker<Result>(channel, total_ram, results);
+    CreateResultCacheWorker<Result>(channel, megs, results);
   }
 }
-
 
 #endif

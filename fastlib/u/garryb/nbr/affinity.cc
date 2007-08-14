@@ -33,6 +33,25 @@ As one-variable rho:
 #define SIMILARITY_MAX 0
 
 struct AffinityCommon {
+  struct Param {
+   public:
+    /** Self-pereference. */
+    double pref;
+    /** The damping factor. */
+    double lambda;
+
+    OT_DEF(Param) {
+      OT_MY_OBJECT(pref);
+      OT_MY_OBJECT(lambda);
+    }
+
+   public:
+    void Init(datanode *module) {
+      pref = fx_param_double_req(module, "pref");
+      lambda = fx_param_double(module, "lambda", 0.6);
+    }
+  };
+
   /** The bounding type. Required by THOR. */
   typedef DHrectBound<2> Bound;
 
@@ -73,59 +92,38 @@ struct AffinityCommon {
     }
   };
 
-  typedef ThorVectorInfoPoint<CombinedInfo> Point;
+  class Point {
+   private:
+    Vector vec_;
+    CombinedInfo info_;
 
-  struct Param {
-   public:
-    /** The dimensionality of the data sets. */
-    index_t dim;
-    /** Number of points */
-    index_t n_points;
-    /** Self-pereference. */
-    double pref;
-    /** The damping factor. */
-    double lambda;
-
-    OT_DEF(Param) {
-      OT_MY_OBJECT(dim);
-      OT_MY_OBJECT(n_points);
-      OT_MY_OBJECT(pref);
-      OT_MY_OBJECT(lambda);
+    OT_DEF(Point) {
+      OT_MY_OBJECT(vec_);
+      OT_MY_OBJECT(info_);
     }
 
    public:
-    void Init(datanode *module) {
-      dim = -1;
-      pref = fx_param_double_req(module, "pref");
-      lambda = fx_param_double(module, "lambda", 0.6);
+    void Init(const Param& param, const DatasetInfo& schema) {
+      vec_.Init(schema.n_features());
+      info_.alpha.max1 = 0;
+      info_.alpha.max2 = 0;
+      info_.alpha.max1_index = -1;
+      info_.rho = param.pref;
     }
 
-    void InitPointExtras(int tag, Point *point) const {
-      point->info().rho = DBL_NAN;
-      point->info().alpha.max1 = DBL_NAN;
-      point->info().alpha.max2 = DBL_NAN;
-      point->info().alpha.max1_index = -1;
-    }
-
-    void SetPointExtras(int tag, index_t index, Point *point) const {
-      point->info().alpha.max1 = 0;
-      point->info().alpha.max2 = pref;
-      point->info().alpha.max1_index = index;
-      if (rand() % 256 == 0) {
-        point->info().rho = -pref * 0.25;
-      } else {
-        point->info().rho = 0;
+    void Set(const Param& param, const Vector& data) {
+      vec_.CopyValues(data);
+      // Randomly prime points to be exemplars.
+      if (rand() % 1024 == 0) {
+        info_.rho = -param.pref / 2;
       }
     }
 
-    void Bootstrap(int tag, index_t dim_in, index_t count) {
-      dim = dim_in;
-      n_points = count;
-      // NOTE: These values are manually assigned to be different later.
-    }
-
-    void SetEpsilon(double eps_in) {
-    }
+    const Vector& vec() const { return vec_; }
+    Vector& vec() { return vec_; }
+    
+    const CombinedInfo& info() const { return info_; }
+    CombinedInfo& info() { return info_; }
   };
 
   struct CombinedStat {
@@ -390,7 +388,7 @@ class AffinityAlpha {
         const QNode& q_node, const RNode& r_node, const Delta& delta,
         const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      return (delta.alpha.hi > q_summary_result.alpha.lo);
+      return (delta.alpha.hi >= q_summary_result.alpha.lo);
     }
     static bool ConsiderQueryTermination(const Param& param,
         const QNode& q_node,
@@ -565,7 +563,8 @@ struct ApplyAlphas {
     sum_alpha2 = 0;
   }
 
-  void Update(AffinityCommon::Point *point, AffinityAlpha::QResult* result) {
+  void Update(index_t index,
+      AffinityCommon::Point *point, AffinityAlpha::QResult* result) {
     point->info().alpha = result->alpha;
     sum_alpha1 += result->alpha.max1;
     sum_alpha2 += result->alpha.max2;
@@ -585,12 +584,14 @@ struct ApplyRhos {
  public:
   const AffinityCommon::Param *param;
   index_t n_changed;
+  index_t hash;
   index_t n_exemplars;
   double squared_difference;
   double sum;
 
   OT_DEF(ApplyRhos) {
     OT_MY_OBJECT(n_changed);
+    OT_MY_OBJECT(hash);
     OT_MY_OBJECT(n_exemplars);
     OT_MY_OBJECT(squared_difference);
     OT_MY_OBJECT(sum);
@@ -604,36 +605,36 @@ struct ApplyRhos {
  public:
   void Init(const AffinityCommon::Param *param_in) {
     param = param_in;
+    hash = 0;
     n_changed = 0;
     n_exemplars = 0;
     squared_difference = 0;
     sum = 0;
   }
 
-  void Update(AffinityCommon::Point *point, AffinityRho::QResult* result) {
+  void Update(index_t index,
+      AffinityCommon::Point *point, AffinityRho::QResult* result) {
     double old_rho = point->info().rho;
     double new_rho = damp(param->lambda, old_rho, result->rho);
     bool was_exemplar = (old_rho > 0);
     bool wants_exemplar = (result->rho > 0);
 
     if (was_exemplar != wants_exemplar) {
-      // if exemplar status is trying to change, damp it again
-      // (because when a point changes exemplar status it invokes a chain
-      // reaction causing other points to change).  but, damp it randomly,
-      // as a form of symmetry-breaking
-      new_rho = damp(math::Random(0.5, 1.0), old_rho, new_rho);
+      // If exemplar status is trying to change, damp it again.
+      // This double-damping attempts to avoid the chain reaction that
+      // occurs when a point changes exemplar status.
+      // But, damp randomly, as a form of symmetry-breaking.
+      new_rho = damp(math::Random(0.0, 1.0), old_rho, new_rho);
+      n_changed++;
+      hash ^= index;
     }
 
     bool now_exemplar = (new_rho > 0);
 
-    if (was_exemplar != now_exemplar) {
-      n_changed++;
-    }
-
     squared_difference += math::Sqr(new_rho - old_rho);
     sum += new_rho;
 
-    if (new_rho > 0) {
+    if (now_exemplar) {
       n_exemplars++;
     }
 
@@ -645,6 +646,7 @@ struct ApplyRhos {
     n_exemplars += other.n_exemplars;
     squared_difference += other.squared_difference;
     sum += other.sum;
+    hash ^= other.hash;
   }
 };
 
@@ -688,15 +690,15 @@ void AffinityTimer::RecordTimes(timer *alpha_timer, timer *rho_timer) {
 void AffinityMain(datanode *module, const char *gnp_name) {
   AffinityCommon::Param *param;
   AffinityTimer timestats;
-  const int MEGABYTE = 1048576;
   const int TREE_CHANNEL = 300;
   const int ALPHA_CHANNEL = 350;
   const int RHO_CHANNEL = 360;
   const int REDUCE_CHANNEL = 370;
   const int DONE_CHANNEL = 390;
-  int convergence = fx_param_int(module, "affinity/convergence", 40);
+  int convergence = fx_param_int(module, "affinity/convergence", 50);
   int stable_iterations = 0;
   int maxit = fx_param_int(module, "affinity/maxit", 1000);
+  index_t n_points;
 
   if (!rpc::is_root()) {
     // turn off fastexec output
@@ -708,43 +710,45 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   param = new AffinityCommon::Param();
   param->Init(fx_submodule(module, gnp_name, gnp_name));
 
-  ThorKdTree<AffinityCommon::Param,
+  ThorTree<AffinityCommon::Param,
       AffinityCommon::Point, AffinityCommon::Node> tree;
   DistributedCache alphas;
   DistributedCache rhos;
 
   // One thing to note: alpha and rho are never taking up
   // RAM at the same time!
-  size_t alpha_mb = fx_param_int(module, "alpha/mb", 200);
-  size_t rho_mb = fx_param_int(module, "rho/mb", 100);
+  double alpha_mb = fx_param_double(module, "alpha/megs", 200);
+  double rho_mb = fx_param_double(module, "rho/megs", 100);
   timer *timer_alpha = fx_timer(module, "all_alpha");
   timer *timer_rho = fx_timer(module, "all_rho");
 
-  tree.Init(&param, 0, TREE_CHANNEL, fx_submodule(module, "data", "data"));
+  fx_timer_start(module, "read");
+  DistributedCache *points_cache = new DistributedCache();
+  n_points = thor::ReadPoints<AffinityCommon::Point>(
+      *param, TREE_CHANNEL + 0, TREE_CHANNEL + 1,
+      fx_submodule(module, "data", "data"), points_cache);
+  fx_timer_stop(module, "read");
 
-  if (rpc::is_root()) {
-    AffinityAlpha::QResult alpha_default;
-    alpha_default.Init(*param);
-    tree.InitDistributedCacheMaster(ALPHA_CHANNEL, alpha_default,
-        alpha_mb * MEGABYTE, &alphas);
-    AffinityRho::QResult rho_default;
-    rho_default.Init(*param);
-    tree.InitDistributedCacheMaster(RHO_CHANNEL, rho_default,
-        rho_mb * MEGABYTE, &rhos);
-  } else {
-    tree.InitDistributedCacheWorker<AffinityAlpha::QResult>(
-        ALPHA_CHANNEL, alpha_mb * MEGABYTE, &alphas);
-    tree.InitDistributedCacheWorker<AffinityRho::QResult>(
-        RHO_CHANNEL, rho_mb * MEGABYTE, &rhos);
-  }
+  fx_timer_start(module, "tree");
+  thor::CreateKdTree<AffinityCommon::Point, AffinityCommon::Node>(
+      *param, TREE_CHANNEL + 2, TREE_CHANNEL + 3,
+      fx_submodule(module, "tree", "tree"), n_points, points_cache, &tree);
+  fx_timer_stop(module, "tree");
 
-  index_t n_points = tree.n_points();
+  AffinityAlpha::QResult alpha_default;
+  alpha_default.Init(*param);
+  tree.CreateResultCache(ALPHA_CHANNEL, alpha_default,
+      alpha_mb, &alphas);
+  AffinityRho::QResult rho_default;
+  rho_default.Init(*param);
+  tree.CreateResultCache(RHO_CHANNEL, rho_default,
+      rho_mb, &rhos);
 
   for (int iter = 0;;) {
     iter++;
 
     fx_timer_start(module, "all_alpha");
-    thor_utils::RpcDualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
+    thor::RpcDualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
         fx_submodule(module, "thor", "iter/%d/alpha", iter), 200,
         *param, &tree, &tree, &alphas, NULL);
     ApplyAlphas apply_alphas;
@@ -760,7 +764,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     fx_timer_stop(module, "all_alpha");
 
     fx_timer_start(module, "all_rho");
-    thor_utils::RpcDualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
+    thor::RpcDualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
         fx_submodule(module, "thor", "iter/%d/rho", iter), 200,
         *param, &tree, &tree, &rhos, NULL);
     ApplyRhos apply_rhos;
@@ -768,10 +772,10 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     tree.Update<AffinityRho::QResult>(&rhos, &apply_rhos);
     rpc::Reduce(REDUCE_CHANNEL+1, VisitorReductor<ApplyRhos>(), &apply_rhos);
     if (rpc::is_root()) {
-      fprintf(stderr, ANSI_GREEN"--- %3d:  rho: %"LI"d exemplars (%"LI"d changed, rms diff=%f, avg=%f)"ANSI_CLEAR"\n",
+      fprintf(stderr, ANSI_GREEN"--- %3d:  rho: %"LI"d exemplars (%"LI"d changed, rms diff=%.1e, hash=%"LI"d)"ANSI_CLEAR"\n",
           iter, apply_rhos.n_exemplars, apply_rhos.n_changed,
           sqrt(apply_rhos.squared_difference / n_points),
-          apply_rhos.sum / n_points);
+          apply_rhos.hash);
     }
     rhos.ResetElements();
     fx_timer_stop(module, "all_rho");
@@ -816,7 +820,6 @@ int main(int argc, char *argv[]) {
   rpc::Done();
   fx_done();
 }
-
 
 
 #if 0
@@ -930,7 +933,7 @@ int main(int argc, char *argv[]) {
 //      q_results_alpha.Init(default_result_alpha, data_points.end_index(),
 //          data_points.n_block_elems());
 //
-//      thor_utils::ThreadedDualTreeSolver
+//      thor::ThreadedDualTreeSolver
 //               < AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >::Solve(
 //          fx_submodule(module, "threads", "iters/%d/alpha", iter), param,
 //          &data_points, &data_nodes, &data_points, &data_nodes,
@@ -954,7 +957,7 @@ int main(int argc, char *argv[]) {
 //        }
 //      }
 //
-//      thor_utils::StatFixer<
+//      thor::StatFixer<
 //          AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
 //          ::Fix(param, &data_points, &data_nodes);
 //    }
@@ -975,7 +978,7 @@ int main(int argc, char *argv[]) {
 //      q_results_rho.Init(default_result_rho, data_points.end_index(),
 //          data_points.n_block_elems());
 //
-//      thor_utils::ThreadedDualTreeSolver< AffinityRho, DualTreeDepthFirst<AffinityRho> >::Solve(
+//      thor::ThreadedDualTreeSolver< AffinityRho, DualTreeDepthFirst<AffinityRho> >::Solve(
 //          fx_submodule(module, "threads", "iters/%d/rho", iter), param,
 //          &data_points, &data_nodes, &data_points, &data_nodes,
 //          &q_results_rho);
@@ -1007,7 +1010,7 @@ int main(int argc, char *argv[]) {
 //      }
 //
 //
-//      thor_utils::StatFixer<
+//      thor::StatFixer<
 //          AffinityAlpha::Param, AffinityAlpha::QPoint, AffinityAlpha::QNode>
 //          ::Fix(param, &data_points, &data_nodes);
 //

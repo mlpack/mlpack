@@ -164,8 +164,6 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   q_nodes_.StopRead(q_root_index);
 
   //fx_timer_stop(datanode_, "execute");
-
-#warning we should collect statistics
   /*DEBUG_ONLY(fx_format_result(datanode_, "naive_ratio", "%f",
       1.0 * n_naive_ / q_root->count() / r_root_->count()));
   DEBUG_ONLY(fx_format_result(datanode_, "naive_per_query", "%f",

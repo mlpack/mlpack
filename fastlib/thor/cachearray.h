@@ -3,8 +3,6 @@
 
 #include "distribcache.h"
 
-#warning "initialize in terms of kb per block, not elements per block"
-
 /**
  * Array elements may vary in size from run to run.  However, we place the
  * constraint that each array element must be the same size, derived all
@@ -76,6 +74,12 @@ class CacheArrayBlockHandler : public BlockHandler {
   size_t n_elem_bytes() {
     return default_elem_.size();
   }
+
+  void GetDefaultElement(T *default_element_out) {
+    ArrayList<char> tmp(default_elem_);
+    const T* source = ot::PointerThaw<T>(tmp.begin());
+    ot::Copy(*source, default_element_out);
+  }
 };
 
 // LIMITATION: This type of cache array assumes that everything fits in
@@ -131,22 +135,55 @@ class CacheArray {
   DistributedCache *cache_;
 
  public:
+  /**
+   * Finds a power-of-two block size that is at most the specified number
+   * of kilobytes.
+   */
+  static index_t ConvertBlockSize(const Element& element, int kilobytes) {
+    size_t elem_size = ot::PointerFrozenSize(element);
+    size_t bytes = size_t(kilobytes) << 10;
+    int i;
+
+    for (i = 0; (size_t(1) << i) * elem_size <= bytes; i++) {}
+
+    return index_t(1) << (i - 1);
+  }
   /** Helper to help you create a DistributedCache. */
-  static void MakeDistributedCacheMaster(int channel,
-      index_t n_block_elems, const Element& default_elem, size_t total_ram,
+  static void CreateCacheMaster(int channel,
+      index_t n_block_elems, const Element& default_elem, double megs,
       DistributedCache *cache) {
     CacheArrayBlockHandler<Element> *handler =
         new CacheArrayBlockHandler<Element>();
     handler->Init(default_elem);
     cache->InitMaster(channel, n_block_elems * handler->n_elem_bytes(),
-        total_ram, handler);
+        math::RoundInt(megs * MEGABYTE), handler);
   }
   /** Helper to help you connect a DistributedCache to master. */
-  static void MakeDistributedCacheWorker(int channel,
-      size_t total_ram, DistributedCache *cache) {
+  static void CreateCacheWorker(int channel, double megs,
+      DistributedCache *cache) {
     CacheArrayBlockHandler<Element> *handler =
         new CacheArrayBlockHandler<Element>();
-    cache->InitWorker(channel, total_ram, handler);
+    cache->InitWorker(channel, math::RoundInt(megs * MEGABYTE), handler);
+  }
+  /**
+   * Gets the default element of a cache.
+   */
+  static void GetDefaultElement(DistributedCache *cache, Element *element) {
+    static_cast<CacheArrayBlockHandler<TElement>*>(
+        cache->block_handler())->GetDefaultElement(element);
+  }
+  /**
+   * Gets size of an element.
+   */
+  static size_t GetNumElementBytes(DistributedCache *cache) {
+    return static_cast<CacheArrayBlockHandler<TElement>*>(
+        cache->block_handler())->n_elem_bytes();
+  }
+  /**
+   * Gets the number of elements in a block.
+   */
+  static size_t GetNumBlockElements(DistributedCache *cache) {
+    return cache->n_block_bytes() / GetNumElementBytes(cache);
   }
 
  public:
@@ -154,6 +191,13 @@ class CacheArray {
   ~CacheArray() {
     Flush();
     mem::Free(fifo_);
+  }
+
+  void InitCreate(int channel, index_t n_block_elems,
+      const Element& default_elem, double megs, DistributedCache *cache_in) {
+    CreateCacheMaster(channel, n_block_elems, default_elem,
+        megs, cache_in);
+    Init(cache_in, BlockDevice::M_CREATE);
   }
 
   /** Reopens another cache array, the same range */
@@ -722,76 +766,4 @@ class SubsetArray {
   }
 };
 
-//#error what *is* a TempCache now?
-///**
-// * Specialed cache-array to simplify the creation/cleanup process.
-// */
-//template<typename TElement>
-//class TempCacheArray : public CacheArray<TElement> {
-// private:
-//  DistributedCache underlying_cache_;
-//  NullBlockDevice null_device_;
-//
-// public:
-//  ~TempCacheArray() {
-//    CacheArray<TElement>::Flush(true);
-//  }
-//
-//  /** Creates a blank, temporary cached array */
-//  void Init(const TElement& default_obj,
-//      index_t n_elems_in,
-//      unsigned int n_block_elems_in,
-//      size_t total_ram = 16777216) {
-//    CacheArrayBlockHandler<TElement> *handler =
-//        new CacheArrayBlockHandler<TElement>;
-//    handler->Init(default_obj);
-//
-//    null_device_.Init(0, n_block_elems_in * handler->n_elem_bytes());
-//    underlying_cache_.InitMaster(&null_device_, handler, BlockDevice::M_TEMP);
-//
-//    CacheArray<TElement>::Init(&underlying_cache_, BlockDevice::M_TEMP, 0, 0);
-//
-//    if (n_elems_in != 0) {
-//      // Allocate a bunch of space.
-//      CacheArray<TElement>::Alloc(n_elems_in);
-//    }
-//  }
-//};
-
 #endif
-
-//  void WriteHeader(BlockDevice *inner_device) {
-//    // Next, we store the ArrayList in another ArrayList because we can't
-//    // get away with storing just the object (we would lose the size).
-//    ArrayList<char> buffer;
-//    buffer.Init(inner_device->n_block_bytes());
-//    size_t array_size = ot::PointerFrozenSize(default_elem_);
-//    (void) array_size;
-//    DEBUG_ASSERT_MSG(array_size <= inner_device->n_block_bytes(),
-//        "Too small of a block size, must be at least %ld bytes (obj is %ld)",
-//        long(array_size), long(default_elem_.size()));
-//    ot::PointerFreeze(default_elem_, buffer.begin());
-//
-//    BlockDevice::blockid_t blockid = inner_device->AllocBlocks(1);
-//    (void) blockid;
-//    DEBUG_ASSERT_MSG(blockid == HEADER_BLOCKID, "Header block already exists");
-//    inner_device->Write(HEADER_BLOCKID, 0,
-//        inner_device->n_block_bytes(), buffer.begin());
-//  }
-
-//  /**
-//   * Inits from a block device -- using this on the cache itself will
-//   * probably cause lots of trouble (especially in non-read modes) so please
-//   * use it on the underlying block device.
-//   */
-//  void InitFromDevice(BlockDevice *inner_device) {
-//    ArrayList<char> buffer;
-//
-//    buffer.Init(inner_device->n_block_bytes());
-//    // Read the first block, the header
-//    inner_device->Read(HEADER_BLOCKID, 0,
-//        inner_device->n_block_bytes(), buffer.begin());
-//    ArrayList<char> *default_elem_stored =
-//        ot::PointerThaw< ArrayList<char> >(buffer.begin());
-//    default_elem_.Copy(*default_elem_stored);
-//  }

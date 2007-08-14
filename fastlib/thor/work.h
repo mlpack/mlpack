@@ -100,6 +100,13 @@ class CentroidWorkQueue
     index_t max_grain_size;
     Vector sum_centers;
     MinHeap<double, InternalNode*> work_items;
+    
+    OT_DEF(ProcessWorkQueue) {
+      OT_MY_OBJECT(n_centers);
+      OT_MY_OBJECT(max_grain_size);
+      OT_MY_OBJECT(sum_centers);
+      OT_MY_OBJECT(work_items);
+    }
   };
 
  private:
@@ -193,8 +200,8 @@ void CentroidWorkQueue<Node>::DistributeInitialWork_(
     // won't have any work to do...
     Vector center;
     node->node().bound().CalculateMidpoint(&center);
-    index_t max_grain_size = int(nearbyint(
-        node->count() / granularity_ / n_threads_));
+    index_t max_grain_size = math::RoundInt(
+        node->count() / granularity_ / n_threads_);
 
     for (int i = begin_rank; i < end_rank; i++) {
       ProcessWorkQueue *queue = &processes_[i];

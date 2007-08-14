@@ -1,6 +1,8 @@
 #ifndef THOR_GNP_H
 #define THOR_GNP_H
 
+#include "la/matrix.h"
+#include "data/dataset.h"
 #include "base/otrav.h"
 #include "fx/fx.h"
 

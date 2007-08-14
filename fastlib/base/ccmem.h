@@ -412,6 +412,17 @@ namespace mem {
   inline ptrdiff_t PointerAbsoluteAddress(const T* pointer) {
     return reinterpret_cast<ptrdiff_t>(pointer);
   }
+
+  /**
+   * Determines if two pointers are the same.
+   *
+   * If the pointers are different types, this always returns false.  If
+   * they are of the same type, a pointer 
+   */
+  template<typename A, typename B>
+  inline bool PointersEqual(const A* a, const B* b) {
+    return reinterpret_cast<size_t>(a) == reinterpret_cast<size_t>(b);
+  } 
 };
 
 

@@ -9,6 +9,8 @@
 #ifndef THORTREE_ALGS_H
 #define THORTREE_ALGS_H
 
+#include "thor_struct.h"
+
 /**
  * A single work item.
  */
@@ -73,7 +75,7 @@ class ThorTreeDecomposition {
     }
 
     int Interpolate(index_t numerator, index_t denominator) {
-      return math::IntRound(double(end_rank - begin_rank)
+      return math::RoundInt(double(end_rank - begin_rank)
           * numerator / denominator) + begin_rank;
     }
 
@@ -110,9 +112,10 @@ class ThorTreeDecomposition {
   void Init(DecompNode *root_in) {
     root_ = root_in;
     DEBUG_ASSERT(root_->info().begin_rank == 0);
-    int n = root_->info().end_rank;
-    grain_by_owner_.Init(n);
-    for (int i = 0; i < n; i++) {
+    DEBUG_ASSERT(root_->info().end_rank == rpc::n_peers());
+    DEBUG_ASSERT(root_in != NULL);
+    grain_by_owner_.Init(rpc::n_peers());
+    for (int i = 0; i < grain_by_owner_.size(); i++) {
       grain_by_owner_[i].InitBlank();
     }
     FillLinearization_(root_);
@@ -186,7 +189,7 @@ class ThorUpdate {
 
 //-- ThorTreeDecomposition
 
-template<class TNode> {
+template<class TNode>
 void ThorTreeDecomposition<TNode>::FillLinearization_(DecompNode *node) {
   TreeGrain *grain;
 
@@ -299,10 +302,11 @@ void ThorUpdate<TParam, TPoint, TNode, TResult, TVisitor>::Recurse_(
     CacheWriteIter<Result> result(results_, node->begin());
     CacheWriteIter<Point> point(points_, node->begin());
 
-    for (index_t i = 0; i < node->count(); i++, point.Next(), result.Next()) {
-      visitor_->Update(point, result);
+    for (index_t i = node->begin(); i < node->end();
+        i++, point.Next(), result.Next()) {
+      visitor_->Update(i, point, result);
       node->stat().Accumulate(*param_, *point);
-      node->bound() |= *point;
+      node->bound() |= point->vec();
     }
   }
 

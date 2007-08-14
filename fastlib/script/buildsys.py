@@ -61,8 +61,8 @@ class GCCCompiler(CompilerInfo):
     self.mode_dictionary = {
       "verbose": "-g -DDEBUG -DVERBOSE",
       "debug": "-g3 -DDEBUG -O0",
-      "check": "-O2 -finline-functions -g -DDEBUG",
-      "fast": "-O2 -finline-functions -fomit-frame-pointer -g -DNDEBUG -finline-limit=2000",
+      "check": "-O2 -finline-functions -finline-limit=2000 -g -DDEBUG",
+      "fast": "-O2 -finline-functions -finline-limit=2000 -fomit-frame-pointer -g -DNDEBUG",
       "unsafe": "-O3 -ffast-math -g -fomit-frame-pointer -DNDEBUG",
       "profile" : "-O2 -pg -finline-limit=12 -DPROFILE -DNDEBUG",
       "small": "-Os -DNDEBUG",
@@ -84,8 +84,8 @@ class GCC4Compiler(CompilerInfo):
     self.mode_dictionary = {
       "verbose": "-g -DDEBUG -DVERBOSE",
       "debug": "-g3 -DDEBUG -O0",
-      "check": "-O2 -finline-functions -g -DDEBUG",
-      "fast": "-O2 -finline-functions -fomit-frame-pointer -g -DNDEBUG -finline-limit=1000",
+      "check": "-O2 -finline-functions -finline-limit=2000 -g -DDEBUG",
+      "fast": "-O2 -finline-functions -finline-limit=2000 -fomit-frame-pointer -g -DNDEBUG",
       "unsafe": "-O3 -ffast-math -g -fomit-frame-pointer -DNDEBUG",
       "profile" : "-O2 -pg -finline-limit=12 -DPROFILE -DNDEBUG",
       "small": "-Os -DNDEBUG",

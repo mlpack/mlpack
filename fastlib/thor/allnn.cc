@@ -34,12 +34,9 @@ class Allnn {
     void Init(datanode *datanode) {
       dim = -1;
     }
-    
-    void InitPointExtras(int tag, ThorVectorPoint *point) const {}
-    void SetPointExtras(int tag, index_t index, ThorVectorPoint *point) const {}
-    
-    void Bootstrap(int tag, index_t dim_in, index_t count) {
-      dim = dim_in;
+
+    void SetDimensions(index_t vector_dimension, index_t n_pointsk) {
+      dim = vector_dimension;
     }
   };
 
@@ -216,7 +213,7 @@ class Allnn {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-  thor_utils::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
+  thor::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
       fx_root, "allnn");
   
   fx_done();
