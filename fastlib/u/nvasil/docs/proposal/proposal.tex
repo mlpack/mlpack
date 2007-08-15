@@ -1572,18 +1572,18 @@ and for NRAF (dashed line).}
 \label{proposed}
 
 The goal of this thesis is to make kernel methods scalable.
-Efficient computation of the kernel matrix for large volumes of
-data. Special emphasis is given in high dimensional data $d>30$. One
+Efficient computation and optimization of the kernel matrix for large volumes of
+data are proposed. Special emphasis is given in high dimensional data $d>30$. One
 of the goals is to use Kernel PCA for unfolding the speech manifold.
 In other words estimate the intrinsic dimensionality of speech by
 using big databases like TIMIT \cite{garofolo1993tap}, Wall Street Journal and Broadcast
-News \cite{graff1997bns}. Implicitly dimensionality reduction will lead to new feature
-generation . The ultimate goal is to use these new features along
+News \cite{graff1997bns}. Dimensionality reduction will implicitly lead to new feature
+generation. The ultimate goal is to use these new features along
 with kd-trees do speech recognition by nearest neighbor search.
 
 \subsection{Customized Kernels}
 There are infinite functions
-that can act as valid kernels \cite{shawetaylor2004kmp}. The most popular kernels are:
+that are valid kernels \cite{shawetaylor2004kmp}. The most popular ones are:
 \begin{enumerate}
   \item The gaussian kernel $k(x, y)=e^{-\frac{||x-y||^2}{\sigma^2}}$
   \item The polynomial kernel $k(x, y)=(xy)^n$
@@ -1610,7 +1610,7 @@ from scratch without using any fixed kernel. As we have already
 mentioned the kernel matrix has to be a positive semidefinite
 matrix. Initially we have to define a k neighborhood  for every
 point. So at first we have to connect points to their neighbors and
- initialize the non zero values of the matrix to 1. Then we
+initialize the non zero values of the matrix to 1. Then we
 maximize the trace of the kernel matrix under the constraint that
 the the distances in the kernel matrix are preserved. This leads to
 a semidefinite programming problem. Here is the algorithm they
@@ -1763,7 +1763,7 @@ There are two approaches on that:
   are required. They can be computed very quickly by the conjugate
   gradient method \cite{saad2003ims} which is specially designed for sparse positive
   definite matrices \cite{saad2003ims}. This is also a stochastic gradient approach since 
-  incomplete instances of the gradient are computed \cite{spall2003iss}.
+  incomplete (noisy) instances of the gradient are computed \cite{spall2003iss}.
 \end{enumerate}
 
 \subsubsection{Accelerating Semidefinite PCA with domain
@@ -1811,7 +1811,7 @@ one of the most common tasks in kernel methods. The general formula
 \end{equation}
 
 appears in many cases, with the most interesting case the
-eigenvalue/eigenvector computation. The kernel summation is a very
+eigenvalue/eigenvector computation of the kernel matrix. The kernel summation is a very
 computationally intensive task. For Gaussian kernels there are
 approximations that can speed up computations orders of magnitude.
 We will briefly discuss them here. Besides computation saving we can
@@ -1886,7 +1886,7 @@ where
   \sum_{r=1}^{N}w_r\left(\frac{x_r-x_0}{\sigma}\right)
 \end{equation}
 
-The error $E_H(p)$ due to truncating the series after $p^d$ terms os
+The error $E_H(p)$ due to truncating the series after $p^d$ terms is
 bounded by
 
 \begin{equation}
