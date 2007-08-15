@@ -203,7 +203,7 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
       split_col = (node->begin() + node->end()) / 2;
     } else {
       // perform a midpoint split
-      split_col = Partition(
+      split_col = thor::Partition(
           HrectPartitionCondition(split_dim, split_val),
           begin_col, end_col - begin_col,
           &points_, &final_left_bound, &final_right_bound);
@@ -240,7 +240,7 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
 
       left_bound.Reset();
       right_bound.Reset();
-      split_col = Partition(
+      split_col = thor::Partition(
           HrectPartitionCondition(split_dim, split_val),
           begin_col, end_col - begin_col,
           &points_, &left_bound, &right_bound);

@@ -14,6 +14,7 @@ void ot__private::ZOTPrinter::ShowIndents() {
     putc(' ', stream_);
   }
 }
+
 void ot__private::ZOTPrinter::Write(const char *format, ...) {
   va_list vl;
   ShowIndents();

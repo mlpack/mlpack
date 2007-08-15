@@ -490,112 +490,6 @@ class CacheWrite {
 
 //------------------------------------------------------------------------
 
-template<typename Helperclass, typename Element, typename BaseElement>
-class ZCacheIterImpl_ {
-  FORBID_COPY(ZCacheIterImpl_);
-
- private:
-  Element *element_;
-  uint stride_;
-  uint left_;
-  CacheArray<BaseElement> *cache_;
-  BlockDevice::blockid_t blockid_;
-
- public:
-  ZCacheIterImpl_(CacheArray<BaseElement>* cache_in, index_t begin_index) {
-    cache_ = cache_in;
-    blockid_ = cache_->Blockid(begin_index);
-    element_ = Helperclass::MyStartAccess_(cache_, begin_index);
-    stride_ = cache_->n_elem_bytes();
-    unsigned int mask = cache_->n_block_elems_mask();
-    // equivalent to: block_size - (begin_index % block_size) - 1
-    left_ = (begin_index ^ mask) & mask;
-  }
-  ~ZCacheIterImpl_() {
-    if (likely(element_ != NULL)) {
-      cache_->ReleaseBlock(blockid_);
-    }
-  }
-
-  operator Element * () const {
-    return element_;
-  }
-  Element * operator -> () const {
-    return element_;
-  }
-  Element & operator * () const {
-    return *element_;
-  }
-
-  void SetIndex(index_t begin_index) {
-    cache_->ReleaseBlock(blockid_);
-    blockid_ = cache_->Blockid(begin_index);
-    element_ = Helperclass::MyStartAccess_(cache_, begin_index);
-    unsigned int mask = cache_->n_block_elems_mask();
-    left_ = (begin_index ^ mask) & mask;
-  }
-
-  void Next() {
-    DEBUG_BOUNDS(left_, cache_->n_block_elems() + 1);
-    element_ = mem::PointerAdd(element_, stride_);
-    if (unlikely(left_ == 0)) {
-      NextBlock_();
-      return;
-    }
-    --left_;
-  }
-
- private:
-  COMPILER_NOINLINE
-  void NextBlock_();
-};
-
-template<typename Element>
-class ZCacheReadIterHelperclass_ {
- public:
-  static const Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
-    return a->StartRead(i);
-  }
-};
-
-template<typename Element>
-class CacheReadIter
-  : public ZCacheIterImpl_<ZCacheReadIterHelperclass_<Element>, const Element, Element> {
- public:
-  /**
-   * Starts reading the cache at the specified index.
-   *
-   * (Chains to parent constructor).
-   */
-  CacheReadIter(CacheArray<Element>* cache_in, index_t begin_index)
-      : ZCacheIterImpl_<ZCacheReadIterHelperclass_<Element>, const Element, Element>
-          (cache_in, begin_index) {}
-};
-
-template<typename Element>
-class ZCacheWriteIterHelperclass_ {
- public:
-  static Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
-    return a->StartWrite(i);
-  }
-};
-
-template<typename Element>
-class CacheWriteIter
-  : public ZCacheIterImpl_<ZCacheWriteIterHelperclass_<Element>, Element, Element> {
- public:
-  /**
-   * Starts writing to the cache at the specified index.
-   *
-   * (Chains to parent constructor).
-   */
-  CacheWriteIter(CacheArray<Element>* cache_in, index_t begin_index)
-      : ZCacheIterImpl_<ZCacheWriteIterHelperclass_<Element>, Element, Element>
-          (cache_in, begin_index) {}
-};
-
-//------------------------------------------------------------------------
-
 /**
  * Condensed-RAM array.
  *
@@ -657,5 +551,35 @@ class SubsetArray {
 };
 
 #include "cachearray_impl.h"
+
+//------------------------------------------------------------------------
+
+template<typename Element>
+class CacheWriteIter
+  : public ZCacheIterImpl_<ZCacheWriteIterHelperclass_<Element>, Element, Element> {
+ public:
+  /**
+   * Starts writing to the cache at the specified index.
+   *
+   * (Chains to parent constructor).
+   */
+  CacheWriteIter(CacheArray<Element>* cache_in, index_t begin_index)
+      : ZCacheIterImpl_<ZCacheWriteIterHelperclass_<Element>, Element, Element>
+          (cache_in, begin_index) {}
+};
+
+template<typename Element>
+class CacheReadIter
+  : public ZCacheIterImpl_<ZCacheReadIterHelperclass_<Element>, const Element, Element> {
+ public:
+  /**
+   * Starts reading the cache at the specified index.
+   *
+   * (Chains to parent constructor).
+   */
+  CacheReadIter(CacheArray<Element>* cache_in, index_t begin_index)
+      : ZCacheIterImpl_<ZCacheReadIterHelperclass_<Element>, const Element, Element>
+          (cache_in, begin_index) {}
+};
 
 #endif

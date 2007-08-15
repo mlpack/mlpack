@@ -3,7 +3,8 @@
 librule(
     sources = [],
     headers = [
-        "kdtree.h", "bounds.h", "spacetree.h", "statistic.h"
+        "kdtree.h", "kdtree_impl.h", "bounds.h",
+        "spacetree.h", "statistic.h"
     ],
     deplibs = ["base:base", "la:la", "col:col",
         "file:file_int", "data:data", "fx:fx"]

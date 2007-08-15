@@ -125,7 +125,7 @@ class Queue {
     }
 
     head_ = NULL;
-    tailp_ = &head;
+    tailp_ = &head_;
   }
 };
 

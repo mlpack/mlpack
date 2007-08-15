@@ -148,7 +148,7 @@ index_t ReadPointsMaster(
  *
  * @param param the parameter object used for initializing the points
  * @param points_channel an rpc channel number that can be used for points
- * @param extra_channel an extra channel used internally for communication
+ * @param extra_channel a free channel used for internal purposes
  * @param module parameters (see above)
  * @param points_cache an uninitialized cache that will contain the points
  *
