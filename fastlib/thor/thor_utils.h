@@ -57,6 +57,8 @@ class ThreadedDualTreeSolver {
    * Runs a multi-threaded dual-tree problem.
    *
    * @param n_threads the number of threads to run on this machine
+   * @param rank the rank of the current machine (rpc::rank() will provide
+   *        this if RPC is being used, otherwise just specify 0)
    * @param work_queue_in the work queue to get work items from
    * @param param the parameter object for the GNP
    * @param q_points_cache_in the cache containing query points

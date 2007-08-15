@@ -180,7 +180,9 @@ class ThorSkeletonNode {
    *
    * @param info_in the info object to use
    * @param array where to get tree information from
-   * @param index_in the index of the node in the tree
+   * @param node_index_in the index of the node in the tree
+   * @param end_index_in a non-inclusive upper bound on node indices for
+   *        this subtree
    * @param parent_in the parent node, or NULL if this is the root
    */
   ThorSkeletonNode(const Info& info_in, CacheArray<Node> *array,

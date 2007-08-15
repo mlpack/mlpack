@@ -242,7 +242,8 @@ class Vector {
   /**
    * Copies all of the values from an array of doubles to this vector.
    *
-   * @param other the vector to copy from
+   * @param src_ptr the vector to copy from, must have at least
+   *        length() elements
    */
   void CopyValues(const double *src_ptr) {
     mem::Copy(ptr_, src_ptr, length_);
@@ -250,7 +251,9 @@ class Vector {
   
   /**
    * Prints to a stream as a debug message.
+   *
    * @param name a name that will be printed with the vector
+   * @param stream the stream to print to, such as stderr (default) or stdout
    */
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {
     fprintf(stream, "----- VECTOR %s ------\n", name);
@@ -566,6 +569,8 @@ class Matrix {
   /**
    * Make a matrix that is an alias of a particular slice of my columns.
    *
+   * @param start_col the first column
+   * @param n_cols_new the number of columns in the new matrix
    * @param dest an UNINITIALIZED matrix
    */
   void MakeColumnSlice(index_t start_col, index_t n_cols_new,
@@ -698,7 +703,9 @@ class Matrix {
 
   /**
    * Prints to a stream as a debug message.
+   *
    * @param name a name that will be printed with the matrix
+   * @param stream the stream to print to, defaults to @c stderr
    */
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {
     fprintf(stream, "----- MATRIX %s ------\n", name);

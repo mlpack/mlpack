@@ -116,51 +116,51 @@ namespace math {
 
 namespace math_private {
   template<int t_numerator, int t_denominator = 1>
-  struct PowImpl {
+  struct ZPowImpl {
     static double Calculate(double d) {
       return pow(d, t_numerator * 1.0 / t_denominator);
     }
   };
 
   template<int t_equal>
-  struct PowImpl<t_equal, t_equal> {
+  struct ZPowImpl<t_equal, t_equal> {
     static double Calculate(double d) {
       return d;
     }
   };
 
   template<>
-  struct PowImpl<1, 1> {
+  struct ZPowImpl<1, 1> {
     static double Calculate(double d) {
       return d;
     }
   };
 
   template<>
-  struct PowImpl<1, 2> {
+  struct ZPowImpl<1, 2> {
     static double Calculate(double d) {
       return sqrt(d);
     }
   };
 
   template<>
-  struct PowImpl<1, 3> {
+  struct ZPowImpl<1, 3> {
     static double Calculate(double d) {
       return cbrt(d);
     }
   };
 
   template<int t_denominator>
-  struct PowImpl<0, t_denominator> {
+  struct ZPowImpl<0, t_denominator> {
     static double Calculate(double d) {
       return 1;
     }
   };
 
   template<int t_numerator>
-  struct PowImpl<t_numerator, 1> {
+  struct ZPowImpl<t_numerator, 1> {
     static double Calculate(double d) {
-      return PowImpl<t_numerator - 1, 1>::Calculate(d) * d;
+      return ZPowImpl<t_numerator - 1, 1>::Calculate(d) * d;
     }
   };
 
@@ -168,19 +168,19 @@ namespace math_private {
   // TODO: do this for all even integer powers
 
   template<int t_numerator, int t_denominator, bool is_even>
-  struct PowAbsImpl;
+  struct ZPowAbsImpl;
 
   template<int t_numerator, int t_denominator>
-  struct PowAbsImpl<t_numerator, t_denominator, false> {
+  struct ZPowAbsImpl<t_numerator, t_denominator, false> {
     static double Calculate(double d) {
-      return PowImpl<t_numerator, t_denominator>::Calculate(fabs(d));
+      return ZPowImpl<t_numerator, t_denominator>::Calculate(fabs(d));
     }
   };
 
   template<int t_numerator, int t_denominator>
-  struct PowAbsImpl<t_numerator, t_denominator, true> {
+  struct ZPowAbsImpl<t_numerator, t_denominator, true> {
     static double Calculate(double d) {
-      return PowImpl<t_numerator, t_denominator>::Calculate(d);
+      return ZPowImpl<t_numerator, t_denominator>::Calculate(d);
     }
   };
 };
@@ -195,7 +195,7 @@ namespace math {
    */
   template<int t_numerator, int t_denominator> 
   inline double Pow(double d) {
-    return math_private::PowImpl<t_numerator, t_denominator>::Calculate(d);
+    return math_private::ZPowImpl<t_numerator, t_denominator>::Calculate(d);
   }
   
   /**
@@ -211,7 +211,7 @@ namespace math {
   inline double PowAbs(double d) {
     // we specify whether it's an even function -- if so, we can sometimes
     // avoid the absolute value sign
-    return math_private::PowAbsImpl<t_numerator, t_denominator,
+    return math_private::ZPowAbsImpl<t_numerator, t_denominator,
         (t_numerator%t_denominator == 0) && ((t_numerator/t_denominator)%2 == 0)>::Calculate(fabs(d));
   }
 };

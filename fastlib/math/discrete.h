@@ -23,10 +23,13 @@ namespace math {
   /**
    * Creates an identity permutation where the element i equals i.
    *
+   * Low-level pointer version -- preferably use the @c ArrayList
+   * version instead.
+   *
    * For instance, result[0] == 0, result[1] == 1, result[2] == 2, etc.
    *
-   * @param size the size to initialize the result to
-   * @param result the resulting matrix
+   * @param size the number of elements in the permutation
+   * @param array a place to store the permutation
    */
   void MakeIdentityPermutation(index_t size, index_t *array);
   
@@ -59,7 +62,7 @@ namespace math {
    * Creates a random permutation over integers 0 throush size - 1.
    *
    * @param size the number of elements
-   * @param array will be initialized to a permutation array
+   * @param result will be initialized to a permutation array
    */
   inline void MakeRandomPermutation(
       index_t size, ArrayList<index_t> *result) {

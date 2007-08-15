@@ -173,10 +173,11 @@ namespace tree {
    * (By unitialized I mean don't call Init on it)
    *
    * @param matrix data where each column is a point, WHICH WILL BE RE-ORDERED
-   * @param old_from_new pointer to an unitialized arraylist; it will map
-   *        original indexes to new indices
+   * @param leaf_size the maximum points in a leaf
    * @param old_from_new pointer to an unitialized arraylist; it will map
    *        new indices to original
+   * @param new_from_old pointer to an unitialized arraylist; it will map
+   *        original indexes to new indices
    */
   template<typename TKdTree>
   TKdTree *MakeKdTreeMidpoint(Matrix& matrix, index_t leaf_size,

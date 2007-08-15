@@ -10,7 +10,7 @@
 #warning perform randomized syncing to avoid contention
 
 void DistributedCache::InitMaster(int channel_num_in,
-    BlockDevice::offset_t n_block_bytes_in,
+    offset_t n_block_bytes_in,
     size_t total_ram,
     BlockHandler *handler_in) {
   InitCommon_();
@@ -497,7 +497,7 @@ char *DistributedCache::StartWrite(blockid_t blockid, bool is_partial) {
   return block->data;
 }
 
-char *DistributedCache::StartRead(BlockDevice::blockid_t blockid) {
+char *DistributedCache::StartRead(blockid_t blockid) {
   mutex_.Lock();
   BlockMetadata *block = &blocks_[blockid];
   if (likely(block->locks)) {
@@ -509,7 +509,7 @@ char *DistributedCache::StartRead(BlockDevice::blockid_t blockid) {
   return block->data;
 }
 
-void DistributedCache::DecacheBlock_(BlockDevice::blockid_t blockid) {
+void DistributedCache::DecacheBlock_(blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
   index_t slot = (unsigned(blockid) % unsigned(n_sets_)) << LOG_ASSOC;
   Slot *base_slot = &slots_[slot];
@@ -532,7 +532,7 @@ void DistributedCache::DecacheBlock_(BlockDevice::blockid_t blockid) {
   }
 }
 
-void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
+void DistributedCache::HandleMiss_(blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(block->data == NULL);
@@ -576,7 +576,7 @@ void DistributedCache::HandleMiss_(BlockDevice::blockid_t blockid) {
   }
 }
 
-void DistributedCache::HandleLocalMiss_(BlockDevice::blockid_t blockid) {
+void DistributedCache::HandleLocalMiss_(blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
   blockid_t local_blockid = block->local_blockid();
 
@@ -590,7 +590,7 @@ void DistributedCache::HandleLocalMiss_(BlockDevice::blockid_t blockid) {
   block->locks = 1;
 }
 
-void DistributedCache::HandleRemoteMiss_(BlockDevice::blockid_t blockid) {
+void DistributedCache::HandleRemoteMiss_(blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
   DEBUG_ASSERT(!block->is_owner());
 
@@ -624,7 +624,7 @@ void DistributedCache::DoReadRequest_(int peer, blockid_t blockid,
   mem::CopyBytes(buffer, transaction.response()->data(), end - begin);
 }
 
-void DistributedCache::StopRead(BlockDevice::blockid_t blockid) {
+void DistributedCache::StopRead(blockid_t blockid) {
   mutex_.Lock();
   BlockMetadata *block = &blocks_[blockid];
   if (unlikely(--block->locks == 0)) {
@@ -633,7 +633,7 @@ void DistributedCache::StopRead(BlockDevice::blockid_t blockid) {
   mutex_.Unlock();
 }
 
-void DistributedCache::StopWrite(BlockDevice::blockid_t blockid) {
+void DistributedCache::StopWrite(blockid_t blockid) {
   mutex_.Lock();
   BlockMetadata *block = &blocks_[blockid];
   if (unlikely(--block->locks == 0)) {
@@ -642,7 +642,7 @@ void DistributedCache::StopWrite(BlockDevice::blockid_t blockid) {
   mutex_.Unlock();
 }
 
-void DistributedCache::EncacheBlock_(BlockDevice::blockid_t blockid) {
+void DistributedCache::EncacheBlock_(blockid_t blockid) {
   index_t slot = (unsigned(blockid) % unsigned(n_sets_)) << LOG_ASSOC;
   Slot *base_slot = &slots_[slot];
   int i;
@@ -703,12 +703,12 @@ void DistributedCache::Purge_(blockid_t blockid) {
 }
 
 void DistributedCache::WritebackDirtyLocalFreeze_(
-    BlockDevice::blockid_t blockid) {
+    blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(block->is_owner());
 
-  BlockDevice::blockid_t local_blockid = block->local_blockid();
+  blockid_t local_blockid = block->local_blockid();
 
   if (local_blockid == SELF_OWNER_UNALLOCATED) {
     local_blockid = overflow_free_;
@@ -730,7 +730,7 @@ void DistributedCache::WritebackDirtyLocalFreeze_(
   block->status = NOT_DIRTY_OLD;
 }
 
-void DistributedCache::WritebackDirtyRemote_(BlockDevice::blockid_t blockid) {
+void DistributedCache::WritebackDirtyRemote_(blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(!block->is_owner());
@@ -789,7 +789,7 @@ void DistributedCache::DoWriteRequest_(
   net_stats_.RecordWrite(end - begin);
   BasicTransaction transaction;
   transaction.Init(channel_num_);
-  BlockDevice::offset_t n_bytes = end - begin;
+  offset_t n_bytes = end - begin;
   Message *message = transaction.CreateMessage(peer, Request::size(n_bytes));
   Request *request = message->data_as<Request>();
   request->type = Request::WRITE;

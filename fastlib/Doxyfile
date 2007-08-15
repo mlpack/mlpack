@@ -34,8 +34,8 @@ DETAILS_AT_TOP         = YES
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
-ALIASES                = "experimental=\par EXPERIMENTAL FEATURE.\n" \
-                         "removal=\par THINKING ABOUT REMOVAL.  If this file breaks, remove it rather than fix it.\n"
+ALIASES                = "experimental=\par EXPERIMENTAL FEATURE." \
+                         "removal=\par THINKING ABOUT REMOVAL.  If this file breaks, remove it rather than fix it."
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 BUILTIN_STL_SUPPORT    = NO
@@ -75,7 +75,7 @@ FILE_VERSION_FILTER    =
 #---------------------------------------------------------------------------
 QUIET                  = NO
 WARNINGS               = YES
-WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_UNDOCUMENTED   = NO
 WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = NO
 WARN_FORMAT            = "$file:$line: $text"

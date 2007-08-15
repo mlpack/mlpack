@@ -86,7 +86,7 @@ class KdTreeHybridBuilder {
    * @param nodes_create the nodes, which will be allocated one by one
    */
   void Doit(
-      struct datanode* module, const Param* param_in_,
+      struct datanode* module, const Param* param,
       index_t begin_index, index_t end_index,
       DistributedCache* points_inout, DistributedCache* nodes_create,
       TreeDecomposition* decomposition);
@@ -115,6 +115,7 @@ namespace thor {
    * @param nodes_channel the channel for the nodes cache
    * @param block_size_kb the upper-limit block size in kilobytes
    * @param megs the number of megabytes dedicated to the nodes cache
+   * @param module where to get tree-building parameters such as leaf_size
    * @param n_points the number of data points
    * @param points_cache the cache of points to reorder
    * @param nodes_cache the cache of nodes to initialize and create
@@ -136,7 +137,8 @@ namespace thor {
    * @li @c megs cache size, in megabytes (floating-point allowed)
    *
    * @param param parameter object
-   * @param base_channel the first of a contiguous group of 5 channels
+   * @param nodes_channel the channel for the nodes distributed cache
+   * @param extra_channel a channel used internally
    * @param module the module to load config parameters from
    * @param n_points the number of points
    * @param points_cache the data points to reorder, must be allocated via

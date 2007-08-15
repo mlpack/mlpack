@@ -10,12 +10,12 @@
 #include "otrav.h"
 
 namespace ot_private {
-  void OTPrinter::ShowIndents() {
+  void ZOTPrinter::ShowIndents() {
     for (int i = 0; i < indent_amount_; i++) {
       putc(' ', stream_);
     }
   }
-  void OTPrinter::Write(const char *format, ...) {
+  void ZOTPrinter::Write(const char *format, ...) {
     va_list vl;
     ShowIndents();
     va_start(vl, format);

@@ -164,7 +164,8 @@ inline T max(T a, Q b) {
  *
  * The Stuff class will then have all inequality operators.
  *
- * @param cl the name of the class
+ * @param cl1 the left-hand-side class
+ * @param cl2 the right-hand-side class
  */
 #define DEFINE_INEQUALITY_COMPARATORS_HETERO(cl1, cl2) \
         friend bool operator > (cl1 const & a, cl2 const & b) { return b < a; } \
@@ -198,7 +199,8 @@ inline T max(T a, Q b) {
  *
  * The operators for both will be filled out.
  *
- * @param cl the name of the class
+ * @param cl1 the left-hand-side class
+ * @param cl2 the right-hand-side class
  */
 #define DEFINE_ALL_COMPARATORS_HETERO(cl1, cl2) \
         DEFINE_INEQUALITY_COMPARATORS_HETERO(cl1, cl2) \

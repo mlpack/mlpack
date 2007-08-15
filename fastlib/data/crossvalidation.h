@@ -122,6 +122,7 @@ class SimpleCrossValidator {
    *        command-line parameter kfold/k)
    * @param module_root the fastexec module this is under (usually use fx_root)
    * @param classifier_fx_name short name to give it under fastexec
+   * @param kfold_fx_name the fastexec name of the cross-validator
    */
   void Init(
       const Dataset *data_with_labels,

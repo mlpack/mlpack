@@ -48,8 +48,8 @@ struct BasicTransaction : public Transaction {
     cond_.Wait();
   }
 
-  void HandleMessage(Message *m) {
-    response_ = m;
+  void HandleMessage(Message *message) {
+    response_ = message;
     Done();
     cond_.Done();
   }

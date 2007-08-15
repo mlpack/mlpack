@@ -96,7 +96,7 @@
  * Automatically generate a copy constructor based on the object traversal.
  */
 #define OT_GEN_COPY_CONSTRUCTOR(AClass) \
- public: AClass(const AClass& other) { ot_private::OTDeepCopier::Doit(other, this); } private:
+ public: AClass(const AClass& other) { ot_private::ZOTDeepCopier::Doit(other, this); } private:
 
 /**
  * Automatically create a dstructor based on object traversal.
@@ -313,7 +313,7 @@ namespace ot_private {
   // (Currently only freezing/thawing is supported)
 
   template<typename DefaultPrinter, typename Printer, typename T>
-  struct OTPrinter_Dispatcher {
+  struct ZOTPrinter_Dispatcher {
     static void Print(const char *name, T& x, Printer* printer) {
       DefaultPrinter::Print(name, x, printer);
     }
@@ -322,7 +322,7 @@ namespace ot_private {
   /* macro for use within this file */
   #define OTPRINTER__SPECIAL(T, format_str) \
     template<typename DefaultPrinter, typename Printer> \
-    struct OTPrinter_Dispatcher<DefaultPrinter, Printer, T> { \
+    struct ZOTPrinter_Dispatcher<DefaultPrinter, Printer, T> { \
       static void Print(const char *name, T x, Printer *printer) { \
         printer->Write("%s : "format_str, name, x); \
       } \
@@ -342,7 +342,7 @@ namespace ot_private {
   /**
    * Utility class to take an OT-compatible object and prints it to screen.
    */
-  class OTPrinter {
+  class ZOTPrinter {
    private:
     FILE *stream_;
     int indent_amount_;
@@ -351,7 +351,7 @@ namespace ot_private {
    private:
     template<typename T>
     struct DefaultPrimitivePrinter {
-      static void Print(const char *name, const T& x, OTPrinter *printer) {
+      static void Print(const char *name, const T& x, ZOTPrinter *printer) {
         printer->ShowIndents();
         for (size_t i = 0; i < sizeof(T); i++) {
           fprintf(printer->stream(), " %02X",
@@ -363,7 +363,7 @@ namespace ot_private {
 
     template<typename T>
     struct DefaultObjectPrinter {
-      static void Print(const char *name, T& x, OTPrinter *printer) {
+      static void Print(const char *name, T& x, ZOTPrinter *printer) {
         printer->Write("%s : %s {", name, typeid(T).name());
         printer->Indent(2);
         TraverseObject(&x, printer);
@@ -387,7 +387,7 @@ namespace ot_private {
     }
 
     template<typename T> void Primitive(T& x) {
-      OTPrinter_Dispatcher< DefaultPrimitivePrinter<T>, OTPrinter, T >
+      ZOTPrinter_Dispatcher< DefaultPrimitivePrinter<T>, ZOTPrinter, T >
           ::Print(name_, x, this);
     }
 
@@ -396,7 +396,7 @@ namespace ot_private {
       if (nullable && !obj) {
         Write("%s : %s %s = NULL", name_, label, typeid(T).name());
       } else {
-        OTPrinter_Dispatcher< DefaultObjectPrinter<T>, OTPrinter, T >
+        ZOTPrinter_Dispatcher< DefaultObjectPrinter<T>, ZOTPrinter, T >
             ::Print(name_, *obj, this);
       }
     }
@@ -478,7 +478,7 @@ namespace ot_private {
    *
    * ANY MODIFICATIONS TO THIS MUST ALSO BE MADE TO THE SIZE CALCULATOR!
    */
-  class OTPointerFreezer {
+  class ZOTPointerFreezer {
    private:
     /** The block of memory to freeze into. */
     char *block_;
@@ -592,7 +592,7 @@ namespace ot_private {
     }
   };
 
-  template<typename T> void OTPointerFreezer::Ptr(
+  template<typename T> void ZOTPointerFreezer::Ptr(
       T*& source_region, bool nullable) {
     if (nullable && unlikely(source_region == NULL)) {
       *DestinationEquivalentPointer_(&source_region) = NULL;
@@ -614,7 +614,7 @@ namespace ot_private {
     }
   }
 
-  template<typename T> void OTPointerFreezer::Array(
+  template<typename T> void ZOTPointerFreezer::Array(
       T*& source_region, index_t len) {
     if (len == 0) {
       *DestinationEquivalentPointer_(&source_region) = NULL;
@@ -638,7 +638,7 @@ namespace ot_private {
     }
   }
 
-  class OTFrozenSizeCalculator {
+  class ZOTFrozenSizeCalculator {
    private:
     size_t pos_;
 
@@ -696,7 +696,7 @@ namespace ot_private {
     }
   };
 
-  class OTPointerThawer {
+  class ZOTPointerThawer {
    private:
     ptrdiff_t offset_;
 
@@ -750,7 +750,7 @@ namespace ot_private {
     }
   };
 
-  class OTPointerRelocator {
+  class ZOTPointerRelocator {
    private:
     ptrdiff_t pre_offset_;
     ptrdiff_t post_offset_;
@@ -808,11 +808,11 @@ namespace ot_private {
     }
   };
 
-  struct OTDeepCopier {
+  struct ZOTDeepCopier {
    public:
     template<typename T>
     static void Doit(const T& src, T *dest) {
-      ot_private::OTDeepCopier d;
+      ot_private::ZOTDeepCopier d;
       mem::Copy(dest, &src, 1);
       d.MyObject(*dest);
     }
@@ -847,7 +847,7 @@ namespace ot_private {
     }
   };
 
-  struct OTDestructor {
+  struct ZOTDestructor {
    public:
     /** Receives the nanme of the upcoming object -- we ignore this. */
     void Name(const char *s) {}
@@ -885,7 +885,7 @@ namespace ot_private {
 
   template<typename T>
   void DestructorImplementation(T *dest) {
-    ot_private::OTDestructor d;
+    ZOTDestructor d;
     TraverseObject(dest, &d);
     // can't poison this because of destructor chanining
   }
@@ -903,7 +903,7 @@ namespace ot {
    */
   template<typename T>
   void Print(const T& object, FILE *stream = stderr) {
-    ot_private::OTPrinter printer;
+    ot_private::ZOTPrinter printer;
     printer.Doit(object, stream);
   }
 
@@ -921,7 +921,7 @@ namespace ot {
    */
   template<typename T>
   const char *PrintMsg(const T& object, const char *message) {
-    ot_private::OTPrinter printer;
+    ot_private::ZOTPrinter printer;
     fprintf(stderr, ANSI_HRED"---- PRINTING %s ----"ANSI_CLEAR"\n", message);
     printer.Doit(object, stderr);
     return message;
@@ -932,7 +932,7 @@ namespace ot {
    */
   template<typename T>
   size_t PointerFrozenSize(const T& obj) {
-    ot_private::OTFrozenSizeCalculator calc;
+    ot_private::ZOTFrozenSizeCalculator calc;
     calc.Doit(obj);
     return calc.size();
   }
@@ -942,7 +942,7 @@ namespace ot {
    */
   template<typename T>
   void PointerFreeze(const T& live_object, char *block) {
-    ot_private::OTPointerFreezer freezer;
+    ot_private::ZOTPointerFreezer freezer;
     freezer.Doit(live_object, block);
     DEBUG_SAME_INT(freezer.size(), ot::PointerFrozenSize(live_object));
   }
@@ -953,7 +953,7 @@ namespace ot {
    */
   template<typename T>
   void PointerRefreeze(T* obj) {
-    ot_private::OTPointerRelocator fixer;
+    ot_private::ZOTPointerRelocator fixer;
     fixer.Doit<T>(
         0, -mem::PointerAbsoluteAddress(obj),
         reinterpret_cast<T*>(obj));
@@ -971,7 +971,7 @@ namespace ot {
    */
   template<typename T>
   void PointerRefreeze(const T* src, char* dest) {
-    ot_private::OTPointerRelocator fixer;
+    ot_private::ZOTPointerRelocator fixer;
     fixer.Doit<T>(
         mem::PointerDiff(dest, src), -mem::PointerAbsoluteAddress(src),
         reinterpret_cast<T*>(dest));
@@ -986,7 +986,7 @@ namespace ot {
    */
   template<typename T>
   T* PointerThaw(char *block) {
-    ot_private::OTPointerThawer fixer;
+    ot_private::ZOTPointerThawer fixer;
     return fixer.Doit<T>(
         mem::PointerAbsoluteAddress(block),
         block);
@@ -999,7 +999,7 @@ namespace ot {
    */
   template<typename T>
   void PointerRelocate(const char *old_location, char *new_location) {
-    ot_private::OTPointerRelocator fixer;
+    ot_private::ZOTPointerRelocator fixer;
     fixer.Doit<T>(
         mem::PointerDiff(new_location, old_location),
         mem::PointerDiff(new_location, old_location),

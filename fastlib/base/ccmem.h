@@ -122,7 +122,9 @@ namespace mem {
   /**
    * Allocates the specified number of elements, initializing all of them
    * to the specified value.
+   *
    * @param elems number of *elements*
+   * @param initial the initial value of each element
    * @return a pointer that must be freed with mem::Free
    */
   template<typename T>
@@ -180,9 +182,9 @@ namespace mem {
   /**
    * Copies bit-by-bit from one location to another (memcpy).
    *
-   * Attempts to be smart when it can.
-   *
-   * @param dest 
+   * @param dest the destination to copy to
+   * @param src the source to copy from
+   * @return the destination, for convenience
    */
   template<typename T>
   inline T * Copy(T* dest, const T* src) {
@@ -243,6 +245,7 @@ namespace mem {
      for (size_t i = 0; i < elems; i++) new(m+i)T(); return m;
   }
 #define BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(T) \
+  /** Specialized no-op default constructor. */ \
   template<> inline T* ConstructAll<T>(T* m, size_t elems) { return m; }
 
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(char)
