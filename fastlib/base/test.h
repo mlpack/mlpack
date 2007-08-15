@@ -34,7 +34,7 @@
  * After this, declare a lot of void functions that contain assertions.
  */
 #define TEST_SUITE_BEGIN(suite_name) \
-    namespace suite_name ## _test { /* begin the private namespace */
+    namespace { /* begin the private namespace */
 
 /** Prototype for test functions -- take in no arguments */
 typedef void (*test__void_func)();
@@ -62,7 +62,7 @@ typedef void (*test__void_func)();
       } \
     }; /* end the private namespace */ \
     int main(int argc, char *argv[]) { \
-      return suite_name ## _test :: execute_tests( \
+      return execute_tests( \
          argc <= 1 ? -1 : atoi(argv[1])); \
     }
 

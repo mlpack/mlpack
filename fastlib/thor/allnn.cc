@@ -1,3 +1,11 @@
+/**
+ * @file allnn.cc
+ *
+ * A multithreaded and cluster-parallel nearest neighbors finder.
+ *
+ * TODO: Currently doesn't output anything.
+ */
+
 #include "thor/thor.h"
 #include "fastlib/fastlib.h"
 

@@ -1,15 +1,21 @@
-/**
- * @file kdtree_impl.h
- *
- * Template implementations for kdtree.h.
- */
+/* Template implementations for kdtree.h. */
 
+namespace thor {
 
 /**
- * A generalized partition function for cache arrays.
+ * A generalized partition function for cached arrays.
  */
 template<typename PartitionCondition, typename PointCache, typename Bound>
 index_t Partition(
+    PartitionCondition splitcond,
+    index_t begin, index_t count,
+    PointCache* points,
+    Bound* left_bound, Bound* right_bound);
+
+};
+
+template<typename PartitionCondition, typename PointCache, typename Bound>
+index_t thor::Partition(
     PartitionCondition splitcond,
     index_t begin, index_t count,
     PointCache* points,
@@ -49,8 +55,6 @@ index_t Partition(
     DEBUG_ASSERT(left_i <= right_i);
     right_i--;
   }
-
-  abort();
 }
 
 template<typename TPoint, typename TNode, typename TParam>

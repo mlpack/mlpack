@@ -1,3 +1,9 @@
+/**
+ * @file col.cc
+ *
+ * Non-templated implementations of various collections.
+ */
+
 #include "arraylist.h"
 #include "string.h"
 

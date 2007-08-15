@@ -1,5 +1,13 @@
+/**
+ * @file fortran.h
+ *
+ * Basic types for FORTRAN compatability.
+ */
+
 #ifndef BASE_FORTRAN_H
 #define BASE_FORTRAN_H
+
+// These typedefs should work for all machines I'm aware of.
 
 /**
  * FORTRAN integer type.

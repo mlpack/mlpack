@@ -1,3 +1,9 @@
+/**
+ * @file dfs.h
+ *
+ * Depth-first dual-tree solver.
+ */
+
 #ifndef THOR_DFS_H
 #define THOR_DFS_H
 

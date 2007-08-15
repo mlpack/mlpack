@@ -1,3 +1,9 @@
+/**
+ * @file work.cc
+ *
+ * Non-templated implementations for GNP scheduling.
+ */
+
 #include "work.h"
 
 void WorkQueueInterface::Report(struct datanode *module) {

@@ -1,3 +1,9 @@
+/**
+ * @file distribcache.h
+ *
+ * A distributed disk-overflowing cache.
+ */
+
 #ifndef THOR_DISTRIBCACHE_H
 #define THOR_DISTRIBCACHE_H
 

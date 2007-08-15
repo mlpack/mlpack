@@ -1,3 +1,10 @@
+/**
+ * @file template_types.c
+ *
+ * Determines the size of each of the machine's basic types, automatically
+ * generating basic_types.h.
+ */
+
 #include <stdio.h>
 
 #define SHOWSIZE(def, type) \

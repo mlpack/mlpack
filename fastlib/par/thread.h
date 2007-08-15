@@ -211,8 +211,12 @@ class WaitCondition {
 /**
  * Reliable wait condition to signal readiness.
  *
- * I think this has semantics almost identical to the regular wait conditions
- * except it will wake up only exactly one process.
+ * This has semantics almost identical to the regular wait conditions,
+ * except it will wake up only exactly one process, and that Wait() will
+ * terminate immediately if Done() was previously called.
+ *
+ * This may be reused multiple times -- every time Wait() is called, the
+ * done flag is reset to false afterwards.
  */
 class DoneCondition {
   Mutex mutex_;
@@ -223,6 +227,9 @@ class DoneCondition {
   DoneCondition() { done_ = false; }
   ~DoneCondition() {}
 
+  /**
+   * Atomically waits for completion and then resets the done flag to false.
+   */
   void Wait() {
     mutex_.Lock();
     while (!done_) {
@@ -232,6 +239,9 @@ class DoneCondition {
     mutex_.Unlock();
   }
 
+  /**
+   * Sets status to done and wakes up another process.
+   */
   void Done() {
     mutex_.Lock();
     DEBUG_ASSERT_MSG(done_ == false, "Doesn't do a counter -- should it?");

@@ -40,11 +40,6 @@
  *
  */
 namespace mem {
-  template<size_t t_elems, typename T = char>
-  struct Chunk {
-    T data[t_elems];
-  };
-  
   /**
    * In debug mode, sets the entire chunk of memory to a BIG_BAD_NUMBER.
    * @param array chunk of memory
@@ -321,7 +316,7 @@ namespace mem {
 
   /** Shallow swap of two arrays, sized in bytes. */
   template<typename T>
-  void SwapBytes(T* a, T* b, size_t bytes) {
+  inline void SwapBytes(T* a, T* b, size_t bytes) {
     SwapBytes__Impl(reinterpret_cast<long*>(a), reinterpret_cast<long*>(b),
         bytes);
   }

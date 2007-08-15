@@ -1,3 +1,9 @@
+/**
+ * @file cc.cc
+ *
+ * Implementations for FASTlib's basic C++ usage.
+ */
+
 #include "cc.h"
 
 static const double DBL_ZERO = 0.0;
@@ -28,6 +34,9 @@ class CCInformDebug {
   }
 };
 
+/**
+ * Declaring an instance causes its constructor and destructor to be called.
+ */
 CCInformDebug cc_inform_debug_instance;
 };
 #endif

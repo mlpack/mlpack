@@ -1,7 +1,7 @@
 /**
  * @file dataset.cc
  *
- * Definitions for the dataset utilities.
+ * Implementations for the dataset utilities.
  */
 
 #include "file/textfile.h"

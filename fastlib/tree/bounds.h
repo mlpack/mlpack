@@ -1,7 +1,7 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
 // ABSOLUTELY NOT FOR DISTRIBUTION
 /**
- * @param bounds.h
+ * @file tree/bounds.h
  *
  * Bounds that are useful for binary space partitioning trees.
  *
@@ -292,8 +292,6 @@ struct DRange {
  * Hyper-rectangle bound for an L-metric.
  *
  * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
- *
- * @experimental
  */
 template<int t_pow = 2>
 class DHrectBound {

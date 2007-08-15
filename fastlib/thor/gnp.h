@@ -1,3 +1,12 @@
+/**
+ * @file gnp.h
+ *
+ * Abstract concepts used by THOR generalized N-body problems.
+ *
+ * This mostly contains blank elements that you can substitute if certain
+ * parts of the problem don't make sense for you.
+ */
+
 #ifndef THOR_GNP_H
 #define THOR_GNP_H
 

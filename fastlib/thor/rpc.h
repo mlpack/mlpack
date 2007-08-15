@@ -159,7 +159,7 @@ class RemoteObjectBackend : public Channel {
       inner_ = inner_in;
     }
 
-    virtual void HandleMessage(Message *request);
+    virtual void HandleMessage(Message *message);
   };
 
  public:

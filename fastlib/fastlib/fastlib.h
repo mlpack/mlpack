@@ -19,7 +19,6 @@
 #include "data/dataset.h"
 #include "data/crossvalidation.h"
 #include "math/math.h"
-//#include "file/serialize.h"
 #include "file/textfile.h"
 #include "fx/fx.h"
 #include "par/thread.h"
@@ -42,7 +41,7 @@
  * The cookbook should be built as a sort of micro-howto for small tasks that
  * you are interested in doing.
  * However, this Doxygen documentation will always be the
- * most complete -- and Doxygen links to the cross-reference code if the
+ * most complete -- and Doxygen links to the cross-referenced code if the
  * comments aren't good enough.
  *
  * @section using_doxygen Using Doxygen in Your Code
@@ -67,7 +66,7 @@
  * This software was written at Georgia Institute of Technology.
  * This software is not yet ready for distribution.
  *
- * The current core maintainers are garryb@cc.gatech.edu
+ * The current core maintainers are garryb@gatech.edu
  * and rriegel@cc.gatech.edu.  
  *
  * The source for this main page is in fastlib/fastlib.h.
