@@ -1,3 +1,9 @@
+/**
+ * @file blockdev.cc
+ *
+ * Implementations for common block devices.
+ */
+
 #include "blockdev.h"
 
 #include <sys/types.h>

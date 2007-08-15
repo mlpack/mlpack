@@ -84,12 +84,13 @@ class KdTreeHybridBuilder {
    * @param end_index one beyond the last index
    * @param points_inout the points, to be reordered
    * @param nodes_create the nodes, which will be allocated one by one
+   * @param decomposition_out will be initialized to a tree decomposition
    */
   void Doit(
       struct datanode* module, const Param* param,
       index_t begin_index, index_t end_index,
       DistributedCache* points_inout, DistributedCache* nodes_create,
-      TreeDecomposition* decomposition);
+      TreeDecomposition* decomposition_out);
  
  private:
   /** Determines the bounding box for a range of points. */

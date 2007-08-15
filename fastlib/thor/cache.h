@@ -1,3 +1,9 @@
+/**
+ * @file cache.h
+ *
+ * Common abstractions used by the caching infrastructure.
+ */
+
 #ifndef THOR_CACHE_H
 #define THOR_CACHE_H
 

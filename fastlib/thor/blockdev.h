@@ -1,3 +1,9 @@
+/**
+ * @file blockdev.h
+ *
+ * Block-device abstractions, such as a disk-based block device.
+ */
+
 #ifndef THOR_BLOCKDEV_H
 #define THOR_BLOCKDEV_H
 

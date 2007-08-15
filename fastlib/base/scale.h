@@ -3,22 +3,22 @@
 /**
  * @file scale.h
  *
- * Contains definitions that deal with problem scale.
+ * Configuration for dealing with problem scale.
  *
  * This contains hints as to what sizes the problems might be and what
  * integer types to use; for instance, to use 64-bit integers on 64-bit
  * machines if scale is defined as FL_SCALE_LARGE.
  *
  * FL_SCALE_NORMAL - Problems are as large as conveniently fits into the
- *   machine's natural integer sizes
+ *   machine's natural integer sizes.  On all major systems in 2007 this
+ *   is 32 bits.
  *
  * FL_SCALE_LARGE - Support problem sizes as large as the architecture can
- *   support.  Unless you have strictly more than 8 gigs of RAM or your data
- *   points are no larger than short ints (16-bit), this will probably waste
- *   space, reducing your cache efficiency.
+ *   support.  Unless you have at least 2 billion data points, this will
+ *   probably waste space, reducing cache efficiency.
  *
  * FL_SCALE_TOOLARGE - Support problem sizes that are too large to fit in
- *   RAM.  This means 64-bit everything.
+ *   RAM, i.e. more than 2 billion data points.  This means 64-bit everything.
  */
 
 #ifndef FL_SCALE_H

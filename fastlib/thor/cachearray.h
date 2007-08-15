@@ -491,8 +491,8 @@ class CacheWrite {
 //------------------------------------------------------------------------
 
 template<typename Helperclass, typename Element, typename BaseElement>
-class CacheIterImpl_ {
-  FORBID_COPY(CacheIterImpl_);
+class ZCacheIterImpl_ {
+  FORBID_COPY(ZCacheIterImpl_);
 
  private:
   Element *element_;
@@ -502,7 +502,7 @@ class CacheIterImpl_ {
   BlockDevice::blockid_t blockid_;
 
  public:
-  CacheIterImpl_(CacheArray<BaseElement>* cache_in, index_t begin_index) {
+  ZCacheIterImpl_(CacheArray<BaseElement>* cache_in, index_t begin_index) {
     cache_ = cache_in;
     blockid_ = cache_->Blockid(begin_index);
     element_ = Helperclass::MyStartAccess_(cache_, begin_index);
@@ -511,7 +511,7 @@ class CacheIterImpl_ {
     // equivalent to: block_size - (begin_index % block_size) - 1
     left_ = (begin_index ^ mask) & mask;
   }
-  ~CacheIterImpl_() {
+  ~ZCacheIterImpl_() {
     if (likely(element_ != NULL)) {
       cache_->ReleaseBlock(blockid_);
     }
@@ -551,7 +551,7 @@ class CacheIterImpl_ {
 };
 
 template<typename Element>
-class CacheReadIterHelperclass_ {
+class ZCacheReadIterHelperclass_ {
  public:
   static const Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
     return a->StartRead(i);
@@ -560,15 +560,20 @@ class CacheReadIterHelperclass_ {
 
 template<typename Element>
 class CacheReadIter
-  : public CacheIterImpl_<CacheReadIterHelperclass_<Element>, const Element, Element> {
+  : public ZCacheIterImpl_<ZCacheReadIterHelperclass_<Element>, const Element, Element> {
  public:
+  /**
+   * Starts reading the cache at the specified index.
+   *
+   * (Chains to parent constructor).
+   */
   CacheReadIter(CacheArray<Element>* cache_in, index_t begin_index)
-      : CacheIterImpl_<CacheReadIterHelperclass_<Element>, const Element, Element>(
-          cache_in, begin_index) {}
+      : ZCacheIterImpl_<ZCacheReadIterHelperclass_<Element>, const Element, Element>
+          (cache_in, begin_index) {}
 };
 
 template<typename Element>
-class CacheWriteIterHelperclass_ {
+class ZCacheWriteIterHelperclass_ {
  public:
   static Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
     return a->StartWrite(i);
@@ -577,11 +582,16 @@ class CacheWriteIterHelperclass_ {
 
 template<typename Element>
 class CacheWriteIter
-  : public CacheIterImpl_<CacheWriteIterHelperclass_<Element>, Element, Element> {
+  : public ZCacheIterImpl_<ZCacheWriteIterHelperclass_<Element>, Element, Element> {
  public:
+  /**
+   * Starts writing to the cache at the specified index.
+   *
+   * (Chains to parent constructor).
+   */
   CacheWriteIter(CacheArray<Element>* cache_in, index_t begin_index)
-      : CacheIterImpl_<CacheWriteIterHelperclass_<Element>, Element, Element>(
-          cache_in, begin_index) {}
+      : ZCacheIterImpl_<ZCacheWriteIterHelperclass_<Element>, Element, Element>
+          (cache_in, begin_index) {}
 };
 
 //------------------------------------------------------------------------

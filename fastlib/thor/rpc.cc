@@ -1,3 +1,11 @@
+/**
+ * @file rpc.cc
+ *
+ * Implementation of generalized RPC routines.
+ *
+ * See rpc_sock.cc for the socket-based parts.
+ */
+
 #include "rpc.h"
 
 Mutex global_mpi_lock;

@@ -8,6 +8,7 @@
 
 #ifndef FASTLIB_FASTLIB_INT_H
 #define FASTLIB_FASTLIB_INT_H
+#define FASTLIB_FASTLIB_H
 
 #include "base/common.h"
 #include "base/cc.h"

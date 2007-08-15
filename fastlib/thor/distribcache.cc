@@ -1,3 +1,8 @@
+/**
+ * @file distribcache.cc
+ *
+ * Implementation of the distributed cache.
+ */
 
 #include "distribcache.h"
 

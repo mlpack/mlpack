@@ -237,6 +237,7 @@ class DatasetInfo {
    * Writes header for CSV file.
    *
    * @param sep the value separator (use ",\t" for CSV)
+   * @param writer the text writer to write the header line to
    */
   void WriteCsvHeader(const char *sep, TextWriter *writer) const;
 

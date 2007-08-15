@@ -1,8 +1,4 @@
-/**
- * @file work_impl.h
- *
- * Implementations for templates in work.h.
- */
+/* Templated Implementations for GNP scheduling. */
 
 template<typename Node>
 void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree,
