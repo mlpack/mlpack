@@ -9,7 +9,6 @@
 #ifndef THORTREE_ALGS_H
 #define THORTREE_ALGS_H
 
-#include "thor_struct.h"
 
 //--------------------------------------------------------------------------
 // IMPLEMENTATION

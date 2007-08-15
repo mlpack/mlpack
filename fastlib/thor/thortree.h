@@ -6,8 +6,10 @@
  * Mostly contains decomposition-related code.
  */
 
-#ifndef SUPERPAR_KD_H
-#define SUPERPAR_KD_H
+#ifndef THOR_THORTREE_H
+#define THOR_THORTREE_H
+
+#include "thor_struct.h"
 
 /**
  * A single component of the tree, viewed as a work item.

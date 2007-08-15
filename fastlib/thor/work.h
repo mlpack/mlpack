@@ -235,4 +235,8 @@ class RemoteWorkQueue
   void GetWork(int rank, ArrayList<Grain> *work_items);
 };
 
+//------------------------------------------------------------------------
+
+#include "work_impl.h"
+
 #endif
