@@ -299,7 +299,83 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
 //--------------------------------------------------------------------------
 
 template<typename Helperclass, typename Element, typename BaseElement>
-void CacheIterImpl_<Helperclass, Element, BaseElement>::NextBlock_() {
+class ZCacheIterImpl_ {
+  FORBID_COPY(ZCacheIterImpl_);
+
+ private:
+  Element *element_;
+  uint stride_;
+  uint left_;
+  CacheArray<BaseElement> *cache_;
+  BlockDevice::blockid_t blockid_;
+
+ public:
+  ZCacheIterImpl_(CacheArray<BaseElement>* cache_in, index_t begin_index) {
+    cache_ = cache_in;
+    blockid_ = cache_->Blockid(begin_index);
+    element_ = Helperclass::MyStartAccess_(cache_, begin_index);
+    stride_ = cache_->n_elem_bytes();
+    unsigned int mask = cache_->n_block_elems_mask();
+    // equivalent to: block_size - (begin_index % block_size) - 1
+    left_ = (begin_index ^ mask) & mask;
+  }
+  ~ZCacheIterImpl_() {
+    if (likely(element_ != NULL)) {
+      cache_->ReleaseBlock(blockid_);
+    }
+  }
+
+  operator Element * () const {
+    return element_;
+  }
+  Element * operator -> () const {
+    return element_;
+  }
+  Element & operator * () const {
+    return *element_;
+  }
+
+  void SetIndex(index_t begin_index) {
+    cache_->ReleaseBlock(blockid_);
+    blockid_ = cache_->Blockid(begin_index);
+    element_ = Helperclass::MyStartAccess_(cache_, begin_index);
+    unsigned int mask = cache_->n_block_elems_mask();
+    left_ = (begin_index ^ mask) & mask;
+  }
+
+  void Next() {
+    DEBUG_BOUNDS(left_, cache_->n_block_elems() + 1);
+    element_ = mem::PointerAdd(element_, stride_);
+    if (unlikely(left_ == 0)) {
+      NextBlock_();
+      return;
+    }
+    --left_;
+  }
+
+ private:
+  COMPILER_NOINLINE
+  void NextBlock_();
+};
+
+template<typename Element>
+class ZCacheReadIterHelperclass_ {
+ public:
+  static const Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
+    return a->StartRead(i);
+  }
+};
+
+template<typename Element>
+class ZCacheWriteIterHelperclass_ {
+ public:
+  static Element *MyStartAccess_(CacheArray<Element>* a, index_t i) {
+    return a->StartWrite(i);
+  }
+};
+
+template<typename Helperclass, typename Element, typename BaseElement>
+void ZCacheIterImpl_<Helperclass, Element, BaseElement>::NextBlock_() {
   left_ = cache_->n_block_elems_mask();
   cache_->ReleaseBlock(blockid_);
   ++blockid_;

@@ -280,6 +280,7 @@ inline void TraverseArray(T* x, index_t n_elems, Visitor *v) {
     TraverseObject(&x[i], v);
   }
 }
+
 #include "otrav_impl.h"
 
 /**

@@ -19,4 +19,5 @@ librule(
     sources = ["common.c", "cc.cc", "ccmem.cc", "otrav.cc"],
     headers = ["cc.h", "ccmem.h", "common.h", "compiler.h",
                "compiler_impl.h", "test.h", "fortran.h",
-               "debug.h", "scale.h", "otrav.h", ":config_headers"])
+               "debug.h", "scale.h", "otrav.h", "otrav_impl.h",
+               ":config_headers"])

@@ -137,9 +137,9 @@ namespace thor {
    * @li @c block_size_kb maximum block size, in kilobytes
    * @li @c megs cache size, in megabytes (floating-point allowed)
    *
-   * @param param parameter object
+   * @param param parameter object for initializing new nodes
    * @param nodes_channel the channel for the nodes distributed cache
-   * @param extra_channel a channel used internally
+   * @param extra_channel a free channel used for internal purposes
    * @param module the module to load config parameters from
    * @param n_points the number of points
    * @param points_cache the data points to reorder, must be allocated via
