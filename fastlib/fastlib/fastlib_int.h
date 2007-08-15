@@ -1,7 +1,7 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
 // ABSOLUTELY NOT FOR DISTRIBUTION
 /**
- * @file fastlib-int.h
+ * @file fastlib_int.h
  *
  * Internal FASTlib header file
  */

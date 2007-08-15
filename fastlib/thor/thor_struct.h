@@ -1,5 +1,5 @@
 /**
- * @file thorstruct.h
+ * @file thor_struct.h
  *
  * The most basic THOR tree structures.
  */

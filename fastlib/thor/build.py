@@ -2,21 +2,24 @@
 headers = """
 blockdev.h
 cachearray.h
+cachearray_impl.h
 cache.h
 dfs.h
 distribcache.h
 gnp.h
-kdtree_builder.h
 kdtree.h
+kdtree_impl.h
 rpc_base.h
 rpc.h
 rpc_sock.h
 thor.h
 thor_struct.h
-thortree_algs.h
 thortree.h
+thortree_impl.h
 thor_utils.h
+thor_utils_impl.h
 work.h
+work_impl.h
 """.split()
 
 librule(name = "thor",

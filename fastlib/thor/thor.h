@@ -14,4 +14,13 @@
 
 #include "tree/bounds.h"
 
+/**
+ * @namespace thor
+ *
+ * THOR tree algorithm parallelization framework.
+ *
+ * THOR is a mechanism for parallelizing dual-tree algorithms.
+ * See the wiki or research papers for more information.
+ */
+
 #endif

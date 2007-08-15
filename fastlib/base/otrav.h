@@ -307,9 +307,7 @@ inline void TraverseArray(T* x, index_t n_elems, Visitor *v) {
   }
 }
 
-/**
- * Private namespace for object-traversal utilities.
- */
+// Private namespace for object-traversal utilities.
 namespace ot_private {
   // TODO: Space-conservatory serialization and deserialization
   // (Currently only freezing/thawing is supported)
@@ -893,10 +891,13 @@ namespace ot_private {
   }
 }; // namespace ot_private
 
+/**
+ * Object-traversal utilities, such as serialization and deserialization.
+ */
 namespace ot {
 
   /**
-   * Prints any object.
+   * Prints any OT-defined object.
    *
    * Perfect for debugging.
    */

@@ -9,7 +9,131 @@
 #ifndef SUPERPAR_KD_H
 #define SUPERPAR_KD_H
 
-#include "thortree_algs.h"
+/**
+ * A single component of the tree, viewed as a work item.
+ */
+struct TreeGrain {
+  /** The root node index, also the first node in the contiguous sequence. */
+  index_t node_index;
+  /** One past the last node in the contiguous node sequence. */
+  index_t node_end_index;
+  /** The first point. */
+  index_t point_begin_index;
+  /** One past the last point. */
+  index_t point_end_index;
+
+  void InitBlank() {
+    node_index = -1;
+    node_end_index = -1;
+    point_begin_index = -1;
+    point_end_index = -1;
+  }
+
+  bool is_valid() const {
+    return node_index >= 0;
+  }
+
+  index_t n_points() const {
+    return point_end_index - point_begin_index;
+  }
+  index_t n_nodes() const {
+    return node_end_index - node_index;
+  }
+
+  OT_DEF_BASIC(TreeGrain) {
+    OT_MY_OBJECT(node_index);
+    OT_MY_OBJECT(node_end_index);
+    OT_MY_OBJECT(point_begin_index);
+    OT_MY_OBJECT(point_end_index);
+  }
+};
+
+/**
+ * A distributed decomposition of an ThorTree.
+ *
+ * Currently only handles trivial node-to-machine decompositions.
+ */
+template<typename TNode>
+class ThorTreeDecomposition {
+ public:
+  typedef TNode Node;
+  struct Info {
+    int begin_rank;
+    int end_rank;
+
+    Info(int begin_rank_in, int end_rank_in)
+        : begin_rank(begin_rank_in), end_rank(end_rank_in) {}
+
+    bool is_singleton() const {
+      return end_rank - begin_rank <= 1;
+    }
+
+    bool contains(int rank) const {
+      return rank >= begin_rank && rank < end_rank;
+    }
+
+    int Interpolate(index_t numerator, index_t denominator) {
+      return math::RoundInt(double(end_rank - begin_rank)
+          * numerator / denominator) + begin_rank;
+    }
+
+    void Fix() {
+      if (end_rank <= begin_rank) {
+        end_rank = begin_rank + 1;
+      }
+    }
+
+    OT_DEF_BASIC(Info) {
+      OT_MY_OBJECT(begin_rank);
+      OT_MY_OBJECT(end_rank);
+    }
+  };
+
+  typedef ThorSkeletonNode<Node, Info> DecompNode;
+
+ private:
+  /**
+   * The tree decomposition.
+   */
+  DecompNode *root_;
+  ArrayList<TreeGrain> grain_by_owner_;
+
+  OT_DEF(ThorTreeDecomposition) {
+    OT_PTR(root_);
+    OT_MY_OBJECT(grain_by_owner_);
+  }
+
+ public:
+  /**
+   * Initializes given the root of a decomposition tree.
+   */
+  void Init(DecompNode *root_in) {
+    root_ = root_in;
+    DEBUG_ASSERT(root_->info().begin_rank == 0);
+    DEBUG_ASSERT(root_->info().end_rank == rpc::n_peers());
+    DEBUG_ASSERT(root_in != NULL);
+    grain_by_owner_.Init(rpc::n_peers());
+    for (int i = 0; i < grain_by_owner_.size(); i++) {
+      grain_by_owner_[i].InitBlank();
+    }
+    FillLinearization_(root_);
+  }
+
+  /** Returns the root of the decomposition tree. */
+  DecompNode *root() const {
+    return root_;
+  }
+
+  /**
+   * Gets the portion of the tree that is assigned to the specified machine.
+   */
+  const TreeGrain& grain_by_owner(int rank) const {
+    return grain_by_owner_[rank];
+  }
+
+ private:
+  void FillLinearization_(DecompNode *node);
+};
 
 /**
  * A ThorTree is a distributed tree of any point and node type.
@@ -81,11 +205,7 @@ class ThorTree {
    * Updates each point and reaccumulates all bounds and statistics.
    */
   template<typename Result, typename Visitor>
-  void Update(DistributedCache *results_cache, Visitor *visitor) {
-    ThorUpdate<Param, Point, Node, Result, Visitor> updater;
-    updater.Doit(rpc::rank(), &param_, decomp_,
-        visitor, results_cache, points_, nodes_);
-  }
+  void Update(DistributedCache *results_cache, Visitor *visitor);
 
   /**
    * Creates a new cache that has one element per point in the original
@@ -116,58 +236,53 @@ class ThorTree {
       double megs, DistributedCache *results);
 };
 
-//-------------------------------------------------------------------------
-// IMPLEMENTATION
-//-------------------------------------------------------------------------
+/**
+ * A parallelizable tree-updater.
+ *
+ * You use this to read from a separate array of results and update each
+ * query point, simultaneously updating all the statistics in the tree.
+ *
+ * This is only parallel so that each machine only works on its local data,
+ * avoiding communication.  Since updating is not CPU intensive this is
+ * in most cases an I/O bound process, so it is only single-threaded.
+ */
+template<class TParam, class TPoint, class TNode,
+         class TResult, class TVisitor>
+class ThorUpdate {
+ public:
+  typedef TParam Param;
+  typedef TPoint Point;
+  typedef TNode Node;
+  typedef TResult Result;
+  typedef TVisitor Visitor;
+  typedef ThorTreeDecomposition<Node> TreeDecomposition;
+  typedef typename TreeDecomposition::DecompNode DecompNode;
 
-//-- ThorTree
+ private:
+  CacheArray<Point> *points_;
+  CacheArray<Node> *nodes_;
+  CacheArray<Result> *results_;
+  Visitor *visitor_;
+  const Param *param_;
 
-template<typename TParam, typename TPoint, typename TNode>
-template<typename Result>
-void ThorTree<TParam, TPoint, TNode>::CreateResultCacheMaster(
-    int channel, const Result& default_result,
-    double megs, DistributedCache *results) {
-  DEBUG_ASSERT_MSG(rpc::rank() == 0, "Only master calls this");
-  index_t block_size = CacheArray<Point>::GetNumBlockElements(points_);
-  CacheArray<Result>::CreateCacheMaster(channel,
-      block_size, default_result, megs, results);
+ public:
+  /**
+   * Perform the tree update for just one machine.
+   *
+   * Note that this will *not* perform any reductions on the visitor, each
+   * machine has its separate visitor for its own part of the tree.
+   *
+   * See class-level comments.
+   */
+  void Doit(int my_rank, const Param *param, const TreeDecomposition& decomp,
+      Visitor *visitor, DistributedCache *results_cache,
+      DistributedCache *points_cache, DistributedCache *nodes_cache);
 
-  for (int i = 0; i < rpc::n_peers(); i++) {
-    const TreeGrain *grain = &decomp_.grain_by_owner(i);
-    if (grain->is_valid()) {
-      BlockDevice::blockid_t begin_block =
-          (grain->point_begin_index + block_size - 1) / block_size;
-      BlockDevice::blockid_t end_block =
-          (grain->point_end_index + block_size - 1) / block_size;
-      DEBUG_ASSERT(results->n_blocks() == begin_block);
-      results->AllocBlocks(end_block - begin_block, i);
-    }
-  }
+ private:
+  void Assemble_(const DecompNode *decomp, Node *parent);
+  void Recurse_(index_t node_index, Node *parent);
+};
 
-  results->StartSync();
-  results->WaitSync();
-}
-
-template<typename TParam, typename TPoint, typename TNode>
-template<typename Result>
-void ThorTree<TParam, TPoint, TNode>::CreateResultCacheWorker(
-    int channel, double megs, DistributedCache *results) {
-  DEBUG_ASSERT_MSG(rpc::rank() != 0, "Only workers call this");
-  CacheArray<Result>::CreateCacheWorker(channel, megs, results);
-  results->StartSync();
-  results->WaitSync();
-}
-
-template<typename TParam, typename TPoint, typename TNode>
-template<typename Result>
-void ThorTree<TParam, TPoint, TNode>::CreateResultCache(
-    int channel, const Result& default_result,
-    double megs, DistributedCache *results) {
-  if (rpc::rank() == 0) {
-    CreateResultCacheMaster(channel, default_result, megs, results);
-  } else {
-    CreateResultCacheWorker<Result>(channel, megs, results);
-  }
-}
+#include "thortree_impl.h"
 
 #endif

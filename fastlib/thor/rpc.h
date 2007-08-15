@@ -441,7 +441,7 @@ void DataGetterBackend<T>::HandleRequest(const DataGetterRequest& request,
 }
 
 /**
- * Remote procedure call namespace.
+ * An asynchronous message-passing system.
  */
 namespace rpc {
   /**

@@ -39,16 +39,20 @@ struct AffinityCommon {
     double pref;
     /** The damping factor. */
     double lambda;
+    /** The proportion of points to prime as exemplars. */
+    double prime;
 
     OT_DEF(Param) {
       OT_MY_OBJECT(pref);
       OT_MY_OBJECT(lambda);
+      OT_MY_OBJECT(prime);
     }
 
    public:
     void Init(datanode *module) {
       pref = fx_param_double_req(module, "pref");
       lambda = fx_param_double(module, "lambda", 0.6);
+      prime = fx_param_double(module, "prime", 0.005);
     }
   };
 
@@ -60,13 +64,15 @@ struct AffinityCommon {
    */
   struct Alpha {
    public:
-    double max1;
     double max2;
+    double max1_sim;
+    double max1;
     index_t max1_index;
 
     OT_DEF(Alpha) {
-      OT_MY_OBJECT(max1);
       OT_MY_OBJECT(max2);
+      OT_MY_OBJECT(max1_sim);
+      OT_MY_OBJECT(max1);
       OT_MY_OBJECT(max1_index);
     }
 
@@ -108,13 +114,14 @@ struct AffinityCommon {
       info_.alpha.max1 = 0;
       info_.alpha.max2 = 0;
       info_.alpha.max1_index = -1;
+      info_.alpha.max1_sim = 0;
       info_.rho = param.pref;
     }
 
     void Set(const Param& param, const Vector& data) {
       vec_.CopyValues(data);
       // Randomly prime points to be exemplars.
-      if (rand() % 1024 == 0) {
+      if (math::Random(0.0, 1.0) < param.prime) {
         info_.rho = -param.pref / 2;
       }
     }
@@ -260,6 +267,7 @@ class AffinityAlpha {
       alpha.max1 = -DBL_MAX;
       alpha.max2 = -DBL_MAX;
       alpha.max1_index = -1;
+      alpha.max1_sim = -DBL_MAX;
     }
     void Postprocess(const Param& param,
         const QPoint& q, index_t q_index, const RNode& r_root) {}
@@ -333,12 +341,12 @@ class AffinityAlpha {
     void VisitPair(const Param& param,
         const QPoint& q, index_t q_index, const RPoint& r, index_t r_index) {
       double candidate_alpha;
+      double sim = AffinityCommon::Helpers::Similarity(
+          la::DistanceSqEuclidean(q.vec(), r.vec()));
 
       if (likely(q_index != r_index)) {
-        double sim = AffinityCommon::Helpers::Similarity(
-            la::DistanceSqEuclidean(q.vec(), r.vec()));
         candidate_alpha = min(
-            min(sim, old_alpha.get(r_index)) + r.info().rho,
+            min(old_alpha.get(r_index), sim) + r.info().rho,
             sim);
       } else {
         candidate_alpha = r.info().rho + old_alpha.get(r_index);
@@ -348,6 +356,7 @@ class AffinityAlpha {
           alpha.max2 = alpha.max1;
           alpha.max1 = candidate_alpha;
           alpha.max1_index = r_index;
+          alpha.max1_sim = sim;
         } else {
           alpha.max2 = candidate_alpha;
         }
@@ -555,12 +564,29 @@ struct VisitorReductor {
 };
 
 struct ApplyAlphas {
+ public:
+  const AffinityCommon::Param *param;
   double sum_alpha1;
   double sum_alpha2;
+  double netsim;
 
-  void Init() {
+  OT_DEF(ApplyAlphas) {
+    OT_MY_OBJECT(sum_alpha1);
+    OT_MY_OBJECT(sum_alpha2);
+    OT_MY_OBJECT(netsim);
+  }
+
+  OT_FIX(ApplyAlphas) {
+    // the pointer shall not be sent over the internet
+    param = NULL;
+  }
+
+ public:
+  void Init(const AffinityCommon::Param *param_in) {
+    param = param_in;
     sum_alpha1 = 0;
     sum_alpha2 = 0;
+    netsim = 0;
   }
 
   void Update(index_t index,
@@ -568,16 +594,22 @@ struct ApplyAlphas {
     point->info().alpha = result->alpha;
     sum_alpha1 += result->alpha.max1;
     sum_alpha2 += result->alpha.max2;
+    if (point->info().rho > 0) {
+      netsim += param->pref;
+    } else {
+      netsim += result->alpha.max1_sim;
+    }
   }
 
   void Accumulate(const ApplyAlphas& other) {
     sum_alpha1 += other.sum_alpha1;
     sum_alpha2 += other.sum_alpha2;
+    netsim += other.netsim;
   }
 };
 
 inline double damp(double lambda, double prev, double next) {
-  return lambda * prev + (1 - lambda) * next;
+  return (prev - next) * lambda + next;
 }
 
 struct ApplyRhos {
@@ -624,7 +656,9 @@ struct ApplyRhos {
       // This double-damping attempts to avoid the chain reaction that
       // occurs when a point changes exemplar status.
       // But, damp randomly, as a form of symmetry-breaking.
-      new_rho = damp(math::Random(0.0, 1.0), old_rho, new_rho);
+      //double ratio = fabs(result->rho) / fabs(result->rho - old_rho);
+      double dampfact = math::Random(0.1, 0.9);//sqrt(ratio));
+      new_rho = damp(dampfact, old_rho, new_rho);
       n_changed++;
       hash ^= index;
     }
@@ -650,6 +684,9 @@ struct ApplyRhos {
   }
 };
 
+/**
+ * Statistics gatherer for per-iteration times for affinity propagation.
+ */
 class AffinityTimer {
  private:
   double last_alpha_micros_;
@@ -687,6 +724,9 @@ void AffinityTimer::RecordTimes(timer *alpha_timer, timer *rho_timer) {
       sum_times_/iteration_times_.size()/M);
 }
 
+/**
+ * Affinity propagation.
+ */
 void AffinityMain(datanode *module, const char *gnp_name) {
   AffinityCommon::Param *param;
   AffinityTimer timestats;
@@ -752,13 +792,14 @@ void AffinityMain(datanode *module, const char *gnp_name) {
         fx_submodule(module, "thor", "iter/%d/alpha", iter), 200,
         *param, &tree, &tree, &alphas, NULL);
     ApplyAlphas apply_alphas;
-    apply_alphas.Init();
+    apply_alphas.Init(param);
     tree.Update<AffinityAlpha::QResult>(&alphas, &apply_alphas);
     rpc::Reduce(REDUCE_CHANNEL+0, VisitorReductor<ApplyAlphas>(), &apply_alphas);
     if (rpc::is_root()) {
-      fprintf(stderr, ANSI_RED"--- %3d: alpha: max1=%f, max2=%f"ANSI_CLEAR"\n",
+      fprintf(stderr, ANSI_RED"--- %3d: alpha: max1=%.2e, max2=%.2e, netsim=%f"ANSI_CLEAR"\n",
           iter, apply_alphas.sum_alpha1 / n_points,
-          apply_alphas.sum_alpha2 / n_points);
+          apply_alphas.sum_alpha2 / n_points,
+          apply_alphas.netsim / n_points);
     }
     alphas.ResetElements();
     fx_timer_stop(module, "all_alpha");
@@ -805,9 +846,41 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
   timestats.Report(module);
 
+  if (fx_param_bool(module, "brute_netsim", false)) {
+    // Calculating netsim using brute force
+    fprintf(stderr, "calculating netsim\n");
+    CacheArray<AffinityCommon::Point> points_array;
+    double netsim = 0;
+    points_array.Init(&tree.points(), BlockDevice::M_READ);
+    CacheReadIter<AffinityCommon::Point> r(&points_array, 0);
+    ArrayList<Vector> list;
+    list.Init();
+    for (index_t j = 0; j < n_points; j++) {
+      if (r->info().rho > 0) {
+        list.AddBack()->Copy(r->vec());
+        netsim += param->pref;
+      }
+      r.Next();
+    }
+    CacheReadIter<AffinityCommon::Point> q(&points_array, 0);
+    for (index_t i = 0; i < n_points; i++) {
+      double min_dist_sq = DBL_MAX;
+      for (index_t j = 0; j < list.size(); j++) {
+        double dist_sq = la::DistanceSqEuclidean(q->vec(), list[j]);
+        if (dist_sq < min_dist_sq) {
+          min_dist_sq = dist_sq;
+        }
+      }
+      netsim -= min_dist_sq;
+      
+      q.Next();
+    }
+    fprintf(stderr, "netsim = %f\n", netsim / n_points);
+    fx_format_result(module, "netsim", "%.5e", netsim / n_points);
+  }
+
   delete param;
 }
-
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);

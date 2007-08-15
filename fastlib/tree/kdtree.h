@@ -1,7 +1,7 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
 // ABSOLUTELY NOT FOR DISTRIBUTION
 /**
- * @file kdtree.h
+ * @file tree/kdtree.h
  *
  * Tools for kd-trees.
  *
@@ -215,7 +215,6 @@ namespace tree {
     return node;
   }
 
-  // TODO: Perhaps move this into a "util.h" file
   /**
    * Loads a KD tree from a command-line parameter,
    * creating a KD tree if necessary.

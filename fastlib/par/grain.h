@@ -5,6 +5,8 @@
  *
  * Tool for creating very simple parallel programs by enqueuing small work
  * items in a priority queue and executing them greedily.
+ *
+ * @removal
  */
 
 #ifndef PAR_GRAIN_H
