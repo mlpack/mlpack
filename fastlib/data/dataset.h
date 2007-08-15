@@ -77,7 +77,7 @@ class DatasetFeature {
    * each feature to this.  (The dataset reading functions will do this
    * for you).
    *
-   * @name_in the name of the feature
+   * @param name_in the name of the feature
    */
   void InitNominal(const char *name_in) {
     name_.Copy(name_in);
@@ -482,6 +482,8 @@ class Dataset {
    * 'string' data type not supported (nominal is supported).
    *
    * @param reader a line reader opened on a CSV or WSV or ARFF file
+   * @param filename a title given to this data set, doesn't necessarily
+   *        need to be anything significant
    */
   success_t InitFromFile(TextLineReader *reader,
       const char *filename = "dataset");

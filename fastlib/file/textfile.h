@@ -70,7 +70,10 @@ class TextLineReader {
   bool MoreLines() {
     return has_line_;
   }
-  
+
+  /**
+   * Returns the currnet line number.
+   */
   int line_num() const {
     return line_num_;
   }
@@ -92,7 +95,6 @@ class TextLineReader {
   /**
    * Tries to read one line from a file.
    *
-   * @param result the string
    * @return true if a line was returned, false if end of file
    */
   bool Gobble();

@@ -6,6 +6,8 @@
  * Tool for creating very simple parallel programs by enqueuing small work
  * items in a priority queue and executing them greedily.
  *
+ * NOT USED ANYWHERE.
+ *
  * @removal
  */
 

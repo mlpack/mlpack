@@ -129,7 +129,7 @@ class DistributedCache : public BlockDevice {
     /**
      * The block size, in bytes.
      */
-    BlockDevice::offset_t n_block_bytes;
+    offset_t n_block_bytes;
     /**
      * Information the block handler (or "schema") needs to initialize itself
      * with.
@@ -270,7 +270,7 @@ class DistributedCache : public BlockDevice {
      * The block ID associated with this entry, or -1 if this slot is
      * currently unused.
      */
-    BlockDevice::blockid_t blockid;
+    blockid_t blockid;
 
     Slot() { blockid = -1; }
   };
@@ -386,7 +386,7 @@ class DistributedCache : public BlockDevice {
       return value == UNKNOWN_OWNER;
     }
     /** Gets the block ID on the local disk. */
-    BlockDevice::blockid_t local_blockid() const {
+    blockid_t local_blockid() const {
       // A block's ID is invalid if...
       DEBUG_ASSERT_MSG(is_owner(), "no local blockid: it's not mine");
       DEBUG_ASSERT_MSG(!is_new(), "no local blockid: it's newly allocated");

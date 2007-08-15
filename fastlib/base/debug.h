@@ -149,6 +149,8 @@ extern int print_warnings;
  * The message is formatted printf-style.
  *
  * @param cond the condition that must be true to proceed
+ * @param msg_params a printf-style format and arguments to print in case
+ *        an assertion fails
  */
 #define DEBUG_ASSERT_MSG(cond, msg_params...) \
     DEBUG_ONLY(likely(cond) \

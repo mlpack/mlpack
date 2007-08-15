@@ -16,38 +16,6 @@ BlockDevice::blockid_t BlockDevice::AllocBlocks(blockid_t n_blocks_to_alloc) {
 
 //------------------------------------------------------------------------
 
-void BlockDeviceWrapper::ReadBypass(blockid_t blockid,
-    offset_t begin, offset_t end, char *data) {
-  n_blocks_ = max(n_blocks_, blockid+1);
-  inner_->Read(blockid, begin, end, data);
-}
-
-void BlockDeviceWrapper::WriteBypass(blockid_t blockid,
-    offset_t begin, offset_t end, const char *data) {
-  n_blocks_ = max(n_blocks_, blockid+1);
-  inner_->Write(blockid, begin, end, data);
-}
-
-void BlockDeviceWrapper::Read(blockid_t blockid,
-    offset_t begin, offset_t end, char *data) {
-  ReadBypass(blockid, begin, end, data);
-}
-
-void BlockDeviceWrapper::Write(blockid_t blockid,
-    offset_t begin, offset_t end, const char *data) {
-  WriteBypass(blockid, begin, end, data);
-}
-
-BlockDevice::blockid_t BlockDeviceWrapper::AllocBlocks(
-    blockid_t n_blocks_to_alloc) {
-  blockid_t blockid = inner_->AllocBlocks(n_blocks_to_alloc);
-  n_blocks_ = blockid + n_blocks_to_alloc;
-  //fprintf(stderr, "BDW Alloc %d, get %d, n_blocks %d\n", n_blocks_to_alloc, blockid, n_blocks());
-  return blockid;
-}
-
-//------------------------------------------------------------------------
-
 void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
   if (fname == NULL) {
     DEBUG_ASSERT_MSG(mode == BlockDevice::M_TEMP,

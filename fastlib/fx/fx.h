@@ -169,7 +169,7 @@ void fx_default_param(struct datanode *module, const char *name,
  *
  * @param module the param's containing module, or NULL for global
  * @param name the name of the parameter (paths allowed)
- * @param format a format string for the parameter, as in printf
+ * @param val the string to set the parameter to
  */
 void fx_set_param(struct datanode *module, const char *name,
 		  const char *val);
