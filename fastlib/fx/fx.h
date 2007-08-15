@@ -238,7 +238,7 @@ void fx_set_param_node(struct datanode *dest_module, const char *destname,
  *
  * @param module the result's containing module, or NULL for global
  * @param name the name of the result (paths allowed)
- * @param format a format string for the result, as in printf
+ * @param val the value to set it to
  */
 void fx_set_result(struct datanode *module, const char *name, const char *val);
 /**
@@ -317,7 +317,7 @@ struct timer *fx_timer(struct datanode *module, const char *name);
  * forwarding.
  *
  * @param module the containing module of the submodule
- * @param params the param node to forward (paths allowed) or NULL
+ * @param param the param node to forward (paths allowed) or NULL
  * @param name_format the name of the submodule (paths allowed);
  *        formatted as in printf
  */

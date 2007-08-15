@@ -176,41 +176,7 @@ namespace mem {
   inline T * Copy(T* dest, const T* src, size_t elems) {
      return CopyBytes(dest, src, elems * sizeof(T));
   }
-  
-  template<typename ChunkType, size_t elems, typename T>
-  inline void ChunkCopy(T* dest, const T* src) {
-    *reinterpret_cast<Chunk<sizeof(T), ChunkType>*>(dest)
-        = *reinterpret_cast<const Chunk<sizeof(T), ChunkType>*>(src);
-  }
-  
-  template<bool mod_2, bool mod_4, bool mod_8, size_t bytes, typename T>
-  struct CopyHelper {
-    static void DoCopy(T* dest, const T* src) {
-      ChunkCopy<char, bytes>(dest, src);
-    }
-  };
 
-  template<size_t bytes, typename T>
-  struct CopyHelper<0, 1, 1, bytes, T> {
-    static void DoCopy(T* dest, const T* src) {
-      ChunkCopy<uint16, bytes/2>(dest, src);
-    }
-  };
-
-  template<size_t bytes, typename T>
-  struct CopyHelper<0, 0, 1, bytes, T> { 
-    static void DoCopy(T* dest, const T* src) {
-      ChunkCopy<uint32, bytes/4>(dest, src);
-    }
-  };
-
-  template<size_t bytes, typename T>
-  struct CopyHelper<0, 0, 0, bytes, T> {
-    static void DoCopy(T* dest, const T* src) {
-      ChunkCopy<uint32, bytes/8>(dest, src);
-    }
-  };
-  
   /**
    * Copies bit-by-bit from one location to another (memcpy).
    *
@@ -228,25 +194,30 @@ namespace mem {
      CopyBytes(dest, src, sizeof(T));
      return dest;
   }
-  
+
+  /** Bit-copies memory, measured in bytes. */
   template<typename T>
   inline T * DupBytes(const T* src, size_t size) {
      T* p = AllocBytes<T>(size); return CopyBytes(p, src, size);
   }
+  /** Bit-copies memory, measured in elements. */
   template<typename T>
   inline T * Dup(const T* src, size_t elems = 1) {
      return DupBytes(src, elems * sizeof(T));
   }
   
-  template<typename T>
-  inline void Zero(T* start, size_t count = 1) {
-     ZeroBytes(start, count * sizeof(T));
-  }
+  /** Bit-zeroes memory, measured in bytes. */
   template<typename T>
   inline void ZeroBytes(T* start, size_t bytes) {
      ::memset(start, 0, bytes);
   }
-  
+  /** Bit-zeroes memory, measured in elements. */
+  template<typename T>
+  inline void Zero(T* start, size_t count = 1) {
+     ZeroBytes(start, count * sizeof(T));
+  }
+
+  /** Frees memory allocated by malloc or mem::Alloc. */
   template<typename T>
   inline void Free(T* ptr) {
      ::free(ptr);
@@ -263,13 +234,17 @@ namespace mem {
   inline T* Construct(T* p) {
      new(p)T(); return p;
   }
+
+  /**
+   * Runs the default constructor on many elements.
+   */
   template<typename T>
   inline T* ConstructAll(T* m, size_t elems) {
      for (size_t i = 0; i < elems; i++) new(m+i)T(); return m;
   }
 #define BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(T) \
   template<> inline T* ConstructAll<T>(T* m, size_t elems) { return m; }
-  
+
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(char)
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(short)
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(int)
@@ -283,51 +258,34 @@ namespace mem {
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(float)
   BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(double)
 
-  // need a class to do this
-  //template<typename T> inline T** ConstructAll<T*>(T** m, size_t elems) {
-  //  return m;
-  //}
-  
 #undef BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR
-  
+
+  /** Calls the copy constructor to initialize an element. */
   template<typename T, typename U>
   inline T* Construct(T* p, U u) {
      new(p)T(u); return p;
   }
+  /** Calls the copy constructor  to initialize many elements to the
+   * same value. */
   template<typename T, typename U>
   inline T* ConstructAll(T* m, U u, size_t elems) {
      for (size_t i = 0; i < elems; i++) new(m+i)T(u); return m;
   }
-  
-  template<typename T, typename U, typename V>
-  inline T* Construct(T* p, U u, V v) {
-     new(p)T(u, v); return p;
-  }
-  template<typename T, typename U, typename V>
-  inline T* ConstructAll(T* m, U u, V v, size_t elems) {
-     for (size_t i = 0; i < elems; i++) new(m+i)T(u, v); return m;
-  }
 
-  template<typename T, typename U, typename V, typename W>
-  inline T* Construct(T* p, U u, V v, W w) {
-     new(p)T(u, v, w); return p;
-  }
-  template<typename T, typename U, typename V, typename W>
-  inline T* ConstructAll(T* m, U u, V v, W w, size_t elems) {
-     for (size_t i = 0; i < elems; i++) new(m+i)T(u, v, w); return m;
-  }
-
+  /** Calls the destructor on an element. */
   template<typename T>
   void Destruct(T* m) {
      m->~T();
      DEBUG_ONLY(DebugPoison(m, 1));
   }
+  /** Calls the dstructor on many elements. */
   template<typename T>
   void DestructAll(T* m, size_t elems) {
      for (size_t i = 0; i < elems; i++) m[i].~T();
      DEBUG_ONLY(DebugPoison(m, elems));
   }
 
+  /** Calls the copy constructor to copy an array of elements. */
   template<typename T>
   inline T* CopyConstruct(T* dest, const T* src, size_t elems = 1) {
      for (size_t i = 0; i < elems; i++) new(dest+i)T(src[i]); return dest;
@@ -349,6 +307,7 @@ namespace mem {
   BASE_CCMEM__FAST_COPY(double)
 #undef BASE_CCMEM__FAST_COPY
 
+  /** Mallocs an array and copies the contents using copy constructors. */
   template<typename T>
   inline T* DupConstruct(const T* src, size_t elems = 1) {
      return CopyConstruct(Alloc<T>(elems), src, elems);
@@ -357,12 +316,14 @@ namespace mem {
   void SwapBytes__Chars(long *a_lp_in, long *b_lp_in, ssize_t remaining);
   void SwapBytes__Impl(long *a_lp_in, long *b_lp_in, ssize_t remaining);
 
+  /** Shallow swap of two arrays, sized in bytes. */
   template<typename T>
   void SwapBytes(T* a, T* b, size_t bytes) {
     SwapBytes__Impl(reinterpret_cast<long*>(a), reinterpret_cast<long*>(b),
         bytes);
   }
 
+  /** Shallow swap of two arrays, sized in elements. */
   template<typename T>
   inline void Swap(T* a, T* b, size_t elems = 1) {
     SwapBytes(a, b, elems * sizeof(T));

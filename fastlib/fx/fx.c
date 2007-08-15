@@ -23,7 +23,7 @@
 #define FX_SHOW_RESULTS_TIMERS
 #endif
 
-int fx__show_results_timers = 0;
+static int fx__show_results_timers = 0;
 
 static struct datanode *fx__real_root;
 static int fx__silent = 0;
