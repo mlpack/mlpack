@@ -634,9 +634,9 @@ class DistributedCache : public BlockDevice {
   //-----------------------------------------------------------------------
 
   /** Sets up the channel to listen for remote requests. */
-  void InitChannel_(int channel_num_in);
+  void InitChannel_();
   /** Initializes things in common for masters and workers. */
-  void InitCommon_();
+  void InitCommon_(int channel_num_in);
   /** Creates the associative cache array. */
   void InitCache_(size_t total_ram);
   /** Opens up the overflow file. */

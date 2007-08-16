@@ -854,6 +854,7 @@ void SockConnection::RawSend(Message *message) {
   }
 
   ++write_total_;
+  //fprintf(stderr, "%d: sending message to %d\n", rpc::rank(), peer_);
   if (!is_writing()) {
     // If we're not writing anything currently, set our current message, and
     // try to write it immediately without blocking.
@@ -958,6 +959,7 @@ bool SockConnection::TryRead() {
 
       read_message_ = NULL;
       read_buffer_pos_ = 0;
+      //fprintf(stderr, "%d: got message from %d\n", rpc::rank(), peer_);
       break;
     }
     // Finally, read as much payload as we can for this message.

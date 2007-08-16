@@ -69,6 +69,7 @@ index_t CacheArray<T>::ConvertBlockSize(
   int i;
 
   for (i = 0; (size_t(1) << i) * elem_size <= bytes; i++) {}
+  //fprintf(stderr, "%d %d %d %d\n", int(bytes), int(elem_size), int(1 << i), int(elem_size));
 
   return index_t(1) << (i - 1);
 }

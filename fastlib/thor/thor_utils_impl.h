@@ -24,7 +24,9 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
 
   for (index_t i = 0; i < n_threads; i++) {
     threads[i].Init(new WorkerTask(this));
-    threads[i].Start();
+    // Set these threads to low priority to make sure the network thread
+    // gets full priority.
+    threads[i].Start(Thread::LOW_PRIORITY);
   }
 
   for (index_t i = 0; i < n_threads; i++) {
@@ -176,7 +178,7 @@ void thor::RpcDualTree(datanode *module, int base_channel,
   ThreadedDualTreeSolver<GNP, SerialSolver> solver;
   solver.Doit(n_threads, rpc::rank(), work_queue, param,
       &q->points(), &q->nodes(), &r->points(), &r->nodes(), q_results);
-  rpc::Barrier(base_channel + 1);
+  rpc::Barrier(base_channel + 2);
   fx_timer_stop(module, "gnp");
 
   fx_timer_start(module, "write_results");
@@ -206,6 +208,7 @@ void thor::RpcDualTree(datanode *module, int base_channel,
       fx_submodule(module, NULL, "global_result"));
 
   if (rpc::is_root()) {
+    rpc::Unregister(base_channel + 0);
     delete work_backend;
     if (global_result_pp) {
       *global_result_pp = new typename GNP::GlobalResult(my_global_result);

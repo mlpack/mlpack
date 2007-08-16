@@ -23,6 +23,12 @@
 class Thread {
   FORBID_COPY(Thread);
   
+ public:
+  enum {
+    LOW_PRIORITY = 20,
+    NORMAL_PRIORITY = 0
+  };
+  
  private:
 #ifdef DEBUG
   enum {UNINIT, READY, ATTACHED, DETACHED, DONE} status_;
@@ -67,6 +73,29 @@ class Thread {
     DEBUG_ASSERT(status_ == READY);
     pthread_create(&thread_, NULL,
         ThreadMain_, reinterpret_cast<void*>(this));
+    DEBUG_ONLY(status_ = ATTACHED);
+  }
+  
+  /**
+   * Starts the thread running with specified priority.
+   *
+   * The priority number is backwards from priority -- higher numbers
+   * have less priority.  Use a priority of 20 for the lowest possible
+   * priority, or 0 if you don't want to change the priority.  Sorry, it is
+   * not possible to increase your priority.
+   */
+  void Start(int prio) {
+    pthread_attr_t tattr;
+    sched_param param;
+
+    DEBUG_ASSERT(status_ == READY);
+    pthread_attr_init(&tattr);
+    pthread_attr_getschedparam(&tattr, &param);
+    param.sched_priority = prio;
+    pthread_attr_setschedparam(&tattr, &param);
+    pthread_create(&thread_, &tattr,
+        ThreadMain_, reinterpret_cast<void*>(this));
+    pthread_attr_destroy(&tattr);
     DEBUG_ONLY(status_ = ATTACHED);
   }
   

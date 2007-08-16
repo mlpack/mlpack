@@ -102,6 +102,7 @@ class Rpc {
     Message *request_msg = transaction_.CreateMessage(
         peer, ot::PointerFrozenSize(request));
     ot::PointerFreeze(request, request_msg->data());
+    transaction_.Send(request_msg);
 
     if (request.requires_response()) {
       transaction_.WaitDone();
@@ -175,10 +176,6 @@ class RemoteObjectBackend : public Channel {
     RemoteObjectTransaction *t = new RemoteObjectTransaction();
     t->Init(message->channel(), this);
     return t;
-  }
-
-  void Register(int channel_num) {
-    rpc::Register(channel_num, this);
   }
 };
 
