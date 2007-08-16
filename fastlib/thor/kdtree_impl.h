@@ -78,8 +78,8 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Doit(
 
   leaf_size_ = fx_param_int(module, "leaf_size", 32);
   chunk_size_ = points_.n_block_elems();
-  DEBUG_ASSERT_MSG(leaf_size_ < chunk_size_,
-      "Leaf size (%d) must be larger than chunk size (%d)",
+  DEBUG_ASSERT_MSG(leaf_size_ <= chunk_size_,
+      "Leaf size (%d) must be no larger than chunk size (%d)",
       int(leaf_size_), int(chunk_size_));
 
   fx_timer_start(module, "tree_build");

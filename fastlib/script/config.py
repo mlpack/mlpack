@@ -41,24 +41,25 @@ util.shell(
 
 print "*** created basic_types.h"
 
+# NOTE: Removed "shares" feature
 # highest priority to lowest
-checked_shares = [
-        "/cygdrive/d/nick/Fast_code/share",
-        "/net/hu11/garryb/fastlab/%s" % (arch),
-        "/usr/local"]
-found_shares = [share for share in checked_shares if os.access(share, os.R_OK)]
+#checked_shares = [
+#        "/cygdrive/d/nick/Fast_code/share",
+#        "/net/hu11/garryb/fastlab/%s" % (arch),
+#        "/usr/local"]
+#found_shares = [share for share in checked_shares if os.access(share, os.R_OK)]
 
-if len(found_shares) == 0:
-  print "XXX No suitable share found."
-  print "    Looked in: ", checked_shares
-  sys.exit(1)
+#if len(found_shares) == 0:
+#  print "XXX No suitable share found."
+#  print "    Looked in: ", checked_shares
+#  sys.exit(1)
+#    "LIB=%s" % " ".join(["-L%s/lib" for share in found_shares]),
+#    "INC=%s" % " ".join(["-I%s/include" for share in found_shares])
 
 print "... outputting Makefile.inc"
 
 makefile_inc_lines = [
     "FASTLIB=%s" % source_dir,
-    "LIB=%s" % " ".join(["-L%s/lib" for share in found_shares]),
-    "INC=%s" % " ".join(["-I%s/include" for share in found_shares])
 ]
 
 util.writelines(os.path.join(base_in, "Makefile.inc"), makefile_inc_lines)

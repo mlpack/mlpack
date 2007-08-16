@@ -1,3 +1,4 @@
+
 /* C-implementation of the affinity propagation clustering algorithm. See */
 /* BJ Frey and D Dueck, Science 315, 972-976, Feb 16, 2007, for a         */
 /* description of the algorithm.                                          */
@@ -279,11 +280,15 @@ int main (int argc, char **argv)
   
   /* If clusters were identified, find the assignments and output them */
   if (K > 0) {
+    double netsim_old;
+
+/*
     for (j = 0; j < m; j++)
       if (dec[decit][k[j]] == 1)
 	a[j] = 0.0;
       else
 	a[j] = -MAXDOUBLE;
+
     for (j = 0; j < n; j++)
       mx1[j] = -MAXDOUBLE;
     for (j = 0; j < m; j++) {
@@ -293,6 +298,7 @@ int main (int argc, char **argv)
 	idx[i[j]] = k[j];
       }
     }
+
     for (j = 0; j < n; j++)
       if (dec[decit][j])
 	idx[j] = j;
@@ -301,6 +307,7 @@ int main (int argc, char **argv)
     for (j = 0; j < m; j++)
       if (idx[i[j]] == idx[k[j]])
 	srp[k[j]] = srp[k[j]] + s[j];
+
     for (j = 0; j < n; j++)
       mx1[j] = -MAXDOUBLE;
     for (j = 0; j < n; j++)
@@ -316,6 +323,7 @@ int main (int argc, char **argv)
 	a[j] = 0.0;
       else
 	a[j] = -MAXDOUBLE;
+*/
     for (j = 0; j < n; j++)
       mx1[j] = -MAXDOUBLE;
     for (j = 0; j < m; j++) {
@@ -331,7 +339,7 @@ int main (int argc, char **argv)
     /*
     f = fopen (argv[3], "w");
     for (j = 0; j < n; j++)
-      ffprintf (stderr, f, "%lu\n", idx[j] + 1);
+      fprintf (f, "%lu\n", idx[j] + 1);
     fclose (f);
     */
     dpsim = 0.0;
@@ -356,6 +364,7 @@ int main (int argc, char **argv)
     fx_format_result(fx_root, "avg", "%f", timer_all_iter->total.micros / 1.0e6 / it);
     fx_format_result(fx_root, "n_iterations", "%d", it);
     fx_format_result(fx_root, "netsim", "%f", netsim);
+    fx_format_result(fx_root, "netsim_r", "%f", netsim / n);
   }
   else
     fprintf (stderr, "\nDid not identify any clusters\n");

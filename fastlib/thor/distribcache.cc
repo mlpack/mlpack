@@ -18,24 +18,24 @@ void DistributedCache::InitMaster(int channel_num_in,
     offset_t n_block_bytes_in,
     size_t total_ram,
     BlockHandler *handler_in) {
-  InitCommon_();
+  InitCommon_(channel_num_in);
   handler_ = handler_in;
   n_blocks_ = 0;
   n_block_bytes_ = n_block_bytes_in;
   InitFile_(NULL);
   InitCache_(total_ram);
-  InitChannel_(channel_num_in);
+  InitChannel_();
 }
 
 void DistributedCache::InitWorker(
     int channel_num_in, size_t total_ram, BlockHandler *handler_in) {
-  InitCommon_();
+  InitCommon_(channel_num_in);
   // connect to master and figure out specs
   handler_ = handler_in;
   DoConfigRequest_();
   InitFile_(NULL);
   InitCache_(total_ram);
-  InitChannel_(channel_num_in);
+  InitChannel_();
 }
 
 DistributedCache::~DistributedCache() {
@@ -56,8 +56,7 @@ void DistributedCache::InitFile_(const char *filename) {
   overflow_device_ = db;
 }
 
-void DistributedCache::InitChannel_(int channel_num_in) {
-  channel_num_ = channel_num_in;
+void DistributedCache::InitChannel_() {
   channel_.Init(this);
   rpc::Register(channel_num_, &channel_);
 }
@@ -66,6 +65,7 @@ void DistributedCache::DoConfigRequest_() {
   BasicTransaction transaction;
   transaction.Init(channel_num_);
   // WALDO -- This used to be sent to MASTER_RANK
+  DEBUG_ASSERT(!rpc::is_root());
   Message *message = transaction.CreateMessage(rpc::parent(), sizeof(Request));
   Request *request = message->data_as<Request>();
 
@@ -83,7 +83,8 @@ void DistributedCache::DoConfigRequest_() {
   handler_->Deserialize(response->block_handler_data);
 }
 
-void DistributedCache::InitCommon_() {
+void DistributedCache::InitCommon_(int channel_num_in) {
+  channel_num_ = channel_num_in;
   syncing_ = false;
   disk_stats_.Init();
   net_stats_.Init();
