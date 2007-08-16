@@ -41,18 +41,21 @@ struct AffinityCommon {
     double lambda;
     /** The proportion of points to prime as exemplars. */
     double prime;
+    double random;
 
     OT_DEF(Param) {
       OT_MY_OBJECT(pref);
       OT_MY_OBJECT(lambda);
       OT_MY_OBJECT(prime);
+      OT_MY_OBJECT(random);
     }
 
    public:
     void Init(datanode *module) {
       pref = fx_param_double_req(module, "pref");
-      lambda = fx_param_double(module, "lambda", 0.6);
-      prime = fx_param_double(module, "prime", 0.005);
+      lambda = fx_param_double(module, "lambda", 0.95);
+      prime = fx_param_double(module, "prime", 0.002);
+      random = fx_param_double(module, "random", 0.002);
     }
   };
 
@@ -618,6 +621,7 @@ struct ApplyRhos {
   index_t n_changed;
   index_t hash;
   index_t n_exemplars;
+  double squared_changed;
   double squared_difference;
   double sum;
 
@@ -626,6 +630,7 @@ struct ApplyRhos {
     OT_MY_OBJECT(hash);
     OT_MY_OBJECT(n_exemplars);
     OT_MY_OBJECT(squared_difference);
+    OT_MY_OBJECT(squared_changed);
     OT_MY_OBJECT(sum);
   }
 
@@ -641,27 +646,53 @@ struct ApplyRhos {
     n_changed = 0;
     n_exemplars = 0;
     squared_difference = 0;
+    squared_changed = 0;
     sum = 0;
   }
 
   void Update(index_t index,
       AffinityCommon::Point *point, AffinityRho::QResult* result) {
     double old_rho = point->info().rho;
-    double new_rho = damp(param->lambda, old_rho, result->rho);
+    double new_rho = result->rho;
     bool was_exemplar = (old_rho > 0);
     bool wants_exemplar = (result->rho > 0);
 
     if (was_exemplar != wants_exemplar) {
-      // If exemplar status is trying to change, damp it again.
-      // This double-damping attempts to avoid the chain reaction that
-      // occurs when a point changes exemplar status.
-      // But, damp randomly, as a form of symmetry-breaking.
-      //double ratio = fabs(result->rho) / fabs(result->rho - old_rho);
-      double dampfact = math::Random(0.1, 0.9);//sqrt(ratio));
-      new_rho = damp(dampfact, old_rho, new_rho);
+      squared_changed += math::Sqr(new_rho - old_rho);
       n_changed++;
       hash ^= index;
     }
+
+    //double idampfact =
+    //    pow(fabs(old_rho) / (fabs(old_rho - new_rho) + fabs(old_rho)), param->dampness);
+    //new_rho = damp((1 - idampfact), old_rho, new_rho);
+    // First, damp according to the specified damping factor.
+    //new_rho = damp(param->lambda, old_rho, new_rho);
+    // Next, damp according to a variable damping factor that penalizes
+    // large changes.
+    //double dampfact = atan2(param->dampness * fabs(new_rho - old_rho),
+    //    fabs(old_rho)) * (2.0 / math::PI);
+
+#define SQUARED_DAMPING
+
+#ifdef EXPONENTIAL_DAMPING
+    double rel_diff = fabs(new_rho - old_rho) / (fabs(old_rho) + 1e-99);
+    double dampfact = 1 - exp(-rel_diff * param->dampness);
+    dampfact *= param->lambda;
+    dampfact -= math::Random(0.0, 1.0) * param->random;
+    new_rho = damp(dampfact, old_rho, new_rho);
+#endif
+
+#ifdef SQUARED_DAMPING
+    double v = fabs(old_rho) / (fabs(old_rho) + fabs(new_rho - old_rho));
+    //double rel_diff = fabs(new_rho - old_rho) / (fabs(old_rho) + 1e-99);
+    double dampfact = 1.0 - math::Sqr(v);
+    dampfact *= param->lambda;
+    dampfact -= math::Random(0.0, 1.0) * param->random;
+    new_rho = damp(dampfact, old_rho, new_rho);
+#endif
+
+    //fprintf(stderr, "%e %e %e\n", factor, sign, old_rho);
 
     bool now_exemplar = (new_rho > 0);
 
@@ -679,6 +710,7 @@ struct ApplyRhos {
     n_changed += other.n_changed;
     n_exemplars += other.n_exemplars;
     squared_difference += other.squared_difference;
+    squared_changed += other.squared_changed;
     sum += other.sum;
     hash ^= other.hash;
   }
@@ -735,7 +767,8 @@ void AffinityMain(datanode *module, const char *gnp_name) {
   const int RHO_CHANNEL = 360;
   const int REDUCE_CHANNEL = 370;
   const int DONE_CHANNEL = 390;
-  int convergence = fx_param_int(module, "affinity/convergence", 50);
+  int conv_it = fx_param_int(module, "affinity/conv_it", 50);
+  int conv_thresh = fx_param_int(module, "affinity/conv_thresh", 5);
   int stable_iterations = 0;
   int maxit = fx_param_int(module, "affinity/maxit", 1000);
   index_t n_points;
@@ -813,9 +846,10 @@ void AffinityMain(datanode *module, const char *gnp_name) {
     tree.Update<AffinityRho::QResult>(&rhos, &apply_rhos);
     rpc::Reduce(REDUCE_CHANNEL+1, VisitorReductor<ApplyRhos>(), &apply_rhos);
     if (rpc::is_root()) {
-      fprintf(stderr, ANSI_GREEN"--- %3d:  rho: %"LI"d exemplars (%"LI"d changed, rms diff=%.1e, hash=%"LI"d)"ANSI_CLEAR"\n",
+      fprintf(stderr, ANSI_GREEN"--- %3d:  rho: %"LI"d exemplars (%"LI"d changed, rms diff=%.1e, for c=%.1e, hash=%"LI"d)"ANSI_CLEAR"\n",
           iter, apply_rhos.n_exemplars, apply_rhos.n_changed,
           sqrt(apply_rhos.squared_difference / n_points),
+          sqrt(apply_rhos.squared_changed / apply_rhos.n_changed),
           apply_rhos.hash);
     }
     rhos.ResetElements();
@@ -829,12 +863,12 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
     if (rpc::is_root()) {
       // TODO: Better termination condition
-      if (apply_rhos.n_changed < 10) {
+      if (apply_rhos.n_changed < conv_thresh) {
         stable_iterations++;
       } else {
         stable_iterations = 0;
       }
-      done.SetData(iter >= maxit || stable_iterations >= convergence);
+      done.SetData(iter >= maxit || stable_iterations >= conv_it);
     }
 
     done.Doit(DONE_CHANNEL);
