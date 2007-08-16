@@ -149,8 +149,8 @@ it is possible to reduce the training of the non-parametric model to
 linear time and the evaluation of a new point in logarithmic time.
 Estimation of the few parameters of a non-parametric model can be
 casted as an optimization problem which in most of the case can be
-convex. We will see how non-parametric Kernel Principal Component 
-Analysis \cite{scholkopf1998nca} can be computed with the help 
+convex. We will see how non-parametric Kernel Principal Component
+Analysis \cite{scholkopf1998nca} can be computed with the help
 of semidefinite programming \cite{vandenberghe1996sp, boyd2004co}.
 
 \section{Origin and history of the problem}
@@ -158,7 +158,7 @@ of semidefinite programming \cite{vandenberghe1996sp, boyd2004co}.
 
 After the information explosion the problem of reducing/estimating
 the real dimensionality also known as the intrinsic dimensionality of a
-given dataset has been an active problem \cite{kegl2003ide}, \cite{costa2003egm}. 
+given dataset has been an active problem \cite{kegl2003ide}, \cite{costa2003egm}.
 It is well known that many
 machine learning algorithms starting from the very fundamental, the
 nearest neighbor, grow exponentially on the intrinsic dimension. This
@@ -193,7 +193,7 @@ The driving force for investigating dimensionality reduction was the
 estimation of the true dimensionality of speech. Many representations
 have been recommended for speech MFCC, LPC, NRAFF etc, \cite{quatieri2002dts,rabiner1978dps, ravindran:inr}. The true
 dimensionality is yet unknown. Meanwhile there is theoretical evidence
-that speech signals lie on manifolds 
+that speech signals lie on manifolds
 \cite{alder1991dss, sciamarella1999tsc, kumar1990ade, tishby1990dsa, jansen2006ifa}. In
 this thesis we will attempt to estimate the true dimensionality of
 speech based on several representations. We will see in the future
@@ -205,7 +205,7 @@ recognition.
 \subsection{The Nearest Neighbor Problem}
 \label{The_Nearest_Neighbor_Problem}
 
-One of the classical problems in statistics and in machine learning 
+One of the classical problems in statistics and in machine learning
 is the nearest neighbor problem. Given a set of points in $S =
 \{x_i, x_i\in\Re^d, i=0\dots N\}$ and a distance metric $M(x_i, y_i),
 x_i, y_i \in S$,  the nearest neighbor of $x_i \in \Re^d$ is
@@ -218,7 +218,7 @@ reference points. The complexity is $O(N)$. Assuming that the number
 of the query points $N$ is the same as the number of reference
 points then the complexity of the naive method is $O(N^2)$. An
 efficient way to reduce the complexity is to use multidimensional
-trees. In the next sections we present kd-trees \cite{moore-tutorial} 
+trees. In the next sections we present kd-trees \cite{moore-tutorial}
 and ball-trees \cite{moore2000ahu}.
 
 As a clarification we mention that this is the problem of the exact
@@ -233,8 +233,8 @@ The purpose of multidimensional trees is to create a hierarchical
 partition of a dataset so that data points are grouped close to
 their neighbors, which are usually the points of interest, and far
 away enough from other points. It has been proven that there is not
-a globally optimal partition strategy \cite{gyorfi2002dft} 
-and it is heavily dependant on the distribution of the data points 
+a globally optimal partition strategy \cite{gyorfi2002dft}
+and it is heavily dependant on the distribution of the data points
 as well as on the dimensionality. In this section we present a particular
  class of multidimensional
 trees, the binary trees and more specifically kd-trees and ball or
@@ -603,7 +603,7 @@ is possible to do non blocking system call for prefetching.
 
 We do not address the problem of building cache
 efficiently trees since this issue has been extensively addressed in
-the literature, with the most successful algorithm the buffer tree 
+the literature, with the most successful algorithm the buffer tree
 \cite{arge2003btt}.
 
 \subsubsection{Memory layout of Kd-trees} There are many ways to
@@ -644,7 +644,7 @@ k or range.
 \subsubsection{Memory Manager Architecture} In order to test
 different memory manager strategies, we used smart pointers that
 would collaborate with their corresponding memory allocators. Memory
-Allocators implement a set of basic functions such as 
+Allocators implement a set of basic functions such as
 {\verb"malloc" }.
 One of the fundamental issues is to make sure the allocated memory for each
 structure had the correct alignment. It is widely known that wrong
@@ -732,7 +732,7 @@ is raised and the page is marked as modified.
 \begin{tabular}{|c|c|c|c|}
   \hline
   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-  number of points & dimensions & dual-tree time(sec)& collecting time (sec)\\ 
+  number of points & dimensions & dual-tree time(sec)& collecting time (sec)\\
   140000000        & 2          & 2711               & 1730\\
   100000000        & 3          & 4885               & 1338\\
   5000000          & 5          & 8376               & 650\\
@@ -747,7 +747,7 @@ is raised and the page is marked as modified.
 \begin{tabular}{|c|c|c|c|}
   \hline
   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-  number of points & dimensions & dual-tree time(sec)& initialization time (sec)\\ 
+  number of points & dimensions & dual-tree time(sec)& initialization time (sec)\\
   140000000 & 2 & 2039 & 836\\
   100000000 & 3 & 2648 & 711\\
   5000000   & 5 & 4131 & 430\\
@@ -765,7 +765,7 @@ is raised and the page is marked as modified.
    140000000 & 2 & 65536   & 25432 & 2482 \\
    140000000 & 2 & 524288  & 4978  & 2026 \\
    140000000 & 2 & 1048576 & 4438  & 1901 \\
-   140000000 & 2 & 4194304 & 4543  & 1819 \\ 
+   140000000 & 2 & 4194304 & 4543  & 1819 \\
    100000000 & 3 & 65536   & 8163  & 1603 \\
    100000000 & 3 & 524288  & 6542  & 1499 \\
    100000000 & 3 & 1048576 & 6094  & 1386 \\
@@ -829,12 +829,12 @@ every dataset they  must give a valid kernel matrix as described in
 previous sections.
 
 Kernel PCA has many cousins such as Laplacian eigenmaps
-\cite{Belkin}, Diffusion maps  \cite{Lafon}, Isomap \cite{tenenbaum2000ggf}, 
-Local Linear Embedding \cite{roweis1993ndr}, 
+\cite{Belkin}, Diffusion maps  \cite{Lafon}, Isomap \cite{tenenbaum2000ggf},
+Local Linear Embedding \cite{roweis1993ndr},
 Local Tangent Space Alignment \cite{zhang2002pma} etc.
 
 %Both works present algorithms for computing the Laplace-Beltrami
-%operator on a submanifold $\Gamma$ embedded in $\Re^d$. 
+%operator on a submanifold $\Gamma$ embedded in $\Re^d$.
 Lafon has introduced a diffusion process on the manifold based on a
 kernel $k(x,y)$ that defines the local geometry on the points that
 belong to the manifold. The choice of the kernel affects essentially
@@ -864,7 +864,7 @@ estimation
 %estimation algorithm. The last section presents examples of the
 %diffusion operator when the kernel bandwidth is trained.
 
-\subsubsection{Geometric diffusion on a manifold} 
+\subsubsection{Geometric diffusion on a manifold}
 Let  $(\Gamma,\mu)$
 be a measure space, where $\Gamma$ is a finite set of
 $d$-dimensional points and $\mu$ is a counting measure that
@@ -964,7 +964,7 @@ nearest neighbors which can be solved by the dual tree algorithm in
 linear time.
 
 \subsection{Parameter estimation for manifold learning, through density estimation}
-
+\label{Bandwidth_Tuning}
 Manifold learning turns out to be a very useful tool for many
 applications of machine learning, such as classification.
 Unfortunately the existing algorithms use ad hoc selection of the
@@ -1283,7 +1283,7 @@ sets. The most common metric is the speech recognition word accuracy
 over TIMIT or any other data set. Unfortunately most of the speech
 recognition systems are specifically tuned for MFCCs and it is
 difficult to have objective comparison since systems always tend to
-favor them. 
+favor them.
 %In this section we will introduce statistical algorithms
 %that can scale easily for large data sets. One very interesting
 %statistical measure for features that can be the basis for many
@@ -1402,8 +1402,9 @@ eigenvalue distribution of the Principal Component Analysis. As seen
 from Fig.~\ref{pca} NRAFs have a more compact distribution than
 MFCCs.
 
-\subsubsection{Comparison of NRAF and MFCC} Two types of
-experiments were done for the comparison of the features. The first
+\subsubsection{Comparison of NRAF and MFCC} 
+\label{Feature_Comparison}
+Two types of experiments were done for the comparison of the features. The first
 one is the Leave One feature Cross Validation. So for every feature
 we find the k-nearest neighbors and check whether the majority has
 the same label as it \footnote{Instead of using the 61 different
@@ -1545,7 +1546,7 @@ and for NRAF (dashed line).}
   NRAF & 42.2\% & 53.5\% & 53.7\% & 52.4\% & 52.4\% \\
   \hline
 \end{tabular}
-\caption{Nearest k-neighbor classfier for
+\caption{Nearest k-neighbor classifier for
   Leave One Speaker out Cross Validation in TIMIT database}
 } \label{kneighborLOOCVTIMIT}
 \end{table}
@@ -1570,18 +1571,206 @@ and for NRAF (dashed line).}
 \newpage
 \section{Proposed Research}
 \label{proposed}
-
-The goal of this thesis is to make kernel methods scalable.
-Efficient computation and optimization of the kernel matrix for large volumes of
-data are proposed. Special emphasis is given in high dimensional data $d>30$. One
-of the goals is to use Kernel PCA for unfolding the speech manifold.
 In other words estimate the intrinsic dimensionality of speech by
 using big databases like TIMIT \cite{garofolo1993tap}, Wall Street Journal and Broadcast
 News \cite{graff1997bns}. Dimensionality reduction will implicitly lead to new feature
 generation. The ultimate goal is to use these new features along
-with kd-trees do speech recognition by nearest neighbor search.
+with kd-trees do speech recognition by nearest neighbor search. The simplest approach to dimensionality 
+reduction is Principal Component Analysis (PCA). Unfortunately PCA is a linear method that works well 
+only on gaussian and euclidian data. It fails to capture nonlinearities on the data manifold. Simple 
+examples of curves like the Swiss roll show that PCA fails to unfold it 
+and identify the principal components. Manifold techniques such as Local Linear Embedding, Isomap, 
+Local Tangent Space Alignment, Kernel PCA, Laplacian Eigenmaps etc are more  efficient in capturing 
+the principal components of a nonlinear manifold. 
+
+Fixed Kernel Methods such as Kernel PCA suffer from the kernel bandwidth tuning. 
+We saw in section \ref{Bandwidth_Tuning}
+that we can tune it with heuristics. Although it can improve the performance we show in 
+section \ref{Feature_Comparison} fig.~\ref{kernel_pca} that the 
+choice of the kernel is crucial in the performance. A very promising direction as we will see in 
+section \ref{Customized_Kernels}
+is to use Semidefinite programming in customizing the kernel matrix (Semidefinite PCA). The results of \cite{weinberger2004lkm}
+indicate superior results compared to standard Kernel Methods as well as Isomap and Local Linear Embedding.
+
+All these methods require the k-neighborhood computation for a every point. As we have already 
+mentioned the computational bottleneck can be reduced from $O(N^2)$ to linear with the dual tree
+algorithm. Another bottleneck is the computation of the eigenvalues for kernel matrices with
+infinite support like the gaussian. Moreover the Semidefinite PCA suffers from polynomial complexity since it uses the interior
+point methods. There are also some other implementational issues with the tree algorithms that we addressed
+in section ?
+
+In this section we present optimization strategies for the fixed kernel methods as well as for the
+Semidefinite PCA. In the last part the strategy for estimating the intrinsic dimension of speech and its
+application in speech recognition is presented.
+
+
+\subsection{Fast kernel summation} 
+Kernel summation is one of the most common tasks in kernel methods. The general formula
+\begin{equation}
+\label{kernel_sum}
+  G(x)=\sum_{r=0}^{N} w_i e^{-\frac{||x-x_r||}{\sigma^2}}
+\end{equation}
+
+appears in many cases, with the most interesting case the
+eigenvalue/eigenvector computation of the kernel matrix. The kernel summation is a very
+computationally intensive task. For Gaussian kernels there are
+approximations that can speed up computations orders of magnitude.
+We will briefly discuss them here. Besides computation saving we can
+save memory as well. The gaussian kernel has infinite support so the
+kernel matrix $\{K : k(x,y)=e^{-\frac{||x-y||}{\sigma^2}} \}$ is not
+sparse. Numerical iterative methods for eigenvector computation are
+based on the general iteration $w^n=w^{n-1}+\lambda Kw^{n-1}$, where
+the multiplication of each row of $K$ with $w^{n-1}$ is a kernel
+summation problem. So we don't really need to store the kernel
+matrix, we just have to compute the kernel sum for every row using
+$w^{n-1}$ as a the weight vector. The term $Kw^{n-1}$ can be
+expanded as
+
+\begin{equation}
+K_i\footnote{$K_i$ is the $ith$ row of the K matrix} w^{n-1} =
+\sum_{j=1}^{N} K(i,j) w^{n-1}_{j}
+\end{equation}
+
+which is the gaussian summation if we replace $K(i,j)$ with the
+Gaussian kernel
+\begin{equation}
+\sum_{j=1}^{N}w^{n-1}_j  e^{-\frac{||x_i-x_j||}{\sigma^2}}
+\end{equation}
+
+\subsubsection{Gaussian Kernel factorization}
+In general the kernel computation speedup is achieved by factorizing
+the kernel \cite{raykar2005fcs} in the form
+\begin{equation}
+k(x_r, x_q)=\sum_{k=1}^{p}\Phi_k(x_r)\Psi_k(x_q)+error
+\end{equation}
+Assuming that $x_r$ stands for the reference points and $x_q$ for
+the query points, the terms that depend on the reference point can
+be precomputed and be used for every query point. This essentially
+reduces the computational complexity to $O(pN+pM)$, where $N$ is the
+number of reference points and $M$ is the number of query points.
+
+\paragraph{Factorization with Hermite Polynomials}
+
+The gaussian can be approximated with the help of Hermite
+polynomials \cite{strain1991fgt}. The Hermite polynomials $H_n(t)$ are defined by the
+Rodrigues formula:
+\begin{equation}
+  H_n(t)=(-1)^ne^{t^2}D^n e^{-t^2}, t\in \Re
+\end{equation}
+where $D=\frac{d}{dt}$.
+
+The gaussian can now be expressed as
+\begin{equation}
+e^{-(t-s)^2}=\sum_{n=0}^{\infty}\frac{s^n}{n!}h_n(t)
+\end{equation}
+
+where $h_n(t)$ is defined by
+\begin{equation}
+h_n(t)=e^{-t^2}H_n(t).
+\end{equation}
+
+Eventually the Gaussian summation
+\begin{equation}
+G(x_q)=\sum_{i=1}^{N}w_i e^{-\frac{||x_r-x_q||}{\sigma^2}}
+\end{equation}
+
+can be expressed as
+\begin{equation}
+  G(x_q)=\sum_{\alpha\geq 0} A_{\alpha} h_{\alpha}
+  \left(\frac{x_r-x_0}{\sigma}\right)
+\end{equation}
+
+where
+
+\begin{equation}
+  A_{\alpha} = \frac{1}{\alpha!}
+  \sum_{r=1}^{N}w_r\left(\frac{x_r-x_0}{\sigma}\right)
+\end{equation}
+
+The error $E_H(p)$ due to truncating the series after $p^d$ terms is
+bounded by
+
+\begin{equation}
+|E_H(p)|\leq (1.09)d\left(\frac{1}{p!}\right)^{\frac{d}{2}}
+\left(\frac{\epsilon^{p+1}}{1-\epsilon}\right)^d
+\end{equation}
+
+The basic problem of this method and essentially of any analytical
+factorization method that we know is that the error bound grows
+exponentially to the dimension.
+
+Moreover there is another issue. Let's say we want to compute Kernel
+PCA. The goal of KPCA or any other spectral method is to find the
+eigen-spectrum of a kernel matrix
+
+\begin{equation}
+K = \sum_{i=1}^{N}\lambda_i ww^T
+\end{equation}
+or to be more specific to express the $(i, j)$ element of the kernel matrix
+\begin{equation}
+k(i,j)=\sum_{i=1}^{N}\lambda_i w_i w_j
+\end{equation}
+
+and since $i$ corresponds to point $x$ and $j$ corresponds to $y$
+we can rewrite it as
+
+\begin{equation}
+k(x,y)=\sum_{i=1}^{N}w(x)w(y)
+\end{equation}
+
+where $w(x)$ is the $ith$ element of $w$ and $w(y)$ the $jth$ of $w$
+It turns out that  Kernel PCA does the same thing with analytic
+kernel factorization, with the difference that the factorization on
+KPCA is done on a lower dimension since the kernel matrix is
+evaluated on the data that lie on a lower dimensional manifold.
+
+So there is no point in using analytic kernel expansion methods when
+dealing with high dimensional data to speed up KPCA since we do many
+redundant computations.
+
+
+\subsubsection{Computing Gaussian Kernel Matrix with trees}
+Instead of using analytic kernel expansion we revert to the original
+idea of fast kernel summation. The initial approach to fast kernel
+summation with trees was based on a nearest neighbor approach. Find
+the range-$\epsilon$ nearest neighbors for the query point, evaluate
+the kernel on them and sum \cite{gray2003rem}. This method scales better than analytic
+kernel factorization since it depends on the nearest neighbor
+algorithm which depends on the intrinsic dimensionality and not on
+the extrinsic.
+
+An interesting issue on KPCA that hasn't really been touched is the
+effect of the truncation error on the Kernel matrix by setting all
+the values less than $k(\epsilon)$ to zero. After searching the
+literature it was found that there is an implicit method to find it.
+
+Assume $K$ the exact kernel matrix which is positive definite matrix
+and $\tilde{K}=K+E$ the perturbed matrix. Then let $\lambda_i$ be
+the eigenvalues of $K$ and $\tilde{\lambda}_i$ the eigenvalues of
+$\tilde{K}$. It turns out \cite{stewart1990mpt} that
+
+\begin{equation}
+\sqrt{\sum_{i=1}^{N}(\lambda_i-\tilde{\lambda}_i)^2}\leq ||E||_F
+\end{equation}
+
+where $||E||_F=\sqrt{\sum_{i=1}^{N}\sum_{j=1}^{N}e_{ij}^2}$, is the
+Frobenious norm of $E$
+
+So we need a good estimate of $||E||_F$. A simple approach would be
+to set all nonzero elements of $E$ which are the zero elements of
+$K$ as $k(\epsilon)$.  An open problem is to estimate a better bound
+for the kernel sum of the furthest neighbors. Trees can give  a good
+estimate on that, by just getting information from the bounding
+boxes that are pruned. This can be done by storing information in cached statistics of 
+a node about the the mean distance of the points in the node and out of the box.
+
+\subsubsection{Applications}
+As we have already mentioned an immediate application of a fast gaussian summation is the 
+computation of the eigenvalues of the kernel matrix. Another application is in gaussian process
+regression and methods that relate to it. As a testbed we use the census database.
 
 \subsection{Customized Kernels}
+\label{Customized_Kernels}
 There are infinite functions
 that are valid kernels \cite{shawetaylor2004kmp}. The most popular ones are:
 \begin{enumerate}
@@ -1589,7 +1778,7 @@ that are valid kernels \cite{shawetaylor2004kmp}. The most popular ones are:
   \item The polynomial kernel $k(x, y)=(xy)^n$
   \item The epanechnikov kernel $k(x, y)=\left\{ \begin{array}{cc}
                                                   1-||x-y||^2/\sigma^2 & ||x-y||\leq\sigma \\
-                                                  0                    & ||x-y||>\sigma 
+                                                  0                    & ||x-y||>\sigma
                                                 \end{array} \right.$
   \item The k-nearest neighbor kernel
 \end{enumerate}
@@ -1762,7 +1951,7 @@ There are two approaches on that:
   This means that for every $n$ only a few columns of $F(x)^{-1}$
   are required. They can be computed very quickly by the conjugate
   gradient method \cite{saad2003ims} which is specially designed for sparse positive
-  definite matrices \cite{saad2003ims}. This is also a stochastic gradient approach since 
+  definite matrices \cite{saad2003ims}. This is also a stochastic gradient approach since
   incomplete (noisy) instances of the gradient are computed \cite{spall2003iss}.
 \end{enumerate}
 
@@ -1796,177 +1985,32 @@ that contain the overlap points corresponding to $I_0$
 
 \vspace{1cm}
 
-The only restriction of the algorithm is that the spectral method
-has to be affine invariant, which is the case in SDPCA.
+The above method assumes a graph between the points, usually formed with the k-nearest neighborhood
+method. Then the authors use a partitioning method for the graph such as METIS \cite{karypis1995mug}
+or Cuthill-McKee \cite{george1981csl}.
+This adds extra computational cost. It is possible to combine the 
+partition of the data and the generation of the graph. This can be done with the use of trees. 
+The spectral decomposition (LTSA, Kernel PCA, etc) can be computed on every leaf individually 
+and then recursively glue the, following the tree form bottom to top. It is necessary though that
+the trees are overlapping since the method requires the domains not to be disjoint. This would potentially
+lead to a nearest neighbor independent solution which can scale better with the dimensionality. 
+Another alternative is to keep kd-tree in the original form and perform nearest 
+neighbor search between the leafs to generate overlapping domains.
 
-As we can see this method makes SDPCA parallelizable, since we can
-implemented in a recursive way.
-
-
-\subsection{Fast kernel summation with trees} Kernel summation is
-one of the most common tasks in kernel methods. The general formula
-\begin{equation}
-\label{kernel_sum}
-  G(x)=\sum_{r=0}^{N} w_i e^{-\frac{||x-x_r||}{\sigma^2}}
-\end{equation}
-
-appears in many cases, with the most interesting case the
-eigenvalue/eigenvector computation of the kernel matrix. The kernel summation is a very
-computationally intensive task. For Gaussian kernels there are
-approximations that can speed up computations orders of magnitude.
-We will briefly discuss them here. Besides computation saving we can
-save memory as well. The gaussian kernel has infinite support so the
-kernel matrix $\{K : k(x,y)=e^{-\frac{||x-y||}{\sigma^2}} \}$ is not
-sparse. Numerical iterative methods for eigenvector computation are
-based on the general iteration $w^n=w^{n-1}+\lambda Kw^{n-1}$, where
-the multiplication of each row of $K$ with $w^{n-1}$ is a kernel
-summation problem. So we don't really need to store the kernel
-matrix, we just have to compute the kernel sum for every row using
-$w^{n-1}$ as a the weight vector. The term $Kw^{n-1}$ can be
-expanded as
-
-\begin{equation}
-K_i\footnote{$K_i$ is the $ith$ row of the K matrix} w^{n-1} =
-\sum_{j=1}^{N} K(i,j) w^{n-1}_{j}
-\end{equation}
-
-which is the gaussian summation if we replace $K(i,j)$ with the
-Gaussian kernel
-\begin{equation}
-\sum_{j=1}^{N}w^{n-1}_j  e^{-\frac{||x_i-x_j||}{\sigma^2}}
-\end{equation}
-
-\subsubsection{Gaussian Kernel factorization}
-In general the kernel computation speedup is achieved by factorizing
-the kernel \cite{raykar2005fcs} in the form
-\begin{equation}
-k(x_r, x_q)=\sum_{k=1}^{p}\Phi_k(x_r)\Psi_k(x_q)+error
-\end{equation}
-Assuming that $x_r$ stands for the reference points and $x_q$ for
-the query points, the terms that depend on the reference point can
-be precomputed and be used for every query point. This essentially
-reduces the computational complexity to $O(pN+pM)$, where $N$ is the
-number of reference points and $M$ is the number of query points.
-
-\paragraph{Factorization with Hermite Polynomials}
-
-The gaussian can be approximated with the help of Hermite
-polynomials \cite{strain1991fgt}. The Hermite polynomials $H_n(t)$ are defined by the
-Rodrigues formula:
-\begin{equation}
-  H_n(t)=(-1)^ne^{t^2}D^n e^{-t^2}, t\in \Re
-\end{equation}
-where $D=\frac{d}{dt}$.
-
-The gaussian can now be expressed as
-\begin{equation}
-e^{-(t-s)^2}=\sum_{n=0}^{\infty}\frac{s^n}{n!}h_n(t)
-\end{equation}
-
-where $h_n(t)$ is defined by
-\begin{equation}
-h_n(t)=e^{-t^2}H_n(t).
-\end{equation}
-
-Eventually the Gaussian summation
-\begin{equation}
-G(x_q)=\sum_{i=1}^{N}w_i e^{-\frac{||x_r-x_q||}{\sigma^2}}
-\end{equation}
-
-can be expressed as
-\begin{equation}
-  G(x_q)=\sum_{\alpha\geq 0} A_{\alpha} h_{\alpha}
-  \left(\frac{x_r-x_0}{\sigma}\right)
-\end{equation}
-
-where
-
-\begin{equation}
-  A_{\alpha} = \frac{1}{\alpha!}
-  \sum_{r=1}^{N}w_r\left(\frac{x_r-x_0}{\sigma}\right)
-\end{equation}
-
-The error $E_H(p)$ due to truncating the series after $p^d$ terms is
-bounded by
-
-\begin{equation}
-|E_H(p)|\leq (1.09)d\left(\frac{1}{p!}\right)^{\frac{d}{2}}
-\left(\frac{\epsilon^{p+1}}{1-\epsilon}\right)^d
-\end{equation}
-
-The basic problem of this method and essentially of any analytical
-factorization method that we know is that the error bound grows
-exponentially to the dimension.
-
-Moreover there is another issue. Let's say we want to compute Kernel
-PCA. The goal of KPCA or any other spectral method is to find the
-eigen-spectrum of a kernel matrix
-
-\begin{equation}
-K = \sum_{i=1}^{N}\lambda_i ww^T
-\end{equation}
-or to be more specific to express the $(i, j)$ element of the kernel matrix
-\begin{equation}
-k(i,j)=\sum_{i=1}^{N}\lambda_i w_i w_j
-\end{equation}
-
-and since $i$ corresponds to point $x$ and $j$ corresponds to $y$
-we can rewrite it as
-
-\begin{equation}
-k(x,y)=\sum_{i=1}^{N}w(x)w(y)
-\end{equation}
-
-where $w(x)$ is the $ith$ element of $w$ and $w(y)$ the $jth$ of $w$
-It turns out that  Kernel PCA does the same thing with analytic
-kernel factorization, with the difference that the factorization on
-KPCA is done on a lower dimension since the kernel matrix is
-evaluated on the data that lie on a lower dimensional manifold.
-
-So there is no point in using analytic kernel expansion methods when
-dealing with high dimensional data to speed up KPCA since we do many
-redundant computations.
-
-
-\subsubsection{Computing Gaussian Kernel Matrix with trees}
-Instead of using analytic kernel expansion we revert to the original
-idea of fast kernel summation. The initial approach to fast kernel
-summation with trees was based on a nearest neighbor approach. Find
-the range-$\epsilon$ nearest neighbors for the query point, evaluate
-the kernel on them and sum \cite{gray2003rem}. This method scales better than analytic
-kernel factorization since it depends on the nearest neighbor
-algorithm which depends on the intrinsic dimensionality and not on
-the extrinsic.
-
-An interesting issue on KPCA that hasn't really been touched is the
-effect of the truncation error on the Kernel matrix by setting all
-the values less than $k(\epsilon)$ to zero. After searching the
-literature it was found that there is an implicit method to find it.
-
-Assume $K$ the exact kernel matrix which is positive definite matrix
-and $\tilde{K}=K+E$ the perturbed matrix. Then let $\lambda_i$ be
-the eigenvalues of $K$ and $\tilde{\lambda}_i$ the eigenvalues of
-$\tilde{K}$. It turns out \cite{stewart1990mpt} that
-
-\begin{equation}
-\sqrt{\sum_{i=1}^{N}(\lambda_i-\tilde{\lambda}_i)^2}\leq ||E||_F
-\end{equation}
-
-where $||E||_F=\sqrt{\sum_{i=1}^{N}\sum_{j=1}^{N}e_{ij}^2}$, is the
-Frobenious norm of $E$
-
-So we need a good estimate of $||E||_F$. A simple approach would be
-to set all nonzero elements of $E$ which are the zero elements of
-$K$ as $k(\epsilon)$.  An open problem is to estimate a better bound
-for the kernel sum of the furthest neighbors. Trees can give  a good
-estimate on that, by just getting information from the bounding
-boxes that are pruned.
+\paragraph{Monte Carlo for Semidefinite PCA.}
+The authors of Semidefinite PCA have also suggested a speedup of the method focusing more on the
+approximation of the graph by shrinking it \cite{weinberger2005ndr}. In \cite{scholkopf2002lks} 
+authors suggest a factorization that it is very similar for accelerating Kernel PCA. We suggest a
+Monte Carlo approach based on a tree partition of the dataset. We can build $m$ kernel matrices
+based on m subtrees and train them with semidefinite programming. Whenever we want to compute the 
+real dimensions of a point we have to project it to the other kernel matrices and average. Trees
+can also help in pruning out redundant projections that can give projections close to zero.
 
 
 \subsection{Speech recognition with nearest neighbor search, Dimensional Analysis of Speech}
-The initial motivation for this thesis has been to develop a speech recognition engine based on nearest neighbor search. In the age of information explosion it is very easy to collect large collections of annotated speech. Most of the tv broadcasts are captioned. Although there are errors and misalignment, it is always possible to reduce them, with an open source Viterbi decoder, by force aligning them. So it is possible to extract the audio from the tv signal segment it in word or phoneme level and then generate features such as MFCC or NRAF or any other customized features. Then we can index the features with kd trees associated with the caption. The problem of speech recognition now can be casted as a search problem. This is a simplistic approach that requires the solution of other problems. 
+The  motivation for this thesis has been to develop a speech recognition engine based on nearest neighbor search. In the age of information explosion it is very easy to collect large collections of annotated speech. Most of the tv broadcasts are captioned. Although there are errors and misalignment, it is always possible to reduce them, with an open source Viterbi decoder, by force aligning them. So it is possible to extract the audio from the tv signal segment it in word or phoneme level and then generate features such as MFCC or NRAF or any other customized features. Then we can index the features with kd trees associated with the caption. The problem of speech recognition now can be casted as a search problem. This is a simplistic approach that requires the solution of other problems.
 
-First of all it is necessary to estimate the intrinsic dimension of the features representing speech. This is why we focused our interest in dimensionality reduction algorithms. This is important for "compressing" the data and saving space. The second issue is to build a cache for trees that don't fit in the main memory already addressed. The last step is to generate features on different time scales. 
+First of all it is necessary to estimate the intrinsic dimension of the features representing speech. This is why we focused our interest in dimensionality reduction algorithms. This is important for "compressing" the data and saving space. The second issue is to build a cache for trees that don't fit in the main memory already addressed. The last step is to generate features on different time scales.
 
 This is probably the most interesting step. Initially we start with features of a minimum durations, let's say 20msec MFCC 39 coefficients. After bringing it down to a certain dimension $d$ with KPCA or SDPCA. Then we merge the features creating vectors of $2d$. We keep repeating this until we reach a stage where the dimensionality cannot be decreased to a value that is beyond the strength of kd-trees.
 
@@ -1979,7 +2023,7 @@ dimensions (eigenvectors of the kernel matrix) we need to find a way
 to compute the new dimensions of a test point $x$. The most common
 method is the one based on Nystr\"{o}m's formula, which requires an
 expression or at least a way to compute the kernel product of the
-test point and it's nearest neighbors. 
+test point and it's nearest neighbors.
 
 \begin{equation}
 y_k(x) = \frac{1}{\lambda_k}\sum_{i=1}^{N} w_{ik}K(x, x_i)
