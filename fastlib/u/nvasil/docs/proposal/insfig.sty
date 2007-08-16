@@ -209,7 +209,7 @@
 
 \newcommand{\insssfigl}{\@ifstar\@insssfigla\@insssfigl}
 \newcommand{\@insssfigl}[7][def]{%
-   \begin{figure}[tb]%
+   \begin{figure}[!htb]%
       \begin{center}%
          \parbox{#7}{%
             \caption{#4}%
@@ -229,7 +229,7 @@
    \end{figure}%
 }% end insssfigl
 \newcommand{\@insssfigla}[7][def]{%
-   \begin{figure*}[tb]%
+   \begin{figure*}[!htb]%
       \begin{center}%
          \parbox{#7}{%
             \caption{#4}%
@@ -251,7 +251,7 @@
 
 \newcommand{\instbfig}{\@ifstar\@instbfiga\@instbfig}
 \newcommand{\@instbfig}[6][def]{
-   \begin{figure}[tb]
+   \begin{figure}[!htb]
       \begin{center}
          \makebox{\includegraphics[width=#5]{#2}}
          \\ (a)\\
@@ -265,7 +265,7 @@
    \end{figure}
 }% end instbfig
 \newcommand{\@instbfiga}[6][def]{
-   \begin{figure*}[tb]
+   \begin{figure*}[!htb]
       \begin{center}
          \makebox{\includegraphics[width=#5]{#2}}
          \\ (a)\\
