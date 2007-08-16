@@ -116,7 +116,7 @@ so it is difficult to find the best parameters given the data. The
 most difficult part is to find the right number of the parameters
 that best fit the data. For example the number of neurons and the
 topology of a neural network is something that can only be
-estimated experimentally after testing different combinations given
+determined experimentally after testing different combinations given
 a dataset. In any case the value of parametric models should not be
 underestimated since it can achieve very good performance in
 practice even if the best parameters have not been chosen.
@@ -126,12 +126,12 @@ parameters plus one or two that have to be estimated. For example in
 the Kernel Density Estimation problem \cite{Silverman}, the bandwidth $h$ of the
 kernel has to be tuned, i.e.
 \begin{equation}
-\hat{f}(x)=\sum_{i}^{N}e^{\frac{-||x-x_i||}{h}}
+\hat{f}(x)=\sum_{i}^{N}e^{-\frac{||x-x_i||}{h}}
 \end{equation}
 There are cases that the bandwidth depends on the point so the above
 equation gets the form
 \begin{equation}
-\hat{f}(x)=\sum_{i}^{N}e^{\frac{-||x-x_i||}{h_i}}
+\hat{f}(x)=\sum_{i}^{N}e^{-\frac{||x-x_i||}{h_i}}
 \end{equation}
 
 \insfig[2d_kernel_density_estimation]{2d_kernel_density_estimation.eps}{Kernel
@@ -139,7 +139,7 @@ Density of 2 dimensional points. Over every point a kernel is set.
 In areas with with high concentration of points there is more
 overlap on the kernels which shows higher probability}{8cm}
 
-In contrast to parametric cases a single evaluation of a non
+In contrast to parametric cases, a single evaluation of a non
 parametric model requires evaluation of $N$ parameters. Naively
 speaking training can be avoided at all if we set the parameter
 ad-hoc. If we want to find the single parameter with cross
@@ -161,7 +161,7 @@ the real dimensionality also known as the intrinsic dimensionality of a
 given dataset has been an active problem \cite{kegl2003ide}, \cite{costa2003egm}.
 It is well known that many
 machine learning algorithms starting from the very fundamental, the
-nearest neighbor, grow exponentially on the intrinsic dimension. This
+nearest neighbor, grow exponentially on the intrinsic dimensionality of the data. This
 is also known as the curse of dimensionality \cite{donoho2000hdd}.
 In the literature, dimensionality is used without the prefix intrinsic or
 extrinsic, causing confusion. The extrinsic dimensionality is just
@@ -189,7 +189,7 @@ will show how  multidimensional trees can reduce
 the complexity, along with other approximations to bring it down to
 linear \cite{gray2000nbp}.
 
-The driving force for investigating dimensionality reduction was the
+The driving force for investigating dimensionality reduction is the
 estimation of the true dimensionality of speech. Many representations
 have been recommended for speech MFCC, LPC, NRAFF etc, \cite{quatieri2002dts,rabiner1978dps, ravindran:inr}. The true
 dimensionality is yet unknown. Meanwhile there is theoretical evidence
@@ -409,7 +409,7 @@ centered around the query point with radius equal to the distance
  bounding boxes that intersect the hyper-sphere. For kd-trees and
  ball trees it is fairly easy to detect that.
 
- In general for natural data-sets where data tend to cluster it is
+ In general for natural data-sets where data tend to cluster, it is
  possible to prune very well  and achieve logarithmic performance in
  search. In some cases when the partitioning is not very good, trees
  behave poorly and eventually have to search almost the whole
@@ -727,12 +727,41 @@ Pages are write protected in memory and if a write occurs a signal
 is raised and the page is marked as modified.
 
 \subsubsection{Results}
+We run several experiments on a 1GByte Ram machine with data that where  at least twice the
+size of the cache (The system would not give more than 700MB to the running process). 
+In reality the memory requirements are much larger since there is other overhead stored on the
+tree. The results are also stored as key-value pairs. for example: <point id, minimum distance>.
+The size of memory requirements depends also on the k-parameter of k-nearest neighbors.
+We tested two different strategies, 
+\begin{enumerate}
+  \item Keep a separate memory mapped output file for the 
+        results. Every leaf points to this file, it needs to keep a list with the current candidate
+        nearest neighbors. Eventually when the algorithm is done, all the results are stores
+        on the external file. The results are shown in table \ref{on_a_separate_file}.
+  \item Store the results on the leafs and when the algorithm is done visit the leafs and
+        dump them on a file, table \ref{on_the_leaf}
+\end{enumerate}
+At this point we would like to stress that the range nearest neighbor problem is much more
+easy in the implementation. Once a point is within the range it can immediately stored on the
+disk, while in the the k-nearest search we know the true k-neighbors after the end of the
+whole dual-tree algorithm.
+
+The results state that keeping the results on a separate file breaks the good locality
+behavior of the dual-tree algorithm, giving almost double execution time. The profiling
+reports show almost 40\% less CPU utilization time because of the frequent page faults.
+
+In table \ref{mmanager_comparison} we see the performance
+of the custom made memory manager, with variable page size. The performance is almost 50\%
+worse than the memory mapped files. Profiling reports showed that a great overhead is spent
+on the memory translation.   
+
 \begin{table}[!htb]
+\label{on_a_separate_file}
 \footnotesize{ \centering
 \begin{tabular}{|c|c|c|c|}
   \hline
   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-  number of points & dimensions & dual-tree time(sec)& collecting time (sec)\\
+  number of points & dimensions & dual-tree time(sec)& initialization (sec)\\
   140000000        & 2          & 2711               & 1730\\
   100000000        & 3          & 4885               & 1338\\
   5000000          & 5          & 8376               & 650\\
@@ -743,11 +772,12 @@ is raised and the page is marked as modified.
 \end{table}
 
 \begin{table}[!htb]
+\label{on_the_leaf}
 \footnotesize{ \centering
 \begin{tabular}{|c|c|c|c|}
   \hline
   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-  number of points & dimensions & dual-tree time(sec)& initialization time (sec)\\
+  number of points & dimensions & dual-tree time(sec) & collection (sec)\\
   140000000 & 2 & 2039 & 836\\
   100000000 & 3 & 2648 & 711\\
   5000000   & 5 & 4131 & 430\\
@@ -758,10 +788,11 @@ is raised and the page is marked as modified.
 \end{table}
 
 \begin{table}[!htb]
+\label{mmanager_comparison}
 \footnotesize{ \centering
 \begin{tabular}{|c|c|c|c|c|}
   \hline
-   number of points dimension & page size & dual-tree(sec) &collecting time(sec) \\
+   number of points & dimension & page size & dual-tree(sec) & collection(sec) \\
    140000000 & 2 & 65536   & 25432 & 2482 \\
    140000000 & 2 & 524288  & 4978  & 2026 \\
    140000000 & 2 & 1048576 & 4438  & 1901 \\
@@ -806,8 +837,7 @@ define a mapping
 \begin{equation}
 \Phi : x \rightarrow X , x \in \Re^d, X\in \Re^f
 \end{equation}
-
-usually $f>>d$. So usually the nonlinear mapping, maps the data in a
+usually $f>>d$. So  the nonlinear mapping, maps the data in a
 higher dimensional space sometimes in an infinite dimensional space.
 At this point it should be clarified that the mapping increases the
 extrinsic dimensionality of the data not the intrinsic. In kernel PCA we
@@ -815,7 +845,6 @@ want to find the principal components of the covariance matrix
 \begin{equation}
 \tilde{C} = \frac{1}{M}\sum_{j=1}^{M}\phi(x_j)\phi(x_j)^T
 \end{equation}
-
 It turns out that the mapping $\Phi$ doesn't have to be known
 explicitly, all we need is the kernel that represents the dot
 product.
@@ -832,7 +861,6 @@ Kernel PCA has many cousins such as Laplacian eigenmaps
 \cite{Belkin}, Diffusion maps  \cite{Lafon}, Isomap \cite{tenenbaum2000ggf},
 Local Linear Embedding \cite{roweis1993ndr},
 Local Tangent Space Alignment \cite{zhang2002pma} etc.
-
 %Both works present algorithms for computing the Laplace-Beltrami
 %operator on a submanifold $\Gamma$ embedded in $\Re^d$.
 Lafon has introduced a diffusion process on the manifold based on a
@@ -1589,7 +1617,7 @@ that we can tune it with heuristics. Although it can improve the performance we 
 section \ref{Feature_Comparison} fig.~\ref{kernel_pca} that the 
 choice of the kernel is crucial in the performance. A very promising direction as we will see in 
 section \ref{Customized_Kernels}
-is to use Semidefinite programming in customizing the kernel matrix (Semidefinite PCA). The results of \cite{weinberger2004lkm}
+is to use semidefinite programming in customizing the kernel matrix (Semidefinite PCA). The results of \cite{weinberger2004lkm}
 indicate superior results compared to standard Kernel Methods as well as Isomap and Local Linear Embedding.
 
 All these methods require the k-neighborhood computation for a every point. As we have already 
@@ -1597,7 +1625,7 @@ mentioned the computational bottleneck can be reduced from $O(N^2)$ to linear wi
 algorithm. Another bottleneck is the computation of the eigenvalues for kernel matrices with
 infinite support like the gaussian. Moreover the Semidefinite PCA suffers from polynomial complexity since it uses the interior
 point methods. There are also some other implementational issues with the tree algorithms that we addressed
-in section ?
+in section \ref{Large_scale_trees}
 
 In this section we present optimization strategies for the fixed kernel methods as well as for the
 Semidefinite PCA. In the last part the strategy for estimating the intrinsic dimension of speech and its
@@ -1610,7 +1638,6 @@ Kernel summation is one of the most common tasks in kernel methods. The general 
 \label{kernel_sum}
   G(x)=\sum_{r=0}^{N} w_i e^{-\frac{||x-x_r||}{\sigma^2}}
 \end{equation}
-
 appears in many cases, with the most interesting case the
 eigenvalue/eigenvector computation of the kernel matrix. The kernel summation is a very
 computationally intensive task. For Gaussian kernels there are
@@ -1717,11 +1744,10 @@ we can rewrite it as
 \begin{equation}
 k(x,y)=\sum_{i=1}^{N}w(x)w(y)
 \end{equation}
-
-where $w(x)$ is the $ith$ element of $w$ and $w(y)$ the $jth$ of $w$
+where $w(x)$ is the $ith$ element of $w$ and $w(y)$ the $jth$ of $w$.
 It turns out that  Kernel PCA does the same thing with analytic
 kernel factorization, with the difference that the factorization on
-KPCA is done on a lower dimension since the kernel matrix is
+Kernel PCA is done on a lower dimension since the kernel matrix is
 evaluated on the data that lie on a lower dimensional manifold.
 
 So there is no point in using analytic kernel expansion methods when
@@ -1754,8 +1780,7 @@ $\tilde{K}$. It turns out \cite{stewart1990mpt} that
 \end{equation}
 
 where $||E||_F=\sqrt{\sum_{i=1}^{N}\sum_{j=1}^{N}e_{ij}^2}$, is the
-Frobenious norm of $E$
-
+Frobenious norm of $E$.
 So we need a good estimate of $||E||_F$. A simple approach would be
 to set all nonzero elements of $E$ which are the zero elements of
 $K$ as $k(\epsilon)$.  An open problem is to estimate a better bound
@@ -1782,7 +1807,6 @@ that are valid kernels \cite{shawetaylor2004kmp}. The most popular ones are:
                                                 \end{array} \right.$
   \item The k-nearest neighbor kernel
 \end{enumerate}
-
 Although these are valid kernels for any kernel method including
 Kernel PCA they are not appropriate for every task. In some cases we
 want to map data in higher dimensional spaces preserving distances
@@ -1806,7 +1830,6 @@ a semidefinite programming problem. Here is the algorithm they
 suggest:
 
 \vspace{1cm}
-
 \fbox{
 \begin{minipage}[c]{0.6\linewidth}
   Maximize $Trace(K)$ subject to:
@@ -1818,16 +1841,13 @@ suggest:
 \end{enumerate}
 \end{minipage}
 }
-
 \vspace{1cm}
 
 where $K$ is the kernel matrix, $G$ is the linear kernel matrix,
 $G_{ij}=x_i x_j^T,\quad x_i,x_j\in \Re^d$ and
 $Trace(K)=\sum_{i=0}^{N}K_{ii}$.
-
 This is a typical semidefinite programming problem that can also be
 posed as
-
 \vspace{1cm}
 
 \fbox{
@@ -1850,7 +1870,6 @@ where $F_i$ is a positive semidefinite matrix and in this case
 }
 
 \vspace{1cm}
-
 The inventors of this method named it Semidefinite PCA (SDPCA),
 which is the term we will use form now on.
 
@@ -2038,7 +2057,6 @@ where
 \end{itemize}
 Unfortunately for methods like Semidefinite PCA there is no
 expression for the kernel.
-
 One other approach \cite{vanvaerenbergh2006swk} has been to keep a certain size kernel matrix and
 after the arrival of a new test point we remove the oldest from the
 kernel and we add the new one. The kernel looks like a sliding
