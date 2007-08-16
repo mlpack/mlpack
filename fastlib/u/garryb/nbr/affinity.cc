@@ -657,6 +657,7 @@ struct ApplyRhos {
 
     if (was_exemplar != wants_exemplar) {
       squared_changed += math::Sqr(new_rho - old_rho);
+      // Random damping so far has gotten to most consistent convergence.
       new_rho = damp(math::Random(0.0, 1.0), old_rho, new_rho);
       n_changed++;
       hash ^= index;
@@ -691,7 +692,7 @@ struct ApplyRhos {
     double dampfact = 1.0 - math::Sqr(v);
     // use lambda about 0.95 with exponential damping
     dampfact *= param->lambda;
-    dampfact -= math::Random(0.0, 1.0) * param->random;
+    dampfact -= math::Random(0.0, 1.0) * param->randomx;
     new_rho = damp(dampfact, old_rho, new_rho);
 #endif
 
