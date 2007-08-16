@@ -41,7 +41,6 @@ struct AffinityCommon {
     double lambda;
     /** The proportion of points to prime as exemplars. */
     double prime;
-    double random;
 
     OT_DEF(Param) {
       OT_MY_OBJECT(pref);
@@ -53,9 +52,8 @@ struct AffinityCommon {
    public:
     void Init(datanode *module) {
       pref = fx_param_double_req(module, "pref");
-      lambda = fx_param_double(module, "lambda", 0.95);
+      lambda = fx_param_double(module, "lambda", 0.6);
       prime = fx_param_double(module, "prime", 0.002);
-      random = fx_param_double(module, "random", 0.002);
     }
   };
 
@@ -659,9 +657,12 @@ struct ApplyRhos {
 
     if (was_exemplar != wants_exemplar) {
       squared_changed += math::Sqr(new_rho - old_rho);
+      new_rho = damp(math::Random(0.0, 1.0), old_rho, new_rho);
       n_changed++;
       hash ^= index;
     }
+
+    new_rho = damp(param->lambda, old_rho, new_rho);
 
     //double idampfact =
     //    pow(fabs(old_rho) / (fabs(old_rho - new_rho) + fabs(old_rho)), param->dampness);
@@ -673,11 +674,12 @@ struct ApplyRhos {
     //double dampfact = atan2(param->dampness * fabs(new_rho - old_rho),
     //    fabs(old_rho)) * (2.0 / math::PI);
 
-#define SQUARED_DAMPING
-
+// NOTE: The bottom two give better netsims on some problems but they're
+// quite bad for convergence.
 #ifdef EXPONENTIAL_DAMPING
     double rel_diff = fabs(new_rho - old_rho) / (fabs(old_rho) + 1e-99);
-    double dampfact = 1 - exp(-rel_diff * param->dampness);
+    double dampfact = 1 - exp(-rel_diff * 1);
+    // use lambda about 0.95 with exponential damping
     dampfact *= param->lambda;
     dampfact -= math::Random(0.0, 1.0) * param->random;
     new_rho = damp(dampfact, old_rho, new_rho);
@@ -687,6 +689,7 @@ struct ApplyRhos {
     double v = fabs(old_rho) / (fabs(old_rho) + fabs(new_rho - old_rho));
     //double rel_diff = fabs(new_rho - old_rho) / (fabs(old_rho) + 1e-99);
     double dampfact = 1.0 - math::Sqr(v);
+    // use lambda about 0.95 with exponential damping
     dampfact *= param->lambda;
     dampfact -= math::Random(0.0, 1.0) * param->random;
     new_rho = damp(dampfact, old_rho, new_rho);
