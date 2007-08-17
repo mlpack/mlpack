@@ -71,46 +71,6 @@ class Tkde {
     }
 
    public:
-    // Convenience methods for purpose of thresholded KDE
-
-    /**
-     * Compute kernel sum for a region of reference points assuming we have
-     * the actual query point (not THOR).
-     */
-    double ComputeKernelSum(
-        const Vector& q,
-        index_t r_count, const Vector& r_mass, double r_sumsq) const {
-      double quadratic_term =
-          + r_count * la::Dot(q, q)
-          - 2.0 * la::Dot(q, r_mass)
-          + r_sumsq;
-      return r_count - quadratic_term * kernel.inv_bandwidth_sq();
-    }
-
-    /**
-     * Divides a vector by an integer (not THOR).
-     */
-    static void ComputeCenter(
-        index_t count, const Vector& mass, Vector* center) {
-      DEBUG_ASSERT(count != 0);
-      center->Copy(mass);
-      la::Scale(1.0 / count, center);
-    }
-
-    /**
-     * Compute kernel sum given only a squared distance (not THOR).
-     */
-    double ComputeKernelSum(
-        double distance_squared,
-        index_t r_count, const Vector& r_center, double r_sumsq) const {
-      //q*q - 2qr + rsumsq
-      //q*q - 2qr + r*r - r*r
-      double quadratic_term =
-          (distance_squared - la::Dot(r_center, r_center)) * r_count
-          + r_sumsq;
-
-      return -quadratic_term * kernel.inv_bandwidth_sq() + r_count;
-    }
   };
 
 
@@ -156,23 +116,44 @@ class Tkde {
       Add(other.count, other.mass, other.sumsq);
     }
 
-    double ComputeKernelSum(const Param& param, const Vector& point) const {
-      return param.ComputeKernelSum(point, count, mass, sumsq);
+    /**
+     * Compute kernel sum for a region of reference points assuming we have
+     * the actual query point.
+     */
+    double ComputeKernelSum(const Param& param, const Vector& q) const {
+      double quadratic_term =
+          + count * la::Dot(q, q)
+          - 2.0 * la::Dot(q, mass)
+          + sumsq;
+      return count - quadratic_term * param.kernel.inv_bandwidth_sq();
+    }
+
+    double ComputeKernelSum(const Param& param, double distance_squared,
+        double center_dot_center) const {
+      //q*q - 2qr + rsumsq
+      //q*q - 2qr + r*r - r*r
+      double quadratic_term =
+          (distance_squared - center_dot_center) * count
+          + sumsq;
+
+      return -quadratic_term * param.kernel.inv_bandwidth_sq() + count;
     }
 
     DRange ComputeKernelSumRange(const Param& param,
         const Bound& query_bound) const {
       DRange density_bound;
       Vector center;
+      double center_dot_center = la::Dot(mass, mass) / count / count;
+      
+      DEBUG_ASSERT(count != 0);
 
-      param.ComputeCenter(count, mass, &center);
+      center.Copy(mass);
+      la::Scale(1.0 / count, &center);
 
-      density_bound.lo = param.ComputeKernelSum(
-          query_bound.MaxDistanceSq(center),
-          count, center, sumsq);
-      density_bound.hi = param.ComputeKernelSum(
-          query_bound.MinDistanceSq(center),
-          count, center, sumsq);
+      density_bound.lo = ComputeKernelSum(param,
+          query_bound.MaxDistanceSq(center), center_dot_center);
+      density_bound.hi = ComputeKernelSum(param,
+          query_bound.MinDistanceSq(center), center_dot_center);
 
       return density_bound;
     }
@@ -326,10 +307,15 @@ class Tkde {
     void Postprocess(const Param& param,
         const QPoint& q, index_t q_index,
         const RNode& r_root) {
-      if (density > param.thresh.hi) {
-        label &= LAB_HI;
-      } else if (density < param.thresh.lo) {
-        label &= LAB_LO;
+      if (label == LAB_EITHER) {
+        // Only check my density if no prune was made.
+        // If a prune was made up above, then my density is probably
+        // out of sync.
+        if (density > param.thresh.hi) {
+          label &= LAB_HI;
+        } else if (density < param.thresh.lo) {
+          label &= LAB_LO;
+        }
       }
       DEBUG_ASSERT_MSG(label != LAB_NEITHER,
           "Conflicting labels: %g %g %g",
@@ -406,22 +392,21 @@ class Tkde {
       density += delta.d_density;
     }
 
-    bool ApplyPostponed(const Param& param,
+    void ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QNode& q_node) {
-      bool change_made;
-
       if (unlikely(postponed.label != LAB_EITHER)) {
         label &= postponed.label;
         DEBUG_ASSERT(label != LAB_NEITHER);
-        change_made = true;
       }
       if (unlikely(!postponed.moment_info.is_empty())) {
-        density += postponed.moment_info.ComputeKernelSumRange
+        DRange computed = postponed.moment_info.ComputeKernelSumRange
             (param, q_node.bound());
-        change_made = true;
+        DEBUG_ASSERT_MSG(computed.lo >= 0, "lo = %g\n", computed.lo);
+        DEBUG_ASSERT_MSG(computed.hi >= 0, "hi = %g\n", computed.hi);
+        density += computed;
+        DEBUG_ASSERT_MSG(density.lo >= 0, "lo = %g\n", density.lo);
+        DEBUG_ASSERT_MSG(density.hi >= 0, "lo = %g\n", density.hi);
       }
-
-      return change_made;
     }
   };
 
@@ -493,6 +478,8 @@ class Tkde {
         QResult* q_result,
         GlobalResult* global_result) {
       if (unlikely(q_result->label != LAB_EITHER)) {
+        // We already have a label.  It is incorrect to proceed because our
+        // density values are necessarily invalid.
         return false;
       }
 
@@ -570,14 +557,10 @@ class Tkde {
         double distance_sq_hi =
             q_node.bound().MaxDistanceSq(r_node.bound());
 
-        if (0) {
-        // REMOVED because this was causing bugs.
-        // Someone please figure out what's wrong with the moment expansion!
-        
-        /*distance_sq_hi < param.kernel.bandwidth_sq()) {
+        if (distance_sq_hi < param.kernel.bandwidth_sq()) {
           DEBUG_MSG(1.0, "tkde: Inclusion");
           q_postponed->moment_info.Add(r_node.stat().moment_info);
-          need_expansion = false;*/
+          need_expansion = false;
         } else {
           DEBUG_MSG(1.0, "tkde: Overlap - need explore");
           //delta->d_density = r_node.stat().moment_info.ComputeKernelSumRange(
@@ -614,7 +597,7 @@ class Tkde {
         QPostponed* q_postponed) {
       bool need_expansion = false;
 
-      DEBUG_ASSERT(q_summary_result.density.lo < q_summary_result.density.hi);
+      DEBUG_ASSERT(q_summary_result.density.lo <= q_summary_result.density.hi);
 
       if (unlikely(q_summary_result.label != LAB_EITHER)) {
         DEBUG_ASSERT((q_summary_result.label & q_postponed->label) != LAB_NEITHER);
