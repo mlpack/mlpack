@@ -46,7 +46,6 @@ struct AffinityCommon {
       OT_MY_OBJECT(pref);
       OT_MY_OBJECT(lambda);
       OT_MY_OBJECT(prime);
-      OT_MY_OBJECT(random);
     }
 
    public:
@@ -692,7 +691,7 @@ struct ApplyRhos {
     double dampfact = 1.0 - math::Sqr(v);
     // use lambda about 0.95 with exponential damping
     dampfact *= param->lambda;
-    dampfact -= math::Random(0.0, 1.0) * param->randomx;
+    dampfact -= math::Random(0.0, 1.0) * param->random;
     new_rho = damp(dampfact, old_rho, new_rho);
 #endif
 

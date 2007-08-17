@@ -1,8 +1,5 @@
-#include "fastlib/fastlib.h"
-#include "spbounds.h"
-#include "gnp.h"
-#include "dfs.h"
-#include "thor_utils.h"
+#include "fastlib/fastlib_int.h"
+#include "thor/thor.h"
 
 /**
  * Approximate kernel density estimation.
@@ -12,15 +9,13 @@
 class Tkde {
  public:
   /** The bounding type. Required by THOR. */
-  typedef HrectBound<2> Bound;
+  typedef DHrectBound<2> Bound;
 
   typedef ThorVectorPoint QPoint;
   typedef ThorVectorPoint RPoint;
 
   /** The type of kernel in use.  NOT required by THOR. */
   typedef EpanKernel Kernel;
-
-  typedef BlankGlobalResult GlobalResult;
 
   /**
    * All parameters required by the execution of the algorithm.
@@ -41,6 +36,8 @@ class Tkde {
     Kernel kernel;
     /** The dimensionality of the data sets. */
     index_t dim;
+    /** Number of points. */
+    index_t count;
     /** The original threshold, before normalization. */
     double nominal_threshold;
 
@@ -48,6 +45,7 @@ class Tkde {
       OT_MY_OBJECT(thresh);
       OT_MY_OBJECT(kernel);
       OT_MY_OBJECT(dim);
+      OT_MY_OBJECT(count);
       OT_MY_OBJECT(nominal_threshold);
     }
 
@@ -60,12 +58,16 @@ class Tkde {
       nominal_threshold = fx_param_double_req(module, "threshold");
     }
 
-    void BootstrapMonochromatic(QPoint* point, index_t count) {
-      dim = point->vec().length();
+    void SetDimensions(index_t vector_dimension, index_t n_points) {
+      dim = vector_dimension;
+      count = n_points;
       double normalized_threshold =
           nominal_threshold * kernel.CalcNormConstant(dim) * count;
-      thresh.lo = normalized_threshold * (1.0 - 1.0e5);
-      thresh.hi = normalized_threshold * (1.0 + 1.0e5);
+      thresh.lo = normalized_threshold * (1.0 - 1.0e-3);
+      thresh.hi = normalized_threshold * (1.0 + 1.0e-3);
+      ot::Print(dim);
+      ot::Print(kernel);
+      ot::Print(thresh);
     }
 
    public:
@@ -166,10 +168,10 @@ class Tkde {
       param.ComputeCenter(count, mass, &center);
 
       density_bound.lo = param.ComputeKernelSum(
-          query_bound.MaxDistanceSqToPoint(center),
+          query_bound.MaxDistanceSq(center),
           count, center, sumsq);
       density_bound.hi = param.ComputeKernelSum(
-          query_bound.MinDistanceSqToPoint(center),
+          query_bound.MinDistanceSq(center),
           count, center, sumsq);
 
       return density_bound;
@@ -322,19 +324,21 @@ class Tkde {
     }
 
     void Postprocess(const Param& param,
-        const QPoint& q,
+        const QPoint& q, index_t q_index,
         const RNode& r_root) {
       if (density > param.thresh.hi) {
         label &= LAB_HI;
       } else if (density < param.thresh.lo) {
         label &= LAB_LO;
       }
-      DEBUG_ASSERT(label != LAB_NEITHER);
+      DEBUG_ASSERT_MSG(label != LAB_NEITHER,
+          "Conflicting labels: %g %g %g",
+          density, param.thresh.lo, param.thresh.hi);
     }
 
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
-        const QPoint& q) {
+        const QPoint& q, index_t q_index) {
       label &= postponed.label; /* bitwise OR */
       DEBUG_ASSERT(label != LAB_NEITHER);
 
@@ -422,6 +426,53 @@ class Tkde {
   };
 
   /**
+   * A simple postprocess-step global result.
+   */
+  struct GlobalResult {
+   public:
+    index_t n_under_threshold;
+    index_t n_unknown;
+    
+    OT_DEF(GlobalResult) {
+      OT_MY_OBJECT(n_under_threshold);
+      OT_MY_OBJECT(n_unknown);
+    }
+
+   public:
+    void Init(const Param& param) {
+      n_under_threshold = 0;
+      n_unknown = 0;
+    }
+    void Accumulate(const Param& param, const GlobalResult& other) {
+      n_under_threshold += other.n_under_threshold;
+      n_unknown += other.n_unknown;
+    }
+    void ApplyDelta(const Param& param, const Delta& delta) {}
+    void UndoDelta(const Param& param, const Delta& delta) {}
+    void Postprocess(const Param& param) {}
+    void Report(const Param& param, datanode *datanode) {
+      fx_format_result(datanode, "n_under_threshold", "%"LI"d",
+          n_under_threshold);
+      fx_format_result(datanode, "p_under_threshold", "%.05f",
+          double(n_under_threshold) / param.count);
+      fx_format_result(datanode, "n_unknown", "%"LI"d",
+          n_unknown);
+      fx_format_result(datanode, "p_unknown", "%.05f",
+          double(n_unknown) / param.count);
+    }
+    void ApplyResult(const Param& param,
+        const QPoint& q_point, index_t q_i,
+        const QResult& result) {
+      fflush(stderr);
+      if (result.label == LAB_LO) {
+        n_under_threshold++;
+      } else if (result.label == LAB_EITHER) {
+        n_unknown++;
+      }
+    }
+  };
+
+  /**
    * Abstract out the inner loop in a way that allows temporary variables
    * to be register-allocated.
    */
@@ -436,7 +487,7 @@ class Tkde {
     // - this function must assume that global_result is incomplete (which is
     // reasonable in allnn)
     bool StartVisitingQueryPoint(const Param& param,
-        const QPoint& q,
+        const QPoint& q, index_t q_index,
         const RNode& r_node,
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
@@ -445,13 +496,13 @@ class Tkde {
         return false;
       }
 
-      double distance_sq_lo = r_node.bound().MinDistanceSqToPoint(q.vec());
+      double distance_sq_lo = r_node.bound().MinDistanceSq(q.vec());
 
       if (unlikely(distance_sq_lo > param.kernel.bandwidth_sq())) {
         return false;
       }
 
-      double distance_sq_hi = r_node.bound().MaxDistanceSqToPoint(q.vec());
+      double distance_sq_hi = r_node.bound().MaxDistanceSq(q.vec());
 
       if (unlikely(distance_sq_hi < param.kernel.bandwidth_sq())) {
         q_result->density += r_node.stat().moment_info.ComputeKernelSum(
@@ -472,7 +523,7 @@ class Tkde {
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q,
+        const QPoint& q, index_t q_index,
         const RNode& r_node,
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
@@ -507,7 +558,7 @@ class Tkde {
         GlobalResult* global_result,
         QPostponed* q_postponed) {
       double distance_sq_lo =
-          q_node.bound().MinDistanceSqToBound(r_node.bound());
+          q_node.bound().MinDistanceSq(r_node.bound());
       bool need_expansion;
       
       DEBUG_MSG(1.0, "tkde: ConsiderPairIntrinsic");
@@ -517,12 +568,16 @@ class Tkde {
         need_expansion = false;
       } else {
         double distance_sq_hi =
-            q_node.bound().MaxDistanceSqToBound(r_node.bound());
+            q_node.bound().MaxDistanceSq(r_node.bound());
 
-        if (distance_sq_hi < param.kernel.bandwidth_sq()) {
+        if (0) {
+        // REMOVED because this was causing bugs.
+        // Someone please figure out what's wrong with the moment expansion!
+        
+        /*distance_sq_hi < param.kernel.bandwidth_sq()) {
           DEBUG_MSG(1.0, "tkde: Inclusion");
           q_postponed->moment_info.Add(r_node.stat().moment_info);
-          need_expansion = false;
+          need_expansion = false;*/
         } else {
           DEBUG_MSG(1.0, "tkde: Overlap - need explore");
           //delta->d_density = r_node.stat().moment_info.ComputeKernelSumRange(
@@ -564,9 +619,9 @@ class Tkde {
       if (unlikely(q_summary_result.label != LAB_EITHER)) {
         DEBUG_ASSERT((q_summary_result.label & q_postponed->label) != LAB_NEITHER);
         q_postponed->label = q_summary_result.label;
-      } else if (unlikely(q_summary_result.density > param.thresh)) {
+      } else if (unlikely(q_summary_result.density.lo > param.thresh.hi)) {
         q_postponed->label = LAB_HI;
-      } else if (unlikely(q_summary_result.density < param.thresh)) {
+      } else if (unlikely(q_summary_result.density.hi < param.thresh.lo)) {
         q_postponed->label = LAB_LO;
       } else {
         need_expansion = true;
@@ -584,23 +639,20 @@ class Tkde {
         const QNode& q_node,
         const RNode& r_node,
         const Delta& delta) {
-      return q_node.bound().MidDistanceSqToBound(r_node.bound());
+      return r_node.bound().MinToMidSq(q_node.bound());
     }
   };
 };
 
+void TkdeMain(datanode *module) {
+  thor::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+      module, "tkde");
+}
+
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-#ifdef USE_MPI  
-  MPI_Init(&argc, &argv);
-  thor_utils::MpiDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
-      fx_root, "tkde");
-  MPI_Finalize();
-#else
-  thor_utils::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
-      fx_root, "tkde");
-#endif
+  TkdeMain(fx_root);
   
   fx_done();
 }
