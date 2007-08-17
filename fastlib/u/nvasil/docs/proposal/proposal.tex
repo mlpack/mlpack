@@ -98,14 +98,22 @@ ECE}{Georgia Institute of Technology}
 
 \begin{Body}
 \section{Introduction}
-\label{intro} Information explosion during the last decades has
-created data volumes of extraordinary size and dimensionality. There
-is a great demand for analysis and information extraction from data.
-Two approaches are common in machine learning, the parametric one
-\cite{bishop2006pra, hastie2001esl, haykin1994nnc} and
-the non-parametric one \cite{wasserman2006ans}. In the parametric case there is an underlying model
-assumption. The concept is to estimate the model parameters given
-the data. In the non-parametric case the data is the model.
+\label{intro}The explosion of information over the last few decades has created data volumes of extraordinary size and dimensionality, 
+bringing with it a great demand for analysis of and information extraction from these data.
+Two approaches for analyzing these data are common in machine learning: parametric \cite{bishop2006pra, hastie2001esl, haykin1994nnc}
+and non-parametric \cite{wasserman2006ans}. 
+In parametric analysis there is an assumption of an underlying model and the model is estimated based on the data.  
+In non-parametric analysis the data serves as the model.
+
+
+%Information explosion during the last decades has
+%created data volumes of extraordinary size and dimensionality. There
+%is a great demand for analysis and information extraction from data.
+%Two approaches are common in machine learning, the parametric one
+%\cite{bishop2006pra, hastie2001esl, haykin1994nnc} and
+%the non-parametric one \cite{wasserman2006ans}. In the parametric case there is an underlying model
+%assumption. The concept is to estimate the model parameters given
+%the data. In the non-parametric case the data is the model.
 
 In the parametric case we start with a very large amount of data $N$
 and we train a model that is described with $k$ parameters, where
@@ -128,8 +136,8 @@ kernel has to be tuned, i.e.
 \begin{equation}
 \hat{f}(x)=\sum_{i}^{N}e^{-\frac{||x-x_i||}{h}}
 \end{equation}
-There are cases that the bandwidth depends on the point so the above
-equation gets the form
+There are cases when the bandwidth depends on the point so the above
+equation changes to
 \begin{equation}
 \hat{f}(x)=\sum_{i}^{N}e^{-\frac{||x-x_i||}{h_i}}
 \end{equation}
@@ -141,24 +149,24 @@ overlap on the kernels which shows higher probability}{8cm}
 
 In contrast to parametric cases, a single evaluation of a non
 parametric model requires evaluation of $N$ parameters. Naively
-speaking training can be avoided at all if we set the parameter
+speaking training can be avoided at all if the parameter is set
 ad-hoc. If we want to find the single parameter with cross
 validation then that would require $N^2$ operations per candidate
-value of $h$. It turns out that if we arrange data in a more sophisticated way
+value of $h$. However if data are in a more sophisticated way
 it is possible to reduce the training of the non-parametric model to
 linear time and the evaluation of a new point in logarithmic time.
 Estimation of the few parameters of a non-parametric model can be
-casted as an optimization problem which in most of the case can be
-convex. We will see how non-parametric Kernel Principal Component
+casted as an optimization problem which in most of the cases can be
+convex. In addition, the non-parametric Kernel Principal Component
 Analysis \cite{scholkopf1998nca} can be computed with the help
 of semidefinite programming \cite{vandenberghe1996sp, boyd2004co}.
 
 \section{Origin and history of the problem}
 \label{origin}
 
-After the information explosion the problem of reducing/estimating
-the real dimensionality also known as the intrinsic dimensionality of a
-given dataset has been an active problem \cite{kegl2003ide}, \cite{costa2003egm}.
+After the information explosion, the problem of reducing/estimating
+the real dimensionality, also known as the intrinsic dimensionality of a
+given dataset, has been an active area of research \cite{kegl2003ide}, \cite{costa2003egm}.
 It is well known that many
 machine learning algorithms starting from the very fundamental, the
 nearest neighbor, grow exponentially on the intrinsic dimensionality of the data. This
@@ -168,8 +176,8 @@ extrinsic, causing confusion. The extrinsic dimensionality is just
 the number of variables needed to describe a point, i.e. the
 extrinsic dimensionality of $x\in \Re^d$ is just $d$. Each variable
 of the d-dimensional vector will be called dimension $1\dots d$. In
-reality some of the dimensions might be linearly or non-linearly
-dependent on other dimensions. So less than $d$ dimensions are
+reality, some of the dimensions might be linearly or non-linearly
+dependent on other dimensions, thus fewer than $d$ dimensions are
 sufficient to describe a point. We can define the intrinsic
 dimensionality of a dataset as the minimum number of "independent"
 variables needed to describe a point in space. Still the term is not
@@ -191,13 +199,12 @@ linear \cite{gray2000nbp}.
 
 The driving force for investigating dimensionality reduction is the
 estimation of the true dimensionality of speech. Many representations
-have been recommended for speech MFCC, LPC, NRAFF etc, \cite{quatieri2002dts,rabiner1978dps, ravindran:inr}. The true
-dimensionality is yet unknown. Meanwhile there is theoretical evidence
+have been recommended for speech including MFCC, LPC, NRAFF etc, \cite{quatieri2002dts,rabiner1978dps, ravindran:inr}, yet the true
+dimensionality is unknown. Meanwhile there is theoretical evidence
 that speech signals lie on manifolds
 \cite{alder1991dss, sciamarella1999tsc, kumar1990ade, tishby1990dsa, jansen2006ifa}. In
 this thesis we will attempt to estimate the true dimensionality of
-speech based on several representations. We will see in the future
-sections how this can help in developing new directions in speech
+speech based on several representations which may  help in developing new methods for speech
 recognition.
 
 \section{Preliminary Research}
@@ -244,9 +251,9 @@ recursively in two sets at every step.
 \subsubsection{Kd-trees}
 \label{Kd_trees}
 
-The first multidimensional tree in the literature was kd-tree \cite{bentley1975bst}. After
-30 years it still has comparable performance and in some cases even
-better with modern trees. At every level a partition (pivot)
+The first multidimensional tree in the literature was the kd-tree \cite{bentley1975bst}. After
+30 years it still performs comparably and in some cases, even
+better than modern trees. At every level a partition (pivot)
 dimension is chosen according to a user defined criterion and the
 data is split in two subsets according to this dimension. Kd-trees
 are off-line trees. In order to build a kd-tree all the data must be
@@ -255,31 +262,31 @@ can dynamically add or delete points.
 
 Several strategies have been recommended for finding the splitting
 dimension. The most popular are splitting on the dimension with the
-maximum variance or maximum range. Both of them are heuristics and
-there is no underlying theory behind it that guarantees better
+maximum variance or maximum range. However both of these strategies are heuristics and
+there is no underlying theory behind them that guarantees better
 performance of the trees. Another issue once the splitting dimension
-is found, is the actual numeric value of the split value. In other words
+is found, is the actual numeric value of the split value. In other words,
 the ratio of the points going in the two resulting sets. The mid
 value of the range or the mid value of the variance will in general
 give two sets that in most of the cases will have different number
 of points. Another strategy is to find the value that gives equally
 sized sets. This strategy in general gives balanced trees, while the
 first one leads to unbalanced trees. In the following sections we
-show that empirically it is more preferable to have unbalance splits
+show that empirically it is preferable to have unbalanced splits
 on the tree, since it favors pruning in the process of finding the
 nearest neighbors.
 
 \paragraph{Data structures for kd-trees}
 
- Kd-tree consists of two types of data structures, the nodes and the
+ Kd-trees consist of two types of data structures, nodes and
  leafs. The basic data needed for the nodes are the
  hyper-rectangles fig.~\ref{parent_kd_node}. Hyper-rectangles are the k-dimensional rectangles that describe the minimum bounding box  for a given set of points.
- Leafs hold additionally the data points  fig.~\ref{2_kd_node}. The number of points on a
- leaf is user defined. The tree method for finding the nearest neighbor is faster than naive
+ Leafs hold the data points  fig.~\ref{2_kd_node}. The number of points on a
+ leaf is user defined. The tree method for finding the nearest neighbor is faster than the naive
  only after a threshold of points. This threshold is used as the maximum number of points
  per leaf. Bounding boxes (Hyper-rectangles) and points are the minimum amount
  of information required to be stored on nodes on the leaf. Extra
- information about the data such as the centroid of the box, higher
+ information about the data, such as the centroid of the box, higher
  order moments, etc also called Cached Statistics can speed up
  tremendously algorithms other than nearest neighbor. The algorithm
  of nearest neighbor search with kd-trees will be described  in the following section,
@@ -357,7 +364,7 @@ feasible}
 \subsubsection{Ball trees}
 One of the main disadvantage of kd-trees is that they can only
 handle problems associated with the euclidian metric, or metrics
-that can be casted in euclidian metric such as the hamming distance.
+that can be cast in euclidian metric such as the hamming distance.
 In many cases although the data is expressed in cartesian
 coordinates and the notion of similarity is beyond the euclidian sense.
 For example the cosine distance is used in many applications of
@@ -410,7 +417,7 @@ centered around the query point with radius equal to the distance
  ball trees it is fairly easy to detect that.
 
  In general for natural data-sets where data tend to cluster, it is
- possible to prune very well  and achieve logarithmic performance in
+ possible to heavily prune and achieve logarithmic performance in
  search. In some cases when the partitioning is not very good, trees
  behave poorly and eventually have to search almost the whole
  data-set and they behave worse than the naive method since they
@@ -535,7 +542,7 @@ algorithm} \label{dualtree_algorithm}
 \subsection{Large scale trees, for out of core memory}
 \label{Large_scale_trees}
 
-Kd-trees have been proven to be be quite successful in
+Kd-trees have been proven to be quite successful in
 multidimensional indexing and outperform several other
 trees in statistical processing of data, mainly in the all nearest
 neighbor problem, n-point correlation etc. In this section we
@@ -546,7 +553,7 @@ paging of nodes on the disk.
 Kd-trees have been used quite successfully in statistics for
 speeding up statistical algorithms (nearest neighbor, 2 point
 correlation) over large datasets \cite{gray2000nbp}. Many other trees like ball trees,
-vantage trees, cover trees etc \cite{samet2005fma} have been developed as a rivalry but
+vantage trees, cover trees etc \cite{samet2005fma} have been developed as rivals but
 they haven't really shown any significant improvement, their
 performance is most of the times comparable to the kd-trees. After
 30 years they still remain the state of the art for developing
@@ -705,7 +712,7 @@ obvious this particular memory segment might be paged out during the
 execution. To avoid that the programmer explicitly locks the
 particular page as long as the pointer is in use and then it is
 explicitly unlocked when the data pointing to is not necessary
-anymore. This is  policy is always prone to deadlocks if the cache
+anymore. This policy is always prone to deadlocks if the cache
 size is small and the page size is large. Another possible case of
 deadlock is when the tree building algorithm does not guarantee good
 locality in the access pattern of the dual-tree algorithm. In
@@ -727,7 +734,7 @@ Pages are write protected in memory and if a write occurs a signal
 is raised and the page is marked as modified.
 
 \subsubsection{Results}
-We run several experiments on a 1GByte Ram machine with data that where  at least twice the
+We ran several experiments on a 1GByte Ram machine with data that where  at least twice the
 size of the cache (The system would not give more than 700MB to the running process). 
 In reality the memory requirements are much larger since there is other overhead stored on the
 tree. The results are also stored as key-value pairs. for example: <point id, minimum distance>.
@@ -1599,8 +1606,8 @@ and for NRAF (dashed line).}
 \newpage
 \section{Proposed Research}
 \label{proposed}
-In other words estimate the intrinsic dimensionality of speech by
-using big databases like TIMIT \cite{garofolo1993tap}, Wall Street Journal and Broadcast
+The goal of this thesis is to  estimate the intrinsic dimensionality of speech relying 
+on big databases like TIMIT \cite{garofolo1993tap}, Wall Street Journal and Broadcast
 News \cite{graff1997bns}. Dimensionality reduction will implicitly lead to new feature
 generation. The ultimate goal is to use these new features along
 with kd-trees do speech recognition by nearest neighbor search. The simplest approach to dimensionality 
@@ -1608,26 +1615,26 @@ reduction is Principal Component Analysis (PCA). Unfortunately PCA is a linear m
 only on gaussian and euclidian data. It fails to capture nonlinearities on the data manifold. Simple 
 examples of curves like the Swiss roll show that PCA fails to unfold it 
 and identify the principal components. Manifold techniques such as Local Linear Embedding, Isomap, 
-Local Tangent Space Alignment, Kernel PCA, Laplacian Eigenmaps etc are more  efficient in capturing 
+Local Tangent Space Alignment (LTSA), Kernel PCA, Laplacian Eigenmaps etc are more  efficient in capturing 
 the principal components of a nonlinear manifold. 
 
 Fixed Kernel Methods such as Kernel PCA suffer from the kernel bandwidth tuning. 
 We saw in section \ref{Bandwidth_Tuning}
 that we can tune it with heuristics. Although it can improve the performance we show in 
 section \ref{Feature_Comparison} fig.~\ref{kernel_pca} that the 
-choice of the kernel is crucial in the performance. A very promising direction as we will see in 
+choice of the kernel is crucial. A very promising direction as we will see in 
 section \ref{Customized_Kernels}
 is to use semidefinite programming in customizing the kernel matrix (Semidefinite PCA). The results of \cite{weinberger2004lkm}
-indicate superior results compared to standard Kernel Methods as well as Isomap and Local Linear Embedding.
+indicate superior perfoormance compared to standard Kernel Methods as well as Isomap and Local Linear Embedding.
 
-All these methods require the k-neighborhood computation for a every point. As we have already 
-mentioned the computational bottleneck can be reduced from $O(N^2)$ to linear with the dual tree
+All these methods require the k-neighborhood computation for every point. As we have already 
+mentioned the computational bottleneck can be reduced from $O(N^2)$ to linear with the dual-tree
 algorithm. Another bottleneck is the computation of the eigenvalues for kernel matrices with
 infinite support like the gaussian. Moreover the Semidefinite PCA suffers from polynomial complexity since it uses the interior
 point methods. There are also some other implementational issues with the tree algorithms that we addressed
 in section \ref{Large_scale_trees}
 
-In this section we present optimization strategies for the fixed kernel methods as well as for the
+In the next sections we present optimization strategies for the fixed kernel methods as well as for the
 Semidefinite PCA. In the last part the strategy for estimating the intrinsic dimension of speech and its
 application in speech recognition is presented.
 
@@ -1642,11 +1649,11 @@ appears in many cases, with the most interesting case the
 eigenvalue/eigenvector computation of the kernel matrix. The kernel summation is a very
 computationally intensive task. For Gaussian kernels there are
 approximations that can speed up computations orders of magnitude.
-We will briefly discuss them here. Besides computation saving we can
-save memory as well. The gaussian kernel has infinite support so the
+We will briefly discuss them here. Apart from computations we can also
+save memory. The gaussian kernel has infinite support, so the
 kernel matrix $\{K : k(x,y)=e^{-\frac{||x-y||}{\sigma^2}} \}$ is not
 sparse. Numerical iterative methods for eigenvector computation are
-based on the general iteration $w^n=w^{n-1}+\lambda Kw^{n-1}$, where
+based on the general iteration rule $w^n=w^{n-1}+\lambda Kw^{n-1}$, where
 the multiplication of each row of $K$ with $w^{n-1}$ is a kernel
 summation problem. So we don't really need to store the kernel
 matrix, we just have to compute the kernel sum for every row using
@@ -1740,7 +1747,6 @@ k(i,j)=\sum_{i=1}^{N}\lambda_i w_i w_j
 
 and since $i$ corresponds to point $x$ and $j$ corresponds to $y$
 we can rewrite it as
-
 \begin{equation}
 k(x,y)=\sum_{i=1}^{N}w(x)w(y)
 \end{equation}
@@ -1778,7 +1784,6 @@ $\tilde{K}$. It turns out \cite{stewart1990mpt} that
 \begin{equation}
 \sqrt{\sum_{i=1}^{N}(\lambda_i-\tilde{\lambda}_i)^2}\leq ||E||_F
 \end{equation}
-
 where $||E||_F=\sqrt{\sum_{i=1}^{N}\sum_{j=1}^{N}e_{ij}^2}$, is the
 Frobenious norm of $E$.
 So we need a good estimate of $||E||_F$. A simple approach would be
@@ -1816,7 +1821,7 @@ gaussian kernel for example tends to behave better in clustering
 since it fades out very quickly. On the other hand it fails to
 unfold the data manifold properly so that the intrinsic dimension
 can be estimated. Manifold unfolding is a very important procedure
-since it can reveal the true dimension of the dataset.
+since it can reveal the true dimensionality of the dataset.
 
 In \cite{weinberger2004lkm} the authors introduced the idea of building the kernel matrix
 from scratch without using any fixed kernel. As we have already
@@ -1874,8 +1879,8 @@ The inventors of this method named it Semidefinite PCA (SDPCA),
 which is the term we will use form now on.
 
 \subsubsection{Speeding up Semidefinite PCA}
-Semidefinite problems are solved with the interior point method. The
-basic concept of interior point method \cite{nesterov1994ipp} is to build a barrier
+Semidefinite problems are solved with the interior point method  \cite{nesterov1994ipp}. The
+basic concept of interior point method is to build a barrier
 function that penalizes solutions that violate the inequality
 constraints. The ideal function would be:
 
@@ -1889,7 +1894,7 @@ I_{-}(u)= \left\{
 \end{equation}
 
 
-It turns out that a good approximation of this functions is
+It turns out that a good approximation of this function is
 
 \begin{equation}
 \hat{I}_{-}(u) = -\frac{1}{t}\log(-u), u\leq 0,
@@ -2010,10 +2015,10 @@ or Cuthill-McKee \cite{george1981csl}.
 This adds extra computational cost. It is possible to combine the 
 partition of the data and the generation of the graph. This can be done with the use of trees. 
 The spectral decomposition (LTSA, Kernel PCA, etc) can be computed on every leaf individually 
-and then recursively glue the, following the tree form bottom to top. It is necessary though that
+and then recursively glue them, following the tree form bottom to top. It is necessary though that
 the trees are overlapping since the method requires the domains not to be disjoint. This would potentially
 lead to a nearest neighbor independent solution which can scale better with the dimensionality. 
-Another alternative is to keep kd-tree in the original form and perform nearest 
+Another alternative is to keep the kd-tree in the original form and perform nearest 
 neighbor search between the leafs to generate overlapping domains.
 
 \paragraph{Monte Carlo for Semidefinite PCA.}
@@ -2027,7 +2032,7 @@ can also help in pruning out redundant projections that can give projections clo
 
 
 \subsection{Speech recognition with nearest neighbor search, Dimensional Analysis of Speech}
-The  motivation for this thesis has been to develop a speech recognition engine based on nearest neighbor search. In the age of information explosion it is very easy to collect large collections of annotated speech. Most of the tv broadcasts are captioned. Although there are errors and misalignment, it is always possible to reduce them, with an open source Viterbi decoder, by force aligning them. So it is possible to extract the audio from the tv signal segment it in word or phoneme level and then generate features such as MFCC or NRAF or any other customized features. Then we can index the features with kd trees associated with the caption. The problem of speech recognition now can be casted as a search problem. This is a simplistic approach that requires the solution of other problems.
+The  motivation for this thesis has been to develop a speech recognition engine based on nearest neighbor search. In the age of information explosion it is very easy to collect large collections of annotated speech. Most of the tv broadcasts are captioned. Although there are errors and misalignment, it is always possible to reduce them, with an open source Viterbi decoder, by force aligning them. So it is possible to extract the audio from the tv signal, segment it in word or phoneme level and then generate features such as MFCC or NRAF or any other customized features. Then we can index the features with kd trees associated with the caption. The problem of speech recognition now can be casted as a search problem. This is a simplistic approach that requires the solution of other problems.
 
 First of all it is necessary to estimate the intrinsic dimension of the features representing speech. This is why we focused our interest in dimensionality reduction algorithms. This is important for "compressing" the data and saving space. The second issue is to build a cache for trees that don't fit in the main memory already addressed. The last step is to generate features on different time scales.
 
