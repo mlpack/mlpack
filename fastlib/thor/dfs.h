@@ -164,8 +164,9 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
     } else {
       Pair_(q_root, r_root_, delta, empty_summary_result, q_root_mut);
     }
-    PushDownPostprocess_(q_root_index, q_root_mut);
   }
+
+  PushDownPostprocess_(q_root_index, q_root_mut);
 
   q_nodes_.StopRead(q_root_index);
 
@@ -233,7 +234,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
 
   /* begin prune checks */
   typename GNP::QSummaryResult mu(q_node_mut->summary_result);
-  //mu.ApplyPostponed(param_, q_node_mut->postponed, *q_node);
+  mu.ApplyPostponed(param_, q_node_mut->postponed, *q_node);
   mu.ApplySummaryResult(param_, unvisited);
   mu.ApplyDelta(param_, delta);
 
@@ -326,11 +327,11 @@ void DualTreeDepthFirst<GNP>::Pair_(
         }
       } else {
         if (likely(r_child2 != NULL)) {
-          typename GNP::QSummaryResult unvisited_for_r1(unvisited);
+          typename GNP::QSummaryResult unvisited_for_r2(unvisited);
           if (likely(r_child1 != NULL)) {
-            unvisited_for_r1.ApplyDelta(param_, delta1);
+            unvisited_for_r2.ApplyDelta(param_, delta1);
           }
-          Pair_(q_node, r_child2, delta2, unvisited_for_r1, q_node_mut);
+          Pair_(q_node, r_child2, delta2, unvisited_for_r2, q_node_mut);
         }
         if (likely(r_child1 != NULL)) {
           Pair_(q_node, r_child1, delta1, unvisited, q_node_mut);
