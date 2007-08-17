@@ -43,7 +43,7 @@ class Allnn {
       dim = -1;
     }
 
-    void SetDimensions(index_t vector_dimension, index_t n_pointsk) {
+    void SetDimensions(index_t vector_dimension, index_t n_points) {
       dim = vector_dimension;
     }
   };
