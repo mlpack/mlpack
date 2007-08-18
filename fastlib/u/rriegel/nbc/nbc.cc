@@ -122,15 +122,15 @@ class Nbc {
     double threshold;
 
     OT_DEF_BASIC(Param) {
-      OT_MY_OBJECT(norm_thresh_pos);
-      OT_MY_OBJECT(norm_thresh_neg);
+      OT_MY_OBJECT(const_pos);
+      OT_MY_OBJECT(const_neg);
       OT_MY_OBJECT(kernel_pos);
       OT_MY_OBJECT(kernel_neg);
       OT_MY_OBJECT(dim);
       OT_MY_OBJECT(count_all);
       OT_MY_OBJECT(count_pos);
       OT_MY_OBJECT(count_neg);
-      OT_MY_OBJECT(orig_thresh);
+      OT_MY_OBJECT(threshold);
     }
 
    public:
@@ -140,7 +140,7 @@ class Nbc {
     void Init(datanode *module) {
       kernel_pos.Init(fx_param_double_req(module, "h_pos"));
       kernel_neg.Init(fx_param_double_req(module, "h_neg"));
-      threshold = fx_param_double(module, "threshold", "0.5");
+      threshold = fx_param_double(module, "threshold", 0.5);
     }
 
     void SetDimensions(index_t vector_dimension, index_t n_points) {
@@ -152,16 +152,16 @@ class Nbc {
      * Finalize parameters (Not THOR).
      */
     void ComputeConsts(int count_pos_in, int count_neg_in) {
-      double epsilon = min(threshold, 1 - thershold) * 1e-3;
+      double epsilon = min(threshold, 1 - threshold) * 1e-3;
 
       double norm_pos = kernel_pos.CalcNormConstant(dim) * count_pos_in;
-      const_pos.lo = (1 - theshold - epsilon) / norm_pos;
-      const_pos.hi = (1 - theshold + epsilon) / norm_pos;
+      const_pos.lo = (1 - threshold - epsilon) / norm_pos;
+      const_pos.hi = (1 - threshold + epsilon) / norm_pos;
       count_pos = count_pos_in;
 
       double norm_neg = kernel_neg.CalcNormConstant(dim) * count_neg_in;
-      const_neg.lo = (theshold - epsilon) / norm_neg;
-      const_neg.hi = (theshold + epsilon) / norm_neg;
+      const_neg.lo = (threshold - epsilon) / norm_neg;
+      const_neg.hi = (threshold + epsilon) / norm_neg;
       count_neg = count_neg_in;
 
       ot::Print(dim);
@@ -224,15 +224,15 @@ class Nbc {
      * Compute kernel sum for a region of reference points assuming we have
      * the actual query point.
      */
-    double ComputeKernelSum(const Param& param, const Vector& q) const {
+    double ComputeKernelSum(const Kernel& kernel, const Vector& q) const {
       double quadratic_term =
           + count * la::Dot(q, q)
           - 2.0 * la::Dot(q, mass)
           + sumsq;
-      return count - quadratic_term * param.kernel.inv_bandwidth_sq();
+      return count - quadratic_term * kernel.inv_bandwidth_sq();
     }
 
-    double ComputeKernelSum(const Param& param, double distance_squared,
+    double ComputeKernelSum(const Kernel& kernel, double distance_squared,
         double center_dot_center) const {
       //q*q - 2qr + rsumsq
       //q*q - 2qr + r*r - r*r
@@ -240,10 +240,10 @@ class Nbc {
           (distance_squared - center_dot_center) * count
           + sumsq;
 
-      return -quadratic_term * param.kernel.inv_bandwidth_sq() + count;
+      return -quadratic_term * kernel.inv_bandwidth_sq() + count;
     }
 
-    DRange ComputeKernelSumRange(const Param& param,
+    DRange ComputeKernelSumRange(const Kernel& kernel,
         const Bound& query_bound) const {
       DRange density_bound;
       Vector center;
@@ -254,9 +254,9 @@ class Nbc {
       center.Copy(mass);
       la::Scale(1.0 / count, &center);
 
-      density_bound.lo = ComputeKernelSum(param,
+      density_bound.lo = ComputeKernelSum(kernel,
           query_bound.MaxDistanceSq(center), center_dot_center);
-      density_bound.hi = ComputeKernelSum(param,
+      density_bound.hi = ComputeKernelSum(kernel,
           query_bound.MinDistanceSq(center), center_dot_center);
 
       return density_bound;
@@ -334,8 +334,8 @@ class Nbc {
 	bound_neg |= point.vec();
 	++count_neg;
       }
-      pi_pos |= point.pi();
-      pi_neg |= 1 - point.pi();
+      pi_pos |= point.pi_pos();
+      pi_neg |= point.pi_neg();
     }
 
     /**
@@ -349,8 +349,8 @@ class Nbc {
       bound_neg |= stat.bound_neg;
       count_pos += stat.count_pos;
       count_neg += stat.count_neg;
-      pi_pos |= stat.pi_pos();
-      pi_neg |= stat.pi_neg();
+      pi_pos |= stat.pi_pos;
+      pi_neg |= stat.pi_neg;
     }
 
     /**
@@ -360,8 +360,8 @@ class Nbc {
     void Postprocess(const Param& param, const Bound& bound, index_t n) {
     }
   };
-  typedef RStat NbcStat;
-  typedef QStat NbcStat;
+  typedef NbcStat RStat;
+  typedef NbcStat QStat;
  
   /**
    * Reference node.
@@ -385,30 +385,35 @@ class Nbc {
   struct QPostponed {
    public:
     /** Moments of pruned things. */
-    MomentInfo moment_info;
+    MomentInfo moment_info_pos;
+    MomentInfo moment_info_neg;
     /** We pruned an entire part of the tree with a particular label. */
     int label;
 
     OT_DEF_BASIC(QPostponed) {
-      OT_MY_OBJECT(moment_info);
+      OT_MY_OBJECT(moment_info_pos);
+      OT_MY_OBJECT(moment_info_neg);
       OT_MY_OBJECT(label);
     }
 
    public:
     void Init(const Param& param) {
-      moment_info.Init(param);
+      moment_info_pos.Init(param);
+      moment_info_neg.Init(param);
       label = LAB_EITHER;
     }
 
     void Reset(const Param& param) {
-      moment_info.Reset();
+      moment_info_pos.Reset();
+      moment_info_neg.Reset();
       label = LAB_EITHER;
     }
 
     void ApplyPostponed(const Param& param, const QPostponed& other) {
       label &= other.label;
       DEBUG_ASSERT_MSG(label != LAB_NEITHER, "Conflicting labels?");
-      moment_info.Add(other.moment_info);
+      moment_info_pos.Add(other.moment_info_pos);
+      moment_info_neg.Add(other.moment_info_neg);
     }
   };
 
@@ -478,11 +483,11 @@ class Nbc {
 
       if (!postponed.moment_info_pos.is_empty()) {
         density_pos += postponed.moment_info_pos.ComputeKernelSum(
-            param, q.vec());
+            param.kernel_pos, q.vec());
       }
       if (!postponed.moment_info_neg.is_empty()) {
         density_neg += postponed.moment_info_neg.ComputeKernelSum(
-            param, q.vec());
+            param.kernel_neg, q.vec());
       }
     }
   };
@@ -563,12 +568,12 @@ class Nbc {
       }
       if (unlikely(!postponed.moment_info_pos.is_empty())) {
         density_pos += postponed.moment_info_pos.ComputeKernelSumRange(
-            param, q_node.bound());
+            param.kernel_pos, q_node.bound());
         change_made = true;
       }
       if (unlikely(!postponed.moment_info_neg.is_empty())) {
         density_neg += postponed.moment_info_neg.ComputeKernelSumRange(
-            param, q_node.bound());
+            param.kernel_neg, q_node.bound());
         change_made = true;
       }
 
@@ -605,11 +610,11 @@ class Nbc {
       fx_format_result(datanode, "count_pos", "%"LI"d",
           count_pos);
       fx_format_result(datanode, "percent_pos", "%.05f",
-          double(count_pos) / param.count * 100.0);
+          double(count_pos) / param.count_all * 100.0);
       fx_format_result(datanode, "count_unknown", "%"LI"d",
           count_unknown);
       fx_format_result(datanode, "percent_unknown", "%.05f",
-          double(count_unknown) / param.count * 100.0);
+          double(count_unknown) / param.count_all * 100.0);
     }
     void ApplyResult(const Param& param,
         const QPoint& q_point, index_t q_i,
@@ -671,7 +676,7 @@ class Nbc {
 	     < param.kernel_pos.bandwidth_sq())) {
 	  q_result->density_pos +=
 	    r_node.stat().moment_info_pos.ComputeKernelSum(
-		param, q.vec());
+		param.kernel_pos, q.vec());
 	  do_pos = false;
 	}
       }
@@ -681,7 +686,7 @@ class Nbc {
 	     < param.kernel_neg.bandwidth_sq())) {
 	  q_result->density_neg +=
 	    r_node.stat().moment_info_neg.ComputeKernelSum(
-		param, q.vec());
+		param.kernel_neg, q.vec());
 	  do_neg = false;
 	}
       }
@@ -705,12 +710,12 @@ class Nbc {
 	if (r_node.stat().count_pos > 0) {
 	  q_result->density_pos +=
 	    r_node.stat().moment_info_pos.ComputeKernelSum(
-	        param, q.vec());
+	        param.kernel_pos, q.vec());
 	}
 	if (r_node.stat().count_neg > 0) {
 	  q_result->density_neg +=
 	    r_node.stat().moment_info_neg.ComputeKernelSum(
-	        param, q.vec());
+	        param.kernel_neg, q.vec());
 	}
 	return false;
       }
@@ -764,11 +769,11 @@ class Nbc {
       if (unlikely(
 	   param.const_pos.lo * total_density_pos.lo * q.pi_pos()
 	   > param.const_neg.hi * total_density_neg.hi * q.pi_neg())) {
-        label &= LAB_POS;
+        q_result->label &= LAB_POS;
       } else if (unlikely(
 	   param.const_neg.lo * total_density_neg.lo * q.pi_neg()
 	   > param.const_pos.hi * total_density_pos.hi * q.pi_pos())) {
-        label &= LAB_NEG;
+        q_result->label &= LAB_NEG;
       }
     }
   };
@@ -921,8 +926,8 @@ void NbcMain(datanode *module) {
   double results_megs = fx_param_double(module, "results/megs", 1000);
   DistributedCache *points_cache;
   index_t n_points;
-  ThorTree<typename Nbc::Param, typename Nbc::QPoint, typename Nbc::QNode> tree;  DistributedCache q_results;
-  typename Nbc::Param param;
+  ThorTree<Nbc::Param, Nbc::QPoint, Nbc::QNode> tree;  DistributedCache q_results;
+  Nbc::Param param;
 
   rpc::Init();
 
@@ -936,18 +941,18 @@ void NbcMain(datanode *module) {
 
   fx_timer_start(module, "read");
   points_cache = new DistributedCache();
-  n_points = ReadPoints<typename Nbc::QPoint>(
+  n_points = thor::ReadPoints<Nbc::QPoint>(
       param, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
       fx_submodule(module, "data", "data"), points_cache);
   fx_timer_stop(module, "read");
 
-  typename Nbc::QPoint default_point;
-  CacheArray<typename Nbc::QPoint>::GetDefaultElement(
+  Nbc::QPoint default_point;
+  CacheArray<Nbc::QPoint>::GetDefaultElement(
       points_cache, &default_point);
   param.SetDimensions(default_point.vec().length(), n_points);
 
   fx_timer_start(module, "tree");
-  CreateKdTree<typename Nbc::QPoint, typename Nbc::QNode>(
+  thor::CreateKdTree<Nbc::QPoint, Nbc::QNode>(
       param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
       fx_submodule(module, "tree", "tree"), n_points, points_cache, &tree);
   fx_timer_stop(module, "tree");
@@ -956,13 +961,13 @@ void NbcMain(datanode *module) {
   param.ComputeConsts(tree.root().stat().count_pos,
 		      tree.root().stat().count_neg);
 
-  typename Nbc::QResult default_result;
+  Nbc::QResult default_result;
   default_result.Init(param);
   tree.CreateResultCache(Q_RESULTS_CHANNEL, default_result,
         results_megs, &q_results);
 
-  typename Nbc::GlobalResult *global_result;
-  RpcDualTree<Nbc, DualTreeDepthFirst<Nbc> >(
+  Nbc::GlobalResult *global_result;
+  thor::RpcDualTree<Nbc, DualTreeDepthFirst<Nbc> >(
       fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, param,
       &tree, &tree, &q_results, &global_result);
   delete global_result;
