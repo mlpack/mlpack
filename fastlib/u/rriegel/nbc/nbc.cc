@@ -98,12 +98,16 @@ class Nbc {
   struct Param {
    public:
     /**
-     * Normalized threshold for positive points. Similar for _neg.
+     * Normalization constat for positive points. Similar for _neg.
      *
-     * Pre-normalization, thresh_pos.lo = 1 - thresh_neg.hi, etc.
+     * Hi and lo also acount for threshold (coincidentally, from the
+     * other class' point of view).  Example use:
+     *
+     *   const_pos.lo * density_pos.lo * pi_pos.lo
+     *   > const_neg.hi * density_neg.hi * pi_neg.hi
      */
-    DRange norm_thresh_pos;
-    DRange norm_thresh_neg;
+    DRange const_pos;
+    DRange const_neg;
     /** The kernel for positive points. Similar for _neg. */
     Kernel kernel_pos;
     Kernel kernel_neg;
@@ -114,8 +118,8 @@ class Nbc {
     /** Number of positive reference points. Similar for _neg. */
     index_t count_pos;
     index_t count_neg;
-    /** The original threshold, before normalization. */
-    double orig_thres;
+    /** The specified threshold for certainty of positive class. */
+    double threshold;
 
     OT_DEF_BASIC(Param) {
       OT_MY_OBJECT(norm_thresh_pos);
@@ -134,64 +138,42 @@ class Nbc {
      * Initialize parameters from a data node (Req THOR).
      */
     void Init(datanode *module) {
-      kernel_pos.Init(fx_param_double_req(module, "hpos"));
-      kernel_neg.Init(fx_param_double_req(module, "hneg"));
-      orig_thresh = fx_param_double(module, "threshold", "0.5");
+      kernel_pos.Init(fx_param_double_req(module, "h_pos"));
+      kernel_neg.Init(fx_param_double_req(module, "h_neg"));
+      threshold = fx_param_double(module, "threshold", "0.5");
     }
 
     void SetDimensions(index_t vector_dimension, index_t n_points) {
-      dim = vector_dimension - 2; // last two cols: class, prior
+      dim = vector_dimension; // last two cols already trimmed
       count_all = n_points;
-      // TODO: this must be done after tree building
-      //double normalized_threshold =
-      //    nominal_threshold * kernel.CalcNormConstant(dim) * count;
-      //thresh.lo = normalized_threshold * (1.0 - 1.0e-3);
-      //thresh.hi = normalized_threshold * (1.0 + 1.0e-3);
-      //ot::Print(dim);
-      //ot::Print(kernel);
-      //ot::Print(thresh);
-    }
-
-   public:
-    // Convenience methods for purpose of thresholded KDE
-
-    /**
-     * Compute kernel sum for a region of reference points assuming we have
-     * the actual query point (not THOR).
-     */
-    double ComputeKernelSum(
-        const Vector& q,
-        index_t r_count, const Vector& r_mass, double r_sumsq) const {
-      double quadratic_term =
-          + r_count * la::Dot(q, q)
-          - 2.0 * la::Dot(q, r_mass)
-          + r_sumsq;
-      return r_count - quadratic_term * kernel.inv_bandwidth_sq();
     }
 
     /**
-     * Divides a vector by an integer (not THOR).
+     * Finalize parameters (Not THOR).
      */
-    static void ComputeCenter(
-        index_t count, const Vector& mass, Vector* center) {
-      DEBUG_ASSERT(count != 0);
-      center->Copy(mass);
-      la::Scale(1.0 / count, center);
-    }
+    void ComputeConsts(int count_pos_in, int count_neg_in) {
+      double epsilon = min(threshold, 1 - thershold) * 1e-3;
 
-    /**
-     * Compute kernel sum given only a squared distance (not THOR).
-     */
-    double ComputeKernelSum(
-        double distance_squared,
-        index_t r_count, const Vector& r_center, double r_sumsq) const {
-      //q*q - 2qr + rsumsq
-      //q*q - 2qr + r*r - r*r
-      double quadratic_term =
-          (distance_squared - la::Dot(r_center, r_center)) * r_count
-          + r_sumsq;
+      double norm_pos = kernel_pos.CalcNormConstant(dim) * count_pos_in;
+      const_pos.lo = (1 - theshold - epsilon) / norm_pos;
+      const_pos.hi = (1 - theshold + epsilon) / norm_pos;
+      count_pos = count_pos_in;
 
-      return -quadratic_term * kernel.inv_bandwidth_sq() + r_count;
+      double norm_neg = kernel_neg.CalcNormConstant(dim) * count_neg_in;
+      const_neg.lo = (theshold - epsilon) / norm_neg;
+      const_neg.hi = (theshold + epsilon) / norm_neg;
+      count_neg = count_neg_in;
+
+      ot::Print(dim);
+      ot::Print(count_all);
+
+      ot::Print(count_pos);
+      ot::Print(kernel_pos);
+      ot::Print(const_pos);
+
+      ot::Print(count_neg);
+      ot::Print(kernel_neg);
+      ot::Print(const_neg);
     }
   };
 
@@ -238,23 +220,44 @@ class Nbc {
       Add(other.count, other.mass, other.sumsq);
     }
 
-    double ComputeKernelSum(const Param& param, const Vector& point) const {
-      return param.ComputeKernelSum(point, count, mass, sumsq);
+    /**
+     * Compute kernel sum for a region of reference points assuming we have
+     * the actual query point.
+     */
+    double ComputeKernelSum(const Param& param, const Vector& q) const {
+      double quadratic_term =
+          + count * la::Dot(q, q)
+          - 2.0 * la::Dot(q, mass)
+          + sumsq;
+      return count - quadratic_term * param.kernel.inv_bandwidth_sq();
+    }
+
+    double ComputeKernelSum(const Param& param, double distance_squared,
+        double center_dot_center) const {
+      //q*q - 2qr + rsumsq
+      //q*q - 2qr + r*r - r*r
+      double quadratic_term =
+          (distance_squared - center_dot_center) * count
+          + sumsq;
+
+      return -quadratic_term * param.kernel.inv_bandwidth_sq() + count;
     }
 
     DRange ComputeKernelSumRange(const Param& param,
         const Bound& query_bound) const {
       DRange density_bound;
       Vector center;
+      double center_dot_center = la::Dot(mass, mass) / count / count;
+      
+      DEBUG_ASSERT(count != 0);
 
-      param.ComputeCenter(count, mass, &center);
+      center.Copy(mass);
+      la::Scale(1.0 / count, &center);
 
-      density_bound.lo = param.ComputeKernelSum(
-          query_bound.MaxDistanceSq(center),
-          count, center, sumsq);
-      density_bound.hi = param.ComputeKernelSum(
-          query_bound.MinDistanceSq(center),
-          count, center, sumsq);
+      density_bound.lo = ComputeKernelSum(param,
+          query_bound.MaxDistanceSq(center), center_dot_center);
+      density_bound.hi = ComputeKernelSum(param,
+          query_bound.MinDistanceSq(center), center_dot_center);
 
       return density_bound;
     }
@@ -628,8 +631,10 @@ class Nbc {
    public:
     double density_pos;
     double density_neg;
+#ifdef CHEC_POS_NEG_BOUNDS
     bool do_pos;
     bool do_neg;
+#endif
 
    public:
     void Init(const Param& param) {}
@@ -647,6 +652,7 @@ class Nbc {
         return false;
       }
 
+#ifdef CHECK_POS_NEG_BOUNDS
       if (unlikely(
 	   (r_node.stat().count_pos == 0 ||
 	    r_node.stat().bound_pos.MinDistanceSq(q.vec())
@@ -657,8 +663,6 @@ class Nbc {
 	return false;
       }
 
-      density_pos = 0.0;
-      density_neg = 0.0;
       do_pos = true;
       do_neg = true;
       if (r_node.stat().count_pos > 0) {
@@ -682,12 +686,46 @@ class Nbc {
 	}
       }
 
+      density_pos = 0.0;
+      density_neg = 0.0;
+
       return do_pos || do_neg;
+#else
+      if (unlikely(
+	    r_node.bound().MinDistanceSq(q.vec())
+	    > max(param.kernel_pos.bandwidth_sq(),
+		  param.kernel_neg.bandwidth_sq()))) {
+	return false;
+      }
+
+      if (unlikely(
+	   r_node.bound().MaxDistanceSq(q.vec())
+	   < min(param.kernel_pos.bandwidth_sq(),
+		 param.kernel_neg.bandwidth_sq()))) {
+	if (r_node.stat().count_pos > 0) {
+	  q_result->density_pos +=
+	    r_node.stat().moment_info_pos.ComputeKernelSum(
+	        param, q.vec());
+	}
+	if (r_node.stat().count_neg > 0) {
+	  q_result->density_neg +=
+	    r_node.stat().moment_info_neg.ComputeKernelSum(
+	        param, q.vec());
+	}
+	return false;
+      }
+
+      density_pos = 0.0;
+      density_neg = 0.0;
+
+      return true;
+#endif
     }
 
     void VisitPair(const Param& param,
         const QPoint& q, index_t q_index,
         const RPoint& r, index_t r_index) {
+#ifdef CHECK_POS_NEG_BOUNDS
       if (r.is_pos()) {
 	if (likely(do_pos)) {
 	  double distance = la::DistanceSqEuclidean(q.vec(), r.vec());
@@ -699,6 +737,14 @@ class Nbc {
 	  density_neg += param.kernel_neg.EvalUnnormOnSq(distance);
 	}
       }
+#else
+      double distance = la::DistanceSqEuclidean(q.vec(), r.vec());
+      if (r.is_pos()) {
+	density_pos += param.kernel_pos.EvalUnnormOnSq(distance);
+      } else {
+	density_neg += param.kernel_neg.EvalUnnormOnSq(distance);
+      }
+#endif
     }
 
     void FinishVisitingQueryPoint(const Param& param,
@@ -743,42 +789,65 @@ class Nbc {
         Delta* delta,
         GlobalResult* global_result,
         QPostponed* q_postponed) {
-      double distance_sq_lo =
-          q_node.bound().MinDistanceSq(r_node.bound());
-      bool need_expansion;
-      
       DEBUG_MSG(1.0, "tkde: ConsiderPairIntrinsic");
-      
-      if (distance_sq_lo > param.kernel.bandwidth_sq()) {
-        DEBUG_MSG(1.0, "tkde: Exclusion");
-        need_expansion = false;
-      } else {
-        double distance_sq_hi =
-            q_node.bound().MaxDistanceSq(r_node.bound());
 
-        if (0) {
-        // REMOVED because this was causing bugs.
-        // Someone please figure out what's wrong with the moment expansion!
-        
-        /*distance_sq_hi < param.kernel.bandwidth_sq()) {
-          DEBUG_MSG(1.0, "tkde: Inclusion");
-          q_postponed->moment_info.Add(r_node.stat().moment_info);
-          need_expansion = false;*/
-        } else {
-          DEBUG_MSG(1.0, "tkde: Overlap - need explore");
-          //delta->d_density = r_node.stat().moment_info.ComputeKernelSumRange(
-          //    param, q_node.bound());
-          //max(delta->d_density.lo, 0.0);
-          // this method seemed like a good idea, but the upper bound it
-          // computes is unfortunately bogus
-          delta->d_density.lo = 0;
-          delta->d_density.hi = r_node.count() *
-              param.kernel.EvalUnnormOnSq(distance_sq_lo);
-          need_expansion = true;
-        }
+      double d_density_pos_hi = 0;
+      if (r_node.stat().count_pos > 0) {
+	double distance_sq_pos_lo =
+	  r_node.stat().bound_pos.MinDistanceSq(q_node.bound());
+	d_density_pos_hi =
+	  param.kernel_pos.EvalUnnormOnSq(distance_sq_pos_lo);
       }
 
-      return need_expansion;
+      double d_density_neg_hi = 0;
+      if (r_node.stat().count_neg > 0) {
+	double distance_sq_neg_lo =
+	  r_node.stat().bound_neg.MinDistanceSq(q_node.bound());
+	d_density_neg_hi =
+	  param.kernel_neg.EvalUnnormOnSq(distance_sq_neg_lo);
+      }
+
+      if (d_density_pos_hi == 0 && d_density_neg_hi == 0) {
+        DEBUG_MSG(1.0, "tkde: Exclusion");
+	return false;
+      }
+
+#ifdef CHECK_POS_NEG_BOUNDS
+      if ((r_node.stat().count_pos == 0 ||
+	   r_node.stat().bound_pos.MaxDistanceSq(q_node.bound())
+	   < param.kernel_pos.bandwidth_sq()) &&
+	  (r_node.stat().count_neg == 0 ||
+	   r_node.stat().bound_neg.MaxDistanceSq(q_node.bound())
+	   < param.kernel_neg.bandwidth_sq())) {
+	if (r_node.stat().count_pos > 0) {
+	  q_postponed->moment_info_pos.Add(r_node.stat().moment_info_pos);
+	}
+	if (r_node.stat().count_neg > 0) {
+	  q_postponed->moment_info_neg.Add(r_node.stat().moment_info_neg);
+	}
+        DEBUG_MSG(1.0, "tkde: Inclusion");
+	return false;
+      }
+#else
+      if (r_node.bound().MaxDistanceSq(q_node.bound())
+	  < param.kernel_pos.bandwidth_sq()) {
+	if (r_node.stat().count_pos > 0) {
+	  q_postponed->moment_info_pos.Add(r_node.stat().moment_info_pos);
+	}
+	if (r_node.stat().count_neg > 0) {
+	  q_postponed->moment_info_neg.Add(r_node.stat().moment_info_neg);
+	}
+        DEBUG_MSG(1.0, "tkde: Inclusion");
+	return false;
+      }
+#endif
+
+      delta->d_density_pos.Init(0, r_node.stat().count_pos * d_density_pos_hi);
+      delta->d_density_pos.hi = 
+      delta->d_density_neg.lo = 0;
+      delta->d_density_neg.hi = r_node.stat().count_neg * d_density_neg_hi;
+      
+      return true;
     }
 
     static bool ConsiderPairExtrinsic(
@@ -798,22 +867,34 @@ class Nbc {
         const QSummaryResult& q_summary_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      bool need_expansion = false;
-
-      DEBUG_ASSERT(q_summary_result.density.lo < q_summary_result.density.hi);
+      DEBUG_ASSERT(q_summary_result.density_pos.lo < q_summary_result.density_pos.hi);
+      DEBUG_ASSERT(q_summary_result.density_neg.lo < q_summary_result.density_neg.hi);
 
       if (unlikely(q_summary_result.label != LAB_EITHER)) {
         DEBUG_ASSERT((q_summary_result.label & q_postponed->label) != LAB_NEITHER);
         q_postponed->label = q_summary_result.label;
-      } else if (unlikely(q_summary_result.density.lo > param.thresh.hi)) {
-        q_postponed->label = LAB_HI;
-      } else if (unlikely(q_summary_result.density.hi < param.thresh.lo)) {
-        q_postponed->label = LAB_LO;
-      } else {
-        need_expansion = true;
+	return false;
+      } else if (unlikely(
+	   param.const_pos.lo
+	     * q_summary_result.density_pos.lo
+	     * q_node.stat().pi_pos.lo
+	   > param.const_neg.hi
+	     * q_summary_result.density_neg.hi
+	     * q_node.stat().pi_neg.hi)) {
+        q_postponed->label = LAB_POS;
+	return false;
+      } else if (unlikely(
+	   param.const_neg.lo
+	     * q_summary_result.density_neg.lo
+	     * q_node.stat().pi_neg.lo
+	   > param.const_pos.hi
+	     * q_summary_result.density_pos.hi
+	     * q_node.stat().pi_pos.hi)) {
+        q_postponed->label = LAB_NEG;
+	return false;
       }
 
-      return need_expansion;
+      return true;
     }
 
     /**
@@ -830,16 +911,69 @@ class Nbc {
   };
 };
 
-void TkdeMain(datanode *module) {
-  thor::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
-      module, "tkde");
+void NbcMain(datanode *module) {
+  //thor::MonochromaticDualTreeMain<Tkde, DualTreeDepthFirst<Tkde> >(
+  //    module, "tkde");
+  const char *gnp_name = "tkde";
+  const int DATA_CHANNEL = 110;
+  const int Q_RESULTS_CHANNEL = 120;
+  const int GNP_CHANNEL = 200;
+  double results_megs = fx_param_double(module, "results/megs", 1000);
+  DistributedCache *points_cache;
+  index_t n_points;
+  ThorTree<typename Nbc::Param, typename Nbc::QPoint, typename Nbc::QNode> tree;  DistributedCache q_results;
+  typename Nbc::Param param;
+
+  rpc::Init();
+
+  if (!rpc::is_root()) {
+    fx_silence();
+  }
+
+  fx_submodule(module, NULL, "io"); // influnce output order
+
+  param.Init(fx_submodule(module, gnp_name, gnp_name));
+
+  fx_timer_start(module, "read");
+  points_cache = new DistributedCache();
+  n_points = ReadPoints<typename Nbc::QPoint>(
+      param, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
+      fx_submodule(module, "data", "data"), points_cache);
+  fx_timer_stop(module, "read");
+
+  typename Nbc::QPoint default_point;
+  CacheArray<typename Nbc::QPoint>::GetDefaultElement(
+      points_cache, &default_point);
+  param.SetDimensions(default_point.vec().length(), n_points);
+
+  fx_timer_start(module, "tree");
+  CreateKdTree<typename Nbc::QPoint, typename Nbc::QNode>(
+      param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
+      fx_submodule(module, "tree", "tree"), n_points, points_cache, &tree);
+  fx_timer_stop(module, "tree");
+
+  // This should have been a first-order reduce at the time of read
+  param.ComputeConsts(tree.root().stat().count_pos,
+		      tree.root().stat().count_neg);
+
+  typename Nbc::QResult default_result;
+  default_result.Init(param);
+  tree.CreateResultCache(Q_RESULTS_CHANNEL, default_result,
+        results_megs, &q_results);
+
+  typename Nbc::GlobalResult *global_result;
+  RpcDualTree<Nbc, DualTreeDepthFirst<Nbc> >(
+      fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, param,
+      &tree, &tree, &q_results, &global_result);
+  delete global_result;
+
+  rpc::Done();
 }
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-  TkdeMain(fx_root);
+  NbcMain(fx_root);
   
   fx_done();
 }
-
