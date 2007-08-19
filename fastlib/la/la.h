@@ -24,15 +24,11 @@ namespace la {
    */
   inline double DistanceSqEuclidean(
       index_t length, const double *va, const double *vb) {
-    // TODO: Use blas to do this
     double s = 0;
-    
     do {
-      --length;
       double d = *va++ - *vb++;
       s += d * d;
-    } while (length);
-    
+    } while (--length);
     return s;
   }
   /**

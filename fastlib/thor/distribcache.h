@@ -281,7 +281,7 @@ class DistributedCache : public BlockDevice {
     Slot() { blockid = -1; }
   };
 
- public:
+ private:
   enum {
     /** The entire block is dirty. */
     FULLY_DIRTY = 0,
@@ -429,7 +429,7 @@ class DistributedCache : public BlockDevice {
     DEFINE_ALL_COMPARATORS(Position);
   };
 
- public:
+ private:
   /** A block-to-metadata mapping, keeping track of each block's status. */
   ArrayList<BlockMetadata> blocks_;
   /** A schema that regards how to freeze, thaw, and initialize blocks. */

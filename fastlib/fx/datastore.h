@@ -49,6 +49,8 @@ struct datanode {
   void *val;
   struct datanode *children;
   struct datanode *next;
+  struct datanode *parent;
+  struct datanode *source;
 #ifdef DEBUG
   nodetype_t type;
 #endif
@@ -72,6 +74,11 @@ void datanode_destroy(struct datanode *node);
  * Frees a datanode's val, and children.
  */
 void datanode_clear(struct datanode *node);
+
+/**
+ * Adds a child to a data node.
+ */
+void datanode_add_child(struct datanode *parent, struct datanode *child);
 
 /**
  * Finds and optionally creates a subnode with a given name.
@@ -100,6 +107,7 @@ void datanode_write(struct datanode *node, FILE *f);
  * Populates a datanode from a file.
  */
 void datanode_read(struct datanode *node, nodetype_t type, FILE *stream);
+
 
 EXTERN_C_END
 

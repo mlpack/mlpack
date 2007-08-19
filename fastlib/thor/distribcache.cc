@@ -187,7 +187,7 @@ void DistributedCache::BestEffortWriteback(double portion) {
   mutex_.Lock();
   Slot *slot = slots_.begin();
   index_t i = slots_.size();
-  int start_col = int(nearbyint(ASSOC * portion));
+  int start_col = math::RoundInt(ASSOC * (1 - portion));
   BlockMetadata *blocks = blocks_.begin();
 
   // Might want to software-pipeline this loop, because of the really nasty
@@ -199,7 +199,7 @@ void DistributedCache::BestEffortWriteback(double portion) {
       if (blockid >= 0) {
         BlockMetadata *block = &blocks[blockid];
         DEBUG_ASSERT_MSG(!block->is_busy(), "Why is a busy block in LRU?");
-        if (unlikely(block->is_dirty()) && unlikely(!block->is_owner())) {
+        if (block->is_dirty() && !block->is_owner()) {
           WritebackDirtyRemote_(blockid);
         }
       }
