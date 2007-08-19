@@ -27,6 +27,8 @@ void datanode_init_len(struct datanode *node, const char *key, int len,
   node->val = NULL;
   node->children = NULL;
   node->next = NULL;
+  node->parent = NULL;
+  node->source = NULL;
 
   DEBUG_ONLY(node->type = type);
 }
@@ -34,16 +36,7 @@ void datanode_init_len(struct datanode *node, const char *key, int len,
 void datanode_init(struct datanode *node, const char *key,
 		   nodetype_t type)
 {
-  DEBUG_ERR_MSG_IF(type == NODETYPE_NO_CREATE,
-		   "Datanode created with type NODETYPE_NO_CREATE");
-
-  node->key = strdup(key);
-
-  node->val = NULL;
-  node->children = NULL;
-  node->next = NULL;
-
-  DEBUG_ONLY(node->type = type);
+  datanode_init_len(node, key, strlen(key), type);
 }
 
 void datanode_clear(struct datanode *node)
@@ -97,6 +90,12 @@ static int datanode__valid_path(const char *path)
 }
 #endif
 
+void datanode_add_child(struct datanode *node, struct datanode *child) {
+  child->next = node->children;
+  node->children = child;
+  child->parent = node;
+}
+
 struct datanode *datanode_get_node(struct datanode *node, const char *name,
 				   nodetype_t create)
 {
@@ -117,8 +116,7 @@ struct datanode *datanode_get_node(struct datanode *node, const char *name,
     child = malloc(sizeof(struct datanode));
     datanode_init(child, name, create);
 
-    child->next = node->children;
-    node->children = child;
+    datanode_add_child(node, child);
   }
 
   return child;
@@ -166,8 +164,7 @@ struct datanode *datanode_get_path(struct datanode *node, const char *path,
       child = malloc(sizeof(struct datanode));
       datanode_init_len(child, path, len, create);
 
-      child->next = node->children;
-      node->children = child;
+      datanode_add_child(node, child);
     }
 
     node = child;

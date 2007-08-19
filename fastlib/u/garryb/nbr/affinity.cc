@@ -41,11 +41,14 @@ struct AffinityCommon {
     double lambda;
     /** The proportion of points to prime as exemplars. */
     double prime;
+    /** The dimensionality. */
+    index_t dim;
 
     OT_DEF(Param) {
       OT_MY_OBJECT(pref);
       OT_MY_OBJECT(lambda);
       OT_MY_OBJECT(prime);
+      OT_MY_OBJECT(dim);
     }
 
    public:
@@ -58,6 +61,92 @@ struct AffinityCommon {
 
   /** The bounding type. Required by THOR. */
   typedef DHrectBound<2> Bound;
+
+//  struct MomentInfo {
+//   public:
+//    Vector mass;
+//    double sumsq;
+//    index_t count;
+//
+//    OT_DEF_BASIC(MomentInfo) {
+//      OT_MY_OBJECT(mass);
+//      OT_MY_OBJECT(sumsq);
+//      OT_MY_OBJECT(count);
+//    }
+//
+//   public:
+//    void Init(int dim) {
+//      mass.Init(dim);
+//      Reset();
+//    }
+//
+//    void Reset() {
+//      mass.SetZero();
+//      sumsq = 0;
+//      count = 0;
+//    }
+//
+//    void Add(index_t count_in, const Vector& mass_in, double sumsq_in) {
+//      if (unlikely(count_in != 0)) {
+//        la::AddTo(mass_in, &mass);
+//        sumsq += sumsq_in;
+//        count += count_in;
+//      }
+//    }
+//
+//    void Add(const MomentInfo& other) {
+//      Add(other.count, other.mass, other.sumsq);
+//    }
+//
+//    void Add(const Vector& v) {
+//      Add(1, v, la::Dot(v, v));
+//    }
+//
+//    double ComputeDistanceSqSum(const Vector& q) const {
+//      double quadratic_term =
+//          + count * la::Dot(q, q)
+//          - 2.0 * la::Dot(q, mass)
+//          + sumsq;
+//      return quadratic_term;
+//    }
+//
+//    double ComputeDistanceSqSum(double distance_squared,
+//        double center_dot_center) const {
+//      //q*q - 2qr + rsumsq
+//      //q*q - 2qr + r*r - r*r
+//      double quadratic_term =
+//          (distance_squared - center_dot_center) * count
+//          + sumsq;
+//
+//      return quadratic_term;
+//    }
+//
+//    DRange ComputeDistanceSqSumRange(
+//        const Bound& query_bound) const {
+//      DRange distsq_sum_bound;
+//      Vector center;
+//      double inv_count = 1.0 / count;
+//      double center_dot_center = la::Dot(mass, mass) * inv_count * inv_count;
+//
+//      DEBUG_ASSERT(count != 0);
+//
+//      center.Copy(mass);
+//      for (index_t i = center.length(); i--;) {
+//        center[i] *= inv_count;
+//      }
+//
+//      distsq_sum_bound.lo = ComputeDistanceSqSum(
+//          query_bound.MaxDistanceSq(center), center_dot_center);
+//      distsq_sum_bound.hi = ComputeDistanceSqSum(
+//          query_bound.MinDistanceSq(center), center_dot_center);
+//
+//      return distsq_sum_bound;
+//    }
+//
+//    bool is_empty() const {
+//      return likely(count == 0);
+//    }
+//  };
 
   /**
    * Alpha corresponds to "maximum availability" with the != k condition.
@@ -218,6 +307,17 @@ struct AffinityCommon {
         hi = param.pref;
       }
       return hi;
+    }
+    static double SimilarityLo(
+        const Param& param,
+        const Vector& a, index_t a_index, const Node& b) {
+      double distsq = b.bound().MaxDistanceSq(a);
+      double lo = Similarity(distsq);
+      if (a_index < b.end() && a_index >= b.begin()
+          && param.pref < lo) {
+        lo = param.pref;
+      }
+      return lo;
     }
   };
 };
@@ -489,7 +589,7 @@ class AffinityRho {
       double sim_hi = AffinityCommon::Helpers::SimilarityHi(
           param, q.vec(), q_index, r_node);
       if (sim_hi < r_node.stat().alpha.lo) {
-        return false;
+         return false;
       } else {
         prho = arho = 0;
         return true;
@@ -508,7 +608,8 @@ class AffinityRho {
         const QPoint& q, index_t q_index,
         const RNode& r_node, const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
-      q_result->rho += (prho + arho) / 2;
+      prho = (prho + arho) / 2;
+      q_result->rho += prho;
     }
   };
 
@@ -804,6 +905,11 @@ void AffinityMain(datanode *module, const char *gnp_name) {
       *param, TREE_CHANNEL + 0, TREE_CHANNEL + 1,
       fx_submodule(module, "data", "data"), points_cache);
   fx_timer_stop(module, "read");
+
+  AffinityCommon::Point example_point;
+  CacheArray<AffinityCommon::Point>::GetDefaultElement(points_cache,
+      &example_point);
+  param->dim = example_point.vec().length();
 
   fx_timer_start(module, "tree");
   thor::CreateKdTree<AffinityCommon::Point, AffinityCommon::Node>(

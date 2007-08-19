@@ -275,6 +275,35 @@ static struct datanode *fx__param(struct datanode *module, const char *name,
   return node;
 }
 
+static void fx__show_param(struct datanode *node) {
+/*
+  Consider doing something with this code
+
+  const char *value = node->val;
+  char buffer[1024];
+  struct datanode *cur = node;
+  char *pos = buffer + sizeof(buffer);
+
+  while (cur != NULL && cur->parent != fx_root) {
+    int len;
+
+    if (cur->source) {
+      cur = cur->source;
+    }
+
+    len = strlen(cur->key);
+    pos -= len + 1;
+    strcpy(pos, cur->key);
+    pos[len] = '/';
+    cur = cur->parent;
+  }
+
+  buffer[sizeof(buffer) - 1] = '\0';
+
+  fprintf(stderr, "%s %s\n", pos, value);
+*/
+}
+
 int fx_param_exists(struct datanode *module, const char *name)
 {
   struct datanode *node;
@@ -300,6 +329,8 @@ const char *fx_param_str(struct datanode *module, const char *name,
     }
   }
 
+  fx__show_param(node);
+
   return node->val;
 }
 
@@ -324,6 +355,8 @@ double fx_param_double(struct datanode *module, const char *name, double def)
 	    name, fx__module_name(module), (char*)node->val);
     }
   }
+
+  fx__show_param(node);
 
   return def;
 }
@@ -355,6 +388,9 @@ long long int fx_param_int(struct datanode *module, const char *name, long long 
 	    name, fx__module_name(module), (char*)node->val);
     }
   }
+
+  fx__show_param(node);
+
   return def;
 }
 
@@ -388,6 +424,9 @@ int fx_param_bool(struct datanode *module, const char *name, int def)
 	    name, fx__module_name(module), (char *)node->val);
     }
   }
+
+  fx__show_param(node);
+
   return -1;
 }
 
@@ -485,6 +524,7 @@ void fx_default_param_node(struct datanode *dest_module, const char *destname,
   struct datanode *source_node = fx__param(src_module, srcname, 0);
 
   if (source_node) {
+    dest_module->source = source_node;
     fx__copy_params(fx__param(dest_module, destname, 1), source_node, 0);
   }
 }
@@ -495,6 +535,7 @@ void fx_set_param_node(struct datanode *dest_module, const char *destname,
   struct datanode *source_node = fx__param(src_module, srcname, 0);
 
   if (source_node) {
+    dest_module->source = source_node;
     fx__copy_params(fx__param(dest_module, destname, 1), source_node, 1);
   }
 }
@@ -674,8 +715,11 @@ struct datanode *fx_submodule(struct datanode *module, const char *params,
 		    "Datastore entry \"%s\" is not a module.", buf);
 
   if (params) {
-    fx__copy_params(datanode_get_node(node, "params", NODETYPE_PARAM), 
-		    fx_param_node(module, params), 1);
+    struct datanode *param_node =
+        datanode_get_node(node, "params", NODETYPE_PARAM);
+
+    param_node->source = fx_param_node(module, params);
+    fx__copy_params(param_node, param_node->source, 1);
   }
 
   return node;
@@ -689,7 +733,7 @@ void fx_scope(const char *scope_name) {
 
   fx__real_root = malloc(sizeof(struct datanode));
   datanode_init(fx__real_root, "FX_ROOT", NODETYPE_MODULE);
-  fx__real_root->children = old_root;
+  datanode_add_child(fx__real_root, old_root);
 }
 
 void fx_silence() {

@@ -153,7 +153,7 @@ class Allnn {
       double trial_distance_sq = la::DistanceSqEuclidean(
           q_point.vec(), r_point.vec());
       if (unlikely(trial_distance_sq <= distance_sq)) {
-        // TODO: Is this a hack?
+        // TODO: Is this really indicative of q != r?
         if (likely(trial_distance_sq != 0)) {
           neighbor_i = r_index;
           distance_sq = trial_distance_sq;
@@ -162,12 +162,9 @@ class Allnn {
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q_point,
-        index_t q_index,
-        const RNode& r_node,
-        const QSummaryResult& unapplied_summary_results,
-        QResult* q_result,
-        GlobalResult* global_result) {
+        const QPoint& q_point, index_t q_index,
+        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
+        QResult* q_result, GlobalResult* global_result) {
       q_result->distance_sq = distance_sq;
       q_result->neighbor_i = neighbor_i;
     }
@@ -192,8 +189,7 @@ class Allnn {
         const QNode& q_node, const RNode& r_node, const Delta& delta,
         const QSummaryResult& q_summary_result, const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      double distance_sq_lo =
-          q_node.bound().MinDistanceSq(r_node.bound());
+      double distance_sq_lo = q_node.bound().MinDistanceSq(r_node.bound());
       return distance_sq_lo <= q_summary_result.distance_sq_hi;
     }
 

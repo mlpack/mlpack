@@ -31,8 +31,8 @@ namespace ot__private {
   OTPRINTER__SPECIAL(unsigned short, "short = %u");
   OTPRINTER__SPECIAL(unsigned int, "int = %u");
   OTPRINTER__SPECIAL(unsigned long, "long = %lu");
-  OTPRINTER__SPECIAL(float, "float = %f");
-  OTPRINTER__SPECIAL(double, "double = %f");
+  OTPRINTER__SPECIAL(float, "float = %g");
+  OTPRINTER__SPECIAL(double, "double = %g");
 
   /* Utility class to take an OT-compatible object and prints it to screen. */
   class ZOTPrinter {

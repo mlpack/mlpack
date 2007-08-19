@@ -143,12 +143,15 @@ class Tkde {
         const Bound& query_bound) const {
       DRange density_bound;
       Vector center;
-      double center_dot_center = la::Dot(mass, mass) / count / count;
+      double inv_count = 1.0 / count;
+      double center_dot_center = la::Dot(mass, mass) * inv_count * inv_count;
       
       DEBUG_ASSERT(count != 0);
 
       center.Copy(mass);
-      la::Scale(1.0 / count, &center);
+      for (index_t i = center.length(); i--;) {
+        center[i] *= inv_count;
+      }
 
       density_bound.lo = ComputeKernelSum(param,
           query_bound.MaxDistanceSq(center), center_dot_center);
@@ -436,14 +439,16 @@ class Tkde {
     void UndoDelta(const Param& param, const Delta& delta) {}
     void Postprocess(const Param& param) {}
     void Report(const Param& param, datanode *datanode) {
-      fx_format_result(datanode, "n_under_threshold", "%"LI"d",
-          n_under_threshold);
-      fx_format_result(datanode, "p_under_threshold", "%.05f",
-          double(n_under_threshold) / param.count);
       fx_format_result(datanode, "n_unknown", "%"LI"d",
           n_unknown);
       fx_format_result(datanode, "p_unknown", "%.05f",
           double(n_unknown) / param.count);
+      fx_format_result(datanode, "n_under_threshold", "%"LI"d",
+          n_under_threshold);
+      fx_format_result(datanode, "p_under_threshold", "%.05f",
+          double(n_under_threshold) / param.count);
+      fx_format_result(datanode, "p_over_threshold", "%.05f",
+          double(param.count - n_unknown - n_under_threshold) / param.count);
     }
     void ApplyResult(const Param& param,
         const QPoint& q_point, index_t q_i,

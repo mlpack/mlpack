@@ -1,4 +1,4 @@
-%
+  %
 %  $Description: Author guidelines and sample document in LaTeX 2.09$ 
 %
 %  $Author: ienne $
@@ -199,27 +199,22 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-The multi-tree approach for accelerating data mining methods has resulted some of the fastest known solutions for a large class of fundamental methods previously considered intractable for massive datasets, including kernel density estimation, all-nearest-neighbor search, spatial statistics, and many others.
-In this paper further scale these efficient serial algorithms via parallelization by first generalizing these to a standard framework.
+The multi-tree approach for accelerating data mining methods has resulted some of the fastest known solutions for a large class of fundamental methods previously considered infeasible for massive datasets, including kernel density estimation, all-nearest-neighbor search, spatial statistics, and many others.
+Representing these problems in a standard mathematical model allows these problems to be scaled further via parallelization, without significant extra programmer effort.
 With the framework, we derive a strategy for parallelization and demonstrate the added efficiency on massive synthetic and real datasets for both shared-memory and cluster implementations.
 \end{abstract}
 
 \section{Introduction}
 
-Many problems in spatial statistics and data mining, especially nonparametric methods, nominally require an all-$n$-tuples analysis of data points that lie in a metric space.
-Recent work\authorsnote{not yet officially published}\cite{ryan_nips} has characterized these {\it generalized $N$-body problems} and shown how a multi-tree algorithmic approach directly follows, leading quite often to asymptotically faster algorithms approaching empirical linear-time performance.
-The multi-tree approach treats these problems by recursively dividing the problem over the Cartesian product of points, resulting in the fastest practical serial algorithms for many statistical and physical problems, such as kernel density estimation, $n$-point correlation, nearest neighbors, Gaussian process regression, and more.
+Many problems in spatial statistics and data mining, especially nonparametric methods, nominally require an all-pairs analysis of data points that lie in a metric space.
+Recent work\authorsnote{not yet officially published}\cite{ryan_nips} has characterized these {\it generalized $N$-body problems} and shown how a multi-tree algorithmic approach directly follows, leading quite often to asymptotically faster algorithms, sometimes nearly linear.
+The multi-tree approach treats these problems by recursively dividing the problem over the Cartesian product of points along the axes of a space partitioning tree such as $kd$-tree, resulting in the fastest practical serial algorithms for many statistical and physical problems, such as kernel density estimation, $n$-point correlation, nearest neighbor finding, Gaussian process regression, and more.
 
 Nonetheless, as multi-core processors begin to dominate even commodity markets, even the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
-Additionally, multi-tree algorithms excel in fields of nonparametric learning, and since nonparametric learning often performs exceptionally well with massive data, it is only natural to conceive of data mining the {\it entire Web} with efficient dual-tree algorithms.
+Multi-tree algorithms traditionally excel in nonparametric learning, and since nonparametric perform exceptionally well with massive data, it is only natural to conceive of data mining the {\it entire Web} with efficient dual-tree algorithms.
 Fortunately, multi-tree algorithms are in fact quite parallel, and we show how the techniques that have long been used to parallelize the physical $N$-body force calculation problems can be extended to encompass this broader class of problems.
 
-NOTE TO SELF:
-things to talk about
-- load balancing the work
-- load balancing DATA TRANSFER
-
-\section{Fast Multi-Tree Algorithms}
+\section{Fast Dual-Tree Algorithms}
 
 \begin{figure*}
   \begin{minipage}{6in}
@@ -259,44 +254,58 @@ things to talk about
 \end{figure*}
 
 \authornote{KD-tree figure goes here}
-Core to dual-tree algorithms is the concepts of trees and bounds.
-Every node $X$ in a spatial tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \union \kdright{X} = X$ with parent $\kdparent{X}$, with each leaf a single point $\{x\}$\footnote{In practice, leaves contain multiple points to avoid recursive overhead.}.
+Spatial trees and bounds form the core of tree algorithms.
+Every node $X$ in a spatial tree $\kdroot{X}$ is a set of points; every internal node is partitioned $\kdleft{X} \union \kdright{X} = X$ with parent $\kdparent{X}$, with each leaf a single point $\{x\}$\footnote{In practice, leaves contain multiple points to amortize recursion overhead.}.
 For example, a $kd$-tree\cite{preparata_kdtrees}, as in \fig{kdtree}, recursively partitions the data along coordinate dimensions.
 Each node has a bounding box and can also store summary statistics such as means and other moments.
-Notationally, we denote $\dist{\cdot}{\cdot}$ to be a distance metric; superscripts $l$ and $u$ refer respectively to lower and upper bounds, which are often, as in the case of distance, obtained from bounding boxes of points.
+Notationally, we denote $\dist{x}{y}$ to be a distance metric such as Euclidean $||x-y||$.
+Superscripts $l$ and $u$ refer respectively to lower and upper bounds, which are often, as in the case of distance, obtained from the node's bounding box.
 
-\authornote{This paragraph needs some work.}A single-tree algorithm accelerates computation by partitioning the data in half along the tree branches.
-Some parts of the tree need no further exploration, and the subcomputation is pruned.
-Often, this traversal is repeated for many query points.
-A dual-tree algorithm extends this concept by looking at {\it pairs} of nodes, each time partitioning the Cartesian product of data in half.
+\authornote{This paragraph needs some work.}A single-tree algorithm accelerates computation by partitioning reference data, such as training data, in half along the tree branches.
+When considering a query point, such as a test datum, some parts of the tree bear no computational relevance or can be summarized at a coarse level, and the subcomputation is pruned.
+Since this traversal is frequently repeated for many query points, a dual-tree algorithm further accelerates by building a tree over queries.
+It is then possible to look at {\it pairs} of nodes, each time partitioning the Cartesian product of queries and references in half.
 Whereas a single-tree algorithm must consider every level of the tree for each query point and is at best $O(N \log N)$, a dual-tree algorithm considers the upper-level nodes of the tree only with other upper-level nodes, leading at times to linear performance.
+The dual-tree approach, despite its simplicity, leads to a multitude of asmyptotically fast algorithms.
 
-{\bf The Two-point Correlation.} A member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation of data set $X$ for radius $h$ is
-$\sum_{y \in X} \sum_{x \in X} I(d(y, x) \leq h)$ for the indicator function $I$.
+{\bf The Two-point Correlation.}
+A member of the family of $n$-point correlation functions, collectively the foundation for all spatial statistics, the two-point correlation of a data set is the number of pairs of points within a specified radius.
+For data set $X$, radius $h$, and indicator function $I$, it can be expressed
+$\sum_{x \in X} \sum_{y \in X} I(d(x, y) \leq h)$.
 Figure~\ref{fig:allnntpc} shows a formulation that recursively considers a subset pair $Y$ and $X$, returning immediately if all points in $Y$ and $X$ are completely inside or outside the radius.
+The asmyptotic speedul of this dual-tree algorithm was shown in \cite{gray_nips}.
 
-{\bf All-nearest-neighbors.} In applications from manifold learning to classification, it is often desirable to find for a batch of queries $Q$ the nearest neighbors from reference set $R$, as $\map_{q \in Q} \argmin_{r \in R} d(q,r)$, with the exception $d(q,q) = \infty$.
+{\bf All-nearest-neighbors.}
+In applications from manifold learning to classification, one computes the nearest neighbors from reference set $R$ for a batch of queries $Q$.
+We express this computation $\map_{q \in Q} \argmin_{r \in R} d(q,r)$.
 To achieve speedup, one maintains for each tree node $Q$ of queries the furthest candidate neighbor distance, $a(Q)$.
-If a set of references is farther away than this distance, no further exploration is required.
+If a set of references is farther away than this distance, no further exploration is required.\authorsnote{Publish this algorithm}
+
+{\bf Kernel density estimation.}
+Insert spiel here.
 
 {\bf Affinity propagation.}
 Affinity propagation is a recent clustering technique that identifies exemplars in a data set, taking into account all point-to-point similarities\cite{affinity}\authorsnote{I might not actually implement this in parallel}.
 The similaritiy $\simil{i}{j}$ between points $x_i$ and $x_j$ is the negative squared distance or some other quantity to be maximized, with diagonals $\simil{i}{i}$ set to a parameter that controls the number of clusters.
 The algorithm maximizes the sum of similarities between each point and its chosen exemplar.
-If a metric space is defined over the points, one may use the dual-tree algorithm in \cite{ryan_nips} to solve the modified problems,
+If a metric space is defined over the points, one use the dual-tree algorithm in \cite{ryan_nips} to solve a modified version of the affinity propagation update steps,
 \[ \begin{array}{l}
   \vecalpha \gets \map_{i} \argmin^2_{j} \!\left( \cpos{i}{j}(\cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) - \frho{j}) - \simil{i}{j} \right)\! ,
   \\
   \vecrho \gets \map_{j} \sum_{i} \!\left( \cpos{i}{j}(\simil{i}{j} + \falphaj{i}{j}) \right)\!,
 \end{array} \]
 \noindent with $\ocpos{v}(x)$ being $\min(x, 0)$ for $v$ true and $x$ otherwise, and $\falphaj{i}{j}$ being the first minimum of $\falpha{i}$ when $i \neq j$ and the second otherwise.
-These vectors are computed iteratively until convergence.
-Exemplars are those points $j$ with $\frho{j}$ positive and each point belongs to the cluster defined by the exemplar closest to it.
-Empirical $O(N^{1.3})$ scaling was achieved on three-dimensional points from a gravitational $N$-body particle simulation, compared to the existing $O(N^2)$ time and space method.
+%These vectors are computed iteratively until convergence.
+%Exemplars are those points $j$ with $\frho{j}$ positive and each point belongs to the cluster defined by the exemplar closest to it.
+The algorithm uses $O(N)$ space and empirically took $O(N^{1.3})$ on three-dimensional points from a gravitational $N$-body particle simulation, compared to the existing $O(N^2)$ time and space method.
+
+{\bf Generalization.}
+All of these problems have a characteristic of nested commutative, associative operators over an inner computation.
+Indeed, we later show this property is essential to both dual-tree algorithms and their parallelization.
 
 \section{Parallel $N$-Body Simulations}
 
-Some of the largest parallel computing efforts in history are $N$-body particle simulations.
+Some of the best-studied parallel computing efforts are $N$-body particle simulations.
 Algorithms for efficient simulation almost universally use trees, and parallelization of these tree codes offers indispensible insight into that of generalized $N$-body problems.
 The physical $N$-body problem models $N$ particles in an evolving system where each particle exerts force on all other particles.
 Computational solutions break the simulation into discrete time steps, during which force is calculated,
@@ -326,7 +335,7 @@ The cost of the dry run is amortized, since the simulation changes slowly and th
 
 The estimated runtime is then used for the domain decomposition.
 Orthogonal recursive bisection (ORB) decomposition hierarchically bisects the data along a plane, somewhat like a $kd$-tree, but such that each side has an equal total computational cost \cite{singh95load, liu94experiences, warren93parallel}.
-The cost-zones technique alternatively uses the existing oct-tree used by the simulation and sequentially orders all points following a Morton or Hilber-Peano pattern.
+The cost-zones technique alternatively uses the existing oct-tree used by the simulation and sequentially orders all points following a Morton or Peano-Hilbert pattern.
 The data are then cut into sequential chunks of roughly equal size.
 
 Both techniques attempt to solve the problems for larger scale parallelization -- communication cost.
@@ -357,18 +366,34 @@ This paper focuses on techniques that apply universally to {\it all} dual-tree a
 \section{Parallel Programming via Models}
 
 Making parallelization accessible to programmers without parallelization expertise has been a common goal in parallelization communities.
-One technique offered by the programming languages community is the parallelization inherent in functional languages -- in fact, numerous papers have parallelized Barnes-Hut and the Fast Multipole Method algorithms this way \cite{hu-implementing, more}.
-Using such a language, however, can sometimes put unintended constraints on development, especially since compiler technologies cannot automatically derive the wealth of parallelization techniques that have been used in past state-of-the-art parallel $N$-body simulations.
+Approaches are very diverse, and vary in two dimensions.
+If one views the "stack" of programming from the syntactical code level to the machine level, these approaches vary by which "layer" is chosen to be abstracted.
+The next dimension is how general-purpose or specialized the abstraction is.
 
-The development of specialized programming model form another aspect.
-Great care is taken to ensure that all programs in this model can be executed efficiently in parallel, so that a developer with little parallelization knowledge can write a parallel program.
-The Map-Reduce framework introduced by Google in \cite{mapreduce} combines research in all fronts of high-performance computing to efficiently solve a wide variety of problems.
-We later show that $N$-body problems are largely incompatible with Map-Reduce and propose a similar framework for dual-tree algorithms.
+At the highest level, the programming languages community attempts to create languages that are either functional and inherently parallel or parallel extensions to existing programming languages.
+For instance, the Barnes-Hut and the Fast Multipole Method have both been parallelized with the NESL parallel programming language, and \cite{hu-implementing, more}\authorsnote{I need to read their papers}.
+Languages like UPC attempt to make parallelizable C code, but only for algorithms with stereotypically "linear" access patterns or data decompositions.
+These abstract parallelism at the programming language level and automatically create parallel code, and typically each excels in their own target area.
+Unfortunately, it is often not possible to control what underlying data structures or work decompositions are used.
+Although not completely unpredictable, the access pattern of an $N$-body problem is far from static, and trivial work decompositions are not always applicable.
+
+Alternately, at the lowest level, projects like SAM\cite{sam} provide a distributed memory layer that abstracts physically distributed memory as one logical address space, except that it provides versioned values or accumulators instead of implementing a coherency model.
+The authors of SAM achieved over 50\% speedup for about 64 processors for the Barnes-Hut algorithm on various parallel computers.
+Another low-level abstraction simply simulates a coherency protocol as part of the memory hierarchy by listening for segmentation faults, but uses a relaxed consistency model to reduce traffic on bandwidth-limited ethernet settings.
+They also implemented, as an example, a version of Barnes-Hut that scaled to about 8 processors\cite{relaxed}.
+
+Considering the second dimension, it is often possible to create an implementation that provides an abstraction specific to a problem class and provides a finely tuned implementation for that problem class.
+One popular example is Map-Reduce, a framework to solve problems that process massive data sets through the three-step process of preprocessing, sorting, and reduction.
+By targetting this class of problems, Map-Reduce can use optimally efficient data decomposition methods, out-of-core sorting algorithms, and mechanisms for fault-tolerance.
+Additionally, very little work on the part of the programmer is needed, so that sometimes writing the parallel algorithm can be simpler than writing the serial algorithm.
+
+We take the same approach as Map-Reduce, but for problems solvable by dual-tree algorithms.
+Rather than focusing on the processes in a dual-tree algorithm, our framework focuses only on the data interactions that take place between points and nodes.
 
 \section{Dual-Tree Algorithm Framework}
 
 \cite{ryan_nips} formalizes the class of generalized $N$-body problems and shows how they lead naturally to dual-tree algorithms.
-We summarize key points in order to motivate a unified computational model for generalized $N$-body problems.
+We mention key points in order to motivate a unified computational model for generalized $N$-body problems.
 
 A \defterm{second-order reduce problem} is a tuple $\Theta = (\mathcal{X}, \mathcal{Y}, \bigotimes, \bigodot, f, g, h)$ with $\bigotimes$ and $\bigodot$ both commutative and associative, such that for problem instance $X \subset {\mathcal{X}}, Y \subset {\mathcal{Y}}$, one computes
 \[\begin{array}{l}
@@ -376,25 +401,31 @@ A \defterm{second-order reduce problem} is a tuple $\Theta = (\mathcal{X}, \math
   \\
   \displaystyle \gnp(X, Y) = \bigodot_{x \in X} g\!\left(x, \bigotimes_{y \in Y} f(x, y) \right).
 \end{array}\]
-\noindent For example, three-dimensional two-point correlation with radius $h$ is the tuple $(\mathcal{R}^3, \mathcal{R}^3, +, +, \lambda x,y ~ I(\dist{x}{y} < h), \lambda x,a ~ a, \lambda b ~ b)$.
-A second-order reduce problem is \defterm{regular} if $g(x, a) = a$.
-It is also \defterm{block decomposable} if for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$, $\gnp(X,Y) = \gnp(X,\kdleft{Y}) \otimes \gnp(X,\kdright{Y})$.
-Note the equivalent statement for partitioning $X$ is trivial from commutativity and associativity of $\bigodot$ alone.
-A second-order reduce problem with both qualities is a second-order \defterm{generalized $N$-body problem}\authorsnote{Later, I require abelian monoid}\authorsnote{Fix X, Y ordering.}.
+\noindent For example, three-dimensional two-point correlation with radius $h$ is has,
+
+\[\begin{array}{rcl}
+  \mathcal{X} \equiv \mathcal{Y} &\equiv& \mathcal{R}^3
+  \\
+  \bigodot \equiv \bigotimes &\equiv& \sum
+  \\
+  f(x,y) &\equiv& I(d(x,y) < h)
+  \\
+  g(x, a) &\equiv& a
+  \\
+  h(b) &\equiv& b
+\end{array}{c}\]
+\noindent \authorsnote{use mathbb for reals}
+A second-order reduce problem is \defterm{block decomposable} if for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$, $\gnp(X,Y) = \gnp(X,\kdleft{Y}) \otimes \gnp(X,\kdright{Y})$.
+We define a \defterm{generalized $N$-body problem} to be any block decomposable second-order reduce problem.
 
 Two major types of regular reduce problems are block decomposable.
 If $\bigodot = \bigotimes$ then associativity trivially leads to block decomposability; we call this a \defterm{single-operator second-order reduce problem}.
-If $\bigodot$ is the special higher-order operator $\map$, then we modify the problem to a key value pair problem such that
-\[\begin{array}{c}
-  \displaystyle \map_{y \in Y} \bigotimes_{x \in X} f(x, y) = \Union_{y \in Y} \bigvec{\bigotimes}_{x \in X} \{(y, f(x, y))\},
-  \\
-  A \bigvec{\otimes} B = \{(y, u \otimes v) | (y,u) \in A, (y,v) \in B\},
-\end{array}\]
-\noindent which is block-decomposable.
-A problem for which $\bigodot$ is $\map$ is a \defterm{query-reference problem}.
+If $\bigodot$ is the special higher-order operator $\map$, then the problem can be formally expressed as block-decomposable by viewing it as a key-value pair problem, although such formality is not necessary in our discussions.
+We term a $\map$ problem as \defterm{query-reference problem} since each result is specific to a particular query.
 
-Note that {\it any} second-order reduce problem can be transformed into a query-reference GNP by replacing the outer operator with $\map$, treating both $g$ and $\odot$ as a postprocessing step.
-Therefore, any parallelization framework that solves query-reference problems can solve any second-order reduce problem.
+We finally note that {\it any} second-order reduce problem can be transformed into a query-reference GNP by replacing the outer operator with $\map$, treating both $g$ and $\odot$ as a postprocessing step.
+Therefore, any parallelization framework that solves query-reference problems necessarily solves any second-order reduce problem.
+Thus, we focus primarily on the query-reference problem type in our framework.
 
 {\bf The Generalized $N$-Body Algorithm.}
 Block decomposition implies a hierarchical computation,
@@ -410,8 +441,8 @@ Block decomposition implies a hierarchical computation,
 \]
 \noindent where $\prefsplit{X}{Y}$ specifies a recursion preference.
 This hierarchical computation motivates the popular use of trees in generalized $N$-body problems.
-A single-tree execution has $\prefsplit{X}{Y} = |X| > 1$, that is, $X$ is split until individual points in $X$ are considered.
-A dual-tree execution may use a heuristic such as $|X| \geq |Y|$.
+A single-tree execution has $\prefsplit{X}{Y} = |X| > 1$, that is, $X$ is split until individual points are considered, after which $Y$ is recursed.
+A dual-tree execution may use a heuristic such as $|X| \geq |Y|$ to prefer working on node pairs with approximately equal cardinality.
 The \defterm{generalized $N$-body algorithm} initially considers the expression $\gnp(\kdroot{X}, \kdroot{Y})$, continually replacing any subexpression $\gnp(X, Y)$ with its expansion as mentioned above.
 The final expression forms an \defterm{expression tree} where leaves are of the form $f(x,y)$ and internal nodes are either $\odot$ or $\otimes$.
 
@@ -420,18 +451,20 @@ Using these statistics, GNP's often can efficiently bound the results for $\gnp(
 If this set is singleton, only one result is possible, and an \defterm{intrinsic prune} may be performed; this result becomes a leaf in the expression tree.
 
 Sometimes the summary results of the entire problem imply that a subproblem needs no further consideration.
-%In nearest neighbors, $\infty$\authorsnote{Actually, a vectorized infinity.} may be returned if the bounding boxes are farther away than the worst candidate neighbor found.
 Summary results can be aggregated bottom-up in the same manner the problem has been decomposed using some summary composition operator $A \otimeshat B \supseteq \{a \otimes b | a \in A, b \in B\}$ and likewise for $\odothat$.
-For all-nearest-neighbors, this set is the set of all sets of possible key-value pairs representing query points and the corresponding possible nearest neighbor distances, each of which ranges continuously from 0 (the best distance possible) to the best candidate nearest neighbor distance.
-A prune is made by intersecting this with the similar set returned by $\summary(\outstat(X),\outstat(Y))$, and if the summary result set is unaffected, $(X,Y)$ may be skipped entirely.
-Unfortunately, it is infeasible to represent this construct directly in practice, so typically a single upper and/or lower bound is stored to summarize worst-case bounds.
+Unfortunately, these formal sets are infeasible to construct in practice, but can be bounded by considering single values that a represent a bound for a relevant part of the computation.
+An example is the upper bound nearest neighbor distance kept by nearest neighbors for each query node.
+%For all-nearest-neighbors, this set is the set of all sets of possible key-value pairs representing query points and the corresponding possible nearest neighbor distances, each of which ranges continuously from 0 (the best distance possible) to the best candidate nearest neighbor distance.
+%A prune is made by intersecting this with the similar set returned by $\summary(\outstat(X),\outstat(Y))$, and if the summary result set is unaffected, $(X,Y)$ may be skipped entirely.
+%Unfortunately, it is infeasible to represent this construct directly in practice, so typically a single upper and/or lower bound is stored to summarize worst-case bounds.
 
 %The generalized $N$-body algorithm begins with $\gnp(\kdroot{X},\kdroot{Y})$, and repeatedly replacing some $\gnp(X,Y)$ with one of its expansions.
 %There is no one required exploration pattern.
-It is worth noting that if there is no extrinsic pruning rule, then $\prefsplit{X}{Y}$ solely determines the pruning behavior, with any expansion pattern behaving similarly.
-Some problems that use extrinsic pruning may prefer a depth-first expansion with a heuristic on whether to expand left or right first, whereas some others work best by continually refining the "frontier" of the problem in a breadth-first manner.
-The choice of expansion pattern is solely to aid the ability of the algorithm to prune as much computation as possible.
-We shall later\authorsnote{Empirically or theoretically?} show how to expand the expression in parallel.
+It is worth noting that the generalized algorithm is agnostic to expansion pattern, but individual algorithms may exhibit differing runtime performances.
+If there is no extrinsic pruning rule, then $\prefsplit{X}{Y}$ solely determines the pruning behavior, with any expansion pattern behaving similarly.
+Some problems that use extrinsic pruning may prefer a depth-first expansion if relevant data are almost always local, providing only a heuristic on which node pairs to expand first.
+Others achieve good performance by a breadth-first expansion, that is similar to an "iterative refinement" of the computation.
+Further expansion patterns may involve parallelism, by noting that, with a few performance implications, each subproblem can be considered independent.
 
 %Ongoing research attempts to characterize all generalized N-body problems with rigorous mathematical formality; however, such rigorous formalization is outside the scope of this paper.
 %Here, we postulate that all dual-tree algorithms fall into one or both of two categories: a single scalar or vector result summarizing all pairs of inputs, or an independent result for each query point computed against the entire reference set.
@@ -444,7 +477,7 @@ We shall later\authorsnote{Empirically or theoretically?} show how to expand the
 %For each point in the query set, execute a commutative, associative operator over every element in a reference set.
 %These problems include such fundamental problems as all-nearest-neighbors, kernel density estimation, the testing phase of most nonparametric classification methods, matrix-vector multiplication, and many more.
 
-\subsection{Singular Reduce Problems}
+\subsection{Single-Operator Reduce Problems}
 
 A \defterm{single-operator reduce problem} computes a single scalar or relatively small vector of results, taking as input two data sets and applying an aggregate commutative and associative operator to all pairs,
 \begin{eqnarray*}
@@ -577,7 +610,7 @@ Both algorithms, though, compute values by dividing along the reference tree,
 
 \subsection{Query-Reference Extrinsic Prunes}
 
-Extrinsic pruning in a query-reference problems is a more complex process but still leads to an overarching model\footnote{Singular reduce problems have this kind of prune too, but since it is less common, we have omitted it for brevity.}.
+Extrinsic pruning in a query-reference problems is a more complex process but still leads to an overarching model\footnote{Single-operator reduce problems have this kind of prune too, but since it is less common, we have omitted it for brevity.}.
 We define the abstract $\inmu(Q, R)$ as a compact representation of the summary results for the computation $(Q,R)$.
 At completion, we desire the ideal value $\inmu(Q, \kdroot{R})$ for each query node with
 \begin{equation*}
@@ -657,8 +690,6 @@ Finding all nearest neighbor distances then becomes,
 \noindent One small note is that in depth-first implementations, $\deltamu$ is typically ignored, i.e. treated as $\infty$, such that unvisited references are ignored.
 However, in breadth-first and other patterns, $\deltamu$ is essential\authorsnote{Does $\deltaqrv$ want to take in $\lettermu$ as a parameter?}.
 
-
-
 \subsection{Examples}
 
 Note to self: I could put an examples section, and talk about how we handle things like the fast multipole method (which is really the distributive property of $\fqr$ with $\opqr$).
@@ -722,9 +753,11 @@ Although we omit the code for single-operator second-order reduce problems, it i
 
 Goal: PARALLELIZE EVERYTHING!
 
+vocabulary to insert to sound smart: caching, replication
+
 \subsection{Decomposition}
 
-Decomposability is the key to parallelization, and a generalized $N$-body problem, by definition alone, is decomposable in two orthogonal ways.
+Decomposability is the key to parallelization, and a second-order generalized $N$-body problem, by definition alone, is decomposable in two orthogonal ways.
 In fact, parallelization is simply one variant of expansion allowed by the generalized $N$-body algorithm.
 It is possible to expand $\gnp(\kdroot{X}, \kdroot{Y})$ into subproblems $(X_1,Y_1), (X_2,Y_2), ..., (X_k, Y_k)$ such that $\Union_{1 \leq i \leq k} (X_i \times Y_i) = \kdroot{X} \times \kdroot{Y}$, merging the results using $\odot$ and $\otimes$\authorsnote{There are some restrictions on the types of divisions possible.}.
 For now, we restrict our discussion of decomposition in terms of tree node pairs since they are natural units of work for dual-tree algorithms.
