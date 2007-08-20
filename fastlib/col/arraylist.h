@@ -16,10 +16,10 @@
 /**
  * Fast expandable array with debug-mode bounds checking.
  *
- * This has roughly similar features to std::vector.  However, instead of
- * assuming the data type has a copy constructor, we assume it can be
- * "relocated" to another memory address using realloc.
- * The primary case where this assumption would be false is if objects have
+ * This has roughly similar features to std::vector.  However, an ArrayList
+ * assumes that all objects can be relocated by just doing a shallow move
+ * with realloc, without performing a deep copy on every element.
+ * This means you cannot use an ArrayList if objects have
  * pointers to fields within themselves -- this isn't a very common
  * programming practice.  Like std::vector, it is unwise to have
  * external pointers to objects inside this array, if you expect that the
@@ -41,7 +41,7 @@
  * ArrayList<MyType> list;
  * list.Init();
  * while (some_condition) {
- *    list.AddBack()->Init(arguments, for, MyType);
+ *    list.AddBack()->Init(x, y, z);
  * }
  * @endcode
  *
@@ -51,14 +51,21 @@
  * ArrayList<MyType> list;
  * list.Init(55);
  * for (int i = 0; i < 55; i++) {
- *   list[i].Init(arguments, for, MyType);
+ *   list[i].Init(x, y, z);
  * }
  * @endcode
+ *
+ * In addition, ArrayList has all the definitions necessary for the object
+ * traversal system, so it is suitable for use with THOR's automatic
+ * serialization and deserialization.
  *
  */
 template<typename TElement>
 class ArrayList {
  public:
+  /**
+   * The element type.
+   */
   typedef TElement Element;
 
  private:
@@ -208,6 +215,9 @@ class ArrayList {
   /**
    * Steals the contents of another ArrayList, initializing this ArrayList and
    * destructing the other ArrayList.
+   *
+   * WARNING: If the other ArrayList falls out of scope without being
+   * reinitialized, the program will fail.
    */
   void StealDestruct(ArrayList* other) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");

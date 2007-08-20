@@ -104,9 +104,9 @@ index_t thor::ReadPointsMaster(
     } else if (is_done) {
       break;
     } else {
-      CacheWrite<Point> point(&points_array,
-          points_array.AllocD(rpc::rank(), 1));
-      point->Set(param, vector);
+      index_t i = points_array.AllocD(rpc::rank(), 1);
+      CacheWrite<Point> point(&points_array, i);
+      point->Set(param, i, vector);
       n_points++;
     }
   }
