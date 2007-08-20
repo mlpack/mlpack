@@ -59,10 +59,13 @@ void CentroidWorkQueue<Node>::DistributeInitialWork_(
     // Subdivide the node further if possible.
     while (node_stack.size() != 0) {
       InternalNode *cur = *node_stack.PopBackPtr();
-      double distance = cur->node().bound().MinDistanceSq(center);
+      //double distance = cur->node().bound().MinDistanceSq(center);
 
       if (cur->is_leaf() || cur->count() <= max_grain_size) {
-        queue->work_items.Put(distance, cur);
+        // Put in work-queue in tree order.  This helps ensure that both
+        // threads are working on relatively nearby data to maximize global
+        // cache use.
+        queue->work_items.Put(cur->node().begin(), cur);
         n_grains_++;
       } else {
         for (index_t k = 0; k < Node::CARDINALITY; k++) {

@@ -931,7 +931,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
     fx_timer_start(module, "all_alpha");
     thor::RpcDualTree<AffinityAlpha, DualTreeDepthFirst<AffinityAlpha> >(
-        fx_submodule(module, "thor", "iter/%d/alpha", iter), 200,
+        fx_submodule(module, "gnp", "iter/%d/alpha", iter), 200,
         *param, &tree, &tree, &alphas, NULL);
     ApplyAlphas apply_alphas;
     apply_alphas.Init(param);
@@ -948,7 +948,7 @@ void AffinityMain(datanode *module, const char *gnp_name) {
 
     fx_timer_start(module, "all_rho");
     thor::RpcDualTree<AffinityRho, DualTreeDepthFirst<AffinityRho> >(
-        fx_submodule(module, "thor", "iter/%d/rho", iter), 200,
+        fx_submodule(module, "gnp", "iter/%d/rho", iter), 200,
         *param, &tree, &tree, &rhos, NULL);
     ApplyRhos apply_rhos;
     apply_rhos.Init(param);

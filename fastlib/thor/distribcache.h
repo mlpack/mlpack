@@ -299,6 +299,15 @@ class DistributedCache : public BlockDevice {
     /** I'm the owner of this block, but I haven't assigned it a page. */
     SELF_OWNER_UNALLOCATED = (1 << 30)
   };
+  
+  enum {
+    /** Marks a block as not currently being read asynchronously. */
+    NOT_READING = 0,
+    /** Marks a as being read asynchronously by only one thread. */
+    READING = 1,
+    /** Marks a as being read asynchronously by more than one thread. */
+    WAITING = 2
+  };
 
   /**
    * Rank of the master machine, which is configured with the block handler
@@ -336,7 +345,7 @@ class DistributedCache : public BlockDevice {
       value = UNKNOWN_OWNER;
       locks = 0;
       status = NOT_DIRTY_NEW;
-      is_reading = false;
+      is_reading = 0;
     }
     ~BlockMetadata() {
       if (data != NULL) {
@@ -353,11 +362,11 @@ class DistributedCache : public BlockDevice {
      */
     int32 value;
     /** Number of FIFO's that are currently accessing this. */
-    int16 locks;
-    /** Linked list of ranges that we've written. */
-    uint8 status;
+    uint16 locks;
+    /** Block's status, whether it is dirty, clean, or new. */
+    uint8 status:4;
     /** Whether the block is currently being read asynchronously. */
-    uint8 is_reading;
+    uint8 is_reading:2;
 
     /** Determines the block's owner. */
     int owner(const struct DistributedCache *cache) const {
@@ -428,6 +437,17 @@ class DistributedCache : public BlockDevice {
     }
     DEFINE_ALL_COMPARATORS(Position);
   };
+  
+  /**
+   * Modulo for I/O wakeup conditions.
+   *
+   * When performing I/O, we release the mutex and use a condition variable
+   * to alert other listening threads once the block becomes available.
+   * To avoid too many spurious wakeups we might use one wait-condition
+   * per block, but since that is very wasteful, we just use a modulo number
+   * that is on the order of the max number of threads.
+   */
+  static const int IO_COND_MODULO = 16;
 
  private:
   /** A block-to-metadata mapping, keeping track of each block's status. */
@@ -461,7 +481,7 @@ class DistributedCache : public BlockDevice {
   /** The channel listening for remote requests. */
   CacheChannel channel_;
   /** Wait condition used to listen for responses to read requests. */
-  WaitCondition io_cond_;
+  WaitCondition io_cond_[IO_COND_MODULO];
 
   /** I/O stats for our own disk. */
   IoStats disk_stats_;
@@ -664,13 +684,11 @@ class DistributedCache : public BlockDevice {
    */
   void EncacheBlock_(blockid_t blockid);
   /**
-   * Grabs a block from the appropriate block device.
+   * Grabs a block that was not found in cache.
    */
   void HandleMiss_(blockid_t blockid);
-  /** Grabs a block from our local disk. */
-  void HandleLocalMiss_(blockid_t blockid);
-  /** Grabs a block from another machine. */
-  void HandleRemoteMiss_(blockid_t blockid);
+  /** Grabs a block that we missed, and we have to do actual I/O for. */
+  void HandleRealMiss_(blockid_t blockid);
   /**
    * Removes a block's memory, if it's dirty -- does
    * nothing if it's not dirty.
@@ -681,12 +699,12 @@ class DistributedCache : public BlockDevice {
    * Resets the status to clean -- although this does not clear the data, this
    * will freeze the data!
    */
-  void WritebackDirtyLocalFreeze_(blockid_t blockid);
+  void WritebackDirtyLocalFreeze_(blockid_t blockid, char *data);
   /**
    * Writes back a dirty block to the proper machine.
    * Resets status to clean but does not clear the data.
    */
-  void WritebackDirtyRemote_(blockid_t blockid);
+  void WritebackDirtyRemote_(blockid_t blockid, char *data);
   /** Marks a block as ENTIRELY dirty. */
   void MarkDirty_(BlockMetadata *block);
   /** Marks a block as partially dirty. */
