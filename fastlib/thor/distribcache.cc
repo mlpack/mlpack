@@ -105,12 +105,13 @@ void DistributedCache::InitCommon_(int channel_num_in) {
 }
 
 void DistributedCache::InitCache_(size_t total_ram) {
-  if (total_ram < 65536) {
-    FATAL("total_ram for a cache is unusually low (%ld BYTES)!",
-        long(total_ram));
+  // give minimum number of cache sets
+  n_sets_ = (total_ram) / (ASSOC*n_block_bytes_);
+  if (n_sets_ == 0) {
+    NONFATAL("%lu bytes is too small a cache size -- upping size to %lu!",
+        (unsigned long)total_ram, (unsigned long)(ASSOC*n_block_bytes_));
+    n_sets_ = 1;
   }
-  // give enough cache sets, but rounded up
-  n_sets_ = (total_ram + ASSOC*n_block_bytes_ - 1) / (ASSOC*n_block_bytes_);
   slots_.Init(n_sets_ << LOG_ASSOC);
 }
 
@@ -200,7 +201,7 @@ void DistributedCache::BestEffortWriteback(double portion) {
         BlockMetadata *block = &blocks[blockid];
         DEBUG_ASSERT_MSG(!block->is_busy(), "Why is a busy block in LRU?");
         if (block->is_dirty() && !block->is_owner()) {
-          WritebackDirtyRemote_(blockid);
+          WritebackDirtyRemote_(blockid, block->data);
         }
       }
     }
@@ -544,12 +545,16 @@ void DistributedCache::HandleMiss_(blockid_t blockid) {
   DEBUG_ASSERT(block->data == NULL);
 
   if (block->is_reading) {
+    // Increase is_reading so that the busy thread will wake up the I/O
+    // condition.
+    block->is_reading = WAITING;
+
     // The block is currently being read.
     // Note instead of storing a whole mutex for each block, we store
     // is_reading and have a global I/O condition, which together
     // simulate a mutex.
-    while (block->is_reading) {
-      io_cond_.Wait(&mutex_);
+    while (block->is_reading != NOT_READING) {
+      io_cond_[blockid % IO_COND_MODULO].Wait(&mutex_);
     }
 
     // We're starting from scratch, recursively calling DecacheBlock.
@@ -569,12 +574,9 @@ void DistributedCache::HandleMiss_(blockid_t blockid) {
       DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
           "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
       handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
-    } else if (block->is_owner()) {
-      DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
-      HandleLocalMiss_(blockid);
     } else {
       DEBUG_ASSERT(block->status == NOT_DIRTY_OLD);
-      HandleRemoteMiss_(blockid);
+      HandleRealMiss_(blockid);
     }
 
     handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
@@ -582,37 +584,35 @@ void DistributedCache::HandleMiss_(blockid_t blockid) {
   }
 }
 
-void DistributedCache::HandleLocalMiss_(blockid_t blockid) {
+void DistributedCache::HandleRealMiss_(blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
-  blockid_t local_blockid = block->local_blockid();
+  int value = block->value;
 
-  DEBUG_ASSERT(block->is_owner());
-  block->data = mem::Alloc<char>(n_block_bytes_);
-  //fprintf(stderr, "DISK: reading %d from %d (%d bytes)\n",
-  //    blockid, local_blockid, n_block_bytes_);
-  disk_stats_.RecordRead(n_block_bytes_);
-  overflow_device_->Read(local_blockid,
-      0, n_block_bytes_, block->data);
-  block->locks = 1;
-}
-
-void DistributedCache::HandleRemoteMiss_(blockid_t blockid) {
-  BlockMetadata *block = &blocks_[blockid];
-  DEBUG_ASSERT(!block->is_owner());
-
-  int owner = block->owner();
-
-  block->is_reading = true;
-  net_stats_.RecordRead(n_block_bytes_);
-  char *data = mem::Alloc<char>(n_block_bytes_);
+  DEBUG_ASSERT(!block->is_reading);
+  block->is_reading = READING;
   mutex_.Unlock();
 
-  DoReadRequest_(owner, blockid, 0, n_block_bytes_, data);
+  char *data = mem::Alloc<char>(n_block_bytes_);
+  if (value >= 0) {
+    blockid_t local_blockid = value;
+    // read the block from disk
+    disk_stats_.RecordRead(n_block_bytes_);
+    overflow_device_->Read(local_blockid, 0, n_block_bytes_, data);
+  } else {
+    int owner = ~value;
+    // read the block from a remote machine
+    net_stats_.RecordRead(n_block_bytes_);
+    DoReadRequest_(owner, blockid, 0, n_block_bytes_, data);
+  }
 
   mutex_.Lock();
-  block->is_reading = false;
+  int is_reading = block->is_reading;
+  block->is_reading = NOT_READING;
   block->data = data;
-  io_cond_.Broadcast();
+  if (is_reading == WAITING) {
+    // I wasn't the only reader, broadcast the block's status
+    io_cond_[blockid % IO_COND_MODULO].Broadcast();
+  }
 }
 
 void DistributedCache::DoReadRequest_(int peer, blockid_t blockid,
@@ -662,13 +662,14 @@ void DistributedCache::EncacheBlock_(blockid_t blockid) {
         "Block re-cached: block %d, cache block size %d",
         blockid, n_block_bytes_);
     if (unlikely(i == ASSOC-1)) {
-      const int remote_preference = ASSOC/2;
+      const int remote_allowance = ASSOC/2;
       for (;;) {
         if (!blocks_[base_slot[i].blockid].is_owner()) {
           break;
         }
         i--;
-        if (i == remote_preference) {
+        if (i == remote_allowance) {
+          // no renote block to purge, take the worst local one
           i = ASSOC-1;
           break;
         }
@@ -690,26 +691,28 @@ void DistributedCache::EncacheBlock_(blockid_t blockid) {
 
 void DistributedCache::Purge_(blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
+  char *data = block->data;
 
   DEBUG_ASSERT(block->is_in_core());
   DEBUG_ASSERT_MSG(!block->is_busy(),
       "Trying to evict a busy block (non-zero lock count %d)",
       int(block->locks));
 
+  block->data = NULL;
+
   if (block->is_dirty()) {
     if (block->is_owner()) {
-      WritebackDirtyLocalFreeze_(blockid);
+      WritebackDirtyLocalFreeze_(blockid, data);
     } else {
-      WritebackDirtyRemote_(blockid);
+      WritebackDirtyRemote_(blockid, data);
     }
   }
 
-  mem::Free(block->data);
-  block->data = NULL;
+  mem::Free(data);
 }
 
 void DistributedCache::WritebackDirtyLocalFreeze_(
-    blockid_t blockid) {
+    blockid_t blockid, char *data) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(block->is_owner());
@@ -728,15 +731,16 @@ void DistributedCache::WritebackDirtyLocalFreeze_(
   }
 
   DEBUG_ASSERT(block->is_dirty());
-  handler_->BlockFreeze(blockid, 0, n_block_bytes_, block->data, block->data);
   //fprintf(stderr, "DISK: writing %d to %d (%d bytes)\n",
   //    blockid, local_blockid, n_block_bytes_);
   disk_stats_.RecordWrite(n_block_bytes_);
-  overflow_device_->Write(local_blockid, 0, n_block_bytes_, block->data);
   block->status = NOT_DIRTY_OLD;
+
+  handler_->BlockFreeze(blockid, 0, n_block_bytes_, data, data);
+  overflow_device_->Write(local_blockid, 0, n_block_bytes_, data);
 }
 
-void DistributedCache::WritebackDirtyRemote_(blockid_t blockid) {
+void DistributedCache::WritebackDirtyRemote_(blockid_t blockid, char *data) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(!block->is_owner());
@@ -745,7 +749,7 @@ void DistributedCache::WritebackDirtyRemote_(blockid_t blockid) {
   if (block->status == FULLY_DIRTY) {
     // The entire block is dirty
     DoWriteRequest_(block->owner(), blockid,
-        0, n_block_bytes_, block->data);
+        0, n_block_bytes_, data);
   } else {
     DEBUG_ASSERT(block->status == PARTIALLY_DIRTY);
     // Find the intersection between this block and all dirty ranges we
@@ -768,7 +772,7 @@ void DistributedCache::WritebackDirtyRemote_(blockid_t blockid) {
         }
         if (end_offset > begin_offset) {
           DoWriteRequest_(block->owner(), blockid,
-              begin_offset, end_offset, block->data + begin_offset);
+              begin_offset, end_offset, data + begin_offset);
         }
         DEBUG_ASSERT(end_offset >= begin_offset);
         DEBUG_ONLY(bytes_total += end_offset - begin_offset);

@@ -43,11 +43,7 @@ class Range {
       h_sq = h_orig * h_orig;
     }
 
-    void InitPointExtras(int tag, ThorVectorPoint *point) const {}
-
-    void SetPointExtras(int tag, index_t index, ThorVectorPoint *point) const {}
-    
-    void Bootstrap(int tag, index_t dim_in, index_t count_in) {
+    void SetDimensions(index_t dim_in, index_t count_in) {
       dim = dim_in;
       count = count_in;
     }
@@ -256,7 +252,7 @@ class Range {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-  thor_utils::MonochromaticDualTreeMain<Range, DualTreeDepthFirst<Range> >(
+  thor::MonochromaticDualTreeMain<Range, DualTreeDepthFirst<Range> >(
       fx_root, "range");      
   
   fx_done();
