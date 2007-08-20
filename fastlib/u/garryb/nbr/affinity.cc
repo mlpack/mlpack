@@ -207,7 +207,7 @@ struct AffinityCommon {
       info_.rho = param.pref;
     }
 
-    void Set(const Param& param, const Vector& data) {
+    void Set(const Param& param, index_t index, const Vector& data) {
       vec_.CopyValues(data);
       // Randomly prime points to be exemplars.
       if (math::Random(0.0, 1.0) < param.prime) {

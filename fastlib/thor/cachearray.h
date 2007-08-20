@@ -103,11 +103,9 @@ class CacheArray {
    * "locked" blocks!  This maximum should be 32 for most use cases, with 64
    * giving a nice balance between efficiency and memory usage -- given the
    * worst-case of 32 used blocks, the mean search time for an empty FIFO
-   * entry is two, and only 64 blocks are forced into RAM.
+   * entry is about three, and only 48 blocks are forced into RAM.
    */
   static const int FIFO_SIZE = 64;
-  /** Bitmask for doing modulo FIFO_SIZE. */
-  static const int FIFO_MASK = (FIFO_SIZE-1);
 
  protected:
   /** The metadata array, but adjusted (see how it is used in code). */

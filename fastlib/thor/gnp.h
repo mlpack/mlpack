@@ -63,10 +63,11 @@ class ThorVectorPoint {
    * with Init.
    *
    * @param param ignored
+   * @param index the index of the point, ignored
    * @param data the vector data read from file
    */
   template<typename Param>
-  void Set(const Param& param, const Vector& data) {
+  void Set(const Param& param, index_t index, const Vector& data) {
     vec_.CopyValues(data);
   }
 };
@@ -77,8 +78,6 @@ struct BlankDelta {
  public:
   template<typename Param>
   void Init(const Param& param) {}
-  template<typename Param>
-  void ApplyDelta(const Param& param, const BlankDelta& other) {}
 };
 
 struct BlankQPostponed {

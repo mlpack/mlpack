@@ -258,22 +258,33 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
   // unlocked item -- the most likely case is that the first item in the
   // fifo is non-negative (i.e. it exists) and it's most likely not locked
   for (;;) {
-    fifo_index_ = (fifo_index_+1) & FIFO_MASK;
+    if (unlikely(fifo_index_ == 0)) {
+      fifo_index_ = FIFO_SIZE;
+    }
+
+    fifo_index_--;
     victim = fifo_[fifo_index_];
+
     if (unlikely(victim < 0)) {
       break;
     }
+
     victim_metadata = adjusted_metadatas_ + victim;
+
     if (unlikely(victim_metadata->lock_count != 0)) {
+      // the block was locked
       continue;
     }
+
     DEBUG_ASSERT(victim_metadata->data != NULL);
     if (BlockDevice::can_write(mode_)) {
       cache_->StopWrite(victim);
     } else {
       cache_->StopRead(victim);
     }
+
     victim_metadata->data = NULL;
+
     break;
   }
 
