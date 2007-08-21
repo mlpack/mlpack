@@ -196,7 +196,7 @@
 
 \begin{slide}{Code Examples}
  {\tt main()} for K Nearest Neighbors classifier:
- \vspace*{.2in}
+ \vspace*{.1in}
 \begin{verbatim}
 #include "knn.h"
 #include "fastlib/fastlib.h"
@@ -230,24 +230,60 @@ int main(int argc, char *argv[]) {
 \end{slide}
 
 \begin{slide}{Code Example - 1 Nearest Neighbor}
- \vspace*{-0.2in}
- \hspace*{-0.4in}
+ \vspace{-.17in}
 \begin{verbatim}
 int OneNNClassifier::Classify(
    const Vector& test) {
  double closest = DBL_MAX; int label = -1;
  for (index_t i = 0; i < matrix_.n_cols(); i++) {
   Vector train;
-  double dist_squared;
   matrix_.MakeColumnSubvector(i, 0,
       matrix_.n_rows() - 1, &train);
-  dist_squared = la::DistanceSqEuclidean(
-      test, train);
+  double dist_squared =
+      la::DistanceSqEuclidean(test, train);
   if (unlikely(dist_squared < closest)) {
     closest = dist_squared;
     label = int(
         matrix_.get(i, matrix_.n_rows()-1));
-  } } return label; }
+  } }
+ return label; }
+\end{verbatim}
+\end{slide}
+
+\begin{slide}{Code Example - SVD}
+\vspace{-.17in}
+\begin{verbatim}
+ Matrix A, U, VT, S, tmp, new_A;
+ Vector s;
+
+ data::Read("foo.csv", &A);
+ la::SVDInit(A, &s, &U, &VT);
+ S.InitDiagonal(s);
+ la::MulInit(U, S, &tmp);
+ la::MulInit(tmp, VT, &new_A);
+ //.. new_A should equal A
+\end{verbatim}
+\end{slide}
+
+\begin{slide}{Code Example - Modules}
+\vspace{-.17in}
+\begin{verbatim}
+void DoCache(datanode *module,
+             ArrayList<int> *perm) {
+  int n = fx_param_int_req(module, "n");
+  fx_timer_start(module, "permute");
+  if (fx_param_bool(module, "random", 0)) {
+    math::MakeRandomPermutation(n, perm);
+  } else {
+    math::MakeIdentityPermutation(n, perm);
+  }
+  fx_timer_stop(module, "permute");
+}
+void (datanode *module) {
+  ArrayList<int> a, b;
+  DoCache(fx_submodule(module, "a", "a"), &a);
+  DoCache(fx_submodule(module, "b", "a"), &b);
+}
 \end{verbatim}
 \end{slide}
 
@@ -288,14 +324,16 @@ int OneNNClassifier::Classify(
 
 \begin{slide}{How do I start coding?}
  \vspace*{.3in}
- When starting out, keep in mind: \\
+ Ample resources should be available: \\
  \begin{itemize}
  \itemt{Tutorial} FASTlib's Tutorial on the wiki is the all-in-one guide to starting out.
  \itemt{Cookbook}
  For common tasks, we'll collaboratively contribute to a "cookbook" on the wiki.
  \itemt{Doxygen}
  Inline source documentation with Doxygen, a Javadoc-like tool.
- http://www.cc.gatech.edu/\~~garryb/fastlib/html
+ http://www-static.cc.gatech.edu/\~~garryb/fastlib/html
+ \itemt{Brains}
+ The FASTlib developers are just an email away.
  \end{itemize}
 \end{slide}
 
