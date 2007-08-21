@@ -1,0 +1,302 @@
+\documentclass[pdf,colorBG,slideColor]{prosper}
+\hypersetup{pdfpagemode=FullScreen}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\newcommand{\itemt}[1]{\item {\bf #1} -}
+
+\title{FASTlib}
+\subtitle{A library of Fundamental Algorithmic and Statistical Tools}
+\author{FASTlab}
+\institution{College of Computing\\Georgia Institute of Technology}
+
+\begin{document}
+
+\maketitle
+
+\begin{slide}{FASTlib}
+ \vspace*{.6in}
+ FASTlib is a new library for fast machine learning on large data sets.
+\end{slide}
+
+\begin{slide}{Mission}
+ We aim to...
+ \\
+ \begin{itemize}
+  \item Offer fast code for state-of-the-art algorithms in various machine learning fields.
+  \item Make it easy for others to incorporate/understand/contribute to our work.
+  \begin{itemize}
+    \item Implies having a tolerable learning curve and encouraging distributed development.
+  \end{itemize}
+  \item Broaden our toolbox of methods for comparsion purposes.
+  \item Experiment with new techniques.
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Why not library X?}
+ Some existing libraries:
+ \begin{itemize}
+  \itemt{Auton} Difficult to extend existing code without modifying it directly.
+  Now a maintenance nightmare.
+  \itemt{Frank Dellaert's OCaml library}
+  Although alternative languages are faster than C++ some of the time,
+  sometimes they are unacceptably slow for a performance-oriented group.
+  \itemt{Weka} Large class hierarchies are bad for old-school developers.
+  We can discuss Java's performance limitations.
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{What can FASTlib do better?}
+ \begin{itemize}
+  \itemt{Flexibility} Establish extensible library for rapid algorithm development.
+  \itemt{Concentration} Specifically concentrate on statistical machine learning.
+  \itemt{Programming} Do things ``right'' with regards to documentation and design.
+  \begin{itemize}
+    \item Avoid things that ``sound neat on paper'' but are just confusing.
+  \end{itemize}
+  \itemt{Speed} Be fast, but avoid pitfalls of low-level development.
+  \itemt{Debugging} ML algorithms can produce results from garbage -- we have strong debugging support.
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Why can FASTlib do better?}
+ \begin{itemize}
+  \itemt{Knowledge} Lots of experience of Auton's weaknesses.
+  \itemt{Diversity and Integration}
+  Centralized respository but decentralized development allows one cohesive unit with many diverse components.
+  \itemt{Language Features}
+  We choose a powerful language but use it wisely.
+  \itemt{Specialized} It's our library, and we control it.
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Separation}
+ FASTlib is divided into two main parts:
+ \begin{itemize}
+ \itemt{Core} What this presentation describes.  This part can be built by
+ the community but will have much stricter standards.
+ \itemt{Arsenal} Collaborateively-built standalone algorithms.
+ This is what you will probably work on!
+ \end{itemize}
+ Everyone will have read/write access to a Subversion repository with both.
+\end{slide}
+
+\begin{slide}{Coding for FASTlib}
+ C++ is our language of choice:
+ \begin{itemize}
+ \itemt{Popular} Well-known even among non-CS, and reasonably portable.
+ \itemt{Speed} Low-level, allows sidestepping overhead and direct control.
+ \itemt{High-Level} Enough to allow widespread code reuse.
+ \end{itemize}
+ Python is our scripting language of choice.
+ (You won't have to worry about Makefiles.)
+\end{slide}
+
+\begin{slide}{Some design decisions}
+ After a month of debate, we decided:
+ \begin{itemize}
+  \itemt{Avoid Class Hierarchies}
+  Shallow class hierarchies.  Templates over virtual functions.
+  \itemt{Ease/Power Duality}
+  Simple solutions for simple scenarios, but have separate ``power user'' features available.
+  \itemt{Default Constructors with Explicit Initializers}
+  Allows for greater control over object lifecycle.
+  We compensate with good debugging checks.
+  \itemt{Feels like C}
+  Many OO principles hinder rapid development algorithmic code.
+  Instead, incorporate OO as components mature or reach the ``core''.
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Main Packages}
+ \begin{tabular}{rl}
+   {\bf Debug/Base}    & Bare necessities. \\
+   {\bf FASTexec}      & Parameters, timers, results, and automation. \\
+   {\bf Datasets}      & Reading/writing/accessing mixed data. \\
+   {\bf Collections}   & Dynamic arrays and other storage classes. \\
+   {\bf Math}          & Kernels, metrics, etc.; eventually more. \\
+   {\bf Linear Alg}    & An interface for LAPACK. \\
+   {\bf Spatial Trees} & Formation and utilities. \\
+   {\bf THOR}          & Parallel dual-tree algorithms.
+ \end{tabular}
+\end{slide}
+
+\begin{slide}{Features}
+ Debug/Base:
+ \begin{itemize}
+ \itemt{Runtime Checks} Low-overhead bounds checks and assertions.
+ \itemt{Debug Mode} Checks can be disabled with a simple switch.
+ \itemt{Performance Directives} Compiler directives to assist the compiler.
+ \itemt{Object Traversal (OT)} Abstract serialization, deserialization, and debug printing.
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Features - FASTexec}
+ FASTexec:
+ \begin{itemize}
+ \itemt{Modular Storage} Hierarchical storage of parameters, results, and timers.
+ \itemt{Parameters} Modular command-line parameters.
+ \itemt{Experimental Conditions}
+   Automatically records system information and usage info.
+ \itemt{Data Extraction} Python scripts scan the output, making tables and charts.
+ \end{itemize}
+ \vspace{-.2in}
+  \includegraphics[width=2.2in]{g_blocksizes_t.ps}
+  \includegraphics[width=2.2in]{g_assoc.ps}
+\end{slide}
+
+\begin{slide}{Features}
+ Datasets:
+ \begin{itemize}
+ \itemt{Double-Precision Storage} Data stored as a matrix of doubles.
+ \itemt{Multiple Representations} Features may be continuous, integral, or nominal.
+ \itemt{Column-Major} A datum is a column, for FORTRAN/LAPACK support.
+ \itemt{Text Formats} Reads/writes {\tt arff} and {\tt csv}
+ \itemt{Aliasing} Non-copying access to column vectors and submatrices.
+ \itemt{Cross-Validation} Randomized or strided cross validation.
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Features}
+ Collections:
+ \begin{itemize}
+ \itemt{ArrayList} Templated dynamic array, works with library standards.
+ \itemt{Queues} Priority and FIFO queues.
+ \itemt{Miscellanous} Range sets, and dense integer map.
+ \item More to come later, but C++ also has a wide variety of STL classes.
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Features}
+ Linear Algebra:
+ \begin{itemize}
+ \itemt{Matrices, Vectors} Compatible with dataset classes.
+ \itemt{LAPACK Wrappers} Easy-to-use LAPACK wrappers.
+ \itemt{LAPACK Support}
+ Supports custom built ATLAS, or builds reference implementation automatically.
+ \end{itemize}
+ \vspace*{.2in}
+ Spatial Trees:
+ \begin{itemize}
+ \itemt{Abstract} Trees have abstract bounding types.
+ \itemt{Building} Currently, builds KD-trees.
+ \itemt{Statistics} Tempated statistics computed for nodes
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Features}
+ Other Math: \\
+ \begin{itemize}
+ \item Various tools for discrete math, geometry, etc.
+ \item Gaussian and Epanechnikov kernels.
+ \item Great opportunity for extension, hint hint
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Code Examples}
+ {\tt main()} for K Nearest Neighbors classifier:
+ \vspace*{.2in}
+\begin{verbatim}
+#include "knn.h"
+#include "fastlib/fastlib.h"
+int main(int argc, char *argv[]) {
+ fx_init(argc, argv);
+ const char *fname =
+     fx_param_str(fx_root, "fname", NULL);
+ Dataset dataset;
+ dataset.InitFromFile(data);
+ SimpleCrossValidator<KnnClassifier> xvd;
+ xvd.Init(&dataset, 0, 10, fx_root, "knn");
+ xvd.Run();
+ fx_done();
+}
+\end{verbatim}
+\end{slide}
+
+\begin{slide}{Code Example}
+ \vspace*{.3in}
+ The last example: \\
+ \begin{itemize}
+ \item Accepts parameters for number of cross validation folds and number
+ of nearest neighbors: \verb|./main --kfold/k=10 --knn/k=5 --fname=q.arff|
+ \item Builds: \verb|fl-build main --mode=fast|
+ \item Yields results (and timers for everything):
+\begin{verbatim}
+/kfold/results/p_correct 0.805
+/kfold/timers/total/wall/sec 0.025244
+\end{verbatim}
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Code Example - 1 Nearest Neighbor}
+ \vspace*{-0.2in}
+ \hspace*{-0.4in}
+\begin{verbatim}
+int OneNNClassifier::Classify(
+   const Vector& test) {
+ double closest = DBL_MAX; int label = -1;
+ for (index_t i = 0; i < matrix_.n_cols(); i++) {
+  Vector train;
+  double dist_squared;
+  matrix_.MakeColumnSubvector(i, 0,
+      matrix_.n_rows() - 1, &train);
+  dist_squared = la::DistanceSqEuclidean(
+      test, train);
+  if (unlikely(dist_squared < closest)) {
+    closest = dist_squared;
+    label = int(
+        matrix_.get(i, matrix_.n_rows()-1));
+  } } return label; }
+\end{verbatim}
+\end{slide}
+
+%\begin{slide}{Code Example}
+%  \vspace*{.3in}
+%  The last example: \\
+%  \begin{itemize}
+%  \item Accepts parameters for number of cross validation folds and number
+%  of nearest neighbors: \verb|./main --kfold/k=10 --knn/k=5 --data=q.arff|
+%  \item Builds: \verb|fl-build main --mode=fast|
+%  \item Yields results (and timers for everything):
+%\begin{verbatim}
+%/kfold/results/p_correct 0.805
+%/kfold/timers/total/wall/sec 0.025244
+%\end{verbatim}
+%  \end{itemize}
+%\end{slide}
+%
+%\begin{slide}{Code Example - 1 Nearest Neighbor}
+%\begin{verbatim}
+%  for (index_t i = 0; i < matrix_.n_cols(); i++) {
+%    Vector train_wlabel;
+%    Vector train;
+%    double dist_squared;
+%    matrix_.MakeColumnVector(i, &train_wlabel);
+%    train_wlabel.MakeSubvector(0,
+%        matrix_.n_rows() - 1, &train);
+%    dist_squared = la::DistanceSqEuclidean(
+%        test, train);
+%    if (unlikely(dist_squared < closest)) {
+%      closest = dist_squared;
+%      label = int(train_wlabel[
+%          train_wlabel.length()-1]);
+%    }
+%  }
+%\end{verbatim}
+%\end{slide}
+
+\begin{slide}{How do I start coding?}
+ \vspace*{.3in}
+ When starting out, keep in mind: \\
+ \begin{itemize}
+ \itemt{Tutorial} FASTlib's Tutorial on the wiki is the all-in-one guide to starting out.
+ \itemt{Cookbook}
+ For common tasks, we'll collaboratively contribute to a "cookbook" on the wiki.
+ \itemt{Doxygen}
+ Inline source documentation with Doxygen, a Javadoc-like tool.
+ http://www.cc.gatech.edu/\~~garryb/fastlib/html
+ \end{itemize}
+\end{slide}
+
+\end{document}
