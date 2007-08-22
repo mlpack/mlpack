@@ -47,27 +47,28 @@
  \end{itemize}
 \end{slide}
 
-\begin{slide}{What can FASTlib do better?}
+\begin{slide}{How Can FASTlib Be Better?}
  \begin{itemize}
-  \itemt{Flexibility} Establish extensible library for rapid algorithm development.
-  \itemt{Concentration} Specifically concentrate on statistical machine learning.
-  \itemt{Programming} Do things ``right'' with regards to documentation and design.
-  \begin{itemize}
-    \item Avoid things that ``sound neat on paper'' but are just confusing.
-  \end{itemize}
+  \itemt{Design} Use well-thought-out, flexible designs with an eye for future extension.
+  Avoid over-complicated designs that serve no purpose, even if they ``sound neat on paper''.
+  (The ``KISS'' principle.)
+  \itemt{Documentation} Document as much as reasonable.
+  Avoid ``I have no idea why that code works -- don't touch it''.
+  Includes in-code and wiki-based documentation.
+  \itemt{Debugging} Machine learning algorithms can produce results from garbage -- to compensate, we have strong debugging support.
   \itemt{Speed} Be fast, but avoid pitfalls of low-level development.
-  \itemt{Debugging} ML algorithms can produce results from garbage -- we have strong debugging support.
+  \itemt{Testing} Significant components should provide tests.
  \end{itemize}
 \end{slide}
 
-\begin{slide}{Why can FASTlib do better?}
+\begin{slide}{Why Can FASTlib Be Better?}
  \begin{itemize}
-  \itemt{Knowledge} Lots of experience of Auton's weaknesses.
+  \itemt{Knowledge} Lots of experiences with Auton's weaknesses.
   \itemt{Diversity and Integration}
   Centralized respository but decentralized development allows one cohesive unit with many diverse components.
   \itemt{Language Features}
   We choose a powerful language but use it wisely.
-  \itemt{Specialized} It's our library, and we control it.
+  \itemt{Specialized} It's our library, for statistical machine-learning purposes, and we control it.
  \end{itemize}
 \end{slide}
 
@@ -82,7 +83,7 @@
  Everyone will have read/write access to a Subversion repository with both.
 \end{slide}
 
-\begin{slide}{Coding for FASTlib}
+\begin{slide}{Language}
  C++ is our language of choice:
  \begin{itemize}
  \itemt{Popular} Well-known even among non-CS, and reasonably portable.
@@ -93,7 +94,7 @@
  (You won't have to worry about Makefiles.)
 \end{slide}
 
-\begin{slide}{Some design decisions}
+\begin{slide}{Design Decisions}
  After a month of debate, we decided:
  \begin{itemize}
   \itemt{Avoid Class Hierarchies}

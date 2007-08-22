@@ -15,7 +15,8 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#define OT__NAME(x) (v_OT->Name( #x ))
+// Declares the name of the field, for printing
+#define OT__NAME_(x) (v_OT->Name( #x ))
 
 /**
  * Within OT_DEF, declare a sub-object (or primitive) that is directly
@@ -24,32 +25,32 @@
  * (For those reading the definition: v_OT is the parameter, the visitor,
  * passed to the object traverse member function).
  */
-#define OT_MY_OBJECT(x) (OT__NAME(x), v_OT->MyObject(this->x))
+#define OT_MY_OBJECT(x) (OT__NAME_(x), v_OT->MyObject(this->x))
 /**
  * Within OT_DEF, declare a static-sized array embedded within your object.
  *
  * The length of the array is determined automatically via sizeof.
  */
-#define OT_MY_ARRAY(x) (OT__NAME(x), v_OT->MyArray(this->x, sizeof(this->x) / sizeof(this->x[0])))
+#define OT_MY_ARRAY(x) (OT__NAME_(x), v_OT->MyArray(this->x, sizeof(this->x) / sizeof(this->x[0])))
 /**
  * Within OT_DEF, declare an object being pointed to, managed by
  * new and delete.
  */
-#define OT_PTR(x) (OT__NAME(x), v_OT->Ptr(this->x, false))
+#define OT_PTR(x) (OT__NAME_(x), v_OT->Ptr(this->x, false))
 /**
  * Within OT_DEF, declare an array being pointed to, managed by
  * new[] and delete[].
  */
-#define OT_ARRAY(x, i) (OT__NAME(x), v_OT->Array(this->x, i))
+#define OT_ARRAY(x, i) (OT__NAME_(x), v_OT->Array(this->x, i))
 /**
  * Within OT_DEF, declare an array or object being pointed to managed by
  * malloc and free.
  */
-#define OT_MALLOC_ARRAY(x, i) (OT__NAME(x), v_OT->MallocArray(this->x, i))
+#define OT_MALLOC_ARRAY(x, i) (OT__NAME_(x), v_OT->MallocArray(this->x, i))
 /**
  * Within OT_DEF, declare a pointer to a new-delete object that might be NULL.
  */
-#define OT_PTR_NULLABLE(x) (OT__NAME(x), v_OT->Ptr(this->x, true))
+#define OT_PTR_NULLABLE(x) (OT__NAME_(x), v_OT->Ptr(this->x, true))
 
 /**
  * Like OT_DEF but doesn't define any of the automatic freebies.
@@ -68,18 +69,24 @@
 
 /**
  * Automatically generate a copy constructor based on the object traversal.
+ *
+ * Note that OT_DEF calls this automatically.
  */
 #define OT_GEN_COPY_CONSTRUCTOR(AClass) \
  public: AClass(const AClass& other) { ot__private::ZOTDeepCopier::Doit(other, this); } private:
 
 /**
  * Automatically create a dstructor based on object traversal.
+ *
+ * Note that OT_DEF calls this automatically.
  */
 #define OT_GEN_DESTRUCTOR(AClass) \
  public: ~AClass() { ot__private::DestructorImplementation(this); } private:
 
 /**
  * Automatically create a dstructor based on object traversal.
+ *
+ * Note that OT_DEF calls this automatically.
  */
 #define OT_GEN_ASSIGN(AClass) \
  public: const AClass& operator = (const AClass& other) \
@@ -88,12 +95,17 @@
 
 /**
  * Generate a default constructor.
+ *
+ * Note that OT_DEF calls this automatically.
+ * TODO(gboyer): It would be useful if this somehow poisoned the memory.
  */
 #define OT_GEN_DEFAULT_CONSTRUCTOR(AClass) \
  public: AClass() { } private:
 
 /**
  * Automatically create a Copy method based on the copy constructor.
+ *
+ * Note that OT_DEF calls this automatically.
  */
 #define OT_GEN_COPY_METHOD(AClass) \
  public: void Copy(const AClass& other) { new(this)AClass(other); } private:
@@ -257,12 +269,8 @@ inline void TraverseObject(T* x, Visitor* v) {
  * Postprocess function for making copies, to fix anything that may be
  * inaccurate from a plain copy.
  *
- * You will probably never need to implement this.  This exists
- * mainly so that lazy-rezing data structures (i.e. ArrayList) can serialize
- * themselves as their trimmed size -- the TraverseObject function neglects
- * saving the capacity, and fills in the capacity upon deserialization.
- * Note this should NOT dereference any pointers within the object, just
- * update things like flags.
+ * You will probably never need to implement this -- if you do, use
+ * OT_FIX or see its comments.
  */
 template<typename T>
 inline void TraverseObjectPostprocess(T* x) {

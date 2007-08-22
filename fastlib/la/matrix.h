@@ -425,6 +425,14 @@ class Matrix {
   }
 
   /**
+   * Creates a diagonal matrix.
+   */
+  void InitDiagonal(const Vector& v) {
+    Init(v.length(), v.length());
+    SetDiagonal(v);
+  }
+
+  /**
    * Sets the entire matrix to zero.
    */
   void SetAll(double d) {
@@ -439,7 +447,7 @@ class Matrix {
     // zero
     SetAll(0);
   }
-  
+
   /**
    * Makes this a diagonal matrix whose diagonals are the values in v.
    */
