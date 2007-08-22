@@ -10,6 +10,9 @@
 \usepackage{icdm07}
 \usepackage{times}
 \usepackage{amsmath}
+\usepackage{graphicx}
+
+\newcommand{\THOR}{{{\tt THOR}} }
 
 \newcommand{\authornote}[1]{\footnote{Note to self: #1}}
 \newcommand{\authorsnote}[1]{\authornote{#1}}
@@ -200,13 +203,14 @@
 
 \begin{abstract}
 The multi-tree approach for accelerating data mining methods has resulted some of the fastest known solutions for a large class of fundamental methods previously considered infeasible for massive datasets, including kernel density estimation, all-nearest-neighbor search, spatial statistics, and many others.
-Representing these problems in a standard mathematical model allows these problems to be scaled further via parallelization, without significant extra programmer effort.
-With the framework, we derive a strategy for parallelization and demonstrate the added efficiency on massive synthetic and real datasets for both shared-memory and cluster implementations.
+We present a standard mathematical model that allows these problems to be scaled further via parallelization, without significant extra programmer effort.
+With the framework, we derive a strategy for parallelization and describe our implementation, Tree High-Order Reduce or \THOR.
+We then demonstrate scalability for massive datasets in both multi-threaded and cluster settings.
 \end{abstract}
 
 \section{Introduction}
 
-Many problems in spatial statistics and data mining, especially nonparametric methods, nominally require an all-pairs analysis of data points that lie in a metric space.
+Many problems in spatial statistics and data mining, especially nonparametric methods, nominally require an all-pairs analysis of metric data.
 Recent work\authorsnote{not yet officially published}\cite{ryan_nips} has characterized these {\it generalized $N$-body problems} and shown how a multi-tree algorithmic approach directly follows, leading quite often to asymptotically faster algorithms, sometimes nearly linear.
 The multi-tree approach treats these problems by recursively dividing the problem over the Cartesian product of points along the axes of a space partitioning tree such as $kd$-tree, resulting in the fastest practical serial algorithms for many statistical and physical problems, such as kernel density estimation, $n$-point correlation, nearest neighbor finding, Gaussian process regression, and more.
 
@@ -223,11 +227,11 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
         \begin{array}[t]{l}
           \text{{\bf tpc} - Two-point correlation.}
           \X \text{function tpc}(Y, X)
-          \x \text{if }\distup(Y, X) > h\text{: return }0
-          \x \text{if }\distlo(Y, X) \leq h\text{: return } |Y| \cdot |X|
-          \x \text{else if }|Y| \geq |X|\text{:}
+          \x \text{if }\distup(Y, X) > h\text{, return }0
+          \x \text{if }\distlo(Y, X) \leq h\text{, return } |Y| \cdot |X|
+          \x \text{else if }|Y| \geq |X|\text{,}
           \xx \text{return tpc}(\kdleft{Y}, X, h) + \text{tpc}(\kdright{Y}, X, h)
-          \x \text{else:}
+          \x \text{else,}
           \xx \text{return tpc}(Y, \kdleft{X}, h) + \text{tpc}(Y, \kdright{X}, h)
         \end{array}
        \end{displaymath}
@@ -237,15 +241,15 @@ Fortunately, multi-tree algorithms are in fact quite parallel, and we show how t
        \begin{displaymath}
         \begin{array}[t]{l}
           \text{{\bf allnn} - All-nearest-neighbors.}
-          \X \text{init all nodes }Q \subseteq \kdroot{Q}\text{: }a(Q) \gets \infty
-          \X \text{procedure allnn}(Q,R)\text{:}
-          \x \text{if }a(Q) < \distlo(Q, R)\text{: return}
+          \X \text{init all nodes }Q \subseteq \kdroot{Q}\text{, }a(Q) \gets \infty
+          \X \text{procedure allnn}(Q,R)\text{,}
+          \x \text{if }a(Q) < \distlo(Q, R)\text{, return}
           \x \text{else if }Q = \{q\} \text{ and } R = \{r\}
           \xx a(\{q\}) \gets \min(a(\{q\}), \dist{Q}{R})
-          \x \text{else if }|Q| \geq |R|\text{:}
+          \x \text{else if }|Q| \geq |R|\text{,}
           \xx \text{allnn}(\kdleft{Q}, R); \text{ allnn}(\kdright{Q}, R)
           \xx a(Q) \gets \max(a(\kdleft{Q}), a(\kdright{Q}))
-          \x \text{else prioritize by min distance:}
+          \x \text{else prioritize by min distance,}
           \xx \text{allnn}(Q, \kdleft{R}); \text{ allnn}(Q, \kdright{R})
         \end{array}
        \end{displaymath}
@@ -307,7 +311,7 @@ Indeed, we later show this property is essential to both dual-tree algorithms an
 
 \section{Parallel $N$-Body Simulations}
 
-Some of the best-studied parallel computing efforts are $N$-body particle simulations.
+$N$-body particle simulations comprise some of the best-studied parallel computing problems.
 Algorithms for efficient simulation almost universally use trees, and parallelization of these tree codes offers indispensible insight into that of generalized $N$-body problems.
 The physical $N$-body problem models $N$ particles in an evolving system where each particle exerts force on all other particles.
 Computational solutions break the simulation into discrete time steps, during which force is calculated,
@@ -315,49 +319,43 @@ Computational solutions break the simulation into discrete time steps, during wh
 \noindent where $f(q,r)$ is often an inverse-squared-distance gravitational or Coulombic force.
 Directly computing the sum takes $O(N^2)$ time, but speedup is achieved by approximating distant interactions.
 
-%The earliest tree-based algorithm by Appel \cite{appel_alg} approximates these force contributions in an approach closely resembling the dual-tree approach.
 The popular Barnes-Hut algorithm\cite{barnes_hut} and Fast Multipole Method\cite{greengard_fmm} received significant attention from the parallelization community.
+Barnes-Hut\cite{barnes_hut} descends an oct-tree\footnote{An oct-tree hierarchically divides all 3 dimensions at the midpoint.} to approximate force on each particle.
+If query particle $q$ is further than parameter $\theta$ times the spatial width of the considered node, the force calculation is approximated by the node's center of mass.
+Although Barnes-Hut is a single-tree algorithm, many aspects of its parallelization can often be generalized to the dual-tree case.
 
-The algorithm by Barnes and Hut, presented in \cite{barnes_hut}, descends an oct-tree \footnote{An oct-tree hierarchically divides all 3 dimensions at the midpoint.} to approximate force on each particle.
-If query point $q$ is further than parameter $\theta$ times the spatial width of the considered node, the force calculation is approximated by the node's center of mass.
+The Fast Multipole Method (FMM)\cite{greengard_fmm} achieves closer to $O(N)$, but with a higher constant factor than the $O(N log N)$ Barnes-Hut, by considering node-node interactions like dual-tree algorithms.
+Although the FMM may be posed as a dual-tree algorithm due to its node-node computations, it has a very specific descent pattern.
+Thus, the details of a parallel implementation of the FMM cannot be entirely transferred to dual-tree algorithms, although some features in common.
 
-Although Barnes-Hut is $O(N log N)$, The Fast Multiple Method \cite{greengard_fmm} achieves closer to $O(N)$, but with a higher constant factor, by considering node-node interactions like dual-tree algorithms.
-However, it is not a dual-tree algorithm in our definition, because it predetermines which node-node interactions to compute via specialized rules involving the tree structure itself rather than using bounding information inferred by recursive exploration of node pairs.
-The multipole method is rarely treated beyond small extensions of techniques used for Barnes-Hut \cite{singh95load} or in the context of auto-parallelization, such as data-parallel programming languages \cite{nyland93dataparallel} \cite{washington_nesl}; thus, we devote our discussion mainly to the extensively studied Barnes-Hut\authornote{Something else I could do is just talk about BH, and at the end give a short spiel on how FMM is usually treated.}.
+% \cite{singh95load} \cite{nyland93dataparallel} \cite{washington_nesl}
 
-%Greengard's Fast Multipole Method \cite{greengard_fmm} has some elements of dual-tree computation in its downwards pass, in which the force contribution for an entire node of queries is estimated for an entire node of references.
-%The Fast Multipole Method is considered to have a higher constant factor; thus, most research focuses on the single-tree Barnes-Hut\cite{fmm_slower}.
+\section{Parallel Programmability}
 
-{\bf Brief History of $N$-Body Parallelization.}
+Making parallelization accessible to algorithm developers without parallelization expertise has been a common goal in parallelization communities.
+In this realm, there are three general approaches.
 
-
-
-\section{Parallel Programming via Models}
-
-Making parallelization accessible to programmers without parallelization expertise has been a common goal in parallelization communities.
-Approaches are very diverse, and vary in two dimensions.
-If one views the "stack" of programming from the syntactical code level to the machine level, these approaches vary by which "layer" is chosen to be abstracted.
-The next dimension is how general-purpose or specialized the abstraction is.
-
-At the highest level, the programming languages community attempts to create languages that are either functional and inherently parallel or parallel extensions to existing programming languages.
+At the highest level, the programming languages community attempts either to create languages that are functional and inherently parallel or to add parallel extensions to existing programming languages.
 For instance, the Barnes-Hut and the Fast Multipole Method have both been parallelized with the NESL parallel programming language, and \cite{hu-implementing, more}\authorsnote{I need to read their papers}.
 Languages like UPC attempt to make parallelizable C code, but only for algorithms with stereotypically "linear" access patterns or data decompositions.
-These abstract parallelism at the programming language level and automatically create parallel code, and typically each excels in their own target area.
-Unfortunately, it is often not possible to control what underlying data structures or work decompositions are used.
-Although not completely unpredictable, the access pattern of an $N$-body problem is far from static, and trivial work decompositions are not always applicable.
+Unfortunately, these are typically so high-level that it is not possible to control what underlying techniques are used.
+Although not completely unpredictable, the access pattern of an $N$-body problem is far from static, and trivial work decompositions are impractical.
 
 Alternately, at the lowest level, projects like SAM\cite{sam} provide a distributed memory layer that abstracts physically distributed memory as one logical address space, except that it provides versioned values or accumulators instead of implementing a coherency model.
 The authors of SAM achieved over 50\% speedup for about 64 processors for the Barnes-Hut algorithm on various parallel computers.
-Another low-level abstraction simply simulates a coherency protocol as part of the memory hierarchy by listening for segmentation faults, but uses a relaxed consistency model to reduce traffic on bandwidth-limited ethernet settings.
-They also implemented, as an example, a version of Barnes-Hut that scaled to about 8 processors\cite{relaxed}.
+Another low-level abstraction simply simulates distributed RAM using a lazy consistency protocol by listening for segmentation faults\cite{relaxed}.
+They also implemented, as an example, a version of Barnes-Hut that scaled to about 8 processors.
 
-Considering the second dimension, it is often possible to create an implementation that provides an abstraction specific to a problem class and provides a finely tuned implementation for that problem class.
+Another popular approach requires identifying a specific, but diverse, class of problems that share common properties.
+It may be possible to create a very efficient implementation with arbitrarily complex low level details for the entire problem class, allowing the developer to plug in the specifics of their problem.
 One popular example is Map-Reduce, a framework to solve problems that process massive data sets through the three-step process of preprocessing, sorting, and reduction.
 By targetting this class of problems, Map-Reduce can use optimally efficient data decomposition methods, out-of-core sorting algorithms, and mechanisms for fault-tolerance.
 Additionally, very little work on the part of the programmer is needed, so that sometimes writing the parallel algorithm can be simpler than writing the serial algorithm.
 
-We take the same approach as Map-Reduce, but for problems solvable by dual-tree algorithms.
-Rather than focusing on the processes in a dual-tree algorithm, our framework focuses only on the data interactions that take place between points and nodes.
+Due to the generalizability of $N$-body methods, \THOR takes the same approach as Map-Reduce to implement a highly specialized parallel version of the serial algorithm.
+The developer needs only to focus on the interactions that occur among points and nodes, not on the details of the tree algorithm or its parallelization.
+Additionally, since programmers prefer to use common constructs such as vectors and lists over static bit-copiable structures, \THOR provides a scheme that takes advantage of C++ templates to implement serialization and deserialization of acyclic pointer graphs, using a templated object traversal.
+Thus, we present \THOR as a ``quick and easy'' way to generate parallel dual-tree algorithms that are also efficient.
 
 \section{Dual-Tree Algorithm Framework}
 
@@ -394,7 +392,7 @@ We term a $\map$ problem as \defterm{query-reference problem} since each result 
 
 We finally note that {\it any} second-order reduce problem can be transformed into a query-reference GNP by replacing the outer operator with $\map$, treating both $g$ and $\odot$ as a postprocessing step.
 Therefore, any parallelization framework that solves query-reference problems necessarily solves any second-order reduce problem.
-Thus, we focus primarily on the query-reference problem type in our framework.
+Although \THOR has native support for both single-operator and query-reference problems, our discussion focuses on the more general query-reference problem.
 
 {\bf The Generalized $N$-Body Algorithm.}
 Block decomposition implies a hierarchical computation,
@@ -446,84 +444,77 @@ Further expansion patterns may involve parallelism, by noting that, with a few p
 %For each point in the query set, execute a commutative, associative operator over every element in a reference set.
 %These problems include such fundamental problems as all-nearest-neighbors, kernel density estimation, the testing phase of most nonparametric classification methods, matrix-vector multiplication, and many more.
 
-\subsection{Single-Operator Reduce Problems}
-
-A \defterm{single-operator reduce problem} computes a single scalar or relatively small vector of results, taking as input two data sets and applying an aggregate commutative and associative operator to all pairs,
-\begin{eqnarray*}
-\outglob(X, Y) &=& \gglob(\inglob(X, Y)),
-\\
-\inglob(X, Y) &=& \Opglob_{(x, y) \in X \times Y} \fglob(x, y).
-\label{eqn:defglob}
-\end{eqnarray*}
-
-\noindent where $\gglob$ is a post-processing function (usually identity), $\Opglob$ is a commutative and associative operator, and $\fglob$ is an inner function.
-We can express two-point correlation,
-\[\begin{array}{rcl}
-\TWOPT(X, r) &\equiv& \inglob_r(X, X),
-\\
-\opglob &\equiv& +
-\\
-\fglob(x, y) &\equiv& I(d(x, y) < h).
-\end{array}\]
-
-\noindent We decompose $\inglob$ with the identities,
-\begin{eqnarray*}
-\inglob(X, Y) &=& \inglob(\kdleft{X}, Y) \opglob \inglob(\kdright{X}, Y),
-\\
-\inglob(X, Y) &=& \inglob(X, \kdleft{Y}) \opglob \inglob(X, \kdright{Y}).
-\label{eqn:divideglob}
-\end{eqnarray*}
-
-\noindent Summary statistics are commonly also built from commutative-associative operators,
-\begin{eqnarray*}
-\outstat(X) &=& \gstat(\instat(X)),
-\\
-\instat(X) &=& \Opstat_{x \in X} \fstat(x),
-\label{eqn:defstat}
-\end{eqnarray*}
-\noindent and can be computed bottom-up $\instat(X) = \instat(\kdleft{X}) \opstat \instat(\kdright{X})$.
-Intrinsic prunes are applied with the following rule,
-\begin{equation*}
-\text{if } \canpruneglob(\outstat(X), \outstat(Y)) \text{, then } \inglob(X, Y) = \deltaglob(\outstat(X), \outstat(Y))
-\label{eqn:intrinsic}
-\end{equation*}
-\noindent where $\canpruneglob$ is a Boolean indicator that a prune is possible i.e. the initial summary set is singleton, and $\deltaglob$ is the summary set's only element.
-
-The rules shown so far allow some software system to execute single-operator reduce problems with intrinsic prunes given definitions for the relevant functions and operators.
-For instance, a $kd$-tree-based two-point correlation $\TWOPT(X, h)= \outglob(X,X)$ is defined:
-\begin{eqnarray*}
-\label{eqn:tpc_gglob}
-\gglob(\inglob) &\equiv& \inglob
-\\
-\label{eqn:tpc_opglob}
-\opglob &\equiv& +
-\\
-\label{eqn:tpc_fglob}
-\fglob(x,y) &\equiv& I(\dist{x}{y} < h)
-\\
-\label{eqn:tpc_canpruneglob}
-\canpruneglob(\sigma(X), \sigma(Y))
-&\equiv&
-\begin{array}{l}\distup(\outstat(X),\outstat(Y)) < h \\ \vee \distlo(\outstat(X),\outstat(Y)) \geq h\end{array}
-\\
-\label{eqn:tpc_deltaglob}
-\deltaglob(\outstat(X),\outstat(Y)) &\equiv& \left\{ \begin{array}{l} 0 \text{ if } \distup(\outstat(X),\outstat(Y)) < h \\ |X|\cdot|Y| \text{ if } \distlo(\outstat(X),\outstat(Y)) \geq h \end{array}\right.
-\\
-\label{eqn:tpc_fstat}
-\fstat(x) &\equiv& (x,x)
-\\
-\label{eqn:tpc_opstat}
-\opstat(x) &\equiv& \left( \bigvec{\min} , \bigvec{\max} \right)
-\end{eqnarray*}
-\noindent The first three summarize the problem itself, with the next two specifying the pruning condition.
-The last two specify the construction of a bounding box, although this is automatic with $kd$-trees.
-Given a parallel execution system, the above is all the programmer needs to specify to have a fully parallelized two-point correlation.
-
+%\subsection{Single-Operator Reduce Problems}
+%
+%A \defterm{single-operator reduce problem} computes a single scalar or relatively small vector of results, taking as input two data sets and applying an aggregate commutative and associative operator to all pairs,
+%\begin{eqnarray*}
+%\outglob(X, Y) &=& \gglob(\inglob(X, Y)),
+%\\
+%\inglob(X, Y) &=& \Opglob_{(x, y) \in X \times Y} \fglob(x, y).
+%\label{eqn:defglob}
+%\end{eqnarray*}
+%
+%\noindent where $\gglob$ is a post-processing function (usually identity), $\Opglob$ is a commutative and associative operator, and $\fglob$ is an inner function.
+%We can express two-point correlation,
+%\[\begin{array}{rcl}
+%\TWOPT(X, r) &\equiv& \inglob_r(X, X),
+%\\
+%\opglob &\equiv& +
+%\\
+%\fglob(x, y) &\equiv& I(d(x, y) < h).
+%\end{array}\]
+%
+%\noindent We decompose $\inglob$ with the identities,
+%\begin{eqnarray*}
+%\inglob(X, Y) &=& \inglob(\kdleft{X}, Y) \opglob \inglob(\kdright{X}, Y),
+%\\
+%\inglob(X, Y) &=& \inglob(X, \kdleft{Y}) \opglob \inglob(X, \kdright{Y}).
+%\label{eqn:divideglob}
+%\end{eqnarray*}
+%
+%\noindent and can be computed bottom-up $\instat(X) = \instat(\kdleft{X}) \opstat \instat(\kdright{X})$.
+%Intrinsic prunes are applied with the following rule,
+%\begin{equation*}
+%\text{if } \canpruneglob(\outstat(X), \outstat(Y)) \text{, then } \inglob(X, Y) = \deltaglob(\outstat(X), \outstat(Y))
+%\label{eqn:intrinsic}
+%\end{equation*}
+%\noindent where $\canpruneglob$ is a Boolean indicator that a prune is possible i.e. the initial summary set is singleton, and $\deltaglob$ is the summary set's only element.
+%
+%The rules shown so far allow some software system to execute single-operator reduce problems with intrinsic prunes given definitions for the relevant functions and operators.
+%For instance, a $kd$-tree-based two-point correlation $\TWOPT(X, h)= \outglob(X,X)$ is defined:
+%\begin{eqnarray*}
+%\label{eqn:tpc_gglob}
+%\gglob(\inglob) &\equiv& \inglob
+%\\
+%\label{eqn:tpc_opglob}
+%\opglob &\equiv& +
+%\\
+%\label{eqn:tpc_fglob}
+%\fglob(x,y) &\equiv& I(\dist{x}{y} < h)
+%\\
+%\label{eqn:tpc_canpruneglob}
+%\canpruneglob(\sigma(X), \sigma(Y))
+%&\equiv&
+%\begin{array}{l}\distup(\outstat(X),\outstat(Y)) < h \\ \vee \distlo(\outstat(X),\outstat(Y)) \geq h\end{array}
+%\\
+%\label{eqn:tpc_deltaglob}
+%\deltaglob(\outstat(X),\outstat(Y)) &\equiv& \left\{ \begin{array}{l} 0 \text{ if } \distup(\outstat(X),\outstat(Y)) < h \\ |X|\cdot|Y| \text{ if } \distlo(\outstat(X),\outstat(Y)) \geq h \end{array}\right.
+%\\
+%\label{eqn:tpc_fstat}
+%\fstat(x) &\equiv& (x,x)
+%\\
+%\label{eqn:tpc_opstat}
+%\opstat(x) &\equiv& \left( \bigvec{\min} , \bigvec{\max} \right)
+%\end{eqnarray*}
+%\noindent The first three summarize the problem itself, with the next two specifying the pruning condition.
+%The last two specify the construction of a bounding box, although this is automatic with $kd$-trees.
+%Given a parallel execution system, the above is all the programmer needs to specify to have a fully parallelized two-point correlation.
+%
 
 %The model shown so far is limited to very simple dual-tree algorithms.
 %First, we later discuss additions to allow for efficient computation of query-reference problems such as all-nearest-neighbors and density estimation.
 %Additionally, many algorithms, such as nearest-neighbor, classification problems, and approximate density estimates, require information about previous pairwise computation in order to determine whether pruning is possible.
-%Nonetheless, this simple model leads to effective parallelization of problems such as two-point correlation\footnote{WALDO list more}.
+%Nonetheless, this simple model leads to effective parallelization of problems such as two-point correlation\footnote{list more}.
 
 \subsection{Simple Query-Reference Problems}
 A query-reference problem computes for each query $q$,
@@ -562,6 +553,16 @@ Both algorithms, though, compute values by dividing along the reference tree,
 \label{eqn:prunepi}
 \end{equation*}
 
+\noindent
+where the statistics $\outstat(Q)$ and $\outstat(R)$ are commonly built from commutative associative operators, and may also be decomposed:
+
+\begin{eqnarray*}
+\outstat(X) &=& \gstat(\instat(X)),
+\\
+\instat(X) &=& \Opstat_{x \in X} \fstat(x),
+\label{eqn:defstat}
+\end{eqnarray*}
+
 \noindent Range count, the query-reference analog to two-point correlation $\map_{q \in Q} \sum_{r \in R} I(\dist{q}{r} < h)$ is\footnote{When I use deltas, make sure I consistently put the sigmas as the arguments.}:
 \begin{eqnarray*}
 \gqr(q, \inqr) &\equiv& \inqr
@@ -576,6 +577,9 @@ Both algorithms, though, compute values by dividing along the reference tree,
 \\
 \deltaqrv(\outstat(Q),\outstat(R)) &\equiv& \left\{ \begin{array}{l} 0 \text{ if } \distup(\outstat(Q),\outstat(R)) < h \\ |R| \text{ if } \distlo(\outstat(Q),\outstat(R)) \geq h \end{array}\right.
 \end{eqnarray*}
+
+\noindent
+The two-point correlation may be computed by summing $\outqr$ for all queries.
 
 \subsection{Query-Reference Extrinsic Prunes}
 
@@ -665,11 +669,10 @@ Note to self: I could put an examples section, and talk about how we handle thin
 
 \subsection{Execution}
 
-We show in \fig{dfe} a depth-first implementation of the query-reference with extrinsic prune rules for query-reference problems.
-(The version for single-operator problems is much simpler, and both types of problems could even be computed simultaneous using the same expansion pattern.)
-The input to the algorithm is the data to operate on, and the functions required for an effective dual-tree algorithm.
+We show in \fig{dfe} a depth-first implementation of the query-reference with extrinsic prune rules for query-reference problems\footnote{The code for single-operator problems is much simpler, and \THOR actually can compute both simultaneously.}
+The input to the algorithm consists of the data to operate on and the functions required for an effective dual-tree algorithm.
 Via the power of $\map$, we have shown that this code can solve any second-order reduce problem.
-A breadth-first implementation is also possible, which makes substantial use of $\opmu$ to compose sibling results.
+\THOR also has a breadth-first implementation that performs far better for some problems.
 
 \begin{figure}
 \[
@@ -724,54 +727,104 @@ Goal: PARALLELIZE EVERYTHING!
 
 vocabulary to insert to sound smart: caching, replication
 
-\subsection{Decomposition}
+\subsection{Task Decomposition}
 
-Decomposability is the key to parallelization, and a second-order generalized $N$-body problem, by definition alone, is decomposable in two orthogonal ways.
-In fact, parallelization is simply one variant of expansion allowed by the generalized $N$-body algorithm.
-It is possible to expand $\gnp(\kdroot{X}, \kdroot{Y})$ into subproblems $(X_1,Y_1), (X_2,Y_2), ..., (X_k, Y_k)$ such that $\Union_{1 \leq i \leq k} (X_i \times Y_i) = \kdroot{X} \times \kdroot{Y}$, merging the results using $\odot$ and $\otimes$\authorsnote{There are some restrictions on the types of divisions possible.}.
-For now, we restrict our discussion of decomposition in terms of tree node pairs since they are natural units of work for dual-tree algorithms.
+Parallelization requires a problem decomposition -- fortunately, a second-order generalized $N$-body problem, by definition, is decomposable in two orthogonal ways.
+We may consider parallelization as an allowable expansion pattern permitted by the Generalized $N$-body Algorithm.
+$\gnp(\kdroot{Q}, \kdroot{R})$ may be expanded into subproblems $(Q_1,R_1), (Q_2,R_2), ..., (Q_k, R_k)$ such that $\Union_{1 \leq i \leq k} (Q_i \times R_i) = \kdroot{Q} \times \kdroot{R}$.
+Each subproblem can be executed in parallel, and merged using $\odot$ ($\map$ for query-reference problems) and $\otimes$.
+Since the natural unit of subdivision for dual-tree algorithms is a tree node, we concentrate on decompositions where $Q_i$ and $R_i$ are tree nodes.
 
-Since intrinsic pruning is agnostic to expansion pattern, any reasonable decomposition would have little effect on serial performance.
-However, for query-reference problems with extrinsic pruning, expansion pattern is critical to the quality of $\inmu(Q, \kdroot{R})$ used for pruning decisions.
-Consider a decomposition over the reference tree in a query-reference problem, i.e. $(\kdroot{Q}, R_1), (\kdroot{Q}, R_2), ..., (\kdroot{Q}, R_k)$.
-Each processor refines its value of $\inmu(\kdroot{Q}, R_i)$, yet $\inmu(Q, \kdroot{R})$ is needed for pruning.
-To circumvent this, processors may periodically exchange values of $\mu$.
-However, dividing work by queries $(Q_1, \kdroot{R}), (Q_2, \kdroot{R}), ..., (Q_k, \kdroot{R})$ can keep all pruning information local, as $\inmu(Q_i, \kdroot{R})$ needs to know nothing about other queries.
-Information transfer is only needed to obtain locally essential portions of the data and communicate the final results.
+Although many decompositions are necessary, we decompose the problem based only the query tree into tasks $(Q_1, \kdroot{R}), (Q_2, \kdroot{R}), ..., (Q_k, \kdroot{R})$.
+Since $\odot$ is $\map$, all writable information is query-specific.
+Thus, the query-based decomposition results in zero writes to shared data, and thus no write synchronization is necessary.
+Furthermore, extrinsic pruning is highly dependent on the quality of $\inmu(Q, \kdroot(R))$ for a considered query node $Q$.
+Considering the entire reference tree on a single processor therefore promotes pruning by having a higher-quality value of $\inmu$ without extra communication.
 
-Continuing, consider decomposing both trees for intrinsic-prune-only problems.
-(Without loss of generality, we label the trees query and reference even for single-operator reduce problems.)
-When all pairs must be examined exhaustively, this technique is in fact optimal.
-Given $p$ processors, each processor considers $\frac{N}{\sqrt{p}}$ queries and $\frac{N}{\sqrt{p}}$ references, with the total communication cost for the entire system $O(N\sqrt{P})$ points.
-In practical dual-tree codes far-separated node pairs tend to require orders of magnitude less computation than nearby node pairs, and such wildly varying runtimes significantly complicate scheduling.
-However, the run time for a work item $(Q, \kdroot{R})$ is typically within a constant factor directly proportional to $|Q|$ unless the spatial distribution of points is pathologically non-uniform.
-Similarly, the size of the locally essential tree for $(Q, \kdroot{R})$ also tends to be $O(|Q|)$, since distant references typically do not require exploration.
-For a sufficiently large number of processors, $O(\frac{N}{p})$ fares significantly better than the alternative $O(\frac{N}{\sqrt{p}})$ points per processor.
-Although future research may show certain cases to the contrary, in this paper, we here only decompose on the query tree.
+For single-operator problems like two-point correlation, one might consider decomposing both the query and reference tree.
+Unfortunately, the execution time of distant node pairs tends to be orders of magnitude less that of nearby node pairs; such variance is extremely problematic for a generalized scheduler.
+Our experience shows that considering the same set of references for each query node is typically quite manageable for even simple schedulres\authorsnote{Verify that we show this}.
+
+Finally, it is worth noting that past parallelization of both Barnes-Hut and the FMM universally, to our knowledge, take the approach of dividing queries among processors \cite{all, of, the, nbody, parallelization, papers}.
+We therefore refer to tasks synonymously with nodes of the query tree.
+Typically, each processor executes several tasks over the course of the computation in order to allow dynamic task migration\authorsnote{Note on dichromatic problems?}.
 
 \subsection{Communication}
 
-In our proof-of-concept cluster implementation, we take advantage of Salmon and Warren's observation in \cite{salmon97parallel} that for treecodes, efficiency for disk-resident out-of-core implementations mirrors communication efficiency in a parallel implementation\footnote{In fact, our software is intended eventually to support out-of-core execution.}.
-By far, the greatest communication cost is sending data points to machines that need them.
-Our software automatically serializes points, tree nodes, results, and user data into equal-sized blocks, forming the fundamental unit of communication.
-Workers request blocks of data on demand.
+Communication is one of the fundamental factors inhibiting scalability of parallel algorithms, with experience showing it can be the primary scalability inhibitor for generalized $N$-body methods.
+Although a query-based decomposition allows all writes to be independent, each task may need to consider interactions with arbitrary portions of the reference tree.
+Previous literature\cite{etc, etc, etc} refers to this portion of the references as a \defterm{locally essential tree}.
+This is in contrast to the problem's \defterm{domain decomposition}, a one-to-one or many-to-one assignment of query tree nodes to processors.
 
-To assist block decomposition, our tree-building algorithm recursively partitions data points on the block-rounded median of the dimension with the greatest range, until the number of points fits in a block.
-Since splits are rounded to block boundaries, eventually, the splits lead to tree nodes that are exactly a single block of points and cannot be split further this way.
-This node is then recursively partitioned into leaves based on the midpoint of the dimension with the greatest range.
-The median-based splits simplify scheduling and assist the dual-tree algorithm at a coarser granularity, whereas the midpoint-based splits at a finer granularity allow better pruning in the face of local outliers.
-A typical block size \authorsnote{Note that the optimal block size is intimately related to the ratio of transfer time to latency on the communications medium} is 512 points, with a maximum 32 points per leaf.
-Note that with 32 points per leaf, there are relatively few tree nodes compared to points, ensuring that points, not tree nodes, dominate communication cost.
+{\bf Domain decompositions.}
+A good domain decomposition for a single-tree algorithm allows maximal overlap among the locally essential trees of query points, thereby minimizing the locally essential tree for that processor.
+In their distributed implementation of Barnes-Hut, Salmon and Warren\cite{salmon, salmon} use a decomposition based on an orthogonal recursive bisection (ORB), which is roughly a $kd$-tree that is balanced by estimated runtime.
+Each processor is then assigned to a leaf in the orthogonal recursive bisection.
+Singh et al. describe an alternate \defterm{cost-zones} decomposition\cite{singh} that instead sorts the query points along a Morton ordering of the oct-tree\footnote{A Morton ordering is simplistically a left-to-right traversal of an oct-tree's leaves.  For $kd$-trees, a skewed Morton ordering can be computed in the same way.}.
+The points are then divided into contiguous portions of roughly equal estimated runtime.
+Singh shows\cite{singh} that this technique typically performs better than the ORB decomposition since it uses the same decomposition as the tree.
 
-In this paper we focus on convenentional use cases where the data originates on one machine, the tree is quickly built locally, and then the blocks representing the tree and data are distributed.
-Such an implementation is not suitable for massive datacenter\authorsnote{i.e. ``Google''} scenarios where data originates distributed among machines; however, the existence of efficient parallel tree-building algorithms \cite{alfuraih00parallel} makes such an implementation inevitable.
+Since our data lie in $kd$-trees, which are isomorphic with an ORB tree, cost-zones is not necessarily beneficial.
+\THOR initially assigns points to processors by assigning large nodes of a balanced $kd$-tree.
+However, we later show one of \THOR's dynamic schedulers, to compensate for runtime variations, assigns smaller tasks using a Morton ordering of query nodes within the ORB domain decomposition.
 
-Ideally, each block should reside on the computer most likely to use it.
-Unfortunately, such an implementation requires significant cooperation between the scheduler and data distribution and presents a formidable theoretical and technical challenges.
-With a small loss in performance, we instead distribute blocks randomly by taking the block ID number modulo the number of machines\authorsnote{I should consistently use terms \defterm{processor} and \defterm{machine}, or some other scheme, to distinguish threads and address spaces}.
-We find that this scales to (insert size here)-sized clusters.
+{\bf Nature of communication.}
+Several authors\cite{singh, liu} describe the data-intensive nature of $N$-body methods to be a formidable problem in parallelization using distributed-memory systems and instead promote more costly NUMA shared-memory architectures to achieve parallelization.
+However, generalized $N$-body vary widely in performance characteristics.
+A low-dimensional nearest neighbor computation typically finishes computation so quickly that parallelization is rarely helpful -- 16 million three-dimensional points can be computed in a few of seconds.
+Compute-intensive dual-tree algorithms instead parallelize extremely well, since the amount of computation is high compared to communication.
+Nonetheless, several authors have made successful cluster implementations of both Barnes-Hut and the Fast Multipole Method.
+
+Initially, Salmon and Warren\cite{makesure, thisisright} promote the idea of sender-based communication for this problem.
+Each machine computes {\it a priori} which of its own points and nodes belong to the locally essential trees of other machines, and sends them in advance.
+The motivation of sender-based communication is to avoid the latency of waiting for a response.
+Such computation is possible since Barnes-Hut's pruning criterion is based only on the bounding box and distances of the cells; however, dual-tree algorithms may have much more diverse pruning criteria that cannot be computed without actually beginning computation.
+A few years later, however, the same authors describe\cite{salmon97parallel} a successful implementation that fetches data on demand by grouping points into \defterm{blocks} of a fixed size.
+Although grouping points into blocks had the initial goal of allowing an out-of-core $N$-body simulator, the authors show this technique even yields excellent satisfactory parallel performance.
+In this paper, we implement a cache system based on this same principle for parallelism.
+
+\authorsnote{briefly mention SAM, NESL, and eager consistency here}
+
+{\bf Distributed cache system.}
+\THOR utilizes a software-based cache system not unlike the system by Salmon and Warren\footnote{We use a different high-level abstraction of array indices versus pointers, our computation is multi-threaded, and all of our communication is asynchronous.}.
+A \defterm{cached array} is an array distributed in fixed-sized blocks, whose architecture is depicted in \fig{cache}.
+Blocks in the point array are roughly 100 points or 8 kilobytes; for the nodes array, 8 nodes or 2 kilobytes.
+We separate nodes from points to allow independent block-size control and for simpler programmability.
+The array is accessed with explicit locking and unlocking of elements and their associated blocks into memory.
+
+\begin{figure}
+  \hspace{-.17in}
+  \includegraphics[width=3.5in,height=2.3in]{DistributedArchitecture.eps}
+  \vspace{-.3in}
+  \
+  \caption{\label{fig:cache} A single distributed cache in THOR.}
+\end{figure}
+
+The primary cache is a set-associative LRU cache\footnote{We use 16-block sets, although we omit empirical evidence that a 4-way cache is nearly as good as a fully associative one.} that is shared among all threads.
+Each cache maintains for each block which machine each it resides, whether it is in memory, and if out-of-core execution is permitted and it is local, its location on local disk.
+Blocks are requested from its location and locked into memory on first use, and when unlocked, placed in the set-associative cache.
+Unlike most distributed caches, we use a remarkably simple coherency protocol.
+Simultaneous reads and writes to the same block are permitted if they are restricted to explicitly declared disjoint contiguous regions.
+When the block is purged, only the overlapping contiguous regions are written.
+Global consistency is ensured at global synchronization points, which occur after all computation has finished.
+
+To avoid contention and caching overhead, each thread has a small (about 64 blocks) FIFO cache of blocks locked into memory.
+The user code locks blocks into the FIFO cache\footnote{The FIFO's sizee places a hard limit on the number of active blocks.  Fortunately, 64 blocks is quite generous for balanced tree traversals.}.
+Blocks are evicted to the set-associative cache in a round-robin fashion, skipping locked blocks.
+
+{\bf Data layout.}
+\THOR stores points are in tree-based skewed Morton ordering.
+Additionally, we build the $kd$-tree such splits are aligned to block boundaries until a single block is reached, ensuring a one-to-one mapping between tree nodes and blocks of points.
+Thus, storage spatial locality mirrors the metric spatial locality.
+Tree nodes are stored pre-order, ensuring that subtrees correspond to contiguous ranges of nodes, and thus can be manipulated using our coherence model.
+
+Nodes and points are then distributed block-by-block via the above domain decomposition.
+If tree sections cross block boundaries, a tiebreaker is used.
 
 \subsection{Scheduling}
+
+... reread the banicescu paper
+...
 
 In earlier sections, we declared that a software system attempting to parallelize {\it any} generalized $N$-body problem cannot assume the ability to predict run times with the accuracy available via a dry run, when a dry run may take as much time as an actual computation.
 Instead, we dynamically assign tasks to processors during the course of computation.
@@ -828,11 +881,13 @@ However, since scheduling is such a small cost compared to the dual-tree computa
 
 \section{Experimentation}
 
-We ran our experiments on (insert type of machine here).
+- What is the overhead of the caching architecture, and how many FIFO misses occur
 
-Multithreaded performance goes here.
+- What is the overhead of task decomposition
 
-Cluster performance goes here.
+- Multithreaded performance
+
+- Cluster performance
 
 \section{Future Work}
 
