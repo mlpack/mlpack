@@ -87,7 +87,7 @@
  C++ is our language of choice:
  \begin{itemize}
  \itemt{Popular} Well-known even among non-CS, and reasonably portable.
- \itemt{Speed} Low-level, allows sidestepping overhead and direct control.
+ \itemt{Fast} Low-level, low-overhead with direct machine control.
  \itemt{High-Level} Enough to allow widespread code reuse.
  \end{itemize}
  Python is our scripting language of choice.
@@ -97,16 +97,16 @@
 \begin{slide}{Design Decisions}
  After a month of debate, we decided:
  \begin{itemize}
-  \itemt{Avoid Class Hierarchies}
-  Shallow class hierarchies.  Templates over virtual functions.
+  \itemt{Shallow Class Hierarchies}
+  Avoid unnecessary object-oriented abstraction.
   \itemt{Ease/Power Duality}
   Simple solutions for simple scenarios, but have separate ``power user'' features available.
   \itemt{Default Constructors with Explicit Initializers}
   Allows for greater control over object lifecycle.
   We compensate with good debugging checks.
-  \itemt{Feels like C}
+  \itemt{C-like Feel}
   Many OO principles hinder rapid development algorithmic code.
-  Instead, incorporate OO as components mature or reach the ``core''.
+  OO is only used on components that need it\footnote{A {\tt class} does not OO make -- think virtual methods and design patterns.}.
  \end{itemize}
 \end{slide}
 
@@ -123,8 +123,8 @@
  \end{tabular}
 \end{slide}
 
-\begin{slide}{Features}
- Debug/Base:
+\begin{slide}{Features - Base}
+ Debug/Base ({\tt base}):
  \begin{itemize}
  \itemt{Runtime Checks} Low-overhead bounds checks and assertions.
  \itemt{Debug Mode} Checks can be disabled with a simple switch.
@@ -134,7 +134,7 @@
 \end{slide}
 
 \begin{slide}{Features - FASTexec}
- FASTexec:
+ FASTexec ({\tt fx}):
  \begin{itemize}
  \itemt{Modular Storage} Hierarchical storage of parameters, results, and timers.
  \itemt{Parameters} Modular command-line parameters.
@@ -147,8 +147,8 @@
   \includegraphics[width=2.2in]{g_assoc.ps}
 \end{slide}
 
-\begin{slide}{Features}
- Datasets:
+\begin{slide}{Features - Datasets}
+ Datasets ({\tt data}):
  \begin{itemize}
  \itemt{Double-Precision Storage} Data stored as a matrix of doubles.
  \itemt{Multiple Representations} Features may be continuous, integral, or nominal.
@@ -159,8 +159,8 @@
  \end{itemize}
 \end{slide}
 
-\begin{slide}{Features}
- Collections:
+\begin{slide}{Features - Collections}
+ Collections ({\tt col}):
  \begin{itemize}
  \itemt{ArrayList} Templated dynamic array, works with library standards.
  \itemt{Queues} Priority and FIFO queues.
@@ -169,8 +169,8 @@
  \end{itemize}
 \end{slide}
 
-\begin{slide}{Features}
- Linear Algebra:
+\begin{slide}{Features - Linear Algebra}
+ Linear Algebra ({\tt la}):
  \begin{itemize}
  \itemt{Matrices, Vectors} Compatible with dataset classes.
  \itemt{LAPACK Wrappers} Easy-to-use LAPACK wrappers.
@@ -178,7 +178,7 @@
  Supports custom built ATLAS, or builds reference implementation automatically.
  \end{itemize}
  \vspace*{.2in}
- Spatial Trees:
+ Spatial Trees ({\tt tree}):
  \begin{itemize}
  \itemt{Abstract} Trees have abstract bounding types.
  \itemt{Building} Currently, builds KD-trees.
@@ -186,8 +186,8 @@
  \end{itemize}
 \end{slide}
 
-\begin{slide}{Features}
- Other Math: \\
+\begin{slide}{Features - Math}
+ Other Math ({\tt math}): \\
  \begin{itemize}
  \item Various tools for discrete math, geometry, etc.
  \item Gaussian and Epanechnikov kernels.
@@ -195,7 +195,23 @@
  \end{itemize}
 \end{slide}
 
-\begin{slide}{Code Examples}
+\begin{slide}{Code Example - Main}
+ \vspace*{.3in}
+ We will write a {\tt main()} that: \\
+ \begin{itemize}
+ \item Does cross-validation on a KNN classifier.
+ \item Accepts parameters for number of cross validation folds and number
+ of nearest neighbors: \verb|./main --kfold/k=10 --knn/k=5 --fname=q.arff|
+ \item Builds by: \verb|fl-build main|
+ \item Yields results and timers for everything, for example:
+\begin{verbatim}
+/kfold/results/p_correct 0.805
+/kfold/timers/total/wall/sec 0.025244
+\end{verbatim}
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Code Example - Main}
  {\tt main()} for K Nearest Neighbors classifier:
  \vspace*{.1in}
 \begin{verbatim}
@@ -215,19 +231,31 @@ int main(int argc, char *argv[]) {
 \end{verbatim}
 \end{slide}
 
-\begin{slide}{Code Example}
- \vspace*{.3in}
- The last example: \\
- \begin{itemize}
- \item Accepts parameters for number of cross validation folds and number
- of nearest neighbors: \verb|./main --kfold/k=10 --knn/k=5 --fname=q.arff|
- \item Builds: \verb|fl-build main --mode=fast|
- \item Yields results (and timers for everything):
+\begin{slide}{Code Example - Building}
+ Build file ({\tt build.py}) for previous example, located in
+ the same directory as source code {\tt main.cc}:
+ \vspace{0.05in}
 \begin{verbatim}
-/kfold/results/p_correct 0.805
-/kfold/timers/total/wall/sec 0.025244
+  binrule(
+      name = "main",
+      sources = ["main.cc"],
+      deplibs = ["fastlib:fastlib"])
+
+  $$ fl-build main
 \end{verbatim}
- \end{itemize}
+ \vspace{0.05in}
+ If all you need is core FASTlib, you can skip the build file:
+ \vspace{0.05in}
+\begin{verbatim}
+  $$ fl-build main.cc
+\end{verbatim}
+ \vspace{0.05in}
+ Other options:
+\begin{verbatim}
+  $$ fl-build main --mode=fast --cflags="-DXYZ"
+  $$ make clean
+\end{verbatim}
+ 
 \end{slide}
 
 \begin{slide}{Code Example - 1 Nearest Neighbor}
@@ -235,19 +263,20 @@ int main(int argc, char *argv[]) {
 \begin{verbatim}
 int OneNNClassifier::Classify(
    const Vector& test) {
- double closest = DBL_MAX; int label = -1;
- for (index_t i = 0; i < matrix_.n_cols(); i++) {
+ double closest = DBL_MAX; double label = -1;
+ index_t d = matrix_.n_cols()-1; // dimension
+ for (index_t i = 0; i<matrix_.n_cols(); i++){
   Vector train;
-  matrix_.MakeColumnSubvector(i, 0,
-      matrix_.n_rows() - 1, &train);
+  matrix_.MakeColumnSubvector(i,0,d,&train);
   double dist_squared =
       la::DistanceSqEuclidean(test, train);
   if (unlikely(dist_squared < closest)) {
     closest = dist_squared;
-    label = int(
-        matrix_.get(i, matrix_.n_rows()-1));
-  } }
- return label; }
+    label = matrix_.get(i, d);
+  }
+ }
+ return int(label);
+}
 \end{verbatim}
 \end{slide}
 
@@ -280,11 +309,33 @@ void DoCache(datanode *module,
   }
   fx_timer_stop(module, "permute");
 }
-void (datanode *module) {
+void DoBoth(datanode *module) {
   ArrayList<int> a, b;
   DoCache(fx_submodule(module, "a", "a"), &a);
-  DoCache(fx_submodule(module, "b", "a"), &b);
+  DoCache(fx_submodule(module, "b", "b"), &b);
 }
+\end{verbatim}
+\end{slide}
+
+\begin{slide}{Code Example - Modules (cont.)}
+\vspace{-.17in}
+\begin{verbatim}
+int main(int argc, char *argv[]) {
+  fx_init(argc, argv);
+  DoBoth(fx_root);
+  fx_done();
+}
+
+$$ ./main --a/random=false --a/n=10000000
+          --b/random=true --b/n=10000000
+
+/a/params/n 10000000
+/a/params/random false
+/a/timers/permute/wall/cycles 177184032
+/a/timers/permute/wall/sec 0.111000
+/b/params/n 10000000
+/b/params/random true
+/b/timers/permute/wall/sec 1.953043
 \end{verbatim}
 \end{slide}
 
@@ -333,7 +384,7 @@ void (datanode *module) {
  \itemt{Doxygen}
  Inline source documentation with Doxygen, a Javadoc-like tool.
  http://www-static.cc.gatech.edu/\~~garryb/fastlib/html
- \itemt{Brains}
+ \itemt{Email}
  The FASTlib developers are just an email away.
  \end{itemize}
 \end{slide}

@@ -564,7 +564,11 @@ class Loader:
       register(name, BinRule(longname, sourcerules(Types.LINKABLE, deplibs)))
     build_file_path = os.path.join(real_path, BUILD_FILE)
     print "... Reading %s" % (build_file_path)
-    text = util.readfile(build_file_path)
+    try:
+      text = util.readfile(build_file_path)
+    except IOError:
+      print "!!! Build file '%s' not found, assuming blank." % build_file_path
+      text = ""
     # remove DOS line feeds and add posttext
     text = text.replace("\r", "") + "\n" + posttext
     exec text in {"register" : register, "Types" : Types,
