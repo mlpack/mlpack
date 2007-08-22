@@ -1,4 +1,4 @@
-# Scroll down to see the main part
+# Scroll down to see the main part.
 # (This first part is dedicated to compiling and installing LAPACK.)
 
 wgetrule(
@@ -6,7 +6,7 @@ wgetrule(
     type = Types.ANY,
     url = "http://www.cc.gatech.edu/~garryb/fastlib/blaspack.tgz")
 
-def doit_compile_lapack(sysentry, files, params):
+def gen_compile_lapack(sysentry, files, params):
   blaspack_tgz = files["blaspack_tgz"].single(Types.ANY)
   libblaspack = sysentry.file("KEEP/libblaspack.a", "arch", "kernel", "compiler")
   workspace_dir = os.path.join(os.path.dirname(libblaspack.name), "libblaspack_workspace")
@@ -18,9 +18,10 @@ def doit_compile_lapack(sysentry, files, params):
   sysentry.command("mkdir -p %s" % sq(workspace_dir))
   sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq(blaspack_tgz.name)))
   sysentry.command("echo '*** Compiling LAPACK with BLAS reference implementation.'")
+  sysentry.command("echo '!!! LAPACK WARNING: For better performance, install ATLAS or Intel MKL.'")
   sysentry.command("echo '... Our compilation differs slightly from regular LAPACK/BLAS:'")
-  sysentry.command("echo '... NOTE 1: We omit complex-number routines (halves compile time).'")
-  sysentry.command("echo '... NOTE 2: We require case sensitivity for LAPACK/BLAS string parameters.'")
+  sysentry.command("echo '... NOTE 2: We omit complex-number routines (halves compile time).'")
+  sysentry.command("echo '... NOTE 3: We require case sensitivity for LAPACK/BLAS string parameters.'")
   sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
   # Loop unrolling is not useful on modern architectures (and bloats EXE size).
   # Thus, we only compile -O2.
@@ -38,7 +39,7 @@ def doit_compile_lapack(sysentry, files, params):
 customrule(
     name = "libblaspack",
     dependencies = {"blaspack_tgz": [find(":blaspack_tgz")]},
-    doit_fn = doit_compile_lapack)
+    doit_fn = gen_compile_lapack)
 
 #---- This is the main part of LA package
 
