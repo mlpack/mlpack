@@ -114,8 +114,10 @@ print "*** Target Rule: '%s'" % target_name
 loader = buildsys.Loader(real_rootpath)
 if implicit:
   target_shortname = target_name[target_name.index(":")+1:]
-  posttext = "binrule(name = '%s', sources=['%s.cc'], linkables = [':'])" \
-      % (target_shortname, target_shortname)
+  fx.param_default("lib", "fastlib:fastlib")
+  lib = fx.param_str("lib")
+  posttext = "binrule(name = '%s', sources=['%s.cc'], linkables = ['%s'])" \
+      % (target_shortname, target_shortname, lib)
 else:
   posttext = ""
 target = loader.find_rule(target_name, real_path, fake_path, posttext)
