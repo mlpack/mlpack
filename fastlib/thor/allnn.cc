@@ -14,13 +14,6 @@
  */
 class Allnn {
  public:
-  /** The bounding type. Required by THOR. */
-  typedef DHrectBound<2> Bound;
-
-  /** The type of point in use. Required by THOR. */
-  typedef ThorVectorPoint QPoint;
-  typedef ThorVectorPoint RPoint;
-
   /**
    * All parameters required by the execution of the algorithm.
    *
@@ -47,6 +40,13 @@ class Allnn {
       dim = vector_dimension;
     }
   };
+
+  /** The bounding type. Required by THOR. */
+  typedef DHrectBound<2> Bound;
+
+  /** The type of point in use. Required by THOR. */
+  typedef ThorVectorPoint QPoint;
+  typedef ThorVectorPoint RPoint;
 
   typedef BlankStat QStat;
   typedef BlankStat RStat;

@@ -1221,7 +1221,7 @@ namespace la {
    * ... assign A to [0 1; -1 0]
    * Vector s;     // Not initialized
    * Matrix U, VT; // Not initialized
-   * la::SvdInit(A, &s, &U, &VT);
+   * la::SVDInit(A, &s, &U, &VT);
    * ... s is now [1 1]
    * ... U is now [0 1; 1 0]
    * ... V is now [-1 0; 0 1]

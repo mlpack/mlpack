@@ -172,6 +172,8 @@ def escape_latex(str):
   for c in str:
     if c == '\\':
       result += "$\\backslash$"
+    elif c == '~':
+      result += "\\~~"
     elif c in "#%&~$_^{}":
       result += "\\" + c
     else:

@@ -2,6 +2,8 @@
 
 USAGE="""
 fx-rpc -- run programs written with garry's makeshift sockets api thing
+
+more help to come
 """
 
 import os
@@ -12,6 +14,10 @@ import time
 import random
 
 # note: we're not using fx for parameter parsing right now...
+
+if len(sys.argv) <= 1:
+  print USAGE
+  os.exit(1);
 
 n = int(sys.argv[1])
 if n <= 0:
