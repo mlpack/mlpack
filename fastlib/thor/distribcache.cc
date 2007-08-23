@@ -607,6 +607,7 @@ void DistributedCache::HandleRealMiss_(blockid_t blockid) {
 
   mutex_.Lock();
   int is_reading = block->is_reading;
+  DEBUG_ASSERT(block->data == NULL);
   block->is_reading = NOT_READING;
   block->data = data;
   if (is_reading == WAITING) {
