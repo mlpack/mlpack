@@ -6,6 +6,7 @@
 
 #include "blockdev.h"
 
+#define _XOPEN_SOURCE 600
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -59,6 +60,8 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
     FATAL("Could not open file '%s'.", fname);
   }
 
+  posix_fadvise(fd_, 0, 0, POSIX_FADV_RANDOM);
+
   mode_ = mode;
 }
 
@@ -72,6 +75,7 @@ void RandomAccessFile::Close() {
 void RandomAccessFile::Write(off_t pos, size_t len, const char *buffer) {
   off_t rv;
 
+  mutex_.Lock();
   rv = lseek(fd_, pos, SEEK_SET);
 
   assert(rv >= 0);
@@ -89,11 +93,13 @@ void RandomAccessFile::Write(off_t pos, size_t len, const char *buffer) {
 
     buffer += written;
   }
+  mutex_.Unlock();
 }
 
 void RandomAccessFile::Read(off_t pos, size_t len, char *buffer) {
   off_t rv;
 
+  mutex_.Lock();
   rv = lseek(fd_, pos, SEEK_SET);
 
   assert(rv >= 0);
@@ -116,6 +122,7 @@ void RandomAccessFile::Read(off_t pos, size_t len, char *buffer) {
 
     buffer += amount_read;
   }
+  mutex_.Unlock();
 }
 
 off_t RandomAccessFile::FindSize() const {

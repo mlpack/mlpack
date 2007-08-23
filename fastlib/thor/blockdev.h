@@ -250,6 +250,8 @@ class RandomAccessFile {
   mode_t mode_;
   /** The filename open. */
   String fname_;
+  /** Mutex to protect the lseek-read sequence. */
+  Mutex mutex_;
 
  public:
   RandomAccessFile() {}
