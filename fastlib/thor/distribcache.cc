@@ -200,6 +200,7 @@ void DistributedCache::BestEffortWriteback(double portion) {
       if (blockid >= 0) {
         BlockMetadata *block = &blocks[blockid];
         DEBUG_ASSERT_MSG(!block->is_busy(), "Why is a busy block in LRU?");
+        DEBUG_ASSERT(!block->is_reading);
         if (block->is_dirty() && !block->is_owner()) {
           WritebackDirtyRemote_(blockid, block->data);
         }
@@ -380,21 +381,20 @@ BlockDevice::blockid_t DistributedCache::AllocBlocks(
   index_t blockid = RemoteAllocBlocks(n_blocks_to_alloc, owner, my_rank_);
   if (owner != my_rank_) {
     // Tell the owner that I've allocated a block in their name.
-    DoOwnerRequest_(owner, blockid, blockid + n_blocks_to_alloc);
   }
   return blockid;
 }
 
-void DistributedCache::DoOwnerRequest_(int owner,
+void DistributedCache::DoOwnerRequest_(int dest, int new_owner,
     blockid_t blockid, blockid_t end_block) {
   BasicTransaction transaction;
   transaction.Init(channel_num_);
-  Message *message = transaction.CreateMessage(owner, sizeof(Request));
+  Message *message = transaction.CreateMessage(dest, sizeof(Request));
   Request *request = message->data_as<Request>();
   request->type = Request::OWNER;
   request->field1 = blockid;
   request->field2 = end_block;
-  request->field3 = 0;
+  request->field3 = new_owner;
   transaction.Send(message);
   transaction.Done();
 }
@@ -427,6 +427,10 @@ void DistributedCache::MarkOwner_(int owner,
   int32 value = (owner == my_rank_) ? SELF_OWNER_UNALLOCATED : (~owner);
 
   for (blockid_t i = begin; i < end; i++) {
+    if (blocks_[i].is_owner()) {
+      DEBUG_ASSERT(!blocks_[i].is_dirty());
+      RecycleLocalBlock_(blocks_[i].local_blockid());
+    }
     blocks_[i].value = value;
   }
 }
@@ -447,7 +451,8 @@ BlockDevice::blockid_t DistributedCache::DoAllocRequest_(
   return retval;
 }
 
-void DistributedCache::HandleRemoteOwner_(blockid_t block, blockid_t end) {
+void DistributedCache::HandleRemoteOwner_(blockid_t block, blockid_t end,
+    int new_owner) {
   mutex_.Lock();
   n_blocks_ = max(n_blocks_, end);
   blocks_.Resize(n_blocks_);
@@ -456,24 +461,24 @@ void DistributedCache::HandleRemoteOwner_(blockid_t block, blockid_t end) {
 }
 
 void DistributedCache::GiveOwnership(blockid_t blockid, int new_owner) {
-  if (likely(new_owner != my_rank_)) {
-    // mark whole block as dirty and change its owner.
-    mutex_.Lock();
-    BlockMetadata *block = &blocks_[blockid];
-    if (unlikely(block->locks == 0)) {
-      DecacheBlock_(blockid);
-      block->locks = 0;
-    }
-    block->status = FULLY_DIRTY;
-    DEBUG_ASSERT_MSG(block->is_owner(),
-        "Can only give ownership if I'm the owner");
-    RecycleLocalBlock_(block->local_blockid());
-    block->value = ~new_owner;
-    if (unlikely(block->locks == 0)) {
-      EncacheBlock_(blockid);
-    }
-    mutex_.Unlock();
+  // mark whole block as dirty and change its owner.
+  mutex_.Lock();
+  BlockMetadata *block = &blocks_[blockid];
+  if (unlikely(block->locks == 0)) {
+    DecacheBlock_(blockid);
+    block->locks = 0;
   }
+  block->status = FULLY_DIRTY;
+  if (!block->is_owner()) {
+    DoOwnerRequest_(block->owner(), new_owner, blockid, blockid + 1);
+  } else {
+    RecycleLocalBlock_(block->local_blockid());
+  }
+  block->value = ~new_owner;
+  if (unlikely(block->locks == 0)) {
+    EncacheBlock_(blockid);
+  }
+  mutex_.Unlock();
 }
 
 void DistributedCache::RecycleLocalBlock_(blockid_t local_blockid) {
@@ -524,6 +529,7 @@ void DistributedCache::DecacheBlock_(blockid_t blockid) {
   DEBUG_ASSERT(!block->is_busy());
 
   if (likely(block->is_in_core())) {
+    DEBUG_ASSERT(!block->is_reading);
     // It's in core, but its lock count was zero, so that means it's
     // definitely definitely in cache and in this line.
     for (int i = 0;; i++) {
@@ -543,6 +549,7 @@ void DistributedCache::HandleMiss_(blockid_t blockid) {
   BlockMetadata *block = &blocks_[blockid];
 
   DEBUG_ASSERT(block->data == NULL);
+  DEBUG_ASSERT(block->locks == 0);
 
   if (block->is_reading) {
     // Increase is_reading so that the busy thread will wake up the I/O
@@ -580,6 +587,7 @@ void DistributedCache::HandleMiss_(blockid_t blockid) {
     }
 
     handler_->BlockThaw(blockid, 0, n_block_bytes_, block->data);
+    DEBUG_ASSERT(block->locks == 0);
     block->locks = 1;
   }
 }
@@ -872,7 +880,8 @@ void DistributedCache::ResponseTransaction::HandleMessage(
     case Request::OWNER: {
       blockid_t blockid = request->field1;
       blockid_t end_blockid = request->field2;
-      cache_->HandleRemoteOwner_(blockid, end_blockid);
+      blockid_t owner = request->field3;
+      cache_->HandleRemoteOwner_(blockid, end_blockid, owner);
     }
     break;
     case Request::ALLOC: {

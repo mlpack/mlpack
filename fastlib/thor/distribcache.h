@@ -712,7 +712,7 @@ class DistributedCache : public BlockDevice {
   /** Mark a particular owner for a region of blocks. */
   void MarkOwner_(int owner, blockid_t begin, blockid_t end);
   /** Handle the fact that I'm suddenly the owner of these blocks. */
-  void HandleRemoteOwner_(blockid_t block, blockid_t end);
+  void HandleRemoteOwner_(blockid_t block, blockid_t end, int new_owner);
   /** Recycles a local block ID for use later. */
   void RecycleLocalBlock_(blockid_t blockid);	
 
@@ -732,14 +732,16 @@ class DistributedCache : public BlockDevice {
    */
   blockid_t DoAllocRequest_(blockid_t n_blocks_to_alloc, int owner);
   /**
-   * Informs a peer that it has become the owner of a block.
+   * Informs a peer about an ownership change.
    *
    * Whenever we allocate a block but declare someone else the owner, we
    * must inform them that they are the owner, so that in a synchronization
    * point, the remote host will correctly be able to identify the block
    * as their own.
+   *
+   * This function is also used to grab ownership from another machine.
    */
-  void DoOwnerRequest_(int owner, blockid_t blockid, blockid_t end_block);
+  void DoOwnerRequest_(int dest, int owner, blockid_t blockid, blockid_t end_block);
   /**
    * Sends out a write to be executed.
    *
