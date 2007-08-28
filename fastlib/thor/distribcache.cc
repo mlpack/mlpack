@@ -474,7 +474,11 @@ void DistributedCache::GiveOwnership(blockid_t blockid, int new_owner) {
   } else {
     RecycleLocalBlock_(block->local_blockid());
   }
-  block->value = ~new_owner;
+  if (new_owner == my_rank_) {
+    block->value = SELF_OWNER_UNALLOCATED;
+  } else {
+    block->value = ~new_owner;
+  }
   if (unlikely(block->locks == 0)) {
     EncacheBlock_(blockid);
   }

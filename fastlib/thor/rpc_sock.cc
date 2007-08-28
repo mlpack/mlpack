@@ -190,7 +190,8 @@ void RpcSockImpl::Unregister(int channel_num) {
 }
 
 void RpcSockImpl::Send(Message *message) {
-  DEBUG_ASSERT(n_peers_ != 1);
+  DEBUG_ASSERT_MSG(n_peers_ != 1,
+     "I'm the only machine -- why am I trying to send messages over the network?");
   Peer *peer = &peers_[message->peer()];
   peer->mutex.Lock();
   if (likely(message->transaction_id() != TID_CONTROL)) {
