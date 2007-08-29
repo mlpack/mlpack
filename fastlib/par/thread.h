@@ -129,34 +129,41 @@ class Thread {
 };
 
 /**
- * Mutual exclusion lock to prevent threads from clobbering results.
+ * Mutual exclusion lock to protect shared data.
  */
 class Mutex {
   FORBID_COPY(Mutex);
   friend class WaitCondition;
  
  public:
-  struct Recursive {};
-
- private:
-  static pthread_mutex_t fast_mutex_;
-  static pthread_mutex_t recursive_mutex_;
+  struct DummyRecursiveAttribute {};
 
  private:
   mutable pthread_mutex_t mutex_;
- 
+
  public:
   static Mutex global;
- 
+
  public:
   Mutex() {
-    mutex_ = fast_mutex_;
-    //pthread_mutex_init(&mutex_, NULL);
+#if defined(DEBUG) && defined(PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP)
+    mutex_ = (pthread_mutex_t)PTHREAD_ERRORCHECK_MUTEX_INITIALIZER_NP;
+#else
+    mutex_ = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
+#endif
   }
-  Mutex(Recursive v) {
-    mutex_ = recursive_mutex_;
+  Mutex(DummyRecursiveAttribute v) {
+#ifdef PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP
+    mutex_ = (pthread_mutex_t)PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+#else
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE_NP);
+    pthread_mutex_init(&mutex_, &attr);
+    pthread_mutexattr_destroy(&attr);
+#endif
   }
-  
+
   ~Mutex() {
     pthread_mutex_destroy(&mutex_);
   }
@@ -170,7 +177,7 @@ class Mutex {
   
   /** Tries to lock, returns false if doing so would require waiting. */
   bool TryLock() const {
-    return likely(pthread_mutex_trylock(&mutex_) != 0);
+    return likely(pthread_mutex_trylock(&mutex_) == 0);
   }
   
   /** Releases the lock. */
@@ -178,14 +185,16 @@ class Mutex {
     pthread_mutex_unlock(&mutex_);
   }
 };
+
 /**
- * Mutual exclusion lock to prevent threads from clobbering results.
+ * Mutual exclusion lock to protect shared data, but can be locked and
+ * unlocked multiple times by the same thread without a deadlock.
  */
 class RecursiveMutex : public Mutex {
   FORBID_COPY(RecursiveMutex);
 
  public:
-  RecursiveMutex() : Mutex(Recursive()) {}
+  RecursiveMutex() : Mutex(DummyRecursiveAttribute()) {}
 };
 
 /**
