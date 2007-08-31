@@ -200,6 +200,7 @@ void CacheArray<T>::Init(
       static_cast<CacheArrayBlockHandler<T>*>(
           cache_in->block_handler());
 
+  DEBUG_ONLY(n_fifo_locks_ = 0);
   cache_ = cache_in;
   begin_ = begin_index_in;
   end_ = end_index_in;
@@ -246,6 +247,9 @@ void CacheArray<T>::Flush() {
       fifo_[i] = -1;
     }
   }
+  
+  DEBUG_ONLY(cache_->AddFifoLocks(n_fifo_locks_));
+  DEBUG_ONLY(n_fifo_locks_ = 0);
 }
 
 template<typename T>

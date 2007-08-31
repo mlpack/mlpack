@@ -142,6 +142,11 @@ class CacheArray {
 
   /** The underlying distributed cache. */
   DistributedCache *cache_;
+  
+#ifdef DEBUG
+  /** Number of locks made to this cache. */
+  int64 n_fifo_locks_;
+#endif
 
  public:
   /**
@@ -394,6 +399,7 @@ class CacheArray {
         + adjusted_metadatas_;
     char *data = metadata->data;
     BlockDevice::offset_t offset = Offset(element_id);
+    DEBUG_ONLY(n_fifo_locks_++);
     ++metadata->lock_count;
 
     if (likely(data != NULL)) {
