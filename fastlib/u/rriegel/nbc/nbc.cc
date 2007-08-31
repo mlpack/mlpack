@@ -183,7 +183,7 @@ class Nbc {
      * Finalize parameters (Not THOR).
      */
     void ComputeConsts(int count_pos_in, int count_neg_in) {
-      double epsilon = min(threshold, 1 - threshold) * 1e-2;
+      double epsilon = min(threshold, 1 - threshold) * 1e-4;
 
       count_pos = count_pos_in;
       count_neg = count_neg_in;
@@ -850,6 +850,10 @@ class Nbc {
       if (param.loo) {
 	// Withhold contribution of q from density for its class
 	if (q.is_pos()) {
+	  DEBUG_ASSERT_MSG(total_density_pos.hi > param.peak_pos,
+			   "$pos bd %g <= peak %g",
+			   total_density_pos.hi,
+			   param.peak_pos);
 	  if (unlikely(
 	       param.const_pos_loo.lo * max(0.0,total_density_pos.lo - param.peak_pos) * q.pi_pos()
 	       > param.const_neg.hi * total_density_neg.hi * q.pi_neg())) {
@@ -860,6 +864,10 @@ class Nbc {
 	    q_result->label &= LAB_NEG;
 	  }
 	} else {
+	  DEBUG_ASSERT_MSG(total_density_neg.hi > param.peak_neg,
+			   "$neg bd %g <= peak %g",
+			   total_density_neg.hi,
+			   param.peak_neg);
 	  if (unlikely(
 	       param.const_pos.lo * total_density_pos.lo * q.pi_pos()
 	       > param.const_neg_loo.hi * max(0.0,total_density_neg.hi - param.peak_neg) * q.pi_neg())) {
