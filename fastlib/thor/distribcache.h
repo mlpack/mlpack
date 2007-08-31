@@ -169,11 +169,15 @@ class DistributedCache : public BlockDevice {
    public:
     IoStats disk_stats;
     IoStats net_stats;
+    int64 n_locks;
+    int64 n_fifo_locks;
     ArrayList<BlockStatus> statuses;
     
     OT_DEF(SyncInfo) {
       OT_MY_OBJECT(disk_stats);
       OT_MY_OBJECT(net_stats);
+      OT_MY_OBJECT(n_locks);
+      OT_MY_OBJECT(n_fifo_locks);
       OT_MY_OBJECT(statuses);
     }
     
@@ -494,6 +498,15 @@ class DistributedCache : public BlockDevice {
   /** I/O stats for all network requests. */
   IoStats world_net_stats_;
 
+  /** Number of FIFO misses. */
+  int64 n_locks_;
+  /** Number of global FIFO misses. */
+  int64 world_n_locks_;
+  /** Number of FIFO hits+misses. */
+  int64 n_fifo_locks_;
+  /** Number of global FIFO hits+misses. */
+  int64 world_n_fifo_locks_;
+
   /** Indicates whether a sync event is going on. */
   bool syncing_;
 
@@ -629,6 +642,18 @@ class DistributedCache : public BlockDevice {
     return handler_;
   }
 
+  /** Gets the number of cache locks, i.e. FIFO misses. */
+  int64 n_locks() const {
+    return n_locks_;
+  }
+  /** Gets the number of FIFO locks. */
+  int64 n_fifo_locks() const {
+    return n_fifo_locks_;
+  }
+  /** Add a number of FIFO locks (called by the CacheArray.) */
+  void AddFifoLocks(int64 n_fifo_locks_to_add) {
+    n_fifo_locks_ += n_fifo_locks_to_add;
+  }
   /** IO statistics for local disk. */
   const IoStats& disk_stats() const {
     return disk_stats_;

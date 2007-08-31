@@ -90,6 +90,10 @@ void DistributedCache::InitCommon_(int channel_num_in) {
   net_stats_.Init();
   world_disk_stats_.Init();
   world_net_stats_.Init();
+  n_locks_ = 0;
+  world_n_locks_ = 0;
+  n_fifo_locks_ = 0;
+  world_n_fifo_locks_ = 0;
 
   blocks_.Init();
   handler_ = NULL;
@@ -125,6 +129,8 @@ void DistributedCache::HandleSyncInfo_(const SyncInfo& info) {
   HandleStatusInformation_(info.statuses);
   world_disk_stats_ = info.disk_stats;
   world_net_stats_ = info.net_stats;
+  world_n_locks_ = info.n_locks;
+  world_n_fifo_locks_ = info.n_fifo_locks;
   mutex_.Unlock();
 }
 
@@ -272,10 +278,6 @@ void DistributedCache::WaitSync(datanode *node) {
   mutex_.Lock();
   syncing_ = false;
   if (node) {
-    /*disk_stats().Report(n_block_bytes_, n_blocks_,
-        fx_submodule(node, NULL, "disk_stats"));
-    net_stats().Report(n_block_bytes_, n_blocks_, 
-        fx_submodule(node, NULL, "net_stats"));*/
     world_disk_stats().Report(n_block_bytes_, n_blocks_, 
         fx_submodule(node, NULL, "world_disk_stats"));
     if (rpc::n_peers() > 1) {
@@ -283,7 +285,17 @@ void DistributedCache::WaitSync(datanode *node) {
       world_net_stats().Report(n_block_bytes_, n_blocks_, 
           fx_submodule(node, NULL, "world_net_stats"));
     }
+    #ifdef DEBUG
+    fx_format_result(node, "world_n_locks", "%"L64"d", world_n_locks_);
+    fx_format_result(node, "world_lock_ratio", "%f",
+        1.0 * world_n_locks_ / n_blocks_);
+    fx_format_result(node, "world_n_fifo_locks", "%"L64"d", world_n_fifo_locks_);
+    fx_format_result(node, "world_fifo_miss_ratio", "%f",
+        1.0 * world_n_locks_ / world_n_fifo_locks_);
+    #endif
   }
+  n_locks_ = 0;
+  n_fifo_locks_ = 0;
   disk_stats_.Reset();
   net_stats_.Reset();
   mutex_.Unlock();
@@ -503,6 +515,7 @@ void DistributedCache::RecycleLocalBlock_(blockid_t local_blockid) {
 
 char *DistributedCache::StartWrite(blockid_t blockid, bool is_partial) {
   mutex_.Lock();
+  DEBUG_ONLY(n_locks_++);
   BlockMetadata *block = &blocks_[blockid];
   if (likely(block->locks)) {
     block->locks++;
@@ -520,6 +533,7 @@ char *DistributedCache::StartWrite(blockid_t blockid, bool is_partial) {
 
 char *DistributedCache::StartRead(blockid_t blockid) {
   mutex_.Lock();
+  DEBUG_ONLY(n_locks_++);
   BlockMetadata *block = &blocks_[blockid];
   if (likely(block->locks)) {
     block->locks++;
@@ -917,6 +931,8 @@ void DistributedCache::ResponseTransaction::HandleMessage(
 void DistributedCache::SyncInfo::Init(const DistributedCache& cache) {
   disk_stats = cache.disk_stats();
   net_stats = cache.net_stats();
+  n_locks = cache.n_locks();
+  n_fifo_locks = cache.n_fifo_locks();
   cache.ComputeStatusInformation_(&statuses);
 }
 
@@ -939,6 +955,7 @@ void DistributedCache::SyncInfo::MergeWith(const SyncInfo& other) {
   }
   disk_stats.Add(other.disk_stats);
   net_stats.Add(other.net_stats);
+  n_locks += other.n_locks;
 }
 
 //-------------------------------------------------------------------------

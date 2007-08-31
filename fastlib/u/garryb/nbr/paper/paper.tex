@@ -333,20 +333,24 @@ Thus, the details of a parallel implementation of the FMM cannot be entirely tra
 \section{Parallel Programmability}
 
 Making parallelization accessible to algorithm developers without parallelization expertise has been a common goal in parallelization communities.
-In this realm, there are three general approaches.
+There are three general approaches that are relevant to treecodes.
 
-At the highest level, the programming languages community attempts either to create languages that are functional and inherently parallel or to add parallel extensions to existing programming languages.
-For instance, the Barnes-Hut and the Fast Multipole Method have both been parallelized with the NESL parallel programming language, and \cite{hu-implementing, more}\authorsnote{I need to read their papers}.
-Languages like UPC attempt to make parallelizable C code, but only for algorithms with stereotypically "linear" access patterns or data decompositions.
-Unfortunately, these are typically so high-level that it is not possible to control what underlying techniques are used.
-Although not completely unpredictable, the access pattern of an $N$-body problem is far from static, and trivial work decompositions are impractical.
+Programming languages communities aim to create languages that are functional and inherently parallel or to add parallel extensions to existing programming languages.
+Both Barnes-Hut and the Fast Multipole Method have been parallelized with the NESL parallel programming language \cite{hu-implementing, more}\authorsnote{I need to read their papers}.
 
-Alternately, at the lowest level, projects like SAM\cite{sam} provide a distributed memory layer that abstracts physically distributed memory as one logical address space, except that it provides versioned values or accumulators instead of implementing a coherency model.
-The authors of SAM achieved over 50\% speedup for about 64 processors for the Barnes-Hut algorithm on various parallel computers.
+Read their papers before continuing.
+WHY WHY WHY do their algorithms not work?  What straw man am I building?
+
+Open-MP and UPC are efforts to make parallelizable C code for shared and distributed memory configurations respectively, but primarily for algorithms with stereotypically "linear" access patterns or data decompositions \cite{openmpi, upc}.
+These high-level efforts, while excellent at a certain class of problems, have limitations in the classes of prpoblem sets they can attack.
+In general, these are not appropriate for treecodes, as their traversal patterns are dififcult to predict until runtime.
+
+At the lower levels, projects like SAM\cite{sam} provide a distributed memory layer that abstracts physically distributed memory as one logical address space, except that it provides versioned values or accumulators instead of implementing a coherency model.
+The authors of SAM achieved over 50\% speedup for about 64 processors for the Barnes-Hut algorithm on various parallel computers \authorsnote{Numbers are meaningless}.
 Another low-level abstraction simply simulates distributed RAM using a lazy consistency protocol by listening for segmentation faults\cite{relaxed}.
 They also implemented, as an example, a version of Barnes-Hut that scaled to about 8 processors.
 
-Another popular approach requires identifying a specific, but diverse, class of problems that share common properties.
+Another popular approach requires identifying a specific, yet diverse, class of problems that share common properties.
 It may be possible to create a very efficient implementation with arbitrarily complex low level details for the entire problem class, allowing the developer to plug in the specifics of their problem.
 One popular example is Map-Reduce, a framework to solve problems that process massive data sets through the three-step process of preprocessing, sorting, and reduction.
 By targetting this class of problems, Map-Reduce can use optimally efficient data decomposition methods, out-of-core sorting algorithms, and mechanisms for fault-tolerance.

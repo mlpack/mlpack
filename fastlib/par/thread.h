@@ -171,7 +171,7 @@ class Mutex {
   /** Obtains the lock. */
   void Lock() const {
     int t = pthread_mutex_lock(&mutex_);
-    (void)t;
+    (void)t; // avoid an "unused variable" warning
     DEBUG_ASSERT_MSG(t == 0, "Error locking mutex -- relocking a non-recursive mutex?");
   }
   
