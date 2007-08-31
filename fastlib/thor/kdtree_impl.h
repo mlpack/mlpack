@@ -78,9 +78,11 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Doit(
 
   leaf_size_ = fx_param_int(module, "leaf_size", 32);
   chunk_size_ = points_.n_block_elems();
-  DEBUG_ASSERT_MSG(leaf_size_ <= chunk_size_,
-      "Leaf size (%d) must be no larger than chunk size (%d)",
-      int(leaf_size_), int(chunk_size_));
+  if (chunk_size_ <= leaf_size_) {
+    NONFATAL("Decreasing leaf size from %d to %d due to block size!\n",
+       int(leaf_size_), int(chunk_size_));
+    leaf_size_ = chunk_size_;
+  }
 
   fx_timer_start(module, "tree_build");
   DecompNode* decomp_root;
@@ -253,26 +255,24 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
         final_left_bound |= left_bound;
         current_range = right_bound.get(split_dim);
         if (current_range.width() == 0) {
-          // right_bound straddles the boundary, force it to break up
-          final_right_bound |= right_bound;
-          final_left_bound |= right_bound;
-          split_col = goal_col;
-          break;
+          break; // identical elements
         }
         begin_col = split_col;
       } else if (split_col > goal_col) {
         final_right_bound |= right_bound;
         current_range = left_bound.get(split_dim);
         if (current_range.width() == 0) {
-          // left_bound straddles the boundary, force it to break up
-          final_left_bound |= left_bound;
-          final_right_bound |= left_bound;
-          split_col = goal_col;
-          break;
+          break; // identical elements
         }
         end_col = split_col;
       }
     }
+    if (split_col != goal_col) {
+      // we got identical elements in that dimension, compute actual bound
+      FindBoundingBox_(begin_col, goal_col, &final_left_bound);
+      FindBoundingBox_(goal_col, end_col, &final_right_bound);
+    }
+    split_col = goal_col;
   }
 
   if (end_rank - begin_rank <= 1) {
