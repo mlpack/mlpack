@@ -1,0 +1,415 @@
+\documentclass[pdf,colorBG,slideColor]{prosper}
+\hypersetup{pdfpagemode=FullScreen}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+\title{THOR}
+\subtitle{Tree High Order Reduce}
+\author{Garrett Boyer, Ryan Riegel, Alexander Gray}
+\institution{College of Computing\\Georgia Institute of Technology}
+
+\newcommand{\itemt}[1]{\item {\bf #1} -}
+
+\newcommand{\union}{\cup}
+\newcommand{\intersect}{\cap}
+\newcommand{\Union}{\bigcup}
+\newcommand{\Intersect}{\bigcap}
+\newcommand{\bigvec}[1]{\mathop{\overrightarrow{#1}}}
+
+\DeclareMathOperator*{\map}{map}
+\DeclareMathOperator*{\worst}{worst}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator{\TWOPT}{TWOPOINT}
+\DeclareMathOperator{\cardinality}{cardinality}
+\DeclareMathOperator{\hrect}{hrect}
+\DeclareMathOperator{\child}{child}
+\DeclareMathOperator{\visited}{visited}
+\DeclareMathOperator{\unvisited}{unvisited}
+\DeclareMathOperator{\prune}{prune}
+\DeclareMathOperator{\IF}{if}
+\DeclareMathOperator{\ATDISCRETION}{}
+
+\newcommand{\fig}[1]{Figure~\ref{fig:#1}}
+
+\newcommand{\Gnp}{\Psi_{\Theta}}
+\newcommand{\gnp}{\psi_{\Theta}}
+
+%\newcommand{\psty}{\scriptstyle}
+\newcommand{\psty}{}
+\newcommand{\X}{\\ \psty}
+\newcommand{\x}{\X \hspace{0.13in}}
+\newcommand{\xx}{\X \hspace{0.26in}}
+\newcommand{\xxx}{\X \hspace{0.39in}}
+\newcommand{\xxxx}{\X \hspace{0.52in}}
+
+\newcommand{\defterm}[1]{{\bf #1}}
+\newcommand{\nbody}{$N$-body}
+
+\newcommand{\kdroot}[1]{#1^{\text{root}}}
+\newcommand{\kdleft}[1]{#1^{\!L}}
+\newcommand{\kdright}[1]{#1^{\!R}}
+\newcommand{\kdparent}[1]{#1^{\!P}}
+
+\newcommand{\lo}[1]{#1^{l}}
+\newcommand{\up}[1]{#1^{u}}
+\newcommand{\distlo}{\lo{d}}
+\newcommand{\distup}{\up{d}}
+\newcommand{\dist}[2]{d(#1,#2)}
+
+%\newcommand{\myOp}[1]{\mathop{\bigotimes\nolimits\hspace{-0.045in}_{#1}}}
+\newcommand{\nameOp}[2]{\mathop{#1\nolimits\!\!_{#2}}}
+\newcommand{\nameop}[2]{{\scriptstyle\:}#1_{\!#2}}
+\newcommand{\myOp}[1]{\nameOp{\bigotimes}{#1}}
+%\newcommand{\myop}[1]{\otimes\hspace{-0.04in}_{#1}\hspace{0.03in}}
+\newcommand{\myop}[1]{\nameop{\otimes}{#1}}
+\newcommand{\myOutop}[1]{\nameOp{\bigodot}{#1}}
+\newcommand{\myoutop}[1]{\nameop{\odot}{#1}}
+
+\newcommand{\letterglob}{\psi}
+\newcommand{\outglob}{\Psi}
+\newcommand{\inglob}{\psi}
+\newcommand{\Opglob}{\myOp{\letterglob}}
+\newcommand{\opglob}{\myop{\letterglob}}
+\newcommand{\fglob}{f_{\!\letterglob}}
+\newcommand{\gglob}{g_{\!\letterglob}}
+\newcommand{\canpruneglob}{C_{\!\letterglob}}
+\newcommand{\deltaglob}{\summary_{\!\letterglob}}
+
+\newcommand{\letterqr}{\rho}
+\newcommand{\outqr}{\varrho}
+\newcommand{\inqr}{\rho}
+\newcommand{\Opqr}{\myOp{\letterqr}}
+\newcommand{\opqr}{\myop{\letterqr}}
+\newcommand{\fqr}{f_{\!\letterqr}}
+\newcommand{\gqr}{g_{\!\letterqr}}
+
+\newcommand{\letterqrv}{\vec{\rho}}
+%\newcommand{\outqrv}{\vec{\rho}}
+\newcommand{\inqrv}{\vec{\rho}}
+%\newcommand{\fqrv}{f_{\letterqrv}}
+%\newcommand{\gqrv}{g_{\letterqrv}}
+\newcommand{\deltaqrv}{\summary_{\!\letterqrv}}
+\newcommand{\canpruneqrv}{C_{\!\letterqrv}}
+\newcommand{\identqr}{0_{\!\letterqrv}}
+\newcommand{\varqrv}{\letterqrv^{\:C\!}}
+\newcommand{\varqrvparent}{\letterqrv^{\:P\!}}
+
+\newcommand{\lettermu}{\mu}
+%\newcommand{\inmu}{\mu}
+\newcommand{\inmu}{\mu}
+\newcommand{\Outopmu}{\widehat{\nameOp{\bigodot}{\lettermu}}}%\mathop{\widehat{\bigodot\nolimits}\!\scriptstyle{\mu}}}
+\newcommand{\outopmu}{\:\widehat{\odot}_{\!\mu}\:}
+\newcommand{\Opmu}{\myOp{\lettermu}}
+\newcommand{\opmu}{\myop{\lettermu}}
+\newcommand{\fmu}{f_{\!\lettermu}}
+\newcommand{\fmuv}{\vec{f_{\!\lettermu}}}
+\newcommand{\deltamu}{\summary_{\!\lettermu}}
+\newcommand{\canprunemu}{C_{\!\lettermu}}
+\newcommand{\heurqr}{H}
+\newcommand{\identmu}{0_{\lettermu}}
+\newcommand{\varmuchild}{\lettermu^{\!C}}
+\newcommand{\varmuparent}{\lettermu^{\!P}}
+
+%\newcommand{\muparent}{\inmu_{\text{coarse}}}
+%\newcommand{\muchild}{\inmu_{\text{children}}}
+%\newcommand{\muvisit}{\inmu_{\text{visited}}}
+%\newcommand{\muall}{\inmu_{\text{all}}}
+
+%\newcommand{\hatpi}{\hat{\outpi}}
+%\newcommand{\piparent}{\outpi_{\text{parent}}}
+
+\newcommand{\letterstat}{s}
+\newcommand{\namestat}[1]{\sigma_{\text{#1}}}
+\newcommand{\outstat}{\sigma}
+\newcommand{\instat}{s}
+\newcommand{\Opstat}{\myOp{\letterstat}}
+\newcommand{\opstat}{\myop{\letterstat}}
+\newcommand{\fstat}{f_{\!\letterstat}}
+\newcommand{\gstat}{g_{\!\letterstat}}
+
+% Affinity propagation
+
+
+\newcommand{\eqspace}{\!\!\!\!}
+\newcommand{\true}{\text{true}}
+\newcommand{\ocpos}[1]{c^{+}_{#1}}
+\newcommand{\ocneg}[1]{c^{-}_{#1}}
+\newcommand{\cpos}[2]{\ocpos{#1 \neq #2}}
+\newcommand{\cneg}[2]{\ocneg{#1 \neq #2}}
+
+\newcommand{\respo}[2]{R_{#1#2}}
+\newcommand{\avail}[2]{A_{#1#2}}
+\newcommand{\simil}[2]{S_{#1#2}}
+
+\newcommand{\vecrho}{\vec{\rho}}
+\newcommand{\vecalpha}{\vec{\alpha}}
+\newcommand{\frho}[1]{\rho_{#1}}
+\newcommand{\falpha}[1]{\alpha_{#1}}
+\newcommand{\falphaj}[2]{\alpha_{#1[#2]}}
+
+\newcommand{\falphamax}{\alpha^{u}}
+\newcommand{\falphamin}{\alpha^{l}}
+\newcommand{\frhomax}{\rho^{u}}
+\newcommand{\frhomin}{\rho^{l}}
+
+\newcommand{\alphacand}{v}
+
+
+
+\begin{document}
+
+\maketitle
+
+\begin{slide}{Mission}
+  Allow mainstream algorithm developers to create well-tuned parallel
+  dual-tree algorithms.
+
+  \begin{itemize}
+    \itemt{Motivation}
+    Multi-tree algorithms are asymptotically fastest at many problems.
+    Parallelization allows even greater scalability.
+    \itemt{Approach}
+    \begin{enumerate}
+      \item Generalize the multi-tree problem space.
+      \item Parallelize the generalized problem.
+    \end{enumerate}
+  \end{itemize}
+  % Introduction, Motivation
+  % What is the point?
+  % Why am I presenting? To explain THOR.
+  % Why am I creating THOR? To parallelize dual-tree algorithms.
+  % My audience has no idea that these tree algorithms can be generalized.
+  % Keep this in mind -- it's interesting to them.
+\end{slide}
+
+\begin{slide}{Dual-Tree Algorithms - Intro}
+  \begin{itemize}
+    \itemt{Cartesian Hierarchy}
+    Hierarchically divide the Cartesian product of two
+    datasets to perform an all-pairs computation.
+    \itemt{Trees}
+    Use existing spatial trees to divide each dataset.
+    \itemt{Pruning}
+    Exploration can stop on subcomponent $X \times Y$ if we know a suitable
+    result for it, or if its result doesn't affect the overall computation.
+    (More on this later.)
+    \itemt{Data Intensive}
+    Dual-tree algorithms are fundamentally data intensive -- operating on
+    lots of data, and moreover, all data pairs.
+    This data intensive nature is the core issue in dual-tree parallelization.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{Dual-Tree Algorithms - Example}
+  \begin{itemize}
+    \itemt{Two-Point Correlation}
+    Number of pairs within radius $h$.
+    \[\sum_{x \in X} \sum_{y \in X} I(d(x, y) \leq h)\]
+    \itemt{Nearest Neighbors}
+    For each query $q \in Q$, find the nearest $r \in R$.
+    \[\map_{q \in Q} \argmin_{r \in R} d(q,r)\]
+    \itemt{Kernel Density Estimation}
+    For each query $q \in Q$, find a kernel sum generated around points $r \in R$.
+    \[\map_{q \in Q} \sum_{r \in R} K(q, r)\]
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{Physical $N$-Body Problem}
+  \begin{itemize}
+    \itemt{Problem}
+    In particle simulations, each point exerts force on other particles.
+    Find particle's position at a later time.
+    Done paractically with time-step iterations.
+    \itemt{Barnes-Hut Algorithm}
+    Create an oct-tree.
+    For each query particle, traverse the oct-tree, approximating the force
+    of distant particles. O(N log N).
+    \itemt{Fast Multipole Method}
+    Create an oct-tree.
+    Bottom-up, compute multipole expansions.
+    Top-down, aggregate siblings' expansions.
+    Compute per-particle force using the expansions.
+    O(N).
+  \end{itemize}
+  % The problem
+  % BH
+  % FMM and AFMM
+\end{slide}
+
+\begin{slide}{Software Frameworks}
+  \begin{itemize}
+    \itemt{Frameworks}
+    Software frameworks execute a generalized problem, where
+    users fill in the blanks.
+    \itemt{Map-Reduce}
+    Map-Reduce runs problems that involve a step of preprocessing and
+    further aggregation.
+    It solves problems like creating a reverse-index, counting words
+    in documents, and much more.
+    \itemt{Premise}
+    If you can generalize a problem, then create an implementation that
+    has certain provable properties given the generalized problem, then
+    all members of the problem space therefore have that property.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{Software Frameworks - Alternatives}
+  Why frameworks?  Consider some alternatives:
+  \begin{itemize}
+    \itemt{Parallel Languages}
+    UPC provides parallel extensions to C.  NESL is a parallel ML-like
+    language.
+    \\ {\bf Con:} Little control over implementation details.
+    \itemt{Virtual Memory}
+    Some projects simulate virtual memory over multiple computers
+    using page tables.
+    \\ {\bf Con:} Makes worst-case assumptions about semantics.
+    Dual-tree algorithms have much less strict requirements.
+    \itemt{Hand Parallelization}
+    $N$-body methods have been hand-parallelized for decades in a way that
+    is impossible for other approaches to compete with.
+    \\ {\bf Con:} Takes months, and we'll show this work is avoidable.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{GNP Basics - Notation}
+  \begin{itemize}
+    \itemt{Map Operator} $\map$ builds a list of results.
+    Mathematically, $\map$ outputs a set of key-value pairs.
+    \itemt{Generic Operators} $\bigodot, \bigotimes$ mean {\em any} commutative, associative operator.
+    \itemt{Trees} A tree node is {\em equivalent} to a set of points.
+    $\kdroot{X}$ is the entire data set, $X$ is a subset,
+    $X = \kdleft{X} \union \kdright{X}$ partitions a node into two children.
+    \itemt{Sets} $X, Y$ refer to two sets.  $Q, R$ are used for queries and
+    references, when the $\map$ operator is in use.
+    \itemt{Generic Statistics} $\outstat(Q)$ is a statistic on a set of points,
+    such as bounding box, mean, or variance.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{GNP Basics - Reduce Problem}
+  A \defterm{second-order reduce problem} solves for dataset pair $X, Y$:
+    \[\begin{array}{l}
+      \displaystyle \gnp(X, Y) = \bigodot_{x \in X} g\!\left(x, \bigotimes_{y \in Y} f(x, y) \right)
+    \end{array}\]
+  for commutative, associative operators $\bigodot, \bigotimes$, and user-provided
+  outer function $g$ and inner function $f$.
+  \\
+  A Generalized $N$-body problem (GNP) additionally requires that, for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$:
+    \[\begin{array}{ll}
+     \gnp(X,Y) = \gnp(\kdleft{X}, Y) \odot \gnp(\kdright{X},Y) & \text{\it commutative, associatve}
+     \\
+     \gnp(X,Y) = \gnp(X,\kdleft{Y}) \otimes \gnp(X,\kdright{Y}) & \text{\it block decomposition}
+    \end{array}\]
+\end{slide}
+
+
+\begin{slide}{GNP Basics - Expansion and Pruning}
+  \begin{itemize}
+    \itemt{Expansion}
+    Consider expression $\gnp(\kdroot{X}, \kdroot{Y})$.
+    Replace any term with its decomposition.
+    Repeat until explosion.
+    \itemt{Intrinsic Prune}
+    Substitute subexpressions whose values can be determined with
+    in-tree statistics.
+    \begin{itemize}
+      \itemt{Example: Two-point correlation} The nodes' bounding boxes are
+      farther apart than radius $h$.
+    \end{itemize}
+    \itemt{Extrinsic Prune}
+    A subexpression's value is determined to be "good enough".
+    Checked via tree node statistics AND summaries of surrounding computations.
+    \begin{itemize}
+      \itemt{Example: Nearest neighbors}
+      The nodes' bounding boxes are farther apart than the
+      worst-case candidate neighbor.
+    \end{itemize}
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{GNP Basics - Q/R Problems}
+  \begin{itemize}
+    \item A \defterm{query-reference} problem has $\bigodot = \map$, i.e. one result per query.
+    (Consider $\map$'s output ``under the hood'' to be a set of key-value pairs.)
+    \item Any second-order reduce problem can be transformed into a query-reference problem:
+    Replace outer operator with $\map$, and apply the original operator as a post-processing step.
+    \item We'll only talk about query-reference problems for the rest of the slides.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{Math - QR Intrinsic}
+  
+\end{slide}
+
+\begin{slide}{Math - QR Extrinsic}
+  % What is mu
+  % How is it solved
+  % Quality of mu
+\end{slide}
+
+\begin{slide}{Math - Summary}
+  % For those who didn't understand it, or
+  % For those who didn't get the point of it
+\end{slide}
+
+\begin{slide}{Task Decomposition}
+  % Query-based partitioning
+  % why it is non-obvious
+\end{slide}
+
+\begin{slide}{Communication - Essential Trees}
+  % Introduce Domain Decomposition here
+\end{slide}
+
+\begin{slide}{Communication - Nature of Communication}
+\end{slide}
+
+\begin{slide}{Communication - Distributed Cache System}
+\end{slide}
+
+\begin{slide}{Communication - Data Layout}
+\end{slide}
+
+\begin{slide}{Scheduling - Problem}
+  % establish what the scheduling problme is
+  % per-task variance
+  % locality problem: multi-threaded and cluster
+\end{slide}
+
+\begin{slide}{Scheduling - Traditional}
+\end{slide}
+
+\begin{slide}{Scheduling - Dynamic}
+  % my work: 
+  % previous work: fractiling
+\end{slide}
+
+% QUESTION: Separate Setup/Results/Discussion sections?
+
+\begin{slide}{Experiments - Setup}
+  % algorithms and data-sets
+\end{slide}
+
+\begin{slide}{Experiments - Overhead}
+\end{slide}
+
+\begin{slide}{Experiments - Multithreaded}
+  % range - galaxy simulation
+  % allnn - high-D
+  % nbc - quasar
+\end{slide}
+
+\begin{slide}{Experiments - Cluster}
+  % range - galaxy simulation
+  % allnn - high-D
+  % nbc - quasar
+\end{slide}
+
+\begin{slide}{Discussion/Conclusion}
+\end{slide}
+
+\end{document}
+
