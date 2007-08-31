@@ -107,10 +107,15 @@ void DistributedCache::InitCommon_(int channel_num_in) {
 void DistributedCache::InitCache_(size_t total_ram) {
   // give minimum number of cache sets
   n_sets_ = (total_ram) / (ASSOC*n_block_bytes_);
+  if (rpc::n_peers() != 1 && n_sets_ % rpc::n_peers() == 0) {
+    n_sets_--;
+  }
   if (n_sets_ == 0) {
     NONFATAL("%lu bytes is too small a cache size -- upping size to %lu!",
         (unsigned long)total_ram, (unsigned long)(ASSOC*n_block_bytes_));
     n_sets_ = 1;
+  } else {
+    DEBUG_ASSERT(n_sets_ * ASSOC * n_block_bytes_ <= total_ram);
   }
   slots_.Init(n_sets_ << LOG_ASSOC);
 }
