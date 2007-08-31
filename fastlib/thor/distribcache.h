@@ -320,6 +320,8 @@ class DistributedCache : public BlockDevice {
   static const int LOG_ASSOC = 4;
   /** The set associativity of the cache. */
   static const int ASSOC = (1 << LOG_ASSOC);
+  /** Number of remote blocks allowed before we start paging local blocks. */
+  static const int REMOTE_ALLOWANCE = ASSOC/4;
 
   /**
    * Information we keep about the block.
