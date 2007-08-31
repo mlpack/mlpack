@@ -183,7 +183,7 @@ class Nbc {
      * Finalize parameters (Not THOR).
      */
     void ComputeConsts(int count_pos_in, int count_neg_in) {
-      double epsilon = min(threshold, 1 - threshold) * 1e-3;
+      double epsilon = min(threshold, 1 - threshold) * 1e-2;
 
       count_pos = count_pos_in;
       count_neg = count_neg_in;
@@ -203,6 +203,8 @@ class Nbc {
       norm_neg = kernel_neg.CalcNormConstant(dim) * (count_neg - 1);
       const_neg_loo.lo = (threshold - epsilon) / norm_neg;
       const_neg_loo.hi = (threshold + epsilon) / norm_neg;
+
+      ot::Print(loo);
 
       ot::Print(dim);
       ot::Print(count_all);
@@ -520,18 +522,18 @@ class Nbc {
       if (param.loo) {
 	// Withhold contribution of q from density for its class
 	if (q.is_pos()) {
-	  if (param.const_pos_loo.lo * (density_pos - param.peak_pos) * q.pi_pos()
+	  if (param.const_pos_loo.lo * max(0.0,density_pos - param.peak_pos) * q.pi_pos()
 	      > param.const_neg.hi * density_neg * q.pi_neg()) {
 	    label &= LAB_POS;
 	  } else if (param.const_neg.lo * density_neg * q.pi_neg()
-	      > param.const_pos_loo.hi * (density_pos - param.peak_pos) * q.pi_pos()) {
+	      > param.const_pos_loo.hi * max(0.0,density_pos - param.peak_pos) * q.pi_pos()) {
 	    label &= LAB_NEG;
 	  }
 	} else {
 	  if (param.const_pos.lo * density_pos * q.pi_pos()
-	      > param.const_neg_loo.hi * (density_neg - param.peak_neg) * q.pi_neg()) {
+	      > param.const_neg_loo.hi * max(0.0,density_neg - param.peak_neg) * q.pi_neg()) {
 	    label &= LAB_POS;
-	  } else if (param.const_neg_loo.lo * (density_neg - param.peak_neg) * q.pi_neg()
+	  } else if (param.const_neg_loo.lo * max(0.0,density_neg - param.peak_neg) * q.pi_neg()
 	      > param.const_pos.hi * density_pos * q.pi_pos()) {
 	    label &= LAB_NEG;
 	  }
@@ -849,21 +851,21 @@ class Nbc {
 	// Withhold contribution of q from density for its class
 	if (q.is_pos()) {
 	  if (unlikely(
-	       param.const_pos_loo.lo * (total_density_pos.lo - param.peak_pos) * q.pi_pos()
+	       param.const_pos_loo.lo * max(0.0,total_density_pos.lo - param.peak_pos) * q.pi_pos()
 	       > param.const_neg.hi * total_density_neg.hi * q.pi_neg())) {
 	    q_result->label &= LAB_POS;
 	  } else if (unlikely(
 	       param.const_neg.lo * total_density_neg.lo * q.pi_neg()
-	       > param.const_pos_loo.hi * (total_density_pos.hi - param.peak_pos) * q.pi_pos())) {
+	       > param.const_pos_loo.hi * max(0.0,total_density_pos.hi - param.peak_pos) * q.pi_pos())) {
 	    q_result->label &= LAB_NEG;
 	  }
 	} else {
 	  if (unlikely(
 	       param.const_pos.lo * total_density_pos.lo * q.pi_pos()
-	       > param.const_neg_loo.hi * (total_density_neg.hi - param.peak_neg) * q.pi_neg())) {
+	       > param.const_neg_loo.hi * max(0.0,total_density_neg.hi - param.peak_neg) * q.pi_neg())) {
 	    q_result->label &= LAB_POS;
 	  } else if (unlikely(
-	       param.const_neg_loo.lo * (total_density_neg.lo - param.peak_neg) * q.pi_neg()
+	       param.const_neg_loo.lo * max(0.0,total_density_neg.lo - param.peak_neg) * q.pi_neg()
 	       > param.const_pos.hi * total_density_pos.hi * q.pi_pos())) {
 	    q_result->label &= LAB_NEG;
 	  }
@@ -991,7 +993,7 @@ class Nbc {
 	if (unlikely(
 	     (q_node.stat().count_pos == 0 ||
 	       param.const_pos_loo.lo
-	         * (q_summary_result.density_pos.lo - param.peak_pos)
+	         * max(0.0,q_summary_result.density_pos.lo - param.peak_pos)
 	         * q_node.stat().pi_pos.lo
 	       > param.const_neg.hi
 	         * q_summary_result.density_neg.hi
@@ -1001,7 +1003,7 @@ class Nbc {
 	         * q_summary_result.density_pos.lo
 	         * q_node.stat().pi_pos.lo
 	       > param.const_neg_loo.hi
-	         * (q_summary_result.density_neg.hi - param.peak_neg)
+	         * max(0.0,q_summary_result.density_neg.hi - param.peak_neg)
 	         * q_node.stat().pi_neg.hi))) {
 	  q_postponed->label = LAB_POS;
 	  return false;
@@ -1011,11 +1013,11 @@ class Nbc {
 	         * q_summary_result.density_neg.lo
 	         * q_node.stat().pi_neg.lo
 	       > param.const_pos_loo.hi
-	         * (q_summary_result.density_pos.hi - param.peak_pos)
+	         * max(0.0,q_summary_result.density_pos.hi - param.peak_pos)
 	         * q_node.stat().pi_pos.hi)
 	     && (q_node.stat().count_neg == 0 ||
 	       param.const_neg_loo.lo
-	         * (q_summary_result.density_neg.lo - param.peak_neg)
+	         * max(0.0,q_summary_result.density_neg.lo - param.peak_neg)
 	         * q_node.stat().pi_neg.lo
 	       > param.const_pos.hi
 	         * q_summary_result.density_pos.hi
@@ -1027,7 +1029,7 @@ class Nbc {
 	// Note const_pos.lo < const_pos_loo.lo, etc.
 	if (unlikely(
 	     param.const_pos.lo
-	       * (q_summary_result.density_pos.lo - param.peak_pos)
+	       * max(0.0,q_summary_result.density_pos.lo - param.peak_pos)
 	       * q_node.stat().pi_pos.lo
 	     > param.const_neg_loo.hi
 	       * q_summary_result.density_neg.hi
@@ -1036,7 +1038,7 @@ class Nbc {
 	  return false;
 	} else if (unlikely(
 	     param.const_neg.lo
-	       * (q_summary_result.density_neg.lo - param.peak_neg)
+	       * max(0.0,q_summary_result.density_neg.lo - param.peak_neg)
 	       * q_node.stat().pi_neg.lo
 	     > param.const_pos_loo.hi
 	       * q_summary_result.density_pos.hi
