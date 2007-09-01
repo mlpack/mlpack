@@ -5,6 +5,7 @@ cachearray.h
 cachearray_impl.h
 cache.h
 dfs.h
+dfs_impl.h
 distribcache.h
 gnp.h
 kdtree.h
