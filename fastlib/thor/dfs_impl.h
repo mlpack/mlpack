@@ -201,11 +201,11 @@ void DualTreeDepthFirst<GNP>::Pair_(
           param_, *q_node, *r_child2, &delta2,
           &global_result_, &q_node_mut->postponed);
       
-      if (unlikely(!explore_r1)) {
+      if (!explore_r1) {
         if (explore_r2) {
           Pair_(q_node, r_child2, delta2, unvisited, q_node_mut);
         }
-      } else if (unlikely(!explore_r2)) {
+      } else if (!explore_r2) {
         Pair_(q_node, r_child1, delta1, unvisited, q_node_mut);
       } else {
         double heur1;
