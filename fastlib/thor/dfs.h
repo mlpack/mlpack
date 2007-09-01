@@ -42,7 +42,6 @@ class DualTreeDepthFirst {
   const typename GNP::RNode *r_root_;
 
   bool do_naive_;
-  //datanode *datanode_;
   uint64 n_naive_;
   uint64 n_pre_naive_;
   uint64 n_recurse_;
@@ -77,7 +76,9 @@ class DualTreeDepthFirst {
   }
 
  private:
+  COMPILER_NOINLINE
   void Begin_(index_t q_root_index);
+  COMPILER_NOINLINE
   void Pair_(
       const typename GNP::QNode *q_node,
       const typename GNP::RNode *r_node,
