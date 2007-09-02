@@ -162,7 +162,7 @@ class Nbc {
       kernel_pos.Init(fx_param_double_req(module, "h_pos"));
       kernel_neg.Init(fx_param_double_req(module, "h_neg"));
       threshold = fx_param_double(module, "threshold", 0.5);
-      loo = !fx_param_exists(module, "q");
+      loo = false;
     }
 
     /**
@@ -173,17 +173,15 @@ class Nbc {
     void SetDimensions(index_t vector_dimension, index_t n_points) {
       dim = vector_dimension; // last two cols already trimmed
       count_all = n_points;
-      peak_pos = kernel_pos.EvalUnnormOnSq(0)
-	/ kernel_pos.CalcNormConstant(dim);
-      peak_neg = kernel_neg.EvalUnnormOnSq(0)
-	/ kernel_neg.CalcNormConstant(dim);
+      peak_pos = kernel_pos.EvalUnnormOnSq(0);
+      peak_neg = kernel_neg.EvalUnnormOnSq(0);
     }
 
     /**
      * Finalize parameters (Not THOR).
      */
     void ComputeConsts(int count_pos_in, int count_neg_in) {
-      double epsilon = min(threshold, 1 - threshold) * 1e-4;
+      double epsilon = min(threshold, 1 - threshold) * 1e-6;
 
       count_pos = count_pos_in;
       count_neg = count_neg_in;
@@ -330,14 +328,12 @@ class Nbc {
     /** Bounding box of the positive points. Similar for _neg. */
     Bound bound_pos;
     Bound bound_neg;
-    /** Number of positive ponits. Similar for _neg. */
+    /** Number of positive points. Similar for _neg. */
     index_t count_pos;
     index_t count_neg;
     /** Bounds for query priors. Similar for _neg. */
     DRange pi_pos;
     DRange pi_neg;
-    /** Bounds for query self-contrib (undone in LOO case). */
-    DRange loo_contrib;
 
     OT_DEF_BASIC(NbcStat) {
       OT_MY_OBJECT(moment_info_pos);
@@ -348,7 +344,6 @@ class Nbc {
       OT_MY_OBJECT(count_neg);
       OT_MY_OBJECT(pi_pos);
       OT_MY_OBJECT(pi_neg);
-      OT_MY_OBJECT(loo_contrib);
     }
 
    public:
@@ -366,11 +361,6 @@ class Nbc {
       count_neg = 0;
       pi_pos.InitEmptySet();
       pi_neg.InitEmptySet();
-      if (param.loo) {
-	loo_contrib.InitEmptySet();
-      } else {
-	loo_contrib.Init(0, 0);
-      }
     }
 
     /**
@@ -388,13 +378,6 @@ class Nbc {
       }
       pi_pos |= point.pi_pos();
       pi_neg |= point.pi_neg();
-      if (param.loo) {
-	if (point.is_pos()) {
-	  loo_contrib |= param.peak_pos;
-	} else {
-	  loo_contrib |= param.peak_neg;
-	}
-      }
     }
 
     /**
@@ -410,7 +393,6 @@ class Nbc {
       count_neg += stat.count_neg;
       pi_pos |= stat.pi_pos;
       pi_neg |= stat.pi_neg;
-      loo_contrib |= stat.loo_contrib;
     }
 
     /**
@@ -850,7 +832,7 @@ class Nbc {
       if (param.loo) {
 	// Withhold contribution of q from density for its class
 	if (q.is_pos()) {
-	  DEBUG_ASSERT_MSG(total_density_pos.hi > param.peak_pos,
+	  DEBUG_ASSERT_MSG(total_density_pos.hi >= param.peak_pos,
 			   "$pos bd %g <= peak %g",
 			   total_density_pos.hi,
 			   param.peak_pos);
@@ -864,7 +846,7 @@ class Nbc {
 	    q_result->label &= LAB_NEG;
 	  }
 	} else {
-	  DEBUG_ASSERT_MSG(total_density_neg.hi > param.peak_neg,
+	  DEBUG_ASSERT_MSG(total_density_neg.hi >= param.peak_neg,
 			   "$neg bd %g <= peak %g",
 			   total_density_neg.hi,
 			   param.peak_neg);
@@ -1144,6 +1126,7 @@ void NbcMain(datanode *module) {
   } else {
     q_points_cache = r_points_cache;
     n_q_points = n_r_points;
+    param.loo = true;
   }
   fx_timer_stop(module, "read");
 
