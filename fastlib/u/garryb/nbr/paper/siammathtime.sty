@@ -1,0 +1,342 @@
+%%
+%% This is file `mathtime.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% mathtime.dtx  (with options: `package,mathtime')
+%% 
+%% Copyright 1996 1997 Frank Mittelbach and David Carlisle.
+%%
+%% Development of this package was commissioned by Y&Y Inc.
+%% http://www.yandy.com
+\NeedsTeXFormat{LaTeX2e}[1995/01/01]
+\ProvidesPackage{mathtime}
+ [1997/09/01 v1.0d %
+ mathtime
+ font support (FMi/DPC)]
+\newcommand\greekshape{}
+\DeclareOption{slantedgreek}{\renewcommand\greekshape{it}}
+\DeclareOption{uprightgreek}{\renewcommand\greekshape{n}}
+\DeclareOption{nobold}{\let\boldmath=u}
+\DeclareOption{cmbold}{\let\boldmath=c}
+\DeclareOption{mtbold}{\let\boldmath=m}
+\DeclareOption{heavybold}{\let\boldmath=h}
+\newcommand\enablesubscriptcorrection {\catcode`\_=12\relax}
+\newcommand\disablesubscriptcorrection{\catcode`\_=8\relax}
+\DeclareOption{nosubscriptcorrection}{\disablesubscriptcorrection}
+\DeclareOption{subscriptcorrection}  {\enablesubscriptcorrection}
+\DeclareOption{cmcal}    {\let\mathcal=c}
+\DeclareOption{lucidacal}{\let\mathcal=l}
+\DeclareOption{mtplusscr}{\let\mathscr=s}
+\DeclareOption{mtpluscal}{\let\mathcal=s}
+\DeclareOption{lucidascr}{\let\mathscr=l}
+\DeclareOption{noTS1}    {\let\symtextcomp\relax}
+\let\operator@encoding\encodingdefault
+\DeclareOption{OT1}{\def\operator@encoding{OT1}}
+\DeclareOption{T1}{\def\operator@encoding{T1}}
+\DeclareOption{LY1}{\def\operator@encoding{LY1}\ExecuteOptions{noTS1}}
+\DeclareOption{errorshow}{%
+   \def\@font@info#1{%
+         \GenericInfo{(Font)\@spaces\@spaces\@spaces\space\space}%
+                     {LaTeX Font Info: \space\space\space#1}}%
+    \def\@font@warning#1{%
+         \GenericInfo{(Font)\@spaces\@spaces\@spaces\space\space}%
+                        {LaTeX Font Warning: #1}}}
+\DeclareOption{warningshow}{%
+   \def\@font@info#1{%
+         \GenericInfo{(Font)\@spaces\@spaces\@spaces\space\space}%
+                     {LaTeX Font Info: \space\space\space#1}}%
+    \def\@font@warning#1{%
+         \GenericWarning{(Font)\@spaces\@spaces\@spaces\space\space}%
+                        {LaTeX Font Warning: #1}}}
+\DeclareOption{nofontinfo}{%
+   \let\@font@info\@gobble
+   \let\@font@warning\@gobble}
+\ExecuteOptions{%
+  slantedgreek,nobold,nosubscriptcorrection,cmcal,errorshow}
+\ProcessOptions
+\edef\@tempa{\rmdefault}
+\def\@tempb {cmr}
+\ifx\@tempa\@tempb
+  \renewcommand*\sfdefault{poptima}
+  \renewcommand*\rmdefault{ptm}
+  \renewcommand*\ttdefault{pcr}
+  \renewcommand*\bfdefault{b}
+\fi
+\DeclareFontEncoding{MY1}{}{}
+\DeclareFontEncoding{MY2}{}{}
+\DeclareFontEncoding{MY3}{}{}
+\DeclareFontSubstitution{MY1}{mtt}{m}{it}
+\DeclareFontSubstitution{MY2}{mtt}{m}{n}
+\DeclareFontSubstitution{MY3}{mtt}{m}{n}
+\SetSymbolFont{operators}   {normal}{\operator@encoding}{ptm}{m}{n}
+\SetSymbolFont{letters}     {normal}{MY1}{mtt}{m}{it}
+\SetSymbolFont{symbols}     {normal}{MY2}{mtt}{m}{n}
+\SetSymbolFont{largesymbols}{normal}{MY3}{mtt}{m}{n}
+\ifx\boldmath c
+  \SetSymbolFont{operators}   {bold}{\operator@encoding}{cmr}{bx}{n}
+  \SetSymbolFont{letters}     {bold}{OML}{cmm}{b}{it}
+  \SetSymbolFont{symbols}     {bold}{OMS}{cmsy}{b}{n}
+  \SetSymbolFont{largesymbols}{bold}{MY3}{mtt}{m}{n}
+\PackageWarningNoLine{mathtime}
+  {The use of the `cmbold' option will result\MessageBreak
+   in incorrect characters in some circumstances\MessageBreak
+   without any warning as the Math Time fonts and the\MessageBreak
+   Computer Modern fonts have incompatible encodings.\MessageBreak
+   Please use this option with care!\@gobble}
+  \renewcommand\boldmath{\@nomath\boldmath\mathversion{bold}}
+  \let\heavymath\boldmath
+\fi
+\ifx\boldmath u
+  \let\@tempa\version@elt
+    \def\version@elt#1{%
+      \ifx\mv@bold#1\else\noexpand\version@elt\noexpand#1\fi}
+    \edef\version@list{\version@list}
+  \let\version@elt\@tempa
+  \let\mv@bold\@undefined
+  \renewcommand\boldmath{\PackageError{mathtime}%
+               {Bold math is not supported}%
+               {Use cmbold or mtbold options}}
+  \let\heavymath\boldmath
+\fi
+\ifx\boldmath m
+  \SetSymbolFont{operators}{bold}{\operator@encoding}{\rmdefault}{b}{n}
+  \SetSymbolFont{letters}     {bold}{MY1}{mtt}{b}{\greekshape}
+  \SetSymbolFont{symbols}     {bold}{MY2}{mtt}{b}{n}
+  \SetSymbolFont{largesymbols}{bold}{MY3}{mtt}{b}{n}
+  \DeclareMathVersion{heavy}
+  \SetSymbolFont{operators}{heavy}{\operator@encoding}{\rmdefault}{b}{n}
+  \SetSymbolFont{letters}     {heavy}{MY1}{mtt}{ub}{\greekshape}
+  \SetSymbolFont{symbols}     {heavy}{MY2}{mtt}{ub}{n}
+  \SetSymbolFont{largesymbols}{heavy}{MY3}{mtt}{ub}{n}
+  \DeclareMathSymbol{:}{\mathrel}{symbols}{86}
+  \DeclareMathSymbol{!}{\mathclose}{symbols}{87}
+  \DeclareMathSymbol{[}{\mathopen}{symbols}{84}
+  \DeclareMathSymbol{]}{\mathclose}{symbols}{85}
+  \renewcommand\boldmath{\@nomath\boldmath\mathversion{bold}}
+  \newcommand\heavymath{\@nomath\heavymath\mathversion{heavy}}
+\fi
+\ifx\boldmath h
+  \SetSymbolFont{operators}{bold}{\operator@encoding}{\rmdefault}{b}{n}
+  \SetSymbolFont{letters}     {bold}{MY1}{mtt}{ub}{\greekshape}
+  \SetSymbolFont{symbols}     {bold}{MY2}{mtt}{ub}{n}
+  \SetSymbolFont{largesymbols}{bold}{MY3}{mtt}{ub}{n}
+  \DeclareMathSymbol{:}{\mathrel}{symbols}{86}
+  \DeclareMathSymbol{!}{\mathclose}{symbols}{87}
+  \DeclareMathSymbol{[}{\mathopen}{symbols}{84}
+  \DeclareMathSymbol{]}{\mathclose}{symbols}{85}
+  \renewcommand\boldmath{\@nomath\boldmath\mathversion{bold}}
+  \let\heavymath\boldmath
+\fi
+\SetMathAlphabet{\mathrm}{normal}{\encodingdefault}{\rmdefault}{m}{n}
+\SetMathAlphabet{\mathbf}{normal}{\encodingdefault}{\rmdefault}{b}{n}
+\SetMathAlphabet{\mathit}{normal}{\encodingdefault}{\rmdefault}{m}{it}
+\SetMathAlphabet{\mathsf}{normal}{\encodingdefault}{\sfdefault}{m}{n}
+\SetMathAlphabet{\mathtt}{normal}{\encodingdefault}{\ttdefault}{m}{n}
+\ifx\mv@bold\@undefined
+\else
+  \SetMathAlphabet{\mathrm}{bold} {\encodingdefault}{\rmdefault}{b}{n}
+  \SetMathAlphabet{\mathbf}{bold} {\encodingdefault}{\rmdefault}{b}{n}
+  \SetMathAlphabet{\mathit}{bold} {\encodingdefault}{\rmdefault}{b}{it}
+  \SetMathAlphabet{\mathsf}{bold} {\encodingdefault}{\sfdefault}{b}{n}
+  \SetMathAlphabet{\mathtt}{bold} {\encodingdefault}{\ttdefault}{b}{n}
+\fi
+\ifx\mv@heavy\@undefined
+\else
+  \SetMathAlphabet{\mathrm}{heavy}{\encodingdefault}{\rmdefault}{b}{n}
+  \SetMathAlphabet{\mathbf}{heavy}{\encodingdefault}{\rmdefault}{b}{n}
+  \SetMathAlphabet{\mathit}{heavy}{\encodingdefault}{\rmdefault}{b}{it}
+  \SetMathAlphabet{\mathsf}{heavy}{\encodingdefault}{\sfdefault}{b}{n}
+  \SetMathAlphabet{\mathtt}{heavy}{\encodingdefault}{\ttdefault}{b}{n}
+\fi
+\ifx\mathscr s
+  \let\mathscr\relax
+  \DeclareMathAlphabet\mathscr{U}        {mtms}{b}{n}
+  \SetMathAlphabet    \mathscr{normal}{U}{mtms}{m}{n}
+  \DeclareMathAlphabet\mathbscr{U}{mtms}{b}{n}
+\fi
+\ifx\mathscr l
+  \let\mathscr\relax
+  \DeclareMathAlphabet{\mathscr}          {OMS}{lby}{b}{n}
+  \SetMathAlphabet    {\mathscr}{normal}  {OMS}{lby}{m}{n}
+  \DeclareMathAlphabet{\mathbscr}         {OMS}{lby}{b}{n}
+\fi
+\ifx\mathcal l
+  \let\mathcal\relax
+  \DeclareMathAlphabet{\mathcal}          {OMS}{lby}{b}{n}
+  \SetMathAlphabet    {\mathcal}{normal}  {OMS}{lby}{m}{n}
+  \DeclareMathAlphabet{\mathbcal}         {OMS}{lby}{b}{n}
+\fi
+\ifx\mathcal s
+  \let\mathcal\relax
+  \DeclareMathAlphabet\mathcal{U}        {mtms}{b}{n}
+  \SetMathAlphabet    \mathcal{normal}{U}{mtms}{m}{n}
+  \DeclareMathAlphabet\mathbcal{U}{mtms}{b}{n}
+\fi
+\ifx\mathcal c
+  \let\mathcal\relax
+  \DeclareMathAlphabet\mathcal{OMS}        {cmsy}{b}{n}
+  \SetMathAlphabet    \mathcal{normal}{OMS}{cmsy}{m}{n}
+  \DeclareMathAlphabet\mathbcal{OMS}       {cmsy}{b}{n}
+
+\fi
+\DeclareMathSymbol\Gamma  {\mathord}{letters}{48}
+\DeclareMathSymbol\Delta  {\mathord}{letters}{49}
+\DeclareMathSymbol\Theta  {\mathord}{letters}{50}
+\DeclareMathSymbol\Lambda {\mathord}{letters}{51}
+\DeclareMathSymbol\Xi     {\mathord}{letters}{52}
+\DeclareMathSymbol\Pi     {\mathord}{letters}{53}
+\DeclareMathSymbol\Sigma  {\mathord}{letters}{54}
+\DeclareMathSymbol\Upsilon{\mathord}{letters}{55}
+\DeclareMathSymbol\Phi    {\mathord}{letters}{56}
+\DeclareMathSymbol\Psi    {\mathord}{letters}{57}
+\DeclareMathSymbol\Omega  {\mathord}{letters}{127}
+\DeclareMathSymbol\varGamma    {\mathord}{letters}{0}
+\DeclareMathSymbol\varDelta    {\mathord}{letters}{1}
+\DeclareMathSymbol\varTheta    {\mathord}{letters}{2}
+\DeclareMathSymbol\varLambda   {\mathord}{letters}{3}
+\DeclareMathSymbol\varXi       {\mathord}{letters}{4}
+\DeclareMathSymbol\varPi       {\mathord}{letters}{5}
+\DeclareMathSymbol\varSigma    {\mathord}{letters}{6}
+\DeclareMathSymbol\varUpsilon  {\mathord}{letters}{7}
+\DeclareMathSymbol\varPhi      {\mathord}{letters}{8}
+\DeclareMathSymbol\varPsi      {\mathord}{letters}{9}
+\DeclareMathSymbol\varOmega    {\mathord}{letters}{10}
+\DeclareMathSymbol{(}{\mathopen}{letters}{46} % was 028
+\DeclareMathSymbol{)}{\mathclose}{letters}{47} % was 029
+\DeclareMathDelimiter{(}{letters}{46}{largesymbols}{0}
+\DeclareMathDelimiter{)}{letters}{47}{largesymbols}{1}
+\DeclareMathSymbol{\triangleleft}{\mathbin}{symbols}{71}  % was 12F
+\DeclareMathSymbol{\triangleright}{\mathbin}{symbols}{70} % was 12E
+\DeclareMathSymbol{\comp}{\mathbin}{symbols}{66}       % new?
+\DeclareMathSymbol{\setdif}{\mathbin}{symbols}{88}     % new
+\DeclareMathSymbol{\cupprod}{\mathbin}{symbols}{89}    % new
+\DeclareMathSymbol{\capprod}{\mathbin}{symbols}{90}    % new
+\DeclareMathSymbol{+}{\mathbin}{symbols}{67}           % was 02B
+\DeclareMathSymbol{=}{\mathrel}{symbols}{68}           % was 03D
+\let\Relbar\@undefined
+\DeclareMathSymbol{\Relbar}{\mathrel}{symbols}{72}     % was a macro
+\DeclareMathSymbol{;}{\mathpunct}{symbols}{73}         % was 13B
+\DeclareMathSymbol{\varkappa}{\mathord}{letters}{126}   % new (AMS)
+\DeclareMathAccent{\vec}{\mathord}{symbols}{69}
+\DeclareMathAccent{\grave}{\mathord}{symbols}{74}
+\DeclareMathAccent{\acute}{\mathord}{symbols}{75}
+\DeclareMathAccent{\check}{\mathord}{symbols}{76}
+\DeclareMathAccent{\breve}{\mathord}{symbols}{77}
+\DeclareMathAccent{\bar}{\mathord}{symbols}{78}
+\DeclareMathAccent{\hat}{\mathord}{symbols}{79}
+\DeclareMathAccent{\dot}{\mathord}{symbols}{80}
+\DeclareMathAccent{\tilde}{\mathord}{symbols}{81}
+\DeclareMathAccent{\ddot}{\mathord}{symbols}{82}
+\DeclareMathAccent{\widebar}{\mathord}{symbols}{83} % new
+\def\defaultscriptratio{.7}
+\def\defaultscriptscriptratio{.5}
+\newcommand\hb@xmdot{\hbox{$\m@th.$}}
+\def\vdots{\vbox{\baselineskip4\p@ \lineskiplimit\z@
+  \kern6\p@\hb@xmdot\hb@xmdot\hb@xmdot}}
+\def\ddots{\mathinner{\mkern1mu\raise7\p@\vbox{\kern7\p@
+  \hb@xmdot}\mkern2mu
+  \raise4\p@\hb@xmdot\mkern2mu\raise\p@\hb@xmdot\mkern1mu}}
+\def\angle{{\vbox{\ialign{$\m@th\scriptstyle##$\crcr
+      \not\mathrel{\mkern14mu}\crcr
+      \noalign{\nointerlineskip}%
+      \mkern2.5mu%
+      \leaders\hrule\@height.48\p@\hfill\mkern2.5mu\crcr}}}}
+\def\hbar{{%
+ \dimen@.12em%
+ \dimen@ii.1em%
+ \def\@tempa##1##2{{%
+   \lower##1\dimen@\rlap{\kern##1\dimen@ii\the##2\tw@\char78}}}%
+ \mathchoice\@tempa\@ne\textfont
+            \@tempa\@ne\textfont
+            \@tempa\defaultscriptratio\scriptfont
+            \@tempa\defaultscriptscriptratio\scriptscriptfont
+  h}}
+\def\@fnsymbol#1{\ensuremath{\ifcase#1\or *\or \dagger\or \ddagger\or
+   \mathsection\or \mathparagraph\or \|\or **\or \dagger\dagger
+   \or \ddagger\ddagger \else\@ctrerr\fi}}
+\ifx\symtextcomp\relax
+  \def\@tempa{LY1}
+  \ifx\operator@encoding\@tempa
+    \DeclareMathSymbol\dagger {\mathbin}{operators}{134}
+    \DeclareMathSymbol\ddagger{\mathbin}{operators}{135}
+    \DeclareMathSymbol\mathsection{\mathord}{operators}{'247}
+    \DeclareMathSymbol\mathparagraph{\mathord}{operators}{'266}
+    \DeclareMathSymbol\mathsterling{\mathord}{operators}{163}
+    \let\mathunderscore\@undefined
+    \DeclareMathSymbol\mathunderscore{\mathord}{operators}{95}
+  \fi
+  \def\@tempa{T1}
+  \ifx\operator@encoding\@tempa
+    \DeclareMathSymbol\mathsterling{\mathord}{operators}{191}
+    \let\mathunderscore\@undefined
+    \DeclareMathSymbol\mathunderscore{\mathord}{operators}{95}
+  \fi
+\else
+  \DeclareFontEncoding{TS1}{}{}
+  \DeclareSymbolFont{textcomp}{TS1}{ptm}{m}{n}
+  \ifx\mv@bold\@undefined
+  \else
+    \SetSymbolFont    {textcomp}{bold}{TS1}{ptm}{b}{n}
+  \fi
+  \ifx\mv@heavy\@undefined
+  \else
+    \SetSymbolFont    {textcomp}{heavy}{TS1}{ptm}{b}{n}
+  \fi
+  \DeclareMathSymbol\dagger {\mathbin}{textcomp}{'204}
+  \DeclareMathSymbol\ddagger{\mathbin}{textcomp}{'205}
+  \DeclareMathSymbol\mathsection{\mathord}{textcomp}{'247}
+  \DeclareMathSymbol\mathparagraph{\mathord}{textcomp}{'266}
+\fi
+\DeclareTextSymbolDefault{\textless}{MY1}
+\DeclareTextSymbolDefault{\textgreater}{MY1}
+\DeclareTextAccentDefault{\t}{MY2}
+\DeclareTextSymbol{\textless}{MY1}{`\<}
+\DeclareTextSymbol{\textgreater}{MY1}{`\>}
+\DeclareTextAccent{\t}{MY2}{65}
+\DeclareTextSymbolDefault{\textasteriskcentered}{MY2}
+\DeclareTextSymbolDefault{\textbackslash}{MY2}
+\DeclareTextSymbolDefault{\textbar}{MY2}
+\DeclareTextSymbolDefault{\textbraceleft}{MY2}
+\DeclareTextSymbolDefault{\textbraceright}{MY2}
+\DeclareTextSymbolDefault{\textbullet}{MY2}
+\DeclareTextSymbolDefault{\textperiodcentered}{MY2}
+\DeclareTextAccentDefault{\textcircled}{MY2}
+\DeclareTextSymbol{\textasteriskcentered}{MY2}{3}
+\DeclareTextSymbol{\textbackslash}{MY2}{110}
+\DeclareTextSymbol{\textbar}{MY2}{106}
+\DeclareTextSymbol{\textbraceleft}{MY2}{102}
+\DeclareTextSymbol{\textbraceright}{MY2}{103}
+\DeclareTextSymbol{\textbullet}{MY2}{15}
+\DeclareTextSymbol{\textperiodcentered}{MY2}{1}
+\DeclareTextCommand{\textcircled}{MY2}[1]{{%
+   \ooalign{%
+      \hfil \raise .07ex\hbox {\upshape#1}\hfil \crcr
+      \char13}}}
+\ifx\symtextcomp\relax
+\else
+  \DeclareTextSymbolDefault{\textsection}{TS1}
+  \DeclareTextSymbolDefault{\textparagraph}{TS1}
+  \DeclareTextSymbol{\textsection}{TS1}{'247}
+  \DeclareTextSymbol{\textparagraph}{TS1}{'266}
+\fi
+\begingroup
+ \catcode`\_=13
+ \gdef_#1{\sb{\test@sb#1}}
+\endgroup
+\def\test@sb{%
+  \@ifnextchar p%
+    {\mkern\m@ne mu}%
+    {\ifx\@let@token j%
+       \mkern-\tw@ mu%
+     \else
+       \ifx\@let@token f%
+         \mkern-\tw@ mu%
+       \fi
+     \fi}}
+\mathcode`\_=\string"8000
+
+\endinput
+%%
+%% End of file `mathtime.sty'.
