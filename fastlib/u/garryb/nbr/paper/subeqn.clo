@@ -1,0 +1,56 @@
+% subeqn.sty 
+% ----------------------------------------------------------------------
+%                     This LaTeX environment  is for
+% printing   subequations.   To   use   this   environment,  include  in  the
+% \documentstyle header  a command to  load in the  .sty file containing this
+% macro. For example:
+%     \documentstyle[subeqn]{article}
+% if you  have the  macro in  a file subeqn.sty. The environment seems pretty
+% well documented in the comments.
+%
+% Modified : June 8, 1989.  You can now reference either individual
+%            equations in the subequations environment, or all of
+%            them.  If you use a \label command immediately after the
+%            \begin{subequations} command, then a reference to that
+%            label will generate a reference to the equation number
+%            without the alphabetic extension.
+%
+% Modified : 16 - january - 1989 by Johannes Braams ( BRAAMS@HLSDNL5)
+%            Added \global\@ignoretrue in the definition of
+%            \endsubequations in order to prevent a spurious space
+%            at the beginning of the next text-line. Also added %'s
+%            at the end of each command-line for the same reasons.
+%
+%%%----------------------------------------------------------------
+%%% File: subeqn.sty
+%%% The subequations environment %%%
+%
+% Within the subequations environment, the only change is that
+% equations are labeled differently.  The number stays the same,
+% and lower case letters are appended.  For example, if after doing
+% three equations, numbered 1, 2, and 3, you start a subequations
+% environmment and do three more equations, they will be numbered
+% 4a, 4b, and 4c.  After you end the subequations environment, the
+% next equation will be numbered 5.
+%
+% Both text and equations can be put inside the subequations environment.
+%
+% If you make any improvements, I'd like to hear about them.
+%
+%
+\newtoks\@stequation
+
+\def\subequations{\refstepcounter{equation}%
+\edef\@savedequation{\the\c@equation}%
+\@stequation=\expandafter{\theequation}%   %only want \theequation
+\edef\@savedtheequation{\the\@stequation}% %expanded once
+\edef\oldtheequation{\theequation}%
+\setcounter{equation}{0}%
+\def\theequation{\oldtheequation\alph{equation}}}%
+
+\def\endsubequations{%
+\setcounter{equation}{\@savedequation}%
+\@stequation=\expandafter{\@savedtheequation}%
+\edef\theequation{\the\@stequation}\global\@ignoretrue}
+%%%----------------------------
+

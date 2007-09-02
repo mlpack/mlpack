@@ -1,0 +1,66 @@
+
+
+\ProvidesFile{ly1poptima.fd}
+   [1997/01/26  LY1/poptima with Adobe file names. (DPC)]
+
+\DeclareFontFamily{LY1}{poptima}{}
+
+\DeclareFontShape{LY1}{poptima}{b}{n}{
+   <-> opb
+}{}
+
+\DeclareFontShape{LY1}{poptima}{b}{sc}{
+   <-> sub poptima/b/n
+}{}
+
+\DeclareFontShape{LY1}{poptima}{b}{sl}{
+   <-> opbi
+}{}
+
+\DeclareFontShape{LY1}{poptima}{bc}{n}{
+   <-> sub poptima/m/n
+}{}
+
+\DeclareFontShape{LY1}{poptima}{bc}{sc}{
+   <-> sub poptima/bc/n
+}{}
+
+\DeclareFontShape{LY1}{poptima}{bc}{sl}{
+   <-> sub poptima/m/sl
+}{}
+
+\DeclareFontShape{LY1}{poptima}{m}{n}{
+   <-> op
+}{}
+
+\DeclareFontShape{LY1}{poptima}{m}{sc}{
+   <-> sub poptima/m/n
+}{}
+
+\DeclareFontShape{LY1}{poptima}{m}{sl}{
+   <-> opi
+}{}
+
+\DeclareFontShape{LY1}{poptima}{mc}{n}{
+   <-> sub poptima/m/m
+}{}
+
+\DeclareFontShape{LY1}{poptima}{mc}{sc}{
+   <-> sub poptima/m/n
+}{}
+
+\DeclareFontShape{LY1}{poptima}{mc}{sl}{
+   <-> sub poptima/m/sl
+}{}
+
+\DeclareFontShape{LY1}{poptima}{bx}{n}{<->ssub * poptima/b/n}{}
+\DeclareFontShape{LY1}{poptima}{bx}{sc}{<->ssub * poptima/b/sc}{}
+\DeclareFontShape{LY1}{poptima}{bx}{sl}{<->ssub * poptima/b/sl}{}
+\DeclareFontShape{LY1}{poptima}{b}{it}{<->ssub * poptima/b/sl}{}
+\DeclareFontShape{LY1}{poptima}{bx}{it}{<->ssub * poptima/b/it}{}
+\DeclareFontShape{LY1}{poptima}{bc}{it}{<->ssub * poptima/bc/sl}{}
+\DeclareFontShape{LY1}{poptima}{l}{it}{<->ssub * poptima/l/sl}{}
+\DeclareFontShape{LY1}{poptima}{m}{it}{<->ssub * poptima/m/sl}{}
+\DeclareFontShape{LY1}{poptima}{mc}{it}{<->ssub * poptima/mc/sl}{}
+
+\endinput

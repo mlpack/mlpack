@@ -1,0 +1,208 @@
+%%
+%% This is file `crop.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% crop.dtx  (with options: `package')
+%% 
+%% IMPORTANT NOTICE:
+%% 
+%% For the copyright see the source file.
+%% 
+%% You are *not* allowed to modify this file.
+%% 
+%% You are *not* allowed to distribute this file.
+%% For distribution of the original source see the terms
+%% for copying and modification in the file crop.dtx.
+%% 
+%% File: crop.dtx   Copyright (C) 1998,1999    Melchior FRANZ
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{crop}[1999/05/15 v1.3a cropmarks  (mf)]
+\DeclareOption{landscapecenter}{%
+  \def\CROP@center#1#2{\AtBeginDocument{\CROP@setoffset{#2}{#1}}}}
+\DeclareOption{a4center}{\CROP@center{297truemm}{210truemm}}
+\DeclareOption{a5center}{\CROP@center{210truemm}{148truemm}}
+\DeclareOption{b5center}{\CROP@center{250truemm}{176truemm}}
+\DeclareOption{lettercenter}{\CROP@center{11truein}{8.5truein}}
+\DeclareOption{sevenbyten}{\CROP@center{10truein}{7truein}}
+\DeclareOption{legalcenter}{\CROP@center{14truein}{8.5truein}}
+\DeclareOption{executivecenter}{\CROP@center{10.5truein}{7.25truein}}
+\newcommand*\CROP@setoffset[2]{%
+  \voffset#1\advance\voffset-\paperheight\voffset.5\voffset
+  \hoffset#2\advance\hoffset-\paperwidth\hoffset.5\hoffset}
+\def\CROP@center#1#2{\AtBeginDocument{\CROP@setoffset{#1}{#2}}}
+\DeclareOption*{\CROP@execopt\CurrentOption}
+\newcommand*\crop[1][cam,noaxes]{%
+  \@for\CROP@@:=#1\do{\CROP@execopt\CROP@@}}
+\newcommand*\CROP@execopt[1]{%
+  \def\CROP@##1=##2=##3\@nil{\def\CROP@{##1}\def\CROP@@{##2}}%
+  \expandafter\CROP@#1==\@nil%
+  \@ifundefined{CROP@opt@\CROP@}%
+    {\PackageWarning{crop}{Requested option `#1' not provided}}%
+      {\@nameuse{CROP@opt@\CROP@}}}
+\newcommand*\cropdef[6][\CROP@@info]{%
+  \@namedef{CROP@opt@#6}{%
+    \CROP@on
+    \def\CROP@info{#1}%
+    \let\CROP@ulc#2
+    \let\CROP@urc#3
+    \let\CROP@llc#4
+    \let\CROP@lrc#5}}
+\newcommand*\CROP@@vaxis{%
+  \hfil
+  \setbox\z@\hbox{\vtop{\hrule\@height12\p@\@depth-2\p@\@width.4\p@
+    \vskip\paperheight\vskip4\p@
+    \hrule\@height\z@\@depth10\p@\@width.4\p@}}%
+  \ht\z@\z@ \dp\z@\z@ \box\z@
+  \hfil}
+\newcommand*\CROP@@haxis{%
+  \vfil
+  \hb@xt@\paperwidth{%
+    \llap{\vrule\@height.2\p@\@depth.2\p@\@width10\p@\hskip2\p@}%
+    \hfil
+    \rlap{\hskip2\p@\vrule\@height.2\p@\@depth.2\p@\@width10\p@}}%
+  \vfil}
+\newcommand*\CROP@@info{%
+  \hskip\paperwidth\hskip12\p@
+  \raise12\p@\hbox{\vbox{%
+    \hbox{``\jobname''\strut}%
+    \hbox{\the\year/\the\month/\the\day\strut}%
+    \hbox{page \thepage\strut}}}}
+\newcommand*\CROP@@ulc{%
+  \begin{picture}(0,0)\unitlength\p@\thinlines
+  \put(-30,0){\circle{10}}
+  \put(-30,-5){\line(0,1){10}}
+  \put(-35,0){\line(1,0){30}}
+  \put(0,30){\circle{10}}
+  \put(-5,30){\line(1,0){10}}
+  \put(0,35){\line(0,-1){30}}
+  \end{picture}}
+\newcommand*\CROP@@urc{%
+  \begin{picture}(0,0)\unitlength\p@\thinlines
+  \put(30,0){\circle{10}}
+  \put(30,-5){\line(0,1){10}}
+  \put(35,0){\line(-1,0){30}}
+  \put(0,30){\circle{10}}
+  \put(-5,30){\line(1,0){10}}
+  \put(0,35){\line(0,-1){30}}
+  \end{picture}}
+\newcommand*\CROP@@llc{%
+  \begin{picture}(0,0)\unitlength\p@\thinlines
+  \put(-30,0){\circle{10}}
+  \put(-30,-5){\line(0,1){10}}
+  \put(-35,0){\line(1,0){30}}
+  \put(0,-30){\circle{10}}
+  \put(-5,-30){\line(1,0){10}}
+  \put(0,-35){\line(0,1){30}}
+  \end{picture}}
+\newcommand*\CROP@@lrc{%
+  \begin{picture}(0,0)\unitlength\p@\thinlines
+  \put(30,0){\circle{10}}
+  \put(30,-5){\line(0,1){10}}
+  \put(35,0){\line(-1,0){30}}
+  \put(0,-30){\circle{10}}
+  \put(-5,-30){\line(1,0){10}}
+  \put(0,-35){\line(0,1){30}}
+  \end{picture}}
+\cropdef\CROP@@ulc\CROP@@urc\CROP@@llc\CROP@@lrc{cam}
+\newcommand*\CROP@@cross{%
+  \begin{picture}(0,0)\unitlength1in\thinlines
+    \put(-1,0){\line(1,0){2}}
+    \put(0,-1){\line(0,1){2}}
+  \end{picture}}
+\cropdef\CROP@@cross\CROP@@cross\CROP@@cross\CROP@@cross{cross}
+\newcommand*\CROP@@frame{%
+  \begin{picture}(0,0)\unitlength\p@\thinlines
+    \put(0,0){\line(1,0){\strip@pt\paperwidth}}
+    \put(0,0){\line(0,-1){\strip@pt\paperheight}}
+    \put(\strip@pt\paperwidth,0){\line(0,-1){\strip@pt\paperheight}}
+    \put(0,-\strip@pt\paperheight){\line(1,0){\strip@pt\paperwidth}}
+  \end{picture}}
+\cropdef\CROP@@frame\relax\relax\relax{frame}
+\let\CROP@shipout\shipout
+\renewcommand*\shipout{\afterassignment\CROP@ship\setbox\@cclv=}
+\newcommand*\CROP@ship{%
+  \ifvoid\@cclv\expandafter\aftergroup\fi\CROP@@ship}
+\newcommand*\CROP@shiplist{\CROP@@@ship\unvbox\@cclv}
+\newcommand*\CROP@@ship{\CROP@shipout\vbox{\CROP@shiplist}}
+\newcommand*\CROP@shipadd[1]{\begingroup
+  \toks@\expandafter{\expandafter#1\expandafter{\CROP@shiplist}}%
+  \xdef\CROP@shiplist{\the\toks@}%
+  \endgroup}
+\newcommand*\CROP@kernel{\color@setgroup
+  \vbox to\z@{\vskip-.5in%_%_%_%_%_%moves crops relative to page
+    \hb@xt@\z@{\hskip-.25in
+      \CROP@every
+      \vbox to\paperheight{%
+        \hb@xt@\paperwidth{%
+          \setbox\z@\hbox{\normalfont\CROP@info}%
+          \ht\z@\z@ \dp\z@\z@ \wd\z@\z@ \box\z@
+          \CROP@ulc\CROP@uedge\CROP@urc}%
+        \CROP@ledge
+        \hb@xt@\paperwidth{%
+          \CROP@llc\hfil\CROP@lrc}}%
+    \hss}%
+  \vss}\color@endgroup}
+\newcommand*\CROP@on{\let\CROP@@@ship\CROP@kernel}
+\newcommand*\CROP@opt@off{\let\CROP@@@ship\relax}
+\newcommand*\CROP@opt@axes{%
+  \let\CROP@uedge\CROP@@vaxis
+  \let\CROP@ledge\CROP@@haxis}
+\newcommand*\CROP@opt@noaxes{%
+  \let\CROP@uedge\hfil
+  \let\CROP@ledge\vfil}
+\expandafter\newcommand\expandafter*\csname CROP@opt@mount1\endcsname
+  {\let\CROP@every\relax}
+\newcount\CROP@offset
+\expandafter\newcommand\expandafter*\csname CROP@opt@mount2\endcsname
+  {\CROP@offset=\ifx\CROP@@\empty\z@\else\CROP@@\fi
+  \def\CROP@every{\count@\c@page
+    \advance\count@\CROP@offset
+    \ifodd\count@
+      \let\CROP@ulc\relax\let\CROP@llc\relax
+    \else
+      \let\CROP@urc\relax\let\CROP@lrc\relax\let\CROP@info\relax
+    \fi}}
+\DeclareOption{mirror}{%
+  \AtBeginDocument{\CROP@shipadd\CROP@reflect\CROP@setps}}
+\newcommand*\CROP@reflect[1]{%
+  \vbox to\z@{\vskip-1in\hb@xt@\z@{\hskip-1in
+    \CROP@ps{gsave currentpoint}\kern\paperwidth
+    \CROP@ps{currentpoint}\hss}\vss}%
+  \CROP@ps{translate -1 1 scale neg exch neg exch translate}%
+  \vbox{#1}%
+  \CROP@ps{grestore}}
+\newcommand*\CROP@setps{%
+  \ifx\Gin@PS@raw\undefined
+    \PackageWarning{crop}{internal PostScript interface used}%
+    \newcommand*\CROP@ps[1]{\special{ps: ##1}}%
+  \else
+    \PackageInfo{crop}{graphics/color PostScript interface used}{}%
+    \let\CROP@ps\Gin@PS@raw
+  \fi
+  \let\CROP@setps\undefined}
+\DeclareOption{invert}{%
+  \AtEndOfPackage{\RequirePackage{color}}%
+  \AtBeginDocument{\CROP@invert}}
+\newcommand*\CROP@invert{%
+  \ifx\color\undefined
+    \PackageWarning{crop}%
+      {The `color' package could not be loaded,^^J%
+      so I'm ignoring the `invert' option}%
+  \else
+    \pagecolor{black}\color{white}%
+    \newcommand\CROP@color[2][]{}%
+    \DeclareRobustCommand\color{\CROP@color}%
+    \DeclareRobustCommand\pagecolor{\CROP@color}%
+    \DeclareRobustCommand\textcolor{\CROP@color}%
+    \let\normalcolor\relax
+  \fi
+  \let\CROP@invert\undefined}
+\crop[off,noaxes,mount1]
+\InputIfFileExists{crop.cfg}%
+  {\PackageInfo{crop}{Local config file crop.cfg used}}{}
+\ProcessOptions
+\endinput
+%%
+%% End of file `crop.sty'.
