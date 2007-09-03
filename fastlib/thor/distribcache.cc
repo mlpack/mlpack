@@ -124,6 +124,32 @@ void DistributedCache::InitCache_(size_t total_ram) {
   slots_.Init(n_sets_ << LOG_ASSOC);
 }
 
+char *DistributedCache::AllocBlock_() {
+  /*char *item = block_freelist_;
+  if (unlikely(item == NULL)) {
+    int slab_items = 128;
+    item = mem::Alloc<char>(slab_items * n_block_bytes_);
+
+    *reinterpret_cast<char**>(item) = block_freelist_;
+    --slab_items;
+
+    do {
+      char *prev = item;
+      item += n_block_bytes_;
+      *reinterpret_cast<char**>(item) = prev;
+    } while (--slab_items);
+  }
+  block_freelist_ = *reinterpret_cast<char**>(item);
+  return item;*/
+  return mem::Alloc<char>(n_block_bytes_);
+}
+
+void DistributedCache::FreeBlock_(char *item) {
+  //*reinterpret_cast<char**>(item) = block_freelist_;
+  //block_freelist_ = item;
+  mem::Free(item);
+}
+
 void DistributedCache::HandleSyncInfo_(const SyncInfo& info) {
   mutex_.Lock();
   HandleStatusInformation_(info.statuses);
@@ -311,7 +337,7 @@ void DistributedCache::ResetElements() {
     DEBUG_ASSERT(!block->is_reading);
 
     if (block->is_in_core()) {
-      mem::Free(block->data);
+      FreeBlock_(block->data);
       block->data = NULL;
     }
     if (block->is_owner()) {
@@ -600,7 +626,7 @@ void DistributedCache::HandleMiss_(blockid_t blockid) {
     // We're exclusive now -- nobody else is reading the block.
 
     if (block->is_new()) {
-      block->data = mem::Alloc<char>(n_block_bytes_);
+      block->data = AllocBlock_();
       DEBUG_ASSERT_MSG(block->status == NOT_DIRTY_NEW,
           "Block should be NOT_DIRTY_NEW, because that's what is_new() means");
       handler_->BlockInitFrozen(blockid, 0, n_block_bytes_, block->data);
@@ -623,7 +649,7 @@ void DistributedCache::HandleRealMiss_(blockid_t blockid) {
   block->is_reading = READING;
   mutex_.Unlock();
 
-  char *data = mem::Alloc<char>(n_block_bytes_);
+  char *data = AllocBlock_();
   if (value >= 0) {
     blockid_t local_blockid = value;
     // read the block from disk
@@ -739,7 +765,7 @@ void DistributedCache::Purge_(blockid_t blockid) {
     }
   }
 
-  mem::Free(data);
+  FreeBlock_(data);
 }
 
 void DistributedCache::WritebackDirtyLocalFreeze_(

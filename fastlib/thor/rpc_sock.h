@@ -136,7 +136,7 @@ class SockConnection {
   bool TryRead();
   /** Try writing something from the queue. */
   void TryWrite();
-  
+
   /** The rank of the peer. */
   int peer() const {
     return peer_;
@@ -187,7 +187,15 @@ class RpcSockImpl {
      * a non-negative channel number and incoming messages have a negative
      * channel number.
      */
-    DenseIntMap<Transaction*> outgoing_transactions;
+    ArrayList<Transaction*> outgoing_transactions;
+    /**
+     * Free list of outgoing transactions ready for reuse.
+     */
+    ArrayList<int> outgoing_freelist;
+    /**
+     * An available outgoing transaction, or -1 if none.
+     */
+    int outgoing_free;
     /**
      * Whether there are any messages that are pending locally because
      * the associated channel does not yet exist.
@@ -198,11 +206,6 @@ class RpcSockImpl {
      * the channel they're intended for hasn't been found.
      */
     Queue<Message*> pending;
-    /**
-     * Number of my messges that haven't yet been processed by the remote
-     * host, either because they failed to register a channel or because
-     */
-    int unacknowledged;
 
    public:
     Peer();
@@ -232,7 +235,7 @@ class RpcSockImpl {
       main_object_->PollingLoop_();
     }
   };
-  
+
   struct Cleanup {
     ~Cleanup() {
       delete RpcSockImpl::instance;
@@ -242,10 +245,11 @@ class RpcSockImpl {
  public:
   static const int request_header_size = sizeof(Header);
   static const int response_header_size = 0;
+  static const int MAX_UNACKNOWLEDGED = 100;
 
  public:
   static RpcSockImpl *instance;
- 
+
  private:
   static Cleanup cleanup_;
 
@@ -298,7 +302,7 @@ class RpcSockImpl {
   /** Largest file descriptor. */
   MinMaxVal<int> max_fd_;
 
-  /** Number of active writers. */
+  /** Number of sent messages that haven't ben acknowledged. */
   int unacknowledged_;
   /** Mutex that is locked when writes are pending. */
   WaitCondition flush_cond_;
@@ -308,7 +312,13 @@ class RpcSockImpl {
   void Done();
   void Register(int channel_num, Channel *channel);
   void Unregister(int channel_num);
-  void Send(Message *message);
+  /**
+   * Sends a message.
+   *
+   * If forbid_blocking is false, then this will block if the buffer pool
+   * has grown too large.
+   */
+  void Send(Message *message, bool forbid_blocking);
   void WakeUpPollingLoop();
   void UnregisterTransaction(int peer, int channel, int transaction_id);
   int AssignTransaction(int peer_num, Transaction *transaction);
@@ -383,7 +393,7 @@ namespace rpc {
   }
   /** Deliver a message */
   inline void Send(Message *message) {
-    RpcSockImpl::instance->Send(message);
+    RpcSockImpl::instance->Send(message, false);
   }
   /** Waits for all pending writes to be sent -- important for barriers! */
   inline void WriteFlush() {

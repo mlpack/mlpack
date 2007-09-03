@@ -19,18 +19,22 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
 
   global_result_.Init(*param_);
 
-  ArrayList<Thread> threads;
-  threads.Init(n_threads);
+  if (n_threads > 1) {
+    ArrayList<Thread> threads;
+    threads.Init(n_threads);
 
-  for (index_t i = 0; i < n_threads; i++) {
-    threads[i].Init(new WorkerTask(this));
-    // Set these threads to low priority to make sure the network thread
-    // gets full priority.
-    threads[i].Start(Thread::LOW_PRIORITY);
-  }
+    for (index_t i = 0; i < n_threads; i++) {
+      threads[i].Init(new WorkerTask(this));
+      // Set these threads to low priority to make sure the network thread
+      // gets full priority.
+      threads[i].Start(Thread::LOW_PRIORITY);
+    }
 
-  for (index_t i = 0; i < n_threads; i++) {
-    threads[i].WaitStop();
+    for (index_t i = 0; i < n_threads; i++) {
+      threads[i].WaitStop();
+    }
+  } else {
+    (new WorkerTask(this))->Run();
   }
 }
 

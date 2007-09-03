@@ -68,6 +68,7 @@ class KdTreeHybridBuilder {
   CacheArray<Node> nodes_;
   index_t leaf_size_;
   index_t chunk_size_;
+  index_t block_size_;
   index_t n_points_;
 
  public:
