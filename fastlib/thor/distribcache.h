@@ -784,6 +784,14 @@ class DistributedCache : public BlockDevice {
    */
   void DoReadRequest_(int peer, blockid_t blockid,
       offset_t begin, offset_t end, char *buffer);
+  /**
+   * Allocates a block worth of data.
+   */
+  char *AllocBlock_();
+  /**
+   * Frees a block worth of data.
+   */
+  void FreeBlock_(char *block);
 };
 
 #endif

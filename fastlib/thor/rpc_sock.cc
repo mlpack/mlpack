@@ -15,6 +15,10 @@
 
 //-------------------------------------------------------------------------
 
+#warning "avoid transaction messages"
+#warning "put buffer limit"
+#warning "use udp"
+
 RpcSockImpl::Cleanup RpcSockImpl::cleanup_;
 
 /*
@@ -93,9 +97,11 @@ register port numbers
  */
 #define TIMEOUT_SELECT 30
 
-void MakeSocketNonBlocking(int fd) {
-  fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
-}
+namespace {
+  void MakeSocketNonBlocking(int fd) {
+    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK);
+  }
+};
 
 //-------------------------------------------------------------------------
 
@@ -189,14 +195,24 @@ void RpcSockImpl::Unregister(int channel_num) {
   mutex_.Unlock();
 }
 
-void RpcSockImpl::Send(Message *message) {
+void RpcSockImpl::Send(Message *message, bool forbid_blocking) {
+  bool control_message = unlikely(message->transaction_id() == TID_CONTROL);
+
   DEBUG_ASSERT_MSG(n_peers_ != 1,
      "I'm the only machine -- why am I trying to send messages over the network?");
+
+  fd_mutex_.Lock();
+  if (!control_message && !forbid_blocking) {
+    while (unlikely(unacknowledged_ >= MAX_UNACKNOWLEDGED)) {
+      // Wait for number of unacknowledged messages to go back to zero.
+      flush_cond_.Wait(&fd_mutex_);
+    }
+  }
+  unacknowledged_++;
+  fd_mutex_.Unlock();
+
   Peer *peer = &peers_[message->peer()];
   peer->mutex.Lock();
-  if (likely(message->transaction_id() != TID_CONTROL)) {
-    peer->unacknowledged++;
-  }
   peer->connection.RawSend(message);
   peer->mutex.Unlock();
 }
@@ -216,8 +232,10 @@ void RpcSockImpl::UnregisterTransaction(int peer_id, int channel, int id) {
     DEBUG_ASSERT(peer->incoming_transactions.get(id) != NULL);
     peer->incoming_transactions[id] = NULL;
   } else {
-    DEBUG_ASSERT(peer->outgoing_transactions.get(id) != NULL);
+    DEBUG_ASSERT(peer->outgoing_transactions[id] != NULL);
     peer->outgoing_transactions[id] = NULL;
+    peer->outgoing_freelist[id] = peer->outgoing_free;
+    peer->outgoing_free = id;
   }
   peer->mutex.Unlock();
 }
@@ -226,8 +244,15 @@ int RpcSockImpl::AssignTransaction(int peer_num, Transaction *transaction) {
   Peer *peer = &peers_[peer_num];
   int id;
   peer->mutex.Lock();
-  for (id = 0; peer->outgoing_transactions[id] != NULL; id++) {}
-  peer->outgoing_transactions[id] = transaction;
+  id = peer->outgoing_free;
+  if (id >= 0) {
+    peer->outgoing_free = peer->outgoing_freelist[id];
+  } else {
+    id = peer->outgoing_transactions.size();
+    peer->outgoing_transactions.Resize(id + 1);
+    peer->outgoing_freelist.Resize(id + 1);
+  }
+  DEBUG_ONLY(peer->outgoing_freelist[id] = -1);
   peer->mutex.Unlock();
   return id;
 }
@@ -442,8 +467,6 @@ void RpcSockImpl::PollingLoop_() {
         }
       }
 
-      int tmp_unacknowledged = 0;
-
       mutex_.Lock();
       alarm(TIMEOUT_MESSAGE);
       for (index_t i = 0; i < peers_.size(); i++) {
@@ -453,14 +476,12 @@ void RpcSockImpl::PollingLoop_() {
         if (unlikely(peer->is_pending)) {
           ExecuteReadyMessages_(peer);
         }
-        tmp_unacknowledged += peer->unacknowledged;
       }
       alarm(0);
       mutex_.Unlock();
 
       fd_mutex_.Lock();
-      unacknowledged_ = tmp_unacknowledged;
-      if (tmp_unacknowledged == 0) {
+      if (unacknowledged_ == 0) {
         flush_cond_.Broadcast();
       }
       fd_mutex_.Unlock();
@@ -531,11 +552,11 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
       } else if (message->channel() == MSG_PING) {
         Ping_(peer->connection.peer(), MSG_PONG);
       } else if (message->channel() == MSG_ACK) {
-        peer->mutex.Lock();
-        peer->unacknowledged -= *message->data_as<int32>();
-        peer->mutex.Unlock();
-        DEBUG_ASSERT_MSG(peer->unacknowledged >= 0,
+        fd_mutex_.Lock();
+        unacknowledged_ -= *message->data_as<int32>();
+        DEBUG_ASSERT_MSG(unacknowledged_ >= 0,
             "Received more acknowledgements than messages sent.");
+        fd_mutex_.Unlock();
       } else {
         FATAL("Unknown control message: %d", message->channel());
       }
@@ -574,21 +595,23 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
       }
     }
     peer->mutex.Unlock();
+
     if (!transaction) {
       peer->is_pending = true;
       break;
     }
+
     handled++;
     transaction->HandleMessage(message);
     peer->pending.Pop();
   }
-  
+
   if (handled != 0) {
     // send acknowledgement of the messages we've processed
     Message *ack = peer->connection.CreateMessage(MSG_ACK, TID_CONTROL,
         sizeof(int32));
     *ack->data_as<int32>() = handled;
-    Send(ack);
+    Send(ack, true);
   }
 }
 
@@ -648,10 +671,10 @@ RpcSockImpl::Peer::Peer() {
   incoming_transactions.Init();
   incoming_transactions.default_value() = NULL;
   outgoing_transactions.Init();
-  outgoing_transactions.default_value() = NULL;
+  outgoing_freelist.Init();
+  outgoing_free = -1;
   is_pending = false;
   pending.Init();
-  unacknowledged = 0;
 }
 
 RpcSockImpl::Peer::~Peer() {
@@ -709,7 +732,7 @@ void Transaction::TransactionHandleNewSender_(Message *message) {
 
 void Transaction::Send(Message *message) {
   // RpcSockImpl knows how to send messages, we don't need to bother with it.
-  RpcSockImpl::instance->Send(message);
+  rpc::Send(message);
 }
 
 void Transaction::Done() {
@@ -847,7 +870,7 @@ void SockConnection::AcceptIncoming(int accepted_fd) {
 }
 
 void SockConnection::RawSend(Message *message) {
-  if (!is_write_open()) {
+  if (unlikely(!is_write_open())) {
     // Open our outgoing link if one doesn't exist.
     OpenOutgoing(false);
     // Alert network thread that there's a new file descriptor
@@ -888,8 +911,8 @@ void SockConnection::TryWrite() {
           RpcSockImpl::instance->DeactivateWriteFd(write_fd_);
           return;
         } else {
-          write_buffer_pos_ = 0;
           write_message_ = write_queue_.Pop();
+          write_buffer_pos_ = 0;
           DEBUG_ASSERT(write_message_->buffer_size() != 0);
         }
       }

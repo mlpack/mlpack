@@ -77,12 +77,13 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Doit(
   }
 
   leaf_size_ = fx_param_int(module, "leaf_size", 32);
-  chunk_size_ = points_.n_block_elems();
-  if (chunk_size_ <= leaf_size_) {
+  block_size_ = points_.n_block_elems();
+  if (leaf_size_ > block_size_) {
     NONFATAL("Decreasing leaf size from %d to %d due to block size!\n",
-       int(leaf_size_), int(chunk_size_));
-    leaf_size_ = chunk_size_;
+       int(leaf_size_), int(block_size_));
+    leaf_size_ = block_size_;
   }
+  chunk_size_ = fx_param_int(module, "chunk_size", leaf_size_ * 16);
 
   fx_timer_start(module, "tree_build");
   DecompNode* decomp_root;
@@ -197,28 +198,16 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
     percent_indicator("tree built", node->begin(), n_points_);
   }
 
-  if (node->count() <= chunk_size_) {
-    split_val = current_range.mid();
-    if (current_range.width() == 0) {
-      // All points are equal.  As a point of diligence, we still divide it,
-      // into two overlapping nodes.
-      split_col = (node->begin() + node->end()) / 2;
-    } else {
-      // perform a midpoint split
-      split_col = thor::Partition(
-          HrectPartitionCondition(split_dim, split_val),
-          begin_col, end_col - begin_col,
-          &points_, &final_left_bound, &final_right_bound);
-    }
-  } else {
+  if (1) {
     index_t goal_col;
     typename Node::Bound left_bound;
     typename Node::Bound right_bound;
+    bool single_machine = (end_rank <= begin_rank + 1);
 
     left_bound.Init(node->bound().dim());
     right_bound.Init(node->bound().dim());
 
-    if (end_rank <= begin_rank + 1) {
+    if (single_machine) {
       // All points will go on the same machine, so do median split.
       goal_col = (begin_col + end_col) / 2;
     } else {
@@ -231,10 +220,12 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
           / rpc::n_peers() / 2;
     }
 
-    // Round the goal to the nearest block.
-    goal_col = (goal_col + chunk_size_ / 2) / chunk_size_ * chunk_size_;
+    if (node->count() > block_size_) {
+      // Round the goal to the nearest block if larger than a block.
+      goal_col = (goal_col + block_size_ / 2) / block_size_ * block_size_;
+    }
 
-    for (;;) {
+    for (int iteration = 0;; iteration++) {
       // use linear interpolation to guess the value to split on.
       // this typically leads to convergence rather quickly.
       split_val = current_range.interpolate(
@@ -246,6 +237,24 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
           HrectPartitionCondition(split_dim, split_val),
           begin_col, end_col - begin_col,
           &points_, &left_bound, &right_bound);
+
+      if (node->count() < chunk_size_ && single_machine) {
+        if (node->count() <= block_size_) {
+          // Smaller than a block, we'll finish with a median split.
+          goal_col = split_col;
+        } else if (iteration == 0) {
+          // Larger than a block, so round to a block.
+          DEBUG_ASSERT(end_col - begin_col == node->count());
+          goal_col = (split_col + block_size_ / 2) / block_size_ * block_size_;
+          if (goal_col <= begin_col) {
+            goal_col += block_size_;
+            DEBUG_ASSERT_MSG(goal_col < end_col - 1,
+               "(%d %d) %d %d (%d %d)", node->begin(), begin_col, split_col, goal_col, node->end(), end_col);
+          } else if (goal_col >= end_col - 1) {
+            goal_col -= block_size_;
+          }
+        }
+      }
 
       if (split_col == goal_col) {
         final_left_bound |= left_bound;

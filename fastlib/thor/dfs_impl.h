@@ -141,6 +141,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
 
   if (!GNP::Algorithm::ConsiderQueryTermination(
          param_, *q_node, mu, global_result_, &q_node_mut->postponed)) {
+    // TODO: This behavior should be re-thinked.
     q_node_mut->summary_result.ApplyDelta(param_, delta);
     DEBUG_MSG(1.0, "Termination prune");
   } else if (!GNP::Algorithm::ConsiderPairExtrinsic(
@@ -200,7 +201,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
       bool explore_r2 = GNP::Algorithm::ConsiderPairIntrinsic(
           param_, *q_node, *r_child2, &delta2,
           &global_result_, &q_node_mut->postponed);
-      
+
       if (!explore_r1) {
         if (explore_r2) {
           Pair_(q_node, r_child2, delta2, unvisited, q_node_mut);
