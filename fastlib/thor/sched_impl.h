@@ -1,7 +1,7 @@
 /* Templated Implementations for GNP scheduling. */
 
 template<typename Node>
-void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree,
+void CentroidScheduler<Node>::Init(CacheArray<Node> *tree,
     const DecompNode *decomp_root, int n_threads, datanode *module) {
   granularity_ = fx_param_double(module, "granularity", 12);
   no_overflow_ = fx_param_bool(module, "no_overflow", false);
@@ -26,7 +26,7 @@ void CentroidWorkQueue<Node>::Init(CacheArray<Node> *tree,
 }
 
 template<typename Node>
-void CentroidWorkQueue<Node>::DistributeInitialWork_(
+void CentroidScheduler<Node>::DistributeInitialWork_(
     const DecompNode *decomp_node, InternalNode *node) {
   int begin_rank = decomp_node->info().begin_rank;
   int end_rank = decomp_node->info().end_rank;
@@ -44,14 +44,14 @@ void CentroidWorkQueue<Node>::DistributeInitialWork_(
         node->count() / granularity_ / n_threads_);
 
     for (int i = begin_rank; i < end_rank; i++) {
-      ProcessWorkQueue *queue = &rankes_[i];
+      ProcessScheduler *queue = &rankes_[i];
       queue->max_grain_size = max_grain_size;
       queue->n_centers = 1;
       queue->sum_centers.Copy(center);
       queue->work_items.Init();
     }
 
-    ProcessWorkQueue *queue = &rankes_[begin_rank];
+    ProcessScheduler *queue = &rankes_[begin_rank];
     ArrayList<InternalNode*> node_stack;
     node_stack.Init();
     *node_stack.AddBack() = node;
@@ -81,9 +81,9 @@ void CentroidWorkQueue<Node>::DistributeInitialWork_(
 }
 
 template<typename Node>
-void CentroidWorkQueue<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
+void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
   InternalNode *found_node;
-  ProcessWorkQueue *queue = &rankes_[rank_num];
+  ProcessScheduler *queue = &rankes_[rank_num];
 
   found_node = NULL;
 
@@ -183,7 +183,7 @@ void CentroidWorkQueue<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
 }
 
 template<typename Node>
-void CentroidWorkQueue<Node>::Report(struct datanode *module) {
+void CentroidScheduler<Node>::Report(struct datanode *module) {
   fx_format_result(module, "n_grains", "%"LI"d",
       n_preferred_ + n_overflows_);
   fx_format_result(module, "overflow_grain_ratio", "%.4f",

@@ -19,12 +19,12 @@ thortree.h
 thortree_impl.h
 thor_utils.h
 thor_utils_impl.h
-work.h
-work_impl.h
+sched.h
+sched_impl.h
 """.split()
 
 librule(name = "thor",
-   sources = ["distribcache.cc", "blockdev.cc", "work.cc",
+   sources = ["distribcache.cc", "blockdev.cc", "sched.cc",
               "rpc.cc", "rpc_sock.cc"],
    headers = headers,
    deplibs = ["fastlib:fastlib_int"])

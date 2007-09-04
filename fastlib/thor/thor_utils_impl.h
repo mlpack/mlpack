@@ -2,7 +2,7 @@
 
 template<typename GNP, typename Solver>
 void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
-    index_t n_threads, int rank, WorkQueueInterface *work_queue_in,
+    index_t n_threads, int rank, SchedulerInterface *work_queue_in,
     const typename GNP::Param& param,
     DistributedCache *q_points_cache_in, DistributedCache *q_nodes_cache_in,
     DistributedCache *r_points_cache_in, DistributedCache *r_nodes_cache_in,
@@ -41,7 +41,7 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
 template<typename GNP, typename Solver>
 void thor::ThreadedDualTreeSolver<GNP, Solver>::ThreadBody_() {
   while (1) {
-    ArrayList<WorkQueueInterface::Grain> work;
+    ArrayList<SchedulerInterface::Grain> work;
 
     mutex_.Lock();
     work_queue_->GetWork(rank_, &work);
@@ -152,26 +152,26 @@ void thor::RpcDualTree(datanode *module, int base_channel,
     DistributedCache *q_results,
     typename GNP::GlobalResult **global_result_pp) {
   int n_threads = fx_param_int(module, "n_threads", 2);
-  RemoteWorkQueueBackend *work_backend = NULL;
-  WorkQueueInterface *work_queue;
+  RemoteSchedulerBackend *work_backend = NULL;
+  SchedulerInterface *work_queue;
   datanode *io_module = fx_submodule(module, NULL, "io");
   datanode *work_module = fx_submodule(module, NULL, "scheduler");
 
   if (rpc::is_root()) {
     // Make a static work queue
-    CentroidWorkQueue<typename GNP::QNode> *actual_work_queue =
-        new CentroidWorkQueue<typename GNP::QNode>;
+    CentroidScheduler<typename GNP::QNode> *actual_work_queue =
+        new CentroidScheduler<typename GNP::QNode>;
     CacheArray<typename GNP::QNode> q_nodes_array;
     q_nodes_array.Init(&q->nodes(), BlockDevice::M_READ);
     actual_work_queue->Init(&q_nodes_array,
         q->decomp().root(), n_threads, module);
-    work_queue = new LockedWorkQueue(actual_work_queue);
+    work_queue = new LockedScheduler(actual_work_queue);
 
-    work_backend = new RemoteWorkQueueBackend();
+    work_backend = new RemoteSchedulerBackend();
     work_backend->Init(work_queue);
     rpc::Register(base_channel + 0, work_backend);
   } else {
-    RemoteWorkQueue *remote_work_queue = new RemoteWorkQueue();
+    RemoteScheduler *remote_work_queue = new RemoteScheduler();
     remote_work_queue->Init(base_channel + 0, 0);
     work_queue = remote_work_queue;
   }

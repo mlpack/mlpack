@@ -1,5 +1,5 @@
 /**
- * @file work.h
+ * @file sched.h
  *
  * Work-queues, load balancing, and the like.
  */
@@ -25,15 +25,15 @@
  * Consider renaming this to "Scheduler" or "Work Scheduler" because it's
  * not exactly a queue -- it can be any kind of scheduler.
  */
-class WorkQueueInterface {
-  FORBID_COPY(WorkQueueInterface);
+class SchedulerInterface {
+  FORBID_COPY(SchedulerInterface);
 
  public:
   typedef TreeGrain Grain;
 
  public:
-  WorkQueueInterface() {}
-  virtual ~WorkQueueInterface() {}
+  SchedulerInterface() {}
+  virtual ~SchedulerInterface() {}
 
   /**
    * Gets work items to do -- may get one or multiple items.
@@ -59,11 +59,11 @@ class WorkQueueInterface {
  * A wrapper for a work-queue that ensures that multiple
  * threads aren't going to trample on each other.
  */
-class LockedWorkQueue : public WorkQueueInterface {
-  FORBID_COPY(LockedWorkQueue);
+class LockedScheduler : public SchedulerInterface {
+  FORBID_COPY(LockedScheduler);
 
  private:
-  WorkQueueInterface *inner_;
+  SchedulerInterface *inner_;
   Mutex mutex_;
   
  public:
@@ -72,8 +72,8 @@ class LockedWorkQueue : public WorkQueueInterface {
    *
    * Will delete the other work-queue when done.
    */
-  LockedWorkQueue(WorkQueueInterface *inner) : inner_(inner) {}
-  virtual ~LockedWorkQueue() { delete inner_; }
+  LockedScheduler(SchedulerInterface *inner) : inner_(inner) {}
+  virtual ~LockedScheduler() { delete inner_; }
 
   virtual void GetWork(int rank, ArrayList<Grain> *work) {
     mutex_.Lock();
@@ -89,9 +89,9 @@ class LockedWorkQueue : public WorkQueueInterface {
 //------------------------------------------------------------------------
 
 template<typename Node>
-class CentroidWorkQueue
-    : public WorkQueueInterface {
-  FORBID_COPY(CentroidWorkQueue);
+class CentroidScheduler
+    : public SchedulerInterface {
+  FORBID_COPY(CentroidScheduler);
 
  private:
   /** Convenience typedef for the decomposition node. */
@@ -110,13 +110,13 @@ class CentroidWorkQueue
   typedef ThorSkeletonNode<Node, Status> InternalNode;
 
   /** The status for one particular machine. */
-  struct ProcessWorkQueue {
+  struct ProcessScheduler {
     index_t n_centers;
     index_t max_grain_size;
     Vector sum_centers;
     MinHeap<double, InternalNode*> work_items;
     
-    OT_DEF(ProcessWorkQueue) {
+    OT_DEF(ProcessScheduler) {
       OT_MY_OBJECT(n_centers);
       OT_MY_OBJECT(max_grain_size);
       OT_MY_OBJECT(sum_centers);
@@ -126,7 +126,7 @@ class CentroidWorkQueue
 
  private:
   CacheArray<Node> *tree_;
-  ArrayList<ProcessWorkQueue> rankes_;
+  ArrayList<ProcessScheduler> rankes_;
   InternalNode *root_;
   int n_threads_;
   double granularity_;
@@ -138,8 +138,8 @@ class CentroidWorkQueue
   bool no_overflow_;
 
  public:
-  CentroidWorkQueue() {}
-  virtual ~CentroidWorkQueue() {
+  CentroidScheduler() {}
+  virtual ~CentroidScheduler() {
     delete root_;
   }
 
@@ -199,36 +199,36 @@ struct WorkRequest {
 }; 
 
 struct WorkResponse {
-  ArrayList<WorkQueueInterface::Grain> work_items;
+  ArrayList<SchedulerInterface::Grain> work_items;
 
   OT_DEF_BASIC(WorkResponse) {
     OT_MY_OBJECT(work_items);
   }
 };
 
-class RemoteWorkQueueBackend
+class RemoteSchedulerBackend
     : public RemoteObjectBackend<WorkRequest, WorkResponse> {
  private:
-  WorkQueueInterface *inner_;
+  SchedulerInterface *inner_;
 
  public:
-  void Init(WorkQueueInterface *inner_work_queue);
+  void Init(SchedulerInterface *inner_work_queue);
 
   virtual void HandleRequest(
       const WorkRequest& request, WorkResponse *response);
 };
 
-class RemoteWorkQueue
-    : public WorkQueueInterface {
-  FORBID_COPY(RemoteWorkQueue);
+class RemoteScheduler
+    : public SchedulerInterface {
+  FORBID_COPY(RemoteScheduler);
 
  private:
   int channel_;
   int destination_;
 
  public:
-  RemoteWorkQueue() {}
-  virtual ~RemoteWorkQueue() {}
+  RemoteScheduler() {}
+  virtual ~RemoteScheduler() {}
   
   void Init(int channel, int destination);
 
@@ -237,6 +237,6 @@ class RemoteWorkQueue
 
 //------------------------------------------------------------------------
 
-#include "work_impl.h"
+#include "sched_impl.h"
 
 #endif

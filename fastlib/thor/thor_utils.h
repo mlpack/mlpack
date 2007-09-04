@@ -11,7 +11,7 @@
 #define THOR_UTILS_H
 
 #include "kdtree.h"
-#include "work.h"
+#include "sched.h"
 #include "rpc.h"
 
 #include "par/thread.h"
@@ -43,7 +43,7 @@ class ThreadedDualTreeSolver {
  private:
   int rank_;
   const typename GNP::Param *param_;
-  WorkQueueInterface *work_queue_;
+  SchedulerInterface *work_queue_;
   DistributedCache *q_points_cache_;
   DistributedCache *q_nodes_cache_;
   DistributedCache *r_points_cache_;
@@ -67,7 +67,7 @@ class ThreadedDualTreeSolver {
    * @param r_nodes_cache_in the cache containing the reference tree
    * @param q_results_cache_in the cache containing per-query results.
    */
-  void Doit(index_t n_threads, int rank, WorkQueueInterface *work_queue_in,
+  void Doit(index_t n_threads, int rank, SchedulerInterface *work_queue_in,
       const typename GNP::Param& param,
       DistributedCache *q_points_cache_in, DistributedCache *q_nodes_cache_in,
       DistributedCache *r_points_cache_in, DistributedCache *r_nodes_cache_in,
