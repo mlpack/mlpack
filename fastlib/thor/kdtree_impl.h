@@ -240,8 +240,12 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
 
       if (node->count() < chunk_size_ && single_machine) {
         if (node->count() <= block_size_) {
-          // Smaller than a block, we'll finish with a median split.
-          goal_col = split_col;
+          // Smaller than a block.
+          // If it's not pathological, we'll finish off with a midpoint split.
+          // Otherwise, we'll arbitrarily split up the block at the median.
+          if (current_range.width() != 0) {
+            goal_col = split_col;
+          }
         } else if (iteration == 0) {
           // Larger than a block, so round to a block.
           DEBUG_ASSERT(end_col - begin_col == node->count());

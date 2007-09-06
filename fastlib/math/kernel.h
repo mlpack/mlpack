@@ -21,7 +21,7 @@
  * Standard multivariate Gaussian kernel.
  *
  */
-struct GaussianKernel {
+class GaussianKernel {
  private:
   double inv_bandwidth_2sq_;
   double bandwidth_sq_;
@@ -87,7 +87,7 @@ struct GaussianKernel {
  * To use, first get an unnormalized density, and divide by the
  * normalizeation factor.
  */
-struct EpanKernel {
+class EpanKernel {
  private:
   double inv_bandwidth_sq_;
   double bandwidth_sq_;

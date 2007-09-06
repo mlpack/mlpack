@@ -96,16 +96,6 @@ class CacheArray {
   };
 
  protected:
-  /**
-   * Number of pages in the thread-local FIFO cache.
-   *
-   * This absolutely cannot be less than the maximum number of concurrent
-   * "locked" blocks!  This maximum should be 32 for most use cases, with 64
-   * giving a nice balance between efficiency and memory usage -- given the
-   * worst-case of 32 used blocks, the mean search time for an empty FIFO
-   * entry is about three, and only 48 blocks are forced into RAM.
-   */
-  static const int FIFO_SIZE = 64;
 
  protected:
   /** The metadata array, but adjusted (see how it is used in code). */
@@ -147,6 +137,16 @@ class CacheArray {
   /** Number of locks made to this cache. */
   int64 n_fifo_locks_;
 #endif
+  /**
+   * Number of pages in the thread-local FIFO cache.
+   *
+   * This absolutely cannot be less than the maximum number of concurrent
+   * "locked" blocks!  This maximum should be 32 for most use cases, with 64
+   * giving a nice balance between efficiency and memory usage -- given the
+   * worst-case of 32 used blocks, the mean search time for an empty FIFO
+   * entry is about three, and only 48 blocks are forced into RAM.
+   */
+  int fifo_size_;
 
  public:
   /**
@@ -372,7 +372,7 @@ class CacheArray {
 
   /** Gets the within-block byte offset of an element. */
   BlockDevice::offset_t Offset(index_t element_id) {
-    return (element_id & n_block_elems_mask()) * n_elem_bytes_;
+    return (element_id & n_block_elems_mask_) * n_elem_bytes_;
   }
 
   /** Releases an element, same as StopRead or StopWrite. */

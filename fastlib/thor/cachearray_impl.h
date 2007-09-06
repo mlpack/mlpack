@@ -209,8 +209,9 @@ void CacheArray<T>::Init(
   next_alloc_ = end_;
   mode_ = mode_in;
   n_elem_bytes_ = handler->n_elem_bytes();
-  fifo_ = mem::Alloc<BlockDevice::blockid_t>(FIFO_SIZE);
-  mem::ConstructAll(fifo_, -1, FIFO_SIZE);
+  fifo_size_ = 64;
+  fifo_ = mem::Alloc<BlockDevice::blockid_t>(fifo_size_);
+  mem::ConstructAll(fifo_, -1, fifo_size_);
   fifo_index_ = 0;
 
   unsigned n_block_elems_calc = cache_->n_block_bytes() / n_elem_bytes_;
@@ -230,7 +231,7 @@ void CacheArray<T>::Init(
 
 template<typename T>
 void CacheArray<T>::Flush() {
-  for (int i = 0; i < FIFO_SIZE; i++) {
+  for (int i = 0; i < fifo_size_; i++) {
     BlockDevice::blockid_t blockid = fifo_[i];
 
     if (blockid >= 0) {
@@ -257,13 +258,23 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
     index_t element_id) {
   BlockDevice::blockid_t victim;
   Metadata *victim_metadata;
+  bool looped = false;
 
   // warning, this isn't very readable... basically, look for the first
   // unlocked item -- the most likely case is that the first item in the
   // fifo is non-negative (i.e. it exists) and it's most likely not locked
   for (;;) {
     if (unlikely(fifo_index_ == 0)) {
-      fifo_index_ = FIFO_SIZE;
+      if (unlikely(looped)) {
+        int old_size = fifo_size_;
+        fifo_size_ *= 2;
+        fifo_ = mem::Resize(fifo_, fifo_size_);
+        for (int i = old_size; i < fifo_size_; i++) {
+          fifo_[i] = -1;
+        }
+      }
+      looped = true;
+      fifo_index_ = fifo_size_;
     }
 
     fifo_index_--;
@@ -300,10 +311,8 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
   if (BlockDevice::can_write(mode_)) {
     metadata->data = cache_->StartWrite(blockid,
         !BlockDevice::is_dynamic(mode_));
-    //putchar('#');
   } else {
     metadata->data = cache_->StartRead(blockid);
-    //putchar('.');
   }
 
   BlockDevice::offset_t offset =

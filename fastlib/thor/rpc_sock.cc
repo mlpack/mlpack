@@ -195,21 +195,20 @@ void RpcSockImpl::Unregister(int channel_num) {
   mutex_.Unlock();
 }
 
-void RpcSockImpl::Send(Message *message, bool forbid_blocking) {
+void RpcSockImpl::Send(Message *message) {
   bool control_message = unlikely(message->transaction_id() == TID_CONTROL);
 
   DEBUG_ASSERT_MSG(n_peers_ != 1,
      "I'm the only machine -- why am I trying to send messages over the network?");
 
-  fd_mutex_.Lock();
-  if (!control_message && !forbid_blocking) {
-    while (unlikely(unacknowledged_ >= MAX_UNACKNOWLEDGED)) {
-      // Wait for number of unacknowledged messages to go back to zero.
-      flush_cond_.Wait(&fd_mutex_);
-    }
+  if (!control_message) {
+    fd_mutex_.Lock();
+    // This used to make sure the buffer pool didn't get too big, but this
+    // causes problems within the server thread.  For now, the distributed
+    // cache will handle it.
+    unacknowledged_++;
+    fd_mutex_.Unlock();
   }
-  unacknowledged_++;
-  fd_mutex_.Unlock();
 
   Peer *peer = &peers_[message->peer()];
   peer->mutex.Lock();
@@ -224,15 +223,18 @@ void RpcSockImpl::WakeUpPollingLoop() {
   }
 }
 
-void RpcSockImpl::UnregisterTransaction(int peer_id, int channel, int id) {
-  Peer *peer = &peers_[peer_id];
+void RpcSockImpl::UnregisterTransaction(int peer_num, int channel, int id) {
+  Peer *peer = &peers_[peer_num];
 
   peer->mutex.Lock(); // Lock peer's mutex
   if (channel < 0) {
     DEBUG_ASSERT(peer->incoming_transactions.get(id) != NULL);
     peer->incoming_transactions[id] = NULL;
   } else {
-    DEBUG_ASSERT(peer->outgoing_transactions[id] != NULL);
+    //fprintf(stderr, "%d to %d: unregistering %d\n", rpc::rank(), peer_num, id);
+    DEBUG_ASSERT_MSG(peer->outgoing_transactions[id] != NULL,
+       "%d: %d of %d already NULL when unregistering outgoing transaction",
+       rpc::rank(), id, peer->outgoing_transactions.size());
     peer->outgoing_transactions[id] = NULL;
     peer->outgoing_freelist[id] = peer->outgoing_free;
     peer->outgoing_free = id;
@@ -252,7 +254,9 @@ int RpcSockImpl::AssignTransaction(int peer_num, Transaction *transaction) {
     peer->outgoing_transactions.Resize(id + 1);
     peer->outgoing_freelist.Resize(id + 1);
   }
+  //fprintf(stderr, "%d to %d: registering %d\n", rpc::rank(), peer_num, id);
   DEBUG_ONLY(peer->outgoing_freelist[id] = -1);
+  peer->outgoing_transactions[id] = transaction;
   peer->mutex.Unlock();
   return id;
 }
@@ -611,7 +615,7 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
     Message *ack = peer->connection.CreateMessage(MSG_ACK, TID_CONTROL,
         sizeof(int32));
     *ack->data_as<int32>() = handled;
-    Send(ack, true);
+    Send(ack);
   }
 }
 
