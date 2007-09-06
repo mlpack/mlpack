@@ -245,7 +245,6 @@ class RpcSockImpl {
  public:
   static const int request_header_size = sizeof(Header);
   static const int response_header_size = 0;
-  static const int MAX_UNACKNOWLEDGED = 100;
 
  public:
   static RpcSockImpl *instance;
@@ -318,7 +317,7 @@ class RpcSockImpl {
    * If forbid_blocking is false, then this will block if the buffer pool
    * has grown too large.
    */
-  void Send(Message *message, bool forbid_blocking);
+  void Send(Message *message);
   void WakeUpPollingLoop();
   void UnregisterTransaction(int peer, int channel, int transaction_id);
   int AssignTransaction(int peer_num, Transaction *transaction);
@@ -393,7 +392,7 @@ namespace rpc {
   }
   /** Deliver a message */
   inline void Send(Message *message) {
-    RpcSockImpl::instance->Send(message, false);
+    RpcSockImpl::instance->Send(message);
   }
   /** Waits for all pending writes to be sent -- important for barriers! */
   inline void WriteFlush() {

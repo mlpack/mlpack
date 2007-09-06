@@ -110,12 +110,20 @@ index_t thor::ReadPointsMaster(
     } else if (is_done) {
       break;
     } else {
-      index_t i = points_array.AllocD(rpc::rank(), 1);
+      int owner = rpc::rank();
+      // Distributing the points seems to make it a ton slower, disk seems
+      // to be better for some odd reason.
+      //int owner = (n_points / points_array.n_block_elems()) % rpc::n_peers();
+      index_t i = points_array.AllocD(owner, 1);
       CacheWrite<Point> point(&points_array, i);
       point->Set(param, i, vector);
       n_points++;
+      if (n_points % 1048576 == 0) {
+        fprintf(stderr, "... read %"LI"d points...\n", n_points);
+      }
     }
   }
+  fprintf(stderr, "... done reading, %"LI"d points.\n", n_points);
 
   return n_points;
 }

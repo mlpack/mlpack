@@ -254,6 +254,7 @@ void DistributedCache::StartSync() {
   Slot *slot = slots_.begin();
   index_t i = slots_.size();
   BlockMetadata *blocks = blocks_.begin();
+  size_t unflushed_bytes = 0;
 
   DEBUG_ASSERT_MSG(!syncing_, "Called StartSync twice before WaitSync!");
 
@@ -268,6 +269,11 @@ void DistributedCache::StartSync() {
         slot->blockid = -1;
         DEBUG_ASSERT_MSG(block->locks == 0, "Why is a locked block in LRU?");
         DEBUG_ASSERT(!block->is_reading);
+        unflushed_bytes += n_block_bytes_;
+        // Flush every 4 megabytes to avoid eating RAM with buffers.
+        if (unflushed_bytes > 4*MEGABYTE) {
+          rpc::WriteFlush();
+        }
         Purge_(blockid);
         DEBUG_ASSERT_MSG(!block->is_dirty(),
             "We purged a block and it's still marked as dirty?");

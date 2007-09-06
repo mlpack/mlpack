@@ -38,7 +38,7 @@ try:
   for i in range(n):
     machinename = peerlist[i]
     print >> log, "****** CONNECTING TO %s ******" % machinename
-    argv = ["ssh", "-x", "-T", "-n", machinename, executable] + sys.argv[4:] + [
+    argv = ["ssh", "-x", "-T", "-n", "-o", "StrictHostKeyChecking=no", machinename, executable] + sys.argv[4:] + [
         "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
         "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
         ]
