@@ -52,13 +52,13 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   CacheRead<typename GNP::QNode> q_root(&q_nodes_, q_root_index);
   QMutables *q_root_mut = &q_mutables_[q_root_index];
 
-  DEBUG_ONLY(n_naive_ = 0);
-  DEBUG_ONLY(n_pre_naive_ = 0);
-  DEBUG_ONLY(n_recurse_ = 0);
-
   bool need_explore = GNP::Algorithm::ConsiderPairIntrinsic(
       param_, *q_root, *r_root_, &delta,
       &global_result_, &q_root_mut->postponed);
+
+  stats_.Init();
+  stats_.tuples_analyzed = q_root->count() * r_root_->count();
+  stats_.n_queries = q_root->count();
 
   if (need_explore) {
     typename GNP::QSummaryResult empty_summary_result;
@@ -73,24 +73,6 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   }
 
   PushDownPostprocess_(q_root_index, q_root_mut);
-
-  //fx_timer_stop(datanode_, "execute");
-  /*DEBUG_ONLY(fx_format_result(datanode_, "naive_ratio", "%f",
-      1.0 * n_naive_ / q_root->count() / r_root_->count()));
-  DEBUG_ONLY(fx_format_result(datanode_, "naive_per_query", "%f",
-      1.0 * n_naive_ / q_root->count()));
-  DEBUG_ONLY(fx_format_result(datanode_, "pre_naive_ratio", "%f",
-      1.0 * n_pre_naive_ / q_root->count() / r_root_->count()));
-  DEBUG_ONLY(fx_format_result(datanode_, "pre_naive_per_query", "%f",
-      1.0 * n_pre_naive_ / q_root->count()));
-  DEBUG_ONLY(fx_format_result(datanode_, "recurse_ratio", "%f",
-      1.0 * n_recurse_ / q_root->count() / r_root_->count()));
-  DEBUG_ONLY(fx_format_result(datanode_, "recurse_per_query", "%f",
-      1.0 * n_recurse_ / q_root->count()));*/
-
-/*  if (fx_param_bool(datanode_, "print", 0)) {
-    ot::Print(q_results_);
-  }*/
 }
 
 template<typename GNP>
@@ -131,7 +113,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
   DEBUG_MSG(1.0, "Checking (%d,%d) x (%d,%d)",
       q_node->begin(), q_node->end(),
       r_node->begin(), r_node->end());
-  DEBUG_ONLY(n_recurse_++);
+  DEBUG_ONLY(stats_.node_node_considered++);
 
   /* begin prune checks */
   typename GNP::QSummaryResult mu(q_node_mut->summary_result);
@@ -241,7 +223,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     const typename GNP::QSummaryResult& unvisited,
     QMutables *q_node_mut) {
 
-  DEBUG_ONLY(n_pre_naive_ += q_node->count() * r_node->count());
+  DEBUG_ONLY(stats_.node_point_considered += q_node->count());
 
   q_node_mut->summary_result.StartReaccumulate(param_, *q_node);
 
@@ -279,7 +261,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
       visitor.FinishVisitingQueryPoint(param_, *q_point, q_i, *r_node,
           unvisited, q_result, &global_result_);
 
-      DEBUG_ONLY(n_naive_ += r_node->count());
+      DEBUG_ONLY(stats_.point_point_considered += r_node->count());
     }
 
     q_node_mut->summary_result.Accumulate(param_, *q_result);

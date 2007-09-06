@@ -50,6 +50,7 @@ class ThreadedDualTreeSolver {
   DistributedCache *r_nodes_cache_;
   DistributedCache *q_results_cache_;
   typename GNP::GlobalResult global_result_;
+  DualTreeRecursionStats stats_;
   Mutex mutex_;
 
  public:
@@ -78,6 +79,13 @@ class ThreadedDualTreeSolver {
    */
   const typename GNP::GlobalResult& global_result() const {
     return global_result_;
+  }
+
+  /**
+   * Recursion statistics.
+   */
+  const DualTreeRecursionStats& stats() const {
+    return stats_;
   }
 
  private:

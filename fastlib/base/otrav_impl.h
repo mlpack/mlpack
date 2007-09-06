@@ -507,6 +507,7 @@ namespace ot__private {
     static void Doit(const T& src, T *dest) {
       ot__private::ZOTDeepCopier d;
       mem::Copy(dest, &src, 1);
+      TraverseObjectPostprocess(dest);
       d.MyObject(*dest);
     }
 

@@ -73,7 +73,10 @@
  * Note that OT_DEF calls this automatically.
  */
 #define OT_GEN_COPY_CONSTRUCTOR(AClass) \
- public: AClass(const AClass& other) { ot__private::ZOTDeepCopier::Doit(other, this); } private:
+ public: AClass(const AClass& other) { \
+   ot__private::ZOTDeepCopier::Doit(other, this); \
+ } \
+ private:
 
 /**
  * Automatically create a dstructor based on object traversal.

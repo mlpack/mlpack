@@ -71,10 +71,7 @@ void ThorTreeDecomposition<TNode>::FillLinearization_(DecompNode *node) {
 
   if (node->info().is_singleton() || !node->is_complete()) {
     grain = &grain_by_owner_[node->info().begin_rank];
-    grain->node_index = node->index();
-    grain->node_end_index = node->end_index();
-    grain->point_begin_index = node->node().begin();
-    grain->point_end_index = node->node().end();
+    grain->Init(*node);
   } else {
     for (int k = 0; k < Node::CARDINALITY; k++) {
       FillLinearization_(node->child(k));

@@ -24,22 +24,29 @@
 struct GaussianKernel {
  private:
   double inv_bandwidth_2sq_;
+  double bandwidth_sq_;
   
   OT_DEF_BASIC(GaussianKernel) {
     OT_MY_OBJECT(inv_bandwidth_2sq_);
+    OT_MY_OBJECT(bandwidth_sq_);
   }
   
  public:
   static const bool HAS_CUTOFF = false;
  
  public:
+  double bandwidth_sq() const {
+    return bandwidth_sq_;
+  }
+
   /**
    * Initializes to a specific bandwidth.
    *
    * @param bandwidth_in the standard deviation sigma
    */
   void Init(double bandwidth_in) {
-    inv_bandwidth_2sq_ = 1.0 / (2.0 * bandwidth_in * bandwidth_in);
+    bandwidth_sq_ = bandwidth_in * bandwidth_in;
+    inv_bandwidth_2sq_ = 1.0 / (2.0 * bandwidth_sq_);
   }
   
   /**

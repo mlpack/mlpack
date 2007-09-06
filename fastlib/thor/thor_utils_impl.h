@@ -18,6 +18,7 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
   q_results_cache_ = q_results_cache_in;
 
   global_result_.Init(*param_);
+  stats_.Init();
 
   if (n_threads > 1) {
     ArrayList<Thread> threads;
@@ -61,6 +62,7 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::ThreadBody_() {
           q_results_cache_);
 
       mutex_.Lock();
+      stats_.Add(solver.stats());
       global_result_.Accumulate(*param_, solver.global_result());
       mutex_.Unlock();
     }
@@ -202,10 +204,16 @@ void thor::RpcDualTree(datanode *module, int base_channel,
   q_results->WaitSync(fx_submodule(io_module, NULL, "q_results"));
   fx_timer_stop(module, "write_results");
 
+#ifdef DEBUG
+  DualTreeRecursionStats stats = solver.stats();
+  rpc::Reduce(base_channel + 5, DualTreeRecursionStats::Reductor(), &stats);
+  stats.Report(fx_submodule(module, NULL, "recursion"));
+#endif
+
   GlobalResultReductor<GNP> global_result_reductor;
   typename GNP::GlobalResult my_global_result = solver.global_result();
   global_result_reductor.Init(&param);
-  rpc::Reduce(base_channel + 5, global_result_reductor, &my_global_result);
+  rpc::Reduce(base_channel + 6, global_result_reductor, &my_global_result);
 
   work_queue->Report(work_module);
   my_global_result.Report(param,

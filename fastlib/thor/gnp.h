@@ -217,4 +217,71 @@ class BlankAlgorithm {
   }
 };
 
+struct DualTreeRecursionStats {
+ public:
+  /**
+   * An rpc-style reductor suitable for recursion stats.
+   */
+  struct Reductor {
+    /**
+     * Reduces two elements.
+     *
+     * @param right a new element to merge
+     * @param left the element to merge into
+     */
+    void Reduce(const DualTreeRecursionStats& right,
+        DualTreeRecursionStats* left) const {
+      left->Add(right);
+    }
+  };
+
+ public:
+  double tuples_analyzed;
+  index_t n_queries;
+  int64 node_node_considered;
+  int64 node_point_considered;
+  int64 point_point_considered;
+  
+  OT_DEF(DualTreeRecursionStats) {
+    OT_MY_OBJECT(tuples_analyzed);
+    OT_MY_OBJECT(n_queries);
+    OT_MY_OBJECT(node_node_considered);
+    OT_MY_OBJECT(node_point_considered);
+    OT_MY_OBJECT(point_point_considered);
+  }
+  
+ public:
+  void Init() {
+    tuples_analyzed = 0;
+    n_queries = 0;
+    node_node_considered = 0;
+    node_point_considered = 0;
+    point_point_considered = 0;
+  }
+
+  void Add(const DualTreeRecursionStats& other) {
+    tuples_analyzed += other.tuples_analyzed;
+    n_queries += other.n_queries;
+    node_node_considered += other.node_node_considered;
+    node_point_considered += other.node_point_considered;
+    point_point_considered += other.point_point_considered;
+  }
+
+  void Report(datanode *module) {
+    fx_format_result(module, "p_node_node",
+        "%g", node_node_considered / tuples_analyzed);
+    fx_format_result(module, "p_node_point",
+        "%g", node_point_considered / tuples_analyzed);
+    fx_format_result(module, "p_point_point",
+        "%g", point_point_considered / tuples_analyzed);
+
+    fx_format_result(module, "r_node_node",
+        "%g", 1.0 * node_node_considered / n_queries);
+    fx_format_result(module, "r_node_point",
+        "%g", 1.0 * node_point_considered / n_queries);
+    fx_format_result(module, "r_point_point",
+        "%g", 1.0 * point_point_considered / n_queries);
+  }
+};
+
 #endif

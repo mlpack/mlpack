@@ -620,27 +620,20 @@ class Nbc {
       density_neg += delta.d_density_neg;
     }
 
-    bool ApplyPostponed(const Param& param,
+    void ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QNode& q_node) {
-      bool change_made;
-
       if (unlikely(postponed.label != LAB_EITHER)) {
         label &= postponed.label;
         DEBUG_ASSERT(label != LAB_NEITHER);
-        change_made = true;
       }
       if (unlikely(!postponed.moment_info_pos.is_empty())) {
         density_pos += postponed.moment_info_pos.ComputeKernelSumRange(
             param.kernel_pos, q_node.bound());
-        change_made = true;
       }
       if (unlikely(!postponed.moment_info_neg.is_empty())) {
         density_neg += postponed.moment_info_neg.ComputeKernelSumRange(
             param.kernel_neg, q_node.bound());
-        change_made = true;
       }
-
-      return change_made;
     }
   };
 
@@ -682,7 +675,7 @@ class Nbc {
     void ApplyResult(const Param& param,
         const QPoint& q_point, index_t q_i,
         const QResult& result) {
-      fflush(stderr);
+      fflush(stderr); // ???
       if (result.label == LAB_POS) {
         ++count_pos;
       } else if (result.label == LAB_EITHER) {

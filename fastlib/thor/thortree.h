@@ -24,7 +24,15 @@ struct TreeGrain {
   /** One past the last point. */
   index_t point_end_index;
 
-  void InitBlank() {
+  template<typename TSkeletonNode>
+  void Init(const TSkeletonNode& node) {
+    node_index = node.index();
+    node_end_index = node.end_index();
+    point_begin_index = node.node().begin();
+    point_end_index = node.node().end();
+  }
+
+  void InitInvalid() {
     node_index = -1;
     node_end_index = -1;
     point_begin_index = -1;
@@ -116,7 +124,7 @@ class ThorTreeDecomposition {
     DEBUG_ASSERT(root_in != NULL);
     grain_by_owner_.Init(rpc::n_peers());
     for (int i = 0; i < grain_by_owner_.size(); i++) {
-      grain_by_owner_[i].InitBlank();
+      grain_by_owner_[i].InitInvalid();
     }
     FillLinearization_(root_);
   }

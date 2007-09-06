@@ -11,11 +11,22 @@
 
 \newcommand{\itemt}[1]{\item {\bf #1} -}
 
+
+\newcommand{\authornote}[1]{\footnote{Note to self: #1}}
+\newcommand{\authorsnote}[1]{\authornote{#1}}
+\newcommand{\com}[1]{{\small \textit{((#1))}}}
+
 \newcommand{\union}{\cup}
 \newcommand{\intersect}{\cap}
 \newcommand{\Union}{\bigcup}
 \newcommand{\Intersect}{\bigcap}
 \newcommand{\bigvec}[1]{\mathop{\overrightarrow{#1}}}
+
+\newcommand{\otimeshat}{\widehat{\otimes}}
+\newcommand{\odothat}{\widehat{\odot}}
+
+\newcommand{\prefsplit}[2]{#1 \succ #2}
+\newcommand{\summary}{\hat{\sigma}}
 
 \DeclareMathOperator*{\map}{map}
 \DeclareMathOperator*{\worst}{worst}
@@ -274,18 +285,25 @@
   \end{itemize}
 \end{slide}
 
+\begin{slide}{GNP Basics}
+  Unlike many software frameworks, ours is inherently mathematical.
+
+  Next, we dive into the formalisms behind our framework.
+\end{slide}
+
 \begin{slide}{GNP Basics - Notation}
   \begin{itemize}
     \itemt{Map Operator} $\map$ builds a list of results.
     Mathematically, $\map$ outputs a set of key-value pairs.
     \itemt{Generic Operators} $\bigodot, \bigotimes$ mean {\em any} commutative, associative operator.
-    \itemt{Trees} A tree node is {\em equivalent} to a set of points.
-    $\kdroot{X}$ is the entire data set, $X$ is a subset,
-    $X = \kdleft{X} \union \kdright{X}$ partitions a node into two children.
-    \itemt{Sets} $X, Y$ refer to two sets.  $Q, R$ are used for queries and
-    references, when the $\map$ operator is in use.
+    \itemt{Trees} A tree node {\em summarizes} a set of points.
+    $\kdroot{X}$ is the entire data set.
+    $X$ is a subset with parent $\kdparent{X}$,
+    partitioned into children $X = \kdleft{X} \union \kdright{X}$.
     \itemt{Generic Statistics} $\outstat(Q)$ is a statistic on a set of points,
     such as bounding box, mean, or variance.
+    \itemt{Upper/Lower Bounds} $\distup(\outstat(X), \outstat(Y))$ is an upper-bound distance
+    between bounding boxes.  $\distlo$ is the lower-bound.
   \end{itemize}
 \end{slide}
 
@@ -304,7 +322,6 @@
      \gnp(X,Y) = \gnp(X,\kdleft{Y}) \otimes \gnp(X,\kdright{Y}) & \text{\it block decomposition}
     \end{array}\]
 \end{slide}
-
 
 \begin{slide}{GNP Basics - Expansion and Pruning}
   \begin{itemize}
@@ -330,64 +347,272 @@
   \end{itemize}
 \end{slide}
 
-\begin{slide}{GNP Basics - Q/R Problems}
+\begin{slide}{Q/R Problems}
   \begin{itemize}
-    \item A \defterm{query-reference} problem has $\bigodot = \map$, i.e. one result per query.
-    (Consider $\map$'s output ``under the hood'' to be a set of key-value pairs.)
-    \item Any second-order reduce problem can be transformed into a query-reference problem:
-    Replace outer operator with $\map$, and apply the original operator as a post-processing step.
-    \item We'll only talk about query-reference problems for the rest of the slides.
+    \itemt{Definition} A \defterm{query-reference} problem has $\bigodot = \map$, i.e. one result per query.
+    \itemt{Universality} {\it Any} second-order reduce problem can be transformed into a query-reference problem.
+    \begin{itemize} \item
+      Replace outer operator with $\map$, and treat original operator as a postprocess step.
+    \end{itemize}
+  \end{itemize}
+  Next, we'll focus on solving these problems formally.
+\end{slide}
+
+\begin{slide}{Q/R Problems - Formalization}
+  Assume commutative, associative $\opqr$.
+  For each query $q$, solve $\outqr(q, \kdroot{R})$, given:
+  \begin{eqnarray*}
+    \outqr(q, R) &\equiv& \gqr(q, \inqr(q, R)),
+x    \\
+    \inqr(q, R) &\equiv& \Opqr_{r \in R} \fqr(q, r).
+  \end{eqnarray*}
+  Sometimes, the same \defterm{mass result} $\inqrv(Q, R)$
+  applies to many queries for a particular reference node.
+  This is a prune, formally expressed,
+  \[
+  \forall q \in Q,~~ \inqr(q, R) \gets \inqrv(Q, R).
+  \]
+\end{slide}
+
+\begin{slide}{Q/R Problems - Solving}
+  We may compute $\inqrv$ using the three rules:
+  \[\begin{array}{l}
+    \inqrv(Q, R) = \inqrv(Q, \kdleft{R}) \opqr \inqrv(Q, \kdright{R}),
+    \\
+    \text{if prune occurs for } \kdparent{Q} \supset Q \text{, then } \inqrv(Q, R) = \inqrv(\kdparent{Q}, R),
+    \\
+    \text{if } \canpruneqrv(\outstat(Q), \outstat(R)) \text{, then } \inqrv(Q, R) = \deltaqrv(\outstat(Q), \outstat(R)).
+  \end{array}\]
+  We have:
+  \begin{itemize}
+    \itemt{$\canpruneqrv$} An intrinsic prune check.
+    \itemt{$\deltaqrv$} The pruned value, computed with summary statistics.
   \end{itemize}
 \end{slide}
 
-\begin{slide}{Math - QR Intrinsic}
+\begin{slide}{Q/R Problems - Example}
+  Range count is a query-reference analog of two-point correlation,
+  \[\map_{q \in Q} \sum_{r \in R} I(\dist{q}{r} < h).\]
+  A THOR user simply implements the following in C++.
+  \begin{eqnarray*}
+  \gqr(q, \inqr) &\equiv& \inqr
+  \\
+  \opqr &\equiv& +
+  \\
+  \fqr(q,r) &\equiv& I(\dist{q}{r} < h)
+  \\
+  \canpruneqrv(\sigma(Q), \sigma(R))
+  &\equiv&
+  \begin{array}{l}\distup(\outstat(Q),\outstat(R)) < h \\ \vee \distlo(\outstat(Q),\outstat(R)) \geq h\end{array}
+  \\
+  \deltaqrv(\outstat(Q),\outstat(R)) &\equiv& \left\{ \begin{array}{l} 0 \text{ if } \distup(\outstat(Q),\outstat(R)) < h \\ |R| \text{ if } \distlo(\outstat(Q),\outstat(R)) \geq h \end{array}\right.
+  \end{eqnarray*}
+\end{slide}
+
+\begin{slide}{Q/R Problems - Extrinsic Pruning}
+  \begin{itemize}
+    \item We compute \defterm{query summary results} $\inmu(Q, \kdroot{R})$
+    to achieve extrinsic pruning for query node $Q$.
+    The \defterm{ideal} value bounds the exact results of each query,
+      \begin{equation*}
+      \inmu(Q, R) \gets \Outopmu_{q \in Q} \fmu(q, \inqr(q, R)).
+      \end{equation*}
+    During computation, we make pessimistic bounds using only
+    summary statistics and completed computations.
+    \item Extrinsic prunes use a separate prune check $\canprunemu(\outstat(Q), \outstat(R), \inmu(Q, \kdroot{R}))$.
+    \item The subjective \defterm{quality} of $\lettermu$ reflects how
+    closely it approaches the ideal value.
+    Higher-quality values aid pruning.
+    \item Computational details omitted for brevity.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{Q/R Problems - Conclusion}
+  \begin{itemize}
+    \itemt{Generality}
+    We maintain that our query-reference model can solve all second-order reduce problems.
+    Whether a problem can be solved efficiently is up to pruning rules and the execution pattern.
+    \itemt{Execution}
+    The aforementioned ``rules'' have few constraints on their execution.
+    Depth-first, breadth-first, and importantly {\em parallel} expansions are fair game!
+  \end{itemize}
   
+  We'll now focus on parallel executions.
 \end{slide}
 
-\begin{slide}{Math - QR Extrinsic}
-  % What is mu
-  % How is it solved
-  % Quality of mu
+\begin{slide}{Work Decomposition}
+  A dual-tree problem can be decomposed both query and reference trees.
+  We decompose by dividing the query tree only:
+  \begin{itemize}
+    \itemt{Private Data}
+    No writes to shared data.
+    \itemt{Quality of $\lettermu$}
+    For high-quality query summary results, one must consider all references.
+    Considering referenes independently makes this problematic.
+    \itemt{Scheduling}
+    Distant query-reference pairs complete orders of magnitude faster than
+    nearby ones.
+    Unpredictable runtimes unduly complicates scheduling.
+  \end{itemize}
 \end{slide}
 
-\begin{slide}{Math - Summary}
-  % For those who didn't understand it, or
-  % For those who didn't get the point of it
+\begin{slide}{Work Decomposition - An Item}
+  \begin{itemize}
+    \item A \defterm{work item} is a query node that is solved with a standard
+    serial expansion pattern.
+    \item We'll address the topic of decomposition two more times.
+  \end{itemize}
 \end{slide}
 
-\begin{slide}{Task Decomposition}
-  % Query-based partitioning
-  % why it is non-obvious
-\end{slide}
-
-\begin{slide}{Communication - Essential Trees}
+\begin{slide}{Communication}
+  \begin{itemize}
+    \itemt{Fundamental Issue} Communication is a fundamental issue of parallel programming.
+    \itemt{Limiting Factor} Decades of experience show communication is the prime
+    limiting factor in parallel $N$-body methods.
+    \itemt{Essential Trees} Although writes are independent, many reference
+    points and tree nodes may be needed to perform a computation.  These are
+    the \defterm{essential} points and nodes for a particular query node.
+  \end{itemize}
   % Introduce Domain Decomposition here
 \end{slide}
 
-\begin{slide}{Communication - Nature of Communication}
+\begin{slide}{Comm. - Decompositions}
+  \begin{itemize}
+    \itemt{Domain Decompositions}
+    A domain decomposition divides queries among processors.
+    \itemt{Goal}
+    One attempts to minimize locally essential trees, by maximizing
+    overlap between queries owned by a processor. (WALDO Figure goes here.)
+    \itemt{Past Techniques}
+    Neglecting scheduling details, we consider previous work:
+    \begin{itemize}
+      \itemt{ORB Tree} A $kd$-tree balanced by estimated work divides
+      points hierarchically among processors.
+      \itemt{Cost-Zones} Distribute points based on contiguous regions of
+      the Barnes-Hut tree traversal.
+    \end{itemize}
+    \itemt{THOR's Technique}
+    We combine the two by building the underlying $kd$-tree with
+    the domain decomposition in mind.
+  \end{itemize}
 \end{slide}
 
-\begin{slide}{Communication - Distributed Cache System}
+\begin{slide}{Comm. - Approach}
+  \begin{itemize}
+    \item We summarize previous approaches for $N$-body communication:
+    \begin{itemize}
+      \itemt{Sender Initiated}
+      Compute locally essential trees beforehand and send in one large pass.
+      {\bf Con}: Computing these trees is problem-specific.
+      \itemt{Use Shared Memory}
+      J. Singh argues you should just use large NUMA system.
+      {\bf Con}: NUMA systems are very expensive.
+      \itemt{Use Blocks}
+      Divide data and nodes into blocks, and request blocks on demand.
+      Similar to underlying NUMA systems, and allows disk-based algorithms.
+    \end{itemize}
+    \item We use blocks.  Blocked methods are adaptive, have attractive
+    performance, and naturally allow disk-based trees.
+    Salmon and Warren successfully tried this a decade ago!
+  \end{itemize}
 \end{slide}
 
-\begin{slide}{Communication - Data Layout}
+\begin{slide}{Comm. - Distributed Cache}
+  \begin{itemize}
+    \itemt{Cached Array}
+    A cached array is distributed among machines block-by-block.
+    One cache one for points, one for nodes.
+    \itemt{Replication}
+    Blocks are stored on all machines that need it, but maintained by only one.
+    All machines have the directory.
+    \itemt{Consistency}
+    Global consistency is maintained only at infrequent sync points, once per GNP.
+    Between sync points, THOR writes to explicitly declared disjoint contiguous regions.
+    \itemt{Software Cache}
+    Blocks are accessed by explicitly locking and unlocking pages.
+    An unlocked page is placed in a queue for potential eviction.
+    Out-of-core blocks are requested from disk or other machines.
+  \end{itemize}
 \end{slide}
 
-\begin{slide}{Scheduling - Problem}
-  % establish what the scheduling problme is
-  % per-task variance
-  % locality problem: multi-threaded and cluster
+\begin{slide}{Comm. - Data Layout}
+  \begin{itemize}
+    \itemt{Point Order}
+    Points are stored in perfect left-to-right tree order.
+    For $kd$-trees, this is analagous to a Morton ordering.
+    \itemt{Point Blocking}
+    Each block of points corresponds to one tree node.
+    The tree-builder makes block-aligned splits until a single block
+    is reached, then performs midpoint splits.
+    \itemt{Node Order}
+    Previous work shows both pre-order and high-fanout orderings work well
+    for dual-tree algorithms. We use pre-order because it allows contiguous
+    groupings of nodes.
+  \end{itemize}
 \end{slide}
 
-\begin{slide}{Scheduling - Traditional}
+\begin{slide}{Scheduling}
+  \begin{itemize}
+    \itemt{Objective}
+    Assign tasks to processors to minimize overall run time, keeping in mind
+    the ``weakest link'' principle.
+    \itemt{Past Techniques}
+    The aforementioned ORB and cost-zones techniques require work estimates
+    per query from previous iterations.
+    Unfortunately, THOR cannot generally assume multiple iterations, though
+    future work can take this into account.
+    \itemt{Dynamic Scheduling}
+    THOR must use a dynamic scheduler to account for unforseen load imbalances.
+    In practice, very simple dynamic schedulers achieve good performance.
+  \end{itemize}
 \end{slide}
 
-\begin{slide}{Scheduling - Dynamic}
-  % my work: 
-  % previous work: fractiling
+\begin{slide}{Scheduling in THOR}
+  An overview of THOR's scheduler:
+  \begin{itemize}
+    \itemt{Initial Assignment}
+    Divide query tree into nodes smaller than a processor is expected to handle.
+    Create an initial task decomposition based on the domain decomposition.
+    \itemt{Assignment Process}
+    A thread requests a work item from the master whenever it becomes idle.
+    Threads from the same machine are treated identically.
+    \itemt{Overflow}
+    If a machine completes its work, the spatially closest unfinished work
+    item is assigned.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{Scheduling - Further Work}
+  THOR's primitive scheduler works well, but it could be better:
+  \begin{itemize}
+    \itemt{Restart} For pathological imbalances, a work item taking unusually
+    long should be restarted and distributed among processors.
+    \itemt{Distributed Assignment} Centralized scheduling becomes a bottleneck
+    as the number of processors grows larger.
+    \itemt{Hierarchical Redistribution} Rather than a greedy overflow policy
+    that doesn't optimize for holistic locality, overflow can be
+    handled by aggressively reassigning large chunks of work to large chunks
+    of processors.
+  \end{itemize}
 \end{slide}
 
 % QUESTION: Separate Setup/Results/Discussion sections?
+
+\begin{slide}{Experiments}
+  Our experiments must be {\em realistic}:
+  \begin{itemize}
+    \itemt{Application} Our experiments must apply to problems someone
+    might want to solve.  Finding nearest neighbors on uniform data is
+    silly -- just use a grid!
+    \itemt{Necessity}
+    A problem that takes a few minutes on one processor probably
+    doesn't need to be parallel.
+    If it's an hour on one processor, 128 processors is too many - consider
+    the bureaucratic red tape invovled.
+  \end{itemize}
+  We'll look at problems that are too large to be solved practically on
+  a single processor.
+\end{slide}
 
 \begin{slide}{Experiments - Setup}
   % algorithms and data-sets
