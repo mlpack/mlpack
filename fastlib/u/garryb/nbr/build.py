@@ -3,6 +3,10 @@ binrule(name = "tkde",
    sources = ["tkde.cc"],
    deplibs = ["thor:thor"])
 
+binrule(name = "fdkde",
+   sources = ["fdkde.cc"],
+   deplibs = ["thor:thor"])
+
 binrule(name = "allnn_rpc",
    headers = ["allnn.cc"],
    sources = ["allnn_rpc.cc"],

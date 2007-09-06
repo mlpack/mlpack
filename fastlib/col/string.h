@@ -390,6 +390,13 @@ class String {
   }
   
   /**
+   * Checks if this string begins with another string.
+   */
+  bool StartsWith(const char *s) const {
+    return strncmp(array_.begin(), s, strlen(s)) == 0;
+  }
+  
+  /**
    * Compares two strings.
    *
    * If I am the lesser string, I return negative.

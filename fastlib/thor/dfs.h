@@ -42,9 +42,7 @@ class DualTreeDepthFirst {
   const typename GNP::RNode *r_root_;
 
   bool do_naive_;
-  uint64 n_naive_;
-  uint64 n_pre_naive_;
-  uint64 n_recurse_;
+  DualTreeRecursionStats stats_;
 
  public:
   DualTreeDepthFirst() {}
@@ -73,6 +71,10 @@ class DualTreeDepthFirst {
    */
   const typename GNP::GlobalResult& global_result() const {
     return global_result_;
+  }
+  
+  const DualTreeRecursionStats& stats() const {
+    return stats_;
   }
 
  private:

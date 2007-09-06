@@ -368,7 +368,7 @@ class DHrectBound {
    * to the specified power.
    */
   double MinDistanceSq(const double *mpoint) const {
-    double sumsq = 0;
+    double sum = 0;
     const DRange *mbound = bounds_;
     
     index_t d = dim_;
@@ -383,10 +383,10 @@ class DHrectBound {
       mbound++;
       mpoint++;
       
-      sumsq += math::Pow<t_pow, 1>(v);
+      sum += math::Pow<t_pow, 1>(v);
     } while (--d);
     
-    return math::Pow<2, t_pow>(sumsq) / 4;
+    return math::Pow<2, t_pow>(sum) / 4;
   }
 
   /**
@@ -410,7 +410,7 @@ class DHrectBound {
    * </code>
    */
   double MinToMidSq(const DHrectBound& other) const {
-    double sumsq = 0;
+    double sum = 0;
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
@@ -426,10 +426,10 @@ class DHrectBound {
       a++;
       b++;
       
-      sumsq += math::Pow<t_pow, 1>(v);
+      sum += math::Pow<t_pow, 1>(v);
     }
 
-    return math::Pow<2, t_pow>(sumsq) / 4;
+    return math::Pow<2, t_pow>(sum) / 4;
   }
 
   /**
@@ -437,26 +437,26 @@ class DHrectBound {
    * to the specified power.
    */
   double MaxDistanceSq(const Vector& point) const {
-    double sumsq = 0;
+    double sum = 0;
 
     DEBUG_ASSERT(point.length() == dim_);
 
     for (index_t d = 0; d < dim_; d++) {
-      sumsq += math::Pow<t_pow, 1>(
+      sum += math::Pow<t_pow, 1>(
           max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]));
     }
 
-    return math::Pow<2, t_pow>(sumsq);
+    return math::Pow<2, t_pow>(sum);
   }
 
   /**
-   * Calculates minimum bound-to-point squared distance,
+   * Calculates minimum bound-to-bound squared distance,
    * to the specified power.
    *
    * Example: bound1.MinDistanceSq(other) for minimum squared distance.
    */
   double MinDistanceSq(const DHrectBound& other) const {
-    double sumsq = 0;
+    double sum = 0;
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
     index_t mdim = dim_;
@@ -471,10 +471,42 @@ class DHrectBound {
       //   (x * 2)^2 / 4 = x^2
       double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-      sumsq += math::Pow<t_pow, 1>(v);
+      sum += math::Pow<t_pow, 1>(v);
     }
 
-    return math::Pow<2, t_pow>(sumsq) / 4;
+    return math::Pow<2, t_pow>(sum) / 4;
+  }
+
+  /**
+   * Calculates minimum and maximum bound-to-bound squared distance,
+   * to the specified power.
+   *
+   * Example: bound1.MinDistanceSq(other) for minimum squared distance.
+   */
+  DRange RangeDistanceSq(const DHrectBound& other) const {
+    double sum_lo = 0;
+    double sum_hi = 0;
+    const DRange *a = this->bounds_;
+    const DRange *b = other.bounds_;
+    index_t mdim = dim_;
+
+    DEBUG_SAME_INT(dim_, other.dim_);
+
+    for (index_t d = 0; d < mdim; d++) {
+      double v1 = b[d].lo - a[d].hi;
+      double v2 = a[d].lo - b[d].hi;
+      // We invoke the following:
+      //   x + fabs(x) = max(x * 2, 0)
+      //   (x * 2)^2 / 4 = x^2
+      double v_lo = (v1 + fabs(v1)) + (v2 + fabs(v2));
+      double v_hi = min(v1, v2);
+
+      sum_lo += math::Pow<t_pow, 1>(v_lo);
+      sum_hi += math::Pow<t_pow, 1>(v_hi);
+    }
+
+    return DRange(math::Pow<2, t_pow>(sum_lo) / 4,
+        math::Pow<2, t_pow>(sum_hi));
   }
 
   /**
@@ -482,7 +514,7 @@ class DHrectBound {
    * to the specified power.
    */
   double MinimaxDistanceSq(const DHrectBound& other) const {
-    double sumsq = 0;
+    double sum = 0;
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
     index_t mdim = dim_;
@@ -494,10 +526,10 @@ class DHrectBound {
       double v2 = a[d].lo - b[d].lo;
       double v = max(v1, v2);
       v = (v + fabs(v)); /* truncate negatives to zero */
-      sumsq += math::Pow<t_pow, 1>(v);
+      sum += math::Pow<t_pow, 1>(v);
     }
 
-    return math::Pow<2, t_pow>(sumsq) / 4;
+    return math::Pow<2, t_pow>(sum) / 4;
   }
 
   /**
@@ -505,18 +537,18 @@ class DHrectBound {
    * to the specified power.
    */
   double MaxDistanceSq(const DHrectBound& other) const {
-    double sumsq = 0;
+    double sum = 0;
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
     
     for (index_t d = 0; d < dim_; d++) {
-      sumsq += math::Pow<t_pow, 1>(
+      sum += math::Pow<t_pow, 1>(
           max(b[d].hi - a[d].lo, a[d].hi - b[d].lo));
     }
 
-    return math::Pow<2, t_pow>(sumsq);
+    return math::Pow<2, t_pow>(sum);
   }
 
   /**
@@ -524,17 +556,17 @@ class DHrectBound {
    * to the specified power.
    */
   double MidDistanceSq(const DHrectBound& other) const {
-    double sumsq = 0;
+    double sum = 0;
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
     DEBUG_ASSERT(dim_ == other.dim_);
     
     for (index_t d = 0; d < dim_; d++) {
-      sumsq += math::PowAbs<t_pow, 1>(a[d].hi + a[d].lo - b[d].hi - b[d].lo);
+      sum += math::PowAbs<t_pow, 1>(a[d].hi + a[d].lo - b[d].hi - b[d].lo);
     }
 
-    return math::Pow<2, t_pow>(sumsq) / 4;
+    return math::Pow<2, t_pow>(sum) / 4;
   }
   
   /**
