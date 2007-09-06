@@ -205,6 +205,294 @@ class MinMaxVal {
   }
 };
 
+/**
+ * Simple real-valued range.
+ *
+ * @experimental
+ */
+struct DRange {
+ public:
+  /**
+   * The lower bound.
+   */
+  double lo;
+  /**
+   * The upper bound.
+   */
+  double hi;
+  
+  OT_DEF_BASIC(DRange) {
+    OT_MY_OBJECT(lo);
+    OT_MY_OBJECT(hi);
+  }
+  
+ public:
+  /** Initializes to specified values. */
+  DRange(double lo_in, double hi_in)
+      : lo(lo_in), hi(hi_in)
+      {}
+
+  /** Initialize to an empty set, where lo > hi. */
+  void InitEmptySet() {
+    lo = DBL_MAX;
+    hi = -DBL_MAX;
+  }
+
+  /** Initializes to -infinity to infinity. */
+  void InitUniversalSet() {
+    lo = -DBL_MAX;
+    hi = DBL_MAX;
+  }
+  
+  /** Initializes to a range of values. */
+  void Init(double lo_in, double hi_in) {
+    lo = lo_in;
+    hi = hi_in;
+  }
+
+  /**
+   * Resets to a range of values.
+   *
+   * Since there is no dynamic memory this is the same as Init, but calling
+   * Reset instead of Init probably looks more similar to surrounding code.
+   */
+  void Reset(double lo_in, double hi_in) {
+    lo = lo_in;
+    hi = hi_in;
+  }
+
+  /**
+   * Gets the span of the range, hi - lo.
+   */  
+  double width() const {
+    return hi - lo;
+  }
+
+  /**
+   * Gets the midpoint of this range.
+   */  
+  double mid() const {
+    return (hi + lo) / 2;
+  }
+  
+  /**
+   * Interpolates (factor) * hi + (1 - factor) * lo.
+   */
+  double interpolate(double factor) const {
+    return factor * width() + lo;
+  }
+
+  /**
+   * Simulate an union by growing the range if necessary.
+   */
+  const DRange& operator |= (double d) {
+    if (unlikely(d < lo)) {
+      lo = d;
+    }
+    if (unlikely(d > hi)) {
+      hi = d;
+    }
+    return *this;
+  }
+
+  /**
+   * Sets this range to include only the specified value, or
+   * becomes an empty set if the range does not contain the number.
+   */
+  const DRange& operator &= (double d) {
+    if (likely(d > lo)) {
+      lo = d;
+    }
+    if (likely(d < hi)) {
+      hi = d;
+    }
+    return *this;
+  }
+
+  /**
+   * Expands range to include the other range.
+   */
+  const DRange& operator |= (const DRange& other) {
+    if (unlikely(other.lo < lo)) {
+      lo = other.lo;
+    }
+    if (unlikely(other.hi > hi)) {
+      hi = other.hi;
+    }
+    return *this;
+  }
+  
+  /**
+   * Shrinks range to be the overlap with another range, becoming an empty
+   * set if there is no overlap.
+   */
+  const DRange& operator &= (const DRange& other) {
+    if (unlikely(other.lo > lo)) {
+      lo = other.lo;
+    }
+    if (unlikely(other.hi < hi)) {
+      hi = other.hi;
+    }
+    return *this;
+  }
+  
+  /** Scales upper and lower bounds. */
+  const DRange& operator *= (double d) {
+    lo *= d;
+    hi *= d;
+    return *this;
+  }
+
+  /** Scales upper and lower bounds. */
+  friend DRange operator * (const DRange& r, double d) {
+    return DRange(r.lo * d, r.hi * d);
+  }
+
+  /** Scales upper and lower bounds. */
+  friend DRange operator * (double d, const DRange& r) {
+    return DRange(r.lo * d, r.hi * d);
+  }
+  
+  /** Sums the upper and lower independently. */
+  const DRange& operator += (const DRange& other) {
+    lo += other.lo;
+    hi += other.hi;
+    return *this;
+  }
+  
+  /** Subtracts from the upper and lower independently. */
+  const DRange& operator -= (const DRange& other) {
+    lo -= other.lo;
+    hi -= other.hi;
+    return *this;
+  }
+  
+  /** Adds to the upper and lower independently. */
+  const DRange& operator += (double d) {
+    lo += d;
+    hi += d;
+    return *this;
+  }
+  
+  /** Subtracts from the upper and lower independently. */
+  const DRange& operator -= (double d) {
+    lo -= d;
+    hi -= d;
+    return *this;
+  }
+
+  friend DRange operator + (const DRange& a, const DRange& b) {
+    DRange result;
+    result.lo = a.lo + b.lo;
+    result.hi = a.hi + b.hi;
+    return result;
+  }
+
+  friend DRange operator - (const DRange& a, const DRange& b) {
+    DRange result;
+    result.lo = a.lo - b.lo;
+    result.hi = a.hi - b.hi;
+    return result;
+  }
+  
+  friend DRange operator + (const DRange& a, double b) {
+    DRange result;
+    result.lo = a.lo + b;
+    result.hi = a.hi + b;
+    return result;
+  }
+
+  friend DRange operator - (const DRange& a, double b) {
+    DRange result;
+    result.lo = a.lo - b;
+    result.hi = a.hi - b;
+    return result;
+  }
+
+  /**
+   * Takes the maximum of upper and lower bounds independently.
+   */
+  void MaxWith(const DRange& range) {
+    if (unlikely(range.lo > lo)) {
+      lo = range.lo;
+    }
+    if (unlikely(range.hi > hi)) {
+      hi = range.hi;
+    }
+  }
+  
+  /**
+   * Takes the minimum of upper and lower bounds independently.
+   */
+  void MinWith(const DRange& range) {
+    if (unlikely(range.lo < lo)) {
+      lo = range.lo;
+    }
+    if (unlikely(range.hi < hi)) {
+      hi = range.hi;
+    }
+  }
+
+  /**
+   * Takes the maximum of upper and lower bounds independently.
+   */
+  void MaxWith(double v) {
+    if (unlikely(v > lo)) {
+      lo = v;
+      if (unlikely(v > hi)) {
+        hi = v;
+      }
+    }
+  }
+  
+  /**
+   * Takes the minimum of upper and lower bounds independently.
+   */
+  void MinWith(double v) {
+    if (unlikely(v < hi)) {
+      hi = v;
+      if (unlikely(v < lo)) {
+        lo = v;
+      }
+    }
+  }
+
+  /**
+   * Compares if this is STRICTLY less than another range.
+   */  
+  friend bool operator < (const DRange& a, const DRange& b) {
+    return a.hi < b.lo;
+  }
+  /**
+   * Compares if this is STRICTLY equal to another range.
+   */  
+  friend bool operator == (const DRange& a, const DRange& b) {
+    return a.lo == b.lo && a.hi == b.hi;
+  }
+  DEFINE_ALL_COMPARATORS(DRange);
+  
+  /**
+   * Compares if this is STRICTLY less than a value.
+   */  
+  friend bool operator < (const DRange& a, double b) {
+    return a.hi < b;
+  }
+  /**
+   * Compares if a value is STRICTLY less than this range.
+   */  
+  friend bool operator < (double a, const DRange& b) {
+    return a < b.lo;
+  }
+  DEFINE_INEQUALITY_COMPARATORS_HETERO(DRange, double);
+
+  /**
+   * Determines if a point is contained within the range.
+   */  
+  bool Contains(double d) const {
+    return d >= lo || d <= hi;
+  }
+};
+
 #include "discrete.h"
 #include "kernel.h"
 #include "geometry.h"

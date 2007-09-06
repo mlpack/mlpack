@@ -23,12 +23,91 @@
  */
 class GaussianKernel {
  private:
-  double inv_bandwidth_2sq_;
+  double neg_inv_bandwidth_2sq_;
   double bandwidth_sq_;
-  
+
   OT_DEF_BASIC(GaussianKernel) {
-    OT_MY_OBJECT(inv_bandwidth_2sq_);
+    OT_MY_OBJECT(neg_inv_bandwidth_2sq_);
     OT_MY_OBJECT(bandwidth_sq_);
+  }
+
+ public:
+  static const bool HAS_CUTOFF = false;
+
+ public:
+  double bandwidth_sq() const {
+    return bandwidth_sq_;
+  }
+
+  void Init(double bandwidth_in, index_t dims) {
+    Init(bandwidth_in);
+  }
+
+  /**
+   * Initializes to a specific bandwidth.
+   *
+   * @param bandwidth_in the standard deviation sigma
+   */
+  void Init(double bandwidth_in) {
+    bandwidth_sq_ = bandwidth_in * bandwidth_in;
+    neg_inv_bandwidth_2sq_ = -1.0 / (2.0 * bandwidth_sq_);
+  }
+
+  /**
+   * Evaluates an unnormalized density, given the distance between
+   * the kernel's mean and a query point.
+   */
+  double EvalUnnorm(double dist) const {
+    return EvalUnnormOnSq(dist * dist);
+  }
+
+  /**
+   * Evaluates an unnormalized density, given the square of the
+   * distance.
+   */
+  double EvalUnnormOnSq(double sqdist) const {
+    double d = exp(sqdist * neg_inv_bandwidth_2sq_);
+    return d;
+  }
+
+  /** Unnormalized range on a range of squared distances. */
+  DRange RangeUnnormOnSq(const DRange& range) const {
+    return DRange(EvalUnnormOnSq(range.lo), EvalUnnormOnSq(range.hi));
+  }
+
+  /**
+   * Gets the maximum unnormalized value.
+   */
+  double MaxUnnormValue() {
+    return 1;
+  }
+
+  /**
+   * Divide by this constant when you're done.
+   */
+  double CalcNormConstant(index_t dims) const {
+    return pow((-math::PI/neg_inv_bandwidth_2sq_), dims/2.0);
+  }
+};
+
+/**
+ * Standard multivariate Gaussian kernel.
+ *
+ */
+class GaussianStarKernel {
+ private:
+  double neg_inv_bandwidth_2sq_;
+  double factor_;
+  double bandwidth_sq_;
+  double critical_point_sq_;
+  double critical_point_value_;
+  
+  OT_DEF_BASIC(GaussianStarKernel) {
+    OT_MY_OBJECT(neg_inv_bandwidth_2sq_);
+    OT_MY_OBJECT(factor_);
+    OT_MY_OBJECT(bandwidth_sq_);
+    OT_MY_OBJECT(critical_point_sq_);
+    OT_MY_OBJECT(critical_point_value_);
   }
   
  public:
@@ -44,9 +123,12 @@ class GaussianKernel {
    *
    * @param bandwidth_in the standard deviation sigma
    */
-  void Init(double bandwidth_in) {
+  void Init(double bandwidth_in, index_t dims) {
     bandwidth_sq_ = bandwidth_in * bandwidth_in;
-    inv_bandwidth_2sq_ = 1.0 / (2.0 * bandwidth_sq_);
+    neg_inv_bandwidth_2sq_ = -1.0 / (2.0 * bandwidth_sq_);
+    factor_ = pow(2.0, -dims / 2.0 - 1);
+    critical_point_sq_ = 4 * bandwidth_sq_ * (dims / 2.0 + 2) * math::LN_2;
+    critical_point_value_ = EvalUnnormOnSq(critical_point_sq_);
   }
   
   /**
@@ -56,14 +138,33 @@ class GaussianKernel {
   double EvalUnnorm(double dist) const {
     return EvalUnnormOnSq(dist * dist);
   }
-  
+
   /**
    * Evaluates an unnormalized density, given the square of the
    * distance.
    */
   double EvalUnnormOnSq(double sqdist) const {
-    double d = exp(-sqdist * inv_bandwidth_2sq_);
+    double d =
+      factor_ * exp(sqdist * neg_inv_bandwidth_2sq_ * 0.5)
+      - exp(sqdist * neg_inv_bandwidth_2sq_);
     return d;
+  }
+
+  /** Unnormalized range on a range of squared distances. */
+  DRange RangeUnnormOnSq(const DRange& range) const {
+    double eval_lo = EvalUnnormOnSq(range.lo);
+    double eval_hi = EvalUnnormOnSq(range.hi);
+    if (range.lo < critical_point_sq_) {
+      if (range.hi < critical_point_sq_) {
+        // Strictly under critical point.
+        return DRange(eval_lo, eval_hi);
+      } else {
+        // Critical point is included
+        return DRange(min(eval_lo, eval_hi), critical_point_value_);
+      }
+    } else {
+      return DRange(eval_hi, eval_lo);
+    }
   }
 
   /**
@@ -72,12 +173,21 @@ class GaussianKernel {
   double MaxUnnormValue() {
     return 1;
   }
-  
+
   /**
    * Divide by this constant when you're done.
+   *
+   * @deprecated -- this function is very confusing
    */
   double CalcNormConstant(index_t dims) const {
-    return pow((math::PI/inv_bandwidth_2sq_), dims/2.0);
+    return pow(math::PI_2*bandwidth_sq_, dims / 2) / 2;
+  }
+  
+  /**
+   * Multiply densities by this value.
+   */
+  double CalcMultiplicativeNormConstant(index_t dims) const {
+    return 1.0 / CalcNormConstant(dims);
   }
 };
 
@@ -101,6 +211,10 @@ class EpanKernel {
   static const bool HAS_CUTOFF = true;
   
  public:
+  void Init(double bandwidth_in, index_t dims) {
+    Init(bandwidth_in);
+  }
+
   /**
    * Initializes to a specific bandwidth.
    */
@@ -128,6 +242,11 @@ class EpanKernel {
     } else {
       return 0;
     }
+  }
+
+  /** Unnormalized range on a range of squared distances. */
+  DRange RangeUnnormOnSq(const DRange& range) const {
+    return DRange(EvalUnnormOnSq(range.lo), EvalUnnormOnSq(range.hi));
   }
 
   /**

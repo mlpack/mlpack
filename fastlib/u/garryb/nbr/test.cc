@@ -2,7 +2,21 @@
 #include <sys/time.h>
 
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv);
+  GaussianStarKernel kernel;
+  double mul_factor;
+
+  kernel.Init(0.05, 2);
+  mul_factor = kernel.CalcMultiplicativeNormConstant(2);
+  
+  for (double d = 0; d < 1; d += 0.01) {
+    DRange range = kernel.RangeUnnormOnSq(
+      DRange(math::Sqr(d - 0.01), math::Sqr(d + 0.01)));
+
+    printf("%f: %f (%f..%f)\n", d, kernel.EvalUnnormOnSq(d*d),
+      range.lo, range.hi);
+  }
+
+/*  fx_init(argc, argv);
   index_t n = fx_param_int_req(fx_root, "n");
   index_t granularity = fx_param_int(fx_root, "granularity", 8);
   bool fix = fx_param_int(fx_root, "fix", 0);
@@ -88,4 +102,5 @@ int main(int argc, char *argv[]) {
   fx_format_result(fx_root, "max_miss_count", "%d", max_miss_count);
 
   fx_done();
+  */
 }

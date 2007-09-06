@@ -42,6 +42,8 @@ class FdKde {
     double rel_error;
     /** Amount of error that is local error */
     double p_local;
+    /** The band width, h. */
+    double bandwidth;
 
     OT_DEF_BASIC(Param) {
       OT_MY_OBJECT(kernel);
@@ -52,6 +54,7 @@ class FdKde {
       OT_MY_OBJECT(mul_constant);
       OT_MY_OBJECT(rel_error);
       OT_MY_OBJECT(p_local);
+      OT_MY_OBJECT(bandwidth);
     }
 
    public:
@@ -59,7 +62,7 @@ class FdKde {
      * Initialize parameters from a data node (Req THOR).
      */
     void Init(datanode *module) {
-      kernel.Init(fx_param_double_req(module, "h"));
+      bandwidth = fx_param_double_req(module, "h");
       p_local = fx_param_double(module, "p_local", 0.5);
       rel_error = fx_param_double(module, "rel_error", 0.1);
     }
@@ -68,6 +71,7 @@ class FdKde {
       dim = vector_dimension;
       count = n_points;
 
+      kernel.Init(bandwidth, dim);
       mul_constant = 1.0 / (kernel.CalcNormConstant(dim) * (count - 1));
       rel_error_local = rel_error * p_local;
       rel_error_global = rel_error * (1.0 - p_local) / count;
@@ -419,14 +423,10 @@ class FdKde {
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
-      double distance_sq_lo = r_node.bound().MinDistanceSq(q.vec());
-      double distance_sq_hi = r_node.bound().MaxDistanceSq(q.vec());
-      DRange d_density;
-
-      d_density.lo = r_node.count() *
-          param.kernel.EvalUnnormOnSq(distance_sq_hi);
-      d_density.hi = r_node.count() *
-          param.kernel.EvalUnnormOnSq(distance_sq_lo);
+      DRange distance_sq_range = DRange(
+          r_node.bound().MinDistanceSq(q.vec()),
+          r_node.bound().MaxDistanceSq(q.vec()));
+      DRange d_density = param.kernel.RangeUnnormOnSq(distance_sq_range);
 
       double summary_density_lo = unapplied_summary_results.density.lo
           + d_density.lo + q_result->density.lo;
@@ -480,13 +480,10 @@ class FdKde {
       //DRange distance_sq =
       //    q_node.bound().RangeDistanceSq(r_node.bound());
       //double distance_sq_mid = q_node.bound().MaxToMidSq(r_node.bound());
-      double distance_sq_lo = q_node.bound().MinDistanceSq(r_node.bound());
-      double distance_sq_hi = q_node.bound().MaxDistanceSq(r_node.bound());
+      DRange distance_sq_range = q_node.bound().RangeDistanceSq(r_node.bound());
 
-      delta->d_density.lo = r_node.count() *
-          param.kernel.EvalUnnormOnSq(distance_sq_hi);
-      delta->d_density.hi = r_node.count() *
-          param.kernel.EvalUnnormOnSq(distance_sq_lo);
+      delta->d_density = param.kernel.RangeUnnormOnSq(distance_sq_range);
+      delta->d_density *= r_node.count();
 
       return likely(delta->d_density.hi != 0);
     }
@@ -539,16 +536,20 @@ class FdKde {
 };
 
 void FdKdeMain(datanode *module) {
-  String kernel = fx_param_str(module, "fdkde/kernel", "gauss");
-  
-  if (kernel.StartsWith("gauss")) {
+  String kernel = fx_param_str(module, "kde/kernel", "gauss");
+
+  if (kernel == "gauss") {
     thor::MonochromaticDualTreeMain<
         FdKde<GaussianKernel>, DualTreeDepthFirst<FdKde<GaussianKernel> > >(
-        module, "fdkde");
-  } else if (kernel.StartsWith("epan")) {
+        module, "kde");
+  } else if (kernel == "gauss_star") {
+    thor::MonochromaticDualTreeMain<
+        FdKde<GaussianStarKernel>, DualTreeDepthFirst<FdKde<GaussianStarKernel> > >(
+        module, "kde");
+  } else if (kernel == "epan") {
     thor::MonochromaticDualTreeMain<
         FdKde<EpanKernel>, DualTreeDepthFirst<FdKde<EpanKernel> > >(
-        module, "fdkde");
+        module, "kde");
   }
 }
 
