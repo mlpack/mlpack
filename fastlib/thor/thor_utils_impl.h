@@ -284,11 +284,10 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   tree.CreateResultCache(Q_RESULTS_CHANNEL, default_result,
         results_megs, &q_results);
 
-  typename GNP::GlobalResult *global_result;
+  typename GNP::GlobalResult global_result;
   RpcDualTree<GNP, Solver>(
       fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, param,
       &tree, &tree, &q_results, &global_result);
-  delete global_result;
 
   rpc::Done();
 }

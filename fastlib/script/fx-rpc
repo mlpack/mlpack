@@ -24,8 +24,9 @@ if n <= 0:
   print "error: n must be positive"
   os.exit(1)
 
-peers = os.path.abspath(sys.argv[2])
-executable = os.path.abspath(sys.argv[3])
+peers = sys.argv[2]
+executable = sys.argv[3]
+cwd = os.getcwd()
 
 port = random.randrange(10000, 64000)
 
@@ -33,25 +34,32 @@ peerlist = util.readlines(peers)
 
 pids = {}
 log = sys.stderr
+rootpid = -1
+rootexitcode = 0
 
 try:
   for i in range(n):
     machinename = peerlist[i]
     print >> log, "****** CONNECTING TO %s ******" % machinename
-    argv = ["ssh", "-x", "-T", "-n", "-o", "StrictHostKeyChecking=no", machinename, executable] + sys.argv[4:] + [
+    remote_command = ["cd", cwd, "&&", executable] + sys.argv[4:] + [
         "--rpc/n=%d"%n, "--rpc/rank=%d"%i,
-        "--rpc/port=%d"%port, "--rpc/peers=%s"%peers,
-        ]
+        "--rpc/port=%d"%port, "--rpc/peers=%s"%peers]
+    argv = ["ssh", "-x", "-T", "-n", "-o", "StrictHostKeyChecking=no",
+        machinename, " ".join(remote_command)]
+
     print >> log, " ".join(argv)
     pid = os.fork()
     if not pid:
       os.execvp(argv[0], argv)
-    pids[pid] = 1
+    pids[pid] = i
 
   while pids:
     (pid, status) = os.wait()
-    pids.pop(pid)
-    print >> log, "*********** PID %d done!" % pid
+    rank = pids.pop(pid)
+    exitcode = util.getstatus(status)
+    print >> log, "*********** Rank %d returned, exit code %d" % (pid, exitcode)
+    if rank == 0:
+      rootexitcode = exitcode
 
 finally:
   for pid in pids:
@@ -66,3 +74,6 @@ finally:
           os.kill(pid, signal.SIGKILL)
         except:
           print >> log, "Kill failed for %d" % pid
+
+sys.exit(exitcode)
+

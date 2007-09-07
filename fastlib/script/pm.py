@@ -364,6 +364,18 @@ class MpiCluster(BindDest):
     spec.wrapper_args += ["mpirun", "-machinefile", self.machinefile, "-np", str(val)]
     spec.wrapper_info += ["mpi-%s-%s" % (os.path.basename(self.machinefile), str(val))]
 
+class FxRpcCluster(BindDest):
+  """A parameter that represents running in fx-rpc.
+  """
+  def __init__(self, machinefile):
+    """Sample use:
+      pm.Bind(pm.FxRpcCluster(os.path.abspath("./amdmachines.txt")), [1, 2, 4, 8, 12])
+    """
+    self.machinefile = machinefile
+  def set(self, spec, val):
+    spec.wrapper_args += ["fx-rpc", str(val), self.machinefile]
+    spec.wrapper_info += ["rpc-%s-%s" % (os.path.basename(self.machinefile), str(val))]
+
 # Set of values that can be bound to a destination
 
 class ValSet:
