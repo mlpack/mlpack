@@ -160,7 +160,7 @@ template<typename GNP, typename SerialSolver, typename QTree, typename RTree>
 void thor::RpcDualTree(datanode *module, int base_channel,
     const typename GNP::Param& param, QTree *q, RTree *r,
     DistributedCache *q_results,
-    typename GNP::GlobalResult **global_result_pp) {
+    typename GNP::GlobalResult *global_result_out) {
   int n_threads = fx_param_int(module, "n_threads", 2);
   RemoteSchedulerBackend *work_backend = NULL;
   SchedulerInterface *work_queue;
@@ -230,13 +230,10 @@ void thor::RpcDualTree(datanode *module, int base_channel,
   if (rpc::is_root()) {
     rpc::Unregister(base_channel + 0);
     delete work_backend;
-    if (global_result_pp) {
-      *global_result_pp = new typename GNP::GlobalResult(my_global_result);
-    }
-  } else {
-    if (global_result_pp) {
-      *global_result_pp = NULL;
-    }
+  }
+
+  if (global_result_out) {
+    global_result_out->Copy(my_global_result);
   }
 
   delete work_queue;
