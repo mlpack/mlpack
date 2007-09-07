@@ -262,6 +262,19 @@ def ensuredir(dirpath):
   if (not os.access(dirpath, os.R_OK|os.W_OK)):
     os.makedirs(dirpath)
 
+def getstatus(status):
+  """Converts the status returned by os.waitpid into a value:
+  
+  * -1 if it was killed
+  
+  * the return code, if it exited
+  """
+
+  if status & 0xFF != 0:
+    return -1 # It was killed -- the right eight bits are non-zero
+  else:
+    return status >> 8
+
 def spawn_redirect(rundir, args, infile = None, outfile = None, errfile = None):
   """Spawn a new process, optionally redirecting one of standard in, standard
   out, or standard error to the specified filenames.
@@ -327,10 +340,7 @@ def spawn_redirect(rundir, args, infile = None, outfile = None, errfile = None):
   # The right 8 bits of status is the signal killed (always zero in case
   # of Windows).
   # The left eight bits are set to the exit value.
-  if status & 0xFF != 0:
-    return -1 # It was killed -- the right eight bits are non-zero
-  else:
-    return status >> 8
+  return getstatus(status)
 
 def shell(args, infile = None, outfile = None, errfile = None):
   """Executes either a list of arguments (argv[0] being the command)

@@ -113,6 +113,10 @@ class Range {
   struct GlobalResult {
    public:
     uint64 count;
+    
+    OT_DEF_BASIC(GlobalResult) {
+      OT_MY_OBJECT(count);
+    }
 
    public:
     void Init(const Param& param) {
