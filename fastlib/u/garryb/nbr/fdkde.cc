@@ -12,8 +12,9 @@ class FdKde {
   /** The bounding type. Required by THOR. */
   typedef DHrectBound<2> Bound;
 
-  typedef ThorVectorPoint QPoint;
-  typedef ThorVectorPoint RPoint;
+  typedef ThorVectorPoint Point;
+  typedef Point QPoint;
+  typedef Point RPoint;
 
   /** The type of kernel in use.  NOT required by THOR. */
   typedef TKernel Kernel;
@@ -67,110 +68,14 @@ class FdKde {
       rel_error = fx_param_double(module, "rel_error", 0.1);
     }
 
-    void SetDimensions(index_t vector_dimension, index_t n_points) {
-      dim = vector_dimension;
-      count = n_points;
-
+    /** this is called after things are set. */
+    void SetDimensions() {
       kernel.Init(bandwidth, dim);
       mul_constant = 1.0 / (kernel.CalcNormConstant(dim) * (count - 1));
       rel_error_local = rel_error * p_local;
       rel_error_global = rel_error * (1.0 - p_local) / count;
     }
-
-   public:
   };
-
-//  /**
-//   * Moment information used by thresholded KDE.
-//   *
-//   * NOT required by THOR, but used within other classes.
-//   */
-//  struct MomentInfo {
-//   public:
-//    Vector mass;
-//    double sumsq;
-//    index_t count;
-//
-//    OT_DEF_BASIC(MomentInfo) {
-//      OT_MY_OBJECT(mass);
-//      OT_MY_OBJECT(sumsq);
-//      OT_MY_OBJECT(count);
-//    }
-//
-//   public:
-//    void Init(const Param& param) {
-//      DEBUG_ASSERT(param.dim > 0);
-//      mass.Init(param.dim);
-//      Reset();
-//    }
-//
-//    void Reset() {
-//      mass.SetZero();
-//      sumsq = 0;
-//      count = 0;
-//    }
-//
-//    void Add(index_t count_in, const Vector& mass_in, double sumsq_in) {
-//      if (unlikely(count_in != 0)) {
-//        la::AddTo(mass_in, &mass);
-//        sumsq += sumsq_in;
-//        count += count_in;
-//      }
-//    }
-//
-//    void Add(const MomentInfo& other) {
-//      Add(other.count, other.mass, other.sumsq);
-//    }
-//
-//    /**
-//     * Compute kernel sum for a region of reference points assuming we have
-//     * the actual query point.
-//     */
-//    double ComputeKernelSum(const Param& param, const Vector& q) const {
-//      double quadratic_term =
-//          + count * la::Dot(q, q)
-//          - 2.0 * la::Dot(q, mass)
-//          + sumsq;
-//      return count - quadratic_term * param.kernel.inv_bandwidth_sq();
-//    }
-//
-//    double ComputeKernelSum(const Param& param, double distance_squared,
-//        double center_dot_center) const {
-//      //q*q - 2qr + rsumsq
-//      //q*q - 2qr + r*r - r*r
-//      double quadratic_term =
-//          (distance_squared - center_dot_center) * count
-//          + sumsq;
-//
-//      return -quadratic_term * param.kernel.inv_bandwidth_sq() + count;
-//    }
-//
-//    DRange ComputeKernelSumRange(const Param& param,
-//        const Bound& query_bound) const {
-//      DRange density_bound;
-//      Vector center;
-//      double inv_count = 1.0 / count;
-//      double center_dot_center = la::Dot(mass, mass) * inv_count * inv_count;
-//      
-//      DEBUG_ASSERT(count != 0);
-//
-//      center.Copy(mass);
-//      for (index_t i = center.length(); i--;) {
-//        center[i] *= inv_count;
-//      }
-//
-//      density_bound.lo = ComputeKernelSum(param,
-//          query_bound.MaxDistanceSq(center), center_dot_center);
-//      density_bound.hi = ComputeKernelSum(param,
-//          query_bound.MinDistanceSq(center), center_dot_center);
-//
-//      return density_bound;
-//    }
-//
-//    bool is_empty() const {
-//      return likely(count == 0);
-//    }
-//  };
 
   /**
    * Per-reference-node bottom-up statistic.
@@ -230,14 +135,9 @@ class FdKde {
    */
   typedef RStat QStat;
 
-  /**
-   * Query node.
-   */
-  typedef ThorNode<Bound, RStat> RNode;
-  /**
-   * Reference node.
-   */
-  typedef ThorNode<Bound, QStat> QNode;
+  typedef ThorNode<Bound, RStat> Node;
+  typedef Node QNode;
+  typedef Node RNode;
 
   /**
    * Coarse result on a region.
@@ -426,6 +326,7 @@ class FdKde {
       DRange distance_sq_range = DRange(
           r_node.bound().MinDistanceSq(q.vec()),
           r_node.bound().MaxDistanceSq(q.vec()));
+      DEBUG_ASSERT(distance_sq_range.width() >= 0);
       DRange d_density = param.kernel.RangeUnnormOnSq(distance_sq_range);
 
       double summary_density_lo = unapplied_summary_results.density.lo
@@ -435,7 +336,7 @@ class FdKde {
           + param.rel_error_global * summary_density_lo * r_node.count();
 
       if (d_density.width() < allocated_error * 2) {
-        q_result->density += d_density;
+        q_result->density += d_density * r_node.count();
         return false;
       }
 
@@ -485,6 +386,8 @@ class FdKde {
       delta->d_density = param.kernel.RangeUnnormOnSq(distance_sq_range);
       delta->d_density *= r_node.count();
 
+      DEBUG_ASSERT(delta->d_density.lo <= delta->d_density.hi);
+
       return likely(delta->d_density.hi != 0);
     }
 
@@ -533,30 +436,111 @@ class FdKde {
       //return fabs(d - param.kernel.bandwidth_sq());
     }
   };
+
+  static void DoKde(datanode *module) {
+    rpc::Init();
+    
+    if (!rpc::is_root()) {
+      // turn off fastexec output
+      fx_silence();
+    }
+
+    const int TREE_CHANNEL = 300;
+    const int RESULT_CHANNEL = 350;
+    Param *param;
+    ThorTree<Param, Point, Node> tree;
+    DistributedCache results;
+    double results_megs = fx_param_double(module, "results/megs", 1000);
+
+    param = new Param();
+    param->Init(fx_submodule(module, "kde", "kde"));
+
+    fx_timer_start(module, "read");
+    DistributedCache *points_cache = new DistributedCache();
+    param->count = thor::ReadPoints<Point>(
+        Empty(), TREE_CHANNEL + 0, TREE_CHANNEL + 1,
+        fx_submodule(module, "data", "data"), points_cache);
+    fx_timer_stop(module, "read");
+
+    Point example_point;
+    CacheArray<Point>::GetDefaultElement(points_cache,
+        &example_point);
+    param->dim = example_point.vec().length();
+    
+    param->SetDimensions();
+
+    fx_timer_start(module, "tree");
+    thor::CreateKdTree<Point, Node>(
+        *param, TREE_CHANNEL + 2, TREE_CHANNEL + 3,
+        fx_submodule(module, "tree", "tree"), param->count,
+        points_cache, &tree);
+    fx_timer_stop(module, "tree");
+
+    QResult example_result;
+    example_result.Init(*param);
+    tree.CreateResultCache(RESULT_CHANNEL, example_result,
+        results_megs, &results);
+
+    GlobalResult global_result_1;
+
+    fx_timer_start(module, "kde_1");
+    thor::RpcDualTree<FdKde, DualTreeDepthFirst<FdKde> >(
+        fx_submodule(module, "gnp", "kde_1"), 200,
+        *param, &tree, &tree, &results, &global_result_1);
+    fx_timer_stop(module, "kde_1");
+    results.ResetElements();
+
+    String kernel_type = fx_param_str_req(module, "kde/kernel");
+    if (kernel_type == "gauss_star") {
+      // Gaussian convolution kernel.  Run again at the modified bandwidth.
+      GlobalResult global_result_2;
+      
+      param->kernel.Init(sqrt(param->kernel.bandwidth_sq() * 2));
+      
+      fx_timer_start(module, "kde_2");
+      thor::RpcDualTree<FdKde, DualTreeDepthFirst<FdKde> >(
+          fx_submodule(module, "gnp", "kde_2"), 200,
+          *param, &tree, &tree, &results, &global_result_2);
+      fx_timer_stop(module, "kde_2");
+      results.ResetElements();
+      
+      if (rpc::is_root()) {
+        DRange lscv_value;
+        
+        lscv_value.lo = global_result_2.sum_density.lo
+            - 2 * global_result_1.sum_density.hi;
+        lscv_value.hi = global_result_2.sum_density.hi
+            - 2 * global_result_1.sum_density.lo;
+        
+        fx_format_result(module, "lscv/value", "%g", lscv_value.mid());
+        fx_format_result(module, "lscv/error", "%g", lscv_value.width() / 2);
+        fx_format_result(module, "lscv/lo", "%g", lscv_value.lo);
+        fx_format_result(module, "lscv/hi", "%g", lscv_value.hi);
+      }
+    }
+
+    delete param;
+    
+    rpc::Done();
+  }
 };
 
-void FdKdeMain(datanode *module) {
+void KdeMain(datanode *module) {
   String kernel = fx_param_str(module, "kde/kernel", "gauss");
 
-  if (kernel == "gauss") {
-    thor::MonochromaticDualTreeMain<
-        FdKde<GaussianKernel>, DualTreeDepthFirst<FdKde<GaussianKernel> > >(
-        module, "kde");
-  } else if (kernel == "gauss_star") {
-    thor::MonochromaticDualTreeMain<
-        FdKde<GaussianStarKernel>, DualTreeDepthFirst<FdKde<GaussianStarKernel> > >(
-        module, "kde");
+  if (kernel == "gauss" || kernel == "gauss_star") {
+    FdKde<GaussianKernel>::DoKde(module);
   } else if (kernel == "epan") {
-    thor::MonochromaticDualTreeMain<
-        FdKde<EpanKernel>, DualTreeDepthFirst<FdKde<EpanKernel> > >(
-        module, "kde");
+    FdKde<EpanKernel>::DoKde(module);
+  } else {
+    FATAL("Unsupported kernel: '%s'", kernel.c_str());
   }
 }
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-  FdKdeMain(fx_root);
+  KdeMain(fx_root);
   
   fx_done();
 }

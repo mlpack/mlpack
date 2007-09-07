@@ -335,9 +335,15 @@ struct DRange {
     }
     return *this;
   }
+
+  /** Scales upper and lower bounds. */
+  friend DRange operator - (const DRange& r) {
+    return DRange(-r.hi, -r.lo);
+  }
   
   /** Scales upper and lower bounds. */
   const DRange& operator *= (double d) {
+    DEBUG_ASSERT_MSG(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
     lo *= d;
     hi *= d;
     return *this;
@@ -345,11 +351,13 @@ struct DRange {
 
   /** Scales upper and lower bounds. */
   friend DRange operator * (const DRange& r, double d) {
+    DEBUG_ASSERT_MSG(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
     return DRange(r.lo * d, r.hi * d);
   }
 
   /** Scales upper and lower bounds. */
   friend DRange operator * (double d, const DRange& r) {
+    DEBUG_ASSERT_MSG(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
     return DRange(r.lo * d, r.hi * d);
   }
   
@@ -360,10 +368,13 @@ struct DRange {
     return *this;
   }
   
-  /** Subtracts from the upper and lower independently. */
+  /** Subtracts from the upper and lower.
+   * THIS SWAPS THE ORDER OF HI AND LO, assuming a worst case result.
+   * This is NOT an undo of the + operator.
+   */
   const DRange& operator -= (const DRange& other) {
-    lo -= other.lo;
-    hi -= other.hi;
+    lo -= other.hi;
+    hi -= other.lo;
     return *this;
   }
   
@@ -390,8 +401,8 @@ struct DRange {
 
   friend DRange operator - (const DRange& a, const DRange& b) {
     DRange result;
-    result.lo = a.lo - b.lo;
-    result.hi = a.hi - b.hi;
+    result.lo = a.lo - b.hi;
+    result.hi = a.hi - b.lo;
     return result;
   }
   

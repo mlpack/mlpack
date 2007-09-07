@@ -176,14 +176,16 @@ index_t ReadPoints(
  * @param q the query tree
  * @param r the reference tree
  * @param q_results the query results
- * @param global_result_pp (output) if non-NULL, the global result will be
- *        allocated via @c new and stored here only on the master machine
+ * @param global_result_out (output) if non-NULL, it will be initialized to the
+ *        global result on the root machine; on other machines, this will
+ *        correspond to a global result of the machine's subtree of processors
+ *        (probably not useful to you)
  */
 template<typename GNP, typename SerialSolver, typename QTree, typename RTree>
 void RpcDualTree(datanode *module, int base_channel,
     const typename GNP::Param& param, QTree *q, RTree *r,
     DistributedCache *q_results,
-    typename GNP::GlobalResult **global_result_pp);
+    typename GNP::GlobalResult *global_result_out);
 
 /**
  * A "cookie-cutter" main for monochromatic dual tree problems.
