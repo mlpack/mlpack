@@ -125,8 +125,6 @@ class Range {
     void Accumulate(const Param& param, const GlobalResult& other) {
       count += other.count;
     }
-    void ApplyDelta(const Param& param, const Delta& delta) {}
-    void UndoDelta(const Param& param, const Delta& delta) {}
     void Postprocess(const Param& param) {}
     void Report(const Param& param, datanode *datanode) {
       fx_format_result(datanode, "per_point_avg", "%g",

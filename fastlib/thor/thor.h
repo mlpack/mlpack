@@ -9,6 +9,7 @@
 
 #include "gnp.h"
 #include "dfs.h"
+#include "rbfs.h"
 #include "thor_utils.h"
 #include "kdtree.h"
 

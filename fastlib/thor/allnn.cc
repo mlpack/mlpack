@@ -147,6 +147,17 @@ class Allnn {
       return r_node.bound().MinDistanceSq(q_point.vec()) <= distance_sq;
     }
 
+    bool StartVisitingQueryPoint(const Param& param,
+        const QPoint& q_point,
+        index_t q_index,
+        const RNode& r_node,
+        QResult* q_result,
+        GlobalResult* global_result) {
+      distance_sq = q_result->distance_sq;
+      neighbor_i = q_result->neighbor_i;
+      return true;
+    }
+
     void VisitPair(const Param& param,
         const QPoint& q_point, index_t q_index,
         const RPoint& r_point, index_t r_index) {
@@ -164,6 +175,14 @@ class Allnn {
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q_point, index_t q_index,
         const RNode& r_node, const QSummaryResult& unapplied_summary_results,
+        QResult* q_result, GlobalResult* global_result) {
+      q_result->distance_sq = distance_sq;
+      q_result->neighbor_i = neighbor_i;
+    }
+
+    void FinishVisitingQueryPoint(const Param& param,
+        const QPoint& q_point, index_t q_index,
+        const RNode& r_node,
         QResult* q_result, GlobalResult* global_result) {
       q_result->distance_sq = distance_sq;
       q_result->neighbor_i = neighbor_i;

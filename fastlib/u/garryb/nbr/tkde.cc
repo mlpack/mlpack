@@ -435,8 +435,6 @@ class Tkde {
       n_under_threshold += other.n_under_threshold;
       n_unknown += other.n_unknown;
     }
-    void ApplyDelta(const Param& param, const Delta& delta) {}
-    void UndoDelta(const Param& param, const Delta& delta) {}
     void Postprocess(const Param& param) {}
     void Report(const Param& param, datanode *datanode) {
       fx_format_result(datanode, "n_unknown", "%"LI"d",
