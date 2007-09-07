@@ -131,8 +131,6 @@ void DualTreeDepthFirst<GNP>::Pair_(
           &q_node_mut->postponed)) {
     DEBUG_MSG(1.0, "Extrinsic prune");
   } else {
-    global_result_.UndoDelta(param_, delta);
-
     if (q_node->is_leaf() && r_node->is_leaf()) {
       DEBUG_MSG(1.0, "Base case");
       BaseCase_(q_node, r_node, unvisited, q_node_mut);
@@ -155,7 +153,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
         if (GNP::Algorithm::ConsiderPairIntrinsic(
                 param_, *q_child, *r_node, &child_delta,
                 &global_result_, &q_child_mut->postponed)) {
-          Pair_(q_child, r_node, delta, unvisited, q_child_mut);
+          Pair_(q_child, r_node, child_delta, unvisited, q_child_mut);
         }
 
         // We must VERY carefully apply both the horizontal and vertical join

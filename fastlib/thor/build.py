@@ -6,6 +6,8 @@ cachearray_impl.h
 cache.h
 dfs.h
 dfs_impl.h
+rbfs.h
+rbfs_impl.h
 distribcache.h
 gnp.h
 kdtree.h
@@ -30,3 +32,4 @@ librule(name = "thor",
    deplibs = ["fastlib:fastlib_int"])
 
 binrule(name = "allnn", sources = ["allnn.cc"], deplibs = [":thor"])
+binrule(name = "allnnbfs", sources = ["allnnbfs.cc"], deplibs = [":thor"])

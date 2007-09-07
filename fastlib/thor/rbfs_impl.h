@@ -1,0 +1,286 @@
+/**
+ * @file rbfs_impl.h
+ *
+ * Depth-first dual-tree solver template implementations.
+ */
+
+template<typename GNP>
+DualTreeRecursiveBreadth<GNP>::~DualTreeRecursiveBreadth() {
+  r_nodes_.StopRead(0);
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::Doit(
+    const typename GNP::Param& param_in,
+    index_t q_root_index,
+    index_t q_end_index,
+    DistributedCache *q_points,
+    DistributedCache *q_nodes,
+    DistributedCache *r_points,
+    DistributedCache *r_nodes,
+    DistributedCache *q_results) {
+  param_.Copy(param_in);
+
+  q_nodes_.Init(q_nodes, BlockDevice::M_READ);
+  r_points_.Init(r_points, BlockDevice::M_READ);
+  r_nodes_.Init(r_nodes, BlockDevice::M_READ);
+
+  const typename GNP::QNode *q_root = q_nodes_.StartRead(q_root_index);
+  q_results_.Init(q_results, BlockDevice::M_OVERWRITE,
+      q_root->begin(), q_root->end());
+  q_points_.Init(q_points, BlockDevice::M_READ,
+      q_root->begin(), q_root->end());
+  q_nodes_.StopRead(q_root_index);
+
+  global_result_.Init(param_);
+
+  r_root_ = r_nodes_.StartRead(0);
+
+  do_naive_ = false;
+
+  Begin_(q_root_index);
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::Begin_(index_t q_root_index) {
+  typename GNP::Delta delta;
+  CacheRead<typename GNP::QNode> q_root(&q_nodes_, q_root_index);
+
+  stats_.Init();
+  stats_.tuples_analyzed = q_root->count() * r_root_->count();
+  stats_.n_queries = q_root->count();
+
+  Queue queue;
+
+  queue.Init(param_);
+  queue.Consider(param_, *q_root, *r_root_, 0, &global_result_);
+
+  Divide_(q_root_index, &queue);
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::PushDownPostprocess_(
+    const typename GNP::QNode& q_node,
+    const typename GNP::QPostponed& postponed) {
+  if (q_node.is_leaf()) {
+    index_t q_i = q_node.begin();
+    CacheWriteIter<typename GNP::QResult> q_result(&q_results_, q_i);
+    CacheReadIter<typename GNP::QPoint> q_point(&q_points_, q_i);
+    
+    for (; q_i < q_node.end(); q_i++, q_result.Next(), q_point.Next()) {
+      q_result->ApplyPostponed(param_, postponed, *q_point, q_i);
+      q_result->Postprocess(param_, *q_point, q_i, *r_root_);
+      global_result_.ApplyResult(param_, *q_point, q_i, *q_result);
+    }
+  } else {
+    for (int k = 0; k < GNP::QNode::CARDINALITY; k++) {
+      CacheRead<typename GNP::QNode> q_child(&q_nodes_, q_node.child(k));
+
+      PushDownPostprocess_(*q_child, postponed);
+    }
+  }
+}
+
+template<typename GNP>
+bool DualTreeRecursiveBreadth<GNP>::BeginExploringQueue_(
+    const typename GNP::QNode& q_node, Queue *parent_queue) {
+  if (parent_queue->q.size() == 0
+      || !GNP::Algorithm::ConsiderQueryTermination(
+          param_, q_node, parent_queue->summary_result,
+          global_result_, &parent_queue->postponed)) {
+    // Distribute mass results to the leaves
+    PushDownPostprocess_(q_node, parent_queue->postponed);
+    return false;
+  } else {
+    return true;
+  }
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::Queue::Init(
+    const typename GNP::Param& param) {
+  q.Init();
+  summary_result.Init(param);
+  postponed.Init(param);
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::Queue::Consider(
+    const typename GNP::Param& param,
+    const typename GNP::QNode& q_node, const typename GNP::RNode& r_node,
+    index_t r_index,
+    typename GNP::GlobalResult *global_result) {
+  QueueItem *item = q.AddBack();
+  item->r_index = r_index;
+  if (likely(GNP::Algorithm::ConsiderPairIntrinsic(param, q_node, r_node,
+      &item->delta, global_result, &postponed))) {
+    summary_result.ApplyDelta(param, item->delta);
+  } else {
+    q.PopBack();
+  }
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::Queue::Reconsider(
+    const typename GNP::Param& param,
+    const QueueItem& item) {
+  new(q.AddBack())QueueItem(item);
+  summary_result.ApplyDelta(param, item.delta);
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::Queue::Done(
+    const typename GNP::Param& param,
+    const typename GNP::QPostponed& parent_postponed,
+    const typename GNP::QNode& q_node) {
+  postponed.ApplyPostponed(param, parent_postponed);
+  summary_result.ApplyPostponed(param, postponed, q_node);
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::DivideReferences_(
+    index_t q_node_i, Queue* parent_queue) {
+  const typename GNP::QNode q_node(*q_nodes_.StartRead(q_node_i));
+  q_nodes_.StopRead(q_node_i);
+
+  if (!BeginExploringQueue_(q_node, parent_queue)) {
+    return;
+  }
+
+  Queue child_queue;
+  child_queue.Init(param_);
+
+  DEBUG_ONLY(stats_.node_node_considered += parent_queue->q.size());
+
+  for (index_t i = 0; i < parent_queue->q.size(); i++) {
+    const QueueItem *item = &parent_queue->q[i];
+    CacheRead<typename GNP::RNode> r_node(&r_nodes_, item->r_index);
+
+    if (likely(GNP::Algorithm::ConsiderPairExtrinsic(
+        param_, q_node, *r_node, item->delta, parent_queue->summary_result,
+        global_result_, &parent_queue->postponed))) {
+      if (!r_node->is_leaf()) {
+        for (int k_r = 0; k_r < GNP::RNode::CARDINALITY; k_r++) {
+          index_t r_child_i = r_node->child(k_r);
+          CacheRead<typename GNP::RNode> r_child(&r_nodes_, r_child_i);
+
+          child_queue.Consider(param_, q_node, *r_child, r_child_i,
+              &global_result_);
+        }
+      } else {
+        BaseCase_(q_node, *r_node);
+      }
+    }
+  }
+
+  child_queue.Done(param_, parent_queue->postponed, q_node);
+  DivideReferences_(q_node_i, &child_queue);
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::Divide_(
+    index_t q_node_i, Queue* parent_queue) {
+  const typename GNP::QNode q_node(*q_nodes_.StartRead(q_node_i));
+  q_nodes_.StopRead(q_node_i);
+
+  if (q_node.is_leaf()) {
+    DivideReferences_(q_node_i, parent_queue);
+    return;
+  }
+
+  if (!BeginExploringQueue_(q_node, parent_queue)) {
+    return;
+  }
+
+  Queue child_queues[GNP::QNode::CARDINALITY];
+  const typename GNP::QNode *q_children[GNP::QNode::CARDINALITY];
+
+  for (int k = 0; k < GNP::QNode::CARDINALITY; k++) {
+    q_children[k] = q_nodes_.StartRead(q_node.child(k));
+    child_queues[k].Init(param_);
+  }
+
+  DEBUG_ONLY(stats_.node_node_considered += parent_queue->q.size());
+
+  for (index_t i = 0; i < parent_queue->q.size(); i++) {
+    const QueueItem *item = &parent_queue->q[i];
+    CacheRead<typename GNP::RNode> r_node(&r_nodes_, item->r_index);
+
+    if (likely(GNP::Algorithm::ConsiderPairExtrinsic(
+        param_, q_node, *r_node, item->delta, parent_queue->summary_result,
+        global_result_, &parent_queue->postponed))) {
+      if (!r_node->is_leaf()) {
+        for (int k_r = 0; k_r < GNP::RNode::CARDINALITY; k_r++) {
+          index_t r_child_i = r_node->child(k_r);
+          CacheRead<typename GNP::RNode> r_child(&r_nodes_, r_child_i);
+
+          for (int k_q = 0; k_q < GNP::QNode::CARDINALITY; k_q++) {
+            child_queues[k_q].Consider(param_, *q_children[k_q], *r_child,
+                r_child_i, &global_result_);
+          }
+        }
+      } else {
+        for (int k_q = 0; k_q < GNP::QNode::CARDINALITY; k_q++) {
+          child_queues[k_q].Reconsider(param_, *item);
+        }
+      }
+    }
+  }
+
+  // Release the locks on the children to ease cache pressure in the FIFO
+  for (int k = 0; k < GNP::QNode::CARDINALITY; k++) {
+    child_queues[k].Done(param_, parent_queue->postponed, *q_children[k]);
+    q_nodes_.StopRead(q_node.child(k));
+  }
+
+  for (int k = 0; k < GNP::QNode::CARDINALITY; k++) {
+    Divide_(q_node.child(k), &child_queues[k]);
+  }
+}
+
+template<typename GNP>
+void DualTreeRecursiveBreadth<GNP>::BaseCase_(
+    const typename GNP::QNode& q_node,
+    const typename GNP::RNode& r_node) {
+  DEBUG_ONLY(stats_.node_point_considered += q_node.count());
+
+  typename GNP::PairVisitor visitor;
+  visitor.Init(param_);
+
+  CacheRead<typename GNP::QPoint> first_q_point(&q_points_, q_node.begin());
+  CacheWrite<typename GNP::QResult> first_q_result(&q_results_, q_node.begin());
+  CacheRead<typename GNP::RPoint> first_r_point(&r_points_, r_node.begin());
+  size_t q_point_stride = q_points_.n_elem_bytes();
+  size_t q_result_stride = q_results_.n_elem_bytes();
+  size_t r_point_stride = r_points_.n_elem_bytes();
+  index_t q_end = q_node.end();
+  const typename GNP::QPoint *q_point = first_q_point;
+  typename GNP::QResult *q_result = first_q_result;
+
+  for (index_t q_i = q_node.begin(); q_i < q_end; ++q_i) {
+    if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, r_node,
+          q_result, &global_result_)) {
+      const typename GNP::RPoint *r_point = first_r_point;
+      index_t r_i = r_node.begin();
+      index_t r_left = r_node.count();
+
+      for (;;) {
+        visitor.VisitPair(param_, *q_point, q_i, *r_point, r_i);
+        if (unlikely(--r_left == 0)) {
+          break;
+        }
+        r_i++;
+        r_point = mem::PointerAdd(r_point, r_point_stride);
+      }
+
+      visitor.FinishVisitingQueryPoint(param_, *q_point, q_i, r_node,
+          q_result, &global_result_);
+
+      DEBUG_ONLY(stats_.point_point_considered += r_node.count());
+    }
+
+    q_point = mem::PointerAdd(q_point, q_point_stride);
+    q_result = mem::PointerAdd(q_result, q_result_stride);
+  }
+}
+

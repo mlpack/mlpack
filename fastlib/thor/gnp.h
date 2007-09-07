@@ -131,10 +131,13 @@ class BlankGlobalResult {
   void Init(const Param& param) {}
   template<typename Param>
   void Accumulate(const Param& param, const BlankGlobalResult& other) {}
-  template<typename Param, typename Delta>
+  // Delta-refinement is currently unimplemented, because we discovered it
+  // was buggy and neglected.  if this is desired, then someone may want to
+  // reimplement it, but I'm not sure if it'd be that useful.
+  /*template<typename Param, typename Delta>
   void ApplyDelta(const Param& param, const Delta& delta) {}
   template<typename Param, typename Delta>
-  void UndoDelta(const Param& param, const Delta& delta) {}
+  void UndoDelta(const Param& param, const Delta& delta) {}*/
   template<typename Param>
   void Postprocess(const Param& param) {}
   template<typename Param>
