@@ -156,7 +156,7 @@ class DataNode:
         path = line[:space]
         value = line[space+1:].rstrip()
         self.set_val_path(path, util.unescape_dspath(value))
-      except:
+      except ValueError:
         print "Warning: Line ignored: %s" % (line.strip())
 
   def read_sexpression(self, file):
