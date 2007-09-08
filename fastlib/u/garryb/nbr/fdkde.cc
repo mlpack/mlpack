@@ -550,6 +550,10 @@ class FdKde {
 
     GlobalResult global_result_1;
 
+    if (rpc::is_root()) {
+      fprintf(stderr, "Doing density estimation now...\n");
+    }
+
     fx_timer_start(module, "kde_1");
     thor::RpcDualTree<FdKde, SOLVER_TYPE<FdKde> >(
         fx_submodule(module, "gnp", "kde_1"), 200,
@@ -559,6 +563,9 @@ class FdKde {
 
     String kernel_type = fx_param_str_req(module, "kde/kernel");
     if (kernel_type == "gauss_star") {
+      if (rpc::is_root()) {
+        fprintf(stderr, "Doing density estimation with second kernel for LSCV...\n");
+      }
       // Gaussian convolution kernel.  Run again at the modified bandwidth.
       GlobalResult global_result_2;
       
