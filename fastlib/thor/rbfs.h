@@ -108,7 +108,8 @@ class DualTreeRecursiveBreadth {
   void DivideReferences_(index_t q_node_i, Queue *parent_queue);
   void BaseCase_(
       const typename GNP::QNode& q_node,
-      const typename GNP::RNode& r_node);
+      const typename GNP::RNode& r_node,
+      const typename GNP::QSummaryResult& unvisited);
   /**
    * Postprocesses results and pushes down any postponed prunes.
    */
