@@ -134,7 +134,7 @@ void DualTreeRecursiveBreadth<GNP>::Queue::Done(
     const typename GNP::QPostponed& parent_postponed,
     const typename GNP::QNode& q_node) {
   postponed.ApplyPostponed(param, parent_postponed);
-  summary_result.ApplyPostponed(param, postponed, q_node);
+  //summary_result.ApplyPostponed(param, postponed, q_node);
 }
 
 template<typename GNP>
@@ -143,6 +143,26 @@ void DualTreeRecursiveBreadth<GNP>::DivideReferences_(
   const typename GNP::QNode q_node(*q_nodes_.StartRead(q_node_i));
   q_nodes_.StopRead(q_node_i);
 
+  if (q_node.is_leaf()) {
+    // Make sure we take into account results at the leaves in our
+    // summary result.
+    // While we're at it, let's also take care of postponed results.
+    typename GNP::QSummaryResult mu;
+    mu.Init(param_);
+    mu.StartReaccumulate(param_, q_node);
+    for (index_t q_i = q_node.begin(); q_i < q_node.end(); q_i++) {
+      CacheRead<typename GNP::QPoint> q_point(&q_points_, q_i);
+      CacheWrite<typename GNP::QResult> q_result(&q_results_, q_i);
+      q_result->ApplyPostponed(param_, parent_queue->postponed, *q_point, q_i);
+      mu.Accumulate(param_, *q_result);
+    }
+    mu.FinishReaccumulate(param_, q_node);
+    parent_queue->summary_result.ApplySummaryResult(param_, mu);
+    parent_queue->postponed.Reset(param_);
+  } else {
+    FATAL("Unwritten code -- someone can write it");
+  }
+
   if (!BeginExploringQueue_(q_node, parent_queue)) {
     return;
   }
@@ -150,9 +170,21 @@ void DualTreeRecursiveBreadth<GNP>::DivideReferences_(
   Queue child_queue;
   child_queue.Init(param_);
 
+  ArrayList<typename GNP::QSummaryResult> summaries;
+
+  summaries.Init(parent_queue->q.size());
+  summaries[0].Init(param_);
+  // note: parent's postponed is empty
+  //summaries[0].ApplyPostponed(parent.postponed);
+
+  for (index_t i = 1; i < parent_queue->q.size(); i++) {
+    summaries[i].Copy(summaries[i-1]);
+    summaries[i].ApplyDelta(param_, parent_queue->q[i-1].delta);
+  }
+
   DEBUG_ONLY(stats_.node_node_considered += parent_queue->q.size());
 
-  for (index_t i = 0; i < parent_queue->q.size(); i++) {
+  for (index_t i = parent_queue->q.size(); i--;) {
     const QueueItem *item = &parent_queue->q[i];
     CacheRead<typename GNP::RNode> r_node(&r_nodes_, item->r_index);
 
@@ -168,7 +200,13 @@ void DualTreeRecursiveBreadth<GNP>::DivideReferences_(
               &global_result_);
         }
       } else {
-        BaseCase_(q_node, *r_node);
+        // Compute summary results for all computations on the queue EXCEPT
+        // this one.
+        summaries[i].ApplySummaryResult(param_, child_queue.summary_result);
+        summaries[i].ApplyPostponed(param_, child_queue.postponed, q_node);
+        // TODO: Instead of applying postponed at the node level, we can
+        // eagerly forward it to the points themselves.
+        BaseCase_(q_node, *r_node, summaries[i]);
       }
     }
   }
@@ -194,6 +232,8 @@ void DualTreeRecursiveBreadth<GNP>::Divide_(
 
   Queue child_queues[GNP::QNode::CARDINALITY];
   const typename GNP::QNode *q_children[GNP::QNode::CARDINALITY];
+
+  parent_queue->summary_result.ApplyPostponed(param_, parent_queue->postponed, q_node);
 
   for (int k = 0; k < GNP::QNode::CARDINALITY; k++) {
     q_children[k] = q_nodes_.StartRead(q_node.child(k));
@@ -241,7 +281,8 @@ void DualTreeRecursiveBreadth<GNP>::Divide_(
 template<typename GNP>
 void DualTreeRecursiveBreadth<GNP>::BaseCase_(
     const typename GNP::QNode& q_node,
-    const typename GNP::RNode& r_node) {
+    const typename GNP::RNode& r_node,
+    const typename GNP::QSummaryResult& unvisited) {
   DEBUG_ONLY(stats_.node_point_considered += q_node.count());
 
   typename GNP::PairVisitor visitor;
@@ -259,7 +300,7 @@ void DualTreeRecursiveBreadth<GNP>::BaseCase_(
 
   for (index_t q_i = q_node.begin(); q_i < q_end; ++q_i) {
     if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, r_node,
-          q_result, &global_result_)) {
+          unvisited, q_result, &global_result_)) {
       const typename GNP::RPoint *r_point = first_r_point;
       index_t r_i = r_node.begin();
       index_t r_left = r_node.count();
@@ -274,7 +315,7 @@ void DualTreeRecursiveBreadth<GNP>::BaseCase_(
       }
 
       visitor.FinishVisitingQueryPoint(param_, *q_point, q_i, r_node,
-          q_result, &global_result_);
+          unvisited, q_result, &global_result_);
 
       DEBUG_ONLY(stats_.point_point_considered += r_node.count());
     }

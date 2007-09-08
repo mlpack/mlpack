@@ -57,6 +57,7 @@ class FdKde {
       OT_MY_OBJECT(mul_constant);
       OT_MY_OBJECT(rel_error);
       OT_MY_OBJECT(p_local);
+      OT_MY_OBJECT(p_global);
       OT_MY_OBJECT(bandwidth);
     }
 
@@ -226,12 +227,12 @@ class FdKde {
    public:
     /** Bound on density from leaves. */
     DRange density;
-    double used_error;
+    double used_width;
     index_t n_pruned;
 
     OT_DEF_BASIC(QSummaryResult) {
       OT_MY_OBJECT(density);
-      OT_MY_OBJECT(used_error);
+      OT_MY_OBJECT(used_width);
       OT_MY_OBJECT(n_pruned);
     }
 
@@ -239,7 +240,7 @@ class FdKde {
     void Init(const Param& param) {
       /* horizontal init */
       density.Init(0, 0);
-      used_error = 0;
+      used_width = 0;
       n_pruned = 0;
     }
 
@@ -247,27 +248,27 @@ class FdKde {
     void ApplySummaryResult(const Param& param,
         const QSummaryResult& summary_result) {
       density += summary_result.density;
-      used_error += summary_result.used_error;
+      used_width += summary_result.used_width;
       n_pruned += summary_result.n_pruned;
     }
 
     void ApplyDelta(const Param& param,
         const Delta& delta) {
       density += delta.d_density;
-      // delta's don't affect used error
+      // deltas don't affect used error
     }
 
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed, const QNode& q_node) {
       density += postponed.d_density;
-      used_error += postponed.d_density.width() / 2;
+      used_width += postponed.d_density.width();
       n_pruned += postponed.n_pruned;
     }
-    
+
     void StartReaccumulate(const Param& param, const QNode& q_node) {
       /* vertical init */
       density.InitEmptySet();
-      used_error = 0;
+      used_width = 0;
       n_pruned = param.count;
     }
 
@@ -275,14 +276,14 @@ class FdKde {
       // TODO: applying to single result could be made part of QResult,
       // but in some cases may require a copy/undo stage
       density |= result.density;
-      used_error = max(used_error, result.density.width() / 2);
+      used_width = max(used_width, result.density.width());
       n_pruned = min(n_pruned, result.n_pruned);
     }
 
     void Accumulate(const Param& param,
         const QSummaryResult& result, index_t n_points) {
       density |= result.density;
-      used_error = max(used_error, result.used_error);
+      used_width = max(used_width, result.used_width);
       n_pruned = min(n_pruned, result.n_pruned);
     }
 
@@ -363,7 +364,7 @@ class FdKde {
           (d_density.lo + unapplied_summary_results.density.lo + q_result->density.lo);
       
       double allocated_error =
-           (param.rel_error * density_lo
+          (param.rel_error * density_lo
               - (q_result->density.width() / 2))
           / (param.count - q_result->n_pruned) * param.p_global;
       allocated_error *= r_node.count();
@@ -462,14 +463,14 @@ class FdKde {
         const QSummaryResult& q_summary_result,
         const GlobalResult& global_result,
         QPostponed* q_postponed) {
-      double allocated_error =
-          (param.rel_error * q_summary_result.density.lo
-              - q_summary_result.used_error)
+      double allocated_width =
+          (param.rel_error * q_summary_result.density.lo * 2
+              - q_summary_result.used_width)
           / (param.count - q_summary_result.n_pruned) * param.p_global;
-      allocated_error *= r_node.count();
-      allocated_error += param.rel_error_local * delta.d_density.lo;
+      allocated_width *= r_node.count();
+      allocated_width += param.rel_error_local * delta.d_density.lo * 2;
 
-      if (delta.d_density.width() < allocated_error * 2) {
+      if (delta.d_density.width() < allocated_width) {
         q_postponed->d_density += delta.d_density;
         q_postponed->n_pruned += r_node.count();
         return false;

@@ -253,10 +253,6 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
   rpc::Init();
 
-  if (!rpc::is_root()) {
-    fx_silence();
-  }
-
   fx_submodule(module, NULL, "io"); // influnce output order
 
   param.Init(fx_submodule(module, gnp_name, gnp_name));
