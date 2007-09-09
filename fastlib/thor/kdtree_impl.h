@@ -195,7 +195,7 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
     points_.cache()->GiveOwnership(
         points_.Blockid(node->begin()), begin_rank);
     // This is also a convenient time to display status.
-    percent_indicator("tree built", node->end(), n_points_);
+    percent_indicator("tree built", node->begin() + block_size_, n_points_);
   }
 
   if (1) {
