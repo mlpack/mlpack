@@ -538,16 +538,16 @@ class ansi:
   HYELLOW = ansi_seq("1;33")
   HBLUE = ansi_seq("1;34")
   HMAGENTA = ansi_seq("1;35")
-  HCYAN = ansi_seq("1;35")
-  HWHITE = ansi_seq("1;36")
+  HCYAN = ansi_seq("1;36")
+  HWHITE = ansi_seq("1;37")
   BLACK = ansi_seq("30")
   RED = ansi_seq("31")
   GREEN = ansi_seq("32")
   YELLOW = ansi_seq("33")
   BLUE = ansi_seq("34")
   MAGENTA = ansi_seq("35")
-  CYAN = ansi_seq("35")
-  WHITE = ansi_seq("36")
+  CYAN = ansi_seq("36")
+  WHITE = ansi_seq("37")
 
 
 if __name__ == "__main__":

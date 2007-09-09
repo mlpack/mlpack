@@ -72,13 +72,13 @@ class WorkEntry:
   
   def inline_exec(self):
     # TODO: Recover from errors
-    print "%s" % self.runname
+    print (util.ansi.HCYAN+"%s"+util.ansi.CLEAR) % self.runname
     try:
       for infile in self.runspec.all_inputs:
         if not os.path.exists(infile):
           return self.INPUT_NOT_AVAILABLE
     except OSError:
-      print "ERROR: Error reading input files: %s" % (str(self.runspec.all_inputs))
+      print (util.ansi.HRED+"ERROR: Error reading input files: %s"+util.ansi.CLEAR) % (str(self.runspec.all_inputs))
       return self.ERROR
     if not os.path.exists(self.rundir):
       util.ensuredir(self.rundir)
@@ -90,20 +90,20 @@ class WorkEntry:
           if not self.should_rerun(lines[0]):
             return lines[0]
         except OSError:
-          print "ERROR: Could not read status file %s." % self.statusfile
+          print (util.ansi.HRED+"ERROR: Could not read status file %s."+util.ansi.CLEAR) % self.statusfile
           return self.ERROR
-      print " ... %s" % self.runspec.to_command()
+      print (util.ansi.HCYAN+" ... %s"+util.ansi.CLEAR) % self.runspec.to_command()
       util.writefile(self.statusfile, self.IN_PROGRESS)
       retval = util.spawn_redirect(
         self.rundir, self.runspec.to_args(),
         self.runspec.stdin, self.runspec.stdout, self.logfile)
       if retval != 0:
         status = self.ERROR
-        print " ... Error %d " % retval
-        print util.readfile(self.logfile)
+        print (util.ansi.HRED+" ... Returned error code: %d "+util.ansi.CLEAR) % retval
+        print "".join([" | %s\n" for line in util.readlines(self.logfile)]),
       else:
         status = self.FINISHED
-        print " ... Done!"
+        print (util.ansi.HGREEN+" ... Done!"+util.ansi.CLEAR)
       util.writefile(self.statusfile, status)
       return status
     except WorkQueue:
@@ -140,5 +140,5 @@ class WorkQueue:
     # TODO: Handle the return value
     for item in self.entries:
       result = item.inline_exec()
-      print result
+      print (util.ansi.HCYAN+"... Status: %s"+util.ansi.CLEAR) % result
 
