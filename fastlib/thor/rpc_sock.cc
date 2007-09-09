@@ -133,6 +133,11 @@ void RpcSockImpl::Init() {
     port_ = fx_param_int(module_, "port", 31415);
   }
 
+  if (rank_ != 0) {
+    // Only the first machine should print out FX information.
+    fx_silence();
+  }
+
   CreatePeers_();
   CalcChildren_();
 
