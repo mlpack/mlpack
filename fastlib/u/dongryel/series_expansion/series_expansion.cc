@@ -94,7 +94,7 @@ void SeriesExpansion::ComputeLocalCoeffs(const Matrix& data,
   int dim = sea.get_dimension();
   int total_num_coeffs = sea.get_total_num_coeffs(order);
   
-  // get negative inverse factorials (precomputed)
+  // get inverse factorials (precomputed)
   Vector neg_inv_multiindex_factorials;
   neg_inv_multiindex_factorials.Alias
     (sea.get_neg_inv_multiindex_factorials());
@@ -120,7 +120,7 @@ void SeriesExpansion::ComputeLocalCoeffs(const Matrix& data,
 
     // calculate x_r - x_Q
     for(index_t d = 0; d < dim; d++) {
-      x_r_minus_x_Q[d] = (data.get(d, row_num) - center_[d]) / 
+      x_r_minus_x_Q[d] = (center_[d] - data.get(d, row_num)) / 
 	sqrt_two_bandwidth;
     }
     
@@ -240,6 +240,68 @@ double SeriesExpansion::EvaluateFarField(Matrix* data, int row_num,
   }
 
   return multipole_sum;
+}
+
+double SeriesExpansion::EvaluateLocalField(Matrix* data, int row_num,
+					   Vector* x_q,
+					   SeriesExpansionAux *sea) {
+  index_t k, t, tail;
+  
+  // total number of coefficient
+  int total_num_coeffs = sea->get_total_num_coeffs(order_);
+
+  // number of dimensions
+  int dim = sea->get_dimension();
+
+  // evaluated sum to be returned
+  double sum = 0;
+  
+  // sqrt two bandwidth
+  double sqrt_two_bandwidth = sqrt(2 * bwsqd_);
+
+  // temporary variable
+  Vector x_Q_to_x_q;
+  x_Q_to_x_q.Init(dim);
+  Vector tmp;
+  tmp.Init(total_num_coeffs);
+  ArrayList<int> heads;
+  heads.Init(dim + 1);
+  
+  // compute (x_q - x_Q) / (sqrt(2h^2))
+  for(index_t i = 0; i < dim; i++) {
+    
+    if(data == NULL) {
+      x_Q_to_x_q[i] = ((*x_q)[i] - center_[i]) / sqrt_two_bandwidth;
+    }
+    else {
+      x_Q_to_x_q[i] = (data->get(i, row_num) - center_[i]) / 
+	sqrt_two_bandwidth;
+    }
+  }
+  
+  for(index_t i = 0; i < dim; i++)
+    heads[i] = 0;
+  heads[dim] = MAXINT;
+
+  tmp[0] = 1.0;
+
+  for(k = 1, t = 1, tail = 1; k <= order_; k++, tail = t) {
+
+    for(index_t i = 0; i < dim; i++) {
+      int head = heads[i];
+      heads[i] = t;
+
+      for(index_t j = head; j < tail; j++, t++) {
+        tmp[t] = tmp[j] * x_Q_to_x_q[i];
+      }
+    }
+  }
+
+  for(index_t i = 0; i < total_num_coeffs; i++) {
+    sum += coeffs_[i] * tmp[i];
+  }
+
+  return sum;
 }
 
 void SeriesExpansion::Init(KernelType kernel_type, 
@@ -444,11 +506,14 @@ void SeriesExpansion::TransLocalToLocal(const SeriesExpansion &se,
   ArrayList<int> tmp_storage;
   tmp_storage.Init(dim);
 
+  // sqrt two times bandwidth
+  double sqrt_two_bandwidth = sqrt(2 * bwsqd_);
+
   // center difference between the old center and the new one
   Vector center_diff;
   center_diff.Init(dim);
   for(index_t d = 0; d < dim; d++) {
-    center_diff[d] = center_[d] - prev_center[d];
+    center_diff[d] = (center_[d] - prev_center[d]) / sqrt_two_bandwidth;
   }
 
   // set to the new order if the order of the expansion we are translating
@@ -457,8 +522,7 @@ void SeriesExpansion::TransLocalToLocal(const SeriesExpansion &se,
     order_ = prev_order;
   }
 
-  // sqrt two times bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * bwsqd_);
+  // inverse multiindex factorials
   Vector C_k;
   C_k.Alias(sea.get_inv_multiindex_factorials());
   
@@ -488,15 +552,12 @@ void SeriesExpansion::TransLocalToLocal(const SeriesExpansion &se,
       for(index_t l = 0; l < dim; l++) {
 	int start = beta_mapping[l];
 	int end = start - alpha_mapping[l];
-	diff1 *= pow(center_diff[l] / sqrt_two_bandwidth, tmp_storage[l]);
+	diff1 *= pow(center_diff[l], tmp_storage[l]);
 
 	for(int diffprod = start; diffprod > end; diffprod--) {
 	  diff1 *= diffprod;
 	}
       }
-      
-      printf("beta multichoose alpha is %g\n",
-	     sea.get_n_multichoose_k_by_pos(k, j));
 
       /*
       coeffs_[j] += prev_coeffs[k] * diff1 *
