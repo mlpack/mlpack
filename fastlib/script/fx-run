@@ -88,11 +88,11 @@ paramset = pm.Combine(
     pm.Bind(pm.Binfile(), exename),
     pm.Bind(pm.Output("fx/output"), fxsys.OUTPUT_FNAME))
 
-print "*** List of runs that will be performed"
+print (util.ansi.HCYAN+"*** List of runs that will be performed"+util.ansi.CLEAR)
 paramset.print_all()
 
 print
-print "*** Executing (results go in ./fx)"
+print (util.ansi.HCYAN+"*** Executing (results go in ./fx)"+util.ansi.CLEAR)
 fxsys.execute_paramset_here(exename, label, paramset)
 print
-print "*** Finished (results in ./fx)"
+print (util.ansi.HCYAN+"*** Finished (results in ./fx)"+util.ansi.CLEAR)
