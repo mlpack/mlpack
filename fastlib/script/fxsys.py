@@ -108,7 +108,7 @@ class AbstractExperiment:
           try:
             os.unlink(statusfile)
           except:
-            print "... Status file was already invalid.  This run can be re-run."
+            print "... Status file was already cleared.  This run can be re-run."
       elif nuke:
         print "NUKING COMPLETED RUN %s" % runname
         try:
