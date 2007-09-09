@@ -213,7 +213,6 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   // declare expansion objects at (0,0) and other centers
   SeriesExpansion se;
   SeriesExpansion se_translated;
-  SeriesExpansion se_cmp;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
@@ -221,41 +220,34 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
 	  sea.get_max_total_num_coeffs(), 1);
   se_translated.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL,
 		     new_center, sea.get_max_total_num_coeffs(), 1);
-  se_cmp.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL,
-	      new_center, sea.get_max_total_num_coeffs(), 1);
   
   // compute up to 4-th order multivariate polynomial and translate it.
-  se.ComputeLocalCoeffs(data, weights, rows, 5, sea);
+  se.ComputeLocalCoeffs(data, weights, rows, 0, sea);
   se_translated.TransLocalToLocal(se, sea);
-  
-  // now compute the same thing at (1, -1) and compare
-  se_cmp.ComputeLocalCoeffs(data, weights, rows, 5, sea);
 
   // print out the objects
-  se.PrintDebug();               // expansion at (0, 0)
-  se_translated.PrintDebug();    // expansion at (1, -1) translated from
+  se.PrintDebug();               // expansion at (4, 4)
+  se_translated.PrintDebug();    // expansion at (3.5, 3.5) translated from
                                  // one above
-  se_cmp.PrintDebug();           // directly computed expansion at (1, -1)
 
-  // retrieve the coefficients of se_translated and se_cmp
-  Vector se_translated_coeffs;
-  Vector se_cmp_coeffs;
-  se_translated_coeffs.Alias(se_translated.get_coeffs());
-  se_cmp_coeffs.Alias(se_cmp.get_coeffs());
+  // evaluate the expansion
+  Vector evaluate_here;
+  evaluate_here.Init(2);
+  evaluate_here[0] = evaluate_here[1] = 3.75;
+  double original_sum = se.EvaluateLocalField(NULL, -1, &evaluate_here, &sea);
+  double translated_sum = 
+    se_translated.EvaluateLocalField(NULL, -1, &evaluate_here, &sea);
 
-  // assert that se_translated and se_cmp have equal set of coefficients
-  // within 0.1 % error taking account the numerical errors
-  for(index_t i = 0; i < se_cmp_coeffs.length(); i++) {
-    if(fabs(se_translated_coeffs[i] - se_cmp_coeffs[i]) > 
-       0.001 * fabs(se_cmp_coeffs[i])) {
-      printf("Differs by %g at position %d...\n", 
-	     fabs(se_translated_coeffs[i] - se_cmp_coeffs[i]) / 
-	     fabs(se_cmp_coeffs[i]), i);
-      return 0;
-    }
+  printf("Evaluating both expansions at (%g %g)...\n", evaluate_here[0],
+	 evaluate_here[1]);
+  printf("Sum evaluated at the original local expansion: %g\n", original_sum);
+  printf("Sum evaluated at the translated local expansion: %g\n",
+	 translated_sum);
+
+  if(fabs(original_sum - translated_sum) <= 0.001 * fabs(original_sum)) {
+    return 1;
   }
-  
-  return 1;
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
