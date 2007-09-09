@@ -336,7 +336,7 @@ void SeriesExpansion::PrintDebug(const char *name, FILE *stream) const {
   fprintf(stream, "\n");
   
   for (index_t i = 0; i < coeffs_.length(); i++) {
-    fprintf(stream, "%+3.3f ", coeffs_[i]);
+    fprintf(stream, "%g ", coeffs_[i]);
   }
   fprintf(stream, "\n");
 }
@@ -550,21 +550,11 @@ void SeriesExpansion::TransLocalToLocal(const SeriesExpansion &se,
 	continue;
 
       for(index_t l = 0; l < dim; l++) {
-	int start = beta_mapping[l];
-	int end = start - alpha_mapping[l];
 	diff1 *= pow(center_diff[l], tmp_storage[l]);
-
-	for(int diffprod = start; diffprod > end; diffprod--) {
-	  diff1 *= diffprod;
-	}
       }
-
-      /*
       coeffs_[j] += prev_coeffs[k] * diff1 *
 	sea.get_n_multichoose_k_by_pos(k, j);
-      */
-      coeffs_[j] += prev_coeffs[k] * diff1 * C_k[j];
 
     } // end of k loop
-  } // end of j -loop
+  } // end of j loop
 }
