@@ -89,6 +89,13 @@ class SeriesExpansion {
 			  SeriesExpansionAux* sea=NULL);
 
   /**
+   * Evaluates the local-field coefficients at the given point
+   */
+  double EvaluateLocalField(Matrix* data=NULL, int row_num=-1,
+			    Vector* point=NULL,
+			    SeriesExpansionAux* sea=NULL);
+
+  /**
    * Initializes the current SeriesExpansion object with the given
    * center.
    */

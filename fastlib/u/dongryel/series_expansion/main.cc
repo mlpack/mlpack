@@ -32,9 +32,9 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   SeriesExpansion se;
 
   // initialize expansion objects with respective centers and the bandwidth
-  // squared of 1
+  // squared of 0.5
   se.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::FARFIELD, center,
-          sea.get_max_total_num_coeffs(), 1);
+          sea.get_max_total_num_coeffs(), 0.5);
 
   // compute up to 4-th order multivariate polynomial.
   se.ComputeFarFieldCoeffs(data, weights, rows, 10, sea);
@@ -56,7 +56,60 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
 			    (evaluate_here[0] - data.get(0, row_num)) +
 			    (evaluate_here[1] - data.get(1, row_num)) * 
 			    (evaluate_here[1] - data.get(1, row_num))) 
-			  / (2 * 1));
+			  / (2 * 0.5));
+  }
+  printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
+  return 1;
+}
+
+int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
+			   const ArrayList<int> &rows) {
+
+  printf("\n----- TestEvaluateLocalField -----\n");
+
+  // declare auxiliary object and initialize
+  SeriesExpansionAux sea;
+  sea.Init(10, data.n_rows());
+
+  // declare center at the origin
+  Vector center;
+  center.Init(2);
+  center[0] = center[1] = 4;
+
+  // to-be-evaluated point
+  Vector evaluate_here;
+  evaluate_here.Init(2);
+  evaluate_here[0] = evaluate_here[1] = 3.5;
+
+  // declare expansion objects at (0,0) and other centers
+  SeriesExpansion se;
+
+  // initialize expansion objects with respective centers and the bandwidth
+  // squared of 1
+  se.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL, center,
+          sea.get_max_total_num_coeffs(), 1);
+
+  // compute up to 4-th order multivariate polynomial.
+  se.ComputeLocalCoeffs(data, weights, rows, 6, sea);
+
+  // print out the objects
+  se.PrintDebug();
+
+  // evaluate the series expansion
+  printf("Evaluated the expansion at (%g %g) is %g...\n",
+	 evaluate_here[0], evaluate_here[1],
+         se.EvaluateLocalField(NULL, -1, &evaluate_here, &sea));
+  
+  // check with exhaustive method
+  double exhaustive_sum = 0;
+  for(index_t i = 0; i < rows.size(); i++) {
+    int row_num = rows[i];
+
+    exhaustive_sum += exp(-((evaluate_here[0] - data.get(0, row_num)) *
+                            (evaluate_here[0] - data.get(0, row_num)) +
+                            (evaluate_here[1] - data.get(1, row_num)) *
+                            (evaluate_here[1] - data.get(1, row_num)))
+                          / (2 * 1));
   }
   printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
   return 1;
@@ -150,13 +203,12 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   // declare center at the origin
   Vector center;
   center.Init(2);
-  center.SetZero();
+  center[0] = center[1] = 4;
 
   // declare a new center at (1, -1)
   Vector new_center;
   new_center.Init(2);
-  new_center[0] = 1;
-  new_center[1] = -1;
+  new_center[0] = new_center[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
   SeriesExpansion se;
@@ -166,18 +218,18 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
   se.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL, center, 
-	  sea.get_max_total_num_coeffs(), 0.1);
+	  sea.get_max_total_num_coeffs(), 1);
   se_translated.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL,
-		     new_center, sea.get_max_total_num_coeffs(), 0.1);
+		     new_center, sea.get_max_total_num_coeffs(), 1);
   se_cmp.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL,
-	      new_center, sea.get_max_total_num_coeffs(), 0.1);
+	      new_center, sea.get_max_total_num_coeffs(), 1);
   
   // compute up to 4-th order multivariate polynomial and translate it.
-  se.ComputeLocalCoeffs(data, weights, rows, 0, sea);
+  se.ComputeLocalCoeffs(data, weights, rows, 5, sea);
   se_translated.TransLocalToLocal(se, sea);
   
   // now compute the same thing at (1, -1) and compare
-  se_cmp.ComputeLocalCoeffs(data, weights, rows, 0, sea);
+  se_cmp.ComputeLocalCoeffs(data, weights, rows, 5, sea);
 
   // print out the objects
   se.PrintDebug();               // expansion at (0, 0)
@@ -196,6 +248,9 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   for(index_t i = 0; i < se_cmp_coeffs.length(); i++) {
     if(fabs(se_translated_coeffs[i] - se_cmp_coeffs[i]) > 
        0.001 * fabs(se_cmp_coeffs[i])) {
+      printf("Differs by %g at position %d...\n", 
+	     fabs(se_translated_coeffs[i] - se_cmp_coeffs[i]) / 
+	     fabs(se_cmp_coeffs[i]), i);
       return 0;
     }
   }
@@ -230,8 +285,9 @@ int main(int argc, char *argv[]) {
   // unit tests begin here!
   DEBUG_ASSERT(TestInitAux(data) == 1);
   DEBUG_ASSERT(TestEvaluateFarField(data, weights, rows) == 1);
+  DEBUG_ASSERT(TestEvaluateLocalField(data, weights, rows) == 1);
   DEBUG_ASSERT(TestTransFarToFar(data, weights, rows) == 1);
-  //DEBUG_ASSERT(TestTransLocalToLocal(data, weights, rows) == 1);
+  DEBUG_ASSERT(TestTransLocalToLocal(data, weights, rows) == 1);
 
   fx_done();
 }
