@@ -149,7 +149,7 @@ void percent_indicator(const char *what, uint64 numerator, uint64 denominator) {
   if (unlikely(id != last_id)) {
     last_id = id;
 
-    if (percent == 100) {
+    if (percent >= 100) {
       for (; i < sizeof(buf) - 1; i++) {
         buf[i] = ' ';
       }

@@ -47,7 +47,7 @@ void DualTreeRecursiveBreadth<GNP>::Begin_(index_t q_root_index) {
   CacheRead<typename GNP::QNode> q_root(&q_nodes_, q_root_index);
 
   stats_.Init();
-  stats_.tuples_analyzed = q_root->count() * r_root_->count();
+  stats_.tuples_analyzed = double(q_root->count()) * r_root_->count();
   stats_.n_queries = q_root->count();
 
   Queue queue;
@@ -157,6 +157,8 @@ void DualTreeRecursiveBreadth<GNP>::DivideReferences_(
       mu.Accumulate(param_, *q_result);
     }
     mu.FinishReaccumulate(param_, q_node);
+    // Divide_ will apply the postponed results to the summary result.
+    // Instead, we apply the points' results to the summary result.
     parent_queue->summary_result.ApplySummaryResult(param_, mu);
     parent_queue->postponed.Reset(param_);
   } else {
@@ -200,8 +202,13 @@ void DualTreeRecursiveBreadth<GNP>::DivideReferences_(
               &global_result_);
         }
       } else {
-        // Compute summary results for all computations on the queue EXCEPT
-        // this one.
+        // Only for leaf computations will we go through the trouble of
+        // recomputing summary results.
+
+        // Here, we compute summary results for all computations on the
+        // queue EXCEPT this one.  We'll start with the left-to-right from
+        // the previous level, add in the right-to-left result from the
+        // children, add in the postponed prunes we made on this level.
         summaries[i].ApplySummaryResult(param_, child_queue.summary_result);
         summaries[i].ApplyPostponed(param_, child_queue.postponed, q_node);
         // TODO: Instead of applying postponed at the node level, we can

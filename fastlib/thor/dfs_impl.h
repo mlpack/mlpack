@@ -57,7 +57,7 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
       &global_result_, &q_root_mut->postponed);
 
   stats_.Init();
-  stats_.tuples_analyzed = q_root->count() * r_root_->count();
+  stats_.tuples_analyzed = double(q_root->count()) * r_root_->count();
   stats_.n_queries = q_root->count();
 
   if (need_explore) {
