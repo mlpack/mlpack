@@ -352,26 +352,26 @@ class FdKde {
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
-      q_result->n_pruned += r_node.count();
-      
       DRange distance_sq_range = DRange(
           r_node.bound().MinDistanceSq(q.vec()),
           r_node.bound().MaxDistanceSq(q.vec()));
-      DEBUG_ASSERT(distance_sq_range.width() >= 0);
       DRange d_density = param.kernel.RangeUnnormOnSq(distance_sq_range);
 
-      double density_lo =
-          (d_density.lo + unapplied_summary_results.density.lo + q_result->density.lo);
-      
-      double allocated_error =
-          (param.rel_error * density_lo
-              - (q_result->density.width() / 2))
-          / (param.count - q_result->n_pruned) * param.p_global;
-      allocated_error *= r_node.count();
-      allocated_error += param.rel_error_local * d_density.lo;
+      d_density *= r_node.count();
 
-      if (d_density.width() < allocated_error * 2) {
-        q_result->density += d_density * r_node.count();
+      double density_lo = d_density.lo + q_result->density.lo
+          + unapplied_summary_results.density.lo;
+
+      double allocated_width =
+          (param.rel_error * density_lo * 2 - q_result->density.width())
+          * r_node.count() / (param.count - q_result->n_pruned);
+      /*allocated_error *= param.p_global;
+      allocated_error += param.rel_error_local * d_density.lo;*/
+
+      q_result->n_pruned += r_node.count();
+
+      if (d_density.width() < allocated_width) {
+        q_result->density += d_density;
         return false;
       }
 
@@ -466,9 +466,9 @@ class FdKde {
       double allocated_width =
           (param.rel_error * q_summary_result.density.lo * 2
               - q_summary_result.used_width)
-          / (param.count - q_summary_result.n_pruned) * param.p_global;
-      allocated_width *= r_node.count();
-      allocated_width += param.rel_error_local * delta.d_density.lo * 2;
+          * r_node.count() / (param.count - q_summary_result.n_pruned);
+      /*allocated_width *= param.p_global;
+      allocated_width += param.rel_error_local * delta.d_density.lo * 2;*/
 
       if (delta.d_density.width() < allocated_width) {
         q_postponed->d_density += delta.d_density;
