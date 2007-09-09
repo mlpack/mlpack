@@ -216,8 +216,6 @@ We demonstrate its applicability to severalrealistic sample data mining problems
 
 \section{Introduction}
 
-\authorsnote{Cite some pivotal works on cache efficiency}
-\authorsnote{Talk about our anti-undo policy}
 Many problems in data mining nominally require an all-pairs analysis of metric data.
 For a significant subclass of these problems, \defterm{generalized $N$-body problems} (GNP's), a higher-order divide and conquer technique can avoid nearly all computation by skipping combinations of regions with little mutual interaction.
 Higher-order divide and conquer on metric\authorsnote{May need to explain what metric data is, depending on the type of reviewers to expect.} data typically utilizes metric trees, such as $kd$-trees \cite{preparata_kdtrees}, ball trees \cite{balltrees}, and cover trees \cite{covertrees}, to assist in dividing the data set into regions.
@@ -232,8 +230,17 @@ We show that techniques that have long been used to parallelize the physical $N$
 Parallel programming is well-known for its significant cost in terms of development time, which is frequently far greater and more expensive than any achievable speedup.
 However, we show that all GNP's can be phrased as an instance of a generalized $N$-body algorithm, leading to an intriguing solution: Invest in a parallel solver for the general problem, requiring algorithm developers to provide only problem-specific portions.
 In practice, this approach leads to efficient parallel and serial performance, and furthermore, the parallel algorithm in some cases takes less time to develop than a from-scratch serial algorithm.
-We describe in this paper both the formal problem generalization, and our first-version implementation \THOR that handles dual-tree algorithms with a locally-ordered depth-first expansion pattern.
-\authorsnote{Make sure it's clear at this point what is novel in my paper.  What should be clear is: (a) the mathematical model, and (b) its implementation in parallel.}
+
+%We describe in this paper both the formal problem generalization, and our implementation \THOR that executes dual-tree algorithms with two different expansion patterns.
+%\authorsnote{Make sure it's clear at this point what is novel in my paper.  What should be clear is: (a) the mathematical model, and (b) its implementation in parallel.}
+
+We present and justify three major claims.
+We show a formal, unified model that solves all generalized $N$-body problems, and respectively allows most dual-tree algorithms.
+Second, we argue that programming in this unified model is not costly in developer time.
+Finally, we show the inherent parallelism of our model by examining an implementation that uses well-known parallelization techniques.
+\authorsnote{Cite some pivotal works on cache efficiency}
+\authorsnote{Remind people that kd-trees are adaptive}
+\authorsnote{Talk about our anti-undo policy}
 
 \section{Fast Dual-Tree Algorithms}
 
@@ -379,7 +386,7 @@ Still, key parallelization insights are still applicable to dual-tree algorithms
 
 % \cite{singh95load} \cite{nyland93dataparallel} \cite{washington_nesl}
 
-\section{Parallel Programming}
+\section{Parallel Programming Productivity}
 
 When approached with a potentially parallelizable problem, development time is typically far more expensive than CPU time.
 Simplifying the process of developing parallel code has been a widespread goal of parallelization communities.
@@ -413,6 +420,7 @@ Thus, we present \THOR as a ``quick and easy'' way to generate efficient paralle
 \section{Dual-Tree Algorithm Framework}
 
 Previously, we implied that a subclass of all-pairs computations are generalized $N$-body problems.
+We begin to describe an extreme, though computationally unreasonable, generaliztion of $N$-body problems.
 The class of \defterm{second-order reduce problems} is a type of all-pairs computation that is a superset of generalized $N$-body problems.
 For $\bigotimes$ and $\bigodot$ both commutative and associative, postprocessing functions $h$ and $g$, inner function $f$, and data sets $X$ and $Y$, one computes,
 \[\begin{array}{l}
@@ -444,9 +452,10 @@ If $\bigodot$ is the higher-order operator $\map$ and $g$ is null, the above pro
 For the sake of simplicity, we omit such formality, without loss of generality.
 
 It is clear that {\em any} second-order reduce problem can be transformed into a query-reference GNP by replacing the outer operator with $\map$, and then treating both $g$ and $\odot$ as a postprocessing step.
-Therefore, any parallelization framework that solves query-reference problems necessarily solves any second-order reduce problem.
+Therefore, any framework that solves query-reference problems necessarily solves any second-order reduce problem.
 Although \THOR's implementation does provide native support for both single-operator and query-reference problems, our discussion focuses on the more general query-reference problems.
 We justify such omission since the transformation to the query-reference analog rarely results in an asymptotic difference in performance.
+Nonetheless, we have shown that all generalized $N$-body problems can be expressed as query-reference problems, and proceed to show that the execution and pruning of most dual-tree algorithms can be generalized.
 
 \mysub{The Generalized $N$-Body Algorithm}
 Generalized $N$-body problems have a hierarchical computation,
@@ -469,9 +478,9 @@ The final expression forms an \defterm{expression tree} where leaves are of the 
 
 In the above, we only require that $X = \kdleft{X} \union \kdright{X}$ be a valid partitioning, not necessarily tree branches.
 Trees are commonly used since they hierarchically group points that are likely to prune simultaneously as a group, i.e. a high correlation in pruning ability.
+
 Dual-tree algorithms can use at-node statistics $\outstat(\cdot)$ to prove facts about node pairs at a higher level, and \defterm{prune} part of the expression tree.
 A prune based only on statistics is an \defterm{intrinsic prune}.
-
 In some cases, the results of computations outside of the currently considered pair can provide necessary evidence to prune.
 For example, in all nearest-neighbors, a distant pair of nodes can be excluded if the query node's previously-calculated worst-case candidate neighbor is closer.
 This prune is called an \defterm{extrinsic prune}.
@@ -491,8 +500,13 @@ It is worth noting that the generalized algorithm is agnostic to expansion patte
 However, expansion pattern can have a significant, sometimes asymptotic, effect on run time.
 With intrinsic pruning only, $\prefsplit{X}{Y}$ alone determines the asymptotic run time, so expansion pattern is irrelvant.
 Extrinsically pruning problems that contentrate on spatially nearby computations may prefer a depth-first expansion along with a local ordering heuristic.
-Others achieve good performance with a breadth-first expansion, which closely mimics an iterative refinement or multi-grid strategy.
-Our paper treats parallel execution as an additional expansion pattern by noting that these subproblems can be considered independent and solved in parallel, given careful design choices.
+Others achieve good performance with a breadth-first expansion, which holistically refines the problem space.
+
+Nearly all dual-tree algorithms we have encountered can be viewed as the algorithm above with intrinsic and extrinsic pruning.
+However, the generalized algorithm does not explain the rich ``flow'' of data throughout an actual computation.
+We next show, for query-reference problems, a set of generalized ``rules'' enumerating allowable ways in which results can be computed.
+
+%Our paper treats parallel execution as an additional expansion pattern by noting that these subproblems can be considered independent and solved in parallel, given careful design choices.
 
 %Ongoing research attempts to characterize all generalized N-body problems with rigorous mathematical formality; however, such rigorous formalization is outside the scope of this paper.
 %Here, we postulate that all dual-tree algorithms fall into one or both of two categories: a single scalar or vector result summarizing all pairs of inputs, or an independent result for each query point computed against the entire reference set.
@@ -620,12 +634,12 @@ Both types of algorithms, though, perform divide and conquer with the reference 
 \noindent
 with statistics $\outstat(Q)$ and $\outstat(R)$, an intrinsic prune indicator function $\canpruneqrv$, and intrinsic prune value $\deltaqrv$.
 Statistics are frequently built from commutative, associative operators, and may also be built bottom-up,
-\begin{eqnarray*}
+\begin{eqnarray}
 \outstat(X) &=& \gstat(\instat(X)),
 \\
 \instat(X) &=& \Opstat_{x \in X} \fstat(x),
 \label{eqn:defstat}
-\end{eqnarray*}
+\end{eqnarray}
 
 \noindent
 Range count, the query-reference analog to two-point correlation, is fully defined,
@@ -645,6 +659,7 @@ Range count, the query-reference analog to two-point correlation, is fully defin
 
 \noindent
 The two-point correlation is then the sum of $\outqr$ for all queries.
+Equations \ref{eqn:qrdef} through \ref{eqn:defstat} thus express the data flow of any query-reference problem that prunes only intrinsically using arbitrary commutative, associative statistics.
 
 \subsection{Query-Reference Extrinsic Prunes}
 
@@ -709,11 +724,13 @@ When no other information is available, we must resort to this rule, especially 
 
 \mysubsub{Quality}
 A final note is that extrinsic pruning requires ``high-quality'' values of $\inmu$, that is, values that approach the aforementioned ideal value.
-Although the quality of $\inmu$ generally increases as more node pairs are explored, the order of exploration may help the value converge much faster.
+Although the quality of $\lettermu$ generally increases as more node pairs are explored, the order of exploration may help the value converge much faster.
 The distribution of useful information over the space of node pairs is highly non-uniform in efficient dual-tree problems.
 Prioritization is then used to concentrate on node pairs with higher potential information yield.
 We introduce a heuristic function $\heurqr(\outstat(Q),\outstat(R))$ that returns a real value, such that lower values are explored first.
-Finding all nearest neighbor distances then becomes,
+
+We believe that the above allows $\lettermu$ to be computed via the tree structure in any way that considers queries independent and involves commutative, associative operators.
+For instance, finding all nearest neighbor distances then becomes,
 \begin{eqnarray*}
 \gqr(q, \inqr) &\equiv& \inqr
 \\
@@ -745,9 +762,23 @@ However, in breadth-first and other patterns, $\deltamu$ is essential.
 \subsection{Execution}
 
 To this point, we have defined many different ``rules'' that are assumed to be valid when computing a query-reference GNP.
-Execution of a dual-tree algorithm requires application of these rules in an expansion pattern.
-Such patterns include depth-first, breadth-first, global best-first, and even parallel.
-We previously showed depth-first implementations of two-point correlations and nearest neighbors in \fig{allnntpc}.
+\THOR must utilize an expansion strategy that applies these rules in order to solve a problem.
+
+Previously, we showed locally-ordered depth-first implementations of two-point correlations and nearest neighbors in \fig{allnntpc}, that work by recursively dividing along the two trees.
+\fig{dfe} shows the generalized depth-first dual-tree expansion algorithm that takes as input the data and functions of the generalized $N$-body problem.
+This pseudocode, though heavily translated into C++, is present in \THOR to execute a locally-ordered depth-first expansion.
+
+Some dual-tree algorithms achieve performance gains by maintaining a queue of node pairs to expand, rather than recursing immediately; however, this has worst-case $O(N^2)$ space.
+\THOR implements a novel partially-recursive variant to reduce this to $O(N)$\footnote{
+  In practice, pruning prevents the queues from approaching either of these worst-case sizes.}.
+This expansion pattern mathematically differs from depth-first in the way summary results are computed.
+Summary results are only accumulated from previous prunes and from the list of considered reference nodes.
+Summary result quality is achieved by considering all references holistically at a finer and finer granularity.
+On the other hand, depth-first expansion builds quality by visiting individual points first.
+Although further discussion of the merits is warranted, it is beyond the scope of this paper\footnote{
+  In short, the expansion strategy considers a query node with a list of reference nodes.
+  While processing the list, creates similar lists for each of the query node's children.
+  Each child is then explored recursively with its respective list.}.
 
 \begin{figure}
 \[
@@ -808,19 +839,21 @@ We previously showed depth-first implementations of two-point correlations and n
     \xx \text{fixup}(\kdright{Q}, \varqrv(Q))
   \end{array}
 \]
-\caption{\label{fig:dfe} The depth-first expansion algorithm for query-reference problems.
+\caption{\label{fig:dfe} The locally-ordered depth-first expansion algorithm for query-reference problems.
 This subroutine is used internally in \THOR, though heavily translated to C++.
 }
 \end{figure}
 
-We show in \fig{dfe} an application of the generalized rules for a complete depth-first implementation.
-The input to the algorithm consists of the data to operate on and the functions required for an effective dual-tree algorithm.
-This pseudocode, though heavily translated into C++, is present in \THOR to execute a depth-first expansion.
+So far, we have justified our first two claims about \THOR.
+We have supported the completeness of our unified model with the existence of two generalized expansion patterns and two example algorithms, and will later show additional algorithms that have been ported.
+Second, the ability to test new expansion patterns in a way that does not involve rewriting the code -- in fact, without any modifications at all -- shows that \THOR can actually be an aid in creating serial algorithms.
+Next, we address the claim is that \THOR parallelizes these algorithms, and is just another execution style of the unified model.
 
 \section{Parallel Execution}
 
-The main premise of this paper is to extend the concept of abstract expansion patterns to encompass parallel execution.
-Parallelization of any algorithm requires addressing how work is divided, what communication is necessary, and how work imbalances are kept to a minimum.
+Parallelization of {\em any} algorithm requires addressing how work is divided, what communication is necessary, and how work imbalances are kept to a minimum.
+Decades of research into the parallelization of the Barnes-Hut and Fast Multipole algorithms gives insight into the parallelization of dual-tree algorithms.
+However, we make significant deviations because of fundamental differences of dual-tree algorithms and the generality of both data structures and the problems solved.
 
 \subsection{Task Decomposition}
 
@@ -1080,6 +1113,8 @@ For example, if a problem takes fifteen minutes on a single processor, then we a
   This table is currently fictitious.
   }
 \end{table*}
+
+optimal bandwidth: mock galaxy, 0.25
 
 Table~\ref{tab:setup} shows problems we have selected, and their respective run-times in THOR on a single processor for small-scale problems, or 8 processors for problems impractical for a single processor.
 The Speech data set is nominally 28 dimensions but has an underlying manifold of lower dimensionality, obtained from (XYZ) due to (XYZ) reference (XYZ).
