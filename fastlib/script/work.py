@@ -92,18 +92,21 @@ class WorkEntry:
         except OSError:
           print (util.ansi.HRED+"ERROR: Could not read status file %s."+util.ansi.CLEAR) % self.statusfile
           return self.ERROR
-      print (util.ansi.HCYAN+" ... %s"+util.ansi.CLEAR) % self.runspec.to_command()
-      util.writefile(self.statusfile, self.IN_PROGRESS)
-      retval = util.spawn_redirect(
-        self.rundir, self.runspec.to_args(),
-        self.runspec.stdin, self.runspec.stdout, self.logfile)
-      if retval != 0:
-        status = self.ERROR
-        print (util.ansi.HRED+" ... Returned error code: %d "+util.ansi.CLEAR) % retval
-        print "".join([" | %s\n" for line in util.readlines(self.logfile)]),
-      else:
-        status = self.FINISHED
-        print (util.ansi.HGREEN+" ... Done!"+util.ansi.CLEAR)
+      for i in range(2):
+        # Try each run twice, to allow for transient errors.
+        print (util.ansi.HCYAN+" ... %s"+util.ansi.CLEAR) % self.runspec.to_command()
+        util.writefile(self.statusfile, self.IN_PROGRESS)
+        retval = util.spawn_redirect(
+          self.rundir, self.runspec.to_args(),
+          self.runspec.stdin, self.runspec.stdout, self.logfile)
+        if retval != 0:
+          status = self.ERROR
+          print (util.ansi.HRED+" ... Returned error code: %d "+util.ansi.CLEAR) % retval
+          print "".join([" | %s\n" for line in util.readlines(self.logfile)]),
+        else:
+          status = self.FINISHED
+          print (util.ansi.HGREEN+" ... Done!"+util.ansi.CLEAR)
+          break
       util.writefile(self.statusfile, status)
       return status
     except WorkQueue:

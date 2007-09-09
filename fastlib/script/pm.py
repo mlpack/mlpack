@@ -115,7 +115,7 @@ class ParamSet:
     run."""
     for e in self.enumerate():
       #print e.to_command()
-      print e.generate_name() + ": " + e.binfile + " " + " ".join(e.param_args)
+      print e.generate_name(False) + ": " + e.binfile + " " + " ".join(e.param_args)
 
 class Combine(ParamSet):
   """Cartesian product, or all combinations,

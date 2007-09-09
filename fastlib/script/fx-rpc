@@ -60,7 +60,12 @@ try:
     chdir_prefix = ["cd", cwd, "&&"]
     if not do_gdb:
       remote_command = [executable] + user_args + rpc_args
+      # arguments: -x -T -n means no X11, no standard input, no TTY
+      # StrictHostKeyChecking=no means don't prompt "Do you really want to connect?"
+      # We turn off number of password prompts.  We'd rather SSH die than
+      # sit indefinitely waiting for a password.
       argv = ["ssh", "-x", "-T", "-n", "-o", "StrictHostKeyChecking=no",
+          "-o", "NumberOfPasswordPrompts=0",
           machinename, " ".join(chdir_prefix + remote_command)]
     else:
       filename = os.path.abspath("fx-rpc.gdb.%d" % rank)
@@ -75,6 +80,7 @@ try:
     if not pid:
       os.execvp(argv[0], argv)
     pids[pid] = rank
+    time.sleep(0.5)
 
   while pids:
     (pid, status) = os.wait()
