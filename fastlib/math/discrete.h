@@ -21,6 +21,16 @@ namespace math {
   COMPILER_FUNCTIONAL double Factorial(int d);
   
   /**
+   * Computes the binomial coefficient, n choose k for nonnegative integers
+   * n and k
+   *
+   * @param n the first nonnegative integer argument
+   * @param k the second nonnegative integer argument
+   * @return the binomial coefficient n choose k
+   */
+  double BinomialCoefficient(int n, int k);
+
+  /**
    * Creates an identity permutation where the element i equals i.
    *
    * Low-level pointer version -- preferably use the @c ArrayList
