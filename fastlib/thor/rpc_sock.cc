@@ -842,7 +842,7 @@ void SockConnection::OpenOutgoing(bool blocking) {
 
       if (elapsed_time >= TIMEOUT_CONNECT) {
         FATAL("Tried connecting to rank %d for %d seconds, bailing out.",
-            TIMEOUT_CONNECT, peer_);
+            peer_, TIMEOUT_CONNECT);
       }
 
       sleep(sleeptime);

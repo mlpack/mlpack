@@ -256,12 +256,16 @@ void DualTreeRecursiveBreadth<GNP>::Divide_(
     if (likely(GNP::Algorithm::ConsiderPairExtrinsic(
         param_, q_node, *r_node, item->delta, parent_queue->summary_result,
         global_result_, &parent_queue->postponed))) {
-      if (likely(!r_node->is_leaf()) && likely(r_node->count() > 2 * q_node->count())) {
+      if (likely(!r_node->is_leaf()) && likely(r_node->count() > 2 * q_node.count())) {
+        // Only divide reference node if it is more than twice the size of the query.
+
         for (int k_r = 0; k_r < GNP::RNode::CARDINALITY; k_r++) {
           index_t r_child_i = r_node->child(k_r);
           CacheRead<typename GNP::RNode> r_child(&r_nodes_, r_child_i);
 
           for (int k_q = 0; k_q < GNP::QNode::CARDINALITY; k_q++) {
+            // Loop for both query children
+
             if (unlikely(r_child->count() > q_children[k_q]->count()) && likely(!r_child->is_leaf())) {
               // Divide reference set an extra time if the reference node is large.
               for (int k_r2 = 0; k_r2 < GNP::RNode::CARDINALITY; k_r2++) {
@@ -270,7 +274,7 @@ void DualTreeRecursiveBreadth<GNP>::Divide_(
                 child_queues[k_q].Consider(param_, *q_children[k_q], *r_child2,
                     r_child2_i, &global_result_);
               }
-            } else if (likely(q_children[k_q]->count() > r_child->count())) {
+            } else {
               child_queues[k_q].Consider(param_, *q_children[k_q], *r_child,
                   r_child_i, &global_result_);
             }

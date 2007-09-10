@@ -1,8 +1,8 @@
 #include "fastlib/fastlib_int.h"
 #include "thor/thor.h"
 
-//#define SOLVER_TYPE DualTreeRecursiveBreadth
-#define SOLVER_TYPE DualTreeDepthFirst
+#define SOLVER_TYPE DualTreeRecursiveBreadth
+//#define SOLVER_TYPE DualTreeDepthFirst
 
 /**
  * Approximate kernel density estimation.
