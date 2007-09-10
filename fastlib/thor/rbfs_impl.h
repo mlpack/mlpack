@@ -256,19 +256,31 @@ void DualTreeRecursiveBreadth<GNP>::Divide_(
     if (likely(GNP::Algorithm::ConsiderPairExtrinsic(
         param_, q_node, *r_node, item->delta, parent_queue->summary_result,
         global_result_, &parent_queue->postponed))) {
-      if (!r_node->is_leaf()) {
+      if (likely(!r_node->is_leaf()) && likely(r_node->count() > 2 * q_node->count())) {
         for (int k_r = 0; k_r < GNP::RNode::CARDINALITY; k_r++) {
           index_t r_child_i = r_node->child(k_r);
           CacheRead<typename GNP::RNode> r_child(&r_nodes_, r_child_i);
 
           for (int k_q = 0; k_q < GNP::QNode::CARDINALITY; k_q++) {
-            child_queues[k_q].Consider(param_, *q_children[k_q], *r_child,
-                r_child_i, &global_result_);
+            if (unlikely(r_child->count() > q_children[k_q]->count()) && likely(!r_child->is_leaf())) {
+              // Divide reference set an extra time if the reference node is large.
+              for (int k_r2 = 0; k_r2 < GNP::RNode::CARDINALITY; k_r2++) {
+                index_t r_child2_i = r_child->child(k_r2);
+                CacheRead<typename GNP::RNode> r_child2(&r_nodes_, r_child2_i);
+                child_queues[k_q].Consider(param_, *q_children[k_q], *r_child2,
+                    r_child2_i, &global_result_);
+              }
+            } else if (likely(q_children[k_q]->count() > r_child->count())) {
+              child_queues[k_q].Consider(param_, *q_children[k_q], *r_child,
+                  r_child_i, &global_result_);
+            }
           }
         }
       } else {
         for (int k_q = 0; k_q < GNP::QNode::CARDINALITY; k_q++) {
-          child_queues[k_q].Reconsider(param_, *item);
+          child_queues[k_q].Consider(param_, *q_children[k_q], *r_node,
+              item->r_index, &global_result_);
+          //child_queues[k_q].Reconsider(param_, *item);
         }
       }
     }

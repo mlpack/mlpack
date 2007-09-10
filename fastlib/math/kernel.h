@@ -168,13 +168,6 @@ class GaussianStarKernel {
   }
 
   /**
-   * Gets the maximum unnormalized value.
-   */
-  double MaxUnnormValue() {
-    return 1;
-  }
-
-  /**
    * Divide by this constant when you're done.
    *
    * @deprecated -- this function is very confusing

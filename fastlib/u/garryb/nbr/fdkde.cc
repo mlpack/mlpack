@@ -1,8 +1,8 @@
 #include "fastlib/fastlib_int.h"
 #include "thor/thor.h"
 
-#define SOLVER_TYPE DualTreeRecursiveBreadth
-//#define SOLVER_TYPE DualTreeDepthFirst
+//#define SOLVER_TYPE DualTreeRecursiveBreadth
+#define SOLVER_TYPE DualTreeDepthFirst
 
 /**
  * Approximate kernel density estimation.
@@ -31,8 +31,8 @@ class FdKde {
    public:
     /** The kernel in use. */
     Kernel kernel;
-    /** The amount of relative error prooportional to local lower bound. */
-    double rel_error_local;
+    // /** The amount of relative error prooportional to local lower bound. */
+    // double rel_error_local;
 
     /** The dimensionality of the data sets. */
     index_t dim;
@@ -42,22 +42,22 @@ class FdKde {
     double mul_constant;
     /** The amount of relative error allowed. */
     double rel_error;
-    /** Amount of error that is local error */
-    double p_local;
-    /** Amount of error that is global error */
-    double p_global;
+    // /** Amount of error that is local error */
+    // double p_local;
+    // /** Amount of error that is global error */
+    // double p_global;
     /** The band width, h. */
     double bandwidth;
 
     OT_DEF_BASIC(Param) {
       OT_MY_OBJECT(kernel);
-      OT_MY_OBJECT(rel_error_local);
+      //OT_MY_OBJECT(rel_error_local);
       OT_MY_OBJECT(dim);
       OT_MY_OBJECT(count);
       OT_MY_OBJECT(mul_constant);
       OT_MY_OBJECT(rel_error);
-      OT_MY_OBJECT(p_local);
-      OT_MY_OBJECT(p_global);
+      //OT_MY_OBJECT(p_local);
+      //OT_MY_OBJECT(p_global);
       OT_MY_OBJECT(bandwidth);
     }
 
@@ -67,10 +67,10 @@ class FdKde {
      */
     void Init(datanode *module) {
       bandwidth = fx_param_double_req(module, "h");
-      p_local = fx_param_double(module, "p_local", 0);
-      p_global = 1 - p_local;
+      //p_local = fx_param_double(module, "p_local", 0);
+      //p_global = 1 - p_local;
       rel_error = fx_param_double(module, "rel_error", 0.1);
-      rel_error_local = rel_error * p_local;
+      //rel_error_local = rel_error * p_local;
     }
 
     /** this is called after things are set. */
