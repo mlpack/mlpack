@@ -24,8 +24,6 @@ class SeriesExpansion {
   
   typedef TKernel Kernel;
 
-  enum KernelType { GAUSSIAN, EPANECHNIKOV };
-
   enum ExpansionType { FARFIELD, LOCAL };
 
  private:
@@ -44,6 +42,9 @@ class SeriesExpansion {
 
   /** order */
   int order_;
+  
+  /** precomputed quantities */
+  SeriesExpansionAux *sea_;
 
  public:
 
@@ -56,10 +57,13 @@ class SeriesExpansion {
   /** Get the coefficients */
   double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
 
+  /** Get the center of expansion */
   const Vector& get_center() const { return center_; }
 
+  /** Get the coefficients */
   const Vector& get_coeffs() const { return coeffs_; }
 
+  /** Get the expansion type */
   ExpansionType get_expansion_type() const { return expansion_type_; }
 
   /** Get the approximation order */
@@ -71,37 +75,32 @@ class SeriesExpansion {
    * Computes the far-field coefficients for the given data
    */
   void ComputeFarFieldCoeffs(const Matrix& data, const Vector& weights,
-			     const ArrayList<int>& rows, int order,
-			     const SeriesExpansionAux& sea);
+			     const ArrayList<int>& rows, int order);
 
   /**
    * Computes the local coefficients for the given data
    */
   void ComputeLocalCoeffs(const Matrix& data, const Vector& weights,
-			  const ArrayList<int>& rows, int order,
-			  const SeriesExpansionAux& sea);
+			  const ArrayList<int>& rows, int order);
 
   /**
    * Evaluates the far-field coefficients at the given point
    */
   double EvaluateFarField(Matrix* data=NULL, int row_num=-1,
-			  Vector* point=NULL, 
-			  SeriesExpansionAux* sea=NULL);
+			  Vector* point=NULL);
 
   /**
    * Evaluates the local-field coefficients at the given point
    */
   double EvaluateLocalField(Matrix* data=NULL, int row_num=-1,
-			    Vector* point=NULL,
-			    SeriesExpansionAux* sea=NULL);
+			    Vector* point=NULL);
 
   /**
    * Initializes the current SeriesExpansion object with the given
    * center.
    */
-  void Init(const TKernel& kernel,
-	    ExpansionType expansion_type,
-	    const Vector& center, int max_total_num_coeffs);
+  void Init(const TKernel& kernel, ExpansionType expansion_type,
+	    const Vector& center, SeriesExpansionAux *sea);
 
   /**
    * Prints out the series expansion represented by this object.
@@ -112,31 +111,29 @@ class SeriesExpansion {
    * Far-field to Far-field translation operator: translates the given
    * far-field expansion to the new center
    */
-  void TransFarToFar(const SeriesExpansion &se, const SeriesExpansionAux &sea);
+  void TransFarToFar(const SeriesExpansion &se);
 
   /**
    * Far-field to local translation operator: translates the given far
    * expansion to the local expansion at the new center.
    */
-  void TransFarToLocal(const SeriesExpansion &se,
-		       const SeriesExpansionAux &sea);
+  void TransFarToLocal(const SeriesExpansion &se);
 
   /**
    * Local to local translation operator: translates the given local
    * expansion to the local expansion at the new center.
    */
-  void TransLocalToLocal(const SeriesExpansion &se, 
-			 const SeriesExpansionAux &sea);
+  void TransLocalToLocal(const SeriesExpansion &se);
 
 };
 
 template<typename TKernel>
 void SeriesExpansion<TKernel>::ComputeFarFieldCoeffs
 (const Matrix& data, const Vector& weights,
- const ArrayList<int>& rows, int order, const SeriesExpansionAux& sea) {
+ const ArrayList<int>& rows, int order) {
 
   int dim = data.n_rows();
-  int total_num_coeffs = sea.get_total_num_coeffs(order);
+  int total_num_coeffs = sea_->get_total_num_coeffs(order);
   Vector tmp;
   int num_rows = rows.size();
   int r, i, j, k, t, tail;
@@ -195,7 +192,7 @@ void SeriesExpansion<TKernel>::ComputeFarFieldCoeffs
   } // End of looping through each reference point
 
   // get multiindex factors
-  C_k.Alias(sea.get_inv_multiindex_factorials());
+  C_k.Alias(sea_->get_inv_multiindex_factorials());
 
   for(r = 1; r < total_num_coeffs; r++) {
     coeffs_[r] = coeffs_[r] * C_k[r];
@@ -205,20 +202,20 @@ void SeriesExpansion<TKernel>::ComputeFarFieldCoeffs
 template<typename TKernel>
 void SeriesExpansion<TKernel>::ComputeLocalCoeffs
 (const Matrix& data, const Vector& weights, const ArrayList<int>& rows, 
- int order, const SeriesExpansionAux& sea) {
+ int order) {
 
 
   if(order > order_) {
     order_ = order;
   }
 
-  int dim = sea.get_dimension();
-  int total_num_coeffs = sea.get_total_num_coeffs(order);
+  int dim = sea_->get_dimension();
+  int total_num_coeffs = sea_->get_total_num_coeffs(order);
   
   // get inverse factorials (precomputed)
   Vector neg_inv_multiindex_factorials;
   neg_inv_multiindex_factorials.Alias
-    (sea.get_neg_inv_multiindex_factorials());
+    (sea_->get_neg_inv_multiindex_factorials());
 
   // declare hermite mapping
   Matrix hermite_map;
@@ -270,7 +267,7 @@ void SeriesExpansion<TKernel>::ComputeLocalCoeffs
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
-      ArrayList<int> mapping = sea.get_multiindex(j);
+      ArrayList<int> mapping = sea_->get_multiindex(j);
       arrtmp[j] = 1.0;
 
       for(index_t d = 0; d < dim; d++) {
@@ -287,13 +284,13 @@ void SeriesExpansion<TKernel>::ComputeLocalCoeffs
 
 template<typename TKernel>
 double SeriesExpansion<TKernel>::EvaluateFarField
-(Matrix* data, int row_num, Vector* x_q, SeriesExpansionAux *sea) {
+(Matrix* data, int row_num, Vector* x_q) {
   
   // dimension
-  int dim = sea->get_dimension();
+  int dim = sea_->get_dimension();
 
   // total number of coefficients
-  int total_num_coeffs = sea->get_total_num_coeffs(order_);
+  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
   // square root times bandwidth
   double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
@@ -347,7 +344,7 @@ double SeriesExpansion<TKernel>::EvaluateFarField
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2))
   for(index_t j = 0; j < total_num_coeffs; j++) {
-    ArrayList<int> mapping = sea->get_multiindex(j);
+    ArrayList<int> mapping = sea_->get_multiindex(j);
     arrtmp[j] = 1.0;
     
     for(index_t d = 0; d < dim; d++) {
@@ -365,15 +362,15 @@ double SeriesExpansion<TKernel>::EvaluateFarField
 
 template<typename TKernel>
 double SeriesExpansion<TKernel>::EvaluateLocalField
-(Matrix* data, int row_num, Vector* x_q, SeriesExpansionAux *sea) {
+(Matrix* data, int row_num, Vector* x_q) {
 
   index_t k, t, tail;
   
   // total number of coefficient
-  int total_num_coeffs = sea->get_total_num_coeffs(order_);
+  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
   // number of dimensions
-  int dim = sea->get_dimension();
+  int dim = sea_->get_dimension();
 
   // evaluated sum to be returned
   double sum = 0;
@@ -430,16 +427,17 @@ template<typename TKernel>
 void SeriesExpansion<TKernel>::Init(const TKernel &kernel,
 				    ExpansionType expansion_type, 
 				    const Vector& center, 
-				    int max_total_num_coeffs) {
+				    SeriesExpansionAux* sea) {
 
   // copy kernel type, center, and bandwidth squared
-  kernel_ = kernel;
+  kernel_.Init(sqrt(kernel.bandwidth_sq()));
   expansion_type_ = expansion_type;
   center_.Copy(center);
   order_ = 0;
+  sea_ = sea;
 
   // initialize coefficient array
-  coeffs_.Init(max_total_num_coeffs);
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
@@ -464,16 +462,15 @@ void SeriesExpansion<TKernel>::PrintDebug(const char *name,
 }
 
 template<typename TKernel>
-void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se,
-					     const SeriesExpansionAux &sea) {
+void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se) {
 
   double sqrt_two_bandwidth = sqrt(2 * se.bandwidth_sq());
-  int dim = sea.get_dimension();
+  int dim = sea_->get_dimension();
   int order = se.get_order();
-  int total_num_coeffs = sea.get_total_num_coeffs(order);
+  int total_num_coeffs = sea_->get_total_num_coeffs(order);
   Vector prev_coeffs;
   Vector prev_center;
-  const ArrayList < int > *multiindex_mapping = sea.get_multiindex_mapping();
+  const ArrayList < int > *multiindex_mapping = sea_->get_multiindex_mapping();
   ArrayList <int> tmp_storage;
   Vector center_diff;
   Vector inv_multiindex_factorials;
@@ -483,8 +480,8 @@ void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se,
   // retrieve coefficients to be translated and helper mappings
   prev_coeffs.Alias(se.get_coeffs());
   prev_center.Alias(se.get_center());
-  tmp_storage.Init(sea.get_dimension());
-  inv_multiindex_factorials.Alias(sea.get_inv_multiindex_factorials());
+  tmp_storage.Init(sea_->get_dimension());
+  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
 
   // no coefficients can be translated
   if(order == 0)
@@ -531,23 +528,22 @@ void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se,
       }
 
       coeffs_[j] += prev_coeffs[k] * diff1 * 
-	inv_multiindex_factorials[sea.ComputeMultiindexPosition(tmp_storage)];
+	inv_multiindex_factorials[sea_->ComputeMultiindexPosition(tmp_storage)];
 
     } // end of k-loop
   } // end of j-loop
 }
 
 template<typename TKernel>
-void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se,
-					       const SeriesExpansionAux &sea) {
+void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se) {
 
   Vector arrtmp;
   Matrix hermite_map;
   Vector far_center;
   Vector far_coeffs;
-  int dimension = sea.get_dimension();
+  int dimension = sea_->get_dimension();
   int far_order = se.get_order();
-  int total_num_coeffs = sea.get_total_num_coeffs(far_order);
+  int total_num_coeffs = sea_->get_total_num_coeffs(far_order);
   int limit;
   double bw_times_sqrt_two = sqrt(2 * kernel_.bandwidth_sq());
 
@@ -586,12 +582,12 @@ void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se,
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    ArrayList<int> beta_mapping = sea.get_multiindex(j);
+    ArrayList<int> beta_mapping = sea_->get_multiindex(j);
     arrtmp[j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
-      ArrayList<int> alpha_mapping = sea.get_multiindex(k);
+      ArrayList<int> alpha_mapping = sea_->get_multiindex(k);
       double hermite_factor = 1.0;
 
       for(index_t d = 0; d < dimension; d++) {
@@ -604,15 +600,14 @@ void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se,
     } // end of k-loop
   } // end of j-loop
 
-  Vector C_k_neg = sea.get_neg_inv_multiindex_factorials();
+  Vector C_k_neg = sea_->get_neg_inv_multiindex_factorials();
   for(index_t j = 0; j < total_num_coeffs; j++) {
     coeffs_[j] += arrtmp[j] * C_k_neg[j];
   }
 }
 
 template<typename TKernel>
-void SeriesExpansion<TKernel>::TransLocalToLocal
-(const SeriesExpansion &se, const SeriesExpansionAux &sea) {
+void SeriesExpansion<TKernel>::TransLocalToLocal(const SeriesExpansion &se) {
   
   // get the center and the order and the total number of coefficients of 
   // the expansion we are translating from. Also get coefficients we
@@ -620,12 +615,12 @@ void SeriesExpansion<TKernel>::TransLocalToLocal
   Vector prev_center;
   prev_center.Alias(se.get_center());
   int prev_order = se.get_order();
-  int total_num_coeffs = sea.get_total_num_coeffs(prev_order);
+  int total_num_coeffs = sea_->get_total_num_coeffs(prev_order);
   Vector prev_coeffs;
   prev_coeffs.Alias(se.get_coeffs());
 
   // dimension
-  int dim = sea.get_dimension();
+  int dim = sea_->get_dimension();
 
   // temporary variable
   ArrayList<int> tmp_storage;
@@ -649,16 +644,16 @@ void SeriesExpansion<TKernel>::TransLocalToLocal
 
   // inverse multiindex factorials
   Vector C_k;
-  C_k.Alias(sea.get_inv_multiindex_factorials());
+  C_k.Alias(sea_->get_inv_multiindex_factorials());
   
   // do the actual translation
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    ArrayList<int> alpha_mapping = sea.get_multiindex(j);
+    ArrayList<int> alpha_mapping = sea_->get_multiindex(j);
     
     for(index_t k = j; k < total_num_coeffs; k++) {
 
-      ArrayList<int> beta_mapping = sea.get_multiindex(k);
+      ArrayList<int> beta_mapping = sea_->get_multiindex(k);
       int flag = 0;
       double diff1 = 1.0;
 
@@ -678,7 +673,7 @@ void SeriesExpansion<TKernel>::TransLocalToLocal
 	diff1 *= pow(center_diff[l], tmp_storage[l]);
       }
       coeffs_[j] += prev_coeffs[k] * diff1 *
-	sea.get_n_multichoose_k_by_pos(k, j);
+	sea_->get_n_multichoose_k_by_pos(k, j);
 
     } // end of k loop
   } // end of j loop
