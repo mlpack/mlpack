@@ -39,9 +39,6 @@ class SeriesExpansion {
   /** The center of the expansion */
   Vector center_;
 
-  /** bandwidth squared */
-  double bwsqd_;
-
   /** The coefficients */
   Vector coeffs_;
 
@@ -57,7 +54,7 @@ class SeriesExpansion {
   // getters and setters
   
   /** Get the coefficients */
-  double get_bwsqd() const { return bwsqd_; }
+  double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
 
   const Vector& get_center() const { return center_; }
 
@@ -104,7 +101,7 @@ class SeriesExpansion {
    */
   void Init(const TKernel& kernel,
 	    ExpansionType expansion_type,
-	    const Vector& center, int max_total_num_coeffs, double bwsqd);
+	    const Vector& center, int max_total_num_coeffs);
 
   /**
    * Prints out the series expansion represented by this object.
@@ -146,7 +143,7 @@ void SeriesExpansion<TKernel>::ComputeFarFieldCoeffs
   Vector heads;
   Vector x_r;
   Vector C_k;
-  double bw_times_sqrt_two = sqrt(2 * bwsqd_);
+  double bw_times_sqrt_two = sqrt(2 * kernel_.bandwidth_sq());
 
   // initialize temporary variables
   tmp.Init(total_num_coeffs);
@@ -234,7 +231,7 @@ void SeriesExpansion<TKernel>::ComputeLocalCoeffs
   x_r_minus_x_Q.Init(dim);
 
   // sqrt two times bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * bwsqd_);
+  double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
 
   // for each data point,
   for(index_t r = 0; r < rows.size(); r++) {
@@ -299,7 +296,7 @@ double SeriesExpansion<TKernel>::EvaluateFarField
   int total_num_coeffs = sea->get_total_num_coeffs(order_);
 
   // square root times bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * bwsqd_);
+  double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
   
   // the evaluated sum
   double multipole_sum = 0;
@@ -382,7 +379,7 @@ double SeriesExpansion<TKernel>::EvaluateLocalField
   double sum = 0;
   
   // sqrt two bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * bwsqd_);
+  double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
 
   // temporary variable
   Vector x_Q_to_x_q;
@@ -433,14 +430,12 @@ template<typename TKernel>
 void SeriesExpansion<TKernel>::Init(const TKernel &kernel,
 				    ExpansionType expansion_type, 
 				    const Vector& center, 
-				    int max_total_num_coeffs, 
-				    double bwsqd) {
+				    int max_total_num_coeffs) {
 
   // copy kernel type, center, and bandwidth squared
   kernel_ = kernel;
   expansion_type_ = expansion_type;
   center_.Copy(center);
-  bwsqd_ = bwsqd;
   order_ = 0;
 
   // initialize coefficient array
@@ -472,7 +467,7 @@ template<typename TKernel>
 void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se,
 					     const SeriesExpansionAux &sea) {
 
-  double sqrt_two_bandwidth = sqrt(2 * se.get_bwsqd());
+  double sqrt_two_bandwidth = sqrt(2 * se.bandwidth_sq());
   int dim = sea.get_dimension();
   int order = se.get_order();
   int total_num_coeffs = sea.get_total_num_coeffs(order);
@@ -554,7 +549,7 @@ void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se,
   int far_order = se.get_order();
   int total_num_coeffs = sea.get_total_num_coeffs(far_order);
   int limit;
-  double bw_times_sqrt_two = sqrt(2 * bwsqd_);
+  double bw_times_sqrt_two = sqrt(2 * kernel_.bandwidth_sq());
 
   // get center and coefficients for far field expansion
   far_center.Alias(se.get_center());
@@ -637,7 +632,7 @@ void SeriesExpansion<TKernel>::TransLocalToLocal
   tmp_storage.Init(dim);
 
   // sqrt two times bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * bwsqd_);
+  double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
 
   // center difference between the old center and the new one
   Vector center_diff;
