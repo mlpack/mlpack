@@ -14,6 +14,8 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   
   printf("\n----- TestEvaluateFarField -----\n");
 
+  GaussianKernel kernel;
+
   // declare auxiliary object and initialize
   SeriesExpansionAux sea;
   sea.Init(10, data.n_rows());
@@ -29,11 +31,11 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3;
 
   // declare expansion objects at (0,0) and other centers
-  SeriesExpansion se;
+  SeriesExpansion<GaussianKernel> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
-  se.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::FARFIELD, center,
+  se.Init(kernel, SeriesExpansion<GaussianKernel>::FARFIELD, center,
           sea.get_max_total_num_coeffs(), 0.5);
 
   // compute up to 4-th order multivariate polynomial.
@@ -68,6 +70,7 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   printf("\n----- TestEvaluateLocalField -----\n");
 
   // declare auxiliary object and initialize
+  GaussianKernel kernel;
   SeriesExpansionAux sea;
   sea.Init(10, data.n_rows());
 
@@ -82,11 +85,11 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
-  SeriesExpansion se;
+  SeriesExpansion<GaussianKernel> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 1
-  se.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL, center,
+  se.Init(kernel, SeriesExpansion<GaussianKernel>::LOCAL, center,
           sea.get_max_total_num_coeffs(), 1);
 
   // compute up to 4-th order multivariate polynomial.
@@ -132,6 +135,7 @@ int TestTransFarToFar(const Matrix &data, const Vector &weights,
   printf("\n----- TestTransFarToFar -----\n");
 
   // declare auxiliary object and initialize
+  GaussianKernel kernel;
   SeriesExpansionAux sea;
   sea.Init(10, data.n_rows());
   
@@ -147,17 +151,17 @@ int TestTransFarToFar(const Matrix &data, const Vector &weights,
   new_center[1] = -2;
 
   // declare expansion objects at (0,0) and other centers
-  SeriesExpansion se;
-  SeriesExpansion se_translated;
-  SeriesExpansion se_cmp;
+  SeriesExpansion<GaussianKernel> se;
+  SeriesExpansion<GaussianKernel> se_translated;
+  SeriesExpansion<GaussianKernel> se_cmp;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
-  se.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::FARFIELD, center, 
+  se.Init(kernel, SeriesExpansion<GaussianKernel>::FARFIELD, center, 
 	  sea.get_max_total_num_coeffs(), 0.1);
-  se_translated.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::FARFIELD, 
+  se_translated.Init(kernel, SeriesExpansion<GaussianKernel>::FARFIELD, 
 		     new_center, sea.get_max_total_num_coeffs(), 0.1);
-  se_cmp.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::FARFIELD, 
+  se_cmp.Init(kernel, SeriesExpansion<GaussianKernel>::FARFIELD, 
 	      new_center, sea.get_max_total_num_coeffs(), 0.1);
   
   // compute up to 4-th order multivariate polynomial and translate it.
@@ -197,6 +201,7 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   printf("\n----- TestTransLocalToLocal -----\n");
 
   // declare auxiliary object and initialize
+  GaussianKernel kernel;
   SeriesExpansionAux sea;
   sea.Init(10, data.n_rows());
   
@@ -211,14 +216,14 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   new_center[0] = new_center[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
-  SeriesExpansion se;
-  SeriesExpansion se_translated;
+  SeriesExpansion<GaussianKernel> se;
+  SeriesExpansion<GaussianKernel> se_translated;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
-  se.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL, center, 
+  se.Init(kernel, SeriesExpansion<GaussianKernel>::LOCAL, center, 
 	  sea.get_max_total_num_coeffs(), 1);
-  se_translated.Init(SeriesExpansion::GAUSSIAN, SeriesExpansion::LOCAL,
+  se_translated.Init(kernel, SeriesExpansion<GaussianKernel>::LOCAL,
 		     new_center, sea.get_max_total_num_coeffs(), 1);
   
   // compute up to 4-th order multivariate polynomial and translate it.
