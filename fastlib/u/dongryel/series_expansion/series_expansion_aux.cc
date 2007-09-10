@@ -65,7 +65,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   // compute the list of total number of coefficients for p-th order expansion
   list_total_num_coeffs_.Init(max_order + 1);
   for(p = 0; p <= max_order; p++) {
-    list_total_num_coeffs_[p] = nchoosek(p + dim, dim);
+    list_total_num_coeffs_[p] = (int) math::BinomialCoefficient(p + dim, dim);
   }
 
   // allocate space for inverse factorial and 
@@ -117,7 +117,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   // compute n choose k's
   for(j = 0; j <= max_order + dim; j++) {
     for(k = 0; k <= max_order + dim; k++) {
-      n_choose_k_.set(j, k, nchoosek(j, k));
+      n_choose_k_.set(j, k, math::BinomialCoefficient(j, k));
     }
   }
 
