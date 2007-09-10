@@ -1069,6 +1069,15 @@ The ultimate goal of a parallel system such as THOR is to use all available cloc
 In practice, this is unachievable, so we must quantify to the extent that resources are utilized.
 After explaining our experimental design, we quantify \THOR's three primary opportunities for underutilization: overhead due to code complexity, load imbalances, and communication time.
 
+\subsection{Implementation Notes}
+
+- Since the GNP is the time consuming part and focus of the paper, that is the only part we parallelize.
+We don't parallelize tree building, although \cite{xyz} shows how to do kd-tree construction in parallel.
+
+- Recognize the "initial transfer" i.e. distribution
+
+- Acknowledge Intel's donations in my paper.
+
 \subsection{Design}
 
 % you just need to state that in a positive light: the framework is geared towards breaking up larger problems; smaller problems can be solved effectively in serial
