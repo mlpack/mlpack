@@ -1154,11 +1154,14 @@ void NbcMain(datanode *module) {
   q_tree->CreateResultCache(Q_RESULTS_CHANNEL, default_result,
 			    results_megs, &q_results);
 
-  Nbc::GlobalResult *global_result;
+  Nbc::GlobalResult global_result;
+#if 1
   thor::RpcDualTree<Nbc, DualTreeDepthFirst<Nbc> >(
+#else
+  thor::RpcDualTree<Nbc, DualTreeRecursiveBreadth<Nbc> >(
+#endif
       fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, param,
       q_tree, r_tree, &q_results, &global_result);
-  delete global_result;
 
   // Emit the results; this needs to be folded into THOR
   Matrix classifications;
