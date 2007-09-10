@@ -445,6 +445,9 @@ template<typename TKernel>
 void SeriesExpansion<TKernel>::PrintDebug(const char *name, 
 					  FILE *stream) const {
   
+  int dim = sea_->get_dimension();
+  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+
   fprintf(stream, "----- SERIESEXPANSION %s ------\n", name);
   fprintf(stream, "Expansion type: %s\n", (expansion_type_ == FARFIELD) ?
 	  "FARFIELD":"LOCAL");
@@ -455,8 +458,29 @@ void SeriesExpansion<TKernel>::PrintDebug(const char *name,
   }
   fprintf(stream, "\n");
   
-  for (index_t i = 0; i < coeffs_.length(); i++) {
-    fprintf(stream, "%g ", coeffs_[i]);
+  fprintf(stream, "f(");
+  for(index_t d = 0; d < dim; d++) {
+    fprintf(stream, "x_%d", d);
+    if(d < dim - 1)
+      fprintf(stream, ",");
+  }
+  fprintf(stream, ") = ");
+
+  for (index_t i = 0; i < total_num_coeffs; i++) {
+    ArrayList<int> mapping = sea_->get_multiindex(i);
+    if(expansion_type_ == FARFIELD) {
+      fprintf(stream, "%g", coeffs_[i]);
+      
+      for(index_t d = 0; d < dim; d++) {
+	fprintf(stream, "(x_%d - (%g))^%d", d, center_[d], mapping[d]);
+      }
+    }
+    else {
+      fprintf(stream, "%g ", coeffs_[i]);
+    }
+    if(i < total_num_coeffs - 1) {
+      fprintf(stream, " + ");
+    }
   }
   fprintf(stream, "\n");
 }
@@ -486,6 +510,8 @@ void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se) {
   // no coefficients can be translated
   if(order == 0)
     return;
+  else
+    order_ = order;
   
   // the first order (the sum of the weights) stays constant regardless
   // of the location of the center.

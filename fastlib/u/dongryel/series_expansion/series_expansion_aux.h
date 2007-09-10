@@ -31,27 +31,6 @@ class SeriesExpansionAux {
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
 
-  /** compute n choose k: this might be moved later to FastLib core... */
-  int nchoosek(int n, int k) {
-    int n_k = n - k;
-    int nchsk = 1;
-    int i;
-    
-    if(k > n)
-      return 0;
-    
-    if(k < n_k) {
-      k = n_k;
-      n_k = n - k;
-    }
-    
-    for(i = 1; i <= n_k; i++) {
-      nchsk *= (++k);
-      nchsk /= i;
-    }
-    return nchsk;
-  }
-  
  public:
 
   // construtor/destructor
