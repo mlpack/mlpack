@@ -28,8 +28,47 @@ class SeriesExpansionAux {
 
   ArrayList< ArrayList<int> > multiindex_mapping_;
 
+  /** 
+   * for each i-th multiindex m_i, store the positions of the j-th
+   * multiindex mapping such that m_i - m_j >= 0 (the difference in
+   * all coordinates is nonnegative).
+   */
+  ArrayList< ArrayList<int> > lower_mapping_index_;
+
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
+
+  void ComputeLowerMappingIndex() {
+    
+    ArrayList<int> diff;
+    diff.Init(dim_);
+
+    // initialize the index
+    lower_mapping_index_.Init(list_total_num_coeffs_[max_order_]);
+
+    for(index_t i = 0; i < list_total_num_coeffs_[max_order_]; i++) {
+      ArrayList<int> outer_mapping = multiindex_mapping_[i];
+      lower_mapping_index_[i].Init();
+
+      for(index_t j = 0; j <= i; j++) {
+	ArrayList<int> inner_mapping = multiindex_mapping_[j];
+	int flag = 0;
+
+	for(index_t d = 0; d < dim_; d++) {
+	  diff[d] = outer_mapping[d] - inner_mapping[d];
+	  
+	  if(diff[d] < 0) {
+	    flag = 1;
+	    break;
+	  }
+	}
+	
+	if(flag == 0) {
+	  (lower_mapping_index_[i]).AddBackItem(j);
+	}
+      } // end of j-loop
+    } // end of i-loop
+  }
 
  public:
 
@@ -46,6 +85,8 @@ class SeriesExpansionAux {
   int get_max_total_num_coeffs() const;
 
   const Vector& get_inv_multiindex_factorials() const;
+
+  const ArrayList< int > * get_lower_mapping_index() const;
 
   const ArrayList< int > & get_multiindex(int pos) const;
 

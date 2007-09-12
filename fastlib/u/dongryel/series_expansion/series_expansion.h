@@ -460,23 +460,41 @@ void SeriesExpansion<TKernel>::PrintDebug(const char *name,
   
   fprintf(stream, "f(");
   for(index_t d = 0; d < dim; d++) {
-    fprintf(stream, "x_%d", d);
+    fprintf(stream, "x_q%d", d);
     if(d < dim - 1)
       fprintf(stream, ",");
   }
-  fprintf(stream, ") = ");
-
+  fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
+  
   for (index_t i = 0; i < total_num_coeffs; i++) {
     ArrayList<int> mapping = sea_->get_multiindex(i);
-    if(expansion_type_ == FARFIELD) {
+    if(expansion_type_ == LOCAL) {
       fprintf(stream, "%g", coeffs_[i]);
       
       for(index_t d = 0; d < dim; d++) {
-	fprintf(stream, "(x_%d - (%g))^%d", d, center_[d], mapping[d]);
+	fprintf(stream, "(x_q%d - (%g))^%d ", d, center_[d], mapping[d]);
       }
     }
     else {
       fprintf(stream, "%g ", coeffs_[i]);
+      
+      fprintf(stream, "(-1)^(");
+      for(index_t d = 0; d < dim; d++) {
+	fprintf(stream, "%d", mapping[d]);
+	if(d < dim - 1)
+	  fprintf(stream, " + ");
+      }
+      fprintf(stream, ") D^((");
+      for(index_t d = 0; d < dim; d++) {
+	fprintf(stream, "%d", mapping[d]);
+	
+	if(d < dim - 1)
+	  fprintf(stream, ",");
+      }
+      fprintf(stream, "))");
+      for(index_t d = 0; d < dim; d++) {
+	fprintf(stream, "(x_q%d - (%g))^%d ", d, center_[d], mapping[d]);
+      }
     }
     if(i < total_num_coeffs - 1) {
       fprintf(stream, " + ");
