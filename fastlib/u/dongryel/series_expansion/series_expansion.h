@@ -513,6 +513,9 @@ void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se) {
   Vector prev_coeffs;
   Vector prev_center;
   const ArrayList < int > *multiindex_mapping = sea_->get_multiindex_mapping();
+  const ArrayList < int > *lower_mapping_index = 
+    sea_->get_lower_mapping_index();
+
   ArrayList <int> tmp_storage;
   Vector center_diff;
   Vector inv_multiindex_factorials;
@@ -544,9 +547,13 @@ void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se) {
   for(index_t j = 1; j < total_num_coeffs; j++) {
     
     ArrayList <int> gamma_mapping = multiindex_mapping[j];
-    
-    for(index_t k = 0; k <= j; k++) {
-      ArrayList <int> inner_mapping = multiindex_mapping[k];
+    ArrayList <int> lower_mappings_for_gamma = lower_mapping_index[j];
+
+    for(index_t k = 0; k < lower_mappings_for_gamma.size(); k++) {
+
+      ArrayList <int> inner_mapping = 
+	multiindex_mapping[lower_mappings_for_gamma[k]];
+
       int flag = 0;
       double diff1;
       
@@ -571,8 +578,9 @@ void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se) {
 	diff1 *= pow(center_diff[l] / sqrt_two_bandwidth, tmp_storage[l]);
       }
 
-      coeffs_[j] += prev_coeffs[k] * diff1 * 
-	inv_multiindex_factorials[sea_->ComputeMultiindexPosition(tmp_storage)];
+      coeffs_[j] += prev_coeffs[lower_mappings_for_gamma[k]] * diff1 * 
+	inv_multiindex_factorials
+	[sea_->ComputeMultiindexPosition(tmp_storage)];
 
     } // end of k-loop
   } // end of j-loop
