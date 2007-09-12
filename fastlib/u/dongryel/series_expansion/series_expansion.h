@@ -668,6 +668,8 @@ void SeriesExpansion<TKernel>::TransLocalToLocal(const SeriesExpansion &se) {
   prev_center.Alias(se.get_center());
   int prev_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(prev_order);
+  const ArrayList < int > *upper_mapping_index = 
+    sea_->get_upper_mapping_index();
   Vector prev_coeffs;
   prev_coeffs.Alias(se.get_coeffs());
 
@@ -702,10 +704,16 @@ void SeriesExpansion<TKernel>::TransLocalToLocal(const SeriesExpansion &se) {
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
     ArrayList<int> alpha_mapping = sea_->get_multiindex(j);
-    
-    for(index_t k = j; k < total_num_coeffs; k++) {
+    ArrayList <int> upper_mappings_for_alpha = upper_mapping_index[j];
 
-      ArrayList<int> beta_mapping = sea_->get_multiindex(k);
+    for(index_t k = 0; k < upper_mappings_for_alpha.size(); k++) {
+      
+      if(upper_mappings_for_alpha[k] >= total_num_coeffs) {
+	break;
+      }
+
+      ArrayList<int> beta_mapping = 
+	sea_->get_multiindex(upper_mappings_for_alpha[k]);
       int flag = 0;
       double diff1 = 1.0;
 
@@ -724,8 +732,8 @@ void SeriesExpansion<TKernel>::TransLocalToLocal(const SeriesExpansion &se) {
       for(index_t l = 0; l < dim; l++) {
 	diff1 *= pow(center_diff[l], tmp_storage[l]);
       }
-      coeffs_[j] += prev_coeffs[k] * diff1 *
-	sea_->get_n_multichoose_k_by_pos(k, j);
+      coeffs_[j] += prev_coeffs[upper_mappings_for_alpha[k]] * diff1 *
+	sea_->get_n_multichoose_k_by_pos(upper_mappings_for_alpha[k], j);
 
     } // end of k loop
   } // end of j loop

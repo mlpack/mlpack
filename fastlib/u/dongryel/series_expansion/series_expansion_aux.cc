@@ -38,6 +38,10 @@ int SeriesExpansionAux::get_total_num_coeffs(int order) const {
   return list_total_num_coeffs_[order];
 }
 
+const ArrayList < int > *SeriesExpansionAux::get_upper_mapping_index() const {
+  return upper_mapping_index_.begin();
+}
+
 int SeriesExpansionAux::ComputeMultiindexPosition
 (const ArrayList<int> &multiindex) const {
 
@@ -150,9 +154,10 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
     }
   }
 
-  // compute the lower_mapping_index_ (see series_expansion_aux.h for
-  // explanation)
+  // compute the lower_mapping_index_ and the upper_mapping_index_
+  // (see series_expansion_aux.h for explanation)
   ComputeLowerMappingIndex();
+  ComputeUpperMappingIndex();
 }
 
 void SeriesExpansionAux::PrintDebug(const char *name, FILE *stream) const {

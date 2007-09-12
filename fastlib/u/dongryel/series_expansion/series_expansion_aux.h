@@ -35,6 +35,13 @@ class SeriesExpansionAux {
    */
   ArrayList< ArrayList<int> > lower_mapping_index_;
 
+  /** 
+   * for each i-th multiindex m_i, store the positions of the j-th
+   * multiindex mapping such that m_i - m_j <= 0 (the difference in
+   * all coordinates is nonpositive).
+   */
+  ArrayList< ArrayList<int> > upper_mapping_index_;
+
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
 
@@ -69,6 +76,38 @@ class SeriesExpansionAux {
       } // end of j-loop
     } // end of i-loop
   }
+  
+  void ComputeUpperMappingIndex() {
+    
+    ArrayList<int> diff;
+    diff.Init(dim_);
+    
+    // initialize the index
+    upper_mapping_index_.Init(list_total_num_coeffs_[max_order_]);
+    
+    for(index_t i = 0; i < list_total_num_coeffs_[max_order_]; i++) {
+      ArrayList<int> outer_mapping = multiindex_mapping_[i];
+      upper_mapping_index_[i].Init();
+      
+      for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+	ArrayList<int> inner_mapping = multiindex_mapping_[j];
+	int flag = 0;
+	
+	for(index_t d = 0; d < dim_; d++) {
+	  diff[d] = inner_mapping[d] - outer_mapping[d];
+	  
+	  if(diff[d] < 0) {
+	    flag = 1;
+	    break;
+	  }
+	}
+	
+	if(flag == 0) {
+	  (upper_mapping_index_[i]).AddBackItem(j);
+	}
+      } // end of j-loop
+    } // end of i-loop
+  }
 
  public:
 
@@ -97,6 +136,8 @@ class SeriesExpansionAux {
   double get_n_choose_k(int n, int k) const;
 
   double get_n_multichoose_k_by_pos(int n, int k) const;
+
+  const ArrayList< int > * get_upper_mapping_index() const;
 
   // interesting functions
 
