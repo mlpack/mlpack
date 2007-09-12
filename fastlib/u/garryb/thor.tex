@@ -616,24 +616,114 @@ x    \\
 
 \begin{slide}{Experiments - Setup}
   % algorithms and data-sets
+  Data:
+  \begin{itemize}
+    \itemt{Speech}
+    12-dimensional, frequency-domain, with manifold.
+    Nearest neighbors and KDE.
+    \itemt{Galaxy}
+    3-d positions of galactic halos ($\Lambda CDM$).
+    Two-point correlation.
+    \itemt{Redshift}
+    4-dimensional redshift data for quasar detection.
+    KDE.
+  \end{itemize}
+  We run KDE with Gaussian kernel and finite difference method.
 \end{slide}
 
 \begin{slide}{Experiments - Overhead}
+  Two sources of potential overhead studied.
+  \begin{itemize}
+    \itemt{Infrastructure} Does cache system cause slowdown?
+    \begin{itemize}
+      \itemt{Preliminary Auton Comparison}
+      THOR's KDE was faster than Auton's by about a factor of 2.
+      \itemt{FASTlib Comparison}
+      Compared to well-written FASTlib code, THOR is about 15\% slower.
+    \end{itemize}
+    \itemt{Decomposition} Breaking the query tree might result in redundant
+    work.
+    \begin{itemize}
+      \itemt{Experiment} Compare single-thread THOR code with different work granularities.
+      \itemt{Result} Virtually no degradation seen until query tasks become
+      small (circa 200 points).
+    \end{itemize}
+  \end{itemize}
 \end{slide}
 
 \begin{slide}{Experiments - Multithreaded}
+  Multiple processors on the same computer.
+  How does THOR scale?
+  \begin{itemize}
+    \itemt{Factors}
+    Multithreaded performance measures CPU cache utilization,
+    load balance, and lock contention.
+    \itemt{Experiments}
+    95\% or better utilization for up to 8 processors.
+    \itemt{Practice}
+    For months, we've used it on our dual-core machines, seeing
+    near-perfect usage every time.  I don't have patience for single-threaded
+    runs anymore.
+  \end{itemize}
   % range - galaxy simulation
   % allnn - high-D
   % nbc - quasar
 \end{slide}
 
 \begin{slide}{Experiments - Cluster}
+  Works on clusters of at {\it least} 92 CPU's (46 machines).
+  \begin{itemize}
+    \item Note: We compare 92 processors to a base case of 8 processors.
+  \end{itemize}
+  \begin{tabular}{|r|r|r|r|r|r|}
+    \hline
+    {\bf Algorithm} & {\bf Data} & \# Points & Degrad. & Time (s)
+    \\ \hline
+    KDE & Speech & 500,000 & 6\% & 124
+    \\ \hline
+    KDE & Redshift & 500,000 & 2\% & 82
+    \\ \hline
+    Neighbors & Speech & 2,000,000 & 12\% & 114
+    \\ \hline
+    Two-Point\footnote{First two-point correlation uses high bandwidth, second with low bandwidth.} & Galaxy & 3,000,000 & 11\% & 86
+    \\ \hline
+    Two-Point & Galaxy & 16,000,000 & 3\% & 151
+    \\ \hline
+  \end{tabular}
   % range - galaxy simulation
   % allnn - high-D
   % nbc - quasar
 \end{slide}
 
-\begin{slide}{Discussion/Conclusion}
+\begin{slide}{Experiments - Issues}
+  There are some pitfalls that need to be addressed.
+  \begin{itemize}
+    \itemt{Problem Size}
+    Small, easy tasks, like low-dimensionality nearest neighbors, scale poorly on multiple machines.
+    The serial algorithm is too fast to warrant parallelization.
+    \itemt{Tree Building}
+    Reading the data set and building the tree is currently on one processor.
+    However, parallel tree-building algorithms do exist.
+    \itemt{Communication Catch-22}
+    All test cases, except low-bandwidth two-point correlation, required
+    all machines to need almost all the data, but the serial algorithm
+    is slow enough to allow scalability.  Low-dimension nearest neighbors
+    doesn't have this problem so much, but parallelizes poorly.
+    However, affinity propagation shows a nice balance.
+  \end{itemize}
+\end{slide}
+
+\begin{slide}{Conclusion}
+  In short,
+  \begin{itemize}
+    \item THOR solves all second-order GNP's, and is
+    inherently parallel.
+    \item THOR allows persons with some dual-tree knowledge
+    and virtually no parallelization knowledge to write parallel code.
+    \item THOR is quite efficient for the problems that need
+    the most parallelization, especially for a first-generation
+    implementation. 
+  \end{itemize}
 \end{slide}
 
 \end{document}

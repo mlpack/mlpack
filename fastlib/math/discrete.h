@@ -18,7 +18,8 @@ namespace math {
   /**
    * Computes the factorial of an integer.
    */
-  COMPILER_FUNCTIONAL double Factorial(int d);
+  COMPILER_FUNCTIONAL
+  double Factorial(int d);
   
   /**
    * Computes the binomial coefficient, n choose k for nonnegative integers
@@ -28,6 +29,7 @@ namespace math {
    * @param k the second nonnegative integer argument
    * @return the binomial coefficient n choose k
    */
+  COMPILER_FUNCTIONAL
   double BinomialCoefficient(int n, int k);
 
   /**

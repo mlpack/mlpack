@@ -447,6 +447,7 @@ class FdKde {
           "delta density lo %f > hi %f",
           delta->d_density.lo, delta->d_density.hi);
 
+
       if (likely(delta->d_density.hi != 0)) {
         return true;
       } else {
@@ -469,8 +470,10 @@ class FdKde {
           * r_node.count() / (param.count - q_summary_result.n_pruned);
       /*allocated_width *= param.p_global;
       allocated_width += param.rel_error_local * delta.d_density.lo * 2;*/
+      //fprintf(stderr, "%e..%e (%e, %e) %e (%e)\n", delta.d_density.lo, delta.d_density.hi, delta.d_density.width(), allocated_width, q_summary_result.density.lo,
+      //    sqrt(q_node.bound().MaxDistanceSq(q_node.bound())));
 
-      if (delta.d_density.width() < allocated_width) {
+      if (delta.d_density.width() <= allocated_width) {
         q_postponed->d_density += delta.d_density;
         q_postponed->n_pruned += r_node.count();
         return false;
