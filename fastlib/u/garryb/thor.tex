@@ -709,15 +709,15 @@ x    \\
     all machines to need almost all the data, but the serial algorithm
     is slow enough to allow scalability.  Low-dimension nearest neighbors
     doesn't have this problem so much, but parallelizes poorly.
-    However, affinity propagation shows a nice balance.
+    Affinity propagation shows a nice balance.
   \end{itemize}
 \end{slide}
 
 \begin{slide}{Conclusion}
   In short,
   \begin{itemize}
-    \item THOR solves all second-order GNP's, and is
-    inherently parallel.
+    \item THOR's inherently parallel computational model solves all
+    second-order GNP's, and can execute most dual-tree algorithms.
     \item THOR allows persons with some dual-tree knowledge
     and virtually no parallelization knowledge to write parallel code.
     \item THOR is quite efficient for the problems that need
