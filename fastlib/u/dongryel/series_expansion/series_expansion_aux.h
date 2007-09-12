@@ -50,7 +50,7 @@ class SeriesExpansionAux {
       ArrayList<int> outer_mapping = multiindex_mapping_[i];
       lower_mapping_index_[i].Init();
 
-      for(index_t j = 0; j <= i; j++) {
+      for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
 	ArrayList<int> inner_mapping = multiindex_mapping_[j];
 	int flag = 0;
 
