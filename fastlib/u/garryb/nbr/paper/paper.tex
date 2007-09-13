@@ -220,7 +220,7 @@ Many problems in data mining nominally require an all-pairs analysis of metric d
 For a significant subclass of these problems, \defterm{generalized $N$-body problems} (GNP's), a higher-order divide and conquer technique can avoid nearly all computation by skipping combinations of regions with little mutual interaction.
 Higher-order divide and conquer on metric\authorsnote{May need to explain what metric data is, depending on the type of reviewers to expect.} data typically utilizes metric trees, such as $kd$-trees \cite{preparata_kdtrees}, ball trees \cite{balltrees}, and cover trees \cite{covertrees}, to assist in dividing the data set into regions.
 Such employment of trees is frequently called the \defterm{dual-tree} or the more generalized \defterm{multi-tree} approach.
-The multi-tree approach is used by some of the fastest known serial algorithms for many statistical and physical problems on metric data, such as bounded-error kernel density estimation \cite{gray_kde, lee_gauss1, lee_gauss2}, $n$-point correlation \cite{gray_nbody}, nearest neighbor search \cite{ryan_nips}, and more.
+This approach is used by some of the fastest known serial algorithms for many statistical and physical problems on metric data, such as bounded-error kernel density estimation \cite{gray_kde, lee_gauss1, lee_gauss2}, $n$-point correlation \cite{gray_nbody}, nearest neighbor search \cite{ryan_nips}, and more.
 
 Nonetheless, as multi-core processors begin to dominate even commodity markets, even the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
 Additionally, and perhaps more importantly, some data sets are too massive to be practical on a single processor -- given enough processors, these problems may become practical.
@@ -228,19 +228,20 @@ Fortunately, multi-tree algorithms, owing to their divide-and-conquer nature, ar
 We show that techniques that have long been used to parallelize the physical $N$-body force calculation methods can be, to an extent, applied to all GNP's.
 
 Parallel programming is well-known for its significant cost in terms of development time, which is frequently far greater and more expensive than any achievable speedup.
-However, we show that all GNP's can be phrased as an instance of a generalized $N$-body algorithm, leading to an intriguing solution: Invest in a parallel solver for the general problem, requiring algorithm developers to provide only problem-specific portions.
+However, we show that all second-order GNP's can be phrased as an instance of a generalized $N$-body algorithm, leading to an intriguing solution: Invest in a parallel solver for the general problem, requiring algorithm developers to provide only problem-specific portions.
 In practice, this approach leads to efficient parallel and serial performance, and furthermore, the parallel algorithm in some cases takes less time to develop than a from-scratch serial algorithm.
 
 %We describe in this paper both the formal problem generalization, and our implementation \THOR that executes dual-tree algorithms with two different expansion patterns.
 %\authorsnote{Make sure it's clear at this point what is novel in my paper.  What should be clear is: (a) the mathematical model, and (b) its implementation in parallel.}
 
 We present and justify three major claims.
-We show a formal, unified model that solves all generalized $N$-body problems, and respectively allows most dual-tree algorithms.
+We show a formal, unified model that solves all second-order generalized $N$-body problems, and respectively allows most dual-tree algorithms.
 Second, we argue that programming in this unified model is not costly in developer time.
 Finally, we show the inherent parallelism of our model by examining an implementation that uses well-known parallelization techniques.
 \authorsnote{Cite some pivotal works on cache efficiency}
 \authorsnote{Remind people that kd-trees are adaptive}
 \authorsnote{Talk about our anti-undo policy}
+\authorsnote{Try to appeal to people who don't really care about dual-tree algorithms, but just want raw parallelism.}
 
 \section{Fast Dual-Tree Algorithms}
 
@@ -289,7 +290,7 @@ We briefly introduce the concept of metric trees and define some fundamental not
 Our notation considers tree node $X$ in a metric tree $\kdroot{X}$ to be a set of points.
 These points lie in a metric space, such that a distance metric $\dist{x}{y}$ is commutative, satisfies the triangle inequality $\dist{x}{z} \leq \dist{x}{y} + \dist{y}{z}$, and is zero iff $x = y$.
 For example, a $kd$-tree\cite{preparata_kdtrees}, as in \fig{kdtree}, is a binary tree that recursively divides the data along coordinate dimensions, and works with $L$ distance metrics such as Euclidean $L_2$.
-Ball trees are binary and use bounding hyper-spheres instead.
+Ball trees are binary and use bounding radii instead, and work with any metric space.
 Cover trees are not binary and have a variable branching factor depending on the dimensionality of the data.
 Quad-trees and oct-trees recursively bisect all coordinate dimensions for two- and three-dimensional vector spaces.
 The choice of tree is often problem-specific, but generally results in a constant-factor rather than asymptotic complexity difference.
@@ -303,11 +304,12 @@ Bounds are a fundamental part of multi-tree algorithms, so we universally use su
 \mysub{Single-tree versus dual-tree}
 A common program structure, which we label \defterm{query-reference}, loops at the top level over a sequence of query points, and for each of those, considers all reference points with regard to the query.
 An example, nearest neighbors, loops over many query points, and for each, loops over reference points to find the nearest one for that query.
+
 A \defterm{single-tree} algorithm replaces the inner loop with a tree traversal, and skips parts of the tree that are irrelevant to the query, much like search in a binary search tree.
 A \defterm{dual-tree} algorithm merges the two loops together and considers the entire computation a traversal over tree node pairs, forming a hierarchy over the Cartesian product of points.
-The dual-tree algorithm prunes node pairs from consideration when possible.
+The dual-tree algorithm \defterm{prunes} node pairs from consideration when possible, using summary information.
 Although dual-tree algorithms can solve problems such as two-point correlation that have no actual differentiation between a query or reference point, the query-reference nomenclature simplifies our discourse with a minor loss in generality.
-In many practical problems, the amount of computation that can be pruned is immense, reducing the complexity to $O(N log N)$, $O(N)$, or $O(N^{1+\epsilon})$.
+In many practical problems, the amount of computation that can be pruned is immense, reducing the complexity to $O(N log N)$, $O(N)$, or $O(N^{1+\epsilon})$ for $0 < \epsilon < 1$.
 Although not tree-based algorithms, Strassen's\cite{strassen} matrix multiplication and Baeza-Yates\cite{baeza_yates} set-intersection algorithms also exhibit key features of higher-order divide and conquer.
 
 For each query point, a single-tree algorithm must commence at the root of the tree and traverse towards the leaves or until pruning occurs, and is usually best $O(N log N)$.
@@ -317,16 +319,16 @@ Such performance for large datasets make dual-tree algorithms a prime candidate 
 
 \mysub{Two-point correlation and range count}
 The fundamental two-point-correlation statistic conceptually measures ``clumpiness'' and fractal dimension.
-xIts dual-tree algorithm is only a few lines of code and very simple to understand, yet is asymptotically fast in practice \cite{gray_nbody}.
+Its dual-tree algorithm is only a few lines of code and very simple to understand, yet is asymptotically fast in practice \cite{gray_nbody}.
 
-Two-point correlation\footnote{A common formulation of two-point correlation skips redundant pairs, resulting in a somewhat faster algorithm, although converting between the two pair counts is elementary algebra.} calculates the number of pairs of points within fixed radius $h$.
+Two-point correlation\footnote{A common formulation of two-point correlation skips redundant pairs, however, converting between the two is elementary algebra.} calculates the number of pairs of points within fixed radius $h$.
 For data set $X$, radius $h$, and indicator function $I$, two-point correlation is
 \[\sum_{x \in X} \sum_{y \in X} I(d(x, y) \leq h).\]
 \noindent
 The dual-tree algorithm in \fig{allnntpc} considers subset (node) pair $X$ and $Y$, returning immediately if all points are completely inside or outside the radius.
-The asmyptotic speedup of this dual-tree algorithm was shown in \cite{gray_nbody}.
+The asmyptotic speedup of this dual-tree algorithm, of the $O(N^{1+\epsilon})$ variety, was shown in \cite{gray_nbody}.
 
-Two-point correlation is not necessarily a query-reference problem, since only a single result is required, although it is still nominally a nested loop.
+Two-point correlation is not necessarily a query-reference problem, since only a single result is required.
 Its analog, range count, considers the number of points within the radius for each query,
 \[\map_{q \in Q} \sum_{r \in R} I(d(q, r) \leq h).\]
 Range count has a similar, but slightly more complex, dual-tree algorithm, that we enumerate in a later section.
@@ -344,8 +346,9 @@ Given a kernel $K$, data set $R$, and query points $Q$, calculate
 \[\map_{q \in Q} \sum_{r \in R} K(q, r).\]
 One of many dual-tree algorithms \cite{gray_kde, lee_gauss1, lee_gauss2} can be used to give a bounded relative-error approximations for each query point, by pruning subcomputations with acceptable error.
 
-\mysub{Affinity propagation}
-Authorsnote: Affinity propagation has been removed, since the corresponding NIPS paper has been rejected and we have not the space to introduce a novel algorithm.x
+%\mysub{Affinity propagation}
+%authorsnote: Affinity propagation has been removed, since the corresponding NIPS paper has been rejected and we have not the space to introduce a novel algorithm.
+
 %Affinity propagation is a recent clustering technique that identifies exemplars in a data set, taking into account all point-to-point similarities\cite{affinity}.
 %The similaritiy $\simil{i}{j}$ between points $x_i$ and $x_j$ is the negative squared distance or some other quantity to be maximized, with diagonals $\simil{i}{i}$ set to a parameter that controls the number of clusters.
 %The algorithm maximizes the sum of similarities between each point and its chosen exemplar.
@@ -367,21 +370,21 @@ Indeed, we later show this property is essential to both dual-tree algorithms an
 \section{$N$-Body Particle Simulations}
 
 $N$-body particle simulations comprise some of the best-studied parallel computing problems.
-Algorithms for efficient simulation almost universally use trees, and parallelization of these tree codes offers indispensible insight into that of generalized $N$-body problems.
+Most algorithms for efficient simulation use trees, and parallelization of these tree codes offers indispensible insight into that of generalized $N$-body problems.
 The physical $N$-body problem models $N$ particles in an evolving system where each particle exerts force on all other particles.
 Computational solutions break the simulation into discrete time steps, during which force is calculated as a query-reference generalized $N$-body problem,
 \[\map_{q \in D} \sum_{r \in D} f(q,r),\]
 \noindent where $f(q,r)$ is typically an inverse-squared-distance gravitational or Coulombic force.
-Directly computing the sum takes $O(N^2)$ time and has been one avenue of pursuit\cite{grape}.
+Direct computation of the sum is $O(N^2)$ and has been one avenue of pursuit \cite{grape}.
 
-However, the famous Barnes-Hut algorithm\cite{barnes_hut} and Fast Multipole Method\cite{greengard_fmm} achieve speedup by considering distant interactions using trees, and have been subject to enormous parallelization efforts.
+However, the famous Barnes-Hut algorithm\cite{barnes_hut} and Fast Multipole Method\cite{greengard_fmm} achieve speedup by using trees to approximate distant interactions, and have been subject to enormous parallelization efforts.
 Barnes-Hut\cite{barnes_hut} traverses an oct-tree\footnote{An oct-tree hierarchically divides all 3 dimensions at the midpoint.} to approximate force on each particle.
 If query particle $q$ is further than parameter $\theta$ times the spatial width of the considered node, the force calculation is approximated by the node's center of mass.
-Although Barnes-Hut is a single-tree algorithm, many aspects of its parallelization are extracted to the dual-tree case.
+Although Barnes-Hut is a single-tree algorithm, many aspects of its parallelization are applicable to the dual-tree case.
 
-The Fast Multipole Method (FMM)\cite{greengard_fmm} achieves $O(N)$ on uniform distributions, but with a higher constant factor than the $O(N log N)$ Barnes-Hut, by considering node-node interactions like dual-tree algorithms.
-Although the FMM is indeed a special case of dual-tree algorithms due to its node-node computations.
-However, its traversal pattern, often called a ``downwards pass,'' is quite specific and does not necessary reflect the diversity of dual-tree problems.
+The Fast Multipole Method (FMM)\cite{greengard_fmm} achieves $O(N)$ on uniform distributions, but with a higher constant factor, by considering node-node interactions.
+The FMM is indeed a special case of dual-tree algorithms due to its node-node computations.
+However, its traversal pattern, often called a ``downwards pass,'' is quite specific and does not necessarily reflect the diversity of dual-tree problems.
 Still, key parallelization insights are still applicable to dual-tree algorithms.
 
 % \cite{singh95load} \cite{nyland93dataparallel} \cite{washington_nesl}
@@ -392,15 +395,16 @@ When approached with a potentially parallelizable problem, development time is t
 Simplifying the process of developing parallel code has been a widespread goal of parallelization communities.
 
 One approach is to create parallel programming languages or language extensions that allow a user to write serial or minimally parallel code and have it run on automatically on many processors.
-These languages or extensions may provide terriffic performance for problems with regular access patterns with minimal programming, but leave the developer at the mercy of the language's abilities.
-However, generalized $N$-body problems rarely exhibit the type regularity of which these languages can take advantage.
-NESL is a very high-level parallel programming language semantically resembling ML.
-NESL is designed to handle irregular access pattern, and sports parallel implementations of Barnes-Hut and the FMM \cite{blelloch_nbody}.
+These languages or extensions may provide terriffic performance for problems with regular access patterns, but leave the developer at the mercy of the language's abilities.
+Generalized $N$-body problems rarely exhibit the type regularity of which these languages can take advantage.
+
+However, NESL is a very high-level parallel programming language, semantically resembling ML, that is designed to handle irregular access pattern.
+NESL sports parallel implementations of Barnes-Hut and the FMM \cite{blelloch_nbody}.
 However, its explicit goal of rapid algorithm development for the benefit of teaching and experimentation overshadows the goal of fine-tuned production code.
-We find that direct implementation control to be advantageous for considering different communication or scheduling strategies, incorporating efficient machine-level code, and considering additional features like fault tolerance.
+We find direct implementation control to be advantageous for considering different communication or scheduling strategies, incorporating efficient machine-level code, and considering additional features like fault tolerance.
 %Although it is fair to say that parallel programming languages have improved dramatically since then, there is still sparse literature on parallelizing $N$-body algorithms this way.
 
-A popular approach involves generalizing a specific, yet diverse, class of problems.
+An increasingly popular approach involves generalizing a specific, yet diverse, class of problems.
 One develops an arbitrarily fine-tuned implementation of the generalized problem in a fast language, but allow the user to plug in the algorithmic specifics.
 Map-Reduce\cite{mapreduce} is a famous example for solving problems that process massive data sets through the three-step process of preprocessing, aggregating, and reduction.
 By targetting only this class of problems, Map-Reduce can use optimally efficient data decomposition methods, out-of-core sorting algorithms, and mechanisms for fault-tolerance.
@@ -409,11 +413,11 @@ Additionally, very little work on the part of the programmer is needed, such tha
 Warren and Salmon\cite{warren95portable} made a similar argument over a decade ago when building a software framework for parallelizing oct-tree algorithms using a Hashed Oct-Tree method.
 They created a fine-tuned implementation of single-tree algorithms based on previous Barnes-Hut work, but abstracted key points that can be replaced with custom code for different problems.
 We do build on major points from both authors, prime figures in distributed-memory $N$-body algorithms.
-However, dual-tree algorithms differ fundamentally from single-tree algorithms, and the Hashed Oct-Tree method's specificity to oct-trees leads us to look at other methods.
+However, dual-tree algorithms differ fundamentally from single-tree algorithms, and the Hashed Oct-Tree method is specific to oct-trees.
 
-We show dual-tree algorithms have a novel generalization, which we take advantage of to create parallel code.
-The developer needs only to focus on the interactions that occur among points and nodes, not on the details of the tree algorithm or its parallelization.
-We choose to implement \THOR in C++ owing to its wide availability of efficient compilers, low-level access to hardware, and efficient templating system.
+We show dual-tree algorithms have a novel generalization, of which we take advantage in order to create parallel code.
+The developer needs only to focus on the interactions that occur among points and tree nodes, not on the details of the tree exploration or its parallelization.
+We choose to implement \THOR in C++ owing to the availability of efficient compilers, low-level access to hardware, and efficient templating system.
 Additionally, since programmers prefer to use common constructs such as vectors and lists over static bit-copiable structures, \THOR provides a scheme that takes advantage of C++ templates to implement serialization and deserialization of acyclic pointer graphs, using a templated object traversal.
 Thus, we present \THOR as a ``quick and easy'' way to generate efficient parallel dual-tree algorithms.
 
@@ -422,7 +426,7 @@ Thus, we present \THOR as a ``quick and easy'' way to generate efficient paralle
 Previously, we implied that a subclass of all-pairs computations are generalized $N$-body problems.
 We begin to describe an extreme, though computationally unreasonable, generaliztion of $N$-body problems.
 The class of \defterm{second-order reduce problems} is a type of all-pairs computation that is a superset of generalized $N$-body problems.
-For $\bigotimes$ and $\bigodot$ both commutative and associative, postprocessing functions $h$ and $g$, inner function $f$, and data sets $X$ and $Y$, one computes,
+For commutative, associative operators $\bigotimes$ and $\bigodot$, postprocessing functions $h$ and $g$, inner function $f$, and data sets $X$ and $Y$, one computes,
 \[\begin{array}{l}
   \displaystyle \Gnp(X, Y) = h(\gnp(X, Y)),
   \\
@@ -441,9 +445,9 @@ For example, two-point correlation with radius $w$ is has,
   \multicolumn{3}{r}{g(x, a)} &\equiv& a
   \\
   \multicolumn{3}{r}{h(a)} &\equiv& a
-\end{array}{c}\]
+\end{array}\]
 
-A second-order reduce problem is a \defterm{generalized $N$-body problem} if for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$,
+A second-order reduce problem is also a \defterm{generalized $N$-body problem} if for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$,
 \[\gnp(X,Y) = \gnp(X,\kdleft{Y}) \otimes \gnp(X,\kdright{Y}).\]
 \noindent Note that similar decomposition of $X$ over $\bigodot$ is trivial by commutativity and associativity.
 A simple generalized $N$-body problem, a \defterm{single-operator problem}, has $\bigodot = \bigotimes$ and a null $g$, such as two-point correlation above.
