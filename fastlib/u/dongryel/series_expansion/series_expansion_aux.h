@@ -18,6 +18,8 @@ class SeriesExpansionAux {
 
   int max_order_;
 
+  Vector factorials_;
+
   ArrayList<int> list_total_num_coeffs_;
 
   Vector inv_multiindex_factorials_;
@@ -44,6 +46,15 @@ class SeriesExpansionAux {
 
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
+
+  void ComputeFactorials() {
+    factorials_.Init(max_order_ + 1);
+
+    factorials_[0] = 1;
+    for(index_t t = 1; t <= max_order_; t++) {
+      factorials_[t] = t * factorials_[t - 1];
+    }
+  }
 
   void ComputeLowerMappingIndex() {
     
@@ -76,7 +87,37 @@ class SeriesExpansionAux {
       } // end of j-loop
     } // end of i-loop
   }
-  
+
+  void ComputeMultiindexCombination() {
+
+    multiindex_combination_.Init(list_total_num_coeffs_[max_order_],
+				 list_total_num_coeffs_[max_order_]);
+
+    for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+      
+      // beta mapping
+      ArrayList<int> beta_mapping = multiindex_mapping_[j];
+      
+      for(index_t k = 0; k < list_total_num_coeffs_[max_order_]; k++) {
+	
+	// alpha mapping
+	ArrayList<int> alpha_mapping = multiindex_mapping_[k];
+	
+	// initialize the factor to 1
+	multiindex_combination_.set(j, k, 1);
+	
+	for(index_t i = 0; i < dim_; i++) {
+	  multiindex_combination_.set
+	    (j, k, multiindex_combination_.get(j, k) * 
+	     n_choose_k_.get(beta_mapping[i], alpha_mapping[i]));
+	  
+	  if(multiindex_combination_.get(j, k) == 0)
+	    break;
+	}
+      }
+    }
+  }
+
   void ComputeUpperMappingIndex() {
     
     ArrayList<int> diff;
@@ -117,6 +158,8 @@ class SeriesExpansionAux {
   ~SeriesExpansionAux() {}
 
   // getters and setters
+  double factorial(int k) { return factorials_[k]; }
+
   int get_dimension() const { return dim_; }
 
   int get_total_num_coeffs(int order) const;
@@ -126,6 +169,8 @@ class SeriesExpansionAux {
   const Vector& get_inv_multiindex_factorials() const;
 
   const ArrayList< int > * get_lower_mapping_index() const;
+
+  int get_max_order() const;
 
   const ArrayList< int > & get_multiindex(int pos) const;
 
