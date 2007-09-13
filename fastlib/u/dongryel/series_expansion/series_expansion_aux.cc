@@ -14,6 +14,10 @@ const ArrayList < int > *SeriesExpansionAux::get_lower_mapping_index() const {
   return lower_mapping_index_.begin();
 }
 
+int SeriesExpansionAux::get_max_order() const {
+  return max_order_;
+}
+
 const ArrayList < int > &SeriesExpansionAux::get_multiindex(int pos) const {
   return multiindex_mapping_[pos];
 }
@@ -76,6 +80,9 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
     list_total_num_coeffs_[p] = (int) math::BinomialCoefficient(p + dim, dim);
   }
 
+  // compute factorials
+  ComputeFactorials();
+
   // allocate space for inverse factorial and 
   // negative inverse factorials and multiindex mapping and n_choose_k 
   // and multiindex_combination precomputed factors
@@ -88,8 +95,6 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   }
   n_choose_k_.Init(max_order + dim + 1, max_order + dim + 1);
   n_choose_k_.SetZero();
-  multiindex_combination_.Init(list_total_num_coeffs_[max_order],
-			       list_total_num_coeffs_[max_order]);
 
   // initialization of temporary variables for computation...
   heads.Init(dim + 1);
@@ -130,29 +135,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   }
 
   // initialize multiindex_combination matrix beta choose alpha
-  for(j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
-    
-    // beta mapping
-    ArrayList<int> beta_mapping = multiindex_mapping_[j];
-
-    for(k = 0; k < list_total_num_coeffs_[max_order_]; k++) {
-
-      // alpha mapping
-      ArrayList<int> alpha_mapping = multiindex_mapping_[k];
-
-      // initialize the factor to 1
-      multiindex_combination_.set(j, k, 1);
-
-      for(i = 0; i < dim; i++) {
-	multiindex_combination_.set
-	  (j, k, multiindex_combination_.get(j, k) * 
-	   n_choose_k_.get(beta_mapping[i], alpha_mapping[i]));
-
-	if(multiindex_combination_.get(j, k) == 0)
-	  break;
-      }
-    }
-  }
+  ComputeMultiindexCombination();
 
   // compute the lower_mapping_index_ and the upper_mapping_index_
   // (see series_expansion_aux.h for explanation)

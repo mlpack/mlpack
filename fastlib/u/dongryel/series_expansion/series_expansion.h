@@ -102,6 +102,22 @@ class SeriesExpansion {
   void Init(const TKernel& kernel, ExpansionType expansion_type,
 	    const Vector& center, SeriesExpansionAux *sea);
 
+  int OrderForEvaluating(const ArrayList< DRange > &region) const;
+
+  /**
+   * Computes the required order for converting to the local expansion
+   * inside another region, so that the total error (truncation error
+   * of the far field expansion plus the conversion error) is bounded
+   * above by the given user bound.
+   *
+   * @return the minimum approximation order required for the error,
+   *         -1 if approximation up to the maximum order is not possible
+   */
+  int OrderForConvertingToLocal(const ArrayList< DRange > &far_field_region,
+				const ArrayList< DRange > &local_field_region, 
+				double min_dist_sqd_regions, 
+				double required_bound, 
+				double *actual_error) const;
   /**
    * Prints out the series expansion represented by this object.
    */
@@ -442,6 +458,93 @@ void SeriesExpansion<TKernel>::Init(const TKernel &kernel,
 }
 
 template<typename TKernel>
+int SeriesExpansion<TKernel>::OrderForEvaluating
+(const ArrayList< DRange > &region) const {
+
+  int order = 0;
+  
+  return order;
+}
+
+template<typename TKernel>
+int SeriesExpansion<TKernel>::OrderForConvertingToLocal
+(const ArrayList< DRange > &far_field_region,
+ const ArrayList< DRange > &local_field_region, double min_dist_sqd_regions,
+ double required_bound, double *actual_error) const {
+
+  // for local field to local field conversion, no error is incurred
+  if(expansion_type_ == LOCAL) {
+    return 0;
+  }
+
+  // get dimension
+  int dim = sea_->get_dimension();
+
+  // get max order
+  int max_order = sea_->get_max_order();
+
+  double max_far_field_region_length = 0;
+  double max_local_field_region_length = 0;
+  
+  // compute the maximum side length of two regions
+  for(index_t d = 0; d < dim; d++) {
+    DRange far_field_bound = far_field_region[d];
+    DRange local_field_bound = local_field_region[d];
+    max_far_field_region_length = max(max_far_field_region_length,
+				      far_field_bound.width());
+    max_local_field_region_length = max(max_local_field_region_length,
+					local_field_bound.width());
+  }
+  
+  // get bandwidth squared
+  double bwsqd = kernel_.bandwidth_sqd();
+
+  // compute 
+  double two_times_bandwidth = sqrt(bwsqd) * 2;
+  double r_R = max_far_field_region_length / two_times_bandwidth;
+  double r_Q = max_local_field_region_length / two_times_bandwidth;
+  double sqrt_two_r_R = sqrt(2.0) * r_R;
+  double sqrt_two_r_Q = sqrt(2.0) * r_Q;
+
+  // if either the far field/local region is too big, don't approximate
+  if(sqrt_two_r_R >= 1.0 || sqrt_two_r_Q >= 1.0)
+    return -1;
+
+  int order = 0;
+  double sqrt_two_r_R_raised_to_p = 1.0;
+  double r_Q_raised_to_p = 1.0;
+  int remainder;
+  double ret2;
+  double frontfactor = exp(-min_dist_sqd_regions / (4.0 * bwsqd));
+  double floor_fact, ceil_fact;
+
+  do {
+    order++;
+
+    r_Q_raised_to_p *= r_Q;
+    sqrt_two_r_R_raised_to_p *= sqrt_two_r_R;
+    floor_fact = sea_->factorial((int) floor((double) order / (double) dim));
+    ceil_fact = sea_->factorial((int) ceil((double) order / (double)dim));
+
+    if(floor_fact < 0 || ceil_fact < 0 || order > max_order)
+      return -1;
+
+    remainder = order % dim;
+
+    ret2 = (sea_->get_total_num_coeffs(order + 1) -
+	    sea_->get_total_num_coeffs(order))
+      / sqrt(pow(floor_fact, dim - remainder) *
+	     pow(ceil_fact, remainder));
+    ret2 *= (r_Q_raised_to_p + sqrt_two_r_R_raised_to_p * 
+	     sea_->get_total_num_coeffs(order)) * frontfactor;
+
+  } while(ret2 > required_bound);
+
+  *actual_error = ret2;
+  return order;
+}
+
+template<typename TKernel>
 void SeriesExpansion<TKernel>::PrintDebug(const char *name, 
 					  FILE *stream) const {
   
@@ -533,7 +636,10 @@ void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se) {
     return;
   else
     order_ = order;
-  
+
+  // set the expansion type
+  expansion_type_ = FARFIELD;
+
   // the first order (the sum of the weights) stays constant regardless
   // of the location of the center.
   coeffs_.SetZero();
@@ -608,6 +714,9 @@ void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se) {
   if(far_order > order_) {
     order_ = far_order;
   }
+
+  // set the expansion type to local expansion
+  expansion_type_ = LOCAL;
 
   // compute Gaussian derivative
   limit = 2 * order_ + 1;
@@ -695,6 +804,9 @@ void SeriesExpansion<TKernel>::TransLocalToLocal(const SeriesExpansion &se) {
   if(prev_order > order_) {
     order_ = prev_order;
   }
+
+  // set the expansion type to local expansion
+  expansion_type_ = LOCAL;
 
   // inverse multiindex factorials
   Vector C_k;
