@@ -10,7 +10,7 @@
 #include "fastlib/fastlib.h"
 
 /**
- * Derivative computer class
+ * Derivative computer class for Gaussian kernel
  */
 class GaussianKernelDerivative {
   FORBID_COPY(GaussianKernelDerivative);
@@ -48,6 +48,47 @@ class GaussianKernelDerivative {
 	  }
 	}
       }
+    } // end of looping over each dimension
+  }
+};
+
+/**
+ * Derivative computer class for Epanechnikov kernel
+ */
+class EpanKernelDerivative {
+  FORBID_COPY(EpanKernelDerivative);
+  
+ public:
+
+  EpanKernelDerivative() {}
+
+  ~EpanKernelDerivative() {}
+
+  void ComputePartialDerivatives(const Vector &x, 
+				 Matrix &derivative_map) const {
+
+    int dim = derivative_map.n_rows();
+    int order = derivative_map.n_cols() - 1;
+    
+    // precompute necessary Hermite polynomials based on coordinate difference
+    for(index_t d = 0; d < dim; d++) {
+      
+      double coord_div_band = x[d];
+      
+      derivative_map.set(d, 0, 1 - coord_div_band * coord_div_band);
+
+      if(order > 0) {
+	derivative_map.set(d, 1, -2 * coord_div_band);
+	
+	if(order > 1) {
+	  derivative_map.set(d, 2, -2);
+
+	  for(index_t k = 3; k <= order; k++) {
+	    derivative_map.set(d, k, 0);
+	  }
+	}
+      }
+
     } // end of looping over each dimension
   }
 };
