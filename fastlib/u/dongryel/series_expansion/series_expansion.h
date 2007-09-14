@@ -11,18 +11,21 @@
 
 #include "fastlib/fastlib.h"
 
+#include "kernel_derivative.h"
 #include "series_expansion_aux.h"
 
 /**
  * Series expansion class.
  */
-template<typename TKernel>
+template<typename TKernel, typename TKernelDerivative>
 class SeriesExpansion {
   FORBID_COPY(SeriesExpansion);
   
  public:
   
   typedef TKernel Kernel;
+
+  typedef TKernelDerivative KernelDerivative;
 
   enum ExpansionType { FARFIELD, LOCAL };
 
@@ -45,6 +48,9 @@ class SeriesExpansion {
   
   /** precomputed quantities */
   SeriesExpansionAux *sea_;
+
+  /** Derivative computer based on the kernel passed in */
+  KernelDerivative kd_;
 
  public:
 
@@ -143,8 +149,8 @@ class SeriesExpansion {
 
 };
 
-template<typename TKernel>
-void SeriesExpansion<TKernel>::ComputeFarFieldCoeffs
+template<typename TKernel, typename TKernelDerivative>
+void SeriesExpansion<TKernel, TKernelDerivative>::ComputeFarFieldCoeffs
 (const Matrix& data, const Vector& weights,
  const ArrayList<int>& rows, int order) {
 
@@ -215,8 +221,8 @@ void SeriesExpansion<TKernel>::ComputeFarFieldCoeffs
   }
 }
 
-template<typename TKernel>
-void SeriesExpansion<TKernel>::ComputeLocalCoeffs
+template<typename TKernel, typename TKernelDerivative>
+void SeriesExpansion<TKernel, TKernelDerivative>::ComputeLocalCoeffs
 (const Matrix& data, const Vector& weights, const ArrayList<int>& rows, 
  int order) {
 
@@ -233,53 +239,33 @@ void SeriesExpansion<TKernel>::ComputeLocalCoeffs
   neg_inv_multiindex_factorials.Alias
     (sea_->get_neg_inv_multiindex_factorials());
 
-  // declare hermite mapping
-  Matrix hermite_map;
-  hermite_map.Init(dim, order + 1);
+  // declare deritave mapping
+  Matrix derivative_map;
+  derivative_map.Init(dim, order + 1);
   
   // some temporary variables
   Vector arrtmp;
   arrtmp.Init(total_num_coeffs);
   Vector x_r_minus_x_Q;
   x_r_minus_x_Q.Init(dim);
-
+  
   // sqrt two times bandwidth
   double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
-
+  
   // for each data point,
   for(index_t r = 0; r < rows.size(); r++) {
-
+    
     // get the row number
     int row_num = rows[r];
-
+    
     // calculate x_r - x_Q
     for(index_t d = 0; d < dim; d++) {
       x_r_minus_x_Q[d] = (center_[d] - data.get(d, row_num)) / 
 	sqrt_two_bandwidth;
     }
     
-    // precompute necessary Hermite polynomials based on coordinate difference
-    for(index_t d = 0; d < dim; d++) {
-
-      double coord_div_band = x_r_minus_x_Q[d];
-      double d2 = 2 * coord_div_band;
-      double facj = exp(-coord_div_band * coord_div_band);
-      
-      hermite_map.set(d, 0, facj);
-      
-      if(order > 0) {
-
-	hermite_map.set(d, 1, d2 * facj);
-	
-	if(order > 1) {
-	  for(index_t k = 1; k < order; k++) {
-	    int k2 = k * 2;
-	    hermite_map.set(d, k + 1, d2 * hermite_map.get(d, k) -
-			    k2 * hermite_map.get(d, k - 1));
-	  }
-	}
-      }
-    } // end of looping over each dimension
+    // precompute necessary partial derivatives based on coordinate difference
+    kd_.ComputePartialDerivatives(x_r_minus_x_Q, derivative_map);
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -287,7 +273,7 @@ void SeriesExpansion<TKernel>::ComputeLocalCoeffs
       arrtmp[j] = 1.0;
 
       for(index_t d = 0; d < dim; d++) {
-        arrtmp[j] *= hermite_map.get(d, mapping[d]);
+        arrtmp[j] *= derivative_map.get(d, mapping[d]);
       }
     }
 
@@ -298,8 +284,8 @@ void SeriesExpansion<TKernel>::ComputeLocalCoeffs
   } // End of looping through each reference point.
 }
 
-template<typename TKernel>
-double SeriesExpansion<TKernel>::EvaluateFarField
+template<typename TKernel, typename TKernelDerivative>
+double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateFarField
 (Matrix* data, int row_num, Vector* x_q) {
   
   // dimension
@@ -338,25 +324,7 @@ double SeriesExpansion<TKernel>::EvaluateFarField
   }
 
   // compute deriative maps based on coordinate difference.
-  for(index_t d = 0; d < dim; d++) {
-    double coord_div_band = x_q_minus_x_R[d];
-    double d2 = 2 * coord_div_band;
-    double facj = exp(-coord_div_band * coord_div_band);
-
-    derivative_map.set(d, 0, facj);
-
-    if(order_ > 0) {
-      derivative_map.set(d, 1, d2 * facj);
-    
-      if(order_ > 1) {
-	for(index_t k = 1; k < order_; k++) {
-	  int k2 = k * 2;
-	  derivative_map.set(d, k + 1, d2 * derivative_map.get(d, k) -
-			     k2 * derivative_map.get(d, k - 1));
-	}
-      }
-    }
-  }
+  kd_.ComputePartialDerivatives(x_q_minus_x_R, derivative_map);
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2))
   for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -376,8 +344,8 @@ double SeriesExpansion<TKernel>::EvaluateFarField
   return multipole_sum;
 }
 
-template<typename TKernel>
-double SeriesExpansion<TKernel>::EvaluateLocalField
+template<typename TKernel, typename TKernelDerivative>
+double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateLocalField
 (Matrix* data, int row_num, Vector* x_q) {
 
   index_t k, t, tail;
@@ -439,8 +407,8 @@ double SeriesExpansion<TKernel>::EvaluateLocalField
   return sum;
 }
 
-template<typename TKernel>
-void SeriesExpansion<TKernel>::Init(const TKernel &kernel,
+template<typename TKernel, typename TKernelDerivative>
+void SeriesExpansion<TKernel, TKernelDerivative>::Init(const TKernel &kernel,
 				    ExpansionType expansion_type, 
 				    const Vector& center, 
 				    SeriesExpansionAux* sea) {
@@ -457,8 +425,8 @@ void SeriesExpansion<TKernel>::Init(const TKernel &kernel,
   coeffs_.SetZero();
 }
 
-template<typename TKernel>
-int SeriesExpansion<TKernel>::OrderForEvaluating
+template<typename TKernel, typename TKernelDerivative>
+int SeriesExpansion<TKernel, TKernelDerivative>::OrderForEvaluating
 (const ArrayList< DRange > &region) const {
 
   int order = 0;
@@ -466,8 +434,8 @@ int SeriesExpansion<TKernel>::OrderForEvaluating
   return order;
 }
 
-template<typename TKernel>
-int SeriesExpansion<TKernel>::OrderForConvertingToLocal
+template<typename TKernel, typename TKernelDerivative>
+int SeriesExpansion<TKernel, TKernelDerivative>::OrderForConvertingToLocal
 (const ArrayList< DRange > &far_field_region,
  const ArrayList< DRange > &local_field_region, double min_dist_sqd_regions,
  double required_bound, double *actual_error) const {
@@ -544,8 +512,8 @@ int SeriesExpansion<TKernel>::OrderForConvertingToLocal
   return order;
 }
 
-template<typename TKernel>
-void SeriesExpansion<TKernel>::PrintDebug(const char *name, 
+template<typename TKernel, typename TKernelDerivative>
+void SeriesExpansion<TKernel, TKernelDerivative>::PrintDebug(const char *name, 
 					  FILE *stream) const {
   
   int dim = sea_->get_dimension();
@@ -606,8 +574,9 @@ void SeriesExpansion<TKernel>::PrintDebug(const char *name,
   fprintf(stream, "\n");
 }
 
-template<typename TKernel>
-void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se) {
+template<typename TKernel, typename TKernelDerivative>
+void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToFar
+  (const SeriesExpansion &se) {
 
   double sqrt_two_bandwidth = sqrt(2 * se.bandwidth_sq());
   int dim = sea_->get_dimension();
@@ -692,12 +661,14 @@ void SeriesExpansion<TKernel>::TransFarToFar(const SeriesExpansion &se) {
   } // end of j-loop
 }
 
-template<typename TKernel>
-void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se) {
+template<typename TKernel, typename TKernelDerivative>
+void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToLocal
+  (const SeriesExpansion &se) {
 
   Vector arrtmp;
-  Matrix hermite_map;
+  Matrix derivative_map;
   Vector far_center;
+  Vector cent_diff;
   Vector far_coeffs;
   int dimension = sea_->get_dimension();
   int far_order = se.get_order();
@@ -708,6 +679,7 @@ void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se) {
   // get center and coefficients for far field expansion
   far_center.Alias(se.get_center());
   far_coeffs.Alias(se.get_coeffs());
+  cent_diff.Init(dimension);
 
   // if the order of the far field expansion is greater than the
   // local one we are adding onto, then increase the order.
@@ -720,26 +692,16 @@ void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se) {
 
   // compute Gaussian derivative
   limit = 2 * order_ + 1;
-  hermite_map.Init(dimension, limit);
+  derivative_map.Init(dimension, limit);
   arrtmp.Init(total_num_coeffs);
-  
+
+  // compute center difference divided by bw_times_sqrt_two;
   for(index_t j = 0; j < dimension; j++) {
-    double coord_div_band = (center_[j] - far_center[j]) / bw_times_sqrt_two;
-    double d2 = 2 * coord_div_band;
-    double facj = exp(-coord_div_band * coord_div_band);
+    cent_diff[j] = (center_[j] - far_center[j]) / bw_times_sqrt_two;
+  }
 
-    hermite_map.set(j, 0, facj);
-    
-    if(order_ > 0) {
-      hermite_map.set(j, 1, d2 * facj);
-
-      for(index_t k = 1; k < limit; k++) {
-	int k2 = k * 2;
-	hermite_map.set(j, k + 1, d2 * hermite_map.get(j, k) - k2 * 
-			hermite_map.get(j, k - 1));
-      } // end of k loop
-    }
-  } // end of j-loop
+  // compute required partial derivatives
+  kd_.ComputePartialDerivatives(cent_diff, derivative_map);
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
@@ -749,14 +711,14 @@ void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se) {
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
       ArrayList<int> alpha_mapping = sea_->get_multiindex(k);
-      double hermite_factor = 1.0;
+      double derivative_factor = 1.0;
 
       for(index_t d = 0; d < dimension; d++) {
-	hermite_factor *= 
-	  hermite_map.get(d, beta_mapping[d] + alpha_mapping[d]);
+	derivative_factor *= 
+	  derivative_map.get(d, beta_mapping[d] + alpha_mapping[d]);
       }
       
-      arrtmp[j] += far_coeffs[k] * hermite_factor;
+      arrtmp[j] += far_coeffs[k] * derivative_factor;
 
     } // end of k-loop
   } // end of j-loop
@@ -767,8 +729,9 @@ void SeriesExpansion<TKernel>::TransFarToLocal(const SeriesExpansion &se) {
   }
 }
 
-template<typename TKernel>
-void SeriesExpansion<TKernel>::TransLocalToLocal(const SeriesExpansion &se) {
+template<typename TKernel, typename TKernelDerivative>
+void SeriesExpansion<TKernel, TKernelDerivative>::TransLocalToLocal
+  (const SeriesExpansion &se) {
   
   // get the center and the order and the total number of coefficients of 
   // the expansion we are translating from. Also get coefficients we
