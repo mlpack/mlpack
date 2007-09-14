@@ -2,7 +2,7 @@
 librule(
     name = "series_expansion",               # this line can be safely omitted
     sources = ["series_expansion_aux.cc"],   # files that must be compiled
-    headers = ["derivative_computer.h",
+    headers = ["kernel_derivative.h",
                "series_expansion.h",
                "series_expansion_aux.h"],    # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # depends on fastlib core

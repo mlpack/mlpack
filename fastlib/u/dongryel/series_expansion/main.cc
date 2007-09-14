@@ -6,6 +6,7 @@
  */
 
 #include "fastlib/fastlib.h"
+#include "kernel_derivative.h"
 #include "series_expansion.h"
 #include "series_expansion_aux.h"
 
@@ -33,11 +34,13 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3;
 
   // declare expansion objects at (0,0) and other centers
-  SeriesExpansion<GaussianKernel> se;
+  SeriesExpansion<GaussianKernel, GaussianKernelDerivative> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
-  se.Init(kernel, SeriesExpansion<GaussianKernel>::FARFIELD, center, &sea);
+  se.Init(kernel, 
+	  SeriesExpansion<GaussianKernel, GaussianKernelDerivative>::FARFIELD, 
+	  center, &sea);
 
   // compute up to 4-th order multivariate polynomial.
   se.ComputeFarFieldCoeffs(data, weights, rows, 10);
@@ -88,11 +91,13 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
-  SeriesExpansion<GaussianKernel> se;
+  SeriesExpansion<GaussianKernel, GaussianKernelDerivative> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 1
-  se.Init(kernel, SeriesExpansion<GaussianKernel>::LOCAL, center, &sea);
+  se.Init(kernel, 
+	  SeriesExpansion<GaussianKernel, GaussianKernelDerivative>::LOCAL, 
+	  center, &sea);
 
   // compute up to 4-th order multivariate polynomial.
   se.ComputeLocalCoeffs(data, weights, rows, 6);
@@ -156,17 +161,23 @@ int TestTransFarToFar(const Matrix &data, const Vector &weights,
   new_center[1] = -2;
 
   // declare expansion objects at (0,0) and other centers
-  SeriesExpansion<GaussianKernel> se;
-  SeriesExpansion<GaussianKernel> se_translated;
-  SeriesExpansion<GaussianKernel> se_cmp;
+  SeriesExpansion<GaussianKernel, GaussianKernelDerivative> se;
+  SeriesExpansion<GaussianKernel, GaussianKernelDerivative> se_translated;
+  SeriesExpansion<GaussianKernel, GaussianKernelDerivative> se_cmp;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
-  se.Init(kernel, SeriesExpansion<GaussianKernel>::FARFIELD, center, &sea);
-  se_translated.Init(kernel, SeriesExpansion<GaussianKernel>::FARFIELD, 
-		     new_center, &sea);
-  se_cmp.Init(kernel, SeriesExpansion<GaussianKernel>::FARFIELD, 
-	      new_center, &sea);
+  se.Init(kernel, 
+	  SeriesExpansion<GaussianKernel, GaussianKernelDerivative>::FARFIELD, 
+	  center, &sea);
+  se_translated.Init
+    (kernel, 
+     SeriesExpansion<GaussianKernel, GaussianKernelDerivative>::FARFIELD, 
+     new_center, &sea);
+  se_cmp.Init
+    (kernel, 
+     SeriesExpansion<GaussianKernel, GaussianKernelDerivative>::FARFIELD, 
+     new_center, &sea);
   
   // compute up to 4-th order multivariate polynomial and translate it.
   se.ComputeFarFieldCoeffs(data, weights, rows, 4);
@@ -221,14 +232,17 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   new_center[0] = new_center[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
-  SeriesExpansion<GaussianKernel> se;
-  SeriesExpansion<GaussianKernel> se_translated;
+  SeriesExpansion<GaussianKernel, GaussianKernelDerivative> se;
+  SeriesExpansion<GaussianKernel, GaussianKernelDerivative> se_translated;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
-  se.Init(kernel, SeriesExpansion<GaussianKernel>::LOCAL, center, &sea);
-  se_translated.Init(kernel, SeriesExpansion<GaussianKernel>::LOCAL, 
-		     new_center, &sea);
+  se.Init(kernel, 
+	  SeriesExpansion<GaussianKernel, GaussianKernelDerivative>::LOCAL, 
+	  center, &sea);
+  se_translated.Init
+    (kernel, SeriesExpansion<GaussianKernel, GaussianKernelDerivative>::LOCAL, 
+     new_center, &sea);
   
   // compute up to 4-th order multivariate polynomial and translate it.
   se.ComputeLocalCoeffs(data, weights, rows, 4);
