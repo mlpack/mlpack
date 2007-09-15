@@ -29,7 +29,8 @@
 \newcommand{\odothat}{\widehat{\odot}}
 
 \newcommand{\prefsplit}[2]{#1 \succ #2}
-\newcommand{\summary}{\hat{\sigma}}
+\newcommand{\summary}{\delta}
+%hat{\sigma}}
 
 \DeclareMathOperator*{\map}{map}
 \DeclareMathOperator*{\worst}{worst}
@@ -46,6 +47,7 @@
 \DeclareMathOperator{\ATDISCRETION}{}
 
 \newcommand{\fig}[1]{Figure~\ref{fig:#1}}
+\newcommand{\eqn}[1]{Equation~\ref{eqn:#1}}
 
 \newcommand{\Gnp}{\Psi}
 \newcommand{\gnp}{\psi}
@@ -96,40 +98,42 @@
 \newcommand{\canpruneglob}{C_{\!\letterglob}}
 \newcommand{\deltaglob}{\summary_{\!\letterglob}}
 
-\newcommand{\letterqr}{\rho}
-\newcommand{\outqr}{\varrho}
-\newcommand{\inqr}{\rho}
+\newcommand{\letterqr}{v}
+\newcommand{\outqr}{V}
+\newcommand{\inqr}{v}
 \newcommand{\Opqr}{\myOp{\letterqr}}
 \newcommand{\opqr}{\myop{\letterqr}}
 \newcommand{\fqr}{f_{\!\letterqr}}
 \newcommand{\gqr}{g_{\!\letterqr}}
 
-\newcommand{\letterqrv}{\vec{\rho}}
+\newcommand{\letterqrv}{v}
 %\newcommand{\outqrv}{\vec{\rho}}
-\newcommand{\inqrv}{\vec{\rho}}
+\newcommand{\inqrv}{v}
 %\newcommand{\fqrv}{f_{\letterqrv}}
 %\newcommand{\gqrv}{g_{\letterqrv}}
 \newcommand{\deltaqrv}{\summary_{\!\letterqrv}}
-\newcommand{\canpruneqrv}{C_{\!\letterqrv}}
+\newcommand{\canpruneqrv}{C}%_{\!\letterqrv}}
 \newcommand{\identqr}{0_{\!\letterqrv}}
-\newcommand{\varqrv}{\letterqrv^{\:C\!}}
-\newcommand{\varqrvparent}{\letterqrv^{\:P\!}}
+\newcommand{\varqrv}{\tilde{\letterqrv}}
+%\newcommand{\varqrv}{\letterqrv^{\:C\!}}
+\newcommand{\varqrvparent}{\letterqrv^{P}}
 
-\newcommand{\lettermu}{\mu}
+\newcommand{\lettermu}{e}
 %\newcommand{\inmu}{\mu}
-\newcommand{\inmu}{\mu}
-\newcommand{\Outopmu}{\widehat{\nameOp{\bigodot}{\lettermu}}}%\mathop{\widehat{\bigodot\nolimits}\!\scriptstyle{\mu}}}
-\newcommand{\outopmu}{\:\widehat{\odot}_{\!\mu}\:}
+\newcommand{\inmu}{e}
+\newcommand{\Outopmu}{\nameOp{\bigodot}{\lettermu}}%\mathop{\widehat{\bigodot\nolimits}\!\scriptstyle{\mu}}}
+\newcommand{\outopmu}{\:\odot_{\!\mu}\:}
 \newcommand{\Opmu}{\myOp{\lettermu}}
 \newcommand{\opmu}{\myop{\lettermu}}
 \newcommand{\fmu}{f_{\!\lettermu}}
-\newcommand{\fmuv}{\vec{f_{\!\lettermu}}}
+\newcommand{\fmuv}{f_{\!\lettermu}}
 \newcommand{\deltamu}{\summary_{\!\lettermu}}
-\newcommand{\canprunemu}{C_{\!\lettermu}}
+\newcommand{\canprunemu}{C}
 \newcommand{\heurqr}{H}
 \newcommand{\identmu}{0_{\lettermu}}
-\newcommand{\varmuchild}{\lettermu^{\!C}}
-\newcommand{\varmuparent}{\lettermu^{\!P}}
+\newcommand{\varmuchild}{\tilde{\lettermu}}
+%\newcommand{\varmuchild}{\lettermu^{\!C}}
+\newcommand{\varmuparent}{\lettermu^{P}}
 
 %\newcommand{\muparent}{\inmu_{\text{coarse}}}
 %\newcommand{\muchild}{\inmu_{\text{children}}}
@@ -596,32 +600,27 @@ We next show, for query-reference problems, a set of generalized ``rules'' enume
 %Nonetheless, this simple model leads to effective parallelization of problems such as two-point correlation\footnote{list more}.
 
 \subsection{Query-reference instrinsic pruning}
-A query-reference problem computes for each query $q$,
+A query-reference problem computes for each query a \defterm{query result} $\outqr(q, \kdroot{R})$, expressed
 \begin{eqnarray}
-\outqr(q, R) &=& \gqr(q, \inqr(q, R)),
+\outqr(q, R) &=& \gqr(q, \inqrv(\{q\}, R)),
 \\
-\inqr(q, R) &=& \Opqr_{r \in R} \fqr(q, r).
+\inqrv(\{q\}, R) &=& \Opqr_{r \in R} \fqr(q, r).
 \label{eqn:qrdef}
 \end{eqnarray}
 
-\noindent where $R$ is initially $\kdroot{R}$.
-In addition to the classic \nbody\ force calculation problem, this encompasses all nearest-neighbors, k-nearest-neighbors classification, nonparametric Bayes classification, kernel density estimation, affinity propagation, and more.
-Although each query is independent, speedup is achievable by considering queries {\it en masse}; that is, the contribution of a set of references might be shown to have an exact value for an entire distant set of queries.
-A \defterm{mass result} $\inqrv(Q, R)$ is defined if it is acceptable to treat
-\[
-\forall q \in Q,~~ \inqr(q, R) \gets \inqrv(Q, R)
-\]
 \noindent
-within the context of the entire computation.
+In addition to the classic \nbody\ force calculation problem, this encompasses all nearest-neighbors, k-nearest-neighbors classification, nonparametric Bayes classification, kernel density estimation, affinity propagation, and more.
+Although each query is independent, speedup is achievable by considering queries {\it en masse}; that is, the contribution of a set of references might be shown to have an exact value for an entire set of queries.
+A \defterm{mass result} $\inqrv(Q, R)$ may exist if it is acceptable to use that same value for each query given a reference node.
 Otherwise, $\inqrv(Q,R)$ is undefined.
-Expressed in tree notation,
+Hierarchically, we express,
 \begin{equation}
-\text{if prune occurs for } \kdparent{Q} \supset Q \text{, then } \inqrv(Q, R) = \inqrv(\kdparent{Q}, R).
+\text{if } \kdparent{Q} \supset Q \text{ and }\inqrv(\kdparent{Q}, R)\text{ is defined, } \inqrv(Q, R) \gets \inqrv(\kdparent{Q}, R).
 \label{eqn:qrvparent}
 \end{equation}
 
 \noindent
-Note that $\inqrv$ must be defined for singleton queries, and a single-tree algorithm conceptually treates $\inqrv$ in only this way.
+Recall that $\inqrv$ is defined for singleton queries, and a single-tree algorithm conceptually treates $\inqrv$ in only this way.
 It is important to note that although a dual-tree algorithm recursively descends the query tree, there is no explicit data dependency within the query tree, except the ability to incorporate mass results pruned from a parent.
 Our mathematical model leaves to the implementation how the query set is divided.
 Both types of algorithms, though, perform divide and conquer with the reference tree,
@@ -636,7 +635,7 @@ Both types of algorithms, though, perform divide and conquer with the reference 
 \end{equation}
 
 \noindent
-with statistics $\outstat(Q)$ and $\outstat(R)$, an intrinsic prune indicator function $\canpruneqrv$, and intrinsic prune value $\deltaqrv$.
+with node statistics $\outstat(Q)$ and $\outstat(R)$, an intrinsic prune indicator function $\canpruneqrv$, and intrinsic prune value $\deltaqrv$.
 Statistics are frequently built from commutative, associative operators, and may also be built bottom-up,
 \begin{eqnarray}
 \outstat(X) &=& \gstat(\instat(X)),
@@ -663,7 +662,7 @@ Range count, the query-reference analog to two-point correlation, is fully defin
 
 \noindent
 The two-point correlation is then the sum of $\outqr$ for all queries.
-Equations \ref{eqn:qrdef} through \ref{eqn:defstat} thus express the data flow of any query-reference problem that prunes only intrinsically using arbitrary commutative, associative statistics.
+Equations \ref{eqn:qrdef} through \ref{eqn:defstat} thus express the data flow of any query-reference problem, and allows intrinsic prunes.
 
 \subsection{Query-Reference Extrinsic Prunes}
 
@@ -788,7 +787,7 @@ Although further discussion of the merits is warranted, it is beyond the scope o
 \[
   \begin{array}[t]{l}
     \\ \text{Input:}\left(
-        \begin{array}[c]{l}\kdroot{Q}, \kdroot{R}, \gqr, \opqr, \fqr, \deltaqrv, \\ \heurqr, \canpruneqrv, \canprunemu, \outopmu, \opmu, \fmuv, \deltamu\end{array}\right)
+        \begin{array}[c]{l}\kdroot{Q}, \kdroot{R}, \gqr, \opqr, \fqr, \deltaqrv, \\ \heurqr, \canprunemu, \outopmu, \opmu, \fmuv, \deltamu\end{array}\right)
     \X \text{for all nodes } Q \in \kdroot{Q}\text{, } \varmuchild(Q) \gets \text{identity of }\Opmu
     \X \text{for all nodes } Q \in \kdroot{Q}\text{, } \varqrv(Q) \gets \text{identity of }\Opqr%\identqr
     \X \text{dfe}(\kdroot{Q}, \kdroot{R}, \text{identity of }\Opmu)
@@ -806,14 +805,14 @@ Although further discussion of the merits is warranted, it is beyond the scope o
          \\             &\psty\!\!\!\!\opmu\!\!\!\!& \psty\deltamu(\outstat(Q), \outstat(R)) & \!\!\!\text{\com{node pair's $\lettermu$, Eqn~\ref{eqn:mudelta}}}
          \\             &\psty\!\!\!\!\opmu\!\!\!\!& \psty\varmuparent                       & \!\!\!\text{\com{unvisited $\lettermu$, Eqn~\ref{eqn:muparent}}}
        \end{array}
-    \x \text{if } \exists q \exists r ~ Q = \{q\}\text{ and }R = \{r\}\text{,}
+    \x \text{if } Q = \{q\}\text{ and }R = \{r\}\text{ singletons,}
     \xx \text{\com{leaf-leaf interaction, Eqns \ref{eqn:qrdef}, \ref{eqn:qrvcompose}}}
-    \xx \varqrv(\{q\}) \gets \varqrv(\{Q\}) \opqr \fqr(q, r)
-    \x \text{else if } \canpruneqrv(\outstat(Q), \outstat(R))\text{ or }\canprunemu(\outstat(Q), \outstat(R), \lettermu)\text{,}
+    \xx \varqrv(\{q\}) \gets \varqrv(\{q\}) \opqr \fqr(q, r)
+    \x \text{else if } \canprunemu(\outstat(Q), \outstat(R), \lettermu)\text{,}
     \xx \text{\com{prune node-node interaction, Eqns \ref{eqn:qrvprune}, \ref{eqn:qrvcompose}}}
     \xx \varqrv(Q) \gets \varqrv(Q) \opqr \deltaqrv(\outstat(Q), \outstat(R))
     \x \text{else if } |Q| \geq |R|\text{,}
-    \xx \text{\com{independently explore query children}}
+    \xx \text{\com{explore both query children}}
     \xx \text{for } Q' \in \{\kdleft{Q}, \kdright{Q}\}\text{,}
     \xxx \text{\com{apply pruning information, Eqns \ref{eqn:qrvparent}, \ref{eqn:qrvcompose}}}
     \xxx \varqrv(Q') \gets \varqrv(Q') \opqr \varqrv(Q)
@@ -822,8 +821,8 @@ Although further discussion of the merits is warranted, it is beyond the scope o
     \xx \varqrv(Q) \gets \text{identity of }\Opqr
     \xx \text{\com{recompute high-quality $\lettermu$ bottom-up, Eqn~\ref{eqn:muchild}}}
     \xx \!\!\!\begin{array}{lll}
-         \psty \varmuchild(Q) &\psty\!\!\gets\!\!&\psty (\varmuchild(\kdleft{Q})  \opmu \fmuv(\kdleft{Q}, \varqrv(\kdleft{Q})))
-         \\          &\psty\!\!\outopmu\!\!&\psty (\varmuchild(\kdright{Q}) \opmu \fmuv(\kdright{Q}, \varqrv(\kdright{Q})))
+         \psty \varmuchild(Q) &\psty\!\!\gets\!\!&\psty (\varmuchild(\kdleft{Q})  \opmu \fmuv(\outstat(\kdleft{Q}), \varqrv(\kdleft{Q})))
+         \\          &\psty\!\!\outopmu\!\!&\psty (\varmuchild(\kdright{Q}) \opmu \fmuv(\outstat(\kdright{Q}), \varqrv(\kdright{Q})))
         \end{array}
     \x \text{else}
     \xx \text{\com{explore reference children in heuristic order}}
@@ -836,8 +835,8 @@ Although further discussion of the merits is warranted, it is beyond the scope o
     \X \text{function fixup}(Q, \varqrvparent)\text{,}
     \x \text{\com{propagate mass results to leaves}}
     \x \varqrv(Q) \gets \varqrv(Q) \opqr \varqrvparent
-    \x \text{if } \exists q ~ Q = \{q\}\text{,}
-    \xx \outqr(q, \kdroot{R}) \gets \gqr(q, \varqrv(Q))
+    \x \text{if } Q = \{q\}\text{ singleton,}
+    \xx \outqr(q, \kdroot{R}) \gets \gqr(q, \varqrv(\{q\}))
     \x \text{else,}
     \xx \text{fixup}(\kdleft{Q}, \varqrv(Q))
     \xx \text{fixup}(\kdright{Q}, \varqrv(Q))
