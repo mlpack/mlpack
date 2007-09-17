@@ -25,8 +25,8 @@
 \newcommand{\Intersect}{\bigcap}
 \newcommand{\bigvec}[1]{\mathop{\overrightarrow{#1}}}
 
-\newcommand{\otimeshat}{\widehat{\otimes}}
-\newcommand{\odothat}{\widehat{\odot}}
+%\newcommand{\otimeshat}{\widehat{\otimes}}
+%\newcommand{\odothat}{\widehat{\odot}}
 
 \newcommand{\prefsplit}[2]{#1 \succ #2}
 \newcommand{\summary}{\delta}
@@ -113,16 +113,14 @@
 %\newcommand{\gqrv}{g_{\letterqrv}}
 \newcommand{\deltaqrv}{\summary_{\!\letterqrv}}
 \newcommand{\canpruneqrv}{C}%_{\!\letterqrv}}
-\newcommand{\identqr}{0_{\!\letterqrv}}
-\newcommand{\varqrv}{\tilde{\letterqrv}}
+\newcommand{\varqrv}{\hat{\letterqrv}}
 %\newcommand{\varqrv}{\letterqrv^{\:C\!}}
 \newcommand{\varqrvparent}{\letterqrv^{P}}
 
 \newcommand{\lettermu}{e}
-%\newcommand{\inmu}{\mu}
 \newcommand{\inmu}{e}
 \newcommand{\Outopmu}{\nameOp{\bigodot}{\lettermu}}%\mathop{\widehat{\bigodot\nolimits}\!\scriptstyle{\mu}}}
-\newcommand{\outopmu}{\:\odot_{\!\mu}\:}
+\newcommand{\outopmu}{\:\odot_{\!\lettermu}\:}
 \newcommand{\Opmu}{\myOp{\lettermu}}
 \newcommand{\opmu}{\myop{\lettermu}}
 \newcommand{\fmu}{f_{\!\lettermu}}
@@ -130,8 +128,7 @@
 \newcommand{\deltamu}{\summary_{\!\lettermu}}
 \newcommand{\canprunemu}{C}
 \newcommand{\heurqr}{H}
-\newcommand{\identmu}{0_{\lettermu}}
-\newcommand{\varmuchild}{\tilde{\lettermu}}
+\newcommand{\varmuchild}{\hat{\lettermu}}
 %\newcommand{\varmuchild}{\lettermu^{\!C}}
 \newcommand{\varmuparent}{\lettermu^{P}}
 
@@ -238,9 +235,8 @@ In practice, this approach leads to efficient parallel and serial performance, a
 %We describe in this paper both the formal problem generalization, and our implementation \THOR that executes dual-tree algorithms with two different expansion patterns.
 %\authorsnote{Make sure it's clear at this point what is novel in my paper.  What should be clear is: (a) the mathematical model, and (b) its implementation in parallel.}
 
-We present and justify three major claims.
-We show a formal, unified model that solves all second-order generalized $N$-body problems, and respectively allows most dual-tree algorithms.
-Second, we argue that programming in this unified model is not costly in developer time.
+We demonstrate a formal, unified model that solves all second-order generalized $N$-body problems, and respectively allows most dual-tree algorithms.
+Next, we argue that programming in this unified model is not costly in developer time.
 Finally, we show the inherent parallelism of our model by examining an implementation that uses well-known parallelization techniques.
 \authorsnote{Cite some pivotal works on cache efficiency}
 \authorsnote{Remind people that kd-trees are adaptive}
@@ -298,7 +294,8 @@ Ball trees are binary and use bounding radii instead, and work with any metric s
 Cover trees are not binary and have a variable branching factor depending on the dimensionality of the data.
 Quad-trees and oct-trees recursively bisect all coordinate dimensions for two- and three-dimensional vector spaces.
 The choice of tree is often problem-specific, but generally results in a constant-factor rather than asymptotic complexity difference.
-Our mathematical discussion, without loss of generality, treats non-binary trees as if they are binary for simplicity, with every internal node has partitioned $X = \kdleft{X} \union \kdright{X}$ and having parent $\kdparent{X} \supset X$.
+For clarity, our mathematical discussion focuses on binary trees, although the notation is trivially extrapolated to arbitrary $n$-ary trees.
+Every internal node is partitioned $X = \kdleft{X} \union \kdright{X}$, with parent $\kdparent{X} \supset X$.
 Conceptually, a leaf is a single point $\{x\}$, though in practice multiple points may be grouped to amortize recursion overhead.
 
 In all these trees, each node $X$ has summary information we label $\outstat(X)$.
@@ -312,11 +309,11 @@ An example, nearest neighbors, loops over many query points, and for each, loops
 A \defterm{single-tree} algorithm replaces the inner loop with a tree traversal, and skips parts of the tree that are irrelevant to the query, much like search in a binary search tree.
 A \defterm{dual-tree} algorithm merges the two loops together and considers the entire computation a traversal over tree node pairs, forming a hierarchy over the Cartesian product of points.
 The dual-tree algorithm \defterm{prunes} node pairs from consideration when possible, using summary information.
-Although dual-tree algorithms can solve problems such as two-point correlation that have no actual differentiation between a query or reference point, the query-reference nomenclature simplifies our discourse with a minor loss in generality.
+Although dual-tree algorithms can solve problems such as two-point correlation that have no actual differentiation between a query or reference point, the query-reference nomenclature simplifies our discourse.
 In many practical problems, the amount of computation that can be pruned is immense, reducing the complexity to $O(N log N)$, $O(N)$, or $O(N^{1+\epsilon})$ for $0 < \epsilon < 1$.
-Although not tree-based algorithms, Strassen's\cite{strassen} matrix multiplication and Baeza-Yates\cite{baeza_yates} set-intersection algorithms also exhibit key features of higher-order divide and conquer.
+%Although not tree-based algorithms, Strassen's\cite{strassen} matrix multiplication and Baeza-Yates\cite{baeza_yates} set-intersection algorithms also exhibit key features of higher-order divide and conquer.
 
-For each query point, a single-tree algorithm must commence at the root of the tree and traverse towards the leaves or until pruning occurs, and is usually best $O(N log N)$.
+For each query point, a single-tree algorithm must commence at the root of the tree and traverse towards the leaves or until pruning occurs, and is usually at best $O(N log N)$.
 A dual-tree algorithm instead considers the root-level nodes only with other root-level nodes, therefore amortizing the cost of considering the root-level nodes, and can be $O(N)$ in practice.
 Empirical studies show that dual-tree algorithms significantly overtake similar single-tree algorithms for data sets larger than a threshold\authorsnote{I need to find the proximity project to justify this claim.}.
 Such performance for large datasets make dual-tree algorithms a prime candidate for parallelization.
@@ -611,7 +608,7 @@ A query-reference problem computes for each query a \defterm{query result} $\out
 \noindent
 In addition to the classic \nbody\ force calculation problem, this encompasses all nearest-neighbors, k-nearest-neighbors classification, nonparametric Bayes classification, kernel density estimation, affinity propagation, and more.
 Although each query is independent, speedup is achievable by considering queries {\it en masse}; that is, the contribution of a set of references might be shown to have an exact value for an entire set of queries.
-A \defterm{mass result} $\inqrv(Q, R)$ may exist if it is acceptable to use that same value for each query given a reference node.
+This value, a \defterm{mass result} $\inqrv(Q, R)$, exists under the condition that it is acceptable to use that same value for each query given a reference node, in other words, the prune criterion is satisfied.
 Otherwise, $\inqrv(Q,R)$ is undefined.
 Hierarchically, we express,
 \begin{equation}
@@ -768,7 +765,7 @@ To this point, we have defined many different ``rules'' that are assumed to be v
 \THOR must utilize an expansion strategy that applies these rules in order to solve a problem.
 
 Previously, we showed locally-ordered depth-first implementations of two-point correlations and nearest neighbors in \fig{allnntpc}, that work by recursively dividing along the two trees.
-\fig{dfe} shows the generalized depth-first dual-tree expansion algorithm that takes as input the data and functions of the generalized $N$-body problem.
+\fig{DFE} shows the generalized depth-first dual-tree expansion algorithm that takes as input the data and functions of the generalized $N$-body problem.
 This pseudocode, though heavily translated into C++, is present in \THOR to execute a locally-ordered depth-first expansion.
 
 Some dual-tree algorithms achieve performance gains by maintaining a queue of node pairs to expand, rather than recursing immediately; however, this has worst-case $O(N^2)$ space.
@@ -784,65 +781,69 @@ Although further discussion of the merits is warranted, it is beyond the scope o
   Each child is then explored recursively with its respective list.}.
 
 \begin{figure}
+  \vspace{-0.3in}
 \[
   \begin{array}[t]{l}
     \\ \text{Input:}\left(
         \begin{array}[c]{l}\kdroot{Q}, \kdroot{R}, \gqr, \opqr, \fqr, \deltaqrv, \\ \heurqr, \canprunemu, \outopmu, \opmu, \fmuv, \deltamu\end{array}\right)
+    \X \text{\com{Initialize mass results and summary results.}}
     \X \text{for all nodes } Q \in \kdroot{Q}\text{, } \varmuchild(Q) \gets \text{identity of }\Opmu
-    \X \text{for all nodes } Q \in \kdroot{Q}\text{, } \varqrv(Q) \gets \text{identity of }\Opqr%\identqr
-    \X \text{dfe}(\kdroot{Q}, \kdroot{R}, \text{identity of }\Opmu)
-    \X \text{fixup}(\kdroot{Q}, \identqr)
+    \X \text{for all nodes } Q \in \kdroot{Q}\text{, } \varqrv(Q) \gets \text{identity of }\Opqr
+    \X \text{DFE}(\kdroot{Q}, \kdroot{R}, \text{identity of }\Opmu)
+    \X \text{PushDown}(\kdroot{Q}, \text{identity of }\Opqr)
     \X
-    \X \text{procedure dfe}(Q, R, \varmuparent)\text{, \com{explore a node pair}}
-    \x \text{\com{combine relevant $\lettermu$, Eqn~\ref{eqn:mucompose}}}
+    \X \text{procedure DFE}(Q, R, \varmuparent)\text{, \com{explore a node pair}}
+    \x \text{\com{compute extrinsic pruning information, Eqn~\ref{eqn:mucompose}}}
     %\x \!\!\!\begin{array}{lllll}
     %     \psty\inmu(Q,\kdroot{R}) &\psty\!\!\gets\!\!& \psty\varmuchild(Q) &\psty\!\!\opmu\!\!& \psty\fmuv(\outstat(Q), \varqrv(Q))
     %     \\              &\psty\!\!\opmu\!\!& \psty\varmuparent   &\psty\!\!\opmu\!\!& \psty\deltamu(\outstat(Q), \outstat(R))
     %   \end{array}
     \x \!\!\!\begin{array}{llll}
-         \psty\lettermu &\psty\!\!\!\!\gets\!\!\!\!& \psty\varmuchild(Q)                     & \!\!\!\text{\com{bottom-up $\lettermu$, via Eqn~\ref{eqn:muchild}}}
-         \\             &\psty\!\!\!\!\opmu\!\!\!\!& \psty\fmuv(\outstat(Q), \varqrv(Q))     & \!\!\!\text{\com{mass-result $\lettermu$, Eqn~\ref{eqn:muprune}}}
-         \\             &\psty\!\!\!\!\opmu\!\!\!\!& \psty\deltamu(\outstat(Q), \outstat(R)) & \!\!\!\text{\com{node pair's $\lettermu$, Eqn~\ref{eqn:mudelta}}}
-         \\             &\psty\!\!\!\!\opmu\!\!\!\!& \psty\varmuparent                       & \!\!\!\text{\com{unvisited $\lettermu$, Eqn~\ref{eqn:muparent}}}
+         \psty\lettermu &\psty\!\!\!\!\gets\!\!\!\!& \psty\varmuchild(Q)                     & \!\!\!\text{\com{bottom-up, via Eqn~\ref{eqn:muchild}}}
+         \\             &\psty\!\!\!\!\opmu\!\!\!\!& \psty\deltamu(\outstat(Q), \outstat(R)) & \!\!\!\text{\com{node pair's, Eqn~\ref{eqn:mudelta}}}
+         \\             &\psty\!\!\!\!\opmu\!\!\!\!& \psty\fmuv(\outstat(Q), \varqrv(Q))     & \!\!\!\text{\com{pruned mass results', Eqn~\ref{eqn:muprune}}}
+         \\             &\psty\!\!\!\!\opmu\!\!\!\!& \psty\varmuparent                       & \!\!\!\text{\com{unvisited, Eqn~\ref{eqn:muparent}}}
        \end{array}
-    \x \text{if } Q = \{q\}\text{ and }R = \{r\}\text{ singletons,}
-    \xx \text{\com{leaf-leaf interaction, Eqns \ref{eqn:qrdef}, \ref{eqn:qrvcompose}}}
+    \x \text{if } Q = \{q\}\text{ and }R = \{r\}\text{ singletons, \com{leaf-leaf pair}}
+    \xx \text{\com{compute value directly, Eqns \ref{eqn:qrdef}, \ref{eqn:qrvcompose}}}
     \xx \varqrv(\{q\}) \gets \varqrv(\{q\}) \opqr \fqr(q, r)
-    \x \text{else if } \canprunemu(\outstat(Q), \outstat(R), \lettermu)\text{,}
-    \xx \text{\com{prune node-node interaction, Eqns \ref{eqn:qrvprune}, \ref{eqn:qrvcompose}}}
+    \x \text{else if } \canprunemu(\outstat(Q), \outstat(R), \lettermu)\text{, \com{node-to-node prune}}
+    \xx \text{\com{update the node's mass result, Eqns \ref{eqn:qrvprune}, \ref{eqn:qrvcompose}}}
     \xx \varqrv(Q) \gets \varqrv(Q) \opqr \deltaqrv(\outstat(Q), \outstat(R))
-    \x \text{else if } |Q| \geq |R|\text{,}
-    \xx \text{\com{explore both query children}}
-    \xx \text{for } Q' \in \{\kdleft{Q}, \kdright{Q}\}\text{,}
-    \xxx \text{\com{apply pruning information, Eqns \ref{eqn:qrvparent}, \ref{eqn:qrvcompose}}}
-    \xxx \varqrv(Q') \gets \varqrv(Q') \opqr \varqrv(Q)
-    \xxx \text{\com{recurse, by nature of dual-tree}}
-    \xxx \text{dfe}(Q', R, \varmuparent)
-    \xx \varqrv(Q) \gets \text{identity of }\Opqr
-    \xx \text{\com{recompute high-quality $\lettermu$ bottom-up, Eqn~\ref{eqn:muchild}}}
-    \xx \!\!\!\begin{array}{lll}
+    \x \text{else if } |Q| \geq |R|\text{, \com{query set is larger, divide it}}
+    \xx \text{DivideQueries}(Q, R)
+    \x \text{else, \com{divide the reference set}}
+    \xx \text{DivideReferences}(Q, R)
+    \X \text{procedure DivideQueries}(Q, R)\text{, \com{explore query children}}
+    \x \text{for } Q' \in \{\kdleft{Q}, \kdright{Q}\}\text{,}
+    \xx \text{\com{apply pruning information, Eqns \ref{eqn:qrvparent}, \ref{eqn:qrvcompose}}}
+    \xx \varqrv(Q') \gets \varqrv(Q') \opqr \varqrv(Q)
+    \xx \text{\com{recurse, by nature of dual-tree}}
+    \xx \text{DFE}(Q', R, \varmuparent)
+    \x \varqrv(Q) \gets \text{identity of }\Opqr
+    \x \text{\com{recompute $\varmuchild(Q)$ bottom-up, Eqn~\ref{eqn:muchild}}}
+    \x \!\!\!\begin{array}{lll}
          \psty \varmuchild(Q) &\psty\!\!\gets\!\!&\psty (\varmuchild(\kdleft{Q})  \opmu \fmuv(\outstat(\kdleft{Q}), \varqrv(\kdleft{Q})))
          \\          &\psty\!\!\outopmu\!\!&\psty (\varmuchild(\kdright{Q}) \opmu \fmuv(\outstat(\kdright{Q}), \varqrv(\kdright{Q})))
         \end{array}
-    \x \text{else}
-    \xx \text{\com{explore reference children in heuristic order}}
-    \xx (R_a, R_b) \gets \text{sort }(\kdleft{R}, \kdright{R})\text{ by }\lambda v ~ \heurqr(\outstat(Q), \outstat(v))
-    \xx \text{\com{bound unvisited $\lettermu$ with statistics, Eqns \ref{eqn:mudelta}, \ref{eqn:mucompose}, \ref{eqn:muparent}}}
-    \xx \text{dfe}(Q, R_a, \varmuparent \opmu \deltamu(\outstat(Q), \outstat(R_b))
-    \xx \text{\com{use with parent's value of $\lettermu$, Eqn \ref{eqn:muparent}}}
-    \xx \text{dfe}(Q, R_b, \varmuparent)
-    \X
-    \X \text{function fixup}(Q, \varqrvparent)\text{,}
+    \X \text{procedure DivideReferences}(Q, R)\text{,}
+    \x \text{\com{explore reference children in heuristic order}}
+    \x (R_a, R_b) \gets \text{sort }(\kdleft{R}, \kdright{R})\text{ by }\lambda v ~ \heurqr(\outstat(Q), \outstat(v))
+    \x \text{\com{bound unvisited $\lettermu$ with statistics, Eqns \ref{eqn:mudelta}, \ref{eqn:mucompose}, \ref{eqn:muparent}}}
+    \x \text{DFE}(Q, R_a, \varmuparent \opmu \deltamu(\outstat(Q), \outstat(R_b))
+    \x \text{\com{use with parent's value of $\lettermu$, Eqn \ref{eqn:muparent}}}
+    \x \text{DFE}(Q, R_b, \varmuparent)
+    \X \text{procedure PushDown}(Q, \varqrvparent)\text{,}
     \x \text{\com{propagate mass results to leaves}}
     \x \varqrv(Q) \gets \varqrv(Q) \opqr \varqrvparent
     \x \text{if } Q = \{q\}\text{ singleton,}
     \xx \outqr(q, \kdroot{R}) \gets \gqr(q, \varqrv(\{q\}))
     \x \text{else,}
-    \xx \text{fixup}(\kdleft{Q}, \varqrv(Q))
-    \xx \text{fixup}(\kdright{Q}, \varqrv(Q))
+    \xx \text{PushDown}(\kdleft{Q}, \varqrv(Q))
+    \xx \text{PushDown}(\kdright{Q}, \varqrv(Q))
   \end{array}
 \]
-\caption{\label{fig:dfe} The locally-ordered depth-first expansion algorithm for query-reference problems.
+\caption{\label{fig:DFE} The locally-ordered depth-first expansion algorithm for query-reference problems.
 This subroutine is used internally in \THOR, though heavily translated to C++.
 }
 \end{figure}
@@ -878,7 +879,7 @@ Our experience shows that a query-based decomposition scheme is typically quite 
 Finally, it is worth noting that past parallelization of both Barnes-Hut and the FMM universally divide queries among processors \cite{salmon_thesis, singh_thesis, liu94experiences}.
 
 We define a task to be the solving of results for a subtree of queries.
-These queries are processed using a standard serial solver, such as the aforementioned depth-first expansion in \fig{dfe}.
+These queries are processed using a standard serial solver, such as the aforementioned depth-first expansion in \fig{DFE}.
 Typically, each processor executes several tasks over the course of the computation in order to allow dynamic task migration.
 
 \subsection{Communication}
@@ -1211,7 +1212,6 @@ Symbol & Macro & Description, Rationale
 \\ $\Opqr$ & Opqr & query-reference operator
 \\ $\fqr$ & fqr & query-reference inner function
 \\ $\gqr$ & gqr & query-reference postprocess
-\\ $\identqr$ & identqr & identity element of abelian monoid $\Opqr$
 \\ $\letterqrv$ & letterqrv & mass result 'problem space'
 \\ $\inqrv$ & inqrv & mass result function
 \\ $\deltaqrv$ & deltaqrv & mass result prune value
@@ -1227,7 +1227,6 @@ Symbol & Macro & Description, Rationale
 \\ $\fmuv$ & fmuv & inner function converting $\inqrv$ to $\inmu$
 \\ $\deltamu$ & deltamu & 'initial' summary results
 \\ $\canprunemu$ & canprunemu & prune check for extrinsic prunes
-\\ $\identmu$ & identmu & identity element of abelian monoid $\Opmu$
 \\ $\heurqr$ & heurqr & expansion heuristic
 \\ $\varmuchild$ & varmuchild & high-quality, built bottom-up with $\Outopmu$
 \\ $\varmuparent$ & varmuparent & low-quality, built top-down with $\Opmu$

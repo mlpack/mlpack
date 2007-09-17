@@ -44,8 +44,8 @@
 
 \newcommand{\fig}[1]{Figure~\ref{fig:#1}}
 
-\newcommand{\Gnp}{\Psi_{\Theta}}
-\newcommand{\gnp}{\psi_{\Theta}}
+\newcommand{\Gnp}{\Psi}
+\newcommand{\gnp}{\psi}
 
 %\newcommand{\psty}{\scriptstyle}
 \newcommand{\psty}{}
@@ -230,9 +230,8 @@
 \begin{slide}{Physical $N$-Body Problem}
   \begin{itemize}
     \itemt{Problem}
-    In particle simulations, each point exerts force on other particles.
+    Simulate a system of particles that exert mutual force.
     Find particle's position at a later time.
-    Done paractically with time-step iterations.
     \itemt{Barnes-Hut Algorithm}
     Create an oct-tree.
     For each query particle, traverse the oct-tree, approximating the force
@@ -260,9 +259,9 @@
     It solves problems like creating a reverse-index, counting words
     in documents, and much more.
     \itemt{Premise}
-    If you can generalize a problem, then create an implementation that
-    has certain provable properties given the generalized problem, then
-    all members of the problem space therefore have that property.
+    If a problem is generalizable, then create an implementation that
+    has certain provable properties.
+    All members of the problem space therefore inherit those properties.
   \end{itemize}
 \end{slide}
 
@@ -300,7 +299,7 @@
     $\kdroot{X}$ is the entire data set.
     $X$ is a subset with parent $\kdparent{X}$,
     partitioned into children $X = \kdleft{X} \union \kdright{X}$.
-    \itemt{Generic Statistics} $\outstat(Q)$ is a statistic on a set of points,
+    \itemt{Generic Statistics} $\outstat(X)$ is a statistic on a set of points,
     such as bounding box, mean, or variance.
     \itemt{Upper/Lower Bounds} $\distup(\outstat(X), \outstat(Y))$ is an upper-bound distance
     between bounding boxes.  $\distlo$ is the lower-bound.
@@ -410,6 +409,7 @@ x    \\
 \end{slide}
 
 \begin{slide}{Q/R Problems - Extrinsic Pruning}
+  \vspace{-.1in}
   \begin{itemize}
     \item We compute \defterm{query summary results} $\inmu(Q, \kdroot{R})$
     to achieve extrinsic pruning for query node $Q$.
@@ -434,25 +434,29 @@ x    \\
     Whether a problem can be solved efficiently is up to pruning rules and the execution pattern.
     \itemt{Execution}
     The aforementioned ``rules'' have few constraints on their execution.
-    Depth-first, breadth-first, and importantly {\em parallel} expansions are fair game!
+    Depth-first, breadth-first, and importantly {\em parallel} expansion patterns are fair game!
   \end{itemize}
   
   We'll now focus on parallel executions.
 \end{slide}
 
 \begin{slide}{Work Decomposition}
-  A dual-tree problem can be decomposed both query and reference trees.
-  We decompose by dividing the query tree only:
   \begin{itemize}
-    \itemt{Private Data}
-    No writes to shared data.
-    \itemt{Quality of $\lettermu$}
-    For high-quality query summary results, one must consider all references.
-    Considering referenes independently makes this problematic.
-    \itemt{Scheduling}
-    Distant query-reference pairs complete orders of magnitude faster than
-    nearby ones.
-    Unpredictable runtimes unduly complicates scheduling.
+    \itemt{Two Axes}
+    A dual-tree problem can theoretically be decomposed both query and reference trees.
+    \itemt{Query Only}
+    We decompose by dividing the query tree only:
+    \begin{itemize}
+      \itemt{Private Data}
+      No writes to shared data.
+      \itemt{Quality of $\lettermu$}
+      For high-quality query summary results, one must consider all references.
+      Considering referenes independently makes this problematic.
+      \itemt{Scheduling}
+      Distant query-reference pairs complete orders of magnitude faster than
+      nearby ones.
+      Unpredictable runtimes unduly complicates scheduling.
+    \end{itemize}
   \end{itemize}
 \end{slide}
 
@@ -482,7 +486,7 @@ x    \\
     A domain decomposition divides queries among processors.
     \itemt{Goal}
     One attempts to minimize locally essential trees, by maximizing
-    overlap between queries owned by a processor. (WALDO Figure goes here.)
+    overlap between queries owned by a processor.
     \itemt{Past Techniques}
     Neglecting scheduling details, we consider previous work:
     \begin{itemize}
@@ -533,6 +537,10 @@ x    \\
     An unlocked page is placed in a queue for potential eviction.
     Out-of-core blocks are requested from disk or other machines.
   \end{itemize}
+\end{slide}
+  
+\begin{slide}{Comm. - Distributed Cache}
+  \includegraphics[width=4.0in]{DistributedArchitecture.eps}
 \end{slide}
 
 \begin{slide}{Comm. - Data Layout}
