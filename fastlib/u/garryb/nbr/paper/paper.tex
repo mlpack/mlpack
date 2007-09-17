@@ -294,7 +294,7 @@ Ball trees are binary and use bounding radii instead, and work with any metric s
 Cover trees are not binary and have a variable branching factor depending on the dimensionality of the data.
 Quad-trees and oct-trees recursively bisect all coordinate dimensions for two- and three-dimensional vector spaces.
 The choice of tree is often problem-specific, but generally results in a constant-factor rather than asymptotic complexity difference.
-For clarity, our mathematical discussion focuses on binary trees, although the notation is trivially extrapolated to arbitrary $n$-ary trees.
+For clarity, our mathematical notation focuses on binary trees, although the notation is trivially extended to arbitrary $n$-ary trees.
 Every internal node is partitioned $X = \kdleft{X} \union \kdright{X}$, with parent $\kdparent{X} \supset X$.
 Conceptually, a leaf is a single point $\{x\}$, though in practice multiple points may be grouped to amortize recursion overhead.
 
@@ -316,7 +316,7 @@ In many practical problems, the amount of computation that can be pruned is imme
 For each query point, a single-tree algorithm must commence at the root of the tree and traverse towards the leaves or until pruning occurs, and is usually at best $O(N log N)$.
 A dual-tree algorithm instead considers the root-level nodes only with other root-level nodes, therefore amortizing the cost of considering the root-level nodes, and can be $O(N)$ in practice.
 Empirical studies show that dual-tree algorithms significantly overtake similar single-tree algorithms for data sets larger than a threshold\authorsnote{I need to find the proximity project to justify this claim.}.
-Such performance for large datasets make dual-tree algorithms a prime candidate for parallelization.
+Such asymptotic performance promotes the use of dual-tree algorithms over alternatives to scale data mining of massive data sets beyond a single processor.
 
 \mysub{Two-point correlation and range count}
 The fundamental two-point-correlation statistic conceptually measures ``clumpiness'' and fractal dimension.
