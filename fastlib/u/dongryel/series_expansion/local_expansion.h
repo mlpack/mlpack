@@ -1,0 +1,242 @@
+/**
+ * @file local_expansion.h
+ *
+ * The header file for the local expansion
+ */
+
+#ifndef LOCAL_EXPANSION
+#define LOCAL_EXPANSION
+
+#include <values.h>
+
+#include "fastlib/fastlib.h"
+#include "kernel_derivative.h"
+#include "series_expansion_aux.h"
+
+template<typename TKernel, typename TKernelDerivative>
+class FarFieldExpansion;
+
+/**
+ * Local expansion class
+ */
+template<typename TKernel, typename TKernelDerivative>
+class LocalExpansion {
+  FORBID_COPY(LocalExpansion);
+  
+   public:
+  
+  typedef TKernel Kernel;
+  
+  typedef TKernelDerivative KernelDerivative;
+
+ private:
+  
+  /** The type of the kernel */
+  Kernel kernel_;
+  
+  /** The center of the expansion */
+  Vector center_;
+  
+  /** The coefficients */
+  Vector coeffs_;
+  
+  /** order */
+  int order_;
+  
+  /** precomputed quantities */
+  SeriesExpansionAux *sea_;
+  
+  /** Derivative computer based on the kernel passed in */
+  KernelDerivative kd_;
+
+ public:
+  
+  FarFieldExpansion() {}
+  
+  ~FarFieldExpansion() {}
+  
+  // getters and setters
+  
+  /** Get the coefficients */
+  double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
+  
+  /** Get the center of expansion */
+  const Vector& get_center() const { return center_; }
+  
+  /** Get the coefficients */
+  const Vector& get_coeffs() const { return coeffs_; }
+  
+  /** Get the approximation order */
+  int get_order() const { return order_; }
+
+  /** Set the approximation order */
+  void set_order(int new_order) { order_ = new_order; }
+
+  // interesting functions...
+  
+  /**
+   * Accumulates the local moment represented by the given reference
+   * data into the coefficients
+   */
+  void AccumulateCoeffs(const Matrix& data, const Vector& weights,
+			const ArrayList<int>& rows, int order);
+
+  /**
+   * This does not apply for local coefficients.
+   */
+  void RefineCoeffs(const Matrix& data, const Vector& weights,
+		    const ArrayList<int>& rows, int order);
+  
+  /**
+   * Evaluates the local coefficients at the given point
+   */
+  double EvaluateField(Matrix* data=NULL, int row_num=-1,
+		       Vector* x_q=NULL);
+  
+  /**
+   * Initializes the current local expansion object with the given
+   * center.
+   */
+  void Init(const TKernel& kernel, const Vector& center, 
+	    SeriesExpansionAux *sea);
+
+  /**
+   * Computes the required order for evaluating the far field expansion
+   * for any query point within the specified region for a given bound.
+   */
+  int OrderForEvaluating(const DHrectBound<2> &far_field_region) const;
+
+  /**
+   * Computes the required order for converting to the local expansion
+   * inside another region, so that the total error (truncation error
+   * of the far field expansion plus the conversion error) is bounded
+   * above by the given user bound.
+   *
+   * @return the minimum approximation order required for the error,
+   *         -1 if approximation up to the maximum order is not possible
+   */
+  int OrderForConverting(const DHrectBound<2> &far_field_region,
+			 const DHrectBound<2> &local_field_region, 
+			 double min_dist_sqd_regions, 
+			 double required_bound, 
+			 double *actual_error) const;
+
+  /**
+   * Prints out the series expansion represented by this object.
+   */
+  void PrintDebug(const char *name="", FILE *stream=stderr) const;
+
+  /**
+   * Translate from a far field expansion to the expansion here.
+   * The translated coefficients are added up to the ones here.
+   */
+  void TranslateFromFarField(const FarFieldExpansion &se);
+  
+  /**
+   * Translate to the given local expansion. The translated coefficients
+   * are added up to the passed-in local expansion coefficients.
+   */
+  void TranslateToLocal
+    (LocalExpansion<TKernel, TKernelDerivative> &se);
+
+}
+
+template<typename TKernel, typename TKernelDerivative>
+void LocalExpansion<Tkernel, TKernelDerivative>::AccumulateCoeffs
+(const Matrix& data, const Vector& weights, 
+ const ArrayList<int>& rows, int order) {
+
+  if(order > order_) {
+    order_ = order;
+  }
+
+  int dim = sea_->get_dimension();
+  int total_num_coeffs = sea_->get_total_num_coeffs(order);
+  
+  // get inverse factorials (precomputed)
+  Vector neg_inv_multiindex_factorials;
+  neg_inv_multiindex_factorials.Alias
+    (sea_->get_neg_inv_multiindex_factorials());
+
+  // declare deritave mapping
+  Matrix derivative_map;
+  derivative_map.Init(dim, order + 1);
+  
+  // some temporary variables
+  Vector arrtmp;
+  arrtmp.Init(total_num_coeffs);
+  Vector x_r_minus_x_Q;
+  x_r_minus_x_Q.Init(dim);
+  
+  // sqrt two times bandwidth
+  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
+  
+  // for each data point,
+  for(index_t r = 0; r < rows.size(); r++) {
+    
+    // get the row number
+    int row_num = rows[r];
+    
+    // calculate x_r - x_Q
+    for(index_t d = 0; d < dim; d++) {
+      x_r_minus_x_Q[d] = (center_[d] - data.get(d, row_num)) / 
+	bandwidth_factor;
+    }
+    
+    // precompute necessary partial derivatives based on coordinate difference
+    kd_.ComputeDirectionalDerivatives(x_r_minus_x_Q, derivative_map);
+    
+    // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
+    for(index_t j = 0; j < total_num_coeffs; j++) {
+      ArrayList<int> mapping = sea_->get_multiindex(j);
+      arrtmp[j] = kd_.ComputePartialDerivative(derivative_map, mapping);
+    }
+
+    for(index_t j = 0; j < total_num_coeffs; j++) {
+      coeffs_[j] += neg_inv_multiindex_factorials[j] * weights[row_num] * 
+	arrtmp[j];
+    }
+  } // End of looping through each reference point.
+}
+
+template<typename TKernel, typename TKernelDerivative>
+  void LocalExpansion<TKernel, TKernelDerivative>::PrintDebug
+  (const char *name, FILE *stream) const {
+  
+    
+  int dim = sea_->get_dimension();
+  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+
+  fprintf(stream, "----- SERIESEXPANSION %s ------\n", name);
+  fprintf(stream, "Local expansion\n");
+  fprintf(stream, "Center: ");
+  
+  for (index_t i = 0; i < center_.length(); i++) {
+    fprintf(stream, "%g ", center_[i]);
+  }
+  fprintf(stream, "\n");
+  
+  fprintf(stream, "f(");
+  for(index_t d = 0; d < dim; d++) {
+    fprintf(stream, "x_q%d", d);
+    if(d < dim - 1)
+      fprintf(stream, ",");
+  }
+  fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
+  
+  for (index_t i = 0; i < total_num_coeffs; i++) {
+    ArrayList<int> mapping = sea_->get_multiindex(i);
+    fprintf(stream, "%g", coeffs_[i]);
+    
+    for(index_t d = 0; d < dim; d++) {
+      fprintf(stream, "(x_q%d - (%g))^%d ", d, center_[d], mapping[d]);
+    }
+
+    if(i < total_num_coeffs - 1) {
+      fprintf(stream, " + ");
+    }
+  }
+  fprintf(stream, "\n");
+}
+
+#endif
