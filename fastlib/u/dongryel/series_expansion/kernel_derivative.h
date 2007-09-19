@@ -14,15 +14,19 @@
  */
 class GaussianKernelDerivative {
   FORBID_COPY(GaussianKernelDerivative);
-  
+
  public:
 
   GaussianKernelDerivative() {}
 
   ~GaussianKernelDerivative() {}
 
-  void ComputePartialDerivatives(const Vector &x, 
-				 Matrix &derivative_map) const {
+  double BandwidthFactor(double bandwidth_sq) const {
+    return sqrt(2 * bandwidth_sq);
+  }
+
+  void ComputeDirectionalDerivatives(const Vector &x, 
+				     Matrix &derivative_map) const {
     
     int dim = derivative_map.n_rows();
     int order = derivative_map.n_cols() - 1;
@@ -50,6 +54,18 @@ class GaussianKernelDerivative {
       }
     } // end of looping over each dimension
   }
+
+  double ComputePartialDerivative(const Matrix &derivative_map,
+				  ArrayList<int> mapping) const {
+    
+    double partial_derivative = 1.0;
+    
+    for(index_t d = 0; d < mapping.size(); d++) {
+      partial_derivative *= derivative_map.get(d, mapping[d]);
+    }
+    return partial_derivative;
+  }
+
 };
 
 /**
@@ -64,8 +80,12 @@ class EpanKernelDerivative {
 
   ~EpanKernelDerivative() {}
 
-  void ComputePartialDerivatives(const Vector &x, 
-				 Matrix &derivative_map) const {
+  double BandwidthFactor(double bandwidth_sq) const {
+    return sqrt(bandwidth_sq);
+  }
+
+  void ComputeDirectionalDerivatives(const Vector &x, 
+				     Matrix &derivative_map) const {
 
     int dim = derivative_map.n_rows();
     int order = derivative_map.n_cols() - 1;
@@ -78,7 +98,7 @@ class EpanKernelDerivative {
       derivative_map.set(d, 0, 1 - coord_div_band * coord_div_band);
 
       if(order > 0) {
-	derivative_map.set(d, 1, -2 * coord_div_band);
+	derivative_map.set(d, 1, 2 * coord_div_band);
 	
 	if(order > 1) {
 	  derivative_map.set(d, 2, -2);
@@ -91,6 +111,26 @@ class EpanKernelDerivative {
 
     } // end of looping over each dimension
   }
+
+  double ComputePartialDerivative(const Matrix &derivative_map,
+				  ArrayList<int> mapping) const {
+    
+    int nonzero_count = 0;
+    int nonzero_index = 0;
+
+    for(index_t d = 0; d < mapping.size(); d++) {
+      if(mapping[d] > 0) {
+	nonzero_count++;
+	nonzero_index = d;
+      }
+
+      if(nonzero_count > 1) {
+	return 0;
+      }
+    }
+    return derivative_map.get(nonzero_index, mapping[nonzero_index]);
+  }
+
 };
 
 #endif

@@ -10,6 +10,95 @@
 #include "series_expansion.h"
 #include "series_expansion_aux.h"
 
+int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
+				   const ArrayList<int> &rows) {
+  
+  printf("\n----- TestEpanKernelEvaluateFarField -----\n");
+
+  // bandwidth of 10 Epanechnikov kernel
+  EpanKernel kernel;
+  kernel.Init(10);
+
+  // declare auxiliary object and initialize
+  SeriesExpansionAux sea;
+  sea.Init(10, data.n_rows());
+
+  // declare center at the origin
+  Vector center;
+  center.Init(2);
+  center.SetZero();
+
+  // to-be-evaluated point
+  Vector evaluate_here;
+  evaluate_here.Init(2);
+  evaluate_here[0] = evaluate_here[1] = 0.1;
+
+  // declare expansion object
+  SeriesExpansion<EpanKernel, EpanKernelDerivative> se;
+
+  // initialize expansion objects with respective center and the bandwidth
+  se.Init(kernel, 
+	  SeriesExpansion<EpanKernel, 
+	  EpanKernelDerivative>::FARFIELD, center, &sea);
+
+  // compute up to 2-nd order multivariate polynomial.
+  se.ComputeFarFieldCoeffs(data, weights, rows, 2);
+
+  // print out the objects
+  se.PrintDebug();               // expansion at (0, 0)
+
+  // evaluate the series expansion
+  printf("Evaluated the expansion at (%g %g) is %g...\n",
+	 evaluate_here[0], evaluate_here[1],
+	 se.EvaluateFarField(NULL, -1, &evaluate_here));
+
+  // check with exhaustive method
+  double exhaustive_sum = 0;
+  for(index_t i = 0; i < rows.size(); i++) {
+    int row_num = rows[i];
+    double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
+      (evaluate_here[0] - data.get(0, row_num)) +
+      (evaluate_here[1] - data.get(1, row_num)) * 
+      (evaluate_here[1] - data.get(1, row_num));
+    
+    exhaustive_sum += kernel.EvalUnnormOnSq(dsqd);
+
+  }
+  printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
+
+  // now recompute using the old expansion formula...
+  double first_moment0 = 0;
+  double first_moment1 = 0;
+  double second_moment0 = 0;
+  double second_moment1 = 0;
+
+  for(index_t i = 0; i < rows.size(); i++) {
+    int row_num = rows[i];
+
+    double diff0 = (data.get(0, row_num) - center[0]) / 
+      sqrt(kernel.bandwidth_sq());
+    double diff1 = (data.get(1, row_num) - center[1]) / 
+      sqrt(kernel.bandwidth_sq());
+
+    first_moment0 += diff0;
+    first_moment1 += diff1;
+    second_moment0 += diff0 * diff0;
+    second_moment1 += diff1 * diff1;
+  }
+  double diff_coord0 = (evaluate_here[0] - center[0]) / 
+    sqrt(kernel.bandwidth_sq());
+  double diff_coord1 = (evaluate_here[1] - center[1]) / 
+    sqrt(kernel.bandwidth_sq());
+  
+  printf("Old formula got: %g\n",
+	 rows.size() - (second_moment0 - 2 * first_moment0 * diff_coord0 + 
+			rows.size() * diff_coord0 * diff_coord0) - 
+	 (second_moment1 - 2 * first_moment1 * diff_coord1 + 
+	  rows.size() * diff_coord1 * diff_coord1));
+
+  return 1;
+}
+
 int TestEvaluateFarField(const Matrix &data, const Vector &weights,
 			 const ArrayList<int> &rows) {
   
@@ -39,8 +128,8 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
   se.Init(kernel, 
-	  SeriesExpansion<GaussianKernel, GaussianKernelDerivative>::FARFIELD, 
-	  center, &sea);
+	  SeriesExpansion<GaussianKernel, 
+	  GaussianKernelDerivative>::FARFIELD, center, &sea);
 
   // compute up to 4-th order multivariate polynomial.
   se.ComputeFarFieldCoeffs(data, weights, rows, 10);
@@ -303,6 +392,8 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestEvaluateLocalField(data, weights, rows) == 1);
   DEBUG_ASSERT(TestTransFarToFar(data, weights, rows) == 1);
   DEBUG_ASSERT(TestTransLocalToLocal(data, weights, rows) == 1);
+
+  DEBUG_ASSERT(TestEpanKernelEvaluateFarField(data, weights, rows) == 1);
 
   fx_done();
 }
