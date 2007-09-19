@@ -151,8 +151,8 @@ class SeriesExpansion {
 
 template<typename TKernel, typename TKernelDerivative>
 void SeriesExpansion<TKernel, TKernelDerivative>::ComputeFarFieldCoeffs
-(const Matrix& data, const Vector& weights,
- const ArrayList<int>& rows, int order) {
+(const Matrix& data, const Vector& weights, const ArrayList<int>& rows, 
+ int order) {
 
   int dim = data.n_rows();
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
@@ -162,7 +162,7 @@ void SeriesExpansion<TKernel, TKernelDerivative>::ComputeFarFieldCoeffs
   Vector heads;
   Vector x_r;
   Vector C_k;
-  double bw_times_sqrt_two = sqrt(2 * kernel_.bandwidth_sq());
+  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
 
   // initialize temporary variables
   tmp.Init(total_num_coeffs);
@@ -186,7 +186,7 @@ void SeriesExpansion<TKernel, TKernelDerivative>::ComputeFarFieldCoeffs
     // Calculate the coordinate difference between the ref point and the 
     // centroid.
     for(i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, row_num) - center_[i]) / bw_times_sqrt_two;
+      x_r[i] = (data.get(i, row_num) - center_[i]) / bandwidth_factor;
     }
 
     // initialize heads
@@ -250,7 +250,7 @@ void SeriesExpansion<TKernel, TKernelDerivative>::ComputeLocalCoeffs
   x_r_minus_x_Q.Init(dim);
   
   // sqrt two times bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
+  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
   
   // for each data point,
   for(index_t r = 0; r < rows.size(); r++) {
@@ -261,20 +261,16 @@ void SeriesExpansion<TKernel, TKernelDerivative>::ComputeLocalCoeffs
     // calculate x_r - x_Q
     for(index_t d = 0; d < dim; d++) {
       x_r_minus_x_Q[d] = (center_[d] - data.get(d, row_num)) / 
-	sqrt_two_bandwidth;
+	bandwidth_factor;
     }
     
     // precompute necessary partial derivatives based on coordinate difference
-    kd_.ComputePartialDerivatives(x_r_minus_x_Q, derivative_map);
+    kd_.ComputeDirectionalDerivatives(x_r_minus_x_Q, derivative_map);
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
       ArrayList<int> mapping = sea_->get_multiindex(j);
-      arrtmp[j] = 1.0;
-
-      for(index_t d = 0; d < dim; d++) {
-        arrtmp[j] *= derivative_map.get(d, mapping[d]);
-      }
+      arrtmp[j] = kd_.ComputePartialDerivative(derivative_map, mapping);
     }
 
     for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -295,7 +291,7 @@ double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateFarField
   int total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
   // square root times bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
+  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
   
   // the evaluated sum
   double multipole_sum = 0;
@@ -316,24 +312,20 @@ double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateFarField
   for(index_t d = 0; d < dim; d++) {
     if(x_q == NULL) {
       x_q_minus_x_R[d] = (data->get(d, row_num) - center_[d]) / 
-	sqrt_two_bandwidth;
+	bandwidth_factor;
     }
     else {
-      x_q_minus_x_R[d] = ((*x_q)[d] - center_[d]) / sqrt_two_bandwidth;
+      x_q_minus_x_R[d] = ((*x_q)[d] - center_[d]) / bandwidth_factor;
     }
   }
 
   // compute deriative maps based on coordinate difference.
-  kd_.ComputePartialDerivatives(x_q_minus_x_R, derivative_map);
+  kd_.ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2))
   for(index_t j = 0; j < total_num_coeffs; j++) {
     ArrayList<int> mapping = sea_->get_multiindex(j);
-    arrtmp[j] = 1.0;
-    
-    for(index_t d = 0; d < dim; d++) {
-      arrtmp[j] *= derivative_map.get(d, mapping[d]);
-    }
+    arrtmp[j] = kd_.ComputePartialDerivative(derivative_map, mapping);
   }
   
   // tally up the multipole sum
@@ -360,7 +352,7 @@ double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateLocalField
   double sum = 0;
   
   // sqrt two bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
+  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
 
   // temporary variable
   Vector x_Q_to_x_q;
@@ -374,11 +366,11 @@ double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateLocalField
   for(index_t i = 0; i < dim; i++) {
     
     if(data == NULL) {
-      x_Q_to_x_q[i] = ((*x_q)[i] - center_[i]) / sqrt_two_bandwidth;
+      x_Q_to_x_q[i] = ((*x_q)[i] - center_[i]) / bandwidth_factor;
     }
     else {
       x_Q_to_x_q[i] = (data->get(i, row_num) - center_[i]) / 
-	sqrt_two_bandwidth;
+	bandwidth_factor;
     }
   }
   
@@ -408,10 +400,9 @@ double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateLocalField
 }
 
 template<typename TKernel, typename TKernelDerivative>
-void SeriesExpansion<TKernel, TKernelDerivative>::Init(const TKernel &kernel,
-				    ExpansionType expansion_type, 
-				    const Vector& center, 
-				    SeriesExpansionAux* sea) {
+void SeriesExpansion<TKernel, TKernelDerivative>::Init
+  (const TKernel &kernel, ExpansionType expansion_type, 
+   const Vector& center, SeriesExpansionAux* sea) {
 
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(sqrt(kernel.bandwidth_sq()));
@@ -430,6 +421,7 @@ int SeriesExpansion<TKernel, TKernelDerivative>::OrderForEvaluating
 (const ArrayList< DRange > &region) const {
 
   int order = 0;
+  
   
   return order;
 }
@@ -513,8 +505,8 @@ int SeriesExpansion<TKernel, TKernelDerivative>::OrderForConvertingToLocal
 }
 
 template<typename TKernel, typename TKernelDerivative>
-void SeriesExpansion<TKernel, TKernelDerivative>::PrintDebug(const char *name, 
-					  FILE *stream) const {
+void SeriesExpansion<TKernel, TKernelDerivative>::PrintDebug
+(const char *name, FILE *stream) const {
   
   int dim = sea_->get_dimension();
   int total_num_coeffs = sea_->get_total_num_coeffs(order_);
@@ -562,10 +554,7 @@ void SeriesExpansion<TKernel, TKernelDerivative>::PrintDebug(const char *name,
 	if(d < dim - 1)
 	  fprintf(stream, ",");
       }
-      fprintf(stream, "))");
-      for(index_t d = 0; d < dim; d++) {
-	fprintf(stream, "(x_q%d - (%g))^%d ", d, center_[d], mapping[d]);
-      }
+      fprintf(stream, ")) f(x_q - x_R)");
     }
     if(i < total_num_coeffs - 1) {
       fprintf(stream, " + ");
@@ -575,10 +564,10 @@ void SeriesExpansion<TKernel, TKernelDerivative>::PrintDebug(const char *name,
 }
 
 template<typename TKernel, typename TKernelDerivative>
-void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToFar
+  void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToFar
   (const SeriesExpansion &se) {
 
-  double sqrt_two_bandwidth = sqrt(2 * se.bandwidth_sq());
+  double bandwidth_factor = kd_.BandwidthFactor(se.bandwidth_sq());
   int dim = sea_->get_dimension();
   int order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
@@ -649,8 +638,7 @@ void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToFar
       diff1 = 1.0;
       
       for(index_t l = 0; l < dim; l++) {
-
-	diff1 *= pow(center_diff[l] / sqrt_two_bandwidth, tmp_storage[l]);
+	diff1 *= pow(center_diff[l] / bandwidth_factor, tmp_storage[l]);
       }
 
       coeffs_[j] += prev_coeffs[lower_mappings_for_gamma[k]] * diff1 * 
@@ -662,7 +650,7 @@ void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToFar
 }
 
 template<typename TKernel, typename TKernelDerivative>
-void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToLocal
+  void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToLocal
   (const SeriesExpansion &se) {
 
   Vector arrtmp;
@@ -674,7 +662,7 @@ void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToLocal
   int far_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(far_order);
   int limit;
-  double bw_times_sqrt_two = sqrt(2 * kernel_.bandwidth_sq());
+  double bandwidth_factor = kd_.BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for far field expansion
   far_center.Alias(se.get_center());
@@ -697,11 +685,13 @@ void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToLocal
 
   // compute center difference divided by bw_times_sqrt_two;
   for(index_t j = 0; j < dimension; j++) {
-    cent_diff[j] = (center_[j] - far_center[j]) / bw_times_sqrt_two;
+    cent_diff[j] = (center_[j] - far_center[j]) / bandwidth_factor;
   }
 
   // compute required partial derivatives
-  kd_.ComputePartialDerivatives(cent_diff, derivative_map);
+  kd_.ComputeDirectionalDerivatives(cent_diff, derivative_map);
+  ArrayList<int> beta_plus_alpha;
+  beta_plus_alpha.Init(dimension);
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
@@ -711,12 +701,11 @@ void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToLocal
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
       ArrayList<int> alpha_mapping = sea_->get_multiindex(k);
-      double derivative_factor = 1.0;
-
       for(index_t d = 0; d < dimension; d++) {
-	derivative_factor *= 
-	  derivative_map.get(d, beta_mapping[d] + alpha_mapping[d]);
+	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
+      double derivative_factor = 
+	kd_.ComputePartialDerivative(derivative_map, beta_plus_alpha);
       
       arrtmp[j] += far_coeffs[k] * derivative_factor;
 
@@ -730,7 +719,7 @@ void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToLocal
 }
 
 template<typename TKernel, typename TKernelDerivative>
-void SeriesExpansion<TKernel, TKernelDerivative>::TransLocalToLocal
+  void SeriesExpansion<TKernel, TKernelDerivative>::TransLocalToLocal
   (const SeriesExpansion &se) {
   
   // get the center and the order and the total number of coefficients of 
@@ -753,13 +742,13 @@ void SeriesExpansion<TKernel, TKernelDerivative>::TransLocalToLocal
   tmp_storage.Init(dim);
 
   // sqrt two times bandwidth
-  double sqrt_two_bandwidth = sqrt(2 * kernel_.bandwidth_sq());
+  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
 
   // center difference between the old center and the new one
   Vector center_diff;
   center_diff.Init(dim);
   for(index_t d = 0; d < dim; d++) {
-    center_diff[d] = (center_[d] - prev_center[d]) / sqrt_two_bandwidth;
+    center_diff[d] = (center_[d] - prev_center[d]) / bandwidth_factor;
   }
 
   // set to the new order if the order of the expansion we are translating
