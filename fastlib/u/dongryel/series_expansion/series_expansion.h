@@ -307,6 +307,8 @@ double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateFarField
   double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
   
   // the evaluated sum
+  double pos_multipole_sum = 0;
+  double neg_multipole_sum = 0;
   double multipole_sum = 0;
   
   // computed derivative map
@@ -335,17 +337,21 @@ double SeriesExpansion<TKernel, TKernelDerivative>::EvaluateFarField
   // compute deriative maps based on coordinate difference.
   kd_.ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
 
-  // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2))
+  // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
     ArrayList<int> mapping = sea_->get_multiindex(j);
-    arrtmp[j] = kd_.ComputePartialDerivative(derivative_map, mapping);
-  }
-  
-  // tally up the multipole sum
-  for(index_t j = 0; j < total_num_coeffs; j++) {
-    multipole_sum += coeffs_[j] * arrtmp[j];
+    double arrtmp = kd_.ComputePartialDerivative(derivative_map, mapping);
+    double prod = coeffs_[j] * arrtmp;
+    
+    if(prod > 0) {
+      pos_multipole_sum += prod;
+    }
+    else {
+      neg_multipole_sum += prod;
+    }
   }
 
+  multipole_sum = pos_multipole_sum + neg_multipole_sum;
   return multipole_sum;
 }
 
