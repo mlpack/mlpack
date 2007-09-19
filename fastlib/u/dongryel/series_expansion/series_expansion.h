@@ -168,6 +168,12 @@ void SeriesExpansion<TKernel, TKernelDerivative>::ComputeFarFieldCoeffs
   tmp.Init(total_num_coeffs);
   heads.Init(dim + 1);
   x_r.Init(dim);
+  Vector pos_coeffs;
+  Vector neg_coeffs;
+  pos_coeffs.Init(total_num_coeffs);
+  pos_coeffs.SetZero();
+  neg_coeffs.Init(total_num_coeffs);
+  neg_coeffs.SetZero();
 
   // If we have more than what we need, return.
   if(order_ >= order) {
@@ -208,7 +214,14 @@ void SeriesExpansion<TKernel, TKernelDerivative>::ComputeFarFieldCoeffs
     
     // Tally up the result in A_k.
     for(i = 0; i < total_num_coeffs; i++) {
-      coeffs_[i] += weights[row_num] * tmp[i];
+      double prod = weights[row_num] * tmp[i];
+      
+      if(prod > 0) {
+	pos_coeffs[i] += prod;
+      }
+      else {
+	neg_coeffs[i] += prod;
+      }
     }
     
   } // End of looping through each reference point
@@ -216,8 +229,8 @@ void SeriesExpansion<TKernel, TKernelDerivative>::ComputeFarFieldCoeffs
   // get multiindex factors
   C_k.Alias(sea_->get_inv_multiindex_factorials());
 
-  for(r = 1; r < total_num_coeffs; r++) {
-    coeffs_[r] = coeffs_[r] * C_k[r];
+  for(r = 0; r < total_num_coeffs; r++) {
+    coeffs_[r] = (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
   }
 }
 
@@ -597,21 +610,18 @@ template<typename TKernel, typename TKernelDerivative>
 
   // set the expansion type
   expansion_type_ = FARFIELD;
-
-  // the first order (the sum of the weights) stays constant regardless
-  // of the location of the center.
-  coeffs_.SetZero();
-  coeffs_[0] = prev_coeffs[0];
   
   // compute center difference
   for(index_t j = 0; j < dim; j++) {
     center_diff[j] = prev_center[j] - center_[j];
   }
 
-  for(index_t j = 1; j < total_num_coeffs; j++) {
+  for(index_t j = 0; j < total_num_coeffs; j++) {
     
     ArrayList <int> gamma_mapping = multiindex_mapping[j];
     ArrayList <int> lower_mappings_for_gamma = lower_mapping_index[j];
+    double pos_coeff = 0;
+    double neg_coeff = 0;
 
     for(index_t k = 0; k < lower_mappings_for_gamma.size(); k++) {
 
@@ -641,11 +651,21 @@ template<typename TKernel, typename TKernelDerivative>
 	diff1 *= pow(center_diff[l] / bandwidth_factor, tmp_storage[l]);
       }
 
-      coeffs_[j] += prev_coeffs[lower_mappings_for_gamma[k]] * diff1 * 
+      double prod = prev_coeffs[lower_mappings_for_gamma[k]] * diff1 * 
 	inv_multiindex_factorials
 	[sea_->ComputeMultiindexPosition(tmp_storage)];
+      
+      if(prod > 0) {
+	pos_coeff += prod;
+      }
+      else {
+	neg_coeff += prod;
+      }
 
     } // end of k-loop
+    
+    coeffs_[j] += pos_coeff + neg_coeff;
+
   } // end of j-loop
 }
 
@@ -653,7 +673,7 @@ template<typename TKernel, typename TKernelDerivative>
   void SeriesExpansion<TKernel, TKernelDerivative>::TransFarToLocal
   (const SeriesExpansion &se) {
 
-  Vector arrtmp;
+  Vector pos_arrtmp, neg_arrtmp;
   Matrix derivative_map;
   Vector far_center;
   Vector cent_diff;
@@ -681,7 +701,8 @@ template<typename TKernel, typename TKernelDerivative>
   // compute Gaussian derivative
   limit = 2 * order_ + 1;
   derivative_map.Init(dimension, limit);
-  arrtmp.Init(total_num_coeffs);
+  pos_arrtmp.Init(total_num_coeffs);
+  neg_arrtmp.Init(total_num_coeffs);
 
   // compute center difference divided by bw_times_sqrt_two;
   for(index_t j = 0; j < dimension; j++) {
@@ -696,7 +717,7 @@ template<typename TKernel, typename TKernelDerivative>
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
     ArrayList<int> beta_mapping = sea_->get_multiindex(j);
-    arrtmp[j] = 0;
+    pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
@@ -704,17 +725,23 @@ template<typename TKernel, typename TKernelDerivative>
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
-      double derivative_factor = 
+      double derivative_factor =
 	kd_.ComputePartialDerivative(derivative_map, beta_plus_alpha);
       
-      arrtmp[j] += far_coeffs[k] * derivative_factor;
+      double prod = far_coeffs[k] * derivative_factor;
 
+      if(prod > 0) {
+	pos_arrtmp[j] += prod;
+      }
+      else {
+	neg_arrtmp[j] += prod;
+      }
     } // end of k-loop
   } // end of j-loop
 
   Vector C_k_neg = sea_->get_neg_inv_multiindex_factorials();
   for(index_t j = 0; j < total_num_coeffs; j++) {
-    coeffs_[j] += arrtmp[j] * C_k_neg[j];
+    coeffs_[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
   }
 }
 
@@ -769,6 +796,8 @@ template<typename TKernel, typename TKernelDerivative>
 
     ArrayList<int> alpha_mapping = sea_->get_multiindex(j);
     ArrayList <int> upper_mappings_for_alpha = upper_mapping_index[j];
+    double pos_coeffs = 0;
+    double neg_coeffs = 0;
 
     for(index_t k = 0; k < upper_mappings_for_alpha.size(); k++) {
       
@@ -796,10 +825,20 @@ template<typename TKernel, typename TKernelDerivative>
       for(index_t l = 0; l < dim; l++) {
 	diff1 *= pow(center_diff[l], tmp_storage[l]);
       }
-      coeffs_[j] += prev_coeffs[upper_mappings_for_alpha[k]] * diff1 *
+
+      double prod =  prev_coeffs[upper_mappings_for_alpha[k]] * diff1 *
 	sea_->get_n_multichoose_k_by_pos(upper_mappings_for_alpha[k], j);
+      
+      if(prod > 0) {
+	pos_coeffs += prod;
+      }
+      else {
+	neg_coeffs += prod;
+      }
 
     } // end of k loop
+
+    coeffs_[j] += pos_coeffs + neg_coeffs;
   } // end of j loop
 }
 
