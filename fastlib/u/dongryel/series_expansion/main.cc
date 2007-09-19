@@ -7,6 +7,7 @@
 
 #include "fastlib/fastlib.h"
 #include "kernel_derivative.h"
+#include "farfield_expansion.h"
 #include "series_expansion.h"
 #include "series_expansion_aux.h"
 
