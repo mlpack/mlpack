@@ -92,13 +92,13 @@ class FarFieldExpansion {
    * Evaluates the far-field coefficients at the given point
    */
   double EvaluateField(Matrix* data=NULL, int row_num=-1,
-		       Vector* x_q=NULL);
+		       Vector* x_q=NULL) const;
   
   /**
    * Initializes the current far field expansion object with the given
    * center.
    */
-  void Init(const TKernel& kernel, const Vector& center, 
+  void Init(double bandwidth, const Vector& center, 
 	    SeriesExpansionAux *sea);
 
   /**
@@ -305,7 +305,7 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
 
 template<typename TKernel, typename TKernelDerivative>
 double FarFieldExpansion<TKernel, TKernelDerivative>::
-  EvaluateField(Matrix* data, int row_num, Vector* x_q) {
+  EvaluateField(Matrix* data, int row_num, Vector* x_q) const {
   
   // dimension
   int dim = sea_->get_dimension();
@@ -367,10 +367,10 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::
 
 template<typename TKernel, typename TKernelDerivative>
   void FarFieldExpansion<TKernel, TKernelDerivative>::Init
-  (const TKernel& kernel, const Vector& center, SeriesExpansionAux *sea) {
+  (double bandwidth, const Vector& center, SeriesExpansionAux *sea) {
   
   // copy kernel type, center, and bandwidth squared
-  kernel_.Init(sqrt(kernel.bandwidth_sq()));
+  kernel_.Init(bandwidth);
   center_.Copy(center);
   order_ = 0;
   sea_ = sea;
