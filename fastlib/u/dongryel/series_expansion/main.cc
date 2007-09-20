@@ -33,7 +33,7 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   // to-be-evaluated point
   Vector evaluate_here;
   evaluate_here.Init(2);
-  evaluate_here[0] = evaluate_here[1] = 0;
+  evaluate_here[0] = evaluate_here[1] = 0.1;
 
   // declare expansion object
   FarFieldExpansion<EpanKernel, EpanKernelDerivative> se;

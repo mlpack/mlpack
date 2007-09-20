@@ -351,6 +351,9 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::
   for(index_t j = 0; j < total_num_coeffs; j++) {
     ArrayList<int> mapping = sea_->get_multiindex(j);
     double arrtmp = kd_.ComputePartialDerivative(derivative_map, mapping);
+
+    printf("Got coeffs: %g, arrtmp; %g\n", coeffs_[j], arrtmp);
+
     double prod = coeffs_[j] * arrtmp;
     
     if(prod > 0) {
