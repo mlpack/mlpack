@@ -95,7 +95,7 @@ class EpanKernelDerivative {
       
       double coord_div_band = x[d];
       
-      derivative_map.set(d, 0, 1 - coord_div_band * coord_div_band);
+      derivative_map.set(d, 0, coord_div_band * coord_div_band);
 
       if(order > 0) {
 	derivative_map.set(d, 1, 2 * coord_div_band);
@@ -128,6 +128,14 @@ class EpanKernelDerivative {
 	return 0;
       }
     }
+    if(nonzero_count == 0) {
+      double prod = 0;
+      for(index_t d = 0; d < mapping.size(); d++) {
+	prod += derivative_map.get(d, 0);
+      }
+      return 1.0 - prod;
+    }
+    
     return derivative_map.get(nonzero_index, mapping[nonzero_index]);
   }
 
