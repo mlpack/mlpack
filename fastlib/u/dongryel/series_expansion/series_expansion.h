@@ -105,7 +105,7 @@ class SeriesExpansion {
    * Initializes the current SeriesExpansion object with the given
    * center.
    */
-  void Init(const TKernel& kernel, ExpansionType expansion_type,
+  void Init(const TKernel &kernel, ExpansionType expansion_type,
 	    const Vector& center, SeriesExpansionAux *sea);
 
   int OrderForEvaluating(const ArrayList< DRange > &region) const;

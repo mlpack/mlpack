@@ -51,9 +51,9 @@ class LocalExpansion {
 
  public:
   
-  FarFieldExpansion() {}
+  LocalExpansion() {}
   
-  ~FarFieldExpansion() {}
+  ~LocalExpansion() {}
   
   // getters and setters
   
@@ -85,19 +85,19 @@ class LocalExpansion {
    * This does not apply for local coefficients.
    */
   void RefineCoeffs(const Matrix& data, const Vector& weights,
-		    const ArrayList<int>& rows, int order);
+		    const ArrayList<int>& rows, int order) { }
   
   /**
    * Evaluates the local coefficients at the given point
    */
   double EvaluateField(Matrix* data=NULL, int row_num=-1,
-		       Vector* x_q=NULL);
+		       Vector* x_q=NULL) const;
   
   /**
    * Initializes the current local expansion object with the given
    * center.
    */
-  void Init(const TKernel& kernel, const Vector& center, 
+  void Init(double bandwidth, const Vector& center, 
 	    SeriesExpansionAux *sea);
 
   /**
@@ -105,21 +105,6 @@ class LocalExpansion {
    * for any query point within the specified region for a given bound.
    */
   int OrderForEvaluating(const DHrectBound<2> &far_field_region) const;
-
-  /**
-   * Computes the required order for converting to the local expansion
-   * inside another region, so that the total error (truncation error
-   * of the far field expansion plus the conversion error) is bounded
-   * above by the given user bound.
-   *
-   * @return the minimum approximation order required for the error,
-   *         -1 if approximation up to the maximum order is not possible
-   */
-  int OrderForConverting(const DHrectBound<2> &far_field_region,
-			 const DHrectBound<2> &local_field_region, 
-			 double min_dist_sqd_regions, 
-			 double required_bound, 
-			 double *actual_error) const;
 
   /**
    * Prints out the series expansion represented by this object.
@@ -130,7 +115,8 @@ class LocalExpansion {
    * Translate from a far field expansion to the expansion here.
    * The translated coefficients are added up to the ones here.
    */
-  void TranslateFromFarField(const FarFieldExpansion &se);
+  void TranslateFromFarField
+    (const FarFieldExpansion<TKernel, TKernelDerivative> &se);
   
   /**
    * Translate to the given local expansion. The translated coefficients
@@ -139,10 +125,10 @@ class LocalExpansion {
   void TranslateToLocal
     (LocalExpansion<TKernel, TKernelDerivative> &se);
 
-}
+};
 
 template<typename TKernel, typename TKernelDerivative>
-void LocalExpansion<Tkernel, TKernelDerivative>::AccumulateCoeffs
+void LocalExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
 (const Matrix& data, const Vector& weights, 
  const ArrayList<int>& rows, int order) {
 
@@ -237,6 +223,259 @@ template<typename TKernel, typename TKernelDerivative>
     }
   }
   fprintf(stream, "\n");
+}
+
+template<typename TKernel, typename TKernelDerivative>
+  double LocalExpansion<TKernel, TKernelDerivative>::
+  EvaluateField(Matrix* data, int row_num, Vector* x_q) const {
+  
+  index_t k, t, tail;
+  
+  // total number of coefficient
+  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+
+  // number of dimensions
+  int dim = sea_->get_dimension();
+
+  // evaluated sum to be returned
+  double sum = 0;
+  
+  // sqrt two bandwidth
+  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
+
+  // temporary variable
+  Vector x_Q_to_x_q;
+  x_Q_to_x_q.Init(dim);
+  Vector tmp;
+  tmp.Init(total_num_coeffs);
+  ArrayList<int> heads;
+  heads.Init(dim + 1);
+  
+  // compute (x_q - x_Q) / (sqrt(2h^2))
+  for(index_t i = 0; i < dim; i++) {
+    
+    if(data == NULL) {
+      x_Q_to_x_q[i] = ((*x_q)[i] - center_[i]) / bandwidth_factor;
+    }
+    else {
+      x_Q_to_x_q[i] = (data->get(i, row_num) - center_[i]) / 
+	bandwidth_factor;
+    }
+  }
+  
+  for(index_t i = 0; i < dim; i++)
+    heads[i] = 0;
+  heads[dim] = MAXINT;
+
+  tmp[0] = 1.0;
+
+  for(k = 1, t = 1, tail = 1; k <= order_; k++, tail = t) {
+
+    for(index_t i = 0; i < dim; i++) {
+      int head = heads[i];
+      heads[i] = t;
+
+      for(index_t j = head; j < tail; j++, t++) {
+        tmp[t] = tmp[j] * x_Q_to_x_q[i];
+      }
+    }
+  }
+
+  for(index_t i = 0; i < total_num_coeffs; i++) {
+    sum += coeffs_[i] * tmp[i];
+  }
+
+  return sum;
+}
+
+template<typename TKernel, typename TKernelDerivative>
+  void LocalExpansion<TKernel, TKernelDerivative>::Init
+  (double bandwidth, const Vector& center, SeriesExpansionAux *sea) {
+  
+  // copy kernel type, center, and bandwidth squared
+  kernel_.Init(bandwidth);
+  center_.Copy(center);
+  order_ = 0;
+  sea_ = sea;
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
+}
+
+template<typename TKernel, typename TKernelDerivative>
+  int LocalExpansion<TKernel, TKernelDerivative>::OrderForEvaluating
+  (const DHrectBound<2> &far_field_region) const {
+
+  // needs to be ported over from Auton
+  return 0;
+}
+
+template<typename TKernel, typename TKernelDerivative>
+  void LocalExpansion<TKernel, TKernelDerivative>::TranslateFromFarField
+  (const FarFieldExpansion<TKernel, TKernelDerivative> &se) {
+
+  Vector pos_arrtmp, neg_arrtmp;
+  Matrix derivative_map;
+  Vector far_center;
+  Vector cent_diff;
+  Vector far_coeffs;
+  int dimension = sea_->get_dimension();
+  int far_order = se.get_order();
+  int total_num_coeffs = sea_->get_total_num_coeffs(far_order);
+  int limit;
+  double bandwidth_factor = kd_.BandwidthFactor(se.bandwidth_sq());
+
+  // get center and coefficients for far field expansion
+  far_center.Alias(se.get_center());
+  far_coeffs.Alias(se.get_coeffs());
+  cent_diff.Init(dimension);
+
+  // if the order of the far field expansion is greater than the
+  // local one we are adding onto, then increase the order.
+  if(far_order > order_) {
+    order_ = far_order;
+  }
+
+  // compute Gaussian derivative
+  limit = 2 * order_ + 1;
+  derivative_map.Init(dimension, limit);
+  pos_arrtmp.Init(total_num_coeffs);
+  neg_arrtmp.Init(total_num_coeffs);
+
+  // compute center difference divided by bw_times_sqrt_two;
+  for(index_t j = 0; j < dimension; j++) {
+    cent_diff[j] = (center_[j] - far_center[j]) / bandwidth_factor;
+  }
+
+  // compute required partial derivatives
+  kd_.ComputeDirectionalDerivatives(cent_diff, derivative_map);
+  ArrayList<int> beta_plus_alpha;
+  beta_plus_alpha.Init(dimension);
+
+  for(index_t j = 0; j < total_num_coeffs; j++) {
+
+    ArrayList<int> beta_mapping = sea_->get_multiindex(j);
+    pos_arrtmp[j] = neg_arrtmp[j] = 0;
+
+    for(index_t k = 0; k < total_num_coeffs; k++) {
+
+      ArrayList<int> alpha_mapping = sea_->get_multiindex(k);
+      for(index_t d = 0; d < dimension; d++) {
+	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
+      }
+      double derivative_factor =
+	kd_.ComputePartialDerivative(derivative_map, beta_plus_alpha);
+      
+      double prod = far_coeffs[k] * derivative_factor;
+
+      if(prod > 0) {
+	pos_arrtmp[j] += prod;
+      }
+      else {
+	neg_arrtmp[j] += prod;
+      }
+    } // end of k-loop
+  } // end of j-loop
+
+  Vector C_k_neg = sea_->get_neg_inv_multiindex_factorials();
+  for(index_t j = 0; j < total_num_coeffs; j++) {
+    coeffs_[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
+  }
+}
+  
+template<typename TKernel, typename TKernelDerivative>
+  void LocalExpansion<TKernel, TKernelDerivative>::TranslateToLocal
+  (LocalExpansion<TKernel, TKernelDerivative> &se) {
+
+  // get the center and the order and the total number of coefficients of 
+  // the expansion we are translating from. Also get coefficients we
+  // are translating
+  Vector new_center;
+  new_center.Alias(se.get_center());
+  int prev_order = se.get_order();
+  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  const ArrayList < int > *upper_mapping_index = 
+    sea_->get_upper_mapping_index();
+  Vector new_coeffs;
+  new_coeffs.Alias(se.get_coeffs());
+
+  // dimension
+  int dim = sea_->get_dimension();
+
+  // temporary variable
+  ArrayList<int> tmp_storage;
+  tmp_storage.Init(dim);
+
+  // sqrt two times bandwidth
+  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
+
+  // center difference between the old center and the new one
+  Vector center_diff;
+  center_diff.Init(dim);
+  for(index_t d = 0; d < dim; d++) {
+    center_diff[d] = (new_center[d] - center_[d]) / bandwidth_factor;
+  }
+
+  // set to the new order if the order of the expansion we are translating
+  // from is higher
+  if(prev_order < order_) {
+    se.set_order(order_);
+  }
+
+  // inverse multiindex factorials
+  Vector C_k;
+  C_k.Alias(sea_->get_inv_multiindex_factorials());
+  
+  // do the actual translation
+  for(index_t j = 0; j < total_num_coeffs; j++) {
+
+    ArrayList<int> alpha_mapping = sea_->get_multiindex(j);
+    ArrayList <int> upper_mappings_for_alpha = upper_mapping_index[j];
+    double pos_coeffs = 0;
+    double neg_coeffs = 0;
+
+    for(index_t k = 0; k < upper_mappings_for_alpha.size(); k++) {
+      
+      if(upper_mappings_for_alpha[k] >= total_num_coeffs) {
+	break;
+      }
+
+      ArrayList<int> beta_mapping = 
+	sea_->get_multiindex(upper_mappings_for_alpha[k]);
+      int flag = 0;
+      double diff1 = 1.0;
+
+      for(index_t l = 0; l < dim; l++) {
+	tmp_storage[l] = beta_mapping[l] - alpha_mapping[l];
+
+	if(tmp_storage[l] < 0) {
+	  flag = 1;
+	  break;
+	}
+      } // end of looping over dimension
+      
+      if(flag)
+	continue;
+
+      for(index_t l = 0; l < dim; l++) {
+	diff1 *= pow(center_diff[l], tmp_storage[l]);
+      }
+
+      double prod =  coeffs_[upper_mappings_for_alpha[k]] * diff1 *
+	sea_->get_n_multichoose_k_by_pos(upper_mappings_for_alpha[k], j);
+      
+      if(prod > 0) {
+	pos_coeffs += prod;
+      }
+      else {
+	neg_coeffs += prod;
+      }
+
+    } // end of k loop
+
+    new_coeffs[j] += pos_coeffs + neg_coeffs;
+  } // end of j loop
 }
 
 #endif
