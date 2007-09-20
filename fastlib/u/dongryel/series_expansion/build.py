@@ -5,7 +5,6 @@ librule(
     headers = ["farfield_expansion.h",
                "kernel_derivative.h",
                "local_expansion.h",
-               "series_expansion.h",
                "series_expansion_aux.h"],    # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # depends on fastlib core
     )
