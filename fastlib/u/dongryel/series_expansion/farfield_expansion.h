@@ -116,11 +116,11 @@ class FarFieldExpansion {
    * @return the minimum approximation order required for the error,
    *         -1 if approximation up to the maximum order is not possible
    */
-  int OrderForConverting(const DHrectBound<2> &far_field_region,
-			 const DHrectBound<2> &local_field_region, 
-			 double min_dist_sqd_regions, 
-			 double required_bound, 
-			 double *actual_error) const;
+  int OrderForConvertingtoLocal(const DHrectBound<2> &far_field_region,
+				const DHrectBound<2> &local_field_region, 
+				double min_dist_sqd_regions, 
+				double required_bound, 
+				double *actual_error) const;
 
   /**
    * Prints out the series expansion represented by this object.
@@ -388,16 +388,27 @@ template<typename TKernel, typename TKernelDerivative>
   (const DHrectBound<2> &far_field_region) const {
   
   // needs to be ported over from auton
+  
   return 0;
 }
 
 template<typename TKernel, typename TKernelDerivative>
-  int FarFieldExpansion<TKernel, TKernelDerivative>::OrderForConverting
-  (const DHrectBound<2> &far_field_region,
-   const DHrectBound<2> &local_field_region, double min_dist_sqd_regions, 
-   double required_bound, double *actual_error) const {
+  int FarFieldExpansion<TKernel, TKernelDerivative>::
+  OrderForConvertingtoLocal(const DHrectBound<2> &far_field_region,
+			    const DHrectBound<2> &local_field_region, 
+			    double min_dist_sqd_regions, 
+			    double required_bound, 
+			    double *actual_error) const {
   
-  // needs to be ported over from auton...
+  double factor = exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
+  double widest_width = 0;
+  
+  // find out the widest dimension and its length
+  for(index_t d = 0; d < far_field_region.dim(); d++) {
+    DRange range = far_field_region.get(d);
+    widest_width = max(widest_width, range.width());
+  }
+
   return 0;
 }
 
