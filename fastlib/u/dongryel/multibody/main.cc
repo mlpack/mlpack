@@ -27,7 +27,9 @@ int main(int argc, char *argv[])
 
   // Multibody computation
   fx_timer_start(NULL,"multibody");
-
+  MultitreeMultibody<GaussianKernel, GaussianKernelDerivative> mtmb;
+  mtmb.Init(data);
+  mtmb.Compute();
   fx_timer_stop(NULL, "multibody");
 
   // NAIVE
