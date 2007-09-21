@@ -101,10 +101,12 @@ class LocalExpansion {
 	    SeriesExpansionAux *sea);
 
   /**
-   * Computes the required order for evaluating the far field expansion
+   * Computes the required order for evaluating the local expansion
    * for any query point within the specified region for a given bound.
    */
-  int OrderForEvaluating(const DHrectBound<2> &far_field_region) const;
+  int OrderForEvaluating(const DHrectBound<2> &local_region,
+			 double min_dist_sqd_regions,
+                         double max_error, double *actual_error) const;
 
   /**
    * Prints out the series expansion represented by this object.
@@ -305,10 +307,67 @@ template<typename TKernel, typename TKernelDerivative>
 
 template<typename TKernel, typename TKernelDerivative>
   int LocalExpansion<TKernel, TKernelDerivative>::OrderForEvaluating
-  (const DHrectBound<2> &far_field_region) const {
-
-  // needs to be ported over from Auton
-  return 0;
+  (const DHrectBound<2> &local_region, double min_dist_sqd_regions,
+   double max_error, double *actual_error) const {
+  
+  double frontfactor =
+    exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
+  double widest_width = 0;
+  int dim = local_region.dim();
+  int max_order = sea_->get_max_order();
+  
+  // find out the widest dimension and its length
+  for(index_t d = 0; d < dim; d++) {
+    DRange range = local_region.get(d);
+    widest_width = max(widest_width, range.width());
+  }
+  
+  double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
+  double r = widest_width / two_bandwidth;
+  
+  // This is not really necessary for O(D^p) expansion, but it is for
+  // speeding up the convergence of the Taylor expansion.
+  if(r >= 1.0)
+    return -1;
+  
+  double r_raised_to_p_alpha = 1.0;
+  double ret;
+  int p_alpha = 0;
+  double floor_fact, ceil_fact;
+  int remainder;
+  
+  do {
+    
+    if(p_alpha > max_order)
+      return -1;
+    
+    r_raised_to_p_alpha *= r;
+    
+    floor_fact =
+      sea_->factorial((int)floor(((double) p_alpha) / ((double) dim)));
+    ceil_fact =
+      sea_->factorial((int)ceil(((double) p_alpha) / ((double) dim)));
+    
+    if(floor_fact < 0.0 || ceil_fact < 0.0)
+      return -1;
+    
+    remainder = p_alpha % dim;
+    
+    ret = frontfactor *
+      (sea_->get_total_num_coeffs(p_alpha + 1) -
+       sea_->get_total_num_coeffs(p_alpha)) * r_raised_to_p_alpha /
+      sqrt(pow(floor_fact, dim - remainder) * pow(ceil_fact, remainder));
+    
+    if(ret > max_error) {
+      p_alpha++;
+    }
+    else {
+      break;
+    }
+  } while(1);
+  
+  *actual_error = ret;
+  return p_alpha;
 }
 
 template<typename TKernel, typename TKernelDerivative>
