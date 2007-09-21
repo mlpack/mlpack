@@ -105,7 +105,9 @@ class FarFieldExpansion {
    * Computes the required order for evaluating the far field expansion
    * for any query point within the specified region for a given bound.
    */
-  int OrderForEvaluating(const DHrectBound<2> &far_field_region) const;
+  int OrderForEvaluating(const DHrectBound<2> &far_field_region,
+			 double min_dist_sqd_regions,
+			 double max_error, double *actual_error) const;
 
   /**
    * Computes the required order for converting to the local expansion
@@ -351,9 +353,6 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::
   for(index_t j = 0; j < total_num_coeffs; j++) {
     ArrayList<int> mapping = sea_->get_multiindex(j);
     double arrtmp = kd_.ComputePartialDerivative(derivative_map, mapping);
-
-    printf("Got coeffs: %g, arrtmp; %g\n", coeffs_[j], arrtmp);
-
     double prod = coeffs_[j] * arrtmp;
     
     if(prod > 0) {
@@ -385,11 +384,67 @@ template<typename TKernel, typename TKernelDerivative>
 
 template<typename TKernel, typename TKernelDerivative>
   int FarFieldExpansion<TKernel, TKernelDerivative>::OrderForEvaluating
-  (const DHrectBound<2> &far_field_region) const {
+  (const DHrectBound<2> &far_field_region, double min_dist_sqd_regions,
+   double max_error, double *actual_error) const {
+
+  double frontfactor = 
+    exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
+  double widest_width = 0;
+  int dim = far_field_region.dim();
+  int max_order = sea_->get_max_order();
+
+  // find out the widest dimension and its length
+  for(index_t d = 0; d < dim; d++) {
+    DRange range = far_field_region.get(d);
+    widest_width = max(widest_width, range.width());
+  }
   
-  // needs to be ported over from auton
-  
-  return 0;
+  double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
+  double r = widest_width / two_bandwidth;
+
+  // This is not really necessary for O(D^p) expansion, but it is for
+  // speeding up the convergence of the Taylor expansion.
+  if(r >= 1.0)
+    return -1;
+
+  double r_raised_to_p_alpha = 1.0;
+  double ret;
+  int p_alpha = 0;
+  double floor_fact, ceil_fact;
+  int remainder;
+
+  do {
+
+    if(p_alpha > max_order)
+      return -1;
+
+    r_raised_to_p_alpha *= r;
+
+    floor_fact = 
+      sea_->factorial((int)floor(((double) p_alpha) / ((double) dim)));
+    ceil_fact = 
+      sea_->factorial((int)ceil(((double) p_alpha) / ((double) dim)));
+
+    if(floor_fact < 0.0 || ceil_fact < 0.0)
+      return -1;
+
+    remainder = p_alpha % dim;
+
+    ret = frontfactor * 
+      (sea_->get_total_num_coeffs(p_alpha + 1) -
+       sea_->get_total_num_coeffs(p_alpha)) * r_raised_to_p_alpha /
+      sqrt(pow(floor_fact, dim - remainder) * pow(ceil_fact, remainder));
+    
+    if(ret > max_error) {
+      p_alpha++;
+    }
+    else {
+      break;
+    }
+  } while(1);
+
+  *actual_error = ret;
+  return p_alpha;
 }
 
 template<typename TKernel, typename TKernelDerivative>
@@ -397,19 +452,71 @@ template<typename TKernel, typename TKernelDerivative>
   OrderForConvertingtoLocal(const DHrectBound<2> &far_field_region,
 			    const DHrectBound<2> &local_field_region, 
 			    double min_dist_sqd_regions, 
-			    double required_bound, 
+			    double max_error, 
 			    double *actual_error) const {
-  
-  double factor = exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
-  double widest_width = 0;
-  
+
+  double max_ref_length = 0;
+  double max_query_length = 0;
+
+  int dim = far_field_region.dim();
+  int max_order = sea_->get_max_order();
+
   // find out the widest dimension and its length
-  for(index_t d = 0; d < far_field_region.dim(); d++) {
-    DRange range = far_field_region.get(d);
-    widest_width = max(widest_width, range.width());
+  for(index_t d = 0; d < dim; d++) {
+    DRange far_range = far_field_region.get(d);
+    DRange local_range = local_field_region.get(d);
+    max_ref_length = max(max_ref_length, far_range.width());
+    max_query_length = max(max_query_length, local_range.width());
   }
 
-  return 0;
+  double bwsqd = kernel_.bandwidth_sq();
+  double two_times_bandwidth = sqrt(bwsqd) * 2;
+  double r_R = max_ref_length / two_times_bandwidth;
+  double r_Q = max_query_length / two_times_bandwidth;
+  double sqrt_two_r_R = sqrt(2.0) * r_R;
+  double sqrt_two_r_Q = sqrt(2.0) * r_Q;
+
+  if(sqrt_two_r_R >= 1.0 || sqrt_two_r_Q >= 1.0)
+    return -1;
+
+  int p_alpha = 0;
+  double sqrt_two_r_R_raised_to_p = 1.0;
+  double r_Q_raised_to_p = 1.0;
+  int remainder;
+  double ret;
+  double frontfactor = exp(-min_dist_sqd_regions / (4.0 * bwsqd));
+  double floor_fact, ceil_fact;
+
+  do {
+    r_Q_raised_to_p *= r_Q;
+    sqrt_two_r_R_raised_to_p *= sqrt_two_r_R;
+    floor_fact = 
+      sea_->factorial((int) floor((double) p_alpha / (double) dim));
+    ceil_fact = 
+      sea_->factorial((int) ceil((double)p_alpha / (double)dim));
+
+    if(floor_fact < 0 || ceil_fact < 0 || p_alpha > max_order)
+      return -1;
+
+    remainder = p_alpha % dim;
+
+    ret = (sea_->get_total_num_coeffs(p_alpha + 1) -
+	   sea_->get_total_num_coeffs(p_alpha))
+      / sqrt(pow(floor_fact, dim - remainder) *
+             pow(ceil_fact, remainder));
+    ret *= (r_Q_raised_to_p + sqrt_two_r_R_raised_to_p *
+	    sea_->get_total_num_coeffs(p_alpha)) * frontfactor;
+    
+    if(ret > max_error) {
+      p_alpha++;
+    }
+    else {
+      break;
+    }
+  } while(1);
+
+  *actual_error = ret;
+  return p_alpha;
 }
 
 template<typename TKernel, typename TKernelDerivative>
