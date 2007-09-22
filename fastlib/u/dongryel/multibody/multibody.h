@@ -6,6 +6,95 @@
 #include "u/dongryel/series_expansion/local_expansion.h"
 #include "u/dongryel/series_expansion/series_expansion_aux.h"
 
+template<typename TKernel>
+class NaiveMultibody {
+
+  FORBID_COPY(NaiveMultibody);
+
+ private:
+
+  /** Temporary space for storing indices selected for exhaustive computation
+   */
+  ArrayList<int> exhaustive_indices_;
+
+  /** Temporary space for storing pairwise distances */
+  Matrix distmat_;
+
+  /** dataset */
+  Dataset dataset_;
+
+  /** dataset for the tree */
+  Matrix data_;
+
+  /** kernel function */
+  TKernel kernel_;
+
+  /** the total number of n-tuples to consider */
+  double total_num_tuples_;
+
+  /** potential estimate */
+  double potential_e_;
+
+  double potential_l_;
+
+  double total_num_tuples;
+
+  /** exhaustive computer */
+  void NMultibody(int level) {
+    
+    int num_nodes = 3;
+    int start_index = 0;
+    double result = 0;
+
+    if(level < num_nodes) {
+      
+      if(level == 0) {
+	start_index = 0;
+      }
+      else {
+	start_index = exhaustive_indices_[level - 1] + 1;
+      }
+      
+      for(index_t i = start_index; i < data_.n_cols() - 
+	    (num_nodes - level - 1); i++) {
+	
+	exhaustive_indices_[level] = i;
+	NMultibody(level + 1);
+      }
+    }
+    else {
+      for(index_t i = 0; i < num_nodes; i++) {
+	const double *i_col = data_.GetColumnPtr(exhaustive_indices_[i]);
+	for(index_t j = i + 1; j < num_nodes; j++) {
+	  const double *j_col = data_.GetColumnPtr(exhaustive_indices_[j]);
+	  distmat_.set(i, j, la::DistanceSqEuclidean(data_.n_rows(), i_col,
+						     j_col));
+	}
+      }
+
+      result = kernel_.EvalUnnormOnSq(distmat_.get(0, 1)) *
+        kernel_.EvalUnnormOnSq(distmat_.get(0, 2)) *
+        kernel_.EvalUnnormOnSq(distmat_.get(1, 2));
+
+      potential_e_ += result;
+      potential_l_ += result;
+    }
+  }
+
+ public:
+  
+  void Init(const Matrix &data) {
+    data_.Init(data);
+    distmat_.Init(3, 3);
+    exhaustive_indices_.Init(3);
+    total_num_tuples = 0;
+  }
+
+  void Compute() {
+    NaiveMultibody(0);
+  }
+
+};
 
 template<typename TKernel, typename TKernelDerivative>
 class MultitreeMultibody {
@@ -404,7 +493,7 @@ private:
     }
     else {
       
-      /* complete the table of distance computation */
+      // complete the table of distance computation
       for(index_t i = 0; i < num_nodes; i++) {
 	const double *i_col = data_.GetColumnPtr(exhaustive_indices_[i]);
 
