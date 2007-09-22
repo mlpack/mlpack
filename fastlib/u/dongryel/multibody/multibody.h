@@ -1,6 +1,8 @@
 #ifndef MULTIBODY_H
 #define MULTIBODY_H
 
+#include <values.h>
+
 #include "fastlib/fastlib_int.h"
 #include "u/dongryel/series_expansion/farfield_expansion.h"
 #include "u/dongryel/series_expansion/local_expansion.h"
@@ -20,9 +22,6 @@ class NaiveMultibody {
   /** Temporary space for storing pairwise distances */
   Matrix distmat_;
 
-  /** dataset */
-  Dataset dataset_;
-
   /** dataset for the tree */
   Matrix data_;
 
@@ -34,10 +33,6 @@ class NaiveMultibody {
 
   /** potential estimate */
   double potential_e_;
-
-  double potential_l_;
-
-  double total_num_tuples;
 
   /** exhaustive computer */
   void NMultibody(int level) {
@@ -72,26 +67,35 @@ class NaiveMultibody {
 	}
       }
 
-      result = kernel_.EvalUnnormOnSq(distmat_.get(0, 1)) *
+      result = 1e-27 * kernel_.EvalUnnormOnSq(distmat_.get(0, 1)) *
         kernel_.EvalUnnormOnSq(distmat_.get(0, 2)) *
         kernel_.EvalUnnormOnSq(distmat_.get(1, 2));
 
       potential_e_ += result;
-      potential_l_ += result;
     }
   }
 
  public:
+
+  NaiveMultibody() {}
   
-  void Init(const Matrix &data) {
-    data_.Init(data);
+  ~NaiveMultibody() {}
+
+  void Init(const Matrix &data, double bandwidth) {
+    data_.Alias(data);
     distmat_.Init(3, 3);
     exhaustive_indices_.Init(3);
-    total_num_tuples = 0;
+    kernel_.Init(bandwidth);
+    total_num_tuples_ = 0;
+
+    potential_e_ = 0;
   }
 
   void Compute() {
-    NaiveMultibody(0);
+
+    NMultibody(0);
+
+    printf("Got potential sum %g\n", potential_e_);
   }
 
 };
@@ -169,44 +173,32 @@ public:
   
   typedef TKernelDerivative KernelDerivative;
 
+  // constructor/destructor
   MultitreeMultibody() {}
   
   ~MultitreeMultibody() { delete root_; }
 
+  // getters/setters
+  
+  const Matrix &get_data() const { return data_; }
+
+  // interesting functions...
+
   /** Main computation */
   void Compute(double tau) {
-    ArrayList<Tree *> root_nodes;
 
-    // Warning, I should fix this so that it generalizes to any number of
-    // tuples... May involves coming up with a solution that involves
-    // templates...
+    ArrayList<Tree *> root_nodes;
     root_nodes.Init(3);
-    tmp_nodes_.Init(3);
-    non_leaf_indices_.Init(0);
-    tmp_non_leaf_indices_.Init(0);
-    leaf_indices_.Init(0);
-    tmp_leaf_indices_.Init(0);
-    distmat_.Init(3, 3);
-    exhaustive_indices_.Init(3);
 
     // store node pointers
     for(index_t i = 0; i < 3; i++) {
       root_nodes[i] = root_;
     }
     
-    // determine which are leaves and non-leaves...
-    for(index_t i = 0; i < 3; i++) {
-      if((root_nodes[i])->is_leaf()) {
-	leaf_indices_.AddBackItem(i);
-      }
-      else {
-	non_leaf_indices_.AddBackItem(i);
-      }
-    }
-    
-    total_num_tuples_ = ttn(0, root_nodes);
+    total_num_tuples_ = math::BinomialCoefficient(data_.n_cols(), 3);
     tau_ = tau;
 
+    // run and do timing for multitree multibody
     MTMultibody(root_nodes, total_num_tuples_);
 
     printf("Total potential estimate: %g\n", potential_e_);
@@ -243,25 +235,23 @@ public:
 
     InitExpansionObjects(root_);
 
-    fx_timer_stop(NULL, "timer_d");
+    fx_timer_stop(NULL, "tree_d");
+
+    // Warning, I should fix this so that it generalizes to any number of
+    // tuples... May involves coming up with a solution that involves
+    // templates...
+    non_leaf_indices_.Init(3);
+    distmat_.Init(3, 3);
+    exhaustive_indices_.Init(3);
+
+    potential_l_ = potential_e_ = 0;
+    extra_token_ = 0;
   }
 
 private:
-
-  /** Temporary storage space for holding onto the node pointers */
-  ArrayList<Tree *> tmp_nodes_;
   
   /** The current list of non-leaf indices */
   ArrayList<int> non_leaf_indices_;
-  
-  /** Storage for holding onto temporary non-leaf indices */
-  ArrayList<int> tmp_non_leaf_indices_;
-
-  /** The current list of leaf_indices */
-  ArrayList<int> leaf_indices_;
-  
-  /** Storage for holding onto temporary leaf indices */
-  ArrayList<int> tmp_leaf_indices_;
 
   /** Temporary space for storing indices selected for exhaustive computation 
    */
@@ -284,6 +274,12 @@ private:
 
   /** the total number of n-tuples to consider */
   double total_num_tuples_;
+  
+  /**
+   * Extra amount of error that can be spent for the query points in
+   * this node.
+   */
+  double extra_token_;
 
   /** potential estimate */
   double potential_e_;
@@ -294,7 +290,7 @@ private:
   /** approximation relative error bound */
   double tau_;
 
-  bool as_indexes_strictly_surround_bs(Tree *a, Tree *b) {
+  int as_indexes_strictly_surround_bs(Tree *a, Tree *b) {
     return (a->begin() < b->begin() && a->end() >= b->end()) ||
       (a->begin() <= b->begin() && a->end() > b->end());
   }
@@ -321,55 +317,56 @@ private:
     Tree *bkn = nodes[b];
     double result;
     int n = nodes.size();
-    
-    if ( b == n-1 ) {
+
+    if(b == n - 1) {
       result = (double) bkn->count();
     }
     else {
       int j;
-      bool conflict = 0;
-      bool simple_product = 1;
+      int conflict = 0;
+      int simple_product = 1;
       
       result = (double) bkn->count();
       
-      for(j = b+1 ; j < n && !conflict; j++) {
+      for(j = b + 1 ; j < n && !conflict; j++) {
 	Tree *knj = nodes[j];
+	
 	if (bkn->begin() >= knj->end() - 1) {
 	  conflict = 1;
 	}
-	else if(nodes[j-1]->end() - 1 > knj->begin()) {
+	else if(nodes[j - 1]->end() - 1 > knj->begin()) {
 	  simple_product = 0;
 	}
       }
       
-      if ( conflict ) {
+      if(conflict) {
 	result = 0.0;
       }
-      else if ( simple_product ) {
-	for ( j = b+1 ; j < n ; j++ ) {
+      else if(simple_product) {
+	for(j = b + 1; j < n; j++) {
 	  result *= nodes[j]->count();
 	}
       }
       else {
-	bool jdiff = -1; 
+	int jdiff = -1; 
+
 	// undefined... will eventually point to the
 	// lowest j > b such that nodes[j] is different from
-	// bkn
-	
-	for ( j = b+1 ; jdiff < 0 && j < n ; j++ ) {
+	// bkn	
+	for(j = b + 1; jdiff < 0 && j < n; j++) {
 	  Tree *knj = nodes[j];
 	  if(bkn->begin() != knj->begin() ||
 	     bkn->end() - 1 != knj->end() - 1) {
 	    jdiff = j;
 	  }
 	}
-	
+
 	if(jdiff < 0) {
 	  result = math::BinomialCoefficient(bkn->count(), n - b);
 	}
 	else {
 	  Tree *dkn = nodes[jdiff];
-	  
+
 	  if(dkn->begin() >= bkn->end() - 1) {
 	    result = math::BinomialCoefficient(bkn->count(), jdiff - b);
 	    if(result > 0.0) {
@@ -391,19 +388,30 @@ private:
   /** Heuristic for node splitting - find the node with most points */
   int FindSplitNode(ArrayList<Tree *> nodes) {
 
-    int max_num_points = 0;
-    int max_index = -1;
+    int global_index = -1;
+    double global_min = MAXDOUBLE;
 
-    for(index_t i = 0; i < tmp_non_leaf_indices_.size(); i++) {
+    for(index_t i = 0; i < non_leaf_indices_.size(); i++) {
 
-      int non_leaf_index = tmp_non_leaf_indices_[i];
-      
-      if(max_num_points < (nodes[non_leaf_index])->count()) {
-	max_num_points = (nodes[non_leaf_index])->count();
-	max_index = non_leaf_index;
+      int non_leaf_index = non_leaf_indices_[i];
+      double minimum_side_length = MAXDOUBLE;
+
+      // find out the minimum side length
+      for(index_t j = 0; j < data_.n_rows(); j++) {
+	
+	DRange range = nodes[non_leaf_index]->bound().get(j);
+	double side_length = range.width();
+	
+	if(side_length < minimum_side_length) {
+	  minimum_side_length = side_length;
+	}
+      }
+      if(minimum_side_length < global_min) {
+	global_min = minimum_side_length;
+	global_index = non_leaf_index;
       }
     }
-    return max_index;
+    return global_index;
   }
 
   /** Pruning rule */
@@ -440,25 +448,29 @@ private:
     dsqd_jk_min = distmat_.get(1, 2);
     dsqd_jk_max = distmat_.get(2, 1);
     
-    min_potential = kernel_.EvalUnnormOnSq(dsqd_ij_max) *
+    min_potential = 1e-27 * kernel_.EvalUnnormOnSq(dsqd_ij_max) *
       kernel_.EvalUnnormOnSq(dsqd_ik_max) *
       kernel_.EvalUnnormOnSq(dsqd_jk_max);
-    max_potential = kernel_.EvalUnnormOnSq(dsqd_ij_min) *
+    max_potential = 1e-27 * kernel_.EvalUnnormOnSq(dsqd_ij_min) *
       kernel_.EvalUnnormOnSq(dsqd_ik_min) *
       kernel_.EvalUnnormOnSq(dsqd_jk_min);
 
     lower_change = num_tuples * min_potential;
     
-    error = num_tuples * 0.5 * (max_potential - min_potential);
+    error = 0.5 * (max_potential - min_potential);
     
     estimate = 0.5 * num_tuples * (min_potential + max_potential);
 
     // compute whether the error is below the threshold
-    if(max_potential - min_potential <= 
-       2 * tau_ * (potential_l_ + lower_change) / total_num_tuples_) {
-
+    if(error <= tau_ * (potential_l_ + lower_change) / 
+       total_num_tuples_ + extra_token_) {
+      
       potential_l_ += lower_change;
       potential_e_ += estimate;
+      extra_token_ = num_tuples * (potential_l_ * tau_ / total_num_tuples_ - error) 
+	+ extra_token_;
+
+      DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
     }
     return 0;
@@ -486,13 +498,13 @@ private:
 	start_index = nodes[level]->begin();
       }
       
-      for(index_t i = start_index; i < (nodes[level])->count(); i++) {	
+      for(index_t i = start_index; i < (nodes[level])->end(); i++) {	
 	exhaustive_indices_[level] = i;
 	MTMultibodyBase(nodes, level + 1);
       }
     }
     else {
-      
+
       // complete the table of distance computation
       for(index_t i = 0; i < num_nodes; i++) {
 	const double *i_col = data_.GetColumnPtr(exhaustive_indices_[i]);
@@ -505,7 +517,7 @@ private:
 	}
       }
       
-      result = kernel_.EvalUnnormOnSq(distmat_.get(0, 1)) *
+      result = 1e-27 * kernel_.EvalUnnormOnSq(distmat_.get(0, 1)) *
 	kernel_.EvalUnnormOnSq(distmat_.get(0, 2)) *
 	kernel_.EvalUnnormOnSq(distmat_.get(1, 2));
       
@@ -521,44 +533,49 @@ private:
       return;
     }
 
+    // figure out which ones are non-leaves
+    non_leaf_indices_.Resize(0);
+    for(index_t i = 0; i < 3; i++) {
+      if(!(nodes[i]->is_leaf())) {
+	non_leaf_indices_.AddBackItem(i);
+      }
+    }
+    
     // all leaves, then base case
-    else if(non_leaf_indices_.size() == 0) {
+    if(non_leaf_indices_.size() == 0) {
       MTMultibodyBase(nodes, 0);
+      return;
     }
     
     // else, split an internal node and recurse
     else {
       int split_index;
       double new_num_tuples;
-      tmp_non_leaf_indices_.Resize(0);
-      tmp_leaf_indices_.Resize(0);
       
-      // save node pointers before recursing
-      for(index_t i = 0; i < nodes.size(); i++) {
-	tmp_nodes_[i] = nodes[i];
+      // copy to new nodes
+      ArrayList<Tree *> new_nodes;
+      new_nodes.Init(3);
+      for(index_t i = 0; i < 3; i++) {
+	new_nodes[i] = nodes[i];
       }
-      for(index_t i = 0; i < non_leaf_indices_.size(); i++) {
-	tmp_non_leaf_indices_.AddBackItem(non_leaf_indices_[i]);
-      }
-      for(index_t i = 0; i < leaf_indices_.size(); i++) {
-	tmp_leaf_indices_.AddBackItem(leaf_indices_[i]);
-      }
-      
+
       // apply splitting heuristic
       split_index = FindSplitNode(nodes);
 
-      nodes[split_index] = tmp_nodes_[split_index]->left();
-      new_num_tuples = ttn(0, nodes);
+      // recurse to the left
+      new_nodes[split_index] = nodes[split_index]->left();
+      new_num_tuples = ttn(0, new_nodes);
       
       if(new_num_tuples > 0) {
-	MTMultibody(nodes, new_num_tuples);
+	MTMultibody(new_nodes, new_num_tuples);
       }
       
-      nodes[split_index] = tmp_nodes_[split_index]->right();
-      new_num_tuples = ttn(0, nodes);
+      // recurse to the right
+      new_nodes[split_index] = nodes[split_index]->right();
+      new_num_tuples = ttn(0, new_nodes);
       
       if(new_num_tuples > 0) {
-	MTMultibody(nodes, new_num_tuples);
+	MTMultibody(new_nodes, new_num_tuples);
       }
     }
   }
