@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
   // PARSE INPUTS
   do_naive = fx_param_exists(NULL, "do_naive");
-  bandwidth = fx_param_double(NULL, "bandwidth", 0.5);
+  bandwidth = fx_param_double(NULL, "bandwidth", 0.1);
 
   // Multibody computation
   printf("Starting multitree multibody...\n");

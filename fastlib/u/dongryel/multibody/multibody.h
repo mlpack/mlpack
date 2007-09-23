@@ -389,10 +389,11 @@ private:
   int FindSplitNode(ArrayList<Tree *> nodes) {
 
     int global_index = -1;
-    double global_min = MAXDOUBLE;
+    int global_min = 0;
 
     for(index_t i = 0; i < non_leaf_indices_.size(); i++) {
 
+      /*
       int non_leaf_index = non_leaf_indices_[i];
       double minimum_side_length = MAXDOUBLE;
 
@@ -406,8 +407,14 @@ private:
 	  minimum_side_length = side_length;
 	}
       }
-      if(minimum_side_length < global_min) {
+      if(minimum_side_length > global_min) {
 	global_min = minimum_side_length;
+	global_index = non_leaf_index;
+      }
+      */
+      int non_leaf_index = non_leaf_indices_[i];
+      if(nodes[non_leaf_index]->count() > global_min) {
+	global_min = nodes[non_leaf_index]->count();
 	global_index = non_leaf_index;
       }
     }
@@ -457,18 +464,20 @@ private:
 
     lower_change = num_tuples * min_potential;
     
-    error = 0.5 * (max_potential - min_potential);
+    error = 0.5 * num_tuples * (max_potential - min_potential);
     
     estimate = 0.5 * num_tuples * (min_potential + max_potential);
 
     // compute whether the error is below the threshold
-    if(error <= tau_ * (potential_l_ + lower_change) / 
-       total_num_tuples_ + extra_token_) {
+    if(likely(error >= 0) && 
+       error <= tau_ * (potential_l_ + lower_change) *
+       ((num_tuples + extra_token_) / total_num_tuples_)) {
       
       potential_l_ += lower_change;
       potential_e_ += estimate;
-      extra_token_ = num_tuples * (potential_l_ * tau_ / total_num_tuples_ - error) 
-	+ extra_token_;
+
+      extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
+	(tau_ * potential_l_);
 
       DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
@@ -544,6 +553,7 @@ private:
     // all leaves, then base case
     if(non_leaf_indices_.size() == 0) {
       MTMultibodyBase(nodes, 0);
+      extra_token_ += num_tuples;
       return;
     }
     
