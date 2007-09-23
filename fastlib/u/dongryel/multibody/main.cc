@@ -1,8 +1,10 @@
 #include "multibody.h"
+#include "multibody_kernel.h"
 
 int main(int argc, char *argv[])
 {
   bool do_naive;
+  double tau;
   double bandwidth;
   
   fx_init(argc, argv);
@@ -10,13 +12,15 @@ int main(int argc, char *argv[])
   // PARSE INPUTS
   do_naive = fx_param_exists(NULL, "do_naive");
   bandwidth = fx_param_double(NULL, "bandwidth", 0.1);
-
+  tau = fx_param_double(NULL, "tau", 0.1);
+  
   // Multibody computation
   printf("Starting multitree multibody...\n");
   fx_timer_start(NULL, "multibody");
-  MultitreeMultibody<GaussianKernel, GaussianKernelDerivative> mtmb;
+  MultitreeMultibody<GaussianThreeBodyKernel, 
+    GaussianKernel, GaussianKernelDerivative> mtmb;
   mtmb.Init(bandwidth);
-  mtmb.Compute(0.1);
+  mtmb.Compute(tau);
   fx_timer_stop(NULL, "multibody");
   printf("multitree multibody completed...\n");
 
@@ -24,7 +28,7 @@ int main(int argc, char *argv[])
   if (do_naive) {
     printf("Starting naive multibody...\n");
     fx_timer_start(NULL, "naive_multibody");
-    NaiveMultibody<GaussianKernel> nmb;
+    NaiveMultibody<GaussianThreeBodyKernel> nmb;
     nmb.Init(mtmb.get_data(), bandwidth);
     nmb.Compute();
     fx_timer_stop(NULL, "naive_multibody");

@@ -2,7 +2,8 @@
 librule(
     name = "multibody",                      # this line can be safely omitted
     sources = [],                            # files that must be compiled
-    headers = ["multibody.h"],               # include files part of the 'lib'
+    headers = ["multibody.h",
+               "multibody_kernel.h"],        # include files part of the 'lib'
     deplibs = ["u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
     )

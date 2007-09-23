@@ -7,8 +7,9 @@
 #include "u/dongryel/series_expansion/farfield_expansion.h"
 #include "u/dongryel/series_expansion/local_expansion.h"
 #include "u/dongryel/series_expansion/series_expansion_aux.h"
+#include "multibody_kernel.h"
 
-template<typename TKernel>
+template<typename TMultibodyKernel>
 class NaiveMultibody {
 
   FORBID_COPY(NaiveMultibody);
@@ -19,17 +20,11 @@ class NaiveMultibody {
    */
   ArrayList<int> exhaustive_indices_;
 
-  /** Temporary space for storing pairwise distances */
-  Matrix distmat_;
-
   /** dataset for the tree */
   Matrix data_;
 
-  /** kernel function */
-  TKernel kernel_;
-
-  /** the total number of n-tuples to consider */
-  double total_num_tuples_;
+  /** multibody kernel function */
+  TMultibodyKernel mkernel_;
 
   /** potential estimate */
   double potential_e_;
@@ -37,7 +32,7 @@ class NaiveMultibody {
   /** exhaustive computer */
   void NMultibody(int level) {
     
-    int num_nodes = 3;
+    int num_nodes = mkernel_.order();
     int start_index = 0;
     double result = 0;
 
@@ -52,25 +47,12 @@ class NaiveMultibody {
       
       for(index_t i = start_index; i < data_.n_cols() - 
 	    (num_nodes - level - 1); i++) {
-	
 	exhaustive_indices_[level] = i;
 	NMultibody(level + 1);
       }
     }
     else {
-      for(index_t i = 0; i < num_nodes; i++) {
-	const double *i_col = data_.GetColumnPtr(exhaustive_indices_[i]);
-	for(index_t j = i + 1; j < num_nodes; j++) {
-	  const double *j_col = data_.GetColumnPtr(exhaustive_indices_[j]);
-	  distmat_.set(i, j, la::DistanceSqEuclidean(data_.n_rows(), i_col,
-						     j_col));
-	}
-      }
-
-      result = 1e-27 * kernel_.EvalUnnormOnSq(distmat_.get(0, 1)) *
-        kernel_.EvalUnnormOnSq(distmat_.get(0, 2)) *
-        kernel_.EvalUnnormOnSq(distmat_.get(1, 2));
-
+      result = mkernel_.Eval(data_, exhaustive_indices_);
       potential_e_ += result;
     }
   }
@@ -83,11 +65,8 @@ class NaiveMultibody {
 
   void Init(const Matrix &data, double bandwidth) {
     data_.Alias(data);
-    distmat_.Init(3, 3);
     exhaustive_indices_.Init(3);
-    kernel_.Init(bandwidth);
-    total_num_tuples_ = 0;
-
+    mkernel_.Init(bandwidth);
     potential_e_ = 0;
   }
 
@@ -101,76 +80,80 @@ class NaiveMultibody {
 };
 
 template<typename TKernel, typename TKernelDerivative>
+class MultibodyStat {
+
+ public:
+
+  /** Summed up potential for query points in this node */
+  double potential_;
+
+  /**
+   * Extra amount of error that can be spent for the query points in
+   * this node.
+   */
+  double extra_token_;
+
+  /**
+   * Far field expansion created by the reference points in this node.
+   */
+  FarFieldExpansion<TKernel, TKernelDerivative> farfield_expansion_;
+
+  /**
+   * Local expansion stored in this node.
+   */
+  LocalExpansion<TKernel, TKernelDerivative> local_expansion_;
+
+  /** Initialize the statistics */
+  void Init() {
+  }
+
+  void Init(double bandwidth, SeriesExpansionAux *sea) {
+    potential_ = 0;
+    extra_token_ = 0;
+    farfield_expansion_.Init(bandwidth, sea);
+    local_expansion_.Init(bandwidth, sea);
+  }
+
+  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+    Init();
+  }
+
+  void Init(const Matrix& dataset, index_t &start, index_t &count,
+	    const MultibodyStat& left_stat,
+	    const MultibodyStat& right_stat) {
+    Init();
+  }
+
+  void Init(double bandwidth, const Vector& center,
+	    SeriesExpansionAux *sea) {
+
+    potential_ = 0;
+    extra_token_ = 0;
+    farfield_expansion_.Init(bandwidth, center, sea);
+    local_expansion_.Init(bandwidth, center, sea);
+  }
+
+  MultibodyStat() { }
+
+  ~MultibodyStat() {}
+
+};
+
+
+template<typename TMultibodyKernel, typename TKernel, typename TKernelDerivative>
 class MultitreeMultibody {
 
   FORBID_COPY(MultitreeMultibody);
 
 public:
 
-  /** Statatistics stored in each node of the tree */
-  class MultibodyStat {
-    
-  public:
-    
-    /** Summed up potential for query points in this node */
-    double potential_;
-
-    /**
-     * Extra amount of error that can be spent for the query points in
-     * this node.
-     */
-    double extra_token_;
-
-    /**
-     * Far field expansion created by the reference points in this node.
-     */
-    FarFieldExpansion<TKernel, TKernelDerivative> farfield_expansion_;
-
-    /**
-     * Local expansion stored in this node.
-     */
-    LocalExpansion<TKernel, TKernelDerivative> local_expansion_;
-
-    /** Initialize the statistics */
-    void Init() {
-    }
-
-    void Init(double bandwidth, SeriesExpansionAux *sea) {
-      potential_ = 0;
-      extra_token_ = 0;
-      farfield_expansion_.Init(bandwidth, sea);
-      local_expansion_.Init(bandwidth, sea);
-    }
-    
-    void Init(const Matrix& dataset, index_t &start, index_t &count) {
-      Init();
-    }
-    
-    void Init(const Matrix& dataset, index_t &start, index_t &count,
-	      const MultibodyStat& left_stat, 
-	      const MultibodyStat& right_stat) {
-      Init();
-    }
-
-    void Init(double bandwidth, const Vector& center, 
-	      SeriesExpansionAux *sea) {
-      
-      potential_ = 0;
-      extra_token_ = 0;
-      farfield_expansion_.Init(bandwidth, center, sea);
-      local_expansion_.Init(bandwidth, center, sea);
-    }
-
-    MultibodyStat() { }
-    
-    ~MultibodyStat() {}
-
-  };
-
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, MultibodyStat> Tree;
+  typedef BinarySpaceTree<DHrectBound<2>, Matrix, 
+    MultibodyStat<TKernel, TKernelDerivative> > Tree;
 
   typedef TKernel Kernel;
   
+  typedef TMultibodyKernel MultibodyKernel;
+
   typedef TKernelDerivative KernelDerivative;
 
   // constructor/destructor
@@ -212,8 +195,7 @@ public:
       far_center.Alias(node->stat().farfield_expansion_.get_center());
       local_center.Alias(node->stat().local_expansion_.get_center());
       node->bound().CalculateMidpoint(&far_center);
-      node->bound().CalculateMidpoint(&local_center);
-      
+      node->bound().CalculateMidpoint(&local_center); 
       node->stat().Init(sqrt(kernel_.bandwidth_sq()), &sea_);
     }
 
@@ -232,7 +214,7 @@ public:
     sea_.Init(10, data_.n_rows());
     
     kernel_.Init(bandwidth);
-
+    mkernel_.Init(bandwidth);
     InitExpansionObjects(root_);
 
     fx_timer_stop(NULL, "tree_d");
@@ -240,9 +222,10 @@ public:
     // Warning, I should fix this so that it generalizes to any number of
     // tuples... May involves coming up with a solution that involves
     // templates...
-    non_leaf_indices_.Init(3);
-    distmat_.Init(3, 3);
-    exhaustive_indices_.Init(3);
+    non_leaf_indices_.Init(mkernel_.order());
+    distmat_.Init(mkernel_.order(), mkernel_.order());
+    exhaustive_indices_.Init(mkernel_.order());
+    node_bounds_.Init(mkernel_.order());
 
     potential_l_ = potential_e_ = 0;
     extra_token_ = 0;
@@ -250,6 +233,9 @@ public:
 
 private:
   
+  /** hrect bounds passed to evaluation */
+  ArrayList<DHrectBound<2> *> node_bounds_;
+
   /** The current list of non-leaf indices */
   ArrayList<int> non_leaf_indices_;
 
@@ -271,6 +257,9 @@ private:
 
   /** kernel function */
   Kernel kernel_;
+
+  /** multibody kernel function */
+  MultibodyKernel mkernel_;
 
   /** the total number of n-tuples to consider */
   double total_num_tuples_;
@@ -424,43 +413,15 @@ private:
   /** Pruning rule */
   int Prunable(ArrayList<Tree *> nodes, double num_tuples) {
 
-    int i, j;
     double min_potential, max_potential;
-    double dsqd_ij_min, dsqd_ij_max, dsqd_ik_min, dsqd_ik_max, dsqd_jk_min,
-      dsqd_jk_max;
-    int num_nodes = nodes.size();
     double lower_change;
     double error, estimate;
-    double dmin = 0, dmax = 0;
     
     // compute pairwise bounding box distances
-    for(i = 0; i < num_nodes - 1; i++) {
-      Tree *node_i = nodes[i];
-
-      for(j = i + 1; j < num_nodes; j++) {
-	Tree *node_j = nodes[j];
-	
-	dmin = node_i->bound().MinDistanceSq(node_j->bound());
-	dmax = node_i->bound().MaxDistanceSq(node_j->bound());
-
-	distmat_.set(i, j, dmin);
-	distmat_.set(j, i, dmax);
-      }
+    for(index_t i = 0; i < mkernel_.order(); i++) {
+      node_bounds_[i] = &(nodes[i]->bound());
     }
-
-    dsqd_ij_min = distmat_.get(0, 1);
-    dsqd_ij_max = distmat_.get(1, 0);
-    dsqd_ik_min = distmat_.get(0, 2);
-    dsqd_ik_max = distmat_.get(2, 0);
-    dsqd_jk_min = distmat_.get(1, 2);
-    dsqd_jk_max = distmat_.get(2, 1);
-    
-    min_potential = 1e-27 * kernel_.EvalUnnormOnSq(dsqd_ij_max) *
-      kernel_.EvalUnnormOnSq(dsqd_ik_max) *
-      kernel_.EvalUnnormOnSq(dsqd_jk_max);
-    max_potential = 1e-27 * kernel_.EvalUnnormOnSq(dsqd_ij_min) *
-      kernel_.EvalUnnormOnSq(dsqd_ik_min) *
-      kernel_.EvalUnnormOnSq(dsqd_jk_min);
+    mkernel_.EvalNodes(node_bounds_, &min_potential, &max_potential);
 
     lower_change = num_tuples * min_potential;
     
@@ -515,21 +476,7 @@ private:
     else {
 
       // complete the table of distance computation
-      for(index_t i = 0; i < num_nodes; i++) {
-	const double *i_col = data_.GetColumnPtr(exhaustive_indices_[i]);
-
-	for(index_t j = i + 1; j < num_nodes; j++) {
-	  
-	  const double *j_col = data_.GetColumnPtr(exhaustive_indices_[j]);
-	  distmat_.set(i, j, la::DistanceSqEuclidean(data_.n_rows(), i_col, 
-						     j_col));
-	}
-      }
-      
-      result = 1e-27 * kernel_.EvalUnnormOnSq(distmat_.get(0, 1)) *
-	kernel_.EvalUnnormOnSq(distmat_.get(0, 2)) *
-	kernel_.EvalUnnormOnSq(distmat_.get(1, 2));
-      
+      result = mkernel_.Eval(data_, exhaustive_indices_);
       potential_e_ += result;
       potential_l_ += result;
     }
