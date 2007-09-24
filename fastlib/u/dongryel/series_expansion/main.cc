@@ -346,6 +346,48 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   return 1;
 }
 
+int TestConvolveFarField(const Matrix &data, const Vector &weights,
+			 const ArrayList<int> &rows) {
+  
+  printf("\n----- TestConvolveFarField -----\n");
+
+  // bandwidth of sqrt(0.5) Gaussian kernel
+  double bandwidth = sqrt(0.5);
+  GaussianKernel kernel;
+  kernel.Init(sqrt(0.5));
+
+  // declare auxiliary object and initialize
+  SeriesExpansionAux sea;
+  sea.Init(20, data.n_rows());
+
+  // declare center at the origin
+  Vector center;
+  center.Init(2);
+  center.SetZero();
+
+  // to-be-evaluated point
+  Vector evaluate_here;
+  evaluate_here.Init(2);
+  evaluate_here[0] = evaluate_here[1] = 3;
+
+  // declare expansion objects at (0,0) and other centers
+  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se;
+
+  // initialize expansion objects with respective centers and the bandwidth
+  // squared of 0.5
+  se.Init(bandwidth, center, &sea);
+
+  // compute up to 4-th order multivariate polynomial.
+  se.AccumulateCoeffs(data, weights, rows, 20);
+
+  // print out the objects
+  se.PrintDebug();               // expansion at (0, 0)
+
+  se.ConvolveField(se, se, 6, 6, 6);
+
+  return 1;
+}
+
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
@@ -378,6 +420,8 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestTransLocalToLocal(data, weights, rows) == 1);
 
   DEBUG_ASSERT(TestEpanKernelEvaluateFarField(data, weights, rows) == 1);
+
+  DEBUG_ASSERT(TestConvolveFarField(data, weights, rows) == 1);
 
   fx_done();
 }
