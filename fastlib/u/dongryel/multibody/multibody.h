@@ -196,7 +196,7 @@ public:
       local_center.Alias(node->stat().local_expansion_.get_center());
       node->bound().CalculateMidpoint(&far_center);
       node->bound().CalculateMidpoint(&local_center); 
-      node->stat().Init(sqrt(kernel_.bandwidth_sq()), &sea_);
+      node->stat().Init(sqrt(mkernel_.bandwidth_sq()), &sea_);
     }
 
     if(!node->is_leaf()) {
@@ -212,8 +212,7 @@ public:
     tree::LoadKdTree(NULL, &data_, &root_, NULL);
 
     sea_.Init(10, data_.n_rows());
-    
-    kernel_.Init(bandwidth);
+
     mkernel_.Init(bandwidth);
     InitExpansionObjects(root_);
 
@@ -254,10 +253,7 @@ private:
 
   /** series approximation auxiliary computations */
   SeriesExpansionAux sea_;
-
-  /** kernel function */
-  Kernel kernel_;
-
+  
   /** multibody kernel function */
   MultibodyKernel mkernel_;
 
