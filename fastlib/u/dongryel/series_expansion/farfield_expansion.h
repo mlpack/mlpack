@@ -63,6 +63,8 @@ class FarFieldExpansion {
   /** Get the center of expansion */
   const Vector& get_center() const { return center_; }
   
+  Vector &get_center() { return center_; }
+
   /** Get the coefficients */
   const Vector& get_coeffs() const { return coeffs_; }
   
@@ -72,6 +74,17 @@ class FarFieldExpansion {
   /** Set the approximation order */
   void set_order(int new_order) { order_ = new_order; }
   
+  /** 
+   * Set the center of the expansion - assumes that the center has been
+   * initialized before...
+   */
+  void set_center(const Vector &center) {
+    
+    for(index_t i = 0; i < center.length(); i++) {
+      center_[i] = center[i];
+    }
+  }
+
   // interesting functions...
   
   /**
@@ -95,11 +108,22 @@ class FarFieldExpansion {
 		       Vector* x_q=NULL) const;
   
   /**
+   * Evaluates the three-way convolution with two other far field
+   * expansions
+   */
+  double ConvolveField
+    (const FarFieldExpansion<TKernel, TKernelDerivative> &fe2,
+     const FarFieldExpansion<TKernel, TKernelDerivative> &fe3,
+     int order1, int order2, int order3) const;
+
+  /**
    * Initializes the current far field expansion object with the given
    * center.
    */
   void Init(double bandwidth, const Vector& center, 
 	    SeriesExpansionAux *sea);
+
+  void Init(double bandwidth, SeriesExpansionAux *sea);
 
   /**
    * Computes the required order for evaluating the far field expansion
@@ -368,12 +392,88 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::
 }
 
 template<typename TKernel, typename TKernelDerivative>
+double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
+  (const FarFieldExpansion<TKernel, TKernelDerivative> &fe2,
+   const FarFieldExpansion<TKernel, TKernelDerivative> &fe3,
+   int order1, int order2, int order3) const {
+  
+  const ArrayList<int> *multiindex_mapping = sea_->get_multiindex_mapping();
+  const ArrayList<int> *lower_mapping_index = sea_->get_lower_mapping_index();
+
+  // get the total number of coefficients
+  int total_num_coeffs1 = sea_->get_total_num_coeffs(order1);
+  int total_num_coeffs2 = sea_->get_total_num_coeffs(order2);
+  int total_num_coeffs3 = sea_->get_total_num_coeffs(order3);
+  
+  // actual accumulated sum
+  double neg_sum = 0;
+  double pos_sum = 0;
+  double sum = 0;
+
+  // main loop
+  for(index_t alpha = 0; alpha < total_num_coeffs1; alpha++) {
+
+    ArrayList <int> alpha_mapping = multiindex_mapping[alpha];
+    ArrayList <int> lower_mappings_for_alpha = lower_mapping_index[alpha];
+
+    for(index_t mu = 0; mu < lower_mappings_for_alpha.size(); mu++) {
+
+      ArrayList <int> mu_mapping = 
+	multiindex_mapping[lower_mappings_for_alpha[mu]];
+
+      for(index_t beta = 0; beta < total_num_coeffs2; beta++) {
+	
+	ArrayList <int> beta_mapping = multiindex_mapping[beta];
+	ArrayList <int> lower_mappings_for_beta = lower_mapping_index[beta];
+
+	for(index_t nu = 0; nu < lower_mappings_for_beta.size(); nu++) {
+	  
+	  ArrayList<int> nu_mapping = 
+	    multiindex_mapping[lower_mappings_for_beta[nu]];
+
+	  for(index_t gamma = 0; gamma < total_num_coeffs3; gamma++) {
+	    
+	    ArrayList <int> gamma_mapping = multiindex_mapping[gamma];
+	    ArrayList <int> lower_mappings_for_gamma = 
+	      lower_mapping_index[gamma];
+
+	    for(index_t eta = 0; eta < lower_mappings_for_gamma.size(); eta++){
+	      
+	      pos_sum += 1;
+	    } // end of eta
+	  } // end of gamma
+	} // end of nu
+      } // end of beta
+    } // end of mu
+  } // end of alpha
+  
+  // combine negative and positive sums
+  sum = neg_sum + pos_sum;
+  return sum;
+}
+
+template<typename TKernel, typename TKernelDerivative>
   void FarFieldExpansion<TKernel, TKernelDerivative>::Init
   (double bandwidth, const Vector& center, SeriesExpansionAux *sea) {
   
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(bandwidth);
   center_.Copy(center);
+  order_ = 0;
+  sea_ = sea;
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
+}
+
+template<typename TKernel, typename TKernelDerivative>
+  void FarFieldExpansion<TKernel, TKernelDerivative>::Init
+  (double bandwidth, SeriesExpansionAux *sea) {
+  
+  // copy kernel type, center, and bandwidth squared
+  kernel_.Init(bandwidth);
+  center_.Init(sea->get_dimension());
   order_ = 0;
   sea_ = sea;
 

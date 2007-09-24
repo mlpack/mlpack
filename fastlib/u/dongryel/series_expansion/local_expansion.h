@@ -63,6 +63,8 @@ class LocalExpansion {
   /** Get the center of expansion */
   const Vector& get_center() const { return center_; }
   
+  Vector& get_center() { return center_; }
+
   /** Get the coefficients */
   const Vector& get_coeffs() const { return coeffs_; }
   
@@ -100,6 +102,8 @@ class LocalExpansion {
   void Init(double bandwidth, const Vector& center, 
 	    SeriesExpansionAux *sea);
 
+  void Init(double bandwidth, SeriesExpansionAux *sea);
+  
   /**
    * Computes the required order for evaluating the local expansion
    * for any query point within the specified region for a given bound.
@@ -297,6 +301,21 @@ template<typename TKernel, typename TKernelDerivative>
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(bandwidth);
   center_.Copy(center);
+  order_ = 0;
+  sea_ = sea;
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
+}
+
+template<typename TKernel, typename TKernelDerivative>
+  void LocalExpansion<TKernel, TKernelDerivative>::Init
+  (double bandwidth, SeriesExpansionAux *sea) {
+  
+  // copy kernel type, center, and bandwidth squared
+  kernel_.Init(bandwidth);
+  center_.Init(sea->get_dimension());
   order_ = 0;
   sea_ = sea;
 
