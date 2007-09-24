@@ -2,6 +2,7 @@
 #define MULTIBODY_KERNEL_H
 
 #include "fastlib/fastlib_int.h"
+#include "u/dongryel/series_expansion/kernel_derivative.h"
 
 class GaussianThreeBodyKernel {
   
@@ -15,6 +16,9 @@ class GaussianThreeBodyKernel {
   GaussianThreeBodyKernel() {}
   
   ~GaussianThreeBodyKernel() {}
+
+  // getters and setters
+  double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
 
   void Init(double bandwidth_in) {
     kernel_.Init(bandwidth_in);
