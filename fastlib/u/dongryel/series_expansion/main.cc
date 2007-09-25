@@ -365,11 +365,6 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
   center.Init(2);
   center.SetZero();
 
-  // to-be-evaluated point
-  Vector evaluate_here;
-  evaluate_here.Init(2);
-  evaluate_here[0] = evaluate_here[1] = 3;
-
   // declare expansion objects at (0,0) and other centers
   FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se;
 
@@ -383,7 +378,7 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
   // print out the objects
   se.PrintDebug();               // expansion at (0, 0)
 
-  se.ConvolveField(se, se, 6, 6, 6);
+  printf("Convolution: %g\n", se.ConvolveField(se, se, 5, 5, 5));
 
   return 1;
 }
