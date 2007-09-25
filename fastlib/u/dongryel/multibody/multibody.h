@@ -218,9 +218,6 @@ public:
 
     fx_timer_stop(NULL, "tree_d");
 
-    // Warning, I should fix this so that it generalizes to any number of
-    // tuples... May involves coming up with a solution that involves
-    // templates...
     non_leaf_indices_.Init(mkernel_.order());
     distmat_.Init(mkernel_.order(), mkernel_.order());
     exhaustive_indices_.Init(mkernel_.order());

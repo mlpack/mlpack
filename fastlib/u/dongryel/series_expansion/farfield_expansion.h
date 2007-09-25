@@ -404,42 +404,147 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
   int total_num_coeffs1 = sea_->get_total_num_coeffs(order1);
   int total_num_coeffs2 = sea_->get_total_num_coeffs(order2);
   int total_num_coeffs3 = sea_->get_total_num_coeffs(order3);
+  int dim = sea_->get_dimension();
   
   // actual accumulated sum
   double neg_sum = 0;
   double pos_sum = 0;
   double sum = 0;
+  
+  // some temporary
+  double moment_i, moment_j, moment_k;
+
+  // temporary array
+  ArrayList<int> mu_nu_mapping;
+  ArrayList<int> alpha_mu_eta_mapping;
+  ArrayList<int> beta_gamma_nu_eta_mapping;
+  ArrayList<int> alpha_mu_mapping;
+  ArrayList<int> beta_nu_mapping;
+  ArrayList<int> gamma_eta_mapping;
+  alpha_mu_mapping.Init(dim);
+  beta_nu_mapping.Init(dim);
+  gamma_eta_mapping.Init(dim);
+  mu_nu_mapping.Init(dim);
+  alpha_mu_eta_mapping.Init(dim);
+  beta_gamma_nu_eta_mapping.Init(dim);
+
+  // partial derivatives table
+  Matrix derivative_map_alpha;
+  derivative_map_alpha.Init(dim, order1 + 1);
+  Matrix derivative_map_beta;
+  derivative_map_beta.Init(dim, order2 + 1);
+  Matrix derivative_map_gamma;
+  derivative_map_gamma.Init(dim, order3 + 1);
+  
+  // compute center differences and complete the table of partial derivatives
+  Vector xJ_xI, xK_xI, xK_xJ;
+  xJ_xI.Init(dim);
+  xK_xI.Init(dim);
+  xK_xJ.Init(dim);
+  Vector xJ_center, xK_center;
+  xJ_center.Alias(fe2.get_center());
+  xK_center.Alias(fe3.get_center());
+
+  for(index_t d = 0; d < dim; d++) {
+    xJ_xI[d] = xJ_center[d] - center_[d];
+    xK_xI[d] = xK_center[d] - center_[d];
+    xK_xJ[d] = xK_center[d] - xJ_center[d];
+  }
+  kd_.ComputeDirectionalDerivatives(xJ_xI, derivative_map_alpha);
+  kd_.ComputeDirectionalDerivatives(xK_xI, derivative_map_beta);
+  kd_.ComputeDirectionalDerivatives(xK_xJ, derivative_map_gamma);
+
+  // inverse factorials
+  Vector inv_multiindex_factorials;
+  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
 
   // main loop
   for(index_t alpha = 0; alpha < total_num_coeffs1; alpha++) {
 
     ArrayList <int> alpha_mapping = multiindex_mapping[alpha];
     ArrayList <int> lower_mappings_for_alpha = lower_mapping_index[alpha];
+    double alpha_derivative = kd_.ComputePartialDerivative
+      (derivative_map_alpha, alpha_mapping);
 
     for(index_t mu = 0; mu < lower_mappings_for_alpha.size(); mu++) {
 
       ArrayList <int> mu_mapping = 
 	multiindex_mapping[lower_mappings_for_alpha[mu]];
 
+      // alpha - mu
+      for(index_t d = 0; d < dim; d++) {
+	alpha_mu_mapping[d] = alpha_mapping[d] - mu_mapping[d];
+      }
+      
       for(index_t beta = 0; beta < total_num_coeffs2; beta++) {
 	
 	ArrayList <int> beta_mapping = multiindex_mapping[beta];
 	ArrayList <int> lower_mappings_for_beta = lower_mapping_index[beta];
+	double beta_derivative = kd_.ComputePartialDerivative
+	  (derivative_map_beta, beta_mapping);
 
 	for(index_t nu = 0; nu < lower_mappings_for_beta.size(); nu++) {
 	  
 	  ArrayList<int> nu_mapping = 
 	    multiindex_mapping[lower_mappings_for_beta[nu]];
 
+	  // mu + nu and beta - nu
+	  for(index_t d = 0; d < dim; d++) {
+	    mu_nu_mapping[d] = mu_mapping[d] + nu_mapping[d];
+	    beta_nu_mapping[d] = beta_mapping[d] - nu_mapping[d];
+	  }
+
 	  for(index_t gamma = 0; gamma < total_num_coeffs3; gamma++) {
 	    
 	    ArrayList <int> gamma_mapping = multiindex_mapping[gamma];
 	    ArrayList <int> lower_mappings_for_gamma = 
 	      lower_mapping_index[gamma];
+	    double gamma_derivative = kd_.ComputePartialDerivative
+	      (derivative_map_gamma, gamma_mapping);
 
 	    for(index_t eta = 0; eta < lower_mappings_for_gamma.size(); eta++){
 	      
-	      pos_sum += 1;
+	      // add up alpha, mu, eta and beta, gamma, nu, eta
+	      int sign = 0;
+	      
+	      ArrayList<int> eta_mapping =
+		multiindex_mapping[lower_mappings_for_gamma[eta]];
+
+	      for(index_t d = 0; d < dim; d++) {
+		alpha_mu_eta_mapping[d] = alpha_mapping[d] - mu_mapping[d] +
+		  eta_mapping[d];
+		beta_gamma_nu_eta_mapping[d] = beta_mapping[d] +
+		  gamma_mapping[d] - nu_mapping[d] - eta_mapping[d];
+		gamma_eta_mapping[d] = gamma_mapping[d] - eta_mapping[d];
+		
+		sign += alpha_mapping[d] + beta_mapping[d] + gamma_mapping[d] -
+		  mu_mapping[d] - nu_mapping[d] - eta_mapping[d];
+		sign = sign % 2;
+	      }
+	      if(sign == 1) {
+		sign = -1;
+	      }
+	      else {
+		sign = 1;
+	      }
+	      
+	      moment_i = sea_->ComputeMultiindexPosition(mu_nu_mapping);
+	      moment_j = sea_->ComputeMultiindexPosition(alpha_mu_eta_mapping);
+	      moment_k = sea_->ComputeMultiindexPosition
+		(beta_gamma_nu_eta_mapping);
+
+	      pos_sum += sign * inv_multiindex_factorials[alpha] *
+		inv_multiindex_factorials
+		[sea_->ComputeMultiindexPosition(alpha_mu_mapping)] *
+		inv_multiindex_factorials[beta] * 
+		inv_multiindex_factorials
+		[sea_->ComputeMultiindexPosition(beta_nu_mapping)] *
+		inv_multiindex_factorials[gamma] *
+		inv_multiindex_factorials
+		[sea_->ComputeMultiindexPosition(gamma_eta_mapping)] *
+		alpha_derivative * beta_derivative * gamma_derivative * 
+		moment_i * moment_j * moment_k;
+
 	    } // end of eta
 	  } // end of gamma
 	} // end of nu
