@@ -71,6 +71,9 @@ class FarFieldExpansion {
   /** Get the approximation order */
   int get_order() const { return order_; }
   
+  /** Get the maximum possible approximation order */
+  int get_max_order() const { return sea_->get_max_order(); }
+
   /** Set the approximation order */
   void set_order(int new_order) { order_ = new_order; }
   
@@ -666,63 +669,42 @@ template<typename TKernel, typename TKernelDerivative>
   double max_query_length = 0;
 
   int dim = far_field_region.dim();
-  int max_order = sea_->get_max_order();
+
+  // fix for multibody code
+  int max_order = sea_->get_max_order() / 2;
 
   // find out the widest dimension and its length
   for(index_t d = 0; d < dim; d++) {
     DRange far_range = far_field_region.get(d);
     DRange local_range = local_field_region.get(d);
-    max_ref_length = max(max_ref_length, far_range.width());
-    max_query_length = max(max_query_length, local_range.width());
+    max_ref_length += far_range.width() * far_range.width();
+    max_query_length += local_range.width() * local_range.width();
   }
+  max_ref_length = sqrt(max_ref_length) / 2.0;
+  max_query_length = sqrt(max_query_length) / 2.0;
 
-  double bwsqd = kernel_.bandwidth_sq();
-  double two_times_bandwidth = sqrt(bwsqd) * 2;
-  double r_R = max_ref_length / two_times_bandwidth;
-  double r_Q = max_query_length / two_times_bandwidth;
-  double sqrt_two_r_R = sqrt(2.0) * r_R;
-  double sqrt_two_r_Q = sqrt(2.0) * r_Q;
-
-  if(sqrt_two_r_R >= 1.0 || sqrt_two_r_Q >= 1.0)
-    return -1;
+  double bandwidth = sqrt(kernel_.bandwidth_sq());
+  double r_R = max_ref_length / bandwidth;
+  double r_Q = max_query_length / bandwidth;
 
   int p_alpha = 0;
-  double sqrt_two_r_R_raised_to_p = 1.0;
-  double r_Q_raised_to_p = 1.0;
-  int remainder;
-  double ret;
-  double frontfactor = exp(-min_dist_sqd_regions / (4.0 * bwsqd));
-  double floor_fact, ceil_fact;
+  double error = exp(-2 * r_R * r_Q);
 
   do {
-    r_Q_raised_to_p *= r_Q;
-    sqrt_two_r_R_raised_to_p *= sqrt_two_r_R;
-    floor_fact = 
-      sea_->factorial((int) floor((double) p_alpha / (double) dim));
-    ceil_fact = 
-      sea_->factorial((int) ceil((double)p_alpha / (double)dim));
 
-    if(floor_fact < 0 || ceil_fact < 0 || p_alpha > max_order)
+    if(p_alpha > max_order) {
       return -1;
-
-    remainder = p_alpha % dim;
-
-    ret = (sea_->get_total_num_coeffs(p_alpha + 1) -
-	   sea_->get_total_num_coeffs(p_alpha))
-      / sqrt(pow(floor_fact, dim - remainder) *
-             pow(ceil_fact, remainder));
-    ret *= (r_Q_raised_to_p + sqrt_two_r_R_raised_to_p *
-	    sea_->get_total_num_coeffs(p_alpha)) * frontfactor;
-    
-    if(ret > max_error) {
-      p_alpha++;
     }
-    else {
+
+    error *= r_Q * r_R * 2.0 / (p_alpha + 1.0);
+    
+    if(error <= max_error) {
       break;
     }
+    p_alpha++;
   } while(1);
 
-  *actual_error = ret;
+  *actual_error = error;
   return p_alpha;
 }
 
