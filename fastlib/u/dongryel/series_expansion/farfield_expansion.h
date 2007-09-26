@@ -437,22 +437,22 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
   derivative_map_gamma.Init(dim, order3 + 1);
   
   // compute center differences and complete the table of partial derivatives
-  Vector xJ_xI, xK_xI, xK_xJ;
-  xJ_xI.Init(dim);
-  xK_xI.Init(dim);
-  xK_xJ.Init(dim);
+  Vector xI_xJ, xI_xK, xJ_xK;
+  xI_xJ.Init(dim);
+  xI_xK.Init(dim);
+  xJ_xK.Init(dim);
   Vector xJ_center, xK_center;
   xJ_center.Alias(fe2.get_center());
   xK_center.Alias(fe3.get_center());
 
   for(index_t d = 0; d < dim; d++) {
-    xJ_xI[d] = xJ_center[d] - center_[d];
-    xK_xI[d] = xK_center[d] - center_[d];
-    xK_xJ[d] = xK_center[d] - xJ_center[d];
+    xI_xJ[d] = center_[d] - xJ_center[d];
+    xI_xK[d] = center_[d] - xK_center[d];
+    xJ_xK[d] = xJ_center[d] - xK_center[d];
   }
-  kd_.ComputeDirectionalDerivatives(xJ_xI, derivative_map_alpha);
-  kd_.ComputeDirectionalDerivatives(xK_xI, derivative_map_beta);
-  kd_.ComputeDirectionalDerivatives(xK_xJ, derivative_map_gamma);
+  kd_.ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha);
+  kd_.ComputeDirectionalDerivatives(xI_xK, derivative_map_beta);
+  kd_.ComputeDirectionalDerivatives(xJ_xK, derivative_map_gamma);
 
   // inverse factorials
   Vector inv_multiindex_factorials;
@@ -517,8 +517,9 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
 		  gamma_mapping[d] - nu_mapping[d] - eta_mapping[d];
 		gamma_eta_mapping[d] = gamma_mapping[d] - eta_mapping[d];
 		
-		sign += alpha_mapping[d] + beta_mapping[d] + gamma_mapping[d] -
-		  mu_mapping[d] - nu_mapping[d] - eta_mapping[d];
+		sign += 2 * (alpha_mapping[d] + beta_mapping[d] + 
+			     gamma_mapping[d]) - mu_mapping[d] - nu_mapping[d] 
+		  - eta_mapping[d];
 		sign = sign % 2;
 	      }
 	      if(sign == 1) {
@@ -528,20 +529,25 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
 		sign = 1;
 	      }
 	      
-	      moment_i = sea_->ComputeMultiindexPosition(mu_nu_mapping);
-	      moment_j = sea_->ComputeMultiindexPosition(alpha_mu_eta_mapping);
-	      moment_k = sea_->ComputeMultiindexPosition
-		(beta_gamma_nu_eta_mapping);
+	      // retrieve moments for appropriate multiindex maps
+	      moment_i = 
+		coeffs_[sea_->ComputeMultiindexPosition(mu_nu_mapping)];
+	      moment_j = 
+		coeffs_[sea_->ComputeMultiindexPosition(alpha_mu_eta_mapping)];
+	      moment_k = 
+		coeffs_[sea_->ComputeMultiindexPosition
+			(beta_gamma_nu_eta_mapping)];
 
-	      pos_sum += sign * inv_multiindex_factorials[alpha] *
-		inv_multiindex_factorials
-		[sea_->ComputeMultiindexPosition(alpha_mu_mapping)] *
-		inv_multiindex_factorials[beta] * 
-		inv_multiindex_factorials
-		[sea_->ComputeMultiindexPosition(beta_nu_mapping)] *
-		inv_multiindex_factorials[gamma] *
-		inv_multiindex_factorials
-		[sea_->ComputeMultiindexPosition(gamma_eta_mapping)] *
+	      pos_sum += sign * 
+		sea_->get_n_multichoose_k_by_pos
+		(sea_->ComputeMultiindexPosition(mu_nu_mapping),
+		 sea_->ComputeMultiindexPosition(mu_mapping)) *
+		sea_->get_n_multichoose_k_by_pos
+		(sea_->ComputeMultiindexPosition(alpha_mu_eta_mapping),
+		 sea_->ComputeMultiindexPosition(eta_mapping)) *
+		sea_->get_n_multichoose_k_by_pos
+		(sea_->ComputeMultiindexPosition(beta_gamma_nu_eta_mapping),
+		 sea_->ComputeMultiindexPosition(beta_nu_mapping)) *
 		alpha_derivative * beta_derivative * gamma_derivative * 
 		moment_i * moment_j * moment_k;
 
