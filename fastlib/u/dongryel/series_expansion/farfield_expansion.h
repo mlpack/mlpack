@@ -397,15 +397,20 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
    const FarFieldExpansion<TKernel, TKernelDerivative> &fe3,
    int order1, int order2, int order3) const {
   
+  // bandwidth factor and multiindex mapping stuffs
+  double bandwidth_factor = kd_.BandwidthFactor(bandwidth_sq());
   const ArrayList<int> *multiindex_mapping = sea_->get_multiindex_mapping();
   const ArrayList<int> *lower_mapping_index = sea_->get_lower_mapping_index();
 
-  // get the total number of coefficients
+  // get the total number of coefficients and coefficients
   int total_num_coeffs1 = sea_->get_total_num_coeffs(order1);
   int total_num_coeffs2 = sea_->get_total_num_coeffs(order2);
   int total_num_coeffs3 = sea_->get_total_num_coeffs(order3);
   int dim = sea_->get_dimension();
-  
+  Vector coeffs2, coeffs3;
+  coeffs2.Alias(fe2.get_coeffs());
+  coeffs3.Alias(fe3.get_coeffs());
+
   // actual accumulated sum
   double neg_sum = 0;
   double pos_sum = 0;
@@ -446,9 +451,9 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
   xK_center.Alias(fe3.get_center());
 
   for(index_t d = 0; d < dim; d++) {
-    xI_xJ[d] = center_[d] - xJ_center[d];
-    xI_xK[d] = center_[d] - xK_center[d];
-    xJ_xK[d] = xJ_center[d] - xK_center[d];
+    xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
+    xI_xK[d] = (center_[d] - xK_center[d]) / bandwidth_factor;
+    xJ_xK[d] = (xJ_center[d] - xK_center[d]) / bandwidth_factor;
   }
   kd_.ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha);
   kd_.ComputeDirectionalDerivatives(xI_xK, derivative_map_beta);
@@ -520,9 +525,8 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
 		sign += 2 * (alpha_mapping[d] + beta_mapping[d] + 
 			     gamma_mapping[d]) - mu_mapping[d] - nu_mapping[d] 
 		  - eta_mapping[d];
-		sign = sign % 2;
 	      }
-	      if(sign == 1) {
+	      if(sign % 2 == 1) {
 		sign = -1;
 	      }
 	      else {
@@ -533,9 +537,9 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
 	      moment_i = 
 		coeffs_[sea_->ComputeMultiindexPosition(mu_nu_mapping)];
 	      moment_j = 
-		coeffs_[sea_->ComputeMultiindexPosition(alpha_mu_eta_mapping)];
+		coeffs2[sea_->ComputeMultiindexPosition(alpha_mu_eta_mapping)];
 	      moment_k = 
-		coeffs_[sea_->ComputeMultiindexPosition
+		coeffs3[sea_->ComputeMultiindexPosition
 			(beta_gamma_nu_eta_mapping)];
 
 	      pos_sum += sign * 
