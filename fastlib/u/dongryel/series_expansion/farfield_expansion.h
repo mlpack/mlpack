@@ -92,14 +92,14 @@ class FarFieldExpansion {
    * data into the coefficients
    */
   void AccumulateCoeffs(const Matrix& data, const Vector& weights,
-			const ArrayList<int>& rows, int order);
+			int begin, int end, int order);
 
   /**
    * Refine the far field moment that has been computed before up to
    * a new order.
    */
   void RefineCoeffs(const Matrix& data, const Vector& weights,
-		    const ArrayList<int>& rows, int order);
+		    int begin, int end, int order);
   
   /**
    * Evaluates the far-field coefficients at the given point
@@ -170,13 +170,12 @@ class FarFieldExpansion {
 
 template<typename TKernel, typename TKernelDerivative>
 void FarFieldExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
-(const Matrix& data, const Vector& weights, const ArrayList<int>& rows, 
+(const Matrix& data, const Vector& weights, int begin, int end, 
  int order) {
   
   int dim = data.n_rows();
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   Vector tmp;
-  int num_rows = rows.size();
   int r, i, j, k, t, tail;
   Vector heads;
   Vector x_r;
@@ -200,15 +199,12 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
   }
     
   // Repeat for each reference point in this reference node.
-  for(r = 0; r < num_rows; r++) {
-    
-    // get the row number.
-    int row_num = rows[r];
+  for(r = begin; r < end; r++) {
     
     // Calculate the coordinate difference between the ref point and the 
     // centroid.
     for(i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, row_num) - center_[i]) / bandwidth_factor;
+      x_r[i] = (data.get(i, r) - center_[i]) / bandwidth_factor;
     }
 
     // initialize heads
@@ -230,7 +226,7 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
     
     // Tally up the result in A_k.
     for(i = 0; i < total_num_coeffs; i++) {
-      double prod = weights[row_num] * tmp[i];
+      double prod = weights[r] * tmp[i];
       
       if(prod > 0) {
 	pos_coeffs[i] += prod;
@@ -252,14 +248,13 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
 
 template<typename TKernel, typename TKernelDerivative>
 void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
-(const Matrix& data, const Vector& weights, const ArrayList<int>& rows, 
+(const Matrix& data, const Vector& weights, int begin, int end, 
  int order) {
   
   int dim = data.n_rows();
   int old_total_num_coeffs = sea_->get_total_num_coeffs(order_);
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   Vector tmp;
-  int num_rows = rows.size();
   int r, i, j, k, t, tail;
   Vector heads;
   Vector x_r;
@@ -286,15 +281,12 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
   }
     
   // Repeat for each reference point in this reference node.
-  for(r = 0; r < num_rows; r++) {
-    
-    // get the row number.
-    int row_num = rows[r];
+  for(r = begin; r < end; r++) {
     
     // Calculate the coordinate difference between the ref point and the 
     // centroid.
     for(i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, row_num) - center_[i]) / bandwidth_factor;
+      x_r[i] = (data.get(i, r) - center_[i]) / bandwidth_factor;
     }
 
     // compute in bruteforce way
@@ -309,7 +301,7 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
     
     // Tally up the result in A_k.
     for(i = 0; i < total_num_coeffs; i++) {
-      double prod = weights[row_num] * tmp[i];
+      double prod = weights[r] * tmp[i];
       
       if(prod > 0) {
 	pos_coeffs[i] += prod;

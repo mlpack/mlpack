@@ -12,7 +12,7 @@
 #include "series_expansion_aux.h"
 
 int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
-				   const ArrayList<int> &rows) {
+				   int begin, int end) {
   
   printf("\n----- TestEpanKernelEvaluateFarField -----\n");
 
@@ -42,7 +42,7 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   se.Init(bandwidth, center, &sea);
 
   // compute up to 2-nd order multivariate polynomial.
-  se.AccumulateCoeffs(data, weights, rows, 2);
+  se.AccumulateCoeffs(data, weights, begin, end, 2);
 
   // print out the objects
   se.PrintDebug();               // expansion at (0, 0)
@@ -54,8 +54,8 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
 
   // check with exhaustive method
   double exhaustive_sum = 0;
-  for(index_t i = 0; i < rows.size(); i++) {
-    int row_num = rows[i];
+  for(index_t i = begin; i < end; i++) {
+    int row_num = i;
     double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
       (evaluate_here[0] - data.get(0, row_num)) +
       (evaluate_here[1] - data.get(1, row_num)) * 
@@ -72,8 +72,8 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   double second_moment0 = 0;
   double second_moment1 = 0;
 
-  for(index_t i = 0; i < rows.size(); i++) {
-    int row_num = rows[i];
+  for(index_t i = begin; i < end; i++) {
+    int row_num = i;
 
     double diff0 = (data.get(0, row_num) - center[0]) / 
       sqrt(kernel.bandwidth_sq());
@@ -91,16 +91,16 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
     sqrt(kernel.bandwidth_sq());
   
   printf("Old formula got: %g\n",
-	 rows.size() - (second_moment0 - 2 * first_moment0 * diff_coord0 + 
-			rows.size() * diff_coord0 * diff_coord0) - 
+	 end - (second_moment0 - 2 * first_moment0 * diff_coord0 + 
+		end * diff_coord0 * diff_coord0) - 
 	 (second_moment1 - 2 * first_moment1 * diff_coord1 + 
-	  rows.size() * diff_coord1 * diff_coord1));
+	  end * diff_coord1 * diff_coord1));
 
   return 1;
 }
 
 int TestEvaluateFarField(const Matrix &data, const Vector &weights,
-			 const ArrayList<int> &rows) {
+			 int begin, int end) {
   
   printf("\n----- TestEvaluateFarField -----\n");
 
@@ -131,7 +131,7 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   se.Init(bandwidth, center, &sea);
 
   // compute up to 4-th order multivariate polynomial.
-  se.AccumulateCoeffs(data, weights, rows, 10);
+  se.AccumulateCoeffs(data, weights, begin, end, 10);
 
   // print out the objects
   se.PrintDebug();               // expansion at (0, 0)
@@ -143,8 +143,8 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
 
   // check with exhaustive method
   double exhaustive_sum = 0;
-  for(index_t i = 0; i < rows.size(); i++) {
-    int row_num = rows[i];
+  for(index_t i = begin; i < end; i++) {
+    int row_num = i;
     double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
       (evaluate_here[0] - data.get(0, row_num)) +
       (evaluate_here[1] - data.get(1, row_num)) * 
@@ -158,7 +158,7 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
 }
 
 int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
-			   const ArrayList<int> &rows) {
+			   int begin, int end) {
 
   printf("\n----- TestEvaluateLocalField -----\n");
 
@@ -187,7 +187,7 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   se.Init(bandwidth, center, &sea);
 
   // compute up to 4-th order multivariate polynomial.
-  se.AccumulateCoeffs(data, weights, rows, 6);
+  se.AccumulateCoeffs(data, weights, begin, end, 6);
 
   // print out the objects
   se.PrintDebug();
@@ -199,8 +199,8 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   
   // check with exhaustive method
   double exhaustive_sum = 0;
-  for(index_t i = 0; i < rows.size(); i++) {
-    int row_num = rows[i];
+  for(index_t i = begin; i < end; i++) {
+    int row_num = i;
 
     double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
       (evaluate_here[0] - data.get(0, row_num)) +
@@ -226,7 +226,7 @@ int TestInitAux(const Matrix& data) {
 }
 
 int TestTransFarToFar(const Matrix &data, const Vector &weights,
-		      const ArrayList<int> &rows) {
+		      int begin, int end) {
 
   printf("\n----- TestTransFarToFar -----\n");
 
@@ -258,11 +258,11 @@ int TestTransFarToFar(const Matrix &data, const Vector &weights,
   se_cmp.Init(bandwidth, new_center, &sea);
   
   // compute up to 4-th order multivariate polynomial and translate it.
-  se.AccumulateCoeffs(data, weights, rows, 4);
+  se.AccumulateCoeffs(data, weights, begin, end, 4);
   se_translated.TranslateFromFarField(se);
   
   // now compute the same thing at (2, -2) and compare
-  se_cmp.AccumulateCoeffs(data, weights, rows, 4);
+  se_cmp.AccumulateCoeffs(data, weights, begin, end, 4);
 
   // print out the objects
   se.PrintDebug();               // expansion at (0, 0)
@@ -289,7 +289,7 @@ int TestTransFarToFar(const Matrix &data, const Vector &weights,
 }
 
 int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
-			  const ArrayList<int> &rows) {
+			  int begin, int end) {
   
   printf("\n----- TestTransLocalToLocal -----\n");
 
@@ -318,7 +318,7 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   se_translated.Init(bandwidth, new_center, &sea);
   
   // compute up to 4-th order multivariate polynomial and translate it.
-  se.AccumulateCoeffs(data, weights, rows, 4);
+  se.AccumulateCoeffs(data, weights, begin, end, 4);
   se.TranslateToLocal(se_translated);
 
   // print out the objects
@@ -347,7 +347,7 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
 }
 
 int TestConvolveFarField(const Matrix &data, const Vector &weights,
-			 const ArrayList<int> &rows) {
+			 int begin, int end) {
   
   printf("\n----- TestConvolveFarField -----\n");
 
@@ -398,9 +398,9 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
   se3.Init(bandwidth, center3, &sea);
 
   // compute up to 20-th order multivariate polynomial.
-  se.AccumulateCoeffs(data, weights, rows, 20);
-  se2.AccumulateCoeffs(data2, weights, rows, 20);
-  se3.AccumulateCoeffs(data3, weights, rows, 20);
+  se.AccumulateCoeffs(data, weights, begin, end, 20);
+  se2.AccumulateCoeffs(data2, weights, begin, end, 20);
+  se3.AccumulateCoeffs(data3, weights, begin, end, 20);
 
   printf("Convolution: %g\n", se.ConvolveField(se2, se3, 6, 6, 6));
 
@@ -438,7 +438,7 @@ int main(int argc, char *argv[]) {
   Dataset dataset;
   Matrix data;
   Vector weights;
-  ArrayList<int> rows;
+  int begin, end;
   
   // read the dataset and get the matrix
   if (!PASSED(dataset.InitFromFile(datafile_name))) {
@@ -448,23 +448,18 @@ int main(int argc, char *argv[]) {
   data.Alias(dataset.matrix());
   weights.Init(data.n_cols());
   weights.SetAll(1);
-  rows.Init(data.n_cols());
-
-  for(index_t i = 0; i < data.n_cols(); i++) {
-    rows[i] = i;
-  }
-
+  begin = 0; end = data.n_cols();
 
   // unit tests begin here!
   DEBUG_ASSERT(TestInitAux(data) == 1);
-  DEBUG_ASSERT(TestEvaluateFarField(data, weights, rows) == 1);
-  DEBUG_ASSERT(TestEvaluateLocalField(data, weights, rows) == 1);
-  DEBUG_ASSERT(TestTransFarToFar(data, weights, rows) == 1);
-  DEBUG_ASSERT(TestTransLocalToLocal(data, weights, rows) == 1);
+  DEBUG_ASSERT(TestEvaluateFarField(data, weights, begin, end) == 1);
+  DEBUG_ASSERT(TestEvaluateLocalField(data, weights, begin, end) == 1);
+  DEBUG_ASSERT(TestTransFarToFar(data, weights, begin, end) == 1);
+  DEBUG_ASSERT(TestTransLocalToLocal(data, weights, begin, end) == 1);
 
-  DEBUG_ASSERT(TestEpanKernelEvaluateFarField(data, weights, rows) == 1);
+  DEBUG_ASSERT(TestEpanKernelEvaluateFarField(data, weights, begin, end) == 1);
 
-  DEBUG_ASSERT(TestConvolveFarField(data, weights, rows) == 1);
+  DEBUG_ASSERT(TestConvolveFarField(data, weights, begin, end) == 1);
 
   fx_done();
 }

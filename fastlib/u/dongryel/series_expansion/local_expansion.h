@@ -81,13 +81,13 @@ class LocalExpansion {
    * data into the coefficients
    */
   void AccumulateCoeffs(const Matrix& data, const Vector& weights,
-			const ArrayList<int>& rows, int order);
+			int begin, int end, int order);
 
   /**
    * This does not apply for local coefficients.
    */
   void RefineCoeffs(const Matrix& data, const Vector& weights,
-		    const ArrayList<int>& rows, int order) { }
+		    int begin, int end, int order) { }
   
   /**
    * Evaluates the local coefficients at the given point
@@ -136,7 +136,7 @@ class LocalExpansion {
 template<typename TKernel, typename TKernelDerivative>
 void LocalExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
 (const Matrix& data, const Vector& weights, 
- const ArrayList<int>& rows, int order) {
+ int begin, int end, int order) {
 
   if(order > order_) {
     order_ = order;
@@ -164,14 +164,11 @@ void LocalExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
   double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
   
   // for each data point,
-  for(index_t r = 0; r < rows.size(); r++) {
-    
-    // get the row number
-    int row_num = rows[r];
+  for(index_t r = begin; r < end; r++) {
     
     // calculate x_r - x_Q
     for(index_t d = 0; d < dim; d++) {
-      x_r_minus_x_Q[d] = (center_[d] - data.get(d, row_num)) / 
+      x_r_minus_x_Q[d] = (center_[d] - data.get(d, r)) / 
 	bandwidth_factor;
     }
     
@@ -185,7 +182,7 @@ void LocalExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
     }
 
     for(index_t j = 0; j < total_num_coeffs; j++) {
-      coeffs_[j] += neg_inv_multiindex_factorials[j] * weights[row_num] * 
+      coeffs_[j] += neg_inv_multiindex_factorials[j] * weights[r] * 
 	arrtmp[j];
     }
   } // End of looping through each reference point.
