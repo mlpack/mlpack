@@ -460,18 +460,21 @@ private:
     Matrix distmat;
     distmat.Alias(mkernel_.EvalMinMaxDsqds(node_bounds_));
     
-    double max_ij = mkernel_.EvalUnnormOnSqOnePair(max_ij);
-    double max_ik = mkernel_.EvalUnnormOnSqOnePair(max_ik);
-    double max_jk = mkernel_.EvalUnnormOnSqOnePair(max_jk);
-
-    double total_relerr = allowed_err / 
-      (num_tuples * max_ij * max_ik * max_jk);
-    double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0);
+    //double max_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(0, 1));
+    //double max_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(0, 2));
+    //double max_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 2));
+    double min_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 0));
+    double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
+    double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
+    
+    //double total_relerr = allowed_err / 
+    //(num_tuples * max_ij * max_ik * max_jk);
+    //double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0);
 
     // compute the required number of terms
-    int order_ij = 5;
-    int order_ik = 5;
-    int order_jk = 5;
+    int order_ij = 10;
+    int order_ik = 10;
+    int order_jk = 10;
     
     nodes[0]->stat().get_farfield_coeffs().
       AccumulateCoeffs(data_, weights_, nodes[0]->begin(), nodes[0]->end(),
@@ -482,6 +485,12 @@ private:
     nodes[2]->stat().get_farfield_coeffs().
       AccumulateCoeffs(data_, weights_, nodes[2]->begin(), nodes[2]->end(),
 		       order_jk);
+    
+    potential_l_ += num_tuples * min_ij * min_ik * min_jk;
+    potential_e_ += 
+      (nodes[0]->stat().get_farfield_coeffs()).ConvolveField
+      (nodes[1]->stat().get_farfield_coeffs(), 
+       nodes[2]->stat().get_farfield_coeffs(), 2, 2, 2);
     
     return 0;
   }
