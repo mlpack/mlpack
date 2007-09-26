@@ -351,35 +351,83 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
   
   printf("\n----- TestConvolveFarField -----\n");
 
-  // bandwidth of sqrt(0.5) Gaussian kernel
-  double bandwidth = sqrt(0.5);
+  // bandwidth of 5 Gaussian kernel
+  double bandwidth = 5;
   GaussianKernel kernel;
-  kernel.Init(sqrt(0.5));
+  kernel.Init(bandwidth);
 
   // declare auxiliary object and initialize
   SeriesExpansionAux sea;
   sea.Init(20, data.n_rows());
 
-  // declare center at the origin
+  // declare center at the origin, (10, -10) and (-10, -10)
   Vector center;
   center.Init(2);
   center.SetZero();
+  Vector center2;
+  center2.Init(2);
+  center2[0] = 10; center2[1] = -10;
+  Vector center3;
+  center3.Init(2);
+  center3[0] = center3[1] = -10;
+
+  // create fake data
+  Matrix data2, data3;
+  data2.Copy(data);
+  data3.Copy(data);
+  for(index_t c = 0; c < data.n_cols(); c++) {
+    data2.set(0, c, data2.get(0, c) + center2[0]); 
+    data2.set(1, c, data2.get(1, c) + center2[1]);
+    data3.set(0, c, data3.get(0, c) + center3[0]);
+    data3.set(1, c, data3.get(1, c) + center3[1]);
+  }
+
+  data.PrintDebug();
+  data2.PrintDebug();
+  data3.PrintDebug();
 
   // declare expansion objects at (0,0) and other centers
   FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se;
+  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se2;
+  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se3;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
   se.Init(bandwidth, center, &sea);
+  se2.Init(bandwidth, center2, &sea);
+  se3.Init(bandwidth, center3, &sea);
 
-  // compute up to 4-th order multivariate polynomial.
+  // compute up to 20-th order multivariate polynomial.
   se.AccumulateCoeffs(data, weights, rows, 20);
+  se2.AccumulateCoeffs(data2, weights, rows, 20);
+  se3.AccumulateCoeffs(data3, weights, rows, 20);
 
-  // print out the objects
-  se.PrintDebug();               // expansion at (0, 0)
+  printf("Convolution: %g\n", se.ConvolveField(se2, se3, 6, 6, 6));
 
-  printf("Convolution: %g\n", se.ConvolveField(se, se, 5, 5, 5));
+  // compare with naive
+  double naive_result = 0;
+  for(index_t i = 0; i < data.n_cols(); i++) {
+    const double *i_col = data.GetColumnPtr(i);
+    for(index_t j = 0; j < data2.n_cols(); j++) {
+      const double *j_col = data2.GetColumnPtr(j);
+      for(index_t k = 0; k < data3.n_cols(); k++) {
+	const double *k_col = data3.GetColumnPtr(k);
 
+	// compute pairwise distances
+	double dsqd_ij = 0;
+	double dsqd_ik = 0;
+	double dsqd_jk = 0;
+	for(index_t d = 0; d < sea.get_dimension(); d++) {
+	  dsqd_ij += (i_col[d] - j_col[d]) * (i_col[d] - j_col[d]);
+	  dsqd_ik += (i_col[d] - k_col[d]) * (i_col[d] - k_col[d]);
+	  dsqd_jk += (j_col[d] - k_col[d]) * (j_col[d] - k_col[d]);
+	}
+	naive_result += kernel.EvalUnnormOnSq(dsqd_ij + dsqd_ik +
+					      dsqd_jk);
+      }
+    }
+  }
+  printf("Naive algorithm: %g\n", naive_result);
   return 1;
 }
 
