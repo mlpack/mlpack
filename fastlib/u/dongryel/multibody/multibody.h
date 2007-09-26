@@ -103,6 +103,11 @@ class MultibodyStat {
    */
   LocalExpansion<TKernel, TKernelDerivative> local_expansion_;
 
+  // getters and setters
+  FarFieldExpansion<TKernel, TKernelDerivative> &get_farfield_coeffs() {
+    return farfield_expansion_;
+  }
+
   /** Initialize the statistics */
   void Init() {
   }
@@ -140,7 +145,8 @@ class MultibodyStat {
 };
 
 
-template<typename TMultibodyKernel, typename TKernel, typename TKernelDerivative>
+template<typename TMultibodyKernel, typename TKernel, 
+	 typename TKernelDerivative>
 class MultitreeMultibody {
 
   FORBID_COPY(MultitreeMultibody);
@@ -149,12 +155,8 @@ public:
 
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, 
     MultibodyStat<TKernel, TKernelDerivative> > Tree;
-
-  typedef TKernel Kernel;
   
   typedef TMultibodyKernel MultibodyKernel;
-
-  typedef TKernelDerivative KernelDerivative;
 
   // constructor/destructor
   MultitreeMultibody() {}
@@ -178,7 +180,8 @@ public:
       root_nodes[i] = root_;
     }
     
-    total_num_tuples_ = math::BinomialCoefficient(data_.n_cols(), 3);
+    total_num_tuples_ = math::BinomialCoefficient(data_.n_cols(), 
+						  mkernel_.order());
     tau_ = tau;
 
     // run and do timing for multitree multibody
@@ -210,6 +213,10 @@ public:
 
     fx_timer_start(NULL, "tree_d");
     tree::LoadKdTree(NULL, &data_, &root_, NULL);
+    weights_.Init(data_.n_cols());
+    
+    // by default, each point has a uniform weight
+    weights_.SetAll(1);
 
     sea_.Init(10, data_.n_rows());
 
@@ -248,6 +255,9 @@ private:
   /** dataset for the tree */
   Matrix data_;
 
+  /** weight for each point */
+  Vector weights_;
+
   /** series approximation auxiliary computations */
   SeriesExpansionAux sea_;
   
@@ -258,8 +268,7 @@ private:
   double total_num_tuples_;
   
   /**
-   * Extra amount of error that can be spent for the query points in
-   * this node.
+   * Extra amount of error that can be spent
    */
   double extra_token_;
 
@@ -272,6 +281,7 @@ private:
   /** approximation relative error bound */
   double tau_;
 
+  /** test whether node a is an ancestor node of node b */
   int as_indexes_strictly_surround_bs(Tree *a, Tree *b) {
     return (a->begin() < b->begin() && a->end() >= b->end()) ||
       (a->begin() <= b->begin() && a->end() > b->end());
@@ -404,7 +414,8 @@ private:
   }
 
   /** Pruning rule */
-  int Prunable(ArrayList<Tree *> nodes, double num_tuples) {
+  int Prunable(ArrayList<Tree *> nodes, double num_tuples, 
+	       double *allowed_err) {
 
     double min_potential, max_potential;
     double lower_change;
@@ -423,6 +434,9 @@ private:
     estimate = 0.5 * num_tuples * (min_potential + max_potential);
 
     // compute whether the error is below the threshold
+    *allowed_err = tau_ * (potential_l_ + lower_change) *
+      ((num_tuples + extra_token_) / total_num_tuples_);
+    
     if(likely(error >= 0) && 
        error <= tau_ * (potential_l_ + lower_change) *
        ((num_tuples + extra_token_) / total_num_tuples_)) {
@@ -436,6 +450,39 @@ private:
       DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
     }
+    return 0;
+  }
+
+  /** Pruning rule for series approxiamation approach */
+  int PrunableSeriesExpansion(ArrayList<Tree *> nodes, double num_tuples,
+			      double allowed_err) {
+    
+    Matrix distmat;
+    distmat.Alias(mkernel_.EvalMinMaxDsqds(node_bounds_));
+    
+    double max_ij = mkernel_.EvalUnnormOnSqOnePair(max_ij);
+    double max_ik = mkernel_.EvalUnnormOnSqOnePair(max_ik);
+    double max_jk = mkernel_.EvalUnnormOnSqOnePair(max_jk);
+
+    double total_relerr = allowed_err / 
+      (num_tuples * max_ij * max_ik * max_jk);
+    double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0);
+
+    // compute the required number of terms
+    int order_ij = 5;
+    int order_ik = 5;
+    int order_jk = 5;
+    
+    nodes[0]->stat().get_farfield_coeffs().
+      AccumulateCoeffs(data_, weights_, nodes[0]->begin(), nodes[0]->end(),
+		       order_ij);
+    nodes[1]->stat().get_farfield_coeffs().
+      AccumulateCoeffs(data_, weights_, nodes[1]->begin(), nodes[1]->end(),
+		       order_ik);
+    nodes[2]->stat().get_farfield_coeffs().
+      AccumulateCoeffs(data_, weights_, nodes[2]->begin(), nodes[2]->end(),
+		       order_jk);
+    
     return 0;
   }
 
@@ -478,7 +525,8 @@ private:
   /** Main multitree recursion */
   void MTMultibody(ArrayList<Tree *> nodes, double num_tuples) {
     
-    if(Prunable(nodes, num_tuples)) {
+    double allowed_err = 0;
+    if(Prunable(nodes, num_tuples, &allowed_err)) {
       return;
     }
 

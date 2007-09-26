@@ -20,6 +20,8 @@ class GaussianThreeBodyKernel {
   // getters and setters
   double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
 
+  const Matrix &pairwise_dsqd() const { return distmat_; }
+
   void Init(double bandwidth_in) {
     kernel_.Init(bandwidth_in);
     distmat_.Init(3, 3);
@@ -27,6 +29,10 @@ class GaussianThreeBodyKernel {
   
   int order() {
     return 3;
+  }
+
+  double EvalUnnormOnSqOnePair(double sqdist) const {
+    return kernel_.EvalUnnormOnSq(sqdist);
   }
 
   double EvalUnnormOnSq(const Matrix &sqdists) const {
@@ -39,7 +45,6 @@ class GaussianThreeBodyKernel {
 	result *= kernel_.EvalUnnormOnSq(sqdists.get(i, j));
       }
     }
-    result *= 1e-27;
     return result;
   }
 
@@ -54,8 +59,27 @@ class GaussianThreeBodyKernel {
 	*max = (*max) * kernel_.EvalUnnormOnSq(distmat_.get(i, j));
       }
     }
-    *min = (*min) * 1e-27;
-    *max = (*max) * 1e-27;
+  }
+
+  const Matrix &EvalMinMaxDsqds
+    (const ArrayList<DHrectBound<2> *> &node_bounds) {
+
+    int num_nodes = node_bounds.size();
+
+    for(index_t i = 0; i < num_nodes - 1; i++) {
+      DHrectBound<2> *node_i_bound = node_bounds[i];
+
+      for(index_t j = i + 1; j < num_nodes; j++) {
+        DHrectBound<2> *node_j_bound = node_bounds[j];
+        double dmin = node_i_bound->MinDistanceSq(*node_j_bound);
+        double dmax = node_i_bound->MaxDistanceSq(*node_j_bound);
+
+        distmat_.set(i, j, dmin);
+        distmat_.set(j, i, dmax);
+      }
+    }
+    
+    return distmat_;
   }
 
   double Eval(const Matrix &data, const ArrayList<int> &indices) {
@@ -92,6 +116,10 @@ class GaussianThreeBodyKernel {
     
     EvalMinMax(num_nodes, min, max);
   }
+
+};
+
+class AxilrodTellerKernel {
 
 };
 
