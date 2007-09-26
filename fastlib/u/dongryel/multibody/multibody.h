@@ -173,10 +173,10 @@ public:
   void Compute(double tau) {
 
     ArrayList<Tree *> root_nodes;
-    root_nodes.Init(3);
+    root_nodes.Init(mkernel_.order());
 
     // store node pointers
-    for(index_t i = 0; i < 3; i++) {
+    for(index_t i = 0; i < mkernel_.order(); i++) {
       root_nodes[i] = root_;
     }
     
@@ -218,6 +218,7 @@ public:
     // by default, each point has a uniform weight
     weights_.SetAll(1);
 
+    // set the maximum order of approximation here!
     sea_.Init(10, data_.n_rows());
 
     mkernel_.Init(bandwidth);
@@ -456,41 +457,77 @@ private:
   /** Pruning rule for series approxiamation approach */
   int PrunableSeriesExpansion(ArrayList<Tree *> nodes, double num_tuples,
 			      double allowed_err) {
-    
-    Matrix distmat;
-    distmat.Alias(mkernel_.EvalMinMaxDsqds(node_bounds_));
-    
-    //double max_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(0, 1));
-    //double max_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(0, 2));
-    //double max_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 2));
-    double min_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 0));
-    double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
-    double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
-    
-    //double total_relerr = allowed_err / 
-    //(num_tuples * max_ij * max_ik * max_jk);
-    //double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0);
 
-    // compute the required number of terms
-    int order_ij = 10;
-    int order_ik = 10;
-    int order_jk = 10;
-    
-    nodes[0]->stat().get_farfield_coeffs().
-      AccumulateCoeffs(data_, weights_, nodes[0]->begin(), nodes[0]->end(),
-		       order_ij);
-    nodes[1]->stat().get_farfield_coeffs().
-      AccumulateCoeffs(data_, weights_, nodes[1]->begin(), nodes[1]->end(),
-		       order_ik);
-    nodes[2]->stat().get_farfield_coeffs().
-      AccumulateCoeffs(data_, weights_, nodes[2]->begin(), nodes[2]->end(),
-		       order_jk);
-    
-    potential_l_ += num_tuples * min_ij * min_ik * min_jk;
-    potential_e_ += 
-      (nodes[0]->stat().get_farfield_coeffs()).ConvolveField
-      (nodes[1]->stat().get_farfield_coeffs(), 
-       nodes[2]->stat().get_farfield_coeffs(), 2, 2, 2);
+    if(nodes[0] != nodes[1] && nodes[0] != nodes[2] && nodes[1] != nodes[2]) {
+
+      Matrix distmat;
+      double actual_error = 0;
+      distmat.Alias(mkernel_.EvalMinMaxDsqds(node_bounds_));
+      
+      double max_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(0, 1));
+      double max_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(0, 2));
+      double max_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 2));
+      double min_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 0));
+      double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
+      double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
+      double mid_ij = mkernel_.EvalUnnormOnSqOnePair
+	(0.5* (distmat.get(1, 0) + distmat.get(0, 1)));
+      double mid_ik = mkernel_.EvalUnnormOnSqOnePair
+	(0.5 * (distmat.get(2, 0) + distmat.get(0, 2)));
+      double mid_jk = mkernel_.EvalUnnormOnSqOnePair
+	(0.5 * (distmat.get(2, 1) + distmat.get(1, 2)));
+      
+      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs0 =
+	nodes[0]->stat().get_farfield_coeffs();
+      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs1 =
+	nodes[1]->stat().get_farfield_coeffs();
+      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs2 =
+	nodes[2]->stat().get_farfield_coeffs();
+      double total_relerr = allowed_err / 
+	(num_tuples * mid_ij * mid_ik * mid_jk);
+      double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0);
+      
+      // compute the required number of terms
+      int order_ij = coeffs0.OrderForConvertingtoLocal(nodes[0]->bound(),
+						       nodes[1]->bound(),
+						       distmat.get(0, 1),
+						       mid_ij * rel_err,
+						       &actual_error);
+      int order_ik = coeffs1.OrderForConvertingtoLocal(nodes[0]->bound(),
+						       nodes[2]->bound(),
+						       distmat.get(0, 2),
+						       mid_ik * rel_err,
+						       &actual_error);
+      int order_jk = coeffs2.OrderForConvertingtoLocal(nodes[1]->bound(),
+						       nodes[2]->bound(),
+						       distmat.get(1, 2),
+						       mid_jk * rel_err,
+						       &actual_error);
+      
+      int max_order = coeffs0.get_max_order() / 2 - 1;
+      if(order_ij >= 0 && order_ik >= 0 && order_jk >= 0 &&
+	 order_ij < max_order && order_ik < max_order && 
+	 order_jk < max_order &&
+	 sea_.get_total_num_coeffs(order_ij) *
+	 sea_.get_total_num_coeffs(order_ik) *
+	 sea_.get_total_num_coeffs(order_jk) <
+	 nodes[0]->count() * nodes[1]->count() * nodes[2]->count()) {
+	
+	coeffs0.AccumulateCoeffs(data_, weights_, nodes[0]->begin(), 
+				 nodes[0]->end(), order_ij);
+	coeffs1.AccumulateCoeffs(data_, weights_, nodes[1]->begin(), 
+				 nodes[1]->end(), order_ik);
+	coeffs2.AccumulateCoeffs(data_, weights_, nodes[2]->begin(), 
+				 nodes[2]->end(), order_jk);
+	
+	potential_l_ += num_tuples * min_ij * min_ik * min_jk;
+	potential_e_ += coeffs0.ConvolveField(coeffs1, coeffs2, order_ij, 
+					      order_ik, order_jk);
+
+	return 1;
+      }
+      return 0;
+    }
     
     return 0;
   }
@@ -538,6 +575,9 @@ private:
     if(Prunable(nodes, num_tuples, &allowed_err)) {
       return;
     }
+    //else if(PrunableSeriesExpansion(nodes, num_tuples, allowed_err)) {
+    //  return;
+    // }
 
     // figure out which ones are non-leaves
     non_leaf_indices_.Resize(0);

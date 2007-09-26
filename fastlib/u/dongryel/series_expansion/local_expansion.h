@@ -71,6 +71,9 @@ class LocalExpansion {
   /** Get the approximation order */
   int get_order() const { return order_; }
 
+  /** Get the maximum possible approximation order */
+  int get_max_order() const { return sea_->get_max_order(); }
+
   /** Set the approximation order */
   void set_order(int new_order) { order_ = new_order; }
 
