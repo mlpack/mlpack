@@ -1,29 +1,58 @@
-#include <math.h>
-#include <string.h>
-#include "hrect.h"
-#include "distutils.h"
-#include "kdtree.h"
-#include "dymutil.h"
-#include "timing_dyvs.h"
-#include "my_time.h"
+#ifndef ORTHO_RANGE_SEARCH_H
+#define ORTHO_RANGE_SEARCH_H
 
+class NaiveOrthoRangeSearch {
+  
+  FORBID_COPY(NaiveOrthoRangeSearch);
 
-#define EXCLUDE 0
-#define SUBSUME 1
-#define INCONCLUSIVE 2
+ private:
 
+  /** tells whether the i-th point is in the specified orthogonal range */
+  ArrayList<bool> in_range_;
 
-//#define TIMING
+  /** pointer to the dataset */
+  Matrix dataset_;
 
-#define NUM_ITTERATIONS 10
-#define NUM_ITTERATIONS_DOUBLE ((double)NUM_ITTERATIONS)
+  /** 
+   * orthogonal range to search in: this will be generalized to a list
+   * of orthogonal ranges
+   */
+  DHrectBound<2> range_;
+  
+ public:
+  
+  /** initialize the computation object */
+  void Init() {
+    
+    dataset_.();
+  }
 
-int Num_hrect_prunes;
-int Num_ball_prunes;
+  /** the main computation of naive orthogonal range search */
+  void Compute() {
 
-ivec *mk_random_subset_of_ints(int n,int subsize);
+    for(index_t i = 0; i < dataset_.cols(); i++) {
 
-dyv *my_metric;
+      Vector pt;
+      dataset_.MakeColumnVector(i, &pt);
+      
+      // determine which one of the two cases we have: EXCLUDE, SUBSUME
+      // first the EXCLUDE case: when dist is above the upper bound distance
+      // of this dimension, or dist is below the lower bound distance of
+      // this dimension
+      if(range_.Contains(pt)) {
+	in_range_[i] = true;
+      }
+    }
+  }
+
+};
+
+class OrthoRangeSearch {
+
+  
+};
+
+#endif
 
 void mrkd_slow_ortho_range_search(ivec *rows,dym *x,
 				  dym *bounds,int *count)
