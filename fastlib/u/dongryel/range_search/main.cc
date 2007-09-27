@@ -2,5 +2,9 @@
 
 int main(int argc, char *argv[]) {
 
+  NaiveOrthoRangeSearch search;
+
+  search.Init();
+
   return 0;
 }

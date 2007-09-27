@@ -2,7 +2,7 @@
 librule(
     name = "range_search",                   # this line can be safely omitted
     sources = [],                            # files that must be compiled
-    headers = ["range_search.h"],            # include files part of the 'lib'
+    headers = ["ortho_range_search.h"],      # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # dependency
     )
 
