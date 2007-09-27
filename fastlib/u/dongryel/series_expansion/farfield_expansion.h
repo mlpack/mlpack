@@ -263,15 +263,12 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
   int dim = data.n_rows();
   int old_total_num_coeffs = sea_->get_total_num_coeffs(order_);
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
-  Vector tmp;
+  double tmp;
   int r, i, j;
-  Vector heads;
   Vector x_r;
   double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
 
   // initialize temporary variables
-  tmp.Init(total_num_coeffs);
-  heads.Init(dim + 1);
   x_r.Init(dim);
   Vector pos_coeffs;
   Vector neg_coeffs;
@@ -302,22 +299,19 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
     // compute in bruteforce way
     for(i = old_total_num_coeffs; i < total_num_coeffs; i++) {
       ArrayList<int> mapping = sea_->get_multiindex(i);
-      tmp[i] = 1;
-
+      tmp = 1;
+      
       for(j = 0; j < dim; j++) {
-	tmp[i] *= pow(x_r[j], mapping[j]);
+	tmp *= pow(x_r[j], mapping[j]);
       }
-    }
-    
-    // Tally up the result in A_k.
-    for(i = 0; i < total_num_coeffs; i++) {
-      double prod = weights[r] * tmp[i];
+
+      double prod = weights[r] * tmp;
       
       if(prod > 0) {
-	pos_coeffs[i] += prod;
+        pos_coeffs[i] += prod;
       }
       else {
-	neg_coeffs[i] += prod;
+        neg_coeffs[i] += prod;
       }
     }
     
@@ -326,7 +320,7 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
   // get multiindex factors
   C_k.Alias(sea_->get_inv_multiindex_factorials());
 
-  for(r = 0; r < total_num_coeffs; r++) {
+  for(r = old_total_num_coeffs; r < total_num_coeffs; r++) {
     coeffs_[r] = (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
   }
 }
@@ -400,6 +394,7 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
    int order1, int order2, int order3) const {
   
   // bandwidth factor and multiindex mapping stuffs
+  double result;
   double bandwidth_factor = kd_.BandwidthFactor(bandwidth_sq());
   const ArrayList<int> *multiindex_mapping = sea_->get_multiindex_mapping();
   const ArrayList<int> *lower_mapping_index = sea_->get_lower_mapping_index();
@@ -509,7 +504,8 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
 	    double gamma_derivative = kd_.ComputePartialDerivative
 	      (derivative_map_gamma, gamma_mapping);
 
-	    for(index_t eta = 0; eta < lower_mappings_for_gamma.size(); eta++){
+	    for(index_t eta = 0; eta < lower_mappings_for_gamma.size(); 
+		eta++){
 	      
 	      // add up alpha, mu, eta and beta, gamma, nu, eta
 	      int sign = 0;
@@ -525,8 +521,8 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
 		gamma_eta_mapping[d] = gamma_mapping[d] - eta_mapping[d];
 		
 		sign += 2 * (alpha_mapping[d] + beta_mapping[d] + 
-			     gamma_mapping[d]) - mu_mapping[d] - nu_mapping[d] 
-		  - eta_mapping[d];
+			     gamma_mapping[d]) - mu_mapping[d] - 
+		  nu_mapping[d] - eta_mapping[d];
 	      }
 	      if(sign % 2 == 1) {
 		sign = -1;
@@ -539,12 +535,13 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
 	      moment_i = 
 		coeffs_[sea_->ComputeMultiindexPosition(mu_nu_mapping)];
 	      moment_j = 
-		coeffs2[sea_->ComputeMultiindexPosition(alpha_mu_eta_mapping)];
+		coeffs2[sea_->ComputeMultiindexPosition
+			(alpha_mu_eta_mapping)];
 	      moment_k = 
 		coeffs3[sea_->ComputeMultiindexPosition
 			(beta_gamma_nu_eta_mapping)];
 
-	      pos_sum += sign * 
+	      result = sign * 
 		sea_->get_n_multichoose_k_by_pos
 		(sea_->ComputeMultiindexPosition(mu_nu_mapping),
 		 sea_->ComputeMultiindexPosition(mu_mapping)) *
@@ -556,6 +553,13 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::ConvolveField
 		 sea_->ComputeMultiindexPosition(beta_nu_mapping)) *
 		alpha_derivative * beta_derivative * gamma_derivative * 
 		moment_i * moment_j * moment_k;
+
+	      if(result > 0) {
+		pos_sum += result;
+	      }
+	      else {
+		neg_sum += result;
+	      }
 
 	    } // end of eta
 	  } // end of gamma
