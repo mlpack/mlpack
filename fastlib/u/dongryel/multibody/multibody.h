@@ -313,6 +313,14 @@ private:
   Vector combination_;
 
   // functions
+  /** 
+   * figure out whether the rank of the current index is below the 
+   * current combination iteration that denotes the exhaustive
+   * computation
+   */
+  int has_been_computed(const ArrayList<int> &index) {
+    
+  }
 
   /** combination enumerator */  
   success_t generate_next_symmetric_index(Vector &index) {
