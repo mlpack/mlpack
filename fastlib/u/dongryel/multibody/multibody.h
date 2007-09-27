@@ -195,14 +195,11 @@ public:
   void InitExpansionObjects(Tree *node) {
     
     if(node != NULL) {
-      Vector far_center;
-      Vector local_center;
       node->stat().Init(sqrt(mkernel_.bandwidth_sq()), &sea_);
-      far_center.Alias(node->stat().farfield_expansion_.get_center());
-      local_center.Alias(node->stat().local_expansion_.get_center());
-      node->bound().CalculateMidpoint(&far_center);
-      node->bound().CalculateMidpoint(&local_center); 
-      node->stat().Init(sqrt(mkernel_.bandwidth_sq()), &sea_);
+      node->bound().CalculateMidpoint
+	(&(node->stat().farfield_expansion_.get_center()));
+      node->bound().CalculateMidpoint
+	(&(node->stat().local_expansion_.get_center()));
     }
 
     if(!node->is_leaf()) {
@@ -566,6 +563,7 @@ private:
 
       // complete the table of distance computation
       result = mkernel_.Eval(data_, exhaustive_indices_);
+      
       potential_e_ += result;
       potential_l_ += result;
     }
