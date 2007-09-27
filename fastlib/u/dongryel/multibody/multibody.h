@@ -161,7 +161,9 @@ public:
   // constructor/destructor
   MultitreeMultibody() {}
   
-  ~MultitreeMultibody() { delete root_; }
+  ~MultitreeMultibody() { 
+    delete root_;
+  }
 
   // getters/setters
   
@@ -195,6 +197,7 @@ public:
     if(node != NULL) {
       Vector far_center;
       Vector local_center;
+      node->stat().Init(sqrt(mkernel_.bandwidth_sq()), &sea_);
       far_center.Alias(node->stat().farfield_expansion_.get_center());
       local_center.Alias(node->stat().local_expansion_.get_center());
       node->bound().CalculateMidpoint(&far_center);
@@ -211,8 +214,14 @@ public:
   /** Initialize the kernel object, and build the tree */
   void Init(double bandwidth) {
 
+    const char *fname = fx_param_str(NULL, "data", NULL);
+    int leaflen = fx_param_int(NULL, "leaflen", 20);
+     
     fx_timer_start(NULL, "tree_d");
-    tree::LoadKdTree(NULL, &data_, &root_, NULL);
+    Dataset dataset_;
+    dataset_.InitFromFile(fname);
+    data_.Own(&(dataset_.matrix()));
+    root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen, NULL);
     weights_.Init(data_.n_cols());
     
     // by default, each point has a uniform weight
@@ -470,12 +479,6 @@ private:
       double min_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 0));
       double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
       double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
-      double mid_ij = mkernel_.EvalUnnormOnSqOnePair
-	(0.5* (distmat.get(1, 0) + distmat.get(0, 1)));
-      double mid_ik = mkernel_.EvalUnnormOnSqOnePair
-	(0.5 * (distmat.get(2, 0) + distmat.get(0, 2)));
-      double mid_jk = mkernel_.EvalUnnormOnSqOnePair
-	(0.5 * (distmat.get(2, 1) + distmat.get(1, 2)));
       
       FarFieldExpansion<TKernel, TKernelDerivative> &coeffs0 =
 	nodes[0]->stat().get_farfield_coeffs();
@@ -484,24 +487,24 @@ private:
       FarFieldExpansion<TKernel, TKernelDerivative> &coeffs2 =
 	nodes[2]->stat().get_farfield_coeffs();
       double total_relerr = allowed_err / 
-	(num_tuples * mid_ij * mid_ik * mid_jk);
+	(num_tuples * max_ij * max_ik * max_jk);
       double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0);
       
       // compute the required number of terms
       int order_ij = coeffs0.OrderForConvertingtoLocal(nodes[0]->bound(),
 						       nodes[1]->bound(),
 						       distmat.get(0, 1),
-						       mid_ij * rel_err,
+						       min_ij * rel_err,
 						       &actual_error);
       int order_ik = coeffs1.OrderForConvertingtoLocal(nodes[0]->bound(),
 						       nodes[2]->bound(),
 						       distmat.get(0, 2),
-						       mid_ik * rel_err,
+						       min_ik * rel_err,
 						       &actual_error);
       int order_jk = coeffs2.OrderForConvertingtoLocal(nodes[1]->bound(),
 						       nodes[2]->bound(),
 						       distmat.get(1, 2),
-						       mid_jk * rel_err,
+						       min_jk * rel_err,
 						       &actual_error);
       
       int max_order = coeffs0.get_max_order() / 2 - 1;
@@ -512,18 +515,18 @@ private:
 	 sea_.get_total_num_coeffs(order_ik) *
 	 sea_.get_total_num_coeffs(order_jk) <
 	 nodes[0]->count() * nodes[1]->count() * nodes[2]->count()) {
-	
-	coeffs0.AccumulateCoeffs(data_, weights_, nodes[0]->begin(), 
-				 nodes[0]->end(), order_ij);
-	coeffs1.AccumulateCoeffs(data_, weights_, nodes[1]->begin(), 
-				 nodes[1]->end(), order_ik);
-	coeffs2.AccumulateCoeffs(data_, weights_, nodes[2]->begin(), 
-				 nodes[2]->end(), order_jk);
+
+	coeffs0.RefineCoeffs(data_, weights_, nodes[0]->begin(), 
+			     nodes[0]->end(), order_ij);
+	coeffs1.RefineCoeffs(data_, weights_, nodes[1]->begin(), 
+			     nodes[1]->end(), order_ik);
+	coeffs2.RefineCoeffs(data_, weights_, nodes[2]->begin(), 
+			     nodes[2]->end(), order_jk);
 	
 	potential_l_ += num_tuples * min_ij * min_ik * min_jk;
 	potential_e_ += coeffs0.ConvolveField(coeffs1, coeffs2, order_ij, 
 					      order_ik, order_jk);
-
+	extra_token_ = 0;
 	return 1;
       }
       return 0;
@@ -576,8 +579,8 @@ private:
       return;
     }
     //else if(PrunableSeriesExpansion(nodes, num_tuples, allowed_err)) {
-    //  return;
-    // }
+    //return;
+    //}
 
     // figure out which ones are non-leaves
     non_leaf_indices_.Resize(0);

@@ -182,7 +182,6 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
   int r, i, j, k, t, tail;
   Vector heads;
   Vector x_r;
-  Vector C_k;
   double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
 
   // initialize temporary variables
@@ -200,6 +199,7 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
   if(order_ < order) {
     order_ = order;
   }
+  Vector C_k;
     
   // Repeat for each reference point in this reference node.
   for(r = begin; r < end; r++) {
@@ -254,14 +254,19 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
 (const Matrix& data, const Vector& weights, int begin, int end, 
  int order) {
   
+  if(order_ < 0) {
+    
+    AccumulateCoeffs(data, weights, begin, end, order);
+    return;
+  }
+
   int dim = data.n_rows();
   int old_total_num_coeffs = sea_->get_total_num_coeffs(order_);
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   Vector tmp;
-  int r, i, j, k, t, tail;
+  int r, i, j;
   Vector heads;
   Vector x_r;
-  Vector C_k;
   double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
 
   // initialize temporary variables
@@ -282,7 +287,9 @@ void FarFieldExpansion<TKernel, TKernelDerivative>::RefineCoeffs
   else {
     order_ = order;
   }
-    
+
+  Vector C_k;
+
   // Repeat for each reference point in this reference node.
   for(r = begin; r < end; r++) {
     
@@ -569,7 +576,7 @@ template<typename TKernel, typename TKernelDerivative>
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(bandwidth);
   center_.Copy(center);
-  order_ = 0;
+  order_ = -1;
   sea_ = sea;
 
   // initialize coefficient array
@@ -584,7 +591,8 @@ template<typename TKernel, typename TKernelDerivative>
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(bandwidth);
   center_.Init(sea->get_dimension());
-  order_ = 0;
+  center_.SetZero();
+  order_ = -1;
   sea_ = sea;
 
   // initialize coefficient array
