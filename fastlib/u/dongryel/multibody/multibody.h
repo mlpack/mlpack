@@ -187,9 +187,13 @@ public:
     tau_ = tau;
 
     // run and do timing for multitree multibody
+    NumPrunes_ = 0;
+    NumNodesExpanded_ = 0;
     MTMultibody(root_nodes, total_num_tuples_);
 
     printf("Total potential estimate: %g\n", potential_e_);
+    printf("Number of series approximations: %d\n", NumPrunes_);
+    printf("Number of tuples of nodes expanded: %d\n", NumNodesExpanded_);
   }
 
   void InitExpansionObjects(Tree *node) {
@@ -214,6 +218,7 @@ public:
     const char *fname = fx_param_str(NULL, "data", NULL);
     int leaflen = fx_param_int(NULL, "leaflen", 20);
      
+    // read in the dataset and build a kd-tree
     fx_timer_start(NULL, "tree_d");
     Dataset dataset_;
     dataset_.InitFromFile(fname);
@@ -225,24 +230,36 @@ public:
     weights_.SetAll(1);
 
     // set the maximum order of approximation here!
-    sea_.Init(10, data_.n_rows());
+    sea_.Init(8, data_.n_rows());
 
+    // initialize the multibody kernel and the series expansion objects
+    // for all nodes
     mkernel_.Init(bandwidth);
     InitExpansionObjects(root_);
 
     fx_timer_stop(NULL, "tree_d");
 
+    // more temporary variables initialization
     non_leaf_indices_.Init(mkernel_.order());
     distmat_.Init(mkernel_.order(), mkernel_.order());
     exhaustive_indices_.Init(mkernel_.order());
     node_bounds_.Init(mkernel_.order());
 
+    // initialize the combination generator
+    combination_.Init(mkernel_.order());
+    for(index_t i = 0; i < mkernel_.order(); i++) {
+      combination_[i] = i;
+    }
+
+    // potential bounds and tokens initialized to 0.
     potential_l_ = potential_e_ = 0;
     extra_token_ = 0;
   }
 
 private:
-  
+
+  // member variables
+
   /** hrect bounds passed to evaluation */
   ArrayList<DHrectBound<2> *> node_bounds_;
 
@@ -274,9 +291,7 @@ private:
   /** the total number of n-tuples to consider */
   double total_num_tuples_;
   
-  /**
-   * Extra amount of error that can be spent
-   */
+  /** Extra amount of error that can be spent */
   double extra_token_;
 
   /** potential estimate */
@@ -287,6 +302,51 @@ private:
 
   /** approximation relative error bound */
   double tau_;
+
+  /** number of prunes made */
+  int NumPrunes_;
+
+  /** number of nodes expanded */
+  int NumNodesExpanded_;
+  
+  /** index enumerating a combination from beginning to the end */
+  Vector combination_;
+
+  // functions
+
+  /** combination enumerator */  
+  success_t generate_next_symmetric_index(Vector &index) {
+
+    int i, ok_so_far;
+    int n = index.length();
+    int top = n-1;
+    
+    do {
+      index[top] += 1;
+      ok_so_far = 1;
+      
+      if (index[top] >= data_.n_cols()) {
+	index[top] = -1;
+	top -= 1;
+	ok_so_far = 0;
+	
+	if (top < 0) { 
+	  return SUCCESS_FAIL;
+	}
+      }
+      for (i = 0; i < top && ok_so_far; i++) {
+	if (index[top] <= index[i]) {
+	  ok_so_far = 0;
+	}
+      }
+      if(ok_so_far) {
+	top += 1;
+      }
+    }
+    while (top < n);
+    
+    return SUCCESS_PASS;
+  }
 
   /** test whether node a is an ancestor node of node b */
   int as_indexes_strictly_surround_bs(Tree *a, Tree *b) {
@@ -443,7 +503,7 @@ private:
     // compute whether the error is below the threshold
     *allowed_err = tau_ * (potential_l_ + lower_change) *
       ((num_tuples + extra_token_) / total_num_tuples_);
-    
+
     if(likely(error >= 0) && 
        error <= tau_ * (potential_l_ + lower_change) *
        ((num_tuples + extra_token_) / total_num_tuples_)) {
@@ -457,6 +517,7 @@ private:
       DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
     }
+
     return 0;
   }
 
@@ -467,7 +528,9 @@ private:
     if(nodes[0] != nodes[1] && nodes[0] != nodes[2] && nodes[1] != nodes[2]) {
 
       Matrix distmat;
-      double actual_error = 0;
+      double actual_error1 = 0;
+      double actual_error2 = 0;
+      double actual_error3 = 0;
       distmat.Alias(mkernel_.EvalMinMaxDsqds(node_bounds_));
       
       double max_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(0, 1));
@@ -492,17 +555,17 @@ private:
 						       nodes[1]->bound(),
 						       distmat.get(0, 1),
 						       min_ij * rel_err,
-						       &actual_error);
+						       &actual_error1);
       int order_ik = coeffs1.OrderForConvertingtoLocal(nodes[0]->bound(),
 						       nodes[2]->bound(),
 						       distmat.get(0, 2),
 						       min_ik * rel_err,
-						       &actual_error);
+						       &actual_error2);
       int order_jk = coeffs2.OrderForConvertingtoLocal(nodes[1]->bound(),
 						       nodes[2]->bound(),
 						       distmat.get(1, 2),
 						       min_jk * rel_err,
-						       &actual_error);
+						       &actual_error3);
       
       int max_order = coeffs0.get_max_order() / 2 - 1;
       if(order_ij >= 0 && order_ik >= 0 && order_jk >= 0 &&
@@ -523,7 +586,24 @@ private:
 	potential_l_ += num_tuples * min_ij * min_ik * min_jk;
 	potential_e_ += coeffs0.ConvolveField(coeffs1, coeffs2, order_ij, 
 					      order_ik, order_jk);
-	extra_token_ = 0;
+
+	// the maximum relative error incurred
+	double max_rel_err_incurred1 = actual_error1 / min_ij;
+	double max_rel_err_incurred2 = actual_error2 / min_ik;
+	double max_rel_err_incurred3 = actual_error3 / min_jk;
+	double max_rel_err_incurred =
+	  max_rel_err_incurred1 + max_rel_err_incurred2 +
+	  max_rel_err_incurred3 + max_rel_err_incurred1 *
+	  max_rel_err_incurred2 + max_rel_err_incurred1 *
+	  max_rel_err_incurred3 + max_rel_err_incurred2 *
+	  max_rel_err_incurred3 + max_rel_err_incurred1 *
+	  max_rel_err_incurred2 + max_rel_err_incurred3;
+	double error = max_rel_err_incurred * max_ij * max_ik * max_jk;
+	
+	extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
+	  (tau_ * potential_l_);
+	
+	DEBUG_ASSERT(extra_token_ >= 0);
 	return 1;
       }
       return 0;
@@ -573,10 +653,13 @@ private:
   void MTMultibody(ArrayList<Tree *> nodes, double num_tuples) {
     
     double allowed_err = 0;
+    NumNodesExpanded_++;
+
     if(Prunable(nodes, num_tuples, &allowed_err)) {
       return;
     }
     //else if(PrunableSeriesExpansion(nodes, num_tuples, allowed_err)) {
+    //NumPrunes_++;
     //return;
     //}
 
