@@ -31,14 +31,8 @@ class NaiveOrthoRangeSearch {
   ~NaiveOrthoRangeSearch() {}
 
   /** get the result of the search */
-  void get_results(ArrayList<int> &results) const {
-
-    for(index_t i = 0; i < in_range_.size(); i++) {
-
-      if(in_range_[i]) {
-	*results.AddBack() = i;
-      }
-    }
+  const ArrayList<bool>& get_results() const {
+    return in_range_;
   }
 
   /** initialize the computation object */
@@ -55,6 +49,17 @@ class NaiveOrthoRangeSearch {
     range_.Init(data_.n_rows());
     RangeReader::ReadRangeData(range_);
     
+    // re-initialize boolean flag
+    in_range_.Init(data_.n_cols());
+    for(index_t i = 0; i < data_.n_cols(); i++) {
+      in_range_[i] = false;
+    }
+  }
+
+  void Init(const Matrix &data, const ArrayList<DRange> &range) {
+    data_.Alias(data);
+    range_.Copy(range);
+
     // re-initialize boolean flag
     in_range_.Init(data_.n_cols());
     for(index_t i = 0; i < data_.n_cols(); i++) {
@@ -98,21 +103,22 @@ class OrthoRangeSearch {
   // getters and setters
 
   /** get the result of the search by expanding the node list */
-  void get_results(ArrayList<int> &results) const {
+  const ArrayList<bool> &get_results() {
     
     for(index_t i = 0; i < candidate_nodes_.size(); i++) {
       
       Tree *node = candidate_nodes_[i];
       for(index_t r = node->begin(); r < node->end(); r++) {
-	*results.AddBack() = r;
+	candidate_points_[r] = true;
       }
     }
-
-    for(index_t i = 0; i < candidate_points_.size(); i++) {
-      *results.AddBack() = candidate_points_[i];
-    }
+    return candidate_points_;
   }
-  
+
+  const Matrix &get_data() const { return data_; }
+
+  const ArrayList<DRange> &get_range() const { return search_range_; }
+ 
   // interesting functions...
 
   /** perform the orthogonal range search */
@@ -142,7 +148,10 @@ class OrthoRangeSearch {
     
     // initialize candidate nodes and points */
     candidate_nodes_.Init(0, data_.n_cols());
-    candidate_points_.Init(0, data_.n_cols());
+    candidate_points_.Init(data_.n_cols());
+    for(index_t i = 0; i < data_.n_cols(); i++) {
+      candidate_points_[i] = false;
+    }
   }
 
  private:
@@ -173,7 +182,8 @@ class OrthoRangeSearch {
   /**
    * List of candidate points
    */
-  ArrayList<int> candidate_points_;
+  ArrayList<bool> candidate_points_;
+  
 
   // member functions
   
@@ -200,7 +210,7 @@ class OrthoRangeSearch {
       }
 
       if(prune_flag == SUBSUME) {
-	*candidate_points_.AddBack() = row;
+	candidate_points_[row] = true;
       }
     }
   }
