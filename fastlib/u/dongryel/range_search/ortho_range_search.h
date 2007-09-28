@@ -2,6 +2,7 @@
 #define ORTHO_RANGE_SEARCH_H
 
 #include <values.h>
+#include "range_reader.h"
 #include "fastlib/fastlib_int.h"
 
 /** Naive orthogonal range search class */
@@ -28,12 +29,22 @@ class NaiveOrthoRangeSearch {
   NaiveOrthoRangeSearch() {}
 
   ~NaiveOrthoRangeSearch() {}
-  
+
+  /** get the result of the search */
+  void get_results(ArrayList<int> &results) const {
+
+    for(index_t i = 0; i < in_range_.size(); i++) {
+
+      if(in_range_[i]) {
+	*results.AddBack() = i;
+      }
+    }
+  }
+
   /** initialize the computation object */
   void Init() {
     
     const char *fname = fx_param_str(NULL, "data", NULL);
-    const char *dname = fx_param_str(NULL, "range", NULL);
 
     // read in the dataset
     Dataset dataset_;
@@ -42,42 +53,7 @@ class NaiveOrthoRangeSearch {
 
     // read the orthogonal query range text file
     range_.Init(data_.n_rows());
-    TextTokenizer tokenizer;
-    tokenizer.Open(dname);
-    
-    for(index_t i = 0; i < data_.n_rows(); i++) {
-
-      tokenizer.Gobble();
-      if((tokenizer.Current().c_str())[0] == '-') {
-        tokenizer.Gobble();
-        if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-          range_[i].lo = -MAXDOUBLE;
-        }
-      }
-      else if(tokenizer.Match("INFINITY")) {
-        range_[i].lo = MAXDOUBLE;
-      }
-      else {
-        range_[i].lo = atof(tokenizer.Current().c_str());
-      }
-      tokenizer.Gobble();
-      if((tokenizer.Current().c_str())[0] == ',') {
-	tokenizer.Gobble();
-      }
-      
-      if((tokenizer.Current().c_str())[0] == '-') {
-	tokenizer.Gobble();
-	if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-	  range_[i].hi = -MAXDOUBLE;
-	}
-      }
-      else if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-	range_[i].hi = MAXDOUBLE;
-      }
-      else {
-	range_[i].hi = atof(tokenizer.Current().c_str());
-      }
-    }
+    RangeReader::ReadRangeData(range_);
     
     // re-initialize boolean flag
     in_range_.Init(data_.n_cols());
@@ -103,6 +79,7 @@ class NaiveOrthoRangeSearch {
       for(index_t d = 0; d < data_.n_rows(); d++) {
 	if(pt[d] < range_[d].lo || pt[d] > range_[d].hi) {
 	  flag = false;
+	  break;
 	}
       }
       in_range_[i] = flag;
@@ -130,6 +107,10 @@ class OrthoRangeSearch {
 	*results.AddBack() = r;
       }
     }
+
+    for(index_t i = 0; i < candidate_points_.size(); i++) {
+      *results.AddBack() = candidate_points_[i];
+    }
   }
   
   // interesting functions...
@@ -145,7 +126,6 @@ class OrthoRangeSearch {
   void Init() {
 
     const char *fname = fx_param_str(NULL, "data", NULL);
-    const char *dname = fx_param_str(NULL, "range", NULL);
     int leaflen = fx_param_int(NULL, "leaflen", 20);
 
     // read in the dataset
@@ -158,52 +138,17 @@ class OrthoRangeSearch {
 
     // read in the query range
     search_range_.Init(data_.n_rows());
-    TextTokenizer tokenizer;
-    tokenizer.Open(dname);
-
-    for(index_t i = 0; i < data_.n_rows(); i++) {
-      
-      tokenizer.Gobble();
-      if((tokenizer.Current().c_str())[0] == '-') {
-	tokenizer.Gobble();
-	if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-	  search_range_[i].lo = -MAXDOUBLE;
-	}
-      }
-      else if(tokenizer.Match("INFINITY")) {
-	search_range_[i].lo = MAXDOUBLE;
-      }
-      else {
-	search_range_[i].lo = atof(tokenizer.Current().c_str());
-      }
-      tokenizer.Gobble();
-      if((tokenizer.Current().c_str())[0] == ',') {
-	tokenizer.Gobble();
-      }
-
-      if((tokenizer.Current().c_str())[0] == '-') {
-	tokenizer.Gobble();
-	if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-	  search_range_[i].hi = -MAXDOUBLE;
-	}
-      }
-      else if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-        search_range_[i].hi = MAXDOUBLE;
-      }
-      else {
-        search_range_[i].hi = atof(tokenizer.Current().c_str());
-      }
-    }
+    RangeReader::ReadRangeData(search_range_);
     
     // initialize candidate nodes and points */
-    candidate_nodes_.Init(0);
-    candidate_points_.Init(0);
+    candidate_nodes_.Init(0, data_.n_cols());
+    candidate_points_.Init(0, data_.n_cols());
   }
 
  private:
 
   /** flag determining a prune */
-  enum PruneStatus {SUBSUME, INCONCLUSIVE};
+  enum PruneStatus {SUBSUME, INCONCLUSIVE, EXCLUDE};
 
   // member variables
   /** pointer to the dataset */
@@ -249,6 +194,7 @@ class OrthoRangeSearch {
 	// this dimension
 	if(data_.get(d, row) > search_dir_range.hi ||
 	   data_.get(d, row) < search_dir_range.lo) {
+	  prune_flag = EXCLUDE;
 	  break;
 	}
       }
