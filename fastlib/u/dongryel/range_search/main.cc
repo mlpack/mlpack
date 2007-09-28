@@ -21,14 +21,15 @@ int main(int argc, char *argv[]) {
     for(index_t i = 0; i < fast_search_results.size(); i++) {
       if(fast_search_results[i] != naive_search_results[i]) {
 	flag = false;
+	printf("Differ on %d\n", i);
 	break;
       }
     }
     if(flag) {
-      printf("Both methods have different results...\n");
+      printf("Both naive and tree-based method got the same results...\n");
     }
     else {
-      printf("Both naive and tree-based method got the same results...\n");
+      printf("Both methods have different results...\n");
     }
   }
   fx_done();
