@@ -104,14 +104,6 @@ class OrthoRangeSearch {
 
   /** get the result of the search by expanding the node list */
   const ArrayList<bool> &get_results() {
-    
-    for(index_t i = 0; i < candidate_nodes_.size(); i++) {
-      
-      Tree *node = candidate_nodes_[i];
-      for(index_t r = node->begin(); r < node->end(); r++) {
-	candidate_points_[r] = true;
-      }
-    }
     return candidate_points_;
   }
 
@@ -147,7 +139,6 @@ class OrthoRangeSearch {
     RangeReader::ReadRangeData(search_range_);
     
     // initialize candidate nodes and points */
-    candidate_nodes_.Init(0, data_.n_cols());
     candidate_points_.Init(data_.n_cols());
     for(index_t i = 0; i < data_.n_cols(); i++) {
       candidate_points_[i] = false;
@@ -172,13 +163,6 @@ class OrthoRangeSearch {
   /** the root of the tree */
   Tree *root_;
 
-  /** 
-   * list of candidates nodes that contain the points that are in the range
-   * - this needs to be generalized to be a list of lists for multiple
-   * orthogonal range queries.
-   */
-  ArrayList<Tree *> candidate_nodes_;
-  
   /**
    * List of candidate points
    */
@@ -253,7 +237,9 @@ class OrthoRangeSearch {
     // in case of subsume, then add all points owned by this node to
     // candidates
     if(prune_flag == SUBSUME) {
-      candidate_nodes_.AddBackItem(node);
+      for(index_t i = node->begin(); i < node->end(); i++) {
+	candidate_points_[i] = true;
+      }
       return;
     }
     else if(node->is_leaf()) {
