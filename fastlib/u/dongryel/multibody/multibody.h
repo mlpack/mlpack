@@ -173,7 +173,7 @@ public:
 
   /** Main computation */
   void Compute(double tau) {
-
+    
     ArrayList<Tree *> root_nodes;
     root_nodes.Init(mkernel_.order());
 
@@ -313,13 +313,31 @@ private:
   Vector combination_;
 
   // functions
+  
+  /** convert a combination to a rank in dictionary order */
+  double combination_to_rank(const ArrayList<int> &index) {
+    double r = 0;
+    int n = data_.n_cols();
+    int k = mkernel_.order();
+    int lower = 0;
+
+    for(index_t j = 0; j < k; j++) {
+      printf("checking %d\n", index[j]);
+      for(index_t i = lower; i < index[j]; i++) {
+	r += math::BinomialCoefficient(n - i - 1, k - j - 1);
+      }
+      lower = index[j] + 1;
+    }
+    return r;
+  }
+
   /** 
    * figure out whether the rank of the current index is below the 
    * current combination iteration that denotes the exhaustive
    * computation
    */
   int has_been_computed(const ArrayList<int> &index) {
-    
+    return 0;
   }
 
   /** combination enumerator */  
