@@ -6,23 +6,30 @@ int main(int argc, char *argv[]) {
   bool do_naive = fx_param_exists(NULL, "do_naive");
 
   OrthoRangeSearch fast_search;
-  ArrayList<int> fast_search_results;
-  fast_search_results.Init(0);
   fast_search.Init();
   fast_search.Compute();
-  fast_search.get_results(fast_search_results);
+  ArrayList<bool> fast_search_results = fast_search.get_results();
 
   // if naive option is specified, do naive algorithm
   if(do_naive) {
     NaiveOrthoRangeSearch search;
-    ArrayList<int> naive_search_results;
-    naive_search_results.Init(0);
-    search.Init();    
+    search.Init(fast_search.get_data(), fast_search.get_range());
     search.Compute();
-    search.get_results(naive_search_results);
+    ArrayList<bool> naive_search_results = search.get_results();
+    bool flag = true;
 
-    printf("Fast method got %d candidates, slow method got %d candidates\n",
-	   fast_search_results.size(), naive_search_results.size());
+    for(index_t i = 0; i < fast_search_results.size(); i++) {
+      if(fast_search_results[i] != naive_search_results[i]) {
+	flag = false;
+	break;
+      }
+    }
+    if(flag) {
+      printf("Both methods have different results...\n");
+    }
+    else {
+      printf("Both naive and tree-based method got the same results...\n");
+    }
   }
   fx_done();
   return 0;
