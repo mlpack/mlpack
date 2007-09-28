@@ -38,7 +38,7 @@ class NaiveOrthoRangeSearch {
   /** initialize the computation object */
   void Init() {
     
-    const char *fname = fx_param_str(NULL, "data", NULL);
+    const char *fname = fx_param_str(NULL, "data", "data.ds");
 
     // read in the dataset
     Dataset dataset_;
@@ -123,7 +123,7 @@ class OrthoRangeSearch {
   /** initialization function - to read the data and to construct tree */
   void Init() {
 
-    const char *fname = fx_param_str(NULL, "data", NULL);
+    const char *fname = fx_param_str(NULL, "data", "data.ds");
     int leaflen = fx_param_int(NULL, "leaflen", 20);
 
     // read in the dataset

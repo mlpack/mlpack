@@ -11,7 +11,9 @@ class RangeReader {
   static void ReadRangeData(ArrayList<DRange> &range) {
 
     TextTokenizer tokenizer;
-    const char *dname = fx_param_str(NULL, "range", NULL);
+    const char *dname = fx_param_str(NULL, "range", "range.txt");
+    const double offset1 = fx_param_double(NULL, "offset1", 0);
+    const double offset2 = fx_param_double(NULL, "offset2", 0);
     tokenizer.Open(dname);
     
     for(index_t i = 0; i < range.size(); i++) {
@@ -48,6 +50,10 @@ class RangeReader {
 	range[i].hi = atof(tokenizer.Current().c_str());
       }
       
+      // apply offset
+      range[i].lo -= offset1;
+      range[i].hi -= offset2;
+
       printf("Got [ %g %g ]\n", range[i].lo, range[i].hi);
       
       if(range[i].lo > range[i].hi) {
