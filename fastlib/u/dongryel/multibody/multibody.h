@@ -250,6 +250,7 @@ public:
     for(index_t i = 0; i < mkernel_.order(); i++) {
       combination_[i] = i;
     }
+    combination_rank_ = 0;
 
     // potential bounds and tokens initialized to 0.
     potential_l_ = potential_e_ = 0;
@@ -312,6 +313,9 @@ private:
   /** index enumerating a combination from beginning to the end */
   Vector combination_;
 
+  /** rank of the current combination */
+  int combination_rank_;
+
   // functions
   
   /** convert a combination to a rank in dictionary order */
@@ -322,7 +326,6 @@ private:
     int lower = 0;
 
     for(index_t j = 0; j < k; j++) {
-      printf("checking %d\n", index[j]);
       for(index_t i = lower; i < index[j]; i++) {
 	r += math::BinomialCoefficient(n - i - 1, k - j - 1);
       }
@@ -331,13 +334,48 @@ private:
     return r;
   }
 
-  /** 
-   * figure out whether the rank of the current index is below the 
-   * current combination iteration that denotes the exhaustive
-   * computation
+  /**
+   * find the rank of the lowest and the highest combination generated
+   * by the given tuples of nodes.
    */
-  int has_been_computed(const ArrayList<int> &index) {
-    return 0;
+  void FindCombinationRankBounds(ArrayList <Tree *> nodes, 
+				 double *lowest_rank, double *highest_rank) {
+    
+    // first find the index of the lowest rank
+    exhaustive_indices_[0] = nodes[0]->begin();
+    for(index_t i = 1; i < nodes.size(); i++) {
+      if(nodes[i] == nodes[i - 1]) {
+	exhaustive_indices_[i] = exhaustive_indices_[i - 1] + 1;
+      }
+      else {
+	exhaustive_indices_[i] = nodes[i]->begin();
+      }
+      // this shows that there is no valid n-tuple
+      if(exhaustive_indices_[i] >= nodes[i]->end()) {
+	*lowest_rank = -1;
+	*highest_rank = -1;
+	return;
+      }
+    }
+    *lowest_rank = combination_to_rank(exhaustive_indices_);
+    
+    // next find the index of the highest rank
+    exhaustive_indices_[nodes.size() - 1] = 
+      nodes[nodes.size() - 1]->end() - 1;
+    for(index_t i = nodes.size() - 2; i >= 0; i--) {
+      if(nodes[i] == nodes[i + 1]) {
+        exhaustive_indices_[i] = exhaustive_indices_[i + 1] - 1;
+      }
+      else {
+        exhaustive_indices_[i] = nodes[i]->begin();
+      }
+      // this shows that there is no valid n-tuple
+      if(exhaustive_indices_[i] < nodes[i]->begin()) {
+	*highest_rank = -1;
+        return;
+      }
+    }
+    *highest_rank = combination_to_rank(exhaustive_indices_);
   }
 
   /** combination enumerator */  
@@ -513,6 +551,10 @@ private:
     double min_potential, max_potential;
     double lower_change;
     double error, estimate;
+    //double lowest_rank, highest_rank;
+
+    //FindCombinationRankBounds(nodes, &lowest_rank, &highest_rank);
+    //double unaccounted_tuples = highest_rank - combination_rank_ - 1;
     
     // compute pairwise bounding box distances
     for(index_t i = 0; i < mkernel_.order(); i++) {
@@ -680,7 +722,7 @@ private:
     
     double allowed_err = 0;
     NumNodesExpanded_++;
-
+    
     if(Prunable(nodes, num_tuples, &allowed_err)) {
       return;
     }
