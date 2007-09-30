@@ -32,6 +32,12 @@ int main(int argc, char *argv[]) {
       printf("Both methods have different results...\n");
     }
   }
+  timer *tree_range_search_time = fx_timer(NULL, "tree_range_search");
+  timer *naive_search_time = fx_timer(NULL, "naive_search");
+	 
+  fx_format_result(NULL, "speedup", "%g", 
+		   ((double)(naive_search_time->total).micros) / 
+		   ((double)(tree_range_search_time->total).micros));
   fx_done();
   return 0;
 }

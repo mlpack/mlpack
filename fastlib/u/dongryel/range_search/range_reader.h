@@ -12,8 +12,8 @@ class RangeReader {
 
     TextTokenizer tokenizer;
     const char *dname = fx_param_str(NULL, "range", "range.txt");
-    const double offset1 = fx_param_double(NULL, "offset1", 0);
-    const double offset2 = fx_param_double(NULL, "offset2", 0);
+    const double factor = fx_param_double(NULL, "factor", 1);
+    const double offset = fx_param_double(NULL, "offset", 0);
     tokenizer.Open(dname);
     
     for(index_t i = 0; i < range.size(); i++) {
@@ -51,8 +51,9 @@ class RangeReader {
       }
       
       // apply offset
-      range[i].lo -= offset1;
-      range[i].hi -= offset2;
+      range[i].lo -= offset;
+      range[i].hi -= offset;
+      range[i].hi = range[i].lo + (range[i].hi - range[i].lo) * factor;
 
       printf("Got [ %g %g ]\n", range[i].lo, range[i].hi);
       
