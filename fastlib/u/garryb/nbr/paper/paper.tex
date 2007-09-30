@@ -934,15 +934,15 @@ In small-scale SMP systems, we find that within a single query task, dual-tree a
 %Modern multicore machines such as Intel's Core brand processors share L2 caches between consecutive nodes, and to maximize cache usage, it is best to assign these pairs similar chunks of the tree.
 
 Singh in \cite{singh_thesis} argues that the high data requirements of $N$-body methods prevent efficient distributed-memory implementations, and instead recommends costly shared-memory architectures to achieve parallelization for even large numbers of processors\authorsnote{rewrite}.
-It is important to acknowledge that generalized $N$-body problems have widely varying computational characteristics.
-In general, the most time consuming algorithms have relatively lower communication requirements relative to computation.
-A low-dimensional nearest neighbor computation for 16 million three-dimensional points can be computed in under a minute on a single processor -- a single point-to-point transfer these points may take several times as long.
-For the same data set, a two point correlation with a wide bandwidth may take hours, parallelizing extremely well.
-Moreover, a nearest-neighbor computation for high-dimensional manifolds may also take hours and similarly parallelize well.
 Nonetheless, several authors \cite{salmon_thesis, liu94experiences, salmon97parallel} have made message-passing implementations of both Barnes-Hut and the Fast Multipole Method.
 
-Initially, Salmon\cite{salmon_thesis} and Liu and Bhatt\cite{liu94experiences} promote the idea of sender-initiated communication.
-In other words, each machine computes which of its own points and nodes belong to the locally essential trees of other machines, and sends them before computation begins.
+It is also important to acknowledge that generalized $N$-body problems have widely varying computational characteristics.
+In general, the most time-consuming dual-tree algorithms have relatively lower communication requirements relative to computation.
+For example, a low-dimensional nearest neighbor computation for 16 million three-dimensional points can be computed in under a minute on a single processor, whereas transferring that data set over a network connection would take several times as long.
+For the same data, a two point-correlation with a wide bandwidth may take hours, and thus the communication cost is relatively lower.
+
+Initially, Salmon\cite{salmon_thesis} and Liu and Bhatt\cite{liu94experiences}, in their distributed-memory implementations of Barnes-Hut and FMM, promote the idea of sender-initiated communication.
+Each machine precomputes which of its own points and nodes belong to the locally essential trees of other machines, and sends them before computation begins.
 By predicting needed data, no latency costs due to requesting remote data are paid, and therefore transfer time is the only limitation.
 Such computation is possible since Barnes-Hut's pruning criterion is based only on the bounding box and distances of the cells.
 
@@ -1008,7 +1008,7 @@ Instead, we dynamically assign tasks to processors during the course of computat
 
 %We choose $\hat{k}$ to be a small constant factor times the total number of threads.
 
-Within a machine, uniform chunking is used \cite{uniform_chunking}.
+Within a machine, uniform-sized chunking is used \cite{kruskal85allocating}.
 A shared work queue contains $k$ query nodes of roughly equal cardinality.
 A granularity parameter, $g$, determines the minimum expected number of tasks per processor, with $p$ total processors.
 These tasks are quickly enumerated by performing a depth-first traversal, terminating at subtrees with at most $\frac{n}{gp}$ points.
@@ -1019,7 +1019,7 @@ With all threads on a single machine, this method alone allows close to optimal 
 %\authorsnote{At this point, I begin to describe a distributed scheduler that is different than the one THOR currently uses.
 %I soon plan on implementing it.  The above section is correct, however.}
 When multiple machines are used, the scheduler must manage two concerns: minimizing communication, but also ensuring a balanced load.
-Several papers \cite{markatos94using, banicescu, salmon, warren} mention the difficulty in achieving both goals simultaneously.
+Several papers \cite{markatos94using, banicescu95balancing, salmon_thesis} mention the difficulty in achieving both goals simultaneously.
 
 THOR uses the domain decomposition is a starting point for work assignment.
 Each machine's domain is divided into tasks like previously mentioned.
@@ -1130,6 +1130,42 @@ For example, if a problem takes fifteen minutes on a single processor, then we a
 
 %Since a run of affinity propagation typically performs 100 or more iterations with each executing two generalized $N$-body problems, we calibrate our data set size based on total time.
 %However, to control for number of iterations, we report the mean time per iteration.
+
+% fx-csv rohans ./range /params/data /params/rpc/n /params/range/h /gnp/timers/gnp/wall/sec /timers/default/wall/sec /gnp/io/q_points/world_net_stats/results/read_ratio
+% fx-csv rohans ./fdkde /params/data /params/rpc/n /params/kde/h /kde_1/timers/gnp/wall/sec /timers/default/wall/sec /kde_1/io/q_points/world_net_stats/results/read_ratio
+% fx-csv rohans ./allnn /params/data /params/rpc/n /params/range/h /gnp/timers/gnp/wall/sec /timers/default/wall/sec /gnp/io/q_points/world_net_stats/results/read_ratio
+% data, n, h, sec, sec, read_ratio
+% /tmp/garryb/lcdm.txt, 2, 18, 3358.381664, 3469.685367, 0.3610
+% /tmp/garryb/lcdm.txt, 4, 18, 1682.555178, 1807.437799, 0.8583
+% /tmp/garryb/lcdm.txt, 8, 18, 812.731948, 940.527689, 1.9400
+% /tmp/garryb/lcdm.txt, 16, 18, 395.224485, 531.809224, 2.6155
+% /tmp/garryb/lcdm.txt, 32, 18, 210.917186, 358.055520, 4.4185
+% /tmp/garryb/lcdm.txt, 46, 18, 151.153713, 328.090205, 6.3462
+% /tmp/garryb/lcdm3000k.txt, 2, 90, 1764.333915, 1784.780000, 1.0000
+% /tmp/garryb/lcdm3000k.txt, 4, 90, 885.350625, 907.580057, 2.9945
+% /tmp/garryb/lcdm3000k.txt, 8, 90, 413.688281, 439.047169, 6.9080
+% /tmp/garryb/lcdm3000k.txt, 16, 90, 214.246966, 244.685013, 13.9476
+% /tmp/garryb/lcdm3000k.txt, 32, 90, 119.660350, 170.881812, 25.4586
+% /tmp/garryb/lcdm3000k.txt, 46, 90, 86.845145, 144.649013, 35.0314
+% data, n, h, sec, sec, read_ratio
+% /tmp/garryb/a500k.txt, 4, 0.05, 924.604805, 930.016924, 2.9995
+% /tmp/garryb/a500k.txt, 8, 0.05, 609.580028, 635.747685, 6.9503
+% /tmp/garryb/a500k.txt, 16, 0.05, 242.851925, 254.274229, 14.6071
+% /tmp/garryb/a500k.txt, 32, 0.05, 119.911340, 139.760265, 28.7479
+% /tmp/garryb/a500k.txt, 46, 0.05, 82.038028, 118.238711, 38.3729
+% /tmp/garryb/timit500k.txt, 4, 0.01, 1342.395164, 1353.742021, 2.9736
+% /tmp/garryb/timit500k.txt, 8, 0.01, 682.703312, 706.568909, 6.8601
+% /tmp/garryb/timit500k.txt, 16, 0.01, 349.739168, 387.520821, 14.5703
+% /tmp/garryb/timit500k.txt, 32, 0.01, 179.748038, 206.358624, 29.8550
+% /tmp/garryb/timit500k.txt, 46, 0.01, 124.156092, 174.510755, 43.1353
+% data, n, h, sec, sec, read_ratio
+% /tmp/garryb/timit2000k.txt, 16, , 153.314920, 208.486512, 14.6171
+% /tmp/garryb/timit2000k.txt, 32, , 85.554880, 149.544739, 29.1878
+% /tmp/garryb/timit2000k.txt, 45, , 65.347369, 137.087579, 40.2455
+%/tmp/garryb/timit4000k.txt, 16, , 438.141895, 550.783006, 14.5667
+%/tmp/garryb/timit4000k.txt, 32, , 241.590771, 355.503673, 29.0087
+%/tmp/garryb/timit4000k.txt, 45, , 182.481596, 296.100844, 40.2777
+
 
 \begin{table*}
   \begin{tabular}{|l|l|l|r||r|r||r|r|}
@@ -1279,8 +1315,6 @@ Full papers should have a maximum length of 12 pages, short papers and poster pa
 Authors should use US Letter (8.5" x 11") paper size.
 Papers must have an abstract with a maximum of 300 words and a keyword list with no more than 6 keywords.
 Authors are required to submit their papers electronically in PDF format (postscript files can be converted using standard convertors).
-
-\end{appendix}
 
 \end{document}
 
