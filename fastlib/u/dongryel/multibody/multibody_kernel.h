@@ -120,7 +120,7 @@ class GaussianThreeBodyKernel {
 };
 
 class AxilrodTellerKernel {
-
+  
 };
 
 #endif
