@@ -176,15 +176,12 @@ public:
 
     // run and do timing for multitree multibody
     NumPrunes_ = 0;
-    NumNodesExpanded_ = 0;
+    NumTupleNodesExpanded_ = 0;
     MTMultibody(root_nodes, total_num_tuples_);
 
     printf("Total potential estimate: %g\n", potential_e_);
     printf("Number of series approximations: %d\n", NumPrunes_);
-    printf("Number of tuples of nodes expanded: %d\n", NumNodesExpanded_);
-    printf("Accounted for %g tuples...\n", combination_rank_);
-    printf("Have to start with tuples that begin with %d\n",
-	   combination_[0]);
+    printf("Number of tuples of nodes expanded: %d\n", NumTupleNodesExpanded_);
   }
 
   void InitExpansionObjects(Tree *node) {
@@ -200,6 +197,9 @@ public:
     if(!node->is_leaf()) {
       InitExpansionObjects(node->left());
       InitExpansionObjects(node->right());
+    }
+    else {
+      list_of_leaves_.AddBackItem(node);
     }
   }
 
@@ -226,7 +226,9 @@ public:
     // initialize the multibody kernel and the series expansion objects
     // for all nodes
     mkernel_.Init(bandwidth);
+    list_of_leaves_.Init(0);
     InitExpansionObjects(root_);
+    printf("Got %d leaves...\n", list_of_leaves_.size());
 
     fx_timer_stop(NULL, "tree_d");
 
@@ -236,12 +238,7 @@ public:
     exhaustive_indices_.Init(mkernel_.order());
     node_bounds_.Init(mkernel_.order());
 
-    // initialize the combination generator
-    combination_.Init(mkernel_.order());
-    for(index_t i = 0; i < mkernel_.order(); i++) {
-      combination_[i] = i;
-    }
-    combination_rank_ = 0;
+    base_indices_count_ = 0;
 
     // potential bounds and tokens initialized to 0.
     potential_l_ = potential_e_ = 0;
@@ -291,117 +288,22 @@ private:
   
   /** Running lower bound on the potential */
   double potential_l_;
-
+  
   /** approximation relative error bound */
   double tau_;
+
+  /** list of leaf nodes */
+  ArrayList<Tree *> list_of_leaves_;
 
   /** number of prunes made */
   int NumPrunes_;
 
-  /** number of nodes expanded */
-  int NumNodesExpanded_;
+  /** number of tuples of nodes expanded */
+  int NumTupleNodesExpanded_;
   
-  /** index enumerating a combination from beginning to the end */
-  ArrayList<int> combination_;
-
-  /** rank of the current combination */
-  double combination_rank_;
+  int base_indices_count_;
 
   // functions
-  
-  /** convert a combination to a rank in dictionary order */
-  double combination_to_rank(const ArrayList<int> &index) {
-    double r = 0;
-    int n = data_.n_cols();
-    int k = mkernel_.order();
-    int lower = 0;
-
-    for(index_t j = 0; j < k; j++) {
-      for(index_t i = lower; i < index[j]; i++) {
-	r += math::BinomialCoefficient(n - i - 1, k - j - 1);
-      }
-      lower = index[j] + 1;
-    }
-    return r;
-  }
-
-  /**
-   * find the rank of the lowest and the highest combination generated
-   * by the given tuples of nodes.
-   */
-  void FindCombinationRankBounds(ArrayList <Tree *> nodes, 
-				 double *lowest_rank, double *highest_rank) {
-    
-    // first find the index of the lowest rank
-    exhaustive_indices_[0] = nodes[0]->begin();
-    for(index_t i = 1; i < nodes.size(); i++) {
-      if(nodes[i] == nodes[i - 1]) {
-	exhaustive_indices_[i] = exhaustive_indices_[i - 1] + 1;
-      }
-      else {
-	exhaustive_indices_[i] = nodes[i]->begin();
-      }
-      // this shows that there is no valid n-tuple
-      if(exhaustive_indices_[i] >= nodes[i]->end()) {
-	*lowest_rank = -1;
-	*highest_rank = -1;
-	return;
-      }
-    }
-    *lowest_rank = combination_to_rank(exhaustive_indices_);
-    
-    // next find the index of the highest rank
-    exhaustive_indices_[nodes.size() - 1] = 
-      nodes[nodes.size() - 1]->end() - 1;
-    for(index_t i = nodes.size() - 2; i >= 0; i--) {
-      if(nodes[i] == nodes[i + 1]) {
-        exhaustive_indices_[i] = exhaustive_indices_[i + 1] - 1;
-      }
-      else {
-        exhaustive_indices_[i] = nodes[i]->end() - 1;
-      }
-      // this shows that there is no valid n-tuple
-      if(exhaustive_indices_[i] < nodes[i]->begin()) {
-	*highest_rank = -1;
-        return;
-      }
-    }
-    *highest_rank = combination_to_rank(exhaustive_indices_);
-  }
-
-  /** combination enumerator */  
-  success_t generate_next_symmetric_index(ArrayList<int> &index) {
-
-    int i, ok_so_far;
-    int n = index.size();
-    int top = n-1;
-    
-    do {
-      index[top] += 1;
-      ok_so_far = 1;
-      
-      if (index[top] >= data_.n_cols()) {
-	index[top] = -1;
-	top -= 1;
-	ok_so_far = 0;
-	
-	if (top < 0) { 
-	  return SUCCESS_FAIL;
-	}
-      }
-      for (i = 0; i < top && ok_so_far; i++) {
-	if (index[top] <= index[i]) {
-	  ok_so_far = 0;
-	}
-      }
-      if(ok_so_far) {
-	top += 1;
-      }
-    }
-    while (top < n);
-    
-    return SUCCESS_PASS;
-  }
 
   /** test whether node a is an ancestor node of node b */
   int as_indexes_strictly_surround_bs(Tree *a, Tree *b) {
@@ -427,14 +329,7 @@ private:
   
   /** get effective count of the node */
   int effective_count(Tree *node) {
-    int count;
-    if(node->begin() < combination_[0]) {
-      count = max(node->count() - (combination_[0] - node->begin()), 0);
-    }
-    else {
-      count = node->count();
-    }
-    return count;
+    return node->count();
   }
 
   /** Compute the total number of n-tuples */
@@ -568,18 +463,18 @@ private:
     estimate = 0.5 * num_tuples * (min_potential + max_potential);
 
     // compute whether the error is below the threshold
-    *allowed_err = tau_ * (potential_l_ + lower_change) *
+    *allowed_err = tau_ * (max_potential_l + lower_change) *
       ((num_tuples + extra_token_) / total_num_tuples_);
 
     if(likely(error >= 0) && 
-       error <= tau_ * (potential_l_ + lower_change) *
+       error <= tau_ * (max_potential_l + lower_change) *
        ((num_tuples + extra_token_) / total_num_tuples_)) {
       
       potential_l_ += lower_change;
       potential_e_ += estimate;
 
       extra_token_ = num_tuples + extra_token_ - 
-	error * total_num_tuples_ / (tau_ * potential_l_);
+	error * total_num_tuples_ / (tau_ * max_potential_l);
 
       DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
@@ -688,13 +583,13 @@ private:
 
     if(level < num_nodes) {
       
-      /* run over each point in this node */
+      // run over each point in this node
       if(level > 0) {
 	if(nodes[level - 1]->begin() == nodes[level]->begin()) {
 	  start_index = exhaustive_indices_[level - 1] + 1;
 	}
 	else {
-	  start_index = node[level]->begin();
+	  start_index = nodes[level]->begin();
 	}
       }
       else {
@@ -709,12 +604,10 @@ private:
     else {
 
       // complete the table of distance computation
-      if(combination_to_rank(exhaustive_indices_) >= combination_rank_) {
-	result = mkernel_.Eval(data_, exhaustive_indices_);
-	potential_e_ += result;
-	potential_l_ += result;
-	extra_token_++;
-      }
+      result = mkernel_.Eval(data_, exhaustive_indices_);
+
+      potential_e_ += result;
+      potential_l_ += result;	
     }
   }
 
@@ -722,33 +615,30 @@ private:
   void MTMultibody(ArrayList<Tree *> nodes, double num_tuples) {
     
     double allowed_err = 0;
-    NumNodesExpanded_++;
+    NumTupleNodesExpanded_++;
 
     if(Prunable(nodes, num_tuples, &allowed_err)) {
       return;
     }
-    else {
-      for(index_t k = 0; k < 5; k++) {
-	int previous_start_index = combination_[0];
-	while(combination_rank_ < total_num_tuples_ &&
-	      combination_[0] == previous_start_index) {
-	  double increment = mkernel_.Eval(data_, combination_);
-	  potential_l_ += increment;
-	  potential_e_ += increment;
-	  extra_token_ += 1;
-	  combination_rank_ += 1;
-	  generate_next_symmetric_index(combination_);
-	}
+    else if(base_indices_count_ < list_of_leaves_.size()) {
+      ArrayList<Tree *> base_nodes;
+
+      base_nodes.Init(mkernel_.order());
+      for(index_t k = 0; k < mkernel_.order(); k++) {
+	base_nodes[k] = list_of_leaves_[base_indices_count_];
       }
+      double base_num_tuples = ttn(0, base_nodes);
+      
+      if(base_num_tuples > 0) {
+	MTMultibodyBase(base_nodes, 0);
+	extra_token_ += base_num_tuples;
+      }
+      base_indices_count_++;
     }
-    //else if(PrunableSeriesExpansion(nodes, num_tuples, allowed_err)) {
-    //NumPrunes_++;
-    //return;
-    //}
 
     // figure out which ones are non-leaves
     non_leaf_indices_.Resize(0);
-    for(index_t i = 0; i < 3; i++) {
+    for(index_t i = 0; i < mkernel_.order(); i++) {
       if(!(nodes[i]->is_leaf())) {
 	non_leaf_indices_.AddBackItem(i);
       }
@@ -756,7 +646,11 @@ private:
     
     // all leaves, then base case
     if(non_leaf_indices_.size() == 0) {
-      //MTMultibodyBase(nodes, 0);
+      if(!(nodes[0] == nodes[1] && nodes[1] == nodes[2] &&
+	   nodes[0] == nodes[2])) {
+	MTMultibodyBase(nodes, 0);
+	extra_token_ += num_tuples;
+      }
       return;
     }
     
@@ -767,8 +661,8 @@ private:
       
       // copy to new nodes
       ArrayList<Tree *> new_nodes;
-      new_nodes.Init(3);
-      for(index_t i = 0; i < 3; i++) {
+      new_nodes.Init(mkernel_.order());
+      for(index_t i = 0; i < mkernel_.order(); i++) {
 	new_nodes[i] = nodes[i];
       }
 

@@ -317,66 +317,6 @@ private:
   int combination_rank_;
 
   // functions
-  
-  /** convert a combination to a rank in dictionary order */
-  double combination_to_rank(const ArrayList<int> &index) {
-    double r = 0;
-    int n = data_.n_cols();
-    int k = mkernel_.order();
-    int lower = 0;
-
-    for(index_t j = 0; j < k; j++) {
-      for(index_t i = lower; i < index[j]; i++) {
-	r += math::BinomialCoefficient(n - i - 1, k - j - 1);
-      }
-      lower = index[j] + 1;
-    }
-    return r;
-  }
-
-  /**
-   * find the rank of the lowest and the highest combination generated
-   * by the given tuples of nodes.
-   */
-  void FindCombinationRankBounds(ArrayList <Tree *> nodes, 
-				 double *lowest_rank, double *highest_rank) {
-    
-    // first find the index of the lowest rank
-    exhaustive_indices_[0] = nodes[0]->begin();
-    for(index_t i = 1; i < nodes.size(); i++) {
-      if(nodes[i] == nodes[i - 1]) {
-	exhaustive_indices_[i] = exhaustive_indices_[i - 1] + 1;
-      }
-      else {
-	exhaustive_indices_[i] = nodes[i]->begin();
-      }
-      // this shows that there is no valid n-tuple
-      if(exhaustive_indices_[i] >= nodes[i]->end()) {
-	*lowest_rank = -1;
-	*highest_rank = -1;
-	return;
-      }
-    }
-    *lowest_rank = combination_to_rank(exhaustive_indices_);
-    
-    // next find the index of the highest rank
-    exhaustive_indices_[nodes.size() - 1] = 
-      nodes[nodes.size() - 1]->end() - 1;
-    for(index_t i = nodes.size() - 2; i >= 0; i--) {
-      if(nodes[i] == nodes[i + 1]) {
-        exhaustive_indices_[i] = exhaustive_indices_[i + 1] - 1;
-      }
-      else {
-        exhaustive_indices_[i] = nodes[i]->begin();
-      }
-      // this shows that there is no valid n-tuple
-      if(exhaustive_indices_[i] < nodes[i]->begin()) {
-	*highest_rank = -1;
-        return;
-      }
-    }
-    *highest_rank = combination_to_rank(exhaustive_indices_);
-  }
 
   /** combination enumerator */  
   success_t generate_next_symmetric_index(Vector &index) {
@@ -551,10 +491,6 @@ private:
     double min_potential, max_potential;
     double lower_change;
     double error, estimate;
-    //double lowest_rank, highest_rank;
-
-    //FindCombinationRankBounds(nodes, &lowest_rank, &highest_rank);
-    //double unaccounted_tuples = highest_rank - combination_rank_ - 1;
     
     // compute pairwise bounding box distances
     for(index_t i = 0; i < mkernel_.order(); i++) {
@@ -580,7 +516,7 @@ private:
       potential_e_ += estimate;
 
       extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
-	(tau_ * potential_l_);
+	(tau_ * (potential_l_ + lower_change));
 
       DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
