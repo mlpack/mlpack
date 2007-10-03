@@ -230,7 +230,7 @@ public:
     weights_.SetAll(1);
 
     // set the maximum order of approximation here!
-    sea_.Init(8, data_.n_rows());
+    sea_.Init(14, data_.n_rows());
 
     // initialize the multibody kernel and the series expansion objects
     // for all nodes
@@ -601,8 +601,88 @@ private:
 	  max_rel_err_incurred2 + max_rel_err_incurred1 *
 	  max_rel_err_incurred3 + max_rel_err_incurred2 *
 	  max_rel_err_incurred3 + max_rel_err_incurred1 *
-	  max_rel_err_incurred2 + max_rel_err_incurred3;
+	  max_rel_err_incurred2 * max_rel_err_incurred3;
 	double error = max_rel_err_incurred * max_ij * max_ik * max_jk;
+	
+	extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
+	  (tau_ * potential_l_);
+	
+	DEBUG_ASSERT(extra_token_ >= 0);
+	return 1;
+      }
+      return 0;
+    }
+    
+    return 0;
+  }
+
+  /** Pruning rule for series approxiamation second approach */
+  int PrunableSeriesExpansion2(ArrayList<Tree *> nodes, double num_tuples,
+			       double allowed_err) {
+
+    if(nodes[0] != nodes[1] && nodes[0] != nodes[2] && nodes[1] != nodes[2]) {
+
+      Matrix distmat;
+      double actual_error2 = 0;
+      double actual_error3 = 0;
+      distmat.Alias(mkernel_.EvalMinMaxDsqds(node_bounds_));
+            
+      double max_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(0, 2));
+      double max_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 2));
+      double min_ij = mkernel_.EvalUnnormOnSqOnePair(distmat.get(1, 0));
+      double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
+      double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
+      
+      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs0 =
+	nodes[0]->stat().get_farfield_coeffs();
+      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs1 =
+	nodes[1]->stat().get_farfield_coeffs();
+      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs2 =
+	nodes[2]->stat().get_farfield_coeffs();
+      double total_relerr = allowed_err / 
+	(num_tuples * max_ik * max_jk);
+      double rel_err = max(pow(total_relerr + 1, 1.0 / 2.0) - 1, 0);
+
+      // compute the required number of terms
+      int order_ik = -1;
+      int order_jk = -1;
+      if(min_ik * rel_err > 0) {
+	order_ik = coeffs1.OrderForConvertingtoLocal(nodes[0]->bound(),
+						     nodes[2]->bound(),
+						     distmat.get(0, 2),
+						     min_ik * rel_err,
+						     &actual_error2);
+      }
+      if(min_jk * rel_err > 0) {
+	order_jk = coeffs2.OrderForConvertingtoLocal(nodes[1]->bound(),
+						     nodes[2]->bound(),
+						     distmat.get(1, 2),
+						     min_jk * rel_err,
+						     &actual_error3);
+      }
+
+      int max_order = coeffs1.get_max_order() / 2 - 1;
+      if(order_ik >= 0 && order_jk >= 0 && order_ik < max_order && 
+	 order_jk < max_order &&
+	 sea_.get_total_num_coeffs(order_ik) *
+	 sea_.get_total_num_coeffs(order_jk) < 2 * nodes[2]->count()) {
+
+	coeffs2.RefineCoeffs(data_, weights_, nodes[2]->begin(), 
+			     nodes[2]->end(), order_jk);
+	
+	potential_l_ += num_tuples * min_ij * min_ik * min_jk;
+	potential_e_ += coeffs0.MixField(data_, nodes[0]->begin(),
+					 nodes[0]->end(), nodes[1]->begin(),
+					 nodes[1]->end(), coeffs1, coeffs2, 
+					 order_ik, order_jk);
+
+	// the maximum relative error incurred
+	double max_rel_err_incurred2 = actual_error2 / min_ik;
+	double max_rel_err_incurred3 = actual_error3 / min_jk;
+	double max_rel_err_incurred =
+	  max_rel_err_incurred2 + max_rel_err_incurred3 + 
+	  max_rel_err_incurred2 * max_rel_err_incurred3;
+	double error = max_rel_err_incurred * max_ik * max_jk;
 	
 	extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
 	  (tau_ * potential_l_);
@@ -662,7 +742,7 @@ private:
     if(Prunable(nodes, num_tuples, &allowed_err)) {
       return;
     }
-    //else if(PrunableSeriesExpansion(nodes, num_tuples, allowed_err)) {
+    //else if(PrunableSeriesExpansion2(nodes, num_tuples, allowed_err)) {
     //NumPrunes_++;
     //return;
     //}
