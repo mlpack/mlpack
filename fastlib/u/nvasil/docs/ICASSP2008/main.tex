@@ -1,0 +1,298 @@
+% Deadlines March Friday 31, 2006.
+% Notification of acceptance Wednesday May 31, 2006
+% Revised October 3rd Georgia Tech
+% Now Submitted to ICASSP
+% Deadline October 5, 2007
+% Notification of Acceptance (by email)	December 14, 2007
+% Accepted Paper Revision Period	January 11, 2008 until Noon GMT, January 19, 2008
+% Author’s Registration Deadline	January 18, 2008
+% ----------------------------------------------------------------
+
+
+
+
+\documentclass[times, 10pt,twocolumn]{article}
+\usepackage{spconf}
+\usepackage{times}
+\input{psfig.tex}
+\usepackage{epsfig}
+
+
+% ----------------------------------------------------------------
+
+%\topmargin  1cm                 %
+%\textheight 20cm
+%\renewcommand{\baselinestretch}{1} %spacing
+
+\pagestyle{empty}
+
+% ----------------------------------------------------------------
+\begin{document}
+
+\title{Scalable k-nearest neighbor classifiers in speech recognition}
+
+\name
+  {Nikolaos Vasiloglou, Antonio Moreno, Alexander Gray, David V. Anderson}
+   \address
+   { Georgia Institute of Technology\\
+     Center for Signal and Image Processing\\
+     Atlanta GA 30332\\ \\
+     nvasil@ieee.org, antonio@ece.gatech.edu, agray@cc.gatech.edu, dva@ece.gatech.edu\\
+   }
+
+\maketitle
+
+\thispagestyle{empty}
+\begin{abstract}
+In this paper we introduce the k-nearest neighbor classifier (KNNC) in speech recognition for large scale datasets. Naive KNNC  has linear complexity which makes it very slow over large training data. In this paper a Fast KNNC (FKNNC) is introduced and the results on speech classification and speech recognition are presented. FKNNC scales very well over large datasets. Automatic Speech Recognition (ASR) based on FKNN has the advantage of adding labeled data online without retraining the ASR system.
+\end{abstract}
+
+
+\section{Introduction}
+\label{introduction}
+In the state of the art Automatic Speech Recognition (ASR) systems the states are modeled with Gaussian Mixtures Models (GMM), Neural Networks (NN) or other parametric models. In general parametric models make specific assumptions about the properties of the features, such as gaussian distributions. So in general it is difficult to experiment with different features since, for every feature type there underlying assumptions of the parametric model might not be valid. For example more layers for the NN might be necessary or the features might not follow a gaussian distribution. It would be more preferable if a non-parametric model was used. For example instead of GMMs a Kernel Density Estimator could have been used:
+
+\begin{equation}\label{KDE}
+    \hat{f}(x_q)=\sum_{i=0}^{N}k(x_q,x_i)
+\end{equation}
+where $N$ is the number of features, $x_i \in \Re^d$ is the training data, $d$ is the dimensionality of the features. And $x_q$ is the test (query) feature that we would like to estimate its probability. $K(x,y)$ is a kernel, ie the gaussian kernel:
+\begin{equation}\label{Gaussian}
+    k(x,y)=e^{-\frac{||x-y||^2}{\sigma^2}}
+\end{equation}
+where $\sigma$ is the variance or else known as bandwidth.
+The Kernel Nearest Neighbor Classifier (KNNC) is another non-parametric model defined as:
+\begin{equation}\label{KNNC}
+    label of  arg\min ||x_q-x_i|| , i=1,\dots,N
+\end{equation}
+Or simply if you want to classify $x_q$, find its nearest neighbor and associate it with its label. 
+The advantage of these two non-parametric models is that they depend on the data, there is only one parameter that has to be tuned (bandwidth and k). Besides that, if more data are added it is not necessary to retrain it. On the other hand they are much slower than parametric ones, since the KDE evaluation for a query point $x_q$ requires $N$ evaluations of the kernel. The same thing holds for KNNC, since $N$ comparisons have to be done to find the nearest neighbor. 
+
+In this paper we show that by using multidimensional trees it is possible to reduce the computational complexity of non-parametric models down to $O(\log N)$  for a single point evaluation. In batch mode for $M$ query points instead of $O(M\log N)$, the complexity can be reduced to $O(M+N)$. The Fast KNNC (FKNNC) is applied in speech classification and recognition experiments.
+
+ 
+
+\section{Speech features}
+In our implementation, MFCC features were extracted using the freely available code
+from \emph{Voicebox}. The speech signal was divided into frames of
+length 25 msec, with 50 \% overlap and 13 MFCC coefficients
+(including the zeroth coefficient) where extracted from each frame.
+Twenty-seven filters were used to group the frequency bins into
+critical bands.
+
+The NRAF features were derived from a model of the early auditory
+system~\cite{shamma_main}. The input signal was passed through a
+bandpass filter bank. We then performed a difference operation between
+adjacent frequency channels. This is followed by a half-wave
+rectification and a smoothing filter. We compute
+a discrete cosine transform (DCT) of the logarithm of the output of
+the smoothing filter to obtain the NRAFs. The filter bank consisted
+of 27 1/4$^{th}$ octave filters tuned from 76 Hz to 6887 Hz. The
+smoothing (temporal integration) was done over 25 msec and sampled at
+a rate of 80 Hz (in order to match MFCCs). As in the case of MFCCs,
+the first 13 coefficients were used for further processing.
+
+In both cases the delta and acceleration coefficients were extracted
+and appended to each feature vector, increasing the dimensionality from
+13 to 39.
+
+\section{Fast nearest neighbor computation}
+In section \ref{introduction} the KNNC was introduced. The bottleneck of this classifier and many other non-parametric ones is the computation of the nearest neigbor.
+The "naive" method requires $N$ comparisons over all data. Ordering the multidimensional data on a binary tree, gives $O(\log (N)$ search time per point and $O(N\log N)$ for all nearest neighbors between all points. There is a plethora of binary multidimensional trees ball tree, kd tree, cover tree etc. In the experiments the kd-tree was used. A detailed description of kd-trees can be found at \cite{moore-tutorial}. The main concept is to recursively partition data in disjoint rectangles. Each tree node contains a k-dimensional rectangle (hyper rectangle) that bounds all
+the points that are contained in the subtree. Only leafs contain points. In Fig.~\ref{kdtree} an example of a kd-tree in 2 dimensions is given, while the algorithm for computing the nearest
+neighbor for a test point is depicted in table Fig.~\ref{dualtree_algorithm}. The main idea is to recursively find the leaf that contains the query point then compute a candidate nearest neighbor on the leaf. As the algorithm back tracks it determines if it is necessary to search other subtrees for a nearest neighbor.
+
+The use of dual trees in the all nearest neighbor search has proven
+to give significant speed-up in all-nearest neighbor computations.
+The basic idea is that the whole query set is structured on a tree.
+In our case the query tree and the reference tree are the same. The
+core of the algorithm relies on the fact that if the current maximum
+nearest neighbor distance in the query node is smaller than the
+distance between the query and the reference node distance then the
+reference node can be pruned. This saves a huge amount of
+computation in most of the cases since whole  subtrees can be
+pruned out for a large subset of points at once. The all nearest
+neighbor search is described algorithmically in Table
+\ref{dualtree_algorithm}. The complexity of the algorithm, on average, turns out
+to be linear.
+
+\begin{table}
+\begin{verbatim}
+recurse(q : KdTree, r : KdTree) {
+  if (can_prune(q, r)) {
+    summarize(q, r) /* prune */
+  } else if (IsLeaf(q) and IsLeaf(r)) {
+    do_all_pairs(q, r)
+    /* at leaves we must resort to n^2 */
+  } else if (<should recurse on q>) {
+    recurse(q.left, r)
+    recurse(q.right, r)
+  } else {
+    recurse(q, r.left)
+    recurse(q, r.right)
+  }
+}
+\end{verbatim}
+\caption{Pseudo-code for the dual-tree all nearest neighbor
+algorithm}
+\label{dualtree_algorithm}
+\end{table}
+
+
+\begin{figure}
+\centerline{\psfig{figure=kdtree.eps ,height=6cm, width=8.0cm}}
+\caption{A two dimensional kd-tree}
+ \label{kdtree}
+\end{figure}
+
+\begin{figure}
+\centerline{\psfig{figure=dualtree_recursion.eps,height=6cm,
+width=8.0cm}} \caption{Simulation of the dual tree algorithm}
+\label{dualkdtree}
+\end{figure}
+
+\section{Experiments}
+The experiments were focused on three objectives. The first objective is to show the speed-up of FKNNC with trees the single and dual tree algorithm. The second objective is to do speech classification with FKNNC and compare two different features MFCC and NRAF. The third objective is to replace parametric models for the HMM states with FKNNC and compare the ASR performance with the state of the art. TIMIT and NTIMIT were tge benchmark datasets that were chosen for the experiments.
+
+\subsection{All nearest neighbor timing performance}
+The timing results are illustrated in table \ref{timing}. The all
+20-nearest neighbor method with the dual tree algorithm on kd-trees
+is 30 to 50 times faster than naive in terms of time. It took about
+3.6 hours for MFCCs and 2.2 hours for NRAF for all 20-nearest
+neighbors. It is well known that the pruning performance of the
+trees depends on the intrinsic dimension of the dataset. A simple
+way to get an estimation of the intrinsic dimension is the
+eigenvalue distribution of the Principal Component Analysis. As seen
+from Fig.~\ref{pca} NRAFs have a more compact distribution than
+MFCCs.
+
+\subsection{Comparison of NRAF and MFCC for speech classification}
+Two types of experiments were done for the comparison of the
+features. The first one is the Leave One feature Cross Validation.
+So for every feature we find the k-nearest neighbors and check
+whether the majority has the same label as it \footnote{Instead of
+using the 61 different phonetic classes of TIMIT we used the 39
+categories of the CMU dictionary}. In tables
+\ref{kneighborTIMIT} and \ref{kneighborNTIMIT}, we demonstrate the
+performance of MFCC and NRAF for TIMIT and NTIMIT for various k.
+NRAF perform better than MFCC, specially in the noisy case.
+
+In the second experiment we do Leave-One-Speaker-Out cross
+validation. For every feature we find the k-nearest neighbors that
+don't belong to the same speaker and check if the majority has the
+same label as it. The results are illustrated again in
+\ref{kneighborLOOCVTIMIT} and \ref{kneighborLOOCVNTIMIT}. The
+results drop significantly and it interesting that MFCCs perform
+better than NRAFs. The reason why the performance drops
+significantly is because we haven't done any covariance
+normalization on the data. It is well known in the speech
+recognition literature that mean and variance normalization improves
+recognition as it removes the speaker bias. It turns out that
+variance normalization broadens significantly the PCA spectrum which
+is tightly connected with the performance of kd-trees. We tried
+variance normalization but the all nearest neighbor performance was
+very slow. Another option is the Mahalanobis distance on a metric
+tree, but again the covariance normalization would have an immediate
+effect on the performance.
+
+It turns out that variance normalization is a way of decorrelating
+the MFCC/NRAF dimensions, which breaks the manifold structure. This
+is a suggestion that we should move on with higher dimensional
+transformations that remove the speaker bias intrinsically.
+
+\subsection{Speech recognition results}
+
+\section{Discussion}
+
+
+\bibliographystyle{IEEEbib}
+\bibliography{main}
+
+\begin{table}[h!]
+\footnotesize{
+\centering
+\begin{tabular}{|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & Naive & Single Tree & Dual Tree \\
+  \hline
+  MFCC & 100 & 4.3 & 3.6 \\
+  NRAF & 100 & 2.9 & 2.2 \\
+  \hline
+\end{tabular}
+ \caption {CPU time (in hours) for evaluating all 20 nearest neighbors on
+  TIMIT database}
+  }
+  \label{timing}
+\end{table}
+
+\begin{table}[htb]
+\footnotesize{
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & 1-nearest & 3-nearest & 4-nearest & 7-nearest & 10-nearest \\
+  \hline
+  MFCC & 62.2\% & 70.4\% & 69.7\% & 65.3\% & 63.4\% \\
+  NRAF & 66.9\% & 74.1\% & 73.2\% & 67.3\% & 64.7\% \\
+  \hline
+\end{tabular}
+\caption{Nearest k-neighbor classfier for TIMIT database}
+}
+\label{kneighborTIMIT}
+\end{table}
+
+\begin{table}[htb]
+\footnotesize{
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & 1-nearest & 3-nearest & 4-nearest & 7-nearest & 10-nearest \\
+  \hline
+  MFCC & 41.4\% & 55.5\% & 54.5\% & 50.7\% & 49.4\% \\
+  NRAF & 55.0\% & 65.1\% & 64.0\% & 57.5\% & 54.5\% \\
+  \hline
+\end{tabular}
+\caption{Nearest k-neighbor classfier for NTIMIT database}
+}
+\label{kneighborNTIMIT}
+\end{table}
+
+\begin{table}[htb]
+\footnotesize{
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & 1-nearest & 3-nearest & 4-nearest & 7-nearest & 10-nearest \\
+  \hline
+  MFCC & 44.0\% & 56.3\% & 56.3\% & 54.7\% & 54.6\% \\
+  NRAF & 42.2\% & 53.5\% & 53.7\% & 52.4\% & 52.4\% \\
+  \hline
+\end{tabular}
+\caption{Nearest k-neighbor classfier for
+  Leave One Speaker out Cross Validation in TIMIT database}
+}
+\label{kneighborLOOCVTIMIT}
+\end{table}
+
+\begin{table}[htb]
+\footnotesize{
+\centering
+\begin{tabular}{|c|c|c|c|c|c|}
+  \hline
+  % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+  feature & 1-nearest & 3-nearest & 4-nearest & 7-nearest & 10-nearest \\
+  \hline
+  MFCC & 32.0\% & 46.7\% & 46.5\% & ?44.3\% & 43.8\% \\
+  NRAF & 30.1\% & 42.9\% & 42.9\% & 41.2\% & 40.1\% \\
+  \hline
+\end{tabular}
+  \caption{Nearest k-neighbor classfier for Leave One Speaker Out
+  Cross validation in  NTIMIT database}
+}
+\label{kneighborLOOCVNTIMIT}
+\end{table}
+
+\end{document}
