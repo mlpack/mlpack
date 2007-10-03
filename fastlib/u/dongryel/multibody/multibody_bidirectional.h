@@ -177,6 +177,25 @@ public:
     // run and do timing for multitree multibody
     NumPrunes_ = 0;
     NumTupleNodesExpanded_ = 0;
+
+    // first compute exhaustively for self-tuples
+    printf("Starting with %g tuples...\n", total_num_tuples_);
+    for(index_t i = 0; i < list_of_leaves_.size(); i++) {
+      ArrayList<Tree *> base_nodes;
+
+      base_nodes.Init(mkernel_.order());
+      for(index_t k = 0; k < mkernel_.order(); k++) {
+	base_nodes[k] = list_of_leaves_[i];
+      }
+      base_num_tuples_[base_indices_count_] = ttn(0, base_nodes);
+
+      MTMultibodyBase(base_nodes, 0);
+      total_num_tuples_ -= base_num_tuples_[i];
+      base_indices_count_++;
+    }
+    printf("Accounted for %g tuples before the start out of %g tuples!\n", extra_token_,
+	   total_num_tuples_);
+    printf("Current lower bound %g\n", potential_l_);
     MTMultibody(root_nodes, total_num_tuples_);
 
     printf("Total potential estimate: %g\n", potential_e_);
@@ -239,6 +258,10 @@ public:
     node_bounds_.Init(mkernel_.order());
 
     base_indices_count_ = 0;
+    base_num_tuples_.Init(list_of_leaves_.size());
+    for(index_t i = 0; i < base_num_tuples_.size(); i++) {
+      base_num_tuples_[i] = 0;
+    }
 
     // potential bounds and tokens initialized to 0.
     potential_l_ = potential_e_ = 0;
@@ -303,6 +326,9 @@ private:
   
   int base_indices_count_;
 
+  /** the number of tuples for leaf node index (i, i, ... i) */
+  ArrayList<double> base_num_tuples_;
+
   // functions
 
   /** test whether node a is an ancestor node of node b */
@@ -328,8 +354,31 @@ private:
   }
   
   /** get effective count of the node */
-  int effective_count(Tree *node) {
-    return node->count();
+  double wrapper_ttn(ArrayList<Tree *> nodes) {
+
+    double unfiltered_count = ttn(0, nodes);
+
+    // depending on how many leaf tuples have been exhaustively computed
+    // under the first node, take out the number of tuples
+
+    for(index_t i = 0; i < list_of_leaves_.size(); i++) {
+      int flag = 1;
+      
+      for(index_t j = 0; j < nodes.size(); j++) {
+	
+	if(!(nodes[j]->begin() <= list_of_leaves_[i]->begin() &&
+	     list_of_leaves_[i]->end() <= nodes[j]->end())) {
+	  flag = 0;
+	  break;
+	}
+      }
+
+      if(flag == 1) {
+	unfiltered_count -= base_num_tuples_[i];
+      }
+    }
+
+    return unfiltered_count;
   }
 
   /** Compute the total number of n-tuples */
@@ -340,14 +389,14 @@ private:
     int n = nodes.size();
 
     if(b == n - 1) {
-      result = effective_count(bkn);
+      result = bkn->count();
     }
     else {
       int j;
       int conflict = 0;
       int simple_product = 1;
       
-      result = effective_count(bkn);
+      result = bkn->count();
       
       for(j = b + 1 ; j < n && !conflict; j++) {
 	Tree *knj = nodes[j];
@@ -365,7 +414,7 @@ private:
       }
       else if(simple_product) {
 	for(j = b + 1; j < n; j++) {
-	  result *= effective_count(nodes[j]);
+	  result *= nodes[j]->count();
 	}
       }
       else {
@@ -383,13 +432,13 @@ private:
 	}
 
 	if(jdiff < 0) {
-	  result = math::BinomialCoefficient(effective_count(bkn), n - b);
+	  result = math::BinomialCoefficient(bkn->count(), n - b);
 	}
 	else {
 	  Tree *dkn = nodes[jdiff];
 
 	  if(dkn->begin() >= bkn->end() - 1) {
-	    result = math::BinomialCoefficient(effective_count(bkn), 
+	    result = math::BinomialCoefficient(bkn->count(), 
 					       jdiff - b);
 	    if(result > 0.0) {
 	      result *= ttn(jdiff, nodes);
@@ -463,18 +512,18 @@ private:
     estimate = 0.5 * num_tuples * (min_potential + max_potential);
 
     // compute whether the error is below the threshold
-    *allowed_err = tau_ * (max_potential_l + lower_change) *
+    *allowed_err = tau_ * (potential_l_ + lower_change) *
       ((num_tuples + extra_token_) / total_num_tuples_);
 
     if(likely(error >= 0) && 
-       error <= tau_ * (max_potential_l + lower_change) *
+       error <= tau_ * (potential_l_ + lower_change) *
        ((num_tuples + extra_token_) / total_num_tuples_)) {
       
       potential_l_ += lower_change;
       potential_e_ += estimate;
 
       extra_token_ = num_tuples + extra_token_ - 
-	error * total_num_tuples_ / (tau_ * max_potential_l);
+	error * total_num_tuples_ / (tau_ * potential_l_);
 
       DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
@@ -620,21 +669,6 @@ private:
     if(Prunable(nodes, num_tuples, &allowed_err)) {
       return;
     }
-    else if(base_indices_count_ < list_of_leaves_.size()) {
-      ArrayList<Tree *> base_nodes;
-
-      base_nodes.Init(mkernel_.order());
-      for(index_t k = 0; k < mkernel_.order(); k++) {
-	base_nodes[k] = list_of_leaves_[base_indices_count_];
-      }
-      double base_num_tuples = ttn(0, base_nodes);
-      
-      if(base_num_tuples > 0) {
-	MTMultibodyBase(base_nodes, 0);
-	extra_token_ += base_num_tuples;
-      }
-      base_indices_count_++;
-    }
 
     // figure out which ones are non-leaves
     non_leaf_indices_.Resize(0);
@@ -644,7 +678,7 @@ private:
       }
     }
     
-    // all leaves, then base case
+    // all leaves and not all of them are equal, then base case
     if(non_leaf_indices_.size() == 0) {
       if(!(nodes[0] == nodes[1] && nodes[1] == nodes[2] &&
 	   nodes[0] == nodes[2])) {
@@ -665,13 +699,13 @@ private:
       for(index_t i = 0; i < mkernel_.order(); i++) {
 	new_nodes[i] = nodes[i];
       }
-
+      
       // apply splitting heuristic
       split_index = FindSplitNode(nodes);
-
+      
       // recurse to the left
       new_nodes[split_index] = nodes[split_index]->left();
-      new_num_tuples = ttn(0, new_nodes);
+      new_num_tuples = wrapper_ttn(new_nodes);
       
       if(new_num_tuples > 0) {
 	MTMultibody(new_nodes, new_num_tuples);
@@ -679,7 +713,7 @@ private:
       
       // recurse to the right
       new_nodes[split_index] = nodes[split_index]->right();
-      new_num_tuples = ttn(0, new_nodes);
+      new_num_tuples = wrapper_ttn(new_nodes);
       
       if(new_num_tuples > 0) {
 	MTMultibody(new_nodes, new_num_tuples);
