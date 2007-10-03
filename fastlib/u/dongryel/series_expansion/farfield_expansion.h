@@ -111,6 +111,16 @@ class FarFieldExpansion {
 		       Vector* x_q=NULL) const;
   
   /**
+   * Evaluates the two-way convolution mixed with exhaustive computations
+   * with two other far field expansions
+   */
+  double MixField(const Matrix &data, int node1_begin, int node1_end, 
+		  int node2_begin, int node2_end,
+		  const FarFieldExpansion<TKernel, TKernelDerivative> &fe2,
+		  const FarFieldExpansion<TKernel, TKernelDerivative> &fe3,
+		  int order2, int order3) const;
+
+  /**
    * Evaluates the three-way convolution with two other far field
    * expansions
    */
@@ -385,6 +395,186 @@ double FarFieldExpansion<TKernel, TKernelDerivative>::
 
   multipole_sum = pos_multipole_sum + neg_multipole_sum;
   return multipole_sum;
+}
+
+template<typename TKernel, typename TKernelDerivative>
+  double FarFieldExpansion<TKernel, TKernelDerivative>::MixField
+  (const Matrix &data, int node1_begin, int node1_end,
+   int node2_begin, int node2_end,
+   const FarFieldExpansion<TKernel, TKernelDerivative> &fe2,
+   const FarFieldExpansion<TKernel, TKernelDerivative> &fe3,
+   int order2, int order3) const {
+
+  // bandwidth factor and multiindex mapping stuffs
+  double result;
+  double bandwidth_factor = kd_.BandwidthFactor(bandwidth_sq());
+  const ArrayList<int> *multiindex_mapping = sea_->get_multiindex_mapping();
+  const ArrayList<int> *lower_mapping_index = sea_->get_lower_mapping_index();
+
+  // get the total number of coefficients and coefficients
+  int total_num_coeffs2 = sea_->get_total_num_coeffs(order2);
+  int total_num_coeffs3 = sea_->get_total_num_coeffs(order3);
+  int dim = sea_->get_dimension();
+  Vector coeffs2, coeffs3;
+  coeffs2.Alias(fe2.get_coeffs());
+  coeffs3.Alias(fe3.get_coeffs());
+
+  // actual accumulated sum
+  double neg_sum = 0;
+  double pos_sum = 0;
+  double sum = 0;
+  
+  // some temporary
+  double moment_k;
+  double xi_xI, xj_xJ, diff;
+
+  // temporary array
+  ArrayList<int> beta_gamma_nu_eta_mapping;
+  ArrayList<int> beta_nu_mapping;
+  ArrayList<int> gamma_eta_mapping;
+  beta_nu_mapping.Init(dim);
+  gamma_eta_mapping.Init(dim);
+  beta_gamma_nu_eta_mapping.Init(dim);
+
+  // partial derivatives table
+  Matrix derivative_map_beta;
+  derivative_map_beta.Init(dim, order2 + 1);
+  Matrix derivative_map_gamma;
+  derivative_map_gamma.Init(dim, order3 + 1);
+  
+  // compute center differences and complete the table of partial derivatives
+  Vector xI_xK, xJ_xK;
+  xI_xK.Init(dim);
+  xJ_xK.Init(dim);
+  Vector xJ_center, xK_center;
+  xJ_center.Alias(fe2.get_center());
+  xK_center.Alias(fe3.get_center());
+
+  for(index_t d = 0; d < dim; d++) {
+    xI_xK[d] = (center_[d] - xK_center[d]) / bandwidth_factor;
+    xJ_xK[d] = (xJ_center[d] - xK_center[d]) / bandwidth_factor;
+  }
+  kd_.ComputeDirectionalDerivatives(xI_xK, derivative_map_beta);
+  kd_.ComputeDirectionalDerivatives(xJ_xK, derivative_map_gamma);
+
+  // inverse factorials
+  Vector inv_multiindex_factorials;
+  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
+
+  // precompute pairwise kernel values between node i and node j
+  Matrix exhaustive_ij;
+  exhaustive_ij.Init(node1_end - node1_begin, node2_end - node2_begin);
+  for(index_t i = node1_begin; i < node1_end; i++) {
+    const double *i_col = data.GetColumnPtr(i);
+    for(index_t j = node2_begin; j < node2_end; j++) {
+      const double *j_col = data.GetColumnPtr(j);
+      
+      exhaustive_ij.set
+	(i - node1_begin, j - node2_begin, 
+	 kernel_.EvalUnnormOnSq(la::DistanceSqEuclidean(data.n_rows(), 
+							i_col, j_col)));
+    }
+  }
+
+  // main loop
+  for(index_t beta = 0; beta < total_num_coeffs2; beta++) {
+    
+    ArrayList <int> beta_mapping = multiindex_mapping[beta];
+    ArrayList <int> lower_mappings_for_beta = lower_mapping_index[beta];
+    double beta_derivative = kd_.ComputePartialDerivative
+      (derivative_map_beta, beta_mapping);
+    
+    for(index_t nu = 0; nu < lower_mappings_for_beta.size(); nu++) {
+      
+      ArrayList<int> nu_mapping = 
+	multiindex_mapping[lower_mappings_for_beta[nu]];
+      
+      // beta - nu
+      for(index_t d = 0; d < dim; d++) {
+	beta_nu_mapping[d] = beta_mapping[d] - nu_mapping[d];
+      }
+      
+      for(index_t gamma = 0; gamma < total_num_coeffs3; gamma++) {
+	
+	ArrayList <int> gamma_mapping = multiindex_mapping[gamma];
+	ArrayList <int> lower_mappings_for_gamma = 
+	  lower_mapping_index[gamma];
+	double gamma_derivative = kd_.ComputePartialDerivative
+	  (derivative_map_gamma, gamma_mapping);
+	
+	for(index_t eta = 0; eta < lower_mappings_for_gamma.size(); 
+	    eta++){
+	  
+	  // add up alpha, mu, eta and beta, gamma, nu, eta
+	  int sign = 0;
+	  
+	  ArrayList<int> eta_mapping =
+	    multiindex_mapping[lower_mappings_for_gamma[eta]];
+	  
+	  for(index_t d = 0; d < dim; d++) {
+	    beta_gamma_nu_eta_mapping[d] = beta_mapping[d] +
+	      gamma_mapping[d] - nu_mapping[d] - eta_mapping[d];
+	    gamma_eta_mapping[d] = gamma_mapping[d] - eta_mapping[d];
+	    
+	    sign += 2 * (beta_mapping[d] + gamma_mapping[d]) - 
+	      (nu_mapping[d] + eta_mapping[d]);
+	  }
+	  if(sign % 2 == 1) {
+	    sign = -1;
+	  }
+	  else {
+	    sign = 1;
+	  }
+	  
+	  // retrieve moments for appropriate multiindex maps
+	  moment_k = coeffs3[sea_->ComputeMultiindexPosition
+			     (beta_gamma_nu_eta_mapping)];
+
+	  // loop over every pairs of points in node i and node j
+	  for(index_t i = node1_begin; i < node1_end; i++) {
+	    
+	    xi_xI = 
+	      inv_multiindex_factorials
+	      [sea_->ComputeMultiindexPosition(nu_mapping)];
+	    for(index_t d = 0; d < dim; d++) {
+	      diff = (data.get(d, i) - center_[d]) / bandwidth_factor;
+	      xi_xI *= pow(diff, nu_mapping[d]);
+	    }	    
+
+	    for(index_t j = node2_begin; j < node2_end; j++) {
+
+	      xj_xJ = inv_multiindex_factorials
+		[sea_->ComputeMultiindexPosition(eta_mapping)];
+	      for(index_t d = 0; d < dim; d++) {
+		diff = (data.get(d, j) - xJ_center[d]) / bandwidth_factor;
+		xj_xJ *= pow(diff, eta_mapping[d]);
+	      }
+
+	      result = sign *
+		sea_->get_n_multichoose_k_by_pos
+                (sea_->ComputeMultiindexPosition(beta_gamma_nu_eta_mapping),
+                 sea_->ComputeMultiindexPosition(beta_nu_mapping)) *
+		beta_derivative * gamma_derivative * xi_xI * xj_xJ *
+		moment_k * exhaustive_ij.get
+		(i - node1_begin, j - node2_begin);
+	      
+	      if(result > 0) {
+		pos_sum += result;
+	      }
+	      else {
+		neg_sum += result;
+	      }
+	    }
+	  }
+	  
+	} // end of eta
+      } // end of gamma
+    } // end of nu
+  } // end of beta
+  
+  // combine negative and positive sums
+  sum = neg_sum + pos_sum;
+  return sum;
 }
 
 template<typename TKernel, typename TKernelDerivative>

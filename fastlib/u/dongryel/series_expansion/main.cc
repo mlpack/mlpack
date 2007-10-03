@@ -346,6 +346,98 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   return 1;
 }
 
+int TestMixFarField(const Matrix &data, const Vector &weights,
+		    int begin, int end) {
+  
+  printf("\n----- TestMixFarField -----\n");
+
+  // bandwidth of 5 Gaussian kernel
+  double bandwidth = 5;
+  GaussianKernel kernel;
+  kernel.Init(bandwidth);
+
+  // declare auxiliary object and initialize
+  SeriesExpansionAux sea;
+  sea.Init(20, data.n_rows());
+
+  // declare center at the origin, (10, -10) and (-10, -10)
+  Vector center;
+  center.Init(2);
+  center.SetZero();
+  Vector center2;
+  center2.Init(2);
+  center2[0] = 10; center2[1] = -10;
+  Vector center3;
+  center3.Init(2);
+  center3[0] = center3[1] = -10;
+
+  // create fake data
+  Matrix data_comb;
+  data_comb.Init(data.n_rows(), data.n_cols() * 3);
+  for(index_t c = 0; c < data.n_cols(); c++) {
+    data_comb.set(0, c, data.get(0, c));
+    data_comb.set(1, c, data.get(1, c));
+    data_comb.set(0, c + data.n_cols(), data.get(0, c) + center2[0]);
+    data_comb.set(1, c + data.n_cols(), data.get(1, c) + center2[1]);
+    data_comb.set(0, c + 2 * data.n_cols(), data.get(0, c) + center3[0]);
+    data_comb.set(1, c + 2 * data.n_cols(), data.get(1, c) + center3[1]);
+  }
+  Vector weights_comb;
+  weights_comb.Init(data.n_cols() * 3);
+  weights_comb.SetAll(1);
+
+  data_comb.PrintDebug();
+
+  // declare expansion objects at (0,0) and other centers
+  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se;
+  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se2;
+  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se3;
+
+  // initialize expansion objects with respective centers and the bandwidth
+  // squared of 0.5
+  se.Init(bandwidth, center, &sea);
+  se2.Init(bandwidth, center2, &sea);
+  se3.Init(bandwidth, center3, &sea);
+
+  // compute up to 20-th order multivariate polynomial.
+  se.AccumulateCoeffs(data_comb, weights_comb, begin, end, 20);
+  se2.AccumulateCoeffs(data_comb, weights_comb, begin + data.n_cols(), 
+		       end + data.n_cols(), 20);
+  se3.AccumulateCoeffs(data_comb, weights_comb, begin + 2 * data.n_cols(), 
+		       end + 2 * data.n_cols(), 20);
+
+  printf("Convolution: %g\n", se.MixField(data_comb, begin, end, 
+					  begin + data.n_cols(), 
+					  end + data.n_cols(),
+					  se2, se3, 6, 6));
+
+  // compare with naive
+  double naive_result = 0;
+  for(index_t i = 0; i < data.n_cols(); i++) {
+    const double *i_col = data_comb.GetColumnPtr(i);
+    for(index_t j = data.n_cols(); j < 2 * data.n_cols(); j++) {
+      const double *j_col = data_comb.GetColumnPtr(j);
+      for(index_t k = 2 * data.n_cols(); k < 3 * data.n_cols(); k++) {
+	const double *k_col = data_comb.GetColumnPtr(k);
+
+	// compute pairwise distances
+	double dsqd_ij = 0;
+	double dsqd_ik = 0;
+	double dsqd_jk = 0;
+	for(index_t d = 0; d < sea.get_dimension(); d++) {
+	  dsqd_ij += (i_col[d] - j_col[d]) * (i_col[d] - j_col[d]);
+	  dsqd_ik += (i_col[d] - k_col[d]) * (i_col[d] - k_col[d]);
+	  dsqd_jk += (j_col[d] - k_col[d]) * (j_col[d] - k_col[d]);
+	}
+	naive_result += kernel.EvalUnnormOnSq(dsqd_ij + dsqd_ik +
+					      dsqd_jk);
+      }
+    }
+  }
+  printf("Naive algorithm: %g\n", naive_result);
+  return 1;
+}
+
 int TestConvolveFarField(const Matrix &data, const Vector &weights,
 			 int begin, int end) {
   
@@ -460,6 +552,6 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestEpanKernelEvaluateFarField(data, weights, begin, end) == 1);
 
   DEBUG_ASSERT(TestConvolveFarField(data, weights, begin, end) == 1);
-
+  DEBUG_ASSERT(TestMixFarField(data, weights, begin, end) == 1);
   fx_done();
 }
