@@ -516,8 +516,8 @@ private:
       potential_e_ += estimate;
 
       extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
-	(tau_ * (potential_l_ + lower_change));
-
+	(tau_ * potential_l_);
+      
       DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
     }
