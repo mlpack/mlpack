@@ -11,7 +11,7 @@ binrule(
     name = "kde_bin",                        # the executable name
     sources = ["main.cc"],                   # compile multibody.cc
     headers = [],                            # no extra headers
-    deplibs = [":multibody",
+    deplibs = [":kde",
                "u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
