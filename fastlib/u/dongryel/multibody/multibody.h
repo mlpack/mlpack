@@ -27,14 +27,15 @@ class NaiveMultibody {
   TMultibodyKernel mkernel_;
 
   /** potential estimate */
-  double potential_e_;
+  double neg_potential_e_;
+  double pos_potential_e_;
 
   /** exhaustive computer */
   void NMultibody(int level) {
     
     int num_nodes = mkernel_.order();
     int start_index = 0;
-    double result = 0;
+    double neg, pos;
 
     if(level < num_nodes) {
       
@@ -52,8 +53,9 @@ class NaiveMultibody {
       }
     }
     else {
-      result = mkernel_.Eval(data_, exhaustive_indices_);
-      potential_e_ += result;
+      mkernel_.Eval(data_, exhaustive_indices_, &neg, &pos);
+      neg_potential_e_ += neg;
+      pos_potential_e_ += pos;
     }
   }
 
@@ -67,14 +69,16 @@ class NaiveMultibody {
     data_.Alias(data);
     exhaustive_indices_.Init(3);
     mkernel_.Init(bandwidth);
-    potential_e_ = 0;
+    neg_potential_e_ = pos_potential_e_ = 0;
   }
 
   void Compute() {
 
     NMultibody(0);
 
-    printf("Got potential sum %g\n", potential_e_);
+    printf("Negative potential sum %g\n", neg_potential_e_);
+    printf("Positive potential sum %g\n", pos_potential_e_);
+    printf("Got potential sum %g\n", neg_potential_e_ + pos_potential_e_);
   }
 
 };
@@ -83,15 +87,6 @@ template<typename TKernel, typename TKernelDerivative>
 class MultibodyStat {
 
  public:
-
-  /** Summed up potential for query points in this node */
-  double potential_;
-
-  /**
-   * Extra amount of error that can be spent for the query points in
-   * this node.
-   */
-  double extra_token_;
 
   /**
    * Far field expansion created by the reference points in this node.
@@ -113,8 +108,6 @@ class MultibodyStat {
   }
 
   void Init(double bandwidth, SeriesExpansionAux *sea) {
-    potential_ = 0;
-    extra_token_ = 0;
     farfield_expansion_.Init(bandwidth, sea);
     local_expansion_.Init(bandwidth, sea);
   }
@@ -132,8 +125,6 @@ class MultibodyStat {
   void Init(double bandwidth, const Vector& center,
 	    SeriesExpansionAux *sea) {
 
-    potential_ = 0;
-    extra_token_ = 0;
     farfield_expansion_.Init(bandwidth, center, sea);
     local_expansion_.Init(bandwidth, center, sea);
   }
@@ -191,7 +182,10 @@ public:
     NumNodesExpanded_ = 0;
     MTMultibody(root_nodes, total_num_tuples_);
 
-    printf("Total potential estimate: %g\n", potential_e_);
+    printf("Negative potential %g\n", neg_potential_e_);
+    printf("Positive potential %g\n", pos_potential_e_);
+    printf("Total potential estimate: %g\n", pos_potential_e_ +
+	   neg_potential_e_);
     printf("Number of series approximations: %d\n", NumPrunes_);
     printf("Number of tuples of nodes expanded: %d\n", NumNodesExpanded_);
   }
@@ -253,7 +247,8 @@ public:
     combination_rank_ = 0;
 
     // potential bounds and tokens initialized to 0.
-    potential_l_ = potential_e_ = 0;
+    neg_potential_u_ = neg_potential_e_ = 0;
+    pos_potential_l_ = pos_potential_e_ = 0;
     extra_token_ = 0;
   }
 
@@ -295,11 +290,17 @@ private:
   /** Extra amount of error that can be spent */
   double extra_token_;
 
-  /** potential estimate */
-  double potential_e_;
+  /** negative potential estimate */
+  double neg_potential_e_;
   
-  /** Running lower bound on the potential */
-  double potential_l_;
+  /** running lower bound on the negative potential */
+  double neg_potential_u_;
+
+  /** positive potential estimate */
+  double pos_potential_e_;
+
+  /** running lower bound on the positive potential */
+  double pos_potential_l_;
 
   /** approximation relative error bound */
   double tau_;
@@ -488,35 +489,51 @@ private:
   int Prunable(ArrayList<Tree *> nodes, double num_tuples, 
 	       double *allowed_err) {
 
-    double min_potential, max_potential;
-    double lower_change;
-    double error, estimate;
-    
+    double pos_min_potential, pos_max_potential;
+    double neg_min_potential, neg_max_potential;
+    double pos_lower_change, neg_upper_change;
+    double pos_error, pos_estimate, neg_error, neg_estimate;
+    double error;
+
     // compute pairwise bounding box distances
     for(index_t i = 0; i < mkernel_.order(); i++) {
       node_bounds_[i] = &(nodes[i]->bound());
     }
-    mkernel_.EvalNodes(node_bounds_, &min_potential, &max_potential);
+    mkernel_.EvalNodes(node_bounds_, &neg_min_potential, &neg_max_potential,
+		       &pos_min_potential, &pos_max_potential);
 
-    lower_change = num_tuples * min_potential;
+    if(isnan(pos_max_potential) || isinf(pos_max_potential)) {
+      return 0;
+    }
+
+    pos_lower_change = num_tuples * pos_min_potential;
     
-    error = 0.5 * num_tuples * (max_potential - min_potential);
+    pos_error = 0.5 * num_tuples * (pos_max_potential - pos_min_potential);
     
-    estimate = 0.5 * num_tuples * (min_potential + max_potential);
+    pos_estimate = 0.5 * num_tuples * (pos_min_potential + pos_max_potential);
+    
+    neg_upper_change = num_tuples * neg_max_potential;
+    
+    neg_error = 0.5 * num_tuples * (neg_max_potential - neg_min_potential);
+    
+    neg_estimate = 0.5 * num_tuples * (neg_min_potential + neg_max_potential);
 
     // compute whether the error is below the threshold
-    *allowed_err = tau_ * (potential_l_ + lower_change) *
+    *allowed_err = tau_ * (pos_potential_l_ + pos_lower_change -
+			   (neg_potential_u_ + neg_upper_change)) *
       ((num_tuples + extra_token_) / total_num_tuples_);
 
-    if(likely(error >= 0) && 
-       error <= tau_ * (potential_l_ + lower_change) *
-       ((num_tuples + extra_token_) / total_num_tuples_)) {
+    error = max(pos_error, neg_error);
+
+    if(likely(error >= 0) && error <= (*allowed_err)) {
       
-      potential_l_ += lower_change;
-      potential_e_ += estimate;
+      pos_potential_l_ += pos_lower_change;
+      pos_potential_e_ += pos_estimate;
+      neg_potential_u_ += neg_upper_change;
+      neg_potential_e_ += neg_estimate;
 
       extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
-	(tau_ * potential_l_);
+	(tau_ * (pos_potential_l_ -neg_potential_u_));
       
       DEBUG_ASSERT(extra_token_ >= 0);
       return 1;
@@ -587,9 +604,9 @@ private:
 	coeffs2.RefineCoeffs(data_, weights_, nodes[2]->begin(), 
 			     nodes[2]->end(), order_jk);
 	
-	potential_l_ += num_tuples * min_ij * min_ik * min_jk;
-	potential_e_ += coeffs0.ConvolveField(coeffs1, coeffs2, order_ij, 
-					      order_ik, order_jk);
+	pos_potential_l_ += num_tuples * min_ij * min_ik * min_jk;
+	pos_potential_e_ += coeffs0.ConvolveField(coeffs1, coeffs2, order_ij, 
+						  order_ik, order_jk);
 
 	// the maximum relative error incurred
 	double max_rel_err_incurred1 = actual_error1 / min_ij;
@@ -605,7 +622,7 @@ private:
 	double error = max_rel_err_incurred * max_ij * max_ik * max_jk;
 	
 	extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
-	  (tau_ * potential_l_);
+	  (tau_ * pos_potential_l_);
 	
 	DEBUG_ASSERT(extra_token_ >= 0);
 	return 1;
@@ -670,11 +687,12 @@ private:
 	coeffs2.RefineCoeffs(data_, weights_, nodes[2]->begin(), 
 			     nodes[2]->end(), order_jk);
 	
-	potential_l_ += num_tuples * min_ij * min_ik * min_jk;
-	potential_e_ += coeffs0.MixField(data_, nodes[0]->begin(),
-					 nodes[0]->end(), nodes[1]->begin(),
-					 nodes[1]->end(), coeffs1, coeffs2, 
-					 order_ik, order_jk);
+	pos_potential_l_ += num_tuples * min_ij * min_ik * min_jk;
+	pos_potential_e_ += coeffs0.MixField(data_, nodes[0]->begin(),
+					     nodes[0]->end(), 
+					     nodes[1]->begin(),
+					     nodes[1]->end(), coeffs1, 
+					     coeffs2, order_ik, order_jk);
 
 	// the maximum relative error incurred
 	double max_rel_err_incurred2 = actual_error2 / min_ik;
@@ -685,7 +703,7 @@ private:
 	double error = max_rel_err_incurred * max_ik * max_jk;
 	
 	extra_token_ = num_tuples + extra_token_ - error * total_num_tuples_ /
-	  (tau_ * potential_l_);
+	  (tau_ * pos_potential_l_);
 	
 	DEBUG_ASSERT(extra_token_ >= 0);
 	return 1;
@@ -700,7 +718,6 @@ private:
   void MTMultibodyBase(ArrayList<Tree *> nodes, int level) {
 
     int start_index;
-    double result;
     int num_nodes = nodes.size();
 
     if(level < num_nodes) {
@@ -725,11 +742,15 @@ private:
     }
     else {
 
+      double neg, pos;
+
       // complete the table of distance computation
-      result = mkernel_.Eval(data_, exhaustive_indices_);
+      mkernel_.Eval(data_, exhaustive_indices_, &neg, &pos);
       
-      potential_e_ += result;
-      potential_l_ += result;
+      neg_potential_e_ += neg;
+      neg_potential_u_ += neg;
+      pos_potential_e_ += pos;
+      pos_potential_l_ += pos;
     }
   }
 
