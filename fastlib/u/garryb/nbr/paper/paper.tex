@@ -234,7 +234,7 @@
 The multi-tree approach for accelerating data mining methods has spurred some of the fastest known solutions for a significant class of fundamental methods previously considered impractical for massive data sets, including kernel density estimation, nearest-neighbor search, and spatial statistics.
 We present a standard mathematical model that allows these problems to be scaled further via parallelization, without significant extra programmer effort.
 With the framework, we derive a strategy for parallelization and describe our implementation, Tree High-Order Reduce or THOR.
-We demonstrate its effectiveness on three realistic applications: kernel density estimation on the Sloan Digital Sky Survey, two-point correlation of three-dimensional positions of galactic halos, and nearest neighbor search on a high-dimensional speech manifold.
+We demonstrate three realistic parallel applications: kernel density estimation on the Sloan Digital Sky Survey, two-point correlation of galactic halo positions, and nearest neighbor search on a high-dimensional speech manifold.
 \end{abstract}
 
 \section{Introduction}
@@ -246,21 +246,22 @@ Higher-order divide and conquer on metric data typically utilizes metric trees, 
 Such employment of trees is frequently called the \defterm{dual-tree} or the more generalized \defterm{multi-tree} approach.
 This approach is used by some of the fastest known serial algorithms for many statistical and physical problems on metric data, such as bounded-error kernel density estimation \cite{gray_kde, lee_gauss1, lee_gauss2}, $n$-point correlation \cite{gray_nbody}, nearest neighbor search \cite{gray_nbody}, and more.
 
-Nonetheless, as multi-core processors begin to dominate even commodity markets, even the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
-Additionally, and perhaps more importantly, some data sets are too massive to be practical on a single processor -- given enough processors, these problems may become worthwhile.
-Fortunately, multi-tree algorithms, owing to their divide-and-conquer nature, are in fact quite parallelizable.
-We show that techniques that have long been used to parallelize the physical $N$-body force calculation methods can be, to an extent, applied to all GNP's.
+Nonetheless, as multi-core processors begin to dominate commodity markets, the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
+Perhaps more importantly, some problems are impractically large for a single processor, but can be solved given enough processors.
+Owing to their divide-and-conquer nature, multi-tree algorithms are quite parallelizable.
+We extend decades of research on parallelizing a well-known GNP, the physical $N$-body force calculation problem, to parallelize all second-order GNP's.
 
-Parallel programming is well-known for its significant cost in terms of development time, which is frequently far greater and more expensive than any achievable speedup.
-However, we show that all second-order GNP's can be phrased as an instance of a generalized $N$-body algorithm, leading to a novel solution: Invest in a parallel solver for the general problem, requiring algorithm developers to provide only problem-specific portions.
-In practice, this approach leads to efficient parallel and serial performance, and furthermore, the parallel algorithm in some cases takes less time to develop than a from-scratch serial algorithm.
+Parallel programming is notorious for its significant development cost, frequently far greater than any achievable speedup.
+We counter this limitation with a novel formulation allowing all second-order GNP's to be phrased as an instance of a generalized $N$-body algorithm.
+After a one-time investment in a parallel solver for the general problem, algorithm developers need only provide problem-specific portions.
+In practice, this approach leads to efficient parallel and serial performance, and furthermore, the parallel algorithm may take less time to develop than a from-scratch serial algorithm.
 
 %We describe in this paper both the formal problem generalization, and our implementation THOR that executes dual-tree algorithms with two different expansion patterns.
 %\authorsnote{Make sure it's clear at this point what is novel in my paper.  What should be clear is: (a) the mathematical model, and (b) its implementation in parallel.}
 
-We demonstrate a formal, unified model that solves all second-order generalized $N$-body problems, and respectively allows most dual-tree algorithms.
-Next, we argue that programming in this unified model is not costly in developer time.
-Finally, we show the inherent parallelism of our model by examining an implementation that uses well-known parallelization techniques.
+We define the class of second-order generalized $N$-body problems and demonstrate a formal model that solves all such problems and subsumes most dual-tree algorithms.
+We believe that programming in this unified model is not costly in developer time.
+This model comprises the core of our parallel dual-tree software framework, THOR, which is then applied to several realistic massive data mining problems, with the intial version demonstrating up to an 80-fold speedup on 90 processors.
 \authorsnote{I must try to appeal to people who don't really care about dual-tree algorithms, but just want raw parallelism.  Am I successful?}
 
 \section{Fast Dual-Tree Algorithms}
@@ -370,7 +371,7 @@ Range count has a similar, but slightly more complex, dual-tree algorithm, that 
 In applications from manifold learning to classification, one computes the nearest point from reference set $R$ for each of a batch of queries $Q$.
 We express this computation,
 \[\map_{q \in Q} \argmin_{r \in R} d(q,r).\]
-\noindent To achieve speedup, the dual-tree algorithm in \fig{allnn} maintains for each query tree node $Q$ the furthest candidate neighbor distance, $a(Q)$.
+\noindent To achieve speedup, the dual-tree algorithm hinted by \cite{gray_body} in \fig{allnn} maintains for each query tree node $Q$ the furthest candidate neighbor distance, $a(Q)$.
 If a set of references is farther away than this distance, no further exploration is required.
 
 \mysub{Kernel density estimation (KDE)}
@@ -405,7 +406,7 @@ Computational solutions break the simulation into discrete time steps, during wh
 \noindent where $f(q,r)$ is typically an inverse-squared-distance gravitational or Coulombic force.
 Direct computation of the sum is $O(N^2)$ and has been one avenue of pursuit \cite{grape}.
 
-However, the famous Barnes-Hut algorithm \cite{barnes_hut} and Fast Multipole Method \cite{greengard_fmm} achieve speedup by using trees to approximate distant interactions, and have been subject to enormous parallelization efforts.
+However, the famous Barnes-Hut algorithm \cite{barnes_hut} and Fast Multipole Method \cite{greengard_fmm} achieve speedup by using trees to approximate distant interactions, and have been subject to enormous parallelization efforts\authorsnote{Citations}.
 Barnes-Hut \cite{barnes_hut} traverses an oct-tree\footnote{An oct-tree hierarchically divides all 3 dimensions at the midpoint.} to approximate force on each particle.
 If query particle $q$ is further than parameter $\theta$ times the spatial width of the considered node, the force calculation is approximated by the node's center of mass.
 Although Barnes-Hut is a single-tree algorithm, many aspects of its parallelization are applicable to the dual-tree case.
@@ -974,9 +975,11 @@ Each machine precomputes which of its own points and nodes belong to the locally
 By predicting needed data, no latency costs due to requesting remote data are paid, and therefore transfer time is the only limitation.
 Such computation is possible since Barnes-Hut's pruning criterion is based only on the bounding box and distances of the cells.
 
-Dual-tree algorithms may have diverse pruning criteria that cannot be predicted -- an example is bounded-error kernel density estimation in \cite{gray_kde}, that bases pruning decisions on lower bound density obtained during the computation.
-Such a blocking strategy is also the underlying mechanism behind shared-memory systems.
-For these reasons, THOR utilizes an on-demand block-transfer strategy.
+Dual-tree algorithms may have diverse pruning criteria that cannot be predicted without actually beginning computation -- one example is a bounded-error kernel density estimation \cite{gray_kde}.
+Salmon later describes in \cite{salmon97parallel} a successful Barnes-Hut implementation that fetches data on demand, but avoids latency by grouping points into \defterm{blocks} of a fixed size.
+In this context, the authors block data to allow an out-of-core $N$-body simulator, but also show the same technique yields excellent parallel performance.
+Additionally, the underlying mechanism of shared-memory systems also involves transfer of fixed-sized cache lines to avoid latency.
+THOR thus utilizes an on-demand block-transfer strategy.
 
 \mysubsub{Distributed cache system}
 
@@ -1128,13 +1131,14 @@ In practice, however, the overhead of centralized scheduling is insignificant co
 %Once again, this section is a stub, we haven't done any experimentation.}
 The ideal goal of a parallel system such as THOR is to use all available clock cycles to perform useful computation.
 In practice, this is unachievable, so we must quantify to the extent that resources are utilized.
-After explanation of our experimental design, we quantify THOR's three primary opportunities for under-utilization: overhead due to software complexity, load imbalances, and communication time.
+After explanation of our experimental design, we quantify THOR's three primary opportunities for under-utilization: software complexity overhead, load imbalance, and communication.
 
 
 \subsection{Implementation Notes}
 
 In this section, we concentrate on parallelizing the execution of the generalized $N$-body problem and not of tree building, which is parallelizable as shown in \cite{alfuraih00parallel}.
 After the tree is built or loaded from file, it is distributed initially among machines via the domain decomposition.
+We compare only the execution time of the actual generalized $N$-body problem.\authorsnote{Should probably show in a table how long this takes for the algorithms}
 All THOR code is written in C++, with heavy use of template programming.
 
 \subsection{Design}
