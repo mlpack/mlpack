@@ -44,13 +44,13 @@
 
 \thispagestyle{empty}
 \begin{abstract}
-In this paper we introduce the k-nearest neighbor classifier (KNNC) in speech recognition for large scale datasets. Naive KNNC  has linear complexity which makes it very slow over large training data. In this paper a Fast KNNC (FKNNC) is introduced and the results on speech classification and speech recognition are presented. FKNNC scales very well over large datasets. Automatic Speech Recognition (ASR) based on FKNN has the advantage of adding labeled data online without retraining the ASR system.
+In this paper we introduce the K-Nearest Neighbor Classifier (KNNC) in speech recognition for large datasets. Naive KNNC  has linear complexity which makes it very slow over large training data. In this paper a Fast KNNC (FKNNC) is introduced and the results on speech classification and speech recognition are presented. FKNNC scales very well over large datasets. Automatic Speech Recognition (ASR) based on FKNN has the advantage of adding labeled data online without retraining the ASR system. Results on TIMIT benchmark are presented and compared to the state of the art.
 \end{abstract}
 
 
 \section{Introduction}
 \label{introduction}
-In the state of the art Automatic Speech Recognition (ASR) systems the states are modeled with Gaussian Mixtures Models (GMM), Neural Networks (NN) or other parametric models. In general parametric models make specific assumptions about the properties of the features, such as gaussian distributions. So in general it is difficult to experiment with different features since, for every feature type there underlying assumptions of the parametric model might not be valid. For example more layers for the NN might be necessary or the features might not follow a gaussian distribution. It would be more preferable if a non-parametric model was used. For example instead of GMMs a Kernel Density Estimator could have been used:
+In the state of the art Automatic Speech Recognition (ASR) systems based on the Hidden Markov Models (HMM), the states are modeled with Gaussian Mixtures Models (GMM), Neural Networks (NN) or other parametric models. In general parametric models make specific assumptions about the properties of the features, such as gaussian distributions. So in general it is difficult to experiment with different features since, for every feature type there underlying assumptions of the parametric model might not be valid. For example more layers for the NN might be necessary or the features might not follow a gaussian distribution. It would be more preferable if a non-parametric model was used. For example instead of GMMs a Kernel Density Estimator could have been used:
 
 \begin{equation}\label{KDE}
     \hat{f}(x_q)=\sum_{i=0}^{N}k(x_q,x_i)
@@ -67,10 +67,9 @@ The Kernel Nearest Neighbor Classifier (KNNC) is another non-parametric model de
 Or simply if you want to classify $x_q$, find its nearest neighbor and associate it with its label. 
 The advantage of these two non-parametric models is that they depend on the data, there is only one parameter that has to be tuned (bandwidth and k). Besides that, if more data are added it is not necessary to retrain it. On the other hand they are much slower than parametric ones, since the KDE evaluation for a query point $x_q$ requires $N$ evaluations of the kernel. The same thing holds for KNNC, since $N$ comparisons have to be done to find the nearest neighbor. 
 
-In this paper we show that by using multidimensional trees it is possible to reduce the computational complexity of non-parametric models down to $O(\log N)$  for a single point evaluation. In batch mode for $M$ query points instead of $O(M\log N)$, the complexity can be reduced to $O(M+N)$. The Fast KNNC (FKNNC) is applied in speech classification and recognition experiments.
+In this paper we show that by using multidimensional trees it is possible to reduce the computational complexity of non-parametric models down to $O(\log N)$  for a single point evaluation. In batch mode for $M$ query (test) points instead of $O(M\log N)$, the complexity can be reduced to $O(M+N)$. This is an important fact because it can speed up experiments with different features since  over  large benchmarks that is done offline. The Fast KNNC (FKNNC) is applied in speech classification and recognition experiments.
 
  
-
 \section{Speech features}
 In our implementation, MFCC features were extracted using the freely available code
 from \emph{Voicebox}. The speech signal was divided into frames of
@@ -101,19 +100,9 @@ The "naive" method requires $N$ comparisons over all data. Ordering the multidim
 the points that are contained in the subtree. Only leafs contain points. In Fig.~\ref{kdtree} an example of a kd-tree in 2 dimensions is given, while the algorithm for computing the nearest
 neighbor for a test point is depicted in table Fig.~\ref{dualtree_algorithm}. The main idea is to recursively find the leaf that contains the query point then compute a candidate nearest neighbor on the leaf. As the algorithm back tracks it determines if it is necessary to search other subtrees for a nearest neighbor.
 
-The use of dual trees in the all nearest neighbor search has proven
-to give significant speed-up in all-nearest neighbor computations.
-The basic idea is that the whole query set is structured on a tree.
-In our case the query tree and the reference tree are the same. The
-core of the algorithm relies on the fact that if the current maximum
-nearest neighbor distance in the query node is smaller than the
-distance between the query and the reference node distance then the
-reference node can be pruned. This saves a huge amount of
-computation in most of the cases since whole  subtrees can be
-pruned out for a large subset of points at once. The all nearest
-neighbor search is described algorithmically in Table
-\ref{dualtree_algorithm}. The complexity of the algorithm, on average, turns out
-to be linear.
+The use of dual trees in the all nearest neighbor search has proven to give significant speed-up in all-nearest neighbor computations. The basic idea is that the whole query set is structured on a tree. In our case the query tree and the reference tree are the same. The core of the algorithm relies on the fact that if the current maximum nearest neighbor distance in the query node is smaller than the distance between the query and the reference node distance then the
+reference node can be pruned. This saves a huge amount of computation in most of the cases since whole  subtrees can be pruned out for a large subset of points at once. The all nearest
+neighbor search is described algorithmically in Table \ref{dualtree_algorithm}. The complexity of the algorithm, on average, turns out to be linear.
 
 \begin{table}
 \begin{verbatim}
@@ -154,52 +143,21 @@ width=8.0cm}} \caption{Simulation of the dual tree algorithm}
 The experiments were focused on three objectives. The first objective is to show the speed-up of FKNNC with trees the single and dual tree algorithm. The second objective is to do speech classification with FKNNC and compare two different features MFCC and NRAF. The third objective is to replace parametric models for the HMM states with FKNNC and compare the ASR performance with the state of the art. TIMIT and NTIMIT were tge benchmark datasets that were chosen for the experiments.
 
 \subsection{All nearest neighbor timing performance}
-The timing results are illustrated in table \ref{timing}. The all
-20-nearest neighbor method with the dual tree algorithm on kd-trees
-is 30 to 50 times faster than naive in terms of time. It took about
-3.6 hours for MFCCs and 2.2 hours for NRAF for all 20-nearest
-neighbors. It is well known that the pruning performance of the
-trees depends on the intrinsic dimension of the dataset. A simple
-way to get an estimation of the intrinsic dimension is the
-eigenvalue distribution of the Principal Component Analysis. As seen
-from Fig.~\ref{pca} NRAFs have a more compact distribution than
+The timing results are illustrated in table \ref{timing}. The all 20-nearest neighbor method for the whole TIMIT dataset (train and test \~1.5Million points)vwith the dual tree algorithm on kd-trees is 30 to 50 times faster than naive in terms of time. It took about 3.6 hours for MFCCs and 2.2 hours for NRAF for all 20-nearest neighbors. It is well known that the pruning performance of the trees depends on the intrinsic dimension of the dataset. A simple
+way to get an estimation of the intrinsic dimension is the eigenvalue distribution of the Principal Component Analysis. As seen from Fig.~\ref{pca} NRAFs have a more compact distribution than
 MFCCs.
 
 \subsection{Comparison of NRAF and MFCC for speech classification}
-Two types of experiments were done for the comparison of the
-features. The first one is the Leave One feature Cross Validation.
-So for every feature we find the k-nearest neighbors and check
-whether the majority has the same label as it \footnote{Instead of
+Two types of experiments were done for the comparison of the features. The first one is the Leave One feature Cross Validation experiment. So for every feature we find the k-nearest neighbors and check whether the majority has the same label with it \footnote{Instead of
 using the 61 different phonetic classes of TIMIT we used the 39
-categories of the CMU dictionary}. In tables
-\ref{kneighborTIMIT} and \ref{kneighborNTIMIT}, we demonstrate the
-performance of MFCC and NRAF for TIMIT and NTIMIT for various k.
-NRAF perform better than MFCC, specially in the noisy case.
+categories of the CMU dictionary}. In tables \ref{kneighborTIMIT} and \ref{kneighborNTIMIT}, we demonstrate the performance of MFCC and NRAF for TIMIT and NTIMIT for various k. NRAF perform better than MFCC, specially in the noisy case.
 
-In the second experiment we do Leave-One-Speaker-Out cross
-validation. For every feature we find the k-nearest neighbors that
-don't belong to the same speaker and check if the majority has the
-same label as it. The results are illustrated again in
-\ref{kneighborLOOCVTIMIT} and \ref{kneighborLOOCVNTIMIT}. The
-results drop significantly and it interesting that MFCCs perform
-better than NRAFs. The reason why the performance drops
-significantly is because we haven't done any covariance
-normalization on the data. It is well known in the speech
-recognition literature that mean and variance normalization improves
-recognition as it removes the speaker bias. It turns out that
-variance normalization broadens significantly the PCA spectrum which
-is tightly connected with the performance of kd-trees. We tried
-variance normalization but the all nearest neighbor performance was
-very slow. Another option is the Mahalanobis distance on a metric
-tree, but again the covariance normalization would have an immediate
-effect on the performance.
-
-It turns out that variance normalization is a way of decorrelating
-the MFCC/NRAF dimensions, which breaks the manifold structure. This
-is a suggestion that we should move on with higher dimensional
-transformations that remove the speaker bias intrinsically.
+In the second experiment we do Leave-One-Speaker-Out cross validation. For every feature we find the k-nearest neighbors that don't belong to the same speaker and check if the majority has the
+same label as it. The results are illustrated again in \ref{kneighborLOOCVTIMIT} and \ref{kneighborLOOCVNTIMIT}. The results drop significantly and it interesting that MFCCs perform
+better than NRAFs. The reason why the performance drops significantly is because we haven't done any covariance normalization on the data. It is well known in the speech recognition literature that mean and variance normalization improves recognition as it removes the speaker bias. It turns out that variance normalization broadens significantly the PCA spectrum which is tightly connected with the performance of kd-trees. We tried variance normalization but the all nearest neighbor performance was very slow. Another option is the Mahalanobis distance on a metric tree, but again the covariance normalization would have an immediate effect on the performance.
 
 \subsection{Speech recognition results}
+For the speech recognition experiments, the ATT FSM system was used. In order to be consistent with the  performance metrics commonly used, the 39 phonemes of the CMU dictionary were used. The test set that contains \~500000 39-dimensional MFCC vectors were classified with FKNNC, with 20-neighbors over the training data that contains \~1000000 MFCC vectors. The batch mode dual-tree algorithm was used in order to speed up the computations. After the classification every frame is associated with the best candidate phoneme. This information is fed into the FSM, which generates the word level recognition results by incorporating information about the phoneme duration, phoneme distribution and a simple language model. The results are compared with the state of the art ASR based on GMMs over mfccs.
 
 \section{Discussion}
 
