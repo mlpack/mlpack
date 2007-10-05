@@ -6,6 +6,66 @@
 #include "u/dongryel/series_expansion/local_expansion.h"
 #include "u/dongryel/series_expansion/kernel_derivative.h"
 
+template<typename TKernel>
+class NaiveKde {
+
+ private:
+  
+  /** query dataset */
+  Matrix qset_;
+  
+  /** reference dataset */
+  Matrix rset_;
+
+  /** kernel */
+  TKernel kernel_;
+
+  /** computed densities */
+  Vector densities_;
+  
+ public:
+  
+  void Compute() {
+    
+    // compute unnormalized sum
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      
+      const double *q_col = qset_.GetColumnPtr(q);
+      for(index_t r = 0; r < rset_.n_cols(); r++) {
+	const double *r_col = rset_.GetColumnPtr(r);
+	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+	
+	densities_[q] += kernel_.EvalUnnormOnSq(dsqd);
+      }
+    }
+    
+    // then normalize it
+    double norm_const = kernel_.CalcNormConstant(qset_.n_rows());
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      densities_[q] /= norm_const;
+    }
+  }
+
+  void Init() {
+    densities_.SetZero();
+  }
+
+  void Init(Matrix &qset, Matrix &rset, double bandwidth) {
+
+    // get datasets
+    qset_.Own(qset);
+    rset_.Own(rset);
+
+    // get bandwidth
+    kernel_.Init(bandwidth);
+    
+    // allocate density storage
+    densities_.Init();
+    densities_.SetZero();
+  }
+
+};
+
 template<typename TKernel, typename TKernelDerivative>
 class KdeStat {
  public:
