@@ -202,6 +202,18 @@ class KdeStat {
     
 };
 
+/** computing kernel estimate using Fast Fourier Transform */
+template<typename TKernel>
+class FFTKde {
+
+ public:
+  
+  FFTKde() {}
+  
+  ~FFTKde() {}
+
+};
+
 template<typename TKernel, typename TKernelDerivative>
 class FastKde {
   
