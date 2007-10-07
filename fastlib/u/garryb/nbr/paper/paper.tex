@@ -286,7 +286,7 @@ This model comprises the core of our parallel dual-tree software framework, THOR
 \mysub{Foundations}
 We briefly introduce the concept of metric trees and define some fundamental notation that we use throughout the paper.
 Our notation considers tree node $X$ in a metric tree $\kdroot{X}$ to be a set of points.
-These points lie in a metric space, e.g.~such that distance $\dist{x}{y}$ is reflexive, satisfies the triangle inequality $\dist{x}{z} \leq \dist{x}{y} + \dist{y}{z}$, and is zero iff $x = y$.
+These points lie in a metric space, i.e.~such that distance $\dist{x}{y}$ is reflexive, satisfies the triangle inequality $\dist{x}{z} \leq \dist{x}{y} + \dist{y}{z}$, and is zero iff $x = y$.
 For example, a $kd$-tree \cite{preparata_kdtrees}, as in \fig{kdtree}, is a binary tree that recursively divides the data along coordinate dimensions, and works with $L$ distance metrics such as Euclidean $L_2$.
 Unlike a grid, a $kd$-tree is adaptive, and can thus concentrate on lower-dimensional manifolds when present.
 Ball trees \cite{anchors_balltrees_moore} are binary and use bounding radii instead, and work with any metric space.
