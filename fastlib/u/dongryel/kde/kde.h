@@ -148,11 +148,6 @@ class KdeStat {
    */
   LocalExpansion<TKernel, TKernelDerivative> local_expansion_;
     
-  // getters and setters
-  FarFieldExpansion<TKernel, TKernelDerivative> &get_farfield_coeffs() {
-    return farfield_expansion_;
-  }
-    
   /** Initialize the statistics */
   void Init() {
     mass_l_ = 0;
@@ -185,6 +180,7 @@ class KdeStat {
       
     farfield_expansion_.Init(bandwidth, center, sea);
     local_expansion_.Init(bandwidth, center, sea);
+    Init();
   }
     
   void UpdateBounds(KdeStat *left_stat, KdeStat *right_stat, 
@@ -281,6 +277,9 @@ class FastKde {
   typedef BinarySpaceTree<DHrectBound<2>, Matrix,
     KdeStat<TKernel, TKernelDerivative> > Tree;
 
+  /** series expansion auxililary object */
+  SeriesExpansionAux sea_;
+
   /** query dataset */
   Matrix qset_;
 
@@ -316,6 +315,12 @@ class FastKde {
   double du_;
   
   double dt_;
+
+  int order_farfield_;
+  
+  int order_local_;
+  
+  int order_farfield_to_local_;
 
   // member functions
 
@@ -361,6 +366,73 @@ class FastKde {
     qnode->stat().mass_u_ = max_u + qnode->stat().more_u_;
   }
 
+  /** 
+   * checking for prunability of the query and the reference pair using
+   * four types of pruning methods
+   */
+  int PrunableEnhanced(Tree *qnode, Tree *rnode) {
+
+    // actual amount of error incurred per each query/ref pair
+    double actual_err = 0;
+
+    // query node stat
+    KdeStat<TKernel, TKernelDerivative> &stat = qnode->stat();
+    
+    // expansion objects
+    FarFieldExpansion<TKernel, TKernelDerivative> &farfield_expansion
+      = stat.farfield_expansion_;
+    LocalExpansion<TKernel, TKernelDerivative> &local_expansion
+      = stat.local_expansion_;
+
+    // number of reference points
+    int num_references = rnode->count();
+    
+    // try pruning after bound refinement:
+    DRange dsqd_range;
+    dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
+    dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
+    DRange kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
+    
+    // the new lower bound after incorporating new info
+    dl_ = kernel_value_range.lo * num_references;
+    de_ = 0.5 * num_references * 
+      (kernel_value_range.lo + kernel_value_range.hi);
+    du_ = -kernel_value_range.hi * num_references;
+
+    // refine the lower bound using the new lower bound info
+    double new_mass_l = stat.mass_l_ + dl_;    
+    double allowed_err = tau_ * new_mass_l *
+      ((double)(num_references + stat.mass_t_)) / 
+      ((double) rroot_->count() * num_references);
+    
+    // get the order of approximations
+    order_farfield_to_local_ = 
+      farfield_expansion.OrderForConvertingtoLocal(rnode->bound(), 
+						   qnode->bound(),
+						   dsqd_range.lo, allowed_err,
+						   &actual_err);
+    if(order_farfield_to_local_ >= 0) {
+      return 1;
+    }
+    
+    order_farfield_ =
+      farfield_expansion.OrderForEvaluating(rnode->bound(), dsqd_range.lo,
+					    allowed_err, &actual_err);
+    if(order_farfield_ >= 0) {
+      return 1;
+    }
+
+    order_local_ =
+      local_expansion.OrderForEvaluating(qnode->bound(), dsqd_range.lo,
+					 allowed_err, &actual_err);
+
+    if(order_local_ >= 0) {
+      return 1;
+    }
+
+    return 0;
+  }
+
   /** checking for prunability of the query and the reference pair */
   int Prunable(Tree *qnode, Tree *rnode) {
 
@@ -392,6 +464,10 @@ class FastKde {
 
     // this is total error for each query point
     double error = m * num_references;
+
+    /*** DEBUGGINGIGNGI! */
+    PrunableEnhanced(qnode, rnode);
+    /*** END DEBUG!!! */
 
     // check pruning condition
     if(error <= allowed_err) {
@@ -500,6 +576,26 @@ class FastKde {
     }
   }
 
+  /** 
+   * pre-processing step - this wouldn't be necessary if the core
+   * fastlib supported a Init function for Stat objects that take
+   * more arguments.
+   */
+  void PreProcess(Tree *node) {
+
+    node->stat().Init(sqrt(kernel_.bandwidth_sq()), &sea_);
+    node->bound().CalculateMidpoint
+      (&(node->stat().farfield_expansion_.get_center()));
+    node->bound().CalculateMidpoint
+      (&(node->stat().local_expansion_.get_center()));
+
+    // for non-leaf node, recurse
+    if(!node->is_leaf()) {
+      PreProcess(node->left());
+      PreProcess(node->right());
+    }
+  }
+
   /** post processing step */
   void PostProcess(Tree *qnode) {
     
@@ -536,7 +632,17 @@ class FastKde {
   // constructor/destructor
   FastKde() {}
 
-  ~FastKde() {}
+  ~FastKde() { 
+    
+    if(qroot_ != rroot_ ) {
+      delete qroot_; 
+      delete rroot_; 
+    } 
+    else {
+      delete rroot_;
+    }
+
+  }
 
   // getters and setters
 
@@ -562,7 +668,17 @@ class FastKde {
     densities_u_.SetZero();
 
     fx_timer_start(NULL, "fast_kde_compute");
+
+
+    // preprocessing step for initializing series expansion objects
+    PreProcess(rroot_);
+    if(qroot_ != rroot_) {
+      PreProcess(qroot_);
+    }
+    
     // call main routine
+    dl_ = de_ = du_ = dt_ = 0;
+    order_farfield_ = order_local_ = order_farfield_to_local_ = -1;
     FKde(qroot_, rroot_);
 
     // postprocessing step
@@ -591,7 +707,7 @@ class FastKde {
     fx_timer_start(NULL, "tree_d");
     rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen, NULL);
 
-    if(qfname == NULL) {
+    if(!strcmp(qfname, rfname)) {
       qset_.Alias(rset_);
       qroot_ = rroot_;
     }
@@ -613,6 +729,9 @@ class FastKde {
 
     // initialize the kernel
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+
+    // initialize the series expansion object
+    sea_.Init(14, qset_.n_rows());
   }
 
   void PrintDebug() {
