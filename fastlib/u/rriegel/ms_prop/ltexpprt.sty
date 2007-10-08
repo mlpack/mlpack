@@ -1,0 +1,354 @@
+%   This is ltexpprt.sty, a file of macros and definitions for creating a 
+%   chapter for publication in the ACM/SIAM Preprint series using LaTeX2E.
+%   It is designed to produce double-column output.
+%   This file may be freely distributed but may not be altered in any way.
+%   Any comments or questions regarding these macros should be directed to:
+
+%                 Donna Witzleben
+%                 SIAM
+%                 3600 University City Science Center
+%                 Philadelphia, PA 19104-2688
+%                 USA
+%                 Telephone: (215) 382-9800
+%                 Fax: (215) 386-7999
+%                 e-mail: witzleben@siam.org
+
+
+%   Report the version.
+\message{*** ACM/SIAM LaTeX2E Preprint Series macro package, version 1.0,
+September 5, 1996 ***} 
+
+
+\pretolerance=800 
+\tolerance=10000 
+\sloppy 
+ 
+%\voffset=-.5in 
+%\hoffset=-.5in 
+\vsize=55pc 
+\hsize=41pc 
+\baselineskip=14pt 
+\footskip=18pt 
+\topmargin -24pt  
+\headheight 12pt  
+\headsep 17pt  
+\textheight 52.5pc  \advance\textheight by \topskip 
+\textwidth 41pc  
+\parskip 0pt
+\parindent 18pt
+
+\setlength{\oddsidemargin}{-0.875pc} 
+\setlength{\evensidemargin}{-0.875pc}
+
+\font\tensmc=cmcsc10
+\def\smc{\tensmc}
+
+%% footnotes  to be set 8/10 
+\def\footnotesize{\@setsize\footnotesize{10pt}\viiipt\@viiipt 
+      %  \indent 
+        \abovedisplayskip \z@ 
+        \belowdisplayskip\z@ 
+        \abovedisplayshortskip\abovedisplayskip 
+        \belowdisplayshortskip\belowdisplayshortskip 
+  \def\@listi{\leftmargin\leftmargini \topsep 3pt plus 1pt minus 1pt 
+        \parsep 2pt plus 1pt minus 1pt 
+        \itemsep \parsep}} 
+ 
+\let\referencesize\footnotesize 
+ 
+\footnotesep 0pt  
+ 
+\skip\footins 12pt plus 12pt  
+ 
+\def\footnoterule{\kern3\p@  \hrule width 3em} % the \hrule is .4pt high 
+ 
+\def\ps@plain{\let\@mkboth\@gobbletwo 
+     \def\@oddfoot{{\hfil\small\thepage\hfil}}% 
+     \def\@oddhead{} 
+      \def\@evenhead{}\def\@evenfoot{}} 
+ 
+
+
+ 
+ 
+\def\ps@headings{\let\@mkboth\markboth 
+        \def\@oddfoot{}\def\@evenfoot{}% 
+        \def\@evenhead{{\rm\thepage}\hfil{\small\leftmark}}%
+        \def\@oddhead{{\noindent\small\rightmark}\hfil{\rm\thepage}}%
+
+
+
+\def\ps@myheadings{\let\@mkboth\@gobbletwo 
+ \def\@oddfoot{}\def\@evenfoot{}% 
+ \def\@oddhead{\rlap{\normalsize\rm\rightmark}\hfil{small\thepage}}% 
+ \def\@evenhead%{\hfil{\small\@chapapp}\  
+                {\small\thepage}\hfil\llap{\normalsize\rm\leftmark}}% 
+        \def\chaptermark##1{}% 
+       \def\sectionmark##1{}\def\subsectionmark##1{}} 
+
+
+\def\theequation{\arabic{section}.\arabic{equation}} 
+ 
+ 
+\def\section{\@startsection{section}{1}{0pt}{-12pt}{3pt}{\hyphenpenalty=\@M
+\exhyphenpenalty=\@M\normalsize\bf}} 
+\def\subsection{\@startsection{subsection}{2}{0pt}{-12pt}{-5pt}{\normalsize\bf}} 
+\def\subsubsection{\@startsection 
+ {subsubsection}{3}{0pt}{-12pt}{-5pt}{\normalsize\bf}} 
+\def\paragraph{\@startsection  
+ {paragraph}{4}{\parindent}{0pt}{-5pt}{\normalsize\bf}} 
+\def\subparagraph{\@startsection 
+ {subparagraph}{4}{\parindent}{0pt}{-5pt}{\normalsize\bf}} 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%                                         % 
+%     THEOREMS, PROOFS, ALGORITHMS        % 
+%                                         % 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+ 
+%%% defined proof environment by theorem model (took out counter) 
+ 
+\def\newproof#1{\@nprf{#1}} 
+ 
+\def\@nprf#1#2{\@xnprf{#1}{#2}} 
+ 
+\def\@xnprf#1#2{\expandafter\@ifdefinable\csname #1\endcsname 
+\global\@namedef{#1}{\@prf{#1}{#2}}\global\@namedef{end#1}{\@endproof}} 
+ 
+\def\@prf#1#2{\@xprf{#1}{#2}} 
+ 
+\def\@xprf#1#2{\@beginproof{#2}{\csname the#1\endcsname}\ignorespaces} 
+ 
+ 
+ 
+%%% defined algorithm environment by theorem model 
+ 
+\def\newalgorithm#1{\@ifnextchar[{\@oalg{#1}}{\@nalg{#1}}} 
+ 
+\def\@nalg#1#2{% 
+\@ifnextchar[{\@xnalg{#1}{#2}}{\@ynalg{#1}{#2}}} 
+ 
+\def\@xnalg#1#2[#3]{\expandafter\@ifdefinable\csname #1\endcsname 
+{\@definecounter{#1}\@addtoreset{#1}{#3}% 
+\expandafter\xdef\csname the#1\endcsname{\expandafter\noexpand 
+  \csname the#3\endcsname \@thmcountersep \@thmcounter{#1}}% 
+\global\@namedef{#1}{\@alg{#1}{#2}}\global\@namedef{end#1}{\@endalgorithm}}} 
+ 
+\def\@ynalg#1#2{\expandafter\@ifdefinable\csname #1\endcsname 
+{\@definecounter{#1}% 
+\expandafter\xdef\csname the#1\endcsname{\@thmcounter{#1}}% 
+\global\@namedef{#1}{\@alg{#1}{#2}}\global\@namedef{end#1}{\@endalgorithm}}} 
+ 
+\def\@oalg#1[#2]#3{\expandafter\@ifdefinable\csname #1\endcsname 
+  {\global\@namedef{the#1}{\@nameuse{the#2}}% 
+\global\@namedef{#1}{\@alg{#2}{#3}}% 
+\global\@namedef{end#1}{\@endalgorithm}}} 
+ 
+\def\@alg#1#2{\refstepcounter 
+    {#1}\@ifnextchar[{\@yalg{#1}{#2}}{\@xalg{#1}{#2}}} 
+ 
+\def\@xalg#1#2{\@beginalgorithm{#2}{\csname the#1\endcsname}\ignorespaces} 
+\def\@yalg#1#2[#3]{\@opargbeginalgorithm{#2}{\csname 
+       the#1\endcsname}{#3}\ignorespaces} 
+ 
+ 
+ 
+ 
+\def\@beginproof#1{\rm \trivlist \item[\hskip \labelsep{\it #1.\/}]} 
+\def\@endproof{\outerparskip 0pt\endtrivlist} 
+ 
+\def\@begintheorem#1#2{\it \trivlist \item[\hskip \labelsep{\sc #1\ #2.}]} 
+\def\@opargbegintheorem#1#2#3{\it \trivlist 
+      \item[\hskip \labelsep{\sc #1\ #2.\ (#3)}]} 
+\def\@endtheorem{\outerparskip 0pt\endtrivlist} 
+
+%\def\@begindefinition#1#2{\rm \trivlist \item[\hskip \labelsep{\sc #1\ #2.}]} 
+%\def\@opargbegindefinition#1#2#3{\rm \trivlist 
+%      \item[\hskip \labelsep{\sc #1\ #2.\ (#3)}]} 
+%\def\@enddefinition{\outerparskip 0pt\endtrivlist} 
+
+ 
+\def\@beginalgorithm#1#2{\rm \trivlist \item[\hskip \labelsep{\sc #1\ #2.}]} 
+\def\@opargbeginalgorithm#1#2#3{\rm \trivlist 
+      \item[\hskip \labelsep{\sc #1\ #2.\ (#3)}]} 
+\def\@endalgorithm{\outerparskip 6pt\endtrivlist} 
+ 
+ 
+\newskip\outerparskip 
+ 
+%\def\trivlist{\parsep\outerparskip 
+%  \@trivlist \labelwidth\z@ \leftmargin\z@ 
+%  \itemindent\parindent \def\makelabel##1{##1}} 
+% 
+%\def\@trivlist{\topsep=0pt\@topsepadd\topsep 
+%  \if@noskipsec \leavevmode \fi 
+%  \ifvmode \advance\@topsepadd\partopsep \else \unskip\par\fi 
+%  \if@inlabel \@noparitemtrue \@noparlisttrue  
+%    \else \@noparlistfalse \@topsep\@topsepadd \fi 
+%    \advance\@topsep \parskip 
+%  \leftskip\z@\rightskip\@rightskip \parfillskip\@flushglue 
+%  \@setpar{\if@newlist\else{\@@par}\fi}% 
+%  \global\@newlisttrue \@outerparskip\parskip} 
+% 
+% 
+%\def\endtrivlist{\if@newlist\@noitemerr\fi  
+%   \if@inlabel\indent\fi  
+%   \ifhmode\unskip \par\fi  
+%   \if@noparlist \else 
+%      \ifdim\lastskip >\z@ \@tempskipa\lastskip \vskip -\lastskip 
+%         \advance\@tempskipa\parskip \advance\@tempskipa -\@outerparskip  
+%         \vskip\@tempskipa 
+%   \fi\@endparenv\fi 
+%   \vskip\outerparskip} 
+ 
+ 
+ 
+ \newproof{@proof}{Proof} 
+ \newenvironment{proof}{\begin{@proof}}{\end{@proof}} 
+ 
+ \newtheorem{@theorem}{Theorem}[section] 
+ \newenvironment{theorem}{\begin{@theorem}}{\end{@theorem}} 
+ 
+ \newalgorithm{@algorithm}{Algorithm}[section] 
+ \newenvironment{algorithm}{\begin{@algorithm}}{\end{@algorithm}} 
+ 
+ 
+ 
+\newtheorem{lemma}{Lemma}[section] 
+\newtheorem{fact}{Fact}[section] 
+\newtheorem{corollary}{Corollary}[section] 
+\newtheorem{axiom}{Axiom}[section] 
+\newtheorem{cond}{Condition}[section] 
+\newtheorem{property}{Property}[section]  
+\newtheorem{proposition}{Proposition}[section] 
+ 
+\newtheorem{Conjecture}{Conjecture}[section] 
+%\newtheorem{Corollary}[Theorem]{Corollary} 
+\newtheorem{Definition}{Definition}[section] 
+\newtheorem{Lemma}{Lemma}[section] 
+\newtheorem{Remark}{Remark}[section] 
+ 
+\newproof{Example}{Example} 
+\newproof{Method}{Method} 
+\newproof{Exercise}{Exercise} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%                                          %% 
+%%            BIBLIOGRAPHY                  %% 
+%%                                          %% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+ 
+\def\thebibliography#1{% 
+%\cleardoublepage 
+\parindent 0em
+\vspace{6pt}
+\begin{flushleft}\normalsize\bf References\end{flushleft}
+\addvspace{3pt}\nopagebreak\list 
+ %% default is no labels, for those not using \cite or BibTeX 
+% {[\arabic{enumi}]} {\settowidth\labelwidth{[#1]} 
+{[\arabic{enumi}]}{\settowidth\labelwidth{mm} 
+\leftmargin\labelwidth 
+ \advance\leftmargin\labelsep 
+ \usecounter{enumi}\@bibsetup} 
+\def\newblock{\hskip .11em plus .33em minus -.07em} 
+ \sloppy\clubpenalty4000\widowpenalty4000 
+ \sfcode`\.=1000\relax} 
+ 
+%% setup 8/10 type 
+\def\@bibsetup{\itemindent=0pt \itemsep=0pt \parsep=0pt
+\small} 
+ 
+\def\sameauthor{\leavevmode\vrule height 2pt depth -1.6pt width 23pt} 
+
+
+\pagestyle{empty}
+
+%%%change maketitle to eliminate drop folio
+\if@titlepage
+  \renewcommand\maketitle{\begin{titlepage}%
+  \let\footnotesize\small
+  \let\footnoterule\relax
+  \let \footnote \thanks
+  \null\vfil
+  \vskip 60\p@
+  \begin{center}%
+    {\LARGE \@title \par}%
+    \vskip 3em%
+    {\large
+     \lineskip .75em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+      \vskip 1.5em%
+    {\large \@date \par}%       % Set date in \large size.
+  \end{center}\par
+  \@thanks
+  \vfil\null
+  \end{titlepage}%
+  \setcounter{footnote}{0}%
+  \global\let\thanks\relax
+  \global\let\maketitle\relax
+  \global\let\@thanks\@empty
+  \global\let\@author\@empty
+  \global\let\@date\@empty
+  \global\let\@title\@empty
+  \global\let\title\relax
+  \global\let\author\relax
+  \global\let\date\relax
+  \global\let\and\relax
+}
+\else
+\renewcommand\maketitle{\par
+  \begingroup
+    \renewcommand\thefootnote{\@fnsymbol\c@footnote}%
+    \def\@makefnmark{\rlap{\@textsuperscript{\normalfont\@thefnmark}}}%
+    \long\def\@makefntext##1{\parindent 1em\noindent
+            \hb@xt@1.8em{%
+                \hss\@textsuperscript{\normalfont\@thefnmark}}##1}%
+    \if@twocolumn
+      \ifnum \col@number=\@ne
+        \@maketitle
+      \else
+        \twocolumn[\@maketitle]%
+      \fi
+    \else
+      \newpage
+      \global\@topnum\z@   % Prevents figures from going at top of page.
+      \@maketitle
+    \fi
+    \thispagestyle{empty}\@thanks
+  \endgroup
+  \setcounter{footnote}{0}%
+  \global\let\thanks\relax
+  \global\let\maketitle\relax
+  \global\let\@maketitle\relax
+  \global\let\@thanks\@empty
+  \global\let\@author\@empty
+  \global\let\@date\@empty
+  \global\let\@title\@empty
+  \global\let\title\relax
+  \global\let\author\relax
+  \global\let\date\relax
+  \global\let\and\relax
+}
+\def\@maketitle{%
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+  \let \footnote \thanks
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\large
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 1em%
+    {\large \@date}%
+  \end{center}%
+  \par
+  \vskip 1.5em}
+\fi
