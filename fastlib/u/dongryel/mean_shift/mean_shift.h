@@ -1,5 +1,5 @@
-#ifndef KDE_H
-#define KDE_H
+#ifndef MEAN_SHIFT_H
+#define MEAN_SHIFT_H
 
 #include "fastlib/fastlib_int.h"
 #include "u/dongryel/series_expansion/farfield_expansion.h"
@@ -7,7 +7,7 @@
 #include "u/dongryel/series_expansion/kernel_derivative.h"
 
 template<typename TKernel>
-class NaiveKde {
+class NaiveMeanShift {
 
  private:
   
@@ -27,7 +27,7 @@ class NaiveKde {
   
   void Compute() {
 
-    fx_timer_start(NULL, "naive_kde_compute");
+    fx_timer_start(NULL, "naive_mean_shift_compute");
 
     // compute unnormalized sum
     for(index_t q = 0; q < qset_.n_cols(); q++) {
@@ -47,7 +47,7 @@ class NaiveKde {
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       densities_[q] /= norm_const;
     }
-    fx_timer_stop(NULL, "naive_kde_compute");
+    fx_timer_stop(NULL, "naive_mean_shift_compute");
   }
 
   void Init() {
@@ -73,10 +73,10 @@ class NaiveKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(NULL, "naive_kde_output", NULL)) != NULL) {
+    if((fname = fx_param_str(NULL, "naive_mean_shift_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
-    densities_.PrintDebug("Naive KDE results", stream);
+    densities_.PrintDebug("Naive Mean Shift results", stream);
     
     if(stream != stdout) {
       fclose(stream);
@@ -94,14 +94,14 @@ class NaiveKde {
       }
     }
     
-    fx_format_result(NULL, "maxium_relative_error_for_fast_KDE", "%g", 
+    fx_format_result(NULL, "maxium_relative_error_for_fast_mean_shift", "%g", 
 		     max_rel_err);
   }
 
 };
 
 template<typename TKernel, typename TKernelDerivative>
-class KdeStat {
+class MeanShiftStat {
  public:
     
   /** lower bound on the densities for the query points owned by this node */
@@ -175,8 +175,8 @@ class KdeStat {
   }
     
   void Init(const Matrix& dataset, index_t &start, index_t &count,
-	    const KdeStat& left_stat,
-	    const KdeStat& right_stat) {
+	    const MeanShiftStat& left_stat,
+	    const MeanShiftStat& right_stat) {
     Init();
   }
     
@@ -187,7 +187,7 @@ class KdeStat {
     local_expansion_.Init(bandwidth, center, sea);
   }
     
-  void UpdateBounds(KdeStat *left_stat, KdeStat *right_stat, 
+  void UpdateBounds(MeanShiftStat *left_stat, MeanShiftStat *right_stat, 
 		    double *dl, double *de, double *du, double *dt) {
       
     // incorporate into the self
@@ -228,7 +228,7 @@ class KdeStat {
     *du = 0;
   }
 
-  void MergeChildBounds(KdeStat &left_stat, KdeStat &right_stat) {
+  void MergeChildBounds(MeanShiftStat &left_stat, MeanShiftStat &right_stat) {
     double min_mass_t = min(left_stat.mass_t_, right_stat.mass_t_);
 
     mass_l_ = max(mass_l_, min(left_stat.mass_l_, right_stat.mass_l_));
@@ -238,7 +238,7 @@ class KdeStat {
     right_stat.mass_t_ -= min_mass_t;
   }
 
-  void PushDownTokens(KdeStat &left_stat, KdeStat &right_stat,
+  void PushDownTokens(MeanShiftStat &left_stat, MeanShiftStat &right_stat,
 		      double *de, double *dt) {
     
     if(de != NULL) {
@@ -255,31 +255,19 @@ class KdeStat {
     }
   }
 
-  KdeStat() { }
+  MeanShiftStat() { }
     
-  ~KdeStat() {}
+  ~MeanShiftStat() {}
     
-};
-
-/** computing kernel estimate using Fast Fourier Transform */
-template<typename TKernel>
-class FFTKde {
-
- public:
-  
-  FFTKde() {}
-  
-  ~FFTKde() {}
-
 };
 
 template<typename TKernel, typename TKernelDerivative>
-class FastKde {
+class FastMeanShift {
   
  private:
 
   typedef BinarySpaceTree<DHrectBound<2>, Matrix,
-    KdeStat<TKernel, TKernelDerivative> > Tree;
+    MeanShiftStat<TKernel, TKernelDerivative> > Tree;
 
   /** query dataset */
   Matrix qset_;
@@ -320,7 +308,7 @@ class FastKde {
   // member functions
 
   /** exhaustive base KDE case */
-  void FKdeBase(Tree *qnode, Tree *rnode) {
+  void FMeanShiftBase(Tree *qnode, Tree *rnode) {
 
     // compute unnormalized sum
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -365,7 +353,7 @@ class FastKde {
   int Prunable(Tree *qnode, Tree *rnode) {
 
     // query node stat
-    KdeStat<TKernel, TKernelDerivative> &stat = qnode->stat();
+    MeanShiftStat<TKernel, TKernelDerivative> &stat = qnode->stat();
     
     // number of reference points
     int num_references = rnode->count();
@@ -422,12 +410,12 @@ class FastKde {
     }
   }
 
-  /** canonical dualtree KDE case */
-  void FKde(Tree *qnode, Tree *rnode) {
+  /** canonical dualtree mean shift case */
+  void FMeanShift(Tree *qnode, Tree *rnode) {
 
-    KdeStat<TKernel, TKernelDerivative> &stat = qnode->stat();
-    KdeStat<TKernel, TKernelDerivative> *left_stat = NULL;
-    KdeStat<TKernel, TKernelDerivative> *right_stat = NULL;
+    MeanShiftStat<TKernel, TKernelDerivative> &stat = qnode->stat();
+    MeanShiftStat<TKernel, TKernelDerivative> *left_stat = NULL;
+    MeanShiftStat<TKernel, TKernelDerivative> *right_stat = NULL;
 
     // process density bound changes sent from the ancestor query nodes
     // then tighten lower/upper bounds and the error reclaimed based on
@@ -451,7 +439,7 @@ class FastKde {
       
       // for leaf pairs, go exhaustive
       if(rnode->is_leaf()) {
-	FKdeBase(qnode, rnode);
+	FMeanShiftBase(qnode, rnode);
 	return;
       }
       
@@ -460,8 +448,8 @@ class FastKde {
 	Tree *rnode_first = NULL, *rnode_second = NULL;
 	BestNodePartners(qnode, rnode->left(), rnode->right(), &rnode_first,
 			 &rnode_second);
-	FKde(qnode, rnode_first);
-	FKde(qnode, rnode_second);
+	FMeanShift(qnode, rnode_first);
+	FMeanShift(qnode, rnode_second);
 	return;
       }
     }
@@ -476,8 +464,8 @@ class FastKde {
 	stat.PushDownTokens(*left_stat, *right_stat, NULL, &stat.mass_t_);
 	BestNodePartners(rnode, qnode->left(), qnode->right(), &qnode_first,
 			 &qnode_second);
-	FKde(qnode_first, rnode);
-	FKde(qnode_second, rnode);
+	FMeanShift(qnode_first, rnode);
+	FMeanShift(qnode_second, rnode);
 	return;
       }
 
@@ -488,13 +476,13 @@ class FastKde {
 	
 	BestNodePartners(qnode->left(), rnode->left(), rnode->right(),
 			 &rnode_first, &rnode_second);
-	FKde(qnode->left(), rnode_first);
-	FKde(qnode->left(), rnode_second);
+	FMeanShift(qnode->left(), rnode_first);
+	FMeanShift(qnode->left(), rnode_second);
 
 	BestNodePartners(qnode->right(), rnode->left(), rnode->right(),
 			 &rnode_first, &rnode_second);
-	FKde(qnode->right(), rnode_first);
-	FKde(qnode->right(), rnode_second);
+	FMeanShift(qnode->right(), rnode_first);
+	FMeanShift(qnode->right(), rnode_second);
 	return;
       }
     }
@@ -503,7 +491,7 @@ class FastKde {
   /** post processing step */
   void PostProcess(Tree *qnode) {
     
-    KdeStat<TKernel, TKernelDerivative> &stat = qnode->stat();
+    MeanShiftStat<TKernel, TKernelDerivative> &stat = qnode->stat();
 
     // for leaf query node
     if(qnode->is_leaf()) {
@@ -534,10 +522,10 @@ class FastKde {
  public:
 
   // constructor/destructor
-  FastKde() {}
+  FastMeanShift() {}
 
-  ~FastKde() {}
-
+  ~FastMeanShift() {}
+  
   // getters and setters
 
   /** get the reference dataset */
@@ -561,16 +549,16 @@ class FastKde {
     densities_e_.SetZero();
     densities_u_.SetZero();
 
-    fx_timer_start(NULL, "fast_kde_compute");
+    fx_timer_start(NULL, "fast_mean_shift_compute");
     // call main routine
-    FKde(qroot_, rroot_);
+    FMeanShift(qroot_, rroot_);
 
     // postprocessing step
     PostProcess(qroot_);
 
     // normalize densities
     NormalizeDensities();
-    fx_timer_stop(NULL, "fast_kde_compute");
+    fx_timer_stop(NULL, "fast_mean_shift_compute");
   }
 
   void Init() {
@@ -620,10 +608,10 @@ class FastKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(NULL, "fast_kde_output", NULL)) != NULL) {
+    if((fname = fx_param_str(NULL, "fast_mean_shift_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
-    densities_e_.PrintDebug("Fast KDE results", stream);
+    densities_e_.PrintDebug("Fast mean shift results", stream);
     
     if(stream != stdout) {
       fclose(stream);
