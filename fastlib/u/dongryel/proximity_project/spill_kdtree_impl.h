@@ -83,13 +83,8 @@ namespace tree_spill_kdtree_private {
     TKdTree *right = NULL;
     int left_begin = 0;
     int left_count = 0;
-    int left_count_overlap = 0;
     int right_begin = 0;
     int right_count = 0;
-    int right_count_overlap = 0;
-    
-    //FindBoundFromMatrix(matrix, node->begin(), node->count(),
-    //    &node->bound());
 
     if (node->count() > leaf_size) {
       index_t split_dim = BIG_BAD_NUMBER;
@@ -130,27 +125,44 @@ namespace tree_spill_kdtree_private {
 
 	if(left_count > matrix.n_rows() + 1 &&
 	   right_count > matrix.n_rows() + 1) {
-	  left_count_overlap = left_count + matrix.n_rows() + 1;
-	  right_count_overlap = right_count + matrix.n_rows() + 1;
-	  
+	  left_count += matrix.n_rows() + 1;
+	  right_count += matrix.n_rows() + 1;
+	  right_begin -= (matrix.n_rows() + 1);
+
 	  DEBUG_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
 		    node->begin(), split_col,
 		    node->begin() + node->count(), split_dim, split_val,
 		    node->bound().get(split_dim).lo,
 		    node->bound().get(split_dim).hi);
 	  
-	  left->Init(left_begin, left_count, left_count_overlap);
-	  right->Init(right_begin, right_count, right_count_overlap);
-	  
+	  left->Init(left_begin, left_count);
+	  right->Init(right_begin, right_count);
+
 	  // This should never happen if max_width > 0
 	  DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 	  
+	  // now expand the left and the right bounding boxes to include the
+	  // overlap points
+	  for(index_t i = right_begin; i < right_begin + 
+		2 * (matrix.n_rows() + 1); i++) {
+	    Vector vector;
+	    matrix.MakeColumnVector(i, &vector);
+	    left->bound() |= vector;
+	    right->bound() |= vector;
+	  }
+
 	  SplitSpillKdTreeMidpoint(matrix, left, leaf_size, old_from_new);
 	  SplitSpillKdTreeMidpoint(matrix, right, leaf_size, old_from_new);
 	}
 	
 	// Here since we cannot make the required overlap, we give up!
 	else {
+	  left->left_ = NULL;	  
+	  delete left;
+	  right->left_ = NULL;
+	  delete right;
+	  left = NULL;
+	  right = NULL;
 	}
       }
     }

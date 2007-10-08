@@ -61,7 +61,7 @@ namespace proximity {
       old_from_new_ptr = NULL;
     }
       
-    node->Init(0, matrix.n_cols(), matrix.n_cols());
+    node->Init(0, matrix.n_cols());
     node->bound().Init(matrix.n_rows());
     tree_spill_kdtree_private::FindBoundFromMatrix(matrix, 0, matrix.n_cols(), 
 						   &node->bound());
