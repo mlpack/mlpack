@@ -156,7 +156,7 @@ class KdeStat {
   void UpdateBounds(KdeStat *left_stat, KdeStat *right_stat, 
 		    double &dl, double &de, double &du, double &dt) {
       
-    // incorporate
+    // incorporate into the self
     mass_l_ += dl;
     mass_e_ += de;
     mass_u_ += du;
@@ -194,6 +194,12 @@ class KdeStat {
     mass_t_ += min_mass_t;
     left_stat->mass_t_ -= min_mass_t;
     right_stat->mass_t_ -= min_mass_t;
+  }
+
+  void PushDownTokens(KdeStat *left_stat, KdeStat *right_stat) {
+    left_stat.mass_t_ += mass_t_;
+    right_stat.mass_t_ += mass_t_;
+    mass_t_ = 0;
   }
 
   KdeStat() { }
@@ -262,8 +268,11 @@ class FastKde {
       for(index_t r = rnode->begin(); r < rnode->end(); r++) {
 	const double *r_col = rset_.GetColumnPtr(r);
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
-	
-	densities_e_[q] += kernel_.EvalUnnormOnSq(dsqd);
+	double ker_value = kernel_.EvalUnnormOnSq(dsqd);
+
+	densities_l_[q] += ker_value;
+	densities_e_[q] += ker_value;
+	densities_u_[q] += ker_value;
       }
     }
     
@@ -284,11 +293,11 @@ class FastKde {
     }
     
     // subtract the contribution accounted by the exhaustive computation
-    qnode->stat().offset_u_ -= rnode->count();
+    qnode->stat().more_u_ -= rnode->count();
 
     // tighten lower and upper bound
-    qnode->stat().dens_l_ = min_l + qnode->stat().offset_l_;
-    qnode->stat().dens_u_ = max_u + qnode->stat().offset_u_;
+    qnode->stat().dens_l_ = min_l + qnode->stat().more_l_;
+    qnode->stat().dens_u_ = max_u + qnode->stat().more_u_;
   }
 
   /** checking for prunability of the query and the reference pair */
@@ -304,7 +313,8 @@ class FastKde {
     DRange &kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
     
     // the new lower bound after incorporating new info
-    double new_mass_l = stat.mass_l + kernel_value_range.lo * (rnode->count());
+    double new_mass_l = stat.mass_l + kernel_value_range.lo * 
+      (rnode->count());
     double allowed_err = tau_ * new_mass_l / ((double) rroot_->count());
 
     // check pruning condition
@@ -315,6 +325,23 @@ class FastKde {
     }
     else {
       return 0;
+    }
+  }
+
+  /** determine which of the node to expand first */
+  void BestNodePartners(Tree *nd, Tree *nd1, Tree *nd2, Tree **partner1,
+			Tree **partner2) {
+    
+    double d1 = nd->bound().MinDistanceSq(nd1->bound());
+    double d2 = nd->bound().MinDistanceSq(nd2->bound());
+
+    if(d1 <= d2) {
+      *partner1 = nd1;
+      *partner2 = nd2;
+    }
+    else {
+      *partner1 = nd2;
+      *partner2 = nd1;
     }
   }
 
@@ -345,15 +372,57 @@ class FastKde {
       return;
     }
     
-    // for leaf pairs, go exhaustive
-    if(qnode->is_leaf() && rnode->is_leaf()) {
-      FKdeBase(qnode, rnode);
-      return;
+    // for leaf query node
+    if(qnode->is_leaf()) {
+      
+      // for leaf pairs, go exhaustive
+      if(rnode->is_leaf()) {
+	FKdeBase(qnode, rnode);
+	return;
+      }
+      
+      // for non-leaf reference, expand reference node
+      else {
+	Tree **rnode_first, **rnode_second;
+	BestNodePartners(qnode, rnode->left(), rnode->right(), &rnode_first,
+			 &rnode_second);
+	FKde(qnode, rnode_first);
+	FKde(qnode, rnode_second);
+	return;
+      }
     }
     
-    // otherwise, recurse to the finer levels
+    // for non-leaf query node
     else {
       
+      // for a leaf reference node, expand query node
+      if(rnode->is_leaf()) {
+	Tree **qnode_first, **qnode_second;
+
+	PushDownTokens(left_stat, right_stat);
+	BestNodePartners(rnode, qnode->left(), qnode->right(), &qnode_first,
+			 &qnode_second);
+	FKde(qnode_first, rnode);
+	FKde(qnode_second, rnode);
+	return;
+      }
+
+      // for non-leaf reference node, expand both query and reference nodes
+      else {
+	Tree **rnode_first, **rnode_second;
+	PushDownTokens(left_stat, right_stat);
+	
+	BestNodePartners(qnode->left(), rnode->left(), rnode->right(),
+			 &rnode_first, &rnode_second);
+	FKde(qnode->left(), rnode_first);
+	FKde(qnode->left(), rnode_second);
+
+	BestNodePartners(qnode->right(), rnode->left(), rnode->right(),
+			 &rnode_first, &rnode_second);
+	FKde(qnode->right(), rnode_first);
+	FKde(qnode->right(), rnode_second);
+	return;
+      }
     }
   }
   
