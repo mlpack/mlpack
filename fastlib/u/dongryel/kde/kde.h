@@ -465,10 +465,6 @@ class FastKde {
     // this is total error for each query point
     double error = m * num_references;
 
-    /*** DEBUGGINGIGNGI! */
-    PrunableEnhanced(qnode, rnode);
-    /*** END DEBUG!!! */
-
     // check pruning condition
     if(error <= allowed_err) {
       dt_ = num_references * 
