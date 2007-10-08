@@ -33,13 +33,11 @@ class GeneralBinarySpaceTree {
   typedef TDataset Dataset;
   typedef TStatistic Statistic;
   
-  private:
   Bound bound_;
   GeneralBinarySpaceTree *left_;
   GeneralBinarySpaceTree *right_;
   index_t begin_;
   index_t count_;
-  index_t count_overlap_;
   Statistic stat_;
   
   public:
@@ -61,13 +59,12 @@ class GeneralBinarySpaceTree {
     DEBUG_POISON_PTR(right_);
   }
   
-  void Init(index_t begin_in, index_t count_in, index_t count_overlap) {
+  void Init(index_t begin_in, index_t count_in) {
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
     begin_ = begin_in;
     count_ = count_in;
-    count_overlap_ = count_overlap;
   }
 
   /**
