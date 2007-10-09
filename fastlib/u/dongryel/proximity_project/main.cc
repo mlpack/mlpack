@@ -1,7 +1,8 @@
 #include "fastlib/fastlib_int.h"
+#include "pca_tree.h"
 #include "spill_kdtree.h"
 
-typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix> Tree;
+typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, PCAStat> Tree;
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
@@ -14,7 +15,6 @@ int main(int argc, char *argv[]) {
   Tree *root_ = 
     proximity::MakeSpillKdTreeMidpoint<Tree>(data_, leaflen, NULL);
   
-  root_->Print();
   fx_done();
   return 0;
 }
