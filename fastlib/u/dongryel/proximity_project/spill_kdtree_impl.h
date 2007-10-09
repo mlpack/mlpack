@@ -76,6 +76,21 @@ namespace tree_spill_kdtree_private {
     return left;
   }
 
+  int qsort_compar(const void *a, const void *b) {
+
+    double *a_dbl = (double *) a;
+    double *b_dbl = (double *) b;
+
+    if(*a_dbl < *b_dbl) {
+      return -1;
+    }
+    else if(*a_dbl > *b_dbl) {
+      return 1;
+    }
+    else
+      return 0;
+  }
+
   template<typename TKdTree>
   void SplitSpillKdTreeMidpoint(Matrix& matrix, TKdTree *node, 
 				index_t leaf_size, index_t *old_from_new) {
@@ -98,8 +113,19 @@ namespace tree_spill_kdtree_private {
           split_dim = d;
         }
       }
+      
+      // choose the split value by median sorting - this could be improved
+      double split_val = 0;
+      Vector coordinate_vals;
+      coordinate_vals.Init(node->count());
+      for(index_t i = node->begin(); i < node->end(); i++) {
+	coordinate_vals[i - node->begin()] = matrix.get(split_dim, i);
+      }
+      qsort(coordinate_vals.ptr(), node->count(), sizeof(double), 
+	    &qsort_compar);
 
-      double split_val = node->bound().get(split_dim).mid();
+      split_val = coordinate_vals[node->count() / 2];
+
 
       if (max_width == 0) {
         // Okay, we can't do any splitting, because all these points are the
@@ -113,9 +139,9 @@ namespace tree_spill_kdtree_private {
         right->bound().Init(matrix.n_rows());
 
         index_t split_col = MatrixPartition(matrix, split_dim, split_val,
-            node->begin(), node->count(),
-            &left->bound(), &right->bound(),
-            old_from_new);
+					    node->begin(), node->count(),
+					    &left->bound(), &right->bound(),
+					    old_from_new);
 	
 	
 	left_begin = node->begin();
@@ -125,6 +151,7 @@ namespace tree_spill_kdtree_private {
 
 	if(left_count > matrix.n_rows() + 1 &&
 	   right_count > matrix.n_rows() + 1) {
+
 	  left_count += matrix.n_rows() + 1;
 	  right_count += matrix.n_rows() + 1;
 	  right_begin -= (matrix.n_rows() + 1);
@@ -157,7 +184,9 @@ namespace tree_spill_kdtree_private {
 	
 	// Here since we cannot make the required overlap, we give up!
 	else {
-	  left->left_ = NULL;	  
+	  printf("I could not split %d points!\n", node->count());
+
+	  left->left_ = NULL;
 	  delete left;
 	  right->left_ = NULL;
 	  delete right;

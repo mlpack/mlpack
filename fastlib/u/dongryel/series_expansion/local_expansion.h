@@ -357,7 +357,7 @@ template<typename TKernel, typename TKernelDerivative>
   
   do {
     
-    if(p_alpha > max_order)
+    if(p_alpha > max_order - 1)
       return -1;
     
     r_raised_to_p_alpha *= r;
