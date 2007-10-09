@@ -89,8 +89,8 @@
 
 %\newcommand{\mysubsub}[1]{{\bf #1.}  }
 %\newcommand{\mysub}[1]{{\bf #1.}  }
-\newcommand{\mysubsub}[1]{\subsubsection{#1}. }
-\newcommand{\mysub}[1]{\subsection{#1}. }
+\newcommand{\mysubsub}[1]{\subsubsection{#1.}}
+\newcommand{\mysub}[1]{\subsection{#1.}}
 
 \newcommand{\defterm}[1]{{\bf #1}}
 %\newcommand{\nbody}{$N$-body}
@@ -268,7 +268,7 @@ We believe that programming in this unified model is not costly in developer tim
 This model comprises the core of our parallel dual-tree software framework, THOR, which is then applied to several realistic massive data mining problems, with the intial version demonstrating up to an 81-fold speedup on 90 processors.
 \authorsnote{I must try to appeal to people who don't really care about dual-tree algorithms, but just want raw parallelism.  Am I successful?}
 
-\autorsnots{for npt, also cite the moore et al 2001 and Computational Physics
+\authorsnote{for npt, also cite the moore et al 2001 and Computational Physics
  paper - should be in the gnp paper's refs; also cite latest kde paper by 
  dongryeol - 'faster gaussian summation', uai 2006; in fact use all the 
  citations to algorithms from the gnp paper}
@@ -346,8 +346,7 @@ We use the \defterm{map} operator that returns one result for each query.
 Range count has a similar dual-tree algorithm that we describe in a later section.
 
 \begin{figure}[t]
-  \fbox{
-  \begin{displaymath}
+  \[
     \begin{array}[t]{l}
       \X \text{function tpc}(X, Y, w)
       \x \text{if }\distup(\outstat(X), \outstat(Y)) > w\text{, return }0
@@ -357,7 +356,7 @@ Range count has a similar dual-tree algorithm that we describe in a later sectio
       \x \text{else,}
       \xx \text{return tpc}(X, \kdleft{Y}, w) + \text{tpc}(X, \kdright{Y}, w)
     \end{array}
-  \end{displaymath}}
+  \]
   \caption{\label{fig:tpc} Dual-tree two-point correlation.
   $d$ signifies distance, and superscripts $l$ and $u$ refer, respectively, to lower and upper bounds.}
 \end{figure}
@@ -365,7 +364,6 @@ Range count has a similar dual-tree algorithm that we describe in a later sectio
 \authorsnote{include single-tree nn pseudocode for clarity}
 
 \begin{figure}[t]
-  \fbox{
   \begin{displaymath}
    \begin{array}[t]{l}
      \X \text{for each node }Q\text{ in tree } \kdroot{Q}\text{, }a(Q) \gets \infty
@@ -379,7 +377,7 @@ Range count has a similar dual-tree algorithm that we describe in a later sectio
      \x \text{else, prioritize by node distance,}
      \xx \text{allnn}(Q, \kdleft{R}); \text{ allnn}(Q, \kdright{R})
    \end{array}
-  \end{displaymath}}
+  \end{displaymath}
   \caption{\label{fig:allnn} Dual-tree nearest-neighbor search.}
 \end{figure}
 
@@ -842,19 +840,20 @@ Further discussion of merits is warranted, but beyond the scope of this paper\fo
 
 \begin{figure}
   \vspace{-0.3in}
-\fbox{\[
+  \[
   \begin{array}[t]{l}
-    \\ \text{Input:}\left(
+    \\ \text{procedure DepthFirst\!}\left(
         \begin{array}[c]{l}\kdroot{Q}, \kdroot{R}, \gqr, \opqr, \fqr, \deltaqrv, \\ \heurqr, \canprunemu, \outopmu, \opmu, \fmuv, \deltamu\end{array}\right)
     \X \text{\com{Initialize mass results and summary results.}}
     \X \text{for each node } Q \text{ in tree } \kdroot{Q}\text{, } \varmuchild(Q) \gets \text{identity of }\Opmu
     \X \text{for each point } q \in \kdroot{Q}\text{, } \varqr(q) \gets \text{identity of }\Opqr
     \X \text{\com{Compute the GNP.}}
-    \X \text{DepthFirst}(\kdroot{Q}, \kdroot{R}, \text{identity of }\Opmu)
-    \X \text{\com{Postprocess each point.}}
+    \X \text{Recurse}(\kdroot{Q}, \kdroot{R}, \text{identity of }\Opmu)
+    \X \text{\com{Postprocess each point and return results.}}
     \X \text{for each point } q \in \kdroot{Q}\text{, } \outqr(q, \kdroot{R}) \gets \gqr(q, \varqr(\{q\}))
+    \X \text{return }\outqr
     \X
-    \X \text{procedure DepthFirst}(Q, R, \varmuparent)\text{, \com{explore a node pair}}
+    \X \text{procedure Recurse}(Q, R, \varmuparent)\text{, \com{explore a node pair}}
     \x \text{\com{compute extrinsic pruning information, Eqn~\ref{eqn:mucompose}}}
     %\x \!\!\!\begin{array}{lllll}
     %     \psty\inmu(Q,\kdroot{R}) &\psty\!\!\gets\!\!& \psty\varmuchild(Q) &\psty\!\!\opmu\!\!& \psty\fmuv(\outstat(Q), \varqrv(Q))
@@ -883,7 +882,7 @@ Further discussion of merits is warranted, but beyond the scope of this paper\fo
     \X \text{procedure DivideQueries}(Q, R)\text{,}
     \x \text{for each } P = \kdleft{Q}, \kdright{Q}
     \xx \text{\com{recurse, by nature of dual-tree}}
-    \xx \text{DepthFirst}(P, R, \varmuparent)
+    \xx \text{Recurse}(P, R, \varmuparent)
     \x \text{\com{recompute $\varmuchild(Q)$ bottom-up, Eqn~\ref{eqn:muchild}}}
     \x \varmuchild(Q) \gets \varmuchild(\kdleft{Q}) \outopmu \varmuchild(\kdright{Q})
 %    \x \!\!\!\begin{array}{lll}
@@ -895,9 +894,9 @@ Further discussion of merits is warranted, but beyond the scope of this paper\fo
     \x \text{\com{explore reference children in heuristic order}}
     \x (R_a, R_b) \gets \text{sort }(\kdleft{R}, \kdright{R})\text{ by }\lambda v ~ \heurqr(\outstat(Q), \outstat(v))
     \x \text{\com{bound unvisited $\lettermu$ with statistics, Eqns \ref{eqn:mudelta}, \ref{eqn:mucompose}, \ref{eqn:muparent}}}
-    \x \text{DepthFirst}(Q, R_a, \varmuparent \opmu \deltamu(\outstat(Q), \outstat(R_b))
+    \x \text{Recurse}(Q, R_a, \varmuparent \opmu \deltamu(\outstat(Q), \outstat(R_b))
     \x \text{\com{use with parent's value of $\lettermu$, Eqn \ref{eqn:muparent}}}
-    \x \text{DepthFirst}(Q, R_b, \varmuparent)
+    \x \text{Recurse}(Q, R_b, \varmuparent)
     %    \X \text{procedure PushDown}(Q, \varqrvparent)\text{,}
     %    \x \text{\com{propagate mass results to leaves}}
     %    \x \varqrv(Q) \gets \varqrv(Q) \opqr \varqrvparent
@@ -907,7 +906,7 @@ Further discussion of merits is warranted, but beyond the scope of this paper\fo
     %    \xx \text{PushDown}(\kdleft{Q}, \varqrv(Q))
     %    \xx \text{PushDown}(\kdright{Q}, \varqrv(Q))
   \end{array}
-\]}
+\]
 \caption{\label{fig:DepthFirst} The locally-ordered depth-first expansion algorithm for query-reference problems.
 This subroutine, with few modifications, is utilized in THOR.
 }
@@ -1188,18 +1187,27 @@ We present three different large-scale data mining applications, each having a d
 %Table~\ref{tab:setup} shows problems we have selected, and their respective run-times in THOR on a single processor for small-scale problems, or 8 processors for problems impractical for a single processor.
 %
 
-The LCDM data we use are three-dimensional positions of galactic halos from the Virgo Supercomputing Consortium's Lambda Cold Dark Matter simulation.
+
+The LCDM data we use are three-dimensional positions of galactic halos from the Virgo Supercomputing Consortium's Lambda Cold Dark Matter simulation\footnote{
+    The LCDM data are from a simulation carried out by the Virgo Supercomputing Consortium using computers based at Computing Centre of the Max-Planck Society in Garching and at the Edinburgh Parallel Computing Centre.
+    The data are publicly available at www.mpa-garching.mpg.de.}.
 Astronomers use the two-point and three-point correlations to examine cosmic structure and thus evaluate cosmological models.
 We look at the two-point correlation for a high bandwidth where 50\% of pairs fall within the bandwidth, and a low bandwidth with 15\%, using the depth-first pattern.
 The former has both high computational and high data requirements, whereas the latter has much lower computational but only somewhat lower communication requirements.
 
-Next, we examine four-dimensional color data obtained from the Sloan Digital Sky Survey of celestial bodies, some of which are quasars.
+Next, we examine four-dimensional color data of celestial bodies, some of which are quasars, obtained from the Sloan Digital Sky Survey\footnote{
+  Funding for the Sloan Digital Sky Survey (SDSS) and SDSS-II has been provided by the Alfred P. Sloan Foundation, the Participating Institutions, the National Science Foundation, the U.S. Department of Energy, the National Aeronautics and Space Administration, the Japanese Monbukagakusho, and the Max Planck Society, and the Higher Education Funding Council for England.
+  The SDSS Web site is http://www.sdss.org/.
+  The SDSS is managed by the Astrophysical Research Consortium (ARC) for the Participating Institutions.
+  The Participating Institutions are the American Museum of Natural History, Astrophysical Institute Potsdam, University of Basel, University of Cambridge, Case Western Reserve University, The University of Chicago, Drexel University, Fermilab, the Institute for Advanced Study, the Japan Participation Group, The Johns Hopkins University, the Joint Institute for Nuclear Astrophysics, the Kavli Institute for Particle Astrophysics and Cosmology, the Korean Scientist Group, the Chinese Academy of Sciences (LAMOST), Los Alamos National Laboratory, the Max-Planck-Institute for Astronomy (MPIA), the Max-Planck-Institute for Astrophysics (MPA), New Mexico State University, Ohio State University, University of Pittsburgh, University of Portsmouth, Princeton University, the United States Naval Observatory, and the University of Washington.
+}.
 Since kernel methods are commonly used to determine if unknown bodies are quasars\authorsnote{Citation?}, we compute a kernel density estimate.
 We use the finite-difference kernel density estimation algorithm in \cite{gray_kde} on subsets of these data, but employ the partially-recursive variant of breadth-first expansion.
 
-We also analyze frequency-domain MFCC features of speech data, extracted using the freely available code from Voicebox.
+We also analyze frequency-domain MFCC features of speech data\footnote{The speech data set uses MFCC coefficients of frames from TIMIT, computed from code freely available from Voicebox.
+   We take 12 MFCC from each 25 msec. frame with 50\% overlap, using code freely available from Voicebox.}.
 The ten-dimensional points are believed to lie on a lower-dimensional manifold.
-Since nearest neighbor search is frequently used in manifold learning, we run the depth-first nearest neighbor algorithm.
+Since nearest neighbor search is frequently used in manifold\authorsnote{be careful} learning, we run the depth-first nearest neighbor algorithm.
 
 %\begin{table*}
 %  \centering
@@ -1302,7 +1310,7 @@ If that fails, I still have dual-core results...
   }
 \end{table*}
 
-To demonstrate the distributed-memory features of THOR, we parallelize some larger scale data mining problems to a cluster of 90 processors.
+To demonstrate the distributed-memory features of THOR, we parallelize some larger scale data mining problems to a cluster\footnote{The cluster is provided by an equipment grant from Intel Corporation.} of 90 processors.
 Rather than attempt to parallelize small problems with marginal realistic speedup, we wish to parallelize data mining applications that are so time-consuming that they are impractical on a single processor.
 However, since we must demonstrate single-processor performance for rigor, we select medium problem sizes that take hours on a single processor, but ideally a minute or two on a cluster.
 
@@ -1343,27 +1351,6 @@ Finally, hardware failure is highly probable with thousands of computers.
 Since each task is already independent, fault tolerance is achievable by rescheduling failed tasks and replicating tree data redundantly.
 
 Nonetheless, the current version promises to solve many problems that were, up to now, seen as impractical or inconvenient, in a way that is surprisingly simple for the developer.
-
-\section{Acknowledgments}
-
-{\small
-The cluster used in the experiments is due to a grant from Intel, Microsoft, and Dell.\authorsnote{NEED TO OBTAIN OFFICIAL CITATION FROM MATT}
-
-FASTlab is funded by XX, YY, ZZ.\authorsnote{Who funds fastlab?}
-
-The LCDM data used in this paper is a simulation carried out by the Virgo Supercomputing Consortium using computers based at Computing Centre of the Max-Planck Society in Garching and at the Edinburgh Parallel Computing Centre. The data are publicly available at www.mpa-garching.mpg.de.
-
-The speech data set uses MFCC coefficients of frames from TIMIT, computed from code freely available from Voicebox.
-We take 12 MFCC from each 25 msec. frame with 50\% overlap.
-
-The color data are from the Sloan Digital Sky Survey.
-Funding for the Sloan Digital Sky Survey (SDSS) and SDSS-II has been provided by the Alfred P. Sloan Foundation, the Participating Institutions, the National Science Foundation, the U.S. Department of Energy, the National Aeronautics and Space Administration, the Japanese Monbukagakusho, and the Max Planck Society, and the Higher Education Funding Council for England.
-The SDSS Web site is http://www.sdss.org/.
-
-The SDSS is managed by the Astrophysical Research Consortium (ARC) for the Participating Institutions.
-The Participating Institutions are the American Museum of Natural History, Astrophysical Institute Potsdam, University of Basel, University of Cambridge, Case Western Reserve University, The University of Chicago, Drexel University, Fermilab, the Institute for Advanced Study, the Japan Participation Group, The Johns Hopkins University, the Joint Institute for Nuclear Astrophysics, the Kavli Institute for Particle Astrophysics and Cosmology, the Korean Scientist Group, the Chinese Academy of Sciences (LAMOST), Los Alamos National Laboratory, the Max-Planck-Institute for Astronomy (MPIA), the Max-Planck-Institute for Astrophysics (MPA), New Mexico State University, Ohio State University, University of Pittsburgh, University of Portsmouth, Princeton University, the United States Naval Observatory, and the University of Washington.
-}
-
 
 %\nocite{ex1,ex2}
 \bibliographystyle{abbrv}
