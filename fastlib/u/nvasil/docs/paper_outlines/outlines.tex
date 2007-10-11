@@ -1,0 +1,60 @@
+\documentclass[times, 12pt,onecolumn]{article}
+
+% ----------------------------------------------------------------
+
+%\topmargin  1cm                 %
+%\textheight 20cm
+%\renewcommand{\baselinestretch}{1} %spacing
+
+\pagestyle{empty}
+
+% ----------------------------------------------------------------
+\begin{document}
+
+\begin{center}
+    \textbf{Novel Semidefinite Programming Methods for Dimensionality Reduction}
+\end{center}
+\begin{enumerate}
+  \item \textit{Dimensionality transformation methods.} One of the basic goals of Machine Learning is to increase or reduce  the dimensionality of a feature set. There are several ways to do that linearly and non-linearly. Semidefinite Programming is a tool for non-linear dimensionality reduction, since the objective of the reduction/creation can be quantified and be cast as an optimization problem.
+  \item \textit{Semidefinite PCA} Semidefinite PCA is an isometric manifold unfolding method. Essentially it leads to kernel matrices with rank equal or smaller to the initial dimension of the dataset. The method is based on the maximization of the trace of the kernel matrix. This corresponds to the maximization of the variance of the new transformed space.
+  \item \textit{Alternative objectives for SDP} The Semidefinite Programming SDP opens new doors for manifold learning techniques with more meaningful optimization criteria. Usually the goal is to make the spectrum of the kernel matrix as compact as it is possible. There are different ways to express that with an objective function. Maximizing the sum of the first p largest eigenvalues while minimizing the sum of the q smallest non-zero eigenvalues is one way. A different approach is to maximize the ratio of the maximum to the minimum eigenvalue. Of course these are not convex problems, but there are convex relaxations as SDP
+  \item \textit{Toy experiments} The derived methods will be tested over benchmarks
+\end{enumerate}
+
+\newpage
+
+\begin{center}
+    \textbf{A Fast Semidefinite Programming Algorithm for Kernel Matrices}
+\end{center}
+\begin{enumerate}
+  \item \textit{Scalability Issues of SDP} Semidefinite Programming  is in general of polynomial complexity. Polynomial complexity makes SDP prohibitive for large scale problems. In this paper we focus on SDP's over kernel matrices that have a specific structure.
+  \item \textit{Domain Decomposition} The first approach is to use Dr Zha's domain decomposition method. This method combined with the trees for the partition part can essentially split kernel matrix into smaller matrices. The SDP is ran on the smaller matrices and the optimal kernel matrix is reconstructed by the optimal subspaces (smaller matrices).
+  \item \textit{Fast Online SDP} A different approach is to use online gradient descent for such a large scale problem. It is widely known that for large scale problem computation of the Hessian or even the gradient is very costly. In this section we propose a stochastic approximation of the method based on tree sampling.
+  \item \textit{Perturbation on SDP, using Trees} In this section we use sensitivity analysis of SDP to approximate the solution. The SDP problem is solved for the centroids of the nodes of the tree at a certain level. Then the solution for lower levels of the tree is linearly approximated  with linear expansion of the SDP solution around the centroid
+\end{enumerate}
+
+\newpage
+
+\begin{center}
+    \textbf{Fast Kernel PCA for Low and High Dimensional Data}
+\end{center}
+In this paper we discuss scalability issues of Kernel PCA, by finding ways to form efficiently and decompose the kernel matrix to its eigenvectors.
+\begin{enumerate}
+  \item \textit{Fast Kernel Summation} Fast kernel summation has been proven to be of linear complexity under some assumptions. It has been successfully applied to Kernel Density Estimation. 
+  \item \textit{Sparse Kernels} sparsity of the kernel matrix is essential for the scalability of Kernel PCA methods. Some kernels lead to sparse matrices, while others don't. In both cases setting the threshold for generating a sparse kernel matrix is done ad hoc without error bounds.
+  \item \textit{Fast Vector Matrix Multiplication (FVMM) for Power Method} For low dimensional data the Kernel-matrix vector multiplication can be cast as a kernel summation problem. Using the Fast Vector Matrix Multiplication (FVMM) algorithm we can use power methods to compute efficiently the eigenvectors/eigenvalues. We also need to find out how the approximation of the FVMM affects the eigenvalues.
+  \item \textit{Eigenvalue error bounds for Sparse Kernel Matrices} For high-dimensional data where FVMM is not applicable the sparse matrix approach is used. Error bounds for the eigenvalues of the thresholded matrix can be computed with the help of the trees.  
+\end{enumerate}
+
+\newpage
+\begin{center}
+    \textbf{Developing new Features for Speech with Manifold Learning}
+\end{center}
+  In this paper the goal is to generate meaningful features for speech recognition, by exploring the properties of the speech manifold.
+\begin{enumerate}
+  \item \textit{The Intrinsic Dimension of Speech} The very first step is to form the kernel matrix that represents the speech manifold. Our intension is to build a large enough kernel matrix that will contain sufficient number of data points representative of the variation of speech at least for the american-english language. The very first information that we care about is the intrinsic dimensionality of speech.
+  \item \textit{Speech manifolds on different scales} Speech conveys different information in different time-scales. So it is necessary to examine the manifold properties in several timescales. The output of such process will be new set of features for speech
+  \item \textit{Speech Recognition} The new features will be tested in speech recognition under several metrics such as noise robustness, speaker independency, acoustic environment invariance. 
+\end{enumerate}
+
+\end{document}
