@@ -147,7 +147,7 @@
 \newcommand{\lettermu}{e}
 \newcommand{\inmu}{e}
 \newcommand{\Outopmu}{\nameOp{\bigodot}{\lettermu}}%\mathop{\widehat{\bigodot\nolimits}\!\scriptstyle{\mu}}}
-\newcommand{\outopmu}{\myop{\lettermu}}
+\newcommand{\outopmu}{\nameop{\odot}{\lettermu}}
 \newcommand{\Opmu}{\myOp{\lettermu}}
 \newcommand{\opmu}{\myop{\lettermu}}
 \newcommand{\fmu}{f_{\lettermu}}
@@ -232,7 +232,7 @@
 \thispagestyle{empty}
 
 \begin{abstract}
-The multi-tree approach for accelerating data mining methods has spurred some of the fastest known solutions for a significant class of fundamental methods previously considered impractical for massive data sets, including kernel density estimation, nearest-neighbor search, and spatial statistics.
+The $N$-body or multi-tree approach for accelerating data mining methods has spurred some of the fastest known solutions for a significant class of fundamental methods previously considered impractical for massive data sets, including kernel density estimation, nearest-neighbor search, and spatial statistics.
 We present a standard mathematical model and associated programming model that allows these problems to be scaled further via parallelization, without significant extra programmer effort.
 With the framework, we derive a strategy for multi-core and cluster parallelism and describe our implementation, Tree-based High-Order Reduce or THOR.
 We demonstrate three realistic parallel applications: kernel density estimation on the Sloan Digital Sky Survey, two-point correlation of galactic halo positions, and nearest neighbor search on high-dimensional speech data.
@@ -240,20 +240,19 @@ We demonstrate three realistic parallel applications: kernel density estimation 
 
 \section{Introduction}
 
-Applying machine learning methods to large datasets is increasingly critical for many applications.
-Unfortunately, powerful nonparametric methods that analyze all pairs of distances are commonly $O(N^2)$, given $O(N)$ test (or query) points and training (or reference) points.
-For a significant subclass of these problems, which we call \defterm{generalized $N$-body problems (GNP's)}, a higher-order divide-and-conquer technique pioneered in \cite{gray_nbody} can avoid nearly all computation by skipping combinations of regions with little mutual interaction.
+Many powerful nonparametric methods that take full advantage of massive data require analyzing all pairs of distances; however, such analysis is time consuming.
+For a significant subclass of these problems, which we call \defterm{generalized $N$-body problems (GNP's)}, a higher-order divide-and-conquer technique enumerated in \cite{gray_nbody} can avoid nearly all computation by skipping combinations of regions with little mutual interaction.
 % TODO: balltrees
 Higher-order divide and conquer on metric data typically utilizes space-partitioning trees, such as $kd$-trees \cite{preparata_kdtrees}, ball trees \cite{anchors_balltrees_moore}, and cover trees \cite{covertrees}, to assist in dividing the data into regions.
 This use of trees is called the \defterm{dual-tree} or the broader \defterm{multi-tree} approach.
 
-This approach generalizes long-used algorithms such as $kd$-tree-based nearest-neighbor search \cite{friedman_bentley_finkel}, as well as more recent algorithms using space-partitioning trees for N-body physical simulation such as the celebrated Fast Multipole Method (FMM) \cite{greengard_fmm} and for statistical problems like kernel regression \cite{moore97efficient}.
-In the case of nearest-neighbor search and kernel regression, the dual-tree approach generalizes these earlier algorithms by considering all query points simultaneously, by organizing them in a second tree.
-The multi-tree approach generalizes the FMM by casting it recursively, allowing arbitary tree structures, recursion patterns, approximation schemes, and error criteria.
-This approach is used by some of the fastest known serial algorithms for many statistical and physical problems on metric data, such as bounded-error kernel density estimation \cite{gray_nbody, gray_kde, lee_gauss1, lee_gauss2},  $k$-nearest-neighbor classification \cite{ting-liu}, kernel discriminant analysis \cite{nbc-compstat}, nearest neighbor search \cite{gray_nbody}, $n$-point correlation \cite{gray_nbody, moore01fast}, and more.
-For each of these problems, no overall faster algorithms are known.
+%This approach generalizes long-used algorithms such as $kd$-tree-based nearest-neighbor search \cite{friedman_bentley_finkel}, as well as more recent algorithms using space-partitioning trees for N-body physical simulation such as the celebrated Fast Multipole Method (FMM) \cite{greengard_fmm} and for statistical problems like kernel regression \cite{moore97efficient}.
+%For nearest-neighbor search and kernel regression, the dual-tree approach generalizes these earlier algorithms by considering all query points simultaneously, by organizing them in a second tree.
+%The multi-tree approach generalizes the FMM by casting it recursively, allowing arbitary tree structures, recursion patterns, approximation schemes, and error criteria.
+This approach is applied to many statistical and physical problems on metric data, such as bounded-error kernel density estimation \cite{gray_nbody, gray_kde, lee_gauss1, lee_gauss2},  $k$-nearest-neighbor classification \cite{ting-liu}, kernel discriminant analysis \cite{nbc-compstat}, nearest neighbor search \cite{gray_nbody}, $n$-point correlation \cite{gray_nbody, moore01fast}, and more.
+For each of these problems, no overall faster serial algorithms are known.
 Other machine learning problems treated with this strategy include dimensionality reduction methods \cite{hochreiter00beyond}, nonparametric belief propagation \cite{alex-ihler}, linear algebraic machine learning methods \cite{freitas_fast}, and particle filters \cite{klaas-toward}.
-Many current and future data mining techniques remain to be treated in depth with this strategy, not to mention a large array of related fundamental problems in computational geometry, physics, and applied mathematics.
+Many current and future data mining techniques remain to be considered in depth with this strategy, not to mention a large array of related fundamental problems in computational geometry, physics, and applied mathematics.
 
 Nonetheless, as multi-core processors begin to dominate markets, the fastest serial algorithms may not compete with a trivially parallelizable brute-force algorithm.
 Perhaps more importantly, some problems are impractically large for a single processor, but can be solved given enough processors.
@@ -267,7 +266,7 @@ In practice, this approach leads to efficient parallel and serial performance, a
 
 We first describe fundamental concepts and examples of dual-tree algorithms.
 Next, we define the class of second-order generalized $N$-body problems, and demonstrate a formal model that solves all such GNP's and subsumes most dual-tree algorithms.
-We catalog the parallel implementation of this model, THOR, and show its performance when applied to several realistic massive data mining problems, with the intial version demonstrating up to an 81-fold speedup on 90 processors.
+We catalog the parallel implementation of this model, THOR, and show its performance when applied to several sample massive data mining applications, with the intial version demonstrating up to an 81-fold speedup on 90 processors.
 
 \section{Fast Dual-Tree Algorithms}
 
@@ -291,14 +290,14 @@ We catalog the parallel implementation of this model, THOR, and show its perform
 \mysub{Foundations}
 We briefly introduce the space-partitioning trees and define some fundamental notation used throughout the paper.
 Our notation considers tree node $X$ in a tree $\kdroot{X}$ to be a set of points.
-These points lie in a metric space, i.e.~such that distance $\dist{x}{y}$ is reflexive, satisfies the triangle inequality $\dist{x}{z} \leq \dist{x}{y} + \dist{y}{z}$, and is zero iff $x = y$.
+These points lie in a metric space, such that distance $\dist{x}{y}$ is reflexive, satisfies the triangle inequality $\dist{x}{z} \leq \dist{x}{y} + \dist{y}{z}$, and is zero iff $x = y$.
 Our notation focuses on binary trees for clarity, although it is trivially extended.
 Internal nodes are partitioned $X = \kdleft{X} \union \kdright{X}$, with parent $\kdparent{X} \supset X$.
 A leaf is conceptually a single point $\{x\}$, although in practice points are grouped to amortize recursion overhead.
 
 A $kd$-tree \cite{preparata_kdtrees}, as in \fig{kdtree}, is a binary tree that recursively divides the data along coordinate dimensions, working with $L_p$ distance metrics such as Euclidean $L_2$.
 Unlike a grid, a $kd$-tree is adaptive, accomodating lower-dimensional manifolds and non-uniform distributions.
-Ball trees \cite{anchors_balltrees_moore} are binary and uses bounding radii, work with arbitrary metric spaces including non-Euclidean, and are believed to have good high-dimensional properties.
+Ball trees \cite{anchors_balltrees_moore} are binary and use bounding radii, work with arbitrary metric spaces including non-Euclidean, and have good high-dimensional properties.
 %TODO: Cite ball trees and cover trees
 Cover trees \cite{covertrees} have a variable branching factor depending on properties of the data.
 Quad-trees and oct-trees recursively bisect all coordinate dimensions for two- and three-dimensional vector spaces, though extend poorly to higher dimensions.
@@ -309,14 +308,14 @@ Summary information includes a bounding structure such as a hyper-rectangle or h
 Bounds are a fundamental part of multi-tree algorithms, so we universally use superscripts $l$ and $u$ refer respectively to lower and upper bounds, which are often, as in the case of distance, obtained from the node's bounding structure.
 
 \mysub{Single-tree versus dual-tree}
-A common program structure, which we label \defterm{query-reference}, loops at the top level over a sequence of \defterm{query} points, and for each of those, considers all \defterm{reference} points with regard to the query.
-In the \defterm{monochromatic} case the query and reference sets are the same, but may be distinct in the \defterm{bichromatic} case.
+A common program structure, which we label \defterm{query-reference}, loops over a sequence of \defterm{query} points, and for each of those, considers all \defterm{reference} points with regard to the query.
+The query and reference sets are frequently the same i.e. \defterm{monochromatic}, but may distinct in the \defterm{bichromatic} case.
 For eample, nearest neighbors loops over many query points, and for each, loops over reference points to find the nearest one.
 
 A \defterm{single-tree} algorithm replaces the inner loop with a tree traversal, skipping parts of the reference tree that are irrelevant to the query.
 A \defterm{dual-tree} algorithm merges the two loops together and considers the entire computation a traversal over tree node pairs, forming a hierarchy over the Cartesian product of points.
 The dual-tree algorithm \defterm{prunes} node pairs from consideration when possible, using summary information.
-Although dual-tree algorithms can solve problems such as two-point correlation that have no actual differentiation between a query or reference point, the query-reference nomenclature simplifies our discourse.
+Although dual-tree algorithms can solve problems such as two-point correlation that have no distinction between a query or reference point, the query-reference nomenclature simplifies our discourse.
 In many practical problems, the amount of computation that can be pruned is immense, with the nominally quadratic complexity reduced empirically to $O(N log N)$, $O(N)$, or $O(N^{1+\epsilon})$.
 
 A single-tree algorithm must commence at the root of the tree and traverse towards the leaves or until pruning occurs for each query point, and is usually at best $O(N log N)$.
@@ -344,8 +343,8 @@ Range count has a similar dual-tree algorithm that we describe in a later sectio
   \fbox{$$
     \begin{array}[t]{l}
       \text{define tpc}(X, Y, w)\text{,}
-      \x \text{if }\distup(\outstat(X), \outstat(Y)) > w\text{, return }0
-      \x \text{if }\distlo(\outstat(X), \outstat(Y)) \leq w\text{, return } |X| \cdot |Y|
+      \x \text{if }\distlo(\outstat(X), \outstat(Y)) > w\text{, return }0
+      \x \text{if }\distup(\outstat(X), \outstat(Y)) \leq w\text{, return } |X| \cdot |Y|
       \x \text{else if }|X| \geq |Y|\text{,}
       \xx \text{return tpc}(\kdleft{X}, Y, w) + \text{tpc}(\kdright{X}, Y, w)
       \x \text{else,}
@@ -449,12 +448,12 @@ However, its traversal pattern, often called a ``downwards pass,'' is quite spec
 Still, key parallelization insights are applicable to dual-tree algorithms.
 
 \mysub{Generalization}
-All of the above problems have the form of nested commutative, associative operators applied over an inner function.
-We later demonstrate how this property is critical to dual-tree algorithms and their parallelization.
+All of the above problems involve nested commutative, associative operators applied over an inner function.
+We later show how this property is critical to dual-tree algorithms and their parallelization.
 
 % \cite{singh95load} \cite{nyland93dataparallel} \cite{washington_nesl}
 
-\section{Parallel Programming Productivity}
+\section{Productive Parallel Programming Strategies}
 
 When approached with a potentially parallelizable problem, the development time is often far more expensive than the CPU time saved.
 Thus, it is a widespread goal to simplify the development of parallel programs.
@@ -473,18 +472,18 @@ We find that finer implementation control over the underlying implementation is 
 It seems paradoxical to desire both fine implementation control and simplified software development, but both are achievable when targeting a specific class of problems.
 Using a fine-tuned implementation of a generalized problem in a fast language, a developer plugs in the algorithmic specifics.
 MapReduce \cite{mapreduce} is a famous example for solving problems on massive data sets through the three-step process of preprocessing, reorganization, and aggregation.
-By targeting only this class of problems and taking advantage of lack of inter-datum dependencies, MapReduce can use optimally efficient data decomposition methods, out-of-core sorting algorithms, and mechanisms for fault-tolerance.
+By targeting only this class of problems, MapReduce can use optimally efficient data decomposition methods, out-of-core sorting algorithms, and mechanisms for fault-tolerance.
 Additionally, very little work on the part of the programmer is needed to the extent that writing the parallel algorithm can be simpler than writing the serial algorithm.
 It is imperative to state that although many machine learning tasks are simple in MapReduce, generalized $N$-body problems are an extremely poor fit for the model\footnote{
   Theoretically, MapReduce can solve any problem a {\tt for} loop can.
   Briefly, building a $kd$-tree or ball tree in MapReduce is possible, though difficult and inefficient, requiring a logarithmic number of passes.
   Then, using the task decomposition described later in this paper, one may break the query tree into chunks and execute each chunk with a dual-tree algorithm against the entire reference tree.
   MapReduce then distributes tasks statically without regard for tree locality, requiring in most cases all machines to have almost the entire reference tree.
-  Single-tree algorithms suffer from the same problem, but are marginally simpler to implement on MapReduce.
+  Single-tree are marginally simpler to implement on MapReduce, but suffer from the same problem.
   }.
 
 Warren and Salmon in \cite{warren95portable} made a similar argument over a decade ago when building a software framework for parallelizing oct-tree algorithms using their Hashed Oct-Tree method.
-They created a fine-tuned parallel implementation of single-tree algorithms based on previous Barnes-Hut work, abstracting key components that can be replaced with custom code.
+They created a fine-tuned parallel implementation of a general single-tree algorithm based on previous Barnes-Hut work, abstracting key components that can be replaced with custom code.
 We do build on major points from both authors, both prime figures in distributed-memory $N$-body algorithms.
 However, dual-tree algorithms differ fundamentally from single-tree algorithms, and the Hashed Oct-Tree method is quite specific to oct-trees.
 
@@ -492,13 +491,11 @@ We instead show that dual-tree algorithms have a novel generalization that we ut
 A developer focuses solely on the interactions that occur among data, not on the details of the exploration or parallelization.
 We choose to implement THOR in C++ owing to the availability of efficient compilers, low-level access to resources, and efficient templating system.
 Additionally, since programmers prefer to use common constructs such as vectors and lists over static bit-copyable structures, THOR provides a scheme that takes advantage of C++ templates to implement serialization and deserialization of acyclic pointer graphs.
-Thus, we present THOR as a ``quick and easy'' way to develop efficient parallel dual-tree algorithms\authorsnote{Algorithmica, anyone?}.
+Thus, we present THOR as a ``quick and easy'' way to develop efficient parallel dual-tree algorithms.%\authorsnote{Algorithmica, anyone?}.
 
 \section{Dual-Tree Algorithm Framework}
 
-Previously, we hinted that GNP's are a subclass of all-pairs computations\authorsnote{Talk about first-order reduce problems?}.
-We show an extremely general formalization of the problems solved.
-
+We now formalize the class of GNP's.
 The class of \defterm{second-order reduce problems} is a type of all-pairs computation and a superset of GNP's.
 For commutative, associative operators $\bigotimes$ and $\bigodot$, postprocessing functions $h$ and $g$, inner function $f$, and data sets $X$ and $Y$, one computes,
 \[\begin{array}{l}
@@ -522,7 +519,7 @@ For example, two-point correlation with radius $w$ is has,
   \multicolumn{3}{r}{h(a)} &\equiv& a
 \end{array}\]
 
-A second-order reduce problem is also a GNP if for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$,
+A second-order reduce problem is a GNP if for any partitioning $\kdleft{Y} \union \kdright{Y} = Y$,
 \[\gnp(X,Y) = \gnp(X,\kdleft{Y}) \otimes \gnp(X,\kdright{Y}).\]
 \noindent A similar decomposition of $X$ over $\bigodot$ is trivial by commutativity and associativity.
 We later reveal how the ability of GNP's to decompose both ways is instrumental in leveraging higher-order divide and conquer.
@@ -532,12 +529,12 @@ If $\bigodot$ is the operator $\map$ and $g$ is null, it is a \defterm{query-ref
 The decomposition property for $\map$ is formally satisfied by rephrasing results as sets of key-value pairs, but we omit such formality for the sake of simplicity.
 
 It is clear that {\em any} second-order reduce problem can be transformed into a query-reference GNP by replacing the outer operator with $\map$, and then treating both $g$ and $\bigodot$ as a postprocessing step.
-For example, two-point correlation can compute the range count for each query as a $\map$ of $\sum$, postprocessing with $h$ to add the list of range counts.
+For example, two-point correlation can compute the range count for each query as a $\map$ of $\sum$, using $h$ to sum the list of range counts.
 Therefore, any framework that solves query-reference problems necessarily solves any second-order reduce problem.
 Although THOR's implementation does provide native support for both single-operator and query-reference problems, our discussion focuses on the more general query-reference problems.
 %In practice, the transformation to the query-reference analog rarely results in an asymptotic difference in performance.
 %Nonetheless,
-Although we have already shown a general model of the {\it problems}, we next characterize the {\it algorithms} used.
+Since we have already shown a model of the {\it problems} solved, we next characterize the {\it algorithms} used.
 
 \mysub{The Generalized $N$-Body Algorithm}
 Two-way decomposability implies a hierarchical computation of GNP's,
@@ -580,7 +577,7 @@ For example, in all nearest-neighbors, a pair of nodes is skipped if the query n
 %There is no one required exploration pattern.
 
 The hierarchical computation is agnostic to expansion pattern.
-However, choice of expansion pattern can have a significant, sometimes asymptotic, effect on run time.
+However, choice of expansion pattern can have a dramatic effect on run time.
 With intrinsic pruning only, $\prefsplit{X}{Y}$ alone determines the asymptotic run time, so expansion pattern is irrelevant except for machine-level overhead.
 Extrinsically pruning problems that concentrate on spatially nearby computations may prefer a depth-first expansion along with a local ordering heuristic.
 Others achieve good performance with a breadth-first expansion, which holistically refines the Cartesian problem space.
@@ -698,7 +695,7 @@ Hierarchically, we express,
 \end{equation}
 
 \noindent
-Recall that $\inqrv$ is defined for singleton queries in Equation~\ref{eqn:qrdef}, and a single-tree algorithm conceptually treats $\inqrv$ only in this way.
+Recall that $\inqrv$ is defined for singleton queries in Equation~\ref{eqn:qrdef}, and a single-tree algorithm conceptually treats $\inqrv$ in only this way.
 It is important to note that although a dual-tree algorithm recursively descends the query tree, there is no explicit data dependency within the query tree, except the ability to propagate mass results pruned from a parent.
 Our mathematical model leaves to the implementation how the query set is divided.
 Both types of algorithms, though, perform divide and conquer with the reference tree,
@@ -743,7 +740,7 @@ The two-point correlation is then the sum of $\outqr$ for all queries.
 In summary, Equations \ref{eqn:qrdef} through \ref{eqn:defstat} express the data flow of any query-reference problem with an allowance for intrinsic pruning.
 A noteworthy omission is an inverse to $\Opqr$, since many valid operators, such as maximum, have no inverse.
 Even floating-point addition has no general-case inverse, because of rounding error.
-Whereas traditional dual-tree methods often accumulate ``tentative'' results and refine those results with an undo operation, THOR separates tentative and final results.
+Whereas traditional dual-tree methods often accumulate ``tentative'' results and refine those results with an undo operation, THOR separates tentative and final results, combining on demand.
 
 \mysub{Query-Reference Extrinsic Prunes}
 
@@ -775,7 +772,7 @@ However, the since ideal value of $\outqr(q, \kdroot{R})$ is not available until
 \end{equation}
 
 \noindent
-For all nearest neighbors, this might be an upper-bound node-to-node distance\footnote{Traditionally, unseen node pairs are treated as an infinite distance apart, since the node-to-node upper bound distance is usually too pessimsitic to be useful.}.
+For all nearest neighbors, this might be an upper-bound node-to-node distance\footnote{Traditionally, unseen node pairs are treated as an infinite distance apart, since the upper-bound node distance is usually too pessimistic to be useful.}.
 
 Next, if we know $\inmu$ for disjoint reference sets, we may pessimistically compose them in a way analogous to the original $\Opqr$, using a commutative associative operator $\Opmu$,
 \begin{equation}
@@ -784,8 +781,8 @@ Next, if we know $\inmu$ for disjoint reference sets, we may pessimistically com
 \end{equation}
 
 \noindent
-It may not be obvious that the above composition may be extremely pessimistic.
-$\Outopmu$ takes the worst-case values from each query, and the above would compose those worst-case values, even if the two values occurred at different query points.
+It may not be obvious that the above composition can be extremely pessimistic.
+First, $\Outopmu$ takes the worst-case values from each query, and the above would compose those worst-case values, even if the two values occurred at different query points.
 In practice, this pessimism is a necessary evil to avoid deeper traversal.
 %For example, if $\inmu$ is an upper bound on a probability density contribution, summing the upper bounds neglects the possibility of having the upper bound appear at different query points for the two subcomputations.
 %\authornote{Elaborate more, or make less comments.  Actually, this might want a proof.}
@@ -839,16 +836,16 @@ For instance, finding all nearest neighbor can be expressed,
 \deltamu(\outstat(Q),\outstat(R)) &\equiv& \distlo(\outstat(Q),\outstat(R))
 \end{eqnarray*}
 
-\noindent A small note is that in depth-first nearest-neighbor implementation, $\deltamu$ is typically ignored, i.e. treated as $\infty$, since it rarely provides useful information.
-However, in breadth-first and some other patterns, $\deltamu$ is essential.
+%\noindent A small note is that in depth-first nearest-neighbor implementation, $\deltamu$ is typically ignored, i.e. treated as $\infty$, since it rarely provides useful information.
+%However, in breadth-first and some other patterns, $\deltamu$ is essential.
 
 \mysub{Execution}
 
-To this point, we have defined many ``rules'' that can employed to compute a query-reference GNP.
+Up to this point, we have defined many ``rules'' that can employed to compute a query-reference GNP.
 THOR must utilize an expansion strategy that applies these rules in order to solve a problem.
 
-Previously, we showed locally-ordered depth-first implementations of two-point correlations and nearest neighbors in Figures \ref{fig:tpc} and \ref{fig:allnn} that recursively divide along the two trees.
-\fig{DepthFirst} shows the generalized depth-first dual-tree expansion algorithm that takes as input the data and plug-in functions.
+Previously, we showed implementations of two-point correlation and nearest neighbor search in Figures \ref{fig:tpc} and \ref{fig:allnn} that recursively divide along the two trees.
+\fig{DepthFirst} shows the generalized locally-ordered depth-first dual-tree expansion algorithm that takes as input the data and plug-in functions.
 This algorithm is one of the patterns implemented in THOR.
 
 Some dual-tree algorithms maintain a queue of node pairs to expand instead of recursing immediately.
@@ -945,7 +942,7 @@ Next, we show how THOR uses the model to parallelizes these algorithms, by viewi
 
 Parallelization of {\em any} algorithm requires addressing how the problem is divided, what communication is necessary, and how work is balanced.
 Decades of research into the parallelization of the Barnes-Hut and Fast Multipole algorithms gives insight into the parallelization of dual-tree algorithms.
-However, we make significant deviations because of fundamental differences of dual-tree algorithms and the generality of both data structures and the problems solved.
+However, we make significant deviations because of fundamental differences of dual-tree algorithms and the generality of both the data structures used and the problems solved.
 
 \mysub{Task Decomposition}
 
@@ -961,7 +958,7 @@ Since the natural unit of subdivision for dual-tree algorithms is a tree node, w
 
 Although many decompositions are possible, we decompose the problem only along the query tree into tasks $\gnp(Q_1, \kdroot{R}), \gnp(Q_2, \kdroot{R}), ..., \gnp(Q_k, \kdroot{R})$.
 Since $\bigodot$ is $\map$, all writable information is query-specific.
-With zero writes to shared data, and no write synchronization is necessary.
+With zero writes to shared data, no write synchronization is necessary.
 Furthermore, extrinsic pruning is highly dependent on the quality of query summary results for node $Q$ in the context of all reference points, that is, $\inmu(Q, \kdroot{R})$.
 Considering the entire reference tree on a single processor is advantageous because a high-quality value of $\lettermu$ can be computed on the local processor.
 
@@ -1184,7 +1181,7 @@ After explaining our experimental design, we quantify THOR's three primary oppor
 
 We concentrate on parallelizing the generalized $N$-body problem and not tree building, which is parallelizable as shown in \cite{alfuraih00parallel}, or may be loaded from file.
 After the tree is built or loaded from file on a single machine, it is distributed initially among machines via the domain decomposition.
-We then study only the execution time of the generalized $N$-body problem.\authorsnote{Should probably show in a table how tree building, etc takes for the algorithms}
+We then study only the execution time of the generalized $N$-body problem.%\authorsnote{Should probably show in a table how tree building, etc takes for the algorithms}
 All THOR code is written in C++, with heavy use of template programming.
 
 \mysub{Design}
@@ -1226,7 +1223,7 @@ Next, we examine four-dimensional color data of celestial bodies, some of which 
 }.
 Since kernel methods are commonly used to determine if unknown bodies are quasars, we compute a kernel density estimate.
 We use the finite-difference kernel density estimation algorithm in \cite{gray_kde} on subsets of these data, but employ the partially-recursive variant of breadth-first expansion.
-We use a Gaussian kernel at its optimal bandwith, determined using least-squares cross validation via the Gaussian convolution kernel.
+We use a Gaussian kernel at its optimal bandwith as determined by least-squares cross validation via the Gaussian convolution kernel.
 
 We also analyze frequency-domain MFCC features of speech data\footnote{The speech data set uses MFCC coefficients of frames from TIMIT, computed from code freely available from Voicebox.
    We take 12 MFCC from each 25 msec. frame with 50\% overlap, using code freely available from Voicebox.}.
@@ -1290,14 +1287,38 @@ We believe these overheads are quite reasonable given the advantages of THOR.
 
 \mysub{Multi-Threaded}
 
-In the previous subsection, we divide the query tree into pieces and execute them on a single processor.
-By executing these threads on two processors, we measure simple multi-threaded performance.
+\tab{maquis} shows the three applications scaling from one to eight processors.
+All of them exhibited near-perfect speedup, with a 8-core speedups ranging from 7.65 to 7.95.
+Such speedup demonstrates the inherent parallelism of dual-tree algorithms and the ability for even our simple scheduler to achieve good load balance.
 
-On a dual-core AMD Athlon 2.0 GHz processor...
-97\%....
-median of three...
-
-write a short section like above...
+\begin{table*}
+  \centering
+  \begin{tabular}{|l|l|r|r||r|r|r||r|r|}
+    \hline
+    Algorithm               & Data      & Number     & 1-core. & 2-core.  & 4-core.  & 8-core.  & 8-core. & 8-core.
+    \\
+    Name                    & Source    & Instances  & Seconds & \% Ideal & \% Ideal & \% Ideal & Seconds & Speedup
+    \\ \hline \hline
+    % With serial overhead: 0.45 40.5
+    Neighbors               & Speech    & 100,000  & 30.35  & 99 & 97 & 96 & 3.96 & 7.65
+    \\ \hline
+    % With serial overhead: 0.84 75.3
+    KDE                     & Colors    & 50,000    & 94.61 & 99 & 99 & 99 & 11.83 & 7.99
+    \\ \hline
+    % With serial overhead: 0.59 52.7
+    Range Count (High $w$)  & LCDM      & 1,000,000  & 133.46 & 100 & 100 & 99 & 16.93 & 7.88
+    \\ \hline
+    % With serial overhead: 0.44 40.0
+    Range Count (Low $w$)   & LCDM      & 1,000,000 & 1124.26 & 100 & 100 & 99 & 141.49 & 7.95
+    \\ \hline
+  \end{tabular}
+  \caption{
+  \label{tab:maquis}
+  Multi-core performance for selected problems.
+  We show single-processor runtime and percentage of ideal speedup achieved with parallelism, median of three trials.
+  Performed on dual-socket quad-core Intel Core 2 Duo 1.8 GHz.
+  }
+\end{table*}
 
 %We consider a workstation-grade SMP implementation, keeping in mind the ``interactivity'' use-case.
 %For each problem set and data distribution, we ran our code using from 1 to 8 processors on an eight-core system.
@@ -1337,7 +1358,7 @@ write a short section like above...
   }
 \end{table*}
 
-To demonstrate the distributed-memory features of THOR, we parallelize some larger scale data mining problems to a cluster\footnote{The cluster is provided by an equipment grant from Intel Corporation.} of 90 processors.
+To demonstrate the distributed-memory features of THOR, we parallelize some larger scale data mining problems to a cluster\footnote{The cluster is provided by a gracious grant from Intel Corporation.} of 90 processors.
 Rather than attempt to parallelize small problems with marginal realistic speedup, we wish to parallelize data mining applications that are so time-consuming that they are impractical on a single processor.
 Since for rigor we must also demonstrate on a single processor, we select medium problem sizes that take hours on a single processor, but ideally a minute or two on a cluster.
 
@@ -1362,8 +1383,8 @@ Not surprisingly, the most time-consuming problem parallelized the best, as the 
 \section{Future Directions}
 
 This paper presents an initial version of THOR that efficient parallelizes dual-tree algorithms in many cases, and we are pursuing several next steps.
-A modified computational model would allow efficient execution of 3-tree, 4-tree, and further multi-tree algorithms, to solve problems such as 3-point correlation that currently have scant efficient parallel implementations.
-\authorsnote{"could also add that we're also working on demonstrating this approach in the context of computational physics problems, if there's space"}
+An extended computational model would allow efficient execution of 3-tree, 4-tree, and further multi-tree algorithms, to solve problems such as 3-point correlation that currently have scant efficient parallel implementations.
+%\authorsnote{"could also add that we're also working on demonstrating this approach in the context of computational physics problems, if there's space"}
 
 Higher-quality implementations may also allow THOR to scale to thousands of processors.
 Such scaling may require specialized knowledge of the hardware and the problem at hand, much in the way algorithms have been fine-tuned in the past; however, the fine tuning can be developed as a core part of THOR rather than in specialized user code.
