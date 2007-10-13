@@ -246,9 +246,9 @@ For a significant subclass of these problems, which we call \defterm{generalized
 Higher-order divide and conquer on metric data typically utilizes space-partitioning trees, such as $kd$-trees \cite{preparata_kdtrees}, ball trees \cite{anchors_balltrees_moore}, and cover trees \cite{covertrees}, to assist in dividing the data into regions.
 This use of trees is called the \defterm{dual-tree} or the broader \defterm{multi-tree} approach.
 
-%This approach generalizes long-used algorithms such as $kd$-tree-based nearest-neighbor search \cite{friedman_bentley_finkel}, as well as more recent algorithms using space-partitioning trees for N-body physical simulation such as the celebrated Fast Multipole Method (FMM) \cite{greengard_fmm} and for statistical problems like kernel regression \cite{moore97efficient}.
-%For nearest-neighbor search and kernel regression, the dual-tree approach generalizes these earlier algorithms by considering all query points simultaneously, by organizing them in a second tree.
-%The multi-tree approach generalizes the FMM by casting it recursively, allowing arbitary tree structures, recursion patterns, approximation schemes, and error criteria.
+This approach generalizes long-used algorithms such as $kd$-tree-based nearest-neighbor search \cite{friedman_bentley_finkel}, as well as more recent algorithms using space-partitioning trees for N-body physical simulation such as the celebrated Fast Multipole Method (FMM) \cite{greengard_fmm} and for statistical problems like kernel regression \cite{moore97efficient}.
+For nearest-neighbor search and kernel regression, the dual-tree approach generalizes these earlier algorithms by considering all query points simultaneously, by organizing them in a second tree.
+The multi-tree approach generalizes the FMM by casting it recursively, allowing arbitary tree structures, recursion patterns, approximation schemes, and error criteria.
 This approach is applied to many statistical and physical problems on metric data, such as bounded-error kernel density estimation \cite{gray_nbody, gray_kde, lee_gauss1, lee_gauss2},  $k$-nearest-neighbor classification \cite{ting-liu}, kernel discriminant analysis \cite{nbc-compstat}, nearest neighbor search \cite{gray_nbody}, $n$-point correlation \cite{gray_nbody, moore01fast}, and more.
 For each of these problems, no overall faster serial algorithms are known.
 Other machine learning problems treated with this strategy include dimensionality reduction methods \cite{hochreiter00beyond}, nonparametric belief propagation \cite{alex-ihler}, linear algebraic machine learning methods \cite{freitas_fast}, and particle filters \cite{klaas-toward}.
@@ -471,14 +471,15 @@ We find that finer implementation control over the underlying implementation is 
 
 It seems paradoxical to desire both fine implementation control and simplified software development, but both are achievable when targeting a specific class of problems.
 Using a fine-tuned implementation of a generalized problem in a fast language, a developer plugs in the algorithmic specifics.
-MapReduce \cite{mapreduce} is a famous example for solving problems on massive data sets through the three-step process of preprocessing, reorganization, and aggregation.
+MapReduce \cite{mapreduce} is a well-known example for solving problems on massive data sets through the three-step process of preprocessing, reorganization, and aggregation.
 By targeting only this class of problems, MapReduce can use optimally efficient data decomposition methods, out-of-core sorting algorithms, and mechanisms for fault-tolerance.
 Additionally, very little work on the part of the programmer is needed to the extent that writing the parallel algorithm can be simpler than writing the serial algorithm.
-It is imperative to state that although many machine learning tasks are simple in MapReduce, generalized $N$-body problems are an extremely poor fit for the model\footnote{
+It is imperative to state that although many machine learning tasks are simple in MapReduce, generalized $N$-body problems cannot be efficiently represented in the model\footnote{
   Theoretically, MapReduce can solve any problem a {\tt for} loop can.
   Briefly, building a $kd$-tree or ball tree in MapReduce is possible, though difficult and inefficient, requiring a logarithmic number of passes.
   Then, using the task decomposition described later in this paper, one may break the query tree into chunks and execute each chunk with a dual-tree algorithm against the entire reference tree.
   MapReduce then distributes tasks statically without regard for tree locality, requiring in most cases all machines to have almost the entire reference tree.
+  Such data transfer is expensive, and additionally, MapReduce operates on strings rather than native types.
   Single-tree are marginally simpler to implement on MapReduce, but suffer from the same problem.
   }.
 
@@ -941,31 +942,31 @@ Next, we show how THOR uses the model to parallelizes these algorithms, by viewi
 \section{Parallel Execution}
 
 Parallelization of {\em any} algorithm requires addressing how the problem is divided, what communication is necessary, and how work is balanced.
-Decades of research into the parallelization of the Barnes-Hut and Fast Multipole algorithms gives insight into the parallelization of dual-tree algorithms.
-However, we make significant deviations because of fundamental differences of dual-tree algorithms and the generality of both the data structures used and the problems solved.
+Decades of research into the parallelization of the Barnes-Hut and Fast Multipole algorithms provide insight into the parallelization of dual-tree algorithms.
+However, we make significant deviations because of fundamental differences of dual-tree algorithms and the generality of the data structures used and the problems solved.
 
 \mysub{Task Decomposition}
 
-Executing a dual-tree algorithm involves two phases: tree building and computation of the GNP.
-We focus on parallelizing the latter, since tree building is typically very fast compared to execution of the GNP.
-There eixst parallel $kd$-tree algorithms such as in \cite{alfuraih00parallel}, and in many cases, the tree can be stored to disk and be reused for many trials.
+Executing a dual-tree algorithm involves two phases: tree building and solving the GNP.
+Tree building is typically typically very fast compared to execution of the GNP, and in many cases, the tree can be stored to disk and be reused for many trials.
+There also eixst parallel $kd$-tree building algorithms such as \cite{alfuraih00parallel}.
+Thus, we focus on parallelizing the GNP only.
 
 A second-order generalized $N$-body problem is, by definition, decomposable in two orthogonal ways.
-We may consider parallelization as a type of allowable expansion permitted by the generalized $N$-body algorithm.
+Parallelization is an allowable expansion permitted by the generalized $N$-body algorithm.
 $\gnp(\kdroot{Q}, \kdroot{R})$ may be divided into subproblems $\gnp(Q_1,R_1), \gnp(Q_2,R_2), ..., \gnp(Q_k, R_k)$ such that $\Union_{1 \leq i \leq k} (Q_i \times R_i) = \kdroot{Q} \times \kdroot{R}$.
 Each subproblem can be executed in parallel, with results merged using $\odot$ ($\map$ for query-reference problems) and $\otimes$.
 Since the natural unit of subdivision for dual-tree algorithms is a tree node, we concentrate on decompositions where $Q_i$ and $R_i$ are tree nodes.
 
 Although many decompositions are possible, we decompose the problem only along the query tree into tasks $\gnp(Q_1, \kdroot{R}), \gnp(Q_2, \kdroot{R}), ..., \gnp(Q_k, \kdroot{R})$.
-Since $\bigodot$ is $\map$, all writable information is query-specific.
-With zero writes to shared data, no write synchronization is necessary.
-Furthermore, extrinsic pruning is highly dependent on the quality of query summary results for node $Q$ in the context of all reference points, that is, $\inmu(Q, \kdroot{R})$.
-Considering the entire reference tree on a single processor is advantageous because a high-quality value of $\lettermu$ can be computed on the local processor.
+Since $\bigodot$ is $\map$, all writable information is query-specific and no writes to shared data are necessary, resulting in low synchronization costs.
+Furthermore, extrinsic pruning is highly dependent on the quality of query summary results for node $Q$ in the context of {\it all} reference points, that is, $\inmu(Q, \kdroot{R})$.
+Considering the entire reference tree on a single processor allows a high-quality value of $\lettermu$ to be computed on the local processor.
 
-For single-operator problems like two-point correlation, one might consider decomposing both the query and reference tree because the only required communication is a single number.
-Unfortunately, the execution time of distant node pairs tends to be orders of magnitude less than that of nearby node pairs; such variance is extremely problematic for a generalized scheduler.
-Our experience shows that a query-tree decomposition scheme is typically manageable for even simple schedulers.
-Finally, it is worth noting that previous work parallelizing both Barnes-Hut and the FMM similarly divide work by queries \cite{liu94experiences, salmon_thesis, singh_thesis}.
+For single-operator problems like two-point correlation, one might consider decomposing both the query and reference tree because there is no distinction between query and reference.
+However, the execution time of distant node pairs tends to be orders of magnitude less than that of nearby node pairs; such variance is extremely problematic for a generalized scheduler.
+Instead, considering one node with the entire tree is more uniform in run time, and is typically manageable for even simple schedulers.
+Finally, it is worth noting that previous work parallelizing both Barnes-Hut and the FMM similarly divide work by queries only \cite{liu94experiences, salmon_thesis, singh_thesis}.
 
 We now define a single task to be the work of computing results for a subtree of queries.
 These queries are processed using a standard serial algorithm, such as the depth-first expansion in \fig{DepthFirst}.
@@ -988,26 +989,26 @@ Singh {\it et al.} describe an alternate \defterm{cost-zones} decomposition that
 The ordering is divided into contiguous segments with roughly equal estimated run time.
 \cite{singh95load} notes that this technique performs well because its decomposition is based on the same data structure used by Barnes-Hut.
 
-Unsurprisingly, locality issues in single-tree algorithms are very similar to those of dual-tree algorithms.
+Unsurprisingly, locality issues in dual-tree algorithms are very similar to those of single-tree algorithms.
 THOR combines the strengths from both ideas by building the $kd$-tree balanced the same way as an ORB.
-The tree is used for both computation and the domain decomposition.
+The same tree is used for both computation and the domain decomposition.
 
 A lurking point is that if the query and reference data sets are not the same, i.e. the problem is bichromatic, it may be helpful to distribute both data sets using the same spatial divisions.
-Our version builds each tree independently at a small loss in performance.
+Our version simply builds each tree independently, at a possible loss in performance.
 %, but in the common case that there are significantly more queries than references, the extra communication overhead is quite small.
 Further research into the tradeoffs involved is warranted.
 
-We later discuss how a domain decomposition is used as a starting point for scheduling tasks, and describe dynamic adaptations that are used when information about the relative amount of work is unavailable.
+We will later discuss how a domain decomposition is used as a starting point for scheduling tasks, and describe dynamic adaptations that are used when information about the relative amount of work is unavailable.
 
 \mysubsub{Nature of communication}
 
 In THOR, interprocessor communication has two flavors.
 Within a single machine, each processor may have its own cache that communicates over the bus to shared memory.
-For small-scale multi-core systems, dual-tree algorithms have a high enough cache hit rate that memory bandwidth is not typically a limiting factor.
+For small-scale multi-core systems, dual-tree algorithms have a high enough cache hit rate that memory bandwidth is rarely a limiting factor.
 %Modern multicore machines such as Intel's Core brand processors share L2 caches between consecutive nodes, and to maximize cache usage, it is best to assign these pairs similar chunks of the tree.
 
 However, distributed-memory implementations require more care because network interconnects are not so fast.
-Singh argues in his thesis \cite{singh_thesis} that the high data requirements of $N$-body methods preclude efficient distributed-memory implementations, and recommending costly shared-memory architectures instead.
+Singh argues in his thesis \cite{singh_thesis} that the high data requirements of $N$-body methods preclude efficient distributed-memory implementations, and recommends costly shared-memory architectures instead.
 Nonetheless, several authors \cite{salmon_thesis, liu94experiences, salmon97parallel} have developed successful message-passing implementations of both Barnes-Hut and the FMM.
 
 It is important also to acknowledge that GNP's have diverse computational characteristics.
@@ -1015,12 +1016,12 @@ In general, the most time-consuming dual-tree algorithms require somewhat more c
 For example, a nearest-neighbor computation for tens of millions of three-dimensional points can be computed in a few seconds on two cores, whereas a 100 megabit network transfer of that data set would take about a minute.
 For the same data, two-point correlation with a wide bandwidth may take hours, and the communication cost is relatively lower.
 
-Salmon \cite{salmon_thesis} and Liu and Bhatt \cite{liu94experiences}, in earlier work on Barnes-Hut, promote sender-initiated communication.
+Salmon \cite{salmon_thesis} and Liu and Bhatt \cite{liu94experiences}, in earlier work on Barnes-Hut, promote \defterm{sender-initiated communication}.
 Each machine precomputes which of its own points and nodes belong to the locally essential trees of other machines, sending them in advance.
 No latency cost of requesting remote data is paid, and therefore transfer time is the only limitation.
 Such prediction is possible since Barnes-Hut's pruning criterion is based solely on tree structure.
 
-Dual-tree algorithms have diverse pruning criteria that might not be available in advance.
+Dual-tree algorithms have diverse pruning criteria that are seldom computable in advance.
 In a later work, Salmon and Warren describe \cite{salmon97parallel} a successful Barnes-Hut implementation that fetches data on demand, avoiding latency by grouping points into \defterm{blocks} of a fixed size.
 Although they use blocks to allow an out-of-core (disk-based) $N$-body simulator, they show the same idea yields excellent parallel performance.
 Coincidentally, shared-memory systems also avoid latency by transferring fixed-sized cache lines.
@@ -1028,7 +1029,7 @@ THOR thus uses blocks because it allows on-demand access with low overall latenc
 
 \mysubsub{Distributed cache system}
 
-THOR's abstracts shared data as a cached array.
+THOR abstracts shared data as a software-cached array.
 The array contains fixed-sized elements that are divided into fixed-sized blocks, which are distributed among machines.
 One array contains points, one contains tree nodes, and another contains per-query results\footnote{Bichromatic problems require five caches: two for each tree, and one for results.}.
 An element is accessed by explicitly locking and unlocking its block into memory.
@@ -1057,7 +1058,7 @@ THOR's internals are then careful to write to independent regions of the tree be
 The $kd$-tree builder aligns splits to block boundaries whenever possible, ensuring that each block of points corresponds exactly to some tree node.
 Thus, each block of points encompasses a spatially contiguous hyper-rectangle of space.
 Tree nodes are stored pre-order and divided sequentially into blocks, ensuring that subtrees correspond to contiguous ranges of nodes, and thus can be manipulated using the simple consistency model.
-Blocks are then distributed via the aforementioned domain decomposition.
+Blocks are then distributed via the tree's domain decomposition.
 
 \mysub{Scheduling}
 Previous work \cite{salmon_thesis, singh_thesis} on scheduling $N$-body force calculation problems assumes that relative run-time can be predicted from prior iterations.
@@ -1082,7 +1083,7 @@ Instead, we dynamically assign tasks to processors during the course of computat
 Within a machine, uniform-sized chunking is used \cite{kruskal85allocating}.
 A shared work queue contains $k$ query nodes of roughly equal cardinality.
 A granularity parameter, $g$, determines the minimum number of tasks per processor, with $p$ total processors.
-These tasks are quickly enumerated by performing a depth-first traversal, terminating at subtrees with at most $\frac{n}{gp}$ points.
+These tasks are quickly enumerated by performing a depth-first traversal, terminating at subtrees with at most $\frac{N}{gp}$ points.
 
 When a thread becomes idle, it removes a task from the central queue.
 The overhead of this scheduler is small: $O(k)$ for the decomposition, and $O(k)$ for the work assignment.
@@ -1090,19 +1091,19 @@ For a few threads on a single machine, this method alone allows close to optimal
 
 %\authorsnote{At this point, I begin to describe a distributed scheduler that is different than the one THOR currently uses.
 %I soon plan on implementing it.  The above section is correct, however.}
-When multiple machines or non-uniform memory is used, the scheduler must manage two concerns: minimizing communication, but also ensuring a balanced load.
+When distributed or non-uniform memory is used, the scheduler must manage two concerns: minimizing communication, but also ensuring a balanced load.
 % TODO: Add banicescu back in if I end up citing her for another reason.
-Several papers \cite{markatos92using, salmon_thesis} mention the difficulty in achieving both goals simultaneously.
+Several papers \cite{markatos92using, salmon_thesis, banicescu95balancing} mention the difficulty in achieving both goals simultaneously.
 
 THOR uses the domain decomposition as a starting point for work assignment.
 Each machine's domain is divided into tasks using the previous method.
 When a worker becomes idle, it requests a work item from the central scheduler.
 Tasks are preferentially assigned from the worker's domain, but upon exhaustion, an overflow policy is used.
-THOR's current policy greedily assigns the unfinished task that is closest spatially to the centroid of the worker's previously completed work items.
+THOR's current policy greedily assigns the unfinished task that is closest spatially to the centroid of the worker's previously completed tasks.
 In practice, the overflow policy is usually invoked for about 10\% of tasks, usually in regions where queries are more computationally intensive.
 Since these regions are usually concentrated, lack of an overflow policy results in a minority of the processors dominating the overall run time.
 
-Although this scheduler is a centralized communications bottleneck, in practice this is insignificant compared to transfer of tree data.
+Although this scheduler is a centralized communication bottleneck, in practice this is insignificant compared to transfer of tree data.
 In future versions, concepts from Affinity Scheduling in \cite{markatos92using} may allow distributed scheduling while still ensuring locality.
 
 % This is talking about the scheduler THOR might want to use, but doesn't use.
@@ -1174,21 +1175,22 @@ In future versions, concepts from Affinity Scheduling in \cite{markatos92using} 
 %Once again, this section is a stub, we haven't done any experimentation.}
 
 The ideal goal of a parallel system such as THOR is to use all available clock cycles to perform useful computation.
-In practice, this is unachievable, so we must quantify to the extent that resources are utilized.
-After explaining our experimental design, we quantify THOR's three primary opportunities for under-utilization: software complexity overhead, load imbalance, and communication.
+In practice, this is unachievable, so we must quantify the extent that resources are utilized.
+After explaining our experimental design, we see THOR's three primary opportunities for under-utilization: software complexity overhead, load imbalance, and communication.
 
 \mysub{Implementation Notes}
 
 We concentrate on parallelizing the generalized $N$-body problem and not tree building, which is parallelizable as shown in \cite{alfuraih00parallel}, or may be loaded from file.
 After the tree is built or loaded from file on a single machine, it is distributed initially among machines via the domain decomposition.
-We then study only the execution time of the generalized $N$-body problem.%\authorsnote{Should probably show in a table how tree building, etc takes for the algorithms}
-All THOR code is written in C++, with heavy use of template programming.
+We then study only the execution time of the generalized $N$-body problem.
+%\authorsnote{Should probably show in a table how tree building, etc takes for the algorithms}
+All THOR code is C++, with heavy use of template programming.
 
 \mysub{Design}
 
 % you just need to state that in a positive light: the framework is geared towards breaking up larger problems; smaller problems can be solved effectively in serial
 
-Our experimental design carefully focuses on problems of practical impact.
+Our experimental design carefully focuses on problems of practical relevance.
 We present three different large-scale data mining applications, each having a different algorithm and data set.
 
 %We consider three major independent variables: the algorithm to run, the probability distribution or data set of origin, and the number of points.
@@ -1207,14 +1209,14 @@ We present three different large-scale data mining applications, each having a d
 %
 
 
-The LCDM data we use are three-dimensional positions of galactic halos from the Virgo Supercomputing Consortium's Lambda Cold Dark Matter simulation\footnote{
+The \defterm{LCDM} data we use are three-dimensional positions of galactic halos from the Virgo Supercomputing Consortium's Lambda Cold Dark Matter simulation\footnote{
     The LCDM data are from a simulation carried out by the Virgo Supercomputing Consortium using computers based at Computing Centre of the Max-Planck Society in Garching and at the Edinburgh Parallel Computing Centre.
     The data are publicly available at www.mpa-garching.mpg.de.}.
 Astronomers use the two-point and three-point correlations to examine cosmic structure and thus evaluate cosmological models.
 We look at the two-point correlation for a high bandwidth where 50\% of pairs fall within the bandwidth, and a low bandwidth with 15\%, using the depth-first pattern.
 The former has both high computational and high data requirements, whereas the latter has much lower computational but only somewhat lower communication requirements.
 
-Next, we examine four-dimensional color data of celestial bodies, some of which are quasars, obtained from the Sloan Digital Sky Survey\footnote{
+Next, we examine four-dimensional \defterm{color} data of celestial bodies, some of which are quasars, obtained from the Sloan Digital Sky Survey\footnote{
   Funding for the Sloan Digital Sky Survey (SDSS) has been provided by the Alfred E. Sloan Foundation, the participating institutions, the National Aeronautics and Space Administration, The National Science Foundation, the U.S. Department of Energy, the Japanese Monbukagakusho, and the Max Planck Society. The SDSS is a joint project of The University of Chicago, Fermilab, the Institute for Advanced Study, the Japan Participation Group, The Johns Hopkins University, the Max-Planck-Institute for Astronomy (MPIA), the Max-Planck-Institute for Astrophysics (MPA), New Mexico State University, Princeton University, the United States Naval Observatory and the University of Washington.
   %Funding for the Sloan Digital Sky Survey (SDSS) and SDSS-II has been provided by the Alfred P. Sloan Foundation, the Participating Institutions, the National Science Foundation, the U.S. Department of Energy, the National Aeronautics and Space Administration, the Japanese Monbukagakusho, and the Max Planck Society, and the Higher Education Funding Council for England.
   %The SDSS Web site is http://www.sdss.org/.
@@ -1225,7 +1227,7 @@ Since kernel methods are commonly used to determine if unknown bodies are quasar
 We use the finite-difference kernel density estimation algorithm in \cite{gray_kde} on subsets of these data, but employ the partially-recursive variant of breadth-first expansion.
 We use a Gaussian kernel at its optimal bandwith as determined by least-squares cross validation via the Gaussian convolution kernel.
 
-We also analyze frequency-domain MFCC features of speech data\footnote{The speech data set uses MFCC coefficients of frames from TIMIT, computed from code freely available from Voicebox.
+We also analyze frequency-domain MFCC features of \defterm{speech} data\footnote{The speech data set uses MFCC coefficients of frames from TIMIT, computed from code freely available from Voicebox.
    We take 12 MFCC from each 25 msec. frame with 50\% overlap, using code freely available from Voicebox.}.
 The ten-dimensional points are believed to lie on a lower-dimensional manifold.
 Since nearest neighbor search is frequently a step in manifold learning, we run the dual-recursive nearest neighbor algorithm.
@@ -1287,9 +1289,10 @@ We believe these overheads are quite reasonable given the advantages of THOR.
 
 \mysub{Multi-Threaded}
 
+Multi-threaded performance additionally demonstrates the effectiveness of the load balancer.
 \tab{maquis} shows the three applications scaling from one to eight processors.
 All of them exhibited near-perfect speedup, with a 8-core speedups ranging from 7.65 to 7.95.
-Such speedup demonstrates the inherent parallelism of dual-tree algorithms and the ability for even our simple scheduler to achieve good load balance.
+Such speedup demonstrates the inherent parallelism of dual-tree algorithms and the ability for even simple schedulers to achieve good load balance.
 
 \begin{table*}
   \centering
@@ -1328,7 +1331,6 @@ Such speedup demonstrates the inherent parallelism of dual-tree algorithms and t
 
 \mysub{Distributed Memory}
 
-
 \begin{table*}
   \centering
   \begin{tabular}{|l|l|r|r||r|r|r||r|r|}
@@ -1354,11 +1356,11 @@ Such speedup demonstrates the inherent parallelism of dual-tree algorithms and t
   \label{tab:distributed}
   Distributed-memory performance for selected problems.
   We show single-processor runtime and percentage of ideal speedup achieved with parallelism.
-  Performed on a cluster of 45 machines each with two NetBurst-class Intel Xeon processors at 3.2 GHz, connected via Infiniband 4X.
+  Performed on a cluster of 45 machines each with two NetBurst-class Intel Xeon processors at 3.2 GHz, connected via infiniband.
   }
 \end{table*}
 
-To demonstrate the distributed-memory features of THOR, we parallelize some larger scale data mining problems to a cluster\footnote{The cluster is provided by a gracious grant from Intel Corporation.} of 90 processors.
+To demonstrate communication between machines, we parallelize some larger scale data mining problems to a cluster\footnote{The cluster is provided by a gracious grant from Intel Corporation.} of 90 processors.
 Rather than attempt to parallelize small problems with marginal realistic speedup, we wish to parallelize data mining applications that are so time-consuming that they are impractical on a single processor.
 Since for rigor we must also demonstrate on a single processor, we select medium problem sizes that take hours on a single processor, but ideally a minute or two on a cluster.
 
@@ -1382,17 +1384,17 @@ Not surprisingly, the most time-consuming problem parallelized the best, as the 
 
 \section{Future Directions}
 
-This paper presents an initial version of THOR that efficient parallelizes dual-tree algorithms in many cases, and we are pursuing several next steps.
-An extended computational model would allow efficient execution of 3-tree, 4-tree, and further multi-tree algorithms, to solve problems such as 3-point correlation that currently have scant efficient parallel implementations.
+This paper presents an initial version of THOR that efficiently parallelizes many dual-tree algorithms, and we are pursuing several next steps.
+An extended computational model would allow execution of 3-tree, 4-tree, and further multi-tree algorithms, to solve problems such as 3-point correlation that currently have scant efficient parallel implementations.
 %\authorsnote{"could also add that we're also working on demonstrating this approach in the context of computational physics problems, if there's space"}
 
 Higher-quality implementations may also allow THOR to scale to thousands of processors.
 Such scaling may require specialized knowledge of the hardware and the problem at hand, much in the way algorithms have been fine-tuned in the past; however, the fine tuning can be developed as a core part of THOR rather than in specialized user code.
 
 In a large data center environment where the data are already distributed among processors, parallelizing the tree-building process as shown in \cite{alfuraih00parallel} would be imperative.
-Distributed dynamic scheduling techniques, such as Affinity Scheduling in \cite{markatos92using}, may reduce the centralized bottleneck.
+Distributed dynamic scheduling techniques, such as Affinity Scheduling in \cite{markatos92using}, may reduce centralized bottlenecks.
 
-If the dual-tree algorithm is run each time step in a simulation, a static load balancing scheme can use timing information from previous iterations, as in \cite{liu94experiences, salmon_thesis, singh_thesis}.
+If a dual-tree algorithm is executed each time step in a simulation, a static load balancing scheme can use timing information from previous iterations, as in \cite{liu94experiences, salmon_thesis, singh_thesis}.
 Also in simulations, data often already reside on the correct machine for the domain decomposition, so the tree can then be incrementally updated rather than rebuilt \cite{liu94experiences}.
 
 Finally, hardware failure is highly probable with thousands of computers.
