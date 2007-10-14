@@ -14,12 +14,8 @@ class NaiveKde {
   /** query dataset */
   Matrix qset_;
 
-  ArrayList<index_t> q_old_from_new_;
-
   /** reference dataset */
   Matrix rset_;
-
-  ArrayList<index_t> r_old_from_new_;
 
   /** kernel */
   TKernel kernel_;
@@ -60,14 +56,11 @@ class NaiveKde {
     densities_.SetZero();
   }
 
-  void Init(Matrix &qset, ArrayList<index_t> &q_old_from_new,
-	    Matrix &rset, ArrayList<index_t> &r_old_from_new) {
+  void Init(Matrix &qset, Matrix &rset) {
 
     // get datasets
     qset_.Alias(qset);
-    q_old_from_new_.Steal(&q_old_from_new);
     rset_.Alias(rset);
-    r_old_from_new_.Steal(&r_old_from_new);
 
     // get bandwidth
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
@@ -86,7 +79,7 @@ class NaiveKde {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
-      fprintf(stream, "%g\n", densities_[q_old_from_new_[q]]);
+      fprintf(stream, "%g\n", densities_[q]);
     }
     
     if(stream != stdout) {
@@ -256,23 +249,11 @@ class FastKde {
   /** query dataset */
   Matrix qset_;
 
-  /** 
-   * maps new indices of the query dataset to the old indices (of original
-   * text dataset
-   */
-  ArrayList<index_t> q_old_from_new_;
-
   /** query tree */
   Tree *qroot_;
 
   /** reference dataset */
   Matrix rset_;
-
-  /** 
-   * maps new indices of the reference dataset to the old indices (of original
-   * text dataset
-   */
-  ArrayList<index_t> r_old_from_new_;
   
   /** reference tree */
   Tree *rroot_;
@@ -757,16 +738,8 @@ class FastKde {
   /** get the reference dataset */
   Matrix &get_reference_dataset() { return rset_; }
 
-  ArrayList<index_t> &get_reference_old_from_new_mapping() {
-    return r_old_from_new_;
-  }
-
   /** get the query dataset */
   Matrix &get_query_dataset() { return qset_; }
-  
-  ArrayList<index_t> &get_query_old_from_new_mapping() {
-    return q_old_from_new_;
-  }
 
   /** get the density estimate */
   const Vector &get_density_estimates() { return densities_e_; }
@@ -840,20 +813,17 @@ class FastKde {
 
     // construct query and reference trees
     fx_timer_start(NULL, "tree_d");
-    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen,
-					    &r_old_from_new_);
+    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen);
 
     if(!strcmp(qfname, rfname)) {
       qset_.Alias(rset_);
       qroot_ = rroot_;
-      q_old_from_new_.Copy(r_old_from_new_);
     }
     else {
       Dataset query_dataset;
       query_dataset.InitFromFile(qfname);
       qset_.Own(&(query_dataset.matrix()));
-      qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen, 
-					      &q_old_from_new_);
+      qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen);
     }
     fx_timer_stop(NULL, "tree_d");
 
@@ -878,7 +848,7 @@ class FastKde {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
-      fprintf(stream, "%g\n", densities_e_[q_old_from_new_[q]]);
+      fprintf(stream, "%g\n", densities_e_[q]);
     }
     
     if(stream != stdout) {
