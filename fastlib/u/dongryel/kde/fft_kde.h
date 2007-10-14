@@ -1,14 +1,75 @@
 #ifndef FFT_KDE_H
 #define FFT_KDE_H
 
+#include <math.h>
+#include <values.h>
+
 /** 
  * computing kernel estimate using Fast Fourier Transform: I have
  * used multidimensional fast fourier transform called ffteasy
  */
-template<typename TKernel>
 class FFTKde {
   
  private:
+
+  /** constant TAU */
+  static const double TAU = 4.0;
+
+  /** query dataset */
+  Matrix qset_;
+
+  ArrayList<index_t> q_old_from_new_;
+
+  /** reference dataset */
+  Matrix rset_;
+
+  ArrayList<index_t> r_old_from_new_;
+
+  /** kernel */
+  GaussianKernel kernel_;
+
+  /** computed densities */
+  Vector densities_;
+
+  /** number of grid points along each dimension */
+  int m_;
+
+  /** number of points along each dimension in the zero padded */
+  ArrayList<int> size_;
+  
+  /** minimum coordinate along each dimension */
+  Vector mincoords_;
+
+  ArrayList<int> minindices_;
+
+  /** maximum coordinate along each dimension */
+  Vector maxcoords_;
+  
+  /** difference between min and max along each dimension */
+  Vector diffcoords_;
+
+  /** size of grid along each dimension */
+  Vector gridsizes_;
+
+  /** kernel weights along each dimension */
+  ArrayList<int>  kernelweights_dims_;
+
+  /** total number of grid points */
+  int numgridpts_;
+  
+  /** grid box volume */
+  double gridbinvolume_;
+
+  /** discretized dataset storing the assigned kernel weights */
+  Vector discretized_;
+
+  int nyquistnum_;
+
+  Vector d_fnyquist_;
+  
+  Vector k_fnyquist_;
+  
+  Vector kernelweights_;
 
   /**
    * Do a Fourier transform of an array of N complex numbers separated by
@@ -411,131 +472,105 @@ class FFTKde {
     free(indices);
   }
   
-  void assignWeights(double *datapt, double *gridsizes,
-		     double *mincoords, int *indices, int *enlarged_dims,
-		     double *discretized, int level, double volume, int pos,
-		     int skip) {
+  void assign_weights(int reference_pt_num, int level, double volume, int pos,
+		      int skip) {
     if(level == -1) {
-      discretized[pos] += volume;
+      discretized_[pos] += volume;
     }
     else {
       
       // Recurse in the right direction
-      double coord = datapt[level];
-      double leftgridcoord = mincoords[level] + indices[level] *
-	gridsizes[level];
-      double rightgridcoord = leftgridcoord + gridsizes[level];
+      double coord = rset_.get(level, reference_pt_num);
+      double leftgridcoord = mincoords_[level] + minindices_[level] *
+	gridsizes_[level];
+      double rightgridcoord = leftgridcoord + gridsizes_[level];
       double leftvolume = volume * (rightgridcoord - coord);
       double rightvolume = volume * (coord - leftgridcoord);
-      int nextskip = enlarged_dims[level] * skip;
-      int nextleftpos = pos + skip * indices[level];
+      int nextskip = size_[level] * skip;
+      int nextleftpos = pos + skip * minindices_[level];
       
       if(leftvolume > 0.0) {
-	assignWeights(datapt, gridsizes, mincoords, indices,
-		      enlarged_dims, discretized, level - 1, leftvolume,
-		      nextleftpos, nextskip);
+	assign_weights(reference_pt_num, level - 1, leftvolume, nextleftpos, 
+		       nextskip);
       }
 
       if(rightvolume > 0.0) {
-	assignWeights(datapt, gridsizes, mincoords, indices,
-		      enlarged_dims, discretized, level - 1, rightvolume,
-		      nextleftpos + skip, nextskip);
+	assign_weights(reference_pt_num, level - 1, rightvolume, 
+		       nextleftpos + skip, nextskip);
       }
     }
   }
 
-  void retrieveWeights(int dataptnum, double *datapt, int num_dims,
-		       double *gridsizes, double *discretized, int *size,
-		       int *indices, double *mincoords, double volume,
-		       double *densities, int level, int pos, int skip,
-		       double divfactor) {
+  void retrieve_weights(int query_pt_num, double volume, int level, int pos, 
+			int skip, double divfactor) {
 
     if(level == -1) {
-      densities[dataptnum] += discretized[pos] * volume / divfactor;
+      densities_[query_pt_num] += discretized_[pos] * volume / divfactor;
     }
     else {
       
       // Recurse in the right direction
-      double coord = datapt[level];
-      double leftgridcoord = mincoords[level] + indices[level] *
-	gridsizes[level];
-      double rightgridcoord = leftgridcoord + gridsizes[level];
+      double coord = qset_.get(level, query_pt_num);
+      double leftgridcoord = mincoords_[level] + minindices_[level] *
+	gridsizes_[level];
+      double rightgridcoord = leftgridcoord + gridsizes_[level];
       double leftvolume = volume * (rightgridcoord - coord);
       double rightvolume = volume * (coord - leftgridcoord);
-      int nextskip = size[level] * skip;
-      int nextleftpos = pos + skip * indices[level];
+      int nextskip = size_[level] * skip;
+      int nextleftpos = pos + skip * minindices_[level];
       
       if(leftvolume > 0.0) {
-	retrieveWeights(dataptnum, datapt, num_dims, gridsizes, discretized,
-			size, indices, mincoords, leftvolume, densities,
-			level - 1, nextleftpos, nextskip, divfactor);
+	retrieve_weights(query_pt_num, leftvolume, level - 1, nextleftpos, 
+			 nextskip, divfactor);
       }
       if(rightvolume > 0.0) {
-	retrieveWeights(dataptnum, datapt, num_dims, gridsizes, discretized,
-			size, indices, mincoords, rightvolume, densities,
-			level - 1, nextleftpos + skip, nextskip, divfactor);
+	retrieve_weights(query_pt_num, rightvolume, level - 1, 
+			 nextleftpos + skip, nextskip, divfactor);
       }
     }
   }
 
-  double *retrieveDensities(double *dataset, int num_rows, int dim,
-			    double *gridsizes, double *discretized,
-			    int *size, double *mincoords, 
-			    double gridbinvolume, double bandwidsqd) {
+  void retrieveDensities() {
 
-    double *densities = (double *) malloc(num_rows * sizeof(double));
-    double normc = pow((2.0 * PI * bandwidsqd),((double)dim) / 2.0) * 
-      num_rows;
+    double normc = 
+      pow((2.0 * M_PI * kernel_.bandwidth_sq()),
+	  ((double)rset_.n_rows()) / 2.0) * rset_.n_cols();
 
-    int r, d;
-    int *minindices = (int *) malloc(dim * sizeof(int));
-    
-    for(r = 0; r < num_rows; r++) {
-      densities[r] = 0.0;
+    for(index_t r = 0; r < qset_.n_cols(); r++) {
+      densities_[r] = 0.0;
       
-      for(d = 0; d < dim; d++) {
-	minindices[d] = floor((dataset[r * dim + d] - mincoords[d])/
-			      gridsizes[d]);
+      for(index_t d = 0; d < qset_.n_rows(); d++) {
+	minindices_[d] = (int) floor((qset_.get(d, r) - mincoords_[d])/
+				     gridsizes_[d]);
       }
-      retrieveWeights(r, dataset + r * dim, dim, gridsizes, discretized,
-		      size, minindices, mincoords, 1.0, densities, dim - 1,
-		      0.0, 1, gridbinvolume * normc);
+      retrieve_weights(r, 1.0, qset_.n_rows() - 1, 0, 1, 
+		       gridbinvolume_ * normc);
     }
-    free(minindices);
-    return densities;
   }
 
-  double *discretize_dataset(double *dataset, int num_rows, int dim,
-			     double bandwidth, double *gridsizes,
-			     double *mincoords, double *maxcoords,
-			     double *diffcoords, int *kernelweights_dims,
-			     int *enlarged_dims, int *numenlargedgridpts,
-			     double *gridbinvolume) {
+  void discretize_dataset() {
 
     // Temporary used to count the number of elements in the enlarged 
     // matrices for the kernel weights and bin counts. Also calculate the 
     // volume of each grid bin.
-    int numengridpts = 1;
-    double gvolume = 1.0;
-    
-    // This points to the discretized grids with each grid point storing the
-    // counts.
-    double *discretized;
-    
+    numgridpts_ = 1;
+    gridbinvolume_ = 1.0;
+        
     // Temporary index array to locate the bin for each data point.
-    int *minindices = (int *) malloc(dim * sizeof(int));
-    int r, d;
+    ArrayList<int> minindices;
+    minindices.Init(qset_.n_rows());
+
     double min, max;
     
     // Find the min/max in each coordinate direction, and calculate the grid
     // size in each dimension.
-    for(d = 0; d < dim; d++) {
+    for(index_t d = 0; d < qset_.n_rows(); d++) {
       int possiblesample;
       min = MAXDOUBLE;
       max = MINDOUBLE;
       
-      for(r = 0; r < num_rows; r++) {
-	double coord = dataset[r * dim + d];
+      for(index_t r = 0; r < rset_.n_cols(); r++) {
+	double coord = rset_.get(d, r);
 	if(coord > max)
 	  max = coord;
 	if(coord < min)
@@ -543,84 +578,77 @@ class FFTKde {
       }
       
       // Following Silverman's advice here
-      mincoords[d] = min;
-      maxcoords[d] = max;
-      diffcoords[d] = maxcoords[d] - mincoords[d];
-      gridsizes[d] = diffcoords[d] / ((double) M - 1);
-      gvolume *= gridsizes[d];
+      mincoords_[d] = min;
+      maxcoords_[d] = max;
+      diffcoords_[d] = maxcoords_[d] - mincoords_[d];
+      gridsizes_[d] = diffcoords_[d] / ((double) m_ - 1);
+      gridbinvolume_ *= gridsizes_[d];
 
       // Determine how many kernel weight calculation to do for this 
       // dimension.
-      kernelweights_dims[d] = M - 1;
-      possiblesample = floor(TAU * bandwidth / gridsizes[d]);
+      kernelweights_dims_[d] = m_ - 1;
+      possiblesample = (int) floor(TAU * sqrt(kernel_.bandwidth_sq()) / 
+				   gridsizes_[d]);
       
-      if(kernelweights_dims[d] > possiblesample) {
+      if(kernelweights_dims_[d] > possiblesample) {
 	if(possiblesample == 0)
 	  possiblesample = 1;
-	kernelweights_dims[d] = possiblesample;
+	kernelweights_dims_[d] = possiblesample;
       }
 
       // Wand p440: Need to calculate the actual dimension of the matrix
       // after the necessary 0 padding of the kernel weight matrix and the
       // bin count matrix.
-      enlarged_dims[d] = ceil(log(M + kernelweights_dims[d]) / log(2));
-      enlarged_dims[d] = 1 << enlarged_dims[d];
+      size_[d] = (int) ceil(log(m_ + kernelweights_dims_[d]) / log(2));
+      size_[d] = 1 << size_[d];
 
-      numengridpts *= enlarged_dims[d];
+      numgridpts_ *= size_[d];
     }
 
     // Allocate the memory for discretized grid count matrix and initialize 
     // it.
-    discretized = (double *) malloc(numengridpts * sizeof(double));
-    *numenlargedgridpts = numengridpts;
-    *gridbinvolume = gvolume;
-    gvolume = 1.0 / gvolume;
-    for(d = 0; d < numengridpts; d++)
-      discretized[d] = 0.0;
+    discretized_.Init(numgridpts_);
+    discretized_.SetZero();
 
+    double inv_gvolume = 1.0 / gridbinvolume_;
+    
     // Now loop over each data and calculate the weights at each grid point.
-    for(r = 0; r < num_rows; r++) {
+    for(index_t r = 0; r < rset_.n_cols(); r++) {
 
       // First locate the bin the data point falls into and identify it by
       // the lower grid coordinates.
-      for(d = 0; d < dim; d++) {
-	minindices[d] = floor((dataset[r * dim + d] - mincoords[d])/
-			      gridsizes[d]);
+      for(index_t d = 0; d < rset_.n_rows(); d++) {
+	minindices[d] = (int) floor((rset_.get(d, r) - mincoords_[d])/
+				    gridsizes_[d]);
       }
 
       // Assign the weights around the neighboring grid points due to this
       // data point. This results in 2^num_dims number of recursion per data
       // point.
-      assignWeights(dataset + r * dim, gridsizes, mincoords, minindices,
-		    enlarged_dims, discretized, dim - 1, gvolume, 0, 1);
+      assign_weights(r, qset_.n_rows() - 1, inv_gvolume, 0, 1);
     }
-    free(minindices);
-    return discretized;
+
   }
   
-  void gaussify(double *gridsizes, int *enlarged_dims, double *kernelweights,
-		int *kernelweights_dims, double acc, double precalc, 
-		int level, int pos, int skip) {
+  void gaussify(double acc, double precalc, int level, int pos, int skip) {
 
     if(level == -1) {
-      kernelweights[pos] = exp(precalc * acc);
+      kernelweights_[pos] = exp(precalc * acc);
     }
     else {
-      int half = kernelweights_dims[level];
+      int half = kernelweights_dims_[level];
       int g;
       for(g = 0; g <= half; g++) {
-	double addThis = g * gridsizes[level];
+	double addThis = g * gridsizes_[level];
 	double newacc = acc + addThis * addThis;
-	int newskip = skip * enlarged_dims[level];
+	int newskip = skip * size_[level];
 	
-	gaussify(gridsizes, enlarged_dims, kernelweights, kernelweights_dims,
-		 newacc, precalc, level - 1, pos + skip * g, newskip);
+	gaussify(newacc, precalc, level - 1, pos + skip * g, newskip);
 	
 	// If this is not the 0th frequency, then do the mirror image thingie.
 	if(g != 0) {
-	  gaussify(gridsizes, enlarged_dims, kernelweights, 
-		   kernelweights_dims, newacc, precalc, level - 1,
-		   pos + skip * (enlarged_dims[level] - g), newskip);
+	  gaussify(newacc, precalc, level - 1,
+		   pos + skip * (size_[level] - g), newskip);
 	}
       }
     }
@@ -637,6 +665,84 @@ class FFTKde {
   FFTKde() {}
   
   ~FFTKde() {}
+
+  void Init(Matrix &qset, Matrix &rset) {
+    
+    // initialize the kernel and read in the number of grid points
+    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+    m_ = fx_param_int_req(NULL, "num_grid_pts_per_dim");
+
+    // set aliases to the query and reference datasets and initialize
+    // query density sets
+    qset_.Alias(qset);
+    densities_.Init(qset_.n_cols());
+    rset_.Alias(rset);
+
+    // initialize member variables.
+    size_.Init(qset_.n_rows());
+    minindices_.Init(rset_.n_rows());
+    mincoords_.Init(qset_.n_rows());
+    maxcoords_.Init(qset_.n_rows());
+    diffcoords_.Init(qset_.n_rows());
+    gridsizes_.Init(qset_.n_rows());
+    kernelweights_dims_.Init(qset_.n_rows());
+
+    // set up the discretized grid for the reference dataset
+    discretize_dataset();
+
+    nyquistnum_ = 2 * numgridpts_ / size_[rset_.n_rows() - 1];
+
+    d_fnyquist_.Init(nyquistnum_);
+    k_fnyquist_.Init(nyquistnum_);
+    kernelweights_.Init(numgridpts_);
+
+  }
+
+  void Compute() {
+
+    // FFT the discretized bin count matrix.
+    fftrn(discretized_.ptr(), d_fnyquist_.ptr(), rset_.n_rows(), 
+	  size_.begin(), 1);
+
+    // Calculate the required kernel weights at each grid point. This matrix
+    // will be convolved with fourier transformed data set.
+    double precalc = -0.5 / kernel_.bandwidth_sq();
+    gaussify(0.0, precalc, rset_.n_rows() - 1, 0, 1);
+
+    // FFT the kernel weight matrix.
+    fftrn(kernelweights_.ptr(), k_fnyquist_.ptr(), 
+	  rset_.n_rows(), size_.begin(), 1);
+
+    // We need to invoke the convolution theorem for FFT here. Take each
+    // corresponding complex number in kernelweights and discretized and do
+    // an element-wise multiplication. Later, pass it to inverse fft function,
+    // and we have our answer!
+    for(index_t d = 0; d < numgridpts_; d += 2) {
+      double real1 = discretized_[d];
+      double complex1 = discretized_[d + 1];
+      double real2 = kernelweights_[d];
+      double complex2 = kernelweights_[d + 1];
+      discretized_[d] = real1 * real2 - complex1 * complex2;
+      discretized_[d + 1] = real1 * complex2 + complex1 * real2;
+    }
+
+    for(index_t d = 0; d < nyquistnum_; d += 2) {
+      double real1 = d_fnyquist_[d];
+      double complex1 = d_fnyquist_[d + 1];
+      double real2 = k_fnyquist_[d];
+      double complex2 = k_fnyquist_[d + 1];
+      d_fnyquist_[d] = real1 * real2 - complex1 * complex2;
+      d_fnyquist_[d + 1] = real1 * complex2 + complex1 * real2;
+    }
+
+    // Inverse FFT the elementwise multiplied matrix.
+    fftrn(discretized_.ptr(), d_fnyquist_.ptr(), 
+	  rset_.n_rows(), size_.begin(), -1);
+
+    // Retrieve the densities of each data point.
+    retrieveDensities();
+
+  }
 
 };
 

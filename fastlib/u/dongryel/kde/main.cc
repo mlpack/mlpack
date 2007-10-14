@@ -1,4 +1,5 @@
 #include "fastlib/fastlib_int.h"
+#include "fft_kde.h"
 #include "kde.h"
 
 int main(int argc, char *argv[]) {
@@ -21,9 +22,7 @@ int main(int argc, char *argv[]) {
   if(do_naive) {
     NaiveKde<GaussianKernel> naive_kde;
     naive_kde.Init(fast_kde.get_query_dataset(),
-		   fast_kde.get_query_old_from_new_mapping(),
-		   fast_kde.get_reference_dataset(),
-		   fast_kde.get_reference_old_from_new_mapping());
+		   fast_kde.get_reference_dataset());
     naive_kde.Compute();
 
     if(fx_param_exists(NULL, "naive_kde_output")) {
@@ -31,6 +30,10 @@ int main(int argc, char *argv[]) {
     }
     naive_kde.ComputeMaximumRelativeError(fast_kde_results);
   }
+
+  FFTKde fft_kde;
+  fft_kde.Init(fast_kde.get_query_dataset(),
+	       fast_kde.get_reference_dataset());
 
   fx_done();
   return 0;
