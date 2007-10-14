@@ -13,9 +13,13 @@ class NaiveKde {
   
   /** query dataset */
   Matrix qset_;
-  
+
+  ArrayList<index_t> q_old_from_new_;
+
   /** reference dataset */
   Matrix rset_;
+
+  ArrayList<index_t> r_old_from_new_;
 
   /** kernel */
   TKernel kernel_;
@@ -56,18 +60,21 @@ class NaiveKde {
     densities_.SetZero();
   }
 
-  void Init(Matrix &qset, Matrix &rset) {
+  void Init(Matrix &qset, ArrayList<index_t> &q_old_from_new,
+	    Matrix &rset, ArrayList<index_t> &r_old_from_new) {
 
     // get datasets
     qset_.Alias(qset);
+    q_old_from_new_.Steal(&q_old_from_new);
     rset_.Alias(rset);
+    r_old_from_new_.Steal(&r_old_from_new);
 
     // get bandwidth
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
     
     // allocate density storage
     densities_.Init(qset.n_cols());
-    densities_.SetZero();    
+    densities_.SetZero();
   }
 
   void PrintDebug() {
@@ -78,7 +85,9 @@ class NaiveKde {
     if((fname = fx_param_str(NULL, "naive_kde_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
-    densities_.PrintDebug("Naive KDE results", stream);
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      fprintf(stream, "%g\n", densities_[q_old_from_new_[q]]);
+    }
     
     if(stream != stdout) {
       fclose(stream);
@@ -197,8 +206,11 @@ class FastKde {
     }
 
     void MergeChildBounds(KdeStat &left_stat, KdeStat &right_stat) {
+
+      // steal left and right children's tokens
       double min_mass_t = min(left_stat.mass_t_, right_stat.mass_t_);
 
+      // improve lower and upper bound
       mass_l_ = max(mass_l_, min(left_stat.mass_l_, right_stat.mass_l_));
       mass_u_ = min(mass_u_, max(left_stat.mass_u_, right_stat.mass_u_));
       mass_t_ += min_mass_t;
@@ -244,15 +256,27 @@ class FastKde {
   /** query dataset */
   Matrix qset_;
 
+  /** 
+   * maps new indices of the query dataset to the old indices (of original
+   * text dataset
+   */
+  ArrayList<index_t> q_old_from_new_;
+
   /** query tree */
   Tree *qroot_;
 
   /** reference dataset */
   Matrix rset_;
 
+  /** 
+   * maps new indices of the reference dataset to the old indices (of original
+   * text dataset
+   */
+  ArrayList<index_t> r_old_from_new_;
+  
   /** reference tree */
   Tree *rroot_;
-
+  
   /** reference weights */
   Vector rset_weights_;
 
@@ -288,7 +312,6 @@ class FastKde {
 
   // member functions
   void UpdateBounds(Tree *qnode, Tree *rnode, 
-		    KdeStat *left_stat, KdeStat *right_stat,
 		    double *dl, double *de, double *du, double *dt) {
     
     // query self statistics
@@ -348,7 +371,7 @@ class FastKde {
     
     // for a leaf node, incorporate the lower and upper bound changes into
     // its additional offset
-    if(left_stat == NULL) {
+    if(qnode->is_leaf()) {
       qstat.more_l_ += dl_ref;
       qstat.more_u_ += du_ref;
     } 
@@ -357,10 +380,10 @@ class FastKde {
     // the immediate descendants
     else {
       
-      left_stat->owed_l_ += dl_ref;
-      left_stat->owed_u_ += du_ref;
-      right_stat->owed_l_ += dl_ref;
-      right_stat->owed_u_ += du_ref;
+      qnode->left()->stat().owed_l_ += dl_ref;
+      qnode->left()->stat().owed_u_ += du_ref;
+      qnode->right()->stat().owed_l_ += dl_ref;
+      qnode->right()->stat().owed_u_ += du_ref;
     }
     
     // zero out lower and upper bounds
@@ -375,9 +398,14 @@ class FastKde {
     // compute unnormalized sum
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
       
+      // get query point
       const double *q_col = qset_.GetColumnPtr(q);
       for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+
+	// get reference point
 	const double *r_col = rset_.GetColumnPtr(r);
+
+	// pairwise distance and kernel value
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	double ker_value = kernel_.EvalUnnormOnSq(dsqd);
 
@@ -387,7 +415,7 @@ class FastKde {
       }
     }
     
-    // tally up the unused error components
+    // tally up the unused error components due to exhaustive computation
     qnode->stat().mass_t_ += rnode->count();
 
     // get a tighter lower and upper bound by looping over each query point
@@ -525,7 +553,7 @@ class FastKde {
       return 1;
     }
     else {
-      dl_ = du_ = dt_ = 0;
+      dl_ = de_ = du_ = dt_ = 0;
       return 0;
     }
   }
@@ -550,31 +578,33 @@ class FastKde {
   /** canonical fast KDE case */
   void FKde(Tree *qnode, Tree *rnode) {
 
+    // query node statistics
     KdeStat &stat = qnode->stat();
+
+    // left child and right child of query node statistics
     KdeStat *left_stat = NULL;
     KdeStat *right_stat = NULL;
 
-    // process density bound changes sent from the ancestor query nodes
-    // then tighten lower/upper bounds and the error reclaimed based on
-    // the children
+    // process density bound changes sent from the ancestor query nodes,
+    UpdateBounds(qnode, rnode, &stat.owed_l_, NULL, &stat.owed_u_, NULL);
+
+    // for non-leaf query node, tighten lower/upper bounds and the 
+    // reclaim tokens unused by the children.
     if(!qnode->is_leaf()) {
       left_stat = &(qnode->left()->stat());
       right_stat = &(qnode->right()->stat());
-      UpdateBounds(qnode, rnode, left_stat, right_stat, &stat.owed_l_, NULL,
-		   &stat.owed_u_, NULL);
       stat.MergeChildBounds(*left_stat, *right_stat);
     }
 
+    // try finite difference pruning first
     if(Prunable(qnode, rnode)) {
-      UpdateBounds(qnode, rnode, left_stat, right_stat, &dl_, &de_, &du_,
-		   &dt_);
+      UpdateBounds(qnode, rnode, &dl_, &de_, &du_, &dt_);
       return;
     }
 
-    // if prunable, then prune
+    // try series-expansion pruning
     else if(PrunableEnhanced(qnode, rnode)) {
-      UpdateBounds(qnode, rnode, left_stat, right_stat, &dl_, NULL, &du_, 
-		   &dt_);
+      UpdateBounds(qnode, rnode, &dl_, NULL, &du_, &dt_);
       return;
     }
     
@@ -641,19 +671,34 @@ class FastKde {
    */
   void PreProcess(Tree *node) {
 
+    // initialize the center of expansions and bandwidth for
+    // series expansion
     node->stat().Init(sqrt(kernel_.bandwidth_sq()), &sea_);
     node->bound().CalculateMidpoint
       (&(node->stat().farfield_expansion_.get_center()));
     node->bound().CalculateMidpoint
       (&(node->stat().local_expansion_.get_center()));
     
+    // initialize lower bound to 0
+    node->stat().mass_l_ = 0;
+    
+    // set the finite difference approximated amounts to 0
+    node->stat().mass_e_ = 0;
+
     // set the upper bound to the number of reference points
     node->stat().mass_u_ = rset_.n_cols();
 
+    // set the number of tokens to 0
+    node->stat().mass_t_ = 0;
+
     // for non-leaf node, recurse
     if(!node->is_leaf()) {
+      node->stat().owed_l_ = node->stat().owed_u_ = 0;
       PreProcess(node->left());
       PreProcess(node->right());
+    }
+    else {
+      node->stat().more_l_ = node->stat().more_u_ = 0;
     }
   }
 
@@ -711,10 +756,18 @@ class FastKde {
 
   /** get the reference dataset */
   Matrix &get_reference_dataset() { return rset_; }
-  
+
+  ArrayList<index_t> &get_reference_old_from_new_mapping() {
+    return r_old_from_new_;
+  }
+
   /** get the query dataset */
   Matrix &get_query_dataset() { return qset_; }
   
+  ArrayList<index_t> &get_query_old_from_new_mapping() {
+    return q_old_from_new_;
+  }
+
   /** get the density estimate */
   const Vector &get_density_estimates() { return densities_e_; }
 
@@ -728,7 +781,7 @@ class FastKde {
     // initialize the lower and upper bound densities
     densities_l_.SetZero();
     densities_e_.SetZero();
-    densities_u_.SetZero();
+    densities_u_.SetAll(rset_.n_cols());
 
     printf("\nStarting fast KDE...\n");
     fx_timer_start(NULL, "fast_kde_compute");
@@ -744,7 +797,7 @@ class FastKde {
     order_farfield_ = order_local_ = order_farfield_to_local_ = -1;
     FKde(qroot_, rroot_);
 
-    // postprocessing step
+    // postprocessing step for finalizing the sums
     PostProcess(qroot_);
 
     // normalize densities
@@ -787,27 +840,27 @@ class FastKde {
 
     // construct query and reference trees
     fx_timer_start(NULL, "tree_d");
-    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen, NULL);
+    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen,
+					    &r_old_from_new_);
 
     if(!strcmp(qfname, rfname)) {
       qset_.Alias(rset_);
       qroot_ = rroot_;
+      q_old_from_new_.Copy(r_old_from_new_);
     }
     else {
       Dataset query_dataset;
       query_dataset.InitFromFile(qfname);
       qset_.Own(&(query_dataset.matrix()));
-      qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen, NULL);
+      qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen, 
+					      &q_old_from_new_);
     }
     fx_timer_stop(NULL, "tree_d");
 
     // initialize the density lists
     densities_l_.Init(qset_.n_cols());
-    densities_l_.SetZero();
     densities_e_.Init(qset_.n_cols());
-    densities_e_.SetZero();
     densities_u_.Init(qset_.n_cols());
-    densities_u_.SetAll(rset_.n_cols());
 
     // initialize the kernel
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
@@ -824,7 +877,9 @@ class FastKde {
     if((fname = fx_param_str(NULL, "fast_kde_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
-    densities_e_.PrintDebug("Fast KDE results", stream);
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      fprintf(stream, "%g\n", densities_e_[q_old_from_new_[q]]);
+    }
     
     if(stream != stdout) {
       fclose(stream);
