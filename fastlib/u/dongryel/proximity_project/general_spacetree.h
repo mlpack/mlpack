@@ -129,10 +129,11 @@ class GeneralBinarySpaceTree {
    GeneralBinarySpaceTree *right_in) {
      left_ = left_in;
      right_ = right_in;
-     if (!is_leaf()) {
-       stat_.Init(data, begin_, count_, left_->stat_, right_->stat_);
-     } else {
+     if (is_leaf()) {
        stat_.Init(data, begin_, count_);
+     }
+     else {
+       stat_.Init(data, begin_, count_, left_->stat_, right_->stat_);
      }
    }
 

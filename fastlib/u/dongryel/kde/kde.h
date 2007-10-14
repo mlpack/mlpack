@@ -114,7 +114,8 @@ class FastKde {
   class KdeStat {
   public:
     
-    /** lower bound on the densities for the query points owned by this node */
+    /** lower bound on the densities for the query points owned by this node 
+     */
     double mass_l_;
     
     /**
@@ -128,7 +129,12 @@ class FastKde {
      */
     double owed_l_;
     
-    /** upper bound on the densities for the query points owned by this node */
+    /** stores the portion pruned by finite difference
+     */
+    double mass_e_;
+
+    /** upper bound on the densities for the query points owned by this node 
+     */
     double mass_u_;
     
     /**
@@ -160,6 +166,7 @@ class FastKde {
       mass_l_ = 0;
       more_l_ = 0;
       owed_l_ = 0;
+      mass_e_ = 0;
       mass_u_ = 0;
       more_u_ = 0;
       owed_u_ = 0;
@@ -200,9 +207,17 @@ class FastKde {
     }
 
     void PushDownTokens(KdeStat &left_stat, KdeStat &right_stat,
+			double *de,
 			LocalExpansion<TKernel, TKernelDerivative> 
 			*local_expansion, double *dt) {
     
+      if(de != NULL) {
+	double de_ref = *de;
+	left_stat.mass_e_ += de_ref;
+	right_stat.mass_e_ += de_ref;
+	*de = 0;
+      }
+
       if(local_expansion != NULL) {
 	local_expansion->TranslateToLocal(left_stat.local_expansion_);
 	local_expansion->TranslateToLocal(right_stat.local_expansion_);
@@ -258,7 +273,9 @@ class FastKde {
 
   /** temporary variable for storing lower bound change */
   double dl_;
-  
+
+  double de_;
+
   double du_;
   
   double dt_;
@@ -272,7 +289,7 @@ class FastKde {
   // member functions
   void UpdateBounds(Tree *qnode, Tree *rnode, 
 		    KdeStat *left_stat, KdeStat *right_stat,
-		    double *dl, double *du, double *dt) {
+		    double *dl, double *de, double *du, double *dt) {
     
     // query self statistics
     KdeStat &qstat = qnode->stat();
@@ -285,7 +302,13 @@ class FastKde {
     double du_ref = *du;
     qstat.mass_l_ += dl_ref;
     qstat.mass_u_ += du_ref;
-    
+
+    // incorporate finite difference pruning if available
+    if(de != NULL) {
+      qstat.mass_e_ += (*de);
+      *de = 0;
+    }
+
     // incorporate token change
     if(dt != NULL) {
       qstat.mass_t_ += (*dt);
@@ -480,10 +503,8 @@ class FastKde {
     
     // the new lower bound after incorporating new info
     dl_ = kernel_value_range.lo * num_references;
-    /*
     de_ = 0.5 * num_references * 
       (kernel_value_range.lo + kernel_value_range.hi);
-    */
     du_ = -kernel_value_range.hi * num_references;
 
     // refine the lower bound using the new lower bound info
@@ -499,7 +520,6 @@ class FastKde {
 
     // check pruning condition
     if(error <= allowed_err) {
-      order_farfield_to_local_ = 0;
       dt_ = num_references * 
 	(1.0 - (rroot_->count()) * m / (new_mass_l * tau_));
       return 1;
@@ -540,14 +560,21 @@ class FastKde {
     if(!qnode->is_leaf()) {
       left_stat = &(qnode->left()->stat());
       right_stat = &(qnode->right()->stat());
-      UpdateBounds(qnode, rnode, left_stat, right_stat, &stat.owed_l_,
+      UpdateBounds(qnode, rnode, left_stat, right_stat, &stat.owed_l_, NULL,
 		   &stat.owed_u_, NULL);
       stat.MergeChildBounds(*left_stat, *right_stat);
     }
 
+    if(Prunable(qnode, rnode)) {
+      UpdateBounds(qnode, rnode, left_stat, right_stat, &dl_, &de_, &du_,
+		   &dt_);
+      return;
+    }
+
     // if prunable, then prune
-    if(PrunableEnhanced(qnode, rnode)) {
-      UpdateBounds(qnode, rnode, left_stat, right_stat, &dl_, &du_, &dt_);
+    else if(PrunableEnhanced(qnode, rnode)) {
+      UpdateBounds(qnode, rnode, left_stat, right_stat, &dl_, NULL, &du_, 
+		   &dt_);
       return;
     }
     
@@ -578,7 +605,8 @@ class FastKde {
       if(rnode->is_leaf()) {
 	Tree *qnode_first = NULL, *qnode_second = NULL;
 
-	stat.PushDownTokens(*left_stat, *right_stat, NULL, &stat.mass_t_);
+	stat.PushDownTokens(*left_stat, *right_stat, NULL, NULL, 
+			    &stat.mass_t_);
 	BestNodePartners(rnode, qnode->left(), qnode->right(), &qnode_first,
 			 &qnode_second);
 	FKde(qnode_first, rnode);
@@ -589,7 +617,8 @@ class FastKde {
       // for non-leaf reference node, expand both query and reference nodes
       else {
 	Tree *rnode_first = NULL, *rnode_second = NULL;
-	stat.PushDownTokens(*left_stat, *right_stat, NULL, &stat.mass_t_);
+	stat.PushDownTokens(*left_stat, *right_stat, NULL, NULL, 
+			    &stat.mass_t_);
 	
 	BestNodePartners(qnode->left(), rnode->left(), rnode->right(),
 			 &rnode_first, &rnode_second);
@@ -617,6 +646,9 @@ class FastKde {
       (&(node->stat().farfield_expansion_.get_center()));
     node->bound().CalculateMidpoint
       (&(node->stat().local_expansion_.get_center()));
+    
+    // set the upper bound to the number of reference points
+    node->stat().mass_u_ = rset_.n_cols();
 
     // for non-leaf node, recurse
     if(!node->is_leaf()) {
@@ -634,14 +666,15 @@ class FastKde {
     if(qnode->is_leaf()) {
       for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 	densities_e_[q] +=
-	  stat.local_expansion_.EvaluateField(&qset_, q, NULL);
+	  stat.local_expansion_.EvaluateField(&qset_, q, NULL) +
+	  stat.mass_e_;
       }
     }
     else {
 
       // push down approximations
       stat.PushDownTokens(qnode->left()->stat(), qnode->right()->stat(),
-			  &stat.local_expansion_, NULL);
+			  &stat.mass_e_, &stat.local_expansion_, NULL);
       PostProcess(qnode->left());
       PostProcess(qnode->right());
     }
@@ -707,7 +740,7 @@ class FastKde {
     }
     
     // call main routine
-    dl_ = du_ = dt_ = 0;
+    dl_ = de_ = du_ = dt_ = 0;
     order_farfield_ = order_local_ = order_farfield_to_local_ = -1;
     FKde(qroot_, rroot_);
 
@@ -774,13 +807,13 @@ class FastKde {
     densities_e_.Init(qset_.n_cols());
     densities_e_.SetZero();
     densities_u_.Init(qset_.n_cols());
-    densities_u_.SetZero();
+    densities_u_.SetAll(rset_.n_cols());
 
     // initialize the kernel
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
 
     // initialize the series expansion object
-    sea_.Init(8, qset_.n_rows());
+    sea_.Init(fx_param_int(NULL, "order", 7), qset_.n_rows());
   }
 
   void PrintDebug() {
