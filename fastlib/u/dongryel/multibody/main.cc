@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
   if(!strcmp(kernel, "gaussianthreebody")) {
     fx_timer_start(NULL, "multibody");
     MultitreeMultibody<GaussianThreeBodyKernel, 
-      GaussianKernel, GaussianKernelDerivative> mtmb;
+      GaussianKernel, GaussianKernelAux> mtmb;
     mtmb.Init(bandwidth);
     mtmb.Compute(tau);
     fx_timer_stop(NULL, "multibody");
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   else if(!strcmp(kernel, "axilrodteller")) {
     fx_timer_start(NULL, "multibody");
     MultitreeMultibody<AxilrodTellerKernel, 
-      GaussianKernel, GaussianKernelDerivative> mtmb;
+      GaussianKernel, GaussianKernelAux> mtmb;
     mtmb.Init(bandwidth);
     mtmb.Compute(tau);
     fx_timer_stop(NULL, "multibody");

@@ -6,7 +6,7 @@
  */
 
 #include "fastlib/fastlib.h"
-#include "kernel_derivative.h"
+#include "kernel_aux.h"
 #include "farfield_expansion.h"
 #include "local_expansion.h"
 #include "series_expansion_aux.h"
@@ -36,7 +36,7 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 0.1;
 
   // declare expansion object
-  FarFieldExpansion<EpanKernel, EpanKernelDerivative> se;
+  FarFieldExpansion<EpanKernel, EpanKernelAux> se;
 
   // initialize expansion objects with respective center and the bandwidth
   se.Init(bandwidth, center, &sea);
@@ -124,7 +124,7 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3;
 
   // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
@@ -180,7 +180,7 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
-  LocalExpansion<GaussianKernel, GaussianKernelDerivative> se;
+  LocalExpansion<GaussianKernel, GaussianKernelAux> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 1
@@ -247,9 +247,9 @@ int TestTransFarToFar(const Matrix &data, const Vector &weights,
   new_center[1] = -2;
 
   // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se;
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se_translated;
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se_cmp;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se_translated;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se_cmp;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
@@ -309,8 +309,8 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   new_center[0] = new_center[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
-  LocalExpansion<GaussianKernel, GaussianKernelDerivative> se;
-  LocalExpansion<GaussianKernel, GaussianKernelDerivative> se_translated;
+  LocalExpansion<GaussianKernel, GaussianKernelAux> se;
+  LocalExpansion<GaussianKernel, GaussianKernelAux> se_translated;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
@@ -389,9 +389,9 @@ int TestMixFarField(const Matrix &data, const Vector &weights,
   data_comb.PrintDebug();
 
   // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se;
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se2;
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se3;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se2;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se3;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
@@ -479,9 +479,9 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
   data3.PrintDebug();
 
   // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se;
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se2;
-  FarFieldExpansion<GaussianKernel, GaussianKernelDerivative> se3;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se2;
+  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se3;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
