@@ -10,6 +10,7 @@
 
 #include "fastlib/fastlib.h"
 
+#include "mult_series_expansion_aux.h"
 #include "series_expansion_aux.h"
 
 /**
@@ -25,6 +26,8 @@ class GaussianKernelAux {
 
   /** pointer to the series expansion auxiliary object */
   SeriesExpansionAux *sea_;
+
+  MultSeriesExpansionAux *msea_;
 
   GaussianKernelAux() {}
 

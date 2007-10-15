@@ -3,8 +3,11 @@ librule(
     name = "series_expansion",               # this line can be safely omitted
     sources = ["series_expansion_aux.cc"],   # files that must be compiled
     headers = ["farfield_expansion.h",
+               "mult_farfield_expansion.h",
                "kernel_aux.h",
                "local_expansion.h",
+               "mult_local_expansion.h",
+               "mult_series_expansion_aux.h",
                "series_expansion_aux.h"],    # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # depends on fastlib core
     )
