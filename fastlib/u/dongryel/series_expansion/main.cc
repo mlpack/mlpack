@@ -8,7 +8,10 @@
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"
 #include "farfield_expansion.h"
+#include "mult_farfield_expansion.h"
 #include "local_expansion.h"
+#include "mult_local_expansion.h"
+#include "mult_series_expansion_aux.h"
 #include "series_expansion_aux.h"
 
 int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
@@ -523,6 +526,75 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
   return 1;
 }
 
+int TestMultInitAux(const Matrix& data) {
+
+  printf("\n----- TestMultInitAux -----\n");
+
+  MultSeriesExpansionAux msea;
+  msea.Init(3, data.n_rows());
+  msea.PrintDebug();
+
+  return 1;
+}
+
+int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
+			     int begin, int end) {
+  
+  printf("\n----- TestMultEvaluateFarField -----\n");
+
+  // bandwidth of sqrt(0.5) Gaussian kernel
+  double bandwidth = sqrt(0.5);
+  GaussianKernel kernel;
+  kernel.Init(sqrt(0.5));
+
+  // declare auxiliary object and initialize
+  MultSeriesExpansionAux sea;
+  sea.Init(10, data.n_rows());
+
+  // declare center at the origin
+  Vector center;
+  center.Init(2);
+  center.SetZero();
+
+  // to-be-evaluated point
+  Vector evaluate_here;
+  evaluate_here.Init(2);
+  evaluate_here[0] = evaluate_here[1] = 3;
+
+  // declare expansion objects at (0,0) and other centers
+  MultFarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
+
+  // initialize expansion objects with respective centers and the bandwidth
+  // squared of 0.5
+  se.Init(bandwidth, center, &sea);
+
+  // compute up to 4-th order multivariate polynomial.
+  se.AccumulateCoeffs(data, weights, begin, end, 10);
+
+  // print out the objects
+  se.PrintDebug();               // expansion at (0, 0)
+
+  // evaluate the series expansion
+  printf("Evaluated the expansion at (%g %g) is %g...\n",
+	 evaluate_here[0], evaluate_here[1],
+	 se.EvaluateField(NULL, -1, &evaluate_here));
+
+  // check with exhaustive method
+  double exhaustive_sum = 0;
+  for(index_t i = begin; i < end; i++) {
+    int row_num = i;
+    double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
+      (evaluate_here[0] - data.get(0, row_num)) +
+      (evaluate_here[1] - data.get(1, row_num)) * 
+      (evaluate_here[1] - data.get(1, row_num));
+    
+    exhaustive_sum += kernel.EvalUnnormOnSq(dsqd);
+
+  }
+  printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
+  return 1;
+}
+
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
@@ -543,6 +615,7 @@ int main(int argc, char *argv[]) {
   begin = 0; end = data.n_cols();
 
   // unit tests begin here!
+  /*
   DEBUG_ASSERT(TestInitAux(data) == 1);
   DEBUG_ASSERT(TestEvaluateFarField(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestEvaluateLocalField(data, weights, begin, end) == 1);
@@ -553,5 +626,9 @@ int main(int argc, char *argv[]) {
 
   DEBUG_ASSERT(TestConvolveFarField(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestMixFarField(data, weights, begin, end) == 1);
+  */
+  DEBUG_ASSERT(TestMultInitAux(data) == 1);
+  //DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
+
   fx_done();
 }
