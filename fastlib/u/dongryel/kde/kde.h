@@ -424,7 +424,8 @@ class FastKde {
    * checking for prunability of the query and the reference pair using
    * four types of pruning methods
    */
-  int PrunableEnhanced(Tree *qnode, Tree *rnode) {
+  int PrunableEnhanced(Tree *qnode, Tree *rnode, DRange &dsqd_range,
+		       DRange &kernel_value_range) {
 
     // actual amount of error incurred per each query/ref pair
     double actual_err = 0;
@@ -441,13 +442,8 @@ class FastKde {
 
     // number of reference points
     int num_references = rnode->count();
-    
+
     // try pruning after bound refinement:
-    DRange dsqd_range;
-    dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
-    dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-    DRange kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
-    
     // the new lower bound after incorporating new info
     dl_ = kernel_value_range.lo * num_references;
     du_ = -kernel_value_range.hi * num_references;
@@ -462,7 +458,9 @@ class FastKde {
     order_farfield_to_local_ = 
       farfield_expansion.OrderForConvertingToLocal(rnode->bound(), 
 						   qnode->bound(),
-						   dsqd_range.lo, allowed_err,
+						   dsqd_range.lo, 
+						   dsqd_range.hi, 
+						   allowed_err,
 						   &actual_err);
     if(order_farfield_to_local_ >= 0) {
       dt_ = num_references * 
@@ -472,8 +470,10 @@ class FastKde {
 
     if(qnode->count() < rnode->count()) {
       order_farfield_ =
-	farfield_expansion.OrderForEvaluating(rnode->bound(), dsqd_range.lo,
-					      allowed_err, &actual_err);
+	farfield_expansion.OrderForEvaluating(rnode->bound(), qnode->bound(),
+					      dsqd_range.lo,
+					      dsqd_range.hi, allowed_err, 
+					      &actual_err);
       if(order_farfield_ >= 0) {
 	dt_ = num_references * 
 	  (1.0 - (rroot_->count()) * actual_err / (new_mass_l * tau_));      
@@ -482,8 +482,10 @@ class FastKde {
     }
 
     order_local_ =
-      local_expansion.OrderForEvaluating(qnode->bound(), dsqd_range.lo,
-					 allowed_err, &actual_err);
+      local_expansion.OrderForEvaluating(rnode->bound(), qnode->bound(), 
+					 dsqd_range.lo,
+					 dsqd_range.hi, allowed_err, 
+					 &actual_err);
 
     if(order_local_ >= 0) {
       dt_ = num_references * 
@@ -496,7 +498,8 @@ class FastKde {
   }
 
   /** checking for prunability of the query and the reference pair */
-  int Prunable(Tree *qnode, Tree *rnode) {
+  int Prunable(Tree *qnode, Tree *rnode, DRange &dsqd_range,
+	       DRange &kernel_value_range) {
 
     // query node stat
     KdeStat &stat = qnode->stat();
@@ -504,12 +507,12 @@ class FastKde {
     // number of reference points
     int num_references = rnode->count();
 
-    // try pruning after bound refinement:
-    DRange dsqd_range;
+    // try pruning after bound refinement: first compute distance/kernel
+    // value bounds
     dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
     dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-    DRange kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
-    
+    kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
+
     // the new lower bound after incorporating new info
     dl_ = kernel_value_range.lo * num_references;
     de_ = 0.5 * num_references * 
@@ -559,6 +562,10 @@ class FastKde {
   /** canonical fast KDE case */
   void FKde(Tree *qnode, Tree *rnode) {
 
+    // temporary variable for holding distance/kernel value bounds
+    DRange dsqd_range;
+    DRange kernel_value_range;
+
     // query node statistics
     KdeStat &stat = qnode->stat();
 
@@ -578,13 +585,13 @@ class FastKde {
     }
 
     // try finite difference pruning first
-    if(Prunable(qnode, rnode)) {
+    if(Prunable(qnode, rnode, dsqd_range, kernel_value_range)) {
       UpdateBounds(qnode, rnode, &dl_, &de_, &du_, &dt_);
       return;
     }
 
     // try series-expansion pruning
-    else if(PrunableEnhanced(qnode, rnode)) {
+    else if(PrunableEnhanced(qnode, rnode, dsqd_range, kernel_value_range)) {
       UpdateBounds(qnode, rnode, &dl_, NULL, &du_, &dt_);
       return;
     }

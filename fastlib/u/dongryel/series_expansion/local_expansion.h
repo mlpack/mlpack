@@ -113,8 +113,10 @@ class LocalExpansion {
    * Computes the required order for evaluating the local expansion
    * for any query point within the specified region for a given bound.
    */
-  int OrderForEvaluating(const DHrectBound<2> &local_region,
+  int OrderForEvaluating(const DHrectBound<2> &far_field_region,
+			 const DHrectBound<2> &local_field_region,
 			 double min_dist_sqd_regions,
+			 double max_dist_sqd_regions,
                          double max_error, double *actual_error) const;
 
   /**
@@ -338,11 +340,14 @@ template<typename TKernel, typename TKernelAux>
 
 template<typename TKernel, typename TKernelAux>
   int LocalExpansion<TKernel, TKernelAux>::OrderForEvaluating
-  (const DHrectBound<2> &local_region, double min_dist_sqd_regions,
-   double max_error, double *actual_error) const {
+  (const DHrectBound<2> &far_field_region, 
+   const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+   double max_dist_sqd_regions, double max_error, double *actual_error) const {
 
-  return ka_.OrderForEvaluatingLocal(local_region, min_dist_sqd_regions,
-				     max_error, actual_error);
+  return ka_.OrderForEvaluatingLocal(far_field_region, local_field_region, 
+				     min_dist_sqd_regions,
+				     max_dist_sqd_regions, max_error, 
+				     actual_error);
 }
 
 template<typename TKernel, typename TKernelAux>
