@@ -2,7 +2,7 @@
 #define MULTIBODY_KERNEL_H
 
 #include "fastlib/fastlib_int.h"
-#include "u/dongryel/series_expansion/kernel_derivative.h"
+#include "u/dongryel/series_expansion/kernel_aux.h"
 
 class GaussianThreeBodyKernel {
   

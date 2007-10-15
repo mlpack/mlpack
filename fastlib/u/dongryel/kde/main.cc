@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
 
   bool do_naive = fx_param_exists(NULL, "do_naive");
 
-  FastKde<GaussianKernel, GaussianKernelDerivative> fast_kde;
+  FastKde<GaussianKernel, GaussianKernelAux> fast_kde;
   fast_kde.Init();
   fast_kde.Compute(fx_param_double(NULL, "tau", 0.1));
 
@@ -31,10 +31,11 @@ int main(int argc, char *argv[]) {
     naive_kde.ComputeMaximumRelativeError(fast_kde_results);
   }
 
+  /*
   FFTKde fft_kde;
   fft_kde.Init(fast_kde.get_query_dataset(),
 	       fast_kde.get_reference_dataset());
-
+  */
   fx_done();
   return 0;
 }

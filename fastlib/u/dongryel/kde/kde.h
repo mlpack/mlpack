@@ -4,7 +4,7 @@
 #include "fastlib/fastlib_int.h"
 #include "u/dongryel/series_expansion/farfield_expansion.h"
 #include "u/dongryel/series_expansion/local_expansion.h"
-#include "u/dongryel/series_expansion/kernel_derivative.h"
+#include "u/dongryel/series_expansion/kernel_aux.h"
 
 template<typename TKernel>
 class NaiveKde {
@@ -105,7 +105,7 @@ class NaiveKde {
 };
 
 
-template<typename TKernel, typename TKernelDerivative>
+template<typename TKernel, typename TKernelAux>
 class FastKde {
 
   public:
@@ -156,12 +156,12 @@ class FastKde {
     /**
      * Far field expansion created by the reference points in this node.
      */
-    FarFieldExpansion<TKernel, TKernelDerivative> farfield_expansion_;
+    FarFieldExpansion<TKernel, TKernelAux> farfield_expansion_;
     
     /**
      * Local expansion stored in this node.
      */
-    LocalExpansion<TKernel, TKernelDerivative> local_expansion_;
+    LocalExpansion<TKernel, TKernelAux> local_expansion_;
     
     /** Initialize the statistics */
     void Init() {
@@ -213,7 +213,7 @@ class FastKde {
 
     void PushDownTokens(KdeStat &left_stat, KdeStat &right_stat,
 			double *de,
-			LocalExpansion<TKernel, TKernelDerivative> 
+			LocalExpansion<TKernel, TKernelAux> 
 			*local_expansion, double *dt) {
     
       if(de != NULL) {
@@ -434,9 +434,9 @@ class FastKde {
     KdeStat &rstat = rnode->stat();
     
     // expansion objects
-    FarFieldExpansion<TKernel, TKernelDerivative> &farfield_expansion
+    FarFieldExpansion<TKernel, TKernelAux> &farfield_expansion
       = rstat.farfield_expansion_;
-    LocalExpansion<TKernel, TKernelDerivative> &local_expansion
+    LocalExpansion<TKernel, TKernelAux> &local_expansion
       = qstat.local_expansion_;
 
     // number of reference points
@@ -460,7 +460,7 @@ class FastKde {
     
     // get the order of approximations
     order_farfield_to_local_ = 
-      farfield_expansion.OrderForConvertingtoLocal(rnode->bound(), 
+      farfield_expansion.OrderForConvertingToLocal(rnode->bound(), 
 						   qnode->bound(),
 						   dsqd_range.lo, allowed_err,
 						   &actual_err);

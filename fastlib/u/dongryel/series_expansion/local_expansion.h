@@ -10,16 +10,16 @@
 #include <values.h>
 
 #include "fastlib/fastlib.h"
-#include "kernel_derivative.h"
+#include "kernel_aux.h"
 #include "series_expansion_aux.h"
 
-template<typename TKernel, typename TKernelDerivative>
+template<typename TKernel, typename TKernelAux> 
 class FarFieldExpansion;
 
 /**
  * Local expansion class
  */
-template<typename TKernel, typename TKernelDerivative>
+template<typename TKernel, typename TKernelAux>
 class LocalExpansion {
   FORBID_COPY(LocalExpansion);
   
@@ -27,7 +27,7 @@ class LocalExpansion {
   
   typedef TKernel Kernel;
   
-  typedef TKernelDerivative KernelDerivative;
+  typedef TKernelAux KernelAux;
 
  private:
   
@@ -46,9 +46,11 @@ class LocalExpansion {
   /** precomputed quantities */
   SeriesExpansionAux *sea_;
   
-  /** Derivative computer based on the kernel passed in */
-  KernelDerivative kd_;
+  /** auxiliary methods for the kernel (derivative, truncation error bound) */
+  KernelAux ka_;
 
+  /** error bound computer for the kernel */
+  
  public:
   
   LocalExpansion() {}
@@ -125,19 +127,19 @@ class LocalExpansion {
    * The translated coefficients are added up to the ones here.
    */
   void TranslateFromFarField
-    (const FarFieldExpansion<TKernel, TKernelDerivative> &se);
+    (const FarFieldExpansion<TKernel, TKernelAux> &se);
   
   /**
    * Translate to the given local expansion. The translated coefficients
    * are added up to the passed-in local expansion coefficients.
    */
   void TranslateToLocal
-    (LocalExpansion<TKernel, TKernelDerivative> &se);
+    (LocalExpansion<TKernel, TKernelAux> &se);
 
 };
 
-template<typename TKernel, typename TKernelDerivative>
-void LocalExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
+template<typename TKernel, typename TKernelAux>
+void LocalExpansion<TKernel, TKernelAux>::AccumulateCoeffs
 (const Matrix& data, const Vector& weights, 
  int begin, int end, int order) {
 
@@ -164,7 +166,7 @@ void LocalExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
   x_r_minus_x_Q.Init(dim);
   
   // sqrt two times bandwidth
-  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
   
   // for each data point,
   for(index_t r = begin; r < end; r++) {
@@ -176,12 +178,12 @@ void LocalExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
     }
     
     // precompute necessary partial derivatives based on coordinate difference
-    kd_.ComputeDirectionalDerivatives(x_r_minus_x_Q, derivative_map);
+    ka_.ComputeDirectionalDerivatives(x_r_minus_x_Q, derivative_map);
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
       ArrayList<int> mapping = sea_->get_multiindex(j);
-      arrtmp[j] = kd_.ComputePartialDerivative(derivative_map, mapping);
+      arrtmp[j] = ka_.ComputePartialDerivative(derivative_map, mapping);
     }
 
     for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -191,8 +193,8 @@ void LocalExpansion<TKernel, TKernelDerivative>::AccumulateCoeffs
   } // End of looping through each reference point.
 }
 
-template<typename TKernel, typename TKernelDerivative>
-  void LocalExpansion<TKernel, TKernelDerivative>::PrintDebug
+template<typename TKernel, typename TKernelAux>
+  void LocalExpansion<TKernel, TKernelAux>::PrintDebug
   (const char *name, FILE *stream) const {
   
     
@@ -231,8 +233,8 @@ template<typename TKernel, typename TKernelDerivative>
   fprintf(stream, "\n");
 }
 
-template<typename TKernel, typename TKernelDerivative>
-  double LocalExpansion<TKernel, TKernelDerivative>::
+template<typename TKernel, typename TKernelAux>
+  double LocalExpansion<TKernel, TKernelAux>::
   EvaluateField(Matrix* data, int row_num, Vector* x_q) const {
   
   index_t k, t, tail;
@@ -247,7 +249,7 @@ template<typename TKernel, typename TKernelDerivative>
   double sum = 0;
   
   // sqrt two bandwidth
-  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
 
   // temporary variable
   Vector x_Q_to_x_q;
@@ -294,8 +296,8 @@ template<typename TKernel, typename TKernelDerivative>
   return sum;
 }
 
-template<typename TKernel, typename TKernelDerivative>
-  void LocalExpansion<TKernel, TKernelDerivative>::Init
+template<typename TKernel, typename TKernelAux>
+  void LocalExpansion<TKernel, TKernelAux>::Init
   (double bandwidth, const Vector& center, SeriesExpansionAux *sea) {
   
   // copy kernel type, center, and bandwidth squared
@@ -304,13 +306,18 @@ template<typename TKernel, typename TKernelDerivative>
   order_ = 0;
   sea_ = sea;
 
+  // pass in the pointer to the kernel and the series expansion auxiliary
+  // object
+  ka_.kernel_ = &kernel_;
+  ka_.sea_ = sea_;
+
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
-template<typename TKernel, typename TKernelDerivative>
-  void LocalExpansion<TKernel, TKernelDerivative>::Init
+template<typename TKernel, typename TKernelAux>
+  void LocalExpansion<TKernel, TKernelAux>::Init
   (double bandwidth, SeriesExpansionAux *sea) {
   
   // copy kernel type, center, and bandwidth squared
@@ -319,79 +326,28 @@ template<typename TKernel, typename TKernelDerivative>
   order_ = 0;
   sea_ = sea;
 
+  // pass in the pointer to the kernel and the series expansion auxiliary
+  // object
+  ka_.kernel_ = &kernel_;
+  ka_.sea_ = sea_;
+
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
-template<typename TKernel, typename TKernelDerivative>
-  int LocalExpansion<TKernel, TKernelDerivative>::OrderForEvaluating
+template<typename TKernel, typename TKernelAux>
+  int LocalExpansion<TKernel, TKernelAux>::OrderForEvaluating
   (const DHrectBound<2> &local_region, double min_dist_sqd_regions,
    double max_error, double *actual_error) const {
-  
-  double frontfactor =
-    exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
-  double widest_width = 0;
-  int dim = local_region.dim();
-  int max_order = sea_->get_max_order();
-  
-  // find out the widest dimension and its length
-  for(index_t d = 0; d < dim; d++) {
-    DRange range = local_region.get(d);
-    widest_width = max(widest_width, range.width());
-  }
-  
-  double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
-  double r = widest_width / two_bandwidth;
-  
-  // This is not really necessary for O(D^p) expansion, but it is for
-  // speeding up the convergence of the Taylor expansion.
-  if(r >= 1.0)
-    return -1;
-  
-  double r_raised_to_p_alpha = 1.0;
-  double ret;
-  int p_alpha = 0;
-  double floor_fact, ceil_fact;
-  int remainder;
-  
-  do {
-    
-    if(p_alpha > max_order - 1)
-      return -1;
-    
-    r_raised_to_p_alpha *= r;
-    
-    floor_fact =
-      sea_->factorial((int)floor(((double) p_alpha) / ((double) dim)));
-    ceil_fact =
-      sea_->factorial((int)ceil(((double) p_alpha) / ((double) dim)));
-    
-    if(floor_fact < 0.0 || ceil_fact < 0.0)
-      return -1;
-    
-    remainder = p_alpha % dim;
-    
-    ret = frontfactor *
-      (sea_->get_total_num_coeffs(p_alpha + 1) -
-       sea_->get_total_num_coeffs(p_alpha)) * r_raised_to_p_alpha /
-      sqrt(pow(floor_fact, dim - remainder) * pow(ceil_fact, remainder));
-    
-    if(ret > max_error) {
-      p_alpha++;
-    }
-    else {
-      break;
-    }
-  } while(1);
-  
-  *actual_error = ret;
-  return p_alpha;
+
+  return ka_.OrderForEvaluatingLocal(local_region, min_dist_sqd_regions,
+				     max_error, actual_error);
 }
 
-template<typename TKernel, typename TKernelDerivative>
-  void LocalExpansion<TKernel, TKernelDerivative>::TranslateFromFarField
-  (const FarFieldExpansion<TKernel, TKernelDerivative> &se) {
+template<typename TKernel, typename TKernelAux>
+  void LocalExpansion<TKernel, TKernelAux>::TranslateFromFarField
+  (const FarFieldExpansion<TKernel, TKernelAux> &se) {
 
   Vector pos_arrtmp, neg_arrtmp;
   Matrix derivative_map;
@@ -402,7 +358,7 @@ template<typename TKernel, typename TKernelDerivative>
   int far_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(far_order);
   int limit;
-  double bandwidth_factor = kd_.BandwidthFactor(se.bandwidth_sq());
+  double bandwidth_factor = ka_.BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for far field expansion
   far_center.Alias(se.get_center());
@@ -427,7 +383,7 @@ template<typename TKernel, typename TKernelDerivative>
   }
 
   // compute required partial derivatives
-  kd_.ComputeDirectionalDerivatives(cent_diff, derivative_map);
+  ka_.ComputeDirectionalDerivatives(cent_diff, derivative_map);
   ArrayList<int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
@@ -443,7 +399,7 @@ template<typename TKernel, typename TKernelDerivative>
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
       double derivative_factor =
-	kd_.ComputePartialDerivative(derivative_map, beta_plus_alpha);
+	ka_.ComputePartialDerivative(derivative_map, beta_plus_alpha);
       
       double prod = far_coeffs[k] * derivative_factor;
 
@@ -462,9 +418,9 @@ template<typename TKernel, typename TKernelDerivative>
   }
 }
   
-template<typename TKernel, typename TKernelDerivative>
-  void LocalExpansion<TKernel, TKernelDerivative>::TranslateToLocal
-  (LocalExpansion<TKernel, TKernelDerivative> &se) {
+template<typename TKernel, typename TKernelAux>
+  void LocalExpansion<TKernel, TKernelAux>::TranslateToLocal
+  (LocalExpansion<TKernel, TKernelAux> &se) {
 
   // get the center and the order and the total number of coefficients of 
   // the expansion we are translating from. Also get coefficients we
@@ -486,7 +442,7 @@ template<typename TKernel, typename TKernelDerivative>
   tmp_storage.Init(dim);
 
   // sqrt two times bandwidth
-  double bandwidth_factor = kd_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
 
   // center difference between the old center and the new one
   Vector center_diff;
