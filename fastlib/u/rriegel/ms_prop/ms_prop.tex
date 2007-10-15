@@ -28,10 +28,10 @@
 \newcommand{\meq}{\mathrel{\mathord{-}\mathord{=}}}
 \newcommand{\maxeq}{\mathbin{\mathord{\max}\mathord{=}}}
 \newcommand{\mineq}{\mathbin{\mathord{\min}\mathord{=}}}
+\newcommand{\comp}{\mathbin{\circ}}
 
 \newcommand{\GenOp}[1]{\mathop{\bigotimes\nolimits_{\lefteqn{\scriptstyle \!#1}}}}
 \newcommand{\genop}[1]{\mathbin{\otimes_{\scriptscriptstyle \!#1}}}
-\newcommand{\comp}{\mathbin{\circ}}
 
 \newcommand{\Gnp}{\Psi}
 \newcommand{\gnp}{\psi}
@@ -61,81 +61,9 @@
 \newcommand{\lohi}[1]{#1^{l,u}}
 \newcommand{\hilo}[1]{#1^{u,l}}
 
-%\newcommand{\myOp}[1]{\mathop{\bigotimes\nolimits\hspace{-0.045in}_{#1}}}
-\newcommand{\nameOp}[2]{\mathop{#1\nolimits\!\!_{#2}}}
-\newcommand{\nameop}[2]{#1_{\!#2}}
-\newcommand{\myOp}[1]{\nameOp{\bigotimes}{#1}}
-%\newcommand{\myop}[1]{\otimes\hspace{-0.04in}_{#1}\hspace{0.03in}}
-\newcommand{\myop}[1]{\nameop{\otimes}{#1}}
-\newcommand{\myOutop}[1]{\nameOp{\bigodot}{#1}}
-\newcommand{\myoutop}[1]{\nameop{\odot}{#1}}
-
-\newcommand{\letterglob}{\psi}
-\newcommand{\outglob}{\Psi}
-\newcommand{\inglob}{\psi}
-\newcommand{\Opglob}{\myOp{\letterglob}}
-\newcommand{\opglob}{\myop{\letterglob}}
-\newcommand{\fglob}{f_{\letterglob}}
-\newcommand{\gglob}{g_{\letterglob}}
-\newcommand{\canpruneglob}{C_{\letterglob}}
-\newcommand{\deltaglob}{\summary_{\letterglob}}
-
-\newcommand{\letterqr}{v}
-\newcommand{\outqr}{V}
-\newcommand{\inqr}{v}
-\newcommand{\Opqr}{\myOp{\letterqr}}
-\newcommand{\opqr}{\myop{\letterqr}}
-\newcommand{\fqr}{f_{\letterqr}}
-\newcommand{\gqr}{g_{\letterqr}}
-
-\newcommand{\letterqrv}{v}
-%\newcommand{\outqrv}{\vec{\rho}}
-\newcommand{\inqrv}{v}
-%\newcommand{\fqrv}{f_{\letterqrv}}
-%\newcommand{\gqrv}{g_{\letterqrv}}
-\newcommand{\deltaqrv}{\summary_{\letterqrv}}
-\newcommand{\canpruneqrv}{C}%_{\letterqrv}}
-\newcommand{\varqr}{\hat{\letterqr}}
-%\newcommand{\varqrv}{\letterqrv^{\:C\!}}
-\newcommand{\varqrvparent}{\letterqrv^{P}}
-
-\newcommand{\lettermu}{e}
-\newcommand{\inmu}{e}
-\newcommand{\Outopmu}{\nameOp{\bigodot}{\lettermu}}%\mathop{\widehat{\bigodot\nolimits}\!\scriptstyle{\mu}}}
-\newcommand{\outopmu}{\myop{\lettermu}}
-\newcommand{\Opmu}{\myOp{\lettermu}}
-\newcommand{\opmu}{\myop{\lettermu}}
-\newcommand{\fmu}{f_{\lettermu}}
-\newcommand{\fmuv}{f_{\lettermu}}
-\newcommand{\deltamu}{\summary_{\lettermu}}
-\newcommand{\canprunemu}{C}
-\newcommand{\heurqr}{H}
-\newcommand{\varmuchild}{\hat{\lettermu}}
-%\newcommand{\varmuchild}{\lettermu^{C}}
-\newcommand{\varmuparent}{\lettermu^{U\!}}
-
-%\newcommand{\muparent}{\inmu_{\text{coarse}}}
-%\newcommand{\muchild}{\inmu_{\text{children}}}
-%\newcommand{\muvisit}{\inmu_{\text{visited}}}
-%\newcommand{\muall}{\inmu_{\text{all}}}
-
-%\newcommand{\hatpi}{\hat{\outpi}}
-%\newcommand{\piparent}{\outpi_{\text{parent}}}
-
-\newcommand{\letterstat}{s}
-\newcommand{\namestat}[1]{\sigma_{\text{#1}}}
-\newcommand{\outstat}{\sigma}
-\newcommand{\instat}{s}
-\newcommand{\Opstat}{\myOp{\letterstat}}
-\newcommand{\opstat}{\myop{\letterstat}}
-\newcommand{\fstat}{f_{\letterstat}}
-\newcommand{\gstat}{g_{\letterstat}}
-
-%% END GARRY ZONE
 
 
-
-\title{Thesis Proposal for the Microsoft Research Fellowship}
+\title{Towards a Calculus of Massive-Scale Machine Learning}
 \author{Ryan N.~Riegel --
     Georgia Institute of Technology --
     \texttt{rriegel@cc.gatech.edu}
@@ -474,7 +402,7 @@ play a critical role in cosmology.  As the most luminous objects in
 the universe, they may be used as markers of mass in the very
 distant/early universe, making them invaluable to the verification of
 theories such as dark energy.  Prior to our work, the largest
-available catalog of quasars listed less than one hundred thousdand
+available catalog of quasars listed fewer than one hundred thousand
 examples; massive sky surveys such as the Sloan Digital Sky Survey
 (SDSS), on the other hand, are expected to contain millions.  The
 challenge is then to identify quasars given the information made
@@ -490,7 +418,7 @@ bandwidths estimated from training data by a work-sharing
 multi-bandwidth version of the algorithm, the entire classification
 takes approximately 30 minutes on a single computer.  Already, an
 earlier rendition of our catalog has been used to confirm the cosmic
-magnification effect predicted by the relativity \cite{nature05}.
+magnification effect predicted by relativity \cite{nature05}.
 
 \section{How the MSR Fellowship Would Help}
 In an ongoing Microsoft seed effort, ``Data Mining Everywhere,'' we
