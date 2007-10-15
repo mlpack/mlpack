@@ -135,7 +135,7 @@ class PCAStat {
     // extract the relevant part of the dataset and mean-center it
     ExtractSubMatrix(dataset, start, count, orig_mean_centered_);
     ComputeColumnMeanVector(orig_mean_centered_, means_);
-    //SubtractVectorFromMatrix(orig_mean_centered_, means_, orig_mean_centered_);
+    SubtractVectorFromMatrix(orig_mean_centered_, means_, orig_mean_centered_);
 
     // compute PCA on the extracted submatrix
     Matrix U, VT;
@@ -144,7 +144,7 @@ class PCAStat {
 
     // reduce the dimension in half
     Matrix U_trunc;
-    int new_dimension = U.n_cols() / 2;
+    int new_dimension = U.n_cols();
     U_trunc.Init(new_dimension, U.n_rows());
     for(index_t i = 0; i < new_dimension; i++) {
       Vector s;
