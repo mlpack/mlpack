@@ -8,7 +8,8 @@ librule(
                "local_expansion.h",
                "mult_local_expansion.h",
                "mult_series_expansion_aux.h",
-               "series_expansion_aux.h"],    # include files part of the 'lib'
+               "series_expansion_aux.h",
+               "mult_series_expansion_aux.h"],# include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # depends on fastlib core
     )
 

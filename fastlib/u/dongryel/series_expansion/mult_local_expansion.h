@@ -135,8 +135,7 @@ class MultLocalExpansion {
    * Translate to the given local expansion. The translated coefficients
    * are added up to the passed-in local expansion coefficients.
    */
-  void TranslateToLocal
-    (MultLocalExpansion<TKernel, TKernelAux> &se);
+  void TranslateToLocal(MultLocalExpansion<TKernel, TKernelAux> &se);
 
 };
 
@@ -191,7 +190,7 @@ void MultLocalExpansion<TKernel, TKernelAux>::AccumulateCoeffs
       ArrayList<int> mapping = sea_->get_multiindex(index);
       arrtmp[index] = ka_.ComputePartialDerivative(derivative_map, mapping);
     }
-
+    
     for(index_t j = 0; j < total_num_coeffs; j++) {
       int index = traversal_order[j];
       coeffs_[index] += neg_inv_multiindex_factorials[index] * weights[r] * 
@@ -288,7 +287,26 @@ template<typename TKernel, typename TKernelAux>
   ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
 
   /****** NEEDS FIXING ****/
-
+  for(index_t i = 1; i < total_num_coeffs; i++) {
+    
+    int index = traversal_order[i];
+    ArrayList<int> &lower_mappings = sea_->lower_mapping_index_[index];
+    
+    // from the direct descendant, recursively compute the multipole moments
+    int direct_ancestor_mapping_pos = 
+      lower_mappings[lower_mappings.size() - 2];
+    int position = 0;
+    ArrayList<int> &mapping = sea_->multiindex_mapping_[index];
+    ArrayList<int> &direct_ancestor_mapping = 
+      sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
+    for(index_t i = 0; i < dim; i++) {
+      if(mapping[i] != direct_ancestor_mapping[i]) {
+	position = i;
+	break;
+      }
+    }
+    tmp[index] = tmp[direct_ancestor_mapping_pos] * x_Q_to_x_q[position];
+  }
 
   for(index_t i = 0; i < total_num_coeffs; i++) {
     int index = traversal_order[i];
@@ -344,10 +362,10 @@ template<typename TKernel, typename TKernelAux>
    const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
    double max_dist_sqd_regions, double max_error, double *actual_error) const {
 
-  return ka_.OrderForEvaluatingLocal(far_field_region, local_field_region, 
-				     min_dist_sqd_regions,
-				     max_dist_sqd_regions, max_error, 
-				     actual_error);
+  return ka_.OrderForEvaluatingMultLocal(far_field_region, local_field_region, 
+					 min_dist_sqd_regions,
+					 max_dist_sqd_regions, max_error, 
+					 actual_error);
 }
 
 template<typename TKernel, typename TKernelAux>
@@ -392,34 +410,41 @@ template<typename TKernel, typename TKernelAux>
   ArrayList<int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
+  // get the order of traversal for the given order of approximation
+  ArrayList<int> &traversal_order = sea_->traversal_mapping_[far_order];
+
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    ArrayList<int> beta_mapping = sea_->get_multiindex(j);
-    pos_arrtmp[j] = neg_arrtmp[j] = 0;
+    int index_j = traversal_order[j];
+    ArrayList<int> beta_mapping = sea_->get_multiindex(index_j);
+    pos_arrtmp[index_j] = neg_arrtmp[index_j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
-      ArrayList<int> alpha_mapping = sea_->get_multiindex(k);
+      int index_k = traversal_order[k];
+      ArrayList<int> alpha_mapping = sea_->get_multiindex(index_k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
       double derivative_factor =
 	ka_.ComputePartialDerivative(derivative_map, beta_plus_alpha);
       
-      double prod = far_coeffs[k] * derivative_factor;
+      double prod = far_coeffs[index_k] * derivative_factor;
 
       if(prod > 0) {
-	pos_arrtmp[j] += prod;
+	pos_arrtmp[index_j] += prod;
       }
       else {
-	neg_arrtmp[j] += prod;
+	neg_arrtmp[index_j] += prod;
       }
     } // end of k-loop
   } // end of j-loop
 
   Vector C_k_neg = sea_->get_neg_inv_multiindex_factorials();
   for(index_t j = 0; j < total_num_coeffs; j++) {
-    coeffs_[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
+    int index_j = traversal_order[j];
+    coeffs_[index_j] += (pos_arrtmp[index_j] + neg_arrtmp[index_j]) * 
+      C_k_neg[index_j];
   }
 }
   
@@ -465,23 +490,28 @@ template<typename TKernel, typename TKernelAux>
   // inverse multiindex factorials
   Vector C_k;
   C_k.Alias(sea_->get_inv_multiindex_factorials());
-  
+
+  // get the order of traversal for the given order of approximation
+  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+
   // do the actual translation
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    ArrayList<int> alpha_mapping = sea_->get_multiindex(j);
-    ArrayList <int> upper_mappings_for_alpha = upper_mapping_index[j];
+    int index_j = traversal_order[j];
+    ArrayList<int> alpha_mapping = sea_->get_multiindex(index_j);
+    ArrayList <int> upper_mappings_for_alpha = upper_mapping_index[index_j];
     double pos_coeffs = 0;
     double neg_coeffs = 0;
 
     for(index_t k = 0; k < upper_mappings_for_alpha.size(); k++) {
-      
-      if(upper_mappings_for_alpha[k] >= total_num_coeffs) {
+    
+      int index_k = traversal_order[k];
+      if(upper_mappings_for_alpha[index_k] >= total_num_coeffs) {
 	break;
       }
 
       ArrayList<int> beta_mapping = 
-	sea_->get_multiindex(upper_mappings_for_alpha[k]);
+	sea_->get_multiindex(upper_mappings_for_alpha[index_k]);
       int flag = 0;
       double diff1 = 1.0;
 
@@ -501,8 +531,9 @@ template<typename TKernel, typename TKernelAux>
 	diff1 *= pow(center_diff[l], tmp_storage[l]);
       }
 
-      double prod =  coeffs_[upper_mappings_for_alpha[k]] * diff1 *
-	sea_->get_n_multichoose_k_by_pos(upper_mappings_for_alpha[k], j);
+      double prod = coeffs_[upper_mappings_for_alpha[index_k]] * diff1 *
+	sea_->get_n_multichoose_k_by_pos
+	(upper_mappings_for_alpha[index_k], index_j);
       
       if(prod > 0) {
 	pos_coeffs += prod;
@@ -513,7 +544,7 @@ template<typename TKernel, typename TKernelAux>
 
     } // end of k loop
 
-    new_coeffs[j] += pos_coeffs + neg_coeffs;
+    new_coeffs[index_j] += pos_coeffs + neg_coeffs;
   } // end of j loop
 }
 
