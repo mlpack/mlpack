@@ -10,8 +10,267 @@
 
 #include "fastlib/fastlib.h"
 
-#include "mult_series_expansion_aux.h"
-#include "series_expansion_aux.h"
+#include "farfield_expansion.h"
+#include "local_expansion.h"
+#include "mult_farfield_expansion.h"
+#include "mult_local_expansion.h"
+
+/**
+ * Auxiliary computer class for multiplicative p^D expansion for Gaussian
+ * kernel
+ */
+/**
+ * Auxiliary computer class for Gaussian kernel
+ */
+class GaussianKernelMultAux {
+  FORBID_COPY(GaussianKernelMultAux);
+
+ public:
+
+  typedef MultSeriesExpansionAux TSeriesExpansionAux;
+  
+  typedef MultFarFieldExpansion<GaussianKernel, GaussianKernelMultAux>
+    TFarFieldExpansion;
+  
+  typedef MultLocalExpansion<GaussianKernel, GaussianKernelMultAux>
+    TLocalExpansion;
+
+  /** pointer to the Gaussian kernel */
+  GaussianKernel *kernel_;
+
+  /** pointer to the series expansion auxiliary object */
+  MultSeriesExpansionAux *sea_;
+
+  GaussianKernelMultAux() {}
+
+  ~GaussianKernelMultAux() {}
+
+  double BandwidthFactor(double bandwidth_sq) const {
+    return sqrt(2 * bandwidth_sq);
+  }
+
+  void ComputeDirectionalDerivatives(const Vector &x, 
+				     Matrix &derivative_map) const {
+    
+    int dim = derivative_map.n_rows();
+    int order = derivative_map.n_cols() - 1;
+    
+    // precompute necessary Hermite polynomials based on coordinate difference
+    for(index_t d = 0; d < dim; d++) {
+      
+      double coord_div_band = x[d];
+      double d2 = 2 * coord_div_band;
+      double facj = exp(-coord_div_band * coord_div_band);
+      
+      derivative_map.set(d, 0, facj);
+      
+      if(order > 0) {
+	
+	derivative_map.set(d, 1, d2 * facj);
+	
+	if(order > 1) {
+	  for(index_t k = 1; k < order; k++) {
+	    int k2 = k * 2;
+	    derivative_map.set(d, k + 1, d2 * derivative_map.get(d, k) -
+			       k2 * derivative_map.get(d, k - 1));
+	  }
+	}
+      }
+    } // end of looping over each dimension
+  }
+
+  double ComputePartialDerivative(const Matrix &derivative_map,
+				  ArrayList<int> mapping) const {
+    
+    double partial_derivative = 1.0;
+    
+    for(index_t d = 0; d < mapping.size(); d++) {
+      partial_derivative *= derivative_map.get(d, mapping[d]);
+    }
+    return partial_derivative;
+  }
+
+  int OrderForEvaluatingFarField
+    (const DHrectBound<2> &far_field_region, 
+     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+     double max_dist_sqd_regions, double max_error, 
+     double *actual_error) const {
+    
+    double max_far_field_length = 0;
+
+    for(index_t d = 0; d < sea_->get_dimension(); d++) {
+      DRange far_range = far_field_region.get(d);
+      max_far_field_length = max(max_far_field_length, far_range.width());
+    }
+
+    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
+    double r = max_far_field_length / two_times_bandwidth;
+
+    int dim = sea_->get_dimension();
+    double r_raised_to_p_alpha = 1.0;
+    double ret, ret2;
+    int p_alpha = 0;
+    double factorialvalue = 1.0;
+    double first_factor, second_factor;
+    double one_minus_r;
+
+    // In this case, it is "impossible" to prune for the Gaussian kernel.
+    if(r >= 1.0) {
+      return -1;
+    }
+    one_minus_r = 1.0 - r;
+    ret = 1.0 / pow(one_minus_r, dim);
+  
+    do {
+      factorialvalue *= (p_alpha + 1);
+
+      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order() - 1) {
+	return -1;
+      }
+
+      r_raised_to_p_alpha *= r;
+      first_factor = 1.0 - r_raised_to_p_alpha;
+      second_factor = r_raised_to_p_alpha / sqrt(factorialvalue);
+
+      ret2 = ret * (pow((first_factor + second_factor), dim) -
+		    pow(first_factor, dim));
+
+      if(ret2 <= max_error) {
+	break;
+      }
+      
+      p_alpha++;
+
+    } while(1);
+
+    *actual_error = ret2;
+    return p_alpha;
+  }
+
+  int OrderForConvertingFromFarFieldToLocal
+    (const DHrectBound<2> &far_field_region,
+     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions, 
+     double max_dist_sqd_regions, double max_error, 
+     double *actual_error) const {
+
+    double max_far_field_length = 0;
+    double max_local_field_length = 0;
+
+    for(index_t d = 0; d < sea_->get_dimension(); d++) {
+      DRange far_range = far_field_region.get(d);
+      DRange local_range = local_field_region.get(d);
+      max_far_field_length = max(max_far_field_length, far_range.width());
+      max_local_field_length = max(max_local_field_length, 
+				   local_range.width());
+    }
+
+    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
+    double r = max_far_field_length / two_times_bandwidth;
+    double r2 = max_local_field_length / two_times_bandwidth;
+
+    int dim = sea_->get_dimension();
+    double r_raised_to_p_alpha = 1.0;
+    double ret, ret2;
+    int p_alpha = 0;
+    double factorialvalue = 1.0;
+    double first_factor, second_factor;
+    double one_minus_two_r, two_r;
+
+    // In this case, it is "impossible" to prune for the Gaussian kernel.
+    if(r >= 0.5 || r2 >= 0.5)
+      return -1;
+
+    r = max(r, r2);
+    two_r = 2.0 * r;
+    one_minus_two_r = 1.0 - two_r;
+    ret = 1.0 / pow(one_minus_two_r * one_minus_two_r, dim);
+  
+    do {
+      factorialvalue *= (p_alpha + 1);
+
+      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order() - 1) {
+	return -1;
+      }
+
+      r_raised_to_p_alpha *= two_r;
+      first_factor = 1.0 - r_raised_to_p_alpha;
+      first_factor *= first_factor;
+      second_factor = r_raised_to_p_alpha * (2.0 - r_raised_to_p_alpha)
+	/ sqrt(factorialvalue);
+
+      ret2 = ret * (pow((first_factor + second_factor), dim) -
+		    pow(first_factor, dim));
+
+      if(ret2 <= max_error) {
+	break;
+      }
+      
+      p_alpha++;
+
+    } while(1);
+
+    *actual_error = ret2;
+    return p_alpha;
+  }
+  
+  int OrderForEvaluatingLocal
+    (const DHrectBound<2> &far_field_region,
+     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+     double max_dist_sqd_regions, double max_error, 
+     double *actual_error) const {
+        
+    double max_local_field_length = 0;
+
+    for(index_t d = 0; d < sea_->get_dimension(); d++) {
+      DRange local_range = local_field_region.get(d);
+      max_local_field_length = max(max_local_field_length, 
+				   local_range.width());
+    }
+
+    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
+    double r = max_local_field_length / two_times_bandwidth;
+
+    int dim = sea_->get_dimension();
+    double r_raised_to_p_alpha = 1.0;
+    double ret, ret2;
+    int p_alpha = 0;
+    double factorialvalue = 1.0;
+    double first_factor, second_factor;
+    double one_minus_r;
+
+    // In this case, it is "impossible" to prune for the Gaussian kernel.
+    if(r >= 1.0) {
+      return -1;
+    }
+    one_minus_r = 1.0 - r;
+    ret = 1.0 / pow(one_minus_r, dim);
+  
+    do {
+      factorialvalue *= (p_alpha + 1);
+
+      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order() - 1) {
+	return -1;
+      }
+
+      r_raised_to_p_alpha *= r;
+      first_factor = 1.0 - r_raised_to_p_alpha;
+      second_factor = r_raised_to_p_alpha / sqrt(factorialvalue);
+
+      ret2 = ret * (pow((first_factor + second_factor), dim) -
+		    pow(first_factor, dim));
+
+      if(ret2 <= max_error) {
+	break;
+      }
+      
+      p_alpha++;
+
+    } while(1);
+
+    *actual_error = ret2;
+    return p_alpha;
+  }
+};
 
 /**
  * Auxiliary computer class for Gaussian kernel
@@ -21,13 +280,18 @@ class GaussianKernelAux {
 
  public:
 
+  typedef SeriesExpansionAux TSeriesExpansionAux;
+
+  typedef FarFieldExpansion<GaussianKernel, GaussianKernelAux>
+    TFarFieldExpansion;
+  
+  typedef LocalExpansion<GaussianKernel, GaussianKernelAux> TLocalExpansion;
+
   /** pointer to the Gaussian kernel */
   GaussianKernel *kernel_;
 
   /** pointer to the series expansion auxiliary object */
   SeriesExpansionAux *sea_;
-
-  MultSeriesExpansionAux *msea_;
 
   GaussianKernelAux() {}
 
@@ -277,187 +541,6 @@ class GaussianKernelAux {
     *actual_error = ret;
     return p_alpha;
   }
-
-  int OrderForEvaluatingMultFarField
-    (const DHrectBound<2> &far_field_region, 
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
-     double max_dist_sqd_regions, double max_error, 
-     double *actual_error) const {
-    
-    double max_far_field_length = 0;
-
-    for(index_t d = 0; d < msea_->get_dimension(); d++) {
-      DRange far_range = far_field_region.get(d);
-      max_far_field_length = max(max_far_field_length, far_range.width());
-    }
-
-    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
-    double r = max_far_field_length / two_times_bandwidth;
-
-    int dim = msea_->get_dimension();
-    double r_raised_to_p_alpha = 1.0;
-    double ret, ret2;
-    int p_alpha = 0;
-    double factorialvalue = 1.0;
-    double first_factor, second_factor;
-    double one_minus_r;
-
-    // In this case, it is "impossible" to prune for the Gaussian kernel.
-    if(r >= 1.0) {
-      return -1;
-    }
-    one_minus_r = 1.0 - r;
-    ret = 1.0 / pow(one_minus_r, dim);
-  
-    do {
-      factorialvalue *= (p_alpha + 1);
-
-      if(factorialvalue < 0.0 || p_alpha > msea_->get_max_order() - 1) {
-	return -1;
-      }
-
-      r_raised_to_p_alpha *= r;
-      first_factor = 1.0 - r_raised_to_p_alpha;
-      second_factor = r_raised_to_p_alpha / sqrt(factorialvalue);
-
-      ret2 = ret * (pow((first_factor + second_factor), dim) -
-		    pow(first_factor, dim));
-
-      if(ret2 <= max_error) {
-	break;
-      }
-      
-      p_alpha++;
-
-    } while(1);
-
-    *actual_error = ret2;
-    return p_alpha;
-  }
-
-  int OrderForConvertingFromMultFarFieldToMultLocal
-    (const DHrectBound<2> &far_field_region,
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions, 
-     double max_dist_sqd_regions, double max_error, 
-     double *actual_error) const {
-
-    double max_far_field_length = 0;
-    double max_local_field_length = 0;
-
-    for(index_t d = 0; d < msea_->get_dimension(); d++) {
-      DRange far_range = far_field_region.get(d);
-      DRange local_range = local_field_region.get(d);
-      max_far_field_length = max(max_far_field_length, far_range.width());
-      max_local_field_length = max(max_local_field_length, 
-				   local_range.width());
-    }
-
-    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
-    double r = max_far_field_length / two_times_bandwidth;
-    double r2 = max_local_field_length / two_times_bandwidth;
-
-    int dim = msea_->get_dimension();
-    double r_raised_to_p_alpha = 1.0;
-    double ret, ret2;
-    int p_alpha = 0;
-    double factorialvalue = 1.0;
-    double first_factor, second_factor;
-    double one_minus_two_r, two_r;
-
-    // In this case, it is "impossible" to prune for the Gaussian kernel.
-    if(r >= 0.5 || r2 >= 0.5)
-      return -1;
-
-    r = max(r, r2);
-    two_r = 2.0 * r;
-    one_minus_two_r = 1.0 - two_r;
-    ret = 1.0 / pow(one_minus_two_r * one_minus_two_r, dim);
-  
-    do {
-      factorialvalue *= (p_alpha + 1);
-
-      if(factorialvalue < 0.0 || p_alpha > msea_->get_max_order() - 1) {
-	return -1;
-      }
-
-      r_raised_to_p_alpha *= two_r;
-      first_factor = 1.0 - r_raised_to_p_alpha;
-      first_factor *= first_factor;
-      second_factor = r_raised_to_p_alpha * (2.0 - r_raised_to_p_alpha)
-	/ sqrt(factorialvalue);
-
-      ret2 = ret * (pow((first_factor + second_factor), dim) -
-		    pow(first_factor, dim));
-
-      if(ret2 <= max_error) {
-	break;
-      }
-      
-      p_alpha++;
-
-    } while(1);
-
-    *actual_error = ret2;
-    return p_alpha;
-  }
-  
-  int OrderForEvaluatingMultLocal
-    (const DHrectBound<2> &far_field_region,
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
-     double max_dist_sqd_regions, double max_error, 
-     double *actual_error) const {
-        
-    double max_local_field_length = 0;
-
-    for(index_t d = 0; d < msea_->get_dimension(); d++) {
-      DRange local_range = local_field_region.get(d);
-      max_local_field_length = max(max_local_field_length, 
-				   local_range.width());
-    }
-
-    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
-    double r = max_local_field_length / two_times_bandwidth;
-
-    int dim = msea_->get_dimension();
-    double r_raised_to_p_alpha = 1.0;
-    double ret, ret2;
-    int p_alpha = 0;
-    double factorialvalue = 1.0;
-    double first_factor, second_factor;
-    double one_minus_r;
-
-    // In this case, it is "impossible" to prune for the Gaussian kernel.
-    if(r >= 1.0) {
-      return -1;
-    }
-    one_minus_r = 1.0 - r;
-    ret = 1.0 / pow(one_minus_r, dim);
-  
-    do {
-      factorialvalue *= (p_alpha + 1);
-
-      if(factorialvalue < 0.0 || p_alpha > msea_->get_max_order() - 1) {
-	return -1;
-      }
-
-      r_raised_to_p_alpha *= r;
-      first_factor = 1.0 - r_raised_to_p_alpha;
-      second_factor = r_raised_to_p_alpha / sqrt(factorialvalue);
-
-      ret2 = ret * (pow((first_factor + second_factor), dim) -
-		    pow(first_factor, dim));
-
-      if(ret2 <= max_error) {
-	break;
-      }
-      
-      p_alpha++;
-
-    } while(1);
-
-    *actual_error = ret2;
-    return p_alpha;
-  }
 };
 
 /**
@@ -467,6 +550,12 @@ class EpanKernelAux {
   FORBID_COPY(EpanKernelAux);
   
  public:
+
+  typedef SeriesExpansionAux TSeriesExpansionAux;
+
+  typedef FarFieldExpansion<EpanKernel, EpanKernelAux> TFarFieldExpansion;
+  
+  typedef LocalExpansion<EpanKernel, EpanKernelAux> TLocalExpansion;
 
   EpanKernel *kernel_;
   
