@@ -277,6 +277,33 @@ class GaussianKernelAux {
     *actual_error = ret;
     return p_alpha;
   }
+
+  int OrderForEvaluatingMultFarField
+    (const DHrectBound<2> &far_field_region, 
+     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+     double max_dist_sqd_regions, double max_error, 
+     double *actual_error) const {
+
+    return -1;
+  }
+
+  int OrderForConvertingFromMultFarFieldToMultLocal
+    (const DHrectBound<2> &far_field_region,
+     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions, 
+     double max_dist_sqd_regions, double max_error, 
+     double *actual_error) const {
+
+    return -1;
+  }
+  
+  int OrderForEvaluatingMultLocal
+    (const DHrectBound<2> &far_field_region,
+     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+     double max_dist_sqd_regions, double max_error, 
+     double *actual_error) const {
+
+    return -1;
+  }
 };
 
 /**
