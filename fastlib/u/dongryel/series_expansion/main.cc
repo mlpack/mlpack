@@ -531,7 +531,7 @@ int TestMultInitAux(const Matrix& data) {
   printf("\n----- TestMultInitAux -----\n");
 
   MultSeriesExpansionAux msea;
-  msea.Init(3, data.n_rows());
+  msea.Init(2, data.n_rows());
   msea.PrintDebug();
 
   return 1;
@@ -549,11 +549,11 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
 
   // declare auxiliary object and initialize
   MultSeriesExpansionAux sea;
-  sea.Init(10, data.n_rows());
+  sea.Init(2, data.n_rows());
 
   // declare center at the origin
   Vector center;
-  center.Init(2);
+  center.Init(3);
   center.SetZero();
 
   // to-be-evaluated point
@@ -569,29 +569,11 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
   se.Init(bandwidth, center, &sea);
 
   // compute up to 4-th order multivariate polynomial.
-  se.AccumulateCoeffs(data, weights, begin, end, 10);
+  se.AccumulateCoeffs(data, weights, begin, end, 1);
 
   // print out the objects
   se.PrintDebug();               // expansion at (0, 0)
 
-  // evaluate the series expansion
-  printf("Evaluated the expansion at (%g %g) is %g...\n",
-	 evaluate_here[0], evaluate_here[1],
-	 se.EvaluateField(NULL, -1, &evaluate_here));
-
-  // check with exhaustive method
-  double exhaustive_sum = 0;
-  for(index_t i = begin; i < end; i++) {
-    int row_num = i;
-    double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
-      (evaluate_here[0] - data.get(0, row_num)) +
-      (evaluate_here[1] - data.get(1, row_num)) * 
-      (evaluate_here[1] - data.get(1, row_num));
-    
-    exhaustive_sum += kernel.EvalUnnormOnSq(dsqd);
-
-  }
-  printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
   return 1;
 }
 
@@ -628,7 +610,7 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestMixFarField(data, weights, begin, end) == 1);
   */
   DEBUG_ASSERT(TestMultInitAux(data) == 1);
-  //DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
+  DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
 
   fx_done();
 }

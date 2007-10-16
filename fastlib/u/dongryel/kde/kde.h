@@ -338,7 +338,8 @@ class FastKde {
 					     order_farfield_);
       for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 	densities_e_[q] += 
-	  rstat.farfield_expansion_.EvaluateField(&qset_, q, NULL);
+	  rstat.farfield_expansion_.EvaluateField(&qset_, q, NULL, 
+						  order_farfield_);
       }
       order_farfield_ = -1;
     }

@@ -108,7 +108,7 @@ class FarFieldExpansion {
    * Evaluates the far-field coefficients at the given point
    */
   double EvaluateField(Matrix* data=NULL, int row_num=-1,
-		       Vector* x_q=NULL) const;
+		       Vector* x_q=NULL, int order=-1) const;
   
   /**
    * Evaluates the two-way convolution mixed with exhaustive computations
@@ -340,13 +340,13 @@ void FarFieldExpansion<TKernel, TKernelAux>::RefineCoeffs
 
 template<typename TKernel, typename TKernelAux>
 double FarFieldExpansion<TKernel, TKernelAux>::
-  EvaluateField(Matrix* data, int row_num, Vector* x_q) const {
+  EvaluateField(Matrix* data, int row_num, Vector* x_q, int order) const {
   
   // dimension
   int dim = sea_->get_dimension();
 
   // total number of coefficients
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  int total_num_coeffs = sea_->get_total_num_coeffs(order);
 
   // square root times bandwidth
   double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
@@ -358,7 +358,7 @@ double FarFieldExpansion<TKernel, TKernelAux>::
   
   // computed derivative map
   Matrix derivative_map;
-  derivative_map.Init(dim, order_ + 1);
+  derivative_map.Init(dim, order + 1);
 
   // temporary variable
   Vector arrtmp;
