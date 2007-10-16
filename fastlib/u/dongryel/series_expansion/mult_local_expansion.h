@@ -329,7 +329,7 @@ template<typename TKernel, typename TKernelAux>
   // pass in the pointer to the kernel and the series expansion auxiliary
   // object
   ka_.kernel_ = &kernel_;
-  ka_.sea_ = sea_;
+  ka_.msea_ = sea_;
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
@@ -349,7 +349,7 @@ template<typename TKernel, typename TKernelAux>
   // pass in the pointer to the kernel and the series expansion auxiliary
   // object
   ka_.kernel_ = &kernel_;
-  ka_.sea_ = sea_;
+  ka_.msea_ = sea_;
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
