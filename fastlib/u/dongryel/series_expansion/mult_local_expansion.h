@@ -242,9 +242,7 @@ template<typename TKernel, typename TKernelAux>
 template<typename TKernel, typename TKernelAux>
   double MultLocalExpansion<TKernel, TKernelAux>::
   EvaluateField(Matrix* data, int row_num, Vector* x_q) const {
-  
-  index_t k, t, tail;
-  
+    
   // total number of coefficient
   int total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
@@ -261,7 +259,7 @@ template<typename TKernel, typename TKernelAux>
   Vector x_Q_to_x_q;
   x_Q_to_x_q.Init(dim);
   Vector tmp;
-  tmp.Init(total_num_coeffs);
+  tmp.Init(sea_->get_max_total_num_coeffs());
   ArrayList<int> heads;
   heads.Init(dim + 1);
   
@@ -286,7 +284,6 @@ template<typename TKernel, typename TKernelAux>
   // get the order of traversal for the given order of approximation
   ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
 
-  /****** NEEDS FIXING ****/
   for(index_t i = 1; i < total_num_coeffs; i++) {
     
     int index = traversal_order[i];
@@ -504,14 +501,13 @@ template<typename TKernel, typename TKernelAux>
     double neg_coeffs = 0;
 
     for(index_t k = 0; k < upper_mappings_for_alpha.size(); k++) {
-    
-      int index_k = traversal_order[k];
-      if(upper_mappings_for_alpha[index_k] >= total_num_coeffs) {
+
+      if(upper_mappings_for_alpha[k] >= total_num_coeffs) {
 	break;
       }
 
       ArrayList<int> beta_mapping = 
-	sea_->get_multiindex(upper_mappings_for_alpha[index_k]);
+	sea_->get_multiindex(upper_mappings_for_alpha[k]);
       int flag = 0;
       double diff1 = 1.0;
 
@@ -531,9 +527,9 @@ template<typename TKernel, typename TKernelAux>
 	diff1 *= pow(center_diff[l], tmp_storage[l]);
       }
 
-      double prod = coeffs_[upper_mappings_for_alpha[index_k]] * diff1 *
+      double prod = coeffs_[upper_mappings_for_alpha[k]] * diff1 *
 	sea_->get_n_multichoose_k_by_pos
-	(upper_mappings_for_alpha[index_k], index_j);
+	(upper_mappings_for_alpha[k], index_j);
       
       if(prod > 0) {
 	pos_coeffs += prod;
