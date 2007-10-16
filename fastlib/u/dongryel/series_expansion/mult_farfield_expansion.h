@@ -232,7 +232,19 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::AccumulateCoeffs
       // from the direct descendant, recursively compute the multipole moments
       int direct_ancestor_mapping_pos = 
 	lower_mappings[lower_mappings.size() - 2];
-      tmp[index] = tmp[direct_ancestor_mapping_pos] * x_r[i % order_];
+
+      int position = 0;
+      ArrayList<int> &mapping = sea_->multiindex_mapping_[index];
+      ArrayList<int> &direct_ancestor_mapping = 
+	sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
+      for(index_t i = 0; i < dim; i++) {
+	if(mapping[i] != direct_ancestor_mapping[i]) {
+	  position = i;
+	  break;
+	}
+      }
+      
+      tmp[index] = tmp[direct_ancestor_mapping_pos] * x_r[position];
     }
 
     // Tally up the result in A_k.
