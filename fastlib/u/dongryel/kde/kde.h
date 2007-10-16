@@ -4,6 +4,8 @@
 #include "fastlib/fastlib_int.h"
 #include "u/dongryel/series_expansion/farfield_expansion.h"
 #include "u/dongryel/series_expansion/local_expansion.h"
+#include "u/dongryel/series_expansion/mult_farfield_expansion.h"
+#include "u/dongryel/series_expansion/mult_local_expansion.h"
 #include "u/dongryel/series_expansion/kernel_aux.h"
 
 template<typename TKernel>
@@ -109,8 +111,11 @@ template<typename TKernel, typename TKernelAux>
 class FastKde {
 
   public:
-  
+
+  // forward declaration of KdeStat class
   class KdeStat;
+
+  // our tree type using the KdeStat
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, KdeStat > Tree;
   
   class KdeStat {
@@ -156,12 +161,12 @@ class FastKde {
     /**
      * Far field expansion created by the reference points in this node.
      */
-    FarFieldExpansion<TKernel, TKernelAux> farfield_expansion_;
+    typename TKernelAux::TFarFieldExpansion farfield_expansion_;
     
     /**
      * Local expansion stored in this node.
      */
-    LocalExpansion<TKernel, TKernelAux> local_expansion_;
+    typename TKernelAux::TLocalExpansion local_expansion_;
     
     /** Initialize the statistics */
     void Init() {
@@ -175,7 +180,9 @@ class FastKde {
       mass_t_ = 0;    
     }
     
-    void Init(double bandwidth, SeriesExpansionAux *sea) {
+    void Init(double bandwidth, 
+	      typename TKernelAux::TSeriesExpansionAux *sea) {
+
       farfield_expansion_.Init(bandwidth, sea);
       local_expansion_.Init(bandwidth, sea);
     }
@@ -191,7 +198,7 @@ class FastKde {
     }
     
     void Init(double bandwidth, const Vector& center,
-	      SeriesExpansionAux *sea) {
+	      typename TKernelAux::TSeriesExpansionAux *sea) {
       
       farfield_expansion_.Init(bandwidth, center, sea);
       local_expansion_.Init(bandwidth, center, sea);
@@ -211,10 +218,9 @@ class FastKde {
       right_stat.mass_t_ -= min_mass_t;
     }
 
-    void PushDownTokens(KdeStat &left_stat, KdeStat &right_stat,
-			double *de,
-			LocalExpansion<TKernel, TKernelAux> 
-			*local_expansion, double *dt) {
+    void PushDownTokens
+      (KdeStat &left_stat, KdeStat &right_stat, double *de,
+       typename TKernelAux::TLocalExpansion *local_expansion, double *dt) {
     
       if(de != NULL) {
 	double de_ref = *de;
@@ -244,7 +250,7 @@ class FastKde {
   private:
 
   /** series expansion auxililary object */
-  SeriesExpansionAux sea_;
+  typename TKernelAux::TSeriesExpansionAux sea_;
 
   /** query dataset */
   Matrix qset_;
@@ -436,10 +442,10 @@ class FastKde {
     KdeStat &rstat = rnode->stat();
     
     // expansion objects
-    FarFieldExpansion<TKernel, TKernelAux> &farfield_expansion
-      = rstat.farfield_expansion_;
-    LocalExpansion<TKernel, TKernelAux> &local_expansion
-      = qstat.local_expansion_;
+    typename TKernelAux::TFarFieldExpansion &farfield_expansion = 
+      rstat.farfield_expansion_;
+    typename TKernelAux::TLocalExpansion &local_expansion = 
+      qstat.local_expansion_;
 
     // number of reference points
     int num_references = rnode->count();

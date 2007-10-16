@@ -346,7 +346,7 @@ template<typename TKernel, typename TKernelAux>
   // pass in the pointer to the kernel and the series expansion auxiliary
   // object
   ka_.kernel_ = &kernel_;
-  ka_.msea_ = sea_;
+  ka_.sea_ = sea_;
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
@@ -359,10 +359,10 @@ template<typename TKernel, typename TKernelAux>
    const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
    double max_dist_sqd_regions, double max_error, double *actual_error) const {
 
-  return ka_.OrderForEvaluatingMultLocal(far_field_region, local_field_region, 
-					 min_dist_sqd_regions,
-					 max_dist_sqd_regions, max_error, 
-					 actual_error);
+  return ka_.OrderForEvaluatingLocal(far_field_region, local_field_region, 
+				     min_dist_sqd_regions,
+				     max_dist_sqd_regions, max_error, 
+				     actual_error);
 }
 
 template<typename TKernel, typename TKernelAux>

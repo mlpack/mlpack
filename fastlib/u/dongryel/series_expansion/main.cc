@@ -562,7 +562,7 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3;
 
   // declare expansion objects at (0,0) and other centers
-  MultFarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
+  MultFarFieldExpansion<GaussianKernel, GaussianKernelMultAux> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
