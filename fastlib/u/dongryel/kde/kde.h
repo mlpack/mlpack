@@ -825,18 +825,23 @@ class FastKde {
       rset_weights_.SetAll(1);
     }
 
-    // construct query and reference trees
-    fx_timer_start(NULL, "tree_d");
-    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen);
-
     if(!strcmp(qfname, rfname)) {
       qset_.Alias(rset_);
-      qroot_ = rroot_;
     }
     else {
       Dataset query_dataset;
       query_dataset.InitFromFile(qfname);
       qset_.Own(&(query_dataset.matrix()));
+    }
+
+    // construct query and reference trees
+    fx_timer_start(NULL, "tree_d");
+    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen);
+
+    if(!strcmp(qfname, rfname)) {
+      qroot_ = rroot_;
+    }
+    else {
       qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen);
     }
     fx_timer_stop(NULL, "tree_d");
@@ -850,7 +855,21 @@ class FastKde {
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
 
     // initialize the series expansion object
-    sea_.Init(fx_param_int(NULL, "order", 7), qset_.n_rows());
+    if(qset_.n_rows() <= 2) {
+      sea_.Init(fx_param_int(NULL, "order", 7), qset_.n_rows());
+    }
+    else if(qset_.n_rows() <= 3) {
+      sea_.Init(fx_param_int(NULL, "order", 5), qset_.n_rows());
+    }
+    else if(qset_.n_rows() <= 5) {
+      sea_.Init(fx_param_int(NULL, "order", 3), qset_.n_rows());
+    }
+    else if(qset_.n_rows() <= 6) {
+      sea_.Init(fx_param_int(NULL, "order", 1), qset_.n_rows());
+    }
+    else {
+      sea_.Init(fx_param_int(NULL, "order", 0), qset_.n_rows());
+    }
   }
 
   void PrintDebug() {
