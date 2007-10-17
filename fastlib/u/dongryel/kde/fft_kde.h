@@ -18,12 +18,8 @@ class FFTKde {
   /** query dataset */
   Matrix qset_;
 
-  ArrayList<index_t> q_old_from_new_;
-
   /** reference dataset */
   Matrix rset_;
-
-  ArrayList<index_t> r_old_from_new_;
 
   /** kernel */
   GaussianKernel kernel_;
@@ -77,7 +73,7 @@ class FFTKde {
    * and N must be a power of 2.  Forward determines whether to do a
    * forward transform (1) or an inverse one (-1)
    */
-  void fftc1(double f[], int N, int skip, int forward) {
+  void fftc1(double *f, int N, int skip, int forward) {
 
     int b, index1, index2, trans_size, trans;
     double pi2 = 4. * asin(1.);
@@ -184,7 +180,7 @@ class FFTKde {
    * Forward determines whether to do a forward transform (1) or an inverse 
    * one(-1)
    */
-  void fftcn(double f[], int ndims, int size[], int forward) {
+  void fftcn(double *f, int ndims, int *size, int forward) {
 
     int i, j, dim;
 
@@ -230,7 +226,7 @@ class FFTKde {
    * Forward determines whether to do a forward transform (>=0) or an inverse 
    * one(<0)
    */
-  void fftr1(double f[], int N, int forward) {
+  void fftr1(double *f, int N, int forward) {
 
     int b;
     
@@ -305,7 +301,7 @@ class FFTKde {
    * Forward determines whether to do a forward transform (1) or an inverse 
    * one (-1)
    */
-  void fftrn(double f[], double fnyquist[], int ndims, int size[], 
+  void fftrn(double *f, double *fnyquist, int ndims, int size[], 
 	     int forward) {
 
     int i, j, b;
@@ -556,10 +552,6 @@ class FFTKde {
     numgridpts_ = 1;
     gridbinvolume_ = 1.0;
         
-    // Temporary index array to locate the bin for each data point.
-    ArrayList<int> minindices;
-    minindices.Init(qset_.n_rows());
-
     double min, max;
     
     // Find the min/max in each coordinate direction, and calculate the grid
@@ -618,8 +610,8 @@ class FFTKde {
       // First locate the bin the data point falls into and identify it by
       // the lower grid coordinates.
       for(index_t d = 0; d < rset_.n_rows(); d++) {
-	minindices[d] = (int) floor((rset_.get(d, r) - mincoords_[d])/
-				    gridsizes_[d]);
+	minindices_[d] = (int) floor((rset_.get(d, r) - mincoords_[d])/
+				     gridsizes_[d]);
       }
 
       // Assign the weights around the neighboring grid points due to this
@@ -670,13 +662,57 @@ class FFTKde {
     
     // initialize the kernel and read in the number of grid points
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
-    m_ = fx_param_int_req(NULL, "num_grid_pts_per_dim");
+    m_ = fx_param_int(NULL, "num_grid_pts_per_dim", 128);
 
     // set aliases to the query and reference datasets and initialize
     // query density sets
     qset_.Alias(qset);
     densities_.Init(qset_.n_cols());
     rset_.Alias(rset);
+
+    // initialize member variables.
+    size_.Init(qset_.n_rows());
+    minindices_.Init(rset_.n_rows());
+    mincoords_.Init(qset_.n_rows());
+    maxcoords_.Init(qset_.n_rows());
+    diffcoords_.Init(qset_.n_rows());
+    gridsizes_.Init(qset_.n_rows());
+    kernelweights_dims_.Init(qset_.n_rows());
+
+    // set up the discretized grid for the reference dataset
+    discretize_dataset();
+
+    nyquistnum_ = 2 * numgridpts_ / size_[rset_.n_rows() - 1];
+
+    d_fnyquist_.Init(nyquistnum_);
+    k_fnyquist_.Init(nyquistnum_);
+    kernelweights_.Init(numgridpts_);
+
+  }
+
+  void Init() {
+
+    const char *rfname = fx_param_str_req(NULL, "data");
+    const char *qfname = fx_param_str(NULL, "query", rfname);
+
+    // initialize the kernel and read in the number of grid points
+    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+    m_ = fx_param_int(NULL, "num_grid_pts_per_dim", 128);
+
+    // read reference dataset
+    Dataset ref_dataset;
+    ref_dataset.InitFromFile(rfname);
+    rset_.Own(&(ref_dataset.matrix()));
+
+    // read query dataset if different
+    if(!strcmp(qfname, rfname)) {
+      qset_.Alias(rset_);
+    }
+    else {
+      Dataset query_dataset;
+      query_dataset.InitFromFile(qfname);
+      qset_.Own(&(query_dataset.matrix()));
+    }
 
     // initialize member variables.
     size_.Init(qset_.n_rows());
