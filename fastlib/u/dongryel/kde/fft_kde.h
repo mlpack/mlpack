@@ -139,7 +139,7 @@ class FFTKde {
 	  index1 = (trans * trans_size + b) * skip;
 
 	  // Index of element in second half of transform being computed
-	  index2 = index1 + trans_size/2*skip;
+	  index2 = index1 + trans_size / 2 * skip;
 	  temp1 = c[index1];
 	  temp2 = c[index2];
 
@@ -164,7 +164,7 @@ class FFTKde {
     }
     
     // For an inverse transform divide by the number of grid points
-    if(forward<0.) {
+    if(forward<0) {
       for(index1 = 0; index1 < skip * N; index1 += skip) {
 	c[index1].real /= N;
 	c[index1].imag /= N;
@@ -182,8 +182,6 @@ class FFTKde {
    */
   void fftcn(double *f, int ndims, int *size, int forward) {
 
-    int i, j, dim;
-
     // These determine where to begin successive transforms and the skip 
     // between their elements (see below)
     int planesize = 1, skip = 1;
@@ -192,31 +190,30 @@ class FFTKde {
     int totalsize = 1;
     
     // determine total size of array
-    for(dim = 0; dim < ndims; dim++) {
+    for(index_t dim = 0; dim < ndims; dim++) {
       totalsize *= size[dim];
     }
-    
+
     // loop over dimensions
-    for(dim = ndims - 1; dim >= 0; dim--) {
+    for(index_t dim = ndims - 1; dim >= 0; dim--) {
       
       // planesize = Product of all sizes up to and including size[dim] 
       planesize *= size[dim];
 
       // Take big steps to begin loops of transforms 
-      for(i = 0; i < totalsize; i += planesize) {
+      for(index_t i = 0; i < totalsize; i += planesize) {
 	
 	// Skip sets the number of transforms in between big steps as well as 
 	// the skip between elements
-	for(j = 0; j < skip; j++) {
+	for(index_t j = 0; j < skip; j++) {
 	  
 	  // 1-D Fourier transform. (Factor of two converts complex index to 
 	  // double index.)
 	  fftc1(f + 2 * (i + j), size[dim], skip, forward);
 	}
-	
-	// Skip = Product of all sizes up to (but not including) size[dim]
-	skip *= size[dim];
       }
+      // Skip = Product of all sizes up to (but not including) size[dim]
+      skip *= size[dim];
     }
   }
 
@@ -245,7 +242,7 @@ class FFTKde {
     
     // Do a transform of f as if it were N/2 complex points
     if(forward == 1) {
-      fftc1(f, N/2, 1, 1);
+      fftc1(f, N / 2, 1, 1);
     }
 
     // initialize W^b for b = 0
@@ -263,7 +260,7 @@ class FFTKde {
       // Imaginary part of e^(2 pi i b/N) used in D-L formula
       wb.imag = cospi2n * temp1.imag + sinpi2n * temp1.real;
       temp1 = c[b];
-      temp2 = c[N/2-b];
+      temp2 = c[N / 2 - b];
       c[b].real = .5 * (temp1.real + temp2.real + forward * wb.real * 
 			(temp1.imag + temp2.imag) + wb.imag * 
 			(temp1.real - temp2.real));
@@ -289,7 +286,7 @@ class FFTKde {
     if(forward == -1) {
       c[0].real *= .5;
       c[0].imag *= .5;
-      fftc1(f, N/2, 1, -1);
+      fftc1(f, N / 2, 1, -1);
     }
   }
 
@@ -301,8 +298,7 @@ class FFTKde {
    * Forward determines whether to do a forward transform (1) or an inverse 
    * one (-1)
    */
-  void fftrn(double *f, double *fnyquist, int ndims, int size[], 
-	     int forward) {
+  void fftrn(double *f, double *fnyquist, int ndims, int *size, int forward) {
 
     int i, j, b;
 
@@ -334,16 +330,11 @@ class FFTKde {
     int totalsize = 1;
 
     // Indices for looping through array
-    int *indices= (int *) malloc(ndims*sizeof(int));
-
-    // Make sure memory was correctly allocated
-    if(!indices) {
-      printf("Error allocating memory in fftrn routine. Exiting.\n");
-      exit(1);
-    }
+    ArrayList<int> indices;
+    indices.Init(ndims);
     
     // Set size[] to be the sizes of f viewed as a complex array
-    size[ndims-1] /= 2;
+    size[ndims - 1] /= 2;
 
     for(i = 0; i < ndims; i++) {
       totalsize *= size[i];
@@ -351,22 +342,22 @@ class FFTKde {
     }
     
     // forward transform
-    if(forward==1) {
+    if(forward == 1) {
 
       // Do a transform of f as if it were N/2 complex points 
-      fftcn(f,ndims,size,1);
+      fftcn(f, ndims, size, 1);
 
       // Copy b=0 data into cnyquist so the recursion formulas below for b=0 
       // and cnyquist don't overwrite data they later need
-      for(i = 0; i < totalsize / size[ndims-1]; i++) {
+      for(i = 0; i < totalsize / size[ndims - 1]; i++) {
 	
 	// Only copy points where last array index for c is 0
-	cnyquist[i] = c[i*size[ndims-1]];
+	cnyquist[i] = c[i * size[ndims - 1]];
       }
     }
     
     // Loop over all but last array index
-    for(index=0;index<totalsize;index+=size[ndims-1]) {
+    for(index = 0; index < totalsize; index += size[ndims-1]) {
 
       wb.real = 1.; /* Initialize W^b for b=0 */
       wb.imag = 0.;
@@ -382,18 +373,18 @@ class FFTKde {
 	// Imaginary part of e^(2 pi i b/N_real) used in D-L formula
 	wb.imag = cospi2n*temp1.imag + sinpi2n*temp1.real;
 
-	temp1 = c[index+b];
+	temp1 = c[index + b];
 
 	// Note that N-b is NOT the negative frequency for b. Only 
 	// nonnegative b momenta are stored.
-	temp2 = c[indexneg+N/2-b];
+	temp2 = c[indexneg + N / 2 - b];
 
-	c[index+b].real = .5 * (temp1.real + temp2.real + forward * wb.real * 
-				(temp1.imag + temp2.imag) + wb.imag * 
-				(temp1.real - temp2.real));
-	c[index+b].imag = .5 * (temp1.imag - temp2.imag - forward * wb.real * 
-				(temp1.real - temp2.real) + wb.imag * 
-				(temp1.imag + temp2.imag));
+	c[index + b].real = .5 * (temp1.real + temp2.real + forward * wb.real * 
+				  (temp1.imag + temp2.imag) + wb.imag * 
+				  (temp1.real - temp2.real));
+	c[index + b].imag = .5 * (temp1.imag - temp2.imag - forward * wb.real * 
+				  (temp1.real - temp2.real) + wb.imag * 
+				  (temp1.imag + temp2.imag));
 	c[indexneg + N / 2 - b].real = .5 * (temp1.real + temp2.real - 
 					     forward * 
 					     wb.real * 
@@ -410,7 +401,7 @@ class FFTKde {
 
       // Index is smaller for cnyquist because it doesn't have the last 
       // dimension
-      temp2 = cnyquist[indexneg/size[ndims-1]];
+      temp2 = cnyquist[indexneg / size[ndims - 1]];
 
       // Set b=0 term in transform
       c[index].real = .5 * (temp1.real + temp2.real + forward * 
@@ -434,15 +425,15 @@ class FFTKde {
 
       // If the rightmost indices are maximal reset them to 0. Indexneg goes 
       // from 1 to 0 in these dimensions
-      for(j = ndims - 2; indices[j] == size[j] - 1 && j >= 0; j--) {
+      for(j = ndims - 2; j >= 0 && indices[j] == size[j] - 1; j--) {
 	indices[j] = 0;
 	indexneg -= stepsize;
 	stepsize *= size[j];
       }
       
       // If index[j] goes from 0 to 1 indexneg[j] goes from 0 to size[j]-1
-      if(indices[j]==0) {
-	indexneg += stepsize*(size[j]-1);
+      if(j >= 0 && indices[j] == 0) {
+	indexneg += stepsize * (size[j] - 1);
       }
       // Otherwise increasing index[j] decreases indexneg by one unit.
       else {
@@ -451,21 +442,19 @@ class FFTKde {
 
       // This avoids writing outside the array bounds on the last pass 
       // through the array loop
-      if(j>=0) {
+      if(j >= 0) {
 	indices[j]++;
       }
     } // End of i loop (over total array)
     
     // inverse transform
-    if(forward==-1) {
-      fftcn(f,ndims,size,-1);
+    if(forward == -1) {
+      fftcn(f, ndims, size, -1);
     }
     
     // Give the user back the array size[] in its original condition
-    size[ndims-1] *= 2;
+    size[ndims - 1] *= 2;
 
-    // free up memory allocated for indices array
-    free(indices);
   }
   
   void assign_weights(int reference_pt_num, int level, double volume, int pos,
@@ -526,11 +515,13 @@ class FFTKde {
     }
   }
 
-  void retrieveDensities() {
+  /**
+   * Query the normalized density for each query point.
+   */
+  void RetrieveDensities() {
 
     double normc = 
-      pow((2.0 * M_PI * kernel_.bandwidth_sq()),
-	  ((double)rset_.n_rows()) / 2.0) * rset_.n_cols();
+      (kernel_.CalcNormConstant(rset_.n_rows()) * rset_.n_cols());
 
     for(index_t r = 0; r < qset_.n_cols(); r++) {
       densities_[r] = 0.0;
@@ -559,7 +550,7 @@ class FFTKde {
     for(index_t d = 0; d < qset_.n_rows(); d++) {
       int possiblesample;
       min = MAXDOUBLE;
-      max = MINDOUBLE;
+      max = -MAXDOUBLE;
       
       for(index_t r = 0; r < rset_.n_cols(); r++) {
 	double coord = rset_.get(d, r);
@@ -583,8 +574,9 @@ class FFTKde {
 				   gridsizes_[d]);
       
       if(kernelweights_dims_[d] > possiblesample) {
-	if(possiblesample == 0)
+	if(possiblesample == 0) {
 	  possiblesample = 1;
+	}
 	kernelweights_dims_[d] = possiblesample;
       }
 
@@ -657,9 +649,23 @@ class FFTKde {
   FFTKde() {}
   
   ~FFTKde() {}
+  
+  // getters and setters
+  
+  /** get the reference dataset */
+  Matrix &get_reference_dataset() { return rset_; }
+
+  /** get the query dataset */
+  Matrix &get_query_dataset() { return qset_; }
+
+  /** get the density estimate */
+  const Vector &get_density_estimates() { return densities_; }
 
   void Init(Matrix &qset, Matrix &rset) {
     
+    printf("Initializing FFT KDE...\n");
+    fx_timer_start(NULL, "fft_kde_init");
+
     // initialize the kernel and read in the number of grid points
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
     m_ = fx_param_int(NULL, "num_grid_pts_per_dim", 128);
@@ -688,6 +694,8 @@ class FFTKde {
     k_fnyquist_.Init(nyquistnum_);
     kernelweights_.Init(numgridpts_);
 
+    fx_timer_stop(NULL, "fft_kde_init");
+    printf("FFT KDE initialization completed...\n");
   }
 
   void Init() {
@@ -714,8 +722,12 @@ class FFTKde {
       qset_.Own(&(query_dataset.matrix()));
     }
 
+    printf("Initializing FFT KDE...\n");
+    fx_timer_start(NULL, "fft_kde_init");
+
     // initialize member variables.
     size_.Init(qset_.n_rows());
+    densities_.Init(qset_.n_cols());
     minindices_.Init(rset_.n_rows());
     mincoords_.Init(qset_.n_rows());
     maxcoords_.Init(qset_.n_rows());
@@ -731,12 +743,20 @@ class FFTKde {
     d_fnyquist_.Init(nyquistnum_);
     k_fnyquist_.Init(nyquistnum_);
     kernelweights_.Init(numgridpts_);
+    fx_timer_stop(NULL, "fft_kde_init");
+    printf("FFT KDE initialization completed...\n");
 
   }
 
   void Compute() {
 
+    printf("Computing FFT KDE...\n");
+    fx_timer_start(NULL, "fft_kde");
+
     // FFT the discretized bin count matrix.
+    d_fnyquist_.SetZero();
+    k_fnyquist_.SetZero();
+    kernelweights_.SetZero();
     fftrn(discretized_.ptr(), d_fnyquist_.ptr(), rset_.n_rows(), 
 	  size_.begin(), 1);
 
@@ -776,8 +796,35 @@ class FFTKde {
 	  rset_.n_rows(), size_.begin(), -1);
 
     // Retrieve the densities of each data point.
-    retrieveDensities();
+    RetrieveDensities();
 
+    fx_timer_stop(NULL, "fft_kde");
+    printf("FFT KDE completed...\n");
+  }
+
+  void NormalizeDensities() {
+    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
+      rset_.n_cols();
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      densities_[q] /= norm_const;
+    }
+  }
+
+  void PrintDebug() {
+
+    FILE *stream = stdout;
+    const char *fname = NULL;
+
+    if((fname = fx_param_str(NULL, "fft_kde_output", NULL)) != NULL) {
+      stream = fopen(fname, "w+");
+    }
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      fprintf(stream, "%g\n", densities_[q]);
+    }
+    
+    if(stream != stdout) {
+      fclose(stream);
+    }
   }
 
 };
