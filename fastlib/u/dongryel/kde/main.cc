@@ -8,15 +8,35 @@ int main(int argc, char *argv[]) {
 
   const char *algorithm = fx_param_str_req(NULL, "method");
   bool do_naive = fx_param_exists(NULL, "do_naive");
-  const char *kernel_name = fx_param_str_req(NULL, "kernel");
 
   if(!strcmp(algorithm, "fft")) {
     FFTKde fft_kde;
+    Vector fft_kde_results;
+    Matrix query_dataset;
+    Matrix reference_dataset;
     fft_kde.Init();
     fft_kde.Compute();
+
+    fft_kde_results.Copy(fft_kde.get_density_estimates());
+    query_dataset.Copy(fft_kde.get_query_dataset());
+    reference_dataset.Copy(fft_kde.get_reference_dataset());
+    if(fx_param_exists(NULL, "fft_kde_output")) {
+      fft_kde.PrintDebug();
+    }
+
+    if(do_naive) {
+      NaiveKde<GaussianKernel> naive_kde;
+      naive_kde.Init(query_dataset, reference_dataset);
+      naive_kde.Compute();
+      
+      if(fx_param_exists(NULL, "naive_kde_output")) {
+	naive_kde.PrintDebug();
+      }
+      naive_kde.ComputeMaximumRelativeError(fft_kde_results);
+    }
   }
-  else {
-    if(!strcmp(kernel_name, "gaussian")) {
+  else if(!strcmp(algorithm, "fast")) {
+    if(!strcmp(fx_param_str(NULL, "kernel", "gaussian"), "gaussian")) {
 
       Vector fast_kde_results;
       Matrix query_dataset;
@@ -67,10 +87,8 @@ int main(int argc, char *argv[]) {
 	naive_kde.ComputeMaximumRelativeError(fast_kde_results);
       }
     
-    
-
     }
-    else if(!strcmp(kernel_name, "epan")) {
+    else if(!strcmp(fx_param_str(NULL, "kernel", "epan"), "epan")) {
       FastKde<EpanKernel, EpanKernelAux> fast_kde;
       fast_kde.Init();
       fast_kde.Compute(fx_param_double(NULL, "tau", 0.1));
