@@ -37,16 +37,6 @@ class PCAStat {
     Matrix intermediate;
     la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
     la::MulInit(ro_VT_trans, intermediate, A_inv);
-    
-    printf("Testing pseudoinverse\n");
-    ro_s.PrintDebug();
-    ro_s_inv.PrintDebug();
-    A.PrintDebug();
-    A_inv->PrintDebug();
-
-    Matrix check;
-    la::MulInit(A, *A_inv, &check);
-    check.PrintDebug();
   }
 
   void ComputeColumnMeanVector(const Matrix &A, int start, int count,
@@ -118,9 +108,6 @@ class PCAStat {
   /** compute PCA exhaustively for leaf nodes */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
 
-    printf("Base case...\n");
-    printf("Got %d %d\n", start, count);
-
     begin_ = start;
     count_ = count;
 
@@ -135,7 +122,7 @@ class PCAStat {
     // extract the relevant part of the dataset and mean-center it
     ExtractSubMatrix(dataset, start, count, orig_mean_centered_);
     ComputeColumnMeanVector(orig_mean_centered_, means_);
-    SubtractVectorFromMatrix(orig_mean_centered_, means_, orig_mean_centered_);
+    //SubtractVectorFromMatrix(orig_mean_centered_, means_, orig_mean_centered_);
 
     // compute PCA on the extracted submatrix
     Matrix U, VT;
@@ -157,9 +144,6 @@ class PCAStat {
 
     la::MulInit(U_trunc, orig_mean_centered_, &pca_transformed_);
 
-    means_.PrintDebug();
-    pca_transformed_.PrintDebug();
-
     /*
     // this shows how to recover global coordinates
     Matrix recovered_;
@@ -179,12 +163,8 @@ class PCAStat {
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const PCAStat& left_stat, const PCAStat& right_stat) {
 
-    printf("Merging case...\n\n");
-
     begin_ = start;
     count_ = count;
-
-    printf("Got %d %d\n", start, count);
 
     // destory objects and reinitialize
     orig_mean_centered_.Destruct();
@@ -243,10 +223,6 @@ class PCAStat {
     la::MulInit(left_overlap_meancentered, right_overlap_meancentered_inv,
 		&F);
 
-    printf("F is\n");
-    F.PrintDebug();
-
-
     // use the transformation matrix to map the right side local coordinate
     // to the left side local coordinate. left local coordinates that
     // are not in the overlap region stay the same
@@ -272,15 +248,6 @@ class PCAStat {
 			     right_pca_transformed.n_cols() + j, dotprod);
       }
     }
-    
-    printf("Final output!\n");
-    printf("Left: %d %d\n", left_stat.begin_, left_stat.count_);
-    printf("Right: %d %d\n", right_stat.begin_, right_stat.count_);
-    left_pca_transformed.PrintDebug();
-    right_pca_transformed.PrintDebug();
-    pca_transformed_.PrintDebug();
-
-    exit(0);
   }
 
   PCAStat() { Init(); }

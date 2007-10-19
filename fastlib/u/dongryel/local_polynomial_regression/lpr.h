@@ -1,5 +1,5 @@
-#ifndef KDE_H
-#define KDE_H
+#ifndef LPR_H
+#define LPR_H
 
 #include "fastlib/fastlib_int.h"
 #include "u/dongryel/series_expansion/farfield_expansion.h"
@@ -9,7 +9,7 @@
 #include "u/dongryel/series_expansion/kernel_aux.h"
 
 template<typename TKernel>
-class NaiveKde {
+class NaiveLpr {
 
  private:
   
@@ -29,8 +29,8 @@ class NaiveKde {
   
   void Compute() {
 
-    printf("\nStarting naive KDE...\n");
-    fx_timer_start(NULL, "naive_kde_compute");
+    printf("\nStarting naive LPR...\n");
+    fx_timer_start(NULL, "naive_lpr_compute");
 
     // compute unnormalized sum
     for(index_t q = 0; q < qset_.n_cols(); q++) {
@@ -51,7 +51,7 @@ class NaiveKde {
       densities_[q] /= norm_const;
     }
     fx_timer_stop(NULL, "naive_kde_compute");
-    printf("\nNaive KDE completed...\n");
+    printf("\nNaive LPR completed...\n");
   }
 
   void Init() {
@@ -100,7 +100,7 @@ class NaiveKde {
       }
     }
     
-    fx_format_result(NULL, "maxium_relative_error_for_fast_KDE", "%g", 
+    fx_format_result(NULL, "maxium_relative_error_for_fast_LPR", "%g", 
 		     max_rel_err);
   }
 
@@ -108,17 +108,17 @@ class NaiveKde {
 
 
 template<typename TKernel, typename TKernelAux>
-class FastKde {
+class FastLpr {
 
   public:
 
-  // forward declaration of KdeStat class
-  class KdeStat;
+  // forward declaration of LprStat class
+  class LprStat;
 
   // our tree type using the KdeStat
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, KdeStat > Tree;
+  typedef BinarySpaceTree<DHrectBound<2>, Matrix, LprStat > Tree;
   
-  class KdeStat {
+  class LprStat {
   public:
     
     /** lower bound on the densities for the query points owned by this node 
@@ -241,9 +241,9 @@ class FastKde {
       }
     }
 
-    KdeStat() { }
+    LprStat() { }
     
-    ~KdeStat() {}
+    ~LprStat() {}
     
   };
   
@@ -289,10 +289,10 @@ class FastKde {
 		    int *order_local) {
     
     // query self statistics
-    KdeStat &qstat = qnode->stat();
+    LprStat &qstat = qnode->stat();
 
     // reference node statistics
-    KdeStat &rstat = rnode->stat();
+    LprStat &rstat = rnode->stat();
 
     // incorporate into the self
     double dl_ref = *dl;
@@ -357,7 +357,7 @@ class FastKde {
   }
 
   /** exhaustive base KDE case */
-  void FKdeBase(Tree *qnode, Tree *rnode) {
+  void FLprBase(Tree *qnode, Tree *rnode) {
 
     // compute unnormalized sum
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -488,7 +488,7 @@ class FastKde {
 	       double &du, double &dt) {
 
     // query node stat
-    KdeStat &stat = qnode->stat();
+    LprStat &stat = qnode->stat();
     
     // number of reference points
     int num_references = rnode->count();
@@ -545,8 +545,8 @@ class FastKde {
     }
   }
 
-  /** canonical fast KDE case */
-  void FKde(Tree *qnode, Tree *rnode) {
+  /** canonical fast LPR case */
+  void FLpr(Tree *qnode, Tree *rnode) {
 
     /** temporary variable for storing lower bound change */
     double dl = 0, de = 0, du = 0, dt = 0;
@@ -557,11 +557,11 @@ class FastKde {
     DRange kernel_value_range;
 
     // query node statistics
-    KdeStat &stat = qnode->stat();
+    LprStat &stat = qnode->stat();
 
     // left child and right child of query node statistics
-    KdeStat *left_stat = NULL;
-    KdeStat *right_stat = NULL;
+    LprStat *left_stat = NULL;
+    LprStat *right_stat = NULL;
 
     // process density bound changes sent from the ancestor query nodes,
     UpdateBounds(qnode, rnode, &stat.owed_l_, NULL, &stat.owed_u_, NULL,
@@ -598,7 +598,7 @@ class FastKde {
       
       // for leaf pairs, go exhaustive
       if(rnode->is_leaf()) {
-	FKdeBase(qnode, rnode);
+	FLprBase(qnode, rnode);
 	return;
       }
       
@@ -607,8 +607,8 @@ class FastKde {
 	Tree *rnode_first = NULL, *rnode_second = NULL;
 	BestNodePartners(qnode, rnode->left(), rnode->right(), &rnode_first,
 			 &rnode_second);
-	FKde(qnode, rnode_first);
-	FKde(qnode, rnode_second);
+	FLpr(qnode, rnode_first);
+	FLpr(qnode, rnode_second);
 	return;
       }
     }
@@ -624,8 +624,8 @@ class FastKde {
 			    &stat.mass_t_);
 	BestNodePartners(rnode, qnode->left(), qnode->right(), &qnode_first,
 			 &qnode_second);
-	FKde(qnode_first, rnode);
-	FKde(qnode_second, rnode);
+	FLpr(qnode_first, rnode);
+	FLpr(qnode_second, rnode);
 	return;
       }
 
@@ -637,13 +637,13 @@ class FastKde {
 	
 	BestNodePartners(qnode->left(), rnode->left(), rnode->right(),
 			 &rnode_first, &rnode_second);
-	FKde(qnode->left(), rnode_first);
-	FKde(qnode->left(), rnode_second);
+	FLpr(qnode->left(), rnode_first);
+	FLpr(qnode->left(), rnode_second);
 
 	BestNodePartners(qnode->right(), rnode->left(), rnode->right(),
 			 &rnode_first, &rnode_second);
-	FKde(qnode->right(), rnode_first);
-	FKde(qnode->right(), rnode_second);
+	FLpr(qnode->right(), rnode_first);
+	FLpr(qnode->right(), rnode_second);
 	return;
       }
     }
@@ -690,7 +690,7 @@ class FastKde {
   /** post processing step */
   void PostProcess(Tree *qnode) {
     
-    KdeStat &stat = qnode->stat();
+    LprStat &stat = qnode->stat();
 
     // for leaf query node
     if(qnode->is_leaf()) {
@@ -723,9 +723,9 @@ class FastKde {
   public:
 
   // constructor/destructor
-  FastKde() {}
+  FastLpr() {}
 
-  ~FastKde() { 
+  ~FastLpr() { 
     
     if(qroot_ != rroot_ ) {
       delete qroot_; 
@@ -865,7 +865,7 @@ class FastKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(NULL, "fast_kde_output", NULL)) != NULL) {
+    if((fname = fx_param_str(NULL, "fast_lpr_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
