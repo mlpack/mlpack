@@ -19,46 +19,239 @@ class NaiveLpr {
   /** reference dataset */
   Matrix rset_;
 
+  /** reference target */
+  Vector rset_targets_;
+
   /** kernel */
   TKernel kernel_;
 
-  /** computed densities */
-  Vector densities_;
+  /** numerator vector X^T W(q) Y for each query point */
+  ArrayList<Vector> numerator_;
   
+  /** denominator matrix X^T W(q) X for each query point */
+  ArrayList<Matrix> denominator_;
+
+  /** computed regression values */
+  Vector regression_values_;
+
+  /** local polynomial approximation order */
+  int lpr_order_;
+
+  /** total number of coefficients for the local polynomial */
+  int total_num_coeffs_;
+
+  void PseudoInverse(const Matrix &A, Matrix *A_inv) {
+    Vector ro_s;
+    Matrix ro_U, ro_VT;
+
+    // compute the SVD of A
+    la::SVDInit(A, &ro_s, &ro_U, &ro_VT);
+    
+    // take the transpose of V^T and U
+    Matrix ro_VT_trans;
+    Matrix ro_U_trans;
+    la::TransposeInit(ro_VT, &ro_VT_trans);
+    la::TransposeInit(ro_U, &ro_U_trans);
+    Matrix ro_s_inv;
+    ro_s_inv.Init(ro_VT_trans.n_cols(), ro_U_trans.n_rows());
+    ro_s_inv.SetZero();
+
+    // initialize the diagonal by the inverse of ro_s
+    for(index_t i = 0; i < ro_s.length(); i++) {
+      ro_s_inv.set(i, i, 1.0 / ro_s[i]);
+    }
+    Matrix intermediate;
+    la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
+    la::MulInit(ro_VT_trans, intermediate, A_inv);
+  }
+
  public:
   
   void Compute() {
 
+    // temporary variables for multiindex looping
+    ArrayList<int> heads;
+    Vector weighted_values;
+
     printf("\nStarting naive LPR...\n");
     fx_timer_start(NULL, "naive_lpr_compute");
 
-    // compute unnormalized sum
+    // initialization of temporary variables for computation...
+    heads.Init(qset_.n_rows() + 1);
+    weighted_values.Init(total_num_coeffs_);    
+
+    // compute unnormalized sum for the numerator vector and the denominator
+    // matrix
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       
       const double *q_col = qset_.GetColumnPtr(q);
       for(index_t r = 0; r < rset_.n_cols(); r++) {
 	const double *r_col = rset_.GetColumnPtr(r);
+	const double r_target = rset_targets_[r];
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
-	
-	densities_[q] += kernel_.EvalUnnormOnSq(dsqd);
+	double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
+
+	// multiindex looping
+	for(index_t i = 0; i < qset_.n_rows(); i++) {
+	  heads[i] = 0;
+	}
+	heads[qset_.n_rows()] = MAXINT;
+
+	weighted_values[0] = 1.0;
+	for(index_t k = 1, t = 1, tail = 1; k <= lpr_order_; k++, tail = t) {
+	  for(index_t i = 0; i < qset_.n_rows(); i++) {
+	    int head = (int) heads[i];
+	    heads[i] = t;
+	    for(index_t j = head; j < tail; j++, t++) {
+
+	      // compute numerator vector position t based on position j
+	      weighted_values[t] = weighted_values[j] * r_col[i];
+	    }
+	  }
+	}
+
+	// tally up the sum here
+	for(index_t i = 0; i < total_num_coeffs_; i++) {
+	  numerator_[q][i] = numerator_[q][i] + r_target *
+	    weighted_values[i] * kernel_value;
+
+	  for(index_t j = 0; j < total_num_coeffs_; j++) {
+	    denominator_[q].set(i, j, denominator_[q].get(i, j) + 
+				weighted_values[i] * weighted_values[j] *
+				kernel_value);
+	  }
+	}
+      } // end of looping over each reference point
+    } // end of looping over each query point
+
+    // now iterate over all query points and compute regression estimate
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+
+      const double *q_col = qset_.GetColumnPtr(q);
+      Matrix denominator_inv_q;
+      Vector beta_q;
+
+      // now invert the denominator matrix for each query point and multiply
+      // by the numerator vector
+      PseudoInverse(denominator_[q], &denominator_inv_q);      
+      la::MulInit(denominator_inv_q, numerator_[q], &beta_q);
+
+      // compute the vector [1, x_1, \cdots, x_D, second order, ...]
+      weighted_values[0] = 1.0;
+      for(index_t k = 1, t = 1, tail = 1; k <= lpr_order_; k++, tail = t) {
+	for(index_t i = 0; i < qset_.n_rows(); i++) {
+	  int head = (int) heads[i];
+	  heads[i] = t;
+	  for(index_t j = head; j < tail; j++, t++) {
+
+	    // compute numerator vector position t based on position j
+	    weighted_values[t] = weighted_values[j] * q_col[i];
+	  }
+	}
       }
+
+      // compute the dot product between the multiindex vector for the query
+      // point by the beta_q
+      regression_values_[q] = la::Dot(weighted_values, beta_q);
     }
     
-    // then normalize it
-    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) * 
-      rset_.n_cols();
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
-      densities_[q] /= norm_const;
-    }
-    fx_timer_stop(NULL, "naive_kde_compute");
+    fx_timer_stop(NULL, "naive_lpr_compute");
     printf("\nNaive LPR completed...\n");
   }
 
-  void Init() {
-    densities_.SetZero();
+  void ReInit(int order) {
+
+    // compute total number of coefficients
+    total_num_coeffs_ = (int) math::BinomialCoefficient(order + qset_.n_rows(),
+							qset_.n_rows());    
+    regression_values_.SetZero();
+
+    // reinitialize the temporary stroages for storing the numerator vectors
+    // and the denominator matrices
+    if(lpr_order_ != order) {
+      lpr_order_ = order;
+      total_num_coeffs_ = (int) 
+	math::BinomialCoefficient(order + qset_.n_rows(), qset_.n_rows());
+      
+      numerator_.Destruct();
+      numerator_.Init(qset_.n_cols());
+
+      for(index_t i = 0; i < qset_.n_cols(); i++) {
+	numerator_[i].Destruct();
+	numerator_[i].Init(total_num_coeffs_, total_num_coeffs_);
+	numerator_[i].SetZero();
+	denominator_[i].Destruct();
+	denominator_[i].Init(total_num_coeffs_, total_num_coeffs_);
+	denominator_[i].SetZero();
+      }
+    }
   }
 
-  void Init(Matrix &qset, Matrix &rset) {
+  void Init(int order) {
+
+    // get datasets
+    Dataset ref_dataset;
+
+    // read the datasets
+    const char *rfname = fx_param_str_req(NULL, "data");
+    const char *qfname = fx_param_str(NULL, "query", rfname);
+
+    // read reference dataset
+    ref_dataset.InitFromFile(rfname);
+    rset_.Own(&(ref_dataset.matrix()));
+
+    // read the reference weights
+    char *rtfname = NULL;
+    if(fx_param_exists(NULL, "dtarget")) {
+      rtfname = (char *)fx_param_str(NULL, "dtarget", NULL);
+    }
+
+    if(rtfname != NULL) {
+      Dataset ref_targets;
+      ref_targets.InitFromFile(rtfname);
+      rset_targets_.Copy(ref_targets.matrix().GetColumnPtr(0),
+			 ref_targets.matrix().n_rows());
+    }
+    else {
+      rset_targets_.Init(rset_.n_cols());
+      rset_targets_.SetAll(1);
+    }
+
+    if(!strcmp(qfname, rfname)) {
+      qset_.Alias(rset_);
+    }
+    else {
+      Dataset query_dataset;
+      query_dataset.InitFromFile(qfname);
+      qset_.Own(&(query_dataset.matrix()));
+    }
+
+    // get bandwidth
+    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+
+    // compute total number of coefficients
+    lpr_order_ = order;
+    total_num_coeffs_ = (int) math::BinomialCoefficient(order + qset_.n_rows(),
+							qset_.n_rows());
+    
+    // allocate temporary storages for storing the numerator vectors and
+    // the denominator matrices
+    numerator_.Init(qset_.n_cols());
+    denominator_.Init(qset_.n_cols());
+
+    for(index_t i = 0; i < qset_.n_cols(); i++) {
+      numerator_[i].Init(total_num_coeffs_);
+      numerator_[i].SetZero();
+      denominator_[i].Init(total_num_coeffs_, total_num_coeffs_);
+      denominator_[i].SetZero();
+    }
+    
+    // allocate density storage
+    regression_values_.Init(qset_.n_cols());
+    regression_values_.SetZero();
+  }
+
+  void Init(Matrix &qset, Matrix &rset, int order) {
 
     // get datasets
     qset_.Alias(qset);
@@ -66,10 +259,25 @@ class NaiveLpr {
 
     // get bandwidth
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+
+    // compute total number of coefficients
+    lpr_order_ = order;
+    total_num_coeffs_ = (int) math::BinomialCoefficient(order + qset_.n_rows(),
+							qset_.n_rows());
+    
+    // allocate temporary storages for storing the numerator vectors and
+    // the denominator matrices
+    numerator_.Init(qset_.n_cols(), total_num_coeffs_);
+    denominator_.Init(qset_.n_cols());
+
+    for(index_t i = 0; i < qset_.n_cols(); i++) {
+      denominator_[i].Init(total_num_coeffs_, total_num_coeffs_);
+      denominator_[i].SetZero();
+    }
     
     // allocate density storage
-    densities_.Init(qset.n_cols());
-    densities_.SetZero();
+    regression_values_.Init(qset.n_cols());
+    regression_values_.SetZero();
   }
 
   void PrintDebug() {
@@ -77,11 +285,11 @@ class NaiveLpr {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(NULL, "naive_kde_output", NULL)) != NULL) {
+    if((fname = fx_param_str(NULL, "naive_lpr_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
-      fprintf(stream, "%g\n", densities_[q]);
+      fprintf(stream, "%g\n", regression_values_[q]);
     }
     
     if(stream != stdout) {
@@ -89,11 +297,12 @@ class NaiveLpr {
     }    
   }
 
-  void ComputeMaximumRelativeError(const Vector &density_estimate) {
+  void ComputeMaximumRelativeError(const Vector &regression_estimate) {
     
     double max_rel_err = 0;
-    for(index_t q = 0; q < densities_.length(); q++) {
-      double rel_err = (density_estimate[q] - densities_[q]) / densities_[q];
+    for(index_t q = 0; q < regression_values_.length(); q++) {
+      double rel_err = (regression_estimate[q] - regression_values_[q]) / 
+	regression_values_[q];
       
       if(rel_err > max_rel_err) {
 	max_rel_err = rel_err;
@@ -192,8 +401,8 @@ class FastLpr {
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count,
-	      const KdeStat& left_stat,
-	      const KdeStat& right_stat) {
+	      const LprStat& left_stat,
+	      const LprStat& right_stat) {
       Init();
     }
     
@@ -205,7 +414,7 @@ class FastLpr {
       Init();
     }
 
-    void MergeChildBounds(KdeStat &left_stat, KdeStat &right_stat) {
+    void MergeChildBounds(LprStat &left_stat, LprStat &right_stat) {
 
       // steal left and right children's tokens
       double min_mass_t = min(left_stat.mass_t_, right_stat.mass_t_);
@@ -219,7 +428,7 @@ class FastLpr {
     }
 
     void PushDownTokens
-      (KdeStat &left_stat, KdeStat &right_stat, double *de,
+      (LprStat &left_stat, LprStat &right_stat, double *de,
        typename TKernelAux::TLocalExpansion *local_expansion, double *dt) {
     
       if(de != NULL) {
@@ -416,8 +625,8 @@ class FastLpr {
     double actual_err = 0;
 
     // query node and reference node statistics
-    KdeStat &qstat = qnode->stat();
-    KdeStat &rstat = rnode->stat();
+    LprStat &qstat = qnode->stat();
+    LprStat &rstat = rnode->stat();
     
     // expansion objects
     typename TKernelAux::TFarFieldExpansion &farfield_expansion = 
