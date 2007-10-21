@@ -283,6 +283,47 @@ class FastKde {
   /** accuracy parameter */
   double tau_;
 
+  // preprocessing: scaling the dataset; this has to be moved to the dataset
+  // module
+  /* scales each attribute to 0-1 using the min/max values */
+  void scale_data_by_minmax() {
+
+    int num_dims = rset_.n_rows();
+    DHrectBound<2> qset_bound;
+    DHrectBound<2> rset_bound;
+    qset_bound.Init(qset_.n_rows());
+    rset_bound.Init(qset_.n_rows());
+
+    // go through each query/reference point to find out the bounds
+    for(index_t r = 0; r < rset_.n_cols(); r++) {
+      Vector ref_vector;
+      rset_.MakeColumnVector(r, &ref_vector);
+      rset_bound |= ref_vector;
+    }
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      Vector query_vector;
+      qset_.MakeColumnVector(q, &query_vector);
+      qset_bound |= query_vector;
+    }
+
+    for(index_t i = 0; i < num_dims; i++) {
+      DRange qset_range = qset_bound.get(i);
+      DRange rset_range = rset_bound.get(i);
+      double min_coord = min(qset_range.lo, rset_range.lo);
+      double max_coord = max(qset_range.hi, rset_range.hi);
+      double width = max_coord - min_coord;
+
+      for(index_t j = 0; j < rset_.n_cols(); j++) {
+	rset_.set(i, j, (rset_.get(i, j) - min_coord) / width);
+      }
+      if(qroot_ != rroot_) {
+	for(index_t j = 0; j < qset_.n_cols(); j++) {
+	  qset_.set(i, j, (qset_.get(i, j) - min_coord) / width);
+	}
+      }
+    }
+  }
+
   // member functions
   void UpdateBounds(Tree *qnode, Tree *rnode, 
 		    double *dl, double *de, double *du, double *dt,
@@ -823,6 +864,11 @@ class FastKde {
       qset_.Own(&(query_dataset.matrix()));
     }
 
+    // scale dataset if the user wants to
+    if(!strcmp(fx_param_str(NULL, "scaling", NULL), "range")) {
+      scale_data_by_minmax();
+    }
+
     // construct query and reference trees
     fx_timer_start(NULL, "tree_d");
     rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen);
@@ -834,7 +880,7 @@ class FastKde {
       qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen);
     }
     fx_timer_stop(NULL, "tree_d");
-
+    
     // initialize the density lists
     densities_l_.Init(qset_.n_cols());
     densities_e_.Init(qset_.n_cols());
