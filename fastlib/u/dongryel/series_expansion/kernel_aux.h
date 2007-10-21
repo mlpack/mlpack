@@ -124,7 +124,7 @@ class GaussianKernelMultAux {
     do {
       factorialvalue *= (p_alpha + 1);
 
-      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order() - 1) {
+      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order()) {
 	return -1;
       }
 
@@ -177,8 +177,9 @@ class GaussianKernelMultAux {
     double one_minus_two_r, two_r;
 
     // In this case, it is "impossible" to prune for the Gaussian kernel.
-    if(r >= 0.5 || r2 >= 0.5)
+    if(r >= 0.5 || r2 >= 0.5) {
       return -1;
+    }
 
     r = max(r, r2);
     two_r = 2.0 * r;
@@ -188,7 +189,7 @@ class GaussianKernelMultAux {
     do {
       factorialvalue *= (p_alpha + 1);
 
-      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order() - 1) {
+      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order()) {
 	return -1;
       }
 
@@ -248,7 +249,7 @@ class GaussianKernelMultAux {
     do {
       factorialvalue *= (p_alpha + 1);
 
-      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order() - 1) {
+      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order()) {
 	return -1;
       }
 
