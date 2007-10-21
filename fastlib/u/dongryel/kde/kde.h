@@ -93,7 +93,8 @@ class NaiveKde {
     
     double max_rel_err = 0;
     for(index_t q = 0; q < densities_.length(); q++) {
-      double rel_err = (density_estimate[q] - densities_[q]) / densities_[q];
+      double rel_err = fabs(density_estimate[q] - densities_[q]) / 
+	densities_[q];
       
       if(rel_err > max_rel_err) {
 	max_rel_err = rel_err;
