@@ -1,5 +1,6 @@
 #include "fastlib/fastlib_int.h"
 #include "fft_kde.h"
+#include "fgt_kde.h"
 #include "kde.h"
 
 int main(int argc, char *argv[]) {
@@ -34,6 +35,10 @@ int main(int argc, char *argv[]) {
       }
       naive_kde.ComputeMaximumRelativeError(fft_kde_results);
     }
+  }
+  else if(!strcmp(algorithm, "fgt")) {
+    FGTKde fgt_kde;
+    fgt_kde.Init();    
   }
   else if(!strcmp(algorithm, "fast")) {
     if(!strcmp(fx_param_str(NULL, "kernel", "gaussian"), "gaussian")) {

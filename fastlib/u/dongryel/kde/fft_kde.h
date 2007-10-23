@@ -67,6 +67,47 @@ class FFTKde {
   
   Vector kernelweights_;
 
+  // preprocessing: scaling the dataset; this has to be moved to the dataset
+  // module
+  /* scales each attribute to 0-1 using the min/max values */
+  void scale_data_by_minmax() {
+
+    int num_dims = rset_.n_rows();
+    DHrectBound<2> qset_bound;
+    DHrectBound<2> rset_bound;
+    qset_bound.Init(qset_.n_rows());
+    rset_bound.Init(qset_.n_rows());
+
+    // go through each query/reference point to find out the bounds
+    for(index_t r = 0; r < rset_.n_cols(); r++) {
+      Vector ref_vector;
+      rset_.MakeColumnVector(r, &ref_vector);
+      rset_bound |= ref_vector;
+    }
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      Vector query_vector;
+      qset_.MakeColumnVector(q, &query_vector);
+      qset_bound |= query_vector;
+    }
+
+    for(index_t i = 0; i < num_dims; i++) {
+      DRange qset_range = qset_bound.get(i);
+      DRange rset_range = rset_bound.get(i);
+      double min_coord = min(qset_range.lo, rset_range.lo);
+      double max_coord = max(qset_range.hi, rset_range.hi);
+      double width = max_coord - min_coord;
+
+      for(index_t j = 0; j < rset_.n_cols(); j++) {
+	rset_.set(i, j, (rset_.get(i, j) - min_coord) / width);
+      }
+      if(fx_param_str(NULL, "query", NULL) != NULL) {
+	for(index_t j = 0; j < qset_.n_cols(); j++) {
+	  qset_.set(i, j, (qset_.get(i, j) - min_coord) / width);
+	}
+      }
+    }
+  }
+  
   /**
    * Do a Fourier transform of an array of N complex numbers separated by
    * steps of (complex) size skip.  The array f should be of length 2N*skip
@@ -676,6 +717,11 @@ class FFTKde {
     densities_.Init(qset_.n_cols());
     rset_.Alias(rset);
 
+    // scale dataset if the user wants to
+    if(!strcmp(fx_param_str(NULL, "scaling", NULL), "range")) {
+      scale_data_by_minmax();
+    }
+
     // initialize member variables.
     size_.Init(qset_.n_rows());
     minindices_.Init(rset_.n_rows());
@@ -720,6 +766,11 @@ class FFTKde {
       Dataset query_dataset;
       query_dataset.InitFromFile(qfname);
       qset_.Own(&(query_dataset.matrix()));
+    }
+
+    // scale dataset if the user wants to
+    if(!strcmp(fx_param_str(NULL, "scaling", NULL), "range")) {
+      scale_data_by_minmax();
     }
 
     printf("Initializing FFT KDE...\n");

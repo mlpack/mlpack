@@ -897,7 +897,7 @@ class FastKde {
       sea_.Init(fx_param_int(NULL, "order", 5), qset_.n_rows());
     }
     else if(qset_.n_rows() <= 5) {
-      sea_.Init(fx_param_int(NULL, "order", 3), qset_.n_rows());
+      sea_.Init(fx_param_int(NULL, "order", 2), qset_.n_rows());
     }
     else if(qset_.n_rows() <= 6) {
       sea_.Init(fx_param_int(NULL, "order", 1), qset_.n_rows());
