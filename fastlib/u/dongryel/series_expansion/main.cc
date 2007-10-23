@@ -597,7 +597,6 @@ int main(int argc, char *argv[]) {
   begin = 0; end = data.n_cols();
 
   // unit tests begin here!
-  /*
   DEBUG_ASSERT(TestInitAux(data) == 1);
   DEBUG_ASSERT(TestEvaluateFarField(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestEvaluateLocalField(data, weights, begin, end) == 1);
@@ -608,9 +607,11 @@ int main(int argc, char *argv[]) {
 
   DEBUG_ASSERT(TestConvolveFarField(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestMixFarField(data, weights, begin, end) == 1);
-  */
+
+  /*
   DEBUG_ASSERT(TestMultInitAux(data) == 1);
   DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
+  */
 
   fx_done();
 }

@@ -5,6 +5,15 @@ class PCAStat {
   
  private:
 
+  void AddVectorToMatrix(Matrix &A, const Vector &v, Matrix &R) {
+    
+    for(index_t i = 0; i < A.n_rows(); i++) {
+      for(index_t j = 0; j < A.n_cols(); j++) {
+	R.set(i, j, A.get(i, j) + v[i]);
+      }
+    }
+  }
+
   void SubtractVectorFromMatrix(Matrix &A, const Vector &v, Matrix &R) {
 
     for(index_t i = 0; i < A.n_rows(); i++) {
@@ -121,13 +130,14 @@ class PCAStat {
 
     // extract the relevant part of the dataset and mean-center it
     ExtractSubMatrix(dataset, start, count, orig_mean_centered_);
+
     ComputeColumnMeanVector(orig_mean_centered_, means_);
     //SubtractVectorFromMatrix(orig_mean_centered_, means_, orig_mean_centered_);
 
     // compute PCA on the extracted submatrix
     Matrix U, VT;
-    Vector s;
-    la::SVDInit(orig_mean_centered_, &s, &U, &VT);
+    Vector s_values;
+    la::SVDInit(orig_mean_centered_, &s_values, &U, &VT);
 
     // reduce the dimension in half
     Matrix U_trunc;
@@ -141,18 +151,16 @@ class PCAStat {
 	U_trunc.set(i, j, s[j]);
       }
     }
-
     la::MulInit(U_trunc, orig_mean_centered_, &pca_transformed_);
 
-    /*
     // this shows how to recover global coordinates
+    /*
     Matrix recovered_;
     la::MulTransAInit(U_trunc, pca_transformed_, &recovered_);
-
-    printf("Original mean centered...\n");
-    orig_mean_centered_.PrintDebug();
+    AddVectorToMatrix(recovered_, means_, recovered_);
     printf("Recovered...\n");
     recovered_.PrintDebug();
+    exit(0);
     */
   }
 
