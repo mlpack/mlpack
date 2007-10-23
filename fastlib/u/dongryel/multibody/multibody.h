@@ -83,7 +83,7 @@ class NaiveMultibody {
 
 };
 
-template<typename TKernel, typename TKernelDerivative>
+template<typename TKernel, typename TKernelAux>
 class MultibodyStat {
 
  public:
@@ -91,15 +91,15 @@ class MultibodyStat {
   /**
    * Far field expansion created by the reference points in this node.
    */
-  FarFieldExpansion<TKernel, TKernelDerivative> farfield_expansion_;
+  FarFieldExpansion<TKernel, TKernelAux> farfield_expansion_;
 
   /**
    * Local expansion stored in this node.
    */
-  LocalExpansion<TKernel, TKernelDerivative> local_expansion_;
+  LocalExpansion<TKernel, TKernelAux> local_expansion_;
 
   // getters and setters
-  FarFieldExpansion<TKernel, TKernelDerivative> &get_farfield_coeffs() {
+  FarFieldExpansion<TKernel, TKernelAux> &get_farfield_coeffs() {
     return farfield_expansion_;
   }
 
@@ -136,8 +136,7 @@ class MultibodyStat {
 };
 
 
-template<typename TMultibodyKernel, typename TKernel, 
-	 typename TKernelDerivative>
+template<typename TMultibodyKernel, typename TKernel, typename TKernelAux>
 class MultitreeMultibody {
 
   FORBID_COPY(MultitreeMultibody);
@@ -145,7 +144,7 @@ class MultitreeMultibody {
 public:
 
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, 
-    MultibodyStat<TKernel, TKernelDerivative> > Tree;
+    MultibodyStat<TKernel, TKernelAux> > Tree;
   
   typedef TMultibodyKernel MultibodyKernel;
 
@@ -561,30 +560,33 @@ private:
       double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
       double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
       
-      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs0 =
+      FarFieldExpansion<TKernel, TKernelAux> &coeffs0 =
 	nodes[0]->stat().get_farfield_coeffs();
-      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs1 =
+      FarFieldExpansion<TKernel, TKernelAux> &coeffs1 =
 	nodes[1]->stat().get_farfield_coeffs();
-      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs2 =
+      FarFieldExpansion<TKernel, TKernelAux> &coeffs2 =
 	nodes[2]->stat().get_farfield_coeffs();
       double total_relerr = allowed_err / 
 	(num_tuples * max_ij * max_ik * max_jk);
       double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0);
       
       // compute the required number of terms
-      int order_ij = coeffs0.OrderForConvertingtoLocal(nodes[0]->bound(),
+      int order_ij = coeffs0.OrderForConvertingToLocal(nodes[0]->bound(),
 						       nodes[1]->bound(),
 						       distmat.get(0, 1),
+						       distmat.get(1, 0),
 						       min_ij * rel_err,
 						       &actual_error1);
-      int order_ik = coeffs1.OrderForConvertingtoLocal(nodes[0]->bound(),
+      int order_ik = coeffs1.OrderForConvertingToLocal(nodes[0]->bound(),
 						       nodes[2]->bound(),
 						       distmat.get(0, 2),
+						       distmat.get(2, 0),
 						       min_ik * rel_err,
 						       &actual_error2);
-      int order_jk = coeffs2.OrderForConvertingtoLocal(nodes[1]->bound(),
+      int order_jk = coeffs2.OrderForConvertingToLocal(nodes[1]->bound(),
 						       nodes[2]->bound(),
 						       distmat.get(1, 2),
+						       distmat.get(2, 1),
 						       min_jk * rel_err,
 						       &actual_error3);
       
@@ -650,11 +652,11 @@ private:
       double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
       double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
       
-      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs0 =
+      FarFieldExpansion<TKernel, TKernelAux> &coeffs0 =
 	nodes[0]->stat().get_farfield_coeffs();
-      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs1 =
+      FarFieldExpansion<TKernel, TKernelAux> &coeffs1 =
 	nodes[1]->stat().get_farfield_coeffs();
-      FarFieldExpansion<TKernel, TKernelDerivative> &coeffs2 =
+      FarFieldExpansion<TKernel, TKernelAux> &coeffs2 =
 	nodes[2]->stat().get_farfield_coeffs();
       double total_relerr = allowed_err / 
 	(num_tuples * max_ik * max_jk);
@@ -663,17 +665,17 @@ private:
       // compute the required number of terms
       int order_ik = -1;
       int order_jk = -1;
-      if(min_ik * rel_err > 0) {
-	order_ik = coeffs1.OrderForConvertingtoLocal(nodes[0]->bound(),
+      if(min_ik * rel_err > 0 && min_jk * rel_err > 0) {
+	order_ik = coeffs1.OrderForConvertingToLocal(nodes[0]->bound(),
 						     nodes[2]->bound(),
 						     distmat.get(0, 2),
+						     distmat.get(2, 0),
 						     min_ik * rel_err,
 						     &actual_error2);
-      }
-      if(min_jk * rel_err > 0) {
-	order_jk = coeffs2.OrderForConvertingtoLocal(nodes[1]->bound(),
+	order_jk = coeffs2.OrderForConvertingToLocal(nodes[1]->bound(),
 						     nodes[2]->bound(),
 						     distmat.get(1, 2),
+						     distmat.get(2, 1),
 						     min_jk * rel_err,
 						     &actual_error3);
       }
@@ -710,7 +712,6 @@ private:
       }
       return 0;
     }
-    
     return 0;
   }
 

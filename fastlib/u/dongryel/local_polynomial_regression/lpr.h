@@ -301,7 +301,7 @@ class NaiveLpr {
     
     double max_rel_err = 0;
     for(index_t q = 0; q < regression_values_.length(); q++) {
-      double rel_err = (regression_estimate[q] - regression_values_[q]) / 
+      double rel_err = fabs(regression_estimate[q] - regression_values_[q]) / 
 	regression_values_[q];
       
       if(rel_err > max_rel_err) {
@@ -332,68 +332,56 @@ class FastLpr {
     
     /** lower bound on the densities for the query points owned by this node 
      */
-    double mass_l_;
+    ArrayList<double> mass_l_;
     
     /**
      * additional offset for the lower bound on the densities for the query
      * points owned by this node (for leaf nodes only).
      */
-    double more_l_;
+    ArrayList<double> more_l_;
     
     /**
      * lower bound offset passed from above
      */
-    double owed_l_;
+    ArrayList<double> owed_l_;
     
     /** stores the portion pruned by finite difference
      */
-    double mass_e_;
+    ArrayList<double> mass_e_;
 
     /** upper bound on the densities for the query points owned by this node 
      */
-    double mass_u_;
+    ArrayList<double> mass_u_;
     
     /**
      * additional offset for the upper bound on the densities for the query
      * points owned by this node (for leaf nodes only)
      */
-    double more_u_;
+    ArrayList<double> more_u_;
     
     /**
      * upper bound offset passed from above
      */
-    double owed_u_;
+    ArrayList<double> owed_u_;
     
     /** extra error that can be used for the query points in this node */
-    double mass_t_;
-    
-    /**
-     * Far field expansion created by the reference points in this node.
-     */
-    typename TKernelAux::TFarFieldExpansion farfield_expansion_;
-    
-    /**
-     * Local expansion stored in this node.
-     */
-    typename TKernelAux::TLocalExpansion local_expansion_;
+    ArrayList<double> mass_t_;
     
     /** Initialize the statistics */
     void Init() {
-      mass_l_ = 0;
-      more_l_ = 0;
-      owed_l_ = 0;
-      mass_e_ = 0;
-      mass_u_ = 0;
-      more_u_ = 0;
-      owed_u_ = 0;
-      mass_t_ = 0;    
+      mass_l_.Init();
+      more_l_.Init();
+      owed_l_.Init();
+      mass_e_.Init();
+      mass_u_.Init();
+      more_u_.Init();
+      owed_u_.Init();
+      mass_t_.Init(); 
     }
     
     void Init(double bandwidth, 
 	      typename TKernelAux::TSeriesExpansionAux *sea) {
 
-      farfield_expansion_.Init(bandwidth, sea);
-      local_expansion_.Init(bandwidth, sea);
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count) {
@@ -408,14 +396,12 @@ class FastLpr {
     
     void Init(double bandwidth, const Vector& center,
 	      typename TKernelAux::TSeriesExpansionAux *sea) {
-      
-      farfield_expansion_.Init(bandwidth, center, sea);
-      local_expansion_.Init(bandwidth, center, sea);
       Init();
     }
 
     void MergeChildBounds(LprStat &left_stat, LprStat &right_stat) {
 
+      /*
       // steal left and right children's tokens
       double min_mass_t = min(left_stat.mass_t_, right_stat.mass_t_);
 
@@ -425,12 +411,14 @@ class FastLpr {
       mass_t_ += min_mass_t;
       left_stat.mass_t_ -= min_mass_t;
       right_stat.mass_t_ -= min_mass_t;
+      */
     }
 
     void PushDownTokens
       (LprStat &left_stat, LprStat &right_stat, double *de,
        typename TKernelAux::TLocalExpansion *local_expansion, double *dt) {
-    
+      
+      /*
       if(de != NULL) {
 	double de_ref = *de;
 	left_stat.mass_e_ += de_ref;
@@ -448,6 +436,8 @@ class FastLpr {
 	right_stat.mass_t_ += dt_ref;
 	*dt = 0;
       }
+      */
+
     }
 
     LprStat() { }
@@ -474,7 +464,7 @@ class FastLpr {
   Tree *rroot_;
   
   /** reference weights */
-  Vector rset_weights_;
+  Matrix rset_weights_;
 
   /** list of kernels to evaluate */
   TKernel kernel_;
@@ -491,204 +481,22 @@ class FastLpr {
   /** accuracy parameter */
   double tau_;
 
+  /** local polynomial approximation order */
+  int lpr_order_;
+
+  /** total number of coefficients for the local polynomial */
+  int total_num_coeffs_;
+
   // member functions
   void UpdateBounds(Tree *qnode, Tree *rnode, 
 		    double *dl, double *de, double *du, double *dt,
 		    int *order_farfield_to_local, int *order_farfield,
 		    int *order_local) {
-    
-    // query self statistics
-    LprStat &qstat = qnode->stat();
-
-    // reference node statistics
-    LprStat &rstat = rnode->stat();
-
-    // incorporate into the self
-    double dl_ref = *dl;
-    double du_ref = *du;
-    qstat.mass_l_ += dl_ref;
-    qstat.mass_u_ += du_ref;
-
-    // incorporate finite difference pruning if available
-    if(de != NULL) {
-      qstat.mass_e_ += (*de);
-    }
-
-    // incorporate token change
-    if(dt != NULL) {
-      qstat.mass_t_ += (*dt);
-    }
-    
-    // incorporate series approximation into the self
-
-    // far field to local translation
-    if(order_farfield_to_local != NULL && *order_farfield_to_local >= 0) {
-      rstat.farfield_expansion_.RefineCoeffs(rset_, rset_weights_, 
-					     rnode->begin(),
-					     rnode->end(), 
-					     *order_farfield_to_local);
-      rstat.farfield_expansion_.TranslateToLocal(qstat.local_expansion_);
-    }
-    // far field pruning
-    else if(order_farfield != NULL && *order_farfield >= 0) {
-      rstat.farfield_expansion_.RefineCoeffs(rset_, rset_weights_, 
-					     rnode->begin(),
-					     rnode->end(), 
-					     *order_farfield);
-      for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-	densities_e_[q] += 
-	  rstat.farfield_expansion_.EvaluateField(&qset_, q, NULL, 
-						  *order_farfield);
-      }
-    }
-    // local accumulation pruning
-    else if(order_local != NULL && *order_local >= 0) {
-      qstat.local_expansion_.AccumulateCoeffs(rset_, rset_weights_,
-					      rnode->begin(), rnode->end(),
-					      *order_local);
-    }
-    
-    // for a leaf node, incorporate the lower and upper bound changes into
-    // its additional offset
-    if(qnode->is_leaf()) {
-      qstat.more_l_ += dl_ref;
-      qstat.more_u_ += du_ref;
-    } 
-    
-    // otherwise, incorporate the bound changes into the owed slots of
-    // the immediate descendants
-    else {      
-      qnode->left()->stat().owed_l_ += dl_ref;
-      qnode->left()->stat().owed_u_ += du_ref;
-      qnode->right()->stat().owed_l_ += dl_ref;
-      qnode->right()->stat().owed_u_ += du_ref;
-    }
   }
 
   /** exhaustive base KDE case */
   void FLprBase(Tree *qnode, Tree *rnode) {
 
-    // compute unnormalized sum
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      
-      // get query point
-      const double *q_col = qset_.GetColumnPtr(q);
-      for(index_t r = rnode->begin(); r < rnode->end(); r++) {
-
-	// get reference point
-	const double *r_col = rset_.GetColumnPtr(r);
-
-	// pairwise distance and kernel value
-	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
-	double ker_value = kernel_.EvalUnnormOnSq(dsqd);
-
-	densities_l_[q] += ker_value;
-	densities_e_[q] += ker_value;
-	densities_u_[q] += ker_value;
-      }
-    }
-    
-    // tally up the unused error components due to exhaustive computation
-    qnode->stat().mass_t_ += rnode->count();
-
-    // get a tighter lower and upper bound by looping over each query point
-    // in the current query leaf node
-    double min_l = MAXDOUBLE;
-    double max_u = -MAXDOUBLE;
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      if(densities_l_[q] < min_l) {
-	min_l = densities_l_[q];
-      }
-      if(densities_u_[q] > max_u) {
-	max_u = densities_u_[q];
-      }
-    }
-    
-    // subtract the contribution accounted by the exhaustive computation
-    qnode->stat().more_u_ -= rnode->count();
-
-    // tighten lower and upper bound
-    qnode->stat().mass_l_ = min_l + qnode->stat().more_l_;
-    qnode->stat().mass_u_ = max_u + qnode->stat().more_u_;
-  }
-
-  /** 
-   * checking for prunability of the query and the reference pair using
-   * four types of pruning methods
-   */
-  int PrunableEnhanced(Tree *qnode, Tree *rnode, DRange &dsqd_range,
-		       DRange &kernel_value_range, double &dl, double &du, 
-		       double &dt, int &order_farfield_to_local,
-		       int &order_farfield, int &order_local) {
-
-    // actual amount of error incurred per each query/ref pair
-    double actual_err = 0;
-
-    // query node and reference node statistics
-    LprStat &qstat = qnode->stat();
-    LprStat &rstat = rnode->stat();
-    
-    // expansion objects
-    typename TKernelAux::TFarFieldExpansion &farfield_expansion = 
-      rstat.farfield_expansion_;
-    typename TKernelAux::TLocalExpansion &local_expansion = 
-      qstat.local_expansion_;
-
-    // number of reference points
-    int num_references = rnode->count();
-
-    // try pruning after bound refinement:
-    // the new lower bound after incorporating new info
-    dl = kernel_value_range.lo * num_references;
-    du = -kernel_value_range.hi * num_references;
-
-    // refine the lower bound using the new lower bound info
-    double new_mass_l = qstat.mass_l_ + dl;    
-    double allowed_err = tau_ * new_mass_l *
-      ((double)(num_references + qstat.mass_t_)) / 
-      ((double) rroot_->count() * num_references);
-    
-    // get the order of approximations
-    order_farfield_to_local = 
-      farfield_expansion.OrderForConvertingToLocal(rnode->bound(), 
-						   qnode->bound(),
-						   dsqd_range.lo, 
-						   dsqd_range.hi, 
-						   allowed_err,
-						   &actual_err);
-    if(order_farfield_to_local >= 0) {
-      dt = num_references * 
-	(1.0 - (rroot_->count()) * actual_err / (new_mass_l * tau_));
-      return 1;
-    }
-
-    if(qnode->count() < rnode->count()) {
-      order_farfield =
-	farfield_expansion.OrderForEvaluating(rnode->bound(), qnode->bound(),
-					      dsqd_range.lo,
-					      dsqd_range.hi, allowed_err, 
-					      &actual_err);
-      if(order_farfield >= 0) {
-	dt = num_references * 
-	  (1.0 - (rroot_->count()) * actual_err / (new_mass_l * tau_));      
-	return 1;
-      }
-    }
-
-    order_local =
-      local_expansion.OrderForEvaluating(rnode->bound(), qnode->bound(), 
-					 dsqd_range.lo,
-					 dsqd_range.hi, allowed_err, 
-					 &actual_err);
-
-    if(order_local >= 0) {
-      dt = num_references * 
-	(1.0 - (rroot_->count()) * actual_err / (new_mass_l * tau_));
-      return 1;
-    }
-
-    dl = du = dt = 0;
-    return 0;
   }
 
   /** checking for prunability of the query and the reference pair */
@@ -791,17 +599,6 @@ class FastLpr {
       return;
     }
     
-    // try series-expansion pruning
-    else if(PrunableEnhanced(qnode, rnode, dsqd_range, 
-			     kernel_value_range, dl, du, dt,
-			     order_farfield_to_local, order_farfield,
-			     order_local)) {
-      UpdateBounds(qnode, rnode, &dl, NULL, &du, &dt,
-		   &order_farfield_to_local, &order_farfield,
-		   &order_local);
-      return;
-    }
-    
     // for leaf query node
     if(qnode->is_leaf()) {
       
@@ -864,36 +661,6 @@ class FastLpr {
    * more arguments.
    */
   void PreProcess(Tree *node) {
-
-    // initialize the center of expansions and bandwidth for
-    // series expansion
-    node->stat().Init(sqrt(kernel_.bandwidth_sq()), &sea_);
-    node->bound().CalculateMidpoint
-      (&(node->stat().farfield_expansion_.get_center()));
-    node->bound().CalculateMidpoint
-      (&(node->stat().local_expansion_.get_center()));
-    
-    // initialize lower bound to 0
-    node->stat().mass_l_ = 0;
-    
-    // set the finite difference approximated amounts to 0
-    node->stat().mass_e_ = 0;
-
-    // set the upper bound to the number of reference points
-    node->stat().mass_u_ = rset_.n_cols();
-
-    // set the number of tokens to 0
-    node->stat().mass_t_ = 0;
-
-    // for non-leaf node, recurse
-    if(!node->is_leaf()) {
-      node->stat().owed_l_ = node->stat().owed_u_ = 0;
-      PreProcess(node->left());
-      PreProcess(node->right());
-    }
-    else {
-      node->stat().more_l_ = node->stat().more_u_ = 0;
-    }
   }
 
   /** post processing step */
@@ -927,6 +694,10 @@ class FastLpr {
       densities_e_[q] /= norm_const;
       densities_u_[q] /= norm_const;
     }
+  }
+
+  void BuildReferenceWeights(const Vector &rset_targets) {
+    rset_weights_.Init(rset_.num_cols(), );
   }
 
   public:
@@ -990,7 +761,7 @@ class FastLpr {
     printf("\nFast KDE completed...\n");
   }
 
-  void Init() {
+  void Init(int order) {
     
     Dataset ref_dataset;
 
@@ -1047,6 +818,11 @@ class FastLpr {
     densities_l_.Init(qset_.n_cols());
     densities_e_.Init(qset_.n_cols());
     densities_u_.Init(qset_.n_cols());
+
+    // initialize the local polynomial order
+    lpr_order_ = order;
+    total_num_coeffs_ = (int) math::BinomialCoefficient(order + qset_.n_rows(),
+							qset_.n_rows());
 
     // initialize the kernel
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
