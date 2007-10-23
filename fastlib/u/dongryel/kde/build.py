@@ -3,6 +3,7 @@ librule(
     name = "kde",                            # this line can be safely omitted
     sources = [],                            # files that must be compiled
     headers = ["fft_kde.h",
+               "fgt_kde.h",
                "kde.h"],                     # include files part of the 'lib'
     deplibs = ["u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
