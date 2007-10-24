@@ -91,8 +91,9 @@ class GaussianKernelMultAux {
   }
 
   int OrderForEvaluatingFarField
-    (const DHrectBound<2> &far_field_region, 
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+    (const DHrectBound<2> &far_field_region,
+     const DHrectBound<2> &local_field_region, 
+     double min_dist_sqd_regions,
      double max_dist_sqd_regions, double max_error, 
      double *actual_error) const {
     
@@ -149,7 +150,8 @@ class GaussianKernelMultAux {
 
   int OrderForConvertingFromFarFieldToLocal
     (const DHrectBound<2> &far_field_region,
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions, 
+     const DHrectBound<2> &local_field_region, 
+     double min_dist_sqd_regions, 
      double max_dist_sqd_regions, double max_error, 
      double *actual_error) const {
 
@@ -216,7 +218,8 @@ class GaussianKernelMultAux {
   
   int OrderForEvaluatingLocal
     (const DHrectBound<2> &far_field_region,
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+     const DHrectBound<2> &local_field_region, 
+     double min_dist_sqd_regions,
      double max_dist_sqd_regions, double max_error, 
      double *actual_error) const {
         
@@ -345,7 +348,8 @@ class GaussianKernelAux {
 
   int OrderForEvaluatingFarField
     (const DHrectBound<2> &far_field_region, 
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+     const DHrectBound<2> &local_field_region, 
+     double min_dist_sqd_regions,
      double max_dist_sqd_regions, double max_error, 
      double *actual_error) const {
 
@@ -358,46 +362,26 @@ class GaussianKernelAux {
     // find out the widest dimension and its length
     for(index_t d = 0; d < dim; d++) {
       DRange range = far_field_region.get(d);
-      widest_width = max(widest_width, range.width());
+      widest_width += range.width();
     }
   
     double two_bandwidth = 2 * sqrt(kernel_->bandwidth_sq());
     double r = widest_width / two_bandwidth;
 
-    // This is not really necessary for O(D^p) expansion, but it is for
-    // speeding up the convergence of the Taylor expansion.
-    if(r >= 1.0) {
-      return -1;
-    }
-
     double r_raised_to_p_alpha = 1.0;
     double ret;
     int p_alpha = 0;
-    double floor_fact, ceil_fact;
-    int remainder;
 
     do {
 
-      if(p_alpha > max_order - 1)
-	return -1;
-
-      r_raised_to_p_alpha *= r;
-
-      floor_fact = 
-	sea_->factorial((int)floor(((double) p_alpha) / ((double) dim)));
-      ceil_fact = 
-	sea_->factorial((int)ceil(((double) p_alpha) / ((double) dim)));
-
-      if(floor_fact < 0.0 || ceil_fact < 0.0) {
+      if(p_alpha > max_order - 1) {
 	return -1;
       }
 
-      remainder = p_alpha % dim;
-
-      ret = frontfactor * 
-	(sea_->get_total_num_coeffs(p_alpha + 1) -
-	 sea_->get_total_num_coeffs(p_alpha)) * r_raised_to_p_alpha /
-	sqrt(pow(floor_fact, dim - remainder) * pow(ceil_fact, remainder));
+      r_raised_to_p_alpha *= r;
+      frontfactor /= sqrt(p_alpha + 1);
+      
+      ret = frontfactor * r_raised_to_p_alpha;
     
       if(ret > max_error) {
 	p_alpha++;
@@ -413,7 +397,8 @@ class GaussianKernelAux {
 
   int OrderForConvertingFromFarFieldToLocal
     (const DHrectBound<2> &far_field_region,
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions, 
+     const DHrectBound<2> &local_field_region, 
+     double min_dist_sqd_regions, 
      double max_dist_sqd_regions, double max_error, 
      double *actual_error) const {
 
@@ -424,52 +409,45 @@ class GaussianKernelAux {
     for(index_t i = 0; i < dim; i++) {
       DRange far_field_range = far_field_region.get(i);
       DRange local_range = local_field_region.get(i);
-      max_ref_length = max(max_ref_length, far_field_range.width());
-      max_query_length = max(max_query_length, local_range.width());
+      max_ref_length += far_field_range.width();
+      max_query_length += local_range.width();
     }
   
     double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
     double r_R = max_ref_length / two_times_bandwidth;
     double r_Q = max_query_length / two_times_bandwidth;
-    double sqrt_two_r_R = sqrt(2.0) * r_R;
-    double sqrt_two_r_Q = sqrt(2.0) * r_Q;
-
-    if(sqrt_two_r_R >= 1.0 || sqrt_two_r_Q >= 1.0) {
-      return -1;
-    }
 
     int p_alpha = -1;
-    double sqrt_two_r_R_raised_to_p = 1.0;
     double r_Q_raised_to_p = 1.0;
-    int remainder;
+    double r_R_raised_to_p = 1.0;
     double ret2;
-    double frontfactor = 
+    double frontfactor =
       exp(-min_dist_sqd_regions / (4.0 * kernel_->bandwidth_sq()));
-    double floor_fact, ceil_fact;
+    double first_factorial = 1.0;
+    double second_factorial = 1.0;
+    double r_Q_raised_to_p_cumulative = 1;
 
     do {
       p_alpha++;
 
-      r_Q_raised_to_p *= r_Q;
-      sqrt_two_r_R_raised_to_p *= sqrt_two_r_R;
-      floor_fact = 
-	sea_->factorial((int) floor((double) p_alpha / (double) dim));
-      ceil_fact = 
-	sea_->factorial((int) ceil((double)p_alpha / (double)dim));
-
-      if(floor_fact < 0 || ceil_fact < 0 || 
-	 p_alpha > sea_->get_max_order() - 1) {
+      if(p_alpha > sea_->get_max_order() - 1) {
 	return -1;
       }
 
-      remainder = p_alpha % dim;
+      first_factorial *= (p_alpha + 1);
+      if(p_alpha > 0) {
+	second_factorial *= sqrt(2 * p_alpha * (2 * p_alpha + 1));
+      }
+      r_Q_raised_to_p *= r_Q;
+      r_R_raised_to_p *= r_R;
+      
+      ret2 = frontfactor * 
+	(1.0 / first_factorial * r_R_raised_to_p * second_factorial * 
+	 r_Q_raised_to_p_cumulative +
+	 1.0 / sqrt(first_factorial) * r_Q_raised_to_p);
 
-      ret2 = (sea_->get_total_num_coeffs(p_alpha + 1) -
-	      sea_->get_total_num_coeffs(p_alpha))
-	/ sqrt(pow(floor_fact, dim - remainder) *
-	       pow(ceil_fact, remainder));
-      ret2 *= (r_Q_raised_to_p + sqrt_two_r_R_raised_to_p * 
-	       sea_->get_total_num_coeffs(p_alpha)) * frontfactor;
+      r_Q_raised_to_p_cumulative += r_Q_raised_to_p / 
+	((p_alpha > 0) ? (first_factorial / (p_alpha + 1)):first_factorial);
 
     } while(ret2 >= max_error);
 
@@ -479,7 +457,8 @@ class GaussianKernelAux {
   
   int OrderForEvaluatingLocal
     (const DHrectBound<2> &far_field_region,
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+     const DHrectBound<2> &local_field_region, 
+     double min_dist_sqd_regions,
      double max_dist_sqd_regions, double max_error, 
      double *actual_error) const {
     
@@ -492,44 +471,26 @@ class GaussianKernelAux {
     // find out the widest dimension and its length
     for(index_t d = 0; d < dim; d++) {
       DRange range = local_field_region.get(d);
-      widest_width = max(widest_width, range.width());
+      widest_width += range.width();
     }
   
     double two_bandwidth = 2 * sqrt(kernel_->bandwidth_sq());
     double r = widest_width / two_bandwidth;
-  
-    // This is not really necessary for O(D^p) expansion, but it is for
-    // speeding up the convergence of the Taylor expansion.
-    if(r >= 1.0)
-      return -1;
-  
+
     double r_raised_to_p_alpha = 1.0;
     double ret;
     int p_alpha = 0;
-    double floor_fact, ceil_fact;
-    int remainder;
   
     do {
     
-      if(p_alpha > max_order - 1)
+      if(p_alpha > max_order - 1) {
 	return -1;
+      }
     
       r_raised_to_p_alpha *= r;
+      frontfactor /= sqrt(p_alpha + 1);
     
-      floor_fact =
-	sea_->factorial((int)floor(((double) p_alpha) / ((double) dim)));
-      ceil_fact =
-	sea_->factorial((int)ceil(((double) p_alpha) / ((double) dim)));
-    
-      if(floor_fact < 0.0 || ceil_fact < 0.0)
-	return -1;
-    
-      remainder = p_alpha % dim;
-    
-      ret = frontfactor *
-	(sea_->get_total_num_coeffs(p_alpha + 1) -
-	 sea_->get_total_num_coeffs(p_alpha)) * r_raised_to_p_alpha /
-	sqrt(pow(floor_fact, dim - remainder) * pow(ceil_fact, remainder));
+      ret = frontfactor * r_raised_to_p_alpha;
     
       if(ret > max_error) {
 	p_alpha++;
@@ -631,7 +592,8 @@ class EpanKernelAux {
 
   int OrderForEvaluatingFarField
     (const DHrectBound<2> &far_field_region, 
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+     const DHrectBound<2> &local_field_region, 
+     double min_dist_sqd_regions,
      double max_dist_sqd_regions, double max_error, 
      double *actual_error) const {
 
@@ -691,7 +653,8 @@ class EpanKernelAux {
 
   int OrderForConvertingFromFarFieldToLocal
     (const DHrectBound<2> &far_field_region,
-     const DHrectBound<2> &local_field_region, double min_dist_sqd_regions, 
+     const DHrectBound<2> &local_field_region, 
+     double min_dist_sqd_regions, 
      double max_dist_sqd_regions, double max_error, 
      double *actual_error) const {
 
