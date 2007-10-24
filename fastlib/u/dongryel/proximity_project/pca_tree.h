@@ -162,6 +162,9 @@ class PCAStat {
     recovered_.PrintDebug();
     exit(0);
     */
+
+    printf("Singular values...\n");
+    s_values.PrintDebug();
   }
 
   /** 

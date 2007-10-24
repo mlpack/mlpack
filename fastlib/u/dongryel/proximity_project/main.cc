@@ -42,12 +42,12 @@ int main(int argc, char *argv[]) {
     proximity::MakeSpillKdTreeMidpoint<Tree>(data_, leaflen, NULL);
 
   // recursively computed PCA
-  printf("Recursive PCA\n");
-  (root_->stat().pca_transformed_).PrintDebug();
+  //printf("Recursive PCA\n");
+  //(root_->stat().pca_transformed_).PrintDebug();
 
   // exhaustively compute PCA
-  printf("Exhaustive PCA\n");
-  PCA(data_);
+  //printf("Exhaustive PCA\n");
+  //PCA(data_);
 
   fx_done();
   return 0;
