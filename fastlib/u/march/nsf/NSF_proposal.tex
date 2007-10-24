@@ -1,0 +1,89 @@
+\documentclass[twoside,leqno, 12pt]{article}
+\usepackage{ltexpprt}
+
+%\documentstyle[nips07submit_09,times]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\newcommand{\spcA}{\hspace*{0in}}
+\newcommand{\spcB}{\hspace*{.1in}}
+\newcommand{\spcC}{\hspace*{.2in}}
+\newcommand{\spcD}{\hspace*{.3in}}
+\newcommand{\spcE}{\hspace*{.4in}}
+\newcommand{\spcF}{\hspace*{.5in}}
+\newcommand{\spcG}{\hspace*{.6in}}
+
+
+\title{NSF Research Proposal}
+\author{Bill March}
+\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+%Opening: importance of simulations to various areas.  Something about applications, etc.  - cite
+% Not sure how to open it, needs a good first sentence, lots of really compelling examples
+
+Computer simulations are widely used in chemistry, biology and physics.  (Discuss more about exciting applications).  
+
+All of these simulations require the scientist conducting them to make basic choices about the level of approximation in the calculations and the scale of the system studied.  Most of the effort in developing simulation techniques is spent on determining the right balance between these factors.  For example, force field parameters in molecular biology, basis sets in computational chemistry.  In order for these methods to progress substantially, there must be new computational methods that allow better accuracy without sacrificing large systems and reasonable computing times.  
+
+% Would like to use 3-body terms for some systems, only reason not to is that it's slow
+%3-body simulations are more accurate than 2-body in some situations - cite
+One of the fundamental simplifying assumptions in these systems is that all interactions are pairwise (rephrase).  This approximation is accurate in some systems, but fails on others.  Liquid argon, water, etc.  These examples are well known, but 3-body terms in other systems are rarely considered.  Historically, researchers have had little impetus to study three-body terms, since they are too slow for interesting systems.  We believe that if 3-body calculations are made tractable, they will attract more attention.
+
+We propose a general framework for making three-body potentials computationally feasible for large systems.  (This paragraph needs to say more, but I'm not sure what).  In particular, we will investigate a fast version of the Axilrod-Teller potential \cite{axilrod_teller}.  This potential is commonly applied to simulations involving noble gases.  In general, we expect our work to be easily applicable to other many-body potentials.  Additionally, we intend to investigate similar methods for other computations involving several interactions, such as the repulsion and exchange integrals in Hartree-Fock \cite{Leach:2001rt}.
+
+%%% Section 2 %%%
+%Much effort is spent making simulations tractable.  FMM makes 2-body possible.  
+Even the simplest simulations are intractable for large systems.  
+For short-range interactions, it is generally acceptable to cut off computations beyond a small radius, thus making these calculations manageable.  For long range interactions, especially electrostatics, cutoffs are too imprecise.  
+
+The Fast Multipole Method \cite{grngard} makes large-scale electrostatic computations feasible.  
+The FMM groups charged particles in a space-partitioning tree.  
+%Do I really want to explain the FMM here?  Maybe I should stick to explaining the DTFGT
+The FMM groups charges together.  The interaction between two groups of charges can be approximated efficiently.
+
+%We have done 3-body like things in statistics - cite.  This is the part where I need to make it convincing that I can really do this.
+%This is also the place to bring up N-body methods, fast Gauss transform, etc.
+%kd-trees, multitree recursion, series expansions
+The space-partitioning and approximation ideas employed in the FMM can be applied to many other problems \cite{gray_nbody}.  Elaborate more on the methods here.  Examples are DTFGT etc.
+
+
+%We will extend the FMM to multibody, specifically AT potential
+These techniques (meaning series expansions and trees) can be extended to treat multibody potentials.  
+
+%We have done a simple version of this - give data.  This is important for making it convincing.
+% Need to see if we really have any data
+
+%Last paragraph: There are many other multi-body potenitals.  HF is a 4-body thing
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Points to be made:
+
+%Simulations are important - situate my work inside this important/useful/exciting field
+%Simulations all have a tradeoff between accuracy and computing time
+%Some simulations need/could benefit from 3-body and higher terms, but these we're abandoned because it's too slow - $O(N^3)$
+%There are techniques for fast computation that can be extended to 3-body terms.
+%FMM groups points spatially, does multipole expansions, this is a good start.
+%DTFGT is a good start too, demonstrates that the multipole expansion idea can be generalized.
+%These are both part of a common idea, cite Alex's work, N-body problems, etc.
+%We will apply this common framework to the well-known Axilrod-Teller potential.
+%Discuss progress so far, maybe have some basic results.
+%This is an important step toward general fast multibody potentials, for many systems.
+%This will allow chemists, biologists, physicists to determine more general potentials.  
+%This idea can apply to other problems.
+%HF is included.
+
+
+
+\bibliographystyle{abbrv}
+\bibliography{NSF_proposal}
+
+
+\end{document}  
