@@ -19,7 +19,6 @@ class AllNN {
   
  public:
   AllNN() {}
-  
   ~AllNN() {}
   
  public:
@@ -106,7 +105,15 @@ class AllNNDualTree : public AllNN {
       dist_upper = DBL_MAX;
     }
     
-      };
+    void Init(const Matrix& dataset, index_t start, index_t count) {
+      Init();
+    }
+    
+    void Init(const Matrix& dataset, index_t start, index_t count,
+        const Stat& left_stat, const Stat& right_stat) {
+      Init();
+    }
+  };
 
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, Stat> Tree;
 
