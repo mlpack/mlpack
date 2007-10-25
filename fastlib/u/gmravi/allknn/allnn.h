@@ -73,7 +73,7 @@ public:
   //This is the function which will perform the actual single tree algorithm and spew the results 
 
 void ComputeAllNNSingleTree(Matrix*, Matrix*);
-SingleTreeResults* find_nearest_neighbour(Tree*,double*,Matrix*,SingleTreeResults*);
+SingleTreeResults* FindNearestNeighbour(Tree*,double*,Matrix*,SingleTreeResults*);
 };
 
 bool check_if_equal(ArrayList <double>, ArrayList <double>);
@@ -82,7 +82,7 @@ bool check_if_equal(ArrayList <double>, ArrayList <double>);
 class AllKNNSingleTreeResults
 {
  public:
-   SingleTreeResults **astr; 
+   ArrayList<ArrayList<SingleTreeResults> > astr; 
 
   AllKNNSingleTreeResults()
     {
@@ -109,5 +109,34 @@ class AllKNNSingleTree
   int  FindKNearestNeighbours(Tree*,double*,Matrix*,SingleTreeResults*,int,int); //A 1-D matrix of the k nearest neighbours is returned
 
 };
+
+
+
+class AllKNNDualTreeResults //This is just the same as AllKNNSingleTreeResults
+{
+ public:
+   ArrayList<ArrayList<SingleTreeResults> > astr; 
+
+   
+};
+
+classAllKNNDualTree
+{
+public:
+  AllKNNDualTreeResults results_matrix;
+  //constructor
+  //cosntructor definition
+  AllKNNDualTree() 
+    {
+      //Initialize  results_matrix_ This will later be reinitialized to the number of columns in the function ComputeAllKNNSingleTree
+      // results_matrix.astr.Init();
+      printf("Initialized properly\n");
+    }
+  
+  //This is the function which will perform the actual single tree algorithm and spew the results 
+  
+  void ComputeAllKNNSingleTree(Matrix*,Matrix*,int);  // A 2-D matrix is returned
+  int  FindKNearestNeighbours(Tree*,double*,Matrix*,SingleTreeResults*,int,int); //A 1-D matrix of the k nearest neighbours is returned
+}
 
 
