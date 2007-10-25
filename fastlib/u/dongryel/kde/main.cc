@@ -39,6 +39,7 @@ int main(int argc, char *argv[]) {
   else if(!strcmp(algorithm, "fgt")) {
     FGTKde fgt_kde;
     fgt_kde.Init();    
+    fgt_kde.Compute();
   }
   else if(!strcmp(algorithm, "fast")) {
     if(!strcmp(fx_param_str(NULL, "kernel", "gaussian"), "gaussian")) {
