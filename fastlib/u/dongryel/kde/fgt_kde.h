@@ -817,9 +817,6 @@ class FGTKde {
   const Vector &get_density_estimates() { return densities_; }
 
   void Init(Matrix &qset, Matrix &rset) {
-    
-    printf("Initializing FGT KDE...\n");
-    fx_timer_start(NULL, "fgt_kde_init");
 
     // initialize the kernel and read in the number of grid points
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
@@ -832,9 +829,6 @@ class FGTKde {
 
     // set accuracy
     tau_ = fx_param_double(NULL, "tau", 0.1);
-
-    fx_timer_stop(NULL, "fgt_kde_init");
-    printf("FGT KDE initialization completed...\n");
   }
 
   void Init() {
@@ -865,15 +859,6 @@ class FGTKde {
 
     // set accuracy
     tau_ = fx_param_double(NULL, "tau", 0.1);
-
-    printf("Initializing FGT KDE...\n");
-    fx_timer_start(NULL, "fgt_kde_init");
-
-
-    
-    fx_timer_stop(NULL, "fgt_kde_init");
-    printf("FGT KDE initialization completed...\n");
-
   }
 
   void FastGaussTransformPreprocess(double *interaction_radius, 
@@ -972,14 +957,16 @@ class FGTKde {
     mincoords.Init(rset_.n_rows());
 
     printf("Computing FGT KDE...\n");
-    fx_timer_start(NULL, "fgt_kde");
+    
 
     // initialize densities to zero
     densities_.SetZero();
 
+    fx_timer_start(NULL, "fgt_kde_init");
     FastGaussTransformPreprocess(&interaction_radius, nsides, sidelengths,
 				 mincoords, &nboxes, &nterms);
-    
+    fx_timer_stop(NULL, "fgt_kde_init");
+
     // precompute factorials
     msea_.Init(nterms - 1, qset_.n_rows());
 
@@ -1013,10 +1000,14 @@ class FGTKde {
     
     double delta = 2 * kernel_.bandwidth_sq();
 
+    fx_timer_start(NULL, "fgt_kde");
     gauss_t(delta, nterms, nboxes, nsides, sidelengths, mincoords,
 	    locexp, center, queries_assigned, references_assigned, mcoeffs);
 
+    // normalize the sum
+    NormalizeDensities();
     fx_timer_stop(NULL, "fgt_kde");
+    printf("FGT KDE completed...\n");
   }
 
   void NormalizeDensities() {
