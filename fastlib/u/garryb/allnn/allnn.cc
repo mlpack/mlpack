@@ -19,6 +19,7 @@ class AllNN {
   
  public:
   AllNN() {}
+  
   ~AllNN() {}
   
  public:
