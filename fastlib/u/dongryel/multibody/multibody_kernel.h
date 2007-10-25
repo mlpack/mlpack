@@ -105,7 +105,7 @@ class GaussianThreeBodyKernel {
     
     int num_nodes = node_bounds.size();
 
-    for(index_t i = 0; i < num_nodes - 1; i++) {
+    for(index_t i = 0; i < num_nodes - 1; i++) {f
       DHrectBound<2> *node_i_bound = node_bounds[i];
 
       for(index_t j = i + 1; j < num_nodes; j++) {
