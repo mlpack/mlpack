@@ -51,6 +51,13 @@ Computer simulations are widely used in biology and chemistry.  \textit{Add a be
 
 \textbf{Fast Two-Body Computations.}  In general, two-body potentials scale as $O(N^2)$.  For many potentials, it is possible to truncate such computations for distant particles.  However, for long-range effects, such as the Coulomb electrostatic potential, this simple method is too inaccurate, so one must find a better approximation for distant interactions.  
 
+\begin{figure}[th]
+\centering
+\includegraphics[width=0.5\textwidth]{3nodes_multipole.eps}
+\caption{Three nodes $Q_I, Q_J, Q_K$.  The sum of the potentials between all of the points $p_I, p_J, p_K$ can be approximated using multipole expansions centered at $x_I, x_J, x_K$.}
+\label{three_nodes}
+\end{figure}
+
 \textbf{FMM.}  The Fast Multipole Method \cite{grngard} makes large-scale electrostatic computations feasible.  The FMM groups charged particles in the nodes of a space-partitioning tree, and computes interactions between pairs of particles by considering pairs of nodes.  Interactions between nearby groups of particles can be computed exhaustively, as in the truncation method.  When two nodes are distant, the algorithm approximates their interactions with a single computation.  The potential due to points in a node can be approximated with a Taylor series.  This \emph{multipole expansion} is what makes the FMM effective.
 
 
