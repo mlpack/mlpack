@@ -1,0 +1,165 @@
+\documentclass{amsart}
+\usepackage[colorlinks=true]{hyperref}
+\title{Nonparametric Entropy Estimation}
+
+\begin{document}
+
+\maketitle
+
+\section{Methods}
+
+There is a decent bit of previous work on estimating the differential entropy of a random variable. This paper provides an overview of methods for nonparametric entropy estimation: \href{http://ecf.caltech.edu/summerlecture/docs/Entropy\%20estimation.pdf}{Nonparametric entropy estimation: An overview}.
+
+
+A few of the methods are:
+\begin{enumerate}
+\item m-spacing estimator
+\item nearest-neighbor distances
+\item plug-in estimates
+\end{enumerate}
+
+The last method involves estimating the density $f(x)$ using $\hat{f}(x)$ and then simply finding an estimate of the entropy
+
+\begin{displaymath}
+\hat{H}(X) = \int \hat{f}(x) \log \hat{f}(x) dx
+\end{displaymath}
+
+The problem with first estimating the density is that the optimal kernel bandwidth for density estimation is not necessarily the optimal bandwidth for entropy estimation.
+
+\section{Objective Function}
+
+For KDE, our loss function is integrated squared error of the density estimate and the actual density, because we actually want to minimize the difference in the density of the estimated and actual densities at every point. For entropy estimation, it is unobvious what an appropriate loss function would be.
+
+Consider the following loss function:
+
+\begin{displaymath}
+L_{H_2}(x) = \int (f(x) \log f(x) - \hat{f}(x) \log \hat{f}(x))^2 dx
+\end{displaymath}
+
+This loss function measures the error in the derivative of the entropy, $ f(x) \log f(x) $; the correctness of this loss function follows since entropy is just $ \int f(x) \log f(x) dx $. Intuitively, the difference between $ f(x) \log f(x) $ and $ \hat{f}(x) \log \hat{f}(x) $ at an arbitrary point $ x $ will contribute to differences between the entropy estimates of the two distributions. We can denote the expression $ f(x) \log f(x) $ as the entropy density, Integrating over the entropy density thus gives us entropy.
+
+Using this formulation, we can expand the loss function to give:
+
+
+\begin{align*}
+L_{H_2}(\hat{f})& = \int f(x)^2 (\log f(x))^2 dx\\
+& + \int \hat{f}(x)^2 (\log \hat{f}(x))^2 dx\\
+& - 2 \int f(x) \log f(x) \hat{f}(x) \log \hat{f}(x) dx
+\end{align*}
+
+
+
+
+Minimizing $ L_{H_2}(\hat{f}) $ with respect to $ \hat{f} $ is equivalent to minimizing:
+
+\begin{align*}
+L_{H_2}'(\hat{f}) &= \int \hat{f}(x)^2 (\log \hat{f}(x))^2 dx  - 2 \int f(x) \log f(x) \hat{f}(x) \log \hat{f}(x) dx\\
+& =\int \hat{f}(x)^2 (\log \hat{f}(x))^2 dx  - 2 \mathbf{E}_f[\log f(x) \hat{f}(x) \log \hat{f}(x)]
+\end{align*}
+
+We should be able to estimate the first term from the data (and our data-driven density estimator).
+
+\section{Approximate $\log f(x)$}
+
+
+Estimating the second term is difficult. We can take expectation over $ f(x) $ by sampling over the empirical distribution. To approximate $\log f(x)$, we note that the Kullback-Leibler divergence $ D(f\|g) = \int f(x) \log \frac{f(x)}{g(x)} dx $ is always positive with equality when $ f(x) = g(x) $.
+
+Since $ \int p(x) \log \frac{p(x)}{q(x)} dx = \int p(x) \log p(x) dx - \int p(x) \log q(x) dx \geq 0 $, then $ \int p(x) \log p(x) dx \geq \int p(x) \log q(x) dx $.
+
+Note that $ \int p(x) \log q(x) dx $ is maximized when $ p(x) = q(x) $.
+
+Now, we obtain an approximation for $ \log f(x) $. We can approximate $ \log f(x) $ using $ \log \hat{f}_{h_E}(x) $, where $ h_E = \arg \min_h \int f(x) \log \hat{f}_h dx = \mathbf{E}_f[\log \hat{f}_h] \approx \sum_{i=1}^n \log \hat{f}_{h,-i}(x_i) $.
+
+
+
+Finally, we have
+
+\begin{align*}
+\mathbf{E}_{f}[\log f(x) \hat{f}(x) \log \hat{f}(x)] & \approx \mathbf{E}_f[ \log \hat{f}_{h_E} \hat{f}(x) \log \hat{f}(x)]\\
+& \approx \sum_{i=1}^n \log \hat{f}_{h_E,-i}(x_i) \hat{f}_{h,-i}(x_i) \log \hat{f}_{h,-i}(x_i)
+\end{align*}
+
+\section{Approximation Error}
+
+What is the error in this approximation?
+
+Let $ f(x) = \hat{f}_{h_E}(x) + E(x) $
+
+Then
+
+\begin{align*}
+& \mathbf{E}_f[ \log f(x) \hat{f}_h(x) \log \hat{f}_h(x)]\\
+& = \mathbf{E}_f[ \log (\hat{f}_{h_E}(x) + E(x)) \hat{f}_h(x) \log \hat{f}_h(x)]\\
+& = \mathbf{E}_f[ \log (\hat{f}_{h_E}(x) (1 + \frac{E(x)}{\hat{f}_{h_E}(x)})) \hat{f}_h(x) \log \hat{f}_h(x)]\\
+& = \mathbf{E}_f[ \log \hat{f}_{h_E}(x) \hat{f}_h(x) \log \hat{f}_h(x)] + \mathbf{E}_f[ \log (1 + \frac{E(x)}{\hat{f}_{h_E}(x)}) \hat{f}_h(x) \log \hat{f}_h(x)]
+\end{align*}
+
+The second term in the final expression above is the error term. It's clear from this term that the ratio of the error in estimated density to the estimated density contributes to the error. In the density estimation case, an error of $ \epsilon $ contributes equally regardless of the region in which the error is made. In this case, the error contributes more highly in low-density regions of the actual pdf. It may be more costly to accumulate errors in the low density regions of the distribution.
+
+
+\section{Objective Function - Final Form}
+
+\begin{displaymath}
+\sum_{q \in Q} T_{log}(\sum_{i=1}^n K(d(q,x_i)))^2 - 2 \sum_{i=1}^n \log \hat{f}_{h_E,-i}(x_i) \hat{f}_{h,-i}(x_i) \log \hat{f}_{h,-i}(x_i)
+\end{displaymath}
+
+where $ T_{log}(p) = p \log(p) $
+
+
+\section{Formulation as Generalized N-Body Problem}
+
+There are a couple of ways to approximate $ \int (\hat{f}(x) \log \hat{f}(x))^2  $
+
+
+Reference set: data
+
+
+Query set:
+
+1) Linear spacing of M points in the support of $ \hat{f}(x) $ - increases exponentially in dimension
+
+OR 
+
+2) P Points sampled from estimated density
+
+
+Kernel: Gaussian
+
+For linear spacing, Computation is:
+
+\begin{displaymath}
+Accumulate[(\hat{f}(q) \log \hat{f}(q))^2] , \forall q \in Q 
+\end{displaymath}
+
+Express sum of squared kernel density times squared log density in terms of operators
+
+\begin{displaymath}
+\sum_{q \in Q} (T_{log}(\sum_{r \in R} K(d(q,r))))^2
+\end{displaymath}
+
+using GNP notation
+
+\begin{displaymath}
+\bigodot_{q \in Q} g\left(\bigotimes_{r \in R} f(q,r)\right)
+\end{displaymath}
+
+where
+
+\begin{align*}
+f(q,r) & = K(d(q,r))\\
+g(x) & = (x \log x)^2\\
+\bigodot & = \bigotimes = \sum
+\end{align*}
+
+
+
+Necessary N-body computations
+\begin{enumerate}
+\item find optimal bandwidth for estimating f(x) log f(x) and evaluate log f(x)
+\item cross-validate to find optimal bandwidth for the whole functional
+\end{enumerate}
+
+
+
+
+\end{document}

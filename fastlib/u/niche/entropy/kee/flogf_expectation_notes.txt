@@ -1,0 +1,7 @@
+Does it make sense to treat f(x) log f(x) as a density?
+
+Is the density at every point in the distribution necessarily less than 1?
+
+No, depends upon the spikiness of the distribution.
+
+we can normalize the density so that areas of high density are driven below 1. What effect does this have 

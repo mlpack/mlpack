@@ -1,0 +1,40 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\pagestyle{empty}
+
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\E}{\mathbf{E}}
+
+\begin{document}
+
+Nonparametric entropy estimation using cross-validation for minimization of expected Kullback-Leibler loss
+
+Nishant Mehta
+
+9.18.2007
+
+\section{stuff}
+
+Objective function: $\E_{f(x)}[\log f(x)] - \E_{\hat{f}(x)}[\log \hat{f}(x)]$
+
+But $\E_{f(x)}[\log f(x)]$ is unknown.
+
+Consider $\E_{\hat{f}(x)}[\log \hat{f}(x)]$. If $\hat{f}_N(x)$ is the kernel density estimator, then $\hat{f}_N(x) \xrightarrow{p} f(x)$
+
+If $\hat{f}(x)$ is a kernel density estimator, then asymptotically For an unbiased and consistent estimatorAs $n \to \infty$, $\hat{f}$ 
+This is just the expectation of 
+
+ $\E_{f(x)}[\log f(x)] - \E_{f(x)}[\log \hat{f}(x)]$
+KL-loss: 
+calculate the KL-loss of an estimated distribution
+
+
+
+
+
+\end{document}
