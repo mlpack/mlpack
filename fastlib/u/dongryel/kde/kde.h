@@ -77,7 +77,8 @@ class NaiveKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(NULL, "naive_kde_output", NULL)) != NULL) {
+    if(fx_param_exists(NULL, "naive_kde_output")) {
+      fname = fx_param_str(NULL, "naive_kde_output", NULL);
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {

@@ -14,6 +14,47 @@ void concatenate_vectors(Matrix &source, Vector &dest) {
   }
 }
 
+// preprocessing: scaling the dataset; this has to be moved to the dataset
+// module
+/* scales each attribute to 0-1 using the min/max values */
+void scale_data_by_minmax(Matrix &qset_, Matrix &rset_) {
+
+  int num_dims = rset_.n_rows();
+  DHrectBound<2> qset_bound;
+  DHrectBound<2> rset_bound;
+  qset_bound.Init(qset_.n_rows());
+  rset_bound.Init(qset_.n_rows());
+
+  // go through each query/reference point to find out the bounds
+  for(index_t r = 0; r < rset_.n_cols(); r++) {
+    Vector ref_vector;
+    rset_.MakeColumnVector(r, &ref_vector);
+    rset_bound |= ref_vector;
+  }
+  for(index_t q = 0; q < qset_.n_cols(); q++) {
+    Vector query_vector;
+    qset_.MakeColumnVector(q, &query_vector);
+    qset_bound |= query_vector;
+  }
+
+  for(index_t i = 0; i < num_dims; i++) {
+    DRange qset_range = qset_bound.get(i);
+    DRange rset_range = rset_bound.get(i);
+    double min_coord = min(qset_range.lo, rset_range.lo);
+    double max_coord = max(qset_range.hi, rset_range.hi);
+    double width = max_coord - min_coord;
+
+    for(index_t j = 0; j < rset_.n_cols(); j++) {
+      rset_.set(i, j, (rset_.get(i, j) - min_coord) / width);
+    }
+    if(fx_param_str(NULL, "query", NULL) != NULL) {
+      for(index_t j = 0; j < qset_.n_cols(); j++) {
+	qset_.set(i, j, (qset_.get(i, j) - min_coord) / width);
+      }
+    }
+  }
+}
+
 int main(int argc, char *argv[]) {
 
   fx_init(argc, argv);
@@ -57,6 +98,11 @@ int main(int argc, char *argv[]) {
     query_dataset.InitFromFile(qfname);
     qset_.Own(&(query_dataset.matrix()));
   }
+  
+  // scale dataset if the user wants to
+  if(!strcmp(fx_param_str(NULL, "scaling", NULL), "range")) {
+    scale_data_by_minmax(qset_, rset_);
+  }
 
   Vector pSources;
   pSources.Init(rset_.n_rows() * rset_.n_cols());
@@ -72,6 +118,7 @@ int main(int argc, char *argv[]) {
 
 
   // choose parameters
+  fx_timer_start(NULL, "ifgt_kde_compute");
   ImprovedFastGaussTransformChooseParameters cp(rset_.n_rows(), Bandwidth,
 						epsilon, 
 						(int) ceil(0.2 * 100 / 
@@ -88,14 +135,7 @@ int main(int argc, char *argv[]) {
   pClusterIndex.Init(rset_.n_cols());
   KCenterClustering kc(rset_.n_rows(), rset_.n_cols(), pSources.ptr(),
 		       pClusterIndex.begin(), cp.K);
-  
-  printf("Clustering %d...\n", cp.K);
   kc.Cluster();
-
-  for(index_t i = 0;i < pClusterIndex.size(); i++) {
-    printf("%d ", pClusterIndex[i]);
-  }
-  printf("\n");
 
   ArrayList<int> pNumPoints;
   pNumPoints.Init(cp.K);
@@ -128,36 +168,23 @@ int main(int argc, char *argv[]) {
 
   // run IFGT
   pIFGT->Evaluate();
-  FILE *stream = stdout;
-  const char *fname = NULL;
   
   GaussianKernel kernel;
   kernel.Init(Bandwidth);
   double norm_const = kernel.CalcNormConstant(qset_.n_rows()) *
     rset_.n_cols();
 
-
+  // normalize density estimates
   for(index_t q = 0; q < qset_.n_cols(); q++) {
     pGaussTransform[q] /= norm_const;
   }
-  if((fname = fx_param_str(NULL, "ifgt_kde_output", NULL)) != NULL) {
-    stream = fopen(fname, "w+");
-  }
-  for(index_t q = 0; q < qset_.n_cols(); q++) {
-    fprintf(stream, "%g\n", pGaussTransform[q]);
-  }
-
-  if(stream != stdout) {
-    fclose(stream);
-  }
-
+  fx_timer_stop(NULL, "ifgt_kde_compute");
 
   // check answer with naive
   NaiveKde<GaussianKernel> naive_kde;
   naive_kde.Init(qset_, rset_);
   naive_kde.Compute();
   naive_kde.ComputeMaximumRelativeError(pGaussTransform);
-  naive_kde.PrintDebug();
 
   delete pIFGT;
 
