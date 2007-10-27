@@ -2,10 +2,14 @@
 librule(
     name = "kde",                            # this line can be safely omitted
     sources = ["ifgt_kde.cc",
+               "ifgt_choose_parameters.cc",
+               "ifgt_choose_truncation_number.cc",
                "kcenter_clustering.cc"],     # files that must be compiled
     headers = ["fft_kde.h",
                "fgt_kde.h",
                "ifgt_kde.h",
+               "ifgt_choose_parameters.h",
+               "ifgt_choose_truncation_number.h",
                "kcenter_clustering.h",
                "kde.h"],                     # include files part of the 'lib'
     deplibs = ["u/dongryel/series_expansion:series_expansion",

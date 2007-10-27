@@ -68,7 +68,7 @@ ImprovedFastGaussTransform::ImprovedFastGaussTransform(int Dim,
   N=NSources;
   M=MTargets;
   px=pSources;
-  h=Bandwidth;
+  h=Bandwidth * sqrt(2);
   pq=pWeights;
   py=pTargets;
   p_max=MaxTruncNumber;
@@ -110,16 +110,6 @@ ImprovedFastGaussTransform::ImprovedFastGaussTransform(int Dim,
 
 ImprovedFastGaussTransform::~ImprovedFastGaussTransform()
 {
-  delete []ry_square;
-  delete []ry;
-  delete []C;
-  delete []heads;
-  delete []dy;
-  delete []dx;
-  delete []target_center_monomials;
-  delete []source_center_monomials;
-  delete []constant_series;
-	
 }
 
 
