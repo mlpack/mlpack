@@ -4,7 +4,7 @@
 %\documentstyle[nips07submit_09,times]{article}
 
 \usepackage{amsmath,amssymb}
-\usepackage{graphicx}
+\usepackage{graphicx, subfigure}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
 \newcommand{\spcA}{\hspace*{0in}}
@@ -27,61 +27,88 @@
 \Large{Bill March}
 \end{center}
 
-
+%%%%%  Instructions %%%%%%%%%
 %Describe any scientific research activities in which you have participated, such as experience in undergraduate research programs, or research experience gained through summer or part-time employment or in work-study programs, or other research activities, either academic or job-related. Explain the purpose of the research and your specific role in the research, including the extent to which you worked independently and/or as part of a team, and what you learned from your research. In your statement, distinguish between undergraduate and graduate research experience. 
 
 %If you have no direct research experience, describe any activities that you believe have prepared you to undertake research. At the end of your statement, list any publications and/or presentations made at national and/or regional professional meetings. 
 
-Opening paragraph: quick summary of things I've worked on/looked into
-Tie this into interests established before in the first essay, set up interest in proposal
-Graph coloring
-Computational Geometry
-Fast algorithms
-Computational biology and chemistry
+%%%%%%%%%% Opening %%%%%%%%%%%%
 
-%1/2 page on other things I've looked at
-%	Worked on graph coloring
-%	Other computational geometry - convex hulls
-%	Robot stuff
-%	Protein folding
-%	Computational chemistry
-%1.5 pages on hierarchical clustering
-%	Explain kd-trees while I'm at it, can refer to this later
-	
+\section{Research Overview and Interests}
 
+I have participated in research during my last two years as an undergraduate.  I have studied fast algorithms for several geometry and graph problems and explored applications of these algorithms.  I participated in the NSF Research Experience for Undergraduates at Georgia Tech in Summer 2005, where I explored fast algorithms for online graph coloring.  Since the Summer of 2006, I have been working with Alex Gray on fast algorithms for machine learning and scientific applications.  I have also been investigating applications of these algorithms in science, particularly computational biology and chemistry.  
+
+%Maybe need some kind of transition into this. . .
 %%%%%%%% Hierarchical Clustering %%%%%%%%%%
-\textbf{Hierarchical Clustering and EMST}
+\section{Euclidean Minimum Spanning Trees and Hierarchical Clustering}
 
 \textbf{Context.}
-Euclidean Minimum Spanning Trees are fundamental structures in computational geometry.  They have been applied to many things.  Additionally, the EMST is equivalent to a hierarchical clustering of the underlying points.  This form of clustering is common in biology and cosmology.  
+Euclidean Minimum Spanning Trees are fundamental structures in computational geometry and are widely applied in network design, optimization, and computer vision.  Additionally, the EMST is equivalent to a form of hierarchical clustering of the underlying points.  This method of clustering is commonly applied throughout science and is particularly popular for clustering gene microarray data and cosmological surveys.  
 
-The problem has been around for a long time.  There are algorithms, but none are great.  Now, there are gene microarrays and the SDSS, which scientists might want to apply EMST/hierarchical clustering to.  So, we need better scalable algorithms to make this happen.
+Since it is such a fundamental and widely applied problem, finding the EMST is well-studied.  Many of these are quite effective in limited cases, such as the planar case.  However, none of the existing algorithms are truly scalable to massive data sets and high dimensions.  New algorithms are necessary to handle large-scale data gathering efforts, such as the Sloan Digital Sky Survey and the Human Genome Project.
 
-I approached Alex in Spring 2006 about research opportunities.  He suggested it might be possible to apply some of his techniques to the EMST problem.  I began working on this problem with him over the summer.  Did it myself.  Worked with his grad students on learning the other algorithms.  Figured out the algorithm, wrote the code, did the experiments on my own.
-
-
-\textbf{Details.}
-Computing nearest neighbors - should be able to copy a lot of this from the paper
-
-Include a picture of a kd-tree, etc.  All the details really exist to set up the proposal.
+% It might be possible
+Alex suggested it might be possible to apply some of his techniques to the EMST problem.  I surveyed the literature for existing algorithms.  I worked with some of Alex's other graduate students to better understand the $N$-body framework.  I developed the algorithm on my own, with occasional discussions with Alex and other students.  I implemented the algorithm and designed the experiments.  I was also the primary author of the conference paper describing the new algorithm.  
 
 
-Results
-Include some of the better charts
+%Include a picture of a kd-tree, etc.  All the details really exist to set up the proposal.
+% Details the proposal needs:
+% dual- and multi-tree recursion - stick to dual here, bring up multi in the proposal
+% Some idea of approximation, hard to introduce here
+%
+% Here: dual-tree recursion, space partitioning trees
+% Proposal: dual leads to multi-tree, approximations, multipole expansions
 
-What did I learn?  How does it help the proposal?
+% Quick, Ryan-like explanation of dual-tree, bounds, iterative refinement
+% Applied here to quickly find the nearest neighbors of components
 
-%%%%% On-line graph coloring %%%%%%%%
-My role: read and thought, learned some stuffs
-Learned I wanted something more directly applicable
+\textbf{Details.}  I applied an existing framework, known as \emph{generalized $N$-body problems} \cite{gray_nbody}, to finding EMST's.  This framework has been previously used to create fast algorithms for many problems in statistics and machine learning including the $N$-point correlation, all-nearest-neighbors, and kernel density estimation.  Using these ideas, I was able to design and implement the fastest existing algorithm for EMST's in any dimension.  
 
+The algorithm, \textsc{DualTreeBoruvka}, applies multi-tree recursion to Bor\r{u}vka's algorithm for finding MST's.  Bor\r{u}vka's algorithm is similar to Kruskal's, in that it maintains a spanning forest and iteratively connects components to build the tree.  While Kruskal's algorithm connects the closest two components in each step, Bor\r{u}vka's connects each component with its nearest neighbor.  I used the space-partitioning trees and multi-tree recursion ideas to quickly compute the nearest neighbor of each component.  
+
+The algorithm uses a \emph{$kd$-tree} to organize the points.   Each node of the tree consists of a hyper-rectangle or bounding box containing a subset of the data.  The root node contains the entire data set.  Children are created as follows: choose the longest dimension of the current node's bounding box, partition the data along the midpoint in this dimension, and form two new, smaller bounding boxes to cover the subsets.  The tree forms leaves when a node contains fewer than some specified number of points.  
+
+% This is all written in paper terms, needs to be fixed
+\textbf{Dual-tree Recursion.}  The simplest way to compute the nearest neighbor of a component $Q$ is to compute the distances from all points $q \in Q$ to all points $r \in \overline{Q}$ and keep the smallest.  For each $q$, we store the distance to the nearest neighbor found so far, $d^u(q)$, as an upper bound on the true distance.  If, for any point $r, d(q, r) > d^u(q)$, then we can be confident $r$ is not the nearest neighbor of $q$. 
+
+Using the $kd$-tree, we can improve on this method.  Instead of iterating over the points $r \in \overline{Q}$, we compare a point $q$ with an entire node $R$.  Using the bounding box of $R$, we can compute a lower bound $d^l(q, R) < d(q, r)$ for all $r \in R$.  Then, if $d^l(q, R) > d^u(q)$ for some $R$, we can \emph{prune} any further consideration of points in $R$.  Otherwise, we recursively consider the two children of $R$.
+
+This idea can be extended even further.  Since we want the nearest neighbor of each component $Q$, we should exploit the fact that these points are also grouped in the $kd$-tree.  We can maintain a bound $d^u(Q)$ on the upper bound for a nearest neighbor of all points in a node $Q$.  We compare nodes $Q$ and $R$, compute the minimum distance between their bounding boxes $d^l(Q,R)$, and prune if $d^l(Q, R) > d^u(Q)$.  Otherwise, we recursively compare the children of $Q$ with the children of $R$.  By accounting for points in the same component, this method can quickly and efficiently solve the problem of finding each component's nearest neighbor.  
+
+\begin{figure}[tb]
+\begin{center}
+\subfigure[Runtimes on synthetic clustered data.]{
+\includegraphics[width=0.45\linewidth]{5_3_all_matlab.eps}
+\label{chart}
+}
+\subfigure[Runtimes for SDSS data and protein folding trajectories.]{
+\begin{tabular}{|c|c|c|c|c|} \hline
+dim & $N$ & GeoMST2 & DTB & Speedup \\ \hline \hline
+3 & 389354 & 78.0 & 16.9 & 4.6 \\ \hline 
+12 & 320000 & 702 & 62.3 & 11.3 \\ \hline 
+\end{tabular}
+\label{table}
+}
+\label{runtimes}
+\end{center}
+\end{figure}
+
+\textbf{Results}
+This method proved to be the fastest known algorithm for finding EMST's in general metric spaces.  I compared it to several well known MST algorithms, including \textsc{GeoMST2}, the previous fastest algorithm.  Since hierarchical clustering is important in many domains, including cosmology and bioinformatics, I also tested my algorithm on two large data sets from these areas.  One is three-dimensional spectral data taken from the SDSS, and the other is a compressed (12-dimensional) representation of 16,000 steps of folding simulations for 20 proteins.  
+
+%What did I learn?  How does it help the proposal? 
+% Should this go here, or earlier
+% If it doesn't go here, how will I conclude this one?
+\textbf{What I learned.}  I gained experience with designing faster algorithms for a long standing and well-studied problem.  I had to master a diverse literature covering the topic from many different fields.  I gained an appreciation for the potential of truly scalable algorithms in the sciences.
 
 
 %%%%%% List publications and presentations %%%%%%%%
-Submitted EMST paper.
+\section{Publications}
+
+EMST paper (submitted).
 
 
 \bibliographystyle{abbrv}
-\bibliography{NSF_proposal}
+\bibliography{NSF_previous}
 
 \end{document}
