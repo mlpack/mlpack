@@ -35,21 +35,29 @@
 %%%%%%%%%% Opening %%%%%%%%%%%%
 
 \section{Research Overview and Interests}
+%% Needs work
+% Make this a paragraph about research interests and overview
+% Make last paragraph a summary of other activities 
+\textbf{Current work.}  Since summer 2006, I have worked as a research assistant for Alex Gray's FASTlab.  I have explored fast algorithms for problems in computational geometry, including convex hulls, path finding, and minimum spanning trees.  I have spent much of my time investigating scientific applications for these algorithms, especially in biology and chemistry.  As a graduate student, I am investigating ways to apply my earlier techniques to designing faster and more accurate computational chemistry algorithms.  
 
-I have participated in research during my last two years as an undergraduate.  I have studied fast algorithms for several geometry and graph problems and explored applications of these algorithms.  I participated in the NSF Research Experience for Undergraduates at Georgia Tech in Summer 2005, where I explored fast algorithms for online graph coloring.  Since the Summer of 2006, I have been working with Alex Gray on fast algorithms for machine learning and scientific applications.  I have also been investigating applications of these algorithms in science, particularly computational biology and chemistry.  
+%I have participated in research during my last two years as an undergraduate.  I have studied fast algorithms for several geometry and graph problems and explored applications of these algorithms.  I participated in the NSF Research Experience for Undergraduates at Georgia Tech in Summer 2005, where I explored fast algorithms for online graph coloring.  Since the Summer of 2006, I have been working with Alex Gray on fast algorithms for machine learning and scientific applications.  I have also been investigating applications of these algorithms in science, particularly computational biology and chemistry.  
+
+\textbf{Past research.}  Previously, during Summer 2005, I participated in the NSF Research Experience for Undergraduates program at Georgia Tech.  I studied online graph coloring algorithms with Prof. Trotter in the School of Mathematics.  This experience gave me valuable experience with reading papers, organizing a complex research topic, and exploring new ideas.  However, I found mathematics too far removed from the scientific applications I was interested in, which led me to my current work.
 
 %Maybe need some kind of transition into this. . .
+% Maybe not, to save space
+
 %%%%%%%% Hierarchical Clustering %%%%%%%%%%
-\section{Euclidean Minimum Spanning Trees and Hierarchical Clustering}
+\section{Euclidean Minimum Spanning Trees}
 
-\textbf{Context.}
-Euclidean Minimum Spanning Trees are fundamental structures in computational geometry and are widely applied in network design, optimization, and computer vision.  Additionally, the EMST is equivalent to a form of hierarchical clustering of the underlying points.  This method of clustering is commonly applied throughout science and is particularly popular for clustering gene microarray data and cosmological surveys.  
+\textbf{Context.}  Euclidean Minimum Spanning Trees are fundamental structures in computational geometry and are widely applied in network design, optimization, and computer vision.  Additionally, the EMST is used to find a hierarchical clustering of the underlying points.  This method of clustering is commonly applied throughout science and is particularly popular for clustering gene microarray data and cosmological surveys.  
 
-Since it is such a fundamental and widely applied problem, finding the EMST is well-studied.  Many of these are quite effective in limited cases, such as the planar case.  However, none of the existing algorithms are truly scalable to massive data sets and high dimensions.  New algorithms are necessary to handle large-scale data gathering efforts, such as the Sloan Digital Sky Survey and the Human Genome Project.
+The EMST problem is well-studied, and there are effective algorithms for many cases, such as in two dimensions.  However, none of the existing algorithms are truly scalable to massive data sets and arbitrary dimensions.  New algorithms are necessary to handle large-scale data gathering efforts, such as the Sloan Digital Sky Survey and the Human Genome Project.
 
-% It might be possible
-Alex suggested it might be possible to apply some of his techniques to the EMST problem.  I surveyed the literature for existing algorithms.  I worked with some of Alex's other graduate students to better understand the $N$-body framework.  I developed the algorithm on my own, with occasional discussions with Alex and other students.  I implemented the algorithm and designed the experiments.  I was also the primary author of the conference paper describing the new algorithm.  
+% These paragraphs need some revision
+\textbf{Teamwork.}  As an initial research problem with his lab, Dr. Gray suggested it might be possible to apply some of his earlier work on fast machine learning algorithms to the EMST problem.  Since I was new, I relied on discussions with his graduate students to become familiar with our existing approaches and learn the lab's code base.  Throughout the project, I often discussed ideas and difficulties with Alex and the other students in the lab.  These interactions often allowed me to find ways around difficulties.
 
+\textbf{Individual work.}  Although others helped as needed, I did most of the work individually.  I searched the existing literature to determine the best existing algorithms.  I determined the link between the previous work and the EMST problem and worked out the details of my own EMST algorithm.  I wrote the code for my algorithm and the competitors, then organized and carried out the comparisons.  I have submitted a conference paper on my algorithm which is currently under review.  
 
 %Include a picture of a kd-tree, etc.  All the details really exist to set up the proposal.
 % Details the proposal needs:
@@ -62,30 +70,35 @@ Alex suggested it might be possible to apply some of his techniques to the EMST 
 % Quick, Ryan-like explanation of dual-tree, bounds, iterative refinement
 % Applied here to quickly find the nearest neighbors of components
 
-\textbf{Details.}  I applied an existing framework, known as \emph{generalized $N$-body problems} \cite{gray_nbody}, to finding EMST's.  This framework has been previously used to create fast algorithms for many problems in statistics and machine learning including the $N$-point correlation, all-nearest-neighbors, and kernel density estimation.  Using these ideas, I was able to design and implement the fastest existing algorithm for EMST's in any dimension.  
+% I don't like the layout of this much, see what Alex thinks
+% Need to explain multi-tree recursion better
 
-The algorithm, \textsc{DualTreeBoruvka}, applies multi-tree recursion to Bor\r{u}vka's algorithm for finding MST's.  Bor\r{u}vka's algorithm is similar to Kruskal's, in that it maintains a spanning forest and iteratively connects components to build the tree.  While Kruskal's algorithm connects the closest two components in each step, Bor\r{u}vka's connects each component with its nearest neighbor.  I used the space-partitioning trees and multi-tree recursion ideas to quickly compute the nearest neighbor of each component.  
+\textbf{Algorithm details.}  I applied an existing framework, known as \emph{generalized $N$-body problems} \cite{gray_nbody}, to finding EMST's.  This framework has been previously used to create fast algorithms for many problems in statistics and machine learning including the $N$-point correlation, all-nearest-neighbors, and kernel density estimation.  Using these ideas, I was able to design and implement the fastest existing algorithm for EMST's in any dimension.  
+
+My algorithm, \textsc{DualTreeBoruvka}, applies multi-tree recursion to Bor\r{u}vka's algorithm for finding MST's.  Bor\r{u}vka's algorithm is similar to Kruskal's, in that it maintains a spanning forest and iteratively connects components to build the tree.  While Kruskal's algorithm connects the closest two components in each step, Bor\r{u}vka's connects each component with its nearest neighbor.  I used the space-partitioning trees and multi-tree recursion ideas to quickly compute the nearest neighbor of each component.  
 
 The algorithm uses a \emph{$kd$-tree} to organize the points.   Each node of the tree consists of a hyper-rectangle or bounding box containing a subset of the data.  The root node contains the entire data set.  Children are created as follows: choose the longest dimension of the current node's bounding box, partition the data along the midpoint in this dimension, and form two new, smaller bounding boxes to cover the subsets.  The tree forms leaves when a node contains fewer than some specified number of points.  
 
-% This is all written in paper terms, needs to be fixed
 \textbf{Dual-tree Recursion.}  The simplest way to compute the nearest neighbor of a component $Q$ is to compute the distances from all points $q \in Q$ to all points $r \in \overline{Q}$ and keep the smallest.  For each $q$, we store the distance to the nearest neighbor found so far, $d^u(q)$, as an upper bound on the true distance.  If, for any point $r, d(q, r) > d^u(q)$, then we can be confident $r$ is not the nearest neighbor of $q$. 
 
-Using the $kd$-tree, we can improve on this method.  Instead of iterating over the points $r \in \overline{Q}$, we compare a point $q$ with an entire node $R$.  Using the bounding box of $R$, we can compute a lower bound $d^l(q, R) < d(q, r)$ for all $r \in R$.  Then, if $d^l(q, R) > d^u(q)$ for some $R$, we can \emph{prune} any further consideration of points in $R$.  Otherwise, we recursively consider the two children of $R$.
+Using the $kd$-tree, it is possible to improve on this method.  Instead of iterating over the points $r \in \overline{Q}$, compare a point $q$ with an entire node $R$.  Using the bounding box of $R$, the algorithm can compute a lower bound $d^l(q, R) < d(q, r)$ for all $r \in R$.  Then, if $d^l(q, R) > d^u(q)$ for some $R$, it can \emph{prune} any further consideration of points in $R$.  Otherwise, recursively consider the two children of $R$.
 
-This idea can be extended even further.  Since we want the nearest neighbor of each component $Q$, we should exploit the fact that these points are also grouped in the $kd$-tree.  We can maintain a bound $d^u(Q)$ on the upper bound for a nearest neighbor of all points in a node $Q$.  We compare nodes $Q$ and $R$, compute the minimum distance between their bounding boxes $d^l(Q,R)$, and prune if $d^l(Q, R) > d^u(Q)$.  Otherwise, we recursively compare the children of $Q$ with the children of $R$.  By accounting for points in the same component, this method can quickly and efficiently solve the problem of finding each component's nearest neighbor.  
+This idea can be extended even further.  Since Bor\r{u}vka's algorithm needs the nearest neighbor of each component $Q$, my algorithm exploits the fact that these points are also grouped in the $kd$-tree.  We can maintain an upper bound $d^u(Q)$ on $d^u(q)$ for all points $q \in Q$.  We compare nodes $Q$ and $R$, compute the minimum distance between their bounding boxes $d^l(Q,R)$, and prune if $d^l(Q, R) > d^u(Q)$.  Otherwise, we recursively compare the children of $Q$ with the children of $R$.  By accounting for points in the same component, this method can quickly and efficiently solve the problem of finding each component's nearest neighbor.  
 
+%% The formatting sucks here, needs some work
+%% Ask Ryan about the formatting
 \begin{figure}[tb]
 \begin{center}
-\subfigure[Runtimes on synthetic clustered data.]{
+\subfigure[Log-log scale runtimes on synthetic clustered data.]{
 \includegraphics[width=0.45\linewidth]{5_3_all_matlab.eps}
 \label{chart}
 }
-\subfigure[Runtimes for SDSS data and protein folding trajectories.]{
+\vspace{-0.5in}
+\subfigure[Runtimes for SDSS data and protein folding trajectories.  \textsc{GeoMST2} is the previous fastest EMST algorithm.  DTB stands for my \textsc{DualTreeBoruvka} algorithm.]{
 \begin{tabular}{|c|c|c|c|c|} \hline
-dim & $N$ & GeoMST2 & DTB & Speedup \\ \hline \hline
-3 & 389354 & 78.0 & 16.9 & 4.6 \\ \hline 
-12 & 320000 & 702 & 62.3 & 11.3 \\ \hline 
+dim & $N$ & \textsc{GeoMST2} & \textsc{DTB} & Speedup \\ \hline \hline
+3 & 389354 & 78.0 & 16.9 & \textbf{4.6} \\ \hline 
+12 & 320000 & 702 & 62.3 & \textbf{11.3} \\ \hline 
 \end{tabular}
 \label{table}
 }
@@ -93,13 +106,15 @@ dim & $N$ & GeoMST2 & DTB & Speedup \\ \hline \hline
 \end{center}
 \end{figure}
 
+
 \textbf{Results}
-This method proved to be the fastest known algorithm for finding EMST's in general metric spaces.  I compared it to several well known MST algorithms, including \textsc{GeoMST2}, the previous fastest algorithm.  Since hierarchical clustering is important in many domains, including cosmology and bioinformatics, I also tested my algorithm on two large data sets from these areas.  One is three-dimensional spectral data taken from the SDSS, and the other is a compressed (12-dimensional) representation of 16,000 steps of folding simulations for 20 proteins.  
+This method proved to be the fastest known algorithm for finding EMST's in general metric spaces.  I compared it to several well known MST algorithms, including \textsc{GeoMST2} \cite{narzhuzac:00}, the previous fastest algorithm.  Since this research was motivated by scientific applications, especially cosmology and computational biology, I also tested my algorithm on two large data sets from these areas.  One is three-dimensional spectral data taken from the SDSS, and the other is a compressed (12-dimensional) representation of 16,000 steps of folding simulations for 20 proteins.  These experiments clearly demonstrated the scalability of my algorithm in terms of running time and storage requirements.
 
 %What did I learn?  How does it help the proposal? 
 % Should this go here, or earlier
 % If it doesn't go here, how will I conclude this one?
-\textbf{What I learned.}  I gained experience with designing faster algorithms for a long standing and well-studied problem.  I had to master a diverse literature covering the topic from many different fields.  I gained an appreciation for the potential of truly scalable algorithms in the sciences.
+\textbf{What I learned.}  Through my research involvements, particularly designing my EMST algorithm, I 
+gained experience with all aspects of algorithm design.  I searched and compared the existing methods and explored the scientific literature for applications.  I gained experience with powerful algorithmic techniques and the challenges associated with applying them to new problems.  I also have worked on communicating my research through a conference submission.
 
 
 %%%%%% List publications and presentations %%%%%%%%
