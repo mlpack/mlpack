@@ -23,9 +23,16 @@
 \begin{document}
 %\maketitle
 \begin{center}
-\LARGE{NSF Graduate Research Fellowship Proposal} \newline
-\Large{Bill March}
+\LARGE{Tractable Many-body Simulations} \newline
 \end{center}
+
+\textbf{Keywords.}  \textit{computational chemistry, computational biology, many-body potentials, scalable algorithms}
+
+%In a clear, concise, and original statement, present a complete plan for a research project that you may pursue while on fellowship tenure and how you became interested in the topic. Your statement should demonstrate your understanding of research design and methodology and explain the relationship to your previous research, if any. You MUST provide specific details in this essay that address BOTH the NSF Merit Review Criteria of Intellectual Merit and Broader Impacts in order for your application to be competitive. Please refer to the Program Announcement for further information on the NSF Merit Review Criteria. 
+
+%Format: Include the title, key words, hypothesis, research plan (strategy, methodology, and controls), anticipated results or findings, literature citations, and a statement attesting to the originality of the research proposal. If you have not formulated a research plan, your statement should include a description of a topic that interests you and how you would propose to conduct research on that topic. 
+
+%Research topics discussed in your proposed plan will be used to determine eligibility. Refer to the Field of Study eligibility criterion in the program announcement.
 
 %%%% To-do%%%%%
 
@@ -39,7 +46,16 @@
 % Make sure I address all the things they mention as important
 % Do more to be specific about how I will do the proposal
 
-Computer simulations are widely used in biology and chemistry.  \textit{Add a better opening sentence.  Discuss some compelling applications here.}
+% Add keywords
+
+\section{Motivation}
+
+Computer simulations have been used to study virtually every aspect of chemistry and molecular biology.  Computers have been applied to drug design, analyzing structure-function relationships in proteins, nanotechnology, 
+
+Further progress in all of these areas requires longer and more detailed simulations.  
+
+Applications: 
+binding, structure to function relationships, energies, 
 
 \textbf{Implementing Simulations.}  All of these simulations require a tradeoff between detail and scale.  Detailed quantum mechanics methods can require quadratic space and $O(N^4)$ time.  On the other hand, simplified models can easily lose the details necessary to capture interesting behavior.  Therefore, one of the primary challenges of developing practical computer simulations is to find the correct simplifications.  In quantum mechanical methods, sets of functions, called basis sets, are combined to approximate the wavefunction.  Basis sets are carefully optimized for both speed and accuracy and often are specialized for particular systems.  In classical simulations on proteins, a set of parameters are fixed, called a force field.  These included atomic charges which are developed to accurately reproduce experiments.  Determining a force field is extremely time consuming, and force fields rarely generalize to other systems.  New algorithms are necessary to allow larger and more accurate simulations and reduce the need for scientists to spend time developing elaborate parameter sets.  
 
@@ -47,10 +63,11 @@ Computer simulations are widely used in biology and chemistry.  \textit{Add a be
 
 \textbf{Efficient Many-Body Potentials.}  I propose a general framework for making many-body potentials computationally feasible for large systems.  It applies methods from statistics and machine learning to generalize the Fast Multipole Method to many-body potentials.  I will also release code for the algorithm, enabling widespread scientific investigations of many-body potentials in general.
 
-%%%%% Don't forget to include a figure!!!! %%%%%%%%%%%
 
+\section{Details}
 \textbf{Fast Two-Body Computations.}  In general, two-body potentials scale as $O(N^2)$.  For many potentials, it is possible to truncate such computations for distant particles.  However, for long-range effects, such as the Coulomb electrostatic potential, this simple method is too inaccurate, so one must find a better approximation for distant interactions.  
 
+% This needs a lot of formatting
 \begin{figure}[th]
 \centering
 \includegraphics[width=0.5\textwidth]{3nodes_multipole.eps}
@@ -76,7 +93,7 @@ My collaborators and I have developed a simplified monopole expansion using only
 
 \textbf{Extensions.}  These techniques (meaning series expansions and trees) can be extended to treat many other many-body potentials.  We are also considering extensions of this framework to other problems in computational chemistry.  As mentioned above, quantum mechanics simulations utilize basis functions.  The rate-limiting step in the fundamental Hartree-Fock method is computing electron repulsion integrals (ERI's) among sets of four basis functions.  \textit{Give the formula here.}  This computation is very similar to a four-body potential, and we believe that our methods can be extended to accelerate this and other methods.
 
-
+\textbf{Originality.}  This proposal represents my own work and ideas.
 
 
 
