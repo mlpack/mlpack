@@ -15,10 +15,10 @@ differences = zeros(1,K);
 
 for k = 1:K
   
-  N = 3000;
-  
+  N = 10000;
+'start finding h'  
   h = find_h_D(X);
-  
+  'found h'
 %   X = normrnd(zeros(N,1),1);
   
   p_X = kde(X, h);

@@ -3,7 +3,7 @@
 #include "fastlib/fastlib_int.h"
 #include "thor/thor.h"
 
-##define SOLVER_TYPE DualTreeRecursiveBreadth
+//#define SOLVER_TYPE DualTreeRecursiveBreadth
 #define SOLVER_TYPE DualTreeDepthFirst
 
 /**
@@ -13,11 +13,71 @@
  */
 template<typename TKernel>
 class FdKde {
- public:
+public:
   /** The bounding type. Required by THOR. */
   typedef DHrectBound<2> Bound;
+  
+  /** Point data includes index and vector */
+  class Point {
+  private:
+    index_t index_;
+    Vector vec_;
+    
+    OT_DEF_BASIC(Point) {
+      OT_MY_OBJECT(index_);
+      OT_MY_OBJECT(vec_);
+    }
+    
+  public:
 
-  typedef ThorVectorPoint Point;
+    /**
+     * Gets the index.
+     */
+    index_t index() const {
+      return index_;
+    }
+
+    /**
+     * Gets the vector.
+     */
+    const Vector& vec() const {
+      return vec_;
+    }
+
+    /**
+     * Gets the vector.
+     */
+    Vector& vec() {
+      return vec_;
+    }
+    
+    /**
+     * Initializes a "default element" from a dataset schema.
+     *
+     * This is the only function that allows allocation.
+     */
+    template<typename Param>
+    void Init(const Param& param, const DatasetInfo& schema) {
+      vec_.Init(schema.n_features());
+      vec_.SetZero();
+    }
+    /**
+     * Sets the values of this object, not allocating any memory.
+     *
+     * If memory needs to be allocated it must be allocated at the beginning
+     * with Init.
+     *
+     * @param param ignored
+     * @param index the index of the point, ignored
+     * @param data the vector data read from file
+     */
+    template<typename Param>
+    void Set(const Param& param, index_t index, const Vector& data) {
+      index_ = index;
+      vec_.CopyValues(data);
+    }
+  };
+    
   typedef Point QPoint;
   typedef Point RPoint;
 
@@ -30,7 +90,7 @@ class FdKde {
    * Required by N-Body Reduce.
    */
   struct Param {
-   public:
+  public:
     /** The kernel in use. */
     Kernel kernel;
     // /** The amount of relative error prooportional to local lower bound. */
@@ -63,7 +123,7 @@ class FdKde {
       OT_MY_OBJECT(bandwidth);
     }
 
-   public:
+  public:
     /**
      * Initialize parameters from a data node (Req THOR).
      */
@@ -90,14 +150,14 @@ class FdKde {
    * computable.
    */
   struct RStat {
-   public:
+  public:
     //MomentInfo moment_info;
 
     OT_DEF_BASIC(RStat) {
       //OT_MY_OBJECT(moment_info);
     }
 
-   public:
+  public:
     /**
      * Initialize to a default zero value, as if no data is seen (Req THOR).
      *
@@ -118,7 +178,7 @@ class FdKde {
      * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param,
-        const RStat& stat, const Bound& bound, index_t n) {
+		    const RStat& stat, const Bound& bound, index_t n) {
       //moment_info.Add(stat.moment_info);
     }
 
@@ -149,7 +209,7 @@ class FdKde {
    * Coarse result on a region.
    */
   struct QPostponed {
-   public:
+  public:
     /** The density contribution postponed. */
     DRange d_density;
     index_t n_pruned;
@@ -159,7 +219,7 @@ class FdKde {
       OT_MY_OBJECT(n_pruned);
     }
 
-   public:
+  public:
     void Init(const Param& param) {
       d_density.Init(0, 0);
       n_pruned = 0;
@@ -180,7 +240,7 @@ class FdKde {
    * Coarse result on a region.
    */
   struct Delta {
-   public:
+  public:
     /** Min and max density update possible. */
     DRange d_density;
 
@@ -188,14 +248,14 @@ class FdKde {
       OT_MY_OBJECT(d_density);
     }
 
-   public:
+  public:
     void Init(const Param& param) {
     }
   };
 
   // rho
   struct QResult {
-   public:
+  public:
     DRange density;
     index_t n_pruned;
 
@@ -204,30 +264,30 @@ class FdKde {
       OT_MY_OBJECT(n_pruned);
     }
 
-   public:
+  public:
     void Init(const Param& param) {
       density.Init(0, 0);
       n_pruned = 0;
     }
 
     void Postprocess(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RNode& r_root) {
+		     const QPoint& q, index_t q_index,
+		     const RNode& r_root) {
       density -= 1; // LOO
       density.lo *= param.mul_constant;
       density.hi *= param.mul_constant;
     }
 
     void ApplyPostponed(const Param& param,
-        const QPostponed& postponed,
-        const QPoint& q, index_t q_index) {
+			const QPostponed& postponed,
+			const QPoint& q, index_t q_index) {
       density += postponed.d_density;
       n_pruned += postponed.n_pruned;
     }
   };
 
   struct QSummaryResult {
-   public:
+  public:
     /** Bound on density from leaves. */
     DRange density;
     double used_width;
@@ -239,7 +299,7 @@ class FdKde {
       OT_MY_OBJECT(n_pruned);
     }
 
-   public:
+  public:
     void Init(const Param& param) {
       /* horizontal init */
       density.Init(0, 0);
@@ -249,20 +309,20 @@ class FdKde {
 
     /** horizontal join operator */
     void ApplySummaryResult(const Param& param,
-        const QSummaryResult& summary_result) {
+			    const QSummaryResult& summary_result) {
       density += summary_result.density;
       used_width += summary_result.used_width;
       n_pruned += summary_result.n_pruned;
     }
 
     void ApplyDelta(const Param& param,
-        const Delta& delta) {
+		    const Delta& delta) {
       density += delta.d_density;
       // deltas don't affect used error
     }
 
     void ApplyPostponed(const Param& param,
-        const QPostponed& postponed, const QNode& q_node) {
+			const QPostponed& postponed, const QNode& q_node) {
       density += postponed.d_density;
       used_width += postponed.d_density.width();
       n_pruned += postponed.n_pruned;
@@ -284,14 +344,14 @@ class FdKde {
     }
 
     void Accumulate(const Param& param,
-        const QSummaryResult& result, index_t n_points) {
+		    const QSummaryResult& result, index_t n_points) {
       density |= result.density;
       used_width = max(used_width, result.used_width);
       n_pruned = min(n_pruned, result.n_pruned);
     }
 
     void FinishReaccumulate(const Param& param,
-        const QNode& q_node) {
+			    const QNode& q_node) {
       /* no post-processing steps necessary */
     }
   };
@@ -300,7 +360,7 @@ class FdKde {
    * A simple postprocess-step global result.
    */
   struct GlobalResult {
-   public:
+  public:
     DRange sum_density;
     double foo;
     
@@ -309,7 +369,7 @@ class FdKde {
       OT_MY_OBJECT(foo);
     }
 
-   public:
+  public:
     void Init(const Param& param) {
       sum_density.Init(0, 0);
       foo = 0;
@@ -324,12 +384,12 @@ class FdKde {
       fx_format_result(datanode, "avg_density_hi", "%g", sum_density.hi / param.count);
       fx_format_result(datanode, "avg_density", "%g", sum_density.mid() / param.count);
       fx_format_result(datanode, "avg_rel_error", "%g",
-          sum_density.width() / sum_density.lo / 2);
+		       sum_density.width() / sum_density.lo / 2);
       fx_format_result(datanode, "foo", "%g", foo / param.count);
     }
     void ApplyResult(const Param& param,
-        const QPoint& q_point, index_t q_i,
-        const QResult& result) {
+		     const QPoint& q_point, index_t q_i,
+		     const QResult& result) {
       sum_density += result.density;
       foo += log(result.density.mid());
     }
@@ -340,42 +400,42 @@ class FdKde {
    * to be register-allocated.
    */
   struct PairVisitor {
-   public:
+  public:
     double density;
 
-   public:
+  public:
     void Init(const Param& param) {}
 
     // notes
     // - this function must assume that global_result is incomplete (which is
     // reasonable in allnn)
     bool StartVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RNode& r_node,
-        const QSummaryResult& unapplied_summary_results,
-        QResult* q_result,
-        GlobalResult* global_result) {
+				 const QPoint& q, index_t q_index,
+				 const RNode& r_node,
+				 const QSummaryResult& unapplied_summary_results,
+				 QResult* q_result,
+				 GlobalResult* global_result) {
       DRange distance_sq_range = DRange(
-          r_node.bound().MinDistanceSq(q.vec()),
-          r_node.bound().MaxDistanceSq(q.vec()));
+					r_node.bound().MinDistanceSq(q.vec()),
+					r_node.bound().MaxDistanceSq(q.vec()));
       DRange d_density = param.kernel.RangeUnnormOnSq(distance_sq_range);
 
       d_density *= r_node.count();
 
       double density_lo = d_density.lo + q_result->density.lo
-          + unapplied_summary_results.density.lo;
+	+ unapplied_summary_results.density.lo;
 
       double allocated_width =
-          (param.rel_error * density_lo * 2 - q_result->density.width())
-          * r_node.count() / (param.count - q_result->n_pruned);
+	(param.rel_error * density_lo * 2 - q_result->density.width())
+	* r_node.count() / (param.count - q_result->n_pruned);
       /*allocated_error *= param.p_global;
-      allocated_error += param.rel_error_local * d_density.lo;*/
+	allocated_error += param.rel_error_local * d_density.lo;*/
 
       q_result->n_pruned += r_node.count();
 
       if (d_density.width() < allocated_width) {
-        q_result->density += d_density;
-        return false;
+	q_result->density += d_density;
+	return false;
       }
 
       density = 0;
@@ -390,25 +450,25 @@ class FdKde {
      * doesn't want to bother with giving you summary results, so it doesn't.
      */
     bool StartVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RNode& r_node,
-        QResult* q_result,
-        GlobalResult* global_result) {
+				 const QPoint& q, index_t q_index,
+				 const RNode& r_node,
+				 QResult* q_result,
+				 GlobalResult* global_result) {
       density = 0;
       return true;
     }
 
     void VisitPair(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RPoint& r, index_t r_index) {
+		   const QPoint& q, index_t q_index,
+		   const RPoint& r, index_t r_index) {
       double distance = la::DistanceSqEuclidean(q.vec(), r.vec());
       density += param.kernel.EvalUnnormOnSq(distance);
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index, const RNode& r_node,
-        const QSummaryResult& unapplied_summary_results,
-        QResult* q_result, GlobalResult* global_result) {
+				  const QPoint& q, index_t q_index, const RNode& r_node,
+				  const QSummaryResult& unapplied_summary_results,
+				  QResult* q_result, GlobalResult* global_result) {
       q_result->density += density;
     }
 
@@ -416,14 +476,14 @@ class FdKde {
      * Once again, the lame form for breadth-first.
      */
     void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index, const RNode& r_node,
-        QResult* q_result, GlobalResult* global_result) {
+				  const QPoint& q, index_t q_index, const RNode& r_node,
+				  QResult* q_result, GlobalResult* global_result) {
       q_result->density += density;
     }
   };
 
   class Algorithm {
-   public:
+  public:
     /**
      * Calculates a delta....
      *
@@ -432,12 +492,12 @@ class FdKde {
      * - If this returns false, delta is not touched.
      */
     static bool ConsiderPairIntrinsic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node,
-        Delta* delta,
-        GlobalResult* global_result,
-        QPostponed* q_postponed) {
+				      const Param& param,
+				      const QNode& q_node,
+				      const RNode& r_node,
+				      Delta* delta,
+				      GlobalResult* global_result,
+				      QPostponed* q_postponed) {
       //DRange distance_sq =
       //    q_node.bound().RangeDistanceSq(r_node.bound());
       //double distance_sq_mid = q_node.bound().MaxToMidSq(r_node.bound());
@@ -447,50 +507,50 @@ class FdKde {
       delta->d_density *= r_node.count();
 
       DEBUG_ASSERT_MSG(delta->d_density.lo <= delta->d_density.hi * (1 + 1.0e-7),
-          "delta density lo %f > hi %f",
-          delta->d_density.lo, delta->d_density.hi);
+		       "delta density lo %f > hi %f",
+		       delta->d_density.lo, delta->d_density.hi);
 
 
       if (likely(delta->d_density.hi != 0)) {
-        return true;
+	return true;
       } else {
-        q_postponed->n_pruned += r_node.count();
-        return false;
+	q_postponed->n_pruned += r_node.count();
+	return false;
       }
     }
 
     static bool ConsiderPairExtrinsic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node,
-        const Delta& delta,
-        const QSummaryResult& q_summary_result,
-        const GlobalResult& global_result,
-        QPostponed* q_postponed) {
+				      const Param& param,
+				      const QNode& q_node,
+				      const RNode& r_node,
+				      const Delta& delta,
+				      const QSummaryResult& q_summary_result,
+				      const GlobalResult& global_result,
+				      QPostponed* q_postponed) {
       double allocated_width =
-          (param.rel_error * q_summary_result.density.lo * 2
-              - q_summary_result.used_width)
-          * r_node.count() / (param.count - q_summary_result.n_pruned);
+	(param.rel_error * q_summary_result.density.lo * 2
+	 - q_summary_result.used_width)
+	* r_node.count() / (param.count - q_summary_result.n_pruned);
       /*allocated_width *= param.p_global;
-      allocated_width += param.rel_error_local * delta.d_density.lo * 2;*/
+	allocated_width += param.rel_error_local * delta.d_density.lo * 2;*/
       //fprintf(stderr, "%e..%e (%e, %e) %e (%e)\n", delta.d_density.lo, delta.d_density.hi, delta.d_density.width(), allocated_width, q_summary_result.density.lo,
       //    sqrt(q_node.bound().MaxDistanceSq(q_node.bound())));
 
       if (delta.d_density.width() <= allocated_width) {
-        q_postponed->d_density += delta.d_density;
-        q_postponed->n_pruned += r_node.count();
-        return false;
+	q_postponed->d_density += delta.d_density;
+	q_postponed->n_pruned += r_node.count();
+	return false;
       }
 
       return true;
     }
 
     static bool ConsiderQueryTermination(
-        const Param& param,
-        const QNode& q_node,
-        const QSummaryResult& q_summary_result,
-        const GlobalResult& global_result,
-        QPostponed* q_postponed) {
+					 const Param& param,
+					 const QNode& q_node,
+					 const QSummaryResult& q_summary_result,
+					 const GlobalResult& global_result,
+					 QPostponed* q_postponed) {
       return true;
     }
 
@@ -499,10 +559,10 @@ class FdKde {
      * values are earlier.
      */
     static double Heuristic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node,
-        const Delta& delta) {
+			    const Param& param,
+			    const QNode& q_node,
+			    const RNode& r_node,
+			    const Delta& delta) {
       //double d = r_node.bound().MinToMidSq(q_node.bound());
       //return delta.d_density.lo / delta.d_density.width() + d * 1.0e-32;
       double d = r_node.bound().MidDistanceSq(q_node.bound());
@@ -532,28 +592,28 @@ class FdKde {
     fx_timer_start(module, "read");
     DistributedCache *points_cache = new DistributedCache();
     param->count = thor::ReadPoints<Point>(
-        Empty(), TREE_CHANNEL + 0, TREE_CHANNEL + 1,
-        fx_submodule(module, "data", "data"), points_cache);
+					   Empty(), TREE_CHANNEL + 0, TREE_CHANNEL + 1,
+					   fx_submodule(module, "data", "data"), points_cache);
     fx_timer_stop(module, "read");
 
     Point example_point;
     CacheArray<Point>::GetDefaultElement(points_cache,
-        &example_point);
+					 &example_point);
     param->dim = example_point.vec().length();
     
     param->SetDimensions();
 
     fx_timer_start(module, "tree");
     thor::CreateKdTree<Point, Node>(
-        *param, TREE_CHANNEL + 2, TREE_CHANNEL + 3,
-        fx_submodule(module, "tree", "tree"), param->count,
-        points_cache, &tree);
+				    *param, TREE_CHANNEL + 2, TREE_CHANNEL + 3,
+				    fx_submodule(module, "tree", "tree"), param->count,
+				    points_cache, &tree);
     fx_timer_stop(module, "tree");
 
     QResult example_result;
     example_result.Init(*param);
     tree.CreateResultCache(RESULT_CHANNEL, example_result,
-        results_megs, &results);
+			   results_megs, &results);
 
     GlobalResult global_result_1;
 
@@ -563,15 +623,44 @@ class FdKde {
 
     fx_timer_start(module, "kde_1");
     thor::RpcDualTree<FdKde, SOLVER_TYPE<FdKde> >(
-        fx_submodule(module, "gnp", "kde_1"), 200,
-        *param, &tree, &tree, &results, &global_result_1);
+						  fx_submodule(module, "gnp", "kde_1"), 200,
+						  *param, &tree, &tree, &results, &global_result_1);
     fx_timer_stop(module, "kde_1");
+
+
+    // emit results
+
+    Matrix densities;
+    densities.Init(1, param->count);
+
+
+    if (rpc::is_root()) {
+      CacheArray<QResult> result_array;
+      CacheArray<QPoint> points_array;
+      result_array.Init(&results, BlockDevice::M_READ);
+      points_array.Init(points_cache, BlockDevice::M_READ);
+      CacheReadIter<QResult> result_iter(&result_array, 0);
+      CacheReadIter<QPoint> points_iter(&points_array, 0);
+      for (index_t i = 0; i < param->count; i++,
+	     result_iter.Next(), points_iter.Next()) {
+	
+	densities.set(0, (*points_iter).index(), (*result_iter).density.lo);
+
+	//I think lo and hi should always be the same at the end so we need only use lo
+	//densities.set(1, i, (*result_iter).density.hi);
+      }
+    }
+    data::Save(fx_param_str(module, "results", "results.csv"), densities);
+    
+
+
+
     results.ResetElements();
 
     String kernel_type = fx_param_str_req(module, "kde/kernel");
     if (kernel_type == "gauss_star") {
       if (rpc::is_root()) {
-        fprintf(stderr, "Doing density estimation with second kernel for LSCV...\n");
+	fprintf(stderr, "Doing density estimation with second kernel for LSCV...\n");
       }
       // Gaussian convolution kernel.  Run again at the modified bandwidth.
       GlobalResult global_result_2;
@@ -580,23 +669,23 @@ class FdKde {
       
       fx_timer_start(module, "kde_2");
       thor::RpcDualTree<FdKde, SOLVER_TYPE<FdKde> >(
-          fx_submodule(module, "gnp", "kde_2"), 200,
-          *param, &tree, &tree, &results, &global_result_2);
+						    fx_submodule(module, "gnp", "kde_2"), 200,
+						    *param, &tree, &tree, &results, &global_result_2);
       fx_timer_stop(module, "kde_2");
       results.ResetElements();
       
       if (rpc::is_root()) {
-        DRange lscv_value;
+	DRange lscv_value;
         
-        lscv_value.lo = global_result_2.sum_density.lo
-            - 2 * global_result_1.sum_density.hi;
-        lscv_value.hi = global_result_2.sum_density.hi
-            - 2 * global_result_1.sum_density.lo;
+	lscv_value.lo = global_result_2.sum_density.lo
+	  - 2 * global_result_1.sum_density.hi;
+	lscv_value.hi = global_result_2.sum_density.hi
+	  - 2 * global_result_1.sum_density.lo;
         
-        fx_format_result(module, "lscv/value", "%g", lscv_value.mid());
-        fx_format_result(module, "lscv/error", "%g", lscv_value.width() / 2);
-        fx_format_result(module, "lscv/lo", "%g", lscv_value.lo);
-        fx_format_result(module, "lscv/hi", "%g", lscv_value.hi);
+	fx_format_result(module, "lscv/value", "%g", lscv_value.mid());
+	fx_format_result(module, "lscv/error", "%g", lscv_value.width() / 2);
+	fx_format_result(module, "lscv/lo", "%g", lscv_value.lo);
+	fx_format_result(module, "lscv/hi", "%g", lscv_value.hi);
       }
     }
 
@@ -626,3 +715,4 @@ int main(int argc, char *argv[]) {
   fx_done();
 }
 
+  
