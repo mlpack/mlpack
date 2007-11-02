@@ -63,10 +63,11 @@ For a $k$-way computation, the algorithm considers interactions between $k$ node
 %perhaps show one equation, like the hermite expansion for the guassian. - probably not enough space
  \begin{wrapfigure}{r}{0.45\textwidth}
 \includegraphics[width=0.45\textwidth]{3nodes_multipole.eps}
-\caption{Three nodes $Q_I, Q_J, Q_K$ with bounding boxes.}
+\caption{Three nodes $Q_I, Q_J, Q_K$ with bounding boxes.  The arrows represent the approximated interactions.}
 \label{three_nodes}
 \end{wrapfigure}
 
+\vspace{-0.2in}
 I am investigating a fast algorithm for computing the Fock matrix using this algorithmic framework.  This involves deriving the bounds on computations mentioned above and determining the best tree to organize the basis functions.  Once the algorithm is designed, I will implement it in software and test against existing methods.  With the support of David Sherrill and his research group, I test my algorithm on systems of real chemical interest.  I will also integrate my algorithm with his open-source quantum chemistry code \cite{psi3}, thus providing a useful alternative to the current commercialized programs.  
 
 
