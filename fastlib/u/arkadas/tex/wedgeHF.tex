@@ -16,9 +16,10 @@ that is computationally practical, and sufficiently accurate.
 
 We will start by reviewing the Hartree-Fock method in a new notation.
 
-\subsection{Review of Hartree-Fock theory}
+\subsection{Hartree-Fock theory}
 
-The problem is to find an antisymmetric, $n$-electron wavefunction $\Psi =
+The problem is to find an antisymmetric, $n$-electron wavefunction (actually, a spin orbital)
+$\Psi =
 \Psi(x_1, \cdots, x_n)$ that minimizes,
 \begin{equation}
   E_\Psi = \langle \Psi | H | \Psi \rangle \,,
@@ -28,7 +29,7 @@ being the 1-electron core Hamiltonian representing electron kinetic energy
 and the electron-nucleus interactions, and $H_{ee}$ representing the
 electron-electron interactions,
 \begin{equation}
-  H_{ee} = \sum_{k=1}^{n-1} \sum_{l=k+1}^n \frac{e^2}{|\mathbf{r}_k - \mathbf{r}_l|}
+  H_{ee} = \sum_{k=1}^{n-1} \sum_{l=k+1}^n \frac{e^2}{|\mathbf{r}_k - \mathbf{r}_l|}\,.
 \end{equation}
 
 The Hartree-Fock method restricts the search for the 
@@ -42,8 +43,8 @@ Slater determinants.
 Let $\psi_A(x)$ and $\psi_B(x)$ be two single-electron wavefunctions
 (let us ignore spin for the moment; everything we say below can (and
 in fact, should) be written in terms of spin orbitals). We define
-their antisymmetric product (or the {\it wedge} product) $\psi_A
-\wedge \psi_B$ as an antisymmetric function of two variables,
+their antisymmetric product, or the {\it wedge} product $\psi_A
+\wedge \psi_B$ as an antisymmetric function for two variables,
 \begin{equation}
   (\psi_A \wedge \psi_B)(x_1, x_2) = \frac{1}{\sqrt{2!}} \big(\psi_A(x_1)
   \psi_B(x_2) - \psi_A(x_2)\psi_B(x_1)\big)\,.
@@ -59,23 +60,23 @@ orthogonal to each other\footnote{A note here on the fact that they
   determinant.} 
 and are normalized as single-electron 
 wavefunctions. Similarly, we can represent a
-$3\times 3$ Slater determinant by a triple wedge product
-single-electron spin orbitals, which gives a function of three varibles,
+$3\times 3$ Slater determinant by a triple wedge product of
+single-electron wavefunctions, which gives a function of three varibles,
 \begin{eqnarray}
   (\psi_A \wedge \psi_B \wedge \psi_C)(x_1,x_2,x3) =
-  \frac{1}{\sqrt{3!}}\Large[
+  \frac{1}{\sqrt{3!}}\Big[
   \psi_A(x_1) \psi_B(x_2) \psi_C(x_3) + \cr
   \psi_A(x_2) \psi_B(x_3) \psi_C(x_1) + \cr
   \psi_A(x_3) \psi_B(x_1) \psi_C(x_2) - \cr
   \psi_A(x_1) \psi_B(x_3) \psi_C(x_2) - \cr
   \psi_A(x_3) \psi_B(x_2) \psi_C(x_1) - \cr
-  \psi_A(x_2) \psi_B(x_1) \psi_C(x_3)\Large] \,.
+  \psi_A(x_2) \psi_B(x_1) \psi_C(x_3)\Big] \,.
 \end{eqnarray}
-The $n$-fold product $\psi_1\wedge\cdots\wedge\psi_n$ is defined
+The $n$-fold product $\psi_1\wedge\cdots\wedge\psi_n$ is defined similarly,
 by summing over all permutations of the arguments, and introducing the
 appropriate signs just as in the definition of the determinant,
 \begin{equation}
-  (\psi_1\wedge\cdots\wedge\psi_n)(x_1,\cdots,x_n) = \frac{1}{n!} \sum_{\sigma} 
+  (\psi_1\wedge\cdots\wedge\psi_n)(x_1,\cdots,x_n) = \frac{1}{\sqrt{n!}} \sum_{\sigma} 
   sgn(\sigma)\psi_1(x_{\sigma_1}) \psi_2(x_{\sigma_2})\cdots \psi_n(x_{\sigma_n})\,,
 \end{equation}
 where $\sigma$ denotes a permutation of $1\cdots n$, so the sum over
@@ -87,20 +88,20 @@ $-1$ otherwise.
 Although these definitions are enough for rewriting Hartree-Fock
 theory using the notation of wedge products, we will also
 define the wedge products of multiparticle wavefunctions, since these
-will be crucial in the generalization we will describe.
+will be crucial to the generalization we will describe.
 
-Let $\omega$ be a two-particle, antisymmetric wavefunction, and $\psi$
+Let $\omega$ be a two-particle, antisymmetric wavefunction, and $\psi($
 be a single-particle wavefunction. We define their wedge product
 $\omega \wedge \psi$ to be a totally antisymmetric three-particle
 wavefunction given by,
 \begin{eqnarray}
-  (\omega \wedge \psi)(x_1, x_2, x_3) = \frac{1}{N_{2,1}} (
+  (\omega \wedge \psi)(x_1, x_2, x_3) = \frac{1}{N_{2,1}} \Big[
 \omega(x_1,x_2)\psi(x_3)+\cr
 \omega(x_2,x_3)\psi(x_1)+\cr
 \omega(x_3,x_1)\psi(x_2)-\cr
 \omega(x_1,x_3)\psi(x_2)-\cr
 \omega(x_3,x_2)\psi(x_1)-\cr
-\omega(x_2,x_1)\psi(x_3)) \,,
+\omega(x_2,x_1)\psi(x_3)\Big] \,,
 \end{eqnarray}
 where $N_{2,1}$ is a normalization factor to be discussed shortly.
 The idea of the definition is to permute the variables plugged in the three
@@ -113,10 +114,10 @@ appropriate signs for each permutation.\footnote{$\psi\wedge\omega$ is
 Note that some of the terms
 are identical to each other due to the antisymmetry of $\omega$, e.g.,
 $-\omega(x_1,x_3)\psi(x_2) = \omega(x_3,x_1)\psi(x_2)$. The
-normalization factor $N_{2,1} = (2\times 1\times \sqrt{{2+1\choose 2}})^{-1}
-= \frac{1}{2\sqrt{3}}$ is chosen\footnote{The generalized version which will
+normalization factor $N_{2,1} = \frac{1}{2\sqrt{3}}$ is 
+chosen\footnote{The generalized version which will
   perhaps be discussed in a future version is given by
-  $N_{p,q}=(p!q!{p+q\choose p})^{-1}$} so that 
+  $N_{p,q}=\left(p!q!{p+q\choose p}\right)^{-1}$} so that 
 the wedge product $\omega\wedge\psi$ is
 normalized when $\omega$ and
 $\psi$ are normalized as two-particle and single-particle
@@ -127,18 +128,22 @@ sense that,
 \end{equation}
 Due to the antisymmetry of $\omega$, this implies $\int
 \omega(y,x)\psi(y)dy=0$ also. We will come back to this notion of
-orthogonality in the following sections.
+orthogonality in the following sections. {\it Remark on the
+  overcounting due to the antisymmetry of $\omega$}
 
 This definition of the wedge product of a two-particle
 wavefunction with a one-particle wavefunction is compatible with the
-triple wedge product of single particle wavefunctions introduced above,
+triple wedge product of single particle wavefunctions introduced above.
 % give equation number
-in the sense that, if one defines $\omega = \psi_A\wedge\psi_B$, then
-$\omega \wedge psi_C = \psi_A\wedge\psi_B\wedge\psi_C$, i.e,
-$(\psi_A\wedge\psi_B)\wedge\psi_C =
-\psi_A\wedge\psi_B\wedge\psi_C$. Likewise, defining $\omega =
-\psi_B\wedge\psi_C$ and using a similar definition of
-$\psi\wedge\omega$, one can see that $\psi_A\wedge(\psi_B\wedge\psi_C) =
+If one defines $\omega = \psi_A\wedge\psi_B$, then
+$\omega \wedge \psi_C = (\psi_A\wedge\psi_B)\wedge\psi_C$
+turns out to be equal to $\psi_A\wedge\psi_B\wedge\psi_C$ as given above.
+% give equation number
+Likewise, defining $\omega =
+\psi_B\wedge\psi_C$ and using a definition of
+$\psi\wedge\omega$ similar to that of $\omega\wedge\psi$, 
+% give eq no
+one can see that $\psi_A\wedge(\psi_B\wedge\psi_C) =
 \psi_A\wedge\psi_B\wedge\psi_C$.
 
 It is possible to generalize these definitions and 
@@ -151,20 +156,54 @@ It is possible to generalize these definitions and
 
 --Include remarks about the normalization factors not being standard.
 
-\section{The setup}
-
-The energy expectation value in terms of the wave-function with a rank 2
-factor. (Better name?)
-
-
 \subsection{Orthogonality}
 
-The justification for the notion of orthogonality between the rank 1
-and rank 2 parts of the total wavefunction.
+\subsection{The setup}
 
+--Here, describe the general setup: we basically have a partially
+ordered set of spaces of wavefunctions, the maximal element being the
+set of all antisym n-particle wavefunctions, and the minimal one being
+the set of Hartree-Fock wavefunctions.
+
+
+\section{The first improvement}
+
+Let us start by exploring the lowest order improvement over
+Hartree-Fock theory in this framework, namely, minimizing the expectation
+value of energy over the space of wavefunctions of the form,
+\begin{equation}
+  \Psi(x_1\cdots x_n) =
+  (\omega\wedge\psi_3\wedge\psi_4\cdots\wedge\psi_n)(x_1\cdots x_n) \,,
+\end{equation}
+where $\omega$ is a normalized, two-particle, antisymmetric wavefunction,
+$\{\psi_i: i=3\cdots n\}$ is an orthonormal set of single-particle
+wavefunctions\footnote{Indexing of the $\psi$s starts from 3 for
+ notational convenience.}, 
+and $\omega$ is orthogonal to the $\psi_i$s in the sense
+described above. % give section number
 \subsection{Core terms}
 
-Evaluate the core terms, utilizing orthogonality.
+Let's first calculate the expectation value of $H_{core}$ for this
+wavefunction. Using $H_{core}(x_1,\cdots, x_n)=\sum_k
+H_{core}^{(k)}(x_k)$,
+\begin{equation}
+  E_\Psi = \langle\Psi|H_{core}|\Psi\rangle = \sum_k
+  \langle\Psi|H_{core}^{(k)}|\Psi\rangle\,,
+\end{equation}
+and expanding the wavefunction as a sum of
+products with permuted arguments, we get,
+\begin{eqnarray*}
+ \lefteqn{E_\Psi=\int dx_1\cdots dx_n
+  \sum_{k,\sigma,\tau}(-)^\sigma (-)^\tau}\\& & 
+ \Big[\omega(x_{\sigma_1},x_{\sigma_2})
+  \psi_3(x_{\sigma_3})\cdots\psi_n(x_{\sigma_n})\Big]H_{core}^{(k)}\Big[\omega(x_{\tau_1},x_{\tau_2})
+  \psi_3(x_{\tau_3})\cdots\psi_n(x_{\tau_n})\Big]\,,
+\end{eqnarray*}
+where $\sigma$ and $\tau$ are permutations of $1\cdots n$, and
+$(-)^\sigma$ and $(-)^\tau$ are shorthand for $sgn(\sigma)$ and
+$sgn(\tau)$, respectively.
+
+\subsubsection{Utilizing orthogonality}
 
 \subsection{e-e terms}
 
