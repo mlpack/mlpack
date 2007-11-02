@@ -1,0 +1,185 @@
+\documentclass[11pt]{article}
+
+\begin{document}
+
+\section{Introduction}
+
+--Review Hartree-Fock in the wedge-product notation.
+
+We will introduce a framework for calculating approximations to 
+the ground state many-electron wavefunction for a given molecule, 
+assuming the positions of the nuclei are given. This framework
+reproduces the Hartree-Fock solution as the lowest order, and in
+principle gives the exact wavefunction as the highest order
+solution. The idea is to use some intermediate order approximation
+that is computationally practical, and sufficiently accurate. 
+
+We will start by reviewing the Hartree-Fock method in a new notation.
+
+\subsection{Review of Hartree-Fock theory}
+
+The problem is to find an antisymmetric, $n$-electron wavefunction $\Psi =
+\Psi(x_1, \cdots, x_n)$ that minimizes,
+\begin{equation}
+  E_\Psi = \langle \Psi | H | \Psi \rangle \,,
+\end{equation}
+where $H = H_{core} + H_{ee}$ is the Hamiltonian, with $H_{core}$
+being the 1-electron core Hamiltonian representing electron kinetic energy
+and the electron-nucleus interactions, and $H_{ee}$ representing the
+electron-electron interactions,
+\begin{equation}
+  H_{ee} = \sum_{k=1}^{n-1} \sum_{l=k+1}^n \frac{e^2}{|\mathbf{r}_k - \mathbf{r}_l|}
+\end{equation}
+
+The Hartree-Fock method restricts the search for the 
+minimizing $\Psi$ to the set of Slater determinants of 1-electron spin
+orbitals. This automatically gives $n$-electron wavefunctions that are
+antisymmetric. Let us introduce a new notation to represent these
+Slater determinants.
+
+\subsection{Antisymmetric products}
+
+Let $\psi_A(x)$ and $\psi_B(x)$ be two single-electron wavefunctions
+(let us ignore spin for the moment; everything we say below can (and
+in fact, should) be written in terms of spin orbitals). We define
+their antisymmetric product (or the {\it wedge} product) $\psi_A
+\wedge \psi_B$ as an antisymmetric function of two variables,
+\begin{equation}
+  (\psi_A \wedge \psi_B)(x_1, x_2) = \frac{1}{\sqrt{2!}} \big(\psi_A(x_1)
+  \psi_B(x_2) - \psi_A(x_2)\psi_B(x_1)\big)\,.
+\end{equation}
+Note that this implies $\psi_A\wedge \psi_B=-\psi_B\wedge\psi_A$. 
+This is just a fancy notation for the Slater determinant of two
+variables, but it will turn out to be convenient for the
+generalization we will describe. As in the Slater determinant, the
+factor $\frac{1}{\sqrt{2!}}$ ensures that the two-particle wavefunction
+$\psi_A\wedge \psi_B$ is normalized when $\psi_A$ and $\psi_B$ are
+orthogonal to each other\footnote{A note here on the fact that they
+  can always be made orthogonal to each other without changing the
+  determinant.} 
+and are normalized as single-electron 
+wavefunctions. Similarly, we can represent a
+$3\times 3$ Slater determinant by a triple wedge product
+single-electron spin orbitals, which gives a function of three varibles,
+\begin{eqnarray}
+  (\psi_A \wedge \psi_B \wedge \psi_C)(x_1,x_2,x3) =
+  \frac{1}{\sqrt{3!}}\Large[
+  \psi_A(x_1) \psi_B(x_2) \psi_C(x_3) + \cr
+  \psi_A(x_2) \psi_B(x_3) \psi_C(x_1) + \cr
+  \psi_A(x_3) \psi_B(x_1) \psi_C(x_2) - \cr
+  \psi_A(x_1) \psi_B(x_3) \psi_C(x_2) - \cr
+  \psi_A(x_3) \psi_B(x_2) \psi_C(x_1) - \cr
+  \psi_A(x_2) \psi_B(x_1) \psi_C(x_3)\Large] \,.
+\end{eqnarray}
+The $n$-fold product $\psi_1\wedge\cdots\wedge\psi_n$ is defined
+by summing over all permutations of the arguments, and introducing the
+appropriate signs just as in the definition of the determinant,
+\begin{equation}
+  (\psi_1\wedge\cdots\wedge\psi_n)(x_1,\cdots,x_n) = \frac{1}{n!} \sum_{\sigma} 
+  sgn(\sigma)\psi_1(x_{\sigma_1}) \psi_2(x_{\sigma_2})\cdots \psi_n(x_{\sigma_n})\,,
+\end{equation}
+where $\sigma$ denotes a permutation of $1\cdots n$, so the sum over
+$\sigma$ denotes a sum over all such permutations. $sgn(\sigma)$
+denotes the sign of the permutation, being equal to $1$ if $\sigma$
+can be written as an even number of successive pair exchanges, and
+$-1$ otherwise.
+
+Although these definitions are enough for rewriting Hartree-Fock
+theory using the notation of wedge products, we will also
+define the wedge products of multiparticle wavefunctions, since these
+will be crucial in the generalization we will describe.
+
+Let $\omega$ be a two-particle, antisymmetric wavefunction, and $\psi$
+be a single-particle wavefunction. We define their wedge product
+$\omega \wedge \psi$ to be a totally antisymmetric three-particle
+wavefunction given by,
+\begin{eqnarray}
+  (\omega \wedge \psi)(x_1, x_2, x_3) = \frac{1}{N_{2,1}} (
+\omega(x_1,x_2)\psi(x_3)+\cr
+\omega(x_2,x_3)\psi(x_1)+\cr
+\omega(x_3,x_1)\psi(x_2)-\cr
+\omega(x_1,x_3)\psi(x_2)-\cr
+\omega(x_3,x_2)\psi(x_1)-\cr
+\omega(x_2,x_1)\psi(x_3)) \,,
+\end{eqnarray}
+where $N_{2,1}$ is a normalization factor to be discussed shortly.
+The idea of the definition is to permute the variables plugged in the three
+``slots'' in $\omega(\cdot, \cdot)\psi(\cdot)$, and introduce the
+appropriate signs for each permutation.\footnote{$\psi\wedge\omega$ is
+  defined in a similar manner, and turns out to be equal to
+  $\omega\wedge\psi$. Note that this commutative property does not
+  hold in the more general case of a wedge product between a
+  $p$-particle wavefunction and and a $q$-particle wavefunction.} 
+Note that some of the terms
+are identical to each other due to the antisymmetry of $\omega$, e.g.,
+$-\omega(x_1,x_3)\psi(x_2) = \omega(x_3,x_1)\psi(x_2)$. The
+normalization factor $N_{2,1} = (2\times 1\times \sqrt{{2+1\choose 2}})^{-1}
+= \frac{1}{2\sqrt{3}}$ is chosen\footnote{The generalized version which will
+  perhaps be discussed in a future version is given by
+  $N_{p,q}=(p!q!{p+q\choose p})^{-1}$} so that 
+the wedge product $\omega\wedge\psi$ is
+normalized when $\omega$ and
+$\psi$ are normalized as two-particle and single-particle
+wavefunctions, respectively, and are orthogonal to each other in the
+sense that,
+\begin{equation}
+  \int \omega(x,y)\psi(y)dy = 0\,.
+\end{equation}
+Due to the antisymmetry of $\omega$, this implies $\int
+\omega(y,x)\psi(y)dy=0$ also. We will come back to this notion of
+orthogonality in the following sections.
+
+This definition of the wedge product of a two-particle
+wavefunction with a one-particle wavefunction is compatible with the
+triple wedge product of single particle wavefunctions introduced above,
+% give equation number
+in the sense that, if one defines $\omega = \psi_A\wedge\psi_B$, then
+$\omega \wedge psi_C = \psi_A\wedge\psi_B\wedge\psi_C$, i.e,
+$(\psi_A\wedge\psi_B)\wedge\psi_C =
+\psi_A\wedge\psi_B\wedge\psi_C$. Likewise, defining $\omega =
+\psi_B\wedge\psi_C$ and using a similar definition of
+$\psi\wedge\omega$, one can see that $\psi_A\wedge(\psi_B\wedge\psi_C) =
+\psi_A\wedge\psi_B\wedge\psi_C$.
+
+It is possible to generalize these definitions and 
+
+--Orthogonality in one pair of slots implies that in any other pair.
+
+--Remark on the fact that the orthogonalization of a two-part wavefn
+  with a one-part. wavefne is always possible without changing their wedge
+  product. (Generalize this to p-part and q-part.)
+
+--Include remarks about the normalization factors not being standard.
+
+\section{The setup}
+
+The energy expectation value in terms of the wave-function with a rank 2
+factor. (Better name?)
+
+
+\subsection{Orthogonality}
+
+The justification for the notion of orthogonality between the rank 1
+and rank 2 parts of the total wavefunction.
+
+\subsection{Core terms}
+
+Evaluate the core terms, utilizing orthogonality.
+
+\subsection{e-e terms}
+
+Evaluate the e-e terms. 
+
+\subsection{Total energy}
+
+Give the final formula.
+
+\section{Introducing a basis}
+
+Extract the analogue of Roothaan-Hall equations by defining a basis. 
+
+\section{Computational considerations}
+
+How to implement a preliminary version of the algorithm.
+
+\end{document}
