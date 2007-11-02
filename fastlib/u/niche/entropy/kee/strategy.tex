@@ -68,7 +68,7 @@ Since $ \int p(x) \log \frac{p(x)}{q(x)} dx = \int p(x) \log p(x) dx - \int p(x)
 
 Note that $ \int p(x) \log q(x) dx $ is maximized when $ p(x) = q(x) $.
 
-Now, we obtain an approximation for $ \log f(x) $. We can approximate $ \log f(x) $ using $ \log \hat{f}_{h_E}(x) $, where $ h_E = \arg \min_h \int f(x) \log \hat{f}_h dx = \mathbf{E}_f[\log \hat{f}_h] \approx \sum_{i=1}^n \log \hat{f}_{h,-i}(x_i) $.
+Now, we obtain an approximation for $ \log f(x) $. We can approximate $ \log f(x) $ using $ \log \hat{f}_{h_E}(x) $, where $ h_E = \arg \max_h \int f(x) \log \hat{f}_h dx = \arg \min_h - \int f(x) \log \hat{f}_h dx $, where $ \int f(x) \log \hat{f}_h dx = \mathbf{E}_f[\log \hat{f}_h] \approx \sum_{i=1}^n \log \hat{f}_{h,-i}(x_i) $.
 
 
 
@@ -124,7 +124,7 @@ OR
 
 
 Kernel: Gaussian
-
+\\\\
 For linear spacing, Computation is:
 
 \begin{displaymath}
