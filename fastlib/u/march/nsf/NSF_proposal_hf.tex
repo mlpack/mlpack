@@ -4,7 +4,7 @@
 %\documentstyle[nips07submit_09,times]{article}
 
 \usepackage{amsmath,amssymb}
-\usepackage{graphicx}
+\usepackage{graphicx, wrapfig}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
 \newcommand{\spcA}{\hspace*{0in}}
@@ -23,90 +23,53 @@
 \begin{document}
 %\maketitle
 \begin{center}
-\LARGE{Tractable ERI's in Hartree-Fock} \newline
+\Large{Tractable Quantum Chemistry Computations}
 \end{center}
-\vspace{-0.5in}
-\textbf{Keywords.}  \textit{computational chemistry}
+\vspace{-0.15in}
+\textbf{Keywords.}  \textit{Hartree-Fock, higher-order recursion}
 
+
+%%%%%%%%%% Instructions %%%%%%%%%%%%%%%%
 %In a clear, concise, and original statement, present a complete plan for a research project that you may pursue while on fellowship tenure and how you became interested in the topic. Your statement should demonstrate your understanding of research design and methodology and explain the relationship to your previous research, if any. You MUST provide specific details in this essay that address BOTH the NSF Merit Review Criteria of Intellectual Merit and Broader Impacts in order for your application to be competitive. Please refer to the Program Announcement for further information on the NSF Merit Review Criteria. 
 
 %Format: Include the title, key words, hypothesis, research plan (strategy, methodology, and controls), anticipated results or findings, literature citations, and a statement attesting to the originality of the research proposal. If you have not formulated a research plan, your statement should include a description of a topic that interests you and how you would propose to conduct research on that topic. 
 
 %Research topics discussed in your proposed plan will be used to determine eligibility. Refer to the Field of Study eligibility criterion in the program announcement.
 
-this is just the gist that i think makes a good story.  feel free to
-use your own language, etc.
 
-first paragraph - short summary:  i am pursuing more efficient methods for quantum 
-simulation, by introducing algorithmic ideas from computer science
-as well as mathematical ideas from nonparametric estimation theory. 
-(this latter part is optional depending on space - see below). 
+%%%%%%%%%%% Introduction %%%%%%%%%%%%%%%%%%
+I am investigating more efficient methods for modeling chemical systems at the quantum level.  I intend to apply sophisticated algorithmic techniques from computer science to a fundamental calculation in quantum-level molecular simulations.
+%as well as mathematical ideas from nonparametric estimation theory. 
+%(this latter part is optional depending on space - see below). 
 
-studying and designing molecules for drug design and materials design
-requires simulation of their behavior.  for computational reasons,
-simulations at performed at various levels of fidelity, the quantum
-level being the most detailed.  there we account for all the 
-electrons, etc.  at higher levels, gross approximations are made,
-including things like approximating whole side-chains at the protein
-folding level.  note that the inability to simulate tractably while
-maintaining accuracy is the bottleneck for the protein folding needed 
-for drug discovery.
+Applications such as drug and materials design require detailed simulations of the behavior of molecular systems.  However, due to computational constraints, some accuracy must be sacrificed.  
+At the most detailed level, quantum mechanical methods model electrons and nuclei separately.  Larger systems can only be handled approximately, with atoms, molecules, or entire proteins treated as interacting units.  While these approximations greatly increase the size of systems that can be modeled, they are simply too inaccurate for the most important applications such as protein folding and drug discovery.   
 
-the hartree-fock method is what's used at the quantum level [cite].
-even the most accurate methods like David Sherrill's coupled-cluster
-methods [cite] build upon hartree-fock.  it has two main computational 
-parts, an outer svd and an inner $N^4$ loop.  (show one equation.) for
-this reason only tens of atoms can be simulated at the quantum level
-of simulation.  we focus our efforts on computing the inner loop
-tractably while maintaining very high accuracy.
+The basis for all first-principles quantum mechanical simulations is the Hartree-Fock (HF) method \cite{RevModPhys.23.69}.  All other, more sophisticated methods such as coupled cluster build on the HF solution \cite{cc}.  In quantum mechanics, the \emph{wavefunction} governs the behavior of electrons.  Hartree-Fock estimates the wavefunction as a linear combination of specified, usually Gaussian, \emph{basis functions}.  The HF algorithm determines the correct coefficients in this linear combination.  The algorithm can be decomposed into two parts: the formation of the Fock matrix $F_{a b}$, and the solution to an eigenvalue problem using it.  
+\begin{displaymath}
+F_{a b} = H^{\textrm{core}}_{a b} + \sum_c \sum_d P_{c d} \int \int \phi_a(r_1) \phi_b(r_1) ||r_1 - r_2||^{-1} \phi_c(r_2) \phi_d(r_2) dr_1 dr_2
+\end{displaymath}
+Since $a, b, c$ and $d$ range over the basis functions, this computation is na\"{i}vely $O(N^4)$, where $N$ is the number of basis functions, thus making it the rate-limiting step.  By using Gaussian basis functions, the integrals here have closed-form solutions, which can be represented as Gaussians.  I will focus on computing this matrix tractably while maintaining very high accuracy and bounded error.
 
-the FMM [cite] is used here.  however, the FMM was created for
-pairwise interactions.  it makes the naive $N^2$ into O(N).  it has been
-used in the hartree-fock context by making other hacky approximations
-like truncations.  despite the promise of the introduction of the FMM 
-to quantum chemistry, it hasn't opened the way to larger molecules.  the
-rigorous error bounds of the FMM do not carry over to the entire computation
-since the FMM only deals with part of the overall $N^4$ computation.  there 
-is no FMM which can deal with 4-way interactions.
 
-[don't go into all the details about the FMM that you did in the current
-writeup - first, the exact statements aren't completely accurate; also 
-it is not needed]
+Since the integrals above are the quantum analog of Columbic interactions, the Fast Multipole Method has been applied to this problem \cite{grngard}.  For pairwise interactions, which are na\"{i}vely $O(N^2)$, the FMM computes them in $O(N)$ time.  In HF, the Continuous FMM \cite{white_continuous} requires truncations and other approximations which lose the rigorous error bounds of the original FMM.  Additionally, the CFMM still does not directly attack the $O(N^4)$ computation, since the FMM cannot deal with four-way interactions.  Therefore, the FMM has not permitted quantum simulations on large systems. 
 
-in [nbody-nips-paper, riegel-tech-report 07], a kind of generalization
-of the FMM was shown, which extends to k-way interactions.  the
-approach comes from a computer science viewpoint, and can be thought
-of as a kind of higher-order divide-and-conquer.  this line of work 
-was concerned with statistical problems, such as n-point correlation
-functions (which involve a k-way interaction) [gray comp-phys 94] and
-kernel density estimation (which can involve gaussian densities)
-[lee-paper 06].  the recursive approach can use adaptive 
-space-partitioning trees which are more sensitive than oct-trees to
-non-uniformly distributed points, and can automatically guarantee
-rigorous error bounds on relative error (with respect to the true
-quantity) as opposed to absolute error.
 
-describe how it works.  figure can be made more compact by shortening
-the lines between the nodes.  also use wrapfig latex package (ask ryan) to 
-make it take up much less space.  perhaps show one equation, like the 
-hermite expansion for the guassian. %probably not enough space
- 
-i am investigating the derivation of a fast algorithm for the inner
-loop of hartree-fock using this framework.  this involves....  mention
-investigating recent data structures from theoretical computer science
-such as cover-trees [cite]...  implementing it in software...  testing
-on molecules of chemical interest such as...  replacing the Gauss
-software to help the quantum chemistry community since good public
-codes don't exist...  describe how sherrill and his group are 
-providing chemistry intuition, data, etc. to us.
+%% Just cite  Riegel and Gray.  Title. GA Tech Tech report 2007
+There is a method, which can be viewed as a generalization of the FMM, that extends to $k$-way interactions \cite{gray_nbody, techrep}.  These approaches arise from a computer science viewpoint and are a form of higher-order divide-and-conquer.  This line of work has tackled statistical problems, such as the $N$-point correlation (which involves a $k$-way interaction) \cite{comp.phys94} and kernel density estimation \cite{NIPS2005_570}.  This recursive method can automatically guarantee rigorous error bounds and can use adaptive space-partitioning trees which are more sensitive to structured data than the oct-trees of the FMM.  
 
-perhaps also get into the idea of using the theory of nonparametric
-estimation to select the gaussian bandwidths.  mention the 1/r
-approximation, etc. % Almost certainly not enough space
+For a $k$-way computation, the algorithm considers interactions between $k$ nodes in the tree at a time.  Using the bounding boxes of the nodes, it determines bounds on the possible values of the computation between points.  In previous applications, multipole expansions similar to those in the FMM have been used to improve these bounds.  When these bounds indicate the computation will be within a specified relative error tolerance, further computation is \emph{pruned} and the computation between each $k$-tuple of points in the $k$-nodes is approximated by the computation between the nodes.  Otherwise, the algorithm recursively considers interactions between the children of the nodes.  
+%perhaps show one equation, like the hermite expansion for the guassian. - probably not enough space
+ \begin{wrapfigure}{r}{0.45\textwidth}
+\includegraphics[width=0.45\textwidth]{3nodes_multipole.eps}
+\caption{Three nodes $Q_I, Q_J, Q_K$ with bounding boxes.}
+\label{three_nodes}
+\end{wrapfigure}
 
-this work has the exciting potential of allowing bigger molecules...
-connect back to materials and drug design... etc.
+I am investigating a fast algorithm for computing the Fock matrix using this algorithmic framework.  This involves deriving the bounds on computations mentioned above and determining the best tree to organize the basis functions.  Once the algorithm is designed, I will implement it in software and test against existing methods.  With the support of David Sherrill and his research group, I test my algorithm on systems of real chemical interest.  I will also integrate my algorithm with his open-source quantum chemistry code \cite{psi3}, thus providing a useful alternative to the current commercialized programs.  
 
+
+Given the past success of algorithms employing this framework on similar problems, I believe this work will provide a tremendous speedup over existing methods.  This will allow simulations on much larger systems than were previously feasible at this level of detail.  Additionally, detailed simulations are often used to determine appropriate approximations for simpler ones, so my algorithm will help expand the accuracy of these models as well.  By allowing new simulations, and improving existing ones, it should be possible for researchers to make great progress in understanding protein interactions, leading to better drug design.  
 
 \textbf{Originality.}  This proposal represents my own work and ideas.
 
