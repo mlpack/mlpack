@@ -61,9 +61,9 @@ class FarFieldExpansion {
   double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
   
   /** Get the center of expansion */
-  const Vector& get_center() const { return center_; }
-  
-  Vector &get_center() { return center_; }
+  Vector* get_center() { return &center_; }
+
+  const Vector* get_center() const { return &center_; }
 
   /** Get the coefficients */
   const Vector& get_coeffs() const { return coeffs_; }
@@ -450,8 +450,8 @@ template<typename TKernel, typename TKernelAux>
   xI_xK.Init(dim);
   xJ_xK.Init(dim);
   Vector xJ_center, xK_center;
-  xJ_center.Alias(fe2.get_center());
-  xK_center.Alias(fe3.get_center());
+  xJ_center.Alias(*(fe2.get_center()));
+  xK_center.Alias(*(fe3.get_center()));
 
   for(index_t d = 0; d < dim; d++) {
     xI_xK[d] = (center_[d] - xK_center[d]) / bandwidth_factor;
@@ -637,8 +637,8 @@ double FarFieldExpansion<TKernel, TKernelAux>::ConvolveField
   xI_xK.Init(dim);
   xJ_xK.Init(dim);
   Vector xJ_center, xK_center;
-  xJ_center.Alias(fe2.get_center());
-  xK_center.Alias(fe3.get_center());
+  xJ_center.Alias(*(fe2.get_center()));
+  xK_center.Alias(*(fe3.get_center()));
 
   for(index_t d = 0; d < dim; d++) {
     xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
@@ -908,7 +908,7 @@ template<typename TKernel, typename TKernelAux>
 
   // retrieve coefficients to be translated and helper mappings
   prev_coeffs.Alias(se.get_coeffs());
-  prev_center.Alias(se.get_center());
+  prev_center.Alias(*(se.get_center()));
   tmp_storage.Init(sea_->get_dimension());
   inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
 
@@ -992,7 +992,7 @@ void FarFieldExpansion<TKernel, TKernelAux>::TranslateToLocal
   double bandwidth_factor = ka_.BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for local expansion
-  local_center.Alias(se.get_center());
+  local_center.Alias(*(se.get_center()));
   local_coeffs.Alias(se.get_coeffs());
   cent_diff.Init(dimension);
 

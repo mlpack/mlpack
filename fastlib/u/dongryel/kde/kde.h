@@ -327,7 +327,9 @@ class FastKde {
       for(index_t j = 0; j < rset_.n_cols(); j++) {
 	rset_.set(i, j, (rset_.get(i, j) - min_coord) / width);
       }
-      if(qroot_ != rroot_) {
+      
+      if(strcmp(fx_param_str(NULL, "query", NULL), 
+		fx_param_str_req(NULL, "data"))) {
 	for(index_t j = 0; j < qset_.n_cols(); j++) {
 	  qset_.set(i, j, (qset_.get(i, j) - min_coord) / width);
 	}
@@ -736,9 +738,9 @@ class FastKde {
     // series expansion
     node->stat().Init(sqrt(kernel_.bandwidth_sq()), &sea_);
     node->bound().CalculateMidpoint
-      (&(node->stat().farfield_expansion_.get_center()));
+      (node->stat().farfield_expansion_.get_center());
     node->bound().CalculateMidpoint
-      (&(node->stat().local_expansion_.get_center()));
+      (node->stat().local_expansion_.get_center());
     
     // initialize lower bound to 0
     node->stat().mass_l_ = 0;
