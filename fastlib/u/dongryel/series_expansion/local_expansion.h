@@ -63,9 +63,9 @@ class LocalExpansion {
   double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
   
   /** Get the center of expansion */
-  const Vector& get_center() const { return center_; }
-  
-  Vector& get_center() { return center_; }
+  Vector* get_center() { return &center_; }
+
+  const Vector* get_center() const { return &center_; }
 
   /** Get the coefficients */
   const Vector& get_coeffs() const { return coeffs_; }
@@ -371,7 +371,7 @@ template<typename TKernel, typename TKernelAux>
   double bandwidth_factor = ka_.BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for far field expansion
-  far_center.Alias(se.get_center());
+  far_center.Alias(*(se.get_center()));
   far_coeffs.Alias(se.get_coeffs());
   cent_diff.Init(dimension);
 
@@ -441,7 +441,7 @@ template<typename TKernel, typename TKernelAux>
   // the expansion we are translating from. Also get coefficients we
   // are translating
   Vector new_center;
-  new_center.Alias(se.get_center());
+  new_center.Alias(*(se.get_center()));
   int prev_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(order_);
   const ArrayList < int > *upper_mapping_index = 
