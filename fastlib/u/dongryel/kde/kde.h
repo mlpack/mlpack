@@ -284,6 +284,14 @@ class FastKde {
   /** accuracy parameter */
   double tau_;
 
+  int num_farfield_to_local_prunes_;
+
+  int num_farfield_prunes_;
+  
+  int num_local_prunes_;
+  
+  int num_finite_difference_prunes_;
+
   // preprocessing: scaling the dataset; this has to be moved to the dataset
   // module
   /* scales each attribute to 0-1 using the min/max values */
@@ -313,6 +321,8 @@ class FastKde {
       double min_coord = min(qset_range.lo, rset_range.lo);
       double max_coord = max(qset_range.hi, rset_range.hi);
       double width = max_coord - min_coord;
+
+      printf("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
 
       for(index_t j = 0; j < rset_.n_cols(); j++) {
 	rset_.set(i, j, (rset_.get(i, j) - min_coord) / width);
@@ -357,18 +367,11 @@ class FastKde {
 
     // far field to local translation
     if(order_farfield_to_local != NULL && *order_farfield_to_local >= 0) {
-      rstat.farfield_expansion_.RefineCoeffs(rset_, rset_weights_, 
-					     rnode->begin(),
-					     rnode->end(), 
-					     *order_farfield_to_local);
-      rstat.farfield_expansion_.TranslateToLocal(qstat.local_expansion_);
+      rstat.farfield_expansion_.TranslateToLocal(qstat.local_expansion_,
+						 *order_farfield_to_local);
     }
     // far field pruning
     else if(order_farfield != NULL && *order_farfield >= 0) {
-      rstat.farfield_expansion_.RefineCoeffs(rset_, rset_weights_, 
-					     rnode->begin(),
-					     rnode->end(), 
-					     *order_farfield);
       for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 	densities_e_[q] += 
 	  rstat.farfield_expansion_.EvaluateField(&qset_, q, NULL, 
@@ -455,8 +458,19 @@ class FastKde {
 		       double &dt, int &order_farfield_to_local,
 		       int &order_farfield, int &order_local) {
 
+    int dim = rset_.n_rows();
+
     // actual amount of error incurred per each query/ref pair
-    double actual_err = 0;
+    double actual_err_farfield_to_local = 0;
+    double actual_err_farfield = 0;
+    double actual_err_local = 0;
+
+    // estimated computational cost
+    int cost_farfield_to_local = MAXINT;
+    int cost_farfield = MAXINT;
+    int cost_local = MAXINT;
+    int cost_exhaustive = (qnode->count()) * (rnode->count()) * dim;
+    int min_cost = 0;
 
     // query node and reference node statistics
     KdeStat &qstat = qnode->stat();
@@ -484,43 +498,59 @@ class FastKde {
     
     // get the order of approximations
     order_farfield_to_local = 
-      farfield_expansion.OrderForConvertingToLocal(rnode->bound(), 
-						   qnode->bound(),
-						   dsqd_range.lo, 
-						   dsqd_range.hi, 
-						   allowed_err,
-						   &actual_err);
-    if(order_farfield_to_local >= 0) {
-      dt = num_references * 
-	(1.0 - (rroot_->count()) * actual_err / (new_mass_l * tau_));
-      return 1;
-    }
-
-    if(qnode->count() < rnode->count()) {
-      order_farfield =
-	farfield_expansion.OrderForEvaluating(rnode->bound(), qnode->bound(),
-					      dsqd_range.lo,
-					      dsqd_range.hi, allowed_err, 
-					      &actual_err);
-      if(order_farfield >= 0) {
-	dt = num_references * 
-	  (1.0 - (rroot_->count()) * actual_err / (new_mass_l * tau_));      
-	return 1;
-      }
-    }
-
-    order_local =
+      farfield_expansion.OrderForConvertingToLocal
+      (rnode->bound(), qnode->bound(), dsqd_range.lo, dsqd_range.hi, 
+       allowed_err, &actual_err_farfield_to_local);
+    order_farfield = 
+      farfield_expansion.OrderForEvaluating(rnode->bound(), qnode->bound(),
+					    dsqd_range.lo, dsqd_range.hi,
+					    allowed_err, &actual_err_farfield);
+    order_local = 
       local_expansion.OrderForEvaluating(rnode->bound(), qnode->bound(), 
-					 dsqd_range.lo,
-					 dsqd_range.hi, allowed_err, 
-					 &actual_err);
+					 dsqd_range.lo, dsqd_range.hi,
+					 allowed_err, &actual_err_local);
 
+    // update computational cost and compute the minimum
+    if(order_farfield_to_local >= 0) {
+      cost_farfield_to_local = (int) pow(order_farfield_to_local + 1, 
+					 2 * dim);
+    }
+    if(order_farfield >= 0) {
+      cost_farfield = (int) pow(order_farfield + 1, dim) * (qnode->count());
+    }
     if(order_local >= 0) {
+      cost_local = (int) pow(order_local + 1, dim) * (rnode->count());
+    }
+
+    min_cost = min(cost_farfield_to_local, 
+		   min(cost_farfield, min(cost_local, cost_exhaustive)));
+
+    if(cost_farfield_to_local == min_cost) {
       dt = num_references * 
-	(1.0 - (rroot_->count()) * actual_err / (new_mass_l * tau_));
+	(1.0 - (rroot_->count()) * actual_err_farfield_to_local / 
+	 (new_mass_l * tau_));
+      order_farfield = order_local = -1;
+      num_farfield_to_local_prunes_++;
       return 1;
     }
 
+    if(cost_farfield == min_cost) {
+      dt = num_references * 
+	(1.0 - (rroot_->count()) * actual_err_farfield / (new_mass_l * tau_));
+      order_farfield_to_local = order_local = -1;
+      num_farfield_prunes_++;
+      return 1;
+    }
+
+    if(cost_local == min_cost) {
+      dt = num_references * 
+	(1.0 - (rroot_->count()) * actual_err_local / (new_mass_l * tau_));
+      order_farfield_to_local = order_farfield = -1;
+      num_local_prunes_++;
+      return 1;
+    }
+
+    order_farfield_to_local = order_farfield = order_local = -1;
     dl = du = dt = 0;
     return 0;
   }
@@ -563,6 +593,7 @@ class FastKde {
     if(error <= allowed_err) {
       dt = num_references * 
 	(1.0 - (rroot_->count()) * m / (new_mass_l * tau_));
+      num_finite_difference_prunes_++;
       return 1;
     }
     else {
@@ -626,16 +657,18 @@ class FastKde {
     }
     
     // try series-expansion pruning
-    else if(PrunableEnhanced(qnode, rnode, dsqd_range, 
-			     kernel_value_range, dl, du, dt,
-			     order_farfield_to_local, order_farfield,
-			     order_local)) {
+    else if(rset_.n_rows() < 5 &&  PrunableEnhanced(qnode, rnode, dsqd_range, 
+						    kernel_value_range, dl, du,
+						    dt, 
+						    order_farfield_to_local, 
+						    order_farfield,
+						    order_local)) {
       UpdateBounds(qnode, rnode, &dl, NULL, &du, &dt,
 		   &order_farfield_to_local, &order_farfield,
 		   &order_local);
       return;
     }
-    
+
     // for leaf query node
     if(qnode->is_leaf()) {
       
@@ -724,9 +757,20 @@ class FastKde {
       node->stat().owed_l_ = node->stat().owed_u_ = 0;
       PreProcess(node->left());
       PreProcess(node->right());
+
+      // translate multipole moments
+      node->stat().farfield_expansion_.TranslateFromFarField
+	(node->left()->stat().farfield_expansion_);
+      node->stat().farfield_expansion_.TranslateFromFarField
+	(node->right()->stat().farfield_expansion_);
     }
     else {
       node->stat().more_l_ = node->stat().more_u_ = 0;
+      
+      // exhaustively compute multipole moments
+      node->stat().farfield_expansion_.RefineCoeffs(rset_, rset_weights_,
+						    node->begin(), node->end(),
+						    sea_.get_max_order());
     }
   }
 
@@ -803,6 +847,9 @@ class FastKde {
     densities_e_.SetZero();
     densities_u_.SetAll(rset_.n_cols());
 
+    num_finite_difference_prunes_ = num_farfield_to_local_prunes_ =
+      num_farfield_prunes_ = num_local_prunes_ = 0;
+
     printf("\nStarting fast KDE...\n");
     fx_timer_start(NULL, "fast_kde_compute");
 
@@ -822,6 +869,10 @@ class FastKde {
     NormalizeDensities();
     fx_timer_stop(NULL, "fast_kde_compute");
     printf("\nFast KDE completed...\n");
+    printf("Finite difference prunes: %d\n", num_finite_difference_prunes_);
+    printf("F2L prunes: %d\n", num_farfield_to_local_prunes_);
+    printf("F prunes: %d\n", num_farfield_prunes_);
+    printf("L prunes: %d\n", num_local_prunes_);
   }
 
   void Init() {
@@ -892,16 +943,10 @@ class FastKde {
 
     // initialize the series expansion object
     if(qset_.n_rows() <= 2) {
-      sea_.Init(fx_param_int(NULL, "order", 7), qset_.n_rows());
-    }
-    else if(qset_.n_rows() <= 3) {
       sea_.Init(fx_param_int(NULL, "order", 5), qset_.n_rows());
     }
-    else if(qset_.n_rows() <= 5) {
+    else if(qset_.n_rows() <= 3) {
       sea_.Init(fx_param_int(NULL, "order", 2), qset_.n_rows());
-    }
-    else if(qset_.n_rows() <= 6) {
-      sea_.Init(fx_param_int(NULL, "order", 1), qset_.n_rows());
     }
     else {
       sea_.Init(fx_param_int(NULL, "order", 0), qset_.n_rows());

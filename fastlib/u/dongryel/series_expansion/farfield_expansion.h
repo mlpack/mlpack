@@ -179,8 +179,8 @@ class FarFieldExpansion {
    * Translate to the given local expansion. The translated coefficients
    * are added up to the passed-in local expansion coefficients.
    */
-  void TranslateToLocal
-    (LocalExpansion<TKernel, TKernelAux> &se);
+  void TranslateToLocal(LocalExpansion<TKernel, TKernelAux> &se, 
+			int truncation_order);
 
 };
 
@@ -913,7 +913,7 @@ template<typename TKernel, typename TKernelAux>
   inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
 
   // no coefficients can be translated
-  if(order == 0)
+  if(order == -1)
     return;
   else
     order_ = order;
@@ -978,7 +978,7 @@ template<typename TKernel, typename TKernelAux>
 
 template<typename TKernel, typename TKernelAux>
 void FarFieldExpansion<TKernel, TKernelAux>::TranslateToLocal
-  (LocalExpansion<TKernel, TKernelAux> &se) {
+  (LocalExpansion<TKernel, TKernelAux> &se, int truncation_order) {
   
   Vector pos_arrtmp, neg_arrtmp;
   Matrix derivative_map;
@@ -987,7 +987,7 @@ void FarFieldExpansion<TKernel, TKernelAux>::TranslateToLocal
   Vector local_coeffs;
   int local_order = se.get_order();
   int dimension = sea_->get_dimension();
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  int total_num_coeffs = sea_->get_total_num_coeffs(truncation_order);
   int limit;
   double bandwidth_factor = ka_.BandwidthFactor(se.bandwidth_sq());
 
@@ -998,12 +998,12 @@ void FarFieldExpansion<TKernel, TKernelAux>::TranslateToLocal
 
   // if the order of the far field expansion is greater than the
   // local one we are adding onto, then increase the order.
-  if(local_order < order_) {
-    se.set_order(order_);
+  if(local_order < truncation_order) {
+    se.set_order(truncation_order);
   }
 
   // compute Gaussian derivative
-  limit = 2 * order_ + 1;
+  limit = 2 * truncation_order + 1;
   derivative_map.Init(dimension, limit);
   pos_arrtmp.Init(total_num_coeffs);
   neg_arrtmp.Init(total_num_coeffs);

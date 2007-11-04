@@ -239,6 +239,11 @@ template<typename TKernel, typename TKernelAux>
   double LocalExpansion<TKernel, TKernelAux>::
   EvaluateField(Matrix* data, int row_num, Vector* x_q) const {
   
+  // if there are no local expansion here, then return 0
+  if(order_ < 0) {
+    return 0;
+  }
+
   index_t k, t, tail;
   
   // total number of coefficient
@@ -305,7 +310,7 @@ template<typename TKernel, typename TKernelAux>
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(bandwidth);
   center_.Copy(center);
-  order_ = 0;
+  order_ = -1;
   sea_ = sea;
 
   // pass in the pointer to the kernel and the series expansion auxiliary
@@ -325,7 +330,7 @@ template<typename TKernel, typename TKernelAux>
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(bandwidth);
   center_.Init(sea->get_dimension());
-  order_ = 0;
+  order_ = -1;
   sea_ = sea;
 
   // pass in the pointer to the kernel and the series expansion auxiliary
@@ -426,6 +431,11 @@ template<typename TKernel, typename TKernelAux>
 template<typename TKernel, typename TKernelAux>
   void LocalExpansion<TKernel, TKernelAux>::TranslateToLocal
   (LocalExpansion<TKernel, TKernelAux> &se) {
+
+  // if there are no local coefficients to translate, return
+  if(order_ < 0) {
+    return;
+  }
 
   // get the center and the order and the total number of coefficients of 
   // the expansion we are translating from. Also get coefficients we
