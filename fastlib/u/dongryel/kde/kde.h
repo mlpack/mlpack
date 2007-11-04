@@ -659,12 +659,10 @@ class FastKde {
     }
     
     // try series-expansion pruning
-    else if(rset_.n_rows() < 5 &&  PrunableEnhanced(qnode, rnode, dsqd_range, 
-						    kernel_value_range, dl, du,
-						    dt, 
-						    order_farfield_to_local, 
-						    order_farfield,
-						    order_local)) {
+    else if(PrunableEnhanced(qnode, rnode, dsqd_range, kernel_value_range, 
+			     dl, du, dt, order_farfield_to_local, 
+			     order_farfield, order_local)) {
+
       UpdateBounds(qnode, rnode, &dl, NULL, &du, &dt,
 		   &order_farfield_to_local, &order_farfield,
 		   &order_local);
@@ -946,9 +944,6 @@ class FastKde {
     // initialize the series expansion object
     if(qset_.n_rows() <= 2) {
       sea_.Init(fx_param_int(NULL, "order", 5), qset_.n_rows());
-    }
-    else if(qset_.n_rows() <= 3) {
-      sea_.Init(fx_param_int(NULL, "order", 2), qset_.n_rows());
     }
     else {
       sea_.Init(fx_param_int(NULL, "order", 0), qset_.n_rows());
