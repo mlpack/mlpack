@@ -194,9 +194,9 @@ public:
     if(node != NULL) {
       node->stat().Init(sqrt(mkernel_.bandwidth_sq()), &sea_);
       node->bound().CalculateMidpoint
-	(&(node->stat().farfield_expansion_.get_center()));
+	(node->stat().farfield_expansion_.get_center());
       node->bound().CalculateMidpoint
-	(&(node->stat().local_expansion_.get_center()));
+	(node->stat().local_expansion_.get_center());
     }
 
     if(!node->is_leaf()) {
