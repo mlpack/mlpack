@@ -696,8 +696,55 @@ class FastLpr {
     }
   }
 
-  void BuildReferenceWeights(const Vector &rset_targets) {
-    rset_weights_.Init(rset_.num_cols(), );
+  void BuildReferenceWeights() {
+    
+    // read the reference weights
+    char *rwfname = NULL;
+    if(fx_param_exists(NULL, "dwgts")) {
+      rwfname = (char *)fx_param_str(NULL, "dwgts", NULL);
+    }
+
+    // each column vector represents the weights for each reference point
+    rset_weights_.Init(total_num_coeffs_, rset_.n_cols());
+
+    Vector rset_targets;
+    if(rwfname != NULL) {
+      Dataset ref_targets;
+      ref_targets.InitFromFile(rwfname);
+      rset_targets.Copy(ref_targets.matrix().GetColumnPtr(0),
+			ref_targets.matrix().n_rows());
+    }
+    else {
+      rset_targets.Init(rset_.n_cols());
+      rset_targets.SetAll(1);
+    }    
+
+    // temporary variables for multiindex looping
+    ArrayList<int> heads;
+
+    // initialization of temporary variables for computation...
+    heads.Init(qset_.n_rows() + 1);
+    
+    for(index_t ref = 0; ref < rset_.n_cols(); ref++) {
+      
+      // get the reference point
+      const double *r_col = rset_.GetColumnPtr(ref);
+
+      // loop over all multiindices
+      rset_weights_.set(0, ref, rset_targets[ref]);
+      for(index_t k = 1, t = 1, tail = 1; k <= lpr_order_; k++, tail = t) {
+	for(index_t i = 0; i < rset_.n_rows(); i++) {
+
+	  int head = (int) heads[i];
+	  heads[i] = t;
+	  for(index_t j = head; j < tail; j++, t++) {
+	    
+	    // compute numerator vector position t based on position j
+	    rset_weights_.set(t, ref, rset_weights_.get(j, ref) * r_col[i]);
+	  }
+	}
+      }
+    }
   }
 
   public:
@@ -762,7 +809,12 @@ class FastLpr {
   }
 
   void Init(int order) {
-    
+
+    // initialize the local polynomial order
+    lpr_order_ = order;
+    total_num_coeffs_ = (int) math::BinomialCoefficient(order + qset_.n_rows(),
+							qset_.n_rows());
+
     Dataset ref_dataset;
 
     // read in the number of points owned by a leaf
@@ -776,23 +828,10 @@ class FastLpr {
     ref_dataset.InitFromFile(rfname);
     rset_.Own(&(ref_dataset.matrix()));
 
-    // read the reference weights
-    char *rwfname = NULL;
-    if(fx_param_exists(NULL, "dwgts")) {
-      rwfname = (char *)fx_param_str(NULL, "dwgts", NULL);
-    }
+    // build internal reference point weights for the code
+    BuildReferenceWeights();
 
-    if(rwfname != NULL) {
-      Dataset ref_weights;
-      ref_weights.InitFromFile(rwfname);
-      rset_weights_.Copy(ref_weights.matrix().GetColumnPtr(0),
-			 ref_weights.matrix().n_rows());
-    }
-    else {
-      rset_weights_.Init(rset_.n_cols());
-      rset_weights_.SetAll(1);
-    }
-
+    // read the query dataset
     if(!strcmp(qfname, rfname)) {
       qset_.Alias(rset_);
     }
@@ -818,11 +857,6 @@ class FastLpr {
     densities_l_.Init(qset_.n_cols());
     densities_e_.Init(qset_.n_cols());
     densities_u_.Init(qset_.n_cols());
-
-    // initialize the local polynomial order
-    lpr_order_ = order;
-    total_num_coeffs_ = (int) math::BinomialCoefficient(order + qset_.n_rows(),
-							qset_.n_rows());
 
     // initialize the kernel
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
