@@ -15,6 +15,7 @@
 #include "uselapack.h"
 
 #include "base/scale.h"
+#include "math/math.h"
 
 #include <math.h>
 
@@ -37,6 +38,39 @@ namespace la {
   inline double DistanceSqEuclidean(const Vector& x, const Vector& y) {
     DEBUG_SAME_INT(x.length(), y.length());
     return DistanceSqEuclidean(x.length(), x.ptr(), y.ptr());
+  }
+  /**
+   * Finds an L_p metric distance except doesn't perform the root
+   * at the end.
+   *
+   * @param t_pow the power each distance calculatin is raised to
+   * @param length the length of the vectors
+   * @param va first vector
+   * @param vb second vector
+   */
+  template<int t_pow>
+  inline double RawLMetric(
+      index_t length, const double *va, const double *vb) {
+    double s = 0;
+    do {
+      double d = *va++ - *vb++;
+      s += math::PowAbs<t_pow, 1>(d);
+    } while (--length);
+    return s;
+  }
+  /**
+   * Finds an L_p metric distance AND performs the root
+   * at the end.
+   *
+   * @param t_pow the power each distance calculatin is raised to
+   * @param length the length of the vectors
+   * @param va first vector
+   * @param vb second vector
+   */
+  template<int t_pow>
+  inline double LMetric(
+      index_t length, const double *va, const double *vb) {
+    return math::Pow<1, t_pow>(RawLMetric<t_pow>(length, va, vb));
   }
 };
 

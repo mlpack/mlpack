@@ -2,9 +2,6 @@
  * @file test.h
  *
  * Very basic unit-testing infrastructure.
- *
- * WARNING: This is likely to be deprecated at any time to be more
- * sophisticated! Use at your own risk.
  */
 
 #ifndef BASE_TEST_H
@@ -49,7 +46,8 @@ typedef void (*test__void_func)();
         \
         if (which_test < 0) { \
           for (int i = 0; i < n_tests; i++) { \
-              tests[i](); \
+            fprintf(stderr, "Running test %d...\n", i); \
+            tests[i](); \
           } \
         } else { \
           if (which_test >= n_tests) { \

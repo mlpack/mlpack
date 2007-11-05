@@ -47,4 +47,4 @@ librule(
     sources = ["uselapack.cc"],
     headers = ["matrix.h", "la.h", "uselapack.h", "clapack.h", "blas.h"],
     tests = ["uselapack_test.cc"],
-    deplibs = ["base:base", "col:col", ":libblaspack"])
+    deplibs = ["base:base", "col:col", ":libblaspack", "math:math"])

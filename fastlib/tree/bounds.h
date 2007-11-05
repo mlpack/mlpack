@@ -17,6 +17,8 @@
 #include "la/matrix.h"
 #include "la/la.h"
 
+#include "math/math.h"
+
 /**
  * Hyper-rectangle bound for an L-metric.
  *
