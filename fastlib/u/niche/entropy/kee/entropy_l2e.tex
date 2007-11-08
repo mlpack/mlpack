@@ -1,0 +1,186 @@
+%\documentclass{amsart}
+\documentclass{article}
+\usepackage{amsmath, amsthm}
+\usepackage[colorlinks=true]{hyperref}
+\title{Nonparametric Entropy Estimation}
+
+\DeclareMathOperator*{\E}{\mathsf{E}}
+
+\begin{document}
+
+  \maketitle
+
+  \section{Previous entropy estimation methods}
+
+
+  There is a decent bit of previous work on estimating the differential entropy of a random variable. This paper provides an overview of methods for nonparametric entropy estimation: \href{http://ecf.caltech.edu/summerlecture/docs/Entropy\%20estimation.pdf}{Nonparametric entropy estimation: An overview}.
+
+
+  A few of the methods are:
+  \begin{enumerate}
+  \item $m$-spacing estimator
+    \begin{itemize}
+    \item asymptotically efficient: $\sqrt{N}$ convergence
+    \item $ \hat{H}(Z^1,\ldots,Z^N) =  \frac{1}{N-m} \sum_{i=1}^{N-m} \log \left( \frac{N+1}{m}(Z^{(i+m)} - Z^{(i)}) \right) $
+    \item consistent if $m$,$N \rightarrow \infty$, $\frac{m}{N} \rightarrow 0$
+    \item used in RADICAL (Robust, Accurate Direct ICA aLgorithm), where $m = \sqrt{N} $
+    \item in my experimentation, I wasn't able to attain consistent entropy estimation (document this), but my experiments didn't use the Gaussian perturbation data augmentation. I need to test this.
+    \end{itemize}
+  \item nearest-neighbor distances
+    \begin{itemize}
+    \item Somewhere asymptotic convergence properties are proved.
+    \item Needs further testing
+    \item Has striking similarities to m-spacing estimator for the 1-dimensional case. The 1-NN distance ball for a point can be considered inversely proportional to the probability mass around that point.
+    \end{itemize}
+  \item plug-in estimates
+    \begin{itemize}
+    \item $ \hat{H}(X) = \int \hat{f}(x) \log \hat{f}(x) dx $
+    \item Bandwidth selection problem
+      \begin{itemize}
+      \item use optimal $L_2E$ density estimation bandwidth
+      \item use optimal Kullback-Leibler loss bandwidth: $\arg \max_h \int f(x) \log \hat{f}_h dx $ (more on this later, we use this as an approximation within a more powerful estimator - we may be able to do some EM style algorithm here)
+      \end{itemize}
+    \end{itemize}
+  \end{enumerate}
+
+  The last method involves estimating the density $f(x)$ using $\hat{f}(x)$ and then simply finding an estimate of the entropy
+
+  \begin{displaymath}
+    \hat{H}(X) = \int \hat{f}(x) \log \hat{f}(x) dx
+  \end{displaymath}
+
+  The problem with first estimating the density is that the optimal kernel bandwidth for density estimation is not necessarily the optimal bandwidth for entropy estimation.
+
+  \section{$L_2E$ for entropy}
+
+  For KDE, our loss function is integrated squared error of the density estimate and the actual density, because we actually want to minimize the difference in the density of the estimated and actual densities at every point. For entropy estimation, it is unobvious what an appropriate loss function would be.
+
+  We consider the following loss function:
+
+  \begin{displaymath}
+    L_{H_2}(x) = \int (f(x) \log f(x) - \hat{f}(x) \log \hat{f}(x))^2 dx
+  \end{displaymath}
+
+  This loss function measures the error in the derivative of the entropy, $ f(x) \log f(x) $; the correctness of this loss function follows since entropy is just $ \int f(x) \log f(x) dx $. Intuitively, the difference between $ f(x) \log f(x) $ and $ \hat{f}(x) \log \hat{f}(x) $ at an arbitrary point $ x $ will contribute to differences between the entropy estimates of the two distributions. We can denote the expression $ f(x) \log f(x) $ as the entropy density, Integrating over the entropy density thus gives us entropy.
+
+  Using this formulation, we can expand the loss function to give:
+  \begin{align*}
+    L_{H_2}(\hat{f})& = \int f(x)^2 (\log f(x))^2 dx\\
+    & + \int \hat{f}(x)^2 (\log \hat{f}(x))^2 dx\\
+    & - 2 \int f(x) \log f(x) \hat{f}(x) \log \hat{f}(x) dx
+  \end{align*}
+
+
+
+
+  Minimizing $ L_{H_2}(\hat{f}) $ with respect to $ \hat{f} $ is equivalent to minimizing:
+  \begin{align} \label{L}
+    L_{H_2}'(\hat{f}) &= \int \hat{f}(x)^2 (\log \hat{f}(x))^2 dx  - 2 \int f(x) \log f(x) \hat{f}(x) \log \hat{f}(x) dx \nonumber\\ 
+    & =\int \hat{f}(x)^2 (\log \hat{f}(x))^2 dx  - 2 \E_f[\log f(x) \hat{f}(x) \log \hat{f}(x)]
+  \end{align}
+
+
+  Clearly, we can estimate the first term from the data; however, estimating the second term is not straightforward because of the $ \log f(x) $ term. 
+
+  \section{Approximation for log density}
+
+  We take expectation over $ f(x) $ by sampling over the empirical distribution. To approximate $\log f(x)$, we note that the Kullback-Leibler divergence $ D(f\|g) = \int f(x) \log \frac{f(x)}{g(x)} dx $ is always nonnegative, with equality when $ f(x) = g(x) $.
+
+  Since $ \int p(x) \log \frac{p(x)}{q(x)} dx = \int p(x) \log p(x) dx - \int p(x) \log q(x) dx \geq 0 $, then $ \int p(x) \log p(x) dx \geq \int p(x) \log q(x) dx $.
+
+  Note that $ \int p(x) \log q(x) dx $ is maximized when $ p(x) = q(x) $.
+
+  Now, we obtain an approximation for $ \log f(x) $. We can approximate $ \log f(x) $ using $ \log \hat{f}_{h_E}(x) $, where $ h_E = \arg \max_h \int f(x) \log \hat{f}_h dx = \arg \min_h - \int f(x) \log \hat{f}_h dx $, where $ \int f(x) \log \hat{f}_h dx = \E_f[\log \hat{f}_h] \approx \sum_{i=1}^n \log \hat{f}_{h,-i}(x_i) $.
+
+  We now can express the second term of \eqref{L} as
+  \begin{align*}
+    -2 \E_{f}[\log f(x) \hat{f}(x) \log \hat{f}(x)] & \approx -2 \E_f[ \log \hat{f}_{h_E} \hat{f}(x) \log \hat{f}(x)]\\
+    & \approx -2 \sum_{i=1}^n \log \hat{f}_{h_E,-i}(x_i) \hat{f}_{h,-i}(x_i) \log \hat{f}_{h,-i}(x_i)
+  \end{align*}
+
+  \section{Approximation error}
+
+  What is the error in this approximation?
+
+  Let $ f(x) = \hat{f}_{h_E}(x) + E(x) $
+
+  Then
+  \begin{align*}
+    & \E_f[ \log f(x) \hat{f}_h(x) \log \hat{f}_h(x)]\\
+    & = \E_f[ \log (\hat{f}_{h_E}(x) + E(x)) \hat{f}_h(x) \log \hat{f}_h(x)]\\
+    & = \E_f[ \log \left( \hat{f}_{h_E}(x) (1 + \frac{E(x)}{\hat{f}_{h_E}(x)}) \right) \hat{f}_h(x) \log \hat{f}_h(x)]\\
+    & = \E_f[ \log \hat{f}_{h_E}(x) \hat{f}_h(x) \log \hat{f}_h(x)] + \E_f[ \log \left( 1 + \frac{E(x)}{\hat{f}_{h_E}(x)} \right) \hat{f}_h(x) \log \hat{f}_h(x)]
+  \end{align*}
+
+  The second term in the final expression above is the error term. It's clear from this term that the ratio of the error in estimated density to the estimated density contributes to our approximation error. In the density estimation case, an error of $ \epsilon $ contributes equally regardless of the region in which the error is made. In the entropy estimation case, the error contributes more highly in low-density regions of the actual pdf, i.e. it may be more costly to accumulate errors in the low density regions of the distribution.
+
+
+  \section{Expanded $L_2E$ objective function}
+
+  \begin{displaymath}
+    \frac{1}{\vert Q \vert} \sum_{q \in Q} \left( T_{\log} \left( \frac{1}{N} \sum_{i=1}^n K_h(d(q,x_i)) \right) \right) ^2 - 2 \sum_{i=1}^n \log \hat{f}_{h_E,-i}(x_i) \hat{f}_{h,-i}(x_i) \log \hat{f}_{h,-i}(x_i)
+  \end{displaymath}
+
+  where $ T_{\log}(p) = p \log(p) $ and $Q$ is a set of sample points on the range of $X$ (e.g. linear spacing of $M$ points)
+
+
+  \section{Formulation as a generalized $N$-body problem}
+
+  There are a couple of ways to approximate $ \int (\hat{f}(x) \log \hat{f}(x))^2  $
+  \begin{itemize}
+  \item Reference set $R$: data
+  \item Query set $Q$: Linear spacing of $M$ points in the support of $ \hat{f}(x) $ - increases exponentially in dimension
+  \item Kernel: Gaussian
+  \end{itemize}
+
+  
+  The first term of \eqref{L} is
+
+  \begin{displaymath}
+    \frac{1}{\vert Q \vert} \sum_{q \in Q} \left( T_{\log} \left( \frac{1}{\vert R \vert} \sum_{r \in R} K_h(d(q,r)) \right) \right) ^2
+  \end{displaymath}
+
+
+
+  using GNP notation
+
+  \begin{displaymath}
+    \frac{1}{\vert Q \vert \vert R \vert ^2} \bigodot_{q \in Q} g\left(\bigotimes_{r \in R} f(q,r)\right)
+  \end{displaymath}
+
+  where
+  \begin{align*}
+    d(q,r) & = \| q - r \| \\
+    f(q,r) & = K_h(d(q,r)) \\
+    g(x) & = \left( x \log \left( \frac{x}{N} \right) \right)^2 \\
+    \bigodot & = \bigotimes = \sum
+  \end{align*}
+
+
+  The integral of the log density is:
+
+  \begin{displaymath}
+    \frac{1}{\vert R \vert} \sum_{q \in R} \log \left( \frac{1}{\vert R \vert - 1} \sum_{r \in R, r \neq q} K_h(d(q,r)) \right)
+  \end{displaymath}
+
+  
+  
+  Necessary N-body computations
+  \begin{enumerate}
+  \item find optimal bandwidth for estimating f(x) log f(x) and evaluate log f(x)
+  \item cross-validate to find optimal bandwidth for the whole functional
+  \end{enumerate}
+
+
+
+  \section{EM-style algorithm to reduce approximation error}
+  \begin{enumerate}
+  \item Approximate true log density using optimal KL-loss entropy estimator, in order to find $\hat{f}_0$, an approximation to the optimal $L_2E$ entropy estimator.
+  \item Can we prove that this $L_2E$ estimator is better than the KL-loss entropy estimator?
+  \item If we can, now approximate true log density using $\hat{f}_0$ to find $\hat{f}_1$, a better approximation to the optimal $L_2E$ entropy estimator.
+  \item The iterative scheme is now obvious.
+  \end{enumerate}
+    
+
+
+\end{document}
