@@ -118,7 +118,7 @@ index_t thor::ReadPointsMaster(
       CacheWrite<Point> point(&points_array, i);
       point->Set(param, i, vector);
       n_points++;
-      if (n_points % 1048576 == 0) {
+      if (n_points % 1000000 == 0) {
         fprintf(stderr, "... read %"LI"d points...\n", n_points);
       }
     }
