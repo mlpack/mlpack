@@ -17,7 +17,7 @@ for k = 1:K
   
   N = 10000;
 'start finding h'  
-  h = find_h_D(X);
+  h = .1;%find_h_D(X);
   'found h'
 %   X = normrnd(zeros(N,1),1);
   
