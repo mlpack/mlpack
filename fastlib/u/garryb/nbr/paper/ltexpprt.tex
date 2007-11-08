@@ -1,0 +1,394 @@
+% This is ltexpprt.tex, an example file for use with the SIAM LaTeX2E
+% Preprint Series macros. It is designed to provide double-column output. 
+% Please take the time to read the following comments, as they document
+% how to use these macros. This file can be composed and printed out for
+% use as sample output.
+
+% Any comments or questions regarding these macros should be directed to:
+%
+%                 Donna Witzleben
+%                 SIAM
+%                 3600 University City Science Center
+%                 Philadelphia, PA 19104-2688
+%                 USA
+%                 Telephone: (215) 382-9800
+%                 Fax: (215) 386-7999
+%                 e-mail: witzleben@siam.org
+
+
+% This file is to be used as an example for style only. It should not be read
+% for content.
+
+%%%%%%%%%%%%%%% PLEASE NOTE THE FOLLOWING STYLE RESTRICTIONS %%%%%%%%%%%%%%%
+
+%%  1. There are no new tags.  Existing LaTeX tags have been formatted to match
+%%     the Preprint series style.    
+%%
+%%  2. You must use \cite in the text to mark your reference citations and 
+%%     \bibitem in the listing of references at the end of your chapter. See
+%%     the examples in the following file. If you are using BibTeX, please
+%%     supply the bst file with the manuscript file.
+%% 
+%%  3. This macro is set up for two levels of headings (\section and 
+%%     \subsection). The macro will automatically number the headings for you.
+%%
+%%  5. No running heads are to be used for this volume.
+%% 
+%%  6. Theorems, Lemmas, Definitions, etc. are to be double numbered, 
+%%     indicating the section and the occurence of that element
+%%     within that section. (For example, the first theorem in the second
+%%     section would be numbered 2.1. The macro will 
+%%     automatically do the numbering for you.
+%%
+%%  7. Figures, equations, and tables must be single-numbered. 
+%%     Use existing LaTeX tags for these elements.
+%%     Numbering will be done automatically.
+%%   
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\documentclass[twoside,leqno,twocolumn]{article}  
+\usepackage{ltexpprt} 
+
+\begin{document}
+
+
+%\setcounter{chapter}{2} % If you are doing your chapter as chapter one,
+%\setcounter{section}{3} % comment these two lines out.
+
+\title{\Large SIAM/ACM Preprint Series Macros for
+Use With LaTeX\thanks{Supported by GSF grants ABC123, DEF456, and GHI789.}}
+\author{Corey Gray\thanks{Society for Industrial and Applied Mathematics.} \\
+\and 
+Tricia Manning\thanks{Society for Industrial and Applied Mathematics.}}
+\date{}
+
+\maketitle
+
+ 
+%\pagenumbering{arabic}
+%\setcounter{page}{1}%Leave this line commented out.
+
+\begin{abstract} \small\baselineskip=9pt This is the text of my abstract. It is a brief
+description of my
+paper, outlining the purposes and goals I am trying to address.\end{abstract}
+
+ 
+
+
+\section{Problem Specification.}In this paper, we consider the solution of the $N \times
+N$ linear
+system
+\begin{equation} \label{e1.1}
+A x = b
+\end{equation}
+where $A$ is large, sparse, symmetric, and positive definite.  We consider
+the direct solution of (\ref{e1.1}) by means of general sparse Gaussian
+elimination.  In such a procedure, we find a permutation matrix $P$, and
+compute the decomposition
+\[
+P A P^{t} = L D L^{t}
+\]
+where $L$ is unit lower triangular and $D$ is diagonal.  
+
+ 
+\section{Design Considerations.}Several good ordering algorithms (nested dissection and
+minimum degree)
+are available for computing $P$  \cite{GEORGELIU}, \cite{ROSE72}.
+Since our interest here does not
+focus directly on the ordering, we assume for convenience that $P=I$,
+or that $A$ has been preordered to reflect an appropriate choice of $P$.
+
+Our purpose here is to examine the nonnumerical complexity of the
+sparse elimination algorithm given in  \cite{BANKSMITH}.
+As was shown there, a general sparse elimination scheme based on the
+bordering algorithm requires less storage for pointers and
+row/column indices than more traditional implementations of general
+sparse elimination.  This is accomplished by exploiting the m-tree,
+a particular spanning tree for the graph of the filled-in matrix.
+
+\begin{theorem} The method  was extended to three
+dimensions. For the standard multigrid
+coarsening
+(in which, for a given grid, the next coarser grid has $1/8$
+as many points), anisotropic problems require plane
+relaxation to
+obtain a good smoothing factor.\end{theorem} 
+
+Our purpose here is to examine the nonnumerical complexity of the
+sparse elimination algorithm given in  \cite{BANKSMITH}.
+As was shown there, a general sparse elimination scheme based on the
+bordering algorithm requires less storage for pointers and
+row/column indices than more traditional implementations of general
+sparse elimination.  This is accomplished by exploiting the m-tree,
+a particular spanning tree for the graph of the filled-in matrix.
+Several good ordering algorithms (nested dissection and minimum degree)
+are available for computing $P$  \cite{GEORGELIU}, \cite{ROSE72}.
+Since our interest here does not
+focus directly on the ordering, we assume for convenience that $P=I$,
+or that $A$ has been preordered to reflect an appropriate choice of $P$.
+
+\begin{proof} In this paper we consider two methods. The first method
+is
+basically the method considered with two differences:
+first, we perform plane relaxation by a two-dimensional
+multigrid method, and second, we use a slightly different
+choice of
+interpolation operator, which improves performance
+for nearly singular problems. In the second method coarsening
+is done by successively coarsening in each of the three
+independent variables and then ignoring the intermediate
+grids; this artifice simplifies coding considerably.
+\end{proof}
+
+Our purpose here is to examine the nonnumerical complexity of the
+sparse elimination algorithm given in  \cite{BANKSMITH}.
+As was shown there, a general sparse elimination scheme based on the
+bordering algorithm requires less storage for pointers and
+row/column indices than more traditional implementations of general
+sparse elimination.  This is accomplished by exploiting the m-tree,
+a particular spanning tree for the graph of the filled-in matrix.
+
+\begin{Definition}{\rm We describe the two methods in \S 1.2. In \S\ 1.3. we
+discuss
+some remaining details.}
+\end{Definition}
+
+Our purpose here is to examine the nonnumerical complexity of the
+sparse elimination algorithm given in  \cite{BANKSMITH}.
+As was shown there, a general sparse elimination scheme based on the
+bordering algorithm requires less storage for pointers and
+row/column indices than more traditional implementations of general
+sparse elimination.  This is accomplished by exploiting the m-tree,
+a particular spanning tree for the graph of the filled-in matrix.
+Several good ordering algorithms (nested dissection and minimum degree)
+are available for computing $P$  \cite{GEORGELIU}, \cite{ROSE72}.
+Since our interest here does not
+focus directly on the ordering, we assume for convenience that $P=I$,
+or that $A$ has been preordered to reflect an appropriate choice of $P$.
+
+Our purpose here is to examine the nonnumerical complexity of the
+sparse elimination algorithm given in  \cite{BANKSMITH}.
+As was shown there, a general sparse elimination scheme based on the
+bordering algorithm requires less storage for pointers and
+row/column indices than more traditional implementations of general
+sparse elimination.  
+
+\begin{lemma} We discuss first the choice for $I_{k-1}^k$
+which is a generalization. We assume that $G^{k-1}$ is
+obtained
+from $G^k$
+by standard coarsening; that is, if $G^k$ is a tensor product
+grid $G_{x}^k \times G_{y}^k \times G_{z}^k$,
+$G^{k-1}=G_{x}^{k-1} \times G_{y}^{k-1} \times G_{z}^{k-1}$,
+where $G_{x}^{k-1}$ is obtained by deleting every other grid
+point of $G_x^k$ and similarly for $G_{y}^k$ and $G_{z}^k$.
+\end{lemma}
+ 
+To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6]. In \S 1.3., we analyze the complexity of the old and new
+approaches to the intersection problem for the special case of
+an $n \times n$ grid ordered by nested dissection. The special
+structure of this problem allows us to make exact estimates of
+the complexity. To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6].
+
+In \S 1.2, we review the bordering algorithm, and introduce
+the sorting and intersection problems that arise in the
+sparse formulation of the algorithm.  
+In \S 1.3., we analyze the complexity of the old and new
+approaches to the intersection problem for the special case of
+an $n \times n$ grid ordered by nested dissection. The special
+structure of this problem allows us to make exact estimates of
+the complexity. To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6].
+
+
+For the old approach, we show that the
+complexity of the intersection problem is $O(n^{3})$, the same
+as the complexity of the numerical computations.  For the
+new approach, the complexity of the second part is reduced to
+$O(n^{2} (\log n)^{2})$.  
+
+To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6]. In \S 1.3., we analyze the complexity of the old and new
+approaches to the intersection problem for the special case of
+an $n \times n$ grid ordered by nested dissection. The special
+structure of this problem allows us to make exact estimates of
+the complexity. To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6].
+This is accomplished by exploiting the m-tree,
+a particular spanning tree for the graph of the filled-in matrix.
+To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+\cite{EISENSTAT} - \cite{LIU2}, \cite{ROSE76},  \cite{SCHREIBER}.
+
+\subsection{Robustness.}We do not
+attempt to present an overview
+here, but rather attempt to focus on those results that
+are relevant to our particular algorithm.
+This section assumes prior knowledge of the role of graph theory
+in sparse Gaussian elimination; surveys of this role are
+available in \cite{ROSE72} and \cite{GEORGELIU}. More general
+discussions of elimination trees are given in
+\cite{LAW} - \cite{LIU2}, \cite{SCHREIBER}.
+Thus, at the $k$th stage, the bordering algorithm consists of
+solving the lower triangular system
+\begin{equation} \label{1.2}
+ L_{k-1}v = c
+\end{equation}
+and setting
+\begin{eqnarray} 
+\ell &=& D^{-1}_{k-1}v , \\
+\delta &=& \alpha - \ell^{t} v .
+\end{eqnarray}
+
+\begin{figure}
+\vspace{14pc}
+\caption{This is a figure 1.1.}
+\end{figure}
+
+\section{Robustness.} We do not
+attempt to present an overview
+here, but rather attempt to focus on those results that
+are relevant to our particular algorithm.
+ 
+\subsection{Versatility.}The special
+structure of this problem allows us to make exact estimates of
+the complexity.  For the old approach, we show that the
+complexity of the intersection problem is $O(n^{3})$, the same
+as the complexity of the numerical computations
+\cite{GEORGELIU}, \cite{ROSEWHITTEN}.  For the
+new approach, the complexity of the second part is reduced to
+$O(n^{2} (\log n)^{2})$. 
+
+To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6]. In \S 1.3., we analyze the complexity of the old and new
+approaches to the intersection problem for the special case of
+an $n \times n$ grid ordered by nested dissection. The special
+structure of this problem allows us to make exact estimates of
+the complexity. To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6].
+
+In \S 1.2, we review the bordering algorithm, and introduce
+the sorting and intersection problems that arise in the
+sparse formulation of the algorithm.  
+In \S 1.3., we analyze the complexity of the old and new
+approaches to the intersection problem for the special case of
+an $n \times n$ grid ordered by nested dissection. The special
+structure of this problem allows us to make exact estimates of
+the complexity. To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6].
+
+
+For the old approach, we show that the
+complexity of the intersection problem is $O(n^{3})$, the same
+as the complexity of the numerical computations.  For the
+new approach, the complexity of the second part is reduced to
+$O(n^{2} (\log n)^{2})$.  
+
+To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6]. In \S 1.3., we analyze the complexity of the old and new
+approaches to the intersection problem for the special case of
+an $n \times n$ grid ordered by nested dissection. The special
+structure of this problem allows us to make exact estimates of
+the complexity. To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+[4] - [10], [5], [6].
+This is accomplished by exploiting the m-tree,
+a particular spanning tree for the graph of the filled-in matrix.
+To our knowledge, the m-tree previously has not been applied in this
+fashion to the numerical factorization, but it has been used,
+directly or indirectly, in several optimal order algorithms for
+computing the fill-in during the symbolic factorization phase
+\cite{EISENSTAT} - \cite{LIU2}, \cite{ROSE76},  \cite{SCHREIBER}.
+
+\begin{thebibliography}{99}
+
+%\bibitem{GUIDE}
+%R.~E. Bank, {\em PLTMG  users' guide, edition 5.0}, tech. report,
+%  Department of Mathematics, University of California, San Diego, CA, 1988.
+
+%\bibitem{HBMG}
+%R.~E. Bank, T.~F. Dupont, and H.~Yserentant, {\em The hierarchical basis
+%  multigrid method}, Numer. Math., 52 (1988), pp.~427--458.
+
+\bibitem{BANKSMITH}
+R.~E. Bank and R.~K. Smith, {\em General sparse elimination requires no
+  permanent integer storage}, SIAM J. Sci. Stat. Comput., 8 (1987),
+  pp.~574--584.
+
+\bibitem{EISENSTAT}
+S.~C. Eisenstat, M.~C. Gursky, M.~Schultz, and A.~Sherman, {\em
+  Algorithms and data structures for sparse symmetric gaussian elimination},
+  SIAM J. Sci. Stat. Comput., 2 (1982), pp.~225--237.
+
+\bibitem{GEORGELIU}
+A.~George and J.~Liu, {\em Computer Solution of Large Sparse Positive
+  Definite Systems}, Prentice Hall, Englewood Cliffs, NJ, 1981.
+
+\bibitem{LAW}
+K.~H. Law and S.~J. Fenves, {\em A node addition model for symbolic
+  factorization}, ACM TOMS, 12 (1986), pp.~37--50.
+
+\bibitem{LIU}
+J.~W.~H. Liu, {\em A compact row storage scheme for cholesky factors
+  using elimination trees}, ACM TOMS, 12 (1986), pp.~127--148.
+
+\bibitem{LIU2}
+\sameauthor , {\em The role of
+  elimination trees in sparse factorization}, Tech. Report CS-87-12,Department
+  of Computer Science, York University, Ontario, Canada, 1987.
+
+\bibitem{ROSE72}
+D.~J. Rose, {\em A graph theoretic study of the numeric solution of
+  sparse positive definite systems}, in Graph Theory and Computing, Academic  Press, New
+York, 1972.
+
+\bibitem{ROSE76}
+D.~J. Rose, R.~E. Tarjan, and G.~S. Lueker, {\em Algorithmic aspects of
+  vertex elimination on graphs}, SIAM J. Comput., 5 (1976), pp.~226--283.
+
+\bibitem{ROSEWHITTEN}
+D.~J. Rose and G.~F. Whitten, {\em A recursive analysis of disection
+  strategies}, in Sparse Matrix Computations, Academic Press, New York, 1976.
+
+\bibitem{SCHREIBER}
+R.~Schrieber, {\em A new implementation of sparse gaussian elimination},
+  ACM TOMS, 8 (1982), pp.~256--276.
+
+\end{thebibliography}
+\end{document}

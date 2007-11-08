@@ -216,26 +216,24 @@
 %\title{Framework for Fast Parallel Generalized N-Body Methods}
 \title{A Parallel $N$-Body Data Mining Framework}
 
-\author{Garrett F. Boyer, Ryan N. Riegel, Alexander G. Gray
-\\ Georgia Institute of Technology
-\\ Computational Science and Engineering
-\\ 801 Atlantic Drive, Atlanta, GA
-\\ \{garryb,rriegel,agray\}@cc.gatech.edu
-\\
-% For a paper whose authors are all at the same institution, 
-% omit the following lines up until the closing ``\}''.
-% Additional authors and addresses can be added with ``\and'', 
-% just like the second author.
+\author{
+Garrett F. Boyer\thanks{Georgia Institute of Technology}
+\and
+Ryan N. Riegel\thanks{Georgia Institute of Technology}
+\and
+Alexander G. Gray\thanks{Georgia Institute of Technology}
 }
-
+\date{}
 \maketitle
 \thispagestyle{empty}
 
-\begin{abstract}
+\begin{abstract} \small\baselineskip=9pt
 The $N$-body or multi-tree approach for accelerating data mining methods has spurred some of the fastest known solutions for a significant class of fundamental methods previously considered impractical for massive data sets, including kernel density estimation, nearest-neighbor search, and spatial statistics.
 We present a standard mathematical model and associated programming model that allows these problems to be scaled further via parallelization, without significant extra programmer effort.
 With the framework, we derive a strategy for multi-core and cluster parallelism and describe our implementation, Tree-based High-Order Reduce or THOR.
 We demonstrate three realistic parallel applications: kernel density estimation on the Sloan Digital Sky Survey, two-point correlation of galactic halo positions, and nearest neighbor search on high-dimensional speech data.
+
+{\bf Keywords:} Parallel Data Mining, N-Body, Nonparametric Methods, Kernel Density Estimation
 \end{abstract}
 
 \section{Introduction}

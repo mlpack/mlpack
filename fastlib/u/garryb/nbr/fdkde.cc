@@ -435,9 +435,6 @@ class FdKde {
         Delta* delta,
         GlobalResult* global_result,
         QPostponed* q_postponed) {
-      //DRange distance_sq =
-      //    q_node.bound().RangeDistanceSq(r_node.bound());
-      //double distance_sq_mid = q_node.bound().MaxToMidSq(r_node.bound());
       DRange distance_sq_range = q_node.bound().RangeDistanceSq(r_node.bound());
 
       delta->d_density = param.kernel.RangeUnnormOnSq(distance_sq_range);
@@ -446,7 +443,6 @@ class FdKde {
       DEBUG_ASSERT_MSG(delta->d_density.lo <= delta->d_density.hi * (1 + 1.0e-7),
           "delta density lo %f > hi %f",
           delta->d_density.lo, delta->d_density.hi);
-
 
       if (likely(delta->d_density.hi != 0)) {
         return true;
@@ -468,10 +464,6 @@ class FdKde {
           (param.rel_error * q_summary_result.density.lo * 2
               - q_summary_result.used_width)
           * r_node.count() / (param.count - q_summary_result.n_pruned);
-      /*allocated_width *= param.p_global;
-      allocated_width += param.rel_error_local * delta.d_density.lo * 2;*/
-      //fprintf(stderr, "%e..%e (%e, %e) %e (%e)\n", delta.d_density.lo, delta.d_density.hi, delta.d_density.width(), allocated_width, q_summary_result.density.lo,
-      //    sqrt(q_node.bound().MaxDistanceSq(q_node.bound())));
 
       if (delta.d_density.width() <= allocated_width) {
         q_postponed->d_density += delta.d_density;

@@ -102,7 +102,7 @@ class WorkEntry:
         if retval != 0:
           status = self.ERROR
           print (util.ansi.HRED+" ... Returned error code: %d "+util.ansi.CLEAR) % retval
-          print "".join([" | %s\n" for line in util.readlines(self.logfile)]),
+          print "".join([" | %s\n" % line for line in util.readlines(self.logfile)]),
         else:
           status = self.FINISHED
           print (util.ansi.HGREEN+" ... Done!"+util.ansi.CLEAR)
@@ -115,6 +115,9 @@ class WorkEntry:
       except:
         pass
       return self.ERROR
+    except:
+      util.writefile(self.statusfile, self.ERROR)
+      os.exit(1)
 
 class WorkQueue:
   """A list of work that needs to be done.
