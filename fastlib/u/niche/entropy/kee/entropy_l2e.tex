@@ -1,4 +1,3 @@
-%\documentclass{amsart}
 \documentclass{article}
 \usepackage{amsmath, amsthm}
 \usepackage[colorlinks=true]{hyperref}
@@ -118,7 +117,7 @@
   \section{Expanded $L_2E$ objective function}
 
   \begin{displaymath}
-    \frac{1}{\vert Q \vert} \sum_{q \in Q} \left( T_{\log} \left( \frac{1}{N} \sum_{i=1}^n K_h(d(q,x_i)) \right) \right) ^2 - 2 \sum_{i=1}^n \log \hat{f}_{h_E,-i}(x_i) \hat{f}_{h,-i}(x_i) \log \hat{f}_{h,-i}(x_i)
+    \arg \min_h \frac{1}{\vert Q \vert} \sum_{q \in Q} \left( T_{\log} \left( \frac{1}{N} \sum_{i=1}^n K_h(d(q,x_i)) \right) \right) ^2 - 2 \sum_{i=1}^n \log \hat{f}_{h_E,-i}(x_i) \hat{f}_{h,-i}(x_i) \log \hat{f}_{h,-i}(x_i)
   \end{displaymath}
 
   where $ T_{\log}(p) = p \log(p) $ and $Q$ is a set of sample points on the range of $X$ (e.g. linear spacing of $M$ points)
