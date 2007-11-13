@@ -1,15 +1,18 @@
 
-/* this was garry's code, now with changes I have made whimsically - nishant */
+/* this was fdkde code with changes I (Nishant) made to do L2E kernel entropy estimation */
 
 #include "fastlib/fastlib_int.h"
 #include "thor/thor.h"
 
-//#define SOLVER_TYPE DualTreeRecursiveBreadth
 #define SOLVER_TYPE DualTreeDepthFirst
 
+inline double normpdf(double x);
+
+const double sqrt_2_pi = sqrt(2*M_PI);
 
 
-int LOO = 1;
+
+int LOO = 0;
 
 
 /**
@@ -556,6 +559,339 @@ public:
     }
   };
 
+
+  static double DoKdeKL(datanode *module, Vector &log_densities) {
+
+    if (!rpc::is_root()) {
+      // turn off fastexec output
+      fx_silence();
+    }
+    
+    const int TREE_CHANNEL = 300;
+    const int RESULT_CHANNEL = 350;
+    
+    
+    
+    Param *param;
+    ThorTree<Param, Point, Node> q_tree;
+    ThorTree<Param, Point, Node> r_tree;
+    
+    param = new Param();
+    param->Init(fx_submodule(module, "kde", "kde"));
+    
+    DistributedCache results;
+    double results_megs = fx_param_double(module, "results/megs", 1000);
+      
+      
+
+    fx_timer_start(module, "read");
+    DistributedCache *q_points_cache = new DistributedCache();
+    param->q_count = thor::ReadPoints<Point>(
+					     Empty(), TREE_CHANNEL + 0, TREE_CHANNEL + 1,
+					     fx_submodule(module, "data", "data"), q_points_cache);
+    fx_timer_stop(module, "read");
+
+    fx_timer_start(module, "read");
+    DistributedCache *r_points_cache = new DistributedCache();
+    param->r_count = thor::ReadPoints<Point>(
+					     Empty(), TREE_CHANNEL + 0, TREE_CHANNEL + 1,
+					     fx_submodule(module, "data", "data"), r_points_cache);
+    fx_timer_stop(module, "read");
+
+
+      
+    Point example_point;
+    CacheArray<Point>::GetDefaultElement(r_points_cache,
+					 &example_point);
+    param->dim = example_point.vec().length();
+
+    
+    LOO = 1;
+    param->SetDimensions();
+
+    
+
+    //edit for query
+    fx_timer_start(module, "q_tree");
+    thor::CreateKdTree<Point, Node>(
+				    *param, TREE_CHANNEL + 2, TREE_CHANNEL + 3,
+				    fx_submodule(module, "q_tree", "q_tree"), param->q_count,
+				    q_points_cache, &q_tree);
+    fx_timer_stop(module, "q_tree");
+
+      
+    fx_timer_start(module, "r_tree");
+    thor::CreateKdTree<Point, Node>(
+				    *param, TREE_CHANNEL + 2, TREE_CHANNEL + 3,
+				    fx_submodule(module, "r_tree", "r_tree"), param->r_count,
+				    r_points_cache, &r_tree);
+    fx_timer_stop(module, "r_tree");
+    
+    QResult example_result;
+    example_result.Init(*param);
+    //changed from tree to q_tree
+    q_tree.CreateResultCache(RESULT_CHANNEL, example_result,
+			     results_megs, &results);
+    
+    GlobalResult global_result_1;
+    
+    log_densities.Init(param->q_count);
+    
+
+
+    ArrayList<double> test_bandwidths;
+    test_bandwidths.Init();
+
+    ArrayList<double> test_scores;
+    test_scores.Init();
+    
+
+
+    index_t test_state = 0;
+
+    double left_bandwidth = 1e-5;
+    double right_bandwidth = 1;
+    double mid_bandwidth = -1;
+
+    double left_score = -1;
+    double right_score = -1;
+    double mid_score = -1;
+
+    const double EPSILON = 1e-3;
+
+    bool search = true;
+
+    /*
+      1) Test left_bandwidth and right_bandwidth
+      2) iteratively test (left_bandwidth + right_bandwidth) / 2
+      until (eval(left_bandwidth) - eval(right_bandwidth)) < epsilon */
+
+    
+    
+    for(index_t iter = 0; search; iter++) {
+
+
+      bool choose = false;
+
+      
+      if (rpc::is_root()) {
+	fprintf(stderr, "Doing density estimation now...\n");
+	if(LOO) {
+	  printf("LOO enabled\n");
+	}
+	else{
+	  printf("LOO disabled\n");
+	}
+      }
+
+      printf("left = %f\n", left_bandwidth);
+      printf("mid = %f\n", mid_bandwidth);
+      printf("right = %f\n", right_bandwidth);
+
+      
+      switch(test_state) {
+      case 0:
+	param->bandwidth = left_bandwidth;
+	break;
+      case 1:
+	param->bandwidth = right_bandwidth;
+	break;
+      case 2:
+	if((right_bandwidth - left_bandwidth) > EPSILON) {
+	  param->bandwidth = (left_bandwidth + right_bandwidth) / 2;
+	}
+	else {
+	  search = false;
+	}
+	break;
+      case 3:
+
+	double right_diff = right_bandwidth - mid_bandwidth;
+	double left_diff = mid_bandwidth - left_bandwidth;
+
+	if((right_diff < EPSILON) && (left_diff < EPSILON)) {
+	  search = false;
+	}
+	else {
+	  if(right_diff > left_diff) {
+	    choose = 1; //choose right
+	  }
+	  else if(left_diff > right_diff) {
+	    choose = 0; // choose left
+	  }
+	  else {
+	    if(left_score < right_score) {
+	      choose = 0; // choose left
+	    }
+	    else {
+	      choose = 1; // choose right
+	    }
+	  }
+
+	  if(choose == 0) {
+	    param->bandwidth = (left_bandwidth + mid_bandwidth) / 2;
+	    printf("left = %f, mid = %f\n", left_bandwidth, mid_bandwidth);
+	    printf("splitting on left and mid: ");
+	  }
+	  else {
+	    param->bandwidth = (right_bandwidth + mid_bandwidth) / 2;
+	    printf("right = %f, mid = %f\n", right_bandwidth, mid_bandwidth);
+	    printf("splitting on right and mid: ");
+	  }
+	  printf("%f\n", param->bandwidth);
+	}
+	break;
+      default:
+	;//impossible!
+      }
+
+
+      if(!search) {
+	break;
+      }
+
+      search = false; //early termination for debugging
+
+      
+      param->SetDimensions();
+      
+      printf("\nusing bandwidth %f\n", param->bandwidth);
+    
+
+      
+      fx_timer_start(module, "kde_x");
+      thor::RpcDualTree<FdKde, SOLVER_TYPE<FdKde> >(
+						    fx_submodule(module, "gnp", "kde_%d", iter), 200,
+						    *param, &q_tree, &r_tree, &results, &global_result_1);
+      fx_timer_stop(module, "kde_x");
+      
+      
+      
+      // emit results
+      
+      
+      
+      if (rpc::is_root()) {
+	CacheArray<QResult> result_array;
+	CacheArray<QPoint> q_points_array;
+	result_array.Init(&results, BlockDevice::M_READ);
+	q_points_array.Init(q_points_cache, BlockDevice::M_READ);
+	CacheReadIter<QResult> result_iter(&result_array, 0);
+	CacheReadIter<QPoint> q_points_iter(&q_points_array, 0);
+	for (index_t i = 0; i < param->q_count; i++,
+	       result_iter.Next(), q_points_iter.Next()) {
+	  //I think lo and hi should always be the same so we just use lo
+	  log_densities[(*q_points_iter).index()] = 
+	    log((*result_iter).density.lo);
+	}
+
+
+	double sum_log_density = 0;
+	for(index_t i = 0; i < param->q_count; i++) {
+	  sum_log_density += log_densities[i];
+	}
+
+	double expected_log_density = -sum_log_density / ((double)param->q_count);
+	
+	printf("\nexpected log density = %f\n", expected_log_density);
+
+
+
+
+
+	test_bandwidths.AddBackItem(param->bandwidth);
+	test_scores.AddBackItem(expected_log_density);
+
+	    
+
+	switch(test_state) {
+	case 0:
+	  left_score = expected_log_density;
+	  test_state = 1;
+	  break;
+	case 1:
+	  right_score = expected_log_density;
+	  test_state = 2;
+	  break;
+	case 2:
+	  if((right_score < expected_log_density) &&
+	     (expected_log_density < left_score)) {
+	    left_bandwidth = param->bandwidth;
+	    left_score = expected_log_density;
+	  }
+	  else if((left_score < expected_log_density) &&
+		  (expected_log_density < right_score)) {
+	    right_bandwidth = param->bandwidth;
+	    right_score = expected_log_density;
+	  }
+	  else {
+	    mid_bandwidth = param->bandwidth;
+	    mid_score = expected_log_density;
+	    test_state = 3;
+	  }
+	  break;
+	case 3:
+
+	  double x_score;
+
+	  if(choose == 0) {
+	    x_score = left_score;
+	  }
+	  else {
+	    x_score = right_score;
+	  }
+
+	  if((mid_score <= expected_log_density) && (expected_log_density <= x_score)) {
+	    if(choose == 0) {
+	      left_bandwidth = param->bandwidth;
+	      left_score = expected_log_density;
+	    }
+	    else {
+	      right_bandwidth = param->bandwidth;
+	      right_score = expected_log_density;
+	    }
+	  }
+	  else {
+	    if(choose == 0) {
+	      right_bandwidth = mid_bandwidth;
+	      right_score = mid_score;
+	      mid_bandwidth = param->bandwidth;
+	      mid_score = expected_log_density;
+	    }
+	    else {
+	      left_bandwidth = mid_bandwidth;
+	      left_score = mid_score;
+	      mid_bandwidth = param->bandwidth;
+	      mid_score = expected_log_density;
+	    }
+	  }
+	  
+	  break;
+	default:
+	  ;//impossible!
+	}
+	
+      }
+      //data::Save(fx_param_str(module, "results", "results.csv"), log_densities);
+      results.ResetElements();
+
+    }
+    
+    
+    printf("bandwidth\tscore\n");
+
+    
+    for(index_t i = 0; i < test_bandwidths.size(); i++) {
+      printf("%f\t%f\n", test_bandwidths[i], test_scores[i]);
+
+    }
+
+
+    // NOTE: I need to ensure that the last bandwidth tested is in fact optimal or close enough
+    return *(test_bandwidths.last());
+  }
+
+
   static double DoKdeEntropyL2E(datanode *module,
 				Vector h_KL_log_densities,
 				Vector &densities) {
@@ -788,6 +1124,10 @@ public:
 	double max_linspace = -1;
 	index_t q_count_minus_1 = param->q_count - 1;
 
+	Vector log_density_of_points;
+	log_density_of_points.Init(param->r_count);
+
+
 	for (index_t i = 0; i < param->q_count; i++,
 	       result_iter.Next(), q_points_iter.Next()) {
 	  //I think lo and hi should always be the same so we just use lo
@@ -799,7 +1139,23 @@ public:
 	  else if(unlikely((*q_points_iter).index() == q_count_minus_1)){
 	    max_linspace = (*q_points_iter).vec()[0];
 	  }
+
+	  if((*q_points_iter).index() < param->r_count) {
+	    log_density_of_points[(*q_points_iter).index()] = (*q_points_iter).vec()[0];
+	  }
+	    
+
 	}
+	
+	//printf("display log_density_of_points\n");
+	
+	for(index_t i = 0; i < param->r_count; i++) {
+	  //printf("%f ", log_density_of_points[i]);
+	  log_density_of_points[i] = log(normpdf(log_density_of_points[i]));
+	}
+
+	//printf("\n");
+
 
 	double linspace_range = max_linspace - min_linspace;
 
@@ -825,17 +1181,41 @@ public:
 	  //since density was calculated with LOO disabled, adjust density
 	  //mul_constant = 1.0 / (kernel.CalcNormConstant(dim) * r_count - LOO)
 	  p = ((p / param->mul_constant) - 1) * new_mul_constant;
+	  
 	  if(p == 0) {
 	    ref_densities[i] = 0;
 	  }
 	  else {
 	    ref_densities[i] = p * log(p);
 	  }
+	  
 	}
 
+	/*
+	Matrix ref_densities_matrix;
+	ref_densities_matrix.AliasRowVector(ref_densities);
+
+	Matrix linspace_densities_matrix;
+	linspace_densities_matrix.AliasRowVector(linspace_densities);
+	
+	data::Save(fx_param_str(module, "ref_densities", "ref_densities.csv"),
+		   ref_densities_matrix);
+	data::Save(fx_param_str(module, "linspace_densities", "linspace_densities.csv"),
+		   linspace_densities_matrix);
+	*/
+
+
+	// what if we use the actual log density rather than a proxy? Then:
+
+	double second_term =
+	  la::Dot(log_density_of_points, ref_densities) / 
+	  ((double)(param->r_count));
+	
+	/*
 	double second_term =
 	  la::Dot(h_KL_log_densities, ref_densities) / 
-	  ((double)(param->r_count));
+	 ((double)(param->r_count));
+	*/
 
 
 	// only sum over the last q_count - r_count queries
@@ -965,337 +1345,6 @@ public:
   }
 
 
-  static double DoKdeKL(datanode *module, Vector &log_densities) {
-
-    if (!rpc::is_root()) {
-      // turn off fastexec output
-      fx_silence();
-    }
-    
-    const int TREE_CHANNEL = 300;
-    const int RESULT_CHANNEL = 350;
-    
-    
-    
-    Param *param;
-    ThorTree<Param, Point, Node> q_tree;
-    ThorTree<Param, Point, Node> r_tree;
-    
-    param = new Param();
-    param->Init(fx_submodule(module, "kde", "kde"));
-    
-    DistributedCache results;
-    double results_megs = fx_param_double(module, "results/megs", 1000);
-      
-      
-
-    fx_timer_start(module, "read");
-    DistributedCache *q_points_cache = new DistributedCache();
-    param->q_count = thor::ReadPoints<Point>(
-					     Empty(), TREE_CHANNEL + 0, TREE_CHANNEL + 1,
-					     fx_submodule(module, "data", "data"), q_points_cache);
-    fx_timer_stop(module, "read");
-
-    fx_timer_start(module, "read");
-    DistributedCache *r_points_cache = new DistributedCache();
-    param->r_count = thor::ReadPoints<Point>(
-					     Empty(), TREE_CHANNEL + 0, TREE_CHANNEL + 1,
-					     fx_submodule(module, "data", "data"), r_points_cache);
-    fx_timer_stop(module, "read");
-
-
-      
-    Point example_point;
-    CacheArray<Point>::GetDefaultElement(r_points_cache,
-					 &example_point);
-    param->dim = example_point.vec().length();
-
-    
-    LOO = 1;
-    param->SetDimensions();
-
-    
-
-    //edit for query
-    fx_timer_start(module, "q_tree");
-    thor::CreateKdTree<Point, Node>(
-				    *param, TREE_CHANNEL + 2, TREE_CHANNEL + 3,
-				    fx_submodule(module, "q_tree", "q_tree"), param->q_count,
-				    q_points_cache, &q_tree);
-    fx_timer_stop(module, "q_tree");
-
-      
-    fx_timer_start(module, "r_tree");
-    thor::CreateKdTree<Point, Node>(
-				    *param, TREE_CHANNEL + 2, TREE_CHANNEL + 3,
-				    fx_submodule(module, "r_tree", "r_tree"), param->r_count,
-				    r_points_cache, &r_tree);
-    fx_timer_stop(module, "r_tree");
-    
-    QResult example_result;
-    example_result.Init(*param);
-    //changed from tree to q_tree
-    q_tree.CreateResultCache(RESULT_CHANNEL, example_result,
-			     results_megs, &results);
-    
-    GlobalResult global_result_1;
-    
-    log_densities.Init(param->q_count);
-    
-
-
-    ArrayList<double> test_bandwidths;
-    test_bandwidths.Init();
-
-    ArrayList<double> test_scores;
-    test_scores.Init();
-    
-
-
-    index_t test_state = 0;
-
-    double left_bandwidth = 1e-5;
-    double right_bandwidth = 1;
-    double mid_bandwidth = -1;
-
-    double left_score = -1;
-    double right_score = -1;
-    double mid_score = -1;
-
-    const double EPSILON = 1e-3;
-
-    bool search = true;
-
-    /*
-      1) Test left_bandwidth and right_bandwidth
-      2) iteratively test (left_bandwidth + right_bandwidth) / 2
-      until (eval(left_bandwidth) - eval(right_bandwidth)) < epsilon */
-
-    
-    
-    for(index_t iter = 0; search; iter++) {
-
-
-      bool choose = false;
-
-      
-      if (rpc::is_root()) {
-	fprintf(stderr, "Doing density estimation now...\n");
-	if(LOO) {
-	  printf("LOO enabled\n");
-	}
-	else{
-	  printf("LOO disabled\n");
-	}
-      }
-
-      printf("left = %f\n", left_bandwidth);
-      printf("mid = %f\n", mid_bandwidth);
-      printf("right = %f\n", right_bandwidth);
-
-      
-      switch(test_state) {
-      case 0:
-	param->bandwidth = left_bandwidth;
-	break;
-      case 1:
-	param->bandwidth = right_bandwidth;
-	break;
-      case 2:
-	if((right_bandwidth - left_bandwidth) > EPSILON) {
-	  param->bandwidth = (left_bandwidth + right_bandwidth) / 2;
-	}
-	else {
-	  search = false;
-	}
-	break;
-      case 3:
-
-	double right_diff = right_bandwidth - mid_bandwidth;
-	double left_diff = mid_bandwidth - left_bandwidth;
-
-	if((right_diff < EPSILON) && (left_diff < EPSILON)) {
-	  search = false;
-	}
-	else {
-	  if(right_diff > left_diff) {
-	    choose = 1; //choose right
-	  }
-	  else if(left_diff > right_diff) {
-	    choose = 0; // choose left
-	  }
-	  else {
-	    if(left_score < right_score) {
-	      choose = 0; // choose left
-	    }
-	    else {
-	      choose = 1; // choose right
-	    }
-	  }
-
-	  if(choose == 0) {
-	    param->bandwidth = (left_bandwidth + mid_bandwidth) / 2;
-	    printf("left = %f, mid = %f\n", left_bandwidth, mid_bandwidth);
-	    printf("splitting on left and mid: ");
-	  }
-	  else {
-	    param->bandwidth = (right_bandwidth + mid_bandwidth) / 2;
-	    printf("right = %f, mid = %f\n", right_bandwidth, mid_bandwidth);
-	    printf("splitting on right and mid: ");
-	  }
-	  printf("%f\n", param->bandwidth);
-	}
-	break;
-      default:
-	;//impossible!
-      }
-
-
-      if(!search) {
-	break;
-      }
-
-      //search = false; //early termination for debugging
-
-      
-      param->SetDimensions();
-      
-      printf("\nusing bandwidth %f\n", param->bandwidth);
-    
-
-      
-      fx_timer_start(module, "kde_x");
-      thor::RpcDualTree<FdKde, SOLVER_TYPE<FdKde> >(
-						    fx_submodule(module, "gnp", "kde_%d", iter), 200,
-						    *param, &q_tree, &r_tree, &results, &global_result_1);
-      fx_timer_stop(module, "kde_x");
-      
-      
-      
-      // emit results
-      
-      
-      
-      if (rpc::is_root()) {
-	CacheArray<QResult> result_array;
-	CacheArray<QPoint> q_points_array;
-	result_array.Init(&results, BlockDevice::M_READ);
-	q_points_array.Init(q_points_cache, BlockDevice::M_READ);
-	CacheReadIter<QResult> result_iter(&result_array, 0);
-	CacheReadIter<QPoint> q_points_iter(&q_points_array, 0);
-	for (index_t i = 0; i < param->q_count; i++,
-	       result_iter.Next(), q_points_iter.Next()) {
-	  //I think lo and hi should always be the same so we just use lo
-	  log_densities[(*q_points_iter).index()] = 
-	    log((*result_iter).density.lo);
-	}
-
-
-	double sum_log_density = 0;
-	for(index_t i = 0; i < param->q_count; i++) {
-	  sum_log_density += log_densities[i];
-	}
-
-	double expected_log_density = -sum_log_density / ((double)param->q_count);
-	
-	printf("\nexpected log density = %f\n", expected_log_density);
-
-
-
-
-
-	test_bandwidths.AddBackItem(param->bandwidth);
-	//test_scores.AddBackItem(expected_log_density);
-	test_scores.AddBackItem(fabs(expected_log_density - 1.418939));
-
-	    
-
-	switch(test_state) {
-	case 0:
-	  left_score = expected_log_density;
-	  test_state = 1;
-	  break;
-	case 1:
-	  right_score = expected_log_density;
-	  test_state = 2;
-	  break;
-	case 2:
-	  if((right_score < expected_log_density) &&
-	     (expected_log_density < left_score)) {
-	    left_bandwidth = param->bandwidth;
-	    left_score = expected_log_density;
-	  }
-	  else if((left_score < expected_log_density) &&
-		  (expected_log_density < right_score)) {
-	    right_bandwidth = param->bandwidth;
-	    right_score = expected_log_density;
-	  }
-	  else {
-	    mid_bandwidth = param->bandwidth;
-	    mid_score = expected_log_density;
-	    test_state = 3;
-	  }
-	  break;
-	case 3:
-
-	  double x_score;
-
-	  if(choose == 0) {
-	    x_score = left_score;
-	  }
-	  else {
-	    x_score = right_score;
-	  }
-
-	  if((mid_score <= expected_log_density) && (expected_log_density <= x_score)) {
-	    if(choose == 0) {
-	      left_bandwidth = param->bandwidth;
-	      left_score = expected_log_density;
-	    }
-	    else {
-	      right_bandwidth = param->bandwidth;
-	      right_score = expected_log_density;
-	    }
-	  }
-	  else {
-	    if(choose == 0) {
-	      right_bandwidth = mid_bandwidth;
-	      right_score = mid_score;
-	      mid_bandwidth = param->bandwidth;
-	      mid_score = expected_log_density;
-	    }
-	    else {
-	      left_bandwidth = mid_bandwidth;
-	      left_score = mid_score;
-	      mid_bandwidth = param->bandwidth;
-	      mid_score = expected_log_density;
-	    }
-	  }
-	  
-	  break;
-	default:
-	  ;//impossible!
-	}
-	
-      }
-      //data::Save(fx_param_str(module, "results", "results.csv"), log_densities);
-      results.ResetElements();
-
-    }
-    
-    
-    printf("bandwidth\tscore\n");
-
-    
-    for(index_t i = 0; i < test_bandwidths.size(); i++) {
-      printf("%f\t%f\n", test_bandwidths[i], test_scores[i]);
-
-    }
-
-
-    // NOTE: I need to ensure that the last bandwidth tested is in fact optimal or close enough
-    return *(test_bandwidths.last());
-  }
 
 
 
@@ -1348,12 +1397,23 @@ void KdeMain(datanode *module) {
 
   
 
+
+  
+
   
   
   
 
 
 }
+
+
+
+
+inline double normpdf(double x) {
+  return exp(-(x*x) / 2) / sqrt_2_pi;
+}
+
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
