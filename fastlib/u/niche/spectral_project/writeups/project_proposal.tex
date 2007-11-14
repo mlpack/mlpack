@@ -1,0 +1,49 @@
+\documentclass{article}
+
+\bibliographystyle{unsrt}
+
+
+\begin{document}
+
+
+\title{Project Proposal}
+
+\author{Dongryeol Lee, Nishant Mehta, Linji Yang}
+
+\maketitle
+
+
+
+We are planning to explore major nearest-neighbor classification methods using SVD/ random projections (and combinations of these). We can measure the quality of the  results by error (distance between true nearest neighbors and nearest neighbors returned by the algorithm) and the empirical performance of the algorithm.
+
+Some of the methods we have encountered thus far:
+
+\begin{enumerate}
+\item CSVD \cite{castelli2003cca} - partition data set into clusters, use SVD to dimensionality reduction on each cluster, recurse as necessary
+\item projecting points onto random vectors \cite{kleinberg1997tan} to drive down probability of having high error
+\item random projection trees (kd-trees using split on random vectors)
+\item LSH \cite{indyk1997lph}
+\end{enumerate}
+
+
+
+We propose to test the following methods:
+\begin{enumerate}
+\item Approximate SVD
+	different methods for projecting the data onto subspaces (subspaces that provide stronger guarantees of error minimization)
+\item Random sampling 
+\item Combination of approximate SVD and random projection methods
+\item Methods that explore the relationship between clustering and nearest-neighbor search
+\end{enumerate}
+
+We will explore these methods and hopefully obtain some theoretical results (time-permitting).
+
+
+We will experiment with our methods on synthetic data sets generated from the following distributions: uniform, mixture of Gaussians, points distributed along an anulus
+
+We may experiment using some data sets taken from the UCI repository, specifically data sets that have high dimensionality and a very large number of points.
+
+
+\bibliography{citations}
+
+\end{document}

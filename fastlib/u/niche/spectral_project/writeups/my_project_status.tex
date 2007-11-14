@@ -1,0 +1,16 @@
+\documentclass{article}
+
+\bibliographystyle{unsrt}
+
+
+\begin{document}
+
+For the approximate nearest neighbor (NN) problem, Kleinberg employs a geometric lemma that shows that for $ x,y \in \mathbf{R}^d $, if $ (1 + \gamma) \|x\| \leq \|y\| $, for $v$ uniformly distributed over (the unit $d-1$ sphere) $S^{d-1}$, $\mathsf{Pr}[\vert v \cdot x \vert \geq \vert v \cdot y \vert] \leq \frac{1}{2} - \frac{\gamma}{3} $. This leads to a simple algorithm that compares distances (via a tournament) between points and a query point using one-dimensional random projections \cite{kleinberg1997tan}. This algorithm is more expensive in the preprocessing phase $O(d L n) $, where $L$ is the number of random vectors needed.
+For the project we consider improvements to this algorithm's projection phase. In the case of approximate SVD we see that adaptive length-squared sampling provides a better error bound over ordinary length-squared sampling. For approximate NN, the run-time of an algorithm is heavily influenced by the number of iterations necessary to return a result within specified error bounds. We will consider random projections onto subspaces of rank $ > 1 $ to see if we can achieve improvement on the necessary run-time. We begin by considering again vectors $x,y \in  \mathbf{R}^d $ as before, but now projecting onto rank-2 subspaces.
+
+We consider the probability: $ \mathsf{Pr}[\| \pi_W(x) \| \geq \| \pi_W(y) \|] \leq \delta $, where $W$ is a random rank-2 subspace, and we wish to minimize $\delta$. One method to draw $W$ is to draw two random vectors independently and use their span as the subspace. Another method is to condition the second random vector on the first random vector such that the two cover a larger volume of space. We hope to need significantly fewer random subspaces; by decreasing the number of random subspaces to $L'$ we reduce the run-time of the preprocessing phase. If $L'$ is small enough, the greater computational demand of rank-2 projections as compared to rank-1 projections will be outweighed by the savings linear in the change in $L$. If we attain positive results for rank-2 subspaces, we may consider subspaces of higher rank.
+
+We have requested code from Kleinberg (if it exists) for the random projection/tournmanet algorithm, so that we may test this algorithm on datasets.
+\bibliography{citations}
+
+\end{document}
