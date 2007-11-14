@@ -1,0 +1,28 @@
+\documentclass{article}
+\begin{document}
+
+\section{First, nearest neighbors in the cube}
+For each distance $l$, create a set of $M$ independent projections  $P^{(l)} = P_1, P_2, \ldots, P_M$, for $M = (d + \log \frac{2d}{\delta}) \frac{2 \log d}{\delta} $
+
+Each projection $P_i$ is onto a $k$-dimensional cube
+
+
+How do we project data onto a cube?
+
+To project $p \in Z^d_2$ to $p' \in Z^k_2$, we use a random $d$ x $k$ matrix $R$, $P(R_{ij} = 1) = p$, (otherwise 0).
+
+
+To search for a query $q$ at a particular distance $l$, project the query point to a random $P_i \in P^{(l)}$. Use binary search where we consider the sort as a string of failures followed by a string of successes for increasing $l$.
+
+
+
+
+
+
+
+%For each subset $B(v,l)$
+% Create a data structure of size $2^N$
+
+%Use cube to cube projection to reduce space needed 
+ 
+\end{document}
