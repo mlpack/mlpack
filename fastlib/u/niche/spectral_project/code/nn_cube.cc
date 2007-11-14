@@ -7,7 +7,7 @@
 
 
 
-int main() {
+int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
   printf("hi\n");
