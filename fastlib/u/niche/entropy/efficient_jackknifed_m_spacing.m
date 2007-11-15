@@ -1,9 +1,9 @@
 % jackknifed_m_spacing() - efficiently get an unbiased estimate of entropy
 % using jackknifed m-spacing
 
-function H = efficient_jackknifed_m_spacing(n);
+function [H H_jackknifed] = efficient_jackknifed_m_spacing(n);
 
-randn('seed', sum(100));%*clock));
+randn('seed', sum(100*clock));
 X = normrnd(zeros(n, 1), 1);
 Z = sort(X, 'ascend');
 m = round(sqrt(n)/2);
@@ -70,7 +70,7 @@ for j=1:n
   end
 
   
-  H(j) = ((sum_logs_before + sum_logs_at + sum_logs_after)/(n-1)) + ...
+  H_LOO(j) = ((sum_logs_before + sum_logs_at + sum_logs_after)/(n-1)) + ...
 	 log((n-1)/(2*m));
   
   sum_logs_before_array(j) = sum_logs_before;
@@ -80,6 +80,33 @@ for j=1:n
 
 
 end
+
+
+
+
+% normal m-spacing estimator
+
+sum_logs = 0;
+for i = 1:n
+  if (i + m) > n
+    sum_logs = sum_logs + log(Z(n) - Z(i-m));
+  elseif (i-m) < 1
+    sum_logs = sum_logs + log(Z(i+m) - Z(1));
+  else    
+    sum_logs = sum_logs + log(Z(i+m) - Z(i-m));
+  end
+end
+
+H = (sum_logs / n) + log(n/(2*m));
+
+H_jackknifed = H - (n - 1) * (mean(H_LOO) - H);
+
+
+
+
+
+
+
 
 
 

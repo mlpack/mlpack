@@ -4,7 +4,7 @@
 
 function H = jackknifed_m_spacing(n);
 
-randn('seed', sum(100));%*clock));
+randn('seed', sum(100*clock));
 X = normrnd(zeros(n, 1), 1);
 Z = sort(X, 'ascend');
 m = round(sqrt(n)/2);
