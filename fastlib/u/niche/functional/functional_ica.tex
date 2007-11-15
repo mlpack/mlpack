@@ -16,14 +16,38 @@ Let the data be a set of curves $\mathbf{X} = \{X_1(t), X_2(t), \ldots, X_n(t)\}
 
 Let the functional principal components be a set of curves $\mathbf{e} = \{e_1(t), e_2(t), \ldots, e_p(t)\}$.
 
-The loading of fPC $e_j$ in data curve $X_i$ is $\int e_j(t) X_i(t) dt = \langle e_j, X_i \rangle$
+The loading of fPC $e_j$ in data curve $X_k$ is $\int e_j(t) X_k(t) dt = \langle e_j, X_k \rangle$
 
-Let a new curve $f$ be defined as $f(t) = \sum_{j=1}^p a_j e_j(t)$
+Suppose we have a set of curves $\mathbf{f} = \{f_1(t), f_2(t), \ldots, f_p(t)\}$.
 
-The loading of curve $f$ in data curve $X_i$ is $\int f(t) X_i(t) dt = \int (\sum_{j=1}^p a_j e_j(t)) X_i(t) dt$ = $\sum_{j=1}^p a_j \int e_j(t) X_i(t) dt = \sum_{j=1}^p a_j \langle e_j, X_i \rangle$.
+Define $f_i(t) = \sum_{j=1}^p w_{i,j} e_j(t)$
 
-Suppose we have the loadings of a set of curves $\mathbf{f} = \{f_1(t), f_2(t), \ldots, f_p(t)\}$. As before, refer to the loading of $f_j$ in $X_i$ as $\langle f_j, X_i \rangle$.
-  
-  
+The loading of curve $f_i$ in data curve $X_k$ is $\int f_i(t) X_k(t) dt = \int (\sum_{j=1}^p w_{i,j} e_j(t)) X_k(t) dt$ = $\sum_{j=1}^p w_{i,j} \int e_j(t) X_k(t) dt = \sum_{j=1}^p w_{i,j} \langle e_j, X_k \rangle$.
+
+
+We refer to the loading of $f_i$ in $X_k$ as $\langle f_i, X_k \rangle$.
+
+
+
+Let $\mathbf{w_i} = [w_{i,1} w_{i,2} \ldots w_{i,p}]$.
+
+Let
+$
+\mathbf{W} = \left[\begin{array}{c}
+    \mathbf{w_1} \\
+    \mathbf{w_2} \\
+    \vdots \\
+    \mathbf{w_p}
+    \end{array}\right]
+$
+
+
+\begin{equation}
+\mathbf{y} = \mathbf{W} \mathbf{e}
+\end{equation}
+where $\mathbf{y}$ is a random variable $\in \mathbf{R}^p$, $\mathbf{W} \in \mathbf{R}^{p \mathrm{x} p}$, and $\mathbf{e}$ is a random variable $\in \mathbf{R}^p$.
+Consider the distribution of the random variable $y$ over all realizations of $y \in Y$, where $Y = {\mathbf{y_1} \mathbf{y_2} \ldots \mathbf{y_T}}$, we want to minimize the entropy of the marginals of $\mathbf{y}$. If we have a continuous representation of the entropy of the marginals, we can then follow the gradient to find local minima. The optimization landscape likely is riddled with local minima however. Another method would be to adopt the optimization method from RADICAL, where we enforce pairwise independence.
+
+We need a way to solve the overconstrained problem. We might represent the data with 30 basis functions but we actually only want to extract two independent components. Which components are more relevant to us? The ones that exhibit higher complexity or lower complexity?  
   
 \end{document}
