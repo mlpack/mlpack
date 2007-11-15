@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage{amsmath,amsthm,amsfonts}
+\title{Functional ICA}
+
+\begin{document}
+  
+  \maketitle
+  
+  Find the functional principal components to whiten the data.
+  Search over the space of linear transformations $\mathcal{S}$ of the functional principal components, maintaining the orthogonality property.
+  For each candidate transformation $s \in \mathcal{S}$, evaluate the separation of the candidate components.
+
+As we proceed below, $t \in [O, T]$.
+
+Let the data be a set of curves $\mathbf{X} = \{X_1(t), X_2(t), \ldots, X_n(t)\}$.
+
+Let the functional principal components be a set of curves $\mathbf{e} = \{e_1(t), e_2(t), \ldots, e_p(t)\}$.
+
+The loading of fPC $e_j$ in data curve $X_i$ is $\int e_j(t) X_i(t) dt = \langle e_j, X_i \rangle$
+
+Let a new curve $f$ be defined as $f(t) = \sum_{j=1}^p a_j e_j(t)$
+
+The loading of curve $f$ in data curve $X_i$ is $\int f(t) X_i(t) dt = \int (\sum_{j=1}^p a_j e_j(t)) X_i(t) dt$ = $\sum_{j=1}^p a_j \int e_j(t) X_i(t) dt = \sum_{j=1}^p a_j \langle e_j, X_i \rangle$.
+
+Suppose we have the loadings of a set of curves $\mathbf{f} = \{f_1(t), f_2(t), \ldots, f_p(t)\}$. As before, refer to the loading of $f_j$ in $X_i$ as $\langle f_j, X_i \rangle$.
+  
+  
+  
+\end{document}
