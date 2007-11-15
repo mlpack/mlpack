@@ -1,0 +1,66 @@
+three methods for approaching ICA with consideration for time series:
+
+
+1) Temporal ICA with smoothing
+
+Consider spatial mixing model X = A*S
+
+X = N x T
+A = N x N
+S = N x T
+
+the distribution of each x is not necessarily independent of the distribution of any other other x
+the distribution of each s is independent of the distribution of each other s
+
+spatial dimensions correspond to multivariate data
+goal is to unmix multivariate data into new independent distributions
+
+there is some temporal structure in the data
+smooth the data X over time
+
+
+2) ICA where each observation is a T-dimensional data point
+
+X = A * S
+
+X = T x N
+A = T x T
+S = T x N
+
+dot product of two data points does not produce a zero
+if we can find some mapping of the data points onto an independent basis
+
+we are unaware of how many independent components truly underly the data
+
+
+given N observations, it is possible to recover no more than N components
+we often care to recover less components
+
+the process we actually consider should be some mixing process with noise
+
+
+assume N observations
+each observation is some superposition of temporal patterns
+these temporal patterns occur in each observation independently
+
+
+
+suppose we have recovered N' principle components that account for most of the variance of our data
+thus, we have e set
+We can then consider rotations of these principal components
+
+
+
+      
+
+PCA provides a transformation on the loadings of the components that maximizes the amount of variance accounted for by each component
+
+ICA provides a transformation on the loadings of the components that maximizes the statistical independence in the distributions of the loadings of the components
+
+
+1st dimension varies over basis functions
+
+
+
+
+
