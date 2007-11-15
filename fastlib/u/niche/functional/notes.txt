@@ -1,0 +1,16 @@
+DATA GENERATION
+
+1) construct N orthogonal curves of length T
+     e.g.: e1(t) = sqrt(2) * sin(pi*x)
+           e2(t) = sqrt(2) * cos(pi*x)
+
+2) generate M x N scores:
+   for each of N curves
+       draw M scores from a Laplacian distribution
+
+3) compose M data points
+
+
+ALGORITHM
+
+1) start with some random assignment of weights for a B-vector (B = 2)
