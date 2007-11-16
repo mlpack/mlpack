@@ -1,26 +1,54 @@
 
 librule(
     name = "kde",                            # this line can be safely omitted
-    sources = ["ifgt_kde.cc",
-               "ifgt_choose_parameters.cc",
-               "ifgt_choose_truncation_number.cc",
-               "kcenter_clustering.cc"],     # files that must be compiled
-    headers = ["fft_kde.h",
-               "fgt_kde.h",
-               "ifgt_kde.h",
-               "ifgt_choose_parameters.h",
-               "ifgt_choose_truncation_number.h",
-               "kcenter_clustering.h",
+    sources = [],                            # files that must be compiled
+    headers = ["fgt_kde.h",
                "kde.h"],                     # include files part of the 'lib'
     deplibs = ["u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
+    )
+
+librule(
+    name = "fgt_kde",
+    sources = [],
+    headers = ["fgt_kde.h"],
+    deplibs = ["fastlib:fastlib_int"]
+    )
+
+librule(
+    name = "ifgt_kde",
+    sources = ["ifgt_kde.cc",
+               "ifgt_choose_parameters.cc",
+               "ifgt_choose_truncation_number.cc",
+               "kcenter_clustering.cc"],
+    headers = ["ifgt_kde.h",
+               "ifgt_choose_parameters.h",
+               "ifgt_choose_truncation_number.h",
+               "kcenter_clustering.h"],
+    deplibs = ["fastlib:fastlib_int"]
+    )
+
+librule(
+    name = "fft_kde",                        # this line can be safely omitted
+    sources = [],                            # files that must be compiled
+    headers = ["fft_kde.h"],                 # include files part of the 'lib'
+    deplibs = ["fastlib:fastlib_int"]        # dependency
+    )
+
+librule(
+    name = "thor_kde",
+    sources = [],
+    headers = ["thor_kde.h"],
+    deplibs = ["fastlib:fastlib_int"]
     )
 
 binrule(
     name = "kde_bin",                        # the executable name
     sources = ["main.cc"],                   #
     headers = [],                            # no extra headers
-    deplibs = [":kde",
+    deplibs = [":fft_kde",
+               ":fgt_kde",
+               ":kde",
                "u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
@@ -29,7 +57,7 @@ binrule(
     name = "ifgt_bin",                        # the executable name
     sources = ["ifgt_main.cc"],               #
     headers = [],                             # no extra headers
-    deplibs = [":kde",
+    deplibs = [":ifgt_kde",
                "u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
