@@ -5,4 +5,4 @@ if size(f) == size(g')
   g = g';
 end
 
-norm = quad(@ppval, domain(1), domain(end), [], [], spline(domain, f .* g));
+norm = diff(ppval(fnint(spline(domain, f .* g)), [domain(1) domain(end)]));
