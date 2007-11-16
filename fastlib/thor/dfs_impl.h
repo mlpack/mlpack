@@ -30,12 +30,34 @@ void DualTreeDepthFirst<GNP>::Doit(
       q_root->begin(), q_root->end());
   q_points_.Init(q_points, BlockDevice::M_READ,
       q_root->begin(), q_root->end());
+
+  // Seed q_results
+  {
+    CacheWriteIter<typename GNP::QResult> q_results_iter(&q_results_,
+	q_root->begin());
+    CacheReadIter<typename GNP::QPoint> q_points_iter(&q_points_,
+	q_root->begin());
+    for (int i = q_root->begin(); i < q_root->end(); ++i,
+	   q_results_iter.Next(), q_points_iter.Next()) {
+      (*q_results_iter).Seed(param_, *q_points_iter);
+    }
+  }
+
   q_nodes_.StopRead(q_root_index);
 
   QMutables default_mutable;
   default_mutable.summary_result.Init(param_);
   default_mutable.postponed.Init(param_);
   q_mutables_.Init(default_mutable, q_root_index, q_end_index);
+
+  // Seed summary_results
+  {
+    CacheReadIter<typename GNP::QNode> q_nodes_iter(&q_nodes_,
+	q_root_index);
+    for (int i = q_root_index; i < q_end_index; ++i, q_nodes_iter.Next()) {
+      q_mutables_[i].summary_result.Seed(param_, *q_nodes_iter);
+    }
+  }
 
   global_result_.Init(param_);
 
@@ -49,11 +71,14 @@ void DualTreeDepthFirst<GNP>::Doit(
 template<typename GNP>
 void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   typename GNP::Delta delta;
+  typename GNP::Delta empty_delta;
   CacheRead<typename GNP::QNode> q_root(&q_nodes_, q_root_index);
   QMutables *q_root_mut = &q_mutables_[q_root_index];
 
+  empty_delta.Init(param_);
+  delta.Init(param_);
   bool need_explore = GNP::Algorithm::ConsiderPairIntrinsic(
-      param_, *q_root, *r_root_, &delta,
+      param_, *q_root, *r_root_, empty_delta, &delta,
       &global_result_, &q_root_mut->postponed);
 
   stats_.Init();
@@ -66,7 +91,7 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
     empty_summary_result.Init(param_);
 
     if (do_naive_) {
-      BaseCase_(q_root, r_root_, empty_summary_result, q_root_mut);
+      BaseCase_(q_root, r_root_, delta, empty_summary_result, q_root_mut);
     } else {
       Pair_(q_root, r_root_, delta, empty_summary_result, q_root_mut);
     }
@@ -133,7 +158,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
   } else {
     if (q_node->is_leaf() && r_node->is_leaf()) {
       DEBUG_MSG(1.0, "Base case");
-      BaseCase_(q_node, r_node, unvisited, q_node_mut);
+      BaseCase_(q_node, r_node, delta, unvisited, q_node_mut);
     } else if (r_node->is_leaf()
         || (q_node->count() >= r_node->count() && !q_node->is_leaf())) {
       DEBUG_MSG(1.0, "Splitting Q");
@@ -151,7 +176,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
             param_, q_node_mut->postponed);
 
         if (GNP::Algorithm::ConsiderPairIntrinsic(
-                param_, *q_child, *r_node, &child_delta,
+                param_, *q_child, *r_node, delta, &child_delta,
                 &global_result_, &q_child_mut->postponed)) {
           Pair_(q_child, r_node, child_delta, unvisited, q_child_mut);
         }
@@ -176,10 +201,10 @@ void DualTreeDepthFirst<GNP>::Pair_(
       delta2.Init(param_);
 
       bool explore_r1 = GNP::Algorithm::ConsiderPairIntrinsic(
-          param_, *q_node, *r_child1, &delta1,
+          param_, *q_node, *r_child1, delta, &delta1,
           &global_result_, &q_node_mut->postponed);
       bool explore_r2 = GNP::Algorithm::ConsiderPairIntrinsic(
-          param_, *q_node, *r_child2, &delta2,
+          param_, *q_node, *r_child2, delta, &delta2,
           &global_result_, &q_node_mut->postponed);
 
       if (!explore_r1) {
@@ -218,6 +243,7 @@ template<typename GNP>
 void DualTreeDepthFirst<GNP>::BaseCase_(
     const typename GNP::QNode *q_node,
     const typename GNP::RNode *r_node,
+    const typename GNP::Delta& delta,
     const typename GNP::QSummaryResult& unvisited,
     QMutables *q_node_mut) {
 
@@ -242,7 +268,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
     q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
 
     if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, *r_node,
-          unvisited, q_result, &global_result_)) {
+          delta, unvisited, q_result, &global_result_)) {
       const typename GNP::RPoint *r_point = first_r_point;
       index_t r_i = r_node->begin();
       index_t r_left = r_node->count();

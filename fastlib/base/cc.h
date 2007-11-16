@@ -42,16 +42,16 @@ extern const double FLT_INF;
 /**
  * Return the minimum of two objects.
  */
-template<typename T, typename Q>
-inline T min(T a, Q b) {
+template<typename T>
+inline T min(T a, T b) {
   return a < b ? a : b;
 }
 
 /**
  * Return the maximum of two objects.
  */
-template<typename T, typename Q>
-inline T max(T a, Q b) {
+template<typename T>
+inline T max(T a, T b) {
   return a > b ? a : b;
 }
 

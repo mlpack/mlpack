@@ -35,7 +35,7 @@ class DualTreeRecursiveBreadth {
      */
     void Consider(const typename GNP::Param& param,
         const typename GNP::QNode& q_node, const typename GNP::RNode& r_node,
-        index_t r_index,
+        index_t r_index, const typename GNP::Delta& delta,
         typename GNP::GlobalResult *global_result);
 
     /**
@@ -109,6 +109,7 @@ class DualTreeRecursiveBreadth {
   void BaseCase_(
       const typename GNP::QNode& q_node,
       const typename GNP::RNode& r_node,
+      const typename GNP::Delta& delta,
       const typename GNP::QSummaryResult& unvisited);
   /**
    * Postprocesses results and pushes down any postponed prunes.
