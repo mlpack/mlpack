@@ -781,12 +781,18 @@ class FastKde {
     
     KdeStat &stat = qnode->stat();
 
+    // propagate unincorporated lower and upper bound changes
+    UpdateBounds(qnode, NULL, &stat.owed_l_, NULL, &stat.owed_u_, NULL,
+		 NULL, NULL, NULL);
+
     // for leaf query node
     if(qnode->is_leaf()) {
       for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+	densities_l_[q] += stat.more_l_;
 	densities_e_[q] +=
 	  stat.local_expansion_.EvaluateField(&qset_, q, NULL) +
 	  stat.mass_e_;
+	densities_u_[q] += stat.more_u_;
       }
     }
     else {
