@@ -1,3 +1,8 @@
+% funcica() - functional ICA
+
+function [] = funcica
+
+
 % Given
 %   distribution F
 %   observations X (dims N x T)
