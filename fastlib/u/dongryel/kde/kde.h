@@ -639,10 +639,12 @@ class FastKde {
     KdeStat *left_stat = NULL;
     KdeStat *right_stat = NULL;
 
-    // process density bound changes sent from the ancestor query nodes,
+    // process density bound changes sent from the ancestor query nodes and
+    // set the owed slots to zero
     UpdateBounds(qnode, rnode, &stat.owed_l_, NULL, &stat.owed_u_, NULL,
 		 NULL, NULL, NULL);
-
+    stat.owed_l_ = stat.owed_u_ = 0;
+    
     // for non-leaf query node, tighten lower/upper bounds and the 
     // reclaim tokens unused by the children.
     if(!qnode->is_leaf()) {
