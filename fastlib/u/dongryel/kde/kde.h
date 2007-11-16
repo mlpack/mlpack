@@ -578,7 +578,7 @@ class FastKde {
     dl = kernel_value_range.lo * num_references;
     de = 0.5 * num_references * 
       (kernel_value_range.lo + kernel_value_range.hi);
-    du = -kernel_value_range.hi * num_references;
+    du = (1 - kernel_value_range.hi) * num_references;
 
     // refine the lower bound using the new lower bound info
     double new_mass_l = stat.mass_l_ + dl;    
