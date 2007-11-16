@@ -5,7 +5,9 @@ c4 = 18;
 
 mybasis = create_bspline_basis([0 .5], 30, 4);
 
-load ../bci_comp_2003_dataSet_IV/sp1s_aa_1000Hz;
+load ~/brains/bci_comp_2003_dataSet_IV/sp1s_aa_1000Hz;
+
+
 
 x_train = CAR(x_train);
 ground_truth = y_train;
