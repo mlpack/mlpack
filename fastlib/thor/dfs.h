@@ -90,6 +90,7 @@ class DualTreeDepthFirst {
   void BaseCase_(
       const typename GNP::QNode *q_node,
       const typename GNP::RNode *r_node,
+      const typename GNP::Delta& delta,
       const typename GNP::QSummaryResult& unvisited,
       QMutables *q_node_mut);
   /**

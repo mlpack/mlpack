@@ -123,7 +123,7 @@ class DHrectBound {
    * Calculates minimum bound-to-point squared distance.
    */
   double MinDistanceSq(const Vector& point) const {
-    DEBUG_ASSERT(point.length() == dim_);
+    DEBUG_SAME_INT(point.length(), dim_);
     return MinDistanceSq(point.ptr());
   }
 
@@ -148,7 +148,7 @@ class DHrectBound {
       //   (x * 2)^2 / 4 = x^2
       double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-      sum += math::Pow<t_pow, 1>(v); // v s non-negative
+      sum += math::Pow<t_pow, 1>(v); // v is non-negative
     }
 
     return math::Pow<2, t_pow>(sum) / 4;
@@ -160,7 +160,7 @@ class DHrectBound {
   double MaxDistanceSq(const Vector& point) const {
     double sum = 0;
 
-    DEBUG_ASSERT(point.length() == dim_);
+    DEBUG_SAME_INT(point.length(), dim_);
 
     for (index_t d = 0; d < dim_; d++) {
       double v = max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
@@ -178,7 +178,7 @@ class DHrectBound {
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
-    DEBUG_ASSERT(dim_ == other.dim_);
+    DEBUG_SAME_INT(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
       double v = max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
@@ -190,8 +190,6 @@ class DHrectBound {
 
   /**
    * Calculates minimum and maximum bound-to-bound squared distance.
-   *
-   * Example: bound1.MinDistanceSq(other) for minimum squared distance.
    */
   DRange RangeDistanceSq(const DHrectBound& other) const {
     double sum_lo = 0;
@@ -219,7 +217,33 @@ class DHrectBound {
         math::Pow<2, t_pow>(sum_hi));
   }
 
+  /**
+   * Calculates minimum and maximum bound-to-point squared distance.
+   */
+  DRange RangeDistanceSq(const Vector& point) const {
+    double sum_lo = 0;
+    double sum_hi = 0;
+    const double *mpoint = point.ptr();
+    const DRange *mbound = bounds_;
 
+    DEBUG_SAME_INT(point.length(), dim_);
+
+    index_t d = dim_;
+    do {
+      double v = *mpoint;
+      double v1 = mbound->lo - v;
+      double v2 = v - mbound->hi;
+
+      sum_lo += math::Pow<t_pow, 1>((v1 + fabs(v1)) + (v2 + fabs(v2)));
+      sum_hi += math::Pow<t_pow, 1>(-min(v1, v2));
+
+      mpoint++;
+      mbound++;
+    } while (--d);
+
+    return DRange(math::Pow<2, t_pow>(sum_lo) / 4,
+		  math::Pow<2, t_pow>(sum_hi));
+  }
 
   /**
    * Calculates closest-to-their-midpoint bounding box distance,
@@ -237,7 +261,7 @@ class DHrectBound {
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
-    DEBUG_ASSERT(dim_ == other.dim_);
+    DEBUG_SAME_INT(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
       double v = b->mid();
@@ -264,7 +288,7 @@ class DHrectBound {
     const DRange *b = other.bounds_;
     index_t mdim = dim_;
 
-    DEBUG_ASSERT(dim_ == other.dim_);
+    DEBUG_SAME_INT(dim_, other.dim_);
 
     for (index_t d = 0; d < mdim; d++) {
       double v1 = b[d].hi - a[d].hi;
@@ -285,7 +309,7 @@ class DHrectBound {
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
-    DEBUG_ASSERT(dim_ == other.dim_);
+    DEBUG_SAME_INT(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
       sum += math::PowAbs<t_pow, 1>(a[d].hi + a[d].lo - b[d].hi - b[d].lo);

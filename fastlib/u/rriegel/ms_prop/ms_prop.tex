@@ -14,8 +14,8 @@
 \DeclareMathOperator*{\argmin}{argmin}
 \DeclareMathOperator*{\argmax}{argmax}
 
-\DeclareMathOperator{\push}{push}
-\DeclareMathOperator{\pop}{pop}
+\DeclareMathOperator{\enqueue}{enqueue}
+\DeclareMathOperator{\dequeue}{dequeue}
 
 \DeclareMathOperator{\tpc}{tpc}
 \DeclareMathOperator{\rng}{rng}
@@ -147,9 +147,9 @@ where $I$ is the indicator function.  This is obviously quadratic when
 implemented as a nested loop, but the dual-tree\footnote{Multi-tree
 algorithms are also possible for $n > 2$.} equivalent in
 Figure~\ref{fig:tpc} is empirically $O(N^{1+\epsilon})$
-\cite{nips2000paper}.  This algorithm achieves it acceleration by {\em
-pruning} work on paired nodes when bounding boxes prove them to be
-entirely outside or within radius $h$ of each other.
+\cite{nips2000paper}.  This algorithm achieves its acceleration by
+{\em pruning} work on paired nodes when bounding boxes prove them to
+be entirely outside or within radius $h$ of each other.
 
 \begin{figure}[tb]
   \begin{center}\fbox{\begin{minipage}{3.1in}
@@ -279,14 +279,14 @@ Figure~\ref{fig:kda}.
   \begin{displaymath}
     \begin{array}{l}
       \xinit \forall q \in \kdroot{Q}, a(q) = \contrib(\kdroot{Q},\kdroot{R}) \\
-      \push(\kdroot{Q},\kdroot{R}) \\
-      \xwhile \pop(Q,R) \quad \text{// Main loop of } \kda
+      \enqueue(\kdroot{Q},\kdroot{R}) \\
+      \xwhile \dequeue(Q,R) \quad \text{// Main loop of } \kda
       \x \xif \lo{a}(Q) > 0 \text{ or } \hi{a}(Q) < 0, \xreturn
       \x \forall q \in Q, a(q) \meq \contrib(Q,R)
       \x \forall q \in \kdleft{Q}, a(q) \peq \contrib(\kdleft{Q},\kdleft{R}) + \contrib(\kdleft{Q},\kdright{R})
       \x \forall q \in \kdright{Q}, a(q) \peq \contrib(\kdright{Q},\kdleft{R}) + \contrib(\kdright{Q},\kdright{R})
-      \x \push(\kdleft{Q},\kdleft{R});\:\push(\kdleft{Q},\kdright{R})
-      \x \push(\kdright{Q},\kdleft{R});\:\push(\kdright{Q},\kdright{R})
+      \x \enqueue(\kdleft{Q},\kdleft{R});\:\enqueue(\kdleft{Q},\kdright{R})
+      \x \enqueue(\kdright{Q},\kdleft{R});\:\enqueue(\kdright{Q},\kdright{R})
       \\ \\
       \xfunction \contrib(Q,R)
       \x \xreturn |R_{C_1}| \cdot \lohi{K_{h_{C_1}}}(Q,R_{C_1}) P(C_1)
