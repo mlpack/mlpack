@@ -376,8 +376,7 @@ class FastKde {
     else if(order_farfield != NULL && *order_farfield >= 0) {
       for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 	densities_e_[q] += 
-	  rstat.farfield_expansion_.EvaluateField(&qset_, q, NULL, 
-						  *order_farfield);
+	  rstat.farfield_expansion_.EvaluateField(qset_, q, *order_farfield);
       }
     }
     // local accumulation pruning
@@ -789,8 +788,7 @@ class FastKde {
     if(qnode->is_leaf()) {
       for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 	densities_l_[q] += stat.more_l_;
-	densities_e_[q] +=
-	  stat.local_expansion_.EvaluateField(&qset_, q, NULL) +
+	densities_e_[q] += stat.local_expansion_.EvaluateField(qset_, q) +
 	  stat.mass_e_;
 	densities_u_[q] += stat.more_u_;
       }

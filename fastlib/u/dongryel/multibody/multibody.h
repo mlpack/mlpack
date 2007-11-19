@@ -223,7 +223,7 @@ public:
     weights_.SetAll(1);
 
     // set the maximum order of approximation here!
-    sea_.Init(14, data_.n_rows());
+    sea_.Init(4, data_.n_rows());
 
     // initialize the multibody kernel and the series expansion objects
     // for all nodes
@@ -568,7 +568,7 @@ private:
 	nodes[2]->stat().get_farfield_coeffs();
       double total_relerr = allowed_err / 
 	(num_tuples * max_ij * max_ik * max_jk);
-      double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0);
+      double rel_err = max(pow(total_relerr + 1, 1.0 / 3.0) - 1, 0.0);
       
       // compute the required number of terms
       int order_ij = coeffs0.OrderForConvertingToLocal(nodes[0]->bound(),
@@ -660,7 +660,7 @@ private:
 	nodes[2]->stat().get_farfield_coeffs();
       double total_relerr = allowed_err / 
 	(num_tuples * max_ik * max_jk);
-      double rel_err = max(pow(total_relerr + 1, 1.0 / 2.0) - 1, 0);
+      double rel_err = max(pow(total_relerr + 1, 1.0 / 2.0) - 1, 0.0);
 
       // compute the required number of terms
       int order_ik = -1;
@@ -764,10 +764,10 @@ private:
     if(Prunable(nodes, num_tuples, &allowed_err)) {
       return;
     }
-    //else if(PrunableSeriesExpansion2(nodes, num_tuples, allowed_err)) {
-    //NumPrunes_++;
-    //return;
-    //}
+    else if(PrunableSeriesExpansion2(nodes, num_tuples, allowed_err)) {
+      NumPrunes_++;
+      return;
+    }
 
     // figure out which ones are non-leaves
     non_leaf_indices_.Resize(0);

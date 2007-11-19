@@ -1,8 +1,7 @@
 #include "fastlib/fastlib_int.h"
 #include "pca_tree.h"
-#include "spill_kdtree.h"
 
-typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, PCAStat> Tree;
+typedef BinarySpaceTree<DHrectBound<2>, Matrix, PCAStat> Tree;
 
 void PCA(const Matrix &data) {
   
@@ -38,8 +37,7 @@ int main(int argc, char *argv[]) {
   Matrix data_;
   data_.Own(&(dataset_.matrix()));
   int leaflen = fx_param_int(NULL, "leaflen", 20);
-  Tree *root_ = 
-    proximity::MakeSpillKdTreeMidpoint<Tree>(data_, leaflen, NULL);
+  Tree *root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen, NULL);
 
   // recursively computed PCA
   //printf("Recursive PCA\n");

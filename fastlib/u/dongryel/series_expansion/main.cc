@@ -53,7 +53,7 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   // evaluate the series expansion
   printf("Evaluated the expansion at (%g %g) is %g...\n",
 	 evaluate_here[0], evaluate_here[1],
-	 se.EvaluateField(NULL, -1, &evaluate_here));
+	 se.EvaluateField(evaluate_here, 2));
 
   // check with exhaustive method
   double exhaustive_sum = 0;
@@ -133,7 +133,7 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   // squared of 0.5
   se.Init(bandwidth, center, &sea);
 
-  // compute up to 4-th order multivariate polynomial.
+  // compute up to 10-th order multivariate polynomial.
   se.AccumulateCoeffs(data, weights, begin, end, 10);
 
   // print out the objects
@@ -142,7 +142,7 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   // evaluate the series expansion
   printf("Evaluated the expansion at (%g %g) is %g...\n",
 	 evaluate_here[0], evaluate_here[1],
-	 se.EvaluateField(NULL, -1, &evaluate_here));
+	 se.EvaluateField(evaluate_here, 10));
 
   // check with exhaustive method
   double exhaustive_sum = 0;
@@ -198,7 +198,7 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   // evaluate the series expansion
   printf("Evaluated the expansion at (%g %g) is %g...\n",
 	 evaluate_here[0], evaluate_here[1],
-         se.EvaluateField(NULL, -1, &evaluate_here));
+         se.EvaluateField(evaluate_here));
   
   // check with exhaustive method
   double exhaustive_sum = 0;
@@ -333,9 +333,9 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   Vector evaluate_here;
   evaluate_here.Init(2);
   evaluate_here[0] = evaluate_here[1] = 3.75;
-  double original_sum = se.EvaluateField(NULL, -1, &evaluate_here);
+  double original_sum = se.EvaluateField(evaluate_here);
   double translated_sum = 
-    se_translated.EvaluateField(NULL, -1, &evaluate_here);
+    se_translated.EvaluateField(evaluate_here);
 
   printf("Evaluating both expansions at (%g %g)...\n", evaluate_here[0],
 	 evaluate_here[1]);
@@ -585,7 +585,7 @@ int main(int argc, char *argv[]) {
   Matrix data;
   Vector weights;
   int begin, end;
-  
+
   // read the dataset and get the matrix
   if (!PASSED(dataset.InitFromFile(datafile_name))) {
     fprintf(stderr, "main: Couldn't open file '%s'.\n", datafile_name);
@@ -596,7 +596,7 @@ int main(int argc, char *argv[]) {
   weights.SetAll(1);
   begin = 0; end = data.n_cols();
 
-  // unit tests begin here!
+  // unit tests begin here!  
   DEBUG_ASSERT(TestInitAux(data) == 1);
   DEBUG_ASSERT(TestEvaluateFarField(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestEvaluateLocalField(data, weights, begin, end) == 1);
