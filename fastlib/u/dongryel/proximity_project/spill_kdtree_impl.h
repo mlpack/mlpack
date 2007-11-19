@@ -148,13 +148,13 @@ namespace tree_spill_kdtree_private {
 	right_begin = split_col;
 	left_count = split_col - node->begin();
 	right_count = node->begin() + node->count() - split_col;
-
-	if(left_count > matrix.n_rows() + 1 &&
-	   right_count > matrix.n_rows() + 1) {
-
-	  left_count += matrix.n_rows() + 1;
-	  right_count += matrix.n_rows() + 1;
-	  right_begin -= (matrix.n_rows() + 1);
+	
+	if(left_count > (int) ceil(0.5 * (matrix.n_rows() + 1))&&
+	   right_count > (int) floor(0.5 * (matrix.n_rows() + 1))) {
+	  
+	  left_count += (int) floor(0.5 * (matrix.n_rows() + 1));
+	  right_count += (int) ceil(0.5 * (matrix.n_rows() + 1));
+	  right_begin -= (int) ceil(0.5 * (matrix.n_rows() + 1));
 
 	  DEBUG_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
 		    node->begin(), split_col,

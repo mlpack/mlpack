@@ -5,6 +5,40 @@ class PCAStat {
   
  private:
 
+  inline success_t FullSVDInit(const Matrix &A, Vector *s, Matrix *U, 
+			       Matrix *VT) {
+    f77_integer k = min(A.n_rows(), A.n_cols());
+    s->Init(k);
+    U->Init(A.n_rows(), A.n_rows());
+    VT->Init(A.n_cols(), A.n_cols());
+    Matrix tmp;
+    tmp.Copy(A);
+    
+    f77_integer info;
+    f77_integer m = tmp.n_rows();
+    f77_integer n = tmp.n_cols();
+    f77_integer iwork[8 * k];
+    const char *job = "A";
+    double d; // for querying optimal work size
+    
+    F77_FUNC(dgesdd)(job, m, n, tmp.ptr(), m,
+		     s->ptr(), U->ptr(), m, VT->ptr(), n, &d, -1, 
+		     iwork, &info);
+    {
+      f77_integer lwork = (f77_integer)d;
+      // work for DGESDD can be large, we really do need to malloc it
+      double *work = mem::Alloc<double>(lwork);
+      
+      F77_FUNC(dgesdd)(job, m, n, tmp.ptr(), m,
+		       s->ptr(), U->ptr(), m, VT->ptr(), n, work, 
+		       lwork, iwork, &info);
+      
+      mem::Free(work);
+    }
+
+    return SUCCESS_FROM_LAPACK(info);
+  }
+
   void AddVectorToMatrix(Matrix &A, const Vector &v, Matrix &R) {
     
     for(index_t i = 0; i < A.n_rows(); i++) {
@@ -46,6 +80,15 @@ class PCAStat {
     Matrix intermediate;
     la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
     la::MulInit(ro_VT_trans, intermediate, A_inv);
+  }
+
+  void ComputeColumnSumVector(const Matrix &A, Vector &A_sum) {    
+    A_sum.SetZero();
+    for(index_t i = 0; i < A.n_cols(); i++) {
+      Vector s;
+      A.MakeColumnVector(i, &s);
+      la::AddTo(s, &A_sum);
+    }
   }
 
   void ComputeColumnMeanVector(const Matrix &A, int start, int count,
@@ -97,11 +140,11 @@ class PCAStat {
 
  public:
 
-  int begin_;
+  int start_;
   
   int count_;
   
-  Matrix orig_mean_centered_;
+  Matrix mean_centered_;
 
   Matrix pca_transformed_;
   
@@ -109,159 +152,87 @@ class PCAStat {
 
   /** Initialize the statistics */
   void Init() {
-    orig_mean_centered_.Init(0, 0);
-    pca_transformed_.Init(0, 0);
-    means_.Init(0);
   }
 
   /** compute PCA exhaustively for leaf nodes */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
 
-    begin_ = start;
+    // set the starting index and the count
+    start_ = start;
     count_ = count;
 
     // copy the mean-centered submatrix of the points in this leaf node
-    orig_mean_centered_.Destruct();
-    pca_transformed_.Destruct();
-    means_.Destruct();
-
-    orig_mean_centered_.Init(dataset.n_rows(), count);
+    mean_centered_.Init(dataset.n_rows(), count);
     means_.Init(dataset.n_rows());
 
     // extract the relevant part of the dataset and mean-center it
-    ExtractSubMatrix(dataset, start, count, orig_mean_centered_);
-
-    ComputeColumnMeanVector(orig_mean_centered_, means_);
-    //SubtractVectorFromMatrix(orig_mean_centered_, means_, orig_mean_centered_);
+    ExtractSubMatrix(dataset, start, count, mean_centered_);
+    ComputeColumnMeanVector(mean_centered_, means_);
+    SubtractVectorFromMatrix(mean_centered_, means_, mean_centered_);
 
     // compute PCA on the extracted submatrix
     Matrix U, VT;
     Vector s_values;
-    la::SVDInit(orig_mean_centered_, &s_values, &U, &VT);
+    la::SVDInit(mean_centered_, &s_values, &U, &VT);
 
     // reduce the dimension in half
     Matrix U_trunc;
-    int new_dimension = U.n_cols();
-    U_trunc.Init(new_dimension, U.n_rows());
-    for(index_t i = 0; i < new_dimension; i++) {
-      Vector s;
-      U.MakeColumnVector(i, &s);
-      
-      for(index_t j = 0; j < U.n_rows(); j++) {
-	U_trunc.set(i, j, s[j]);
-      }
-    }
-    la::MulInit(U_trunc, orig_mean_centered_, &pca_transformed_);
+    la::TransposeInit(U, &U_trunc);
 
-    // this shows how to recover global coordinates
-    /*
-    Matrix recovered_;
-    la::MulTransAInit(U_trunc, pca_transformed_, &recovered_);
-    AddVectorToMatrix(recovered_, means_, recovered_);
-    printf("Recovered...\n");
-    recovered_.PrintDebug();
-    exit(0);
-    */
+    // transform coordinates
+    la::MulInit(U_trunc, mean_centered_, &pca_transformed_);
 
-    printf("Singular values...\n");
-    s_values.PrintDebug();
+    printf("Leaf exhaustive:\n");
+    pca_transformed_.PrintDebug();
   }
 
   /** 
-   * domain-decomposition based PCA merging using one-sided affine
+   * domain-decomposition based PCA merging using two-sided affine
    * transformation
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const PCAStat& left_stat, const PCAStat& right_stat) {
 
-    begin_ = start;
+    int dim = dataset.n_rows();
+
+    double factor1 = ((double) left_stat.count_ + right_stat.count_) /
+      ((double) count);
+    double factor2 = 1.0 - factor1;
+    double factor3 = sqrt(((double) left_stat.count_ * right_stat.count_) /
+			  ((double) left_stat.count_ + right_stat.count_));
+
+    // set the starting index and the number of points in this node
+    start_ = start;
     count_ = count;
 
-    // destory objects and reinitialize
-    orig_mean_centered_.Destruct();
-    pca_transformed_.Destruct();
-    means_.Destruct();
-    orig_mean_centered_.Init(dataset.n_rows(), count);
-    means_.Init(dataset.n_rows());
+    // compute the combined mean using the left and the right means    
+    means_.Copy(left_stat.means_);
+    la::Scale(factor1, &means_);
+    la::AddExpert(factor2, right_stat.means_, &means_);
+    
+    // span that includes the difference in the two mean vectors and
+    // the subspace spanned by the right node
+    Matrix perturbation;
+    perturbation.Init(dim, right_stat.count_ + 1);
+    for(int i = 0; i < dim; i++) {
 
-    // compute the entire mean and the difference between the left and
-    // the right means
-    ComputeColumnMeanVector(dataset, start, count, means_);
-
-    // copy the two overlap regions
-    Matrix left_pca_transformed;
-    Matrix right_pca_transformed;
-    Matrix left_overlap;
-    Matrix right_overlap;
-    Matrix left_overlap_meancentered;
-    Matrix right_overlap_meancentered;
-    left_pca_transformed.Alias(left_stat.pca_transformed_);
-    right_pca_transformed.Alias(right_stat.pca_transformed_);
-
-    int num_overlap = left_stat.begin_ + left_stat.count_ -
-      right_stat.begin_;
-    left_overlap.Init(left_pca_transformed.n_rows(),num_overlap);
-    right_overlap.Init(right_pca_transformed.n_rows(), num_overlap);
-    left_overlap_meancentered.Init(left_pca_transformed.n_rows(),
-				   num_overlap);
-    right_overlap_meancentered.Init(right_pca_transformed.n_rows(),
-				    num_overlap);
-    ExtractSubMatrix(left_pca_transformed, 
-		     left_pca_transformed.n_cols() - num_overlap,
-		     num_overlap, left_overlap);
-    ExtractSubMatrix(right_pca_transformed, 0, num_overlap, right_overlap);
-
-    // compute the column means of the left overlap and the right overlap
-    Vector left_overlap_means;
-    Vector right_overlap_means;
-    left_overlap_means.Init(left_overlap.n_rows());
-    right_overlap_means.Init(right_overlap.n_rows());
-    ComputeColumnMeanVector(left_overlap, left_overlap_means);
-    ComputeColumnMeanVector(right_overlap, right_overlap_means);
-
-    // compute mean centered left and right overlap regions
-    SubtractVectorFromMatrix(left_overlap, left_overlap_means,
-			     left_overlap_meancentered);
-    SubtractVectorFromMatrix(right_overlap, right_overlap_means,
-			     right_overlap_meancentered);
-
-    // get the pseudoinverse of the mean-centered right overlap
-    Matrix right_overlap_meancentered_inv;
-    PseudoInverse(right_overlap_meancentered, &right_overlap_meancentered_inv);
-
-    // this is the transformation matrix from right overlap to left overlap
-    Matrix F;
-    la::MulInit(left_overlap_meancentered, right_overlap_meancentered_inv,
-		&F);
-
-    // use the transformation matrix to map the right side local coordinate
-    // to the left side local coordinate. left local coordinates that
-    // are not in the overlap region stay the same
-    pca_transformed_.Init(left_pca_transformed.n_rows(), count);
-    pca_transformed_.SetZero();
-    for(index_t i = 0; i < left_pca_transformed.n_cols() - num_overlap; i++) {
-      Vector sl, d;
-      left_pca_transformed.MakeColumnVector(i, &sl);
-      pca_transformed_.MakeColumnVector(i, &d);
-      d.CopyValues(sl);
-    }
-    Vector right_overlap_means_transformed;
-    la::MulInit(F, right_overlap_means, &right_overlap_means_transformed);
-    for(index_t i = 0; i < right_pca_transformed.n_rows(); i++) {
-      for(index_t j = 0; j < right_pca_transformed.n_cols(); j++) {
-	double dotprod = 0;
-	for(index_t k = 0; k < F.n_cols(); k++) {
-	  dotprod += F.get(i, k) * right_pca_transformed.get(k, j);
-	}
-	dotprod += (left_overlap_means[i] - 
-		    right_overlap_means_transformed[i]);
-	pca_transformed_.set(i, pca_transformed_.n_cols() - 		     
-			     right_pca_transformed.n_cols() + j, dotprod);
+      for(int j = 0; j < right_stat.count_; j++) {
+	perturbation.set(i, j, right_stat.mean_centered_.get(i, j) +
+			 right_stat.means_[i] - means_[i]);
       }
+      perturbation.set(right_stat.count_, i, factor3 * 
+		       (left_stat.means_[i] - right_stat.means_[i]));
     }
+    
+    // apply QR decomposition to get orthonormal basis of the span above
+    Matrix q, r;
+    la::QRInit(perturbation, &q, &r);
+
+    // combined system
+    
   }
 
-  PCAStat() { Init(); }
+  PCAStat() { }
 
   ~PCAStat() { }
 

@@ -2,6 +2,7 @@
 #include "fft_kde.h"
 #include "fgt_kde.h"
 #include "kde.h"
+#include "thor_kde.h"
 
 int main(int argc, char *argv[]) {
 

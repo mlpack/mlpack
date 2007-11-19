@@ -49,6 +49,7 @@ binrule(
     deplibs = [":fft_kde",
                ":fgt_kde",
                ":kde",
+               ":thor_kde",
                "u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )

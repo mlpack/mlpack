@@ -107,8 +107,8 @@ class MultFarFieldExpansion {
   /**
    * Evaluates the far-field coefficients at the given point
    */
-  double EvaluateField(Matrix* data=NULL, int row_num=-1,
-		       Vector* x_q=NULL, int order=-1) const;
+  double EvaluateField(const Matrix& data, int row_num, int order) const;
+  double EvaluateField(const Vector& x_q, int order) const;
   
   /**
    * Evaluates the two-way convolution mixed with exhaustive computations
@@ -294,7 +294,7 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::RefineCoeffs
 
 template<typename TKernel, typename TKernelAux>
 double MultFarFieldExpansion<TKernel, TKernelAux>::
-  EvaluateField(Matrix* data, int row_num, Vector* x_q, int order) const {
+  EvaluateField(const Matrix& data, int row_num, int order) const {
   
   // dimension
   int dim = sea_->get_dimension();
@@ -324,13 +324,68 @@ double MultFarFieldExpansion<TKernel, TKernelAux>::
 
   // compute (x_q - x_R) / (sqrt(2h^2))
   for(index_t d = 0; d < dim; d++) {
-    if(x_q == NULL) {
-      x_q_minus_x_R[d] = (data->get(d, row_num) - center_[d]) / 
-	bandwidth_factor;
+    x_q_minus_x_R[d] = (data.get(d, row_num) - center_[d]) / bandwidth_factor;
+  }
+
+  // compute deriative maps based on coordinate difference.
+  ka_.ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
+  
+  // get the order of traversal for the given order of approximation
+  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+
+  // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
+  for(index_t j = 0; j < total_num_coeffs; j++) {
+    
+    int index = traversal_order[j];
+    ArrayList<int> mapping = sea_->get_multiindex(index);
+    double arrtmp = ka_.ComputePartialDerivative(derivative_map, mapping);
+    double prod = coeffs_[index] * arrtmp;
+    
+    if(prod > 0) {
+      pos_multipole_sum += prod;
     }
     else {
-      x_q_minus_x_R[d] = ((*x_q)[d] - center_[d]) / bandwidth_factor;
+      neg_multipole_sum += prod;
     }
+  }
+
+  multipole_sum = pos_multipole_sum + neg_multipole_sum;
+  return multipole_sum;
+}
+
+template<typename TKernel, typename TKernelAux>
+double MultFarFieldExpansion<TKernel, TKernelAux>::
+  EvaluateField(const Vector& x_q, int order) const {
+  
+  // dimension
+  int dim = sea_->get_dimension();
+
+  // total number of coefficients
+  int total_num_coeffs = sea_->get_total_num_coeffs(order);
+
+  // square root times bandwidth
+  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+  
+  // the evaluated sum
+  double pos_multipole_sum = 0;
+  double neg_multipole_sum = 0;
+  double multipole_sum = 0;
+  
+  // computed derivative map
+  Matrix derivative_map;
+  derivative_map.Init(dim, order_ + 1);
+
+  // temporary variable
+  Vector arrtmp;
+  arrtmp.Init(total_num_coeffs);
+
+  // (x_q - x_R) scaled by bandwidth
+  Vector x_q_minus_x_R;
+  x_q_minus_x_R.Init(dim);
+
+  // compute (x_q - x_R) / (sqrt(2h^2))
+  for(index_t d = 0; d < dim; d++) {
+    x_q_minus_x_R[d] = (x_q[d] - center_[d]) / bandwidth_factor;
   }
 
   // compute deriative maps based on coordinate difference.

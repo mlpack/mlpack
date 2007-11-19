@@ -17,6 +17,13 @@ binrule(
                "fastlib:fastlib_int"]
     )
 
+binrule(
+    name = "kfold_splitter_bin",
+    sources = ["kfold_splitter.cc"],
+    headers = ["kfold_splitter.h"],
+    deplibs = ["fastlib:fastlib_int"]
+    )
+
 # to build:
 # 1. make sure have environment variables set up:
 #    $ source /full/path/to/fastlib/script/fl-env /full/path/to/fastlib

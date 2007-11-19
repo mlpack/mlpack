@@ -97,8 +97,8 @@ class MultLocalExpansion {
   /**
    * Evaluates the local coefficients at the given point
    */
-  double EvaluateField(Matrix* data=NULL, int row_num=-1,
-		       Vector* x_q=NULL) const;
+  double EvaluateField(const Matrix& data, int row_num) const;
+  double EvaluateField(const Vector& x_q) const;
   
   /**
    * Initializes the current local expansion object with the given
@@ -241,7 +241,7 @@ template<typename TKernel, typename TKernelAux>
 
 template<typename TKernel, typename TKernelAux>
   double MultLocalExpansion<TKernel, TKernelAux>::
-  EvaluateField(Matrix* data, int row_num, Vector* x_q) const {
+  EvaluateField(const Matrix& data, int row_num) const {
     
   // if there are no local coefficients, then return 0
   if(order_ < 0) {
@@ -270,14 +270,79 @@ template<typename TKernel, typename TKernelAux>
   
   // compute (x_q - x_Q) / (sqrt(2h^2))
   for(index_t i = 0; i < dim; i++) {
+    x_Q_to_x_q[i] = (data.get(i, row_num) - center_[i]) / bandwidth_factor;
+  }
+  
+  for(index_t i = 0; i < dim; i++)
+    heads[i] = 0;
+  heads[dim] = MAXINT;
+
+  tmp[0] = 1.0;
+
+  // get the order of traversal for the given order of approximation
+  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+
+  for(index_t i = 1; i < total_num_coeffs; i++) {
     
-    if(data == NULL) {
-      x_Q_to_x_q[i] = ((*x_q)[i] - center_[i]) / bandwidth_factor;
+    int index = traversal_order[i];
+    ArrayList<int> &lower_mappings = sea_->lower_mapping_index_[index];
+    
+    // from the direct descendant, recursively compute the multipole moments
+    int direct_ancestor_mapping_pos = 
+      lower_mappings[lower_mappings.size() - 2];
+    int position = 0;
+    ArrayList<int> &mapping = sea_->multiindex_mapping_[index];
+    ArrayList<int> &direct_ancestor_mapping = 
+      sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
+    for(index_t i = 0; i < dim; i++) {
+      if(mapping[i] != direct_ancestor_mapping[i]) {
+	position = i;
+	break;
+      }
     }
-    else {
-      x_Q_to_x_q[i] = (data->get(i, row_num) - center_[i]) / 
-	bandwidth_factor;
-    }
+    tmp[index] = tmp[direct_ancestor_mapping_pos] * x_Q_to_x_q[position];
+  }
+
+  for(index_t i = 0; i < total_num_coeffs; i++) {
+    int index = traversal_order[i];
+    sum += coeffs_[index] * tmp[index];
+  }
+
+  return sum;
+}
+
+template<typename TKernel, typename TKernelAux>
+  double MultLocalExpansion<TKernel, TKernelAux>::
+  EvaluateField(const Vector& x_q) const {
+    
+  // if there are no local coefficients, then return 0
+  if(order_ < 0) {
+    return 0;
+  }
+
+  // total number of coefficient
+  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+
+  // number of dimensions
+  int dim = sea_->get_dimension();
+
+  // evaluated sum to be returned
+  double sum = 0;
+  
+  // sqrt two bandwidth
+  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+
+  // temporary variable
+  Vector x_Q_to_x_q;
+  x_Q_to_x_q.Init(dim);
+  Vector tmp;
+  tmp.Init(sea_->get_max_total_num_coeffs());
+  ArrayList<int> heads;
+  heads.Init(dim + 1);
+  
+  // compute (x_q - x_Q) / (sqrt(2h^2))
+  for(index_t i = 0; i < dim; i++) {
+    x_Q_to_x_q[i] = (x_q[i] - center_[i]) / bandwidth_factor;
   }
   
   for(index_t i = 0; i < dim; i++)
