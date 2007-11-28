@@ -181,11 +181,31 @@ class PCAStat {
     Matrix VT;
     Vector svalues;
     la::SVDInit(mean_centered_, &svalues, &eigenvectors_, &VT);
-    eigenvalues_.Init(svalues.length(), svalues.length());
-    eigenvalues_.SetZero();
+
+    // find out how many eigenvalues to keep
+    int eigencount = 0;
     for(index_t i = 0; i < svalues.length(); i++) {
-      eigenvalues_.set(i, i, svalues[i] * svalues[i] / ((double) count_));
+      if(svalues[i] > epsilon_) {
+	eigencount++;
+      }
     }
+    eigenvalues_.Init(eigencount, eigencount);
+    eigenvalues_.SetZero();
+
+    // relationship between the singular value and the eigenvalue is
+    // enforced here
+    for(index_t i = 0, index = 0; i < svalues.length(); i++) {
+      if(svalues[i] > epsilon_) {
+	Vector s, d;
+	eigenvalues_.set(index, index, 
+			 svalues[i] * svalues[i] / ((double) count_));
+	eigenvectors_.MakeColumnVector(i, &s);
+	eigenvectors_.MakeColumnVector(index, &d);
+	d.CopyValues(s);
+	index++;
+      }
+    }
+    eigenvectors_.ResizeNoalias(eigencount);
 
     // transform coordinates
     la::MulTransAInit(eigenvectors_, mean_centered_, &pca_transformed_);
@@ -400,11 +420,6 @@ class PCAStat {
     Matrix rotation, combined_subspace;
     Vector evalues;
     la::EigenvectorsInit(eigensystem, &evalues, &rotation);
-    eigenvalues_.Init(evalues.length(), evalues.length());
-    eigenvalues_.SetZero();
-    for(index_t i = 0; i < evalues.length(); i++) {
-      eigenvalues_.set(i, i, evalues[i]);
-    }
     combined_subspace.Copy(left_stat.eigenvectors_);
     combined_subspace.ResizeNoalias(combined_subspace.n_cols() + 
 				    leftside_nullspace_basis.n_cols());
@@ -419,6 +434,30 @@ class PCAStat {
     // rotate the left eigenbasis plus the null space of the leftside to
     // get the global eigenbasis
     la::MulInit(combined_subspace, rotation, &eigenvectors_);
+
+    // find out how many eigenvalues to keep
+    int eigencount = 0;
+    for(index_t i = 0; i < evalues.length(); i++) {
+      if(evalues[i] > epsilon_) {
+	eigencount++;
+      }
+    }
+    eigenvalues_.Init(eigencount, eigencount);
+    eigenvalues_.SetZero();
+
+    // relationship between the singular value and the eigenvalue is
+    // enforced here
+    for(index_t i = 0, index = 0; i < evalues.length(); i++) {
+      if(evalues[i] > epsilon_) {
+	Vector s, d;
+	eigenvalues_.set(index, index, evalues[i]);
+	eigenvectors_.MakeColumnVector(i, &s);
+	eigenvectors_.MakeColumnVector(index, &d);
+	d.CopyValues(s);
+	index++;
+      }
+    }
+    eigenvectors_.ResizeNoalias(eigencount);
 
     // compute the weighted average of the two means
     double factor1 = ((double) left_stat.count_) / ((double) count_);
