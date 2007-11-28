@@ -5,6 +5,8 @@ class PCAStat {
   
  private:
 
+  static const double epsilon_ = 0.00001;
+
   inline success_t FullSVDInit(const Matrix &A, Vector *s, Matrix *U, 
 			       Matrix *VT) {
     f77_integer k = min(A.n_rows(), A.n_cols());
@@ -176,16 +178,29 @@ class PCAStat {
 
     // compute PCA on the extracted submatrix
     Matrix VT;
-    Vector evalues;
-    la::SVDInit(mean_centered_, &evalues, &eigenvectors_, &VT);
-    eigenvalues_.Init(evalues.length(), evalues.length());
+    Vector svalues;
+    la::SVDInit(mean_centered_, &svalues, &eigenvectors_, &VT);
+    eigenvalues_.Init(svalues.length(), svalues.length());
     eigenvalues_.SetZero();
-    for(index_t i = 0; i < evalues.length(); i++) {
-      eigenvalues_.set(i, i, evalues[i]);
+    for(index_t i = 0; i < svalues.length(); i++) {
+      eigenvalues_.set(i, i, svalues[i] * svalues[i]);
     }
 
     // transform coordinates
     la::MulTransAInit(eigenvectors_, mean_centered_, &pca_transformed_);
+
+    // check with the covariance matrix method
+    Matrix covariance;
+    la::MulTransBInit(mean_centered_, mean_centered_, &covariance);
+    Vector evalues;
+    Matrix evectors;
+    la::EigenvectorsInit(covariance, &evalues, &evectors);
+    evalues.PrintDebug();
+    evectors.PrintDebug();
+
+    eigenvalues_.PrintDebug();
+    eigenvectors_.PrintDebug();
+    exit(0);
   }
 
   /**
@@ -208,6 +223,12 @@ class PCAStat {
     right_eigenbasis.Alias(right_stat.eigenvectors_);
     left_means.Alias(left_stat.means_);
     right_means.Alias(right_stat.means_);
+
+    printf("left means:\n");
+    left_means.PrintDebug();
+    printf("right means:\n");
+    right_means.PrintDebug();
+
     la::SubInit(right_means, left_means, mean_diff);
 
     // compute the projection of the right eigenbasis onto the left
@@ -244,7 +265,7 @@ class PCAStat {
 	(i, &residue_vector);
       euclidean_norm = la::LengthEuclidean(residue_vector);
 
-      if(euclidean_norm > 0.001) {
+      if(euclidean_norm > epsilon_) {
 	Vector dest;
 	span_set.ResizeNoalias(span_set.n_cols() + 1);
 	span_set.MakeColumnVector(span_set.n_cols() - 1, &dest);
@@ -253,7 +274,7 @@ class PCAStat {
     }
     double euclidean_norm_of_projection_residue_of_mean_diff =
       la::LengthEuclidean(projection_residue_of_mean_diff);
-    if(euclidean_norm_of_projection_residue_of_mean_diff > 0.001) {
+    if(euclidean_norm_of_projection_residue_of_mean_diff > epsilon_) {
       Vector dest;
       span_set.ResizeNoalias(span_set.n_cols() + 1);
       span_set.MakeColumnVector(span_set.n_cols() - 1, &dest);
@@ -299,8 +320,8 @@ class PCAStat {
 			leftside_nullspace_basis.n_cols());
     }
     else {
-      eigensystem->Init(left_eigenvalues.n_rows(),
-			left_eigenvalues.n_rows());
+      eigensystem->Init(left_eigenvalues.n_rows(), left_eigenvalues.n_rows());
+      printf("None needed!\n");
     }
     eigensystem->SetZero();
     
@@ -316,7 +337,8 @@ class PCAStat {
 			 projection_of_mean_diff[j]);
       }
     }
-    
+
+    // handling the top right, bottom left, and bottom right
     if(leftside_nullspace_basis.n_cols() > 0) {
       Matrix proj_rightside_eigenbasis_on_leftside_nullspace;
       Vector proj_mean_diff_on_leftside_nullspace;
@@ -385,6 +407,9 @@ class PCAStat {
 				  &leftside_nullspace_basis,
 				  &projection_of_right_eigenbasis,
 				  &mean_diff, &projection_of_mean_diff);
+
+    printf("mean difference projection\n");
+    projection_of_mean_diff.PrintDebug();
     SetupEigensystem(left_stat, right_stat,
 		     leftside_nullspace_basis,
 		     projection_of_right_eigenbasis,
