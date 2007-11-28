@@ -173,6 +173,7 @@ class PCAStat {
 
     // extract the relevant part of the dataset and mean-center it
     ExtractSubMatrix(dataset, start, count, mean_centered_);
+
     ComputeColumnMeanVector(mean_centered_, means_);
     SubtractVectorFromMatrix(mean_centered_, means_, mean_centered_);
 
@@ -183,24 +184,11 @@ class PCAStat {
     eigenvalues_.Init(svalues.length(), svalues.length());
     eigenvalues_.SetZero();
     for(index_t i = 0; i < svalues.length(); i++) {
-      eigenvalues_.set(i, i, svalues[i] * svalues[i]);
+      eigenvalues_.set(i, i, svalues[i] * svalues[i] / ((double) count_));
     }
 
     // transform coordinates
     la::MulTransAInit(eigenvectors_, mean_centered_, &pca_transformed_);
-
-    // check with the covariance matrix method
-    Matrix covariance;
-    la::MulTransBInit(mean_centered_, mean_centered_, &covariance);
-    Vector evalues;
-    Matrix evectors;
-    la::EigenvectorsInit(covariance, &evalues, &evectors);
-    evalues.PrintDebug();
-    evectors.PrintDebug();
-
-    eigenvalues_.PrintDebug();
-    eigenvectors_.PrintDebug();
-    exit(0);
   }
 
   /**
@@ -224,11 +212,7 @@ class PCAStat {
     left_means.Alias(left_stat.means_);
     right_means.Alias(right_stat.means_);
 
-    printf("left means:\n");
-    left_means.PrintDebug();
-    printf("right means:\n");
-    right_means.PrintDebug();
-
+    // compute mean difference between two eigenspaces
     la::SubInit(right_means, left_means, mean_diff);
 
     // compute the projection of the right eigenbasis onto the left
@@ -284,7 +268,6 @@ class PCAStat {
     if(span_set.n_cols() > 0) {
       Matrix dummy;
       la::QRInit(span_set, leftside_nullspace_basis, &dummy);
-      span_set.PrintDebug();
     }
     else {
       leftside_nullspace_basis->Init(dim, 0);
@@ -321,7 +304,6 @@ class PCAStat {
     }
     else {
       eigensystem->Init(left_eigenvalues.n_rows(), left_eigenvalues.n_rows());
-      printf("None needed!\n");
     }
     eigensystem->SetZero();
     
@@ -329,6 +311,7 @@ class PCAStat {
     Matrix top_left, top_tmp;
     la::MulInit(projection_of_right_eigenbasis, right_eigenvalues, &top_tmp);
     la::MulTransBInit(top_tmp, projection_of_right_eigenbasis, &top_left);
+
     for(index_t i = 0; i < left_eigenvalues.n_rows(); i++) {
       for(index_t j = 0; j < left_eigenvalues.n_cols(); j++) {
 	eigensystem->set(i, j, factor1 * left_eigenvalues.get(i, j) +
@@ -408,8 +391,6 @@ class PCAStat {
 				  &projection_of_right_eigenbasis,
 				  &mean_diff, &projection_of_mean_diff);
 
-    printf("mean difference projection\n");
-    projection_of_mean_diff.PrintDebug();
     SetupEigensystem(left_stat, right_stat,
 		     leftside_nullspace_basis,
 		     projection_of_right_eigenbasis,
@@ -434,18 +415,25 @@ class PCAStat {
 					 &dest);
       dest.CopyValues(source);
     }
-    la::MulInit(combined_subspace, rotation, &eigenvectors_);
-    eigenvectors_.PrintDebug();
-    eigenvalues_.PrintDebug();
 
-    // debugging
-    eigenvectors_.Destruct();
-    eigenvalues_.Destruct();
-    printf("Exhaustively checking...\n");
-    Init(dataset, start, count);
-    eigenvectors_.PrintDebug();
-    eigenvalues_.PrintDebug();
-    exit(0);
+    // rotate the left eigenbasis plus the null space of the leftside to
+    // get the global eigenbasis
+    la::MulInit(combined_subspace, rotation, &eigenvectors_);
+
+    // compute the weighted average of the two means
+    double factor1 = ((double) left_stat.count_) / ((double) count_);
+    double factor2 = ((double) right_stat.count_) / ((double) count_);
+    means_.Copy(left_stat.means_);
+    la::Scale(factor1, &means_);
+    la::AddExpert(factor2, right_stat.means_, &means_);
+
+    // extract the relevant part of the dataset and mean-center it
+    mean_centered_.Init(dataset.n_rows(), count);
+    ExtractSubMatrix(dataset, start, count, mean_centered_);
+    SubtractVectorFromMatrix(mean_centered_, means_, mean_centered_);
+
+    // transform coordinates
+    la::MulTransAInit(eigenvectors_, mean_centered_, &pca_transformed_);
   }
 
   PCAStat() { }
