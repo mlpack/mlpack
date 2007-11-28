@@ -3,11 +3,27 @@
 
 typedef BinarySpaceTree<DHrectBound<2>, Matrix, PCAStat> Tree;
 
-void PCA(const Matrix &data) {
+void PCA(Matrix &data) {
   
   // compute PCA on the extracted submatrix
   Matrix U, VT;
   Vector s;
+  Vector mean;
+  mean.Init(data.n_rows());
+  
+  mean.SetZero();
+  for(index_t i = 0; i < data.n_cols(); i++) {
+    Vector s;
+    data.MakeColumnVector(i, &s);
+    la::AddTo(s, &mean);
+  }
+  la::Scale(1.0 / ((double) data.n_cols()), &mean);
+  for(index_t i = 0; i < data.n_rows(); i++) {
+    for(index_t j = 0; j < data.n_cols(); j++) {
+      data.set(i, j, data.get(i, j) - mean[i]);
+    }
+  }
+
   la::SVDInit(data, &s, &U, &VT);
 
   // reduce the dimension in half
@@ -26,7 +42,8 @@ void PCA(const Matrix &data) {
   Matrix pca_transformed;
   la::MulInit(U_trunc, data, &pca_transformed);
 
-  pca_transformed.PrintDebug();
+  U.PrintDebug();
+  s.PrintDebug();
 }
 
 int main(int argc, char *argv[]) {
@@ -40,12 +57,13 @@ int main(int argc, char *argv[]) {
   Tree *root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen, NULL);
 
   // recursively computed PCA
-  //printf("Recursive PCA\n");
-  //(root_->stat().pca_transformed_).PrintDebug();
+  printf("Recursive PCA\n");
+  (root_->stat().eigenvectors_).PrintDebug();
+  (root_->stat().eigenvalues_).PrintDebug();
 
   // exhaustively compute PCA
-  //printf("Exhaustive PCA\n");
-  //PCA(data_);
+  printf("Exhaustive PCA\n");
+  PCA(data_);
 
   fx_done();
   return 0;
