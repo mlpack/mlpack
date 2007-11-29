@@ -3,8 +3,8 @@ librule(
     name = "proximity_project",              # this line can be safely omitted
     sources = [],                            # files that must be compiled
     headers = ["pca_tree.h",
-               "spill_kdtree.h",
-               "spill_kdtree_impl.h",
+               "gen_kdtree.h",
+               "gen_kdtree_impl.h",
                "general_spacetree.h"],       # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # dependency
     )

@@ -2,26 +2,25 @@
 
 #include "fastlib/fastlib_int.h"
 
-namespace tree_spill_kdtree_private {
+namespace tree_gen_kdtree_private {
 
   template<typename TBound>
-  void FindBoundFromMatrix(const Matrix& matrix,
-      index_t first, index_t count, TBound *bounds) {
+    void FindBoundFromMatrix(const Matrix& matrix,
+			     index_t first, index_t count, TBound *bounds) {
     index_t end = first + count;
     for (index_t i = first; i < end; i++) {
       Vector col;
-
+      
       matrix.MakeColumnVector(i, &col);
       *bounds |= col;
     }
   }
-
+  
   template<typename TBound>
-  index_t MatrixPartition(
-      Matrix& matrix, index_t dim, double splitvalue,
-      index_t first, index_t count,
-      TBound* left_bound, TBound* right_bound,
-      index_t *old_from_new) {
+    index_t MatrixPartition(Matrix& matrix, index_t dim, double splitvalue,
+			    index_t first, index_t count,
+			    TBound* left_bound, TBound* right_bound,
+			    index_t *old_from_new) {
     index_t left = first;
     index_t right = first + count - 1;
     
@@ -66,34 +65,19 @@ namespace tree_spill_kdtree_private {
         old_from_new[left] = old_from_new[right];
         old_from_new[right] = t;
       }
-
+      
       DEBUG_ASSERT(left <= right);
       right--;
     }
-
+    
     DEBUG_ASSERT(left == right + 1);
 
     return left;
   }
 
-  int qsort_compar(const void *a, const void *b) {
-
-    double *a_dbl = (double *) a;
-    double *b_dbl = (double *) b;
-
-    if(*a_dbl < *b_dbl) {
-      return -1;
-    }
-    else if(*a_dbl > *b_dbl) {
-      return 1;
-    }
-    else
-      return 0;
-  }
-
-  template<typename TKdTree>
-  void SplitSpillKdTreeMidpoint(Matrix& matrix, TKdTree *node, 
-				index_t leaf_size, index_t *old_from_new) {
+  template<typename TKdTree, typename TKdTreeSplitter>
+    void SplitGenKdTree(Matrix& matrix, TKdTree *node, 
+			index_t leaf_size, index_t *old_from_new) {
     TKdTree *left = NULL;
     TKdTree *right = NULL;
     int left_begin = 0;
@@ -114,19 +98,10 @@ namespace tree_spill_kdtree_private {
         }
       }
       
-      // choose the split value by median sorting - this could be improved
-      double split_val = 0;
-      Vector coordinate_vals;
-      coordinate_vals.Init(node->count());
-      for(index_t i = node->begin(); i < node->end(); i++) {
-	coordinate_vals[i - node->begin()] = matrix.get(split_dim, i);
-      }
-      qsort(coordinate_vals.ptr(), node->count(), sizeof(double), 
-	    &qsort_compar);
-
-      split_val = coordinate_vals[node->count() / 2];
-
-
+      // choose the split value along the dimension to be splitted
+      double split_val = 
+	TKdTreeSplitter::ChooseKdTreeSplitValue(matrix, node, split_dim);
+    
       if (max_width == 0) {
         // Okay, we can't do any splitting, because all these points are the
         // same.  We have to give up.
@@ -134,7 +109,7 @@ namespace tree_spill_kdtree_private {
       else {
         left = new TKdTree();
         left->bound().Init(matrix.n_rows());
-
+	
         right = new TKdTree();
         right->bound().Init(matrix.n_rows());
 
@@ -164,7 +139,7 @@ namespace tree_spill_kdtree_private {
 	  
 	  left->Init(left_begin, left_count);
 	  right->Init(right_begin, right_count);
-
+	  
 	  // This should never happen if max_width > 0
 	  DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 	  
@@ -178,14 +153,14 @@ namespace tree_spill_kdtree_private {
 	    right->bound() |= vector;
 	  }
 
-	  SplitSpillKdTreeMidpoint(matrix, left, leaf_size, old_from_new);
-	  SplitSpillKdTreeMidpoint(matrix, right, leaf_size, old_from_new);
+	  SplitGenKdTree<TKdTree, TKdTreeSplitter>
+	    (matrix, left, leaf_size, old_from_new);
+	  SplitGenKdTree<TKdTree, TKdTreeSplitter>
+	    (matrix, right, leaf_size, old_from_new);
 	}
 	
 	// Here since we cannot make the required overlap, we give up!
 	else {
-	  printf("I could not split %d points!\n", node->count());
-
 	  left->left_ = NULL;
 	  delete left;
 	  right->left_ = NULL;
