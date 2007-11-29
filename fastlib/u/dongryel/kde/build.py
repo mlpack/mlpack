@@ -35,9 +35,9 @@ librule(
     deplibs = ["fastlib:fastlib_int"]        # dependency
     )
 
-librule(
-    name = "thor_kde",
-    sources = [],
+binrule(
+    name = "thor_kde_bin",
+    sources = ["thor_kde_main.cc"],
     headers = ["thor_kde.h"],
     deplibs = ["fastlib:fastlib_int"]
     )
@@ -49,7 +49,6 @@ binrule(
     deplibs = [":fft_kde",
                ":fgt_kde",
                ":kde",
-               ":thor_kde",
                "u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
