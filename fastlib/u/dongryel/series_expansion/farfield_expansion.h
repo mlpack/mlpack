@@ -91,6 +91,12 @@ class FarFieldExpansion {
   // interesting functions...
   
   /**
+   * Accumulates the contribution of a single reference point as a 
+   * far-field moment.
+   */
+  void Accumulate(const Vector &v, double weight, int order);
+
+  /**
    * Accumulates the far field moment represented by the given reference
    * data into the coefficients
    */
@@ -183,6 +189,79 @@ class FarFieldExpansion {
 			int truncation_order);
 
 };
+
+template<typename TKernel, typename TKernelAux>
+void FarFieldExpansion<TKernel, TKernelAux>::Accumulate(const Vector &v,
+							double weight,
+							int order) {
+
+  int dim = v.length();
+  int total_num_coeffs = sea_->get_total_num_coeffs(order);
+  Vector tmp;
+  int r, i, j, k, t, tail;
+  Vector heads;
+  Vector x_r;
+  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+
+  // initialize temporary variables
+  tmp.Init(total_num_coeffs);
+  heads.Init(dim + 1);
+  x_r.Init(dim);
+  Vector pos_coeffs;
+  Vector neg_coeffs;
+  pos_coeffs.Init(total_num_coeffs);
+  pos_coeffs.SetZero();
+  neg_coeffs.Init(total_num_coeffs);
+  neg_coeffs.SetZero();
+
+  // set to new order if greater
+  if(order_ < order) {
+    order_ = order;
+  }
+  Vector C_k;
+    
+  // Calculate the coordinate difference between the ref point and the 
+  // centroid.
+  for(i = 0; i < dim; i++) {
+    x_r[i] = (v[i] - center_[i]) / bandwidth_factor;
+  }
+  
+  // initialize heads
+  heads.SetZero();
+  heads[dim] = MAXINT;
+  
+  tmp[0] = 1.0;
+  
+  for(k = 1, t = 1, tail = 1; k <= order; k++, tail = t) {
+    for(i = 0; i < dim; i++) {
+      int head = (int) heads[i];
+      heads[i] = t;
+      
+      for(j = head; j < tail; j++, t++) {
+	tmp[t] = tmp[j] * x_r[i];
+      }
+    }
+  }
+  
+  // Tally up the result in A_k.
+  for(i = 0; i < total_num_coeffs; i++) {
+    double prod = weight * tmp[i];
+    
+    if(prod > 0) {
+      pos_coeffs[i] += prod;
+    }
+    else {
+      neg_coeffs[i] += prod;
+    }
+  }
+
+  // get multiindex factors
+  C_k.Alias(sea_->get_inv_multiindex_factorials());
+  
+  for(r = 0; r < total_num_coeffs; r++) {
+    coeffs_[r] += (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
+  }
+}
 
 template<typename TKernel, typename TKernelAux>
 void FarFieldExpansion<TKernel, TKernelAux>::AccumulateCoeffs
