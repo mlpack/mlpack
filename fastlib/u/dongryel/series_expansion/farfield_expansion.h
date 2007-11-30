@@ -44,7 +44,7 @@ class FarFieldExpansion {
   int order_;
   
   /** precomputed quantities */
-  SeriesExpansionAux *sea_;
+  const SeriesExpansionAux *sea_;
   
   /** auxilirary methods for the kernel (derivative, truncation error bound) */
   KernelAux ka_;
@@ -143,6 +143,7 @@ class FarFieldExpansion {
 	    SeriesExpansionAux *sea);
 
   void Init(double bandwidth, SeriesExpansionAux *sea);
+  void Init(double bandwidth, const SeriesExpansionAux *sea);
 
   /**
    * Computes the required order for evaluating the far field expansion
@@ -919,6 +920,27 @@ template<typename TKernel, typename TKernelAux>
 template<typename TKernel, typename TKernelAux>
   void FarFieldExpansion<TKernel, TKernelAux>::Init
   (double bandwidth, SeriesExpansionAux *sea) {
+  
+  // copy kernel type, center, and bandwidth squared
+  kernel_.Init(bandwidth);
+  center_.Init(sea->get_dimension());
+  center_.SetZero();
+  order_ = -1;
+  sea_ = sea;
+
+  // pass in the pointer to the kernel and the series expansion auxiliary
+  // object
+  ka_.kernel_ = &kernel_;
+  ka_.sea_ = sea_;
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
+}
+
+template<typename TKernel, typename TKernelAux>
+  void FarFieldExpansion<TKernel, TKernelAux>::Init
+  (double bandwidth, const SeriesExpansionAux *sea) {
   
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(bandwidth);

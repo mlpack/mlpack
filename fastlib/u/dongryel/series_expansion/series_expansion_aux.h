@@ -10,7 +10,6 @@
  * Series expansion class.
  */
 class SeriesExpansionAux {
-  FORBID_COPY(SeriesExpansionAux);
   
  private:
 
@@ -46,6 +45,22 @@ class SeriesExpansionAux {
 
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
+
+  OT_DEF_BASIC(SeriesExpansionAux) {
+    OT_MY_OBJECT(dim_);
+    OT_MY_OBJECT(max_order_);
+    OT_MY_OBJECT(factorials_);
+    OT_MY_OBJECT(list_total_num_coeffs_);
+    OT_MY_OBJECT(inv_multiindex_factorials_);
+    OT_MY_OBJECT(neg_inv_multiindex_factorials_);
+    OT_MY_OBJECT(multiindex_combination_);
+    OT_MY_OBJECT(multiindex_mapping_);
+    OT_MY_OBJECT(lower_mapping_index_);
+    OT_MY_OBJECT(upper_mapping_index_);
+    OT_MY_OBJECT(n_choose_k_);
+  }
+
+ public:
 
   void ComputeFactorials() {
     factorials_.Init(max_order_ + 1);
@@ -149,14 +164,7 @@ class SeriesExpansionAux {
       } // end of j-loop
     } // end of i-loop
   }
-
- public:
-
-  // construtor/destructor
-  SeriesExpansionAux() {}
-
-  ~SeriesExpansionAux() {}
-
+  
   // getters and setters
   double factorial(int k) { return factorials_[k]; }
 
