@@ -21,7 +21,6 @@ class LocalExpansion;
  */
 template<typename TKernel, typename TKernelAux>
 class FarFieldExpansion {
-  FORBID_COPY(FarFieldExpansion);
   
  public:
   
@@ -49,11 +48,14 @@ class FarFieldExpansion {
   /** auxilirary methods for the kernel (derivative, truncation error bound) */
   KernelAux ka_;
 
+  OT_DEF(FarFieldExpansion) {
+    OT_MY_OBJECT(kernel_);
+    OT_MY_OBJECT(center_);
+    OT_MY_OBJECT(coeffs_);
+    OT_MY_OBJECT(order_);
+  }
+
  public:
-  
-  FarFieldExpansion() {}
-  
-  ~FarFieldExpansion() {}
   
   // getters and setters
   
