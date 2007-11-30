@@ -44,7 +44,7 @@ class LocalExpansion {
   int order_;
   
   /** precomputed quantities */
-  SeriesExpansionAux *sea_;
+  const SeriesExpansionAux *sea_;
   
   /** auxiliary methods for the kernel (derivative, truncation error bound) */
   KernelAux ka_;
@@ -108,7 +108,9 @@ class LocalExpansion {
 	    SeriesExpansionAux *sea);
 
   void Init(double bandwidth, SeriesExpansionAux *sea);
-  
+
+  void Init(double bandwidth, const SeriesExpansionAux *sea);
+
   /**
    * Computes the required order for evaluating the local expansion
    * for any query point within the specified region for a given bound.
@@ -380,6 +382,26 @@ template<typename TKernel, typename TKernelAux>
 template<typename TKernel, typename TKernelAux>
   void LocalExpansion<TKernel, TKernelAux>::Init
   (double bandwidth, SeriesExpansionAux *sea) {
+  
+  // copy kernel type, center, and bandwidth squared
+  kernel_.Init(bandwidth);
+  center_.Init(sea->get_dimension());
+  order_ = -1;
+  sea_ = sea;
+
+  // pass in the pointer to the kernel and the series expansion auxiliary
+  // object
+  ka_.kernel_ = &kernel_;
+  ka_.sea_ = sea_;
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
+}
+
+template<typename TKernel, typename TKernelAux>
+  void LocalExpansion<TKernel, TKernelAux>::Init
+  (double bandwidth, const SeriesExpansionAux *sea) {
   
   // copy kernel type, center, and bandwidth squared
   kernel_.Init(bandwidth);

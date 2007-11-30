@@ -11,7 +11,6 @@
  * Precomputes constants for O(p^D) expansions.
  */
 class MultSeriesExpansionAux {
-  FORBID_COPY(MultSeriesExpansionAux);
 
  public:
 
@@ -47,6 +46,29 @@ class MultSeriesExpansionAux {
 
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
+
+  /**
+   * For each i-th order, store the positions of the coefficient
+   * array to traverse.
+   */
+  ArrayList< ArrayList<int> > traversal_mapping_;
+
+  OT_DEF_BASIC(MultSeriesExpansionAux) {
+    OT_MY_OBJECT(dim_);
+    OT_MY_OBJECT(max_order_);
+    OT_MY_OBJECT(factorials_);
+    OT_MY_OBJECT(list_total_num_coeffs_);
+    OT_MY_OBJECT(inv_multiindex_factorials_);
+    OT_MY_OBJECT(neg_inv_multiindex_factorials_);
+    OT_MY_OBJECT(multiindex_combination_);
+    OT_MY_OBJECT(multiindex_mapping_);
+    OT_MY_OBJECT(lower_mapping_index_);
+    OT_MY_OBJECT(upper_mapping_index_);
+    OT_MY_OBJECT(n_choose_k_);
+    OT_MY_OBJECT(traversal_mapping_);
+  }
+
+ public:
 
   void ComputeFactorials() {
     factorials_.Init(max_order_ + 1);
@@ -178,18 +200,6 @@ class MultSeriesExpansionAux {
       } // end of j-loop
     } // end of i-loop
   }
-  
-  /**
-   * For each i-th order, store the positions of the coefficient
-   * array to traverse.
-   */
-  ArrayList< ArrayList<int> > traversal_mapping_;
-
-
-  // construtor/destructor
-  MultSeriesExpansionAux() {}
-
-  ~MultSeriesExpansionAux() {}
 
   // getters and setters
   double factorial(int k) { return factorials_[k]; }

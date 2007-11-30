@@ -23,7 +23,6 @@
  * Auxiliary computer class for Gaussian kernel
  */
 class GaussianKernelMultAux {
-  FORBID_COPY(GaussianKernelMultAux);
 
  public:
 
@@ -39,11 +38,12 @@ class GaussianKernelMultAux {
   GaussianKernel *kernel_;
 
   /** pointer to the series expansion auxiliary object */
-  MultSeriesExpansionAux *sea_;
+  const MultSeriesExpansionAux *sea_;
 
-  GaussianKernelMultAux() {}
+  OT_DEF_BASIC(GaussianKernelMultAux) {
+  }
 
-  ~GaussianKernelMultAux() {}
+ public:
 
   double BandwidthFactor(double bandwidth_sq) const {
     return sqrt(2 * bandwidth_sq);
@@ -280,7 +280,6 @@ class GaussianKernelMultAux {
  * Auxiliary computer class for Gaussian kernel
  */
 class GaussianKernelAux {
-  FORBID_COPY(GaussianKernelAux);
 
  public:
 
@@ -295,11 +294,12 @@ class GaussianKernelAux {
   GaussianKernel *kernel_;
 
   /** pointer to the series expansion auxiliary object */
-  SeriesExpansionAux *sea_;
+  const SeriesExpansionAux *sea_;
 
-  GaussianKernelAux() {}
+  OT_DEF_BASIC(GaussianKernelAux) {
+  }
 
-  ~GaussianKernelAux() {}
+ public:
 
   double BandwidthFactor(double bandwidth_sq) const {
     return sqrt(2 * bandwidth_sq);
@@ -509,7 +509,6 @@ class GaussianKernelAux {
  * Auxilairy computer class for Epanechnikov kernel
  */
 class EpanKernelAux {
-  FORBID_COPY(EpanKernelAux);
   
  public:
 
@@ -521,11 +520,12 @@ class EpanKernelAux {
 
   EpanKernel *kernel_;
   
-  SeriesExpansionAux *sea_;
+  const SeriesExpansionAux *sea_;
 
-  EpanKernelAux() {}
+  OT_DEF_BASIC(EpanKernelAux) {
+  }
 
-  ~EpanKernelAux() {}
+ public:
 
   double BandwidthFactor(double bandwidth_sq) const {
     return sqrt(bandwidth_sq);
