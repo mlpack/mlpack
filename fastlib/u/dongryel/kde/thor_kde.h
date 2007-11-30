@@ -20,7 +20,13 @@ class ThorKde {
   /** parameter class */
   class Param {
   public:
-      
+    
+    /** the kernel in use */
+    TKernel kernel_;
+    
+    /** precomputed constants for series expansion */
+    typename TKernelAux::TSeriesExpansionAux sea_;
+
     /** the dimensionality of the datasets */
     index_t dimension_;
     
@@ -40,6 +46,8 @@ class ThorKde {
     double mul_constant_;
 
     OT_DEF_BASIC(Param) {
+      OT_MY_OBJECT(kernel_);
+      OT_MY_OBJECT(sea_);
       OT_MY_OBJECT(dimension_);
       OT_MY_OBJECT(reference_count_);
       OT_MY_OBJECT(query_count_);
@@ -47,6 +55,7 @@ class ThorKde {
       OT_MY_OBJECT(bandwidth_);
       OT_MY_OBJECT(mul_constant_);
     }
+  public:
 
     /**
      * Initializes parameters from a data node (Req THOR).
@@ -61,44 +70,42 @@ class ThorKde {
       dimension_ = reference_count_ = query_count_ = -1;
     }
 
-    void FinalizeInit(datanode *module, int dimension, int query_count,
-		      int reference_count) {
+    void FinalizeInit(datanode *module, int dimension) {
       dimension_ = dimension;
-      query_count_ = query_count;
-      reference_count_ = reference_count;
-
-      /*
+      
       // initialize the series expansion object
       if(fx_param_exists(module, "multiplicative_expansion")) {
-      if(dimension_ <= 2) {
-      sea_.Init(fx_param_int(module, "order", 5), qset_.n_rows());
-      }
-      else if(dimension_ <= 3) {
-      sea_.Init(fx_param_int(module, "order", 1), qset_.n_rows());
-      }
-      else {
-      sea_.Init(fx_param_int(module, "order", 0), qset_n_rows());
-      }
-      }
-      else {
-      if(dimension_ <= 2) {
-      sea_.Init(fx_param_int(module, "order", 7), qset_.n_rows());
-      }
-      else if(dimension_ <= 3) {
-      sea_.Init(fx_param_int(module, "order", 3), qset_.n_rows());
-      }
-      else if(dimension_ <= 5) {
-      sea_.Init(fx_param_int(module, "order", 1), qset_n_rows());
+	if(dimension_ <= 2) {
+	  sea_.Init(fx_param_int(module, "order", 5), dimension);
+	}
+	else if(dimension_ <= 3) {
+	  sea_.Init(fx_param_int(module, "order", 1), dimension);
+	}
+	else {
+	  sea_.Init(fx_param_int(module, "order", 0), dimension);
+	}
       }
       else {
-      sea_.Init(fx_param_int(module, "order", 0), qset_n_rows());
+	if(dimension_ <= 2) {
+	  sea_.Init(fx_param_int(module, "order", 7), dimension);
+	}
+	else if(dimension_ <= 3) {
+	  sea_.Init(fx_param_int(module, "order", 3), dimension);
+	}
+	else if(dimension_ <= 5) {
+	  sea_.Init(fx_param_int(module, "order", 1), dimension);
+	}
+	else {
+	  sea_.Init(fx_param_int(module, "order", 0), dimension);
+	}
       }
-      }
-      */
     }
   };
 
-  /** the type of each KDE point */
+  /** 
+   * the type of each KDE point - this assumes that each query and
+   * each reference point is appended with a weight.
+   */
   class ThorKdePoint {
   public:
     
@@ -173,8 +180,8 @@ class ThorKde {
     */
  public:
    void Init(const Param& param) {
-     far_field_expansion_.Init(param.bandwidth_, NULL);
-     local_expansion_.Init(param.bandwidth_, NULL);
+     far_field_expansion_.Init(param.bandwidth_, &param.sea_);
+     local_expansion_.Init(param.bandwidth_, &param.sea_);
    }
 
    /**
@@ -197,9 +204,9 @@ class ThorKde {
     * Finish accumulating data; for instance, for mean, divide by the
     * number of points.
     */
- public:
-
-   void Postprocess(const Param& param, const Bound&bound, index_t n) {      
+   void Postprocess(const Param& param, const Bound&bound, index_t n) {
+     bound.CalculateMidpoint(far_field_expansion_.get_center());
+     bound.CalculateMidpoint(local_expansion_.get_center());
    }
  };
 
@@ -452,7 +459,15 @@ class ThorKde {
   };
 
   // functions
-  
+      
+  /** KDE computation */
+  void Compute() {
+
+    thor::RpcDualTree<ThorKde, DualTreeRecursiveBreadth<ThorKde> >
+    (fx_submodule(fx_root, "gnp", "gnp"), GNP_CHANNEL,
+     parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+  }
+
   /** read datasets, build trees */
   void Init(datanode *module) {
 
@@ -466,16 +481,20 @@ class ThorKde {
       fx_silence();
     }
 
+    // initialize parameter set
+    fx_submodule(module, NULL, "io");
+    parameters_.Init(module);
+       
     // read reference dataset
     fx_timer_start(module, "read_datasets");
     r_points_cache_ = new DistributedCache();
     parameters_.reference_count_ = 
       thor::ReadPoints<RPoint>(parameters_, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
-			       fx_submodule(module, "r", "r"),
+			       fx_submodule(module, "data", "data"),
 			       r_points_cache_);
 
     // read the query dataset if present
-    if(fx_param_exists(module, "q")) {
+    if(fx_param_exists(module, "query")) {
       q_points_cache_ = new DistributedCache();
       parameters_.query_count_ = thor::ReadPoints<QPoint>
 	(parameters_, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
@@ -486,6 +505,10 @@ class ThorKde {
       parameters_.query_count_ = parameters_.reference_count_;
     }
     fx_timer_stop(module, "read_datasets");
+    ThorKdePoint default_point;
+    CacheArray<ThorKdePoint>::GetDefaultElement(r_points_cache_, 
+						&default_point);    
+    parameters_.FinalizeInit(module, default_point.vec().length());
 
     // construct trees
     fx_timer_start(module, "tree_construction");
@@ -544,11 +567,6 @@ class ThorKde {
   /** GNP channel ? */
   static const int GNP_CHANNEL = 200;
 
-  /** the kernel in use */
-  TKernel kernel_;
-
-  /** precomputed constants for series expansion */
-  static SeriesExpansionAux sea_;
 };
 
 #endif

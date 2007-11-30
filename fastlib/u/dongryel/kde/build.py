@@ -39,7 +39,8 @@ binrule(
     name = "thor_kde_bin",
     sources = ["thor_kde_main.cc"],
     headers = ["thor_kde.h"],
-    deplibs = ["fastlib:fastlib_int",
+    deplibs = ["u/dongryel/series_expansion:series_expansion",
+               "fastlib:fastlib_int",
                "thor:thor"]
     )
 
