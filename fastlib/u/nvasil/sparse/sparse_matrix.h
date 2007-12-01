@@ -75,7 +75,7 @@ class Matrix {
 		  FATAL("Error %s while trying to open %s\n", 
 					  strerror(errno), file.c_str());
 		}
-		fscanf(fp, "%i %i\n", dimension_, max_non_zero_);
+		fscanf(fp, "%i %i\n", &dimension_, &max_non_zero_);
     index_t alloc_size = dimension_ * 
 			                   max_non_zero_ * sizeof(NonZeroElement_t);
 		ptr_rows_ = (NonZeroElement_t *)mmap(NULL, alloc_size, 
@@ -107,7 +107,25 @@ class Matrix {
 		}
 		munmap(row_elements_, dimension_*sizeof(int32));
   }
-  
+  void ToTextFile(string filename) {
+	  FILE *fp;
+	  fp=fopen(filename.c_str(), "w");
+    if (fp==NULL) {
+	    FATAL("Error %s while trying to open %s\n", strerror(errno), 
+			  	  filename.c_str());
+	  }
+	  fprintf(fp, "%lli\n", (long long)dimension_);
+   	
+	  for(index_t i=0; i<dimension_; i++) {
+      index_t row=i*max_non_zero_;
+			for(index_t k=0; k<row_elements_[i]; k++) {
+	      fprintf(fp, "%lli %lli %lg\n", 
+					  (long long)i,
+						(long long)ptr_rows_[row+k].first, 
+					  (double)ptr_rows_[row+k].second);
+			}	
+	  }
+	} 
 	inline T get(index_t  i, index_t j) {
 		index_t row = i*max_non_zero_;
 		DEBUG_ASSERT_MSG(i<dimension_ && i>=0,
@@ -313,6 +331,20 @@ T *ReadVectorFromFile(string filename) {
 	}
   fclose(fp);
 	return ptr;
+}
+
+template<typename T>
+void WriteVectorToFile(string filename, T *vec, index_t dimension) {
+  FILE *fp;
+	fp=fopen(filename.c_str(), "w");
+  if (fp==NULL) {
+	  FATAL("Error %s while trying to open %s\n", strerror(errno), 
+				   filename.c_str());
+	}
+	fprintf(fp, "%lli\n", dimension);
+	for(index_t i=0; i<dimension; i++) {
+	  fprintf(fp, "%lg\n", double(vec[i])); 
+	}
 }
 };
 

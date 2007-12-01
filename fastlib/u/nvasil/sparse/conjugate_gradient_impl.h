@@ -20,6 +20,7 @@
 #define CONJUGATE_MATRIX_IMPL_H_
 
 #include <string.h>
+#include <math.h>
 #include "u/nvasil/sparse/sparse_matrix.h"
 namespace sparse {
 // solves the problem A*x=b
@@ -38,8 +39,9 @@ void ConjugateGradient(Matrix<T> &A, T *b, T* x, T tolerance) {
 		T rr=VectorDotProduct(r, r, dimension);
 	  T alpha=rr/VectorDotProduct(temp1, p, dimension); // a=(r,r)/(A*p,p)
     VectorPlusTimes(x, alpha, p, dimension, x);    // x=x+a*p
-    T error=alpha*VectorDotProduct(p, p, dimension)/
+    T error=alpha*alpha*VectorDotProduct(p, p, dimension)/
 			            VectorDotProduct(x, x, dimension);
+  	printf("Error %lg...\n", (double)error);
 		if (error<tolerance) {
 		  break;
 		}
