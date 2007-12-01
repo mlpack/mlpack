@@ -73,6 +73,12 @@ class ThorKde {
     void FinalizeInit(datanode *module, int dimension) {
       dimension_ = dimension;
       
+      // initialize the kernel and compute the normalization constant to
+      // multiply each density in the postprocessing step
+      kernel_.Init(bandwidth_);
+      mul_constant_ = 1.0 / 
+	(kernel_.CalcNormConstant(dimension) * reference_count_);
+
       // initialize the series expansion object
       if(fx_param_exists(module, "multiplicative_expansion")) {
 	if(dimension_ <= 2) {
@@ -233,8 +239,10 @@ class ThorKde {
    public:
 
     /** Density update to apply to children's bound. Similar for _neg. */
+    DRange d_density_;
 
     OT_DEF_BASIC(Delta) {
+      OT_MY_OBJECT(d_density_);
     }
 
    public:
@@ -277,8 +285,10 @@ class ThorKde {
     void Seed(const Param& param, const QPoint& q) {
     }
 
+    /** divide each density by the normalization constant */
     void Postprocess(const Param& param, const QPoint& q, index_t q_index,
 		     const RNode& r_root) {
+      density_ *= param.mul_constant_;
     }
 
     void ApplyPostponed(const Param& param, const QPostponed& postponed,
@@ -361,15 +371,14 @@ class ThorKde {
         const QResult& result) {
     }
   };
-
-    /**
+  
+  /**
    * Abstract out the inner loop in a way that allows temporary variables
    * to be register-allocated.
    */
   struct PairVisitor {
    public:
-    double density_pos;
-    double density_neg;
+    double density_;
 
    public:
     void Init(const Param& param) {}
@@ -384,22 +393,28 @@ class ThorKde {
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
-
+      density_ = 0;
       return true;
     }
 
+    /** exhaustive computation between a query point and a reference point
+     */
     void VisitPair(const Param& param,
         const QPoint& q, index_t q_index,
         const RPoint& r, index_t r_index) {
+      double distance_sq = la::DistanceSqEuclidean(q.vec(), r.vec());
+      density_ += param.kernel_.EvalUnnormOnSq(distance_sq);
     }
 
+    /** pass back the accumulated result into the query result
+     */
     void FinishVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
         const RNode& r_node,
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
-
+      q_result->density_ += density_;
     }
   };
 
