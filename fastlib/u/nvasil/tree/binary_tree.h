@@ -102,6 +102,21 @@ class BinaryTree {
      NEIGHBORTYPE range,
      bool &found);
   
+	// This finds the nearest neighbor and an estimate of the sum of squares
+	// of the furthest neighbors 
+	template<typename POINTTYPE, typename NEIGHBORTYPE, typename KERNEL>
+  void NearestNeighborWithKernel(POINTTYPE test_point, 
+			vector<pair<Precision_t, Point_t> > *nearest_point,
+			Precision_t *furthest_square_error,
+			NEIGHBORTYPE range);	
+	
+	template<typename POINTTYPE, typename NEIGHBORTYPE, typename KERNEL>
+  void NearestNeighborWithKernel(NodePtr_t ptr,
+			POINTTYPE test_point, 
+			vector<pair<Precision_t, Point_t> > *nearest_point,
+			Precision_t *furthest_square_error,
+			NEIGHBORTYPE range);	
+
   // This is the duall tree nearest neighbors method, again it works
   // for all cases k nearest/ range nearest 
   template<typename NEIGHBORTYPE>

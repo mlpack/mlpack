@@ -299,6 +299,14 @@ void TREE__::NearestNeighbor(NodePtr_t ptr,
   }
   ptr.Unlock();	
 }    
+TEMPLATE__
+template<typename POINTTYPE, typename NEIGHBORTYPE, typename KERNEL>
+void TREE__::NearestNeighborWithKernel(POINTTYPE test_point, 
+    vector<pair<Precision_t, Point_t> > *nearest_point,
+		Precision_t *furthest_square_error,
+		NEIGHBORTYPE range) {
+
+}
 
 TEMPLATE__                  	                                
 template<typename NEIGHBORTYPE>

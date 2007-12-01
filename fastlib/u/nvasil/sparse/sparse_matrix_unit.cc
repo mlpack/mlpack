@@ -35,7 +35,7 @@ class MatrixTest {
 		matrixfile_="sparse_matrix.txt";
 		xfile_="xfile.txt";
 		bfile_="bfile.txt";
-		tolerance_=0.01;
+		tolerance_=0.00001;
 	};
 	void Destruct(){
 	  matrix_.Destruct();
