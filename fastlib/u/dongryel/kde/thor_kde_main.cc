@@ -9,7 +9,8 @@ int main(int argc, char *argv[]) {
  
   // initialize and compute
   thor_kde.Init(fx_root);
-  thor_kde.Compute();
+  thor_kde.NaiveCompute();
+  //thor_kde.Compute();
  
   fx_done();
   return 0;

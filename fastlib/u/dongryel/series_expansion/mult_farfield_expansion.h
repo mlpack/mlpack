@@ -21,7 +21,6 @@ class MultLocalExpansion;
  */
 template<typename TKernel, typename TKernelAux>
 class MultFarFieldExpansion {
-  FORBID_COPY(MultFarFieldExpansion);
   
  public:
   
@@ -49,11 +48,14 @@ class MultFarFieldExpansion {
   /** auxilirary methods for the kernel (derivative, truncation error bound) */
   KernelAux ka_;
 
+  OT_DEF(MultFarFieldExpansion) {
+    OT_MY_OBJECT(kernel_);
+    OT_MY_OBJECT(center_);
+    OT_MY_OBJECT(coeffs_);
+    OT_MY_OBJECT(order_);
+  }
+
  public:
-  
-  MultFarFieldExpansion() {}
-  
-  ~MultFarFieldExpansion() {}
   
   // getters and setters
   

@@ -529,11 +529,8 @@ void Init(const Param& param) {}
      * Prune based on the accumulated lower bound contribution and allocated
      * error
      */
-    static bool ConsiderPairExtrinsic(
-				      const Param& param,
-				      const QNode& q_node,
-				      const RNode& r_node,
-				      const Delta& delta,
+    static bool ConsiderPairExtrinsic(const Param& param, const QNode& q_node,
+				      const RNode& r_node, const Delta& delta,
 				      const QSummaryResult& q_summary_result,
 				      const GlobalResult& global_result,
 				      QPostponed* q_postponed) {
@@ -541,7 +538,7 @@ void Init(const Param& param) {}
       double allocated_width =
 	param.relative_error_ * (r_node.count() / 
 				 ((double) param.reference_count_)) *
-	q_summary_result.density_.lo;;
+	(q_summary_result.density_.lo + delta.d_density_.lo);
 
       if(delta.d_density_.width() / 2.0 <= allocated_width) {
 	q_postponed->d_density_ += delta.d_density_;
@@ -577,6 +574,73 @@ void Init(const Param& param) {}
   // functions
       
   /** KDE computation */
+  void NaiveCompute() {
+    
+    // distributed cache for storing query results
+    DistributedCache q_naive_results;
+
+    // set up the cache for holding naive results
+    QResult default_result;
+    default_result.Init(parameters_);
+    q_tree_->CreateResultCache(Q_RESULTS_CHANNEL, default_result,
+			       1000, &q_naive_results);
+
+    // create cache array for the distriuted caches storing the query
+    // reference points and query results
+    CacheArray<QPoint> q_points_cache_array;
+    CacheArray<QResult> q_results_cache_array;
+    CacheArray<RPoint> r_points_cache_array;
+    q_points_cache_array.Init(q_points_cache_, BlockDevice::M_READ);
+    q_results_cache_array.Init(&q_naive_results, BlockDevice::M_OVERWRITE);
+    r_points_cache_array.Init(r_points_cache_, BlockDevice::M_READ);
+    
+    // create reader/writer for each cache
+    CacheRead<QPoint> first_q_point(&q_points_cache_array, 
+				    (q_tree_->root()).begin());
+    CacheWrite<QResult> first_q_result(&q_results_cache_array,
+				       (q_tree_->root()).begin());
+    CacheRead<RPoint> first_r_point(&r_points_cache_array,	
+				    (r_tree_->root()).begin());
+
+    // memory stride for looping over each point/result
+    size_t q_point_stride = q_points_cache_array.n_elem_bytes();
+    size_t q_result_stride = q_results_cache_array.n_elem_bytes();
+    size_t r_point_stride = r_points_cache_array.n_elem_bytes();
+    index_t q_end = (q_tree_->root()).end();
+
+    // point to the first query point and its corresopnding result
+    const QPoint *q_point = first_q_point;
+    QResult *q_result = first_q_result;
+    
+    for(index_t q = (q_tree_->root()).begin(); q < q_end; q++) {
+      const RPoint *r_point = first_r_point;
+      index_t r_i = (r_tree_->root()).begin();
+      index_t r_left = (r_tree_->root()).count();
+
+      for(;;) {
+	if(unlikely(--r_left == 0)) {
+	  break;
+	}
+
+	// compute pairwise and add contribution
+	double distance_sq = la::DistanceSqEuclidean(q_point->vec(), 
+						     r_point->vec());
+	double kernel_value = parameters_.kernel_.EvalUnnormOnSq(distance_sq);
+	q_result->density_.lo += kernel_value;
+	q_result->density_.hi += kernel_value;
+
+	r_i++;
+	r_point = mem::PointerAdd(r_point, r_point_stride);
+      } // finish looping over each reference point
+      
+      q_point = mem::PointerAdd(q_point, q_point_stride);
+      printf("Naively: %g\n", q_result->density_.lo);
+      q_result = mem::PointerAdd(q_result, q_result_stride);
+      
+    } // finish looping over each query point
+  }
+
+  /** KDE computation using THOR */
   void Compute() {
 
     thor::RpcDualTree<ThorKde, DualTreeRecursiveBreadth<ThorKde> >
