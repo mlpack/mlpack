@@ -1,0 +1,18 @@
+These are the command line parameters which the code regression.h uses
+
+
+
+do_naive=true/false
+
+method=fast
+
+fast_kde_output: file name to which the output of fast kde should be written to
+
+
+naive_kde_output:file name to which the navie kde should outptut its results
+
+kernel: the kernel u want to use
+
+data: the file name from which the data is read
+
+query: the file name from which the query is read
