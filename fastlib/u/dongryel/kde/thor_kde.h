@@ -11,12 +11,12 @@
  */
 template<typename TKernel, typename TKernelAux>
 class ThorKde {
-
+  
  public:
-
+  
   /** the bounding type which is required by THOR */
   typedef DHrectBound<2> Bound;
-
+  
   /** parameter class */
   class Param {
   public:
@@ -26,25 +26,25 @@ class ThorKde {
     
     /** precomputed constants for series expansion */
     typename TKernelAux::TSeriesExpansionAux sea_;
-
+    
     /** the dimensionality of the datasets */
     index_t dimension_;
     
     /** number of query points */
     index_t query_count_;
-
+    
     /** number of reference points */
     index_t reference_count_;
-   
+    
     /** the global relative error allowed */
     double relative_error_;
     
     /** the bandwidth */
     double bandwidth_;
-
+    
     /** multiply the unnormalized sum by this to get the density estimate */
     double mul_constant_;
-
+    
     OT_DEF_BASIC(Param) {
       OT_MY_OBJECT(kernel_);
       OT_MY_OBJECT(sea_);
@@ -56,7 +56,7 @@ class ThorKde {
       OT_MY_OBJECT(mul_constant_);
     }
   public:
-
+    
     /**
      * Initializes parameters from a data node (Req THOR).
      */
@@ -65,11 +65,11 @@ class ThorKde {
       // get bandwidth and relative error
       bandwidth_ = fx_param_double_req(module, "bandwidth");
       relative_error_ = fx_param_double(module, "tau", 0.1);
-
+      
       // temporarily initialize these to -1's
       dimension_ = reference_count_ = query_count_ = -1;
     }
-
+    
     void FinalizeInit(datanode *module, int dimension) {
       dimension_ = dimension;
       
@@ -78,7 +78,7 @@ class ThorKde {
       kernel_.Init(bandwidth_);
       mul_constant_ = 1.0 / 
 	(kernel_.CalcNormConstant(dimension) * reference_count_);
-
+      
       // initialize the series expansion object
       if(fx_param_exists(module, "multiplicative_expansion")) {
 	if(dimension_ <= 2) {
@@ -107,7 +107,7 @@ class ThorKde {
       }
     }
   };
-
+  
   /** 
    * the type of each KDE point - this assumes that each query and
    * each reference point is appended with a weight.
@@ -125,20 +125,20 @@ class ThorKde {
       OT_MY_OBJECT(v_);
       OT_MY_OBJECT(weight_);
     }
-
+    
   public:
-
+    
     /** getters for the vector so that the tree-builder can access it */
     const Vector& vec() const { return v_; }
     Vector& vec() { return v_; }
-
+    
     /** initializes all memory for a point */
     void Init(const Param& param, const DatasetInfo& schema) {
       v_.Init(schema.n_features() - 1);
       v_.SetZero();
       weight_ = 1.0;
     }
-
+    
     /** 
      * sets contents assuming all space has been allocated.
      * Any attempt to allocate memory here will lead to a core dump.
@@ -153,81 +153,81 @@ class ThorKde {
   };
 
 
-
- /**
-  * Per-node bottom-up statistic for both queries and references.
-  *
-  * The statistic must be commutative and associative, thus bottom-up
-  * computable.
-  *
-  */
- class ThorKdeStat {
-    
- public:
-    
-   /**
-    * far field expansion created by the reference points in this node.
-    */
-   typename TKernelAux::TFarFieldExpansion far_field_expansion_;
-    
-   /** local expansion stored in this node.
-    */
-   typename TKernelAux::TLocalExpansion local_expansion_;
-
-   OT_DEF(ThorKdeStat) {
-     OT_MY_OBJECT(far_field_expansion_);
-     OT_MY_OBJECT(local_expansion_);
-   }
-
-   /**
-    * Initialize to a default zero value, as if no data is seen (Req THOR).
-    *
-    * This is the only method in which memory allocation can occur.
-    */
- public:
-   void Init(const Param& param) {
-     far_field_expansion_.Init(param.bandwidth_, &param.sea_);
-     local_expansion_.Init(param.bandwidth_, &param.sea_);
-   }
-
-   /**
-    * Accumulate data from a single point (Req THOR).
-    */
-   void Accumulate(const Param& param, const ThorKdePoint& point) {
-     far_field_expansion_.Accumulate(point.vec(), point.weight_, 0);
-   }
-
-   /**
-    * Accumulate data from one of your children (Req THOR).
-    */
-   void Accumulate(const Param& param, const ThorKdeStat& child_stat, 
-		   const Bound& bound, index_t child_n_points) {
-     far_field_expansion_.
-       TranslateFromFarField(child_stat.far_field_expansion_);
-   }
-    
-   /**
-    * Finish accumulating data; for instance, for mean, divide by the
-    * number of points.
-    */
-   void Postprocess(const Param& param, const Bound&bound, index_t n) {
-     bound.CalculateMidpoint(far_field_expansion_.get_center());
-     bound.CalculateMidpoint(local_expansion_.get_center());
-   }
- };
-
- typedef ThorKdePoint QPoint;
- typedef ThorKdePoint RPoint;
-
-
- /** query stat */
- typedef ThorKdeStat QStat;
   
- /** reference stat */
- typedef ThorKdeStat RStat;
+  /**
+   * Per-node bottom-up statistic for both queries and references.
+   *
+   * The statistic must be commutative and associative, thus bottom-up
+   * computable.
+   *
+   */
+  class ThorKdeStat {
+    
+  public:
+    
+    /**
+     * far field expansion created by the reference points in this node.
+     */
+    typename TKernelAux::TFarFieldExpansion far_field_expansion_;
+    
+    /** local expansion stored in this node.
+     */
+    typename TKernelAux::TLocalExpansion local_expansion_;
+    
+    OT_DEF(ThorKdeStat) {
+      OT_MY_OBJECT(far_field_expansion_);
+      OT_MY_OBJECT(local_expansion_);
+    }
+    
+    /**
+     * Initialize to a default zero value, as if no data is seen (Req THOR).
+     *
+     * This is the only method in which memory allocation can occur.
+     */
+  public:
+    void Init(const Param& param) {
+      far_field_expansion_.Init(param.bandwidth_, &param.sea_);
+      local_expansion_.Init(param.bandwidth_, &param.sea_);
+    }
+    
+    /**
+     * Accumulate data from a single point (Req THOR).
+     */
+    void Accumulate(const Param& param, const ThorKdePoint& point) {
+      far_field_expansion_.Accumulate(point.vec(), point.weight_, 0);
+    }
+    
+    /**
+     * Accumulate data from one of your children (Req THOR).
+     */
+    void Accumulate(const Param& param, const ThorKdeStat& child_stat, 
+		    const Bound& bound, index_t child_n_points) {
+      far_field_expansion_.
+	TranslateFromFarField(child_stat.far_field_expansion_);
+    }
+    
+    /**
+     * Finish accumulating data; for instance, for mean, divide by the
+     * number of points.
+     */
+    void Postprocess(const Param& param, const Bound&bound, index_t n) {
+      bound.CalculateMidpoint(far_field_expansion_.get_center());
+      bound.CalculateMidpoint(local_expansion_.get_center());
+    }
+  };
+  
+  typedef ThorKdePoint QPoint;
+  typedef ThorKdePoint RPoint;
+  
+  
+  /** query stat */
+  typedef ThorKdeStat QStat;
+  
+  /** reference stat */
+  typedef ThorKdeStat RStat;
 
- /** query node */
- typedef ThorNode<Bound, QStat> QNode;
+  /** query node */
+  typedef ThorNode<Bound, QStat> QNode;
 
   /** reference node */
   typedef ThorNode<Bound, RStat> RNode;
@@ -236,50 +236,67 @@ class ThorKde {
    * Coarse result on a region.
    */
   class Delta {
-   public:
+  public:
 
-    /** Density update to apply to children's bound. Similar for _neg. */
+    /** Density update to apply to children's bound */
     DRange d_density_;
 
     OT_DEF_BASIC(Delta) {
       OT_MY_OBJECT(d_density_);
     }
 
-   public:
+  public:
     void Init(const Param& param) {
     }
   };
 
   /** coarse result on a region */
   class QPostponed {
-   public:
+  public:
+
+    DRange d_density_;
+    int n_pruned_;
 
     OT_DEF_BASIC(QPostponed) {
+      OT_MY_OBJECT(d_density_);
+      OT_MY_OBJECT(n_pruned_);
     }
 
-   public:
+  public:
+    
+    /** initialize postponed information to zero */
     void Init(const Param& param) {
+      d_density_.Init(0, 0);
+      n_pruned_ = 0;
     }
 
     void Reset(const Param& param) {
+      d_density_.Init(0, 0);
+      n_pruned_ = 0;
     }
 
+    /** accumulate postponed information passed down from above */
     void ApplyPostponed(const Param& param, const QPostponed& other) {
+      d_density_ += other.d_density_;
+      n_pruned_ += other.n_pruned_;
     }
   };
 
   /** individual query result */
   class QResult {
-   public:
-    double density_;
+  public:
+    DRange density_;
+    index_t n_pruned_;
 
     OT_DEF_BASIC(QResult) {
       OT_MY_OBJECT(density_);
+      OT_MY_OBJECT(n_pruned_);
     }
 
-   public:
+  public:
     void Init(const Param& param) {
-      density_ = 0.0;
+      density_.Init(0, 0);
+      n_pruned_ = 0;
     }
 
     void Seed(const Param& param, const QPoint& q) {
@@ -291,59 +308,86 @@ class ThorKde {
       density_ *= param.mul_constant_;
     }
 
+    /** apply left over postponed contributions */
     void ApplyPostponed(const Param& param, const QPostponed& postponed,
 			const QPoint& q, index_t q_index) {
+      density_ += postponed.d_density_;
+      n_pruned_ += postponed.n_pruned_;
     }
   };
 
   class QSummaryResult {
-   public:
+  public:
+
+    /** bound on the density from leaves */
+    DRange density_;
+    index_t n_pruned_;
 
     OT_DEF_BASIC(QSummaryResult) {
+      OT_MY_OBJECT(density_);
+      OT_MY_OBJECT(n_pruned_);
     }
 
-   public:
+  public:
+    
+    /** initialize summary result to zeros */
     void Init(const Param& param) {
-
+      density_.Init(0, 0);
+      n_pruned_ = 0;
     }
 
     void Seed(const Param& param, const QNode& q_node) {
 
     }
 
-    // Why does this have a q_node?  RR
     void StartReaccumulate(const Param& param, const QNode& q_node) {
-
+      density_.InitEmptySet();
+      n_pruned_ = param.reference_count_;
     }
 
+    /** 
+     * refine query summary results by incorporating the given current
+     * query result
+     */
     void Accumulate(const Param& param, const QResult& result) {
-
+      density_ |= result.density_;
+      n_pruned_ = min(n_pruned_, result.n_pruned_);
     }
 
+    /** 
+     * this is the vertical operator that refines the current query summary
+     * results based on the summary results owned by the given child
+     */
     void Accumulate(const Param& param,
 		    const QSummaryResult& result, index_t n_points) {
-
+      density_ |= result.density_;
+      n_pruned_ = min(n_pruned_, result.n_pruned_);
     }
 
-    void FinishReaccumulate(const Param& param,
-        const QNode& q_node) {
-      /* no post-processing steps necessary */
+    void FinishReaccumulate(const Param& param, const QNode& q_node) {
     }
 
-    /** horizontal join operator */
+    /** 
+     * horizontal join operator that accumulates the current best guess
+     * on the density bound on the reference portion that has not been
+     * visited so far.
+     */
     void ApplySummaryResult(const Param& param,
-        const QSummaryResult& summary_result) {
-
+			    const QSummaryResult& summary_result) {
+      density_ += summary_result.density_;
+      n_pruned_ += summary_result.n_pruned_;
     }
 
-    void ApplyDelta(const Param& param,
-        const Delta& delta) {
-
+    /** apply deltas */
+    void ApplyDelta(const Param& param, const Delta& delta) {
+      density_ += delta.d_density_;
     }
 
+    /** apply postponed contributions that were passed down */
     void ApplyPostponed(const Param& param,
-        const QPostponed& postponed, const QNode& q_node) {
-
+			const QPostponed& postponed, const QNode& q_node) {
+      density_ += postponed.d_density_;
+      n_pruned_ += postponed.n_pruned_;
     }
   };
 
@@ -351,12 +395,12 @@ class ThorKde {
    * A simple postprocess-step global result.
    */
   class GlobalResult {
-   public:
+  public:
     
     OT_DEF_BASIC(GlobalResult) {
     }
 
-   public:
+  public:
     void Init(const Param& param) {
     }
     void Accumulate(const Param& param, const GlobalResult& other) {
@@ -367,8 +411,8 @@ class ThorKde {
     void Report(const Param& param, datanode *datanode) {
     }
     void ApplyResult(const Param& param,
-        const QPoint& q_point, index_t q_i,
-        const QResult& result) {
+		     const QPoint& q_point, index_t q_i,
+		     const QResult& result) {
     }
   };
   
@@ -377,49 +421,72 @@ class ThorKde {
    * to be register-allocated.
    */
   struct PairVisitor {
-   public:
-    double density_;
+    public:
+double density_;
 
-   public:
-    void Init(const Param& param) {}
-
-    // notes
-    // - this function must assume that global_result is incomplete (which is
-    // reasonable in allnn)
-    bool StartVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RNode& r_node,
-	const Delta& delta,
-        const QSummaryResult& unapplied_summary_results,
-        QResult* q_result,
-        GlobalResult* global_result) {
+    public:
+void Init(const Param& param) {}
+    
+    /** apply single-tree based pruning by iterating over each query point
+     */
+    bool StartVisitingQueryPoint
+    (const Param& param, const QPoint& q, index_t q_index,
+     const RNode& r_node, const Delta& delta,
+     const QSummaryResult& unapplied_summary_results, QResult* q_result,
+     GlobalResult* global_result) {
+      
+      // compute distance bound between a given query point and the given
+      // reference node and the resulting kernel value bound and density 
+      // contribution bound
+      DRange distance_sq_range = DRange(r_node.bound().MinDistanceSq(q.vec()),
+					r_node.bound().MaxDistanceSq(q.vec()));
+      DRange d_density = param.kernel_.RangeUnnormOnSq(distance_sq_range);
+      d_density *= r_node.count();
+      
+      // refine the lower bound by incorporating the recently gained info and
+      // unapplied info
+      double density_lo = d_density.lo + q_result->density_.lo
+	+ unapplied_summary_results.density_.lo;
+      
+      double allocated_width = param.relative_error_ *
+	(r_node.count() / ((double) param.reference_count_)) * density_lo;
+      
+      q_result->n_pruned_ += r_node.count();
+      
+      // if we can prune the entire reference node for the given query point,
+      // then we are done
+      if (d_density.width() / 2.0 < allocated_width) {
+        q_result->density_ += d_density;
+        return false;
+      }
+      
+      // otherwise, we need to iterate over each reference point
       density_ = 0;
       return true;
     }
 
     /** exhaustive computation between a query point and a reference point
      */
-    void VisitPair(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RPoint& r, index_t r_index) {
+    void VisitPair(const Param& param, const QPoint& q, index_t q_index,
+		   const RPoint& r, index_t r_index) {
       double distance_sq = la::DistanceSqEuclidean(q.vec(), r.vec());
       density_ += param.kernel_.EvalUnnormOnSq(distance_sq);
     }
-
+    
     /** pass back the accumulated result into the query result
      */
-    void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RNode& r_node,
-        const QSummaryResult& unapplied_summary_results,
-        QResult* q_result,
-        GlobalResult* global_result) {
+    void FinishVisitingQueryPoint
+    (const Param& param, const QPoint& q, index_t q_index,
+     const RNode& r_node, const QSummaryResult& unapplied_summary_results,
+     QResult* q_result, GlobalResult* global_result) {
+      
       q_result->density_ += density_;
     }
   };
 
   class Algorithm {
-   public:
+  public:
+
     /**
      * Calculates a delta....
      *
@@ -427,36 +494,73 @@ class ThorKde {
      * updated.  q_postponed is not touched.
      * - If this returns false, delta is not touched.
      */
-    static bool ConsiderPairIntrinsic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node,
-	const Delta& parent_delta,
-        Delta* delta,
-        GlobalResult* global_result,
-        QPostponed* q_postponed) {
-
-      return true;
+    static bool ConsiderPairIntrinsic(const Param& param,
+				      const QNode& q_node,
+				      const RNode& r_node,
+				      const Delta& parent_delta,
+				      Delta* delta,
+				      GlobalResult* global_result,
+				      QPostponed* q_postponed) {
+      
+      // compute distance bound between two nodes
+      DRange distance_sq_range = 
+	q_node.bound().RangeDistanceSq(r_node.bound());
+      
+      // compute the bound on kernel contribution
+      delta->d_density_ = param.kernel_.RangeUnnormOnSq(distance_sq_range);
+      delta->d_density_ *= r_node.count();
+      
+      DEBUG_ASSERT_MSG(delta->d_density_.lo <= 
+		       delta->d_density_.hi * (1 + 1.0e-7),
+		       "delta density lo %f > hi %f",
+		       delta->d_density_.lo, delta->d_density_.hi);
+      
+      if (likely(delta->d_density_.hi != 0)) {
+        return true;
+      }
+      // if the highest kernel value is zero, then perform exclusion pruning
+      else {
+        q_postponed->n_pruned_ += r_node.count();
+	return false;
+      }
     }
 
+    /**
+     * Prune based on the accumulated lower bound contribution and allocated
+     * error
+     */
     static bool ConsiderPairExtrinsic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node,
-        const Delta& delta,
-        const QSummaryResult& q_summary_result,
-        const GlobalResult& global_result,
-        QPostponed* q_postponed) {
+				      const Param& param,
+				      const QNode& q_node,
+				      const RNode& r_node,
+				      const Delta& delta,
+				      const QSummaryResult& q_summary_result,
+				      const GlobalResult& global_result,
+				      QPostponed* q_postponed) {
+
+      double allocated_width =
+	param.relative_error_ * (r_node.count() / 
+				 ((double) param.reference_count_)) *
+	q_summary_result.density_.lo;;
+
+      if(delta.d_density_.width() / 2.0 <= allocated_width) {
+	q_postponed->d_density_ += delta.d_density_;
+	q_postponed->n_pruned_ += r_node.count();
+	return false;
+      }
+      
       return true;
     }
 
-    static bool ConsiderQueryTermination(
-        const Param& param,
-        const QNode& q_node,
-        const QSummaryResult& q_summary_result,
-        const GlobalResult& global_result,
-        QPostponed* q_postponed) {
-
+    /**
+     * Termination prune does not apply in KDE since all reference points
+     * have to be considered...
+     */
+    static bool ConsiderQueryTermination
+      (const Param& param, const QNode& q_node,
+       const QSummaryResult& q_summary_result,
+       const GlobalResult& global_result, QPostponed* q_postponed) {
+      
       return true;
     }
 
@@ -464,11 +568,8 @@ class ThorKde {
      * Computes a heuristic for how early a computation should occur
      * -- smaller values are earlier.
      */
-    static double Heuristic(
-        const Param& param,
-        const QNode& q_node,
-        const RNode& r_node,
-        const Delta& delta) {
+    static double Heuristic(const Param& param, const QNode& q_node,
+			    const RNode& r_node, const Delta& delta) {
       return r_node.bound().MinToMidSq(q_node.bound());
     }
   };
@@ -479,8 +580,8 @@ class ThorKde {
   void Compute() {
 
     thor::RpcDualTree<ThorKde, DualTreeRecursiveBreadth<ThorKde> >
-    (fx_submodule(fx_root, "gnp", "gnp"), GNP_CHANNEL,
-     parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+      (fx_submodule(fx_root, "gnp", "gnp"), GNP_CHANNEL,
+       parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
   }
 
   /** read datasets, build trees */
