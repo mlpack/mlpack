@@ -7,10 +7,10 @@ bool check_if_equal(ArrayList <double> arr1, ArrayList <double> arr2)
   for(i=0;i<arr1.size();i++)
     {
       if(arr1[i]!=arr2[i])
-	return 0;
+	return false;
     }
-  return 1;
-}
+  return true;
+} 
 void AllNNNaive::Compute(Matrix *q_matrix, Matrix *r_matrix)
 {
   //for each column vector of q_matrix find the nearest neighbour in r_matrix
@@ -175,18 +175,24 @@ void AllNNSingleTree::ComputeAllNNSingleTree(Matrix* q_matrix, Matrix  *r_matrix
   //return str_;
 }
 
-int find_index(SingleTreeResults *str,double dist,int start,int end)
+int find_index(ArrayList<SingleTreeResults> str,double dist,int start,int end)
 {
   printf("Start is %d and end is %d\n",start,end);
+  printf("Searching for distance %f\n",dist);
+  printf("In function find index str is...\n");
+  for(int j=start;j<=end;j++)
+    {
+      printf("distance is %f\n",str[j].get_distance());
+    }
   if(start>end)
     return 0;
   if(start==end)
     {
-      //printf("str[start].get_distance() is %f",str[start].get_distance());
-      //printf("dist is %f\n",dist);
+      printf("str[start].get_distance() is %f",str[start].get_distance());
+      printf("dist is %f\n",dist);
       if(dist>str[start].get_distance())
 	{
-	  //  printf("will return %d\n",end+1);
+	    printf("will return %d\n",end+1);
 	  return end+1; //returned if the element to be added is at the end of the list
 	}
       else return start;
@@ -200,30 +206,32 @@ int find_index(SingleTreeResults *str,double dist,int start,int end)
       if(dist<str[(end+start)/2].get_distance())
 	{
 	  //go left
-	  //printf("left\n");
+	  printf("left\n");
 	  return find_index(str,dist,start,(start+end)/2);
 	}
       else
 	{
 	      //go right
-	  // printf("right\n");
-	  //printf("New start is %d and new end is %d\n",(start+end)/2+1,end);
+	  printf("right\n");
+	  printf("New start is %d and new end is %d\n",(start+end)/2+1,end);
 	  return find_index(str,dist,(start+end)/2+1,end);
 	}
     }
 }
 
-int push_into_array(SingleTreeResults *str,int position, double dist,int length, int index,int k)
+int push_into_array(ArrayList<SingleTreeResults> &str,int position, double dist,int length, int index,int k)
 {
-  //printf("Length is %d\n",length);
-  //printf("Index to be inserted is %d\n",index);
-  //printf("Distance to be inserted is %f\n",dist);
-  //printf("The position is %d\n",position);
+  printf("Length is %d\n",length);
+  printf("Index to be inserted is %d\n",index);
+  printf("Distance to be inserted is %f\n",dist);
+  printf("The position is %d\n",position);
   if(position==length) //that means add the element to the end of list
     {
       if(length==k)
 	{
 	  //cannot push into array
+	  for(int l=0;l<length;l++)
+	printf("distance:%f and index:%d\n",str[l].get_distance(),str[l].get_index());
 	  return 0;
 	}
       else
@@ -231,21 +239,29 @@ int push_into_array(SingleTreeResults *str,int position, double dist,int length,
 
 	  //add it to the end of the array
 	  str[length].set_result(dist,index);
+	  for(int l=0;l<length+1;l++)
+	    printf("distance:%f and index:%d\n",str[l].get_distance(),str[l].get_index());
+
+
+ 
 	  return 1;
 	}
     }
 
   ArrayList <SingleTreeResults> temp;
   temp.Init(k);
-  // printf("temp created\n");
+   printf("temp created\n");
   //the element will be added in the middle of the array
-  //printf("The element will be added to the middle of the array\n");
+  printf("The element will be added to the middle of the array\n");
 
   for(int j=0;j<position;j++)
     temp[j].set_result(str[j].get_distance(),str[j].get_index());
 
+  printf("Distance is %f\n",dist);
+  printf("index is %d\n",index);
   temp[position].set_result(dist,index);
-  //printf("Length is %d and k=%d\n",length,k);
+  printf("Length is %d and k=%d\n",length,k);
+  printf("temp at position is set up\n");
 
   if(length==k)
     {
@@ -255,22 +271,57 @@ int push_into_array(SingleTreeResults *str,int position, double dist,int length,
       for(int j=0;j<length;j++)
 	str[j].set_result(temp[j].get_distance(),temp[j].get_index());
       // delete(temp);
+      printf("Before returning i have str as\n");
+      for(int l=0;l<length;l++)
+	printf("distance:%f and index:%d\n",str[l].get_distance(),str[l].get_index());
+     
 	return 0;
     }
   else
     {
-      for(int t=length;t>position;t--)
-	temp[t].set_result(str[t-1].get_distance(),str[t-1].get_index());
-      //  printf("adjusted.....");
+      printf("since length is not equal to k\n");
+
+    
+      for(int t=length;t>position;t-=1)
+	{
+	  
+	  printf("came here\n");
+	  printf("Length is %d\n",length);
+	  printf("position is %d\n",position);
+	  printf("will copy to temp\n");
+	  printf("t is %d\n",t);
+	  printf("distance is %f\n",str[t-1].get_distance());
+	  printf("index is %d\n",str[t-1].get_index());
+	  temp[t].set_result(str[t-1].get_distance(),str[t-1].get_index());
+	  printf("Set up..\n");
+	  printf("t is %d\n",t);
+	  printf("wi.ll loop...\n");
+	}
+      
+      printf("adjusrwrewerwerwerwerwe.....");
       for(int j=0;j<length+1;j++)
-	str[j].set_result(temp[j].get_distance(),temp[j].get_index());
+	{
+	  printf("copying element by element...\n");
+	  printf("woll copy distance %f\n",temp[j].get_distance());
+	  printf("Will copy index =%d\n",temp[j].get_index());
+	  printf("j is %d\n",j);
+	 
+	  str[j].set_result(temp[j].get_distance(),temp[j].get_index());
+	  printf("copied....\n");
+	}
       printf("copied\n");
       // delete(temp);
       // printf("deleted temp");
+      printf("str before leaving is..\n");
+      for(int l=0;l<length+1;l++)
+	printf("distance:%f and index:%d\n",str[l].get_distance(),str[l].get_index());
+
+
       return 1;
     }
 }
-bool same_points(double *point1,double *point2, int len)
+
+bool same_points(double *point1,double *point2,int len)
 {
   for(int i=0;i<len;i++)
     {
@@ -286,7 +337,7 @@ bool same_points(double *point1,double *point2, int len)
   return true;
 }
 
-int AllKNNSingleTree::FindKNearestNeighbours(Tree *root, double *point,Matrix *r_matrix,SingleTreeResults *str,int length,int k)
+int AllKNNSingleTree::FindKNearestNeighbours(Tree *root, double *point,Matrix *r_matrix,ArrayList<SingleTreeResults> &str,int length,int k)
 {
   //Base case is that the node is a leaf 
 
@@ -308,18 +359,21 @@ int AllKNNSingleTree::FindKNearestNeighbours(Tree *root, double *point,Matrix *r
 	  if(!same_points(point,r_matrix->GetColumnPtr(i),r_matrix->n_rows()))
 	    { 
 	      dist=la::DistanceSqEuclidean(r_matrix->n_rows(),point,r_matrix->GetColumnPtr(i));
-	      //printf("Distance is %f\n",dist);
+	      printf("Distance is %f\n",dist);
 	      //find where the new element should be pushed
 	      int start=0;
+	      printf("Before going to funcction find index ..\n");
+	      for(int l=0;l<length;l++)
+		printf("distance is %f\n",str[l].get_distance());
 	      position=find_index(str,dist,start,end); 
-	      //printf("The position where this willbe inserted is \n");
-	      //printf("%d\n",position);
+	      printf("The position where this willbe inserted is \n");
+	      printf("%d\n",position);
 	      length+=push_into_array(str,position,dist,length,i,k);
 	      end=length-1;
-	      /*printf("After push...\n");
+	      printf("After pushAFTWER PUSH AFTER PUSH...\n");
 
 	      for(int count=0;count<length;count++)
-		printf("distance:%f\n",str[count].get_distance());*/
+		printf("distance:%f\n",str[count].get_distance());
 
 	      //printf("length is now %d\n",length);
 	      if(length>k)
@@ -404,7 +458,8 @@ int AllKNNSingleTree::FindKNearestNeighbours(Tree *root, double *point,Matrix *r
 
   //Now for each query point find the k nearest neighbours
 
-  SingleTreeResults *str=new SingleTreeResults[k];
+  ArrayList<SingleTreeResults> str;
+  str.Init(k);
 
   //printf("Will start knn calculations\n"); 
  
@@ -413,11 +468,8 @@ int AllKNNSingleTree::FindKNearestNeighbours(Tree *root, double *point,Matrix *r
   for(int i=0;i<r_matrix->n_cols();i++)
     {   
       int length=0;
-      // printf("came here...\n");
-      //printf("root=%X\n",root);
-      //printf("the number of points covered are %d\n",i);
-      //printf("Total number of points left to be covered are %d\n",r_matrix->n_cols()-i);
-      length=FindKNearestNeighbours(root,q_matrix->GetColumnPtr(i),r_matrix,str,length,k);
+      
+      length+=FindKNearestNeighbours(root,q_matrix->GetColumnPtr(i),r_matrix,str,length,k);
  
       printf("The nearest neighbour distances are\n");
 
@@ -431,12 +483,7 @@ int AllKNNSingleTree::FindKNearestNeighbours(Tree *root, double *point,Matrix *r
 	  results_matrix.astr[i][j].set_result(str[j].get_distance(),str[j].get_index());
 	}
 
-      /*  printf("knn for this point have been added...........\n");
     
-      for(int j=0;j<length;j++)
-	{
-          printf("Index:%d distance: %f\n",str[j].get_index(),str[j].get_distance());
-	  }*/
 
        printf("The origianl point is\n");
 
@@ -446,30 +493,215 @@ int AllKNNSingleTree::FindKNearestNeighbours(Tree *root, double *point,Matrix *r
     
       printf("Will clear str now........\n");
       printf("Length is %d\n",length);
-      /* for(int l=0;l<length;l++)
-	 str[l].set_result(32768.0,-1);*/
-    }
-  printf("The knn distances are\n");
-  printf("The number of points are %d\n",r_matrix->n_cols());
-  char fname[40];
-  strcpy(fname,"allknn");
-  char query_file[40];
-  strcat(fname,"_colors50k.ds");
-  strcat(fname,query_file);
-  printf("The name of query_file is %s\n",query_file);
-  FILE *fp=fopen(fname,"w");
-  for(int t=0;t<r_matrix->n_cols();t++)
-    {
-      for(int l=0;l<k;l++)
-	fprintf(fp,"%f ",results_matrix.astr[t][l].get_distance());
-      fprintf(fp,"\n");
+     
     }
 }
 
-
-void test_module()
+double AllKNNDualTree::FindKNearestNeighboursDualTree(Tree *q_tree,Tree *r_tree,Matrix *q_matrix,Matrix *r_matrix,int k)
 {
+  //if distance between the two boxes is larger than the max _distance then return
+  double distance_between_boxes=q_tree->bound().MinDistanceSq (r_tree->bound()); //base case
+  if(q_tree->is_leaf()&& r_tree->is_leaf())
+    {
+      int start,end;
+      //check if pruneable
+      if(q_tree->stat().get_maximum_distance() < distance_between_boxes)
+	{
+	  //then there is no need to go further and hence we can return
+	  return 32768.0;
+	}
+      else
+	{
+	  //not purneable. therefore carry out exhaustive point-to-point computations
+	  double max_dist=0.0;
+	  double distance;
+	  int position;
+	  int count=0;
+	  for(int i=q_tree->begin();i<q_tree->end();i++)
+	    {
+	      printf("for this point count is %d\n",count);
+	      printf("TAKING NEW I=%d............................................................\n",i);
+	     
+	      count=0;
+	      for(int j=r_tree->begin();j<r_tree->end();j++)
+		{
+		  if(!same_points(q_matrix->GetColumnPtr(i),r_matrix->GetColumnPtr(j),q_matrix->n_rows()))
+		    {
+		      
+		      distance=la::DistanceSqEuclidean (r_matrix->n_rows(),q_matrix->GetColumnPtr(i),r_matrix->GetColumnPtr(j));
+		      //we would like to find index of this point into str. this will enter into str[i]. This function takes in as argument an array list of single tree results            
+		      printf("distance is %f\n",distance);
+		      printf("size is %d\n",results_matrix.astr[i].size());
+		      if(results_matrix.astr[i].size()==0)  
+			{
+			  //initialize start and end
+			  printf("Initialized start and end\n");
+			  start=0;
+			  end=-1;
+			}
+
+		      int length=results_matrix.astr[i].size(); //this calculates the old length
+		      printf("at the moment length is %d\n",length);
+		      
+		      position=find_index(results_matrix.astr[i],distance,start,results_matrix.astr[i].size()-1);
+		      if(length<k)
+			{
+			  printf("since the size of array is still lesser than k will increase the size\n");
+			  printf("Before expanding length is %d \n",length);
+			  results_matrix.astr[i].AddBack(1); //increase the length of the arraylist, only if the number of elements as of now are lesser than k
+			  printf("new length after expanding is %d\n",results_matrix.astr[i].size());
+			}
+
+		      push_into_array(results_matrix.astr[i],position,distance,length,j,k);
+		      printf("pushed into array..\n");
+		      count++;
+		     
+		    }
+		
+		}
+
+	      if(results_matrix.astr[i].size()<k)
+		max_dist=32768.0;
+	      else //all k nn have been found
+		max_dist=max_dist > results_matrix.astr[i][k-1].get_distance()?max_dist:results_matrix.astr[i][k-1].get_distance(); //this is an update after every point IN THE QUERY NODE
+	      
+	      for(int z=0;z<results_matrix.astr[i].size();z++)
+		printf("distance=%f and index=%d\n",results_matrix.astr[i][z].get_distance(),results_matrix.astr[i][z].get_index());
+	    }
+	  printf("Will return from this node a value of %f%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n",max_dist);
+
+	  return max_dist;
+	}
+    }
+
+  else
+    {
+      //Not base case. PRUNING CASE
+      if(q_tree->stat().get_maximum_distance() < distance_between_boxes)
+	{
+	  //then there is no need to go further and henraghavce we can return
+	  return 32768.0;
+	}
+
+      //NOT PRUNEABLE
+      //both are not leafs
+      if(!q_tree->is_leaf() && !r_tree->is_leaf())
+	{
+	  printf("both are not leafs......\n");
+	  double max_dist_q_left_r_left=FindKNearestNeighboursDualTree(q_tree->left(),r_tree->left(),q_matrix,r_matrix,k);
+	  
+	  /*  if(max_dist < q_tree->stat().get_maximum_distance())
+	    {
+	      q_tree->stat().set_maximum_distance(max_dist);
+	      }*/
+	  
+	  double max_dist_q_left_r_right=FindKNearestNeighboursDualTree(q_tree->left(),r_tree->right(),q_matrix,r_matrix,k);
+
+	  double max_dist_q_left= max_dist_q_left_r_left< max_dist_q_left_r_right? max_dist_q_left_r_left: max_dist_q_left_r_right;//take minimum
+
+	  /* if(max_dist_q_left< q_tree->stat().get_maximum_distance())
+	    {
+	      q_tree->stat().set_maximum_distance(max_dist);
+	      }*/
+
+	  double max_dist_q_right_r_left=FindKNearestNeighboursDualTree(q_tree->right(),r_tree->left(),q_matrix,r_matrix,k);
+	  /*if(max_dist<q_tree->stat().get_maximum_distance())
+	    {
+	      q_tree->stat().set_maximum_distance(max_dist);
+	      }*/
+
+	  double max_dist_q_right_r_right=FindKNearestNeighboursDualTree(q_tree->right(),r_tree->right(),q_matrix,r_matrix,k);
+
+	  double max_dist_q_right= max_dist_q_right_r_left< max_dist_q_right_r_right? max_dist_q_right_r_left: max_dist_q_right_r_right;
+	 
+	  double max_dist_q=max_dist_q_left>max_dist_q_right?max_dist_q_left:max_dist_q_right;
+	  q_tree->stat().set_maximum_distance(max_dist_q);
+	  return q_tree->stat().get_maximum_distance();
+	}
+      else
+	{
+	  printf("q is leaf and r is not...\n");
+	  //q_tree is leaf and r_tree is not
+	  if(q_tree->is_leaf()&&!r_tree->is_leaf())
+	    {
+	 
+	      double max_dist_q_r_left=FindKNearestNeighboursDualTree(q_tree,r_tree->left(),q_matrix,r_matrix,k);
+	      
+	      /*if(max_dist < q_tree->stat().get_maximum_distance())
+		{
+		  q_tree->stat().set_maximum_distance(max_dist);
+		  }*/
+	      
+	      double max_dist_q_r_right=FindKNearestNeighboursDualTree(q_tree,r_tree->right(),q_matrix,r_matrix,k);
+	      
+	      /*if(max_dist<q_tree->stat().get_maximum_distance())
+		{
+		   q_tree->stat().set_maximum_distance(max_dist);
+		  }*/
+	      
+	      double max_dist_q = max_dist_q_r_left > max_dist_q_r_right?max_dist_q_r_right:max_dist_q_r_left; //take minimum
+	      q_tree->stat().set_maximum_distance(max_dist_q);
+	      return q_tree->stat().get_maximum_distance();
+	    }
+
+	  else
+	    {
+	      printf("q is not a leaf and r is \n");
+	      //q_tree is not a leaf and r_tree is
+
+	      if(!q_tree->is_leaf()&&r_tree->is_leaf())
+		{
+		  
+		  double max_dist_q_left_r=FindKNearestNeighboursDualTree(q_tree->left(),r_tree,q_matrix,r_matrix,k);
+		  //printf("After getting back to the function the value is %f\n",max_dist);
+		  printf("will compare this vlaue with %f\n",q_tree->stat().get_maximum_distance());
+		  /* if(max_dist < q_tree->stat().get_maximum_distance())
+		    {
+		      q_tree->stat().set_maximum_distance(max_dist);
+		      }*/
+		  
+		  double max_dist_q_right_r=FindKNearestNeighboursDualTree(q_tree->right(),r_tree,q_matrix,r_matrix,k);
+		  
+		  double max_dist_q= max_dist_q_left_r > max_dist_q_right_r? max_dist_q_left_r: max_dist_q_right_r;
+		  q_tree->stat().set_maximum_distance(max_dist_q);
+		  return max_dist_q;
+		}
+	    }
+	}
+    }
 }
+  
+void AllKNNDualTree::ComputeAllKNNDualTree(Matrix *q_matrix,Matrix *r_matrix,int k)
+{
+
+ //printf("results_matrix initialized\n");
+ // Build the kdtree form the reference matrix and the query matrix
+  using namespace tree;
+ 
+ Tree *r_tree=tree::MakeKdTreeMidpoint<Tree>(*r_matrix,3,NULL,NULL); //here the leaf size is set to 3
+ printf("ref tree built\n"); 
+ 
+ Tree *q_tree=tree::MakeKdTreeMidpoint<Tree>(*r_matrix,3,NULL,NULL); //here the leaf size is set to 3
+ printf("query tree built\n");
+
+ printf("Trees built\n");
+ //****************************************************************
+ results_matrix.astr.Init(r_matrix->n_cols()); //the arraylist ahs been completely initialized
+ printf("size has been set to %d\n",r_matrix->n_cols());
+  for(int i=0;i<r_matrix->n_cols();i++)
+    results_matrix.astr[i].Init();
+  FindKNearestNeighboursDualTree(q_tree,r_tree,q_matrix,r_matrix,k);
+  printf("completed the algo. Printing results\n");
+  printf("the k nearest neighbours are............\n");
+  for(int l=0;l<r_matrix->n_cols();l++)
+    {
+      for(int t=0;t<k;t++)
+       {printf("distance is %f ",results_matrix.astr[l][t].get_distance());}
+      printf("\n");
+    }
+  //****************************************************************
+}
+
 
 int main(int argc, char *argv[])
 { 
@@ -490,8 +722,8 @@ int main(int argc, char *argv[])
   //strcpy(ref_file,fx_param_str_req(NULL,"ref_file"));
   //strcpy(method,fx_param_str_req(NULL,"method"));
 
-  strcpy(query_file,"colors50k.ds");
-  strcpy(ref_file,"colors50k.ds");
+  strcpy(query_file,"dummy.ds");
+  strcpy(ref_file,"dummy.ds");
 
 
   int k=3;
@@ -507,7 +739,7 @@ int main(int argc, char *argv[])
 
   //if method is allnnnaive. AllNNNaive computations follow
   //printf("String compare with allknnsingletree is %d\n",strcmp(method,"allknnsingletree"));
-  if(strcmp(method,"allnnnaive")==0)
+   if(strcmp(method,"allnnnaive")==0)
   {
     printf("In allnaive");
     AllNNNaive naive;
@@ -541,15 +773,14 @@ int main(int argc, char *argv[])
 	 akst->ComputeAllKNNSingleTree(q_matrix,r_matrix,k);
     }
 
-     //the code that follows is just a test module
-     if(strcmp(method,"test"))
+  /*
+     if(strcmp(method,"allknndualtree")==0)
        {
-	 printf("came here");
-	 test_module();
-       }
-     if(strcmp(method,"allnndual")==0)
-       {
-
-       }
+	 printf("in allknndualtree\n");
+	 //AllKNNSDual tree computations
+	 //int k=fx_param_int_req(NULL,"k");
+	 AllKNNDualTree *akdt= new AllKNNDualTree();
+	 akdt->ComputeAllKNNDualTree(q_matrix,r_matrix,k);
+	 }*/
      fx_done();     
 }
