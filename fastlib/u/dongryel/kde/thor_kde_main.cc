@@ -11,11 +11,6 @@ int main(int argc, char *argv[]) {
   thor_kde.Init(fx_root);
   thor_kde.Compute();
 
-  if(fx_param_exists(fx_root, "do_naive")) {
-    thor_kde.NaiveCompute();
-    thor_kde.ComputeMaximumRelativeError();
-  }
-
   fx_done();
   return 0;
 }
