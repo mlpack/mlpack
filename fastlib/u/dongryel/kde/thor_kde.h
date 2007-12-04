@@ -248,10 +248,12 @@ class ThorKde {
   public:
 
     DRange d_density_;
+    double used_error_;
     int n_pruned_;
 
     OT_DEF_BASIC(QPostponed) {
       OT_MY_OBJECT(d_density_);
+      OT_MY_OBJECT(used_error_);
       OT_MY_OBJECT(n_pruned_);
     }
 
@@ -260,17 +262,20 @@ class ThorKde {
     /** initialize postponed information to zero */
     void Init(const Param& param) {
       d_density_.Init(0, 0);
+      used_error_ = 0;
       n_pruned_ = 0;
     }
 
     void Reset(const Param& param) {
       d_density_.Init(0, 0);
+      used_error_ = 0;
       n_pruned_ = 0;
     }
 
     /** accumulate postponed information passed down from above */
     void ApplyPostponed(const Param& param, const QPostponed& other) {
       d_density_ += other.d_density_;
+      used_error_ += other.used_error_;
       n_pruned_ += other.n_pruned_;
     }
   };
@@ -279,16 +284,23 @@ class ThorKde {
   class QResult {
   public:
     DRange density_;
+
+    /** amount of used absolute error for this query point */
+    double used_error_;
+
+    /** number of reference points taken care for this query point */
     index_t n_pruned_;
 
     OT_DEF_BASIC(QResult) {
       OT_MY_OBJECT(density_);
+      OT_MY_OBJECT(used_error_);
       OT_MY_OBJECT(n_pruned_);
     }
 
   public:
     void Init(const Param& param) {      
       density_.Init(0, 0);
+      used_error_ = 0;
       n_pruned_ = 0;
     }
 
@@ -305,6 +317,7 @@ class ThorKde {
     void ApplyPostponed(const Param& param, const QPostponed& postponed,
 			const QPoint& q, index_t q_index) {
       density_ += postponed.d_density_;
+      used_error_ += postponed.used_error_;
       n_pruned_ += postponed.n_pruned_;
     }
   };
@@ -314,10 +327,19 @@ class ThorKde {
 
     /** bound on the density from leaves */
     DRange density_;
+
+    /** maximum amount of error incurred among the query points */
+    double used_error_;
+    
+    /** 
+     * minimum bound on the portion of the reference dataset that has been
+     * taken care of.
+     */
     index_t n_pruned_;
 
     OT_DEF_BASIC(QSummaryResult) {
       OT_MY_OBJECT(density_);
+      OT_MY_OBJECT(used_error_);
       OT_MY_OBJECT(n_pruned_);
     }
 
@@ -326,6 +348,7 @@ class ThorKde {
     /** initialize summary result to zeros */
     void Init(const Param& param) {
       density_.Init(0, 0);
+      used_error_ = 0;
       n_pruned_ = 0;
     }
 
@@ -335,6 +358,7 @@ class ThorKde {
 
     void StartReaccumulate(const Param& param, const QNode& q_node) {
       density_.InitEmptySet();
+      used_error_ = 0;
       n_pruned_ = param.reference_count_;
     }
 
@@ -344,6 +368,7 @@ class ThorKde {
      */
     void Accumulate(const Param& param, const QResult& result) {
       density_ |= result.density_;
+      used_error_ = max(used_error_, result.used_error_);
       n_pruned_ = min(n_pruned_, result.n_pruned_);
     }
 
@@ -354,6 +379,7 @@ class ThorKde {
     void Accumulate(const Param& param,
 		    const QSummaryResult& result, index_t n_points) {
       density_ |= result.density_;
+      used_error_ += result.used_error_;
       n_pruned_ = min(n_pruned_, result.n_pruned_);
     }
 
@@ -368,6 +394,7 @@ class ThorKde {
     void ApplySummaryResult(const Param& param,
 			    const QSummaryResult& summary_result) {
       density_ += summary_result.density_;
+      used_error_ += summary_result.used_error_;
       n_pruned_ += summary_result.n_pruned_;
     }
 
@@ -380,6 +407,7 @@ class ThorKde {
     void ApplyPostponed(const Param& param,
 			const QPostponed& postponed, const QNode& q_node) {
       density_ += postponed.d_density_;
+      used_error_ += postponed.used_error_;
       n_pruned_ += postponed.n_pruned_;
     }
   };
@@ -441,15 +469,18 @@ class ThorKde {
       double density_lo = d_density.lo + q_result->density_.lo
 	+ unapplied_summary_results.density_.lo;
       
-      double allocated_width = param.relative_error_ *
-	(r_node.count() / ((double) param.reference_count_)) * density_lo;
+      double allocated_error = 
+	(param.relative_error_ * density_lo - q_result->used_error_) *
+	(r_node.count() / 
+	 ((double) param.reference_count_ - q_result->n_pruned_));
       
       q_result->n_pruned_ += r_node.count();
       
       // if we can prune the entire reference node for the given query point,
       // then we are done
-      if (d_density.width() / 2.0 < allocated_width) {
+      if (d_density.width() / 2.0 < allocated_error) {
         q_result->density_ += d_density;
+	q_result->used_error_ += d_density.width() / 2.0;
         return false;
       }
       
@@ -528,13 +559,14 @@ class ThorKde {
 				      const GlobalResult& global_result,
 				      QPostponed* q_postponed) {
 
-      double allocated_width =
-	param.relative_error_ * (r_node.count() / 
-				 ((double) param.reference_count_)) *
-	q_summary_result.density_.lo;
+      double allocated_error =
+	(param.relative_error_ * q_summary_result.density_.lo -
+	 q_summary_result.used_error_) *
+	r_node.count() / (param.reference_count_ - q_summary_result.n_pruned_);
 
-      if(delta.d_density_.width() / 2.0 <= allocated_width) {
+      if(delta.d_density_.width() / 2.0 <= allocated_error) {
 	q_postponed->d_density_ += delta.d_density_;
+	q_postponed->used_error_ += delta.d_density_.width() / 2.0;
 	q_postponed->n_pruned_ += r_node.count();
 	return false;
       }
@@ -567,7 +599,7 @@ class ThorKde {
   // functions
 
   /** compare naive and fast KDE results and compute maximum relative error */
-  double ComputeMaximumRelativeError() {
+  double ComputeMaximumRelativeError(datanode *module) {
 
     // create cache array for the distributed caches holding the fast KDE
     // naive KDE results
@@ -593,7 +625,7 @@ class ThorKde {
 	max_rel_err = rel_err;
       }
     }
-    printf("maximum relative error: %g\n", max_rel_err);
+    fx_format_result(module, "maximum relative error", "%g", max_rel_err);
     return max_rel_err;
   }
 
@@ -638,12 +670,22 @@ class ThorKde {
   }
 
   /** KDE computation using THOR */
-  void Compute() {
+  void Compute(datanode *module) {
+    
+    printf("Starting dualtree KDE...\n");
+    fx_timer_start(module, "dualtree kde");
     thor::RpcDualTree<ThorKde, DualTreeDepthFirst<ThorKde> >
       (fx_submodule(fx_root, "gnp", "gnp"), GNP_CHANNEL,
        parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+    fx_timer_stop(module, "dualtree kde");
+    printf("Dualtree KDE completed...\n");
+
+    printf("Starting naive KDE...\n");
+    fx_timer_start(module, "naive kde");
     NaiveCompute();
-    ComputeMaximumRelativeError();
+    fx_timer_start(module, "naive kde");
+    printf("Finished naive KDE...\n");
+    ComputeMaximumRelativeError(module);
     
     rpc::Done();
   }
