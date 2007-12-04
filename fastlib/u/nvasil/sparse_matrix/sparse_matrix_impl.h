@@ -21,15 +21,29 @@ SparseMatrix::SparseMatrix() {
 
 }
 
-void SparseMatrix::Init(index_t dimension, index_t nnz_per_row) {
-  dimension_ = dimension;
-	map_ = new Epetra_Map(dimension_, 0, comm_);
+void SparseMatrix::Init(index_t num_of_rows, 
+		                    index_t num_of_columns,
+		                    index_t nnz_per_row) {
+  num_of_rows_=num_of_rows;
+	num_of_columns_=num_of_columns;
+	if (num_of_rows_ < num_of_columns_) {
+	  FATAL("Num of rows  %i is less than the number or columns %i",
+				   num_of_rows_, num_of_columns_);
+	}
+	map_ = new Epetra_Map(num_of_rows_, 0, comm_);
 	matrix_ = new Epetra_CrsMatrix(Copy , map_, nnz_per_row);
 }
 
-void SparseMatrix::Init(index_t dimension, index_t *nnz_per_row) {
-  dimension_ = dimension;
-	map_ = new Epetra_Map(dimension_, 0, comm_);
+void SparseMatrix::Init(index_t num_of_rows,
+	                      index_t num_of_columns,
+												index_t *nnz_per_row) {
+  num_of_rows_=num_of_rows;
+	num_of_columns_=num_of_columns;
+	if (num_of_rows_ < num_of_columns_) {
+	  FATAL("Num of rows  %i is less than the number or columns %i",
+				   num_of_rows_, num_of_columns_);
+	}
+	map_ = new Epetra_Map(num_of_rows_, 0, comm_);
 	matrix_ = new Epetra_CrsMatrix(Copy , map_, nnz_per_row);
 }
 
@@ -40,23 +54,29 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
 			                  index_t nnz_per_row, 
 			                  index_t dimension) {
   if (nnz_per_row > 0 && dimension > 0) {
-	  Init(dimension, nnz_per_row);
+	  Init(dimension, dimension, nnz_per_row);
   } else {
-		dimension_ = 0;
+		num_of_rows_ = 0;
+		num_of_columns_=0;
 		map<index_t, index_t> frequencies;
 		for(index_t i=0; i<rows.length(); i++) {
 			frequencies[rows[i]]++;
 			frequencies[columns[i]]++;
-		  if (rows[i]>dimension_) {
-			  dimension_ = rows[i];
+		  if (rows[i]>num_of_rows_) {
+			  num_of_rows_ = rows[i];
+			}
+			if (columns[i]>num_of_columns_) {
+			  num_of_columns_ = columns[i];
 			}
 		}
-    dimension_=frequencies.size();
-    index_t *nnz= new index_t[dimension_];
-		for(index_t i=0; i<dimension_; i++) {
+    if (frequency.size()-1!=num_of_rows_) {
+		  NONFATAL("Some of the rows are zeros only!");
+		}
+		index_t *nnz= new index_t[dimension_];
+		for(index_t i=0; i<num_of_rows__; i++) {
 		  nnz[i]=frequency[i];
 		}
-	  Init(dimension, nnz);	
+	  Init(num_of_rows_, num_of_columns_, nnz);	
 		delete []nnz;
 		Load(rows, columns, values);
  	}
@@ -109,6 +129,8 @@ void SparseMatrix::Load(Vector &rows,
 }
 
 double SparseMatrix::get(ndex_t r, index_t c) {
+  DEBUG_BOUNDS(r, num_of_rows_);
+	DEBUG_BOUNDS(c, num_of_columns_);
 	index_t global_row = MyGlobalElements_[r];
 	index_t num_of_entries;
 	double *values;
@@ -120,4 +142,28 @@ double SparseMatrix::get(ndex_t r, index_t c) {
 	}
   return values[*pos];
 }
-	
+
+void SparseMatrix::set(index_t r, index_t c, double v) {
+  DEBUG_BOUNDS(r, num_of_rows_);
+	DEBUG_BOUNDS(c, num_of_columns_);
+	if (get(r,c)!=0) {
+	  matrix_->InsertGlobalValues(MyGlobalElements_[r], 1, &v, &c);
+	} else {
+    matrix_->ReplaceGlobalValues(MyGlobalElements_[r], 1, &v, &c); 
+	}
+}
+void SparseMatrix::MakeSymmetric() {
+	index_t num_of_entries;
+	double  *values;
+	index_t *indices;
+  for(index_t i=0; i<dimension_; i++) {
+    index_t global_row = MyGlobalElements_[i];
+    matrix_->ExtractctGlobalRowView(global_row, num_of_entries, values, indices);
+    for(index_t j=0; j<num_of_entries; j++) {
+		  if (unlikely(get(i, indices[j])!=values[j])) {
+			  set(i, indices[j], values[j]);
+			}
+		}
+  } 
+}
+
