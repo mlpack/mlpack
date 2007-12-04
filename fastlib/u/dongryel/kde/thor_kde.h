@@ -118,12 +118,8 @@ class ThorKde {
     /** the point's position */
     Vector v_;
     
-    /** the weight for each reference point */
-    double weight_;
-    
     OT_DEF(ThorKdePoint) {
       OT_MY_OBJECT(v_);
-      OT_MY_OBJECT(weight_);
     }
     
   public:
@@ -134,9 +130,8 @@ class ThorKde {
     
     /** initializes all memory for a point */
     void Init(const Param& param, const DatasetInfo& schema) {
-      v_.Init(schema.n_features() - 1);
+      v_.Init(schema.n_features());
       v_.SetZero();
-      weight_ = 1.0;
     }
     
     /** 
@@ -145,10 +140,8 @@ class ThorKde {
      */
     void Set(const Param& param, index_t index, Vector& data) {
       Vector tmp;
-      DEBUG_ASSERT(data.length() == v_.length() + 1);
       data.MakeSubvector(0, v_.length(), &tmp);
       v_.CopyValues(tmp);
-      weight_ = data[data.length() - 1];
     }    
   };
 
@@ -194,7 +187,7 @@ class ThorKde {
      * Accumulate data from a single point (Req THOR).
      */
     void Accumulate(const Param& param, const ThorKdePoint& point) {
-      far_field_expansion_.Accumulate(point.vec(), point.weight_, 0);
+      far_field_expansion_.Accumulate(point.vec(), 1, 0);
     }
     
     /**
@@ -294,7 +287,7 @@ class ThorKde {
     }
 
   public:
-    void Init(const Param& param) {
+    void Init(const Param& param) {      
       density_.Init(0, 0);
       n_pruned_ = 0;
     }
@@ -581,24 +574,15 @@ class ThorKde {
     CacheArray<QResult> q_fast_results_cache_array;
     q_fast_results_cache_array.Init(&q_results_, BlockDevice::M_READ);
  
-    // create cache reader for each result
-    CacheRead<QResult> first_q_fast_result(&q_fast_results_cache_array,
-					   (q_tree_->root()).begin());
- 
     // maximum relative error
     double max_rel_err = 0;
 
-    // get stride for iterating over each query result
-    size_t q_fast_result_stride = q_fast_results_cache_array.n_elem_bytes();
-     index_t q_end = (q_tree_->root()).end();
-
-    // point to the first query point and its corresopnding result
-    const QResult *q_fast_result = first_q_fast_result;
+    index_t q_end = (q_tree_->root()).end();
 
     for(index_t q = (q_tree_->root()).begin(); q < q_end; q++) {
 
-      printf("Comparing %g against %g\n", (q_fast_result->density_).mid(),
-	     q_naive_results_[q]);
+      // create cache reader for each result
+      CacheRead<QResult> q_fast_result(&q_fast_results_cache_array, q);
 
       double rel_err = fabs(0.5 * (q_fast_result->density_.lo +
 				   q_fast_result->density_.hi) -
@@ -608,7 +592,6 @@ class ThorKde {
       if(rel_err > max_rel_err) {
 	max_rel_err = rel_err;
       }
-      q_fast_result = mem::PointerAdd(q_fast_result, q_fast_result_stride);
     }
     printf("maximum relative error: %g\n", max_rel_err);
     return max_rel_err;
@@ -616,7 +599,7 @@ class ThorKde {
 
   /** KDE computation */
   void NaiveCompute() {
-
+    
     // create cache array for the distriuted caches storing the query
     // reference points and query results
     CacheArray<QPoint> q_points_cache_array;
@@ -624,58 +607,45 @@ class ThorKde {
     q_points_cache_array.Init(q_points_cache_, BlockDevice::M_READ);
     r_points_cache_array.Init(r_points_cache_, BlockDevice::M_READ);
     
-    // create reader/writer for each cache
-    CacheRead<QPoint> first_q_point(&q_points_cache_array, 
-				    (q_tree_->root()).begin());
-    CacheRead<RPoint> first_r_point(&r_points_cache_array,	
-				    (r_tree_->root()).begin());
-
-    // memory stride for looping over each point/result
-    size_t q_point_stride = q_points_cache_array.n_elem_bytes();
-    size_t r_point_stride = r_points_cache_array.n_elem_bytes();
     index_t q_end = (q_tree_->root()).end();
-
-    // point to the first query point and its corresopnding result
-    const QPoint *q_point = first_q_point;
-    
+    index_t r_end = (r_tree_->root()).end();
     for(index_t q = (q_tree_->root()).begin(); q < q_end; q++) {
-      const RPoint *r_point = first_r_point;
-      index_t r_i = (r_tree_->root()).begin();
-      index_t r_left = (r_tree_->root()).count();
+      
+      CacheRead<QPoint> q_point(&q_points_cache_array, q);
 
-      for(;;) {
+      if(q_point->vec().length() == 0) {
+	printf("Problem with %d!\n", q);
+      }
+
+      for(index_t r = (r_tree_->root()).begin(); r < r_end; r++) {
+
+	CacheRead<RPoint> r_point(&r_points_cache_array, r);
+
 	// compute pairwise and add contribution
 	double distance_sq = la::DistanceSqEuclidean(q_point->vec(), 
 						     r_point->vec());
+
 	double kernel_value = parameters_.kernel_.EvalUnnormOnSq(distance_sq);
 
 	q_naive_results_[q] += kernel_value;
 
-	if(unlikely(--r_left == 0)) {
-	  break;
-	}
-
-	r_i++;
-	r_point = mem::PointerAdd(r_point, r_point_stride);
       } // finish looping over each reference point
-
+      
       // normalize the current query density estimate
       q_naive_results_[q] *= parameters_.mul_constant_;
-
-      // move pointer to the next query point
-      q_point = mem::PointerAdd(q_point, q_point_stride);
       
-      printf("Naively: %g\n", q_naive_results_[q]);
-      
-    } // finish looping over each query point    
+    } // finish looping over each query point
   }
 
   /** KDE computation using THOR */
   void Compute() {
-
     thor::RpcDualTree<ThorKde, DualTreeDepthFirst<ThorKde> >
       (fx_submodule(fx_root, "gnp", "gnp"), GNP_CHANNEL,
        parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+    NaiveCompute();
+    ComputeMaximumRelativeError();
+    
+    rpc::Done();
   }
 
   /** read datasets, build trees */
@@ -717,7 +687,7 @@ class ThorKde {
     fx_timer_stop(module, "read_datasets");
     ThorKdePoint default_point;
     CacheArray<ThorKdePoint>::GetDefaultElement(r_points_cache_, 
-						&default_point);    
+						&default_point);   
     parameters_.FinalizeInit(module, default_point.vec().length());
 
     // construct trees
