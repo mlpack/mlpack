@@ -683,7 +683,7 @@ class ThorKde {
     printf("Starting naive KDE...\n");
     fx_timer_start(module, "naive kde");
     NaiveCompute();
-    fx_timer_start(module, "naive kde");
+    fx_timer_stop(module, "naive kde");
     printf("Finished naive KDE...\n");
     ComputeMaximumRelativeError(module);
     
