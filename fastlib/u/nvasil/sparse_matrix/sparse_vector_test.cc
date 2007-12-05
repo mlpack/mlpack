@@ -15,7 +15,9 @@
  *
  * =====================================================================================
  */
-
+#include <limit>
+#include <vector>
+#include <map>
 #include "fastlib/fastlib.h"
 #include "u/nvasil/sparse_matrix/sparse_vector.h"
 
@@ -24,48 +26,98 @@ class SparseVectorTest {
 	void Init() {
     dim_  = 100;
 	  ind1_	= new index_t[10];
-		ind2_ = new index_t[5];
 		val1_ = new double[10];
-		val2_ = new double[5];
+		val2_.Init(5);
 		dim_  = 40;
 		for(index_t i=0; i<10; i++) {
-		  ind1_[i] = 2*i;
-			val1_[i] = 3*i;
+		  ind1_[i] = 2*i+1;
+			val1_[i] = 3*i+1;
 		}
 		
 		for(index_t i=0; i<5; i++) {
-		  ind1_[i] = 2*i;
-			val1_[i] = 4*i;
+		  ind2_.push_back(2*i+1);
+			val2_[i] = 4*i+1;
 		}
     v1_.Init(ind1_, val1_, 10, dim_);
-    v2_.Init(ind2_, val2_,  5, dim_);
-    
-		
+    v2_.Init(ind2_, val2_, dim_);
 	}
   
 	void Destruct() {
 	  v1_.Destruct();
 		v2_.Destruct();
 		delete []ind1_;
-		delete []ind2_;
+		delete []val1_;
+		ind2_.clear();
+		val2.Destruct();
 	}
 
-	void TestInit1();
-	void TestInit2();
-	void TestInit3();
-  void TestCopyConstructor();
-  void TestGet();
-	void TestSet();
-	void TestAdd();
-	void TestSubtract();
-	void TestPointProduct();
-	void TestDotProduct();
-	void TestDistance();
+	void TestInit1() {
+	  Init();
+		for(index_t i=0; i<10; i++) {
+		  TEST_DOUBLE_APPROX(v1_.get(i), 
+			  	               2*i+1,
+				                 numeric_limits<Precision_t>::epsilon());
+		}
+		TEST_DOUBLE_APPROX(v1_.get(0), 0,  numeric_limits<Precision_t>::epsilon());
+	  TEST_DOUBLE_APPROX(v1_.get(4), 0,  numeric_limits<Precision_t>::epsilon());
+		TEST_DOUBLE_APPROX(v1_.get(24), 0,  numeric_limits<Precision_t>::epsilon());
+     Destruct();
+	}
+
+	void TestInit2() {
+	  std::map mp;
+    for(index_t i=0; i<5; i++) {
+		  mp[i]=3*i+1;
+		}
+    SparseVector v;
+    v.Init(mp, dim_);
+		for(index_t i=0; i<dim_; i++) {
+		  TEST_DOUBLE_ASSERT(v.get(i), v2.get(i), numeric_limits<Precision_t>::epsilon());
+		}
+	}
+  void TestCopyConstructor() {
+	  SparseVector v(v1);
+    for(index_t i=0; i<dim_; i++) {
+		  TEST_DOUBLE_ASSERT(v.get(i), v1.get(i), numeric_limits<Precision_t>::epsilon());
+	  }
+	}
+	void TestSet() {
+    for(index_t i=0; i<dim_; i++) {
+		  v1_.set(i, i);
+		}
+		for(index_t i=0; i<dim_; i++) {
+		  TEST_DOUBLE_ASSERT(v1_.get(i), i, numeric_limits<Precision_t>::epsilon());
+	  }
+	}
+	
+	void TestAdd() {
+    SparseVector v;
+    sparse::Add(v1, v2, &v);
+	}
+	
+	void TestSubtract() {
+	  SparseVector v;
+		sparse::Subtract(v1, v2, &v);
+	}
+	
+	void TestPointProduct() {
+	  SparseVector v;
+		sparse::PointProduct(v1, v2, &v);
+	}
+	
+	void TestDotProduct() {
+	  double dot_prod;
+		sparse::DotProduct(v1, v2, &dot_prod);
+	}
+	
+	void TestDistance() {
+	  double dist;
+		sparse::Distance(v1, v2, &dist);
+	}
 	
 	void TestAll() {
-		TestInit1();
-	  TestInit2();
-	  TestInit3();
+		TestInit1(); 
+		TestInit2();
     TestCopyConstructor();
     TestGet();
 	  TestSet();
@@ -77,14 +129,14 @@ class SparseVectorTest {
 	}
 
  private:
-  SparseVector v1_;
-	SparseVector v2_;
-	SparseVector v3_;
-	index_t   *ind1_;
-	index_t   *ind2_;
-  double     *val1;	
-	double     *val2;
-	index_t     dim_;
+  SparseVector            v1_;
+	SparseVector            v2_;
+	SparseVector            v3_;
+	index_t              *ind1_;
+	std::vector<index_t>  ind2_;
+  double                *val1;	
+	Vector                 val2;
+	index_t                dim_;
 };
 
 int main() {
