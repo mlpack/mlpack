@@ -66,6 +66,10 @@ class SparseVector {
 										 SparseVector* dest)
   double get(index_t i);
 	void   set(index_t i, double  value);
+	void   set_start(index_t i);
+	void   set_end(index_t i);
+	void   Lock();
+	  
 		
  private:
 	Epetra_CrsMatrix *vector_;
@@ -232,19 +236,35 @@ namespace sparse {
   	v2.vector_->ExtractGlobalRowView(0, num2, values2, indices2);
 		index_t i=0;
 		index_t j=0;
-		*dist=0;
+		double dist=0;
 		while (likely(i<num1 && j<num2)) {
 			while (indices1[i] < indices2[j]) {
+			 	values3.push_back(values1[i]);
+				indices3.push_back(indices1[i]);
 			  i++;	
         if unlikely((i>=num1)) {
 				  break;
 				}
 		  }
 			if ( likely(i<num1) && indices1[i] == indices2[j]) {
-			  dot_product+=(values1[i] - values2[j]) * (values1[i] - values2[j]);
-			} 
+			  dist += (values1[i] - values2[j]) * (values1[i] - values2[j]);
+			} else {
+			  dist += values2[j] * values2[j];
+			}
 			j++;
 		}
+		if (i<num1) {
+			for(index_t ii=i; i<num1; i++) {
+		    dist += values1[ii] * values1[ii];
+			}
+		}
+		if (j<num2) {
+			for(index_t jj=j; jj<num2; jj++) {
+		    dist +=  values2[jj] * values2[jj];
+			  
+			}
+		}
+    diff->Init(indices3, values3, v1.dimension_);
 	}
   
 	template<int t_pow>

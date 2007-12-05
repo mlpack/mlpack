@@ -211,6 +211,13 @@ inline void SparseVector::set(index_t i, double  value) {
 	}
 }
 
+inline void SparseVector::Lock() {
+  if (unlikely(vector_==NULL)) {
+	  FATAL("Attempted to Lock but you haven't initialized the Epetra_CrsMatrix pointer\n");
+	}
+	vector_->FillComplete();
+}
+
 inline void SparseVector::set_start(index_t ind) {
   start_ = ind;
 }
