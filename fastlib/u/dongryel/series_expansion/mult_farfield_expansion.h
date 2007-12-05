@@ -13,25 +13,16 @@
 #include "kernel_aux.h"
 #include "mult_series_expansion_aux.h"
 
-template<typename TKernel, typename TKernelAux> 
+template<typename TKernelAux> 
 class MultLocalExpansion;
 
 /**
  * Far field expansion class
  */
-template<typename TKernel, typename TKernelAux>
+template<typename TKernelAux>
 class MultFarFieldExpansion {
   
- public:
-  
-  typedef TKernel Kernel;
-  
-  typedef TKernelAux KernelAux;
-
  private:
-  
-  /** The type of the kernel */
-  Kernel kernel_;
   
   /** The center of the expansion */
   Vector center_;
@@ -42,14 +33,16 @@ class MultFarFieldExpansion {
   /** order */
   int order_;
   
-  /** precomputed quantities */
-  MultSeriesExpansionAux *sea_;
-  
   /** auxilirary methods for the kernel (derivative, truncation error bound) */
-  KernelAux ka_;
+  const TKernelAux *ka_;
+
+  /** pointer to the kernel object inside kernel auxiliary object */
+  const typename TKernelAux::TKernel *kernel_;
+
+  /** pointer to the precomputed constants inside kernel auxiliary object */
+  const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(MultFarFieldExpansion) {
-    OT_MY_OBJECT(kernel_);
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
@@ -60,7 +53,7 @@ class MultFarFieldExpansion {
   // getters and setters
   
   /** Get the coefficients */
-  double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
+  double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
   
   /** Get the center of expansion */
   Vector *get_center() { return &center_; }
@@ -118,27 +111,24 @@ class MultFarFieldExpansion {
    */
   double MixField(const Matrix &data, int node1_begin, int node1_end, 
 		  int node2_begin, int node2_end,
-		  const MultFarFieldExpansion<TKernel, TKernelAux> &fe2,
-		  const MultFarFieldExpansion<TKernel, TKernelAux> &fe3,
+		  const MultFarFieldExpansion &fe2,
+		  const MultFarFieldExpansion &fe3,
 		  int order2, int order3) const;
 
   /**
    * Evaluates the three-way convolution with two other far field
    * expansions
    */
-  double ConvolveField
-    (const MultFarFieldExpansion<TKernel, TKernelAux> &fe2,
-     const MultFarFieldExpansion<TKernel, TKernelAux> &fe3,
-     int order1, int order2, int order3) const;
-
+  double ConvolveField(const MultFarFieldExpansion &fe2,
+		       const MultFarFieldExpansion &fe3,
+		       int order1, int order2, int order3) const;
+  
   /**
    * Initializes the current far field expansion object with the given
    * center.
    */
-  void Init(double bandwidth, const Vector& center, 
-	    MultSeriesExpansionAux *sea);
-
-  void Init(double bandwidth, MultSeriesExpansionAux *sea);
+  void Init(const Vector& center, const TKernelAux &ka);
+  void Init(const TKernelAux &ka);
 
   /**
    * Computes the required order for evaluating the far field expansion
@@ -181,21 +171,22 @@ class MultFarFieldExpansion {
    * Translate to the given local expansion. The translated coefficients
    * are added up to the passed-in local expansion coefficients.
    */
-  void TranslateToLocal(MultLocalExpansion<TKernel, TKernelAux> &se, 
+  void TranslateToLocal(MultLocalExpansion<TKernelAux> &se, 
 			int truncation_order);
 
 };
 
-template<typename TKernel, typename TKernelAux>
-void MultFarFieldExpansion<TKernel, TKernelAux>::AccumulateCoeffs
-(const Matrix& data, const Vector& weights, int begin, int end, 
- int order) {
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data, 
+							 const Vector& weights,
+							 int begin, int end, 
+							 int order) {
   
   int dim = data.n_rows();
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   int max_total_num_coeffs = sea_->get_max_total_num_coeffs();
   Vector x_r, tmp;
-  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
 
   // initialize temporary variables
   x_r.Init(dim);
@@ -213,7 +204,7 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::AccumulateCoeffs
   }
   
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order_];
 
   // Repeat for each reference point in this reference node.
   for(index_t r = begin; r < end; r++) {
@@ -230,15 +221,15 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::AccumulateCoeffs
     for(index_t i = 1; i < total_num_coeffs; i++) {
       
       int index = traversal_order[i];
-      ArrayList<int> &lower_mappings = sea_->lower_mapping_index_[index];
+      const ArrayList<int> lower_mappings = sea_->lower_mapping_index_[index];
 
       // from the direct descendant, recursively compute the multipole moments
       int direct_ancestor_mapping_pos = 
 	lower_mappings[lower_mappings.size() - 2];
 
       int position = 0;
-      ArrayList<int> &mapping = sea_->multiindex_mapping_[index];
-      ArrayList<int> &direct_ancestor_mapping = 
+      const ArrayList<int> mapping = sea_->multiindex_mapping_[index];
+      const ArrayList<int> direct_ancestor_mapping = 
 	sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
       for(index_t i = 0; i < dim; i++) {
 	if(mapping[i] != direct_ancestor_mapping[i]) {
@@ -273,10 +264,11 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::AccumulateCoeffs
   }
 }
 
-template<typename TKernel, typename TKernelAux>
-void MultFarFieldExpansion<TKernel, TKernelAux>::RefineCoeffs
-(const Matrix& data, const Vector& weights, int begin, int end, 
- int order) {
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data, 
+						     const Vector& weights, 
+						     int begin, int end, 
+						     int order) {
 
   // if we already have the order of approximation, then return.
   if(order_ >= order) {
@@ -294,9 +286,10 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::RefineCoeffs
   }
 }
 
-template<typename TKernel, typename TKernelAux>
-double MultFarFieldExpansion<TKernel, TKernelAux>::
-  EvaluateField(const Matrix& data, int row_num, int order) const {
+template<typename TKernelAux>
+double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data, 
+							int row_num, 
+							int order) const {
   
   // dimension
   int dim = sea_->get_dimension();
@@ -305,7 +298,7 @@ double MultFarFieldExpansion<TKernel, TKernelAux>::
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
 
   // square root times bandwidth
-  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
   
   // the evaluated sum
   double pos_multipole_sum = 0;
@@ -330,17 +323,17 @@ double MultFarFieldExpansion<TKernel, TKernelAux>::
   }
 
   // compute deriative maps based on coordinate difference.
-  ka_.ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
+  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
   
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order_];
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
     
     int index = traversal_order[j];
     ArrayList<int> mapping = sea_->get_multiindex(index);
-    double arrtmp = ka_.ComputePartialDerivative(derivative_map, mapping);
+    double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
     double prod = coeffs_[index] * arrtmp;
     
     if(prod > 0) {
@@ -355,9 +348,9 @@ double MultFarFieldExpansion<TKernel, TKernelAux>::
   return multipole_sum;
 }
 
-template<typename TKernel, typename TKernelAux>
-double MultFarFieldExpansion<TKernel, TKernelAux>::
-  EvaluateField(const Vector& x_q, int order) const {
+template<typename TKernelAux>
+double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Vector& x_q, 
+							int order) const {
   
   // dimension
   int dim = sea_->get_dimension();
@@ -366,7 +359,7 @@ double MultFarFieldExpansion<TKernel, TKernelAux>::
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
 
   // square root times bandwidth
-  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_.BandwidthFactor(kernel_->bandwidth_sq());
   
   // the evaluated sum
   double pos_multipole_sum = 0;
@@ -416,78 +409,68 @@ double MultFarFieldExpansion<TKernel, TKernelAux>::
   return multipole_sum;
 }
 
-template<typename TKernel, typename TKernelAux>
-  void MultFarFieldExpansion<TKernel, TKernelAux>::Init
-  (double bandwidth, const Vector& center, MultSeriesExpansionAux *sea) {
+template<typename TKernelAux>
+  void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center, 
+					       const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
-  kernel_.Init(bandwidth);
+  kernel_ = &(ka.kernel_);
   center_.Copy(center);
   order_ = -1;
-  sea_ = sea;
-
-  // pass in the pointer to the kernel and the series expansion auxiliary
-  // object
-  ka_.kernel_ = &kernel_;
-  ka_.sea_ = sea_;
+  sea_ = &(ka.sea_);
+  ka_ = &ka;
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
-template<typename TKernel, typename TKernelAux>
-  void MultFarFieldExpansion<TKernel, TKernelAux>::Init
-  (double bandwidth, MultSeriesExpansionAux *sea) {
+template<typename TKernelAux>
+  void MultFarFieldExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
-  kernel_.Init(bandwidth);
-  center_.Init(sea->get_dimension());
-  center_.SetZero();
+  kernel_ = &(ka.kernel_);  
   order_ = -1;
-  sea_ = sea;
-
-  // pass in the pointer to the kernel and the series expansion auxiliary
-  // object
-  ka_.kernel_ = &kernel_;
-  ka_.sea_ = sea_;
+  sea_ = &(ka.sea_);
+  center_.Init(sea_->get_dimension());
+  center_.SetZero();
+  ka_ = &ka;
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
-template<typename TKernel, typename TKernelAux>
-  int MultFarFieldExpansion<TKernel, TKernelAux>::OrderForEvaluating
-  (const DHrectBound<2> &far_field_region, 
-   const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
-   double max_dist_sqd_regions, double max_error, double *actual_error) const {
-
-  return ka_.OrderForEvaluatingFarField(far_field_region,
-					local_field_region,
-					min_dist_sqd_regions, 
-					max_dist_sqd_regions, max_error,
-					actual_error);
+template<typename TKernelAux>
+int MultFarFieldExpansion<TKernelAux>::OrderForEvaluating
+(const DHrectBound<2> &far_field_region, 
+ const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+ double max_dist_sqd_regions, double max_error, double *actual_error) const {
+  
+  return ka_->OrderForEvaluatingFarField(far_field_region,
+					 local_field_region,
+					 min_dist_sqd_regions, 
+					 max_dist_sqd_regions, max_error,
+					 actual_error);
 }
 
-template<typename TKernel, typename TKernelAux>
-  int MultFarFieldExpansion<TKernel, TKernelAux>::
-  OrderForConvertingToLocal(const DHrectBound<2> &far_field_region,
-			    const DHrectBound<2> &local_field_region, 
-			    double min_dist_sqd_regions, 
-			    double max_dist_sqd_regions,
-			    double max_error, 
-			    double *actual_error) const {
-
-  return ka_.OrderForConvertingFromFarFieldToLocal
+template<typename TKernelAux>
+int MultFarFieldExpansion<TKernelAux>::
+OrderForConvertingToLocal(const DHrectBound<2> &far_field_region,
+			  const DHrectBound<2> &local_field_region, 
+			  double min_dist_sqd_regions, 
+			  double max_dist_sqd_regions,
+			  double max_error, 
+			  double *actual_error) const {
+  
+  return ka_->OrderForConvertingFromFarFieldToLocal
     (far_field_region, local_field_region, min_dist_sqd_regions,
      max_dist_sqd_regions, max_error, actual_error);
 }
 
-template<typename TKernel, typename TKernelAux>
-  void MultFarFieldExpansion<TKernel, TKernelAux>::PrintDebug
-  (const char *name, FILE *stream) const {
-
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::PrintDebug
+(const char *name, FILE *stream) const {
     
   int dim = sea_->get_dimension();
   int total_num_coeffs = sea_->get_total_num_coeffs(order_);
@@ -534,11 +517,11 @@ template<typename TKernel, typename TKernelAux>
   fprintf(stream, "\n");
 }
 
-template<typename TKernel, typename TKernelAux>
-  void MultFarFieldExpansion<TKernel, TKernelAux>::TranslateFromFarField
-  (const MultFarFieldExpansion &se) {
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::TranslateFromFarField
+(const MultFarFieldExpansion &se) {
   
-  double bandwidth_factor = ka_.BandwidthFactor(se.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
   int dim = sea_->get_dimension();
   int order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
@@ -574,7 +557,7 @@ template<typename TKernel, typename TKernelAux>
   }
 
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order];
+  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order];
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
    
@@ -630,9 +613,9 @@ template<typename TKernel, typename TKernelAux>
   } // end of j-loop
 }
 
-template<typename TKernel, typename TKernelAux>
-void MultFarFieldExpansion<TKernel, TKernelAux>::TranslateToLocal
-  (MultLocalExpansion<TKernel, TKernelAux> &se, int truncation_order) {
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
+(MultLocalExpansion<TKernelAux> &se, int truncation_order) {
   
   Vector pos_arrtmp, neg_arrtmp;
   Matrix derivative_map;
@@ -643,7 +626,7 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::TranslateToLocal
   int dimension = sea_->get_dimension();
   int total_num_coeffs = sea_->get_total_num_coeffs(truncation_order);
   int limit;
-  double bandwidth_factor = ka_.BandwidthFactor(se.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for local expansion
   local_center.Alias(*(se.get_center()));
@@ -668,12 +651,13 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::TranslateToLocal
   }
 
   // compute required partial derivatives
-  ka_.ComputeDirectionalDerivatives(cent_diff, derivative_map);
+  ka_->ComputeDirectionalDerivatives(cent_diff, derivative_map);
   ArrayList<int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[truncation_order];
+  const ArrayList<int> traversal_order = 
+    sea_->traversal_mapping_[truncation_order];
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
@@ -690,7 +674,7 @@ void MultFarFieldExpansion<TKernel, TKernelAux>::TranslateToLocal
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
       double derivative_factor =
-	ka_.ComputePartialDerivative(derivative_map, beta_plus_alpha);
+	ka_->ComputePartialDerivative(derivative_map, beta_plus_alpha);
       
       double prod = coeffs_[index_k] * derivative_factor;
 

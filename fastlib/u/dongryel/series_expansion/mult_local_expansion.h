@@ -13,25 +13,16 @@
 #include "kernel_aux.h"
 #include "mult_series_expansion_aux.h"
 
-template<typename TKernel, typename TKernelAux> 
+template<typename TKernelAux> 
 class MultFarFieldExpansion;
 
 /**
  * Local expansion class
  */
-template<typename TKernel, typename TKernelAux>
+template<typename TKernelAux>
 class MultLocalExpansion {
-  
- public:
-  
-  typedef TKernel Kernel;
-  
-  typedef TKernelAux KernelAux;
 
  private:
-  
-  /** The type of the kernel */
-  Kernel kernel_;
   
   /** The center of the expansion */
   Vector center_;
@@ -42,14 +33,16 @@ class MultLocalExpansion {
   /** order */
   int order_;
   
-  /** precomputed quantities */
-  MultSeriesExpansionAux *sea_;
-  
   /** auxiliary methods for the kernel (derivative, truncation error bound) */
-  KernelAux ka_;
+  const TKernelAux *ka_;
+
+  /** pointer to the kernel object inside kernel auxiliary object */
+  const typename TKernelAux::TKernel *kernel_;
+
+  /** pointer to the precomputed constants inside kernel auxiliary object */
+  const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(MultLocalExpansion) {
-    OT_MY_OBJECT(kernel_);
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
@@ -60,7 +53,7 @@ class MultLocalExpansion {
   // getters and setters
   
   /** Get the coefficients */
-  double bandwidth_sq() const { return kernel_.bandwidth_sq(); }
+  double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
   
   /** Get the center of expansion */
   Vector* get_center() { return &center_; }
@@ -104,10 +97,9 @@ class MultLocalExpansion {
    * Initializes the current local expansion object with the given
    * center.
    */
-  void Init(double bandwidth, const Vector& center, 
-	    MultSeriesExpansionAux *sea);
+  void Init(const Vector& center, const TKernelAux &sea);
 
-  void Init(double bandwidth, MultSeriesExpansionAux *sea);
+  void Init(const TKernelAux &sea);
   
   /**
    * Computes the required order for evaluating the local expansion
@@ -128,21 +120,21 @@ class MultLocalExpansion {
    * Translate from a far field expansion to the expansion here.
    * The translated coefficients are added up to the ones here.
    */
-  void TranslateFromFarField
-    (const MultFarFieldExpansion<TKernel, TKernelAux> &se);
+  void TranslateFromFarField(const MultFarFieldExpansion<TKernelAux> &se);
   
   /**
    * Translate to the given local expansion. The translated coefficients
    * are added up to the passed-in local expansion coefficients.
    */
-  void TranslateToLocal(MultLocalExpansion<TKernel, TKernelAux> &se);
+  void TranslateToLocal(MultLocalExpansion &se);
 
 };
 
-template<typename TKernel, typename TKernelAux>
-void MultLocalExpansion<TKernel, TKernelAux>::AccumulateCoeffs
-(const Matrix& data, const Vector& weights, 
- int begin, int end, int order) {
+template<typename TKernelAux>
+void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data, 
+						      const Vector& weights, 
+						      int begin, int end, 
+						      int order) {
 
   if(order > order_) {
     order_ = order;
@@ -167,10 +159,10 @@ void MultLocalExpansion<TKernel, TKernelAux>::AccumulateCoeffs
   x_r_minus_x_Q.Init(dim);
   
   // sqrt two times bandwidth
-  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
   
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order];
+  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order];
 
   // for each data point,
   for(index_t r = begin; r < end; r++) {
@@ -182,13 +174,13 @@ void MultLocalExpansion<TKernel, TKernelAux>::AccumulateCoeffs
     }
     
     // precompute necessary partial derivatives based on coordinate difference
-    ka_.ComputeDirectionalDerivatives(x_r_minus_x_Q, derivative_map);
+    ka_->ComputeDirectionalDerivatives(x_r_minus_x_Q, derivative_map);
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
       int index = traversal_order[j];
       ArrayList<int> mapping = sea_->get_multiindex(index);
-      arrtmp[index] = ka_.ComputePartialDerivative(derivative_map, mapping);
+      arrtmp[index] = ka_->ComputePartialDerivative(derivative_map, mapping);
     }
     
     for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -199,9 +191,9 @@ void MultLocalExpansion<TKernel, TKernelAux>::AccumulateCoeffs
   } // End of looping through each reference point.
 }
 
-template<typename TKernel, typename TKernelAux>
-  void MultLocalExpansion<TKernel, TKernelAux>::PrintDebug
-  (const char *name, FILE *stream) const {
+template<typename TKernelAux>
+void MultLocalExpansion<TKernelAux>::PrintDebug(const char *name, 
+						FILE *stream) const {
   
     
   int dim = sea_->get_dimension();
@@ -239,9 +231,9 @@ template<typename TKernel, typename TKernelAux>
   fprintf(stream, "\n");
 }
 
-template<typename TKernel, typename TKernelAux>
-  double MultLocalExpansion<TKernel, TKernelAux>::
-  EvaluateField(const Matrix& data, int row_num) const {
+template<typename TKernelAux>
+double MultLocalExpansion<TKernelAux>::EvaluateField(const Matrix& data, 
+						     int row_num) const {
     
   // if there are no local coefficients, then return 0
   if(order_ < 0) {
@@ -258,7 +250,7 @@ template<typename TKernel, typename TKernelAux>
   double sum = 0;
   
   // sqrt two bandwidth
-  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
 
   // temporary variable
   Vector x_Q_to_x_q;
@@ -280,19 +272,19 @@ template<typename TKernel, typename TKernelAux>
   tmp[0] = 1.0;
 
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order_];
 
   for(index_t i = 1; i < total_num_coeffs; i++) {
     
     int index = traversal_order[i];
-    ArrayList<int> &lower_mappings = sea_->lower_mapping_index_[index];
+    const ArrayList<int> lower_mappings = sea_->lower_mapping_index_[index];
     
     // from the direct descendant, recursively compute the multipole moments
     int direct_ancestor_mapping_pos = 
       lower_mappings[lower_mappings.size() - 2];
     int position = 0;
-    ArrayList<int> &mapping = sea_->multiindex_mapping_[index];
-    ArrayList<int> &direct_ancestor_mapping = 
+    const ArrayList<int> mapping = sea_->multiindex_mapping_[index];
+    const ArrayList<int> direct_ancestor_mapping = 
       sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
     for(index_t i = 0; i < dim; i++) {
       if(mapping[i] != direct_ancestor_mapping[i]) {
@@ -311,9 +303,8 @@ template<typename TKernel, typename TKernelAux>
   return sum;
 }
 
-template<typename TKernel, typename TKernelAux>
-  double MultLocalExpansion<TKernel, TKernelAux>::
-  EvaluateField(const Vector& x_q) const {
+template<typename TKernelAux>
+double MultLocalExpansion<TKernelAux>::EvaluateField(const Vector& x_q) const {
     
   // if there are no local coefficients, then return 0
   if(order_ < 0) {
@@ -330,7 +321,7 @@ template<typename TKernel, typename TKernelAux>
   double sum = 0;
   
   // sqrt two bandwidth
-  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(kernel_.bandwidth_sq());
 
   // temporary variable
   Vector x_Q_to_x_q;
@@ -383,61 +374,52 @@ template<typename TKernel, typename TKernelAux>
   return sum;
 }
 
-template<typename TKernel, typename TKernelAux>
-  void MultLocalExpansion<TKernel, TKernelAux>::Init
-  (double bandwidth, const Vector& center, MultSeriesExpansionAux *sea) {
+template<typename TKernelAux>
+void MultLocalExpansion<TKernelAux>::Init(const Vector& center, 
+					  const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
-  kernel_.Init(bandwidth);
+  kernel_ = &(ka.kernel_);
   center_.Copy(center);
   order_ = -1;
-  sea_ = sea;
-
-  // pass in the pointer to the kernel and the series expansion auxiliary
-  // object
-  ka_.kernel_ = &kernel_;
-  ka_.msea_ = sea_;
+  sea_ = &(ka.sea_);
+  ka_ = &ka;
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
-template<typename TKernel, typename TKernelAux>
-  void MultLocalExpansion<TKernel, TKernelAux>::Init
-  (double bandwidth, MultSeriesExpansionAux *sea) {
+template<typename TKernelAux>
+void MultLocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
-  kernel_.Init(bandwidth);
-  center_.Init(sea->get_dimension());
+  kernel_ = &(ka.kernel_);
+  sea_ = &(ka.sea_);
+  center_.Init(sea_->get_dimension());
   order_ = -1;
-  sea_ = sea;
-
-  // pass in the pointer to the kernel and the series expansion auxiliary
-  // object
-  ka_.kernel_ = &kernel_;
-  ka_.sea_ = sea_;
+  ka_ = &ka;
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
-template<typename TKernel, typename TKernelAux>
-  int MultLocalExpansion<TKernel, TKernelAux>::OrderForEvaluating
-  (const DHrectBound<2> &far_field_region, 
-   const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
-   double max_dist_sqd_regions, double max_error, double *actual_error) const {
-
-  return ka_.OrderForEvaluatingLocal(far_field_region, local_field_region, 
+template<typename TKernelAux>
+int MultLocalExpansion<TKernelAux>::OrderForEvaluating
+(const DHrectBound<2> &far_field_region, 
+ const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+ double max_dist_sqd_regions, double max_error, double *actual_error) const {
+  
+  return ka_->OrderForEvaluatingLocal(far_field_region, local_field_region, 
 				     min_dist_sqd_regions,
 				     max_dist_sqd_regions, max_error, 
 				     actual_error);
 }
 
-template<typename TKernel, typename TKernelAux>
-  void MultLocalExpansion<TKernel, TKernelAux>::TranslateFromFarField
-  (const MultFarFieldExpansion<TKernel, TKernelAux> &se) {
+template<typename TKernelAux>
+void MultLocalExpansion<TKernelAux>::TranslateFromFarField
+(const MultFarFieldExpansion<TKernelAux> &se) {
 
   Vector pos_arrtmp, neg_arrtmp;
   Matrix derivative_map;
@@ -448,7 +430,7 @@ template<typename TKernel, typename TKernelAux>
   int far_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(far_order);
   int limit;
-  double bandwidth_factor = ka_.BandwidthFactor(se.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for far field expansion
   far_center.Alias(*(se.get_center()));
@@ -473,7 +455,7 @@ template<typename TKernel, typename TKernelAux>
   }
 
   // compute required partial derivatives
-  ka_.ComputeDirectionalDerivatives(cent_diff, derivative_map);
+  ka_->ComputeDirectionalDerivatives(cent_diff, derivative_map);
   ArrayList<int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
@@ -494,7 +476,7 @@ template<typename TKernel, typename TKernelAux>
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
       double derivative_factor =
-	ka_.ComputePartialDerivative(derivative_map, beta_plus_alpha);
+	ka_->ComputePartialDerivative(derivative_map, beta_plus_alpha);
       
       double prod = far_coeffs[index_k] * derivative_factor;
 
@@ -515,9 +497,8 @@ template<typename TKernel, typename TKernelAux>
   }
 }
   
-template<typename TKernel, typename TKernelAux>
-  void MultLocalExpansion<TKernel, TKernelAux>::TranslateToLocal
-  (MultLocalExpansion<TKernel, TKernelAux> &se) {
+template<typename TKernelAux>
+void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
 
   // if no local coefficients have formed, then nothing to translate
   if(order_ < 0) {
@@ -544,7 +525,7 @@ template<typename TKernel, typename TKernelAux>
   tmp_storage.Init(dim);
 
   // sqrt two times bandwidth
-  double bandwidth_factor = ka_.BandwidthFactor(kernel_.bandwidth_sq());
+  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
 
   // center difference between the old center and the new one
   Vector center_diff;
@@ -564,7 +545,7 @@ template<typename TKernel, typename TKernelAux>
   C_k.Alias(sea_->get_inv_multiindex_factorials());
 
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order_];
 
   // do the actual translation
   for(index_t j = 0; j < total_num_coeffs; j++) {
