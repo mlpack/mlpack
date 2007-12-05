@@ -71,6 +71,48 @@ inline void SparseVector::Init(std::vector<index_t> &indices,
 	start_ = 0;
 	end_   = dimension_-1;
 }
+
+void Sparse::Init(std::vector<index_t> &indices, std::vector<double> &values, 
+			      index_t dimension) {
+	Init();
+	if (unlikely(indices.size()!=values.size())) {
+	  FATAL("Indices vector has %i elements while Values vectors has %i\n", 
+				  indices.size(), values.size());
+	}
+	std::vector<index_t>::iterator it = std::max_element(indices.begin(), indices.end()); 
+	dimension_ = *it+1;
+	if (dimension>0) {
+	  if (dimension > dimension_) {
+		  dimension_= dimension;
+		} else {
+		  FATAL("Error, the requested dimension was %i, while the maximum "
+					  "index in the data is %i", dimension, dimension_);
+		}
+	}
+	vector_ = new Epetra_CrsMatrix(Copy , *map_, indices.size());
+  my_global_elements_ = map_.MyGlobalElements();
+  vector_->InsertGlobalValues(*myglobal_elements_, 
+		                          values.size(), 
+															&values, 
+															&indices);
+	start_ = 0;
+	end_   = dimension_-1;
+}
+	
+void SparseVector::Init(index_t *indices, double *values, index_t len, index_t dimension) {
+  Init();
+	vector_ = new Epetra_CrsMatrix(Copy , *map_, len);
+  my_global_elements_ = map_.MyGlobalElements();
+  vector_->InsertGlobalValues(*myglobal_elements_, 
+		                          len, 
+															values, 
+															indices);
+	start_ = 0;
+	end_   = dimension_-1;
+
+}
+
+
 inline void SparseMatrix::Init(std::map<index_t, double> &data, index_t dimension) {
   Init();
   std::map<index_t, double>::iterator it=max_element(data.begin(), data.end());
