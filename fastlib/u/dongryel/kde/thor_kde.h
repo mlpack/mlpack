@@ -9,7 +9,7 @@
 /**
  * THOR-based KDE
  */
-template<typename TKernel, typename TKernelAux>
+template<typename TKernelAux>
 class ThorKde {
   
  public:
@@ -22,7 +22,7 @@ class ThorKde {
   public:
     
     /** the kernel in use */
-    TKernel kernel_;
+    typename TKernelAux::TKernel kernel_;
     
     /** precomputed constants for series expansion */
     typename TKernelAux::TSeriesExpansionAux sea_;
@@ -158,18 +158,7 @@ class ThorKde {
     
   public:
     
-    /**
-     * far field expansion created by the reference points in this node.
-     */
-    typename TKernelAux::TFarFieldExpansion far_field_expansion_;
-    
-    /** local expansion stored in this node.
-     */
-    typename TKernelAux::TLocalExpansion local_expansion_;
-    
     OT_DEF(ThorKdeStat) {
-      OT_MY_OBJECT(far_field_expansion_);
-      OT_MY_OBJECT(local_expansion_);
     }
     
     /**
@@ -179,15 +168,12 @@ class ThorKde {
      */
   public:
     void Init(const Param& param) {
-      far_field_expansion_.Init(param.bandwidth_, &param.sea_);
-      local_expansion_.Init(param.bandwidth_, &param.sea_);
     }
     
     /**
      * Accumulate data from a single point (Req THOR).
      */
     void Accumulate(const Param& param, const ThorKdePoint& point) {
-      far_field_expansion_.Accumulate(point.vec(), 1, 0);
     }
     
     /**
@@ -195,8 +181,6 @@ class ThorKde {
      */
     void Accumulate(const Param& param, const ThorKdeStat& child_stat, 
 		    const Bound& bound, index_t child_n_points) {
-      far_field_expansion_.
-	TranslateFromFarField(child_stat.far_field_expansion_);
     }
     
     /**
@@ -204,8 +188,6 @@ class ThorKde {
      * number of points.
      */
     void Postprocess(const Param& param, const Bound&bound, index_t n) {
-      bound.CalculateMidpoint(far_field_expansion_.get_center());
-      bound.CalculateMidpoint(local_expansion_.get_center());
     }
   };
   

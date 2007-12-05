@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
-  ThorKde<GaussianKernel, GaussianKernelAux> thor_kde;
+  ThorKde<GaussianKernelAux> thor_kde;
  
   // initialize and compute
   thor_kde.Init(fx_root);

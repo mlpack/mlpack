@@ -26,24 +26,31 @@ class GaussianKernelMultAux {
 
  public:
 
+  typedef GaussianKernel TKernel;
+
   typedef MultSeriesExpansionAux TSeriesExpansionAux;
   
-  typedef MultFarFieldExpansion<GaussianKernel, GaussianKernelMultAux>
-    TFarFieldExpansion;
+  typedef MultFarFieldExpansion<GaussianKernelMultAux> TFarFieldExpansion;
   
-  typedef MultLocalExpansion<GaussianKernel, GaussianKernelMultAux>
-    TLocalExpansion;
+  typedef MultLocalExpansion<GaussianKernelMultAux> TLocalExpansion;
 
   /** pointer to the Gaussian kernel */
-  GaussianKernel *kernel_;
+  TKernel kernel_;
 
   /** pointer to the series expansion auxiliary object */
-  const MultSeriesExpansionAux *sea_;
+  TSeriesExpansionAux sea_;
 
   OT_DEF_BASIC(GaussianKernelMultAux) {
+    OT_MY_OBJECT(kernel_);
+    OT_MY_OBJECT(sea_);
   }
 
  public:
+
+  void Init(double bandwidth, int max_order, int dim) {
+    kernel_.Init(bandwidth);
+    sea_.Init(max_order, dim);
+  }
 
   double BandwidthFactor(double bandwidth_sq) const {
     return sqrt(2 * bandwidth_sq);
@@ -99,15 +106,15 @@ class GaussianKernelMultAux {
     
     double max_far_field_length = 0;
 
-    for(index_t d = 0; d < sea_->get_dimension(); d++) {
+    for(index_t d = 0; d < sea_.get_dimension(); d++) {
       DRange far_range = far_field_region.get(d);
       max_far_field_length = max(max_far_field_length, far_range.width());
     }
 
-    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
+    double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
     double r = max_far_field_length / two_times_bandwidth;
 
-    int dim = sea_->get_dimension();
+    int dim = sea_.get_dimension();
     double r_raised_to_p_alpha = 1.0;
     double ret, ret2;
     int p_alpha = 0;
@@ -125,7 +132,7 @@ class GaussianKernelMultAux {
     do {
       factorialvalue *= (p_alpha + 1);
 
-      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order()) {
+      if(factorialvalue < 0.0 || p_alpha > sea_.get_max_order()) {
 	return -1;
       }
 
@@ -158,7 +165,7 @@ class GaussianKernelMultAux {
     double max_far_field_length = 0;
     double max_local_field_length = 0;
 
-    for(index_t d = 0; d < sea_->get_dimension(); d++) {
+    for(index_t d = 0; d < sea_.get_dimension(); d++) {
       DRange far_range = far_field_region.get(d);
       DRange local_range = local_field_region.get(d);
       max_far_field_length = max(max_far_field_length, far_range.width());
@@ -166,11 +173,11 @@ class GaussianKernelMultAux {
 				   local_range.width());
     }
 
-    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
+    double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
     double r = max_far_field_length / two_times_bandwidth;
     double r2 = max_local_field_length / two_times_bandwidth;
 
-    int dim = sea_->get_dimension();
+    int dim = sea_.get_dimension();
     double r_raised_to_p_alpha = 1.0;
     double ret, ret2;
     int p_alpha = 0;
@@ -191,7 +198,7 @@ class GaussianKernelMultAux {
     do {
       factorialvalue *= (p_alpha + 1);
 
-      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order()) {
+      if(factorialvalue < 0.0 || p_alpha > sea_.get_max_order()) {
 	return -1;
       }
 
@@ -225,16 +232,16 @@ class GaussianKernelMultAux {
         
     double max_local_field_length = 0;
 
-    for(index_t d = 0; d < sea_->get_dimension(); d++) {
+    for(index_t d = 0; d < sea_.get_dimension(); d++) {
       DRange local_range = local_field_region.get(d);
       max_local_field_length = max(max_local_field_length, 
 				   local_range.width());
     }
 
-    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
+    double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
     double r = max_local_field_length / two_times_bandwidth;
 
-    int dim = sea_->get_dimension();
+    int dim = sea_.get_dimension();
     double r_raised_to_p_alpha = 1.0;
     double ret, ret2;
     int p_alpha = 0;
@@ -252,7 +259,7 @@ class GaussianKernelMultAux {
     do {
       factorialvalue *= (p_alpha + 1);
 
-      if(factorialvalue < 0.0 || p_alpha > sea_->get_max_order()) {
+      if(factorialvalue < 0.0 || p_alpha > sea_.get_max_order()) {
 	return -1;
       }
 
@@ -283,23 +290,31 @@ class GaussianKernelAux {
 
  public:
 
+  typedef GaussianKernel TKernel;
+
   typedef SeriesExpansionAux TSeriesExpansionAux;
 
-  typedef FarFieldExpansion<GaussianKernel, GaussianKernelAux>
-    TFarFieldExpansion;
+  typedef FarFieldExpansion<GaussianKernelAux> TFarFieldExpansion;
   
-  typedef LocalExpansion<GaussianKernel, GaussianKernelAux> TLocalExpansion;
+  typedef LocalExpansion<GaussianKernelAux> TLocalExpansion;
 
   /** pointer to the Gaussian kernel */
-  GaussianKernel *kernel_;
+  TKernel kernel_;
 
   /** pointer to the series expansion auxiliary object */
-  const SeriesExpansionAux *sea_;
+  TSeriesExpansionAux sea_;
 
   OT_DEF_BASIC(GaussianKernelAux) {
+    OT_MY_OBJECT(kernel_);
+    OT_MY_OBJECT(sea_);
   }
 
  public:
+
+  void Init(double bandwidth, int max_order, int dim) {
+    kernel_.Init(bandwidth);
+    sea_.Init(max_order, dim);
+  }
 
   double BandwidthFactor(double bandwidth_sq) const {
     return sqrt(2 * bandwidth_sq);
@@ -354,10 +369,10 @@ class GaussianKernelAux {
      double *actual_error) const {
 
     double frontfactor = 
-      exp(-min_dist_sqd_regions / (4 * kernel_->bandwidth_sq()));
+      exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
     double widest_width = 0;
     int dim = far_field_region.dim();
-    int max_order = sea_->get_max_order();
+    int max_order = sea_.get_max_order();
 
     // find out the widest dimension and its length
     for(index_t d = 0; d < dim; d++) {
@@ -365,7 +380,7 @@ class GaussianKernelAux {
       widest_width += range.width();
     }
   
-    double two_bandwidth = 2 * sqrt(kernel_->bandwidth_sq());
+    double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
     double r = widest_width / two_bandwidth;
 
     double r_raised_to_p_alpha = 1.0;
@@ -404,7 +419,7 @@ class GaussianKernelAux {
 
     double max_ref_length = 0;
     double max_query_length = 0;
-    int dim = sea_->get_dimension();
+    int dim = sea_.get_dimension();
 
     for(index_t i = 0; i < dim; i++) {
       DRange far_field_range = far_field_region.get(i);
@@ -413,7 +428,7 @@ class GaussianKernelAux {
       max_query_length += local_range.width();
     }
   
-    double two_times_bandwidth = sqrt(kernel_->bandwidth_sq()) * 2;
+    double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
     double r_R = max_ref_length / two_times_bandwidth;
     double r_Q = max_query_length / two_times_bandwidth;
 
@@ -422,7 +437,7 @@ class GaussianKernelAux {
     double r_R_raised_to_p = 1.0;
     double ret2;
     double frontfactor =
-      exp(-min_dist_sqd_regions / (4.0 * kernel_->bandwidth_sq()));
+      exp(-min_dist_sqd_regions / (4.0 * kernel_.bandwidth_sq()));
     double first_factorial = 1.0;
     double second_factorial = 1.0;
     double r_Q_raised_to_p_cumulative = 1;
@@ -430,7 +445,7 @@ class GaussianKernelAux {
     do {
       p_alpha++;
 
-      if(p_alpha > sea_->get_max_order() - 1) {
+      if(p_alpha > sea_.get_max_order() - 1) {
 	return -1;
       }
 
@@ -463,10 +478,10 @@ class GaussianKernelAux {
      double *actual_error) const {
     
     double frontfactor =
-      exp(-min_dist_sqd_regions / (4 * kernel_->bandwidth_sq()));
+      exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
     double widest_width = 0;
     int dim = local_field_region.dim();
-    int max_order = sea_->get_max_order();
+    int max_order = sea_.get_max_order();
   
     // find out the widest dimension and its length
     for(index_t d = 0; d < dim; d++) {
@@ -474,7 +489,7 @@ class GaussianKernelAux {
       widest_width += range.width();
     }
   
-    double two_bandwidth = 2 * sqrt(kernel_->bandwidth_sq());
+    double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
     double r = widest_width / two_bandwidth;
 
     double r_raised_to_p_alpha = 1.0;
@@ -512,20 +527,29 @@ class EpanKernelAux {
   
  public:
 
+  typedef EpanKernel TKernel;
+
   typedef SeriesExpansionAux TSeriesExpansionAux;
 
-  typedef FarFieldExpansion<EpanKernel, EpanKernelAux> TFarFieldExpansion;
+  typedef FarFieldExpansion<EpanKernelAux> TFarFieldExpansion;
   
-  typedef LocalExpansion<EpanKernel, EpanKernelAux> TLocalExpansion;
+  typedef LocalExpansion<EpanKernelAux> TLocalExpansion;
 
-  EpanKernel *kernel_;
+  TKernel kernel_;
   
-  const SeriesExpansionAux *sea_;
+  TSeriesExpansionAux sea_;
 
   OT_DEF_BASIC(EpanKernelAux) {
+    OT_MY_OBJECT(kernel_);
+    OT_MY_OBJECT(sea_);
   }
 
  public:
+
+  void Init(double bandwidth, int max_order, int dim) {
+    kernel_.Init(bandwidth);
+    sea_.Init(max_order, dim);
+  }
 
   double BandwidthFactor(double bandwidth_sq) const {
     return sqrt(bandwidth_sq);
@@ -599,7 +623,7 @@ class EpanKernelAux {
 
     // first check that the maximum distances between the two regions are
     // within the bandwidth, otherwise the expansion is not valid
-    if(max_dist_sqd_regions > kernel_->bandwidth_sq()) {
+    if(max_dist_sqd_regions > kernel_.bandwidth_sq()) {
       return -1;
     }
 
@@ -628,9 +652,9 @@ class EpanKernelAux {
 
     // divide by the two times the bandwidth to find out how wide it is
     // in terms of the bandwidth
-    double two_bandwidth = 2 * sqrt(kernel_->bandwidth_sq());
+    double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
     double r = widest_width / two_bandwidth;
-    farthest_distance_manhattan /= sqrt(kernel_->bandwidth_sq());
+    farthest_distance_manhattan /= sqrt(kernel_.bandwidth_sq());
 
     // try the 0-th order approximation first
     double error = 2 * dim * farthest_distance_manhattan * r;

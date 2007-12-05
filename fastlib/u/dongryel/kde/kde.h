@@ -109,7 +109,7 @@ class NaiveKde {
 };
 
 
-template<typename TKernel, typename TKernelAux>
+template<typename TKernelAux>
 class FastKde {
 
   public:
@@ -128,8 +128,8 @@ class FastKde {
     double mass_l_;
     
     /**
-     * additional offset for the lower bound on the densities for the query
-     * points owned by this node (for leaf nodes only).
+     * total amount of lower bound change passed down from the ancestor
+     * (for leaf nodes only).
      */
     double more_l_;
     
@@ -147,8 +147,8 @@ class FastKde {
     double mass_u_;
     
     /**
-     * additional offset for the upper bound on the densities for the query
-     * points owned by this node (for leaf nodes only)
+     * total amount of upper bound changes passed down from the ancestors
+     * (for leaf nodes only)
      */
     double more_u_;
     
@@ -182,11 +182,10 @@ class FastKde {
       mass_t_ = 0;    
     }
     
-    void Init(double bandwidth, 
-	      typename TKernelAux::TSeriesExpansionAux *sea) {
+    void Init(const TKernelAux &ka) {
 
-      farfield_expansion_.Init(bandwidth, sea);
-      local_expansion_.Init(bandwidth, sea);
+      farfield_expansion_.Init(ka);
+      local_expansion_.Init(ka);
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count) {
@@ -199,11 +198,10 @@ class FastKde {
       Init();
     }
     
-    void Init(double bandwidth, const Vector& center,
-	      typename TKernelAux::TSeriesExpansionAux *sea) {
+    void Init(const Vector& center, const TKernelAux &ka) {
       
-      farfield_expansion_.Init(bandwidth, center, sea);
-      local_expansion_.Init(bandwidth, center, sea);
+      farfield_expansion_.Init(center, ka);
+      local_expansion_.Init(center, ka);
       Init();
     }
 
@@ -252,7 +250,7 @@ class FastKde {
   private:
 
   /** series expansion auxililary object */
-  typename TKernelAux::TSeriesExpansionAux sea_;
+  TKernelAux ka_;
 
   /** query dataset */
   Matrix qset_;
@@ -268,9 +266,6 @@ class FastKde {
   
   /** reference weights */
   Vector rset_weights_;
-
-  /** list of kernels to evaluate */
-  TKernel kernel_;
 
   /** lower bound on the densities */
   Vector densities_l_;
@@ -418,7 +413,7 @@ class FastKde {
 
 	// pairwise distance and kernel value
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
-	double ker_value = kernel_.EvalUnnormOnSq(dsqd);
+	double ker_value = ka_.kernel_.EvalUnnormOnSq(dsqd);
 
 	densities_l_[q] += ker_value;
 	densities_e_[q] += ker_value;
@@ -571,7 +566,7 @@ class FastKde {
     // value bounds
     dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
     dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-    kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
+    kernel_value_range = ka_.kernel_.RangeUnnormOnSq(dsqd_range);
 
     // the new lower bound after incorporating new info
     dl = kernel_value_range.lo * num_references;
@@ -735,7 +730,7 @@ class FastKde {
 
     // initialize the center of expansions and bandwidth for
     // series expansion
-    node->stat().Init(sqrt(kernel_.bandwidth_sq()), &sea_);
+    node->stat().Init(ka_);
     node->bound().CalculateMidpoint
       (node->stat().farfield_expansion_.get_center());
     node->bound().CalculateMidpoint
@@ -771,7 +766,7 @@ class FastKde {
       // exhaustively compute multipole moments
       node->stat().farfield_expansion_.RefineCoeffs(rset_, rset_weights_,
 						    node->begin(), node->end(),
-						    sea_.get_max_order());
+						    ka_.sea_.get_max_order());
     }
   }
 
@@ -804,7 +799,7 @@ class FastKde {
   }
 
   void NormalizeDensities() {
-    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
+    double norm_const = ka_.kernel_.CalcNormConstant(qset_.n_rows()) *
       rset_.n_cols();
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       densities_l_[q] /= norm_const;
@@ -945,14 +940,14 @@ class FastKde {
     densities_u_.Init(qset_.n_cols());
 
     // initialize the kernel
-    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+    double bandwidth = fx_param_double_req(NULL, "bandwidth");
 
     // initialize the series expansion object
     if(qset_.n_rows() <= 2) {
-      sea_.Init(fx_param_int(NULL, "order", 5), qset_.n_rows());
+      ka_.Init(bandwidth, fx_param_int(NULL, "order", 5), qset_.n_rows());
     }
     else {
-      sea_.Init(fx_param_int(NULL, "order", 0), qset_.n_rows());
+      ka_.Init(bandwidth, fx_param_int(NULL, "order", 0), qset_.n_rows());
     }
   }
 

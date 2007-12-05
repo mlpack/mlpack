@@ -21,12 +21,10 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
 
   // bandwidth of 10 Epanechnikov kernel
   double bandwidth = 10;
-  EpanKernel kernel;
-  kernel.Init(bandwidth);
 
   // declare auxiliary object and initialize
-  SeriesExpansionAux sea;
-  sea.Init(10, data.n_rows());
+  EpanKernelAux ka;
+  ka.Init(bandwidth, 10, data.n_rows());
 
   // declare center at the origin
   Vector center;
@@ -39,10 +37,10 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 0.1;
 
   // declare expansion object
-  FarFieldExpansion<EpanKernel, EpanKernelAux> se;
+  FarFieldExpansion<EpanKernelAux> se;
 
   // initialize expansion objects with respective center and the bandwidth
-  se.Init(bandwidth, center, &sea);
+  se.Init(center, ka);
 
   // compute up to 2-nd order multivariate polynomial.
   se.AccumulateCoeffs(data, weights, begin, end, 2);
@@ -64,7 +62,7 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
       (evaluate_here[1] - data.get(1, row_num)) * 
       (evaluate_here[1] - data.get(1, row_num));
     
-    exhaustive_sum += kernel.EvalUnnormOnSq(dsqd);
+    exhaustive_sum += ka.kernel_.EvalUnnormOnSq(dsqd);
 
   }
   printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
@@ -79,9 +77,9 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
     int row_num = i;
 
     double diff0 = (data.get(0, row_num) - center[0]) / 
-      sqrt(kernel.bandwidth_sq());
+      sqrt(ka.kernel_.bandwidth_sq());
     double diff1 = (data.get(1, row_num) - center[1]) / 
-      sqrt(kernel.bandwidth_sq());
+      sqrt(ka.kernel_.bandwidth_sq());
 
     first_moment0 += diff0;
     first_moment1 += diff1;
@@ -89,9 +87,9 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
     second_moment1 += diff1 * diff1;
   }
   double diff_coord0 = (evaluate_here[0] - center[0]) / 
-    sqrt(kernel.bandwidth_sq());
+    sqrt(ka.kernel_.bandwidth_sq());
   double diff_coord1 = (evaluate_here[1] - center[1]) / 
-    sqrt(kernel.bandwidth_sq());
+    sqrt(ka.kernel_.bandwidth_sq());
   
   printf("Old formula got: %g\n",
 	 end - (second_moment0 - 2 * first_moment0 * diff_coord0 + 
@@ -109,12 +107,10 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
 
   // bandwidth of sqrt(0.5) Gaussian kernel
   double bandwidth = sqrt(0.5);
-  GaussianKernel kernel;
-  kernel.Init(sqrt(0.5));
 
   // declare auxiliary object and initialize
-  SeriesExpansionAux sea;
-  sea.Init(10, data.n_rows());
+  GaussianKernelAux ka;
+  ka.Init(bandwidth, 10, data.n_rows());
 
   // declare center at the origin
   Vector center;
@@ -127,11 +123,11 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3;
 
   // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
+  FarFieldExpansion<GaussianKernelAux> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
-  se.Init(bandwidth, center, &sea);
+  se.Init(center, ka);
 
   // compute up to 10-th order multivariate polynomial.
   se.AccumulateCoeffs(data, weights, begin, end, 10);
@@ -153,7 +149,7 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
       (evaluate_here[1] - data.get(1, row_num)) * 
       (evaluate_here[1] - data.get(1, row_num));
     
-    exhaustive_sum += kernel.EvalUnnormOnSq(dsqd);
+    exhaustive_sum += ka.kernel_.EvalUnnormOnSq(dsqd);
 
   }
   printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
@@ -167,10 +163,8 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
 
   // declare auxiliary object and initialize
   double bandwidth = 1;
-  GaussianKernel kernel;
-  kernel.Init(bandwidth);
-  SeriesExpansionAux sea;
-  sea.Init(10, data.n_rows());
+  GaussianKernelAux ka;
+  ka.Init(bandwidth, 10, data.n_rows());
 
   // declare center at the origin
   Vector center;
@@ -183,11 +177,11 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
-  LocalExpansion<GaussianKernel, GaussianKernelAux> se;
+  LocalExpansion<GaussianKernelAux> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 1
-  se.Init(bandwidth, center, &sea);
+  se.Init(center, ka);
 
   // compute up to 4-th order multivariate polynomial.
   se.AccumulateCoeffs(data, weights, begin, end, 6);
@@ -210,7 +204,7 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
       (evaluate_here[1] - data.get(1, row_num)) * 
       (evaluate_here[1] - data.get(1, row_num));
     
-    exhaustive_sum += kernel.EvalUnnormOnSq(dsqd);
+    exhaustive_sum += ka.kernel_.EvalUnnormOnSq(dsqd);
 
   }
   printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
@@ -235,8 +229,8 @@ int TestTransFarToFar(const Matrix &data, const Vector &weights,
 
   // declare auxiliary object and initialize
   double bandwidth = sqrt(0.1);
-  SeriesExpansionAux sea;
-  sea.Init(10, data.n_rows());
+  GaussianKernelAux ka;
+  ka.Init(bandwidth, 10, data.n_rows());
   
   // declare center at the origin
   Vector center;
@@ -250,15 +244,15 @@ int TestTransFarToFar(const Matrix &data, const Vector &weights,
   new_center[1] = -2;
 
   // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se_translated;
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se_cmp;
+  FarFieldExpansion<GaussianKernelAux> se;
+  FarFieldExpansion<GaussianKernelAux> se_translated;
+  FarFieldExpansion<GaussianKernelAux> se_cmp;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
-  se.Init(bandwidth, center, &sea);
-  se_translated.Init(bandwidth, new_center, &sea);
-  se_cmp.Init(bandwidth, new_center, &sea);
+  se.Init(center, ka);
+  se_translated.Init(new_center, ka);
+  se_cmp.Init(new_center, ka);
   
   // compute up to 4-th order multivariate polynomial and translate it.
   se.AccumulateCoeffs(data, weights, begin, end, 4);
@@ -298,8 +292,8 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
 
   // declare auxiliary object and initialize
   double bandwidth = sqrt(1);
-  SeriesExpansionAux sea;
-  sea.Init(10, data.n_rows());
+  GaussianKernelAux ka;
+  ka.Init(bandwidth, 10, data.n_rows());
   
   // declare center at the origin
   Vector center;
@@ -312,13 +306,13 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   new_center[0] = new_center[1] = 3.5;
 
   // declare expansion objects at (0,0) and other centers
-  LocalExpansion<GaussianKernel, GaussianKernelAux> se;
-  LocalExpansion<GaussianKernel, GaussianKernelAux> se_translated;
+  LocalExpansion<GaussianKernelAux> se;
+  LocalExpansion<GaussianKernelAux> se_translated;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.1
-  se.Init(bandwidth, center, &sea);
-  se_translated.Init(bandwidth, new_center, &sea);
+  se.Init(center, ka);
+  se_translated.Init(new_center, ka);
   
   // compute up to 4-th order multivariate polynomial and translate it.
   se.AccumulateCoeffs(data, weights, begin, end, 4);
@@ -356,12 +350,10 @@ int TestMixFarField(const Matrix &data, const Vector &weights,
 
   // bandwidth of 5 Gaussian kernel
   double bandwidth = 5;
-  GaussianKernel kernel;
-  kernel.Init(bandwidth);
 
   // declare auxiliary object and initialize
-  SeriesExpansionAux sea;
-  sea.Init(20, data.n_rows());
+  GaussianKernelAux ka;
+  ka.Init(bandwidth, 20, data.n_rows());
 
   // declare center at the origin, (10, -10) and (-10, -10)
   Vector center;
@@ -392,15 +384,15 @@ int TestMixFarField(const Matrix &data, const Vector &weights,
   data_comb.PrintDebug();
 
   // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se2;
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se3;
+  FarFieldExpansion<GaussianKernelAux> se;
+  FarFieldExpansion<GaussianKernelAux> se2;
+  FarFieldExpansion<GaussianKernelAux> se3;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
-  se.Init(bandwidth, center, &sea);
-  se2.Init(bandwidth, center2, &sea);
-  se3.Init(bandwidth, center3, &sea);
+  se.Init(center, ka);
+  se2.Init(center2, ka);
+  se3.Init(center3, ka);
 
   // compute up to 20-th order multivariate polynomial.
   se.AccumulateCoeffs(data_comb, weights_comb, begin, end, 20);
@@ -427,13 +419,13 @@ int TestMixFarField(const Matrix &data, const Vector &weights,
 	double dsqd_ij = 0;
 	double dsqd_ik = 0;
 	double dsqd_jk = 0;
-	for(index_t d = 0; d < sea.get_dimension(); d++) {
+	for(index_t d = 0; d < ka.sea_.get_dimension(); d++) {
 	  dsqd_ij += (i_col[d] - j_col[d]) * (i_col[d] - j_col[d]);
 	  dsqd_ik += (i_col[d] - k_col[d]) * (i_col[d] - k_col[d]);
 	  dsqd_jk += (j_col[d] - k_col[d]) * (j_col[d] - k_col[d]);
 	}
-	naive_result += kernel.EvalUnnormOnSq(dsqd_ij + dsqd_ik +
-					      dsqd_jk);
+	naive_result += ka.kernel_.EvalUnnormOnSq(dsqd_ij + dsqd_ik +
+						  dsqd_jk);
       }
     }
   }
@@ -448,12 +440,10 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
 
   // bandwidth of 5 Gaussian kernel
   double bandwidth = 5;
-  GaussianKernel kernel;
-  kernel.Init(bandwidth);
 
   // declare auxiliary object and initialize
-  SeriesExpansionAux sea;
-  sea.Init(20, data.n_rows());
+  GaussianKernelAux ka;
+  ka.Init(bandwidth, 20, data.n_rows());
 
   // declare center at the origin, (10, -10) and (-10, -10)
   Vector center;
@@ -482,15 +472,15 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
   data3.PrintDebug();
 
   // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se;
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se2;
-  FarFieldExpansion<GaussianKernel, GaussianKernelAux> se3;
+  FarFieldExpansion<GaussianKernelAux> se;
+  FarFieldExpansion<GaussianKernelAux> se2;
+  FarFieldExpansion<GaussianKernelAux> se3;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
-  se.Init(bandwidth, center, &sea);
-  se2.Init(bandwidth, center2, &sea);
-  se3.Init(bandwidth, center3, &sea);
+  se.Init(center, ka);
+  se2.Init(center2, ka);
+  se3.Init(center3, ka);
 
   // compute up to 20-th order multivariate polynomial.
   se.AccumulateCoeffs(data, weights, begin, end, 20);
@@ -512,13 +502,13 @@ int TestConvolveFarField(const Matrix &data, const Vector &weights,
 	double dsqd_ij = 0;
 	double dsqd_ik = 0;
 	double dsqd_jk = 0;
-	for(index_t d = 0; d < sea.get_dimension(); d++) {
+	for(index_t d = 0; d < ka.sea_.get_dimension(); d++) {
 	  dsqd_ij += (i_col[d] - j_col[d]) * (i_col[d] - j_col[d]);
 	  dsqd_ik += (i_col[d] - k_col[d]) * (i_col[d] - k_col[d]);
 	  dsqd_jk += (j_col[d] - k_col[d]) * (j_col[d] - k_col[d]);
 	}
-	naive_result += kernel.EvalUnnormOnSq(dsqd_ij + dsqd_ik +
-					      dsqd_jk);
+	naive_result += ka.kernel_.EvalUnnormOnSq(dsqd_ij + dsqd_ik +
+						  dsqd_jk);
       }
     }
   }
@@ -544,12 +534,10 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
 
   // bandwidth of sqrt(0.5) Gaussian kernel
   double bandwidth = sqrt(0.5);
-  GaussianKernel kernel;
-  kernel.Init(sqrt(0.5));
 
   // declare auxiliary object and initialize
-  MultSeriesExpansionAux sea;
-  sea.Init(2, data.n_rows());
+  GaussianKernelMultAux ka;
+  ka.Init(bandwidth, 2, data.n_rows());
 
   // declare center at the origin
   Vector center;
@@ -562,11 +550,11 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
   evaluate_here[0] = evaluate_here[1] = 3;
 
   // declare expansion objects at (0,0) and other centers
-  MultFarFieldExpansion<GaussianKernel, GaussianKernelMultAux> se;
+  MultFarFieldExpansion<GaussianKernelMultAux> se;
 
   // initialize expansion objects with respective centers and the bandwidth
   // squared of 0.5
-  se.Init(bandwidth, center, &sea);
+  se.Init(center, ka);
 
   // compute up to 4-th order multivariate polynomial.
   se.AccumulateCoeffs(data, weights, begin, end, 1);

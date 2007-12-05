@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
       if(fx_param_exists(NULL, "multiplicative_expansion")) {
 
 	printf("O(p^D) expansion KDE\n");
-	FastKde<GaussianKernel, GaussianKernelMultAux> fast_kde;
+	FastKde<GaussianKernelMultAux> fast_kde;
 	fast_kde.Init();
 	fast_kde.Compute(fx_param_double(NULL, "tau", 0.1));
       
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
       else {
 
 	printf("O(D^p) expansion KDE\n");
-	FastKde<GaussianKernel, GaussianKernelAux> fast_kde;
+	FastKde<GaussianKernelAux> fast_kde;
 	fast_kde.Init();
 	fast_kde.Compute(fx_param_double(NULL, "tau", 0.1));
       
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
     
     }
     else if(!strcmp(fx_param_str(NULL, "kernel", "epan"), "epan")) {
-      FastKde<EpanKernel, EpanKernelAux> fast_kde;
+      FastKde<EpanKernelAux> fast_kde;
       fast_kde.Init();
       fast_kde.Compute(fx_param_double(NULL, "tau", 0.1));
     

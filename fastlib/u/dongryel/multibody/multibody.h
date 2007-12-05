@@ -83,7 +83,7 @@ class NaiveMultibody {
 
 };
 
-template<typename TKernel, typename TKernelAux>
+template<typename TKernelAux>
 class MultibodyStat {
 
  public:
@@ -91,15 +91,15 @@ class MultibodyStat {
   /**
    * Far field expansion created by the reference points in this node.
    */
-  FarFieldExpansion<TKernel, TKernelAux> farfield_expansion_;
+  FarFieldExpansion<TKernelAux> farfield_expansion_;
 
   /**
    * Local expansion stored in this node.
    */
-  LocalExpansion<TKernel, TKernelAux> local_expansion_;
+  LocalExpansion<TKernelAux> local_expansion_;
 
   // getters and setters
-  FarFieldExpansion<TKernel, TKernelAux> &get_farfield_coeffs() {
+  FarFieldExpansion<TKernelAux> &get_farfield_coeffs() {
     return farfield_expansion_;
   }
 
@@ -107,9 +107,9 @@ class MultibodyStat {
   void Init() {
   }
 
-  void Init(double bandwidth, SeriesExpansionAux *sea) {
-    farfield_expansion_.Init(bandwidth, sea);
-    local_expansion_.Init(bandwidth, sea);
+  void Init(const TKernelAux &ka) {
+    farfield_expansion_.Init(ka);
+    local_expansion_.Init(ka);
   }
 
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
@@ -122,11 +122,9 @@ class MultibodyStat {
     Init();
   }
 
-  void Init(double bandwidth, const Vector& center,
-	    SeriesExpansionAux *sea) {
-
-    farfield_expansion_.Init(bandwidth, center, sea);
-    local_expansion_.Init(bandwidth, center, sea);
+  void Init(const Vector& center, const TKernelAux &ka) {
+    farfield_expansion_.Init(center, ka);
+    local_expansion_.Init(center, ka);
   }
 
   MultibodyStat() { }
@@ -136,7 +134,7 @@ class MultibodyStat {
 };
 
 
-template<typename TMultibodyKernel, typename TKernel, typename TKernelAux>
+template<typename TMultibodyKernel, typename TKernelAux>
 class MultitreeMultibody {
 
   FORBID_COPY(MultitreeMultibody);
@@ -144,7 +142,7 @@ class MultitreeMultibody {
 public:
 
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, 
-    MultibodyStat<TKernel, TKernelAux> > Tree;
+    MultibodyStat<TKernelAux> > Tree;
   
   typedef TMultibodyKernel MultibodyKernel;
 
@@ -192,7 +190,7 @@ public:
   void InitExpansionObjects(Tree *node) {
     
     if(node != NULL) {
-      node->stat().Init(sqrt(mkernel_.bandwidth_sq()), &sea_);
+      node->stat().Init(ka_);
       node->bound().CalculateMidpoint
 	(node->stat().farfield_expansion_.get_center());
       node->bound().CalculateMidpoint
@@ -223,7 +221,7 @@ public:
     weights_.SetAll(1);
 
     // set the maximum order of approximation here!
-    sea_.Init(4, data_.n_rows());
+    ka_.Init(bandwidth, 4, data_.n_rows());
 
     // initialize the multibody kernel and the series expansion objects
     // for all nodes
@@ -278,7 +276,7 @@ private:
   Vector weights_;
 
   /** series approximation auxiliary computations */
-  SeriesExpansionAux sea_;
+  TKernelAux ka_;
   
   /** multibody kernel function */
   MultibodyKernel mkernel_;
@@ -560,11 +558,11 @@ private:
       double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
       double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
       
-      FarFieldExpansion<TKernel, TKernelAux> &coeffs0 =
+      FarFieldExpansion<TKernelAux> &coeffs0 =
 	nodes[0]->stat().get_farfield_coeffs();
-      FarFieldExpansion<TKernel, TKernelAux> &coeffs1 =
+      FarFieldExpansion<TKernelAux> &coeffs1 =
 	nodes[1]->stat().get_farfield_coeffs();
-      FarFieldExpansion<TKernel, TKernelAux> &coeffs2 =
+      FarFieldExpansion<TKernelAux> &coeffs2 =
 	nodes[2]->stat().get_farfield_coeffs();
       double total_relerr = allowed_err / 
 	(num_tuples * max_ij * max_ik * max_jk);
@@ -594,9 +592,9 @@ private:
       if(order_ij >= 0 && order_ik >= 0 && order_jk >= 0 &&
 	 order_ij < max_order && order_ik < max_order && 
 	 order_jk < max_order &&
-	 sea_.get_total_num_coeffs(order_ij) *
-	 sea_.get_total_num_coeffs(order_ik) *
-	 sea_.get_total_num_coeffs(order_jk) <
+	 ka_.sea_.get_total_num_coeffs(order_ij) *
+	 ka_.sea_.get_total_num_coeffs(order_ik) *
+	 ka_.sea_.get_total_num_coeffs(order_jk) <
 	 nodes[0]->count() * nodes[1]->count() * nodes[2]->count()) {
 
 	coeffs0.RefineCoeffs(data_, weights_, nodes[0]->begin(), 
@@ -652,11 +650,11 @@ private:
       double min_ik = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 0));
       double min_jk = mkernel_.EvalUnnormOnSqOnePair(distmat.get(2, 1));
       
-      FarFieldExpansion<TKernel, TKernelAux> &coeffs0 =
+      FarFieldExpansion<TKernelAux> &coeffs0 =
 	nodes[0]->stat().get_farfield_coeffs();
-      FarFieldExpansion<TKernel, TKernelAux> &coeffs1 =
+      FarFieldExpansion<TKernelAux> &coeffs1 =
 	nodes[1]->stat().get_farfield_coeffs();
-      FarFieldExpansion<TKernel, TKernelAux> &coeffs2 =
+      FarFieldExpansion<TKernelAux> &coeffs2 =
 	nodes[2]->stat().get_farfield_coeffs();
       double total_relerr = allowed_err / 
 	(num_tuples * max_ik * max_jk);
@@ -683,8 +681,8 @@ private:
       int max_order = coeffs1.get_max_order() / 2 - 1;
       if(order_ik >= 0 && order_jk >= 0 && order_ik < max_order && 
 	 order_jk < max_order &&
-	 sea_.get_total_num_coeffs(order_ik) *
-	 sea_.get_total_num_coeffs(order_jk) < 2 * nodes[2]->count()) {
+	 ka_.sea_.get_total_num_coeffs(order_ik) *
+	 ka_.sea_.get_total_num_coeffs(order_jk) < 2 * nodes[2]->count()) {
 
 	coeffs2.RefineCoeffs(data_, weights_, nodes[2]->begin(), 
 			     nodes[2]->end(), order_jk);
