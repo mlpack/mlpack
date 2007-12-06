@@ -49,9 +49,9 @@ inline void SparseVector::Init(std::vector<index_t> &indices,
 		                    Vector &values, 
 												index_t  dimension) {
 	Init();
-	if (unlikely(indices.size()!=values.length())) {
+	if (unlikely((index_t)indices.size()!=values.length())) {
 	  FATAL("Indices vector has %i elements while Values vectors has %i\n", 
-				  indices.size(), values.length());
+				  (index_t)indices.size(), values.length());
 	}
 	std::vector<index_t>::iterator it = std::max_element(indices.begin(), indices.end()); 
 	dimension_ = *it+1;
@@ -63,12 +63,12 @@ inline void SparseVector::Init(std::vector<index_t> &indices,
 					  "index in the data is %i", dimension, dimension_);
 		}
 	}
-	vector_ = new Epetra_CrsMatrix(Copy , *map_, indices.size());
-  myglobal_elements_ = map_.MyGlobalElements();
-  vector_->InsertGlobalValues(*myglobal_elements_, 
+	vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, (index_t)indices.size());
+  my_global_elements_ = map_->MyGlobalElements();
+  vector_->InsertGlobalValues(*my_global_elements_, 
 		                          values.length(), 
 															values.ptr(), 
-															&indices);
+															&indices[0]);
 	start_ = 0;
 	end_   = dimension_-1;
 }
@@ -78,7 +78,7 @@ void SparseVector::Init(std::vector<index_t> &indices, std::vector<double> &valu
 	Init();
 	if (unlikely(indices.size()!=values.size())) {
 	  FATAL("Indices vector has %i elements while Values vectors has %i\n", 
-				  indices.size(), values.size());
+				  (index_t)indices.size(), values.size());
 	}
 	std::vector<index_t>::iterator it = std::max_element(indices.begin(), indices.end()); 
 	dimension_ = *it+1;
@@ -90,21 +90,21 @@ void SparseVector::Init(std::vector<index_t> &indices, std::vector<double> &valu
 					  "index in the data is %i", dimension, dimension_);
 		}
 	}
-	vector_ = new Epetra_CrsMatrix(Copy , *map_, indices.size());
-  my_global_elements_ = map_.MyGlobalElements();
-  vector_->InsertGlobalValues(*myglobal_elements_, 
+	vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, indices.size());
+  my_global_elements_ = map_->MyGlobalElements();
+  vector_->InsertGlobalValues(*my_global_elements_, 
 		                          values.size(), 
-															&values, 
-															&indices);
+															&values[0], 
+															&indices[0]);
 	start_ = 0;
 	end_   = dimension_-1;
 }
 	
 void SparseVector::Init(index_t *indices, double *values, index_t len, index_t dimension) {
   Init();
-	vector_ = new Epetra_CrsMatrix(Copy , *map_, len);
-  myglobal_elements_ = map_->MyGlobalElements();
-  vector_->InsertGlobalValues(*myglobal_elements_, 
+	vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, len);
+  my_global_elements_ = map_->MyGlobalElements();
+  vector_->InsertGlobalValues(*my_global_elements_, 
 		                          len, 
 															values, 
 															indices);
@@ -126,18 +126,18 @@ inline void SparseVector::Init(std::map<index_t, double> &data, index_t dimensio
 					  "index in the data is %i", dimension, dimension_);
 		}
 	}
-	vector_ = new Epetra_CrsMatrix(Copy, map_, map.size());
-	index_t *indices = new index_t[map.size()];
-	double  *values  = new double[map.size()];
+	vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, data.size());
+	index_t *indices = new index_t[data.size()];
+	double  *values  = new double[data.size()];
 	index_t i = 0;
-	for(it=map.begin(); it!=map.end(); it++) {
+	for(it=data.begin(); it!=data.end(); it++) {
 	  indices[i] = it->first;
 		values[i]  = it->second;
 		i++;
 	}
-	my_global_elements_ = map_.MyGlobalElements();
-  vector_->InsertGlobalValues(*myglobal_elements_, 
-		                          map.size(), 
+	my_global_elements_ = map_->MyGlobalElements();
+  vector_->InsertGlobalValues(*my_global_elements_, 
+		                          data.size(), 
 															values, 
 															indices);
   delete []indices;
@@ -149,7 +149,7 @@ inline void SparseVector::Init(std::map<index_t, double> &data, index_t dimensio
 
 inline void SparseVector::Init(index_t estimated_non_zero_elements, index_t dimension) {
   Init(); 
-  vector_ = new Epetra_CrsMatrix(Copy, map_, estimated_non_zero_elements);
+  vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, estimated_non_zero_elements);
 	dimension_ = dimension;
 	start_ = 0;
 	end_   = dimension_-1;
@@ -159,7 +159,6 @@ inline void SparseVector::Init(Epetra_CrsMatrix *one_dim_matrix, index_t dimensi
   Init();
 	vector_ = one_dim_matrix;
 	*map_  = one_dim_matrix->RowMap();
-	comm_ =  one_dim_matrix->Comm();
 	dimension_ = dimension;
 	start_ = 0;
 	end_   = dimension_-1;
@@ -167,8 +166,8 @@ inline void SparseVector::Init(Epetra_CrsMatrix *one_dim_matrix, index_t dimensi
 
 inline void SparseVector::Copy(const SparseVector &other) {
   Init();
-	vector_ =  new Epetra_CrsMatrix(other);
-  dimension_ = other.dimension;
+	vector_ =  new Epetra_CrsMatrix(*other.vector_);
+  dimension_ = other.dimension_;
 	start_=other.start_;
 	end_=other.end_;
 }
@@ -184,16 +183,16 @@ inline void SparseVector::MakeSubvector(index_t start_index, index_t len, Sparse
 	DEBUG_BOUNDS(start_ + start_index+len-1, end_+1);
 	dest->Init(this->vector_, dimension_);
   dest->set_start(start_index + start_);
-  dest->set_end(start_ + start_index_t + len-1);	
+  dest->set_end(start_ + start_index + len-1);	
 }
   
 inline double SparseVector::get(index_t i) {
   DEBUG_BOUNDS(start_+i, end_+1);
-	pos = start_+i;
+	index_t pos = start_+i;
 	double  *values;
 	index_t *indices;
 	index_t num_of_elements;
-	vector_->ExtractctGlobalRowView(*myglobal_elements_, num_of_elemets, values, indices);
+	vector_->ExtractGlobalRowView(*my_global_elements_, num_of_elements, values, indices);
   index_t *p = std::find(indices, indices+num_of_elements, pos);
 	if (p!=indices+num_of_elements) {
 	  return values[p-indices];
@@ -205,10 +204,10 @@ inline double SparseVector::get(index_t i) {
 inline void SparseVector::set(index_t i, double  value) {
   DEBUG_BOUNDS(start_+i, end_+1);
 	index_t pos = start_+i;
-	if (get(i)!=0){
-	  vector_->ReplaceGlobalValues(*myglobal_values_, 1, &value, &pos);
+	if (get(i)!=0) {
+	  vector_->ReplaceGlobalValues(*my_global_elements_, 1, &value, &pos);
 	} else {
-	  vector_->InsertGlobalValues(*myglobal_values_, 1, &value, &pos);
+	  vector_->InsertGlobalValues(*my_global_elements_, 1, &value, &pos);
 	}
 }
 

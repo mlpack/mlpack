@@ -60,7 +60,7 @@ class SparseVector {
 	void Init(std::vector<index_t> &indices, std::vector<double> &values, 
 			      index_t dimension);
 	void Init(index_t *indices, double *values, index_t len, index_t dimension);
-	void Init(std::map<index_t, double> data, index_t dimension);
+	void Init(std::map<index_t, double> &data, index_t dimension);
 	void Init(index_t estimated_non_zero_elements, index_t dimension);
 	void Init(Epetra_CrsMatrix *one_dim_matrix, index_t dimension);
 	void Copy(const SparseVector &other);
@@ -78,7 +78,7 @@ class SparseVector {
 	Epetra_CrsMatrix *vector_;
 	Epetra_SerialComm comm_;
 	Epetra_Map *map_;
-  index_t *myglobal_elements_;
+  index_t *my_global_elements_;
 	index_t dimension_;
 	index_t start_;
 	index_t end_;
@@ -130,7 +130,7 @@ class sparse {
     sum->Init(indices3, values3, v1.dimension_);
 	}
 	
-	static inline void Subtract(SparseVector &v1, SparseVector &v2, SparseVector *diff) {
+	static inline void SubtractVectors(SparseVector &v1, SparseVector &v2, SparseVector *diff) {
 	  if (unlikely(v1.dimension_ != v2.dimension_)) {
 		  FATAL("Sparse Vectors have different dimensions %i != %i", v1.dimension_, v2.dimension_);
 		}
@@ -174,7 +174,7 @@ class sparse {
     diff->Init(indices3, values3, v1.dimension_);
 	}
 	
-	static inline void PointProduct(SparseVector &v1, SparseVector &v2, SparseVector *point_prod) {
+	static inline void PointProductVectors(SparseVector &v1, SparseVector &v2, SparseVector *point_prod) {
 	  if (unlikely(v1.dimension_ != v2.dimension_)) {
 		  FATAL("Sparse Vectors have different dimensions %i != %i", v1.dimension_, v2.dimension_);
 		}
@@ -203,7 +203,7 @@ class sparse {
 		point_prod->Init(indices3, values3, v1.dimension_);
 	}
 
-	static inline void DotProduct(SparseVector &v1, SparseVector &v2, double *dot_product) {
+	static inline void DotProductVectors(SparseVector &v1, SparseVector &v2, double *dot_product) {
 	  if (unlikely(v1.dimension_ != v2.dimension_)) {
 		  FATAL("Sparse Vectors have different dimensions %i != %i", v1.dimension_, v2.dimension_);
 		}
@@ -229,7 +229,7 @@ class sparse {
 		}
 	}
   
-	static inline void DistanceSqEuclidean(SparseVector &v1, SparseVector &v2, double *dist) {
+	static inline void DistanceSqEuclideanVector(SparseVector &v1, SparseVector &v2, double *dist) {
 	  if (unlikely(v1.dimension_ != v2.dimension_)) {
 		  FATAL("Sparse Vectors have different dimensions %i != %i", v1.dimension_, v2.dimension_);
 		}
@@ -273,7 +273,7 @@ class sparse {
 	}
   
 	template<int t_pow>
-  inline void RawLMetric(SparseVector &v1, SparseVector &v2, double *dist);
+  inline void RawLMetricVectors(SparseVector &v1, SparseVector &v2, double *dist);
 };
 
 #include "sparse_vector_impl.h"
