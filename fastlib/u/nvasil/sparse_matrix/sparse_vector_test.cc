@@ -15,12 +15,12 @@
  *
  * =====================================================================================
  */
-#include <limit>
+#include <limits>
 #include <vector>
 #include <map>
 #include "fastlib/fastlib.h"
 #include "u/nvasil/sparse_matrix/sparse_vector.h"
-
+/*
 class SparseVectorTest {
  public:
 	void Init() {
@@ -93,26 +93,93 @@ class SparseVectorTest {
 	void TestAdd() {
     SparseVector v;
     sparse::Add(v1, v2, &v);
+		double epected_result[dim_];
+		memset(expected_result, 0, dim_*sizeof(double));
+    for(index_t i=0; i<10; i++) {
+		  expected_result[2*i+1]+= 3*i+1;
+		}
+    for(index_t i=0; i<5; i++) {
+		  expected_result[2*i+1]+= 4*i+1;
+		}
+    for(index_t i=0; i<dim_; i++) {
+ 		  TEST_DOUBLE_ASSERT(v.get(i), expected_result[i], 
+					               numeric_limits<Precision_t>::epsilon());
+		}
 	}
 	
 	void TestSubtract() {
 	  SparseVector v;
 		sparse::Subtract(v1, v2, &v);
+    double epected_result[dim_];
+		memset(expected_result, 0, dim_*sizeof(double));
+    for(index_t i=0; i<10; i++) {
+		  expected_result[2*i+1]+= 3*i+1;
+		}
+    for(index_t i=0; i<5; i++) {
+		  expected_result[2*i+1]-= 4*i+1;
+		}
+    for(index_t i=0; i<dim_; i++) {
+ 		  TEST_DOUBLE_ASSERT(v.get(i), expected_result[i], 
+					               numeric_limits<Precision_t>::epsilon());
+		}
 	}
 	
 	void TestPointProduct() {
 	  SparseVector v;
 		sparse::PointProduct(v1, v2, &v);
+    double epected_result[dim_];
+		memset(expected_result, 0, dim_*sizeof(double));
+    for(index_t i=0; i<10; i++) {
+		  expected_result[2*i+1]+= 3*i+1;
+		}
+    for(index_t i=0; i<5; i++) {
+		  expected_result[2*i+1]*= 4*i+1;
+		}
+    for(index_t i=0; i<dim_; i++) {
+ 		  TEST_DOUBLE_ASSERT(v.get(i), expected_result[i], 
+					               numeric_limits<Precision_t>::epsilon());
+		}
 	}
 	
 	void TestDotProduct() {
 	  double dot_prod;
 		sparse::DotProduct(v1, v2, &dot_prod);
+    double epected_result[dim_];
+		memset(expected_result, 0, dim_*sizeof(double));
+    for(index_t i=0; i<10; i++) {
+		  expected_result[2*i+1]+= 3*i+1;
+		}
+    for(index_t i=0; i<5; i++) {
+		  expected_result[2*i+1]*= 4*i+1;
+		}
+		double expected_dot_prod=0;
+    for(index_t i=0; i<dim_; i++) {
+			expected_dot_prod+=expected_result[i];
+ 		}
+    TEST_DOUBLE_ASSERT(dot_prod, 
+				               expected_dot_prod,
+					             numeric_limits<Precision_t>::epsilon());
+
 	}
 	
 	void TestDistance() {
 	  double dist;
 		sparse::Distance(v1, v2, &dist);
+    double epected_result[dim_];
+		memset(expected_result, 0, dim_*sizeof(double));
+    for(index_t i=0; i<10; i++) {
+		  expected_result[2*i+1]+= 3*i+1;
+		}
+    for(index_t i=0; i<5; i++) {
+		  expected_result[2*i+1]-= 4*i+1;
+		}
+		double distance=0;
+    for(index_t i=0; i<dim_; i++) {
+			distance = expected_result[i] * expected_result[i];
+ 		}
+    TEST_DOUBLE_ASSERT(distance, 
+				               dist,
+					             numeric_limits<Precision_t>::epsilon());
 	}
 	
 	void TestAll() {
@@ -143,3 +210,4 @@ int main() {
   SparseVectorTest test;
 	test.TestAll();
 }
+*/
