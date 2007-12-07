@@ -74,13 +74,13 @@ int main(int argc, char *argv[]) {
 	printf("O(p^D) expansion KDE\n");
 	FastKde<GaussianKernelMultAux> fast_kde;
 	fast_kde.Init();
-	fast_kde.Compute(fx_param_double(NULL, "tau", 0.1));
+	fast_kde.Compute();
       
 	if(fx_param_exists(NULL, "fast_kde_output")) {
 	  fast_kde.PrintDebug();
 	}
       
-	fast_kde_results.Copy(fast_kde.get_density_estimates());
+	fast_kde.get_density_estimates(&fast_kde_results);
 	query_dataset.Copy(fast_kde.get_query_dataset());
 	reference_dataset.Copy(fast_kde.get_reference_dataset());
       }
@@ -91,13 +91,13 @@ int main(int argc, char *argv[]) {
 	printf("O(D^p) expansion KDE\n");
 	FastKde<GaussianKernelAux> fast_kde;
 	fast_kde.Init();
-	fast_kde.Compute(fx_param_double(NULL, "tau", 0.1));
+	fast_kde.Compute();
       
 	if(fx_param_exists(NULL, "fast_kde_output")) {
 	  fast_kde.PrintDebug();
 	}
       
-	fast_kde_results.Copy(fast_kde.get_density_estimates());
+	fast_kde.get_density_estimates(&fast_kde_results);
 	query_dataset.Copy(fast_kde.get_query_dataset());
 	reference_dataset.Copy(fast_kde.get_reference_dataset());
       }
@@ -117,14 +117,13 @@ int main(int argc, char *argv[]) {
     else if(!strcmp(fx_param_str(NULL, "kernel", "epan"), "epan")) {
       FastKde<EpanKernelAux> fast_kde;
       fast_kde.Init();
-      fast_kde.Compute(fx_param_double(NULL, "tau", 0.1));
+      fast_kde.Compute();
     
       if(fx_param_exists(NULL, "fast_kde_output")) {
 	fast_kde.PrintDebug();
       }
-    
       Vector fast_kde_results;
-      fast_kde_results.Alias(fast_kde.get_density_estimates());
+      fast_kde.get_density_estimates(&fast_kde_results);
     
       if(do_naive) {
 	NaiveKde<EpanKernel> naive_kde;
