@@ -36,6 +36,22 @@ librule(
     )
 
 binrule(
+    name = "fft_kde_bin",
+    sources = ["fft_kde_main.cc"],
+    headers = ["fft_kde.h",
+               "kde.h"],
+    deplibs = ["fastlib:fastlib_int"]
+    )
+
+binrule(
+    name = "fgt_kde_bin",
+    sources = ["fgt_kde_main.cc"],
+    headers = ["fgt_kde.h",
+               "kde.h"],
+    deplibs = ["fastlib:fastlib_int"]
+    )
+
+binrule(
     name = "thor_kde_bin",
     sources = ["thor_kde_main.cc"],
     headers = ["thor_kde.h"],
