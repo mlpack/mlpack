@@ -212,11 +212,13 @@ class FastKde {
   public:
 
     DRange d_density_range_;
+    DRange finite_diff_range_;
     double used_error_;
     int n_pruned_;
 
     OT_DEF_BASIC(QPostponed) {
       OT_MY_OBJECT(d_density_range_);
+      OT_MY_OBJECT(finite_diff_range_);
       OT_MY_OBJECT(used_error_);
       OT_MY_OBJECT(n_pruned_);
     }
@@ -226,12 +228,14 @@ class FastKde {
     /** initialize postponed information to zero */
     void Init(const Param& param) {
       d_density_range_.Init(0, 0);
+      finite_diff_range_.Init(0, 0);
       used_error_ = 0;
       n_pruned_ = 0;
     }
 
     void Reset(const Param& param) {
       d_density_range_.Init(0, 0);
+      finite_diff_range_.Init(0, 0);
       used_error_ = 0;
       n_pruned_ = 0;
     }
@@ -239,6 +243,7 @@ class FastKde {
     /** accumulate postponed information passed down from above */
     void ApplyPostponed(const Param& param, const QPostponed& other) {
       d_density_range_ += other.d_density_range_;
+      finite_diff_range_ += other.finite_diff_range_;
       used_error_ += other.used_error_;
       n_pruned_ += other.n_pruned_;
     }
@@ -250,15 +255,20 @@ class FastKde {
   class Delta {
   public:
 
+    /** holds the squared distance bound */
+    DRange dsqd_range_;
+
     /** Density update to apply to children's bound */
     DRange d_density_range_;
 
     OT_DEF_BASIC(Delta) {
+      OT_MY_OBJECT(dsqd_range_);
       OT_MY_OBJECT(d_density_range_);
     }
 
   public:
     void Init(const Param& param) {
+      dsqd_range_.Init(0, 0);
       d_density_range_.Init(0, 0);
     }
   };
@@ -300,8 +310,8 @@ class FastKde {
     /** apply left over postponed contributions */
     void ApplyPostponed(const Param& param, const QPostponed& postponed) {
       density_range_ += postponed.d_density_range_;
-      density_estimate_ += 0.5 * (postponed.d_density_range_.lo +
-				  postponed.d_density_range_.hi);
+      density_estimate_ += 0.5 * (postponed.finite_diff_range_.lo +
+				  postponed.finite_diff_range_.hi);
       used_error_ += postponed.used_error_;
       n_pruned_ += postponed.n_pruned_;
     }
@@ -568,11 +578,11 @@ class FastKde {
 			 Delta *delta) {
 
     // compute distance bound between two nodes
-    DRange distance_sq_range = qnode->bound().RangeDistanceSq(rnode->bound());
+    delta->dsqd_range_ = qnode->bound().RangeDistanceSq(rnode->bound());
     
     // compute the bound on kernel contribution
     delta->d_density_range_ = 
-      parameters_.ka_.kernel_.RangeUnnormOnSq(distance_sq_range);
+      parameters_.ka_.kernel_.RangeUnnormOnSq(delta->dsqd_range_);
     delta->d_density_range_ *= rnode->count();
     
     if(likely(delta->d_density_range_.hi != 0)) {
@@ -585,7 +595,114 @@ class FastKde {
       return true;
     }
   }
+  
+  /** 
+   * checking for prunbability of the query and the reference pair using
+   * series expansion
+   */
+  bool ExtrinsicPrunableSeriesExpansion
+    (Tree *qnode, Tree *rnode, const Delta& delta, 
+     const QSummaryResult& q_summary_result) {
 
+    // order of approximation
+    int order_farfield_to_local = -1;
+    int order_farfield = -1;
+    int order_local = -1;
+
+    // actual amount of error incurred per each query/ref pair
+    double actual_err_farfield_to_local = 0;
+    double actual_err_farfield = 0;
+    double actual_err_local = 0;
+
+    // estimated computational cost
+    int cost_farfield_to_local = MAXINT;
+    int cost_farfield = MAXINT;
+    int cost_local = MAXINT;
+    int cost_exhaustive = (qnode->count()) * (rnode->count()) * 
+      parameters_.dimension_;
+    int min_cost = 0;
+
+    // allocated error per each reference point
+    double allowed_err =
+      (parameters_.relative_error_ * q_summary_result.density_range_.lo -
+       q_summary_result.used_error_) / 
+      (parameters_.reference_count_ - q_summary_result.n_pruned_);
+
+    // get the order of approximations
+    order_farfield_to_local = 
+      rnode->stat().farfield_expansion_.OrderForConvertingToLocal
+      (rnode->bound(), qnode->bound(), 
+       delta.dsqd_range_.lo, delta.dsqd_range_.hi,
+       allowed_err, &actual_err_farfield_to_local);
+    order_farfield = 
+      rnode->stat().farfield_expansion_.OrderForEvaluating
+      (rnode->bound(), qnode->bound(), delta.dsqd_range_.lo, 
+       delta.dsqd_range_.hi, allowed_err, &actual_err_farfield);
+    order_local = 
+      qnode->stat().local_expansion_.OrderForEvaluating
+      (rnode->bound(), qnode->bound(), delta.dsqd_range_.lo, 
+       delta.dsqd_range_.hi, allowed_err, &actual_err_local);
+
+    // update computational cost and compute the minimum
+    if(order_farfield_to_local >= 0) {
+      cost_farfield_to_local = (int) pow(order_farfield_to_local + 1, 
+					 2 * parameters_.dimension_);
+    }
+    if(order_farfield >= 0) {
+      cost_farfield = (int) pow(order_farfield + 1, parameters_.dimension_) * 
+	(qnode->count());
+    }
+    if(order_local >= 0) {
+      cost_local = (int) pow(order_local + 1, parameters_.dimension_) * 
+	(rnode->count());
+    }
+
+    min_cost = min(cost_farfield_to_local, 
+		   min(cost_farfield, min(cost_local, cost_exhaustive)));
+    
+    if(cost_farfield_to_local == min_cost) {
+      qnode->stat().postponed_.d_density_range_ += delta.d_density_range_;
+      qnode->stat().postponed_.used_error_ += 
+	rnode->count() * actual_err_farfield_to_local;
+      qnode->stat().postponed_.n_pruned_ += rnode->count();
+
+      rnode->stat().farfield_expansion_.TranslateToLocal
+	(qnode->stat().local_expansion_, order_farfield_to_local);
+      num_farfield_to_local_prunes_++;
+      return true;
+    }
+
+    if(cost_farfield == min_cost) {
+      qnode->stat().postponed_.d_density_range_ += delta.d_density_range_;
+      qnode->stat().postponed_.used_error_ += 
+	rnode->count() * actual_err_farfield;
+      qnode->stat().postponed_.n_pruned_ += rnode->count();
+
+      for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+	q_results_[q].density_estimate_ += 
+	  rnode->stat().farfield_expansion_.EvaluateField(qset_, q, 
+							  order_farfield);
+      }
+      num_farfield_prunes_++;
+      return true;
+    }
+
+    if(cost_local == min_cost) {
+      qnode->stat().postponed_.d_density_range_ += delta.d_density_range_;
+      qnode->stat().postponed_.used_error_ += 
+	rnode->count() * actual_err_local;
+      qnode->stat().postponed_.n_pruned_ += rnode->count();
+
+      qnode->stat().local_expansion_.AccumulateCoeffs(rset_, rset_weights_,
+						      rnode->begin(), 
+						      rnode->end(),
+						      order_local);
+      num_local_prunes_++;
+      return true;
+    }
+    return false;
+  }
+ 
   /** checking for prunability of the query and the reference pair */
   bool ExtrinsicPrunable(Tree *qnode, Tree *rnode, const Delta& delta,
 			 const QSummaryResult& q_summary_result) {
@@ -595,15 +712,21 @@ class FastKde {
        q_summary_result.used_error_) * rnode->count() / 
       (parameters_.reference_count_ - q_summary_result.n_pruned_);
     
+    // finite difference first
     if(delta.d_density_range_.width() / 2.0 <= allocated_error) {
       qnode->stat().postponed_.d_density_range_ += delta.d_density_range_;
+      qnode->stat().postponed_.finite_diff_range_ += delta.d_density_range_;
       qnode->stat().postponed_.used_error_ += 
 	delta.d_density_range_.width() / 2.0;
       qnode->stat().postponed_.n_pruned_ += rnode->count();
       num_finite_difference_prunes_++;
       return true;
     }
-    return false;
+    // series expansion
+    else {
+      return ExtrinsicPrunableSeriesExpansion(qnode, rnode, delta,
+					      q_summary_result);
+    }
   }
 
   double Heuristic(Tree *qnode, Tree *rnode) {
@@ -767,6 +890,8 @@ class FastKde {
     if(qnode->is_leaf()) {
       for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 	q_results_[q].ApplyPostponed(parameters_, qnode->stat().postponed_);
+	q_results_[q].density_estimate_ +=
+	  qnode->stat().local_expansion_.EvaluateField(qset_, q);
 	q_results_[q].Postprocess(parameters_);
       }
     }
@@ -778,6 +903,12 @@ class FastKde {
 	(parameters_, qnode->stat().postponed_);
       qnode->right()->stat().postponed_.ApplyPostponed
 	(parameters_, qnode->stat().postponed_);
+      
+      qnode->stat().local_expansion_.TranslateToLocal
+	(qnode->left()->stat().local_expansion_);
+      qnode->stat().local_expansion_.TranslateToLocal
+	(qnode->right()->stat().local_expansion_);
+
       PostProcess(qnode->left());      
       PostProcess(qnode->right());
     }
