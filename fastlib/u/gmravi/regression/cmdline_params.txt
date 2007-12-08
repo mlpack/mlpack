@@ -24,7 +24,7 @@ weights: this file is the weights assigned to the dofferent points
 the  command should be:
 
 
-./main --method=fast --do_naive --fast_kde_output=fast_kde_output.txt --naive_kde_output=naive_kde_output.txt --kernel=gaussian --data=query_file.csv --query=query_file.csv --scaling=none --bandwidth=0.1
+./main --method=fast --do_naive --fast_kde_output=fast_kde_output.txt --naive_kde_output=naive_kde_output.txt --kernel=gaussian --data=query_file.csv --query=query_file.csv --scaling=none --bandwidth=1.0
 
 
 
