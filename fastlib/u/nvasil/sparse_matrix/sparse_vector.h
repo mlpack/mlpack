@@ -39,6 +39,7 @@ class SparseVector {
 	friend class SparseVectorTest;
 	friend class sparse;
 	SparseVector() {
+		map_=NULL;
 	}
 	SparseVector(std::vector<index_t> &indices, 
 			         Vector &values, 
@@ -54,7 +55,7 @@ class SparseVector {
 	~SparseVector() {
 	  Destruct();
 	}
-	void Init();
+	void Init(index_t dimension);
 	void Init(std::vector<index_t> &indices, Vector &values, 
 			      index_t dimension);
 	void Init(std::vector<index_t> &indices, std::vector<double> &values, 
@@ -229,7 +230,9 @@ class sparse {
 		}
 	}
   
-	static inline void DistanceSqEuclideanVector(SparseVector &v1, SparseVector &v2, double *dist) {
+	static inline void DistanceSqEuclideanVector(SparseVector &v1, 
+			                                         SparseVector &v2, 
+																							 double *dist) {
 	  if (unlikely(v1.dimension_ != v2.dimension_)) {
 		  FATAL("Sparse Vectors have different dimensions %i != %i", v1.dimension_, v2.dimension_);
 		}
@@ -260,7 +263,7 @@ class sparse {
 			j++;
 		}
 		if (i<num1) {
-			for(index_t ii=i; i<num1; i++) {
+			for(index_t ii=i+1; ii<num1; ii++) {
 		    *dist += values1[ii] * values1[ii];
 			}
 		}

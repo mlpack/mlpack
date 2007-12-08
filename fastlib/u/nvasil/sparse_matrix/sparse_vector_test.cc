@@ -24,6 +24,13 @@
 
 class SparseVectorTest {
  public:
+	SparseVectorTest() {
+	}
+	~SparseVectorTest() {
+    Init();
+    delete []ind1_;
+    delete []val1_;		
+	}
 	void Init() {
     dim_  = 100;
 	  ind1_	= new index_t[10];
@@ -51,47 +58,60 @@ class SparseVectorTest {
 		ind2_.clear();
 		val2_.Destruct();
 	}
-
+  
 	void TestInit1() {
 	  Init();
 		for(index_t i=0; i<10; i++) {
-		  TEST_DOUBLE_APPROX(v1_.get(i), 
-			  	               2*i+1,
+		  TEST_DOUBLE_APPROX(v1_.get(2*i+1), 
+			  	               3*i+1,
 				                 std::numeric_limits<double>::epsilon());
 		}
 		TEST_DOUBLE_APPROX(v1_.get(0), 0,  std::numeric_limits<double>::epsilon());
 	  TEST_DOUBLE_APPROX(v1_.get(4), 0,  std::numeric_limits<double>::epsilon());
 		TEST_DOUBLE_APPROX(v1_.get(24), 0,  std::numeric_limits<double>::epsilon());
      Destruct();
+		 NONFATAL("TestInit1: success\n");
 	}
 
 	void TestInit2() {
+		Init();
 	  std::map<index_t, double> mp;
     for(index_t i=0; i<5; i++) {
-		  mp[i]=3*i+1;
+		  mp[2*i+1]=4*i+1;
 		}
     SparseVector v;
     v.Init(mp, dim_);
 		for(index_t i=0; i<dim_; i++) {
 		  TEST_DOUBLE_APPROX(v.get(i), v2_.get(i), std::numeric_limits<double>::epsilon());
 		}
+		Destruct();
+		NONFATAL("TestInit2: success\n");
 	}
   void TestCopyConstructor() {
+		Init();
+		v1_.Lock();
 	  SparseVector v(v1_);
     for(index_t i=0; i<dim_; i++) {
 		  TEST_DOUBLE_APPROX(v.get(i), v1_.get(i), std::numeric_limits<double>::epsilon());
 	  }
+		Destruct();
+		NONFATAL("TestCopyConstructor: success\n");
+
 	}
 	void TestSet() {
+		Init();
     for(index_t i=0; i<dim_; i++) {
 		  v1_.set(i, i);
 		}
 		for(index_t i=0; i<dim_; i++) {
 		  TEST_DOUBLE_APPROX(v1_.get(i), i, std::numeric_limits<double>::epsilon());
 	  }
+		Destruct();
+  	NONFATAL("TestSet: success\n");
 	}
 	
 	void TestAdd() {
+		Init();
     SparseVector v;
     sparse::AddVectors(v1_, v2_, &v);
 		double expected_result[dim_];
@@ -106,10 +126,13 @@ class SparseVectorTest {
  		  TEST_DOUBLE_APPROX(v.get(i), expected_result[i], 
 					               std::numeric_limits<double>::epsilon());
 		}
+		Destruct();
+  	NONFATAL("TestAdd: success\n");
 	}
 	
 	void TestSubtract() {
-	  SparseVector v;
+	  Init();
+		SparseVector v;
 		sparse::SubtractVectors(v1_, v2_, &v);
     double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
@@ -123,35 +146,35 @@ class SparseVectorTest {
  		  TEST_DOUBLE_APPROX(v.get(i), expected_result[i], 
 					               std::numeric_limits<double>::epsilon());
 		}
+		Destruct();
+	  NONFATAL("TestSubtract: success\n")		;
 	}
 	
 	void TestPointProduct() {
-	  SparseVector v;
+	  Init();
+		SparseVector v;
 		sparse::PointProductVectors(v1_, v2_, &v);
     double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
-    for(index_t i=0; i<10; i++) {
-		  expected_result[2*i+1]+= 3*i+1;
-		}
     for(index_t i=0; i<5; i++) {
-		  expected_result[2*i+1]*= 4*i+1;
+		  expected_result[2*i+1]+= (3*i+1) * (4*i+1);
 		}
     for(index_t i=0; i<dim_; i++) {
  		  TEST_DOUBLE_APPROX(v.get(i), expected_result[i], 
 					               std::numeric_limits<double>::epsilon());
 		}
+		Destruct();
+		NONFATAL("TestPointProduct: success\n");
 	}
 	
 	void TestDotProduct() {
-	  double dot_prod;
+	  Init();
+		double dot_prod;
 		sparse::DotProductVectors(v1_, v2_, &dot_prod);
     double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
-    for(index_t i=0; i<10; i++) {
-		  expected_result[2*i+1]+= 3*i+1;
-		}
     for(index_t i=0; i<5; i++) {
-		  expected_result[2*i+1]*= 4*i+1;
+		  expected_result[2*i+1]+= (3*i+1)*(4*i+1);
 		}
 		double expected_dot_prod=0;
     for(index_t i=0; i<dim_; i++) {
@@ -160,11 +183,13 @@ class SparseVectorTest {
     TEST_DOUBLE_APPROX(dot_prod, 
 				               expected_dot_prod,
 					             std::numeric_limits<double>::epsilon());
-
+    Destruct();
+		NONFATAL("TestDotProduct: success\n");
 	}
 	
 	void TestDistance() {
-	  double dist;
+	  Init();
+		double dist;
 		sparse::DistanceSqEuclideanVector(v1_, v2_, &dist);
     double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
@@ -176,11 +201,13 @@ class SparseVectorTest {
 		}
 		double distance=0;
     for(index_t i=0; i<dim_; i++) {
-			distance = expected_result[i] * expected_result[i];
+			distance += expected_result[i] * expected_result[i];
  		}
     TEST_DOUBLE_APPROX(distance, 
 				               dist,
 					             std::numeric_limits<double>::epsilon());
+		Destruct();
+		NONFATAL("TestDistance: success\n");
 	}
 	
 	void TestAll() {
@@ -198,7 +225,6 @@ class SparseVectorTest {
  private:
   SparseVector            v1_;
 	SparseVector            v2_;
-	SparseVector            v3_;
 	index_t              *ind1_;
 	std::vector<index_t>  ind2_;
   double                *val1_;	
