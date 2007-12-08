@@ -40,7 +40,7 @@ inline SparseVector::SparseVector(Epetra_CrsMatrix *one_dim_matrix,
 inline SparseVector::SparseVector(const SparseVector &other) {
   Copy(other);
 }
-inline void SparseVector::Init() {
+inline void SparseVector::Init(index_t dimension) {
   map_ =  new Epetra_Map(dimension_, 0, comm_);
 	own_ =  true;
 }
@@ -48,7 +48,6 @@ inline void SparseVector::Init() {
 inline void SparseVector::Init(std::vector<index_t> &indices, 
 		                    Vector &values, 
 												index_t  dimension) {
-	Init();
 	if (unlikely((index_t)indices.size()!=values.length())) {
 	  FATAL("Indices vector has %i elements while Values vectors has %i\n", 
 				  (index_t)indices.size(), values.length());
@@ -63,6 +62,8 @@ inline void SparseVector::Init(std::vector<index_t> &indices,
 					  "index in the data is %i", dimension, dimension_);
 		}
 	}
+	
+	Init(dimension_);
 	vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, (index_t)indices.size());
   my_global_elements_ = map_->MyGlobalElements();
   vector_->InsertGlobalValues(*my_global_elements_, 
@@ -75,10 +76,10 @@ inline void SparseVector::Init(std::vector<index_t> &indices,
 
 void SparseVector::Init(std::vector<index_t> &indices, std::vector<double> &values, 
 			      index_t dimension) {
-	Init();
+
 	if (unlikely(indices.size()!=values.size())) {
 	  FATAL("Indices vector has %i elements while Values vectors has %i\n", 
-				  (index_t)indices.size(), values.size());
+				  (index_t)indices.size(), (index_t)values.size());
 	}
 	std::vector<index_t>::iterator it = std::max_element(indices.begin(), indices.end()); 
 	dimension_ = *it+1;
@@ -90,6 +91,7 @@ void SparseVector::Init(std::vector<index_t> &indices, std::vector<double> &valu
 					  "index in the data is %i", dimension, dimension_);
 		}
 	}
+	Init(dimension_);
 	vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, indices.size());
   my_global_elements_ = map_->MyGlobalElements();
   vector_->InsertGlobalValues(*my_global_elements_, 
@@ -101,7 +103,8 @@ void SparseVector::Init(std::vector<index_t> &indices, std::vector<double> &valu
 }
 	
 void SparseVector::Init(index_t *indices, double *values, index_t len, index_t dimension) {
-  Init();
+  dimension_ = dimension;
+	Init(dimension_);
 	vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, len);
   my_global_elements_ = map_->MyGlobalElements();
   vector_->InsertGlobalValues(*my_global_elements_, 
@@ -115,7 +118,6 @@ void SparseVector::Init(index_t *indices, double *values, index_t len, index_t d
 
 
 inline void SparseVector::Init(std::map<index_t, double> &data, index_t dimension) {
-  Init();
   std::map<index_t, double>::iterator it=max_element(data.begin(), data.end());
 	dimension_ = it->first+1;
 	if (dimension>0) {
@@ -126,6 +128,7 @@ inline void SparseVector::Init(std::map<index_t, double> &data, index_t dimensio
 					  "index in the data is %i", dimension, dimension_);
 		}
 	}
+  Init(dimension_);
 	vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, data.size());
 	index_t *indices = new index_t[data.size()];
 	double  *values  = new double[data.size()];
@@ -148,26 +151,26 @@ inline void SparseVector::Init(std::map<index_t, double> &data, index_t dimensio
 }
 
 inline void SparseVector::Init(index_t estimated_non_zero_elements, index_t dimension) {
-  Init(); 
-  vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, estimated_non_zero_elements);
 	dimension_ = dimension;
+	Init(dimension_); 
+  vector_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, estimated_non_zero_elements);
 	start_ = 0;
 	end_   = dimension_-1;
 }
 
 inline void SparseVector::Init(Epetra_CrsMatrix *one_dim_matrix, index_t dimension) {
-  Init();
 	vector_ = one_dim_matrix;
 	*map_  = one_dim_matrix->RowMap();
 	dimension_ = dimension;
+  Init(dimension_);
 	start_ = 0;
 	end_   = dimension_-1;
 }
 
 inline void SparseVector::Copy(const SparseVector &other) {
-  Init();
-	vector_ =  new Epetra_CrsMatrix(*other.vector_);
   dimension_ = other.dimension_;
+	Init(dimension_);
+	vector_ =  new Epetra_CrsMatrix(*other.vector_);
 	start_=other.start_;
 	end_=other.end_;
 }
@@ -175,7 +178,9 @@ inline void SparseVector::Destruct() {
   if (own_ == true) {
 	  delete vector_;
 	}
-	delete map_;
+	if (map_!=NULL) {
+	  delete map_;
+	}
 }
 
 inline void SparseVector::MakeSubvector(index_t start_index, index_t len, SparseVector* dest) {
