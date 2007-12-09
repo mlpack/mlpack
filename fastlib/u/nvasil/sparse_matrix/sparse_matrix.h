@@ -21,6 +21,8 @@
 #ifndef HAVE_CONFIG_H
 #define HAVE_CONFIG_H
 #endif
+#include <stdio.h>
+#include <errno.h>
 #include <string>
 #include <map>
 #include <vector>
@@ -33,15 +35,18 @@
 
 class SparseMatrix {
  public:
-  SparseMatrix();
-	// Constructor, note num_of_rows is always greater or 
-	// equal to num_of_columns
-	SparseMatrix(index_t num_of_rows, index_t num_of_columns);
+  SparseMatrix() ;
+	SparseMatrix(index_t num_of_rows, index_t num_of_columns) {
+	  num_of_rows_ = num_of_rows;
+		num_of_columns_ = num_of_columns;
+	}
 	// This constructor creates square matrices
 	SparseMatrix(index_t num_of_rows);
 	// Copy constructor
   SparseMatrix(const SparseMatrix &other);
-	~SparseMatrix();
+	~SparseMatrix()  {
+	  Destruct();
+	}
 	void Destruct();
 	// Initializer: nnz_per_row is the  estimated non zero elements per row
   void Init(index_t num_of_rows, index_t num_of_columns, 
