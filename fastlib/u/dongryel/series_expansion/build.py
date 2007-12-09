@@ -2,7 +2,8 @@
 librule(
     name = "series_expansion",               # this line can be safely omitted
     sources = ["series_expansion_aux.cc"],   # files that must be compiled
-    headers = ["farfield_expansion.h",
+    headers = ["bounds_aux.h",
+               "farfield_expansion.h",
                "mult_farfield_expansion.h",
                "kernel_aux.h",
                "local_expansion.h",
