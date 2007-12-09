@@ -92,6 +92,37 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
 	Init(rows, columns, temp, nnz_per_row, dimension);
 
 }
+
+void SparseMatrix::Init(std::string filename) {
+  FILE *fp = fopen(filename.c_str(), "r");
+	if (fp == NULL) {
+	  FATAL("Cannot open %s, error: %s", 
+				  filename.c_str(), 
+					strerror(errno));
+	}
+	std::vector<index_t> rows;
+	std::vector<index_t> cols;
+	std::vector<double>  vals;
+	while (!feof(fp)) {
+		index_t r, c;
+		double v;
+		fscanf(fp,"%i %i %lg\n", &r, &c, &v);
+		rows.push_back(r);
+		cols.push_back(c);
+		vals.push_back(v);
+	}
+	fclose(fp);	
+	Init(rows, cols, vals, -1, -1);
+}
+
+void SparseMatrix::Destruct() {
+  if (map_!=NULL) {
+	  delete map_;
+	}
+	if (matrix_ != NULL) {
+	  delete matrix_;
+	}
+}
 void SparseMatrix::StartLoadingRows() {
    my_global_elements_ = map_->MyGlobalElements();
 }
