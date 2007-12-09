@@ -562,6 +562,9 @@ class FastKde {
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	double ker_value = parameters_.ka_.kernel_.EvalUnnormOnSq(dsqd);
 
+	// apply exhaustively computed value to the lower/upper bounds and
+	// actual density estimate that is to be returned.
+	q_results_[q].density_range_ += ker_value;
 	q_results_[q].density_estimate_ += ker_value;
       }
       qnode->stat().summary_result_.Accumulate(parameters_, q_results_[q]);
