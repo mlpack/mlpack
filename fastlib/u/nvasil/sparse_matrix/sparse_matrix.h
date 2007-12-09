@@ -26,7 +26,7 @@
 #include <vector>
 #include <algorithm>
 #include "fastlib/fastlib.h"
-#include "fastlib/la/vector.h"
+#include "la/matrix.h"
 #include "Epetra_CrsMatrix.h"
 #include "Epetra_SerialComm.h"
 #include "Epetra_Map.h"
@@ -40,7 +40,7 @@ class SparseMatrix {
 	// This constructor creates square matrices
 	SparseMatrix(index_t num_of_rows);
 	// Copy constructor
-  SparseMatrix(const SparseMatrix);
+  SparseMatrix(const SparseMatrix &other);
 	~SparseMatrix();
 	void Destruct();
 	// Initializer: nnz_per_row is the  estimated non zero elements per row
@@ -55,9 +55,15 @@ class SparseMatrix {
 	// are set to a negative value, the function will automatically detect it 
 	void Init(const std::vector<index_t> &row_indices,
 		       	const std::vector<index_t> &col_indices,
-			      const Vector values, 
+			      const Vector &values, 
 			      index_t nnz_per_row, 
 			      index_t dimension);
+void Init(const std::vector<index_t> &row_indices,
+		       	const std::vector<index_t> &col_indices,
+			      const std::vector<double> &values, 
+			      index_t nnz_per_row, 
+			      index_t dimension);
+
 	// Initialize from a text file in the following format
 	// row column value \n
 	void Init(std::string textfile);
@@ -65,10 +71,13 @@ class SparseMatrix {
 	void InitDiagonal(const Vector &vec); 
 	// Initialize the diagonal with a constant
 	void InitDiagonal(const double value);
-	void StartLoading();
-  void LoadRow();
-  void EndLoading();
-  void MakeSymetric();	
+	void StartLoadingRows();
+  void LoadRow(index_t row, std::vector<index_t> &columns, Vector &values);
+  void LoadRow(index_t row, index_t *columns, Vector &values);
+  void LoadRow(index_t row, index_t num, index_t *columns, double  *values);
+  void LoadRow(index_t row, std::vector<index_t> &columns, std::vector<double>  &values);
+	void EndLoading();
+  void MakeSymmetric();	
   void SetAll(double d);
   void SetZero();
   void SetDiagonal(const Vector &vector); 
@@ -77,22 +86,32 @@ class SparseMatrix {
   void SwapValues(SparseMatrix* other);
   void CopyValues(const SparseMatrix& other);
   double get(index_t r, index_t c);
-  void set(index_t r, index_t c, double v);
-	void set_non_zero_to_non_zero(index_t r, index_t c, double v);
-	void set_zero_to_non_zero(index_t r, index_t c, double v);
-  void set_non_zero_to_zero(index_t r, index_t c);
-  double &ref(index_t r, index_t c);
-  index_t get_dimension();
-	index_t get_nnz();
- 
+  void   set(index_t r, index_t c, double v);
+  index_t get_num_of_rows() {
+		return num_of_rows_;
+	}
+  index_t get_num_of_columns() {
+	  return num_of_columns_;
+	}
+	index_t get_dimension() {
+	  return dimension_;
+	}
+	index_t get_nnz() {
+	 return matrix_->NumGlobalNonzeros();
+  }
+
  private:
+	index_t dimension_;
 	index_t num_of_rows_;
 	index_t num_of_columns_;
 	Epetra_SerialComm comm_;
 	Epetra_Map *map_;
   Epetra_CrsMatrix *matrix_;
-  index_t *MyglobalElements_;
-  void AllRowsLoad(Vector &rows, Vector &columns);
+  index_t *my_global_elements_;
+  void Load(const std::vector<index_t> &rows, 
+			      const std::vector<index_t> &columns, 
+						const Vector &values);
+	void AllRowsLoad(Vector &rows, Vector &columns);
 
 };
 
