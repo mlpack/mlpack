@@ -1,0 +1,25 @@
+-- function "tree" is create tree and "nn" is do NN search
+function=nn;
+-- "db" means database and "file" means files. please set appropriate input values
+io=file;
+--
+-- properties for creating a tree
+-- 	file properties
+dataFile=D:\Workspace\VS\ParallelDualTreeApplication\AerialLarge400k.txt;
+colSeperator=	;
+ignoreFirstLine=false;
+treeFile=AerialLarge400ktree;
+mappingFile=AerialLarge400ktree_mapping;
+--	db properties
+dataDb=nntest;
+dataTable=aerialLarge400k;
+treeTable=aerial400ktree;
+treeDb=nntest;
+--
+-- properties nearest neighbor
+-- 	file properties
+nnFile=nn400k_4_file;
+--	db properties
+nnDb=nntest;
+nnTable=nn400k_4;
+knn=4;
