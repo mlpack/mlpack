@@ -5,7 +5,7 @@ class PCAStat {
   
  private:
 
-  static const double epsilon_ = 0.00001;
+  static const double epsilon_ = 0.01;
 
   inline success_t FullSVDInit(const Matrix &A, Vector *s, Matrix *U, 
 			       Matrix *VT) {
@@ -184,8 +184,14 @@ class PCAStat {
 
     // find out how many eigenvalues to keep
     int eigencount = 0;
+    double max_svalue = 0;
     for(index_t i = 0; i < svalues.length(); i++) {
-      if(svalues[i] > epsilon_) {
+      if(svalues[i] > max_svalue) {
+	max_svalue = svalues[i];
+      }
+    }
+    for(index_t i = 0; i < svalues.length(); i++) {
+      if(svalues[i] > epsilon_ * max_svalue) {
 	eigencount++;
       }
     }
@@ -195,7 +201,7 @@ class PCAStat {
     // relationship between the singular value and the eigenvalue is
     // enforced here
     for(index_t i = 0, index = 0; i < svalues.length(); i++) {
-      if(svalues[i] > epsilon_) {
+      if(svalues[i] > epsilon_ * max_svalue) {
 	Vector s, d;
 	eigenvalues_.set(index, index, 
 			 svalues[i] * svalues[i] / ((double) count_));
@@ -437,8 +443,14 @@ class PCAStat {
 
     // find out how many eigenvalues to keep
     int eigencount = 0;
+    double max_eigenvalue = 0;
     for(index_t i = 0; i < evalues.length(); i++) {
-      if(evalues[i] > epsilon_) {
+      if(evalues[i] > max_eigenvalue) {
+	max_eigenvalue = evalues[i];
+      }
+    }
+    for(index_t i = 0; i < evalues.length(); i++) {
+      if(evalues[i] > epsilon_ * max_eigenvalue) {
 	eigencount++;
       }
     }
@@ -448,7 +460,7 @@ class PCAStat {
     // relationship between the singular value and the eigenvalue is
     // enforced here
     for(index_t i = 0, index = 0; i < evalues.length(); i++) {
-      if(evalues[i] > epsilon_) {
+      if(evalues[i] > epsilon_ * max_eigenvalue) {
 	Vector s, d;
 	eigenvalues_.set(index, index, evalues[i]);
 	eigenvectors_.MakeColumnVector(i, &s);
