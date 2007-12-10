@@ -166,7 +166,7 @@ class SeriesExpansionAux {
   }
   
   // getters and setters
-  double factorial(int k) { return factorials_[k]; }
+  double factorial(int k) const { return factorials_[k]; }
 
   int get_dimension() const { return dim_; }
 
