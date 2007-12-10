@@ -58,14 +58,18 @@ int main(int argc, char *argv[]) {
   Matrix data_;
   data_.Own(&(dataset_.matrix()));
   int leaflen = fx_param_int(NULL, "leaflen", 20);
+
+  printf("Constructing the tree...\n");
   Tree *root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen, NULL);
   GTree *tmp = proximity::MakeGenKdTree<GTree, 
     proximity::GenKdTreeMedianSplitter>(data_, leaflen, NULL);
+  printf("Finished constructing the tree...\n");
 
   // recursively computed PCA
   printf("Recursive PCA\n");
   (root_->stat().eigenvectors_).PrintDebug();
   (root_->stat().eigenvalues_).PrintDebug();
+  printf("Recursive PCA completed!\n");
 
   // exhaustively compute PCA
   printf("Exhaustive PCA\n");
