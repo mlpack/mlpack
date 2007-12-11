@@ -30,7 +30,8 @@ namespace proximity {
   class GenKdTreeMidpointSplitter {
   public:
     template<typename TKdTree>
-      static double ChooseKdTreeSplitValue(const Matrix& matrix, TKdTree *node, 
+      static double ChooseKdTreeSplitValue(const Matrix& matrix, 
+					   TKdTree *node, 
 					   int split_dim) {
       return node->bound().get(split_dim).mid();
     }
@@ -50,19 +51,23 @@ namespace proximity {
       else if(*a_dbl > *b_dbl) {
 	return 1;
       }
-      else
+      else {
 	return 0;
+      }
     }
 
   public:
     template<typename TKdTree>
-      static double ChooseKdTreeSplitValue(const Matrix& matrix, TKdTree *node, 
+      static double ChooseKdTreeSplitValue(const Matrix& matrix, 
+					   TKdTree *node, 
 					   int split_dim) {
       Vector coordinate_vals;
       coordinate_vals.Init(node->count());
       for(index_t i = node->begin(); i < node->end(); i++) {
 	coordinate_vals[i - node->begin()] = matrix.get(split_dim, i);
       }
+
+      // sort coordinate value
       qsort(coordinate_vals.ptr(), node->count(), sizeof(double), 
 	    &GenKdTreeMedianSplitter::qsort_compar);
 

@@ -5,7 +5,7 @@ class PCAStat {
   
  private:
 
-  static const double epsilon_ = 0.01;
+  static const double epsilon_ = 0.00001;
 
   inline success_t FullSVDInit(const Matrix &A, Vector *s, Matrix *U, 
 			       Matrix *VT) {
@@ -162,6 +162,12 @@ class PCAStat {
 
   /** compute PCA exhaustively for leaf nodes */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
+    
+    mean_centered_.Destruct();
+    pca_transformed_.Destruct();
+    means_.Destruct();
+    eigenvectors_.Destruct();
+    eigenvalues_.Destruct();
 
     // set the starting index and the count
     start_ = start;
@@ -180,6 +186,7 @@ class PCAStat {
     // compute PCA on the extracted submatrix
     Matrix VT;
     Vector svalues;
+
     la::SVDInit(mean_centered_, &svalues, &eigenvectors_, &VT);
 
     // find out how many eigenvalues to keep
@@ -191,7 +198,7 @@ class PCAStat {
       }
     }
     for(index_t i = 0; i < svalues.length(); i++) {
-      if(svalues[i] > epsilon_ * max_svalue) {
+      if(svalues[i] >= epsilon_ * max_svalue) {
 	eigencount++;
       }
     }
@@ -404,6 +411,12 @@ class PCAStat {
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const PCAStat& left_stat, const PCAStat& right_stat) {
 
+    mean_centered_.Destruct();
+    pca_transformed_.Destruct();
+    means_.Destruct();
+    eigenvectors_.Destruct();
+    eigenvalues_.Destruct();
+
     // set up starting index and the count
     start_ = start;
     count_ = count;
@@ -487,7 +500,13 @@ class PCAStat {
     la::MulTransAInit(eigenvectors_, mean_centered_, &pca_transformed_);
   }
 
-  PCAStat() { }
+  PCAStat() { 
+    mean_centered_.Init(1, 1);
+    pca_transformed_.Init(1, 1);
+    means_.Init(1);
+    eigenvectors_.Init(1, 1);
+    eigenvalues_.Init(1, 1);
+  }
 
   ~PCAStat() { }
 

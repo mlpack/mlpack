@@ -80,10 +80,6 @@ namespace tree_gen_kdtree_private {
 			index_t leaf_size, index_t *old_from_new) {
     TKdTree *left = NULL;
     TKdTree *right = NULL;
-    int left_begin = 0;
-    int left_count = 0;
-    int right_begin = 0;
-    int right_count = 0;
 
     if (node->count() > leaf_size) {
       index_t split_dim = BIG_BAD_NUMBER;
@@ -118,55 +114,30 @@ namespace tree_gen_kdtree_private {
 					    &left->bound(), &right->bound(),
 					    old_from_new);
 	
-	
-	left_begin = node->begin();
-	right_begin = split_col;
-	left_count = split_col - node->begin();
-	right_count = node->begin() + node->count() - split_col;
-	
-	if(left_count > (int) ceil(0.5 * (matrix.n_rows() + 1))&&
-	   right_count > (int) floor(0.5 * (matrix.n_rows() + 1))) {
-	  
-	  left_count += (int) floor(0.5 * (matrix.n_rows() + 1));
-	  right_count += (int) ceil(0.5 * (matrix.n_rows() + 1));
-	  right_begin -= (int) ceil(0.5 * (matrix.n_rows() + 1));
+	DEBUG_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
+		  node->begin(), split_col,
+		  node->begin() + node->count(), split_dim, split_val,
+		  node->bound().get(split_dim).lo,
+		  node->bound().get(split_dim).hi);
 
-	  DEBUG_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
-		    node->begin(), split_col,
-		    node->begin() + node->count(), split_dim, split_val,
-		    node->bound().get(split_dim).lo,
-		    node->bound().get(split_dim).hi);
-	  
-	  left->Init(left_begin, left_count);
-	  right->Init(right_begin, right_count);
-	  
-	  // This should never happen if max_width > 0
-	  DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
-	  
-	  // now expand the left and the right bounding boxes to include the
-	  // overlap points
-	  for(index_t i = right_begin; i < right_begin + 
-		2 * (matrix.n_rows() + 1); i++) {
-	    Vector vector;
-	    matrix.MakeColumnVector(i, &vector);
-	    left->bound() |= vector;
-	    right->bound() |= vector;
-	  }
+	left->Init(node->begin(), split_col - node->begin());
+	right->Init(split_col, node->begin() + node->count() - split_col);
 
+	if(left->count() < 2 || right->count() < 2) {
+	  left->left_ = NULL;
+	  left->right_ = NULL;
+	  right->left_ = NULL;
+	  right->right_ = NULL;
+	  delete left;
+	  delete right;
+	  left = NULL;
+	  right = NULL;
+	}
+	else {
 	  SplitGenKdTree<TKdTree, TKdTreeSplitter>
 	    (matrix, left, leaf_size, old_from_new);
 	  SplitGenKdTree<TKdTree, TKdTreeSplitter>
 	    (matrix, right, leaf_size, old_from_new);
-	}
-	
-	// Here since we cannot make the required overlap, we give up!
-	else {
-	  left->left_ = NULL;
-	  delete left;
-	  right->left_ = NULL;
-	  delete right;
-	  left = NULL;
-	  right = NULL;
 	}
       }
     }
