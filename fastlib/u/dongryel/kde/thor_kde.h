@@ -656,9 +656,18 @@ class ThorKde {
     
     printf("Starting dualtree KDE...\n");
     fx_timer_start(module, "dualtree kde");
-    thor::RpcDualTree<ThorKde, DualTreeDepthFirst<ThorKde> >
-      (fx_submodule(fx_root, "gnp", "gnp"), GNP_CHANNEL,
-       parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+
+    if(!strcmp(fx_param_str_req(module, "method"), "rbfs")) {
+      thor::RpcDualTree<ThorKde, DualTreeRecursiveBreadth<ThorKde> >
+	(fx_submodule(fx_root, "gnp", "gnp"), GNP_CHANNEL,
+	 parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+    }
+    else if(!strcmp(fx_param_str_req(module, "method"), "dfs")) {
+      thor::RpcDualTree<ThorKde, DualTreeDepthFirst<ThorKde> >
+	(fx_submodule(fx_root, "gnp", "gnp"), GNP_CHANNEL,
+	 parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+    }
+
     fx_timer_stop(module, "dualtree kde");
     printf("Dualtree KDE completed...\n");
 
