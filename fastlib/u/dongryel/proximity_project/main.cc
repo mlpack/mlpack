@@ -4,7 +4,7 @@
 #include "gen_kdtree.h"
 
 typedef BinarySpaceTree<DHrectBound<2>, Matrix, PCAStat> Tree;
-typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix> GTree;
+typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, PCAStat> GTree;
 
 void PCA(Matrix &data) {
   
@@ -60,9 +60,11 @@ int main(int argc, char *argv[]) {
   int leaflen = fx_param_int(NULL, "leaflen", 20);
 
   printf("Constructing the tree...\n");
-  Tree *root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen, NULL);
-  GTree *tmp = proximity::MakeGenKdTree<GTree, 
+  fx_timer_start(NULL, "pca tree");
+  GTree *root_ = proximity::MakeGenKdTree<GTree, 
     proximity::GenKdTreeMedianSplitter>(data_, leaflen, NULL);
+
+  fx_timer_stop(NULL, "pca tree");
   printf("Finished constructing the tree...\n");
 
   // recursively computed PCA
@@ -73,7 +75,9 @@ int main(int argc, char *argv[]) {
 
   // exhaustively compute PCA
   printf("Exhaustive PCA\n");
+  fx_timer_start(NULL, "exhaustive pca");
   PCA(data_);
+  fx_timer_stop(NULL, "exhaustive pca");
 
   fx_done();
   return 0;
