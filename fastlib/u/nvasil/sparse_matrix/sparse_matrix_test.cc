@@ -44,7 +44,9 @@ class SparseMatrixTest {
     delete smat_;		
 	}
   void TestInit1() {
-	  smat_ = new SparseMatrix(num_of_rows_, num_of_cols_);
+	  smat_ = new SparseMatrix(num_of_rows_, 
+				                     num_of_cols_, 
+														 num_of_nnz_);
     smat_->StartLoadingRows();
 		std::vector<index_t> ind;
 	  std::vector<double>  val;
@@ -53,12 +55,13 @@ class SparseMatrixTest {
 			val.clear();
       for(index_t j=0; j<num_of_cols_; j++) {
 				if (mat_[i][j] != 0) {
-			    ind.push_back(i);
+			    ind.push_back(j);
 				  val.push_back(mat_[i][j]);
 				}
 			}
 		  smat_->LoadRow(i, ind, val);
 		}
+
 		for(index_t i=0; i<num_of_rows_; i++) {
 		  for(index_t j=0; j<num_of_cols_; j++) {
 			  TEST_DOUBLE_APPROX(smat_->get(i,j), 
@@ -66,30 +69,40 @@ class SparseMatrixTest {
 						               std::numeric_limits<double>::epsilon());
 			}
 		}
+		NONFATAL("TestInit1 sucess!!\n");
 	}
 	void TestInit2() {
 		std::vector<index_t> rows;
 	  std::vector<index_t> cols;
 	  std::vector<double>  vals;
 		std::vector<index_t> nnz(num_of_rows_);
-		for(index_t i=0; i<num_of_cols_; i++) {
+		for(index_t i=0; i<num_of_rows_; i++) {
       for(index_t j=0; j<num_of_cols_; j++) {
 				if (mat_[i][j] != 0) {
 			    rows.push_back(i);
-					rows.push_back(j);
+					cols.push_back(j);
 				  vals.push_back(mat_[i][j]);
 					nnz[i]++;
 				}
 			}
 		}
+		/*for(index_t i=0; i<(index_t)rows.size(); i++) {
+			printf("%i %i %lg\n",  
+			 		   rows[i],
+					   cols[i],
+				     vals[i]);
+		}*/
+		smat_ = new SparseMatrix();
 		smat_->Init(rows, cols, vals, 
 				        *(std::max_element(nnz.begin(), nnz.end())), num_of_rows_);
+		// printf("%s\n", smat_->Print().c_str());
 		for(index_t i=0; i<num_of_rows_; i++) {
 		  for(index_t j=0; j<num_of_cols_; j++) {
 			  TEST_DOUBLE_APPROX(smat_->get(i,j), mat_[i][j],
 						               std::numeric_limits<double>::epsilon());
 			}
 		}
+		NONFATAL("TestInit2 success!!\n");
 	}
   void TestInit3() {
 		FILE *fp = fopen("temp.txt", "w");
@@ -99,11 +112,13 @@ class SparseMatrixTest {
 		for(index_t i=0; i<num_of_cols_; i++) {
       for(index_t j=0; j<num_of_cols_; j++) {
 				if (mat_[i][j] != 0) {
-				  fprintf(fp, "%i %i %g", i, j, mat_[i][j]);
+				  fprintf(fp, "%i %i %g\n", i, j, mat_[i][j]);
 				}
 			}
 		}
-    smat_->Init("temp.txt");
+    fclose(fp);
+		smat_ = new SparseMatrix();
+	 	smat_->Init("temp.txt");
     unlink("temp.txt");
     for(index_t i=0; i<num_of_rows_; i++) {
 		  for(index_t j=0; j<num_of_cols_; j++) {
@@ -112,9 +127,12 @@ class SparseMatrixTest {
 						               std::numeric_limits<double>::epsilon());
 			}
 		}
+		NONFATAL("TestInit3 success!!");
 	}
 	void TestCopyConstructor() {
-	  	}
+	  smat_ = new SparseMatrix();
+	 	NONFATAL("TestCopyConstructor success!!\n");
+	}
 	void TestMakeSymmetric() {
 	  TestInit1();
 		smat_->set(2, 3, 1.44);
@@ -129,6 +147,7 @@ class SparseMatrixTest {
 													 std::numeric_limits<double>::epsilon());
 			}
 		}
+		NONFATAL("Test MakeSymmetric success!!\n");
 	}
   void TestAll(){
 		Init();
@@ -150,12 +169,12 @@ class SparseMatrixTest {
 		
  private:
 	SparseMatrix *smat_;
-  static const index_t num_of_cols_  = 40;
-	static const index_t num_of_rows_          = 40;
+  static const index_t num_of_cols_  = 10;
+	static const index_t num_of_rows_  = 10;
+	static const index_t num_of_nnz_   = 2;
   double                mat_[num_of_rows_][num_of_cols_];
 	std::vector<index_t>  indices_;
 	std::vector<index_t>  rows_;
-	Vector                values_;
 };
 
 int main() {

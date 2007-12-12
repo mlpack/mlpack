@@ -18,20 +18,32 @@
  */
 
 SparseMatrix::SparseMatrix() {
-
+  map_    = NULL;
+	matrix_ = NULL;
 }
 
-void SparseMatrix::Init(index_t num_of_rows, 
-		                    index_t num_of_columns,
-		                    index_t nnz_per_row) {
+SparseMatrix::SparseMatrix(const index_t num_of_rows,
+                           const index_t num_of_columns,
+  												 const index_t nnz_per_row) {
+  Init(num_of_rows, num_of_columns, nnz_per_row);
+}
+void SparseMatrix::Init(const index_t num_of_rows, 
+		                    const index_t num_of_columns,
+		                    const index_t nnz_per_row) {
+	if likely(num_of_rows < num_of_columns) {
+	  FATAL("Num of rows %i should be greater than the num of columns %i\n",
+				  num_of_rows, num_of_columns);
+	}
   num_of_rows_=num_of_rows;
 	num_of_columns_=num_of_columns;
+	dimension_ = num_of_rows_;
 	if (num_of_rows_ < num_of_columns_) {
 	  FATAL("Num of rows  %i is less than the number or columns %i",
 				   num_of_rows_, num_of_columns_);
 	}
 	map_ = new Epetra_Map(num_of_rows_, 0, comm_);
 	matrix_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, nnz_per_row);
+	StartLoadingRows();
 }
 
 void SparseMatrix::Init(index_t num_of_rows,
@@ -39,12 +51,14 @@ void SparseMatrix::Init(index_t num_of_rows,
 												index_t *nnz_per_row) {
   num_of_rows_=num_of_rows;
 	num_of_columns_=num_of_columns;
+	dimension_ = num_of_rows;
 	if (num_of_rows_ < num_of_columns_) {
 	  FATAL("Num of rows  %i is less than the number or columns %i",
 				   num_of_rows_, num_of_columns_);
 	}
 	map_ = new Epetra_Map(num_of_rows_, 0, comm_);
 	matrix_ = new Epetra_CrsMatrix((Epetra_DataAccess)0 , *map_, nnz_per_row);
+	StartLoadingRows();
 }
 
 
@@ -69,7 +83,9 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
 			  num_of_columns_ = columns[i];
 			}
 		}
-    if ((index_t)frequencies.size()-1!=num_of_rows_) {
+		num_of_columns_++;
+		num_of_rows_++;
+    if ((index_t)frequencies.size()!=num_of_rows_) {
 		  NONFATAL("Some of the rows are zeros only!");
 		}
 		index_t *nnz= new index_t[dimension_];
@@ -77,9 +93,9 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
 		  nnz[i]=frequencies[i];
 		}
 	  Init(num_of_rows_, num_of_columns_, nnz);	
-		delete []nnz;
-		Load(rows, columns, values);
+		//delete []nnz;
  	}
+	Load(rows, columns, values);
 }
 
 void SparseMatrix::Init(const std::vector<index_t> &rows,
@@ -112,6 +128,9 @@ void SparseMatrix::Init(std::string filename) {
 		vals.push_back(v);
 	}
 	fclose(fp);	
+	/*for(index_t i=0; i< (index_t)rows.size(); i++) {
+	  printf("%i %i %lg\n", rows[i], cols[i], vals[i]);
+	}*/
 	Init(rows, cols, vals, -1, -1);
 }
 
@@ -176,6 +195,8 @@ void SparseMatrix::EndLoading() {
 void SparseMatrix::Load(const std::vector<index_t> &rows, 
 		                    const std::vector<index_t> &columns, 
 												const Vector &values) {
+	DEBUG_ASSERT(rows.size() ==columns.size());
+	DEBUG_ASSERT((index_t)columns.size() == values.length());
   my_global_elements_ = map_->MyGlobalElements();
 	index_t i=0;
 	index_t cur_row = rows[i];
@@ -183,18 +204,22 @@ void SparseMatrix::Load(const std::vector<index_t> &rows,
 	std::vector<index_t> indices;
 	std::vector<double> row_values;	
 	while (true) {
-	  while (rows[cur_row]==rows[prev_row]) {
+		indices.clear();
+		row_values.clear();
+	  while (likely((rows[cur_row]==rows[prev_row]) && 
+					        (i < (index_t)rows.size()))) {
 		  indices.push_back(columns[i]);
 			row_values.push_back(values[i]);
 			i++;
 		  prev_row=i-1;
 		  cur_row=i;	
     }
-    matrix_->InsertGlobalValues(my_global_elements_[cur_row], 
-				                        values.length(), 
+    matrix_->InsertGlobalValues(my_global_elements_[rows[prev_row]], 
+				                        row_values.size(), 
 																&row_values[0], 
 																&indices[0]);
-		if (i==dimension_) {
+		prev_row=cur_row;
+    if (i >= (index_t)rows.size()) {
 		  break;
 		}
 	}
@@ -212,7 +237,7 @@ double SparseMatrix::get(index_t r, index_t c) {
 	if (pos==indices+num_of_entries) {
 	  return 0;
 	}
-  return values[*pos];
+  return values[(ptrdiff_t)(pos-indices)];
 }
 
 void SparseMatrix::set(index_t r, index_t c, double v) {

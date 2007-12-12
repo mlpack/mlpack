@@ -26,9 +26,15 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <sstream>
 #include <algorithm>
 #include "fastlib/fastlib.h"
 #include "la/matrix.h"
+// you need this because trillinos redifines it. It's ok
+// if you don't have it, but you will get an annoying warning
+#ifdef F77_FUNC
+#undef F77_FUNC
+#endif
 #include "Epetra_CrsMatrix.h"
 #include "Epetra_SerialComm.h"
 #include "Epetra_Map.h"
@@ -36,12 +42,10 @@
 class SparseMatrix {
  public:
   SparseMatrix() ;
-	SparseMatrix(index_t num_of_rows, index_t num_of_columns) {
-	  num_of_rows_ = num_of_rows;
-		num_of_columns_ = num_of_columns;
-	}
 	// This constructor creates square matrices
-	SparseMatrix(index_t num_of_rows);
+	SparseMatrix(const index_t num_of_rows, 
+			         const index_t num_of_cols, 
+			         const index_t nnz_per_row);
 	// Copy constructor
   SparseMatrix(const SparseMatrix &other);
 	~SparseMatrix()  {
@@ -49,8 +53,9 @@ class SparseMatrix {
 	}
 	void Destruct();
 	// Initializer: nnz_per_row is the  estimated non zero elements per row
-  void Init(index_t num_of_rows, index_t num_of_columns, 
-			      index_t nnz_per_row);
+  void Init(const index_t num_of_rows, 
+			      const index_t num_of_columns, 
+			      const index_t nnz_per_row);
 	// Initializer nnz_per_row has the estimated non zero elements per row
 	// notice that it is not the same for every row;
   void Init(index_t num_of_rows, index_t num_of_columns, index_t *nnz_per_row);
@@ -92,6 +97,11 @@ void Init(const std::vector<index_t> &row_indices,
   void CopyValues(const SparseMatrix& other);
   double get(index_t r, index_t c);
   void   set(index_t r, index_t c, double v);
+	std::string Print() {
+		std::ostringstream s1;
+		matrix_->Print(s1);
+		return s1.str();
+	}
   index_t get_num_of_rows() {
 		return num_of_rows_;
 	}
