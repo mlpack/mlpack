@@ -1,5 +1,5 @@
-#ifndef KDE_H
-#define KDE_H
+#ifndef REGRESSION_H
+#define REGRESSION_H
 #define MAXDOUBLE 32768.0
 #include "fastlib/fastlib_int.h"
 
@@ -26,8 +26,8 @@ template < typename TKernel > class NaiveKde{
  public:
   void Compute (){
 
-    printf ("\nStarting naive KDE computations...\n");
-    fx_timer_start (NULL, "naive_kde_compute");
+    //printf ("\nStarting naive KDE computations...\n");
+    fx_timer_start (NULL, "naive_kde");
 
     // compute unnormalized sum
     for (index_t q = 0; q < qset_.n_cols (); q++){	//for each query point
@@ -56,13 +56,14 @@ template < typename TKernel > class NaiveKde{
 	}
       }
     }
+    fx_timer_stop(NULL,"naive_kde");
 
     //Density estimates from naive calculations.....
-    for(int i=0;i<qset_.n_cols();i++){
+    /*for(int i=0;i<qset_.n_cols();i++){
       for(int j=0;j<rset_.n_rows()+1;j++){
 	printf("density from naive calculation is %f\n",densities_[i][j]);
       }
-    }
+      }*/
     // then normalize it
     /*    for (index_t q = 0; q < qset_.n_cols (); q++){	//for each query point
 	  for (index_t d = 0; d < rset_.n_rows () + 1; d++){	//along each dimension
@@ -141,17 +142,12 @@ template < typename TKernel > class NaiveKde{
 
   void ComputeMaximumRelativeError (ArrayList < Vector > density_estimate) {
 
-    printf ("Came to compute maximum relative error...\n");
+    //printf ("Came to compute maximum relative error...\n");
     double max_rel_err = 0;
     for (index_t q = 0; q < qset_.n_cols (); q++){
       for (index_t d = 0; d < rset_.n_rows () + 1; d++){
 
-	printf ("The values being compared are ...\n");
-	printf ("density estimate is %f and density is %f\n",
-		density_estimate[q][d], densities_[q][d]);
-	double rel_err =
-	  fabs (density_estimate[q][d] -
-		densities_[q][d]) / densities_[q][d];
+	double rel_err = fabs (density_estimate[q][d] - densities_[q][d]) / densities_[q][d];
 
 	if (rel_err > max_rel_err){
 	  max_rel_err = rel_err;
@@ -165,7 +161,7 @@ template < typename TKernel > class NaiveKde{
 
 };  //Class NaiveKDE ends........
 
-/*****************************************************************************************************/
+
 
 template < typename TKernel > class FastKde{
  public:
@@ -320,7 +316,7 @@ template < typename TKernel > class FastKde{
       double max_coord = max (qset_range.hi, rset_range.hi);
       double width = max_coord - min_coord;
       
-      printf ("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
+//printf ("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
       
       for (index_t j = 0; j < rset_.n_cols (); j++){
 	rset_.set (i, j, (rset_.get (i, j) - min_coord) / width);
@@ -377,10 +373,10 @@ template < typename TKernel > class FastKde{
 	  }
 	}
       }
-      printf ("THE WEIGHT VECTOR I WILL BE RETURNING IS ...\n");
+/*printf ("THE WEIGHT VECTOR I WILL BE RETURNING IS ...\n");
       for (int i = 0; i < rset_.n_rows () + 1; i++){
 	printf ("weight is %f\n", node->stat ().weight_of_dimension[i]);
-      }
+	}*/
     }
       
     
@@ -446,17 +442,17 @@ template < typename TKernel > class FastKde{
 
   /** exhaustive base KDE case */
   void FKdeBase (Tree * qnode, Tree * rnode){
-    printf ("In FKdeBase ...\n");
+//printf ("In FKdeBase ...\n");
 
     fast_kde_base++;
-    printf("with this fast_kde_base is %d\n",fast_kde_base);
+//printf("with this fast_kde_base is %d\n",fast_kde_base);
 
     //subtract because now you are doing exhaustive computation
 
     for(index_t d=0;d<rset_.n_rows()+1;d++){ //along each dimension
-      printf("Before subtraction i have more_u is %f\n",qnode->stat().more_u[d]);
+//  printf("Before subtraction i have more_u is %f\n",qnode->stat().more_u[d]);
       qnode->stat().more_u[d]-=rnode->stat().weight_of_dimension[d];
-      printf("After subtraction i have more_u is %f\n",qnode->stat().more_u[d]);
+//    printf("After subtraction i have more_u is %f\n",qnode->stat().more_u[d]);
     }
      
     // compute unnormalized sum
@@ -529,7 +525,7 @@ template < typename TKernel > class FastKde{
 
   /** checking for prunability of the query and the reference pair */
   int Prunable (Tree * qnode, Tree * rnode, DRange & dsqd_range,
-		DRange & kernel_value_range, Vector dl, Vector du){
+		DRange & kernel_value_range, Vector &dl, Vector &du){
 
     // query node stat
     KdeStat & stat = qnode->stat ();
@@ -570,18 +566,14 @@ template < typename TKernel > class FastKde{
 
       // check pruning condition
       if (error > allowed_err){
-	if(qnode->is_leaf()&&rnode->is_leaf()){
-	  printf("Both are leaf nodes and they didnt get pruned..\n");
-	}
+
 	dl.SetZero();
 	du.SetZero();
 	return 0;
       }
     }
     //could prune along every dimension
-    if(qnode->is_leaf()&&rnode->is_leaf()){
-      printf("both are leaf nodes and pruning took place..\n");
-    }
+ 
     number_of_prunes++;
     return 1;
   }
@@ -713,11 +705,11 @@ template < typename TKernel > class FastKde{
       for (index_t q = qnode->begin (); q < qnode->end (); q++){ //for each point
 	for (int i = 0; i < rset_.n_rows () + 1; i++){	//Along each dimension
 		
-	  printf("We have the following estimates....\n");
+/* printf("We have the following estimates....\n");
 	  printf("density_lower is %f\n",densities_l_[q][i]);
 	  printf("density upper estimate is %f\n",densities_u_[q][i]);
 	  printf("lower estimate of more is %f\n",qnode->stat().more_l[i]);
-	  printf("Upper estimate of more is %f\n",qnode->stat().more_u[i]);
+	  printf("Upper estimate of more is %f\n",qnode->stat().more_u[i]);*/
 	  densities_e_[q][i] =
 	    (densities_l_[q][i] + qnode->stat ().more_l[i] +
 	     densities_u_[q][i] + qnode->stat ().more_u[i]) / 2.0;
@@ -752,7 +744,7 @@ template < typename TKernel > class FastKde{
 
   ~FastKde (){
 
-    printf ("Have come to destructor of fastkde...\n");
+// printf ("Have come to destructor of fastkde...\n");
     //delete qroot_;
     //delete rroot_;
       
@@ -791,9 +783,9 @@ template < typename TKernel > class FastKde{
   }
 
   /** get the density estimate */
-  const Vector & get_density_estimates (int i){
+ double get_density_estimates (int q,int d){
 
-    return densities_e_[i];
+    return densities_e_[q][d];
   }
 
   // interesting functions.......
@@ -826,7 +818,7 @@ template < typename TKernel > class FastKde{
 
   void Compute (double tau){
 
-    printf ("Came to compute function...\n");
+//printf ("Came to compute function...\n");
     // set accuracy parameter
     tau_ = tau;
 
@@ -872,8 +864,9 @@ template < typename TKernel > class FastKde{
     SetUpperBoundOfDensity (qroot_);
 
     // call main routine
+    fx_timer_start(NULL,"fast_kde");
     FKde (qroot_, rroot_);
-
+    fx_timer_stop(NULL,"fast_kde");
     // postprocessing step for finalizing the sums
     PostProcess (qroot_);
 
@@ -951,7 +944,7 @@ template < typename TKernel > class FastKde{
     // initialize the kernel
 
     kernel_.Init (fx_param_double_req (NULL, "bandwidth"));
-    printf("In the fast kde module....\n");
+//printf("In the fast kde module....\n");
     fast_kde_base=0;
     number_of_prunes=0;
   }
@@ -975,8 +968,8 @@ template < typename TKernel > class FastKde{
 	fprintf (fp, "%f\n", densities_e_[q][d]);
       }
     }
-    printf("Total number of base calulations are %d\n",fast_kde_base);
-    printf("Number of prunes are...%d\n",number_of_prunes);
+//printf("Total number of base calulations are %d\n",fast_kde_base);
+//  printf("Number of prunes are...%d\n",number_of_prunes);
     fclose (fp);
   }
 
