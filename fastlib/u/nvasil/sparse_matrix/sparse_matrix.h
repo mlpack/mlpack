@@ -38,9 +38,19 @@
 #include "Epetra_CrsMatrix.h"
 #include "Epetra_SerialComm.h"
 #include "Epetra_Map.h"
+#include "Epetra_MultiVector.h"
+#include "AnasaziBasicEigenproblem.hpp"
+#include "AnasaziEpetraAdapter.hpp"
+#include "AnasaziBlockKrylovSchurSolMgr.hpp"
+
 
 class SparseMatrix {
  public:
+ // Some typedefs for oft-used data types
+  typedef Epetra_MultiVector MV;
+  typedef Epetra_Operator OP;
+  typedef Anasazi::MultiVecTraits<double, Epetra_MultiVector> MVT;
+
   SparseMatrix() ;
 	// This constructor creates square matrices
 	SparseMatrix(const index_t num_of_rows, 
@@ -114,7 +124,7 @@ void Init(const std::vector<index_t> &row_indices,
 	index_t get_nnz() {
 	 return matrix_->NumGlobalNonzeros();
   }
-
+  void Eig(index_t num_of_eigvalues, Vector *eigvectors, Vector *eigvalues);
  private:
 	index_t dimension_;
 	index_t num_of_rows_;
