@@ -264,3 +264,148 @@ void SparseMatrix::MakeSymmetric() {
   } 
 }
 
+void SparseMatrix::Eig(index_t num_of_eigvalues,
+	                     std::string eigtype,	
+		                   Matrix *eigvectors, 
+											 std::vector<double> *real_eigvalues,
+											 std::vector<double> *imag_eigvalues) {
+  index_t block_size = 4;
+  Epetra_MultiVector *ivec =  new Epetra_MultiVector(map_, block_size);
+  // Fill it with random numbers
+  ivec->Random();
+
+  // Setup the eigenproblem, with the matrix A and the initial vectors ivec
+  Anasazi::BasicEigenproblem<double,MV,OP> *problem = 
+      new Anasazi::BasicEigenproblem<double,MV,OP>(matrix_, ivec);
+
+  // The 2-D laplacian is symmetric. Specify this in the eigenproblem.
+  if (symmetric_ == true) {
+	  problem->setHermitian(true);
+	}
+
+  // Specify the desired number of eigenvalues
+  problem->setNEV(num_of_eigenvalues);
+
+  // Signal that we are done setting up the eigenvalue problem
+  ierr = problem->setProblem();
+
+  // Check the return from setProblem(). If this is true, there was an
+  // error. This probably means we did not specify enough information for
+  // the eigenproblem.
+  if unlikely(ierr == true) {
+	  FATAL("Trilinos solver error, you probably didn't specify enough information"
+				  "for the eigenvalue problem\n");
+	}
+
+  // Specify the verbosity level. Options include:
+  // Anasazi::Errors 
+  //   This option is always set
+  // Anasazi::Warnings 
+  //   Warnings (less severe than errors)
+  // Anasazi::IterationDetails 
+  //   Details at each iteration, such as the current eigenvalues
+  // Anasazi::OrthoDetails 
+  //   Details about orthogonality
+  // Anasazi::TimingDetails
+  //   A summary of the timing info for the solve() routine
+  // Anasazi::FinalSummary 
+  //   A final summary 
+  // Anasazi::Debug 
+  //   Debugging information
+  int verbosity = Anasazi::Warnings     + 
+		              Anasazi::Errors       + 
+									Anasazi::FinalSummary + 
+									Anasazi::TimingDetails;
+
+  // Choose which eigenvalues to compute
+  // Choices are:
+  // LM - target the largest magnitude  [default]
+  // SM - target the smallest magnitude 
+  // LR - target the largest real 
+  // SR - target the smallest real 
+  // LI - target the largest imaginary
+  // SI - target the smallest imaginary
+
+  // Create the parameter list for the eigensolver
+  Teuchos::ParameterList my_pl;
+  my_pl.set( "Verbosity", verbosity);
+  my_pl.set( "Which", eigtype);
+  my_pl.set( "Block Size", blocksize);
+  my_pl.set( "Num Blocks", 20);
+  my_pl.set( "Maximum Restarts", 100);
+  my_pl.set( "Convergence Tolerance", 1.0e-8);
+
+  // Create the Block Krylov Schur solver
+  // This takes as inputs the eigenvalue problem and the solver parameters
+  Anasazi::BlockKrylovSchurSolMgr<double,MV,OP> 
+    my_block_krylov_schur(problem, my_pl);
+
+  // Solve the eigenvalue problem, and save the return code
+  Anasazi::ReturnType solver_return = my_block_krylov_schur.solve();
+
+  // Check return code of the solver: Unconverged, Failed, or OK
+  switch (solver_return) {
+    // UNCONVERGED
+    case Anasazi::Unconverged: 
+      NONFATAL("Anasazi::BlockKrylovSchur::solve() did not converge!\n");  
+      delete problem;
+			delete ivec;
+			return 0;    
+    // CONVERGED
+    case Anasazi::Converged:
+      NONFATAL("Anasazi::BlockKrylovSchur::solve() converged!\n");
+  }
+  // Get eigensolution struct
+  Anasazi::Eigensolution<double, Epetra_MultiVector> sol = problem->getSolution();
+  delete problem;
+	delete ivec;
+  // Get the number of eigenpairs returned
+  int num_of_eigvals_returned = sol.numVecs;
+	NONFATAL("The solver returned less eigenvalues (%i) "
+			     "than requested (%i)\n", num_of_eigvalues,
+		       num_of_eigvals_returned);
+
+  // Get eigenvectors
+	eig_vectors->Init(dimension_, num_of_eigvals_returned);
+  Epetra_MultiVector *evecs = sol.Evecs;
+	evecs->ExtractCopy(eig_vectors->GetColumnPtr(0), dimension_);
+
+  // Get eigenvalues
+  std::vector<Anasazi::Value<double> > evals = sol.Evals;
+  real_eigvalues->resize(num_of_eigvals_returned);
+	for(index_t i=0; i<num_of_eigvals_returned; i++) {
+	  real_eigvalues->assign(i, evals[i].realpart);
+	}
+	if (symmetric_ == false) {
+    imag_eigvalues->resize(num_of_eigvals_returned);
+		imag_eigvalues->assign(i, evals[i].imagpart);
+	}
+
+  // Test residuals
+  // Generate a (numev x numev) dense matrix for the eigenvalues...
+  // This matrix is automatically initialized to zero
+  Teuchos::SerialDenseMatrix<int, double> d(num_of_eigvalues, 
+			                                      num_of_eigvalues);
+
+  // Add the eigenvalues on the diagonals (only the real part since problem is Hermitian)
+  for (int i=0; i<num_of_eigvalues; i++) {
+    d(i,i) = evals[i].realpart;
+  }
+
+  // Generate a multivector for the product of the matrix and the eigenvectors
+  Epetra_MultiVector res(*map_, num_of_eigvalues); 
+
+  // R = A*evecs
+  matrix_->Apply( *evecs, res);
+
+  // R -= evecs*D 
+  //    = A*evecs - evecs*D
+  MVT::MvTimesMatAddMv( -1.0, *evecs, d, 1.0, res);
+
+  // Compute the 2-norm of each vector in the MultiVector
+  // and store them to a std::vector<double>
+  std::vector<double> norm_res(num_of_eigvalues);
+  MVT::MvNorm(res, &norm_res);
+  delete evecs;
+}
+
