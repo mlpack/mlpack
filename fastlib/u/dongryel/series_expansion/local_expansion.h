@@ -23,7 +23,10 @@ template<typename TKernelAux>
 class LocalExpansion {
 
  private:
-  
+
+  /** the basis vectors */
+  Matrix basis_vectors_;
+
   /** The center of the expansion */
   Vector center_;
   
@@ -43,6 +46,7 @@ class LocalExpansion {
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(LocalExpansion) {
+    OT_MY_OBJECT(basis_vectors_);
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
@@ -114,6 +118,12 @@ class LocalExpansion {
    * Prints out the series expansion represented by this object.
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const;
+
+  /** 
+   * rotate from another local expansion such that its local moments
+   * expressed in terms of the basis vectors here.
+   */
+  void RotateFromLocal(const LocalExpansion &se);
 
   /**
    * Translate from a far field expansion to the expansion here.
@@ -356,6 +366,10 @@ void LocalExpansion<TKernelAux>::Init(const Vector& center,
   sea_ = &(ka.sea_);
   ka_ = &ka;
   
+  // basis vectors are empty, if we assume that we are using the global
+  // coordinate system
+  basis_vectors_.Init(0, 0);
+
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
@@ -370,7 +384,11 @@ void LocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   sea_ = &(ka.sea_);
   center_.Init(sea_->get_dimension());
   ka_ = &ka;
-  
+
+  // basis vectors are empty, if we assume that we are using the global
+  // coordinate system
+  basis_vectors_.Init(0, 0);
+
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
@@ -386,6 +404,12 @@ int LocalExpansion<TKernelAux>::OrderForEvaluating
 				     min_dist_sqd_regions,
 				     max_dist_sqd_regions, max_error, 
 				     actual_error);
+}
+
+template<typename TKernelAux>
+void LocalExpansion<TKernelAux>::RotateFromLocal
+(const LocalExpansion<TKernelAux> &se) {
+  
 }
 
 template<typename TKernelAux>

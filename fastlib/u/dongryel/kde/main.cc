@@ -1,5 +1,6 @@
 #include "fastlib/fastlib_int.h"
 #include "kde.h"
+#include "naive_kde.h"
 
 int main(int argc, char *argv[]) {
 
