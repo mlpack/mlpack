@@ -23,7 +23,10 @@ template<typename TKernelAux>
 class MultFarFieldExpansion {
   
  private:
-  
+
+  /** the basis vectors */
+  Matrix basis_vectors_;
+
   /** The center of the expansion */
   Vector center_;
   
@@ -160,6 +163,12 @@ class MultFarFieldExpansion {
    * Prints out the series expansion represented by this object.
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const;
+
+  /**
+   * Rotate from another far field expansion so that its farfield moments
+   * expressed in terms of the basis vectors owned here.
+   */
+  void RotateFromFarField(const MultFarFieldExpansion &se);
 
   /**
    * Translate from a far field expansion to the expansion here.
@@ -420,6 +429,10 @@ template<typename TKernelAux>
   sea_ = &(ka.sea_);
   ka_ = &ka;
 
+  // basis vectors are empty, if we assume that we are using the global
+  // coordinate system
+  basis_vectors_.Init(0, 0);
+
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
@@ -435,6 +448,10 @@ template<typename TKernelAux>
   center_.Init(sea_->get_dimension());
   center_.SetZero();
   ka_ = &ka;
+
+  // basis vectors are empty, if we assume that we are using the global
+  // coordinate system
+  basis_vectors_.Init(0, 0);
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
@@ -515,6 +532,12 @@ void MultFarFieldExpansion<TKernelAux>::PrintDebug
     }
   }
   fprintf(stream, "\n");
+}
+
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::RotateFromFarField
+(const MultFarFieldExpansion &se) {
+  
 }
 
 template<typename TKernelAux>

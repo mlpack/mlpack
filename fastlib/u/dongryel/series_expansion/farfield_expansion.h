@@ -23,6 +23,9 @@ template<typename TKernelAux>
 class FarFieldExpansion {
 
  private:
+
+  /** basis vectors spanning */
+  Matrix basis_vectors_;
   
   /** The center of the expansion */
   Vector center_;
@@ -43,6 +46,7 @@ class FarFieldExpansion {
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(FarFieldExpansion) {
+    OT_MY_OBJECT(basis_vectors_);
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
@@ -164,6 +168,12 @@ class FarFieldExpansion {
    * Prints out the series expansion represented by this object.
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const;
+
+  /**
+   * Rotate from another far field expansion so that its farfield moments
+   * expressed in terms of the basis vectors owned here.
+   */
+  void RotateFromFarField(const FarFieldExpansion &se);
 
   /**
    * Translate from a far field expansion to the expansion here.
@@ -896,6 +906,10 @@ void FarFieldExpansion<TKernelAux>::Init(const Vector& center,
   order_ = -1;
   sea_ = &(ka.sea_);
   ka_ = &ka;
+  
+  // basis vectors are empty, if we assume that we are using the global
+  // coordinate system
+  basis_vectors_.Init(0, 0);
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
@@ -912,6 +926,10 @@ void FarFieldExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   center_.Init(sea_->get_dimension());
   center_.SetZero();
   ka_ = &ka;
+  
+  // basis vectors are empty, if we assume that we are using the global
+  // coordinate system
+  basis_vectors_.Init(0, 0);
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
@@ -995,6 +1013,12 @@ void FarFieldExpansion<TKernelAux>::PrintDebug(const char *name,
     }
   }
   fprintf(stream, "\n");
+}
+
+template<typename TKernelAux>
+void FarFieldExpansion<TKernelAux>::RotateFromFarField
+(const FarFieldExpansion &se) {
+
 }
 
 template<typename TKernelAux>

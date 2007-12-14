@@ -23,7 +23,10 @@ template<typename TKernelAux>
 class MultLocalExpansion {
 
  private:
-  
+
+  /** the basis vectors */
+  Matrix basis_vectors_;
+
   /** The center of the expansion */
   Vector center_;
   
@@ -115,6 +118,12 @@ class MultLocalExpansion {
    * Prints out the series expansion represented by this object.
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const;
+
+  /** 
+   * rotate from another local expansion such that its local moments
+   * expressed in terms of the basis vectors here.
+   */
+  void RotateFromLocal(const MultLocalExpansion &se);
 
   /**
    * Translate from a far field expansion to the expansion here.
@@ -385,6 +394,10 @@ void MultLocalExpansion<TKernelAux>::Init(const Vector& center,
   sea_ = &(ka.sea_);
   ka_ = &ka;
 
+  // basis vectors are empty, if we assume that we are using the global
+  // coordinate system
+  basis_vectors_.Init(0, 0);
+
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
@@ -399,6 +412,10 @@ void MultLocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   center_.Init(sea_->get_dimension());
   order_ = -1;
   ka_ = &ka;
+
+  // basis vectors are empty, if we assume that we are using the global
+  // coordinate system
+  basis_vectors_.Init(0, 0);
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
@@ -415,6 +432,12 @@ int MultLocalExpansion<TKernelAux>::OrderForEvaluating
 				     min_dist_sqd_regions,
 				     max_dist_sqd_regions, max_error, 
 				     actual_error);
+}
+
+template<typename TKernelAux>
+void MultLocalExpansion<TKernelAux>::RotateFromLocal
+(const MultLocalExpansion<TKernelAux> &se) {
+  
 }
 
 template<typename TKernelAux>
