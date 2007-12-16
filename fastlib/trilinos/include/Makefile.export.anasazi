@@ -1,0 +1,55 @@
+# Required dependence on epetra and teuchos
+include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.epetra
+include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.teuchos
+
+# Optional dependance on thyra for the anasazi/thyra adapters
+#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.thyra
+#ANASAZI_THYRA_INCLUDES = -I/net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/packages/anasazi/../../../packages/anasazi/thyra/src $(THYRA_INCLUDES)
+#ANASAZI_THYRA_LIBS = $(THYRA_LIBS)
+
+# Optional dependencies on triutils, belos, aztecoo, and ifpack are for 
+# examples only.  We add them ONLY to the test target.
+#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.triutils
+#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.epetraext
+#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.belos
+#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.amesos
+#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.aztecoo
+#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.ifpack
+
+_ANASAZI_INCLUDES = \
+	-I/net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include \
+	-I/net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include \
+	$(TEUCHOS_INCLUDES) \
+	$(EPETRA_INCLUDES) \
+	$(ANASAZI_THYRA_INCLUDES)
+
+_ANASAZI_LIBS =  $(ANASAZI_THYRA_LIBS) -L/net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/lib -lanasazi $(EPETRA_LIBS) $(TEUCHOS_LIBS) -llapack -lblas   -L/usr/lib/gcc/x86_64-redhat-linux/3.4.6 -L/usr/lib/gcc/x86_64-redhat-linux/3.4.6/../../../../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/3.4.6/../../.. -L/lib/../lib64 -L/usr/lib/../lib64 -lfrtbegin -lg2c -lm 
+
+#ANASAZI_INCLUDES  = $(shell perl /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/strip_dup_incl_paths.pl $(_ANASAZI_INCLUDES))
+#ANASAZI_LIBS      = $(shell perl /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/strip_dup_libs.pl $(_ANASAZI_LIBS))
+ANASAZI_INCLUDES = $(_ANASAZI_INCLUDES)
+ANASAZI_LIBS     = $(_ANASAZI_LIBS)
+
+# These variables define the include path and libraries that can be used in
+# the examples and tests, but that are not required to compile or link
+# against the library itself.
+
+_ANASAZI_TEST_INCLUDES = \
+	-I/net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include \
+	-I/net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include \
+	$(IFPACK_INCLUDES) \
+	$(BELOS_INCLUDES) \
+	$(AMESOS_INCLUDES) \
+	$(AZTECOO_INCLUDE) \
+	$(TRIUTILS_INCLUDES) \
+	$(ANASAZI_THYRA_INCLUDES) \
+        $(EPETRAEXT_INCLUDES) \
+	$(EPETRA_INCLUDES) \
+	$(TEUCHOS_INCLUDES)
+
+_ANASAZI_TEST_LIBS =  $(ANASAZI_THYRA_LIBS) -L/net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/lib -lanasazi $(IFPACK_LIBS) $(BELOS_LIBS) $(AMESOS_LIBS) $(AZTECOO_LIBS) $(TRIUTILS_LIBS) $(EPETRAEXT_LIBS) $(EPETRA_LIBS) $(TEUCHOS_LIBS) -llapack -lblas   -L/usr/lib/gcc/x86_64-redhat-linux/3.4.6 -L/usr/lib/gcc/x86_64-redhat-linux/3.4.6/../../../../lib64 -L/usr/lib/gcc/x86_64-redhat-linux/3.4.6/../../.. -L/lib/../lib64 -L/usr/lib/../lib64 -lfrtbegin -lg2c -lm
+
+#ANASAZI_TEST_INCLUDES  = $(shell perl /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/strip_dup_incl_paths.pl $(_ANASAZI_TEST_INCLUDES))
+#ANASAZI_TEST_LIBS      = $(shell perl /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/strip_dup_libs.pl $(_ANASAZI_TEST_LIBS))
+ANASAZI_TEST_INCLUDES = $(_ANASAZI_TEST_INCLUDES)
+ANASAZI_TEST_LIBS     = $(_ANASAZI_TEST_LIBS)
