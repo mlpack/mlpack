@@ -1,0 +1,29 @@
+bed - 2 hand (like going to sleep) - repetitive artificially
+RED - left hand, right hand, left elbow, right elbow
+
+bathroom - 1 hand shaking back and forth (elbow movement) a little bit, with thumb between first and second finger like a T - repetitive naturally
+RED - right elbow
+YELLOW - right thumb, right first finger
+
+
+hot - C hand from chin, flipping outwards, like cutting (wrist movement and a little elbow movement) - repetitive artificially
+RED - all right fingers, right wrist, right elbow
+
+cold - 2 hands shaking back and forth, vigorously (elbow movement only) - repetitive naturally
+RED - left elbow, right elbow
+
+
+pain - hands in front of chest, twisting (wrists rotating back and forth asynchronously (oppositely), index fingers extended - repetitive naturally
+RED - left wrist, right wrist
+YELLOW - left index finger, right index finger
+
+OK - hand like O, then like K - doing this repeatedly - index extended, thumb on 2nd knuckle of 2nd finger, 2nd finger half curved - repetitive artificially
+RED - all right fingers
+
+
+
+VOI (volumr of interest) sizes
+hand		5566
+fingers	2972
+wrist		4409
+elbow		2267
