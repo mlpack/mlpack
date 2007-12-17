@@ -13,6 +13,7 @@ namespace KDTreeStructures
         // these are set in constructor
         public double splitPoint;  // -1 if leaf
         public int splitDimension; // -1 if leaf
+        private int nodeId;
         // these are set using setters
         private int lcIndex, rcIndex;   // 0 if leaf
 
@@ -22,12 +23,13 @@ namespace KDTreeStructures
         private int boxIdx;
         private KDTree tree;
         
-        public KNode(int splitDim, double splitPt,
+        public KNode(int splitDim, double splitPt, int id,
             int boxIndex, int numPts, int lvl, KDTree ownerTree)
         {
             
             splitDimension = splitDim;
             splitPoint = splitPt;
+            nodeId = id;
             boxIdx = boxIndex;//new BoundingBox(boundingBox);
             tree = ownerTree;
             numPoints = numPts;
@@ -96,6 +98,21 @@ namespace KDTreeStructures
         public int GetLevel()
         {
             return level;
+        }
+
+        public int GetNodeId()
+        {
+            return nodeId;
+        }
+
+        public double GetSplitPoint()
+        {
+            return splitPoint;
+        }
+
+        public int GetSplitDimension()
+        {
+            return splitDimension;
         }
     }
 
