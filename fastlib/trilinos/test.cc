@@ -18,10 +18,12 @@
 
 #define HAVE_CONFIG_H
 #include "fastlib/fastlib.h"
-#include "Epetra_SerialDenseMatrix.h"
-#include "Epetra_Matrix.h"
-#include "Epetra_SerialComm.h"
-#include "Epetra_Version.h"
+#ifdef F77_FUNC
+#undef F77_FUNC
+#endif
+#include "trilinos/include/Epetra_SerialDenseMatrix.h"
+#include "trilinos/include/Epetra_SerialComm.h"
+#include "trilinos/include/Epetra_Version.h"
 
 
 int main(int argc, char *argv[]) {
