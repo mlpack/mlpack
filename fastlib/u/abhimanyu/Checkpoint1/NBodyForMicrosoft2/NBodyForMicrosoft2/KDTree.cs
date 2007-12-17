@@ -31,7 +31,7 @@ namespace KDTreeStructures
         private double[] boxMins;
         private double[] boxMaxs;
         private double* minPtr, maxPtr;
-
+        private const int maxMedianSplitLevel = 2;
         public KDTree()
         {
             // junk delete this
@@ -87,10 +87,10 @@ namespace KDTreeStructures
         private unsafe void CreateTreeRecursively(double* dataPtr, int *idPtr, int dataSize, int level)
         {
             
-            // check if this node should be a leaf
+            // check if this node should be pos1 leaf
             if (dataSize <= idealLeafSize)
             {
-                // is leaf ... create this as a leaf node and then return
+                // is leaf ... create this as pos1 leaf node and then return
                 SetBoundedRegion(dataPtr, dataSize);
                 nodeList.Add(new KNode(-1, -1, nNodes, dataSize, level, this));
                 nNodes++;
@@ -100,20 +100,34 @@ namespace KDTreeStructures
             }
 
             // otherwise split this data into 2. first find where to split
-            double splitPoint;
+            double splitPoint;  // temporarily set to the mid point
             int splitDimension = GetMaxRangeDimension(dataPtr, idPtr, dataSize, out splitPoint);
+            //Console.WriteLine("split dimension: " + splitDimension);
             minPtr += k;
             maxPtr += k;
+            // now split the data based on either midpoint or median
             int leftSize;
-            // now split the data
-            bool splitOccured = GetLeftRightSplit(
-                dataPtr, idPtr, dataSize, splitDimension, splitPoint, out leftSize );
-
+            bool splitOccured;
+            if (level > maxMedianSplitLevel)
+            {
+                // do the mid point split
+                splitOccured = GetLeftRightSplit(
+                    dataPtr, idPtr, dataSize, splitDimension, splitPoint, out leftSize);
+            }
+            else
+            {
+                // do the median split
+                splitOccured = DoMedianSplit(
+                    dataPtr, idPtr, dataSize, splitDimension, out splitPoint, out leftSize);
+                //Console.WriteLine("done once split point: " + splitPoint + " dimension " + splitDimension + " leftsize " + leftSize );
+                //Console.ReadLine();
+            }
+            
             int rightSplitSize = dataSize - leftSize;
 
             if (splitOccured && leftSize != 1 && rightSplitSize != 1)
             {
-                // then this is not a leaf node
+                // then this is not pos1 leaf node
                 int nodeIndex = nNodes;
                 KNode node = new KNode(splitDimension, splitPoint, nNodes, dataSize, level, this);
                 nodeList.Add(node);
@@ -139,7 +153,7 @@ namespace KDTreeStructures
             return (int)(2 * Math.Pow(2, baseTwo));
         }
 
-        private unsafe int GetMaxRangeDimension(double *dataPtr, int* idPtr, int dataSize, out double splitPoint)
+        private unsafe int GetMaxRangeDimension(double *dataPtr, int* idPtr, int dataSize, out double midPoint)
         {
             SetBoundedRegion(dataPtr, dataSize);
             double maxRange = (*maxPtr - *minPtr);
@@ -153,8 +167,8 @@ namespace KDTreeStructures
                     maxRangeIndex = i;
                 }
             }
-            splitPoint = ( *(maxPtr+maxRangeIndex) + *(minPtr+maxRangeIndex) ) / 2;
-            //Console.WriteLine("SplitPoint:" + splitPoint);
+            midPoint = ( *(maxPtr+maxRangeIndex) + *(minPtr+maxRangeIndex) ) / 2;
+            //Console.WriteLine("SplitPoint:" + midPoint);
             //Console.WriteLine("Splitdimension:" + maxRange);
             return maxRangeIndex;
         }
@@ -210,6 +224,9 @@ namespace KDTreeStructures
             int end = dataSize - 1;
             double* rt = dataPtr + ((dataSize-1)*k);
             double* lt = dataPtr;
+            int* rtId = idPtr + dataSize - 1;
+            int* ltId = idPtr;
+
             int lftIdx = start;
             int rtIdx = end;
 
@@ -218,13 +235,15 @@ namespace KDTreeStructures
                 // run upto the point where lftIdx datum should be in the right side
                 while (lftIdx <= end && *(lt + splitDimension) <= splitPoint)
                 {
-                    lt+= k;
+                    lt += k;
+                    ltId += 1;
                     lftIdx++;
                 }
 
                 while (rtIdx >= start && *(rt + splitDimension) > splitPoint)
                 {
                     rt-= k;
+                    rtId -= 1;
                     rtIdx--;
                 }
 
@@ -237,6 +256,10 @@ namespace KDTreeStructures
                         *(rt + i) = *(lt + i);
                         *(lt + i) = temp;
                     }
+                    // also exchange the id's
+                    temp = *rtId;
+                    *rtId = *ltId;
+                    *ltId = (int)temp;
 
                 }
                 else
@@ -284,7 +307,7 @@ namespace KDTreeStructures
             return nodeList[0] == null ? true : false;
         }
 
-        // returns the max number of children a node can have ie fanout
+        // returns the max number of children pos1 node can have ie fanout
         public int GetFanOut()
         {
             return fanOut;
@@ -397,114 +420,127 @@ namespace KDTreeStructures
             return sqrdDistance;
         }
 
+        unsafe bool DoMedianSplit(double* dataPtr, int* idPtr, int dataSize,
+            int splitDimension, out double splitPoint, out int leftSize)
+        {
+            Quick_sort(0,dataSize-1,dataPtr,idPtr,splitDimension,(dataSize-1)/2);
+            int middleIdx = k * (dataSize / 2);
+            splitPoint = dataPtr[ middleIdx + splitDimension]; // the median
+            return GetLeftRightSplit(dataPtr,idPtr,dataSize,splitDimension, splitPoint, out leftSize);
+        }
+        
+        unsafe void ExchangeData(double* dataPtr, int pos1, int pos2)
+        {
+            for (int i = 0; i < k; i++)
+            {
+                double temp = dataPtr[pos1 * k + i];
+                dataPtr[pos1 * k + i] = dataPtr[pos2 * k + i];
+                dataPtr[pos2 * k + i] = temp;
+            }
+        }
+
+        unsafe int Partition(int low, int high, double* dataPtr, int* idPtr, int dimension)
+        {
+            double high_vac, low_vac, pivot;
+            int high_vac_id, low_vac_id, pivot_id;
+            double* lowPtr = (dataPtr + low*k + dimension);
+            double* highPtr = (dataPtr + high*k + dimension);
+
+            /**
+             * This is the quick sort partitioning method.
+             * The random pivot picked is the first element in the
+             * list. The problem is that if we have sorted this dimension before
+             * Then this pivot is the lowest element in the list
+             * and thus the worst case behaviour of n(n-1)(n-2)... happens.
+             * Thus we simply exchange the first element with an element in the middle of the
+             * list. 
+             */
+            int pivot_idx = (high + low) / 2;
+            ExchangeData(dataPtr, pivot_idx, low);
+            int temp = idPtr[pivot_idx];
+            idPtr[pivot_idx] = idPtr[low];
+            idPtr[low] = temp;
+            
+            // now contnue
+            double[] pivotData = new double[k];
+            for (int i = 0; i < k; i++)
+            {
+                pivotData[i] = dataPtr[low * k + i];
+            }
+            pivot = dataPtr[low * k + dimension];
+            pivot_id = idPtr[low];
+
+            while (high > low)
+            {
+                high_vac = *highPtr; // dataPtr[high * k + dimension];
+                high_vac_id = idPtr[high];
+                while (pivot < high_vac)
+                {
+                    if (high <= low)
+                    {
+                        break;
+                    }
+                    high--;
+                    highPtr -= k;
+                    high_vac = *highPtr;
+                    high_vac_id = idPtr[high];
+                }
+                ExchangeData(dataPtr, high, low);   //dataPtr[low * k + dimension] = high_vac;
+                idPtr[low] = high_vac_id;
+                low_vac = *lowPtr; // dataPtr[low * k + dimension];
+                low_vac_id = idPtr[low];
+
+                while (pivot >= low_vac)
+                {
+                    if (high <= low)
+                    {
+                        break;
+                    }
+                    low++;
+                    lowPtr += k;
+                    low_vac = *lowPtr;
+                    low_vac_id = idPtr[low];
+                }
+                ExchangeData(dataPtr, high, low);
+                idPtr[high] = low_vac_id;
+
+            }
+            for (int i = 0; i < k; i++)
+            {
+                dataPtr[low * k + i] = pivotData[i];
+            }
+            //dataPtr[low * k + dimension] = pivot;
+            idPtr[low] = pivot_id;
+            return low;
+        }
+
+        unsafe void Quick_sort(int low, int high, double* dataPtr, int* idPtr, int dimension, int middle)
+        {
+
+            int Piv_index;
+           // Console.WriteLine("Low {0} High {1}", low, high);
+            if (low < high)
+            {
+                Piv_index = Partition(low, high, dataPtr, idPtr, dimension);
+                if (Piv_index == middle)
+                {
+                    return;
+                }
+                else if (Piv_index > middle)
+                {
+                    Quick_sort(low, Piv_index - 1, dataPtr, idPtr, dimension, middle);
+                }
+                else
+                {
+                    Quick_sort(Piv_index + 1, high, dataPtr, idPtr, dimension, middle);
+                }
+                //Console.WriteLine("Low {0} Pv {1} High {2}", low, Piv_index, high);
+                //Console.ReadLine();
+            }
+        }
+
     }
 
 
 
 }
-/**
-This was the attempt at a non recursive version...
- lets start with recursive and see where we get
- * 
- * 
-   int k = data[0].GetDimensionality();
-        // create initial array
-        nodeList = new ArrayList(GetInitialArraySize(data.Length));
-
-        // now we populate the array and root
-        // initially we create the root and its children outside the while
-        // this is because in the loop we would be pushing and popping the parent
-        // into the parent stack. This is because at the point the child of a parent
-        // is popped we need to assign the parent with the value child's index in the array
-        // but we cannot do this for the root. Also, this extra part can be avoided
-        // by checking everytime if the parent stack is null. This is inefficient and thus
-        // this step has been taken
-
-        Stack childStack = new Stack();
-        Stack parentStack = new Stack();
-        // TODO.. give these stacks initial sizes
-        childStack.Push(data);
-        int id = 0;
-        int arrayIndex;
-        int splitDimension;
-        double splitPoint;
-        BoundingBox box;
-        Datum[][] splitData = new Datum[2][];
-        Datum[] poppedData;
-        KNode node;
-        KNode parent;
-
-        //
-        poppedData = (Datum[])childStack.Pop();
-        splitDimension = GetMaxRangeDimension(poppedData, out splitPoint, out box);
-        node = new KNode(id++, splitDimension, splitPoint, box, this);
-        // now check for leaf condition
-        if (poppedData.Length <= idealLeafSize)
-        {
-            // is leaf ignore
-        }
-        else   // try and split the data
-        {
-            bool splitOccured = GetLeftRightSplit(poppedData, splitDimension, splitPoint, splitData);
-            if (splitOccured)
-            {
-                // not leaf
-                childStack.Push(splitData[0]);
-                childStack.Push(splitData[1]);
-                parentStack.Push(node);
-                parentStack.Push(node);
-            }
-        }
-        nodeList.Add(node);
-        arrayIndex++;
-
-        if (node.IsLeaf())
-        {
-            return;
-        }
-        
-        //
-        while(childStack.Count != 0)
-        {
-            poppedData = (Datum[])childStack.Pop();
-            splitDimension = GetMaxRangeDimension(poppedData, out splitPoint, out box);
-            node = new KNode(id++, splitDimension, splitPoint, box, this);
-            // now check for leaf condition
-            if (poppedData.Length <= idealLeafSize)
-            {
-                // is leaf
-            }
-            else   // try and split the data
-            {
-                bool splitOccured = GetLeftRightSplit(poppedData, splitDimension, splitPoint, splitData);
-                if(splitOccured)
-                {
-                    // not leaf
-                    childStack.Push(splitData[0]);
-                    childStack.Push(splitData[1]);
-
-                }
-                else
-                {
-                    // leaf
-                }
-            }
-            parent = parentStack.Pop();
-            if (parent.GetLC() == 0)
-            {
-                parent.SetLC(arrayIndex);
-            }
-            else
-            {
-                parent.SetRC(arrayIndex);
-            }
-
-            
-            nodeList.Add(node);
-            arrayIndex++;
-            
-            // check for leaf condition to be true
-        }
-
-
-*/

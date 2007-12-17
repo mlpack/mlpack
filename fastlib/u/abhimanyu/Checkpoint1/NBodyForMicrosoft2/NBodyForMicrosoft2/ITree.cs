@@ -17,7 +17,7 @@ namespace StructureInterfaces
         // sets up the tree with the given data
         void InitializeTree(int[] ids, double[] data);
 
-        // sets up the tree previously stored in a database table
+        // sets up the tree previously stored in pos1 database table
         void InitialLizeTree(String dbName, String tableName);
 
         // returns the root node
@@ -29,13 +29,13 @@ namespace StructureInterfaces
         // returns true if the tree is Uninitialized
         bool IsEmpty();
 
-        // returns the max number of children a node can have ie fanout
+        // returns the max number of children pos1 node can have ie fanout
         int GetFanOut();
 
         void SaveToDb(String dbName, String tableName);
         // public void UpdateDataTable(Datum data[]);
 
-        // returns the number of normalizationVector points ideally owned by a leaf
+        // returns the number of normalizationVector points ideally owned by pos1 leaf
         int GetThresholdLeafSize();
 
         double GetMinSqEuclideanDst(INode node1, INode node2);
