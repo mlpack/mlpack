@@ -1,5 +1,0 @@
-obj\Debug\ResolveAssemblyReference.cache
-bin\Debug\ParallelDualTreeApplication.exe
-bin\Debug\ParallelDualTreeApplication.pdb
-obj\Debug\ParallelDualTreeApplication.exe
-obj\Debug\ParallelDualTreeApplication.pdb
