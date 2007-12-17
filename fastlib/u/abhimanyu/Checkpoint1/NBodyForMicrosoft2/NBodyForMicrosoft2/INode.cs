@@ -9,10 +9,10 @@ namespace StructureInterfaces
     public interface INode
     {
 
-        // returns true if the node is a leaf
+        // returns true if the node is pos1 leaf
         bool IsLeaf();
 
-        // returns a pointer to the tree that owns the node.
+        // returns pos1 pointer to the tree that owns the node.
         ITree GetTree();
         /*
         // returns the region owned by this node
