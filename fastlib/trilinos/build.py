@@ -8,7 +8,7 @@ wgetrule(
 
 def gen_compile_trilinos(sysentry, files, params):
   trilinos_tgz = files["trilinos_tgz"].single(Types.ANY)
-  libtrilinospack = sysentry.file("KEEP/trilinospack.a", "arch", "kernel", "compiler")
+  libtrilinospack = sysentry.file("KEEP/libtrilinospack.a", "arch", "kernel", "compiler")
   workspace_dir = os.path.join(os.path.dirname(libtrilinospack.name), "libtrilinospack_workspace")
   compiler_info = compilers[params["compiler"]]
   compiler = compiler_info.compiler_program("f")
@@ -17,6 +17,7 @@ def gen_compile_trilinos(sysentry, files, params):
   sysentry.command("echo '... Extracting Source trilinos files...'")
   sysentry.command("mkdir -p %s" % sq(workspace_dir))
   sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq(trilinos_tgz.name)))
+  sysentry.command("rm -rf %s"  %  sq(trilinos_tgz.name))
   sysentry.command("echo '*** Compiling Trilinos 8.0.4 version.'")
   sysentry.command("echo '... We only compile Epetra, Teuchos, Anasazi:'")
   sysentry.command("echo '... At this time we do not support distributed trilinos.'")
@@ -49,13 +50,13 @@ def gen_compile_trilinos(sysentry, files, params):
 			              ar -x libepetra.a && \
 			              ar -x libteuchos.a && \
 			              ar -x libanasazi.a && \
-										ar -rS %s *.o" % 
+										ar -rs %s *.o" % 
 										(sq(workspace_dir), sq(libtrilinospack.name)))
   sysentry.command("echo '... Created archive'")
   sysentry.command("echo '... Copying the include header files to fastlib'")
   sysentry.command("cp -r %s/trilinos-8.0.4/LINUX_SERIAL/include ." % sq(workspace_dir))
   sysentry.command("echo '... Cleaning'")
-  #sysentry.command("rm -rf %s" % sq(workspace_dir))
+  sysentry.command("rm -rf %s" % sq(workspace_dir))
   sysentry.command("echo '*** Done with TRILINOS!'")
   return [(Types.LINKABLE, libtrilinospack)]
 
@@ -66,9 +67,13 @@ customrule(
 
 #---- This is the test part of the installation 
 
+librule(name = "trilinos",
+		    headers = lglob("trilinons/include/*.hpp"),
+				deplibs =["la:libblaspack",":libtrilinos"])
+
 binrule(
 		name = "test_trilinos",
-    sources = ["test.cc"],
-		headers = lglob("./include/*.hpp"),
-		deplibs = ["base:base", "la:libblaspack", ":libtrilinos"])
+		#cflags="-I./include/",
+		sources = ["test.cc"],
+		deplibs = ["base:base", ":trilinos"])
 
