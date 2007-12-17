@@ -133,7 +133,13 @@ template < typename TKernel > class NaiveKde{
       fp = fopen (fname, "w+");
     }
     for (index_t q = 0; q < qset_.n_cols (); q++){
-
+      
+      fprintf(fp,"Point:");
+      for(index_t z=0;z<qset_.n_rows();z++){
+	fprintf(fp,"%f",qset_.get(z,q));
+	fprintf(fp," ");
+      }
+      fprintf(fp,"\n");
       for (index_t d = 0; d < rset_.n_rows () + 1; d++){
 	fprintf (fp, "%f\n", densities_[q][d]);
       }
@@ -282,6 +288,9 @@ template < typename TKernel > class FastKde{
 
   /** accuracy parameter */
   double tau_;
+
+  ArrayList <index_t> old_from_new;
+  ArrayList <index_t> new_from_old;
 
   /**Number of base case operations*/
   int fast_kde_base;
@@ -724,6 +733,36 @@ template < typename TKernel > class FastKde{
     }
   }
 
+ void TransformToOriginal(){
+
+    printf("Came to transform to original...\n");
+
+     ArrayList<Vector> temp;
+
+     //Initialize temp first
+
+     temp.Init(qset_.n_cols());
+     for(index_t i=0;i<qset_.n_cols();i++){
+
+       temp[i].Init(rset_.n_rows()+1);
+     }
+
+     for(index_t i=0;i<qset_.n_cols();i++){
+       
+       printf("old_from_new[%d] is %d\n",i,old_from_new[i]); 
+       temp[old_from_new[i]].CopyValues(densities_e_[i]);
+     }
+
+    for(index_t i=0;i<qset_.n_cols();i++){
+      
+      densities_e_[i].CopyValues(temp[i]);   
+    }
+
+    printf("results has been set up...\n");
+
+  }
+
+
   void NormalizeDensities (Tree * rnode){
 
     index_t norm_const=1;
@@ -790,7 +829,7 @@ template < typename TKernel > class FastKde{
 
   // interesting functions.......
 
-
+ 
   void SetUpperBoundOfDensity (Tree * qnode){
 
     if (qnode->is_leaf ()){
@@ -799,7 +838,7 @@ template < typename TKernel > class FastKde{
       //Initialize the value
       for (int i = 0; i < rset_.n_rows () + 1; i++){
 
-	qnode->stat ().mass_u[i] = qnode->stat ().weight_of_dimension[i];
+	qnode->stat ().mass_u[i] = qroot_->stat ().weight_of_dimension[i];
       }
       return;
     }
@@ -809,7 +848,7 @@ template < typename TKernel > class FastKde{
     //Initialize the value
     for (int i = 0; i < rset_.n_rows () + 1; i++){
 
-      qnode->stat ().mass_u[i] = qnode->stat ().weight_of_dimension[i];
+      qnode->stat ().mass_u[i] = qroot_->stat ().weight_of_dimension[i];
     }
     SetUpperBoundOfDensity (qnode->left ());
     SetUpperBoundOfDensity (qnode->right ());
@@ -867,8 +906,12 @@ template < typename TKernel > class FastKde{
     fx_timer_start(NULL,"fast_kde");
     FKde (qroot_, rroot_);
     fx_timer_stop(NULL,"fast_kde");
+
+
     // postprocessing step for finalizing the sums
     PostProcess (qroot_);
+
+    TransformToOriginal();
 
     /**normalize densities*/
 
@@ -936,9 +979,27 @@ template < typename TKernel > class FastKde{
 
     // construct query and reference trees. This also fills up the statistics in the reference tree
 
+
+
+    printf("Before tree construction the query set is ..\n");
+    qset_.PrintDebug();
     fx_timer_start (NULL, "tree_d");
     rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen);
-    qroot_ = tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen);
+    qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,&old_from_new,&new_from_old);
+    printf("After tree construction the query set is ..\n");
+    qset_.PrintDebug();
+    
+
+    for(index_t i=0;i<qset_.n_cols();i++){
+      printf("old_from_new[%d] =%d\n",i,old_from_new[i]);
+    }
+    
+    
+    for(index_t i=0;i<qset_.n_cols();i++){
+
+      printf("new_from_old[%d] =%d\n",i,new_from_old[i]);
+    }
+
     fx_timer_stop (NULL, "tree_d");
 
     // initialize the kernel
@@ -962,6 +1023,14 @@ template < typename TKernel > class FastKde{
       fp = fopen (fname, "w+");
     }
     for (index_t q = 0; q < qset_.n_cols (); q++){
+
+      fprintf(fp,"Point:");
+      for(index_t z=0;z<qset_.n_rows();z++){
+
+	fprintf(fp,"%f",qset_.get(z,q));
+	fprintf(fp," ");
+      }
+      fprintf(fp,"\n");
 
       for (index_t d = 0; d < rset_.n_rows () + 1; d++){
 
