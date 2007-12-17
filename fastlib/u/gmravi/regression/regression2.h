@@ -319,9 +319,6 @@ template <typename TKernel > class Regression2 {
   /**it will map new indices to original for the query tree**/
   ArrayList <index_t> old_from_new_q_;
 
-  /** This will hold the pseudo inverse of results. That is it will hold (B^TWB)^-1 for every query point**/
-  ArrayList <Vector> inverse_of_results_;
-  
   //Intersting functions...................................
 
 
@@ -607,7 +604,7 @@ void scale_data_by_minmax (){
  int Prunable (Tree * qnode, Tree * rnode, DRange & dsqd_range,
 		DRange & kernel_value_range, double &dl, double &du){
 
-   printf("In prunable..............\n");
+   //printf("In prunable..............\n");
    
    // query node stat
    Regression2Stat & stat = qnode->stat ();
@@ -636,7 +633,7 @@ void scale_data_by_minmax (){
    //printf("tau_ is %g\n",tau_);
    double allowed_err = tau_ * new_mass_l*((double) (rnode->stat().weight)) /((double) (rroot_->stat().weight));
 
-   printf("Allowed error is %g\n",allowed_err);
+   //printf("Allowed error is %g\n",allowed_err);
    
    // this is error per each query/reference pair for a fixed query
    double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
@@ -646,19 +643,19 @@ void scale_data_by_minmax (){
    // this is total maximumn error for each query point
 
    double error = m * rnode->stat ().weight;
-   printf("actual error is %g\n",error);
+   //printf("actual error is %g\n",error);
    // check pruning condition
     if (error >= allowed_err){
-      printf("Hence cannot prune...\n");
+      //printf("Hence cannot prune...\n");
       dl=0;
       du=0;
       return 0;
     }
     
     //could prune 
-    printf("Was able to prune...\n");
-    printf("dl is %g\n",dl);
-    printf("du is %g\n",du);
+    //printf("Was able to prune...\n");
+    //printf("dl is %g\n",dl);
+    //printf("du is %g\n",du);
 
     return 1;
  }
@@ -669,7 +666,7 @@ void scale_data_by_minmax (){
   void WFKde(Tree *qnode,Tree *rnode,int row,int col){
 
     /** temporary variable for storing lower bound change */
-    printf("In WFKDE...............\n");
+    //printf("In WFKDE...............\n");
     
     double dl;
     double du;
@@ -705,7 +702,7 @@ void scale_data_by_minmax (){
       return;
     }
 
-    printf("Not pruneable...\n");
+    //printf("Not pruneable...\n");
   
     //Pruning failed........
     
@@ -769,13 +766,13 @@ void scale_data_by_minmax (){
 
     if(node->is_leaf()){
 
-      printf("weight: %f\n",node->stat().weight);
+      //printf("weight: %f\n",node->stat().weight);
       return ;
     }
 
     else{
 
-      printf("Weight is: %f\n",node->stat().weight);
+      // printf("Weight is: %f\n",node->stat().weight);
       PrintDebugTree(node->left());
       PrintDebugTree(node->right());
     }
@@ -855,7 +852,7 @@ void scale_data_by_minmax (){
 	WFKde(qroot_,rroot_,row,col);
 	PostProcess(qroot_,row,col);
 
-	printf("Finished a row,column compuation ..\n");
+	//printf("Finished a row,column compuation ..\n");
 	//fill the row,col element of the results witht the estiamted density values
 	for(index_t q=0;q<qset_.n_cols();q++){
 
@@ -891,15 +888,15 @@ void scale_data_by_minmax (){
       
       for (index_t q = node->begin (); q < node->end (); q++){ //for each point
        
-	printf("densities_l_[q] is %f\n",densities_l_[q]);
+	/*printf("densities_l_[q] is %f\n",densities_l_[q]);
 	printf("densities_u_[q] is %f\n",densities_u_[q]);
 	printf("more_l is %f\n",node->stat().more_l);
-	printf("more_u is %f\n", node->stat().more_u);
+	printf("more_u is %f\n", node->stat().more_u);*/
 
 	densities_e_[q] =
 	  (densities_l_[q] + node->stat ().more_l+
 	   densities_u_[q]+ node->stat ().more_u) / 2.0;
-	printf("q:%d row:%d col:%d density:%f\n",q,row,col,densities_e_[q]);
+	//	printf("q:%d row:%d col:%d density:%f\n",q,row,col,densities_e_[q]);
 
       }
     }
@@ -928,7 +925,7 @@ void scale_data_by_minmax (){
 
     for(index_t i=0;i<qset_.n_cols();i++){
 
-      printf("old_from_new_q_[%d]= %d\n",i,old_from_new_q_[i]);
+      //printf("old_from_new_q_[%d]= %d\n",i,old_from_new_q_[i]);
       temp[old_from_new_q_[i]].CopyValues(results_[i]);
     }
 
@@ -950,6 +947,8 @@ void scale_data_by_minmax (){
     fp=fopen("svd_inverse.txt","w+");
     
     for(index_t q=0;q<qset_.n_cols();q++){ //for all query points
+
+     
       
       
       /*This was SVD stuff**********/
@@ -957,76 +956,65 @@ void scale_data_by_minmax (){
       Matrix U;
       Matrix VT; 
       Matrix V;
+      Matrix S_diagonal;
+      Matrix U_transpose;
 
       la::SVDInit(results_[q],&s,&U,&VT); //perform SVD
-      printf("did SVD..\n");
+      //printf("did SVD..\n");
       la::TransposeInit(VT,&V); //Transpose VT
-      printf("did transpose..\n");
-      for(index_t i=0;i<s.length();i++){
+      //printf("did transpose..\n");
 
-	s[i]=1.0/s[i];
+      //S_diagonal is a diagonal matrix formed from the reciprocal of the elements of s.
+
+      //dimensions of S_diagonal are fromed appropriately. it is (columns in V)X(columns in U)
+
+      index_t rows_in_S_diagonal=V.n_cols();
+      index_t cols_in_S_diagonal=U.n_cols();
+
+      //appropriately initialize s_diagonal
+      S_diagonal.Init(rows_in_S_diagonal,cols_in_S_diagonal);
+
+      //Fill up the s_diagonal matrix with the reciprocal elements of s
+
+      for(index_t i=0;i<rows_in_S_diagonal;i++){
+
+	for(index_t j=0;j<cols_in_S_diagonal;j++){
+
+	  if(i==j){
+
+            //The diagonal element
+	    S_diagonal.set(i,j,1.0/s[i]);
+	  }
+	  else{
+	    //off diagonal element. hence is equal to 0
+	    S_diagonal.set(i,j,0);
+	  }
+	}
       }
-      printf("Did inversion of s vector..\n");
-      Vector temp1;
-      Vector temp2;
-      la::MulInit (V,s,&temp1);
-      printf("did multiplication1..\n");
-      la::MulInit(temp1, U, &temp2); //At this point the variable temp holds the pseudo-inverse of results_[q]
-      printf("did multiplication2..\n");
-      printf("Length of temp2 is %d\n",temp2.length()); 
 
-      for(int i=0;i<temp2.length();i++){
-       
-	inverse_of_results_[q][i]=temp2[i];
-	fprintf(fp,"inverse elements is %f\n",inverse_of_results_[q][i]);
-      }
-      fprintf(fp,"\n");
+      //printf("Did inversion of s vector..\n");
 
-      printf("results copied..\n");
+      Matrix temp1;
+      Matrix temp2;
+      la::MulInit (V,S_diagonal,&temp1);
+      //printf("did multiplication1..\n");
 
+      //Find transpose of U
+
+      la::TransposeInit(U,&U_transpose);
+      la::MulInit(temp1, U_transpose, &temp2); //At this point the variable temp holds the pseudo-inverse of results_[q]
+      //printf("did multiplication2..\n");
+
+      //Copy the contents of temp2 to results_
+      results_[q].CopyValues(temp2);
+      printf("matrix inverted is...................\n");
+      results_[q].PrintDebug();
+
+      // printf("Successfully copied the values of temp2 into results_..\n");
     }
 
-    printf("will do normal inverse..\n");
-    
-    FILE *gp;
-    gp=fopen("normal_inverse.txt","w+");
-   
-
-    ArrayList <Matrix> inverse;
-    inverse.Init(qset_.n_cols());
-    //Trying to invert the normal way.Will fail if the matrix is actually not invertible
-    
-    for(index_t q=0;q<qset_.n_cols();q++){ //for all query points
-
-      int success_t= la::InverseInit(results_[q],&inverse[q]);
-      printf("matrix has been inverted\n");
-      if(success_t==SUCCESS_FAIL)
-	{
-	  printf("sorry this matrix is not invertible........\n");
-	  exit(0);
-	}
-      printf("Number of rows are %d\n",inverse[q].n_rows());
-      printf("Number of cols are %d\n",inverse[q].n_cols());
-
-      for(index_t i=0;i<inverse[q].n_rows();i++){
-
-	printf("outer loop..\n");
-	for(index_t j=0;j<inverse[q].n_cols();j++){
-
-	  printf("iiner loops..\n");
-	  fprintf(gp,"%f ",inverse[q].get(i,j));
-	}
-
-	fprintf(gp,"\n");
-      }
-      fprintf(gp,"\n");
-    
-      printf("successfully inverted..\n");
-    }
+      
   }
-
-  
-
 
 
  public:
@@ -1140,13 +1128,7 @@ void scale_data_by_minmax (){
 
        results_[l].Init(rset_.n_rows()+1,rset_.n_rows()+1); //dimensions of each matrix are (D+1)X(D+1), where D is the dimensionality of the reference dataset
      }
-     
-     //  initalize inverse of results
-     inverse_of_results_.Init(qset_.n_cols());
-     for(int i=0;i<qset_.n_cols();i++){
-       inverse_of_results_[i].Init(rset_.n_rows()+1);
-
-     }
+       
   }
   
 }; //Class Regression2 comes to an end..............

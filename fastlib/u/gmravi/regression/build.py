@@ -1,7 +1,7 @@
 binrule(
-    name = "main2",                        # the executable name
-    sources = ["main2.cc"],                   #
-    headers = ["regression2.h"],                            # no extra headers
+    name = "main",                     # the executable name
+    sources = ["main.cc"],                   
+    headers = ["regression2.h","regression.h"], # no extra headers
     deplibs = ["fastlib:fastlib_int"]
     )
 
