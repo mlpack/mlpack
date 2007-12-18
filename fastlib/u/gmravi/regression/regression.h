@@ -24,6 +24,15 @@ template < typename TKernel > class NaiveKde{
   Vector rset_weights_;
 
  public:
+
+  //getters...............
+
+  double get_density_estimates(index_t i, index_t j){
+
+    return densities_[i][j];
+  }
+
+  //Interesting functions...........................
   void Compute (){
 
     //printf ("\nStarting naive KDE computations...\n");
@@ -288,9 +297,6 @@ template < typename TKernel > class FastKde{
 
   /** accuracy parameter */
   double tau_;
-
-  ArrayList <index_t> old_from_new;
-  ArrayList <index_t> new_from_old;
 
   /**Number of base case operations*/
   int fast_kde_base;
@@ -733,35 +739,6 @@ template < typename TKernel > class FastKde{
     }
   }
 
- void TransformToOriginal(){
-
-    printf("Came to transform to original...\n");
-
-     ArrayList<Vector> temp;
-
-     //Initialize temp first
-
-     temp.Init(qset_.n_cols());
-     for(index_t i=0;i<qset_.n_cols();i++){
-
-       temp[i].Init(rset_.n_rows()+1);
-     }
-
-     for(index_t i=0;i<qset_.n_cols();i++){
-       
-       printf("old_from_new[%d] is %d\n",i,old_from_new[i]); 
-       temp[old_from_new[i]].CopyValues(densities_e_[i]);
-     }
-
-    for(index_t i=0;i<qset_.n_cols();i++){
-      
-      densities_e_[i].CopyValues(temp[i]);   
-    }
-
-    printf("results has been set up...\n");
-
-  }
-
 
   void NormalizeDensities (Tree * rnode){
 
@@ -911,11 +888,7 @@ template < typename TKernel > class FastKde{
     // postprocessing step for finalizing the sums
     PostProcess (qroot_);
 
-    TransformToOriginal();
-
-    /**normalize densities*/
-
-    // NormalizeDensities (rroot_);
+  
   }
 
 
@@ -924,7 +897,7 @@ template < typename TKernel > class FastKde{
     Dataset ref_dataset;
 
     // read in the number of points owned by a leaf
-    int leaflen = fx_param_int (NULL, "leaflen", 1);
+    int leaflen = fx_param_int (NULL, "leaflen", 10);
 
     // read the datasets
     const char *rfname = fx_param_str_req (NULL, "data");
@@ -979,27 +952,15 @@ template < typename TKernel > class FastKde{
 
     // construct query and reference trees. This also fills up the statistics in the reference tree
 
+    //printf("Before building trees the dataset in regression.h is ...\n");
+    //qset_.PrintDebug();
 
-
-    printf("Before tree construction the query set is ..\n");
-    qset_.PrintDebug();
     fx_timer_start (NULL, "tree_d");
     rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen);
-    qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,&old_from_new,&new_from_old);
-    printf("After tree construction the query set is ..\n");
-    qset_.PrintDebug();
-    
-
-    for(index_t i=0;i<qset_.n_cols();i++){
-      printf("old_from_new[%d] =%d\n",i,old_from_new[i]);
-    }
-    
-    
-    for(index_t i=0;i<qset_.n_cols();i++){
-
-      printf("new_from_old[%d] =%d\n",i,new_from_old[i]);
-    }
-
+    qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,NULL,NULL);
+   
+    //printf("After building tree the dataset in regression.h is ...\n");
+    //qset_.PrintDebug();
     fx_timer_stop (NULL, "tree_d");
 
     // initialize the kernel
