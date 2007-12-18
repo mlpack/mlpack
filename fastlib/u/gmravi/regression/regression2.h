@@ -20,10 +20,93 @@ template < typename TKernel > class NaiveRegression2{
   ArrayList <Matrix> results_;
 
  public:
-  void Compute (){
 
-    FILE *fp;
-    fp=fopen("naive_output.txt","w+");
+
+  //getter....
+
+  ArrayList<Matrix>  &get_results(){
+   
+    /* printf("The naive matrix is ..\n");
+   
+    for(int i=0;i<qset_.n_cols();i++){
+     
+      results_[i].PrintDebug();
+      }*/
+   
+    //First invert the results.....
+   
+    for(index_t q=0;q<qset_.n_cols();q++){ //for all query points 
+     
+      /*This was SVD stuff**********/
+      Vector s;
+      Matrix U;
+      Matrix VT; 
+      Matrix V;
+      Matrix S_diagonal;
+      Matrix U_transpose;
+     
+      la::SVDInit(results_[q],&s,&U,&VT); //perform SVD
+      //printf("did SVD..\n");
+      la::TransposeInit(VT,&V); //Transpose VT
+     
+      //S_diagonal is a diagonal matrix formed from the reciprocal of the elements of s.
+     
+      //dimensions of S_diagonal are fromed appropriately. it is (columns in V)X(columns in U)
+     
+      index_t rows_in_S_diagonal=V.n_cols();
+      index_t cols_in_S_diagonal=U.n_cols();
+     
+      //appropriately initialize s_diagonal
+      S_diagonal.Init(rows_in_S_diagonal,cols_in_S_diagonal);
+     
+      //Fill up the s_diagonal matrix with the reciprocal elements of s
+      
+      for(index_t i=0;i<rows_in_S_diagonal;i++){
+	
+	for(index_t j=0;j<cols_in_S_diagonal;j++){
+	  
+	  if(i==j){
+	    
+            //The diagonal element
+	    S_diagonal.set(i,j,1.0/s[i]);
+	  }
+	  else{
+	    //off diagonal element. hence is equal to 0
+	    S_diagonal.set(i,j,0);
+	  }
+	}
+      }
+      
+      //printf("Did inversion of s vector..\n");
+      
+      Matrix temp1;
+      Matrix temp2;
+      la::MulInit (V,S_diagonal,&temp1);
+      //printf("did multiplication1..\n");
+      
+      //Find transpose of U
+      
+      la::TransposeInit(U,&U_transpose);
+      la::MulInit(temp1, U_transpose, &temp2); //At this point the variable temp holds the pseudo-inverse of results_[q]
+      //printf("did multiplication2..\n");
+      
+      //Copy the contents of temp2 to results_
+      results_[q].CopyValues(temp2);
+      //printf("matrix inverted is...................\n");
+      //results_[q].PrintDebug();
+      
+      // printf("Successfully copied the values of temp2 into results_..\n");
+    }
+     
+    return results_;
+  }
+
+  //Interesting functions.................
+  void Compute (){
+    
+    printf("thsi is naive kde compute..........\n");
+    printf("query dataset is ..\n");
+    //qset_.PrintDebug();
 
     //printf ("\nStarting naive KDE computations...\n");
     fx_timer_start (NULL, "naive_kde");
@@ -63,10 +146,10 @@ template < typename TKernel > class NaiveRegression2{
 		weight=rset_.get(col-1,ref);
 	      }
 	      else{
-		  //row=col=0
-		  weight=1;
-		}
+		//row=col=0
+		weight=1;
 	      }
+	    }
 	    
 	    const double *r_col = rset_.GetColumnPtr (ref); //get the reference point
  	    double dsqd =la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
@@ -76,69 +159,44 @@ template < typename TKernel > class NaiveRegression2{
 	  }
 	  results_[q].set(row,col,density);
 	  
-	  fprintf(fp,"Point:%d row:%d col:%d density:%f",q,row,col,density);
-	  fprintf(fp,"\n");
+	 
 	}
       }
     }
 
-    //Having done this, now reflect the matrix...........
-    for(index_t q=0;q<qset_.n_cols();q++){
+    //reflect this matrix along the diagonal
+    for(index_t row=0;row<rset_.n_rows()+1;row++){ //for a row
 
-      for(index_t row=0;row<rset_.n_rows()+1;row++){ //for a row
-
-	for(index_t col=0;col<row;col++){ //for all columns<row => lower triangular matrix
-	  
-	  
+      for(index_t col=0;col<row;col++){ //for all columns<row => lower triangular matrix
+	
+	for(index_t q=0;q<qset_.n_cols();q++){ //do this for all query points
 	  results_[q].set(row,col,results_[q].get(col,row));
 	}
       }
     }
 
-    printf("Having reflected...\n");
 
-    for(index_t q=0;q<qset_.n_cols();q++){ //for all query points
-      
-      for(index_t row=0;row<rset_.n_rows()+1;row++){ //for a row
-	
-	for(index_t col=0;col<rset_.n_rows()+1;col++){ //for all columns<row => lower triangular matrix
-	  
-	  if(results_[q].get(row,col)!=results_[q].get(col,row)){
-	    printf("reflection was not done properly..\n");
-	    //exit(0);
-	  }
-	}
-      }
-    }
+    printf("at the end of the compute function.........\n");
+    /*for(int i=0;i<qset_.n_cols();i++){
+
+      results_[i].PrintDebug();
+      }*/
+ 
+   
     fx_timer_stop(NULL,"naive_kde");
   }
 
-  void Init (){
+  void Init (Matrix query_dataset, Matrix reference_dataset){
 
     printf("came to naive density calculations............\n");
-    
-    //get datasets
-    char *rfname=(char*)malloc(40);
-    char *qfname=(char*)malloc(40); 
-    strcpy(rfname,fx_param_str_req (NULL, "data"));
-    strcpy(qfname,fx_param_str_req (NULL,"query"));
-    
-    
-    printf("qf name is %s\n",qfname);
-    printf("rfname is %s\n",rfname);
-    printf("will load matrices...\n");
-    
-    // read reference dataset and query datasets
-    
-    Dataset ref_dataset ;
-    Dataset q_dataset;
-    
-    ref_dataset.InitFromFile(rfname);
-    rset_.Own(&(ref_dataset.matrix()));
-    
-    q_dataset.InitFromFile(qfname);
-    qset_.Own(&(q_dataset.matrix()));    
- 
+    qset_.Copy(query_dataset);
+    rset_.Copy(reference_dataset);
+
+    printf("reference dataset is .....\n");
+    //rset_.PrintDebug();
+
+    printf("query dataset in init function is ..\n");
+    //qset_.PrintDebug();
     
     // get bandwidth
     kernel_.Init (fx_param_double_req (NULL, "bandwidth"));
@@ -151,43 +209,39 @@ template < typename TKernel > class NaiveRegression2{
       
       results_[i].Init(rset_.n_rows()+1,rset_.n_rows()+1); //A square matrix
     }
+    //printf("query dataset in init function is ..\n");
+    //qset_.PrintDebug();
      
   }
 
-     void ComputeMaximumRelativeError(ArrayList<Matrix> fast_wfkde_results){
+  void ComputeMaximumRelativeError(ArrayList<Matrix> fast_wfkde_results){
 
-       FILE *gp;
-       gp=fopen("relative_error.txt","w+");
+    FILE *gp;
+    gp=fopen("relative_error.txt","w+");
 
+    for(index_t q=0;q<qset_.n_cols();q++){
+	
+      //max_error is the maximum error u commit for a given query point
+      double max_error=0;
+
+
+	
       for(index_t q=0;q<qset_.n_cols();q++){
-	
-	//max_error is the maximum error u commit for a given query point
-	double max_error=0;
-
-
-	
-	for(index_t q=0;q<qset_.n_cols();q++){
-
-	 
-
-	  for(index_t row=0;row<rset_.n_rows()+1;row++){
+	for(index_t row=0;row<rset_.n_rows()+1;row++){
 	    
-	    for(index_t col=0;col<rset_.n_rows()+1;col++){
+	  for(index_t col=0;col<rset_.n_rows()+1;col++){
 	      
-	     
+	    double error=fabs(fast_wfkde_results[q].get(row,col)-results_[q].get(row,col))/results_[q].get(row,col);
 	      
-	    
-	      double error=fabs(fast_wfkde_results[q].get(row,col)-results_[q].get(row,col))/results_[q].get(row,col);
-	      
-	      if(error>max_error){
-		max_error=error;
-	      }
+	    if(error>max_error){
+	      max_error=error;
 	    }
 	  }
-	   fprintf(gp,"The maximum relative error for this query point is %f\n",max_error);
 	}
+	fprintf(gp,"The maximum relative error for this query point is %f\n",max_error);
       }
-      }
+    }
+  }
 };  //Naive regression2 is done
 
 
@@ -240,7 +294,7 @@ template <typename TKernel > class Regression2 {
      * upper bound offset passed from above. 
      */
 
-   double owed_u;
+    double owed_u;
 
 
 
@@ -316,14 +370,12 @@ template <typename TKernel > class Regression2 {
   /** results stores the upper triangular matrix. Just the upper traingular is enough, because  the matrix is symmetric*/
   ArrayList <Matrix> results_;
 
-  /**it will map new indices to original for the query tree**/
-  ArrayList <index_t> old_from_new_q_;
-
+ 
   //Intersting functions...................................
 
 
 
-void scale_data_by_minmax (){
+  void scale_data_by_minmax (){
     int num_dims = rset_.n_rows ();
     DHrectBound < 2 > qset_bound;
     DHrectBound < 2 > rset_bound;
@@ -349,7 +401,7 @@ void scale_data_by_minmax (){
       double max_coord = max (qset_range.hi, rset_range.hi);
       double width = max_coord - min_coord;
       
-//printf ("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
+      //printf ("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
       
       for (index_t j = 0; j < rset_.n_cols (); j++){
 	rset_.set (i, j, (rset_.get (i, j) - min_coord) / width);
@@ -362,7 +414,7 @@ void scale_data_by_minmax (){
 	}
       }
     }
-}
+  }
 
   void SetUpperBoundOfDensity (Tree * qnode){
 
@@ -385,62 +437,62 @@ void scale_data_by_minmax (){
     // initialize lower bound to 0
     
 
-      node->stat ().mass_l = 0;
-      node->stat ().owed_l= 0;
-      node->stat ().owed_u= 0;
+    node->stat ().mass_l = 0;
+    node->stat ().owed_l= 0;
+    node->stat ().owed_u= 0;
 
 
-      //Base CAse.....
+    //Base CAse.....
     
-      if (node->is_leaf ()){
+    if (node->is_leaf ()){
       
-	//This is a leaf node.......................
+      //This is a leaf node.......................
 	
-	node->stat ().more_l=0;
-	node->stat ().more_u=0;
+      node->stat ().more_l=0;
+      node->stat ().more_u=0;
 
-	//set weight=ref_{i,row-1}.r_{i,col-1}
-	double weight=0;
+      //set weight=ref_{i,row-1}.r_{i,col-1}
+      double weight=0;
 
-	if(row>=1&&col>=1){
+      if(row>=1&&col>=1){
 	  
-	  //printf("in row>1 and col>1..\n");
-	  for(index_t i=node->begin();i<node->end();i++){
+	//printf("in row>1 and col>1..\n");
+	for(index_t i=node->begin();i<node->end();i++){
 	    
-	    weight+=rset_.get(row-1,i)*rset_.get(col-1,i); //This means i am considering the row-1th and col-1 th corrdinates of the ith point
+	  weight+=rset_.get(row-1,i)*rset_.get(col-1,i); //This means i am considering the row-1th and col-1 th corrdinates of the ith point
+	}
+      }
+
+      else{ //one of row or columns is 0
+
+	if(row==0&&col>0){
+	    
+	  for(index_t i=node->begin();i<node->end();i++){
+	      
+	    weight+=rset_.get(col-1,i);
 	  }
 	}
-
-	else{ //one of row or columns is 0
-
-	  if(row==0&&col>0){
+	else{
 	    
-	    for(index_t i=node->begin();i<node->end();i++){
-	      
-	      weight+=rset_.get(col-1,i);
-	    }
-	  }
-	  else{
-	    
-	      //printf("row and col both are 0..\n");  
-	      weight+=node->end()-node->begin();
-	    }
-	  }
-
-	node->stat().weight=weight;
+	  //printf("row and col both are 0..\n");  
+	  weight+=node->end()-node->begin();
+	}
       }
+
+      node->stat().weight=weight;
+    }
       
-      // for non-leaf node, recurse
-      else{
-	//printf ("This is not a leaf node...\n");
+    // for non-leaf node, recurse
+    else{
+      //printf ("This is not a leaf node...\n");
 	
-	PreProcess (node->left(),row,col);
-	PreProcess (node->right(),row,col);
+      PreProcess (node->left(),row,col);
+      PreProcess (node->right(),row,col);
 	
-	//weight of the parent node is the sum of the weights of the children nodes
+      //weight of the parent node is the sum of the weights of the children nodes
 	
-	node->stat().weight=node->left()->stat().weight + node->right()->stat().weight; 
-      }   
+      node->stat().weight=node->left()->stat().weight + node->right()->stat().weight; 
+    }   
   }
 
 
@@ -476,9 +528,9 @@ void scale_data_by_minmax (){
 
     if (qnode->is_leaf ()){
       
-	qstat.more_l+= dl;
-	qstat.more_u+= du;
-      }
+      qstat.more_l+= dl;
+      qstat.more_u+= du;
+    }
 
     // otherwise, incorporate the bound changes into the owed slots of
     // the immediate descendants
@@ -498,15 +550,15 @@ void scale_data_by_minmax (){
 
 
 
- /** exhaustive base KDE case */
+  /** exhaustive base KDE case */
 
   void Regression2Base (Tree * qnode, Tree * rnode,int row,int col){
    
 
     //subtract because now you are doing exhaustive computation
-    printf("Initial more_u is %g\n",qnode->stat().more_u); 
+    //printf("Initial more_u is %g\n",qnode->stat().more_u); 
     qnode->stat().more_u-=rnode->stat().weight;
-    printf("final more_u is %g\n",qnode->stat().more_u);
+    //printf("final more_u is %g\n",qnode->stat().more_u);
 
     // compute unnormalized sum
 
@@ -526,25 +578,25 @@ void scale_data_by_minmax (){
        
 	double dsqd = la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	double ker_value = kernel_.EvalUnnormOnSq (dsqd);
-        printf("q is %d\n",q);
+        //printf("q is %d\n",q);
 
-	for(index_t z=0;z<qset_.n_rows();z++){
+	/*for(index_t z=0;z<qset_.n_rows();z++){
 	  printf("q coord is %f\n",q_col[z]);
 
-	}
-	for(index_t z=0;z<rset_.n_rows();z++){
+	  }*/
+	/*for(index_t z=0;z<rset_.n_rows();z++){
 	  printf("r coord is %f\n",r_col[z]);
 
 	}
 	printf("distance squared is %g\n",dsqd);
 	printf("kernel value is %g\n",ker_value);
-	printf("row=%d and col=%d\n",row,col);
+	printf("row=%d and col=%d\n",row,col);*/
 	
 	if(row>0 && col> 0){
 	  
 	  densities_l_[q]+= ker_value * rset_.get(row-1,r)*rset_.get(col-1,r);
 	  densities_u_[q]+= ker_value * rset_.get(row-1,r)*rset_.get(col-1,r);
-	  printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
+	  //printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
 	}
 	
 	else{ //atleast one of row or col is 0
@@ -552,7 +604,7 @@ void scale_data_by_minmax (){
 	  if(row==0 && col>0){
 	    densities_l_[q]+= ker_value * rset_.get(col-1,r);
 	    densities_u_[q]+= ker_value * rset_.get(col-1,r);
-	    printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
+	    //printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
 	  }
 	  
 	  else{
@@ -560,7 +612,7 @@ void scale_data_by_minmax (){
 	    //both row=col=0;
 	    densities_l_[q]+= ker_value;
 	    densities_u_[q]+= ker_value; 
-	    printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
+	    //printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
 	  } 
 	}
       }
@@ -589,10 +641,10 @@ void scale_data_by_minmax (){
     }
 
     // tighten lower and upper bound
-    printf("min_l is %g\n",min_l);
-    printf("more_l is %g\n",qnode->stat().more_l);
-    printf("more_u is %g\n",qnode->stat().more_u);
-    printf("max_u  is %g\n",max_u);
+    //printf("min_l is %g\n",min_l);
+    //printf("more_l is %g\n",qnode->stat().more_l);
+    //printf("more_u is %g\n",qnode->stat().more_u);
+    //printf("max_u  is %g\n",max_u);
     qnode->stat ().mass_l = min_l + qnode->stat ().more_l;
     qnode->stat ().mass_u = max_u + qnode->stat ().more_u;
     
@@ -601,50 +653,50 @@ void scale_data_by_minmax (){
 
 
 
- int Prunable (Tree * qnode, Tree * rnode, DRange & dsqd_range,
+  int Prunable (Tree * qnode, Tree * rnode, DRange & dsqd_range,
 		DRange & kernel_value_range, double &dl, double &du){
 
-   //printf("In prunable..............\n");
+    //printf("In prunable..............\n");
    
-   // query node stat
-   Regression2Stat & stat = qnode->stat ();
-   
-   
-   // try pruning after bound refinement: first compute distance/kernel
-   // value bounds
-   dsqd_range.lo = qnode->bound ().MinDistanceSq (rnode->bound ());
-   dsqd_range.hi = qnode->bound ().MaxDistanceSq (rnode->bound ());
-   kernel_value_range = kernel_.RangeUnnormOnSq (dsqd_range);
+    // query node stat
+    Regression2Stat & stat = qnode->stat ();
    
    
-   // the new lower bound after incorporating new info for each dimension
+    // try pruning after bound refinement: first compute distance/kernel
+    // value bounds
+    dsqd_range.lo = qnode->bound ().MinDistanceSq (rnode->bound ());
+    dsqd_range.hi = qnode->bound ().MaxDistanceSq (rnode->bound ());
+    kernel_value_range = kernel_.RangeUnnormOnSq (dsqd_range);
    
    
-   dl = rnode->stat().weight * kernel_value_range.lo;
-   du = -1 *rnode->stat().weight* (1-kernel_value_range.hi);
+    // the new lower bound after incorporating new info for each dimension
    
    
-   // refine the lower bound using the new lower bound info
+    dl = rnode->stat().weight * kernel_value_range.lo;
+    du = -1 *rnode->stat().weight* (1-kernel_value_range.hi);
    
-   double new_mass_l;
    
-   new_mass_l = stat.mass_l + dl;
+    // refine the lower bound using the new lower bound info
+   
+    double new_mass_l;
+   
+    new_mass_l = stat.mass_l + dl;
   
-   //printf("tau_ is %g\n",tau_);
-   double allowed_err = tau_ * new_mass_l*((double) (rnode->stat().weight)) /((double) (rroot_->stat().weight));
+    //printf("tau_ is %g\n",tau_);
+    double allowed_err = tau_ * new_mass_l*((double) (rnode->stat().weight)) /((double) (rroot_->stat().weight));
 
-   //printf("Allowed error is %g\n",allowed_err);
+    //printf("Allowed error is %g\n",allowed_err);
    
-   // this is error per each query/reference pair for a fixed query
-   double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
+    // this is error per each query/reference pair for a fixed query
+    double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
    
-   //printf("min distance is %g\n",dsqd_range.lo);
-   //printf("max distance is %g\n",dsqd_range.hi);
-   // this is total maximumn error for each query point
+    //printf("min distance is %g\n",dsqd_range.lo);
+    //printf("max distance is %g\n",dsqd_range.hi);
+    // this is total maximumn error for each query point
 
-   double error = m * rnode->stat ().weight;
-   //printf("actual error is %g\n",error);
-   // check pruning condition
+    double error = m * rnode->stat ().weight;
+    //printf("actual error is %g\n",error);
+    // check pruning condition
     if (error >= allowed_err){
       //printf("Hence cannot prune...\n");
       dl=0;
@@ -658,7 +710,7 @@ void scale_data_by_minmax (){
     //printf("du is %g\n",du);
 
     return 1;
- }
+  }
 
 
 
@@ -710,11 +762,11 @@ void scale_data_by_minmax (){
       
       if (rnode->is_leaf ()){
 
-	printf("Going exhaustive....\n");
-	printf("mass_l=%g and mass_u=%g\n",qnode->stat().mass_l,qnode->stat().mass_u);
+	//printf("Going exhaustive....\n");
+	//printf("mass_l=%g and mass_u=%g\n",qnode->stat().mass_l,qnode->stat().mass_u);
 	Regression2Base (qnode, rnode,row,col);
-	printf("after cal...\n");
-	printf("mass_l=%g and mass_u=%g\n",qnode->stat().mass_l,qnode->stat().mass_u);
+	//printf("after cal...\n");
+	//printf("mass_l=%g and mass_u=%g\n",qnode->stat().mass_l,qnode->stat().mass_u);
 	return;
       }
       
@@ -785,12 +837,18 @@ void scale_data_by_minmax (){
     //First create reference and query trees
     // read in the number of points owned by a leaf
 
-    int leaflen = fx_param_int (NULL, "leaflen", 1);
+    int leaflen = fx_param_int (NULL, "leaflen", 10);
 	
-    qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,&old_from_new_q_,NULL);
+    /* printf("Before forming the tree for regression2 we have the query dataset as ...\n");
+       qset_.PrintDebug();*/
+
+    qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,NULL,NULL);
     rroot_=tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen,NULL,NULL);
     
 	
+    /* printf("After forming the tree for regression2 we have the query dataset as ...\n");
+       qset_.PrintDebug();*/
+
     //Initialize densities
     densities_l_.Init (qset_.n_cols ());
     densities_u_.Init (qset_.n_cols ());
@@ -819,8 +877,8 @@ void scale_data_by_minmax (){
 	PreProcess (qroot_,row,col);    
 	PreProcess (rroot_,row,col);
 	
-	printf("row=%d, column=%d\n",row,col);
-	PrintDebugTree(rroot_);
+	//printf("row=%d, column=%d\n",row,col);
+	//PrintDebugTree(rroot_);
 
 	//Flush all the densities values
 
@@ -836,7 +894,7 @@ void scale_data_by_minmax (){
 	}
 
 	/*printf("Before starting new iteration.....");
-	for(int i=0;i<qset_.n_cols();i++){  //for all points
+	  for(int i=0;i<qset_.n_cols();i++){  //for all points
 	  
 	  printf("densities_l_[i]=%f\n",densities_l_[i]);
 	  printf("densities_e_[i]=%f\n",densities_e_[i]);
@@ -889,9 +947,9 @@ void scale_data_by_minmax (){
       for (index_t q = node->begin (); q < node->end (); q++){ //for each point
        
 	/*printf("densities_l_[q] is %f\n",densities_l_[q]);
-	printf("densities_u_[q] is %f\n",densities_u_[q]);
-	printf("more_l is %f\n",node->stat().more_l);
-	printf("more_u is %f\n", node->stat().more_u);*/
+	  printf("densities_u_[q] is %f\n",densities_u_[q]);
+	  printf("more_l is %f\n",node->stat().more_l);
+	  printf("more_u is %f\n", node->stat().more_u);*/
 
 	densities_e_[q] =
 	  (densities_l_[q] + node->stat ().more_l+
@@ -910,33 +968,7 @@ void scale_data_by_minmax (){
   }
 
 
-  void TransformToOriginal(){
-    printf("Came to transform to original...\n");
-
-     ArrayList<Matrix> temp;
-
-     //Initialize temp first
-
-     temp.Init(qset_.n_cols());
-     for(index_t i=0;i<qset_.n_cols();i++){
-
-       temp[i].Init(rset_.n_rows()+1,rset_.n_rows()+1);
-     }
-
-    for(index_t i=0;i<qset_.n_cols();i++){
-
-      //printf("old_from_new_q_[%d]= %d\n",i,old_from_new_q_[i]);
-      temp[old_from_new_q_[i]].CopyValues(results_[i]);
-    }
-
-    for(index_t i=0;i<qset_.n_cols();i++){
-      
-      results_[i].CopyValues(temp[i]);   
-    }
-
-    printf("results has been set up...\n");
-
-  }
+ 
 
   void InvertAll(){
 
@@ -946,10 +978,7 @@ void scale_data_by_minmax (){
     FILE *fp;
     fp=fopen("svd_inverse.txt","w+");
     
-    for(index_t q=0;q<qset_.n_cols();q++){ //for all query points
-
-     
-      
+    for(index_t q=0;q<qset_.n_cols();q++){ //for all query points 
       
       /*This was SVD stuff**********/
       Vector s;
@@ -1007,8 +1036,8 @@ void scale_data_by_minmax (){
 
       //Copy the contents of temp2 to results_
       results_[q].CopyValues(temp2);
-      printf("matrix inverted is...................\n");
-      results_[q].PrintDebug();
+      //printf("matrix inverted is...................\n");
+      //results_[q].PrintDebug();
 
       // printf("Successfully copied the values of temp2 into results_..\n");
     }
@@ -1043,23 +1072,21 @@ void scale_data_by_minmax (){
     tau_=tau;
     printf("tau_ is %f\n",tau_);
     FillMatrix();
-
-    //note due to tree formation the order of the query points and the refence points are changed. This restores the density values
-    TransformToOriginal();
+  
 
     FILE *fp;
     fp=fopen("not_inverse_file.txt","w+");
 
-     for(index_t q=0;q<qset_.n_cols();q++){
+    for(index_t q=0;q<qset_.n_cols();q++){
 
-       for(index_t i=0;i<rset_.n_rows()+1;i++){
+      for(index_t i=0;i<rset_.n_rows()+1;i++){
 
-	 for(index_t j=0;j<rset_.n_rows()+1;j++){
+	for(index_t j=0;j<rset_.n_rows()+1;j++){
 
-	   fprintf(fp,"q:%d i:%d j:%d density:%f\n",q,i,j,results_[q].get(i,j));
-	 }
-       }
-     }
+	  fprintf(fp,"q:%d i:%d j:%d density:%f\n",q,i,j,results_[q].get(i,j));
+	}
+      }
+    }
 
    
     //Do a matrix inversion for the matrix of each query point. 
@@ -1070,64 +1097,68 @@ void scale_data_by_minmax (){
     
   }
   
-  void Init (){			
+  void Init (Matrix &query_dataset, Matrix &reference_dataset){			
     
     
     //This is the Init function of Regression2     
     
     // read the datasets
-     char *rfname=(char*)malloc(40);
-     char *qfname=(char*)malloc(40); 
-     strcpy(rfname,fx_param_str_req (NULL, "data"));
-     strcpy(qfname,fx_param_str_req (NULL,"query"));
+
+    /* char *rfname=(char*)malloc(40);
+       char *qfname=(char*)malloc(40); 
+       strcpy(rfname,fx_param_str_req (NULL, "data"));
+       strcpy(qfname,fx_param_str_req (NULL,"query"));*/
     
 
-     printf("qf name is %s\n",qfname);
-     printf("rfname is %s\n",rfname);
-     printf("will load matrices...\n");
+   
 
-     // read reference dataset and query datasets
+    // read reference dataset and query datasets
   
-     Dataset ref_dataset ;
-     Dataset q_dataset;
+    /*Dataset ref_dataset ;
+      Dataset q_dataset;*/
 
-     ref_dataset.InitFromFile(rfname);
-     rset_.Own(&(ref_dataset.matrix()));
+    /*ref_dataset.InitFromFile(rfname);
+      rset_.Own(&(ref_dataset.matrix()));
 
-     q_dataset.InitFromFile(qfname);
-     qset_.Own(&(q_dataset.matrix()));
+      q_dataset.InitFromFile(qfname);
+      qset_.Own(&(q_dataset.matrix()));
 
-     printf("qset_ is ...\n");
-     qset_.PrintDebug();
-      
+      printf("qset_ is ...\n");
+      qset_.PrintDebug();*/
 
-     printf("the numbner of columns in rset is %d\n",rset_.n_cols());
-     printf("the numbner of rows in rset is %d\n",rset_.n_rows());
-
-     printf("the numbner of columns in qset is %d\n",qset_.n_cols());
-     printf("the numbner of columns in qset is %d\n",qset_.n_rows());
-
-     printf("loaded...\n");
-     // scale dataset if the user wants to. 
+    qset_.Alias(query_dataset);
+    rset_.Alias(reference_dataset);
      
-     if (!strcmp (fx_param_str (NULL, "scaling", NULL), "range")){
+    /*printf("The query_dataset received in this program is ..\n");
+    query_dataset.PrintDebug();
+
+    printf("the number of columns in rset is %d\n",rset_.n_cols());
+    printf("the number of rows in rset is %d\n",rset_.n_rows());
+
+    printf("the number of columns in qset is %d\n",qset_.n_cols());
+    printf("the number of rows in qset is %d\n",qset_.n_rows());
+
+    printf("loaded...\n");*/
+    // scale dataset if the user wants to. 
+     
+    if (!strcmp (fx_param_str (NULL, "scaling", NULL), "range")){
        
-        scale_data_by_minmax ();
-     }
+      scale_data_by_minmax ();
+    }
      
-     // initialize the kernel
+    // initialize the kernel
      
-     kernel_.Init (fx_param_double_req (NULL, "bandwidth"));
+    kernel_.Init (fx_param_double_req (NULL, "bandwidth"));
      
-     printf("init function succesfully executed..\n");
+    printf("init function succesfully executed..\n");
 
-     //Initialize results_ properly
-     results_.Init(qset_.n_cols());
+    //Initialize results_ properly
+    results_.Init(qset_.n_cols());
 
-     for(int l=0;l<qset_.n_cols();l++){
+    for(int l=0;l<qset_.n_cols();l++){
 
-       results_[l].Init(rset_.n_rows()+1,rset_.n_rows()+1); //dimensions of each matrix are (D+1)X(D+1), where D is the dimensionality of the reference dataset
-     }
+      results_[l].Init(rset_.n_rows()+1,rset_.n_rows()+1); //dimensions of each matrix are (D+1)X(D+1), where D is the dimensionality of the reference dataset
+    }
        
   }
   
