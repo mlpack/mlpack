@@ -1,7 +1,6 @@
 #include "fastlib/fastlib_int.h"
 #include "regression.h"
 #include "regression2.h"
-#define  MAXDOUBLE 32768.0
 
 int main (int argc, char *argv[]){
 
@@ -23,6 +22,8 @@ int main (int argc, char *argv[]){
 
   Vector regression_estimates_naive;
   Vector regression_estimates;
+
+  ArrayList <index_t> new_from_old_r;
   FILE *fp;
   FILE *gp;
   fp=fopen("fast_regression.txt","w+");
@@ -75,6 +76,8 @@ int main (int argc, char *argv[]){
 	      fast_kde_results[q][d]=fast_kde.get_density_estimates(q,d);
 	    }
 	}
+      new_from_old_r.Copy(fast_kde.get_new_from_old_r());
+
       printf("WILL NOW START REGRESSION2......................\n");
 
     //Now lets get (B^TWB)^-1. This can be done by calling routines related the object Regression2 present in the file regression2.h 
@@ -160,7 +163,7 @@ int main (int argc, char *argv[]){
     //query_dataset.PrintDebug();
 
     fx_timer_start(NULL,"second_matrix_naive");
-    naive_kde.Init (query_dataset,reference_dataset);
+    naive_kde.Init (query_dataset,reference_dataset,new_from_old_r);
     naive_kde.Compute ();
     fx_timer_stop(NULL,"second_matrix_naive");
 
@@ -188,6 +191,7 @@ int main (int argc, char *argv[]){
 	      naive_kde_results[q][d]=naive_kde.get_density_estimates(q,d);
 	    }
 	}
+
       printf("WILL NOW START REGRESSION2......................\n");
 
     //Now lets get (B^TWB)^-1. This can be done by calling routines related the object Regression2 present in the file regression2.h 
@@ -261,7 +265,11 @@ int main (int argc, char *argv[]){
       for(index_t q=0;q<num_query_points;q++){
 
 	error=(double)fabs(regression_estimates_naive[q]-regression_estimates[q])/regression_estimates_naive[q];
-	fprintf(lp,"regression_estimates_naive: %f, regression_estimates_fast:%f\n",regression_estimates_naive[q],regression_estimates[q]);
+
+	for(int d=0;d<num_of_dimensions;d++){
+	  fprintf(lp,"%f,",query_dataset.get(d,q));
+	}
+	fprintf(lp,"ren: %3f, refast:%3f diff:%3f\n",regression_estimates_naive[q],regression_estimates[q],error);
 	if(error>relative_error){
 	  relative_error=error;
 	}
