@@ -917,6 +917,9 @@ template < typename TKernel > class FastKde{
 
     // construct query and reference trees. This also fills up the statistics in the reference tree
 
+
+    printf("the refernece file is ..\n");
+    rset_.PrintDebug();
     fx_timer_start (NULL, "tree_d");
     rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen, NULL, &new_from_old_r_);
     qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen, NULL, NULL);
