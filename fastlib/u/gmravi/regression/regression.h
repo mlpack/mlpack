@@ -301,7 +301,7 @@ template < typename TKernel > class FastKde{
 
   /**The mapping array for the reference file**/
   ArrayList <int> new_from_old_r_;
-
+  ArrayList<int> old_from_new_r_;
  
   // preprocessing: scaling the dataset; this has to be moved to the dataset
   // module
@@ -814,8 +814,10 @@ template < typename TKernel > class FastKde{
     tau_ = tau;
 
     //PreProcess first.....
+
     PreProcess (qroot_);
     PreProcess (rroot_);
+
     //printf ("Preprocessing complete....\n");
 
     //Initialize all the densities properly
@@ -862,7 +864,7 @@ template < typename TKernel > class FastKde{
     Dataset ref_dataset;
 
     // read in the number of points owned by a leaf
-    int leaflen = fx_param_int (NULL, "leaflen", 10);
+    int leaflen = fx_param_int (NULL, "leaflen", 2);
 
     // read the datasets
     const char *rfname = fx_param_str_req (NULL, "data");
@@ -896,6 +898,9 @@ template < typename TKernel > class FastKde{
       rset_weights_.SetAll (1);
      
     }
+
+    printf("the weights are ..\n");
+    rset_weights_.PrintDebug();
    
     if (!strcmp (qfname, rfname)){
 
@@ -927,11 +932,13 @@ template < typename TKernel > class FastKde{
 
     
     fx_timer_start (NULL, "tree_d");
-    rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen, NULL, &new_from_old_r_);
+    rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen, &old_from_new_r_, &new_from_old_r_);
     qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen, NULL, NULL);
   
     fx_timer_stop (NULL, "tree_d");
 
+    printf("The query set is ..\n");
+    qset_.PrintDebug();
     printf("The mapping is ...\n");
 
     for(index_t i=0;i<new_from_old_r_.size();i++){
