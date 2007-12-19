@@ -1,8 +1,7 @@
 #ifndef REGRESSION_H
 #define REGRESSION_H
-#define MAXDOUBLE 32768.0
+#include "values.h"
 #include "fastlib/fastlib_int.h"
-
 
 template < typename TKernel > class NaiveKde{
 
@@ -23,6 +22,10 @@ template < typename TKernel > class NaiveKde{
   /**Reference weights*/
   Vector rset_weights_;
 
+  /** get the permutation */
+
+  ArrayList<index_t> new_from_old_r_;
+
  public:
 
   //getters...............
@@ -31,6 +34,8 @@ template < typename TKernel > class NaiveKde{
 
     return densities_[i][j];
   }
+
+ 
 
   //Interesting functions...........................
   void Compute (){
@@ -49,7 +54,7 @@ template < typename TKernel > class NaiveKde{
 	    const double *r_col = rset_.GetColumnPtr (r);
 	    double dsqd =la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	    double val = kernel_.EvalUnnormOnSq (dsqd);
-	    val *= rset_weights_[r];
+	    val *= rset_weights_[new_from_old_r_[r]];
 	    densities_[q][d] += val;
 	  }
 	  else{
@@ -58,7 +63,7 @@ template < typename TKernel > class NaiveKde{
 	    double dsqd =
 	      la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	    double val = kernel_.EvalUnnormOnSq (dsqd);
-	    val *= rset_weights_[r];
+	    val *= rset_weights_[new_from_old_r_[r]];
 	    val *= rset_.get (d - 1, r);
 	    densities_[q][d] += val;
 	  }
@@ -68,17 +73,7 @@ template < typename TKernel > class NaiveKde{
     fx_timer_stop(NULL,"naive_kde");
 
     //Density estimates from naive calculations.....
-    /*for(int i=0;i<qset_.n_cols();i++){
-      for(int j=0;j<rset_.n_rows()+1;j++){
-	printf("density from naive calculation is %f\n",densities_[i][j]);
-      }
-      }*/
-    // then normalize it
-    /*    for (index_t q = 0; q < qset_.n_cols (); q++){	//for each query point
-	  for (index_t d = 0; d < rset_.n_rows () + 1; d++){	//along each dimension
-	  densities_[q][d] /= (rset_.n_cols());
-      }
-      }*/
+   
   }
 
   void Init (){
@@ -90,12 +85,15 @@ template < typename TKernel > class NaiveKde{
     }
   }
 
-  void Init (Matrix & qset, Matrix & rset){
+  void Init (Matrix & qset, Matrix & rset, ArrayList<index_t> &new_from_old_r){
     
     // get datasets
     qset_.Alias (qset);
     rset_.Alias (rset);
     
+    //get permutation
+    new_from_old_r_.Copy(new_from_old_r);
+
     // get bandwidth
     kernel_.Init (fx_param_double_req (NULL, "bandwidth"));
    
@@ -157,7 +155,6 @@ template < typename TKernel > class NaiveKde{
 
   void ComputeMaximumRelativeError (ArrayList < Vector > density_estimate) {
 
-    //printf ("Came to compute maximum relative error...\n");
     double max_rel_err = 0;
     for (index_t q = 0; q < qset_.n_cols (); q++){
       for (index_t d = 0; d < rset_.n_rows () + 1; d++){
@@ -300,6 +297,11 @@ template < typename TKernel > class FastKde{
 
   /**Number of base case operations*/
   int fast_kde_base;
+
+
+  /**The mapping array for the reference file**/
+  ArrayList <int> new_from_old_r_;
+
  
   // preprocessing: scaling the dataset; this has to be moved to the dataset
   // module
@@ -330,8 +332,6 @@ template < typename TKernel > class FastKde{
       double min_coord = min (qset_range.lo, rset_range.lo);
       double max_coord = max (qset_range.hi, rset_range.hi);
       double width = max_coord - min_coord;
-      
-//printf ("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
       
       for (index_t j = 0; j < rset_.n_cols (); j++){
 	rset_.set (i, j, (rset_.get (i, j) - min_coord) / width);
@@ -365,6 +365,7 @@ template < typename TKernel > class FastKde{
       node->stat ().owed_l[i] = 0;
       node->stat ().owed_u[i] = 0;
     }
+
     //Base CAse.....
     
     if (node->is_leaf ()){
@@ -380,24 +381,20 @@ template < typename TKernel > class FastKde{
 	for (int j = node->begin (); j < node->end (); j++){ //looping over all points
 	  if (i != 0){
 	    node->stat ().weight_of_dimension[i] +=
-	      rset_.get (i - 1, j) * rset_weights_[j];
+	      rset_.get (i - 1, j) * rset_weights_[new_from_old_r_[j]];
 	  }
 	  else{
-	    node->stat ().weight_of_dimension[i] += rset_weights_[j];
+	    node->stat ().weight_of_dimension[i] += rset_weights_[new_from_old_r_[j]];
 	    
 	  }
 	}
       }
-/*printf ("THE WEIGHT VECTOR I WILL BE RETURNING IS ...\n");
-      for (int i = 0; i < rset_.n_rows () + 1; i++){
-	printf ("weight is %f\n", node->stat ().weight_of_dimension[i]);
-	}*/
     }
       
     
     // for non-leaf node, recurse
     else{
-      //printf ("This is not a leaf node...\n");
+    
       
       PreProcess (node->left ());
       PreProcess (node->right ());
@@ -431,7 +428,7 @@ template < typename TKernel > class FastKde{
 
     if (qnode->is_leaf ()){
       for (int t = 0; t < rset_.n_rows () + 1; t++){
-	qstat.more_l[t] += dl[t];	//Why are we doing this. Why dowe maintain a field called qstat.more_l_ for a leaf node
+	qstat.more_l[t] += dl[t];
 	qstat.more_u[t] += du[t];
       }
     }
@@ -457,21 +454,16 @@ template < typename TKernel > class FastKde{
 
   /** exhaustive base KDE case */
   void FKdeBase (Tree * qnode, Tree * rnode){
-//printf ("In FKdeBase ...\n");
-
-    fast_kde_base++;
-//printf("with this fast_kde_base is %d\n",fast_kde_base);
 
     //subtract because now you are doing exhaustive computation
 
     for(index_t d=0;d<rset_.n_rows()+1;d++){ //along each dimension
-//  printf("Before subtraction i have more_u is %f\n",qnode->stat().more_u[d]);
+
       qnode->stat().more_u[d]-=rnode->stat().weight_of_dimension[d];
-//    printf("After subtraction i have more_u is %f\n",qnode->stat().more_u[d]);
     }
      
     // compute unnormalized sum
-    for (index_t q = qnode->begin (); q < qnode->end (); q++){
+    for (index_t q = qnode->begin (); q < qnode->end (); q++){ //for each query node
 
       // get query point
       const double *q_col = qset_.GetColumnPtr (q);
@@ -488,13 +480,13 @@ template < typename TKernel > class FastKde{
 	  double ker_value = kernel_.EvalUnnormOnSq (dsqd);
 	  if (i != 0){
 	    densities_l_[q][i] +=
-	      ker_value * rset_weights_[r] * rset_.get (i - 1, r);
+	      ker_value * rset_weights_[new_from_old_r_[r]] * rset_.get (i - 1, r);
 	    densities_u_[q][i] +=
-	      ker_value * rset_weights_[r] * rset_.get (i - 1, r);
+	      ker_value * rset_weights_[new_from_old_r_[r]] * rset_.get (i - 1, r);
 	  }
 	  else{
-	    densities_l_[q][i] += ker_value * rset_weights_[r];
-	    densities_u_[q][i] += ker_value * rset_weights_[r];
+	    densities_l_[q][i] += ker_value * rset_weights_[new_from_old_r_[r]];
+	    densities_u_[q][i] += ker_value * rset_weights_[new_from_old_r_[r]];
 
 	  }
 	}
@@ -502,8 +494,7 @@ template < typename TKernel > class FastKde{
     }
 
     // get a tighter lower and upper bound for every dimension by looping over each query point
-    // in the current query leaf node
-
+   
     Vector min_l;
     min_l.Init (rset_.n_rows () + 1);
 
@@ -544,8 +535,6 @@ template < typename TKernel > class FastKde{
 
     // query node stat
     KdeStat & stat = qnode->stat ();
-    // printf("The error tolerance is %f\n",tau_);
-
 
     // try pruning after bound refinement: first compute distance/kernel
     // value bounds
@@ -637,15 +626,15 @@ template < typename TKernel > class FastKde{
 
       left_stat = &(qnode->left ()->stat ());
       right_stat = &(qnode->right ()->stat ());
-      // stat.MergeChildBounds (*left_stat, *right_stat, rset_.n_rows()+ 1); //I think this should not be here
-    }
 
     // try finite difference pruning first
+
     if (Prunable (qnode, rnode, dsqd_range, kernel_value_range, dl, du)){
 
 	UpdateBounds (qnode, dl, du);
 	return;
       }
+    }
 
     //Pruning failed........
 
@@ -677,8 +666,6 @@ template < typename TKernel > class FastKde{
       if (rnode->is_leaf ()){
 
 	Tree *qnode_first = NULL, *qnode_second = NULL;
-
-	//stat.PushDownTokens(*left_stat, *right_stat, NULL, NULL,&stat.mass_t_);
 	BestNodePartners (rnode, qnode->left (), qnode->right (),
 			  &qnode_first, &qnode_second);
 	FKde (qnode_first, rnode);
@@ -690,8 +677,6 @@ template < typename TKernel > class FastKde{
       else{
 
 	Tree *rnode_first = NULL, *rnode_second = NULL;
-	//stat.PushDownTokens(*left_stat, *right_stat, NULL, NULL,&stat.mass_t_);
-
 	BestNodePartners (qnode->left (), rnode->left (), rnode->right (),
 			  &rnode_first, &rnode_second);
 	FKde (qnode->left (), rnode_first);
@@ -701,7 +686,6 @@ template < typename TKernel > class FastKde{
 			  rnode->right (), &rnode_first, &rnode_second);
 	FKde (qnode->right (), rnode_first);
 	FKde (qnode->right (), rnode_second);
-	//	return;
       }
       stat.MergeChildBounds (*left_stat, *right_stat, rset_.n_rows()+ 1);
     }
@@ -720,11 +704,6 @@ template < typename TKernel > class FastKde{
       for (index_t q = qnode->begin (); q < qnode->end (); q++){ //for each point
 	for (int i = 0; i < rset_.n_rows () + 1; i++){	//Along each dimension
 		
-/* printf("We have the following estimates....\n");
-	  printf("density_lower is %f\n",densities_l_[q][i]);
-	  printf("density upper estimate is %f\n",densities_u_[q][i]);
-	  printf("lower estimate of more is %f\n",qnode->stat().more_l[i]);
-	  printf("Upper estimate of more is %f\n",qnode->stat().more_u[i]);*/
 	  densities_e_[q][i] =
 	    (densities_l_[q][i] + qnode->stat ().more_l[i] +
 	     densities_u_[q][i] + qnode->stat ().more_u[i]) / 2.0;
@@ -759,8 +738,6 @@ template < typename TKernel > class FastKde{
   }
 
   ~FastKde (){
-
-// printf ("Have come to destructor of fastkde...\n");
     //delete qroot_;
     //delete rroot_;
       
@@ -768,22 +745,21 @@ template < typename TKernel > class FastKde{
 
   // getters and setters
 
-  void set_total_sum_of_weights (Vector rset_weights_){
-    double total_sum_of_weights_ = 0;
-    for (int i = 0; i < rset_weights_.length (); i++){
-      total_sum_of_weights_ += rset_weights_[i];
-    }
-  }
 
-  /*void set_total_sum_of_weights (index_t value){
 
-  total_sum_of_weights_ = value;
-  }*/
+
   /**get the reference weights*/
 
   Vector get_reference_weights (){
 
     return rset_weights_;
+  }
+
+  /** Get the perumutation*/
+
+  ArrayList<int>& get_new_from_old_r(){
+    
+    return new_from_old_r_;
   }
 
   /** get the reference dataset */
@@ -822,7 +798,7 @@ template < typename TKernel > class FastKde{
 
     //initialize the size
     qnode->stat ().mass_u.Init (rset_.n_rows () + 1);
-    //Initialize the value
+ 
     for (int i = 0; i < rset_.n_rows () + 1; i++){
 
       qnode->stat ().mass_u[i] = qroot_->stat ().weight_of_dimension[i];
@@ -834,22 +810,11 @@ template < typename TKernel > class FastKde{
 
   void Compute (double tau){
 
-//printf ("Came to compute function...\n");
     // set accuracy parameter
     tau_ = tau;
 
-    //num_finite_difference_prunes_ = num_farfield_to_local_prunes_ =num_farfield_prunes_ = num_local_prunes_ = 0;
-
-    // fx_timer_start(NULL, "fast_kde_compute");
-
-    //printf ("Will  call FKde....\n");
-    //printf ("Will preprocess now....\n");
-   
-
     //PreProcess first.....
     PreProcess (qroot_);
-    //printf ("done with preprocessing of the query tree.....\n");
-
     PreProcess (rroot_);
     //printf ("Preprocessing complete....\n");
 
@@ -922,14 +887,14 @@ template < typename TKernel > class FastKde{
       Dataset ref_weights;
       ref_weights.InitFromFile (rwfname);
       rset_weights_.Copy (ref_weights.matrix ().GetColumnPtr (0), ref_weights.matrix ().n_rows ());	//Note rset_weights_ is a vector of weights
-      //set_total_sum_of_weights (rset_weights_);
+     
     }
 
     else{
 
       rset_weights_.Init (rset_.n_cols ());
       rset_weights_.SetAll (1);
-      //set_total_sum_of_weights (rset_.n_cols ());
+     
     }
    
     if (!strcmp (qfname, rfname)){
@@ -952,21 +917,22 @@ template < typename TKernel > class FastKde{
 
     // construct query and reference trees. This also fills up the statistics in the reference tree
 
-    //printf("Before building trees the dataset in regression.h is ...\n");
-    //qset_.PrintDebug();
-
     fx_timer_start (NULL, "tree_d");
-    rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen);
-    qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,NULL,NULL);
-   
-    //printf("After building tree the dataset in regression.h is ...\n");
-    //qset_.PrintDebug();
+    rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen, NULL, &new_from_old_r_);
+    qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen, NULL, NULL);
+  
     fx_timer_stop (NULL, "tree_d");
+
+    printf("The mapping is ...\n");
+
+    for(index_t i=0;i<new_from_old_r_.size();i++){
+
+      printf("new_from_old[%d]=%d\n",i,new_from_old_r_[i]);
+    }
 
     // initialize the kernel
 
     kernel_.Init (fx_param_double_req (NULL, "bandwidth"));
-//printf("In the fast kde module....\n");
     fast_kde_base=0;
     number_of_prunes=0;
   }
@@ -998,8 +964,7 @@ template < typename TKernel > class FastKde{
 	fprintf (fp, "%f\n", densities_e_[q][d]);
       }
     }
-//printf("Total number of base calulations are %d\n",fast_kde_base);
-//  printf("Number of prunes are...%d\n",number_of_prunes);
+
     fclose (fp);
   }
 
