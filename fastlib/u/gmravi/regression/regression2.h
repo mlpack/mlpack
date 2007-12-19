@@ -1,9 +1,9 @@
 #ifndef REGRESSION2_H
 #define REGRESSION2_H
-#define MAXDOUBLE 32768.0
+//#include "values.h"
 #include "fastlib/fastlib_int.h"
 
-template < typename TKernel > class NaiveRegression2{
+template <typename TKernel> class NaiveRegression2{
 
  private:
 
@@ -22,16 +22,9 @@ template < typename TKernel > class NaiveRegression2{
  public:
 
 
-  //getter....
+  //getter function....
 
   ArrayList<Matrix>  &get_results(){
-   
-    /* printf("The naive matrix is ..\n");
-   
-    for(int i=0;i<qset_.n_cols();i++){
-     
-      results_[i].PrintDebug();
-      }*/
    
     //First invert the results.....
    
@@ -88,14 +81,11 @@ template < typename TKernel > class NaiveRegression2{
       
       la::TransposeInit(U,&U_transpose);
       la::MulInit(temp1, U_transpose, &temp2); //At this point the variable temp holds the pseudo-inverse of results_[q]
-      //printf("did multiplication2..\n");
+     
       
       //Copy the contents of temp2 to results_
       results_[q].CopyValues(temp2);
-      //printf("matrix inverted is...................\n");
-      //results_[q].PrintDebug();
-      
-      // printf("Successfully copied the values of temp2 into results_..\n");
+    
     }
      
     return results_;
@@ -106,7 +96,6 @@ template < typename TKernel > class NaiveRegression2{
     
     printf("thsi is naive kde compute..........\n");
     printf("query dataset is ..\n");
-    //qset_.PrintDebug();
 
     //printf ("\nStarting naive KDE computations...\n");
     fx_timer_start (NULL, "naive_kde");
@@ -175,32 +164,17 @@ template < typename TKernel > class NaiveRegression2{
       }
     }
 
-
     printf("at the end of the compute function.........\n");
-    /*for(int i=0;i<qset_.n_cols();i++){
-
-      results_[i].PrintDebug();
-      }*/
- 
-   
     fx_timer_stop(NULL,"naive_kde");
   }
 
   void Init (Matrix query_dataset, Matrix reference_dataset){
 
-    printf("came to naive density calculations............\n");
+   
     qset_.Copy(query_dataset);
     rset_.Copy(reference_dataset);
-
-    printf("reference dataset is .....\n");
-    //rset_.PrintDebug();
-
-    printf("query dataset in init function is ..\n");
-    //qset_.PrintDebug();
     
-    // get bandwidth
     kernel_.Init (fx_param_double_req (NULL, "bandwidth"));
-    
 
     //Initialize results_
     results_.Init (qset_.n_cols ());
@@ -209,8 +183,7 @@ template < typename TKernel > class NaiveRegression2{
       
       results_[i].Init(rset_.n_rows()+1,rset_.n_rows()+1); //A square matrix
     }
-    //printf("query dataset in init function is ..\n");
-    //qset_.PrintDebug();
+    
      
   }
 
@@ -297,7 +270,6 @@ template <typename TKernel > class Regression2 {
     double owed_u;
 
 
-
     //These are the Init functions of Regression2Stat
     void Init (){
 
@@ -315,11 +287,8 @@ template <typename TKernel > class Regression2 {
     void MergeChildBounds (Regression2Stat & left_stat, Regression2Stat & right_stat){
 
       // improve lower and upper bound
-      //printf("Came to merge child bounds.....................\n");
-      //printf("Initial mass-l is =%f and mass_u=%f\n",mass_l,mass_u);
       mass_l=max (mass_l, min (left_stat.mass_l, right_stat.mass_l));
       mass_u=min (mass_u, max (left_stat.mass_u, right_stat.mass_u));
-      //printf("final mass-l is =%f and mass_u=%f\n",mass_l,mass_u);
     }
     
 
@@ -332,8 +301,6 @@ template <typename TKernel > class Regression2 {
       printf("came to the destructor of regression2stat..\n");
 
     }
-
-
 
   };//WITH THIS CLASS Regression2STAT COMES TO AN END......
 
@@ -556,9 +523,9 @@ template <typename TKernel > class Regression2 {
    
 
     //subtract because now you are doing exhaustive computation
-    //printf("Initial more_u is %g\n",qnode->stat().more_u); 
+   
     qnode->stat().more_u-=rnode->stat().weight;
-    //printf("final more_u is %g\n",qnode->stat().more_u);
+   
 
     // compute unnormalized sum
 
@@ -574,29 +541,15 @@ template <typename TKernel > class Regression2 {
 	const double *r_col = rset_.GetColumnPtr(r);
 	
 	// pairwise distance and kernel value
-
        
 	double dsqd = la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	double ker_value = kernel_.EvalUnnormOnSq (dsqd);
-        //printf("q is %d\n",q);
-
-	/*for(index_t z=0;z<qset_.n_rows();z++){
-	  printf("q coord is %f\n",q_col[z]);
-
-	  }*/
-	/*for(index_t z=0;z<rset_.n_rows();z++){
-	  printf("r coord is %f\n",r_col[z]);
-
-	}
-	printf("distance squared is %g\n",dsqd);
-	printf("kernel value is %g\n",ker_value);
-	printf("row=%d and col=%d\n",row,col);*/
-	
+       
 	if(row>0 && col> 0){
 	  
 	  densities_l_[q]+= ker_value * rset_.get(row-1,r)*rset_.get(col-1,r);
 	  densities_u_[q]+= ker_value * rset_.get(row-1,r)*rset_.get(col-1,r);
-	  //printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
+	  
 	}
 	
 	else{ //atleast one of row or col is 0
@@ -604,7 +557,7 @@ template <typename TKernel > class Regression2 {
 	  if(row==0 && col>0){
 	    densities_l_[q]+= ker_value * rset_.get(col-1,r);
 	    densities_u_[q]+= ker_value * rset_.get(col-1,r);
-	    //printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
+	   
 	  }
 	  
 	  else{
@@ -612,7 +565,7 @@ template <typename TKernel > class Regression2 {
 	    //both row=col=0;
 	    densities_l_[q]+= ker_value;
 	    densities_u_[q]+= ker_value; 
-	    //printf("upper and lower densities now become %g and %g\n",densities_l_[q],densities_u_[q]);
+	    
 	  } 
 	}
       }
@@ -641,10 +594,6 @@ template <typename TKernel > class Regression2 {
     }
 
     // tighten lower and upper bound
-    //printf("min_l is %g\n",min_l);
-    //printf("more_l is %g\n",qnode->stat().more_l);
-    //printf("more_u is %g\n",qnode->stat().more_u);
-    //printf("max_u  is %g\n",max_u);
     qnode->stat ().mass_l = min_l + qnode->stat ().more_l;
     qnode->stat ().mass_u = max_u + qnode->stat ().more_u;
     
@@ -653,10 +602,9 @@ template <typename TKernel > class Regression2 {
 
 
 
-  int Prunable (Tree * qnode, Tree * rnode, DRange & dsqd_range,
-		DRange & kernel_value_range, double &dl, double &du){
+  int Prunable (Tree * qnode, Tree * rnode, DRange & dsqd_range,DRange & kernel_value_range, double &dl, double &du){
 
-    //printf("In prunable..............\n");
+  
    
     // query node stat
     Regression2Stat & stat = qnode->stat ();
@@ -681,34 +629,25 @@ template <typename TKernel > class Regression2 {
     double new_mass_l;
    
     new_mass_l = stat.mass_l + dl;
-  
-    //printf("tau_ is %g\n",tau_);
     double allowed_err = tau_ * new_mass_l*((double) (rnode->stat().weight)) /((double) (rroot_->stat().weight));
 
-    //printf("Allowed error is %g\n",allowed_err);
-   
     // this is error per each query/reference pair for a fixed query
     double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
    
-    //printf("min distance is %g\n",dsqd_range.lo);
-    //printf("max distance is %g\n",dsqd_range.hi);
     // this is total maximumn error for each query point
 
     double error = m * rnode->stat ().weight;
-    //printf("actual error is %g\n",error);
+
+    
     // check pruning condition
     if (error >= allowed_err){
-      //printf("Hence cannot prune...\n");
+     
       dl=0;
       du=0;
       return 0;
     }
     
     //could prune 
-    //printf("Was able to prune...\n");
-    //printf("dl is %g\n",dl);
-    //printf("du is %g\n",du);
-
     return 1;
   }
 
@@ -718,8 +657,6 @@ template <typename TKernel > class Regression2 {
   void WFKde(Tree *qnode,Tree *rnode,int row,int col){
 
     /** temporary variable for storing lower bound change */
-    //printf("In WFKDE...............\n");
-    
     double dl;
     double du;
     dl=0;
@@ -754,19 +691,13 @@ template <typename TKernel > class Regression2 {
       return;
     }
 
-    //printf("Not pruneable...\n");
   
     //Pruning failed........
     
     if (qnode->is_leaf ()){
       
       if (rnode->is_leaf ()){
-
-	//printf("Going exhaustive....\n");
-	//printf("mass_l=%g and mass_u=%g\n",qnode->stat().mass_l,qnode->stat().mass_u);
 	Regression2Base (qnode, rnode,row,col);
-	//printf("after cal...\n");
-	//printf("mass_l=%g and mass_u=%g\n",qnode->stat().mass_l,qnode->stat().mass_u);
 	return;
       }
       
@@ -774,9 +705,9 @@ template <typename TKernel > class Regression2 {
       else{
 	
 	Tree *rnode_first = NULL, *rnode_second = NULL;
-	// BestNodePartners (qnode, rnode->left (), rnode->right (),&rnode_first, &rnode_second);
-	WFKde (qnode, rnode->left(),row,col);
-	WFKde (qnode, rnode->right(),row,col);
+	BestNodePartners (qnode, rnode->left (), rnode->right (),&rnode_first, &rnode_second);
+	WFKde (qnode, rnode_first,row,col);
+	WFKde (qnode, rnode_second,row,col);
 	return;
       }
     }
@@ -788,9 +719,9 @@ template <typename TKernel > class Regression2 {
 	
 	Tree *qnode_first = NULL, *qnode_second = NULL;
        
-	//BestNodePartners (rnode, qnode->left (), qnode->right (),&qnode_first, &qnode_second);
-	WFKde (qnode->left(), rnode,row,col);
-	WFKde (qnode->right(), rnode,row,col);
+	BestNodePartners (rnode, qnode->left (), qnode->right (),&qnode_first, &qnode_second);
+	WFKde (qnode->left(),rnode,row,col);
+	WFKde (qnode->right(),rnode,row,col);
 	
       }
 
@@ -799,13 +730,13 @@ template <typename TKernel > class Regression2 {
 
 	Tree *rnode_first = NULL, *rnode_second = NULL;
 
-	//BestNodePartners (qnode->left (), rnode->left (), rnode->right (),&rnode_first, &rnode_second);
-	WFKde (qnode->left (), rnode->left(),row,col);
-	WFKde (qnode->left (), rnode->right(),row,col);
+	BestNodePartners (qnode->left (), rnode->left (), rnode->right (),&rnode_first, &rnode_second);
+	WFKde (qnode->left (), rnode_first,row,col);
+	WFKde (qnode->left (), rnode_second,row,col);
 
-	//BestNodePartners (qnode->right (), rnode->left (),rnode->right (), &rnode_first, &rnode_second);
-	WFKde (qnode->right (), rnode->left(),row,col);
-	WFKde (qnode->right (), rnode->right(),row,col);
+	BestNodePartners (qnode->right (), rnode->left (),rnode->right (), &rnode_first, &rnode_second);
+	WFKde (qnode->right (), rnode_first,row,col);
+	WFKde (qnode->right (), rnode_second,row,col);
        
       }
 
@@ -817,14 +748,12 @@ template <typename TKernel > class Regression2 {
 
 
     if(node->is_leaf()){
-
-      //printf("weight: %f\n",node->stat().weight);
       return ;
     }
 
     else{
 
-      // printf("Weight is: %f\n",node->stat().weight);
+    
       PrintDebugTree(node->left());
       PrintDebugTree(node->right());
     }
@@ -835,19 +764,11 @@ template <typename TKernel > class Regression2 {
   void FillMatrix(){
 
     //First create reference and query trees
-    // read in the number of points owned by a leaf
 
     int leaflen = fx_param_int (NULL, "leaflen", 10);
-	
-    /* printf("Before forming the tree for regression2 we have the query dataset as ...\n");
-       qset_.PrintDebug();*/
 
     qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,NULL,NULL);
     rroot_=tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen,NULL,NULL);
-    
-	
-    /* printf("After forming the tree for regression2 we have the query dataset as ...\n");
-       qset_.PrintDebug();*/
 
     //Initialize densities
     densities_l_.Init (qset_.n_cols ());
@@ -877,8 +798,6 @@ template <typename TKernel > class Regression2 {
 	PreProcess (qroot_,row,col);    
 	PreProcess (rroot_,row,col);
 	
-	//printf("row=%d, column=%d\n",row,col);
-	//PrintDebugTree(rroot_);
 
 	//Flush all the densities values
 
@@ -893,14 +812,6 @@ template <typename TKernel > class Regression2 {
 	  densities_u_[i]=rroot_->stat().weight;
 	}
 
-	/*printf("Before starting new iteration.....");
-	  for(int i=0;i<qset_.n_cols();i++){  //for all points
-	  
-	  printf("densities_l_[i]=%f\n",densities_l_[i]);
-	  printf("densities_e_[i]=%f\n",densities_e_[i]);
-	  printf("densities_u_[i]=%f\n",densities_u_[i]);
-	  }*/
-
 	//This sets the upper bound on the density at each node
 	
 	SetUpperBoundOfDensity (qroot_);
@@ -910,7 +821,6 @@ template <typename TKernel > class Regression2 {
 	WFKde(qroot_,rroot_,row,col);
 	PostProcess(qroot_,row,col);
 
-	//printf("Finished a row,column compuation ..\n");
 	//fill the row,col element of the results witht the estiamted density values
 	for(index_t q=0;q<qset_.n_cols();q++){
 
@@ -946,15 +856,9 @@ template <typename TKernel > class Regression2 {
       
       for (index_t q = node->begin (); q < node->end (); q++){ //for each point
        
-	/*printf("densities_l_[q] is %f\n",densities_l_[q]);
-	  printf("densities_u_[q] is %f\n",densities_u_[q]);
-	  printf("more_l is %f\n",node->stat().more_l);
-	  printf("more_u is %f\n", node->stat().more_u);*/
-
 	densities_e_[q] =
 	  (densities_l_[q] + node->stat ().more_l+
 	   densities_u_[q]+ node->stat ().more_u) / 2.0;
-	//	printf("q:%d row:%d col:%d density:%f\n",q,row,col,densities_e_[q]);
 
       }
     }
@@ -975,12 +879,10 @@ template <typename TKernel > class Regression2 {
     //Call SVD first
     printf("Came to invert all");
     
-    FILE *fp;
-    fp=fopen("svd_inverse.txt","w+");
     
     for(index_t q=0;q<qset_.n_cols();q++){ //for all query points 
       
-      /*This was SVD stuff**********/
+      /*This is SVD stuff used to do pseudo inverse of the matrix**********/
       Vector s;
       Matrix U;
       Matrix VT; 
@@ -1036,10 +938,7 @@ template <typename TKernel > class Regression2 {
 
       //Copy the contents of temp2 to results_
       results_[q].CopyValues(temp2);
-      //printf("matrix inverted is...................\n");
-      //results_[q].PrintDebug();
-
-      // printf("Successfully copied the values of temp2 into results_..\n");
+     
     }
 
       
@@ -1102,43 +1001,10 @@ template <typename TKernel > class Regression2 {
     
     //This is the Init function of Regression2     
     
-    // read the datasets
-
-    /* char *rfname=(char*)malloc(40);
-       char *qfname=(char*)malloc(40); 
-       strcpy(rfname,fx_param_str_req (NULL, "data"));
-       strcpy(qfname,fx_param_str_req (NULL,"query"));*/
-    
-
-   
-
-    // read reference dataset and query datasets
-  
-    /*Dataset ref_dataset ;
-      Dataset q_dataset;*/
-
-    /*ref_dataset.InitFromFile(rfname);
-      rset_.Own(&(ref_dataset.matrix()));
-
-      q_dataset.InitFromFile(qfname);
-      qset_.Own(&(q_dataset.matrix()));
-
-      printf("qset_ is ...\n");
-      qset_.PrintDebug();*/
-
     qset_.Alias(query_dataset);
     rset_.Alias(reference_dataset);
      
-    /*printf("The query_dataset received in this program is ..\n");
-    query_dataset.PrintDebug();
-
-    printf("the number of columns in rset is %d\n",rset_.n_cols());
-    printf("the number of rows in rset is %d\n",rset_.n_rows());
-
-    printf("the number of columns in qset is %d\n",qset_.n_cols());
-    printf("the number of rows in qset is %d\n",qset_.n_rows());
-
-    printf("loaded...\n");*/
+   
     // scale dataset if the user wants to. 
      
     if (!strcmp (fx_param_str (NULL, "scaling", NULL), "range")){
