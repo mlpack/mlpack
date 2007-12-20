@@ -113,7 +113,7 @@ class SparseVectorTest {
 	void TestAdd() {
 		Init();
     SparseVector v;
-    sparse::AddVectors(v1_, v2_, &v);
+    Sparsev::AddVectors(v1_, v2_, &v);
 		double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
     for(index_t i=0; i<10; i++) {
@@ -133,7 +133,7 @@ class SparseVectorTest {
 	void TestSubtract() {
 	  Init();
 		SparseVector v;
-		sparse::SubtractVectors(v1_, v2_, &v);
+		Sparsev::SubtractVectors(v1_, v2_, &v);
     double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
     for(index_t i=0; i<10; i++) {
@@ -153,7 +153,7 @@ class SparseVectorTest {
 	void TestPointProduct() {
 	  Init();
 		SparseVector v;
-		sparse::PointProductVectors(v1_, v2_, &v);
+		Sparsev::PointProductVectors(v1_, v2_, &v);
     double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
     for(index_t i=0; i<5; i++) {
@@ -170,7 +170,7 @@ class SparseVectorTest {
 	void TestDotProduct() {
 	  Init();
 		double dot_prod;
-		sparse::DotProductVectors(v1_, v2_, &dot_prod);
+		Sparsev::DotProductVectors(v1_, v2_, &dot_prod);
     double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
     for(index_t i=0; i<5; i++) {
@@ -190,7 +190,7 @@ class SparseVectorTest {
 	void TestDistance() {
 	  Init();
 		double dist;
-		sparse::DistanceSqEuclideanVector(v1_, v2_, &dist);
+		Sparsev::DistanceSqEuclideanVector(v1_, v2_, &dist);
     double expected_result[dim_];
 		memset(expected_result, 0, dim_*sizeof(double));
     for(index_t i=0; i<10; i++) {

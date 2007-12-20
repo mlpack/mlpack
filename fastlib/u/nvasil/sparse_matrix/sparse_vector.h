@@ -32,12 +32,12 @@
 #include "Epetra_Map.h"
 
 class SparseVectorTest;
-class sparse;
+class Sparsev;
 
 class SparseVector {
  public:
 	friend class SparseVectorTest;
-	friend class sparse;
+	friend class Sparsev;
 	SparseVector() {
 		map_=NULL;
 	}
@@ -87,7 +87,7 @@ class SparseVector {
 
 };
 
-class sparse {
+class Sparsev {
  public:
   static inline void AddVectors(SparseVector &v1, SparseVector &v2, SparseVector* sum) {
 	  if (unlikely(v1.dimension_ != v2.dimension_)) {

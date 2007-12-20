@@ -20,6 +20,7 @@
 SparseMatrix::SparseMatrix() {
   map_    = NULL;
 	matrix_ = NULL;
+	issymmetric_=false;
 }
 
 SparseMatrix::SparseMatrix(const index_t num_of_rows,
@@ -30,6 +31,7 @@ SparseMatrix::SparseMatrix(const index_t num_of_rows,
 void SparseMatrix::Init(const index_t num_of_rows, 
 		                    const index_t num_of_columns,
 		                    const index_t nnz_per_row) {
+  issymmetric_ = false;
 	if likely(num_of_rows < num_of_columns) {
 	  FATAL("Num of rows %i should be greater than the num of columns %i\n",
 				  num_of_rows, num_of_columns);
@@ -49,7 +51,8 @@ void SparseMatrix::Init(const index_t num_of_rows,
 void SparseMatrix::Init(index_t num_of_rows,
 	                      index_t num_of_columns,
 												index_t *nnz_per_row) {
-  num_of_rows_=num_of_rows;
+  issymmetric_ = false;
+	num_of_rows_=num_of_rows;
 	num_of_columns_=num_of_columns;
 	dimension_ = num_of_rows;
 	if (num_of_rows_ < num_of_columns_) {
@@ -67,7 +70,8 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
 		                    const Vector &values, 
 			                  index_t nnz_per_row, 
 			                  index_t dimension) {
-  if (nnz_per_row > 0 && dimension > 0) {
+  issymmetric_ = false;
+	if (nnz_per_row > 0 && dimension > 0) {
 	  Init(dimension, dimension, nnz_per_row);
   } else {
 		num_of_rows_ = 0;
@@ -103,6 +107,7 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
                         const std::vector<double>  &values, 
                         index_t nnz_per_row, 
                         index_t dimension) {
+	issymmetric_ = false;
 	Vector temp;
 	temp.Alias((double *)&values[0], values.size());
 	Init(rows, columns, temp, nnz_per_row, dimension);
@@ -110,7 +115,8 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
 }
 
 void SparseMatrix::Init(std::string filename) {
-  FILE *fp = fopen(filename.c_str(), "r");
+  issymmetric_ = false;
+	FILE *fp = fopen(filename.c_str(), "r");
 	if (fp == NULL) {
 	  FATAL("Cannot open %s, error: %s", 
 				  filename.c_str(), 
@@ -261,7 +267,8 @@ void SparseMatrix::MakeSymmetric() {
 			  set(i, indices[j], values[j]);
 			}
 		}
-  } 
+  }
+ issymmetric_ = true;	
 }
 
 void SparseMatrix::Eig(index_t num_of_eigvalues,
