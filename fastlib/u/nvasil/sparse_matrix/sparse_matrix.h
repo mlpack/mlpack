@@ -148,7 +148,7 @@ class SparseMatrix {
 	// Not Implemented yet
   void SwapValues(SparseMatrix* other);
   // Access values, It will fail if EndLoading() has been called
-	double get(index_t r, index_t c);
+	double get(index_t r, index_t c) const;
 	// Set Values
   void   set(index_t r, index_t c, double v);
 	// For debug purposes you can call it to print the matrix
@@ -253,7 +253,6 @@ class SparseMatrix {
 	  Epetra_Vector temp(View, *map_, result->ptr());
     matrix_->InvColMaxs(temp);
 	}
-  
 
  private:
 	index_t dimension_;
@@ -433,7 +432,31 @@ class Sparsem {
 				values3.clear();
 		  }
 	  } else {
-	    DEBUG_ASSERT(!"Not implemented yet");  
+	    for(index_t r1=0; r1<a.num_of_rows_; r1++) {
+        index_t num1;
+				double  *values1;
+				index_t *indices1;
+        a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1],
+						                            num1, values1, indices1);
+				double dot_product=0;
+				std::vector<index_t> indices3;
+				std::vector<double>  values3;
+				for(index_t r2=0; r2<b.num_of_columns_; r2++) {
+					for(index_t k=0; k< num1; k++) {
+				    dot_product += values1[k]*b.get(k, r2);
+					}
+					if (dot_product!=0){
+					  indices3.push_back(r2);
+						values3.push_back(dot_product);
+					}
+				}
+				if (!indices3.empty()) {
+				  result->LoadRow(r1, indices3, values3);
+				}
+        indices3.clear();
+				values3.clear();
+
+			}
 		}
 	}
 	/* The transpose flag should be set to true if 
