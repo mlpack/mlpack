@@ -229,7 +229,7 @@ void SparseMatrix::Load(const std::vector<index_t> &rows,
 	}
 }
 
-double SparseMatrix::get(index_t r, index_t c) {
+double SparseMatrix::get(index_t r, index_t c) const {
   DEBUG_BOUNDS(r, num_of_rows_);
 	DEBUG_BOUNDS(c, num_of_columns_);
 	index_t global_row = my_global_elements_[r];
