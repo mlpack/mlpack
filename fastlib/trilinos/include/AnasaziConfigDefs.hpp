@@ -73,7 +73,7 @@
 #undef VERSION
 #endif
 
-#include <Anasazi_config.h>
+#include "Anasazi_config.h"
 
 #ifdef HAVE_MPI
 #ifndef EPETRA_MPI
