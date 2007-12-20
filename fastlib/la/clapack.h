@@ -9,7 +9,7 @@
 
 #include "base/fortran.h"
 #include "base/compiler.h"
-
+namespace la {
 EXTERN_C_START
 
 f77_ret_void F77_FUNC(cbdsqr)(const char *uplo, f77_integer CONST_REF n, f77_integer CONST_REF ncvt, f77_integer CONST_REF nru, f77_integer CONST_REF ncc, f77_real *d__, f77_real *e, f77_complex *vt, f77_integer CONST_REF ldvt, f77_complex *u, f77_integer CONST_REF ldu, f77_complex *c__, f77_integer CONST_REF ldc, f77_real *rwork, f77_integer *info);
@@ -1231,5 +1231,5 @@ f77_ret_void F77_FUNC(zupgtr)(const char *uplo, f77_integer CONST_REF n, f77_dou
 f77_ret_void F77_FUNC(zupmtr)(const char *side, const char *uplo, const char *trans, f77_integer CONST_REF m, f77_integer CONST_REF n, f77_doublecomplex *ap, f77_doublecomplex *tau, f77_doublecomplex *c__, f77_integer CONST_REF ldc, f77_doublecomplex *work, f77_integer *info);
 
 EXTERN_C_END
-
+};
 #endif /* CLAPACK_H */

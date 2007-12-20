@@ -3,6 +3,7 @@
 
 #include "base/fortran.h"
 #include "base/compiler.h"
+namespace la {
 
 EXTERN_C_START
 
@@ -37,8 +38,8 @@ f77_ret_void F77_FUNC(cswap)(f77_integer CONST_REF, f77_complex *, f77_integer C
 f77_ret_void F77_FUNC(ccopy)(f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF, f77_complex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(caxpy)(f77_integer CONST_REF, f77_complex CONST_REF, const f77_complex *, f77_integer CONST_REF, f77_complex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(cswap)(f77_integer CONST_REF, f77_complex *, f77_integer CONST_REF, f77_complex *, f77_integer CONST_REF);
-/*f77_ret_complex F77_FUNC(cdotc)(f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF);*/
-/*f77_ret_complex F77_FUNC(cdotu)(f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF);*/
+//f77_ret_complex F77_FUNC(cdotc)(f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF);
+//f77_ret_complex F77_FUNC(cdotu)(f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(cscal)(f77_integer CONST_REF, f77_complex CONST_REF, f77_complex *, f77_integer CONST_REF);
 f77_ret_integer F77_FUNC(icamax)(f77_integer CONST_REF, const f77_complex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(csscal)(f77_integer CONST_REF, f77_real CONST_REF, f77_complex *, f77_integer CONST_REF);
@@ -48,8 +49,8 @@ f77_ret_void F77_FUNC(zswap)(f77_integer CONST_REF, f77_doublecomplex *, f77_int
 f77_ret_void F77_FUNC(zcopy)(f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(zaxpy)(f77_integer CONST_REF, f77_doublecomplex CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(zswap)(f77_integer CONST_REF, f77_doublecomplex *, f77_integer CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
-/*f77_ret_doublecomplex F77_FUNC(zdotc)(f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF);*/
-/*f77_ret_doublecomplex F77_FUNC(zdotu)(f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF);*/
+//f77_ret_doublecomplex F77_FUNC(zdotc)(f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF);
+//f77_ret_doublecomplex F77_FUNC(zdotu)(f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(zdscal)(f77_integer CONST_REF, f77_double CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(zscal)(f77_integer CONST_REF, f77_doublecomplex CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
 f77_ret_double F77_FUNC(dznrm2)(f77_integer CONST_REF, const f77_doublecomplex *, f77_integer CONST_REF);
@@ -153,5 +154,5 @@ f77_ret_void F77_FUNC(ztrmm)(const char *, const char *, const char *, const cha
 f77_ret_void F77_FUNC(ztrsm)(const char *, const char *, const char *, const char *, f77_integer CONST_REF, f77_integer CONST_REF, const f77_doublecomplex *, const f77_doublecomplex *, f77_integer CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
 
 EXTERN_C_END
-
+};
 #endif
