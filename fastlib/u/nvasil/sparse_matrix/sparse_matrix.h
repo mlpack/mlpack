@@ -174,7 +174,23 @@ class SparseMatrix {
 	 return matrix_->NumGlobalNonzeros();
   }
 	// Computes the eignvalues with the Krylov Method
-  void Eig(index_t num_of_eigvalues, Vector *eigvectors, Vector *eigvalues);
+	void Eig(index_t num_of_eigvalues, // number of eigenvalues to compute
+			     std::string eigtype, // Choose which eigenvalues to compute
+                                // Choices are:
+                                // LM - target the largest magnitude  
+                                // SM - target the smallest magnitude 
+                                // LR - target the largest real 
+                                // SR - target the smallest real 
+                                // LI - target the largest imaginary
+                                // SI - target the smallest imaginary
+		       Matrix *eigvectors,  // The eigenvectors compute must be initialized
+					 std::vector<double> *real_eigvalues, // real part of the eigenvalues
+					                                      // must be initialized
+					 std::vector<double> *imag_eigvalues  // imaginary part of the eigenvalues
+					                                      // must be initialized. If the
+																								// problem is symmetric there is 
+																								// no need to initialize    
+					 );
   // Linear System solution
 	void LinSolve(Vector &b, Vector *x, 
 			          bool upper, // set true if the matrix is upper diagonal 
@@ -246,7 +262,7 @@ class SparseMatrix {
 	Epetra_SerialComm comm_;
 	bool issymmetric_;
 	Epetra_Map *map_;
-  Epetra_CrsMatrix *matrix_;
+  Teuchos::RCP<Epetra_CrsMatrix> matrix_;
   index_t *my_global_elements_;
   void Load(const std::vector<index_t> &rows, 
 			      const std::vector<index_t> &columns, 

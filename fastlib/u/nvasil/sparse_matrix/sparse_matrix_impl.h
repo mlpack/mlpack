@@ -19,7 +19,6 @@
 
 SparseMatrix::SparseMatrix() {
   map_    = NULL;
-	matrix_ = NULL;
 	issymmetric_=false;
 }
 
@@ -44,7 +43,8 @@ void SparseMatrix::Init(const index_t num_of_rows,
 				   num_of_rows_, num_of_columns_);
 	}
 	map_ = new Epetra_Map(num_of_rows_, 0, comm_);
-	matrix_ = new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, nnz_per_row);
+	matrix_ = Teuchos::rcp(
+			         new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, nnz_per_row));
 	StartLoadingRows();
 }
 
@@ -60,7 +60,8 @@ void SparseMatrix::Init(index_t num_of_rows,
 				   num_of_rows_, num_of_columns_);
 	}
 	map_ = new Epetra_Map(num_of_rows_, 0, comm_);
-	matrix_ = new Epetra_CrsMatrix((Epetra_DataAccess)0 , *map_, nnz_per_row);
+	matrix_ = Teuchos::rcp(
+               new Epetra_CrsMatrix((Epetra_DataAccess)0 , *map_, nnz_per_row));
 	StartLoadingRows();
 }
 
@@ -143,9 +144,6 @@ void SparseMatrix::Init(std::string filename) {
 void SparseMatrix::Destruct() {
   if (map_!=NULL) {
 	  delete map_;
-	}
-	if (matrix_ != NULL) {
-	  delete matrix_;
 	}
 }
 void SparseMatrix::StartLoadingRows() {
@@ -277,24 +275,26 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
 											 std::vector<double> *real_eigvalues,
 											 std::vector<double> *imag_eigvalues) {
   index_t block_size = 4;
-  Epetra_MultiVector *ivec =  new Epetra_MultiVector(map_, block_size);
+	Teuchos::RCP<Epetra_MultiVector> ivec =  Teuchos::rcp(new Epetra_MultiVector(*map_, 
+			                                                      block_size,
+																										        num_of_eigvalues));
   // Fill it with random numbers
   ivec->Random();
 
   // Setup the eigenproblem, with the matrix A and the initial vectors ivec
-  Anasazi::BasicEigenproblem<double,MV,OP> *problem = 
-      new Anasazi::BasicEigenproblem<double,MV,OP>(matrix_, ivec);
+	Teuchos::RCP<Anasazi::BasicEigenproblem<double,MV,OP>  >problem = 
+      Teuchos::rcp(new Anasazi::BasicEigenproblem<double,MV,OP>(matrix_, ivec));
 
   // The 2-D laplacian is symmetric. Specify this in the eigenproblem.
-  if (symmetric_ == true) {
+  if (issymmetric_ == true) {
 	  problem->setHermitian(true);
 	}
 
   // Specify the desired number of eigenvalues
-  problem->setNEV(num_of_eigenvalues);
+  problem->setNEV(num_of_eigvalues);
 
   // Signal that we are done setting up the eigenvalue problem
-  ierr = problem->setProblem();
+  bool ierr = problem->setProblem();
 
   // Check the return from setProblem(). If this is true, there was an
   // error. This probably means we did not specify enough information for
@@ -337,7 +337,7 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   Teuchos::ParameterList my_pl;
   my_pl.set( "Verbosity", verbosity);
   my_pl.set( "Which", eigtype);
-  my_pl.set( "Block Size", blocksize);
+  my_pl.set( "Block Size", block_size);
   my_pl.set( "Num Blocks", 20);
   my_pl.set( "Maximum Restarts", 100);
   my_pl.set( "Convergence Tolerance", 1.0e-8);
@@ -355,17 +355,13 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
     // UNCONVERGED
     case Anasazi::Unconverged: 
       NONFATAL("Anasazi::BlockKrylovSchur::solve() did not converge!\n");  
-      delete problem;
-			delete ivec;
-			return 0;    
+			return ;    
     // CONVERGED
     case Anasazi::Converged:
       NONFATAL("Anasazi::BlockKrylovSchur::solve() converged!\n");
   }
   // Get eigensolution struct
   Anasazi::Eigensolution<double, Epetra_MultiVector> sol = problem->getSolution();
-  delete problem;
-	delete ivec;
   // Get the number of eigenpairs returned
   int num_of_eigvals_returned = sol.numVecs;
 	NONFATAL("The solver returned less eigenvalues (%i) "
@@ -373,19 +369,19 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
 		       num_of_eigvals_returned);
 
   // Get eigenvectors
-	eig_vectors->Init(dimension_, num_of_eigvals_returned);
-  Epetra_MultiVector *evecs = sol.Evecs;
-	evecs->ExtractCopy(eig_vectors->GetColumnPtr(0), dimension_);
+	eigvectors->Init(dimension_, num_of_eigvals_returned);
+	Teuchos::RCP<Epetra_MultiVector> evecs = sol.Evecs;
+	evecs->ExtractCopy(eigvectors->GetColumnPtr(0), dimension_);
 
   // Get eigenvalues
   std::vector<Anasazi::Value<double> > evals = sol.Evals;
   real_eigvalues->resize(num_of_eigvals_returned);
 	for(index_t i=0; i<num_of_eigvals_returned; i++) {
 	  real_eigvalues->assign(i, evals[i].realpart);
-	}
-	if (symmetric_ == false) {
-    imag_eigvalues->resize(num_of_eigvals_returned);
-		imag_eigvalues->assign(i, evals[i].imagpart);
+	  if (issymmetric_ == false) {
+      imag_eigvalues->resize(num_of_eigvals_returned);
+		  imag_eigvalues->assign(i, evals[i].imagpart);
+	  }
 	}
 
   // Test residuals
@@ -413,6 +409,5 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   // and store them to a std::vector<double>
   std::vector<double> norm_res(num_of_eigvalues);
   MVT::MvNorm(res, &norm_res);
-  delete evecs;
 }
 
