@@ -71,7 +71,7 @@ customrule(
 
 librule(name = "trilinos",
 		    headers = lglob("trilinons/include/*.hpp"),
-				deplibs =["la:libblaspack",":libtrilinos"])
+				deplibs =["la:libblaspack", "la:libcomplexblaspack", ":libtrilinos"])
 
 binrule(
 		name = "test_trilinos",
