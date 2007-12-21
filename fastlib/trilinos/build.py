@@ -26,8 +26,11 @@ def gen_compile_trilinos(sysentry, files, params):
   sysentry.command("echo '***Configuring Trilinos...'")
   sysentry.command("cd %s/trilinos-8.0.4/LINUX_SERIAL && \
 	                  ../configure --prefix=%s/trilinos-8.0.4/LINUX_SERIAL \
+										FFLAGS=\"-O5 -funroll-all-loops \" \
 			              --disable-default-packages \
-			              --enable-epetra \
+										--disable-tests \
+			              --disable-examples\
+									  --enable-epetra   \
 										--enable-teuchos \
 										--enable-anasazi \
 										--enable-aztecoo \
@@ -45,18 +48,18 @@ def gen_compile_trilinos(sysentry, files, params):
 	                  logfile make_LINUX_SERIAL.log and make_install_LINUX_SERIAL.log'")
   #we have to find out how to combine all libraries into one but
 	#first we have to remove any old libtrilinos.a
-  sysentry.command("rm -f %s" % sq(libtrilinospack.name))
+  sysentry.command("cd %s && rm -f %s" % (sq(workspace_dir), sq(libtrilinospack.name)))
   sysentry.command("cd %s/trilinos-8.0.4/LINUX_SERIAL/lib && \
 			              ar -x libepetra.a && \
 			              ar -x libteuchos.a && \
 			              ar -x libanasazi.a && \
 										ar -x libaztecoo.a && \
-										ar -x libifpack.a \
+										ar -x libifpack.a &&\
 										ar -rs %s *.o" % 
 										(sq(workspace_dir), sq(libtrilinospack.name)))
   sysentry.command("echo '... Created archive'")
   sysentry.command("echo '... Copying the include header files to fastlib'")
-  sysentry.command("cp -r %s/trilinos-8.0.4/LINUX_SERIAL/include ." % sq(workspace_dir))
+  #sysentry.command("cp -r %s/trilinos-8.0.4/LINUX_SERIAL/include ." % sq(workspace_dir))
   sysentry.command("echo '... Cleaning'")
   sysentry.command("rm -rf %s" % sq(workspace_dir))
   sysentry.command("echo '*** Done with TRILINOS!'")
