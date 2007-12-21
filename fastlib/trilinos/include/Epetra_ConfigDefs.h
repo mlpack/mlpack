@@ -80,7 +80,7 @@ const double Epetra_Underflow = 2.23E-308;
 #undef VERSION
 #endif
 
-#include <Epetra_config.h>
+#include "Epetra_config.h"
 
 #ifdef HAVE_MPI
 #ifndef EPETRA_MPI
