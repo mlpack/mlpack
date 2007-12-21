@@ -34,6 +34,7 @@
   status test class to compute solutions to an eigenproblem
 */
 
+#include "AnasaziConfigDefs.hpp"
 #include "AnasaziTypes.hpp"
 #include "Teuchos_SerialDenseMatrix.hpp"
 #include "Teuchos_RCP.hpp"

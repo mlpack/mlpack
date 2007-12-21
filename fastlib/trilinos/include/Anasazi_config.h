@@ -28,7 +28,7 @@
 /* #undef HAVE_ANASAZI_AMESOS */
 
 /* Define if want to build with anasazi enabled */
-/* #undef HAVE_ANASAZI_AZTECOO */
+#define HAVE_ANASAZI_AZTECOO 1
 
 /* Define if want to build with anasazi enabled */
 /* #undef HAVE_ANASAZI_BELOS */
@@ -43,7 +43,7 @@
 /* #undef HAVE_ANASAZI_EXPERIMENTAL */
 
 /* Define if want to build with anasazi enabled */
-/* #undef HAVE_ANASAZI_IFPACK */
+#define HAVE_ANASAZI_IFPACK 1
 
 /* Define if want to build anasazi-tests */
 #define HAVE_ANASAZI_TESTS 
@@ -55,7 +55,7 @@
 /* #undef HAVE_ANASAZI_TPETRA */
 
 /* Define if want to build with anasazi enabled */
-/* #undef HAVE_ANASAZI_TRIUTILS */
+#define HAVE_ANASAZI_TRIUTILS 1
 
 /* Define if you have a BLAS library. */
 #define HAVE_BLAS 1

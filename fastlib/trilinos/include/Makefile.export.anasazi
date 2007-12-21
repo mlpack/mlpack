@@ -9,12 +9,12 @@ include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMM
 
 # Optional dependencies on triutils, belos, aztecoo, and ifpack are for 
 # examples only.  We add them ONLY to the test target.
-#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.triutils
+include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.triutils
 #include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.epetraext
 #include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.belos
 #include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.amesos
-#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.aztecoo
-#include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.ifpack
+include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.aztecoo
+include /net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include/Makefile.export.ifpack
 
 _ANASAZI_INCLUDES = \
 	-I/net/hu15/gtg739c/fastlib2/fastlib/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/libtrilinospack_workspace/trilinos-8.0.4/LINUX_SERIAL/include \
