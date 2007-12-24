@@ -151,6 +151,15 @@ void SparseMatrix::Destruct() {
 	  delete map_;
 	}
 }
+
+void SparseMatrix::Copy(const SparseMatrix &other) {
+  num_of_rows_ = other.num_of_rows_;
+	num_of_columns_ = other.num_of_columns_;
+	dimension_   = other.dimension_;
+	map_ =other.map_;
+	issymmetric_ = other.issymmetric_;
+	matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(*(other.matrix_.get())));
+}
 void SparseMatrix::StartLoadingRows() {
    my_global_elements_ = map_->MyGlobalElements();
 }

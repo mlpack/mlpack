@@ -180,7 +180,7 @@ class SparseMatrixTest {
 		SparseMatrix a_times_b("AtimesB.txt");
 		SparseMatrix a_dot_times_b("AdottimesB.txt");
 		SparseMatrix temp;
-		temp.Init(20,20, 3);
+		temp.Init(21,21, 3);
 		Sparsem::Add(a, b, &temp);
 		for(index_t i=0; i<20; i++) {
 		  for(index_t j=0; j<20; j++) {
@@ -190,30 +190,30 @@ class SparseMatrixTest {
 		}
 		temp.Destruct();
 		NONFATAL("Matrix addition sucess!!\n");
-		temp.Init(20,20, 3);
+		temp.Init(21,21, 3);
 		Sparsem::Subtract(a, b, &temp);
-		for(index_t i=0; i<20; i++) {
-		  for(index_t j=0; j<20; j++) {
+		for(index_t i=0; i<21; i++) {
+		  for(index_t j=0; j<21; j++) {
 			  TEST_DOUBLE_APPROX(a_minus_b.get(i,j), temp.get(i,j), 
 						               std::numeric_limits<double>::epsilon());
 			}
 		}
 		temp.Destruct();
 		NONFATAL("Matrix subtraction success!!\n");
-    temp.Init(20,20, 3);
+    temp.Init(21,21, 3);
 		Sparsem::Multiply(a, b, &temp);
-		for(index_t i=0; i<20; i++) {
-		  for(index_t j=0; j<20; j++) {
+		for(index_t i=0; i<21; i++) {
+		  for(index_t j=0; j<21; j++) {
 			  TEST_DOUBLE_APPROX(a_times_b.get(i,j), temp.get(i,j), 
 						               std::numeric_limits<double>::epsilon());
 			}
 		}
 		temp.Destruct();
 		NONFATAL("Matrix multiplicationn success!!\n");
-    temp.Init(20,20, 3);
+    temp.Init(21, 21, 3);
 		Sparsem::DotMultiply(a, b, &temp);
-		for(index_t i=0; i<20; i++) {
-		  for(index_t j=0; j<20; j++) {
+		for(index_t i=0; i<21; i++) {
+		  for(index_t j=0; j<21; j++) {
 			  TEST_DOUBLE_APPROX(a_dot_times_b.get(i,j), temp.get(i,j), 
 						               std::numeric_limits<double>::epsilon());
 			}
@@ -222,8 +222,8 @@ class SparseMatrixTest {
 		NONFATAL("Matrix dot multiplicationn success!!\n");
     temp.Init(20,20, 3);
 		Sparsem::Multiply(a, 3.45, &temp);
-		for(index_t i=0; i<20; i++) {
-		  for(index_t j=0; j<20; j++) {
+		for(index_t i=0; i<21; i++) {
+		  for(index_t j=0; j<21; j++) {
 			  TEST_DOUBLE_APPROX(a.get(i,j), 3.45*temp.get(i,j), 
 						               std::numeric_limits<double>::epsilon());
 			}
