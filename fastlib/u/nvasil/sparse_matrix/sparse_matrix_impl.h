@@ -90,6 +90,11 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
 		}
 		num_of_columns_++;
 		num_of_rows_++;
+		if (num_of_rows_ < num_of_columns_) {
+		  FATAL("At this point we only support rows (%i) >= columns (%i)\n", 
+					  num_of_rows_, num_of_columns_);
+		}
+		dimension_ = num_of_rows_;
     if ((index_t)frequencies.size()!=num_of_rows_) {
 		  NONFATAL("Some of the rows are zeros only!");
 		}
@@ -194,6 +199,7 @@ void SparseMatrix::LoadRow(index_t row,
 
 void SparseMatrix::EndLoading() {
   matrix_->FillComplete();
+	matrix_->OptimizeStorage();
 }
 
 void SparseMatrix::Load(const std::vector<index_t> &rows, 
@@ -274,13 +280,16 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
 		                   Matrix *eigvectors, 
 											 std::vector<double> *real_eigvalues,
 											 std::vector<double> *imag_eigvalues) {
-  index_t block_size = 4;
-	Teuchos::RCP<Epetra_MultiVector> ivec =  Teuchos::rcp(new Epetra_MultiVector(*map_, 
-			                                                      block_size,
-																										        num_of_eigvalues));
+  if (unlikely(!matrix_->Filled())) {
+	  FATAL("You have to call EndLoading before running eigenvalues otherwise "
+				  "it will fail\n");
+	}	
+	index_t block_size=2;
+	Teuchos::RCP<Epetra_MultiVector> ivec =  Teuchos::rcp(new 
+																						Epetra_MultiVector(*map_, 
+			                                                         block_size));
   // Fill it with random numbers
   ivec->Random();
-
   // Setup the eigenproblem, with the matrix A and the initial vectors ivec
 	Teuchos::RCP<Anasazi::BasicEigenproblem<double,MV,OP>  >problem = 
       Teuchos::rcp(new Anasazi::BasicEigenproblem<double,MV,OP>(matrix_, ivec));
@@ -288,6 +297,8 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   // The 2-D laplacian is symmetric. Specify this in the eigenproblem.
   if (issymmetric_ == true) {
 	  problem->setHermitian(true);
+	} else {
+	  problem->setHermitian(false);
 	}
 
   // Specify the desired number of eigenvalues
@@ -299,8 +310,8 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   // Check the return from setProblem(). If this is true, there was an
   // error. This probably means we did not specify enough information for
   // the eigenproblem.
-  if unlikely(ierr == true) {
-	  FATAL("Trilinos solver error, you probably didn't specify enough information"
+  if unlikely(ierr == false) {
+	  FATAL("Trilinos solver error, you probably didn't specify enough information "
 				  "for the eigenvalue problem\n");
 	}
 
@@ -364,9 +375,11 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   Anasazi::Eigensolution<double, Epetra_MultiVector> sol = problem->getSolution();
   // Get the number of eigenpairs returned
   int num_of_eigvals_returned = sol.numVecs;
-	NONFATAL("The solver returned less eigenvalues (%i) "
-			     "than requested (%i)\n", num_of_eigvalues,
-		       num_of_eigvals_returned);
+	if (num_of_eigvals_returned < num_of_eigvalues) {
+	  NONFATAL("The solver returned less eigenvalues (%i) "
+		  	     "than requested (%i)\n", num_of_eigvalues,
+		         num_of_eigvals_returned);
+	}
 
   // Get eigenvectors
 	eigvectors->Init(dimension_, num_of_eigvals_returned);

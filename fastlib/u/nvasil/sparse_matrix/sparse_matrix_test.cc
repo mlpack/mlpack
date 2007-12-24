@@ -149,6 +149,17 @@ class SparseMatrixTest {
 		}
 		NONFATAL("Test MakeSymmetric success!!\n");
 	}
+  void TestEig() {
+	  TestInit1();
+		smat_->EndLoading();
+		std::vector<double> eigvalues_real;
+	  std::vector<double> eigvalues_imag;
+		Matrix eigvectors;
+		smat_->Eig(1, "LM", &eigvectors, &eigvalues_real, &eigvalues_imag);
+    eigvectors.PrintDebug();
+		NONFATAL("Test Eigenvector success!!\n");
+	}
+	
   void TestAll(){
 		Init();
     TestInit1();
@@ -165,14 +176,17 @@ class SparseMatrixTest {
 		Init();
 		TestMakeSymmetric();
 		Destruct();
+		Init();
+		TestEig();
+		Destruct();
 	}
 		
  private:
 	SparseMatrix *smat_;
-  static const index_t num_of_cols_  = 10;
-	static const index_t num_of_rows_  = 10;
-	static const index_t num_of_nnz_   = 2;
-  double                mat_[num_of_rows_][num_of_cols_];
+  static const index_t num_of_cols_  = 120;
+	static const index_t num_of_rows_  = 120;
+	static const index_t num_of_nnz_   = 4;
+  double               mat_[num_of_rows_][num_of_cols_];
 	std::vector<index_t>  indices_;
 	std::vector<index_t>  rows_;
 };
