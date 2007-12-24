@@ -46,6 +46,7 @@
 #include "trilinos/include/AnasaziBasicEigenproblem.hpp"
 #include "trilinos/include/AnasaziEpetraAdapter.hpp"
 #include "trilinos/include/AnasaziBlockKrylovSchurSolMgr.hpp"
+#include "trilinos/include/AztecOO.h"
 
 /* class SparseMatrix created by Nick
  * This is a sparse matrix wrapper for trilinos Epetra_CrsMatrix
@@ -85,6 +86,9 @@ class SparseMatrix {
 			         const index_t nnz_per_row);
 	// Copy constructor
   SparseMatrix(const SparseMatrix &other);
+	SparseMatrix(std::string textfile) {
+	  Init(textfile);
+	}
 	~SparseMatrix()  {
 	  Destruct();
 	}
@@ -199,20 +203,30 @@ class SparseMatrix {
 																								// hold for the space allocated
 																								// in the non-symmetric case    
 					 );
-  // Linear System solution
-	void LinSolve(Vector &b, Vector *x, 
-			          bool upper, // set true if the matrix is upper diagonal 
-								bool trans, // set true if you want to solve for A^T
-								bool unit_diagonal // set true if the matrix is unit diagonal
-								) {
+  // Linear System solution, Call Endloading First.
+	void LinSolve(Vector &b, // must be initialized (space allocated)
+			          Vector *x, // must be initialized (space allocated)
+								double tolerance,
+								index_t iterations
+						) {
+		if (matrix_->Filled()==false && matrix_->StorageOptimized()==false){
+		  FATAL("You should call EndLoading() first\n");
+		}
 	  Epetra_Vector tempb(View, *map_, b.ptr());
     Epetra_Vector tempx(View, *map_, x->ptr());
-    matrix_->Solve(upper, trans, unit_diagonal, tempb, tempx);
+    // create linear problem
+ 	  Epetra_LinearProblem problem(matrix_.get(), &tempx, &tempb);
+ 		// create the AztecOO instance
+		AztecOO solver(problem);
+		solver.SetAztecOption( AZ_precond, AZ_Jacobi);
+		solver.Iterate(iterations, tolerance);
+		NONFATAL("Solver performed %i iterations, true residual %lg",
+				     solver.NumIters(), solver.TrueResidual());
 	}
 
 	// Use this for the general case
   void LinSolve(Vector &b, Vector *x) {
-	  LinSolve(b,x,false,false,false);
+	  LinSolve(b, x, 1E-9, 1000);
 	}
   	
 	// scales the matrix with a scalar;
