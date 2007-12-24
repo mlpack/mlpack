@@ -183,13 +183,21 @@ class SparseMatrix {
                                 // SR - target the smallest real 
                                 // LI - target the largest imaginary
                                 // SI - target the smallest imaginary
-		       Matrix *eigvectors,  // The eigenvectors compute must be initialized
+		       Matrix *eigvectors,  // The eigenvectors computed must not be initialized
 					 std::vector<double> *real_eigvalues, // real part of the eigenvalues
-					                                      // must be initialized
+					                                      // must be initialized, but should not
+																								// allocate space. The eigenvalues
+																								// returned might actually be less 
+																								// than the ones requested
+																								// for example when the matrix has 
+																								// rank n< eigenvalues requested
 					 std::vector<double> *imag_eigvalues  // imaginary part of the eigenvalues
 					                                      // must be initialized. If the
 																								// problem is symmetric there is 
-																								// no need to initialize    
+																								// no need to initialize. 
+																								// The same as real_eigvalues
+																								// hold for the space allocated
+																								// in the non-symmetric case    
 					 );
   // Linear System solution
 	void LinSolve(Vector &b, Vector *x, 
