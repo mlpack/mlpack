@@ -184,8 +184,7 @@ class SparseMatrixTest {
 		Sparsem::Add(a, b, &temp);
 		for(index_t i=0; i<20; i++) {
 		  for(index_t j=0; j<20; j++) {
-			  TEST_DOUBLE_APPROX(a_plus_b.get(i,j), temp.get(i,j), 
-						               std::numeric_limits<double>::epsilon());
+			  TEST_DOUBLE_APPROX(a_plus_b.get(i,j), temp.get(i,j), 0.01);
 			}
 		}
 		temp.Destruct();
@@ -194,8 +193,7 @@ class SparseMatrixTest {
 		Sparsem::Subtract(a, b, &temp);
 		for(index_t i=0; i<21; i++) {
 		  for(index_t j=0; j<21; j++) {
-			  TEST_DOUBLE_APPROX(a_minus_b.get(i,j), temp.get(i,j), 
-						               std::numeric_limits<double>::epsilon());
+			  TEST_DOUBLE_APPROX(a_minus_b.get(i,j), temp.get(i,j), 0.01);
 			}
 		}
 		temp.Destruct();
@@ -204,22 +202,20 @@ class SparseMatrixTest {
 		Sparsem::Multiply(a, b, &temp);
 		for(index_t i=0; i<21; i++) {
 		  for(index_t j=0; j<21; j++) {
-			  TEST_DOUBLE_APPROX(a_times_b.get(i,j), temp.get(i,j), 
-						               std::numeric_limits<double>::epsilon());
+			  TEST_DOUBLE_APPROX(a_times_b.get(i,j), temp.get(i,j), 0.01);
 			}
 		}
 		temp.Destruct();
-		NONFATAL("Matrix multiplicationn success!!\n");
+		NONFATAL("Matrix multiplication success!!\n");
     temp.Init(21, 21, 3);
 		Sparsem::DotMultiply(a, b, &temp);
-		for(index_t i=0; i<21; i++) {
-		  for(index_t j=0; j<21; j++) {
-			  TEST_DOUBLE_APPROX(a_dot_times_b.get(i,j), temp.get(i,j), 
-						               std::numeric_limits<double>::epsilon());
+		for(index_t i=0; i<a_dot_times_b.get_num_of_rows(); i++) {
+		  for(index_t j=0; j<a_dot_times_b.get_num_of_columns(); j++) {
+			  TEST_DOUBLE_APPROX(a_dot_times_b.get(i,j), temp.get(i,j), 0.01);
 			}
 		}
 		temp.Destruct();
-		NONFATAL("Matrix dot multiplicationn success!!\n");
+		NONFATAL("Matrix dot multiplication success!!\n");
     temp.Init(20,20, 3);
 		Sparsem::Multiply(a, 3.45, &temp);
 		for(index_t i=0; i<21; i++) {

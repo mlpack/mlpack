@@ -336,7 +336,7 @@ class Sparsem {
 		  }
 		  if (j<num2) {
 		    values3.insert(values3.end(), values2+j, values2+num2);
-			  indices3.insert(indices3.end(), indices2+i, indices2+num2);
+			  indices3.insert(indices3.end(), indices2+j, indices2+num2);
 		  }
       result->LoadRow(r, indices3, values3);
 		}
@@ -351,8 +351,8 @@ class Sparsem {
 		// If you try assigning the results to an already initialized matrix
 		// you might get unexpected results. The following assertions
 		// prevent you partially from that 
-		DEBUG_ASSERT(&a == result); 
-		DEBUG_ASSERT(&b == result);
+		DEBUG_ASSERT(&a != result); 
+		DEBUG_ASSERT(&b != result);
 		result->StartLoadingRows();
     for(index_t r=0; r<a.num_of_rows_; r++) {
 		  index_t num1, num2;
@@ -390,8 +390,10 @@ class Sparsem {
 			  indices3.insert(indices3.end(), indices1+i, indices1+num1);
 		  }
 		  if (j<num2) {
-		    values3.insert(values3.end(), values2+j, values2+num2);
-			  indices3.insert(indices3.end(), indices2+i, indices2+num2);
+				for(index_t k=j; k<num2; k++) {
+		      values3.push_back(-values2[k]);
+			    indices3.push_back(indices2[k]);
+				}
 		  }
       result->LoadRow(r, indices3, values3);
 		}
@@ -411,8 +413,8 @@ class Sparsem {
 	  // If you try assigning the results to an already initialized matrix
 		// you might get unexpected results. The following assertions
 		// prevent you partially from that 
-    DEBUG_ASSERT(&a == result); 
-		DEBUG_ASSERT(&b == result);
+    DEBUG_ASSERT(&a != result); 
+		DEBUG_ASSERT(&b != result);
 
 	  if (b.issymmetric_ == true) {
 	    for(index_t r1=0; r1<a.num_of_rows_; r1++) {
@@ -465,19 +467,19 @@ class Sparsem {
 				std::vector<double>  values3;
 				for(index_t r2=0; r2<b.num_of_columns_; r2++) {
 					for(index_t k=0; k< num1; k++) {
-				    dot_product += values1[k]*b.get(k, r2);
+				    dot_product += values1[k]*b.get(indices1[k], r2);
 					}
 					if (dot_product!=0){
 					  indices3.push_back(r2);
 						values3.push_back(dot_product);
 					}
+					dot_product=0;
 				}
 				if (!indices3.empty()) {
 				  result->LoadRow(r1, indices3, values3);
 				}
         indices3.clear();
 				values3.clear();
-
 			}
 		}
 	}
@@ -513,8 +515,8 @@ class Sparsem {
 	  // If you try assigning the results to an already initialized matrix
 		// you might get unexpected results. The following assertions
 		// prevent you partially from that 
-    DEBUG_ASSERT(&a == result); 
-		DEBUG_ASSERT(&b == result);
+    DEBUG_ASSERT(&a != result); 
+		DEBUG_ASSERT(&b != result);
 		for(index_t r=0; r<a.num_of_rows_; r++) {
 	    std::vector<index_t> indices3;
 			std::vector<double>	 values3;
