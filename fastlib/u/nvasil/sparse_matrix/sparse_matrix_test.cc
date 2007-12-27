@@ -216,11 +216,11 @@ class SparseMatrixTest {
 		}
 		temp.Destruct();
 		NONFATAL("Matrix dot multiplication success!!\n");
-    temp.Init(20,20, 3);
+    temp.Init(21,21, 3);
 		Sparsem::Multiply(a, 3.45, &temp);
 		for(index_t i=0; i<21; i++) {
 		  for(index_t j=0; j<21; j++) {
-			  TEST_DOUBLE_APPROX(a.get(i,j), 3.45*temp.get(i,j), 
+			  TEST_DOUBLE_APPROX(3.45 * a.get(i,j), temp.get(i,j), 
 						               std::numeric_limits<double>::epsilon());
 			}
 		}
@@ -252,7 +252,6 @@ class SparseMatrixTest {
 		Destruct();
 		Init();
 		TestBasicOperations();
-		Destruct();
 	}
 		
  private:
