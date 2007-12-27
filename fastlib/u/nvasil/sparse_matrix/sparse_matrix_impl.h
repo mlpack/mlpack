@@ -149,6 +149,7 @@ void SparseMatrix::Init(std::string filename) {
 void SparseMatrix::Destruct() {
   if (map_!=NULL) {
 	  delete map_;
+		map_=NULL;
 	}
 }
 
@@ -156,9 +157,22 @@ void SparseMatrix::Copy(const SparseMatrix &other) {
   num_of_rows_ = other.num_of_rows_;
 	num_of_columns_ = other.num_of_columns_;
 	dimension_   = other.dimension_;
-	map_ =other.map_;
+	map_ = new Epetra_Map(num_of_rows_, 0, comm_);
 	issymmetric_ = other.issymmetric_;
-	matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(*(other.matrix_.get())));
+	if (other.matrix_->Filled()==false) {
+	  matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(Epetra_DataAccess(0), *map_, 10));
+		this->StartLoadingRows();
+		for(index_t r=0; r<num_of_rows_; r++){
+		 index_t global_row = other.my_global_elements_[r];
+	   index_t num_of_entries;
+	   double *values;
+	   index_t *indices;
+     other.matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+		 this->LoadRow(r, num_of_entries, indices, values);
+		}
+  } else {
+	  matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(*(other.matrix_.get())));
+	}
 }
 void SparseMatrix::StartLoadingRows() {
    my_global_elements_ = map_->MyGlobalElements();
