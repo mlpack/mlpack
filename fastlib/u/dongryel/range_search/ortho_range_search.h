@@ -104,7 +104,6 @@ class OrthoRangeSearch {
 
   // constructor
   OrthoRangeSearch() {
-    data_buffer_ = NULL;
     tree_buffer_ = NULL;
     old_from_new_buffer_ = NULL;
     new_from_old_buffer_ = NULL;
@@ -114,7 +113,6 @@ class OrthoRangeSearch {
   // destructor
   ~OrthoRangeSearch() {
     if(tree_buffer_ != NULL) {
-      mem::Free(data_buffer_);
       mem::Free(tree_buffer_);
       mem::Free(old_from_new_buffer_);
       mem::Free(new_from_old_buffer_);
@@ -179,13 +177,6 @@ class OrthoRangeSearch {
     
     mem::Free(tmp_array);
 
-    // now serialize the permuted dataset
-    int dataset_size = ot::PointerFrozenSize(data_);
-    char *tmp_dataset = (char *) mem::AllocBytes<Matrix>(dataset_size);
-    fwrite((const void *) &dataset_size, sizeof(int), 1, output);
-    ot::PointerFreeze(data_, tmp_dataset);
-    fwrite((const void *) tmp_dataset, dataset_size, 1, output);
-
     printf("Tree is serialized...\n");
   }
 
@@ -195,7 +186,7 @@ class OrthoRangeSearch {
     FILE *input = fopen(tfname, "r");
     
     // read the tree size
-    int tree_size, old_from_new_size, new_from_old_size, data_size;
+    int tree_size, old_from_new_size, new_from_old_size;
     fread((void *) &tree_size, sizeof(int), 1, input);
 
     printf("Tree file: %s occupies %d bytes...\n", tfname, tree_size);
@@ -219,13 +210,20 @@ class OrthoRangeSearch {
     new_from_old_.Copy(*(ot::PointerThaw<ArrayList<index_t> >
 			 ((char *) new_from_old_buffer_)));
 
-    // read the permuted dataset
-    fread((void *) &data_size, sizeof(int), 1, input);
-    data_buffer_ = mem::AllocBytes<Matrix>(data_size);
-    fread((void *) data_buffer_, data_size, 1, input);
-    data_.Copy(*(ot::PointerThaw<Matrix>((char *) data_buffer_)));
-
     printf("Tree has been loaded...\n");
+
+    // apply permutation to the dataset
+    Matrix tmp_data;
+    tmp_data.Init(data_.n_rows(), data_.n_cols());
+
+    for(index_t i = 0; i < data_.n_cols(); i++) {
+      Vector source, dest;
+      data_.MakeColumnVector(i, &source);
+      tmp_data.MakeColumnVector(new_from_old_[i], &dest);
+      dest.CopyValues(source);
+    }
+    data_.Destruct();
+    data_.Own(&tmp_data);
   }
 
   /** initialization function - to read the data and to construct tree */
@@ -234,17 +232,17 @@ class OrthoRangeSearch {
     const char *fname = fx_param_str(NULL, "data", "data.ds");
     int leaflen = fx_param_int(NULL, "leaflen", 20);
 
+    // read dataset
+    Dataset dataset_;
+    dataset_.InitFromFile(fname);
+    data_.Own(&(dataset_.matrix()));
+
     fx_timer_start(NULL, "tree_d");
 
     if(fx_param_exists(NULL, "load_tree_file")) {
       LoadTree();
     }
     else {
-
-      // read dataset
-      Dataset dataset_;
-      dataset_.InitFromFile(fname);
-      data_.Own(&(dataset_.matrix()));
       root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen,
 					     &old_from_new_,
 					     &new_from_old_);
@@ -282,8 +280,6 @@ class OrthoRangeSearch {
   ArrayList<index_t> *new_from_old_buffer_;
 
   Tree *tree_buffer_;
-  
-  Matrix *data_buffer_;
 
   ArrayList<index_t> old_from_new_;
   
