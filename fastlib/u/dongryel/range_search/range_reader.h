@@ -11,7 +11,7 @@ class RangeReader {
   static void ReadRangeData(ArrayList<DRange> &range) {
 
     TextTokenizer tokenizer;
-    const char *dname = fx_param_str(NULL, "range", "range.txt");
+    const char *dname = fx_param_str(NULL, "range", "range.ds");
     const double factor = fx_param_double(NULL, "factor", 1);
     const double offset = fx_param_double(NULL, "offset", 0);
     tokenizer.Open(dname);

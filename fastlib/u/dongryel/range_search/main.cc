@@ -6,8 +6,14 @@ int main(int argc, char *argv[]) {
   bool do_naive = fx_param_exists(NULL, "do_naive");
 
   OrthoRangeSearch fast_search;
+
   fast_search.Init();
   fast_search.Compute();
+
+  if(fx_param_exists(NULL, "save_tree_file")) {
+    fast_search.SaveTree();
+  }
+
   ArrayList<bool> fast_search_results = fast_search.get_results();
 
   // if naive option is specified, do naive algorithm
@@ -19,6 +25,7 @@ int main(int argc, char *argv[]) {
     bool flag = true;
 
     for(index_t i = 0; i < fast_search_results.size(); i++) {
+
       if(fast_search_results[i] != naive_search_results[i]) {
 	flag = false;
 	printf("Differ on %d\n", i);
