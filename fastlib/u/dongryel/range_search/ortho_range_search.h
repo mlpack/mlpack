@@ -104,6 +104,7 @@ class OrthoRangeSearch {
 
   // constructor
   OrthoRangeSearch() {
+    data_buffer_ = NULL;
     tree_buffer_ = NULL;
     old_from_new_buffer_ = NULL;
     new_from_old_buffer_ = NULL;
@@ -113,9 +114,10 @@ class OrthoRangeSearch {
   // destructor
   ~OrthoRangeSearch() {
     if(tree_buffer_ != NULL) {
+      mem::Free(data_buffer_);
       mem::Free(tree_buffer_);
-      mem::Free<char>(old_from_new_buffer_);
-      mem::Free<char>(new_from_old_buffer_);
+      mem::Free(old_from_new_buffer_);
+      mem::Free(new_from_old_buffer_);
     }
     else {
       delete root_;
@@ -143,6 +145,9 @@ class OrthoRangeSearch {
   }
 
   void SaveTree() {
+
+    printf("Serializing the tree data structure...\n");
+
     const char *tfname = fx_param_str(NULL, "save_tree_file", "savedtree");
     FILE *output = fopen(tfname, "w+");
 
@@ -152,7 +157,7 @@ class OrthoRangeSearch {
     printf("Tree occupies %d bytes...\n", tree_size);
 
     fwrite((const void *) &tree_size, sizeof(int), 1, output);
-    char *tmp_root = mem::AllocBytes<char>(tree_size);
+    char *tmp_root = (char *) mem::AllocBytes<Tree>(tree_size);
     ot::PointerFreeze(*root_, tmp_root);
     fwrite((const void *) tmp_root, tree_size, 1, output);
     mem::Free(tmp_root);
@@ -161,10 +166,10 @@ class OrthoRangeSearch {
     // along with its sizes
     int old_from_new_size = ot::PointerFrozenSize(old_from_new_);
     int new_from_old_size = ot::PointerFrozenSize(new_from_old_);
-    char *tmp_array = mem::AllocBytes<char>(old_from_new_size);
+    char *tmp_array = 
+      (char *) mem::AllocBytes<ArrayList<index_t> >(old_from_new_size);
 
-    printf("size saved %d %d\n", old_from_new_size, new_from_old_size);
-    fwrite((const void*) &old_from_new_size, sizeof(int), 1, output);    
+    fwrite((const void *) &old_from_new_size, sizeof(int), 1, output);    
     ot::PointerFreeze(old_from_new_, tmp_array);
     fwrite((const void *) tmp_array, old_from_new_size, 1, output);
     
@@ -173,7 +178,15 @@ class OrthoRangeSearch {
     fwrite((const void *) tmp_array, new_from_old_size, 1, output);
     
     mem::Free(tmp_array);
-    printf("Tree is serialized!\n");
+
+    // now serialize the permuted dataset
+    int dataset_size = ot::PointerFrozenSize(data_);
+    char *tmp_dataset = (char *) mem::AllocBytes<Matrix>(dataset_size);
+    fwrite((const void *) &dataset_size, sizeof(int), 1, output);
+    ot::PointerFreeze(data_, tmp_dataset);
+    fwrite((const void *) tmp_dataset, dataset_size, 1, output);
+
+    printf("Tree is serialized...\n");
   }
 
   void LoadTree() {
@@ -182,7 +195,7 @@ class OrthoRangeSearch {
     FILE *input = fopen(tfname, "r");
     
     // read the tree size
-    int tree_size, old_from_new_size, new_from_old_size;
+    int tree_size, old_from_new_size, new_from_old_size, data_size;
     fread((void *) &tree_size, sizeof(int), 1, input);
 
     printf("Tree file: %s occupies %d bytes...\n", tfname, tree_size);
@@ -192,21 +205,27 @@ class OrthoRangeSearch {
     
     // read old_from_new
     fread((void *) &old_from_new_size, sizeof(int), 1, input);
-    printf("Old from new size occupies %d bytes...\n", old_from_new_size);
-    old_from_new_buffer_ = mem::AllocBytes<char>(old_from_new_size);
+    old_from_new_buffer_ = 
+    mem::AllocBytes<ArrayList<index_t> >(old_from_new_size);
     fread((void *) old_from_new_buffer_, old_from_new_size, 1, input);
     old_from_new_.Copy(*(ot::PointerThaw<ArrayList<index_t> >
-			 (old_from_new_buffer_)));
+			 ((char *) old_from_new_buffer_)));
 
     // read new_from_old
     fread((void *) &new_from_old_size, sizeof(int), 1, input);
-    printf("New from old size occpupies %d bytes...\n", new_from_old_size);
-    new_from_old_buffer_ = mem::AllocBytes<char>(new_from_old_size);
+    new_from_old_buffer_ = 
+    mem::AllocBytes<ArrayList<index_t> >(new_from_old_size);
     fread((void *) new_from_old_buffer_, new_from_old_size, 1, input);
     new_from_old_.Copy(*(ot::PointerThaw<ArrayList<index_t> >
-			 (new_from_old_buffer_)));
+			 ((char *) new_from_old_buffer_)));
 
-    printf("tree has been loaded...\n");
+    // read the permuted dataset
+    fread((void *) &data_size, sizeof(int), 1, input);
+    data_buffer_ = mem::AllocBytes<Matrix>(data_size);
+    fread((void *) data_buffer_, data_size, 1, input);
+    data_.Copy(*(ot::PointerThaw<Matrix>((char *) data_buffer_)));
+
+    printf("Tree has been loaded...\n");
   }
 
   /** initialization function - to read the data and to construct tree */
@@ -215,24 +234,20 @@ class OrthoRangeSearch {
     const char *fname = fx_param_str(NULL, "data", "data.ds");
     int leaflen = fx_param_int(NULL, "leaflen", 20);
 
-    // read in the dataset
-    Dataset dataset_;
-    dataset_.InitFromFile(fname);
-    data_.Own(&(dataset_.matrix()));
     fx_timer_start(NULL, "tree_d");
 
     if(fx_param_exists(NULL, "load_tree_file")) {
       LoadTree();
     }
     else {
+
+      // read dataset
+      Dataset dataset_;
+      dataset_.InitFromFile(fname);
+      data_.Own(&(dataset_.matrix()));
       root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen,
 					     &old_from_new_,
 					     &new_from_old_);
-
-      for(index_t i = 0; i < 100; i++) {
-	printf("%d mapped to %d\n", i, new_from_old_[i]);
-      }
-
     }
     fx_timer_stop(NULL, "tree_d");
 
@@ -262,12 +277,14 @@ class OrthoRangeSearch {
    */
   ArrayList<DRange> search_range_;
 
-  char *old_from_new_buffer_;
+  ArrayList<index_t> *old_from_new_buffer_;
 
-  char *new_from_old_buffer_;
+  ArrayList<index_t> *new_from_old_buffer_;
 
   Tree *tree_buffer_;
   
+  Matrix *data_buffer_;
+
   ArrayList<index_t> old_from_new_;
   
   ArrayList<index_t> new_from_old_;
