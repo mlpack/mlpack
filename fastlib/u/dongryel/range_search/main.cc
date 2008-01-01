@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   // if naive option is specified, do naive algorithm
   if(do_naive) {
     NaiveOrthoRangeSearch search;
-    search.Init(fast_search.get_data(), fast_search.get_range());
+    search.Init();
     search.Compute();
     ArrayList<bool> naive_search_results = search.get_results();
     bool flag = true;

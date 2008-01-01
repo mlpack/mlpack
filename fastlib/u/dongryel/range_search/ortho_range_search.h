@@ -57,17 +57,6 @@ class NaiveOrthoRangeSearch {
     }
   }
 
-  void Init(const Matrix &data, const ArrayList<DRange> &range) {
-    data_.Alias(data);
-    range_.Copy(range);
-
-    // re-initialize boolean flag
-    in_range_.Init(data_.n_cols());
-    for(index_t i = 0; i < data_.n_cols(); i++) {
-      in_range_[i] = false;
-    }
-  }
-
   /** the main computation of naive orthogonal range search */
   void Compute() {
 
@@ -140,6 +129,17 @@ class OrthoRangeSearch {
     fx_timer_start(NULL, "tree_range_search");
     ortho_range_search(root_, 0);
     fx_timer_stop(NULL, "tree_range_search");
+
+    // reshuffle the results to account for shuffling during tree construction
+    ArrayList<bool> tmp_results;
+    tmp_results.Init(candidate_points_.size());
+
+    for(index_t i = 0; i < candidate_points_.size(); i++) {
+      tmp_results[old_from_new_[i]] = candidate_points_[i];
+    }
+    for(index_t i = 0; i < candidate_points_.size(); i++) {
+      candidate_points_[i] = tmp_results[i];
+    }
   }
 
   void SaveTree() {
