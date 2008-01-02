@@ -1,0 +1,35 @@
+FUNCTION FastICA(X, contrastFunction, tolerance)
+  Read data
+  (Optional filtering step)
+  [Center data]
+    centeredX = center(X)
+  [Whiten data (with optional dimensionality reduction)]
+    whitenedX = whiten(centeredX)
+  [Run Jacobian method using some contrast function]
+    Note that contrastFunction is logcosh OR exp
+    deflationICA(whitenedX, contrastFunction, tolerance)
+END
+
+FUNCTION whiten(X)
+  E{x x^T} = EDE^T
+  whitenedX = ED^-.5 E^T X
+  RETURN whitenedX    
+END
+  
+
+FUNCTION deflationICA(X, contrastFunction, tolerance)
+  fixedSubspace = nullSpace
+  
+  FOR i FROM 1 TO p
+    IC(i) = univariateFastICA(X, contrastFunction, fixedSubspace, tolerance)
+    fixedSubspace = fixedSubspace UNION IC(i)
+  END
+END
+
+
+FUNCTION univariateFastICA(X, contrastFunction, fixedSubspace, tolerance)
+  Choose random weight vector w
+  update w using contrast function
+  set w to projection of w orthogonal to fixedSubspace
+  check for convergence of w using tolerance
+END
