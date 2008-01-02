@@ -1,1 +1,3 @@
-binrule(name = "fastica", sources=["fastica.cc"], linkables=["fastlib:fastlib"])
+binrule(name = "fastica",
+   sources = ["fastica.cc"],
+   deplibs = ["fastlib:fastlib"])

@@ -1,7 +1,7 @@
 #include "fastlib/fastlib.h"
 
 int main(int argc, char *argv[]) {
-  fx_init(argc, arv);
+  fx_init(argc, argv);
 
   const char *data = fx_param_str(NULL, "data", NULL);
 
