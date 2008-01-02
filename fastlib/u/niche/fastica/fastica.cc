@@ -5,7 +5,7 @@ void whiten(Matrix X, Matrix &X_whitened) {
   Vector D_vector;
 
   la::TransposeInit(X, &X_transpose);
-  MulInit(X, X_transpose, &X_squared);
+  la::MulInit(X, X_transpose, &X_squared);
 
   la::EigenvectorsInit(X_squared, &D_vector, &E);
   la::TransposeInit(E, &E_transpose);
@@ -15,9 +15,9 @@ void whiten(Matrix X, Matrix &X_whitened) {
     D.set(i, i, pow(D.get(i, i), -.5));
   }
 
-  MulInit(E, D, &X_temp);
-  MulInit(X_temp, E_transpose, &X_temp2);
-  MulInit(X_temp2, X, &X_whitened);
+  la::MulInit(E, D, &X_temp);
+  la::MulInit(X_temp, E_transpose, &X_temp2);
+  la::MulInit(X_temp2, X, &X_whitened);
 }
 
 
