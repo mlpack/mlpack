@@ -1,23 +1,9 @@
-% Given
-%   distribution F
-%   observations X (dims N x T)
-
-% construct random vector w by sampling from F
-
-% sort w descending
-
-% attribute highest values of w to observations with maximal variance
-
-
 % initialize random number generator
 rand('state', sum(100*clock))
 
-
-% sample from laplacian
-
 clear;
 
-D = 2;
+D = 3;
 N = 10000;
 p = 30;
 
@@ -27,36 +13,19 @@ b = sigma/2;
 
 
 
-% laplacian
-clear l_x l_px;
+clear x px;
 for i=1:D
-  l_x(i,:) = laplacinv(rand(N, 1), mu, b);
-  l_px(i,:) = laplacpdf(l_x(i,:), mu, b);
+
+  x(i,:) = laplacinv(rand(N, 1), mu, b);  % laplacian
+
+  %x(i,:) = rand(N, 1);  % uniform random
+  
+  %x(i,:) = norminv(rand(N, 1), mu, sigma);  %gaussian
+  
 end
 
 % center the sampling distribution
-l_x = l_x - repmat(mean(l_x')', 1, N);
-
-
-% gaussian
-%clear g_x g_px;
-%for i=1:D
-%  g_x(i,:) = norminv(rand(N, 1), mu, sigma);
-%  g_px(i,:) = normpdf(g_x(i,:), mu, sigma);
-%end
-
-% center the sampling distribution
-%g_x = g_x - repmat(mean(g_x')', 1, N);
-
-
-
-% mix the source signals
-
-%a = rand(D,D);
-%X = a * l_x;
-
-%shuffling = shuffle(1:N);
-%X_shuffled = X(:,shuffling);
+x = x - repmat(mean(x')', 1, N);
 
 
 % generate b-spline basis curves
@@ -69,7 +38,7 @@ load s1s2;
 s = [s1(t); s2(t)]';
 
 
-data = s * l_x;
+data = s * x;
 
 
 
