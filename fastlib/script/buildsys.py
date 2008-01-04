@@ -42,13 +42,6 @@ class Types:
 class CompilerInfo:
   def __init__(self):
     (self.kernel, nodename, release, version, self.arch) = os.uname()
-    #if self.kernel in ["Darwin"]:
-    #  self.lflags_ar_start = ""
-    #  self.lflags_ar_end = ""
-    #  self.lflags_fortran = ""
-    #else:
-    #  self.lflags_ar_start = "-Wl,-whole-archive"
-    #  self.lflags_ar_end = "-Wl,-no-whole-archive"
     self.lflags_fortran = "-lg2c"
   def compiler_program(self, extension):
     # for instance, turn "gcc %s -c %s -o ..." into just "gcc"
@@ -57,6 +50,10 @@ class CompilerInfo:
 class GCCCompiler(CompilerInfo):
   def __init__(self):
     CompilerInfo.__init__(self)
+    use_gfortran = True
+    if os.path.exists("/usr/bin/g77") and not os.path.exists("/usr/bin/gfortran"):
+      use_gfortran = False
+      print "!!! Using g77.  GFortran will be preferred eventually."
     self.name = "gcc"
     self.mode_dictionary = {
       "verbose": "-g -DDEBUG -DVERBOSE",
@@ -71,34 +68,23 @@ class GCCCompiler(CompilerInfo):
     self.command_from_ext = {
       "c" : "gcc %s -c %s -o %s -Wall",
       "cc" : "g++ -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions %s -c %s -o %s",
-      "f" : "g77 %s -c %s -o %s -Wall -Wno-uninitialized"
+      "f" : "gfortran %s -c %s -o %s -Wall -Wno-uninitialized"
     }
+    if use_gfortran:
+      self.lflags_fortran = "-lgfortran"
+    else:
+      self.lflags_fortran = "-lg2c"
+      self.command_from_ext["f"] = "g77 %s -c %s -o %s -Wall -Wno-uninitialized"
     self.linker = "g++"
     self.lflags_start = ""
     self.lflags_end = "-lm -lpthread %s" % (self.lflags_fortran)
 
-class GCC4Compiler(CompilerInfo):
+class GCC4Compiler(GCCCompiler):
   def __init__(self):
-    CompilerInfo.__init__(self)
+    GCCCompiler.__init__(self)
     self.name = "gcc4"
-    self.mode_dictionary = {
-      "verbose": "-g -DDEBUG -DVERBOSE",
-      "debug": "-g3 -DDEBUG -O0",
-      "check": "-O2 -finline-functions -finline-limit=2000 -g -DDEBUG",
-      "fast": "-O2 -finline-functions -finline-limit=2000 -fomit-frame-pointer -g -DNDEBUG",
-      "unsafe": "-O3 -ffast-math -g -fomit-frame-pointer -DNDEBUG",
-      "profile" : "-O2 -pg -finline-limit=12 -DPROFILE -DNDEBUG",
-      "small": "-Os -DNDEBUG",
-      "trace": "-g -DNDEBUG"
-    }
-    self.command_from_ext = {
-      "c" : "gcc4 %s -c %s -o %s -Wall",
-      "cc" : "g++4 -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions %s -c %s -o %s",
-      "f" : "g77 %s -c %s -o %s -Wall -Wno-uninitialized"
-    }
-    self.linker = "g++"
-    self.lflags_start = ""
-    self.lflags_end = "-lm -lpthread %s" % (self.lflags_fortran)
+    self.command_from_ext["c"] = "gcc4 %s -c %s -o %s -Wall";
+    self.command_from_ext["cc"] = "g++4 -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions %s -c %s -o %s";
 
 class ICCCompiler(CompilerInfo):
   def __init__(self):
