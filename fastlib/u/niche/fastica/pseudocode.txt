@@ -21,8 +21,8 @@ FUNCTION deflationICA(X, contrastFunction, tolerance)
   fixedSubspace = nullSpace
   
   FOR i FROM 1 TO p
-    IC(i) = univariateFastICA(X, contrastFunction, fixedSubspace, tolerance)
-    fixedSubspace = fixedSubspace UNION IC(i)
+    w(i) = univariateFastICA(X, contrastFunction, fixedSubspace, tolerance)
+    fixedSubspace = fixedSubspace UNION w(i)
   END
 END
 
