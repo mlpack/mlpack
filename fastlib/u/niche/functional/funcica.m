@@ -28,7 +28,8 @@ p = 30;
 
 mu = 0;
 sigma = 1;
-b = sigma/2;
+b = sqrt(sigma/2); % recent edit - see the wikipedia page for
+                   % Laplacian distribution
 
 
 
