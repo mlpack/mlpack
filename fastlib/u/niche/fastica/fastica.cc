@@ -51,8 +51,8 @@ void center(Matrix X, Matrix &X_centered) {
 }
 
 
-void whiten(Matrix X, Matrix &X_whitened) {
-  Matrix X_transpose, X_squared, D, E, E_transpose, X_temp, X_temp2;
+void whiten(Matrix X, Matrix &whitening, Matrix &X_whitened) {
+  Matrix X_transpose, X_squared, D, E, E_transpose, X_temp;
   Vector D_vector;
 
   la::TransposeInit(X, &X_transpose);
@@ -67,8 +67,9 @@ void whiten(Matrix X, Matrix &X_whitened) {
   }
 
   la::MulInit(E, D, &X_temp);
-  la::MulInit(X_temp, E_transpose, &X_temp2);
-  la::MulInit(X_temp2, X, &X_whitened);
+  la::MulInit(X_temp, E_transpose, &whitening);
+  
+  la::MulInit(whitening, X, &X_whitened);
 }
 
 
@@ -159,12 +160,17 @@ void univariate_FastICA(Matrix X,
 
 void deflationICA(Matrix X,
 		  double (*contrast_function)(double),
-		  double tolerance) {
-  Matrix fixed_subspace;
-  index_t n_dims = X.n_rows();
+		  double tolerance, Matrix fixed_subspace) {
+  //index_t n_dims = X.n_rows();
+
+  //printf("n_dims = %d\n", n_dims);
+
+  return;
+  /*
   fixed_subspace.Init(n_dims, n_dims);
   
   for(index_t i = 0; i < n_dims; i++) {
+    printf("i = %d\n", i);
     Vector w;
     univariate_FastICA(X, contrast_function, fixed_subspace, i, tolerance, w);
     Vector fixed_subspace_vector_i;
@@ -172,8 +178,10 @@ void deflationICA(Matrix X,
     fixed_subspace_vector_i.CopyValues(w);
   }
 
+  // fixed_subspace is the transpose of the postwhitening unmixing matrix W~
+  // saving fixed_subspace really saves the transpose, so we simply save
   data::Save("fixed_subspace.dat", fixed_subspace);
-  
+  */
 }
   
 double d_logcosh(double u) {
@@ -192,26 +200,42 @@ int main(int argc, char *argv[]) {
 
   const char *data = fx_param_str(NULL, "data", NULL);
 
-  Matrix X, X_centered, X_whitened;
+  Matrix X, X_centered, whitening, X_whitened;
   data::Load(data, &X);
 
-  //index_t n_dims = X.n_rows();
-  //index_t n_points = X.n_cols();
+  printf("%d,%d\n", X.n_rows(), X.n_cols());
 
+  printf("centering\n");
   center(X, X_centered);
-
+  
   data::Save("X_centered.dat", X_centered);
 
-  whiten(X_centered, X_whitened);
+  printf("whitening\n");
 
+  whiten(X_centered, whitening, X_whitened);
+  
   data::Save("X_whitened.dat", X_whitened);
 
   double tolerance = 1e-4;
 
-  deflationICA(X_whitened, &d_logcosh, tolerance);
+  Matrix post_whitening_W_transpose;
+  
+  Matrix post_whitening_W;
 
+  printf("deflationICA\n");
 
+  deflationICA(X_whitened, &d_logcosh, tolerance, post_whitening_W);
+  /*
+  la::TransposeInit(post_whitening_W_transpose, &post_whitening_W);
 
+  Matrix W;
+  la::MulInit(whitening, post_whitening_W, &W);
+
+  Matrix W_transpose;
+  la::TransposeInit(W, &W_transpose);
+  
+  data::Save("W.dat", W_transpose);
+  */
 
   //  fx_done();
 
