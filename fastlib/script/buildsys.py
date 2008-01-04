@@ -51,7 +51,7 @@ class GCCCompiler(CompilerInfo):
   def __init__(self):
     CompilerInfo.__init__(self)
     use_gfortran = True
-    if os.path.exists("/usr/bin/g77") and not os.path.exists("/usr/bin/gfortran"):
+    if os.path.exists("/usr/bin/g77"):
       use_gfortran = False
       print "!!! Using g77.  GFortran will be preferred eventually."
     self.name = "gcc"
