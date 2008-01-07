@@ -30,7 +30,7 @@ template <typename TKernel> class NaiveRegression2{
    
     for(index_t q=0;q<qset_.n_cols();q++){ //for all query points 
      
-      /*This was SVD stuff**********/
+      /*This is inversion by SVD **********/
       Vector s;
       Matrix U;
       Matrix VT; 
@@ -93,13 +93,7 @@ template <typename TKernel> class NaiveRegression2{
 
   //Interesting functions.................
   void Compute (){
-    
-    printf("thsi is naive kde compute..........\n");
-    printf("query dataset is ..\n");
-
-    //printf ("\nStarting naive KDE computations...\n");
-    fx_timer_start (NULL, "naive_kde");
-
+  
     // compute unnormalized sum
     for (index_t q = 0; q < qset_.n_cols (); q++){	//for each query point
 	
@@ -163,9 +157,6 @@ template <typename TKernel> class NaiveRegression2{
 	}
       }
     }
-
-    printf("at the end of the compute function.........\n");
-    fx_timer_stop(NULL,"naive_kde");
   }
 
   void Init (Matrix query_dataset, Matrix reference_dataset){
@@ -964,36 +955,11 @@ template <typename TKernel > class Regression2 {
   //Interesting functions.......................... 
   void Compute (double tau){
     
-    
-    //This function fills in the Arraylist<matrix> results
-    printf("in compute tau is %f ...\n",tau);
-    
     tau_=tau;
-    printf("tau_ is %f\n",tau_);
+    //This function fills in the Arraylist<matrix> results
     FillMatrix();
-  
-
-    FILE *fp;
-    fp=fopen("not_inverse_file.txt","w+");
-
-    for(index_t q=0;q<qset_.n_cols();q++){
-
-      for(index_t i=0;i<rset_.n_rows()+1;i++){
-
-	for(index_t j=0;j<rset_.n_rows()+1;j++){
-
-	  fprintf(fp,"q:%d i:%d j:%d density:%f\n",q,i,j,results_[q].get(i,j));
-	}
-      }
-    }
-
-   
     //Do a matrix inversion for the matrix of each query point. 
-
     InvertAll();
-
-    //This is the last step where u multiply the result of (B^TWB)-1 (B^TWY)
-    
   }
   
   void Init (Matrix &query_dataset, Matrix &reference_dataset){			
