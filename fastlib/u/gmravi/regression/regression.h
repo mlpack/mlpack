@@ -40,9 +40,6 @@ template < typename TKernel > class NaiveKde{
   //Interesting functions...........................
   void Compute (){
 
-    //printf ("\nStarting naive KDE computations...\n");
-    fx_timer_start (NULL, "naive_kde");
-
     // compute unnormalized sum
     for (index_t q = 0; q < qset_.n_cols (); q++){	//for each query point
 	
@@ -70,7 +67,7 @@ template < typename TKernel > class NaiveKde{
 	}
       }
     }
-    fx_timer_stop(NULL,"naive_kde");
+   
 
     //Density estimates from naive calculations.....
    
@@ -847,10 +844,8 @@ template < typename TKernel > class FastKde{
     SetUpperBoundOfDensity (qroot_);
 
     // call main routine
-    fx_timer_start(NULL,"fast_kde");
+   
     FKde (qroot_, rroot_);
-    fx_timer_stop(NULL,"fast_kde");
-
 
     // postprocessing step for finalizing the sums
     PostProcess (qroot_);
@@ -900,7 +895,7 @@ template < typename TKernel > class FastKde{
     }
 
     printf("the weights are ..\n");
-    rset_weights_.PrintDebug();
+    // rset_weights_.PrintDebug();
    
     if (!strcmp (qfname, rfname)){
 
@@ -936,15 +931,6 @@ template < typename TKernel > class FastKde{
     qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen, NULL, NULL);
   
     fx_timer_stop (NULL, "tree_d");
-
-    printf("The query set is ..\n");
-    qset_.PrintDebug();
-    printf("The mapping is ...\n");
-
-    for(index_t i=0;i<new_from_old_r_.size();i++){
-
-      printf("new_from_old[%d]=%d\n",i,new_from_old_r_[i]);
-    }
 
     // initialize the kernel
 
