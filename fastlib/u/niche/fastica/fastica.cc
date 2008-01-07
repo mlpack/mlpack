@@ -1,11 +1,12 @@
 #include "fastlib/fastlib.h"
 
-#define A 1
+#define A1 1
 
 #define epsilon 1e-4
 
 #define LOGCOSH 0
 #define EXP 1
+#define KURTOSIS 2
 
 // n indicates number of points
 // d indicates number of dimensions (number of components or variables)
@@ -57,7 +58,7 @@ namespace {
       la::AddTo(cur_col_vector, &col_vector_sum);
     }
 
-    la::Scale(1/(double)n, &col_vector_sum);
+    la::Scale(1/(double) n, &col_vector_sum);
 
     X_centered.CopyValues(X);
 
@@ -86,7 +87,7 @@ namespace {
   
     index_t d = D.n_rows();
     for(index_t i = 0; i < d; i++) {
-      D.set(i, i, pow(D.get(i, i), -.5));
+      D.set(i, i, 1 / sqrt(D.get(i, i)));
     }
 
     la::MulInit(E, D, &E_times_D);
@@ -96,6 +97,31 @@ namespace {
   }
 
 
+  void Orthogonalize(Matrix W_old, Matrix &W) {
+
+    Matrix W_squared, W_squared_inv_sqrt;
+    
+    la::MulTransAInit(W, W, &W_squared);
+    
+    Matrix D, E, E_times_D;
+    Vector D_vector;
+    
+    la::EigenvectorsInit(W_squared, &D_vector, &E);
+    D.InitDiagonal(D_vector);
+    
+    index_t d = D.n_rows();
+    for(index_t i = 0; i < d; i++) {
+      D.set(i, i, 1 / sqrt(D.get(i, i)));
+    }
+    
+    la::MulInit(E, D, &E_times_D);
+    la::MulTransBInit(E_times_D, E, &W_squared_inv_sqrt);
+	
+    // note that up until this point, W == W_old
+    la::MulOverwrite(W_old, W_squared_inv_sqrt, &W);
+  }
+  
+  
   void UnivariateFastICA(Matrix X, int contrast_type, Matrix fixed_subspace,
 			 index_t dim_num, double tolerance, Vector &w) {
     index_t d = X.n_rows();
@@ -122,11 +148,11 @@ namespace {
     
 
 
-      Vector first_sum;
-      first_sum.Init(d);
-      first_sum.SetZero();
+      Vector first_deriv_component;
+      first_deriv_component.Init(d);
+      first_deriv_component.SetZero();
 
-      double second_sum = 0;
+      double second_deriv_scale_factor = 0;
 
       
       if(contrast_type == LOGCOSH) {
@@ -137,18 +163,18 @@ namespace {
 	for(index_t i = 0; i < n; i++) {
 	  Vector x;
 	  X.MakeColumnVector(i, &x);
-	  first_deriv_dots[i] = tanh(A * la::Dot(w, x));
-	  la::AddExpert(first_deriv_dots[i], x, &first_sum);
+	  first_deriv_dots[i] = tanh(A1 * la::Dot(w, x));
+	  la::AddExpert(first_deriv_dots[i], x, &first_deriv_component);
 	}
-	la::Scale(1/(double)n, &first_sum);
+	la::Scale(1/(double) n, &first_deriv_component);
 	
 	
 	for(index_t i = 0; i < n; i++) {
-	  second_sum += first_deriv_dots[i] * first_deriv_dots[i];
+	  second_deriv_scale_factor += first_deriv_dots[i] * first_deriv_dots[i];
 	}
 	
-	second_sum *= A / (double) n;
-	second_sum -= A;
+	second_deriv_scale_factor *= A1 / (double) n;
+	second_deriv_scale_factor -= A1;
 	
 
       }
@@ -165,32 +191,50 @@ namespace {
 
 	  double dot = la::Dot(w, x);
 	  dots[i] = dot;
-	  exp_dots[i] = exp(-dot * dot/2);
+	  exp_dots[i] = exp(-dot * dot / 2);
 
-	  la::AddExpert(dot * exp_dots[i], x, &first_sum);
+	  la::AddExpert(dot * exp_dots[i], x, &first_deriv_component);
 	}
-	la::Scale(1/(double)n, &first_sum);
+	la::Scale(1/(double) n, &first_deriv_component);
 	
 	
 	for(index_t i = 0; i < n; i++) {
-	  second_sum += exp_dots[i] * (dots[i] * dots[i] - 1);
+	  second_deriv_scale_factor += exp_dots[i] * (dots[i] * dots[i] - 1);
 	}
 	
-	second_sum /= (double) n;
+	second_deriv_scale_factor /= (double) n;
+      }
+      else if(contrast_type == KURTOSIS) {
 
+	Vector dots_cubed;
+	dots_cubed.Init(n);
+
+	for(index_t i = 0; i < n; i++) {
+	  Vector x;
+	  X.MakeColumnVector(i, &x);
+
+	  double dot = la::Dot(w, x);
+	  dots_cubed[i] = pow(dot, 3);
+
+	  la::AddExpert(dots_cubed[i], x, &first_deriv_component);
+	}
+
+	la::Scale(1 / (double) n, &first_deriv_component);
+
+	second_deriv_scale_factor = -3;
       }
       else {
 	printf("ERROR: invalid contrast function: contrast_type = %d\n",
 	       contrast_type);
 	exit(SUCCESS_FAIL);
       }
-
       
-      la::Scale(second_sum, &w);
-      la::AddTo(first_sum, &w);
+      
+      la::Scale(second_deriv_scale_factor, &w);
+      la::AddTo(first_deriv_component, &w);
 
-      first_sum.PrintDebug("first_sum");
-      printf("second_sum = %f\n", second_sum);
+      first_deriv_component.PrintDebug("first_deriv_component");
+      printf("second_deriv_scale_factor = %f\n", second_deriv_scale_factor);
 
 
 
@@ -241,9 +285,12 @@ namespace {
 
 
   void DeflationICA(Matrix X, int contrast_type,
-		     double tolerance, Matrix &fixed_subspace) {
+		    double tolerance, Matrix &fixed_subspace) {
+    
+    printf("Deflation ICA\n");
+    
     index_t d = X.n_rows();
-
+    
     printf("%"LI"d Components\n", d);
   
     for(index_t i = 0; i < d; i++) {
@@ -257,16 +304,191 @@ namespace {
     }
   
   }
+
   
-  double DLogCosh(double u) {
-    return tanh(A * u);
-  }
+  void SymmetricICA(Matrix X, int contrast_type,
+		    double tolerance, Matrix &W) {
 
-  double DExp(double u) {
-    return u * exp(-u*u/2);
-  }
+    printf("Symmetric ICA\n");
 
+    index_t d = X.n_rows();
+    index_t n = X.n_cols();
+
+      
+
+    //generate random W
+      
+    for(index_t i = 0; i < d; i++) {
+      Vector w;
+      W.MakeColumnVector(i, &w);
+      RandVector(w);
+    }
+      
+      
+
+    Matrix W_old;
+    W_old.Init(d, d);
+      
+      
+    bool converged = false;
+      
+    while(!converged) {
+	
+      // orthogonalize W via: newW = W * (W' * W) ^ -.5;
+
+      W_old.CopyValues(W);
+
+      // at this point, W_old == W, and W will be changed by Orthogonalize()
+      Orthogonalize(W_old, W);
+
+      
+      // use Newton-Raphson to update W
+
+      Matrix first_deriv_part;
+      
+      
+      if(contrast_type == LOGCOSH) {
+	
+	
+	//tanh(A1 * X' * W);
+	Matrix tanh_dot_products;
+	la::MulTransAInit(X, W, &tanh_dot_products);
+	for(index_t i = 0; i < d; i++) {
+	  for(index_t j = 0; j < n; j++) {
+	    tanh_dot_products.set(j, i,
+				  tanh(A1 * tanh_dot_products.get(j, i)));
+	  }
+	}
+
+	la::MulInit(X, tanh_dot_products, &first_deriv_part);
+	la::Scale(1 / (double) n, &first_deriv_part);
+
+	
+	// take the mean of each column of tanh_dot_products
+	for(index_t i = 0; i < d; i++) {
+	  Vector w;
+	  W.MakeColumnVector(i, &w);
+
+	  Vector tanh_dot_products_col_i;
+	  tanh_dot_products.MakeColumnVector(i, &tanh_dot_products_col_i);
+
+	  double second_deriv_scale_factor = 0;
+	  for(index_t j = 0; j < n; j++) {
+	    second_deriv_scale_factor +=
+	      tanh_dot_products_col_i[j] * tanh_dot_products_col_i[j];
+	  }
+	  second_deriv_scale_factor =
+	    (second_deriv_scale_factor * A1 / (double) n) - A1;
+
+	  la::Scale(second_deriv_scale_factor, &w);
+	}
+
+      }
+      else if(contrast_type == EXP) {
+
+	Matrix dot_products, exp_dot_products, u_exp_dot_products;
+	la::MulTransAInit(X, W, &dot_products);
+	exp_dot_products.Init(n, d);
+	u_exp_dot_products.Init(n, d);
+	for(index_t i = 0; i < d; i++) {
+	  for(index_t j = 0; j < n; j++) {
+	    double dot = dot_products.get(j, i);
+	    double exp_dot_product = exp(- dot * dot / 2);
+	    exp_dot_products.set(j, i, exp_dot_product);
+	    u_exp_dot_products.set(j, i, dot * exp_dot_product);
+	  }
+	}
+
+	la::MulInit(X, u_exp_dot_products, &first_deriv_part);
+	la::Scale(1 / (double) n, &first_deriv_part);
+
+
+	for(index_t i = 0; i < d; i++) {
+	  Vector w;
+	  W.MakeColumnVector(i, &w);
+
+	  Vector dot_products_col_i, exp_dot_products_col_i;
+	  dot_products.MakeColumnVector(i, &dot_products_col_i);
+	  exp_dot_products.MakeColumnVector(i, &exp_dot_products_col_i);
+	  
+	  double second_deriv_scale_factor = 0;
+	  for(index_t j = 0; j < n; j++) {
+	    double dot = dot_products_col_i[j];
+	    second_deriv_scale_factor +=
+	      exp_dot_products_col_i[j] * (dot * dot - 1);
+	  }
+	  second_deriv_scale_factor /= (double) n;
+
+	  la::Scale(second_deriv_scale_factor, &w);
+	}
+      }
+      else if(contrast_type == KURTOSIS) {
+	
+	Matrix dot_products_cubed;
+	la::MulTransAInit(X, W, &dot_products_cubed);
+	for(index_t i = 0; i < d; i++) {
+	  for(index_t j = 0; j < n; j++) {
+	    dot_products_cubed.set(j, i, pow(dot_products_cubed.get(j, i), 3));
+	  }
+	}
+
+
+	la::MulInit(X, dot_products_cubed, &first_deriv_part);
+	la::Scale(1 / (double) n, &first_deriv_part);
+
+
+	la::Scale(-3, &W);
+
+      }
+      else {
+	printf("ERROR: invalid contrast function: contrast_type = %d\n",
+	       contrast_type);
+	exit(SUCCESS_FAIL);
+      }
+      
+
+      la::AddTo(first_deriv_part, &W);
+
+
+      Matrix temp;
+      temp.Copy(W);
+      Orthogonalize(temp, W);
+      
+      W_old.PrintDebug("W_old");
+      W.PrintDebug("W");
+      
+      // compare W to W_old using some method
+      
+      
+      Matrix W_delta_cov;
+      la::MulTransAInit(W, W_old, &W_delta_cov);
+      
+      double min_abs_diag = DBL_MAX;
+      for(index_t i = 0; i < d; i++) {
+	double current_diag = fabs(W_delta_cov.get(i, i));
+	if(current_diag < min_abs_diag) {
+	  min_abs_diag = current_diag;
+	}
+      }
+      
+      printf("min_abs_diag = %f\n", min_abs_diag);
+
+      if(1 - min_abs_diag < epsilon) {
+	converged = true;
+      }
+      
+      
+    }
+    
+    
+  }
+  
+  
 }
+
+
+
+
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
@@ -306,9 +528,10 @@ int main(int argc, char *argv[]) {
   post_whitening_W_transpose.Init(d, d);
   
 
-  printf("deflation ICA\n");
 
-  DeflationICA(X_whitened, EXP, tolerance, post_whitening_W_transpose);
+  //DeflationICA(X_whitened, KURTOSIS, tolerance, post_whitening_W_transpose);
+
+  SymmetricICA(X_whitened, KURTOSIS, tolerance, post_whitening_W_transpose);
   
   Matrix post_whitening_W;
   la::TransposeInit(post_whitening_W_transpose, &post_whitening_W);
@@ -322,18 +545,20 @@ int main(int argc, char *argv[]) {
 
   Matrix Y;
   la::MulInit(post_whitening_W, X_whitened, &Y);
-
-  SaveCorrectly("post_whitening_W.dat", post_whitening_W);  
-  SaveCorrectly("whitening.dat", whitening);
+      
+  //SaveCorrectly("post_whitening_W.dat", post_whitening_W);  
+  //SaveCorrectly("whitening.dat", whitening);
 
   SaveCorrectly("W.dat", W);
 
-  SaveCorrectly("X_centered.dat", X_centered);
+  //SaveCorrectly("X_centered.dat", X_centered);
   SaveCorrectly("X_whitened.dat", X_whitened);
   SaveCorrectly("Y.dat", Y);
   
 
-  //  fx_done();
+  //fx_done();
+
+
   
   return 0;
 }
