@@ -47,6 +47,7 @@
 #include "trilinos/include/AnasaziEpetraAdapter.hpp"
 #include "trilinos/include/AnasaziBlockKrylovSchurSolMgr.hpp"
 #include "trilinos/include/AztecOO.h"
+#include "trilinos/include/Ifpack_CrsIct.h"
 
 /* class SparseMatrix created by Nick
  * This is a sparse matrix wrapper for trilinos Epetra_CrsMatrix
@@ -228,6 +229,10 @@ class SparseMatrix {
   void LinSolve(Vector &b, Vector *x) {
 	  LinSolve(b, x, 1E-9, 1000);
 	}
+  void IncompleteCholesky(double level_fill,
+			                    double drop_tol,
+			                    SparseMatrix *U, 
+													SparseMatrix *D);
   	
 	// scales the matrix with a scalar;
 	void Scale(double scalar) {
@@ -285,6 +290,7 @@ class SparseMatrix {
 	Epetra_Map *map_;
   Teuchos::RCP<Epetra_CrsMatrix> matrix_;
   index_t *my_global_elements_;
+	void Init(const Epetra_CrsMatrix &other); 
   void Load(const std::vector<index_t> &rows, 
 			      const std::vector<index_t> &columns, 
 						const Vector &values);
