@@ -1,23 +1,22 @@
+function [ic_curves_pos, ic_coef_pos, h_Y_pos, pc_coef, pc_curves] = ...
+    funcica(t, s, myfd_data_train, p, basis_curves, myfdPar);
 % funcica() - functional ICA
-function [ic_curves_pos, ic_coef_pos, h_Y_pos] = funcica(t, s, data);
+% first call prelim_funcica
+% USAGE: [ic_curves_pos, ic_coef_pos, h_Y_pos] = funcica(t, s, data)
 
 
-p = 30; % hardcoded for now
-
-N = size(data,2);
 
 
-mybasis = create_bspline_basis([0 1], p, 4);
-basis_curves = eval_basis(t, mybasis);
-
-
-myfd_data = data2fd(data, t, mybasis);
-coef = getcoef(myfd_data);
-%data1 = basis_curves * coef(:,1);
-pca_results = pca_fd(myfd_data, p);
+data_train_coef = getcoef(myfd_data_train);
+pca_results = pca_fd(myfd_data_train, p, myfdPar);
+%pca_results = pca_fd(myfd_data_train, p);
+% plot_pca(pca_results);
 pc_coef = getcoef(pca_results.harmfd);
 pc_curves = basis_curves * pc_coef;
 pc_scores = pca_results.harmscr;
+
+figure(1); plot(t, pc_curves(:,1));
+figure(2); plot(t, pc_curves(:,2));
 
 
 
@@ -33,9 +32,11 @@ end
 sum_var = 0;
 for p_small = 1:p
   sum_var = sum_var + sum(pc_scores(:,p_small).^2);
-  if sum_var / total_sum_var > 0.999
+  disp(sprintf('i = %d, sum_var = %f', p_small, sum_var / total_sum_var));
+  if sum_var / total_sum_var > 0.99
     break
   end
+
 end
 
 p_small
@@ -44,7 +45,12 @@ p_small
 sub_pc_coef = pc_coef(:,1:p_small);
 E = pc_scores(:,1:p_small)';
 
+save E;
+
 [Y_pos,Y_neg,W_pos,W_neg] = find_opt_unmixing_matrix(E);
+
+save Y_pos;
+save W_pos;
 
 for i = 1:p_small
   h_E(i) = get_vasicek_entropy_estimate(E(i,:));
@@ -62,7 +68,7 @@ ic_curves_pos = basis_curves * ic_coef_pos;
 ic_curves_neg = basis_curves * ic_coef_neg;
 
 
-
+%{
 figure(1);
 clf;
 hold on;
@@ -70,6 +76,6 @@ plot(s, 'b');
 plot(sub_pc_curves, 'r');
 plot(ic_curves_pos, 'g');
 plot(ic_curves_neg, 'c');
-
+%}
 
 
