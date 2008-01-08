@@ -48,6 +48,15 @@ void SparseMatrix::Init(const index_t num_of_rows,
 	StartLoadingRows();
 }
 
+void SparseMatrix::Init(const Epetra_CrsMatrix &other) {
+  issymmetric_ = false;
+	matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(other));
+	map_ = new RowMap(matrix_->RowMap());
+	dimension_ = other.NumGlobalRows();
+	num_of_rows_=dimension_;
+	num_of_columns_=dimension_;
+}
+
 void SparseMatrix::Init(index_t num_of_rows,
 	                      index_t num_of_columns,
 												index_t *nnz_per_row) {
@@ -445,5 +454,25 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   // and store them to a std::vector<double>
   std::vector<double> norm_res(num_of_eigvalues);
   MVT::MvNorm(res, &norm_res);
+}
+
+void SparseMatrix::IncompleteCholesky(double level_fill,
+		                                  double drop_tol,
+																			SparseMatrix *u, 
+																			Vector       *d,
+																			double *condest) {
+  Ifpack_CrsIct *ict=NULL;
+  ict = new Ifpack_CrsIct(*matrix_, drop_tol, level_fill);
+  // Init values from A
+  ict->InitValues(*matrix_);
+  // compute the factors
+  if (unlikely(ict->Factor()<0)) {
+		NONFATAL("Cholesky factorization failed!\n");
+	};
+  // and now estimate the condition number
+  ict->Condest(false, *condest);
+	u->Init(ict->U());
+	d->Init(ict->D());
+	ict->D().ExtractCopy(d->ptr());
 }
 
