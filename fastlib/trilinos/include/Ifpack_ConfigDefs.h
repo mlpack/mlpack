@@ -65,7 +65,7 @@
 #undef VERSION
 #endif
 
-#include <Ifpack_config.h>
+#include "Ifpack_config.h"
 
 #ifdef PACKAGE
 #undef PACKAGE
