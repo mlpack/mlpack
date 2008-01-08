@@ -15,15 +15,15 @@ pc_coef = getcoef(pca_results.harmfd);
 pc_curves = basis_curves * pc_coef;
 pc_scores = pca_results.harmscr;
 
-figure(1); plot(t, pc_curves(:,1));
-figure(2); plot(t, pc_curves(:,2));
+%figure(1); plot(t, pc_curves(:,1));
+%figure(2); plot(t, pc_curves(:,2));
 
 
 
 
 % p_small should be automatically selected according to some
 % reconstruction error threshold
-
+%{
 total_sum_var = 0;
 for i = 1:p
   total_sum_var = total_sum_var + sum(pc_scores(:,i).^2);
@@ -33,11 +33,12 @@ sum_var = 0;
 for p_small = 1:p
   sum_var = sum_var + sum(pc_scores(:,p_small).^2);
   disp(sprintf('i = %d, sum_var = %f', p_small, sum_var / total_sum_var));
-  if sum_var / total_sum_var > 0.99
+  if sum_var / total_sum_var > 0.9
     break
   end
-
 end
+%}
+p_small = 2;
 
 p_small
 
