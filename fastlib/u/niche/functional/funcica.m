@@ -1,4 +1,4 @@
-function [ic_curves_pos, ic_coef_pos, h_Y_pos, pc_coef, pc_curves] = ...
+function [ic_curves_pos, ic_coef_pos, h_Y_pos, pc_coef, pc_curves, mean_coef, W_pos] = ...
     funcica(t, s, myfd_data_train, p, basis_curves, myfdPar);
 % funcica() - functional ICA
 % first call prelim_funcica
@@ -14,6 +14,7 @@ pca_results = pca_fd(myfd_data_train, p, myfdPar);
 pc_coef = getcoef(pca_results.harmfd);
 pc_curves = basis_curves * pc_coef;
 pc_scores = pca_results.harmscr;
+mean_coef = getcoef(pca_results.meanfd);
 
 %figure(1); plot(t, pc_curves(:,1));
 %figure(2); plot(t, pc_curves(:,2));
@@ -46,12 +47,19 @@ p_small
 sub_pc_coef = pc_coef(:,1:p_small);
 E = pc_scores(:,1:p_small)';
 
-save E;
+%{
+inv_pc_coef = inv(pc_coef);
+calc_pc_scores = ...
+    inv_pc_coef * (data_train_coef - ...
+		   repmat(getcoef(pca_results.meanfd), 1, ...
+			  size(data_train_coef, 2)));
+
+disp(sprintf('the difference is %f', maxall(calc_pc_scores' - pc_scores)));
+%}
 
 [Y_pos,Y_neg,W_pos,W_neg] = find_opt_unmixing_matrix(E);
 
-save Y_pos;
-save W_pos;
+%save('YWE.mat', 'E', 'Y_pos', 'W_pos');
 
 for i = 1:p_small
   h_E(i) = get_vasicek_entropy_estimate(E(i,:));
