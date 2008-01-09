@@ -6,7 +6,6 @@ basis_curves = eval_basis(t, mybasis);
 
 
 myfd_data = data2fd(data, t, mybasis);
-data_coef = getcoef(myfd_data);
 
 cut_fraction = .5;
 
@@ -15,6 +14,11 @@ cut = round(cut_fraction * N);
 myfd_data_coef = getcoef(myfd_data);
 
 num_tests = 30;
+
+
+%indices = 1:200:1000;
+%data = data(indices,:);
+
 
 
 
@@ -60,30 +64,39 @@ for j = 1:5
     myfd_data_test = ...
 	fd(myfd_data_test_coef, getbasis(myfd_data), getnames(myfd_data));
     
-    [ic_curves_pos, ic_coef_pos, h_Y_pos, pc_coef, pc_curves] = ...
+    [ic_curves_pos, ic_coef_pos, h_Y_pos, pc_coef, pc_curves, mean_coef, W] = ...
 	funcica(t, s, myfd_data_train, p, basis_curves, myfdPar);
     
     inv_pc_coef = inv(pc_coef);
     
-    data_test_coef = getcoef(myfd_data_test);
+    train_pc_score = inv_pc_coef * (myfd_data_train_coef - ...
+				    repmat(mean_coef, 1, cut));
     
-    test_score = inv_pc_coef * data_test_coef;
+    test_pc_score = inv_pc_coef * (myfd_data_test_coef - ...
+				   repmat(mean_coef, 1, N - cut));
     
-    test_score_normalized = zeros(size(test_score));
-    test_score_normalized(1,:) = test_score(1,:) / std(test_score(1,:));
-    test_score_normalized(2,:) = test_score(2,:) / std(test_score(2,:));
+    train_sub_pc_score = train_pc_score(1:2,:);
+    test_sub_pc_score = test_pc_score(1:2,:);
+
+    train_ic_score = W * train_sub_pc_score;
+    test_ic_score = W * test_sub_pc_score;
+    
    
-    entropies1(i) = ...
-	get_vasicek_entropy_estimate(test_score_normalized(1,:));
-    entropies2(i) = ...
-	get_vasicek_entropy_estimate(test_score_normalized(2,:));
     
-    joint_entropies(i) = vasicek_sum(test_score_normalized(1:2,:));
+    entropies1(i) = ...
+	get_vasicek_entropy_estimate_std(test_ic_score(1,:));
+    entropies2(i) = ...
+	get_vasicek_entropy_estimate_std(test_ic_score(2,:));
+    
+    joint_entropies(i) = entropies1(i) + entropies2(i);
+    
     
   end
+  
   
   lambda_set(j) = lambda;
   entropies1_set(:,j) = entropies1;
   entropies2_set(:,j) = entropies2;
   joint_entropies_set(:,j) = joint_entropies;
+  
 end
