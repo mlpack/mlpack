@@ -20,31 +20,33 @@
 #define KERNEL_PCA_H_
 
 #include <string>
-#include <strdio.h>
+#include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
 #include "fastlib/fastlib.h"
-#include "fastlib/la/matrix.h"
-#include "u/nvasil/binary_dataset.h"
+#include "la/matrix.h"
+#include "u/nvasil/tree/binary_kd_tree_mmapmm.h"
+#include "u/nvasil/dataset/binary_dataset.h"
 #include "sparse/sparse_matrix.h"
 
-template<typename TREE, bool diagnostic>
+
 class KernelPCA {
-	typedef typename TREE::Precision_t   Precision_t;
-	typedef TREE                         Tree_t;
+ public:
+	typedef BinaryKdTreeMMAPMMKnnNode_t Tree_t;
+	typedef Tree_t::Precision_t   Precision_t;
   class GaussianKernel {
 	 public:
 	  void set(double bandwidth) {
 		  bandwidth_ = bandwidth;
 		}
 		double operator()(double distance) {
-		  return exp(-distance/bandwidth);
+		  return exp(-distance/bandwidth_);
 		}
 	 private:
 		double bandwidth_;
 	};	
- public:
-	void Init();
+	void Init(std::string data_file, 
+		        std::string index_file);
   void Destruct();
 	void ComputeNeighborhoods(index_t knn);
   void LoadAffinityMatrix();
@@ -55,7 +57,7 @@ class KernelPCA {
 															 std::vector<double> *eigen_values);
 	void ComputeIsomap(index_t num_of_eigenvalues);
 	void ComputeLLE(index_t num_of_eigenvalues);
-	template<KERNEL>
+	template<typename KERNEL>
 	void ComputeDiffusionMaps(KERNEL kernel, index_t num_of_eigenvalues);
 	void ComputeLaplacialnEigenmaps(index_t);
 	void ComputeSpectralRegression(std::string label_file);
@@ -69,7 +71,7 @@ class KernelPCA {
  private:
   Tree_t tree_;
   SparseMatrix kernel_matrix_;	
-  SparseMatrix affinity_marix_;
+  SparseMatrix affinity_matrix_;
 	BinaryDataset<Precision_t> data_; 
 };
 
