@@ -2,7 +2,6 @@
 #include "fastlib/fastlib.h"
 
 #include "base/deprecated.h"
-using namespace std;
 
 #include <string.h>
 #include <sys/time.h>
