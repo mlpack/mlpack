@@ -45,7 +45,7 @@ DistributedCache::~DistributedCache() {
   
 #ifdef DEBUG
   for (index_t i = 0; i < blocks_.size(); i++) {
-    DEBUG_SAME_INT(blocks_[i].locks, 0);
+    DEBUG_SAME_SIZE(blocks_[i].locks, 0);
   }
 #endif
 }

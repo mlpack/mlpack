@@ -35,7 +35,7 @@ namespace la {
    * Finds the Euclidean distance squared between two vectors.
    */
   inline double DistanceSqEuclidean(const Vector& x, const Vector& y) {
-    DEBUG_SAME_INT(x.length(), y.length());
+    DEBUG_SAME_SIZE(x.length(), y.length());
     return DistanceSqEuclidean(x.length(), x.ptr(), y.ptr());
   }
   /**
