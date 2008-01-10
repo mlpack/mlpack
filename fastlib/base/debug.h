@@ -239,9 +239,9 @@ const T *poison_ptr(T *&x) {
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
  */
-#define DEBUG_SAME_INT(x, y) \
+#define DEBUG_SAME_SIZE(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
-        "DEBUG_SAME_INT failed: %s = %"L64"d not equal to %s = %"L64"d\n", \
+        "DEBUG_SAME_SIZE failed: %s = %"L64"d not equal to %s = %"L64"d\n", \
         #x, STATIC_CAST(int64, x), #y, STATIC_CAST(int64, y))
 
 #endif /* BASE_DEBUG_H */

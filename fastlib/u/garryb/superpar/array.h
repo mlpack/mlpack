@@ -40,7 +40,7 @@ class ArrayInCore {
   ~ArrayInCore() {
     delete[] ptr_;
     DEBUG_ONLY(ptr_ = BIG_BAD_NUMBER);
-    DEBUG_SAME_INT(live_, 0);
+    DEBUG_SAME_SIZE(live_, 0);
   }
   
   void Init(index_t size_in) {

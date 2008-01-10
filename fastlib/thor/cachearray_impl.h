@@ -243,7 +243,7 @@ void CacheArray<T>::Flush() {
         cache_->StopRead(blockid);
       }
 
-      DEBUG_SAME_INT(metadata->lock_count, 0);
+      DEBUG_SAME_SIZE(metadata->lock_count, 0);
       metadata->data = NULL;
       fifo_[i] = -1;
     }

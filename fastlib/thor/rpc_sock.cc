@@ -973,7 +973,7 @@ bool SockConnection::TryRead() {
       read_buffer_pos_ += bytes;
       
       if (read_buffer_pos_ == sizeof(Header)) {
-        DEBUG_SAME_INT(read_header_.magic, MAGIC);
+        DEBUG_SAME_SIZE(read_header_.magic, MAGIC);
         // When we read in a message, we don't need to allocate space for the
         // read_header_ (since we have already read it successfully).
         read_message_ = new Message();
