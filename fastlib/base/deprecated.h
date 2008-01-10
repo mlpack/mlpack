@@ -35,10 +35,6 @@ typedef trial_t success_t;
     VERBOSE_MSG(min_verbosity, msg_params)
 #define DEBUG_GOT_HERE(min_verbosity) \
     VERBOSE_GOT_HERE(min_verbosity)
-#define DEBUG_BOUNDS(x, bound) DEBUG_ASSERT_INDEX_BOUNDS(x, bound)
-#define DEBUG_SAME_INT(x, y) DEBUG_ASSERT_INDICES_EQUAL(x, y)
-#define DEBUG_CHECK_BOUNDS(x, bound) DEBUG_ASSERT_INDEX_BOUNDS(x, bound)
-#define DEBUG_CHECK_EQUAL(x, y) DEBUG_ASSERT_INDICES_EQUAL(x, y)
 
 #ifdef __cplusplus
 /* cc.h */

@@ -206,8 +206,8 @@ class Vector {
    * @param dest an UNINITIALIZED vector to use
    */
   void MakeSubvector(index_t start_index, index_t len, Vector* dest) {
-    DEBUG_ASSERT_INDEX_BOUNDS(start_index, length_);
-    DEBUG_ASSERT_INDEX_BOUNDS(start_index + len, length_ + 1);
+    DEBUG_BOUNDS(start_index, length_);
+    DEBUG_BOUNDS(start_index + len, length_ + 1);
     
     dest->Alias(ptr_ + start_index, len);
   }
@@ -283,7 +283,7 @@ class Vector {
    * Gets the i'th element of this vector.
    */
   double operator [] (index_t i) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(i, length_);
+    DEBUG_BOUNDS(i, length_);
     return ptr_[i];
   }
   
@@ -291,7 +291,7 @@ class Vector {
    * Gets a mutable reference to the i'th element of this vector.
    */
   double &operator [] (index_t i) {
-    DEBUG_ASSERT_INDEX_BOUNDS(i, length_);
+    DEBUG_BOUNDS(i, length_);
     return ptr_[i];
   }
   
@@ -309,7 +309,7 @@ class Vector {
    * @endcode
    */
   double get(index_t i) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(i, length_);
+    DEBUG_BOUNDS(i, length_);
     return ptr_[i];
   }
   
@@ -579,8 +579,8 @@ class Matrix {
    */
   void MakeColumnSlice(index_t start_col, index_t n_cols_new,
       Matrix *dest) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(start_col, n_cols_);
-    DEBUG_ASSERT_INDEX_BOUNDS(start_col + n_cols_new, n_cols_ + 1);
+    DEBUG_BOUNDS(start_col, n_cols_);
+    DEBUG_BOUNDS(start_col + n_cols_new, n_cols_ + 1);
     dest->Alias(ptr_ + start_col * n_rows_,
         n_rows_, n_cols_new);
   }
@@ -619,7 +619,7 @@ class Matrix {
    *        initialized as an alias to the particular column
    */
   void MakeColumnVector(index_t col, Vector *dest) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(col, n_cols_);
+    DEBUG_BOUNDS(col, n_cols_);
     dest->Alias(n_rows_ * col + ptr_, n_rows_);
   }
   
@@ -634,9 +634,9 @@ class Matrix {
    */
   void MakeColumnSubvector(index_t col, index_t start_row, index_t n_rows_new,
       Vector *dest) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(col, n_cols_);
-    DEBUG_ASSERT_INDEX_BOUNDS(start_row, n_rows_);
-    DEBUG_ASSERT_INDEX_BOUNDS(start_row + n_rows_new, n_rows_ + 1);
+    DEBUG_BOUNDS(col, n_cols_);
+    DEBUG_BOUNDS(start_row, n_rows_);
+    DEBUG_BOUNDS(start_row + n_rows_new, n_rows_ + 1);
     dest->Alias(n_rows_ * col + start_row + ptr_, n_rows_new);
   }
   
@@ -649,7 +649,7 @@ class Matrix {
    *         par ticular column
    */
   double *GetColumnPtr(index_t col) {
-    DEBUG_ASSERT_INDEX_BOUNDS(col, n_cols_);
+    DEBUG_BOUNDS(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
   
@@ -662,7 +662,7 @@ class Matrix {
    *         particular column
    */
   const double *GetColumnPtr(index_t col) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(col, n_cols_);
+    DEBUG_BOUNDS(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
   
@@ -749,8 +749,8 @@ class Matrix {
    * @param c the column number
    */
   double get(index_t r, index_t c) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(r, n_rows_);
-    DEBUG_ASSERT_INDEX_BOUNDS(c, n_cols_);
+    DEBUG_BOUNDS(r, n_rows_);
+    DEBUG_BOUNDS(c, n_cols_);
     return ptr_[c * n_rows_ + r];
   }
  
@@ -762,8 +762,8 @@ class Matrix {
    * @param v the value to set
    */ 
   void set(index_t r, index_t c, double v) {
-    DEBUG_ASSERT_INDEX_BOUNDS(r, n_rows_);
-    DEBUG_ASSERT_INDEX_BOUNDS(c, n_cols_);
+    DEBUG_BOUNDS(r, n_rows_);
+    DEBUG_BOUNDS(c, n_cols_);
     ptr_[c * n_rows_ + r] = v;
   }
   
@@ -775,8 +775,8 @@ class Matrix {
    * subsections.
    */
   double &ref(index_t r, index_t c) {
-    DEBUG_ASSERT_INDEX_BOUNDS(r, n_rows_);
-    DEBUG_ASSERT_INDEX_BOUNDS(c, n_cols_);
+    DEBUG_BOUNDS(r, n_rows_);
+    DEBUG_BOUNDS(c, n_cols_);
     return ptr_[c * n_rows_ + r];
   }
   
@@ -844,17 +844,17 @@ class SmallVector : public Vector {
   }
   
   double operator [] (index_t i) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(i, t_length);
+    DEBUG_BOUNDS(i, t_length);
     return array_[i];
   }
   
   double &operator [] (index_t i) {
-    DEBUG_ASSERT_INDEX_BOUNDS(i, t_length);
+    DEBUG_BOUNDS(i, t_length);
     return array_[i];
   }
   
   double get(index_t i) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(i, t_length);
+    DEBUG_BOUNDS(i, t_length);
     return array_[i];
   }
 };
@@ -883,20 +883,20 @@ class SmallMatrix : public Matrix {
   }
 
   double get(index_t r, index_t c) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(r, t_rows);
-    DEBUG_ASSERT_INDEX_BOUNDS(c, t_cols);
+    DEBUG_BOUNDS(r, t_rows);
+    DEBUG_BOUNDS(c, t_cols);
     return array_[c][r];
   }
 
   void set(index_t r, index_t c, double v) {
-    DEBUG_ASSERT_INDEX_BOUNDS(r, t_rows);
-    DEBUG_ASSERT_INDEX_BOUNDS(c, t_cols);
+    DEBUG_BOUNDS(r, t_rows);
+    DEBUG_BOUNDS(c, t_cols);
     array_[c][r] = v;
   }
 
   double &ref(index_t r, index_t c) {
-    DEBUG_ASSERT_INDEX_BOUNDS(r, t_rows);
-    DEBUG_ASSERT_INDEX_BOUNDS(c, t_cols);
+    DEBUG_BOUNDS(r, t_rows);
+    DEBUG_BOUNDS(c, t_cols);
     return array_[c][r];
   }
 
@@ -916,12 +916,12 @@ class SmallMatrix : public Matrix {
   }
 
   double *GetColumnPtr(index_t col) {
-    DEBUG_ASSERT_INDEX_BOUNDS(col, t_cols);
+    DEBUG_BOUNDS(col, t_cols);
     return array_[col];
   }
 
   const double *GetColumnPtr(index_t col) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(col, t_cols);
+    DEBUG_BOUNDS(col, t_cols);
     return array_[col];
   }
 };

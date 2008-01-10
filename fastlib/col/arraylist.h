@@ -440,7 +440,7 @@ class ArrayList {
    * Gets a constant element out of a constant ArrayList.
    */
   const Element& operator[] (index_t i) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(i, size_);
+    DEBUG_BOUNDS(i, size_);
     return ptr_[i];
   }
 
@@ -448,7 +448,7 @@ class ArrayList {
    * Gets a mutable element out of an ArrayList.
    */
   Element& operator[] (index_t i) {
-    DEBUG_ASSERT_INDEX_BOUNDS(i, size_);
+    DEBUG_BOUNDS(i, size_);
     return ptr_[i];
   }
 

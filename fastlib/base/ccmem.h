@@ -24,10 +24,10 @@
 
 /**
  * Wrappers and tools for low-level memory management, including:
- * - debuggable memory allocation wrappers
- * - poisoning, zeroing, copying, and swapping of memory
- * - construction and destruction of allocated object arrays
- * - absolute pointer arithmetic functions
+ * @li debuggable memory allocation wrappers
+ * @li poisoning, zeroing, copying, and swapping of memory
+ * @li construction and destruction of allocated object arrays
+ * @li absolute pointer arithmetic functions
  */
 namespace mem {
   /** Fills memory with BIG_BAD_NUMBER, measured in bytes. */
@@ -52,7 +52,7 @@ namespace mem {
   inline T *AllocBytes(size_t bytes) {
 #ifdef SCALE_NORMAL
     /* Sanity check for small-scale problems. */
-    DEBUG_ASSERT_INDEX_BOUNDS(bytes, BIG_BAD_NUMBER);
+    DEBUG_BOUNDS(bytes, BIG_BAD_NUMBER);
 #endif
     return DebugPoisonBytes(reinterpret_cast<T *>(::malloc(bytes)), bytes);
   }
@@ -61,7 +61,7 @@ namespace mem {
   inline T *Alloc(size_t elems = 1) {
 #ifdef SCALE_NORMAL
     /* Sanity check for small-scale problems. */
-    DEBUG_ASSERT_INDEX_BOUNDS(elems, BIG_BAD_NUMBER);
+    DEBUG_BOUNDS(elems, BIG_BAD_NUMBER);
 #endif
     return AllocBytes<T>(elems * sizeof(T));
   }

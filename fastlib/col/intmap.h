@@ -60,7 +60,7 @@ class DenseIntMap {
    * If you are just probing, beware that this might actually grow the array!
    */
   Value& operator [] (index_t index) {
-    DEBUG_ASSERT_INDEX_BOUNDS(index, BIG_BAD_NUMBER);
+    DEBUG_BOUNDS(index, BIG_BAD_NUMBER);
     if (unlikely(index >= size_)) {
       index_t old_size = size_;
       size_ = std::max(size_ * 2, index + 1);
@@ -81,7 +81,7 @@ class DenseIntMap {
    * Accesses an element, never growing the internal representation.
    */
   const Value& get(index_t index) const {
-    DEBUG_ASSERT_INDEX_BOUNDS(index, BIG_BAD_NUMBER);
+    DEBUG_BOUNDS(index, BIG_BAD_NUMBER);
     if (likely(index < size_)) {
       return ptr_[index];
     } else {

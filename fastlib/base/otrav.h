@@ -382,7 +382,7 @@ namespace ot {
   void PointerFreeze(const T& live_object, char *block) {
     ot__private::ZOTPointerFreezer freezer;
     freezer.Doit(live_object, block);
-    DEBUG_ASSERT_INDICES_EQUAL(freezer.size(), ot::PointerFrozenSize(live_object));
+    DEBUG_SAME_INT(freezer.size(), ot::PointerFrozenSize(live_object));
   }
 
   /**

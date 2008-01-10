@@ -384,7 +384,7 @@ class CacheArray {
  private:
   /** Does a bounds check on an element ID. */
   void BoundsCheck_(index_t element_id) {
-    DEBUG_ASSERT_INDEX_BOUNDS(element_id - begin_, end_ - begin_);
+    DEBUG_BOUNDS(element_id - begin_, end_ - begin_);
   }
 
   /** Handles a miss from the internal FIFO. */
