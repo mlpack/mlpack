@@ -1,5 +1,5 @@
 librule(name="sparse",
-		    headers=["sparse_matrix.h"],
+		    headers=["sparse_matrix.h", "sparse_matrix_impl.h"],
 #		            ]
 deplibs=["trilinos:trilinos", "base:base"]
        );

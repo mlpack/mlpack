@@ -51,7 +51,7 @@ void SparseMatrix::Init(const index_t num_of_rows,
 void SparseMatrix::Init(const Epetra_CrsMatrix &other) {
   issymmetric_ = false;
 	matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(other));
-	map_ = new RowMap(matrix_->RowMap());
+	map_ = new Epetra_Map(matrix_->RowMap());
 	dimension_ = other.NumGlobalRows();
 	num_of_rows_=dimension_;
 	num_of_columns_=dimension_;
@@ -183,6 +183,16 @@ void SparseMatrix::Copy(const SparseMatrix &other) {
 	  matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(*(other.matrix_.get())));
 	}
 }
+
+void SparseMatrix::SetDiagonal(const Vector &vector) { 
+  if (unlikely(vector.length()!=dimension_)) {
+	  FATAL("Vector should have the same dimension with the matrix!\n");
+	}
+	for(index_t i=0; i<dimension_; i++) {
+	  set(i,i, vector[i]);
+	}
+} 
+
 void SparseMatrix::StartLoadingRows() {
    my_global_elements_ = map_->MyGlobalElements();
 }
@@ -291,10 +301,12 @@ void SparseMatrix::set(index_t r, index_t c, double v) {
     matrix_->ReplaceGlobalValues(my_global_elements_[r], 1, &v, &c); 
 	}
 }
+
 void SparseMatrix::MakeSymmetric() {
 	index_t num_of_entries;
 	double  *values;
 	index_t *indices;
+	my_global_elements_ = map_->MyGlobalElements();
   for(index_t i=0; i<dimension_; i++) {
     index_t global_row = my_global_elements_[i];
     matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
@@ -375,15 +387,14 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   // SR - target the smallest real 
   // LI - target the largest imaginary
   // SI - target the smallest imaginary
-
   // Create the parameter list for the eigensolver
   Teuchos::ParameterList my_pl;
   my_pl.set( "Verbosity", verbosity);
   my_pl.set( "Which", eigtype);
   my_pl.set( "Block Size", block_size);
   my_pl.set( "Num Blocks", 20);
-  my_pl.set( "Maximum Restarts", 100);
-  my_pl.set( "Convergence Tolerance", 1.0e-8);
+  my_pl.set( "Maximum Restarts", 200);
+  my_pl.set( "Convergence Tolerance", 1.0e-7);
 
   // Create the Block Krylov Schur solver
   // This takes as inputs the eigenvalue problem and the solver parameters
@@ -397,7 +408,7 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   switch (solver_return) {
     // UNCONVERGED
     case Anasazi::Unconverged: 
-      NONFATAL("Anasazi::BlockKrylovSchur::solve() did not converge!\n");  
+      FATAL("Anasazi::BlockKrylovSchur::solve() did not converge!\n");  
 			return ;    
     // CONVERGED
     case Anasazi::Converged:
@@ -456,7 +467,7 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   MVT::MvNorm(res, &norm_res);
 }
 
-void SparseMatrix::IncompleteCholesky(double level_fill,
+void SparseMatrix::IncompleteCholesky(index_t level_fill,
 		                                  double drop_tol,
 																			SparseMatrix *u, 
 																			Vector       *d,
@@ -472,7 +483,6 @@ void SparseMatrix::IncompleteCholesky(double level_fill,
   // and now estimate the condition number
   ict->Condest(false, *condest);
 	u->Init(ict->U());
-	d->Init(ict->D());
 	ict->D().ExtractCopy(d->ptr());
 }
 

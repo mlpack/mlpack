@@ -121,6 +121,10 @@ class SparseMatrix {
 
 	// Initialize from a text file in the following format
 	// row column value \n
+	// WARNING !!!!!!!
+	// the text file must be sorted according to the rows
+	// meaning that the rows should be in increasing order
+	// you can do that easily in unix with the sort -n command
 	void Init(std::string textfile);
 	// Initialize the diagonal 
 	void InitDiagonal(const Vector &vec); 
@@ -178,6 +182,24 @@ class SparseMatrix {
 	index_t get_nnz() {
 	 return matrix_->NumGlobalNonzeros();
   }
+	// Apply a function on every non-zero element, very usefull for kernels
+	// If you have entered a zero element then it will also be applied on it 
+	// as well
+	template<typename FUNC>
+	void ApplyFunction(FUNC &function){
+    double *values;
+	  index_t *indices;
+	  index_t num_of_entries;
+    my_global_elements_ = map_->MyGlobalElements();
+	  for(index_t i=0; i<num_of_rows_; i++) {
+	    index_t global_row = my_global_elements_[i];
+      matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+      for(index_t j=0; j<num_of_entries; j++) {
+	      values[j]=function(values[j]);
+	    }
+    }
+  }
+	
 	// Computes the eignvalues with the Krylov Method
 	void Eig(index_t num_of_eigvalues, // number of eigenvalues to compute
 			     std::string eigtype, // Choose which eigenvalues to compute
@@ -229,11 +251,11 @@ class SparseMatrix {
   void LinSolve(Vector &b, Vector *x) {
 	  LinSolve(b, x, 1E-9, 1000);
 	}
-  void IncompleteCholesky(double level_fill,
-			                    double drop_tol,
-			                    SparseMatrix *U, 
-													SparseMatrix *D);
-  	
+  void IncompleteCholesky(index_t level_fill,
+		                      double drop_tol,
+			 									  SparseMatrix *u, 
+													Vector       *d,
+													double *condest);   	
 	// scales the matrix with a scalar;
 	void Scale(double scalar) {
 	  matrix_->Scale(scalar);
@@ -552,5 +574,5 @@ class Sparsem {
 	  }
 	}
 }; 
-#include "u/nvasil/sparse_matrix/sparse_matrix_impl.h"
+#include "sparse/sparse_matrix_impl.h"
 #endif
