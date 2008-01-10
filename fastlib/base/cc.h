@@ -12,6 +12,11 @@
 #include <algorithm>
 #include <limits>
 
+/** Extract the highly useful min function from the STL. */
+using std::min;
+/** Extract the highly useful max function from the STL. */
+using std::max;
+
 /** NaN value for doubles; check with isnan, not ==. */
 extern const double DBL_NAN;
 /** NaN value for floats; check with isnanf, not ==. */

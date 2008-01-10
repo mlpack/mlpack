@@ -148,17 +148,17 @@ void DiskBlockDevice::Init(
 
 void DiskBlockDevice::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
-  DEBUG_ASSERT_INDEX_BOUNDS(blockid, n_blocks_);
-  DEBUG_ASSERT_INDEX_BOUNDS(end, n_block_bytes_ + 1);
-  DEBUG_ASSERT_INDEX_BOUNDS(begin, end + 1);
+  DEBUG_BOUNDS(blockid, n_blocks_);
+  DEBUG_BOUNDS(end, n_block_bytes_ + 1);
+  DEBUG_BOUNDS(begin, end + 1);
   file_.Read(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
 }
 
 void DiskBlockDevice::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *data) {
-  DEBUG_ASSERT_INDEX_BOUNDS(blockid, n_blocks_);
-  DEBUG_ASSERT_INDEX_BOUNDS(end, n_block_bytes_ + 1);
-  DEBUG_ASSERT_INDEX_BOUNDS(begin, end + 1);
+  DEBUG_BOUNDS(blockid, n_blocks_);
+  DEBUG_BOUNDS(end, n_block_bytes_ + 1);
+  DEBUG_BOUNDS(begin, end + 1);
   file_.Write(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
 }
 

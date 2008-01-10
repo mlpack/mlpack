@@ -224,13 +224,13 @@ const T *poison_ptr(T *&x) {
  * @param x the index value to test
  * @param bound the upper bound for x; 0 is the implicit lower bound
  */
-#define DEBUG_ASSERT_INDEX_BOUNDS(x, bound) \
+#define DEBUG_BOUNDS(x, bound) \
     DEBUG_ASSERT_MSG(STATIC_CAST(uint64, x) < STATIC_CAST(uint64, bound), \
-        "INDEX_BOUNDS failed: %s = %"LI"d not in [0, %s = %"LI"d)\n", \
-        #x, STATIC_CAST(index_t, x), #bound, STATIC_CAST(index_t, bound))
+        "DEBUG_BOUNDS failed: %s = %"L64"d not in [0, %s = %"L64"d)\n", \
+        #x, STATIC_CAST(int64, x), #bound, STATIC_CAST(int64, bound))
 
 /**
- * Asserts that two indices are the same.
+ * Asserts that two integers are the same.
  *
  * Expressions for x and y are run a second time when reporting an
  * error (and not at all if not in debug mode) and thus should not
@@ -239,9 +239,9 @@ const T *poison_ptr(T *&x) {
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
  */
-#define DEBUG_ASSERT_INDICES_EQUAL(x, y) \
+#define DEBUG_SAME_INT(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
-        "INDICES_EQUAL failed: %s = %"LI"d not equal to %s = %"LI"d\n", \
-        #x, STATIC_CAST(index_t, x), #y, STATIC_CAST(index_t, y))
+        "DEBUG_SAME_INT failed: %s = %"L64"d not equal to %s = %"L64"d\n", \
+        #x, STATIC_CAST(int64, x), #y, STATIC_CAST(int64, y))
 
 #endif /* BASE_DEBUG_H */

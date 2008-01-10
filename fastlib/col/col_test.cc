@@ -145,20 +145,20 @@ void TestRangeSet() {
   set.Union(1, 4);
   set.Union(10, 16);
   set.Union(4, 10);
-  DEBUG_ASSERT_INDICES_EQUAL(set.size(), 1);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges()[0].begin, 1);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges()[0].end, 16);
+  DEBUG_SAME_INT(set.size(), 1);
+  DEBUG_SAME_INT(set.ranges()[0].begin, 1);
+  DEBUG_SAME_INT(set.ranges()[0].end, 16);
   
   set.Reset();
-  DEBUG_ASSERT_INDICES_EQUAL(set.size(), 0);
+  DEBUG_SAME_INT(set.size(), 0);
   set.Union(3, 7);
   set.Union(50, 100);
   set.Union(4, 8);
-  DEBUG_ASSERT_INDICES_EQUAL(set.size(), 2);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges()[0].begin, 3);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges()[0].end, 8);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges()[1].begin, 50);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges()[1].end, 100);
+  DEBUG_SAME_INT(set.size(), 2);
+  DEBUG_SAME_INT(set.ranges()[0].begin, 3);
+  DEBUG_SAME_INT(set.ranges()[0].end, 8);
+  DEBUG_SAME_INT(set.ranges()[1].begin, 50);
+  DEBUG_SAME_INT(set.ranges()[1].end, 100);
   
   set.Reset();
   set.Union(1, 5);
@@ -171,29 +171,29 @@ void TestRangeSet() {
   set.Union(18, 19);
   set.Union(42, 48);
   set.Union(5, 6);
-  DEBUG_ASSERT_INDICES_EQUAL(set.size(), 1);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges()[0].begin, 1);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges()[0].end, 79);
+  DEBUG_SAME_INT(set.size(), 1);
+  DEBUG_SAME_INT(set.ranges()[0].begin, 1);
+  DEBUG_SAME_INT(set.ranges()[0].end, 79);
   set.Union(-55, -52);
   set.Union(500, 600);
   set.Union(800, 900);
   set.Union(550, 801);
   set.Union(-400, -200);
   set.Union(6, 81);
-  DEBUG_ASSERT_INDICES_EQUAL(set.ranges().size(), 4);
-  DEBUG_ASSERT_INDICES_EQUAL(set[0].begin, -400);
-  DEBUG_ASSERT_INDICES_EQUAL(set[0].end, -200);
-  DEBUG_ASSERT_INDICES_EQUAL(set[1].begin, -55);
-  DEBUG_ASSERT_INDICES_EQUAL(set[1].end, -52);
-  DEBUG_ASSERT_INDICES_EQUAL(set[2].begin, 1);
-  DEBUG_ASSERT_INDICES_EQUAL(set[2].end, 81);
-  DEBUG_ASSERT_INDICES_EQUAL(set[3].begin, 500);
-  DEBUG_ASSERT_INDICES_EQUAL(set[3].end, 900);
+  DEBUG_SAME_INT(set.ranges().size(), 4);
+  DEBUG_SAME_INT(set[0].begin, -400);
+  DEBUG_SAME_INT(set[0].end, -200);
+  DEBUG_SAME_INT(set[1].begin, -55);
+  DEBUG_SAME_INT(set[1].end, -52);
+  DEBUG_SAME_INT(set[2].begin, 1);
+  DEBUG_SAME_INT(set[2].end, 81);
+  DEBUG_SAME_INT(set[3].begin, 500);
+  DEBUG_SAME_INT(set[3].end, 900);
   set.Reset();
   set.Union(3, 5);
   set.Union(3, 5);
   set.Union(3, 5);
-  DEBUG_ASSERT_INDICES_EQUAL(set.size(), 1);
+  DEBUG_SAME_INT(set.size(), 1);
 }
 
 void TestQueue() {
@@ -206,17 +206,17 @@ void TestQueue() {
   q.Add(5);
   *q.Add() = 9;
   DEBUG_ASSERT(!q.is_empty());
-  DEBUG_ASSERT_INDICES_EQUAL(q.top(), 3); q.Pop();
-  DEBUG_ASSERT_INDICES_EQUAL(q.top(), 1); q.Pop();
-  DEBUG_ASSERT_INDICES_EQUAL(q.top(), 4); q.PopOnly();
-  DEBUG_ASSERT_INDICES_EQUAL(q.Pop(), 1);
-  DEBUG_ASSERT_INDICES_EQUAL(q.Pop(), 5);
+  DEBUG_SAME_INT(q.top(), 3); q.Pop();
+  DEBUG_SAME_INT(q.top(), 1); q.Pop();
+  DEBUG_SAME_INT(q.top(), 4); q.PopOnly();
+  DEBUG_SAME_INT(q.Pop(), 1);
+  DEBUG_SAME_INT(q.Pop(), 5);
   DEBUG_ASSERT(!q.is_empty());
-  DEBUG_ASSERT_INDICES_EQUAL(q.top(), 9); q.Pop();
+  DEBUG_SAME_INT(q.top(), 9); q.Pop();
   DEBUG_ASSERT(q.is_empty());
   *q.Add() = 551;
   DEBUG_ASSERT(!q.is_empty());
-  DEBUG_ASSERT_INDICES_EQUAL(q.top(), 551); q.PopOnly();
+  DEBUG_SAME_INT(q.top(), 551); q.PopOnly();
   DEBUG_ASSERT(q.is_empty());
 }
 

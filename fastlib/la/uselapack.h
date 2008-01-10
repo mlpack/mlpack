@@ -11,12 +11,12 @@
 #include "col/arraylist.h"
 
 #define DEBUG_VECSIZE(a, b) \
-    DEBUG_ASSERT_INDICES_EQUAL((a).length(), (b).length())
+    DEBUG_SAME_INT((a).length(), (b).length())
 #define DEBUG_MATSIZE(a, b) \
-    DEBUG_ASSERT_INDICES_EQUAL((a).n_rows(), (b).n_rows());\
-    DEBUG_ASSERT_INDICES_EQUAL((a).n_cols(), (b).n_cols())
+    DEBUG_SAME_INT((a).n_rows(), (b).n_rows());\
+    DEBUG_SAME_INT((a).n_cols(), (b).n_cols())
 #define DEBUG_MATSQUARE(a) \
-    DEBUG_ASSERT_INDICES_EQUAL((a).n_rows(), (a).n_cols())
+    DEBUG_SAME_INT((a).n_rows(), (a).n_cols())
 
 /*
  * TODO: this could an overhaul; LAPACK failures may mean either input
@@ -276,7 +276,7 @@ namespace la {
    * (\f$\vec{x} \cdot \vec{y}\f$).
    */
   inline double Dot(const Vector &x, const Vector &y) {
-    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y.length());
+    DEBUG_SAME_INT(x.length(), y.length());
     return Dot(x.length(), x.ptr(), y.ptr());
   }
 
@@ -305,7 +305,7 @@ namespace la {
    * @param X the matrix to scale
    */
   inline void ScaleRows(const Vector& d, Matrix *X) {
-    DEBUG_ASSERT_INDICES_EQUAL(d.length(), X->n_rows());
+    DEBUG_SAME_INT(d.length(), X->n_rows());
     ScaleRows(d.length(), X->n_cols(), d.ptr(), X->ptr());
   }
 
@@ -314,7 +314,7 @@ namespace la {
    * (\f$\vec{y} \gets \alpha \vec{x}\f$).
    */
   inline void ScaleOverwrite(double alpha, const Vector &x, Vector *y) {
-    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y->length());
+    DEBUG_SAME_INT(x.length(), y->length());
     ScaleOverwrite(x.length(), alpha, x.ptr(), y->ptr());
   }
   /**
@@ -322,8 +322,8 @@ namespace la {
    * (\f$Y \gets \alpha X\f$).
    */
   inline void ScaleOverwrite(double alpha, const Matrix &X, Matrix *Y) {
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_cols());
+    DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
+    DEBUG_SAME_INT(X.n_cols(), Y->n_cols());
     ScaleOverwrite(X.n_elements(), alpha, X.ptr(), Y->ptr());
   }
 
@@ -351,7 +351,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} + \alpha \vec{x}\f$).
    */
   inline void AddExpert(double alpha, const Vector &x, Vector *y) {
-    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y->length());
+    DEBUG_SAME_INT(x.length(), y->length());
     AddExpert(x.length(), alpha, x.ptr(), y->ptr());
   }
   /**
@@ -359,8 +359,8 @@ namespace la {
    * (\f$Y \gets Y + \alpha X\f$).
    */
   inline void AddExpert(double alpha, const Matrix &X, Matrix *Y) {
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_cols());
+    DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
+    DEBUG_SAME_INT(X.n_cols(), Y->n_cols());
     AddExpert(X.n_elements(), alpha, X.ptr(), Y->ptr());
   }
 
@@ -371,7 +371,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} + \vec{x}\f$);
    */
   inline void AddTo(const Vector &x, Vector *y) {
-    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y->length());
+    DEBUG_SAME_INT(x.length(), y->length());
     AddTo(x.length(), x.ptr(), y->ptr());
   }
   /**
@@ -379,8 +379,8 @@ namespace la {
    * (\f$Y \gets Y + X\f$);
    */
   inline void AddTo(const Matrix &X, Matrix *Y) {
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_cols());
+    DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
+    DEBUG_SAME_INT(X.n_cols(), Y->n_cols());
     AddTo(X.n_elements(), X.ptr(), Y->ptr());
   }
 
@@ -389,8 +389,8 @@ namespace la {
    * (\f$\vec{z} \gets \vec{y} + \vec{x}\f$).
    */
   inline void AddOverwrite(const Vector &x, const Vector &y, Vector *z) {
-    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y.length());
-    DEBUG_ASSERT_INDICES_EQUAL(z->length(), y.length());
+    DEBUG_SAME_INT(x.length(), y.length());
+    DEBUG_SAME_INT(z->length(), y.length());
     AddOverwrite(x.length(), x.ptr(), y.ptr(), z->ptr());
   }
   /**
@@ -398,10 +398,10 @@ namespace la {
    * (\f$Z \gets Y + X\f$).
    */
   inline void AddOverwrite(const Matrix &X, const Matrix &Y, Matrix *Z) {
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y.n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y.n_cols());
-    DEBUG_ASSERT_INDICES_EQUAL(Z->n_rows(), Y.n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(Z->n_cols(), Y.n_cols());
+    DEBUG_SAME_INT(X.n_rows(), Y.n_rows());
+    DEBUG_SAME_INT(X.n_cols(), Y.n_cols());
+    DEBUG_SAME_INT(Z->n_rows(), Y.n_rows());
+    DEBUG_SAME_INT(Z->n_cols(), Y.n_cols());
     AddOverwrite(X.n_elements(), X.ptr(), Y.ptr(), Z->ptr());
   }
 
@@ -429,7 +429,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubFrom(const Vector &x, Vector *y) {
-    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y->length());
+    DEBUG_SAME_INT(x.length(), y->length());
     SubFrom(x.length(), x.ptr(), y->ptr());
   }
   /**
@@ -437,8 +437,8 @@ namespace la {
    * (\f$Y \gets Y - X\f$).
    */
   inline void SubFrom(const Matrix &X, Matrix *Y) {
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_cols());
+    DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
+    DEBUG_SAME_INT(X.n_cols(), Y->n_cols());
     SubFrom(X.n_elements(), X.ptr(), Y->ptr());
   }
 
@@ -447,8 +447,8 @@ namespace la {
    * (\f$\vec{z} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubOverwrite(const Vector &x, const Vector &y, Vector *z) {
-    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y.length());
-    DEBUG_ASSERT_INDICES_EQUAL(z->length(), y.length());
+    DEBUG_SAME_INT(x.length(), y.length());
+    DEBUG_SAME_INT(z->length(), y.length());
     SubOverwrite(x.length(), x.ptr(), y.ptr(), z->ptr());
   }
   /**
@@ -456,10 +456,10 @@ namespace la {
    * (\f$Z \gets Y - X\f$).
    */
   inline void SubOverwrite(const Matrix &X, const Matrix &Y, Matrix *Z) {
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y.n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y.n_cols());
-    DEBUG_ASSERT_INDICES_EQUAL(Z->n_rows(), Y.n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(Z->n_cols(), Y.n_cols());
+    DEBUG_SAME_INT(X.n_rows(), Y.n_rows());
+    DEBUG_SAME_INT(X.n_cols(), Y.n_cols());
+    DEBUG_SAME_INT(Z->n_rows(), Y.n_rows());
+    DEBUG_SAME_INT(Z->n_cols(), Y.n_cols());
     SubOverwrite(X.n_elements(), X.ptr(), Y.ptr(), Z->ptr());
   }
 
@@ -508,8 +508,8 @@ namespace la {
    * (\f$Y \gets X'\f$).
    */
   inline void TransposeOverwrite(const Matrix &X, Matrix *Y) {
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_cols());
-    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_rows());
+    DEBUG_SAME_INT(X.n_rows(), Y->n_cols());
+    DEBUG_SAME_INT(X.n_cols(), Y->n_rows());
     index_t nr = X.n_rows();
     index_t nc = X.n_cols();
     for (index_t r = 0; r < nr; r++) {
@@ -546,8 +546,8 @@ namespace la {
       double alpha, const Matrix &A, const Vector &x,
       double beta, Vector *y) {
     DEBUG_ASSERT(x.ptr() != y->ptr());
-    DEBUG_ASSERT_INDICES_EQUAL(A.n_cols(), x.length());
-    DEBUG_ASSERT_INDICES_EQUAL(A.n_rows(), y->length());
+    DEBUG_SAME_INT(A.n_cols(), x.length());
+    DEBUG_SAME_INT(A.n_rows(), y->length());
     F77_FUNC(dgemv)("N", A.n_rows(), A.n_cols(),
         alpha, A.ptr(), A.n_rows(), x.ptr(), 1,
         beta, y->ptr(), 1);
@@ -605,8 +605,8 @@ namespace la {
       double alpha, const Vector &x, const Matrix &A,
       double beta, Vector *y) {
     DEBUG_ASSERT(x.ptr() != y->ptr());
-    DEBUG_ASSERT_INDICES_EQUAL(A.n_rows(), x.length());
-    DEBUG_ASSERT_INDICES_EQUAL(A.n_cols(), y->length());
+    DEBUG_SAME_INT(A.n_rows(), x.length());
+    DEBUG_SAME_INT(A.n_cols(), y->length());
     F77_FUNC(dgemv)("T", A.n_rows(), A.n_cols(),
         alpha, A.ptr(), A.n_rows(), x.ptr(), 1,
         beta, y->ptr(), 1);
@@ -660,10 +660,10 @@ namespace la {
       double beta, Matrix *C) {
     DEBUG_ASSERT(A.ptr() != C->ptr());
     DEBUG_ASSERT(B.ptr() != C->ptr());
-    DEBUG_ASSERT_INDICES_EQUAL(trans_A ? A.n_rows() : A.n_cols(),
+    DEBUG_SAME_INT(trans_A ? A.n_rows() : A.n_cols(),
 		   trans_B ? B.n_cols() : B.n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(trans_A ? A.n_cols() : A.n_rows(), C->n_rows());
-    DEBUG_ASSERT_INDICES_EQUAL(trans_B ? B.n_rows() : B.n_cols(), C->n_cols());
+    DEBUG_SAME_INT(trans_A ? A.n_cols() : A.n_rows(), C->n_rows());
+    DEBUG_SAME_INT(trans_B ? B.n_rows() : B.n_cols(), C->n_cols());
     F77_FUNC(dgemm)(trans_A ? "T" : "N", trans_B ? "T" : "N",
         C->n_rows(), C->n_cols(), trans_A ? A.n_rows() : A.n_cols(),
         alpha, A.ptr(), A.n_rows(), B.ptr(), B.n_rows(),
@@ -955,7 +955,7 @@ namespace la {
    */
   inline trial_t SolveInit(const Matrix &A, const Matrix &B, Matrix *X) {
     DEBUG_MATSQUARE(A);
-    DEBUG_ASSERT_INDICES_EQUAL(A.n_rows(), B.n_rows());
+    DEBUG_SAME_INT(A.n_rows(), B.n_rows());
     Matrix tmp;
     index_t n = B.n_rows();
     f77_integer pivots[n];
@@ -988,7 +988,7 @@ namespace la {
    */
   inline trial_t SolveInit(const Matrix &A, const Vector &b, Vector *x) {
     DEBUG_MATSQUARE(A);
-    DEBUG_ASSERT_INDICES_EQUAL(A.n_rows(), b.length());
+    DEBUG_SAME_INT(A.n_rows(), b.length());
     Matrix tmp;
     index_t n = b.length();
     f77_integer pivots[n];

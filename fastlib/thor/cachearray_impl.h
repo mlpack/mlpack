@@ -243,7 +243,7 @@ void CacheArray<T>::Flush() {
         cache_->StopRead(blockid);
       }
 
-      DEBUG_ASSERT_INDICES_EQUAL(metadata->lock_count, 0);
+      DEBUG_SAME_INT(metadata->lock_count, 0);
       metadata->data = NULL;
       fifo_[i] = -1;
     }
@@ -369,7 +369,7 @@ class ZCacheIterImpl_ {
   }
 
   void Next() {
-    DEBUG_ASSERT_INDEX_BOUNDS(left_, cache_->n_block_elems() + 1);
+    DEBUG_BOUNDS(left_, cache_->n_block_elems() + 1);
     element_ = mem::PtrAddBytes(element_, stride_);
     if (unlikely(left_ == 0)) {
       NextBlock_();
