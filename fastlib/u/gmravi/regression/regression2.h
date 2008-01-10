@@ -328,6 +328,9 @@ template <typename TKernel > class Regression2 {
   /** results stores the upper triangular matrix. Just the upper traingular is enough, because  the matrix is symmetric*/
   ArrayList <Matrix> results_;
 
+  //This is required only for NWR estimation
+
+  //Vector denominator_nwr_;
  
   //Intersting functions...................................
 
@@ -758,9 +761,10 @@ template <typename TKernel > class Regression2 {
 
     int leaflen = fx_param_int (NULL, "leaflen", 10);
 
+    fx_timer_start(NULL,"tree_second");
     qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,NULL,NULL);
     rroot_=tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen,NULL,NULL);
-
+    fx_timer_stop(NULL,"tree_second");
     //Initialize densities
     densities_l_.Init (qset_.n_cols ());
     densities_u_.Init (qset_.n_cols ());
@@ -951,13 +955,23 @@ template <typename TKernel > class Regression2 {
     return results_;
   }
  
+  Vector& get_denominator_nwr(){
 
+    //    return denominator_nwr_;
+  }
   //Interesting functions.......................... 
   void Compute (double tau){
     
     tau_=tau;
     //This function fills in the Arraylist<matrix> results
     FillMatrix();
+    //Once u have done this, for nwr estimation just copy all the first element of all matrices into a vector called denominator_nwr_
+
+    /*denominator_nwr_.Init(qset_.n_cols());
+
+    for(index_t q=0;q<qset_.n_cols();q++){
+      denominator_nwr_[q]=results_[q].get(0,0);
+      }*/
     //Do a matrix inversion for the matrix of each query point. 
     InvertAll();
   }
@@ -976,6 +990,8 @@ template <typename TKernel > class Regression2 {
     if (!strcmp (fx_param_str (NULL, "scaling", NULL), "range")){
        
       scale_data_by_minmax ();
+      printf("data was scaled in reg2...");
+      
     }
      
     // initialize the kernel

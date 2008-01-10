@@ -6,10 +6,11 @@ int main (int argc, char *argv[]){
 
   fx_init (argc, argv);
 
-  const char *algorithm = fx_param_str_req (NULL, "method");
-  bool do_naive = fx_param_exists (NULL, "do_naive");
+  //const char *algorithm = fx_param_str_req (NULL, "method");
+  //bool do_naive = fx_param_exists (NULL, "do_naive");
 
   FastKde <GaussianKernel> fast_kde;
+
   //This will hold the results of B^TWY
   ArrayList<Vector> fast_kde_results;
 
@@ -22,7 +23,9 @@ int main (int argc, char *argv[]){
 
   Vector regression_estimates_naive;
   Vector regression_estimates;
+  // Vector nwr_estimates;
 
+  ArrayList <index_t> old_from_new_r;
   ArrayList <index_t> new_from_old_r;
   FILE *fp;
   FILE *gp;
@@ -31,26 +34,24 @@ int main (int argc, char *argv[]){
 
   if (!strcmp (fx_param_str (NULL, "kernel", "gaussian"), "gaussian")){
     
-
+    //    FastKde <GaussianKernel> fast_kde;
     //First lets get B^TWY
-    fx_timer_start(NULL,"second_matrix");
+    printf("will start computing the vector..\n");
     fast_kde.Init ();
+
+    fx_timer_start(NULL,"second_matrix");
     fast_kde.Compute (fx_param_double (NULL, "tau", 0.1));
     fx_timer_stop(NULL,"second_matrix");
 
       //default value is 0.1
-    if(fx_param_exists(NULL,"fast_kde_output"))
+    /*if(fx_param_exists(NULL,"fast_kde_output"))
       {
 	fast_kde.PrintDebug();
-      }
+	}*/
 	
     
     query_dataset.Alias(fast_kde.get_query_dataset());
-    reference_dataset.Alias(fast_kde.get_reference_dataset());  // Hence with this wwe initialize both the datasets
-
-
-    //printf("In main file the dataset received is ..\n");
-    //query_dataset.PrintDebug();
+    reference_dataset.Alias(fast_kde.get_reference_dataset());  // Hence with this we initialize both the datasets
 
     //initialize fast_kde_results
     num_query_points=query_dataset.n_cols();
@@ -65,7 +66,7 @@ int main (int argc, char *argv[]){
  
     //get density estimates from fast kde calculations and push it into the array fast_kde_results
 
-   
+    //nwr_estimates.Init(num_query_points);
 
       for(index_t q=0;q<num_query_points;q++)
 	{
@@ -75,9 +76,11 @@ int main (int argc, char *argv[]){
 	      //along each dimension
 	      fast_kde_results[q][d]=fast_kde.get_density_estimates(q,d);
 	    }
+	  //  nwr_estimates[q]=fast_kde_results[q][0];
 	}
+      old_from_new_r.Copy(fast_kde.get_old_from_new_r());
       new_from_old_r.Copy(fast_kde.get_new_from_old_r());
-
+      printf("finished vector computation.......\n");
       printf("WILL NOW START REGRESSION2......................\n");
 
     //Now lets get (B^TWB)^-1. This can be done by calling routines related the object Regression2 present in the file regression2.h 
@@ -87,8 +90,8 @@ int main (int argc, char *argv[]){
       
       Regression2 <GaussianKernel> reg2;
       printf("going to initialization function...\n");
-      fx_timer_start(NULL,"first_matrix");
       reg2.Init(query_dataset,reference_dataset);
+      fx_timer_start(NULL,"first_matrix");
       reg2.Compute(fx_param_double (NULL, "tau", 0.1));
       fx_timer_stop(NULL,"first_matrix");
       printf("Initializations done..\n");
@@ -132,23 +135,29 @@ int main (int argc, char *argv[]){
 	  }
 	}
 
-	fprintf(fp,"Point:");
+	/*fprintf(fp,"Point:");
 
 	for(index_t d=0;d<query_dataset.n_rows();d++){
 
 	  fprintf(fp,"%f,",query_dataset.get(d,q));
 	}
-	  fprintf(fp,"  ",regression_estimates[q]);
-	printf("Hence regression estimate is %f\n",regression_estimates[q]);
+	fprintf(fp,"  ",regression_estimates[q]);*/
+	//printf("Hence regression estimate is %f\n",regression_estimates[q]);
       }
-      //printf("The regression estimates are ..\n");
-      //regression_estimates.PrintDebug();
+    
+      //Fill up the enwr_estimates
+      /*Vector temp;
+      temp.Copy(reg2.get_denominator_nwr());
+
+      for(index_t i=0;i<query_dataset.n_cols();i++){                 
+	nwr_estimates[i]/=temp[i];
+	}*/
   }
 
-
+  printf("ended matrix computation........ and did multiplication too....\n");
   //Lets do naive calculations too.......
 
-
+  printf("Will start naive regression....\n");
 
   NaiveKde <GaussianKernel> naive_kde;
   //This will hold the results of B^TWY
@@ -162,25 +171,24 @@ int main (int argc, char *argv[]){
     //printf("In main function query dataset is..........\n");
     //query_dataset.PrintDebug();
 
+    
+    naive_kde.Init (query_dataset,reference_dataset,old_from_new_r);
     fx_timer_start(NULL,"second_matrix_naive");
-    naive_kde.Init (query_dataset,reference_dataset,new_from_old_r);
     naive_kde.Compute ();
     fx_timer_stop(NULL,"second_matrix_naive");
 
-    //initialize fast_kde_results
+    //initialize naive_kde_results
     num_query_points=query_dataset.n_cols();
     num_of_dimensions=query_dataset.n_rows();
     
-    naive_kde_results.Init(num_query_points);  //this initializes fast_kde results
+    naive_kde_results.Init(num_query_points);  //this initializes naive_kde results
     
     for(index_t i=0;i<num_query_points;i++)
       { 
 	naive_kde_results[i].Init(num_of_dimensions+1); //Each element is now initialized
       }
  
-    //get density estimates from fast kde calculations and push it into the array fast_kde_results
-
-   
+    //get density estimates from naive kde calculations and push it into the array naive_kde_results
 
       for(index_t q=0;q<num_query_points;q++)
 	{
@@ -192,9 +200,9 @@ int main (int argc, char *argv[]){
 	    }
 	}
 
-      printf("WILL NOW START REGRESSION2......................\n");
+      printf("WILL NOW START Naive REGRESSION2......................\n");
 
-    //Now lets get (B^TWB)^-1. This can be done by calling routines related the object Regression2 present in the file regression2.h 
+    //Now lets get (B^TWB)^-1.
 
 
       //The dataset retrieved in the previous steps is being used once again
@@ -202,14 +210,15 @@ int main (int argc, char *argv[]){
        NaiveRegression2 <GaussianKernel> naive_reg2;
        printf("going to initialization function...\n");
 
-       fx_timer_start(NULL,"first_matrix_naive");
+      
        naive_reg2.Init(query_dataset,reference_dataset);
+       fx_timer_start(NULL,"first_matrix_naive");
        naive_reg2.Compute();
        fx_timer_stop(NULL,"first_matrix_naive");
 
        printf("Initializations done..\n");
        
-       //This will hold the results of regression2 calculations
+       //This will hold the results of Naive regression2 calculations
        ArrayList<Matrix> naive_reg2_results;
        
        naive_reg2_results.Copy(naive_reg2.get_results());  //This initializes wfkde_results
@@ -246,35 +255,35 @@ int main (int argc, char *argv[]){
 	     regression_estimates_naive[q]+=temp1[q].get(i)*1;
 	   }
 	 }
-	 fprintf(gp,"Point:");
+	 /*fprintf(gp,"Point:");
 
 	 for(index_t d=0;d<query_dataset.n_rows();d++){
 
 	   fprintf(gp,"%f,",query_dataset.get(d,q));
 	 }
-	 fprintf(gp,"  ",regression_estimates_naive[q]);
+	 fprintf(gp,"  ",regression_estimates_naive[q]);*/
 	 
        }
-       // printf("The regression estimates are ..\n");
-       //regression_estimates_naive.PrintDebug();
-
        FILE *lp;
-       lp=fopen("estimates.txt","w+");
-      double relative_error=0;
-      double error;
-      for(index_t q=0;q<num_query_points;q++){
+       lp=fopen("estimates_for_astrodataset.txt","w+");
+       double relative_error=0;
+       double error;
+       for(index_t q=0;q<num_query_points;q++){
+	 
+	 //printf("Naive:%f fast estimate:%f\n",q,regression_estimates_naive[q],regression_estimates);
+	 
+	 error=(double)fabs(regression_estimates_naive[new_from_old_r[q]]-regression_estimates[new_from_old_r[q]])/regression_estimates_naive[new_from_old_r[q]];
+	 
+	 for(index_t d=0;d<num_of_dimensions;d++){
+	   fprintf(lp,"%f, ",query_dataset.get(d,new_from_old_r[q]));
+	 }
 
-	error=(double)fabs(regression_estimates_naive[q]-regression_estimates[q])/regression_estimates_naive[q];
-
-	for(int d=0;d<num_of_dimensions;d++){
-	  fprintf(lp,"%f,",query_dataset.get(d,q));
-	}
-	fprintf(lp,"ren: %3f, refast:%3f diff:%3f\n",regression_estimates_naive[q],regression_estimates[q],error);
-	if(error>relative_error){
-	  relative_error=error;
-	}
-      }
-      printf("maximum relative error is %f\n",relative_error);
+	 fprintf(lp,"naive: %2f, fast:%2f  diff:%2f\n",regression_estimates_naive[new_from_old_r[q]],regression_estimates[new_from_old_r[q]],error);
+	 if(error>relative_error){
+	   relative_error=error;
+	 }
+       }
+       printf("maximum relative error is %f\n",relative_error);
   }
   fx_done();
 }
