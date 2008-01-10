@@ -100,17 +100,18 @@ int main(int argc, char* argv[]) {
     * Update the component information and run tree cleanup
     */
     
+        
     DualTreeBoruvka dtb;
     dtb.Init(this_tree);
     
-    dtb.TestTree();
+    //dtb.TestTree();
     
-    //dtb.ComputeMST();
+    dtb.ComputeMST();
     
     /* Step four: format and output results
     */
     
-    dtb.output_results();
+    //dtb.output_results();
     
   }// end else (if using_thor)
   

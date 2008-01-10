@@ -8,7 +8,7 @@
  */
 class UnionFind {
   
-  FORBID_COPY(UnionFind);
+  FORBID_ACCIDENTAL_COPIES(UnionFind);
   
 private:
   
