@@ -10,7 +10,7 @@
 #ifndef FILE_TEXTFILE_H
 #define FILE_TEXTFILE_H
 
-#include "base/common.h"
+#include "base/base.h"
 #include "col/string.h"
 
 #include <cstdio>
@@ -24,7 +24,7 @@
  * you may choose to close it yourself at no harm.
  */
 class TextLineReader {
-  FORBID_COPY(TextLineReader);
+  FORBID_ACCIDENTAL_COPIES(TextLineReader);
   
  private:
   FILE *f_;
@@ -52,7 +52,7 @@ class TextLineReader {
    *
    * @return success value
    */
-  success_t Open(const char *fname);
+  trial_t Open(const char *fname);
   
   /**
    * Closes the file.
@@ -133,7 +133,7 @@ class TextLineReader {
  * @endcode
  */
 class TextTokenizer {
-  FORBID_COPY(TextTokenizer);
+  FORBID_ACCIDENTAL_COPIES(TextTokenizer);
  public:
   enum TokenType {
     INVALID = -1,
@@ -171,7 +171,7 @@ class TextTokenizer {
     DEBUG_POISON_PTR(f_);
   }
   
-  success_t Open(const char *fname,
+  trial_t Open(const char *fname,
       const char *comment_chars = "", const char *ident_extra = "",
       int features = 0);
 
@@ -302,7 +302,7 @@ class TextTokenizer {
  * Helper for writing text fo a file.
  */
 class TextWriter {
-  FORBID_COPY(TextWriter);
+  FORBID_ACCIDENTAL_COPIES(TextWriter);
   
  private:
   FILE *f_;
@@ -324,7 +324,7 @@ class TextWriter {
    */
   ~TextWriter() {
     if (f_) {
-      MUST_PASS(SUCCESS_FROM_INT(::fclose(f_)));
+      MUST_SUCCEED(TRIAL_FROM_C(::fclose(f_)));
     }
     DEBUG_POISON_PTR(f_);
   }
@@ -334,52 +334,52 @@ class TextWriter {
    *
    * @return success or failure
    */
-  success_t Open(const char *fname) {
+  trial_t Open(const char *fname) {
     f_ = ::fopen(fname, "w");
-    return (unlikely(!f_)) ? SUCCESS_FAIL : SUCCESS_PASS;
+    return (unlikely(!f_)) ? TRIAL_FAILURE : TRIAL_SUCCESS;
   }
   
   /**
    * Explicitly closes the file.
    */
-  success_t Close() {
+  trial_t Close() {
     int rv = fclose(f_);
     f_ = NULL;
-    return unlikely(rv < 0) ? SUCCESS_FAIL : SUCCESS_PASS;
+    return unlikely(rv < 0) ? TRIAL_FAILURE : TRIAL_SUCCESS;
   }
   
-  success_t Printf(const char *format, ...);
+  trial_t Printf(const char *format, ...);
   
-  success_t Write(const char *s) {
-    return SUCCESS_FROM_INT(fputs(s, f_));
+  trial_t Write(const char *s) {
+    return TRIAL_FROM_C(fputs(s, f_));
   }
   
-  success_t Write(int i) {
-    return SUCCESS_FROM_INT(fprintf(f_, "%d", i));
+  trial_t Write(int i) {
+    return TRIAL_FROM_C(fprintf(f_, "%d", i));
   }
   
-  success_t Write(unsigned int i) {
-    return SUCCESS_FROM_INT(fprintf(f_, "%u", i));
+  trial_t Write(unsigned int i) {
+    return TRIAL_FROM_C(fprintf(f_, "%u", i));
   }
 
-  success_t Write(long i) {
-    return SUCCESS_FROM_INT(fprintf(f_, "%ld", i));
+  trial_t Write(long i) {
+    return TRIAL_FROM_C(fprintf(f_, "%ld", i));
   }
   
-  success_t Write(unsigned long i) {
-    return SUCCESS_FROM_INT(fprintf(f_, "%lu", i));
+  trial_t Write(unsigned long i) {
+    return TRIAL_FROM_C(fprintf(f_, "%lu", i));
   }
   
-  success_t Write(long long i) {
-    return SUCCESS_FROM_INT(fprintf(f_, "%lld", i));
+  trial_t Write(long long i) {
+    return TRIAL_FROM_C(fprintf(f_, "%lld", i));
   }
   
-  success_t Write(unsigned long long i) {
-    return SUCCESS_FROM_INT(fprintf(f_, "%llu", i));
+  trial_t Write(unsigned long long i) {
+    return TRIAL_FROM_C(fprintf(f_, "%llu", i));
   }
   
-  success_t Write(double d) {
-    return SUCCESS_FROM_INT(fprintf(f_, "%.15e", d));
+  trial_t Write(double d) {
+    return TRIAL_FROM_C(fprintf(f_, "%.15e", d));
   }
 };
 

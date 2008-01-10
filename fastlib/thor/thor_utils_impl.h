@@ -103,7 +103,7 @@ index_t thor::ReadPointsMaster(
 
   for (;;) {
     bool is_done;
-    success_t rv = schema.ReadPoint(&reader, vector.ptr(), &is_done);
+    trial_t rv = schema.ReadPoint(&reader, vector.ptr(), &is_done);
 
     if (unlikely(FAILED(rv))) {
       FATAL("Data file has problems");
@@ -198,14 +198,14 @@ void thor::RpcDualTree(datanode *module, int base_channel,
   fx_timer_start(module, "write_results");
   q->points().StartSync();
   q->nodes().StartSync();
-  if (!mem::PointersEqual(q, r)) {
+  if (!mem::PtrsEqual(q, r)) {
     r->points().StartSync();
     r->nodes().StartSync();
   }
   q_results->StartSync();
   q->points().WaitSync(fx_submodule(io_module, NULL, "q_points"));
   q->nodes().WaitSync(fx_submodule(io_module, NULL, "q_nodes"));
-  if (!mem::PointersEqual(q, r)) {
+  if (!mem::PtrsEqual(q, r)) {
     r->points().WaitSync(fx_submodule(io_module, NULL, "r_points"));
     r->nodes().WaitSync(fx_submodule(io_module, NULL, "r_nodes"));
   }

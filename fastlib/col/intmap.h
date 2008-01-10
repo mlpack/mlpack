@@ -7,9 +7,7 @@
 #ifndef COL_INTMAP_H
 #define COL_INTMAP_H
 
-#include "base/common.h"
-#include "base/ccmem.h"
-#include "base/otrav.h"
+#include "base/base.h"
 
 /**
  * A dense grow-as-needed array that serves as an integer-keyed map.
@@ -62,11 +60,11 @@ class DenseIntMap {
    * If you are just probing, beware that this might actually grow the array!
    */
   Value& operator [] (index_t index) {
-    DEBUG_BOUNDS(index, BIG_BAD_NUMBER);
+    DEBUG_ASSERT_INDEX_BOUNDS(index, BIG_BAD_NUMBER);
     if (unlikely(index >= size_)) {
       index_t old_size = size_;
-      size_ = max(size_ * 2, index + 1);
-      ptr_ = mem::Resize(ptr_, size_);
+      size_ = std::max(size_ * 2, index + 1);
+      ptr_ = mem::Realloc(ptr_, size_);
       for (index_t i = old_size; i < size_; i++) {
         new(ptr_+i)Value(default_value_);
       }
@@ -83,7 +81,7 @@ class DenseIntMap {
    * Accesses an element, never growing the internal representation.
    */
   const Value& get(index_t index) const {
-    DEBUG_BOUNDS(index, BIG_BAD_NUMBER);
+    DEBUG_ASSERT_INDEX_BOUNDS(index, BIG_BAD_NUMBER);
     if (likely(index < size_)) {
       return ptr_[index];
     } else {

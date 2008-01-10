@@ -10,11 +10,12 @@
 #ifndef THOR_RPC_H
 #define THOR_RPC_H
 
+#include "base/base.h"
+
 #include "blockdev.h"
 #include "rpc_base.h"
 #include "rpc_sock.h"
 
-#include "base/common.h"
 #include "col/arraylist.h"
 
 //--------------------------------------------------------------------------
@@ -27,7 +28,7 @@
  * message-passing.
  */
 struct BasicTransaction : public Transaction {
-  FORBID_COPY(BasicTransaction);
+  FORBID_ACCIDENTAL_COPIES(BasicTransaction);
 
  private:
   Message *response_;
@@ -71,7 +72,7 @@ struct BasicTransaction : public Transaction {
  */
 template<class ResponseObject>
 class Rpc {
-  FORBID_COPY(Rpc);
+  FORBID_ACCIDENTAL_COPIES(Rpc);
 
  private:
   BasicTransaction transaction_;
@@ -141,12 +142,12 @@ class Rpc {
  */
 template<typename RequestObject, typename ResponseObject>
 class RemoteObjectBackend : public Channel { 
-  FORBID_COPY(RemoteObjectBackend);
+  FORBID_ACCIDENTAL_COPIES(RemoteObjectBackend);
 
  public:
   // Simple request-response transaction
   class RemoteObjectTransaction : public Transaction {
-    FORBID_COPY(RemoteObjectTransaction);
+    FORBID_ACCIDENTAL_COPIES(RemoteObjectTransaction);
 
    private:
     RemoteObjectBackend *inner_;
@@ -201,11 +202,11 @@ void RemoteObjectBackend<RequestObject, ResponseObject>
 
 template<typename TReductor, typename TData>
 class ReduceChannel : public Channel {
-  FORBID_COPY(ReduceChannel);
+  FORBID_ACCIDENTAL_COPIES(ReduceChannel);
 
  private:
   class ReduceTransaction : public Transaction {
-    FORBID_COPY(ReduceTransaction);
+    FORBID_ACCIDENTAL_COPIES(ReduceTransaction);
 
    private:
     ArrayList<Message*> received_;
@@ -312,14 +313,14 @@ class ReduceChannel : public Channel {
 
 template<typename TData>
 class Broadcaster : public Channel {
-  FORBID_COPY(Broadcaster);
+  FORBID_ACCIDENTAL_COPIES(Broadcaster);
 
  public:
   typedef TData Data;
 
  private:
   class BroadcastTransaction : public Transaction {
-    FORBID_COPY(BroadcastTransaction);
+    FORBID_ACCIDENTAL_COPIES(BroadcastTransaction);
 
    public:
     Message *received;
@@ -329,7 +330,7 @@ class Broadcaster : public Channel {
     void SendToChildren_() {
       for (index_t i = 0; i < rpc::n_children(); i++) {
         Message *m = CreateMessage(rpc::child(i), received->data_size());
-        mem::CopyBytes(m->data(), received->data(), received->data_size());
+        mem::BitCopyBytes(m->data(), received->data(), received->data_size());
         Send(m);
       }
       Done();
@@ -415,7 +416,7 @@ struct DataGetterRequest {
 template<typename T>
 class DataGetterBackend
     : public RemoteObjectBackend<DataGetterRequest, T> {
-  FORBID_COPY(DataGetterBackend);
+  FORBID_ACCIDENTAL_COPIES(DataGetterBackend);
 
  private:
   T data_;

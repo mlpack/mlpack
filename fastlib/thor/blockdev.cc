@@ -148,17 +148,17 @@ void DiskBlockDevice::Init(
 
 void DiskBlockDevice::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
-  DEBUG_BOUNDS(blockid, n_blocks_);
-  DEBUG_BOUNDS(end, n_block_bytes_ + 1);
-  DEBUG_BOUNDS(begin, end + 1);
+  DEBUG_ASSERT_INDEX_BOUNDS(blockid, n_blocks_);
+  DEBUG_ASSERT_INDEX_BOUNDS(end, n_block_bytes_ + 1);
+  DEBUG_ASSERT_INDEX_BOUNDS(begin, end + 1);
   file_.Read(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
 }
 
 void DiskBlockDevice::Write(blockid_t blockid,
     offset_t begin, offset_t end, const char *data) {
-  DEBUG_BOUNDS(blockid, n_blocks_);
-  DEBUG_BOUNDS(end, n_block_bytes_ + 1);
-  DEBUG_BOUNDS(begin, end + 1);
+  DEBUG_ASSERT_INDEX_BOUNDS(blockid, n_blocks_);
+  DEBUG_ASSERT_INDEX_BOUNDS(end, n_block_bytes_ + 1);
+  DEBUG_ASSERT_INDEX_BOUNDS(begin, end + 1);
   file_.Write(off_t(blockid) * n_block_bytes_ + begin, end - begin, data);
 }
 
@@ -175,7 +175,7 @@ void MemBlockDevice::Read(blockid_t blockid,
     offset_t begin, offset_t end, char *data) {
   char *mydata = blocks_.get(blockid);
   if (likely(mydata != NULL)) {
-    mem::Copy(data, mydata + begin, end - begin);
+    mem::BitCopy(data, mydata + begin, end - begin);
     return;
   }
 }
@@ -188,7 +188,7 @@ void MemBlockDevice::Write(blockid_t blockid,
     blocks_[blockid] = mydata = mem::Alloc<char>(n_block_bytes_);
   }
 
-  mem::Copy(mydata + begin, data, end - begin);
+  mem::BitCopy(mydata + begin, data, end - begin);
 }
 
 MemBlockDevice::~MemBlockDevice() {

@@ -113,6 +113,8 @@ struct BlankQResult {
  public:
   template<typename Param>
   void Init(const Param& param) {}
+  template<typename Param, typename Point>
+  void Seed(const Param& param, const Point& point) {}
   template<typename Param, typename Point, typename RNode>
   void Postprocess(const Param& param,
       const Point& q_point, index_t q_index,
@@ -153,6 +155,8 @@ struct BlankQSummaryResult {
  public:
   template<typename Param>
   void Init(const Param& param) {}
+  template<typename Param, typename QNode>
+  void Seed(const Param& param, const QNode& q_node) {}
   template<typename Param, typename Delta>
   void ApplyDelta(const Param& param, const Delta& delta) {}
   template<typename Param, typename QPostponed, typename QNode>
@@ -179,6 +183,7 @@ class BlankAlgorithm {
       const Param& param,
       const QNode& q_node,
       const RNode& r_node,
+      const Delta& parent_delta,
       Delta* delta,
       GlobalResult* global_result,
       QPostponed* q_postponed) {

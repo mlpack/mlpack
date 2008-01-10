@@ -438,10 +438,11 @@ class DistributedCache : public BlockDevice {
         return a.block < b.block;
       }
     }
+    EXPAND_LESS_THAN(Position);
     friend bool operator == (const Position& a, const Position& b) {
       return a.block == b.block && a.offset == b.offset;
     }
-    DEFINE_ALL_COMPARATORS(Position);
+    EXPAND_EQUALS(Position);
   };
   
   /**

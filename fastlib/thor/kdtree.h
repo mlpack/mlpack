@@ -11,13 +11,14 @@
 #ifndef THOR_KDTREE_H
 #define THOR_KDTREE_H
 
+#include "base/base.h"
+
 #include "thortree.h"
 #include "cachearray.h"
 
 #include "file/textfile.h"
 #include "data/dataset.h"
 #include "tree/bounds.h"
-#include "base/common.h"
 #include "col/arraylist.h"
 #include "fx/fx.h"
 

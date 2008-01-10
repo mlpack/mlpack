@@ -360,7 +360,7 @@ void DualTreeRecursiveBreadth<GNP>::BaseCase_(
           break;
         }
         r_i++;
-        r_point = mem::PointerAdd(r_point, r_point_stride);
+        r_point = mem::PtrAddBytes(r_point, r_point_stride);
       }
 
       visitor.FinishVisitingQueryPoint(param_, *q_point, q_i, r_node,
@@ -369,8 +369,8 @@ void DualTreeRecursiveBreadth<GNP>::BaseCase_(
       DEBUG_ONLY(stats_.point_point_considered += r_node.count());
     }
 
-    q_point = mem::PointerAdd(q_point, q_point_stride);
-    q_result = mem::PointerAdd(q_result, q_result_stride);
+    q_point = mem::PtrAddBytes(q_point, q_point_stride);
+    q_result = mem::PtrAddBytes(q_result, q_result_stride);
   }
 }
 

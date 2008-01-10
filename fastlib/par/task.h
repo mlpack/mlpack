@@ -9,8 +9,7 @@
 #ifndef PAR_TASK_H
 #define PAR_TASK_H
 
-#include "base/cc.h"
-#include "base/common.h"
+#include "base/base.h"
 
 /**
  * Single start-to-finish task to be executed.
@@ -18,7 +17,7 @@
  * This is a polymorphic class.
  */
 class Task {
-  FORBID_COPY(Task);
+  FORBID_ACCIDENTAL_COPIES(Task);
   
  public:
   Task() {}

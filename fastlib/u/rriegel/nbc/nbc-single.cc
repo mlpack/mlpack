@@ -1,6 +1,9 @@
 #include "fastlib/fastlib_int.h"
 #include "thor/thor.h"
 
+#include "base/deprecated.h"
+using namespace std;
+
 /**
  * Nonparametric Bayes Classification for 2 classes.
  *

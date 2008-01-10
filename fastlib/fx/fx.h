@@ -20,15 +20,14 @@
 #ifndef FX_H
 #define FX_H
 
+#include "base/base.h"
+
 #include "datastore.h"
 #include "timer.h"
 
-#include "base/compiler.h"
-#include "base/common.h"
-
 #include <stdio.h>
 
-EXTERN_C_START
+EXTERN_C_BEGIN
 
 /** Datanode under which all fx information is stored. */
 extern struct datanode *fx_root;

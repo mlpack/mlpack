@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include "base/compiler.h"
 
-EXTERN_C_START
+EXTERN_C_BEGIN
 
 /**
  * The various kinds of nodes supported by the datastore.

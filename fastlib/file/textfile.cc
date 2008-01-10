@@ -6,8 +6,6 @@
 
 #include "textfile.h"
 
-#include "base/ccmem.h"
-
 #include <ctype.h>
 
 /*
@@ -41,7 +39,7 @@ char *TextTokenizer::ReadLine() {
     
     if (size <= len) {
       size = len * 2 + extra;
-      buf = mem::Resize(buf, size);
+      buf = mem::Realloc(buf, size);
     }
     
     buf[len-1] = c;
@@ -71,17 +69,17 @@ void TextLineReader::Error(const char *format, ...) {
   fprintf(stderr, "\n");
 }
 
-success_t TextLineReader::Open(const char *fname) {
+trial_t TextLineReader::Open(const char *fname) {
   f_ = fopen(fname, "r");
   line_num_ = 0;
   has_line_ = false;
   line_.Init();
   
   if (unlikely(f_ == NULL)) {
-    return SUCCESS_FAIL;
+    return TRIAL_FAILURE;
   } else {
     Gobble();
-    return SUCCESS_PASS;
+    return TRIAL_SUCCESS;
   }
 }  
 
@@ -114,7 +112,7 @@ char *TextLineReader::ReadLine_() {
   
   for (;;) {
     size = size * 2 + extra;
-    buf = mem::Resize(buf, size);
+    buf = mem::Realloc(buf, size);
     char *result = ::fgets(buf + len, size - len, f_);
     if (len == 0 && result == NULL) {
       mem::Free(buf);
@@ -132,7 +130,7 @@ char *TextLineReader::ReadLine_() {
   }
 }
 
-success_t TextTokenizer::Open(const char *fname,
+trial_t TextTokenizer::Open(const char *fname,
     const char *comment_chars_in, const char *ident_extra_in,
     int features_in) {
   next_.Copy("");
@@ -147,10 +145,10 @@ success_t TextTokenizer::Open(const char *fname,
   f_ = fopen(fname, "r");
   
   if (unlikely(f_ == NULL)) {
-    return SUCCESS_FAIL;
+    return TRIAL_FAILURE;
   } else {
     Gobble();
-    return SUCCESS_PASS;
+    return TRIAL_SUCCESS;
   }
 }
 
@@ -371,7 +369,7 @@ void TextTokenizer::Gobble() {
   assert(next_.length() == index_t(strlen(next_.c_str())));
 }
 
-success_t TextWriter::Printf(const char *format, ...) {
+trial_t TextWriter::Printf(const char *format, ...) {
   int rv;
   
   va_list vl;
@@ -380,6 +378,6 @@ success_t TextWriter::Printf(const char *format, ...) {
   rv = vfprintf(f_, format, vl);
   va_end(vl);
   
-  return SUCCESS_FROM_INT(rv);
+  return TRIAL_FROM_C(rv);
 }
 

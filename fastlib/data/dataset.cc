@@ -4,8 +4,8 @@
  * Implementations for the dataset utilities.
  */
 
+#include "base/base.h"
 #include "file/textfile.h"
-#include "base/common.h"
 
 #include "dataset.h"
 
@@ -33,28 +33,28 @@ void DatasetFeature::Format(double value, String *result) const {
   }
 }
 
-success_t DatasetFeature::Parse(const char *str, double *d) const {
+trial_t DatasetFeature::Parse(const char *str, double *d) const {
   if (unlikely(str[0] == '?') && unlikely(str[1] == '\0')) {
     *d = DBL_NAN;
-    return SUCCESS_PASS;
+    return TRIAL_SUCCESS;
   }
   switch (type_) {
     case CONTINUOUS: {
         char *end;
         *d = strtod(str, &end);
         if (likely(*end == '\0')) {
-          return SUCCESS_PASS;
+          return TRIAL_SUCCESS;
         } else {
-          return SUCCESS_FAIL;
+          return TRIAL_FAILURE;
         }
       }
     case INTEGER: {
       int i;
       if (sscanf(str, "%d", &i) == 1) {
         *d = i;
-        return SUCCESS_PASS;
+        return TRIAL_SUCCESS;
       } else {
-        return SUCCESS_FAIL;
+        return TRIAL_FAILURE;
       }
     }
     case NOMINAL: {
@@ -62,11 +62,11 @@ success_t DatasetFeature::Parse(const char *str, double *d) const {
       for (i = 0; i < value_names_.size(); i++) {
         if (value_names_[i] == str) {
           *d = i;
-          return SUCCESS_PASS;
+          return TRIAL_SUCCESS;
         }
       }
       *d = DBL_NAN;
-      return SUCCESS_FAIL;
+      return TRIAL_FAILURE;
     }
     default: abort();
   }
@@ -122,9 +122,9 @@ void DatasetInfo::SkipBlanks_(TextLineReader *reader) {
   }
 }
 
-success_t DatasetInfo::InitFromArff(TextLineReader *reader,
+trial_t DatasetInfo::InitFromArff(TextLineReader *reader,
     const char *filename) {
-  success_t result = SUCCESS_PASS;
+  trial_t result = TRIAL_SUCCESS;
 
   Init(filename);
 
@@ -141,20 +141,20 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
       /* empty line */
     } else if (portions[0][0] != '@') {
       reader->Error("ARFF: Unexpected @command.  Did you forget @data?");
-      result = SUCCESS_FAIL;
+      result = TRIAL_FAILURE;
       break;
     } else {
       if (portions[0].EqualsNoCase("@relation")) {
         if (portions.size() < 2) {
           reader->Error("ARFF: @relation requires name");
-          result = SUCCESS_FAIL;
+          result = TRIAL_FAILURE;
         } else {
           set_name(portions[1]);
         }
       } else if (portions[0].EqualsNoCase("@attribute")) {
         if (portions.size() < 3) {
           reader->Error("ARFF: @attribute requires name and type.");
-          result = SUCCESS_FAIL;
+          result = TRIAL_FAILURE;
         } else {
           if (portions[2][0] == '{') { //}
             DatasetFeature *feature = features_.AddBack();
@@ -173,7 +173,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
             } else {
               reader->Error(
                   "ARFF: Only support 'numeric', 'real', and {nominal}.");
-              result = SUCCESS_FAIL;
+              result = TRIAL_FAILURE;
             }
           }
         }
@@ -183,7 +183,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
         break;
       } else {
         reader->Error("ARFF: Expected @relation, @attribute, or @data.");
-        result = SUCCESS_FAIL;
+        result = TRIAL_FAILURE;
         break;
       }
     }
@@ -194,7 +194,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
   return result;
 }
 
-success_t DatasetInfo::InitFromCsv(TextLineReader *reader,
+trial_t DatasetInfo::InitFromCsv(TextLineReader *reader,
     const char *filename) {
   ArrayList<String> headers;
   bool nonnumeric = false;
@@ -206,7 +206,7 @@ success_t DatasetInfo::InitFromCsv(TextLineReader *reader,
 
   if (headers.size() == 0) {
     reader->Error("Trying to parse empty file as CSV.");
-    return SUCCESS_FAIL;
+    return TRIAL_FAILURE;
   }
 
   // Try to auto-detect if there is a header row
@@ -237,10 +237,10 @@ success_t DatasetInfo::InitFromCsv(TextLineReader *reader,
     }
   }
 
-  return SUCCESS_PASS;
+  return TRIAL_SUCCESS;
 }
 
-success_t DatasetInfo::InitFromFile(TextLineReader *reader,
+trial_t DatasetInfo::InitFromFile(TextLineReader *reader,
     const char *filename) {
   SkipBlanks_(reader);
 
@@ -249,7 +249,7 @@ success_t DatasetInfo::InitFromFile(TextLineReader *reader,
   if (!first_line) {
     Init();
     reader->Error("Could not parse the first line.");
-    return SUCCESS_FAIL;
+    return TRIAL_FAILURE;
   } else if (*first_line == '@') {
     /* Okay, it's ARFF. */
     return InitFromArff(reader, filename);
@@ -269,11 +269,11 @@ bool DatasetInfo::is_all_continuous() const {
   return true;
 }
 
-success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const {
+trial_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const {
   ArrayList<double> linearized;
   index_t n_features = this->n_features();
   index_t n_points = 0;
-  success_t retval = SUCCESS_PASS;
+  trial_t retval = TRIAL_SUCCESS;
   bool is_done;
 
   linearized.Init();
@@ -299,7 +299,7 @@ success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const 
   return retval;
 }
 
-success_t DatasetInfo::ReadPoint(TextLineReader *reader, double *point,
+trial_t DatasetInfo::ReadPoint(TextLineReader *reader, double *point,
     bool *is_done) const {
   index_t n_features = this->n_features();
   char *pos;
@@ -309,7 +309,7 @@ success_t DatasetInfo::ReadPoint(TextLineReader *reader, double *point,
   for (;;) {
     if (!reader->MoreLines()) {
       *is_done = true;
-      return SUCCESS_PASS;
+      return TRIAL_SUCCESS;
     }
 
     pos = reader->Peek().begin();
@@ -341,7 +341,7 @@ success_t DatasetInfo::ReadPoint(TextLineReader *reader, double *point,
       reader->Error("I am expecting %"LI"d entries per row, "
           "but this line has only %"LI"d.",
           n_features, i);
-      return SUCCESS_FAIL;
+      return TRIAL_FAILURE;
     }
 
     next = pos;
@@ -358,7 +358,7 @@ success_t DatasetInfo::ReadPoint(TextLineReader *reader, double *point,
       }
     }
 
-    if (!PASSED(features_[i].Parse(pos, &point[i]))) {
+    if (!SUCCEEDED(features_[i].Parse(pos, &point[i]))) {
       char *end = reader->Peek().end();
       String tmp;
       tmp.Copy(pos);
@@ -368,7 +368,7 @@ success_t DatasetInfo::ReadPoint(TextLineReader *reader, double *point,
         }
       }
       reader->Error("Invalid parse: [%s]", tmp.c_str());
-      return SUCCESS_FAIL;
+      return TRIAL_FAILURE;
     }
 
     pos = next;
@@ -385,12 +385,12 @@ success_t DatasetInfo::ReadPoint(TextLineReader *reader, double *point,
       }
     }
     reader->Error("Extra junk on line.");
-    return SUCCESS_FAIL;
+    return TRIAL_FAILURE;
   }
 
   reader->Gobble();
 
-  return SUCCESS_PASS;
+  return TRIAL_SUCCESS;
 }
 
 
@@ -444,25 +444,25 @@ void DatasetInfo::WriteMatrix(const Matrix& matrix, const char *sep,
 
 // Dataset ------------------------------------------------------------------
 
-success_t Dataset::InitFromFile(const char *fname) {
+trial_t Dataset::InitFromFile(const char *fname) {
   TextLineReader reader;
 
-  if (PASSED(reader.Open(fname))) {
+  if (SUCCEEDED(reader.Open(fname))) {
     return InitFromFile(&reader, fname);
   } else {
     matrix_.Init(0, 0);
     info_.Init();
     NONFATAL("Could not open file '%s' for reading.", fname);
-    return SUCCESS_FAIL;
+    return TRIAL_FAILURE;
   }
 }
 
-success_t Dataset::InitFromFile(TextLineReader *reader,
+trial_t Dataset::InitFromFile(TextLineReader *reader,
     const char *filename) {
-  success_t result;
+  trial_t result;
 
   result = info_.InitFromFile(reader, filename);
-  if (PASSED(result)) {
+  if (SUCCEEDED(result)) {
     result = info_.ReadMatrix(reader, &matrix_);
   } else {
     matrix_.Init(0, 0);
@@ -472,12 +472,12 @@ success_t Dataset::InitFromFile(TextLineReader *reader,
 }
 
 
-success_t Dataset::WriteCsv(const char *fname, bool header) const {
+trial_t Dataset::WriteCsv(const char *fname, bool header) const {
   TextWriter writer;
 
-  if (!PASSED(writer.Open(fname))) {
+  if (!SUCCEEDED(writer.Open(fname))) {
     NONFATAL("Couldn't open '%s' for writing.", fname);
-    return SUCCESS_FAIL;
+    return TRIAL_FAILURE;
   } else {
     if (header) {
       info_.WriteCsvHeader(",\t", &writer);
@@ -487,12 +487,12 @@ success_t Dataset::WriteCsv(const char *fname, bool header) const {
   }
 }
 
-success_t Dataset::WriteArff(const char *fname) const {
+trial_t Dataset::WriteArff(const char *fname) const {
   TextWriter writer;
 
-  if (!PASSED(writer.Open(fname))) {
+  if (!SUCCEEDED(writer.Open(fname))) {
     NONFATAL("Couldn't open '%s' for writing.", fname);
-    return SUCCESS_FAIL;
+    return TRIAL_FAILURE;
   } else {
     info_.WriteArffHeader(&writer);
     info_.WriteMatrix(matrix_, ",", &writer);
@@ -530,7 +530,7 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
       i_train++;
     }
 
-    mem::Copy(dest,
+    mem::BitCopy(dest,
         this->matrix().GetColumnPtr(permutation[i_orig]),
         n_features());
   }
@@ -539,14 +539,14 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
   DEBUG_ASSERT(i_test == test->n_points());
 }
 
-success_t data::Load(const char *fname, Matrix *matrix) {
+trial_t data::Load(const char *fname, Matrix *matrix) {
   Dataset dataset;
-  success_t result = dataset.InitFromFile(fname);
+  trial_t result = dataset.InitFromFile(fname);
   matrix->Own(&dataset.matrix());
   return result;
 }
 
-success_t data::Save(const char *fname, const Matrix& matrix) {
+trial_t data::Save(const char *fname, const Matrix& matrix) {
   Dataset dataset;
   dataset.AliasMatrix(matrix);
   return dataset.WriteCsv(fname);

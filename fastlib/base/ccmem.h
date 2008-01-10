@@ -1,14 +1,13 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
-// ABSOLUTELY NOT FOR DISTRIBUTION
 /**
  * @file ccmem.h
  *
- * Low-level (repeat: scary) memory management routines used by
- * core datastructures.
+ * Low-level (read: scary) memory management routines used by core
+ * data structures.
  *
- * If you need to allocate single objects, use new and delete.  If you need
- * an array, just use ArrayList -- it will even do bounds checking for you
- * in debug mode, which is very handy for machine learning problems.
+ * You likely do not need to care about these functions: use new and
+ * delete (like normal) for allocation of single objects and FASTlib's
+ * ArrayList (or Vector or Matrix) for arrays.
  *
  * If you really need to manage your own memory, use these instead of
  * malloc and free, because these will perform "memory poising" in
@@ -18,371 +17,328 @@
 #ifndef BASE_CCMEM_H
 #define BASE_CCMEM_H
 
-#include "base/basic_types.h"
-#include "base/scale.h"
+#include "common.h"
 #include "debug.h"
-#include "cc.h"
 
-#include <cstdlib>
-#include <cstring>
 #include <new>
 
 /**
- * Wrappers for low-level memory access.
- *
- * This contains things such as:
- *
- * - debugging-helpful memory allocation wrappers
- *
- * - syntax-friendly access to C++ constructors for variables and arrays
- *
- * - swapping memory regions
- *
+ * Wrappers and tools for low-level memory management, including:
+ * - debuggable memory allocation wrappers
+ * - poisoning, zeroing, copying, and swapping of memory
+ * - construction and destruction of allocated object arrays
+ * - absolute pointer arithmetic functions
  */
 namespace mem {
-  /**
-   * In debug mode, sets the entire chunk of memory to a BIG_BAD_NUMBER.
-   * @param array chunk of memory
-   * @param bytes number of *bytes*
-   */
+  /** Fills memory with BIG_BAD_NUMBER, measured in bytes. */
   template<typename T>
-  void DebugPoisonBytes(T* array, size_t bytes) {
+  inline T *DebugPoisonBytes(T *array, size_t bytes) {
 #ifdef DEBUG
-    uint32 *s = reinterpret_cast<uint32*>(array);
-    size_t ints = bytes / sizeof(uint32);
-    
-    for (size_t i = 0; i < ints; i++) {
-      s[i] = uint32(BIG_BAD_NUMBER);
+    int32 *ptr = reinterpret_cast<int32 *>(array);
+    size_t len = bytes / sizeof(int32);
+    for (size_t i = 0; i < len; ++i) {
+      ptr[i] = BIG_BAD_NUMBER;
     }
 #endif
+    return array;
   }
-  
-  /**
-   * In debug mode, sets the entire chunk of memory to a BIG_BAD_NUMBER.
-   * @param array chunk of memory
-   * @param elems number of *elements*
-   */
+  /** Fills memory with BIG_BAD_NUMBER, measured in elements. */
   template<typename T>
-  void DebugPoison(T* array, size_t elems = 1) {
-    DEBUG_ONLY(DebugPoisonBytes(array, elems * sizeof(T)));
+  inline T *DebugPoison(T *array, size_t elems = 1) {
+    return DebugPoisonBytes(array, elems * sizeof(T));
   }
-  
-  /**
-   * Allocates the specified number of bytes.
-   * @param bytes number of bytes
-   * @return a pointer that must be freed with mem::Free
-   */
+  /** Allocates a (debug) poisoned array, measured in bytes. */
   template<typename T>
-  inline T * AllocBytes(size_t bytes) {
-     T *p = reinterpret_cast<T*>(::malloc(bytes));
-     DEBUG_ONLY(DebugPoisonBytes(p, bytes));
-     return p;
-  }
-  /**
-   * Allocates the specified number of elements.
-   * @param elems number of *elements*
-   * @return a pointer that must be freed with mem::Free
-   */
-  template<typename T>
-  inline T * Alloc(size_t elems = 1) {
-#ifdef FL_SCALE_NORMAL
-     // This check is only enabled if the program is run on 32-bit
-     // scales.
-     DEBUG_ASSERT(elems < BIG_BAD_NUMBER);
+  inline T *AllocBytes(size_t bytes) {
+#ifdef SCALE_NORMAL
+    /* Sanity check for small-scale problems. */
+    DEBUG_ASSERT_INDEX_BOUNDS(bytes, BIG_BAD_NUMBER);
 #endif
-     return AllocBytes<T>(elems * sizeof(T));
+    return DebugPoisonBytes(reinterpret_cast<T *>(::malloc(bytes)), bytes);
   }
-  /**
-   * Allocates the specified number of elements, zeroing them out.
-   * @param elems number of *elements*
-   * @return a pointer that must be freed with mem::Free
-   */
+  /** Allocates a (debug) poisoned array, measured in elements. */
   template<typename T>
-  inline T * AllocZeroed(size_t elems = 1) {
-     return reinterpret_cast<T*>(::calloc(elems * sizeof(T), 1));
+  inline T *Alloc(size_t elems = 1) {
+#ifdef SCALE_NORMAL
+    /* Sanity check for small-scale problems. */
+    DEBUG_ASSERT_INDEX_BOUNDS(elems, BIG_BAD_NUMBER);
+#endif
+    return AllocBytes<T>(elems * sizeof(T));
+  }
+
+  /** Bit-zeros memory, measured in bytes. */
+  template<typename T>
+  inline T *BitZeroBytes(T *array, size_t bytes) {
+    return reinterpret_cast<T *>(::memset(array, 0, bytes));
+  }
+  /** Bit-zeros memory, measured in elements. */
+  template<typename T>
+  inline T *BitZero(T *array, size_t elems = 1) {
+    return BitZeroBytes(array, elems * sizeof(T));
+  }
+  /** Allocates a bit-zerod array, measured in bytes. */
+  template<typename T>
+  inline T *AllocBitZeroedBytes(size_t bytes) {
+    return reinterpret_cast<T *>(::calloc(bytes, 1));
+  }
+  /** Allocates a bit-zerod array, measured in elements. */
+  template<typename T>
+  inline T *AllocBitZeroed(size_t elems = 1) {
+    return reinterpret_cast<T *>(::calloc(elems, sizeof(T)));
+  }
+
+  /** Bit-copies from src to dest, measured in bytes. */
+  template<typename T>
+  inline T *BitCopyBytes(T *dest, const T *src, size_t bytes) {
+    return reinterpret_cast<T *>(::memcpy(dest, src, bytes));
+  }
+  /** Bit-copies from src to dest, measured in elements. */
+  template<typename T>
+  inline T *BitCopy(T *dest, const T *src, size_t elems = 1) {
+    return BitCopyBytes(dest, src, elems * sizeof(T));
+  }
+  /** Allocates an array bit-copied from src, measured in bytes. */
+  template<typename T>
+  inline T *AllocBitCopiedBytes(const T *src, size_t bytes) {
+    return BitCopyBytes(reinterpret_cast<T *>(::malloc(bytes)), src, bytes);
+  }
+  /** Allocates an array bit-copied from src, measured in elements. */
+  template<typename T>
+  inline T *AllocBitCopied(const T *src, size_t elems = 1) {
+    return AllocBitCopiedBytes(src, elems * sizeof(T));
   }
 
   /**
-   * Allocates the specified number of elements, constructing each one.
-   * @param elems number of *elements*
-   * @return a pointer that must be freed with mem::Free
-   */
-  template<typename T>
-  inline T * AllocConstruct(size_t elems) {
-    T *p = Alloc<T>(elems);
-    for (size_t i = 0; i < elems; i++) {
-      new(p[i])T();
-    }
-  }
-  /**
-   * Allocates the specified number of elements, initializing all of them
-   * to the specified value.
+   * Resizes allocated memory, mesured in bytes.
    *
-   * @param elems number of *elements*
-   * @param initial the initial value of each element
-   * @return a pointer that must be freed with mem::Free
+   * Added bytes (if any) are not poisoned or zeroed.  The input
+   * pointer is invalidated and should be replaced by the return in
+   * all subsequent uses.
    */
   template<typename T>
-  inline T * AllocConstruct(const T& initial, size_t elems) {
-    T *p = Alloc<T>(elems);
-    for (size_t i = 0; i < elems; i++) {
-      new(p[i])T(initial);
-    }
-  }
-  
-  /**
-   * Resizes a chunk of allocated memory.
-   * @param bytes the desired number of *bytes*
-   * @param ptr a pointer allocated with mem::Alloc
-   * @return a new pointer
-   */
-  template<typename T>
-  inline T * ReallocBytes(T* ptr, size_t bytes) {
-     T *new_ptr = reinterpret_cast<T*>(realloc(ptr, bytes));
-     return new_ptr;
+  inline T *ReallocBytes(T *array, size_t bytes) {
+     return reinterpret_cast<T *>(::realloc(array, bytes));
   }
   /**
-   * Resizes a chunk of allocated memory.
-   * @param elems the desired number of *elements*
-   * @param ptr a pointer allocated with mem::Alloc
-   * @return a new pointer
-   */
-  template<typename T>
-  inline T * Resize(T* ptr, size_t elems = 1) {
-     return ReallocBytes<T>(ptr, elems * sizeof(T));
-  }
-  
-  /**
-   * Copies bit-by-bit from one location to another.
-   * @param dest the destination to copy to
-   * @param src the source data
-   * @param bytes the number of bytes to copy
-   */
-  template<typename TDest, typename TSrc>
-  inline TDest * CopyBytes(TDest* dest, const TSrc* src, size_t bytes) {
-     memcpy(dest, src, bytes); return dest;
-  }
-  /**
-   * Copies bit-by-bit from one location to another (memcpy).
-   * @param dest the destination
-   * @param src the source
-   * @param elems the desired number of *elements*
-   * @return the destination pointer
-   */
-  template<typename T>
-  inline T * Copy(T* dest, const T* src, size_t elems) {
-     return CopyBytes(dest, src, elems * sizeof(T));
-  }
-
-  /**
-   * Copies bit-by-bit from one location to another (memcpy).
+   * Resizes allocated memory, measured in elements.
    *
-   * @param dest the destination to copy to
-   * @param src the source to copy from
-   * @return the destination, for convenience
+   * Added elements (if any) are not poisoned or zeroed.  The input
+   * pointer is invalidated and should be replaced by the return in
+   * all subsequent uses.
    */
   template<typename T>
-  inline T * Copy(T* dest, const T* src) {
-     /*CopyHelper<strideof(T) % 2 != 0,
-                strideof(T) % 4 != 0,
-                strideof(T) % 8 != 0,
-                sizeof(T),
-                T>::DoCopy(dest, src);*/
-     CopyBytes(dest, src, sizeof(T));
-     return dest;
+  inline T *Realloc(T *array, size_t elems) {
+     return ReallocBytes<T>(array, elems * sizeof(T));
   }
 
-  /** Bit-copies memory, measured in bytes. */
-  template<typename T>
-  inline T * DupBytes(const T* src, size_t size) {
-     T* p = AllocBytes<T>(size); return CopyBytes(p, src, size);
-  }
-  /** Bit-copies memory, measured in elements. */
-  template<typename T>
-  inline T * Dup(const T* src, size_t elems = 1) {
-     return DupBytes(src, elems * sizeof(T));
-  }
-  
-  /** Bit-zeroes memory, measured in bytes. */
-  template<typename T>
-  inline void ZeroBytes(T* start, size_t bytes) {
-     ::memset(start, 0, bytes);
-  }
-  /** Bit-zeroes memory, measured in elements. */
-  template<typename T>
-  inline void Zero(T* start, size_t count = 1) {
-     ZeroBytes(start, count * sizeof(T));
-  }
-
-  /** Frees memory allocated by malloc or mem::Alloc. */
+  /** Frees memory allocated by mem::Alloc and its derivatives. */
   template<typename T>
   inline void Free(T* ptr) {
      ::free(ptr);
   }
-  
+
+
+
+  /** Buffer size used when swapping memory via memcpy. */
+#define SWAP_BUF_SIZE 64
+
   /**
-   * Calls the default constructor on an object.
+   * Bit-swaps two arrays, measured in bytes.
    *
-   * This template is "overloaded" so that for primitive types like int,
-   * this will not actually leave it initialized rather than setting it to
-   * zero.
+   * This code works best for arrays starting at multiple-of-eight
+   * (and higher powers of two) byte locations.  Freshly allocated
+   * memory and locations within arrays of longs, doubles, and most
+   * structs will have this property.  Suboptimal performance arises
+   * when swapping between offset locations in arrays of small types,
+   * such as portions of strings.
    */
   template<typename T>
-  inline T* Construct(T* p) {
-     new(p)T(); return p;
-  }
+  inline void BitSwapBytes(T *a, T *b, size_t bytes) {
+    char *a_cp = reinterpret_cast<char *>(a);
+    char *b_cp = reinterpret_cast<char *>(b);
+    char buf[SWAP_BUF_SIZE];
 
+    while (bytes > SWAP_BUF_SIZE) {
+      ::memcpy(buf, a_cp, SWAP_BUF_SIZE);
+      ::memcpy(a_cp, b_cp, SWAP_BUF_SIZE);
+      ::memcpy(b_cp, buf, SWAP_BUF_SIZE);
+
+      bytes -= SWAP_BUF_SIZE;
+      a_cp += SWAP_BUF_SIZE;
+      b_cp += SWAP_BUF_SIZE;
+    }
+    if (bytes > 0) {
+      ::memcpy(buf, a_cp, bytes);
+      ::memcpy(a_cp, b_cp, bytes);
+      ::memcpy(b_cp, buf, bytes);
+    }
+  }
   /**
-   * Runs the default constructor on many elements.
+   * Bit-swaps two arrays, measured in elements.
+   *
+   * This code is optimized for swapping arrays starting at
+   * multiple-of-eight byte locations.  Freshly allocated memory and
+   * all locations within arrays of longs, doubles, and most structs
+   * will have this property.  Suboptimal performance will arise only
+   * when swapping between offset locations in arrays of small types,
+   * such as portions of strings.
    */
   template<typename T>
-  inline T* ConstructAll(T* m, size_t elems) {
-     for (size_t i = 0; i < elems; i++) new(m+i)T(); return m;
+  inline void BitSwap(T *a, T *b, size_t elems = 1) {
+    BitSwapBytes(a, b, elems * sizeof(T));
   }
-#define BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(T) \
-  /** Specialized no-op default constructor. */ \
-  template<> inline T* ConstructAll<T>(T* m, size_t elems) { return m; }
 
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(char)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(short)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(int)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(long)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(long long)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(unsigned char)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(unsigned short)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(unsigned int)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(unsigned long)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(unsigned long long)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(float)
-  BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR(double)
 
-#undef BASE_CCMEM__AVOID_DEFAULT_CONSTRUCTOR
 
-  /** Calls the copy constructor to initialize an element. */
+  /** Default constructs an element. */
+  template<typename T>
+  inline T *DefaultConstruct(T *ptr) {
+    new(ptr) T();
+    return ptr;
+  }
+  /** Default constructs each element in an array. */
+  template<typename T>
+  inline T *DefaultConstruct(T *array, size_t elems) {
+    for (size_t i = 0; i < elems; ++i) {
+      new(array + i) T();
+    }
+    return array;
+  }
+  /** Destructs an element. */
+  template<typename T>
+  inline T *Destruct(T *ptr) {
+    ptr->~T();
+    return DebugPoison(ptr);
+  }
+  /** Destructs each element in an array. */
+  template<typename T>
+  inline T *Destruct(T *array, size_t elems) {
+    for (size_t i = 0; i < elems; ++i) {
+      array[i].~T();
+    }
+    return DebugPoison(array, elems);
+  }
+
+  /** No-op constructors and destcutors for primatives types. */
+#define BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(T) \
+  template<> \
+  inline T *DefaultConstruct< T >(T *ptr) \
+    {return ptr;} \
+  template<> \
+  inline T *DefaultConstruct< T >(T *array, size_t elems) \
+    {return array;} \
+  template<> \
+  inline T *Destruct< T >(T *ptr) \
+    {return DebugPoison(ptr);} \
+  template<> \
+  inline T *Destruct< T >(T *array, size_t elems) \
+    {return DebugPoison(array, elems);}
+
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(char)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(short)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(int)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(long)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(long long)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned char)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned short)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned int)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned long)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned long long)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(float)
+  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(double)
+
+  /** Constructs each element in an array with an initial value. */
   template<typename T, typename U>
-  inline T* Construct(T* p, U u) {
-     new(p)T(u); return p;
+  inline T *InitConstruct(T *array, const U &init, size_t elems = 1) {
+    for (size_t i = 0; i < elems; ++i) {
+      new(array + i) T(init);
+    }
+    return array;
   }
-  /** Calls the copy constructor  to initialize many elements to the
-   * same value. */
+  /** Element-wise copy constructs one element given another. */
   template<typename T, typename U>
-  inline T* ConstructAll(T* m, U u, size_t elems) {
-     for (size_t i = 0; i < elems; i++) new(m+i)T(u); return m;
+  inline T *CopyConstruct(T *dest, const U *src) {
+    new(dest) T(*src);
+    return dest;
+  }
+  /** Element-wise copy constructs one array given another. */
+  template<typename T, typename U>
+  inline T *CopyConstruct(T *dest, const U *src, size_t elems) {
+    for (size_t i = 0; i < elems; ++i) {
+      new(dest + i) T(src[i]);
+    }
+    return dest;
   }
 
-  /** Calls the destructor on an element. */
+  /** Bit-copy copy construction for pirmative types. */
+#define BASE_CCMEM__BIT_COPY_CONSTRUCT(T) \
+  template<> \
+  inline T *CopyConstruct< T >(T *dest, const T *src) \
+    {return BitCopy(dest, src, 1);} \
+  template<> \
+  inline T *CopyConstruct< T >(T *dest, const T *src, size_t elems) \
+    {return BitCopy(dest, src, elems);}
+
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(char)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(short)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(int)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(long)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(long long)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned char)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned short)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned int)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned long)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned long long)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(float)
+  BASE_CCMEM__BIT_COPY_CONSTRUCT(double)
+
+  /** Allocates and default constructs an array. */
   template<typename T>
-  void Destruct(T* m) {
-     m->~T();
-     DEBUG_ONLY(DebugPoison(m, 1));
+  inline T *AllocDefaultConstructed(size_t elems = 1) {
+    return DefaultConstruct(Alloc<T>(elems), elems);
   }
-  /** Calls the dstructor on many elements. */
+  /** Allocates and copy constructs an array. */
+  template<typename T, typename U>
+  inline T *AllocInitConstructed(const U &init, size_t elems = 1) {
+    return InitConstruct(Alloc<T>(elems), init, elems);
+  }
+  /** Allocates and element-wise copy constructs an array. */
+  template<typename T, typename U>
+  inline T *AllocCopyConstructed(const U *src, size_t elems = 1) {
+    return CopyConstruct(Alloc<T>(elems), src, elems);
+  }
+
+  /** Destructs and frees an array. */
   template<typename T>
-  void DestructAll(T* m, size_t elems) {
-     for (size_t i = 0; i < elems; i++) m[i].~T();
-     DEBUG_ONLY(DebugPoison(m, elems));
+  inline void FreeDestructed(T *array, size_t elems = 1) {
+    Free(Destruct(array, elems));
   }
 
-  /** Calls the copy constructor to copy an array of elements. */
+
+
+  /** Offsets a pointer by a given number of bytes. */
   template<typename T>
-  inline T* CopyConstruct(T* dest, const T* src, size_t elems = 1) {
-     for (size_t i = 0; i < elems; i++) new(dest+i)T(src[i]); return dest;
+  inline T *PtrAddBytes(const T *ptr, ptrdiff_t bytes) {
+    /* Const cast to prevent compilation errors for const T. */
+    return reinterpret_cast<T *>(const_cast<char *>(
+      reinterpret_cast<const char *>(ptr) + bytes));
   }
-#define BASE_CCMEM__FAST_COPY(T) \
-  template<> inline T* CopyConstruct<T>(T* dest, const T* src, size_t elems) \
-   { ::memcpy(dest, src, elems * sizeof(T)); return dest; }
-  BASE_CCMEM__FAST_COPY(char)
-  BASE_CCMEM__FAST_COPY(short)
-  BASE_CCMEM__FAST_COPY(int)
-  BASE_CCMEM__FAST_COPY(long)
-  BASE_CCMEM__FAST_COPY(long long)
-  BASE_CCMEM__FAST_COPY(unsigned char)
-  BASE_CCMEM__FAST_COPY(unsigned short)
-  BASE_CCMEM__FAST_COPY(unsigned int)
-  BASE_CCMEM__FAST_COPY(unsigned long)
-  BASE_CCMEM__FAST_COPY(unsigned long long)
-  BASE_CCMEM__FAST_COPY(float)
-  BASE_CCMEM__FAST_COPY(double)
-#undef BASE_CCMEM__FAST_COPY
-
-  /** Mallocs an array and copies the contents using copy constructors. */
+  /** Finds the byte difference of two pointers, i.e. lhs - rhs. */
+  template<typename T, typename U>
+  inline ptrdiff_t PtrDiffBytes(const T *lhs, const U *rhs) {
+    return reinterpret_cast<const char *>(lhs)
+      - reinterpret_cast<const char *>(rhs);
+  }
+  /** Converts a pointer to its integral absolute address. */
   template<typename T>
-  inline T* DupConstruct(const T* src, size_t elems = 1) {
-     return CopyConstruct(Alloc<T>(elems), src, elems);
+  inline ptrdiff_t PtrAbsAddr(const T *ptr) {
+    return reinterpret_cast<ptrdiff_t>(ptr);
   }
-
-  void SwapBytes__Chars(long *a_lp_in, long *b_lp_in, ssize_t remaining);
-  void SwapBytes__Impl(long *a_lp_in, long *b_lp_in, ssize_t remaining);
-
-  /** Shallow swap of two arrays, sized in bytes. */
-  template<typename T>
-  inline void SwapBytes(T* a, T* b, size_t bytes) {
-    SwapBytes__Impl(reinterpret_cast<long*>(a), reinterpret_cast<long*>(b),
-        bytes);
-  }
-
-  /** Shallow swap of two arrays, sized in elements. */
-  template<typename T>
-  inline void Swap(T* a, T* b, size_t elems = 1) {
-    SwapBytes(a, b, elems * sizeof(T));
-  }
-  
-  /**
-   * Adds a byte-by-byte difference to a pointer.
-   *
-   * This is different from pointer addition because this requires an
-   * intermediate cast to character in order to get per-byte addition.
-   *
-   * @param x the pointer offset
-   * @param difference_in_bytes the number of bytes to add
-   * @return the sum
-   */
-  template<typename T>
-  inline T* PointerAdd(T* x, ptrdiff_t difference_in_bytes) {
-    return
-        reinterpret_cast<T*>(
-            const_cast<char*>(
-                reinterpret_cast<const char*>(x)
-                + difference_in_bytes));
-  }
-
-  /**
-   * Finds the byte-by-byte distance between two pointers, lhs - rhs.
-   *
-   * This is different from pointer subtraction because this requires an
-   * intermediate cast to character in order to get per-byte differences.
-   *
-   * @param lhs the "positive" pointer
-   * @param rhs the "negative" pointer
-   * @return the difference, (char*)rhs - (char*)lhs
-   */
-  template<typename A, typename B>
-  inline ptrdiff_t PointerDiff(const A* lhs, const B* rhs) {
-    return reinterpret_cast<const char*>(lhs) - reinterpret_cast<const char*>(rhs);
-  }
-
-  /**
-   * Finds the inter-valued absolute address of a pointer.
-   *
-   * @param pointer the pointer to get the absolute address of
-   * @return the pointer, but in integer form
-   */
-  template<typename T>
-  inline ptrdiff_t PointerAbsoluteAddress(const T* pointer) {
-    return reinterpret_cast<ptrdiff_t>(pointer);
-  }
-
-  /**
-   * Determines if two pointers are the same.
-   *
-   * If the pointers are different types, this always returns false.  If
-   * they are of the same type, a pointer 
-   */
-  template<typename A, typename B>
-  inline bool PointersEqual(const A* a, const B* b) {
-    return reinterpret_cast<size_t>(a) == reinterpret_cast<size_t>(b);
+  /** Determines if two pointers are the same, i.e. lhs == rhs. */
+  template<typename T, typename U>
+  inline bool PtrsEqual(const T *lhs, const U *rhs) {
+    return reinterpret_cast<size_t>(lhs) == reinterpret_cast<size_t>(rhs);
   } 
 };
-
 
 #endif

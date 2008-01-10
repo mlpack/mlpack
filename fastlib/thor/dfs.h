@@ -15,7 +15,7 @@
  */
 template<typename GNP>
 class DualTreeDepthFirst {
-  FORBID_COPY(DualTreeDepthFirst);
+  FORBID_ACCIDENTAL_COPIES(DualTreeDepthFirst);
 
  private:
   struct QMutables {
@@ -78,9 +78,9 @@ class DualTreeDepthFirst {
   }
 
  private:
-  COMPILER_NOINLINE
+  COMPILER_NO_INLINE
   void Begin_(index_t q_root_index);
-  COMPILER_NOINLINE
+  COMPILER_NO_INLINE
   void Pair_(
       const typename GNP::QNode *q_node,
       const typename GNP::RNode *r_node,

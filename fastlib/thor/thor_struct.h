@@ -81,7 +81,7 @@ class ThorNode {
   }
 
   void set_child(int child_number, index_t child_index) {
-    DEBUG_BOUNDS(child_number, t_cardinality);
+    DEBUG_ASSERT_INDEX_BOUNDS(child_number, t_cardinality);
     children_[child_number] = child_index;
   }
 

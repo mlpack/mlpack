@@ -9,7 +9,7 @@
 #ifndef MATH_KERNEL_H
 #define MATH_KERNEL_H
 
-#include "base/common.h"
+#include "base/base.h"
 #include "math/geometry.h"
 #include "math/math.h"
 
@@ -162,7 +162,7 @@ class GaussianStarKernel {
         return DRange(eval_lo, eval_hi);
       } else {
         // Critical point is included
-        return DRange(min(eval_lo, eval_hi), critical_point_value_);
+        return DRange(std::min(eval_lo, eval_hi), critical_point_value_);
       }
     } else {
       return DRange(eval_hi, eval_lo);

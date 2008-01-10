@@ -1,47 +1,39 @@
 /**
  * @file cc.cc
  *
- * Implementations for FASTlib's basic C++ usage.
+ * Implementations for bare-necessities FASTlib programming in C++.
  */
 
 #include "cc.h"
+#include "debug.h"
 
-namespace {
-  const double DBL_ZERO = 0.0;
-};
-
-const double DBL_NAN = DBL_ZERO / DBL_ZERO;
-const double FLT_NAN = DBL_NAN;
-const double DBL_INF = 1.0 / DBL_ZERO;
-const double FLT_INF = DBL_INF;
+const double DBL_NAN = std::numeric_limits<double>::quiet_NaN();
+const float FLT_NAN = std::numeric_limits<float>::quiet_NaN();
+const double DBL_INF = std::numeric_limits<double>::infinity();
+const float FLT_INF = std::numeric_limits<float>::infinity();
 
 #if defined(DEBUG) || defined(PROFILE)
+
 namespace cc__private {
-/**
- * Class to emit a warning message whenever the library is compiled in
- * debug mode.
- */
-class CCInformDebug {
- public:
-  CCInformDebug() {
-#ifdef DEBUG
-    fprintf(stderr, ANSI_HBLACK"Program is being run with debugging checks on."ANSI_CLEAR"\n");
-#endif
-  }
-  ~CCInformDebug() {
-#ifdef PROFILE
-    fprintf(stderr, ANSI_HBLACK"[*] To collect profiling information:\n");
-    fprintf(stderr, "[*] -> gprof $this_binary >profile.out && less profile.out"ANSI_CLEAR"\n");
-#endif
-#ifdef DEBUG
-    fprintf(stderr, ANSI_HBLACK"Program was run with debugging checks on."ANSI_CLEAR"\n");
-#endif
-  }
+  /** Hidden class that emits messages for debug and profile modes. */
+  class InformDebug {
+   public:
+    InformDebug() {
+      PROFILE_ONLY(NOTIFY_STAR("Profiling information available with:\n"));
+      PROFILE_ONLY(NOTIFY_STAR("  gprof $THIS > prof.out && less prof.out\n"));
+      DEBUG_ONLY(NOTIFY_STAR(
+	  ANSI_BLACK"Program compiled with debug checks."ANSI_CLEAR"\n"));
+    }
+    ~InformDebug() {
+      PROFILE_ONLY(NOTIFY_STAR("Profiling information available with:\n"));
+      PROFILE_ONLY(NOTIFY_STAR("  gprof $THIS > prof.out && less prof.out\n"));
+      DEBUG_ONLY(NOTIFY_STAR(
+	  ANSI_BLACK"Program compiled with debug checks."ANSI_CLEAR"\n"));
+    }
+  };
+
+  /** Global instance prints messages before and after computation. */
+  InformDebug inform_debug;
 };
 
-/**
- * Declaring an instance causes its constructor and destructor to be called.
- */
-CCInformDebug cc_inform_debug_instance;
-};
 #endif

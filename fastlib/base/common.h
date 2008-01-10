@@ -1,14 +1,17 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
-// ABSOLUTELY NOT FOR DISTRIBUTION
 /**
  * @file common.h
  *
- * Includes all the bare necessities, like types, debugging, and some
- * convenience items.
+ * The bare necessities of FASTlib programming in C, including
+ * standard types, formatted messages to stderr, and useful libraries
+ * and compiler directives.
+ *
+ * This file should be included before all built-in libraries because
+ * it includes the _REENTRANT definition needed for thread-safety.
+ * Files base.h or fastlib.h include this file first and may serve as
+ * surrogates.
  *
  * @see compiler.h
- * @see debug.h
- * @see scale.h
  */
 
 #ifndef BASE_COMMON_H
@@ -18,29 +21,127 @@
 #define _REENTRANT
 #endif
 
-#ifdef __cplusplus
-#include "cc.h"
-#endif
-
 #include "base/basic_types.h"
 #include "compiler.h"
-#include "debug.h"
-#include "scale.h"
+#include "ansi_colors.h"
 
-#include <float.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <math.h>
+#include <float.h>
 
-EXTERN_C_START
+EXTERN_C_BEGIN
 
-/** A suitable no-op for macro expressions. */
+/** A no-op used in some macros. */
 #define NOP ((void)0)
 
+
+
+/* Types and definitions to assist managment of problem scale. */
+
+/* Ensure that one and only one problem scale is selected. */
+#if defined(SCALE_MASSIVE)
+#if defined(SCALE_LARGE) || defined(SCALE_NORMAL)
+#error Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL may be defined.
+#endif
+#elif defined(SCALE_LARGE) 
+#if defined(SCALE_NORMAL)
+#error Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL may be defined.
+#endif
+#elif !defined(SCALE_NORMAL)
+#define SCALE_NORMAL
+#endif
+
 /**
- * Currently, equivalent to C's abort().
+ * Index type used in FASTlib for array sizes, etc.
  *
- * Note that built-in abort() already flushes all streams.
+ * Define one of the following (default SCALE_NORMAL):
+ *
+ * SCALE_NORMAL - Problems are as large can be indexed with your
+ *   machine's standard integers.  As of 2007, this is 32 bits.
+ *
+ * SCALE_LARGE - Problems are as large as your machine's architecture
+ *   can support.  Unless you have more than 2 billion data points,
+ *   this will waste some space and reduce cache efficiency.
+ *
+ * SCALE_MASSIVE - Problems are 64-bit indexed even on 32-bit
+ *   machines, rendering them larger than RAM.
+ *
+ * Values are signed to allow uninitialized indices of -1 as well as
+ * consideration of potentially negative differences between indices.
  */
-#define fl_abort() abort()
+#if defined(SCALE_MASSIVE)
+typedef int64 index_t;          /* For larger than RAM data sets. */
+#elif defined(SCALE_LARGE)
+typedef ssize_t index_t;        /* As large as this machine can handle. */
+#elif defined(SCALE_NORMAL)
+typedef int index_t;            /* Normal sized data; usually 32-bit. */
+#endif
+
+/**
+ * Length modifier for emitting index_t with printf.
+ *
+ * Example:
+ * @code
+ *   index_t i = 42;
+ *   printf("%"LI"d\n", i);
+ * @endcode
+ */
+#if defined(SCALE_MASSIVE)
+#define LI L64
+#elif defined(SCALE_LARGE)
+#define LI "l"                  /* TODO: confirm correct. */
+#elif defined(SCALE_NORMAL)
+#define LI ""
+#endif
+
+/** Size of a kilobyte in bytes. */
+#define KILOBYTE (((size_t)1) << 10)
+/** Size of a megabyte in bytes. */
+#define MEGABYTE (((size_t)1) << 20)
+/** Size of a gigabyte in bytes. */
+#define GIGABYTE (((size_t)1) << 30)
+/* Add more of these as necessary. */
+
+
+
+/* Tools for FASTlib stderr messages, warnings, and errors. */
+
+/** Whether to segfault instead of calling C's abort(). */
+extern int segfault_on_abort;
+/** Whether to treat nonfatal warnings as fatal. */
+extern int abort_on_nonfatal;
+/** Whether to wait for user input after nonfatal warnings. */
+extern int pause_on_nonfatal;
+/** Whether to print call locations for notifications. */
+extern int print_notify_locs;
+
+/** Different types of messages FASTlib prints to stderr. */
+typedef enum {
+  /** Message for an unrecoverable error. */
+  FL_MSG_FATAL = 0,
+  /** Message for a potentially recoverable warning. */
+  FL_MSG_NONFATAL = 1,
+  /** Message for a significant but non-problematic event. */
+  FL_MSG_NOTIFY_STAR = 2,
+  /** Message for a standard, non-problematic event. */
+  FL_MSG_NOTIFY = 3
+} fl_msg_t;
+
+/** Default markers for FASTlib messages. */
+extern char fl_msg_marker[];
+/** Default colors for FASTlib message markers. */
+extern const char * fl_msg_color[];
+
+/**
+ * Terminates with an error, flushing all streams.
+ *
+ * Behavior adjustable with segfault_on_abort, which may be handy for
+ * valgrind or other debuggers.
+ */
+COMPILER_NO_RETURN
+void fl_abort(void);
 
 /**
  * Waits for the user to press return.
@@ -49,208 +150,138 @@ EXTERN_C_START
  */
 void fl_pause(void);
 
-/**
- * Prints out a blue-colored percentage status indicator.
- */
-void percent_indicator(const char *what, uint64 numerator, uint64 denominator);
+/** Prints a colored message header. */
+void fl_print_msg_header(char marker, const char *color);
 
-/**
- * Obtains a more concise filename from a full path.
- *
- * If the file is in the FASTlib directories, this will shorten the
- * path to contain only the portion beneath the c directory.
- * Otheerwise, it will give the file name and its containing
- * directory.
- */
-const char *fl_filename(const char* name);
+/** Print a location in code. */
+void fl_print_msg_loc(const char *file, const char *func, int line);
 
-/**
- * Prints a message header for a specified location in code.
- */
-void fl_msg_header(char type, const char *color,
-    const char *file, const char *func, int line);
-
-/** Whether to treat nonfatal warnings as fatal. */
-extern int abort_on_nonfatal;
-
-/** Whether to wait for user input after nonfatal warnings. */
-extern int pause_on_nonfatal;
-
-/** Whether to print call locations for notifications. */
-extern int print_notify_headers;
-
-/** Implementation for FATAL - use FATAL instead. */
-COMPILER_NORETURN
+/** Implementation for FATAL. */
+COMPILER_NO_RETURN
 COMPILER_PRINTF(4, 5)
-void fatal(const char *file, const char *func, int line,
-	   const char* format, ...);
+void fl_print_fatal_msg(const char *file, const char *func, int line,
+			const char* format, ...);
 
-/** Implementation for NONFATAL - use NONFATAL instead. */
-COMPILER_PRINTF(4, 5)
-void nonfatal(const char *file, const char *func, int line,
-	      const char* format, ...);
-
-/** Implementation for NOTIFY - use NOTIFY instead. */
-COMPILER_PRINTF(4, 5)
-void notify(const char *file, const char *func, int line,
-	    const char* format, ...);
+/** Implementation for NONFATAL, NOTIFY_STAR, and NOTIFY. */
+COMPILER_PRINTF(5, 6)
+void fl_print_msg(const char *file, const char *func, int line,
+		  fl_msg_t msg_type, const char* format, ...);
 
 /**
- * Aborts, printing call location and a message.
+ * Aborts, printing call location and a message to stderr.
  *
- * Message is sent to stderr.  Arguments are equivalent to printf.
+ * @param msg_params format string and variables, as in printf
  */
-#define FATAL(msg_params...) \
-    (fatal(__FILE__, __func__, __LINE__, msg_params))
+#define FATAL(msg_params...) (fl_print_fatal_msg( \
+    __FILE__, __FUNCTION__, __LINE__, msg_params))
 
 /**
- * (Possibly) aborts or pauses, printing call location and a message.
+ * (Possibly) aborts or pauses, printing call location and a message
+ * to stderr.
  *
- * Message is sent to stderr.  Arguments are equivalent to printf.
+ * @param msg_params format string and variables, as in printf
  */
-#define NONFATAL(msg_params...) \
-    (nonfatal(__FILE__, __func__, __LINE__, msg_params))
+#define NONFATAL(msg_params...) (fl_print_msg( \
+    __FILE__, __FUNCTION__, __LINE__, FL_MSG_NONFATAL, msg_params))
 
 /**
- * Prints (possibly) call location and a message.
+ * Prints (possibly) call location and a message with special marker
+ * to stderr.
  *
- * Message is sent to stderr.  Arguments are equivalent to printf.
+ * @param msg_params format string and variables, as in printf
  */
-#define NOTIFY(msg_params...) \
-    (notify(__FILE__, __func__, __LINE__, msg_params))
-
-/** The maximum number of tsprintf buffers available at any time. */
-#define TSPRINTF_COUNT 16
-
-/** The maximum length of a tsprintf string. */
-#define TSPRINTF_LENGTH 512
+#define NOTIFY_STAR(msg_params...) (fl_print_msg( \
+    __FILE__, __FUNCTION__, __LINE__, FL_MSG_NOTIFY_STAR, msg_params))
 
 /**
- * DEPRECATED - NOT SAFE.
+ * Prints (possibly) call location and a message with standard marker
+ * to stderr.
  *
- * Formats a string and returns an ultra-convenient string which you
- * do not have to free, and can use for a limited time.  If you simply
- * pass this to another function you will be safe.
- *
- * This works by maintaining a pool of TSPRINTF_COUNT buffers which
- * are reused circularly.
- *
- * If the string is longer than TSPRINTF_LENGTH, it will be truncated.
+ * @param msg_params format string and variables, as in printf
  */
-COMPILER_PRINTF(1, 2)
-char *tsprintf(const char *format, ...);
+#define NOTIFY(msg_params...) (fl_print_msg( \
+    __FILE__, __FUNCTION__, __LINE__, FL_MSG_NOTIFY, msg_params))
 
 /**
- * Standard return value for indicating success or failure.
+ * Prints a progress bar using ANSI commands to stay in place.
  *
- * It is recommended to use these consistently, as they have a fixed meaning.
- * Unfortunately, many functions indicate failure with nonzero return values,
- * whereas some functions indicate success with nonzero return values.
+ * For proper formatting, desc should be 22 characters or fewer and
+ * the program should avoid output of other text while emitting a
+ * progress bar.  When finished with a progress bar, emit a newline
+ * ('\n') to keep the bar on screen or a line of spaces followed by a
+ * carriage return ('\r') to clear it.
+ *
+ * @param name printed next to the progress bar; max 22 characters
+ * @param perc percentage of bar filled; should range from 0 to 100
+ */
+void fl_print_progress(const char *name, int perc);
+
+
+
+/* Tools for expressing success or failure of FASTlib functions. */
+
+/**
+ * Type for indicating success or failure.
+ *
+ * Return these rather than ints to indicate your functions' results;
+ * ints are interchangeably interpreted with either zero or nonzero
+ * for success, but values of this type have fixed meaning.
+ *
+ * You may extend the meaning of this type in your code by instead
+ * returning integer values other than TRIAL_FAILURE or TRIAL_SUCCESS,
+ * but ensure that all failure values are less than or equal to
+ * TRIAL_FAILURE, all success values are greater than or equal to
+ * TRIAL_SUCCESS, and all warning values are in between.
+ *
+ * Because the values given below are subject to change, special
+ * values should be expressed as deltas, e.g. TRIAL_FAILURE - 5.  If
+ * you need more than 64 warning values, etc., consider instead using
+ * an additional pointer argument to return an error code.
  */
 typedef enum {
-  /**
-   * Return value for indicating successful operation.
-   */
-  SUCCESS_PASS = 20,
-  /**
-   * Return value indicating an operation may have been successful, but
-   * there are things that a careful programmer or user should be wary of.
-   */
-  SUCCESS_WARN = 15,
-  /**
-   * Return value indicating an operation failed.
-   */
-  SUCCESS_FAIL = 10
-} success_t;
-
+  /** Upper-bound value indicating failed operation. */
+  TRIAL_FAILURE = 63,
+  /** A generic warning value. */
+  TRIAL_WARNING = 96,
+  /** Lower-bound value indicating successful operation. */
+  TRIAL_SUCCESS = 128
+} trial_t;
 
 /**
- * Asserts that a particular operation passes, otherwise terminates
- * the program.
+ * True on TRIAL_SUCCESS or greater; false otherwise.
  *
- * This check will *always* occur, regardless of debug mode.  It is suitable
- * for handling functions that return error codes, where it is not worth
- * trying to recover.
+ * Distinct from !FAILED(x).  Optimized for the passing case.
  */
-#define MUST_PASS(x) ((likely(x >= SUCCESS_PASS)) ? NOP \
-         : FATAL("MUST_PASS failed: %s", #x))
+#define SUCCEEDED(x) (likely((x) >= TRIAL_SUCCESS))
 
 /**
- * @deprecated
+ * True on TRIAL_FAILURE or less; false otherwise.
  *
- * The terminology of this is confusing, because this looks like it's
- * for debug-mode, but it is not.
- *
- * Instead use MUST_PASS which acts exactly the same.
+ * Distinct from !SUCCEEDED(x).  Optimized for the non-failing case.
  */
-#define ASSERT_PASS(x) MUST_PASS(x)
+#define FAILED(x) (unlikely((x) <= TRIAL_FAILURE))
 
 /**
- * Turns return values from most C standard library functions into a
- * standard success_t value, under the assumption that negative is bad.
+ * Asserts that an operation succeeds; otherwise, aborts.
  *
- * If x is less than 0, failure is assumed; otherwise, success is assumed.
+ * This optimized check occurs regardless of debug mode.
  */
-#define SUCCESS_FROM_INT(x) (unlikely((x) < 0) ? SUCCESS_FAIL : SUCCESS_PASS)
+#define MUST_SUCCEED(x) \
+    (likely(x >= TRIAL_SUCCESS) ? NOP : FATAL("MUST_SUCCEED failed: %s", #x))
 
 /**
- * Returns true if something passed, false if it failed or incurred warnings.
+ * Asserts that an operation does not fail; otherwise, aborts.
  *
- * Branch-predictor-optimized for passing case.
+ * This optimized check occurs regardless of debug mode.
  */
-#define PASSED(x) (likely((x) >= SUCCESS_PASS))
+#define MUST_NOT_FAIL(x) \
+    (likely(x > TRIAL_FAILURE) ? NOP : FATAL("MUST_NOT_FAIL failed: %s", #x))
 
-/**
- * Returns true if something failed, false if it passed or incurred warnings.
- *
- * Branch-predictor-optimized for non-failing case.
- */
-#define FAILED(x) (unlikely((x) <= SUCCESS_FAIL))
+/** Converts C library non-negative success into a trial_t. */
+#define TRIAL_FROM_C(x) (unlikely((x) < 0) ? TRIAL_FAILURE : TRIAL_SUCCESS)
 
-/** ANSI color sequence wrapper */
-#define ANSI_SEQ(str) "\033["str"m"
-/** Clears ANSI colors */
-#define ANSI_CLEAR ANSI_SEQ("0")
-/** Begin high-intensity */
-#define ANSI_BOLD ANSI_SEQ("1")
 
-/** Color code: High-intensity Black */
-#define ANSI_HBLACK ANSI_SEQ("1;30")
-/** Color code: High-intensity Red */
-#define ANSI_HRED ANSI_SEQ("1;31")
-/** Color code: High-intensity Green */
-#define ANSI_HGREEN ANSI_SEQ("1;32")
-/** Color code: High-intensity Yellow */
-#define ANSI_HYELLOW ANSI_SEQ("1;33")
-/** Color code: High-intensity Blue */
-#define ANSI_HBLUE ANSI_SEQ("1;34")
-/** Color code: High-intensity Magenta */
-#define ANSI_HMAGENTA ANSI_SEQ("1;35")
-/** Color code: High-intensity Cyan */
-#define ANSI_HCYAN ANSI_SEQ("1;35")
-/** Color code: High-intensity White */
-#define ANSI_HWHITE ANSI_SEQ("1;36")
-
-/** Color code: Black */
-#define ANSI_BLACK ANSI_SEQ("30")
-/** Color code: Red */
-#define ANSI_RED ANSI_SEQ("31")
-/** Color code: Green */
-#define ANSI_GREEN ANSI_SEQ("32")
-/** Color code: Yellow */
-#define ANSI_YELLOW ANSI_SEQ("33")
-/** Color code: Blue */
-#define ANSI_BLUE ANSI_SEQ("34")
-/** Color code: Magenta */
-#define ANSI_MAGENTA ANSI_SEQ("35")
-/** Color code: Cyan */
-#define ANSI_CYAN ANSI_SEQ("35")
-/** Color code: White */
-#define ANSI_WHITE ANSI_SEQ("36")
-
-/** The number of bytes in a megabyte, i.e. 1,048,576. */
-#define MEGABYTE (((size_t)1) << 20)
 
 EXTERN_C_END
 
-#endif
+#endif /* BASE_COMMON_H */

@@ -16,11 +16,11 @@ Mutex global_mpi_lock;
  * A transient channel just for the purpose of having barriers.
  */
 class BarrierChannel : public Channel {
-  FORBID_COPY(BarrierChannel);
+  FORBID_ACCIDENTAL_COPIES(BarrierChannel);
 
  private:
   class BarrierTransaction : public Transaction {
-    FORBID_COPY(BarrierTransaction);
+    FORBID_ACCIDENTAL_COPIES(BarrierTransaction);
 
    private:
     int n_received_;

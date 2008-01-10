@@ -92,13 +92,13 @@ static void fx__parse_cmd_line(struct datanode *node, int argc, char *argv[])
 static void fx__read_debug_params(struct datanode *node)
 {
 #ifdef VERBOSE
-  debug_verbosity = fx_param_double(node, "./verbosity_level", 1.0);
+  verbosity_level = fx_param_double(node, "./verbosity_level", 1.0);
   print_got_heres = fx_param_bool(node, "./print_got_heres", 1);
 #endif
   print_warnings = fx_param_bool(node, "./print_warnings", 1);
   abort_on_nonfatal = fx_param_bool(node, "./abort_on_nonfatal", 0);
   pause_on_nonfatal = fx_param_bool(node, "./pause_on_nonfatal", 0);
-  print_notify_headers = fx_param_bool(node, "./print_notify_headers", 1);
+  print_notify_locs = fx_param_bool(node, "./print_notify_locs", 0);
   fx__show_results_timers = fx_param_bool(node, "./noisy", 0);
 }
 
@@ -655,7 +655,7 @@ void fx_timer_start(struct datanode *module, const char *name)
         fx__module_name(module));
 #endif
 
-  /*DEBUG_MSG(0.0, "Timer \"%s\" in module \"%s\" started.",
+  /*VERBOSE_MSG(0.0, "Timer \"%s\" in module \"%s\" started.",
             name ? name : "default", module ? module->key : fx_root->key);*/
 
   if (!node->val) {

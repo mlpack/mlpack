@@ -16,7 +16,7 @@
  */
 template<typename T>
 class Queue {
-  FORBID_COPY(Queue); // No copy constructor defined (yet)
+  FORBID_ACCIDENTAL_COPIES(Queue); // No copy constructor defined (yet)
 
  private:
   struct Node {

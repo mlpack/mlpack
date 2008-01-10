@@ -9,7 +9,7 @@
 #ifndef COLLECTIONS_STRING_H
 #define COLLECTIONS_STRING_H
 
-#include "base/cc.h"
+#include "base/base.h"
 #include "arraylist.h"
 
 #include <cstring>
@@ -72,7 +72,7 @@ class String {
    */
   void Copy(const char *str_region_begin, index_t len) {
     array_.Init(len + 1);
-    mem::Copy(array_.begin(), str_region_begin, len);
+    mem::BitCopy(array_.begin(), str_region_begin, len);
     Terminate();
   }
   
@@ -414,39 +414,44 @@ class String {
   friend bool operator < (const String& a, const String& b) {
      return strcmp(a.begin(), b.begin()) < 0;
   }
+  EXPAND_LESS_THAN(String);
   friend bool operator == (const String& a, const String& b) {
      return strcmp(a.begin(), b.begin()) == 0;
   }
-  DEFINE_ALL_COMPARATORS(String);
+  EXPAND_EQUALS(String);
   
   friend bool operator < (const char *a, const String& b) {
      // >
      return strcmp(a, b.begin()) < 0;
   }
+  EXPAND_HETERO_LESS_THAN(const char *, String);
   friend bool operator < (const String& a, const char *b) {
      // >
      return strcmp(a.begin(), b) < 0;
   }
+  EXPAND_HETERO_LESS_THAN(String, const char *);
   friend bool operator == (const String& a, const char *b) {
      return strcmp(a.begin(), b) == 0;
   }
-  DEFINE_ALL_COMPARATORS_HETERO(String, const char *);
+  EXPAND_HETERO_EQUALS(String, const char *);
   
   friend bool operator < (char a, const String& b) {
      // >
      DEBUG_ASSERT(b != '\0');
      return a < b[0] || (unlikely(a == b[0]) && b[1] != '\0');
   }
+  EXPAND_HETERO_LESS_THAN(char, String);
   friend bool operator < (const String& a, char b) {
      // >
      DEBUG_ASSERT(b != '\0');
      return a[0] < b;
   }
+  EXPAND_HETERO_LESS_THAN(String, char);
   friend bool operator == (const String& a, char b) {
      DEBUG_ASSERT(b != '\0');
      return a[0] == b && a[1] == '\0';
   }
-  DEFINE_ALL_COMPARATORS_HETERO(String, char);
+  EXPAND_HETERO_EQUALS(String, char);
 };
 
 #endif

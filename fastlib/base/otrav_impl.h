@@ -189,9 +189,9 @@ namespace ot__private {
     void Doit(const T& x, char *block_in) {
       block_ = block_in;
       pos_ = sizeof(T);
-      freeze_offset_ = mem::PointerDiff(block_, &x);
+      freeze_offset_ = mem::PtrDiffBytes(block_, &x);
 
-      mem::Copy(reinterpret_cast<T*>(block_), &x);
+      mem::BitCopy(reinterpret_cast<T*>(block_), &x);
       // we must cast away const due to TraverseObject's limitations
       TraverseObject(const_cast<T*>(&x), this);
     }
@@ -251,7 +251,7 @@ namespace ot__private {
      *        pointer arithmetic for updating the resulting pointers
      */
     T** DestinationEquivalentPointer_(T** source_region_ptr) {
-      return mem::PointerAdd(source_region_ptr, freeze_offset_);
+      return mem::PtrAddBytes(source_region_ptr, freeze_offset_);
     }
     /*
      * Aligns the current position to the given stride, and returns a
@@ -294,12 +294,12 @@ namespace ot__private {
       T* dest = TranslateAndFixPointer_(&source_region);
       // Copy the object and progress
       pos_ += sizeof(T);
-      mem::Copy(dest, source_region);
+      mem::BitCopy(dest, source_region);
       // Save our old freeze offset
       size_t freeze_offset_tmp = freeze_offset_;
       // Calculate new freeze offset as the distance between the source and
       // destination memory regions.
-      freeze_offset_ = mem::PointerDiff(dest, source_region);
+      freeze_offset_ = mem::PtrDiffBytes(dest, source_region);
       // Recurse on the object.
       TraverseObject(source_region, this);
       // Revert to the old freeze offset.
@@ -317,11 +317,11 @@ namespace ot__private {
       // Calculate the total size allocated, copy, and progress
       size_t size = len * sizeof(T);
       pos_ += size;
-      mem::CopyBytes(dest, source_region, size);
+      mem::BitCopyBytes(dest, source_region, size);
       // Save old freeze offset
       size_t freeze_offset_tmp = freeze_offset_;
       // Calculate new freeze offset
-      freeze_offset_ = mem::PointerDiff(dest, source_region);
+      freeze_offset_ = mem::PtrDiffBytes(dest, source_region);
       // Recurse over each object
       for (index_t i = 0; i < len; i++) {
         TraverseObject(&source_region[i], this);
@@ -426,14 +426,14 @@ namespace ot__private {
     /* visits an object pointed to, allocated with new */
     template<typename T> void Ptr(T*& x, bool nullable) {
       if (!nullable || x != NULL) {
-        x = mem::PointerAdd(x, offset_);
+        x = mem::PtrAddBytes(x, offset_);
         MyObject(*x);
       }
     }
     /* visits an array pointed to, allocated with new[] */
     template<typename T> void Array(T*& x, index_t len) {
       if (len != 0) {
-        x = mem::PointerAdd(x, offset_);
+        x = mem::PtrAddBytes(x, offset_);
         MyArray(x, len);
       }
     }
@@ -484,15 +484,15 @@ namespace ot__private {
     /* visits an object pointed to, allocated with new */
     template<typename T> void Ptr(T*& x, bool nullable) {
       if (!nullable || x != NULL) {
-        TraverseObject(mem::PointerAdd(x, pre_offset_), this);
-        x = mem::PointerAdd(x, post_offset_);
+        TraverseObject(mem::PtrAddBytes(x, pre_offset_), this);
+        x = mem::PtrAddBytes(x, post_offset_);
       }
     }
     /* visits an array pointed to, allocated with new[] */
     template<typename T> void Array(T*& x, index_t len) {
       if (len != 0) {
-        TraverseArray(mem::PointerAdd(x, pre_offset_), len, this);
-        x = mem::PointerAdd(x, post_offset_);
+        TraverseArray(mem::PtrAddBytes(x, pre_offset_), len, this);
+        x = mem::PtrAddBytes(x, post_offset_);
       }
     }
     /* visits an array pointed to, allocated with malloc */
@@ -506,7 +506,7 @@ namespace ot__private {
     template<typename T>
     static void Doit(const T& src, T *dest) {
       ot__private::ZOTDeepCopier d;
-      mem::Copy(dest, &src, 1);
+      mem::BitCopy(dest, &src, 1);
       TraverseObjectPostprocess(dest);
       d.MyObject(*dest);
     }
@@ -571,7 +571,7 @@ namespace ot__private {
     /* visits an array pointed to, allocated with malloc */
     template<typename T> void MallocArray(T*& x, index_t len) {
       T *tmpx = x;
-      mem::DestructAll(tmpx, len);
+      mem::Destruct(tmpx, len);
       mem::Free(tmpx);
       DEBUG_POISON_PTR(x);
     }

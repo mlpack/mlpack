@@ -11,7 +11,7 @@
 #ifndef TREE_SPACETREE_H
 #define TREE_SPACETREE_H
 
-#include "base/cc.h"
+#include "base/base.h"
 #include "statistic.h"
 
 /**
@@ -206,7 +206,7 @@ class BinarySpaceTree {
     }
   }
 
-  FORBID_COPY(BinarySpaceTree);
+  FORBID_ACCIDENTAL_COPIES(BinarySpaceTree);
 };
 
 #endif

@@ -1,5 +1,5 @@
+#include "base/base.h"
 #include "base/test.h"
-#include "base/otrav.h"
 #include "la/matrix.h"
 #include "data/dataset.h"
 
@@ -30,7 +30,7 @@ void TestDatasetLayout() {
   d2 = ot::PointerThaw<Dataset>(dump);
   ot::Print(*d2);
   char copy[size];
-  mem::CopyBytes(copy, d2, size);
+  mem::BitCopyBytes(copy, reinterpret_cast<char *>(d2), size);
   ot::PointerRefreeze<Dataset>(d2, copy);
   
   Dataset *d3;

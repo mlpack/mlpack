@@ -15,7 +15,7 @@
  */
 template<typename GNP>
 class DualTreeRecursiveBreadth {
-  FORBID_COPY(DualTreeRecursiveBreadth);
+  FORBID_ACCIDENTAL_COPIES(DualTreeRecursiveBreadth);
 
  private:
   struct QueueItem {
@@ -99,9 +99,9 @@ class DualTreeRecursiveBreadth {
   }
 
  private:
-  COMPILER_NOINLINE
+  COMPILER_NO_INLINE
   void Begin_(index_t q_root_index);
-  COMPILER_NOINLINE
+  COMPILER_NO_INLINE
   bool BeginExploringQueue_(
     const typename GNP::QNode& q_node, Queue *parent_queue);
   void Divide_(index_t q_node_i, Queue *parent_queue);

@@ -7,7 +7,7 @@
 #ifndef THOR_RPC_BASE_H
 #define THOR_RPC_BASE_H
 
-#include "base/common.h"
+#include "base/base.h"
 
 /**
  * A Message is the fundamental unit of message-passing in our RPC system.
@@ -21,7 +21,7 @@
  * to copy the message's contents multiple times.
  */
 class Message {
-  FORBID_COPY(Message);
+  FORBID_ACCIDENTAL_COPIES(Message);
 
  private:
   /** Rank of the message's source or destination (the one that isn't me). */
@@ -125,7 +125,7 @@ class Message {
  * other machine faster than you'd expect.
  */
 class Transaction {
-  FORBID_COPY(Transaction);
+  FORBID_ACCIDENTAL_COPIES(Transaction);
 
  private:
   int channel_;
