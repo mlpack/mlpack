@@ -135,7 +135,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
     const typename GNP::QSummaryResult& unvisited,
     QMutables *q_node_mut) {
   //printf("pair(%d:%d) at (%d:%d)\n", q_node->begin(), q_node->count(), r_node->begin(), r_node->count());
-  DEBUG_MSG(1.0, "Checking (%d,%d) x (%d,%d)",
+  VERBOSE_MSG(1.0, "Checking (%d,%d) x (%d,%d)",
       q_node->begin(), q_node->end(),
       r_node->begin(), r_node->end());
   DEBUG_ONLY(stats_.node_node_considered++);
@@ -150,18 +150,18 @@ void DualTreeDepthFirst<GNP>::Pair_(
          param_, *q_node, mu, global_result_, &q_node_mut->postponed)) {
     // TODO: This behavior should be re-thinked.
     q_node_mut->summary_result.ApplyDelta(param_, delta);
-    DEBUG_MSG(1.0, "Termination prune");
+    VERBOSE_MSG(1.0, "Termination prune");
   } else if (!GNP::Algorithm::ConsiderPairExtrinsic(
           param_, *q_node, *r_node, delta, mu, global_result_,
           &q_node_mut->postponed)) {
-    DEBUG_MSG(1.0, "Extrinsic prune");
+    VERBOSE_MSG(1.0, "Extrinsic prune");
   } else {
     if (q_node->is_leaf() && r_node->is_leaf()) {
-      DEBUG_MSG(1.0, "Base case");
+      VERBOSE_MSG(1.0, "Base case");
       BaseCase_(q_node, r_node, delta, unvisited, q_node_mut);
     } else if (r_node->is_leaf()
         || (q_node->count() >= r_node->count() && !q_node->is_leaf())) {
-      DEBUG_MSG(1.0, "Splitting Q");
+      VERBOSE_MSG(1.0, "Splitting Q");
       // Phase 2: Explore children, and reincorporate their results.
       q_node_mut->summary_result.StartReaccumulate(param_, *q_node);
 
@@ -191,7 +191,7 @@ void DualTreeDepthFirst<GNP>::Pair_(
       q_node_mut->summary_result.FinishReaccumulate(param_, *q_node);
       q_node_mut->postponed.Reset(param_);
     } else {
-      DEBUG_MSG(1.0, "Splitting R");
+      VERBOSE_MSG(1.0, "Splitting R");
       const typename GNP::RNode *r_child1 = r_nodes_.StartRead(r_node->child(0));
       const typename GNP::RNode *r_child2 = r_nodes_.StartRead(r_node->child(1));
       typename GNP::Delta delta1;
@@ -279,7 +279,7 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
           break;
         }
         r_i++;
-        r_point = mem::PointerAdd(r_point, r_point_stride);
+        r_point = mem::PtrAddBytes(r_point, r_point_stride);
       }
 
       visitor.FinishVisitingQueryPoint(param_, *q_point, q_i, *r_node,
@@ -290,8 +290,8 @@ void DualTreeDepthFirst<GNP>::BaseCase_(
 
     q_node_mut->summary_result.Accumulate(param_, *q_result);
 
-    q_point = mem::PointerAdd(q_point, q_point_stride);
-    q_result = mem::PointerAdd(q_result, q_result_stride);
+    q_point = mem::PtrAddBytes(q_point, q_point_stride);
+    q_result = mem::PtrAddBytes(q_result, q_result_stride);
   }
 
   q_node_mut->summary_result.FinishReaccumulate(param_, *q_node);

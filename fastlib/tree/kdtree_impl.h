@@ -118,7 +118,7 @@ namespace tree_kdtree_private {
             &left->bound(), &right->bound(),
             old_from_new);
         
-        DEBUG_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
+        VERBOSE_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
             node->begin(), split_col,
             node->begin() + node->count(), split_dim, split_val,
             node->bound().get(split_dim).lo,

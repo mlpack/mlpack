@@ -1,244 +1,254 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
-// ABSOLUTELY NOT FOR DISTRIBUTION
 /**
  * @file cc.h
  *
- * Bare necessities for C++ in FASTlib.
- *
- * This includes common.h plus some macros to help you create classes.
+ * The bare necessities of FASTlib programming in C++.
  */
 #ifndef BASE_CC_H
 #define BASE_CC_H
 
-#include "compiler.h"
-#include "debug.h"
-#include "scale.h"
+#include "common.h"
 
-#include <cstdlib>
+#include <algorithm>
+#include <limits>
 
-/** NaN value for doubles.  Use isnan to check for this. */
+/** NaN value for doubles; check with isnan, not ==. */
 extern const double DBL_NAN;
-
-/** NaN value for floats.  Use isnanf to check for this. */
-extern const double FLT_NAN;
-
-/** Infinity value for doubles. */
+/** NaN value for floats; check with isnanf, not ==. */
+extern const float FLT_NAN;
+/** Infinity value for doubles; check with isinf, not ==. */
 extern const double DBL_INF;
-
-/** Infinity value for floats. */
-extern const double FLT_INF;
-
-/* TODO: Decide if templated min and max would prefer const refs.
- *
- * I'm purposely not making these const refs for the case of integers
- * and such, where you don't want to invalidate putting something in a
- * register.
- *
- * This might be desirable, except in the case where a and b are large
- * structs, but as far as I know, C++ will use constant references when
- * possible.
- */
+/** Infinity value for floats; check with isinff, not ==. */
+extern const float FLT_INF;
 
 /**
- * Return the minimum of two objects.
- */
-template<typename T>
-inline T min(T a, T b) {
-  return a < b ? a : b;
-}
-
-/**
- * Return the maximum of two objects.
- */
-template<typename T>
-inline T max(T a, T b) {
-  return a > b ? a : b;
-}
-
-/**
- * Prevents your class from being copied.
+ * Disables copy construction and assignment.
  *
- * This avoids needless headaches and errors by avoiding the copy constructor.
+ * This will save you needless headaches by preventing accidental
+ * copying of objects via forgetting to use references in function
+ * arguments, etc.  Instead of odd behavior you will get compiler
+ * errors.  The FASTlib style guide recommends disabling copy
+ * construction and assignment for classes that do more than store
+ * data, defining the Copy method in their lieu if appropriate.
  *
- * From the FASTlib style guide, most classes shouldn't be copiable unless
- * it is only a data structure.
+ * Always follow member declaration macros with the appropriate
+ * visibility label (public, private, or protected).
  *
  * Example:
- *
  * @code
- *  class Stuff {
- *    FORBID_COPY(Stuff);
- *   private:
- *    ...
- *  }
+ *   class MyClass {
+ *     FORBID_ACCIDENTAL_COPIES(MyClass);
+ *    private:
+ *     ...
+ *   };
  * @endcode
+ */
+#define FORBID_ACCIDENTAL_COPIES(C) \
+   private: \
+    C (const C &src); \
+    const C &operator=(const C &src);
+
+/**
+ * Defines assignment in terms of copy construction for non-recursive
+ * data structures.
  *
- * After calling this macro, explicitly define the visibility of whatever
- * follows (public, private, protected).
- */
-#define FORBID_COPY(cl) \
-        private: cl (const cl&); void operator=(const cl&)
-
-/**
- * If you *must* define a copy constructor, this will automatically
- * make a suitable assignment operator.
- */
-#define CC_ASSIGNMENT_OPERATOR(cl) \
-        public: const cl&operator=(const cl&o) \
-        {if(this!=&o){this->~cl();new(this)cl(o);}return *this;}
-
-/**
- * Creates a copy constructor using the Copy method.
+ * This is faster than the recursion-safe version for shallow data
+ * structures but about the same otherwise; built-in assignment is
+ * faster than either.  This is safe when the left-hand does not
+ * contain and is not contained by the right-hand side, i.e. when
+ * destructing the left does not inadvertantly change the right.
  *
- * This does not call the default constructor, so if you are explicitly
- * checking for debug poisons, your checks will fail.
+ * Always follow member declaration macros with the appropriate
+ * visibility label (public, private, or protected).
+ *
+ * @see ASSIGN_VIA_RECURSION_SAFE_COPY_CONSTRUCTION
  */
-#define ALLOW_COPY(cl) \
-        public: cl(const cl& other) { Copy(other); } \
-        CC_ASSIGNMENT_OPERATOR(cl)
+#define ASSIGN_VIA_COPY_CONSTRUCTION(C) \
+   public: \
+    const C &operator=(const C &src) { \
+      if (likely(this != &src)) { \
+        this->~C(); \
+        new(this) C(src); \
+      } \
+      return *this; \
+    }
 
 /**
- * Defines inequality comparators for this class, given the friend
- * operator less-than has already been defined.
+ * Defines assignment in terms of copy construction for recursive data
+ * structures.
+ *
+ * This version of assignment works even when the left-hand side
+ * contains or is contained by the right-hand side.  The left is
+ * replaced by a snapshot of the right, permitting the right to change
+ * or be destructed in the process.  Due to an additional memcpy at
+ * the first layer, this method is slower than the recursion-unsafe
+ * version for shallow data structures but about the same otherwise.
+ *
+ * Always follow member declaration macros with the appropriate
+ * visibility label (public, private, or protected).
+ *
+ * @see ASSIGN_VIA_COPY_CONSTRUCTION
+ */
+#define ASSIGN_VIA_RECURSION_SAFE_COPY_CONSTRUCTION(C) \
+   public: \
+    const C &operator=(const C &src) { \
+      if (likely(this != &src)) { \
+        char buf[sizeof(C)]; \
+        new(buf) C(src); \
+        this->~C(); \
+        memcpy(this, buf, sizeof(C)); \
+      } \
+      return *this; \
+    }
+
+/**
+ * Defines all inequality operators given friended less-than.
  *
  * Example:
- *
  * @code
- *  class Stuff {
- *    friend bool operator < (const Stuff& a, const Stuff& b) {
- *       return a.x < b.x;
- *    }
- *    DEFINE_INEQUALITY_COMPARATORS(Stuff);
- *    ...
- *  }
+ *   class MyClass {
+ *     ...
+ *     friend bool operator<(const MyClass &a, const MyClass &b) {
+ *       return a.v < b.v;
+ *     }
+ *     EXPAND_LESS_THAN(MyClass);
+ *     ...
+ *   };
  * @endcode
  *
- * The Stuff class will then have all inequality operators.
- *
- * @param cl the name of the class
+ * @see EXPAND_GREATER_THAN, EXPAND_EQUALS, EXPAND_HETERO_LESS_THAN
  */
-#define DEFINE_INEQUALITY_COMPARATORS(cl) \
-        friend bool operator > (cl const & a, cl const & b) { return b < a; } \
-        friend bool operator >= (cl const & a, cl const & b) { return !(a < b); } \
-        friend bool operator <= (cl const & a, cl const & b) { return !(b < a); }
+#define EXPAND_LESS_THAN(C) \
+    friend bool operator>(C const &b, C const &a) {return a < b;} \
+    friend bool operator<=(C const &b, C const &a) {return !(a < b);} \
+    friend bool operator>=(C const &a, C const &b) {return !(a < b);}
 
 /**
- * Defines equality and inequality comparators for a class, given the
- * operators less-than and double-equals have already been defined.
+ * Defines all inequality operators given friended greater-than.
  *
  * Example:
- *
  * @code
- *  class Stuff {
- *    friend bool operator < (const Stuff& a, const Stuff& b) {
- *       return a.x < b.x;
- *    }
- *    friend bool operator == (const Stuff& a, const Stuff& b) {
- *       return a.x == b.x;
- *    }
- *    DEFINE_ALL_COMPARATORS(Stuff);
- *    ...
- *  }
+ *   class MyClass {
+ *     ...
+ *     friend bool operator>(const MyClass &a, const MyClass &b) {
+ *       return a.v > b.v;
+ *     }
+ *     EXPAND_GREATER_THAN(MyClass);
+ *     ...
+ *   };
  * @endcode
  *
- * The Stuff class will then have all inequality operators.
- *
- * @param cl the name of the class
+ * @see EXPAND_LESS_THAN, EXPAND_EQUALS, EXPAND_HETERO_GREATER_THAN
  */
-#define DEFINE_ALL_COMPARATORS(cl) \
-        DEFINE_INEQUALITY_COMPARATORS(cl) \
-        friend bool operator != (cl const & a, cl const & b) { return !(a == b); }
+#define EXPAND_GREATER_THAN(C) \
+    friend bool operator<(C const &b, C const &a) {return a > b;} \
+    friend bool operator>=(C const &b, C const &a) {return !(a > b);} \
+    friend bool operator<=(C const &a, C const &b) {return !(a > b);}
 
 /**
- * Defines heterogeneous inequality comparators for this class, given the
- * friend operators less-than for both classes has already been defined.
+ * Defines not-equals given friended equals.
  *
  * Example:
- *
  * @code
- *  class Foo {
- *    friend bool operator < (const Foo& a, const Bar& b) {
- *       ...
- *    }
- *    friend bool operator < (const Bar& a, const Foo& b) {
- *       ...
- *    }
- *    DEFINE_INEQUALITY_COMPARATORS_HETERO(Stuff);
- *    ...
- *  }
+ *   class MyClass {
+ *     ...
+ *     friend bool operator==(const MyClass &a, const MyClass &b) {
+ *       return a.v == b.v;
+ *     }
+ *     EXPAND_EQUALS(MyClass);
+ *     ...
+ *   };
  * @endcode
  *
- * The Stuff class will then have all inequality operators.
- *
- * @param cl1 the left-hand-side class
- * @param cl2 the right-hand-side class
+ * @see EXPAND_LESS_THAN, EXPAND_GREATER_THAN, EXPAND_HETERO_EQUALS
  */
-#define DEFINE_INEQUALITY_COMPARATORS_HETERO(cl1, cl2) \
-        friend bool operator > (cl1 const & a, cl2 const & b) { return b < a; } \
-        friend bool operator >= (cl1 const & a, cl2 const & b) { return !(a < b); } \
-        friend bool operator <= (cl1 const & a, cl2 const & b) { return !(b < a); } \
-        friend bool operator > (cl2 const & a, cl1 const & b) { return b < a; } \
-        friend bool operator >= (cl2 const & a, cl1 const & b) { return !(a < b); } \
-        friend bool operator <= (cl2 const & a, cl1 const & b) { return !(b < a); }
+#define EXPAND_EQUALS(C) \
+    friend bool operator!=(C const &a, C const &b) {return !(a == b);}
 
 /**
- * Defines equality and inequality comparators for a class, given just
- * a few heterogeneous comparators.
+ * Defines several heterogeneous inequality operators given friended
+ * less-than with the first class on the left.
+ *
+ * Use twice, exchanging argument order, to obtain all heterogeneous
+ * inequalities or use in conjunction with EXPAND_HETERO_GREATER_THAN.
  *
  * Example:
- *
  * @code
- *  class Foo {
- *    friend bool operator < (const Foo& a, const Bar& b) {
- *       ...
- *    }
- *    friend bool operator < (const Bar& a, const Foo& b) {
- *       ...
- *    }
- *    friend bool operator == (const Foo& a, const Bar& b) {
- *       ...
- *    }
- *    DEFINE_ALL_COMPARATORS_HETERO(Foo, Bar);
- *    ...
- *  }
+ *   class MyClass {
+ *     ...
+ *     friend bool operator<(const MyClass &a, const int &b) {
+ *       return a.v < b;
+ *     }
+ *     EXPAND_HETERO_LESS_THAN(MyClass, int);
+ *     friend bool operator<(const int &a, const MyClass &b) {
+ *       return a < b.v;
+ *     }
+ *     EXPAND_HETERO_LESS_THAN(int, MyClass);
+ *     ...
+ *   };
  * @endcode
  *
- * The operators for both will be filled out.
+ * @see EXPAND_HETERO_GREATER_THAN, EXPAND_HETERO_EQUALS
+ */
+#define EXPAND_HETERO_LESS_THAN(C, T) \
+    friend bool operator>(T const &b, C const &a) {return a < b;} \
+    friend bool operator<=(T const &b, C const &a) {return !(a < b);} \
+    friend bool operator>=(C const &a, T const &b) {return !(a < b);}
+
+/**
+ * Defines several heterogeneous inequality operators given friended
+ * greater-than with the first class on the left.
  *
- * @param cl1 the left-hand-side class
- * @param cl2 the right-hand-side class
+ * Use twice, exchanging argument order, to obtain all heterogeneous
+ * inequalities or use in conjunction with EXPAND_HETERO_LESS_THAN.
+ *
+ * Example:
+ * @code
+ *   class MyClass {
+ *     ...
+ *     friend bool operator<(const MyClass &a, const int &b) {
+ *       return a.v < b;
+ *     }
+ *     EXPAND_HETERO_LESS_THAN(MyClass, int);
+ *     friend bool operator>(const MyClass &a, const int &b) {
+ *       return a.v > b;
+ *     }
+ *     EXPAND_HETERO_GREATER_THAN(MyClass, int);
+ *     ...
+ *   };
+ * @endcode
+ *
+ * @see EXPAND_HETERO_LESS_THAN, EXPAND_HETERO_EQUALS
  */
-#define DEFINE_ALL_COMPARATORS_HETERO(cl1, cl2) \
-        DEFINE_INEQUALITY_COMPARATORS_HETERO(cl1, cl2) \
-        friend bool operator == (cl2 const & b, cl1 const & a)\
-          {return (a == b);} \
-        friend bool operator != (cl1 const & a, cl2 const & b)\
-          {return !(a == b);} \
-        friend bool operator != (cl2 const & b, cl1 const & a)\
-          {return !(a == b);}
+#define EXPAND_HETERO_GREATER_THAN(C, T) \
+    friend bool operator<(T const &b, C const &a) {return a > b;} \
+    friend bool operator>=(T const &b, C const &a) {return !(a > b);} \
+    friend bool operator<=(C const &a, T const &b) {return !(a > b);}
 
 /**
- * Empty object.
+ * Defines heterogeneus equals with arguments exchanged and both
+ * not-equals given friended equals with the first class on the left.
+ *
+ * Example:
+ * @code
+ *   class MyClass {
+ *     ...
+ *     friend bool operator==(const MyClass &a, const int &b) {
+ *       return a.v == b;
+ *     }
+ *     EXPAND_HETERO_EQUALS(MyClass, int);
+ *     ...
+ *   };
+ * @endcode
+ *
+ * @see EXPAND_HETERO_LESS_THAN, EXPAND_HETERO_GREATER_THAN
  */
-struct Empty {};
+#define EXPAND_HETERO_EQUALS(C, T) \
+    friend bool operator==(T const &b, C const &a) {return a == b;} \
+    friend bool operator!=(C const &a, T const &b) {return !(a == b);} \
+    friend bool operator!=(T const &b, C const &a) {return !(a == b);}
 
-/**
- * IfThenElse condition for template metaprogramming.  A google search will
- * explain how to use this.
- */
-template<bool condition, class TA, class TB>
-class IfThenElse;
-
-template<class TA, class TB>
-class IfThenElse<true, TA, TB> {
- private:
-  typedef TA Result;
-};
-
-template<class TA, class TB>
-class IfThenElse<false, TA, TB> {
- private:
-  typedef TB Result;
-};
+/** Empty object. */
+class Empty {};
 
 #endif /* BASE_CC_H */

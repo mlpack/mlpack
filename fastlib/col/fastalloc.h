@@ -9,8 +9,7 @@
 #ifndef COL_FASTALLOC_H
 #define COL_FASTALLOC_H
 
-#include "base/common.h"
-#include "base/ccmem.h"
+#include "base/base.h"
 
 /**
  * Fast memory allocator for identically sized chunks.

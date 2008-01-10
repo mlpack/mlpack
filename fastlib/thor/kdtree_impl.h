@@ -141,7 +141,7 @@ index_t KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
   } else {
     node->set_leaf();
     // ensure leaves don't straddle block boundaries
-    DEBUG_SAME_INT(node->begin() / points_.n_block_elems(),
+    DEBUG_ASSERT_INDICES_EQUAL(node->begin() / points_.n_block_elems(),
         (node->end() - 1) / points_.n_block_elems());
     for (index_t i = node->begin(); i < node->end(); i++) {
       CacheRead<Point> point(&points_, i);
@@ -195,7 +195,8 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
     points_.cache()->GiveOwnership(
         points_.Blockid(node->begin()), begin_rank);
     // This is also a convenient time to display status.
-    percent_indicator("tree built", node->begin() + block_size_, n_points_);
+    fl_print_progress("tree built",
+        (node->begin() + block_size_) * 100 / n_points_);
   }
 
   if (1) {

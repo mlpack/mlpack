@@ -81,7 +81,7 @@
  */
 template<class TClassifier>
 class SimpleCrossValidator {
-  FORBID_COPY(SimpleCrossValidator);
+  FORBID_ACCIDENTAL_COPIES(SimpleCrossValidator);
   
  public:
   /** Typedef of internal classifier used. */
@@ -256,13 +256,13 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
       SaveTrainTest_(i_folds, train, test);
     }
   
-    DEBUG_MSG(1, "cross: Training fold %d", i_folds);
+    VERBOSE_MSG(1, "cross: Training fold %d", i_folds);
     fx_timer_start(foldmodule, "train");
     classifier.InitTrain(train, n_classes_, classifier_module);
     fx_timer_stop(foldmodule, "train");
     
     fx_timer_start(foldmodule, "test");
-    DEBUG_MSG(1, "cross: Testing fold %d", i_folds);
+    VERBOSE_MSG(1, "cross: Testing fold %d", i_folds);
     for (index_t i = 0; i < test.n_points(); i++) {
       Vector test_vector_with_label;
       Vector test_vector;

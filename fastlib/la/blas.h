@@ -5,7 +5,7 @@
 #include "base/compiler.h"
 namespace la {
 
-EXTERN_C_START
+EXTERN_C_BEGIN
 
 f77_ret_void F77_FUNC(srot)(f77_integer CONST_REF, f77_real *, f77_integer CONST_REF, f77_real *, f77_integer CONST_REF, const f77_real *, const f77_real *);
 f77_ret_void F77_FUNC(srotg)(f77_real *, f77_real *, f77_real *, f77_real *);

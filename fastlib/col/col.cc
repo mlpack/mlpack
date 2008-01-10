@@ -32,7 +32,7 @@ const String& String::InitSprintf(const char *format, ...) {
       size *= 2;
     }
     
-    s = mem::Resize(s, size);
+    s = mem::Realloc(s, size);
   }
   
   Steal(s, len, size);
@@ -43,7 +43,7 @@ const String& String::InitSprintf(const char *format, ...) {
 index_t String::FindAny(const char *char_set, index_t skip_initial) const {
   const char *pos = begin() + skip_initial;
   
-  DEBUG_BOUNDS(skip_initial, length() + 1);
+  DEBUG_ASSERT_INDEX_BOUNDS(skip_initial, length() + 1);
   
   while (*pos != '\0' && strchr(char_set, *pos) == NULL) {
     pos++;
@@ -64,7 +64,7 @@ index_t String::Split(index_t start_index,
   const char *pos = begin() + start_index;
   bool done = false;
   
-  DEBUG_BOUNDS(start_index, length() + 1);
+  DEBUG_ASSERT_INDEX_BOUNDS(start_index, length() + 1);
   
   do {
     const char *startpos;

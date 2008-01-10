@@ -18,7 +18,7 @@
 
 #include <sys/times.h>
 
-EXTERN_C_START
+EXTERN_C_BEGIN
 
 /** Cycle counter data type. */
 typedef uint64 tsc_t;

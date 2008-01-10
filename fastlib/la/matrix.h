@@ -9,11 +9,7 @@
 #ifndef LA_MATRIX_H
 #define LA_MATRIX_H
 
-#include "base/common.h"
-#include "base/scale.h"
-#include "base/cc.h"
-#include "base/ccmem.h"
-#include "base/otrav.h"
+#include "base/base.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -75,7 +71,7 @@ class Vector {
     DEBUG_ONLY(Uninitialize_());
     Copy(other);
   }
-  CC_ASSIGNMENT_OPERATOR(Vector);
+  ASSIGN_VIA_COPY_CONSTRUCTION(Vector);
   
   /**
    * Destroys the Vector, freeing the memory if this copy is not an alias.
@@ -114,7 +110,7 @@ class Vector {
    * Sets all elements to the same value.
    */
   void SetAll(double d) {
-    mem::ConstructAll(ptr_, d, length_);
+    mem::InitConstruct(ptr_, d, length_);
   }
   
   /**
@@ -143,7 +139,7 @@ class Vector {
   void Copy(const double *doubles, index_t in_length) {
     DEBUG_ONLY(AssertUninitialized_());
     
-    ptr_ = mem::Dup(doubles, in_length);
+    ptr_ = mem::AllocBitCopied(doubles, in_length);
     length_ = in_length;
     should_free_ = true;
   }
@@ -210,8 +206,8 @@ class Vector {
    * @param dest an UNINITIALIZED vector to use
    */
   void MakeSubvector(index_t start_index, index_t len, Vector* dest) {
-    DEBUG_BOUNDS(start_index, length_);
-    DEBUG_BOUNDS(start_index + len, length_ + 1);
+    DEBUG_ASSERT_INDEX_BOUNDS(start_index, length_);
+    DEBUG_ASSERT_INDEX_BOUNDS(start_index + len, length_ + 1);
     
     dest->Alias(ptr_ + start_index, len);
   }
@@ -226,7 +222,7 @@ class Vector {
    */
   void SwapValues(Vector* other) {
     DEBUG_ASSERT(length() == other->length());
-    mem::Swap(ptr_, other->ptr_, length_);
+    mem::BitSwap(ptr_, other->ptr_, length_);
   }
   
   /**
@@ -236,7 +232,7 @@ class Vector {
    */
   void CopyValues(const Vector& other) {
     DEBUG_ASSERT(length() == other.length());
-    mem::Copy(ptr_, other.ptr_, length_);
+    mem::BitCopy(ptr_, other.ptr_, length_);
   }
 
   /**
@@ -246,7 +242,7 @@ class Vector {
    *        length() elements
    */
   void CopyValues(const double *src_ptr) {
-    mem::Copy(ptr_, src_ptr, length_);
+    mem::BitCopy(ptr_, src_ptr, length_);
   }
   
   /**
@@ -287,7 +283,7 @@ class Vector {
    * Gets the i'th element of this vector.
    */
   double operator [] (index_t i) const {
-    DEBUG_BOUNDS(i, length_);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, length_);
     return ptr_[i];
   }
   
@@ -295,7 +291,7 @@ class Vector {
    * Gets a mutable reference to the i'th element of this vector.
    */
   double &operator [] (index_t i) {
-    DEBUG_BOUNDS(i, length_);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, length_);
     return ptr_[i];
   }
   
@@ -313,7 +309,7 @@ class Vector {
    * @endcode
    */
   double get(index_t i) const {
-    DEBUG_BOUNDS(i, length_);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, length_);
     return ptr_[i];
   }
   
@@ -380,7 +376,7 @@ class Matrix {
     DEBUG_ONLY(Uninitialize_());
     Copy(other);
   }
-  CC_ASSIGNMENT_OPERATOR(Matrix);
+  ASSIGN_VIA_COPY_CONSTRUCTION(Matrix);
 
   /**
    * Creates a matrix that can be initialized.
@@ -436,7 +432,7 @@ class Matrix {
    * Sets the entire matrix to zero.
    */
   void SetAll(double d) {
-    mem::ConstructAll(ptr_, d, n_elements());
+    mem::InitConstruct(ptr_, d, n_elements());
   }
 
   /**
@@ -480,7 +476,7 @@ class Matrix {
   void Copy(const double *ptr_in, index_t n_rows_in, index_t n_cols_in) {
     DEBUG_ONLY(AssertUninitialized_());
     
-    ptr_ = mem::Dup(ptr_in, n_rows_in * n_cols_in);
+    ptr_ = mem::AllocBitCopied(ptr_in, n_rows_in * n_cols_in);
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
     should_free_ = true;
@@ -561,7 +557,7 @@ class Matrix {
    * linearized chunk of RAM allocated with mem::Alloc.
    *
    * @param ptr_in the pointer to a block of column-major doubles
-   *        allocated via Mem::Alloc
+   *        allocated via mem::Alloc
    * @param n_rows_in the number of rows
    * @param n_cols_in the number of columns
    */
@@ -583,8 +579,8 @@ class Matrix {
    */
   void MakeColumnSlice(index_t start_col, index_t n_cols_new,
       Matrix *dest) const {
-    DEBUG_BOUNDS(start_col, n_cols_);
-    DEBUG_BOUNDS(start_col + n_cols_new, n_cols_ + 1);
+    DEBUG_ASSERT_INDEX_BOUNDS(start_col, n_cols_);
+    DEBUG_ASSERT_INDEX_BOUNDS(start_col + n_cols_new, n_cols_ + 1);
     dest->Alias(ptr_ + start_col * n_rows_,
         n_rows_, n_cols_new);
   }
@@ -623,7 +619,7 @@ class Matrix {
    *        initialized as an alias to the particular column
    */
   void MakeColumnVector(index_t col, Vector *dest) const {
-    DEBUG_BOUNDS(col, n_cols_);
+    DEBUG_ASSERT_INDEX_BOUNDS(col, n_cols_);
     dest->Alias(n_rows_ * col + ptr_, n_rows_);
   }
   
@@ -638,9 +634,9 @@ class Matrix {
    */
   void MakeColumnSubvector(index_t col, index_t start_row, index_t n_rows_new,
       Vector *dest) const {
-    DEBUG_BOUNDS(col, n_cols_);
-    DEBUG_BOUNDS(start_row, n_rows_);
-    DEBUG_BOUNDS(start_row + n_rows_new, n_rows_ + 1);
+    DEBUG_ASSERT_INDEX_BOUNDS(col, n_cols_);
+    DEBUG_ASSERT_INDEX_BOUNDS(start_row, n_rows_);
+    DEBUG_ASSERT_INDEX_BOUNDS(start_row + n_rows_new, n_rows_ + 1);
     dest->Alias(n_rows_ * col + start_row + ptr_, n_rows_new);
   }
   
@@ -653,7 +649,7 @@ class Matrix {
    *         par ticular column
    */
   double *GetColumnPtr(index_t col) {
-    DEBUG_BOUNDS(col, n_cols_);
+    DEBUG_ASSERT_INDEX_BOUNDS(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
   
@@ -666,7 +662,7 @@ class Matrix {
    *         particular column
    */
   const double *GetColumnPtr(index_t col) const {
-    DEBUG_BOUNDS(col, n_cols_);
+    DEBUG_ASSERT_INDEX_BOUNDS(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
   
@@ -681,7 +677,7 @@ class Matrix {
   void ResizeNoalias(index_t new_n_cols) {
     DEBUG_ASSERT(should_free_); // the best assert we can do
     n_cols_ = new_n_cols;
-    ptr_ = mem::Resize(ptr_, n_elements());
+    ptr_ = mem::Realloc(ptr_, n_elements());
   }
   
   /**
@@ -695,7 +691,7 @@ class Matrix {
   void SwapValues(Matrix* other) {
     DEBUG_ASSERT(n_cols() == other->n_cols());
     DEBUG_ASSERT(n_rows() == other->n_rows());
-    mem::Swap(ptr_, other->ptr_, n_elements());
+    mem::BitSwap(ptr_, other->ptr_, n_elements());
   }
   
   /**
@@ -706,7 +702,7 @@ class Matrix {
   void CopyValues(const Matrix& other) {
     DEBUG_ASSERT(n_rows() == other.n_rows());
     DEBUG_ASSERT(n_cols() == other.n_cols());
-    mem::Copy(ptr_, other.ptr_, n_elements());
+    mem::BitCopy(ptr_, other.ptr_, n_elements());
   }
 
   /**
@@ -753,8 +749,8 @@ class Matrix {
    * @param c the column number
    */
   double get(index_t r, index_t c) const {
-    DEBUG_BOUNDS(r, n_rows_);
-    DEBUG_BOUNDS(c, n_cols_);
+    DEBUG_ASSERT_INDEX_BOUNDS(r, n_rows_);
+    DEBUG_ASSERT_INDEX_BOUNDS(c, n_cols_);
     return ptr_[c * n_rows_ + r];
   }
  
@@ -766,8 +762,8 @@ class Matrix {
    * @param v the value to set
    */ 
   void set(index_t r, index_t c, double v) {
-    DEBUG_BOUNDS(r, n_rows_);
-    DEBUG_BOUNDS(c, n_cols_);
+    DEBUG_ASSERT_INDEX_BOUNDS(r, n_rows_);
+    DEBUG_ASSERT_INDEX_BOUNDS(c, n_cols_);
     ptr_[c * n_rows_ + r] = v;
   }
   
@@ -779,8 +775,8 @@ class Matrix {
    * subsections.
    */
   double &ref(index_t r, index_t c) {
-    DEBUG_BOUNDS(r, n_rows_);
-    DEBUG_BOUNDS(c, n_cols_);
+    DEBUG_ASSERT_INDEX_BOUNDS(r, n_rows_);
+    DEBUG_ASSERT_INDEX_BOUNDS(c, n_cols_);
     return ptr_[c * n_rows_ + r];
   }
   
@@ -848,17 +844,17 @@ class SmallVector : public Vector {
   }
   
   double operator [] (index_t i) const {
-    DEBUG_BOUNDS(i, t_length);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, t_length);
     return array_[i];
   }
   
   double &operator [] (index_t i) {
-    DEBUG_BOUNDS(i, t_length);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, t_length);
     return array_[i];
   }
   
   double get(index_t i) const {
-    DEBUG_BOUNDS(i, t_length);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, t_length);
     return array_[i];
   }
 };
@@ -887,20 +883,20 @@ class SmallMatrix : public Matrix {
   }
 
   double get(index_t r, index_t c) const {
-    DEBUG_BOUNDS(r, t_rows);
-    DEBUG_BOUNDS(c, t_cols);
+    DEBUG_ASSERT_INDEX_BOUNDS(r, t_rows);
+    DEBUG_ASSERT_INDEX_BOUNDS(c, t_cols);
     return array_[c][r];
   }
 
   void set(index_t r, index_t c, double v) {
-    DEBUG_BOUNDS(r, t_rows);
-    DEBUG_BOUNDS(c, t_cols);
+    DEBUG_ASSERT_INDEX_BOUNDS(r, t_rows);
+    DEBUG_ASSERT_INDEX_BOUNDS(c, t_cols);
     array_[c][r] = v;
   }
 
   double &ref(index_t r, index_t c) {
-    DEBUG_BOUNDS(r, t_rows);
-    DEBUG_BOUNDS(c, t_cols);
+    DEBUG_ASSERT_INDEX_BOUNDS(r, t_rows);
+    DEBUG_ASSERT_INDEX_BOUNDS(c, t_cols);
     return array_[c][r];
   }
 
@@ -920,12 +916,12 @@ class SmallMatrix : public Matrix {
   }
 
   double *GetColumnPtr(index_t col) {
-    DEBUG_BOUNDS(col, t_cols);
+    DEBUG_ASSERT_INDEX_BOUNDS(col, t_cols);
     return array_[col];
   }
 
   const double *GetColumnPtr(index_t col) const {
-    DEBUG_BOUNDS(col, t_cols);
+    DEBUG_ASSERT_INDEX_BOUNDS(col, t_cols);
     return array_[col];
   }
 };

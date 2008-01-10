@@ -319,11 +319,12 @@ inline void TraverseArray(T* x, index_t n_elems, Visitor *v) {
  * @li Blank default constructor that puts object into an "invalid" state,
  *     with Init methods
  *
- * These classes can be thought of as "pure data structures".  If your class
- * is not OT-compliant, you probably want to put the FORBID_COPY header in
- * your class.  This is not to say that non-OT-compliant classes aren't
- * useful -- it's definitely true that some objects aren't really meant to
- * be copied or sent over the network.  Think for example the Thread class.
+ * These classes can be thought of as "pure data structures".  If your
+ * class is not OT-compliant, you probably want to put the
+ * FORBID_ACCIDENTAL_COPIES header in your class.  This is not to say
+ * that non-OT-compliant classes aren't useful -- it's definitely true
+ * that some objects aren't really meant to be copied or sent over the
+ * network.  Think for example the Thread class.
  *
  * To define the object traversal for a class, use @c OT_DEF (which generates
  * function headers) and fill out the function with
@@ -381,7 +382,7 @@ namespace ot {
   void PointerFreeze(const T& live_object, char *block) {
     ot__private::ZOTPointerFreezer freezer;
     freezer.Doit(live_object, block);
-    DEBUG_SAME_INT(freezer.size(), ot::PointerFrozenSize(live_object));
+    DEBUG_ASSERT_INDICES_EQUAL(freezer.size(), ot::PointerFrozenSize(live_object));
   }
 
   /**
@@ -392,7 +393,7 @@ namespace ot {
   void PointerRefreeze(T* obj) {
     ot__private::ZOTPointerRelocator fixer;
     fixer.Doit<T>(
-        0, -mem::PointerAbsoluteAddress(obj),
+        0, -mem::PtrAbsAddr(obj),
         reinterpret_cast<T*>(obj));
   }
 
@@ -410,7 +411,7 @@ namespace ot {
   void PointerRefreeze(const T* src, char* dest) {
     ot__private::ZOTPointerRelocator fixer;
     fixer.Doit<T>(
-        mem::PointerDiff(dest, src), -mem::PointerAbsoluteAddress(src),
+        mem::PtrDiffBytes(dest, src), -mem::PtrAbsAddr(src),
         reinterpret_cast<T*>(dest));
   }
 
@@ -425,7 +426,7 @@ namespace ot {
   T* PointerThaw(char *block) {
     ot__private::ZOTPointerThawer fixer;
     return fixer.Doit<T>(
-        mem::PointerAbsoluteAddress(block),
+        mem::PtrAbsAddr(block),
         block);
   }
 
@@ -438,8 +439,8 @@ namespace ot {
   void PointerRelocate(const char *old_location, char *new_location) {
     ot__private::ZOTPointerRelocator fixer;
     fixer.Doit<T>(
-        mem::PointerDiff(new_location, old_location),
-        mem::PointerDiff(new_location, old_location),
+        mem::PtrDiffBytes(new_location, old_location),
+        mem::PtrDiffBytes(new_location, old_location),
         reinterpret_cast<T*>(new_location));
   }
 

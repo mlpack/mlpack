@@ -33,7 +33,7 @@
  * be protected by a mutex.
  */
 class SockConnection {
-  FORBID_COPY(SockConnection);
+  FORBID_ACCIDENTAL_COPIES(SockConnection);
 
  public:
   enum { MAGIC = 314159265 };

@@ -16,8 +16,7 @@ customrule(
     doit_fn = config_doit)
 
 librule(
-    sources = ["common.c", "cc.cc", "ccmem.cc", "otrav.cc"],
-    headers = ["cc.h", "ccmem.h", "common.h", "compiler.h",
-               "compiler_impl.h", "test.h", "fortran.h",
-               "debug.h", "scale.h", "otrav.h", "otrav_impl.h",
-               ":config_headers"])
+    sources = ["common.c", "debug.c", "cc.cc", "otrav.cc"],
+    headers = ["common.h", "compiler.h", "debug.h", "cc.h", "ccmem.h",
+               "otrav.h", "otrav_impl.h", "fortran.h", "test.h", 
+               "deprecated.h", ":config_headers"])

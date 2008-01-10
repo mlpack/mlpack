@@ -10,7 +10,7 @@
 
 #include "task.h"
 
-#include "base/common.h"
+#include "base/base.h"
 
 #include <pthread.h>
 
@@ -21,7 +21,7 @@
  * and eventually wait for the thread to finish.
  */
 class Thread {
-  FORBID_COPY(Thread);
+  FORBID_ACCIDENTAL_COPIES(Thread);
   
  public:
   enum {
@@ -132,7 +132,7 @@ class Thread {
  * Mutual exclusion lock to protect shared data.
  */
 class Mutex {
-  FORBID_COPY(Mutex);
+  FORBID_ACCIDENTAL_COPIES(Mutex);
   friend class WaitCondition;
  
  public:
@@ -191,7 +191,7 @@ class Mutex {
  * unlocked multiple times by the same thread without a deadlock.
  */
 class RecursiveMutex : public Mutex {
-  FORBID_COPY(RecursiveMutex);
+  FORBID_ACCIDENTAL_COPIES(RecursiveMutex);
 
  public:
   RecursiveMutex() : Mutex(DummyRecursiveAttribute()) {}
@@ -201,7 +201,7 @@ class RecursiveMutex : public Mutex {
  * Wait condition for alerting other threads of an action.
  */
 class WaitCondition {
-  FORBID_COPY(WaitCondition);
+  FORBID_ACCIDENTAL_COPIES(WaitCondition);
   
  private:
   pthread_cond_t cond_;
@@ -338,7 +338,7 @@ class ValueCondition {
  */
 template<class TContained>
 class Lockable : public TContained, public Mutex {
-  FORBID_COPY(Lockable);
+  FORBID_ACCIDENTAL_COPIES(Lockable);
 
   Lockable() {}
   ~Lockable() {}

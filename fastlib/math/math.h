@@ -9,7 +9,8 @@
 #ifndef MATH_MATH_H
 #define MATH_MATH_H
 
-#include "base/common.h"
+#include "base/base.h"
+
 #include <math.h>
 
 /**
@@ -474,13 +475,14 @@ struct DRange {
   friend bool operator < (const DRange& a, const DRange& b) {
     return a.hi < b.lo;
   }
+  EXPAND_LESS_THAN(DRange);
   /**
    * Compares if this is STRICTLY equal to another range.
    */  
   friend bool operator == (const DRange& a, const DRange& b) {
     return a.lo == b.lo && a.hi == b.hi;
   }
-  DEFINE_ALL_COMPARATORS(DRange);
+  EXPAND_EQUALS(DRange);
   
   /**
    * Compares if this is STRICTLY less than a value.
@@ -488,13 +490,14 @@ struct DRange {
   friend bool operator < (const DRange& a, double b) {
     return a.hi < b;
   }
+  EXPAND_HETERO_LESS_THAN(DRange, double);
   /**
    * Compares if a value is STRICTLY less than this range.
    */  
   friend bool operator < (double a, const DRange& b) {
     return a < b.lo;
   }
-  DEFINE_INEQUALITY_COMPARATORS_HETERO(DRange, double);
+  EXPAND_HETERO_LESS_THAN(double, DRange);
 
   /**
    * Determines if a point is contained within the range.

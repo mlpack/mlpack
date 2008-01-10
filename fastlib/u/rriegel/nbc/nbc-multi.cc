@@ -87,7 +87,7 @@ class Nbc {
     template<typename Param>
     void Set(const Param& param, index_t index, const Vector& data) {
       index_ = index;
-      mem::Copy(vec_.ptr(), data.ptr(), vec_.length());
+      mem::BitCopy(vec_.ptr(), data.ptr(), vec_.length());
       if (param.no_labels) {
 	is_pos_ = false;
       } else {
@@ -531,7 +531,7 @@ class Nbc {
     }
 
     void SetEqual(const MultiLabel& other) {
-      DEBUG_SAME_INT(label.size(), other.label.size());
+      DEBUG_CHECK_EQUAL(label.size(), other.label.size());
 
       for (int i = 0; i < label.size(); i++) {
 	label[i] = other.label[i];
@@ -552,7 +552,7 @@ class Nbc {
     }
 
     MultiLabel& operator&= (const MultiLabel& other) {
-      DEBUG_SAME_INT(label.size(), other.label.size());
+      DEBUG_CHECK_EQUAL(label.size(), other.label.size());
 
       index_t next_i_lo = i_size;
       index_t next_i_hi = 0;
@@ -565,10 +565,10 @@ class Nbc {
 	  DEBUG_ASSERT_MSG(at(i,j) != LAB_NEITHER, "Conflicting labels?");
 
 	  if (at(i,j) == LAB_EITHER) {
-	    next_i_lo = min(next_i_lo, i);
-	    next_i_hi = max(next_i_hi, i+1);
-	    next_j_lo = min(next_j_lo, j);
-	    next_j_hi = max(next_j_hi, j+1);
+	    next_i_lo = std::min(next_i_lo, i);
+	    next_i_hi = std::max(next_i_hi, i+1);
+	    next_j_lo = std::min(next_j_lo, j);
+	    next_j_hi = std::max(next_j_hi, j+1);
 	  }
 	}
       }
@@ -582,7 +582,7 @@ class Nbc {
     }
 
     MultiLabel& operator|= (const MultiLabel& other) {
-      DEBUG_SAME_INT(label.size(), other.label.size());
+      DEBUG_CHECK_EQUAL(label.size(), other.label.size());
 
       index_t next_i_lo = i_size;
       index_t next_i_hi = 0;
@@ -594,10 +594,10 @@ class Nbc {
 	  at(i,j) |= other.at(i,j);
 
 	  if (at(i,j) == LAB_EITHER) {
-	    next_i_lo = min(next_i_lo, i);
-	    next_i_hi = max(next_i_hi, i+1);
-	    next_j_lo = min(next_j_lo, j);
-	    next_j_hi = max(next_j_hi, j+1);
+	    next_i_lo = std::min(next_i_lo, i);
+	    next_i_hi = std::max(next_i_hi, i+1);
+	    next_j_lo = std::min(next_j_lo, j);
+	    next_j_hi = std::max(next_j_hi, j+1);
 	  }
 	}
       }
@@ -1196,10 +1196,10 @@ class Nbc {
 		 param.coeff_pos[i].loo * total_density_pos.hi * q.pi_pos())) {
 	      q_result->label.at(i,j) &= LAB_NEG;
 	    } else {
-	      next_i_lo = min(next_i_lo, i);
-	      next_i_hi = max(next_i_hi, i+1);
-	      next_j_lo = min(next_j_lo, j);
-	      next_j_hi = max(next_j_hi, j+1);
+	      next_i_lo = std::min(next_i_lo, i);
+	      next_i_hi = std::max(next_i_hi, i+1);
+	      next_j_lo = std::min(next_j_lo, j);
+	      next_j_hi = std::max(next_j_hi, j+1);
 	    }
 	  }
 	}
@@ -1354,10 +1354,10 @@ class Nbc {
 		 * q_node.stat().pi_pos.hi)) {
 	      q_postponed->label.at(i,j) &= LAB_NEG;
 	    } else {
-	      next_i_lo = min(next_i_lo, i);
-	      next_i_hi = max(next_i_hi, i+1);
-	      next_j_lo = min(next_j_lo, j);
-	      next_j_hi = max(next_j_hi, j+1);
+	      next_i_lo = std::min(next_i_lo, i);
+	      next_i_hi = std::max(next_i_hi, i+1);
+	      next_j_lo = std::min(next_j_lo, j);
+	      next_j_hi = std::max(next_j_hi, j+1);
 	    }
 	  }
 	}

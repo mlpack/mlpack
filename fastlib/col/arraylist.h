@@ -9,9 +9,7 @@
 #ifndef COLLECTIONS_ARRAYLIST_H
 #define COLLECTIONS_ARRAYLIST_H
 
-#include "base/ccmem.h"
-#include "base/scale.h"
-#include "base/otrav.h"
+#include "base/base.h"
 
 /**
  * Fast expandable array with debug-mode bounds checking.
@@ -91,7 +89,7 @@ class ArrayList {
     DEBUG_ONLY(Invalidate_());
     Copy(other);
   }
-  CC_ASSIGNMENT_OPERATOR(ArrayList);
+  ASSIGN_VIA_COPY_CONSTRUCTION(ArrayList);
 
   ~ArrayList() {
     Destruct();
@@ -116,7 +114,7 @@ class ArrayList {
         "freed.  If you declare an ArrayList, you must use Init or similar, "
         "even if you never use it.");
     if (unlikely(ptr_ != NULL)) {
-      mem::DestructAll(ptr_, size_);
+      mem::Destruct(ptr_, size_);
       mem::Free(ptr_);
     }
     DEBUG_ONLY(Invalidate_());
@@ -158,7 +156,7 @@ class ArrayList {
     ptr_ = mem::Alloc<Element>(cap_);
     // TODO: Default integer constructor initializes to zero; is there
     // a way to avoid this?
-    mem::ConstructAll<Element>(ptr_, size_);
+    mem::DefaultConstruct<Element>(ptr_, size_);
   }
 
   /**
@@ -179,7 +177,7 @@ class ArrayList {
   void Copy(const Element *ptr, index_t size) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");
 
-    ptr_ = mem::DupConstruct<Element>(ptr, size);
+    ptr_ = mem::AllocCopyConstructed<Element>(ptr, size);
     cap_ = size;
     size_ = size;
   }
@@ -337,7 +335,7 @@ class ArrayList {
 
     size_ += size_increment;
 
-    mem::ConstructAll(chunk, size_increment);
+    mem::DefaultConstruct(chunk, size_increment);
 
     return chunk;
   }
@@ -368,7 +366,7 @@ class ArrayList {
     Element* elem = ptr_ + size_;
 
     ++size_;
-    mem::Construct(elem); // call default constructor
+    mem::DefaultConstruct(elem); // call default constructor
 
     return elem;
   }
@@ -442,7 +440,7 @@ class ArrayList {
    * Gets a constant element out of a constant ArrayList.
    */
   const Element& operator[] (index_t i) const {
-    DEBUG_BOUNDS(i, size_);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, size_);
     return ptr_[i];
   }
 
@@ -450,7 +448,7 @@ class ArrayList {
    * Gets a mutable element out of an ArrayList.
    */
   Element& operator[] (index_t i) {
-    DEBUG_BOUNDS(i, size_);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, size_);
     return ptr_[i];
   }
 
@@ -521,7 +519,7 @@ class ArrayList {
     if (unlikely(size_in > cap_)) {
       IncreaseCap_(size_in + cap_);
     }
-    mem::ConstructAll(ptr_ + size_, size_in - size_);
+    mem::DefaultConstruct(ptr_ + size_, size_in - size_);
   }
 
   /**
@@ -529,7 +527,7 @@ class ArrayList {
    */
   void DecreaseSizeHelper_(index_t size_in) {
     DEBUG_ASSERT(size_in <= size_);
-    mem::DestructAll(ptr_ + size_in, size_ - size_in);
+    mem::Destruct(ptr_ + size_in, size_ - size_in);
   }
 
   /**
@@ -543,7 +541,7 @@ class ArrayList {
    * Reallocates the array to be smaller.
    */
   void DecreaseCap_(index_t cap_in) {
-    ptr_ = mem::Resize(ptr_, cap_in);
+    ptr_ = mem::Realloc(ptr_, cap_in);
     cap_ = cap_in;
   }
 
@@ -561,7 +559,7 @@ template<typename TElement>
 void ArrayList<TElement>::IncreaseCap_(index_t cap_in) {
   // round up capacities to sizeof(long)
   cap_in = (cap_in + sizeof(long) - 1) & ~(sizeof(long) - 1);
-  ptr_ = mem::Resize(ptr_, cap_in);
+  ptr_ = mem::Realloc(ptr_, cap_in);
   cap_ = cap_in;
 }
 

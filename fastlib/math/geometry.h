@@ -9,7 +9,7 @@
 #ifndef MATH_GEOMETRY_H
 #define MATH_GEOMETRY_H
 
-#include "base/cc.h"
+#include "base/base.h"
 
 #include <math.h>
 

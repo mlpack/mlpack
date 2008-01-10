@@ -14,10 +14,11 @@
 #ifndef TREE_KDTREE_H
 #define TREE_KDTREE_H
 
+#include "base/base.h"
+
 #include "spacetree.h"
 #include "bounds.h"
 
-#include "base/common.h"
 #include "col/arraylist.h"
 #include "fx/fx.h"
 
@@ -116,15 +117,15 @@ namespace tree {
    *        of the tree, must still be freed on failure
    * @param old_from_new stores the permutation to get from the indices in
    *        the matrix returned to the original data point indices
-   * @return SUCCESS_PASS or SUCCESS_FAIL
+   * @return TRIAL_SUCCESS or TRIAL_FAILURE
    */
   template<typename TKdTree>
-  success_t LoadKdTree(datanode *module,
+  trial_t LoadKdTree(datanode *module,
       Matrix *matrix, TKdTree **tree_pp,
       ArrayList<index_t> *old_from_new) {
     const char *type = fx_param_str(module, "type", "text");
     const char *fname = fx_param_str(module, "", NULL);
-    success_t success = SUCCESS_PASS;
+    trial_t success = TRIAL_SUCCESS;
 
     fx_timer_start(module, "load");
     if (strcmp(type, "text") == 0) {

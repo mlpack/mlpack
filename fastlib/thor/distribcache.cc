@@ -45,7 +45,7 @@ DistributedCache::~DistributedCache() {
   
 #ifdef DEBUG
   for (index_t i = 0; i < blocks_.size(); i++) {
-    DEBUG_SAME_INT(blocks_[i].locks, 0);
+    DEBUG_ASSERT_INDICES_EQUAL(blocks_[i].locks, 0);
   }
 #endif
 }
@@ -371,7 +371,7 @@ void DistributedCache::Read(blockid_t blockid,
     block->locks = 0;
   }
   offset_t n_bytes = end - begin;
-  mem::CopyBytes(buf, block->data + begin, n_bytes);
+  mem::BitCopyBytes(buf, block->data + begin, n_bytes);
   handler_->BlockFreeze(blockid, begin, n_bytes, block->data + begin, buf);
   if (unlikely(block->locks == 0)) {
     EncacheBlock_(blockid);
@@ -398,7 +398,7 @@ void DistributedCache::Write(blockid_t blockid,
   char *dest = StartWrite(blockid, false) + begin;
   size_t n_bytes = end - begin;
 
-  mem::CopyBytes(dest, buf, n_bytes);
+  mem::BitCopyBytes(dest, buf, n_bytes);
   handler_->BlockThaw(blockid, begin, n_bytes, dest);
 
   StopWrite(blockid);
@@ -505,7 +505,7 @@ void DistributedCache::DoOwnerRequest_(int dest, int new_owner,
 void DistributedCache::HandleRemoteOwner_(blockid_t block, blockid_t end,
     int new_owner) {
   mutex_.Lock();
-  n_blocks_ = max(n_blocks_, end);
+  n_blocks_ = std::max(n_blocks_, end);
   blocks_.Resize(n_blocks_);
   MarkOwner_(new_owner, block, end);
   mutex_.Unlock();
@@ -691,7 +691,7 @@ void DistributedCache::DoReadRequest_(int peer, blockid_t blockid,
   request->field3 = end;
   transaction.Send(message);
   transaction.WaitDone();
-  mem::CopyBytes(buffer, transaction.response()->data(), end - begin);
+  mem::BitCopyBytes(buffer, transaction.response()->data(), end - begin);
 }
 
 void DistributedCache::StopRead(blockid_t blockid) {
@@ -869,7 +869,7 @@ void DistributedCache::DoWriteRequest_(
   request->field1 = blockid;
   request->field2 = begin;
   request->field3 = end;
-  mem::CopyBytes(request->data_as<char>(), buffer, n_bytes);
+  mem::BitCopyBytes(request->data_as<char>(), buffer, n_bytes);
   handler_->BlockFreeze(blockid, begin, n_bytes, buffer, request->data_as<char>());
   transaction.Send(message);
   transaction.Done();
@@ -970,7 +970,7 @@ void DistributedCache::SyncInfo::Init(const DistributedCache& cache) {
 
 void DistributedCache::SyncInfo::MergeWith(const SyncInfo& other) {
   index_t old_size = statuses.size();
-  index_t min_size = min(statuses.size(), other.statuses.size());
+  index_t min_size = std::min(statuses.size(), other.statuses.size());
 
   for (index_t i = 0; i < min_size; i++) {
     BlockStatus *orig = &statuses[i];
@@ -982,7 +982,7 @@ void DistributedCache::SyncInfo::MergeWith(const SyncInfo& other) {
   }
   if (old_size < other.statuses.size()) {
     statuses.Resize(other.statuses.size());
-    mem::Copy(&statuses[old_size], &other.statuses[old_size],
+    mem::BitCopy(&statuses[old_size], &other.statuses[old_size],
         statuses.size() - old_size);
   }
   disk_stats.Add(other.disk_stats);

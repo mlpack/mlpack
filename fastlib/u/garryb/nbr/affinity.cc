@@ -1,6 +1,9 @@
 #include "thor/thor.h"
 #include "fastlib/fastlib.h"
 
+#include "base/deprecated.h"
+using namespace std;
+
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
@@ -363,6 +366,7 @@ class AffinityAlpha {
     void Init(const Param& param) {
       Reset();
     }
+    void Seed(const Param& param, const QPoint& q_point) {}
     void Reset() {
       alpha.max1 = -DBL_MAX;
       alpha.max2 = -DBL_MAX;
@@ -387,6 +391,7 @@ class AffinityAlpha {
     void Init(const Param& param) {
       alpha.Init(-DBL_MAX, -DBL_MAX);
     }
+    void Seed(const Param& param, const QNode& q_node) {}
     void ApplySummaryResult(const Param& param, const QSummaryResult& summary_result) {
       alpha.MaxWith(summary_result.alpha);
     }
@@ -419,7 +424,9 @@ class AffinityAlpha {
 
     bool StartVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
-        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
+        const RNode& r_node,
+        const Delta& delta,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
       double alpha_hi;
 
@@ -474,7 +481,7 @@ class AffinityAlpha {
    public:
     static bool ConsiderPairIntrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node,
-        Delta* delta,
+        const Delta& parent_delta, Delta* delta,
         GlobalResult* global_result, QPostponed* q_postponed) {
       double sim_lo = AffinityCommon::Helpers::SimilarityLo(
           param, q_node, r_node);
@@ -554,6 +561,7 @@ class AffinityRho {
     void Init(const Param& param) {
       Reset();
     }
+    void Seed(const Param& param, const QPoint& q_point) {}
     void Reset() {
       rho = 0;
     }
@@ -583,7 +591,9 @@ class AffinityRho {
     void Init(const Param& param) {}
     bool StartVisitingQueryPoint(const Param& param,
         const QPoint& q, index_t q_index,
-        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
+        const RNode& r_node,
+        const Delta& delta,
+        const QSummaryResult& unapplied_summary_results,
         QResult* q_result, GlobalResult* global_result) {
       // do the point-node prune check
       double sim_hi = AffinityCommon::Helpers::SimilarityHi(
@@ -617,7 +627,7 @@ class AffinityRho {
    public:
     static bool ConsiderPairIntrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node,
-        Delta* delta,
+        const Delta& parent_delta, Delta* delta,
         GlobalResult* global_result, QPostponed* q_postponed) {
       double sim_hi = AffinityCommon::Helpers::SimilarityHi(
           param, q_node, r_node);

@@ -1,4 +1,4 @@
-# Doxyfile 1.4.7 
+# Doxyfile 1.4.7
 
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -34,7 +34,8 @@ DETAILS_AT_TOP         = YES
 INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 8
-ALIASES                = "experimental=\par EXPERIMENTAL FEATURE.\n"
+ALIASES                = "experimental=\par EXPERIMENTAL FEATURE." \
+                         "removal=\par THINKING ABOUT REMOVAL.  If this file breaks, remove it rather than fix it."
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
 BUILTIN_STL_SUPPORT    = NO
@@ -43,7 +44,7 @@ SUBGROUPING            = YES
 #---------------------------------------------------------------------------
 # Build related configuration options
 #---------------------------------------------------------------------------
-EXTRACT_ALL            = NO
+EXTRACT_ALL=NO
 EXTRACT_PRIVATE        = NO
 EXTRACT_STATIC         = NO
 EXTRACT_LOCAL_CLASSES  = NO
@@ -74,7 +75,7 @@ FILE_VERSION_FILTER    =
 #---------------------------------------------------------------------------
 QUIET                  = NO
 WARNINGS               = YES
-WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_UNDOCUMENTED   = NO
 WARN_IF_DOC_ERROR      = YES
 WARN_NO_PARAMDOC       = NO
 WARN_FORMAT            = "$file:$line: $text"
@@ -94,10 +95,10 @@ EXCLUDE_PATTERNS       = */auton/* \
                          */bin/* \
                          *clapack.h \
                          *blas.h \
-                         *_impl.h \
                          *_impl.cc \
-                         *test.cc
-#                         */u/* \
+                         *_impl.h \
+                         */u/* \
+                         *_test.cc
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO

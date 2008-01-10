@@ -11,21 +11,21 @@
 #include "col/arraylist.h"
 
 #define DEBUG_VECSIZE(a, b) \
-    DEBUG_SAME_INT((a).length(), (b).length())
+    DEBUG_ASSERT_INDICES_EQUAL((a).length(), (b).length())
 #define DEBUG_MATSIZE(a, b) \
-    DEBUG_SAME_INT((a).n_rows(), (b).n_rows());\
-    DEBUG_SAME_INT((a).n_cols(), (b).n_cols())
+    DEBUG_ASSERT_INDICES_EQUAL((a).n_rows(), (b).n_rows());\
+    DEBUG_ASSERT_INDICES_EQUAL((a).n_cols(), (b).n_cols())
 #define DEBUG_MATSQUARE(a) \
-    DEBUG_SAME_INT((a).n_rows(), (a).n_cols())
+    DEBUG_ASSERT_INDICES_EQUAL((a).n_rows(), (a).n_cols())
 
 /*
  * TODO: this could an overhaul; LAPACK failures may mean either input
  * problems or just some linear algebra result (e.g. singular matrix).
  *
- * Perhaps extend success_t?
+ * Perhaps extend trial_t?
  */
-#define SUCCESS_FROM_LAPACK(info) \
-    (likely((info) == 0) ? SUCCESS_PASS : SUCCESS_FAIL)
+#define TRIAL_FROM_LAPACK(info) \
+    (likely((info) == 0) ? TRIAL_SUCCESS : TRIAL_FAILURE)
 
 #ifndef NO_LAPACK
 #define USE_LAPACK
@@ -143,7 +143,7 @@ namespace la {
    */
   inline void ScaleOverwrite(index_t length,
       double alpha, const double *x, double *y) {
-    mem::Copy(y, x, length);
+    mem::BitCopy(y, x, length);
     Scale(length, alpha, y);
   }
 
@@ -169,7 +169,7 @@ namespace la {
    */
   inline void AddOverwrite(index_t length,
       const double *x, const double *y, double *z) {
-    mem::Copy(z, y, length);
+    mem::BitCopy(z, y, length);
     AddTo(length, x, z);
   }
 
@@ -186,7 +186,7 @@ namespace la {
    */
   inline void SubOverwrite(index_t length,
       const double *x, const double *y, double *z) {
-    mem::Copy(z, y, length);
+    mem::BitCopy(z, y, length);
     SubFrom(length, x, z);
   }
 #else
@@ -276,7 +276,7 @@ namespace la {
    * (\f$\vec{x} \cdot \vec{y}\f$).
    */
   inline double Dot(const Vector &x, const Vector &y) {
-    DEBUG_SAME_INT(x.length(), y.length());
+    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y.length());
     return Dot(x.length(), x.ptr(), y.ptr());
   }
 
@@ -305,7 +305,7 @@ namespace la {
    * @param X the matrix to scale
    */
   inline void ScaleRows(const Vector& d, Matrix *X) {
-    DEBUG_SAME_INT(d.length(), X->n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(d.length(), X->n_rows());
     ScaleRows(d.length(), X->n_cols(), d.ptr(), X->ptr());
   }
 
@@ -314,7 +314,7 @@ namespace la {
    * (\f$\vec{y} \gets \alpha \vec{x}\f$).
    */
   inline void ScaleOverwrite(double alpha, const Vector &x, Vector *y) {
-    DEBUG_SAME_INT(x.length(), y->length());
+    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y->length());
     ScaleOverwrite(x.length(), alpha, x.ptr(), y->ptr());
   }
   /**
@@ -322,8 +322,8 @@ namespace la {
    * (\f$Y \gets \alpha X\f$).
    */
   inline void ScaleOverwrite(double alpha, const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
-    DEBUG_SAME_INT(X.n_cols(), Y->n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_cols());
     ScaleOverwrite(X.n_elements(), alpha, X.ptr(), Y->ptr());
   }
 
@@ -351,7 +351,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} + \alpha \vec{x}\f$).
    */
   inline void AddExpert(double alpha, const Vector &x, Vector *y) {
-    DEBUG_SAME_INT(x.length(), y->length());
+    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y->length());
     AddExpert(x.length(), alpha, x.ptr(), y->ptr());
   }
   /**
@@ -359,8 +359,8 @@ namespace la {
    * (\f$Y \gets Y + \alpha X\f$).
    */
   inline void AddExpert(double alpha, const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
-    DEBUG_SAME_INT(X.n_cols(), Y->n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_cols());
     AddExpert(X.n_elements(), alpha, X.ptr(), Y->ptr());
   }
 
@@ -371,7 +371,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} + \vec{x}\f$);
    */
   inline void AddTo(const Vector &x, Vector *y) {
-    DEBUG_SAME_INT(x.length(), y->length());
+    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y->length());
     AddTo(x.length(), x.ptr(), y->ptr());
   }
   /**
@@ -379,8 +379,8 @@ namespace la {
    * (\f$Y \gets Y + X\f$);
    */
   inline void AddTo(const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
-    DEBUG_SAME_INT(X.n_cols(), Y->n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_cols());
     AddTo(X.n_elements(), X.ptr(), Y->ptr());
   }
 
@@ -389,8 +389,8 @@ namespace la {
    * (\f$\vec{z} \gets \vec{y} + \vec{x}\f$).
    */
   inline void AddOverwrite(const Vector &x, const Vector &y, Vector *z) {
-    DEBUG_SAME_INT(x.length(), y.length());
-    DEBUG_SAME_INT(z->length(), y.length());
+    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y.length());
+    DEBUG_ASSERT_INDICES_EQUAL(z->length(), y.length());
     AddOverwrite(x.length(), x.ptr(), y.ptr(), z->ptr());
   }
   /**
@@ -398,10 +398,10 @@ namespace la {
    * (\f$Z \gets Y + X\f$).
    */
   inline void AddOverwrite(const Matrix &X, const Matrix &Y, Matrix *Z) {
-    DEBUG_SAME_INT(X.n_rows(), Y.n_rows());
-    DEBUG_SAME_INT(X.n_cols(), Y.n_cols());
-    DEBUG_SAME_INT(Z->n_rows(), Y.n_rows());
-    DEBUG_SAME_INT(Z->n_cols(), Y.n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y.n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y.n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(Z->n_rows(), Y.n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(Z->n_cols(), Y.n_cols());
     AddOverwrite(X.n_elements(), X.ptr(), Y.ptr(), Z->ptr());
   }
 
@@ -429,7 +429,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubFrom(const Vector &x, Vector *y) {
-    DEBUG_SAME_INT(x.length(), y->length());
+    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y->length());
     SubFrom(x.length(), x.ptr(), y->ptr());
   }
   /**
@@ -437,8 +437,8 @@ namespace la {
    * (\f$Y \gets Y - X\f$).
    */
   inline void SubFrom(const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_INT(X.n_rows(), Y->n_rows());
-    DEBUG_SAME_INT(X.n_cols(), Y->n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_cols());
     SubFrom(X.n_elements(), X.ptr(), Y->ptr());
   }
 
@@ -447,8 +447,8 @@ namespace la {
    * (\f$\vec{z} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubOverwrite(const Vector &x, const Vector &y, Vector *z) {
-    DEBUG_SAME_INT(x.length(), y.length());
-    DEBUG_SAME_INT(z->length(), y.length());
+    DEBUG_ASSERT_INDICES_EQUAL(x.length(), y.length());
+    DEBUG_ASSERT_INDICES_EQUAL(z->length(), y.length());
     SubOverwrite(x.length(), x.ptr(), y.ptr(), z->ptr());
   }
   /**
@@ -456,10 +456,10 @@ namespace la {
    * (\f$Z \gets Y - X\f$).
    */
   inline void SubOverwrite(const Matrix &X, const Matrix &Y, Matrix *Z) {
-    DEBUG_SAME_INT(X.n_rows(), Y.n_rows());
-    DEBUG_SAME_INT(X.n_cols(), Y.n_cols());
-    DEBUG_SAME_INT(Z->n_rows(), Y.n_rows());
-    DEBUG_SAME_INT(Z->n_cols(), Y.n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y.n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y.n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(Z->n_rows(), Y.n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(Z->n_cols(), Y.n_cols());
     SubOverwrite(X.n_elements(), X.ptr(), Y.ptr(), Z->ptr());
   }
 
@@ -508,8 +508,8 @@ namespace la {
    * (\f$Y \gets X'\f$).
    */
   inline void TransposeOverwrite(const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_INT(X.n_rows(), Y->n_cols());
-    DEBUG_SAME_INT(X.n_cols(), Y->n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_rows(), Y->n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(X.n_cols(), Y->n_rows());
     index_t nr = X.n_rows();
     index_t nc = X.n_cols();
     for (index_t r = 0; r < nr; r++) {
@@ -546,8 +546,8 @@ namespace la {
       double alpha, const Matrix &A, const Vector &x,
       double beta, Vector *y) {
     DEBUG_ASSERT(x.ptr() != y->ptr());
-    DEBUG_SAME_INT(A.n_cols(), x.length());
-    DEBUG_SAME_INT(A.n_rows(), y->length());
+    DEBUG_ASSERT_INDICES_EQUAL(A.n_cols(), x.length());
+    DEBUG_ASSERT_INDICES_EQUAL(A.n_rows(), y->length());
     F77_FUNC(dgemv)("N", A.n_rows(), A.n_cols(),
         alpha, A.ptr(), A.n_rows(), x.ptr(), 1,
         beta, y->ptr(), 1);
@@ -605,8 +605,8 @@ namespace la {
       double alpha, const Vector &x, const Matrix &A,
       double beta, Vector *y) {
     DEBUG_ASSERT(x.ptr() != y->ptr());
-    DEBUG_SAME_INT(A.n_rows(), x.length());
-    DEBUG_SAME_INT(A.n_cols(), y->length());
+    DEBUG_ASSERT_INDICES_EQUAL(A.n_rows(), x.length());
+    DEBUG_ASSERT_INDICES_EQUAL(A.n_cols(), y->length());
     F77_FUNC(dgemv)("T", A.n_rows(), A.n_cols(),
         alpha, A.ptr(), A.n_rows(), x.ptr(), 1,
         beta, y->ptr(), 1);
@@ -660,10 +660,10 @@ namespace la {
       double beta, Matrix *C) {
     DEBUG_ASSERT(A.ptr() != C->ptr());
     DEBUG_ASSERT(B.ptr() != C->ptr());
-    DEBUG_SAME_INT(trans_A ? A.n_rows() : A.n_cols(),
+    DEBUG_ASSERT_INDICES_EQUAL(trans_A ? A.n_rows() : A.n_cols(),
 		   trans_B ? B.n_cols() : B.n_rows());
-    DEBUG_SAME_INT(trans_A ? A.n_cols() : A.n_rows(), C->n_rows());
-    DEBUG_SAME_INT(trans_B ? B.n_rows() : B.n_cols(), C->n_cols());
+    DEBUG_ASSERT_INDICES_EQUAL(trans_A ? A.n_cols() : A.n_rows(), C->n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(trans_B ? B.n_rows() : B.n_cols(), C->n_cols());
     F77_FUNC(dgemm)(trans_A ? "T" : "N", trans_B ? "T" : "N",
         C->n_rows(), C->n_cols(), trans_A ? A.n_rows() : A.n_cols(),
         alpha, A.ptr(), A.n_rows(), B.ptr(), B.n_rows(),
@@ -792,13 +792,13 @@ namespace la {
    *
    * @param pivots a size min(M, N) array to store pivotes
    * @param A_in_LU_out an M-by-N matrix to be decomposed; overwritten
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  inline success_t PLUExpert(f77_integer *pivots, Matrix *A_in_LU_out) {
+  inline trial_t PLUExpert(f77_integer *pivots, Matrix *A_in_LU_out) {
     f77_integer info;
     F77_FUNC(dgetrf)(A_in_LU_out->n_rows(), A_in_LU_out->n_cols(),
         A_in_LU_out->ptr(), A_in_LU_out->n_rows(), pivots, &info);
-    return SUCCESS_FROM_LAPACK(info);
+    return TRIAL_FROM_LAPACK(info);
   }
   /**
    * Init matrices to the LU decomposition of a matrix.
@@ -810,9 +810,9 @@ namespace la {
    *        and filled with the lower triangular matrix
    * @param U a fresh matrix to be initialized to size min(M,N)-by-N
    *        and filled with the upper triangular matrix
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  success_t PLUInit(const Matrix &A,
+  trial_t PLUInit(const Matrix &A,
       ArrayList<f77_integer> *pivots, Matrix *L, Matrix *U);
 
   /**
@@ -820,16 +820,16 @@ namespace la {
    *
    * @param pivots the pivots array from PLU decomposition
    * @param LU_in_B_out the LU decomposition; overwritten with inverse
-   * @return SUCCESS_PASS if invertible, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if invertible, TRIAL_FAILURE otherwise
    */
-  inline success_t InverseExpert(f77_integer *pivots, Matrix *LU_in_B_out) {
+  inline trial_t InverseExpert(f77_integer *pivots, Matrix *LU_in_B_out) {
     f77_integer info;
     f77_integer n = LU_in_B_out->n_rows();
     f77_integer lwork = dgetri_block_size * n;
     double work[lwork];
     DEBUG_MATSQUARE(*LU_in_B_out);
     F77_FUNC(dgetri)(n, LU_in_B_out->ptr(), n, pivots, work, lwork, &info);
-    return SUCCESS_FROM_LAPACK(info);
+    return TRIAL_FROM_LAPACK(info);
   }
   /**
    * Inverts a matrix in place
@@ -843,9 +843,9 @@ namespace la {
    * @endcode
    *
    * @param A an N-by-N matrix to invert
-   * @return SUCCESS_PASS if invertible, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if invertible, TRIAL_FAILURE otherwise
    */
-  success_t Inverse(Matrix *A);
+  trial_t Inverse(Matrix *A);
   /**
    * Set a matrix to the inverse of another matrix
    * (\f$B \gets A^{-1}\f$).
@@ -861,9 +861,9 @@ namespace la {
    *
    * @param A an N-by-N matrix to invert
    * @param B an N-by-N matrix to store the results
-   * @return SUCCESS_PASS if invertible, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if invertible, TRIAL_FAILURE otherwise
    */
-  success_t InverseOverwrite(const Matrix &A, Matrix *B);
+  trial_t InverseOverwrite(const Matrix &A, Matrix *B);
   /**
    * Init a matrix to the inverse of another matrix
    * (\f$B \gets A^{-1}\f$).
@@ -871,9 +871,9 @@ namespace la {
    * @param A an N-by-N matrix to invert
    * @param B a fresh matrix to be initialized to size N-by-N
    *        and filled with the inverse
-   * @return SUCCESS_PASS if invertible, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if invertible, TRIAL_FAILURE otherwise
    */
-  inline success_t InverseInit(const Matrix &A, Matrix *B) {
+  inline trial_t InverseInit(const Matrix &A, Matrix *B) {
     B->Init(A.n_rows(), A.n_cols());
     return InverseOverwrite(A, B);
   }
@@ -918,9 +918,9 @@ namespace la {
    * @param k the number of columns on the right-hand side
    * @param B_in_X_out an N-by-K matrix ptr of desired products;
    *        overwritten with solutions (must not alias A_in_LU_out)
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  inline success_t SolveExpert(
+  inline trial_t SolveExpert(
       f77_integer *pivots, Matrix *A_in_LU_out,
       index_t k, double *B_in_X_out) {
     DEBUG_MATSQUARE(*A_in_LU_out);
@@ -928,7 +928,7 @@ namespace la {
     f77_integer n = A_in_LU_out->n_rows();
     F77_FUNC(dgesv)(n, k, A_in_LU_out->ptr(), n, pivots,
         B_in_X_out, n, &info);
-    return SUCCESS_FROM_LAPACK(info);
+    return TRIAL_FROM_LAPACK(info);
   }
   /**
    * Inits a matrix to the solution of a system of linear equations
@@ -951,11 +951,11 @@ namespace la {
    * @param B a size N-by-K matrix of desired products
    * @param X a fresh matrix to be initialized to size N-by-K
    *        and filled with solutions
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  inline success_t SolveInit(const Matrix &A, const Matrix &B, Matrix *X) {
+  inline trial_t SolveInit(const Matrix &A, const Matrix &B, Matrix *X) {
     DEBUG_MATSQUARE(A);
-    DEBUG_SAME_INT(A.n_rows(), B.n_rows());
+    DEBUG_ASSERT_INDICES_EQUAL(A.n_rows(), B.n_rows());
     Matrix tmp;
     index_t n = B.n_rows();
     f77_integer pivots[n];
@@ -984,11 +984,11 @@ namespace la {
    * @param b an N-length vector of desired products
    * @param x a fresh vector to be initialized to length N
    *        and filled with solutions
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  inline success_t SolveInit(const Matrix &A, const Vector &b, Vector *x) {
+  inline trial_t SolveInit(const Matrix &A, const Vector &b, Vector *x) {
     DEBUG_MATSQUARE(A);
-    DEBUG_SAME_INT(A.n_rows(), b.length());
+    DEBUG_ASSERT_INDICES_EQUAL(A.n_rows(), b.length());
     Matrix tmp;
     index_t n = b.length();
     f77_integer pivots[n];
@@ -1008,9 +1008,9 @@ namespace la {
    *        but are not removed from the matrix)
    * @param R a min(M,N)-by-N matrix to store results (must not be
    *        A_in_Q_out)
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  success_t QRExpert(Matrix *A_in_Q_out, Matrix *R);
+  trial_t QRExpert(Matrix *A_in_Q_out, Matrix *R);
   /**
    * Init matrices to a QR decomposition (A = Q * R).
    *
@@ -1035,9 +1035,9 @@ namespace la {
             and filled with the rotation matrix
    * @param R a fresh matrix to be initialized to size min(M,N)-by-N
             and filled with the reflection matrix
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  success_t QRInit(const Matrix &A, Matrix *Q, Matrix *R);
+  trial_t QRInit(const Matrix &A, Matrix *Q, Matrix *R);
 
   /**
    * Destructive Schur decomposition (A = Z * T * Z').
@@ -1050,9 +1050,9 @@ namespace la {
    * @param w_real a length-N array to store real eigenvalue components
    * @param w_imag a length-N array to store imaginary components
    * @param Z an N-by-N matrix ptr to store the Schur vectors, or NULL
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  success_t SchurExpert(Matrix *A_in_T_out,
+  trial_t SchurExpert(Matrix *A_in_T_out,
       double *w_real, double *w_imag, double *Z);
   /**
    * Init matrices to a Schur decompoosition (A = Z * T * Z').
@@ -1066,9 +1066,9 @@ namespace la {
    *        and filled with the Schur form
    * @param Z a fresh matrix to be initialized to size N-by-N
    *        and filled with the Schur vectors
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  inline success_t SchurInit(const Matrix &A,
+  inline trial_t SchurInit(const Matrix &A,
       Vector *w_real, Vector *w_imag, Matrix *T, Matrix *Z) {
     index_t n = A.n_rows();
     T->Copy(A);
@@ -1090,9 +1090,9 @@ namespace la {
    * @param w_real a length-N array to store real eigenvalue components
    * @param w_imag a length-N array to store imaginary components
    * @param V_raw an N-by-N matrix ptr to store eigenvectors, or NULL
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  success_t EigenExpert(Matrix *A_garbage,
+  trial_t EigenExpert(Matrix *A_garbage,
       double *w_real, double *w_imag, double *V_raw);
 
   /**
@@ -1103,9 +1103,9 @@ namespace la {
    *        and filled with the real eigenvalue components
    * @param w_imag a fresh vector to be initialized to length N
    *        and filled with the imaginary components
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    **/
-  inline success_t EigenvaluesInit(const Matrix &A,
+  inline trial_t EigenvaluesInit(const Matrix &A,
       Vector *w_real, Vector *w_imag) {
     DEBUG_MATSQUARE(A);
     int n = A.n_rows();
@@ -1131,9 +1131,9 @@ namespace la {
    * @param A an N-by-N matrix to find eigenvalues for
    * @param w a fresh vector to be initialized to length N
    *        and filled with the real eigenvalue components
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    **/
-  success_t EigenvaluesInit(const Matrix &A, Vector *w);
+  trial_t EigenvaluesInit(const Matrix &A, Vector *w);
 
   /**
    * Inits vectors and matrices to the eigenvalues/vectors of a matrix.
@@ -1160,9 +1160,9 @@ namespace la {
    *        and filled with the real eigenvector components
    * @param V_imag a fresh matrix to be initialized to size N-by-N
    *        and filled with the imaginary eigenvector components
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  success_t EigenvectorsInit(const Matrix &A,
+  trial_t EigenvectorsInit(const Matrix &A,
       Vector *w_real, Vector *w_imag, Matrix *V_real, Matrix *V_imag);
 
   /**
@@ -1176,9 +1176,9 @@ namespace la {
    *        and filled with the real eigenvalues
    * @param V a fresh matrix to be initialized to size N-by-N
    *        and filled with the real eigenvectors
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  success_t EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V);
+  trial_t EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V);
 
   /**
    * Destructive SVD (A = U * S * VT).
@@ -1193,9 +1193,9 @@ namespace la {
    *        vectors, or NULL for neither U nor VT
    * @param VT a min(M,N)-by-N matrix ptr to store right singular
    *        vectors, or NULL for neither U nor VT
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  success_t SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT);
+  trial_t SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT);
 
   /**
    * Inits a vector to the singular values of a matrix.
@@ -1203,10 +1203,10 @@ namespace la {
    * @param A an N-by-N matrix to find the singular values of
    * @param s a fresh vector to be initialized to length N
    *        and filled with the singular values
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  inline success_t SVDInit(const Matrix &A, Vector *s) {
-    s->Init(min(A.n_rows(), A.n_cols()));
+  inline trial_t SVDInit(const Matrix &A, Vector *s) {
+    s->Init(std::min(A.n_rows(), A.n_cols()));
     Matrix tmp;
     tmp.Copy(A);
     return SVDExpert(&tmp, s->ptr(), NULL, NULL);
@@ -1241,10 +1241,10 @@ namespace la {
    *        and filled with the left singular vectors
    * @param VT a fresh matrix to be initialized to size min(M,N)-by-N
    *        and filled with the right singular vectors
-   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if successful, TRIAL_FAILURE otherwise
    */
-  inline success_t SVDInit(const Matrix &A, Vector *s, Matrix *U, Matrix *VT) {
-    index_t k = min(A.n_rows(), A.n_cols());
+  inline trial_t SVDInit(const Matrix &A, Vector *s, Matrix *U, Matrix *VT) {
+    index_t k = std::min(A.n_rows(), A.n_cols());
     s->Init(k);
     U->Init(A.n_rows(), k);
     VT->Init(k, A.n_cols());
@@ -1258,10 +1258,10 @@ namespace la {
    *
    * @param A_in_U_out an N-by-N matrix to factorize; overwritten
    *        with result
-   * @return SUCCESS_PASS if the matrix is symmetric positive definite,
-   *         SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if the matrix is symmetric positive definite,
+   *         TRIAL_FAILURE otherwise
    */
-  success_t Cholesky(Matrix *A_in_U_out);
+  trial_t Cholesky(Matrix *A_in_U_out);
 
   /**
    * Inits a matrix to the Cholesky factorization (A = U' * U).
@@ -1280,10 +1280,10 @@ namespace la {
    * @param A an N-by-N matrix to factorize
    * @param U a fresh matrix to be initialized to size N-by-N
    *        and filled with the factorization
-   * @return SUCCESS_PASS if the matrix is symmetric positive definite,
-   *         SUCCESS_FAIL otherwise
+   * @return TRIAL_SUCCESS if the matrix is symmetric positive definite,
+   *         TRIAL_FAILURE otherwise
    */
-  inline success_t CholeskyInit(const Matrix &A, Matrix *U) {
+  inline trial_t CholeskyInit(const Matrix &A, Matrix *U) {
     U->Copy(A);
     return Cholesky(U);
   }

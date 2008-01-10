@@ -13,7 +13,7 @@
  * Handles events associated with a cache pulling blocks in and out of memory.
  */
 class BlockHandler {
-  FORBID_COPY(BlockHandler);
+  FORBID_ACCIDENTAL_COPIES(BlockHandler);
  public:
   BlockHandler() {}
   virtual ~BlockHandler() {}

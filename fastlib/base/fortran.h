@@ -1,3 +1,4 @@
+// Copyright 2007 Georgia Institute of Technology. All rights reserved.
 /**
  * @file fortran.h
  *
@@ -7,23 +8,15 @@
 #ifndef BASE_FORTRAN_H
 #define BASE_FORTRAN_H
 
-// These typedefs should work for all machines I'm aware of.
+/* These typedefs should work for all machines I'm aware of. */
 
-/**
- * FORTRAN integer type.
- */
+/** FORTRAN integer type. */
 typedef int f77_integer;
-/**
- * FORTRAN Boolean type for use with - use F77_TRUE and F77_FALSE.
- */
+/** FORTRAN Boolean type with values F77_TRUE and F77_FALSE. */
 typedef unsigned int f77_logical;
-/**
- * FORTRAN single-precision type (should be equivalent to float).
- */
+/** FORTRAN single-precision type (e.g. float). */
 typedef float f77_real;
-/**
- * FORTRAN double-precision type (should be equivalent to double).
- */
+/** FORTRAN double-precision type (e.g. double). */
 typedef double f77_double;
 
 /**
@@ -33,14 +26,9 @@ typedef double f77_double;
  * integer must be ignored.
  */
 typedef int f77_ret_void;
-
-/**
- * FORTRAN integer return value.
- */
+/** FORTRAN integer return value. */
 typedef f77_integer f77_ret_integer;
-/**
- * FORTRAN Boolean return value.
- */
+/** FORTRAN Boolean return value. */
 typedef f77_logical f77_ret_logical;
 /**
  * FORTRAN single-precision return value.
@@ -48,45 +36,39 @@ typedef f77_logical f77_ret_logical;
  * Note that FORTRAN seems to return doubles even for single-precision
  * functions.
  */
-typedef double f77_ret_real;
-/**
- * FORTRAN double-precision return value.
- */
-typedef double f77_ret_double;
-
-/**
- * Length of a FORTRAN string (when FORTRAN needs string lengths).
- */
-typedef long f77_str_len;
-
-#define F77_FALSE ((F77_LOGICAL)0)
-#define F77_TRUE (~F77_FALSE)
+typedef f77_double f77_ret_real;
+/** FORTRAN double-precision return value. */
+typedef f77_double f77_ret_double;
 
 /** FORTRAN single-precision complex number. */
 typedef struct {
   f77_real re;
   f77_real im;
 } f77_complex;
-
 /** FORTRAN double-precision complex number. */
 typedef struct {
   f77_double re;
   f77_double im;
 } f77_doublecomplex;
 
+/** Length of a FORTRAN string. */
+typedef long f77_str_len;
+
+/** False value for f77_logical type. */
+#define F77_FALSE ((f77_logical)0)
+/** True value for f77_logical type. */
+#define F77_TRUE (~F77_FALSE)
+
 /**
  * Does name-mangling for FORTRAN functions.
  *
  * Example:
- *
  * @code
- * F77_FUNC(somefn)(a, b, c, d);
+ *   F77_FUNC(fname)(a, b, c, d);
  * @endcode
- *
  * translates to:
- *
  * @code
- * somefn_(a, b, c, d);
+ *   fname_(a, b, c, d);
  * @endcode
  */
 #define F77_FUNC(fname) fname ## _
@@ -106,4 +88,4 @@ typedef f77_ret_real (*f77_real_func)( F77_UNKNOWN_ARGS );
 /** FORTRAN function-pointer for double-precision. */
 typedef f77_ret_double (*f77_double_func)( F77_UNKNOWN_ARGS );
 
-#endif
+#endif /* BASE_FORTRAN_H */

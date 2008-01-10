@@ -82,7 +82,7 @@ class DHrectBound {
    * Gets the range for a particular dimension.
    */
   const DRange& get(index_t i) const {
-    DEBUG_BOUNDS(i, dim_);
+    DEBUG_ASSERT_INDEX_BOUNDS(i, dim_);
     return bounds_[i];
   }
 
@@ -123,7 +123,7 @@ class DHrectBound {
    * Calculates minimum bound-to-point squared distance.
    */
   double MinDistanceSq(const Vector& point) const {
-    DEBUG_SAME_INT(point.length(), dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(point.length(), dim_);
     return MinDistanceSq(point.ptr());
   }
 
@@ -138,7 +138,7 @@ class DHrectBound {
     const DRange *b = other.bounds_;
     index_t mdim = dim_;
 
-    DEBUG_SAME_INT(dim_, other.dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(dim_, other.dim_);
 
     for (index_t d = 0; d < mdim; d++) {
       double v1 = b[d].lo - a[d].hi;
@@ -160,10 +160,10 @@ class DHrectBound {
   double MaxDistanceSq(const Vector& point) const {
     double sum = 0;
 
-    DEBUG_SAME_INT(point.length(), dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(point.length(), dim_);
 
     for (index_t d = 0; d < dim_; d++) {
-      double v = max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
+      double v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
       sum += math::Pow<t_pow, 1>(v); // v is non-negative
     }
 
@@ -178,10 +178,10 @@ class DHrectBound {
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
-    DEBUG_SAME_INT(dim_, other.dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
-      double v = max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
+      double v = std::max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
       sum += math::PowAbs<t_pow, 1>(v); // v is non-negative
     }
 
@@ -198,7 +198,7 @@ class DHrectBound {
     const DRange *b = other.bounds_;
     index_t mdim = dim_;
 
-    DEBUG_SAME_INT(dim_, other.dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(dim_, other.dim_);
 
     for (index_t d = 0; d < mdim; d++) {
       double v1 = b[d].lo - a[d].hi;
@@ -207,7 +207,7 @@ class DHrectBound {
       //   x + fabs(x) = max(x * 2, 0)
       //   (x * 2)^2 / 4 = x^2
       double v_lo = (v1 + fabs(v1)) + (v2 + fabs(v2));
-      double v_hi = -min(v1, v2);
+      double v_hi = -std::min(v1, v2);
 
       sum_lo += math::Pow<t_pow, 1>(v_lo); // v_lo is non-negative
       sum_hi += math::Pow<t_pow, 1>(v_hi); // v_hi is non-negative
@@ -226,7 +226,7 @@ class DHrectBound {
     const double *mpoint = point.ptr();
     const DRange *mbound = bounds_;
 
-    DEBUG_SAME_INT(point.length(), dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(point.length(), dim_);
 
     index_t d = dim_;
     do {
@@ -235,7 +235,7 @@ class DHrectBound {
       double v2 = v - mbound->hi;
 
       sum_lo += math::Pow<t_pow, 1>((v1 + fabs(v1)) + (v2 + fabs(v2)));
-      sum_hi += math::Pow<t_pow, 1>(-min(v1, v2));
+      sum_hi += math::Pow<t_pow, 1>(-std::min(v1, v2));
 
       mpoint++;
       mbound++;
@@ -261,7 +261,7 @@ class DHrectBound {
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
-    DEBUG_SAME_INT(dim_, other.dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
       double v = b->mid();
@@ -288,12 +288,12 @@ class DHrectBound {
     const DRange *b = other.bounds_;
     index_t mdim = dim_;
 
-    DEBUG_SAME_INT(dim_, other.dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(dim_, other.dim_);
 
     for (index_t d = 0; d < mdim; d++) {
       double v1 = b[d].hi - a[d].hi;
       double v2 = a[d].lo - b[d].lo;
-      double v = max(v1, v2);
+      double v = std::max(v1, v2);
       v = (v + fabs(v)); /* truncate negatives to zero */
       sum += math::Pow<t_pow, 1>(v); // v is non-negative
     }
@@ -309,7 +309,7 @@ class DHrectBound {
     const DRange *a = this->bounds_;
     const DRange *b = other.bounds_;
 
-    DEBUG_SAME_INT(dim_, other.dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
       sum += math::PowAbs<t_pow, 1>(a[d].hi + a[d].lo - b[d].hi - b[d].lo);
@@ -322,7 +322,7 @@ class DHrectBound {
    * Expands this region to include a new point.
    */
   DHrectBound& operator |= (const Vector& vector) {
-    DEBUG_SAME_INT(vector.length(), dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(vector.length(), dim_);
 
     for (index_t i = 0; i < dim_; i++) {
       bounds_[i] |= vector[i];
@@ -335,7 +335,7 @@ class DHrectBound {
    * Expands this region to encompass another bound.
    */
   DHrectBound& operator |= (const DHrectBound& other) {
-    DEBUG_SAME_INT(other.dim_, dim_);
+    DEBUG_ASSERT_INDICES_EQUAL(other.dim_, dim_);
 
     for (index_t i = 0; i < dim_; i++) {
       bounds_[i] |= other.bounds_[i];

@@ -293,7 +293,8 @@ void RpcSockImpl::CreatePeers_() {
 
 void RpcSockImpl::CalcChildren_() {
   int m = 1
-      + min(unsigned(n_peers_ - rank_ - 1), unsigned((~rank_) & (rank_-1)));
+      + std::min(unsigned(n_peers_ - rank_ - 1),
+		 unsigned((~rank_) & (rank_-1)));
   int i;
 
   children_.Init();
@@ -328,7 +329,7 @@ void RpcSockImpl::Listen_() {
 
   // Create a file descriptor we'll use to listen to sockets.
   listen_fd_ = socket(PF_INET, SOCK_STREAM, 0);
-  mem::Zero(&my_address);
+  mem::BitZero(&my_address);
   my_address.sin_family = AF_INET;
   my_address.sin_port = htons(port_);
   my_address.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -796,7 +797,7 @@ Message *SockConnection::CreateMessage(
 void SockConnection::Init(int peer_num, const char *ip_address, int port) {
   peer_ = peer_num;
 
-  mem::Zero(&peer_addr_);
+  mem::BitZero(&peer_addr_);
   peer_addr_.sin_family = AF_INET;
   peer_addr_.sin_port = htons(port);
   if (inet_pton(AF_INET, ip_address, &peer_addr_.sin_addr) < 0) {
@@ -972,7 +973,7 @@ bool SockConnection::TryRead() {
       read_buffer_pos_ += bytes;
       
       if (read_buffer_pos_ == sizeof(Header)) {
-        DEBUG_SAME_INT(read_header_.magic, MAGIC);
+        DEBUG_ASSERT_INDICES_EQUAL(read_header_.magic, MAGIC);
         // When we read in a message, we don't need to allocate space for the
         // read_header_ (since we have already read it successfully).
         read_message_ = new Message();

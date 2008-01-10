@@ -9,8 +9,7 @@
 #ifndef FASTLIB_FASTLIB_H
 #define FASTLIB_FASTLIB_H
 
-#include "base/common.h"
-#include "base/cc.h"
+#include "base/base.h"
 #include "la/la.h"
 #include "la/matrix.h"
 #include "col/arraylist.h"

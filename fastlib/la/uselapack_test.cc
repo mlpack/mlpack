@@ -42,7 +42,7 @@ bool VectorApproxEqual(const Vector& a, const Vector& b,
   
   for (index_t i = 0; i < a.length(); i++) {
     double diff = fabs(a.get(i) - b.get(i));
-    max_diff = max(max_diff, diff);
+    max_diff = std::max(max_diff, diff);
     if (!(diff <= eps)) {
       wrong++;
       if (wrong <= 3) {
@@ -82,7 +82,7 @@ bool MatrixApproxEqual(const Matrix& a, const Matrix& b,
   for (index_t c = 0; c < a.n_cols(); c++) {
     for (index_t r = 0; r < a.n_rows(); r++) {
       double diff = fabs(a.get(r, c) - b.get(r, c));
-      max_diff = max(max_diff, diff);
+      max_diff = std::max(max_diff, diff);
       if (!(diff <= eps)) {
         wrong++;
         if (wrong <= 3) {
@@ -476,21 +476,21 @@ void TestInverse() {
   
   Matrix a_inv_actual;
   
-  TEST_ASSERT(PASSED(la::InverseInit(a, &a_inv_actual)));
+  TEST_ASSERT(SUCCEEDED(la::InverseInit(a, &a_inv_actual)));
   AssertExactMatrix(a_inv_expect, a_inv_actual);
   
   Matrix b_inv_actual;
   
   b_inv_actual.Init(3, 3);
-  TEST_ASSERT(PASSED(la::InverseOverwrite(b, &b_inv_actual)));
+  TEST_ASSERT(SUCCEEDED(la::InverseOverwrite(b, &b_inv_actual)));
   AssertApproxMatrix(b_inv_expect, b_inv_actual, 1.0e-5);
   
   Matrix c_inv_actual;
   // Try inverting a 3x3 rank-3 matrix
-  TEST_ASSERT(!PASSED(la::InverseInit(c, &c_inv_actual)));
+  TEST_ASSERT(!SUCCEEDED(la::InverseInit(c, &c_inv_actual)));
   
   // Try inverting a 3x3 rank-3 matrix
-  TEST_ASSERT(PASSED(la::Inverse(&b)));
+  TEST_ASSERT(SUCCEEDED(la::Inverse(&b)));
   AssertApproxMatrix(b, b_inv_actual, 1.0e-5);
 }
 
@@ -570,21 +570,21 @@ void TestQR() {
   Matrix a_q_actual;
   Matrix a_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(a, &a_q_actual, &a_r_actual)));
+  TEST_ASSERT(SUCCEEDED(la::QRInit(a, &a_q_actual, &a_r_actual)));
   AssertApproxMatrix(a_q_expect, a_q_actual, 1.0e-5);
   AssertApproxMatrix(a_r_expect, a_r_actual, 1.0e-5);
   
   Matrix b_q_actual;
   Matrix b_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(b, &b_q_actual, &b_r_actual)));
+  TEST_ASSERT(SUCCEEDED(la::QRInit(b, &b_q_actual, &b_r_actual)));
   AssertApproxMatrix(b_q_expect, b_q_actual, 1.0e-5);
   AssertApproxMatrix(b_r_expect, b_r_actual, 1.0e-5);
   
   Matrix c_q_actual;
   Matrix c_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(c, &c_q_actual, &c_r_actual)));
+  TEST_ASSERT(SUCCEEDED(la::QRInit(c, &c_q_actual, &c_r_actual)));
   AssertApproxMatrix(c_q_expect, c_q_actual, 1.0e-5);
   AssertApproxMatrix(c_r_expect, c_r_actual, 1.0e-5);
 }
@@ -621,20 +621,20 @@ void TestEigen() {
   Matrix a_eigenvectors_actual;
   Vector a_eigenvalues_actual;
   
-  TEST_ASSERT(PASSED(la::EigenvectorsInit(
+  TEST_ASSERT(SUCCEEDED(la::EigenvectorsInit(
       a, &a_eigenvalues_actual, &a_eigenvectors_actual)));
   AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_actual, 1.0e-5);
   AssertApproxTransMatrix(a_eigenvectors_expect, a_eigenvectors_actual, 1.0e-5);
 
   Vector a_eigenvalues_real_actual;
   Vector a_eigenvalues_imag_actual;
-  TEST_ASSERT(PASSED(la::EigenvaluesInit(
+  TEST_ASSERT(SUCCEEDED(la::EigenvaluesInit(
       a, &a_eigenvalues_real_actual, &a_eigenvalues_imag_actual)));
   AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_real_actual, 1.0e-5);
   AssertApproxVector(a_eigenvalues_imag_expect, a_eigenvalues_imag_actual, 0.0);
 
   Vector a_eigenvalues_actual_2;
-  TEST_ASSERT(PASSED(la::EigenvaluesInit(
+  TEST_ASSERT(SUCCEEDED(la::EigenvaluesInit(
       a, &a_eigenvalues_actual_2)));
   AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_actual_2, 1.0e-5);
   
@@ -645,14 +645,14 @@ void TestEigen() {
    */
   //Matrix b_eigenvectors_actual;
   //Vector b_eigenvalues_actual;
-  //TEST_ASSERT(!PASSED(la::EigenvectorsInit(
+  //TEST_ASSERT(!SUCCEEDED(la::EigenvectorsInit(
   //    b, &b_eigenvalues_actual, &b_eigenvectors_actual)));
 
   Matrix b_eigenvectors_real_actual;
   Matrix b_eigenvectors_imag_actual;
   Vector b_eigenvalues_real_actual;
   Vector b_eigenvalues_imag_actual;
-  TEST_ASSERT(PASSED(la::EigenvectorsInit(
+  TEST_ASSERT(SUCCEEDED(la::EigenvectorsInit(
       b, &b_eigenvalues_real_actual, &b_eigenvalues_imag_actual,
       &b_eigenvectors_real_actual, &b_eigenvectors_imag_actual)));
   AssertApproxVector(b_eigenvalues_real_expect, b_eigenvalues_real_actual, 1.0e-5);
@@ -791,7 +791,7 @@ void TestSVD() {
 
 void TryCholesky(const Matrix &orig) {
   Matrix u;
-  TEST_ASSERT(PASSED(la::CholeskyInit(orig, &u)));
+  TEST_ASSERT(SUCCEEDED(la::CholeskyInit(orig, &u)));
   Matrix result;
   la::MulTransAInit(u, u, &result);
   AssertApproxMatrix(orig, result, 1.0e-8);
@@ -813,7 +813,7 @@ void TestCholesky() {
 
 void TrySolveMatrix(const Matrix& a, const Matrix& b) {
   Matrix x;
-  TEST_ASSERT(PASSED(la::SolveInit(a, b, &x)));
+  TEST_ASSERT(SUCCEEDED(la::SolveInit(a, b, &x)));
   Matrix result;
   la::MulInit(a, x, &result);
   AssertApproxMatrix(b, result, 1.0e-8);

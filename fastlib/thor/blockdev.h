@@ -7,8 +7,7 @@
 #ifndef THOR_BLOCKDEV_H
 #define THOR_BLOCKDEV_H
 
-#include "base/common.h"
-#include "base/otrav.h"
+#include "base/base.h"
 #include "col/intmap.h"
 #include "col/string.h"
 #include "fx/fx.h"
@@ -22,7 +21,7 @@
  * but THOR has distributed caches which function as one large block device.
  */
 class BlockDevice {
-  FORBID_COPY(BlockDevice);
+  FORBID_ACCIDENTAL_COPIES(BlockDevice);
 
  public:
   /**
@@ -209,7 +208,7 @@ class BlockDevice {
  * A null block device that silently ignores writes and fails on reads.
  */
 class NullBlockDevice : public BlockDevice {
-  FORBID_COPY(NullBlockDevice);
+  FORBID_ACCIDENTAL_COPIES(NullBlockDevice);
   
  public:
   NullBlockDevice() {}
@@ -292,7 +291,7 @@ class RandomAccessFile {
  * An on-disk block device.
  */
 class DiskBlockDevice : public BlockDevice {
-  FORBID_COPY(DiskBlockDevice);
+  FORBID_ACCIDENTAL_COPIES(DiskBlockDevice);
 
  private:
   mode_t mode_;

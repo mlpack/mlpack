@@ -36,16 +36,16 @@ namespace la {
       la::dorgqr_block_size = int(fake_workspace);
       
       la::dgeqrf_dorgqr_block_size =
-          max(la::dgeqrf_block_size, la::dorgqr_block_size);
+          std::max(la::dgeqrf_block_size, la::dorgqr_block_size);
     }
   };
 };
 
-success_t la::PLUInit(const Matrix &A,
+trial_t la::PLUInit(const Matrix &A,
     ArrayList<f77_integer> *pivots, Matrix *L, Matrix *U) {
   index_t m = A.n_rows();
   index_t n = A.n_cols();
-  success_t success;
+  trial_t success;
 
   if (m > n) {
     pivots->Init(n);
@@ -53,7 +53,7 @@ success_t la::PLUInit(const Matrix &A,
     U->Init(n, n);
     success = PLUExpert(pivots->begin(), L);
 
-    if (!PASSED(success)) {
+    if (!SUCCEEDED(success)) {
       return success;
     }
 
@@ -61,9 +61,9 @@ success_t la::PLUInit(const Matrix &A,
       double *lcol = L->GetColumnPtr(j);
       double *ucol = U->GetColumnPtr(j);
 
-      mem::Copy(ucol, lcol, j + 1);
-      mem::Zero(ucol + j + 1, n - j - 1);
-      mem::Zero(lcol, j);
+      mem::BitCopy(ucol, lcol, j + 1);
+      mem::BitZero(ucol + j + 1, n - j - 1);
+      mem::BitZero(lcol, j);
       lcol[j] = 1.0;
     }
   } else {
@@ -72,7 +72,7 @@ success_t la::PLUInit(const Matrix &A,
     U->Copy(A);
     success = PLUExpert(pivots->begin(), U);
 
-    if (!PASSED(success)) {
+    if (!SUCCEEDED(success)) {
       return success;
     }
 
@@ -80,22 +80,22 @@ success_t la::PLUInit(const Matrix &A,
       double *lcol = L->GetColumnPtr(j);
       double *ucol = U->GetColumnPtr(j);
 
-      mem::Zero(lcol, j);
+      mem::BitZero(lcol, j);
       lcol[j] = 1.0;
-      mem::Copy(lcol + j + 1, ucol + j + 1, m - j - 1);
-      mem::Zero(ucol + j + 1, m - j - 1);
+      mem::BitCopy(lcol + j + 1, ucol + j + 1, m - j - 1);
+      mem::BitZero(ucol + j + 1, m - j - 1);
     }
   }
 
   return success;
 }
 
-success_t la::Inverse(Matrix *A) {
+trial_t la::Inverse(Matrix *A) {
   f77_integer pivots[A->n_rows()];
 
-  success_t success = PLUExpert(pivots, A);
+  trial_t success = PLUExpert(pivots, A);
 
-  if (!PASSED(success)) {
+  if (!SUCCEEDED(success)) {
     return success;
   }
 
@@ -103,15 +103,15 @@ success_t la::Inverse(Matrix *A) {
 }
   
 
-success_t la::InverseOverwrite(const Matrix &A, Matrix *B) {
+trial_t la::InverseOverwrite(const Matrix &A, Matrix *B) {
   f77_integer pivots[A.n_rows()];
 
   if (likely(A.ptr() != B->ptr())) {
     B->CopyValues(A);
   }
-  success_t success = PLUExpert(pivots, B);
+  trial_t success = PLUExpert(pivots, B);
 
-  if (!PASSED(success)) {
+  if (!SUCCEEDED(success)) {
     return success;
   }
 
@@ -182,11 +182,11 @@ double la::DeterminantLog(const Matrix &A, int *sign_out) {
 /*
 Replaced this with a non-querying version that uses cached block sizes.
 
-success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
+trial_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   f77_integer info;
   f77_integer m = A_in_Q_out->n_rows();
   f77_integer n = A_in_Q_out->n_cols();
-  f77_integer k = min(m, n);
+  f77_integer k = std::min(m, n);
   double d; // for querying optimal work size
   double tau[k];
 
@@ -203,13 +203,13 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   
   R->SetZero();
   if (info != 0) {
-    return SUCCESS_FROM_LAPACK(info);
+    return TRIAL_FROM_LAPACK(info);
   }
 
   // Extract R
   for (index_t j = 0; j < n; j++) {
-    mem::Copy(R->GetColumnPtr(j), A_in_Q_out->GetColumnPtr(j),
-        min(j + 1, k));
+    mem::BitCopy(R->GetColumnPtr(j), A_in_Q_out->GetColumnPtr(j),
+        std::min(j + 1, k));
   }
   
   // Fix Q
@@ -223,15 +223,15 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
         tau, work, lwork, &info);
   }
 
-  return SUCCESS_FROM_LAPACK(info);
+  return TRIAL_FROM_LAPACK(info);
 }
 */
 
-success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
+trial_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   f77_integer info;
   f77_integer m = A_in_Q_out->n_rows();
   f77_integer n = A_in_Q_out->n_cols();
-  f77_integer k = min(m, n);
+  f77_integer k = std::min(m, n);
   f77_integer lwork = n * dgeqrf_dorgqr_block_size;
   double tau[k + lwork];
   double *work = tau + k;
@@ -241,36 +241,36 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
      tau, work, lwork, &info);
 
   if (info != 0) {
-    return SUCCESS_FROM_LAPACK(info);
+    return TRIAL_FROM_LAPACK(info);
   }
 
   // Extract R
   for (index_t j = 0; j < n; j++) {
     double *r_col = R->GetColumnPtr(j);
     double *q_col = A_in_Q_out->GetColumnPtr(j);
-    int i = min(j + 1, k);
-    mem::Copy(r_col, q_col, i);
-    mem::Zero(r_col + i, k - i);
+    int i = std::min(j + 1, k);
+    mem::BitCopy(r_col, q_col, i);
+    mem::BitZero(r_col + i, k - i);
   }
 
   // Fix Q
   F77_FUNC(dorgqr)(m, k, k, A_in_Q_out->ptr(), m,
       tau, work, lwork, &info);
 
-  return SUCCESS_FROM_LAPACK(info);
+  return TRIAL_FROM_LAPACK(info);
 }
 
-success_t la::QRInit(const Matrix &A, Matrix *Q, Matrix *R) {
-  index_t k = min(A.n_rows(), A.n_cols());
+trial_t la::QRInit(const Matrix &A, Matrix *Q, Matrix *R) {
+  index_t k = std::min(A.n_rows(), A.n_cols());
   Q->Copy(A);
   R->Init(k, A.n_cols());
-  success_t success = QRExpert(Q, R);
+  trial_t success = QRExpert(Q, R);
   Q->ResizeNoalias(k);
 
   return success;
 }
 
-success_t la::SchurExpert(Matrix *A_in_T_out,
+trial_t la::SchurExpert(Matrix *A_in_T_out,
     double *w_real, double *w_imag, double *Z) {
   DEBUG_MATSQUARE(*A_in_T_out);
   f77_integer info;
@@ -291,10 +291,10 @@ success_t la::SchurExpert(Matrix *A_in_T_out,
         Z, n, work, lwork, NULL, &info);
   }
 
-  return SUCCESS_FROM_LAPACK(info);
+  return TRIAL_FROM_LAPACK(info);
 }
 
-success_t la::EigenExpert(Matrix *A_garbage,
+trial_t la::EigenExpert(Matrix *A_garbage,
     double *w_real, double *w_imag, double *V_raw) {
   DEBUG_MATSQUARE(*A_garbage);
   f77_integer info;
@@ -312,10 +312,10 @@ success_t la::EigenExpert(Matrix *A_garbage,
         w_real, w_imag, NULL, 1, V_raw, n, work, lwork, &info);
   }
 
-  return SUCCESS_FROM_LAPACK(info);
+  return TRIAL_FROM_LAPACK(info);
 }
 
-success_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
+trial_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
   DEBUG_MATSQUARE(A);
   int n = A.n_rows();
   w->Init(n);
@@ -323,9 +323,9 @@ success_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
 
   Matrix tmp;
   tmp.Copy(A);
-  success_t success = SchurExpert(&tmp, w->ptr(), w_imag, NULL);
+  trial_t success = SchurExpert(&tmp, w->ptr(), w_imag, NULL);
 
-  if (!PASSED(success)) {
+  if (!SUCCEEDED(success)) {
     return success;
   }
 
@@ -338,7 +338,7 @@ success_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
   return success;
 }
 
-success_t la::EigenvectorsInit(const Matrix &A,
+trial_t la::EigenvectorsInit(const Matrix &A,
     Vector *w_real, Vector *w_imag, Matrix *V_real, Matrix *V_imag) {
   DEBUG_MATSQUARE(A);
   index_t n = A.n_rows();
@@ -349,10 +349,10 @@ success_t la::EigenvectorsInit(const Matrix &A,
 
   Matrix tmp;
   tmp.Copy(A);
-  success_t success = EigenExpert(&tmp,
+  trial_t success = EigenExpert(&tmp,
       w_real->ptr(), w_imag->ptr(), V_real->ptr());
 
-  if (!PASSED(success)) {
+  if (!SUCCEEDED(success)) {
     return success;
   }
 
@@ -376,7 +376,7 @@ success_t la::EigenvectorsInit(const Matrix &A,
   return success;
 }
 
-success_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
+trial_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
   DEBUG_MATSQUARE(A);
   index_t n = A.n_rows();
   w->Init(n);
@@ -385,9 +385,9 @@ success_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
 
   Matrix tmp;
   tmp.Copy(A);
-  success_t success = EigenExpert(&tmp, w->ptr(), w_imag, V->ptr());
+  trial_t success = EigenExpert(&tmp, w->ptr(), w_imag, V->ptr());
 
-  if (!PASSED(success)) {
+  if (!SUCCEEDED(success)) {
     return success;
   }
 
@@ -404,11 +404,11 @@ success_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
 DGESDD is supposed to be faster, although I haven't actually found this
 to be the case.
 
-success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
+trial_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
   f77_integer info;
   f77_integer m = A_garbage->n_rows();
   f77_integer n = A_garbage->n_cols();
-  f77_integer k = min(m, n);
+  f77_integer k = std::min(m, n);
   const char *job_u = U ? (U == A_garbage->ptr ? "O" : "S") : "N";
   const char *job_v = VT ? "S" : "N";
   double d; // for querying optimal work size
@@ -423,17 +423,17 @@ success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
         s, U, m, VT, k, work, lwork, &info);
   }
 
-  return SUCCESS_FROM_LAPACK(info);
+  return TRIAL_FROM_LAPACK(info);
 }
 */
 
-success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
+trial_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
   DEBUG_ASSERT_MSG((U == NULL) == (VT == NULL),
                    "You must fill both U and VT or neither.");
   f77_integer info;
   f77_integer m = A_garbage->n_rows();
   f77_integer n = A_garbage->n_cols();
-  f77_integer k = min(m, n);
+  f77_integer k = std::min(m, n);
   f77_integer iwork[8 * k];
   const char *job = U ? "S" : "N";
   double d; // for querying optimal work size
@@ -451,10 +451,10 @@ success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
     mem::Free(work);
   }
 
-  return SUCCESS_FROM_LAPACK(info);
+  return TRIAL_FROM_LAPACK(info);
 }
 
-success_t la::Cholesky(Matrix *A_in_U_out) {
+trial_t la::Cholesky(Matrix *A_in_U_out) {
   DEBUG_MATSQUARE(*A_in_U_out);
   f77_integer info;
   f77_integer n = A_in_U_out->n_rows();
@@ -463,10 +463,10 @@ success_t la::Cholesky(Matrix *A_in_U_out) {
 
   /* set the garbage part of the matrix to 0. */
   for (f77_integer j = 0; j < n; j++) {
-    mem::Zero(A_in_U_out->GetColumnPtr(j) + j + 1, n - j - 1);
+    mem::BitZero(A_in_U_out->GetColumnPtr(j) + j + 1, n - j - 1);
   }
 
-  return SUCCESS_FROM_LAPACK(info);
+  return TRIAL_FROM_LAPACK(info);
 }
 
 static la::zzzLapackInit lapack_initializer;

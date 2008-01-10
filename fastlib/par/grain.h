@@ -126,7 +126,7 @@ class GrainQueue {
 
 template<typename TGrain, typename TContext = int>
 class ThreadedGrainRunner {
-  FORBID_COPY(ThreadedGrainRunner);
+  FORBID_ACCIDENTAL_COPIES(ThreadedGrainRunner);
  public:
   typedef TGrain Grain;
   typedef TContext Context;

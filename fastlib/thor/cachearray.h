@@ -16,7 +16,7 @@
  */
 template<typename T>
 class CacheArrayBlockHandler : public BlockHandler {
-  FORBID_COPY(CacheArrayBlockHandler);
+  FORBID_ACCIDENTAL_COPIES(CacheArrayBlockHandler);
 
  private:
   ArrayList<char> default_elem_;
@@ -74,7 +74,7 @@ class CacheArrayBlockHandler : public BlockHandler {
  */
 template<typename T>
 class CacheArray {
-  FORBID_COPY(CacheArray);
+  FORBID_ACCIDENTAL_COPIES(CacheArray);
 
  public:
   /** The type of an element. */
@@ -384,11 +384,11 @@ class CacheArray {
  private:
   /** Does a bounds check on an element ID. */
   void BoundsCheck_(index_t element_id) {
-    DEBUG_BOUNDS(element_id - begin_, end_ - begin_);
+    DEBUG_ASSERT_INDEX_BOUNDS(element_id - begin_, end_ - begin_);
   }
 
   /** Handles a miss from the internal FIFO. */
-  COMPILER_NOINLINE
+  COMPILER_NO_INLINE
   Element *HandleCacheMiss_(index_t element_id);
 
   /** Checks out an element (happy-path). */
@@ -420,7 +420,7 @@ class CacheArray {
 
 template<typename Element>
 class CacheRead {
-  FORBID_COPY(CacheRead);
+  FORBID_ACCIDENTAL_COPIES(CacheRead);
 
  private:
   const Element *element_;
@@ -455,7 +455,7 @@ class CacheRead {
 
 template<typename Element>
 class CacheWrite {
-  FORBID_COPY(CacheWrite);
+  FORBID_ACCIDENTAL_COPIES(CacheWrite);
 
  private:
   Element *element_;
@@ -504,7 +504,7 @@ class CacheWrite {
  */
 template<typename T>
 class SubsetArray {
-  FORBID_COPY(SubsetArray);
+  FORBID_ACCIDENTAL_COPIES(SubsetArray);
 
  public:
   /** Element type. */

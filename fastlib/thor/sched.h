@@ -26,7 +26,7 @@
  * not exactly a queue -- it can be any kind of scheduler.
  */
 class SchedulerInterface {
-  FORBID_COPY(SchedulerInterface);
+  FORBID_ACCIDENTAL_COPIES(SchedulerInterface);
 
  public:
   typedef TreeGrain Grain;
@@ -60,7 +60,7 @@ class SchedulerInterface {
  * threads aren't going to trample on each other.
  */
 class LockedScheduler : public SchedulerInterface {
-  FORBID_COPY(LockedScheduler);
+  FORBID_ACCIDENTAL_COPIES(LockedScheduler);
 
  private:
   SchedulerInterface *inner_;
@@ -91,7 +91,7 @@ class LockedScheduler : public SchedulerInterface {
 template<typename Node>
 class CentroidScheduler
     : public SchedulerInterface {
-  FORBID_COPY(CentroidScheduler);
+  FORBID_ACCIDENTAL_COPIES(CentroidScheduler);
 
  private:
   /** Convenience typedef for the decomposition node. */
@@ -220,7 +220,7 @@ class RemoteSchedulerBackend
 
 class RemoteScheduler
     : public SchedulerInterface {
-  FORBID_COPY(RemoteScheduler);
+  FORBID_ACCIDENTAL_COPIES(RemoteScheduler);
 
  private:
   int channel_;

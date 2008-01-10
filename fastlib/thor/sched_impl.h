@@ -139,7 +139,8 @@ void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
     index_t count = found_node->count();
     n_assigned_points_ += count;
 
-    percent_indicator("scheduled", n_assigned_points_, root_->count());
+    fl_print_progress("scheduled",
+        n_assigned_points_ * 100 / root_->count());
 
     // Mark all children as complete (non-recursive version)
     ArrayList<InternalNode*> stack;

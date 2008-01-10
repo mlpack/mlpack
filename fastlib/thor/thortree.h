@@ -153,7 +153,7 @@ class ThorTreeDecomposition {
  */
 template<typename TParam, typename TPoint, typename TNode>
 class ThorTree {
-  FORBID_COPY(ThorTree);
+  FORBID_ACCIDENTAL_COPIES(ThorTree);
 
  public:
   typedef TParam Param;

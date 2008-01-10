@@ -22,7 +22,7 @@ void CacheArrayBlockHandler<T>::BlockInitFrozen(BlockDevice::blockid_t blockid,
   DEBUG_ASSERT((begin % default_elem_.size()) == 0);
   index_t elems = bytes / default_elem_.size();
   for (index_t i = 0; i < elems; i++) {
-    mem::CopyBytes(block, default_elem_.begin(), default_elem_.size());
+    mem::BitCopyBytes(block, default_elem_.begin(), default_elem_.size());
     block += default_elem_.size();
   }
 }
@@ -118,7 +118,7 @@ void CacheArray<T>::Swap(index_t index_a, index_t index_b) {
   DEBUG_ASSERT(BlockDevice::can_write(mode_));
   char *a = reinterpret_cast<char*>(StartWrite(index_a));
   char *b = reinterpret_cast<char*>(StartWrite(index_b));
-  mem::Swap(a, b, n_elem_bytes_);
+  mem::BitSwap(a, b, n_elem_bytes_);
   ot::PointerRelocate<Element>(a, b);
   ot::PointerRelocate<Element>(b, a);
   ReleaseElement(index_a);
@@ -132,7 +132,7 @@ void CacheArray<T>::Copy(index_t index_src, index_t index_dest) {
   DEBUG_ASSERT(BlockDevice::can_write(mode_));
   const char *src = reinterpret_cast<char*>(StartWrite(index_src));
   char *dest = reinterpret_cast<char*>(StartWrite(index_dest));
-  mem::Copy(dest, src, n_elem_bytes_);
+  mem::BitCopy(dest, src, n_elem_bytes_);
   ot::PointerRelocate<Element>(src, dest);
   ReleaseElement(index_src);
   ReleaseElement(index_dest);
@@ -211,7 +211,7 @@ void CacheArray<T>::Init(
   n_elem_bytes_ = handler->n_elem_bytes();
   fifo_size_ = 64;
   fifo_ = mem::Alloc<BlockDevice::blockid_t>(fifo_size_);
-  mem::ConstructAll(fifo_, -1, fifo_size_);
+  mem::InitConstruct(fifo_, -1, fifo_size_);
   fifo_index_ = 0;
 
   unsigned n_block_elems_calc = cache_->n_block_bytes() / n_elem_bytes_;
@@ -243,7 +243,7 @@ void CacheArray<T>::Flush() {
         cache_->StopRead(blockid);
       }
 
-      DEBUG_SAME_INT(metadata->lock_count, 0);
+      DEBUG_ASSERT_INDICES_EQUAL(metadata->lock_count, 0);
       metadata->data = NULL;
       fifo_[i] = -1;
     }
@@ -268,7 +268,7 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
       if (unlikely(looped)) {
         int old_size = fifo_size_;
         fifo_size_ *= 2;
-        fifo_ = mem::Resize(fifo_, fifo_size_);
+        fifo_ = mem::Realloc(fifo_, fifo_size_);
         for (int i = old_size; i < fifo_size_; i++) {
           fifo_[i] = -1;
         }
@@ -325,7 +325,7 @@ typename CacheArray<T>::Element* CacheArray<T>::HandleCacheMiss_(
 
 template<typename Helperclass, typename Element, typename BaseElement>
 class ZCacheIterImpl_ {
-  FORBID_COPY(ZCacheIterImpl_);
+  FORBID_ACCIDENTAL_COPIES(ZCacheIterImpl_);
 
  private:
   Element *element_;
@@ -369,8 +369,8 @@ class ZCacheIterImpl_ {
   }
 
   void Next() {
-    DEBUG_BOUNDS(left_, cache_->n_block_elems() + 1);
-    element_ = mem::PointerAdd(element_, stride_);
+    DEBUG_ASSERT_INDEX_BOUNDS(left_, cache_->n_block_elems() + 1);
+    element_ = mem::PtrAddBytes(element_, stride_);
     if (unlikely(left_ == 0)) {
       NextBlock_();
       return;
@@ -379,7 +379,7 @@ class ZCacheIterImpl_ {
   }
 
  private:
-  COMPILER_NOINLINE
+  COMPILER_NO_INLINE
   void NextBlock_();
 };
 
@@ -428,7 +428,7 @@ void SubsetArray<T>::Init(const Element& default_elem,
     ot::PointerFreeze(default_elem, base);
     for (index_t i = begin + 1; i < end; i++) {
       char *ptr = adjusted + i * n_elem_bytes_;
-      mem::CopyBytes(ptr, base, n_elem_bytes_);
+      mem::BitCopyBytes(ptr, base, n_elem_bytes_);
       ot::PointerThaw<Element>(ptr);
     }
     ot::PointerThaw<Element>(base);
