@@ -41,11 +41,11 @@ namespace la {
   };
 };
 
-trial_t la::PLUInit(const Matrix &A,
+success_t la::PLUInit(const Matrix &A,
     ArrayList<f77_integer> *pivots, Matrix *L, Matrix *U) {
   index_t m = A.n_rows();
   index_t n = A.n_cols();
-  trial_t success;
+  success_t success;
 
   if (m > n) {
     pivots->Init(n);
@@ -53,7 +53,7 @@ trial_t la::PLUInit(const Matrix &A,
     U->Init(n, n);
     success = PLUExpert(pivots->begin(), L);
 
-    if (!SUCCEEDED(success)) {
+    if (!PASSED(success)) {
       return success;
     }
 
@@ -72,7 +72,7 @@ trial_t la::PLUInit(const Matrix &A,
     U->Copy(A);
     success = PLUExpert(pivots->begin(), U);
 
-    if (!SUCCEEDED(success)) {
+    if (!PASSED(success)) {
       return success;
     }
 
@@ -90,12 +90,12 @@ trial_t la::PLUInit(const Matrix &A,
   return success;
 }
 
-trial_t la::Inverse(Matrix *A) {
+success_t la::Inverse(Matrix *A) {
   f77_integer pivots[A->n_rows()];
 
-  trial_t success = PLUExpert(pivots, A);
+  success_t success = PLUExpert(pivots, A);
 
-  if (!SUCCEEDED(success)) {
+  if (!PASSED(success)) {
     return success;
   }
 
@@ -103,15 +103,15 @@ trial_t la::Inverse(Matrix *A) {
 }
   
 
-trial_t la::InverseOverwrite(const Matrix &A, Matrix *B) {
+success_t la::InverseOverwrite(const Matrix &A, Matrix *B) {
   f77_integer pivots[A.n_rows()];
 
   if (likely(A.ptr() != B->ptr())) {
     B->CopyValues(A);
   }
-  trial_t success = PLUExpert(pivots, B);
+  success_t success = PLUExpert(pivots, B);
 
-  if (!SUCCEEDED(success)) {
+  if (!PASSED(success)) {
     return success;
   }
 
@@ -182,7 +182,7 @@ double la::DeterminantLog(const Matrix &A, int *sign_out) {
 /*
 Replaced this with a non-querying version that uses cached block sizes.
 
-trial_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
+success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   f77_integer info;
   f77_integer m = A_in_Q_out->n_rows();
   f77_integer n = A_in_Q_out->n_cols();
@@ -227,7 +227,7 @@ trial_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
 }
 */
 
-trial_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
+success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   f77_integer info;
   f77_integer m = A_in_Q_out->n_rows();
   f77_integer n = A_in_Q_out->n_cols();
@@ -260,17 +260,17 @@ trial_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   return TRIAL_FROM_LAPACK(info);
 }
 
-trial_t la::QRInit(const Matrix &A, Matrix *Q, Matrix *R) {
+success_t la::QRInit(const Matrix &A, Matrix *Q, Matrix *R) {
   index_t k = std::min(A.n_rows(), A.n_cols());
   Q->Copy(A);
   R->Init(k, A.n_cols());
-  trial_t success = QRExpert(Q, R);
+  success_t success = QRExpert(Q, R);
   Q->ResizeNoalias(k);
 
   return success;
 }
 
-trial_t la::SchurExpert(Matrix *A_in_T_out,
+success_t la::SchurExpert(Matrix *A_in_T_out,
     double *w_real, double *w_imag, double *Z) {
   DEBUG_MATSQUARE(*A_in_T_out);
   f77_integer info;
@@ -294,7 +294,7 @@ trial_t la::SchurExpert(Matrix *A_in_T_out,
   return TRIAL_FROM_LAPACK(info);
 }
 
-trial_t la::EigenExpert(Matrix *A_garbage,
+success_t la::EigenExpert(Matrix *A_garbage,
     double *w_real, double *w_imag, double *V_raw) {
   DEBUG_MATSQUARE(*A_garbage);
   f77_integer info;
@@ -315,7 +315,7 @@ trial_t la::EigenExpert(Matrix *A_garbage,
   return TRIAL_FROM_LAPACK(info);
 }
 
-trial_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
+success_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
   DEBUG_MATSQUARE(A);
   int n = A.n_rows();
   w->Init(n);
@@ -323,9 +323,9 @@ trial_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
 
   Matrix tmp;
   tmp.Copy(A);
-  trial_t success = SchurExpert(&tmp, w->ptr(), w_imag, NULL);
+  success_t success = SchurExpert(&tmp, w->ptr(), w_imag, NULL);
 
-  if (!SUCCEEDED(success)) {
+  if (!PASSED(success)) {
     return success;
   }
 
@@ -338,7 +338,7 @@ trial_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
   return success;
 }
 
-trial_t la::EigenvectorsInit(const Matrix &A,
+success_t la::EigenvectorsInit(const Matrix &A,
     Vector *w_real, Vector *w_imag, Matrix *V_real, Matrix *V_imag) {
   DEBUG_MATSQUARE(A);
   index_t n = A.n_rows();
@@ -349,10 +349,10 @@ trial_t la::EigenvectorsInit(const Matrix &A,
 
   Matrix tmp;
   tmp.Copy(A);
-  trial_t success = EigenExpert(&tmp,
+  success_t success = EigenExpert(&tmp,
       w_real->ptr(), w_imag->ptr(), V_real->ptr());
 
-  if (!SUCCEEDED(success)) {
+  if (!PASSED(success)) {
     return success;
   }
 
@@ -376,7 +376,7 @@ trial_t la::EigenvectorsInit(const Matrix &A,
   return success;
 }
 
-trial_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
+success_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
   DEBUG_MATSQUARE(A);
   index_t n = A.n_rows();
   w->Init(n);
@@ -385,9 +385,9 @@ trial_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
 
   Matrix tmp;
   tmp.Copy(A);
-  trial_t success = EigenExpert(&tmp, w->ptr(), w_imag, V->ptr());
+  success_t success = EigenExpert(&tmp, w->ptr(), w_imag, V->ptr());
 
-  if (!SUCCEEDED(success)) {
+  if (!PASSED(success)) {
     return success;
   }
 
@@ -404,7 +404,7 @@ trial_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
 DGESDD is supposed to be faster, although I haven't actually found this
 to be the case.
 
-trial_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
+success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
   f77_integer info;
   f77_integer m = A_garbage->n_rows();
   f77_integer n = A_garbage->n_cols();
@@ -427,7 +427,7 @@ trial_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
 }
 */
 
-trial_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
+success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
   DEBUG_ASSERT_MSG((U == NULL) == (VT == NULL),
                    "You must fill both U and VT or neither.");
   f77_integer info;
@@ -454,7 +454,7 @@ trial_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
   return TRIAL_FROM_LAPACK(info);
 }
 
-trial_t la::Cholesky(Matrix *A_in_U_out) {
+success_t la::Cholesky(Matrix *A_in_U_out) {
   DEBUG_MATSQUARE(*A_in_U_out);
   f77_integer info;
   f77_integer n = A_in_U_out->n_rows();

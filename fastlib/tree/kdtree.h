@@ -117,15 +117,15 @@ namespace tree {
    *        of the tree, must still be freed on failure
    * @param old_from_new stores the permutation to get from the indices in
    *        the matrix returned to the original data point indices
-   * @return TRIAL_SUCCESS or TRIAL_FAILURE
+   * @return SUCCESS_PASS or SUCCESS_FAIL
    */
   template<typename TKdTree>
-  trial_t LoadKdTree(datanode *module,
+  success_t LoadKdTree(datanode *module,
       Matrix *matrix, TKdTree **tree_pp,
       ArrayList<index_t> *old_from_new) {
     const char *type = fx_param_str(module, "type", "text");
     const char *fname = fx_param_str(module, "", NULL);
-    trial_t success = TRIAL_SUCCESS;
+    success_t success = SUCCESS_PASS;
 
     fx_timer_start(module, "load");
     if (strcmp(type, "text") == 0) {

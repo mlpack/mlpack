@@ -104,12 +104,12 @@ class DatasetFeature {
    * For nominal, the entry 
    *
    * If an invalid parse occurs, such as a mal-formatted number or
-   * a nominal value not in the list, TRIAL_FAILURE will be returned.
+   * a nominal value not in the list, SUCCESS_FAIL will be returned.
    *
    * @param str the string to parse
    * @param d where to store the result
    */
-  trial_t Parse(const char *str, double *d) const;
+  success_t Parse(const char *str, double *d) const;
   
   /**
    * Gets what the feature is named.
@@ -262,7 +262,7 @@ class DatasetInfo {
    * This will read only the header information and leave the reader at the
    * first line of data.
    */
-  trial_t InitFromArff(TextLineReader *reader,
+  success_t InitFromArff(TextLineReader *reader,
       const char *filename = "dataset");
   
   /**
@@ -272,7 +272,7 @@ class DatasetInfo {
    *
    * InitFromFile will automatically detect this.
    */
-  trial_t InitFromCsv(TextLineReader *reader,
+  success_t InitFromCsv(TextLineReader *reader,
       const char *filename = "dataset");
 
   /**
@@ -282,7 +282,7 @@ class DatasetInfo {
    * left at the first line of actual data.
    * You can then read the data with matrix.
    */
-  trial_t InitFromFile(TextLineReader *reader,
+  success_t InitFromFile(TextLineReader *reader,
       const char *filename = "dataset");
   /**
    * Populates a matrix from a file, given the internal data model.
@@ -293,7 +293,7 @@ class DatasetInfo {
    * @param reader the reader to get lines from
    * @param matrix the matrix to store text into
    */
-  trial_t ReadMatrix(TextLineReader *reader, Matrix *matrix) const;
+  success_t ReadMatrix(TextLineReader *reader, Matrix *matrix) const;
 
   /**
    * Reads a single vector.
@@ -305,7 +305,7 @@ class DatasetInfo {
    *        function returns failure!
    * @return whether reading the line was successful
    */
-  trial_t ReadPoint(TextLineReader *reader, double *point,
+  success_t ReadPoint(TextLineReader *reader, double *point,
       bool *is_done) const;
 
  private:
@@ -474,7 +474,7 @@ class Dataset {
    *
    * @param fname the name of an ARFF, CSV, or whitespace-separated
    */
-  trial_t InitFromFile(const char *fname);
+  success_t InitFromFile(const char *fname);
   
   /**
    * Reads in an ARFF or CSV/WSV file.
@@ -486,7 +486,7 @@ class Dataset {
    * @param filename a title given to this data set, doesn't necessarily
    *        need to be anything significant
    */
-  trial_t InitFromFile(TextLineReader *reader,
+  success_t InitFromFile(TextLineReader *reader,
       const char *filename = "dataset");
   
   /**
@@ -496,14 +496,14 @@ class Dataset {
    * @param header whether to include a first line which is the titles of the
    *               data
    */
-  trial_t WriteCsv(const char *fname, bool header = false) const;
+  success_t WriteCsv(const char *fname, bool header = false) const;
 
   /**
    * Writes to an ARFF file.
    *
    * @param fname name of the file
    */
-  trial_t WriteArff(const char *fname) const;
+  success_t WriteArff(const char *fname) const;
 
   /**
    * Initializes from a matrix copying all contents, assuming all features
@@ -589,7 +589,7 @@ namespace data {
    * @param fname the file name to load
    * @param matrix a pointer to an uninitialized matrix to load
    */
-  trial_t Load(const char *fname, Matrix *matrix);
+  success_t Load(const char *fname, Matrix *matrix);
   /**
    * Saves a matrix to a file.
    *
@@ -604,7 +604,7 @@ namespace data {
    * @param fname the file name to load
    * @param matrix a pointer to an uninitialized matrix to load
    */
-  trial_t Save(const char *fname, const Matrix& matrix);
+  success_t Save(const char *fname, const Matrix& matrix);
 };
 
 #endif

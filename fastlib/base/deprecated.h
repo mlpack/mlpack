@@ -15,13 +15,8 @@
 void percent_indicator(const char *name, uint64 num, uint64 den) {
   fl_print_progress(name, num * 100 / den);
 }
-typedef trial_t success_t;
-#define SUCCESS_PASS TRIAL_SUCCESS
-#define SUCCESS_WARN TRIAL_WARNING
-#define SUCCESS_FAIL TRIAL_FAILURE
-#define MUST_PASS(x) MUST_SUCCEED(x)
-#define ASSERT_PASS(x) MUST_SUCCEED(x)
-#define SUCCESS_FROM_INT(x) TRIAL_FROM_C(x)
+#define ASSERT_PASS(x) MUST_PASS(x)
+#define SUCCESS_FROM_INT(x) SUCCESS_FROM_C(x)
 
 /* compiler.h */
 #define EXTERN_C_START EXTERN_C_BEGIN

@@ -73,11 +73,11 @@ void TestLoad() {
   Dataset d4;
   Dataset d5;
   
-  MUST_SUCCEED(d1.InitFromFile("test/fake.arff"));
-  MUST_SUCCEED(d2.InitFromFile("test/fake.csv"));
-  MUST_SUCCEED(d3.InitFromFile("test/fake.csvh"));
-  MUST_SUCCEED(d4.InitFromFile("test/fake.tsv"));
-  MUST_SUCCEED(d5.InitFromFile("test/fake.weird"));
+  MUST_PASS(d1.InitFromFile("test/fake.arff"));
+  MUST_PASS(d2.InitFromFile("test/fake.csv"));
+  MUST_PASS(d3.InitFromFile("test/fake.csvh"));
+  MUST_PASS(d4.InitFromFile("test/fake.tsv"));
+  MUST_PASS(d5.InitFromFile("test/fake.weird"));
   
   AssertSameMatrix(d1.matrix(), d2.matrix());
   AssertSameMatrix(d1.matrix(), d3.matrix());
@@ -90,12 +90,12 @@ void TestStoreLoad() {
   Dataset d2;
   Dataset d3;
   
-  MUST_SUCCEED(d1.InitFromFile("test/fake.arff"));
+  MUST_PASS(d1.InitFromFile("test/fake.arff"));
   d1.WriteCsv("test/fakeout1.csv");
   d1.WriteArff("test/fakeout1.arff");
   
-  MUST_SUCCEED(d2.InitFromFile("test/fakeout1.arff"));
-  MUST_SUCCEED(d3.InitFromFile("test/fakeout1.csv"));
+  MUST_PASS(d2.InitFromFile("test/fakeout1.arff"));
+  MUST_PASS(d3.InitFromFile("test/fakeout1.csv"));
   
   AssertSameMatrix(d1.matrix(), d2.matrix());
   AssertSameMatrix(d1.matrix(), d3.matrix());
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
   
   if (!PASSED(dataset.InitFromFile(in))) return 1;
   
-  trial_t result;
+  success_t result;
   
   if (type.EqualsNoCase("arff")) {
     result = dataset.WriteArff(out);
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
   } else if (type.EqualsNoCase("csvh")) {
     result = dataset.WriteCsv(out, true);
   } else {
-    result = TRIAL_FAILURE;
+    result = SUCCESS_FAIL;
   }
   
   if (!PASSED(result)) {
