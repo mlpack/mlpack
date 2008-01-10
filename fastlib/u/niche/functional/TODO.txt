@@ -1,3 +1,26 @@
 1 Test smoothing parameter quality
 select random subset of data to estimate unmixing matrix
 select random subset of data to test independence
+
+
+
+take an IC
+observe entropy
+
+smooth the IC (try using a linear approximation)
+observe entropy
+
+
+
+ 
+
+
+given raw data that may require smoothing:
+      smooth until joint entropy stops increasing or smoothness no longer well describes the test data: We obtain smooth components from training data and observe the sum of functional dot products for the test data. If this sum is less than the sum for less smooth data, consider using the last iteration of the (slightly more rough) data.
+      
+
+
+
+
+
+

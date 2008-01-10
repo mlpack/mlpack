@@ -1,4 +1,4 @@
-function [ic_curves_pos, ic_coef_pos, h_Y_pos, pc_coef, pc_curves, mean_coef, W_pos] = ...
+function [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_scores, mean_coef, W_pos, whitening_transform] = ...
     funcica(t, s, myfd_data_train, p, basis_curves, myfdPar);
 % funcica() - functional ICA
 % first call prelim_funcica
@@ -57,16 +57,49 @@ calc_pc_scores = ...
 disp(sprintf('the difference is %f', maxall(calc_pc_scores' - pc_scores)));
 %}
 
-[Y_pos,Y_neg,W_pos,W_neg] = find_opt_unmixing_matrix(E);
 
-%save('YWE.mat', 'E', 'Y_pos', 'W_pos');
 
+% check to ensure covariance matrix is orthogonal
+cov_E = cov(E');
+off_diag_max = maxall(cov_E - diag(diag(cov_E)));
+if off_diag_max > eps
+  fprintf('covariance matrix is not orthogonal!\n');
+  fprintf('off_diag_max = %f\n', off_diag_max);
+  [V,D] = eig(cov_E);
+  whitening_transform = V * (D^(-.5)) * V';
+else
+  % the covariance matrix of E is already diagonal, but we need to
+  % scale it so that cov(E') is white
+  whitening_transform = diag(1./std(E'));
+end
+  
+white_E = whitening_transform * E;
+
+[Y_pos,Y_neg,post_whitening_W_pos,post_whitening_W_neg] = ...
+    find_opt_unmixing_matrix(white_E);
+
+Y = Y_pos;
+W_pos = post_whitening_W_pos * whitening_transform;
+W_neg = post_whitening_W_neg * whitening_transform;
+
+W = W_pos;
+
+save('YWE.mat', 'E', 'Y', 'W');
+
+h_E = zeros(p_small,1);
+h_white_E = zeros(size(h_E));
+h_Y_pos = zeros(size(h_E));
+h_Y_neg = zeros(size(h_E));
 for i = 1:p_small
   h_E(i) = get_vasicek_entropy_estimate(E(i,:));
+  h_white_E(i) = get_vasicek_entropy_estimate(white_E(i,:));
   h_Y_pos(i) = get_vasicek_entropy_estimate(Y_pos(i,:));
   h_Y_neg(i) = get_vasicek_entropy_estimate(Y_neg(i,:));
 end
 
+%fprintf('joint entropy E = %f\n', sum(h_E));
+%fprintf('joint entropy white_E = %f\n', sum(h_white_E));
+fprintf('joint entropy Y = %f\n', sum(h_Y_pos));
 
 
 ic_coef_pos = (W_pos * sub_pc_coef')';

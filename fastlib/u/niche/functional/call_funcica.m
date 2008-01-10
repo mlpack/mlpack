@@ -13,7 +13,7 @@ cut_fraction = .5;
 cut = round(cut_fraction * N);
 myfd_data_coef = getcoef(myfd_data);
 
-num_tests = 30;
+num_tests = 1;
 
 
 %indices = 1:200:1000;
@@ -51,7 +51,7 @@ for j = 1:5
     disp(sprintf('TEST %d', i));
     
     indices = 1:N;
-    shuffled_indices = shuffle(indices);
+    shuffled_indices = indices;%shuffle(indices);
     rand_train_indices = sort(shuffled_indices(1:cut));
     rand_test_indices = sort(shuffled_indices((cut+1):end));
     %train_data = data(:, rand_train_indices);
@@ -64,7 +64,7 @@ for j = 1:5
     myfd_data_test = ...
 	fd(myfd_data_test_coef, getbasis(myfd_data), getnames(myfd_data));
     
-    [ic_curves_pos, ic_coef_pos, h_Y_pos, pc_coef, pc_curves, mean_coef, W] = ...
+    [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_scores, mean_coef, W, whitening_transform] = ...
 	funcica(t, s, myfd_data_train, p, basis_curves, myfdPar);
     
     inv_pc_coef = inv(pc_coef);
@@ -72,6 +72,8 @@ for j = 1:5
     train_pc_score = inv_pc_coef * (myfd_data_train_coef - ...
 				    repmat(mean_coef, 1, cut));
     
+    % does this make sense? I think we should instead subtract the
+    % mean of the test data - the point is just to center the data
     test_pc_score = inv_pc_coef * (myfd_data_test_coef - ...
 				   repmat(mean_coef, 1, N - cut));
     
@@ -81,22 +83,44 @@ for j = 1:5
     train_ic_score = W * train_sub_pc_score;
     test_ic_score = W * test_sub_pc_score;
     
-   
+
+    train_entropies1(i) = ...
+	get_vasicek_entropy_estimate_std(train_ic_score(1,:));
+    train_entropies2(i) = ...
+	get_vasicek_entropy_estimate_std(train_ic_score(2,:));
     
-    entropies1(i) = ...
+    train_joint_entropies(i) = ...
+	train_entropies1(i) + train_entropies2(i);
+
+    
+    test_entropies1(i) = ...
 	get_vasicek_entropy_estimate_std(test_ic_score(1,:));
-    entropies2(i) = ...
+    test_entropies2(i) = ...
 	get_vasicek_entropy_estimate_std(test_ic_score(2,:));
     
-    joint_entropies(i) = entropies1(i) + entropies2(i);
+    
+    % check magnitudes of projection against pc's
+    magnitude(1) = ...
+	dot(train_sub_pc_score(1,:), train_sub_pc_score(1,:));
+    magnitude(2) = ...
+	dot(train_sub_pc_score(2,:), train_sub_pc_score(2,:));
+    magnitude
+    
+    test_joint_entropies(i) = ...
+	test_entropies1(i) + test_entropies2(i);
     
     
   end
   
   
   lambda_set(j) = lambda;
-  entropies1_set(:,j) = entropies1;
-  entropies2_set(:,j) = entropies2;
-  joint_entropies_set(:,j) = joint_entropies;
+  train_entropies1_set(:,j) = train_entropies1;
+  train_entropies2_set(:,j) = train_entropies2;
+  train_joint_entropies_set(:,j) = train_joint_entropies;
+  
+  test_entropies1_set(:,j) = test_entropies1;
+  test_entropies2_set(:,j) = test_entropies2;
+  test_joint_entropies_set(:,j) = test_joint_entropies;
+
   
 end
