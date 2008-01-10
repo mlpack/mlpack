@@ -228,46 +228,46 @@ void fl_print_progress(const char *name, int perc);
  * for success, but values of this type have fixed meaning.
  *
  * You may extend the meaning of this type in your code by instead
- * returning integer values other than TRIAL_FAILURE or TRIAL_SUCCESS,
+ * returning integer values other than SUCCESS_FAIL or SUCCESS_PASS,
  * but ensure that all failure values are less than or equal to
- * TRIAL_FAILURE, all success values are greater than or equal to
- * TRIAL_SUCCESS, and all warning values are in between.
+ * SUCCESS_FAIL, all success values are greater than or equal to
+ * SUCCESS_PASS, and all warning values are in between.
  *
  * Because the values given below are subject to change, special
- * values should be expressed as deltas, e.g. TRIAL_FAILURE - 5.  If
+ * values should be expressed as deltas, e.g. SUCCESS_FAIL - 5.  If
  * you need more than 64 warning values, etc., consider instead using
  * an additional pointer argument to return an error code.
  */
 typedef enum {
   /** Upper-bound value indicating failed operation. */
-  TRIAL_FAILURE = 63,
+  SUCCESS_FAIL = 63,
   /** A generic warning value. */
-  TRIAL_WARNING = 96,
+  SUCCESS_WARN = 96,
   /** Lower-bound value indicating successful operation. */
-  TRIAL_SUCCESS = 128
-} trial_t;
+  SUCCESS_PASS = 128
+} success_t;
 
 /**
- * True on TRIAL_SUCCESS or greater; false otherwise.
+ * True on SUCCESS_PASS or greater; false otherwise.
  *
  * Distinct from !FAILED(x).  Optimized for the passing case.
  */
-#define SUCCEEDED(x) (likely((x) >= TRIAL_SUCCESS))
+#define PASSED(x) (likely((x) >= SUCCESS_PASS))
 
 /**
- * True on TRIAL_FAILURE or less; false otherwise.
+ * True on SUCCESS_FAIL or less; false otherwise.
  *
- * Distinct from !SUCCEEDED(x).  Optimized for the non-failing case.
+ * Distinct from !PASSED(x).  Optimized for the non-failing case.
  */
-#define FAILED(x) (unlikely((x) <= TRIAL_FAILURE))
+#define FAILED(x) (unlikely((x) <= SUCCESS_FAIL))
 
 /**
  * Asserts that an operation succeeds; otherwise, aborts.
  *
  * This optimized check occurs regardless of debug mode.
  */
-#define MUST_SUCCEED(x) \
-    (likely(x >= TRIAL_SUCCESS) ? NOP : FATAL("MUST_SUCCEED failed: %s", #x))
+#define MUST_PASS(x) \
+    (likely(x >= SUCCESS_PASS) ? NOP : FATAL("MUST_PASS failed: %s", #x))
 
 /**
  * Asserts that an operation does not fail; otherwise, aborts.
@@ -275,10 +275,10 @@ typedef enum {
  * This optimized check occurs regardless of debug mode.
  */
 #define MUST_NOT_FAIL(x) \
-    (likely(x > TRIAL_FAILURE) ? NOP : FATAL("MUST_NOT_FAIL failed: %s", #x))
+    (likely(x > SUCCESS_FAIL) ? NOP : FATAL("MUST_NOT_FAIL failed: %s", #x))
 
-/** Converts C library non-negative success into a trial_t. */
-#define TRIAL_FROM_C(x) (unlikely((x) < 0) ? TRIAL_FAILURE : TRIAL_SUCCESS)
+/** Converts C library non-negative success into a success_t. */
+#define SUCCESS_FROM_C(x) (unlikely((x) < 0) ? SUCCESS_FAIL : SUCCESS_PASS)
 
 
 

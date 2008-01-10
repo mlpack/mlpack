@@ -69,17 +69,17 @@ void TextLineReader::Error(const char *format, ...) {
   fprintf(stderr, "\n");
 }
 
-trial_t TextLineReader::Open(const char *fname) {
+success_t TextLineReader::Open(const char *fname) {
   f_ = fopen(fname, "r");
   line_num_ = 0;
   has_line_ = false;
   line_.Init();
   
   if (unlikely(f_ == NULL)) {
-    return TRIAL_FAILURE;
+    return SUCCESS_FAIL;
   } else {
     Gobble();
-    return TRIAL_SUCCESS;
+    return SUCCESS_PASS;
   }
 }  
 
@@ -130,7 +130,7 @@ char *TextLineReader::ReadLine_() {
   }
 }
 
-trial_t TextTokenizer::Open(const char *fname,
+success_t TextTokenizer::Open(const char *fname,
     const char *comment_chars_in, const char *ident_extra_in,
     int features_in) {
   next_.Copy("");
@@ -145,10 +145,10 @@ trial_t TextTokenizer::Open(const char *fname,
   f_ = fopen(fname, "r");
   
   if (unlikely(f_ == NULL)) {
-    return TRIAL_FAILURE;
+    return SUCCESS_FAIL;
   } else {
     Gobble();
-    return TRIAL_SUCCESS;
+    return SUCCESS_PASS;
   }
 }
 
@@ -369,7 +369,7 @@ void TextTokenizer::Gobble() {
   assert(next_.length() == index_t(strlen(next_.c_str())));
 }
 
-trial_t TextWriter::Printf(const char *format, ...) {
+success_t TextWriter::Printf(const char *format, ...) {
   int rv;
   
   va_list vl;
@@ -378,6 +378,6 @@ trial_t TextWriter::Printf(const char *format, ...) {
   rv = vfprintf(f_, format, vl);
   va_end(vl);
   
-  return TRIAL_FROM_C(rv);
+  return SUCCESS_FROM_C(rv);
 }
 

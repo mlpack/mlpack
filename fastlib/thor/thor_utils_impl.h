@@ -103,7 +103,7 @@ index_t thor::ReadPointsMaster(
 
   for (;;) {
     bool is_done;
-    trial_t rv = schema.ReadPoint(&reader, vector.ptr(), &is_done);
+    success_t rv = schema.ReadPoint(&reader, vector.ptr(), &is_done);
 
     if (unlikely(FAILED(rv))) {
       FATAL("Data file has problems");
