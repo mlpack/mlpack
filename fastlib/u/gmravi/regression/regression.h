@@ -24,7 +24,7 @@ template < typename TKernel > class NaiveKde{
 
   /** get the permutation */
 
-  ArrayList<index_t> new_from_old_r_;
+  ArrayList<index_t> old_from_new_r_;
 
  public:
 
@@ -51,7 +51,7 @@ template < typename TKernel > class NaiveKde{
 	    const double *r_col = rset_.GetColumnPtr (r);
 	    double dsqd =la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	    double val = kernel_.EvalUnnormOnSq (dsqd);
-	    val *= rset_weights_[new_from_old_r_[r]];
+	    val *= rset_weights_[old_from_new_r_[r]];
 	    densities_[q][d] += val;
 	  }
 	  else{
@@ -60,10 +60,11 @@ template < typename TKernel > class NaiveKde{
 	    double dsqd =
 	      la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	    double val = kernel_.EvalUnnormOnSq (dsqd);
-	    val *= rset_weights_[new_from_old_r_[r]];
+	    val *= rset_weights_[old_from_new_r_[r]];
 	    val *= rset_.get (d - 1, r);
 	    densities_[q][d] += val;
 	  }
+
 	}
       }
     }
@@ -82,14 +83,14 @@ template < typename TKernel > class NaiveKde{
     }
   }
 
-  void Init (Matrix & qset, Matrix & rset, ArrayList<index_t> &new_from_old_r){
+  void Init (Matrix & qset, Matrix & rset, ArrayList<index_t> &old_from_new_r){
     
     // get datasets
     qset_.Alias (qset);
     rset_.Alias (rset);
     
     //get permutation
-    new_from_old_r_.Copy(new_from_old_r);
+    old_from_new_r_.Copy(old_from_new_r);
 
     // get bandwidth
     kernel_.Init (fx_param_double_req (NULL, "bandwidth"));
@@ -378,10 +379,10 @@ template < typename TKernel > class FastKde{
 	for (int j = node->begin (); j < node->end (); j++){ //looping over all points
 	  if (i != 0){
 	    node->stat ().weight_of_dimension[i] +=
-	      rset_.get (i - 1, j) * rset_weights_[new_from_old_r_[j]];
+	      rset_.get (i - 1, j) * rset_weights_[old_from_new_r_[j]];
 	  }
 	  else{
-	    node->stat ().weight_of_dimension[i] += rset_weights_[new_from_old_r_[j]];
+	    node->stat ().weight_of_dimension[i] += rset_weights_[old_from_new_r_[j]];
 	    
 	  }
 	}
@@ -477,13 +478,13 @@ template < typename TKernel > class FastKde{
 	  double ker_value = kernel_.EvalUnnormOnSq (dsqd);
 	  if (i != 0){
 	    densities_l_[q][i] +=
-	      ker_value * rset_weights_[new_from_old_r_[r]] * rset_.get (i - 1, r);
+	      ker_value * rset_weights_[old_from_new_r_[r]] * rset_.get (i - 1, r);
 	    densities_u_[q][i] +=
-	      ker_value * rset_weights_[new_from_old_r_[r]] * rset_.get (i - 1, r);
+	      ker_value * rset_weights_[old_from_new_r_[r]] * rset_.get (i - 1, r);
 	  }
 	  else{
-	    densities_l_[q][i] += ker_value * rset_weights_[new_from_old_r_[r]];
-	    densities_u_[q][i] += ker_value * rset_weights_[new_from_old_r_[r]];
+	    densities_l_[q][i] += ker_value * rset_weights_[old_from_new_r_[r]];
+	    densities_u_[q][i] += ker_value * rset_weights_[old_from_new_r_[r]];
 
 	  }
 	}
@@ -759,6 +760,10 @@ template < typename TKernel > class FastKde{
     return new_from_old_r_;
   }
 
+  ArrayList<int>& get_old_from_new_r(){
+    
+    return old_from_new_r_;
+  }
   /** get the reference dataset */
   Matrix & get_reference_dataset (){
 
@@ -913,6 +918,8 @@ template < typename TKernel > class FastKde{
     if (!strcmp (fx_param_str (NULL, "scaling", NULL), "range")){
 
       scale_data_by_minmax ();
+      printf("scaling over and will exit now..\n");
+      
     }
 
     // construct query and reference trees. This also fills up the statistics in the reference tree
@@ -926,11 +933,11 @@ template < typename TKernel > class FastKde{
 
 
     
-    fx_timer_start (NULL, "tree_d");
+    fx_timer_start (NULL, "tree_first");
     rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen, &old_from_new_r_, &new_from_old_r_);
     qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen, NULL, NULL);
   
-    fx_timer_stop (NULL, "tree_d");
+    fx_timer_stop (NULL, "tree_first");
 
     // initialize the kernel
 
