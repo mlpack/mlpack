@@ -327,8 +327,10 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   if (unlikely(!matrix_->Filled())) {
 	  FATAL("You have to call EndLoading before running eigenvalues otherwise "
 				  "it will fail\n");
-	}	
-	index_t block_size=2;
+	}
+  
+	index_t block_size=10;
+  retry:	
 	Teuchos::RCP<Epetra_MultiVector> ivec =  Teuchos::rcp(new 
 																						Epetra_MultiVector(*map_, 
 			                                                         block_size));
@@ -377,6 +379,7 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   int verbosity = Anasazi::Warnings     + 
 		              Anasazi::Errors       + 
 									Anasazi::FinalSummary + 
+								//	Anasazi::IterationDetails +
 									Anasazi::TimingDetails;
 
   // Choose which eigenvalues to compute
@@ -388,26 +391,36 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   // LI - target the largest imaginary
   // SI - target the smallest imaginary
   // Create the parameter list for the eigensolver
-  Teuchos::ParameterList my_pl;
+  double tolerance=1.0e-7;
+  
+	Teuchos::ParameterList my_pl;
   my_pl.set( "Verbosity", verbosity);
   my_pl.set( "Which", eigtype);
   my_pl.set( "Block Size", block_size);
   my_pl.set( "Num Blocks", 20);
-  my_pl.set( "Maximum Restarts", 200);
-  my_pl.set( "Convergence Tolerance", 1.0e-7);
+  my_pl.set( "Maximum Restarts", 2);
+  my_pl.set( "Convergence Tolerance", tolerance);
 
   // Create the Block Krylov Schur solver
   // This takes as inputs the eigenvalue problem and the solver parameters
-  Anasazi::BlockKrylovSchurSolMgr<double,MV,OP> 
-    my_block_krylov_schur(problem, my_pl);
+	Teuchos::RCP<Anasazi::BlockKrylovSchurSolMgr<double,MV,OP> >  my_block_krylov_schur;
+	my_block_krylov_schur=Teuchos::rcp(new 
+			Anasazi::BlockKrylovSchurSolMgr<double,MV,OP> (problem, my_pl));
 
   // Solve the eigenvalue problem, and save the return code
-  Anasazi::ReturnType solver_return = my_block_krylov_schur.solve();
+  Anasazi::ReturnType solver_return = my_block_krylov_schur->solve();
 
   // Check return code of the solver: Unconverged, Failed, or OK
   switch (solver_return) {
     // UNCONVERGED
-    case Anasazi::Unconverged: 
+    case Anasazi::Unconverged:
+			block_size*=2;
+		  if (block_size<64) {
+				tolerance=tolerance*10;
+			  NONFATAL("Didn't converge, increasing block_size to %i\n and retrying ", 
+					    	 (int)block_size);
+				goto retry;
+			}	
       FATAL("Anasazi::BlockKrylovSchur::solve() did not converge!\n");  
 			return ;    
     // CONVERGED
@@ -431,9 +444,9 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
 
   // Get eigenvalues
   std::vector<Anasazi::Value<double> > evals = sol.Evals;
-  real_eigvalues->resize(num_of_eigvals_returned);
+  real_eigvalues->resize(0);
 	for(index_t i=0; i<num_of_eigvals_returned; i++) {
-	  real_eigvalues->assign(i, evals[i].realpart);
+	  real_eigvalues->push_back(evals[i].realpart);
 	  if (issymmetric_ == false) {
       imag_eigvalues->resize(num_of_eigvals_returned);
 		  imag_eigvalues->assign(i, evals[i].imagpart);
