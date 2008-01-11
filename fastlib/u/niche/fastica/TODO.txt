@@ -1,2 +1,1 @@
-1 Code symmetric learning algorithm
-2 Improve optimization algorithm (use stochastic gradient descent, or look at strokes method)
+1 Improve optimization algorithm (use stochastic gradient descent, or look at strokes method)

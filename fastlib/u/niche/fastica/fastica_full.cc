@@ -120,7 +120,32 @@ namespace {
     // note that up until this point, W == W_old
     la::MulOverwrite(W_old, W_squared_inv_sqrt, &W);
   }
-  
+
+  void GetSamples(int max, double percentage, Vector *selected_indices) {
+    
+    
+
+    int num_selected = 0;
+    Vector rand_nums;
+    rand_nums.Init(max);
+    for(index_t i = 0; i < max; i++) {
+      double rand_num = drand48();
+      rand_nums[i] = rand_num;
+      if(rand_num <= percentage) {
+	num_selected++;
+      }
+    }
+
+    selected_indices -> Init(num_selected);
+    
+    int j = 0;
+    for(index_t i = 0; i < max; i++) {
+      if(rand_nums[i] <= percentage) {
+	(*selected_indices)[j] = i;
+	j++;
+      }
+    }
+  }  
   
   void UnivariateFastICA(Matrix X, int contrast_type, Matrix fixed_subspace,
 			 index_t dim_num, double tolerance, Vector &w) {
@@ -314,6 +339,15 @@ namespace {
     index_t d = X.n_rows();
     index_t n = X.n_cols();
 
+
+
+    int used_nonlinearity = g_orig;
+    int stroke = 0;
+    bool not_fine = true;
+    bool taking_long = 0;
+
+    // currently we don't allow for guesses for the initial unmixing matrix W
+
       
 
     //generate random W
@@ -326,30 +360,98 @@ namespace {
       
       
 
-    Matrix W_old;
-    W_old.Init(d, d);
-      
-      
-    bool converged = false;
-      
-    while(!converged) {
-	
-      // orthogonalize W via: newW = W * (W' * W) ^ -.5;
+    Matrix W_old, W_old2, temp, temp2;
 
+    W_old.Init(d, d);
+    W_old2.Init(d, d);
+    temp.Init(d, d);
+    temp2.Init(d, d);
+
+    W_old.SetZero();
+    W_old2.SetZero();
+
+
+    for(index_t round = 1; round <= (max_num_iterations + 1)) {
+      if(round == (max_num_iterations + 1)) {
+	printf("No convergence after %d steps\n", max_num_iterations);
+	
+	
+	// orthogonalize W via: newW = W * (W' * W) ^ -.5;
+	temp.Copy(W);
+	Orthogonalize(temp, W);
+	return;
+      }
+	
+
+      temp.Copy(W);
+      Orthogonalize(temp, W);
+      
+      double min_abs_diag = DBL_MAX;
+      double min_abs_diag2 = DBL_MAX;
+      for(index_t i = 0; i < d; i++) {
+	double current_diag = fabs(W_delta_cov.get(i, i));
+	if(current_diag < min_abs_diag) {
+	  min_abs_diag = current_diag;
+	}
+	
+	double current_diag2 = fabs(W_delta_cov2.get(i, i));
+	if(current_diag2 < min_abs_diag2) {
+	  min_abs_diag2 = current_diag2;
+	}
+      }
+      
+      printf("min_abs_diag = %f\n", min_abs_diag);
+
+      if(1 - min_abs_diag < epsilon) {
+	if(fine_tuning_enabled && not_fine) {
+	  not_fine = false;
+	  used_nonlinearity = g_fine;
+	  mu = mu_k * mu_orig;
+	  W_old.SetZero();
+	  W_old2.SetZero();
+	}
+	else {
+	  return;
+	}
+      }
+      else if(stabilization_enabled) {
+	if((stroke == 0) && (1 - min_abs_cos2 < epsilon)) {
+	  stroke = mu;
+	  mu *= .5;
+	  if((usedNlinearity % 2) == 0) {
+	    usedNlinearity += 1;
+	  }
+	}
+	else if(stroke > 0) {
+	  mu = stroke;
+	  stroke = 0;
+	}
+	if((mu == 1) && ((used_nonlinearity % 2) != 0)) {
+	  usedNlinearity += 1;
+	}
+	else if((!taking_long) && (round > max_num_iterations / 2)) {
+	  taking_long = true;
+	  mu *= .5;
+	  if((used_nonlinearity % 2) == 0) {
+	    used_nonlinearity += 1;
+	  }
+	}
+      }
+
+      W_old2.CopyValues(W_old);
       W_old.CopyValues(W);
 
-      // at this point, W_old == W, and W will be changed by Orthogonalize()
-      Orthogonalize(W_old, W);
+      // show progress here, (the lack of code means no progress shown for now)
 
-      
+
+
       // use Newton-Raphson to update W
 
       Matrix first_deriv_part;
+
+      switch(used_nonlinearity) {
+      case LOGCOSH:
       
-      
-      if(contrast_type == LOGCOSH) {
-	
-	
 	//tanh(A1 * X' * W);
 	Matrix tanh_dot_products;
 	la::MulTransAInit(X, W, &tanh_dot_products);
@@ -382,6 +484,79 @@ namespace {
 
 	  la::Scale(second_deriv_scale_factor, &w);
 	}
+
+	break;
+
+
+      case LOGCOSH + 1:
+	Matrix Y, tanh_dot_products;
+	la::MulTransAInit(X, B, &Y);
+	tanh_dot_products.Init(n, d);
+
+	for(index_t i = 0; i < d; i++) {
+	  Vector tanh_col_i;
+	  tanh_dot_products.MakeColumnVector(i, &tanh_dot_products_col_i);
+	  Vector Y_col_i;
+	  Y.MakeColumnVector(i, &Y_col_i);
+
+	  for(index_t j = 0; j < n; j++) {
+	    tanh_dot_products_col_i[j] = tanh(A1 * Y_col_i[j]);
+	  }
+	}
+
+	Vector beta_vector;
+	beta_vector.Init(d);
+	for(index_t i = 0; i < d; i++) {
+	  Vector tanh_col_i;
+	  tanh_dot_products.MakeColumnVector(i, &tanh_dot_products_col_i);
+	  Vector Y_col_i;
+	  Y.MakeColumnVector(i, &Y_col_i);
+	  
+	  double sum = 0;
+	  for(index_t j = 0; j < n; j++) {
+	    sum += tanh_dot_products_col_i[j] * Y_col_i[j];
+	  }
+	  beta_vector[i] = sum;
+	}
+
+	Vector tanh_dot_products_squared_sum;
+	tanh_dot_products_squared_sum.Init(d);
+	for(index_t i = 0; i < d; i++) {
+	  Vector tanh_dot_products_col_i;
+	  tanh_dot_products.MakeColumnVector(i, &tanh_dot_products_col_i);
+	  double sum = 0;
+	  for(index_t j = 0; j < n; j++) {
+	    double val = tanh_dot_products_col_i[j];
+	    sum += val * val;
+	  }
+	  tanh_dot_products_squared_sum[i] = A1 * (n - sum);
+	}
+
+	Vector D_vector;
+	D_vector.Init(d);
+	for(index_t i = 0; i < d; i++) {
+	  D_vector[i] = 1 / (beta_vector[i] - tanh_dot_products_squared_sum[i]);
+	}
+
+	Matrix D;
+	D.InitDiagonal(D_vector);
+
+	Matrix Y_t_times_tanh_dot_products;
+	la::MulTransAInit(Y, tanh_dot_products, &Y_t_times_tanh_dot_products);
+	Matrix Beta;
+	Beta.InitDiagonal(beta_vector);
+	la::SubFrom(Beta, &Y_t_times_tanh_dot_products);
+	la::MulOverwrite(W, Y_t_times_tanh_dot_products, &temp);
+	la::MulOverwrite(temp, D, &temp2);
+	la::AddExpert(mu, temp2, &W);
+
+	break;	
+
+
+      case LOGCOSH + 2:
+	
+	
+	
 
       }
       else if(contrast_type == EXP) {
@@ -450,7 +625,6 @@ namespace {
       la::AddTo(first_deriv_part, &W);
 
 
-      Matrix temp;
       temp.Copy(W);
       Orthogonalize(temp, W);
       
@@ -461,52 +635,17 @@ namespace {
       
       
       Matrix W_delta_cov;
+      Matrix W_delta_cov2;
       la::MulTransAInit(W, W_old, &W_delta_cov);
+      la::MulTransAInit(W, W_old2, &W_delta_cov2);
       
-      double min_abs_diag = DBL_MAX;
-      for(index_t i = 0; i < d; i++) {
-	double current_diag = fabs(W_delta_cov.get(i, i));
-	if(current_diag < min_abs_diag) {
-	  min_abs_diag = current_diag;
-	}
-      }
-      
-      printf("min_abs_diag = %f\n", min_abs_diag);
 
-      if(1 - min_abs_diag < epsilon) {
-	converged = true;
-      }
       
       
     }
     
     
   }
-
-  void GetSamples(int max, double percentage, Vector *selected_indices) {
-    
-    int num_selected = 0;
-    Vector rand_nums;
-    rand_nums.Init(max);
-    for(index_t i = 0; i < max; i++) {
-      double rand_num = drand48();
-      rand_nums[i] = rand_num;
-      if(rand_num <= percentage) {
-	num_selected++;
-      }
-    }
-    
-    selected_indices -> Init(num_selected);
-    
-    int j = 0;
-    for(index_t i = 0; i < max; i++) {
-      if(rand_nums[i] <= percentage) {
-	(*selected_indices)[j] = i;
-	j++;
-      }
-    }
-  }  
-  
   
   
 }
@@ -583,7 +722,7 @@ int main(int argc, char *argv[]) {
 
   //fx_done();
 
-  
+
   
   return 0;
 }
