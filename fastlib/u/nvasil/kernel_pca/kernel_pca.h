@@ -47,6 +47,9 @@ class KernelPCA {
 	 private:
 		double bandwidth_;
 	};	
+	~KernelPCA() {
+	  Destruct();
+	}
 	void Init(std::string data_file, 
 		        std::string index_file);
   void Destruct();
@@ -63,7 +66,7 @@ class KernelPCA {
 	void ComputeDiffusionMaps(KERNEL kernel, index_t num_of_eigenvalues);
 	void ComputeLaplacialnEigenmaps(index_t);
 	void ComputeSpectralRegression(std::string label_file);
-	void EstimateBandWidth(double bandwidth);
+	void EstimateBandwidth(double *bandwidth);
 	static void SaveToTextFile(std::string file, 
 			                       Matrix &eigen_vectors,
 		                         std::vector<double> &eigen_values);
