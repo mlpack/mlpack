@@ -29,9 +29,11 @@
 #include "u/nvasil/dataset/binary_dataset.h"
 #include "sparse/sparse_matrix.h"
 
+class KernelPCATest;
 
 class KernelPCA {
  public:
+	friend class KernelPCATest;
 	typedef BinaryKdTreeMMAPMMKnnNode_t Tree_t;
 	typedef Tree_t::Precision_t   Precision_t;
   class GaussianKernel {
@@ -61,6 +63,7 @@ class KernelPCA {
 	void ComputeDiffusionMaps(KERNEL kernel, index_t num_of_eigenvalues);
 	void ComputeLaplacialnEigenmaps(index_t);
 	void ComputeSpectralRegression(std::string label_file);
+	void EstimateBandWidth(double bandwidth);
 	static void SaveToTextFile(std::string file, 
 			                       Matrix &eigen_vectors,
 		                         std::vector<double> &eigen_values);
