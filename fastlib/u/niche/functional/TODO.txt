@@ -20,7 +20,25 @@ given raw data that may require smoothing:
       
 
 
+training and test coefficients for constructing data from basis curves
+are basis functions orthogonal?
 
+
+for training data, we have the coefficients that compose the curves
+for test data, we have the coe
+
+pc_coef = pc_coef';
+data_coef = data_coef';
+
+
+scores = zeros(N,p);
+for j = 1:p
+  pc_coef_j = pc_coef(j,:);
+
+  for i = 1:N
+    scores(i,j) = sum(sum((data_coef(i,:)' * pc_coef_j) .* pen));
+  end
+end
 
 
 
