@@ -33,8 +33,11 @@ void KernelPCA::Init(std::string data_file,
 void KernelPCA::Destruct() {
   tree_.Destruct();
   data_.Destruct();	
-	unlink("temp.txt");
-	delete mmapmm::MemoryManager<false>::allocator_;
+	unlink("allnn.txt");
+	if (mmapmm::MemoryManager<false>::allocator_ != NULL) {
+	  delete mmapmm::MemoryManager<false>::allocator_;
+    mmapmm::MemoryManager<false>::allocator_=NULL;
+	}
 }
 
 void KernelPCA::ComputeNeighborhoods(index_t knns) {
@@ -49,7 +52,7 @@ void KernelPCA::ComputeNeighborhoods(index_t knns) {
   fflush(stdout);  
 	tree_.AllNearestNeighbors(tree_.get_parent(), knns);
   NONFATAL("Collecting results....\n");
-	tree_.CollectKNearestNeighborWithFwriteText("temp.txt");
+	tree_.CollectKNearestNeighborWithFwriteText("allnn.txt");
 }
 
 template<typename DISTANCEKERNEL>
@@ -72,7 +75,7 @@ void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
 }
 
 void KernelPCA::LoadAffinityMatrix() {
-  affinity_matrix_.Init("temp.txt");
+  affinity_matrix_.Init("allnn.txt");
   affinity_matrix_.MakeSymmetric();
 }
 
@@ -104,5 +107,22 @@ void KernelPCA::SaveToTextFile(std::string file,
 	  fprintf(fp, "%lg\n", eigen_values[i]);
 	}
 	fclose(fp);
+}
+
+void KernelPCA::EstimateBandwidth(double *bandwidth) {
+  FILE *fp=fopen("allnn.txt", "r");
+	if unlikely(fp==NULL) {
+	  FATAL("Unable to open allnn.txt, error %s\n", strerror(errno));
+	}
+	uint64 p1, p2;
+	double dist;
+	double mean=0;
+	uint64 count=0;
+	while (!feof(fp)) {
+		fscanf(fp, "%llu %llu %lg", &p1, &p2, &dist);
+		mean+=dist;
+		count++;
+	}
+	*bandwidth=mean/count;
 }
 
