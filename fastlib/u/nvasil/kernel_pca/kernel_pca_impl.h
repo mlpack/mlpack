@@ -25,30 +25,31 @@ void KernelPCA::Init(std::string data_file,
 	  data_.Init(data_file, index_file);
 	}
 	tree_.Init(&data_);
+  mmapmm::MemoryManager<false>::allocator_ = 
+		    new mmapmm::MemoryManager<false>();
+  mmapmm::MemoryManager<false>::allocator_->Init();
 }
 
 void KernelPCA::Destruct() {
   tree_.Destruct();
   data_.Destruct();	
 	unlink("temp.txt");
+	delete mmapmm::MemoryManager<false>::allocator_;
 }
 
 void KernelPCA::ComputeNeighborhoods(index_t knns) {
   NONFATAL("Building tree...\n");
 	fflush(stdout);
-	fx_timer_start(fx_root, "build_tree");
+	tree_.set_knns(knns);
 	tree_.BuildDepthFirst();
 	NONFATAL("Memory usage: %llu\n",
 	          (unsigned long long)Tree_t::Allocator_t::allocator_->get_usage());
+  NONFATAL("Tree Statistics\n %s\n", tree_.Statistics().c_str());
   NONFATAL("Computing all nearest neighbors...\n");
   fflush(stdout);  
-	fx_timer_start(fx_root, "duall_tree");	
 	tree_.AllNearestNeighbors(tree_.get_parent(), knns);
-	fx_timer_stop(fx_root, "duall_tree");
   NONFATAL("Collecting results....\n");
-	fx_timer_start(fx_root, "collecting_results");
 	tree_.CollectKNearestNeighborWithFwriteText("temp.txt");
-	fx_timer_stop(fx_root, "Collecting results, saving to file");
 }
 
 template<typename DISTANCEKERNEL>
@@ -58,6 +59,12 @@ void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
 																				std::vector<double> *eigen_values){
   kernel_matrix_.Copy(affinity_matrix_);
 	kernel_matrix_.ApplyFunction(kernel);
+	Vector temp;
+	temp.Init(kernel_matrix_.get_dimension());
+	temp.SetAll(1.0);
+	kernel_matrix_.SetDiagonal(temp);
+	kernel_matrix_.EndLoading();
+	NONFATAL("Computing eigen values...\n");
   kernel_matrix_.Eig(num_of_eigenvalues, 
 			               "LM", 
 										 eigen_vectors,
@@ -66,15 +73,19 @@ void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
 
 void KernelPCA::LoadAffinityMatrix() {
   affinity_matrix_.Init("temp.txt");
-	affinity_matrix_.MakeSymmetric();
+  affinity_matrix_.MakeSymmetric();
 }
 
 void KernelPCA::SaveToTextFile(std::string file, 
                                Matrix &eigen_vectors,
 		                           std::vector<double> &eigen_values) {
-  FILE *fp = fopen(file.append("vectors").c_str(), "w");	
+	std::string vec_file(file);
+  vec_file.append(".vectors");
+	std::string lam_file(file);
+  lam_file.append(".lambdas");
+  FILE *fp = fopen(vec_file.c_str(), "w");	
 	if (unlikely(fp==NULL)) {
-	  FATAL("Unable to open file %s, error: %s", file.append("vectors").c_str(), 
+	  FATAL("Unable to open file %s, error: %s", vec_file.c_str(), 
 				   strerror(errno));
 	}
 	for(index_t i=0; i<eigen_vectors.n_rows(); i++) {
@@ -84,13 +95,13 @@ void KernelPCA::SaveToTextFile(std::string file,
 		fprintf(fp, "\n");
 	}
   fclose(fp);
-  fp = fopen(file.append("lambdas").c_str(), "w");	
+  fp = fopen(lam_file.c_str(), "w");	
 	if (unlikely(fp==NULL)) {
-	  FATAL("Unable to open file %s, error: %s", file.append("lambdas").c_str(), 
+	  FATAL("Unable to open file %s, error: %s", lam_file.c_str(), 
 				  strerror(errno));
 	}
 	for(index_t i=0; i<(index_t)eigen_values.size(); i++) {
-	  fprintf(fp, "%lg", eigen_values[i]);
+	  fprintf(fp, "%lg\n", eigen_values[i]);
 	}
 	fclose(fp);
 }

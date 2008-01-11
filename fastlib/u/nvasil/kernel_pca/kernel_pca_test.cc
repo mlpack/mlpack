@@ -25,8 +25,8 @@ class KernelPCATest {
  public:		
 	void Init() {
 	  engine_ = new KernelPCA();
-		engine_->Init("test_data", "");
-		kernel_.set(1.0);
+		engine_->Init("test_data_3_1000", "");
+		kernel_.set(0.01);
 	}
 	void Destruct() {
 	  delete engine_;
@@ -37,10 +37,11 @@ class KernelPCATest {
 	 Init();
    engine_->ComputeNeighborhoods(10);
    engine_->LoadAffinityMatrix();
-	 engine_->ComputeGeneralKernelPCA(kernel_, 3, 
+	 engine_->ComputeGeneralKernelPCA(kernel_, 5, 
 			                              &eigen_vectors,
 																		&eigen_values);
-	 engine_->SaveToTextFile("kernel_pca_results", eigen_vectors, eigen_values);
+
+	 engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
 	 Destruct();
 	}
 	void TestAll() {
