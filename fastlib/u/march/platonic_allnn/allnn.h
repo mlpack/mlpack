@@ -7,7 +7,8 @@
 #include <fastlib/fastlib.h>
 
 /**
-* Performs all-nearest-neighbors.  This class will build the trees.
+* Performs all-nearest-neighbors.  This class will build the trees and perform the recursive 
+* computation.
 */
 class AllNN {
   
@@ -25,63 +26,74 @@ class AllNN {
       OT_MY_OBJECT(max_distance_so_far_); 
     } // OT_DEF_BASIC
     
-private:
+   private:
     
     /**
     * The upper bound on the node's nearest neighbor distances.
      */
     double max_distance_so_far_;
     
-public:
+   public:
     
-    // getter
     double max_distance_so_far() {
       return max_distance_so_far_; 
-    } // getter
+    } 
     
-    // setter
+    
     void set_max_distance_so_far(double new_dist) {
       max_distance_so_far_ = new_dist; 
-    } // setter
+    } 
+    
+    // In addition to any member variables for the statistic, all stat classes need two Init 
+    // functions, one for leaves and one for non-leaves. 
     
     /**
-    * Initialization function used in tree-building when initializing a leaf node.  For allnn, 
+     * Initialization function used in tree-building when initializing a leaf node.  For allnn, 
      * needs no additional information at the time of tree building.  
      */
     void Init(const Matrix& matrix, index_t start, index_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
-    } // Init
+    } 
     
     /**
-    * Initialization function used in tree-building when initializing a non-leaf node.
+     * Initialization function used in tree-building when initializing a non-leaf node.  For other algorithms,
+     * node statistics can be built using information from the children.  
      */
     void Init(const Matrix& matrix, index_t start, index_t count, const QueryStat& left, const QueryStat& right) {
       // For allnn, non-leaves can be initialized the same as leaves
       Init(matrix, start, count);
-    } // Init
+    } 
     
   }; //class AllNNStat  
   
   // QueryTrees are BinarySpaceTrees where the data are bounded by Euclidean bounding boxes,
-  // the data are stored in a Matrix, and each node has a QueryStat
+  // the data are stored in a Matrix, and each node has a QueryStat for sufficient statistics.
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, QueryStat> QueryTree;
   
-  // ReferenceTrees are the same as QueryTrees, but don't need node statistics
+  // ReferenceTrees are the same as QueryTrees, but don't need node statistics for this algorithm.
   typedef BinarySpaceTree<DHrectBound<2>, Matrix> ReferenceTree;  
   
   /////////////////////////////// Members //////////////////////////////////////////////////
-private:
+ private:
+  // These will store our data sets.
   Matrix queries_;
   Matrix references_;
+  // Pointers to the roots of the two trees.
   QueryTree* query_tree_;
   ReferenceTree* reference_tree_;
+  // The total number of prunes.
   index_t number_of_prunes_;
+  // The module containing the parameters for this computation. 
   struct datanode* module_;
+  // A permutation of the indices for tree building.
   ArrayList<index_t> old_from_new_queries_;
   ArrayList<index_t> old_from_new_references_;
+  // The number of points in a leaf
   index_t leaf_size_;
+  // The distance to the candidate nearest neighbor for each query
   Vector neighbor_distances_;
+  // The indices of the candidate nearest neighbor for each query
   ArrayList<index_t> neighbor_indices_;
   
   
@@ -91,16 +103,16 @@ private:
   FORBID_ACCIDENTAL_COPIES(AllNN);
   
 
-public:
+ public:
 
   /**
-  * Constructors are generally very simple in FASTlib; most of the work is done by Init().  It is only
+  * Constructors are generally very simple in FASTlib; most of the work is done by Init().  This is only
   * responsible for ensuring that the object is ready to be destroyed safely.  
   */
   AllNN() {
     query_tree_ = NULL;
     reference_tree_ = NULL;
-  } // AllNN
+  } 
   
   /**
   * The tree is the only member we are responsible for deleting.  The others will take care of themselves.  
@@ -112,58 +124,62 @@ public:
     if (reference_tree_ != NULL) {
       delete reference_tree_;
     }
-  } // ~AllNN
+  } 
     
       
  /////////////////////////////// Helper Functions ///////////////////////////////////////////////////
   
   /**
-  */
+   * Computes the minimum squared distance between the bounding boxes of two nodes
+   */
   double MinNodeDistSq_ (QueryTree* query_node, ReferenceTree* reference_node) {
-   
-    // Explain this
+    // node->bound() gives us the DHrectBound class for the node
+    // It has a function MinDistanceSq which takes another DHrectBound
     return query_node->bound().MinDistanceSq(reference_node->bound());
-    
-  } // MinNodeDist_
+  } 
   
   
   /**
-  */
+   * Performs exhaustive computation between two leaves.  
+   */
   void ComputeBaseCase_(QueryTree* query_node, ReferenceTree* reference_node) {
    
-    
+    // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
     
-    // Explain this
+    // node->begin() is the index of the first point in the node, node->end is one past the last index
     for (index_t query_index = query_node->begin(); query_index < query_node->end(); query_index++) {
       
-      // Explain this
+      // Get the query point from the matrix
       Vector query_point;
       queries_.MakeColumnVector(query_index, &query_point);
       
+      // We'll do the same for the references
       for (index_t reference_index = reference_node->begin(); reference_index < reference_node->end(); reference_index++) {
         
         Vector reference_point;
         references_.MakeColumnVector(reference_index, &reference_point);
         
-        // Explain this
+        // We'll use lapack to find the distance between the two vectors
         double distance = la::DistanceSqEuclidean(query_point, reference_point);
         
-        // Explain this
+        // If the reference point is closer than the current candidate, we'll update the candidate
         if (distance < neighbor_distances_[query_index]) {
           neighbor_distances_[query_index] = distance;
           neighbor_indices_[query_index] = reference_index;
         }
         
-        // Explain this
-        if (neighbor_distances_[query_index] > query_max_neighbor_distance) {
-          query_max_neighbor_distance = neighbor_distances_[query_index]; 
-        }
         
       } // for reference_index
       
+      // We need to find the upper bound distance for this query node
+      if (neighbor_distances_[query_index] > query_max_neighbor_distance) {
+        query_max_neighbor_distance = neighbor_distances_[query_index]; 
+      }
+      
     } // for query_index
     
+    // Update the upper bound for the query_node
     query_node->stat().set_max_distance_so_far(query_max_neighbor_distance);
          
     
@@ -171,20 +187,20 @@ public:
   
   
   /**
-  */
-  void ComputeNeighborsRecursion_ (QueryTree* query_node, ReferenceTree* reference_node) {
+   * The recursive function
+   */
+  void ComputeNeighborsRecursion_ (QueryTree* query_node, ReferenceTree* reference_node, double lower_bound_distance) {
    
-    // Explain this
+    // DEBUG statements should be used frequently, either with or without messages 
     DEBUG_ASSERT(query_node != NULL);
     DEBUG_ASSERT_MSG(reference_node != NULL, "reference node is null");
-    
-    // Explain this (could have passed it)
-    double lower_bound_distance = MinNodeDistSq_(query_node, reference_node);
+    DEBUG_ASSERT(lower_bound_distance == MinNodeDistSq_(query_node, reference_node));
     
     if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
       // Pruned by distance
       number_of_prunes_++;
     }
+    // node->is_leaf() works as one would expect
     else if (query_node->is_leaf() && reference_node->is_leaf()) {
       // Base Case
       ComputeBaseCase_(query_node, reference_node);
@@ -192,27 +208,31 @@ public:
     else if (query_node->is_leaf()) {
       // Only query is a leaf
       
-      // Explain this 
+      // We'll order the computation by distance 
       double left_distance = MinNodeDistSq_(query_node, reference_node->left());
       double right_distance = MinNodeDistSq_(query_node, reference_node->right());
       
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node, reference_node->left());
-        ComputeNeighborsRecursion_(query_node, reference_node->right());
+        ComputeNeighborsRecursion_(query_node, reference_node->left(), left_distance);
+        ComputeNeighborsRecursion_(query_node, reference_node->right(), right_distance);
       }
       else {
-        ComputeNeighborsRecursion_(query_node, reference_node->right());
-        ComputeNeighborsRecursion_(query_node, reference_node->left());
+        ComputeNeighborsRecursion_(query_node, reference_node->right(), right_distance);
+        ComputeNeighborsRecursion_(query_node, reference_node->left(), left_distance);
       }
       
     }
     
     else if (reference_node->is_leaf()) {
       // Only reference is a leaf 
-      ComputeNeighborsRecursion_(query_node->left(), reference_node);
-      ComputeNeighborsRecursion_(query_node->right(), reference_node);
       
-      // Explain this
+      double left_distance = MinNodeDistSq_(query_node->left(), reference_node);
+      double right_distance = MinNodeDistSq_(query_node->right(), reference_node);
+      
+      ComputeNeighborsRecursion_(query_node->left(), reference_node, left_distance);
+      ComputeNeighborsRecursion_(query_node->right(), reference_node, right_distance);
+      
+      // We need to update the upper bound based on the new upper bounds of the children
       query_node->stat().set_max_distance_so_far(
           max(query_node->left()->stat().max_distance_so_far(),
               query_node->right()->stat().max_distance_so_far()));
@@ -220,32 +240,33 @@ public:
     }
     
     else {
-      // Recurse on both
+      // Recurse on both as above
       
       double left_distance = MinNodeDistSq_(query_node->left(), reference_node->left());
       double right_distance = MinNodeDistSq_(query_node->left(), reference_node->right());
       
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->left());
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->right());
+        ComputeNeighborsRecursion_(query_node->left(), reference_node->left(), left_distance);
+        ComputeNeighborsRecursion_(query_node->left(), reference_node->right(), right_distance);
       }
       else {
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->right());
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->left());
+        ComputeNeighborsRecursion_(query_node->left(), reference_node->right(), right_distance);
+        ComputeNeighborsRecursion_(query_node->left(), reference_node->left(), left_distance);
       }
       
       left_distance = MinNodeDistSq_(query_node->right(), reference_node->left());
       right_distance = MinNodeDistSq_(query_node->right(), reference_node->right());
       
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->left());
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->right());
+        ComputeNeighborsRecursion_(query_node->right(), reference_node->left(), left_distance);
+        ComputeNeighborsRecursion_(query_node->right(), reference_node->right(), right_distance);
       }
       else {
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->right());
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->left());
+        ComputeNeighborsRecursion_(query_node->right(), reference_node->right(), right_distance);
+        ComputeNeighborsRecursion_(query_node->right(), reference_node->left(), left_distance);
       }
       
+      // Update the upper bound as above
       query_node->stat().set_max_distance_so_far(
           max(query_node->left()->stat().max_distance_so_far(),
               query_node->right()->stat().max_distance_so_far()));
@@ -255,38 +276,40 @@ public:
   } // ComputeNeighborsRecursion_
   
   
-  
+   
   
   ////////////////////////////////// Public Functions ////////////////////////////////////////////////
   
   /**
   * Setup the class and build the trees.  Note: we are initializing with const references to prevent 
-  * local copies.
+  * local copies of the data.
   */
   void Init(const Matrix& queries_in, const Matrix& references_in, struct datanode* module_in) {
     
     module_ = module_in;
     
-    // Get the leaf size
+    number_of_prunes_ = 0;
+    
+    // Get the leaf size from the module
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
-    // Explain this
+    // Make sure the leaf size is valid
     DEBUG_ASSERT(leaf_size_ > 0);
     
     // Copy the matrices to the class members since they will be rearranged.  
     queries_.Copy(queries_in);
     references_.Copy(references_in);
     
-    // Explain this
+    // The data sets need to have the same number of points
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
     
-    // Explain this
+    // Initialize the list of nearest neighbor candidates
     neighbor_indices_.Init(queries_.n_cols());
     
-    // Explain this
+    // Initialize the vector of upper bounds for each point.  
     neighbor_distances_.Init(queries_.n_cols());
     neighbor_distances_.SetAll(DBL_MAX);
     
-    // Explain this
+    // This call makes each tree from a matrix, leaf size, and two arrays that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
     query_tree_ = tree::MakeKdTreeMidpoint<QueryTree>(queries_, leaf_size_, &old_from_new_queries_, NULL);
     reference_tree_ = tree::MakeKdTreeMidpoint<ReferenceTree>(references_, leaf_size_, &old_from_new_references_, NULL);
@@ -295,40 +318,40 @@ public:
   
   
   /**
-  * 
+  * Computes the nearest neighbors and stores them in *results
   */
   void ComputeNeighbors(ArrayList<index_t>* results) {
     
-    ComputeNeighborsRecursion_(query_tree_, reference_tree_);
+    // Start on the root of each tree
+    ComputeNeighborsRecursion_(query_tree_, reference_tree_, MinNodeDistSq_(query_tree_, reference_tree_));
     
-    // Explain this (for real)
+    // We need to initialize the results list before filling it
     results->Init(neighbor_indices_.size());
+    // We need to map the indices back from how they have been permuted
     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      
       (*results)[old_from_new_queries_[i]] = old_from_new_references_[neighbor_indices_[i]];
-      
-    } // for i
+    } 
     
-    
+    // Save the total number of prunes to the fx module; this will appear on the command line
+    fx_format_result(module_, "number_of_prunes", "%d", number_of_prunes_);
     
   } // ComputeNeighbors
   
   
+  /**
+   * Does the entire computation naively
+   */
   void ComputeNaive(ArrayList<index_t>* results) {
     
     ComputeBaseCase_(query_tree_, reference_tree_);
     
-    // Explain this (for real)
+    // The same code as above
     results->Init(neighbor_indices_.size());
     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      
       (*results)[old_from_new_queries_[i]] = old_from_new_references_[neighbor_indices_[i]];
-      
-    } // for i
+    }
     
   } // ComputeNaive
-  
-  
    
 }; //class AllNN
 
