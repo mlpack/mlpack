@@ -79,20 +79,26 @@ int main(int argc, char* argv[]) {
     * TESTING: this section needs to be tested
     */
     
-    fx_timer_start(NULL, "tree_building");
+    // This makes module called data
+    struct datanode* tree_params = fx_param_node(NULL, "data");
+    //struct datanode* tree_bldg = fx_submodule(NULL, NULL, "tree_building");
+    fx_timer_start(NULL, "tree_building_time");
     
-        
     Emst_Tree* this_tree;
     Matrix data_matrix;
     ArrayList<index_t> data_permutation;
     
     //printf("Building tree\n");
-    struct datanode* tree_params = fx_param_node(NULL, "tree_params");
+    
+    // data has a member called leaflen
     int leaflen = fx_param_int(tree_params, "./leaflen", 1);
-    tree::LoadKdTree(fx_submodule(NULL, "tree_params", "data"), &data_matrix, &this_tree, &data_permutation);
+    //tree::LoadKdTree(fx_submodule(NULL, "tree_params", "data"), &data_matrix, &this_tree, &data_permutation);
     
+    // data gets copied into tree_bldg, which is used by LoadKdTree
+    tree::LoadKdTree(fx_submodule(NULL, "data", "tree_bldg"), &data_matrix, &this_tree, &data_permutation);
+    //tree::LoadKdTree(fx_submodule(tree_bldg, "data", "tree_building"), &data_matrix, &this_tree, &data_permutation);
     
-    fx_timer_stop(NULL, "tree_building");
+    fx_timer_stop(NULL, "tree_building_time");
     
     /* Step three: run the algorithm 
     * Find all nearest neighbors
@@ -102,7 +108,8 @@ int main(int argc, char* argv[]) {
     
         
     DualTreeBoruvka dtb;
-    dtb.Init(this_tree);
+    struct datanode* dtb_module = fx_submodule(NULL, "dtb", "dtb");
+    dtb.Init(this_tree, dtb_module);
     
     //dtb.TestTree();
     

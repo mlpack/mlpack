@@ -114,13 +114,13 @@ public:
    * 
    * @param input_tree The kd-tree on the point set
   */
-  void Init(Emst_Tree* input_tree) {
+  void Init(Emst_Tree* input_tree, struct datanode* mod) {
     number_of_edges_ = 0;
     tree = input_tree;
     number_of_points = tree->count();
     edges.Init(number_of_points-1);
     connections_.Init(number_of_points);
-    total_dist_ = 0.0;
+    module_ = mod;
     
     neighbors_in_component.Init(number_of_points);
     neighbors_out_component.Init(number_of_points);
@@ -131,6 +131,15 @@ public:
       neighbors_distances[i] = DBL_MAX;
       
     }
+    
+    total_dist_ = 0.0;
+    number_of_loops_ = 0;
+    number_distance_prunes_ = 0;
+    number_component_prunes_ = 0;
+    number_leaf_computations_ = 0;
+    number_q_recursions_ = 0;
+    number_r_recursions_ = 0;
+    number_both_recursions_ = 0;
     
     VERBOSE_ONLY(ot::Print(neighbors_distances));
     
@@ -246,10 +255,12 @@ public:
     if (Q->stat().max_neighbor_distance() < incoming_distance) {
       //pruned by distance
       VERBOSE_MSG(0.0, "distance prune");
+      number_distance_prunes_++;
     }
     else if (Q->stat().component_membership() >= 0 && Q->stat().component_membership() == R->stat().component_membership()) {
       //pruned by component membership
       VERBOSE_MSG(0.0, "component prune");
+      number_component_prunes_++;
     }
     else if (Q->is_leaf() && R->is_leaf()) {
       //base case
@@ -257,6 +268,7 @@ public:
       // In the future, this is suboptimal.  I will need to add the matrix to this data structure, and use the indices to refer to it
       
       VERBOSE_MSG(0.0, "at base case\n");
+      number_leaf_computations_++;
       
       // Make sure they're both really leaves
       DEBUG_ASSERT(Q->count() == 1);
@@ -302,6 +314,8 @@ public:
     else if unlikely(Q->is_leaf()) {
       //recurse on R only 
       VERBOSE_MSG(0.0, "Q is_leaf");
+      number_r_recursions_++;
+      
       double left_dist = Q->bound().MinDistanceSq(R->left()->bound());
       double right_dist = Q->bound().MinDistanceSq(R->right()->bound());
       DEBUG_ASSERT(left_dist >= 0.0);
@@ -321,6 +335,7 @@ public:
      //recurse on Q only
       
       VERBOSE_MSG(0.0, "R is_leaf");
+      number_q_recursions_++;
       
       double left_dist = Q->left()->bound().MinDistanceSq(R->bound());
       double right_dist = Q->right()->bound().MinDistanceSq(R->bound());
@@ -335,6 +350,7 @@ public:
      //recurse on both
       
       VERBOSE_MSG(0.0, "recurse on both");
+      number_both_recursions_++;
       
       double left_dist = Q->left()->bound().MinDistanceSq(R->left()->bound());
       double right_dist = Q->left()->bound().MinDistanceSq(R->right()->bound());
@@ -383,14 +399,14 @@ public:
   // This function handles the while loop and calls the compute neighbors function
   void ComputeMST() {
     
-    index_t number_of_loops = 0;
+    
     while (number_of_edges_ < (number_of_points - 1)) {
       ComputeNeighbors();
       // Need to make sure I don't add duplicate edges here
       add_all_edges();
       Cleanup();
-      VERBOSE_ONLY(number_of_loops++);
-      VERBOSE_ONLY(printf("number_of_loops = %d\n", number_of_loops));
+      //VERBOSE_ONLY(number_of_loops++);
+      VERBOSE_ONLY(printf("number_of_loops = %d\n", number_of_loops_));
     }
     
     output_results();
@@ -429,6 +445,7 @@ public:
       DEBUG_ONLY(neighbors_out_component[i] = BIG_BAD_NUMBER);
       
     }
+    number_of_loops_++;
     
     Cleanup_helper(tree);
     
@@ -438,9 +455,17 @@ public:
   */
   void output_results() {
     
-    ot::Print(edges);
+    VERBOSE_ONLY(ot::Print(edges));
     // I should make this work with the modules/fast exec stuff
-    printf("total squared length = %f\n", total_dist_);
+   
+    fx_format_result(module_, "total_squared_length", "%f", total_dist_);
+    fx_format_result(module_, "number_of_loops", "%d", number_of_loops_);
+    fx_format_result(module_, "number_distance_prunes", "%d", number_distance_prunes_);
+    fx_format_result(module_, "number_component_prunes", "%d", number_component_prunes_);
+    fx_format_result(module_, "number_leaf_computations", "%d", number_leaf_computations_);
+    fx_format_result(module_, "number_q_recursions", "%d", number_q_recursions_);
+    fx_format_result(module_, "number_r_recursions", "%d", number_r_recursions_);
+    fx_format_result(module_, "number_both_recursions", "%d", number_both_recursions_);
     
   }
   
@@ -454,11 +479,21 @@ private:
   ArrayList<EdgePair> edges;
   index_t number_of_points;
   UnionFind connections_;
-  double total_dist_;
+  struct datanode* module_;
   
   ArrayList<index_t> neighbors_in_component;
   ArrayList<index_t> neighbors_out_component;
   ArrayList<double> neighbors_distances;
+  
+  // output info
+  double total_dist_;
+  index_t number_of_loops_;
+  index_t number_distance_prunes_;
+  index_t number_component_prunes_;
+  index_t number_leaf_computations_;
+  index_t number_q_recursions_;
+  index_t number_r_recursions_;
+  index_t number_both_recursions_;
   
   Emst_Tree* tree;
   
