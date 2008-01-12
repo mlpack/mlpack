@@ -483,7 +483,7 @@ namespace {
     
   }
 
-  void GetSamples(int max, double percentage, Vector *selected_indices) {
+  index_t GetSamples(int max, double percentage, Vector *selected_indices) {
     
     int num_selected = 0;
     Vector rand_nums;
@@ -505,7 +505,26 @@ namespace {
 	j++;
       }
     }
+    
+    return num_selected;
   }  
+
+
+  void MakeSubMatrixByColumns(Vector column_indices, Matrix A, Matrix *A_sub) {
+
+    index_t num_selected = column_indices.length();
+
+    A_sub->Init(A.n_rows(), num_selected);
+
+    for(index_t i = 0; i < num_selected; i++) {
+      index_t index = (index_t)column_indices[i];
+      Vector A_col_index_i, A_sub_col_i;
+      A.MakeColumnVector(index, &A_col_index_i);
+      A_sub->MakeColumnVector(i, &A_sub_col_i);
+      A_sub_col_i.CopyValues(A_col_index_i);
+    }
+  }
+
   
   
   
@@ -518,8 +537,9 @@ namespace {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
+  srand(time(0));
   srand48(time(0));
-
+  /*
   const char *data = fx_param_str(NULL, "data", NULL);
 
   Matrix X, X_centered, whitening, X_whitened;
@@ -582,8 +602,35 @@ int main(int argc, char *argv[]) {
   
 
   //fx_done();
+  */
+
+  Matrix A;
+  A.Init(4,10);
+  for(int i = 0;  i < 4; i++) {
+    for(int j = 0; j < 10; j++) {
+      A.set(i, j, (j * 10) + i);
+    }
+  }
+
+
+  Vector selected_indices;
+  index_t num_selected = GetSamples(10, .5, &selected_indices);
+
+  Matrix A_sub;
+  MakeSubMatrixByColumns(selected_indices, A, &A_sub);
+
+  A.PrintDebug("A");
+
+  selected_indices.PrintDebug("selected indices");
+
+  printf("num_selected = %d\n", num_selected);
+
+  A_sub.PrintDebug("A_sub");
+
 
   
+
   
+    
   return 0;
 }

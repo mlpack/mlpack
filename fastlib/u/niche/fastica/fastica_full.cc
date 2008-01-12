@@ -121,11 +121,10 @@ namespace {
     la::MulOverwrite(W_old, W_squared_inv_sqrt, &W);
   }
 
-  void GetSamples(int max, double percentage, Vector *selected_indices) {
-    
-    
 
-    int num_selected = 0;
+  index_t GetSamples(int max, double percentage, Vector *selected_indices) {   
+    
+    index_t num_selected = 0;
     Vector rand_nums;
     rand_nums.Init(max);
     for(index_t i = 0; i < max; i++) {
@@ -145,7 +144,29 @@ namespace {
 	j++;
       }
     }
-  }  
+
+    return num_selected;
+  }
+
+
+  void MakeSubMatrixByColumns(Vector column_indices, Matrix A, Matrix *A_sub) {
+
+    index_t num_selected = column_indices.length();
+
+    A_sub->Init(A.n_rows(), num_selected);
+
+    for(index_t i = 0; i < num_selected; i++) {
+      index_t index = column_indices[i];
+      Vector A_col_index_i, A_sub_col_i;
+      A.MakeColumnVector(index, &A);
+      A_sub->MakeColumnVector(i, &A_sub_col_i);
+      A_sub_col_i.CopyValues(A_col_index_i);
+    }
+  }
+
+
+    
+    
   
   void UnivariateFastICA(Matrix X, int contrast_type, Matrix fixed_subspace,
 			 index_t dim_num, double tolerance, Vector &w) {
@@ -485,6 +506,9 @@ namespace {
 	  la::Scale(second_deriv_scale_factor, &w);
 	}
 
+	la::AddTo(first_deriv_part, &W);
+
+
 	break;
 
 
@@ -554,8 +578,84 @@ namespace {
 
 
       case LOGCOSH + 2:
+	// select certain columns of X
+	// p by d
+	
+	Vector selected_indices;
+	index_t num_selected = GetSamples(n, sample_size, &selected_indices);
+	Matrix X_sub;
+	MakeSubMatrixByColumns(selected_indices, X, &X_sub);
+
+	Matrix X_sub;
+	X_sub.Init(d, num_selected);
+
+	for(index_t i = 0; i < num_selected; i++) {
+	  index_t index = selected_indices[i];
+	  Vector X_col_index_i, X_sub_col_i;
+	  X.MakeColumnVector(index, &X);
+	  X_sub.MakeColumnVector(i, &X_sub);
+	}
+	
+
+	Matrix hyp_tan_transpose;
+	hyp_tan_transpose.Init(d, num_selected);
+	for(index_t i = 0; i < num_selected; i++) {
+	  Vector X_selected_col_i;
+	  X.MakeColumnVector(selected_indices[i], X_selected_col_i);
+
+	  Vector hyp_tan_transpose_col_i;
+	  hyp_tan_transpose.MakeColumnVector(i, &hyp_tan_transpose_col_i);
+	  la::MulInit(X, W, &hyp_tan_transpose_col_i);
+	}
+
+	Matrix hyp_tan;
+	la::TransposeInit(hyp_tan_transpose, &hyp_tan);
+
+	for(index_t i = 0; i < d; i++) {
+	  Vector hyp_tan_col_i;
+	  hyp_tan.MakeColumnVector(i, &hyp_tan_col_i);
+	  for(index_t j = 0; j < num_selected; j++) {
+	    hyp_tan_col_i[j] = tanh(A1 * hyp_tan_col_i[j]);
+	  }
+	}
+
+	
+
+	// take the mean of each column of tanh_dot_products
+	for(index_t i = 0; i < d; i++) {
+	  Vector w;
+	  W.MakeColumnVector(i, &w);
+	  
+	  Vector tanh_dot_products_col_i;
+	  tanh_dot_products.MakeColumnVector(i, &tanh_dot_products_col_i);
+	  
+	  double second_deriv_scale_factor = 0;
+	  for(index_t j = 0; j < num_selected; j++) {
+	    second_deriv_scale_factor +=
+	      tanh_dot_products_col_i[j] * tanh_dot_products_col_i[j];
+	  }
+	  second_deriv_scale_factor =
+	    (second_deriv_scale_factor * A1 / (double) num_selected) - A1;
+	  
+	  la::Scale(second_deriv_scale_factor, &w);
+	}
+
+	Matrix first_deriv_part;
+	first_deriv_part = Xsub * hypTan / constant;
+
+
+	la::AddTo(first_deriv_part, &W);
+
 	
 	
+
+
+
+
+
+
+
+	Xsub * hypTan / constant
 	
 
       }
@@ -622,7 +722,6 @@ namespace {
       }
       
 
-      la::AddTo(first_deriv_part, &W);
 
 
       temp.Copy(W);
