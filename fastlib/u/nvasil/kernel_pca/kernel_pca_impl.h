@@ -24,6 +24,7 @@ void KernelPCA::Init(std::string data_file,
 	} else {
 	  data_.Init(data_file, index_file);
 	}
+	dimension_=data_.get_dimension();
 	tree_.Init(&data_);
   mmapmm::MemoryManager<false>::allocator_ = 
 		    new mmapmm::MemoryManager<false>();
@@ -124,5 +125,59 @@ void KernelPCA::EstimateBandwidth(double *bandwidth) {
 		count++;
 	}
 	*bandwidth=mean/count;
+}
+
+void KernelPCA::ComputeLLE(index_t knns,
+		                       index_t num_of_eigenvalues,
+			                     Matrix *eigen_vectors,
+									         std::vector<double> *eigen_values);
+{
+  FILE *fp=fopen("allnn.txt");
+  if unlikely(fp==NULL) {
+	  FATAL("Unable to open allnn.txt, error %s\n", strerror(errno));
+	}
+	uint64 p1, p2;
+	double dist;
+	double mean=0;
+  uint64 last_point=numeric_limits<uint64>::max();
+	Vector point;
+	point.Init(dimension_);
+	Matriix neighbors;
+	neighbor_vals.Init(dimension_, knns);
+	Matrix cov(neighbors);
+	Vector ones;
+	ones.Init(dimension_);
+	ones.SetAll(1);
+	Vector weights;
+	index_t neighbors[knns];
+	index_t i;
+	kernel_matrix_.Init(data_.get_num_of_points(),
+			                data_.get_num_of_point());
+	while (!feof(fp)) {
+		fscanf(fp, "%llu %llu %lg", &p1, &p2, &dist);
+		i=0;
+    if (p1==last_point) {
+		 memcpy(neighbor_vals.GetColumnPtr(i), data_.At(p2), 
+				    sizeof(double)*dimension_);
+		 neighbors[i]=p2;
+		 la::SubFrom(dimension_, point.ptr(), neighbor_vals.GetColumnPtr(i));
+		} else {
+		  point.Copy(data_.At());
+			last_point=p1;
+			i=0;
+      la::MulTransBInit(neighbor_vals, neighbor_vals, &cov);
+      la::SolveInit(cov, ones, &weights);
+      kernel_matrix_.LoadRow(p1, neighbors,weights.ptr());
+			weights.Destruct()
+		}
+	}
+  kernel_matrix_.Negate();
+	kernel_matrix_.SetDiagonal(1.0);
+  NONFATAL("Computing eigen values...\n");
+  kernel_matrix_.Eig(num_of_eigenvalues, 
+			               "SM", 
+										 eigen_vectors,
+										 eigen_values, NULL);
+
 }
 
