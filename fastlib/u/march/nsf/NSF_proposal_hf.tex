@@ -6,6 +6,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx, wrapfig}
 \usepackage[left=1in,right=1in,top=1in,bottom=1in,nohead,nofoot]{geometry}
+\usepackage[font=footnotesize]{caption}
 \DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
 
 \newcommand{\spcA}{\hspace*{0in}}
@@ -27,7 +28,7 @@
 \Large{Tractable Quantum Chemistry Computations}
 \end{center}
 \vspace{-0.15in}
-\textbf{Keywords.}  \textit{Hartree-Fock, higher-order recursion}
+\textbf{Keywords.}  \textit{Hartree-Fock, higher-order recursion, drug design}
 
 
 %%%%%%%%%% Instructions %%%%%%%%%%%%%%%%
@@ -57,7 +58,7 @@ Since the integrals above are the quantum analog of Columbic interactions, the F
 
 
 %% Just cite  Riegel and Gray.  Title. GA Tech Tech report 2007
-There is a method, which can be viewed as a generalization of the FMM, that extends to $k$-way interactions \cite{gray_nbody, techrep}.  These approaches arise from a computer science viewpoint and are a form of higher-order divide-and-conquer.  This line of work has tackled statistical problems, such as the $N$-point correlation (which involves a $k$-way interaction) \cite{comp.phys94} and kernel density estimation \cite{NIPS2005_570}.  This recursive method can automatically guarantee rigorous error bounds and can use adaptive space-partitioning trees which are more sensitive to structured data than the oct-trees of the FMM.  
+There is a method, which can be viewed as a generalization of the FMM, that extends to $k$-way interactions \cite{gray_nbody, techrep}.  These approaches arise from a computer science viewpoint and are a form of higher-order divide-and-conquer.  This line of work has tackled statistical problems, such as the $N$-point correlation (which involves a $k$-way interaction) \cite{mr:fsta} and kernel density estimation \cite{NIPS2005_570}.  This recursive method can automatically guarantee rigorous error bounds and can use adaptive space-partitioning trees which are more sensitive to structured data than the oct-trees of the FMM.  
 
 For a $k$-way computation, the algorithm considers interactions between $k$ nodes in the tree at a time.  Using the bounding boxes of the nodes, it determines bounds on the possible values of the computation between points.  In previous applications, multipole expansions similar to those in the FMM have been used to improve these bounds.  When these bounds indicate the computation will be within a specified relative error tolerance, further computation is \emph{pruned} and the computation between each $k$-tuple of points in the $k$-nodes is approximated by the computation between the nodes.  Otherwise, the algorithm recursively considers interactions between the children of the nodes.  
 %perhaps show one equation, like the hermite expansion for the guassian. - probably not enough space
@@ -74,7 +75,7 @@ I am investigating a fast algorithm for computing the Fock matrix using this alg
 Given the past success of algorithms employing this framework on similar problems, I believe this work will provide a tremendous speedup over existing methods.  This will allow simulations on much larger systems than were previously feasible at this level of detail.  Additionally, detailed simulations are often used to determine appropriate approximations for simpler ones, so my algorithm will help expand the accuracy of these models as well.  By allowing new simulations, and improving existing ones, it should be possible for researchers to make great progress in understanding protein interactions, leading to better drug design.  
 
 \textbf{Originality.}  This proposal represents my own work and ideas.
-
+\vspace{-0.08in}
 
 
 \bibliographystyle{abbrv}

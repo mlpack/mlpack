@@ -4,7 +4,9 @@
 #include <col/arraylist.h>
 
 /**
- * A Union-Find data structure.  See Cormen, Rivest, & Stein for details.  
+ * @class UnionFind
+ *
+ *A Union-Find data structure.  See Cormen, Rivest, & Stein for details.  
  */
 class UnionFind {
   
@@ -18,15 +20,17 @@ private:
   
 public:
   
+  UnionFind() {}
+  
   /**
+    * @function Init 
+   *
    * Initializes the structure.  This implementation assumes
    * that the size is known advance and fixed
    *
    * @param size The number of elements to be tracked.  
    */
-    
-    UnionFind() {}
-    
+  
   void Init(index_t size) {
     
     number_of_elements_ = size;
@@ -40,9 +44,12 @@ public:
   }
   
   /**
+   * @function Find
+   *
    * Returns the component containing an element
    *
    * @param x the component to be found
+   * @return The index of the component containing x
    */
   index_t Find(index_t x) {
     
@@ -58,6 +65,8 @@ public:
   }
   
   /** 
+   * @function Union 
+   *
    * Union the components containing x and y
    * 
    * @param x one component
@@ -84,10 +93,7 @@ public:
     }
     
   }
-  
-  
-  
-  
+
   
 }; //class UnionFind
 
