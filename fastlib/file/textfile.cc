@@ -366,7 +366,7 @@ void TextTokenizer::Gobble() {
   Scan_(&token);
   *token.AddBack() = '\0';
   next_.Steal(&token);
-  assert(next_.length() == index_t(strlen(next_.c_str())));
+  DEBUG_ASSERT(next_.length() == index_t(strlen(next_.c_str())));
 }
 
 success_t TextWriter::Printf(const char *format, ...) {
