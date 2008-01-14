@@ -10,7 +10,7 @@ binrule(
     name = "main",                 # the executable name
     sources = ["main.cc"],         # compile main.cc
     headers = [],                  # no extra headers
-    linkables = [":example"]       # depends on example in this folder
+    deplibs = [":example"]       # depends on example in this folder
     )
 
 # to build:
