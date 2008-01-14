@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
   // It's arguments are the same as main's.
   fx_init(argc, argv);
   
-  
+  /////////// READING PARAMETERS AND LOADING DATA ////////////////////////
   // The filename where the queries are stored
   const char* queries_file_name = fx_param_str_req(NULL, "q");
   
@@ -21,6 +21,8 @@ int main(int argc, char* argv[]) {
   const char* references_file_name = fx_param_str_req(NULL, "r");
   Matrix references;
   data::Load(references_file_name, &references);
+  
+  //////////// DUAL-TREE ALLNN //////////////////////////////////////////////
   
   // Make an AllNN object
   AllNN allnn;
@@ -44,12 +46,17 @@ int main(int argc, char* argv[]) {
   fx_timer_start(allnn_module, "dual_tree_computation");
    
   // This function will do the work of actually computing the neighbors
+  // The list of nearest neighbors will be in *results
   allnn.ComputeNeighbors(&results);
   
   // Stopping the timer above
   fx_timer_stop(allnn_module, "dual_tree_computation");
   
+  /////////////// NAIVE ALLNN ////////////////////////////
+  
   // Specify a command line parameter to check the computation against naive
+  // By default, we'll skip the naive computation.  Use --do_naive=1 on the command line
+  // to perform it
   int do_naive = fx_param_bool(NULL, "do_naive", 0);
     
   // if we want to do the naive check
@@ -75,11 +82,14 @@ int main(int argc, char* argv[]) {
     fx_timer_stop(naive_module, "naive_time");
     
     // Element by element, we'll compare the results of the dual-tree and naive computations, issuing a warning if they disagree
+    // NOTE: this warning only appears when compiled in DEBUG mode
     for (index_t i = 0; i < results.size(); i++) {
       DEBUG_WARN_MSG_IF(results[i] != naive_results[i], "i = %d, results[i] = %d, naive_results[i] = %d", i, results[i], naive_results[i]);;
     }
     
   }
+  
+  //////////// OUTPUT RESULTS ///////////////////////////////////////
   
   // The name of the file we will write results to
   // Defaults to "output.csv"
