@@ -1,1 +1,0 @@
-1 Improve optimization algorithm (use stochastic gradient descent, or look at strokes method)
