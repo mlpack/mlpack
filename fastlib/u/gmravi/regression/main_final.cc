@@ -27,10 +27,10 @@ int main (int argc, char *argv[]){
 
   ArrayList <index_t> old_from_new_r;
   ArrayList <index_t> new_from_old_r;
-  FILE *fp;
+  /* FILE *fp;
   FILE *gp;
   fp=fopen("fast_regression.txt","w+");
-  gp=fopen("naive_regression.txt","w+");
+  gp=fopen("naive_regression.txt","w+");*/
 
   if (!strcmp (fx_param_str (NULL, "kernel", "gaussian"), "gaussian")){
     
@@ -265,25 +265,36 @@ int main (int argc, char *argv[]){
 	 
        }
        FILE *lp;
-       lp=fopen("estimates_for_astrodataset.txt","w+");
+       lp=fopen("estimates_astrodataset_bw_0.3.txt","w+");
        double relative_error=0;
        double error;
+       double total_error=0;
+       double mean_square_error;
+       double max_relative_error;
        for(index_t q=0;q<num_query_points;q++){
 	 
 	 //printf("Naive:%f fast estimate:%f\n",q,regression_estimates_naive[q],regression_estimates);
 	 
-	 error=(double)fabs(regression_estimates_naive[new_from_old_r[q]]-regression_estimates[new_from_old_r[q]])/regression_estimates_naive[new_from_old_r[q]];
+	 error=(double)fabs(regression_estimates_naive[new_from_old_r[q]]-regression_estimates[new_from_old_r[q]]);
+
+	 relative_error=error/regression_estimates_naive[new_from_old_r[q]];
+	 total_error+=pow(error,2);
 	 
 	 for(index_t d=0;d<num_of_dimensions;d++){
 	   fprintf(lp,"%f, ",query_dataset.get(d,new_from_old_r[q]));
 	 }
 
-	 fprintf(lp,"naive: %2f, fast:%2f  diff:%2f\n",regression_estimates_naive[new_from_old_r[q]],regression_estimates[new_from_old_r[q]],error);
-	 if(error>relative_error){
-	   relative_error=error;
+	 fprintf(lp,"naive: %2f, fast:%2f  diff:%2f\n",regression_estimates_naive[new_from_old_r[q]],regression_estimates[new_from_old_r[q]],relative_error);
+
+	 if(relative_error>max_relative_error){
+	   max_relative_error=relative_error;
 	 }
        }
-       printf("maximum relative error is %f\n",relative_error);
+       //mean_square_error=error/num_query_points;
+       fprintf(lp,"number of query points are %d\n",num_query_points);
+       fprintf(lp,"total error=%f\n",total_error);
+       fprintf(lp,"Max relative error=%f\n",max_relative_error); 
+          
   }
   fx_done();
 }

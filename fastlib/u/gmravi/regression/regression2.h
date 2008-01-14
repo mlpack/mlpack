@@ -178,7 +178,7 @@ template <typename TKernel> class NaiveRegression2{
      
   }
 
-  void ComputeMaximumRelativeError(ArrayList<Matrix> fast_wfkde_results){
+  /* void ComputeMaximumRelativeError(ArrayList<Matrix> fast_wfkde_results){
 
     FILE *gp;
     gp=fopen("relative_error.txt","w+");
@@ -205,7 +205,7 @@ template <typename TKernel> class NaiveRegression2{
 	fprintf(gp,"The maximum relative error for this query point is %f\n",max_error);
       }
     }
-  }
+    }*/
 };  //Naive regression2 is done
 
 
@@ -504,9 +504,7 @@ template <typename TKernel > class Regression2 {
       qnode->right ()->stat ().owed_l+= dl;
       qnode->right ()->stat ().owed_u+= du;
     }
-    
    
-
   }
 
 
