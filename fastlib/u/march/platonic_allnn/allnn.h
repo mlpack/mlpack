@@ -1,3 +1,9 @@
+/**
+ * @file allnn.h
+ *
+ * Defines AllNN class to perform all-nearest-neighbors on two specified data sets.
+ */
+
 // inclusion guards, please add them to your .h files
 #ifndef ALLNN_H
 #define ALLNN_H
@@ -61,14 +67,14 @@ class AllNN {
      * node statistics can be built using information from the children.  
      */
     void Init(const Matrix& matrix, index_t start, index_t count, const QueryStat& left, const QueryStat& right) {
-      // For allnn, non-leaves can be initialized the same as leaves
+      // For allnn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
     } 
     
   }; //class AllNNStat  
   
   // QueryTrees are BinarySpaceTrees where the data are bounded by Euclidean bounding boxes,
-  // the data are stored in a Matrix, and each node has a QueryStat for sufficient statistics.
+  // the data are stored in a Matrix, and each node has a QueryStat for its bound.
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, QueryStat> QueryTree;
   
   // ReferenceTrees are the same as QueryTrees, but don't need node statistics for this algorithm.
@@ -144,6 +150,16 @@ class AllNN {
    */
   void ComputeBaseCase_(QueryTree* query_node, ReferenceTree* reference_node) {
    
+    // DEBUG statements should be used frequently, since they incur no overhead
+    // when compiled in fast mode
+    
+    // Check that the pointers are not NULL
+    DEBUG_ASSERT(query_node != NULL);
+    DEBUG_ASSERT(reference_node != NULL);
+    // Check that we really should be in the base case
+    DEBUG_WARN_IF(!query_node->is_leaf());
+    DEBUG_WARN_IF(!reference_node->is_leaf());
+    
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
     
@@ -192,8 +208,12 @@ class AllNN {
   void ComputeNeighborsRecursion_ (QueryTree* query_node, ReferenceTree* reference_node, double lower_bound_distance) {
    
     // DEBUG statements should be used frequently, either with or without messages 
+    
+    // A DEBUG statement with no predefined message
     DEBUG_ASSERT(query_node != NULL);
+    // A DEBUG statement with a predefined message
     DEBUG_ASSERT_MSG(reference_node != NULL, "reference node is null");
+    // Make sure the bounding information is correct
     DEBUG_ASSERT(lower_bound_distance == MinNodeDistSq_(query_node, reference_node));
     
     if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
@@ -286,8 +306,10 @@ class AllNN {
   */
   void Init(const Matrix& queries_in, const Matrix& references_in, struct datanode* module_in) {
     
+    // set the module
     module_ = module_in;
     
+    // track the number of prunes
     number_of_prunes_ = 0;
     
     // Get the leaf size from the module
@@ -316,10 +338,34 @@ class AllNN {
     
   } // Init
   
+  /**
+   * Initializes the AllNN structure for naive computation.  This means that we simply ignore the tree building.
+   */
+  void InitNaive(const Matrix& queries_in, const Matrix& references_in, struct datanode* module_in){
+    
+    module_ = module_in;
+    
+    queries_.Copy(queries_in);
+    references_.Copy(references_in);
+    
+    DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
+    
+    neighbor_indices_.Init(queries_.n_cols());
+    neighbor_distances_.Init(queries_.n_cols());
+    neighbor_distances_.SetAll(DBL_MAX);
+    
+    // The only difference is that we set leaf_size_ to be large enough that each tree has only one node
+    leaf_size_ = max(queries_.n_cols(), references_.n_cols());
+    
+    query_tree_ = tree::MakeKdTreeMidpoint<QueryTree>(queries_, leaf_size_, &old_from_new_queries_, NULL);
+    reference_tree_ = tree::MakeKdTreeMidpoint<ReferenceTree>(references_, leaf_size_, &old_from_new_references_, NULL);
+        
+  } // InitNaive
+  
   
   /**
-  * Computes the nearest neighbors and stores them in *results
-  */
+   * Computes the nearest neighbors and stores them in *results
+   */
   void ComputeNeighbors(ArrayList<index_t>* results) {
     
     // Start on the root of each tree

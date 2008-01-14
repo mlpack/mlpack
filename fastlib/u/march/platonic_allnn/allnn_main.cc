@@ -59,8 +59,8 @@ int main(int argc, char* argv[]) {
     struct datanode* naive_module = fx_submodule(NULL, "naive", "naive_module");
     // create another object for it
     AllNN naive_allnn;
-    // initialize the object
-    naive_allnn.Init(queries, references, naive_module);
+    // initialize the object, this time without building the trees
+    naive_allnn.InitNaive(queries, references, naive_module);
   
     // results for the naive computation
     ArrayList<index_t> naive_results;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
     
     // We'll just use the naive computation for this
     naive_allnn.ComputeNaive(&naive_results);
-  
+    
     // stopping the timer
     fx_timer_stop(naive_module, "naive_time");
     
