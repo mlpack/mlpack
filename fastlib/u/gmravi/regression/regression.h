@@ -127,7 +127,7 @@ template < typename TKernel > class NaiveKde{
      
   }
 
-  void PrintDebug (){
+  /*  void PrintDebug (){
 
     FILE *fp;
     const char *fname;
@@ -149,9 +149,9 @@ template < typename TKernel > class NaiveKde{
 	fprintf (fp, "%f\n", densities_[q][d]);
       }
     }
-  }
+    }*/
 
-  void ComputeMaximumRelativeError (ArrayList < Vector > density_estimate) {
+  /* void ComputeMaximumRelativeError (ArrayList < Vector > density_estimate) {
 
     double max_rel_err = 0;
     for (index_t q = 0; q < qset_.n_cols (); q++){
@@ -166,8 +166,8 @@ template < typename TKernel > class NaiveKde{
     }
 
     fx_format_result (NULL, "maxium_relative_error_for_fast_KDE", "%g",
-		      max_rel_err);
-  }
+    max_rel_err);
+    }*/
 
 };  //Class NaiveKDE ends........
 
@@ -306,6 +306,7 @@ template < typename TKernel > class FastKde{
   /* scales each attribute to 0-1 using the min/max values */
 
   void scale_data_by_minmax (){
+    printf("scaling data..\n");
     int num_dims = rset_.n_rows ();
     DHrectBound < 2 > qset_bound;
     DHrectBound < 2 > rset_bound;
@@ -947,7 +948,7 @@ template < typename TKernel > class FastKde{
   }
 
 
-  void PrintDebug (){
+  /*void PrintDebug (){
 
     //   FILE *stream = stdout;
     const char *fname = NULL;
@@ -975,7 +976,7 @@ template < typename TKernel > class FastKde{
     }
 
     fclose (fp);
-  }
+    }*/
 
 };
 
