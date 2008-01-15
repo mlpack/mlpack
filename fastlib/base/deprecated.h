@@ -30,7 +30,6 @@ void percent_indicator(const char *name, uint64 num, uint64 den) {
     VERBOSE_MSG(min_verbosity, msg_params)
 #define DEBUG_GOT_HERE(min_verbosity) \
     VERBOSE_GOT_HERE(min_verbosity)
-#define DEBUG_SAME_INT(a, b) DEBUG_SAME_SIZE(a, b)
 
 #ifdef __cplusplus
 /* cc.h */

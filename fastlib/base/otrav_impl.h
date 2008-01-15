@@ -152,6 +152,7 @@ namespace ot__private {
     }
   };
 
+#if 0
   /*
    * Takes an OT-compatible object and saves a linear copy in a block of
    * memory.
@@ -330,6 +331,126 @@ namespace ot__private {
       freeze_offset_ = freeze_offset_tmp;
     }
   }
+#else
+  /*
+   * Takes an OT-compatible object and saves a linear copy in a block of
+   * memory.
+   *
+   * This is analogous to serialization but distinct.  Serialization does
+   * not allocate space for transient fields such as pointers.  However, this
+   * dumps every object in its entirety, with the hope that bringing the
+   * object "back to life" is very quick.  When stored, each pointer is
+   * normalized to zero, and the object can be brought back to life by just
+   * renormalizing all the pointers.
+   *
+   * The code here is far more complex than I expected it to be -- please
+   * read the comments!
+   *
+   * TODO: Consider making frozen points relative to the pointer's address
+   * rather than relative to the base address.
+   *
+   * ANY MODIFICATIONS TO THIS MUST ALSO BE MADE TO THE SIZE CALCULATOR!
+   */
+  class ZOTPointerFreezer {
+   private:
+    /* The block of memory to freeze into. */
+    char *block_;
+    /* The current position within the block. */
+    ptrdiff_t pos_;
+
+   public:
+    template<typename T>
+    void Doit(const T& x, char *block_in) {
+      block_ = block_in;
+      pos_ = sizeof(T);
+
+      mem::BitCopy(reinterpret_cast<T*>(block_), &x);
+      TraverseObject(reinterpret_cast<T*>(block_), this);
+    }
+
+    size_t size() const {
+      return stride_align_max(pos_);
+    }
+
+    /* Receives the nanme of the upcoming object -- we ignore this. */
+    void Name(const char *s) {}
+
+    /* Visits an object with no OT implementation. */
+    template<typename T> void Primitive(T& x) {
+      // Primitives can be bit-copied
+    }
+
+    /* Visits an internal object. */
+    template<typename T> void MyObject(T& x) {
+      // Recurse in case this sub-object has pointers
+      TraverseObject(&x, this);
+    }
+    /* Visits an array. */
+    template<typename T> void MyArray(T* x, index_t len) {
+      // Recurse in case any of these objects have pointers
+      TraverseArray(x, len, this);
+    }
+
+    /*
+     * Visits an object pointed to, allocated with new.
+     *
+     * This allocates space within the block for the pointer, copies the
+     * data pointed to, and recurses on the data pointed to.
+     */
+    template<typename T> void Ptr(T*& source_region, bool nullable);
+
+    /*
+     * Visits an array pointed to, allocated with new[].
+     *
+     * This allocates space within the block for the array, copies the
+     * data pointed to, and recurses on the array's elements.
+     */
+    template<typename T> void Array(T*& source_region, index_t len);
+
+    /* Visits an array pointed to, allocated with malloc */
+    template<typename T> void MallocArray(T*& source_region, index_t len) {
+      Array(source_region, len);
+    }
+  };
+
+  template<typename T> void ZOTPointerFreezer::Ptr(
+      T*& source_region, bool nullable) {
+    if (!nullable || likely(source_region != NULL)) {
+      // Make sure we are aligned to the proper alignment for the data
+      pos_ = stride_align(pos_, T);
+      // Get the pointer we will writ into
+      T* dest = reinterpret_cast<T*>(block_ + pos_);
+      // Copy into the appropriate position within the block
+      mem::BitCopy(dest, source_region);
+      // Normalize the pointer to offset from beginning of block
+      source_region = reinterpret_cast<T*>(pos_);
+      // Progress to the next available region in the block
+      pos_ += sizeof(T);
+      // Recurse on the object.
+      TraverseObject(dest, this);
+    }
+  }
+
+  template<typename T> void ZOTPointerFreezer::Array(
+      T*& source_region, index_t len) {
+    if (likely(len > 0)) {
+      // Make sure we are aligned to the proper alignment for the data
+      pos_ = stride_align(pos_, T);
+      // Get the pointer we will writ into
+      T* dest = reinterpret_cast<T*>(block_ + pos_);
+      // Find the total size to copy
+      size_t size = len * sizeof(T);
+      // Copy into the appropriate position within the block
+      mem::BitCopyBytes(dest, source_region, size);
+      // Normalize the pointer to offset from beginning of block
+      source_region = reinterpret_cast<T*>(pos_);
+      // Progress to the next available region in the block
+      pos_ += size;
+      // Recurse on the object.
+      TraverseArray(dest, len, this);
+    }
+  }
+#endif
 
   class ZOTFrozenSizeCalculator {
    private:

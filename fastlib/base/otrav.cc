@@ -9,6 +9,8 @@
 
 #include "otrav.h"
 
+#include <stdarg.h>
+
 void ot__private::ZOTPrinter::ShowIndents() {
   for (int i = 0; i < indent_amount_; i++) {
     putc(' ', stream_);
