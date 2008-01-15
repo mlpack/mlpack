@@ -374,9 +374,15 @@ class AllNN {
    */
   void ComputeNeighbors(ArrayList<index_t>* results) {
     
+    // Starting another timer
+    fx_timer_start(module_, "dual_tree_computation");
+   
     // Start on the root of each tree
     ComputeNeighborsRecursion_(query_tree_, reference_tree_, MinNodeDistSq_(query_tree_, reference_tree_));
     
+    // Stopping the timer above
+    fx_timer_stop(module_, "dual_tree_computation");
+   
     // We need to initialize the results list before filling it
     results->Init(neighbor_indices_.size());
     // We need to map the indices back from how they have been permuted
@@ -395,7 +401,13 @@ class AllNN {
    */
   void ComputeNaive(ArrayList<index_t>* results) {
     
+    // timing for the naive computation
+    fx_timer_start(module_, "naive_time");
+
     ComputeBaseCase_(query_tree_, reference_tree_);
+    
+    // stopping the timer
+    fx_timer_stop(module_, "naive_time");
     
     // The same code as above
     results->Init(neighbor_indices_.size());
