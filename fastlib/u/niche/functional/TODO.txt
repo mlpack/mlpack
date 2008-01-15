@@ -42,3 +42,13 @@ end
 
 
 
+
+score = 0;
+for j = 1:p_small
+  for i = 1:N
+    for k = 1:30
+      score = score + data_coef(i,k) * pc_coef(j,k);
+  end
+end
+
+
