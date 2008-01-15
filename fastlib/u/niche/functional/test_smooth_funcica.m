@@ -26,7 +26,7 @@ num_tests = 50;
 %data = data(indices,:);
 
 
-%lambda_set = 1e-4;
+%lambda_set = 0;
 lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
 
 myfdPar_set = cell(1,length(lambda_set));
@@ -83,6 +83,10 @@ for test_num = 1:num_tests
     size(pc_scores)
     
     p_small = size(ic_coef_pos, 2);
+    
+    pc_curves = basis_curves * pc_coef;
+    
+    ic_curves = pc_curves(:,1:2) * W';
     
     pc_coef = pc_coef';
     

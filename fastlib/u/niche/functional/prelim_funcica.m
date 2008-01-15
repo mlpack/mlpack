@@ -33,7 +33,7 @@ x = x - repmat(mean(x')', 1, N);
 t = linspace(0,1,1000);
 
 
-load s1s2;
+load s1s2_10;
 s = [s1(t); s2(t)]';
 
 data = s * x;
