@@ -2,31 +2,31 @@
 %	  h_Y2_test_set, h_Y_test_set, ...
 %	  h_P1_train_set, h_P2_train_set, h_P_train_set, h_P1_test_set, ...
 %	  h_P2_test_set, h_P_test_set] = ...
-%    test_smooth_funcica(data, t, s);
+%    test_smooth_funcica(data, t, s, basis_inner_products);
 
 N = size(data, 2);
 p = 30; % hardcoded for now
 
 mybasis = create_bspline_basis([0 1], p, 4);
 basis_curves = eval_basis(t, mybasis);
-pen = full(eval_penalty(mybasis, int2Lfd(0)));
+basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
 myfd_data = data2fd(data, t, mybasis);
 
 cut_fraction = .9;
 
 cut = round(cut_fraction * N);
-myfd_data_coef = getcoef(myfd_data);
+data_coef = getcoef(myfd_data);
 
-num_tests = 10;
+num_tests = 1;
 
 
 % a simple method for smoothing
 %indices = 1:200:1000;
 %data = data(indices,:);
 
-%lambda_set = 0;
-lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
+lambda_set = 1e-4;
+%lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
 
 for lambda_i = 1:length(lambda_set)
 
@@ -48,26 +48,28 @@ for lambda_i = 1:length(lambda_set)
     % extract and center train data
     data_train = center(data(:, rand_train_indices));
     myfd_data_train = data2fd(data_train, t, mybasis);
-    myfd_data_train_coef = getcoef(myfd_data_train);
+    data_train_coef = getcoef(myfd_data_train);
     
     % extract and center test data
     data_test = center(data(:, rand_test_indices));
     myfd_data_test = data2fd(data_test, t, mybasis);
-    myfd_data_test_coef = getcoef(myfd_data_test);
+    data_test_coef = getcoef(myfd_data_test);
 
     % alternate way of generating train and test data
     % not used because no centering
     %{
-    myfd_data_train_coef = myfd_data_coef(:,rand_train_indices);
-    myfd_data_test_coef = myfd_data_coef(:,rand_test_indices);
+    data_train_coef = data_coef(:,rand_train_indices);
+    data_test_coef = data_coef(:,rand_test_indices);
     myfd_data_train = ...
-	fd(myfd_data_train_coef, getbasis(myfd_data), getnames(myfd_data));
+	fd(data_train_coef, getbasis(myfd_data), getnames(myfd_data));
     myfd_data_test = ...
-	fd(myfd_data_test_coef, getbasis(myfd_data), getnames(myfd_data));
+	fd(data_test_coef, getbasis(myfd_data), getnames(myfd_data));
     %}
 
     [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_scores, mean_coef, W, whitening_transform] = ...
-	funcica(t, s, myfd_data_train, p, basis_curves, myfdPar);
+	funcica(t, s, myfd_data_train, p, basis_curves, myfdPar, ...
+		basis_inner_products);
+    
     
     
     
@@ -77,34 +79,30 @@ for lambda_i = 1:length(lambda_set)
     scores_train = zeros(cut, p_small);
     scores_test = zeros(N - cut, p_small);
     
+
+    
+    
     
     % rescale the utilized parts of pc_coef such that
     % the pc_curves square integrate to 1
 %{    
     for j = 1:p_small
       pc_coef_j = pc_coef(j,:);
-      alpha = sum(sum((pc_coef_j' * pc_coef_j) .* pen));
-      pc_coef(j,:) = pc_coef(j,:) / sqrt(alpha);
+      alpha = sqrt(sum(sum((pc_coef_j' * pc_coef_j) .* basis_inner_products)));
+      pc_coef(j,:) = pc_coef(j,:) / alpha;
     end
   %}    
-    
-    
-    for j = 1:p_small
-      pc_coef_j = pc_coef(j,:);
-      for i = 1:cut
-	scores_train(i,j) = sum(sum((myfd_data_train_coef(:,i) * ...
-				     pc_coef_j) .* pen));
-	
-      end
-    
-      for i = 1:(N - cut)
-	scores_test(i,j) = sum(sum((myfd_data_test_coef(:,i) * ...
-				    pc_coef_j) .* pen));
-      end
-    end
   
-    scores_train = scores_train';
-    scores_test = scores_test';
+  scores_train = ...
+      get_scores(data_train_coef, ...
+		 pc_coef(1:p_small,:), ...
+		 basis_inner_products)';
+  
+  scores_test = ...
+      get_scores(data_train_coef, ...
+		 pc_coef(1:p_small,:), ...
+		 basis_inner_products)';
+  
     Y_scores_train = W * scores_train(1:2,:);
     Y_scores_test = W * scores_test(1:2,:);
     
