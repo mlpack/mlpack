@@ -330,12 +330,18 @@ class AllNN {
     // Initialize the vector of upper bounds for each point.  
     neighbor_distances_.Init(queries_.n_cols());
     neighbor_distances_.SetAll(DBL_MAX);
-    
+
+    // We'll time tree building
+    fx_timer_start(module_, "tree_building");
+
     // This call makes each tree from a matrix, leaf size, and two arrays that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
     query_tree_ = tree::MakeKdTreeMidpoint<QueryTree>(queries_, leaf_size_, &old_from_new_queries_, NULL);
     reference_tree_ = tree::MakeKdTreeMidpoint<ReferenceTree>(references_, leaf_size_, &old_from_new_references_, NULL);
     
+    // Stop the timer we started above
+    fx_timer_stop(module_, "tree_building");
+
   } // Init
   
   /**
