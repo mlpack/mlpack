@@ -1,9 +1,5 @@
 function [h_Y1_train_set, h_Y2_train_set, h_Y_train_set, h_Y1_test_set, ...
-	  h_Y2_test_set, h_Y_test_set] = call_funcica(data, t, s);
-
-
-    
-
+	  h_Y2_test_set, h_Y_test_set] = test_smooth_funcica(data, t, s);
 
 N = size(data, 2);
 p = 30; % hardcoded for now
@@ -105,52 +101,3 @@ for lambda_i = 1:5
     
   end
 end
-
-
-    
-    
-    
-%{    
-    inv_pc_coef = inv(pc_coef);
-    
-    train_pc_score = inv_pc_coef * (myfd_data_train_coef - ...
-				    repmat(mean_coef, 1, cut));
-    
-    % does this make sense? I think we should instead subtract the
-    % mean of the test data - the point is just to center the data
-    test_pc_score = inv_pc_coef * (myfd_data_test_coef - ...
-				   repmat(mean_coef, 1, N - cut));
-    
-    train_sub_pc_score = train_pc_score(1:2,:);
-    test_sub_pc_score = test_pc_score(1:2,:);
-
-    train_ic_score = W * train_sub_pc_score;
-    test_ic_score = W * test_sub_pc_score;
-    
-
-    train_entropies1(i) = ...
-	get_vasicek_entropy_estimate_std(train_ic_score(1,:));
-    train_entropies2(i) = ...
-	get_vasicek_entropy_estimate_std(train_ic_score(2,:));
-    
-    train_joint_entropies(i) = ...
-	train_entropies1(i) + train_entropies2(i);
-
-    
-    test_entropies1(i) = ...
-	get_vasicek_entropy_estimate_std(test_ic_score(1,:));
-    test_entropies2(i) = ...
-	get_vasicek_entropy_estimate_std(test_ic_score(2,:));
-    
-    
-    % check magnitudes of projection against pc's
-    magnitude(1) = ...
-	dot(train_sub_pc_score(1,:), train_sub_pc_score(1,:));
-    magnitude(2) = ...
-	dot(train_sub_pc_score(2,:), train_sub_pc_score(2,:));
-    magnitude
-    
-    test_joint_entropies(i) = ...
-	test_entropies1(i) + test_entropies2(i);
-  %}  
-    
