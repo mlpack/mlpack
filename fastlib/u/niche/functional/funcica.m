@@ -1,5 +1,5 @@
 function [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_scores, mean_coef, W_pos, whitening_transform] = ...
-    funcica(t, s, myfd_data, p, basis_curves, myfdPar);
+    funcica(t, s, myfd_data, p, basis_curves, myfdPar, basis_inner_products);
 % funcica() - functional ICA
 % first call prelim_funcica
 % USAGE: [ic_curves_pos, ic_coef_pos, h_Y_pos] = funcica(t, s, data)
@@ -11,7 +11,11 @@ data_coef = getcoef(myfd_data);
 pca_results = pca_fd(myfd_data, p, myfdPar);
 pc_coef = getcoef(pca_results.harmfd);
 %pc_curves = basis_curves * pc_coef;
-pc_scores = pca_results.harmscr;
+
+% pc_scores = pca_results.harmscr;% this doesn't work if lambda > 0
+% instead, we do:
+pc_scores = get_scores(data_coef, pc_coef', basis_inner_products);
+
 %mean_coef = getcoef(pca_results.meanfd);
 
 %figure(1); plot(t, pc_curves(:,1));
@@ -22,7 +26,7 @@ pc_scores = pca_results.harmscr;
 
 % p_small should be automatically selected according to some
 % reconstruction error threshold
-%{
+
 total_sum_var = 0;
 for i = 1:p
   total_sum_var = total_sum_var + sum(pc_scores(:,i).^2);
@@ -36,8 +40,8 @@ for p_small = 1:p
     break
   end
 end
-%}
-p_small = 2;
+
+% p_small = 2;
 
 p_small
 
