@@ -1,43 +1,36 @@
+function [h_Y1_train_set, h_Y2_train_set, h_Y_train_set, h_Y1_test_set, ...
+	  h_Y2_test_set, h_Y_test_set] = call_funcica(data, t, s);
+
+
+    
+
+
 N = size(data, 2);
 p = 30; % hardcoded for now
 
 mybasis = create_bspline_basis([0 1], p, 4);
 basis_curves = eval_basis(t, mybasis);
-
+pen = full(eval_penalty(mybasis, int2Lfd(0)));
 
 myfd_data = data2fd(data, t, mybasis);
 
 cut_fraction = .5;
 
-
 cut = round(cut_fraction * N);
 myfd_data_coef = getcoef(myfd_data);
 
-num_tests = 1;
+num_tests = 100;
 
 
 %indices = 1:200:1000;
 %data = data(indices,:);
 
 
+lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
 
+for lambda_i = 1:5
 
-for j = 1:5
-
-  if j == 1
-    lambda = 0;
-  elseif j == 2
-    lambda = 1e-4;
-  elseif j == 3
-    lambda = 1e-3;
-  elseif j == 4
-    lambda = 5e-3;
-  elseif j == 5
-    lambda = 1e-2;
-  else
-    disp(sprintf('invalid j, j = %d', j));
-    break;
-  end
+  lambda = lambda_set(lambda_i);
   disp(sprintf('LAMBDA = %.4f', lambda));
   myfdPar = fdPar(mybasis, 2, lambda);
   
@@ -46,16 +39,14 @@ for j = 1:5
   entropies2_set = zeros(num_tests,1);
   joint_entropies = zeros(num_tests,1);
   
-  for i = 1:num_tests
+  for test_num = 1:num_tests
     
-    disp(sprintf('TEST %d', i));
+    disp(sprintf('TEST %d', test_num));
     
     indices = 1:N;
-    shuffled_indices = indices;%shuffle(indices);
+    shuffled_indices = shuffle(indices);
     rand_train_indices = sort(shuffled_indices(1:cut));
     rand_test_indices = sort(shuffled_indices((cut+1):end));
-    %train_data = data(:, rand_train_indices);
-    %test_data =  data(:, rand_test_indices);
     
     myfd_data_train_coef = myfd_data_coef(:,rand_train_indices);
     myfd_data_test_coef = myfd_data_coef(:,rand_test_indices);
@@ -67,6 +58,59 @@ for j = 1:5
     [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_scores, mean_coef, W, whitening_transform] = ...
 	funcica(t, s, myfd_data_train, p, basis_curves, myfdPar);
     
+    p_small = size(ic_coef_pos, 2);
+    
+    my_data_train_coef = myfd_data_train_coef';
+    my_data_test_coef = myfd_data_test_coef';
+    pc_coef = pc_coef';
+    scores_train = zeros(cut, p_small);
+    scores_test = zeros(N - cut, p_small);
+    
+    for j = 1:p_small
+      pc_coef_j = pc_coef(j,:);
+      for i = 1:cut
+	scores_train(i,j) = sum(sum((myfd_data_train_coef(:,i) * ...
+				     pc_coef_j) .* pen));
+	
+      end
+    
+      for i = 1:(N - cut)
+	scores_test(i,j) = sum(sum((myfd_data_test_coef(:,i) * ...
+				    pc_coef_j) .* pen));
+      end
+    end
+  
+    scores_train = scores_train';
+    scores_test = scores_test';
+    Y_scores_train = W * scores_train(1:2,:);
+    Y_scores_test = W * scores_test(1:2,:);
+    
+    h_Y1_train = ...
+	get_vasicek_entropy_estimate_std(Y_scores_train(1,:));
+    h_Y2_train = ...
+	get_vasicek_entropy_estimate_std(Y_scores_train(2, :));
+    
+    h_Y1_test = ...
+	get_vasicek_entropy_estimate_std(Y_scores_test(1,:));
+    h_Y2_test = ...
+	get_vasicek_entropy_estimate_std(Y_scores_test(2,:));
+    
+    h_Y1_train_set(test_num, lambda_i) = h_Y1_train;
+    h_Y2_train_set(test_num, lambda_i) = h_Y2_train;
+    h_Y_train_set(test_num, lambda_i) = h_Y1_train + h_Y2_train;
+    
+    h_Y1_test_set(test_num, lambda_i) = h_Y1_test;
+    h_Y2_test_set(test_num, lambda_i) = h_Y2_test;
+    h_Y_test_set(test_num, lambda_i) = h_Y1_test + h_Y2_test;
+    
+  end
+end
+
+
+    
+    
+    
+%{    
     inv_pc_coef = inv(pc_coef);
     
     train_pc_score = inv_pc_coef * (myfd_data_train_coef - ...
@@ -108,19 +152,5 @@ for j = 1:5
     
     test_joint_entropies(i) = ...
 	test_entropies1(i) + test_entropies2(i);
+  %}  
     
-    
-  end
-  
-  
-  lambda_set(j) = lambda;
-  train_entropies1_set(:,j) = train_entropies1;
-  train_entropies2_set(:,j) = train_entropies2;
-  train_joint_entropies_set(:,j) = train_joint_entropies;
-  
-  test_entropies1_set(:,j) = test_entropies1;
-  test_entropies2_set(:,j) = test_entropies2;
-  test_joint_entropies_set(:,j) = test_joint_entropies;
-
-  
-end
