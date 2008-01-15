@@ -1,5 +1,9 @@
-function [h_Y1_train_set, h_Y2_train_set, h_Y_train_set, h_Y1_test_set, ...
-	  h_Y2_test_set, h_Y_test_set] = test_smooth_funcica(data, t, s);
+CONSIDER THE MEAN!
+%function [h_Y1_train_set, h_Y2_train_set, h_Y_train_set, h_Y1_test_set, ...
+%	  h_Y2_test_set, h_Y_test_set, ...
+%	  h_P1_train_set, h_P2_train_set, h_P_train_set, h_P1_test_set, ...
+%	  h_P2_test_set, h_P_test_set] = ...
+%    test_smooth_funcica(data, t, s);
 
 N = size(data, 2);
 p = 30; % hardcoded for now
@@ -15,16 +19,16 @@ cut_fraction = .5;
 cut = round(cut_fraction * N);
 myfd_data_coef = getcoef(myfd_data);
 
-num_tests = 100;
+num_tests = 1;
 
 
 %indices = 1:200:1000;
 %data = data(indices,:);
 
-
+%lambda_set = 1e-4;
 lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
 
-for lambda_i = 1:5
+for lambda_i = 1:length(lambda_set)
 
   lambda = lambda_set(lambda_i);
   disp(sprintf('LAMBDA = %.4f', lambda));
@@ -52,13 +56,23 @@ for lambda_i = 1:5
     
     p_small = size(ic_coef_pos, 2);
     
-    my_data_train_coef = myfd_data_train_coef';
-    my_data_test_coef = myfd_data_test_coef';
     pc_coef = pc_coef';
     scores_train = zeros(cut, p_small);
     scores_test = zeros(N - cut, p_small);
     
+    
+    % rescale the utilized parts of pc_coef such that
+    % the pc_curves square integrate to 1
+    
     for j = 1:p_small
+      pc_coef_j = pc_coef(j,:);
+      alpha = sum(sum((pc_coef_j' * pc_coef_j) .* pen));
+      pc_coef(j,:) = pc_coef(j,:) / sqrt(alpha);
+    end
+      
+    
+    
+    for j = 1:30
       pc_coef_j = pc_coef(j,:);
       for i = 1:cut
 	scores_train(i,j) = sum(sum((myfd_data_train_coef(:,i) * ...
@@ -77,20 +91,44 @@ for lambda_i = 1:5
     Y_scores_train = W * scores_train(1:2,:);
     Y_scores_test = W * scores_test(1:2,:);
     
+
+    magnitude_train_set(test_num, lambda_i) = ...
+	sum(sum(scores_train .^ 2));
+    
+    magnitude_test_set(test_num, lambda_i) = ...
+	sum(sum(scores_test .^ 2));
+    
+    
+    
+    h_P1_train = ...
+	get_vasicek_entropy_estimate_std(scores_train(1,:));
+    h_P2_train = ...
+	get_vasicek_entropy_estimate_std(scores_train(2,:));
+    h_P1_train_set(test_num, lambda_i) = h_P1_train;
+    h_P2_train_set(test_num, lambda_i) = h_P2_train;
+    h_P_train_set(test_num, lambda_i) = h_P1_train + h_P2_train;
+    
+    h_P1_test = ...
+	get_vasicek_entropy_estimate_std(scores_test(1,:));
+    h_P2_test = ...
+	get_vasicek_entropy_estimate_std(scores_test(2,:));
+    h_P1_test_set(test_num, lambda_i) = h_P1_test;
+    h_P2_test_set(test_num, lambda_i) = h_P2_test;
+    h_P_test_set(test_num, lambda_i) = h_P1_test + h_P2_test;
+
+    
     h_Y1_train = ...
 	get_vasicek_entropy_estimate_std(Y_scores_train(1,:));
     h_Y2_train = ...
 	get_vasicek_entropy_estimate_std(Y_scores_train(2, :));
-    
+    h_Y1_train_set(test_num, lambda_i) = h_Y1_train;
+    h_Y2_train_set(test_num, lambda_i) = h_Y2_train;
+    h_Y_train_set(test_num, lambda_i) = h_Y1_train + h_Y2_train;
+
     h_Y1_test = ...
 	get_vasicek_entropy_estimate_std(Y_scores_test(1,:));
     h_Y2_test = ...
 	get_vasicek_entropy_estimate_std(Y_scores_test(2,:));
-    
-    h_Y1_train_set(test_num, lambda_i) = h_Y1_train;
-    h_Y2_train_set(test_num, lambda_i) = h_Y2_train;
-    h_Y_train_set(test_num, lambda_i) = h_Y1_train + h_Y2_train;
-    
     h_Y1_test_set(test_num, lambda_i) = h_Y1_test;
     h_Y2_test_set(test_num, lambda_i) = h_Y2_test;
     h_Y_test_set(test_num, lambda_i) = h_Y1_test + h_Y2_test;
