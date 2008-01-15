@@ -9,8 +9,6 @@ function [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_sco
 
 data_train_coef = getcoef(myfd_data_train);
 pca_results = pca_fd(myfd_data_train, p, myfdPar);
-%pca_results = pca_fd(myfd_data_train, p);
-% plot_pca(pca_results);
 pc_coef = getcoef(pca_results.harmfd);
 pc_curves = basis_curves * pc_coef;
 pc_scores = pca_results.harmscr;
@@ -75,7 +73,7 @@ end
   
 white_E = whitening_transform * E;
 
-[Y_pos,Y_neg,post_whitening_W_pos,post_whitening_W_neg] = ...
+[Y_pos, Y_neg, post_whitening_W_pos, post_whitening_W_neg] = ...
     find_opt_unmixing_matrix(white_E);
 
 Y = Y_pos;
@@ -84,7 +82,7 @@ W_neg = post_whitening_W_neg * whitening_transform;
 
 W = W_pos;
 
-save('YWE.mat', 'E', 'Y', 'W');
+%save('YWE.mat', 'E', 'Y', 'W');
 
 h_E = zeros(p_small,1);
 h_white_E = zeros(size(h_E));

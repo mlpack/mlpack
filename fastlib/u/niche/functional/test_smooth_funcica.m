@@ -31,10 +31,6 @@ for lambda_i = 1:5
   myfdPar = fdPar(mybasis, 2, lambda);
   
   
-  entropies1_set = zeros(num_tests,1);
-  entropies2_set = zeros(num_tests,1);
-  joint_entropies = zeros(num_tests,1);
-  
   for test_num = 1:num_tests
     
     disp(sprintf('TEST %d', test_num));
