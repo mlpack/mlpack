@@ -2,6 +2,7 @@
 #include "ifgt_kde.h"
 #include "ifgt_choose_parameters.h"
 #include "kde.h"
+#include "naive_kde.h"
 #include "ifgt_choose_truncation_number.h"
 #include "kcenter_clustering.h"
 

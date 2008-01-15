@@ -12,7 +12,7 @@
 template<typename TMultibodyKernel>
 class NaiveMultibody {
 
-  FORBID_COPY(NaiveMultibody);
+  FORBID_ACCIDENTAL_COPIES(NaiveMultibody);
 
  private:
 
@@ -137,7 +137,7 @@ class MultibodyStat {
 template<typename TMultibodyKernel, typename TKernelAux>
 class MultitreeMultibody {
 
-  FORBID_COPY(MultitreeMultibody);
+  FORBID_ACCIDENTAL_COPIES(MultitreeMultibody);
 
 public:
 

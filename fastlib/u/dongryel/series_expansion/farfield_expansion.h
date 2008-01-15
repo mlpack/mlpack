@@ -59,6 +59,9 @@ class FarFieldExpansion {
   /** Get the coefficients */
   double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
   
+  /** get basis vectors of this expansion */
+  const Matrix& get_basis_vectors() { return basis_vectors_; }
+
   /** Get the center of expansion */
   Vector* get_center() { return &center_; }
 
@@ -137,6 +140,7 @@ class FarFieldExpansion {
    */
   void Init(const Vector& center, const TKernelAux &ka);
   void Init(const TKernelAux &ka);
+  void Init(const Vector& center, const Matrix &basis, const TKernelAux &ka);
 
   /**
    * Computes the required order for evaluating the far field expansion
@@ -897,6 +901,24 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
 }
 
 template<typename TKernelAux>
+void FarFieldExpansion<TKernelAux>::Init(const Vector& center,
+					 const Matrix& basis_vectors,
+                                         const TKernelAux &ka) {
+
+  // copy kernel type, center, and bandwidth squared
+  kernel_ = &(ka.kernel_);
+  center_.Copy(center);
+  order_ = -1;
+  sea_ = &(ka.sea_);
+  ka_ = &ka;
+  basis_vectors_.Alias(basis_vectors);
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
+}
+
+template<typename TKernelAux>
 void FarFieldExpansion<TKernelAux>::Init(const Vector& center, 
 					 const TKernelAux &ka) {
   
@@ -1018,7 +1040,10 @@ void FarFieldExpansion<TKernelAux>::PrintDebug(const char *name,
 template<typename TKernelAux>
 void FarFieldExpansion<TKernelAux>::RotateFromFarField
 (const FarFieldExpansion &se) {
-
+  
+  // if the basis vectors are aligned already, then noting to
+  // rotate
+  
 }
 
 template<typename TKernelAux>

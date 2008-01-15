@@ -7,6 +7,7 @@ class PCAStat {
 
   static const double epsilon_ = 0.00001;
 
+  /*
   inline success_t FullSVDInit(const Matrix &A, Vector *s, Matrix *U, 
 			       Matrix *VT) {
     f77_integer k = min(A.n_rows(), A.n_cols());
@@ -38,8 +39,9 @@ class PCAStat {
       mem::Free(work);
     }
 
-    return SUCCESS_FROM_LAPACK(info);
+    return TRIAL_FROM_LAPACK(info);
   }
+  */
 
   void AddVectorToMatrix(Matrix &A, const Vector &v, Matrix &R) {
     

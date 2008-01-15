@@ -1,6 +1,7 @@
 #include "fastlib/fastlib_int.h"
 #include "fgt_kde.h"
 #include "kde.h"
+#include "naive_kde.h"
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);

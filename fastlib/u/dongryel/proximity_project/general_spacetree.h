@@ -210,7 +210,7 @@ class GeneralBinarySpaceTree {
     }
   }
 
-  FORBID_COPY(GeneralBinarySpaceTree);
+  FORBID_ACCIDENTAL_COPIES(GeneralBinarySpaceTree);
 };
 
 #endif

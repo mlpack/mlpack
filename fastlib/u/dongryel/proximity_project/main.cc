@@ -61,8 +61,15 @@ int main(int argc, char *argv[]) {
 
   printf("Constructing the tree...\n");
   fx_timer_start(NULL, "pca tree");
+
+  ArrayList<int> old_from_new;
   GTree *root_ = proximity::MakeGenKdTree<GTree, 
-    proximity::GenKdTreeMedianSplitter>(data_, leaflen, NULL);
+    proximity::GenKdTreeMedianSplitter>(data_, leaflen, &old_from_new);
+
+  for(index_t i = 0; i < old_from_new.size(); i++) {
+    printf("%d ", old_from_new[i]);
+  }
+  printf("\n");
 
   fx_timer_stop(NULL, "pca tree");
   printf("Finished constructing the tree...\n");
