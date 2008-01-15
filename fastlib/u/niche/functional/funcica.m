@@ -130,6 +130,5 @@ ic_curves_pos = 0;
 Y_pos = 0;
 h_Y_pos = 0;
 pc_curves = 0;
-pc_scores = 0;
 mean_coef = 0;
 whitening_transform = 0;

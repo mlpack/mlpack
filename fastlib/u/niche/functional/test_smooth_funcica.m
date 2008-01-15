@@ -18,18 +18,18 @@ cut_fraction = .9;
 cut = round(cut_fraction * N);
 data_coef = getcoef(myfd_data);
 
-num_tests = 1;
+num_tests = 10;
 
 
 % a simple method for smoothing
 %indices = 1:200:1000;
 %data = data(indices,:);
 
-lambda_set = 1e-4;
-%lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
+%lambda_set = 1e-4;
+lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
 
 for lambda_i = 1:length(lambda_set)
-
+  
   lambda = lambda_set(lambda_i);
   disp(sprintf('LAMBDA = %.4f', lambda));
   myfdPar = fdPar(mybasis, 2, lambda);
@@ -38,13 +38,13 @@ for lambda_i = 1:length(lambda_set)
   for test_num = 1:num_tests
     
     disp(sprintf('TEST %d', test_num));
-
+    
     % generate random train and test indices
     indices = 1:N;
     shuffled_indices = shuffle(indices);
     rand_train_indices = sort(shuffled_indices(1:cut));
     rand_test_indices = sort(shuffled_indices((cut+1):end));
-
+    
     % extract and center train data
     data_train = center(data(:, rand_train_indices));
     myfd_data_train = data2fd(data_train, t, mybasis);
@@ -54,7 +54,7 @@ for lambda_i = 1:length(lambda_set)
     data_test = center(data(:, rand_test_indices));
     myfd_data_test = data2fd(data_test, t, mybasis);
     data_test_coef = getcoef(myfd_data_test);
-
+    
     % alternate way of generating train and test data
     % not used because no centering
     %{
@@ -65,7 +65,7 @@ for lambda_i = 1:length(lambda_set)
     myfd_data_test = ...
 	fd(data_test_coef, getbasis(myfd_data), getnames(myfd_data));
     %}
-
+    
     [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_scores, mean_coef, W, whitening_transform] = ...
 	funcica(t, s, myfd_data_train, p, basis_curves, myfdPar, ...
 		basis_inner_products);
@@ -76,33 +76,26 @@ for lambda_i = 1:length(lambda_set)
     p_small = size(ic_coef_pos, 2);
     
     pc_coef = pc_coef';
-    scores_train = zeros(cut, p_small);
-    scores_test = zeros(N - cut, p_small);
     
-
+    
     
     
     
     % rescale the utilized parts of pc_coef such that
     % the pc_curves square integrate to 1
-%{    
+    
     for j = 1:p_small
       pc_coef_j = pc_coef(j,:);
       alpha = sqrt(sum(sum((pc_coef_j' * pc_coef_j) .* basis_inner_products)));
       pc_coef(j,:) = pc_coef(j,:) / alpha;
     end
-  %}    
-  
-  scores_train = ...
-      get_scores(data_train_coef, ...
-		 pc_coef(1:p_small,:), ...
-		 basis_inner_products)';
-  
-  scores_test = ...
-      get_scores(data_train_coef, ...
-		 pc_coef(1:p_small,:), ...
-		 basis_inner_products)';
-  
+    
+    scores_train = pc_scores';
+    scores_test = ...
+	get_scores(data_train_coef, ...
+		   pc_coef(1:p_small,:), ...
+		   basis_inner_products)';
+    
     Y_scores_train = W * scores_train(1:2,:);
     Y_scores_test = W * scores_test(1:2,:);
     
