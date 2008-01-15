@@ -255,6 +255,13 @@
 //   template<typename T> void MallocArray(T*& x, index_t i, bool nullable);
 // };
 
+#if 0
+template<typename T, typename Visitor>
+inline void TraverseObject(T** x, Visitor* v) {
+  v->Ptr(*x, true);
+}
+#endif
+
 /**
  * Perform object-tree traversal on a single object with a given object-tree
  * visitor.

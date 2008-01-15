@@ -239,9 +239,59 @@ const T *poison_ptr(T *&x) {
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
  */
+#define DEBUG_SAME_INT(x, y) \
+    DEBUG_ASSERT_MSG((x) == (y), \
+        "DEBUG_SAME_INT failed: %s = %"L64"d not equal to %s = %"L64"d\n", \
+        #x, STATIC_CAST(int64, x), #y, STATIC_CAST(int64, y))
+
+/**
+ * Asserts that two integers are the same.
+ *
+ * This is currently the same as DEBUG_SAME_INT, but is specifically
+ * intended for use comparing array lengths.
+ *
+ * Expressions for x and y are run a second time when reporting an
+ * error (and not at all if not in debug mode) and thus should not
+ * have side-effects or be computationally intensive.
+ *
+ * @param x left-hand side of the equality test
+ * @param y right-hand side of the equality test
+ */
 #define DEBUG_SAME_SIZE(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
         "DEBUG_SAME_SIZE failed: %s = %"L64"d not equal to %s = %"L64"d\n", \
         #x, STATIC_CAST(int64, x), #y, STATIC_CAST(int64, y))
+
+/**
+ * Asserts that two floating-point numbers are the same.
+ *
+ * Expressions for x and y are run a second time when reporting an
+ * error (and not at all if not in debug mode) and thus should not
+ * have side-effects or be computationally intensive.
+ *
+ * @param x left-hand side of the equality test
+ * @param y right-hand side of the equality test
+ */
+#define DEBUG_SAME_DBL(x, y) \
+    DEBUG_ASSERT_MSG((x) == (y), \
+        "DEBUG_SAME_DBL failed: %s = %g not equal to %s = %g\n", \
+        #x, STATIC_CAST(double, x), #y, STATIC_CAST(double, y))
+
+/**
+ * Asserts that two floating-point numbers are within epsilon of each
+ * other.
+ *
+ * Expressions for x and y are run a second time when reporting an
+ * error (and not at all if not in debug mode) and thus should not
+ * have side-effects or be computationally intensive.
+ *
+ * @param x left-hand side of the equality test
+ * @param y right-hand side of the equality test
+ */
+#define DEBUG_APPROX_DBL(x, y, eps) \
+    DEBUG_ASSERT_MSG(fabs(STATIC_CAST(double, (x) - (y))) > eps, \
+        "DEBUG_APPROX_DBL failed: %s = %g not within %g of %s = %g\n", \
+        #x, STATIC_CAST(double, x), STATIC_CAST(double, eps), \
+        #y, STATIC_CAST(double, y))
 
 #endif /* BASE_DEBUG_H */

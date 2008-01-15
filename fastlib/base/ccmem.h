@@ -5,13 +5,7 @@
  * Low-level (read: scary) memory management routines used by core
  * data structures.
  *
- * You likely do not need to care about these functions: use new and
- * delete (like normal) for allocation of single objects and FASTlib's
- * ArrayList (or Vector or Matrix) for arrays.
- *
- * If you really need to manage your own memory, use these instead of
- * malloc and free, because these will perform "memory poising" in
- * debug mode.
+ * @see namespace mem
  */
 
 #ifndef BASE_CCMEM_H
@@ -24,10 +18,19 @@
 
 /**
  * Wrappers and tools for low-level memory management, including:
+ *
  * @li debuggable memory allocation wrappers
  * @li poisoning, zeroing, copying, and swapping of memory
  * @li construction and destruction of allocated object arrays
  * @li absolute pointer arithmetic functions
+ *
+ * You likely do not need to care about these functions: use new and
+ * delete (like normal) for allocation of single objects and FASTlib's
+ * ArrayList (or Vector or Matrix) for arrays.
+ *
+ * If you really need to manage your own memory, use these instead of
+ * malloc and free, because these will perform "memory poising" in
+ * debug mode.
  */
 namespace mem {
   /** Fills memory with BIG_BAD_NUMBER, measured in bytes. */

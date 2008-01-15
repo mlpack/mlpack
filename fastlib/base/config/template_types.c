@@ -1,3 +1,4 @@
+// Copyright 2007 Georgia Institute of Technology. All rights reserved.
 /**
  * @file template_types.c
  *
