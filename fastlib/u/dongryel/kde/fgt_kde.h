@@ -12,6 +12,8 @@
  */
 class FGTKde {
   
+  FORBID_ACCIDENTAL_COPIES(FGTKde);
+
  private:
 
   /** query dataset */

@@ -46,6 +46,7 @@ class MultLocalExpansion {
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(MultLocalExpansion) {
+    OT_MY_OBJECT(basis_vectors_);
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
@@ -101,8 +102,9 @@ class MultLocalExpansion {
    * center.
    */
   void Init(const Vector& center, const TKernelAux &sea);
-
   void Init(const TKernelAux &sea);
+  void Init(const Vector& center, const Matrix& basis_vectors,
+	    const TKernelAux &sea);
   
   /**
    * Computes the required order for evaluating the local expansion
@@ -381,6 +383,24 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const Vector& x_q) const {
   }
 
   return sum;
+}
+
+template<typename TKernelAux>
+void MultLocalExpansion<TKernelAux>::Init(const Vector& center,
+					  const Matrix& basis_vectors,
+                                          const TKernelAux &ka) {
+
+  // copy kernel type, center, and bandwidth squared
+  kernel_ = &(ka.kernel_);
+  center_.Copy(center);
+  order_ = -1;
+  sea_ = &(ka.sea_);
+  ka_ = &ka;
+  basis_vectors_.Alias(basis_vectors);
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
 }
 
 template<typename TKernelAux>

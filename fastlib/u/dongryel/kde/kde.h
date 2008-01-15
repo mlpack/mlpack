@@ -12,6 +12,8 @@
 template<typename TKernelAux>
 class FastKde {
   
+  FORBID_ACCIDENTAL_COPIES(FastKde);
+
  private:
   
   // forward declaration of KdeStat class

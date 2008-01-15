@@ -103,6 +103,8 @@ class LocalExpansion {
    */
   void Init(const Vector& center, const TKernelAux &ka);
   void Init(const TKernelAux &ka);
+  void Init(const Vector& center, const Matrix& basis_vectors,
+	    const TKernelAux &ka);
 
   /**
    * Computes the required order for evaluating the local expansion
@@ -353,6 +355,24 @@ double LocalExpansion<TKernelAux>::EvaluateField(const Vector& x_q) const {
   }
 
   return sum;
+}
+
+template<typename TKernelAux>
+void LocalExpansion<TKernelAux>::Init(const Vector& center,
+				      const Matrix& basis_vectors,
+                                      const TKernelAux &ka) {
+
+  // copy kernel type, center, and bandwidth squared
+  kernel_ = &(ka.kernel_);
+  center_.Copy(center);
+  order_ = -1;
+  sea_ = &(ka.sea_);
+  ka_ = &ka;
+  basis_vectors_.Alias(basis_vectors);
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
 }
 
 template<typename TKernelAux>

@@ -46,6 +46,7 @@ class MultFarFieldExpansion {
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(MultFarFieldExpansion) {
+    OT_MY_OBJECT(basis_vectors_);
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
@@ -132,6 +133,8 @@ class MultFarFieldExpansion {
    */
   void Init(const Vector& center, const TKernelAux &ka);
   void Init(const TKernelAux &ka);
+  void Init(const Vector& center, const Matrix& basis_vectors,
+	    const TKernelAux &ka);
 
   /**
    * Computes the required order for evaluating the far field expansion
@@ -416,6 +419,24 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Vector& x_q,
 
   multipole_sum = pos_multipole_sum + neg_multipole_sum;
   return multipole_sum;
+}
+
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center,
+					     const Matrix& basis_vectors,
+					     const TKernelAux &ka) {
+
+  // copy kernel type, center, and bandwidth squared
+  kernel_ = &(ka.kernel_);
+  center_.Copy(center);
+  order_ = -1;
+  sea_ = &(ka.sea_);
+  ka_ = &ka;
+  basis_vectors_.Alias(basis_vectors);
+
+  // initialize coefficient array
+  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.SetZero();
 }
 
 template<typename TKernelAux>

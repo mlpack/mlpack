@@ -9,7 +9,7 @@
 /** Naive orthogonal range search class */
 class NaiveOrthoRangeSearch {
   
-  FORBID_COPY(NaiveOrthoRangeSearch);
+  FORBID_ACCIDENTAL_COPIES(NaiveOrthoRangeSearch);
 
  private:
 

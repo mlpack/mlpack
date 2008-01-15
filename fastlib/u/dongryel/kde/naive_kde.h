@@ -4,6 +4,8 @@
 template<typename TKernel>
 class NaiveKde {
   
+  FORBID_ACCIDENTAL_COPIES(NaiveKde);
+
  private:
   
   /** query dataset */
@@ -19,7 +21,13 @@ class NaiveKde {
   Vector densities_;
   
  public:
-  
+
+  NaiveKde() {
+  }
+
+  ~NaiveKde() {
+  }
+
   void Compute() {
 
     printf("\nStarting naive KDE...\n");

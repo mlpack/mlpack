@@ -114,11 +114,11 @@ namespace tree_gen_kdtree_private {
 					    &left->bound(), &right->bound(),
 					    old_from_new);
 	
-	DEBUG_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
-		  node->begin(), split_col,
-		  node->begin() + node->count(), split_dim, split_val,
-		  node->bound().get(split_dim).lo,
-		  node->bound().get(split_dim).hi);
+	VERBOSE_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
+		    node->begin(), split_col,
+		    node->begin() + node->count(), split_dim, split_val,
+		    node->bound().get(split_dim).lo,
+		    node->bound().get(split_dim).hi);
 
 	left->Init(node->begin(), split_col - node->begin());
 	right->Init(split_col, node->begin() + node->count() - split_col);
