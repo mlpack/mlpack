@@ -13,65 +13,74 @@ basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
 myfd_data = data2fd(data, t, mybasis);
 
-cut_fraction = .9;
+cut_fraction = .5;
 
 cut = round(cut_fraction * N);
 data_coef = getcoef(myfd_data);
 
-num_tests = 10;
+num_tests = 50;
 
 
 % a simple method for smoothing
 %indices = 1:200:1000;
 %data = data(indices,:);
 
+
 %lambda_set = 1e-4;
 lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
 
+myfdPar_set = cell(1,length(lambda_set));
 for lambda_i = 1:length(lambda_set)
+  myfdPar_set{lambda_i} = fdPar(mybasis, 2, lambda_set(lambda_i));
+end
   
-  lambda = lambda_set(lambda_i);
-  disp(sprintf('LAMBDA = %.4f', lambda));
-  myfdPar = fdPar(mybasis, 2, lambda);
+
+for test_num = 1:num_tests
+    
+  disp(sprintf('TEST %d', test_num));
+  
+  % generate random train and test indices
+  indices = 1:N;
+  shuffled_indices = shuffle(indices);
+  rand_train_indices = sort(shuffled_indices(1:cut));
+  rand_test_indices = sort(shuffled_indices((cut+1):end));
+  
+  % extract and center train data
+  data_train = center(data(:, rand_train_indices));
+  myfd_data_train = data2fd(data_train, t, mybasis);
+  data_train_coef = getcoef(myfd_data_train);
+  
+  % extract and center test data
+  data_test = center(data(:, rand_test_indices));
+  myfd_data_test = data2fd(data_test, t, mybasis);
+  data_test_coef = getcoef(myfd_data_test);
+    
+  % alternate way of generating train and test data
+  % not used because no centering
+  %{
+  data_train_coef = data_coef(:,rand_train_indices);
+  data_test_coef = data_coef(:,rand_test_indices);
+  myfd_data_train = ...
+      fd(data_train_coef, getbasis(myfd_data), getnames(myfd_data));
+  myfd_data_test = ...
+      fd(data_test_coef, getbasis(myfd_data), getnames(myfd_data));
+  %}
   
   
-  for test_num = 1:num_tests
+  for lambda_i = 1:length(lambda_set)
     
-    disp(sprintf('TEST %d', test_num));
+    lambda = lambda_set(lambda_i);
+    disp(sprintf('LAMBDA = %.4f', lambda));
+    myfdPar = myfdPar_set{lambda_i};
     
-    % generate random train and test indices
-    indices = 1:N;
-    shuffled_indices = shuffle(indices);
-    rand_train_indices = sort(shuffled_indices(1:cut));
-    rand_test_indices = sort(shuffled_indices((cut+1):end));
     
-    % extract and center train data
-    data_train = center(data(:, rand_train_indices));
-    myfd_data_train = data2fd(data_train, t, mybasis);
-    data_train_coef = getcoef(myfd_data_train);
-    
-    % extract and center test data
-    data_test = center(data(:, rand_test_indices));
-    myfd_data_test = data2fd(data_test, t, mybasis);
-    data_test_coef = getcoef(myfd_data_test);
-    
-    % alternate way of generating train and test data
-    % not used because no centering
-    %{
-    data_train_coef = data_coef(:,rand_train_indices);
-    data_test_coef = data_coef(:,rand_test_indices);
-    myfd_data_train = ...
-	fd(data_train_coef, getbasis(myfd_data), getnames(myfd_data));
-    myfd_data_test = ...
-	fd(data_test_coef, getbasis(myfd_data), getnames(myfd_data));
-    %}
     
     [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_scores, mean_coef, W, whitening_transform] = ...
 	funcica(t, s, myfd_data_train, p, basis_curves, myfdPar, ...
 		basis_inner_products);
     
     
-    
+    size(pc_scores)
     
     p_small = size(ic_coef_pos, 2);
     
@@ -92,7 +101,7 @@ for lambda_i = 1:length(lambda_set)
     
     scores_train = pc_scores';
     scores_test = ...
-	get_scores(data_train_coef, ...
+	get_scores(data_test_coef, ...
 		   pc_coef(1:p_small,:), ...
 		   basis_inner_products)';
     
