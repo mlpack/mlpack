@@ -14,7 +14,7 @@ pc_coef = getcoef(pca_results.harmfd);
 
 % pc_scores = pca_results.harmscr;% this doesn't work if lambda > 0
 % instead, we do:
-pc_scores = get_scores(data_coef, pc_coef', basis_inner_products);
+pc_scores = get_scores(data_coef, pc_coef(:,1:2)', basis_inner_products);
 
 %mean_coef = getcoef(pca_results.meanfd);
 
@@ -26,7 +26,7 @@ pc_scores = get_scores(data_coef, pc_coef', basis_inner_products);
 
 % p_small should be automatically selected according to some
 % reconstruction error threshold
-
+%{
 total_sum_var = 0;
 for i = 1:p
   total_sum_var = total_sum_var + sum(pc_scores(:,i).^2);
@@ -40,8 +40,8 @@ for p_small = 1:p
     break
   end
 end
-
-% p_small = 2;
+%}
+p_small = 2;
 
 p_small
 
