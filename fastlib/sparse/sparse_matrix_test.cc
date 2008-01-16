@@ -209,8 +209,8 @@ class SparseMatrixTest {
 		NONFATAL("Matrix multiplication success!!\n");
     temp.Init(21, 21, 3);
 		Sparsem::DotMultiply(a, b, &temp);
-		for(index_t i=0; i<a_dot_times_b.get_num_of_rows(); i++) {
-		  for(index_t j=0; j<a_dot_times_b.get_num_of_columns(); j++) {
+		for(index_t i=0; i<a_dot_times_b.num_of_rows(); i++) {
+		  for(index_t j=0; j<a_dot_times_b.num_of_columns(); j++) {
 			  TEST_DOUBLE_APPROX(a_dot_times_b.get(i,j), temp.get(i,j), 0.01);
 			}
 		}
