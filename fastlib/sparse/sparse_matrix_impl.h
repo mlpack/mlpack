@@ -27,6 +27,15 @@ SparseMatrix::SparseMatrix(const index_t num_of_rows,
   												 const index_t nnz_per_row) {
   Init(num_of_rows, num_of_columns, nnz_per_row);
 }
+
+SparseMatrix::SparseMatrix(std::string textfile) {
+	  Init(textfile);
+}
+
+SparseMatrix::~SparseMatrix()  {
+	  Destruct();
+}
+
 void SparseMatrix::Init(const index_t num_of_rows, 
 		                    const index_t num_of_columns,
 		                    const index_t nnz_per_row) {
@@ -155,13 +164,6 @@ void SparseMatrix::Init(std::string filename) {
 	Init(rows, cols, vals, -1, -1);
 }
 
-void SparseMatrix::Destruct() {
-  if (map_!=NULL) {
-	  delete map_;
-		map_=NULL;
-	}
-}
-
 void SparseMatrix::Copy(const SparseMatrix &other) {
   num_of_rows_ = other.num_of_rows_;
 	num_of_columns_ = other.num_of_columns_;
@@ -184,14 +186,12 @@ void SparseMatrix::Copy(const SparseMatrix &other) {
 	}
 }
 
-void SparseMatrix::SetDiagonal(const Vector &vector) { 
-  if (unlikely(vector.length()!=dimension_)) {
-	  FATAL("Vector should have the same dimension with the matrix!\n");
+void SparseMatrix::Destruct() {
+  if (map_!=NULL) {
+	  delete map_;
+		map_=NULL;
 	}
-	for(index_t i=0; i<dimension_; i++) {
-	  set(i,i, vector[i]);
-	}
-} 
+}
 
 void SparseMatrix::StartLoadingRows() {
    my_global_elements_ = map_->MyGlobalElements();
@@ -244,38 +244,37 @@ void SparseMatrix::EndLoading() {
 	matrix_->OptimizeStorage();
 }
 
-void SparseMatrix::Load(const std::vector<index_t> &rows, 
-		                    const std::vector<index_t> &columns, 
-												const Vector &values) {
-	DEBUG_ASSERT(rows.size() ==columns.size());
-	DEBUG_ASSERT((index_t)columns.size() == values.length());
-  my_global_elements_ = map_->MyGlobalElements();
-	index_t i=0;
-	index_t cur_row = rows[i];
-  index_t prev_row= rows[i];
-	std::vector<index_t> indices;
-	std::vector<double> row_values;	
-	while (true) {
-		indices.clear();
-		row_values.clear();
-	  while (likely((rows[cur_row]==rows[prev_row]) && 
-					        (i < (index_t)rows.size()))) {
-		  indices.push_back(columns[i]);
-			row_values.push_back(values[i]);
-			i++;
-		  prev_row=i-1;
-		  cur_row=i;	
-    }
-    matrix_->InsertGlobalValues(my_global_elements_[rows[prev_row]], 
-				                        row_values.size(), 
-																&row_values[0], 
-																&indices[0]);
-		prev_row=cur_row;
-    if (i >= (index_t)rows.size()) {
-		  break;
+void SparseMatrix::MakeSymmetric() {
+	index_t num_of_entries;
+	double  *values;
+	index_t *indices;
+	my_global_elements_ = map_->MyGlobalElements();
+  for(index_t i=0; i<dimension_; i++) {
+    index_t global_row = my_global_elements_[i];
+    matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+    for(index_t j=0; j<num_of_entries; j++) {
+		  if (unlikely(get(i, indices[j])!=values[j])) {
+			  set(i, indices[j], values[j]);
+			}
 		}
-	}
+  }
+ issymmetric_ = true;	
 }
+
+oid SparseMatrix::SetDiagonal(const Vector &vector) { 
+  if (unlikely(vector.length()!=dimension_)) {
+	  FATAL("Vector should have the same dimension with the matrix!\n");
+	}
+	for(index_t i=0; i<dimension_; i++) {
+	  set(i,i, vector[i]);
+	}
+} 
+
+void SparseMatrix::SetDiagonal(const double scalar) { 
+	for(index_t i=0; i<dimension_; i++) {
+	  set(i,i, scalar);
+	}
+} 
 
 double SparseMatrix::get(index_t r, index_t c) const {
   DEBUG_BOUNDS(r, num_of_rows_);
@@ -302,22 +301,35 @@ void SparseMatrix::set(index_t r, index_t c, double v) {
 	}
 }
 
-void SparseMatrix::MakeSymmetric() {
-	index_t num_of_entries;
-	double  *values;
-	index_t *indices;
-	my_global_elements_ = map_->MyGlobalElements();
-  for(index_t i=0; i<dimension_; i++) {
-    index_t global_row = my_global_elements_[i];
-    matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
-    for(index_t j=0; j<num_of_entries; j++) {
-		  if (unlikely(get(i, indices[j])!=values[j])) {
-			  set(i, indices[j], values[j]);
-			}
-		}
+
+void Negate(){
+    double *values;
+	  index_t *indices;
+	  index_t num_of_entries;
+    my_global_elements_ = map_->MyGlobalElements();
+	  for(index_t i=0; i<num_of_rows_; i++) {
+	    index_t global_row = my_global_elements_[i];
+      matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+      for(index_t j=0; j<num_of_entries; j++) {
+	      values[j]=-values[j];
+	    }
+    }
   }
- issymmetric_ = true;	
-}
+
+template<typename FUNC>
+void SparseMAtrix::ApplyFunction(FUNC &function){
+    double *values;
+	  index_t *indices;
+	  index_t num_of_entries;
+    my_global_elements_ = map_->MyGlobalElements();
+	  for(index_t i=0; i<num_of_rows_; i++) {
+	    index_t global_row = my_global_elements_[i];
+      matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+      for(index_t j=0; j<num_of_entries; j++) {
+	      values[j]=function(values[j]);
+	    }
+    }
+  }
 
 void SparseMatrix::Eig(index_t num_of_eigvalues,
 	                     std::string eigtype,	
@@ -480,6 +492,27 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   MVT::MvNorm(res, &norm_res);
 }
 
+void SparseMatrix::LinSolve(Vector &b, // must be initialized (space allocated)
+			                      Vector *x, // must be initialized (space allocated)
+								            double tolerance,
+								            index_t iterations) {
+
+	if (matrix_->Filled()==false && matrix_->StorageOptimized()==false){
+	  FATAL("You should call EndLoading() first\n");
+	}
+	Epetra_Vector tempb(View, *map_, b.ptr());
+  Epetra_Vector tempx(View, *map_, x->ptr());
+  // create linear problem
+ 	Epetra_LinearProblem problem(matrix_.get(), &tempx, &tempb);
+ 	// create the AztecOO instance
+	AztecOO solver(problem);
+	solver.SetAztecOption( AZ_precond, AZ_Jacobi);
+	solver.Iterate(iterations, tolerance);
+	NONFATAL("Solver performed %i iterations, true residual %lg",
+			     solver.NumIters(), solver.TrueResidual());
+}
+
+
 void SparseMatrix::IncompleteCholesky(index_t level_fill,
 		                                  double drop_tol,
 																			SparseMatrix *u, 
@@ -498,4 +531,289 @@ void SparseMatrix::IncompleteCholesky(index_t level_fill,
 	u->Init(ict->U());
 	ict->D().ExtractCopy(d->ptr());
 }
+
+void SparseMatrix::Load(const std::vector<index_t> &rows, 
+		                    const std::vector<index_t> &columns, 
+												const Vector &values) {
+	DEBUG_ASSERT(rows.size() ==columns.size());
+	DEBUG_ASSERT((index_t)columns.size() == values.length());
+  my_global_elements_ = map_->MyGlobalElements();
+	index_t i=0;
+	index_t cur_row = rows[i];
+  index_t prev_row= rows[i];
+	std::vector<index_t> indices;
+	std::vector<double> row_values;	
+	while (true) {
+		indices.clear();
+		row_values.clear();
+	  while (likely((rows[cur_row]==rows[prev_row]) && 
+					        (i < (index_t)rows.size()))) {
+		  indices.push_back(columns[i]);
+			row_values.push_back(values[i]);
+			i++;
+		  prev_row=i-1;
+		  cur_row=i;	
+    }
+    matrix_->InsertGlobalValues(my_global_elements_[rows[prev_row]], 
+				                        row_values.size(), 
+																&row_values[0], 
+																&indices[0]);
+		prev_row=cur_row;
+    if (i >= (index_t)rows.size()) {
+		  break;
+		}
+	}
+}
+
+static inline void Sparsem::Add(const SparseMatrix &a, 
+			                          const SparseMatrix &b, 
+												        SparseMatrix *result) {
+  DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
+	DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
+  DEBUG_ASSERT(a.num_of_rows_==result->num_of_rows_);
+	DEBUG_ASSERT(a.num_of_columns_==result->num_of_columns_);
+	result->StartLoadingRows();
+  for(index_t r=0; r<a.num_of_rows_; r++) {
+	  index_t num1, num2;
+		double *values1, *values2;
+		index_t *indices1, *indices2;
+		a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
+  	b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+		std::vector<double>  values3;
+		std::vector<index_t> indices3;
+		index_t i=0;
+		index_t j=0;
+		while (likely(i<num1 && j<num2)) {
+		  while (indices1[i] < indices2[j]) {
+			  values3.push_back(values1[i]);
+				indices3.push_back(indices1[i]);
+			  i++;	
+        if unlikely((i>=num1)) {
+				  break;
+				}
+		  }
+			if ( likely(i<num1) && indices1[i] == indices2[j]) {
+			  values3.push_back(values1[i] + values2[j]);
+			  indices3.push_back(indices1[i]);
+			} else {
+			  values3.push_back(values2[j]);
+			  indices3.push_back(indices2[j]);	
+			}
+			j++;
+		}
+		if (i<num1) {
+		  values3.insert(values3.end(), values1+i, values1+num1);
+		  indices3.insert(indices3.end(), indices1+i, indices1+num1);
+		}
+		if (j<num2) {
+		  values3.insert(values3.end(), values2+j, values2+num2);
+		  indices3.insert(indices3.end(), indices2+j, indices2+num2);
+		}
+    result->LoadRow(r, indices3, values3);
+  }
+}
+
+static inline void Sparsem::Subtract(const SparseMatrix &a,
+			                               const SparseMatrix &b,
+														         SparseMatrix *result) {
+  DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
+	DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
+	DEBUG_ASSERT(a.num_of_rows_==result->num_of_rows_);
+	DEBUG_ASSERT(a.num_of_columns_==result->num_of_columns_);
+	// If you try assigning the results to an already initialized matrix
+	// you might get unexpected results. The following assertions
+	// prevent you partially from that 
+	DEBUG_ASSERT(&a != result); 
+	DEBUG_ASSERT(&b != result);
+	result->StartLoadingRows();
+  for(index_t r=0; r<a.num_of_rows_; r++) {
+	  index_t num1, num2;
+		double *values1, *values2;
+		index_t *indices1, *indices2;
+		a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
+  	b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+		std::vector<double>  values3;
+		std::vector<index_t> indices3;
+		index_t i=0;
+		index_t j=0;
+		while (likely(i<num1 && j<num2)) {
+		  while (indices1[i] < indices2[j]) {
+			  values3.push_back(values1[i]);
+				indices3.push_back(indices1[i]);
+			  i++;	
+        if unlikely((i>=num1)) {
+				  break;
+				}
+		  }
+			if (likely(i<num1) && indices1[i] == indices2[j]) {
+			  double diff=values1[i] - values2[j];
+				if (diff!=0) {
+			    values3.push_back(diff);
+				  indices3.push_back(indices1[i]);
+			  }
+		  } else {
+			  values3.push_back(-values2[j]);
+			  indices3.push_back(indices2[j]);	
+			}
+			j++;
+		}
+		if (i<num1) {
+		  values3.insert(values3.end(), values1+i, values1+num1);
+			indices3.insert(indices3.end(), indices1+i, indices1+num1);
+		}
+		if (j<num2) {
+		  for(index_t k=j; k<num2; k++) {
+		    values3.push_back(-values2[k]);
+			  indices3.push_back(indices2[k]);
+			}
+	  }
+    result->LoadRow(r, indices3, values3);
+	}
+}
+
+static inline void Multiply(const SparseMatrix &a,
+		                        const SparseMatrix &b,
+														SparseMatrix *result) {
+  DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
+  DEBUG_ASSERT(a.num_of_rows_ == result->num_of_rows_);
+  DEBUG_ASSERT(b.num_of_columns_ == result->num_of_columns_);
+  // If you try assigning the results to an already initialized matrix
+	// you might get unexpected results. The following assertions
+	// prevent you partially from that 
+  DEBUG_ASSERT(&a != result); 
+	DEBUG_ASSERT(&b != result);
+
+	if (b.issymmetric_ == true) {
+    for(index_t r1=0; r1<a.num_of_rows_; r1++) {
+			std::vector<index_t> indices3;
+			std::vector<double>  values3;
+			index_t num1;
+			double  *values1;
+			index_t *indices1;
+      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1],
+					                            num1, values1, indices1);
+	    for(index_t r2=0; r2<b.num_of_rows_; r2++) {
+		    index_t num2;
+	      double  *values2;
+				index_t *indices2;
+	     	b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r2], 
+						                            num2, values2, indices2);
+	      index_t i=0;
+	      index_t j=0;
+	      double dot_product=0;
+	      while (likely(i<num1 && j<num2)) {
+		      while (indices1[i] < indices2[j]) {
+		        i++;	
+            if unlikely((i>=num1)) {
+			        break;
+			      }
+	        }
+		      if (likely(i<num1) && indices1[i] == indices2[j]) {
+		        dot_product += values1[i] * values2[j];
+		      } 
+		      j++;
+	      }
+				if (dot_product!=0) {
+				  indices3.push_back(r2);
+					values3.push_back(dot_product);
+				}
+			}
+			result->LoadRow(r1, indices3, values3);
+		  indices3.clear();
+			values3.clear();
+	  }
+  } else {
+    for(index_t r1=0; r1<a.num_of_rows_; r1++) {
+      index_t num1;
+			double  *values1;
+			index_t *indices1;
+      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1],
+					                            num1, values1, indices1);
+			double dot_product=0;
+			std::vector<index_t> indices3;
+			std::vector<double>  values3;
+			for(index_t r2=0; r2<b.num_of_columns_; r2++) {
+				for(index_t k=0; k< num1; k++) {
+			    dot_product += values1[k]*b.get(indices1[k], r2);
+				}
+				if (dot_product!=0){
+				  indices3.push_back(r2);
+					values3.push_back(dot_product);
+				}
+				dot_product=0;
+			}
+			if (!indices3.empty()) {
+			  result->LoadRow(r1, indices3, values3);
+			}
+      indices3.clear();
+			values3.clear();
+		}
+	}
+}
+
+
+static inline void Sparsem::MultiplyT(const SparseMatrix &a,
+															        SparseMatrix *result) {
+	bool flag=a.issymmetric_;
+	a.issymmetric_=true;
+	Multiply(a, a, result);
+	a.issymmetric_=flag;
+}
+
+static inline void Sparsem::Multiply(const SparseMatrix &mat,
+		                                 const Vector &vec,
+														         Vector *result,
+														         bool transpose_flag) {
+  Epetra_Vector temp_in(View, *(mat.map_), (double *)vec.ptr());
+	Epetra_Vector temp_out(View, *(mat.map_), (double *)result->ptr());
+	mat.matrix_->Multiply(transpose_flag, temp_in, temp_out);
+}
+
+static inline void Sparsem::Multiply(const SparseMatrix &mat,
+		                                 const double scalar,
+														         SparseMatrix *result) {
+  result->Copy(mat);
+	result->Scale(scalar);
+}
+
+static inline void Sparsem::DotMultiply(const SparseMatrix &a,
+	                                      const SparseMatrix &b,
+	                                      SparseMatrix *result) {
+  DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
+	DEBUG_ASSERT(a.num_of_rows_ == result->num_of_rows_);
+	DEBUG_ASSERT(b.num_of_columns_ == result->num_of_columns_);
+	// If you try assigning the results to an already initialized matrix
+	// you might get unexpected results. The following assertions
+	// prevent you partially from that 
+  DEBUG_ASSERT(&a != result); 
+	DEBUG_ASSERT(&b != result);
+	for(index_t r=0; r<a.num_of_rows_; r++) {
+	  std::vector<index_t> indices3;
+		std::vector<double>	 values3;
+		indices3.clear();
+		values3.clear();
+		index_t num1, num2;
+		double *values1, *values2;
+		index_t *indices1, *indices2;
+	  a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
+    b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+	  index_t i=0;
+	  index_t j=0;
+		while (likely(i<num1 && j<num2)) {
+		  while (indices1[i] < indices2[j]) {
+		    i++;	
+        if unlikely((i>=num1)) {
+  		    break;
+			  }
+	    }
+		  if ( likely(i<num1) && indices1[i] == indices2[j]) {
+	      values3.push_back(values1[i] * values2[j]);
+				indices3.push_back(indices1[i]);
+			} 
+			j++;
+	  }
+		result->LoadRow(r, indices3, values3);
+  }
+}
+
 
