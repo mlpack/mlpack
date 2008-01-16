@@ -355,7 +355,7 @@ class Sparsem {
 															SparseMatrix *result);
 	/* Computes the result = A * A^T
 	*/
-	static inline void MultiplyT(const SparseMatrix &a,
+	static inline void MultiplyT(SparseMatrix &a,
 															SparseMatrix *result);
 
 	/** The transpose flag should be set to true if 

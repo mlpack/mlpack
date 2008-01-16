@@ -261,7 +261,7 @@ void SparseMatrix::MakeSymmetric() {
  issymmetric_ = true;	
 }
 
-oid SparseMatrix::SetDiagonal(const Vector &vector) { 
+void SparseMatrix::SetDiagonal(const Vector &vector) { 
   if (unlikely(vector.length()!=dimension_)) {
 	  FATAL("Vector should have the same dimension with the matrix!\n");
 	}
@@ -302,7 +302,7 @@ void SparseMatrix::set(index_t r, index_t c, double v) {
 }
 
 
-void Negate(){
+void SparseMatrix::Negate(){
     double *values;
 	  index_t *indices;
 	  index_t num_of_entries;
@@ -317,7 +317,7 @@ void Negate(){
   }
 
 template<typename FUNC>
-void SparseMAtrix::ApplyFunction(FUNC &function){
+void SparseMatrix::ApplyFunction(FUNC &function){
     double *values;
 	  index_t *indices;
 	  index_t num_of_entries;
@@ -565,9 +565,9 @@ void SparseMatrix::Load(const std::vector<index_t> &rows,
 	}
 }
 
-static inline void Sparsem::Add(const SparseMatrix &a, 
-			                          const SparseMatrix &b, 
-												        SparseMatrix *result) {
+inline void Sparsem::Add(const SparseMatrix &a, 
+			                   const SparseMatrix &b, 
+												 SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
 	DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
   DEBUG_ASSERT(a.num_of_rows_==result->num_of_rows_);
@@ -613,9 +613,9 @@ static inline void Sparsem::Add(const SparseMatrix &a,
   }
 }
 
-static inline void Sparsem::Subtract(const SparseMatrix &a,
-			                               const SparseMatrix &b,
-														         SparseMatrix *result) {
+inline void Sparsem::Subtract(const SparseMatrix &a,
+                              const SparseMatrix &b,
+										          SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
 	DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
 	DEBUG_ASSERT(a.num_of_rows_==result->num_of_rows_);
@@ -671,9 +671,9 @@ static inline void Sparsem::Subtract(const SparseMatrix &a,
 	}
 }
 
-static inline void Multiply(const SparseMatrix &a,
-		                        const SparseMatrix &b,
-														SparseMatrix *result) {
+inline void Sparsem::Multiply(const SparseMatrix &a,
+                              const SparseMatrix &b,
+										          SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
   DEBUG_ASSERT(a.num_of_rows_ == result->num_of_rows_);
   DEBUG_ASSERT(b.num_of_columns_ == result->num_of_columns_);
@@ -752,33 +752,33 @@ static inline void Multiply(const SparseMatrix &a,
 }
 
 
-static inline void Sparsem::MultiplyT(const SparseMatrix &a,
-															        SparseMatrix *result) {
+inline void Sparsem::MultiplyT(SparseMatrix &a,
+  											       SparseMatrix *result) {
 	bool flag=a.issymmetric_;
 	a.issymmetric_=true;
 	Multiply(a, a, result);
 	a.issymmetric_=flag;
 }
 
-static inline void Sparsem::Multiply(const SparseMatrix &mat,
-		                                 const Vector &vec,
-														         Vector *result,
-														         bool transpose_flag) {
+inline void Sparsem::Multiply(const SparseMatrix &mat,
+                              const Vector &vec,
+ 										          Vector *result,
+														  bool transpose_flag) {
   Epetra_Vector temp_in(View, *(mat.map_), (double *)vec.ptr());
 	Epetra_Vector temp_out(View, *(mat.map_), (double *)result->ptr());
 	mat.matrix_->Multiply(transpose_flag, temp_in, temp_out);
 }
 
-static inline void Sparsem::Multiply(const SparseMatrix &mat,
-		                                 const double scalar,
-														         SparseMatrix *result) {
+inline void Sparsem::Multiply(const SparseMatrix &mat,
+                              const double scalar,
+ 										          SparseMatrix *result) {
   result->Copy(mat);
 	result->Scale(scalar);
 }
 
-static inline void Sparsem::DotMultiply(const SparseMatrix &a,
-	                                      const SparseMatrix &b,
-	                                      SparseMatrix *result) {
+inline void Sparsem::DotMultiply(const SparseMatrix &a,
+                                 const SparseMatrix &b,
+                                 SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
 	DEBUG_ASSERT(a.num_of_rows_ == result->num_of_rows_);
 	DEBUG_ASSERT(b.num_of_columns_ == result->num_of_columns_);
