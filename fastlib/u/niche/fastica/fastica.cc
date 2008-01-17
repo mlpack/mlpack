@@ -170,8 +170,6 @@ namespace {
     index_t d = X.n_rows();
     index_t n = X.n_cols();
 
-
-
     if(d < num_of_IC) {
       printf("error: must have num_of_IC <= Dimension!\n");
       return SUCCESS_FAIL;
@@ -253,6 +251,7 @@ namespace {
 
 
     if(approach == SYMMETRIC) {
+      printf("using Symmetric approach\n");
 
       if(initial_state_mode == 0) {
 	//generate random B
@@ -870,6 +869,7 @@ namespace {
       }
     }
     else if(approach == DEFLATION) {
+      printf("using Deflation approach\n");
       B.Init(d, d);
       B.SetZero();
 
@@ -1015,7 +1015,8 @@ namespace {
 	  w_old2.CopyValues(w_old);
 	  w_old.CopyValues(w);
 	  
-	  used_nonlinearity = SKEW + 3;
+	  printf("used_nonlinearity = %d\n", used_nonlinearity);
+	
 	  switch(used_nonlinearity) {
 	  case LOGCOSH: {
 	    Vector hyp_tan, temp1;
@@ -1404,7 +1405,114 @@ namespace {
 }
 
 
+int FastICAMain(datanode *module) {
 
+  const char *data = fx_param_str_req(NULL, "data");
+  
+  Matrix X, X_centered, X_whitened, whitening_matrix, dewhitening_matrix, A, W;
+  data::Load(data, &X);
+  
+  index_t d = X.n_rows(); // number of dimensions
+  index_t n = X.n_cols(); // number of points
+
+
+  const char *string_approach =
+    fx_param_str(NULL, "approach", "deflation");
+  int approach;
+  if(strcasecmp(string_approach, "deflation") == 0) {
+    approach = DEFLATION;
+  }
+  else if(strcasecmp(string_approach, "symmetric")) {
+    approach = SYMMETRIC;
+  }
+  else {
+    printf("Error: approach must be 'deflation' or 'symmetric'\n");
+    return SUCCESS_FAIL;
+  }
+    
+  const char *string_nonlinearity =
+    fx_param_str(NULL, "nonlinearity", "logcosh");
+  int nonlinearity;
+  if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
+    nonlinearity = LOGCOSH;
+  }
+  else if(strcasecmp(string_nonlinearity, "gauss") == 0) {
+    nonlinearity = GAUSS;
+  }
+  else if(strcasecmp(string_nonlinearity, "kurtosis") == 0) {
+    nonlinearity = KURTOSIS;
+  }
+  else if(strcasecmp(string_nonlinearity, "skew") == 0) {
+    nonlinearity = SKEW;
+  }
+  else {
+    printf("Error: nonlinearity must be 'logcosh', 'gauss', 'kurtosis', or 'skew'\n");
+    return SUCCESS_FAIL;
+  }
+
+  //const index_t first_eig = fx_param_int(NULL, "first_eig", 1);
+  // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
+  //const index_t last_eig = fx_param_int(NULL, "last_eig", d);
+  index_t num_of_IC = d; //fx_param_int(NULL, "num_of_IC", d);
+
+  bool fine_tune = fx_param_bool(NULL, "fine_tune", 0);
+  double a1 = fx_param_double(NULL, "a1", 1);
+  double a2 = fx_param_double(NULL, "a2", 1);
+  double mu = fx_param_double(NULL, "mu", 1);
+  bool stabilization = fx_param_bool(NULL, "stabilization", 0);
+  double epsilon = fx_param_double(NULL, "epsilon", 0.0001);
+  
+  int int_max_num_iterations = fx_param_int(NULL, "max_num_iterations", 1000);
+  if(int_max_num_iterations < 0) {
+    printf("Error: max_num_iterations = %d must be >= 0\n",
+	   int_max_num_iterations);
+    return SUCCESS_FAIL;
+  }
+  index_t max_num_iterations = (index_t) int_max_num_iterations;
+
+  int int_max_fine_tune = fx_param_int(NULL, "max_fine_tune", 5);
+  if(int_max_fine_tune < 0) {
+    printf("Error: max_fine_tune = %d must be >= 0\n",
+	   int_max_fine_tune);
+    return SUCCESS_FAIL;
+  }
+  index_t max_fine_tune = (index_t) int_max_fine_tune;
+
+  double sample_size = fx_param_double(NULL, "sample_size", 1);
+  if((sample_size < 0) || (sample_size > 1)) {
+    printf("Error: sample_size = %f must be an element in [0,1]\n",
+	   sample_size);
+    return SUCCESS_FAIL;
+  }
+
+
+  printf("X: %d x %d\n", d, n);
+
+  fx_timer_start(NULL, "FastICA");
+
+  X_centered.Init(d, n);
+  Center(X, X_centered);
+
+ 
+
+  Whiten(X_centered, X_whitened, whitening_matrix, dewhitening_matrix);
+
+  
+  FixedPointICA(X_whitened, whitening_matrix, dewhitening_matrix, approach, num_of_IC, nonlinearity, fine_tune, a1, a2, mu, stabilization, epsilon, max_num_iterations, max_fine_tune, sample_size, &A, &W);
+
+  W.PrintDebug("W");
+
+  Matrix Y;
+  la::MulInit(W, X, &Y);
+
+  fx_timer_stop(NULL, "FastICA");
+  
+
+  SaveCorrectly("unmixing_matrix.dat", W);
+  SaveCorrectly("indep_comps.dat", Y);
+
+  return SUCCESS_PASS;
+}
 
 
 int main(int argc, char *argv[]) {
@@ -1412,49 +1520,10 @@ int main(int argc, char *argv[]) {
 
   srand48(time(0));
 
-  const char *data = fx_param_str(NULL, "data", NULL);
+  int ret_val = FastICAMain(fx_root);
 
-  Matrix X, X_centered, X_whitened, whitening_matrix, dewhitening_matrix, A, W;
-  data::Load(data, &X);
+  fx_done();
 
-  index_t d = X.n_rows(); // number of dimensions
-  index_t n = X.n_cols(); // number of points
-
-  printf("X: %d x %d\n", d, n);
-
-  X_centered.Init(d, n);
-  Center(X, X_centered);
-
-  // SET DEFAULT VALUES
-  int approach = DEFLATION;
-  //const index_t first_eig = 1;
-  // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
-  //const index_t last_eig = d;
-  const index_t num_of_IC = d;
-  int g = LOGCOSH;
-  bool fine_tune = false;
-  double a1 = 1;
-  double a2 = 1;
-  double mu = 1;
-  bool stabilization = true;
-  double epsilon = 0.0001;
-  index_t max_num_iterations = 1000;
-  index_t max_fine_tune = 5;
-  double sample_size = 1;
-  // SET DEFAULT VALUES
- 
-
-  Whiten(X_centered, X_whitened, whitening_matrix, dewhitening_matrix);
-
-  FixedPointICA(X_whitened, whitening_matrix, dewhitening_matrix, approach, num_of_IC, g, fine_tune, a1, a2, mu, stabilization, epsilon, max_num_iterations, max_fine_tune, sample_size, &A, &W);
-
-  W.PrintDebug("W");
-
-
-  //fx_done();
-
-
-  
-  return 0;
+  return ret_val;
 }
 
