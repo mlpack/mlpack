@@ -1,0 +1,27 @@
+% transmission
+0.9 0.05
+0.1 0.95
+% prior - state 0
+0.5 0.5
+% mean 0 - state 0
+0 0
+% cov 0 - state 0
+1.0 0.0
+0.0 1.0
+% mean 1 - state 0
+0 5
+% cov 1 - state 0
+1.0 0.0
+0.0 1.0
+% prior - state 1
+0.5 0.5
+% mean 0 - state 1
+5 0
+% cov 0 - state 1
+1.0 0.0
+0.0 1.0
+% mean 1 - state 1
+5 5
+% cov 1 - state 1
+1.0 0.0
+0.0 1.0
