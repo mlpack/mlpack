@@ -1,127 +1,134 @@
-#include "emst.h"
-
-/* for now, I'm just going to write allnn and make sure I can do it, then try to modify the tree and ordering */
-
-/*template<typename GNP, typename Solver>
-void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
-  const int DATA_CHANNEL = 110;
-  const int Q_RESULTS_CHANNEL = 120;
-  const int GNP_CHANNEL = 200;
-  double results_megs = fx_param_double(module, "results/megs", 1000);
-  DistributedCache *points_cache;
-  index_t n_points;
-  ThorTree<typename GNP::Param, typename GNP::QPoint, typename GNP::QNode> tree;
-  DistributedCache q_results;
-  typename GNP::Param param;
-  
-  rpc::Init();
-  
-  fx_submodule(module, NULL, "io"); // influnce output order
-  
-  param.Init(fx_submodule(module, gnp_name, gnp_name));
-  
-  fx_timer_start(module, "read");
-  points_cache = new DistributedCache();
-  n_points = ReadPoints<typename GNP::QPoint>(
-                                              param, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
-                                              fx_submodule(module, "data", "data"), points_cache);
-  fx_timer_stop(module, "read");
-  
-  typename GNP::QPoint default_point;
-  CacheArray<typename GNP::QPoint>::GetDefaultElement(
-                                                      points_cache, &default_point);
-  param.SetDimensions(default_point.vec().length(), n_points);
-  
-  fx_timer_start(module, "tree");
-  CreateKdTree<typename GNP::QPoint, typename GNP::QNode>(
-                                                          param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
-                                                          fx_submodule(module, "tree", "tree"), n_points, points_cache, &tree);
-  fx_timer_stop(module, "tree");
-  
-  typename GNP::QResult default_result;
-  default_result.Init(param);
-  tree.CreateResultCache(Q_RESULTS_CHANNEL, default_result,
-                         results_megs, &q_results);
-  
-  typename GNP::GlobalResult global_result;
-  RpcDualTree<GNP, Solver>(
-                           fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, param,
-                           &tree, &tree, &q_results, &global_result);
-  
-  rpc::Done();
-}
+/**
+* @file emst.cc
+ *
+ * Calls the DualTreeBoruvka algorithm from dtb.h
+ * Can optionally call Naive Boruvka's method
 */
+
+#include "dtb.h"
 
 
 int main(int argc, char* argv[]) {
  
   fx_init(argc, argv);
-  
-  /*thor::MonochromaticDualTreeMain<Emst, DualTreeDepthFirst<Emst> >(fx_root, "EMST");*/
-  
  
-  // Include a check parameter here to see if I'm in the multi-processor case
+  // For when I implement a thor version
   bool using_thor = fx_param_exists(NULL, "using_thor");
   
   
   if unlikely(using_thor) {
     printf("thor is not yet supported\n");
-  } // end if using_thor
+  }
   else {
+      
+    ///////////////// READ IN DATA ////////////////////////////////// 
     
-    /* Step one: read in the data
-    * parameters - leaf size, min width (later: tree type, metric)
-    * data - get the number of points and the dimension
-    */
+    const char* data_file_name = fx_param_str_req(NULL, "data");
     
+    Matrix data_points;
     
-    /* Step two: build the tree
-    * TESTING: this section needs to be tested
-    */
+    data::Load(data_file_name, &data_points);
     
-    // This makes module called data
-    struct datanode* tree_params = fx_param_node(NULL, "data");
-    //struct datanode* tree_bldg = fx_submodule(NULL, NULL, "tree_building");
-    fx_timer_start(NULL, "tree_building_time");
-    
-    Emst_Tree* this_tree;
-    Matrix data_matrix;
-    ArrayList<index_t> data_permutation;
-    
-    //printf("Building tree\n");
-    
-    // data has a member called leaflen
-    int leaflen = fx_param_int(tree_params, "./leaflen", 1);
-    //tree::LoadKdTree(fx_submodule(NULL, "tree_params", "data"), &data_matrix, &this_tree, &data_permutation);
-    
-    // data gets copied into tree_bldg, which is used by LoadKdTree
-    tree::LoadKdTree(fx_submodule(NULL, "data", "tree_bldg"), &data_matrix, &this_tree, &data_permutation);
-    //tree::LoadKdTree(fx_submodule(tree_bldg, "data", "tree_building"), &data_matrix, &this_tree, &data_permutation);
-    
-    fx_timer_stop(NULL, "tree_building_time");
-    
-    /* Step three: run the algorithm 
-    * Find all nearest neighbors
-    * Add the pairs to the edge list
-    * Update the component information and run tree cleanup
-    */
-    
-        
+    /////////////// Initialize DTB //////////////////////
     DualTreeBoruvka dtb;
-    struct datanode* dtb_module = fx_submodule(NULL, "dtb", "dtb");
-    dtb.Init(this_tree, dtb_module);
+    struct datanode* dtb_module = fx_submodule(NULL, "dtb", "dtb_module");
+    dtb.Init(data_points, dtb_module);
     
-    //dtb.TestTree();
+    ////////////// Run DTB /////////////////////
+    ArrayList<EdgePair> results;
     
-    dtb.ComputeMST();
+    dtb.ComputeMST(&results);
     
-    /* Step four: format and output results
-    */
+    //////////////// Check against naive //////////////////////////
+    if (fx_param_bool(NULL, "do_naive", 0)) {
+     
+      DualTreeBoruvka naive;
+      struct datanode* naive_module = fx_submodule(NULL, "naive", 
+                                                   "naive_module");
+      fx_set_param(naive_module, "do_naive", "1");
+      
+      naive.Init(data_points, naive_module);
+      
+      ArrayList<EdgePair> naive_results;
+      naive.ComputeMST(&naive_results);
+      
+      fx_timer_start(naive_module, "comparison");
+      
+      if (fx_get_result_double(dtb_module, "total_squared_length") !=
+          fx_get_result_double(naive_module, "total_squared_length")) { 
+       
+        printf("lengths are different!\n");
+        
+        fx_done();
+        return 1;
+        
+      }
+      
+      int is_correct = 1;
+      for (index_t naive_index = 0; naive_index < results.size(); 
+           naive_index++) {
+       
+        int this_loop_correct = 0;
+        index_t naive_lesser_index = results[naive_index].lesser_index();
+        index_t naive_greater_index = results[naive_index].greater_index();
+        double naive_distance = results[naive_index].distance();
+        
+        for (index_t dual_index = 0; dual_index < naive_results.size();
+             dual_index++) {
+          
+          index_t dual_lesser_index = results[dual_index].lesser_index();
+          index_t dual_greater_index = results[dual_index].greater_index();
+          double dual_distance = results[dual_index].distance();
+          
+          if (naive_lesser_index == dual_lesser_index) {
+            if (naive_greater_index == dual_greater_index) {
+              DEBUG_ASSERT(naive_distance == dual_distance);
+              this_loop_correct = 1;
+              break;
+            }
+          }
+          
+        }
+       
+        if (this_loop_correct == 0) {
+          is_correct = 0;
+          break;
+        }
+        
+      }
+      
+      if (is_correct == 0) {
+       
+        printf("naive check failed!\n");
+        fx_done();
+        return 1;
+        
+      }
+      
+      fx_timer_stop(naive_module, "comparison");
+      
+      const char* naive_output_filename = 
+        fx_param_str(naive_module, "output_filename", "naive_output.csv");
+      
+      FILE* naive_output = fopen(naive_output_filename, "w");
+      
+      ot::Print(naive_results, naive_output);
+      
+    }
     
-    //dtb.output_results();
+    //////////////// Output the Results ////////////////
+    
+    const char* output_filename = 
+        fx_param_str(NULL, "output_filename", "output.csv");
+    
+    FILE* output_file = fopen(output_filename, "w");
+    
+    ot::Print(results, output_file);
     
   }// end else (if using_thor)
   
   fx_done();
+  
+  return 0;
   
 }
