@@ -1,42 +1,46 @@
-# a librule creates a library, there must not be a main
-# It is possible to have many librules in a single build.py
+# A librule creates a library, or code that lacks a main function.
+# You can define many librules in a single build.py.
 librule(
-	# What do you want the library to be called?
-	# Use this name to include the library in binrules elsewhere
-	# If the name is omitted, the library will be called the name of the directory
+	# What do you want the library to be called?  You'll use this
+	# name to include the library in binrules elsewhere.  If the
+	# omitted, the librule uses the name of build.py's directory.
 	name = "allnn",
 	
-	# Any .c or .cc files where library functions are defined
-	# This line can be omitted if there are no .cc or .c files
+	# Any .c or .cc files where library functions are defined.
+	# This line can be omitted if there are no .cc or .c files.
 	#sources = ["allnn.cc"],
-
-	# Any .h files where library functions are defined
+	
+	# Any .h files where library functions are defined.
 	headers = ["allnn.h"],
-
-	# libraries this library depends on
-	# fastlib:fastlib means the fastlib library is in the fastlib directory
-	# fastlib includes all the library functionality		
+	
+	# Other libraries that this library depends upon.  It's often
+	# easiest just to indicate "fastlib:fastlib", interpreted
+	# "directory:librule", to link with all of FASTlib's core
+	# components.
 	deplibs = ["fastlib:fastlib"],
-
-	# A file containing a main with test functions
-	# fl-build allnn_tests creates an executable called allnn_tests
+	
+	# You can specify a unit test file, which should contain a
+	# main function that runs a batch of tests.  In the future,
+	# this will be compiled and run automatically, but for now,
+	# you can compile this explicitly with "fl-build allnn_tests".
 	#tests = ["allnn_tests.cc"]
 )
 
 
 
-# a binrule creates an executable, there must be a main in one of the sources
-# It is possible to have many binrules in a single build.py file
+# A binrule creates an executable, or a stand-alone program that has a
+# main function.  It's possible to have many binrules in one build.py.
 binrule(
 	
-	# the name of the executable
+	# The name of the executable.
 	name = "allnn_main",
-
+	
+	# The .c or .cc file containing main and any others you need.
 	sources = ["allnn_main.cc"],
-
-	# This line can be omitted if there are no headers
+	
+	# This line can be omitted if there are no headers.
 	#headers = ["allnn_main.h"],
-
-	# :allnn means allnn is in the same directory as this build.py file
-	deplibs = [":allnn", "fastlib:fastlib"]
+	
+	# The leading colon means to check this build.py for allnn.
+	deplibs = [":allnn"]
 )
