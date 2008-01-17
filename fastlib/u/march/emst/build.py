@@ -1,7 +1,7 @@
 binrule(
 	name = "emst",
 	sources = ["emst.cc"],
-	headers = ["emst.h", "union_find.h"],
+	headers = ["emst.h", "union_find.h", "dtb.h", "naive_boruvka.h"],
 	deplibs = ["fastlib:fastlib"]
 )
 
