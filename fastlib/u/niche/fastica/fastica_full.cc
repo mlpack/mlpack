@@ -86,9 +86,6 @@ namespace {
     E.set(1, 1, -E.get(1, 1));
 
     
-    D_vector.PrintDebug("D_vector");
-    E.PrintDebug("E");
-
 
     index_t d = D_vector.length();
     D.Init(d, d);
@@ -104,8 +101,6 @@ namespace {
     la::MulTransBInit(D_inv, E, &whitening_matrix);
     la::MulInit(E, D, &dewhitening_matrix);
     la::MulInit(whitening_matrix, X, &X_whitened);
-    whitening_matrix.PrintDebug("whitening matrix");
-    dewhitening_matrix.PrintDebug("dewhitening matrix");
   }
 
 
@@ -1425,14 +1420,10 @@ int main(int argc, char *argv[]) {
   index_t d = X.n_rows(); // number of dimensions
   index_t n = X.n_cols(); // number of points
 
-  printf("d = %d, n = %d\n", d, n);
+  printf("X: %d x %d\n", d, n);
 
-
-  
-  printf("centering\n");
   X_centered.Init(d, n);
   Center(X, X_centered);
-
 
   // SET DEFAULT VALUES
   int approach = DEFLATION;
