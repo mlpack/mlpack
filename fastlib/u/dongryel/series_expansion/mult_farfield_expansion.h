@@ -24,9 +24,6 @@ class MultFarFieldExpansion {
   
  private:
 
-  /** the basis vectors */
-  Matrix basis_vectors_;
-
   /** The center of the expansion */
   Vector center_;
   
@@ -46,7 +43,6 @@ class MultFarFieldExpansion {
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(MultFarFieldExpansion) {
-    OT_MY_OBJECT(basis_vectors_);
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
@@ -133,8 +129,6 @@ class MultFarFieldExpansion {
    */
   void Init(const Vector& center, const TKernelAux &ka);
   void Init(const TKernelAux &ka);
-  void Init(const Vector& center, const Matrix& basis_vectors,
-	    const TKernelAux &ka);
 
   /**
    * Computes the required order for evaluating the far field expansion
@@ -166,12 +160,6 @@ class MultFarFieldExpansion {
    * Prints out the series expansion represented by this object.
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const;
-
-  /**
-   * Rotate from another far field expansion so that its farfield moments
-   * expressed in terms of the basis vectors owned here.
-   */
-  void RotateFromFarField(const MultFarFieldExpansion &se);
 
   /**
    * Translate from a far field expansion to the expansion here.
@@ -422,24 +410,6 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Vector& x_q,
 }
 
 template<typename TKernelAux>
-void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center,
-					     const Matrix& basis_vectors,
-					     const TKernelAux &ka) {
-
-  // copy kernel type, center, and bandwidth squared
-  kernel_ = &(ka.kernel_);
-  center_.Copy(center);
-  order_ = -1;
-  sea_ = &(ka.sea_);
-  ka_ = &ka;
-  basis_vectors_.Alias(basis_vectors);
-
-  // initialize coefficient array
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
-  coeffs_.SetZero();
-}
-
-template<typename TKernelAux>
   void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center, 
 					       const TKernelAux &ka) {
   
@@ -449,10 +419,6 @@ template<typename TKernelAux>
   order_ = -1;
   sea_ = &(ka.sea_);
   ka_ = &ka;
-
-  // basis vectors are empty, if we assume that we are using the global
-  // coordinate system
-  basis_vectors_.Init(0, 0);
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
@@ -469,10 +435,6 @@ template<typename TKernelAux>
   center_.Init(sea_->get_dimension());
   center_.SetZero();
   ka_ = &ka;
-
-  // basis vectors are empty, if we assume that we are using the global
-  // coordinate system
-  basis_vectors_.Init(0, 0);
 
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
@@ -553,12 +515,6 @@ void MultFarFieldExpansion<TKernelAux>::PrintDebug
     }
   }
   fprintf(stream, "\n");
-}
-
-template<typename TKernelAux>
-void MultFarFieldExpansion<TKernelAux>::RotateFromFarField
-(const MultFarFieldExpansion &se) {
-  
 }
 
 template<typename TKernelAux>
