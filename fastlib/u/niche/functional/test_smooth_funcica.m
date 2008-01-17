@@ -7,13 +7,13 @@
 N = size(data, 2);
 p = 30; % hardcoded for now
 
-mybasis = create_bspline_basis([0 1], p, 4);
+mybasis = create_bspline_basis([0 .9910], 100, 4);
 basis_curves = eval_basis(t, mybasis);
 basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
 myfd_data = data2fd(data, t, mybasis);
 
-cut_fraction = .5;
+cut_fraction = .01;
 
 cut = round(cut_fraction * N);
 data_coef = getcoef(myfd_data);
@@ -26,8 +26,8 @@ num_tests = 1;
 %data = data(indices,:);
 
 
-%lambda_set = 0;
-lambda_set = [0 1e-6 1e-5 1e-4 1e-3 5e-3 1e-2];
+lambda_set = 0;
+%lambda_set = [0 1e-6 1e-5 1e-4 1e-3 5e-3 1e-2];
 
 myfdPar_set = cell(1,length(lambda_set));
 for lambda_i = 1:length(lambda_set)
