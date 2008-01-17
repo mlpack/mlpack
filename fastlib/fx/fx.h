@@ -261,6 +261,34 @@ void fx_format_result(struct datanode *module, const char *name,
  * @param name the name of the result to clear (paths allowed)
  */
 void fx_clear_result(struct datanode *module, const char *name);
+/**
+ * Obtain a string result, failing if not found.
+ *
+ * @param module the results's containing module, or NULL for global
+ * @param name the name of the result (paths allowed)
+ */
+const char *fx_get_result_str(struct datanode *module, const char *name);
+/**
+ * Obtain a floating-point result, failing if not found.
+ *
+ * @param module the results's containing module, or NULL for global
+ * @param name the name of the result (paths allowed)
+ */
+double fx_get_result_double(struct datanode *module, const char *name);
+/**
+ * Obtain an integral result, failing if not found.
+ *
+ * @param module the results's containing module, or NULL for global
+ * @param name the name of the result (paths allowed)
+ */
+long long fx_get_result_int(struct datanode *module, const char *name);
+/**
+ * Obtain a boolean result, failing if not found.
+ *
+ * @param module the results's containing module, or NULL for global
+ * @param name the name of the result (paths allowed)
+ */
+int fx_get_result_bool(struct datanode *module, const char *name);
 
 /**
  * Starts or continues a named timer.

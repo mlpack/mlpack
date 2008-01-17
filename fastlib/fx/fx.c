@@ -208,16 +208,12 @@ static void fx__report_usage(int type, struct datanode *node)
 
 static void fx__write(struct datanode *node)
 {
-  FILE *f = stdout;
-
   if (fx_param_exists(node, "fx/output")) {
-    f = fopen(fx_param_str(node, "fx/output", NULL), "w");
-  }
-
-  datanode_write(node, f);
-
-  if (f != stdout) {
+    FILE *f = fopen(fx_param_str(node, "fx/output", NULL), "w");
+    datanode_write(node, f);
     fclose(f);
+  } else if (!fx__silent) {
+    datanode_write(node, stdout);
   }
 }
 
@@ -235,9 +231,8 @@ void fx_done(void) {
       datanode_get_path(fx_root, "info/rusage/self", NODETYPE_RESULT));
   fx__report_usage(RUSAGE_CHILDREN,
       datanode_get_path(fx_root, "info/rusage/children", NODETYPE_RESULT));
-  if (!fx__silent) {
-    fx__write(fx__real_root);
-  }
+
+  fx__write(fx__real_root);
 
   datanode_destroy(fx__real_root);
   free(fx__real_root);
@@ -601,6 +596,61 @@ void fx_clear_result(struct datanode *module, const char *name)
   if (node) {
     datanode_clear(node);
   }
+}
+
+const char *fx_get_result_str(struct datanode *module, const char *name)
+{
+  struct datanode *node;
+  
+  node = fx__result(module, name, 0);
+
+  if (!node->val) {
+    FATAL("Result \"%s\" unspecified in module \"%s\".",
+	  name, fx__module_name(module));
+  }
+
+  return node->val;
+}
+
+double fx_get_result_double(struct datanode *module, const char *name)
+{
+  const char *val = fx_get_result_str(module, name);
+  double res;
+
+  if (sscanf(val, "%lf", &res) != 1) {
+    FATAL("Result \"%s\" in module \"%s\" is not a double: \"%s\".",
+	  name, fx__module_name(module), (char*)val);
+  }
+
+  return res;
+}
+
+long long int fx_get_result_int(struct datanode *module, const char *name)
+{
+  const char *val = fx_get_result_str(module, name);
+  long long int res;
+
+  if (sscanf(val, "%lli", &res) != 1) {
+    FATAL("Result \"%s\" in module \"%s\" is not an int: \"%s\".",
+	  name, fx__module_name(module), val);
+  }
+
+  return res;
+}
+
+int fx_get_result_bool(struct datanode *module, const char *name)
+{
+  const char *val = fx_get_result_str(module, name);
+
+  if (strchr("1tTyY", val[0]) != NULL) {
+    return 1;
+  } else if (strchr("0fFnN", val[0]) != NULL) {
+    return 0;
+  } else {
+    FATAL("Result \"%s\" in module \"%s\" is not a bool: \"%s\".",
+	  name, fx__module_name(module), val);
+  }
+  return -1;
 }
 
 static struct datanode *fx__timer(struct datanode *module, const char *name,
