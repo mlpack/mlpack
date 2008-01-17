@@ -181,6 +181,10 @@ double hmm_decodeD(const Vector& seq, const Matrix& trans, const Matrix& emis, M
 
 double hmm_viterbiD_init(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states) {
   int L = seq.length();
+  return hmm_viterbiD_init(L, seq, trans, emis, states);
+}
+
+double hmm_viterbiD_init(int L, const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states) {
   int M = trans.n_rows();
   int N = emis.n_cols();
   DEBUG_ASSERT_MSG((M==trans.n_cols() && M==emis.n_rows()),"hmm_viterbiD: sizes do not match");
@@ -288,6 +292,72 @@ void hmm_trainD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM,
     }
 
     double s;
+    for (int i = 0; i < M; i++) {
+      s = 0;
+      for (int j = 0; j < M; j++) s += TR.get(i, j);
+      if (s == 0) {
+	for (int j = 0; j < M; j++) gTR.ref(i, j) = 0;
+	gTR.ref(i, i) = 1;
+      }
+      else {
+	for (int j = 0; j < M; j++) gTR.ref(i, j) = TR.get(i, j) / s;
+      }
+      
+      s = 0;
+      for (int j = 0; j < N; j++) s += EM.get(i, j);
+      for (int j = 0; j < N; j++) gEM.ref(i, j) = EM.get(i, j) / s;
+    }
+
+    printf("Iter = %d Loglik = %8.4f\n", iter, loglik);
+    if (fabs(oldlog - loglik) < tol) {
+      printf("\nConverged after %d iterations\n", iter);
+      break;
+    }
+    oldlog = loglik;
+  }
+}
+
+void hmm_train_viterbiD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
+  int L = -1;
+  int M = guessTR->n_rows();
+  int N = guessEM->n_cols();
+  DEBUG_ASSERT_MSG((M==guessTR->n_cols() && M==guessEM->n_rows()),"hmm_trainD: sizes do not match");
+  
+  for (int i = 0; i < seqs.size(); i++)
+    if (seqs[i].length() > L) L = seqs[i].length();
+
+  Matrix &gTR = *guessTR, &gEM = *guessEM;
+  Matrix TR, EM; // guess transition and emission matrix
+  TR.Init(M, M);
+  EM.Init(M, N);
+
+  double loglik = 0, oldlog;
+  for (int iter = 0; iter < max_iter; iter++) {
+    oldlog = loglik;
+    loglik = 0;
+
+    TR.SetAll(1e-4);
+    EM.SetAll(1e-4);
+    for (int idx = 0; idx < seqs.size(); idx++) {
+      Vector states;
+      L = seqs[idx].length();
+      loglik += hmm_viterbiD_init(L, seqs[idx], gTR, gEM, &states);
+      
+      for (int t = 0; t < L-1; t++) {
+	int i = (int) states[t];
+	int j = (int) states[t+1];
+	TR.ref(i, j) ++;
+      }
+      
+      for (int t = 0; t < L; t++) {
+	int e = (int) seqs[idx][t];
+	int i = (int) states[t];
+	EM.ref(i, e) ++;
+      }
+    }
+
+    double s;
+    print_matrix(TR, "TR");
     for (int i = 0; i < M; i++) {
       s = 0;
       for (int j = 0; j < M; j++) s += TR.get(i, j);

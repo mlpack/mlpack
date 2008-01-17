@@ -829,8 +829,30 @@ int main(int argc, char* argv[]) {
   //test_hmm_estimateM();
   //test_hmm_decodeM();
   //test_hmm_viterbiM();
-  test_hmm_trainM();
-  
+  //test_hmm_trainM();
+  /*
+  {
+  ArrayList<Matrix> matlst;
+  load_matrix_list("seq.out", &matlst);
+
+  printf("NO SEQ = %d\n", matlst.size());
+  for (int i = 0; i < matlst.size(); i++) {
+    char s[100];
+    sprintf(s, "SEQ #%d:\n", i);
+    print_matrix(matlst[i],s);
+  }
+  }
+  */
+  ArrayList<Vector> veclst;
+  load_vector_list("seq.out", &veclst);
+
+  printf("NO SEQ = %d\n", veclst.size());
+  for (int i = 0; i < veclst.size(); i++) {
+    char s[100];
+    sprintf(s, "SEQ #%d:\n", i);
+    print_vector(veclst[i],s);
+  }
+
   /*
   MixtureGauss mix;
   mix.InitFromFile("meansG.txt", "covsG.txt");

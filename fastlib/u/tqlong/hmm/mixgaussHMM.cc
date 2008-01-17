@@ -3,6 +3,53 @@
 #include "mixgaussHMM.h"
 #include "gaussianHMM.h"
 
+success_t load_profileM(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
+  ArrayList<Matrix> matlst;
+  if (!PASSED(load_matrix_list(profile, &matlst))) {
+    NONFATAL("Couldn't open '%s' for reading.", profile);
+    return SUCCESS_FAIL;
+  }
+  DEBUG_ASSERT(matlst.size() >= 4); // at least 1 trans, 1 prior, 1 mean, 1 cov
+  trans->Copy(matlst[0]);
+  mixs->Init();
+  int M = trans->n_rows(); // num of states
+  int N = matlst[2].n_rows(); // dimension
+  int p = 1;
+  for (int i = 0; i < M; i++) {
+    int K = matlst[p].n_rows(); // num of clusters
+    //printf("load p=%d K=%d\n", p, K);
+    DEBUG_ASSERT(matlst.size() > p+2*K);
+    MixtureGauss mix;
+    mix.InitFromProfile(matlst, p, N);
+    mixs->AddBackItem(mix);
+    p += 2*K+1;
+  }
+  return SUCCESS_PASS;
+}
+
+success_t save_profileM(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs) {
+  TextWriter w_pro;
+  if (!PASSED(w_pro.Open(profile))) {
+    NONFATAL("Couldn't open '%s' for writing.", profile);
+    return SUCCESS_FAIL;
+  }
+  int M = trans.n_rows(); // num of states
+  print_matrix(w_pro, trans, "% transmission", "%E,");
+  for (int i = 0; i < M; i++) {
+    int K = mixs[i].n_clusters(); // num of clusters
+    char s[100];
+    sprintf(s, "%% prior - state %d", i);
+    print_vector(w_pro, mixs[i].get_prior(), s, "%E,");
+    for (int k=0; k < K; k++) {
+      sprintf(s, "%% mean %d - state %d", k, i);
+      print_vector(w_pro, mixs[i].get_mean(k), s, "%E,");
+      sprintf(s, "%% covariance %d - state %d", k, i);
+      print_matrix(w_pro, mixs[i].get_cov(k), s, "%E,");
+    }
+  }
+  return SUCCESS_PASS;
+}
+
 void hmm_generateM_init(int L, const Matrix& trans, const ArrayList<MixtureGauss>& mixs, Matrix* seq, Vector* states){
   DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==mixs.size()), "hmm_generateM_init: matrices sizes do not match");
   Matrix trsum;
@@ -252,6 +299,17 @@ double hmm_viterbiG_init(const Matrix& trans, const Matrix& emis_prob, Vector* s
 }
 */
 
+void hmm_cal_emis_probM(const Matrix& seq, const ArrayList<MixtureGauss>& mixs, Matrix* emis_prob) {
+  int M = mixs.size();
+  int L = seq.n_cols();
+  for (int t = 0; t < L; t++) {
+    Vector e;
+    seq.MakeColumnVector(t, &e);
+    for (int i = 0; i < M; i++)
+      emis_prob->ref(i, t) = mixs[i].getPDF(e);
+  }
+}
+
 void hmm_trainM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
   ArrayList<MixtureGauss>& gMG = *guessMG;
@@ -332,6 +390,105 @@ void hmm_trainM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Mixtur
 	  for (int j = 0; j < K; j++) 
 	    gMG[i].accumulate(v * emis_prob_cluster[i].get(j, t) / emis_prob.get(i, t), j, e);
 	}
+      }
+      // end accumulate
+    }
+
+    // after accumulate all sequences: re-estimate transition & mean & covariance for the next iteration
+    for (int i = 0; i < M; i++) {
+      double s = 0;
+      for (int j = 0; j < M; j++) s += TR.get(i, j);
+      if (s == 0) {
+	for (int j = 0; j < M; j++) gTR.ref(i, j) = 0;
+	gTR.ref(i, i) = 1;
+      }
+      else {
+	for (int j = 0; j < M; j++) gTR.ref(i, j) = TR.get(i, j) / s;
+      }
+      
+      gMG[i].end_accumulate();
+    }
+    // end re-estimate
+
+    printf("Iter = %d Loglik = %8.4f\n", iter, loglik);
+    if (fabs(oldlog - loglik) < tol) {
+      printf("\nConverged after %d iterations\n", iter);
+      break;
+    }
+    oldlog = loglik;
+  }
+}
+
+void hmm_train_viterbiM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter, double tol) {
+  Matrix &gTR = *guessTR;
+  ArrayList<MixtureGauss>& gMG = *guessMG;
+  int L = -1;
+  int M = gTR.n_rows();
+  DEBUG_ASSERT_MSG((M==gTR.n_cols() && M==gMG.size()),"hmm_trainM: sizes do not match");
+  
+  for (int i = 0; i < seqs.size(); i++)
+    if (seqs[i].n_cols() > L) L = seqs[i].n_cols();
+
+  Matrix TR; // guess transition and emission matrix
+  TR.Init(M, M);
+
+  Matrix emis_prob; // to hold hmm_decodeG results
+  ArrayList<Matrix> emis_prob_cluster;
+
+  emis_prob.Init(M, L);
+  emis_prob_cluster.Init();
+  for (int i = 0; i < M; i++) {
+    Matrix m;
+    int K = gMG[i].n_clusters();
+    m.Init(K, L);
+    emis_prob_cluster.AddBackItem(m);
+  }
+
+  double loglik = 0, oldlog;
+  for (int iter = 0; iter < max_iter; iter++) {
+    oldlog = loglik;
+    loglik = 0;
+
+    // set the accumulating values to zeros and compute the inverse matrices and determinant constants
+    TR.SetZero();
+    for (int i = 0; i < M; i++) 
+      gMG[i].start_accumulate();
+
+    // for each sequence, we will use viterbi procedure to find the most probable state sequence and then accumulate
+    for (int idx = 0; idx < seqs.size(); idx++) {
+      Vector states;
+      // first calculate the emission probabilities of the sequence
+      L = seqs[idx].n_cols();
+      for (int t = 0; t < L; t++) {
+	Vector e;
+	seqs[idx].MakeColumnVector(t, &e);
+	for (int i = 0; i < M; i++) {
+	  double s = 0;
+	  int K = gMG[i].n_clusters();
+	  for (int j = 0; j < K; j++) {
+	    emis_prob_cluster[i].ref(j, t) = gMG[i].getPDF(j, e);
+	    s += emis_prob_cluster[i].ref(j, t);
+	  }
+	  emis_prob.ref(i, t) = s;
+	}
+      }
+      
+      loglik += hmm_viterbiG_init(L, gTR, emis_prob, &states); // viterbi procedure
+      
+      // accumulate expected transition & gaussian mixture parameters
+      for (int t = 0; t < L-1; t++) {
+	int i = (int) states[t];
+	int j = (int) states[t+1];
+	TR.ref(i, j)++;
+      }
+      
+      for (int t = 0; t < L; t++) {
+	Vector e;
+	int i = (int) states[t];
+	seqs[idx].MakeColumnVector(t, &e);
+	int K = gMG[i].n_clusters();
+	for (int j = 0; j < K; j++) 
+	  gMG[i].accumulate(emis_prob_cluster[i].get(j, t) / emis_prob.get(i, t), j, e);
       }
       // end accumulate
     }

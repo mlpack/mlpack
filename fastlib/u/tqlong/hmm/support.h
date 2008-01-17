@@ -14,8 +14,10 @@ double MyMulExpert(const Vector& x, const Matrix& A, const Vector& y);
 double NORMAL_DENSITY(const Vector& x, const Vector& mean, const Matrix& inv_cov, double det_cov);
 
 void print_matrix(const Matrix& a, const char* msg);
+void print_matrix(TextWriter& writer, const Matrix& a, const char* msg, const char* format = "%f,");
 
 void print_vector(const Vector& a, const char* msg);
+void print_vector(TextWriter& writer, const Vector& a, const char* msg, const char* format = "%f,");
 
 bool kmeans(const ArrayList<Matrix>& data, int num_clusters, 
 	    ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
@@ -28,6 +30,9 @@ bool kmeans(Matrix const &data, int num_clusters,
 void mat2arrlst(Matrix& a, ArrayList<Vector> * seqs);
 
 void mat2arrlstmat(int N, Matrix& a, ArrayList<Matrix> * seqs);
+
+success_t load_matrix_list(const char* filename, ArrayList<Matrix> *matlst);
+success_t load_vector_list(const char* filename, ArrayList<Vector> *veclst);
 
 #endif
 

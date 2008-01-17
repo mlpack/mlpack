@@ -3,6 +3,8 @@
 
 #include "fastlib/fastlib.h"
 
+success_t load_profileG(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs);
+success_t save_profileG(const char* profile, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs);
 /**
 Generating a sequence and states using transition and emission probabilities.
 L: sequence length
@@ -35,6 +37,7 @@ void hmm_estimateG_init(int numStates, const Matrix& seq, const Vector& states, 
 */
 double hmm_decodeG(const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales);
 double hmm_decodeG(int L, const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales);
+void hmm_cal_emis_prob(const Matrix& seq, const ArrayList<Vector>& means, const ArrayList<Matrix>& inv_covs, const Vector& det, Matrix* emis_prob);
 
 /** Calculate the most probable states for a sequence
     Viterbi algorithm
@@ -45,13 +48,14 @@ double hmm_decodeG(int L, const Matrix& trans, const Matrix& emis_prob, Matrix* 
     RETURN: log probability of the most probable sequence
 */
 double hmm_viterbiG_init(const Matrix& trans, const Matrix& emis_prob, Vector* states);
-//double hmm_viterbiD_init(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
+double hmm_viterbiG_init(int L, const Matrix& trans, const Matrix& emis_prob, Vector* states);
 
-/** Baum-Welch estimation of transition and emission distribution (Gaussian)
-    
-
+/** Baum-Welch and Viterbi estimation of transition and emission distribution (Gaussian)
 */
+void init_gauss_param(int M, const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO);
+
 void hmm_trainG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol);
 
+void hmm_train_viterbiG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol);
 
 #endif
