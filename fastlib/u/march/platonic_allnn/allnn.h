@@ -151,6 +151,11 @@ class AllNN {
   /** Number of node-pairs pruned by the dual-tree algorithm. */
   index_t number_of_prunes_;
 
+  /** Debug-mode test whether an AllNN object is initialized. */
+  bool initialized_;
+  /** Debug-mode test whether an AllNN object is used twice. */
+  bool already_used_;
+
 
   ////////// Constructors ////////////////////////////////////////////
 
@@ -188,6 +193,9 @@ class AllNN {
     DEBUG_POISON_PTR(module_);
     DEBUG_ONLY(leaf_size_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(number_of_prunes_ = BIG_BAD_NUMBER);
+
+    DEBUG_ONLY(initialized_ = false);
+    DEBUG_ONLY(already_used_ = false);
   }
 
   // Note that we don't delete the fx module; it's managed externally.
@@ -277,14 +285,14 @@ class AllNN {
       } /* for reference_index */
 
       /* Find the upper bound nn distance for this node */
-      if (neighbor_distances_[query_index] > query_max_neighbor_distance) {
-        query_max_neighbor_distance = neighbor_distances_[query_index];
+      if (neighbor_distances_[query_index] > max_nearest_neighbor_distance) {
+        max_nearest_neighbor_distance = neighbor_distances_[query_index];
       }
 
     } /* for query_index */
 
     /* Update the upper bound nn distance for the node */
-    query_node->stat().set_max_distance_so_far(query_max_neighbor_distance);
+    query_node->stat().set_max_distance_so_far(max_nearest_neighbor_distance);
 
   } /* GNPBaseCase_ */
 
@@ -337,15 +345,11 @@ class AllNN {
        * (and thus tighten bounds), so visit it first
        */
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node,
-            reference_node->left(), left_distance);
-        ComputeNeighborsRecursion_(query_node,
-            reference_node->right(), right_distance);
+        GNPRecursion_(query_node, reference_node->left(), left_distance);
+        GNPRecursion_(query_node, reference_node->right(), right_distance);
       } else {
-        ComputeNeighborsRecursion_(query_node,
-            reference_node->right(), right_distance);
-        ComputeNeighborsRecursion_(query_node,
-            reference_node->left(), left_distance);
+        GNPRecursion_(query_node, reference_node->right(), right_distance);
+        GNPRecursion_(query_node, reference_node->left(), left_distance);
       }
 
     } else if (reference_node->is_leaf()) {
@@ -357,10 +361,8 @@ class AllNN {
           MinNodeDistSq_(query_node->right(), reference_node);
 
       /* Order of recursion does not matter */
-      ComputeNeighborsRecursion_(query_node->left(),
-          reference_node, left_distance);
-      ComputeNeighborsRecursion_(query_node->right(),
-          reference_node, right_distance);
+      GNPRecursion_(query_node->left(), reference_node, left_distance);
+      GNPRecursion_(query_node->right(), reference_node, right_distance);
 
       /* Update upper bound nn distance base new child bounds */
       query_node->stat().set_max_distance_so_far(
@@ -383,14 +385,14 @@ class AllNN {
           MinNodeDistSq_(query_node->left(), reference_node->right());
 
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node->left(),
+        GNPRecursion_(query_node->left(),
             reference_node->left(), left_distance);
-        ComputeNeighborsRecursion_(query_node->left(),
+        GNPRecursion_(query_node->left(),
             reference_node->right(), right_distance);
       } else {
-        ComputeNeighborsRecursion_(query_node->left(),
+        GNPRecursion_(query_node->left(),
             reference_node->right(), right_distance);
-        ComputeNeighborsRecursion_(query_node->left(),
+        GNPRecursion_(query_node->left(),
             reference_node->left(), left_distance);
       }
 
@@ -400,14 +402,14 @@ class AllNN {
           MinNodeDistSq_(query_node->right(), reference_node->right());
 
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node->right(),
+        GNPRecursion_(query_node->right(),
             reference_node->left(), left_distance);
-        ComputeNeighborsRecursion_(query_node->right(),
+        GNPRecursion_(query_node->right(),
             reference_node->right(), right_distance);
       } else {
-        ComputeNeighborsRecursion_(query_node->right(),
+        GNPRecursion_(query_node->right(),
             reference_node->right(), right_distance);
-        ComputeNeighborsRecursion_(query_node->right(),
+        GNPRecursion_(query_node->right(),
             reference_node->left(), left_distance);
       }
 
@@ -433,6 +435,11 @@ class AllNN {
    */
   void Init(const Matrix& queries_in, const Matrix& references_in,
 	    struct datanode* module_in) {
+
+    // It's a good idea to make sure the object isn't initialized a
+    // second time, as this is almost certainly mistaken.
+    DEBUG_ASSERT(initialized_ == false);
+    DEBUG_ONLY(initialized_ = true);
 
     module_ = module_in;
 
@@ -488,6 +495,9 @@ class AllNN {
   void InitNaive(const Matrix& queries_in, const Matrix& references_in,
 		 struct datanode* module_in){
 
+    DEBUG_ASSERT(initialized_ == false);
+    DEBUG_ONLY(initialized_ = true);
+
     module_ = module_in;
 
     /* The data sets need to have the same number of points */
@@ -529,10 +539,16 @@ class AllNN {
    */
   void ComputeNeighbors(ArrayList<index_t>* results) {
 
+    // In addition to confirming the object's been initialized, we
+    // want to make sure we aren't asking it to compute a second time.
+    DEBUG_ASSERT(initialized_ == true);
+    DEBUG_ASSERT(already_used_ == false);
+    DEBUG_ONLY(already_used_ = true);
+
     fx_timer_start(module_, "dual_tree_computation");
 
     /* Start recursion on the roots of either tree */
-    Recursion_(query_tree_, reference_tree_,
+    GNPRecursion_(query_tree_, reference_tree_,
         MinNodeDistSq_(query_tree_, reference_tree_));
 
     fx_timer_stop(module_, "dual_tree_computation");
@@ -553,10 +569,14 @@ class AllNN {
    */
   void ComputeNaive(ArrayList<index_t>* results) {
 
+    DEBUG_ASSERT(initialized_ == true);
+    DEBUG_ASSERT(already_used_ == false);
+    DEBUG_ONLY(already_used_ = true);
+
     fx_timer_start(module_, "naive_time");
 
     /* BaseCase_ on the roots is equivalent to naive */
-    BaseCase_(query_tree_, reference_tree_);
+    GNPBaseCase_(query_tree_, reference_tree_);
 
     fx_timer_stop(module_, "naive_time");
 
@@ -570,6 +590,8 @@ class AllNN {
    * Initialize and fill an ArrayList of results.
    */
   void EmitResults(ArrayList<index_t>* results) {
+
+    DEBUG_ASSERT(initialized_ == true);
 
     results->Init(neighbor_indices_.size());
 
