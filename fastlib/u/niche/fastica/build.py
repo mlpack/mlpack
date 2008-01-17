@@ -1,5 +1,5 @@
 binrule(name = "fastica",
-   sources = ["fastica_full.cc"],
+   sources = ["fastica.cc"],
    headers = ["lin_alg.h"],
    deplibs = ["fastlib:fastlib"])
 
