@@ -1,0 +1,27 @@
+% transmission - Matrix (2 x 2) = 
+9.013158E-01,4.244604E-02,
+9.868421E-02,9.575540E-01,
+% prior - state 0 - Vector (2) = 
+5.186639E-01,4.813361E-01,
+% mean 0 - state 0 - Vector (2) = 
+-1.188965E-02,-3.753936E-03,
+% covariance 0 - state 0 - Matrix (2 x 2) = 
+9.505489E-01,5.312182E-02,
+5.312182E-02,1.016244E+00,
+% mean 1 - state 0 - Vector (2) = 
+2.486977E-03,4.987819E+00,
+% covariance 1 - state 0 - Matrix (2 x 2) = 
+9.356824E-01,-2.942855E-02,
+-2.942855E-02,1.143288E+00,
+% prior - state 1 - Vector (2) = 
+5.009455E-01,4.990545E-01,
+% mean 0 - state 1 - Vector (2) = 
+5.005855E+00,-5.875820E-03,
+% covariance 0 - state 1 - Matrix (2 x 2) = 
+9.461827E-01,4.419038E-02,
+4.419038E-02,1.027436E+00,
+% mean 1 - state 1 - Vector (2) = 
+4.978663E+00,5.000389E+00,
+% covariance 1 - state 1 - Matrix (2 x 2) = 
+9.377226E-01,-5.077517E-02,
+-5.077517E-02,9.670612E-01,

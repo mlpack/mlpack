@@ -1,0 +1,13 @@
+% transmission
+0.9 0.05
+0.1 0.95
+% mean - state 0
+0 0
+% covariance - state 0
+1.0 0.1
+0.0 1.0
+% mean - state 1
+2 2
+% covariance - state 1
+1.0 0.0
+0.1 1.0
