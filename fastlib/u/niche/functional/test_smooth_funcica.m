@@ -18,7 +18,7 @@ cut_fraction = .5;
 cut = round(cut_fraction * N);
 data_coef = getcoef(myfd_data);
 
-num_tests = 50;
+num_tests = 1;
 
 
 % a simple method for smoothing
@@ -27,7 +27,7 @@ num_tests = 50;
 
 
 %lambda_set = 0;
-lambda_set = [0 1e-4 1e-3 5e-3 1e-2];
+lambda_set = [0 1e-6 1e-5 1e-4 1e-3 5e-3 1e-2];
 
 myfdPar_set = cell(1,length(lambda_set));
 for lambda_i = 1:length(lambda_set)

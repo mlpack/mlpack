@@ -30,10 +30,15 @@ x = x - repmat(mean(x')', 1, N);
 
 
 % generate b-spline basis curves
-t = linspace(0,1,1000);
+t = linspace(0,1,3000);
 
 
 load s1s2_10;
 s = [s1(t); s2(t)]';
+z = normrnd(zeros(length(t), N), 1);
 
 data = s * x;
+
+data = data + z;
+
+%data = noisy_data;
