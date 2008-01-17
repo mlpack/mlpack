@@ -47,79 +47,75 @@ template <typename TKernel> class NaiveRegression_new1{
   double friend SquaredFrobeniusNorm(Matrix &a);
 
   void CompareWithFast(ArrayList<Matrix> &fast){
-
+    printf("Came to compare witj fast..\n");
+    FILE *fp;
+    fp=fopen("squared_frobenius_error.txt","w+");
     /*Compare the relative frobenius norm */
     double sqdfast,sqdnaive,relative_error,max_error=0.0;
     for(index_t i=0;i<qset_.n_cols();i++){
        sqdfast=SquaredFrobeniusNorm(fast[i]);
        sqdnaive=SquaredFrobeniusNorm(results_[i]);
-       printf("sqdfast=%f and sqdnaive=%f\n",sqdfast,sqdnaive);
+       fprintf(fp,"sqdfast=%f and sqdnaive=%f\n",sqdfast,sqdnaive);
        relative_error=fabs(sqdfast-sqdnaive)/sqdnaive;
        if(max_error<=relative_error){
 
 	 max_error=relative_error;
        }
     }
-    printf("Maximum error was %f\n",max_error);
-    printf("The B^TWB matrices are..\n");
-    for(index_t q=0;q<qset_.n_cols();q++){
+    fprintf(fp,"Maximum error was %f\n",max_error);
+    printf("maximum error was %f\n",max_error);
+    // printf("The B^TWB matrices are..\n");
+    /*for(index_t q=0;q<qset_.n_cols();q++){
 
       printf("Fast..q=%d\n",q);
       fast[q].PrintDebug();
       printf("Naive..q=%d\n",q);
       results_[q].PrintDebug();
-    }
+      }*/
 
   }
 
   void Compute (){
     
-    Matrix B_t;
-    B_t.Init(rset_.n_rows()+1,rset_.n_cols());
-    
-    for(index_t row=0;row<rset_.n_rows()+1;row++){
-      
-      for(index_t col=0;col<rset_.n_cols();col++){
-	
-	if(row==0){
-	  B_t.set(row,col,1);
-	}
-	else
-	  {
-	    B_t.set(row,col,rset_.get(row-1,col));
-	  }
-      }
-    }
-
     /*temp2 hods B */
-    Matrix temp2; 
-    la::TransposeInit(B_t,&temp2); 
-    
     for(index_t q=0;q<qset_.n_cols();q++){
       
       const double *q_col = qset_.GetColumnPtr (q); //get the query point
-     
-      /*Form a diagonal W vector */
+      
+      for(index_t r=0;r<rset_.n_cols();r++){
 
-      Matrix W;
-      Vector v;
-      v.Init(rset_.n_cols());
-     
-      for(index_t i=0;i<rset_.n_cols();i++){
+	Matrix B_t;
+	B_t.Init(rset_.n_rows()+1,1);
+	//printf("Initialized B_t..\n");
 	
-	const double *r_col = rset_.GetColumnPtr (i); //get the reference point
+	
+	Matrix temp2; 
+	la::TransposeInit(B_t,&temp2); 
+	/*Form B^T matrix */
+	for(index_t row=0;row<rset_.n_rows()+1;row++){
+	    
+	    if(row==0){
+	      B_t.set(row,0,1);
+	    }
+	    else
+	      {
+		B_t.set(row,0,rset_.get(row-1,r));
+	      }
+	}
+   	const double *r_col = qset_.GetColumnPtr (r); //get the reference point	
 	double dsqd =la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	double val = kernel_.EvalUnnormOnSq (dsqd);
-	v[i]=val;
-      }
 
-      W.InitDiagonal(v);
-      Matrix temp3;
-      la:: MulInit(B_t,W,&temp3); //temp3 stores B^TW
-      la::MulOverwrite(temp3,temp2,&results_[q]);
-  
+	Matrix temp3;
+	la:: MulInit(B_t,temp2,&temp3); //temp3 stores B^TB
+
+	/* scale temp3 which holds B^TB by val */
+	la::Scale(val,&temp3);
+	la::AddTo(temp3,&results_[q]);
+      }
     }
   }
+
     
   void Init (Matrix query_dataset, Matrix reference_dataset){
 
@@ -202,7 +198,7 @@ template <typename TKernel> class Regression_new1{
       Init ();
     }
 
-    void Init (const Matrix & dataset, index_t & start, index_t & count, const Regression1Stat & left_stat, const Regression1Stat & right_stat){
+   void Init (const Matrix & dataset, index_t & start, index_t & count, const Regression1Stat & left_stat, const Regression1Stat & right_stat){ 
       Init ();
     }
 
@@ -326,13 +322,11 @@ template <typename TKernel> class Regression_new1{
     /**all lower bound matices will be all 0's **/
 
     node->stat().b_twb_mass_l.SetAll(0);
-    node->stat().b_twb_more_l.SetAll(0); 
     node->stat().b_twb_owed_l.SetAll(0);
 
 
-    /**Set the upper bound matrix owed_u and more_u to 0. The upper bound matrix mass_u will be set later*/
+    /**Set the upper bound matrix owed_u to 0. The upper bound matrix mass_u will be set later*/
 
-    node->stat().b_twb_more_u.SetAll(0); 
     node->stat().b_twb_owed_u.SetAll(0);
 
 
@@ -343,16 +337,18 @@ template <typename TKernel> class Regression_new1{
       node->stat().b_twb_more_l.SetAll(0);
       node->stat().b_twb_more_u.SetAll(0);
 
-      //Fill the B^tB matrix. Note B^TB is a symmetric matrix. Hence we will fill up just the upper triangular matix and then invert along the diagonal
+      /*Fill the B^tB matrix. Note B^TB is a symmetric matrix. */
+      /*  Hence we will fill up just the upper triangular matix and then invert along the diagonal */
     
 
 
       /*First from the B matrix */
-      /* Use temp as a temporary matrix variable. Which has the points of rnode in a matrix format */
+      /* Use temp as a temporary matrix variable.It has the points of the node in a matrix format */
 
       Matrix temp;
       index_t span=node->end()-node->begin();
       rset_.MakeColumnSlice(node->begin(),span,&temp);
+
       Matrix B_t;
       B_t.Init(rset_.n_rows()+1,node->end()-node->begin());
 
@@ -361,6 +357,8 @@ template <typename TKernel> class Regression_new1{
 	for(index_t col=0;col<node->end()-node->begin();col++){
 
 	  if(row==0){
+	    /*Set the first tow to all 0's */
+
 	    B_t.set(row,col,1);
 	  }
 	  else
@@ -372,7 +370,7 @@ template <typename TKernel> class Regression_new1{
       /*printf("Matrix B_t is \n");
 	B_t.PrintDebug(); */
 
-      Matrix temp2; //temp2 hold B^T
+      Matrix temp2; //temp2 hold B
       la::TransposeInit(B_t,&temp2);
       la:: MulOverwrite(B_t,temp2,&(node->stat().b_tb));
     }
@@ -383,10 +381,8 @@ template <typename TKernel> class Regression_new1{
 	PreProcess(node->left());
 	PreProcess(node->right());
 	la::AddOverwrite (node->left()->stat().b_tb, node->right()->stat().b_tb, &(node->stat().b_tb));
-
-	
       }
-    }
+  }
 
   void BestNodePartners (Tree * nd, Tree * nd1, Tree * nd2, Tree ** partner1,Tree ** partner2){
     
@@ -413,6 +409,9 @@ template <typename TKernel> class Regression_new1{
 
       /** transmit these values to the children node */
       la::AddTo(dl,&(node->left()->stat().b_twb_owed_l));
+      la::AddTo(du,&(node->left()->stat().b_twb_owed_u));
+
+      la::AddTo(dl,&(node->right()->stat().b_twb_owed_l));
       la::AddTo(du,&(node->right()->stat().b_twb_owed_u));
     }
     else{
@@ -570,19 +569,13 @@ template <typename TKernel> class Regression_new1{
     if(error>allowed_error){
       /* cannot prune */
 
-      printf("Sorry cannot prune for this node %d\n",qnode->begin());
-      printf("error is %f\n",error);
-      printf("allowed error is %f\n",allowed_error);
-
       dl.SetAll(0);
       du.SetAll(0);       
       return 0;
     }
 
     else{
-      printf("Hence can prune for this node %d\n",qnode->begin());
-      printf("error is %f\n",error);
-      printf("allowed error is %f\n",allowed_error);
+     
       return 1;
 
     }
@@ -591,8 +584,6 @@ template <typename TKernel> class Regression_new1{
   
   void Regression1Base(Tree *qnode, Tree *rnode){
 
-
-    printf("Hit regression base..\n");
     /* Subtract the B^TB matrix of rnode from B^TWB_more_u vector vector  */
     
     /*qnode->stat().more_u-=rnode->stat().b_tb*/
@@ -642,8 +633,6 @@ template <typename TKernel> class Regression_new1{
 	v[t++]=val;
 
       }
-
-      printf("V vector formed..\n");
       /*Form a diagonal W vector */
 
       Matrix W;
@@ -654,27 +643,13 @@ template <typename TKernel> class Regression_new1{
       //printf("temp3 set up..\n");
     
       la:: MulInit(B_t,W,&temp3); //temp3 stores B^TW
-      printf("1 done..\n");
+     
 
       /* temp4 holds b_twb which should be added to the exisitng value of b_twb */
       Matrix temp4;
       la::MulInit(temp3,temp2,&temp4);
-    
-
-      printf("Initially B^TWB lower is ..\n");
-      b_twb_l_[q].PrintDebug();    
-
-      printf("Initially B^TWB upper is ..\n");
-      b_twb_u_[q].PrintDebug();
-
       la::AddTo (temp4,&b_twb_l_[q]); //temp4 holds B^TWB
       la::AddTo (temp4,&b_twb_u_[q]);
-
-      printf("B_TWB_lower for node %d\n",q);
-      b_twb_l_[q].PrintDebug();
-
-      printf("finally B_TWB upper for node %d \n",q);
-      b_twb_u_[q].PrintDebug();
     }
     
     /* get a tighter lower and upper bound for every dimension by looping over each query point */
@@ -729,7 +704,7 @@ template <typename TKernel> class Regression_new1{
       for(index_t q=qnode->begin();q<qnode->end();q++){
 	
 	/*b_twb_e=(b_twb_l+b_twb_u_b_twb_more_l+b_twb_more_u)/2 */
-	
+       
 	Matrix temp2;
 
 	la::AddInit(b_twb_l_[q], b_twb_u_[q], &temp2);
@@ -890,10 +865,7 @@ template <typename TKernel> class Regression_new1{
     /* Create trees */  
     qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen,&old_from_new_r_,&new_from_old_r_);
     rroot_=tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen,&old_from_new_r_,&new_from_old_r_);
-
-    printf("new_from_old_r_ is ...\n");
-
-   
+ 
     /*Initialize the arraylist b_twb_l_  b_twb_u_ and b_twb_e_ */
 
     b_twb_l_.Init(qset_.n_cols());
@@ -988,10 +960,7 @@ template <typename TKernel> class Regression_new1{
     rroot_ = tree::MakeKdTreeMidpoint < Tree > (rset_, leaflen, &old_from_new_r_, &new_from_old_r_);
     qroot_=tree::MakeKdTreeMidpoint < Tree > (qset_, leaflen, NULL, NULL);
 
-    printf("The trees are as follows \n");
-    qroot_->Print();
-
-    
+      
     for(index_t i=0;i<qset_.n_cols();i++){
    
       printf("Old:%d new:%d\n",i,new_from_old_r_[i]);
