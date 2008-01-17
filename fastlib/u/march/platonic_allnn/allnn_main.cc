@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
   ////////// OUTPUT RESULTS //////////////////////////////////////////
 
   const char* output_filename =
-      fx_param_str(NULL, "output_filename", "output.csv");
+      fx_param_str(NULL, "output_filename", "output.txt");
 
   // We encourage you to use C-style file streams and print buffers
   // rather than C++'s complicated equivalents.
@@ -127,7 +127,15 @@ int main(int argc, char* argv[]) {
   // The ot namespace stands for object traversal and provides many
   // features.  Here, we pretty-print an ArrayList to file, though we
   // could alternately have serialized it for later loading and reuse.
+  //
+  // Note that this doesn't write a .csv, but instead a transcript of
+  // the ArrayList's contents.  The library does not appear to have a
+  // .csv writer for ArrayLists--this will be addressed.  You can
+  // write .csv from Matrix objects with data::save.
   ot::Print(results, output_file);
+
+  // Don't forget these things!
+  fclose(output_file);
 
   // We must tell FASTexec to wrap up when our code is done.  This
   // emits its complete data structure--parameter settings, timers,
