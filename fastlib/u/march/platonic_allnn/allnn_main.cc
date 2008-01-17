@@ -1,20 +1,24 @@
 /**
- * @file allnn_main.h
+ * @file allnn_main.cc
  *
- * This file contains a "platonic" example of FASTlib code.  It is a
- * rudimentary dual-tree algorithm for all-nearest-neighbors, but more
- * importantly, it demonstrates several useful functions for common
- * tasks as well as proper coding style.
+ * This file contains a "platonic" example of FASTlib code for a
+ * stand-alone executable.  It makes use of an accompanying library
+ * implimenting a rudimentary dual-tree all-nearest-neighbors
+ * algorithm, but more importantly, it demonstrates useful functions
+ * for common tasks as well as proper coding style.
  *
  * Note however that the degree of documentation in this file well
- * exceeds expectations.  You should always provide Doxygen-formatted
+ * exceeds expectations.  You should always provide Doxygen-parsed
  * comments (those starting with slash-star-star) for classes, their
  * members, and functions, but snippets of code only deserve
- * documentation if it is not immediately clear what they do.  (Use
- * slash-slash or slash-star for line-by-line comments that Doxygen
- * should ignore.)  Here, we assume you are a total beginner with
- * FASTlib and a novice with C++, so many additional explanations have
- * been provided.
+ * documentation if it is not immediately clear what they do.  Here,
+ * we assume you are a total beginner with FASTlib and a novice with
+ * C++, so many additional explanations have been provided.  We will
+ * denote explanatory comments not needed in normal coding with
+ * slash-slash and the appropriate degree of code documentation with
+ * slash-star and slash-star-star.
+ *
+ * @see allnn.h
  */
 
 // To begin, note the "@file" at the top of the previous comment
@@ -51,7 +55,7 @@ int main(int argc, char* argv[]) {
   ////////// DUAL-TREE ALLNN /////////////////////////////////////////
 
   AllNN allnn;
-  
+
   // FASTexec organizes parameters and results into submodules.  Think
   // of this as creating a new folder named "allnn_module" under the
   // rood directory (NULL) for the AllNN object to work inside.  Here,
@@ -76,7 +80,7 @@ int main(int argc, char* argv[]) {
 
   ////////// NAIVE ALLNN /////////////////////////////////////////////
 
-  // Compare results with naive if run with "--do_naive=true".
+  /* Compare results with naive if run with "--do_naive=true" */
   if (fx_param_bool(NULL, "do_naive", 0)) {
 
     // Our design of the AllNN class renders it usable only once;
@@ -93,10 +97,11 @@ int main(int argc, char* argv[]) {
     ArrayList<index_t> naive_results;
     naive_allnn.ComputeNaive(&naive_results);
 
-    // A quick sanity check, now that we have naive results.  We don't
-    // want to run the for-loop unless debugging, hence the #ifdef.
-    // Most debug-only commands can instead by handled by DEBUG_ONLY
-    // or other debugging macros.  See base/debug.h for more details.
+    /* Perform a quick sanity check now that we have naive results */
+
+    // We don't want to run the for-loop unless debugging, hence the
+    // #ifdef.  For debug-only one-liners, use DEBUG_ONLY(expr) or the
+    // other debugging macros.  See base/debug.h for more details.
 #ifdef DEBUG
     for (index_t i = 0; i < results.size(); ++i) {
       // Prints a message if results are different.  Note the peculiar
@@ -106,9 +111,9 @@ int main(int argc, char* argv[]) {
           "i = %"LI"d, results[i] = %"LI"d, naive_results[i] = %"LI"d",
           i, results[i], naive_results[i]);
     }
-#endif // DEBUG
+#endif /* DEBUG */
 
-  }
+  } /* if do_naive */
 
   ////////// OUTPUT RESULTS //////////////////////////////////////////
 
@@ -132,4 +137,4 @@ int main(int argc, char* argv[]) {
   // main should return 0 if the program terminates normally.
   return 0;
 
-}
+} /* main */
