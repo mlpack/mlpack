@@ -10,11 +10,27 @@ void print_matrix(const Matrix& a, const char* msg) {
   }
 }
 
+void print_matrix(TextWriter& writer, const Matrix& a, const char* msg, const char* format) {
+  writer.Printf("%s - Matrix (%d x %d) = \n", msg, a.n_rows(), a.n_cols());
+  for (int j = 0; j < a.n_cols(); j++) {
+    for (int i = 0; i < a.n_rows(); i++)
+      writer.Printf(format, a.get(i, j));
+    writer.Printf("\n");
+  }
+}
+
 void print_vector(const Vector& a, const char* msg) {
   printf("%s - Vector (%d) = \n", msg, a.length());
   for (int i = 0; i < a.length(); i++)
     printf("%8.4f", a[i]);
   printf("\n");
+}
+
+void print_vector(TextWriter& writer, const Vector& a, const char* msg, const char* format) {
+  writer.Printf("%s - Vector (%d) = \n", msg, a.length());
+  for (int i = 0; i < a.length(); i++)
+    writer.Printf(format, a[i]);
+  writer.Printf("\n");
 }
 
 double RAND_NORMAL_01() {
@@ -257,4 +273,152 @@ void mat2arrlstmat(int N, Matrix& a, ArrayList<Matrix> * seqs) {
     a.MakeColumnSlice(i, N, &b);
     s_.AddBackItem(b);
   }
+}
+
+bool skip_blank(TextLineReader& reader) {
+  for (;;){
+    if (!reader.MoreLines()) return false;
+    char* pos = reader.Peek().begin();
+    while (*pos == ' ' || *pos == ',' || *pos == '\t')
+      pos++;
+    if (*pos == '\0' || *pos == '%') reader.Gobble();
+    else break;
+  }
+  return true;
+}
+
+success_t read_matrix(TextLineReader& reader, Matrix* matrix) {
+  if (!skip_blank(reader)) { // EOF ?
+    matrix->Init(0,0);
+    return SUCCESS_FAIL;
+  }
+  else {
+    int n_rows = 0;
+    int n_cols = 0;
+    bool is_done;
+    {// How many columns ?
+      ArrayList<String> num_str;
+      num_str.Init();
+      reader.Peek().Split(", \t", &num_str);
+      n_cols = num_str.size();
+    }
+    ArrayList<double> num_double;
+    num_double.Init();
+    
+    for(;;) { // read each rows
+      n_rows++;
+      double* point = num_double.AddBack(n_cols);
+      ArrayList<String> num_str;
+      num_str.Init();
+      reader.Peek().Split(", \t", &num_str);
+      
+      DEBUG_ASSERT(num_str.size() == n_cols);
+
+      for (int i = 0; i < n_cols; i++)
+	*(point+i) = strtod(num_str[i], NULL);
+      
+      is_done = false;
+
+      reader.Gobble();
+      
+      for (;;){
+	if (!reader.MoreLines()) {
+	  is_done = true;
+	  break;
+	}
+	char* pos = reader.Peek().begin();
+	while (*pos == ' ' || *pos == '\t')
+	  pos++;
+	if (*pos == '\0') reader.Gobble();
+	else if (*pos == '%') {
+	  is_done = true;
+	  break;
+	}
+	else break;
+      }
+
+      if (is_done) {
+	num_double.Trim();
+	matrix->Own(num_double.ReleasePointer(), n_cols, n_rows);
+	return SUCCESS_PASS;
+      }
+    }
+  }
+}
+
+success_t read_vector(TextLineReader& reader, Vector* vec) {
+  if (!skip_blank(reader)) { // EOF ?
+    vec->Init(0);
+    return SUCCESS_FAIL;
+  }
+  else {
+    ArrayList<double> num_double;
+    num_double.Init();
+    
+    for(;;) { // read each rows
+      bool is_done = false;
+
+      ArrayList<String> num_str;
+      num_str.Init();
+      reader.Peek().Split(", \t", &num_str);
+
+      double* point = num_double.AddBack(num_str.size());
+      
+      for (int i = 0; i < num_str.size(); i++)
+	*(point+i) = strtod(num_str[i], NULL);
+      
+      reader.Gobble();
+      
+      for (;;){
+	if (!reader.MoreLines()) {
+	  is_done = true;
+	  break;
+	}
+	char* pos = reader.Peek().begin();
+	while (*pos == ' ' || *pos == '\t')
+	  pos++;
+	if (*pos == '\0') reader.Gobble();
+	else if (*pos == '%') {
+	  is_done = true;
+	  break;
+	}
+	else break;
+      }
+
+      if (is_done) {
+	num_double.Trim();
+	int length = num_double.size();
+	vec->Own(num_double.ReleasePointer(), length);
+	return SUCCESS_PASS;
+      }
+    }
+  }
+}
+
+success_t load_matrix_list(const char* filename, ArrayList<Matrix> *matlst) {
+  TextLineReader reader;
+  matlst->Init();
+  if (!PASSED(reader.Open(filename))) return SUCCESS_FAIL;
+  do {
+    Matrix tmp;
+    if (read_matrix(reader, &tmp) == SUCCESS_PASS) {
+      matlst->AddBackItem(tmp);
+    }
+    else break;
+  } while (1);
+  return SUCCESS_PASS;
+}
+
+success_t load_vector_list(const char* filename, ArrayList<Vector> *veclst) {
+  TextLineReader reader;
+  veclst->Init();
+  if (!PASSED(reader.Open(filename))) return SUCCESS_FAIL;
+  do {
+    Vector vec;
+    if (read_vector(reader, &vec) == SUCCESS_PASS) {
+      veclst->AddBackItem(vec);
+    }
+    else break;
+  } while (1);
+  return SUCCESS_PASS;
 }

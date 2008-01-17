@@ -113,6 +113,35 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
   }
 }
 
+void MixtureGauss::InitFromProfile(const ArrayList<Matrix>& matlst, int start, int N) {
+  DEBUG_ASSERT(matlst[start].n_cols()==1);
+  Vector tmp;
+  matlst[start].MakeColumnVector(0, &tmp);
+  prior.Copy(tmp);
+
+  means.Init();
+  covs.Init();
+  int K = prior.length();
+  for (int i = start+1; i < start+2*K+1; i+=2) {
+    DEBUG_ASSERT(matlst[i].n_rows()==N && matlst[i].n_cols()==1);
+    DEBUG_ASSERT(matlst[i+1].n_rows()==N && matlst[i+1].n_cols()==N);
+    Vector m;
+    matlst[i].MakeColumnVector(0, &m);
+    means.AddBackItem(m);
+    covs.AddBackItem(matlst[i+1]);    
+  }
+  ACC_means.Copy(means);
+  ACC_covs.Copy(covs);
+  ACC_prior.Init(K);
+  inv_covs.Copy(covs);
+  det_covs.Init(covs.size());
+  for (int i = 0; i < K; i++) {
+    double det = la::Determinant(covs[i]);
+    la::InverseOverwrite(covs[i], &inv_covs[i]);
+    det_covs[i] = pow(2.0*math::PI, -N/2.0) * pow(det, -0.5);
+  }  
+}
+
 void MixtureGauss::print_mixture(const char* s) const {
   int K = means.size();
   printf("%s - Mixture (%d)\n", s, K);

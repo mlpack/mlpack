@@ -44,11 +44,14 @@ double hmm_decodeD(const Vector& seq, const Matrix& trans, const Matrix& emis, M
     RETURN: log probability of the most probable sequence
 */
 double hmm_viterbiD_init(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
+double hmm_viterbiD_init(int L, const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
 
 /** Baum-Welch estimation of transition and emission probabilities
-    
-
 */
 void hmm_trainD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter = 500, double tol = 1e-3);
+
+/** Viterbi estimation of transition and emission probabilities
+*/
+void hmm_train_viterbiD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter = 500, double tol = 1e-3);
 
 #endif

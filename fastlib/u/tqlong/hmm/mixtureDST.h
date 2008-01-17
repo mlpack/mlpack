@@ -16,12 +16,16 @@ class MixtureGauss {
   double total;
  public:
   void InitFromFile(const char* mean_fn, const char* covs_fn = NULL, const char* prior_fn = NULL);
+  void InitFromProfile(const ArrayList<Matrix>& matlst, int start, int N);
   void Init(int K, int N);
   void Init(int K, const Matrix& data, const ArrayList<int>& labels);
   void print_mixture(const char* s) const;
   void generate(Vector* v) const;
   double MixtureGauss::getPDF(const Vector& v) const;
   double MixtureGauss::getPDF(int cluster, const Vector& v) const;
+  const Vector& get_prior() const { return prior; }
+  const Vector& get_mean(int k) const { return means[k]; }
+  const Matrix& get_cov(int k) const { return covs[k]; }
   int n_clusters() const { return means.size(); }
   int v_length() const { return means[0].length(); }
 

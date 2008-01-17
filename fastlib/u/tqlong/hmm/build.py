@@ -26,6 +26,14 @@ binrule(
     deplibs = ["fastlib:fastlib_int"]       # depends on example in this folder
     )
 
+binrule(
+    name = "hmm",                 # the executable name
+    sources = ["hmm.cc","support.cc","discreteHMM.cc","gaussianHMM.cc","mixgaussHMM.cc","mixtureDST.cc"],
+    headers = ["support.h", "discreteHMM.h","gaussianHMM.h","mixgaussHMM.h","mixtureDST.h"],
+    deplibs = ["fastlib:fastlib_int"]       # depends on example in this folder
+    )
+
+
 # to build:
 # 1. make sure have environment variables set up:
 #    $ source /full/path/to/fastlib/script/fl-env /full/path/to/fastlib

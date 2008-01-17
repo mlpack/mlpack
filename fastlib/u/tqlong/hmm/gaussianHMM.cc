@@ -2,6 +2,52 @@
 #include "support.h"
 #include "gaussianHMM.h"
 
+success_t load_profileG(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
+  ArrayList<Matrix> matlst;
+  if (!PASSED(load_matrix_list(profile, &matlst))) {
+    NONFATAL("Couldn't open '%s' for reading.", profile);
+    return SUCCESS_FAIL;
+  }
+  DEBUG_ASSERT(matlst.size() > 0);
+  trans->Copy(matlst[0]);
+  means->Init();
+  covs->Init();
+  int M = trans->n_rows(); // num of states
+  DEBUG_ASSERT(matlst.size() == 2*M+1);
+  int N = matlst[1].n_rows(); // dimension
+  for (int i = 1; i < 2*M+1; i+=2) {
+    DEBUG_ASSERT(matlst[i].n_rows()==N && matlst[i].n_cols()==1);
+    DEBUG_ASSERT(matlst[i+1].n_rows()==N && matlst[i+1].n_cols()==N);
+    Vector m;
+    matlst[i].MakeColumnVector(0, &m);
+    means->AddBackItem(m);
+    covs->AddBackItem(matlst[i+1]);
+  }
+  return SUCCESS_PASS;
+}
+
+success_t save_profileG(const char* profile, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs) {
+  TextWriter w_pro;
+  if (!PASSED(w_pro.Open(profile))) {
+    NONFATAL("Couldn't open '%s' for writing.", profile);
+    return SUCCESS_FAIL;
+  }
+  int M = trans.n_rows(); // num of states
+  DEBUG_ASSERT(means.size() == M && covs.size() == M);
+  int N = means[0].length(); // dimension
+  print_matrix(w_pro, trans, "% transmission", "%E,");
+  for (int i = 0; i < M; i++) {
+    DEBUG_ASSERT(means[i].length() == N);
+    DEBUG_ASSERT(covs[i].n_rows()==N && covs[i].n_cols()==N);
+    char s[100];
+    sprintf(s, "%% mean - state %d", i);
+    print_vector(w_pro, means[i], s, "%E,");    
+    sprintf(s, "%% covariance - state%d", i);
+    print_matrix(w_pro, covs[i], s, "%E,");    
+  }
+  return SUCCESS_PASS;
+}
+
 void hmm_generateG_init(int L, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs, Matrix* seq, Vector* states){
   DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==means.size() && trans.n_rows()==covs.size()), "hmm_generateG_init: matrices sizes do not match");
   Matrix trsum;
@@ -200,6 +246,10 @@ double hmm_decodeG(const Matrix& trans, const Matrix& emis_prob, Matrix* pstates
 
 double hmm_viterbiG_init(const Matrix& trans, const Matrix& emis_prob, Vector* states) {
   int L = emis_prob.n_cols();
+  return hmm_viterbiG_init(L, trans, emis_prob, states);
+}
+
+double hmm_viterbiG_init(int L, const Matrix& trans, const Matrix& emis_prob, Vector* states) {
   int M = trans.n_rows();
   DEBUG_ASSERT_MSG((M==trans.n_cols() && M==emis_prob.n_rows()),"hmm_viterbiG: sizes do not match");
   
@@ -254,6 +304,179 @@ double hmm_viterbiG_init(const Matrix& trans, const Matrix& emis_prob, Vector* s
 
   return bestVal;
 }
+
+void hmm_cal_emis_prob(const Matrix& seq, const ArrayList<Vector>& means, const ArrayList<Matrix>& inv_covs, const Vector& det, Matrix* emis_prob) {
+  int L = seq.n_cols();
+  int M = means.size();
+  for (int t = 0; t < L; t++) {
+    Vector e;
+    seq.MakeColumnVector(t, &e);
+    for (int i = 0; i < M; i++)
+      emis_prob->ref(i, t) = NORMAL_DENSITY(e, means[i], inv_covs[i], det[i]);
+  }
+}
+
+void init_gauss_param(int M, const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO) {
+  int N = seqs[0].n_rows();
+  Matrix& gTR = *guessTR;
+  ArrayList<Vector>& gME = *guessME;
+  ArrayList<Matrix>& gCO = *guessCO;
+  ArrayList<int> labels;
+  Vector sumState;
+
+  kmeans(seqs, M, &labels, &gME, 1000, 1e-5);
+
+  //for (int i = 0; i < labels.size(); i++) printf("%8d", labels[i]);
+  //printf("---1---\n");
+
+  gTR.Init(M, M); gTR.SetZero();
+  sumState.Init(M); sumState.SetZero();
+  gCO.Init();
+  for (int i = 0; i < M; i++) {
+    Matrix m;
+    m.Init(N, N); m.SetZero();
+    gCO.AddBackItem(m);
+  }
+  //printf("---2---\n");
+
+  int t = 0;
+  for (int p=0; p < seqs.size(); p++) {
+    for (int q=0; q < seqs[p].n_cols(); q++,t++)  {
+      if (q == seqs[p].n_cols() -1) continue;
+      int i = labels[t];
+      int j = labels[t+1];
+
+      gTR.ref(i, j)++;
+      sumState[i]++;
+      
+      Vector data_j_Vec, sub_Vec;
+      Matrix tmp_cov;
+
+      seqs[p].MakeColumnVector(q, &data_j_Vec);
+      la::SubInit(gME[i], data_j_Vec, &sub_Vec);
+      tmp_cov.AliasColVector(sub_Vec);
+      //printf("t = %d x = %8.3f\n", t, sub_Vec[0]);
+      la::MulExpert(1, false, tmp_cov, true, tmp_cov, 1, &gCO[i]);
+    }
+  }
+  
+  for (int i = 0; i < M; i++) 
+    if (sumState[i] == 0) {
+      for (int j = 0; j < M; j++) gTR.ref(i, j) = 0;
+      gTR.ref(i, i) = 1;
+      gME[i].SetZero();
+      gCO[i].SetZero();
+      for (int j = 0; j < N; j++) gCO[i].ref(j, j) = 1;
+    }
+    else {
+      for (int j = 0; j < M; j++) gTR.ref(i, j) /= sumState[i];
+      la::Scale(1.0/sumState[i], &gCO[i]);
+      for (int j = 0; j < N; j++) gCO[i].ref(j, j) += 1e-3; // make sure the diagonal elements are not too small
+    }
+}
+
+void hmm_train_viterbiG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
+  Matrix &gTR = *guessTR;
+  ArrayList<Vector>& gME = *guessME;
+  ArrayList<Matrix>& gCO = *guessCO;
+  int L = -1;
+  int M = gTR.n_rows();
+  int N = gME[0].length();
+  DEBUG_ASSERT_MSG((M==gTR.n_cols() && M==gME.size() && M == gCO.size()),"hmm_trainD: sizes do not match");
+  
+  for (int i = 0; i < seqs.size(); i++)
+    if (seqs[i].n_cols() > L) L = seqs[i].n_cols();
+
+  Matrix TR; // accumulating transition
+  ArrayList<Vector> ME; // accumulating mean
+  ArrayList<Matrix> CO; // accumulating covariance
+  ArrayList<Matrix> INV_CO; // inverse matrix of the covariance
+  Vector DET; // the determinant * constant of the Normal PDF formula
+  TR.Init(M, M);
+  ME.Copy(gME);
+  CO.Copy(gCO);
+  INV_CO.Copy(CO);
+  DET.Init(M);
+
+  Matrix emis_prob;
+  Vector sumState; // the denominator for each state
+
+  emis_prob.Init(M, L);
+  sumState.Init(M);
+
+  double loglik = 0, oldlog;
+  for (int iter = 0; iter < max_iter; iter++) {
+    oldlog = loglik;
+    loglik = 0;
+
+    // set the accumulating values to zeros and compute the inverse matrices and determinant constants
+    TR.SetZero();
+    for (int i = 0; i < M; i++) {
+      ME[i].SetZero();
+      CO[i].SetZero();
+      la::InverseOverwrite(gCO[i], &INV_CO[i]);
+      DET[i] = pow(2.0*math::PI, -N/2.0) * pow(la::Determinant(gCO[i]), -0.5);
+    }
+    sumState.SetZero();
+
+    // for each sequence, we will use forward-backward procedure and then accumulate
+    for (int idx = 0; idx < seqs.size(); idx++) {
+      L = seqs[idx].n_cols();
+      Vector states;
+      hmm_cal_emis_prob(seqs[idx], gME, INV_CO, DET, &emis_prob); // first calculate the emission probabilities of the sequence
+      loglik += hmm_viterbiG_init(L, gTR, emis_prob, &states); // get the most probable state sequence
+      
+      // accumulate expected transition & mean & covariance
+      for (int t = 0; t < L-1; t++) {
+	int i = (int) states[t];
+	int j = (int) states[t+1];
+	TR.ref(i, j) ++;
+      }
+      
+      for (int t = 0; t < L; t++) {
+	Vector e;
+	seqs[idx].MakeColumnVector(t, &e);
+	int i = (int) states[t];
+	sumState[i] ++;
+	la::AddTo(e, &ME[i]);
+
+	Vector d;
+	la::SubInit(e, gME[i], &d);
+	Matrix D;
+	D.AliasColVector(d);
+	la::MulExpert(1, false, D, true, D, 1.0, &CO[i]);
+      }
+      // end accumulate
+    }
+
+    // after accumulate all sequences: re-estimate transition & mean & covariance for the next iteration
+    for (int i = 0; i < M; i++) {
+      double s = 0;
+      for (int j = 0; j < M; j++) s += TR.get(i, j);
+      if (s == 0) {
+	for (int j = 0; j < M; j++) gTR.ref(i, j) = 0;
+	gTR.ref(i, i) = 1;
+      }
+      else {
+	for (int j = 0; j < M; j++) gTR.ref(i, j) = TR.get(i, j) / s;
+      }
+      
+      if (sumState[i] != 0) {
+	la::ScaleOverwrite(1.0/sumState[i], ME[i], &gME[i]);
+	la::ScaleOverwrite(1.0/sumState[i], CO[i], &gCO[i]);
+      }
+    }
+    // end re-estimate
+
+    printf("Iter = %d Loglik = %8.4f\n", iter, loglik);
+    if (fabs(oldlog - loglik) < tol) {
+      printf("\nConverged after %d iterations\n", iter);
+      break;
+    }
+    oldlog = loglik;
+  }
+}
+
 
 void hmm_trainG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
   Matrix &gTR = *guessTR;

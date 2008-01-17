@@ -4,6 +4,9 @@
 #include "fastlib/fastlib.h"
 #include "mixtureDST.h"
 
+success_t load_profileM(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs);
+success_t save_profileM(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs);
+
 /**
 Generating a sequence and states using transition and emission probabilities.
 L: sequence length
@@ -48,10 +51,9 @@ void hmm_estimateM_init(int numStates, int NumClusters, const Matrix& seq, const
 //double hmm_viterbiD_init(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
 
 /** Baum-Welch estimation of transition and emission distribution (Gaussian)
-    
-
 */
+void hmm_cal_emis_probM(const Matrix& seq, const ArrayList<MixtureGauss>& mixs, Matrix* emis_prob);
 void hmm_trainM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter=500, double tol=1e-3);
-
+void hmm_train_viterbiM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter=500, double tol=1e-3);
 
 #endif
