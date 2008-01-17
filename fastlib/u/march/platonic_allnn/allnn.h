@@ -63,6 +63,10 @@ class AllNN {
     // The object traversal macros establish a FASTlib-complient
     // storage class, providing many tools including pretty printing
     // and copy construction.  See base/otrav.h for more details.
+    //
+    // OT_DEF_BASIC is suitable for when you want pretty printing, but
+    // don't need a special destructor (your object has no pointers).
+    // Otherwise, you should use OT_DEF.
     OT_DEF_BASIC(QueryStat) {
       // Declare a non-pointer/array member variable to be traversed.
       // See base/otrav.h for other kinds of declarations.
@@ -443,8 +447,6 @@ class AllNN {
 
     module_ = module_in;
 
-    /* The data sets need to have the same number of points */
-    DEBUG_SAME_SIZE(queries_.n_cols(), references_.n_cols());
     /* The data sets need to have the same dimensionality */
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
 
@@ -500,8 +502,6 @@ class AllNN {
 
     module_ = module_in;
 
-    /* The data sets need to have the same number of points */
-    DEBUG_SAME_SIZE(queries_.n_cols(), references_.n_cols());
     /* The data sets need to have the same dimensionality */
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
 
