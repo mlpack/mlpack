@@ -115,7 +115,7 @@ class AllkNN {
   /////////////////////////////// Constructors /////////////////////////////////////////////
   
   // Add this at the beginning of a class to prevent accidentally calling the copy constructor
-  FORBID_ACCIDENTAL_COPIES(AllNN);
+  FORBID_ACCIDENTAL_COPIES(AllkNN);
   
 
  public:
@@ -171,7 +171,7 @@ class AllkNN {
     
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
-	  ArrayList<std::pair<dstance, index_t> > neighbors;
+	  ArrayList<std::pair<double, index_t> > neighbors;
 		neighbors.Init(knns_, knns_+leaf_size_);
     // node->begin() is the index of the first point in the node, 
 		// node->end is one past the last index
@@ -184,8 +184,8 @@ class AllkNN {
       
       index_t ind = query_index*knns_;
 			for(index_t i=0; i<knns_; i++) {
-			  neighbors[i]=std::make_pair(neighbor_distances[ind+i],
-						                        neighbor_indices[ind+i]);
+			  neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
+						                        neighbor_indices_[ind+i]);
 			}
       // We'll do the same for the references
       for (index_t reference_index = reference_node->begin(); 
@@ -206,13 +206,13 @@ class AllkNN {
 			if (neighbors.size()>knns_) {
         std::sort(neighbors.begin(), neighbors.end());
 			  for(index_t i=0; i<knns_; i++) {
-				  neighbor_distances[ind+i] = neighbors[i].first;
-				  neighbor_indices[ind+i]	= neighbors[i].second;
+				  neighbor_distances_[ind+i] = neighbors[i].first;
+				  neighbor_indices_[ind+i]	= neighbors[i].second;
 			  }
         neighbors.Resize(knns_);
         // We need to find the upper bound distance for this query node
-        if (neighbor_distances_[ind+knns-1] > query_max_neighbor_distance) {
-          query_max_neighbor_distance = neighbor_distances_[nd+knns_-1]; 
+        if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
+          query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
         }
 			}
       
@@ -344,7 +344,7 @@ class AllkNN {
   * local copies of the data.
   */
   void Init(const Matrix& queries_in, const Matrix& references_in, 
-			index_t leaf_size_, ndex_t knns) {
+			index_t leaf_size, index_t knns) {
     
     
     // track the number of prunes
@@ -422,14 +422,16 @@ class AllkNN {
 				MinNodeDistSq_(query_tree_, reference_tree_));
     
     // We need to initialize the results list before filling it
-    results->Init(neighbor_indices_.size());
+    resulting_neighbors->Init(neighbor_indices_.size());
     // We need to map the indices back from how they have 
 		// been permuted
     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      (*results)[old_from_new_queries_[i]] = 
+      (*resulting_neighbors)[
+				old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
 				old_from_new_references_[neighbor_indices_[i]];
 		}
-	  distances.Copy(neighbor_distances_.ptr(), neighbor_distances.len());	
+	  distances->Copy(neighbor_distances_.ptr(), 
+				neighbor_distances_.length());	
     
   } // ComputeNeighbors
   
@@ -444,10 +446,11 @@ class AllkNN {
     // The same code as above
     results->Init(neighbor_indices_.size());
     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      (*results)[old_from_new_queries_[i]] = 
+      (*results)[old_from_new_queries_[i/knns_]] = 
 				  old_from_new_references_[neighbor_indices_[i]];
     }
-    distances.Copy(neighbor_distances_.ptr(), neighbor_distances.len());	
+    distances->Copy(neighbor_distances_.ptr(), 
+				neighbor_distances_.length());	
   } // ComputeNaive
    
 }; //class AllNN

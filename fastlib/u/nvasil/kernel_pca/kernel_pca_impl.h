@@ -17,43 +17,34 @@
  */
 
 
-void KernelPCA::Init(std::string data_file, 
-		                 std::string index_file) {
-	if (index_file.empty()) {
-    data_.Init(data_file);
-	} else {
-	  data_.Init(data_file, index_file);
-	}
-	dimension_=data_.get_dimension();
-	tree_.Init(&data_);
-  mmapmm::MemoryManager<false>::allocator_ = 
-		    new mmapmm::MemoryManager<false>();
-  mmapmm::MemoryManager<false>::allocator_->Init();
+void KernelPCA::Init(std::string data_file, index_t knns, 
+		index_t leaf_size) {
+  data::Load(data_file.c_str(), &data_);
+	knns_ = knns;
+  allknn_.Init(data_, data_, leaf_size, knns);
 }
 
 void KernelPCA::Destruct() {
-  tree_.Destruct();
-  data_.Destruct();	
-	unlink("allnn.txt");
-	if (mmapmm::MemoryManager<false>::allocator_ != NULL) {
-	  delete mmapmm::MemoryManager<false>::allocator_;
-    mmapmm::MemoryManager<false>::allocator_=NULL;
-	}
+  
 }
 
-void KernelPCA::ComputeNeighborhoods(index_t knns) {
+void KernelPCA::ComputeNeighborhoods() {
   NONFATAL("Building tree...\n");
 	fflush(stdout);
-	tree_.set_knns(knns);
-	tree_.BuildDepthFirst();
-	NONFATAL("Memory usage: %llu\n",
-	          (unsigned long long)Tree_t::Allocator_t::allocator_->get_usage());
-  NONFATAL("Tree Statistics\n %s\n", tree_.Statistics().c_str());
-  NONFATAL("Computing all nearest neighbors...\n");
-  fflush(stdout);  
-	tree_.AllNearestNeighbors(tree_.get_parent(), knns);
-  NONFATAL("Collecting results....\n");
-	tree_.CollectKNearestNeighborWithFwriteText("allnn.txt");
+	ArrayList<index_t> resulting_neighbors;
+	ArrayList<double>  distances;
+  allknn_.ComputeNeighbors(&resulting_neighbors,
+			                     &distances);
+	FILE *fp=fopen("allnn.txt", "w");
+	if (fp==NULL) {
+	  FATAL("Unable to open allnn for exporting the results, error %s\n",
+				   strerror(errno));
+	}
+  for(index_t i=0; i<resulting_neighbors.size(); i++) {
+	  fprintf(fp, "%lli %lli %lg\n", i / knns_, resulting_neighbors[i],
+				distances[i]);
+	}
+  fclose(fp);
 }
 
 template<typename DISTANCEKERNEL>
@@ -64,7 +55,7 @@ void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
   kernel_matrix_.Copy(affinity_matrix_);
 	kernel_matrix_.ApplyFunction(kernel);
 	Vector temp;
-	temp.Init(kernel_matrix_.get_dimension());
+	temp.Init(kernel_matrix_.dimension());
 	temp.SetAll(1.0);
 	kernel_matrix_.SetDiagonal(temp);
 	kernel_matrix_.EndLoading();
@@ -127,48 +118,46 @@ void KernelPCA::EstimateBandwidth(double *bandwidth) {
 	*bandwidth=mean/count;
 }
 
-void KernelPCA::ComputeLLE(index_t knns,
-		                       index_t num_of_eigenvalues,
+void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 			                     Matrix *eigen_vectors,
-									         std::vector<double> *eigen_values);
-{
-  FILE *fp=fopen("allnn.txt");
+									         std::vector<double> *eigen_values) {
+  FILE *fp=fopen("allnn.txt", "r");
   if unlikely(fp==NULL) {
 	  FATAL("Unable to open allnn.txt, error %s\n", strerror(errno));
 	}
 	uint64 p1, p2;
 	double dist;
-	double mean=0;
   uint64 last_point=numeric_limits<uint64>::max();
 	Vector point;
 	point.Init(dimension_);
-	Matriix neighbors;
-	neighbor_vals.Init(dimension_, knns);
-	Matrix cov(neighbors);
+	Matrix neighbor_vals;
+	neighbor_vals.Init(dimension_, knns_);
+	Matrix cov(neighbor_vals);
 	Vector ones;
 	ones.Init(dimension_);
 	ones.SetAll(1);
 	Vector weights;
-	index_t neighbors[knns];
+	index_t neighbors[knns_];
 	index_t i;
-	kernel_matrix_.Init(data_.get_num_of_points(),
-			                data_.get_num_of_point());
+	kernel_matrix_.Init(data_.n_rows(),
+			                data_.n_rows(),
+											knns_);
 	while (!feof(fp)) {
 		fscanf(fp, "%llu %llu %lg", &p1, &p2, &dist);
 		i=0;
     if (p1==last_point) {
-		 memcpy(neighbor_vals.GetColumnPtr(i), data_.At(p2), 
+		 memcpy(neighbor_vals.GetColumnPtr(i), data_.GetColumnPtr(p2), 
 				    sizeof(double)*dimension_);
 		 neighbors[i]=p2;
 		 la::SubFrom(dimension_, point.ptr(), neighbor_vals.GetColumnPtr(i));
 		} else {
-		  point.Copy(data_.At());
+		  point.Copy(data_.GetColumnPtr(p1), dimension_);
 			last_point=p1;
 			i=0;
       la::MulTransBInit(neighbor_vals, neighbor_vals, &cov);
       la::SolveInit(cov, ones, &weights);
-      kernel_matrix_.LoadRow(p1, neighbors,weights.ptr());
-			weights.Destruct()
+      kernel_matrix_.LoadRow(p1, knns_, neighbors, weights.ptr());
+			weights.Destruct();
 		}
 	}
   kernel_matrix_.Negate();

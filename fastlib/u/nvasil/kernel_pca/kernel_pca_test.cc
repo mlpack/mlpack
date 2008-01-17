@@ -25,7 +25,7 @@ class KernelPCATest {
  public:		
 	void Init() {
 	  engine_ = new KernelPCA();
-		engine_->Init("test_data_3_1000", "");
+		engine_->Init("test_data_3_1000.csv", 3, 20);
 	}
 	void Destruct() {
 	  delete engine_;
@@ -34,7 +34,7 @@ class KernelPCATest {
    Matrix eigen_vectors;
    std::vector<double> eigen_values;
 	 Init();
-   engine_->ComputeNeighborhoods(10);
+   engine_->ComputeNeighborhoods();
 	 double bandwidth;
 	 engine_->EstimateBandwidth(&bandwidth);
 	 NONFATAL("Estimated bandwidth %lg ...\n", bandwidth);
