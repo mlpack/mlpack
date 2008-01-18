@@ -47,23 +47,25 @@ class KernelPCATest {
 
 	 engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
 	 Destruct();
-	 NONFATAL("Test ComputeLLE passed...!\n");
+   NONFATAL("Test ComputeGeneralKernelPCA passed...!\n");
 	}
 	void TestLLE() {
+		NONFATAL("Testing Compute LLE\n");
     Matrix eigen_vectors;
     std::vector<double> eigen_values;
 	  Init();
     engine_->ComputeNeighborhoods();
     engine_->LoadAffinityMatrix();
-	  engine_->ComputeLLE(5,
+	 	engine_->ComputeLLE(5,
 		 	                  &eigen_vectors,
 									      &eigen_values);
 	  engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
 	  Destruct();
+	  NONFATAL("Test ComputeLLE passed...!\n");
   }
 	void TestAll() {
-	  // TestGeneralKernelPCA();
-		TestLLE();
+	   TestGeneralKernelPCA();
+		 TestLLE();
 	}
  private:
 	KernelPCA *engine_;
