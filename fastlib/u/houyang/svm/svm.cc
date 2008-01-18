@@ -33,7 +33,7 @@ void DoSvmNormalize(Dataset* dataset) {
   Matrix ui; // the inverse of eigenvectors
 
   //cov.PrintDebug("cov");
-  la::EigenvectorsInit(cov, &d, &u);
+  PASSED(la::EigenvectorsInit(cov, &d, &u));
   la::TransposeInit(u, &ui);
 
   for (index_t i = 0; i < d.length(); i++) {
@@ -60,7 +60,7 @@ void DoSvmNormalize(Dataset* dataset) {
 
   if (fx_param_bool(NULL, "save", 0)) {
     fx_default_param(NULL, "kfold/save", "1");
-    dataset->WriteCsv("normalized.csv");
+    dataset->WriteCsv("m_normalized.csv");
   }
 }
 
@@ -76,7 +76,6 @@ void CreateArtificialDataset(Dataset* dataset){
     
   // 2 dimensional dataset, size n, 3 classes
   m.Init(3, n);
-    
   for (index_t i = 0; i < n; i += 3) {
     double x;
     double y;
@@ -85,32 +84,35 @@ void CreateArtificialDataset(Dataset* dataset){
     y = margin / 2 + (rand() * var / RAND_MAX);
     m.set(0, i, x);
     m.set(1, i, x*slope + y + intercept);
-    m.set(2, i, 0);
+    m.set(2, i, 0); // labels
     
     x = (rand() * range / RAND_MAX) + offset;
     y = margin / 2 + (rand() * var / RAND_MAX);
-    m.set(0, i+1, x);
-    m.set(1, i+1, x*slope - y + intercept);
-    m.set(2, i+1, 1);
+    m.set(0, i+1, 10*x);
+    m.set(1, i+1, x*slope + y + intercept);
+    m.set(2, i+1, 1); // labels
     
     x = (rand() * range / RAND_MAX) + offset;
     y = margin / 2 + (rand() * var / RAND_MAX);
-    m.set(0, i+2, x);
-    m.set(1, i+2, 1e2*x*slope - y + intercept);
-    m.set(2, i+2, 2);
+    m.set(0, i+2, 20*x);
+    m.set(1, i+2, x*slope + y + intercept);
+    m.set(2, i+2, 2); // labels
   }
+
   data::Save("m.csv", m);
   dataset->OwnMatrix(&m);
 }
 
 int LoadData(Dataset* dataset, String datafilename){
-if (fx_param_exists(NULL, datafilename)) {
-      // if a data file is specified, use it.
-      if (!SUCCEEDED(dataset->InitFromFile(fx_param_str_req(NULL, datafilename)))) {
-	fprintf(stderr, "Couldn't open the data file.\n");
-	return 0;
-      }
-    } else {
+  if (fx_param_exists(NULL, datafilename)) {
+    // when a data file is specified, use it.
+    if ( !PASSED(dataset->InitFromFile(fx_param_str_req(NULL, datafilename))) ) {
+    fprintf(stderr, "Couldn't open the data file.\n");
+    return 0;
+    }
+  } 
+  else {
+    fprintf(stderr, "No data file exist. Generating artificial dataset.\n");
       // otherwise, create an artificial dataset and save it to "m.csv"
       CreateArtificialDataset(dataset);
     }
@@ -126,7 +128,7 @@ if (fx_param_exists(NULL, datafilename)) {
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
-  //srand(time(NULL));
+  srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");
@@ -192,7 +194,7 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchClassify(&testset, "test_labels");
+	svm.BatchClassify(&testset, "test_labels"); // TODO:param_req
       }
     }
   }
@@ -210,12 +212,12 @@ int main(int argc, char *argv[]) {
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.Init(testset, testset.n_labels(), svm_module);
+      svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
       svm.LoadModelBatchClassify(&testset, "svm_model", "test_labels"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.Init(testset, testset.n_labels(), svm_module);
+      svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
       svm.LoadModelBatchClassify(&testset, "svm_model", "test_labels"); // TODO:param_req
     }
   }

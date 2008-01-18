@@ -129,7 +129,6 @@ class SMO {
         Vector v_j;
         GetVector_(j, &v_j);
         double k = kernel_.Eval(v_i, v_j);
-        
         kernel_cache_sign_.set(j, i, k * GetLabelSign_(i) * GetLabelSign_(j));
       }
     }
@@ -160,7 +159,6 @@ void SMO<TKernel>::Train(const Dataset* dataset_in) {
 
   // calculate kernel_cache_sign_: [k_ij* y_i* y_j]
   CalcKernels_();
-
   while (num_changed > 0 || examine_all) { // TODO: other stopping criteria
     VERBOSE_GOT_HERE(0);
 
