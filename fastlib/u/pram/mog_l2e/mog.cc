@@ -143,7 +143,9 @@ long double MoG::Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
 }
 
 void MoG::KMeans(Matrix& data, ArrayList<Vector> *means,
-		 ArrayList<Matrix> *covars, Vector *weights, index_t value_of_k){
+		 ArrayList<Matrix> *covars, Vector *weights, 
+		 index_t value_of_k){
+
   ArrayList<Vector> mu, mu_old;
   double* tmpssq;
   double* sig;
@@ -301,7 +303,8 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
 	printf("the optimizer\n");
 	fflush(NULL);
 	// The optimizer ...
-	cvgd = polytope( initPoints, initVal, dim_theta, ftol, l2_error, &niters, data, num_gauss );
+	cvgd = polytope( initPoints, initVal, dim_theta, 
+			 ftol, l2_error, &niters, data, num_gauss );
       }while (!cvgd);
       printf("optimized with final value = %Lf\n", initVal[0]);
       if (error_val > initVal[0]) {
@@ -320,7 +323,8 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
       // get a random starting point
       initial_point_generator(init_theta, data, num_gauss);
       // The optimizer.......
-      quasi_newton(init_theta, dim_theta, grad_tol, &niters, &final_val, l2_error, data, num_gauss);
+      quasi_newton(init_theta, dim_theta, grad_tol, 
+		   &niters, &final_val, l2_error, data, num_gauss);
       printf("optimized with final value = %Lf\n", final_val);
       fflush(NULL);
 
@@ -343,7 +347,7 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
 void MoG::points_generator(Matrix& d, double **points, index_t number_of_points,
 			   index_t number_of_components) {
 
-  index_t dim, n, i, j, x;//, y;
+  index_t dim, n, i, j, x;
   
   dim = dimension();
   n = d.n_cols();
@@ -367,9 +371,9 @@ void MoG::points_generator(Matrix& d, double **points, index_t number_of_points,
   for(i = 0; i < number_of_points; i++)
     for(j = 0; j < number_of_components; j++) 
       for(x = 0 ; x < (dim * (dim + 1) / 2); x++)
-	points[i][(number_of_components * (dim + 1) - 1) + (j * (dim * (dim + 1) / 2)) + x] = (rand() % 501)/100;
+	points[i][(number_of_components * (dim + 1) - 1) 
+		  + (j * (dim * (dim + 1) / 2)) + x] = (rand() % 501)/100;
 
-  //printf("points_generator:exit\n");
   return;
 }
 
@@ -380,8 +384,6 @@ void MoG::initial_point_generator (double *theta, Matrix& data, index_t k_comp) 
   Vector weights;
   double temp, noise;
   index_t dim;
-
-  //  srand(time(NULL));
 
   weights.Init(k_comp);
   means.Init(k_comp);
@@ -397,7 +399,6 @@ void MoG::initial_point_generator (double *theta, Matrix& data, index_t k_comp) 
 
   for(index_t k = 0; k < k_comp - 1; k++){
     temp = weights[k] / weights[k_comp - 1];
-    //srand(time(NULL));
     noise = (double)(rand() % 10000) / (double)1000;
     theta[k] = noise - 5;
   }
@@ -410,10 +411,10 @@ void MoG::initial_point_generator (double *theta, Matrix& data, index_t k_comp) 
     la::TransposeInit(U, &U_tran);
     for(index_t j = 0; j < dim; j++) {
       for(index_t i = 0; i < j + 1; i++) {
-	//srand(time(NULL));
 	noise = (rand() % 501) / 100;
-	//printf("%lf +",noise);
-	theta[k_comp - 1 + k_comp * dim + k * dim * (dim + 1) / 2 + j * (j + 1) / 2 + i] = U_tran.get(j, i) + noise;
+	theta[k_comp - 1 + k_comp * dim 
+	      + k * dim * (dim + 1) / 2 
+	      + j * (j + 1) / 2 + i] = U_tran.get(j, i) + noise;
       }
     }
   }

@@ -95,9 +95,17 @@ class MoG {
       lower_triangle_matrix.SetAll(0.0);
       for(index_t j = 0; j < dimension_; j++) {
 	for(index_t i = 0; i < j; i++) {
-	  lower_triangle_matrix.set(j, i, theta[(number_of_gaussians_ - 1) + number_of_gaussians_*dimension_ + k*(dimension_*(dimension_ + 1) / 2) + (j*(j + 1) / 2) + i]);
+	  lower_triangle_matrix.set(j, i, 
+				    theta[(number_of_gaussians_ - 1) 
+					  + number_of_gaussians_*dimension_ 
+					  + k*(dimension_*(dimension_ + 1) / 2) 
+					  + (j*(j + 1) / 2) + i]);
 	}
-	lower_triangle_matrix.set(j, j, theta[(number_of_gaussians_ - 1) + number_of_gaussians_*dimension_ + k*(dimension_*(dimension_ + 1) / 2) + (j*(j + 1) / 2) + j] + s_min);
+	lower_triangle_matrix.set(j, j, 
+				  theta[(number_of_gaussians_ - 1) 
+					+ number_of_gaussians_*dimension_ 
+					+ k*(dimension_*(dimension_ + 1) / 2) 
+					+ (j*(j + 1) / 2) + j] + s_min);
 					
       }
       la::TransposeOverwrite(lower_triangle_matrix, &upper_triangle_matrix);
@@ -147,30 +155,34 @@ class MoG {
       mu_[k].CopyValues(temp_mu);
     }
 			
-    // calculating the sigma values
     //using a lower triangular matrix and its transpose to obtain a positive definite symmetric matrix
     
     // initializing the d_sigma values
-    
     d_sigma_.Resize(number_of_gaussians_);
     for(index_t i = 0; i < number_of_gaussians_; i++)
       d_sigma_[i].Init(dimension_*(dimension_ + 1) / 2);
 
     // calculating the sigma values
-		
     for(index_t k = 0; k < number_of_gaussians_; k++) {
       lower_triangle_matrix.SetAll(0.0);
       for(index_t j = 0; j < dimension_; j++) {
 	for(index_t i = 0; i < j; i++) {
-	  lower_triangle_matrix.set( j, i, theta[(number_of_gaussians_ - 1) + number_of_gaussians_*dimension_ + k*(dimension_*(dimension_ + 1) / 2) + (j*(j + 1) / 2) + i]) ;
+	  lower_triangle_matrix.set( j, i, 
+				     theta[(number_of_gaussians_ - 1) 
+					   + number_of_gaussians_*dimension_ 
+					   + k*(dimension_*(dimension_ + 1) / 2) 
+					   + (j*(j + 1) / 2) + i]) ;
 	}
-	lower_triangle_matrix.set(j, j, theta[(number_of_gaussians_ - 1) + number_of_gaussians_*dimension_ + k*(dimension_*(dimension_ + 1) / 2) + (j*(j + 1) / 2) + j] + s_min);
+	lower_triangle_matrix.set(j, j, 
+				  theta[(number_of_gaussians_ - 1) 
+					+ number_of_gaussians_*dimension_ 
+					+ k*(dimension_*(dimension_ + 1) / 2) 
+					+ (j*(j + 1) / 2) + j] + s_min);
       }
       la::TransposeOverwrite(lower_triangle_matrix, &upper_triangle_matrix);
       la::MulOverwrite(lower_triangle_matrix, upper_triangle_matrix, &sigma_[k]);
 				
       // calculating the d_sigma values
-      
       for(index_t i = 0; i < dimension_; i++){
 	for(index_t in = 0; in < i+1; in++){
 	  Matrix d_sigma_d_r,d_sigma_d_r_t,temp_matrix_1,temp_matrix_2;

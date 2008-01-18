@@ -10,11 +10,9 @@ long double phi(Vector& x, Vector& mean, Matrix& cov) {
   Matrix inv;
   Vector diff, tmp;
 	
-  //printf("%lf -- %lf |", cov.get(1,1),cov.get(1,2));
   dim = x.length();
   la::InverseInit(cov, &inv);
   det = la::Determinant(cov);
-  //printf("%Lf --> ",det);
   if( det < 0){
     det = -det;
   }
@@ -33,7 +31,6 @@ long double phi(Vector& x, Vector& mean, Matrix& cov) {
   tmp2 = -exponent;
   tmp2 = tmp2 / 2;
   f = (tmp1*tmp3*exp(tmp2));
-  //printf("f --> %Lf\n",f);
   return f;
 }
 
@@ -51,7 +48,8 @@ long double phi(float x, float mean, float var) {
    and also the gradients with respect to the mean and the variance
 */
 
-long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, Vector *g_mean, Vector *g_cov){
+long double phi(Vector& x, Vector& mean, Matrix& cov, 
+		ArrayList<Matrix>& d_cov, Vector *g_mean, Vector *g_cov){
 	
   long double det, f;
   double exponent;
@@ -59,11 +57,9 @@ long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, 
   Matrix inv;
   Vector diff, tmp;
 	
-  //printf("%lf -- %lf |", cov.get(1,1),cov.get(1,2));
   dim = x.length();
   la::InverseInit(cov, &inv);
   det = la::Determinant(cov);
-  //printf("%Lf --> ",det);
   if( det < 0){
     det = -det;
   }
@@ -82,8 +78,7 @@ long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, 
   tmp2 = -exponent;
   tmp2 = tmp2 / 2;
   f = (tmp1*tmp3*exp(tmp2));
-  //printf("f --> %Lf\n",f);
-	
+  
   /* Calculating the g_mean values  which would be a (1 X dim) vector */
   la::ScaleInit(f,tmp,g_mean);
 	
