@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
   fx_timer_stop(nbc_module, "training_classifier");
 
   ////// Timing the testing of the Naive Bayes Classifier //////
-  ArrayList<Vector> results;
+  Vector results;
 
   fx_timer_start(nbc_module, "testing_classifier");
 
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 
   ot::Print(results, output_file);
 
-  fclose(results);
+  fclose(output_file);
 
   fx_done();
 
