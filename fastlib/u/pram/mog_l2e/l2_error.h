@@ -6,7 +6,7 @@
 
 #include "fastlib/fastlib.h"
 #include "mog.h"
-#include "phi.h"
+//#include "phi.h"
 
 long double l2_error(Matrix&, index_t, double*);
 
@@ -20,36 +20,34 @@ long double calc_fit(Matrix&, MoG&);
 
 long double calc_fit(Matrix&, MoG&, Vector*);
 
-long double mod_simplex(double**, long double[], double[], index_t, long double (*funk)(Matrix&, index_t, double*),index_t, float, Matrix&, index_t) ;
+long double mod_simplex(double**, long double[], double[], index_t,
+			long double (*funk)(Matrix&, index_t, double*),
+			index_t, float, Matrix&, index_t) ;
 
-bool polytope(double**, long double*, index_t ndim, long double ftol, long double (*funk)(Matrix&, index_t, double*),index_t*, Matrix& data, index_t k_comp);
+bool polytope(double**, long double*, index_t ndim, long double ftol,
+	      long double (*funk)(Matrix&, index_t, double*),index_t*, 
+	      Matrix& data, index_t k_comp);
 
-//void line_search(Vector, long double, Vector*, Vector*, long double*, double, long double (*func) (Matrix&, index_t, double*, Vector*), Matrix&, index_t, Vector*);
+void line_search(index_t, Vector, long double, Vector*, Vector*, Vector*,
+		 long double*, long double, index_t*, 
+		 long double (*funk)(Matrix&, index_t, double*, Vector*), 
+		 Matrix&, index_t);
 
-//void line_search(Vector, long double, Vector*, Vector*, long double*, double, long double (*func) (double*, Vector*), Vector*);
-
-void line_search(index_t, Vector, long double, Vector, Vector, Vector, long double*, long double, index_t*, long double (*funk)(double*, Vector*));
-
-//void quasi_newton(double*, index_t dim, float grad_tol, index_t*, long double*, long double (*func)(Matrix&, index_t, double*, Vector*), Matrix&, index_t);
-
-void quasi_newton(double*, index_t dim, float grad_tol, index_t*, long double*, long double (*func)(double*, Vector*));
+void quasi_newton(double*, index_t, double, index_t*, long double*, 
+		  long double (*func)(Matrix&, index_t, double*, Vector*), 
+		  Matrix&, index_t);
 
 long double l2_error(Matrix& d, index_t num_gauss, double* theta) {
   MoG mog;
   long double reg, fit, l2e; 
   index_t dim, number_of_points;
 	
-  //printf("l2_error:entry\n");
   number_of_points = d.n_cols();
   dim = d.n_rows();
   mog.MakeModel(num_gauss, dim, theta);
-  //M.display();
-  //printf("l2_error:1\n");
   reg = calc_reg(mog);
   fit = calc_fit(d, mog);
-  //printf("l2_error: reg = %Lf , fit = %Lf \n", reg, fit );
   l2e = reg - 2 * fit / number_of_points ;
-  //printf("l2_error:exit\n");
   return l2e;
 }
 	
@@ -60,24 +58,15 @@ long double l2_error(Matrix& d, index_t num_gauss, double* theta, Vector *g_l2_e
   index_t dim, number_of_points;
   Vector g_reg,g_fit,tmp_fit;
 	
-  //printf("l2_error:entry\n");
   number_of_points = d.n_cols();
   dim = d.n_rows();
   mog.MakeModelWithGradients(num_gauss, dim, theta);
-  //printf("model made\n");
-  //fflush(NULL);
-  //mog.display();
-  //printf("l2_error:1\n");
   reg = calc_reg(mog, &g_reg);
-  //printf("reg done\n");
-  //fflush(NULL);
   fit = calc_fit(d,mog, &g_fit);
-  //  printf("l2_error: reg = %Lf , fit = %Lf \n", reg, fit );
   l2e = reg - 2*fit / number_of_points ;
   double alpha = -2.0 / number_of_points;
   la::ScaleInit(alpha, g_fit, &tmp_fit);
-  la::SubInit(tmp_fit, g_reg, g_l2_error);
-  //printf("l2_error:exit\n");
+  la::SubOverwrite(tmp_fit, g_reg, g_l2_error);
   return l2e;
 }
 
@@ -124,7 +113,6 @@ long double calc_reg(MoG& mog, Vector *g_reg){
   ArrayList<Vector> g_mu, g_sigma;
   ArrayList<ArrayList<Vector> > dp_d_mu, dp_d_sigma;
 
-  //printf("reg entry\n");	
   num_gauss = mog.number_of_gaussians();
   dim = mog.dimension();
 
@@ -139,7 +127,6 @@ long double calc_reg(MoG& mog, Vector *g_reg){
     dp_d_mu[k].Init(num_gauss);
     dp_d_sigma[k].Init(num_gauss);
   }
-  //printf("exit 1\n");
   for(index_t k = 1; k < num_gauss; k++) {
     for(index_t j = 0; j < k; j++) {
       la::AddOverwrite(mog.sigma(k), mog.sigma(j), &sum_covar);
@@ -183,7 +170,6 @@ long double calc_reg(MoG& mog, Vector *g_reg){
   }
 	
   // Calculating the reg value
-
   la::MulInit( x, phi_mu, &y );
   reg = la::Dot( x, y );
 	
@@ -296,8 +282,7 @@ long double calc_fit(Matrix& data, MoG& mog, Vector *g_fit) {
 
   la::MulInit(weights, phi_x, &y);
   fit = la::Dot(y, identity_vector); 
-  //printf("fit = %Lf\n",fit);
-	
+  	
   // Calculating the g_omega
   la::MulInit(phi_x, identity_vector, &tmp_g_omega);
   la::MulInit(mog.d_omega(), tmp_g_omega, &g_omega);
@@ -322,7 +307,9 @@ long double calc_fit(Matrix& data, MoG& mog, Vector *g_fit) {
   return fit;
 }
 
-bool polytope(double **p, long double y[], index_t ndim, long double ftol, long double (*funk)(Matrix&, index_t, double*),index_t *nfunk, Matrix& data, index_t k_comp) {
+bool polytope(double **p, long double y[], index_t ndim, long double ftol,
+	      long double (*funk)(Matrix&, index_t, double*),index_t *nfunk, 
+	      Matrix& data, index_t k_comp) {
 
   /* funk(x) is the function to be minimized where 'x' is a 'ndim' dimensional point. 
      'p' is 'ndim+1' vertices of the simplex and 'y' is the function value at those 'ndim+1' vertices
@@ -334,20 +321,10 @@ bool polytope(double **p, long double y[], index_t ndim, long double ftol, long 
   bool cvgd, TRUE = 1, FALSE = 0;
 
 	
-  //printf("polytope:entry\n");
-  
   psum = (double*)malloc(ndim * sizeof(double));
   *nfunk = 0;
-  /*
-  for( j = 0 ; j < ndim ; j++ ){
-    sum = 0.0;
-    for( i = 0 ; i < mpts ; i++ ) 
-      sum += p[i][j];
-    psum[j] = sum;
-  }
-  */
-  gen_m = 0;
   
+  gen_m = 0;
   for(;;) {
     ilo = 0;
     ihi = y[0] > y[1] ? (inhi = 1,0) : (inhi = 0,1);
@@ -370,12 +347,10 @@ bool polytope(double **p, long double y[], index_t ndim, long double ftol, long 
 	p[0][i] =  p[ilo][i] ;
 	p[ilo][i] = swap;
       }
-      //printf("polytope: nfunk = %"LI"d, rtol = %Lf , ftol = %Lf ylo = %Lf\n",*nfunk,rtol,ftol,y[0]);
       cvgd = TRUE;
       break;
     }
     if(*nfunk > NMAX){
-      //printf("polytope:maximum number of function evaluations exceeded with ylo = %Lf\n", y[ilo]);
       cvgd = FALSE;
       break;
     }
@@ -430,11 +405,12 @@ bool polytope(double **p, long double y[], index_t ndim, long double ftol, long 
     }
     else --(*nfunk);
   }
-  //printf("polytope:exit\n");
   return cvgd;
 }
 
-long double mod_simplex(double **p, long double y[], double psum[], index_t ndim, long double (*funk)(Matrix&, index_t, double*),index_t ihi, float fac, Matrix& data, index_t k_comp) {
+long double mod_simplex(double **p, long double y[], double psum[], index_t ndim,
+			long double (*funk)(Matrix&, index_t, double*),index_t ihi,
+			float fac, Matrix& data, index_t k_comp) {
 	
   /* Extropolates by a factor of 'fac' through the face of the simplex across from the worst point, tries it,
      and replaces the worst point if the new point is better than the worst point.*/
@@ -459,234 +435,50 @@ long double mod_simplex(double **p, long double y[], double psum[], index_t ndim
       p[ihi][j] = ptry[j];
     }
   }
-  //printf("mod_simplex:exit\n");
   return ytry;
 }
 
-//void quasi_newton(double *init_p, index_t dim, float grad_tol, index_t *num_iters, long double *f_min, long double (*func)(Matrix&, index_t, double*, Vector*), Matrix& data, index_t k_comp) {
-/*
-void quasi_newton(double *init_p, index_t dim, float grad_tol, index_t *num_iters, long double *f_min, long double (*func)(double*, Vector*)) {
+void quasi_newton(double *p, index_t n, double gradient_tolerance,
+		  index_t *number_of_iterations, long double *f_min,
+		  long double(*func)(Matrix&, index_t, double*, Vector*),
+		  Matrix& data, index_t k_comp) {
 
-  Vector dgrad, grad, hgrad, new_p, old_p, xi, identity_vector;
-  //  double* tmp_array;
-  Matrix hess;
-  double den, stp_max, sum = 0.0, temp, test;
-  long double f_val, EPSILON = 3.0e-8, TOL, STEP_LNGTH_MAX = 100.0;
-  index_t MAXITER = 2000;
+  index_t check, i, its, j, MAXIMUM_ITERATIONS = 200;
+  long double temp_1, temp_2, temp_3, temp_4, f_previous, 
+      maximum_step_length, sum = 0.0, sumdg, sumxi, temp, test;
+  Vector dgrad, grad,hdgrad, pold, pnew, xi;
+  Matrix hessian;
+  long double EPSILON = 3.0e-8;
+  long double TOLERANCE = 4*EPSILON;
+  double MAX_STEP_SIZE = 100.0;
 
-  TOL = 4 * EPSILON;
-  
-  // Initialize all the vectors and matrix here, too lazy to do it right now 
-  dgrad.Init(dim);
-  hgrad.Init(dim);
-  new_p.Init(dim);
-  hess.Init(dim, dim);
-  identity_vector.Init(dim);
-  identity_vector.SetAll(1.0);
-  old_p.Copy(init_p, dim);
-  //printf("func start\n");
-  //fflush(NULL);
-  //for(index_t i = 0; i < dim; i++)
-  //printf("%lf ",init_p[i]);
-
-  //f_val = (*func)(data, k_comp, init_p, &grad);
-  grad.Init(dim);
-  f_val = (*func)(init_p, &grad);
-  //  for(index_t i = 0; i < dim; i++)
-  //printf("%lf ",grad.get(i));
-
-  //printf("%Lf\n", f_val);
-  //printf("func done\n");
-  //return;
-  //fflush(NULL);
-  hess.SetDiagonal(identity_vector);
-  la::ScaleInit(-1.0, grad, &xi);
-  sum = la::Dot(old_p, old_p);
-
-  stp_max = STEP_LNGTH_MAX * (sqrt(sum) > dim ? sqrt(sum) : dim);
-
-  for (index_t iter = 0; iter < MAXITER; iter++) {
-    *num_iters = iter;
-    dgrad.CopyValues(grad);
-    //line_search(old_p, f_val, &xi, &new_p, f_min, stp_max, func, data, k_comp, &grad );// to be done--- remember to add the gradient value which is calculated at 'new_p'
-    line_search(old_p, f_val, &xi, &new_p, f_min, stp_max, func, &grad);
-    if((iter % 10) == 0) printf(".");
-    fflush(NULL);
-    f_val = *f_min;
-    la::SubOverwrite(old_p, new_p, &xi);
-    old_p.CopyValues(new_p);
-    init_p = old_p.ptr();
-
-    test = 0.0;
-    for (index_t i = 0; i < dim; i++) {
-      temp = fabs(xi.get(i)) / (fabs(old_p.get(i)) > 1.0 ? fabs(old_p.get(i)) : 1.0);
-      if (temp > test) 
-	test = temp;
-    }
-    if (test < TOL)
-      return;
-    
-    test = 0.0;
-    den = (*f_min > 1.0 ? *f_min : 1.0);
-    for(index_t i = 0; i < dim; i++) {
-      temp = fabs(grad.get(i)) * (fabs(new_p.get(i)) > 1.0 ? fabs(new_p.get(i)) : 1.0) / den;
-      if (temp > test)
-	test = temp;
-    }
-    if (test < grad_tol)
-      return;
-
-    la::SubFrom(grad, &dgrad);
-    la::Scale(-1.0, &dgrad);
-    la::MulOverwrite(hess, dgrad, &hgrad);
-
-    double temp_dot = la::Dot(dgrad, xi);
-    double temp_dot_2 = la::Dot(dgrad, hgrad);
-    
-    if (temp_dot > sqrt(EPSILON * (la::Dot(dgrad, dgrad)) * (la::Dot(xi, xi)))) {
-      //dgrad.SetAll(0.0);
-      la::ScaleOverwrite((1.0 / temp_dot), xi, &dgrad); // dgrad = alpha * xi -- the function required may also be AddTo
-      la::AddExpert((-1.0 / temp_dot_2), hgrad, &dgrad); // dgrad = dgrad + alpha * hdg
-
-      hess.SetAll(0.0);
-      Matrix co, ro;
-      co.AliasColVector(xi);
-      ro.AliasRowVector(xi);
-      la::MulOverwrite(co, ro, &hess);
-      la::Scale((1.0 / temp_dot), &hess);
-
-      //destruct co, ro somehow
-      Matrix co_1, ro_1, temp_matrix_1;
-      co_1.AliasColVector(hgrad);
-      ro_1.AliasRowVector(hgrad);
-      la::MulInit(co_1, ro_1, &temp_matrix_1);
-      la::AddExpert((-1.0 / temp_dot_2), temp_matrix_1, &hess);
-
-      //destruct co, ro, temp_matrix somehow
-      Matrix co_2, ro_2, temp_matrix_2;
-      co_2.AliasColVector(dgrad);
-      ro_2.AliasRowVector(dgrad);
-      la::MulInit(co_2, ro_2, &temp_matrix_2);
-      la::AddExpert(temp_dot_2, temp_matrix_2, &hess);
-    }
-    la::MulOverwrite(hess, grad, &xi);
-    la::Scale(-1.0, &xi);
-  }
-
-  printf("Quasi - Newton: Exceeded the maximum allowed number of iterations\n");
-}
-*/
-/*
-//void line_search(Vector old_p, long double f_old, Vector *direction, Vector *new_p, long double *f_new, double max_step_length, long double (*func) (Matrix&, index_t, double*, Vector*), Matrix& data, index_t k_comp, Vector *grad) {
-void line_search(Vector old_p, long double f_old, Vector *direction, Vector *new_p, long double *f_new, double max_step_length, long double (*func) (double*, Vector*), Vector *grad) {
-
-  //  double* temp_array;
-  //temp_array = (double*) malloc (old_p.length() * sizeof(double));
-  long double TOL = 1.0e-7, MIN_DECREASE = 1.0e-4;
-  double tmp_dot = la::Dot(*direction, *direction);
-  if (sqrt(tmp_dot) > max_step_length)
-    la::Scale((max_step_length / sqrt(tmp_dot)), direction);
-
-  double slope = la::Dot(*grad, *direction);
-  if (slope >= 0.0)
-    fprintf(stderr,"line search: Roundoff problem\n");
-
-  double temp, test = 0.0;
-  for(index_t i = 0; i < old_p.length(); i++) {
-    temp = fabs((*direction).get(i)) / (fabs(old_p.get(i)) > 1.0 ? fabs(old_p.get(i)) : 1.0);
-    if (temp > test)
-      test = temp;
-  }
-  double min_step_length = TOL / test; //check this line properly
-  double prev_step_length, step_length = 1.0;
-  double temp_step_length, temp1, temp2, temp3, temp4;
-  long double prev_f_new;
-
-  for(;;) {
-
-    (*new_p).CopyValues(old_p);
-    la::AddExpert(step_length, (*direction), new_p);
-    //for(index_t i = 0; i < (*new_p).length(); i++){
-    //temp_array[i] = (*new_p).get(i);
-    //printf("%lf ",temp_array[i]);
-    //}
-    //(*f_new) = (*func) (data, k_comp, (*new_p).ptr(), grad);
-    (*f_new) = (*func) ((*new_p).ptr(), grad);
-    //printf(" val = %Lf\n", *f_new);
-    if (step_length < min_step_length) {
-      (*new_p).CopyValues(old_p);
-      return;
-    }
-    else if (*f_new <= f_old + MIN_DECREASE * step_length * slope)
-      return;
-    else {
-      if (step_length == 1.0)
-	temp_step_length = -slope / (2.0 * (*f_new - f_old - slope)) ;
-      else {
-	temp1 = *f_new - f_old - step_length * slope;
-	temp2 = prev_f_new - f_old - prev_step_length * slope;
-	temp3 = (temp1 / (step_length * step_length) - temp2 / (prev_step_length * prev_step_length)) / (step_length - prev_step_length);
-	temp4 = (-prev_step_length * temp1 / (step_length * step_length) + step_length * temp2 / (prev_step_length * prev_step_length)) / (step_length - prev_step_length);
-	if (temp3 == 0.0)
-	  temp_step_length = -slope / (2.0 * temp4);
-	else {
-	  double temp5 = temp4 * temp4 - 3.0 * temp3 * slope;
-	  if (temp5 < 0.0)
-	    temp_step_length = 0.5 * step_length;
-	  else if (temp4 <= 0.0)
-	    temp_step_length = (-temp4 + sqrt(temp5)) / (3.0 * temp3);
-	  else
-	    temp_step_length = -slope / (temp4 + sqrt(temp5));
-	}
-	if (temp_step_length > 0.5 * step_length)
-	  temp_step_length = 0.5 * step_length;
-      }
-    }
-    prev_step_length = step_length;
-    prev_f_new = *f_new;
-    step_length = (temp_step_length > 0.1 * step_length ? temp_step_length : 0.1 * step_length);
-  }
-}
-*/
-void quasi_newton(double *p, index_t n, double gtol, index_t *iter, long double *fret, long double(*func)(double*, Vector*)) {
-
-  index_t check, i, its, j, ITMAX = 200;
-  long double den, fac,fad,fae,fp,stpmax, sum = 0.0, sumdg, sumxi, temp, test;
-  Vector dg, g,hdg, pold, pnew, xi;
-  Matrix hessin;
-  long double EPS = 3.0e-8;
-  long double TOLX = 4*EPS;
-  double STPMX = 100.0;
-
-  dg.Init(n);
-  g.Init(n);
-  hdg.Init(n);
-  hessin.Init(n,n);
+  dgrad.Init(n);
+  grad.Init(n);
+  hdgrad.Init(n);
+  hessian.Init(n,n);
   pnew.Init(n);
   xi.Init(n);
   pold.Copy(p,n);
-  fp = (*func)(p, &g);
+  f_previous = (*func)(data, k_comp, p, &grad);
   Vector tmp;
   tmp.Init(n);
   tmp.SetAll(1.0);
-  hessin.SetDiagonal(tmp);
+  hessian.SetDiagonal(tmp);
   la::ScaleOverwrite(-1.0, g, &xi);
-  for(i = 0; i < n; i++) {
-    printf("%lf ", xi.get(i));
-  }
-  printf("\n");
+  
   sum = la::Dot(pold, pold);
-
   double fmax;
   if( sqrt(sum) > (float)n ) fmax = sqrt(sum);
   else { fmax = (float)n; }
-  stpmax = STPMX*fmax;
+  maximum_step_length = MAX_STEP_SIZE*fmax;
 
-  for(its = 0; its < ITMAX; its++) {
-    *iter = its;
-    dg.CopyValues(g);
-    line_search(n, pold, fp, g, xi, pnew, fret, stpmax, &check, func);
-    fp = *fret;
+  for(its = 0; its < MAXIMUM_ITERATIONS; its++) {
+    *number_of_iterations = its;
+    dgrad.CopyValues(g);
+    line_search(n, pold, f_previous, &grad, &xi,
+        &pnew, f_min, maximum_step_length, &check, 
+        func, data, k_comp);
+    f_previous = *f_min;
     la::SubOverwrite(pold, pnew, &xi);
     pold.CopyValues(pnew);
 
@@ -697,88 +489,95 @@ void quasi_newton(double *p, index_t n, double gtol, index_t *iter, long double 
       temp = fabs(xi.get(i)) / fmax;
       if(temp > test) test = temp;
     }
-    if(test < TOLX) {
+    if(test < TOLERANCE) {
+      for(i = 0; i < n; i++) {
+	p[i] = pold.get(i);
+      }
       return;
     }
 
     test = 0.0;
-    if((*fret) > 1.0) den = *fret;
-    else{ den = 1.0; }
+    if((*f_min) > 1.0) temp_1 = *f_min;
+    else{ temp_1 = 1.0; }
 
     for(i = 0; i < n; i++) {
       if(fabs(pold.get(i)) > 1.0) fmax = pold.get(i);
       else{ fmax = 1.0; }
 
-      temp = fabs(g.get(i))*fmax / den;
+      temp = fabs(g.get(i))*fmax / temp_1;
       if(temp > test) test = temp;
     }
-    if(test < gtol) {
+    if(test < gradient_tolerance) {
+      for(i = 0; i < n; i++) {
+	p[i] = pold.get(i);
+      }
       return;
     }
 
-    la::SubFrom(g,&dg);
-    la::Scale(-1.0, &dg);
-    la::MulOverwrite(hessin,dg, &hdg);
+    la::SubFrom(grad, &dgrad);
+    la::Scale(-1.0, &dgrad);
+    la::MulOverwrite(hessian,dgrad, &hdgrad);
 
-    fac = la::Dot(dg, xi);
-    fae = la::Dot(dg, hdg);
-    sumdg = la::Dot(dg, dg);
+    temp_2 = la::Dot(dgrad, xi);
+    temp_4 = la::Dot(dgrad, hdgrad);
+    sumdg = la::Dot(dgrad, dgrad);
     sumxi = la::Dot(xi, xi);
 
-    if (fac > sqrt(EPS*sumdg*sumxi)) {
-      fac = 1.0 / fac;
-      fad = 1.0 / fae;
+    if (temp_2 > sqrt(EPSILON*sumdg*sumxi)) {
+      temp_2 = 1.0 / temp_2;
+      temp_3 = 1.0 / temp_4;
 
-      la::ScaleOverwrite(fac, xi, &dg);
-      la::AddExpert((-1.0*fad), hdg, &dg);
+      la::ScaleOverwrite(temp_2, xi, &dgrad);
+      la::AddExpert((-1.0*temp_3), hdgrad, &dgrad);
 
       Matrix co, ro, tmp;
       co.AliasColVector(xi);
       ro.AliasRowVector(xi);
       la::MulInit(co, ro, &tmp);
-      la::AddExpert(fac, tmp, &hessin);
-
-      //      la::Scale((1.0 / temp_dot), &hess);
+      la::AddExpert(temp_2, tmp, &hessian);
 
       co.Destruct();
       ro.Destruct();
       tmp.Destruct();
-
-      //      Matrix co_1, ro_1, temp_matrix_1;
-      co.AliasColVector(hdg);
-      ro.AliasRowVector(hdg);
+      co.AliasColVector(hdgrad);
+      ro.AliasRowVector(hdgrad);
       la::MulInit(co, ro, &tmp);
-      la::AddExpert((-1.0*fad), tmp, &hessin);
+      la::AddExpert((-1.0*temp_3), tmp, &hessian);
 
-      //destruct co, ro, temp_matrix somehow
       co.Destruct();
       ro.Destruct();
       tmp.Destruct();
-
-      //     Matrix co_2, ro_2, temp_matrix_2;
-      co.AliasColVector(dg);
-      ro.AliasRowVector(dg);
+      co.AliasColVector(dgrad);
+      ro.AliasRowVector(dgrad);
       la::MulInit(co, ro, &tmp);
-      la::AddExpert(fae, tmp, &hessin);
+      la::AddExpert(temp_4, tmp, &hessian);
     }
-    la::MulOverwrite(hessin, g, &xi);
+    la::MulOverwrite(hessian, g, &xi);
     la::Scale((-1.0), &xi);
   }
   printf("too many iterations in Quasi Newton\n");
 }
 
 
-void line_search(int n, Vector pold, long double fold, Vector g, Vector xi, Vector pnew, long double *fret, long double stpmax, int *check, long double (*funk)(double*, Vector*)) {
+void line_search(int n, Vector pold, long double fold, Vector *grad,
+		 Vector *xi, Vector *pnew, long double *f_min, 
+		 long double maximum_step_length, int *check,
+		 long double (*funk)(Matrix&, index_t, double*, Vector*),
+		 Matrix& data, index_t k_comp) {
+
   index_t i;
-  long double a, alam, alam2, alamin, b, disc, f2, rhs1, rhs2, slope, sum, temp, test, tmplam, ALF = 1.0e-4, TOLX = 1.0e-7;
+  long double a, step_length, previous_step_length, 
+      minimum_step_length, b, disc, previous_f_value,
+      rhs1, rhs2, slope, sum, temp, test, temp_step_length,
+      MIN_DECREASE = 1.0e-4, TOLERANCE = 1.0e-7;
 
   *check = 0;
-  sum = la::Dot(xi, xi);
+  sum = la::Dot(*xi, *xi);
   sum = sqrt(sum);
-  if(sum > stpmax) {
-    la::Scale((stpmax/sum), &xi);
+  if(sum > maximum_step_length) {
+    la::Scale((maximum_step_length/sum), xi);
   }
-  slope = la::Dot(g, xi);
+  slope = la::Dot(*grad, *xi);
   if(slope >= 0.0){
     printf("blah ");
     return;
@@ -787,62 +586,65 @@ void line_search(int n, Vector pold, long double fold, Vector g, Vector xi, Vect
   for(i = 0; i < n; i++) {
     double fmax;
     fmax = (fabs(pold.get(i)) > 1.0 ? fabs(pold.get(i)) : 1.0);
-    temp = fabs(xi.get(i)) / fmax;
+    temp = fabs((*xi).get(i)) / fmax;
     if(temp > test) test = temp;
   }
 
-  alamin = TOLX/test;
-  alam = 1.0;
+  minimum_step_length = TOLERANCE/test;
+  step_length = 1.0;
   for(;;) {
 
-    pnew.CopyValues(pold);
-    la::AddExpert(alam, xi, &pnew);
+    (*pnew).CopyValues(pold);
+    la::AddExpert(step_length, *xi, pnew);
     double *temp_array;
     temp_array = (double*) malloc (n * sizeof(double));
     for(i = 0; i < n; i++) {
-      temp_array[i] = pnew.get(i);
+      temp_array[i] = (*pnew).get(i);
     }
-    *fret = (*funk)(temp_array, &g);
-    if(alam < alamin) {
-      pnew.CopyValues(pold);
+    *f_min = (*funk)(data, k_comp, temp_array, grad);
+    if(step_length < minimum_step_length) {
+      (*pnew).CopyValues(pold);
       *check = 1;
       return;
     }
-    else if( *fret <= fold + ALF*alam*slope) {
+    else if( *f_min <= fold + MIN_DECREASE*step_length*slope) {
       return;
     }
     else {
-      if (alam == 1.0) {
-	tmplam = -slope/(2.0*(*fret - fold - slope));
+      if (step_length == 1.0) {
+	temp_step_length = -slope/(2.0*(*f_min - fold - slope));
       }
       else {
-	rhs1 = *fret - fold - alam*slope;
-	rhs2 = f2 - fold - alam2*slope;
-	a = (rhs1 / (alam*alam) - rhs2/(alam2*alam2))/(alam-alam2);
-	b = (-alam2*rhs1/(alam*alam)+alam*rhs2/(alam2*alam2)) / (alam - alam2);
+	rhs1 = *f_min - fold - step_length*slope;
+	rhs2 = previous_f_value - fold - previous_step_length*slope;
+	a = (rhs1 / (step_length*step_length) 
+	     - rhs2/(previous_step_length*previous_step_length))
+	     / (step_length-previous_step_length);
+	b = (-previous_step_length*rhs1/(step_length*step_length)
+	     +step_length*rhs2/(previous_step_length*previous_step_length)) 
+	     / (step_length - previous_step_length);
 	if(a == 0.0) {
-	  tmplam = -slope / (2.0*b);
+	  temp_step_length = -slope / (2.0*b);
 	}
 	else {
 	  disc = b*b - 3.0*a*slope;
 	  if(disc < 0.0) {
-	    tmplam = 0.5*alam;
+	    temp_step_length = 0.5*step_length;
 	  }
 	  else if (b <= 0.0) {
-	    tmplam = (-b+sqrt(disc))/(3.0*a);
+	    temp_step_length = (-b+sqrt(disc))/(3.0*a);
 	  }
 	  else {
-	    tmplam = -slope / (b+sqrt(disc));
+	    temp_step_length = -slope / (b+sqrt(disc));
 	  }
 	}
-	if(tmplam > 0.5*alam) {
-	  tmplam = 0.5*alam;
+	if(temp_step_length > 0.5*step_length) {
+	  temp_step_length = 0.5*step_length;
 	}
       }
     }
-    alam2 = alam;
-    f2 = *fret;
-    alam = (tmplam > 0.1*alam ? tmplam : 0.1*alam);
+    previous_step_length = step_length;
+    previous_f_value = *f_min;
+    step_length = (temp_step_length > 0.1*step_length ? temp_step_length : 0.1*step_length);
   }
 }
-
