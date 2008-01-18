@@ -341,8 +341,7 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
 				  "it will fail\n");
 	}
   
-	index_t block_size=10;
-  retry:	
+	index_t block_size=2*num_of_eigvalues;
 	Teuchos::RCP<Epetra_MultiVector> ivec =  Teuchos::rcp(new 
 																						Epetra_MultiVector(*map_, 
 			                                                         block_size));
@@ -403,14 +402,15 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   // LI - target the largest imaginary
   // SI - target the smallest imaginary
   // Create the parameter list for the eigensolver
-  double tolerance=1.0e-7;
-  
+  double tolerance=1.0e-5;
+	int num_of_blocks=6*num_of_eigvalues;
+  retry:	
 	Teuchos::ParameterList my_pl;
   my_pl.set( "Verbosity", verbosity);
   my_pl.set( "Which", eigtype);
   my_pl.set( "Block Size", block_size);
-  my_pl.set( "Num Blocks", 20);
-  my_pl.set( "Maximum Restarts", 2);
+  my_pl.set( "Num Blocks", num_of_blocks);
+  my_pl.set( "Maximum Restarts", 5);
   my_pl.set( "Convergence Tolerance", tolerance);
 
   // Create the Block Krylov Schur solver
@@ -426,11 +426,10 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   switch (solver_return) {
     // UNCONVERGED
     case Anasazi::Unconverged:
-			block_size*=2;
-		  if (block_size<64) {
-				tolerance=tolerance*10;
-			  NONFATAL("Didn't converge, increasing block_size to %i\n and retrying ", 
-					    	 (int)block_size);
+		  if (num_of_blocks<100) {
+				num_of_blocks+=num_of_eigvalues;
+			  NONFATAL("Didn't converge, increasing num_of_blocks to %i\n and retrying ", 
+					    	 (int)num_of_blocks);
 				goto retry;
 			}	
       FATAL("Anasazi::BlockKrylovSchur::solve() did not converge!\n");  
