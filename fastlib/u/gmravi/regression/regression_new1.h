@@ -44,35 +44,40 @@ template <typename TKernel> class NaiveRegression_new1{
 
   /* This is a friend function adn will be used by both the naive class and the fast class */
 
-  double friend SquaredFrobeniusNorm(Matrix &a);
+  double friend SquaredFrobeniusNorm(Matrix &a);                   
 
   void CompareWithFast(ArrayList<Matrix> &fast){
+
     printf("Came to compare witj fast..\n");
     FILE *fp;
     fp=fopen("squared_frobenius_error.txt","w+");
+
+    FILE *rp;
+    rp=fopen("naive_and_fast_matrices.txt","w+");
+
     /*Compare the relative frobenius norm */
     double sqdfast,sqdnaive,relative_error,max_error=0.0;
-    for(index_t i=0;i<qset_.n_cols();i++){
-       sqdfast=SquaredFrobeniusNorm(fast[i]);
-       sqdnaive=SquaredFrobeniusNorm(results_[i]);
-       fprintf(fp,"sqdfast=%f and sqdnaive=%f\n",sqdfast,sqdnaive);
-       relative_error=fabs(sqdfast-sqdnaive)/sqdnaive;
-       if(max_error<=relative_error){
 
-	 max_error=relative_error;
-       }
+    for(index_t i=0;i<qset_.n_cols();i++){
+
+      sqdfast=SquaredFrobeniusNorm(fast[i]);
+      sqdnaive=SquaredFrobeniusNorm(results_[i]);
+
+      fprintf(fp,"sqdfast=%f and sqdnaive=%f\n",sqdfast,sqdnaive);
+      results_[i].PrintDebug(NULL,fp);
+      fast[i].PrintDebug(NULL,rp);
+      Matrix temp;
+      la::SubInit (results_[i], fast[i], &temp);
+      relative_error=fabs(SquaredFrobeniusNorm(temp))/sqdnaive;
+      if(max_error<=relative_error){
+	
+	max_error=relative_error;
+      }
     }
+
     fprintf(fp,"Maximum error was %f\n",max_error);
     printf("maximum error was %f\n",max_error);
     // printf("The B^TWB matrices are..\n");
-    /*for(index_t q=0;q<qset_.n_cols();q++){
-
-      printf("Fast..q=%d\n",q);
-      fast[q].PrintDebug();
-      printf("Naive..q=%d\n",q);
-      results_[q].PrintDebug();
-      }*/
-
   }
 
   void Compute (){
@@ -83,35 +88,45 @@ template <typename TKernel> class NaiveRegression_new1{
       const double *q_col = qset_.GetColumnPtr (q); //get the query point
       
       for(index_t r=0;r<rset_.n_cols();r++){
-
+	
 	Matrix B_t;
 	B_t.Init(rset_.n_rows()+1,1);
-	//printf("Initialized B_t..\n");
 	
-	
-	Matrix temp2; 
-	la::TransposeInit(B_t,&temp2); 
 	/*Form B^T matrix */
 	for(index_t row=0;row<rset_.n_rows()+1;row++){
-	    
-	    if(row==0){
-	      B_t.set(row,0,1);
+	  
+	  if(row==0){
+
+	    B_t.set(row,0,1);
+	  }
+
+	  else
+	    {
+
+	      B_t.set(row,0,rset_.get(row-1,r));
 	    }
-	    else
-	      {
-		B_t.set(row,0,rset_.get(row-1,r));
-	      }
 	}
+
    	const double *r_col = qset_.GetColumnPtr (r); //get the reference point	
 	double dsqd =la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	double val = kernel_.EvalUnnormOnSq (dsqd);
 
+	/* temp2 holds B */
+	Matrix temp2; 
+	la::TransposeInit(B_t,&temp2); 
+	printf("temp2 is...\n");
+	temp2.PrintDebug();
+	
 	Matrix temp3;
 	la:: MulInit(B_t,temp2,&temp3); //temp3 stores B^TB
-
+	printf("temp3 is..\n");
+	temp3.PrintDebug();
 	/* scale temp3 which holds B^TB by val */
 	la::Scale(val,&temp3);
 	la::AddTo(temp3,&results_[q]);
+
+	printf("results_[q] is...\n");
+	results_[q].PrintDebug();
       }
     }
   }
@@ -131,9 +146,9 @@ template <typename TKernel> class NaiveRegression_new1{
     for (index_t i = 0; i < qset_.n_cols (); i++){
       
       results_[i].Init(rset_.n_rows()+1,rset_.n_rows()+1); //A square matrix
+      results_[i].SetAll(0);
     }
     
-     
   }
 };  //Naive regression1 is done
 
