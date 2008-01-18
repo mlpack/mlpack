@@ -4,14 +4,13 @@
 #include "fastlib/fastlib.h"
 
 /* TODO: I don't actually want these to be public */
-/* but sometimes we should provide freedoms for our advanced users */
 const double SMO_ZERO = 1.0e-8;
 const double SMO_EPS = 1.0e-4;
 const double SMO_TOLERANCE = 1.0e-4;
 
 template<typename TKernel>
 class SMO {
-  FORBID_ACCIDENTAL_COPIES(SMO);
+  FORBID_COPY(SMO);
 
  public:
   typedef TKernel Kernel;
@@ -20,11 +19,9 @@ class SMO {
   Matrix kernel_cache_sign_;
   Kernel kernel_;
   const Dataset *dataset_;
-  index_t n_data_; // number of data samples
-  index_t n_classes_; // number of classes
-  Matrix matrix_; // alias for the data matrix
-  Vector alpha_; // the alphas, to be optimized
-  index_t n_sv_; // number of support vectors
+  index_t n_data_;
+  Matrix matrix_;
+  Vector alpha_;
   Vector error_;
   double thresh_;
   double c_;
@@ -40,16 +37,26 @@ class SMO {
    *
    * You must initialize separately the kernel.
    */
-  void Init(int n_classes_in, double c_in, int budget_in) {
+  void Init(const Dataset* dataset_in, double c_in, int budget_in) {
     c_ = c_in;
-    n_classes_ = n_classes_in;
-    budget_ = budget_in;
 
-    thresh_ = 0.0;
-    n_sv_ = 0;
+    dataset_ = dataset_in;
+    matrix_.Alias(dataset_->matrix());
+    
+    n_data_ = matrix_.n_cols();
+    budget_ = min(budget_in, n_data_);
+
+    alpha_.Init(n_data_);
+    alpha_.SetZero();
+    sum_alpha_ = 0;
+
+    error_.Init(n_data_);
+    error_.SetZero();
+
+    thresh_ = 0;
   }
 
-  void Train(const Dataset* dataset_in);
+  void Train();
 
   const Kernel& kernel() const {
     return kernel_;
@@ -63,15 +70,11 @@ class SMO {
     return thresh_;
   }
 
-  //index_t num_sv() const {
-  //  return n_sv_;
-  //}
-
-  void GetSVM(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSVM(Matrix *support_vectors, Vector *support_alpha) const;
 
  private:
   index_t TrainIteration_(bool examine_all);
-  
+
   bool TryChange_(index_t j);
 
   bool TakeStep_(index_t i, index_t j, double error_j);
@@ -89,7 +92,6 @@ class SMO {
     return alpha <= 0 || alpha >= c_;
   }
 
-  // labels: the last row of the data matrix, 0 or 1
   int GetLabelSign_(index_t i) const {
     return matrix_.get(matrix_.n_rows()-1, i) != 0 ? 1 : -1;
   }
@@ -102,7 +104,7 @@ class SMO {
     double val;
     if (!IsBound_(alpha_[i])) {
       val = error_[i];
-      VERBOSE_MSG(0, "error values %f and %f", error_[i], Evaluate_(i) - GetLabelSign_(i));
+      DEBUG_MSG(0, "error values %f and %f", error_[i], Evaluate_(i) - GetLabelSign_(i));
     } else {
       val = CalculateError_(i);
     }
@@ -129,6 +131,7 @@ class SMO {
         Vector v_j;
         GetVector_(j, &v_j);
         double k = kernel_.Eval(v_i, v_j);
+        
         kernel_cache_sign_.set(j, i, k * GetLabelSign_(i) * GetLabelSign_(j));
       }
     }
@@ -136,50 +139,72 @@ class SMO {
   }
 };
 
-// Budget SMO training for 2-classes
 template<typename TKernel>
-void SMO<TKernel>::Train(const Dataset* dataset_in) {
+void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *support_alpha) const {
+  index_t n_support = 0;
+  index_t i_support = 0;
+
+  for (index_t i = 0; i < n_data_; i++) {
+    if (unlikely(alpha_[i] != 0)) {
+      n_support++;
+    }
+  }
+
+  support_vectors->Init(matrix_.n_rows() - 1, n_support);
+  support_alpha->Init(n_support);
+
+  for (index_t i = 0; i < n_data_; i++) {
+    if (unlikely(alpha_[i] != 0)) {
+      Vector source;
+      Vector dest;
+
+      GetVector_(i, &source);
+      support_vectors->MakeColumnVector(i_support, &dest);
+      dest.CopyValues(source);
+
+      (*support_alpha)[i_support] = alpha_[i] * GetLabelSign_(i);
+
+      i_support++;
+    }
+  }
+}
+
+template<typename TKernel>
+double SMO<TKernel>::Evaluate_(index_t i) const {
+  // TODO: This only handles linear
+  Vector kernel_values;
+  double summation = 0;
+  
+  kernel_cache_sign_.MakeColumnVector(i, &kernel_values);
+  summation = la::Dot(alpha_, kernel_values) * GetLabelSign_(i);
+  
+  return (summation - thresh_);
+}
+
+template<typename TKernel>
+void SMO<TKernel>::Train() {
   bool examine_all = true;
   index_t num_changed = 0;
   int n_iter = 0;
-
-  // data-dependent initialization
-  dataset_ = dataset_in;
-  matrix_.Alias(dataset_->matrix());
   
-  n_data_ = matrix_.n_cols();
-  budget_ = min(budget_, n_data_);
-  alpha_.Init(n_data_);
-  
-  alpha_.SetZero();
-  sum_alpha_ = 0;
-  
-  error_.Init(n_data_);
-  error_.SetZero();
-
-  // calculate kernel_cache_sign_: [k_ij* y_i* y_j]
   CalcKernels_();
-  while (num_changed > 0 || examine_all) { // TODO: other stopping criteria
-    VERBOSE_GOT_HERE(0);
 
-    // SMO iterations
+  while ((num_changed > 0 || examine_all)) {
+    DEBUG_GOT_HERE(0);
     num_changed = TrainIteration_(examine_all);
 
     if (examine_all) {
       examine_all = false;
-    } else if (num_changed == 0) { 
+    } else if (num_changed == 0) {
       examine_all = true;
     }
     
-    // if exceed the maximum number of iterations, finished
-    // 200...TODO
     if (++n_iter == 200) {
       fprintf(stderr, "Max iterations %f!!!!!!!!!!!!!!!!!!!!!!!!!!\n",
          sum_alpha_);
       break;
     }
     
-    // for every 100 iterations, do budget shrink
     if (n_iter % 100 == 0 && budget_ < n_data_) {
       MinHeap<double, int> alphas;
       
@@ -202,16 +227,14 @@ void SMO<TKernel>::Train(const Dataset* dataset_in) {
         if (!IsBound_(alpha_[i])) {
           error_[i] = CalculateError_(i);
         } else {
-	  error_[i] = 0;
+          error_[i] = 0;
         }
         sum_alpha_ += alpha_[i];
       }
-    } // if
-
-  } // while
+    }
+  }
 }
 
-// SMO training iterations
 template<typename TKernel>
 index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
   index_t num_changed = 0;
@@ -225,16 +248,15 @@ index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
   return num_changed;
 }
 
-// try to find working set (maximal violating pair)
 template<typename TKernel>
 bool SMO<TKernel>::TryChange_(index_t j) {
-  double error_j = Error_(j); // -y_j g_j^* -thresh
+  double error_j = Error_(j);
   double rj = error_j * GetLabelSign_(j);
 
-  VERBOSE_GOT_HERE(0);
+  DEBUG_GOT_HERE(0);
 
-  if (!( (rj < -SMO_TOLERANCE && alpha_[j] < c_)
-	 ||(rj > SMO_TOLERANCE && alpha_[j] > 0) )) {
+  if (!((rj < -SMO_TOLERANCE && alpha_[j] < c_)
+      || (rj > SMO_TOLERANCE && alpha_[j] > 0))) {
     return false; // nothing to change
   }
 
@@ -245,11 +267,10 @@ bool SMO<TKernel>::TryChange_(index_t j) {
     
     double diff_max = 0;
     
-    // find the max(abs(y_i g_i^*))
     for (index_t k = 0; k < n_data_; k++) {
-      if (!IsBound_(alpha_[k])) { // if 0 < alpha_[k] < c_
+      if (!IsBound_(alpha_[k])) {
         double error_k = error_[k];
-        double diff_k = fabs(error_k - error_j); // abs(y_j g_j^* - y_k g_k^*)
+        double diff_k = fabs(error_k - error_j);
         if (unlikely(diff_k > diff_max)) {
           diff_max = diff_k;
           i = k;
@@ -261,7 +282,7 @@ bool SMO<TKernel>::TryChange_(index_t j) {
     }
   }
 
-  VERBOSE_GOT_HERE(0);
+  DEBUG_GOT_HERE(0);
   // try searching through non-bound examples
   index_t start_i = rand() % n_data_;
   index_t i = start_i;
@@ -274,7 +295,7 @@ bool SMO<TKernel>::TryChange_(index_t j) {
     i = (i + 1) % n_data_;
   } while (i != start_i);
 
-  VERBOSE_GOT_HERE(0);
+  DEBUG_GOT_HERE(0);
   // try searching through all examples
   start_i = rand() % n_data_;
   i = start_i;
@@ -289,11 +310,10 @@ bool SMO<TKernel>::TryChange_(index_t j) {
   return false;
 }
 
-// search direction, update gradient
 template<typename TKernel>
 bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   if (i == j) {
-    VERBOSE_GOT_HERE(0);
+    DEBUG_GOT_HERE(0);
     return false;
   }
 
@@ -325,8 +345,8 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   if (l >= u - SMO_TOLERANCE) {
     // TODO: might put in some tolerance
-    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
-    VERBOSE_GOT_HERE(0);
+    DEBUG_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
+    DEBUG_GOT_HERE(0);
     return false;
   }
 
@@ -334,18 +354,17 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   double kii = EvalKernel_(i, i);
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
-  // second derivative of the objective function
+  // second derivative of objective function
   double eta = +2*kij - kii - kjj;
 
-  VERBOSE_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
+  DEBUG_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
 
-  // update alpha_j
   if (likely(eta < 0)) {
-    VERBOSE_MSG(0, "Common case");
+    DEBUG_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));
   } else {
-    VERBOSE_MSG(0, "Uncommon case");
+    DEBUG_MSG(0, "Uncommon case");
     //abort();
     double c1 = eta/2;
     double c2 = yj * (error_i - error_j) - eta * alpha_j;
@@ -368,11 +387,10 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   // check if there is progress
   if (fabs(delta_alpha_j) < SMO_EPS*(alpha_j + alpha_[j] + SMO_EPS)) {
-    VERBOSE_GOT_HERE(0);
+    DEBUG_GOT_HERE(0);
     return false;
   }
 
-  // update alpha_i
   alpha_i = alpha_i - (s)*(delta_alpha_j);
   if (alpha_i < SMO_ZERO) {
     alpha_j += s * alpha_i;
@@ -403,7 +421,6 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   kernel_cache_sign_.MakeColumnVector(i, &kernel_i);
   kernel_cache_sign_.MakeColumnVector(j, &kernel_j);
 
-  // update gradient
   for (index_t k = 0; k < n_data_; k++) {
     if (likely(k != i) && likely(k != j) && !IsBound_(alpha_[k])) {
       error_[k] += (delta_alpha_i*kernel_i[k] + delta_alpha_j*kernel_j[k]) * GetLabelSign_(k) - delta_thresh;
@@ -421,41 +438,8 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   error_[i] = 0;
   error_[j] = 0;
 
-  VERBOSE_GOT_HERE(0);
+  DEBUG_GOT_HERE(0);
   return true;
-}
-
-
-template<typename TKernel>
-double SMO<TKernel>::Evaluate_(index_t i) const {
-  // TODO: This only handles linear
-  Vector kernel_values;
-  double summation = 0;
-  
-  kernel_cache_sign_.MakeColumnVector(i, &kernel_values);
-  summation = la::Dot(alpha_, kernel_values) * GetLabelSign_(i);
-  
-  return (summation - thresh_);
-}
-
-// Get SVM results:coefficients, number and indecies of SVs
-template<typename TKernel>
-void SMO<TKernel>::GetSVM(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
-  coef.Init(n_data_);
-  for (index_t i = 0; i < n_data_; i++) {
-    if (alpha_[i] != 0) { // support vectors
-      coef[i] = alpha_[i] * GetLabelSign_(i);
-      sv_indicator[dataset_index[i]] = true;
-      n_sv_++;
-      //sv_index[i_sv]= dataset_bi_index[i];
-      //GetVector_(i, &source);
-      //support_vectors->MakeColumnVector(i_support, &dest);
-      //dest.CopyValues(source);
-    }
-    else {
-      coef[i] = 0;
-    }
-  }
 }
 
 #endif

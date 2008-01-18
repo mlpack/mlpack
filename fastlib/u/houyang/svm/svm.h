@@ -108,7 +108,7 @@ void SVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *module)
   param_.kernel_.Init(fx_submodule(module, "kernel", "kernel"));
   param_.kernel_.GetName(&param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
-  // c; default:1
+
   param_.c_ =  fx_param_double_req(NULL, "c");
   // budget parameter, contorls # of support vectors; default: # of data samples (use all)
   param_.b_ = fx_param_int(module, "b", dataset.n_points());  // TODO: param_req
@@ -255,25 +255,33 @@ void SVM<TKernel>::SaveModel(String modelfilename) {
   param_.kernel_.SaveParam(fp);
   fprintf(fp, "total_num_sv %d\n", total_num_sv_);
   fprintf(fp, "labels ");
-  for (i=0; i<num_classes_; i++) 
+  for (i = 0; i < num_classes_; i++) 
     fprintf(fp, "%d ", train_labels_list_[i]);
   fprintf(fp, "\n");
   // save models
   fprintf(fp, "thresholds ");
-  for (i=0; i< num_models_; i++)
+  for (i = 0; i < num_models_; i++)
     fprintf(fp, "%f ", models_[i].thresh_);
+  fprintf(fp, "\n");
+  fprintf(fp, "sv_list_startpos ");
+  for (i =0; i < num_classes_; i++)
+    fprintf(fp, "%d ", sv_list_startpos_[i]);
+  fprintf(fp, "\n");
+  fprintf(fp, "sv_list_ct ");
+  for (i =0; i < num_classes_; i++)
+    fprintf(fp, "%d ", sv_list_ct_[i]);
   fprintf(fp, "\n");
   // save coefficients and support vectors
   fprintf(fp, "SV_coefs\n");
-  for (i=0; i<total_num_sv_; i++) {
-    for (j=0; j<num_classes_-1; j++) {
+  for (i = 0; i < total_num_sv_; i++) {
+    for (j = 0; j < num_classes_-1; j++) {
       fprintf(fp, "%f ", sv_coef_.get(j,i));
     }
     fprintf(fp, "\n");
   }
   fprintf(fp, "SVs\n");
-  for (i=0; i<total_num_sv_; i++) {
-    for (j =0; j<num_features_; j++) { // n_rows-1
+  for (i = 0; i < total_num_sv_; i++) {
+    for (j = 0; j < num_features_; j++) { // n_rows-1
       fprintf(fp, "%f ", sv_.get(j,i));
     }
     fprintf(fp, "\n");
@@ -287,11 +295,12 @@ void SVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
   //Init
   train_labels_list_.Init(num_classes_);
   num_features_ = testset->n_features();
+
   //load model file
   FILE *fp = fopen(modelfilename, "r");
   char cmd[80]; 
   int i, j; int temp_d; double temp_f;
-  for (i=0; i<num_models_; i++) {
+  for (i = 0; i < num_models_; i++) {
 	models_.AddBack();
   }
   while (1) {
@@ -299,7 +308,7 @@ void SVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
     if(strcmp(cmd,"svm_type")==0) {
       fscanf(fp,"%80s",cmd);
       if(strcmp(cmd,"svm_c")==0) {
-	fprintf(stderr, "SVM Classification");
+	fprintf(stderr, "SVM_C\n");
       }
     }
     else if (strcmp(cmd, "num_classes")==0) {
@@ -327,29 +336,48 @@ void SVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
       }
     }
     else if (strcmp(cmd, "thresholds")==0) {
-      for (i=0; i<num_models_; i++) {
+      for ( i= 0; i < num_models_; i++) {
 	fscanf(fp,"%d",&temp_d); 
 	models_[i].thresh_= temp_d;
       }
     }
-    else if (strcmp(cmd, "SV_coef")==0) {
-      for (i=0; i<total_num_sv_; i++) {
-	for (j=0; j<num_classes_-1; j++) {
-	  fscanf(fp,"%f",&temp_f);
+    else if (strcmp(cmd, "sv_list_startpos")==0) {
+      for ( i= 0; i < num_models_; i++) {
+	fscanf(fp,"%d",&temp_d); 
+	sv_list_startpos_[i]= temp_d;
+      }
+    }
+    else if (strcmp(cmd, "sv_list_ct")==0) {
+      for ( i= 0; i < num_models_; i++) {
+	fscanf(fp,"%d",&temp_d); 
+	sv_list_ct_[i]= temp_d;
+      }
+      break;
+    }
+  }
+  sv_coef_.Init(num_classes_-1, total_num_sv_);
+  sv_coef_.SetZero();
+  sv_.Init(num_features_, total_num_sv_);
+  while (1) {
+    fscanf(fp,"%80s",cmd);
+    if (strcmp(cmd, "SV_coefs")==0) {
+      for (i = 0; i < total_num_sv_; i++) {
+	for (j = 0; j < num_classes_-1; j++) {
+	  fscanf(fp,"%lf",&temp_f);
 	  sv_coef_.set(j, i, temp_f);
 	}
       }
     }
     else if (strcmp(cmd, "SVs")==0) {
-      for (i=0; i<total_num_sv_; i++) {
-	for (j=0; j<num_features_; j++) {
-	  fscanf(fp,"%f",&temp_f);
+      for (i = 0; i < total_num_sv_; i++) {
+	for (j = 0; j < num_features_; j++) {
+	  fscanf(fp,"%lf",&temp_f);
 	  sv_.set(j, i, temp_f);
 	}
       }
       break;
     }
-  }// while
+  }
 }
 
 // Multiclass SVM Classifier. Testing for one sample
@@ -369,8 +397,9 @@ int SVM<TKernel>::Classify(const Vector& datum) {
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
       double sum = 0;
-      for(k = 0; k < sv_list_ct_[i]; k++)
+      for(k = 0; k < sv_list_ct_[i]; k++) {
 	sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
+      }
       for(k = 0; k < sv_list_ct_[j]; k++)
 	sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
       sum -= models_[ct].thresh_;
