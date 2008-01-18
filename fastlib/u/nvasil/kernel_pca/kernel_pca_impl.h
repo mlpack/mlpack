@@ -59,6 +59,7 @@ void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
 	temp.Init(kernel_matrix_.dimension());
 	temp.SetAll(1.0);
 	kernel_matrix_.SetDiagonal(temp);
+	kernel_matrix_.ToFile("kpca.txt");
 	kernel_matrix_.EndLoading();
 	NONFATAL("Computing eigen values...\n");
   kernel_matrix_.Eig(num_of_eigenvalues, 
@@ -138,19 +139,27 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 	// We initialize everything with knns_ although it is highly likely that
 	// if the k nearest neighbors include the same point then we will need
 	// a smaller vector knns_-1
-	neighbor_vals.Init(dimension_, knns_);
-	Matrix covariance(knns_, knns_);
-	Matrix t_covariance(knns_-1, knns_-1);
+	neighbor_vals.Init(dimension_, knns_-1);
+	Matrix covariance(knns_-1, knns_-1);
 	Vector ones;
-	ones.Init(knns_);
+	ones.Init(knns_-1);
 	ones.SetAll(1);
 	Vector weights;
 	index_t neighbors[knns_];
-	index_t i;
+	index_t i=0;
 	kernel_matrix_.Init(data_.n_cols(),
 			                data_.n_cols(),
 											knns_);
 	last_point=0;
+  point.CopyValues(data_.GetColumnPtr(0));
+	// Create a unitary matrix
+	Matrix covariance_regularizer;
+	covariance_regularizer.Init(knns_-1, knns_-1);
+  covariance_regularizer.SetZero();
+  for(index_t j=0; j<knns_-1; j++) {
+	  covariance_regularizer.set(j, j, 1);
+	}	
+		
 	while (!feof(fp)) {
 		fscanf(fp, "%llu %llu %lg\n", &p1, &p2, &dist);
 		if (dist==0) {
@@ -159,22 +168,24 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
    	if (p1!=last_point) {
 		  point.CopyValues(data_.GetColumnPtr(p1));
 			last_point=p1;
-			if (i==knns_) {
-        la::MulTransAOverwrite(neighbor_vals, neighbor_vals, &covariance);
-        la::SolveInit(covariance, ones, &weights);
-        kernel_matrix_.LoadRow(p1, knns_, neighbors, weights.ptr());
-			  weights.Destruct();
-			} else {
-			  Vector t_ones;
-				Matrix t_neighbor_vals;
-				Vector t_weights;
-				t_ones.Alias(ones.ptr(), i);
-				t_neighbor_vals.Alias(neighbor_vals.ptr(), dimension_, i);
-        la::MulTransAOverwrite(t_neighbor_vals, t_neighbor_vals, &t_covariance);
-        la::SolveInit(t_covariance, t_ones, &t_weights);
-        kernel_matrix_.LoadRow(p1, i, neighbors, t_weights.ptr());
+			la::MulTransAOverwrite(neighbor_vals, neighbor_vals, &covariance);
+      // calculate the covariance matrix trace
+			double trace=0;
+			for (index_t k=0; k<i; k++) {
+			  trace+=covariance.get(k,k);
 			}
+      la::AddExpert(1e-3*trace, covariance_regularizer, &covariance);
+			la::SolveInit(covariance, ones, &weights);
+			double sum_weights=0;
+			for(index_t k=0; k<weights.length(); k++) {
+			  sum_weights+=weights[k];
+			}
+      for(index_t k=0; k<weights.length(); k++) {
+			  weights[k]/=sum_weights;
+			}
+      kernel_matrix_.LoadRow(p1, i, neighbors, weights.ptr());
 		  i=0;
+			weights.Destruct();
 		}
     memcpy(neighbor_vals.GetColumnPtr(i), data_.GetColumnPtr(p2), 
 		    sizeof(double)*dimension_);
@@ -185,8 +196,12 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
   kernel_matrix_.Negate();
 	kernel_matrix_.SetDiagonal(1.0);
   NONFATAL("Computing eigen values...\n");
-	kernel_matrix_.EndLoading();
-  kernel_matrix_.Eig(num_of_eigenvalues, 
+	SparseMatrix kernel_matrix1;
+	kernel_matrix1.Init(data_.n_cols(), data_.n_cols(), 2*knns_);
+	Sparsem::MultiplyT(kernel_matrix_, &kernel_matrix1);
+	kernel_matrix1.ToFile("lle_mat.txt");
+	kernel_matrix1.EndLoading();
+  kernel_matrix1.Eig(num_of_eigenvalues, 
 			               "SM", 
 										 eigen_vectors,
 										 eigen_values, NULL);
