@@ -272,7 +272,7 @@ const T *poison_ptr(T *&x) {
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
  */
-#define DEBUG_SAME_DBL(x, y) \
+#define DEBUG_SAME_DOUBLE(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
         "DEBUG_SAME_DBL failed: %s = %g not equal to %s = %g\n", \
         #x, STATIC_CAST(double, x), #y, STATIC_CAST(double, y))
@@ -288,7 +288,7 @@ const T *poison_ptr(T *&x) {
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
  */
-#define DEBUG_APPROX_DBL(x, y, eps) \
+#define DEBUG_APPROX_DOUBLE(x, y, eps) \
     DEBUG_ASSERT_MSG(fabs(STATIC_CAST(double, (x) - (y))) > eps, \
         "DEBUG_APPROX_DBL failed: %s = %g not within %g of %s = %g\n", \
         #x, STATIC_CAST(double, x), STATIC_CAST(double, eps), \

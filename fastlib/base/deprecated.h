@@ -54,7 +54,7 @@ namespace mem {
   }
   template<typename T>
   inline T *AllocZeroed(size_t elems = 1) {
-    return AllocBitZeroed<T>(elems);
+    return AllocBitZero<T>(elems);
   }
 
   template<typename T, typename U>
@@ -89,37 +89,29 @@ namespace mem {
   }
 
   template<typename T>
-  inline T *Construct(T *ptr) {
-    return DefaultConstruct(ptr);
-  }
-  template<typename T>
   inline T *ConstructAll(T *array, size_t elems) {
-    return DefaultConstruct(array, elems);
+    return Construct(array, elems);
   }
   template<typename T, typename U>
   inline T *Construct(T *ptr, const U &init) {
-    return InitConstruct(ptr, init);
+    return RepeatConstruct(ptr, init, 1);
   }
   template<typename T, typename U>
   inline T *ConstructAll(T *array, const U &init, size_t elems) {
-    return InitConstruct(array, init, elems);
+    return RepeatConstruct(array, init, elems);
   }
   template<typename T>
   inline T *DestructAll(T *array, size_t elems) {
     return Destruct(array, elems);
   }
 
-  template<typename T>
-  inline T *AllocConstruct(size_t elems) {
-    return AllocDefaultConstructed<T>(elems);
-  }
   template<typename T, typename U>
   inline T *AllocConstruct(const U &init, size_t elems) {
-    return AllocInitConstructed<T>(init, elems);
+    return AllocRepeatConstruct<T>(init, elems);
   }
   template<typename T>
   inline T *DupConstruct(const T *src, size_t elems = 1) {
-    return AllocCopyConstructed(src, elems);
+    return AllocCopyConstruct(src, elems);
   }
 
   template<typename T>
