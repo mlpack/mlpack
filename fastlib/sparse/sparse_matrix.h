@@ -267,6 +267,7 @@ class SparseMatrix {
 		matrix_->Print(s1);
 		return s1.str();
 	}
+	void ToFile(std::string file);
 	/** Computes the eignvalues with the Krylov Method
 	    index_t num_of_eigvalues:   number of eigenvalues to compute
 			     std::string eigtype:   Choose which eigenvalues to compute

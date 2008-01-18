@@ -330,6 +330,27 @@ void SparseMatrix::ApplyFunction(FUNC &function){
 	    }
     }
   }
+void SparseMatrix::ToFile(std::string file) {
+  FILE *fp=fopen(file.c_str(), "w");
+	if (fp==NULL) {
+	  FATAL("Unable to open %s for exporting the matrix, error %s\n",
+				file.c_str(), strerror(errno));
+	}
+	double *values;
+  index_t *indices;
+  index_t num_of_entries;
+  my_global_elements_ = map_->MyGlobalElements();
+  for(index_t i=0; i<num_of_rows_; i++) {
+    index_t global_row = my_global_elements_[i];
+    matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+    for(index_t j=0; j<num_of_entries; j++) {
+     fprintf(fp, "%lli %lli %lg\n", (long long int)i, 
+				                            (long long int)indices[j],
+										    						values[j]); 
+    }
+  }
+	fclose(fp);
+}
 
 void SparseMatrix::Eig(index_t num_of_eigvalues,
 	                     std::string eigtype,	
