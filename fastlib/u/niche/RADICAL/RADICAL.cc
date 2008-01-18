@@ -8,37 +8,117 @@ void SaveCorrectly(const char *filename, Matrix a) {
 }
 
 
-void RADICALOptTheta(Matrix X, double std_dev, index_t m,
+int compare_doubles_ascending(const void* a, const void* b) {
+  double* arg1 = (double*) a;
+  double* arg2 = (double*) b;
+  if(*arg1 < *arg2) {
+    return -1;
+  }
+  else if(*arg1 == *arg2) {
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}
+  
+
+double vasicekm(Vector v, index_t m) {
+
+  Vector sorted_v;
+
+  index_t n = v.length();
+
+  sorted_v.Copy(v);
+
+  qsort(sorted_v.ptr(), n, sizeof(double), compare_doubles_ascending);
+
+sum_logs = 0;
+
+for i = 1:n
+  if (i + m) > n
+    sum_logs = sum_logs + log(Z(n) - Z(i-m));
+  elseif (i-m) < 1
+    sum_logs = sum_logs + log(Z(i+m) - Z(1));
+  else    
+    sum_logs = sum_logs + log(Z(i+m) - Z(i-m));
+  end
+end
+
+  
+
+h = (sum_logs/n) + log(n/(2*m));
+
+
+
+}
+
+
+
+void RADICALOptTheta(Matrix X_t, double std_dev, index_t m,
 		     index_t reps, double new_k, double range,
 		     double *theta_star, Matrix* rotator_star) {
-  Matrix X_aug;
+  Matrix X_aug_t;
 
   index_t d = X.n_rows();
   index_t n = X.n_cols();
 
   
   if(reps == 1) {
-    X_aug.Copy(X);
+    X_aug_t.Alias(X_t);
   }
   else {
     Matrix noise_matrix;
     Scale(std_dev,
-	  RandNormalInit(d, n * reps, &noise_matrix));
+	  RandNormalInit(n * reps, d, &noise_matrix));
     
-    X_aug.Init(d, n * reps);
+    X_aug_t.Init(n * reps, d);
     
-    double* X_elements = X.ptr();
-    double* X_aug_elements = X_aug.ptr();
+    double* X_t_elements = X_t.ptr();
+    double* X_aug_t_elements = X_aug_t.ptr();
     
     index_t num_elements = d * n;
     for(index_t rep_num = 0; rep_num < reps; rep_num++) {
-      memcpy(X_aug_elements + (rep_num * num_elements) * sizeof(double),
-	     X_elements,
+      memcpy(X_aug_t_elements + (rep_num * num_elements) * sizeof(double),
+	     X_t_elements,
 	     num_elements * sizeof(double));
     }
 
-    la::AddTo(noise_matrix, &X_aug);
+    la::AddTo(noise_matrix, &X_aug_t);
   }
+
+  double perc = range / (M_PI / 2);
+  double number_k = perc * k;
+  index_t start  = (index_t) floor((k - number_k) / 2) + 1;
+  index_t end_point = (index_t) ceil((k - number_k) / 2);
+
+  for(index_t i = 0; i < k; i++) {
+    double theta =
+      ((double) (i - 1) / (double) (k - 1) * M_PI / 2) - (M_PI / 4);
+
+    double cos_theta = cos(theta);
+    double sin_theta = sin(theta);
+    Matrix rotator;
+    rotator.Init(2,2);
+    rotator.set(0,0, cos_theta);
+    rotator.set(0,1, sin_theta);
+    rotator.set(1,0, -sin_theta);
+    rotator.set(1,1, cos_theta);
+    Matrix rotated_X_aug_t;
+    la::MulTransBInit(X_aug_t, rotator, &rotated_X_aug_t);
+
+    Vector marginal_at_theta;
+    marginal_at_theta.Init(d);
+    for(index_t j = 0; j < d; j++) {
+      Vector col_vector;
+      rotated_X_aug_t.MakeColumnVector(j, &col_vector);
+      marginal_at_theta[j] = vasicekm(col_vector, m);
+    }
+      
+    
+		    
+
+  
 }
 
 
@@ -54,7 +134,7 @@ void RADICAL(Matrix X, Matrix whitening_matrix, Matrix X_whitened,
   Matrix X_t, X_current_t, X_whitened_t;
   la::TransposeInit(X, &X_t);
   la::TransposeInit(X_whitened, &X_current_t);
-  la::TransposeInit(X_whitened, &X_whitened_t);
+  X_whitened_t.Copy(X_current_t);
   
 
   index_t sweeps = d - 1;
@@ -134,19 +214,12 @@ void RADICAL(Matrix X, Matrix whitening_matrix, Matrix X_whitened,
 
 
 
+// there should be some way to wrap X, W, and Y into our module no? ask ryan
 
+int RADICALMain(datanode *module, Matrix X, Matrix *W, Matrix *Y) {
 
-int RADICALMain(datanode *module, Matrix *W, Matrix *Y) {
-
-  const char *data = fx_param_str_req(NULL, "data");
+  Matrix X_centered, X_whitened, whitening_matrix;
   
-  Matrix X, X_centered, X_whitened, whitening_matrix;
-  data::Load(data, &X);
-  
-  index_t d = X.n_rows(); // number of dimensions
-  index_t n = X.n_cols(); // number of points
-
-
   index_t k = 150;
   bool aug_flag = false;
   index_t reps = 30;
@@ -158,14 +231,11 @@ int RADICALMain(datanode *module, Matrix *W, Matrix *Y) {
   WhitenUsingSVD(X_centered, &X_whitened, &whitening_matrix);
 
 
-  RADICAL(X, whitening_matrix, X_whitened, k, aug_flag, reps, std_dev, m, W, Y);
+  RADICAL(X, whitening_matrix, X_whitened,
+	  k, aug_flag, reps, std_dev, m,
+	  W, Y);
 
-	
 
-
-
-  W -> Init(0,0);
-  Y -> Init(0,0);
 
   return SUCCESS_PASS;
 }
@@ -177,9 +247,12 @@ int main(int argc, char *argv[]) {
 
   srand48(time(0));
 
-  Matrix W, Y;
+  Matrix X, W, Y;
 
-  int ret_val = RADICALMain(fx_root, &W, &Y);
+  const char *data = fx_param_str_req(NULL, "data");
+  data::Load(data, &X);
+  
+  int ret_val = RADICALMain(fx_root, X, &W, &Y);
 
   //SaveCorrectly("unmixing_matrix.dat", W);
   //SaveCorrectly("indep_comps.dat", Y);
