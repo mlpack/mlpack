@@ -37,6 +37,15 @@ double ArgMinus(double x, double arg) {
   return arg - x;
 }
 
+Matrix* DiagMatrixInit(index_t n, double value, Matrix *diag_matrix) {
+  diag_matrix -> Init(n, n);
+  diag_matrix -> SetZero();
+  for(index_t i = 0; i < n; i++) {
+    diag_matrix -> set(i, i, value);
+  }
+
+  return diag_matrix;
+}
 
 Matrix* ColVector(index_t n, double value, Matrix *col_vector) {
   col_vector -> Init(n, 1);
@@ -490,68 +499,210 @@ void MakeSubMatrixByColumns(Vector column_indices, Matrix A, Matrix *A_sub) {
   }
 }
 
+
+
+void Center(Matrix X, Matrix* X_centered) {
+  Vector col_vector_sum;
+  col_vector_sum.Init(X.n_rows());
+  col_vector_sum.SetZero();
+  
+  index_t n = X.n_cols();
+ 
+  for(index_t i = 0; i < n; i++) {
+    Vector cur_col_vector;
+    X.MakeColumnVector(i, &cur_col_vector);
+    la::AddTo(cur_col_vector, &col_vector_sum);
+  }
+
+  la::Scale(1/(double) n, &col_vector_sum);
+
+  X_centered -> Copy(X);
+
+  for(index_t i = 0; i < n; i++) {
+    Vector cur_col_vector;
+    X_centered -> MakeColumnVector(i, &cur_col_vector);
+    la::SubFrom(col_vector_sum, &cur_col_vector);
+  }
+
+}
+
+
+void WhitenUsingSVD(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix) {
+  
+  Matrix cov_X, U, VT, inv_S_matrix, temp1;
+  Vector S_vector;
+  
+  Scale(1 / (double) (X.n_cols() - 1),
+	MulTransBInit(&X, &X, &cov_X));
+  
+  la::SVDInit(cov_X, &S_vector, &U, &VT);
+  
+  index_t d = S_vector.length();
+  inv_S_matrix.Init(d, d);
+  inv_S_matrix.SetZero();
+  for(index_t i = 0; i < d; i++) {
+    double inv_sqrt_val = 1 / sqrt(S_vector[i]);
+    inv_S_matrix.set(i, i, inv_sqrt_val);
+  }
+
+  cov_X.PrintDebug("cov(X')");
+  U.PrintDebug("U");
+  VT.PrintDebug("VT");
+  inv_S_matrix.PrintDebug("S^-.5");
+  
+  MulTransBInit(MulTransAInit(&VT, &inv_S_matrix, &temp1),
+		&U,
+		whitening_matrix);
+  
+  MulInit(whitening_matrix, &X, X_whitened);
+  
+}
+
+
+void WhitenUsingEig(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix, Matrix* dewhitening_matrix) {
+  Matrix cov_X, D, D_inv, E;
+  Vector D_vector;
+
+  Scale(1 / (double) (X.n_cols() - 1),
+	MulTransBInit(&X, &X, &cov_X));
+    
+
+  la::EigenvectorsInit(cov_X, &D_vector, &E);
+
+  //E.set(0, 1, -E.get(0, 1));
+  //E.set(1, 1, -E.get(1, 1));
+
+    
+
+  index_t d = D_vector.length();
+  D.Init(d, d);
+  D.SetZero();
+  D_inv.Init(d, d);
+  D_inv.SetZero();
+  for(index_t i = 0; i < d; i++) {
+    double sqrt_val = sqrt(D_vector[i]);
+    D.set(i, i, sqrt_val);
+    D_inv.set(i, i, 1 / sqrt_val);
+  }
+
+  la::MulTransBInit(D_inv, E, whitening_matrix);
+  la::MulInit(E, D, dewhitening_matrix);
+  la::MulInit(*whitening_matrix, X, X_whitened);
+}
+
+
+
+void RandVector(Vector &v) {
+  
+  index_t d = v.length();
+  v.SetZero();
+  
+  for(index_t i = 0; i+1 < d; i+=2) {
+    double a = drand48();
+    double b = drand48();
+    double first_term = sqrt(-2 * log(a));
+    double second_term = 2 * M_PI * b;
+    v[i] =   first_term * cos(second_term);
+    v[i+1] = first_term * sin(second_term);
+  }
+  
+  if((d % 2) == 1) {
+    v[d - 1] = sqrt(-2 * log(drand48())) * cos(2 * M_PI * drand48());
+  }
+  
+  la::Scale(1/sqrt(la::Dot(v, v)), &v);
+  
+}
+
+
+Matrix* RandNormalInit(index_t d, index_t n, Matrix* A) {
+
+  double* A_elements = A -> ptr();
+
+  index_t num_elements = d * n;
+
+  for(index_t i = 0; i+1 < num_elements; i+=2) {
+    double a = drand48();
+    double b = drand48();
+    double first_term = sqrt(-2 * log(a));
+    double second_term = 2 * M_PI * b;
+    A_elements[i] =   first_term * cos(second_term);
+    A_elements[i+1] = first_term * sin(second_term);
+  }
+  
+  if((d % 2) == 1) {
+    A_elements[d - 1] = sqrt(-2 * log(drand48())) * cos(2 * M_PI * drand48());
+  }
+
+  return A;
+}     
+      
+
+
+
+
 /*
   int main(int argc, char *argv[]) {*/
-  //fx_init(argc, argv);
-  /*  
-  Matrix A, B, C, D, E, F;
+//fx_init(argc, argv);
+/*  
+    Matrix A, B, C, D, E, F;
 
-  RandMatrix(5, 2, &A);
-  RandMatrix(2, 4, &B);
-  RandMatrix(5, 4, &C);
-  RandMatrix(7, 5, &D);
-  RandMatrix(7, 4, &E);
-  RandMatrix(7, 4, &F);
+    RandMatrix(5, 2, &A);
+    RandMatrix(2, 4, &B);
+    RandMatrix(5, 4, &C);
+    RandMatrix(7, 5, &D);
+    RandMatrix(7, 4, &E);
+    RandMatrix(7, 4, &F);
 
-  SaveCorrectly("A.dat", A);
-  SaveCorrectly("B.dat", B);
-  SaveCorrectly("C.dat", C);
-  SaveCorrectly("D.dat", D);
-  SaveCorrectly("E.dat", E);
+    SaveCorrectly("A.dat", A);
+    SaveCorrectly("B.dat", B);
+    SaveCorrectly("C.dat", C);
+    SaveCorrectly("D.dat", D);
+    SaveCorrectly("E.dat", E);
 
 
-  Matrix temp1, temp2, temp3, temp4, temp5;
+    Matrix temp1, temp2, temp3, temp4, temp5;
   
-  Vector sum_vector;
-  Matrix diag_matrix;
+    Vector sum_vector;
+    Matrix diag_matrix;
 
-  VectorToDiag(MatrixSum(DotMultiplyInit(MapOverwrite(&TimesTen, Sub(Mul(&D, Sub(Mul(&A, &B, &temp1), &C, &temp2), &temp3), &E, &temp4)), &F, &temp5), &sum_vector), &diag_matrix);
+    VectorToDiag(MatrixSum(DotMultiplyInit(MapOverwrite(&TimesTen, Sub(Mul(&D, Sub(Mul(&A, &B, &temp1), &C, &temp2), &temp3), &E, &temp4)), &F, &temp5), &sum_vector), &diag_matrix);
 
-  Vector diag_vector;
-  DiagToVector(&diag_matrix, &diag_vector);
+    Vector diag_vector;
+    DiagToVector(&diag_matrix, &diag_vector);
 
-  la::Scale(2, Scale(100, &diag_matrix));
+    la::Scale(2, Scale(100, &diag_matrix));
 						
   
-  A.PrintDebug("A");
-  B.PrintDebug("B");
-  C.PrintDebug("C");
-  D.PrintDebug("D");
-  E.PrintDebug("E");
-  F.PrintDebug("F");
+    A.PrintDebug("A");
+    B.PrintDebug("B");
+    C.PrintDebug("C");
+    D.PrintDebug("D");
+    E.PrintDebug("E");
+    F.PrintDebug("F");
 
-  temp4.PrintDebug("temp4");
-  temp5.PrintDebug("temp5");
+    temp4.PrintDebug("temp4");
+    temp5.PrintDebug("temp5");
 
-  sum_vector.PrintDebug("sum(temp5)");
+    sum_vector.PrintDebug("sum(temp5)");
 
-  diag_matrix.PrintDebug("diag_matrix");
-  diag_vector.PrintDebug("diag_vector");
+    diag_matrix.PrintDebug("diag_matrix");
+    diag_vector.PrintDebug("diag_vector");
 
 
-  Matrix Z, sub_Z;
-  RandMatrix(4, 5, &Z);
-  Vector indices;
-  indices.Init(3);
-  indices[0] = 1;
-  indices[1] = 0;
-  indices[2] = 3;
-  MakeSubMatrixByColumns(indices, Z, &sub_Z);
+    Matrix Z, sub_Z;
+    RandMatrix(4, 5, &Z);
+    Vector indices;
+    indices.Init(3);
+    indices[0] = 1;
+    indices[1] = 0;
+    indices[2] = 3;
+    MakeSubMatrixByColumns(indices, Z, &sub_Z);
 
-  Z.PrintDebug("Z");
-  sub_Z.PrintDebug("sub_Z");
+    Z.PrintDebug("Z");
+    sub_Z.PrintDebug("sub_Z");
 
-  */
+*/
 /*
   index_t n = 10;
   index_t d = 2;
@@ -568,8 +719,8 @@ void MakeSubMatrixByColumns(Vector column_indices, Matrix A, Matrix *A_sub) {
 
   Matrix sum, temp1, temp2;
   AddOverwrite(
-	       Scale(1 / (double) n, MulInit(&X, &hyp_tan, &temp1)),
-	       DotMultiplyOverwrite(MulInit(&ones, Scale(A1 / (double) n, MapOverwrite(&MinusArg, A1, Sum(MapOverwrite(&Square, 0, &hyp_tan), &sum))), &temp2), &B));
+  Scale(1 / (double) n, MulInit(&X, &hyp_tan, &temp1)),
+  DotMultiplyOverwrite(MulInit(&ones, Scale(A1 / (double) n, MapOverwrite(&MinusArg, A1, Sum(MapOverwrite(&Square, 0, &hyp_tan), &sum))), &temp2), &B));
 	     
 
   B.PrintDebug("B");
@@ -581,5 +732,5 @@ void MakeSubMatrixByColumns(Vector column_indices, Matrix A, Matrix *A_sub) {
 
   return 0;
 
-}
+  }
 */

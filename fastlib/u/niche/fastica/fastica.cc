@@ -23,85 +23,8 @@ namespace {
   }
   
 
-  void RandVector(Vector &v) {
-
-    index_t d = v.length();
-    v.SetZero();
-  
-    for(index_t i = 0; i+1 < d; i+=2) {
-      double a = drand48();
-      double b = drand48();
-      double first_term = sqrt(-2 * log(a));
-      double second_term = 2 * M_PI * b;
-      v[i] =   first_term * cos(second_term);
-      v[i+1] = first_term * sin(second_term);
-    }
-  
-    if((d % 2) == 1) {
-      v[d - 1] = sqrt(-2 * log(drand48())) * cos(2 * M_PI * drand48());
-    }
-
-    la::Scale(1/sqrt(la::Dot(v, v)), &v);
-
-  }
 
 
-  void Center(Matrix X, Matrix &X_centered) {
-    Vector col_vector_sum;
-    col_vector_sum.Init(X.n_rows());
-    col_vector_sum.SetZero();
-  
-    index_t n = X.n_cols();
- 
-    for(index_t i = 0; i < n; i++) {
-      Vector cur_col_vector;
-      X.MakeColumnVector(i, &cur_col_vector);
-      la::AddTo(cur_col_vector, &col_vector_sum);
-    }
-
-    la::Scale(1/(double) n, &col_vector_sum);
-
-    X_centered.CopyValues(X);
-
-    for(index_t i = 0; i < n; i++) {
-      Vector cur_col_vector;
-      X_centered.MakeColumnVector(i, &cur_col_vector);
-      la::SubFrom(col_vector_sum, &cur_col_vector);
-    }
-
-  }
-
-
-  void Whiten(Matrix X, Matrix &X_whitened, Matrix &whitening_matrix, Matrix &dewhitening_matrix) {
-    Matrix X_cov, D, D_inv, E;
-    Vector D_vector;
-
-    Scale(1 / (double) (X.n_cols() - 1),
-	  MulTransBInit(&X, &X, &X_cov));
-    
-
-    la::EigenvectorsInit(X_cov, &D_vector, &E);
-
-    E.set(0, 1, -E.get(0, 1));
-    E.set(1, 1, -E.get(1, 1));
-
-    
-
-    index_t d = D_vector.length();
-    D.Init(d, d);
-    D.SetZero();
-    D_inv.Init(d, d);
-    D_inv.SetZero();
-    for(index_t i = 0; i < d; i++) {
-      double sqrt_val = sqrt(D_vector[i]);
-      D.set(i, i, sqrt_val);
-      D_inv.set(i, i, 1 / sqrt_val);
-    }
-
-    la::MulTransBInit(D_inv, E, &whitening_matrix);
-    la::MulInit(E, D, &dewhitening_matrix);
-    la::MulInit(whitening_matrix, X, &X_whitened);
-  }
 
 
   void Orthogonalize(Matrix W_old, Matrix &W) {
@@ -157,11 +80,11 @@ namespace {
 
   
   int FixedPointICA(Matrix X, Matrix whitening_matrix, Matrix dewhitening_matrix,
-		   int approach, index_t num_of_IC, int g, int fine_tune,
-		   double a1, double a2, double mu, bool stabilization,
-		   double epsilon, index_t max_num_iterations,
-		   index_t max_fine_tune, double sample_size,
-		   Matrix* A, Matrix* W) {
+		    int approach, index_t num_of_IC, int g, int fine_tune,
+		    double a1, double a2, double mu, bool stabilization,
+		    double epsilon, index_t max_num_iterations,
+		    index_t max_fine_tune, double sample_size,
+		    Matrix* A, Matrix* W) {
 
     // ensure default values are passed into this function if the user doesn't care about certain parameters
 
@@ -258,11 +181,11 @@ namespace {
 	B.Init(d, num_of_IC);
 
 	/*
-	for(index_t i = 0; i < num_of_IC; i++) {
+	  for(index_t i = 0; i < num_of_IC; i++) {
 	  Vector b;
 	  B.MakeColumnVector(i, &b);
 	  RandVector(b);
-	}
+	  }
 	*/
 	B.SetZero();
 	for(index_t i = 0; i < d; i++) {
@@ -393,12 +316,12 @@ namespace {
 
 	  Scale(1 / (double) n,
 		AddTo(MulInit(&X, &hyp_tan, &temp1),
-			     DotMultiplyOverwrite(MulInit(&col_vector,
-							  MapOverwrite(&MinusArg,
-								       n,
-								       MatrixMapSum(&Square, 0, &hyp_tan, &sum)),
-							  &temp2),
-						  &B)));
+		      DotMultiplyOverwrite(MulInit(&col_vector,
+						   MapOverwrite(&MinusArg,
+								n,
+								MatrixMapSum(&Square, 0, &hyp_tan, &sum)),
+						   &temp2),
+					   &B)));
 	
 	
 	  break;
@@ -453,12 +376,12 @@ namespace {
 	
 	  Scale(1 / (double) num_selected,
 		AddTo(MulInit(&X_sub, &hyp_tan, &temp1),
-			     DotMultiplyOverwrite(MulInit(&col_vector,
-							  MapOverwrite(&MinusArg,
-								       num_selected,
-								       MatrixMapSum(&Square, 0, &hyp_tan, &sum)),
-							  &temp2),
-						  &B)));
+		      DotMultiplyOverwrite(MulInit(&col_vector,
+						   MapOverwrite(&MinusArg,
+								num_selected,
+								MatrixMapSum(&Square, 0, &hyp_tan, &sum)),
+						   &temp2),
+					   &B)));
 
 
 	  break;
@@ -607,11 +530,11 @@ namespace {
 	
 	  Scale(1 / (double) num_selected,
 		SubOverwrite(MulInit(&X_sub, &U, &temp1),
-			DotMultiplyOverwrite(&B,
-					     MulInit(&col_vector,
-						     Sum(&ex, &sum),
-						     &temp2)),
-			&B));
+			     DotMultiplyOverwrite(&B,
+						  MulInit(&col_vector,
+							  Sum(&ex, &sum),
+							  &temp2)),
+			     &B));
 	  
 	  break;
 
@@ -660,8 +583,8 @@ namespace {
 
 	  //D = diag(1 ./ (Beta + sum((Y_squared_a2 - 1) .* ex)))
 	  VectorToDiag(MapOverwrite(&Inv,
-			   0,
-			   AddTo(&Beta_vector, &sum_vector)),
+				    0,
+				    AddTo(&Beta_vector, &sum_vector)),
 		       &D);
 		
 	  //B = B + myy * B * (Y' * gauss - diag(Beta)) * D;
@@ -734,8 +657,8 @@ namespace {
 	  Scale(1 / (double) num_selected,
 		MulInit(&X_sub,
 			MapOverwrite(&pow,
-			    3,
-			    MulTransAInit(&X_sub, &B, &temp1)),
+				     3,
+				     MulTransAInit(&X_sub, &B, &temp1)),
 			&temp2));
 	
 	  AddTo(&temp2,
@@ -784,10 +707,10 @@ namespace {
 
 	  Scale(1 / (double) n,
 		MulOverwrite(&X,
-			MapOverwrite(&Square,
-			    0,
-			    MulTransAInit(&X, &B, &temp1)),
-			&B));
+			     MapOverwrite(&Square,
+					  0,
+					  MulTransAInit(&X, &B, &temp1)),
+			     &B));
 	
 	  break;
 	}
@@ -824,10 +747,10 @@ namespace {
 	
 	  Scale(1 / (double) num_selected,
 		MulOverwrite(&X_sub,
-			MapOverwrite(&Square,
-				     0,
-				     MulTransAInit(&X_sub, &B, &temp1)),
-			&B));
+			     MapOverwrite(&Square,
+					  0,
+					  MulTransAInit(&X_sub, &B, &temp1)),
+			     &B));
 	
 	  break;
 	}
@@ -1405,11 +1328,11 @@ namespace {
 }
 
 
-int FastICAMain(datanode *module) {
+int FastICAMain(datanode *module, Matrix *W, Matrix *Y) {
 
   const char *data = fx_param_str_req(NULL, "data");
   
-  Matrix X, X_centered, X_whitened, whitening_matrix, dewhitening_matrix, A, W;
+  Matrix X, X_centered, X_whitened, whitening_matrix, dewhitening_matrix, A;
   data::Load(data, &X);
   
   index_t d = X.n_rows(); // number of dimensions
@@ -1490,26 +1413,21 @@ int FastICAMain(datanode *module) {
 
   fx_timer_start(NULL, "FastICA");
 
-  X_centered.Init(d, n);
-  Center(X, X_centered);
+  Center(X, &X_centered);
 
  
 
-  Whiten(X_centered, X_whitened, whitening_matrix, dewhitening_matrix);
+  WhitenUsingEig(X_centered, &X_whitened, &whitening_matrix, &dewhitening_matrix);
 
   
-  FixedPointICA(X_whitened, whitening_matrix, dewhitening_matrix, approach, num_of_IC, nonlinearity, fine_tune, a1, a2, mu, stabilization, epsilon, max_num_iterations, max_fine_tune, sample_size, &A, &W);
+  FixedPointICA(X_whitened, whitening_matrix, dewhitening_matrix, approach, num_of_IC, nonlinearity, fine_tune, a1, a2, mu, stabilization, epsilon, max_num_iterations, max_fine_tune, sample_size, &A, W);
 
-  W.PrintDebug("W");
+  W -> PrintDebug("W");
 
-  Matrix Y;
-  la::MulInit(W, X, &Y);
+  la::MulInit(*W, X, Y);
 
   fx_timer_stop(NULL, "FastICA");
   
-
-  SaveCorrectly("unmixing_matrix.dat", W);
-  SaveCorrectly("indep_comps.dat", Y);
 
   return SUCCESS_PASS;
 }
@@ -1520,7 +1438,12 @@ int main(int argc, char *argv[]) {
 
   srand48(time(0));
 
-  int ret_val = FastICAMain(fx_root);
+  Matrix W, Y;
+
+  int ret_val = FastICAMain(fx_root, &W, &Y);
+
+  SaveCorrectly("unmixing_matrix.dat", W);
+  SaveCorrectly("indep_comps.dat", Y);
 
   fx_done();
 
