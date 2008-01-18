@@ -259,6 +259,86 @@ success_t DatasetInfo::InitFromFile(TextLineReader *reader,
   }
 }
 
+index_t Dataset::n_labels() const {
+  index_t i = 0;
+  index_t label_row_idx = matrix_.n_rows() - 1; // the last row is for labels
+  index_t n_labels = 0;
+  
+  ArrayList<double> labels_list;
+  labels_list.Init();
+  *(labels_list.AddBack()) = matrix_.get(label_row_idx,0); 
+  ++n_labels;
+
+  for (i = 1; i < matrix_.n_cols(); i++) {
+    double current_label = matrix_.get(label_row_idx,i);
+    index_t j = 0;
+    for (j = 0; j < n_labels; j++) {
+      if (current_label == labels_list[j]) {
+	break;
+      }
+    }
+    if (j == n_labels) { // new label
+      *(labels_list.AddBack()) = current_label;
+      ++n_labels;
+    }
+  }
+  labels_list.Clear();
+  return n_labels;
+}
+
+void Dataset::GetLabels(ArrayList<int> &labels_list, ArrayList<index_t> &labels_index, ArrayList<index_t> &labels_ct, ArrayList<index_t> &labels_startpos) const {
+  index_t i = 0;
+  index_t label_row_idx = matrix_.n_rows() - 1; // the last row is for labels
+  index_t n_points = matrix_.n_cols();
+  index_t n_labels = 0;
+
+  labels_index.Init(n_points);
+  labels_list.Init();
+  labels_ct.Init();
+  labels_startpos.Init();
+
+  ArrayList<index_t> labels_temp;
+  labels_temp.Init(n_points);
+  labels_temp[0] = 0;
+
+  *(labels_list.AddBack()) = (int)matrix_.get(label_row_idx,0);  // labels need to be integers
+  *(labels_ct.AddBack()) = 1;
+  n_labels++;
+
+  for (i = 1; i < n_points; i++) {
+    double current_label = matrix_.get(label_row_idx, i);
+    index_t j = 0;
+    for (j = 0; j < n_labels; j++) {
+      if (current_label == labels_list[j]) {
+	labels_ct[j]++;
+      	break;
+      }
+    }
+    labels_temp[i] = j;
+    if (j == n_labels) { // new label
+      *(labels_list.AddBack()) = (int)current_label; // labels need to be integers
+      *(labels_ct.AddBack()) = 1;
+      n_labels++;
+    }
+  }
+  
+  *labels_startpos.AddBack() = 0;
+  for(i = 1; i < n_labels; i++){
+    *labels_startpos.AddBack() = labels_startpos[i-1] + labels_ct[i-1];
+  }
+
+  for(i = 0; i < n_points; i++) {
+    labels_index[labels_startpos[labels_temp[i]]] = i;
+    labels_startpos[labels_temp[i]]++;
+  }
+
+  labels_startpos[0] = 0;
+  for(i = 1; i < n_labels; i++)
+    labels_startpos[i] = labels_startpos[i-1] + labels_ct[i-1];
+
+  labels_temp.Clear();
+}
+
 bool DatasetInfo::is_all_continuous() const {
   for (index_t i = 0; i < features_.size(); i++) {
     if (features_[i].type() != DatasetFeature::CONTINUOUS) {
