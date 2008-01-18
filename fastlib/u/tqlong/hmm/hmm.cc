@@ -9,21 +9,62 @@ success_t generate_mode();
 success_t loglik_mode();
 success_t viterbi_mode();
 success_t train_mode();
+void usage();
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv);
-  const char* mode = fx_param_str_req(NULL, "mode");
-  if (strcmp(mode, "generate") == 0) 
-    generate_mode();
-  else if (strcmp(mode, "loglik") == 0)
-    loglik_mode();
-  else if (strcmp(mode, "viterbi") == 0) 
-    viterbi_mode();
-  else if (strcmp(mode, "train") == 0) 
-    train_mode();
-  else     
-    printf("Unrecognized mode: must be: generate | loglik | viterbi | train !!!\n");
+  success_t s = SUCCESS_PASS;
+  const char* mode = fx_param_str(NULL, "mode","");
+  if (fx_param_exists(NULL,"type"))
+    if (strcmp(mode, "generate") == 0) 
+      s = generate_mode();
+    else if (strcmp(mode, "loglik") == 0)
+      s = loglik_mode();
+    else if (strcmp(mode, "viterbi") == 0) 
+      s = viterbi_mode();
+    else if (strcmp(mode, "train") == 0) 
+      s = train_mode();
+    else {
+      printf("Unrecognized mode: must be: generate | loglik | viterbi | train !!!\n");
+      s = SUCCESS_FAIL;
+    }
+  else {
+    printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
+    s = SUCCESS_FAIL;
+  }
+  if (!PASSED(s)) usage();
   fx_done();
+}
+
+void usage() {
+  printf("\nUsage:\n");
+  printf("  hmm --mode={generate|loglik|viterbi|train} --type=={discrete|gaussian|mixture} options\n");
+  printf("MODES\n");
+  printf("[generate]\n");
+  printf("  --profile=file   : file contains HMM profile\n");
+  printf("  --length=NUM     : sequence length\n");
+  printf("  --lenmax=NUM     : maximum sequence length, default = length\n");
+  printf("  --numseq=NUM     : number of sequence\n");
+  printf("  --seqfile=file   : output file for generated sequences\n");
+  printf("  --statefile=file : output file for generated state sequences\n");
+  
+  printf("[loglik]\n");
+  printf("  --profile=file   : file contains HMM profile\n");
+  printf("  --seqfile=file   : file contains input sequences\n");
+  printf("  --logfile=file   : output file for log-likelihood of the sequences\n");
+
+  printf("[viterbi]\n");
+  printf("  --profile=file   : file contains HMM profile\n");
+  printf("  --seqfile=file   : file contains input sequences\n");
+  printf("  --statefile=file : output file for state sequences\n");
+
+  printf("[train]\n");
+  printf("  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch\n");
+  printf("  --seqfile=file   : file contains input sequences\n");
+  printf("  --guess=file     : file contains guess HMM profile\n");
+  printf("  --numstate=NUM   : if no guess profile is specified, at least specify the number of state\n");
+  printf("  --profile=file   : output file for estimated HMM profile\n");
+
 }
 
 success_t train_baumwelch();
@@ -37,7 +78,7 @@ success_t train_mode() {
     return train_viterbi();
   else {
     printf("Unrecognized algorithm: must be baumwelch or viterbi !!!\n");
-    return SUCCESS_PASS;
+    return SUCCESS_FAIL;
   }
 }
 
@@ -55,11 +96,15 @@ success_t viterbi_mode() {
     return viterbi_mixture();
   else {
     printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
-    return SUCCESS_PASS;
+    return SUCCESS_FAIL;
   }
 }
 
 success_t viterbi_mixture() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.mix.out");
   const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.mix.out");
@@ -95,6 +140,10 @@ success_t viterbi_mixture() {
 }
 
 success_t viterbi_gaussian() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.gauss.out");
   const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.gauss.out");
@@ -141,6 +190,10 @@ success_t viterbi_gaussian() {
 }
 
 success_t viterbi_discrete() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.out");
   const char* stateout = fx_param_str(NULL, "statefile", "state_viterbi.out");
@@ -186,11 +239,15 @@ success_t loglik_mode() {
     return loglik_mixture();
   else {
     printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
-    return SUCCESS_PASS;
+    return SUCCESS_FAIL;
   }
 }
 
 success_t loglik_mixture() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.mix.out");
   const char* logout = fx_param_str(NULL, "logfile", "log.mix.out");
@@ -227,6 +284,10 @@ success_t loglik_mixture() {
 }
 
 success_t loglik_gaussian() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.gauss.out");
   const char* logout = fx_param_str(NULL, "logfile", "log.gauss.out");
@@ -275,6 +336,10 @@ success_t loglik_gaussian() {
 }
 
 success_t loglik_discrete() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.out");
   const char* logout = fx_param_str(NULL, "logfile", "log.out");
@@ -328,6 +393,10 @@ success_t generate_mode() {
 }
 
 success_t generate_mixture() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
@@ -373,6 +442,10 @@ success_t generate_mixture() {
 }
 
 success_t generate_gaussian() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
@@ -418,6 +491,10 @@ success_t generate_gaussian() {
 }
 
 success_t generate_discrete() {
+  if (!fx_param_exists(NULL, "profile")) {
+    printf("--profile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
@@ -463,6 +540,10 @@ success_t generate_discrete() {
 }
 
 success_t train_baumwelch_mixture() {
+  if (!fx_param_exists(NULL, "seqfile")) {
+    printf("--seqfile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   Matrix gTR;
   ArrayList<MixtureGauss> gMIX;
   ArrayList<Matrix> seqs;
@@ -499,6 +580,10 @@ success_t train_baumwelch_mixture() {
 }
 
 success_t train_baumwelch_gaussian() {
+  if (!fx_param_exists(NULL, "seqfile")) {
+    printf("--seqfile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   Matrix gTR;
   ArrayList<Vector> gME;
   ArrayList<Matrix> gCO;
@@ -531,7 +616,11 @@ success_t train_baumwelch_gaussian() {
 }
 
 success_t train_baumwelch_discrete() {
-  //ArrayList<Matrix> matlst;
+  if (!fx_param_exists(NULL, "seqfile")) {
+    printf("--seqfile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
+
   Matrix gTR, gEM;
   ArrayList<Vector> seqs;
 
@@ -583,6 +672,10 @@ success_t train_baumwelch_discrete() {
 }
 
 success_t train_viterbi_mixture() {
+  if (!fx_param_exists(NULL, "seqfile")) {
+    printf("--seqfile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   Matrix gTR;
   ArrayList<MixtureGauss> gMIX;
   ArrayList<Matrix> seqs;
@@ -619,6 +712,10 @@ success_t train_viterbi_mixture() {
 }
 
 success_t train_viterbi_gaussian() {
+  if (!fx_param_exists(NULL, "seqfile")) {
+    printf("--seqfile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
   Matrix gTR;
   ArrayList<Vector> gME;
   ArrayList<Matrix> gCO;
@@ -651,7 +748,11 @@ success_t train_viterbi_gaussian() {
 }
 
 success_t train_viterbi_discrete() {
-  //ArrayList<Matrix> matlst;
+  if (!fx_param_exists(NULL, "seqfile")) {
+    printf("--seqfile must be defined.\n");
+    return SUCCESS_FAIL;
+  }
+
   Matrix gTR, gEM;
   ArrayList<Vector> seqs;
 
@@ -712,7 +813,7 @@ success_t train_baumwelch() {
     return train_baumwelch_mixture();
   else {
     printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
-    return SUCCESS_PASS;
+    return SUCCESS_FAIL;
   }
 }
 
@@ -726,6 +827,6 @@ success_t train_viterbi() {
     return train_viterbi_mixture();
   else {
     printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
-    return SUCCESS_PASS;
+    return SUCCESS_FAIL;
   }
 }
