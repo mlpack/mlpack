@@ -26,6 +26,7 @@ void DoSvmNormalize(Dataset* dataset) {
   
   Matrix cov;
 
+
   la::MulTransBInit(m, m, &cov);
 
   Vector d;
@@ -33,7 +34,7 @@ void DoSvmNormalize(Dataset* dataset) {
   Matrix ui; // the inverse of eigenvectors
 
   //cov.PrintDebug("cov");
-  PASSED(la::EigenvectorsInit(cov, &d, &u));
+  la::EigenvectorsInit(cov, &d, &u);
   la::TransposeInit(u, &ui);
 
   for (index_t i = 0; i < d.length(); i++) {
@@ -57,170 +58,73 @@ void DoSvmNormalize(Dataset* dataset) {
   }
 
   //dataset->matrix().PrintDebug("m");
-
-  if (fx_param_bool(NULL, "save", 0)) {
-    fx_default_param(NULL, "kfold/save", "1");
-    dataset->WriteCsv("m_normalized.csv");
-  }
-}
-
-void CreateArtificialDataset(Dataset* dataset){
-  Matrix m;
-  index_t n = fx_param_int(NULL, "n", 30);
-  double offset = fx_param_double(NULL, "offset", 0.0);
-  double range = fx_param_double(NULL, "range", 1.0);
-  double slope = fx_param_double(NULL, "slope", 1.0);
-  double margin = fx_param_double(NULL, "margin", 1.0);
-  double var = fx_param_double(NULL, "var", 1.0);
-  double intercept = fx_param_double(NULL, "intercept", 0.0);
-    
-  // 2 dimensional dataset, size n, 3 classes
-  m.Init(3, n);
-  for (index_t i = 0; i < n; i += 3) {
-    double x;
-    double y;
-    
-    x = (rand() * range / RAND_MAX) + offset;
-    y = margin / 2 + (rand() * var / RAND_MAX);
-    m.set(0, i, x);
-    m.set(1, i, x*slope + y + intercept);
-    m.set(2, i, 0); // labels
-    
-    x = (rand() * range / RAND_MAX) + offset;
-    y = margin / 2 + (rand() * var / RAND_MAX);
-    m.set(0, i+1, 10*x);
-    m.set(1, i+1, x*slope + y + intercept);
-    m.set(2, i+1, 1); // labels
-    
-    x = (rand() * range / RAND_MAX) + offset;
-    y = margin / 2 + (rand() * var / RAND_MAX);
-    m.set(0, i+2, 20*x);
-    m.set(1, i+2, x*slope + y + intercept);
-    m.set(2, i+2, 2); // labels
-  }
-
-  data::Save("m.csv", m);
-  dataset->OwnMatrix(&m);
-}
-
-int LoadData(Dataset* dataset, String datafilename){
-  if (fx_param_exists(NULL, datafilename)) {
-    // when a data file is specified, use it.
-    if ( !PASSED(dataset->InitFromFile(fx_param_str_req(NULL, datafilename))) ) {
-    fprintf(stderr, "Couldn't open the data file.\n");
-    return 0;
-    }
-  } 
-  else {
-    fprintf(stderr, "No data file exist. Generating artificial dataset.\n");
-      // otherwise, create an artificial dataset and save it to "m.csv"
-      CreateArtificialDataset(dataset);
-    }
-  
-    if (fx_param_bool(NULL, "normalize", 1)) {
-      fprintf(stderr, "Normalizing\n");
-      DoSvmNormalize(dataset);
-    } else {
-      fprintf(stderr, "Skipping normalize\n");
-    }
-    return 1;
 }
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
-  srand(time(NULL));
-
-  String mode = fx_param_str_req(NULL, "mode");
-  String kernel = fx_param_str_req(NULL, "kernel");
   
-  // TODO: more kernels to be supported
-
-  // Cross Validation Mode, need cross validation data
-  if(mode == "cv") { 
-    fprintf(stderr, "SVM Cross Validation... \n");
-    
-    // Load cross validation data
-    Dataset cvset;
-    if (LoadData(&cvset, "cv_data") == 0)
-    return 1;
-    
-    if (kernel == "linear") {
-      SimpleCrossValidator< SVM<SVMLinearKernel> > cross_validator; 
-      // Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1
-      cross_validator.Init(&cvset,cvset.n_labels(),fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
-      // k_cv folds cross validation; (true): do training set permutation
-      cross_validator.Run(true);
-      cross_validator.confusion_matrix().PrintDebug("confusion matrix");
-    }
-    else if (kernel == "gaussian") {
-      SimpleCrossValidator< SVM<SVMRBFKernel> > cross_validator; 
-      // Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds
-      cross_validator.Init(&cvset,cvset.n_labels(),fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
-      // k_cv folds cross validation; (true): do training set permutation
-      cross_validator.Run(true);
-      cross_validator.confusion_matrix().PrintDebug("confusion matrix");
-    }
-  }
-  // Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data
-  else if (mode=="train" || mode=="train_test"){
-    fprintf(stderr, "SVM Training... \n");
-
-    // Load training data
-    Dataset trainset;
-    if (LoadData(&trainset, "train_data") == 0) // TODO:param_req
+  Dataset dataset;
+  
+  if (fx_param_exists(NULL, "data")) {
+    // if a data file is specified, use it.
+    if (!PASSED(dataset.InitFromFile(fx_param_str_req(NULL, "data")))) {
+      fprintf(stderr, "Couldn't open the data file.\n");
       return 1;
+    }
+  } else {
+    // create an artificial dataset and save it to "m.csv"
     
-    // Begin SVM Training | Training and Testing
-    datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
-
-    if (kernel == "linear") {
-      SVM<SVMLinearKernel> svm;
-      svm.InitTrain(trainset, trainset.n_labels(), svm_module);
-      if (mode=="train_test"){ // training and testing, thus no need to load model from file
-	fprintf(stderr, "SVM Classifying... \n");
-	// Load testing data
-	Dataset testset;
-	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
-	  return 1;
-	svm.BatchClassify(&testset, "test_labels");
-      }
+    Matrix m;
+    index_t n = fx_param_int(NULL, "n", 30);
+    double offset = fx_param_double(NULL, "offset", 0.0);
+    double range = fx_param_double(NULL, "range", 1.0);
+    double slope = fx_param_double(NULL, "slope", 1.0);
+    double margin = fx_param_double(NULL, "margin", 1.0);
+    double var = fx_param_double(NULL, "var", 1.0);
+    double intercept = fx_param_double(NULL, "intercept", 0.0);
+    
+    // 3 dimensional dataset, size n
+    m.Init(3, n);
+    
+    for (index_t i = 0; i < n; i += 2) {
+      double x;
+      double y;
+      
+      x = (rand() * range / RAND_MAX) + offset;
+      y = margin / 2 + (rand() * var / RAND_MAX);
+      m.set(0, i, x);
+      m.set(1, i, x*slope + y + intercept);
+      m.set(2, i, 0);
+      
+      x = (rand() * range / RAND_MAX) + offset;
+      y = margin / 2 + (rand() * var / RAND_MAX);
+      m.set(0, i+1, x);
+      m.set(1, i+1, x*slope - y + intercept);
+      m.set(2, i+1, 1);
     }
-    else if (kernel == "gaussian") {
-      SVM<SVMRBFKernel> svm;
-      svm.InitTrain(trainset, trainset.n_labels(), svm_module);
-      if (mode=="train_test"){ // training and testing, thus no need to load model from file
-	fprintf(stderr, "SVM Classifying... \n");
-	// Load testing data
-	Dataset testset;
-	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
-	  return 1;
-	svm.BatchClassify(&testset, "test_labels"); // TODO:param_req
-      }
-    }
+    data::Save("m.csv", m);
+    dataset.OwnMatrix(&m);
   }
-  // Testing(offline) Mode, need loading model file and testing data
-  else if (mode=="test") {
-    fprintf(stderr, "SVM Classifying... \n");
-
-    // Load testing data
-    Dataset testset;
-    if (LoadData(&testset, "test_data") == 0) // TODO:param_req
-      return 1;
-
-    // Begin Classification
-    datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
-
-    if (kernel == "linear") {
-      SVM<SVMLinearKernel> svm;
-      svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchClassify(&testset, "svm_model", "test_labels"); // TODO:param_req
-    }
-    else if (kernel == "gaussian") {
-      SVM<SVMRBFKernel> svm;
-      svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchClassify(&testset, "svm_model", "test_labels"); // TODO:param_req
-    }
+  
+  if (fx_param_bool(NULL, "normalize", 1)) {
+    fprintf(stderr, "Normalizing\n");
+    DoSvmNormalize(&dataset);
+  } else {
+    fprintf(stderr, "Skipping normalize\n");
   }
+  
+  if (fx_param_bool(NULL, "save", 0)) {
+    fx_default_param(NULL, "kfold/save", "1");
+    dataset.WriteCsv("normalized.csv");
+  }
+  
+  SimpleCrossValidator< SVM<SVMRBFKernel> > cross_validator;
+  // k_cv: number of cross-validation folds
+  cross_validator.Init(&dataset, 2,fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
+  cross_validator.Run(true);
+  
+  cross_validator.confusion_matrix().PrintDebug("confusion matrix");
+  
   fx_done();
 }
 
