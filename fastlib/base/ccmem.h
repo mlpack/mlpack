@@ -81,12 +81,12 @@ namespace mem {
   }
   /** Allocates a bit-zerod array, measured in bytes. */
   template<typename T>
-  inline T *AllocBitZeroedBytes(size_t bytes) {
+  inline T *AllocBitZeroBytes(size_t bytes) {
     return reinterpret_cast<T *>(::calloc(bytes, 1));
   }
   /** Allocates a bit-zerod array, measured in elements. */
   template<typename T>
-  inline T *AllocBitZeroed(size_t elems = 1) {
+  inline T *AllocBitZero(size_t elems = 1) {
     return reinterpret_cast<T *>(::calloc(elems, sizeof(T)));
   }
 
@@ -102,13 +102,13 @@ namespace mem {
   }
   /** Allocates an array bit-copied from src, measured in bytes. */
   template<typename T>
-  inline T *AllocBitCopiedBytes(const T *src, size_t bytes) {
+  inline T *AllocBitCopyBytes(const T *src, size_t bytes) {
     return BitCopyBytes(reinterpret_cast<T *>(::malloc(bytes)), src, bytes);
   }
   /** Allocates an array bit-copied from src, measured in elements. */
   template<typename T>
-  inline T *AllocBitCopied(const T *src, size_t elems = 1) {
-    return AllocBitCopiedBytes(src, elems * sizeof(T));
+  inline T *AllocBitCopy(const T *src, size_t elems = 1) {
+    return AllocBitCopyBytes(src, elems * sizeof(T));
   }
 
   /**
@@ -195,13 +195,13 @@ namespace mem {
 
   /** Default constructs an element. */
   template<typename T>
-  inline T *DefaultConstruct(T *ptr) {
+  inline T *Construct(T *ptr) {
     new(ptr) T();
     return ptr;
   }
   /** Default constructs each element in an array. */
   template<typename T>
-  inline T *DefaultConstruct(T *array, size_t elems) {
+  inline T *Construct(T *array, size_t elems) {
     for (size_t i = 0; i < elems; ++i) {
       new(array + i) T();
     }
@@ -221,43 +221,6 @@ namespace mem {
     }
     return DebugPoison(array, elems);
   }
-
-  /** No-op constructors and destcutors for primatives types. */
-#define BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(T) \
-  template<> \
-  inline T *DefaultConstruct< T >(T *ptr) \
-    {return ptr;} \
-  template<> \
-  inline T *DefaultConstruct< T >(T *array, size_t elems) \
-    {return array;} \
-  template<> \
-  inline T *Destruct< T >(T *ptr) \
-    {return DebugPoison(ptr);} \
-  template<> \
-  inline T *Destruct< T >(T *array, size_t elems) \
-    {return DebugPoison(array, elems);}
-
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(char)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(short)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(int)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(long)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(long long)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned char)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned short)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned int)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned long)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(unsigned long long)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(float)
-  BASE_CCMEM__NOP_CONSTRUCT_DESTRUCT(double)
-
-  /** Constructs each element in an array with an initial value. */
-  template<typename T, typename U>
-  inline T *InitConstruct(T *array, const U &init, size_t elems = 1) {
-    for (size_t i = 0; i < elems; ++i) {
-      new(array + i) T(init);
-    }
-    return array;
-  }
   /** Element-wise copy constructs one element given another. */
   template<typename T, typename U>
   inline T *CopyConstruct(T *dest, const U *src) {
@@ -273,8 +236,20 @@ namespace mem {
     return dest;
   }
 
-  /** Bit-copy copy construction for pirmative types. */
-#define BASE_CCMEM__BIT_COPY_CONSTRUCT(T) \
+  /** Simple constructors and destcutors for primatives types. */
+#define BASE_CCMEM__SIMPLE_CONSTRUCTORS(T) \
+  template<> \
+  inline T *Construct< T >(T *ptr) \
+    {return DebugPoison(ptr);} \
+  template<> \
+  inline T *Construct< T >(T *array, size_t elems) \
+    {return DebugPoison(array, elems);} \
+  template<> \
+  inline T *Destruct< T >(T *ptr) \
+    {return DebugPoison(ptr);} \
+  template<> \
+  inline T *Destruct< T >(T *array, size_t elems) \
+    {return DebugPoison(array, elems);} \
   template<> \
   inline T *CopyConstruct< T >(T *dest, const T *src) \
     {return BitCopy(dest, src, 1);} \
@@ -282,38 +257,60 @@ namespace mem {
   inline T *CopyConstruct< T >(T *dest, const T *src, size_t elems) \
     {return BitCopy(dest, src, elems);}
 
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(char)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(short)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(int)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(long)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(long long)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned char)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned short)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned int)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned long)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(unsigned long long)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(float)
-  BASE_CCMEM__BIT_COPY_CONSTRUCT(double)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(char)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(short)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(int)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(long)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(long long)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned char)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned short)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned int)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned long)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned long long)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(float)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(double)
+
+  /** No-op constructs an array of pointers. */
+  template<typename T>
+  inline T **Construct(T **array, size_t elems = 1)
+    {return DebugPoison(array, elems);}
+  /** No-op destructs an array of pointers. */
+  template<typename T>
+  inline T **Destruct(T **array, size_t elems = 1)
+    {return DebugPoison(array, elems);}
+  /** Bit-copy copy constructs an array of pointers. */
+  template<typename T>
+  inline T **CopyConstruct(T **dest, const T **src, size_t elems = 1)
+    {return BitCopy(dest, src, elems);}
+
+  /** Constructs each element in an array with an initial value. */
+  template<typename T, typename U>
+  inline T *RepeatConstruct(T *array, const U &init, size_t elems) {
+    for (size_t i = 0; i < elems; ++i) {
+      new(array + i) T(init);
+    }
+    return array;
+  }
 
   /** Allocates and default constructs an array. */
   template<typename T>
-  inline T *AllocDefaultConstructed(size_t elems = 1) {
-    return DefaultConstruct(Alloc<T>(elems), elems);
-  }
-  /** Allocates and copy constructs an array. */
-  template<typename T, typename U>
-  inline T *AllocInitConstructed(const U &init, size_t elems = 1) {
-    return InitConstruct(Alloc<T>(elems), init, elems);
+  inline T *AllocConstruct(size_t elems = 1) {
+    return Construct(Alloc<T>(elems), elems);
   }
   /** Allocates and element-wise copy constructs an array. */
   template<typename T, typename U>
-  inline T *AllocCopyConstructed(const U *src, size_t elems = 1) {
+  inline T *AllocCopyConstruct(const U *src, size_t elems = 1) {
     return CopyConstruct(Alloc<T>(elems), src, elems);
+  }
+  /** Allocates and copy constructs an array. */
+  template<typename T, typename U>
+  inline T *AllocRepeatConstruct(const U &init, size_t elems) {
+    return RepeatConstruct(Alloc<T>(elems), init, elems);
   }
 
   /** Destructs and frees an array. */
   template<typename T>
-  inline void FreeDestructed(T *array, size_t elems = 1) {
+  inline void FreeDestruct(T *array, size_t elems = 1) {
     Free(Destruct(array, elems));
   }
 

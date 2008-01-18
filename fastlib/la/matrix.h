@@ -110,7 +110,7 @@ class Vector {
    * Sets all elements to the same value.
    */
   void SetAll(double d) {
-    mem::InitConstruct(ptr_, d, length_);
+    mem::RepeatConstruct(ptr_, d, length_);
   }
   
   /**
@@ -139,7 +139,7 @@ class Vector {
   void Copy(const double *doubles, index_t in_length) {
     DEBUG_ONLY(AssertUninitialized_());
     
-    ptr_ = mem::AllocBitCopied(doubles, in_length);
+    ptr_ = mem::AllocBitCopy(doubles, in_length);
     length_ = in_length;
     should_free_ = true;
   }
@@ -432,7 +432,7 @@ class Matrix {
    * Sets the entire matrix to zero.
    */
   void SetAll(double d) {
-    mem::InitConstruct(ptr_, d, n_elements());
+    mem::RepeatConstruct(ptr_, d, n_elements());
   }
 
   /**
@@ -476,7 +476,7 @@ class Matrix {
   void Copy(const double *ptr_in, index_t n_rows_in, index_t n_cols_in) {
     DEBUG_ONLY(AssertUninitialized_());
     
-    ptr_ = mem::AllocBitCopied(ptr_in, n_rows_in * n_cols_in);
+    ptr_ = mem::AllocBitCopy(ptr_in, n_rows_in * n_cols_in);
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
     should_free_ = true;

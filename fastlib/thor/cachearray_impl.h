@@ -211,7 +211,7 @@ void CacheArray<T>::Init(
   n_elem_bytes_ = handler->n_elem_bytes();
   fifo_size_ = 64;
   fifo_ = mem::Alloc<BlockDevice::blockid_t>(fifo_size_);
-  mem::InitConstruct(fifo_, -1, fifo_size_);
+  mem::RepeatConstruct(fifo_, -1, fifo_size_);
   fifo_index_ = 0;
 
   unsigned n_block_elems_calc = cache_->n_block_bytes() / n_elem_bytes_;

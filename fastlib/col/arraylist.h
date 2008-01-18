@@ -156,7 +156,7 @@ class ArrayList {
     ptr_ = mem::Alloc<Element>(cap_);
     // TODO: Default integer constructor initializes to zero; is there
     // a way to avoid this?
-    mem::DefaultConstruct<Element>(ptr_, size_);
+    mem::Construct<Element>(ptr_, size_);
   }
 
   /**
@@ -177,7 +177,7 @@ class ArrayList {
   void Copy(const Element *ptr, index_t size) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");
 
-    ptr_ = mem::AllocCopyConstructed<Element>(ptr, size);
+    ptr_ = mem::AllocCopyConstruct<Element>(ptr, size);
     cap_ = size;
     size_ = size;
   }
@@ -335,7 +335,7 @@ class ArrayList {
 
     size_ += size_increment;
 
-    mem::DefaultConstruct(chunk, size_increment);
+    mem::Construct(chunk, size_increment);
 
     return chunk;
   }
@@ -366,7 +366,7 @@ class ArrayList {
     Element* elem = ptr_ + size_;
 
     ++size_;
-    mem::DefaultConstruct(elem); // call default constructor
+    mem::Construct(elem); // call default constructor
 
     return elem;
   }
@@ -519,7 +519,7 @@ class ArrayList {
     if (unlikely(size_in > cap_)) {
       IncreaseCap_(size_in + cap_);
     }
-    mem::DefaultConstruct(ptr_ + size_, size_in - size_);
+    mem::Construct(ptr_ + size_, size_in - size_);
   }
 
   /**

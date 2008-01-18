@@ -531,7 +531,7 @@ class Nbc {
     }
 
     void SetEqual(const MultiLabel& other) {
-      DEBUG_CHECK_EQUAL(label.size(), other.label.size());
+      DEBUG_SAME_SIZE(label.size(), other.label.size());
 
       for (int i = 0; i < label.size(); i++) {
 	label[i] = other.label[i];
@@ -552,7 +552,7 @@ class Nbc {
     }
 
     MultiLabel& operator&= (const MultiLabel& other) {
-      DEBUG_CHECK_EQUAL(label.size(), other.label.size());
+      DEBUG_SAME_SIZE(label.size(), other.label.size());
 
       index_t next_i_lo = i_size;
       index_t next_i_hi = 0;
@@ -582,7 +582,7 @@ class Nbc {
     }
 
     MultiLabel& operator|= (const MultiLabel& other) {
-      DEBUG_CHECK_EQUAL(label.size(), other.label.size());
+      DEBUG_SAME_SIZE(label.size(), other.label.size());
 
       index_t next_i_lo = i_size;
       index_t next_i_hi = 0;

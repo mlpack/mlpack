@@ -8,6 +8,7 @@
 #define BASE_CC_H
 
 #include "common.h"
+#include "ccmem.h"
 
 #include <algorithm>
 #include <limits>
@@ -99,9 +100,9 @@ extern const float FLT_INF;
     const C &operator=(const C &src) { \
       if (likely(this != &src)) { \
         char buf[sizeof(C)]; \
-        new(buf) C(src); \
-        this->~C(); \
-        memcpy(this, buf, sizeof(C)); \
+        mem::BitCopy(reinterpret_cast<C *>(buf), this); \
+        new(this) C(src); \
+        reinterpret_cast<C *>(buf)->~C(); \
       } \
       return *this; \
     }
