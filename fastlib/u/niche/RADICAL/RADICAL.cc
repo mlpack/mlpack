@@ -56,7 +56,7 @@ double vasicekm(Vector v, index_t m) {
 
 
 void RADICALOptTheta(Matrix X_t, double std_dev, index_t m,
-		     index_t reps, double new_k, double range,
+		     index_t reps, double k, double range,
 		     double *theta_star, Matrix* rotator_star) {
   Matrix X_aug_t;
 
@@ -87,22 +87,20 @@ void RADICALOptTheta(Matrix X_t, double std_dev, index_t m,
     la::AddTo(noise_matrix, &X_aug_t);
   }
 
-  double perc = range / (M_PI / 2);
-  double number_k = perc * k;
-  index_t start  = (index_t) floor((k - number_k) / 2) + 1;
-  index_t end_point = (index_t) ceil((k - number_k) / 2);
+  Vector entropy;
+  entropy.Init((index_t) k);
 
   for(index_t i = 0; i < k; i++) {
     double theta =
-      ((double) (i - 1) / (double) (k - 1) * M_PI / 2) - (M_PI / 4);
+      ((double) (i - 1) / (k - 1) * M_PI / 2) - (M_PI / 4);
 
     double cos_theta = cos(theta);
     double sin_theta = sin(theta);
     Matrix rotator;
     rotator.Init(2,2);
     rotator.set(0,0, cos_theta);
-    rotator.set(0,1, sin_theta);
-    rotator.set(1,0, -sin_theta);
+    rotator.set(0,1, -sin_theta);
+    rotator.set(1,0, sin_theta);
     rotator.set(1,1, cos_theta);
     Matrix rotated_X_aug_t;
     la::MulTransBInit(X_aug_t, rotator, &rotated_X_aug_t);
@@ -114,21 +112,43 @@ void RADICALOptTheta(Matrix X_t, double std_dev, index_t m,
       rotated_X_aug_t.MakeColumnVector(j, &col_vector);
       marginal_at_theta[j] = vasicekm(col_vector, m);
     }
-      
-    
-		    
 
+    entropy[i] = Sum(&marginal_at_theta);
+  }
+
+  double min_entropy = DBL_MAX;
+  index_t arg_min_entropy = 0;
+
+  for(index_t i = 0; i < k; i++) {
+    if(entropy[i] < min_entropy) {
+      arg_min_entropy = i;
+      min_entropy = entropy[i];
+    }
+  }
+    
+  *theta_star = ((arg_min_entropy - 1) / (k - 1) * M_PI / 2) - (M_PI / 4);
+
+  printf("rotated %5.2f degrees.\n", (*theta_star) / (2 * M_PI) * 360);
+
+  rotator_star -> Init(2, 2);
+
+  double cos_theta_star = cos(*theta_star);
+  double sin_theta_star = sin(*theta_star);
+  rotator_star -> set(0, 0, cos_theta_star);
+  rotator_star -> set(0, 1, -sin_theta_star);
+  rotator_star -> set(1, 0, sin_theta_star);
+  rotator_star -> set(1, 1, cos_theta_star);
   
 }
 
 
 
-void RADICAL(Matrix X, Matrix whitening_matrix, Matrix X_whitened,
-	     index_t k, bool aug_flag, index_t reps, double std_dev, index_t m,
-	     Matrix* W, Matrix* Y) {
+  void RADICAL(Matrix X, Matrix whitening_matrix, Matrix X_whitened,
+	       index_t k, bool aug_flag, index_t reps, double std_dev, index_t m,
+	       Matrix* W, Matrix* Y) { 
 
   index_t d = X.n_rows();
-  index_t n = X.n_cols();
+  //  index_t n = X.n_cols();
   
   
   Matrix X_t, X_current_t, X_whitened_t;
@@ -138,13 +158,11 @@ void RADICAL(Matrix X, Matrix whitening_matrix, Matrix X_whitened,
   
 
   index_t sweeps = d - 1;
-  Matrix* old_total_rotator;
-  Matrix* total_rotator;
-  Matrix* temp_total_rotator;
+  Matrix* old_total_rotator = NULL;
+  Matrix* total_rotator = NULL;
+  Matrix* temp_total_rotator = NULL;
   DiagMatrixInit(d, 1, old_total_rotator);
   DiagMatrixInit(d, 1, total_rotator);
-
-  index_t sweep_iteration = 0;
 
 
 
@@ -219,6 +237,8 @@ void RADICAL(Matrix X, Matrix whitening_matrix, Matrix X_whitened,
 int RADICALMain(datanode *module, Matrix X, Matrix *W, Matrix *Y) {
 
   Matrix X_centered, X_whitened, whitening_matrix;
+
+  index_t n = X.n_cols();
   
   index_t k = 150;
   bool aug_flag = false;
