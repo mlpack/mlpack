@@ -33,23 +33,23 @@ double vasicekm(Vector v, index_t m) {
 
   qsort(sorted_v.ptr(), n, sizeof(double), compare_doubles_ascending);
 
-sum_logs = 0;
+  double sum_logs = 0;
 
-for i = 1:n
-  if (i + m) > n
-    sum_logs = sum_logs + log(Z(n) - Z(i-m));
-  elseif (i-m) < 1
-    sum_logs = sum_logs + log(Z(i+m) - Z(1));
-  else    
-    sum_logs = sum_logs + log(Z(i+m) - Z(i-m));
-  end
-end
+  for(index_t i = 0; i < n; i++) {
+    if((i + m) > (n - 1)) {
+      sum_logs = sum_logs + log(sorted_v[n - 1] - sorted_v[i - m]);
+    }
+    else if((i - m) < 0) {
+      sum_logs = sum_logs + log(sorted_v[i + m] - sorted_v[0]);
+    }
+    else {
+      sum_logs = sum_logs + log(sorted_v[i + m] - sorted_v[i - m]);
+    }
+  }
 
-  
+  double h = (sum_logs / n) + log(n / (2 * m));
 
-h = (sum_logs/n) + log(n/(2*m));
-
-
+  return h;
 
 }
 
@@ -60,8 +60,8 @@ void RADICALOptTheta(Matrix X_t, double std_dev, index_t m,
 		     double *theta_star, Matrix* rotator_star) {
   Matrix X_aug_t;
 
-  index_t d = X.n_rows();
-  index_t n = X.n_cols();
+  index_t d = X_t.n_cols();
+  index_t n = X_t.n_rows();
 
   
   if(reps == 1) {
