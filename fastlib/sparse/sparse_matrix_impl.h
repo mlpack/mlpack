@@ -758,7 +758,7 @@ inline void Sparsem::MultiplyT(SparseMatrix &a,
 	a.issymmetric_=true;
 	Multiply(a, a, result);
 	a.issymmetric_=flag;
-	result->issymetrix_=true;
+	result->issymetric_=true;
 }
 
 inline void Sparsem::Multiply(const SparseMatrix &mat,
