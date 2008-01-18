@@ -520,6 +520,7 @@ public:
       for (index_t i = tree->begin(); i < tree->end(); i++) {
         if (new_membership != connections_.Find(i)) {
           new_membership = -1;
+          DEBUG_ASSERT(tree->stat().component_membership() < 0);
           return;
         }
       }
