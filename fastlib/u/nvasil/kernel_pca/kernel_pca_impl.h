@@ -20,6 +20,7 @@
 void KernelPCA::Init(std::string data_file, index_t knns, 
 		index_t leaf_size) {
   data::Load(data_file.c_str(), &data_);
+	dimension_ = data_.n_rows();
 	knns_ = knns;
   allknn_.Init(data_, data_, leaf_size, knns);
 }
@@ -131,10 +132,10 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 	Vector point;
 	point.Init(dimension_);
 	Matrix neighbor_vals;
-	neighbor_vals.Init(dimension_, knns_);
-	Matrix cov(neighbor_vals);
+	neighbor_vals.Init(dimension_, knns_-1);
+	Matrix covariance(knns_-1, knns_-1);
 	Vector ones;
-	ones.Init(dimension_);
+	ones.Init(knns_-1);
 	ones.SetAll(1);
 	Vector weights;
 	index_t neighbors[knns_];
@@ -144,6 +145,9 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 											knns_);
 	while (!feof(fp)) {
 		fscanf(fp, "%llu %llu %lg", &p1, &p2, &dist);
+		if (dist==0) {
+		  continue;
+		}
 		i=0;
     if (p1==last_point) {
 		 memcpy(neighbor_vals.GetColumnPtr(i), data_.GetColumnPtr(p2), 
@@ -151,18 +155,19 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 		 neighbors[i]=p2;
 		 la::SubFrom(dimension_, point.ptr(), neighbor_vals.GetColumnPtr(i));
 		} else {
-		  point.Copy(data_.GetColumnPtr(p1), dimension_);
+		  point.CopyValues(data_.GetColumnPtr(p1));
 			last_point=p1;
 			i=0;
-      la::MulTransBInit(neighbor_vals, neighbor_vals, &cov);
-      la::SolveInit(cov, ones, &weights);
-      kernel_matrix_.LoadRow(p1, knns_, neighbors, weights.ptr());
+      la::MulTransAOverwrite(neighbor_vals, neighbor_vals, &covariance);
+      la::SolveInit(covariance, ones, &weights);
+      kernel_matrix_.LoadRow(p1, knns_-1, neighbors, weights.ptr());
 			weights.Destruct();
 		}
 	}
   kernel_matrix_.Negate();
 	kernel_matrix_.SetDiagonal(1.0);
   NONFATAL("Computing eigen values...\n");
+	kernel_matrix_.EndLoading();
   kernel_matrix_.Eig(num_of_eigenvalues, 
 			               "SM", 
 										 eigen_vectors,
