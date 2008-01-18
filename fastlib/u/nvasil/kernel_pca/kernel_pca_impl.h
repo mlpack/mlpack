@@ -118,7 +118,10 @@ void KernelPCA::EstimateBandwidth(double *bandwidth) {
 	}
 	*bandwidth=mean/count;
 }
-
+// It is not always know if the k nearest neighbors includes the same point with
+// 0 distance. It is highly likely in cases where the query tree and the reference tree
+// come from different structures that refer to the same dataset. We take care about
+// that in this function. 
 void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 			                     Matrix *eigen_vectors,
 									         std::vector<double> *eigen_values) {
@@ -132,37 +135,52 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 	Vector point;
 	point.Init(dimension_);
 	Matrix neighbor_vals;
-	neighbor_vals.Init(dimension_, knns_-1);
-	Matrix covariance(knns_-1, knns_-1);
+	// We initialize everything with knns_ although it is highly likely that
+	// if the k nearest neighbors include the same point then we will need
+	// a smaller vector knns_-1
+	neighbor_vals.Init(dimension_, knns_);
+	Matrix covariance(knns_, knns_);
+	Matrix t_covariance(knns_-1, knns_-1);
 	Vector ones;
-	ones.Init(knns_-1);
+	ones.Init(knns_);
 	ones.SetAll(1);
 	Vector weights;
 	index_t neighbors[knns_];
 	index_t i;
-	kernel_matrix_.Init(data_.n_rows(),
-			                data_.n_rows(),
+	kernel_matrix_.Init(data_.n_cols(),
+			                data_.n_cols(),
 											knns_);
+	last_point=0;
 	while (!feof(fp)) {
-		fscanf(fp, "%llu %llu %lg", &p1, &p2, &dist);
+		fscanf(fp, "%llu %llu %lg\n", &p1, &p2, &dist);
 		if (dist==0) {
 		  continue;
 		}
-		i=0;
-    if (p1==last_point) {
-		 memcpy(neighbor_vals.GetColumnPtr(i), data_.GetColumnPtr(p2), 
-				    sizeof(double)*dimension_);
-		 neighbors[i]=p2;
-		 la::SubFrom(dimension_, point.ptr(), neighbor_vals.GetColumnPtr(i));
-		} else {
+   	if (p1!=last_point) {
 		  point.CopyValues(data_.GetColumnPtr(p1));
 			last_point=p1;
-			i=0;
-      la::MulTransAOverwrite(neighbor_vals, neighbor_vals, &covariance);
-      la::SolveInit(covariance, ones, &weights);
-      kernel_matrix_.LoadRow(p1, knns_-1, neighbors, weights.ptr());
-			weights.Destruct();
+			if (i==knns_) {
+        la::MulTransAOverwrite(neighbor_vals, neighbor_vals, &covariance);
+        la::SolveInit(covariance, ones, &weights);
+        kernel_matrix_.LoadRow(p1, knns_, neighbors, weights.ptr());
+			  weights.Destruct();
+			} else {
+			  Vector t_ones;
+				Matrix t_neighbor_vals;
+				Vector t_weights;
+				t_ones.Alias(ones.ptr(), i);
+				t_neighbor_vals.Alias(neighbor_vals.ptr(), dimension_, i);
+        la::MulTransAOverwrite(t_neighbor_vals, t_neighbor_vals, &t_covariance);
+        la::SolveInit(t_covariance, t_ones, &t_weights);
+        kernel_matrix_.LoadRow(p1, i, neighbors, t_weights.ptr());
+			}
+		  i=0;
 		}
+    memcpy(neighbor_vals.GetColumnPtr(i), data_.GetColumnPtr(p2), 
+		    sizeof(double)*dimension_);
+	  neighbors[i]=p2;
+	  la::SubFrom(dimension_, point.ptr(), neighbor_vals.GetColumnPtr(i));
+	  i++;
 	}
   kernel_matrix_.Negate();
 	kernel_matrix_.SetDiagonal(1.0);
