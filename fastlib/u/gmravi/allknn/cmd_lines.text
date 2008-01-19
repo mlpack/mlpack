@@ -1,0 +1,1 @@
+gdb  ./allknn_main --method=allnnsingletree --qfile=query_file.csv --rfile=query_file.csv --k=2
