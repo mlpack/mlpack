@@ -1,23 +1,67 @@
 /**
  * @file simple_nbc.h
  *
- * A Simple Naive Bayes Classifier assuming that the data
- * is generated from a gaussian distribution
+ * A Naive Bayes Classifier which parametrically 
+ * estimates the distribution of the features.
+ * It is assumed that the features have been 
+ * sampled from a Gaussian PDF
  *
  */
+#ifndef NBC_H
+#define NBC_H
 
 #include "fastlib/fastlib.h"
 #include "phi.h"
 #include "math_functions.h"
 
+/**
+ * A classification class. The class labels are assumed
+ * to be positive integers - 0,1,2,....
+ *
+ * This class trains on the data by calculating the 
+ * sample mean and variance of the features with 
+ * respect to each of the labels, and also the class
+ * probabilities.
+ *
+ * Mathematically, it computes P(X_i = x_i | Y = y_j)
+ * for each feature X_i for each of the labels y_j.
+ * Alongwith this, it also computes the classs probabilities
+ * P( Y = y_j)
+ *
+ * For classifying a data point (x_1, x_2, ..., x_n),
+ * it computes the following:
+ * arg max_y(P(Y = y)*P(X_1 = x_1 | Y = y) * ... * P(X_n = x_n | Y = y))
+ *
+ * Example use:
+ * 
+ * @code
+ * SimpleNaiveBayesClassifier nbc;
+ * Vector results;
+ * 
+ * nbc.InitTrain(training_data, number_of_classes);
+ * nbc.Classify(testing_data, &results);
+ * @endcode
+ */
 class SimpleNaiveBayesClassifier {
+
+  // The class for testing this class is made a friend class
   friend class TestClassSimpleNBC;
+
  private:
+
+  // The variables containing the sample mean and variance
+  // for each of the features with respect to each class
   Matrix means_, variances_;
+
+  // The variable containing the class probabilities
   ArrayList<double> class_probabilities_;
+
+  // The variable keeping the information about the 
+  // number of classes present
   index_t number_of_classes_;
 		   
  public:
+
   SimpleNaiveBayesClassifier(){
     means_.Init(0, 0);
     variances_.Init(0, 0);
@@ -32,13 +76,16 @@ class SimpleNaiveBayesClassifier {
   }
 
 
-
+  // The function that initializes the classifier as per the input
+  // and then trains it by calculating the sample mean and variances
   void InitTrain(const Matrix& data, int number_of_classes) {
+
     ArrayList<double> feature_sum, feature_sum_squared;
-    /** the last row are the classes */
-    index_t number_examples = data.n_cols(); // number of examples in the dataset
-    index_t number_features = data.n_rows() - 1; // number of features in each example
-    /** the classes are of the form 0,1,2...,n_classes - 1 */
+    index_t number_examples = data.n_cols();
+    index_t number_features = data.n_rows() - 1;
+
+    // updating the variables, private and local, according to
+    // the number of features and classes present in the data
     number_of_classes_ = number_of_classes;
     class_probabilities_.Resize(number_of_classes_);
     means_.Destruct();
@@ -51,8 +98,12 @@ class SimpleNaiveBayesClassifier {
       feature_sum[k] = 0;
       feature_sum_squared[k] = 0;
     }
-    printf("%"LI"d examples with %"LI"d features each\n",number_examples, number_features);
-    // calculating the probablity of occurrence of the individual classes
+    printf("%"LI"d examples with %"LI"d features each\n",
+	   number_examples, number_features);
+
+    // calculating the class probabilities as well as the 
+    // sample mean and variance for each of the features
+    // with respect to each of the labels
     for(index_t i = 0; i < number_of_classes_; i++ ) {
       index_t number_of_occurrences = 0;
       for (index_t j = 0; j < number_examples; j++) {
@@ -66,18 +117,28 @@ class SimpleNaiveBayesClassifier {
 	  }
 	}
       }
-      class_probabilities_[i] = (double)number_of_occurrences / (double)number_examples ;
+      class_probabilities_[i] = (double)number_of_occurrences 
+	/ (double)number_examples ;
       for(index_t k = 0; k < number_features; k++) {
 	means_.set(k, i, (feature_sum[k] / number_of_occurrences));
-	variances_.set(k, i, (feature_sum_squared[k] - (feature_sum[k] * feature_sum[k] / number_of_occurrences)) / (number_of_occurrences - 1));
+	variances_.set(k, i, (feature_sum_squared[k] 
+			      - (feature_sum[k] * feature_sum[k] 
+				 / number_of_occurrences)
+			      )/(number_of_occurrences - 1));
 	feature_sum[k] = 0;
 	feature_sum_squared[k] = 0;
       }
     }
   }
 
+  // Given a bunch of data points, this function evaluates the class
+  // of each of those data points, and puts it in the vector 'results'
   void Classify(const Matrix& test_data, Vector *results){
+
+    // Checking that the number of features in the test data is same
+    // as in the training data
     DEBUG_ASSERT(test_data.n_rows() - 1 == means_.n_rows());
+
     ArrayList<double> tmp_vals;
     double *evaluated_result;
     index_t number_features = test_data.n_rows() - 1;
@@ -85,19 +146,30 @@ class SimpleNaiveBayesClassifier {
     evaluated_result = (double*)malloc(test_data.n_cols() * sizeof(double));
     tmp_vals.Init(number_of_classes_);
     
-    printf("%"LI"d test cases with %"LI"d features each\n", test_data.n_cols(), number_features);
+    printf("%"LI"d test cases with %"LI"d features each\n",
+	   test_data.n_cols(), number_features);
 
+    // Calculating the joint probability for each of the data points
+    // for each of the classes
     for (index_t n = 0; n < test_data.n_cols(); n++) {			
       for (index_t i = 0; i < number_of_classes_; i++) {
+	// Using the log values to prevent floating point underflow
 	tmp_vals[i] = log(class_probabilities_[i]);
 	for (index_t j = 0; j < number_features; j++) {
-	  tmp_vals[i] += log(phi(test_data.get(j, n), means_.get(j, i), variances_.get(j, i)));	  
+	  tmp_vals[i] += log(phi(test_data.get(j, n),
+				 means_.get(j, i),
+				 variances_.get(j, i))
+			     );	  
 	}
       }			
+      // Calling a function 'max_element_index' from the file 'math_functions.h
+      // to obtain the index of the maximum element in an array
       evaluated_result[n] = (double) max_element_index(tmp_vals);      
     }
+    // The result is being put in a vector
     (*results).Copy(evaluated_result, test_data.n_cols());
     
     return;
   }
 };
+#endif
