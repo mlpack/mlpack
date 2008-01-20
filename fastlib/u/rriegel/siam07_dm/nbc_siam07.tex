@@ -65,10 +65,10 @@
 %\setcounter{chapter}{2} % If you are doing your chapter as chapter one,
 %\setcounter{section}{3} % comment these two lines out.
 
-\title{\Large Massive-Scale Kernel Discriminant Analysis: Mining for Quasars\thanks{We would also like to acknowledge the contributions of astrophysicists Robert Nichol and Robert Bruner}}
-\author{Ryan Riegel\thanks{Georgia Institute of Technology.} \\
-  \and Alexander Gray\thanks{Georgia Institute of Technology..} \\
-  \and Gordon Richards\thanks{Johns Hopkins University.}}
+\title{\Large Massive-Scale Kernel Discriminant Analysis: Mining for Quasars\thanks{We would also like to acknowledge astrophysicists Robert Nichol and Robert Bruner and code developer Garrett Boyer}}
+\author{Ryan Riegel\thanks{Georgia Institute of Technology} \\
+  \and Alexander Gray\thanks{Georgia Institute of Technology} \\
+  \and Gordon Richards\thanks{Johns Hopkins University}}
 \date{}
 
 \maketitle
@@ -242,7 +242,7 @@ probabilities.  Simple algebra and incorporation of the above gives us
 \end{equation}
 we will use this as our classification test for the remainder of this
 paper.  This modification may seem trivial from the mindset of
-na\"{\i}ve computation, which provides exhaustively computed class
+exhaustive computation, which provides fully computed class
 probabilities for each query, but it is useful under the new
 algorithmic approach.  Our algorithm deals only in bounds on
 probabilities and aims to terminate computation on a query as soon as
@@ -297,9 +297,10 @@ result.
 \subsection{This Paper.}
 In this paper, we directly extend the work done in
 \cite{nbc-compstat}.  Our new algorithm is the same in spirit as the
-old one and is also implemented specifically\footnote{Though no
-inherent properties of the algorithm prevent it from being extended to
-$M > 2$.} for $M = 2$, but it benefits from several key differences:
+old one and is also implemented specifically for the $M = 2$
+case\footnote{Note, however, that no inherent properties of the
+algorithm prevent it from being extended to $M > 2$.}, but it benefits
+from several key differences:
 \begin{itemize}
 \item It uses an improved work order that better favors pruning and is
   implemented with reduced overhead and improved numerical stability.
@@ -353,13 +354,13 @@ For partitions $\kdleft{X} \cup \kdright{X} = X$ and $\kdleft{Z_k} \cup
 where addition on sets of key-value pairs is understood to add values
 for matching keys.  This immediately suggests a recursive alternative
 to the na\"{\i}ve algorithm in which the query set and reference sets
-are repeatedly split until they become singleton, whereupon $\phi_k$ may
-be computed directly.  Note that this reformulation by itself does
+are repeatedly split until they become singleton, whereupon $\phi_k$
+may be computed directly.  Note that this reformulation by itself does
 nothing to help asymptotic running time because, without pruning, each
 of the $O(N^2)$ kernel evaluations will ultimately occur.  What it
-does offer is the occurrence of $\phi_k(X,Z_k)$ for (generally)
-nontrivial subsets $X \subseteq \kdroot{X}$ and $Z_k \subseteq
-\kdroot{Z_k}$, instrumental to bounds computation and pruning.
+does offer is the occurrence of $\phi_k(X,Z_k)$ for nontrivial subsets
+$X \subseteq \kdroot{X}$ and $Z_k \subseteq \kdroot{Z_k}$,
+instrumental to bounds computation and pruning.
 
 Our algorithm cannot afford to spend much time deciding splits
 $\kdleft{X} \cup \kdright{X} = X$, etc., so we use space partitioning
@@ -425,8 +426,8 @@ induction that, for any $(x,\pi) \in X$, we can find leaves that satisfy
 the requirements of (\ref{eqn:dens-bds}).}  We stop expanding nodes
 $\phi_k(X,Z_k)$ for which we can show either of
 \begin{align}
-  \label{eqn:bd-form1} (1-t)\lo{\Phi_1}(X)\lo{\Pi}(X) > t\hi{\Phi_2}(X)(1-\lo{\Pi}(X)) , \\
-  \label{eqn:bd-form2} t\lo{\Phi_2}(X)(1-\hi{\Pi}(X)) > (1-t)\hi{\Phi_1}(X)\hi{\Pi}(X) ,
+  \label{eqn:bd-form1} (1-t)\lo{\Phi_1}(X)\lo{\Pi}(X) & > t\hi{\Phi_2}(X)(1-\lo{\Pi}(X)) , \\
+  \label{eqn:bd-form2} t\lo{\Phi_2}(X)(1-\hi{\Pi}(X)) & > (1-t)\hi{\Phi_1}(X)\hi{\Pi}(X) ,
 \end{align}
 where
 \begin{equation}
@@ -500,50 +501,50 @@ simultaneous expansions are made to $\phi_1(X,Z_1)$ and
 $\phi_2(X,Z_2)$.  Bounds and pruning on these computations are
 informed by separate bounding boxes and statistics stored for either
 class; if ever a reference node ceases to contain points from one of
-the classes, it is sufficient to treat that class' bounds as $[0,0]$.
-We will use $Z_{1,2}$ to denote nodes of the combined tree, from which
-both $Z_1$ and $Z_2$ are available.
+the classes, the node is removed from consideration in bounding that
+class' kernel summation.  We will use $Z_{1,2}$ to denote nodes of the
+combined tree, from which both $Z_1$ and $Z_2$ are available.
 
 Because sets $X$ and $Z_k$ occurring in computation constitute nodes
 from $kd$-trees, we will henceforth refer to components of computation
 $\phi_h(X,Z_k)$ as {\em node-pairs}.
 
 \subsection{Expansion Pattern.}
-To guide computation, \cite{nbc-compstat} uses a heuristic favoring the
-expansion of node-pairs that provided the most bounds tightening over
-the contribution of their parents.  This may sound desirable with
+To guide computation, \cite{nbc-compstat} uses a heuristic favoring
+the expansion of node-pairs that provide the most bounds tightening
+over the contribution of their parents.  This may sound desirable with
 regards to testing (\ref{eqn:bd-form1}) and (\ref{eqn:bd-form2}), but
-it does not guarantee that further expansion will continue to provide
-much improvement and is prone to missing node-pairs that are just
-about to make a ``breakthrough.''  A further problem of this kind of
-expansion is its dependence upon priority queues (implemented, for
-instance, as a heap), which impose significant computational overhead
-and cache inefficiency.  Also, because potentially any query node may
-follow the present computation, it is necessary to propagate (and
-later undo) all computed bounds to all levels of the query tree to
-which they apply.
+it does not guarantee that further expansion will provide much
+improvement and is prone to missing node-pairs that are just about to
+make a ``breakthrough.''  A further problem of this kind of expansion
+is its dependence upon priority queues (implemented, for instance, as
+a heap), which impose significant computational overhead and cache
+inefficiency.  Also, because potentially any query node may follow the
+present computation, it is necessary to propagate and later undo all
+computed bounds to all levels of the query tree to which they apply,
+possibly impacting numerical stability.
 
 Our algorithm uses a non-heuristic expansion pattern best thought of
-as a hybrid between depth- and breadth-first.  In short, queries are
-handled depth-first while references are handled breadth-first.  This
-pattern's associated data structure is a queue of lists of node-pairs,
-where each list pertains to just one query node $X$ and all references
-nodes $Z_{1,2}^p$, $1 \leq p \leq P$, at some level of the reference
-tree, with $\bigcup_{p=1}^P Z_{1,2}^p = \kdroot{Z_{1,2}}$.  Query
-splits are performed by replacing a list with two equal-length lists
-pertaining to either child of $X$ and the same nodes $Z_{1,2}^p$.
-Reference splits replace the list with a (typically) double-length
-list pertaining to the same $X$ and all of the children of nodes
-$Z_{1,2}^p$.  Leaf nodes $Z_{1,2}^p$ are left unchanged until $X$
-becomes a leaf, at which point they are processed exhaustively and
-removed, their contribution added to exact results stored for each
-query point.  In practice, we always split queries and references
-simultaneously if possible.  Processing lists in this manner results
-in a logarithmically deep stack containing lists of sizes doubling
-from $1$ to $O(N)$, thus consuming $O(N)$ space overall.  This is more
-overhead than regular depth-first's $O(\log N)$ space, but
-significantly less than breadth-first's $O(N^2)$ (pessimistically
-assuming that no prunes occur).
+as a hybrid between depth- and breadth-first expansion.  In short,
+queries are handled depth-first while references are handled
+breadth-first.  This pattern's associated data structure is a queue of
+lists of node-pairs, where each list pertains to just one query node
+$X$ and all references nodes $Z_{1,2}^p$, $1 \leq p \leq P$, at some
+level of the reference tree, with $\bigcup_{p=1}^P Z_{1,2}^p =
+\kdroot{Z_{1,2}}$.  Query splits are performed by replacing a list
+with two equal-length lists pertaining to either child of $X$ and the
+same nodes $Z_{1,2}^p$.  Reference splits replace the list with a
+(typically) double-length list pertaining to the same $X$ and all of
+the children of nodes $Z_{1,2}^p$.  Leaf nodes $Z_{1,2}^p$ are left
+unsplit until $X$ becomes a leaf, at which point they are processed
+exhaustively and removed, their contribution added to exact results
+stored for each query point.  In practice, we always split queries and
+references simultaneously if possible.  Processing lists in this
+manner results in a logarithmically deep stack containing lists of
+sizes doubling from $1$ to $O(N)$, thus consuming $O(N)$ space
+overall.  This is more overhead than regular depth-first's $O(\log N)$
+space, but significantly less than breadth-first's $O(N^2)$
+(pessimistically assuming that no prunes occur).
 
 Because bounds computed for one set of queries do not influence the
 results of another, the order in which nodes are processed from the
@@ -555,8 +556,8 @@ expansion pattern offers sufficient information to find the most
 current bounds on $X$'s full kernel summation: the respective sums of
 upper and lower bounds obtained for the listed node-pairs.  This
 eliminates any need to propagate or undo bound contributions
-throughout the query tree, saving time as well as increasing numerical
-stability.
+throughout the query tree, saving time as well as minimizing the
+effect of limited floating-point precision.
 
 \subsection{Pruning.}
 We have already motivated {\em classification pruning}, where one
@@ -593,7 +594,7 @@ ultimately yielding the expression
 \begin{equation}
   W(Z_k) \frac{D + 2}{2 V_D(h_k)} \left( 1 - \frac{\delta(x,Z_k)}{h_k^2} \right)
 \end{equation}
-in place of the original sum, where
+in place of the original kernal summation, where
 \begin{align}
   \delta(x,Z_k) & = \lefteqn{\textstyle x \cdot x - 2x \cdot \frac{S(Z_k)}{W(Z_k)} + \frac{T(Z_k)}{W(Z_k)} ,} \\
   S(Z_k) & = \sum_{\leftlim{(z,w) \in Z_k}} w z , & T(Z_k) & = \sum_{\leftlim{(z,w) \in Z_k}} w z \cdot z ;
@@ -617,27 +618,30 @@ and vice versa, where
 and similarly for $\lo{\delta}(X,W_k,S_k,T_k)$.
 
 \begin{figure}[tb]
-  \begin{center}\fbox{\begin{minipage}{3.1in}
+  \begin{center}\fbox{\begin{minipage}{3.1in}\vspace{-10pt}
   \begin{displaymath}\begin{array}{l}
     \xinit X = \kdroot{X},\:{\rm work} = \{\kdroot{Z_{1,2}}\} \\
     \xinit W_{1,2} = 0,\:S_{1,2} = 0,\:T_{1,2} = 0 \\
     \xfunction \kda(X,{\rm work},W_{1,2},S_{1,2},T_{1,2})
     \x \xinit \lo{\Phi_1} = 0,\:\hi{\Phi_1} = 0,\:\lo{\Phi_2} = 0,\:\hi{\Phi_2} = 0
-    \x \xinit {\rm next} \text{ to be empty}
+    \x \xinit {\rm next\_work} = \{\} \text{ // filled below}
     \x \xfor \xeach Z_{1,2} \in {\rm work}
     \xx \xif \hi{d}(X,Z_{1,2}) \leq \min\{h_1,h_2\},
+    \xxx \text{// Inclusion prune; add to parabola}
     \xxx W_1 \peq W(Z_1);\:W_2 \peq W(Z_2)
     \xxx \text{... // Similar for $S_{1,2}$ and $T_{1,2}$}
 %    \xxx S_1 \peq S(Z_1);\:S_2 \peq S(Z_2)
 %    \xxx T_1 \peq T(Z_1);\:T_2 \peq T(Z_2)
     \xx \xelif \lo{d}(X,Z_{1,2}) < \max\{h_1,h_2\},
+    \xxx \text{// No prune; record contribution}
     \xxx \lo{\Phi_1} \peq W(Z_1) K_{h_1}(\hi{d}(X,Z_1))
     \xxx \text{... // Similar for $\hi{\Phi_1}$, $\lo{\Phi_2}$, and $\hi{\Phi_2}$}
 %    \xxx \hi{\Phi_1} \peq W(Z_1) K_{h_1}(\lo{d}(X,Z_1))
 %    \xxx \lo{\Phi_2} \peq W(Z_2) K_{h_2}(\hi{d}(X,Z_2))
 %    \xxx \hi{\Phi_2} \peq W(Z_2) K_{h_2}(\lo{d}(X,Z_2))
-    \xxx \text{add $\kdleft{Z}$ and $\kdright{Z}$ to } {\rm next}
+    \xxx \text{add $\kdleft{Z}$ and $\kdright{Z}$ to } {\rm next\_work}
     \xx \xelse \text{// Exclusion prune; do nothing}
+    \x \text{// Account for inclusion prunes}
     \x \lo{\Phi_1} \peq W_1 K_{h_1}(\hi{\delta}(X,W_1,S_1,T_1))
     \x \text{... // Similar for $\hi{\Phi_1}$, $\lo{\Phi_2}$, and $\hi{\Phi_2}$}
 %    \x \hi{\Phi_1} \peq W_1 K_{h_1}(\lo{\delta}(X,W_1,S_1,T_1))
@@ -647,12 +651,12 @@ and similarly for $\lo{\delta}(X,W_k,S_k,T_k)$.
     \xx \text{label $X$ as $C_1$;}\:\xreturn
     \x \xif t \lo{\Phi_2} (1 - \hi{\Pi}(X)) > (1-t) \hi{\Phi_1} \hi{\Pi}(X),
     \xx \text{label $X$ as $C_2$;}\:\xreturn
-    \x \kda(\kdleft{X},{\rm next},W_{1,2},S_{1,2},T_{1,2})
-    \x \kda(\kdright{X},{\rm next},W_{1,2},S_{1,2},T_{1,2})
+    \x \kda(\kdleft{X},{\rm next\_work},W_{1,2},S_{1,2},T_{1,2})
+    \x \kda(\kdright{X},{\rm next\_work},W_{1,2},S_{1,2},T_{1,2})
   \end{array}\end{displaymath}
   \end{minipage}}\end{center}
   \vspace{-10pt}
-  \caption{\label{fig:kda} \footnotesize Pseudocode for kernel
+  \caption{\label{fig:kda}\footnotesize Pseudocode for kernel
     discriminant analysis.  Each recursion begins by testing all nodes
     from a level of the reference tree against the query node, pruning
     those it can while simultaneously accumulating the contributions
@@ -686,11 +690,12 @@ restrict computations of full density estimates to just those points
 identified as members of some class of interest.
 
 \subsection{Leave-one-out Cross-validation.}
-In cross-validation situations, $\kdroot{X}$ and $\kdroot{Z}_{1,2}$
-are the same.  It is handy to represent data as set $X_{1,2} \subset
-\mathcal{X} \times \mathbb{R} \times \mathbb{R}$, separable into sets
-$X_1$ and $X_2$, with elements $(x,\pi,w)$, the observation, its
-data-dependent prior, and its reference weight.
+In cross-validation situations, queries $\kdroot{X}$ and references
+$\kdroot{Z}_{1,2}$ represent the same data.  It is handy to represent
+data as set $X_{1,2} \subset \mathcal{X} \times \mathbb{R} \times
+\mathbb{R}$, separable into sets $X_1$ and $X_2$, with elements
+$(x,\pi,w)$: the observation, its data-dependent prior, and its
+reference weight.
 
 Our goal is to find the results for each $(x,\pi,w)$ that would be
 obtained from normal computation if $Z_{1,2} = X_{1,2} \setminus
@@ -766,24 +771,24 @@ We may use this multi-bandwidth version of the algorithm in a
 rudimentary but effective means of bandwidth optimization.  Starting
 from theoretic bandwidths found by the methods described in
 \cite{silverman86} or some simpler measure such as the average
-$k$th-nearest-neighbor\footnote{A fast algorithm for this problem is
-suggested in \cite{nips2000paper}.} distance, test ten or so
+$k$th-nearest-neighbor distance\footnote{A fast algorithm for this
+problem is suggested in \cite{nips2000paper}.}, test ten or so
 bandwidths ranging from an order of magnitude larger to an order of
 magnitude smaller.  Then, iteratively narrow ranges to contain just
 the few bandwidths found to yield the greatest accuracy, or extend the
 range if the greatest accuracy bandwidths lie on the edge.  This can
 only hope to offer linear convergence upon a local optimum, but it is
-conceptually similar to the well-known simplex method of optimization
-and in practice finds reasonable bandwidths in just a few iterations.
-It is also possible to reuse trees between iterations.
+conceptually similar to the well-known Nelder-Mead method of
+optimization and in practice finds reasonable bandwidths in just a few
+iterations.  It is also possible to reuse trees between iterations.
 
 \section{Parallelization}\label{sec:para}
-The na\"{\i}ve algorithm for KDA is highly parallelizable, but even
-parallelized implementations suffer from the method's inherently poor
-scalability.  It is likely uneconomical to purchase one-hundred-fold
-more processors to tackle a problem just one order of magnitude larger
-than was previously feasible, and that's assuming communication cost
-to be negligible.
+The na\"{\i}ve algorithm for KDA is highly parallelizable, but
+parallelized implementations still suffer from the method's inherent
+poor scalability.  Even assuming communication cost to be negligible,
+it is likely uneconomical to purchase one-hundred-fold more processors
+to tackle a problem just one order of magnitude larger than was
+previously feasible.
 
 The algorithm we propose is also parallelizable.  There are no
 read/write dependencies between sibling recursions; thus, it is safe
@@ -809,6 +814,98 @@ reference tree needed by individual processors, which can be exploited
 by an advanced data distribution system to reduce overall
 communication.
 
+\newpage
+\begin{figure}[t]
+  \begin{center}\fbox{\begin{minipage}{3.1in}\vspace{-10pt}
+  \begin{displaymath}\begin{array}{l}
+    \xinit X = \kdroot{X},\:{\rm work} = \{\kdroot{Z_{1,2}}\} \\
+    \xinit \vec{W}_{1,2} = 0,\:\vec{S}_{1,2} = 0,\:\vec{T}_{1,2} = 0 \\
+    \xfunction \multi(X,{\rm work},\vec{W}_{1,2},\vec{S}_{1,2},\vec{T}_{1,2})
+    \x \xinit \lo{\vec{\Phi}_1} = 0,\:\hi{\vec{\Phi}_1} = 0,\:\lo{\vec{\Phi}_2} = 0,\:\hi{\vec{\Phi}_2} = 0
+    \x \xinit {\rm next\_work} = \{\} \text{ // filled below}
+    \x \xfor \xeach Z_{1,2} \in {\rm work}
+    \xx \xfor i \text{ from } {\rm hi}(Z_1) \text{ to } {\rm lo}(Z_1)
+    \xxx \xif \hi{d}(X,Z_1) \leq h_1^i
+    \xxxx \text{// Inclusion prune; add to parabolas}
+    \xxxx \vec{W}_1{\scriptstyle \!(i)} \peq W(Z_1)
+    \xxxx \text{... // Similar for $\vec{S}_1$ and $\vec{T}_1$}
+%    \xxxx \vec{S}_1{\scriptstyle \!(i)} \peq S(Z_1)
+%    \xxxx \vec{T}_1{\scriptstyle \!(i)} \peq T(Z_1)
+    \xxx \xelse \xbreak
+    \xx \xfor i \text{ continuing to } {\rm lo}(Z_1)
+    \xxx \xif \lo{d}(X,Z_1) < h_1^i,
+    \xxxx \text{// No prune; record contributions}
+    \xxxx \lo{\vec{\Phi}_1}{\scriptstyle \!(i)} \peq W(Z_1) K_{h_1^i}(\hi{d}(X,Z_1))
+    \xxxx \hi{\vec{\Phi}_1}{\scriptstyle \!(i)} \peq W(Z_1) K_{h_1^i}(\lo{d}(X,Z_1))
+    \xxx \xelse \xbreak
+    \xx \text{// No work for exclusion prunes}
+    \xx \text{update ${\rm lo}(Z_1)$ and ${\rm hi}(Z_1)$}
+    \xx \text{... // Similar for $Z_2$}
+%    \xx \xfor j \text{ from } {\rm hi}(Z_2) \text{ to } {\rm lo}(Z_2)
+%    \xxx \xif \hi{d}(X,Z_2) \leq h_2^j
+%    \xxxx \vec{W}_2{\scriptstyle \!(j)} \peq W(Z_2)
+%    \xxxx \text{... // Similar for $\vec{S}_2$ and $\vec{T}_2$}
+%%    \xxxx \vec{S}_2{\scriptstyle \!(j)} \peq S(Z_2)
+%%    \xxxx \vec{T}_2{\scriptstyle \!(j)} \peq T(Z_2)
+%    \xxx \xelse \xbreak
+%    \xx {\rm hi}(Z_2) = j
+%    \xx \xfor j \text{ continuing to } {\rm lo}(Z_2)
+%    \xxx \xif \lo{d}(X,Z_2) < h_2^j,
+%    \xxxx \lo{\vec{\Phi}_2}{\scriptstyle \!(j)} \peq W(Z_2) K_{h_2^j}(\hi{d}(X,Z_2))
+%    \xxxx \hi{\vec{\Phi}_2}{\scriptstyle \!(j)} \peq W(Z_2) K_{h_2^j}(\lo{d}(X,Z_2))
+%    \xxx \xelse \xbreak
+%    \xx {\rm lo}(Z_2) = j+1
+    \xx \xif {\rm lo}(Z_1) \leq {\rm hi}(Z_1) \text{ or } {\rm lo}(Z_2) \leq {\rm hi}(Z_2)
+    \xxx \text{add $\kdleft{Z}$ and $\kdright{Z}$ to } {\rm next\_work}
+    \x \xfor i \text{ from } {\rm lo}_1(X) \text{ to } {\rm hi}_1(X)
+    \xx \text{// Account for inclusion prunes}
+    \xx \lo{\vec{\Phi}_1}{\scriptstyle \!(i)} \peq \vec{W}_1{\scriptstyle \!(i)} K_{h_1^i}(\hi{\delta}(X,\vec{W}_1{\scriptstyle \!(i)},\vec{S}_1{\scriptstyle \!(i)},\vec{T}_1{\scriptstyle \!(i)}))
+    \xx \hi{\vec{\Phi}_1}{\scriptstyle \!(i)} \peq W_1{\scriptstyle \!(i)} K_{h_1^i}(\lo{\delta}(X,W_1{\scriptstyle \!(i)},S_1{\scriptstyle \!(i)},T_1{\scriptstyle \!(i)}))
+    \x \text{... // Similar for $\lo{\vec{\Phi}_2}$ and $\hi{\vec{\Phi}_2}$}
+%    \x \xfor j \text{ from } {\rm lo}_2(X) \text{ to } {\rm hi}_2(X)
+%    \xx \lo{\vec{\Phi}_2}{\scriptstyle \!(j)} \peq \vec{W}_2{\scriptstyle \!(j)} K_{h_2^j}(\hi{\delta}(X,\vec{W}_2{\scriptstyle \!(j)},\vec{S}_2{\scriptstyle \!(j)},\vec{T}_2{\scriptstyle \!(j)}))
+%    \xx \hi{\vec{\Phi}_2}{\scriptstyle \!(j)} \peq W_2{\scriptstyle \!(j)} K_{h_2^j}(\lo{\delta}(X,W_2{\scriptstyle \!(j)},S_2{\scriptstyle \!(j)},T_2{\scriptstyle \!(j)}))
+    \x \xfor i \text{ from } {\rm lo}_1(X) \text{ to } {\rm hi}_1(X)
+    \xx \xfor j \text{ from } {\rm lo}_2(X) \text{ to } {\rm hi}_2(X)
+    \xxx \xif (1-t) \lo{\vec{\Phi}_1}{\scriptstyle \!(i)} \lo{\Pi}(X) > t \hi{\vec{\Phi}_2}{\scriptstyle \!(j)} (1 - \lo{\Pi}(X)),
+    \xxxx \text{label $X$ as $C_1$ for $(i,j)$}
+    \xxx \xif t \lo{\vec{\Phi}_2}{\scriptstyle \!(j)} (1 - \hi{\Pi}(X)) > (1-t) \hi{\vec{\Phi}_1}{\scriptstyle \!(i)} \hi{\Pi}(X),
+    \xxxx \text{label $X$ as $C_2$ for $(i,j)$}
+    \x \text{update ${\rm lo}_1(X)$, ${\rm hi}_1(X)$, ${\rm lo}_2(X)$, and ${\rm hi}_2(X)$}
+    \x \xif {\rm lo}_1(X) \leq {\rm hi}_1(X) \text{ and } {\rm lo}_2(X) \leq {\rm hi}_2(X)
+    \xx \multi(\kdleft{X},{\rm next\_work},\vec{W}_{1,2},\vec{S}_{1,2},\vec{T}_{1,2})
+    \xx \multi(\kdright{X},{\rm next\_work},\vec{W}_{1,2},\vec{S}_{1,2},\vec{T}_{1,2})
+  \end{array}\end{displaymath}
+  \end{minipage}}\end{center}
+  \vspace{-10pt}
+  \caption{\label{fig:multi}\footnotesize Pseudocode for the
+    multi-bandwidth algorithm.  For either class, the algorithm checks
+    for and handles inclusion prunes followed by normal bounds
+    computations until the first exclusion prune.  Pruned
+    contributions are then applied for each bandwidth and bandwidth
+    combinations are tested for classification.  Handling of base-case
+    omitted.}
+  \vspace{-120pt}
+\end{figure}
+
+\vspace*{0pt}
+\newpage
+
+\begin{figure}[tb]
+  \vspace{-10pt}
+  \begin{center}
+    \includegraphics[width=3.1in]{quasar_times_narrow.eps}
+  \end{center}
+  \vspace{-30pt}
+  \caption{\label{fig:quasar-speed}\footnotesize Running times for the
+    na\"{i}ve algorithm, the algorithm from \cite{nbc-compstat}
+    (heap), the improved expansion pattern (hybrid) and pruning
+    opportunities (Epan) separately, and finally the improvements
+    together.  Bandwidths were determined to maximize classification
+    accuracy on the largest set and scaled via the theoretic inverse
+    relationship to $N^{\frac{1}{5}}$.  Only one processor used.}
+\end{figure}
+
 \section{Results}\label{sec:res}
 We applied our algorithms to two data sets: a large selection of
 quasars and stars from the SDSS and the Cover Type data set available
@@ -825,21 +922,8 @@ consists of 40m unidentified objects.  In
 Figure~\ref{fig:quasar-speed}, it is apparent that both the hybrid
 expansion pattern and inclusion/exclusion pruning are crucial to
 asymptotic performance.  Our new algorithm empirically scales at about
-$O(N^{1.1})$ and has an extremely low cross-over point.
-
-\begin{figure}[tb]
-  \begin{center}
-    \includegraphics[width=3.1in]{quasar_times_narrow.eps}
-  \end{center}
-  \vspace{-30pt}
-  \caption{\label{fig:quasar-speed}\footnotesize Running times for the
-    na\"{i}ve algorithm, the algorithm from \cite{nbc-compstat}
-    (heap), the improved expansion pattern (hybrid) and pruning
-    opportunities (Epan) separately, and finally the improvements
-    together.  Bandwidths were determined to maximize classification
-    accuracy on the largest set and scaled via the theoretic inverse
-    relationship to $N^{\frac{1}{5}}$.  Only one processor used.}
-\end{figure}
+$O(N^{1.1})$ and has an extremely low cross-over point with the
+na\"{\i}ve algorithm.
 
 \if 0
 \begin{table}[b]
@@ -886,7 +970,7 @@ running time is expected both because bandwidths are easier to prune
 together if they are more similar to each other and because larger
 bandwidths, which diminish as ranges tighten, tend to prune the least.
 Figure~\ref{fig:multi-speed} demonstrates that the multi-bandwidth
-algorithm is indeed much faster for a small number of bandwidths,
+algorithm is indeed much faster for a bounded number of bandwidths,
 which is all that is necessary for optimization.  In comparison, the
 estimated na\"{\i}ve running time for the above procedure is 140 hours
 even if the algorithm utilizes the same density-sharing technique
@@ -899,7 +983,7 @@ within-class of accuracies of 95\% for quasars and 98\% for stars.
     \includegraphics[width=3.6in]{multi_speed.eps}
     \hspace*{-.3in}
   \end{center}
-  \vspace{-17pt}
+  \vspace{-15pt}
   \caption{\label{fig:multi-speed}\footnotesize Running times for the
     multi-bandwidth algorithm and the single-bandwidth algorithm run
     on all bandwidth combinations.  Bandwidth range is constant
@@ -920,7 +1004,7 @@ research is parallelizing tree building, but at current we are forced
 to conclude that parallelization is not worthwhile at this scale.  In
 any case, we far improve upon both the estimated na\"{\i}ve running
 time of 380 hours, not to mention classifying the entire unknown data
-a tenth the time it takes the old algorithm to test one bandwidth
+in a tenth the time it takes the old algorithm to test one bandwidth
 combination.
 
 \begin{figure}[tb]
@@ -933,7 +1017,8 @@ combination.
   \caption{\label{fig:bad-para-speedup}\footnotesize Speed-up for
     parallelized classification of the full 40m SDSS data set.
     Excluding data access and tree building shows that the underlying
-    computation has workable speed-up.}
+    computation has workable speed-up.  Future parallelization of tree
+    building may then make this feasible.}
 \end{figure}
 
 Using careful tuning of parameters and separate classifiers for
@@ -953,28 +1038,31 @@ specialized kernel), some preprocessing is required.  We normalize
 each dimension to have unit variance and then perform PCA to reduce
 the dimensionality to 8.  Further, as implemented, our algorithm only
 supports two-class problems, so we will train our classifiers to
-distinguish the one class from the rest of the data; results are shown
-for distinguishing the largest class, lodgepole pines, which
-constitutes nearly half of the data, and the smallest class,
-cottonwoods and willows, which constitutes only 0.5\% of the data.
+distinguish one class from the rest of the data; results are shown for
+distinguishing the largest class, lodgepole pines, which constitutes
+nearly half of the data, and the smallest class, cottonwoods and
+willows, which constitutes only 0.5\% of the data.
 
 For lodgepole pines, we optimized bandwidths with three 10-by-10 runs
 of the multi-bandwidth algorithm, taking 609, 135, and 92 seconds when
 parallelized over two-processors.  The resulting classification
 accuracy is 90\% both within and outside the class.  For cottonwoods
 and willows, the same optimization procedure takes 1037, 248, and 213
-seconds and result in a within-class accuracy of 99.4\% and 97.7\%
+seconds and results in a within-class accuracy of 99.4\% and 97.7\%
 outside.  The estimated running time of the na\"{\i}ve algorithm for a
 single bandwidth combination for the identification of either class is
 10.6 hours, suggesting an overall time commitment of 320 hours for the
 above work, around seven orders of magnitude slower.
 
 Parallelization of LOO CV with the multi-bandwidth algorithm was much
-more favorable than with the large SDSS query set.
-Figure~\ref{fig:good-para-speedup} shows workable speed-up, suggesting
-that iterations of the multi-bandwidth algorithm, especially the
-long-running ones seen at higher dimensions, can still benefit greatly
-from this extension.
+more favorable than with the large SDSS query set.  This makes sense
+given Amdahl's law because the ratio of serial work to parallel work
+is significantly reduced: more parallel kernel summations and
+classification tests are performed for the serial act of
+tree-building.  Figure~\ref{fig:good-para-speedup} shows workable
+speed-up, suggesting that iterations of the multi-bandwidth algorithm,
+especially the long-running ones seen at higher dimensions, still
+benefit greatly from parallelization.
 
 \begin{figure}
   \begin{center}
@@ -985,7 +1073,9 @@ from this extension.
   \vspace{-15pt}
   \caption{\label{fig:good-para-speedup}\footnotesize Speed-up for
     parallelized classification of LOO CV with the multi-bandwidth
-    algorithm.}
+    algorithm.  This is more favorable because the multi-bandwidth
+    algorithm performs a larger proportion of parallelizable work than
+    does single-bandwidth classification.}
 \end{figure}
 
 %\subsection{Synthetic Data.}
@@ -1004,9 +1094,10 @@ it would have taken weeks.
 Our algorithm's orders of magnitude speed-up is obtained with a
 minimal degree of parallelization.  Through the use of a more advanced
 data distribution and tree building method, we can expect
-parallelization to yield even more impressive gains.  Also, as for
+parallelization to yield even more impressive gains.  Also, for
 higher-dimensional problems, techniques such as logistic regression
-may be used in combination with KDA, as in \cite{gray-highdimensional}.
+may be used in combination with KDA, as in
+\cite{gray-highdimensional}.
 
 Already, an earlier rendition of our quasar catalog has been used to
 confirm the cosmic magnification effect predicted by the theory of
@@ -1019,73 +1110,7 @@ behind our fast algorithm have no special dependence on KDA.  Methods
 like those demonstrated in this paper have potential to accelerate a
 wide variety of computations across science and data mining.
 
-\begin{figure}[tb]
-  \begin{center}\fbox{\begin{minipage}{3.1in}\vspace{-10pt}
-  \begin{displaymath}\begin{array}{l}
-    \xinit X = \kdroot{X},\:{\rm work} = \{\kdroot{Z_{1,2}}\} \\
-    \xinit \vec{W}_{1,2} = 0,\:\vec{S}_{1,2} = 0,\:\vec{T}_{1,2} = 0 \\
-    \xfunction \multi(X,{\rm work},\vec{W}_{1,2},\vec{S}_{1,2},\vec{T}_{1,2})
-    \x \xinit \lo{\vec{\Phi}_1} = 0,\:\hi{\vec{\Phi}_1} = 0,\:\lo{\vec{\Phi}_2} = 0,\:\hi{\vec{\Phi}_2} = 0
-    \x \xinit {\rm next} \text{ to be empty}
-    \x \xfor \xeach Z_{1,2} \in {\rm work}
-    \xx \xfor i \text{ from } {\rm hi}(Z_1) \text{ to } {\rm lo}(Z_1)
-    \xxx \xif \hi{d}(X,Z_1) \leq h_1^i
-    \xxxx \vec{W}_1{\scriptstyle \!(i)} \peq W(Z_1)
-    \xxxx \text{... // Similar for $\vec{S}_1$ and $\vec{T}_1$}
-%    \xxxx \vec{S}_1{\scriptstyle \!(i)} \peq S(Z_1)
-%    \xxxx \vec{T}_1{\scriptstyle \!(i)} \peq T(Z_1)
-    \xxx \xelse \xbreak
-    \xx \xfor i \text{ continuing to } {\rm lo}(Z_1)
-    \xxx \xif \lo{d}(X,Z_1) < h_1^i,
-    \xxxx \lo{\vec{\Phi}_1}{\scriptstyle \!(i)} \peq W(Z_1) K_{h_1^i}(\hi{d}(X,Z_1))
-    \xxxx \hi{\vec{\Phi}_1}{\scriptstyle \!(i)} \peq W(Z_1) K_{h_1^i}(\lo{d}(X,Z_1))
-    \xxx \xelse \xbreak
-    \xx \text{update ${\rm lo}(Z_1)$ and ${\rm hi}(Z_1)$}
-    \xx \text{... // Similar for $Z_2$}
-%    \xx \xfor j \text{ from } {\rm hi}(Z_2) \text{ to } {\rm lo}(Z_2)
-%    \xxx \xif \hi{d}(X,Z_2) \leq h_2^j
-%    \xxxx \vec{W}_2{\scriptstyle \!(j)} \peq W(Z_2)
-%    \xxxx \text{... // Similar for $\vec{S}_2$ and $\vec{T}_2$}
-%%    \xxxx \vec{S}_2{\scriptstyle \!(j)} \peq S(Z_2)
-%%    \xxxx \vec{T}_2{\scriptstyle \!(j)} \peq T(Z_2)
-%    \xxx \xelse \xbreak
-%    \xx {\rm hi}(Z_2) = j
-%    \xx \xfor j \text{ continuing to } {\rm lo}(Z_2)
-%    \xxx \xif \lo{d}(X,Z_2) < h_2^j,
-%    \xxxx \lo{\vec{\Phi}_2}{\scriptstyle \!(j)} \peq W(Z_2) K_{h_2^j}(\hi{d}(X,Z_2))
-%    \xxxx \hi{\vec{\Phi}_2}{\scriptstyle \!(j)} \peq W(Z_2) K_{h_2^j}(\lo{d}(X,Z_2))
-%    \xxx \xelse \xbreak
-%    \xx {\rm lo}(Z_2) = j+1
-    \xx \xif {\rm lo}(Z_1) \leq {\rm hi}(Z_1) \text{ or } {\rm lo}(Z_2) \leq {\rm hi}(Z_2)
-    \xxx \text{add $\kdleft{Z}$ and $\kdright{Z}$ to } {\rm next}
-    \x \xfor i \text{ from } {\rm lo}_1(X) \text{ to } {\rm hi}_1(X)
-    \xx \lo{\vec{\Phi}_1}{\scriptstyle \!(i)} \peq \vec{W}_1{\scriptstyle \!(i)} K_{h_1^i}(\hi{\delta}(X,\vec{W}_1{\scriptstyle \!(i)},\vec{S}_1{\scriptstyle \!(i)},\vec{T}_1{\scriptstyle \!(i)}))
-    \xx \hi{\vec{\Phi}_1}{\scriptstyle \!(i)} \peq W_1{\scriptstyle \!(i)} K_{h_1^i}(\lo{\delta}(X,W_1{\scriptstyle \!(i)},S_1{\scriptstyle \!(i)},T_1{\scriptstyle \!(i)}))
-    \x \text{... // Similar for $\lo{\vec{\Phi}_2}$ and $\hi{\vec{\Phi}_2}$}
-%    \x \xfor j \text{ from } {\rm lo}_2(X) \text{ to } {\rm hi}_2(X)
-%    \xx \lo{\vec{\Phi}_2}{\scriptstyle \!(j)} \peq \vec{W}_2{\scriptstyle \!(j)} K_{h_2^j}(\hi{\delta}(X,\vec{W}_2{\scriptstyle \!(j)},\vec{S}_2{\scriptstyle \!(j)},\vec{T}_2{\scriptstyle \!(j)}))
-%    \xx \hi{\vec{\Phi}_2}{\scriptstyle \!(j)} \peq W_2{\scriptstyle \!(j)} K_{h_2^j}(\lo{\delta}(X,W_2{\scriptstyle \!(j)},S_2{\scriptstyle \!(j)},T_2{\scriptstyle \!(j)}))
-    \x \xfor i \text{ from } {\rm lo}_1(X) \text{ to } {\rm hi}_1(X)
-    \xx \xfor j \text{ from } {\rm lo}_2(X) \text{ to } {\rm hi}_2(X)
-    \xxx \xif (1-t) \lo{\vec{\Phi}_1}{\scriptstyle \!(i)} \lo{\Pi}(X) > t \hi{\vec{\Phi}_2}{\scriptstyle \!(j)} (1 - \lo{\Pi}(X)),
-    \xxxx \text{label $X$ as $C_1$ for $(i,j)$}
-    \xxx \xif t \lo{\vec{\Phi}_2}{\scriptstyle \!(j)} (1 - \hi{\Pi}(X)) > (1-t) \hi{\vec{\Phi}_1}{\scriptstyle \!(i)} \hi{\Pi}(X),
-    \xxxx \text{label $X$ as $C_2$ for $(i,j)$}
-    \x \text{update ${\rm lo}_1(X)$, ${\rm hi}_1(X)$, ${\rm lo}_2(X)$, and ${\rm hi}_2(X)$}
-    \x \xif {\rm lo}_1(X) \leq {\rm hi}_1(X) \text{ and } {\rm lo}_2(X) \leq {\rm hi}_2(X)
-    \xx \multi(\kdleft{X},{\rm next},\vec{W}_{1,2},\vec{S}_{1,2},\vec{T}_{1,2})
-    \xx \multi(\kdright{X},{\rm next},\vec{W}_{1,2},\vec{S}_{1,2},\vec{T}_{1,2})
-  \end{array}\end{displaymath}
-  \end{minipage}}\end{center}
-  \vspace{-10pt}
-  \caption{\label{fig:multi} \footnotesize Pseudocode for the
-    multi-bandwidth algorithm.  For either class, the algorithm checks
-    for and handles inclusion prunes followed by normal bounds
-    computations until the first exclusion prune.  Pruned
-    contributions are then applied for each bandwidth and bandwidth
-    combinations are tested for classification.  Handling of base-case
-    omitted.}
-\end{figure}
+\newpage
 
 \bibliographystyle{abbrv}
 \bibliography{nbc_siam07}
