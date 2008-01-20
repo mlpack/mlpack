@@ -1,4 +1,5 @@
 /**
+ * @author pram
  * @file mog.cc
  *
  * Implementation for the loglikelihood function, the EM algorithm
@@ -10,7 +11,7 @@
 #include "phi.h"
 #include "math_functions.h"
 
-void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *results) {
+void MoGEM::ExpectationMaximization(Matrix& data_points, ArrayList<double> *results) {
 
   // Declaration of the variables */
   index_t num_points;
@@ -136,7 +137,7 @@ void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *result
   return;
 }
 
-long double MoG::Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
+long double MoGEM::Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
 			       ArrayList<Matrix>& covars, Vector& weights) {
 	
   index_t i, j;
@@ -156,7 +157,7 @@ long double MoG::Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
   return loglikelihood;
 }
 
-void MoG::KMeans(Matrix& data, ArrayList<Vector> *means,
+void MoGEM::KMeans(Matrix& data, ArrayList<Vector> *means,
 		 ArrayList<Matrix> *covars, Vector *weights, index_t value_of_k){
 
 	

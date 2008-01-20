@@ -1,34 +1,35 @@
 /**
+ * @author pram
  * @file mog.h
  *
  * Defines a Gaussian Mixture model and
  * estimates the parameters of the model
  */
 
-#ifndef MOG_H
-#define MOG_H
+#ifndef MOGEM_H
+#define MOGEM_H
 
 #include <fastlib/fastlib.h>
 
 /**
  * A Gaussian mixture model class.
  * 
- * This class uses different loss functions to
+ * This class uses maximum likelihood loss functions to
  * estimate the parameters of a gaussian mixture 
- * model on a given data.
+ * model on a given data via the EM algorithm.
  * 
  *
  * Example use:
  *
  * @code
- * MoG mog;
+ * MoGEM mog;
  * ArrayList<double> results;
  *
  * mog.Init(number_of_gaussians, dimension);
  * mog.ExpectationMaximization(data, &results, optim_flag);
  * @endcode
  */
-class MoG {
+class MoGEM {
 
  private:
 
@@ -41,12 +42,12 @@ class MoG {
 
  public:
 
-  MoG() {
+  MoGEM() {
     mu_.Init(0);
     sigma_.Init(0);
   }
 
-  ~MoG() {
+  ~MoGEM() {
   }
 
   void Init(index_t num_gauss, index_t dimension) {

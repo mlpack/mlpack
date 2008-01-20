@@ -1,5 +1,12 @@
+/**
+ * @author pram
+ * @file phi.h
+ *
+ * This program computes the multivariate 
+ * Gaussian probability density function
+ *
+ */
 #include "fastlib/fastlib.h"
-
 
 /* Calculates the multivariate Gaussian probability density function */
 
@@ -33,7 +40,7 @@ long double phi( Vector& x , Vector& mean , Matrix& cov) {
   tmp2 = -exponent;
   tmp2 = tmp2 / 2;
   f = (tmp1*tmp3*exp(tmp2));
-  //printf("f --> %Lf\n",f);
+
   return f;
 }
 

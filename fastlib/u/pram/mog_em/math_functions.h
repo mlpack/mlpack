@@ -1,3 +1,8 @@
+/**
+ * @author pram
+ * @file math_functions.h
+ *
+ */
 #include "fastlib/fastlib.h"
 
 /* Finds the index of the minimum element in each row of a matrix */
