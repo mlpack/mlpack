@@ -286,7 +286,10 @@ index_t Dataset::n_labels() const {
   return n_labels;
 }
 
-void Dataset::GetLabels(ArrayList<int> &labels_list, ArrayList<index_t> &labels_index, ArrayList<index_t> &labels_ct, ArrayList<index_t> &labels_startpos) const {
+void Dataset::GetLabels(ArrayList<int> &labels_list,
+			ArrayList<index_t> &labels_index,
+			ArrayList<index_t> &labels_ct,
+			ArrayList<index_t> &labels_startpos) const {
   index_t i = 0;
   index_t label_row_idx = matrix_.n_rows() - 1; // the last row is for labels
   index_t n_points = matrix_.n_cols();

@@ -386,7 +386,8 @@ class Dataset {
   /**
    * Gets the number of labels in a labeled dataset.
    *
-   * This corresponds to the number of different items of the n_features-th row (last row) in the matrix.
+   * This corresponds to the number of different items of the
+   * n_features-th row (last row) in the matrix.
    *
    * @return the number of labels in the dataset
    */
@@ -395,17 +396,27 @@ class Dataset {
   /**
    * Gets a list and indicies of labels in a labeled dataset.
    *
-   * The list corresponds to the different items of the n_features-th row (last row)  
-   * in the matrix. The indices is arranged after grouping labels of the same 
-   * class, i.e. (class_1 class_2...class_k), each item indicate the position 
-   * of the label in the dataset. 
+   * The list corresponds to the different items of the n_features-th
+   * row (last row) in the matrix. The indices is arranged after
+   * grouping labels of the same class, i.e. (class_1
+   * class_2...class_k), each item indicate the position of the label
+   * in the dataset.
    *
-   * @param labels_list a list of labels in the dataset. e.g. [0,1,2] for a 3-class dataset
-   * @param labels_index the label indices of each data point. e.g. [(c1)[0,5,6,7,10,13,17],(c2)[1,2,4,8,9],(c3)[3,11,12,14,15,16,18,19]]
-   * @param labels_ct  numbers of point in each label class. e.g. [7,5,8]
-   * @param labels_startpos start positions of each label class in labels_index. e.g. [0,7,12]
+   * @param labels_list a list of labels in the dataset. e.g. [0,1,2]
+   *        for a 3-class dataset
+   * @param labels_index the label indices of each data point. e.g.
+   *        [(c1)[0,5,6,7,10,13,17],
+   *         (c2)[1,2,4,8,9],
+   *         (c3)[3,11,12,14,15,16,18,19]]
+   * @param labels_ct numbers of point in each label class. e.g.
+   *        [7,5,8]
+   * @param labels_startpos start positions of each label class in
+   *        labels_index. e.g. [0,7,12]
    */
-  void GetLabels(ArrayList<int> &labels_list, ArrayList<index_t> &labels_index, ArrayList<index_t> &labels_ct, ArrayList<index_t> &labels_startpos) const;
+  void GetLabels(ArrayList<int> &labels_list,
+		 ArrayList<index_t> &labels_index,
+		 ArrayList<index_t> &labels_ct,
+		 ArrayList<index_t> &labels_startpos) const;
  
   /**
    * Gets the numeric value of a particular feature and point.
