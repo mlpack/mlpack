@@ -1,5 +1,26 @@
+/**
+ * @file svm_main.cc
+ *
+ * This file contains main routines for performing multiclass SVM 
+ * classification. One-vs-One method is employed. 
+ *
+ * It provides four modes:
+ * "cv": cross validation;
+ * "train": model training
+ * "train_test": training and then online batch testing; 
+ * "test": offline batch testing.
+ *
+ * @see svm.h
+ * @see smo.h
+ */
+
 #include "svm.h"
 
+/**
+* Data Normalization
+*
+* @param: the dataset to be normalized
+*/
 void DoSvmNormalize(Dataset* dataset) {
   Matrix m;
   Vector sums;
@@ -32,7 +53,6 @@ void DoSvmNormalize(Dataset* dataset) {
   Matrix u; // eigenvectors
   Matrix ui; // the inverse of eigenvectors
 
-  //cov.PrintDebug("cov");
   PASSED(la::EigenvectorsInit(cov, &d, &u));
   la::TransposeInit(u, &ui);
 
@@ -56,15 +76,18 @@ void DoSvmNormalize(Dataset* dataset) {
     d.CopyValues(s);
   }
 
-  //dataset->matrix().PrintDebug("m");
-
   if (fx_param_bool(NULL, "save", 0)) {
     fx_default_param(NULL, "kfold/save", "1");
     dataset->WriteCsv("m_normalized.csv");
   }
 }
 
-void CreateArtificialDataset(Dataset* dataset){
+/**
+* Generate an artificial data set
+*
+* @param: the dataset to be generated
+*/
+void GenerateArtificialDataset(Dataset* dataset){
   Matrix m;
   index_t n = fx_param_int(NULL, "n", 30);
   double offset = fx_param_double(NULL, "offset", 0.0);
@@ -103,82 +126,96 @@ void CreateArtificialDataset(Dataset* dataset){
   dataset->OwnMatrix(&m);
 }
 
+/**
+* Load data set from data file. If data file not exists, generate an 
+* artificial data set.
+*
+* @param: the dataset
+* @param: name of the data file to be loaded
+*/
 int LoadData(Dataset* dataset, String datafilename){
   if (fx_param_exists(NULL, datafilename)) {
     // when a data file is specified, use it.
-    if ( !PASSED(dataset->InitFromFile(fx_param_str_req(NULL, datafilename))) ) {
+    if ( !PASSED(dataset->InitFromFile( fx_param_str_req(NULL, datafilename) )) ) {
     fprintf(stderr, "Couldn't open the data file.\n");
     return 0;
     }
   } 
   else {
     fprintf(stderr, "No data file exist. Generating artificial dataset.\n");
-      // otherwise, create an artificial dataset and save it to "m.csv"
-      CreateArtificialDataset(dataset);
-    }
+    // otherwise, generate an artificial dataset and save it to "m.csv"
+    GenerateArtificialDataset(dataset);
+  }
   
-    if (fx_param_bool(NULL, "normalize", 1)) {
-      fprintf(stderr, "Normalizing\n");
-      DoSvmNormalize(dataset);
-    } else {
-      fprintf(stderr, "Skipping normalize\n");
-    }
-    return 1;
+  if (fx_param_bool(NULL, "normalize", 1)) {
+    fprintf(stderr, "Normalizing\n");
+    DoSvmNormalize(dataset);
+  } else {
+    fprintf(stderr, "Skipping normalize\n");
+  }
+  return 1;
 }
 
+/**
+* Multiclass SVM classification- Main function
+*
+* @param: argc
+* @param: argv
+*/
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
-  srand(time(NULL));
+  //srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");
   
   // TODO: more kernels to be supported
 
-  // Cross Validation Mode, need cross validation data
+  /* Cross Validation Mode, need cross validation data */
   if(mode == "cv") { 
     fprintf(stderr, "SVM Cross Validation... \n");
     
-    // Load cross validation data
+    /* Load cross validation data */
     Dataset cvset;
     if (LoadData(&cvset, "cv_data") == 0)
     return 1;
     
     if (kernel == "linear") {
       SimpleCrossValidator< SVM<SVMLinearKernel> > cross_validator; 
-      // Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1
+      /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1 */
       cross_validator.Init(&cvset,cvset.n_labels(),fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
-      // k_cv folds cross validation; (true): do training set permutation
+      /* k_cv folds cross validation; (true): do training set permutation */
       cross_validator.Run(true);
       cross_validator.confusion_matrix().PrintDebug("confusion matrix");
     }
     else if (kernel == "gaussian") {
       SimpleCrossValidator< SVM<SVMRBFKernel> > cross_validator; 
-      // Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds
+      /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds */
       cross_validator.Init(&cvset,cvset.n_labels(),fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
-      // k_cv folds cross validation; (true): do training set permutation
+      /* k_cv folds cross validation; (true): do training set permutation */
       cross_validator.Run(true);
       cross_validator.confusion_matrix().PrintDebug("confusion matrix");
     }
   }
-  // Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data
+  /* Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data */
   else if (mode=="train" || mode=="train_test"){
     fprintf(stderr, "SVM Training... \n");
 
-    // Load training data
+    /* Load training data */
     Dataset trainset;
     if (LoadData(&trainset, "train_data") == 0) // TODO:param_req
       return 1;
     
-    // Begin SVM Training | Training and Testing
+    /* Begin SVM Training | Training and Testing */
     datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
       svm.InitTrain(trainset, trainset.n_labels(), svm_module);
-      if (mode=="train_test"){ // training and testing, thus no need to load model from file
+      /* training and testing, thus no need to load model from file */
+      if (mode=="train_test"){
 	fprintf(stderr, "SVM Classifying... \n");
-	// Load testing data
+	/* Load testing data */
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
@@ -188,9 +225,10 @@ int main(int argc, char *argv[]) {
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
       svm.InitTrain(trainset, trainset.n_labels(), svm_module);
-      if (mode=="train_test"){ // training and testing, thus no need to load model from file
+      /* training and testing, thus no need to load model from file */
+      if (mode=="train_test"){
 	fprintf(stderr, "SVM Classifying... \n");
-	// Load testing data
+	/* Load testing data */
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
@@ -198,16 +236,16 @@ int main(int argc, char *argv[]) {
       }
     }
   }
-  // Testing(offline) Mode, need loading model file and testing data
+  /* Testing(offline) Mode, need loading model file and testing data */
   else if (mode=="test") {
     fprintf(stderr, "SVM Classifying... \n");
 
-    // Load testing data
+    /* Load testing data */
     Dataset testset;
     if (LoadData(&testset, "test_data") == 0) // TODO:param_req
       return 1;
 
-    // Begin Classification
+    /* Begin Classification */
     datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
 
     if (kernel == "linear") {
