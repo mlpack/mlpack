@@ -63,7 +63,7 @@ binrule(
 
 binrule(
     name = "kde_bin",                        # the executable name
-    sources = ["main.cc"],                   #
+    sources = ["kde_main.cc"],               #
     headers = [],                            # no extra headers
     deplibs = [":fft_kde",
                ":fgt_kde",
