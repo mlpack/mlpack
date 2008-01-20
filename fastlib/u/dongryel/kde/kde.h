@@ -1,14 +1,69 @@
+/**
+ * @file kde.h
+ *
+ * This file contains an implementation of kernel density estimation
+ * for a linkable library component. It implements a rudimentary
+ * depth-first dual-tree algorithm with finite difference and
+ * series-expansion approximations, using the formalized GNP framework
+ * by Ryan and Garry.
+ *
+ * For more details on mathematical details, please take a look at the
+ * published conference papers:
+ *
+ * @incollection{NIPS2005_570,
+ * title = {Dual-Tree Fast Gauss Transforms},
+ * author = {Dongryeol Lee and Alexander Gray and Andrew Moore},
+ * booktitle = {Advances in Neural Information Processing Systems 18},
+ * editor = {Y. Weiss and B. Sch\"{o}lkopf and J. Platt},
+ * publisher = {MIT Press},
+ * address = {Cambridge, MA},
+ * pages = {747--754},
+ * year = {2006}
+ * }
+ *
+ * @inproceedings{DBLP:conf/uai/LeeG06,
+ * author    = {Dongryeol Lee and
+ *             Alexander G. Gray},
+ * title     = {Faster Gaussian Summation: Theory and Experiment},
+ * booktitle = {UAI},
+ * year      = {2006},
+ * crossref  = {DBLP:conf/uai/2006},
+ * bibsource = {DBLP, http://dblp.uni-trier.de}
+ * }
+ *
+ * @see kde_main.cc
+ */
+
 #ifndef KDE_H
 #define KDE_H
 
-#include "fastlib/fastlib_int.h"
+#include <fastlib/fastlib.h>
 #include "u/dongryel/series_expansion/farfield_expansion.h"
 #include "u/dongryel/series_expansion/local_expansion.h"
 #include "u/dongryel/series_expansion/mult_farfield_expansion.h"
 #include "u/dongryel/series_expansion/mult_local_expansion.h"
 #include "u/dongryel/series_expansion/kernel_aux.h"
 
-
+/**
+ * A computation class for dual-tree based kernel density estimation
+ *
+ * This class builds trees for input query and reference sets on Init.
+ * The KDE computation is then performed by calling Compute
+ *
+ * This class is only intended to compute once per instantiation.
+ *
+ * Example use:
+ *
+ * @code
+ *   FastKde fast_kde;
+ *   struct datanode* allnn_module;
+ *   ArrayList<index_t> results;
+ *
+ *   allnn_module = fx_submodule(NULL, "allnn", "allnn");
+ *   allnn.Init(query_set, reference_set, allnn_module);
+ *   allnn.ComputeNeighbors(&results);
+ * @endcode
+ */
 template<typename TKernelAux>
 class FastKde {
   
@@ -19,7 +74,7 @@ class FastKde {
   // forward declaration of KdeStat class
   class KdeStat;
   
-  // our tree type using the KdeStat
+  /** our tree type using the KdeStat */
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, KdeStat > Tree;
 
   /** parameter class */
@@ -59,7 +114,7 @@ class FastKde {
   public:
 
     /**
-     * Initializes parameters from a data node (Req THOR).
+     * Initializes parameters from a data node
      */
     void Init(datanode *module) {
 
@@ -360,8 +415,10 @@ class FastKde {
       Init();
     }
     
+    /** constructor - does not do anything */
     KdeStat() { }
     
+    /** destructor - does not do anything */
     ~KdeStat() {}
     
   };
@@ -449,6 +506,13 @@ class FastKde {
     qnode->stat().postponed_.Reset(parameters_);
   }
 
+  /**
+   * Checks for prunability of the query and the reference pair by looking
+   * at the highest density value achievable. If the kernel (which is 
+   * assumed to be non-negative and monotonic in terms of distance) is zero
+   * at the least distance between the two nodes, then we apply exclusion
+   * pruning.
+   */
   bool IntrinsicPrunable(Tree *qnode, Tree *rnode, const Delta &parent_delta,
 			 Delta *delta) {
 
@@ -791,11 +855,16 @@ class FastKde {
 
   public:
 
-  // constructor/destructor
-  FastKde() {}
+  ////////// Constructor/Destructor //////////
 
-  ~FastKde() { 
-    
+  /** constructor */
+  FastKde() {
+    qroot_ = NULL;
+    rroot_ = NULL;
+  }
+
+  /** destructor */
+  ~FastKde() {     
     if(qroot_ != rroot_ ) {
       delete qroot_; 
       delete rroot_; 
@@ -803,10 +872,9 @@ class FastKde {
     else {
       delete rroot_;
     }
-
   }
 
-  // getters and setters
+  ////////// Getters/Setters //////////
 
   /** get the reference dataset */
   Matrix &get_reference_dataset() { return rset_; }
@@ -823,8 +891,9 @@ class FastKde {
     }
   }
 
-  // interesting functions...
+  ////////// User-level functions //////////
 
+  /** computes KDE after the initialization function is called */
   void Compute() {
 
     num_finite_difference_prunes_ = num_farfield_to_local_prunes_ =
@@ -885,6 +954,7 @@ class FastKde {
     printf("L prunes: %d\n", num_local_prunes_);
   }
 
+  /** initialize query and reference sets and construct trees */
   void Init(Matrix &queries, Matrix &references, 
 	    bool queries_equal_references) {
 
@@ -932,6 +1002,7 @@ class FastKde {
     parameters_.FinalizeInit(fx_root, rset_.n_rows());
   }
 
+  /** Output KDE results to a stream */
   void PrintDebug() {
 
     FILE *stream = stdout;
