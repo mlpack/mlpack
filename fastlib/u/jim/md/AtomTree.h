@@ -1,14 +1,10 @@
 /**
  * KD-tree stucture for molecular dynamics simulation. 
  * Each node stores a bounding box, centroid, and number of
- * atoms. Velocity for dynamics problems can be stored in 
- * a separate matrix. 
- *
- * Eventually, we will have to add stats to permit multiple
- * types of atoms in a simulation.
+ * atoms. Leaf nodes also store the velocity of the corresponding 
+ * atom. Atoms are assumed to be homogeneous, as this is the
+ * largely the case for applications of the LJ potential.
  * 
- * J. Waters 
- * Begun 11-13-2007 
  */
 
 #include "fastlib/fastlib.h"
@@ -17,14 +13,14 @@
 #include "tree/bounds.h"
 
 
-// We need to track total number of atoms and centroid for each node.
 struct AtomStat {
   double mass;
   Vector centroid;
-  Vector velocity; // At present, only the velocities at leaf nodes
-                    // are used and calculated properly.
- 
-  // Basic Initialization
+  Vector velocity; 
+
+  /**
+   * Default Initialization
+   */
   void Init(){
     centroid.Init(3);
     velocity.Init(3);
@@ -33,7 +29,9 @@ struct AtomStat {
     mass = 0;
   }
 
-  // Leaf node initialization
+  /**
+   * Init funciton for leaf node. Each leaf corresponds to a single atom.
+   */
   void Init(const Matrix& dataset, int start, int count){
     centroid.Init(3);
     centroid.SetZero();
@@ -50,7 +48,11 @@ struct AtomStat {
   }
 
 
-  // Non-leaf node initialization
+  /**
+   * Init function to build node from two children, tracking mass and
+   * centroid of each node. Since the updating of velocities is done
+   * as a single tree search, non-leaves do not need to store velocity.
+   */
   void Init(const Matrix& dataset, int start, int count, 
 	    const AtomStat &left_stat, const AtomStat &right_stat){
     

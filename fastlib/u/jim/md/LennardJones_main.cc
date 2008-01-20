@@ -1,5 +1,11 @@
 /**
  * @file LennardJones_main.cc
+ * 
+ * This program creates an instance of the LennardJones problem
+ * class, and updates the velocities using a leapfrogging scheme
+ * until a specified end time is reached. 
+ *
+ * @see LennardJones.h
  */
 
 
@@ -7,7 +13,6 @@
 
 int main(int argc, char *argv[])
 {
-  // Parse Inputs
   fx_init(argc, argv);
   const char* fp;
   fp = fx_param_str(NULL, "data", "default.txt");
@@ -37,15 +42,16 @@ int main(int argc, char *argv[])
   // Read Atom Matrix
   data::Load(fp, &atom_mat);
 
+
+  /**
+   * Begin simulation, and run to end time.
+   */
   simulation.Init(atom_mat, eps, sig, mass, cutoff);
   simulation.UpdateVelocities(time_step/2);
   
   naive_test.InitNaive(atom_mat, eps, sig, mass);
   naive_test.UpdateVelocitiesNaive(time_step/2);
   
-  
-  
-
   while (time < stop_time){
     simulation.UpdateVelocities(time_step);
     simulation.UpdatePositions(time_step);
@@ -57,7 +63,10 @@ int main(int argc, char *argv[])
   
   }
 
-simulation.WritePositions(tree);
+  /**
+   * Record final positions according to both methods.
+   */
+  simulation.WritePositions(tree);
   naive_test.WritePositions(naive);
 
   fx_done();
