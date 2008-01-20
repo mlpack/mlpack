@@ -1,4 +1,5 @@
 /**
+ * @author pram
  * @file simple_nbc.h
  *
  * A Naive Bayes Classifier which parametrically 
