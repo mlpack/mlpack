@@ -62,8 +62,8 @@ class NaiveKde {
   void Init(Matrix &qset, Matrix &rset) {
 
     // get datasets
-    qset_.Alias(qset);
-    rset_.Alias(rset);
+    qset_.Copy(qset);
+    rset_.Copy(rset);
 
     // get bandwidth
     kernel_.Init(fx_param_double_req(NULL, "bandwidth"));

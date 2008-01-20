@@ -2,7 +2,8 @@
 librule(
     name = "kde",                            # this line can be safely omitted
     sources = [],                            # files that must be compiled
-    headers = ["kde.h",
+    headers = ["dataset_scaler.h",
+               "kde.h",
                "naive_kde.h"],               # include files part of the 'lib'
     deplibs = ["u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency

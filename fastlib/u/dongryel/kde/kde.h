@@ -366,6 +366,8 @@ class FastKde {
     
   };
 
+  ////////// Private Member Variables //////////
+
   /** parameter list */
   Param parameters_;
 
@@ -386,59 +388,27 @@ class FastKde {
 
   /** stores results for all query points */
   ArrayList<QResult> q_results_;
-
+  
+  /** number of far field to local conversions */
   int num_farfield_to_local_prunes_;
 
+  /** number of far field evaluations */
   int num_farfield_prunes_;
   
+  /** number of direct local accumulations */
   int num_local_prunes_;
   
+  /** number of finite difference prunes */  
   int num_finite_difference_prunes_;
 
-  // preprocessing: scaling the dataset; this has to be moved to the dataset
-  // module
-  /* scales each attribute to 0-1 using the min/max values */
-  void scale_data_by_minmax() {
+  /** Permutation mapping indices of queries_ to original order. */
+  ArrayList<index_t> old_from_new_queries_;
 
-    int num_dims = rset_.n_rows();
-    DHrectBound<2> qset_bound;
-    DHrectBound<2> rset_bound;
-    qset_bound.Init(qset_.n_rows());
-    rset_bound.Init(qset_.n_rows());
+  /** Permutation mapping indices of references_ to original order. */
+  ArrayList<index_t> old_from_new_references_;
 
-    // go through each query/reference point to find out the bounds
-    for(index_t r = 0; r < rset_.n_cols(); r++) {
-      Vector ref_vector;
-      rset_.MakeColumnVector(r, &ref_vector);
-      rset_bound |= ref_vector;
-    }
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
-      Vector query_vector;
-      qset_.MakeColumnVector(q, &query_vector);
-      qset_bound |= query_vector;
-    }
 
-    for(index_t i = 0; i < num_dims; i++) {
-      DRange qset_range = qset_bound.get(i);
-      DRange rset_range = rset_bound.get(i);
-      double min_coord = min(qset_range.lo, rset_range.lo);
-      double max_coord = max(qset_range.hi, rset_range.hi);
-      double width = max_coord - min_coord;
-
-      printf("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
-
-      for(index_t j = 0; j < rset_.n_cols(); j++) {
-	rset_.set(i, j, (rset_.get(i, j) - min_coord) / width);
-      }
-      
-      if(strcmp(fx_param_str(NULL, "query", NULL), 
-		fx_param_str_req(NULL, "data"))) {
-	for(index_t j = 0; j < qset_.n_cols(); j++) {
-	  qset_.set(i, j, (qset_.get(i, j) - min_coord) / width);
-	}
-      }
-    }
-  }
+  ////////// Private Member Functions //////////
 
   /** exhaustive base KDE case */
   void FKdeBase(Tree *qnode, Tree *rnode) {
@@ -520,9 +490,9 @@ class FastKde {
     double actual_err_local = 0;
 
     // estimated computational cost
-    int cost_farfield_to_local = MAXINT;
-    int cost_farfield = MAXINT;
-    int cost_local = MAXINT;
+    int cost_farfield_to_local = INT_MAX;
+    int cost_farfield = INT_MAX;
+    int cost_local = INT_MAX;
     int cost_exhaustive = (qnode->count()) * (rnode->count()) * 
       parameters_.dimension_;
     int min_cost = 0;
@@ -885,6 +855,29 @@ class FastKde {
     // postprocessing step for finalizing the sums
     PostProcess(qroot_);
     fx_timer_stop(NULL, "fast_kde_compute");
+
+    // reshuffle the results to account for dataset reshuffling resulted
+    // from tree constructions
+    ArrayList<QResult> tmp_q_results;
+    tmp_q_results.Init(q_results_.size());
+    
+    for(index_t i = 0; i < q_results_.size(); i++) {
+      tmp_q_results[old_from_new_queries_[i]].density_range_ =
+	q_results_[i].density_range_;
+      tmp_q_results[old_from_new_queries_[i]].density_estimate_ =
+	q_results_[i].density_estimate_;
+      tmp_q_results[old_from_new_queries_[i]].used_error_ =
+	q_results_[i].used_error_;
+      tmp_q_results[old_from_new_queries_[i]].n_pruned_ =
+	q_results_[i].n_pruned_;
+    }
+    for(index_t i = 0; i < q_results_.size(); i++) {
+      q_results_[i].density_range_ = tmp_q_results[i].density_range_;
+      q_results_[i].density_estimate_ = tmp_q_results[i].density_estimate_;
+      q_results_[i].used_error_ = tmp_q_results[i].used_error_;
+      q_results_[i].n_pruned_ =	tmp_q_results[i].n_pruned_;
+    }
+    
     printf("\nFast KDE completed...\n");
     printf("Finite difference prunes: %d\n", num_finite_difference_prunes_);
     printf("F2L prunes: %d\n", num_farfield_to_local_prunes_);
@@ -892,61 +885,37 @@ class FastKde {
     printf("L prunes: %d\n", num_local_prunes_);
   }
 
-  void Init() {
-    
-    Dataset ref_dataset;
+  void Init(Matrix &queries, Matrix &references, 
+	    bool queries_equal_references) {
 
     // read in the number of points owned by a leaf
     int leaflen = fx_param_int(NULL, "leaflen", 20);
 
-    // read the datasets
-    const char *rfname = fx_param_str_req(NULL, "data");
-    const char *qfname = fx_param_str(NULL, "query", rfname);
-
-    // read reference dataset
-    ref_dataset.InitFromFile(rfname);
-    rset_.Own(&(ref_dataset.matrix()));
-
-    // read the reference weights
-    char *rwfname = NULL;
-    if(fx_param_exists(NULL, "dwgts")) {
-      rwfname = (char *)fx_param_str(NULL, "dwgts", NULL);
-    }
-
-    if(rwfname != NULL) {
-      Dataset ref_weights;
-      ref_weights.InitFromFile(rwfname);
-      rset_weights_.Copy(ref_weights.matrix().GetColumnPtr(0),
-			 ref_weights.matrix().n_rows());
-    }
-    else {
-      rset_weights_.Init(rset_.n_cols());
-      rset_weights_.SetAll(1);
-    }
-
-    if(!strcmp(qfname, rfname)) {
+    // copy the datasetsread reference dataset
+    rset_.Copy(references);
+    if(queries_equal_references) {
       qset_.Alias(rset_);
     }
     else {
-      Dataset query_dataset;
-      query_dataset.InitFromFile(qfname);
-      qset_.Own(&(query_dataset.matrix()));
+      qset_.Copy(queries);
     }
 
-    // scale dataset if the user wants to
-    if(!strcmp(fx_param_str(NULL, "scaling", NULL), "range")) {
-      scale_data_by_minmax();
-    }
+    // current implementation supports only uniform weighted KDE
+    rset_weights_.Init(rset_.n_cols());
+    rset_weights_.SetAll(1);
 
     // construct query and reference trees
     fx_timer_start(NULL, "tree_d");
-    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen);
+    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen,
+					    &old_from_new_references_, NULL);
 
-    if(!strcmp(qfname, rfname)) {
+    if(queries_equal_references) {
       qroot_ = rroot_;
+      old_from_new_queries_.Copy(old_from_new_references_);
     }
     else {
-      qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen);
+      qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen,
+					      &old_from_new_queries_, NULL);
     }
     fx_timer_stop(NULL, "tree_d");
     
