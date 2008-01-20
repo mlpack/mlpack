@@ -1,3 +1,25 @@
+/**
+ * @file mog_l2e_main.cc
+ * 
+ * This program test drives the L2 estimation
+ * of a Gaussian Mixture model.
+ * 
+ * PARAMETERS TO BE INPUT:
+ * 
+ * --data 
+ * This is the file that contains the data on which 
+ * the model is to be fit
+ *
+ * --number_of_gaussians
+ * This is the number of gaussians we want to fit
+ * on the data, defaults to '1'
+ *
+ * --output_filename
+ * This file will contain the parameters estimated,
+ * defaults to 'ouotput.csv'
+ *
+ */
+
 #include "mog.h"
 
 
@@ -12,7 +34,7 @@ int main(int argc, char* argv[]) {
   Matrix data_points;
   data::Load(data_filename, &data_points);
 
-  ////// MIXTURE OF GAUSSIANS USING EM //////
+  ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
 
   MoG mog;
 
@@ -45,9 +67,8 @@ int main(int argc, char* argv[]) {
   FILE *output_file = fopen(output_filename, "w");
 
   ot::Print(results, output_file);
-  mog.Display();
-
+  
   fx_done();
 
-  return 0;
+  return 1;
 }

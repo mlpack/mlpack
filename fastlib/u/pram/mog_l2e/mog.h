@@ -1,7 +1,9 @@
 /**
  * @file mog.h
  *
- * Defines a Gaussian Mixture model to find the optimal parameters of the model
+ * Defines a Gaussian Mixture model and
+ * estimates the parameters of the model
+ * 
  */
 
 #ifndef MOG_H
@@ -9,18 +11,44 @@
 
 #include <fastlib/fastlib.h>
 
+/**
+ * A Gaussian mixture model class.
+ * 
+ * This class uses different loss functions to
+ * estimate the parameters of a gaussian mixture 
+ * model on a given data.
+ * 
+ * The parameters are converted for optimization
+ * to maintain the following facts:
+ * - the weights sum to one
+ *  - for this, the weights were parameterized using
+ *    the logistic function
+ * - the covariance matrix is always positive definite
+ *  - for this, the Cholesky decomposition is used
+ *
+ * Example use:
+ *
+ * @code
+ * MoG mog;
+ * ArrayList<double> results;
+ *
+ * mog.Init(number_of_gaussians, dimension);
+ * mog.L2Estimation(data, &results, optim_flag);
+ * @endcode
+ */
 class MoG {
-
-  friend class TestMoG;
 
  private:
 
+  // The parameters of the Mixture model
   ArrayList<Vector> mu_;
   ArrayList<Matrix> sigma_;
   Vector omega_;
   index_t number_of_gaussians_;
   index_t dimension_;
-
+  
+  // The differential for the paramterization
+  // for optimization
   Matrix d_omega_;
   ArrayList<ArrayList<Matrix> > d_sigma_;
 
@@ -54,8 +82,24 @@ class MoG {
     }
   }
 
+  /**
+   *
+   * This function uses the parameters used for optimization
+   * and converts it into athe parameters of a Gaussian 
+   * mixture model. This is to be used when you do not want
+   * the gradient values.
+   *
+   * Example use:
+   *
+   * @code
+   * MoG mog;
+   * mog.MakeModel(number_of_gaussians, dimension,
+   *               parameters_for_optimization);
+   * @endcode
+   */
+
   void MakeModel(index_t num_mods, index_t dimension, double* theta) {
-    double *temp_mu; //, *t, *u;
+    double *temp_mu; 
     Matrix lower_triangle_matrix, upper_triangle_matrix;
     double sum, s_min = 0.1;
 
@@ -67,7 +111,7 @@ class MoG {
     lower_triangle_matrix.Init(dimension_, dimension_);
     upper_triangle_matrix.Init(dimension_, dimension_);
 			
-    /* calculating the omega values */
+    // calculating the omega values
     sum = 0;
     double *temp_array;
     temp_array = (double*) malloc (number_of_gaussians_ * sizeof(double));
@@ -75,11 +119,12 @@ class MoG {
       temp_array[i] = exp(theta[i]) ;
       sum += temp_array[i] ;
     }
-    temp_array[number_of_gaussians_ - 1] = 1 ; // this can be changed later on to see if this 1 is actually useful // 
+    temp_array[number_of_gaussians_ - 1] = 1 ; 
     ++sum ;
     omega_.CopyValues(temp_array);
     la::Scale((1.0 / sum), &omega_);
-    /*calculating the mu values */
+
+    // calculating the mu values
     for(index_t k = 0; k < number_of_gaussians_; k++) {
       for(index_t j = 0; j < dimension_; j++) {
 	temp_mu[j] = theta[number_of_gaussians_ + k*dimension_ + j - 1];
@@ -87,10 +132,9 @@ class MoG {
       mu_[k].CopyValues(temp_mu);
     }
 			
-    /*calculating the sigma values
-      using a lower triangular matrix and its transpose
-      to obtain a positive definite symmetric matrix
-    */
+    // calculating the sigma values
+    // using a lower triangular matrix and its transpose
+    // to obtain a positive definite symmetric matrix
     for(index_t k = 0; k < number_of_gaussians_; k++) {
       lower_triangle_matrix.SetAll(0.0);
       for(index_t j = 0; j < dimension_; j++) {
@@ -112,6 +156,21 @@ class MoG {
       la::MulOverwrite(lower_triangle_matrix, upper_triangle_matrix, &sigma_[k]);
     }
   }			
+ /**
+   *
+   * This function uses the parameters used for optimization
+   * and converts it into athe parameters of a Gaussian 
+   * mixture model. This is to be used when you want
+   * the gradient values.
+   *
+   * Example use:
+   *
+   * @code
+   * MoG mog;
+   * mog.MakeModelWithGradients(number_of_gaussians, dimension,
+   *               parameters_for_optimization);
+   * @endcode
+   */
 
   void MakeModelWithGradients(index_t num_mods, index_t dimension, double* theta) {
     double *temp_mu;
@@ -123,6 +182,7 @@ class MoG {
     lower_triangle_matrix.Init(dimension_, dimension_);
     upper_triangle_matrix.Init(dimension_, dimension_);
     
+    // calculating the omega values
     sum = 0;
     double *temp_array;
     temp_array = (double*) malloc (number_of_gaussians_ * sizeof(double));
@@ -130,7 +190,7 @@ class MoG {
       temp_array[i] = exp(theta[i]) ;
       sum += temp_array[i] ;
     }
-    temp_array[number_of_gaussians_ - 1] = 1 ; // this can be changed later on to see if this 1 is actually useful // 
+    temp_array[number_of_gaussians_ - 1] = 1 ;  
     ++sum ;
     omega_.CopyValues(temp_array);
     la::Scale((1.0 / sum), &omega_);
@@ -154,8 +214,11 @@ class MoG {
       }
       mu_[k].CopyValues(temp_mu);
     }
+    // d_mu is not computed because it is implicitly known
+    // since no parameterization is applied on them
 			
-    //using a lower triangular matrix and its transpose to obtain a positive definite symmetric matrix
+    // using a lower triangular matrix and its transpose 
+    // to obtain a positive definite symmetric matrix
     
     // initializing the d_sigma values
     d_sigma_.Resize(number_of_gaussians_);
@@ -246,6 +309,15 @@ class MoG {
     return d_sigma_[i];
   }
 
+  /**
+   * This function outputs the parameters of the model
+   * to an arraylist of doubles 
+   *
+   * @code
+   * ArrayList<double> results;
+   * mog.OutputResults(&results);
+   * @endcode
+   */
   void OutputResults(ArrayList<double> *results) {
 
     // Initialize the size of the output array
@@ -265,6 +337,13 @@ class MoG {
     }
   }
 
+  /**
+   * This function prints the parameters of the model
+   *
+   * @code
+   * mog.Display();
+   *
+   */
   void Display(){
 
     // Output the model parameters as the omega, mu and sigma			
@@ -297,20 +376,72 @@ class MoG {
     printf("\n");
   }
 
+  /**
+   * This function calculates the parameters of the model
+   * using the Maximum Likelihood function via the 
+   * Expectation Maximization (EM) Algorithm.
+   *
+   * @code
+   * MoG mog;
+   * Matrix data = "the data on which you want to fit the model";
+   * ArrayList<double> results;
+   * mog.ExpectationMaximization(data, &results);
+   * @endcode
+   */
   void ExpectationMaximization(Matrix& data_points, ArrayList<double> *results);
 
+  /**
+   * This function computes the loglikelihood of model.
+   * This function is used by the 'ExpectationMaximization'
+   * function.
+   * 
+   */
   long double Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
 			    ArrayList<Matrix>& covars, Vector& weights);
 
+  /**
+   * This function computes the k-means of the data and stores
+   * the calculated means and covariances in the ArrayList
+   * of Vectors and Matrices passed to it. It sets the weights 
+   * uniformly. 
+   * 
+   * This function is used to obtain a starting point for 
+   * the optimization
+   */
   void KMeans(Matrix& data, ArrayList<Vector> *means,
 	      ArrayList<Matrix> *covars, Vector *weights, index_t value_of_k);
 
+  /**
+   * This function calculates the parameters of the model
+   * using the L2 loss function and optimizes
+   * using the polytope method or the quasi newton 
+   * method as per the user's choice.
+   *  -'1' is for the polytope method
+   *  -anything else leads to quasi newton
+   *
+   * @code
+   * MoG mog;
+   * Matrix data = "the data on which you want to fit the model";
+   * ArrayList<double> results;
+   * mog.L2Estimation(data, &results, choice_of_optimizer);
+   * @endcode
+   */
   void L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag);
 
+  /**
+   * This function computes multiple number of starting points
+   * required for the polytope method
+   */
   void points_generator(Matrix& d, double **points, index_t number_of_points,
 			index_t number_of_components);
 
-  void initial_point_generator (double *theta, Matrix& data, index_t number_of_components);
+  /** 
+   * This function parameterizes the starting point obtained
+   * from the 'KMeans" for optimization purposes
+   *
+   */
+  void initial_point_generator (double *theta, Matrix& data,
+				index_t number_of_components);
 };
 
 #endif
