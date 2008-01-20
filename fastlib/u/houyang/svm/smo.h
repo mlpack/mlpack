@@ -441,19 +441,14 @@ double SMO<TKernel>::Evaluate_(index_t i) const {
 // Get SVM results:coefficients, number and indecies of SVs
 template<typename TKernel>
 void SMO<TKernel>::GetSVM(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
-  coef.Init(n_data_);
   for (index_t i = 0; i < n_data_; i++) {
     if (alpha_[i] != 0) { // support vectors
-      coef[i] = alpha_[i] * GetLabelSign_(i);
+      *coef.AddBack() = alpha_[i] * GetLabelSign_(i);
       sv_indicator[dataset_index[i]] = true;
       n_sv_++;
-      //sv_index[i_sv]= dataset_bi_index[i];
-      //GetVector_(i, &source);
-      //support_vectors->MakeColumnVector(i_support, &dest);
-      //dest.CopyValues(source);
     }
     else {
-      coef[i] = 0;
+      *coef.AddBack() = 0;
     }
   }
 }
