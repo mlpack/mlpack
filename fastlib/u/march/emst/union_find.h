@@ -1,3 +1,14 @@
+/**
+ * @file union_find.h
+ *
+ * @author Bill March (march@gatech.edu)
+ *
+ * Implements a union-find data structure.  This structure tracks the components
+ * of a graph.  Each point in the graph is initially in its own component.  
+ * Calling unionfind.Union(x, y) unites the components indexed by x and y.  
+ * unionfind.Find(x) returns the index of the component containing point x.  
+ */
+
 #ifndef UNION_FIND_H
 #define UNION_FIND_H
 
@@ -23,8 +34,6 @@ public:
   UnionFind() {}
   
   /**
-    * @function Init 
-   *
    * Initializes the structure.  This implementation assumes
    * that the size is known advance and fixed
    *
@@ -44,8 +53,6 @@ public:
   }
   
   /**
-   * @function Find
-   *
    * Returns the component containing an element
    *
    * @param x the component to be found
@@ -76,7 +83,6 @@ public:
     
     index_t x_root = Find(x);
     index_t y_root = Find(y);
-    //DEBUG_ASSERT((x_root != y_root), "x and y are already in the same component, x = %d, y = %d, x_root = %d\n", x, y, x_root);
     
     if (x_root == y_root) {
       return;    

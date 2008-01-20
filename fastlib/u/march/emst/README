@@ -1,0 +1,19 @@
+This folder contains an implementation of the DualTreeBoruvka algorithm for finding a Euclidean Minimum Spanning Tree.  NOTE: this algorithm is awaiting publication and is not for distribution.  
+
+Compile with fl-build emst
+
+Run with ./emst --data="filename" for basic use.
+
+Other options:
+
+bool --using_thor -> defaults to 0, thor is not yet supported, so setting it to 1 will cause an error message to be printed
+
+string --data -> the name of the file with the data points
+
+int --dtb/leaf_size -> defaults to 1, the number of points in the leaves of the tree.  For the DualTreeBoruvka algorithm, 1 gives the fastest performance.  I recommend only changing this parameter to conserve memory.
+
+bool --do_naive -> defaults to 0.  If it is 1, then the algorithm will compute the MST with both DualTreeBoruvka and a naive implementation of Boruvka's algorithm.  It will compare the two results and exit with an error if they are different.
+
+string --naive/output_filename -> The name of the file where the naive edge list should be printed.  Defaults to naive_output.txt
+
+string --dtb/output_filename -> The name of the file where the DTB edge list should be printed.  Defaults to output.txt

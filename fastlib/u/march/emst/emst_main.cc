@@ -3,6 +3,9 @@
  *
  * Calls the DualTreeBoruvka algorithm from dtb.h
  * Can optionally call Naive Boruvka's method
+ * See README for command line options.  
+ *
+ * @author Bill March (march@gatech.edu)
 */
 
 #include "dtb.h"
@@ -13,7 +16,7 @@ int main(int argc, char* argv[]) {
   fx_init(argc, argv);
  
   // For when I implement a thor version
-  bool using_thor = fx_param_exists(NULL, "using_thor");
+  bool using_thor = fx_param_bool(NULL, "using_thor", 0);
   
   
   if unlikely(using_thor) {
@@ -63,6 +66,9 @@ int main(int argc, char* argv[]) {
         return 1;
         
       }
+      else {
+        printf("lengths are the same\n");
+      }
       
       int is_correct = 1;
       for (index_t naive_index = 0; naive_index < results.size(); 
@@ -100,15 +106,25 @@ int main(int argc, char* argv[]) {
       if (is_correct == 0) {
        
         printf("naive check failed!\n");
-        fx_done();
-        return 1;
-        
+        if (fx_get_result_double(dtb_module, "total_squared_length") !=
+            fx_get_result_double(naive_module, "total_squared_length")) { 
+          
+          printf("lengths are different!\n");
+          
+          fx_done();
+          return 1;
+          
+        }
+        else {
+          printf("lengths are the same\n");
+        }
+      
       }
       
       fx_timer_stop(naive_module, "comparison");
       
       const char* naive_output_filename = 
-        fx_param_str(naive_module, "output_filename", "naive_output.csv");
+        fx_param_str(naive_module, "output_filename", "naive_output.txt");
       
       FILE* naive_output = fopen(naive_output_filename, "w");
       
@@ -119,7 +135,7 @@ int main(int argc, char* argv[]) {
     //////////////// Output the Results ////////////////
     
     const char* output_filename = 
-        fx_param_str(NULL, "output_filename", "output.csv");
+        fx_param_str(NULL, "output_filename", "output.txt");
     
     FILE* output_file = fopen(output_filename, "w");
     
