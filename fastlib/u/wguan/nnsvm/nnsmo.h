@@ -2,6 +2,7 @@
 #define U_NNSVM_NNSMO_H
 
 #include "fastlib/fastlib.h"
+#include "base/deprecated.h"
 
 const double SMO_ZERO = 1.0e-8;
 const double SMO_TOLERANCE = 1.0e-3;
