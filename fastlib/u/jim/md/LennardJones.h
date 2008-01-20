@@ -1,9 +1,14 @@
 /**
+ * @file LennardJones.h
+ *
  * Molecular Dynamics via Lennard-Jones potential
  *
  * Accelerations are calculated via single-tree search. 
  * Equations of motion are integrated by a leapfrogging method.
+ *
+ * @see LennardJones_main.cc
  */
+
 
 #include "fastlib/fastlib.h"
 #include "fastlib/fastlib_int.h"
@@ -34,6 +39,8 @@ private:
    * Compute the change in the velocity of center_1, according to Lennard-Jones
    * potential between centers 1 & 2. This force will be scaled when it is returned
    * to UpdateVelocityRecursion, if center_2 corresponds to more than one atom.
+   * Note also that this computes the acceleration integrated over the time step,
+   * equal to the change in velocity, rather than the instantaneous acceleration.
    */
   void Acceleration_(Vector &center_1, Vector &center_2, Vector &delta_v_){
     int i;
@@ -43,13 +50,13 @@ private:
     double dist_sq_ = la::DistanceSqEuclidean(center_1, center_2);
     double r_scaled_ = sig*sig / dist_sq_;
     r_scaled_ = r_scaled_*r_scaled_*r_scaled_;
-    double force_mag_ = time_step*24*eps*r_scaled_*(1 - 2*r_scaled_) / (dist_sq_*mass);
+    double force_mag_ = time_step*24*eps*r_scaled_*(2*r_scaled_ - 1) / (dist_sq_*mass);
     la::Scale(force_mag_, &delta_v_);         
   }
 
   /**
    * Update centroids and bounding boxes. Note that we may develop
-   * intersections between bounding boxes.
+   * intersections between bounding boxes as the simulation progresses.
    */
   void UpdatePositionsRecursion_(AtomTree *current_node){
     int i;     
@@ -63,7 +70,8 @@ private:
 	current_node->stat().centroid[i] = 
 	  current_node->left()->stat().mass*current_node->left()->stat().centroid[i] + 
 	  current_node->right()->stat().mass*current_node->right()->stat().centroid[i];
-	current_node->stat().centroid[i] = current_node->stat().centroid[i] / current_node->stat().mass;
+	current_node->stat().centroid[i] = 
+	  current_node->stat().centroid[i] / current_node->stat().mass;
       } 
     } else {  // Base Case
       for (i = 0; i < 3; i++){
@@ -75,8 +83,12 @@ private:
     }      
   }
 
-  void UpdateVelocityRecursion_(AtomTree* vel_query_, AtomTree* vel_ref_){
-    //    int i;
+  /**
+   * Compute the effect of the reference node on the velocity of
+   * the query node. The effect of distant atoms is approximated
+   * from the centroid of the reference node atoms.
+   */
+  void UpdateVelocityRecursion_(AtomTree* vel_query_, AtomTree* vel_ref_){   
     if (unlikely(vel_ref_->count() == 1)){
       UpdateVelocityBase_(vel_query_, vel_ref_);
     } else {
@@ -95,6 +107,10 @@ private:
     }
   } //UpdateVelocityRecursion
 
+
+  /**
+   * Base case calculates pairwise interactions between nearby atoms.
+   */
   void UpdateVelocityBase_(AtomTree* vel_query_, AtomTree* vel_ref_){
     if (likely(vel_query_->begin() != vel_ref_->begin())){
       Vector delta_v_;
@@ -102,7 +118,7 @@ private:
       Acceleration_(vel_query_->stat().centroid, vel_ref_->stat().centroid, delta_v_);
       la::AddTo(delta_v_, &vel_query_->stat().velocity);
     }
-  }
+  } // UpdateVelocityBase
 
 
   ////////////////////////////// Constructors ///////////////////////////////////////
@@ -138,6 +154,10 @@ public:
   } //Init
 
 
+  /**
+   * Naive implementation computes all pairwise interactions, and can be used to
+   * validate approximations made by tree implementation.
+   */
   void InitNaive(const Matrix& atoms_in, double eps_in, double sig_in, double mass_in){
 
     atoms_.Copy(atoms_in);
@@ -149,7 +169,7 @@ public:
     mass = mass_in;
     velocities_.Init(3, n_atoms_);
     velocities_.SetZero();
-  }
+  } // InitNaive
 
 
   void UpdatePositions(double time_step_in){
@@ -219,7 +239,7 @@ public:
       }
     }
 
-  }
+  } // WritePositions
 
 }; // class LennardJones
 

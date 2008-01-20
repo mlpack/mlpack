@@ -646,7 +646,7 @@ class Matrix {
    *
    * @param col the column number
    * @return an array where the i'th element is the i'th row of that
-   *         par ticular column
+   *         particular column
    */
   double *GetColumnPtr(index_t col) {
     DEBUG_BOUNDS(col, n_cols_);
