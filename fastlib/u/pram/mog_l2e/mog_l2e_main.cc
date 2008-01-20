@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
   FILE *output_file = fopen(output_filename, "w");
 
   ot::Print(results, output_file);
-  
+  fclose(output_file);
   fx_done();
 
   return 1;
