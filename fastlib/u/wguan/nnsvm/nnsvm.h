@@ -4,6 +4,7 @@
 #include "nnsmo.h"
 
 #include "fastlib/fastlib.h"
+#include "base/deprecated.h"
 
 #include <typeinfo>
 
