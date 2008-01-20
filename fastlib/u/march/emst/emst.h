@@ -1,13 +1,26 @@
+/** 
+* @file emst.h
+*
+* @author Bill March (march@gatech.edu)
+*
+* This file contains utilities necessary for all of the minimum spanning tree
+* algorithms.
+*/
+
 #ifndef EMST_H
 #define EMST_H
 
 #include "fastlib/fastlib.h"
 #include "union_find.h"
 
+/**
+ * An edge pair is simply two indices and a distance.  It is used as the 
+ * basic element of an edge list when computing a minimum spanning tree.  
+*/
 class EdgePair {
   
   //FORBID_ACCIDENTAL_COPIES(EdgePair);
-  OT_DEF_BASIC(EdgePair) {
+  OT_DEF(EdgePair) {
     OT_MY_OBJECT(lesser_index_);
     OT_MY_OBJECT(greater_index_);
     OT_MY_OBJECT(distance_);
@@ -20,8 +33,13 @@ private:
   
 public:
     
-    //EdgePair() {}
     
+    /**
+     * Initialize an EdgePair with two indices and a distance.  The indices are
+     * called lesser and greater, implying that they be sorted before calling 
+     * Init.  However, this is not necessary for functionality; it is just a way
+     * to keep the edge list organized in other code.
+     */
     void Init(index_t lesser, index_t greater, double dist) {
       
       DEBUG_ASSERT_MSG(lesser != greater, 
@@ -51,6 +69,10 @@ public:
   
   double distance() {
     return distance_;
+  }
+  
+  void set_distance(double new_dist) {
+    distance_ = new_dist; 
   }
   
 };// class EdgePair

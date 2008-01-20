@@ -1,19 +1,18 @@
-binrule(
-	name = "emst",
-	sources = ["emst.cc"],
-	headers = ["emst.h", "union_find.h", "dtb.h", "naive_boruvka.h"],
-	deplibs = ["fastlib:fastlib"]
-)
-
-binrule(
-	name = "union_find_test",
-	sources = ["union_find_test.cc"],
+librule(
+	name = "union_find",
 	headers = ["union_find.h"],
-	deplibs = ["fastlib:fastlib"]
+	deplibs = ["fastlib:fastlib"],
+	tests = ["union_find_test.cc"]
+)
+
+librule(
+	name = "dtb",
+	headers = ["emst.h", "dtb.h"],
+	deplibs = ["fastlib:fastlib", ":union_find"]
 )
 
 binrule(
-	name = "testing",
-	sources = ["testing.cc"],
-	deplibs = ["fastlib:fastlib"]
+	name = "emst_main",
+	sources = ["emst_main.cc"],
+	deplibs = ["fastlib:fastlib", ":union_find", ":dtb"]
 )
