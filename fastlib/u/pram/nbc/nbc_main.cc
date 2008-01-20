@@ -1,4 +1,5 @@
 /**
+ * @author pram
  * @file nbc_main.cc
  * 
  * This program test drives the Simple Naive Bayes Classifier
