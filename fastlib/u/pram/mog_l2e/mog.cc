@@ -1,8 +1,8 @@
 /**
  * @file mog.cc
  *
- * Implementation for the loglikelihood function, the EM algorithm
- * and also computes the K-means for getting an initial point
+ * Implementation for the loglikelihood function, the EM algorithm,
+ * the L2 estimation, computes the K-means for getting an initial point
  *
  */
 
@@ -13,27 +13,30 @@
 
 
 void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *results) {
-  /* Declaration of the variables */
-  index_t num_points;			// total number of points in the data set
-  index_t dim, num_gauss;				// dimension of the data set
-  double sum, tmp; 			// temporary loop variables
-  ArrayList<Vector> mu_temp;	// the means of the gaussians
-  ArrayList<Matrix> sigma_temp;	// the covariance matrix of the gaussians
+  
+  // Declaration of the variables
+  index_t num_points;
+  index_t dim, num_gauss;
+  double sum, tmp; 
+  ArrayList<Vector> mu_temp;
+  ArrayList<Matrix> sigma_temp;
   Vector omega_temp, x;
-  Matrix cond_prob;	// the conditional probablity P( Z_n = k | x_n , theta)
-  long double l, l_old, best_l, INFTY = 99999, TINY = 1.0e-10;		// the likelihood values
+  Matrix cond_prob;	
+  long double l, l_old, best_l, INFTY = 99999, TINY = 1.0e-10;
 
   // Initializing values
   dim = dimension();
   num_gauss = number_of_gaussians();
   num_points = data_points.n_cols();
 
-  // Initializing the number of the vectors and matrices according to the parameters input
+  // Initializing the number of the vectors and matrices 
+  // according to the parameters input
   mu_temp.Init(num_gauss);
   sigma_temp.Init(num_gauss);
   omega_temp.Init(num_gauss);
   
-  // Allocating size to the vectors and matrices according to the dimensionality of the data
+  // Allocating size to the vectors and matrices
+  // according to the dimensionality of the data
   for(index_t i = 0; i < num_gauss; i++) {
     mu_temp[i].Init(dim);
     sigma_temp[i].Init(dim, dim);    
@@ -43,17 +46,24 @@ void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *result
   
   best_l = -INFTY;
   index_t restarts = 0;
-  while (restarts < 5) { // scope for adding options for user to give number of rs
+  // performing 5 restarts and choosing the best from them
+  while (restarts < 5) { 
+
     // assign initial values to 'mu', 'sig' and 'omega' using k-means
     KMeans(data_points, &mu_temp, &sigma_temp, &omega_temp, num_gauss);
     
-    /* added a check here to see if any significant change is being made at every iteration */  
-    /* calculating the likelihood values and seeing if there is any significant improvement */
-    l_old = -INFTY; // what do you assign it with
-    l = Loglikelihood(data_points, mu_temp, sigma_temp, omega_temp);	// calculates the loglikelihood value
-    
+    l_old = -INFTY;
+
+    // calculates the loglikelihood value
+    l = Loglikelihood(data_points, mu_temp, sigma_temp, omega_temp); 
+ 
+    // added a check here to see if any 
+    // significant change is being made 
+    // at every iteration
     while (l - l_old > TINY) {
-      /* calculating the conditional probabilities of choosing a particular gaussian given the data and the present theta value */  
+      // calculating the conditional probabilities 
+      // of choosing a particular gaussian given 
+      // the data and the present theta value
       for (index_t j = 0; j < num_points; j++) {
 	x.CopyValues(data_points.GetColumnPtr(j));
 	sum = 0;
@@ -68,7 +78,8 @@ void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *result
 	}
       }
 			
-      /* calculating the new value of the mu using the updated conditional probabilities */
+      // calculating the new value of the mu 
+      // using the updated conditional probabilities
       for (index_t i = 0; i < num_gauss; i++) {
 	sum = 0;
 	mu_temp[i].SetZero();
@@ -80,7 +91,9 @@ void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *result
 	la::Scale((1.0 / sum), &mu_temp[i]);
       }
 					
-      /* calculating the new value of the sig using the updated conditional probabilities and the updated mu */
+      // calculating the new value of the sig 
+      // using the updated conditional probabilities
+      // and the updated mu
       for (index_t i = 0; i < num_gauss; i++) {
 	sum = 0;
 	sigma_temp[i].SetZero();
@@ -98,7 +111,8 @@ void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *result
 	la::Scale((1.0 / sum), &sigma_temp[i]);
       }
 			
-      /* calculating the new values for omega using the updated conditional probabilities */
+      // calculating the new values for omega 
+      // using the updated conditional probabilities
       Vector identity_vector;
       identity_vector.Init(num_points);
       identity_vector.SetAll(1.0 / num_points);
@@ -108,6 +122,7 @@ void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *result
       l = Loglikelihood(data_points, mu_temp, sigma_temp, omega_temp);
     }
     
+    // putting a check to see if the best one is chosen
     if(l > best_l){
       best_l = l;
       for (index_t i = 0; i < num_gauss; i++) {
@@ -175,7 +190,8 @@ void MoG::KMeans(Matrix& data, ArrayList<Vector> *means,
 	
   score_old = 999999;
 	
-  for(i = 0; i < 5; i++){		// random restarts for calculating k-means
+  // putting 5 random restarts to obtain the k-means
+  for(i = 0; i < 5; i++){
     t = -1;
     for (k = 0; k < value_of_k; k++){
       t = (t + 1 + (rand()%((n - 1 - (value_of_k - k)) - (t + 1))));
@@ -204,7 +220,7 @@ void MoG::KMeans(Matrix& data, ArrayList<Vector> *means,
 	  }
 	}
 	
-	if(p == 0){ // weird indeed 
+	if(p == 0){
 	}
 	else{
 	  double sc = 1 ;
@@ -263,6 +279,8 @@ void MoG::KMeans(Matrix& data, ArrayList<Vector> *means,
 }
 
 void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag) {
+
+  // Declaration of variables
   double *theta;
   double **initPoints;
   long double* initVal;
@@ -272,6 +290,7 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
   index_t dim_theta, niters, restarts = 0;
   bool cvgd, TRUE = 1, FALSE = 0;
 
+  // Initializing the variables
   index_t num_gauss = number_of_gaussians();
   dim_theta = num_gauss*(dimension() + 1)*(dimension() + 2) / 2 - 1;
   ftol = EPS;
@@ -286,27 +305,27 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
   }
 
   initVal = (long double*) malloc ((dim_theta + 1) * sizeof(long double));
-  printf("headache\n");
+  
+  // variable to see if the polytope converges
   cvgd = TRUE;
+  // calling the polytope optimizer
   if (optim_flag == 1) {
     while (restarts < 5) {
       do {
-	// get the dim_theta + 1 initial points from somewhere
+	// get the 'dim_theta + 1' initial points
 	points_generator(data, initPoints, dim_theta + 1, num_gauss);
-	printf("error func\n");
-	fflush(NULL);
-
+	
+	// obtaining the function values at those points
 	for( index_t i = 0 ; i < dim_theta + 1 ; i++ ) {
 	  initVal[i] = l2_error( data, num_gauss, initPoints[i]) ;
-	  //printf( "mog_l2e: error value : %Lf\n ",initVal[i]);
 	}
-	printf("the optimizer\n");
-	fflush(NULL);
+		
 	// The optimizer ...
 	cvgd = polytope( initPoints, initVal, dim_theta, 
 			 ftol, l2_error, &niters, data, num_gauss );
       }while (!cvgd);
-      printf("optimized with final value = %Lf\n", initVal[0]);
+     
+      // choosing the best of the 5 restarts 
       if (error_val > initVal[0]) {
 	for (index_t i = 0; i < dim_theta; i++)
 	  theta[i] = initPoints[0][i];
@@ -315,19 +334,17 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
       restarts++;
     }
   }
-       
+    
+  // using the quasi newtion optmizer   
   else {
-
-    // Find the initial theta using the KMeansInitiator somehow
     while (restarts < 5) {
       // get a random starting point
       initial_point_generator(init_theta, data, num_gauss);
       // The optimizer.......
       quasi_newton(init_theta, dim_theta, grad_tol, 
 		   &niters, &final_val, l2_error, data, num_gauss);
-      printf("optimized with final value = %Lf\n", final_val);
-      fflush(NULL);
-
+      
+      // choosing the best of the 5 restarts 
       if (error_val > final_val) {
 	for (index_t i = 0; i < dim_theta; i++)
 	  theta[i] = init_theta[i];
@@ -336,11 +353,9 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
       restarts++;
     }
   }
-  printf("done\n");
-  fflush(NULL);
+
   MakeModel(num_gauss, dimension(), theta);
   OutputResults(results);
-  printf("error: %Lf\n", error_val);
   return;
 }
 

@@ -6,33 +6,125 @@
 
 #include "fastlib/fastlib.h"
 #include "mog.h"
-//#include "phi.h"
 
+/**
+ * This function calculates the L2 error for 
+ * a Gaussian mixture given the data and the 
+ * parameterized mixture
+ *
+ */
 long double l2_error(Matrix&, index_t, double*);
 
+/** 
+ * This function calculates the L2 error and 
+ * the gradient of the error with respect to the 
+ * parameters given the data and the parameterized
+ * mixture
+ */
 long double l2_error(Matrix&, index_t, double*, Vector*);
 
+/**
+ * Calculates the regularization value for a 
+ * Gaussian mixture.
+ * 
+ * Used by the 'l2_error' function to calculate
+ * the regularization part of the error
+ */
 long double calc_reg(MoG&);
 
+/**
+ * Calculates the regularization value for a 
+ * Gaussian mixture and its gradient with 
+ * respect to the parameters
+ * 
+ * Used by the 'l2_error' function to calculate
+ * the regularization part of the error
+ */
 long double calc_reg(MoG&, Vector*);
 
+/**
+ * Calculates the goodness-of-fit value for a 
+ * Gaussian mixture.
+ * 
+ * Used by the 'l2_error' function to calculate
+ * the goodness-of-fit part of the error
+ */
 long double calc_fit(Matrix&, MoG&);
 
+/**
+ * Calculates the goodness-of-fit value for a 
+ * Gaussian mixture and its gradient with 
+ * respect to the parameters
+ * 
+ * Used by the 'l2_error' function to calculate
+ * the goodness-of-fit part of the error
+ */
 long double calc_fit(Matrix&, MoG&, Vector*);
 
+/**
+ * The function that modifies the simplex in the 
+ * parameter space to move to a better position.
+ * 
+ * Used by the 'polytope' function to change
+ * the shape of the simplex
+ */
 long double mod_simplex(double**, long double[], double[], index_t,
 			long double (*funk)(Matrix&, index_t, double*),
 			index_t, float, Matrix&, index_t) ;
 
-bool polytope(double**, long double*, index_t ndim, long double ftol,
+/**
+ * This function minimizes the 'l2_error' function
+ * using the polytope method
+ *
+ * @code
+ * index_t dim = dimension_of_parameter_space;
+ * double simplex_vertices[dim+1][dim];
+ * double function_values[dim+1];
+ * long double tolerance_value;
+ * Matrix data;
+ * index_t number_of_function_evaluations;
+ * index_t number_of_gaussians;
+ * bool converged;
+ * 
+ * converged = polytope(simplex_vertices,
+ *                      function_values,
+ *                      dim, tolerance_value,
+ *                      l2_error,&number_of_function_evaluations,
+ *                      data,number_of_gaussians);
+ * @endcode
+ */
+bool polytope(double**, long double*, index_t, long double,
 	      long double (*funk)(Matrix&, index_t, double*),index_t*, 
-	      Matrix& data, index_t k_comp);
+	      Matrix&, index_t);
 
+/**
+ * This function performs line search on a function given the function
+ * and its gradients
+ * 
+ * This function is used by the 'quasi_newton' optimizer.
+ */
 void line_search(index_t, Vector, long double, Vector*, Vector*, Vector*,
 		 long double*, long double, index_t*, 
 		 long double (*funk)(Matrix&, index_t, double*, Vector*), 
 		 Matrix&, index_t);
 
+/**
+ * This function minimizes the 'l2_error' function
+ * using the quasi newton method.
+ *
+ * @code
+ * index_t dim = dimension_of_parameter_space;
+ * double point[dim];
+ * double gradient_tolerance_value;
+ * index_t number_of_iterations;
+ * long double minimum_function_obtained;
+ * Matrix data;
+ * index_t number_of_gaussians;
+ *
+ * quasi_newton(point, dim, gradient_tolerance_value,
+ *              number_of_iterations, minimum_function_value_obtained,
+ *              l2_error, data, number_of_gaussians);
+ */
 void quasi_newton(double*, index_t, double, index_t*, long double*, 
 		  long double (*func)(Matrix&, index_t, double*, Vector*), 
 		  Matrix&, index_t);
@@ -140,7 +232,8 @@ long double calc_reg(MoG& mog, Vector *g_reg){
 	tmp_d_cov[(dim*(dim+1)/2)+i].Copy(mog.d_sigma(j)[i]);
       }
       
-      tmpVal = phi(mog.mu(k),mog.mu(j),sum_covar,tmp_d_cov,&dp_d_mu[j][k],&tmp_dp_d_sigma);
+      tmpVal = phi(mog.mu(k),mog.mu(j),sum_covar,
+		   tmp_d_cov,&dp_d_mu[j][k],&tmp_dp_d_sigma);
       
       phi_mu.set(j, k, tmpVal);
       phi_mu.set(k, j, tmpVal);
@@ -163,7 +256,8 @@ long double calc_reg(MoG& mog, Vector *g_reg){
   for(index_t k = 0; k < num_gauss; k++) {
     Vector junk;
     la::ScaleOverwrite(2, mog.sigma(k), &sum_covar);
-    tmpVal = phi(mog.mu(k), mog.mu(k), sum_covar, mog.d_sigma(k), &junk, &dp_d_sigma[k][k]);
+    tmpVal = phi(mog.mu(k), mog.mu(k), sum_covar,
+		 mog.d_sigma(k), &junk, &dp_d_sigma[k][k]);
     phi_mu.set(k, k, tmpVal);
     dp_d_mu[k][k].Init(dim);
     dp_d_mu[k][k].SetZero();
@@ -197,7 +291,8 @@ long double calc_reg(MoG& mog, Vector *g_reg){
 	
   // Making the single gradient vector of size K*(D+1)*(D+2)/2
   double *tmp_g_reg;
-  tmp_g_reg = (double*)malloc(((num_gauss*(dim + 1)*(dim + 2) / 2) - 1)*sizeof(double));
+  tmp_g_reg = (double*)malloc(((num_gauss*(dim + 1)*(dim + 2) / 2) - 1)
+			      *sizeof(double));
   index_t j = 0;
   for(index_t k = 0; k < g_omega.length(); k++)
     tmp_g_reg[k] = g_omega.get(k);
@@ -207,7 +302,9 @@ long double calc_reg(MoG& mog, Vector *g_reg){
       tmp_g_reg[j + k*(dim) + i] = g_mu[k].get(i);
     }
     for(index_t i = 0; i < (dim*(dim+1)/2); i++){
-      tmp_g_reg[j + num_gauss*dim + k*(dim*(dim+1) / 2) + i] = g_sigma[k].get(i);
+      tmp_g_reg[j + num_gauss*dim 
+		+ k*(dim*(dim+1) / 2) 
+		+ i] = g_sigma[k].get(i);
     }
   }
   (*g_reg).Copy(tmp_g_reg, ((num_gauss*(dim+1)*(dim+2) / 2) - 1));
@@ -271,13 +368,14 @@ long double calc_fit(Matrix& data, MoG& mog, Vector *g_fit) {
     for(index_t i = 0; i < num_points; i++) {
       Vector tmp_g_mu, tmp_g_sigma;
       x.CopyValues(data.GetColumnPtr(i));
-      tmpVal = phi(x, mog.mu(k), mog.sigma(k), mog.d_sigma(k), &tmp_g_mu, &tmp_g_sigma);
+      tmpVal = phi(x, mog.mu(k), mog.sigma(k),
+		   mog.d_sigma(k), &tmp_g_mu, &tmp_g_sigma);
       phi_x.set(k, i, tmpVal);
-      la::AddTo(tmp_g_mu, &g_mu[k]); // calculating the vector sums in g_mu
-      la::AddTo(tmp_g_sigma, &g_sigma[k]); // calculating the vector sums in g_sigma
+      la::AddTo(tmp_g_mu, &g_mu[k]);
+      la::AddTo(tmp_g_sigma, &g_sigma[k]);
     }
-    la::Scale(weights.get(k), &g_mu[k]); // the final scaling of the g_mu
-    la::Scale(weights.get(k), &g_sigma[k]); // the final scaling of rhe g_sigma
+    la::Scale(weights.get(k), &g_mu[k]); 
+    la::Scale(weights.get(k), &g_sigma[k]);
   }
 
   la::MulInit(weights, phi_x, &y);
@@ -289,7 +387,8 @@ long double calc_fit(Matrix& data, MoG& mog, Vector *g_fit) {
 	
   // Making the single gradient vector of size K*(D+1)*(D+2)/2
   double *tmp_g_fit;
-  tmp_g_fit = (double*)malloc(((num_gauss * (dim+1)*(dim+2) / 2) - 1)*sizeof(double));
+  tmp_g_fit = (double*)malloc(((num_gauss * (dim+1)*(dim+2) / 2) - 1)
+			      *sizeof(double));
   index_t j = 0;
   for(index_t k = 0; k < g_omega.length(); k++)
     tmp_g_fit[k] = g_omega.get(k);
@@ -299,7 +398,9 @@ long double calc_fit(Matrix& data, MoG& mog, Vector *g_fit) {
       tmp_g_fit[j + k*dim + i] = g_mu[k].get(i);
     }
     for(index_t i = 0; i < (dim * (dim+1) / 2); i++){
-      tmp_g_fit[j + num_gauss*dim + k*(dim * (dim+1) / 2) + i] = g_sigma[k].get(i);
+      tmp_g_fit[j + num_gauss*dim 
+		+ k*(dim * (dim+1) / 2) 
+		+ i] = g_sigma[k].get(i);
     }
   }
   (*g_fit).Copy(tmp_g_fit, ((num_gauss*(dim+1)*(dim+2) / 2) - 1));
@@ -310,10 +411,6 @@ long double calc_fit(Matrix& data, MoG& mog, Vector *g_fit) {
 bool polytope(double **p, long double y[], index_t ndim, long double ftol,
 	      long double (*funk)(Matrix&, index_t, double*),index_t *nfunk, 
 	      Matrix& data, index_t k_comp) {
-
-  /* funk(x) is the function to be minimized where 'x' is a 'ndim' dimensional point. 
-     'p' is 'ndim+1' vertices of the simplex and 'y' is the function value at those 'ndim+1' vertices
-     'ftol' is the fractional convergence tolerance to be achieved and 'nfunk' is the number of function evaluations taken */
 
   index_t i, j, ihi, ilo, inhi, gen_m, mpts = ndim + 1, NMAX = 50000;
   double sum, swap, *psum;
@@ -356,7 +453,8 @@ bool polytope(double **p, long double y[], index_t ndim, long double ftol,
     }
     *nfunk += 2;
 		
-    /* Beginning a new iteration. Extrapolating by a factor of -1.0 through the face of the simplex
+    // Beginning a new iteration. 
+    // Extrapolating by a factor of -1.0 through the face of the simplex
        across from the high point, i.e, reflect the simplex from the high point */
     if( gen_m >= 50 ) {
       gen_m = 0 ;
@@ -370,21 +468,28 @@ bool polytope(double **p, long double y[], index_t ndim, long double ftol,
     for( j = 0 ; j < ndim ; j++ ){
       sum = 0.0;
       for( i = 0 ; i < mpts ; i++ ) 
-	if (i != ihi)// added here to remove the highest point from the consideration
+	if (i != ihi)
 	  sum += p[i][j];
-      //psum[j] = sum; //removed because we are trying to find the center of gravity of the rest of the points
+      
       psum[j] = sum / ndim;
     }
 
     ytry = mod_simplex(p, y, psum, ndim, funk, ihi, -1.0, data, k_comp);
-    if( ytry <= y[ilo] ) {	// result better than best point so additional extrapolation by a factor of 2
+    if( ytry <= y[ilo] ) {	
+      // result better than best point 
+      // so additional extrapolation by a factor of 2
       ytry = mod_simplex(p, y, psum, ndim, funk, ihi, 2.0, data, k_comp);
     }
-    else if( ytry >= y[ihi] ) { // result worse than the worst point so there is a lower intermediate point, i.e., do a one dimensional contraction
+    else if( ytry >= y[ihi] ) { 
+      // result worse than the worst point 
+      // so there is a lower intermediate point, 
+      // i.e., do a one dimensional contraction
       ysave = y[ihi];
-      //ytry = mod_simplex(p, y, psum, ndim, funk, ihi, 0.5, data, k_comp); // since it is contracting and removing 'ihi' should be -0.5 instead of 0.5
+
       ytry = mod_simplex(p, y, psum, ndim, funk, ihi, -0.5, data, k_comp);
-      if( ytry > y[ihi] ) { // Can't get rid of the high point, try to contract around the best point
+      if( ytry > y[ihi] ) { 
+	// Can't get rid of the high point, 
+	// try to contract around the best point
 	for( i = 0; i < mpts; i++ ) {
 	  if( i != ilo ) {
 	    for( j = 0; j < ndim; j++ ) 
@@ -396,9 +501,8 @@ bool polytope(double **p, long double y[], index_t ndim, long double ftol,
 	for( j = 0 ; j < ndim ; j++ ){
 	  sum = 0.0;
 	  for( i = 0 ; i < mpts ; i++ )
-	    if (i != ihi)//same as above
+	    if (i != ihi)
 	      sum += p[i][j];
-	  //psum[j] = sum; // same as above
 	  psum[j] = sum / ndim;
 	}
       }
@@ -412,26 +516,20 @@ long double mod_simplex(double **p, long double y[], double psum[], index_t ndim
 			long double (*funk)(Matrix&, index_t, double*),index_t ihi,
 			float fac, Matrix& data, index_t k_comp) {
 	
-  /* Extropolates by a factor of 'fac' through the face of the simplex across from the worst point, tries it,
-     and replaces the worst point if the new point is better than the worst point.*/
+ 
   index_t j;
-  //float fac1, fac2; // just trying something
   long double ytry;
   double *ptry;
 	
-  //printf("mod_simplex:entry\n");
+  
   ptry = (double*) malloc (ndim * sizeof(double));
-  //fac1 = (1.0 - fac) / ndim; // removing this because the division by 'ndim' is already done
-  // fac1 = (1.0 - fac);
-  // fac2 = fac1 - fac;
-  for (j = 0; j < ndim; j++) 
-    //ptry[j] = psum[j] * fac1 + p[ihi][j] * fac2;
+  for (j = 0; j < ndim; j++) {
     ptry[j] = psum[j] * (1 - fac) + p[ihi][j] * fac;
+  }
   ytry = (*funk)(data, k_comp, ptry);
   if (ytry < y[ihi]) {
     y[ihi] = ytry;
     for (j = 0; j < ndim; j++) {
-      //psum[j] += ptry[j] - p[ihi][j];// apparently not needed
       p[ihi][j] = ptry[j];
     }
   }
@@ -645,6 +743,7 @@ void line_search(int n, Vector pold, long double fold, Vector *grad,
     }
     previous_step_length = step_length;
     previous_f_value = *f_min;
-    step_length = (temp_step_length > 0.1*step_length ? temp_step_length : 0.1*step_length);
+    step_length = (temp_step_length > 0.1*step_length 
+		   ? temp_step_length : 0.1*step_length);
   }
 }
