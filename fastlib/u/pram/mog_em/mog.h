@@ -1,7 +1,8 @@
 /**
  * @file mog.h
  *
- * Defines a Gaussian Mixture model to find the optimal parameters of the model
+ * Defines a Gaussian Mixture model and
+ * estimates the parameters of the model
  */
 
 #ifndef MOG_H
@@ -9,10 +10,29 @@
 
 #include <fastlib/fastlib.h>
 
+/**
+ * A Gaussian mixture model class.
+ * 
+ * This class uses different loss functions to
+ * estimate the parameters of a gaussian mixture 
+ * model on a given data.
+ * 
+ *
+ * Example use:
+ *
+ * @code
+ * MoG mog;
+ * ArrayList<double> results;
+ *
+ * mog.Init(number_of_gaussians, dimension);
+ * mog.ExpectationMaximization(data, &results, optim_flag);
+ * @endcode
+ */
 class MoG {
 
  private:
 
+  // The parameters of the mixture model
   ArrayList<Vector> mu_;
   ArrayList<Matrix> sigma_;
   Vector omega_;
@@ -78,7 +98,16 @@ class MoG {
   double omega(index_t i) {
     return omega_.get(i);
   }
-		
+
+  /**
+   * This function outputs the parameters of the model
+   * to an arraylist of doubles 
+   *
+   * @code
+   * ArrayList<double> results;
+   * mog.OutputResults(&results);
+   * @endcode
+   */
   void OutputResults(ArrayList<double> *results) {
 
     // Initialize the size of the output array
@@ -98,6 +127,13 @@ class MoG {
     }
   }
 
+  /**
+   * This function prints the parameters of the model
+   *
+   * @code
+   * mog.Display();
+   *
+   */
   void Display(){
 
     // Output the model parameters as the omega, mu and sigma			
@@ -130,11 +166,38 @@ class MoG {
     printf("\n");
   }
 
+  /**
+   * This function calculates the parameters of the model
+   * using the Maximum Likelihood function via the 
+   * Expectation Maximization (EM) Algorithm.
+   *
+   * @code
+   * MoG mog;
+   * Matrix data = "the data on which you want to fit the model";
+   * ArrayList<double> results;
+   * mog.ExpectationMaximization(data, &results);
+   * @endcode
+   */
   void ExpectationMaximization(Matrix& data_points, ArrayList<double> *results);
 
+ /**
+   * This function computes the loglikelihood of model.
+   * This function is used by the 'ExpectationMaximization'
+   * function.
+   * 
+   */
   long double Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
 			    ArrayList<Matrix>& covars, Vector& weights);
 
+ /**
+   * This function computes the k-means of the data and stores
+   * the calculated means and covariances in the ArrayList
+   * of Vectors and Matrices passed to it. It sets the weights 
+   * uniformly. 
+   * 
+   * This function is used to obtain a starting point for 
+   * the optimization
+   */
   void KMeans(Matrix& data, ArrayList<Vector> *means,
 	      ArrayList<Matrix> *covars, Vector *weights, index_t value_of_k);
 };
