@@ -100,7 +100,7 @@ extern const float FLT_INF;
     const C &operator=(const C &src) { \
       if (likely(this != &src)) { \
         char buf[sizeof(C)]; \
-        mem::BitCopy(reinterpret_cast<C *>(buf), this); \
+        mem::BitCopy<C>(buf, this); \
         new(this) C(src); \
         reinterpret_cast<C *>(buf)->~C(); \
       } \

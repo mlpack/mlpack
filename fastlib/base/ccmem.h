@@ -91,9 +91,14 @@ namespace mem {
   }
 
   /** Bit-copies from src to dest, measured in bytes. */
-  template<typename T>
-  inline T *BitCopyBytes(T *dest, const T *src, size_t bytes) {
+  template<typename T, typename U>
+  inline T *BitCopyBytes(T *dest, const U *src, size_t bytes) {
     return reinterpret_cast<T *>(::memcpy(dest, src, bytes));
+  }
+  /** Bit-copies from src to dest, measured in elements. */
+  template<typename V, typename T, typename U>
+  inline T *BitCopy(T *dest, const U *src, size_t elems = 1) {
+    return BitCopyBytes(dest, src, elems * sizeof(V));
   }
   /** Bit-copies from src to dest, measured in elements. */
   template<typename T>
@@ -101,14 +106,19 @@ namespace mem {
     return BitCopyBytes(dest, src, elems * sizeof(T));
   }
   /** Allocates an array bit-copied from src, measured in bytes. */
-  template<typename T>
-  inline T *AllocBitCopyBytes(const T *src, size_t bytes) {
+  template<typename T, typename U>
+  inline T *AllocBitCopyBytes(const U *src, size_t bytes) {
     return BitCopyBytes(reinterpret_cast<T *>(::malloc(bytes)), src, bytes);
+  }
+  /** Allocates an array bit-copied from src, measured in elements. */
+  template<typename T, typename U>
+  inline T *AllocBitCopy(const U *src, size_t elems = 1) {
+    return AllocBitCopyBytes<T>(src, elems * sizeof(T));
   }
   /** Allocates an array bit-copied from src, measured in elements. */
   template<typename T>
   inline T *AllocBitCopy(const T *src, size_t elems = 1) {
-    return AllocBitCopyBytes(src, elems * sizeof(T));
+    return AllocBitCopyBytes<T>(src, elems * sizeof(T));
   }
 
   /**
@@ -155,8 +165,8 @@ namespace mem {
    * when swapping between offset locations in arrays of small types,
    * such as portions of strings.
    */
-  template<typename T>
-  inline void BitSwapBytes(T *a, T *b, size_t bytes) {
+  template<typename T, typename U>
+  inline void BitSwapBytes(T *a, U *b, size_t bytes) {
     char *a_cp = reinterpret_cast<char *>(a);
     char *b_cp = reinterpret_cast<char *>(b);
     char buf[SWAP_BUF_SIZE];
@@ -175,6 +185,20 @@ namespace mem {
       ::memcpy(a_cp, b_cp, bytes);
       ::memcpy(b_cp, buf, bytes);
     }
+  }
+  /**
+   * Bit-swaps two arrays, measured in elements.
+   *
+   * This code is optimized for swapping arrays starting at
+   * multiple-of-eight byte locations.  Freshly allocated memory and
+   * all locations within arrays of longs, doubles, and most structs
+   * will have this property.  Suboptimal performance will arise only
+   * when swapping between offset locations in arrays of small types,
+   * such as portions of strings.
+   */
+  template<typename V, typename T, typename U>
+  inline void BitSwap(T *a, U *b, size_t elems = 1) {
+    BitSwapBytes(a, b, elems * sizeof(V));
   }
   /**
    * Bit-swaps two arrays, measured in elements.
