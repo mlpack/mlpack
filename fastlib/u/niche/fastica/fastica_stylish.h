@@ -45,11 +45,11 @@ class FastICA {
     Matrix hyp_tan, col_vector, sum, temp1, temp2;
     
     MapOverwrite(&TanhArg,
-		 a1_,
+		 a1(),
 		 MulTransAInit(&X, B, &hyp_tan));
     
     
-    ColVector(d, a1_, &col_vector);
+    ColVector(d, a1(), &col_vector);
     
     Scale(1 / (double) n,
 	  AddTo(MulInit(&X, &hyp_tan, &temp1),
@@ -66,18 +66,18 @@ class FastICA {
     Matrix Y, hyp_tan, Beta, Beta_Diag, D, sum, temp1, temp2, temp3;
 	
     MulTransAInit(&X, B, &Y);
-    MapInit(&TanhArg, a1_, &Y, &hyp_tan);
+    MapInit(&TanhArg, a1(), &Y, &hyp_tan);
     DotMultiplySum(&Y, &hyp_tan, &Beta);
     VectorToDiag(MapOverwrite(&Inv,
 			      0,
 			      AddTo(&Beta,
-				    Scale(a1_,
+				    Scale(a1(),
 					  MapOverwrite(&MinusArg,
 						       n,
 						       MatrixMapSum(&Square, 0, &hyp_tan, &sum))))),
 		 &D);
     
-    AddExpert(mu_, 
+    AddExpert(mu(), 
 	      MulInit(MulInit(B,
 			      SubFrom(VectorToDiag(&Beta, &Beta_Diag),
 				      MulTransAInit(&Y, &hyp_tan, &temp1)),
@@ -94,15 +94,15 @@ class FastICA {
     MulTransAInit(&X, B, &U);
     
     MapInit(&Square, 0, &U, &U_squared);
-    MapInit(&ExpArg, -a2_ / 2, &U_squared, &ex);
+    MapInit(&ExpArg, -a2() / 2, &U_squared, &ex);
     DotMultiplyOverwrite(&ex, &U);
     //U is gauss
     AddTo(DotMultiplyOverwrite(&ex,
-			       Scale(-a2_, &U_squared)),
+			       Scale(-a2(), &U_squared)),
 	  &ex);
     //ex is dGauss
     
-    ColVector(d, a2_, &col_vector);
+    ColVector(d, a2(), &col_vector);
     
     Scale(1 / (double) n,
 	  SubOverwrite(MulInit(&X, &U, &temp1),
@@ -119,7 +119,7 @@ class FastICA {
     Vector Beta_vector, sum_vector;
 	
     MulTransAInit(&X, B, &Y);
-    MapInit(&SquareArg, a2_, &Y, &Y_squared_a2);
+    MapInit(&SquareArg, a2(), &Y, &Y_squared_a2);
     MapInit(&ExpArg, -.5, &Y_squared_a2, &ex);
     DotMultiplyInit(&Y, &ex, &gauss);
 	
@@ -158,7 +158,7 @@ class FastICA {
 		 &D);
 	  
     //B = B + myy * B * (Y' * gauss - diag(Beta)) * D;
-    AddExpert(mu_,
+    AddExpert(mu(),
 	      MulInit(MulInit(B,
 			      SubFrom(VectorToDiag(&Beta_vector, &Beta),
 				      MulTransAInit(&Y, &gauss, &temp1)),
@@ -200,7 +200,7 @@ class FastICA {
 				      &D_vector)),
 		 &D);
 
-    AddExpert(mu_, 
+    AddExpert(mu(), 
 	      MulInit(MulInit(B,
 			      SubFrom(VectorToDiag(&Beta, &Beta_Diag),
 				      MulTransAInit(&Y, &G_pow_3, &temp1)),
@@ -233,7 +233,7 @@ class FastICA {
     VectorToDiag(MapInit(&Inv, 0, &Beta, &D_vector),
 		 &D);
 	
-    AddExpert(mu_, 
+    AddExpert(mu(), 
 	      MulInit(MulInit(B,
 			      SubFrom(VectorToDiag(&Beta, &Beta_Diag),
 				      MulTransAInit(&Y, &G_skew, &temp1)),
@@ -248,12 +248,12 @@ class FastICA {
     Vector hyp_tan, temp1;
     
     MapOverwrite(&TanhArg,
-		 a1_,
+		 a1(),
 		 MulInit(w, &X, &hyp_tan));
         
     Scale(1 / (double) n,
 	  AddTo(MulInit(&X, &hyp_tan, &temp1),
-		Scale(a1_ * (VectorMapSum(&Square, 0, &hyp_tan) - n),
+		Scale(a1() * (VectorMapSum(&Square, 0, &hyp_tan) - n),
 		      w)));
   }
 
@@ -262,14 +262,14 @@ class FastICA {
     Vector hyp_tan, X_hyp_tan, Beta_w, temp1;
     
     MapOverwrite(&TanhArg,
-		 a1_,
+		 a1(),
 		 MulInit(w, &X, &hyp_tan));
     
     MulInit(&X, &hyp_tan, &X_hyp_tan);
     double Beta = la::Dot(X_hyp_tan, *w);
     
-    AddExpert(mu_,
-	      Scale(1 / (a1_ * (VectorMapSum(&Square, 0, &hyp_tan) - n) + Beta),
+    AddExpert(mu(),
+	      Scale(1 / (a1() * (VectorMapSum(&Square, 0, &hyp_tan) - n) + Beta),
 		    SubInit(&X_hyp_tan,
 			    ScaleInit(Beta, w, &Beta_w),
 			    &temp1)),
@@ -282,11 +282,11 @@ class FastICA {
 
     MulInit(w, &X, &u);
     MapInit(&Square, 0, &u, &u_squared);
-    MapInit(&ExpArg, -.5 * a2_, &u_squared, &ex);
+    MapInit(&ExpArg, -.5 * a2(), &u_squared, &ex);
     DotMultiplyOverwrite(&ex, &u);
     //u is gauss
     AddTo(DotMultiplyOverwrite(&ex,
-			       Scale(-a2_, &u_squared)),
+			       Scale(-a2(), &u_squared)),
 	  &ex);
     //ex is dGauss
     Scale(1 / (double) n,
@@ -300,18 +300,18 @@ class FastICA {
 
     MulInit(w, &X, &u);
     MapInit(&Square, 0, &u, &u_squared);
-    MapInit(&ExpArg, -.5 * a2_, &u_squared, &ex);
+    MapInit(&ExpArg, -.5 * a2(), &u_squared, &ex);
     DotMultiplyOverwrite(&ex, &u);
     //u is gauss
     AddTo(DotMultiplyOverwrite(&ex,
-			       Scale(-a2_, &u_squared)),
+			       Scale(-a2(), &u_squared)),
 	  &ex);
     //ex is dGauss
 
     MulInit(&X, &u, &X_gauss);
     double Beta = la::Dot(X_gauss, *w);
 
-    AddExpert(mu_,
+    AddExpert(mu(),
 	      Scale(1 / (Beta - Sum(&ex)),
 		    SubInit(&X_gauss,
 			    ScaleInit(Beta, w, &Beta_w),
@@ -347,7 +347,7 @@ class FastICA {
 
     double Beta = la::Dot(*w, EXG_pow_3);
 	    
-    AddExpert(mu_ / (Beta - 3),
+    AddExpert(mu() / (Beta - 3),
 	      SubFrom(ScaleInit(Beta, w, &Beta_w),
 		      &EXG_pow_3),
 	      w);
@@ -378,7 +378,7 @@ class FastICA {
 
     double Beta = la::Dot(*w, EXG_skew);
 	    
-    AddExpert(mu_ / Beta,
+    AddExpert(mu() / Beta,
 	      SubFrom(ScaleInit(Beta, w, &Beta_w),
 		      &EXG_skew),
 	      w);
@@ -390,7 +390,7 @@ class FastICA {
     
     
   
-  public:
+ public:
 
   index_t d;
   index_t n;
@@ -400,7 +400,7 @@ class FastICA {
   }
 
   int nonlinearity() {
-    return nonlinearity;
+    return nonlinearity_;
   }
 
   //  index_t first_eig() {
@@ -451,7 +451,7 @@ class FastICA {
     return percent_cut_;
   }
 
-  double X() {
+  Matrix X() {
     return X_;
   }
 
@@ -550,6 +550,531 @@ class FastICA {
   }
 
 
+
+
+
+  int SymmetricFixedPointICA(bool stabilization_enabled,
+			     bool fine_tuning_enabled,
+			     double mu_orig, double mu_k, index_t failure_limit,
+			     int used_nonlinearity, int g_fine, double stroke,
+			     bool not_fine, bool taking_long,
+			     int initial_state_mode,
+			     Matrix X, Matrix* B, Matrix *W, Matrix *A,
+			     Matrix* whitening_matrix,
+			     Matrix* dewhitening_matrix) {
+    
+    if(initial_state_mode == 0) {
+      //generate random B
+      B -> Init(d, num_of_IC());
+      
+      
+      for(index_t i = 0; i < num_of_IC(); i++) {
+	Vector b;
+	B -> MakeColumnVector(i, &b);
+	RandVector(b);
+      }
+	
+      /*
+	B -> SetZero();
+	for(index_t i = 0; i < d; i++) {
+	B -> set(i, i, 1);
+	}
+      */
+    }
+      
+
+    Matrix B_old, B_old2;
+
+    B_old.Init(d, num_of_IC());
+    B_old2.Init(d, num_of_IC());
+
+    B_old.SetZero();
+    B_old2.SetZero();
+
+
+    for(index_t round = 1; round <= (max_num_iterations() + 1); round++) {
+      if(round == (max_num_iterations() + 1)) {
+	printf("No convergence after %d steps\n", max_num_iterations());
+	
+	
+	// orthogonalize B via: newB = B * (B' * B) ^ -.5;
+	Matrix temp;
+	temp.Copy(*B);
+	Orthogonalize(temp, B);
+
+	MulTransAOverwrite(B, whitening_matrix, W);
+	MulOverwrite(dewhitening_matrix, B, A);
+	return SUCCESS_PASS;
+      }
+	
+      {
+	Matrix temp;
+	temp.Copy(*B);
+	Orthogonalize(temp, B);
+	B -> PrintDebug("B");
+      }
+
+      Matrix B_delta_cov;
+      MulTransAInit(B, &B_old, &B_delta_cov);
+      double min_abs_cos = DBL_MAX;
+      for(index_t i = 0; i < d; i++) {
+	double current_cos = fabs(B_delta_cov.get(i, i));
+	if(current_cos < min_abs_cos) {
+	  min_abs_cos = current_cos;
+	}
+      }
+      
+      printf("min_abs_cos = %f\n", min_abs_cos);
+
+      if(1 - min_abs_cos < epsilon()) {
+	if(fine_tuning_enabled && not_fine) {
+	  not_fine = false;
+	  used_nonlinearity = g_fine;
+	  mu_ = mu_k * mu_orig;
+	  B_old.SetZero();
+	  B_old2.SetZero();
+	}
+	else {
+	  MulOverwrite(dewhitening_matrix, B, A);
+	  MulTransAOverwrite(B, whitening_matrix, W);
+	  return SUCCESS_PASS;
+	}
+      }
+      else if(stabilization_enabled) {
+
+	Matrix B_delta_cov2;
+	MulTransAInit(B, &B_old2, &B_delta_cov2);
+	double min_abs_cos2 = DBL_MAX;
+	for(index_t i = 0; i < d; i++) {
+	  double current_cos2 = fabs(B_delta_cov2.get(i, i));
+	  if(current_cos2 < min_abs_cos2) {
+	    min_abs_cos2 = current_cos2;
+	  }
+	}
+
+	if((stroke == 0) && (1 - min_abs_cos2 < epsilon())) {
+	  stroke = mu();
+	  mu_ *= .5;
+	  if((used_nonlinearity % 2) == 0) {
+	    used_nonlinearity += 1;
+	  }
+	}
+	else if(stroke > 0) {
+	  mu_ = stroke;
+	  stroke = 0;
+
+	  if((mu() == 1) && ((used_nonlinearity % 2) != 0)) {
+	    used_nonlinearity -= 1;
+	  }
+	}
+	else if((!taking_long) &&
+		(round > ((double) max_num_iterations() / 2))) {
+	  taking_long = true;
+	  mu_ *= .5;
+	  if((used_nonlinearity % 2) == 0) {
+	    used_nonlinearity += 1;
+	  }
+	}
+      }
+
+      B_old2.CopyValues(B_old);
+      B_old.CopyValues(*B);
+
+      // show progress here, (the lack of code means no progress shown for now)
+
+
+
+      // use Newton-Raphson to update B
+
+      printf("used_nonlinearity = %d\n", used_nonlinearity);
+
+      switch(used_nonlinearity) {
+	  
+      case LOGCOSH: {
+	SymmetricLogCoshUpdate_(n, X, B);
+	break;
+      }
+	
+      case LOGCOSH + 1: {
+	SymmetricLogCoshFineTuningUpdate_(n, X, B);
+	break;	
+      }
+	
+      case LOGCOSH + 2: {
+	Matrix X_sub;
+	index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	SymmetricLogCoshUpdate_(num_selected, X_sub, B);
+	break;
+      }
+	
+      case LOGCOSH + 3: {
+	Matrix X_sub;
+	index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	SymmetricLogCoshFineTuningUpdate_(num_selected, X_sub, B);
+	break;
+      }
+
+      case GAUSS: {
+	SymmetricGaussUpdate_(n, X, B);
+	break;
+      }
+	
+      case GAUSS + 1: {
+	SymmetricGaussFineTuningUpdate_(n, X, B);
+	break;
+      }
+
+      case GAUSS + 2: {
+	Matrix X_sub;
+	index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	SymmetricGaussUpdate_(num_selected, X_sub, B);
+	break;
+      }
+
+      case GAUSS + 3: {
+	Matrix X_sub;
+	index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	SymmetricGaussFineTuningUpdate_(num_selected, X_sub, B);
+	break;
+      }
+
+      case KURTOSIS: {
+	SymmetricKurtosisUpdate_(n, X, B);
+	break;
+      }
+	
+      case KURTOSIS + 1: {
+	SymmetricKurtosisFineTuningUpdate_(n, X, B);
+	break;
+      }
+
+      case KURTOSIS + 2: {
+	Matrix X_sub;
+	index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	SymmetricKurtosisUpdate_(num_selected, X_sub, B);
+	break;
+      }
+
+      case KURTOSIS + 3: {
+	Matrix X_sub;
+	index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	SymmetricKurtosisFineTuningUpdate_(num_selected, X_sub, B);
+	break;
+      }
+
+      case SKEW: {
+	SymmetricSkewUpdate_(n, X, B);
+	break;
+      }
+	
+      case SKEW + 1: {
+	SymmetricSkewFineTuningUpdate_(n, X, B);
+	break;
+      }
+
+      case SKEW + 2: {
+	Matrix X_sub;
+	index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	SymmetricSkewUpdate_(num_selected, X_sub, B);
+	break;
+      }
+	  
+      case SKEW + 3: {
+	Matrix X_sub;
+	index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	SymmetricSkewFineTuningUpdate_(num_selected, X_sub, B);
+	break;
+      }
+	  
+      default:
+	printf("ERROR: invalid contrast function: used_nonlinearity = %d\n",
+	       used_nonlinearity);
+	exit(SUCCESS_FAIL);
+	  
+      }
+    }
+
+    // this code should be unreachable
+    return SUCCESS_FAIL; 
+  }
+
+
+  int DeflationFixedPointICA(bool stabilization_enabled,
+			     bool fine_tuning_enabled,
+			     double mu_orig, double mu_k, index_t failure_limit,
+			     int used_nonlinearity, int g_orig, int g_fine,
+			     double stroke, bool not_fine, bool taking_long,
+			     int initial_state_mode,
+			     Matrix X, Matrix* B, Matrix *W, Matrix *A,
+			     Matrix* whitening_matrix,
+			     Matrix* dewhitening_matrix) {
+
+    B -> Init(d, d);
+    B -> SetZero();
+
+    index_t round = 0;
+
+    index_t num_failures = 0;
+
+    while(round < num_of_IC()) {
+      mu_ = mu_orig;
+      used_nonlinearity = g_orig;
+      stroke = 0;
+      not_fine = true;
+      taking_long = false;
+      int end_fine_tuning = 0;
+	
+      Vector w;
+      if(initial_state_mode == 0) {
+	w.Init(d);
+	RandVector(w);
+      }
+
+      for(index_t i = 0; i < round; i++) {
+	Vector b_i;
+	B -> MakeColumnVector(i, &b_i);
+	la::AddExpert(-la::Dot(b_i, w), b_i, &w);
+      }
+      la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
+
+      Vector w_old, w_old2;
+      w_old.Init(d);
+      w_old.SetZero();
+      w_old2.Init(d);
+      w_old2.SetZero();
+
+      index_t i = 1;
+      index_t gabba = 1;
+      while(i <= max_num_iterations() + gabba) {
+
+	for(index_t j = 0; j < round; j++) {
+	  Vector b_j;
+	  B -> MakeColumnVector(j, &b_j);
+	  la::AddExpert(-la::Dot(b_j, w), b_j, &w);
+	}
+	la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
+
+	if(not_fine) {
+	  if(i == (max_num_iterations() + 1)) {
+	    round++;
+	    num_failures++;
+	    if(num_failures > failure_limit) {
+	      printf("Too many failures to converge (%d). Giving up.\n", num_failures);
+	      return SUCCESS_FAIL;
+	    }
+	    break;
+	  }
+	}
+	else {
+	  if(i >= end_fine_tuning) {
+	    w_old.Copy(w);
+	  }
+	}
+
+	// check for convergence
+	bool converged = false;
+	Vector w_diff;
+	la::SubInit(w_old, w, &w_diff);
+	  
+	if(la::Dot(w_diff, w_diff) < epsilon()) {
+	  converged = true;
+	}
+	else {
+	  la::AddOverwrite(w_old, w, &w_diff);
+	    
+	  if(la::Dot(w_diff, w_diff) < epsilon()) {
+	    converged = true;
+	  }
+	}
+
+	if(converged) {
+	  if(fine_tuning_enabled & not_fine) {
+	    not_fine = false;
+	    gabba = max_fine_tune();
+	    w_old.SetZero();
+	    w_old2.SetZero();
+	    used_nonlinearity = g_fine;
+	    mu_ = mu_k * mu_orig;
+
+	    end_fine_tuning = max_fine_tune() + i;
+	  }
+	  else {
+	    num_failures = 0;
+	    Vector B_col_round, A_col_round, W_col_round;
+
+	    B -> MakeColumnVector(round, &B_col_round);
+	    A -> MakeColumnVector(round, &A_col_round);
+	    W -> MakeColumnVector(round, &W_col_round);
+
+	    B_col_round.CopyValues(w);
+	    la::MulOverwrite(*dewhitening_matrix, w, &A_col_round);
+	    la::MulOverwrite(w, *whitening_matrix, &W_col_round);
+
+	    break; // this line is intended to take us to the next IC
+	  }
+	}
+	else if(stabilization_enabled) {
+	  converged = false;
+	  la::SubInit(w_old2, w, &w_diff);
+	    
+	  if(la::Dot(w_diff, w_diff) < epsilon()) {
+	    converged = true;
+	  }
+	  else {
+	    la::AddOverwrite(w_old2, w, &w_diff);
+	      
+	    if(la::Dot(w_diff, w_diff) < epsilon()) {
+	      converged = true;
+	    }
+	  }
+	    
+	  if((stroke == 0) && converged) {
+	    stroke = mu();
+	    mu_ *= .5;
+	    if((used_nonlinearity % 2) == 0) {
+	      used_nonlinearity++;
+	    }
+	  }
+	  else if(stroke != 0) {
+	    mu_ = stroke;
+	    stroke = 0;
+	    if((mu() == 1) && ((used_nonlinearity % 2) != 0)) {
+	      used_nonlinearity--;
+	    }
+	  }
+	  else if(not_fine && (!taking_long) &&
+		  (i > ((double) max_num_iterations() / 2))) {
+	    taking_long = true;
+	    mu_ *= .5;
+	    if((used_nonlinearity % 2) == 0) {
+	      used_nonlinearity++;
+	    }
+	  }
+	}
+
+	w_old2.CopyValues(w_old);
+	w_old.CopyValues(w);
+	  
+	printf("used_nonlinearity = %d\n", used_nonlinearity);
+
+	switch(used_nonlinearity) {
+
+	case LOGCOSH: {
+	  DeflationLogCoshUpdate_(n, X, &w);
+	  break;
+	}
+
+	case LOGCOSH + 1: {
+	  DeflationLogCoshFineTuningUpdate_(n, X, &w);
+	  break;
+	}
+
+	case LOGCOSH + 2: {
+	  Matrix X_sub;
+	  index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	  DeflationLogCoshUpdate_(num_selected, X_sub, &w);
+	  break;
+	}
+
+	case LOGCOSH + 3: {
+	  Matrix X_sub;
+	  index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	  DeflationLogCoshFineTuningUpdate_(num_selected, X_sub, &w);
+	  break;
+	}
+
+	case GAUSS: {
+	  DeflationGaussUpdate_(n, X, &w);
+	  break;
+	}
+
+	case GAUSS + 1: {
+	  DeflationGaussFineTuningUpdate_(n, X, &w);
+	  break;
+	}
+
+	case GAUSS + 2: {
+	  Matrix X_sub;
+	  index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	  DeflationGaussUpdate_(num_selected, X_sub, &w);
+	  break;
+	}
+
+	case GAUSS + 3: {
+	  Matrix X_sub;
+	  index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	  DeflationGaussFineTuningUpdate_(num_selected, X_sub, &w);
+	  break;
+	}
+
+	case KURTOSIS: {
+	  DeflationKurtosisUpdate_(n, X, &w);
+	  break;
+	}
+
+	case KURTOSIS + 1: {
+	  DeflationKurtosisFineTuningUpdate_(n, X, &w);
+	  break;
+	}
+
+	case KURTOSIS + 2: {
+	  Matrix X_sub;
+	  index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	  DeflationKurtosisUpdate_(num_selected, X_sub, &w);
+	  break;
+	}
+
+	case KURTOSIS + 3: {
+	  Matrix X_sub;
+	  index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	  DeflationKurtosisFineTuningUpdate_(num_selected, X_sub, &w);
+	  break;
+	}
+
+	case SKEW: {
+	  DeflationSkewUpdate_(n, X, &w);
+	  break;
+	}
+
+	case SKEW + 1: {
+	  DeflationSkewFineTuningUpdate_(n, X, &w);
+	  break;
+	}
+
+	case SKEW + 2: {
+	  Matrix X_sub;
+	  index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	  DeflationSkewUpdate_(num_selected, X_sub, &w);
+	  break;
+	}
+
+	case SKEW + 3: {
+	  Matrix X_sub;
+	  index_t num_selected = RandomSubMatrix(n, percent_cut(), X, &X_sub);
+	  DeflationSkewFineTuningUpdate_(num_selected, X_sub, &w);
+	  break;
+	}
+	    
+	default: 
+	  printf("ERROR: invalid contrast function: used_nonlinearity = %d\n",
+		 used_nonlinearity);
+	  exit(SUCCESS_FAIL);
+	    
+	}
+	
+	la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
+	i++;
+      }
+      round++;
+    }
+
+    return SUCCESS_PASS; 
+  }
+
+
+
+
+
   /**
    * Run the fixed point iterative component of FastICA
    * @pre{ X is a d by n data matrix, for d dimensions and n samples}
@@ -558,48 +1083,49 @@ class FastICA {
 		    Matrix* A, Matrix* W) {
     // ensure default values are passed into this function if the user doesn't care about certain parameters
 
-    int g = nonlinearity_;
+    int g = nonlinearity();
     
-    if(d < num_of_IC_) {
+    if(d < num_of_IC()) {
       printf("ERROR: must have num_of_IC <= Dimension!\n");
       W -> Init(0,0);
       A -> Init(0,0);
       return SUCCESS_FAIL;
     }
 
-    W -> Init(d, num_of_IC_);
-    A -> Init(num_of_IC_, d);
+    W -> Init(d, num_of_IC());
+    A -> Init(num_of_IC(), d);
 
-    if((percent_cut_ > 1) || (percent_cut_ < 0)) {
+    if((percent_cut() > 1) || (percent_cut() < 0)) {
       percent_cut_ = 1;
       printf("Setting percent_cut to 1\n");
     }
-    else if(percent_cut_ < 1) {
-      if((percent_cut_ * n) < 1000) {
+    else if(percent_cut() < 1) {
+      if((percent_cut() * n) < 1000) {
 	percent_cut_ = min(1000 / (double) n, (double) 1);
-	printf("Warning: Setting percent_cut to %0.3f (%d samples).\n", percent_cut_,
-	       (int) floor(percent_cut_ * n));
+	printf("Warning: Setting percent_cut to %0.3f (%d samples).\n",
+	       percent_cut(),
+	       (int) floor(percent_cut() * n));
       }
     }
     
     int g_orig = g;
 
-    if(percent_cut_ != 1) {
+    if(percent_cut() != 1) {
       g_orig += 2;
     }
     
-    if(mu_ != 1) {
+    if(mu() != 1) {
       g_orig += 1;
     }
 
     bool fine_tuning_enabled = true;
     int g_fine;
 
-    if(fine_tune_) {
+    if(fine_tune()) {
       g_fine = g + 1;
     }
     else {
-      if(mu_ != 1) {
+      if(mu() != 1) {
 	g_fine = g_orig;
       }
       else {
@@ -610,11 +1136,11 @@ class FastICA {
     }
 
     bool stabilization_enabled;
-    if(stabilization_) {
+    if(stabilization()) {
       stabilization_enabled = true;
     }
     else {
-      if(mu_ != 1) {
+      if(mu() != 1) {
 	stabilization_enabled = true;
       }
       else {
@@ -622,7 +1148,7 @@ class FastICA {
       }
     }
 
-    double mu_orig = mu_;
+    double mu_orig = mu();
     double mu_k = 0.01;
     index_t failure_limit = 5;
     int used_nonlinearity = g_orig;
@@ -634,506 +1160,31 @@ class FastICA {
     int initial_state_mode = 0;
 
     Matrix B;
-  
-    if(approach_ == SYMMETRIC) {
-      printf("using Symmetric approach\n");
 
-      if(initial_state_mode == 0) {
-	//generate random B
-	B.Init(d, num_of_IC_);
-
-	
-	for(index_t i = 0; i < num_of_IC_; i++) {
-	  Vector b;
-	  B.MakeColumnVector(i, &b);
-	  RandVector(b);
-	}
-	
-	/*
-	B.SetZero();
-	for(index_t i = 0; i < d; i++) {
-	  B.set(i, i, 1);
-	}
-	*/
-	  
-      }
-      
-
-      Matrix B_old, B_old2;
-
-      B_old.Init(d, num_of_IC_);
-      B_old2.Init(d, num_of_IC_);
-
-      B_old.SetZero();
-      B_old2.SetZero();
-
-
-      for(index_t round = 1; round <= (max_num_iterations_ + 1); round++) {
-	if(round == (max_num_iterations_ + 1)) {
-	  printf("No convergence after %d steps\n", max_num_iterations_);
-	
-	
-	  // orthogonalize B via: newB = B * (B' * B) ^ -.5;
-	  Matrix temp;
-	  temp.Copy(B);
-	  Orthogonalize(temp, &B);
-
-	  MulTransAOverwrite(&B, &whitening_matrix, W);
-	  MulOverwrite(&dewhitening_matrix, &B, A);
-	  return SUCCESS_PASS;
-	}
-	
-	{
-	  Matrix temp;
-	  temp.Copy(B);
-	  Orthogonalize(temp, &B);
-	  B.PrintDebug("B");
-	}
-
-	Matrix B_delta_cov;
-	MulTransAInit(&B, &B_old, &B_delta_cov);
-	double min_abs_cos = DBL_MAX;
-	for(index_t i = 0; i < d; i++) {
-	  double current_cos = fabs(B_delta_cov.get(i, i));
-	  if(current_cos < min_abs_cos) {
-	    min_abs_cos = current_cos;
-	  }
-	}
-      
-	printf("min_abs_cos = %f\n", min_abs_cos);
-
-	if(1 - min_abs_cos < epsilon_) {
-	  if(fine_tuning_enabled && not_fine) {
-	    not_fine = false;
-	    used_nonlinearity = g_fine;
-	    mu_ = mu_k * mu_orig;
-	    B_old.SetZero();
-	    B_old2.SetZero();
-	  }
-	  else {
-	    MulOverwrite(&dewhitening_matrix, &B, A);
-	    MulTransAOverwrite(&B, &whitening_matrix, W);
-	    return SUCCESS_PASS;
-	  }
-	}
-	else if(stabilization_enabled) {
-
-	  Matrix B_delta_cov2;
-	  MulTransAInit(&B, &B_old2, &B_delta_cov2);
-	  double min_abs_cos2 = DBL_MAX;
-	  for(index_t i = 0; i < d; i++) {
-	    double current_cos2 = fabs(B_delta_cov2.get(i, i));
-	    if(current_cos2 < min_abs_cos2) {
-	      min_abs_cos2 = current_cos2;
-	    }
-	  }
-
-	  if((stroke == 0) && (1 - min_abs_cos2 < epsilon_)) {
-	    stroke = mu_;
-	    mu_ *= .5;
-	    if((used_nonlinearity % 2) == 0) {
-	      used_nonlinearity += 1;
-	    }
-	  }
-	  else if(stroke > 0) {
-	    mu_ = stroke;
-	    stroke = 0;
-
-	    if((mu_ == 1) && ((used_nonlinearity % 2) != 0)) {
-	      used_nonlinearity -= 1;
-	    }
-	  }
-	  else if((!taking_long) &&
-		  (round > ((double) max_num_iterations_ / 2))) {
-	    taking_long = true;
-	    mu_ *= .5;
-	    if((used_nonlinearity % 2) == 0) {
-	      used_nonlinearity += 1;
-	    }
-	  }
-	}
-
-	B_old2.CopyValues(B_old);
-	B_old.CopyValues(B);
-
-	// show progress here, (the lack of code means no progress shown for now)
-
-
-
-	// use Newton-Raphson to update B
-
-	printf("used_nonlinearity = %d\n", used_nonlinearity);
-
-	switch(used_nonlinearity) {
-	  
-	case LOGCOSH: {
-	  SymmetricLogCoshUpdate_(n, X, &B);
-	  break;
-	}
-	
-	case LOGCOSH + 1: {
-	  SymmetricLogCoshFineTuningUpdate_(n, X, &B);
-	  break;	
-	}
-	
-	case LOGCOSH + 2: {
-	  Matrix X_sub;
-	  index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	  SymmetricLogCoshUpdate_(num_selected, X_sub, &B);
-	  break;
-	}
-	
-	case LOGCOSH + 3: {
-	  Matrix X_sub;
-	  index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	  SymmetricLogCoshFineTuningUpdate_(num_selected, X_sub, &B);
-	  break;
-	}
-
-	case GAUSS: {
-	  SymmetricGaussUpdate_(n, X, &B);
-	  break;
-	}
-	
-	case GAUSS + 1: {
-	  SymmetricGaussFineTuningUpdate_(n, X, &B);
-	  break;
-	}
-
-	case GAUSS + 2: {
-	  Matrix X_sub;
-	  index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	  SymmetricGaussUpdate_(num_selected, X_sub, &B);
-	  break;
-	}
-
-	case GAUSS + 3: {
-	  Matrix X_sub;
-	  index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	  SymmetricGaussFineTuningUpdate_(num_selected, X_sub, &B);
-	  break;
-	}
-
-	case KURTOSIS: {
-	  SymmetricKurtosisUpdate_(n, X, &B);
-	  break;
-	}
-	
-	case KURTOSIS + 1: {
-	  SymmetricKurtosisFineTuningUpdate_(n, X, &B);
-	  break;
-	}
-
-	case KURTOSIS + 2: {
-	  Matrix X_sub;
-	  index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	  SymmetricKurtosisUpdate_(num_selected, X_sub, &B);
-	  break;
-	}
-
-	case KURTOSIS + 3: {
-	  Matrix X_sub;
-	  index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	  SymmetricKurtosisFineTuningUpdate_(num_selected, X_sub, &B);
-	  break;
-	}
-
-	case SKEW: {
-	  SymmetricSkewUpdate_(n, X, &B);
-	  break;
-	}
-	
-	case SKEW + 1: {
-	  SymmetricSkewFineTuningUpdate_(n, X, &B);
-	  break;
-	}
-
-	case SKEW + 2: {
-	  Matrix X_sub;
-	  index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	  SymmetricSkewUpdate_(num_selected, X_sub, &B);
-	  break;
-	}
-	  
-	case SKEW + 3: {
-	  Matrix X_sub;
-	  index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	  SymmetricSkewFineTuningUpdate_(num_selected, X_sub, &B);
-	  break;
-	}
-	  
-	default:
-	  printf("ERROR: invalid contrast function: used_nonlinearity = %d\n",
-		 used_nonlinearity);
-	  exit(SUCCESS_FAIL);
-	  
-	}
-      }
-    }
-    else if(approach_ == DEFLATION) {
-      printf("using Deflation approach\n");
-      B.Init(d, d);
-      B.SetZero();
-
-      index_t round = 0;
-
-      index_t num_failures = 0;
-
-      while(round < num_of_IC_) {
-	mu_ = mu_orig;
-	used_nonlinearity = g_orig;
-	stroke = 0;
-	not_fine = true;
-	taking_long = false;
-	int end_fine_tuning = 0;
-	
-	Vector w;
-	if(initial_state_mode == 0) {
-	  w.Init(d);
-	  RandVector(w);
-	}
-
-	for(index_t i = 0; i < round; i++) {
-	  Vector b_i;
-	  B.MakeColumnVector(i, &b_i);
-	  la::AddExpert(-la::Dot(b_i, w), b_i, &w);
-	}
-	la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
-
-	Vector w_old, w_old2;
-	w_old.Init(d);
-	w_old.SetZero();
-	w_old2.Init(d);
-	w_old2.SetZero();
-
-	index_t i = 1;
-	index_t gabba = 1;
-	while(i <= max_num_iterations_ + gabba) {
-
-	  for(index_t j = 0; j < round; j++) {
-	    Vector b_j;
-	    B.MakeColumnVector(j, &b_j);
-	    la::AddExpert(-la::Dot(b_j, w), b_j, &w);
-	  }
-	  la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
-
-	  if(not_fine) {
-	    if(i == (max_num_iterations_ + 1)) {
-	      round++;
-	      num_failures++;
-	      if(num_failures > failure_limit) {
-		printf("Too many failures to converge (%d). Giving up.\n", num_failures);
-		return SUCCESS_FAIL;
-	      }
-	      break;
-	    }
-	  }
-	  else {
-	    if(i >= end_fine_tuning) {
-	      w_old.Copy(w);
-	    }
-	  }
-
-	  // check for convergence
-	  bool converged = false;
-	  Vector w_diff;
-	  la::SubInit(w_old, w, &w_diff);
-	  
-	  if(la::Dot(w_diff, w_diff) < epsilon_) {
-	    converged = true;
-	  }
-	  else {
-	    la::AddOverwrite(w_old, w, &w_diff);
-	    
-	    if(la::Dot(w_diff, w_diff) < epsilon_) {
-	      converged = true;
-	    }
-	  }
-
-	  if(converged) {
-	    if(fine_tuning_enabled & not_fine) {
-	      not_fine = false;
-	      gabba = max_fine_tune_;
-	      w_old.SetZero();
-	      w_old2.SetZero();
-	      used_nonlinearity = g_fine;
-	      mu_ = mu_k * mu_orig;
-
-	      end_fine_tuning = max_fine_tune_ + i;
-	    }
-	    else {
-	      num_failures = 0;
-	      Vector B_col_round, A_col_round, W_col_round;
-
-	      B.MakeColumnVector(round, &B_col_round);
-	      A -> MakeColumnVector(round, &A_col_round);
-	      W -> MakeColumnVector(round, &W_col_round);
-
-	      B_col_round.CopyValues(w);
-	      la::MulOverwrite(dewhitening_matrix, w, &A_col_round);
-	      la::MulOverwrite(w, whitening_matrix, &W_col_round);
-
-	      break; // this line is intended to take us to the next IC
-	    }
-	  }
-	  else if(stabilization_enabled) {
-	    converged = false;
-	    la::SubInit(w_old2, w, &w_diff);
-	    
-	    if(la::Dot(w_diff, w_diff) < epsilon_) {
-	      converged = true;
-	    }
-	    else {
-	      la::AddOverwrite(w_old2, w, &w_diff);
-	      
-	      if(la::Dot(w_diff, w_diff) < epsilon_) {
-		converged = true;
-	      }
-	    }
-	    
-	    if((stroke == 0) && converged) {
-	      stroke = mu_;
-	      mu_ *= .5;
-	      if((used_nonlinearity % 2) == 0) {
-		used_nonlinearity++;
-	      }
-	    }
-	    else if(stroke != 0) {
-	      mu_ = stroke;
-	      stroke = 0;
-	      if((mu_ == 1) && ((used_nonlinearity % 2) != 0)) {
-		used_nonlinearity--;
-	      }
-	    }
-	    else if(not_fine && (!taking_long) && (i > ((double) max_num_iterations_ / 2))) {
-	      taking_long = true;
-	      mu_ *= .5;
-	      if((used_nonlinearity % 2) == 0) {
-		used_nonlinearity++;
-	      }
-	    }
-	  }
-
-	  w_old2.CopyValues(w_old);
-	  w_old.CopyValues(w);
-	  
-	  printf("used_nonlinearity = %d\n", used_nonlinearity);
-
-	  switch(used_nonlinearity) {
-
-	  case LOGCOSH: {
-	    DeflationLogCoshUpdate_(n, X, &w);
-	    break;
-	  }
-
-	  case LOGCOSH + 1: {
-	    DeflationLogCoshFineTuningUpdate_(n, X, &w);
-	    break;
-	  }
-
-	  case LOGCOSH + 2: {
-	    Matrix X_sub;
-	    index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	    DeflationLogCoshUpdate_(num_selected, X_sub, &w);
-	    break;
-	  }
-
-	  case LOGCOSH + 3: {
-	    Matrix X_sub;
-	    index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	    DeflationLogCoshFineTuningUpdate_(num_selected, X_sub, &w);
-	    break;
-	  }
-
-	  case GAUSS: {
-	    DeflationGaussUpdate_(n, X, &w);
-	    break;
-	  }
-
-	  case GAUSS + 1: {
-	    DeflationGaussFineTuningUpdate_(n, X, &w);
-	    break;
-	  }
-
-	  case GAUSS + 2: {
-	    Matrix X_sub;
-	    index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	    DeflationGaussUpdate_(num_selected, X_sub, &w);
-	    break;
-	  }
-
-	  case GAUSS + 3: {
-	    Matrix X_sub;
-	    index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	    DeflationGaussFineTuningUpdate_(num_selected, X_sub, &w);
-	    break;
-	  }
-
-	  case KURTOSIS: {
-	    DeflationKurtosisUpdate_(n, X, &w);
-	    break;
-	  }
-
-	  case KURTOSIS + 1: {
-	    DeflationKurtosisFineTuningUpdate_(n, X, &w);
-	    break;
-	  }
-
-	  case KURTOSIS + 2: {
-	    Matrix X_sub;
-	    index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	    DeflationKurtosisUpdate_(num_selected, X_sub, &w);
-	    break;
-	  }
-
-	  case KURTOSIS + 3: {
-	    Matrix X_sub;
-	    index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	    DeflationKurtosisFineTuningUpdate_(num_selected, X_sub, &w);
-	    break;
-	  }
-
-	  case SKEW: {
-	    DeflationSkewUpdate_(n, X, &w);
-	    break;
-	  }
-
-	  case SKEW + 1: {
-	    DeflationSkewFineTuningUpdate_(n, X, &w);
-	    break;
-	  }
-
-	  case SKEW + 2: {
-	    Matrix X_sub;
-	    index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	    DeflationSkewUpdate_(num_selected, X_sub, &w);
-	    break;
-	  }
-
-	  case SKEW + 3: {
-	    Matrix X_sub;
-	    index_t num_selected = RandomSubMatrix(n, percent_cut_, X, &X_sub);
-	    DeflationSkewFineTuningUpdate_(num_selected, X_sub, &w);
-	    break;
-	  }
-	    
-	  default: 
-	    printf("ERROR: invalid contrast function: used_nonlinearity = %d\n",
-		   used_nonlinearity);
-	    exit(SUCCESS_FAIL);
-	    
-	  }
-	
-	  la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
-	  i++;
-	}
-	round++;
-      }
-    }
+    int ret_val = SUCCESS_FAIL;
     
-    // this code should be unreachable
-    MulTransAOverwrite(&B, &whitening_matrix, W);
-    return SUCCESS_FAIL; 
+    if(approach() == SYMMETRIC) {
+      printf("using Symmetric approach\n");
+      ret_val = 
+	SymmetricFixedPointICA(stabilization_enabled, fine_tuning_enabled,
+			       mu_orig, mu_k, failure_limit,
+			       used_nonlinearity, g_fine, stroke,
+			       not_fine, taking_long, initial_state_mode,
+			       X, &B, W, A,
+			       &whitening_matrix, &dewhitening_matrix);
+    }
+    else if(approach() == DEFLATION) {
+      printf("using Deflation approach\n");
+      ret_val = 
+	DeflationFixedPointICA(stabilization_enabled, fine_tuning_enabled,
+			       mu_orig, mu_k, failure_limit,
+			       used_nonlinearity, g_orig, g_fine,
+			       stroke, not_fine, taking_long, initial_state_mode,
+			       X, &B, W, A,
+			       &whitening_matrix, &dewhitening_matrix);
+    }
+
+    return ret_val;
   }
 
 
@@ -1144,7 +1195,7 @@ class FastICA {
   int DoFastICA(datanode *module, Matrix *W, Matrix *Y) {
 
     const char *string_approach =
-      fx_param_str(NULL, "approach", "symmetric");
+      fx_param_str(NULL, "approach", "deflation");
     if(strcasecmp(string_approach, "deflation") == 0) {
       approach_ = DEFLATION;
     }
@@ -1173,7 +1224,7 @@ class FastICA {
       nonlinearity_ = SKEW;
     }
     else {
-      printf("ERROR: nonlinearity not in {'logcosh', 'gauss', 'kurtosis', 'skew'}\n");
+      printf("ERROR: nonlinearity not in {logcosh, gauss, kurtosis, skew}\n");
       W -> Init(0,0);
       Y -> Init(0,0);
       return SUCCESS_FAIL;
@@ -1187,7 +1238,7 @@ class FastICA {
     a1_ = fx_param_double(NULL, "a1", 1);
     a2_ = fx_param_double(NULL, "a2", 1);
     mu_ = fx_param_double(NULL, "mu", 1);
-    stabilization_ = fx_param_bool(NULL, "stabilization", true);
+    stabilization_ = fx_param_bool(NULL, "stabilization", false);
     epsilon_ = fx_param_double(NULL, "epsilon", 0.0001);
   
     int int_max_num_iterations = fx_param_int(NULL, "max_num_iterations", 1000);
@@ -1211,9 +1262,9 @@ class FastICA {
     max_fine_tune_ = (index_t) int_max_fine_tune;
 
     percent_cut_ = fx_param_double(NULL, "percent_cut", 1);
-    if((percent_cut_ < 0) || (percent_cut_ > 1)) {
+    if((percent_cut() < 0) || (percent_cut() > 1)) {
       printf("ERROR: percent_cut = %f must be an element in [0,1]\n",
-	     percent_cut_);
+	     percent_cut());
       W -> Init(0,0);
       Y -> Init(0,0);
       return SUCCESS_FAIL;
@@ -1221,7 +1272,7 @@ class FastICA {
 
     Matrix X_centered, X_whitened, whitening_matrix, dewhitening_matrix, A;
 
-    Center(X_, &X_centered);
+    Center(X(), &X_centered);
 
     WhitenUsingEig(X_centered, &X_whitened, &whitening_matrix, &dewhitening_matrix);
   
@@ -1230,7 +1281,7 @@ class FastICA {
 
     if(ret_val == SUCCESS_PASS) {
       W -> PrintDebug("W");
-      la::MulInit(*W, X_, Y);
+      la::MulInit(*W, X(), Y);
     }
     else {
       Y -> Init(0,0);
