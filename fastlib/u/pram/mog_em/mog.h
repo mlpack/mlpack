@@ -91,6 +91,18 @@ class MoGEM {
   Vector& mu(index_t i) {
     return mu_[i] ;
   }
+
+  void set_mu(index_t i, Vector& mu) {
+    mu_[i].CopyValues(mu);
+  }
+
+  void set_sigma(index_t i, Matrix& sigma) {
+    sigma_[i].CopyValues(sigma);
+  }
+
+  void set_omega(Vector& omega) {
+    omega_.CopyValues(omega);
+  }
 		
   Matrix& sigma(index_t i) {
     return sigma_[i];
@@ -181,7 +193,7 @@ class MoGEM {
    */
   void ExpectationMaximization(Matrix& data_points, ArrayList<double> *results);
 
- /**
+  /**
    * This function computes the loglikelihood of model.
    * This function is used by the 'ExpectationMaximization'
    * function.
@@ -190,7 +202,7 @@ class MoGEM {
   long double Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
 			    ArrayList<Matrix>& covars, Vector& weights);
 
- /**
+  /**
    * This function computes the k-means of the data and stores
    * the calculated means and covariances in the ArrayList
    * of Vectors and Matrices passed to it. It sets the weights 

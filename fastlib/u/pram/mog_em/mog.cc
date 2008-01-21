@@ -125,10 +125,10 @@ void MoGEM::ExpectationMaximization(Matrix& data_points, ArrayList<double> *resu
     if(l > best_l){
       best_l = l;
       for (index_t i = 0; i < num_gauss; i++) {
-	mu_[i].CopyValues(mu_temp[i]);
-	sigma_[i].CopyValues(sigma_temp[i]);
-	omega_.CopyValues(omega_temp);
+	set_mu(i, mu_temp[i]);
+	set_sigma(i, sigma_temp[i]);
       }
+      set_omega(omega_temp);
     }
     restarts++;
   }	
