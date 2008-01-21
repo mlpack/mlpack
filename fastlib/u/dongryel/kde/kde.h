@@ -1,63 +1,62 @@
-/**
- * @file kde.h
+/** @file kde.h
  *
- * This file contains an implementation of kernel density estimation
- * for a linkable library component. It implements a rudimentary
- * depth-first dual-tree algorithm with finite difference and
- * series-expansion approximations, using the formalized GNP framework
- * by Ryan and Garry. Currently, it supports a fixed-bandwidth,
- * uniform weight kernel density estimation with no multi-bandwidth
- * optimizations. We assume that users will be able to cross-validate
- * for the optimal bandwidth using a black-box optimizer which is not
- * implemented in this code.
+ *  This file contains an implementation of kernel density estimation
+ *  for a linkable library component. It implements a rudimentary
+ *  depth-first dual-tree algorithm with finite difference and
+ *  series-expansion approximations, using the formalized GNP framework
+ *  by Ryan and Garry. Currently, it supports a fixed-bandwidth,
+ *  uniform weight kernel density estimation with no multi-bandwidth
+ *  optimizations. We assume that users will be able to cross-validate
+ *  for the optimal bandwidth using a black-box optimizer which is not
+ *  implemented in this code.
  *
- * For more details on mathematical derivations, please take a look at
- * the published conference papers (in chronological order):
+ *  For more details on mathematical derivations, please take a look at
+ *  the published conference papers (in chronological order):
  *
- * @inproceedings{DBLP:conf/sdm/GrayM03,
- *  author    = {Alexander G. Gray and Andrew W. Moore},
- *  title     = {Nonparametric Density Estimation: Toward Computational 
- *               Tractability},
- *  booktitle = {SDM},
- *  year      = {2003},
- *  ee        = {http://www.siam.org/meetings/sdm03/proceedings/sdm03_19.pdf},
- *  crossref  = {DBLP:conf/sdm/2003},
- *  bibsource = {DBLP, http://dblp.uni-trier.de}
- * }
+ *  inproceedings{DBLP:conf/sdm/GrayM03,
+ *   author    = {Alexander G. Gray and Andrew W. Moore},
+ *   title     = {Nonparametric Density Estimation: Toward Computational 
+ *                Tractability},
+ *   booktitle = {SDM},
+ *   year      = {2003},
+ *   ee        = {http://www.siam.org/meetings/sdm03/proceedings/sdm03_19.pdf},
+ *   crossref  = {DBLP:conf/sdm/2003},
+ *   bibsource = {DBLP, http://dblp.uni-trier.de}
+ *  }
  *
- * @misc{ gray03rapid,
- *  author = "A. Gray and A. Moore",
- *  title = "Rapid evaluation of multiple density models",
- *  booktitle = "In C. M. Bishop and B. J. Frey, editors, 
- *               Proceedings of the Ninth International Workshop on 
- *               Artificial Intelligence and Statistics",
- *  year = "2003",
- *  url = "citeseer.ist.psu.edu/gray03rapid.html"
- * }
+ *  misc{ gray03rapid,
+ *   author = "A. Gray and A. Moore",
+ *   title = "Rapid evaluation of multiple density models",
+ *   booktitle = "In C. M. Bishop and B. J. Frey, editors, 
+ *                Proceedings of the Ninth International Workshop on 
+ *                Artificial Intelligence and Statistics",
+ *   year = "2003",
+ *   url = "citeseer.ist.psu.edu/gray03rapid.html"
+ *  }
  *
- * @incollection{NIPS2005_570,
- *  title = {Dual-Tree Fast Gauss Transforms},
- *  author = {Dongryeol Lee and Alexander Gray and Andrew Moore},
- *  booktitle = {Advances in Neural Information Processing Systems 18},
- *  editor = {Y. Weiss and B. Sch\"{o}lkopf and J. Platt},
- *  publisher = {MIT Press},
- *  address = {Cambridge, MA},
- *  pages = {747--754},
- *  year = {2006}
- * }
+ *  incollection{NIPS2005_570,
+ *   title = {Dual-Tree Fast Gauss Transforms},
+ *   author = {Dongryeol Lee and Alexander Gray and Andrew Moore},
+ *   booktitle = {Advances in Neural Information Processing Systems 18},
+ *   editor = {Y. Weiss and B. Sch\"{o}lkopf and J. Platt},
+ *   publisher = {MIT Press},
+ *   address = {Cambridge, MA},
+ *   pages = {747--754},
+ *   year = {2006}
+ *  }
  *
- * @inproceedings{DBLP:conf/uai/LeeG06,
- *  author    = {Dongryeol Lee and Alexander G. Gray},
- *  title     = {Faster Gaussian Summation: Theory and Experiment},
- *  booktitle = {UAI},
- *  year      = {2006},
- *  crossref  = {DBLP:conf/uai/2006},
- *  bibsource = {DBLP, http://dblp.uni-trier.de}
- * }
+ *  inproceedings{DBLP:conf/uai/LeeG06,
+ *   author    = {Dongryeol Lee and Alexander G. Gray},
+ *   title     = {Faster Gaussian Summation: Theory and Experiment},
+ *   booktitle = {UAI},
+ *   year      = {2006},
+ *   crossref  = {DBLP:conf/uai/2006},
+ *   bibsource = {DBLP, http://dblp.uni-trier.de}
+ *  }
  *
- * @author Dongryeol Lee (dongryel)
- * @see kde_main.cc
- * @bugs No known bugs.
+ *  @author Dongryeol Lee (dongryel)
+ *  @see kde_main.cc
+ *  @bug No known bugs.
  */
 
 #ifndef KDE_H

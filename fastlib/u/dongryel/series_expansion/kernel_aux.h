@@ -3,6 +3,9 @@
  *
  * The header file for the class for computing auxiliary stuffs for the kernel
  * functions (derivative, truncation error bound)
+ *
+ * @author Dongryeol Lee (dongryel)
+ * @bugs No known bugs.
  */
 
 #ifndef KERNEL_AUX

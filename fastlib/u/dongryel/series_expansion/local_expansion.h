@@ -1,7 +1,12 @@
 /**
  * @file local_expansion.h
  *
- * The header file for the local expansion
+ * This file contains a templatized class implementing $O(D^p)$
+ * expansion for computing the coefficients for a local expansion for
+ * an arbitrary kernel function.
+ *
+ * @author Dongryeol Lee (dongryel)
+ * @bugs No known bugs.
  */
 
 #ifndef LOCAL_EXPANSION

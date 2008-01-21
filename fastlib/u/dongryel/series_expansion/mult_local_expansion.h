@@ -1,7 +1,12 @@
 /**
  * @file local_expansion.h
  *
- * The header file for the local expansion
+ * This file contains a templatized class implementing $O(p^D)$
+ * expansion for computing the coefficients for a far-field expansion
+ * for a arbitrary multiplicative kernel function.
+ *
+ * @author Dongryeol Lee (dongryel)
+ * @bugs No known bugs.
  */
 
 #ifndef MULT_LOCAL_EXPANSION
