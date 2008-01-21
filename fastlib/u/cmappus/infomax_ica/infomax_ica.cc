@@ -193,8 +193,11 @@ void InfomaxICA::invertVals(Matrix &m){
  * Identity matrix function 
  */
 Matrix InfomaxICA::eye(index_t dim, double diagVal){
-  Matrix output = Matrix(dim,dim);
-  output.SetDiagonal(diagVal);
+  Matrix output;
+  Vector *diag = new Vector();
+  diag->Init(dim);
+  diag->SetAll(diagVal);
+  output.InitDiagonal(*diag);
   return output;
 }
 
