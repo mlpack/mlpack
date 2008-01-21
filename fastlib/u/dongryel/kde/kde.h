@@ -15,8 +15,7 @@
  * published conference papers (in chronological order):
  *
  * @inproceedings{DBLP:conf/sdm/GrayM03,
- *  author    = {Alexander G. Gray and
- *               Andrew W. Moore},
+ *  author    = {Alexander G. Gray and Andrew W. Moore},
  *  title     = {Nonparametric Density Estimation: Toward Computational 
  *               Tractability},
  *  booktitle = {SDM},
@@ -48,8 +47,7 @@
  * }
  *
  * @inproceedings{DBLP:conf/uai/LeeG06,
- *  author    = {Dongryeol Lee and
- *               Alexander G. Gray},
+ *  author    = {Dongryeol Lee and Alexander G. Gray},
  *  title     = {Faster Gaussian Summation: Theory and Experiment},
  *  booktitle = {UAI},
  *  year      = {2006},
@@ -84,12 +82,16 @@
  *
  * @code
  *   FastKde fast_kde;
- *   struct datanode* allnn_module;
- *   ArrayList<index_t> results;
+ *   struct datanode* kde_module;
+ *   Vector results;
  *
- *   allnn_module = fx_submodule(NULL, "allnn", "allnn");
- *   allnn.Init(query_set, reference_set, allnn_module);
- *   allnn.ComputeNeighbors(&results);
+ *   kde_module = fx_submodule(NULL, "kde", "kde");
+ *   fast_kde.Init(queries, references, queries_equal_references,
+ *                 kde_module);
+ *   fast_kde.Compute(); 
+ *   
+ *   // important to make sure that you don't call Init on results!
+ *   fast_kde.get_density_estimates(&results);
  * @endcode
  */
 template<typename TKernelAux>
@@ -149,6 +151,7 @@ class FastKde {
       // get bandwidth and relative error
       bandwidth_ = fx_param_double_req(module, "bandwidth");
       relative_error_ = fx_param_double(module, "relative_error", 0.1);
+      DEBUG_ASSERT(bandwidth_ > 0 && relative_error_ > 0);
 
       // temporarily initialize these to -1's
       dimension_ = reference_count_ = query_count_ = -1;
