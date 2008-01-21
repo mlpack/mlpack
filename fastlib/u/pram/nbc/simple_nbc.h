@@ -70,10 +70,6 @@ class SimpleNaiveBayesClassifier {
   }
 
   ~SimpleNaiveBayesClassifier(){
-    means_.~Matrix();
-    variances_.~Matrix();
-    class_probabilities_.Clear();
-    class_probabilities_.Destruct();
   }
 
 
