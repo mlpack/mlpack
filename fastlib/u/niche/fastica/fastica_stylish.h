@@ -395,10 +395,76 @@ class FastICA {
   index_t d;
   index_t n;
 
+  int approach() {
+    return approach_;
+  }
 
+  int nonlinearity() {
+    return nonlinearity;
+  }
+
+  //  index_t first_eig() {
+  //    return first_eig_;
+  //  }
+
+  //  index_t last_eig() {
+  //    return last_eig_;
+  //  }
+
+  index_t num_of_IC() {
+    return num_of_IC_;
+  }
+
+  bool fine_tune() {
+    return fine_tune_;
+  }
+
+  double a1() {
+    return a1_;
+  }
+
+  double a2() {
+    return a2_;
+  }
+
+  double mu() {
+    return mu_;
+  }
+
+  bool stabilization() {
+    return stabilization_;
+  }
+
+  double epsilon() {
+    return epsilon_;
+  }
+
+  index_t max_num_iterations() {
+    return max_num_iterations_;
+  }
+
+  index_t max_fine_tune() {
+    return max_fine_tune_;
+  }
+
+  double percent_cut() {
+    return percent_cut_;
+  }
+
+  double X() {
+    return X_;
+  }
+
+
+  /** 
+   * Default constructor does nothing special
+   */
   FastICA() {
   }
 
+  /**
+   * Pass in the data matrix
+   */
   void Init(Matrix X_in) {
     X_.Copy(X_in); // for some reason Alias makes this crash, so copy for now
     d = X_.n_rows();
@@ -483,7 +549,6 @@ class FastICA {
     return num_selected;
   }
 
-  
 
   /**
    * Run the fixed point iterative component of FastICA
@@ -1066,16 +1131,15 @@ class FastICA {
       }
     }
     
+    // this code should be unreachable
     MulTransAOverwrite(&B, &whitening_matrix, W);
-
-    return SUCCESS_FAIL; // it should be impossible to arrive at this line
-  
+    return SUCCESS_FAIL; 
   }
 
 
   /**
-   * Runs FastICA Algorithm on matrix X and stores matrix W and
-   * independent components matrix Y, where X = W * Y)
+   * Runs FastICA Algorithm on matrix X and Inits W to unmixing matrix and Y to
+   * independent components matrix, such that \f$ X = W * Y \f$
    */
   int DoFastICA(datanode *module, Matrix *W, Matrix *Y) {
 
