@@ -102,6 +102,11 @@ class NaiveKde {
       double rel_err = fabs(density_estimates[q] - densities_[q]) / 
 	densities_[q];
 
+      if(isnan(density_estimates[q]) || isinf(density_estimates[q]) || 
+	 isnan(densities_[q]) || isinf(densities_[q])) {
+	VERBOSE_MSG("Warning: Got infs or nans!\n");
+      }
+
       if(rel_err > max_rel_err) {
 	max_rel_err = rel_err;
       }

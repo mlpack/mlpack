@@ -30,7 +30,7 @@
 
 
 /**
- * A computation class for FFT based kernel density estimation
+ * A computation class for FGT based kernel density estimation
  *
  * This class is only inteded to compute once per instantiation.
  *
@@ -666,6 +666,10 @@ class FGTKde {
     return multipolesum;
   }
 
+  /**
+   * Go through each query boxes and evaluate the local expansions
+   * accumulated in each box.
+   */
   void gaeval(double delta, int nterms, int nallbx,
 	      ArrayList<int> &nsides, Matrix &locexp, int nlmax,
 	      ArrayList<ArrayList<int> > &queries_assigned, 
@@ -690,7 +694,6 @@ class FGTKde {
 	  
 	  double result = compute_v_alpha(row_q, x_Q, sqrt(delta), 
 					  i, locexp, totalnumcoeffs, nterms);
-	  
 	  densities_[row_q] += result;
 	}
       }
@@ -800,7 +803,6 @@ class FGTKde {
 
 	  // If this is true, evaluate far field expansion at each query point.
 	  if(ninnbr <= nlmax) {
-
 	    EvaluateMultipoleExpansion(query_rows, nterms,
 				       totalnumcoeffs, mcoeffs,
 				       i, delta, center.GetColumnPtr(i));
@@ -819,8 +821,10 @@ class FGTKde {
 	}
       }
     }
+
     gaeval(delta, nterms, nallbx, nsides, locexp, nlmax,
 	   queries_assigned, center, totalnumcoeffs);
+
   }
 
   void gauss_t(double delta, int nterms, int nallbx, ArrayList<int> &nsides, 
@@ -847,17 +851,15 @@ class FGTKde {
 
  public:
 
+  ////////// Constructor/Destructor //////////
+  
+  /** constructor */
   FGTKde() {}
   
+  /** destructor */
   ~FGTKde() {}
   
-  // getters and setters
-  
-  /** get the reference dataset */
-  Matrix &get_reference_dataset() { return rset_; }
-
-  /** get the query dataset */
-  Matrix &get_query_dataset() { return qset_; }
+  ////////// Getters/Setters //////////
 
   /** get the density estimate */
   void get_density_estimates(Vector *results) {
@@ -868,13 +870,15 @@ class FGTKde {
     }
   }
 
+  ///////// Initialization and computation //////////
+
   /** initialize with the given query and the reference datasets */
   void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
 
     // initialize with the incoming module holding the paramters
     module_ = module_in;
 
-    // initialize the kernel and read in the number of grid points
+    // initialize the kernel
     kernel_.Init(fx_param_double_req(module_, "bandwidth"));
 
     // set aliases to the query and reference datasets and initialize
@@ -927,8 +931,10 @@ class FGTKde {
      * Figure out how many boxes lie along each direction.
      */
     for(di = 0; di < dim; di++) {
+
       nsides[di] = (int) 
 	((maxcoords[di] - mincoords[di]) / bandwidth + 1);
+
       (*nboxes) = (*nboxes) * nsides[di];
       double tmp = (maxcoords[di] - mincoords[di]) /
 	(nsides[di] * 2 * bandwidth);
@@ -939,7 +945,7 @@ class FGTKde {
 
       sidelengths[di] = (maxcoords[di] - mincoords[di]) / 
 	((double) nsides[di]);
-      
+
     }
     
     int ip = 0;
@@ -969,6 +975,9 @@ class FGTKde {
     *nterms = ip;
   }
 
+  /** 
+   * Compute KDE estimates using fast Gauss transform.
+   */
   void Compute() {
 
     double interaction_radius;
@@ -984,7 +993,6 @@ class FGTKde {
 
     printf("Computing FGT KDE...\n");
     
-
     // initialize densities to zero
     densities_.SetZero();
 
@@ -995,7 +1003,7 @@ class FGTKde {
 
     // precompute factorials
     msea_.Init(nterms - 1, qset_.n_rows());
-
+    
     // stores the coordinate of each grid box
     Matrix center;
     center.Init(dim, nboxes);
@@ -1003,6 +1011,7 @@ class FGTKde {
     // stores the local expansion of each grid box
     Matrix locexp;
     locexp.Init((int) pow(nterms, dim), nboxes);
+    locexp.SetZero();
 
     // stores the ids of query points assigned to each grid box
     ArrayList<ArrayList<int> > queries_assigned;
@@ -1023,6 +1032,7 @@ class FGTKde {
     // stores the multipole moments of the reference points in each grid box
     Matrix mcoeffs;
     mcoeffs.Init((int)pow(nterms, dim), nboxes);
+    mcoeffs.SetZero();
     
     double delta = 2 * kernel_.bandwidth_sq();
 
@@ -1043,6 +1053,7 @@ class FGTKde {
   void NormalizeDensities() {
     double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
       rset_.n_cols();
+
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       densities_[q] /= norm_const;
     }
