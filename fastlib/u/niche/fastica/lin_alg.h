@@ -120,7 +120,7 @@ namespace linalg {
   /**
    * Sums over the rows of a M by N matrix and Inits a 1 by N matrix storing
    * the sum
-   * (sum\_vector \f$ \gets \sum_i \vec{A_{row i}} \f$)
+   * (sum_vector \f$ \gets \sum_i \vec{A_{row i}} \f$)
    */
   Matrix* Sum(const Matrix* const A, Matrix *sum_vector) {
     index_t n_rows = A -> n_rows();
@@ -160,7 +160,7 @@ namespace linalg {
    * Applies function with argument arg to a M by N Matrix and Inits a 1 by N
    * matrix to the sum over the transformed rows
    * (\f$ \tilde{A}_{i,j} \gets function(A_{i,j}, arg) \f$,
-   * sum\_vector \f$ \gets \sum_i \vec{\tilde{A}_{row i}} \f$)
+   * sum_vector \f$ \gets \sum_i \vec{\tilde{A}_{row i}} \f$)
    */
   Matrix* MatrixMapSum(double (*function)(double,double),
 		       double arg,
@@ -287,7 +287,7 @@ namespace linalg {
   /**
    * Multiplies A and B (N by M matrices) entry-wise and Inits a 1 by N matrix
    * to the sum over the transformed rows of the result
-   * (\f$ C = A \bullet B \f$, sum\_vector \f$ \gets \sum_i \vec{C_{row i}} \f$)
+   * (\f$ C = A \bullet B \f$, sum_vector \f$ \gets \sum_i \vec{C_{row i}} \f$)
    */
   Matrix* DotMultiplySum(const Matrix* const A, const Matrix* const B,
 			 Matrix* sum_vector) {

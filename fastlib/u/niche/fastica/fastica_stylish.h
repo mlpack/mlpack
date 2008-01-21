@@ -44,12 +44,9 @@ double drand48()
 */
 
 /**
- * TODO: This is the raison d'être of this class
+ * Class for running FastICA Algorithm
  *
- * Example use:
- *
- * @code
- * TODO: write an example use
+ * This class takes in a D by N data matrix and runs FastICA
  */
 class FastICA {
   
