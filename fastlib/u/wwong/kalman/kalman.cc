@@ -59,9 +59,10 @@ void KalmanFiltTimeInvariantTimeUpdate(const ssm& LDS, const Vector& x_hat_t, co
   // P_pred_t_next = A*P_hat_t*A' + Q;
   // inno_cov_t_next = C*P_pred_t_next*C' + R;
 
-  // Due to potentially non-zero S, need to compute A_eff, E, Q_eff
-  Matrix A_eff(LDS.A.n_rows(),LDS.A.n_cols()), Q_eff(LDS.Q.n_rows(),LDS.Q.n_cols()), E;
-  A_eff = schur(LDS.A,LDS.S,LDS.R,LDS.C ); // A_eff = A - S*inv(R)*C
+  // Due to potentially non-zero S, need to compute A_eff, B_eff, E, Q_eff
+  Matrix A_eff(LDS.A.n_rows(),LDS.A.n_cols()), B_eff(LDS.B.n_rows(),LDS.B.n_cols()), Q_eff(LDS.Q.n_rows(),LDS.Q.n_cols()), E;
+  A_eff = schur(LDS.A, LDS.S, LDS.R, LDS.C ); // A_eff = A - S*inv(R)*C
+  B_eff = schur(LDS.B, LDS.S, LDS.R, LDS.D ); // B_eff = B - S*inv(R)*D
   Matrix invR; la::InverseInit(LDS.R, &invR); 
   la::MulInit(LDS.S,invR,&E); // E = S*inv(R);
   Matrix Strans; la::TransposeInit(LDS.S,&Strans);
@@ -101,47 +102,51 @@ void KalmanFiltTimeInvariantTimeUpdate(const ssm& LDS, const Vector& x_hat_t, co
   la::AddTo(LDS.R, &inno_cov_t_next); // inno_cov_t_next  = R + C*P_pred_t_next*C';
 
   la::MulInit(A_eff,x_hat_t,&temp_2); la::MulInit(E,y_t,&temp_3); la::AddTo(temp_2, &temp_3); // temp_3 = A_eff*x_hat_t + E*y_t;     
-  la::MulOverwrite(LDS.B,u_t,&x_pred_t_next); la::AddTo(temp_3,&x_pred_t_next); // x_pred_t_next = A_eff*x_hat_t + E*y_t + B*u_t; 
+  la::MulOverwrite(B_eff,u_t,&x_pred_t_next); la::AddTo(temp_3,&x_pred_t_next); // x_pred_t_next = A_eff*x_hat_t + E*y_t + B_eff*u_t; 
   la::MulOverwrite(LDS.C,x_pred_t_next, &y_pred_t_next); la::MulInit(LDS.D,u_t_next,&temp_4); 
   la::AddTo(temp_4,&y_pred_t_next); // y_pred_t_next = C*x_pred_t_next + D*u_t_next;
 };
 
 void KalmanFiltTimeInvariant(const int& T, const ssm& LDS, const Matrix& u, const Matrix& y, Matrix* x_pred, Matrix P_pred[], Matrix* x_hat, Matrix P_hat[], Matrix* y_pred, Matrix inno_cov[], Matrix K[] )
 {
-  Vector y_t, u_t, u_t_next, x_pred_t ,x_pred_t_next, x_hat_t, y_pred_t, y_pred_t_next; // aliases, no need to .Init(length);
-
+  //y    Vector y_t, u_t, u_t_next, x_pred_t ,x_pred_t_next, x_hat_t, y_pred_t, y_pred_t_next; // aliases, no need to .Init(length);
   for (int t =0; t<=T ;t++) {
-  //Assign References recalling that arrays are by def, passed by reference
-  y.MakeColumnVector(t, &y_t);
-  u.MakeColumnVector(t, &u_t);
-  u.MakeColumnVector(t+1, &u_t_next);
-  (*x_hat).MakeColumnVector(t, &x_hat_t);
-  (*x_pred).MakeColumnVector(t, &x_pred_t);
-  (*x_pred).MakeColumnVector(t+1, &x_pred_t_next);
-  (*y_pred).MakeColumnVector(t, &y_pred_t);
-  (*y_pred).MakeColumnVector(t+1, &y_pred_t_next);
-     
-  // Measurement Update
-  KalmanFiltTimeInvariantMstUpdate(LDS, y_t, u_t, x_pred_t, P_pred[t], y_pred_t, inno_cov[t], x_hat_t, P_hat[t], K[t]);
+    Vector y_t, u_t, u_t_next, x_pred_t ,x_pred_t_next, x_hat_t, y_pred_t, y_pred_t_next; // aliases, no need to .Init(length);
 
-  // Time Update
-  KalmanFiltTimeInvariantTimeUpdate(LDS, x_hat_t, P_hat[t], y_t, u_t, u_t_next, x_pred_t_next, y_pred_t_next, P_pred[t+1], inno_cov[t+1]);
+  //Assign References recalling that arrays are by def, passed by reference
+    y.MakeColumnVector(t, &y_t);
+    u.MakeColumnVector(t, &u_t);
+    u.MakeColumnVector(t+1, &u_t_next);
+    (*x_hat).MakeColumnVector(t, &x_hat_t);
+    (*x_pred).MakeColumnVector(t, &x_pred_t);
+    (*x_pred).MakeColumnVector(t+1, &x_pred_t_next);
+    (*y_pred).MakeColumnVector(t, &y_pred_t);
+    (*y_pred).MakeColumnVector(t+1, &y_pred_t_next);
+     
+    // Measurement Update
+    KalmanFiltTimeInvariantMstUpdate(LDS, y_t, u_t, x_pred_t, P_pred[t], y_pred_t, inno_cov[t], x_hat_t, P_hat[t], K[t]);
+
+    // Time Update
+    KalmanFiltTimeInvariantTimeUpdate(LDS, x_hat_t, P_hat[t], y_t, u_t, u_t_next, x_pred_t_next, y_pred_t_next, P_pred[t+1], inno_cov[t+1]);
  
       
-  if (t == T){ // last measurement update for t = T+1
-    Vector y_T_next, u_T_next, x_hat_T_next;
+    if (t == T){ // last measurement update for t = T+1
+      Vector y_T_next, u_T_next, x_hat_T_next;
 
-    y.MakeColumnVector(T+1,&y_T_next);
-    y.MakeColumnVector(T+1,&u_T_next);
-    (*x_hat).MakeColumnVector(T+1,&x_hat_T_next);
+      y.MakeColumnVector(T+1,&y_T_next);
+      y.MakeColumnVector(T+1,&u_T_next);
+      (*x_hat).MakeColumnVector(T+1,&x_hat_T_next);
 
-    KalmanFiltTimeInvariantMstUpdate(LDS, y_T_next, u_T_next, x_pred_t_next, P_pred[t+1], y_pred_t_next, inno_cov[t+1], x_hat_T_next, P_hat[t+1], K[t+1]);     
-  } else{
-    // Destruct so that re-init can take place
-    y_t.Destruct(); u_t.Destruct(); u_t_next.Destruct();
-    x_hat_t.Destruct(); 
-    x_pred_t.Destruct();  x_pred_t_next.Destruct();
-    y_pred_t.Destruct();  y_pred_t_next.Destruct(); 
-   }; 
+      KalmanFiltTimeInvariantMstUpdate(LDS, y_T_next, u_T_next, x_pred_t_next, P_pred[t+1], y_pred_t_next, inno_cov[t+1], x_hat_T_next, P_hat[t+1], K[t+1]);     
+    }
+#if 0
+ else{
+      // Destruct so that re-init can take place
+      y_t.Destruct(); u_t.Destruct(); u_t_next.Destruct();
+      x_hat_t.Destruct(); 
+      x_pred_t.Destruct();  x_pred_t_next.Destruct();
+      y_pred_t.Destruct();  y_pred_t_next.Destruct(); 
+    }; 
+#endif
   }; 
 };

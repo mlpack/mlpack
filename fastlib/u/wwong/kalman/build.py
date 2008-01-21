@@ -1,6 +1,6 @@
 
 librule(
-    name = "example",              # this line can be safely omitted
+    name = "kalman",              # this line can be safely omitted
     sources = ["header.cc","kalman.cc"],       # files that must be compiled
     headers = ["header.h","kalman.h"],        # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]  # depends on fastlib core
@@ -10,7 +10,7 @@ binrule(
     name = "main",                 # the executable name
     sources = ["main.cc"],         # compile main.cc
     headers = [],                  # no extra headers
-    linkables = [":example"]       # depends on example in this folder
+    deplibs = [":kalman"]       # depends on example in this folder
     )
 
 # to build:
