@@ -59,14 +59,9 @@ class MoGEM {
     // Resize the ArrayList of Vectors and Matrices
     mu_.Resize(number_of_gaussians_);
     sigma_.Resize(number_of_gaussians_);
-
-    // Initialize sizes of the Vectors and Matrices
-    omega_.Init(number_of_gaussians_);
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
-      mu_[i].Init(dimension_);
-      sigma_[i].Init(dimension_, dimension_);
-    }
   }
+
+  // The get functions
 
   ArrayList<Vector>& mu() {
     return mu_;
@@ -91,18 +86,6 @@ class MoGEM {
   Vector& mu(index_t i) {
     return mu_[i] ;
   }
-
-  void set_mu(index_t i, Vector& mu) {
-    mu_[i].CopyValues(mu);
-  }
-
-  void set_sigma(index_t i, Matrix& sigma) {
-    sigma_[i].CopyValues(sigma);
-  }
-
-  void set_omega(Vector& omega) {
-    omega_.CopyValues(omega);
-  }
 		
   Matrix& sigma(index_t i) {
     return sigma_[i];
@@ -111,6 +94,43 @@ class MoGEM {
   double omega(index_t i) {
     return omega_.get(i);
   }
+
+  // The set functions
+
+  void set_mu(index_t i, Vector& mu) {
+    DEBUG_ASSERT(i < number_of_gaussians());
+    DEBUG_ASSERT(mu.length() == dimension()); 
+    mu_[i].Copy(mu);
+    return;
+  }
+
+  void set_mu(index_t i, index_t length, const double *mu) {
+    DEBUG_ASSERT(i < number_of_gaussians());
+    DEBUG_ASSERT(length == dimension());
+    mu_[i].Copy(mu, length);
+    return;
+  }
+
+  void set_sigma(index_t i, Matrix& sigma) {
+    DEBUG_ASSERT(i < number_of_gaussians());
+    DEBUG_ASSERT(sigma.n_rows() == dimension());
+    DEBUG_ASSERT(sigma.n_cols() == dimension());
+    sigma_[i].Copy(sigma);
+    return;
+  }
+
+  void set_omega(Vector& omega) {
+    DEBUG_ASSERT(omega.length() == number_of_gaussians());
+    omega_.Copy(omega);
+    return;
+  }
+
+  void set_omega(index_t length, const double *omega) {
+    DEBUG_ASSERT(length == number_of_gaussians());
+    omega_.Copy(omega, length);
+    return;
+  }
+
 
   /**
    * This function outputs the parameters of the model
