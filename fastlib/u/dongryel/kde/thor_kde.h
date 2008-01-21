@@ -1,10 +1,50 @@
+/**
+ * @file thor_kde.h
+ *
+ * This file contains an implementation of kernel density estimation
+ * (vanilla finite-difference only) for a linkable library component
+ * using the THOR library by Ryan and Garry. Currently, it supports a
+ * fixed-bandwidth, uniform weight kernel density estimation with no
+ * multi-bandwidth optimizations. We assume that users will be able to
+ * cross-validate for the optimal bandwidth using a black-box
+ * optimizer which is not implemented in this code.
+ *
+ * For more details on mathematical details, please take a look at the
+ * published conference papers (in chronological order):
+ *
+ * @inproceedings{DBLP:conf/sdm/GrayM03,
+ *  author    = {Alexander G. Gray and
+ *               Andrew W. Moore},
+ *  title     = {Nonparametric Density Estimation: Toward Computational 
+ *               Tractability},
+ *  booktitle = {SDM},
+ *  year      = {2003},
+ *  ee        = {http://www.siam.org/meetings/sdm03/proceedings/sdm03_19.pdf},
+ *  crossref  = {DBLP:conf/sdm/2003},
+ *  bibsource = {DBLP, http://dblp.uni-trier.de}
+ * }
+ *
+ * @misc{ gray03rapid,
+ *  author = "A. Gray and A. Moore",
+ *  title = "Rapid evaluation of multiple density models",
+ *  booktitle = "In C. M. Bishop and B. J. Frey, editors, 
+ *               Proceedings of the Ninth International Workshop on 
+ *               Artificial Intelligence and Statistics",
+ *  year = "2003",
+ *  url = "citeseer.ist.psu.edu/gray03rapid.html"
+ * }
+ *
+ * @author Dongryeol Lee (dongryel)
+ * @see thor_kde_main.cc
+ * @bugs No known bugs.
+ */
+
 #ifndef THOR_KDE_H
 #define THOR_KDE_H
 
-#include "fastlib/fastlib_int.h"
+#include <fastlib/fastlib.h>
 #include "thor/thor.h"
 #include "u/dongryel/series_expansion/kernel_aux.h"
-
 
 /**
  * THOR-based KDE
