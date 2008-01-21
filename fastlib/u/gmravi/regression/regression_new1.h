@@ -111,7 +111,8 @@ template <typename TKernel> class NaiveRegression_new1{
     fprintf(fp,"Average Relative error was %f\n",average_relative_error);
     fprintf(fp,"Maximum error was %f\n",max_error);
     printf("average relative error was %f\n",average_relative_error);
-    printf("Number of violations are %d\n",number_of_violators);
+    printf("Maximum reltive error is %f\n",max_error);
+    // printf("Number of violations are %d\n",number_of_violators);
     
   }
 
@@ -993,7 +994,7 @@ template <typename TKernel> class Regression_new1{
   void Compute(){
    
     /** Get the tolerance value from the user */
-    tau_=fx_param_double(NULL,"tau",0.2);
+    tau_=fx_param_double(NULL,"tau",0.5);
 
     /*Preprocess both the query and reference trees */
     PreProcess(qroot_);
