@@ -1,6 +1,6 @@
 binrule(name = "fastica",
-   sources = ["fastica.cc"],
-   headers = ["lin_alg.h"],
+   sources = ["fastica_stylish.cc"],
+   headers = ["lin_alg.h", "fastica_stylish.h"],
    deplibs = ["fastlib:fastlib"])
 
 binrule(name = "linalg",
