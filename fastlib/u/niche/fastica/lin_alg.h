@@ -9,7 +9,12 @@
  * @author Nishant Mehta
  */
 
+#ifndef LIN_ALG_H
+#define LIN_ALG_H
+
 #include "fastlib/fastlib.h"
+
+namespace linalg {
 
 /**
  * Save the matrix to a file so that rows in the matrix correspond to rows in
@@ -844,3 +849,6 @@ Matrix* RepeatMatrix(index_t num_row_reps, index_t num_col_reps,
   return new_matrix;
 }
 
+}
+
+#endif /* LIN_ALG_H */

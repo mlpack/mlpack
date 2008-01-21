@@ -24,12 +24,14 @@
 #define SYMMETRIC 0
 #define DEFLATION 1
 
-index_t max_rand_i = 1e6;
+using namespace linalg;
+
+index_t max_rand_i = (index_t) 1e6;
 index_t rand_i = 0;
-double fixed_rand_array[1e6];
+double fixed_rand_array[(index_t) 1e6];
 
 
-
+/*
 double drand48()
 {
   return 
@@ -37,7 +39,7 @@ double drand48()
   if(rand_i > max_rand_i) {
     rand_i = 0;
   }
-
+*/
 
 /**
  * TODO: This is the raison d'être of this class
@@ -1318,4 +1320,6 @@ class FastICA {
 
     return ret_val;
   }
-};
+}; /* class FastICA */
+
+#endif /* FASTICA_STYLISH_H */
