@@ -366,8 +366,8 @@ class DualTreeBoruvka {
       }
       
       query_node->stat().set_max_neighbor_distance(
-                                                   max(query_node->left()->stat().max_neighbor_distance(), 
-                                                       query_node->right()->stat().max_neighbor_distance()));
+          max(query_node->left()->stat().max_neighbor_distance(), 
+              query_node->right()->stat().max_neighbor_distance()));
       
     }// end else
     
