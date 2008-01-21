@@ -742,7 +742,7 @@ class DistributedCache : public BlockDevice {
   /** Handle the fact that I'm suddenly the owner of these blocks. */
   void HandleRemoteOwner_(blockid_t block, blockid_t end, int new_owner);
   /** Recycles a local block ID for use later. */
-  void RecycleLocalBlock_(blockid_t blockid);	
+  void RecycleLocalBlock_(blockid_t blockid);        
 
   /**
    * Requests configuration from the master.

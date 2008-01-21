@@ -34,11 +34,11 @@ void DualTreeDepthFirst<GNP>::Doit(
   // Seed q_results
   {
     CacheWriteIter<typename GNP::QResult> q_results_iter(&q_results_,
-	q_root->begin());
+        q_root->begin());
     CacheReadIter<typename GNP::QPoint> q_points_iter(&q_points_,
-	q_root->begin());
+        q_root->begin());
     for (int i = q_root->begin(); i < q_root->end(); ++i,
-	   q_results_iter.Next(), q_points_iter.Next()) {
+           q_results_iter.Next(), q_points_iter.Next()) {
       (*q_results_iter).Seed(param_, *q_points_iter);
     }
   }
@@ -53,7 +53,7 @@ void DualTreeDepthFirst<GNP>::Doit(
   // Seed summary_results
   {
     CacheReadIter<typename GNP::QNode> q_nodes_iter(&q_nodes_,
-	q_root_index);
+        q_root_index);
     for (int i = q_root_index; i < q_end_index; ++i, q_nodes_iter.Next()) {
       q_mutables_[i].summary_result.Seed(param_, *q_nodes_iter);
     }

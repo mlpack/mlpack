@@ -294,7 +294,7 @@ void RpcSockImpl::CreatePeers_() {
 void RpcSockImpl::CalcChildren_() {
   int m = 1
       + std::min(unsigned(n_peers_ - rank_ - 1),
-		 unsigned((~rank_) & (rank_-1)));
+                 unsigned((~rank_) & (rank_-1)));
   int i;
 
   children_.Init();

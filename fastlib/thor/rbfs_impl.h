@@ -34,11 +34,11 @@ void DualTreeRecursiveBreadth<GNP>::Doit(
   // Seed q_results
   {
     CacheWriteIter<typename GNP::QResult> q_results_iter(&q_results_,
-	q_root->begin());
+        q_root->begin());
     CacheReadIter<typename GNP::QPoint> q_points_iter(&q_points_,
-	q_root->begin());
+        q_root->begin());
     for (int i = q_root->begin(); i < q_root->end(); ++i,
-	   q_results_iter.Next(), q_points_iter.Next()) {
+           q_results_iter.Next(), q_points_iter.Next()) {
       (*q_results_iter).Seed(param_, *q_points_iter);
     }
   }

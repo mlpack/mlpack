@@ -414,9 +414,9 @@ class Dataset {
    *        labels_index. e.g. [0,7,12]
    */
   void GetLabels(ArrayList<int> &labels_list,
-		 ArrayList<index_t> &labels_index,
-		 ArrayList<index_t> &labels_ct,
-		 ArrayList<index_t> &labels_startpos) const;
+                 ArrayList<index_t> &labels_index,
+                 ArrayList<index_t> &labels_ct,
+                 ArrayList<index_t> &labels_startpos) const;
  
   /**
    * Gets the numeric value of a particular feature and point.

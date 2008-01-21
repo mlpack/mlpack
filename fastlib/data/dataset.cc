@@ -274,7 +274,7 @@ index_t Dataset::n_labels() const {
     index_t j = 0;
     for (j = 0; j < n_labels; j++) {
       if (current_label == labels_list[j]) {
-	break;
+        break;
       }
     }
     if (j == n_labels) { // new label
@@ -287,9 +287,9 @@ index_t Dataset::n_labels() const {
 }
 
 void Dataset::GetLabels(ArrayList<int> &labels_list,
-			ArrayList<index_t> &labels_index,
-			ArrayList<index_t> &labels_ct,
-			ArrayList<index_t> &labels_startpos) const {
+                        ArrayList<index_t> &labels_index,
+                        ArrayList<index_t> &labels_ct,
+                        ArrayList<index_t> &labels_startpos) const {
   index_t i = 0;
   index_t label_row_idx = matrix_.n_rows() - 1; // the last row is for labels
   index_t n_points = matrix_.n_cols();
@@ -313,8 +313,8 @@ void Dataset::GetLabels(ArrayList<int> &labels_list,
     index_t j = 0;
     for (j = 0; j < n_labels; j++) {
       if (current_label == labels_list[j]) {
-	labels_ct[j]++;
-      	break;
+        labels_ct[j]++;
+              break;
       }
     }
     labels_temp[i] = j;

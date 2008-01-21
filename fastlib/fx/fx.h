@@ -56,7 +56,7 @@ int fx_param_exists(struct datanode *module, const char *name);
  * @param def value used if param not given, or NULL if required
  */
 const char *fx_param_str(struct datanode *module, const char *name,
-			 const char *def);
+                         const char *def);
 /**
  * Obtain a string parameter, failing if it is not specified.
  *
@@ -160,7 +160,7 @@ struct datanode *fx_param_node(struct datanode *module, const char *name);
  * @param def the value the parameter assumes if unspecified
  */
 void fx_default_param(struct datanode *module, const char *name,
-		      const char *def);
+                      const char *def);
 /**
  * Set a parameter to a given value.
  *
@@ -171,7 +171,7 @@ void fx_default_param(struct datanode *module, const char *name,
  * @param val the string to set the parameter to
  */
 void fx_set_param(struct datanode *module, const char *name,
-		  const char *val);
+                  const char *val);
 /**
  * Set a parameter to a formatted string.
  *
@@ -183,7 +183,7 @@ void fx_set_param(struct datanode *module, const char *name,
  */
 COMPILER_PRINTF(3, 4)
 void fx_format_param(struct datanode *module, const char *name,
-		     const char *format, ...);
+                     const char *format, ...);
 /**
  * Remove a parameter or parameter node if it exists.
  *
@@ -209,7 +209,7 @@ void fx_clear_param(struct datanode *module, const char *name);
  * @param srcname the name under the module's params to copy it from
  */
 void fx_default_param_node(struct datanode *dest_module, const char *destname,
-			   struct datanode *src_module, const char *srcname);
+                           struct datanode *src_module, const char *srcname);
 /**
  * Copy parameters from one module to another, overwriting.
  *
@@ -226,7 +226,7 @@ void fx_default_param_node(struct datanode *dest_module, const char *destname,
  * @param srcname the name under the module's params to copy it from
  */
 void fx_set_param_node(struct datanode *dest_module, const char *destname,
-		       struct datanode *src_module, const char *srcname);
+                       struct datanode *src_module, const char *srcname);
 
 /**
  * Record a result.
@@ -253,7 +253,7 @@ void fx_set_result(struct datanode *module, const char *name, const char *val);
  */
 COMPILER_PRINTF(3, 4)
 void fx_format_result(struct datanode *module, const char *name,
-		      const char *format, ...);
+                      const char *format, ...);
 /**
  * Remove a result or result node if it exists.
  *
@@ -350,7 +350,7 @@ struct timer *fx_timer(struct datanode *module, const char *name);
  */
 COMPILER_PRINTF(3, 4)
 struct datanode *fx_submodule(struct datanode *module, const char *param,
-			      const char *name_format, ...);
+                              const char *name_format, ...);
 
 /**
  * Scopes all FASTexec output under an overarching module.

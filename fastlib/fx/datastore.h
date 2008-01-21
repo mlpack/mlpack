@@ -60,12 +60,12 @@ struct datanode {
  * Initializes a datanode with the beginning of given key.
  */
 void datanode_init_len(struct datanode *node, const char *key, int len,
-		       nodetype_t type);
+                       nodetype_t type);
 /**
  * Initializes a datanode with given key.
  */
 void datanode_init(struct datanode *node, const char *key,
-		   nodetype_t type);
+                   nodetype_t type);
 /**
  * Frees a datanode's key, val, and children.
  */
@@ -84,19 +84,19 @@ void datanode_add_child(struct datanode *parent, struct datanode *child);
  * Finds and optionally creates a subnode with a given name.
  */
 struct datanode *datanode_get_node(struct datanode *node, const char *name,
-				   nodetype_t create);
+                                   nodetype_t create);
 /**
  * Finds and optionally creates a subnode with a given path (with slashes).
  */
 struct datanode *datanode_get_path(struct datanode *node, const char *path,
-				   nodetype_t create);
+                                   nodetype_t create);
 /**
  * Finds a subnode, concatenating given paths.
  *
  * Terminate series of paths with a NULL.
  */
 struct datanode *datanode_get_paths(struct datanode *node,
-				    nodetype_t create, ...);
+                                    nodetype_t create, ...);
 
 /**
  * Write the datanode to a file.

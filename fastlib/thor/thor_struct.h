@@ -230,7 +230,7 @@ class ThorSkeletonNode {
     return node_.count();
   }
 
-  void set_child(int k, ThorSkeletonNode *child) {	
+  void set_child(int k, ThorSkeletonNode *child) {        
     DEBUG_ASSERT(child->parent_ == NULL);
     DEBUG_ASSERT(children_[k] == NULL);
     DEBUG_ASSERT(node_.child(k) == child->index());

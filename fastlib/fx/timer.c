@@ -79,7 +79,7 @@ void timer_init(struct timer *timer)
 void timer_start(struct timer *timer)
 {
   DEBUG_WARN_MSG_IF(TIMER_IS_ACTIVE(timer),
-		    "Restarting active timer");
+                    "Restarting active timer");
 
   timestamp_now_rev(&timer->start);
 }
@@ -104,7 +104,7 @@ void timer_emit_results(struct timer *timer, struct datanode *node)
 #endif
   fx_format_result(node, "./wall/sec", "%f", timer->total.micros / 1e6);
   fx_format_result(node, "./user", "%f",
-		   timer->total.cpu.tms_utime * clockrate);
+                   timer->total.cpu.tms_utime * clockrate);
   fx_format_result(node, "./sys", "%f",
-		   timer->total.cpu.tms_stime * clockrate);
+                   timer->total.cpu.tms_stime * clockrate);
 }
