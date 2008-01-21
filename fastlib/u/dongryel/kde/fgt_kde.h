@@ -849,6 +849,19 @@ class FGTKde {
 	   references_assigned, mcoeffs);
   }
 
+  /** 
+   * Normalize the density estimates after the unnormalized sums have
+   * been computed 
+   */
+  void NormalizeDensities() {
+    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
+      rset_.n_cols();
+
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      densities_[q] /= norm_const;
+    }
+  }
+
  public:
 
   ////////// Constructor/Destructor //////////
@@ -1044,19 +1057,6 @@ class FGTKde {
     NormalizeDensities();
     fx_timer_stop(module_, "fgt_kde");
     printf("FGT KDE completed...\n");
-  }
-
-  /** 
-   * Normalize the density estimates after the unnormalized sums have
-   * been computed 
-   */
-  void NormalizeDensities() {
-    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
-      rset_.n_cols();
-
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
-      densities_[q] /= norm_const;
-    }
   }
 
   void PrintDebug() {
