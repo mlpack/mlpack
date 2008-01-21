@@ -1,3 +1,14 @@
+/**
+ * @file lin_alg.h
+ * Linear algebra utilities, including: Map, Sum, Addition, Subtraction,
+ * Multiplication, Hadamard product (entry-wise multiplication),
+ * Random vectors on the unit sphere, Random uniform matrices, Random
+ * normal matrices, Submatrix that is a slice of selected columns of a matrix,
+ * Block matrix construction from a base matrix
+ *
+ * @author Nishant Mehta
+ */
+
 #include "fastlib/fastlib.h"
 
 /**
