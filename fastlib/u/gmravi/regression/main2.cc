@@ -5,10 +5,29 @@
 int main (int argc, char *argv[]){
 
   fx_init (argc, argv);
+
+  char *rfname=(char*)malloc(40);
+  char *qfname=(char*)malloc(40); 
+  strcpy(rfname,fx_param_str_req (NULL, "data"));
+  strcpy(qfname,fx_param_str_req (NULL,"query"));
+  
   Regression2 <GaussianKernel> reg2;
   printf("going to initialization function...\n");
-  reg2.Init();
+  Dataset ref_dataset ;
+  Dataset q_dataset;
+  
+  Matrix query_dataset;
+  Matrix reference_dataset;
+
+  ref_dataset.InitFromFile(rfname);
+  reference_dataset.Own(&(ref_dataset.matrix()));
+  
+  q_dataset.InitFromFile(qfname);
+  query_dataset.Own(&(q_dataset.matrix()));
+
+  reg2.Init(query_dataset,reference_dataset);
   printf("Initializations done..\n");
+
   //  reg2.Compute(fx_param_double (NULL, "tau", 0.1));
   reg2.Compute(0.1);
   ArrayList<Matrix> wfkde_results;
