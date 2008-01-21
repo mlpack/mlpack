@@ -22,7 +22,7 @@ S = [30;54.75];
 x_pred_init = ones(size(A,1),1);
 P_pred_init = diag(repmat(1e-3,size(A,1),1));
 
-T = 1000;
+T = 2000;
 if flag == 1
   [x_orig,x_pred_orig,x_hat_orig,y_pred_orig,y_orig,P_pred_orig, P_hat_orig, inno_cov_orig,K_orig] = test_kf_sqrt(A,B,C,D,Q,R,S,x_pred_init,P_pred_init,T);
 else
@@ -86,7 +86,9 @@ for t = 1:T+1
 end
 
 A_eff = A-S*inv(R)*C
+B_eff = B - S*inv(R)*D;
 Q_eff = Q - S*inv(R)*S'
+
 E     = S*inv(R)
 
 %Kalman Filtering
@@ -124,7 +126,7 @@ POST                    = POST';
 P_pred(:,:,t+1)         = POST(1:nx,1:nx)*POST(1:nx,1:nx)';
 inno_cov(:,:,t+1)       = C*P_pred(:,:,t+1)*C' + R;
 
-x_pred(:,t+1)           = A_eff*x_hat(:,t) + B*u(:,t) + E*y(:,t);
+x_pred(:,t+1)           = A_eff*x_hat(:,t) + B_eff*u(:,t) + E*y(:,t);
 y_pred(:,t+1)           = C*x_pred(:,t+1) + D*u(:,t+1);
 
 end
