@@ -635,9 +635,32 @@ Matrix* RandNormalInit(index_t d, index_t n, Matrix* A) {
   }
 
   return A;
-}     
-      
+}
 
+Matrix* RepeatMatrix(index_t num_row_reps, index_t num_col_reps,
+		     Matrix base_matrix, Matrix* new_matrix) {
+
+  index_t num_rows = base_matrix.n_rows();
+  index_t num_cols = base_matrix.n_cols();
+
+  new_matrix -> Init(num_rows * num_row_reps, num_cols * num_col_reps);
+  
+  double* base_elements;
+  double* new_elements = new_matrix -> ptr();
+    
+  for(index_t col_rep = 0; col_rep < num_col_reps; col_rep++) {
+    base_elements = base_matrix.ptr();
+    for(index_t col_num = 0; col_num < num_cols; col_num++) {
+      for(index_t row_rep = 0; row_rep < num_row_reps; row_rep++) {
+	memcpy(new_elements, base_elements, num_rows * sizeof(double));
+	new_elements += num_rows;
+      }
+      base_elements += num_rows;
+    }
+  }
+
+  return new_matrix;
+}
 
 
 
