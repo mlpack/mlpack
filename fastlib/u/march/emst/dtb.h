@@ -13,14 +13,8 @@
 
 #include "emst.h"
 
-// For now, everything is in Euclidean space
-const index_t metric = 2;
-// -1 as a component membership means that the node does not entirely belong
-// to one component
-const index_t no_membership = -1;
-
 /**
- * A Stat class for use with fastlib's trees.  This one only stores two values.
+* A Stat class for use with fastlib's trees.  This one only stores two values.
  *
  * @param max_neighbor_distance The upper bound on the distance to the nearest 
  * neighbor of any point in this node.
@@ -33,32 +27,43 @@ const index_t no_membership = -1;
 class DTBStat {
   
 private:
+  
   double max_neighbor_distance_;
   index_t component_membership_;
   
 public:
     
-  void set_max_neighbor_distance(double distance) {
-      this->max_neighbor_distance_ = distance;
-  }
+    void set_max_neighbor_distance(double distance) {
+      max_neighbor_distance_ = distance;
+    }
+  
   double max_neighbor_distance() {
     return max_neighbor_distance_;
   }
+  
   void set_component_membership(index_t membership) {
-    this->component_membership_ = membership;
+    component_membership_ = membership;
   }
+  
   index_t component_membership() {
     return component_membership_; 
   }
+  
+  /** 
+    * A generic initializer.
+    */
   void Init() {
+    
     set_max_neighbor_distance(DBL_MAX);
     set_component_membership(-1);
+    
   }
   
   /**
-   * An initializer for leaves.
+    * An initializer for leaves.
    */
   void Init(const Matrix& dataset, index_t start, index_t count) {
+    
     if (count == 1) {
       set_component_membership(start);
       set_max_neighbor_distance(DBL_MAX);
@@ -66,20 +71,21 @@ public:
     else {
       Init();
     }
+    
   }
   
   /**
-   * An initializer for non-leaves.  Simply calls the leaf initializer.
+    * An initializer for non-leaves.  Simply calls the leaf initializer.
    */
   void Init(const Matrix& dataset, index_t start, index_t count,
             const DTBStat& left_stat, const DTBStat& right_stat) {
+    
     Init(dataset, start, count);
+    
   }
   
 }; // class DTBStat
 
-
-typedef BinarySpaceTree<DHrectBound<metric>, Matrix, DTBStat> DTBTree;
 
 /**
  * Performs the MST calculation using the Dual-Tree Boruvka algorithm.
@@ -87,6 +93,13 @@ typedef BinarySpaceTree<DHrectBound<metric>, Matrix, DTBStat> DTBTree;
 class DualTreeBoruvka {
 
   FORBID_ACCIDENTAL_COPIES(DualTreeBoruvka);
+  
+ public:
+  
+  // For now, everything is in Euclidean space
+  static const index_t metric = 2;
+
+  typedef BinarySpaceTree<DHrectBound<metric>, Matrix, DTBStat> DTBTree;
   
   //////// Member Variables /////////////////////
   
@@ -119,11 +132,12 @@ class DualTreeBoruvka {
   int do_naive_;
   
   DTBTree* tree_;
+   
   
 ////////////////// Constructors ////////////////////////
   
  public:
-  
+
   DualTreeBoruvka() {}
   
   ~DualTreeBoruvka() {
@@ -131,7 +145,8 @@ class DualTreeBoruvka {
       delete tree_; 
     }
   }
-
+  
+  
   ////////////////////////// Private Functions ////////////////////
  private:
     
@@ -142,12 +157,12 @@ class DualTreeBoruvka {
     
     //EdgePair edge;
     DEBUG_ASSERT_MSG((e1 != e2), 
-                     "Indices are equal in DualTreeBoruvka.add_edge(%d, %d, %f)\n", 
-                     e1, e2, distance);
+        "Indices are equal in DualTreeBoruvka.add_edge(%d, %d, %f)\n", 
+        e1, e2, distance);
     
     DEBUG_ASSERT_MSG((distance >= 0.0), 
-                     "Negative distance input in DualTreeBoruvka.add_edge(%d, %d, %f)\n", 
-                     e1, e2, distance);
+        "Negative distance input in DualTreeBoruvka.add_edge(%d, %d, %f)\n", 
+        e1, e2, distance);
     
     if (e1 < e2) {
       edges_[number_of_edges_].Init(e1, e2, distance);
