@@ -90,14 +90,16 @@ FILE_PATTERNS          = *.c \
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = YES
-EXCLUDE_PATTERNS       = */auton/* \
+EXCLUDE_PATTERNS       = */u/* \
+                         */trilinos/* \
+                         */auton/* \
                          */test/* \
                          */bin/* \
+                         */bin_keep/* \
                          *clapack.h \
                          *blas.h \
                          *_impl.cc \
                          *_impl.h \
-                         */u/* \
                          *_test.cc
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
