@@ -1,4 +1,5 @@
 /**
+ * @author pram
  * @file mog_l2e_main.cc
  * 
  * This program test drives the L2 estimation
@@ -36,7 +37,7 @@ int main(int argc, char* argv[]) {
 
   ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
 
-  MoG mog;
+  MoGL2E mog;
 
   struct datanode* mog_em_module = fx_submodule(NULL, "mog_l2e", "mog_l2e_module");
   const int number_of_gaussians = fx_param_int(NULL, "number_of_gaussians", 1);

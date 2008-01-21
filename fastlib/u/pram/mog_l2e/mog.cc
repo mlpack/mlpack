@@ -1,4 +1,5 @@
 /**
+ * @author pram
  * @file mog.cc
  *
  * Implementation for the loglikelihood function, the EM algorithm,
@@ -11,153 +12,7 @@
 #include "math_functions.h"
 #include "l2_error.h"
 
-
-void MoG::ExpectationMaximization(Matrix& data_points, ArrayList<double> *results) {
-  
-  // Declaration of the variables
-  index_t num_points;
-  index_t dim, num_gauss;
-  double sum, tmp; 
-  ArrayList<Vector> mu_temp;
-  ArrayList<Matrix> sigma_temp;
-  Vector omega_temp, x;
-  Matrix cond_prob;	
-  long double l, l_old, best_l, INFTY = 99999, TINY = 1.0e-10;
-
-  // Initializing values
-  dim = dimension();
-  num_gauss = number_of_gaussians();
-  num_points = data_points.n_cols();
-
-  // Initializing the number of the vectors and matrices 
-  // according to the parameters input
-  mu_temp.Init(num_gauss);
-  sigma_temp.Init(num_gauss);
-  omega_temp.Init(num_gauss);
-  
-  // Allocating size to the vectors and matrices
-  // according to the dimensionality of the data
-  for(index_t i = 0; i < num_gauss; i++) {
-    mu_temp[i].Init(dim);
-    sigma_temp[i].Init(dim, dim);    
-  }
-  x.Init(dim);
-  cond_prob.Init(num_gauss, num_points);
-  
-  best_l = -INFTY;
-  index_t restarts = 0;
-  // performing 5 restarts and choosing the best from them
-  while (restarts < 5) { 
-
-    // assign initial values to 'mu', 'sig' and 'omega' using k-means
-    KMeans(data_points, &mu_temp, &sigma_temp, &omega_temp, num_gauss);
-    
-    l_old = -INFTY;
-
-    // calculates the loglikelihood value
-    l = Loglikelihood(data_points, mu_temp, sigma_temp, omega_temp); 
- 
-    // added a check here to see if any 
-    // significant change is being made 
-    // at every iteration
-    while (l - l_old > TINY) {
-      // calculating the conditional probabilities 
-      // of choosing a particular gaussian given 
-      // the data and the present theta value
-      for (index_t j = 0; j < num_points; j++) {
-	x.CopyValues(data_points.GetColumnPtr(j));
-	sum = 0;
-	for (index_t i = 0; i < num_gauss; i++) {
-	  tmp = phi(x, mu_temp[i], sigma_temp[i]) * omega_temp.get(i);
-	  cond_prob.set(i, j, tmp);
-	  sum += tmp;	  
-	}
-	for (index_t i = 0; i < num_gauss; i++) {
-	  tmp = cond_prob.get(i, j);
-	  cond_prob.set(i, j, tmp / sum); 
-	}
-      }
-			
-      // calculating the new value of the mu 
-      // using the updated conditional probabilities
-      for (index_t i = 0; i < num_gauss; i++) {
-	sum = 0;
-	mu_temp[i].SetZero();
-	for (index_t j = 0; j < num_points; j++) {
-	  x.CopyValues(data_points.GetColumnPtr(j));
-	  la::AddExpert(cond_prob.get(i, j), x, &mu_temp[i]);
-	  sum += cond_prob.get(i, j); 
-	}
-	la::Scale((1.0 / sum), &mu_temp[i]);
-      }
-					
-      // calculating the new value of the sig 
-      // using the updated conditional probabilities
-      // and the updated mu
-      for (index_t i = 0; i < num_gauss; i++) {
-	sum = 0;
-	sigma_temp[i].SetZero();
-	for (index_t j = 0; j < num_points; j++) {
-	  Matrix co, ro, c;
-	  c.Init(dim, dim);
-	  x.CopyValues(data_points.GetColumnPtr(j));
-	  la::SubFrom(mu_temp[i] , &x);
-	  co.AliasColVector(x);
-	  ro.AliasRowVector(x);
-	  la::MulOverwrite(co, ro, &c);
-	  la::AddExpert(cond_prob.get(i, j), c, &sigma_temp[i]);
-	  sum += cond_prob.get(i, j);	  
-	}
-	la::Scale((1.0 / sum), &sigma_temp[i]);
-      }
-			
-      // calculating the new values for omega 
-      // using the updated conditional probabilities
-      Vector identity_vector;
-      identity_vector.Init(num_points);
-      identity_vector.SetAll(1.0 / num_points);
-      la::MulOverwrite(cond_prob, identity_vector, &omega_temp);
-      
-      l_old = l;
-      l = Loglikelihood(data_points, mu_temp, sigma_temp, omega_temp);
-    }
-    
-    // putting a check to see if the best one is chosen
-    if(l > best_l){
-      best_l = l;
-      for (index_t i = 0; i < num_gauss; i++) {
-	mu_[i].CopyValues(mu_temp[i]);
-	sigma_[i].CopyValues(sigma_temp[i]);
-	omega_.CopyValues(omega_temp);
-      }
-    }
-    restarts++;
-  }	
-  
-  OutputResults(results);
-  return;
-}
-
-long double MoG::Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
-			       ArrayList<Matrix>& covars, Vector& weights) {
-  index_t i, j;
-  Vector x;
-  long double likelihood, loglikelihood = 0;
-	
-  x.Init(data_points.n_rows());
-	
-  for (j = 0; j < data_points.n_cols(); j++) {
-    x.CopyValues(data_points.GetColumnPtr(j));
-    likelihood = 0;
-    for(i = 0; i < number_of_gaussians() ; i++){
-      likelihood += weights.get(i) * phi(x, means[i], covars[i]);
-    }
-    loglikelihood += log(likelihood);
-  }
-  return loglikelihood;
-}
-
-void MoG::KMeans(Matrix& data, ArrayList<Vector> *means,
+void MoGL2E::KMeans(Matrix& data, ArrayList<Vector> *means,
 		 ArrayList<Matrix> *covars, Vector *weights, 
 		 index_t value_of_k){
 
@@ -278,7 +133,7 @@ void MoG::KMeans(Matrix& data, ArrayList<Vector> *means,
   return;
 }
 
-void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag) {
+void MoGL2E::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag) {
 
   // Declaration of variables
   double *theta;
@@ -288,8 +143,8 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
   long double final_val;
   long double ftol, grad_tol, error_val = 0.0, EPS = 1.0e-7;
   index_t dim_theta, niters, restarts = 0;
-  bool cvgd, TRUE = 1, FALSE = 0;
-
+  bool cvgd;
+  
   // Initializing the variables
   index_t num_gauss = number_of_gaussians();
   dim_theta = num_gauss*(dimension() + 1)*(dimension() + 2) / 2 - 1;
@@ -307,22 +162,23 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
   initVal = (long double*) malloc ((dim_theta + 1) * sizeof(long double));
   
   // variable to see if the polytope converges
-  cvgd = TRUE;
+  cvgd = 0;
   // calling the polytope optimizer
   if (optim_flag == 1) {
     while (restarts < 5) {
       do {
 	// get the 'dim_theta + 1' initial points
-	points_generator(data, initPoints, dim_theta + 1, num_gauss);
+	MultiplePointsGenerator(data, initPoints, dim_theta + 1, num_gauss);
 	
 	// obtaining the function values at those points
 	for( index_t i = 0 ; i < dim_theta + 1 ; i++ ) {
-	  initVal[i] = l2_error( data, num_gauss, initPoints[i]) ;
+	  initVal[i] = l2computations::L2Error(data, num_gauss, initPoints[i]) ;
 	}
 		
 	// The optimizer ...
-	cvgd = polytope( initPoints, initVal, dim_theta, 
-			 ftol, l2_error, &niters, data, num_gauss );
+	cvgd = l2computations::PolytopeOptimizer(initPoints, initVal, dim_theta, 
+						 ftol, (l2computations::L2Error), &niters, 
+						 data, num_gauss);
       }while (!cvgd);
      
       // choosing the best of the 5 restarts 
@@ -339,10 +195,12 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
   else {
     while (restarts < 5) {
       // get a random starting point
-      initial_point_generator(init_theta, data, num_gauss);
+      InitialPointGenerator(init_theta, data, num_gauss);
       // The optimizer.......
-      quasi_newton(init_theta, dim_theta, grad_tol, 
-		   &niters, &final_val, l2_error, data, num_gauss);
+      l2computations::QuasiNewtonOptimizer(init_theta, dim_theta,
+					   grad_tol, &niters, &final_val,
+					   (l2computations::L2ErrorWithGradients),
+					   data, num_gauss);
       
       // choosing the best of the 5 restarts 
       if (error_val > final_val) {
@@ -359,8 +217,9 @@ void MoG::L2Estimation(Matrix& data, ArrayList<double> *results, int optim_flag)
   return;
 }
 
-void MoG::points_generator(Matrix& d, double **points, index_t number_of_points,
-			   index_t number_of_components) {
+void MoGL2E::MultiplePointsGenerator(Matrix& d, double **points, 
+				     index_t number_of_points,
+				     index_t number_of_components) {
 
   index_t dim, n, i, j, x;
   
@@ -392,7 +251,8 @@ void MoG::points_generator(Matrix& d, double **points, index_t number_of_points,
   return;
 }
 
-void MoG::initial_point_generator (double *theta, Matrix& data, index_t k_comp) {
+void MoGL2E::InitialPointGenerator (double *theta, Matrix& data, 
+				    index_t k_comp) {
 
   ArrayList<Vector> means;
   ArrayList<Matrix> covars;

@@ -1,4 +1,5 @@
 /**
+ * @author pram
  * @file mog.h
  *
  * Defines a Gaussian Mixture model and
@@ -6,8 +7,8 @@
  * 
  */
 
-#ifndef MOG_H
-#define MOG_H
+#ifndef MOGL2E_H
+#define MOGL2E_H
 
 #include <fastlib/fastlib.h>
 
@@ -29,14 +30,14 @@
  * Example use:
  *
  * @code
- * MoG mog;
+ * MoGL2E mog;
  * ArrayList<double> results;
  *
  * mog.Init(number_of_gaussians, dimension);
  * mog.L2Estimation(data, &results, optim_flag);
  * @endcode
  */
-class MoG {
+class MoGL2E {
 
  private:
 
@@ -54,14 +55,14 @@ class MoG {
 
  public:
 
-  MoG() {
+  MoGL2E() {
     mu_.Init(0);
     sigma_.Init(0);
     d_sigma_.Init(0);
     d_omega_.Init(0, 0);
   }
 
-  ~MoG() {
+  ~MoGL2E() {
   }
 
   void Init(index_t num_gauss, index_t dimension) {
@@ -92,7 +93,7 @@ class MoG {
    * Example use:
    *
    * @code
-   * MoG mog;
+   * MoGL2E mog;
    * mog.MakeModel(number_of_gaussians, dimension,
    *               parameters_for_optimization);
    * @endcode
@@ -166,7 +167,7 @@ class MoG {
    * Example use:
    *
    * @code
-   * MoG mog;
+   * MoGL2E mog;
    * mog.MakeModelWithGradients(number_of_gaussians, dimension,
    *               parameters_for_optimization);
    * @endcode
@@ -377,29 +378,6 @@ class MoG {
   }
 
   /**
-   * This function calculates the parameters of the model
-   * using the Maximum Likelihood function via the 
-   * Expectation Maximization (EM) Algorithm.
-   *
-   * @code
-   * MoG mog;
-   * Matrix data = "the data on which you want to fit the model";
-   * ArrayList<double> results;
-   * mog.ExpectationMaximization(data, &results);
-   * @endcode
-   */
-  void ExpectationMaximization(Matrix& data_points, ArrayList<double> *results);
-
-  /**
-   * This function computes the loglikelihood of model.
-   * This function is used by the 'ExpectationMaximization'
-   * function.
-   * 
-   */
-  long double Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
-			    ArrayList<Matrix>& covars, Vector& weights);
-
-  /**
    * This function computes the k-means of the data and stores
    * the calculated means and covariances in the ArrayList
    * of Vectors and Matrices passed to it. It sets the weights 
@@ -420,7 +398,7 @@ class MoG {
    *  -anything else leads to quasi newton
    *
    * @code
-   * MoG mog;
+   * MoGL2E mog;
    * Matrix data = "the data on which you want to fit the model";
    * ArrayList<double> results;
    * mog.L2Estimation(data, &results, choice_of_optimizer);
@@ -432,16 +410,17 @@ class MoG {
    * This function computes multiple number of starting points
    * required for the polytope method
    */
-  void points_generator(Matrix& d, double **points, index_t number_of_points,
-			index_t number_of_components);
+  void MultiplePointsGenerator(Matrix& d, double **points, 
+			       index_t number_of_points,
+			       index_t number_of_components);
 
   /** 
    * This function parameterizes the starting point obtained
    * from the 'KMeans" for optimization purposes
    *
    */
-  void initial_point_generator (double *theta, Matrix& data,
-				index_t number_of_components);
+  void InitialPointGenerator(double *theta, Matrix& data,
+			     index_t number_of_components);
 };
 
 #endif
