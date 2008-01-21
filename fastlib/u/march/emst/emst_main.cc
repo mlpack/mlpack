@@ -55,21 +55,13 @@ int main(int argc, char* argv[]) {
       ArrayList<EdgePair> naive_results;
       naive.ComputeMST(&naive_results);
       
+      /* Compare the naive output to the DTB output */
+      
       fx_timer_start(naive_module, "comparison");
       
-      if (fx_get_result_double(dtb_module, "total_squared_length") !=
-          fx_get_result_double(naive_module, "total_squared_length")) { 
-       
-        printf("lengths are different!\n");
-        
-        fx_done();
-        return 1;
-        
-      }
-      else {
-        printf("lengths are the same\n");
-      }
-      
+           
+      // Check if the edge lists are the same
+      // Loop over the naive edge list
       int is_correct = 1;
       for (index_t naive_index = 0; naive_index < results.size(); 
            naive_index++) {
@@ -79,6 +71,8 @@ int main(int argc, char* argv[]) {
         index_t naive_greater_index = results[naive_index].greater_index();
         double naive_distance = results[naive_index].distance();
         
+        // Loop over the DTB edge list and compare against naive
+        // Break when an edge is found that matches the current naive edge
         for (index_t dual_index = 0; dual_index < naive_results.size();
              dual_index++) {
           
@@ -105,20 +99,31 @@ int main(int argc, char* argv[]) {
       
       if (is_correct == 0) {
        
-        printf("naive check failed!\n");
+        printf("Naive check failed!\n  Edge lists are different.\n\n");
+        // Check if the outputs have the same length
         if (fx_get_result_double(dtb_module, "total_squared_length") !=
             fx_get_result_double(naive_module, "total_squared_length")) { 
           
-          printf("lengths are different!\n");
+          printf("Total lengths are different!  One algorithm has failed.\n");
           
           fx_done();
           return 1;
           
         }
         else {
-          printf("lengths are the same\n");
+          // NOTE: if the edge lists are different, but the total lengths are
+          // the same, the algorithm may still be correct.  The MST is not 
+          // uniquely defined for some point sets.  For example, an equilateral
+          // triangle has three minimum spanning trees.  It is possible for 
+          // naive and DTB to find different spanning trees in this case.
+          printf("Total lengths are the same.");
+          printf("It is possible the point set"); 
+          printf("has more than one minimum spanning tree.\n");
         }
       
+      }
+      else {
+        printf("Naive and DualTreeBoruvka produced the same MST.\n\n");
       }
       
       fx_timer_stop(naive_module, "comparison");

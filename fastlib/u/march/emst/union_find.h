@@ -33,6 +33,8 @@ public:
   
   UnionFind() {}
   
+  ~UnionFind() {}
+  
   /**
    * Initializes the structure.  This implementation assumes
    * that the size is known advance and fixed
@@ -60,11 +62,11 @@ public:
    */
   index_t Find(index_t x) {
     
-    // is this if statement unlikely?
     if (parent_[x] == x) {
       return x; 
     }
     else {
+      // This ensures that the tree has a small depth
       parent_[x] = Find(parent_[x]);
       return parent_[x];
     }

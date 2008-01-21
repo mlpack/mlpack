@@ -1,8 +1,8 @@
 This folder contains an implementation of the DualTreeBoruvka algorithm for finding a Euclidean Minimum Spanning Tree.  NOTE: this algorithm is awaiting publication and is not for distribution.  
 
-Compile with fl-build emst
+Compile with fl-build emst_main
 
-Run with ./emst --data="filename" for basic use.
+Run with ./emst_main --data="filename" for basic use.  This will create a file "output.txt" with the minimum spanning tree represented as an edge list.  
 
 Other options:
 
