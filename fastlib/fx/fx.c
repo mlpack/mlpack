@@ -137,13 +137,13 @@ void fx_init(int argc, char **argv) {
 }
 
 static void fx__finalize_timers(struct datanode *node,
-				struct timestamp *now)
+                                struct timestamp *now)
 {
   struct datanode *child;
 
   DEBUG_WARN_MSG_IF(node->type != NODETYPE_TIMER,
-		    "Finalizing non-timer \"%s\" as timer",
-		    node->key);
+                    "Finalizing non-timer \"%s\" as timer",
+                    node->key);
 
   for (child = node->children; child; child = child->next) {
     fx__finalize_timers(child, now);
@@ -161,7 +161,7 @@ static void fx__finalize_timers(struct datanode *node,
 }
 
 static void fx__finalize_module_timers(struct datanode *node,
-				       struct timestamp *now)
+                                       struct timestamp *now)
 {
   struct datanode *child;
 
@@ -169,8 +169,8 @@ static void fx__finalize_module_timers(struct datanode *node,
     if (strcmp("timers", child->key) == 0) {
       fx__finalize_timers(child, now);
     } else if (strcmp("info", child->key) != 0
-	       && strcmp("params", child->key) != 0
-	       && strcmp("results", child->key) != 0) {
+               && strcmp("params", child->key) != 0
+               && strcmp("results", child->key) != 0) {
       fx__finalize_module_timers(child, now);
     }
   }
@@ -243,7 +243,7 @@ void fx_done(void) {
 }
 
 static struct datanode *fx__param(struct datanode *module, const char *name,
-				  int create)
+                                  int create)
 {
   nodetype_t create_type = create ? NODETYPE_PARAM : NODETYPE_NO_CREATE;
   struct datanode *node;
@@ -253,19 +253,19 @@ static struct datanode *fx__param(struct datanode *module, const char *name,
   }
 
   DEBUG_ERR_MSG_IF(name == NULL/* || name[0] == '\0'*/,
-		   "Empty path; maybe you want \".\"");
+                   "Empty path; maybe you want \".\"");
 
   if (name[0] == '.' && (name[1] == '/' || name[1] == '\0')) {
     node = datanode_get_path(module, name + 1, create_type);
   } else {
     DEBUG_WARN_MSG_IF(module->type != NODETYPE_MODULE,
-		      "Accessing \"params\" of non-module \"%s\".",
-		      module->key);
+                      "Accessing \"params\" of non-module \"%s\".",
+                      module->key);
     node = datanode_get_paths(module, create_type, "params", name, NULL);
   }
 
   DEBUG_WARN_MSG_IF(node && node->type != NODETYPE_PARAM,
-		    "Datastore entry \"%s\" is not a parameter.", name);
+                    "Datastore entry \"%s\" is not a parameter.", name);
 
   return node;
 }
@@ -309,7 +309,7 @@ int fx_param_exists(struct datanode *module, const char *name)
 }
 
 const char *fx_param_str(struct datanode *module, const char *name,
-			 const char *def)
+                         const char *def)
 {
   struct datanode *node;
   
@@ -318,7 +318,7 @@ const char *fx_param_str(struct datanode *module, const char *name,
   if (!node->val) {
     if (!def) {
       FATAL("Required parameter \"%s\" unspecified in module \"%s\".",
-	    name, fx__module_name(module));
+            name, fx__module_name(module));
     } else {
       node->val = strdup(def);
     }
@@ -347,7 +347,7 @@ double fx_param_double(struct datanode *module, const char *name, double def)
   } else {
     if (sscanf(node->val, "%lf", &def) != 1) {
       FATAL("Parameter \"%s\" in module \"%s\" is not a double: \"%s\".",
-	    name, fx__module_name(module), (char*)node->val);
+            name, fx__module_name(module), (char*)node->val);
     }
   }
 
@@ -363,7 +363,7 @@ double fx_param_double_req(struct datanode *module, const char *name)
 
   if (sscanf(val, "%lf", &res) != 1) {
     FATAL("Parameter \"%s\" in module \"%s\" is not a double: \"%s\".",
-	  name, fx__module_name(module), (char*)val);
+          name, fx__module_name(module), (char*)val);
   }
 
   return res;
@@ -380,7 +380,7 @@ long long int fx_param_int(struct datanode *module, const char *name, long long 
   } else {
     if (sscanf(node->val, "%lli", &def) != 1) {
       FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
-	    name, fx__module_name(module), (char*)node->val);
+            name, fx__module_name(module), (char*)node->val);
     }
   }
 
@@ -396,7 +396,7 @@ long long int fx_param_int_req(struct datanode *module, const char *name)
 
   if (sscanf(val, "%lli", &res) != 1) {
     FATAL("Parameter \"%s\" in module \"%s\" is not an int: \"%s\".",
-	  name, fx__module_name(module), val);
+          name, fx__module_name(module), val);
   }
 
   return res;
@@ -416,7 +416,7 @@ int fx_param_bool(struct datanode *module, const char *name, int def)
       return 0;
     } else {
       FATAL("Parameter \"%s\" in module \"%s\" is not a bool: \"%s\".",
-	    name, fx__module_name(module), (char *)node->val);
+            name, fx__module_name(module), (char *)node->val);
     }
   }
 
@@ -435,7 +435,7 @@ int fx_param_bool_req(struct datanode *module, const char *name)
     return 0;
   } else {
     FATAL("Parameter \"%s\" in module \"%s\" is not a bool: \"%s\".",
-	  name, fx__module_name(module), val);
+          name, fx__module_name(module), val);
   }
   return -1;
 }
@@ -446,7 +446,7 @@ struct datanode *fx_param_node(struct datanode *module, const char *name)
 }
 
 static void fx__set_param_val(struct datanode *node, const char *val,
-			      int overwrite)
+                              int overwrite)
 {
   if (!node->val) {
     node->val = strdup(val);
@@ -458,19 +458,19 @@ static void fx__set_param_val(struct datanode *node, const char *val,
 }
 
 void fx_default_param(struct datanode *module, const char *name,
-		      const char *def)
+                      const char *def)
 {
   fx__set_param_val(fx__param(module, name, 1), def, 0);
 }
 
 void fx_set_param(struct datanode *module, const char *name,
-		  const char *val)
+                  const char *val)
 {
   fx__set_param_val(fx__param(module, name, 1), val, 1);
 }
 
 void fx_format_param(struct datanode *module, const char *name,
-		     const char *format, ...)
+                     const char *format, ...)
 {
   char buf[1024];
   va_list vl;
@@ -498,9 +498,9 @@ static void fx__copy_params(struct datanode *node,
   struct datanode *child;
 
   DEBUG_WARN_MSG_IF(node->type != NODETYPE_PARAM,
-		    "Destination \"%s\" is not a parameter.", node->key);
+                    "Destination \"%s\" is not a parameter.", node->key);
   DEBUG_WARN_MSG_IF(source->type != NODETYPE_PARAM,
-		    "Source \"%s\" is not a parameter.", source->key);
+                    "Source \"%s\" is not a parameter.", source->key);
 
   if (source->val) {
     fx__set_param_val(node, source->val, overwrite);
@@ -508,13 +508,13 @@ static void fx__copy_params(struct datanode *node,
 
   for (child = source->children; child; child = child->next) {
     fx__copy_params(
-	datanode_get_node(node, child->key, NODETYPE_PARAM), child,
-	overwrite);
+        datanode_get_node(node, child->key, NODETYPE_PARAM), child,
+        overwrite);
   }
 }
 
 void fx_default_param_node(struct datanode *dest_module, const char *destname,
-			   struct datanode *src_module, const char *srcname)
+                           struct datanode *src_module, const char *srcname)
 {
   struct datanode *source_node = fx__param(src_module, srcname, 0);
 
@@ -525,7 +525,7 @@ void fx_default_param_node(struct datanode *dest_module, const char *destname,
 }
 
 void fx_set_param_node(struct datanode *dest_module, const char *destname,
-		       struct datanode *src_module, const char *srcname)
+                       struct datanode *src_module, const char *srcname)
 {
   struct datanode *source_node = fx__param(src_module, srcname, 0);
 
@@ -536,7 +536,7 @@ void fx_set_param_node(struct datanode *dest_module, const char *destname,
 }
 
 static struct datanode *fx__result(struct datanode *module, const char *name,
-				   int create)
+                                   int create)
 {
   nodetype_t create_type = create ? NODETYPE_RESULT : NODETYPE_NO_CREATE;
   struct datanode *node;
@@ -546,19 +546,19 @@ static struct datanode *fx__result(struct datanode *module, const char *name,
   }
 
   DEBUG_ERR_MSG_IF(name == NULL/* || name[0] == '\0'*/,
-		   "Empty path; maybe you want \".\"");
+                   "Empty path; maybe you want \".\"");
 
   if (name[0] == '.' && (name[1] == '/' || name[1] == '\0')) {
     node = datanode_get_path(module, name + 1, create_type);
   } else {
     DEBUG_WARN_MSG_IF(module->type != NODETYPE_MODULE,
-		      "Accessing \"results\" of non-module \"%s\".",
-		      module->key);
+                      "Accessing \"results\" of non-module \"%s\".",
+                      module->key);
     node = datanode_get_paths(module, create_type, "results", name, NULL);
   }
 
   DEBUG_WARN_MSG_IF(node && node->type != NODETYPE_RESULT,
-		    "Datastore entry \"%s\" is not a result.", name);
+                    "Datastore entry \"%s\" is not a result.", name);
 
   return node;
 }
@@ -577,7 +577,7 @@ void fx_set_result(struct datanode *module, const char *name, const char *val)
 }
 
 void fx_format_result(struct datanode *module, const char *name,
-		      const char *format, ...)
+                      const char *format, ...)
 {
   char buf[1024];
   va_list vl;
@@ -606,7 +606,7 @@ const char *fx_get_result_str(struct datanode *module, const char *name)
 
   if (!node->val) {
     FATAL("Result \"%s\" unspecified in module \"%s\".",
-	  name, fx__module_name(module));
+          name, fx__module_name(module));
   }
 
   return node->val;
@@ -619,7 +619,7 @@ double fx_get_result_double(struct datanode *module, const char *name)
 
   if (sscanf(val, "%lf", &res) != 1) {
     FATAL("Result \"%s\" in module \"%s\" is not a double: \"%s\".",
-	  name, fx__module_name(module), (char*)val);
+          name, fx__module_name(module), (char*)val);
   }
 
   return res;
@@ -632,7 +632,7 @@ long long int fx_get_result_int(struct datanode *module, const char *name)
 
   if (sscanf(val, "%lli", &res) != 1) {
     FATAL("Result \"%s\" in module \"%s\" is not an int: \"%s\".",
-	  name, fx__module_name(module), val);
+          name, fx__module_name(module), val);
   }
 
   return res;
@@ -648,13 +648,13 @@ int fx_get_result_bool(struct datanode *module, const char *name)
     return 0;
   } else {
     FATAL("Result \"%s\" in module \"%s\" is not a bool: \"%s\".",
-	  name, fx__module_name(module), val);
+          name, fx__module_name(module), val);
   }
   return -1;
 }
 
 static struct datanode *fx__timer(struct datanode *module, const char *name,
-				  int create)
+                                  int create)
 {
   nodetype_t create_type = create ? NODETYPE_TIMER : NODETYPE_NO_CREATE;
   struct datanode *node;
@@ -667,19 +667,19 @@ static struct datanode *fx__timer(struct datanode *module, const char *name,
   }*/
 
   DEBUG_ERR_MSG_IF(name == NULL/* || name[0] == '\0'*/,
-		   "Empty path; maybe you want \".\"");
+                   "Empty path; maybe you want \".\"");
 
   if (name[0] == '.' && (name[1] == '/' || name[1] == '\0')) {
     node = datanode_get_path(module, name + 1, create_type);
   } else {
     DEBUG_WARN_MSG_IF(module->type != NODETYPE_MODULE,
-		      "Accessing \"timers\" of non-module \"%s\".",
-		      module->key);
+                      "Accessing \"timers\" of non-module \"%s\".",
+                      module->key);
     node = datanode_get_paths(module, create_type, "timers", name, NULL);
   }
 
   DEBUG_WARN_MSG_IF(node && node->type != NODETYPE_TIMER,
-		    "Datastore entry \"%s\" is not a timer.", name);
+                    "Datastore entry \"%s\" is not a timer.", name);
 
   return node;
 }
@@ -735,13 +735,13 @@ void fx_timer_stop(struct datanode *module, const char *name)
 #endif
   } else {
     NONFATAL("No timer named \"%s\" in module \"%s\".",
-	     name, fx__module_name(module));
+             name, fx__module_name(module));
   }
 
 }
 
 struct datanode *fx_submodule(struct datanode *module, const char *params,
-			      const char *name_format, ...)
+                              const char *name_format, ...)
 {
   struct datanode *node;
   char buf[1024];
@@ -762,7 +762,7 @@ struct datanode *fx_submodule(struct datanode *module, const char *params,
   node = datanode_get_path(module, buf, NODETYPE_MODULE);
 
   DEBUG_WARN_MSG_IF(node->type != NODETYPE_MODULE,
-		    "Datastore entry \"%s\" is not a module.", buf);
+                    "Datastore entry \"%s\" is not a module.", buf);
 
   if (params) {
     struct datanode *param_node =

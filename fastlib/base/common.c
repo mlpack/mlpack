@@ -59,7 +59,7 @@ void fl_print_msg_loc(const char *file, const char *func, int line)
 }
 
 void fl_print_fatal_msg(const char *file, const char *func, int line,
-			const char *format, ...)
+                        const char *format, ...)
 {
   va_list vl;
 
@@ -76,7 +76,7 @@ void fl_print_fatal_msg(const char *file, const char *func, int line,
 }
 
 void fl_print_msg(const char *file, const char *func, int line,
-		  fl_msg_t msg_type, const char *format, ...)
+                  fl_msg_t msg_type, const char *format, ...)
 {
   va_list vl;
 
@@ -115,15 +115,15 @@ void fl_print_progress(const char *desc, int prec)
       pos = unlikely(pos > BAR_LEN) ? BAR_LEN : unlikely(pos < 0) ? 0 : pos;
 
       for (; i < pos; ++i) {
-	buf[i] = '#';
+        buf[i] = '#';
       }
       for (; i < BAR_LEN; ++i) {
-	buf[i] = '.';
+        buf[i] = '.';
       }
       buf[i] = '\0';
 
       fprintf(stderr, "\r"ANSI_BLUE"[%s] %d%% %s"ANSI_CLEAR"\r",
-	      buf, prec, desc);
+              buf, prec, desc);
 
       prev_prec = prec;
       prev_desc = desc;

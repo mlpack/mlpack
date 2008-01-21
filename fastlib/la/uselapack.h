@@ -496,9 +496,9 @@ namespace la {
     index_t nr = X->n_rows();
     for (index_t r = 1; r < nr; r++) {
       for (index_t c = 0; c < r; c++) {
-	double temp = X->get(r, c);
-	X->set(r, c, X->get(c, r));
-	X->set(c, r, temp);	
+        double temp = X->get(r, c);
+        X->set(r, c, X->get(c, r));
+        X->set(c, r, temp);        
       }
     }
   }
@@ -661,7 +661,7 @@ namespace la {
     DEBUG_ASSERT(A.ptr() != C->ptr());
     DEBUG_ASSERT(B.ptr() != C->ptr());
     DEBUG_SAME_SIZE(trans_A ? A.n_rows() : A.n_cols(),
-		   trans_B ? B.n_cols() : B.n_rows());
+                   trans_B ? B.n_cols() : B.n_rows());
     DEBUG_SAME_SIZE(trans_A ? A.n_cols() : A.n_rows(), C->n_rows());
     DEBUG_SAME_SIZE(trans_B ? B.n_rows() : B.n_cols(), C->n_cols());
     F77_FUNC(dgemm)(trans_A ? "T" : "N", trans_B ? "T" : "N",

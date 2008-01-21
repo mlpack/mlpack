@@ -22,13 +22,13 @@ namespace cc__private {
       PROFILE_ONLY(NOTIFY_STAR("Profiling information available with:\n"));
       PROFILE_ONLY(NOTIFY_STAR("  gprof $THIS > prof.out && less prof.out\n"));
       DEBUG_ONLY(NOTIFY_STAR(
-	  ANSI_BLACK"Program compiled with debug checks."ANSI_CLEAR"\n"));
+          ANSI_BLACK"Program compiled with debug checks."ANSI_CLEAR"\n"));
     }
     ~InformDebug() {
       PROFILE_ONLY(NOTIFY_STAR("Profiling information available with:\n"));
       PROFILE_ONLY(NOTIFY_STAR("  gprof $THIS > prof.out && less prof.out\n"));
       DEBUG_ONLY(NOTIFY_STAR(
-	  ANSI_BLACK"Program compiled with debug checks."ANSI_CLEAR"\n"));
+          ANSI_BLACK"Program compiled with debug checks."ANSI_CLEAR"\n"));
     }
   };
 

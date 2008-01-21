@@ -15,10 +15,10 @@
 #include <limits.h>
 
 void datanode_init_len(struct datanode *node, const char *key, int len,
-		       nodetype_t type)
+                       nodetype_t type)
 {
   DEBUG_ERR_MSG_IF(type == NODETYPE_NO_CREATE,
-		   "Datanode created with type NODETYPE_NO_CREATE");
+                   "Datanode created with type NODETYPE_NO_CREATE");
 
   node->key = malloc(len + 1);
   strncpy(node->key, key, len);
@@ -34,7 +34,7 @@ void datanode_init_len(struct datanode *node, const char *key, int len,
 }
 
 void datanode_init(struct datanode *node, const char *key,
-		   nodetype_t type)
+                   nodetype_t type)
 {
   datanode_init_len(node, key, strlen(key), type);
 }
@@ -97,7 +97,7 @@ void datanode_add_child(struct datanode *node, struct datanode *child) {
 }
 
 struct datanode *datanode_get_node(struct datanode *node, const char *name,
-				   nodetype_t create)
+                                   nodetype_t create)
 {
   struct datanode *child;
 
@@ -123,7 +123,7 @@ struct datanode *datanode_get_node(struct datanode *node, const char *name,
 }
 
 struct datanode *datanode_get_path(struct datanode *node, const char *path,
-				   nodetype_t create)
+                                   nodetype_t create)
 {
 #if DEBUG
   const char *orig_path = path;
@@ -149,13 +149,13 @@ struct datanode *datanode_get_path(struct datanode *node, const char *path,
     len = slash - path;
 
     DEBUG_ASSERT_MSG(datanode__valid_path_len(path, len),
-		     "Invalid path %s", orig_path);
+                     "Invalid path %s", orig_path);
 
     /* Seek query in node's children */
     for (child = node->children; child; child = child->next) {
       if (strncmp(path, child->key, len) == 0
           && child->key[len] == '\0') {
-	break;
+        break;
       }
     }
 
@@ -175,7 +175,7 @@ struct datanode *datanode_get_path(struct datanode *node, const char *path,
 }
 
 struct datanode *datanode_get_paths(struct datanode *node,
-				    nodetype_t create, ...)
+                                    nodetype_t create, ...)
 {
   const char *arg;
   va_list vl;
@@ -267,7 +267,7 @@ static char *datanode__hex(char *dest, const char *src, int remaining)
       int len = snprintf(dest, remaining, "%%%02X", (unsigned)c);
 
       if (len > remaining - 1) {
-	len = remaining - 1;
+        len = remaining - 1;
       }
 
       dest += len;
@@ -281,7 +281,7 @@ static char *datanode__hex(char *dest, const char *src, int remaining)
 }
 
 static void datanode__write_buf(struct datanode *node, FILE *f,
-				char *prefix, char *buf);
+                                char *prefix, char *buf);
 
 static void datanode__write_buf_backwards(struct datanode *node, FILE *f,
     char *prefix, char *buf) {
@@ -294,7 +294,7 @@ static void datanode__write_buf_backwards(struct datanode *node, FILE *f,
 }
 
 static void datanode__write_buf(struct datanode *node, FILE *f,
-				char *prefix, char *buf)
+                                char *prefix, char *buf)
 {
   if (node->val) {
     buf[0] = ' ';

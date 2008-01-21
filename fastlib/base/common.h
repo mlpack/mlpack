@@ -160,12 +160,12 @@ void fl_print_msg_loc(const char *file, const char *func, int line);
 COMPILER_NO_RETURN
 COMPILER_PRINTF(4, 5)
 void fl_print_fatal_msg(const char *file, const char *func, int line,
-			const char* format, ...);
+                        const char* format, ...);
 
 /** Implementation for NONFATAL, NOTIFY_STAR, and NOTIFY. */
 COMPILER_PRINTF(5, 6)
 void fl_print_msg(const char *file, const char *func, int line,
-		  fl_msg_t msg_type, const char* format, ...);
+                  fl_msg_t msg_type, const char* format, ...);
 
 /**
  * Aborts, printing call location and a message to stderr.

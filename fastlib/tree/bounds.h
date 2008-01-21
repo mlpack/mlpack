@@ -242,7 +242,7 @@ class DHrectBound {
     } while (--d);
 
     return DRange(math::Pow<2, t_pow>(sum_lo) / 4,
-		  math::Pow<2, t_pow>(sum_hi));
+                  math::Pow<2, t_pow>(sum_hi));
   }
 
   /**
