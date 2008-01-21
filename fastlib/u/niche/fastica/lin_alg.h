@@ -1,5 +1,15 @@
 #include "fastlib/fastlib.h"
 
+/**
+ * Save the matrix to a file so that rows in the matrix correspond to rows in
+ * the file: This just means call data::Save() on the transpose of the matrix
+ */ 
+void SaveCorrectly(const char *filename, Matrix a) {
+  Matrix a_transpose;
+  la::TransposeInit(a, &a_transpose);
+  data::Save(filename, a_transpose);
+}
+
 double ExpArg(double x, double arg) {
   return exp(x * arg);
 }
