@@ -10,43 +10,72 @@ void SaveCorrectly(const char *filename, Matrix a) {
   data::Save(filename, a_transpose);
 }
 
+/**
+ * Returns \f$ x^{arg} \f$
+ */
 double ExpArg(double x, double arg) {
   return exp(x * arg);
 }
 
+/**
+ * Returns \f$ 1 / x \f$
+ */
 double Inv(double x, double arg) {
   return 1 / x;
 }
 
+/**
+ * Returns \f$ x^2 \f$
+ */
 double Square(double x, double arg) {
   return x * x;
 }
 
+/**
+ * Returns \f$ arg (x^2) \f$
+ */
 double SquareArg(double x, double arg) {
   return arg * x * x;
 }
 
-
+/**
+ * Returns \f$ \tanh(arg x) \f$
+ */
 double TanhArg(double x, double arg) {
   return tanh(arg * x);
 }
 
+/**
+ * Returns \f$ arg x \f$
+ */
 double Times(double x, double arg) {
   return arg * x;
 }
 
+/**
+ * Returns \f$ x + arg \f$
+ */
 double Plus(double x, double arg) {
   return x + arg;
 }
 
+/**
+ * Returns \f$ x - arg \f$
+ */
 double MinusArg(double x, double arg) {
   return x - arg;
 }
 
+/**
+ * Returns \f$ arg - x \f$
+ */
 double ArgMinus(double x, double arg) {
   return arg - x;
 }
 
+/**
+ * Inits a n by n diagonal matrix and sets the diagonal entries to value
+ */
 Matrix* DiagMatrixInit(index_t n, double value, Matrix *diag_matrix) {
   diag_matrix -> Init(n, n);
   diag_matrix -> SetZero();
@@ -57,6 +86,9 @@ Matrix* DiagMatrixInit(index_t n, double value, Matrix *diag_matrix) {
   return diag_matrix;
 }
 
+/**
+ * Inits a n-dimensional column vector and sets all entries to value
+ */
 Matrix* ColVector(index_t n, double value, Matrix *col_vector) {
   col_vector -> Init(n, 1);
   col_vector -> SetAll(value);
@@ -64,7 +96,11 @@ Matrix* ColVector(index_t n, double value, Matrix *col_vector) {
   return col_vector;
 }
 
-
+/**
+ * Sums over the rows of a M by N matrix and Inits a 1 by N matrix storing
+ * the sum
+ * (\f$ sum\_vector \gets \sum_i \vec{A_{row i}} \f$)
+ */
 Matrix* Sum(const Matrix* const A, Matrix *sum_vector) {
   index_t n_rows = A -> n_rows();
   index_t n_cols = A -> n_cols();
@@ -84,7 +120,10 @@ Matrix* Sum(const Matrix* const A, Matrix *sum_vector) {
   return sum_vector;
 }
 
-
+/**
+ * Returns the sum of the components of vector v
+ * (returns \sum v_i \f$)
+ */
 double Sum(Vector *v) {
   index_t n = v -> length();
 
@@ -96,7 +135,14 @@ double Sum(Vector *v) {
   return sum;
 }
 
-
+/**
+ * Applies function with argument arg to a M by N Matrix and Inits a 1 by N
+ * matrix to the sum over the transformed rows
+ * (\f[
+ * \tilde{A}_{i,j} \gets function(A_{i,j}, arg),
+ * sum\_vector \gets \sum_i \vec{\tilde{A}_{row i}}
+ * \f]
+ */
 Matrix* MatrixMapSum(double (*function)(double,double),
 		     double arg,
 		     const Matrix* const A,
@@ -119,7 +165,11 @@ Matrix* MatrixMapSum(double (*function)(double,double),
   return sum_vector;
 }
 
-
+/**
+ * Applies function with argument arg to vector v and returns the sum of the
+ * transformed components
+ * (sum \gets \f$ \sum_i function(v_i, arg) \f$)
+ */
 double VectorMapSum(double (*function)(double,double),
 		    double arg,
 		    const Vector* const v) {
@@ -133,11 +183,13 @@ double VectorMapSum(double (*function)(double,double),
   return sum;
 }
 
-
-  
-
-// we assume that the dimensions of A and B are equal, if not, oops!!
-Matrix* DotMultiplyInit(const Matrix* const A, const Matrix* const B, Matrix* C) {
+/**
+ * Multiplies A and B entry-wise and Inits a matrix to the result
+ * @pre{ A and B are of equal dimensions }
+ * (\f$ C \gets A .* B \f$)
+ */
+Matrix* DotMultiplyInit(const Matrix* const A, const Matrix* const B,
+			Matrix* C) {
   index_t n_rows = A -> n_rows();
   index_t n_cols = A -> n_cols();
 
@@ -158,8 +210,11 @@ Matrix* DotMultiplyInit(const Matrix* const A, const Matrix* const B, Matrix* C)
   return C;
 }
 
-
-// we assume that the dimensions of A and B are equal, if not, oops!!
+/**
+ * Multiplies A and B entry-wise and overwrites matrix B with the result
+ * @pre{ A and B are of equal dimensions }
+ * (\f$ B \gets A \bullet B \f$)
+ */
 Matrix* DotMultiplyOverwrite(const Matrix* const A, Matrix* const B) {
   index_t n_rows = A -> n_rows();
   index_t n_cols = A -> n_cols();
@@ -177,7 +232,11 @@ Matrix* DotMultiplyOverwrite(const Matrix* const A, Matrix* const B) {
   return B;
 }
 
-
+/**
+ * Multiplies u and v entry-wise and Inits a vector to the result
+ * @pre{ u and v are of equal dimensions }
+ * (\f$ \vec{w} \gets \vec{u} \bullet \vec{v} \f$)
+ */
 Vector* DotMultiplyInit(const Vector* const u, const Vector* const v,
 			Vector* w) {
   index_t n = u -> length();
@@ -191,7 +250,11 @@ Vector* DotMultiplyInit(const Vector* const u, const Vector* const v,
   return w;
 }
 
-
+/**
+ * Multiplies u and v entry-wise and overwrites vector v with the result
+ * @pre{ u and v are of equal dimensions }
+ * (\f$ \vec{v} \gets \vec{u} \bullet \vec{v} \f$)
+ */
 Vector* DotMultiplyOverwrite(const Vector* const u, Vector* const v) {
   index_t n = u -> length();
   
@@ -202,9 +265,13 @@ Vector* DotMultiplyOverwrite(const Vector* const u, Vector* const v) {
   return v;
 }
 
-
-
-Matrix* DotMultiplySum(const Matrix* const A, const Matrix* const B, Matrix* sum_vector) {
+/**
+ * Multiplies A and B (N by M matrices) entry-wise and Inits a 1 by N matrix
+ * to the sum over the transformed rows of the result
+ * (\f$ C = A \bullet B, sum\_vector = \sum_i \vec{C_{row i}} \f$)
+ */
+Matrix* DotMultiplySum(const Matrix* const A, const Matrix* const B,
+		       Matrix* sum_vector) {
   index_t n_rows = A -> n_rows();
   index_t n_cols = A -> n_cols();
 
@@ -225,8 +292,10 @@ Matrix* DotMultiplySum(const Matrix* const A, const Matrix* const B, Matrix* sum
   return sum_vector;
 }
   
-
-
+/**
+ * Inits the diagonal entries of a N by N diagonal matrix to the
+ * entries of a 1 by N matrix
+ */
 Matrix* VectorToDiag(const Matrix* const diag_vector, Matrix* diag_matrix) {
 
   index_t n = diag_vector -> n_cols();
@@ -240,8 +309,10 @@ Matrix* VectorToDiag(const Matrix* const diag_vector, Matrix* diag_matrix) {
   return diag_matrix;
 }
 
-
-
+/**
+ * Inits the diagonal entries of a N by N diagonal matrix to the
+ * entries of a N-dimensional vector
+ */
 Matrix* VectorToDiag(const Vector* const diag_vector, Matrix* diag_matrix) {
 
   diag_matrix -> InitDiagonal(*diag_vector);
@@ -249,8 +320,10 @@ Matrix* VectorToDiag(const Vector* const diag_vector, Matrix* diag_matrix) {
   return diag_matrix;
 }
 
-
-// only valid for square matrices; we don't check the square condition, so don't pass in non-square matrices!
+/**
+ * Inits the components of a vector to the diagonal entries of a square matrix
+ * @pre{ diag_matrix is square }
+ */
 Vector* DiagToVector(const Matrix* const diag_matrix, Vector* diag_vector) {
 
   index_t n = diag_matrix -> n_rows();
@@ -264,154 +337,211 @@ Vector* DiagToVector(const Matrix* const diag_matrix, Vector* diag_vector) {
   return diag_vector;
 }
 
-
-
+/**
+ * Sets A to alpha * A
+ * (\f$ A \gets \alpha * A \f$)
+ */
 Matrix* Scale(double alpha, Matrix *A) {
   la::Scale(alpha, A);
-
   return A;
 }
 
+/**
+ * Sets v to alpha * v
+ * (\f$ \vec{v} \gets \alpha \vec{v} \f$)
+ */
 Vector* Scale(double alpha, Vector* v) {
   la::Scale(alpha, v);
-
   return v;
 }
 
+/**
+ * Inits a matrix to alpha * A
+ * (\f$ B \gets \alpha A \f$)
+ */
+Matrix* ScaleInit(double alpha, const Matrix* const A, Matrix* B) {
+  la::ScaleInit(alpha, *A, B);
+  return B;
+}
+
+/**
+ * Inits a vector to alpha * u
+ * (\f$ \vec{v} \gets \alpha \vec{u} \f$)
+ */
 Vector* ScaleInit(double alpha, const Vector* const u, Vector* v) {
   la::ScaleInit(alpha, *u, v);
-
   return v;
 }
 
-
- 
-
+/**
+ * Inits a matrix to A * B
+ * (\f$ C \gets A B \f$)
+ */
 Matrix* MulInit(const Matrix* const A, const Matrix* const B,
 		Matrix* const C) {
   la::MulInit(*A, *B, C);
-
   return C;
 }
 
+/**
+ * Inits a vector to A * u
+ * (\f$ \vec{v} \gets A \vec{u} \f$)
+ */
 Vector* MulInit(const Matrix* const A, const Vector* const u,
 		Vector* const v) {
   la::MulInit(*A, *u, v);
-
   return v;
 }
 
+/**
+ * Inits a vector to u A or A' u
+ * (\f$ \vec{u} \gets \vec{u} A \f$ or \f$ \vec{u} \gets A^T \vec{u} \f$)
+ */
 Vector* MulInit(const Vector* const u, const Matrix* const A,
 		Vector* const v) {
   la::MulInit(*u, *A, v);
-
   return v;
 }
 
-
-
+/**
+ * Overwrites a matrix with A * B
+ * (\f$ C \gets A B \f$)
+ */
 Matrix* MulOverwrite(const Matrix* const A, const Matrix* const B,
 		     Matrix* const C) {
   la::MulOverwrite(*A, *B, C);
-
   return C;
 }
 
-
+/**
+ * Inits a matrix to A' * B
+ * (\f$ C \gets A^T B \f$)
+ */
 Matrix* MulTransAInit(const Matrix* const A, const Matrix* const B,
 		      Matrix* C) {
   la::MulTransAInit(*A, *B, C);
-
   return C;
 }
 
-
+/**
+ * Overwrites a matrix with A' * B
+ * (\f$ C \gets A^T B \f$)
+ */
 Matrix* MulTransAOverwrite(const Matrix* const A, const Matrix* const B,
 			   Matrix* const C) {
   la::MulTransAOverwrite(*A, *B, C);
-
   return C;
 }
 
-
+/**
+ * Inits a matrix to A * B'
+ * (\f$ C \gets A B^T \f$)
+ */
 Matrix* MulTransBInit(const Matrix* const A, const Matrix* const B,
 		      Matrix* C) {
   la::MulTransBInit(*A, *B, C);
-
   return C;
 }
 
+/** 
+ * Overwrites a matrix with A * B'
+ * (\f$ C \gets A B^T \f$)
+ */
 Matrix* MulTransBOverwrite(const Matrix* const A, Matrix* const B,
 			   Matrix* const C) {
   la::MulTransBOverwrite(*A, *B, C);
-
   return C;
 }
 
-
-
+/**
+ * Inits a matrix to A - B
+ * (\f$ C \gets A - B \f$)
+ */
 Matrix* SubInit(const Matrix* const A, const Matrix* const B, Matrix* C) {
   la::SubInit(*B, *A, C);
-
   return C;
 }
 
+/**
+ * Inits a vector to u - v
+ * (\f$ \vec{w} \gets \vec{u} - \vec{v} \f$)
+ */
 Vector* SubInit(const Vector* const u, const Vector* const v, Vector* w) {
   la::SubInit(*v, *u, w);
-
   return w;
 }
 
-
-Matrix* SubOverwrite(const Matrix* const A, const Matrix* const B, Matrix* const C) {
+/**
+ * Overwrites a matrix with A - B
+ * (\f$ C \gets A - B \f$)
+ */
+Matrix* SubOverwrite(const Matrix* const A, const Matrix* const B,
+		     Matrix* const C) {
   la::SubOverwrite(*B, *A, C);
-
   return C;
 }
 
-
+/**
+ * Sets matrix B to B - A
+ * (\f$ B \gets B - A \f$)
+ */
 Matrix* SubFrom(const Matrix* const A, Matrix* const B) {
   la::SubFrom(*A, B);
-
   return B;
 }
 
+/**
+ * Sets vector v to v - u
+ * (\f$ \vec{v} \gets \vec{v} - vec{u} \f$)
+ */
 Vector* SubFrom(const Vector* const u, Vector* const v) {
   la::SubFrom(*u, v);
-
   return v;
 }
 
-
-
+/**
+ * Sets matrix B to B + A
+ * (\f$ B \gets B + A \f$)
+ */
 Matrix* AddTo(const Matrix* const A, Matrix* const B) {
   la::AddTo(*A, B);
-
   return B;
 }
 
+/**
+ * Sets vector v to v + u
+ * (\f$ \vec{v} \gets \vec{v} + \vec{u} \f$)
+ */
 Vector* AddTo(const Vector* const u, Vector* const v) {
   la::AddTo(*u, v);
-
   return v;
 }
 
-
+/**
+ * Sets matrix B to B + alpha * A
+ * (\f$ B \gets B + \alpha A \f$)
+ */
 Matrix* AddExpert(double alpha, const Matrix* const A, Matrix* const B) {
   la::AddExpert(alpha, *A, B);
 
   return B;
 }
 
+/**
+ * Sets vector v to v + alpha * u
+ * (\f$ \vec{v} \gets \vec{v} + \alpha \vec{u} \f$)
+ */
 Vector* AddExpert(double alpha, const Vector* const u, Vector* const v) {
   la::AddExpert(alpha, *u, v);
 
   return v;
 }
 
-
-
-
+/**
+ * Applies function with argument arg to matrix A and
+ * overwrites A with the result
+ * (\f$ A_{i,j} \gets function(A_{i,j}, arg) \f$)
+ */
 Matrix* MapOverwrite(double (*function)(double,double),
 		     double arg,
 		     Matrix *A) {
@@ -429,6 +559,11 @@ Matrix* MapOverwrite(double (*function)(double,double),
   return A;
 }
 
+/**
+ * Applies function with argument arg to vector v and
+ * overwrites v with the result
+ * (\f$ v_i \gets function(v_i, arg) \f$)
+ */
 Vector* MapOverwrite(double (*function)(double,double),
 		     double arg,
 		     Vector* const v) {
@@ -441,7 +576,11 @@ Vector* MapOverwrite(double (*function)(double,double),
   return v;
 }
 
-
+/**
+ * Inits a matrix to the result of applying function with argument arg to
+ * a matrix
+ * (\f$ B_{i,j} \gets function(A_{i,j}, arg) \f$)
+ */
 Matrix* MapInit(double (*function)(double,double),
 		double arg,
 		const Matrix* const A,
@@ -464,26 +603,28 @@ Matrix* MapInit(double (*function)(double,double),
   return B;
 }
 
-
+/**
+ * Inits a vector to the result of applying function with argument arg to
+ * a vector
+ * (\f$ v_i \gets function(u_i, arg) \f$)
+ */
 Vector* MapInit(double (*function)(double,double),
 		double arg,
-		const Vector* const v,
-		Vector *w) {
-  index_t n = v -> length();
-  w -> Init(n);
+		const Vector* const u,
+		Vector *v) {
+  index_t n = u -> length();
+  v -> Init(n);
   
   for(index_t i = 0; i < n; i++) {
-    (*w)[i] = function((*v)[i], arg);
+    (*v)[i] = function((*u)[i], arg);
   }
 
-  return w;
+  return v;
 }
 
-
-
-
-
-
+/**
+ * Inits a matrix to uniform random entries in [0,1]
+ */
 void RandMatrix(index_t n_rows, index_t n_cols, Matrix *A) {
   A -> Init(n_rows, n_cols);
 
@@ -494,6 +635,9 @@ void RandMatrix(index_t n_rows, index_t n_cols, Matrix *A) {
   }
 }
 
+/**
+ * Inits a matrix to the columns of A specified in column_indices
+ */
 void MakeSubMatrixByColumns(Vector column_indices, Matrix A, Matrix *A_sub) {
   
   index_t num_selected = column_indices.length();
@@ -509,8 +653,10 @@ void MakeSubMatrixByColumns(Vector column_indices, Matrix A, Matrix *A_sub) {
   }
 }
 
-
-
+/**
+ * Sets a matrix to a centered matrix, where centering is done by subtracting
+ * the sum over the columns (a column vector) from each column of the matrix
+ */
 void Center(Matrix X, Matrix* X_centered) {
   Vector col_vector_sum;
   col_vector_sum.Init(X.n_rows());
@@ -536,7 +682,11 @@ void Center(Matrix X, Matrix* X_centered) {
 
 }
 
-
+/**
+ * Whitens a matrix using the singular value decomposition of the covariance
+ * matrix. Whitening means the covariance matrix of the result is
+ * the identity matrix
+ */
 void WhitenUsingSVD(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix) {
   
   Matrix cov_X, U, VT, inv_S_matrix, temp1;
@@ -568,7 +718,11 @@ void WhitenUsingSVD(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix) {
   
 }
 
-
+/**
+ * Whitens a matrix using the eigen decomposition of the covariance
+ * matrix. Whitening means the covariance matrix of the result is
+ * the identity matrix
+ */
 void WhitenUsingEig(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix, Matrix* dewhitening_matrix) {
   Matrix cov_X, D, D_inv, E;
   Vector D_vector;
@@ -600,8 +754,9 @@ void WhitenUsingEig(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix, Matr
   la::MulInit(*whitening_matrix, X, X_whitened);
 }
 
-
-
+/**
+ * Overwrites a dimension-N vector to a random vector on the unit sphere in R^N
+ */
 void RandVector(Vector &v) {
   
   index_t d = v.length();
@@ -624,7 +779,9 @@ void RandVector(Vector &v) {
   
 }
 
-
+/**
+ * Inits a matrix to random normally distributed entries from N(0,1)
+ */
 Matrix* RandNormalInit(index_t d, index_t n, Matrix* A) {
 
   double* A_elements = A -> ptr();
@@ -647,6 +804,10 @@ Matrix* RandNormalInit(index_t d, index_t n, Matrix* A) {
   return A;
 }
 
+/**
+ * Inits a matrix to a num_row_reps by num_col_reps block matrix where
+ * each block is base_matrix
+ */
 Matrix* RepeatMatrix(index_t num_row_reps, index_t num_col_reps,
 		     Matrix base_matrix, Matrix* new_matrix) {
 
@@ -672,98 +833,3 @@ Matrix* RepeatMatrix(index_t num_row_reps, index_t num_col_reps,
   return new_matrix;
 }
 
-
-
-/*
-  int main(int argc, char *argv[]) {*/
-//fx_init(argc, argv);
-/*  
-    Matrix A, B, C, D, E, F;
-
-    RandMatrix(5, 2, &A);
-    RandMatrix(2, 4, &B);
-    RandMatrix(5, 4, &C);
-    RandMatrix(7, 5, &D);
-    RandMatrix(7, 4, &E);
-    RandMatrix(7, 4, &F);
-
-    SaveCorrectly("A.dat", A);
-    SaveCorrectly("B.dat", B);
-    SaveCorrectly("C.dat", C);
-    SaveCorrectly("D.dat", D);
-    SaveCorrectly("E.dat", E);
-
-
-    Matrix temp1, temp2, temp3, temp4, temp5;
-  
-    Vector sum_vector;
-    Matrix diag_matrix;
-
-    VectorToDiag(MatrixSum(DotMultiplyInit(MapOverwrite(&TimesTen, Sub(Mul(&D, Sub(Mul(&A, &B, &temp1), &C, &temp2), &temp3), &E, &temp4)), &F, &temp5), &sum_vector), &diag_matrix);
-
-    Vector diag_vector;
-    DiagToVector(&diag_matrix, &diag_vector);
-
-    la::Scale(2, Scale(100, &diag_matrix));
-						
-  
-    A.PrintDebug("A");
-    B.PrintDebug("B");
-    C.PrintDebug("C");
-    D.PrintDebug("D");
-    E.PrintDebug("E");
-    F.PrintDebug("F");
-
-    temp4.PrintDebug("temp4");
-    temp5.PrintDebug("temp5");
-
-    sum_vector.PrintDebug("sum(temp5)");
-
-    diag_matrix.PrintDebug("diag_matrix");
-    diag_vector.PrintDebug("diag_vector");
-
-
-    Matrix Z, sub_Z;
-    RandMatrix(4, 5, &Z);
-    Vector indices;
-    indices.Init(3);
-    indices[0] = 1;
-    indices[1] = 0;
-    indices[2] = 3;
-    MakeSubMatrixByColumns(indices, Z, &sub_Z);
-
-    Z.PrintDebug("Z");
-    sub_Z.PrintDebug("sub_Z");
-
-*/
-/*
-  index_t n = 10;
-  index_t d = 2;
-
-  Matrix X, B;
-  RandMatrix(d, n, &X);
-  RandMatrix(d, d, &B);
-
-  Matrix hyp_tan;
-  MapOverwrite(&TanhArg, A1, MulTransAInit(&X, &B, &hyp_tan));
-
-  Matrix ones;
-  ColVector(d, 1, &ones);
-
-  Matrix sum, temp1, temp2;
-  AddOverwrite(
-  Scale(1 / (double) n, MulInit(&X, &hyp_tan, &temp1)),
-  DotMultiplyOverwrite(MulInit(&ones, Scale(A1 / (double) n, MapOverwrite(&MinusArg, A1, Sum(MapOverwrite(&Square, 0, &hyp_tan), &sum))), &temp2), &B));
-	     
-
-  B.PrintDebug("B");
-
-
-
-
-  //fx_done();
-
-  return 0;
-
-  }
-*/
