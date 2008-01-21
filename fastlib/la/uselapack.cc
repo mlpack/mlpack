@@ -203,7 +203,7 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   
   R->SetZero();
   if (info != 0) {
-    return TRIAL_FROM_LAPACK(info);
+    return SUCCESS_FROM_LAPACK(info);
   }
 
   // Extract R
@@ -223,7 +223,7 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
         tau, work, lwork, &info);
   }
 
-  return TRIAL_FROM_LAPACK(info);
+  return SUCCESS_FROM_LAPACK(info);
 }
 */
 
@@ -241,7 +241,7 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
      tau, work, lwork, &info);
 
   if (info != 0) {
-    return TRIAL_FROM_LAPACK(info);
+    return SUCCESS_FROM_LAPACK(info);
   }
 
   // Extract R
@@ -257,7 +257,7 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   F77_FUNC(dorgqr)(m, k, k, A_in_Q_out->ptr(), m,
       tau, work, lwork, &info);
 
-  return TRIAL_FROM_LAPACK(info);
+  return SUCCESS_FROM_LAPACK(info);
 }
 
 success_t la::QRInit(const Matrix &A, Matrix *Q, Matrix *R) {
@@ -291,7 +291,7 @@ success_t la::SchurExpert(Matrix *A_in_T_out,
         Z, n, work, lwork, NULL, &info);
   }
 
-  return TRIAL_FROM_LAPACK(info);
+  return SUCCESS_FROM_LAPACK(info);
 }
 
 success_t la::EigenExpert(Matrix *A_garbage,
@@ -312,7 +312,7 @@ success_t la::EigenExpert(Matrix *A_garbage,
         w_real, w_imag, NULL, 1, V_raw, n, work, lwork, &info);
   }
 
-  return TRIAL_FROM_LAPACK(info);
+  return SUCCESS_FROM_LAPACK(info);
 }
 
 success_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
@@ -423,7 +423,7 @@ success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
         s, U, m, VT, k, work, lwork, &info);
   }
 
-  return TRIAL_FROM_LAPACK(info);
+  return SUCCESS_FROM_LAPACK(info);
 }
 */
 
@@ -451,7 +451,7 @@ success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
     mem::Free(work);
   }
 
-  return TRIAL_FROM_LAPACK(info);
+  return SUCCESS_FROM_LAPACK(info);
 }
 
 success_t la::Cholesky(Matrix *A_in_U_out) {
@@ -466,7 +466,7 @@ success_t la::Cholesky(Matrix *A_in_U_out) {
     mem::BitZero(A_in_U_out->GetColumnPtr(j) + j + 1, n - j - 1);
   }
 
-  return TRIAL_FROM_LAPACK(info);
+  return SUCCESS_FROM_LAPACK(info);
 }
 
 static la::zzzLapackInit lapack_initializer;

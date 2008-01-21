@@ -24,7 +24,7 @@
  *
  * Perhaps extend success_t?
  */
-#define TRIAL_FROM_LAPACK(info) \
+#define SUCCESS_FROM_LAPACK(info) \
     (likely((info) == 0) ? SUCCESS_PASS : SUCCESS_FAIL)
 
 #ifndef NO_LAPACK
@@ -798,7 +798,7 @@ namespace la {
     f77_integer info;
     F77_FUNC(dgetrf)(A_in_LU_out->n_rows(), A_in_LU_out->n_cols(),
         A_in_LU_out->ptr(), A_in_LU_out->n_rows(), pivots, &info);
-    return TRIAL_FROM_LAPACK(info);
+    return SUCCESS_FROM_LAPACK(info);
   }
   /**
    * Init matrices to the LU decomposition of a matrix.
@@ -829,7 +829,7 @@ namespace la {
     double work[lwork];
     DEBUG_MATSQUARE(*LU_in_B_out);
     F77_FUNC(dgetri)(n, LU_in_B_out->ptr(), n, pivots, work, lwork, &info);
-    return TRIAL_FROM_LAPACK(info);
+    return SUCCESS_FROM_LAPACK(info);
   }
   /**
    * Inverts a matrix in place
@@ -928,7 +928,7 @@ namespace la {
     f77_integer n = A_in_LU_out->n_rows();
     F77_FUNC(dgesv)(n, k, A_in_LU_out->ptr(), n, pivots,
         B_in_X_out, n, &info);
-    return TRIAL_FROM_LAPACK(info);
+    return SUCCESS_FROM_LAPACK(info);
   }
   /**
    * Inits a matrix to the solution of a system of linear equations
