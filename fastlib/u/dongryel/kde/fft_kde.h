@@ -1,16 +1,59 @@
+/** @file fft_kde.h
+ *
+ * This file contains an implementation of kernel density estimation
+ * using multidimensional fast Fourier transform for a linkable
+ * library component. This algorithm by design supports only the
+ * Gaussian kernel with the fixed-bandwidth. The optimal bandwidth
+ * cross-validation routine is not provided in this library.
+ *
+ * For more details on mathematical derivations, please take a look at
+ * the following paper:
+ *
+ * @Article{wand94,
+ *  Author = "M. P. Wand",
+ *  Title = "{Fast Computation of Multivariate Kernel Estimators}",
+ *  Journal = "Journal of Computational and Graphical Statistics",
+ *  Year = "1994"
+ * }
+ *
+ *  @author Dongryeol Lee (dongryel)
+ *  @bugs No known bugs.
+ */
 #ifndef FFT_KDE_H
 #define FFT_KDE_H
 
-#include <math.h>
-#include <values.h>
+#include <fastlib/fastlib.h>
 
 /** 
- * computing kernel estimate using Fast Fourier Transform: I have
- * used multidimensional fast fourier transform called ffteasy
+ * A computation class for FFT based kernel density estimation
+ *
+ * This class is only inteded to compute once per instantiation.
+ *
+ * Example use:
+ *
+ * @code
+ *   FFTKde fft_kde;
+ *   struct datanode* fft_kde_module;
+ *   Vector results;
+ *
+ *   fft_kde_module = fx_submodule(NULL, "kde", "fft_kde_module");
+ *   fft_kde.Init(queries, references, fft_kde_module);
+ *   fft_kde.Compute();
+ *
+ *   // important to make sure that you don't call Init on results!
+ *   fft_kde.get_density_estimates(&results);
+ * @endcode
  */
 class FFTKde {
-  
+
+  FORBID_ACCIDENTAL_COPIES(FFTKde);
+
  private:
+
+  ////////// Private Member Variables //////////
+
+  /** pointer to the module holding the relevant parameters */
+  struct datanode *module_;
 
   /** constant TAU */
   static const double TAU = 4.0;
@@ -36,6 +79,7 @@ class FFTKde {
   /** minimum coordinate along each dimension */
   Vector mincoords_;
 
+  /** minimum indices along each dimension */
   ArrayList<int> minindices_;
 
   /** maximum coordinate along each dimension */
@@ -66,47 +110,6 @@ class FFTKde {
   Vector k_fnyquist_;
   
   Vector kernelweights_;
-
-  // preprocessing: scaling the dataset; this has to be moved to the dataset
-  // module
-  /* scales each attribute to 0-1 using the min/max values */
-  void scale_data_by_minmax() {
-
-    int num_dims = rset_.n_rows();
-    DHrectBound<2> qset_bound;
-    DHrectBound<2> rset_bound;
-    qset_bound.Init(qset_.n_rows());
-    rset_bound.Init(qset_.n_rows());
-
-    // go through each query/reference point to find out the bounds
-    for(index_t r = 0; r < rset_.n_cols(); r++) {
-      Vector ref_vector;
-      rset_.MakeColumnVector(r, &ref_vector);
-      rset_bound |= ref_vector;
-    }
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
-      Vector query_vector;
-      qset_.MakeColumnVector(q, &query_vector);
-      qset_bound |= query_vector;
-    }
-
-    for(index_t i = 0; i < num_dims; i++) {
-      DRange qset_range = qset_bound.get(i);
-      DRange rset_range = rset_bound.get(i);
-      double min_coord = min(qset_range.lo, rset_range.lo);
-      double max_coord = max(qset_range.hi, rset_range.hi);
-      double width = max_coord - min_coord;
-
-      for(index_t j = 0; j < rset_.n_cols(); j++) {
-	rset_.set(i, j, (rset_.get(i, j) - min_coord) / width);
-      }
-      if(fx_param_str(NULL, "query", NULL) != NULL) {
-	for(index_t j = 0; j < qset_.n_cols(); j++) {
-	  qset_.set(i, j, (qset_.get(i, j) - min_coord) / width);
-	}
-      }
-    }
-  }
   
   /**
    * Do a Fourier transform of an array of N complex numbers separated by
@@ -590,8 +593,8 @@ class FFTKde {
     // size in each dimension.
     for(index_t d = 0; d < qset_.n_rows(); d++) {
       int possiblesample;
-      min = MAXDOUBLE;
-      max = -MAXDOUBLE;
+      min = DBL_MAX;
+      max = -DBL_MAX;
       
       for(index_t r = 0; r < rset_.n_cols(); r++) {
 	double coord = rset_.get(d, r);
@@ -681,17 +684,26 @@ class FFTKde {
   
   
  public:
-  
+
+  /** complex number - composed of real and imaginary parts */
   struct complex {
+
+    /** real part */
     double real;
+
+    /** imaginary part */
     double imag;
   };
 
+  ////////// Constructor/Destructor //////////
+
+  /** constructor - does not do anything */
   FFTKde() {}
   
+  /** destructor - does not do anything */
   ~FFTKde() {}
   
-  // getters and setters
+  ////////// Getters/Setters //////////
   
   /** get the reference dataset */
   Matrix &get_reference_dataset() { return rset_; }
@@ -700,27 +712,34 @@ class FFTKde {
   Matrix &get_query_dataset() { return qset_; }
 
   /** get the density estimate */
-  const Vector &get_density_estimates() { return densities_; }
+  void get_density_estimates(Vector *results) {
+    results->Init(densities_.length());
 
-  void Init(Matrix &qset, Matrix &rset) {
+    for(index_t i = 0; i < densities_.length(); i++) {
+      (*results)[i] = densities_[i];
+    }
+  }
+
+  /** Initialize the FFT KDE object with the query and the reference
+   *  datasets with the parameter lists.
+   */
+  void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
     
+    // initialize module to the incoming one
+    module_ = module_in;
+
     printf("Initializing FFT KDE...\n");
-    fx_timer_start(NULL, "fft_kde_init");
+    fx_timer_start(module_, "fft_kde_init");
 
     // initialize the kernel and read in the number of grid points
-    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
-    m_ = fx_param_int(NULL, "num_grid_pts_per_dim", 128);
+    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
+    m_ = fx_param_int(module_, "num_grid_pts_per_dim", 128);
 
     // set aliases to the query and reference datasets and initialize
     // query density sets
-    qset_.Alias(qset);
+    qset_.Copy(qset);
     densities_.Init(qset_.n_cols());
-    rset_.Alias(rset);
-
-    // scale dataset if the user wants to
-    if(!strcmp(fx_param_str(NULL, "scaling", NULL), "range")) {
-      scale_data_by_minmax();
-    }
+    rset_.Copy(rset);
 
     // initialize member variables.
     size_.Init(qset_.n_rows());
@@ -740,69 +759,17 @@ class FFTKde {
     k_fnyquist_.Init(nyquistnum_);
     kernelweights_.Init(numgridpts_);
 
-    fx_timer_stop(NULL, "fft_kde_init");
+    fx_timer_stop(module_, "fft_kde_init");
     printf("FFT KDE initialization completed...\n");
   }
 
-  void Init() {
-
-    const char *rfname = fx_param_str_req(NULL, "data");
-    const char *qfname = fx_param_str(NULL, "query", rfname);
-
-    // initialize the kernel and read in the number of grid points
-    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
-    m_ = fx_param_int(NULL, "num_grid_pts_per_dim", 128);
-
-    // read reference dataset
-    Dataset ref_dataset;
-    ref_dataset.InitFromFile(rfname);
-    rset_.Own(&(ref_dataset.matrix()));
-
-    // read query dataset if different
-    if(!strcmp(qfname, rfname)) {
-      qset_.Alias(rset_);
-    }
-    else {
-      Dataset query_dataset;
-      query_dataset.InitFromFile(qfname);
-      qset_.Own(&(query_dataset.matrix()));
-    }
-
-    // scale dataset if the user wants to
-    if(!strcmp(fx_param_str(NULL, "scaling", NULL), "range")) {
-      scale_data_by_minmax();
-    }
-
-    printf("Initializing FFT KDE...\n");
-    fx_timer_start(NULL, "fft_kde_init");
-
-    // initialize member variables.
-    size_.Init(qset_.n_rows());
-    densities_.Init(qset_.n_cols());
-    minindices_.Init(rset_.n_rows());
-    mincoords_.Init(qset_.n_rows());
-    maxcoords_.Init(qset_.n_rows());
-    diffcoords_.Init(qset_.n_rows());
-    gridsizes_.Init(qset_.n_rows());
-    kernelweights_dims_.Init(qset_.n_rows());
-
-    // set up the discretized grid for the reference dataset
-    discretize_dataset();
-
-    nyquistnum_ = 2 * numgridpts_ / size_[rset_.n_rows() - 1];
-
-    d_fnyquist_.Init(nyquistnum_);
-    k_fnyquist_.Init(nyquistnum_);
-    kernelweights_.Init(numgridpts_);
-    fx_timer_stop(NULL, "fft_kde_init");
-    printf("FFT KDE initialization completed...\n");
-
-  }
-
+  /**
+   * Compute density estimates using FFT after initialization
+   */
   void Compute() {
 
     printf("Computing FFT KDE...\n");
-    fx_timer_start(NULL, "fft_kde");
+    fx_timer_start(module_, "fft_kde");
 
     // FFT the discretized bin count matrix.
     d_fnyquist_.SetZero();
@@ -849,24 +816,18 @@ class FFTKde {
     // Retrieve the densities of each data point.
     RetrieveDensities();
 
-    fx_timer_stop(NULL, "fft_kde");
+    fx_timer_stop(module_, "fft_kde");
     printf("FFT KDE completed...\n");
   }
 
-  void NormalizeDensities() {
-    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
-      rset_.n_cols();
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
-      densities_[q] /= norm_const;
-    }
-  }
-
+  /** Print out the computed density values to the user-directed stream
+   */
   void PrintDebug() {
 
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(NULL, "fft_kde_output", NULL)) != NULL) {
+    if((fname = fx_param_str(module_, "fft_kde_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
