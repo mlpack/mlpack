@@ -17,9 +17,9 @@ void MoGEM::ExpectationMaximization(Matrix& data_points, ArrayList<double> *resu
   index_t num_points;
   index_t dim, num_gauss;
   double sum, tmp; 	
-  ArrayList<Vector> mu_temp;
-  ArrayList<Matrix> sigma_temp;
-  Vector omega_temp, x;
+  ArrayList<Vector> mu_temp, mu;
+  ArrayList<Matrix> sigma_temp, sigma;
+  Vector omega_temp, omega, x;
   Matrix cond_prob;
   long double l, l_old, best_l, INFTY = 99999, TINY = 1.0e-10;
 
@@ -31,14 +31,19 @@ void MoGEM::ExpectationMaximization(Matrix& data_points, ArrayList<double> *resu
   // Initializing the number of the vectors and matrices 
   // according to the parameters input
   mu_temp.Init(num_gauss);
+  mu.Init(num_gauss);
   sigma_temp.Init(num_gauss);
+  sigma.Init(num_gauss);
   omega_temp.Init(num_gauss);
+  omega.Init(num_gauss);
   
   // Allocating size to the vectors and matrices 
   // according to the dimensionality of the data
   for(index_t i = 0; i < num_gauss; i++) {
     mu_temp[i].Init(dim);
+    mu[i].Init(dim);
     sigma_temp[i].Init(dim, dim);    
+    sigma[i].Init(dim, dim);
   }
   x.Init(dim);
   cond_prob.Init(num_gauss, num_points);
@@ -125,14 +130,22 @@ void MoGEM::ExpectationMaximization(Matrix& data_points, ArrayList<double> *resu
     if(l > best_l){
       best_l = l;
       for (index_t i = 0; i < num_gauss; i++) {
-	set_mu(i, mu_temp[i]);
-	set_sigma(i, sigma_temp[i]);
+	mu[i].CopyValues(mu_temp[i]);
+	sigma[i].CopyValues(sigma_temp[i]);
       }
-      set_omega(omega_temp);
+      omega.CopyValues(omega_temp);
     }
     restarts++;
   }	
+
+  for (index_t i = 0; i < num_gauss; i++) {
+    set_mu(i, mu[i]);
+    set_sigma(i, sigma[i]);
+  }
+  set_omega(omega);
   
+  printf("loglikelihood value of the model: %Lf\n", best_l);
+  Display();
   OutputResults(results);
   return;
 }
