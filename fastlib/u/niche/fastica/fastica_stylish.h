@@ -1,6 +1,8 @@
 /**
  * @file fastica_stylish.h
  *
+ * FastICA Algorithm
+ *
  * Implements the FastICA Algorithm for Independent Component Analysis using
  * fixed-point optimization with various independence-minded contrast
  * functions. For sample usage, see accompanying file fastica_stylish.c
@@ -49,7 +51,6 @@ double drand48()
  * @code
  * TODO: write an example use
  */
-
 class FastICA {
   
  private:

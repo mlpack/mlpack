@@ -1,11 +1,7 @@
 /**
  * @file lin_alg.h
  *
- * Linear algebra utilities, including: Map, Sum, Addition, Subtraction,
- * Multiplication, Hadamard product (entry-wise multiplication),
- * Random vectors on the unit sphere, Random uniform matrices, Random
- * normal matrices, Submatrix that is a slice of selected columns of a matrix,
- * Block matrix construction from a base matrix
+ * Linear algebra utilities
  *
  * @author Nishant Mehta
  */
@@ -15,6 +11,15 @@
 
 #include "fastlib/fastlib.h"
 
+/** 
+ * Linear algebra utilities.
+ *
+ * This includes, among other things, Map, Sum, Addition, Subtraction,
+ * Multiplication, Hadamard product (entry-wise multiplication), Whitening,
+ * Random vectors on the unit sphere, Random uniform matrices, Random
+ * normal matrices, creating a Submatrix that is a slice of selected columns of
+ * a matrix, Block matrix construction from a base matrix
+ */
 namespace linalg {
   /**
    * Save the matrix to a file so that rows in the matrix correspond to rows in
@@ -115,7 +120,7 @@ namespace linalg {
   /**
    * Sums over the rows of a M by N matrix and Inits a 1 by N matrix storing
    * the sum
-   * (\f$ sum\_vector \gets \sum_i \vec{A_{row i}} \f$)
+   * (sum\_vector \f$ \gets \sum_i \vec{A_{row i}} \f$)
    */
   Matrix* Sum(const Matrix* const A, Matrix *sum_vector) {
     index_t n_rows = A -> n_rows();
@@ -138,7 +143,7 @@ namespace linalg {
 
   /**
    * Returns the sum of the components of vector v
-   * (returns \sum v_i \f$)
+   * (returns \f$ \sum v_i \f$)
    */
   double Sum(Vector *v) {
     index_t n = v -> length();
@@ -154,10 +159,8 @@ namespace linalg {
   /**
    * Applies function with argument arg to a M by N Matrix and Inits a 1 by N
    * matrix to the sum over the transformed rows
-   * (\f[
-   * \tilde{A}_{i,j} \gets function(A_{i,j}, arg),
-   * sum\_vector \gets \sum_i \vec{\tilde{A}_{row i}}
-   * \f]
+   * (\f$ \tilde{A}_{i,j} \gets function(A_{i,j}, arg) \f$,
+   * sum\_vector \f$ \gets \sum_i \vec{\tilde{A}_{row i}} \f$)
    */
   Matrix* MatrixMapSum(double (*function)(double,double),
 		       double arg,
@@ -284,7 +287,7 @@ namespace linalg {
   /**
    * Multiplies A and B (N by M matrices) entry-wise and Inits a 1 by N matrix
    * to the sum over the transformed rows of the result
-   * (\f$ C = A \bullet B, sum\_vector = \sum_i \vec{C_{row i}} \f$)
+   * (\f$ C = A \bullet B \f$, sum\_vector \f$ \gets \sum_i \vec{C_{row i}} \f$)
    */
   Matrix* DotMultiplySum(const Matrix* const A, const Matrix* const B,
 			 Matrix* sum_vector) {
@@ -508,7 +511,7 @@ namespace linalg {
 
   /**
    * Sets vector v to v - u
-   * (\f$ \vec{v} \gets \vec{v} - vec{u} \f$)
+   * (\f$ \vec{v} \gets \vec{v} - \vec{u} \f$)
    */
   Vector* SubFrom(const Vector* const u, Vector* const v) {
     la::SubFrom(*u, v);
