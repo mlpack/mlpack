@@ -8,6 +8,9 @@ class NaiveKde {
 
  private:
   
+  /** pointer to the module */
+  struct datanode *module_;
+
   /** query dataset */
   Matrix qset_;
   
@@ -22,16 +25,18 @@ class NaiveKde {
   
  public:
 
-  NaiveKde() {
+  /** constructor - does not do anything */
+  NaiveKde() {    
   }
 
+  /** destructor - does not do anything */
   ~NaiveKde() {
   }
 
   void Compute() {
 
     printf("\nStarting naive KDE...\n");
-    fx_timer_start(NULL, "naive_kde_compute");
+    fx_timer_start(module_, "naive_kde_compute");
 
     // compute unnormalized sum
     for(index_t q = 0; q < qset_.n_cols(); q++) {
@@ -51,22 +56,21 @@ class NaiveKde {
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       densities_[q] /= norm_const;
     }
-    fx_timer_stop(NULL, "naive_kde_compute");
+    fx_timer_stop(module_, "naive_kde_compute");
     printf("\nNaive KDE completed...\n");
   }
 
-  void Init() {
-    densities_.SetZero();
-  }
+  void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
 
-  void Init(Matrix &qset, Matrix &rset) {
+    // set the datanode module to be the incoming one
+    module_ = module_in;
 
     // get datasets
     qset_.Copy(qset);
     rset_.Copy(rset);
 
     // get bandwidth
-    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
     
     // allocate density storage
     densities_.Init(qset.n_cols());
@@ -78,8 +82,8 @@ class NaiveKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if(fx_param_exists(NULL, "naive_kde_output")) {
-      fname = fx_param_str(NULL, "naive_kde_output", NULL);
+    if(fx_param_exists(module_, "naive_kde_output")) {
+      fname = fx_param_str(module_, "naive_kde_output", NULL);
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
@@ -103,7 +107,7 @@ class NaiveKde {
       }
     }
     
-    fx_format_result(NULL, "maxium_relative_error_for_fast_KDE", "%g", 
+    fx_format_result(module_, "maximum_relative_error_for_fast_KDE", "%g", 
 		     max_rel_err);
   }
 

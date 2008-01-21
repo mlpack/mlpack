@@ -1,7 +1,17 @@
+/**
+ * @file dataset_scaler.h
+ *
+ * This file contains utility functions to scale the given query and
+ * reference dataset pair.
+ *
+ * @author Dongryeol Lee (dongryel)
+ * @bug No known bugs.
+ */
+
 #ifndef DATASET_SCALER_H
 #define DATASET_SACLER_H
 
-#include "fastlib/fastlib_int.h"
+#include <fastlib/fastlib.h>
 
 class DatasetScaler {
 

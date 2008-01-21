@@ -5,33 +5,61 @@
  * for a linkable library component. It implements a rudimentary
  * depth-first dual-tree algorithm with finite difference and
  * series-expansion approximations, using the formalized GNP framework
- * by Ryan and Garry.
+ * by Ryan and Garry. Currently, it supports a fixed-bandwidth,
+ * uniform weight kernel density estimation with no multi-bandwidth
+ * optimizations. We assume that users will be able to cross-validate
+ * for the optimal bandwidth using a black-box optimizer which is not
+ * implemented in this code.
  *
  * For more details on mathematical details, please take a look at the
- * published conference papers:
+ * published conference papers (in chronological order):
+ *
+ * @inproceedings{DBLP:conf/sdm/GrayM03,
+ *  author    = {Alexander G. Gray and
+ *               Andrew W. Moore},
+ *  title     = {Nonparametric Density Estimation: Toward Computational 
+ *               Tractability},
+ *  booktitle = {SDM},
+ *  year      = {2003},
+ *  ee        = {http://www.siam.org/meetings/sdm03/proceedings/sdm03_19.pdf},
+ *  crossref  = {DBLP:conf/sdm/2003},
+ *  bibsource = {DBLP, http://dblp.uni-trier.de}
+ * }
+ *
+ * @misc{ gray03rapid,
+ *  author = "A. Gray and A. Moore",
+ *  title = "Rapid evaluation of multiple density models",
+ *  booktitle = "In C. M. Bishop and B. J. Frey, editors, 
+ *               Proceedings of the Ninth International Workshop on 
+ *               Artificial Intelligence and Statistics",
+ *  year = "2003",
+ *  url = "citeseer.ist.psu.edu/gray03rapid.html"
+ * }
  *
  * @incollection{NIPS2005_570,
- * title = {Dual-Tree Fast Gauss Transforms},
- * author = {Dongryeol Lee and Alexander Gray and Andrew Moore},
- * booktitle = {Advances in Neural Information Processing Systems 18},
- * editor = {Y. Weiss and B. Sch\"{o}lkopf and J. Platt},
- * publisher = {MIT Press},
- * address = {Cambridge, MA},
- * pages = {747--754},
- * year = {2006}
+ *  title = {Dual-Tree Fast Gauss Transforms},
+ *  author = {Dongryeol Lee and Alexander Gray and Andrew Moore},
+ *  booktitle = {Advances in Neural Information Processing Systems 18},
+ *  editor = {Y. Weiss and B. Sch\"{o}lkopf and J. Platt},
+ *  publisher = {MIT Press},
+ *  address = {Cambridge, MA},
+ *  pages = {747--754},
+ *  year = {2006}
  * }
  *
  * @inproceedings{DBLP:conf/uai/LeeG06,
- * author    = {Dongryeol Lee and
- *             Alexander G. Gray},
- * title     = {Faster Gaussian Summation: Theory and Experiment},
- * booktitle = {UAI},
- * year      = {2006},
- * crossref  = {DBLP:conf/uai/2006},
- * bibsource = {DBLP, http://dblp.uni-trier.de}
+ *  author    = {Dongryeol Lee and
+ *               Alexander G. Gray},
+ *  title     = {Faster Gaussian Summation: Theory and Experiment},
+ *  booktitle = {UAI},
+ *  year      = {2006},
+ *  crossref  = {DBLP:conf/uai/2006},
+ *  bibsource = {DBLP, http://dblp.uni-trier.de}
  * }
  *
+ * @author Dongryeol Lee (dongryel)
  * @see kde_main.cc
+ * @bugs No known bugs.
  */
 
 #ifndef KDE_H
@@ -120,7 +148,7 @@ class FastKde {
 
       // get bandwidth and relative error
       bandwidth_ = fx_param_double_req(module, "bandwidth");
-      relative_error_ = fx_param_double(module, "tau", 0.1);
+      relative_error_ = fx_param_double(module, "relative_error", 0.1);
 
       // temporarily initialize these to -1's
       dimension_ = reference_count_ = query_count_ = -1;
@@ -390,22 +418,17 @@ class FastKde {
       summary_result_.Init(param);
     }
 
-    void Init() {
-    }
-
     void Init(const TKernelAux &ka) {
       farfield_expansion_.Init(ka);
       local_expansion_.Init(ka);
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count) {
-      Init();
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count,
 	      const KdeStat& left_stat,
 	      const KdeStat& right_stat) {
-      Init();
     }
     
     void Init(const Vector& center, const TKernelAux &ka) {
@@ -424,6 +447,9 @@ class FastKde {
   };
 
   ////////// Private Member Variables //////////
+
+  /** module used to pass parameters into the FastKde object */
+  struct datanode *module_;
 
   /** parameter list */
   Param parameters_;
@@ -861,6 +887,8 @@ class FastKde {
   FastKde() {
     qroot_ = NULL;
     rroot_ = NULL;
+    
+    DEBUG_POISON_PTR(module_);
   }
 
   /** destructor */
@@ -956,10 +984,17 @@ class FastKde {
 
   /** initialize query and reference sets and construct trees */
   void Init(Matrix &queries, Matrix &references, 
-	    bool queries_equal_references) {
+	    bool queries_equal_references, struct datanode *module_in) {
+
+    // the datasets need to have the same dimensionality
+    DEBUG_SAME_SIZE(queries.n_rows(), references.n_rows());
+
+    // set class module pointer to the incoming one
+    module_ = module_in;
 
     // read in the number of points owned by a leaf
-    int leaflen = fx_param_int(NULL, "leaflen", 20);
+    int leaflen = fx_param_int(module_, "leaflen", 20);
+    DEBUG_ASSERT(leaflen > 0);
 
     // copy the datasetsread reference dataset
     rset_.Copy(references);
@@ -975,7 +1010,7 @@ class FastKde {
     rset_weights_.SetAll(1);
 
     // construct query and reference trees
-    fx_timer_start(NULL, "tree_d");
+    fx_timer_start(module_, "tree_building");
     rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen,
 					    &old_from_new_references_, NULL);
 
@@ -987,7 +1022,7 @@ class FastKde {
       qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen,
 					      &old_from_new_queries_, NULL);
     }
-    fx_timer_stop(NULL, "tree_d");
+    fx_timer_stop(module_, "tree_building");
     
     // initialize the density lists
     q_results_.Init(qset_.n_cols());
@@ -996,7 +1031,7 @@ class FastKde {
     }
 
     // initialize parameter list
-    parameters_.Init(fx_root);
+    parameters_.Init(module_);
     parameters_.reference_count_ = rset_.n_cols();
     parameters_.query_count_ = qset_.n_cols();
     parameters_.FinalizeInit(fx_root, rset_.n_rows());
@@ -1008,7 +1043,7 @@ class FastKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(NULL, "fast_kde_output", NULL)) != NULL) {
+    if((fname = fx_param_str(module_, "fast_kde_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
