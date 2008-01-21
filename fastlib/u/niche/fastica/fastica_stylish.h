@@ -1,3 +1,18 @@
+/**
+ * @file fastica_stylish.h
+ *
+ * Implements the FastICA Algorithm for Independent Component Analysis using
+ * fixed-point optimization with various independence-minded contrast
+ * functions. For sample usage, see accompanying file fastica_stylish.c
+ *
+ * @see fastica_stylish.c
+ *
+ * @author Nishant Mehta
+ */
+
+#ifndef FASTICA_STYLISH_H
+#define FASTICA_STYLISH_H
+
 #include "fastlib/fastlib.h"
 #include "lin_alg.h"
 
@@ -8,6 +23,20 @@
 
 #define SYMMETRIC 0
 #define DEFLATION 1
+
+index_t max_rand_i = 1e6;
+index_t rand_i = 0;
+double fixed_rand_array[1e6];
+
+
+
+double drand48()
+{
+  return 
+  rand_i++;
+  if(rand_i > max_rand_i) {
+    rand_i = 0;
+  }
 
 
 /**

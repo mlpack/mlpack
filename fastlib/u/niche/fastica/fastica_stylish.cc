@@ -1,3 +1,12 @@
+/**
+ * @file fastica_stylish.cc
+ *
+ * Demonstrates usage of fastica_stylish.h
+ *
+ * @see fastica_stylish.h
+ *
+ * @author Nishant Mehta
+ */
 #include "fastica_stylish.h"
 
 int main(int argc, char *argv[]) {
