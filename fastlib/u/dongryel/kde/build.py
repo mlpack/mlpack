@@ -1,14 +1,15 @@
-
+# The linkable library for fast KDE algorithm
 librule(
-    name = "kde",                            # this line can be safely omitted
-    sources = [],                            # files that must be compiled
+    name = "kde",                    
+    sources = [],                    
     headers = ["dataset_scaler.h",
                "kde.h",
-               "naive_kde.h"],               # include files part of the 'lib'
+               "naive_kde.h"],       
     deplibs = ["u/dongryel/series_expansion:series_expansion",
-               "fastlib:fastlib_int"]        # dependency
+               "fastlib:fastlib_int"]
     )
 
+# The linkable library for KDE using the original fast Gauss transform
 librule(
     name = "fgt_kde",
     sources = [],
@@ -16,6 +17,7 @@ librule(
     deplibs = ["fastlib:fastlib_int"]
     )
 
+# The linkable library for KDE based on the improved fast Gauss transform
 librule(
     name = "ifgt_kde",
     sources = ["ifgt_kde.cc",
@@ -29,13 +31,15 @@ librule(
     deplibs = ["fastlib:fastlib_int"]
     )
 
+# The linkable library for FFT-based KDE
 librule(
-    name = "fft_kde",                        # this line can be safely omitted
-    sources = [],                            # files that must be compiled
-    headers = ["fft_kde.h"],                 # include files part of the 'lib'
-    deplibs = ["fastlib:fastlib_int"]        # dependency
+    name = "fft_kde",                        
+    sources = [],                            
+    headers = ["fft_kde.h"],                 
+    deplibs = ["fastlib:fastlib_int"]
     )
 
+# The test driver for the FFT-based KDE
 binrule(
     name = "fft_kde_bin",
     sources = ["fft_kde_main.cc"],
@@ -44,6 +48,7 @@ binrule(
     deplibs = ["fastlib:fastlib_int"]
     )
 
+# The test driver for the FGT-based KDE
 binrule(
     name = "fgt_kde_bin",
     sources = ["fgt_kde_main.cc"],
@@ -52,6 +57,7 @@ binrule(
     deplibs = ["fastlib:fastlib_int"]
     )
 
+# The test-driver for the THOR-basd KDE
 binrule(
     name = "thor_kde_bin",
     sources = ["thor_kde_main.cc"],
@@ -61,10 +67,11 @@ binrule(
                "thor:thor"]
     )
 
+# The test-driver for the fast KDE
 binrule(
-    name = "kde_bin",                        # the executable name
-    sources = ["kde_main.cc"],               #
-    headers = [],                            # no extra headers
+    name = "kde_bin",                       
+    sources = ["kde_main.cc"],              
+    headers = [],                           
     deplibs = [":fft_kde",
                ":fgt_kde",
                ":kde",
@@ -72,10 +79,11 @@ binrule(
                "fastlib:fastlib_int"]
     )
 
+# The test-driver for the IFGT-based KDE
 binrule(
-    name = "ifgt_bin",                        # the executable name
-    sources = ["ifgt_main.cc"],               #
-    headers = [],                             # no extra headers
+    name = "ifgt_bin",
+    sources = ["ifgt_main.cc"],              
+    headers = [],                            
     deplibs = [":ifgt_kde",
                "u/dongryel/series_expansion:series_expansion",
                "fastlib:fastlib_int"]

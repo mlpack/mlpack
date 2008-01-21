@@ -11,8 +11,8 @@
  * for the optimal bandwidth using a black-box optimizer which is not
  * implemented in this code.
  *
- * For more details on mathematical details, please take a look at the
- * published conference papers (in chronological order):
+ * For more details on mathematical derivations, please take a look at
+ * the published conference papers (in chronological order):
  *
  * @inproceedings{DBLP:conf/sdm/GrayM03,
  *  author    = {Alexander G. Gray and Andrew W. Moore},
@@ -85,7 +85,7 @@
  *   struct datanode* kde_module;
  *   Vector results;
  *
- *   kde_module = fx_submodule(NULL, "kde", "kde");
+ *   kde_module = fx_submodule(NULL, "kde", "kde_module");
  *   fast_kde.Init(queries, references, queries_equal_references,
  *                 kde_module);
  *   fast_kde.Compute(); 
