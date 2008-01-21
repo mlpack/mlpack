@@ -1,20 +1,64 @@
+/** @file fgt_kde.h
+ *
+ *  This file contains an implmentation of kernel density estimation
+ *  using multidimensional version of the original fast Gauss
+ *  transform for a linkable library component. This algorithm by
+ *  design supports only the Gaussian kernel with the
+ *  fixed-bandwidth. The optimal bandwidth cross-validation routine is
+ *  not provided in this library.
+ *
+ *  For more details on nmathematical derivations, please take a look
+ *  at the following paper:
+ *
+ * @Article{ggstrain,
+ *  Author = "L. Greengard and J. Strain", 
+ *  Title = "{The Fast Gauss Transform}",
+ *  Journal = "SIAM Journal of Scientific and Statistical Computing",
+ *  Volume = "12(1)",
+ *  Year = "1991",
+ *  Pages = "79-94" }
+ *
+ *  @author Dongryeol Lee (dongryel)
+ *  @bugs No known bugs.
+ */
+
 #ifndef FGT_KDE_H
 #define FGT_KDE_H
 
-#include <math.h>
-#include <values.h>
-
+#include <fastlib/fastlib.h>
 #include "u/dongryel/series_expansion/mult_series_expansion_aux.h"
 
-/** 
- * Computing kernel estimate using Fast Gauss Transform by Lelie Greengard
- * and John Strain
+
+/**
+ * A computation class for FFT based kernel density estimation
+ *
+ * This class is only inteded to compute once per instantiation.
+ *
+ * Example use:
+ *
+ * @code
+ *   FGTKde fgt_kde;
+ *   struct datanode* fgt_kde_module;
+ *   Vector results;
+ *
+ *   fgt_kde_module = fx_submodule(NULL, "kde", "fgt_kde_module");
+ *   fgt_kde.Init(queries, references, fgt_kde_module);
+ *   fgt_kde.Compute();
+ *
+ *   // important to make sure that you don't call Init on results!
+ *   fgt_kde.get_density_estimates(&results);
+ * @endcode
  */
 class FGTKde {
   
   FORBID_ACCIDENTAL_COPIES(FGTKde);
 
  private:
+
+  ////////// Private Member Variables //////////
+
+  /** datanode holding the parameters */
+  struct datanode *module_;
 
   /** query dataset */
   Matrix qset_;
@@ -816,51 +860,31 @@ class FGTKde {
   Matrix &get_query_dataset() { return qset_; }
 
   /** get the density estimate */
-  const Vector &get_density_estimates() { return densities_; }
+  void get_density_estimates(Vector *results) {
+    results->Init(densities_.length());
 
-  void Init(Matrix &qset, Matrix &rset) {
+    for(index_t i = 0; i < densities_.length(); i++) {
+      (*results)[i] = densities_[i];
+    }
+  }
+
+  /** initialize with the given query and the reference datasets */
+  void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
+
+    // initialize with the incoming module holding the paramters
+    module_ = module_in;
 
     // initialize the kernel and read in the number of grid points
-    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
 
     // set aliases to the query and reference datasets and initialize
     // query density sets
-    qset_.Alias(qset);
+    qset_.Copy(qset);
     densities_.Init(qset_.n_cols());
-    rset_.Alias(rset);
+    rset_.Copy(rset);
 
     // set accuracy
-    tau_ = fx_param_double(NULL, "tau", 0.1);
-  }
-
-  void Init() {
-
-    const char *rfname = fx_param_str_req(NULL, "data");
-    const char *qfname = fx_param_str(NULL, "query", rfname);
-
-    // initialize the kernel and read in the number of grid points
-    kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
-
-    // read reference dataset
-    Dataset ref_dataset;
-    ref_dataset.InitFromFile(rfname);
-    rset_.Own(&(ref_dataset.matrix()));
-
-    // read query dataset if different
-    if(!strcmp(qfname, rfname)) {
-      qset_.Alias(rset_);
-    }
-    else {
-      Dataset query_dataset;
-      query_dataset.InitFromFile(qfname);
-      qset_.Own(&(query_dataset.matrix()));
-    }
-    
-    // allocate densities
-    densities_.Init(qset_.n_cols());
-
-    // set accuracy
-    tau_ = fx_param_double(NULL, "tau", 0.1);
+    tau_ = fx_param_double(module_, "absolute_error", 0.1);
   }
 
   void FastGaussTransformPreprocess(double *interaction_radius, 
@@ -880,12 +904,12 @@ class FGTKde {
      */
     Vector maxcoords;
     maxcoords.Init(dim);
-    maxcoords.SetAll(MINDOUBLE);
+    maxcoords.SetAll(-DBL_MAX);
     double boxside = -1.0;
     *nboxes = 1;
 
     for(di = 0; di < dim; di++) {
-      mincoords[di] = MAXDOUBLE;
+      mincoords[di] = DBL_MAX;
     }
     
     for(n = 0; n < num_rows; n++) {
@@ -964,10 +988,10 @@ class FGTKde {
     // initialize densities to zero
     densities_.SetZero();
 
-    fx_timer_start(NULL, "fgt_kde_init");
+    fx_timer_start(module_, "fgt_kde_init");
     FastGaussTransformPreprocess(&interaction_radius, nsides, sidelengths,
 				 mincoords, &nboxes, &nterms);
-    fx_timer_stop(NULL, "fgt_kde_init");
+    fx_timer_stop(module_, "fgt_kde_init");
 
     // precompute factorials
     msea_.Init(nterms - 1, qset_.n_rows());
@@ -1002,16 +1026,20 @@ class FGTKde {
     
     double delta = 2 * kernel_.bandwidth_sq();
 
-    fx_timer_start(NULL, "fgt_kde");
+    fx_timer_start(module_, "fgt_kde");
     gauss_t(delta, nterms, nboxes, nsides, sidelengths, mincoords,
 	    locexp, center, queries_assigned, references_assigned, mcoeffs);
 
     // normalize the sum
     NormalizeDensities();
-    fx_timer_stop(NULL, "fgt_kde");
+    fx_timer_stop(module_, "fgt_kde");
     printf("FGT KDE completed...\n");
   }
 
+  /** 
+   * Normalize the density estimates after the unnormalized sums have
+   * been computed 
+   */
   void NormalizeDensities() {
     double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
       rset_.n_cols();
@@ -1025,7 +1053,7 @@ class FGTKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(NULL, "fgt_kde_output", NULL)) != NULL) {
+    if((fname = fx_param_str(module_, "fgt_kde_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
