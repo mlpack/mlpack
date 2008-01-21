@@ -704,12 +704,6 @@ class FFTKde {
   ~FFTKde() {}
   
   ////////// Getters/Setters //////////
-  
-  /** get the reference dataset */
-  Matrix &get_reference_dataset() { return rset_; }
-
-  /** get the query dataset */
-  Matrix &get_query_dataset() { return qset_; }
 
   /** get the density estimate */
   void get_density_estimates(Vector *results) {
