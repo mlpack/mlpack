@@ -1,7 +1,12 @@
 /**
  * @file farfield_expansion.h
  *
- * The header file for the far field expansion
+ * This file contains a templatized class implementing $O(D^p)$
+ * expansion for computing the coefficients for a far-field expansion
+ * for an arbitrary kernel function.
+ *
+ * @author Dongryeol Lee (dongryel)
+ * @bugs No known bugs.
  */
 
 #ifndef FARFIELD_EXPANSION

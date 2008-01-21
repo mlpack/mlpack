@@ -1,24 +1,24 @@
-
+# Library build rule for the series expansion implementation
 librule(
-    name = "series_expansion",               # this line can be safely omitted
-    sources = ["series_expansion_aux.cc"],   # files that must be compiled
-    headers = ["bounds_aux.h",
-               "farfield_expansion.h",
+    name = "series_expansion",
+    sources = ["series_expansion_aux.cc"],
+    headers = ["farfield_expansion.h",
                "mult_farfield_expansion.h",
                "kernel_aux.h",
                "local_expansion.h",
                "mult_local_expansion.h",
                "mult_series_expansion_aux.h",
                "series_expansion_aux.h",
-               "mult_series_expansion_aux.h"],# include files part of the 'lib'
-    deplibs = ["fastlib:fastlib_int"]        # depends on fastlib core
+               "mult_series_expansion_aux.h"],
+    deplibs = ["fastlib:fastlib_int"]
     )
 
+# Test driver for series expansion library
 binrule(
-    name = "main",                  # the executable name
-    sources = ["main.cc"],          # compile main.cc
-    headers = [],                   # no extra headers
-    deplibs = [":series_expansion"] # depends on series_expansion in this folder
+    name = "main",
+    sources = ["main.cc"],
+    headers = [],
+    deplibs = [":series_expansion"]
     )
 
 # to build:

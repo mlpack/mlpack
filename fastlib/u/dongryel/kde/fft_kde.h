@@ -1,23 +1,23 @@
 /** @file fft_kde.h
  *
- * This file contains an implementation of kernel density estimation
- * using multidimensional fast Fourier transform for a linkable
- * library component. This algorithm by design supports only the
- * Gaussian kernel with the fixed-bandwidth. The optimal bandwidth
- * cross-validation routine is not provided in this library.
+ *  This file contains an implementation of kernel density estimation
+ *  using multidimensional fast Fourier transform for a linkable
+ *  library component. This algorithm by design supports only the
+ *  Gaussian kernel with the fixed-bandwidth. The optimal bandwidth
+ *  cross-validation routine is not provided in this library.
  *
- * For more details on mathematical derivations, please take a look at
- * the following paper:
+ *  For more details on mathematical derivations, please take a look at
+ *  the following paper:
  *
- * @Article{wand94,
- *  Author = "M. P. Wand",
- *  Title = "{Fast Computation of Multivariate Kernel Estimators}",
- *  Journal = "Journal of Computational and Graphical Statistics",
- *  Year = "1994"
- * }
+ *  Article{wand94,
+ *   Author = "M. P. Wand",
+ *   Title = "{Fast Computation of Multivariate Kernel Estimators}",
+ *   Journal = "Journal of Computational and Graphical Statistics",
+ *   Year = "1994"
+ *  }
  *
  *  @author Dongryeol Lee (dongryel)
- *  @bugs No known bugs.
+ *  @bug No known bugs.
  */
 #ifndef FFT_KDE_H
 #define FFT_KDE_H

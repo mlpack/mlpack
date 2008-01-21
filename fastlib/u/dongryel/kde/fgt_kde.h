@@ -19,7 +19,7 @@
  *  Pages = "79-94" }
  *
  *  @author Dongryeol Lee (dongryel)
- *  @bugs No known bugs.
+ *  @bug No known bugs.
  */
 
 #ifndef FGT_KDE_H

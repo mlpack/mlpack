@@ -1,3 +1,11 @@
+/** @file naive_kde.h
+ *
+ *  This file contains an implementation of the naive KDE algorithm.
+ *
+ *  @author Dongryeol Lee (dongryel)
+ *  @bug No known bugs.
+ */
+
 #ifndef NAIVE_KDE_H
 #define NAIVE_KDE_H
 
