@@ -69,8 +69,8 @@
  * --kde/do_naive flag is not present.
  *
  * 10. kde/relative_error (optional): relative error criterion for the
- * fast algorithm; default value is 0.1 (10 % relative error for all
- * query density estimates).
+ * fast algorithm; default value is 0.1 (10 percent relative error for
+ * all query density estimates).
  */
 int main(int argc, char *argv[]) {
 
@@ -130,13 +130,11 @@ int main(int argc, char *argv[]) {
       FastKde<GaussianKernelMultAux> fast_kde;
       fast_kde.Init(queries, references, queries_equal_references, 
 		    kde_module);
-      fast_kde.Compute();
+      fast_kde.Compute(&fast_kde_results);
       
       if(fx_param_exists(kde_module, "fast_kde_output")) {
 	fast_kde.PrintDebug();
       }
-      
-      fast_kde.get_density_estimates(&fast_kde_results);
     }
     
     // otherwise do O(D^p) expansion
@@ -146,13 +144,11 @@ int main(int argc, char *argv[]) {
       FastKde<GaussianKernelAux> fast_kde;
       fast_kde.Init(queries, references, queries_equal_references,
 		    kde_module);
-      fast_kde.Compute();
+      fast_kde.Compute(&fast_kde_results);
       
       if(fx_param_exists(kde_module, "fast_kde_output")) {
 	fast_kde.PrintDebug();
       }
-      
-      fast_kde.get_density_estimates(&fast_kde_results);
     }
     
     if(do_naive) {
@@ -169,14 +165,14 @@ int main(int argc, char *argv[]) {
   }
   else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
     FastKde<EpanKernelAux> fast_kde;
+    Vector fast_kde_results;
+
     fast_kde.Init(queries, references, queries_equal_references, kde_module);
-    fast_kde.Compute();
+    fast_kde.Compute(&fast_kde_results);
     
     if(fx_param_exists(kde_module, "fast_kde_output")) {
       fast_kde.PrintDebug();
     }
-    Vector fast_kde_results;
-    fast_kde.get_density_estimates(&fast_kde_results);
     
     if(do_naive) {
       NaiveKde<EpanKernel> naive_kde;
