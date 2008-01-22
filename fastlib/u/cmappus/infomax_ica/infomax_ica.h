@@ -17,6 +17,8 @@
 #define U_INFOMAX_ICA
 
 #include <math.h>
+#include <limits>
+#include <values.h>
 #include "fastlib/fastlib.h"
 
 class TestInfomaxICA; // forward reference
@@ -32,15 +34,16 @@ class InfomaxICA {
   
  public:
   InfomaxICA();
-  InfomaxICA(double lambda, int B);
-  void getUnmixing(Matrix &w);
-  void getSources(const Matrix &dataset, Matrix &s);
-  void setLambda(double lambda);
-  void setB(int b);
+  InfomaxICA(double lambda, int B, double epsilon);
   void applyICA(const Dataset& dataset);
   void evaluateICA();
   void displayMatrix(const Matrix &m);
   void displayVector(const Vector &m);
+  void getUnmixing(Matrix &w);
+  void getSources(const Matrix &dataset, Matrix &s);
+  void setLambda(const double lambda);
+  void setB(const int b);
+  void setEpsilon(const double epsilon);
 
  private:
   Matrix w_;
@@ -49,16 +52,20 @@ class InfomaxICA {
   double lambda_;
   // block size
   int b_;
+  // epsilon for convergence
+  double epsilon_;
   // utility functions
   void expM(Matrix &m);
   void addOne(Matrix &m);
   void invertVals(Matrix &m);
+  void vectorize(const Matrix &m, Vector &v);
   Matrix eye(index_t dim,double diagVal);
   Matrix sqrtm(const Matrix &m);
   void sphere(Matrix &m);
   Matrix subMeans(const Matrix &m);
   Vector rowMean(const Matrix &m);
   Matrix sampleCovariance(const Matrix &m);
+  double w_delta(const Matrix &w_prev, const Matrix &w_pres);
 };
 
 #endif

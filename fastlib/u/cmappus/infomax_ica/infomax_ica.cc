@@ -14,9 +14,10 @@ InfomaxICA::InfomaxICA(){
 
 }
 
-InfomaxICA::InfomaxICA(double lambda, int b):
+InfomaxICA::InfomaxICA(double lambda, int b, double epsilon):
   lambda_(lambda),
-  b_(b){
+  b_(b),
+  epsilon_(epsilon){
 
 }
 
@@ -25,6 +26,7 @@ InfomaxICA::InfomaxICA(double lambda, int b):
  * after initializing the variables.
  */
 void InfomaxICA::applyICA(const Dataset& dataset){
+  double current_cos=DBL_MAX;
   w_.Init(b_,b_);
   data_.Init(dataset.n_features(),dataset.n_points());
   la::ScaleOverwrite(1.0,dataset.matrix(),&data_);
@@ -32,8 +34,13 @@ void InfomaxICA::applyICA(const Dataset& dataset){
     sphere(data_);
     // initial estimate for w is Id
     Matrix i1 = eye(data_.n_rows(),double(1));
-    la::ScaleOverwrite(1.0,i1,&w_);
-    evaluateICA();
+    la::ScaleOverwrite(1.0,i1,&w_);    
+    while (epsilon_<=current_cos){
+      Matrix w_prev;
+      w_prev.Copy(w_);
+      evaluateICA();
+      current_cos = w_delta(w_prev,w_);
+    }
   }
   else
     fprintf(stdout,"Window size must be less than number of instances.");
@@ -152,6 +159,20 @@ Matrix InfomaxICA::sqrtm(const Matrix &m){
   return output;
 }
 
+// Compare w estimates for convergence
+double InfomaxICA::w_delta(const Matrix &w_prev, const Matrix &w_pres){
+  Matrix temp;
+  Vector delta_c;
+  Vector delta_r;
+  double delta_dot;
+  la::SubInit(w_pres,w_prev,&temp);
+  vectorize(temp,delta_r);
+  vectorize(temp,delta_c);
+  delta_dot = la::Dot(delta_r.length(),delta_r.ptr(),delta_c.ptr());
+  fprintf(stderr,"w change=%f\n",delta_dot);
+  return delta_dot;
+}
+
 // utility functions
 
 /** 
@@ -200,6 +221,21 @@ Matrix InfomaxICA::eye(index_t dim, double diagVal){
 }
 
 /** 
+ * Initialize the vector v to values of the matrix m. 
+ */
+void InfomaxICA::vectorize(const Matrix &m, Vector &v){
+  index_t v_ind = 0;
+  v.Init(m.n_rows()*m.n_cols());
+  for (index_t i=0;i<m.n_rows();i++){
+    for (index_t j=0;j<m.n_cols();j++){
+      v[v_ind]=m.get(i,j);
+      v_ind++;
+    }
+  }
+  
+}
+
+/** 
  * Simple display matrix function 
  */
 void InfomaxICA::displayMatrix(const Matrix &m){
@@ -240,10 +276,14 @@ void InfomaxICA::getSources(const Matrix &dataset, Matrix &s){
   la::MulExpert(1.0,false,w_,false,dataset,0.0,&s);
 }
 
-void InfomaxICA::setLambda(double lambda){
+void InfomaxICA::setLambda(const double lambda){
   lambda_=lambda;
 }
 
-void InfomaxICA::setB(int b){
+void InfomaxICA::setB(const int b){
   b_=b;
+}
+
+void InfomaxICA::setEpsilon(const double epsilon){
+  epsilon_=epsilon;
 }
