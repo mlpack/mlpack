@@ -12,10 +12,28 @@
 
 #include <fastlib/fastlib.h>
 
+/** @brief A static class providing utilities for scaling the query
+ *         and the reference datasets.
+ *
+ *  Example use:
+ *
+ *  @code
+ *    DatasetScaler::ScaleDataByMinMax(qset, rset, queries_equal_references);
+ *  @endcode
+ */
 class DatasetScaler {
 
  public:
 
+  /** @brief Scale the given query and the reference datasets to fit
+   *         in the unit hypercube $[0,1]^D$ where $D$ is the common
+   *         dimensionality of the two datasets. 
+   *
+   *  @param qset The column-oriented query set.
+   *  @param rset The column-oriented reference set.
+   *  @param queries_equal_references The boolean flag that tells whether
+   *                                  the queries equal the references.
+   */
   static void ScaleDataByMinMax(Matrix &qset, Matrix &rset,
 				bool queries_equal_references) {
     

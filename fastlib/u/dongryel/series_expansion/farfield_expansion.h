@@ -6,7 +6,7 @@
  * for an arbitrary kernel function.
  *
  * @author Dongryeol Lee (dongryel)
- * @bugs No known bugs.
+ * @bug No known bugs.
  */
 
 #ifndef FARFIELD_EXPANSION

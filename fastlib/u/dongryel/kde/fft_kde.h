@@ -24,31 +24,42 @@
 
 #include <fastlib/fastlib.h>
 
-/** 
- * A computation class for FFT based kernel density estimation
+/** @brief A computation class for FFT based kernel density estimation
  *
- * This class is only inteded to compute once per instantiation.
+ *  This class is only inteded to compute once per instantiation.
  *
- * Example use:
+ *  Example use:
  *
- * @code
- *   FFTKde fft_kde;
- *   struct datanode* fft_kde_module;
- *   Vector results;
+ *  @code
+ *    FFTKde fft_kde;
+ *    struct datanode* fft_kde_module;
+ *    Vector results;
  *
- *   fft_kde_module = fx_submodule(NULL, "kde", "fft_kde_module");
- *   fft_kde.Init(queries, references, fft_kde_module);
- *   fft_kde.Compute();
+ *    fft_kde_module = fx_submodule(NULL, "kde", "fft_kde_module");
+ *    fft_kde.Init(queries, references, fft_kde_module);
+ *    fft_kde.Compute();
  *
- *   // important to make sure that you don't call Init on results!
- *   fft_kde.get_density_estimates(&results);
- * @endcode
+ *    // important to make sure that you don't call Init on results!
+ *    fft_kde.get_density_estimates(&results);
+ *  @endcode
  */
 class FFTKde {
 
   FORBID_ACCIDENTAL_COPIES(FFTKde);
 
  private:
+
+  ////////// Private Class Definitions //////////
+
+  /** @brief Complex number - composed of real and imaginary parts */
+  struct complex {
+
+    /** @brief Real part */
+    double real;
+
+    /** @brief Imaginary part */
+    double imag;
+  };
 
   ////////// Private Member Variables //////////
 
@@ -685,27 +696,21 @@ class FFTKde {
   
  public:
 
-  /** complex number - composed of real and imaginary parts */
-  struct complex {
-
-    /** real part */
-    double real;
-
-    /** imaginary part */
-    double imag;
-  };
-
   ////////// Constructor/Destructor //////////
 
-  /** constructor - does not do anything */
+  /** @brief Constructor - does not do anything */
   FFTKde() {}
   
-  /** destructor - does not do anything */
+  /** @brief Destructor - does not do anything */
   ~FFTKde() {}
   
   ////////// Getters/Setters //////////
 
-  /** get the density estimate */
+  /** @brief Get the density estimates.
+   *
+   *  @param results An uninitialized vector which will be initialized with
+   *                 the computed density estimates.
+   */
   void get_density_estimates(Vector *results) {
     results->Init(densities_.length());
 
@@ -714,8 +719,12 @@ class FFTKde {
     }
   }
 
-  /** Initialize the FFT KDE object with the query and the reference
-   *  datasets with the parameter lists.
+  /** @brief Initialize the FFT KDE object with the query and the
+   *         reference datasets with the parameter lists.
+   *
+   *  @param qset The column-oriented query dataset.
+   *  @param rset The column-oriented reference dataset.
+   *  @param module_in The module containing the parameters for execution.
    */
   void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
     
@@ -757,8 +766,7 @@ class FFTKde {
     printf("FFT KDE initialization completed...\n");
   }
 
-  /**
-   * Compute density estimates using FFT after initialization
+  /** @brief Compute density estimates using FFT after initialization
    */
   void Compute() {
 
@@ -814,7 +822,12 @@ class FFTKde {
     printf("FFT KDE completed...\n");
   }
 
-  /** Print out the computed density values to the user-directed stream
+  /** @brief Output KDE results to a stream 
+   *
+   *  If the user provided "--fft_kde_output=" argument, then the
+   *  output will be directed to a file whose name is provided after
+   *  the equality sign.  Otherwise, it will be provided to the
+   *  screen.
    */
   void PrintDebug() {
 

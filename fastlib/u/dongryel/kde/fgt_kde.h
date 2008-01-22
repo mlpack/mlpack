@@ -29,25 +29,24 @@
 #include "u/dongryel/series_expansion/mult_series_expansion_aux.h"
 
 
-/**
- * A computation class for FGT based kernel density estimation
+/** @brief A computation class for FGT based kernel density estimation
  *
- * This class is only inteded to compute once per instantiation.
+ *  This class is only inteded to compute once per instantiation.
  *
- * Example use:
+ *  Example use:
  *
- * @code
- *   FGTKde fgt_kde;
- *   struct datanode* fgt_kde_module;
- *   Vector results;
+ *  @code
+ *    FGTKde fgt_kde;
+ *    struct datanode* fgt_kde_module;
+ *    Vector results;
  *
- *   fgt_kde_module = fx_submodule(NULL, "kde", "fgt_kde_module");
- *   fgt_kde.Init(queries, references, fgt_kde_module);
- *   fgt_kde.Compute();
+ *    fgt_kde_module = fx_submodule(NULL, "kde", "fgt_kde_module");
+ *    fgt_kde.Init(queries, references, fgt_kde_module);
+ *    fgt_kde.Compute();
  *
- *   // important to make sure that you don't call Init on results!
- *   fgt_kde.get_density_estimates(&results);
- * @endcode
+ *    // important to make sure that you don't call Init on results!
+ *    fgt_kde.get_density_estimates(&results);
+ *  @endcode
  */
 class FGTKde {
   
@@ -77,9 +76,91 @@ class FGTKde {
 
   /** precomputed constants */
   MultSeriesExpansionAux msea_;
+  
+  ////////// Private Member Functions //////////
 
-  /* returns the index in a single-dim array, for the given coords in a
-   * d-dim array, with n[i] elements in the ith dimension
+  void FastGaussTransformPreprocess(double *interaction_radius, 
+				    ArrayList<int> &nsides, 
+				    Vector &sidelengths, Vector &mincoords, 
+				    int *nboxes, int *nterms) {
+  
+    // Compute the interaction radius.
+    double bandwidth = sqrt(kernel_.bandwidth_sq());
+    *interaction_radius = sqrt(-2.0 * kernel_.bandwidth_sq() * log(tau_));
+
+    int di, n, num_rows = rset_.n_cols();
+    int dim = rset_.n_rows();
+
+    // Discretize the grid space into boxes.
+    Vector maxcoords;
+    maxcoords.Init(dim);
+    maxcoords.SetAll(-DBL_MAX);
+    double boxside = -1.0;
+    *nboxes = 1;
+
+    for(di = 0; di < dim; di++) {
+      mincoords[di] = DBL_MAX;
+    }
+    
+    for(n = 0; n < num_rows; n++) {
+      for(di = 0; di < dim; di++) {
+	if(mincoords[di] > rset_.get(di, n)) {
+	  mincoords[di] = rset_.get(di, n);
+	}
+	if(maxcoords[di] < rset_.get(di, n)) {
+	  maxcoords[di] = rset_.get(di, n);
+	}
+      }
+    }
+
+    // Figure out how many boxes lie along each direction.
+    for(di = 0; di < dim; di++) {
+
+      nsides[di] = (int) 
+	((maxcoords[di] - mincoords[di]) / bandwidth + 1);
+
+      (*nboxes) = (*nboxes) * nsides[di];
+      double tmp = (maxcoords[di] - mincoords[di]) /
+	(nsides[di] * 2 * bandwidth);
+    
+      if(tmp > boxside) {
+	boxside = tmp;
+      }
+
+      sidelengths[di] = (maxcoords[di] - mincoords[di]) / 
+	((double) nsides[di]);
+
+    }
+    
+    int ip = 0;
+    double two_r = 2.0 * boxside;
+    double one_minus_two_r = 1.0 - two_r;
+    double ret = 1.0 / pow(one_minus_two_r * one_minus_two_r, dim);
+    double factorialvalue = 1.0;
+    double r_raised_to_p_alpha = 1.0;
+    double first_factor, second_factor;
+    double ret2;
+                                                                       
+    do {
+      ip++;
+      factorialvalue *= ip;
+    
+      r_raised_to_p_alpha *= two_r;
+      first_factor = 1.0 - r_raised_to_p_alpha;
+      first_factor *= first_factor;
+      second_factor = r_raised_to_p_alpha * (2.0 - r_raised_to_p_alpha)
+	/ sqrt(factorialvalue);
+    
+      ret2 = ret * (pow((first_factor + second_factor), dim) -
+		    pow(first_factor, dim));
+    
+    } while(ret2 > tau_);
+
+    *nterms = ip;
+  }
+
+  /* Returns the index in a single-dim array, for the given coords in
+   * a d-dim array, with n[i] elements in the ith dimension
    */
   int multi_dim_index_in_single_array(ArrayList<int> &coords, 
 				      ArrayList<int> &n) {
@@ -866,15 +947,19 @@ class FGTKde {
 
   ////////// Constructor/Destructor //////////
   
-  /** constructor */
+  /** @brief Constructor that does not do anything. */
   FGTKde() {}
   
-  /** destructor */
+  /** @brief Destructor that does not do anything. */
   ~FGTKde() {}
   
   ////////// Getters/Setters //////////
 
-  /** get the density estimate */
+  /** @brief Get the density estimates.
+   *
+   *  @param results An uninitialized vector which will be initialized
+   *                 with the computed density estimates.
+   */
   void get_density_estimates(Vector *results) {
     results->Init(densities_.length());
 
@@ -885,7 +970,13 @@ class FGTKde {
 
   ///////// Initialization and computation //////////
 
-  /** initialize with the given query and the reference datasets */
+  /** @brief Initialize with the given query and the reference
+   *         datasets.
+   *
+   *  @param qset The column-oriented query dataset.
+   *  @param rset The column-oriented reference dataset.
+   *  @param module_in The module holding the parameters for execution.
+   */
   void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
 
     // initialize with the incoming module holding the paramters
@@ -904,92 +995,7 @@ class FGTKde {
     tau_ = fx_param_double(module_, "absolute_error", 0.1);
   }
 
-  void FastGaussTransformPreprocess(double *interaction_radius, 
-				    ArrayList<int> &nsides, 
-				    Vector &sidelengths, Vector &mincoords, 
-				    int *nboxes, int *nterms) {
-  
-    // Compute the interaction radius.
-    double bandwidth = sqrt(kernel_.bandwidth_sq());
-    *interaction_radius = sqrt(-2.0 * kernel_.bandwidth_sq() * log(tau_));
-
-    int di, n, num_rows = rset_.n_cols();
-    int dim = rset_.n_rows();
-
-    /**
-     * Discretize the grid space into boxes.
-     */
-    Vector maxcoords;
-    maxcoords.Init(dim);
-    maxcoords.SetAll(-DBL_MAX);
-    double boxside = -1.0;
-    *nboxes = 1;
-
-    for(di = 0; di < dim; di++) {
-      mincoords[di] = DBL_MAX;
-    }
-    
-    for(n = 0; n < num_rows; n++) {
-      for(di = 0; di < dim; di++) {
-	if(mincoords[di] > rset_.get(di, n)) {
-	  mincoords[di] = rset_.get(di, n);
-	}
-	if(maxcoords[di] < rset_.get(di, n)) {
-	  maxcoords[di] = rset_.get(di, n);
-	}
-      }
-    }
-
-    /**
-     * Figure out how many boxes lie along each direction.
-     */
-    for(di = 0; di < dim; di++) {
-
-      nsides[di] = (int) 
-	((maxcoords[di] - mincoords[di]) / bandwidth + 1);
-
-      (*nboxes) = (*nboxes) * nsides[di];
-      double tmp = (maxcoords[di] - mincoords[di]) /
-	(nsides[di] * 2 * bandwidth);
-    
-      if(tmp > boxside) {
-	boxside = tmp;
-      }
-
-      sidelengths[di] = (maxcoords[di] - mincoords[di]) / 
-	((double) nsides[di]);
-
-    }
-    
-    int ip = 0;
-    double two_r = 2.0 * boxside;
-    double one_minus_two_r = 1.0 - two_r;
-    double ret = 1.0 / pow(one_minus_two_r * one_minus_two_r, dim);
-    double factorialvalue = 1.0;
-    double r_raised_to_p_alpha = 1.0;
-    double first_factor, second_factor;
-    double ret2;
-                                                                       
-    do {
-      ip++;
-      factorialvalue *= ip;
-    
-      r_raised_to_p_alpha *= two_r;
-      first_factor = 1.0 - r_raised_to_p_alpha;
-      first_factor *= first_factor;
-      second_factor = r_raised_to_p_alpha * (2.0 - r_raised_to_p_alpha)
-	/ sqrt(factorialvalue);
-    
-      ret2 = ret * (pow((first_factor + second_factor), dim) -
-		    pow(first_factor, dim));
-    
-    } while(ret2 > tau_);
-
-    *nterms = ip;
-  }
-
-  /** 
-   * Compute KDE estimates using fast Gauss transform.
+  /** @brief Compute KDE estimates using fast Gauss transform.
    */
   void Compute() {
 
@@ -1059,6 +1065,13 @@ class FGTKde {
     printf("FGT KDE completed...\n");
   }
 
+  /** @brief Output KDE results to a stream 
+   *
+   *  If the user provided "--fgt_kde_output=" argument, then the
+   *  output will be directed to a file whose name is provided after
+   *  the equality sign.  Otherwise, it will be provided to the
+   *  screen.
+   */
   void PrintDebug() {
 
     FILE *stream = stdout;

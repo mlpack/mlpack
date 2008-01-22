@@ -69,29 +69,28 @@
 #include "u/dongryel/series_expansion/mult_local_expansion.h"
 #include "u/dongryel/series_expansion/kernel_aux.h"
 
-/**
- * A computation class for dual-tree based kernel density estimation
+/** @brief A computation class for dual-tree based kernel density
+ *         estimation.
  *
- * This class builds trees for input query and reference sets on Init.
- * The KDE computation is then performed by calling Compute
+ *  This class builds trees for input query and reference sets on Init.
+ *  The KDE computation is then performed by calling Compute.
  *
- * This class is only intended to compute once per instantiation.
+ *  This class is only intended to compute once per instantiation.
  *
- * Example use:
+ *  Example use:
  *
- * @code
- *   FastKde fast_kde;
- *   struct datanode* kde_module;
- *   Vector results;
+ *  @code
+ *    FastKde fast_kde;
+ *    struct datanode* kde_module;
+ *    Vector results;
  *
- *   kde_module = fx_submodule(NULL, "kde", "kde_module");
- *   fast_kde.Init(queries, references, queries_equal_references,
- *                 kde_module);
- *   fast_kde.Compute(); 
- *   
- *   // important to make sure that you don't call Init on results!
- *   fast_kde.get_density_estimates(&results);
- * @endcode
+ *    kde_module = fx_submodule(NULL, "kde", "kde_module");
+ *    fast_kde.Init(queries, references, queries_equal_references,
+ *                  kde_module);
+ *
+ *    // important to make sure that you don't call Init on results!
+ *    fast_kde.Compute(&results);
+ *  @endcode
  */
 template<typename TKernelAux>
 class FastKde {
@@ -103,32 +102,36 @@ class FastKde {
   // forward declaration of KdeStat class
   class KdeStat;
   
-  /** our tree type using the KdeStat */
+  /** @brief our tree type using the KdeStat */
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, KdeStat > Tree;
 
-  /** parameter class */
+  /** @brief Defines the parameter class object for holding the
+   *         essential parameters necessary for KDE computations. 
+   */
   class Param {
   public:
 
-    /** series expansion auxililary object */
+    /** @brief Series expansion auxililary object */
     TKernelAux ka_;
 
-    /** the dimensionality of the datasets */
+    /** @brief The dimensionality of the datasets */
     index_t dimension_;
 
-    /** number of query points */
+    /** @brief The number of query points */
     index_t query_count_;
 
-    /** number of reference points */
+    /** @brief The number of reference points */
     index_t reference_count_;
 
-    /** the global relative error allowed */
+    /** @brief The global relative error allowed */
     double relative_error_;
 
-    /** the bandwidth */
+    /** @brief The bandwidth */
     double bandwidth_;
 
-    /** multiply the unnormalized sum by this to get the density estimate */
+    /** @brief The constant to multiply the unnormalized sum by this
+     *	to get the density estimate
+     */
     double mul_constant_;
 
     OT_DEF_BASIC(Param) {
@@ -142,8 +145,9 @@ class FastKde {
     }
   public:
 
-    /**
-     * Initializes parameters from a data node
+    /** @brief Initializes parameters from a data node
+     *
+     *  @param module module holding the parameters for KDE computation
      */
     void Init(datanode *module) {
 
@@ -156,6 +160,13 @@ class FastKde {
       dimension_ = reference_count_ = query_count_ = -1;
     }
 
+    /** @brief Finalizes the parameter object initialization by setting the
+     *         dimensionality and computing the normalization constant and
+     *         initializing the series expansion object.
+     *
+     *  @param module module holding the parameters for KDE computation
+     *  @param dimension the dimensionality of the dataset
+     */
     void FinalizeInit(datanode *module, int dimension) {
       dimension_ = dimension;
 
@@ -194,13 +205,32 @@ class FastKde {
     }
   };
 
-  /** coarse result on a region */
+  /** @brief Defines the class object for holding a coarse
+   *         approximated result accumulated on a query node region
+   */
   class QPostponed {
   public:
 
+    /** @brief The change in lower and upper densities that must be
+     *         propagated downwards.
+     */
     DRange d_density_range_;
+
+    /** @brief The total amount finite-difference based pruning that must be
+     *         incorporated into the density estimate of each query point under
+     *         the query node.
+     */
     DRange finite_diff_range_;
+
+    /** @brief The total amount of error used in approximation for all
+     *         query points that must be propagated downwards.
+     */
     double used_error_;
+
+    /** @brief The number of reference points that were taken care of
+     *         for all query points under this node; this information
+     *         must be propagated downwards.
+     */
     int n_pruned_;
 
     OT_DEF_BASIC(QPostponed) {
@@ -212,7 +242,10 @@ class FastKde {
 
   public:
 
-    /** initialize postponed information to zero */
+    /** @brief Initialize postponed information to zero 
+     *
+     *  @param param global parameter object
+     */
     void Init(const Param& param) {
       d_density_range_.Init(0, 0);
       finite_diff_range_.Init(0, 0);
@@ -440,29 +473,31 @@ class FastKde {
       Init();
     }
     
-    /** constructor - does not do anything */
+    /** @brief constructor - does not do anything 
+     */
     KdeStat() { }
     
-    /** destructor - does not do anything */
+    /** @brief destructor - does not do anything 
+     */
     ~KdeStat() {}
     
   };
 
   ////////// Private Member Variables //////////
 
-  /** module used to pass parameters into the FastKde object */
+  /** @brief module used to pass parameters into the FastKde object */
   struct datanode *module_;
 
-  /** parameter list */
+  /** @brief parameter list */
   Param parameters_;
 
-  /** query dataset */
+  /** @brief query dataset */
   Matrix qset_;
 
-  /** query tree */
+  /** @brief query tree */
   Tree *qroot_;
 
-  /** reference dataset */
+  /** @brief reference dataset */
   Matrix rset_;
   
   /** reference tree */
@@ -811,10 +846,12 @@ class FastKde {
     } // handling the case in which the extrinsic pruning fails
   }
 
-  /** 
-   * pre-processing step - this wouldn't be necessary if the core
-   * fastlib supported a Init function for Stat objects that take
-   * more arguments.
+  /** @brief Pre-processing step that traverse the tree and
+   *         initializes series expansion objects and computes
+   *         far-field coefficients bottomup.
+   *
+   *  @param node The current node - initially called with the root of
+   *              the query/reference tree.
    */
   void PreProcess(Tree *node) {
 
@@ -849,7 +886,13 @@ class FastKde {
     }
   }
 
-  /** post processing step */
+  /** @brief Post processing step that traverses the query tree in a
+   *         pre-order and propagates left-over approximations on each
+   *         node downwards.
+   *
+   *  @param qnode The current query node - initialially called with the root 
+   *               of the query tree.
+   */
   void PostProcess(Tree *qnode) {
 
     // for leaf query node, incorporate the postponed info and normalize
@@ -885,7 +928,7 @@ class FastKde {
 
   ////////// Constructor/Destructor //////////
 
-  /** constructor */
+  /** @brief Constructor that does not do anything. */
   FastKde() {
     qroot_ = NULL;
     rroot_ = NULL;
@@ -893,7 +936,7 @@ class FastKde {
     DEBUG_POISON_PTR(module_);
   }
 
-  /** destructor */
+  /** @brief Destructor which deletes constructed trees and frees memory. */
   ~FastKde() {     
     if(qroot_ != rroot_ ) {
       delete qroot_; 
@@ -906,7 +949,11 @@ class FastKde {
 
   ////////// Getters/Setters //////////
 
-  /** get the density estimate */
+  /** @brief Get the density estimate 
+   *
+   *  @param results An uninitialized vector which will be initialized
+   *                 with the computed density estimates.
+   */
   void get_density_estimates(Vector *results) { 
     results->Init(q_results_.size());
     
@@ -917,8 +964,12 @@ class FastKde {
 
   ////////// User-level functions //////////
 
-  /** computes KDE after the initialization function is called */
-  void Compute() {
+  /** @brief Computes KDE after the initialization function is called 
+   *
+   *  @param results An uninitialized vector which will be initialized
+   *                 with the computed density estimates.
+   */
+  void Compute(Vector *results) {
 
     num_finite_difference_prunes_ = num_farfield_to_local_prunes_ =
       num_farfield_prunes_ = num_local_prunes_ = 0;
@@ -971,6 +1022,10 @@ class FastKde {
       q_results_[i].n_pruned_ =	tmp_q_results[i].n_pruned_;
     }
     
+    // retrieve density estimate results
+    get_density_estimates(results);
+
+    // output some useful statistics
     printf("\nFast KDE completed...\n");
     printf("Finite difference prunes: %d\n", num_finite_difference_prunes_);
     printf("F2L prunes: %d\n", num_farfield_to_local_prunes_);
@@ -978,7 +1033,17 @@ class FastKde {
     printf("L prunes: %d\n", num_local_prunes_);
   }
 
-  /** initialize query and reference sets and construct trees */
+  /** @brief Initialize query and reference sets and construct
+   *         trees.
+   *
+   *  @param queries The column-oriented matrix holding the query
+   *                 points.  
+   *  @param references The column-oriented matrix holding
+   *                    the reference points.
+   *  @param queries_equal_references The boolean flag that tells whether
+   *                                  the queries equal the references.
+   *  @param module_in The FastExec holding the essential parameters.
+   */
   void Init(Matrix &queries, Matrix &references, 
 	    bool queries_equal_references, struct datanode *module_in) {
 
@@ -1033,7 +1098,13 @@ class FastKde {
     parameters_.FinalizeInit(fx_root, rset_.n_rows());
   }
 
-  /** Output KDE results to a stream */
+  /** @brief Output KDE results to a stream 
+   *
+   *  If the user provided "--fast_kde_output=" argument, then the
+   *  output will be directed to a file whose name is provided after
+   *  the equality sign.  Otherwise, it will be provided to the
+   *  screen.
+   */
   void PrintDebug() {
 
     FILE *stream = stdout;

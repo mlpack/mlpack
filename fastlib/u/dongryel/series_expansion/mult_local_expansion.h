@@ -6,7 +6,7 @@
  * for a arbitrary multiplicative kernel function.
  *
  * @author Dongryeol Lee (dongryel)
- * @bugs No known bugs.
+ * @bug No known bugs.
  */
 
 #ifndef MULT_LOCAL_EXPANSION
