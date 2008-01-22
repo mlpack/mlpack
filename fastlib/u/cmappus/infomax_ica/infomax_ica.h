@@ -1,5 +1,6 @@
 /**
- * @file infomaxICA.h
+ * @file infomax_ica.h
+ * @author Chip Mappus
  *
  * Yet another infomax ICA implementation.
  *   
@@ -32,8 +33,8 @@ class InfomaxICA {
  public:
   InfomaxICA();
   InfomaxICA(double lambda, int B);
-  void getUnmixing(Matrix &W);
-  void getSources(const Matrix &dataset, Matrix &S);
+  void getUnmixing(Matrix &w);
+  void getSources(const Matrix &dataset, Matrix &s);
   void setLambda(double lambda);
   void setB(int b);
   void applyICA(const Dataset& dataset);

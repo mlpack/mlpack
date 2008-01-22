@@ -1,3 +1,10 @@
+/**
+ * @file test_infomax_ica.h
+ * @author Chip Mappus
+ *
+ * Unit tests for infomax ica method.
+ */
+
 #include "infomax_ica.h"
 #include "base/test.h"
 
