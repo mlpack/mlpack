@@ -8,7 +8,7 @@
  * k --> number of nearest neighbours
  *
  * @see allknn.h
-*/
+ */
 
 
 #include "allknn.h"
