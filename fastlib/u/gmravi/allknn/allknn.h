@@ -119,7 +119,7 @@ class AllNNNaive{
 		  min_dist=dist;
 		}
 	    }
-	  printf("min dist is %f\n",min_dist);
+	  //printf("min dist is %f\n",min_dist);
 	}
     }
   
@@ -131,7 +131,7 @@ class AllNNNaive{
     {
       FILE *fp;
       fp=fopen("naive_nearest_neighbour.txt","w+");
-      printf("The nearest neighbours are as follows\n");
+      //printf("The nearest neighbours are as follows\n");
       // printf("The number of results are\n");
       //printf("%d\n",results.size());
       for(index_t i=0;i< q_matrix_.n_cols();i++){
@@ -384,9 +384,6 @@ class AllNNSingleTree{
 
     FILE *fp;
     fp=fopen("allnnsingletree_nearest_neighbour.txt","w+");
-    printf("The nearest neighbours are as follows\n");
-    // printf("The number of results are\n");
-    //printf("%d\n",results.size());
     for(index_t i=0;i< q_matrix_.n_cols();i++){
       
       fprintf(fp,"Point:%d\tDistance:%f\n", results.index_of_neighbour[i],results.distance_sqd[i]); 
@@ -550,7 +547,7 @@ private:
 	   results[i].index_of_neighbour.Copy(temp_result.index_of_neighbour);
 	   results[i].distance_sqd.Copy(temp_result.distance_sqd);	
    
-	   printf("Need to flush all values..\n");
+	   //Flush all these values for further usage in the iteration
 	   for(index_t l=0;l<k_;l++){
 	     temp_result.index_of_neighbour[l]=-1;
 	     temp_result.distance_sqd[l]=DBL_MAX;
@@ -583,15 +580,13 @@ private:
 
 	   end=length-1; 
 	   for(int i=rnode->begin();i<rnode->end();i++){
-	     printf("came to base case..\n");
 	     
 	     //one very important check is to see that query point is not the same point as any other point being compared
 	     
 	     if(!check_if_equal(point,r_matrix->GetColumnPtr(i),r_matrix->n_rows()))
 	       { 
 		 dist=la::DistanceSqEuclidean(r_matrix->n_rows(),point,r_matrix->GetColumnPtr(i)); 
-		 //printf("distance is %f\n",dist);
-
+	       
 		 //find where the new element should be pushed
 		 
 		 int start=0;
@@ -604,7 +599,7 @@ private:
 		 
 
 		 //push into array returns 1 if an element is pushable. an element is pushable if it is a possible knn
-		 printf("will push into array...\n");
+	      
 		 length+=push_into_array(result,position,dist,length,i,k_);
 		 end=length-1; 
 		 
@@ -658,7 +653,9 @@ private:
 	     else
 	       {
 		 //This means i have k nearest neighbours
-		 //check the other half only if the kth nn distance is greater than the distance of the point form the farther bounding box
+		 //check the other half only if the kth nn distance is greater 
+		 //than the distance of the point form the farther bounding box
+
 		 printf("will print distance..\n");
 		 printf("distance is %f\n",result.distance_sqd[k_-1]);
 		 if(result.distance_sqd[k_-1]> farther->bound().MinDistanceSq(point)){

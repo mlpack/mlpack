@@ -1,6 +1,7 @@
 
 librule(
     name = "allknn",                    # this line can be safely omitted
+    sources = [""],                          # files that must be compiled
     headers = ["allknn.h"],             # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # depends on fastlib core
     )
@@ -8,7 +9,8 @@ librule(
 binrule(
     name = "allknn_main",                  # the executable name
     sources = ["allknn_main.cc"],          # compile main.cc
-    deplibs = [":allknn"]           
+    headers = ["allknn.h"],                   # no extra headers
+    deplibs = ["fastlib:fastlib_int"]           
     )
 
 # to build:
