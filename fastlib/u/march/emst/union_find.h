@@ -20,7 +20,7 @@
  *A Union-Find data structure.  See Cormen, Rivest, & Stein for details.  
  */
 class UnionFind {
-  
+  friend class TestUnionFind;
   FORBID_ACCIDENTAL_COPIES(UnionFind);
   
 private:
