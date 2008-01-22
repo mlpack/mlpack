@@ -17,7 +17,8 @@ class TestInfomaxICA {
     testdata_.InitFromFile("../../example/fake.arff");
     lambda_=0.001;
     b_=5;
-    ica_ = new InfomaxICA(lambda_,b_);
+    epsilon_=0.001;
+    ica_ = new InfomaxICA(lambda_,b_,epsilon_);
   }
 
   void Destruct(){
@@ -51,5 +52,5 @@ class TestInfomaxICA {
   Dataset testdata_;
   double lambda_;
   int b_;
-  
+  double epsilon_;
 };
