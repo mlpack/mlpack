@@ -130,7 +130,7 @@ class FastKde {
     double bandwidth_;
 
     /** @brief The constant to multiply the unnormalized sum by this
-     *	to get the density estimate
+     *	       to get the density estimate
      */
     double mul_constant_;
 

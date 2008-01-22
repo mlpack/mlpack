@@ -669,7 +669,7 @@ class FFTKde {
 
   }
   
-  void gaussify(double acc, double precalc, int level, int pos, int skip) {
+  void Gaussify(double acc, double precalc, int level, int pos, int skip) {
 
     if(level == -1) {
       kernelweights_[pos] = exp(precalc * acc);
@@ -682,11 +682,11 @@ class FFTKde {
 	double newacc = acc + addThis * addThis;
 	int newskip = skip * size_[level];
 	
-	gaussify(newacc, precalc, level - 1, pos + skip * g, newskip);
+	Gaussify(newacc, precalc, level - 1, pos + skip * g, newskip);
 	
 	// If this is not the 0th frequency, then do the mirror image thingie.
 	if(g != 0) {
-	  gaussify(newacc, precalc, level - 1,
+	  Gaussify(newacc, precalc, level - 1,
 		   pos + skip * (size_[level] - g), newskip);
 	}
       }
@@ -783,7 +783,7 @@ class FFTKde {
     // Calculate the required kernel weights at each grid point. This matrix
     // will be convolved with fourier transformed data set.
     double precalc = -0.5 / kernel_.bandwidth_sq();
-    gaussify(0.0, precalc, rset_.n_rows() - 1, 0, 1);
+    Gaussify(0.0, precalc, rset_.n_rows() - 1, 0, 1);
 
     // FFT the kernel weight matrix.
     fftrn(kernelweights_.ptr(), k_fnyquist_.ptr(), 
