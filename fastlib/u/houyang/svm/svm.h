@@ -218,8 +218,8 @@ void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *mo
 	dataset_bi.matrix().MakeColumnVector(m, &dest);
 	dataset.matrix().MakeColumnVector(train_labels_index[train_labels_startpos[i]+m], &source);
 	dest.CopyValues(source);
-	/* last row for labels 0 */
-	dataset_bi.matrix().set(num_features_, m, 0);
+	/* last row for labels -1 */
+	dataset_bi.matrix().set(num_features_, m, -1);
 	dataset_bi_index[m] = train_labels_index[train_labels_startpos[i]+m];
       }
       for (index_t n = 0; n < train_labels_ct[j]; n++) {

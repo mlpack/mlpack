@@ -91,7 +91,8 @@ class SMO {
 
   // labels: the last row of the data matrix, 0 or 1
   int GetLabelSign_(index_t i) const {
-    return matrix_.get(matrix_.n_rows()-1, i) != 0 ? 1 : -1;
+    //return matrix_.get(matrix_.n_rows()-1, i) != 0 ? 1 : -1;
+    return matrix_.get(matrix_.n_rows()-1, i) == 1 ? 1 : -1;
   }
 
   void GetVector_(index_t i, Vector *v) const {
