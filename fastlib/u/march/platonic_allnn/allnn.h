@@ -318,7 +318,7 @@ class AllNN {
     // precomputed distance entirely.  That's why we have --mode=fast.
 
     /* Make sure the precomputed bounding information is correct */
-    DEBUG_SAME_DBL(lower_bound_distance,
+    DEBUG_SAME_DOUBLE(lower_bound_distance,
         MinNodeDistSq_(query_node, reference_node));
 
     if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
