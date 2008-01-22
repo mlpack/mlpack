@@ -4,9 +4,7 @@ int main(int argc, char *argv[])
   fx_init(argc, argv);
   char method[40];
   strcpy(method,fx_param_str_req(NULL,"method"));
-  printf("method is %s\n",method);
-  printf("string comparing with allnnnaive is %d\n",strcmp(method,"allnnnaive"));
-  if(strcmp(method,"allnnnaive")==0)
+   if(strcmp(method,"allnnnaive")==0)
     {
       printf("In allnnnaive");
       AllNNNaive naive;
