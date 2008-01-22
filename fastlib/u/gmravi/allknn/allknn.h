@@ -1,4 +1,9 @@
-/** In this file we declare 5 classes, which do nn or knn search by using the     * naive search method or by using dual trees 
+/** @file allknn.h
+ *  
+ * In this file we declare 5 classes, which do nn or knn search by using the     
+ * naive search method or by using dual trees 
+ *
+ * @see allknn_main.cc
  */
 
 #include "fastlib/fastlib_int.h"
@@ -6,7 +11,7 @@
 #ifndef ALLKNN_H
 #define ALLKNN_H
 #define LEAF_SIZE 3
-//Class definition for AllNNNaive..............................................
+//Class definition for AllNNNaive.......................
 
 /** This class supports functions to find out 1 single 
  *  nearest neighbour for each query point
@@ -65,28 +70,35 @@ class AllNNNaive{
   //Interesting functions.......
  public:
 
+  // Constructor
+  AllNNNaive(){
+
+  }
+
+  //Destructor 
+
+ ~AllNNNaive(){
+
+  }
+
+
   /** This function will simply load the query files 
     *  and the reference files specified by the user
     *  into matrices
     */
-  void Init()
+  void Init(Matrix &q_matrix, Matrix &r_matrix)
     {
-      char *qfile=(char*)malloc(40);
-      char *rfile=(char*)malloc(40);
-      strcpy(qfile,fx_param_str_req(NULL,"qfile"));
-      strcpy(rfile,fx_param_str_req(NULL,"rfile"));
-      
-      //q_matrix_ will hold the query file in matrix format 
-      //r_matrix_ will hold the reference file in matrix format
-
-      data::Load(qfile,&q_matrix_);
-      data::Load(rfile,&r_matrix_); 
+      //First Copy the dataset
+      q_matrix_.Alias(q_matrix);
+      r_matrix_.Alias(r_matrix);
 
       //An object naive of the class NaiveResults was created
       //and initalized 
       //allocate memory for index_of_neighbour, distance_sqd. Note since 
-      //we are finding exactly 1 nn for each query point, we shall allocate memory 
-      //equal to the number of query points. This is what is being done in the code below
+      //we are finding exactly 1 nn for each query point, 
+      //we shall allocate memory 
+      //equal to the number of query points. 
+      //This is what is being done in the code below
 
       results.Init();
       results.index_of_neighbour.Init(get_query_set().n_cols());
@@ -99,7 +111,8 @@ class AllNNNaive{
   
   void ComputeAllNNNaive()
     {
-      //for each column vector of q_matrix find the nearest neighbour in r_matrix
+      //for each column vector of q_matrix find the 
+      //nearest neighbour in r_matrix
       double min_dist;
       double dist;  
       
@@ -109,9 +122,12 @@ class AllNNNaive{
 	  dist=0.0;
 	  for(index_t cols_r=0; cols_r<r_matrix_.n_cols(); cols_r++)
 	    {
-	      dist=la::DistanceSqEuclidean(get_query_set().n_rows(),get_query_set().GetColumnPtr(cols_q),get_reference_set().GetColumnPtr(cols_r));
+	      dist=la::DistanceSqEuclidean(get_query_set().n_rows(),
+					   get_query_set().GetColumnPtr(cols_q),
+					   get_reference_set().GetColumnPtr(cols_r));
 	      
-	      //distance!=0 guarantees that i am not comparing the same points to find the nearest neighbour
+	      //distance!=0 guarantees that i am not 
+	      //comparing the same points to find the nearest neighbour
 	      if(dist<min_dist && dist!=0.0)
 		{
 		  results.index_of_neighbour[cols_q]=cols_r;
@@ -131,12 +147,9 @@ class AllNNNaive{
     {
       FILE *fp;
       fp=fopen("naive_nearest_neighbour.txt","w+");
-      //printf("The nearest neighbours are as follows\n");
-      // printf("The number of results are\n");
-      //printf("%d\n",results.size());
       for(index_t i=0;i< q_matrix_.n_cols();i++){
 	  
-	fprintf(fp,"Point:%d\tDistance:%f\n", results.index_of_neighbour[i],results.distance_sqd[i]); 
+	fprintf(fp,"Point:%d\tDistance:%f\n", i,results.distance_sqd[i]); 
       }
     }
 };    //End of class definition of AllNNNaive........................................
@@ -197,7 +210,8 @@ class AllNNSingleTree{
       Init();
     }
     
-    void Init(const Matrix& dataset, index_t start, index_t count,const SingleTreeStat& left_stat, const SingleTreeStat& right_stat) {
+    void Init(const Matrix& dataset, index_t start, index_t count,
+	      const SingleTreeStat& left_stat, const SingleTreeStat& right_stat) {
       
       Init();
     }
@@ -236,24 +250,31 @@ class AllNNSingleTree{
   }
   
 
+  //Constructor
+  AllNNSingleTree(){
+
+  }
+
+  //Destructor
+  ~AllNNSingleTree(){
+
+  }
+
   //Interesting functions....
 
   /** This function simply loads the reference dataset and the query dataset into matrices 
    *  and makes a tree form the reference dataset 
    */
 
-  void Init(){
-
-    char *qfile=(char*)malloc(40);
-    char *rfile=(char*)malloc(40);
-    strcpy(qfile,fx_param_str_req(NULL,"qfile"));
-    strcpy(rfile,fx_param_str_req(NULL,"rfile"));
+  void Init(Matrix &q_matrix, Matrix &r_matrix){
     
-    data::Load(qfile,&q_matrix_);
-    data::Load(rfile,&r_matrix_); 
-
+    //First Copy the dataset
+    q_matrix_.Alias(q_matrix);
+    r_matrix_.Alias(r_matrix);
+    
+    
     //Initialize results
-
+    
     results.Init();
     results.index_of_neighbour.Init(get_query_set().n_cols());
     results.distance_sqd.Init(get_query_set().n_cols());
@@ -298,11 +319,13 @@ class AllNNSingleTree{
     }
   
 
-  /** This is the function which finds out the nearest neighbour to the given query point 
-      it does so by traversing the tree depth first and testing if their is  a potential 
-      neighbour at a distance which is lesser than the present estimate for the nearest neighbour
-
-  */
+  /** This is the function which finds out the nearest neighbour 
+    * to the given query point 
+    * it does so by traversing the tree depth first 
+    * and testing if their is  a potential 
+    * neighbour at a distance which is lesser than the 
+    * present estimate for the nearest neighbour
+    */
 
   /*rnode-- reftree node
    *point- the query point whose nearest neighbour we need to find 
@@ -310,7 +333,8 @@ class AllNNSingleTree{
    *potential_distance: The distance of the nearest neighbour estimate we have as of now
    *potential_index: the index in the reference set of the potential neighbour
   */ 
-  void FindNearestNeighbour(Tree *rnode,double *point, Matrix r_matrix, double &potential_distance, index_t &potential_index){
+  void FindNearestNeighbour(Tree *rnode,double *point, Matrix r_matrix, 
+			    double &potential_distance, index_t &potential_index){
     
 
     //check if it is the leaf 
@@ -323,11 +347,14 @@ class AllNNSingleTree{
 	  {
 	    double temp_dist=la::DistanceSqEuclidean(r_matrix_.n_rows(),r_matrix_.GetColumnPtr(i),point);
 	    
-	    //check_if_equal function is being called to avoid comparison between the same points
-	    //This function will not be requied if we are sure that the query and reference sets 
+	    //check_if_equal function is being called to 
+	    //avoid comparison between the same points
+	    //This function will not be requied if we are sure 
+	    //that the query and reference sets 
 	    //have no common points
 
-	    if(check_if_equal(r_matrix_.GetColumnPtr(i),point,r_matrix.n_rows())==false && temp_dist < potential_distance) {
+	    if(check_if_equal(r_matrix_.GetColumnPtr(i),point,r_matrix.n_rows())==false && temp_dist < 
+	       potential_distance) {
 	      
 	      potential_distance=temp_dist;
 	      potential_index=i;
@@ -344,9 +371,13 @@ class AllNNSingleTree{
 	double min_distance_to_right_child=rnode->right()->bound().MinDistanceSq(point);
 	
 	
-	double nearest_bb_distance=min_distance_to_left_child<min_distance_to_right_child?min_distance_to_left_child:min_distance_to_right_child;
+	double nearest_bb_distance=min_distance_to_left_child <
+	  min_distance_to_right_child?
+	  min_distance_to_left_child:
+	min_distance_to_right_child;
 	
-	//continue searching only if the nearest bounding box is closer than the potential nn we have as of now
+	//continue searching only if the nearest bounding box is 
+	//closer than the potential nn we have as of now
 	if(potential_distance > nearest_bb_distance){
 	  
 	  Tree *farther;
@@ -354,7 +385,8 @@ class AllNNSingleTree{
 	    
 	    //recursively explore the left half
 	    farther=rnode->right();
-	    FindNearestNeighbour(rnode->left(),point,r_matrix,potential_distance,potential_index);
+	    FindNearestNeighbour(rnode->left(),
+				 point,r_matrix,potential_distance,potential_index);
 	  }
 	  
 	  else{
@@ -362,10 +394,12 @@ class AllNNSingleTree{
 	    //recursively explore the right half
 	    
 	    farther=rnode->left();
-	    FindNearestNeighbour(rnode->right(),point,r_matrix,potential_distance,potential_index);	
+	    FindNearestNeighbour(rnode->right(),
+				 point,r_matrix,potential_distance,potential_index);	
 	  }
 	  
-	  //check if the potential distance u have is more than the distance to the farther bb
+	  //check if the potential distance u 
+	  //have is more than the distance to the farther bb
 	  
 	  if(potential_distance>farther->bound().MinDistanceSq(point)){
 	    
@@ -386,11 +420,11 @@ class AllNNSingleTree{
     fp=fopen("allnnsingletree_nearest_neighbour.txt","w+");
     for(index_t i=0;i< q_matrix_.n_cols();i++){
       
-      fprintf(fp,"Point:%d\tDistance:%f\n", results.index_of_neighbour[i],results.distance_sqd[i]); 
+      fprintf(fp,"Point:%d\tDistance:%f\n", i,results.distance_sqd[i]); 
     }
   }
   
-};   //Definition of AllNNSingleTree ends.........................................
+};   //Definition of AllNNSingleTree ends.........................
 
 
 /** This class has functions to find the k-nearest neighbours
@@ -416,7 +450,7 @@ class AllKNNSingleTree
       //Init of AllKNNSingleTreeResults
 
     }
-  };  //definition of class AllKNNSingleTreeResults ends..................................
+  };  //definition of class AllKNNSingleTreeResults ends...............
 
   AllKNNSingleTreeResults *results;
 
@@ -438,7 +472,9 @@ class AllKNNSingleTree
       Init();
     }
     
-    void Init(const Matrix& dataset, index_t start, index_t count,const AllKNNSingleTreeStat& left_stat, const AllKNNSingleTreeStat& right_stat) {
+    void Init(const Matrix& dataset, index_t start, index_t count,
+	      const AllKNNSingleTreeStat& left_stat, 
+	      const AllKNNSingleTreeStat& right_stat) {
       
       Init();
     }
@@ -454,43 +490,29 @@ private:
 
  public:
 
+  //Constructor
+ AllKNNSingleTree()
+    {
+     
+    }
+
   //Destructor
   ~AllKNNSingleTree()
     {
-      /*for(int i=0;i<q_matrix_.n_cols();i++)
-	{
-	  delete(results[i].distance_sqd);
-	  delete(results[i].index_of_neighbour);
-	  }*/
-      // delete(results);
       delete(rroot_);
     }
 
-  void Init(){
+  void Init(Matrix &q_matrix, Matrix &r_matrix, index_t k){
 
-    char *qfile=(char*)malloc(40);
-    char *rfile=(char*)malloc(40);
+    //Copy datasets
 
-    strcpy(qfile,fx_param_str_req(NULL,"qfile"));
-    strcpy(rfile,fx_param_str_req(NULL,"rfile"));
-    
-    data::Load(qfile,&q_matrix_);
-    data::Load(rfile,&r_matrix_); 
-    delete(qfile);
-    delete(rfile);
-
-    /** The number of neighbours that we intend to find for each query point */
-    k_=fx_param_int_req(NULL,"k");
-    
+    q_matrix_.Alias(q_matrix);
+    r_matrix_.Alias(r_matrix);
+    k_=k;
     
     //Initialize results
 
     results=new AllKNNSingleTreeResults[q_matrix_.n_cols()];
-
-    /* for(int i=0;i<q_matrix_.n_cols();i++){
-      results[i].index_of_neighbour.Init(k_);
-      results[i].distance_sqd.Init(k_);
-      }*/
 
     //Build the tree out of the reference set
     rroot_ = tree::MakeKdTreeMidpoint < Tree > (r_matrix_, LEAF_SIZE);
@@ -518,12 +540,14 @@ private:
     return true;
   }
 
-  //This is the function which will find out the k- nearest neighbour for all the query point
+  //This is the function which will find out 
+  //the k- nearest neighbour for all the query point
   
   void ComputeAllKNNSingleTree()
     {
       
-      //temp_result holds the result of k-nearest computation of a single point. This will be used again and again in iterations
+      //temp_result holds the result of k-nearest computation of a single point. 
+      //This will be used again and again in iterations
 
       AllKNNSingleTreeResults temp_result;
 
@@ -532,7 +556,9 @@ private:
       temp_result.distance_sqd.Init(k_);
 
 
-      //Initialize temp_result with values that imply that the nearest neighbours are infinitely far off
+      //Initialize temp_result with values that imply that the 
+      //nearest neighbours are infinitely far off
+
       for(index_t i=0;i<k_;i++){
 	temp_result.index_of_neighbour[i]=-1;
 	temp_result.distance_sqd[i]=DBL_MAX;
@@ -543,7 +569,9 @@ private:
 	   index_t length=0;
 
 	   //length is the number of neighbours found till now. Initialized to 0
-	   FindKNearestNeighbours(rroot_,q_matrix_.GetColumnPtr(i),&r_matrix_,temp_result,length,k_);
+	   FindKNearestNeighbours(rroot_,q_matrix_.GetColumnPtr(i),
+				  &r_matrix_,temp_result,length,k_);
+
 	   results[i].index_of_neighbour.Copy(temp_result.index_of_neighbour);
 	   results[i].distance_sqd.Copy(temp_result.distance_sqd);	
    
@@ -555,13 +583,16 @@ private:
 	 }
      }
 
-  /** The FindKNearestNeighbours function finds out the k-nearest neighbours for each query point
-    * the length paramter tells us how many of the k-nearest neighbours have been found. Hence
+  /** The FindKNearestNeighbours function finds out the 
+    * k-nearest neighbours for each query point
+    * the length paramter tells us how many of the k-nearest 
+    * neighbours have been found. Hence
     * this param is set to 0 
   */
 
 
-  void FindKNearestNeighbours(Tree *rnode, double *point,Matrix *r_matrix,AllKNNSingleTreeResults &result,int &length,int k_){
+  void FindKNearestNeighbours(Tree *rnode, double *point,Matrix *r_matrix,
+			      AllKNNSingleTreeResults &result,int &length,int k_){
     
     //Base case is that the node is a leaf 
        
@@ -575,17 +606,20 @@ private:
 	   //length=0 => no neighbours have been found and hence end=-1 in such a  case
 	   
 	   /*end points to the position where the arrays in the class 
-	     AllKNNSingleTreeResults ends. That is it is the index of the last element 
+	    * AllKNNSingleTreeResults ends. 
+	    * That is it is the index of the last element 
 	   */
 
 	   end=length-1; 
 	   for(int i=rnode->begin();i<rnode->end();i++){
 	     
-	     //one very important check is to see that query point is not the same point as any other point being compared
+	     //one very important check is to see that 
+	     //query point is not the same point as any other point being compared
 	     
 	     if(!check_if_equal(point,r_matrix->GetColumnPtr(i),r_matrix->n_rows()))
 	       { 
-		 dist=la::DistanceSqEuclidean(r_matrix->n_rows(),point,r_matrix->GetColumnPtr(i)); 
+		 dist=la::DistanceSqEuclidean(r_matrix->n_rows(),point,
+					      r_matrix->GetColumnPtr(i)); 
 	       
 		 //find where the new element should be pushed
 		 
@@ -598,7 +632,8 @@ private:
 		 position=find_index(result,dist,start,end); 
 		 
 
-		 //push into array returns 1 if an element is pushable. an element is pushable if it is a possible knn
+		 //push into array returns 1 if an element is pushable. 
+		 //an element is pushable if it is a possible knn
 	      
 		 length+=push_into_array(result,position,dist,length,i,k_);
 		 end=length-1; 
@@ -610,24 +645,28 @@ private:
 	  
 	  else
 	    {
-	      //this is not a root node. Hence find the distance to the bounding boxes
+	      //this is not a root node. Hence find 
+	      //the distance to the bounding boxes
 	      
 	      double min_distance_to_left_child=rnode->left()->bound().MinDistanceSq(point);
 	      double min_distance_to_right_child=rnode->right()->bound().MinDistanceSq(point);
 	      
-	      double min_dist_to_bb=min_distance_to_left_child>min_distance_to_right_child?min_distance_to_right_child:min_distance_to_left_child;
+	      double min_dist_to_bb=min_distance_to_left_child >
+		min_distance_to_right_child ?
+		min_distance_to_right_child :
+		min_distance_to_left_child;
 
 	   Tree *farther;
 
 	   //This condition considers further recursion only if all k nearest neighbours 
-	   //have not been found or if distance of the nearest bb is less than the distance of the kth nearest neighbour
+	   //have not been found or if distance of the nearest bb 
+	   //is less than the distance of the kth nearest neighbour
 
-	   printf("first check..\n");
+	  
 	   if(length<k_ ||min_dist_to_bb < result.distance_sqd[k_-1]){
 
 	     if(min_distance_to_left_child < min_distance_to_right_child){
-	       printf("left child..\n");
-	       
+
 	       //Recursively explore the left child
 	       farther=rnode->right();
 	       FindKNearestNeighbours(rnode->left(),point,r_matrix,result,length,k_);
@@ -635,16 +674,15 @@ private:
 
 	   else{
 
-	     printf("right child..\n");
 	     //Recursively explore the right child
 	     farther=rnode->left();
 	     FindKNearestNeighbours(rnode->right(),point,r_matrix,result,length,k_);	       
 	     }
 	   
-	   //If number of neighbours found are less than k then go ahead and explore the other half too
+	     //If number of neighbours found are less than 
+	     //k then go ahead and explore the other half too
 	   
 	     if(length<k_){
-	       printf("will explore the right child because all k nn have not been found...\n");
 	       
 	       //recursively explore the farther child		 
 	       FindKNearestNeighbours(farther,point,r_matrix,result,length,k_);
@@ -656,24 +694,24 @@ private:
 		 //check the other half only if the kth nn distance is greater 
 		 //than the distance of the point form the farther bounding box
 
-		 printf("will print distance..\n");
-		 printf("distance is %f\n",result.distance_sqd[k_-1]);
 		 if(result.distance_sqd[k_-1]> farther->bound().MinDistanceSq(point)){
-		     FindKNearestNeighbours(farther,point,r_matrix,result,length,k_);
-		   }
+		   FindKNearestNeighbours(farther,point,r_matrix,result,length,k_);
+		 }
 	       }
 	   }
-	 }
-   }
-	
-   /* This function finds where the element whose distance is dist from the query point should be pushed in the array results*/
+	    }
+  }
+  
+  /* This function finds where the element whose distance 
+   * is dist from the query point should be pushed in the array results
+   */
 
-   int find_index(AllKNNSingleTreeResults &result,double dist,int start,int end){
+   int find_index(AllKNNSingleTreeResults &result,
+		  double dist,int start,int end){
  
      //this means that there are no elements in the array
      if(start>end){
 
-       //printf("will return 0..\n");
        return 0;
      }
 
@@ -684,17 +722,18 @@ private:
       if(dist>result.distance_sqd[start])
 	{
 	  /* the element should be added to the back of the array*/
-	  // printf("will return %d\n",end+1);
+	 
 	  return end+1; 
 	}
     
       else {
-	//printf("return %d\n",start);
+   
 	return start;
       }
     }
 
-  //find where the element will be in the sorted array. This is just the binary search
+  // find where the element will be in the sorted array. 
+  // This is just the binary search
 
   if(dist==result.distance_sqd[(start+end)/2]){
     printf("Will return %d \n",(start+end)/2);  
@@ -718,20 +757,23 @@ private:
     }
    }
 
-   /** This will push the element into result at the appropriate place, so that the distances 
+   /** This will push the element into result at the 
+    *  appropriate place, so that the distances 
     *  are in ascending order 
-    *  It will return 1 if there is an increase in the length of the array else it will return 0 
+    *  It will return 1 if there is an increase in the 
+    *  length of the array else it will return 0 
     */
 
-   int push_into_array(AllKNNSingleTreeResults &result,int position, double dist,int length, int index,int k_)
+   int push_into_array(AllKNNSingleTreeResults &result,int position, 
+		       double dist,int length, int index,int k_)
    {
-     printf("came to push into array..\n");
+    
      if(position==length) //that means add the element to the end of list
        {
 	 if(length==k_){
-	   printf("returning w/o adding..\n");	
+	 
 	   return 0;
-	   }
+	 }
 
 	 else{
 	     
@@ -760,8 +802,7 @@ private:
      temp.index_of_neighbour[position]=index; 
      
      if(length==k_){
-       printf("I kicked the last element..\n");
-
+       
 	 for(int t=length-1;t>position;t--){
 
 	   temp.distance_sqd[t]=result.distance_sqd[t-1];
@@ -770,7 +811,6 @@ private:
 	 }
 	 //copy temp back to result
 	 for(int j=0;j<length;j++){
-	   printf("copying distance %f\n",temp.distance_sqd[j]);
 	   result.distance_sqd[j]=temp.distance_sqd[j];
 	   result.index_of_neighbour[j]=temp.index_of_neighbour[j];
 	 }
@@ -800,35 +840,32 @@ private:
    
    FILE *fp;
    fp=fopen("allknnsingletree_nearest_neighbour.txt","w+");
-   printf("The nearest neighbours are as follows\n");
-   // printf("The number of results are\n");
-   //printf("%d\n",results.size());
    for(index_t i=0;i< q_matrix_.n_cols();i++){
      for(index_t l=0;l<k_;l++){
-
+       
        fprintf(fp,"Point:%d\tDistance:%f\n", i,results[i].distance_sqd[l]); 
      }
    }
  }
 
-};       //Definition of AllKNNSingleTree ends................................................................................
+};       //Definition of AllKNNSingleTree ends............
 
 
+//Definition of AllKNNDualTree begins.........................
 
-//Definition of AllKNNDualTree begins................................................................................
 /** So this class find sout the k-nearest neighbours for all the query points by 
  *building up 2 -trees one out of the reference set and another f the query set 
  */
 
 class AllKNNDualTree{
-
+  
  public:
 
  //forward declaration sof class
   class AllKNDualTreeResults;
   
   class AllKNNDualTreeResults{
-
+    
   public:
     ArrayList <index_t> index_of_neighbour;
     ArrayList <double> distance_sqd;
@@ -838,7 +875,7 @@ class AllKNNDualTree{
       
 
     }
-  };  //definition of class AllKNNDualTreeResults ends..................................
+  };  //definition of class AllKNNDualTreeResults ends..................
 
   AllKNNDualTreeResults *results;
 
@@ -852,7 +889,10 @@ class AllKNNDualTree{
 
   public:
   
-    /** This gives the maximum distance within which one will find all the knn for the node*/
+    /** This gives the maximum distance within 
+     * which one will find all the knn for the node
+     */
+
     double distance_max;
     
     
@@ -867,14 +907,16 @@ class AllKNNDualTree{
       Init();
     }
     
-    void Init(const Matrix& dataset, index_t start, index_t count,const AllKNNDualTreeStat& left_stat, const AllKNNDualTreeStat& right_stat) {
+    void Init(const Matrix& dataset, index_t start, index_t count,
+	      const AllKNNDualTreeStat& left_stat, 
+	      const AllKNNDualTreeStat& right_stat) {
       
       Init();
     }
     
   };  //definition for AllKNNDualTreeStat ends here.........
 
-private:
+ private:
 
   Matrix q_matrix_;
   Matrix r_matrix_;
@@ -888,40 +930,29 @@ private:
   //Destructor
   ~AllKNNDualTree()
     {
-      /*for(int i=0;i<q_matrix_.n_cols();i++)
-	{
-	  delete(results[i].distance_sqd);
-	  delete(results[i].index_of_neighbour);
-	  }*/
-      // delete(results);
       delete(rroot_);
     }
+  //Constructor
 
-  void Init(){
+  AllKNNDualTree()
+    {
+     
+    }
 
-    char *qfile=(char*)malloc(40);
-    char *rfile=(char*)malloc(40);
+  void Init(Matrix &q_matrix, Matrix &r_matrix,index_t k){
 
-    strcpy(qfile,fx_param_str_req(NULL,"qfile"));
-    strcpy(rfile,fx_param_str_req(NULL,"rfile"));
-    
-    data::Load(qfile,&q_matrix_);
-    data::Load(rfile,&r_matrix_); 
-    delete(qfile);
-    delete(rfile);
-    k_=fx_param_int_req(NULL,"k");
-    printf("k is %d\n",k_);
-    
+    q_matrix_.Alias(q_matrix);
+    r_matrix_.Alias(r_matrix);
+    k_=k;    
     //Initialize results
 
     results=new AllKNNDualTreeResults[q_matrix_.n_cols()];
-    //Initialize to 0 size
-     for(int i=0;i<q_matrix_.n_cols();i++){
+
+    for(int i=0;i<q_matrix_.n_cols();i++){
       results[i].index_of_neighbour.Init();
       results[i].distance_sqd.Init();
      }
-     //old_from_new.Init(q_matrix_.n_cols());
-
+   
     //Build the tree out of the reference set
     rroot_ = tree::MakeKdTreeMidpoint < Tree > (r_matrix_, LEAF_SIZE,NULL,NULL);
 
@@ -929,7 +960,7 @@ private:
   }
   
       
-  //interesting functions.............................................................
+  //interesting functions....................
 
   //checks if point1 is the same as point2
   bool check_if_equal(double *point1,double *point2, int len){
@@ -944,19 +975,18 @@ private:
   }
 
 
-  /* ArrayList<double>& get_results(){
-    
-    return results.distance_sqd;
-    } */ 
-
-  //This is the function which will perform the actual dual tree algorithm and spit the results 
+  //This is the function which will perform 
+  //the actual dual tree algorithm and spit the results 
 
   void ComputeAllKNNDualTree() 
     {
        
       FindKNearestNeighboursDualTree(qroot_, rroot_);
 
-      //Note that the order of points in the query and reference set have changed due to tree formation. hence map the values properly
+      //Note that the order of points in the query and 
+      //reference set have changed due to tree formation.
+      // hence map the values properly
+
       TransformResults();
 
     }
@@ -1021,32 +1051,49 @@ void  FindKNearestNeighboursDualTree(Tree *q_node,Tree *r_node)
 	   int position;
 	  
 	   
-	   for(int i=q_node->begin();i<q_node->end();i++){ //for each query point in the node
-	       
-	      for(int j=r_node->begin();j<r_node->end();j++){ //for each reference point in the reference node
+	   for(int i=q_node->begin();i<q_node->end();i++){
+	     
+	     //for each query point in the node
+	     
+	     for(int j=r_node->begin();j<r_node->end();j++){ 
 
-		  if(!check_if_equal(q_matrix_.GetColumnPtr(i),r_matrix_.GetColumnPtr(j),q_matrix_.n_rows())) //to make sure that we are not comparing the same set of points
+		//for each reference point in the reference node
+
+	       if(!check_if_equal(q_matrix_.GetColumnPtr(i),r_matrix_.GetColumnPtr(j),
+				  q_matrix_.n_rows())) 
 		    {
 		      
-		      distance=la::DistanceSqEuclidean (r_matrix_.n_rows(),q_matrix_.GetColumnPtr(i),r_matrix_.GetColumnPtr(j));
-		      //we would like to find index of this point into str. this will enter into str[i]. This function takes in as argument an array list of single tree results           
+		      distance=la::DistanceSqEuclidean (r_matrix_.n_rows(),
+							q_matrix_.GetColumnPtr(i),
+							r_matrix_.GetColumnPtr(j));
+
+		      //we would like to find index of this point into str. 
+		      //this will enter into str[i]. This function takes in as 
+		      //argument an array list of single tree results           
 
 		      start=0;
 		      /* points to the index of the last element*/
+
 		      end=results[i].distance_sqd.size()-1;
-		      
-		      
-		      int length=results[i].distance_sqd.size(); //this calculates the old length		     
+
+		      //this calculates the old length		     		      
+		      int length=results[i].distance_sqd.size();
 	             
 		      //Find where this element should be inserted
 		      position=find_index(results[i],distance,start,end);
 		      if(length<k_){
 			 
-			  //increase the length of the results[i]. This creates an additional pocket to hold an extra element
+			//increase the length of the results[i]. 
+			//This creates an additional pocket to hold an extra element
+
 			  results[i].distance_sqd.AddBack(1); 
 			  results[i].index_of_neighbour.AddBack(1);
 			}
-		      //Note the length is still the old length, the one that has been claulated in the step above. So it is 1 less than the actual length
+
+		      //Note the length is still the old length, 
+		      //the one that has been claulated in the step above. 
+		      //So it is 1 less than the actual length
+
 		      push_into_array(results[i],position,distance,length,j);
 		     
 		    }
@@ -1061,7 +1108,10 @@ void  FindKNearestNeighboursDualTree(Tree *q_node,Tree *r_node)
 	      else {
 		
 		//all k nn have been found
-		q_node->stat().distance_max=q_node->stat().distance_max > results[i].distance_sqd[k_-1]?q_node->stat().distance_max:results[i].distance_sqd[k_-1];
+		q_node->stat().distance_max=q_node->stat().distance_max > 
+		  results[i].distance_sqd[k_-1]?
+		  q_node->stat().distance_max:
+		  results[i].distance_sqd[k_-1];
 		
 	      }
 	   }
@@ -1093,7 +1143,11 @@ void  FindKNearestNeighboursDualTree(Tree *q_node,Tree *r_node)
 
 	  double max_dist_q_right= q_node->right()->stat().distance_max;
 	 
-	  double max_dist_q=max_dist_q_left>max_dist_q_right?max_dist_q_left:max_dist_q_right;
+	  double max_dist_q=max_dist_q_left > 
+	    max_dist_q_right?
+	    max_dist_q_left:
+	  max_dist_q_right;
+
 	  q_node->stat().distance_max=max_dist_q;
       }
       
@@ -1120,7 +1174,10 @@ void  FindKNearestNeighboursDualTree(Tree *q_node,Tree *r_node)
 		FindKNearestNeighboursDualTree(q_node->right(),r_node);
 		double max_dist_q_right=q_node->right()->stat().distance_max;
 		
-		double max_dist_q= max_dist_q_left> max_dist_q_right? max_dist_q_left: max_dist_q_right;
+		double max_dist_q= max_dist_q_left> 
+		  max_dist_q_right? 
+		  max_dist_q_left: 
+		max_dist_q_right;
 		q_node->stat().distance_max=max_dist_q;
 	      }
 	  }
@@ -1129,9 +1186,7 @@ void  FindKNearestNeighboursDualTree(Tree *q_node,Tree *r_node)
  }
 
  int find_index(AllKNNDualTreeResults &result,double dist,int start,int end){
-     printf("Came to find index..\n");
-
- 
+  
      //this means that there are no elements in the array
      if(start>end){
        printf("will return 0..\n");
@@ -1155,7 +1210,8 @@ void  FindKNearestNeighboursDualTree(Tree *q_node,Tree *r_node)
       }
     }
 
-  //find where the element will be in the sorted array. This is just the binary search
+  //find where the element will be in the sorted array. 
+  //This is just the binary search
 
   if(dist==result.distance_sqd[(start+end)/2]){
     printf("Will return %d \n",(start+end)/2);  
@@ -1177,33 +1233,39 @@ void  FindKNearestNeighboursDualTree(Tree *q_node,Tree *r_node)
 	return find_index(result,dist,(start+end)/2+1,end);
       }
     }
-   }
-   /* This will push the element into result. It will return 1 if there is an increase in the length of the array else it will return 0 */
+ }
+ /** This will push the element into result. 
+  * It will return 1 if there is an increase in the length 
+  * of the array else it will return 0 
+  */
 
- int push_into_array(AllKNNDualTreeResults &result,int position, double dist,int length, int index)
+ int push_into_array(AllKNNDualTreeResults &result,int position, 
+		     double dist,int length, int index)
    {
-     printf("came to push into array..\n");
-     if(position==length) //that means add the element to the end of list
+ 
+     if(position==length) 
        {
-	 if(length==k_){
-	   printf("returning w/o adding..\n");	
-	   return 0;
-	   }
+	 //add the element to the end of list
 
+	 if(length==k_){
+	   
+	   return 0;
+	 }
+	 
 	 else{
 	     
-	     //add it to the end of the array and return 1
-	     result.distance_sqd[length]=dist;
-	     result.index_of_neighbour[length]=index;
-	     return 1;
-	   }
+	   //add it to the end of the array and return 1
+	   result.distance_sqd[length]=dist;
+	   result.index_of_neighbour[length]=index;
+	   return 1;
+	 }
        }
      
      
      AllKNNDualTreeResults temp;
      temp.index_of_neighbour.Init(k_);
      temp.distance_sqd.Init(k_);
-
+     
      //the element will be added in the middle of the array
      
      
@@ -1217,50 +1279,46 @@ void  FindKNearestNeighboursDualTree(Tree *q_node,Tree *r_node)
      temp.index_of_neighbour[position]=index; 
      
      if(length==k_){
-       printf("I kicked the last element..\n");
-
-	 for(int t=length-1;t>position;t--){
-
-	   temp.distance_sqd[t]=result.distance_sqd[t-1];
-	   temp.index_of_neighbour[t]=result.index_of_neighbour[t-1];
-
-	 }
-	 //copy temp back to result
-	 for(int j=0;j<length;j++){
-	   printf("copying distance %f\n",temp.distance_sqd[j]);
-	   result.distance_sqd[j]=temp.distance_sqd[j];
-	   result.index_of_neighbour[j]=temp.index_of_neighbour[j];
-	 }
-	 printf("about to return...\n");
-	 return 0;
+       
+       for(int t=length-1;t>position;t--){
+	 
+	 temp.distance_sqd[t]=result.distance_sqd[t-1];
+	 temp.index_of_neighbour[t]=result.index_of_neighbour[t-1];
+	 
        }
-
+       //copy temp back to result
+       for(int j=0;j<length;j++){
+	
+	 result.distance_sqd[j]=temp.distance_sqd[j];
+	 result.index_of_neighbour[j]=temp.index_of_neighbour[j];
+       }
+     
+       return 0;
+     }
+     
      else{
-
-       printf("an element has been added..\n");
+       
        //this is because an element hase been added
-	 for(int t=length;t>position;t--){
-
-	   temp.distance_sqd[t]=result.distance_sqd[t-1];
-	   temp.index_of_neighbour[t]=result.index_of_neighbour[t-1];
-	 }
+       for(int t=length;t>position;t--){
 	 
-	 
-	 for(int j=0;j<length+1;j++){
-	   printf("copying  distance =%f\n",temp.distance_sqd[j]);
-
-	   result.distance_sqd[j]=temp.distance_sqd[j];
-	   result.index_of_neighbour[j]=temp.index_of_neighbour[j];
-	 }
-	 return 1;
+	 temp.distance_sqd[t]=result.distance_sqd[t-1];
+	 temp.index_of_neighbour[t]=result.index_of_neighbour[t-1];
        }
-   }
+       
+       
+       for(int j=0;j<length+1;j++){
 
+	 result.distance_sqd[j]=temp.distance_sqd[j];
+	 result.index_of_neighbour[j]=temp.index_of_neighbour[j];
+       }
+       return 1;
+     }
+   }
+ 
  void PrintResults(){
    
    FILE *fp;
    fp=fopen("allknndualtree_nearest_neighbour.txt","w+");
-   printf("The nearest neighbours are as follows\n");
   
    for(index_t i=0;i< q_matrix_.n_cols();i++){
      for(index_t l=0;l<k_;l++){
