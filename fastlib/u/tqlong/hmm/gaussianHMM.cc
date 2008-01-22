@@ -2,12 +2,104 @@
 #include "support.h"
 #include "gaussianHMM.h"
 
+void GaussianHMM::InitFromFile(const char* profile) {
+  if (!PASSED(load_profileG(profile, &transmission_, &list_mean_vec_, &list_covariance_mat_)))
+    FATAL("Couldn't open '%s' for reading.", profile);
+  list_inverse_cov_mat_.Copy(list_covariance_mat_);
+  gauss_const_vec_.Init(list_covariance_mat_.size());
+  CalculateInverse();
+}
+
+void GaussianHMM::InitFromData(const ArrayList<Matrix>& list_data_seq, int numstate) {
+  init_gauss_param(numstate, list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_);
+  list_inverse_cov_mat_.Copy(list_covariance_mat_);
+  gauss_const_vec_.Init(list_covariance_mat_.size());
+  CalculateInverse();
+}
+
+void GaussianHMM::LoadProfile(const char* profile) {
+  transmission_.Destruct();
+  list_mean_vec_.Destruct();
+  list_covariance_mat_.Destruct();
+  list_inverse_cov_mat_.Destruct();
+  gauss_const_vec_.Destruct();
+  InitFromFile(profile);
+}
+
+void GaussianHMM::SaveProfile(const char* profile) {
+  save_profileG(profile, transmission_, list_mean_vec_, list_covariance_mat_);
+}
+
+void GaussianHMM::CalculateInverse() {
+  int M = transmission_.n_rows();
+  int N = list_mean_vec_[0].length();
+  for (int i = 0; i < M; i++) {
+    la::InverseOverwrite(list_covariance_mat_[i], &list_inverse_cov_mat_[i]);
+    gauss_const_vec_[i] = pow(2.0*math::PI, -N/2.0) * pow(la::Determinant(list_covariance_mat_[i]), -0.5);
+  }
+}
+
+void GaussianHMM::GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) {
+  hmm_generateG_init(L, transmission_, list_mean_vec_, list_covariance_mat_, data_seq, state_seq);
+}
+
+void forward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, Vector *scales, Matrix* fs);
+
+double GaussianHMM::ComputeLogLikelihood(const Matrix& data_seq) {
+  int L = data_seq.n_cols();
+  int M = transmission_.n_rows();
+  Matrix fs(M, L), emis_prob(M, L);
+  Vector sc;
+  sc.Init(L);
+  hmm_cal_emis_prob(data_seq, list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
+  forward_procedure(L, transmission_, emis_prob, &sc, &fs);
+  double loglik = 0;
+  for (int t = 0; t < L; t++)
+    loglik += log(sc[t]);
+  return loglik;
+}
+
+void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood) {
+  int L = 0;
+  for (int i = 0; i < list_data_seq.size(); i++)
+    if (list_data_seq[i].n_cols() > L) L = list_data_seq[i].n_cols();
+  int M = transmission_.n_rows();
+  Matrix fs(M, L), emis_prob(M, L);
+  Vector sc;
+  sc.Init(L);
+  list_likelihood->Init();
+  for (int i = 0; i < list_data_seq.size(); i++) {
+    int L = list_data_seq[i].n_cols();
+    hmm_cal_emis_prob(list_data_seq[i], list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
+    forward_procedure(L, transmission_, emis_prob, &sc, &fs);
+    double loglik = 0;
+    for (int t = 0; t < L; t++)
+      loglik += log(sc[t]);
+    list_likelihood->AddBackItem(loglik);
+  }
+}
+
+void GaussianHMM::ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) {
+  int M = transmission_.n_rows();
+  int L = data_seq.n_cols();
+  Matrix emis_prob(M, L);
+  hmm_cal_emis_prob(data_seq, list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
+  hmm_viterbiG_init(transmission_, emis_prob, state_seq);
+}
+
+void GaussianHMM::TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
+  hmm_trainG(list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_, max_iteration, tolerance);
+}
+
+void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
+  hmm_train_viterbiG(list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_, max_iteration, tolerance);
+}
+
 success_t load_profileG(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
   ArrayList<Matrix> matlst;
-  if (!PASSED(load_matrix_list(profile, &matlst))) {
-    NONFATAL("Couldn't open '%s' for reading.", profile);
+  if (!PASSED(load_matrix_list(profile, &matlst)))
     return SUCCESS_FAIL;
-  }
+
   DEBUG_ASSERT(matlst.size() > 0);
   trans->Copy(matlst[0]);
   means->Init();
@@ -35,15 +127,15 @@ success_t save_profileG(const char* profile, const Matrix& trans, const ArrayLis
   int M = trans.n_rows(); // num of states
   DEBUG_ASSERT(means.size() == M && covs.size() == M);
   int N = means[0].length(); // dimension
-  print_matrix(w_pro, trans, "% transmission", "%E,");
+  print_matrix(w_pro, trans, "% transmission", "%f,");
   for (int i = 0; i < M; i++) {
     DEBUG_ASSERT(means[i].length() == N);
     DEBUG_ASSERT(covs[i].n_rows()==N && covs[i].n_cols()==N);
     char s[100];
     sprintf(s, "%% mean - state %d", i);
-    print_vector(w_pro, means[i], s, "%E,");    
+    print_vector(w_pro, means[i], s, "%f,");    
     sprintf(s, "%% covariance - state%d", i);
-    print_matrix(w_pro, covs[i], s, "%E,");    
+    print_matrix(w_pro, covs[i], s, "%f,");    
   }
   return SUCCESS_PASS;
 }
@@ -175,6 +267,7 @@ void forward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, Vect
   Vector& s_ = *scales;
 
   fs_.SetZero();
+  s_.SetZero();
   // NOTE: start state is 0
   // time t = 0
   for (int i = 0; i < M; i++) {
@@ -221,9 +314,7 @@ double hmm_decodeG(int L, const Matrix& trans, const Matrix& emis_prob, Matrix* 
 		    M==trans.n_cols() && M==emis_prob.n_rows()),"hmm_decodeG: sizes do not match");
   
   Matrix& ps_ = *pstates;
-
   Vector& s_ = *scales;
-  s_.SetZero();
 
   forward_procedure(L, trans, emis_prob, &s_, fs);
   backward_procedure(L, trans, emis_prob, s_, bs);
@@ -359,7 +450,8 @@ void init_gauss_param(int M, const ArrayList<Matrix>& seqs, Matrix* guessTR, Arr
       la::MulExpert(1, false, tmp_cov, true, tmp_cov, 1, &gCO[i]);
     }
   }
-  
+  //printf("---3---\n");
+
   for (int i = 0; i < M; i++) 
     if (sumState[i] == 0) {
       for (int j = 0; j < M; j++) gTR.ref(i, j) = 0;
@@ -373,6 +465,7 @@ void init_gauss_param(int M, const ArrayList<Matrix>& seqs, Matrix* guessTR, Arr
       la::Scale(1.0/sumState[i], &gCO[i]);
       for (int j = 0; j < N; j++) gCO[i].ref(j, j) += 1e-3; // make sure the diagonal elements are not too small
     }
+  //printf("---4---\n");
 }
 
 void hmm_train_viterbiG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
@@ -554,10 +647,8 @@ void hmm_trainG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector
 	  sumState[i] += ps.get(i, t);
 	  la::AddExpert(ps.get(i, t), e, &ME[i]);
 
-	  Vector d;
-	  la::SubInit(e, gME[i], &d);
 	  Matrix D;
-	  D.AliasColVector(d);
+	  D.AliasColVector(e);
 	  la::MulExpert(ps.get(i, t), false, D, true, D, 1.0, &CO[i]);
 	}
       }
@@ -578,7 +669,10 @@ void hmm_trainG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector
       
       if (sumState[i] != 0) {
 	la::ScaleOverwrite(1.0/sumState[i], ME[i], &gME[i]);
-	la::ScaleOverwrite(1.0/sumState[i], CO[i], &gCO[i]);
+	Matrix D;
+	D.AliasColVector(gME[i]);
+	la::MulExpert(-1.0, false, D, true, D, 1.0/sumState[i], &CO[i]);
+	gCO[i].CopyValues(CO[i]);
       }
     }
     // end re-estimate

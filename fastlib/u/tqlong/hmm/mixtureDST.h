@@ -60,13 +60,11 @@ class MixtureGauss {
     total++;
   }
   void accumulate(double p, int i, const Vector& v) {
-    ACC_prior[i] += p;
     la::AddExpert(p, v, &ACC_means[i]);
-    Vector d;
-    la::SubInit(v, means[i], &d);
-    Matrix D;
-    D.AliasColVector(d);
-    la::MulExpert(p, false, D, true, D, 1.0, &ACC_covs[i]);
+    Matrix V;
+    V.AliasColVector(v);
+    la::MulExpert(p, false, V, true, V, 1.0, &ACC_covs[i]);
+    ACC_prior[i] += p;
     total += p;
   }
   void end_accumulate_cluster() {
@@ -88,7 +86,10 @@ class MixtureGauss {
     for (int i = 0; i < means.size(); i++) {
       if (ACC_prior[i] != 0) {
 	la::ScaleOverwrite(1.0/ACC_prior[i], ACC_means[i], &means[i]);
-	la::ScaleOverwrite(1.0/ACC_prior[i], ACC_covs[i], &covs[i]);
+	Matrix M;
+	M.AliasColVector(means[i]);
+	la::MulExpert(-1.0, false, M, true, M, 1.0/ACC_prior[i], &ACC_covs[i]);
+	covs[i].CopyValues(ACC_covs[i]);
 	prior[i] = ACC_prior[i]/total;
 
 	double det = la::Determinant(covs[i]);
