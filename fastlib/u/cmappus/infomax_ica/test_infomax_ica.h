@@ -27,8 +27,10 @@ class TestInfomaxICA {
   }
 
   void TestICA(){
+    Matrix unmixing;
     ica_->applyICA(testdata_);
-    ica_->displayMatrix(ica_->getUnmixing());
+    ica_->getUnmixing(unmixing);
+    ica_->displayMatrix(unmixing);
   }
 
   void TestAll() {

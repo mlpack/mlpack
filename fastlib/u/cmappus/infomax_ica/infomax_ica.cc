@@ -76,17 +76,14 @@ void InfomaxICA::sphere(Matrix &data){
   Matrix wz = sqrtm(sample_covariance);
   Matrix wz_inverse = Matrix(wz.n_rows(),wz.n_cols());
   Matrix data_sub_means = subMeans(data);
-  //Matrix output = Matrix(data.n_rows(),data.n_cols());
   if (la::InverseOverwrite(wz,&wz_inverse)){
     la::Scale(wz.n_cols()*wz.n_rows(),2.0,wz_inverse.ptr());
-    //la::MulExpert(1.0,false,wz_inverse,false,data_sub_means,0.0,&output);
     la::MulOverwrite(wz_inverse,data_sub_means,&data);
   }
-  //return output;
 }
 
 // Covariance matrix.
-Matrix InfomaxICA::sampleCovariance(Matrix &m){
+Matrix InfomaxICA::sampleCovariance(const Matrix &m){
   Matrix ttm = subMeans(m);
   Matrix wm = Matrix(m.n_cols(),m.n_rows());  
   la::TransposeOverwrite(ttm,&wm);
@@ -103,7 +100,7 @@ Matrix InfomaxICA::sampleCovariance(Matrix &m){
   return output;
 }
 
-Matrix InfomaxICA::subMeans(Matrix &m){
+Matrix InfomaxICA::subMeans(const Matrix &m){
   Matrix output = Matrix(m);
   Vector row_means = rowMean(output);
   la::Scale(row_means.length(),-1.0,row_means.ptr());
@@ -116,7 +113,7 @@ Matrix InfomaxICA::subMeans(Matrix &m){
 /** 
  * Compute the sample mean of a column 
  */
-Vector InfomaxICA::rowMean(Matrix &m){
+Vector InfomaxICA::rowMean(const Matrix &m){
   Vector row_means;
   row_means.Init(m.n_rows());
   row_means.SetZero();
@@ -131,7 +128,7 @@ Vector InfomaxICA::rowMean(Matrix &m){
  *  Matrix square root using Cholesky decomposition method.  Assumes
  *  the input matrix is square.
  */
-Matrix InfomaxICA::sqrtm(Matrix &m){
+Matrix InfomaxICA::sqrtm(const Matrix &m){
   Matrix output = Matrix(m.n_rows(), m.n_cols());
   Matrix chol = Matrix(m);
   if (la::Cholesky(&chol)){
@@ -226,19 +223,20 @@ void InfomaxICA::displayVector(const Vector &m){
 }
 
 /** 
- * Return the current unmixing matrix estimate.
+ * Return the current unmixing matrix estimate. Requires a reference
+ * to an uninitialized matrix.
  */
-Matrix& InfomaxICA::getUnmixing(){
-  return w_;
+void InfomaxICA::getUnmixing(Matrix &w){
+  w.Copy(w_);
 }
 
 /** 
- * Return the source estimates, S.
+ * Return the source estimates, S. S is a reference to an
+ * uninitialized matrix.
  */
-Matrix InfomaxICA::getSources(const Matrix &dataset){
-  Matrix output = Matrix(dataset.n_rows(),dataset.n_cols());
-  la::MulExpert(1.0,false,w_,false,dataset,0.0,&output);
-  return output;
+void InfomaxICA::getSources(const Matrix &dataset, Matrix &s){
+  s.Init(dataset.n_rows(),dataset.n_cols());
+  la::MulExpert(1.0,false,w_,false,dataset,0.0,&s);
 }
 
 void InfomaxICA::setLambda(double lambda){

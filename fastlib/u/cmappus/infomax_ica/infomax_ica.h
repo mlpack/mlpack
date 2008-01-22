@@ -32,8 +32,8 @@ class InfomaxICA {
  public:
   InfomaxICA();
   InfomaxICA(double lambda, int B);
-  Matrix& getUnmixing();
-  Matrix getSources(const Matrix &m);
+  void getUnmixing(Matrix &W);
+  void getSources(const Matrix &dataset, Matrix &S);
   void setLambda(double lambda);
   void setB(int b);
   void applyICA(const Dataset& dataset);
@@ -53,11 +53,11 @@ class InfomaxICA {
   void addOne(Matrix &m);
   void invertVals(Matrix &m);
   Matrix eye(index_t dim,double diagVal);
-  Matrix sqrtm(Matrix &m);
+  Matrix sqrtm(const Matrix &m);
   void sphere(Matrix &m);
-  Matrix subMeans(Matrix &m);
-  Vector rowMean(Matrix &m);
-  Matrix sampleCovariance(Matrix &m);
+  Matrix subMeans(const Matrix &m);
+  Vector rowMean(const Matrix &m);
+  Matrix sampleCovariance(const Matrix &m);
 };
 
 #endif
