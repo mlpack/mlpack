@@ -2,8 +2,9 @@
 #define U_NNSVM_NNSMO_H
 
 #include "fastlib/fastlib.h"
-#include "base/deprecated.h"
 
+/* TODO: I don't actually want these to be public */
+/* but sometimes we should provide freedoms for our advanced users */
 const double SMO_ZERO = 1.0e-8;
 const double SMO_TOLERANCE = 1.0e-3;
 
@@ -18,27 +19,27 @@ class SMO {
   Matrix kernel_cache_sign_;
   Kernel kernel_;
   const Dataset *dataset_;
-  index_t n_data_;
-  Matrix matrix_;
-  Vector alpha_;
-  Vector error_;
-  double thresh_;
+  index_t n_data_; // number of data samples
+  Matrix matrix_; // alias for the data matrix
+  Vector alpha_; // the alphas, to be optimized
+  Vector error_; // the error cache
+  double thresh_; // negation of the intercept
   double c_;
   int budget_;
-  double sum_alpha_;
+  double sum_alpha_; 
 
-  index_t n_feature_;
-  double w_square_sum_;
-  Vector VTA_;
-  double eps_;
-  int max_iter_;
+  index_t n_feature_; // number of data features
+  double w_square_sum_; // square sum of the weight vector
+  Vector VTA_; //
+  double eps_; // the tolerace of progress on alpha values
+  int max_iter_; // the maximum iteration, termination criteria
 
  public:
   SMO() {}
   ~SMO() {}
 
   /**
-   * Initializes an SMO problem.
+   * Initializes an NNSMO problem.
    *
    * You must initialize separately the kernel.
    */
@@ -110,6 +111,7 @@ private:
     return alpha <= 0 || alpha >= c_;
   }
 
+ // labels: the last row of the data matrix, 0 or 1
   int GetLabelSign_(index_t i) const {
     return matrix_.get(matrix_.n_rows()-1, i) != 0 ? 1 : -1;
   }
@@ -145,6 +147,7 @@ private:
   }
 };
 
+// return the support vector, the whole alpha vector and the weight vector of the trained SVM
 template<typename TKernel>
 void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *alpha, Vector * w) const {
   index_t n_support = 0;
@@ -179,7 +182,7 @@ void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *alpha, Vector * w) co
   }
 }
 
-
+//NNSMO training for 2-classes
 template<typename TKernel>
 void SMO<TKernel>::Train() {
   bool examine_all = true;
@@ -190,10 +193,14 @@ void SMO<TKernel>::Train() {
   {
      counter = n_data_;
   }
+
+  // calculate kernel_cache_sign_: [k_ij* y_i* y_j]
   CalcKernels_();
   while ((num_changed > 0 || examine_all)) {
     DEBUG_GOT_HERE(0);
-    num_changed = TrainIteration_(examine_all);
+
+    //NNSMO training iterations
+	num_changed = TrainIteration_(examine_all);
 
     if (examine_all) {
       examine_all = false;
@@ -201,20 +208,25 @@ void SMO<TKernel>::Train() {
       examine_all = true;
     }
     
+	//if exceed the maximum number of iterations, finished
     if (++n_iter == max_iter_) {
       fprintf(stderr, "Max iterations Reached! \n");
       break;
     }
     
+	//for every max(n_data_, 1000) iterations, show progress
     if (n_iter % counter == 0 ) 
     {
 	   fprintf(stderr, ".");
     }
   }
+
+  //compute the final objective value
   double obj = sum_alpha_ - w_square_sum_/2;
   fprintf(stderr, "iter=%d, %d, %f, %f, %f, obj=%f \n", n_iter, num_changed, thresh_, sum_alpha_, w_square_sum_, obj);
 }
 
+//NNSMO training iteration
 template<typename TKernel>
 index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
   index_t num_changed = 0;
@@ -227,6 +239,9 @@ index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
   return num_changed;
 }
 
+// try to find the working set 
+//	outer loop: alpha_j, KKT violation
+//	inner loop: alpha_i, maximum objective value increase with respective to alpha_i, j
 template<typename TKernel>
 bool SMO<TKernel>::TryChange_(index_t j) {
   double error_j = Error_(j);
@@ -258,14 +273,14 @@ bool SMO<TKernel>::TryChange_(index_t j) {
   return false;
 }
 
+//compute the increase of objective value with respect to updating of alpha_i, alpha_j
 template<typename TKernel>
 double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
-//1. check i,j
+  //1. check i,j
   if (i == j) {
     DEBUG_GOT_HERE(0);
     return -1;
   }
-//2. compute L, H
   int yi = GetLabelSign_(i);
   int yj = GetLabelSign_(j);
   double alpha_i = alpha_[i];
@@ -276,30 +291,31 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   double error_i = Error_(i);
   double r;
 
+  //2. compute L, H of alpha_j
   if (s < 0) {
     DEBUG_ASSERT(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
   } else {
     r = alpha_j + alpha_i - c_; // target values are equal
   }
-
   l = math::ClampNonNegative(r);
   u = c_ + math::ClampNonPositive(r);
-
+  
   if (l >= u - SMO_ZERO) {
     // TODO: might put in some tolerance
     DEBUG_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
     DEBUG_GOT_HERE(0);
     return -1;
   }
-  // cached kernel values and eta
+
+  //3. compute eta using cached kernel values 
   double kii = EvalKernel_(i, i);
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
   double eta = +2*kij - kii - kjj;
   DEBUG_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
-
-  // calculate alpha_j^new
+  
+  // calculate alpha_j^{new}
   if (likely(eta < 0)) {
     DEBUG_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
@@ -317,7 +333,7 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
     return -1;
   }
 
-  // compute df 		
+  //4. compute increase of objective value 		
   Vector w;
   w.Init(n_feature_);
   for (index_t s = 0; s < n_feature_; s++) {
@@ -329,14 +345,15 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   {
 	  delta_f += 2* delta_alpha_j;
   }
-  //fprintf(stderr, "%d, %d, %f, %f, df=%g \n", i, j, alpha_[j], alpha_j, delta_f);
 
   DEBUG_GOT_HERE(0);
   return delta_f;
 }
 
+// update alpha_i, alpha_j, as well as the VTA_, negation of intercept: thresh_ and the error cache: error_
 template<typename TKernel>
 bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
+  //1. check i,j
   if (i == j) {
     DEBUG_GOT_HERE(0);
     return false;
@@ -351,7 +368,8 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   int s = (yi == yj) ? 1 : -1;
   double error_i = Error_(i);
   double r;
-
+  
+  //2. compute L, H of alpha_j
   if (s < 0) {
     DEBUG_ASSERT(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
@@ -360,20 +378,22 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   }
   l = math::ClampNonNegative(r);
   u = c_ + math::ClampNonPositive(r);
+
   if (l >= u - SMO_ZERO) {
     // TODO: might put in some tolerance
     DEBUG_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
     DEBUG_GOT_HERE(0);
     return false;
   }
-  // cached kernel values and eta
+  
+  //3. compute eta using cached kernel values 
   double kii = EvalKernel_(i, i);
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
   double eta = +2*kij - kii - kjj;
   DEBUG_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
   
-  // calculate alpha_j^new
+  // calculate alpha_j^{new}
   if (likely(eta < 0)) {
     DEBUG_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
@@ -404,7 +424,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   double delta_alpha_i = alpha_i - alpha_[i];
   delta_alpha_j = alpha_j - alpha_[j];
   
-  //update VTA_, w_square_sum_
+  //4. update VTA_, w_square_sum_
   Vector w;
   w.Init(n_feature_);
   for (index_t s = 0; s < n_feature_; s++) {
@@ -414,12 +434,12 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   }
   w_square_sum_ = la::Dot(w, w);
 
-  //update alpha_, sum_alpha_
+  // update alpha_, sum_alpha_
   alpha_[i] = alpha_i;
   alpha_[j] = alpha_j;
   sum_alpha_ += delta_alpha_i + delta_alpha_j;
 
-  //update error_ and threshold
+  // update error cache and threshold
   double thresh_sum = 0;
   index_t nb_count = 0;
   for (index_t k=0; k < n_data_ ; k++ )
@@ -438,13 +458,11 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   {
 	  thresh_ = thresh_sum/nb_count;
   }
-  //fprintf(stderr, "%d, %d, thresh = %f, %d, %f, %f \n", i, j, thresh_, nb_count, sum_alpha_, w_square_sum_);
 
-  //update error_ using new threshold
+  // update error cache using the new threshold
   for (index_t k=0; k < n_data_ ; k++ )
   {
 	  error_[k] -= thresh_;
-	  //fprintf(stderr, "%f\t%f\n", alpha_[k], error_[k]);
   }
 
   DEBUG_GOT_HERE(0);
