@@ -69,7 +69,7 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NONFATAL("TestInit1 sucess!!\n");
+    NOTIFY("TestInit1 sucess!!\n");
   }
   void TestInit2() {
     std::vector<index_t> rows;
@@ -102,7 +102,7 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NONFATAL("TestInit2 success!!\n");
+    NOTIFY("TestInit2 success!!\n");
   }
   void TestInit3() {
     FILE *fp = fopen("temp.txt", "w");
@@ -127,11 +127,11 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NONFATAL("TestInit3 success!!");
+    NOTIFY("TestInit3 success!!");
   }
   void TestCopyConstructor() {
     smat_ = new SparseMatrix();
-     NONFATAL("TestCopyConstructor success!!\n");
+     NOTIFY("TestCopyConstructor success!!\n");
   }
   void TestMakeSymmetric() {
     TestInit1();
@@ -147,17 +147,17 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NONFATAL("Test MakeSymmetric success!!\n");
+    NOTIFY("Test MakeSymmetric success!!\n");
   }
   void TestEig() {
     TestInit1();
     smat_->EndLoading();
-    std::vector<double> eigvalues_real;
-    std::vector<double> eigvalues_imag;
+    Vector eigvalues_real;
+    Vector eigvalues_imag;
     Matrix eigvectors;
     smat_->Eig(1, "LM", &eigvectors, &eigvalues_real, &eigvalues_imag);
     eigvectors.PrintDebug();
-    NONFATAL("Test Eigenvector success!!\n");
+    NOTIFY("Test Eigenvector success!!\n");
   }
   void TestLinSolve() {
     TestInit1();
@@ -170,7 +170,7 @@ class SparseMatrixTest {
     smat_->EndLoading();
     smat_->LinSolve(b, &x);
     x.PrintDebug();
-    NONFATAL("Test Linear Solve success!!\n");
+    NOTIFY("Test Linear Solve success!!\n");
   }
   void TestBasicOperations() {
     SparseMatrix a("A.txt");
@@ -188,7 +188,7 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NONFATAL("Matrix addition sucess!!\n");
+    NOTIFY("Matrix addition sucess!!\n");
     temp.Init(21,21, 3);
     Sparsem::Subtract(a, b, &temp);
     for(index_t i=0; i<21; i++) {
@@ -197,7 +197,7 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NONFATAL("Matrix subtraction success!!\n");
+    NOTIFY("Matrix subtraction success!!\n");
     temp.Init(21,21, 3);
     Sparsem::Multiply(a, b, &temp);
     for(index_t i=0; i<21; i++) {
@@ -206,7 +206,7 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NONFATAL("Matrix multiplication success!!\n");
+    NOTIFY("Matrix multiplication success!!\n");
     temp.Init(21, 21, 3);
     Sparsem::DotMultiply(a, b, &temp);
     for(index_t i=0; i<a_dot_times_b.num_of_rows(); i++) {
@@ -215,7 +215,7 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NONFATAL("Matrix dot multiplication success!!\n");
+    NOTIFY("Matrix dot multiplication success!!\n");
     temp.Init(21,21, 3);
     Sparsem::Multiply(a, 3.45, &temp);
     for(index_t i=0; i<21; i++) {
@@ -225,7 +225,7 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NONFATAL("Matrix scalar multiplicationn success!!\n");
+    NOTIFY("Matrix scalar multiplicationn success!!\n");
     
   }
   void TestAll() {

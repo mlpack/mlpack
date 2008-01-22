@@ -356,8 +356,8 @@ void SparseMatrix::ToFile(std::string file) {
 void SparseMatrix::Eig(index_t num_of_eigvalues,
                        std::string eigtype,  
                        Matrix *eigvectors, 
-                       std::vector<double> *real_eigvalues,
-                       std::vector<double> *imag_eigvalues) {
+                       Vector *real_eigvalues,
+                       Vector *imag_eigvalues) {
   if (unlikely(!matrix_->Filled())) {
     FATAL("You have to call EndLoading before running eigenvalues otherwise "
           "it will fail\n");
@@ -427,12 +427,12 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
   int num_of_blocks=6*num_of_eigvalues;
   retry:  
   Teuchos::ParameterList my_pl;
-  my_pl.set( "Verbosity", verbosity);
-  my_pl.set( "Which", eigtype);
-  my_pl.set( "Block Size", block_size);
-  my_pl.set( "Num Blocks", num_of_blocks);
-  my_pl.set( "Maximum Restarts", 5);
-  my_pl.set( "Convergence Tolerance", tolerance);
+  my_pl.set("Verbosity", verbosity);
+  my_pl.set("Which", eigtype);
+  my_pl.set("Block Size", block_size);
+  my_pl.set("Num Blocks", num_of_blocks);
+  my_pl.set("Maximum Restarts", 5);
+  my_pl.set("Convergence Tolerance", tolerance);
 
   // Create the Block Krylov Schur solver
   // This takes as inputs the eigenvalue problem and the solver parameters
@@ -476,12 +476,14 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
 
   // Get eigenvalues
   std::vector<Anasazi::Value<double> > evals = sol.Evals;
-  real_eigvalues->resize(0);
+  real_eigvalues->Init(num_of_eigvals_returned);
+  if (issymmetric_==false) {
+    imag_eigvalues->Init(num_of_eigvals_returned);
+  }
   for(index_t i=0; i<num_of_eigvals_returned; i++) {
-    real_eigvalues->push_back(evals[i].realpart);
+    (*real_eigvalues)[i] = (double)evals[i].realpart;
     if (issymmetric_ == false) {
-      imag_eigvalues->resize(num_of_eigvals_returned);
-      imag_eigvalues->assign(i, evals[i].imagpart);
+      (*imag_eigvalues)[i] = (double)evals[i].imagpart;
     }
   }
 
