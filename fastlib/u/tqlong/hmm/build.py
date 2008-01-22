@@ -1,10 +1,33 @@
-binrule(
+librule(
     name = "hmm",                 # the executable name
-    sources = ["hmm.cc","support.cc","discreteHMM.cc","gaussianHMM.cc","mixgaussHMM.cc","mixtureDST.cc"],
+    sources = ["support.cc","discreteHMM.cc","gaussianHMM.cc","mixgaussHMM.cc","mixtureDST.cc"],
     headers = ["support.h", "discreteHMM.h","gaussianHMM.h","mixgaussHMM.h","mixtureDST.h"],
-    deplibs = ["fastlib:fastlib_int"]       # depends on example in this folder
+    deplibs = ["fastlib:fastlib_int"]       # depends on faslib core library
     )
 
+binrule(
+    name = "generate",                 # the executable name
+    sources = ["generate.cc"],
+    deplibs = [":hmm"]       # depends on hmm library in this folder
+    )
+
+binrule(
+    name = "loglik",                 # the executable name
+    sources = ["loglik.cc"],
+    deplibs = [":hmm"]       # depends on hmm library in this folder
+    )
+
+binrule(
+    name = "viterbi",                 # the executable name
+    sources = ["viterbi.cc"],
+    deplibs = [":hmm"]       # depends on hmm library in this folder
+    )
+
+binrule(
+    name = "train",                 # the executable name
+    sources = ["train.cc"],
+    deplibs = [":hmm"]       # depends on hmm library in this folder
+    )
 
 # to build:
 # 1. make sure have environment variables set up:

@@ -4,6 +4,31 @@
 #include "fastlib/fastlib.h"
 #include "mixtureDST.h"
 
+class MixtureofGaussianHMM {
+ private:
+  Matrix transmission_;
+  ArrayList<MixtureGauss> list_mixture_gauss_;
+ public:
+  void InitFromFile(const char* profile);
+  void Init() {
+    transmission_.Init(0, 0);
+    list_mixture_gauss_.Init();
+  }
+
+  void LoadProfile(const char* profile);
+  void SaveProfile(const char* profile);
+
+  void GenerateSequence(int L, Matrix* data_seq, Vector* state_seq);
+
+  double ComputeLogLikelihood(const Matrix& data_seq);
+  void ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood);
+
+  void ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq);
+
+  void TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, int max_iteration = 500, double tolerance = 1e-3);
+  void TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_iteration = 500, double tolerance = 1e-3);
+};
+
 success_t load_profileM(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs);
 success_t save_profileM(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs);
 

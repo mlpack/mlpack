@@ -2,6 +2,143 @@
 #include "support.h"
 #include "discreteHMM.h"
 
+void DiscreteHMM::setModel(const Matrix& transmission, const Matrix& emission) {
+  DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
+  DEBUG_ASSERT(transmission.n_rows() == emission.n_rows());
+  transmission_.Destruct();
+  emission_.Destruct();
+  transmission_.Copy(transmission);
+  emission_.Copy(emission);
+}
+
+void DiscreteHMM::Init(const Matrix& transmission, const Matrix& emission) {
+  transmission_.Copy(transmission);
+  emission_.Copy(emission);
+  DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
+  DEBUG_ASSERT(transmission.n_rows() == emission.n_rows());
+}
+
+void DiscreteHMM::InitFromFile(const char* profile) {
+  ArrayList<Matrix> list_mat;
+  load_matrix_list(profile, &list_mat);
+  if (list_mat.size() < 2)
+    FATAL("Number of matrices in the file should be at least 2.");
+  else if (list_mat.size() > 2)
+    NONFATAL("Number of matrices in the file should be 2.");
+  transmission_.Own(&list_mat[0]);
+  emission_.Own(&list_mat[1]);
+  DEBUG_ASSERT(transmission_.n_rows() == transmission_.n_cols());
+  DEBUG_ASSERT(transmission_.n_rows() == emission_.n_rows());
+}
+
+void DiscreteHMM::InitFromData(const ArrayList<Vector>& list_data_seq, int numstate) {
+  int numsymbol = 0;
+  int maxseq = 0;
+  for (int i = 0; i < list_data_seq.size(); i++) 
+    if (list_data_seq[i].length() > list_data_seq[maxseq].length()) maxseq = i;
+  for (int i = 0; i < list_data_seq[maxseq].length(); i++)
+    if (list_data_seq[maxseq][i] > numsymbol) numsymbol = (int) list_data_seq[maxseq][i];
+  numsymbol++;
+  Vector states;
+  int L = list_data_seq[maxseq].length();
+  states.Init(L);
+  for (int i = 0; i < L; i++) states[i] = rand() % numstate;
+  hmm_estimateD_init(numsymbol, numstate, list_data_seq[maxseq], states, &transmission_, &emission_);  
+}
+
+void DiscreteHMM::LoadProfile(const char* profile) {
+  transmission_.Destruct();
+  emission_.Destruct();
+  InitFromFile(profile);
+}
+
+void DiscreteHMM::SaveProfile(const char* profile) const {
+  TextWriter w_pro;
+  if (!PASSED(w_pro.Open(profile))) {
+    NONFATAL("Couldn't open '%s' for writing.", profile);
+    return;
+  }
+
+  print_matrix(w_pro, transmission_, "%% transmision", "%f,");
+  print_matrix(w_pro, emission_, "%% emission", "%f,");
+}
+
+void DiscreteHMM::GenerateSequence(int length, Vector* data_seq, Vector* state_seq) const {
+  hmm_generateD_init(length, transmission_, emission_, data_seq, state_seq);
+}
+
+void DiscreteHMM::EstimateModel(const Vector& data_seq, const Vector& state_seq) {
+  transmission_.Destruct();
+  emission_.Destruct();
+  hmm_estimateD_init(data_seq, state_seq, &transmission_, &emission_);
+}
+
+void DiscreteHMM::EstimateModel(int numstate, int numsymbol, const Vector& data_seq, const Vector& state_seq) {
+  transmission_.Destruct();
+  emission_.Destruct();
+  hmm_estimateD_init(numsymbol, numstate, data_seq, state_seq, &transmission_, &emission_);
+}
+
+void DiscreteHMM::DecodeOverwrite(const Vector& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const {
+  hmm_decodeD(data_seq, transmission_, emission_, state_prob_mat, forward_prob_mat, backward_prob_mat, scale_vec);
+}
+
+void DiscreteHMM::DecodeInit(const Vector& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const {
+  int M = transmission_.n_rows();
+  int L = data_seq.length();
+  state_prob_mat->Init(M, L);
+  forward_prob_mat->Init(M, L);
+  backward_prob_mat->Init(M, L);
+  scale_vec->Init(L);
+  hmm_decodeD(data_seq, transmission_, emission_, state_prob_mat, forward_prob_mat, backward_prob_mat, scale_vec);
+}
+
+void forward_procedure(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector *scales, Matrix* fs);
+
+double DiscreteHMM::ComputeLogLikelihood(const Vector& data_seq) const {
+  int L = data_seq.length();
+  int M = transmission_.n_rows();
+  Matrix fs(M, L);
+  Vector sc;
+  sc.Init(L);
+  forward_procedure(data_seq, transmission_, emission_, &sc, &fs);
+  double loglik = 0;
+  for (int t = 0; t < L; t++)
+    loglik += log(sc[t]);
+  return loglik;
+}
+
+void DiscreteHMM::ComputeLogLikelihood(const ArrayList<Vector>& list_data_seq, ArrayList<double>* list_likelihood) const {
+  int L = 0;
+  for (int i = 0; i < list_data_seq.size(); i++)
+    if (list_data_seq[i].length() > L) L = list_data_seq[i].length();
+  int M = transmission_.n_rows();
+  Matrix fs(M, L);
+  Vector sc;
+  sc.Init(L);
+  list_likelihood->Init();
+  for (int i = 0; i < list_data_seq.size(); i++) {
+    forward_procedure(list_data_seq[i], transmission_, emission_, &sc, &fs);
+    int L = list_data_seq[i].length();
+    double loglik = 0;
+    for (int t = 0; t < L; t++)
+      loglik += log(sc[t]);
+    list_likelihood->AddBackItem(loglik);
+  }
+}
+
+void DiscreteHMM::ComputeViterbiStateSequence(const Vector& data_seq, Vector* state_seq) const {
+  hmm_viterbiD_init(data_seq, transmission_, emission_, state_seq);
+}
+
+void DiscreteHMM::TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance) {
+  hmm_trainD(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
+}
+
+void DiscreteHMM::TrainViterbi(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance) {
+  hmm_train_viterbiD(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
+}
+
 void hmm_generateD_init(int L, const Matrix& trans, const Matrix& emis, Vector* seq, Vector* states) {
   DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==emis.n_rows()), "hmm_generateD_init: matrices sizes do not match");
   Matrix trsum, esum;
@@ -110,6 +247,7 @@ void forward_procedure(const Vector& seq, const Matrix& trans, const Matrix& emi
   Vector& s_ = *scales;
 
   fs_.SetZero();
+  s_.SetZero();
   // NOTE: start state is 0
   // time t = 0
   int e = (int) seq[0];
@@ -161,9 +299,7 @@ double hmm_decodeD(const Vector& seq, const Matrix& trans, const Matrix& emis, M
 		    M==trans.n_cols() && M==emis.n_rows()),"hmm_decodeD: sizes do not match");
   
   Matrix& ps_ = *pstates;
-
   Vector& s_ = *scales;
-  s_.SetZero();
 
   forward_procedure(seq, trans, emis, &s_, fs);
   backward_procedure(seq, trans, emis, s_, bs);

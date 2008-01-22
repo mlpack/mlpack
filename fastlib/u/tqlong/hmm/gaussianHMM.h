@@ -3,6 +3,37 @@
 
 #include "fastlib/fastlib.h"
 
+/**
+ * A wrapper class for HMM functionals in single Gaussian case
+ */
+
+class GaussianHMM {
+ private:
+  Matrix transmission_;
+  ArrayList<Vector> list_mean_vec_;
+  ArrayList<Matrix> list_covariance_mat_;
+  
+  ArrayList<Matrix> list_inverse_cov_mat_;
+  Vector gauss_const_vec_;
+  void CalculateInverse();
+ public:
+  void InitFromFile(const char* profile);
+  void InitFromData(const ArrayList<Matrix>& list_data_seq, int numstate);
+
+  void LoadProfile(const char* profile);
+  void SaveProfile(const char* profile);
+
+  void GenerateSequence(int L, Matrix* data_seq, Vector* state_seq);
+
+  double ComputeLogLikelihood(const Matrix& data_seq);
+  void ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood);
+
+  void ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq);
+
+  void TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, int max_iteration = 500, double tolerance = 1e-3);
+  void TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_iteration = 500, double tolerance = 1e-3);
+};
+
 success_t load_profileG(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs);
 success_t save_profileG(const char* profile, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs);
 /**

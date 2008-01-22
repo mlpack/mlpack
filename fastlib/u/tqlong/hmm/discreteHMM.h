@@ -1,7 +1,99 @@
+/**
+ * @file discreteHMM.h
+ *
+ * This file contains functions of a discrete Hidden Markov Models (in C) and a
+ * wrapper class (in C++) for these functions. It implements log-likelihood
+ * computation, viterbi algorithm for the most probable sequence, Baum-Welch
+ * algorithm and Viterbi-like algorithm for parameter estimation. It can also
+ * generate sequences from a Hidden Markov  Model.
+ */
+
 #ifndef FASTLIB_DISCRETE_HMM_H
 #define FASTLIB_DISCRETE_HMM_H
 
 #include "fastlib/fastlib.h"
+
+/**
+ * A wrapper class for HMM functionals in discrete case
+ * 
+ * This class maintains transition probabilities and emission probabilities
+ * matrices and performs basic HMM functionals, more details below.
+ * 
+ */
+
+class DiscreteHMM {
+  /////////// Member variables /////////////////////////////////////
+ private:
+  /** Transmission probabilities matrix between states */
+  Matrix transmission_;
+
+  /** Emission probabilities in each state */
+  Matrix emission_;
+
+ public:
+  /** Basic getters */
+  const Matrix& getTransmission() const { return transmission_; }
+  const Matrix& getEmission() const { return emission_; }
+
+  /** Setters used when already initialized */
+  void setModel(const Matrix& transmission, const Matrix& emission);
+
+  /** Initializes from computed transmission and emission matrices */
+  void Init(const Matrix& transmission, const Matrix& emission);
+
+  /** Initializes by loading from a file */
+  void InitFromFile(const char* profile);
+
+  /** Initializes randomly using data as a guide */
+  void InitFromData(const ArrayList<Vector>& list_data_seq, int numstate);
+
+  /** Load from file, used when already initialized */
+  void LoadProfile(const char* profile);
+
+  /** Save matrices to file */
+  void SaveProfile(const char* profile) const;
+
+  /** Generate a random data sequence of a given length */
+  void GenerateSequence(int length, Vector* data_seq, Vector* state_seq) const;
+
+  /** 
+   * Estimate the matrices by a data sequence and a state sequence 
+   * Must be already initialized
+   */
+  void EstimateModel(const Vector& data_seq, const Vector& state_seq);
+  void EstimateModel(int numstate, int numsymbol, const Vector& data_seq, const Vector& state_seq);
+
+  /** 
+   * Decode a sequence into probabilities of each state at each time step
+   * using scaled forward-backward algorithm.
+   * Also return forward, backward probabilities and scale factors
+   */
+  void DecodeOverwrite(const Vector& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const;
+
+  /** A decode version that initialized the out matrices */
+  void DecodeInit(const Vector& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const;
+
+  /** Compute the log-likelihood of a sequence */
+  double ComputeLogLikelihood(const Vector& data_seq) const;
+
+  /** Compute the log-likelihood of a list of sequences */
+  void ComputeLogLikelihood(const ArrayList<Vector>& list_data_seq, ArrayList<double>* list_likelihood) const;
+
+  /** Compute the most probable sequence (Viterbi) */
+  void ComputeViterbiStateSequence(const Vector& data_seq, Vector* state_seq) const;
+
+  /** 
+   * Train the model with a list of sequences, must be already initialized 
+   * using Baum-Welch EM algorithm
+   */
+  void TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration = 500, double tolerance = 1e-3);
+
+  /** 
+   * Train the model with a list of sequences, must be already initialized 
+   * using Viterbi algorithm to determine the state sequence of each sequence
+   */
+  void TrainViterbi(const ArrayList<Vector>& list_data_seq, int max_iteration = 500, double tolerance = 1e-3);
+};
 
 /**
 Generating a sequence and states using transition and emission probabilities.
@@ -12,7 +104,6 @@ seq: uninitialized vector, will have length L
 states: uninitialized vector, will have length L
 */
 void hmm_generateD_init(int L, const Matrix& trans, const Matrix& emis, Vector* seq, Vector * states);
-
 
 /** Estimate transition and emission probabilities from sequence and states
  */
