@@ -298,8 +298,8 @@ class SparseMatrix {
   void Eig(index_t num_of_eigvalues, 
            std::string eigtype, 
            Matrix *eigvectors,  
-           std::vector<double> *real_eigvalues, 
-           std::vector<double> *imag_eigvalues);
+           Vector *real_eigvalues, 
+           Vector *imag_eigvalues);
   /** Linear System solution, Call Endloading First.
   */
   void LinSolve(Vector &b, // must be initialized (space allocated)
