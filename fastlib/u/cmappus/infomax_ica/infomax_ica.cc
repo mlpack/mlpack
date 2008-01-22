@@ -1,6 +1,7 @@
 /**
  * @file infomax_ica.cc
- * 
+ * @author Chip Mappus
+ *
  * Methods for InfomaxICA.
  */
 

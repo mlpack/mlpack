@@ -1,7 +1,8 @@
 /**
  * @file main.cc
+ * @author Chip Mappus
  *
- * Test driver for our infomax ICA method.
+ * main for using infomax ICA method.
  */
 
 #include "infomax_ica.h"
@@ -11,9 +12,18 @@
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 
-  TestInfomaxICA *testica = new TestInfomaxICA();
-  testica->Init();
-  testica->TestAll();
+  const char *data = fx_param_str_req(NULL, "data");
+  double lambda = fx_param_double(NULL,"lambda",0.001);
+  int B = fx_param_int(NULL,"B",5);
+  Dataset dataset;
+  dataset.InitFromFile(data);
+
+  InfomaxICA *ica = new InfomaxICA(lambda, B);
+
+  ica->applyICA(dataset);  
+  Matrix west;
+  ica->getUnmixing(west);
+  ica->displayMatrix(west);
 
   fx_done();
 }
