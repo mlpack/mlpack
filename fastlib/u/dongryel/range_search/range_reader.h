@@ -1,7 +1,7 @@
 #ifndef RANGE_READER_H
 #define RANGE_READER_H
 
-#include "fastlib/fastlib_int.h"
+#include "fastlib/fastlib.h"
 
 // text parser class for handling -INFINITY and INFINITY tokens
 class RangeReader {
@@ -24,11 +24,11 @@ class RangeReader {
 	 !isdigit((tokenizer.Current().c_str())[1])) {
         tokenizer.Gobble();
         if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-          range[i].lo = -MAXDOUBLE;
+          range[i].lo = -DBL_MAX;
         }
       }
       else if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-        range[i].lo = MAXDOUBLE;
+        range[i].lo = DBL_MAX;
       }
       else {
         range[i].lo = atof(tokenizer.Current().c_str());
@@ -40,11 +40,11 @@ class RangeReader {
 	 !isdigit((tokenizer.Current().c_str())[1])) {
 	tokenizer.Gobble();
 	if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-	  range[i].hi = -MAXDOUBLE;
+	  range[i].hi = -DBL_MAX;
 	}
       }
       else if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-	range[i].hi = MAXDOUBLE;
+	range[i].hi = DBL_MAX;
       }
       else {
 	range[i].hi = atof(tokenizer.Current().c_str());

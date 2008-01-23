@@ -1,12 +1,33 @@
+/** @file ortho_range_search_main.cc
+ *
+ *  A test driver for the orthogonal range search code.
+ *
+ *  @author Dongryeol Lee (dongryel)
+ */
 #include "ortho_range_search.h"
 
 int main(int argc, char *argv[]) {
 
+  // Always initialize FASTexec with main's inputs at the beggining of
+  // your program.  This reads the command line, among other things.
   fx_init(argc, argv);
+
+  ////////// READING PARAMETERS AND LOADING DATA /////////////////////
+
+  // The reference data file is a required parameter.
+  const char* dataset_file_name = fx_param_str_req(NULL, "data");
+
+  // column-oriented dataset matrix.
+  Matrix dataset;
+
+  // data::Load inits a matrix with the contents of a .csv or .arff.
+  data::Load(dataset_file_name, &dataset);
+
+  // flag for determining whether we need to do naive algorithm.
   bool do_naive = fx_param_exists(NULL, "do_naive");
 
+  // declare fast tree-based orthogonal range search algorithm object.
   OrthoRangeSearch fast_search;
-
   fast_search.Init();
   fast_search.Compute();
 
@@ -19,7 +40,7 @@ int main(int argc, char *argv[]) {
   // if naive option is specified, do naive algorithm
   if(do_naive) {
     NaiveOrthoRangeSearch search;
-    search.Init();
+    search.Init(dataset);
     search.Compute();
     ArrayList<bool> naive_search_results = search.get_results();
     bool flag = true;
