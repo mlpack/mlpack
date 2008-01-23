@@ -26,7 +26,7 @@ The files are the following:
 
 -> An example run would the following:
 fl-build simple_nbc_main
-./simple_nbc_main --training_data=trainSet.arff  --number_of_classes=2 --testing_data=testSet.arff --output_filename=output_example.csv
+./simple_nbc_main --train=trainSet.arff  --nbc/classes=2 --test=testSet.arff --output=output_example.csv
 
 -> An example run of the testing class would be the following:
 fl-build test_simple_nbc_main
