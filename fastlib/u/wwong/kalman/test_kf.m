@@ -1,234 +1,248 @@
 function main
-clc;clear; close all; 
+% This m-file serves to 
+% 1. generate data for main.cc
+% but more importantly to
+% compare and plot results
+% between a fastlib and matlab
+% implementation
+%
+% Follow the following step by step
+clc;clear; close all;  
+
+%%%%%%%%%%% 1. Stipulate system params and save as *.csv files%%%%%%%%%%%
+
+%% Duration of demo 
+% recall that fastlib
+% starts from index 0;
+% remember to save transpose of matrices
+% because of the way fastlib reads in data
+t_tot = 1000; 
+csvwrite('t_in',t_tot');      
+
+%% System matrices  
+a_mat = diag([0.9, 0.9]);
+b_mat = [1;1];
+c_mat = [1 1];
+q_mat = [8.8125 69.125; 69.125 683.25];
+r_mat = 691.06;
+s_mat = [30;54.75];
+
+csvwrite('a_in', a_mat'); 
+csvwrite('b_in', b_mat');
+csvwrite('c_in', c_mat');
+csvwrite('q_in', q_mat');
+csvwrite('r_in', r_mat'); 
+csvwrite('s_in', s_mat');   
+ 
+%% Initial predictions for kf
+x_pred_0 = ones(size(a_mat,1),1);
+p_pred_0 = diag(repmat(1e-3,size(a_mat,1),1));
+y_pred_0 = c_mat*x_pred_0;   
+inno_cov_0 = c_mat*p_pred_0*c_mat' + r_mat;
+
+csvwrite('x_pred_0_in', x_pred_0'); 
+csvwrite('p_pred_0_in', p_pred_0');
+csvwrite('y_pred_0_in', y_pred_0'); 
+csvwrite('inno_cov_0_in', inno_cov_0');
+
+%%%%%%%%%%Manually run ./main and load results from directory%%%%%%%%%%
+keyboard %type dbcont at command prompt to continue
+ 
+%% These will be used for comparison purposes 
+load w_out;
+load v_out;
+load u_out;
+load x_out;
+load y_out;
+load x_pred_out;
+load p_pred_end_out;
+load x_hat_out;
+load p_hat_end_out;
+load y_pred_out;
+load inno_cov_end_out;
+load k_gain_end_out;
+
+%%%%%%%%%%%%%%%%%%%%%% Run Matlab Equivalent %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% flag = 1: numerically robust implementation
+%% flag = 2: numerically non-robust implementation
 flag = 1;
-randn('state',100);  
-%Step 1: Run This
-A = diag([0.9, 0.9]);
-B = [1;1];
-C = [1 1];
-D = 1;
-Q = [8.8125 69.125; 69.125 683.25];
-R = 691.06;
-S = [30;54.75];
-  
-%A = diag([0.9]);
-%B = [21];
-%C = [1];
-%D = 5;
-%Q = [1.25 ];
-%R = 26.25;
-%S = [0.7];
 
-x_pred_init = ones(size(A,1),1);
-P_pred_init = diag(repmat(1e-3,size(A,1),1));
-
-T = 2000;
+% remember to pass in t_tot + 1 and not t_tot
 if flag == 1
-  [x_orig,x_pred_orig,x_hat_orig,y_pred_orig,y_orig,P_pred_orig, P_hat_orig, inno_cov_orig,K_orig] = test_kf_sqrt(A,B,C,D,Q,R,S,x_pred_init,P_pred_init,T);
-else
-  [x_orig,x_pred_orig,x_hat_orig,y_pred_orig,y_orig,P_pred_orig, P_hat_orig, inno_cov_orig,K_orig] = test_kf_no_sqrt(A,B,C,D,Q,R,S,x_pred_init,P_pred_init,T);
+  [x_ml, y_ml, x_pred_ml, p_pred_ml, x_hat_ml, p_hat_ml, y_pred_ml, inno_cov_ml, k_gain_ml] ...
+    = test_kf_sqrt(t_tot +1, a_mat, b_mat, c_mat, q_mat, r_mat, s_mat, x_pred_0, p_pred_0, y_pred_0, inno_cov_0, w_out, v_out, u_out);   
+elseif flag == 2
+  [x_ml, y_ml, x_pred_ml, p_pred_ml, x_hat_ml, p_hat_ml, y_pred_ml, inno_cov_ml, k_gain_ml] ...
+    = test_kf_nosqrt(t_tot +1, a_mat, b_mat, c_mat, q_mat, r_mat, s_mat, x_pred_0, p_pred_0, y_pred_0, inno_cov_0, w_out, v_out, u_out);   
 end
+   
 
-%Step 2: Compile ./main manually
+%%%%%%%%%%%%%%%%%%%%%%%%Visual and Numerical Comparisons%%%%%%%%%%%%%%%%%
+%% Trivial checks (just to be sure)
+display('......Trivial checks.......')
+display('||x_fastlib - x_ml||_2')
+display(num2str(norm(x_out - x_ml)))
+
+display('||y_fastlib - y_ml||_2')
+display(num2str(norm(y_out - y_ml)))
+
+%% Non-trivial checks 
+display('......Non-trivial checks......')
+display('||x_pred_fastlib - x_pred_ml||_2')
+display(num2str(norm(x_pred_out - x_pred_ml)))
  
-%Step 3: Run the following
-keyboard
-load x_pred; 
-load x_hat; 
-load y_pred;
-load K_end;
-load P_pred_end;
-load P_hat_end;
-load inno_cov_end; 
- 
-[norm(x_pred-x_pred_orig) norm(y_pred-y_pred_orig) norm(x_hat-x_hat_orig)]
-[norm(inno_cov_orig(:,:,end) - inno_cov_end) norm(P_pred_orig(:,:,end) - P_pred_end) norm(P_hat_orig(:,:,end) - P_hat_end) norm(K_orig(:,:,end) - K_end) ]
+display('||p_pred_fastlib - p_pred_ml||_2')
+display(num2str(norm(p_pred_end_out - p_pred_ml(:, :, end))))
 
-%for i =1 :size(x_orig,1)
-%    figure; 
-%    subplot(211); plot(x_pred_orig(i,:),x_pred(i,:));
-%    subplot(212); plot(x_hat_orig(i,:),x_hat(i,:));            
-%end
+display('||x_hat_fastlib - x_hat_ml||_2')
+display(num2str(norm(x_hat_out - x_hat_ml)))
 
-%for i =1 :size(y_orig,1)
-%    figure; plot(y_pred_orig(i,:),y_pred(i,:));            
-%end
+display('||x_hat_fastlib - x_hat_ml||_2')
+display(num2str(norm(p_hat_end_out - p_hat_ml(:, :, end))))
 
-% clc; [y_pred' y_pred_orig']
- keyboard      
-end  
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [x,x_pred,x_hat,y_pred,y,P_pred,P_hat,inno_cov,K] = test_kf_sqrt(A,B,C,D,Q,R,S,x_pred_init,P_pred_init,T);
+display('||y_pred_fastlib - y_pred_ml||_2')
+display(num2str(norm(y_pred_out - y_pred_ml)))
 
-T = T+1;
-noise_matrix = [Q,S;S',R];
+display('||y_pred_fastlib - y_pred_ml||_2')
+display(num2str(norm(inno_cov_end_out - inno_cov_ml(:, :, end))))
 
-%Generate Data
-[ny,nx] = size(C);
-[nx,nu] = size(B);
+display('||k_gain_fastlib - k_gain_ml||_2')
+display(num2str(norm(k_gain_end_out - k_gain_ml(:, :, end))))
 
-x = zeros(nx,T+1); 
-u = randn(nu,T+1);
-y = zeros(ny,T+1);
-w = zeros(nx,T+1);
-v = zeros(ny,T+1);
-wv = zeros(nx+ny,T+1);
-
-for t = 1:T+1
-    wv(:,t) = chol(noise_matrix)'*randn(nx+ny,1);
-    w(:,t) = wv(1:nx,t);
-    v(:,t) = wv(nx+1:end,t);
-    
-    y(:,t)   = C*x(:,t) + D*u(:,t); +v(:,t); if (t == T+1) break; end
-    x(:,t+1) = A*x(:,t) + B*u(:,t) + w(:,t);
-    
-end
-
-A_eff = A-S*inv(R)*C
-B_eff = B - S*inv(R)*D;
-Q_eff = Q - S*inv(R)*S'
-
-E     = S*inv(R)
-
-%Kalman Filtering
-x_pred = zeros(nx,T+1); P_Pred = zeros(nx,nx,T+1); x_pred(:,1) = x_pred_init; P_pred(:,:,1) = P_pred_init;
-x_hat  = zeros(nx,T+1); P_hat  = zeros(nx,nx,T+1);
-y_pred = zeros(ny,T+1); inno_cov = zeros(ny,ny,T+1); y_pred(:,1) = C*x_pred(:,1) + D*u(:,1); inno_cov(:,:,1) = C*P_pred(:,:,1)*C'+R;
-K = zeros(nx,ny,T+1);
-
-for t = 1:T+1
-    
-%Measurement Update
-PRE = zeros(ny+nx,ny+nx);
-PRE(1:ny,1:ny)              = chol(R)';
-PRE(1:ny, ny+1:end)         = C*chol(P_pred(:,:,t))'; 
-PRE(ny+1:end, ny+1:end)     = chol(P_pred(:,:,t))';
-PRE                         = PRE'; 
-[dummy,POST]                = qr(PRE);
-POST                        = POST.';
-P_hat(:,:,t)                = POST(ny+1:end,ny+1:end)*POST(ny+1:end,ny+1:end)';
-K(:,:,t)                    = POST(ny+1:end,1:ny)*inv(POST(1:ny,1:ny));
-
-x_hat(:,t)                  = x_pred(:,t) + K(:,:,t)*(y(:,t) - y_pred(:,t) );
-
-if t == T+1
-    break;
-end
-
-%Time Update 
-PRE                     = zeros(nx,2*nx);
-PRE(1:nx,1:nx)          = A_eff*chol(P_hat(:,:,t))';
-PRE(1:nx,nx+1:end)      = chol(Q_eff)';
-PRE                     = PRE';
-[dummy,POST]            = qr(PRE);
-POST                    = POST';
-P_pred(:,:,t+1)         = POST(1:nx,1:nx)*POST(1:nx,1:nx)';
-inno_cov(:,:,t+1)       = C*P_pred(:,:,t+1)*C' + R;
-
-x_pred(:,t+1)           = A_eff*x_hat(:,t) + B_eff*u(:,t) + E*y(:,t);
-y_pred(:,t+1)           = C*x_pred(:,t+1) + D*u(:,t+1);
-
-end
-
-csvwrite('T_in',T-1);
-csvwrite('A_in',A'); 
-csvwrite('B_in',B');
-csvwrite('C_in',C');
-csvwrite('D_in',D');
-csvwrite('Q_in',Q');
-csvwrite('R_in',R'); 
-csvwrite('S_in',S');   
-csvwrite('u_in',u');
-csvwrite('w_in',w');
-csvwrite('v_in',v');
-csvwrite('y_in',y');
-csvwrite('x_in',x'); 
-csvwrite('x_pred_0_in',x_pred(:,1)');
-csvwrite('y_pred_0_in',y_pred(:,1)');
-csvwrite('P_pred_0_in',P_pred(:,:,1)');
-csvwrite('inno_cov_0_in',inno_cov(:,:,1)');
-end %end of function test_kf_sqrt
-
+keyboard  
+end  % main
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [x,x_pred,x_hat,y_pred,y,P_pred,P_hat,inno_cov,K] = test_kf_no_sqrt(A,B,C,D,Q,R,S,x_pred_init,P_pred_init,T);
-clc; 
+function [x, y, x_pred, p_pred, x_hat, p_hat, y_pred, inno_cov, k_gain] = ...
+    test_kf_sqrt(t_tot, a_mat, b_mat, c_mat, q_mat, r_mat, s_mat, x_pred_0, p_pred_0, y_pred_0, inno_cov_0, w, v, u);
+ 
+%% Define vars
+[ny, nx] = size(c_mat);
+[nx, nu] = size(b_mat);
+x = zeros(nx, t_tot); 
+y = zeros(ny, t_tot);
+x_pred = zeros(nx, t_tot); x_pred(:, 1) = x_pred_0;
+x_hat = zeros(nx, t_tot);
+y_pred = zeros(ny, t_tot); y_pred(:, 1) = y_pred_0;
+p_pred = zeros(nx, nx, t_tot); p_pred(:, :, 1) = p_pred_0;
+p_hat = zeros(nx, nx, t_tot);
+inno_cov = zeros(ny, ny, t_tot); inno_cov(:, :, 1) =  inno_cov_0;
+k_gain   = zeros(nx, ny, t_tot);
 
-T = T+1;
-noise_matrix = [Q,S;S',R];
+a_eff_mat = a_mat - s_mat*inv(r_mat)*c_mat;
+q_eff_mat = q_mat - s_mat*inv(r_mat)*s_mat';
+e_mat     = s_mat*inv(r_mat);
 
-%Generate Data
-[ny,nx] = size(C);
-[nx,nu] = size(B);
+  for t = 1:t_tot
+    %% Signal generation. As a demo, the system will also 
+    %% be an lds with the same params. as the k.f.
+    %% althought this doesn't need to be necessarily true.
 
-x = zeros(nx,T+1); 
-u = randn(nu,T+1);
-y = zeros(ny,T+1);
-w = zeros(nx,T+1);
-v = zeros(ny,T+1);
-wv = zeros(nx+ny,T+1);
+    % Generate noise signals (trivial)
+    w(:, t) = w(:, t); 
+    v(:, t) = v(:, t);
 
-for t = 1:T+1
-    wv(:,t) = chol(noise_matrix)'*randn(nx+ny,1);
-    w(:,t) = wv(1:nx,t);
-    v(:,t) = wv(nx+1:end,t);
-    
-    y(:,t)   = C*x(:,t) + D*u(:,t); +v(:,t); if (t == T+1) break; end
-    x(:,t+1) = A*x(:,t) + B*u(:,t) + w(:,t);
-    
-end
+    %% y_t = c_matx_t + v_t
+    y(:, t) = c_mat*x(:, t) + v(:, t);
 
-A_eff = A-S*inv(R)*C
-Q_eff = Q - S*inv(R)*S'
-E     = S*inv(R)
+    %% Perform measurement update
+    pre_mat = zeros(ny+nx, ny+nx);   
+    pre_mat(1:ny, 1:ny) = chol(r_mat);
+    pre_mat(ny+1:end, 1:ny) = chol(p_pred(:, :, t))*c_mat';
+    pre_mat(ny+1:end, ny+1:end) = chol(p_pred(:, :, t));
+  
+    [dummy, post_mat] = qr(pre_mat);
+    post_mat = post_mat.';
+    p_hat(:, :, t)  = post_mat(ny+1:end, ny+1:end)*post_mat(ny+1:end, ny+1:end)';
+    k_gain(:, :, t) = post_mat(ny+1:end, 1:ny)*inv(post_mat(1:ny, 1:ny));
+  
+    x_hat(:, t) = x_pred(:, t) + k_gain(:, :, t)*(y(:, t) - y_pred(:, t) );    
 
-%Kalman Filtering
-x_pred = zeros(nx,T+1); P_Pred = zeros(nx,nx,T+1); x_pred(:,1) = x_pred_init; P_pred(:,:,1) = P_pred_init;
-x_hat  = zeros(nx,T+1); P_hat  = zeros(nx,nx,T+1);
-y_pred = zeros(ny,T+1); inno_cov = zeros(ny,ny,T+1); y_pred(:,1) = C*x_pred(:,1) + D*u(:,1); inno_cov(:,:,1) = C*P_pred(:,:,1)*C'+R;
-K = zeros(nx,ny,T+1);
+    %% Get input (trivial)
+    u(:, t) = u(:, t);
 
-for t = 1:T+1
-    
-%Measurement Update
-K(:,:,t)                    = P_pred(:,:,t)*C'*inv(R+C*P_pred(:,:,t)*C');
-P_hat(:,:,t)                = (eye(nx,nx) - K(:,:,t)*C)*P_pred(:,:,t);
+    %% Perform time update only if not last time step    
+    if t < t_tot
+      pre_mat = zeros(2*nx, nx);
+      pre_mat(1:nx, 1:nx) = (a_eff_mat*chol(p_hat(:, :, t))')';
+      pre_mat(nx+1:end, 1:nx)  = (chol(q_eff_mat)')'; 
+      [dummy,post_mat] = qr(pre_mat);
+      post_mat = post_mat';
+      p_pred(:, :, t+1) = post_mat(1:nx, 1:nx)*post_mat(1:nx, 1:nx)';
+      inno_cov(:, :, t+1) = c_mat*p_pred(:, :, t+1)*c_mat' + r_mat;
+  
+      x_pred(:, t+1) = a_eff_mat*x_hat(:, t) + e_mat*y(:, t) + b_mat*u(:, t);
+      y_pred(:, t+1) = c_mat*x_pred(:, t+1);
+    end
 
-x_hat(:,t)                  = x_pred(:,t) + K(:,:,t)*(y(:,t) - y_pred(:,t) );
+    %% propagate system one-step ahead only if not last time step    
+    if t<t_tot
+      x(:, t+1) = a_mat*x(:, t) + b_mat*u(:, t) + w(:, t);
+    end
+  end
+  
+end  % test_kf_sqrt
 
-if t == T+1
-    break;
-end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function [x, y, x_pred, p_pred, x_hat, p_hat, y_pred, inno_cov, k_gain] = ...
+    test_kf_nosqrt(t_tot, a_mat, b_mat, c_mat, q_mat, r_mat, s_mat, x_pred_0, p_pred_0, y_pred_0, inno_cov_0, w, v, u);
+ 
+%% Define vars
+[ny, nx] = size(c_mat);
+[nx, nu] = size(b_mat);
+x = zeros(nx, t_tot); 
+y = zeros(ny, t_tot);
+x_pred = zeros(nx, t_tot); x_pred(:, 1) = x_pred_0;
+x_hat = zeros(nx, t_tot);
+y_pred = zeros(ny, t_tot); y_pred(:, 1) = y_pred_0;
+p_pred = zeros(nx, nx, t_tot); p_pred(:, :, 1) = p_pred_0;
+p_hat = zeros(nx, nx, t_tot);
+inno_cov = zeros(ny, ny, t_tot); inno_cov(:, :, 1) =  inno_cov_0;
+k_gain   = zeros(nx, ny, t_tot);
 
-%Time Update 
-P_pred(:,:,t+1) = A_eff*P_hat(:,:,t)*A_eff' + Q_eff;
+a_eff_mat = a_mat - s_mat*inv(r_mat)*c_mat;
+q_eff_mat = q_mat - s_mat*inv(r_mat)*s_mat';
+e_mat     = s_mat*inv(r_mat);
 
-inno_cov(:,:,t+1)       = C*P_pred(:,:,t+1)*C' + R;
+  for t = 1:t_tot
+    %% Signal generation. As a demo, the system will also 
+    %% be an lds with the same params. as the k.f.
+    %% althought this doesn't need to be necessarily true.
 
-x_pred(:,t+1)           = A_eff*x_hat(:,t) + B*u(:,t) + E*y(:,t);
-y_pred(:,t+1)           = C*x_pred(:,t+1) + D*u(:,t+1);
+    % Generate noise signals (trivial)
+    w(:, t) = w(:, t); 
+    v(:, t) = v(:, t);
 
-end
+    %% y_t = c_matx_t + v_t
+    y(:, t) = c_mat*x(:, t) + v(:, t);
 
-csvwrite('T_in',T-1);
-csvwrite('A_in',A'); 
-csvwrite('B_in',B');
-csvwrite('C_in',C');
-csvwrite('D_in',D');
-csvwrite('Q_in',Q');
-csvwrite('R_in',R'); 
-csvwrite('S_in',S');   
-csvwrite('u_in',u');
-csvwrite('w_in',w');
-csvwrite('v_in',v');
-csvwrite('y_in',y');
-csvwrite('x_in',x'); 
-csvwrite('x_pred_0',x_pred(:,1)');
-csvwrite('y_pred_0',y_pred(:,1)');
-csvwrite('P_pred_0',P_pred(:,:,1)');
-csvwrite('inno_cov_0',inno_cov(:,:,1)');
-end %end of function test_kf_no_sqrt
+    %% Perform measurement update
+    k_gain(:, :, t) = p_pred(:, :, t)*c_mat'*inv(inno_cov(:, :, t));
+    p_hat(:, :, t)  = (eye(nx, nx) - k_gain(:, :, t)*c_mat)*p_pred(:, :, t);  
+    x_hat(:, t) = x_pred(:, t) + k_gain(:, :, t)*(y(:, t) - y_pred(:, t) );    
+
+    %% Get input (trivial)
+    u(:, t) = u(:, t);
+
+    %% Perform time update only if not last time step    
+    if t < t_tot
+      p_pred(:, :, t+1) = a_eff_mat*p_hat(:, :, t)*a_eff_mat' + q_eff_mat;
+      inno_cov(:, :, t+1) = c_mat*p_pred(:, :, t+1)*c_mat' + r_mat;
+  
+      x_pred(:, t+1) = a_eff_mat*x_hat(:, t) + e_mat*y(:, t) + b_mat*u(:, t);
+      y_pred(:, t+1) = c_mat*x_pred(:, t+1);
+    end
+
+    %% propagate system one-step ahead only if not last time step    
+    if t<t_tot
+      x(:, t+1) = a_mat*x(:, t) + b_mat*u(:, t) + w(:, t);
+    end
+  end
+  
+end  % test_kf_nosqrt
+ 
+
 
 
 
