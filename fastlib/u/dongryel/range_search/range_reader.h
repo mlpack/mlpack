@@ -1,3 +1,11 @@
+/** @file range_reader.h
+ *
+ *  This file implements a static class for reading in the search
+ *  range data from a file.
+ *
+ *  @author Dongryeol Lee (dongryel)
+ */
+
 #ifndef RANGE_READER_H
 #define RANGE_READER_H
 
@@ -8,15 +16,19 @@ class RangeReader {
   
  public:
   
-  static void ReadRangeData(ArrayList<DRange> &range) {
+  static void ReadRangeData(Vector *low_coord_limits, 
+			    Vector *high_coord_limits,
+			    Matrix &dataset,
+			    const char *range_data_file_name) {
 
     TextTokenizer tokenizer;
-    const char *dname = fx_param_str(NULL, "range", "range.ds");
-    const double factor = fx_param_double(NULL, "factor", 1);
-    const double offset = fx_param_double(NULL, "offset", 0);
-    tokenizer.Open(dname);
+    tokenizer.Open(range_data_file_name);
     
-    for(index_t i = 0; i < range.size(); i++) {
+    // Initialize the vector limits with the appropriate dimension
+    low_coord_limits->Init(dataset.n_rows());
+    high_coord_limits->Init(dataset.n_rows());
+
+    for(index_t i = 0; i < low_coord_limits->length(); i++) {
       
       // read in the lower bound for this dimension
       tokenizer.Gobble();
@@ -24,14 +36,14 @@ class RangeReader {
 	 !isdigit((tokenizer.Current().c_str())[1])) {
         tokenizer.Gobble();
         if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-          range[i].lo = -DBL_MAX;
+	  (*low_coord_limits)[i] = -DBL_MAX;
         }
       }
       else if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-        range[i].lo = DBL_MAX;
+        (*low_coord_limits)[i] = DBL_MAX;
       }
       else {
-        range[i].lo = atof(tokenizer.Current().c_str());
+        (*low_coord_limits)[i] = atof(tokenizer.Current().c_str());
       }
       
       // read in the upper bound for this dimension
@@ -40,26 +52,22 @@ class RangeReader {
 	 !isdigit((tokenizer.Current().c_str())[1])) {
 	tokenizer.Gobble();
 	if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-	  range[i].hi = -DBL_MAX;
+	  (*high_coord_limits)[i] = -DBL_MAX;
 	}
       }
       else if(strncmp(tokenizer.Current().c_str(), "INFINITY", 8) == 0) {
-	range[i].hi = DBL_MAX;
+	(*high_coord_limits)[i] = DBL_MAX;
       }
       else {
-	range[i].hi = atof(tokenizer.Current().c_str());
+	(*high_coord_limits)[i] = atof(tokenizer.Current().c_str());
       }
-      
-      // apply offset
-      range[i].lo -= offset;
-      range[i].hi -= offset;
-      range[i].hi = range[i].lo + (range[i].hi - range[i].lo) * factor;
 
-      printf("Got [ %g %g ]\n", range[i].lo, range[i].hi);
+      printf("Got [ %g %g ]\n", (*low_coord_limits)[i],
+	     (*high_coord_limits)[i]);
       
-      if(range[i].lo > range[i].hi) {
+      if((*low_coord_limits)[i] > (*high_coord_limits)[i]) {
 	printf("Warning: you inputed the bounds [ %g %g ] for dimension %d\n",
-	       range[i].lo, range[i].hi, i);
+	       (*low_coord_limits)[i], (*high_coord_limits)[i], i);
       }
     }
   }
