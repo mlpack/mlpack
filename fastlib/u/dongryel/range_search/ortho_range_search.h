@@ -15,42 +15,57 @@
  */
 class NaiveOrthoRangeSearch {
   
+  // This class object cannot be copied!
   FORBID_ACCIDENTAL_COPIES(NaiveOrthoRangeSearch);
 
  private:
 
-  /** tells whether the i-th point is in the specified orthogonal range */
+  /** @brief The i-th position of this array tells whether the i-th
+   *         point is in the specified orthogonal range.
+   */
   ArrayList<bool> in_range_;
 
-  /** pointer to the dataset */
-  Matrix data_;
-
-  /** 
-   * orthogonal range to search in: this will be generalized to a list
-   * of orthogonal ranges
+  /** @brief The dataset. 
    */
-  ArrayList<DRange> range_;
+  Matrix data_;
   
  public:
+  
+  ////////// Constructor/Destructor //////////
 
+  /** @brief Constructor which does not do anything.
+   */
   NaiveOrthoRangeSearch() {}
 
+  /** @brief Destructor which does not do anything.
+   */
   ~NaiveOrthoRangeSearch() {}
 
-  /** get the result of the search */
-  const ArrayList<bool>& get_results() const {
-    return in_range_;
+  ////////// Getters/Setters //////////
+
+  /** @brief Retrieve the result of the search.
+   *
+   *  @param results An uninitialized vector which will have the boolean 
+   *                 results representing the search results.
+   */
+  void get_results(ArrayList<bool> *results) const {
+    results->Init(in_range_.size());
+
+    for(index_t i = 0; i < in_range_.size(); i++) {
+      (*results)[i] = in_range_[i];
+    }
   }
 
-  /** initialize the computation object */
+  ////////// User-level Functions //////////
+
+  /** @brief Initialize the computation object.
+   *
+   *  @param data The data used for orthogonal range search.
+   */
   void Init(Matrix &data) {
 
     // copy the incoming data
     data_.Copy(data);
-
-    // read the orthogonal query range text file
-    range_.Init(data_.n_rows());
-    RangeReader::ReadRangeData(range_);
     
     // re-initialize boolean flag
     in_range_.Init(data_.n_cols());
@@ -59,9 +74,11 @@ class NaiveOrthoRangeSearch {
     }
   }
 
-  /** the main computation of naive orthogonal range search */
-  void Compute() {
+  /** @brief The main computation of naive orthogonal range search.
+   */
+  void Compute(Vector &low_coord_limits, Vector &high_coord_limits) {
 
+    // Start the search.
     fx_timer_start(NULL, "naive_search");
     for(index_t i = 0; i < data_.n_cols(); i++) {
 
@@ -69,12 +86,12 @@ class NaiveOrthoRangeSearch {
       bool flag = true;
       data_.MakeColumnVector(i, &pt);
       
-      // determine which one of the two cases we have: EXCLUDE, SUBSUME
+      // Determine which one of the two cases we have: EXCLUDE, SUBSUME
       // first the EXCLUDE case: when dist is above the upper bound distance
       // of this dimension, or dist is below the lower bound distance of
       // this dimension
       for(index_t d = 0; d < data_.n_rows(); d++) {
-	if(pt[d] < range_[d].lo || pt[d] > range_[d].hi) {
+	if(pt[d] < low_coord_limits[d] || pt[d] > high_coord_limits[d]) {
 	  flag = false;
 	  break;
 	}
@@ -82,6 +99,9 @@ class NaiveOrthoRangeSearch {
       in_range_[i] = flag;
     }
     fx_timer_stop(NULL, "naive_search");
+    
+    // Search is now finished.
+    
   }
 
 };
@@ -113,23 +133,29 @@ class OrthoRangeSearch {
     }
   }
 
-  // getters and setters
+  ////////// Getters/Setters //////////
 
-  /** get the result of the search by expanding the node list */
-  const ArrayList<bool> &get_results() {
-    return candidate_points_;
+  /** @brief Retrieve the result of the search.
+   *
+   *  @param results An uninitialized vector which will have the boolean
+   *                 results representing the search results.
+   */
+  void get_results(ArrayList<bool> *results) {
+    results->Init(candidate_points_.size());
+    
+    for(index_t i = 0; i < candidate_points_.size(); i++) {
+      (*results)[i] = candidate_points_[i];
+    }
   }
 
-  const Matrix &get_data() const { return data_; }
+  ////////// User-level Functions //////////
 
-  const ArrayList<DRange> &get_range() const { return search_range_; }
- 
-  // interesting functions...
+  /** @brief Perform the orthogonal range search.
+   */
+  void Compute(Vector &low_coord_limits, Vector &high_coord_limits) {
 
-  /** perform the orthogonal range search */
-  void Compute() {
     fx_timer_start(NULL, "tree_range_search");
-    ortho_range_search(root_, 0);
+    ortho_range_search(root_, 0, low_coord_limits, high_coord_limits);
     fx_timer_stop(NULL, "tree_range_search");
 
     // reshuffle the results to account for shuffling during tree construction
@@ -144,12 +170,13 @@ class OrthoRangeSearch {
     }
   }
 
-  void SaveTree() {
+  /** @brief Save the tree to the file
+   */
+  void SaveTree(const char *save_tree_file_name) {
 
     printf("Serializing the tree data structure...\n");
 
-    const char *tfname = fx_param_str(NULL, "save_tree_file", "savedtree");
-    FILE *output = fopen(tfname, "w+");
+    FILE *output = fopen(save_tree_file_name, "w+");
 
     // first serialize the total amount of bytes needed for serializing the
     // tree and the tree itself
@@ -182,16 +209,19 @@ class OrthoRangeSearch {
     printf("Tree is serialized...\n");
   }
 
-  void LoadTree() {
+  /** @brief Load the tree from the file.
+   */
+  void LoadTree(const char *load_tree_file_name) {
 
-    const char *tfname = fx_param_str(NULL, "load_tree_file", "savedtree");
-    FILE *input = fopen(tfname, "r");
+    //const char *tfname = fx_param_str(NULL, "load_tree_file", "savedtree");
+    FILE *input = fopen(load_tree_file_name, "r");
     
     // read the tree size
     int tree_size, old_from_new_size, new_from_old_size;
     fread((void *) &tree_size, sizeof(int), 1, input);
 
-    printf("Tree file: %s occupies %d bytes...\n", tfname, tree_size);
+    printf("Tree file: %s occupies %d bytes...\n", load_tree_file_name, 
+	   tree_size);
     tree_buffer_ = mem::AllocBytes<Tree>(tree_size);
     fread((void *) tree_buffer_, 1, tree_size, input);
     root_ = ot::PointerThaw<Tree>((char *) tree_buffer_);
@@ -228,32 +258,29 @@ class OrthoRangeSearch {
     data_.Own(&tmp_data);
   }
 
-  /** initialization function - to read the data and to construct tree */
-  void Init() {
+  /** @brief Initialization function - to read the data and to construct tree.
+   */
+  void Init(Matrix &dataset, const char *load_tree_file_name) {
 
-    const char *fname = fx_param_str(NULL, "data", "data.ds");
     int leaflen = fx_param_int(NULL, "leaflen", 20);
 
-    // read dataset
-    Dataset dataset_;
-    dataset_.InitFromFile(fname);
-    data_.Own(&(dataset_.matrix()));
+    // Make a copy of the dataset.
+    data_.Copy(dataset);
 
     fx_timer_start(NULL, "tree_d");
 
-    if(fx_param_exists(NULL, "load_tree_file")) {
-      LoadTree();
+    // If the user wants to load the tree from a file,
+    if(load_tree_file_name != NULL) {
+      LoadTree(load_tree_file_name);
     }
+
+    // Otherwise, construct one from scratch.
     else {
       root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen,
 					     &old_from_new_,
 					     &new_from_old_);
     }
     fx_timer_stop(NULL, "tree_d");
-
-    // read in the query range
-    search_range_.Init(data_.n_rows());
-    RangeReader::ReadRangeData(search_range_);
     
     // initialize candidate nodes and points */
     candidate_points_.Init(data_.n_cols());
@@ -270,12 +297,6 @@ class OrthoRangeSearch {
   // member variables
   /** pointer to the dataset */
   Matrix data_;
-
-  /** 
-   * orthogonal range to search in: this will be generalized to a list
-   * of orthogonal ranges
-   */
-  ArrayList<DRange> search_range_;
 
   ArrayList<index_t> *old_from_new_buffer_;
 
@@ -298,7 +319,8 @@ class OrthoRangeSearch {
   // member functions
   
   /** base case */
-  void ortho_slow_range_search(Tree *node) {
+  void ortho_slow_range_search(Tree *node, const Vector &low_coord_limits,
+			       const Vector &high_coord_limits) {
     PruneStatus prune_flag;
 
     for(index_t row = node->begin(); row < node->end(); row++) {
@@ -307,13 +329,11 @@ class OrthoRangeSearch {
       for(index_t d = 0; d < data_.n_rows(); d++) {
 	// determine which one of the two cases we have: EXCLUDE, SUBSUME
 
-	DRange search_dir_range = search_range_[d];
-
 	// first the EXCLUDE case: when dist is above the upper bound distance
 	// of this dimension, or dist is below the lower bound distance of
 	// this dimension
-	if(data_.get(d, row) > search_dir_range.hi ||
-	   data_.get(d, row) < search_dir_range.lo) {
+	if(data_.get(d, row) > high_coord_limits[d] ||
+	   data_.get(d, row) < low_coord_limits[d]) {
 	  prune_flag = EXCLUDE;
 	  break;
 	}
@@ -326,7 +346,9 @@ class OrthoRangeSearch {
   }
 
   /** the workhorse algorithm for fast orthgonal range search */
-  void ortho_range_search(Tree *node, int start_dim) {
+  void ortho_range_search(Tree *node, int start_dim,
+			  const Vector &low_coord_limits, 
+			  const Vector &high_coord_limits) {
 
     PruneStatus prune_flag = SUBSUME;
     
@@ -334,8 +356,7 @@ class OrthoRangeSearch {
     // determining the lower and the upper bound distance per each dimension 
     // for the given reference node, kn
     for(index_t d = start_dim; d < data_.n_rows(); d++) {
-      
-      DRange search_dir_range = search_range_[d];
+
       DRange node_dir_range = node->bound().get(d);
 
       // determine which one of the three cases we have: EXCLUDE, SUBSUME, or
@@ -344,13 +365,13 @@ class OrthoRangeSearch {
       // first the EXCLUDE case: when mindist is above the upper bound 
       // distance of this dimension,  or maxdist is below the lower bound 
       // distance of this dimension
-      if(node_dir_range.lo > search_dir_range.hi ||
-	 node_dir_range.hi < search_dir_range.lo) {
+      if(node_dir_range.lo > high_coord_limits[d] ||
+	 node_dir_range.hi < low_coord_limits[d]) {
 	return;
       }
       // otherwise, check for SUBSUME case
-      else if(search_dir_range.lo <= node_dir_range.lo &&
-	      node_dir_range.hi <= search_dir_range.hi) {
+      else if(low_coord_limits[d] <= node_dir_range.lo &&
+	      node_dir_range.hi <= high_coord_limits[d]) {
       }
       // if any dimension turns out to be inconclusive, then break.
       else {
@@ -369,11 +390,13 @@ class OrthoRangeSearch {
       return;
     }
     else if(node->is_leaf()) {
-      ortho_slow_range_search(node);
+      ortho_slow_range_search(node, low_coord_limits, high_coord_limits);
     }
     else {
-      ortho_range_search(node->left(), start_dim);
-      ortho_range_search(node->right(), start_dim);
+      ortho_range_search(node->left(), start_dim, low_coord_limits,
+			 high_coord_limits);
+      ortho_range_search(node->right(), start_dim, low_coord_limits,
+			 high_coord_limits);
     }
   }
 };
