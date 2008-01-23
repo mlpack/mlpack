@@ -32,8 +32,8 @@ class DiscreteHMM {
 
  public:
   /** Basic getters */
-  const Matrix& getTransmission() const { return transmission_; }
-  const Matrix& getEmission() const { return emission_; }
+  const Matrix& transmission() const { return transmission_; }
+  const Matrix& emission() const { return emission_; }
 
   /** Setters used when already initialized */
   void setModel(const Matrix& transmission, const Matrix& emission);
@@ -86,63 +86,62 @@ class DiscreteHMM {
    * Train the model with a list of sequences, must be already initialized 
    * using Baum-Welch EM algorithm
    */
-  void TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration = 500, double tolerance = 1e-3);
+  void TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Viterbi algorithm to determine the state sequence of each sequence
    */
-  void TrainViterbi(const ArrayList<Vector>& list_data_seq, int max_iteration = 500, double tolerance = 1e-3);
+  void TrainViterbi(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance);
+
+
+  ///////// Static helper functions ///////////////////////////////////////
+
+  /**
+   * Generating a sequence and states using transition and emission probabilities.
+   * L: sequence length
+   * trans: Matrix M x M (M states)
+   * emis: Matrix M x N (N emissions)
+   * seq: uninitialized vector, will have length L
+   * states: uninitialized vector, will have length L
+   */
+  static void GenerateInit(int L, const Matrix& trans, const Matrix& emis, Vector* seq, Vector * states);
+
+  /** Estimate transition and emission probabilities from sequence and states */
+  static void EstimateInit(const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis);
+  static void EstimateInit(int numSymbols, int numStates, const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis);
+
+  /** Calculate posteriori probabilities of states at each steps
+   * Scaled Forward - Backward procedure
+   * seq: Vector of length L of emissions
+   * trans: Transition probabilities, size M x M
+   * emis: Emission probabilities, size M x N
+   * pstates: size M x L
+   * fs: scaled forward probabities, size M x L
+   * bs: scaled backward probabities, size M x L
+   * scales: scale factors, length L
+   * RETURN: log probabilities of sequence
+   */
+  static void ForwardProcedure(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector *scales, Matrix* fs);
+  static void BackwardProcedure(const Vector& seq, const Matrix& trans, const Matrix& emis, const Vector& scales, Matrix* bs);
+  static double Decode(const Vector& seq, const Matrix& trans, const Matrix& emis, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales);
+
+  /** Calculate the most probable states for a sequence
+   * Viterbi algorithm
+   * seq: Vector of length L of emissions
+   * trans: Transition probabilities, size M x M
+   * emis: Emission probabilities, size M x N
+   * states: Unitialized, will have length L
+   * RETURN: log probability of the most probable sequence
+   */
+  static double ViterbiInit(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
+  static double ViterbiInit(int L, const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
+
+  /** Baum-Welch estimation of transition and emission probabilities */
+  static void Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol);
+
+  /** Viterbi estimation of transition and emission probabilities */
+  static void TrainViterbi(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol);
+
 };
-
-/**
-Generating a sequence and states using transition and emission probabilities.
-L: sequence length
-trans: Matrix M x M (M states)
-emis: Matrix M x N (N emissions)
-seq: uninitialized vector, will have length L
-states: uninitialized vector, will have length L
-*/
-void hmm_generateD_init(int L, const Matrix& trans, const Matrix& emis, Vector* seq, Vector * states);
-
-/** Estimate transition and emission probabilities from sequence and states
- */
-void hmm_estimateD_init(const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis);
-void hmm_estimateD_init(int numSymbols, int numStates, const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis);
-
-/** Calculate posteriori probabilities of states at each steps
-    Scaled Forward - Backward procedure
-
-    seq: Vector of length L of emissions
-    trans: Transition probabilities, size M x M
-    emis: Emission probabilities, size M x N
-
-    pstates: size M x L
-    fs: scaled forward probabities, size M x L
-    bs: scaled backward probabities, size M x L
-    scales: scale factors, length L
-    RETURN: log probabilities of sequence
-*/
-double hmm_decodeD(const Vector& seq, const Matrix& trans, const Matrix& emis, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales);
-
-/** Calculate the most probable states for a sequence
-    Viterbi algorithm
-    seq: Vector of length L of emissions
-    trans: Transition probabilities, size M x M
-    emis: Emission probabilities, size M x N
-    
-    states: Unitialized, will have length L
-    RETURN: log probability of the most probable sequence
-*/
-double hmm_viterbiD_init(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
-double hmm_viterbiD_init(int L, const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
-
-/** Baum-Welch estimation of transition and emission probabilities
-*/
-void hmm_trainD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter = 500, double tol = 1e-3);
-
-/** Viterbi estimation of transition and emission probabilities
-*/
-void hmm_train_viterbiD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter = 500, double tol = 1e-3);
-
 #endif

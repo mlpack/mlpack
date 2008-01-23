@@ -5,6 +5,8 @@
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
 
+using namespace hmm_support;
+
 success_t loglik_discrete();
 success_t loglik_gaussian();
 success_t loglik_mixture();

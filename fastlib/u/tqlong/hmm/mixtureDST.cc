@@ -3,6 +3,8 @@
 #include "support.h"
 #include "mixtureDST.h"
 
+using namespace hmm_support;
+
 void MixtureGauss::Init(int K, int N) {
   means.Init();
   for (int i = 0; i < K; i++) {
@@ -155,7 +157,7 @@ void MixtureGauss::print_mixture(const char* s) const {
 
 void MixtureGauss::generate(Vector* v) const {
   int K = means.size();
-  double r = RAND_UNIFORM_01;
+  double r = RAND_UNIFORM_01();
   int cluster = K-1;
   double s = 0;
   for (int i = 0; i < K; i++) {

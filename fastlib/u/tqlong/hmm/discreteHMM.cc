@@ -2,6 +2,8 @@
 #include "support.h"
 #include "discreteHMM.h"
 
+using namespace hmm_support;
+
 void DiscreteHMM::setModel(const Matrix& transmission, const Matrix& emission) {
   DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
   DEBUG_ASSERT(transmission.n_rows() == emission.n_rows());
@@ -43,7 +45,7 @@ void DiscreteHMM::InitFromData(const ArrayList<Vector>& list_data_seq, int numst
   int L = list_data_seq[maxseq].length();
   states.Init(L);
   for (int i = 0; i < L; i++) states[i] = rand() % numstate;
-  hmm_estimateD_init(numsymbol, numstate, list_data_seq[maxseq], states, &transmission_, &emission_);  
+  DiscreteHMM::EstimateInit(numsymbol, numstate, list_data_seq[maxseq], states, &transmission_, &emission_);  
 }
 
 void DiscreteHMM::LoadProfile(const char* profile) {
@@ -64,23 +66,23 @@ void DiscreteHMM::SaveProfile(const char* profile) const {
 }
 
 void DiscreteHMM::GenerateSequence(int length, Vector* data_seq, Vector* state_seq) const {
-  hmm_generateD_init(length, transmission_, emission_, data_seq, state_seq);
+  DiscreteHMM::GenerateInit(length, transmission_, emission_, data_seq, state_seq);
 }
 
 void DiscreteHMM::EstimateModel(const Vector& data_seq, const Vector& state_seq) {
   transmission_.Destruct();
   emission_.Destruct();
-  hmm_estimateD_init(data_seq, state_seq, &transmission_, &emission_);
+  DiscreteHMM::EstimateInit(data_seq, state_seq, &transmission_, &emission_);
 }
 
 void DiscreteHMM::EstimateModel(int numstate, int numsymbol, const Vector& data_seq, const Vector& state_seq) {
   transmission_.Destruct();
   emission_.Destruct();
-  hmm_estimateD_init(numsymbol, numstate, data_seq, state_seq, &transmission_, &emission_);
+  DiscreteHMM::EstimateInit(numsymbol, numstate, data_seq, state_seq, &transmission_, &emission_);
 }
 
 void DiscreteHMM::DecodeOverwrite(const Vector& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const {
-  hmm_decodeD(data_seq, transmission_, emission_, state_prob_mat, forward_prob_mat, backward_prob_mat, scale_vec);
+  DiscreteHMM::Decode(data_seq, transmission_, emission_, state_prob_mat, forward_prob_mat, backward_prob_mat, scale_vec);
 }
 
 void DiscreteHMM::DecodeInit(const Vector& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const {
@@ -90,7 +92,7 @@ void DiscreteHMM::DecodeInit(const Vector& data_seq, Matrix* state_prob_mat, Mat
   forward_prob_mat->Init(M, L);
   backward_prob_mat->Init(M, L);
   scale_vec->Init(L);
-  hmm_decodeD(data_seq, transmission_, emission_, state_prob_mat, forward_prob_mat, backward_prob_mat, scale_vec);
+  DiscreteHMM::Decode(data_seq, transmission_, emission_, state_prob_mat, forward_prob_mat, backward_prob_mat, scale_vec);
 }
 
 void forward_procedure(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector *scales, Matrix* fs);
@@ -101,7 +103,7 @@ double DiscreteHMM::ComputeLogLikelihood(const Vector& data_seq) const {
   Matrix fs(M, L);
   Vector sc;
   sc.Init(L);
-  forward_procedure(data_seq, transmission_, emission_, &sc, &fs);
+  DiscreteHMM::ForwardProcedure(data_seq, transmission_, emission_, &sc, &fs);
   double loglik = 0;
   for (int t = 0; t < L; t++)
     loglik += log(sc[t]);
@@ -118,7 +120,7 @@ void DiscreteHMM::ComputeLogLikelihood(const ArrayList<Vector>& list_data_seq, A
   sc.Init(L);
   list_likelihood->Init();
   for (int i = 0; i < list_data_seq.size(); i++) {
-    forward_procedure(list_data_seq[i], transmission_, emission_, &sc, &fs);
+    DiscreteHMM::ForwardProcedure(list_data_seq[i], transmission_, emission_, &sc, &fs);
     int L = list_data_seq[i].length();
     double loglik = 0;
     for (int t = 0; t < L; t++)
@@ -128,18 +130,18 @@ void DiscreteHMM::ComputeLogLikelihood(const ArrayList<Vector>& list_data_seq, A
 }
 
 void DiscreteHMM::ComputeViterbiStateSequence(const Vector& data_seq, Vector* state_seq) const {
-  hmm_viterbiD_init(data_seq, transmission_, emission_, state_seq);
+  DiscreteHMM::ViterbiInit(data_seq, transmission_, emission_, state_seq);
 }
 
 void DiscreteHMM::TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance) {
-  hmm_trainD(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
+  DiscreteHMM::Train(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
 }
 
 void DiscreteHMM::TrainViterbi(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance) {
-  hmm_train_viterbiD(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
+  DiscreteHMM::TrainViterbi(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
 }
 
-void hmm_generateD_init(int L, const Matrix& trans, const Matrix& emis, Vector* seq, Vector* states) {
+void DiscreteHMM::GenerateInit(int L, const Matrix& trans, const Matrix& emis, Vector* seq, Vector* states) {
   DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==emis.n_rows()), "hmm_generateD_init: matrices sizes do not match");
   Matrix trsum, esum;
   Vector &seq_ = *seq, &states_ = *states;
@@ -169,13 +171,13 @@ void hmm_generateD_init(int L, const Matrix& trans, const Matrix& emis, Vector* 
     double r;
 
     // next state
-    r = RAND_UNIFORM_01;
+    r = RAND_UNIFORM_01();
     for (j = 0; j < M; j++)
       if (r <= trsum.get(cur_state, j)) break;
     cur_state = j;
 	
     // emission
-    r = RAND_UNIFORM_01;
+    r = RAND_UNIFORM_01();
     for (j = 0; j < N; j++)
       if (r <= esum.get(cur_state, j)) break;
     seq_[i] = j;
@@ -183,7 +185,7 @@ void hmm_generateD_init(int L, const Matrix& trans, const Matrix& emis, Vector* 
   }
 }
 
-void hmm_estimateD_init(const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis) {
+void DiscreteHMM::EstimateInit(const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis) {
   DEBUG_ASSERT_MSG((seq.length()==states.length()), "hmm_estimateD_init: sequence and states length must be the same");
   int M = 0, N=0;
   for (int i = 0; i < seq.length(); i++) {
@@ -192,10 +194,10 @@ void hmm_estimateD_init(const Vector& seq, const Vector& states, Matrix* trans, 
   }
   M++;
   N++;
-  hmm_estimateD_init(N, M, seq, states, trans, emis);
+  DiscreteHMM::EstimateInit(N, M, seq, states, trans, emis);
 }
 
-void hmm_estimateD_init(int numSymbols, int numStates, const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis){
+void DiscreteHMM::EstimateInit(int numSymbols, int numStates, const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis){
   DEBUG_ASSERT_MSG((seq.length()==states.length()), "hmm_estimateD_init: sequence and states length must be the same");
   int N = numSymbols;
   int M = numStates;
@@ -239,7 +241,7 @@ void hmm_estimateD_init(int numSymbols, int numStates, const Vector& seq, const 
   }
 }
 
-void forward_procedure(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector *scales, Matrix* fs) {
+void DiscreteHMM::ForwardProcedure(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector *scales, Matrix* fs) {
   int L = seq.length();
   int M = trans.n_rows();
 
@@ -272,7 +274,7 @@ void forward_procedure(const Vector& seq, const Matrix& trans, const Matrix& emi
   }
 }
 
-void backward_procedure(const Vector& seq, const Matrix& trans, const Matrix& emis, const Vector& scales, Matrix* bs) {
+void DiscreteHMM::BackwardProcedure(const Vector& seq, const Matrix& trans, const Matrix& emis, const Vector& scales, Matrix* bs) {
   int L = seq.length();
   int M = trans.n_rows();
 
@@ -291,7 +293,7 @@ void backward_procedure(const Vector& seq, const Matrix& trans, const Matrix& em
   }
 }
 
-double hmm_decodeD(const Vector& seq, const Matrix& trans, const Matrix& emis, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
+double DiscreteHMM::Decode(const Vector& seq, const Matrix& trans, const Matrix& emis, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
   int L = seq.length();
   int M = trans.n_rows();
 
@@ -301,8 +303,8 @@ double hmm_decodeD(const Vector& seq, const Matrix& trans, const Matrix& emis, M
   Matrix& ps_ = *pstates;
   Vector& s_ = *scales;
 
-  forward_procedure(seq, trans, emis, &s_, fs);
-  backward_procedure(seq, trans, emis, s_, bs);
+  DiscreteHMM::ForwardProcedure(seq, trans, emis, &s_, fs);
+  DiscreteHMM::BackwardProcedure(seq, trans, emis, s_, bs);
 
   for (int i = 0; i < M; i++)
     for (int t = 0; t < L; t++)
@@ -315,12 +317,12 @@ double hmm_decodeD(const Vector& seq, const Matrix& trans, const Matrix& emis, M
   return logpseq;
 }
 
-double hmm_viterbiD_init(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states) {
+double DiscreteHMM::ViterbiInit(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states) {
   int L = seq.length();
-  return hmm_viterbiD_init(L, seq, trans, emis, states);
+  return DiscreteHMM::ViterbiInit(L, seq, trans, emis, states);
 }
 
-double hmm_viterbiD_init(int L, const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states) {
+double DiscreteHMM::ViterbiInit(int L, const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states) {
   int M = trans.n_rows();
   int N = emis.n_cols();
   DEBUG_ASSERT_MSG((M==trans.n_cols() && M==emis.n_rows()),"hmm_viterbiD: sizes do not match");
@@ -380,7 +382,7 @@ double hmm_viterbiD_init(int L, const Vector& seq, const Matrix& trans, const Ma
   return bestVal;
 }
 
-void hmm_trainD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
+void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
   int L = -1;
   int M = guessTR->n_rows();
   int N = guessEM->n_cols();
@@ -411,7 +413,7 @@ void hmm_trainD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM,
     EM.SetZero();
     for (int idx = 0; idx < seqs.size(); idx++) {
       L = seqs[idx].length();
-      loglik += hmm_decodeD(seqs[idx], gTR, gEM, &ps, &fs, &bs, &s);
+      loglik += DiscreteHMM::Decode(seqs[idx], gTR, gEM, &ps, &fs, &bs, &s);
       
       for (int t = 0; t < L-1; t++) {
 	int e = (int) seqs[idx][t+1];
@@ -453,7 +455,7 @@ void hmm_trainD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM,
   }
 }
 
-void hmm_train_viterbiD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
+void DiscreteHMM::TrainViterbi(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
   int L = -1;
   int M = guessTR->n_rows();
   int N = guessEM->n_cols();
@@ -477,7 +479,7 @@ void hmm_train_viterbiD(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
     for (int idx = 0; idx < seqs.size(); idx++) {
       Vector states;
       L = seqs[idx].length();
-      loglik += hmm_viterbiD_init(L, seqs[idx], gTR, gEM, &states);
+      loglik += DiscreteHMM::ViterbiInit(L, seqs[idx], gTR, gEM, &states);
       
       for (int t = 0; t < L-1; t++) {
 	int i = (int) states[t];

@@ -5,6 +5,8 @@
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
 
+using namespace hmm_support;
+
 success_t viterbi_discrete();
 success_t viterbi_gaussian();
 success_t viterbi_mixture();
