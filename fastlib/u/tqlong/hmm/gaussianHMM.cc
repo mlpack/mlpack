@@ -2,8 +2,43 @@
 #include "support.h"
 #include "gaussianHMM.h"
 
+using namespace hmm_support;
+
+void GaussianHMM::setModel(const Matrix& transmission,  const ArrayList<Vector>& list_mean_vec,const ArrayList<Matrix>& list_covariance_mat) {
+  DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
+  DEBUG_ASSERT(transmission.n_rows() == list_mean_vec.size());
+  DEBUG_ASSERT(transmission.n_rows() == list_covariance_mat.size());
+  for (int i = 1; i < list_mean_vec.size(); i++) {
+    DEBUG_ASSERT(list_mean_vec[0].length() == list_covariance_mat[i].n_rows());
+    DEBUG_ASSERT(list_mean_vec[0].length() == list_covariance_mat[i].n_cols());
+    DEBUG_ASSERT(list_mean_vec[0].length() == list_mean_vec[i].length());
+  }
+  transmission_.Destruct();
+  list_mean_vec_.Destruct();
+  list_covariance_mat_.Destruct();
+  transmission_.Copy(transmission);
+  list_mean_vec_.Copy(list_mean_vec);
+  list_covariance_mat_.Copy(list_covariance_mat);
+  CalculateInverse();
+}
+
+void GaussianHMM::Init(const Matrix& transmission,  const ArrayList<Vector>& list_mean_vec,const ArrayList<Matrix>& list_covariance_mat) {
+  transmission_.Copy(transmission);
+  list_mean_vec_.Copy(list_mean_vec);
+  list_covariance_mat_.Copy(list_covariance_mat);
+  DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
+  DEBUG_ASSERT(transmission.n_rows() == list_mean_vec.size());
+  DEBUG_ASSERT(transmission.n_rows() == list_covariance_mat.size());
+  for (int i = 1; i < list_mean_vec.size(); i++) {
+    DEBUG_ASSERT(list_mean_vec[0].length() == list_covariance_mat[i].n_rows());
+    DEBUG_ASSERT(list_mean_vec[0].length() == list_covariance_mat[i].n_cols());
+    DEBUG_ASSERT(list_mean_vec[0].length() == list_mean_vec[i].length());
+  }  
+  CalculateInverse();
+}
+
 void GaussianHMM::InitFromFile(const char* profile) {
-  if (!PASSED(load_profileG(profile, &transmission_, &list_mean_vec_, &list_covariance_mat_)))
+  if (!PASSED(GaussianHMM::LoadProfile(profile, &transmission_, &list_mean_vec_, &list_covariance_mat_)))
     FATAL("Couldn't open '%s' for reading.", profile);
   list_inverse_cov_mat_.Copy(list_covariance_mat_);
   gauss_const_vec_.Init(list_covariance_mat_.size());
@@ -11,9 +46,15 @@ void GaussianHMM::InitFromFile(const char* profile) {
 }
 
 void GaussianHMM::InitFromData(const ArrayList<Matrix>& list_data_seq, int numstate) {
-  init_gauss_param(numstate, list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_);
+  GaussianHMM::InitGaussParameter(numstate, list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_);
   list_inverse_cov_mat_.Copy(list_covariance_mat_);
   gauss_const_vec_.Init(list_covariance_mat_.size());
+  CalculateInverse();
+}
+
+void GaussianHMM::InitFromData(const Matrix& data_seq, const Vector& state_seq)  {
+  GaussianHMM::EstimateInit(data_seq, state_seq, &transmission_, 
+			    &list_mean_vec_, &list_covariance_mat_);
   CalculateInverse();
 }
 
@@ -26,8 +67,8 @@ void GaussianHMM::LoadProfile(const char* profile) {
   InitFromFile(profile);
 }
 
-void GaussianHMM::SaveProfile(const char* profile) {
-  save_profileG(profile, transmission_, list_mean_vec_, list_covariance_mat_);
+void GaussianHMM::SaveProfile(const char* profile) const {
+  GaussianHMM::SaveProfile(profile, transmission_, list_mean_vec_, list_covariance_mat_);
 }
 
 void GaussianHMM::CalculateInverse() {
@@ -39,27 +80,69 @@ void GaussianHMM::CalculateInverse() {
   }
 }
 
-void GaussianHMM::GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) {
-  hmm_generateG_init(L, transmission_, list_mean_vec_, list_covariance_mat_, data_seq, state_seq);
+void GaussianHMM::GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) const {
+  GaussianHMM::GenerateInit(L, transmission_, list_mean_vec_, list_covariance_mat_, data_seq, state_seq);
 }
 
-void forward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, Vector *scales, Matrix* fs);
+void GaussianHMM::EstimateModel(const Matrix& data_seq, const Vector& state_seq) {
+  transmission_.Destruct();
+  list_mean_vec_.Destruct();
+  list_covariance_mat_.Destruct();
+  GaussianHMM::EstimateInit(data_seq, state_seq, &transmission_, 
+			    &list_mean_vec_, &list_covariance_mat_);
+  CalculateInverse();
+}
 
-double GaussianHMM::ComputeLogLikelihood(const Matrix& data_seq) {
+void GaussianHMM::EstimateModel(int numstate, const Matrix& data_seq, const Vector& state_seq) {
+  transmission_.Destruct();
+  list_mean_vec_.Destruct();
+  list_covariance_mat_.Destruct();
+  GaussianHMM::EstimateInit(numstate, data_seq, state_seq, &transmission_, 
+			    &list_mean_vec_, &list_covariance_mat_);
+  CalculateInverse();
+}
+
+void GaussianHMM::DecodeOverwrite(const Matrix& data_seq, Matrix* state_prob_mat, 
+				  Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const {
+  int M = transmission_.n_rows();
+  int L = data_seq.n_cols();  
+  Matrix emission_prob_mat(M, L);
+  GaussianHMM::CalculateEmissionProb(data_seq, list_mean_vec_, list_inverse_cov_mat_,
+				     gauss_const_vec_, &emission_prob_mat);
+  GaussianHMM::Decode(transmission_, emission_prob_mat, state_prob_mat, forward_prob_mat,
+		      backward_prob_mat, scale_vec);
+}
+
+void GaussianHMM::DecodeInit(const Matrix& data_seq, Matrix* state_prob_mat, 
+			     Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const {
+  int M = transmission_.n_rows();
+  int L = data_seq.n_cols();  
+  state_prob_mat->Init(M, L);
+  forward_prob_mat->Init(M, L);
+  backward_prob_mat->Init(M, L);
+  scale_vec->Init(L);
+  Matrix emission_prob_mat(M, L);
+  GaussianHMM::CalculateEmissionProb(data_seq, list_mean_vec_, list_inverse_cov_mat_,
+				     gauss_const_vec_, &emission_prob_mat);
+  GaussianHMM::Decode(transmission_, emission_prob_mat, state_prob_mat, forward_prob_mat,
+		      backward_prob_mat, scale_vec);
+}
+
+double GaussianHMM::ComputeLogLikelihood(const Matrix& data_seq) const {
   int L = data_seq.n_cols();
   int M = transmission_.n_rows();
   Matrix fs(M, L), emis_prob(M, L);
   Vector sc;
   sc.Init(L);
-  hmm_cal_emis_prob(data_seq, list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
-  forward_procedure(L, transmission_, emis_prob, &sc, &fs);
+  GaussianHMM::CalculateEmissionProb(data_seq, list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
+  GaussianHMM::ForwardProcedure(L, transmission_, emis_prob, &sc, &fs);
   double loglik = 0;
   for (int t = 0; t < L; t++)
     loglik += log(sc[t]);
   return loglik;
 }
 
-void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood) {
+void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood) const {
   int L = 0;
   for (int i = 0; i < list_data_seq.size(); i++)
     if (list_data_seq[i].n_cols() > L) L = list_data_seq[i].n_cols();
@@ -70,8 +153,8 @@ void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, A
   list_likelihood->Init();
   for (int i = 0; i < list_data_seq.size(); i++) {
     int L = list_data_seq[i].n_cols();
-    hmm_cal_emis_prob(list_data_seq[i], list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
-    forward_procedure(L, transmission_, emis_prob, &sc, &fs);
+    GaussianHMM::CalculateEmissionProb(list_data_seq[i], list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
+    GaussianHMM::ForwardProcedure(L, transmission_, emis_prob, &sc, &fs);
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
@@ -79,23 +162,25 @@ void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, A
   }
 }
 
-void GaussianHMM::ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) {
+void GaussianHMM::ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) const {
   int M = transmission_.n_rows();
   int L = data_seq.n_cols();
   Matrix emis_prob(M, L);
-  hmm_cal_emis_prob(data_seq, list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
-  hmm_viterbiG_init(transmission_, emis_prob, state_seq);
+  GaussianHMM::CalculateEmissionProb(data_seq, list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
+  GaussianHMM::ViterbiInit(transmission_, emis_prob, state_seq);
 }
 
 void GaussianHMM::TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
-  hmm_trainG(list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_, max_iteration, tolerance);
+  GaussianHMM::Train(list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_, max_iteration, tolerance);
+  CalculateInverse();
 }
 
 void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
-  hmm_train_viterbiG(list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_, max_iteration, tolerance);
+  GaussianHMM::TrainViterbi(list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_, max_iteration, tolerance);
+  CalculateInverse();
 }
 
-success_t load_profileG(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
+success_t GaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
   ArrayList<Matrix> matlst;
   if (!PASSED(load_matrix_list(profile, &matlst)))
     return SUCCESS_FAIL;
@@ -118,7 +203,7 @@ success_t load_profileG(const char* profile, Matrix* trans, ArrayList<Vector>* m
   return SUCCESS_PASS;
 }
 
-success_t save_profileG(const char* profile, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs) {
+success_t GaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs) {
   TextWriter w_pro;
   if (!PASSED(w_pro.Open(profile))) {
     NONFATAL("Couldn't open '%s' for writing.", profile);
@@ -140,7 +225,7 @@ success_t save_profileG(const char* profile, const Matrix& trans, const ArrayLis
   return SUCCESS_PASS;
 }
 
-void hmm_generateG_init(int L, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs, Matrix* seq, Vector* states){
+void GaussianHMM::GenerateInit(int L, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs, Matrix* seq, Vector* states){
   DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==means.size() && trans.n_rows()==covs.size()), "hmm_generateG_init: matrices sizes do not match");
   Matrix trsum;
   Matrix& seq_ = *seq;
@@ -166,7 +251,7 @@ void hmm_generateG_init(int L, const Matrix& trans, const ArrayList<Vector>& mea
     int j;
 
     // next state
-    double r = RAND_UNIFORM_01;
+    double r = RAND_UNIFORM_01();
     for (j = 0; j < M; j++)
       if (r <= trsum.get(cur_state, j)) break;
     cur_state = j;
@@ -180,16 +265,16 @@ void hmm_generateG_init(int L, const Matrix& trans, const ArrayList<Vector>& mea
   }
 }
 
-void hmm_estimateG_init(const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
+void GaussianHMM::EstimateInit(const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
   DEBUG_ASSERT_MSG((seq.n_cols()==states.length()), "hmm_estimateG_init: sequence and states length must be the same");
   int M = 0;
   for (int i = 0; i < seq.n_cols(); i++)
     if (states[i] > M) M = (int) states[i];
   M++;
-  hmm_estimateG_init(M, seq, states, trans, means, covs);
+  GaussianHMM::EstimateInit(M, seq, states, trans, means, covs);
 }
 
-void hmm_estimateG_init(int numStates, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
+void GaussianHMM::EstimateInit(int numStates, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
   DEBUG_ASSERT_MSG((seq.n_cols()==states.length()), "hmm_estimateD_init: sequence and states length must be the same");
   
   int N = seq.n_rows(); // emission vector length
@@ -260,7 +345,7 @@ void hmm_estimateG_init(int numStates, const Matrix& seq, const Vector& states, 
       la::Scale(1.0/stateSum[i], &cov_[i]);
 }
 
-void forward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, Vector *scales, Matrix* fs) {
+void GaussianHMM::ForwardProcedure(int L, const Matrix& trans, const Matrix& emis_prob, Vector *scales, Matrix* fs) {
   int M = trans.n_rows();
 
   Matrix& fs_ = *fs;
@@ -290,7 +375,7 @@ void forward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, Vect
   }
 }
 
-void backward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, const Vector& scales, Matrix* bs) {
+void GaussianHMM::BackwardProcedure(int L, const Matrix& trans, const Matrix& emis_prob, const Vector& scales, Matrix* bs) {
   int M = trans.n_rows();
 
   Matrix& bs_ = *bs;
@@ -307,7 +392,7 @@ void backward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, con
   }
 }
 
-double hmm_decodeG(int L, const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
+double GaussianHMM::Decode(int L, const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
   int M = trans.n_rows();
 
   DEBUG_ASSERT_MSG((L==pstates->n_cols() && L==fs->n_cols() && L == bs->n_cols() && 
@@ -316,8 +401,8 @@ double hmm_decodeG(int L, const Matrix& trans, const Matrix& emis_prob, Matrix* 
   Matrix& ps_ = *pstates;
   Vector& s_ = *scales;
 
-  forward_procedure(L, trans, emis_prob, &s_, fs);
-  backward_procedure(L, trans, emis_prob, s_, bs);
+  GaussianHMM::ForwardProcedure(L, trans, emis_prob, &s_, fs);
+  GaussianHMM::BackwardProcedure(L, trans, emis_prob, s_, bs);
 
   for (int i = 0; i < M; i++)
     for (int t = 0; t < L; t++)
@@ -330,17 +415,17 @@ double hmm_decodeG(int L, const Matrix& trans, const Matrix& emis_prob, Matrix* 
   return logpseq;
 }
 
-double hmm_decodeG(const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
+double GaussianHMM::Decode(const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
   int L = emis_prob.n_cols();
-  return hmm_decodeG(L, trans, emis_prob, pstates, fs, bs, scales);
+  return GaussianHMM::Decode(L, trans, emis_prob, pstates, fs, bs, scales);
 }
 
-double hmm_viterbiG_init(const Matrix& trans, const Matrix& emis_prob, Vector* states) {
+double GaussianHMM::ViterbiInit(const Matrix& trans, const Matrix& emis_prob, Vector* states) {
   int L = emis_prob.n_cols();
-  return hmm_viterbiG_init(L, trans, emis_prob, states);
+  return GaussianHMM::ViterbiInit(L, trans, emis_prob, states);
 }
 
-double hmm_viterbiG_init(int L, const Matrix& trans, const Matrix& emis_prob, Vector* states) {
+double GaussianHMM::ViterbiInit(int L, const Matrix& trans, const Matrix& emis_prob, Vector* states) {
   int M = trans.n_rows();
   DEBUG_ASSERT_MSG((M==trans.n_cols() && M==emis_prob.n_rows()),"hmm_viterbiG: sizes do not match");
   
@@ -396,7 +481,7 @@ double hmm_viterbiG_init(int L, const Matrix& trans, const Matrix& emis_prob, Ve
   return bestVal;
 }
 
-void hmm_cal_emis_prob(const Matrix& seq, const ArrayList<Vector>& means, const ArrayList<Matrix>& inv_covs, const Vector& det, Matrix* emis_prob) {
+void GaussianHMM::CalculateEmissionProb(const Matrix& seq, const ArrayList<Vector>& means, const ArrayList<Matrix>& inv_covs, const Vector& det, Matrix* emis_prob) {
   int L = seq.n_cols();
   int M = means.size();
   for (int t = 0; t < L; t++) {
@@ -407,7 +492,7 @@ void hmm_cal_emis_prob(const Matrix& seq, const ArrayList<Vector>& means, const 
   }
 }
 
-void init_gauss_param(int M, const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO) {
+void GaussianHMM::InitGaussParameter(int M, const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO) {
   int N = seqs[0].n_rows();
   Matrix& gTR = *guessTR;
   ArrayList<Vector>& gME = *guessME;
@@ -468,7 +553,7 @@ void init_gauss_param(int M, const ArrayList<Matrix>& seqs, Matrix* guessTR, Arr
   //printf("---4---\n");
 }
 
-void hmm_train_viterbiG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
+void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
   ArrayList<Vector>& gME = *guessME;
   ArrayList<Matrix>& gCO = *guessCO;
@@ -516,8 +601,8 @@ void hmm_train_viterbiG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayLis
     for (int idx = 0; idx < seqs.size(); idx++) {
       L = seqs[idx].n_cols();
       Vector states;
-      hmm_cal_emis_prob(seqs[idx], gME, INV_CO, DET, &emis_prob); // first calculate the emission probabilities of the sequence
-      loglik += hmm_viterbiG_init(L, gTR, emis_prob, &states); // get the most probable state sequence
+      GaussianHMM::CalculateEmissionProb(seqs[idx], gME, INV_CO, DET, &emis_prob); // first calculate the emission probabilities of the sequence
+      loglik += GaussianHMM::ViterbiInit(L, gTR, emis_prob, &states); // get the most probable state sequence
       
       // accumulate expected transition & mean & covariance
       for (int t = 0; t < L-1; t++) {
@@ -571,7 +656,7 @@ void hmm_train_viterbiG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayLis
 }
 
 
-void hmm_trainG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
+void GaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
   ArrayList<Vector>& gME = *guessME;
   ArrayList<Matrix>& gCO = *guessCO;
@@ -631,7 +716,7 @@ void hmm_trainG(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector
 	  emis_prob.ref(i, t) = NORMAL_DENSITY(e, gME[i], INV_CO[i], DET[i]);
       }
       
-      loglik += hmm_decodeG(L, gTR, emis_prob, &ps, &fs, &bs, &s); // forward - backward procedure
+      loglik += GaussianHMM::Decode(L, gTR, emis_prob, &ps, &fs, &bs, &s); // forward - backward procedure
       
       // accumulate expected transition & mean & covariance
       for (int t = 0; t < L-1; t++) {

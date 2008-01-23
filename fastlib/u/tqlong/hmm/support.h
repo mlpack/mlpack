@@ -1,38 +1,69 @@
 #ifndef FASTLIB_HMM_SUPPORT_H
 #define FASTLIB_HMM_SUPPORT_H
 
-#define RAND_UNIFORM_01 ((double) rand() / (double)RAND_MAX)
-#define RAND_UNIFORM(a,b) (RAND_UNIFORM_01 * ((b)-(a)) + (a))
-double RAND_NORMAL_01();
-void RAND_NORMAL_01_INIT(int N, Vector* v);
-void RAND_NORMAL_INIT(const Vector& mean, const Matrix& cov, Vector* v);
+#include "fastlib/fastlib.h"
 
-// return x'Ay
-double MyMulExpert(const Vector& x, const Matrix& A, const Vector& y);
+namespace hmm_support {
+  /** Generate uniform random value in [0, 1] */
+  double RAND_UNIFORM_01();
 
-// compute normal PDF
-double NORMAL_DENSITY(const Vector& x, const Vector& mean, const Matrix& inv_cov, double det_cov);
+  /** Generate uniform random value in [a, b] */
+  double RAND_UNIFORM(double a, double b);
 
-void print_matrix(const Matrix& a, const char* msg);
-void print_matrix(TextWriter& writer, const Matrix& a, const char* msg, const char* format = "%f,");
+  /** Generate normal (Gaussian) random value N(0, 1) */
+  double RAND_NORMAL_01();
 
-void print_vector(const Vector& a, const char* msg);
-void print_vector(TextWriter& writer, const Vector& a, const char* msg, const char* format = "%f,");
+  /** Generate normal (Gaussian) random vector N(0, 1) */
+  void RAND_NORMAL_01_INIT(int N, Vector* v);
 
-bool kmeans(const ArrayList<Matrix>& data, int num_clusters, 
-	    ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
-	    int max_iter = 1000, double error_thresh = 1e-3);
+  /** Generate normal (Gaussian) random vector N(mean, cov^2) */
+  void RAND_NORMAL_INIT(const Vector& mean, const Matrix& cov, Vector* v);
 
-bool kmeans(Matrix const &data, int num_clusters, 
-	    ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
-	    int max_iter=1000, double error_thresh=1e-04);
+  /** Calculate quadratic form x'Ay */
+  double MyMulExpert(const Vector& x, const Matrix& A, const Vector& y);
 
-void mat2arrlst(Matrix& a, ArrayList<Vector> * seqs);
+  /** Compute normal density function */
+  double NORMAL_DENSITY(const Vector& x, const Vector& mean, const Matrix& inv_cov, double det_cov);
 
-void mat2arrlstmat(int N, Matrix& a, ArrayList<Matrix> * seqs);
+  /** Print a matrix to stdout */
+  void print_matrix(const Matrix& a, const char* msg);
 
-success_t load_matrix_list(const char* filename, ArrayList<Matrix> *matlst);
-success_t load_vector_list(const char* filename, ArrayList<Vector> *veclst);
+  /** Print a matrix to a TextWriter object */
+  void print_matrix(TextWriter& writer, const Matrix& a, const char* msg, const char* format = "%f,");
+  
+  /** Print a vector to stdout */
+  void print_vector(const Vector& a, const char* msg);
+
+  /** Print a vector to a TextWriter object */
+  void print_vector(TextWriter& writer, const Vector& a, const char* msg, const char* format = "%f,");
+
+  /** Compute the centroids and label the samples by K-means algorithm */
+  bool kmeans(const ArrayList<Matrix>& data, int num_clusters, 
+	      ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
+	      int max_iter = 1000, double error_thresh = 1e-3);
+
+  bool kmeans(Matrix const &data, int num_clusters, 
+	      ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
+	      int max_iter=1000, double error_thresh=1e-04);
+
+  /** Convert a matrix in to an array list of vectors of its column */
+  void mat2arrlst(Matrix& a, ArrayList<Vector> * seqs);
+  
+  /** Convert a matrix in to an array list of matrices of slice of its columns */
+  void mat2arrlstmat(int N, Matrix& a, ArrayList<Matrix> * seqs);
+
+  /**
+   * Load an array list of matrices from file where the matrices
+   * are seperated by a line start with %
+   */
+  success_t load_matrix_list(const char* filename, ArrayList<Matrix> *matlst);
+
+  /** 
+   * Load an array list of vectors from file where the vectors
+   * are seperated by a line start with %
+   */
+  success_t load_vector_list(const char* filename, ArrayList<Vector> *veclst);
+};
 
 #endif
 

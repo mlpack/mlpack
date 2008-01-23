@@ -3,8 +3,20 @@
 #include "mixgaussHMM.h"
 #include "gaussianHMM.h"
 
+using namespace hmm_support;
+
+void MixtureofGaussianHMM::setModel(const Matrix& transmission,
+				    const ArrayList<MixtureGauss>& list_mixture_gauss) {
+  DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
+  DEBUG_ASSERT(transmission.n_rows() == list_mixture_gauss.size());
+  transmission_.Destruct();
+  list_mixture_gauss_.Destruct();
+  transmission_.Copy(transmission);
+  list_mixture_gauss_.Copy(list_mixture_gauss);
+}
+
 void MixtureofGaussianHMM::InitFromFile(const char* profile) {
-  if (!PASSED(load_profileM(profile, &transmission_, &list_mixture_gauss_)))
+  if (!PASSED(MixtureofGaussianHMM::LoadProfile(profile, &transmission_, &list_mixture_gauss_)))
     FATAL("Couldn't open '%s' for reading.", profile);
 }
 
@@ -14,31 +26,74 @@ void MixtureofGaussianHMM::LoadProfile(const char* profile) {
   InitFromFile(profile);
 }
 
-void MixtureofGaussianHMM::SaveProfile(const char* profile) {
-  save_profileM(profile, transmission_, list_mixture_gauss_);
+void MixtureofGaussianHMM::SaveProfile(const char* profile) const {
+  MixtureofGaussianHMM::SaveProfile(profile, transmission_, list_mixture_gauss_);
 }
 
-void MixtureofGaussianHMM::GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) {
-  hmm_generateM_init(L, transmission_, list_mixture_gauss_, data_seq, state_seq);
+void MixtureofGaussianHMM::GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) const {
+  MixtureofGaussianHMM::GenerateInit(L, transmission_, list_mixture_gauss_, data_seq, state_seq);
 }
 
-void forward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, Vector *scales, Matrix* fs);
+void MixtureofGaussianHMM::EstimateModel(int numcluster, const Matrix& data_seq, 
+					 const Vector& state_seq) {
+  transmission_.Destruct();
+  list_mixture_gauss_.Destruct();
+  MixtureofGaussianHMM::EstimateInit(numcluster, data_seq, state_seq, &transmission_, 
+				     &list_mixture_gauss_);
+}
 
-double MixtureofGaussianHMM::ComputeLogLikelihood(const Matrix& data_seq) {
+void MixtureofGaussianHMM::EstimateModel(int numstate, int numcluster, 
+					 const Matrix& data_seq, const Vector& state_seq) {
+  transmission_.Destruct();
+  list_mixture_gauss_.Destruct();
+  MixtureofGaussianHMM::EstimateInit(numstate, numcluster, data_seq, state_seq, 
+				     &transmission_, &list_mixture_gauss_);
+}
+
+void MixtureofGaussianHMM::DecodeOverwrite(const Matrix& data_seq, Matrix* state_prob_mat, 
+					   Matrix* forward_prob_mat, 
+					   Matrix* backward_prob_mat, Vector* scale_vec) const {
+  int M = transmission_.n_rows();
+  int L = data_seq.n_cols();  
+  Matrix emission_prob_mat(M, L);
+  MixtureofGaussianHMM::CalculateEmissionProb(data_seq, list_mixture_gauss_,
+					      &emission_prob_mat);
+  MixtureofGaussianHMM::Decode(transmission_, emission_prob_mat, state_prob_mat, 
+			       forward_prob_mat, backward_prob_mat, scale_vec);
+}
+
+void MixtureofGaussianHMM::DecodeInit(const Matrix& data_seq, Matrix* state_prob_mat, 
+				      Matrix* forward_prob_mat, Matrix* backward_prob_mat, 
+				      Vector* scale_vec) const {
+  int M = transmission_.n_rows();
+  int L = data_seq.n_cols();  
+  state_prob_mat->Init(M, L);
+  forward_prob_mat->Init(M, L);
+  backward_prob_mat->Init(M, L);
+  scale_vec->Init(L);
+  Matrix emission_prob_mat(M, L);
+  MixtureofGaussianHMM::CalculateEmissionProb(data_seq, list_mixture_gauss_, 
+					      &emission_prob_mat);
+  MixtureofGaussianHMM::Decode(transmission_, emission_prob_mat, state_prob_mat, 
+			       forward_prob_mat, backward_prob_mat, scale_vec);  
+}
+
+double MixtureofGaussianHMM::ComputeLogLikelihood(const Matrix& data_seq) const {
   int L = data_seq.n_cols();
   int M = transmission_.n_rows();
   Matrix fs(M, L), emis_prob(M, L);
   Vector sc;
   sc.Init(L);
-  hmm_cal_emis_probM(data_seq, list_mixture_gauss_, &emis_prob);
-  forward_procedure(L, transmission_, emis_prob, &sc, &fs);
+
+  MixtureofGaussianHMM::CalculateEmissionProb(data_seq, list_mixture_gauss_, &emis_prob);
+  MixtureofGaussianHMM::ForwardProcedure(L, transmission_, emis_prob, &sc, &fs);
   double loglik = 0;
   for (int t = 0; t < L; t++)
     loglik += log(sc[t]);
   return loglik;
 }
 
-void MixtureofGaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood) {
+void MixtureofGaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood) const {
   int L = 0;
   for (int i = 0; i < list_data_seq.size(); i++)
     if (list_data_seq[i].n_cols() > L) L = list_data_seq[i].n_cols();
@@ -49,8 +104,8 @@ void MixtureofGaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_da
   list_likelihood->Init();
   for (int i = 0; i < list_data_seq.size(); i++) {
     int L = list_data_seq[i].n_cols();
-    hmm_cal_emis_probM(list_data_seq[i], list_mixture_gauss_, &emis_prob);
-    forward_procedure(L, transmission_, emis_prob, &sc, &fs);
+    MixtureofGaussianHMM::CalculateEmissionProb(list_data_seq[i], list_mixture_gauss_, &emis_prob);
+    MixtureofGaussianHMM::ForwardProcedure(L, transmission_, emis_prob, &sc, &fs);
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
@@ -58,23 +113,23 @@ void MixtureofGaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_da
   }
 }
 
-void MixtureofGaussianHMM::ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) {
+void MixtureofGaussianHMM::ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) const {
   int M = transmission_.n_rows();
   int L = data_seq.n_cols();
   Matrix emis_prob(M, L);
-  hmm_cal_emis_probM(data_seq, list_mixture_gauss_, &emis_prob);
-  hmm_viterbiG_init(transmission_, emis_prob, state_seq);
+  MixtureofGaussianHMM::CalculateEmissionProb(data_seq, list_mixture_gauss_, &emis_prob);
+  MixtureofGaussianHMM::ViterbiInit(transmission_, emis_prob, state_seq);
 }
 
 void MixtureofGaussianHMM::TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
-  hmm_trainM(list_data_seq, &transmission_, &list_mixture_gauss_, max_iteration, tolerance);
+  MixtureofGaussianHMM::Train(list_data_seq, &transmission_, &list_mixture_gauss_, max_iteration, tolerance);
 }
 
 void MixtureofGaussianHMM::TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
-  hmm_train_viterbiM(list_data_seq, &transmission_, &list_mixture_gauss_, max_iteration, tolerance);
+  MixtureofGaussianHMM::TrainViterbi(list_data_seq, &transmission_, &list_mixture_gauss_, max_iteration, tolerance);
 }
 
-success_t load_profileM(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
+success_t MixtureofGaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
   ArrayList<Matrix> matlst;
   if (!PASSED(load_matrix_list(profile, &matlst))) {
     NONFATAL("Couldn't open '%s' for reading.", profile);
@@ -98,7 +153,7 @@ success_t load_profileM(const char* profile, Matrix* trans, ArrayList<MixtureGau
   return SUCCESS_PASS;
 }
 
-success_t save_profileM(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs) {
+success_t MixtureofGaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs) {
   TextWriter w_pro;
   if (!PASSED(w_pro.Open(profile))) {
     NONFATAL("Couldn't open '%s' for writing.", profile);
@@ -121,7 +176,7 @@ success_t save_profileM(const char* profile, const Matrix& trans, const ArrayLis
   return SUCCESS_PASS;
 }
 
-void hmm_generateM_init(int L, const Matrix& trans, const ArrayList<MixtureGauss>& mixs, Matrix* seq, Vector* states){
+void MixtureofGaussianHMM::GenerateInit(int L, const Matrix& trans, const ArrayList<MixtureGauss>& mixs, Matrix* seq, Vector* states){
   DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==mixs.size()), "hmm_generateM_init: matrices sizes do not match");
   Matrix trsum;
   Matrix& seq_ = *seq;
@@ -147,7 +202,7 @@ void hmm_generateM_init(int L, const Matrix& trans, const ArrayList<MixtureGauss
     int j;
 
     // next state
-    double r = RAND_UNIFORM_01;
+    double r = RAND_UNIFORM_01();
     for (j = 0; j < M; j++)
       if (r <= trsum.get(cur_state, j)) break;
     cur_state = j;
@@ -161,7 +216,7 @@ void hmm_generateM_init(int L, const Matrix& trans, const ArrayList<MixtureGauss
   }
 }
 
-void hmm_estimateM_init(int numStates, int numClusters, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
+void MixtureofGaussianHMM::EstimateInit(int numStates, int numClusters, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
   DEBUG_ASSERT_MSG((seq.n_cols()==states.length()), "hmm_estimateM_init: sequence and states length must be the same");
   
   int N = seq.n_rows(); // emission vector length
@@ -225,152 +280,44 @@ void hmm_estimateM_init(int numStates, int numClusters, const Matrix& seq, const
   }
 }
 
-void hmm_estimateM_init(int NumClusters, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
+void MixtureofGaussianHMM::EstimateInit(int NumClusters, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
   DEBUG_ASSERT_MSG((seq.n_cols()==states.length()), "hmm_estimateG_init: sequence and states length must be the same");
   int M = 0;
   for (int i = 0; i < seq.n_cols(); i++)
     if (states[i] > M) M = (int) states[i];
   M++;
-  hmm_estimateM_init(M, NumClusters, seq, states, trans, mixs);
+  MixtureofGaussianHMM::EstimateInit(M, NumClusters, seq, states, trans, mixs);
 }
 
-/*
-void forward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, Vector *scales, Matrix* fs) {
-  int M = trans.n_rows();
-
-  Matrix& fs_ = *fs;
-  Vector& s_ = *scales;
-
-  fs_.SetZero();
-  // NOTE: start state is 0
-  // time t = 0
-  for (int i = 0; i < M; i++) {
-    fs_.ref(i, 0) = trans.get(0, i) * emis_prob.get(i, 0);
-    s_[0] += fs_.get(i, 0);
-  }
-  for (int i = 0; i < M; i++)
-    fs_.ref(i, 0) /= s_[0];
-
-  // time t = 1 -> L-1
-  for (int t = 1; t < L; t++) {
-    for (int j = 0; j < M; j++) {
-      for (int i = 0; i < M; i++)
-	fs_.ref(j, t) += fs_.get(i, t-1)*trans.get(i, j);
-      fs_.ref(j, t) *= emis_prob.get(j, t);
-      s_[t] += fs_.get(j, t);
-    }
-    for (int j = 0; j < M; j++)
-      fs_.ref(j, t) /= s_[t];
-  }
+void MixtureofGaussianHMM::ForwardProcedure(int L, const Matrix& trans, const Matrix& emis_prob, 
+		      Vector *scales, Matrix* fs) {
+  GaussianHMM::ForwardProcedure(L, trans, emis_prob, scales, fs);
 }
 
-void backward_procedure(int L, const Matrix& trans, const Matrix& emis_prob, const Vector& scales, Matrix* bs) {
-  int M = trans.n_rows();
-
-  Matrix& bs_ = *bs;
-  bs_.SetZero();
-  for (int i = 0; i < M; i++)
-    bs_.ref(i, L-1) = 1.0;
-
-  for (int t = L-2; t >= 0; t--) {
-    for (int i = 0; i < M; i++) {
-      for (int j = 0; j < M; j++)
-	bs_.ref(i, t) += trans.get(i, j) * bs_.ref(j, t+1) * emis_prob.get(j, t+1);
-      bs_.ref(i, t) /= scales[t+1];
-    }
-  }
+void MixtureofGaussianHMM::BackwardProcedure(int L, const Matrix& trans, const Matrix& emis_prob, 
+		       const Vector& scales, Matrix* bs) {
+  GaussianHMM::BackwardProcedure(L, trans, emis_prob, scales, bs);
 }
 
-double hmm_decodeG(int L, const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
-  int M = trans.n_rows();
-
-  DEBUG_ASSERT_MSG((L==pstates->n_cols() && L==fs->n_cols() && L == bs->n_cols() && 
-		    M==trans.n_cols() && M==emis_prob.n_rows()),"hmm_decodeG: sizes do not match");
-  
-  Matrix& ps_ = *pstates;
-
-  Vector& s_ = *scales;
-  s_.SetZero();
-
-  forward_procedure(L, trans, emis_prob, &s_, fs);
-  backward_procedure(L, trans, emis_prob, s_, bs);
-
-  for (int i = 0; i < M; i++)
-    for (int t = 0; t < L; t++)
-      ps_.ref(i, t) = fs->get(i,t) * bs->get(i,t);
-
-  double logpseq = 0;
-  for (int t = 0; t < L; t++) 
-    logpseq += log(s_[t]);
-
-  return logpseq;
+double MixtureofGaussianHMM::Decode(const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, 
+	      Matrix* fs, Matrix* bs, Vector* scales) {
+  return GaussianHMM::Decode(trans, emis_prob, pstates, fs, bs, scales);
 }
 
-double hmm_decodeG(const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
-  int L = emis_prob.n_cols();
-  return hmm_decodeM(L, trans, emis_prob, pstates, fs, bs, scales);
+double MixtureofGaussianHMM::Decode(int L, const Matrix& trans, const Matrix& emis_prob, 
+	      Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
+  return GaussianHMM::Decode(L, trans, emis_prob, pstates, fs, bs, scales);
 }
-*/
-/*
-double hmm_viterbiG_init(const Matrix& trans, const Matrix& emis_prob, Vector* states) {
-  int L = emis_prob.n_cols();
-  int M = trans.n_rows();
-  DEBUG_ASSERT_MSG((M==trans.n_cols() && M==emis_prob.n_rows()),"hmm_viterbiG: sizes do not match");
-  
-  Vector& s_ = *states;
-  s_.Init(L);
-  
-  Vector v, vOld;
-  v.Init(M);
-  v.SetAll(-INFINITY);
-  v[0] = 0;
-  vOld.Copy(v);
 
-  Matrix w;
-  w.Init(M, L);
-
-  Matrix logtrans;
-  logtrans.Init(M, M);
-
-  for (int i = 0; i < M; i++)
-    for (int j = 0; j < M; j++) logtrans.ref(i, j) = log(trans.get(i, j));
-
-
-  for (int t = 0; t < L; t++) {
-    for (int j = 0; j < M; j++) {
-      double bestVal = -INFINITY;
-      double bestPtr = -1;      
-      for (int i = 0; i < M; i++) {
-	double val = vOld[i] + logtrans.get(i, j);
-	if (val > bestVal) {
-	  bestVal = val;
-	  bestPtr = i;
-	}
-      }
-      v[j] = bestVal + log(emis_prob.get(j, t));
-      w.ref(j, t) = bestPtr;
-    }
-    vOld.CopyValues(v);
-  }
-
-  double bestVal = -INFINITY;
-  double bestPtr = -1;
-  for (int i = 0; i < M; i++)
-    if (v[i] > bestVal) {
-      bestVal = v[i];
-      bestPtr = i;
-    }
-  
-  s_[L-1] = bestPtr;
-  for (int t = L-2; t >= 0; t--) {
-    s_[t] = w.get((int)s_[t+1], t+1);
-  }
-
-  return bestVal;
+double MixtureofGaussianHMM::ViterbiInit(const Matrix& trans, const Matrix& emis_prob, Vector* states) {
+  return GaussianHMM::ViterbiInit(trans, emis_prob, states);
 }
-*/
 
-void hmm_cal_emis_probM(const Matrix& seq, const ArrayList<MixtureGauss>& mixs, Matrix* emis_prob) {
+double MixtureofGaussianHMM::ViterbiInit(int L, const Matrix& trans, const Matrix& emis_prob, Vector* states) {
+  return GaussianHMM::ViterbiInit(L, trans, emis_prob, states);
+}
+
+void MixtureofGaussianHMM::CalculateEmissionProb(const Matrix& seq, const ArrayList<MixtureGauss>& mixs, Matrix* emis_prob) {
   int M = mixs.size();
   int L = seq.n_cols();
   for (int t = 0; t < L; t++) {
@@ -381,7 +328,7 @@ void hmm_cal_emis_probM(const Matrix& seq, const ArrayList<MixtureGauss>& mixs, 
   }
 }
 
-void hmm_trainM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter, double tol) {
+void MixtureofGaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
   ArrayList<MixtureGauss>& gMG = *guessMG;
   int L = -1;
@@ -443,7 +390,7 @@ void hmm_trainM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Mixtur
 	}
       }
       
-      loglik += hmm_decodeG(L, gTR, emis_prob, &ps, &fs, &bs, &s); // forward - backward procedure
+      loglik += MixtureofGaussianHMM::Decode(L, gTR, emis_prob, &ps, &fs, &bs, &s); // forward - backward procedure
       
       // accumulate expected transition & gaussian mixture parameters
       for (int t = 0; t < L-1; t++) {
@@ -490,7 +437,7 @@ void hmm_trainM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Mixtur
   }
 }
 
-void hmm_train_viterbiM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter, double tol) {
+void MixtureofGaussianHMM::TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
   ArrayList<MixtureGauss>& gMG = *guessMG;
   int L = -1;
@@ -544,7 +491,7 @@ void hmm_train_viterbiM(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayLis
 	}
       }
       
-      loglik += hmm_viterbiG_init(L, gTR, emis_prob, &states); // viterbi procedure
+      loglik += GaussianHMM::ViterbiInit(L, gTR, emis_prob, &states); // viterbi procedure
       
       // accumulate expected transition & gaussian mixture parameters
       for (int t = 0; t < L-1; t++) {

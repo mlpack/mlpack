@@ -5,6 +5,8 @@
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
 
+using namespace hmm_support;
+
 success_t generate_discrete();
 success_t generate_gaussian();
 success_t generate_mixture();

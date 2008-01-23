@@ -5,6 +5,8 @@
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
 
+using namespace hmm_support;
+
 success_t train_baumwelch();
 success_t train_viterbi();
 void usage();
