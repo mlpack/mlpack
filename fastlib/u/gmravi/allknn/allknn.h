@@ -748,8 +748,7 @@ class AllKNNSingleTree
     // find where the element will be in the sorted array. 
     // This is just the binary search
 
-    if(dist==result.distance_sqd[(start+end)/2]){
-      printf("Will return %d \n",(start+end)/2);  
+    if(dist==result.distance_sqd[(start+end)/2]){  
       return (start+end)/2;
     }
 
@@ -1202,7 +1201,7 @@ class AllKNNDualTree{
   
     //this means that there are no elements in the array
     if(start>end){
-      printf("will return 0..\n");
+      
       return 0;
     }
 
@@ -1213,12 +1212,12 @@ class AllKNNDualTree{
 	if(dist>result.distance_sqd[start])
 	  {
 	    /* the element should be added to the back of the array*/
-	    printf("will return %d\n",end+1);
+	    
 	    return end+1; 
 	  }
     
 	else {
-	  printf("return %d\n",start);
+	 
 	  return start;
 	}
       }
@@ -1227,7 +1226,7 @@ class AllKNNDualTree{
     //This is just the binary search
 
     if(dist==result.distance_sqd[(start+end)/2]){
-      printf("Will return %d \n",(start+end)/2);  
+      
       return (start+end)/2;
     }
 
