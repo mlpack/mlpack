@@ -43,7 +43,10 @@ int main(int argc, char *argv[])
       //function. Then it calls the ComputeAllNNNaive 
       AllNNNaive naive;
       naive.Init(q_matrix,r_matrix);
+      fx_timer_start(NULL,"naive_timer");
+    
       naive.ComputeAllNNNaive();
+      fx_timer_stop(NULL,"naive_timer");
       naive.PrintResults();
       
     }
@@ -62,7 +65,10 @@ int main(int argc, char *argv[])
   
       AllNNSingleTree ast;
       ast.Init(q_matrix,r_matrix);     
+      fx_timer_start(NULL,"allnnsingletree_timer");
+
       ast.ComputeAllNNSingleTree();
+      fx_timer_stop(NULL,"allnnsingletree_timer");
       //ast.get_results();
       ast.PrintResults();
     } 
@@ -82,7 +88,10 @@ int main(int argc, char *argv[])
    
       AllKNNSingleTree akst;
       akst.Init(q_matrix,r_matrix,k);
+
+      fx_timer_start(NULL,"allknnsingletree_timer");
       akst.ComputeAllKNNSingleTree();
+      fx_timer_stop(NULL,"allknnsingletree_timer");
       //akst.get_results();
       akst.PrintResults();
     }
@@ -104,7 +113,10 @@ int main(int argc, char *argv[])
       //AllKNNDual tree computations
       AllKNNDualTree akdt;
       akdt.Init(q_matrix,r_matrix,k);
+
+      fx_timer_start(NULL,"allknndualtree_timer");
       akdt.ComputeAllKNNDualTree();
+      fx_timer_stop(NULL,"allknndualtree_timer");
       akdt.PrintResults();
     }
   
