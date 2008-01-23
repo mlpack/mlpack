@@ -1,17 +1,17 @@
 
 librule(
-    name = "range_search",                   # this line can be safely omitted
-    sources = [],                            # files that must be compiled
+    name = "range_search",
+    sources = [],
     headers = ["interval_tree.h",
                "ortho_range_search.h",
-               "range_reader.h"],            # include files part of the 'lib'
-    deplibs = ["fastlib:fastlib_int"]        # dependency
+               "range_reader.h"],
+    deplibs = ["fastlib:fastlib_int"]
     )
 
 binrule(
-    name = "range_search_bin",               # the executable name
-    sources = ["main.cc"],                   # compile multibody.cc
-    headers = [],                            # no extra headers
+    name = "range_search_bin",
+    sources = ["ortho_range_search_main.cc"],
+    headers = [],
     deplibs = [":range_search",
                "fastlib:fastlib_int"]
     )

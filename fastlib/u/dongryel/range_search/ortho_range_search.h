@@ -1,12 +1,18 @@
+/** @file ortho_range_search.h
+ *
+ *  This file contains an implementation of a tree-based and a naive
+ *  algorithm for orthogonal range search.
+ *
+ *  @author Dongryeol Lee (dongryel)
+ */
 #ifndef ORTHO_RANGE_SEARCH_H
 #define ORTHO_RANGE_SEARCH_H
 
-#include <values.h>
-#include <sys/stat.h>
 #include "range_reader.h"
-#include "fastlib/fastlib_int.h"
+#include "fastlib/fastlib.h"
 
-/** Naive orthogonal range search class */
+/** @brief Naive orthogonal range search class 
+ */
 class NaiveOrthoRangeSearch {
   
   FORBID_ACCIDENTAL_COPIES(NaiveOrthoRangeSearch);
@@ -37,14 +43,10 @@ class NaiveOrthoRangeSearch {
   }
 
   /** initialize the computation object */
-  void Init() {
-    
-    const char *fname = fx_param_str(NULL, "data", "data.ds");
+  void Init(Matrix &data) {
 
-    // read in the dataset
-    Dataset dataset_;
-    dataset_.InitFromFile(fname);
-    data_.Own(&(dataset_.matrix()));
+    // copy the incoming data
+    data_.Copy(data);
 
     // read the orthogonal query range text file
     range_.Init(data_.n_rows());
