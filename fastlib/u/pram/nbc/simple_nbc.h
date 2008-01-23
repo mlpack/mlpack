@@ -60,6 +60,8 @@ class SimpleNaiveBayesClassifier {
   // The variable keeping the information about the 
   // number of classes present
   index_t number_of_classes_;
+
+  datanode *nbc_module_;
 		   
  public:
 
@@ -75,15 +77,16 @@ class SimpleNaiveBayesClassifier {
 
   // The function that initializes the classifier as per the input
   // and then trains it by calculating the sample mean and variances
-  void InitTrain(const Matrix& data, int number_of_classes) {
+  void InitTrain(const Matrix& data, datanode* nbc_module) {
 
     ArrayList<double> feature_sum, feature_sum_squared;
     index_t number_examples = data.n_cols();
     index_t number_features = data.n_rows() - 1;
+    nbc_module_ = nbc_module;
 
     // updating the variables, private and local, according to
     // the number of features and classes present in the data
-    number_of_classes_ = number_of_classes;
+    number_of_classes_ = fx_param_int_req(nbc_module_,"classes");
     class_probabilities_.Resize(number_of_classes_);
     means_.Destruct();
     means_.Init(number_features, number_of_classes_ );
@@ -95,8 +98,10 @@ class SimpleNaiveBayesClassifier {
       feature_sum[k] = 0;
       feature_sum_squared[k] = 0;
     }
-    printf("%"LI"d examples with %"LI"d features each\n",
+    NOTIFY("%"LI"d examples with %"LI"d features each\n",
 	   number_examples, number_features);
+    fx_format_param(nbc_module_, "features", "%d", number_features);
+    fx_format_result(nbc_module_, "examples", "%d", number_examples);
 
     // calculating the class probabilities as well as the 
     // sample mean and variance for each of the features
@@ -119,9 +124,8 @@ class SimpleNaiveBayesClassifier {
       for(index_t k = 0; k < number_features; k++) {
 	means_.set(k, i, (feature_sum[k] / number_of_occurrences));
 	variances_.set(k, i, (feature_sum_squared[k] 
-			      - (feature_sum[k] * feature_sum[k] 
-				 / number_of_occurrences)
-			      )/(number_of_occurrences - 1));
+			      - (feature_sum[k] * feature_sum[k] / number_of_occurrences))
+			     /(number_of_occurrences - 1));
 	feature_sum[k] = 0;
 	feature_sum_squared[k] = 0;
       }
@@ -143,12 +147,17 @@ class SimpleNaiveBayesClassifier {
     evaluated_result = (double*)malloc(test_data.n_cols() * sizeof(double));
     tmp_vals.Init(number_of_classes_);
     
-    printf("%"LI"d test cases with %"LI"d features each\n",
+    NOTIFY("%"LI"d test cases with %"LI"d features each\n",
 	   test_data.n_cols(), number_features);
 
+    fx_format_result(nbc_module_,"tests", "%d", test_data.n_cols());
     // Calculating the joint probability for each of the data points
     // for each of the classes
+
+    // looping over every test case
     for (index_t n = 0; n < test_data.n_cols(); n++) {			
+      
+      //looping over every class
       for (index_t i = 0; i < number_of_classes_; i++) {
 	// Using the log values to prevent floating point underflow
 	tmp_vals[i] = log(class_probabilities_[i]);
@@ -164,7 +173,7 @@ class SimpleNaiveBayesClassifier {
       evaluated_result[n] = (double) max_element_index(tmp_vals);      
     }
     // The result is being put in a vector
-    (*results).Copy(evaluated_result, test_data.n_cols());
+    results->Copy(evaluated_result, test_data.n_cols());
     
     return;
   }

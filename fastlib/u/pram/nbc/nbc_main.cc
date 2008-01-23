@@ -10,17 +10,17 @@
  *
  * PARAMETERS TO BE INPUT:
  * 
- * --training_data 
+ * --train 
  * This is the file that contains the training data
  *
- * --number_of_classes
+ * --nbc/classes
  * This is the number of classes present in the training data
  *
- * --testing_data
+ * --test
  * This file contains the data points which the trained
  * classifier would classify
  *
- * --output_filename
+ * --output
  * This file will contain the classes to which the corresponding
  * data points in the testing data 
  * 
@@ -34,11 +34,11 @@ int main(int argc, char* argv[]) {
 
   ////// READING PARAMETERS AND LOADING DATA //////
 
-  const char *training_data_filename = fx_param_str_req(NULL, "training_data");
+  const char *training_data_filename = fx_param_str_req(NULL, "train");
   Matrix training_data;
   data::Load(training_data_filename, &training_data);
 
-  const char *testing_data_filename = fx_param_str_req(NULL, "testing_data");
+  const char *testing_data_filename = fx_param_str_req(NULL, "test");
   Matrix testing_data;
   data::Load(testing_data_filename, &testing_data);
 
@@ -47,31 +47,30 @@ int main(int argc, char* argv[]) {
   ////// Declaration of an object of the class SimpleNaiveBayesClassifier
   SimpleNaiveBayesClassifier nbc;
 
-  struct datanode* nbc_module = fx_submodule(NULL, "simple_nbc", "simple_nbc_module");
-  const int number_of_classes = fx_param_int_req(NULL, "number_of_classes");
-
+  struct datanode* nbc_module = fx_submodule(NULL, "nbc", "nbc");
+  
   ////// Timing the training of the Naive Bayes Classifier //////
-  fx_timer_start(nbc_module, "training_classifier");
+  fx_timer_start(nbc_module, "training");
 
   ////// Calling the function that trains the classifier
-  nbc.InitTrain(training_data, number_of_classes);
+  nbc.InitTrain(training_data, nbc_module);
 
-  fx_timer_stop(nbc_module, "training_classifier");
+  fx_timer_stop(nbc_module, "training");
 
   ////// Timing the testing of the Naive Bayes Classifier //////
   ////// The variable that contains the result of the classification
   Vector results;
 
-  fx_timer_start(nbc_module, "testing_classifier");
+  fx_timer_start(nbc_module, "testing");
 
   ////// Calling the function that classifies the test data
   nbc.Classify(testing_data, &results);
 
-  fx_timer_stop(nbc_module, "testing_classifier");
+  fx_timer_stop(nbc_module, "testing");
 
   ////// OUTPUT RESULTS //////
 
-  const char *output_filename = fx_param_str(NULL, "output_filename", "output.csv");
+  const char *output_filename = fx_param_str(NULL, "output", "output.csv");
 
   FILE *output_file = fopen(output_filename, "w");
 
@@ -81,5 +80,5 @@ int main(int argc, char* argv[]) {
 
   fx_done();
 
-  return 0;
+  return 1;
 }

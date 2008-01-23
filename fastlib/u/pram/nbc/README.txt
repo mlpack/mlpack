@@ -1,10 +1,10 @@
 The files are the following:
 1. nbc_main.cc - this is the main which creates an object of the class SimpleNaiveBayesClassifier, trains it, tests it and outputs the results. The executable formed is called "simple_nbc_main".
  - the parameters taken in by the main are the following:
-   --training_data : the file that contains the training data, the last column being the class of the data point
-   --number_of_classes : the number of classes the data provided has been classified into
-   --testing_data : this file contains the testing data, this still contains its actual labels on the last column, but it is not used.
-   --output_filename : the file into which you want the output to be written into, defaults to "output.csv" (but it does not output in .csv format, it outputs in the "pretty-print" format)
+   --train : the file that contains the training data, the last column being the class of the data point
+   --nbc/classes : the number of classes the data provided has been classified into
+   --test : this file contains the testing data, this still contains its actual labels on the last column, but it is not used.
+   --output : the file into which you want the output to be written into, defaults to "output.csv" (but it does not output in .csv format, it outputs in the "pretty-print" format)
 
 2. simple_nbc.h - this is the file that contains the definition of the class SimpleNaiveBayesClassifier. The rest of the details are present in the file itself.
 
