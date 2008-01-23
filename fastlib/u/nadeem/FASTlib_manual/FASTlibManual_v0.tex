@@ -25,13 +25,114 @@ Atlanta, GA
 \chapter {Introduction}
 
 \section {Overview}
-FASTlib is a library of numerical and machine learning methods written in C and C++. It provides:
+FASTlib is a C/C++ library of state-of-the-art numerical and machine
+learning methods.  Its primary design goals are to be versatile, easy
+to use, and as fast as possible while still avoiding the worst
+problems of developing in a low-level language.  Special emphasis is
+given to scalable computation, including algorithms for generalized
+$N$-body problems \cite{gray_nips2000} and some support for
+parallelization.  Library components are designed to be modular,
+facilitating their use as subcomputations of other algorithms.
+Further, FASTlib aims to permit rapid, distributed development in an
+effort to stay up to date with advances in scientific computation.
+Its features include:
 \begin{enumerate}
-\item templated classes for matrices and vectors and methods for operating over those.
-\item a large number of functions for numerical linear algebra and other mathematical methods.
-\item classes API's for machine learning methods so that these can be integrated into larger data analysis models and system implementations.
-\item a set of tools written in Python to simplify the build setup and for automatic generation of makefiles etc.
-\item a collection of machine learning tools as stand-alone executables that can be used for ``out of box'' analysis without the need to write any code.
+\item A collection of machine learning methods in both executable and
+  linkable form that can be used for ``out of box'' analysis.
+\item High-performance vectors, matrices, trees, and other data
+  structures that can be specialized for a given application via
+  templating.
+\item Many automated tasks for custom storage types, including memory
+  management, serialization, and (very soon) printing to XML.
+\item A framework to manage and record parameters, timers, and other
+  results involved in all levels of modular computation.
+\item An array of debugging and unit testing tools that can be
+  compiled out but are still fast when left in.
+\item Handy Python scripts for compilation, conducting experiments,
+  and analysing resutls.
+\end{enumerate}
+
+\section {Background and Motivation}
+FASTlib was created in response to the presently disorganized state of
+machine learning software, in which the best (if not only) available
+implementations of cutting-edge algorithms are typically Matlab
+scripts or stand-alone C executables.  Neither of these cases is
+optimal in the grand scheme of things.  Matlab may make it easy to
+adapt the method for use in other applications, but it suffers from
+poor efficiency when doing anything other than linear algebra.  On the
+other hand, C code is potentially quick but does not often lend itself
+to incorporation into larger projects.  Significant adjustment of data
+representation may be necessary, especially if one wants to integrate
+C and Matlab.  A further complication is the plethora of solutions
+algorithm developers have devised for common tasks such as file I/O,
+parsing command line parameters, and reporting results.
+Incompatibilities regarding these can lead to a frustrating degree of
+end-user written go-between code.
+
+Several attempts have been made to mitigate these problems, including
+Weka and arguably Matlab itself.  Neither of these, however, are
+generally speedy enough to serve today's premier data mining
+applications.  Our aim with FASTlib is to meet this demand by
+providing high-performance implementations for numerical and machine
+learning methods united by an effective, portable, and consistent API.
+We link to other libraries when appropriate---for instance, we defer to
+BLAS/LAPACK for (dense) linear algebra---but provide wrappers in order
+to standardize and simplify use---finding singular values in LAPACK
+involves fourteen parameters, while we need only two.  For the most
+part, though, FASTlib directly implements methods of interest in an
+effort to maximize their efficiency.
+
+\section {Language and Style}
+Various reasons motivated our choice of C/C++ for FASTlib:
+\begin{itemize}
+\item C/C++ is widely used, well understood, and easily accessible.
+\item C/C++ compilers offer high-quality compile-time optimization.
+\item While we do not make full use of object-oriented programming,
+  encapsulation of code in classes leads to better organization than
+  is common in C alone.
+\item Relatedly, constructs such as templates and inheritance enable a
+  greater extent of code reuse than is possible in C alone.
+\item C++ permits both abstraction from memory management when
+  convenient and fine control over allocation when necessary.
+\item Good tools exist for parallelization in C/C++.
+\end{itemize}
+Unfortunately, improper use of C++ easily results in confusing,
+unmaintainable code.  Accordingly, we have enacted library-wide
+precautions against some of C++'s common pitfalls.  Notably, we stick
+to C's standard library for I/O tasks, we employ only shallow class
+hierarchies, and we make frequent use of compiler-optimized debug
+checks.  This last point is especially important in machine learning
+as it can be difficult to tell whether statistical or typographical
+problems are to blame for an algorithm's lack of convergence.
+
+\section{Development Model}
+Core tenets of FASTlib include openness and extensibility---not just by
+a few privileged developers, but by a community.  Centralized code
+bases are often subject to a host of political dilemmas: Who owns the
+code?  Whose style should be used?  Will contributions be rejected on
+pure stylistic grounds?  Will the project be forked if different
+groups cannot agree on the library's underpinning values?
+
+We hope to stem these questions by developing a staged migration path
+for contributed code.  In sketch, this path is as follows:
+\begin{enumerate}
+\item Experimental code is developed in developers' individual user
+  directories in the Subversion repository.  Here, developers have no
+  chance of hurting others' work if they must make changes to their
+  code's organization, but they may still invite others to review or
+  assist with their project.
+\item Upon reaching a satisfactory degree of functionality, the code
+  is moved into a provisional location where it is tested for proper
+  behavior and revised to meet FASTlib library API standards.
+  Documentation must also be fully fleshed out by this point.
+\item After having been reviewed by sufficiently many members of the
+  development community, the code joins the other algorithms in
+  FASTlib's extended corpus.  The extended corpus is the final
+  destination for most code.
+\item Infrequently, it will be necessary to modify FASTlib's core
+  components.  These are held to the strictest standards of quality;
+  further, they must remain fast and flexible enough to serve
+  everyone's needs.
 \end{enumerate}
 
 \begin {figure*}[h]
@@ -40,54 +141,17 @@ FASTlib is a library of numerical and machine learning methods written in C and 
 \label{fastlib_archi}
 \end{figure*}
 
-Figure \ref{fastlib_archi} shows the overall organization of FASTlib. FASTlib is designed with the goal of being:
-
-
-\begin{itemize}
-\item scalable - the code should be able to handle large-scale machine learning problems and programmers should have the ability to 
-\item flexible - the design is modular so that only the core library is necessary and components can be plugged in as needed.
-\item easy to use - provides simple and consistent interface, a rich set of API, and rich set of compilation and debugging tools to enable ease of use. 
-\item $\cdots$
-\end{itemize}  
-
-The Core FASTlib library is meant to provide the basic tools needed to start hands-on with machine learning. Its design goals are to have a low learning curve, allow distributed development, be as fast as possible, yet avoid most of the worst problems of developing in a low-level language.
-
- 
-\section {Background and Motivation} 
-In the current state of affairs, the best implementation of each algorithm is typically in MATLAB or in a stand-alone C code. Neither situation is optimal in the grand scheme of things. Some things are very difficult to do efficiently in MATLAB whereas they are easy to do in C, whereas others are very difficult to do in C. 
-
-For example, MATLAB programmers often resort to creating quadratically-sized matrices in order to exploit vector computation, using inordinate amounts of memory, whereas in C a nested for loop with small memory usage would work. Additionally, combining MATLAB and C code, although possible, is still not yet a wide practice. 
-
-On the other hand, standalone C can be quite difficult. Using linear algebra in C usually requires writing your own methods, or going through the effort of integrating a large third-party library. Utilities for reading files have to be hand-rolled, and a lot of file readers have various quirks and expectations. With a core library, these processes can be just one line of code. 
-
-A common library can provide the basic necessities for machine learning, while still allowing familiar, efficient programming constructs. FASTlib uses the same linear algebra library, LAPACK/BLAS/ATLAS, that is used by MATLAB, and provides a very easy-to-use wrappers for these (finding singular values in LAPACK requires two function calls of 14 parameters each, whereas our single wrapper needs only two parameters). 
-
-\subsection{Development Model} 
-A core tenet of FASTlib is that it is to be open and extensible not just by a few developers, but by a community. Typically, a centralized code base implies a plethora of politics: Who owns the code? Whose style should be used? Will contributions be rejected on pure stylistic grounds? Will the code have to be forked if different requirements are necessary? 
-
-To avoid a lot of these plaguing issues, a staging model is used. Contributed code follows a simple migration path. We'll describe starting from the beginning of the migration path to the end. We want to support a vast array of algorithms. These are part of FASTlib's extended API and must meet a certain standard of quality, but not nearly as high as we would want the core of FASTlib to be, in order to facilitate contribution.
-
-
-\subsection {Core API} 
-The core API is extremely well organized and thoroughly reviewed, with a consistent programming style, in order to be easy to use, flexible, and very fast. Every person has their own view of how a problem could be solved, and our API should be flexible so that new ideas can be easily built upon. 
-
-The core API has many common data structures, useful frameworks and libraries such as parallelization support, and fundamental numerical and data analysis techniques. The core API is in the form of a linkable library, and not executable files. 
-
-\section {Language and Style} 
-We chose to use a combination of C and C++ that is both fast and flexible. Although C++ can lead to difficult code when used improperly, our code design sticks to simpler features of C++ avoid other pitfalls. 
-
-For examples, in unmanaged languages like C or C++, especially in machine learning, it is entirely possible to write an algorithm that appears to work but is actually incorrect because of no run-time checking. For example, a neural network that computes weight updates for each node (suppose we number this node N), but applies the weight to node N+1, might actually appear to work. FASTlib has a very fast debug mode that will check accesses to data structures, and would immediately catch the neural network error as an out-of-bounds write to an array, saving the developer hours of manually inserting print statements or reading over the code multiple times. 
-
-To be fast, we use C++ templates in inner-loop type computations, but employ simple inheritance in other situations. The inheritance tree shouldn’t too be too tall to navigate, to avoid distributing logic over many layers of hierarchy. 
-
-Finally, C++ is an excellent language for developing parallel code. All the machine's features are there, but C++ templates provide exciting possibilities for simplification: for instance, we use templates to allow painless serialization of data structures. 
-
 \section{Why do I want to use FASTlib?} 
-Maybe there is some machine learning algorithm you'd like to implement, but you want to do this in a fast programming language but have at your fingertips many common tools. With FASTlib, you will alternately be able to apply many machine learning algorithms all from the same package, and integrate them together. 
+Maybe you have an application for an ``out of box'' method, but other
+toolkits are too slow.  Maybe you have an algorithm you'd like to
+implement in a fast language, but you don't want to reinvent the wheel
+regarding data structures and I/O.  Maybe you need to stitch two
+methods together in nontrivial ways to do what you want.  Or maybe you
+want to make your work available to a community that values fast yet
+flexible solutions.  FASTlib is posed to help with all of these
+scenarios, so if any of them sound like you, give us a try!
 
-\section {THOR Component}
-
-\chapter {Using FASTlib and dveloping code using FASTlib}
+\chapter {Using FASTlib and developing code using FASTlib}
 \section{Obtaining and Building FASTlib}
 \subsection {Before Installation}
 Systems that we have tested:
