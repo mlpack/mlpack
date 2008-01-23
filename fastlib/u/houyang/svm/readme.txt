@@ -14,6 +14,6 @@ svm_main --mode=train --train_data=traindata.csv --kernel=linear --c=1 --normali
 svm_main --mode=train_test --train_data=traindata.csv --test_data=testdata.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=1
 svm_main --mode=train_test --train_data=traindata.csv --test_data=testdata.csv --kernel=linear --c=1 --normalize=1
 
-4.testing mode (the model file "svm_model" shoud exist)
+4.testing mode (the model file "svm_model" should exist)
 svm_main --mode=test --test_data=testdata.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=1
 svm_main --mode=test --test_data=testdata.csv --kernel=linear --c=1 --normalize=1

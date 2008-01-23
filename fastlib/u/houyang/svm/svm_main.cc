@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchClassify(&testset, "test_labels");
+	svm.BatchClassify(&testset, "testlabels");
       }
     }
     else if (kernel == "gaussian") {
@@ -232,7 +232,7 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchClassify(&testset, "test_labels"); // TODO:param_req
+	svm.BatchClassify(&testset, "testlabels"); // TODO:param_req
       }
     }
   }
@@ -251,12 +251,12 @@ int main(int argc, char *argv[]) {
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
       svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchClassify(&testset, "svm_model", "test_labels"); // TODO:param_req
+      svm.LoadModelBatchClassify(&testset, "svm_model", "testlabels"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
       svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchClassify(&testset, "svm_model", "test_labels"); // TODO:param_req
+      svm.LoadModelBatchClassify(&testset, "svm_model", "testlabels"); // TODO:param_req
     }
   }
   fx_done();
