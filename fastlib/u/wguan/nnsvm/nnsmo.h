@@ -10,7 +10,7 @@ const double SMO_TOLERANCE = 1.0e-3;
 
 template<typename TKernel>
 class SMO {
-  FORBID_COPY(SMO);
+  FORBID_ACCIDENTAL_COPIES(SMO);
 
  public:
   typedef TKernel Kernel;
@@ -197,8 +197,7 @@ void SMO<TKernel>::Train() {
   // calculate kernel_cache_sign_: [k_ij* y_i* y_j]
   CalcKernels_();
   while ((num_changed > 0 || examine_all)) {
-    DEBUG_GOT_HERE(0);
-
+    VERBOSE_GOT_HERE(0);
     //NNSMO training iterations
 	num_changed = TrainIteration_(examine_all);
 
@@ -247,7 +246,7 @@ bool SMO<TKernel>::TryChange_(index_t j) {
   double error_j = Error_(j);
   double rj = error_j * GetLabelSign_(j);
   
-  DEBUG_GOT_HERE(0);
+  VERBOSE_GOT_HERE(0);
 
   if (!((rj < -SMO_TOLERANCE && alpha_[j] < c_)
       || (rj > SMO_TOLERANCE && alpha_[j] > 0))) {
@@ -268,7 +267,7 @@ bool SMO<TKernel>::TryChange_(index_t j) {
       return true;
     }
 
-  DEBUG_GOT_HERE(0);
+  VERBOSE_GOT_HERE(0);
 
   return false;
 }
@@ -278,7 +277,7 @@ template<typename TKernel>
 double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   //1. check i,j
   if (i == j) {
-    DEBUG_GOT_HERE(0);
+    VERBOSE_GOT_HERE(0);
     return -1;
   }
   int yi = GetLabelSign_(i);
@@ -303,8 +302,8 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   
   if (l >= u - SMO_ZERO) {
     // TODO: might put in some tolerance
-    DEBUG_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
-    DEBUG_GOT_HERE(0);
+    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
+    VERBOSE_GOT_HERE(0);
     return -1;
   }
 
@@ -313,15 +312,15 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
   double eta = +2*kij - kii - kjj;
-  DEBUG_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
+  VERBOSE_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
   
   // calculate alpha_j^{new}
   if (likely(eta < 0)) {
-    DEBUG_MSG(0, "Common case");
+    VERBOSE_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));
   } else {
-    DEBUG_MSG(0, "Uncommon case");
+    VERBOSE_MSG(0, "Uncommon case");
 	return -1;
   }
   alpha_j = FixAlpha_(alpha_j);
@@ -329,7 +328,7 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
 
   // check if there is progress
   if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_)) {
-    DEBUG_GOT_HERE(0);
+    VERBOSE_GOT_HERE(0);
     return -1;
   }
 
@@ -346,7 +345,7 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
 	  delta_f += 2* delta_alpha_j;
   }
 
-  DEBUG_GOT_HERE(0);
+  VERBOSE_GOT_HERE(0);
   return delta_f;
 }
 
@@ -355,7 +354,7 @@ template<typename TKernel>
 bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   //1. check i,j
   if (i == j) {
-    DEBUG_GOT_HERE(0);
+    VERBOSE_GOT_HERE(0);
     return false;
   }
 
@@ -381,8 +380,8 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   if (l >= u - SMO_ZERO) {
     // TODO: might put in some tolerance
-    DEBUG_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
-    DEBUG_GOT_HERE(0);
+    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
+    VERBOSE_GOT_HERE(0);
     return false;
   }
   
@@ -391,15 +390,15 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
   double eta = +2*kij - kii - kjj;
-  DEBUG_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
+  VERBOSE_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
   
   // calculate alpha_j^{new}
   if (likely(eta < 0)) {
-    DEBUG_MSG(0, "Common case");
+    VERBOSE_MSG(0,"Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));
   } else {
-    DEBUG_MSG(0, "Uncommon case");
+    VERBOSE_MSG(0, "Uncommon case");
 	return false;
   }
   alpha_j = FixAlpha_(alpha_j);
@@ -407,7 +406,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   // check if there is progress
   if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_)) {
-    DEBUG_GOT_HERE(0);
+    VERBOSE_GOT_HERE(0);
     return false;
   }
 
@@ -465,7 +464,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 	  error_[k] -= thresh_;
   }
 
-  DEBUG_GOT_HERE(0);
+  VERBOSE_GOT_HERE(0);
   return true;
 }
 
