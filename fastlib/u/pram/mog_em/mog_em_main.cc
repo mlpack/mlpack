@@ -41,23 +41,22 @@ int main(int argc, char* argv[]) {
 
   struct datanode* mog_em_module = fx_submodule(NULL, "mog_em", "mog_em");
   fx_param_int(mog_em_module, "K", 1);
-  fx_param_int(mog_em_module, "D", data_points.n_rows());
+  fx_format_param(mog_em_module, "D", "%d", data_points.n_rows());
 
   ////// Timing the initialization of the mixture model //////
   fx_timer_start(mog_em_module, "model_init");
-
   mog.Init(mog_em_module);
-
   fx_timer_stop(mog_em_module, "model_init");
 
   ////// Computing the parameters of the model using the EM algorithm //////
   ArrayList<double> results;
 
   fx_timer_start(mog_em_module, "EM");
-
-  mog.ExpectationMaximization(data_points, &results);
-
+  mog.ExpectationMaximization(data_points);
   fx_timer_stop(mog_em_module, "EM");
+  
+  mog.Display();
+  mog.OutputResults(&results);
 
   ////// OUTPUT RESULTS //////
 
