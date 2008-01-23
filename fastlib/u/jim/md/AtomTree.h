@@ -66,6 +66,21 @@ struct AtomStat {
     velocity.SetZero();
   }
 
+  void UpdateCentroid(double time_step){
+    int i;
+    for (i = 0; i < 3; i++){
+      centroid[i] = centroid[i] + time_step*velocity[i];
+    }
+  }
+
+  void UpdateCentroid(const AtomStat &left_stat, const AtomStat &right_stat){
+    int i;
+    for (i = 0; i < 3; i++){
+      centroid[i] = (left_stat.centroid[i] * left_stat.mass + 
+		     right_stat.centroid[i] * right_stat.mass) / mass;
+    }
+  }
+
 };
 
 typedef BinarySpaceTree<DHrectBound<2>, Matrix, AtomStat> AtomTree;
