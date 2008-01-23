@@ -26,22 +26,9 @@
 #define SYMMETRIC 0
 #define DEFLATION 1
 
+
 using namespace linalg;
 
-index_t max_rand_i = (index_t) 1e6;
-index_t rand_i = 0;
-double fixed_rand_array[(index_t) 1e6];
-
-
-/*
-double drand48()
-{
-  return 
-  rand_i++;
-  if(rand_i > max_rand_i) {
-    rand_i = 0;
-  }
-*/
 
 /**
  * Class for running FastICA Algorithm
