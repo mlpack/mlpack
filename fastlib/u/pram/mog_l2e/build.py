@@ -2,7 +2,7 @@
 librule(
     name = "mog_l2e",                    # this line can be safely omitted
     sources = ["mog.cc"],                          # files that must be compiled
-    headers = ["mog.h","phi.h","math_functions.h","l2_error.h"],# include files part of the 'lib'
+    headers = ["mog.h","phi.h"],# include files part of the 'lib'
     deplibs = ["fastlib:fastlib"]        # depends on fastlib core
     #tests = ["mog_l2e_tests.cc"]
     )
@@ -10,7 +10,7 @@ librule(
 binrule(
     name = "mog_l2e_main",                  # the executable name
     sources = ["mog_l2e_main.cc"],          # compile main.cc
-    #headers = ["mog_l2e_main.h"], # no extra headers
+    headers = ["optimizers.h"], # no extra headers
     deplibs = [":mog_l2e","fastlib:fastlib"]           #
     )
 
