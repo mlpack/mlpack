@@ -11,7 +11,7 @@
 #include "phi.h"
 #include "math_functions.h"
 
-void MoGEM::ExpectationMaximization(Matrix& data_points, ArrayList<double> *results) {
+void MoGEM::ExpectationMaximization(Matrix& data_points) {
 
   // Declaration of the variables */
   index_t num_points;
@@ -145,8 +145,6 @@ void MoGEM::ExpectationMaximization(Matrix& data_points, ArrayList<double> *resu
   set_omega(omega);
   
   NOTIFY("loglikelihood value of the estimated model: %Lf\n", best_l);
-  Display();
-  OutputResults(results);
   return;
 }
 

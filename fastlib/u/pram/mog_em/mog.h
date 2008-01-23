@@ -217,7 +217,7 @@ class MoGEM {
    * mog.ExpectationMaximization(data, &results);
    * @endcode
    */
-  void ExpectationMaximization(Matrix& data_points, ArrayList<double> *results);
+  void ExpectationMaximization(Matrix& data_points);
 
   /**
    * This function computes the loglikelihood of model.
