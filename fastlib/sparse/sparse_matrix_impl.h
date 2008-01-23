@@ -358,6 +358,18 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
                        Matrix *eigvectors, 
                        Vector *real_eigvalues,
                        Vector *imag_eigvalues) {
+  SparseMatrix pencil_matrix;
+  Eig(pencil_matrix, num_of_eigvalues, eigtype, eigvectors, real_eigvalues,
+      imag_eigvalues);
+}
+
+
+void SparseMatrix::Eig(SparseMatrix &pencil_matrix,
+                       index_t num_of_eigvalues,
+                       std::string eigtype,  
+                       Matrix *eigvectors, 
+                       Vector *real_eigvalues,
+                       Vector *imag_eigvalues) {
   if (unlikely(!matrix_->Filled())) {
     FATAL("You have to call EndLoading before running eigenvalues otherwise "
           "it will fail\n");
@@ -368,9 +380,16 @@ void SparseMatrix::Eig(index_t num_of_eigvalues,
       Teuchos::rcp(new Epetra_MultiVector(*map_, block_size));
   // Fill it with random numbers
   ivec->Random();
+  Teuchos::RCP<Anasazi::BasicEigenproblem<double,MV,OP>  > problem;
   // Setup the eigenproblem, with the matrix A and the initial vectors ivec
-  Teuchos::RCP<Anasazi::BasicEigenproblem<double,MV,OP>  >problem = 
-      Teuchos::rcp(new Anasazi::BasicEigenproblem<double,MV,OP>(matrix_, ivec));
+  if (pencil_matrix.matrix_.get()==NULL) {
+    problem = Teuchos::rcp(
+        new Anasazi::BasicEigenproblem<double,MV,OP>(matrix_, ivec));
+  } else {
+    problem =Teuchos::rcp(
+        new Anasazi::BasicEigenproblem<double,MV,OP>(
+                matrix_, pencil_matrix.matrix_, ivec));
+  }
 
   // The 2-D laplacian is symmetric. Specify this in the eigenproblem.
   if (issymmetric_ == true) {
