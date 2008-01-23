@@ -1,6 +1,6 @@
 
 librule(
-    name = "range_search",
+    name = "ortho_range_search",
     sources = [],
     headers = ["ortho_range_search.h",
                "range_reader.h"],
@@ -11,7 +11,7 @@ binrule(
     name = "ortho_range_search_bin",
     sources = ["ortho_range_search_main.cc"],
     headers = [],
-    deplibs = [":range_search",
+    deplibs = [":ortho_range_search",
                "fastlib:fastlib_int"]
     )
 

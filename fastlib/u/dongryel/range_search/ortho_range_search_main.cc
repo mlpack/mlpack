@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
   // The reference data file is a required parameter.
-  const char* dataset_file_name = fx_param_str_req(NULL, "data");
+  const char* dataset_file_name = fx_param_str(NULL, "data", "data.ds");
 
   // column-oriented dataset matrix.
   Matrix dataset;
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   data::Load(dataset_file_name, &dataset);
 
   // Read the search range from the file.
-  const char *range_data_file_name = fx_param_str_req(NULL, "range");
+  const char *range_data_file_name = fx_param_str(NULL, "range", "range.ds");
   Vector low_coord_limits, high_coord_limits;
   RangeReader::ReadRangeData(&low_coord_limits, &high_coord_limits,
 			     dataset, range_data_file_name);
@@ -33,7 +33,14 @@ int main(int argc, char *argv[]) {
   bool do_naive = fx_param_exists(NULL, "do_naive");
 
   // File name containing the saved tree (if the user desires to do so)
-  const char *load_tree_file_name = fx_param_str(NULL, "load_tree_file", NULL);
+  const char *load_tree_file_name;
+
+  if(fx_param_exists(NULL, "load_tree_file")) {
+    load_tree_file_name = fx_param_str(NULL, "load_tree_file", NULL);
+  }
+  else {
+    load_tree_file_name = NULL;
+  }
 
   // Declare fast tree-based orthogonal range search algorithm object.
   OrthoRangeSearch fast_search;
