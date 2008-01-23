@@ -17,17 +17,12 @@ librule(
     deplibs = ["fastlib:fastlib_int"]
     )
 
-# The linkable library for KDE based on the improved fast Gauss transform
+# The linkable library for KDE based on the original improved fast
+# Gauss transform.
 librule(
-    name = "ifgt_kde",
-    sources = ["ifgt_kde.cc",
-               "ifgt_choose_parameters.cc",
-               "ifgt_choose_truncation_number.cc",
-               "kcenter_clustering.cc"],
-    headers = ["ifgt_kde.h",
-               "ifgt_choose_parameters.h",
-               "ifgt_choose_truncation_number.h",
-               "kcenter_clustering.h"],
+    name = "original_ifgt",
+    sources = [],
+    headers = ["original_ifgt.h"],
     deplibs = ["fastlib:fastlib_int"]
     )
 
@@ -79,13 +74,12 @@ binrule(
                "fastlib:fastlib_int"]
     )
 
-# The test-driver for the IFGT-based KDE
+# The test-driver for the original IFGT-based KDE
 binrule(
-    name = "ifgt_bin",
-    sources = ["ifgt_main.cc"],              
+    name = "original_ifgt_bin",
+    sources = ["original_ifgt_main.cc"],              
     headers = [],                            
-    deplibs = [":ifgt_kde",
-               "u/dongryel/series_expansion:series_expansion",
+    deplibs = [":original_ifgt",
                "fastlib:fastlib_int"]
     )
 
