@@ -144,7 +144,7 @@ void MoGEM::ExpectationMaximization(Matrix& data_points, ArrayList<double> *resu
   }
   set_omega(omega);
   
-  printf("loglikelihood value of the model: %Lf\n", best_l);
+  NOTIFY("loglikelihood value of the estimated model: %Lf\n", best_l);
   Display();
   OutputResults(results);
   return;
