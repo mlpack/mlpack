@@ -11,6 +11,9 @@
 
 #include "fastlib/fastlib.h"
 
+#define max_rand_i 100000
+
+
 /** 
  * Linear algebra utilities.
  *
@@ -21,6 +24,8 @@
  * a matrix, Block matrix construction from a base matrix
  */
 namespace linalg {
+
+
   /**
    * Save the matrix to a file so that rows in the matrix correspond to rows in
    * the file: This just means call data::Save() on the transpose of the matrix
@@ -724,11 +729,6 @@ namespace linalg {
       inv_S_matrix.set(i, i, inv_sqrt_val);
     }
 
-    cov_X.PrintDebug("cov(X')");
-    U.PrintDebug("U");
-    VT.PrintDebug("VT");
-    inv_S_matrix.PrintDebug("S^-.5");
-  
     MulTransBInit(MulTransAInit(&VT, &inv_S_matrix, &temp1),
 		  &U,
 		  whitening_matrix);
@@ -777,7 +777,6 @@ namespace linalg {
    * Overwrites a dimension-N vector to a random vector on the unit sphere in R^N
    */
   void RandVector(Vector &v) {
-  
     index_t d = v.length();
     v.SetZero();
   
