@@ -61,6 +61,12 @@ class MoGEM {
     sigma_.Resize(number_of_gaussians_);
   }
 
+  void Init(datanode *mog_em_module) {
+    
+    index_t num_gauss = fx_param_int_req(mog_em_module, "K");
+    index_t dim = fx_param_int_req(mog_em_module, "D");
+    Init(num_gauss, dim);
+  }
   // The get functions
 
   ArrayList<Vector>& mu() {
