@@ -221,7 +221,7 @@ class FarFieldExpansion {
   /** @brief Computes the required order for converting to the local
    *         expansion inside another region, so that the total error
    *         (truncation error of the far field expansion plus the
-   *         conversion * error) is bounded above by the given user
+   *         conversion error) is bounded above by the given user
    *         bound.
    *
    *  @return the minimum approximation order required for the error,
