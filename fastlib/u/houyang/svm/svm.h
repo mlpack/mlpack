@@ -103,7 +103,7 @@ class SVM {
 
   /* total number of support vectors */
   index_t total_num_sv_;
-  /* array of indicators: is/isn't a support vector */
+  /* bool indicators for the training set: is/isn't a support vector */
   ArrayList<bool> sv_indicator_;
   /* support vector list to store the indices (in the training set) of support vectors */
   ArrayList<index_t> sv_index_;
@@ -194,7 +194,7 @@ void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *mo
   ArrayList<index_t> train_labels_startpos;
   dataset.GetLabels(train_labels_list_, train_labels_index, train_labels_ct, train_labels_startpos);
 
-  /* Train n_classes*(n_classes-1)/2 binary class(labels: 0, 1) models using SMO */
+  /* Train n_classes*(n_classes-1)/2 binary class(labels:-1, 1) models using SMO */
   index_t ct = 0;
   index_t i; index_t j;
   for (i = 0; i < n_classes; i++) {
@@ -206,7 +206,7 @@ void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *mo
       smo.Init(n_classes, param_.c_, param_.b_);
       smo.kernel().Init(fx_submodule(module, "kernel", "kernel"));
 
-      /* Construct dataset consists of two classes i and j (reassign labels 0 and 1) */
+      /* Construct dataset consists of two classes i and j (reassign labels -1 and 1) */
       Dataset dataset_bi;
       dataset_bi.InitBlank();
       dataset_bi.info().Init();
@@ -232,7 +232,7 @@ void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *mo
 	dataset_bi_index[n+train_labels_ct[i]] = train_labels_index[train_labels_startpos[j]+n];
       }
 
-      /* 2-classes SVM-SMO training using SMO */
+      /* 2-classes SVM training using SMO */
       smo.Train(&dataset_bi);
 
       /* Get the trained bi-class model */
@@ -251,7 +251,7 @@ void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *mo
   for (i = 0; i < n_classes; i++) {
     ct = 0;
     for (j = 0; j < train_labels_ct[i]; j++) {
-      if (sv_indicator_[train_labels_startpos[i] + j]) {
+      if (sv_indicator_[ train_labels_index[train_labels_startpos[i] + j] ]) {
 	*sv_index_.AddBack() = train_labels_index[train_labels_startpos[i] + j];
 	total_num_sv_++;
 	ct++;
@@ -278,13 +278,13 @@ void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *mo
     for (j = i+1; j < n_classes; j++) {
       p = sv_list_startpos_[i];
       for (k = 0; k < train_labels_ct[i]; k++) {
-	if (sv_indicator_[train_labels_startpos[i]+k]) {
+	if (sv_indicator_[ train_labels_index[train_labels_startpos[i]+k] ]) {
 	  sv_coef_.set(j-1, p++, models_[ct_model].bi_coef_[k]);
 	}
       }
       p = sv_list_startpos_[j];
       for (k = 0; k < train_labels_ct[j]; k++) {
-	if (sv_indicator_[train_labels_startpos[j]+k]) {
+	if (sv_indicator_[ train_labels_index[train_labels_startpos[j]+k] ]) {
 	  sv_coef_.set(i, p++, models_[ct_model].bi_coef_[k]);
 	}
       }
@@ -498,11 +498,11 @@ int SVM<TKernel>::Classify(const Vector& datum) {
   ct = 0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if(values[ct] > 0.0) {
-	++vote[i];
-      }
-      else {
+      if(values[ct] > 0.0) { // label 1 in bi-classifiers (for j=...)
 	++vote[j];
+      }
+      else {  // label -1 in bi-classifiers (for i=...)
+	++vote[i];
       }
       ct++;
     }
