@@ -2,7 +2,7 @@ The files are the following:
 1. mog_em_main.cc - this is the main which creates an object of the class MoG, initializes it, and then does parametric estimation on the data input using the L2 error criteria. The executable formed is called "mog_l2e_main".
  - parameters input to the main:
   --data : this is the file containing the data on which the mixture of gaussians is supposed to be fit.
-  --number_of_gaussians : the number of gaussians you want to fit on the data
+  --mog_em/K : the number of gaussians you want to fit on the data
 
 2. mog.h - this is the file that contains the definition of the class MoG.
 
@@ -18,7 +18,7 @@ The files are the following:
 
 -> An example run would be:
 fl-build mog_em_main
-./mog_em_main --data=data.arff --number_of_gaussians=3 
+./mog_em_main --data=data.arff --mog_em/K=3 
 
 I have not written any test class for this because I could not think of any good way of doing it
 But if you want to take a look at the program I have written to test individual functions, you can contact me personally :)
