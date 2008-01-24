@@ -149,16 +149,25 @@ parallelization.  In Section~\ref{sec:res}, we demonstrate our
 algorithm's superior performance on two data sets.
 
 \subsection{Bayes' Rule in Classification.}
+%Bayes' rule,
+%\begin{equation}
+%  P(A|B) = \frac{P(B|A)P(A)}{P(B)} ,
+%\end{equation}
+%is a fundamental relationship between prior and posterior
+%probabilities used in a wide variety of statistical methods.  As shown
+%in \cite{rao73}, the optimal classifier on $M$ classes assigns observation
+%$x \in \mathcal{X}$ to the class $C_k$ with the greatest posterior
+%probability $P(C_k|x)$.  Applying Bayes' rule, we assign $x$ to $C_k$
+%if, for all $l \neq k$, $1 \leq l \leq M$, we have
+The optimal classifier on $M$ classes assigns observation $x \in
+\mathcal{X}$ to the class $C_k$, $1 \leq k \leq M$, that has the
+greatest posterior probability $P(C_k|x)$ \cite{rao73}.  Applying
 Bayes' rule,
 \begin{equation}
   P(A|B) = \frac{P(B|A)P(A)}{P(B)} ,
 \end{equation}
-is a fundamental relationship between prior and posterior
-probabilities used in a wide variety of statistical methods.  As shown
-in \cite{rao73}, the optimal classifier on $M$ classes assigns observation
-$x \in \mathcal{X}$ to the class $C_k$ with the greatest posterior
-probability $P(C_k|x)$.  Applying Bayes' rule, we assign $x$ to $C_k$
-if, for all $l \neq k$, $1 \leq l \leq M$, we have
+we assign $x$ to $C_k$ if, for all $l \neq k$, $1 \leq l \leq M$, we
+have
 \begin{equation}\label{eqn:ineq-form}
   f(x|C_k)P(C_k) > f(x|C_l)P(C_l) ,
 \end{equation}
@@ -191,8 +200,8 @@ Gaussian,
 \begin{equation}
   K_h(x,z) = \frac{1}{\left( h \sqrt{2 \pi} \right)^D} \exp \! \left( \frac{- \| x - z \|^2}{2 h^2} \right) ,
 \end{equation}
-though \cite{silverman86} shows that the optimal kernel for density
-estimation is in fact the Epanechnikov kernel,
+though the optimal kernel for density estimation is in fact the
+Epanechnikov kernel \cite{silverman86},
 \begin{equation}
   K_h(x,z) = \max \left\{ \frac{D + 2}{2 V_D(h)} \left( 1 - \frac{\| x - z \|^2}{h^2} \right), 0 \right\} ,
 \end{equation}
@@ -205,11 +214,13 @@ later in this paper, $K_h$ of one argument is understood to work on
 the distance term directly.
 
 Proper selection of bandwidths $h_k$, $1 \leq k \leq M$, is critical
-for accurate classification results.  \cite{silverman86} provides some
-theoretical insights on how a data set's variance and size should
-inform bandwidth choice, but in practice, it is most effective to
-choose bandwidths that minimize cross-validation error or some other
-measure of loss.
+for accurate classification results.  Theory suggests that the optimal
+bandwidth for density estimation is related to a data set's variance
+and the inverse fifth-root of its size \cite{silverman86},
+%Silverman provides some theoretical insights on how a data set's
+%variance and size should inform bandwidth choice \cite{silverman86},
+but in practice, it is most effective to choose bandwidths that
+minimize KDA's cross-validation error or some other measure of loss.
 
 \subsection{Extensions to the Classifier.}
 It is not uncommon to have additional information $y \in \mathcal{Y}$
@@ -462,9 +473,14 @@ new pruning opportunity and the bookkeeping that facilitates it,
 ultimately arriving at the algorithm in Figure~\ref{fig:kda}.
 
 \subsection{Spatial Trees.}
+%Both the algorithm in \cite{nbc-compstat} and the one presented in
+%this paper use $kd$-trees, a kind of spatially-informed tree described
+%in \cite{preparata}, to facilitate the splitting of query and
+%reference sets.
+
 Both the algorithm in \cite{nbc-compstat} and the one presented in
-this paper use $kd$-trees, a kind of spatially-informed tree described
-in \cite{preparata}, to facilitate the splitting of query and
+this paper use $kd$-trees \cite{preparata}, a kind of
+spatially-informed tree, to facilitate the splitting of query and
 reference sets.  We construct two trees, one for $\kdroot{X}$ and one
 for the combined\footnote{Alternately, separate trees could be used
 for each class.} references $\kdroot{Z_1}$ and $\kdroot{Z_2}$, in
@@ -473,8 +489,9 @@ which each interior node represents a partitioning $\kdleft{X} \cup
 need to split data later in computation.  Points stored beneath each
 node are represented by their bounding box and child nodes are formed
 by splitting the widest dimension of the parent's bounding box along
-its midpoint.\footnote{When parallelizing, as discussed later, it is
-beneficial to use median splits for the first few levels of the tree.}
+its midpoint.
+%\footnote{When parallelizing, as discussed later, it is beneficial to
+%use median splits for the first few levels of the tree.}
 Leaves are formed when the number of represented points drops below a
 specified threshold; the algorithm stops partitioning a set once it
 reaches a leaf and computes $\phi_k(X,Z_k)$ exhaustively if both $X$
@@ -487,27 +504,28 @@ location to store sums of computed bounds; \cite{nbc-compstat} makes
 heavy use of this, but the algorithm we propose does not.
 
 The primary motivation for spatial trees is that they tend to tighten
-bounds rapidly as we expand $\phi_h(X,Z_k)$ even though splits are
+bounds rapidly as we expand $\phi_k(X,Z_k)$ even though splits are
 made without any knowledge of interaction between $X$ and $Z_k$.  In
 other words, we would not expect to see gigantic improvement in bounds
 from choosing custom partitions for each expansion, a comparatively
-expensive procedure.  Tree building incurs $O(N \log N)$ computations
-in addition to the rest of the algorithm, but the cost of these
-computations is negligible except for very large data sets and could
-conceivably be precomputed.
+expensive procedure.  Tree building incurs $O(N \log N)$ computations,
+but the cost of this step is small compared to the rest of the
+algorithm except for very large data sets.  It is also possible to
+reuse existing spatial trees on the data, perhaps computed because
+some prior algorithm needed them as well.
 
 Due to the conjoined nature of our reference tree, matching
 simultaneous expansions are made to $\phi_1(X,Z_1)$ and
 $\phi_2(X,Z_2)$.  Bounds and pruning on these computations are
 informed by separate bounding boxes and statistics stored for either
 class; if ever a reference node ceases to contain points from one of
-the classes, the node is removed from consideration in bounding that
+the classes, the node is removed from consideration when bounding that
 class' kernel summation.  We will use $Z_{1,2}$ to denote nodes of the
 combined tree, from which both $Z_1$ and $Z_2$ are available.
 
 Because sets $X$ and $Z_k$ occurring in computation constitute nodes
 from $kd$-trees, we will henceforth refer to components of computation
-$\phi_h(X,Z_k)$ as {\em node-pairs}.
+$\phi_k(X,Z_k)$ as {\em node-pairs}.
 
 \subsection{Expansion Pattern.}
 To guide computation, \cite{nbc-compstat} uses a heuristic favoring
@@ -518,33 +536,36 @@ it does not guarantee that further expansion will provide much
 improvement and is prone to missing node-pairs that are just about to
 make a ``breakthrough.''  A further problem of this kind of expansion
 is its dependence upon priority queues (implemented, for instance, as
-a heap), which impose significant computational overhead and cache
-inefficiency.  Also, because potentially any query node may follow the
-present computation, it is necessary to propagate and later undo all
-computed bounds to all levels of the query tree to which they apply,
-possibly impacting numerical stability.
+a heap), which in our experience impose significant computational
+overhead and cache inefficiency.  Also, because potentially any query
+node may follow the present computation, it is necessary to propagate
+and later undo all computed bounds to all levels of the query tree to
+which they apply, possibly impacting numerical stability.
 
 Our algorithm uses a non-heuristic expansion pattern best thought of
-as a hybrid between depth- and breadth-first expansion.  In short,
-queries are handled depth-first while references are handled
-breadth-first.  This pattern's associated data structure is a queue of
-lists of node-pairs, where each list pertains to just one query node
-$X$ and all references nodes $Z_{1,2}^p$, $1 \leq p \leq P$, at some
-level of the reference tree, with $\bigcup_{p=1}^P Z_{1,2}^p =
-\kdroot{Z_{1,2}}$.  Query splits are performed by replacing a list
-with two equal-length lists pertaining to either child of $X$ and the
-same nodes $Z_{1,2}^p$.  Reference splits replace the list with a
-(typically) double-length list pertaining to the same $X$ and all of
-the children of nodes $Z_{1,2}^p$.  Leaf nodes $Z_{1,2}^p$ are left
+as a hybrid between depth- and breadth-first.  In short, queries are
+handled depth-first while references are handled breadth-first.  This
+pattern's associated data structure is a stack of lists of node-pairs,
+where each list pertains to one query node $X$ and all references
+nodes $Z_{1,2}^p$, $1 \leq p \leq P$, at some level of the reference
+tree, i.e.~with $\bigcup_{p=1}^P Z_{1,2}^p = \kdroot{Z_{1,2}}$.
+Bounds computation over a list consists of accumulating the partial
+bounds found for all node-pairs $\phi_1(X,Z_1^p)$ and
+$\phi_2(X,Z_2^p)$ as per (\ref{eqn:dens-bds}).  Query splits are
+performed by replacing the list at the top of the stack with two
+equal-length lists pertaining to either child of $X$ and the same
+nodes $Z_{1,2}^p$.  Reference splits instead replace the list with an
+at most double-length list pertaining to the same $X$ and all of the
+children of nodes $Z_{1,2}^p$.  Leaf nodes $Z_{1,2}^p$ are left
 unsplit until $X$ becomes a leaf, at which point they are processed
 exhaustively and removed, their contribution added to exact results
 stored for each query point.  In practice, we always split queries and
 references simultaneously if possible.  Processing lists in this
 manner results in a logarithmically deep stack containing lists of
 sizes doubling from $1$ to $O(N)$, thus consuming $O(N)$ space
-overall.  This is more overhead than regular depth-first's $O(\log N)$
-space, but significantly less than breadth-first's $O(N^2)$
-(pessimistically assuming that no prunes occur).
+overall.  This is more overhead than depth-first's $O(\log N)$ space,
+but significantly less than breadth-first's $O(N^2)$ (pessimistically
+assuming that no prunes occur).
 
 Because bounds computed for one set of queries do not influence the
 results of another, the order in which nodes are processed from the
@@ -554,7 +575,7 @@ tightened bounds from all parts of the reference tree, crucial in
 demonstrating queries' classifications.  Further, each list in the new
 expansion pattern offers sufficient information to find the most
 current bounds on $X$'s full kernel summation: the respective sums of
-upper and lower bounds obtained for the listed node-pairs.  This
+upper and lower bounds obtained for the represented node-pairs.  This
 eliminates any need to propagate or undo bound contributions
 throughout the query tree, saving time as well as minimizing the
 effect of limited floating-point precision.
@@ -574,7 +595,7 @@ for distances smaller than bandwidth $h$ and zero otherwise.  Thus, if
 the lower-bound distance between $X$ and $Z_k$ is greater than the
 bandwidth, those points' contribution to the kernel sum will be
 exactly zero.  This makes for a convenient {\em exclusion prune}:
-node-pairs $\phi_{h_{1,2}}(X,Z_{1,2})$ with $\lo{d}(X,Z_{1,2}) \geq
+node-pairs $\phi_{1,2}(X,Z_{1,2})$ with $\lo{d}(X,Z_{1,2}) \geq
 \max\{h_1,h_2\}$ may be removed from the hybrid expansion pattern's
 work lists.
 
@@ -584,8 +605,8 @@ sum of parabolas is a parabola, we may compute the exact kernel
 summation over a set of references $Z_k$ at once if we can prove it is
 entirely within bandwidth $h$ of some query $x$.  By extension, if
 $\hi{d}(X,Z_{1,2}) \leq \min\{h_1,h_2\}$, we may exactly compute
-$\phi_h(X,Z_{1,2})$ in $O(N)$ or find tighter than normal bounds in
-constant time.  The derivation of this prune observes that square
+$\phi_{1,2}(X,Z_{1,2})$ in $O(N)$ or find tighter than normal bounds
+in constant time.  The derivation of this prune observes that square
 distance may be computed
 \begin{equation}
   (x - z) \cdot (x - z) = x \cdot x - 2 x \cdot z + z \cdot z ,
@@ -679,23 +700,23 @@ time necessary to explore the space of bandwidth settings.
 
 Fast bandwidth optimization is arguably the most significant
 contribution of this paper.  Often times, full density estimates are
-more useful than just classifications and fast algorithms developed in
-\cite{nips2000paper, kde-siamdm, kde-nips-dong, kde-uai-dong} are able
-to approximate these with high accuracy.  Regardless, these estimators
-must undergo the same learning as KDA before their results can be
-trusted.  Classification pruning, available in KDA but not regular
-kernel density estimation, can greatly accelerate this preliminary
-phase.  Further, the results of the KDA learning phase may be used to
-restrict computations of full density estimates to just those points
-identified as members of some class of interest.
+more useful than just classifications and existing fast algorithms can
+approximate these with high accuracy \cite{nips2000paper, kde-siamdm,
+kde-nips-dong, kde-uai-dong}.  Regardless, these estimators must
+undergo the same learning as KDA before their results can be trusted.
+Classification pruning, available in KDA but not regular kernel
+density estimation, can greatly accelerate this preliminary phase.
+Further, the results of the KDA learning phase may be used to restrict
+computations of full density estimates to just those points identified
+as members of some class of interest.
 
 \subsection{Leave-one-out Cross-validation.}
 In cross-validation situations, queries $\kdroot{X}$ and references
-$\kdroot{Z}_{1,2}$ represent the same data.  It is handy to represent
-data as set $X_{1,2} \subset \mathcal{X} \times \mathbb{R} \times
-\mathbb{R}$, separable into sets $X_1$ and $X_2$, with elements
-$(x,\pi,w)$: the observation, its data-dependent prior, and its
-reference weight.
+$\kdroot{Z}_{1,2}$ represent the same data.  It is handy to denote
+data as a set $X_{1,2} \subset \mathcal{X} \times \mathbb{R} \times
+\mathbb{R}$, separable into sets $X_1$ and $X_2$ for either class and
+with elements $(x,\pi,w)$: the observation, its data-dependent prior,
+and its reference weight.
 
 Our goal is to find the results for each $(x,\pi,w)$ that would be
 obtained from normal computation if $Z_{1,2} = X_{1,2} \setminus
@@ -723,15 +744,15 @@ where
   \hi{w}(X_k) = \max_{\leftlim{(x,\pi,w) \in X_k}} w .
 \end{equation}
 Clearly, if $X_{1,2}$ contains only points from one class (i.e.~one of
-$X_1$ or $X_2$ is empty), then tighter modifications can be made; this
-is imperative in base-case computations because, otherwise, a
-classification may never be found.
+$X_1$ or $X_2$ is empty), then tighter modifications can be made.
+This is imperative in the base-case because a classification may never
+be found otherwise.
 
 \subsection{Multi-bandwidth Computation.}
 Classification accuracy is nondifferentiable, preventing the use of
 most rapidly converging optimization techniques to find favorable
 bandwidths.  Indeed, it is not uncommon for researchers to test
-bandwidths by hand until accuracy seems to have peaked, a tedious and
+bandwidths by hand until accuracy seems to have peaked, a
 time-consuming process prone to error and wasted effort.  Here, we
 describe an extension to our algorithm that swiftly and systematically
 considers all pairs of two sets of bandwidths.
@@ -764,12 +785,12 @@ tests to perform at each level of recursion.  The classification test
 is, however, very fast in comparison to density estimation.  We should
 then expect to see running time grow roughly linearly for bounded
 values of $I$ and $J$.  The sharing of tree building, distance
-computations, and exclusion pruning should also provide speed-up over
-running the standard algorithm on all of the bandwidth combinations.
+computations, and exclusion pruning also provide speed-up over running
+the standard algorithm on all of the bandwidth combinations.
 
 We may use this multi-bandwidth version of the algorithm in a
 rudimentary but effective means of bandwidth optimization.  Starting
-from theoretic bandwidths found by the methods described in
+from theoretic approximations of the optimal bandwidths
 \cite{silverman86} or some simpler measure such as the average
 $k$th-nearest-neighbor distance\footnote{A fast algorithm for this
 problem is suggested in \cite{nips2000paper}.}, test ten or so
@@ -793,26 +814,29 @@ previously feasible.
 The algorithm we propose is also parallelizable.  There are no
 read/write dependencies between sibling recursions; thus, it is safe
 for these tasks to be handled by different processors.  For $P$
-processors and grain size parameter $G$, we perform median splits in
-the query tree up to depth $\lceil \log PG \rceil$, enqueuing each
-node at that depth in a global work list.  This ensures that there are
-at least $G$ grains per processor and that grains are all about the
-same size.  As they become available, processors are assigned
-computations $\phi(X,\kdroot{Z_{1,2}})$ for successive nodes $X$ in
-the global work list.  The use of multiple grains per processor helps
-alleviate inevitable irregularities in the amount of time it takes to
-classify different regions of the queries; using too many grains,
-however, both incurs communication overhead and reduces the degree to
-which work can be shared between queries.
+processors and grain size parameter $G$, we perform median (rather
+than midpoint) splits in the query tree up to depth $\lceil \log PG
+\rceil$, enqueuing each node at that depth in a global work list.
+This ensures that there are at least $G$ grains per processor and that
+grains are all about the same size.  As they become available,
+processors are assigned computations $\phi_{1,2}(X,\kdroot{Z_{1,2}})$
+for successive nodes $X$ in the global work list.  The use of multiple
+grains per processor helps alleviate inevitable irregularities in the
+amount of time it takes to classify different regions of the queries;
+using too many grains, however, both incurs communication overhead and
+reduces the degree to which work can be shared between queries.
 
 This method of parallelization should be more advantageous than simply
 breaking the queries into chunks before forming trees.  The initial
-query nodes assigned to processors are more compact than they would be
-otherwise, thus encouraging the earlier pruning of much of the
+query nodes assigned to processors are more compact than they would
+otherwise be, thus encouraging the earlier pruning of much of the
 reference set.  This has the effect of restricting the amount of the
 reference tree needed by individual processors, which can be exploited
 by an advanced data distribution system to reduce overall
-communication.
+communication.  We must note, however, that this method presupposes
+the formation of the query tree before parallelization can begin.  At
+present, tree building is performed in serial, but future work aims to
+address whether that step can also be parallelized.
 
 \newpage
 \begin{figure}[t]
@@ -897,13 +921,14 @@ communication.
     \includegraphics[width=3.1in]{quasar_times_narrow.eps}
   \end{center}
   \vspace{-30pt}
-  \caption{\label{fig:quasar-speed}\footnotesize Running times for the
-    na\"{i}ve algorithm, the algorithm from \cite{nbc-compstat}
-    (heap), the improved expansion pattern (hybrid) and pruning
-    opportunities (Epan) separately, and finally the improvements
-    together.  Bandwidths were determined to maximize classification
-    accuracy on the largest set and scaled via the theoretic inverse
-    relationship to $N^{\frac{1}{5}}$.  Only one processor used.}
+  \caption{\label{fig:quasar-speed}\footnotesize Running times of LOO
+    CV on one bandwidth combination for the na\"{i}ve algorithm, the
+    algorithm from \cite{nbc-compstat} (Heap), the improved expansion
+    pattern (Hybrid) and pruning opportunities (Epan) separately, and
+    finally the improvements together.  Bandwidths were determined to
+    maximize classification accuracy on the largest set and scaled via
+    the theoretic inverse relationship to $N^{\frac{1}{5}}$.  Only one
+    processor used.}
 \end{figure}
 
 \section{Results}\label{sec:res}
@@ -924,44 +949,6 @@ expansion pattern and inclusion/exclusion pruning are crucial to
 asymptotic performance.  Our new algorithm empirically scales at about
 $O(N^{1.1})$ and has an extremely low cross-over point with the
 na\"{\i}ve algorithm.
-
-\if 0
-\begin{table}[b]
-  \begin{center}\begin{tabular}{|l|r|r|r|r|r|r|r|r|r|}
-    \hline
-    \hline
-    Size & 1875 & 3750 & 7500 & 15000 \\
-    \hline
-    \hline
-    d \\
-    \hline
-    b \\
-    \hline
-    d \\
-    \hline
-    b \\
-    \hline
-    d \\
-    \hline
-    \hline
-    30000 & 60000 & 120000 & 240000 & 480000 \\
-    \hline
-    \hline
-    d \\
-    \hline
-    b \\
-    \hline
-    d \\
-    \hline
-    b \\
-    \hline
-    d \\
-    \hline
-    \hline
-  \end{tabular}\end{center}\vspace{}
-  \caption{Bob}
-\end{table}
-\fi
 
 Three multi-bandwidth runs with 10 bandwidths per class, successively
 narrowing the tested bandwidth ranges about the optimum, take 334,
@@ -1096,8 +1083,7 @@ minimal degree of parallelization.  Through the use of a more advanced
 data distribution and tree building method, we can expect
 parallelization to yield even more impressive gains.  Also, for
 higher-dimensional problems, techniques such as logistic regression
-may be used in combination with KDA, as in
-\cite{gray-highdimensional}.
+may be used in combination with KDA \cite{gray-highdimensional}.
 
 Already, an earlier rendition of our quasar catalog has been used to
 confirm the cosmic magnification effect predicted by the theory of
@@ -1105,10 +1091,36 @@ relativity \cite{nature05}.  The new, larger catalog that we have
 found will undoubtedly lead to many other impressive discoveries.
 Nonetheless, these are results from one data set in one scientific
 application.  KDA has no special dependence upon quasar
-identification, and in fact, the general methods \cite{nips2000paper}
-behind our fast algorithm have no special dependence on KDA.  Methods
-like those demonstrated in this paper have potential to accelerate a
-wide variety of computations across science and data mining.
+identification, and in fact, the general ideas behind our fast
+algorithm have no special dependence on KDA \cite{nips2000paper}.
+Methods like those demonstrated in this paper have potential to
+accelerate a wide variety of computations across science and data
+mining.
+
+\vspace{40pt}
+\begin{table}[h]
+  \begin{center}\footnotesize\begin{tabular}{|c|r|r|r|r|r|}
+    \hline
+    \hline
+    $N$ & Na\"{\i}ve & Heap & Hp.Ep. & Hybrid & \bf Hy.Ep. \\
+    \hline
+    \hline
+    1875 & .344 & .153 & .113 & .088 & \bf .043 \\
+    3750 & 1.11 & .408 & .250 & .115 & \bf .055 \\
+    7500 & 4.17 & 1.17 & .603 & .283 & \bf .111 \\
+    15k  & 16.3 & 4.75 & 1.74 & .884 & \bf .236 \\
+    30k  & 65.5 & 19.3 & 4.68 & 3.32 & \bf .540 \\
+    60k  &  264 & 78.4 & 17.9 & 13.6 & \bf 1.13 \\
+    120k & 1050 &  199 & 63.2 & 54.5 & \bf 2.38 \\
+    240k & 4200 & 1340 &  230 &  202 & \bf 5.15 \\
+    480k &  --- & 5900 & 2690 &  716 & \bf 10.8 \\
+    \hline
+    \hline
+  \end{tabular}\end{center}
+  \caption{\footnotesize Running times in seconds of LOO CV on one
+    bandwidth combination for the various algorithms.  Plotted on
+    log-log axes in Figure~\ref{fig:quasar-speed}.}
+\end{table}
 
 \newpage
 
