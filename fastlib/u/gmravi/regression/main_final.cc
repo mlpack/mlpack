@@ -78,84 +78,92 @@ int main (int argc, char *argv[]){
     fast_vector.Compute (fx_param_double (NULL, "tau", 0.1));
     fx_timer_stop(NULL,"second_matrix");
 
+
+    //Get the datasets. Note when we evaluated the 
+    //vector B^TWY by building dual trees the order of 
+    //query and reference points changed. Hence we are 
+    //pulling back the data
+
     query_dataset.Alias(fast_vector.get_query_dataset());
     reference_dataset.Alias(fast_vector.get_reference_dataset());  
 
-    //initialize fast_vector_results
+   
     num_query_points=query_dataset.n_cols();
     num_of_dimensions=query_dataset.n_rows();
     
-    fast_vector_results.Init(num_query_points);  
+    //initialize fast_vector_results
+     fast_vector_results.Init(num_query_points);  
     
     for(index_t i=0;i<num_query_points;i++)
       { 
 	fast_vector_results[i].Init(num_of_dimensions+1); 
-      }
- 
+     }
+    
     //get vector estimates from fast vector calculations 
     //and push it into the array fast_vector_results
 
-      for(index_t q=0;q<num_query_points;q++)
-	{
-	  //for each query point
-	  for(index_t d=0;d<num_of_dimensions+1;d++)
-	    {
-	      //along each dimension
-	      fast_vector_results[q][d]=fast_vector.get_vector_estimates(q,d);
-	    }
-	  //  nwr_estimates[q]=fast_kde_results[q][0];
-	}
-      old_from_new_r.Copy(fast_vector.get_old_from_new_r());
-      new_from_old_r.Copy(fast_vector.get_new_from_old_r());
-
-      //Now lets get (B^TWB)^-1. 
-      //This can be done by calling routines related the 
-      //object Regression2 present in the file regression2.h 
-
-      //The dataset retrieved in the previous steps is being used once again
-      
-      FastMatrixCalculation <GaussianKernel> fast_matrix_calc;
-      fast_matrix_calc.Init(query_dataset,reference_dataset);
-      fx_timer_start(NULL,"first_matrix");
-      fast_matrix_calc.Compute(fx_param_double (NULL, "tau", 0.1));
-      fx_timer_stop(NULL,"first_matrix");
-
-      //This will hold the results of regression2 calculations
-      ArrayList<Matrix> fast_matrix_results;
-      
-      //This initializes fast_matrix_results
-      fast_matrix_results.Copy(fast_matrix_calc.get_results());  
-      
-      
-      //We now have to multiply the 
-      //matrix fast_matrix__results with fast_vector_results
-      
-      ArrayList<Vector> temp1;
-      temp1.Init(num_query_points);  //This initializes temp1
-
-     
-      regression_estimates.Init(num_query_points);
-      regression_estimates.SetZero();
-     
-      for(index_t q=0;q<num_query_points;q++){
-
-
-	temp1[q].Init(num_of_dimensions+1);
-	la::MulInit(fast_matrix_results[q],fast_vector_results[q],&temp1[q]);
-       
-	for(index_t i=0;i<num_of_dimensions+1;i++){
-	  
-	  if(i!=0){
-	    
-	    regression_estimates[q]+=temp1[q].get(i)*query_dataset.get(i-1,q);
+    for(index_t q=0;q<num_query_points;q++)
+      {
+	//for each query point
+	for(index_t d=0;d<num_of_dimensions+1;d++)
+	  {
+	    //along each dimension
+	    fast_vector_results[q][d]=fast_vector.get_vector_estimates(q,d);
 	  }
-	  
-	  else{
+      }
+
+    //Pull back the results of fast vector calculations
+    old_from_new_r.Copy(fast_vector.get_old_from_new_r());
+    new_from_old_r.Copy(fast_vector.get_new_from_old_r());
+
+    //Now lets get (B^TWB)^-1. 
+    //This can be done by calling routines related the 
+    //object Regression2 present in the file regression2.h 
+    
+    //The dataset retrieved in the previous steps is being used once again
+    
+    FastMatrixCalculation <GaussianKernel> fast_matrix_calc;
+    fast_matrix_calc.Init(query_dataset,reference_dataset);
+
+    fx_timer_start(NULL,"first_matrix");
+    fast_matrix_calc.Compute(fx_param_double (NULL, "tau", 0.1));
+    fx_timer_stop(NULL,"first_matrix");
+    
+    //This will hold the results of regression_matrix calculations
+    ArrayList<Matrix> fast_matrix_results;
+    
+    //This initializes fast_matrix_results 
+    fast_matrix_results.Copy(fast_matrix_calc.get_results());  
+    
+    
+    //We now have to multiply the 
+    //matrix fast_matrix__results with fast_vector_results
+    
+    ArrayList<Vector> temp1;
+    temp1.Init(num_query_points);  //This initializes temp1
+    
+    regression_estimates.Init(num_query_points);
+    regression_estimates.SetZero();
+    
+    for(index_t q=0;q<num_query_points;q++){
+      
+      
+      temp1[q].Init(num_of_dimensions+1);
+      la::MulInit(fast_matrix_results[q],fast_vector_results[q],&temp1[q]);
+      
+      for(index_t i=0;i<num_of_dimensions+1;i++){
 	
-	    regression_estimates[q]+=temp1[q].get(i)*1;
-	  }
+	if(i!=0){
+	  
+	  regression_estimates[q]+=temp1[q].get(i)*query_dataset.get(i-1,q);
+	}
+	
+	else{
+	  
+	  regression_estimates[q]+=temp1[q].get(i)*1;
 	}
       }
+    }
     
   }
 
@@ -180,25 +188,27 @@ int main (int argc, char *argv[]){
     num_of_dimensions=query_dataset.n_rows();
     
     naive_vector_calc_results.Init(num_query_points); 
-    for(index_t i=0;i<num_query_points;i++)
+
+  
+       for(index_t i=0;i<num_query_points;i++)
       { 
 	naive_vector_calc_results[i].Init(num_of_dimensions+1);
       }
- 
-    //get density estimates from naive vector calculations 
+       
+       //get density estimates from naive vector calculations 
     //and push it into the array naive_vector_calc_results
-
-      for(index_t q=0;q<num_query_points;q++)
-	{
-	  //for each query point
-	  for(index_t d=0;d<num_of_dimensions+1;d++)
-	    {
-	      //along each dimension
-	      naive_vector_calc_results[q][d]=
-		naive_vector_calc.get_vector_estimates(q,d);
-	    }
-	}
-      
+       
+       for(index_t q=0;q<num_query_points;q++)
+	 {
+	   //for each query point
+	   for(index_t d=0;d<num_of_dimensions+1;d++)
+	     {
+	       //along each dimension
+	       naive_vector_calc_results[q][d]=
+		 naive_vector_calc.get_vector_estimates(q,d);
+	     }
+	 }
+       
       
       //Now lets get (B^TWB)^-1.
 
@@ -280,7 +290,7 @@ int main (int argc, char *argv[]){
        fprintf(lp,"number of query points are %d\n",num_query_points);
        fprintf(lp,"total error=%f\n",total_error);
        fprintf(lp,"Max relative error=%f\n",max_relative_error); 
-          
+       fclose(lp);       
   }
   fx_done();
 }
