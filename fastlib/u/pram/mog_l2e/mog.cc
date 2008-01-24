@@ -2,8 +2,8 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file mog.cc
  *
- * Implementation for the loglikelihood function, the EM algorithm,
- * the L2 estimation, computes the K-means for getting an initial point
+ * Implementation for L2 loss function, and 
+ * also some initial points generator
  *
  */
 
