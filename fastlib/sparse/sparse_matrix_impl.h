@@ -241,7 +241,7 @@ void SparseMatrix::LoadRow(index_t row,
 }
 
 void SparseMatrix::EndLoading() {
-  matrix_->FillComplete();
+  matrix_->FillComplete(false);
   matrix_->OptimizeStorage();
 }
 
@@ -615,15 +615,23 @@ inline void Sparsem::Add(const SparseMatrix &a,
                          SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
   DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
-  DEBUG_ASSERT(a.num_of_rows_==result->num_of_rows_);
-  DEBUG_ASSERT(a.num_of_columns_==result->num_of_columns_);
+  result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
+      b.nnz()/b.num_of_rows_);
   result->StartLoadingRows();
   for(index_t r=0; r<a.num_of_rows_; r++) {
     index_t num1, num2;
     double *values1, *values2;
     index_t *indices1, *indices2;
-    a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
-    b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+    if (!a.matrix_->IndicesAreLocal()) {
+      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
+    } else {
+      a.matrix_->ExtractMyRowView(a.my_global_elements_[r], num1, values1, indices1);
+    }
+    if (!b.matrix_->IndicesAreLocal()) {
+      b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+    } else {
+      b.matrix_->ExtractMyRowView(b.my_global_elements_[r], num2, values2, indices2);
+    }
     std::vector<double>  values3;
     std::vector<index_t> indices3;
     index_t i=0;
@@ -637,14 +645,16 @@ inline void Sparsem::Add(const SparseMatrix &a,
           break;
         }
       }
-      if ( likely(i<num1) && indices1[i] == indices2[j]) {
+      if (likely(i<num1) && indices1[i] == indices2[j]) {
         values3.push_back(values1[i] + values2[j]);
         indices3.push_back(indices1[i]);
+        i++;
+        j++;
       } else {
         values3.push_back(values2[j]);
         indices3.push_back(indices2[j]);  
+        j++;
       }
-      j++;
     }
     if (i<num1) {
       values3.insert(values3.end(), values1+i, values1+num1);
@@ -663,20 +673,25 @@ inline void Sparsem::Subtract(const SparseMatrix &a,
                               SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
   DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
-  DEBUG_ASSERT(a.num_of_rows_==result->num_of_rows_);
-  DEBUG_ASSERT(a.num_of_columns_==result->num_of_columns_);
-  // If you try assigning the results to an already initialized matrix
-  // you might get unexpected results. The following assertions
-  // prevent you partially from that 
-  DEBUG_ASSERT(&a != result); 
-  DEBUG_ASSERT(&b != result);
+  result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
+      b.nnz()/b.num_of_rows_);
+ 
   result->StartLoadingRows();
   for(index_t r=0; r<a.num_of_rows_; r++) {
     index_t num1, num2;
     double *values1, *values2;
     index_t *indices1, *indices2;
-    a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
-    b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+    if (!a.matrix_->IndicesAreLocal()) {
+      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
+    } else {
+      a.matrix_->ExtractMyRowView(a.my_global_elements_[r], num1, values1, indices1);
+    }
+    if (!b.matrix_->IndicesAreLocal()) {
+      b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+    } else {
+      b.matrix_->ExtractMyRowView(b.my_global_elements_[r], num2, values2, indices2);
+    }
+ 
     std::vector<double>  values3;
     std::vector<index_t> indices3;
     index_t i=0;
@@ -696,11 +711,13 @@ inline void Sparsem::Subtract(const SparseMatrix &a,
           values3.push_back(diff);
           indices3.push_back(indices1[i]);
         }
+        i++;
+        j++;
       } else {
         values3.push_back(-values2[j]);
-        indices3.push_back(indices2[j]);  
+        indices3.push_back(indices2[j]);
+        j++;
       }
-      j++;
     }
     if (i<num1) {
       values3.insert(values3.end(), values1+i, values1+num1);
@@ -720,14 +737,9 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
                               const SparseMatrix &b,
                               SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
-  DEBUG_ASSERT(a.num_of_rows_ == result->num_of_rows_);
-  DEBUG_ASSERT(b.num_of_columns_ == result->num_of_columns_);
-  // If you try assigning the results to an already initialized matrix
-  // you might get unexpected results. The following assertions
-  // prevent you partially from that 
-  DEBUG_ASSERT(&a != result); 
-  DEBUG_ASSERT(&b != result);
-
+  result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
+      b.nnz()/b.num_of_rows_);
+  result->StartLoadingRows();
   if (b.issymmetric_ == true) {
     for(index_t r1=0; r1<a.num_of_rows_; r1++) {
       std::vector<index_t> indices3;
@@ -735,8 +747,11 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
       index_t num1;
       double  *values1;
       index_t *indices1;
-      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1],
-                                      num1, values1, indices1);
+      if (!a.matrix_->IndicesAreLocal()) {
+        a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1], num1, values1, indices1);
+      } else {
+        a.matrix_->ExtractMyRowView(a.my_global_elements_[r1], num1, values1, indices1);
+      }
       for(index_t r2=0; r2<b.num_of_rows_; r2++) {
         index_t num2;
         double  *values2;
@@ -772,8 +787,11 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
       index_t num1;
       double  *values1;
       index_t *indices1;
-      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1],
-                                      num1, values1, indices1);
+      if (!a.matrix_->IndicesAreLocal()) {
+        a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1], num1, values1, indices1);
+      } else {
+        a.matrix_->ExtractMyRowView(a.my_global_elements_[r1], num1, values1, indices1);
+      }
       double dot_product=0;
       std::vector<index_t> indices3;
       std::vector<double>  values3;
@@ -826,13 +844,9 @@ inline void Sparsem::DotMultiply(const SparseMatrix &a,
                                  const SparseMatrix &b,
                                  SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
-  DEBUG_ASSERT(a.num_of_rows_ == result->num_of_rows_);
-  DEBUG_ASSERT(b.num_of_columns_ == result->num_of_columns_);
-  // If you try assigning the results to an already initialized matrix
-  // you might get unexpected results. The following assertions
-  // prevent you partially from that 
-  DEBUG_ASSERT(&a != result); 
-  DEBUG_ASSERT(&b != result);
+  result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
+      b.nnz()/b.num_of_rows_);
+  result->StartLoadingRows();
   for(index_t r=0; r<a.num_of_rows_; r++) {
     std::vector<index_t> indices3;
     std::vector<double>   values3;
@@ -841,8 +855,16 @@ inline void Sparsem::DotMultiply(const SparseMatrix &a,
     index_t num1, num2;
     double *values1, *values2;
     index_t *indices1, *indices2;
-    a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
-    b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+    if (!a.matrix_->IndicesAreLocal()) {
+      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
+    } else {
+      a.matrix_->ExtractMyRowView(a.my_global_elements_[r], num1, values1, indices1);
+    }
+    if (!b.matrix_->IndicesAreLocal()) {
+      b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+    } else {
+      b.matrix_->ExtractMyRowView(b.my_global_elements_[r], num2, values2, indices2);
+    }
     index_t i=0;
     index_t j=0;
     while (likely(i<num1 && j<num2)) {
