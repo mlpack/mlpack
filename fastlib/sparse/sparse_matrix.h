@@ -148,6 +148,9 @@ class SparseMatrix {
   void LoadRow(index_t row, std::vector<index_t> &columns, std::vector<double>  &values);
   /** When you are done call this it does some optimization in the storage, no
    *  further asignment 
+   *  !!!WARNING !!!!
+   *  if there are empty rows it is going to eliminate them, 
+   *  so it might change the dimensions of the matrix
    */
   void EndLoading();
   /** 
@@ -179,7 +182,7 @@ class SparseMatrix {
   /** 
    * Set Values
    */
-  void   set(index_t r, index_t c, double v);
+  void  set(index_t r, index_t c, double v);
   /** 
    * scales the matrix with a scalar
    */
@@ -213,14 +216,22 @@ class SparseMatrix {
   }
   /** 
    * computes the L1 norm
+   * You must have called EndLoading()
    */
   double L1Norm() {
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You should call EndLoading first...\n");
+    }
     return matrix_->NormOne();
   }
   /** 
    * L infinity norm
+   * You must have called EndLoading()
    */
   double LInfNorm() {
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You should call EndLoading first...\n");
+    }
     return matrix_->NormInf();
   }
   /** 
@@ -230,8 +241,7 @@ class SparseMatrix {
    */
   void InvRowSums(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading before running eigenvalues otherwise "
-          "it will fail\n");
+      FATAL("You have to call EndLoading first...\n");
     }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
@@ -244,8 +254,7 @@ class SparseMatrix {
   */
   void RowSums(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading before running eigenvalues otherwise "
-          "it will fail\n");
+      FATAL("You have to call EndLoading first...\n");
     }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
@@ -261,8 +270,7 @@ class SparseMatrix {
    */
   void InvRowMaxs(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading before running eigenvalues otherwise "
-          "it will fail\n");
+      FATAL("You have to call EndLoading first...\n");
     }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
@@ -274,8 +282,7 @@ class SparseMatrix {
    */
   void InvColSums(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading before running eigenvalues otherwise "
-          "it will fail\n");
+      FATAL("You have to call EndLoading first...\n");
     }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
@@ -286,10 +293,9 @@ class SparseMatrix {
    *  You must have called EndLoading()
    */
   void InvColMaxs(Vector *result) {
-     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading before running eigenvalues otherwise "
-          "it will fail\n");
-    } 
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You have to call EndLoading first...\n");
+    }
     result->Init(num_of_columns_);  
     Epetra_Vector temp(View, *map_, result->ptr());
     matrix_->InvColMaxs(temp);
@@ -315,7 +321,7 @@ class SparseMatrix {
   /** 
    * The number of non zero elements
    */
-  index_t nnz() {
+  index_t nnz() const {
    return matrix_->NumGlobalNonzeros();
   }
   /** Apply a function on every non-zero element, very usefull for kernels
@@ -417,6 +423,8 @@ class SparseMatrix {
  * have been a namespace, but I prefered to make it a class with static
  * member functions so that I can declare it as a friend to the SparseMatrix
  * class
+ *
+ * WARNING !!!! THE RESULT SHOULD NOT BE INITIALIZED !!!
  */
 class Sparsem {
  public:

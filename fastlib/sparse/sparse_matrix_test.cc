@@ -259,7 +259,7 @@ class SparseMatrixTest {
     Vector eigvalues_imag;
     Matrix eigvectors;
     smat_->Eig(1, "LM", &eigvectors, &eigvalues_real, &eigvalues_imag);
-    eigvectors.PrintDebug();
+    // eigvectors.PrintDebug();
     NOTIFY("Test Eigenvector success!!\n");
   }
   
@@ -283,9 +283,13 @@ class SparseMatrixTest {
     SparseMatrix a_minus_b("AminusB.txt");
     SparseMatrix a_times_b("AtimesB.txt");
     SparseMatrix a_dot_times_b("AdottimesB.txt");
+
     SparseMatrix temp;
-    temp.Init(21,21, 3);
     Sparsem::Add(a, b, &temp);
+    temp.EndLoading();  
+    a_plus_b.EndLoading();
+//    printf("%s\n", temp.Print().c_str());
+//    printf("%s\n", a_plus_b.Print().c_str());
     for(index_t i=0; i<20; i++) {
       for(index_t j=0; j<20; j++) {
         TEST_DOUBLE_APPROX(a_plus_b.get(i,j), temp.get(i,j), 0.01);
@@ -293,8 +297,10 @@ class SparseMatrixTest {
     }
     temp.Destruct();
     NOTIFY("Matrix addition sucess!!\n");
-    temp.Init(21,21, 3);
+    
     Sparsem::Subtract(a, b, &temp);
+    temp.EndLoading();
+    a_minus_b.EndLoading();
     for(index_t i=0; i<21; i++) {
       for(index_t j=0; j<21; j++) {
         TEST_DOUBLE_APPROX(a_minus_b.get(i,j), temp.get(i,j), 0.01);
@@ -302,8 +308,12 @@ class SparseMatrixTest {
     }
     temp.Destruct();
     NOTIFY("Matrix subtraction success!!\n");
-    temp.Init(21,21, 3);
+    
     Sparsem::Multiply(a, b, &temp);
+//    printf("%s\n", temp.Print().c_str());
+//    printf("%s\n", a_times_b.Print().c_str());
+    temp.EndLoading();
+    a_times_b.EndLoading();
     for(index_t i=0; i<21; i++) {
       for(index_t j=0; j<21; j++) {
         TEST_DOUBLE_APPROX(a_times_b.get(i,j), temp.get(i,j), 0.01);
@@ -311,8 +321,13 @@ class SparseMatrixTest {
     }
     temp.Destruct();
     NOTIFY("Matrix multiplication success!!\n");
-    temp.Init(21, 21, 3);
+    
     Sparsem::DotMultiply(a, b, &temp);
+//    printf("%s\n", temp.Print().c_str());
+//    printf("%s\n", a_dot_times_b.Print().c_str());
+    temp.EndLoading();
+    a_dot_times_b.EndLoading();
+
     for(index_t i=0; i<a_dot_times_b.num_of_rows(); i++) {
       for(index_t j=0; j<a_dot_times_b.num_of_columns(); j++) {
         TEST_DOUBLE_APPROX(a_dot_times_b.get(i,j), temp.get(i,j), 0.01);
@@ -320,7 +335,7 @@ class SparseMatrixTest {
     }
     temp.Destruct();
     NOTIFY("Matrix dot multiplication success!!\n");
-    temp.Init(21,21, 3);
+    
     Sparsem::Multiply(a, 3.45, &temp);
     for(index_t i=0; i<21; i++) {
       for(index_t j=0; j<21; j++) {
