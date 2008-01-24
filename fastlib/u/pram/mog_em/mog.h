@@ -171,7 +171,7 @@ class MoGEM {
    *
    * @code
    * mog.Display();
-   *
+   * @endcode
    */
   void Display(){
 
