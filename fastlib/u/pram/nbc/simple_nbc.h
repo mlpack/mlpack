@@ -1,5 +1,5 @@
 /**
- * @author pram
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file simple_nbc.h
  *
  * A Naive Bayes Classifier which parametrically 
@@ -37,9 +37,11 @@
  * 
  * @code
  * SimpleNaiveBayesClassifier nbc;
+ * Matrix training_data, testing_data;
+ * datanode *nbc_module = fx_submodule(NULL,"nbc","nbc");
  * Vector results;
  * 
- * nbc.InitTrain(training_data, number_of_classes);
+ * nbc.InitTrain(training_data, nbc_module);
  * nbc.Classify(testing_data, &results);
  * @endcode
  */
@@ -74,9 +76,18 @@ class SimpleNaiveBayesClassifier {
   ~SimpleNaiveBayesClassifier(){
   }
 
-
-  // The function that initializes the classifier as per the input
-  // and then trains it by calculating the sample mean and variances
+ /**
+  * The function that initializes the classifier as per the input
+  * and then trains it by calculating the sample mean and variances
+  *
+  * Example use:
+  * @code
+  * Matrix training_data, testing_data;
+  * datanode *nbc_module = fx_submodule(NULL,"nbc","nbc");
+  * ....
+  * nbc.InitTrain(training_data, nbc_module);
+  * @endcode
+  */
   void InitTrain(const Matrix& data, datanode* nbc_module) {
 
     ArrayList<double> feature_sum, feature_sum_squared;
@@ -132,8 +143,17 @@ class SimpleNaiveBayesClassifier {
     }
   }
 
-  // Given a bunch of data points, this function evaluates the class
-  // of each of those data points, and puts it in the vector 'results'
+  /**
+   * Given a bunch of data points, this function evaluates the class
+   * of each of those data points, and puts it in the vector 'results'
+   *
+   * @code
+   * Matrix test_data; // each column is a test point
+   * Vector results;
+   * ...
+   * nbc.Classify(test_data, &results);
+   * @endcode
+   */
   void Classify(const Matrix& test_data, Vector *results){
 
     // Checking that the number of features in the test data is same

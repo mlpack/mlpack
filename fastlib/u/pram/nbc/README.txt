@@ -1,3 +1,5 @@
+Author : Parikshit Ram (pram@cc.gatech.edu)
+
 The files are the following:
 1. nbc_main.cc - this is the main which creates an object of the class SimpleNaiveBayesClassifier, trains it, tests it and outputs the results. The executable formed is called "simple_nbc_main".
  - the parameters taken in by the main are the following:
