@@ -8,6 +8,7 @@
 
 #include "uselapack.h"
 
+#include "la.h"
 TEST_SUITE_BEGIN(uselapack);
 
 /**
@@ -856,6 +857,44 @@ void TestSolve() {
   TrySolveVector(a, a_vector_4);
 }
 
+/**
+ * Writen by Nick to Test LeastSquareFit
+ */
+void TestLeastSquareFit() {
+  Matrix x;
+  Matrix y;
+  Matrix a;
+  x.Init(3,2);
+  x.set(0, 0, 1.0);
+  x.set(0, 1, -1.0);
+  x.set(1, 0, 0.33);
+  x.set(1, 1, 0.44);
+  x.set(2, 0, 1.5);
+  x.set(2, 1, -0.2);
+  y.Init(3, 2);
+  y.set(0, 0, 1.5);
+  y.set(0, 1, -2.0);
+  y.set(1, 0, -0.3);
+  y.set(1, 1, 4.0);
+  y.set(2, 0, 0.2);
+  y.set(2, 1, -0.4);
+  la::LeastSquareFit(y, x, &a);
+  Matrix true_a;
+  true_a.Init(2, 2);
+  true_a.set(0, 0, 0.0596);
+  true_a.set(0, 1, 1.0162);
+  true_a.set(1, 0, -1.299);
+  true_a.set(1, 1, 4.064);
+  for (index_t i=0; i<2; i++) {
+    for(index_t j=0; j<2; j++) {
+      TEST_DOUBLE_APPROX(true_a.get(i,j), a.get(i, j), 0.001);
+    }
+  }
+  
+    
+
+}
+
 TEST_SUITE_END(uselapack,
     TestVector,
     TestMatrix,
@@ -871,4 +910,5 @@ TEST_SUITE_END(uselapack,
     TestSVD,
     TestCholesky,
     TestSolve,
+    TestLeastSquareFit
     );

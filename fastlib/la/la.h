@@ -71,6 +71,93 @@ namespace la {
       index_t length, const double *va, const double *vb) {
     return math::Pow<1, t_pow>(RawLMetric<t_pow>(length, va, vb));
   }
+  /** Finds the trace of the matrix.
+   *  Trace(A) is the sum of the diagonal elements
+   */
+  inline double Trace(Matrix &a) {
+    // trace has meaning only for square matrices
+    DEBUG_SAME_SIZE(a.n_cols(), a.n_rows());
+    double trace=0;
+    for(index_t i=0; i<a.n_cols(); i++) {
+      trace+=a.get(i, i);
+    }
+    return trace;
+  }
+  
+  /** Solves the classic least square problem y=x*a
+   *  where y  is N x 1
+   *        x  is N x m
+   *        a  is m x 1
+   *  We require that N >= m
+   *  a should not be initialized
+   */
+  inline success_t LeastSquareFit(Vector &y, Matrix &x, Vector *a) {
+    DEBUG_SAME_SIZE(y.length(), x.n_rows());
+    DEBUG_ASSERT(x.n_rows() >= x.n_cols());
+    Vector r_xy_vec;
+    Matrix r_xx_mat;
+    la::MulTransAInit(x, x, &r_xx_mat);
+    la::MulInit(y, x, &r_xy_vec);
+    success_t status = la::SolveInit(r_xx_mat, r_xy_vec, a);
+    if unlikely(status != SUCCESS_PASS) {
+      if (status==SUCCESS_FAIL) {
+        FATAL("Least square fit failed \n");
+      } else {
+        NONFATAL("Least square fit returned a warning \n");
+      }
+    }
+    return status;
+  }
+
+  /** Solves the classic least square problem y=x*a
+   *  where y  is N x r
+   *        x  is N x m
+   *        a  is m x r
+   *  We require that N >= m
+   *  a should not be initialized
+   */
+  inline success_t LeastSquareFit(Matrix &y, Matrix &x, Matrix *a) {
+    DEBUG_SAME_SIZE(y.n_rows(), x.n_rows());
+    DEBUG_ASSERT(x.n_rows() >= x.n_cols());
+    Matrix r_xy_mat;
+    Matrix r_xx_mat;
+    la::MulTransAInit(x, x, &r_xx_mat);
+    la::MulTransAInit(x, y, &r_xy_mat);
+    success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
+    if unlikely(status != SUCCESS_PASS) {
+      if (status==SUCCESS_FAIL) {
+        FATAL("Least square fit failed \n");
+      } else {
+        NONFATAL("Least square fit returned a warning \n");
+      }
+    }
+    return status;
+  }
+  
+  /** Solves the classic least square problem y=x'*a
+   *  where y  is N x r
+   *        x  is m x N
+   *        a  is m x r
+   *  We require that N >= m
+   *  a should not be initialized
+   */
+  inline success_t LeastSquareFitTrans(Matrix &y, Matrix &x, Matrix *a) {
+    DEBUG_SAME_SIZE(y.n_rows(), x.n_cols());
+    DEBUG_ASSERT(x.n_cols() >= x.n_rows());
+    Matrix r_xy_mat;
+    Matrix r_xx_mat;
+    la::MulTransBInit(x, x, &r_xx_mat);
+    la::MulInit(x, y, &r_xy_mat);
+    success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
+    if unlikely(status != SUCCESS_PASS) {
+      if (status==SUCCESS_FAIL) {
+        FATAL("Least square fit failed \n");
+      } else {
+        NONFATAL("Least square fit returned a warning \n");
+      }
+    }
+    return status;
+  }
 };
 
 #endif
