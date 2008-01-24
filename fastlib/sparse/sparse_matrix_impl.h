@@ -254,12 +254,12 @@ void SparseMatrix::MakeSymmetric() {
     index_t global_row = my_global_elements_[i];
     matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
     for(index_t j=0; j<num_of_entries; j++) {
-      if (unlikely(get(i, indices[j])!=values[j])) {
-        set(i, indices[j], values[j]);
+      if (unlikely(get(indices[j], i)!=values[j])) {
+        set(indices[j], i, values[j]);
       }
     }
   }
- issymmetric_ = true;  
+  issymmetric_ = true;  
 }
 
 void SparseMatrix::SetDiagonal(const Vector &vector) { 
