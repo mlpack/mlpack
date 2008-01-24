@@ -9,9 +9,19 @@
 #include "fastlib/fastlib_int.h"
 #include <cmath>
 
-/* Calculates the multivariate Gaussian probability density function */
+/**
+ * Calculates the multivariate Gaussian probability density function
+ * 
+ * Example use:
+ * @code
+ * Vector x, mean;
+ * Matrix cov;
+ * ....
+ * long double f = phi(x, mean, cov);
+ * @endcode
+ */
 
-long double phi( Vector& x , Vector& mean , Matrix& cov) {
+long double phi(Vector& x , Vector& mean , Matrix& cov) {
 	
   long double det, f;
   double exponent;
@@ -45,9 +55,18 @@ long double phi( Vector& x , Vector& mean , Matrix& cov) {
   return f;
 }
 
-/* Calculates the univariate Gaussian probability density function */
+/**
+ * Calculates the univariate Gaussian probability density function
+ * 
+ * Example use:
+ * @code
+ * double x, mean, var;
+ * ....
+ * long double f = phi(x, mean, var);
+ * @endcode
+ */
 
-long double phi( float x, float mean, float var ) {
+long double phi(double x, double mean, double var) {
 
   long double f;
 	
@@ -55,11 +74,20 @@ long double phi( float x, float mean, float var ) {
   return f;
 }
 
-/* Calculates the multivariate Gaussian probability density function 
-   and also the gradients with respect to the mean and the variance
-*/
+/**
+ * Calculates the multivariate Gaussian probability density function 
+ * and also the gradients with respect to the mean and the variance
+ *
+ * Example use:
+ * @code
+ * Vector x, mean, g_mean, g_cov;
+ * ArrayList<Matrix> d_cov; // the dSigma
+ * ....
+ * long double f = phi(x, mean, cov, d_cov, &g_mean, &g_cov);
+ * @endcode
+ */
 
-long double phi( Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, Vector *g_mean, Vector *g_cov){
+long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, Vector *g_mean, Vector *g_cov){
 	
   long double det, f;
   double exponent;
@@ -90,10 +118,10 @@ long double phi( Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov,
   tmp2 = tmp2 / 2;
   f = (tmp1*tmp3*exp(tmp2));
 
-  /* Calculating the g_mean values  which would be a (1 X dim) vector */
+  // Calculating the g_mean values  which would be a (1 X dim) vector
   la::ScaleInit(f,tmp,g_mean);
 	
-  /* Calculating the g_cov values which would be a (1 X (dim*(dim+1)/2)) vector */
+  // Calculating the g_cov values which would be a (1 X (dim*(dim+1)/2)) vector
   double *g_cov_tmp;
   g_cov_tmp = (double*)malloc(d_cov.size()*sizeof(double));
   for(index_t i = 0; i < d_cov.size(); i++){
@@ -108,7 +136,7 @@ long double phi( Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov,
       tmp_d_cov_d_r += inv_d.get(j,j);
     g_cov_tmp[i] = f*tmp_d_cov_d_r/2;
   }
-  (*g_cov).Copy(g_cov_tmp,d_cov.size());
+  g_cov->Copy(g_cov_tmp,d_cov.size());
 	
   return f;
 }
