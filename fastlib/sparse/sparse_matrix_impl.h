@@ -312,7 +312,7 @@ double SparseMatrix::get(index_t r, index_t c) const {
 void SparseMatrix::set(index_t r, index_t c, double v) {
   DEBUG_BOUNDS(r, num_of_rows_);
   DEBUG_BOUNDS(c, num_of_columns_);
-  if (get(r,c)!=0) {
+  if (get(r,c)==0) {
     matrix_->InsertGlobalValues(my_global_elements_[r], 1, &v, &c);
   } else {
     matrix_->ReplaceGlobalValues(my_global_elements_[r], 1, &v, &c); 
