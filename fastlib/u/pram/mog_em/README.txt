@@ -1,3 +1,5 @@
+Author: Parikshit Ram (pram@cc.gatech.edu)
+
 The files are the following:
 1. mog_em_main.cc - this is the main which creates an object of the class MoG, initializes it, and then does parametric estimation on the data input using the L2 error criteria. The executable formed is called "mog_l2e_main".
  - parameters input to the main:
