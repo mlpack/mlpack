@@ -1,5 +1,5 @@
 /**
- * @author pram
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file mog_l2e_main.cc
  * 
  * This program test drives the L2 estimation

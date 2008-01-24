@@ -1,5 +1,5 @@
 /**
- * @author pram
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file phi.h
  *
  * This file computes the Gaussian probability
