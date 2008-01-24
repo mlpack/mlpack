@@ -18,12 +18,28 @@ We hypothesize that DBI communication rates can be increased by recognizing phra
 
 Imagine a person with a progressive muscular disease such as ALS.  As the symptoms worsen, he learns useful signs or phrases of sign (see Figure \ref{fig:brainsign}).When finally locked-in and in need of a DBI, he then imagines or attempts to produce these ASL phrases. BrainSign, our recognition system, then recognizes these signs and displays the appropriate English translation for the user's communication partners.
 
+%\begin{figure}[h]
+%\centering
+%\fbox{\includegraphics[width=120mm]{all_vs.png}}
+%\caption{Three sets of paired signs where we expect the activation in the motor cortex to be sufficiently distinct for recognition. Regions of activation due to sign are shown in white. The brain images were produced by MRIcron, available at http://www.mricro.com/mricron.}
+%\label{fig:brainsign}
+%\end{figure}
+
 \begin{figure}[h]
-\centering
-\fbox{\includegraphics[width=120mm]{all_vs.png}}
-\caption{Three sets of paired signs where we expect the activation in the motor cortex to be sufficiently distinct for recognition. Regions of activation due to sign are shown in white. The brain images were produced by MRIcron, available at http://www.mricro.com/mricron.}
-\label{fig:brainsign}
+\begin{minipage}[t]{120mm}
+\begin{center}
+\includegraphics[width=120mm,clip]{all_vs.png}
+\end{center}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{35mm}
+\begin{center}
+\includegraphics[width=35mm]{BedHotIPain_time_slices.png}
+\end{center}
+\end{minipage}
+\caption{\label{fig:brainsign} At left, three sets of paired signs where we expect the activation in the motor cortex to be sufficiently distinct for recognition. Regions of activation due to sign are shown in white. At right, temporal progression of activation on the motor cortex strip during signing of ``Bed Hot I Pain''. The brain images were produced by MRIcron, available at http://www.mricro.com/mricron.}
 \end{figure}
+
 
 Vocal speech involves muscles (tongue, larynx, etc.) in a relatively small region of the motor cortex, and phonemes are relatively indistinct from each other at the spatial and temporal scales currently detectable with brain imagers; however, signs are constructed using much coarser muscle movements (shoulders, arms, hands, fingers, face, etc.) and often vastly differ from each other: one versus two handed production, static versus sweeping arm postures, fixed versus dynamic finger poses, and symmetry of left and right hand shapes.  Figure \ref{fig:brainsign} demonstrates pairs of signs where we expect both fMRI activation and event related potentials (ERPs) to be distinct.  The simplest version of BrainSign would be an interface where the user attempts to produce one of two signs (e.g. ``cold'' or ``hot'') in response to a question.  The user would simply imagine producing that sign repeatedly until a timeout appropriate for the sensing technology.  A more sophisticated interface would allow the user to select from a series of distinct signs.  Note that the expected ERPs for the six signs in Figure \ref{fig:brainsign} are distinct and represent potential needs for a locked-in user (i.e. I'm ``hot'' or ``cold,'' I want to go to ``bed'' or go to my ``chair,'' I am in ``pain'' or I'm ``OK'').  Such an interface may allow the user to communicate more quickly; however, the fastest interface would be a system that distinguishes entire phrases of sign. Just as with a foreign language phrasebook, signed phrases could be chosen for their utility and their likelihood of being understood (in this case, by the DBI).
 
