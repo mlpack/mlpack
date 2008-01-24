@@ -1,7 +1,13 @@
 
 librule(
     name = "md",                  
-    headers = ["AtomTree.h", "LennardJones.h"],     
+    headers = ["atom_tree.h", "lennard_jones.h"],     
+    deplibs = ["fastlib:fastlib", "fastlib:fastlib_int"]
+    )
+
+librule(
+    name = "md_test",                  
+    headers = ["atom_tree.h", "lennard_jones.h", "test_lennard_jones.h"],     
     deplibs = ["fastlib:fastlib", "fastlib:fastlib_int"]
     )
 
@@ -11,3 +17,8 @@ binrule(
     linkables = [":md"]
     )
 
+binrule(
+    name = "test",
+    sources = ["test_lennard_jones.cc"],  
+    linkables = [":md_test"]
+    )
