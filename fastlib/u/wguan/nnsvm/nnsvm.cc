@@ -30,7 +30,7 @@ int LoadData(Dataset* dataset, String datafilename){
 	fprintf(stderr, "Couldn't open the data file.\n");
 	return 0;
       }
-    }
+    }
     return 1;
 }
 
@@ -58,7 +58,8 @@ int main(int argc, char *argv[]) {
     // Load training data
     Dataset trainset;
     if (LoadData(&trainset, "train_data") == 0) // TODO:param_req
-      return 1;    
+      return 1;
+    
    
     // Begin NNSVM Training 
     datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
