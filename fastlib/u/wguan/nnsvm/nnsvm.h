@@ -224,7 +224,9 @@ void NNSVM<TKernel>::SaveModel(String modelfilename) {
 template<typename TKernel>
 void NNSVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
   /* Init */
+  //fprintf(stderr, "modelfilename= %s\n", modelfilename.c_str()); 
   num_features_ = testset->n_features() - 1;
+
   model_.w_.Init(num_features_);
   /* load model file */
   FILE *fp = fopen(modelfilename, "r");
@@ -259,6 +261,7 @@ void NNSVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
 	fscanf(fp,"%lf",&temp_f); 
 	model_.w_[s] = temp_f;
       }
+      break;
     }
   }
   support_vectors_.Init(num_features_, model_.num_sv_);
@@ -274,6 +277,7 @@ void NNSVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
 	  support_vectors_.set(j, i, temp_f);
 	}
       }
+      break;
     }
   }
   fclose(fp);
