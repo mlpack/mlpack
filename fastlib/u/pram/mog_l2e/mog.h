@@ -109,7 +109,7 @@ class MoGL2E {
   void MakeModel(index_t num_mods, index_t dimension, double* theta) {
     double *temp_mu; 
     Matrix lower_triangle_matrix, upper_triangle_matrix;
-    double sum, s_min = 0.1;
+    double sum, s_min = 0.00001;
 
     Init(num_mods, dimension);
     temp_mu = (double*) malloc (dimension * sizeof(double)) ;
@@ -190,7 +190,7 @@ class MoGL2E {
   void MakeModelWithGradients(index_t num_mods, index_t dimension, double* theta) {
     double *temp_mu;
     Matrix lower_triangle_matrix, upper_triangle_matrix;
-    double sum, s_min = 0.1;
+    double sum, s_min = 0.00001;
 
     Init(num_mods, dimension);
     temp_mu = (double*) malloc (dimension * sizeof(double));
@@ -220,6 +220,9 @@ class MoGL2E {
 	d_omega_temp.set(j,i,-(omega(i)*omega(j)));
       }
       d_omega_temp.set(i,i,omega(i)*(1-omega(i)));
+    }
+    for(index_t i = 0; i < num_mods - 1; i++) {
+      d_omega_temp.set(i, num_mods - 1, -(omega(i)*omega(num_mods - 1)));
     }
     set_d_omega(d_omega_temp);
     			
