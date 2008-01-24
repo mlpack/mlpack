@@ -1,5 +1,5 @@
 /**
- * @author pram
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file nbc_main.cc
  * 
  * This program test drives the Simple Naive Bayes Classifier
