@@ -20,5 +20,3 @@ The files are the following:
 fl-build mog_em_main
 ./mog_em_main --data=data.arff --mog_em/K=3 
 
-I have not written any test class for this because I could not think of any good way of doing it
-But if you want to take a look at the program I have written to test individual functions, you can contact me personally :)
