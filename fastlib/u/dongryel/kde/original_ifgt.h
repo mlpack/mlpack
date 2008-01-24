@@ -98,6 +98,9 @@ class OriginalIFGT {
   /** @brief The weights associated with each reference point. */
   Vector reference_weights_;
 
+  /** @brief The bandwidth */
+  double bandwidth_;
+
   /** @brief Squared bandwidth */
   double bandwidth_sq_;
 
@@ -132,7 +135,11 @@ class OriginalIFGT {
    *         then the kernel sum contribution of the cluster is
    *         presumed to be zero.
    */
-  double ratio_far_;
+  double cut_off_radius_;
+
+  /** @brief The maximum radius of the cluster among those generated.
+   */
+  double max_radius_cluster_;
 
   /** @brief The set of cluster centers
    */
@@ -147,6 +154,11 @@ class OriginalIFGT {
    *         to which the i-th reference point belongs.
    */
   ArrayList<int> cluster_index_;
+
+  /** @brief The i-th position of this vector tells the radius of the i-th
+   *         cluster.
+   */
+  Vector cluster_radii_;
 
   /** @brief The number of reference points owned by each cluster.
    */
@@ -257,7 +269,15 @@ class OriginalIFGT {
     return;
   }
 
-  void ComputeCenters() {
+  /** @brief Compute the center and the radius of each cluster.
+   *
+   *  @return The maximum radius of the cluster among generated clusters.
+   */
+  double ComputeCenters() {
+
+    // set cluster max radius to zero
+    max_radius_cluster_ = 0;
+
     // clear all centers.
     cluster_centers_.SetZero();
     
@@ -277,8 +297,30 @@ class OriginalIFGT {
 			     num_reference_points_in_cluster_[i]);
       }
     }
+    
+    // Now loop through and compute the radius of each cluster.
+    cluster_radii_.SetZero();
+    for(int i = 0; i < num_reference_points_; i++) {
+      Vector reference_pt;
+      reference_set_.MakeColumnVector(i, &reference_pt);
+
+      // the index of the cluster this reference point belongs to.
+      int cluster_id = cluster_index_[i];
+      Vector center;
+      cluster_centers_.MakeColumnVector(cluster_id, &center);
+      cluster_radii_[cluster_id] = 
+	std::max(cluster_radii_[cluster_id], 
+		 sqrt(la::DistanceSqEuclidean(reference_pt, center)));
+      max_radius_cluster_ =
+	std::max(max_radius_cluster_, cluster_radii_[cluster_id]);
+    }
+
+    return max_radius_cluster_;
   }
 
+  /** @brief Perform the farthest point clustering algorithm on the 
+   *         reference set.
+   */
   double KCenterClustering() {
     
     Vector distances_to_center;
@@ -332,7 +374,7 @@ class OriginalIFGT {
       }
     }
     
-    // Find the radius of the k-center algorithm.
+    // Find the maximum radius of the k-center algorithm.
     ind = IndexOfLargestElement(distances_to_center);
     
     double radius = distances_to_center[ind];
@@ -378,6 +420,93 @@ class OriginalIFGT {
     for(index_t q = 0; q < query_set_.n_cols(); q++) {
       densities_[q] /= norm_const;
     }
+  }
+
+  void IFGTChooseTruncationNumber_() {	
+
+    double rx = max_radius_cluster_;
+    double max_diameter_of_the_datasets = sqrt(dim_);
+    
+    double two_h_square = bandwidth_factor_ * bandwidth_factor_;
+    
+    double r = min(max_diameter_of_the_datasets, 
+		   bandwidth_factor_ * sqrt(log(1 / epsilon_)));
+    
+    int p_ul=300;
+    
+    double rx_square = rx * rx;
+    
+    double error = 1;
+    double temp = 1;
+    int p = 0;
+    while((error > epsilon_) & (p <= p_ul)) {
+      p++;
+      double b = min(((rx + sqrt((rx_square) + (2 * p * two_h_square))) / 2),
+		     rx + r);
+      double c = rx - b;
+      temp = temp * (((2 * rx * b) / two_h_square) / p);
+      error = temp * (exp(-(c * c) / two_h_square));			
+    }	
+    
+    // update the truncation order.
+    pterms_ = p;
+
+    // update the cut-off radius
+    cut_off_radius_ = r;
+    
+  }
+  
+  void IFGTChooseParameters_(int max_num_clusters) {
+    
+    // for references and queries that fit in the unit hypercube, this
+    // assumption is true, but for general case it is not.
+    double max_diamater_of_the_datasets = sqrt(dim_);
+    
+    double two_h_square = bandwidth_factor_ * bandwidth_factor_;
+
+    // The cut-off radius.
+    double r = min(max_diamater_of_the_datasets, 
+		   bandwidth_factor_ * sqrt(log(1 / epsilon_)));
+    
+    // Upper limit on the truncation number.
+    int p_ul=200; 
+    
+    num_cluster_desired_ = 1;
+    
+    double complexity_min=1e16;
+    double rx;
+
+    for(int i = 0; i < max_num_clusters; i++){
+     
+      // Compute an estimate of the maximum cluster radius.
+      rx = pow((double) i + 1, -1.0 / (double) dim_);
+      double rx_square = rx * rx;
+
+      // An estimate of the number of neighbors.
+      double n = std::min(i + 1.0, pow(r / rx, (double) dim_));
+      double error = 1;
+      double temp = 1;
+      int p = 0;
+
+      // Choose the truncation order.
+      while((error > epsilon_) & (p <= p_ul)) {
+	p++;
+	double b = 
+	  std::min(((rx + sqrt((rx_square) + (2 * p * two_h_square))) / 2.0),
+		   rx + r);
+	double c = rx - b;
+	temp = temp * (((2 * rx * b) / two_h_square) / p);
+	error = temp * (exp(-(c * c) / two_h_square));
+      }
+      double complexity = (i + 1) + log((double) i + 1) + 
+	((1 + n) * math::BinomialCoefficient(p - 1 + dim_, dim_));
+	
+      if(complexity < complexity_min) {
+	complexity_min = complexity;
+	num_cluster_desired_ = i + 1;
+	pterms_ = p;
+      }
+    }    
   }
 
  public:
@@ -431,36 +560,56 @@ class OriginalIFGT {
     densities_.Init(query_set_.n_cols());
     
     // A "hack" such that the code uses the proper Gaussian kernel.
-    bandwidth_sq_ = fx_param_double_req(module_, "bandwidth");
-    bandwidth_sq_ *= bandwidth_sq_;
-    bandwidth_factor_ = sqrt(2) * fx_param_double_req(module_, "bandwidth");
+    bandwidth_ = fx_param_double_req(module_, "bandwidth");
+    bandwidth_sq_ = bandwidth_ * bandwidth_;
+    bandwidth_factor_ = sqrt(2) * bandwidth_;
     
-    pterms_ = fx_param_int_req(module_, "order");
-    num_cluster_desired_ = fx_param_int_req(module_, "num_cluster");
-    ratio_far_ = fx_param_int_req(module_, "cut_off_ratio");
+    // Read in the desired absolute error accuracy.
+    epsilon_ = fx_param_double(module_, "absolute_error", 0.1);
+
+    // This is the upper limit on the number of clusters.
+    int cluster_limit = (int) ceilf(20.0 * sqrt(dim_) / sqrt(bandwidth_));
     
+    VERBOSE_MSG("Automatic parameter selection phase...\n");
+
+    fx_timer_start(module_, "ifgt_kde_preprocess");
+    IFGTChooseParameters_(cluster_limit);
+    VERBOSE_MSG("Chose %d clusters...\n", num_cluster_desired_);
+    VERBOSE_MSG("Tentatively chose %d truncation order...\n", pterms_);
+
+    // Allocate spaces for storing coefficients and clustering information.
+    cluster_centers_.Init(dim_, num_cluster_desired_);
+    index_during_clustering_.Init(num_cluster_desired_);
+    cluster_index_.Init(num_reference_points_);
+    cluster_radii_.Init(num_cluster_desired_);
+    num_reference_points_in_cluster_.Init(num_cluster_desired_);    
+    
+    VERBOSE_MSG("Now clustering...\n");
+
+    // Divide the source space into num_cluster_desired_ parts using
+    // K-center algorithm
+    max_radius_cluster_ = KCenterClustering();
+    
+    // computer the center of the sources
+    ComputeCenters();
+
+    // Readjust the truncation order based on the actual clustering result.
+    IFGTChooseTruncationNumber_();
     // pd = C_dim^(dim+pterms-1)
     total_num_coeffs_ = 
       (int) math::BinomialCoefficient(pterms_ + dim_ - 1, dim_);
     weighted_coeffs_.Init(total_num_coeffs_, num_cluster_desired_);
     unweighted_coeffs_.Init(total_num_coeffs_, num_cluster_desired_);
-    cluster_centers_.Init(dim_, num_cluster_desired_);
-    index_during_clustering_.Init(num_cluster_desired_);
-    cluster_index_.Init(num_reference_points_);
-    num_reference_points_in_cluster_.Init(num_cluster_desired_);
 
-    printf("Precomputing and clustering for the original IFGT...\n");
+    printf("Maximum radius generated in the cluster: %g...\n",
+	   max_radius_cluster_);
+    printf("Truncation order updated to %d after clustering...\n", 
+	   pterms_);
 
-    // Divide the source space into num_cluster_desired_ parts using
-    // K-center algorithm
-    fx_timer_start(module_, "ifgt_kde_preprocess");
-    KCenterClustering();
-    
-    // computer the center of the sources
-    ComputeCenters();
-    
-    // Compute coefficients.
+    // Compute coefficients.    
+    VERBOSE_MSG("Now computing Taylor coefficients...\n");
     TaylorExpansion();
+    VERBOSE_MSG("Taylor coefficient computation finished...\n");
     fx_timer_stop(module_, "ifgt_kde_preprocess");
     printf("Preprocessing step finished...\n");
   }
@@ -503,7 +652,10 @@ class OriginalIFGT {
 	
 	// If the ratio is greater than the cut-off, this cluster's
 	// contribution is ignored.
-	if (sum2 > ratio_far_) continue;
+	if (sum2 > (cut_off_radius_ + cluster_radii_[kn]) /
+	    (bandwidth_factor_ * bandwidth_factor_)) {
+	  continue;
+	}
 	
 	for(int i = 0; i < dim_; i++) {
 	  heads[i] = 0;
