@@ -3,7 +3,7 @@ The files are the following:
  - parameters input to the main:
   --data : this is the file containing the data on which the mixture of gaussians is supposed to be fit.
   --mog_l2e/K : the number of gaussians you want to fit on the data
-  --opt/method : this lets the user choose which optimizer he/she wants to use. It is 'NelderMead' for the polytope method, otherwise it defaults to the quasi newton method.
+  --opt/method : this lets the user choose which optimizer he/she wants to use. It is 'NelderMead' for the polytope method, otherwise it defaults to 'QuasiNewton' for the quasi newton method.
   --output : the file into which the estimated parameters of the gaussian mixture are written into, defaults to "output.csv" (the output is in the "pretty-print" format)
 
 2. mog.h - this is the file that contains the definition of the class MoG.
@@ -23,5 +23,3 @@ classes
 fl-build mog_l2e_main
 ./mog_l2e_main --data=data.arff --mog_l2e/K=3 --opt/method=NelderMead
 
-I have not written any test class for this because I could not think of any good way of doing it
-But if you want to take a look at the program I have written to test individual functions, you can contact me personally :)
