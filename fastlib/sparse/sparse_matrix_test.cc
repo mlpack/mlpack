@@ -40,9 +40,11 @@ class SparseMatrixTest {
       }
     }
   }
+  
   void Destruct() {
     delete smat_;    
   }
+  
   void TestInit1() {
     smat_ = new SparseMatrix(num_of_rows_, 
                              num_of_cols_, 
@@ -71,6 +73,7 @@ class SparseMatrixTest {
     }
     NOTIFY("TestInit1 sucess!!\n");
   }
+  
   void TestInit2() {
     std::vector<index_t> rows;
     std::vector<index_t> cols;
@@ -104,6 +107,7 @@ class SparseMatrixTest {
     }
     NOTIFY("TestInit2 success!!\n");
   }
+  
   void TestInit3() {
     FILE *fp = fopen("temp.txt", "w");
     if (fp==NULL) {
@@ -129,10 +133,12 @@ class SparseMatrixTest {
     }
     NOTIFY("TestInit3 success!!");
   }
+  
   void TestCopyConstructor() {
     smat_ = new SparseMatrix();
      NOTIFY("TestCopyConstructor success!!\n");
   }
+  
   void TestMakeSymmetric() {
     TestInit1();
     smat_->set(2, 3, 1.44);
@@ -149,6 +155,103 @@ class SparseMatrixTest {
     }
     NOTIFY("Test MakeSymmetric success!!\n");
   }
+  
+  void TestNegate() {
+    TestInit1();
+    smat_->Negate();
+    for(index_t i=0; i<num_of_rows_; i++) {
+      for(index_t j=0; j<num_of_cols_; j++) {
+        TEST_DOUBLE_APPROX(smat_->get(i,j), -mat_[i][j],
+                           std::numeric_limits<double>::epsilon());
+      }
+    }
+    NOTIFY("Test Negate success!!");
+  }
+  
+  void TestColumnScale() {
+    TestInit1();
+    Vector scale;
+    scale.Init(num_of_cols_);
+    for(index_t i=0; i<num_of_cols_; i++) {
+      scale[i]=i;
+    }
+    smat_->EndLoading();
+    smat_->ColumnScale(scale);
+    for(index_t i=0; i<num_of_rows_; i++) {
+      for(index_t j=0; j<num_of_cols_; j++) {
+        TEST_DOUBLE_APPROX(smat_->get(i,j), j*mat_[i][j],
+                           std::numeric_limits<double>::epsilon());
+      }
+    }
+    NOTIFY("Test ColumnScale success!!");
+  }
+
+  void TestRowScale() {
+    TestInit1();
+    Vector scale;
+    scale.Init(num_of_cols_);
+    for(index_t i=0; i<num_of_cols_; i++) {
+      scale[i]=i;
+    }
+    smat_->EndLoading();
+    smat_->RowScale(scale);
+    for(index_t i=0; i<num_of_rows_; i++) {
+      for(index_t j=0; j<num_of_cols_; j++) {
+        TEST_DOUBLE_APPROX(smat_->get(i,j), i*mat_[i][j],
+                           std::numeric_limits<double>::epsilon());
+      }
+    }
+    NOTIFY("Test RowScale success!!");
+  }
+  
+  void TestRowSums() {
+    TestInit1();
+    Vector row_sums;
+    smat_->EndLoading();
+    smat_->RowSums(&row_sums);
+    for(index_t i=0; i<num_of_rows_; i++) {
+      double row_sum=0;
+      for(index_t j=0; j<num_of_cols_; j++) {
+        row_sum+=mat_[i][j];
+      }
+      TEST_DOUBLE_APPROX(row_sums[i], row_sum, 0.001);
+    } 
+    NOTIFY("Test RowSums success!!");
+  }
+  
+  void TestInvRowSums() {
+    TestInit1();
+    Vector row_sums;
+    smat_->EndLoading();
+    smat_->InvRowSums(&row_sums);
+    for(index_t i=0; i<num_of_rows_; i++) {
+      double row_sum=0;
+      for(index_t j=0; j<num_of_cols_; j++) {
+        row_sum+=mat_[i][j];
+      }
+      TEST_DOUBLE_APPROX(row_sums[i], 1.0/row_sum ,
+                           std::numeric_limits<double>::epsilon());
+    } 
+    NOTIFY("Test InvRowSums success!!");
+  }
+  
+  void TestInvColMaxs() {
+    TestInit1();
+    Vector col_maxs;
+    smat_->EndLoading();
+    smat_->InvColMaxs(&col_maxs);
+    for(index_t i=0; i<num_of_cols_; i++) {
+      double col_max=0;
+      for(index_t j=0; j<num_of_rows_; j++) {
+        col_max=max(col_max, mat_[j][i]);
+      }
+      TEST_DOUBLE_APPROX(col_maxs[i], 1.0/col_max,
+          std::numeric_limits<double>::epsilon());
+    } 
+    NOTIFY("Test InvColMaxs success!!");
+  
+  }
+  
   void TestEig() {
     TestInit1();
     smat_->EndLoading();
@@ -159,6 +262,7 @@ class SparseMatrixTest {
     eigvectors.PrintDebug();
     NOTIFY("Test Eigenvector success!!\n");
   }
+  
   void TestLinSolve() {
     TestInit1();
     Vector b,x;
@@ -243,6 +347,24 @@ class SparseMatrixTest {
     Destruct();
     Init();
     TestMakeSymmetric();
+    Destruct();
+    Init();
+    TestNegate();
+    Destruct();
+    Init();
+    TestColumnScale();
+    Destruct();
+    Init();
+    TestRowScale();
+    Destruct();
+    Init();
+    TestRowSums();
+    Destruct();
+    Init();
+    TestInvRowSums(); 
+    Destruct();
+    Init();
+    TestInvColMaxs();
     Destruct();
     Init();
     TestEig();
