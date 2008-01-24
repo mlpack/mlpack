@@ -572,6 +572,8 @@ class OriginalIFGT {
     
     VERBOSE_MSG("Automatic parameter selection phase...\n");
 
+    printf("Preprocessing phase for the original IFGT...\n");
+
     fx_timer_start(module_, "ifgt_kde_preprocess");
     IFGTChooseParameters_(cluster_limit);
     VERBOSE_MSG("Chose %d clusters...\n", num_cluster_desired_);
@@ -601,10 +603,10 @@ class OriginalIFGT {
     weighted_coeffs_.Init(total_num_coeffs_, num_cluster_desired_);
     unweighted_coeffs_.Init(total_num_coeffs_, num_cluster_desired_);
 
-    printf("Maximum radius generated in the cluster: %g...\n",
-	   max_radius_cluster_);
-    printf("Truncation order updated to %d after clustering...\n", 
-	   pterms_);
+    VERBOSE_MSG("Maximum radius generated in the cluster: %g...\n",
+		max_radius_cluster_);
+    VERBOSE_MSG("Truncation order updated to %d after clustering...\n", 
+		pterms_);
 
     // Compute coefficients.    
     VERBOSE_MSG("Now computing Taylor coefficients...\n");
