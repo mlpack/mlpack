@@ -5,12 +5,12 @@
 
 /* TODO: I don't actually want these to be public */
 /* but sometimes we should provide freedoms for our advanced users */
-const double SMO_ZERO = 1.0e-8;
-const double SMO_TOLERANCE = 1.0e-3;
+const double NNSMO_ZERO = 1.0e-8;
+const double NNSMO_TOLERANCE = 1.0e-3;
 
 template<typename TKernel>
-class SMO {
-  FORBID_ACCIDENTAL_COPIES(SMO);
+class NNSMO {
+  FORBID_ACCIDENTAL_COPIES(NNSMO);
 
  public:
   typedef TKernel Kernel;
@@ -35,8 +35,8 @@ class SMO {
   int max_iter_; // the maximum iteration, termination criteria
 
  public:
-  SMO() {}
-  ~SMO() {}
+  NNSMO() {}
+  ~NNSMO() {}
 
   /**
    * Initializes an NNSMO problem.
@@ -87,7 +87,7 @@ class SMO {
     return thresh_;
   }
 
-  void GetSVM(Matrix *support_vectors, Vector *alpha, Vector * w) const;
+  void GetNNSVM(Matrix *support_vectors, Vector *alpha, Vector * w) const;
 
 private:
   index_t TrainIteration_(bool examine_all);
@@ -99,9 +99,9 @@ private:
   bool TakeStep_(index_t i, index_t j, double error_j);
 
   double FixAlpha_(double alpha) const {
-    if (alpha < SMO_ZERO) {
+    if (alpha < NNSMO_ZERO) {
       alpha = 0;
-    } else if (alpha > c_ - SMO_ZERO) {
+    } else if (alpha > c_ - NNSMO_ZERO) {
       alpha = c_;
     }
     return alpha;
@@ -147,9 +147,9 @@ private:
   }
 };
 
-// return the support vector, the whole alpha vector and the weight vector of the trained SVM
+// return the support vector, the support alpha vector and the weight vector of the trained NNSVM
 template<typename TKernel>
-void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *alpha, Vector * w) const {
+void NNSMO<TKernel>::GetNNSVM(Matrix *support_vectors, Vector *support_alpha, Vector * w) const {
   index_t n_support = 0;
   index_t i_support = 0;
 
@@ -160,17 +160,17 @@ void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *alpha, Vector * w) co
   }
 
   support_vectors->Init(matrix_.n_rows() - 1, n_support);
-  alpha->Init(n_data_);
+  support_alpha->Init(n_support);
 
   for (index_t i = 0; i < n_data_; i++) {
-    (*alpha)[i] = alpha_[i];
+ 	
     if (unlikely(alpha_[i] != 0)) {
       Vector source;
       Vector dest;
       GetVector_(i, &source);
       support_vectors->MakeColumnVector(i_support, &dest);
       dest.CopyValues(source);
-
+      (*support_alpha)[i_support] = alpha_[i] * GetLabelSign_(i);
       i_support++;
     }
   }
@@ -184,7 +184,7 @@ void SMO<TKernel>::GetSVM(Matrix *support_vectors, Vector *alpha, Vector * w) co
 
 //NNSMO training for 2-classes
 template<typename TKernel>
-void SMO<TKernel>::Train() {
+void NNSMO<TKernel>::Train() {
   bool examine_all = true;
   index_t num_changed = 0;
   int n_iter = 0;
@@ -227,7 +227,7 @@ void SMO<TKernel>::Train() {
 
 //NNSMO training iteration
 template<typename TKernel>
-index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
+index_t NNSMO<TKernel>::TrainIteration_(bool examine_all) {
   index_t num_changed = 0;
 
   for (index_t i = 0; i < n_data_; i++) {
@@ -242,14 +242,14 @@ index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
 //	outer loop: alpha_j, KKT violation
 //	inner loop: alpha_i, maximum objective value increase with respective to alpha_i, j
 template<typename TKernel>
-bool SMO<TKernel>::TryChange_(index_t j) {
+bool NNSMO<TKernel>::TryChange_(index_t j) {
   double error_j = Error_(j);
   double rj = error_j * GetLabelSign_(j);
   
   VERBOSE_GOT_HERE(0);
 
-  if (!((rj < -SMO_TOLERANCE && alpha_[j] < c_)
-      || (rj > SMO_TOLERANCE && alpha_[j] > 0))) {
+  if (!((rj < -NNSMO_TOLERANCE && alpha_[j] < c_)
+      || (rj > NNSMO_TOLERANCE && alpha_[j] > 0))) {
     return false; // nothing to change
   }
 
@@ -274,7 +274,7 @@ bool SMO<TKernel>::TryChange_(index_t j) {
 
 //compute the increase of objective value with respect to updating of alpha_i, alpha_j
 template<typename TKernel>
-double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
+double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   //1. check i,j
   if (i == j) {
     VERBOSE_GOT_HERE(0);
@@ -300,7 +300,7 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   l = math::ClampNonNegative(r);
   u = c_ + math::ClampNonPositive(r);
   
-  if (l >= u - SMO_ZERO) {
+  if (l >= u - NNSMO_ZERO) {
     // TODO: might put in some tolerance
     VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
     VERBOSE_GOT_HERE(0);
@@ -351,7 +351,7 @@ double SMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
 
 // update alpha_i, alpha_j, as well as the VTA_, negation of intercept: thresh_ and the error cache: error_
 template<typename TKernel>
-bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
+bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   //1. check i,j
   if (i == j) {
     VERBOSE_GOT_HERE(0);
@@ -378,7 +378,7 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   l = math::ClampNonNegative(r);
   u = c_ + math::ClampNonPositive(r);
 
-  if (l >= u - SMO_ZERO) {
+  if (l >= u - NNSMO_ZERO) {
     // TODO: might put in some tolerance
     VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
     VERBOSE_GOT_HERE(0);
@@ -412,10 +412,10 @@ bool SMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   // calculate alpha_i^new
   alpha_i = alpha_i - (s)*(delta_alpha_j);
-  if (alpha_i < SMO_ZERO) {
+  if (alpha_i < NNSMO_ZERO) {
     alpha_j += s * alpha_i;
     alpha_i = 0;
-  } else if (alpha_i > c_ - SMO_ZERO) {
+  } else if (alpha_i > c_ - NNSMO_ZERO) {
     double t = alpha_i - c_;
     alpha_j += s * t;
     alpha_i = c_;
