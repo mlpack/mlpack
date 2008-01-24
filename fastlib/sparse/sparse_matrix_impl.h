@@ -403,6 +403,9 @@ void SparseMatrix::Eig(SparseMatrix &pencil_matrix,
     problem = Teuchos::rcp(
         new Anasazi::BasicEigenproblem<double,MV,OP>(matrix_, ivec));
   } else {
+    if (!pencil_matrix.matrix_->Filled()) {
+      FATAL("Call EndLoading() for the pencil_matrix  before calling Eig...\n");
+    }
     problem =Teuchos::rcp(
         new Anasazi::BasicEigenproblem<double,MV,OP>(
                 matrix_, pencil_matrix.matrix_, ivec));
