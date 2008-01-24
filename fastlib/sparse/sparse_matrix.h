@@ -194,13 +194,20 @@ class SparseMatrix {
       where i denotes the global row number of A and j denotes the  column number 
   */
   void ColumnScale(const Vector &vec) {
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You should call EndLoading first...\n");
+    }
     Epetra_Vector temp(View, *map_, (double*)vec.ptr());
     matrix_->RightScale(temp);
   }
   /** The  matrix will be scaled such that A(i,j) = x(i)*A(i,j) 
    *   where i denotes the row number of A and j denotes the column number of A.
+   *   You must have called EndLoading()
    */
   void RowScale(const Vector &vec) {
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You should call EndLoading first...\n");
+    }
     Epetra_Vector temp(View, *map_, (double *)vec.ptr());
     matrix_->LeftScale(temp);
   }
@@ -219,8 +226,13 @@ class SparseMatrix {
   /** 
    * Computes the inverse of the sum of absolute values of the rows 
    *   of the matrix 
+   *   You must have called EndLoading()
    */
-  void InvRowsSums(Vector *result) {
+  void InvRowSums(Vector *result) {
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You have to call EndLoading before running eigenvalues otherwise "
+          "it will fail\n");
+    }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
     matrix_->InvRowSums(temp);
@@ -228,33 +240,57 @@ class SparseMatrix {
   /** 
    * Computes the  the sum of absolute values of the rows 
    * of the matrix 
+   * You must have called EndLoading()
   */
-  void RowsSums(Vector *result) {
+  void RowSums(Vector *result) {
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You have to call EndLoading before running eigenvalues otherwise "
+          "it will fail\n");
+    }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
     matrix_->InvRowSums(temp);
+    for(index_t i=0; i<dimension_; i++) {
+      (*result)[i]= 1/(*result)[i];
+    }
     
   }
   /** 
-   * Computes the inv of max of absolute values of the rows of the matrix
+   * Computes the inv of max of absolute values of the rows of the matrixa
+   * You must have called EndLoading()
    */
   void InvRowMaxs(Vector *result) {
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You have to call EndLoading before running eigenvalues otherwise "
+          "it will fail\n");
+    }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
     matrix_->InvRowMaxs(temp);
   } 
   /** Computes the inverse of the sum of absolute values of the columns of the
    *  matrix
+   *  You must have called EndLoading()
    */
   void InvColSums(Vector *result) {
+    if (unlikely(!matrix_->Filled())) {
+      FATAL("You have to call EndLoading before running eigenvalues otherwise "
+          "it will fail\n");
+    }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
     matrix_->InvColSums(temp);
   }
   /**
    *  Computes the inv of max of absolute values of the columns of the matrix
+   *  You must have called EndLoading()
    */
   void InvColMaxs(Vector *result) {
+     if (unlikely(!matrix_->Filled())) {
+      FATAL("You have to call EndLoading before running eigenvalues otherwise "
+          "it will fail\n");
+    } 
+    result->Init(num_of_columns_);  
     Epetra_Vector temp(View, *map_, result->ptr());
     matrix_->InvColMaxs(temp);
   }
@@ -375,6 +411,13 @@ class SparseMatrix {
 
 };
 
+/**
+ * Sparsem is more like an interface providing basic lagebraic operations
+ * addition, subtraction multiplicatiion, for sparse matrices. It should
+ * have been a namespace, but I prefered to make it a class with static
+ * member functions so that I can declare it as a friend to the SparseMatrix
+ * class
+ */
 class Sparsem {
  public:
   static inline void Add(const SparseMatrix &a, 

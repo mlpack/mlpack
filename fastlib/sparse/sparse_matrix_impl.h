@@ -284,7 +284,11 @@ double SparseMatrix::get(index_t r, index_t c) const {
   index_t num_of_entries;
   double *values;
   index_t *indices;
-  matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+  if (matrix_->IndicesAreLocal()) {
+    matrix_->ExtractMyRowView(global_row, num_of_entries, values, indices);
+  } else {
+    matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+  }
   index_t *pos = std::find(indices, indices+num_of_entries, c);
   if (pos==indices+num_of_entries) {
     return 0;
