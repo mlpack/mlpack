@@ -373,6 +373,7 @@ class SparseMatrix {
    * Solves the pancil problem:
    *  A*x=lambda *B*x
    *  where pencil_part is the B matrix
+   *  You have to call EndLoading() for B first
    */
   void Eig(SparseMatrix &pencil_part,
            index_t num_of_eigvalues, 
