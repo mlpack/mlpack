@@ -30,10 +30,11 @@ void KernelPCA::Destruct() {
 }
 
 void KernelPCA::ComputeNeighborhoods() {
-  NONFATAL("Building tree...\n");
+  NOTIFY("Building tree...\n");
   fflush(stdout);
   ArrayList<index_t> resulting_neighbors;
   ArrayList<double>  distances;
+  NOTIFY("Computing Neighborhoods");
   allknn_.ComputeNeighbors(&resulting_neighbors,
                            &distances);
   FILE *fp=fopen("allnn.txt", "w");
@@ -52,16 +53,15 @@ template<typename DISTANCEKERNEL>
 void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
                                         index_t num_of_eigenvalues,
                                         Matrix *eigen_vectors,
-                                        std::vector<double> *eigen_values){
+                                        Vector *eigen_values){
   kernel_matrix_.Copy(affinity_matrix_);
   kernel_matrix_.ApplyFunction(kernel);
   Vector temp;
   temp.Init(kernel_matrix_.dimension());
   temp.SetAll(1.0);
   kernel_matrix_.SetDiagonal(temp);
-  kernel_matrix_.ToFile("kpca.txt");
   kernel_matrix_.EndLoading();
-  NONFATAL("Computing eigen values...\n");
+  NOTIFY("Computing eigen values...\n");
   kernel_matrix_.Eig(num_of_eigenvalues, 
                      "LM", 
                      eigen_vectors,
@@ -75,7 +75,7 @@ void KernelPCA::LoadAffinityMatrix() {
 
 void KernelPCA::SaveToTextFile(std::string file, 
                                Matrix &eigen_vectors,
-                               std::vector<double> &eigen_values) {
+                               Vector &eigen_values) {
   std::string vec_file(file);
   vec_file.append(".vectors");
   std::string lam_file(file);
@@ -97,7 +97,7 @@ void KernelPCA::SaveToTextFile(std::string file,
     FATAL("Unable to open file %s, error: %s", lam_file.c_str(), 
           strerror(errno));
   }
-  for(index_t i=0; i<(index_t)eigen_values.size(); i++) {
+  for(index_t i=0; i<(index_t)eigen_values.length(); i++) {
     fprintf(fp, "%lg\n", eigen_values[i]);
   }
   fclose(fp);
@@ -125,7 +125,7 @@ void KernelPCA::EstimateBandwidth(double *bandwidth) {
 // that in this function. 
 void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
                            Matrix *eigen_vectors,
-                           std::vector<double> *eigen_values) {
+                           Vector *eigen_values) {
   FILE *fp=fopen("allnn.txt", "r");
   if unlikely(fp==NULL) {
     FATAL("Unable to open allnn.txt, error %s\n", strerror(errno));
@@ -206,5 +206,76 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
                      eigen_vectors,
                      eigen_values, NULL);
 
+}
+template<typename DISTANCEKERNEL>
+void KernelPCA::ComputeSpectralRegression(std::map<index_t, index_t> &data_label,
+                                 Matrix *embedded_coordinates, 
+                                 Vector *eigenvalues) {
+  // labels has the label of every point, it is not necessary
+  // for every point to have a label, that's why we are using a map and not
+  // a vector
+  
+  // This map has the classes and the points
+  std::map<index_t, ArrayList<index_t> > classes;
+  ArrayList<index_t> default_bin;
+  default_bin.Init();
+  // find how many classes we have
+  index_t num_of_classes=0;
+  std::map<index_t, index_t>::iterator it;
+  for(it=data_label.begin(); it!=data_label.end(); it++) {
+    if (classes.find(it->first)!=classes.end()) {
+      classes[it->first].AddBack(it->second);
+    } else {
+      classes.insert(make_pair(num_of_classes, default_bin));
+      num_of_classes++;
+    }
+  }
+  kernel_matrix_.Copy(affinity_matrix_);
+  DISTANCEKERNEL kernel;
+  kernel_matrix_.ApplyFunction(kernel);
+  // In the paper it is also called W^{SR}
+  SparseMatrix labeled_graph;
+  labeled_graph.Init(data_.n_cols(), data_.n_cols(), 2*knns_);
+  // In the paper this is D^{SR}
+  SparseMatrix d_sr_mat;
+  d_sr_mat.Init(data_.n_cols(), data_.n_cols(), 1);
+  Vector d_sr_mat_diag;
+  d_sr_mat_diag.Init(data_.n_cols());
+  d_sr_mat_diag.SetAll(0);
+  // Now put the label information
+  std::map<index_t, ArrayList<index_t> >::iterator it1;
+  for(it1=classes.begin(); it1!=classes.end(); it1++) {
+    for(index_t i=0; i<it1->second.size(); i++) {
+      for(index_t j=i+1; j<it1->second.size(); j++) {
+        d_sr_mat_diag[it1->second[i]]+=1/(it1->first+1);
+        d_sr_mat_diag[it1->second[j]]+=1/(it1->first+1);
+        kernel_matrix_.set(it1->second[i], it1->second[j], 1.0);
+        labeled_graph.set(it1->second[i], it1->second[j], 1/(it1->first+1));
+        labeled_graph.set(it1->second[j], it1->second[i], 1/(it1->first+1));
+      }
+    }
+  }
+  kernel_matrix_.MakeSymmetric();
+  d_sr_mat.SetDiagonal(d_sr_mat_diag);
+  // This is the matrix D that has the sum of the rows or columns
+  SparseMatrix d_mat;
+  d_mat.Init(data_.n_cols(), data_.n_cols(), 1);
+  Vector d_diagonal;
+  kernel_matrix_.RowsSums(&d_diagonal);
+  d_mat.SetDiagonal(d_diagonal);
+  SparseMatrix laplacian_mat;
+  laplacian_mat.Init(data_.n_cols(), data_.n_cols());
+  Sparsem::Subtract(d_mat, kernel_matrix_, &laplacian_mat);
+  SparseMatrix d_sr_plus_laplacian_mat;
+  d_sr_plus_laplacian_mat.Init(data_.n_cols(), data_.n_cols(), 2*knns_);
+  Sparsem::Add(d_sr_mat, laplacian_mat, &d_sr_plus_laplacian_mat);
+  Matrix eigenvectors;
+  labeled_graph.Eig(d_sr_plus_laplacian_mat, num_of_classes, "LM",
+      &eigenvectors, eigenvalues, NULL); 
+  // this is the embedding therms alpha as shown in 
+  // the paper
+  Matrix alpha_factors;
+  la::LeastSquareFitTrans(eigenvectors, data_, &alpha_factors); 
+  la::MulTransAInit(alpha_factors, data_,embedded_coordinates);
 }
 
