@@ -6,10 +6,22 @@
  *
  * The algorithms in the following papers are implemented:
  *
- * 1. T. Joachims, Making large-Scale SVM Learning Practical. Advances in Kernel Methods - 
- * Support Vector Learning, B. Schölkopf and C. Burges and A. Smola (ed.), MIT Press, 1999 
+ * Multiclass Support Vector Machine Classification
+ * @ARTICLE{Joachims_SVMLIGHT,
+ * author = "T. Joachims",
+ * title = "{Making large-Scale SVM Learning Practical}",
+ * journal = "{Advances in Kernel Methods - Support Vector Learning}",
+ * year = 1999,
+ * publisher = "MIT Press"
+ * }
  *
- * 2. Ofer Dekel and Yoram Singer, Support Vector Machines on a Budget, NIPS, 2006
+ * @INPROCEEDINGS{Budge_SVM,
+ * author = "O. Dekel and Y. Singer",
+ * title = "{Support Vector Machines on a Budget}",
+ * booktitle = NIPS,
+ * number = 19,
+ * year = 2006
+ * }
  *
  * @see svm.h
  */
