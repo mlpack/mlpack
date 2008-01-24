@@ -7,10 +7,10 @@
  *  fixed-bandwidth. The optimal bandwidth cross-validation routine is
  *  not provided in this library.
  *
- *  For more details on nmathematical derivations, please take a look
+ *  For more details on mathematical derivations, please take a look
  *  at the following paper:
  *
- * @Article{ggstrain,
+ *  Article{ggstrain,
  *  Author = "L. Greengard and J. Strain", 
  *  Title = "{The Fast Gauss Transform}",
  *  Journal = "SIAM Journal of Scientific and Statistical Computing",
@@ -56,33 +56,47 @@ class FGTKde {
 
   ////////// Private Member Variables //////////
 
-  /** datanode holding the parameters */
+  /** @brief The datanode holding the parameters. */
   struct datanode *module_;
 
-  /** query dataset */
+  /** @brief The column-oriented query dataset. */
   Matrix qset_;
 
-  /** reference dataset */
+  /** @brief The column-oriented reference dataset. */
   Matrix rset_;
 
-  /** kernel */
+  /** @brief The Gaussian kernel object. */
   GaussianKernel kernel_;
 
-  /** computed densities */
+  /** @brief The vector holding the computed densiites. */
   Vector densities_;
   
-  /** accuracy parameter */
+  /** @brief Desired absolute error level. */
   double tau_;
 
-  /** precomputed constants */
+  /** @brief Precomputed Taylor constants. */
   MultSeriesExpansionAux msea_;
   
   ////////// Private Member Functions //////////
 
-  void FastGaussTransformPreprocess(double *interaction_radius, 
-				    ArrayList<int> &nsides, 
-				    Vector &sidelengths, Vector &mincoords, 
-				    int *nboxes, int *nterms) {
+  /** @brief Preprocessing for gridding the data points into boxes.
+   *
+   *  @param interaction_radius For each boxes that contain query points,
+   *                            reference boxes whose distance from the
+   *                            query boxes that are farther away than this
+   *                            threshold will be ignored.
+   *  @param nsides The number of grid boxes along each dimension.
+   *  @param sidelengths The lengths of each hyperrectangle created in
+   *                     gridding.
+   *  @param mincoords The minimum coordinates of the bounding box
+   *                   that encompasses the dataset in each dimension.
+   *  @param nboxes The total number of boxes created.
+   *  @param nterms The multivariate order of approximation is (nterms - 1).
+   */
+  void FastGaussTransformPreprocess_(double *interaction_radius, 
+				     ArrayList<int> &nsides, 
+				     Vector &sidelengths, Vector &mincoords, 
+				     int *nboxes, int *nterms) {
   
     // Compute the interaction radius.
     double bandwidth = sqrt(kernel_.bandwidth_sq());
@@ -140,7 +154,8 @@ class FGTKde {
     double r_raised_to_p_alpha = 1.0;
     double first_factor, second_factor;
     double ret2;
-                                                                       
+
+    // Determine the truncation order.
     do {
       ip++;
       factorialvalue *= ip;
@@ -159,11 +174,29 @@ class FGTKde {
     *nterms = ip;
   }
 
-  /* Returns the index in a single-dim array, for the given coords in
-   * a d-dim array, with n[i] elements in the ith dimension
+  /** @brief Returns the index in a single-dim array, for the given
+   *         coords in a d-dim array, with n[i] elements in the ith 
+   *         dimension.
+   *
+   *  Basically, each grid box is labeled with a number in this
+   *  fashion (2-D example follows):
+   *
+   *  y
+   *  |
+   *  |30 31 32 33 34 35 36 37 38 39
+   *  |20 21 22 23 24 25 26 27 28 29
+   *  |10 11 12 13 14 15 16 17 18 19
+   *  | 0  1  2  3  4  5  6  7  8  9
+   *  |_____________________________
+   *                                 x
+   *
+   *  @param coords The coordinate of the point that we want to locate in the
+   *                fast Gauss transform grid.
+   *  @param n The number of boxes in each dimension. The i-th position of
+   *           array tells how many boxes lie along the i-th dimension.
    */
-  int multi_dim_index_in_single_array(ArrayList<int> &coords, 
-				      ArrayList<int> &n) {
+  int MultiDimIndexInSingleArray_(ArrayList<int> &coords, 
+				  ArrayList<int> &n) {
     
     int sum = 0;
     
@@ -177,11 +210,16 @@ class FGTKde {
     return sum;
   }
 
-  /** Returns an ivec containing index translated into coordinates in
-   * {n[0],  ..., n[d-1]} space.
+  /** @brief Returns an ivec containing index translated into
+   *  coordinates in {n[0], ..., n[d-1]} space.
+   *
+   *  @param n The i-th position of this array tells how many boxes lie
+   *           along the i-th dimension.
+   *  @param index The box number.
+   *  @param coords The translated box coordinates.
    */
-  void single_dim_index_in_multi_array(ArrayList<int> &n, int index, 
-				       ArrayList<int> &coords) {
+  void SingleDimIndexInMultiArray_(ArrayList<int> &n, int index, 
+				   ArrayList<int> &coords) {
 
     for(index_t i = 0; i < coords.size(); i++) {
       int this_coord = index % n[i];
@@ -190,7 +228,18 @@ class FGTKde {
     }
   }
 
-  int is_ongrid(ArrayList<int> &old_coords, int delta, 
+  /** @brief Determines whether (old_coords) + delta is on the grid box.
+   *
+   *  @param old_coords The original box coordinates.
+   *  @param delta The perturbation to each box coordinate we would like to
+   *               apply.
+   *  @param new_coords The computed perturbed box coordinates.
+   *  @param nsides The i-th position of this array tells how many boxes lie
+   *                along the i-th dimension.
+   *
+   *  @return 1, if the box coordinate is within the grid, 0 otherwise.
+   */
+  int IsOngrid_(ArrayList<int> &old_coords, int delta, 
 		ArrayList<int> &new_coords, ArrayList<int> &nsides) {
     
     int dim = old_coords.size();
@@ -206,13 +255,22 @@ class FGTKde {
     return 1;
   }
 
-  void mknbor(int ibox, ArrayList<int> &nsides, int kdis, 
-	      ArrayList<int> &ret) {
+  /** @brief Compute the list of the neighboring boxes for a given box.
+   *
+   *  @param ibox The id of the grid box.
+   *  @param nsides The i-th position tells how many boxes lie along the
+   *                i-th dimension.
+   *  @param kdis The number of neighbors to look for in increasing direction.
+   *  @param ret The list of grid boxes that are considered neighbors for
+   *             the grid box with id = ibox.
+   */
+  void MakeNeighbors_(int ibox, ArrayList<int> &nsides, int kdis, 
+		      ArrayList<int> &ret) {
 
     // Compute actual vector position of a given box.
     ArrayList<int> coords;
     coords.Init(nsides.size());
-    single_dim_index_in_multi_array(nsides, ibox, coords);
+    SingleDimIndexInMultiArray_(nsides, ibox, coords);
 
     ArrayList<int> dummy_n;
     dummy_n.Init(coords.size());
@@ -240,25 +298,41 @@ class FGTKde {
     new_coords.Init(coords.size());
 
     for(i = 0; i < num_neighbors; i++) {
-      single_dim_index_in_multi_array(dummy_n, i, delta);
+      SingleDimIndexInMultiArray_(dummy_n, i, delta);
 
       for(index_t j = 0; j < coords.size(); j++) {
 	new_coords[j] = coords[j] + delta[j];
       }
-      int ongrid = is_ongrid(new_coords, -kdis, new_coords, nsides);
+      int ongrid = IsOngrid_(new_coords, -kdis, new_coords, nsides);
       
       if(ongrid) {
 	*(ret.AddBack()) = 
-	  multi_dim_index_in_single_array(new_coords, nsides);
+	  MultiDimIndexInSingleArray_(new_coords, nsides);
       }
       
     }
   }
 
-  void assign(int nallbx, ArrayList<int> &nsides, Vector &sidelengths, 
-	      Vector &mincoords, Matrix &center, 
-	      ArrayList<ArrayList<int> > &queries_assigned, 
-	      ArrayList<ArrayList<int> > &references_assigned) {
+  /** @brief Assigns all query and reference points to the grid.
+   *
+   *  @param nallbx The total number of grid boxes.
+   *  @param nsides The number of grid boxes along each dimension.
+   *  @param sidelengths The i-th position of this array tells the length of
+   *                     the grid hypercube in the i-th dimension.
+   *  @param mincoords The minimum coordinates of the fast Gauss transform
+   *                   grid.
+   *  @param center The center of each grid box.
+   *  @param queries_assigned The i-th position of this array contains the
+   *                          list of query indices assigned to the i-th
+   *                          grid box.
+   *  @param references_assigned The i-th position of this array contains the
+   *                             list of reference indices assigned to the
+   *                             i-th grid box.
+   */
+  void Assign_(int nallbx, ArrayList<int> &nsides, Vector &sidelengths, 
+	       Vector &mincoords, Matrix &center, 
+	       ArrayList<ArrayList<int> > &queries_assigned, 
+	       ArrayList<ArrayList<int> > &references_assigned) {
 
     int r;
     int num_query_rows = qset_.n_cols();
@@ -319,11 +393,27 @@ class FGTKde {
     }
   }
 
-  void TranslateMultipoleToLocal(int ref_box_num, int query_box_num,
-				 Matrix &mcoeffsb, Matrix &lcoeffsb,
-				 int p_alpha, int totalnumcoeffs,
-				 double bwsqd_2, const double *hrcentroid,
-				 const double *dest_hrcentroid) {
+  /** @brief Translates a far-field expansion of a reference box and
+   *         accumulates onto the local expansion of a given query box.
+   *
+   *  @param ref_box_num The box number of the references.
+   *  @param query_box_num The box number of the queries.
+   *  @param mcoeffsb The set of far-field moments. The i-th column of
+   *                  this matrix contains the far-field moments for the
+   *                  i-th box.
+   *  @param lcoeffsb The set of local moments. The i-th column of this matrix
+   *                  contains the local moments for the i-th box.
+   *  @param p_alpha The approximation order is up to (p_alpha - 1).
+   *  @param totalnumcoeffs The total number of coefficients.
+   *  @param bwsqd_2 The squared bandwidth times two.
+   *  @param hrcentroid The centroid of the the reference box.
+   *  @param dest_hrcentroid The centroid the query box.
+   */
+  void TranslateMultipoleToLocal_(int ref_box_num, int query_box_num,
+				  Matrix &mcoeffsb, Matrix &lcoeffsb,
+				  int p_alpha, int totalnumcoeffs,
+				  double bwsqd_2, const double *hrcentroid,
+				  const double *dest_hrcentroid) {
 
     double bandwidth = sqrt(bwsqd_2);
     int j, k, l, d, step;
@@ -429,10 +519,23 @@ class FGTKde {
     }
   }
 
-  void ComputeMultipoleCoeffs(Matrix &mcoeffs, int dim,
-			      int p_alpha, int totalnumcoeffs, 
-			      int ref_box_num, double bwsqd_two, 
-			      ArrayList<int> &rows, const double *x_R) {
+  /** @brief Compute far-field moments for a given reference box.
+   *
+   *  @param mcoeffs The i-th column of this matrix contains the far-field
+   *                 moments contributed by the reference points contained
+   *                 within.
+   *  @param dim The dimensionality.
+   *  @param p_alpha The approximation order.
+   *  @param totalnumcoeffs The total number of coefficients.
+   *  @param ref_box_num The id of the grid box containing the reference
+   *                     points.
+   *  @param rows The ids of the reference points contained within the box.
+   *  @param x_R The center of the reference box.
+   */
+  void ComputeMultipoleCoeffs_(Matrix &mcoeffs, int dim,
+			       int p_alpha, int totalnumcoeffs, 
+			       int ref_box_num, double bwsqd_two, 
+			       ArrayList<int> &rows, const double *x_R) {
     
     Vector A_k;
     mcoeffs.MakeColumnVector(ref_box_num, &A_k);
@@ -500,11 +603,23 @@ class FGTKde {
     return;
   }
 
-
-  void DirectLocalAccumulation(ArrayList<int> &rows, int query_box_num,
-			       Matrix &locexps, double delta,
-			       const double *dest_hrcentroid, int p_alpha, 
-			       int totalnumcoeffs) {
+  /** @brief Directly accumulate the contribution of a given reference box
+   *         into the local moments for a given query box.
+   *
+   *  @param rows The ids of the reference points contained within the
+   *              reference box.
+   *  @param query_box_num The box number of the query box.
+   *  @param locexps The i-th column of this matrix contains the local
+   *                 moments of the i-th grid box.
+   *  @param delta Twice the squared bandwidth.
+   *  @param dest_hrcentroid The center of the query box.
+   *  @param p_alpha The approximation order.
+   *  @param totalnumcoeffs The total number of coefficients.
+   */
+  void DirectLocalAccumulation_(ArrayList<int> &rows, int query_box_num,
+				Matrix &locexps, double delta,
+				const double *dest_hrcentroid, int p_alpha, 
+				int totalnumcoeffs) {
 
     int num_rows = rows.size();
     int r, d, boundary, step, i, j, k;
@@ -526,24 +641,18 @@ class FGTKde {
     Vector arr;
     locexps.MakeColumnVector(query_box_num, &arr);
 
-    /**
-     * For each data point,
-     */
+    // For each reference point.
     for(r = 0; r < num_rows; r++) {
 
       int row_num = rows[r];
     
-      /**
-       * Calculate (x_r - x_Q)
-       */
+      // Calculate (x_r - x_Q)
       for(d = 0; d < dim; d++) {
 	x_r_minus_x_Q[d] = dest_hrcentroid[d] - rset_.get(d, row_num);
       }
     
-      /**
-       * Compute the necessary Hermite precomputed map based on the coordinate
-       * difference.
-       */
+      // Compute the necessary Hermite precomputed map based on the
+      // coordinate diference.
       for(d = 0; d < dim; d++) {
 
 	double coord_div_band = x_r_minus_x_Q[d] / bandwidth;
@@ -564,25 +673,19 @@ class FGTKde {
 	}
       }
     
-      /**
-       * Seed to start out the coefficients.
-       */
+      // Seed to start out the coefficients.
       arrtmp[0] = 1.0;
     
       if(p_alpha > 1) {
       
-	/**
-	 * Compute the Taylor coefficients directly...
-	 */
+	// Compute the Taylor coefficients directly...
 	for(boundary = totalnumcoeffs, step = totalnumcoeffs / p_alpha,
 	      d = 0;
 	    step >= 1; step /= p_alpha, boundary /= p_alpha, d++) {
 	  for(i = 0; i < totalnumcoeffs; ) {
 	    int limit = i + boundary;
 	  
-	    /**
-	     * Skip the first one.
-	     */
+	    // Skip the first one.
 	    int first = i;
 	    i += step;
 	  
@@ -606,10 +709,24 @@ class FGTKde {
     }
   }
 
-  void EvaluateMultipoleExpansion(ArrayList<int> &rows, int p_alpha,
-				  int totalnumcoeffs, Matrix &mcoeffsb,
-				  int ref_box_num, double bwsqd_times_2, 
-				  const double *ref_hrcentroid) {
+  /** @brief Evaluate far-field expansion of a reference box for a set of
+   *         query points.
+   *
+   *  @param rows The set of query points for which we want to evaluate
+   *              the far-field expansion.
+   *  @param p_alpha The order of approximation is (p_alpha - 1).
+   *  @param totalnumcoeffs The total number of coefficients.
+   *  @param mcoeffsb The set of far-field moments. The i-th column of
+   *                  this matrix contains the far-field moments for the
+   *                  i-th box.
+   *  @param ref_box_num The box number of the references.
+   *  @param bwsqd_times_2 The squared bandwidth times two.
+   *  @param ref_hrcentroid The center of the reference box.
+   */
+  void EvaluateMultipoleExpansion_(ArrayList<int> &rows, int p_alpha,
+				   int totalnumcoeffs, Matrix &mcoeffsb,
+				   int ref_box_num, double bwsqd_times_2, 
+				   const double *ref_hrcentroid) {
     
     double bandwidth = sqrt(bwsqd_times_2);
     int num_query_rows = rows.size();
@@ -696,9 +813,22 @@ class FGTKde {
     }
   }
 
-  double compute_v_alpha(int row_q, Vector &x_Q, double h, 
-			 int query_box_num, Matrix &lcoeffsb, 
-			 int totalnumcoeffs, int p_alpha) {
+  /** @brief Evaluate local expansion for a single query point.
+   *
+   *  @param row_q The id of the query point.
+   *  @param x_Q The centroid of the query box containing the the query point.
+   *  @param h The bandwidth.
+   *  @param query_box_num The box number of the query box.
+   *  @param lcoeffsb The i-th column of this matrix contains the local
+   *                  moments accumulated for the i-th grid box.
+   *  @param totalnumcoeffs The total number of coefficients.
+   *  @param p_alpha The approximation order.
+   *
+   *  @return The evaluated local expansion value.
+   */
+  double EvaluateLocalExpansion_(int row_q, Vector &x_Q, double h, 
+				 int query_box_num, Matrix &lcoeffsb, 
+				 int totalnumcoeffs, int p_alpha) {
     
     int dim = qset_.n_rows();
     Vector x_Q_to_x_q;
@@ -747,14 +877,32 @@ class FGTKde {
     return multipolesum;
   }
 
-  /**
-   * Go through each query boxes and evaluate the local expansions
-   * accumulated in each box.
+  /** @brief Go through each query boxes and evaluate the local
+   *         expansions accumulated in each box.
+   *
+   *  @param delta Twice the squared bandwidth.
+   *  @param nterms The approximation order.
+   *  @param nallbx The total number of grid boxes.
+   *  @param nsides The number of grid boxes along each dimension.
+   *  @param locexp The i-th column of this matrix contains the local moments
+   *                for the i-th grid box.
+   *  @param nlmax  For a given pair of a reference box with computed far-field
+   *                moments and a query box, if the number of query points
+   *                is within this limit, then we evaluate the contribution
+   *                of the reference box by direct far-field evaluations.
+   *                Otherwise, the far-field moments are converted into
+   *                local moments.
+   *  @param queries_assigned The i-th column of this matrix contains the
+   *                          ids of the queries assigned to the i-th grid
+   *                          box.
+   *  @param center The i-th column of this matrix contains the coordinates
+   *                of the i-th grid box.
+   *  @param totalnumcoeffs The total number of coefficients.
    */
-  void gaeval(double delta, int nterms, int nallbx,
-	      ArrayList<int> &nsides, Matrix &locexp, int nlmax,
-	      ArrayList<ArrayList<int> > &queries_assigned, 
-	      Matrix &center, int totalnumcoeffs) {
+  void EvaluateLocalExpansionForAllQueries_
+    (double delta, int nterms, int nallbx, ArrayList<int> &nsides, 
+     Matrix &locexp, int nlmax, ArrayList<ArrayList<int> > &queries_assigned, 
+     Matrix &center, int totalnumcoeffs) {
 
     int i, j;
     
@@ -773,29 +921,62 @@ class FGTKde {
 	  Vector x_Q;
 	  center.MakeColumnVector(i, &x_Q);
 	  
-	  double result = compute_v_alpha(row_q, x_Q, sqrt(delta), 
-					  i, locexp, totalnumcoeffs, nterms);
+	  double result = EvaluateLocalExpansion_(row_q, x_Q, sqrt(delta), 
+						  i, locexp, totalnumcoeffs, 
+						  nterms);
 	  densities_[row_q] += result;
 	}
       }
     }
   }
 
-  void gafexp(double delta, int nterms,
-	      int nallbx, ArrayList<int> &nsides, Vector &sidelengths, 
-	      Vector &mincoords, Matrix &locexp, int nfmax, int nlmax, 
-	      int kdis, Matrix &center, 
-	      ArrayList<ArrayList<int> > &queries_assigned,
-	      ArrayList<ArrayList<int> > &references_assigned, 
-	      Matrix &mcoeffs) {
+  /** @brief The main workhorse of the algorithm that does direct evaluation,
+   *         far-field approximation, direct local accumulation, and
+   *         far-field-to local translations, i.e. the FGT algorithm.
+   *
+   *  @param delta
+   *  @param nterms
+   *  @param nallbx The total number of grid boxes in the FGT grid.
+   *  @param mincoords The minimum coordinates of the FGT grid.
+   *  @param locexp The i-th column of this matrix contains the local moments
+   *                accumulated for the i-th grid box.
+   *  @param nfmax If the number of reference points owned by a given grid box
+   *               is within this limit, then no far-field moments are
+   *               computed.
+   *  @param nlmax For a given pair of a reference box with computed far-field
+   *               moments and a query box, if the number of query points
+   *               is within this limit, then we evaluate the contribution
+   *               of the reference box by direct far-field evaluations.
+   *               Otherwise, the far-field moments are converted into
+   *               local moments.
+   *  @param kdis
+   *  @param center The i-th column of this matrix contains the coordinates
+   *                of the center of each grid box.
+   *  @param queries_assigned The i-th column of this matrix contains the
+   *                          ids of the queries assigned to the i-th
+   *                          grid box.
+   *  @param references_assigned The i-th column of this matrix contains the
+   *                             ids of the reference points assigned to the
+   *                             i-th grid box.
+   *  @param mcoeffs The i-th column of this matrix contains the far-field
+   *                 moments of the i-th box contributed by the reference
+   *                 points contained within.
+   */
+  void FinalizeSum_(double delta, int nterms, int nallbx, 
+		    ArrayList<int> &nsides, Vector &sidelengths, 
+		    Vector &mincoords, Matrix &locexp, int nfmax, int nlmax, 
+		    int kdis, Matrix &center, 
+		    ArrayList<ArrayList<int> > &queries_assigned,
+		    ArrayList<ArrayList<int> > &references_assigned, 
+		    Matrix &mcoeffs) {
 
     int dim = qset_.n_rows();
 
     int totalnumcoeffs = (int) pow(nterms, dim);
 
     // Step 1: Assign query points and reference points to boxes.
-    assign(nallbx, nsides, sidelengths, mincoords, center, 
-	   queries_assigned, references_assigned);
+    Assign_(nallbx, nsides, sidelengths, mincoords, center, 
+	    queries_assigned, references_assigned);
 
     // Initialize local expansions to zero.
     int i, j, k, l;
@@ -817,7 +998,7 @@ class FGTKde {
 	// Get the query boxes that are in the interaction range.
 	ArrayList <int> nbors;
 	nbors.Init();
-	mknbor(i, nsides, kdis, nbors);
+	MakeNeighbors_(i, nsides, kdis, nbors);
 	int nnbors = nbors.size();
 
 	for(j = 0; j < nnbors; j++) {
@@ -855,10 +1036,10 @@ class FGTKde {
 	  // Taylor series.
 	  else {
 	  
-	    DirectLocalAccumulation(reference_rows, query_box_num,
-				    locexp, delta,
-				    center.GetColumnPtr(query_box_num),
-				    nterms, totalnumcoeffs);
+	    DirectLocalAccumulation_(reference_rows, query_box_num,
+				     locexp, delta,
+				     center.GetColumnPtr(query_box_num),
+				     nterms, totalnumcoeffs);
 	  }
 	
 	}
@@ -867,14 +1048,14 @@ class FGTKde {
       // In this case, create a far field expansion.
       else {
 
-	ComputeMultipoleCoeffs(mcoeffs ,dim, nterms,
-			       totalnumcoeffs, i, delta, reference_rows,
-			       center.GetColumnPtr(i));
+	ComputeMultipoleCoeffs_(mcoeffs ,dim, nterms,
+				totalnumcoeffs, i, delta, reference_rows,
+				center.GetColumnPtr(i));
 
 	// Get the query boxes that are in the interaction range.
 	ArrayList<int> nbors;
 	nbors.Init();
-	mknbor(i, nsides, kdis, nbors);
+	MakeNeighbors_(i, nsides, kdis, nbors);
 	int nnbors = nbors.size();
 
 	for(j = 0; j < nnbors; j++) {
@@ -884,36 +1065,62 @@ class FGTKde {
 
 	  // If this is true, evaluate far field expansion at each query point.
 	  if(ninnbr <= nlmax) {
-	    EvaluateMultipoleExpansion(query_rows, nterms,
-				       totalnumcoeffs, mcoeffs,
-				       i, delta, center.GetColumnPtr(i));
+	    EvaluateMultipoleExpansion_(query_rows, nterms,
+					totalnumcoeffs, mcoeffs,
+					i, delta, center.GetColumnPtr(i));
 	  }
 
-	  // In this case do multipole to local translation.
+	  // In this case do far-field to local translation.
 	  else {
 	    
-	    TranslateMultipoleToLocal(i, query_box_num,
-				      mcoeffs, locexp,
-				      nterms, totalnumcoeffs, delta,
-				      center.GetColumnPtr(i),
-				      center.GetColumnPtr(query_box_num));
+	    TranslateMultipoleToLocal_(i, query_box_num,
+				       mcoeffs, locexp,
+				       nterms, totalnumcoeffs, delta,
+				       center.GetColumnPtr(i),
+				       center.GetColumnPtr(query_box_num));
 	  
 	  }
 	}
       }
     }
 
-    gaeval(delta, nterms, nallbx, nsides, locexp, nlmax,
-	   queries_assigned, center, totalnumcoeffs);
-
+    // Now evaluate the local expansions for all queries.
+    EvaluateLocalExpansionForAllQueries_(delta, nterms, nallbx, nsides, locexp,
+					 nlmax, queries_assigned, center, 
+					 totalnumcoeffs);
   }
 
-  void gauss_t(double delta, int nterms, int nallbx, ArrayList<int> &nsides, 
-	       Vector &sidelengths, Vector &mincoords,
-	       Matrix &locexp, Matrix &center,
-	       ArrayList<ArrayList<int> > &queries_assigned, 
-	       ArrayList<ArrayList<int> > &references_assigned,
-	       Matrix &mcoeffs) {
+  /** @brief Determines the cut-off ranges for efficient evaluations and
+   *         calls the main workhorse for the algorithm.
+   *
+   *  @param delta The twice the squared bandwidth value.
+   *  @param nterms The truncation order of the approximation.
+   *  @param nallbx The total number of boxes.
+   *  @param nsides The number of grid boxes along each dimension.
+   *  @param sidelengths The length of the side of each grid box in each
+   *                     dimensin.
+   *  @param mincoords The minimum coordinates of the FGT grid.
+   *  @param locexp The i-th column of this matrix contains the local moments
+   *                accumulated for the i-th grid box.
+   *  @param center The i-th column of this matrix contains the coordinates
+   *                of the center of the i-th grid box.
+   *  @param queries_assigned The i-th column of this matrix contains the
+   *                          ids of the query points assigned to the i-th
+   *                          grid box.
+   *  @param references_assigned The i-th column of this matrix contains the
+   *                             ids of the reference points assigned to the
+   *                             i-th grid box.
+   *  @param mcoeffs The i-th column of this matrix contains the far-field
+   *                 moments for the i-the grid box contributed by the
+   *                 reference points contained within.
+   */
+  void GaussTransform_(double delta, int nterms, int nallbx, 
+		       ArrayList<int> &nsides, 
+		       Vector &sidelengths, Vector &mincoords,
+		       Matrix &locexp, Matrix &center,
+		       ArrayList<ArrayList<int> > &queries_assigned, 
+		       ArrayList<ArrayList<int> > &references_assigned,
+		       Matrix &mcoeffs) {
 
     int dim = qset_.n_rows();
     int kdis = (int) (sqrt(log(tau_) * -2.0) + 1);
@@ -925,16 +1132,15 @@ class FGTKde {
 
     // Call gafexp to create all expansions on grid, evaluate all appropriate
     // far-field expansions and evaluate all appropriate direct interactions.
-    gafexp(delta, nterms, nallbx, nsides, sidelengths, mincoords,
-	   locexp, nfmax, nlmax, kdis, center, queries_assigned,
-	   references_assigned, mcoeffs);
+    FinalizeSum_(delta, nterms, nallbx, nsides, sidelengths, mincoords,
+		 locexp, nfmax, nlmax, kdis, center, queries_assigned,
+		 references_assigned, mcoeffs);
   }
 
-  /** 
-   * Normalize the density estimates after the unnormalized sums have
-   * been computed 
+  /** @brief Normalize the density estimates after the unnormalized
+   *         sums have been computed.
    */
-  void NormalizeDensities() {
+  void NormalizeDensities_() {
     double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
       rset_.n_cols();
 
@@ -1016,8 +1222,8 @@ class FGTKde {
     densities_.SetZero();
 
     fx_timer_start(module_, "fgt_kde_init");
-    FastGaussTransformPreprocess(&interaction_radius, nsides, sidelengths,
-				 mincoords, &nboxes, &nterms);
+    FastGaussTransformPreprocess_(&interaction_radius, nsides, sidelengths,
+				  mincoords, &nboxes, &nterms);
     fx_timer_stop(module_, "fgt_kde_init");
 
     // precompute factorials
@@ -1056,11 +1262,12 @@ class FGTKde {
     double delta = 2 * kernel_.bandwidth_sq();
 
     fx_timer_start(module_, "fgt_kde");
-    gauss_t(delta, nterms, nboxes, nsides, sidelengths, mincoords,
-	    locexp, center, queries_assigned, references_assigned, mcoeffs);
+    GaussTransform_(delta, nterms, nboxes, nsides, sidelengths, mincoords,
+		    locexp, center, queries_assigned, references_assigned, 
+		    mcoeffs);
 
     // normalize the sum
-    NormalizeDensities();
+    NormalizeDensities_();
     fx_timer_stop(module_, "fgt_kde");
     printf("FGT KDE completed...\n");
   }
