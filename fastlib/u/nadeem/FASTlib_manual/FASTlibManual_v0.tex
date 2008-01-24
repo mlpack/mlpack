@@ -106,15 +106,17 @@ as it can be difficult to tell whether statistical or typographical
 problems are to blame for an algorithm's lack of convergence.
 
 \section{Development Model}
-Core tenets of FASTlib include openness and extensibility---not just by
-a few privileged developers, but by a community.  Centralized code
-bases are often subject to a host of political dilemmas: Who owns the
-code?  Whose style should be used?  Will contributions be rejected on
-pure stylistic grounds?  Will the project be forked if different
-groups cannot agree on the library's underpinning values?
+Core tenets of FASTlib include openness and extensibility, but
+supporting these can lead to organizational and political dilemmas:
+Who owns the code?  How strictly should style be enforced?  Can
+contributions be rejected on stylistic or ideological grounds?  How
+can we prevent projects from being forked over disagreements related
+to the above?  As of this writing, FASTlib's developers are seeking a
+software license that can adequately resolve these issues.
 
-We hope to stem these questions by developing a staged migration path
-for contributed code.  In sketch, this path is as follows:
+In the meantime, we have devised a staged migration path for
+incorporating contributed code into FASTlib's offical toolkits.  In
+sketch, this path is as follows:
 \begin{enumerate}
 \item Experimental code is developed in developers' individual user
   directories in the Subversion repository.  Here, developers have no
@@ -127,7 +129,7 @@ for contributed code.  In sketch, this path is as follows:
   Documentation must also be fully fleshed out by this point.
 \item After having been reviewed by sufficiently many members of the
   development community, the code joins the other algorithms in
-  FASTlib's extended corpus.  The extended corpus is the final
+  FASTlib's extended corpus.  This body of toolkits is the final
   destination for most code.
 \item Infrequently, it will be necessary to modify FASTlib's core
   components.  These are held to the strictest standards of quality;
@@ -151,83 +153,86 @@ want to make your work available to a community that values fast yet
 flexible solutions.  FASTlib is posed to help with all of these
 scenarios, so if any of them sound like you, give us a try!
 
-\chapter {Using FASTlib and developing code using FASTlib}
+\chapter {Code Development in FASTlib}
+
 \section{Obtaining and Building FASTlib}
-\subsection {Before Installation}
-Systems that we have tested:
+FASTlib is intended to be multi-platform, though (without extension)
+it relies heavily on the command line; much of the below assumes a
+Linux-like interface.  We have tested compilation on the following
+systems:
 \begin{itemize}
 \item Linux: 32-bit x86, 64-bit x86, and Itanium
 \item Cygwin (x86 Windows)
-\item MacOSX (you will need g77, see http://hpc.sourceforge.net/ and search for g77)
+\item MacOSX
 \end {itemize} 
-Tools you'll need:
+In order to build FASTlib, you will need the following tools:
 \begin {itemize}
-\item required: gcc C compiler, g++ C++ compiler, and g77 FORTRAN compiler
-\item required: python 2.2 or later, check by typing python -V, earlier versions will NOT work
-\item optional: doxygen (to generate local copies of documentation) 
+\item gcc, g++, and g77 3.4.6; later versions and gfortran should work
+\item python 2.2 or later
+\item (optional) doxygen and graphviz's dot, for formatted documentation
 \end {itemize}
 
-\subsection{Downloading and building FASTlib}
-Download the FASTlib library from blah ...We are assuming that the user has obtained the library tar ball from some place. Let's now assume that FASTlib has been untarred to \verb= $FASTLIBPATH =. Make sure this is an absolute path (it will start with a "/" at the beginning).
-
-After this, you will need to make sure your environment variables are set up properly. Simply add \verb= $FASTLIBPATH/script = into your \verb= $PATH = environment variable. First find out what shell you are using by typing
-
+FASTlib is maintained in a Subversion repositoroy at Georgia Tech, but
+presently it is available to others in tar-ball format via request.
+Let \verb@$FASTLIBPATH@ be the absolute path (i.e.~starting with
+\verb@/@) to the directory where you have extracted FASTlib.  You will
+need to add \verb@$FASTLIBPATH/script@ to your \verb@$PATH@
+environment variable.  This is accomplished differently for different
+shells (type \verb@echo $0@ to find out which you are using):
+\begin{itemize}
+\item For bash or ksh, add to your \verb@.bashrc@ or \verb@.kshrc@
+  file (or \verb@.profile@ if the other is absent):
 \begin{verbatim}
-echo $0
+  export PATH="$FASTLIBPATH/script:$PATH"
 \end{verbatim}
-and it will be bash, ksh, csh, or tcsh. If you are using the bash or ksh shell, you should add this to your ~/.bashrc (for bash) or ~/.kshrc (for ksh), or ~/.profile if the other doesn't exist, substituting \verb= $FASTLIBPATH = accordingly:
-
+\item For csh or tcsh, add to your \verb@.cshrc@ file:
 \begin{verbatim}
-export PATH="$FASTLIBPATH/script:$PATH"
+  setenv PATH "$FASTLIBPATH/script:""$PATH"
 \end{verbatim}
-If you are using csh or tcsh, put the following in your \verb= ~/.cshrc = file: 
+\end{itemize}
+You will need to close and reopen your terminal to enact the change.
+Type \verb@fl-build@ to confirm things are working; this should print
+usage information for FASTlib's build system.  Next, try:
 \begin{verbatim}
-setenv PATH "$FASTLIBPATH/script:""$PATH"
+  cd $FASTLIBPATH/u/example
+  fl-build main
+  ./main --data=fake.arff
 \end{verbatim}
-Close your terminal and re-open it. Check to see if FASTlib is working by typing: 
-\begin{verbatim}
-fl-build 
-\end{verbatim}
-It should give you the help message for FASTlib's build system. If it doesn't, type:
-\begin{verbatim}
-echo $PATH
-\end{verbatim}
-and make sure the \verb= $FASTLIBPATH/script = is there and is spelled exactly correctly. Try typing the export or setenv command by hand and see if it starts working afterwards. Now, change into your \verb= $FASTLIBPATH =, and change into \verb= example =. This is where the example code is, and you can try building it by:
-\begin{verbatim}
-fl-build main
-\end{verbatim}
-Now run 10-fold cross-validation with K-nearest-neighbors:
-\begin{verbatim}
-./main --data=fake.arff
-\end{verbatim}
-You should see p\_correct is 1.0 for fake.arff, which was fabricated specifically to do well with nearest-neighbor classification. 
+This performs 10-fold cross-validation for $k$-nearest-neighbors.  At
+the end of the output, you should see
+\verb@/kfold/results/p_correct 1.000@; \verb@fake.arff@ was engineered
+to be easy.
 
 \section {Code Organization}
-NOTE: This section will have to be reorganized eventually.
-
-FASTlib's core has a major C++ part, but smaller python parts with a few shell scripts. These are laid out in the following way:
+The following is subject to some reorganization while FASTlib is still
+in its earliest versions, but for now FASTlib is arranged as follows:
 \begin{itemize}
-\item Core C++
+\item Core Libraries
   \begin{itemize}
-  \item base/ - basic compiler abstractions and debugging tools
-  \item fx/ - FASTexec client library, for managing parameters, results, and timers, via the data store (actually, this is C so that you can use it in non-FASTlib code)
-  \item data/ - dataset utilities and cross-validation
-  \item math/ - some basic mathematical utilities (we envision growing this)
-  \item la/ - linear algebra routines (thanks to BLAS and LAPACK)
-  \item file/ - convenient stateful file readers
-  \item col/ - collections (dynamic array, heap)
-  \item fastlib/ - wraps all the packages neatly into one package and header
-  \item thor/ - template-based dual-tree parallelization 
+  \item \verb@base/@ - compiler abstractions, debugging, and memory management
+  \item \verb@fx/@ - FASTexec client library for managing parameters, timers, and results
+  \item \verb@col/@ - templated storage types (dynamic arrays, heaps, etc.)
+  \item \verb@data/@ - data set types and utilities
+  \item \verb@file/@ - file reading, writing, and tokenization
+  \item \verb@math/@ - a collection of math utilities, to be extended as needed
+  \item \verb@la/@ - linear algebra routines (mostly a wrapper for BLAS/LAPACK)
+  \item \verb@sparse/@ - sparse linear algebra routines (mostly a wrapper for Trilinos)
+  \item \verb@trilinos/@ - includes needed for Trilinos
+  \item \verb@tree/@ - utilities to build and manage $kd$-trees, among others
+  \item \verb@par/@ - rudimentary parallelization utilities
+  \item \verb@thor/@ - templated, parallelized algorithm for GNPs
+  \item \verb@fastlib/@ - wraps the rest of the library into one convenient include
   \end{itemize}
-\item Community-built C++
+\item Community-build Code
   \begin {itemize}
-  \item u/ (user directory)
+  \item \verb@u/@ - the user directory, which contains individual developers' directories
 \end {itemize} 
 \item  Other
   \begin {itemize}
-  \item script/ has scripts that will be in your \verb= $PATH = variable, and a python mini-library used by the scripts
-  \item bin/ contains files generated by the build system - deleting this is equivalent to make clean
-  \item bin\_keep/ contains other files generated by the build system but aren't meant to be cleaned, such as the linear algebra package 
+  \item \verb@script/@ - scripts for compiling code, running experiments, etc.
+  \item \verb@util/@ - additional utilities that may assist FASTlib development
+  \item \verb@bin/@ - files generated by compilation; \verb@make clean@ deletes this
+  \item \verb@bin_keep/@ - compiled binaries that should not be cleaned, such as BLAS/LAPACK
   \end {itemize}
 \end{itemize}
 
