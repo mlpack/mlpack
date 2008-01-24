@@ -1,5 +1,5 @@
 /**
- * @author pram
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file mog.h
  *
  * Defines a Gaussian Mixture model and

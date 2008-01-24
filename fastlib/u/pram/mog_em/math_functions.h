@@ -1,5 +1,5 @@
 /**
- * @author pram
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file math_functions.h
  *
  * This file has certain functions that find the 
