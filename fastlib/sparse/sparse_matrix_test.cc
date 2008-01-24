@@ -287,7 +287,7 @@ class SparseMatrixTest {
     SparseMatrix temp;
     Sparsem::Add(a, b, &temp);
     temp.EndLoading();  
-    a_plus_b.EndLoading();
+//    a_plus_b.EndLoading();
 //    printf("%s\n", temp.Print().c_str());
 //    printf("%s\n", a_plus_b.Print().c_str());
     for(index_t i=0; i<20; i++) {
