@@ -31,14 +31,14 @@ class KernelPCATest {
     delete engine_;
   }
   void TestGeneralKernelPCA() {
-   NONFATAL("Testing KernelPCA...\n");
+   NOTIFY("Testing KernelPCA...\n");
    Matrix eigen_vectors;
-   std::vector<double> eigen_values;
+   Vector eigen_values;
    Init();
    engine_->ComputeNeighborhoods();
    double bandwidth;
    engine_->EstimateBandwidth(&bandwidth);
-   NONFATAL("Estimated bandwidth %lg ...\n", bandwidth);
+   NOTIFY("Estimated bandwidth %lg ...\n", bandwidth);
    kernel_.set(bandwidth); 
    engine_->LoadAffinityMatrix();
    engine_->ComputeGeneralKernelPCA(kernel_, 5, 
@@ -47,25 +47,48 @@ class KernelPCATest {
 
    engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
    Destruct();
-   NONFATAL("Test ComputeGeneralKernelPCA passed...!\n");
+   NOTIFY("Test ComputeGeneralKernelPCA passed...!\n");
   }
   void TestLLE() {
-    NONFATAL("Testing Compute LLE\n");
+    NOTIFY("Testing ComputeLLE\n");
     Matrix eigen_vectors;
-    std::vector<double> eigen_values;
+    Vector eigen_values;
     Init();
     engine_->ComputeNeighborhoods();
     engine_->LoadAffinityMatrix();
-     engine_->ComputeLLE(5,
+    engine_->ComputeLLE(5,
                          &eigen_vectors,
-                        &eigen_values);
+                         &eigen_values);
     engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
     Destruct();
-    NONFATAL("Test ComputeLLE passed...!\n");
+    NOTIFY("Test ComputeLLE passed...!\n");
+  }
+  void TestSpectralRegression() {
+    NOTIFY("Test ComputeSpectralRegression...\n");
+    Matrix embedded_coordinates;
+    Vector eigenvalues;
+    Init();
+    engine_->Compute_neighborhoods();
+    double bandwidth;
+    engine_->EstimateBandwidth(&bandwidth);
+    NOTIFY("Estimated bandwidth %lg ...\n", bandwidth);
+    kernel_.set(bandwidth); 
+    engine_->LoadAffinityMatrix();
+    std::map<index_t, index_t> data_label;
+    Matrix embedded_coordinates;
+    Vector eigenvalues; 
+    engine_->ComputeSpectralRegression(data_label,
+                                       &embedded_coordinates, 
+                                       &eigenvalues);
+    engine_->SaveToTextFile("results", embedded_coords, eigen_values);
+    Destruct();
+
+    NOTIFY("Test ComputeSpectralRegression passed...\n"); 
   }
   void TestAll() {
      TestGeneralKernelPCA();
      TestLLE();
+     TestSpectralRegression();
   }
  private:
   KernelPCA *engine_;
