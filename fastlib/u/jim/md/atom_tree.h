@@ -1,17 +1,15 @@
 /**
+ * @file atom_tree.h
+ *
  * KD-tree stucture for molecular dynamics simulation. 
  * Each node stores a bounding box, centroid, and number of
  * atoms. Leaf nodes also store the velocity of the corresponding 
- * atom. Atoms are assumed to be homogeneous, as this is the
+ * atom. Atoms are assumed to be identical, as this is the
  * largely the case for applications of the LJ potential.
  * 
  */
 
 #include "fastlib/fastlib.h"
-#include "tree/kdtree.h"
-#include "tree/spacetree.h"
-#include "tree/bounds.h"
-
 
 struct AtomStat {
   double mass;
@@ -66,6 +64,7 @@ struct AtomStat {
     velocity.SetZero();
   }
 
+  // Update Leaf node centroid
   void UpdateCentroid(double time_step){
     int i;
     for (i = 0; i < 3; i++){
@@ -73,6 +72,7 @@ struct AtomStat {
     }
   }
 
+  // Update non-leaf centroid
   void UpdateCentroid(const AtomStat &left_stat, const AtomStat &right_stat){
     int i;
     for (i = 0; i < 3; i++){

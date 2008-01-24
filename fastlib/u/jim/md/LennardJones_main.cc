@@ -5,11 +5,11 @@
  * class, and updates the velocities using a leapfrogging scheme
  * until a specified end time is reached. 
  *
- * @see LennardJones.h
+ * @see lennard_jones.h
  */
 
 
-#include "LennardJones.h"
+#include "lennard_jones.h"
 
 int main(int argc, char *argv[])
 {
@@ -56,10 +56,10 @@ int main(int argc, char *argv[])
     Matrix naive_atom_matrix; 
     naive_atom_matrix.Copy(atom_matrix);
     naive_test.InitNaive(naive_atom_matrix, parameters);
-    naive_test.UpdateVelocitiesNaive(time_step/2);
+    naive_test.UpdateVelocities(time_step/2);
     while(time < stop_time){ 
-      naive_test.UpdatePositionsNaive(time_step);
-      naive_test.UpdateVelocitiesNaive(time_step);
+      naive_test.UpdatePositions(time_step);
+      naive_test.UpdateVelocities(time_step);
       time = time + time_step;
     }
 

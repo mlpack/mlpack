@@ -1,5 +1,5 @@
 /**
- * @file LennardJones.h
+ * @file lennard_jones.h
  *
  * Molecular Dynamics via Lennard-Jones potential, where pairwise forces
  * are given from the gradient of the potential function
@@ -12,9 +12,12 @@
  */
 
 
+#ifndef LENNARD_JONES_H
+#define LENNARD_JONES_H
+
 #include "fastlib/fastlib.h"
 #include "fastlib/fastlib_int.h"
-#include "AtomTree.h"
+#include "atom_tree.h"
 
 class TestLennardJones;
 
@@ -117,6 +120,36 @@ private:
       la::AddTo(delta_v_, &vel_query_->stat().velocity);
     }
   } // UpdateVelocityBase
+
+
+  void UpdatePositionsNaive_(){
+    int i, j;     
+    for (i = 0; i < n_atoms_; i++){
+      for (j = 0; j < 3; j++){
+	atoms_.set(j,i, atoms_.get(j,i) + time_step*velocities_.get(j,i));
+      }
+    }
+
+  } //UpdatePositionsNaive_
+
+  void UpdateVelocitiesNaive_(){    
+    int i, j, k;
+    Vector delta_v_;
+    delta_v_.Init(3);
+    for (i = 0; i < n_atoms_; i++){
+      for (j = i+1; j < n_atoms_; j++){
+	Vector position_i, position_j;
+	atoms_.MakeColumnSubvector(i, 0,3, &position_i);
+	atoms_.MakeColumnSubvector(j, 0,3, &position_j);
+	Acceleration_(position_i, position_j, delta_v_);
+	for (k = 0; k < 3; k++){
+	  velocities_.set(k, i, velocities_.get(k,i) + delta_v_[k]);
+	  velocities_.set(k, j, velocities_.get(k,j) - delta_v_[k]);  
+	}
+      }
+    }    
+  } //UpdateVelocitiesNaive
+  
   
     ///////////////////////////// Constructors ////////////////////////////////
 
@@ -133,7 +166,7 @@ public:
     ~LennardJones(){
       if (system_ != NULL){
 	delete system_;
-      }      
+      }     
     }
     
   ////////////////////////////// Public Functions ////////////////////////////
@@ -175,52 +208,28 @@ public:
 
   void UpdatePositions(double time_step_in){
     time_step = time_step_in;
-    UpdatePositionsRecursion_(system_); 
+    if (system_ != NULL){
+      UpdatePositionsRecursion_(system_); 
+    } else {
+      UpdatePositionsNaive_();
+    }
   }
 
-  /**
-   * Naive velocity update computes each pairwise interaction.
-   */
+ 
   void UpdateVelocities(double time_step_in){
     time_step = time_step_in;
-    int i;
-    for (i = 0; i < n_atoms_; i++){
-      query_ = system_->FindByBeginCount(i,1);      
-      UpdateVelocityRecursion_(query_, system_);
+    if (system_ != NULL){
+      int i;
+      for (i = 0; i < n_atoms_; i++){
+	query_ = system_->FindByBeginCount(i,1);      
+	UpdateVelocityRecursion_(query_, system_);
+      }
+    } else {
+      UpdateVelocitiesNaive_();
     }
   } //UpdateVelocities
 
-  void UpdatePositionsNaive(double time_step_in){
-    int i, j;     
-    for (i = 0; i < n_atoms_; i++){
-      for (j = 0; j < 3; j++){
-	atoms_.set(j,i, atoms_.get(j,i) + time_step_in*velocities_.get(j,i));
-      }
-    }
-
-  } //UpdatePositionsNaive
-
-
-  void UpdateVelocitiesNaive(double time_step_in){
-    time_step = time_step_in;
-    int i, j, k;
-    Vector delta_v_;
-    delta_v_.Init(3);
-    for (i = 0; i < n_atoms_; i++){
-      for (j = i+1; j < n_atoms_; j++){
-	Vector position_i, position_j;
-	atoms_.MakeColumnSubvector(i, 0,3, &position_i);
-	atoms_.MakeColumnSubvector(j, 0,3, &position_j);
-	Acceleration_(position_i, position_j, delta_v_);
-	for (k = 0; k < 3; k++){
-	  velocities_.set(k, i, velocities_.get(k,i) + delta_v_[k]);
-	  velocities_.set(k, j, velocities_.get(k,j) - delta_v_[k]);  
-	}
-      }
-    }
-
-  } //UpdateVelocitiesNaive
-
+ 
 
   /**
    * When called for a tree implementation, this function finds
@@ -270,4 +279,4 @@ public:
 }; // class LennardJones
 
 
-
+#endif
