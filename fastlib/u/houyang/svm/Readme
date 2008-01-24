@@ -1,0 +1,19 @@
+Multiclass SVM Classifier
+
+Examples:
+
+1.Cross validation mode
+svm_main --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=linear --c=10 --normalize=0
+
+2.Training mode (model will be saved as "svm_model")
+svm_main --mode=train --train_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --mode=train --train_data=traindata3.csv --kernel=linear --c=10 --normalize=0
+
+3.Training+testing mode
+svm_main --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
+
+4.Testing mode (the model file "svm_model" should exist)
+svm_main --mode=test --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --mode=test --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
