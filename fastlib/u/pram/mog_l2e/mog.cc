@@ -1,5 +1,5 @@
 /**
- * @author pram
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file mog.cc
  *
  * Implementation for the loglikelihood function, the EM algorithm,
