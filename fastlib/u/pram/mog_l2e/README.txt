@@ -23,5 +23,7 @@ classes
 
 -> An example run would be:
 fl-build mog_l2e_main
-./mog_l2e_main --data=data.arff --mog_l2e/K=3 --opt/method=NelderMead
+./mog_l2e_main --data=fake.arff --mog_l2e/K=3 --opt/method=NelderMead
+OR
+./mog_l2e_main --data=fake.arff --mog_l2e/K=3 --opt/method=QuasiNewton
 
