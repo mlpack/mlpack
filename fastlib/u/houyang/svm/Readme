@@ -1,4 +1,24 @@
+@author Hua Ouyang
+@file README
+
 Multiclass SVM Classifier
+
+Files in this folder:
+README: this file
+# Source codes:
+build.py: build scripts
+svm_main.cc: contains main function of multilcass SVM classifier
+svm.h: contains multiclassification main routine
+smo.h: sequential minimal optimization
+# Unit test data:
+traindata2.csv: training data for a 2 classes toy problem. 10 samples in each class.
+testdata2.csv: testing data for a 2 classes toy problem. 10 samples in each class.
+traindata3.csv: training data for a 3 classes toy problem. 10 samples in each class.
+testdata3.csv: testing data for a 3 classes toy problem. 10 samples in each class.
+# Generated files:
+artificialdata.csv: artificial data if no training/testing data file provided
+svm_model: SVM model file
+testlabels: classified labels
 
 Explanation of arguments:
 1. mode (required) : the mode of svm_main, values: "cv", "train", "train_test", "test".

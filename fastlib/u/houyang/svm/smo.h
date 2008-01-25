@@ -1,4 +1,6 @@
 /**
+ * @author Garry Boyer, Hua Ouyang
+ *
  * @file smo.h
  *
  * This head file contains functions for performing Budget Sequential Minimal Optimization (SMO) 

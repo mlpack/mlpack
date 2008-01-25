@@ -1,4 +1,6 @@
 /**
+ * @author Hua Ouyang
+ *
  * @file svm.h
  *
  * This head file contains functions for performing multiclass SVM 
@@ -300,6 +302,7 @@ void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *mo
   }
   /* Save models to file "svm_model" */
   SaveModel("svm_model"); // TODO: param_req, and for CV mode
+  // TODO: calculate training error
 }
 
 /**
@@ -539,14 +542,22 @@ void SVM<TKernel>::BatchClassify(Dataset* testset, String testlablefilename) {
     fprintf(stderr, "Cannot save test labels to file!");
     return;
   }
+  index_t err_ct = 0;
   num_features_ = testset->n_features()-1;
   for (index_t i = 0; i < testset->n_points(); i++) {
     Vector testvec;
     testset->matrix().MakeColumnSubvector(i, 0, num_features_, &testvec);
     int testlabel = Classify(testvec);
+    if (testlabel != testset->matrix().get(num_features_, i))
+      err_ct++;
+    /* save classified labels to file*/
     fprintf(fp, "%d\n", testlabel);
   }
   fclose(fp);
+  /* calculate testing error */
+  fprintf( stderr, "\n*** %d out of %d misclassified ***\n", err_ct, testset->n_points() );
+  fprintf( stderr, "*** Testing error is %f ***\n", double(err_ct)/double(testset->n_points()) );
+  fprintf( stderr, "*** Results are save in \"%s\" ***\n\n", testlablefilename.c_str());
 }
 
 /**
