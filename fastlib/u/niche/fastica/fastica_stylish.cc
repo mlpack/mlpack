@@ -19,11 +19,14 @@ int main(int argc, char *argv[]) {
   const char *data = fx_param_str_req(NULL, "data");
   data::Load(data, &X);
 
+  struct datanode* fastica_module =
+    fx_submodule(NULL, "fastica", "fastica_module");
+
   FastICA fastica;
 
-  fastica.Init(X);
+  fastica.Init(X, fastica_module);
 
-  int ret_val = fastica.DoFastICA(fx_root, &W, &Y);
+  int ret_val = fastica.DoFastICA(&W, &Y);
 
   SaveCorrectly("unmixing_matrix.dat", W);
   SaveCorrectly("indep_comps.dat", Y);
