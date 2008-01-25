@@ -1,4 +1,6 @@
 /**
+ * @author Hua Ouyang
+ *
  * @file svm_main.cc
  *
  * This file contains main routines for performing multiclass SVM 
@@ -122,7 +124,7 @@ void GenerateArtificialDataset(Dataset* dataset){
     m.set(2, i+2, 2); // labels
   }
 
-  data::Save("m.csv", m);
+  data::Save("artificialdata.csv", m); // TODO, for training, for testing
   dataset->OwnMatrix(&m);
 }
 
@@ -164,7 +166,7 @@ int LoadData(Dataset* dataset, String datafilename){
 */
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
-  //srand(time(NULL));
+  srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");
