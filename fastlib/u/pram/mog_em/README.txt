@@ -20,5 +20,5 @@ The files are the following:
 
 -> An example run would be:
 fl-build mog_em_main
-./mog_em_main --data=data.arff --mog_em/K=3 
+./mog_em_main --data=fake.arff --mog_em/K=3 
 
