@@ -1,6 +1,8 @@
 /**
  * @file atom_tree.h
  *
+ * @author Jim Waters (jwaters6@gatech.edu)
+ *
  * KD-tree stucture for molecular dynamics simulation. 
  * Each node stores a bounding box, centroid, and number of
  * atoms. Leaf nodes also store the velocity of the corresponding 
