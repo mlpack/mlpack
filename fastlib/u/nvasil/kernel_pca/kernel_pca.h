@@ -27,7 +27,7 @@
 #include "fastlib/fastlib.h"
 #include "la/matrix.h"
 #include "sparse/sparse_matrix.h"
-#include "allknn.h"
+#include "u/nvasil/allknn/allknn.h"
 
 class KernelPCATest;
 /*
@@ -132,7 +132,8 @@ class KernelPCA {
    * it assign numerical labels
    */
   template<typename DISTANCEKERNEL>
-  void ComputeSpectralRegression(std::map<index_t, index_t> &data_label,
+  void ComputeSpectralRegression(DISTANCEKERNEL kernel,
+                                 std::map<index_t, index_t> &data_label,
                                  Matrix *embedded_coordinates, 
                                  Vector *eigenvalues);
     
