@@ -6,6 +6,52 @@
  */
 #include "ortho_range_search.h"
 
+/** Main function which reads parameters and runs the orthogonal
+ *  range search.
+ *
+ *  In order to compile this driver, do:
+ *  fl-build ortho_range_search_bin --mode=fast
+ *
+ *  Type the following (which consists of both required and optional
+ *  arguments) in a single command line:
+ *
+ *  ./ortho_range_search_bin --data=dataset
+ *                           --range=range
+ *                           --do_naive
+ *                           --save_tree_file=savedtree
+ *                           --load_tree_file=savedtree
+ *
+ *  Explanations for the arguments listed with possible values.
+ *
+ *  1. data (required): the name of the dataset.
+ *
+ *  2. range (required): the textfile containing the range. The following
+ *                       is an example:
+ *
+ *                       0.88 INFINITY
+ *                       0.90 INFINITY
+ *                       0.90 INFINITY
+ *                       0.90 INFINITY
+ *
+ *                       for 4-dimensional search window of
+ *                       [0.88,inf]*[0.90,inf]*[0.90,inf]*[0.90,inf]
+ *
+ *  3. do_naive (optional): if present, will run the naive algorithm to
+ *                          compare the search result against the naive search.
+ *  4. save_tree_file (optional): this feature is in a beta stage and WILL NOT
+ *                                work with the current FastLib release. It 
+ *                                saves the constructed tree in the fast 
+ *                                algorithm to a file, so that it can be loaded
+ *                                later via --load_tree_file argument. If you 
+ *                                want to use this, let me 
+ *                                (dongryel@cc.gatech.edu) know.
+ *  5. load_tree_file (optional): this feature is in a beta stage and WILL NOT
+ *                                work with the current FastLib release. It
+ *                                loads the saved tree from a file, so that
+ *                                the algorithm does not have to construct
+ *                                trees. If you want to use this feature, let
+ *                                me (dongryel@cc.gatech.edu) know.
+ */
 int main(int argc, char *argv[]) {
 
   // Always initialize FASTexec with main's inputs at the beggining of

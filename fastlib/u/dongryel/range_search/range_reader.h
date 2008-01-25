@@ -12,10 +12,33 @@
 #include "fastlib/fastlib.h"
 
 // text parser class for handling -INFINITY and INFINITY tokens
+/** @brief A class implementation for reading in dataset with special
+ *         tokens: -INFINITY and INFINITY
+ *
+ *  @code
+ *    Vector low_coord_limits, high_coord_limits;
+ *    RangeReader::ReadRangeData(&low_coord_limits, &high_coord_limits,
+ *                               dataset, range_data_file_name);
+ *
+ *    // low_coord_limits and high_coord_limits are initialized with
+ *    // the low and high limits of the search window.
+ *  @endcode
+ */
 class RangeReader {
   
  public:
   
+  /** @brief Reads the orthogonal search range data from a text file
+   *
+   *  @param low_coord_limits An uninitialized vector which will be filled
+   *                          with the lower limits of the search window.
+   *  @param high_coord_limits An uninitialized vector which will be filled
+   *                           with the upper limits of the search window.
+   *  @param dataset The dataset used for searching. Only used for detecting
+   *                 the dimensionality of the search space (i.e. how many
+   *                 rows of the text file to read in).
+   *  @param range_data_file_name The file to read the range data from.
+   */
   static void ReadRangeData(Vector *low_coord_limits, 
 			    Vector *high_coord_limits,
 			    Matrix &dataset,
