@@ -111,10 +111,12 @@ class SparseMatrix {
 
   /** Initialize from a text file in the following format
    *   row column value \n
-   *   WARNING !!!!!!!
+   *   NOTE !!!!!!!
    *   the text file must be sorted according to the rows
    *   meaning that the rows should be in increasing order
    *   you can do that easily in unix with the sort -n command
+   *   if it is not sorted it will still work but it will load 
+   *   much slower
    */
   void Init(std::string textfile);
   /** 
@@ -141,6 +143,9 @@ class SparseMatrix {
   void StartLoadingRows();
   /** 
    * All these functions load Rows, with the data in different format
+   * WARNING!!! there should not be duplicate indices 
+   * If you load the same row twice or the row has duplicate columns
+   * then you will get unexpected results
    */
   void LoadRow(index_t row, std::vector<index_t> &columns, Vector &values);
   void LoadRow(index_t row, index_t *columns, Vector &values);
@@ -194,8 +199,9 @@ class SparseMatrix {
    */
   void Negate();
   /** The matrix will be scaled such that A(i,j) = x(j)*A(i,j) 
-      where i denotes the global row number of A and j denotes the  column number 
-  */
+   *  where i denotes the global row number of A and j denotes the  column number 
+   *  You must have called EndLoading()
+   */
   void ColumnScale(const Vector &vec) {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You should call EndLoading first...\n");
