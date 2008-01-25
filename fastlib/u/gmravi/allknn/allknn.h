@@ -67,7 +67,7 @@ class AllNNNaive{
     return results.distance_sqd;
   }
 
-  //Interesting functions.......
+  //Interesting  unctions.......
  public:
 
   // Constructor
@@ -135,7 +135,7 @@ class AllNNNaive{
 		  min_dist=dist;
 		}
 	    }
-	  //printf("min dist is %f\n",min_dist);
+	  
 	}
     }
   
@@ -580,9 +580,10 @@ class AllKNNSingleTree
 	  index_t length=0;
 
 	  //length is the number of neighbours found till now. Initialized to 0
+	  fx_timer_start(NULL,"allknnsingletree");
 	  FindKNearestNeighbours(rroot_,q_matrix_.GetColumnPtr(i),
 				 &r_matrix_,temp_result,length,k_);
-
+	  fx_timer_stop(NULL,"allknnsingletree");
 	  results[i].index_of_neighbour.Copy(temp_result.index_of_neighbour);
 	  results[i].distance_sqd.Copy(temp_result.distance_sqd);	
    
@@ -863,6 +864,12 @@ class AllKNNSingleTree
 };       //Definition of AllKNNSingleTree ends............
 
 
+
+
+
+
+
+
 //Definition of AllKNNDualTree begins.........................
 
 /** So this class find sout the k-nearest neighbours for all the query points by 
@@ -943,6 +950,7 @@ class AllKNNDualTree{
   ~AllKNNDualTree()
     {
       delete(rroot_);
+      delete(qroot_);
     }
   //Constructor
 
@@ -992,8 +1000,9 @@ class AllKNNDualTree{
 
   void ComputeAllKNNDualTree() 
     {
-       
+      fx_timer_start(NULL,"find_k_nn_dual");
       FindKNearestNeighboursDualTree(qroot_, rroot_);
+      fx_timer_stop(NULL,"find_k_nn_dual");
 
       //Note that the order of points in the query and 
       //reference set have changed due to tree formation.
@@ -1003,6 +1012,20 @@ class AllKNNDualTree{
 
     }
   
+  void BestNodePartners (Tree * nd, Tree * nd1, Tree * nd2, Tree ** partner1,Tree ** partner2){
+    
+    double d1 = nd->bound ().MinDistanceSq (nd1->bound ());
+    double d2 = nd->bound ().MinDistanceSq (nd2->bound ());
+    
+    if (d1 <= d2){
+      *partner1 = nd1;
+      *partner2 = nd2;
+    }
+    else{
+      *partner1 = nd2;
+      *partner2 = nd1;
+    }
+  }
 
   void TransformResults(){
 
@@ -1060,8 +1083,10 @@ class AllKNNDualTree{
 	   
 	   
 	      double distance;
-	      int position;
-	  
+	      index_t position;
+	      
+	      //Maximum distance for this node. this is a temporary variable
+	      double max_distance_for_this_node=DBL_MIN;
 	   
 	      for(int i=q_node->begin();i<q_node->end();i++){
 	     
@@ -1115,18 +1140,21 @@ class AllKNNDualTree{
 		//see if all knn have been found
 		if(results[i].distance_sqd.size()<k_){
 		
-		  q_node->stat().distance_max=DBL_MAX;
+		  max_distance_for_this_node=DBL_MAX;
 		}
 		else {
 		
 		  //all k nn have been found
-		  q_node->stat().distance_max=q_node->stat().distance_max > 
+		  
+		  max_distance_for_this_node=(max_distance_for_this_node>
 		    results[i].distance_sqd[k_-1]?
-		    q_node->stat().distance_max:
-		    results[i].distance_sqd[k_-1];
+		    max_distance_for_this_node:
+		    results[i].distance_sqd[k_-1]);
 		
 		}
 	      }
+	      q_node->stat().distance_max=(q_node->stat().distance_max > max_distance_for_this_node ? max_distance_for_this_node: q_node->stat().distance_max);
+
 	    }
 	}
    
@@ -1143,15 +1171,18 @@ class AllKNNDualTree{
 	  //NOT PRUNEABLE
 	  //both are not leafs
 	  if(!q_node->is_leaf() && !r_node->is_leaf()){
-	 
-	    FindKNearestNeighboursDualTree(q_node->left(),r_node->left());
-	    FindKNearestNeighboursDualTree(q_node->left(),r_node->right());
+
+	    Tree *rnode_first=NULL;
+	    Tree *rnode_second=NULL;
+	    BestNodePartners (q_node->left(), r_node->left (), r_node->right (),&rnode_first, &rnode_second);
+	    FindKNearestNeighboursDualTree(q_node->left(),rnode_first);
+	    FindKNearestNeighboursDualTree(q_node->left(),rnode_second);
 
 	    double max_dist_q_left= q_node->left()->stat().distance_max;
 
-	 
-	    FindKNearestNeighboursDualTree(q_node->right(),r_node->left());
-	    FindKNearestNeighboursDualTree(q_node->right(),r_node->right());
+	    BestNodePartners (q_node->right(), r_node->left (), r_node->right (),&rnode_first, &rnode_second);
+	    FindKNearestNeighboursDualTree(q_node->right(),rnode_first);
+	    FindKNearestNeighboursDualTree(q_node->right(),rnode_second);
 
 	    double max_dist_q_right= q_node->right()->stat().distance_max;
 	 
@@ -1167,9 +1198,12 @@ class AllKNNDualTree{
 	
 	    //q_tree is leaf and r_tree is not
 	    if(q_node->is_leaf()&&!r_node->is_leaf()){
-	  
-	      FindKNearestNeighboursDualTree(q_node,r_node->left());
-	      FindKNearestNeighboursDualTree(q_node,r_node->right());
+
+	      Tree *rnode_first=NULL;
+	      Tree *rnode_second=NULL;
+	      BestNodePartners (q_node, r_node->left (), r_node->right (),&rnode_first, &rnode_second);
+	      FindKNearestNeighboursDualTree(q_node,rnode_first);
+	      FindKNearestNeighboursDualTree(q_node,rnode_second);
 	    }
 	
 	    else
@@ -1180,10 +1214,13 @@ class AllKNNDualTree{
 		if(!q_node->is_leaf()&&r_node->is_leaf())
 		  {
 		
-		    FindKNearestNeighboursDualTree(q_node->left(),r_node);
+		    Tree *qnode_first=NULL;
+		    Tree *qnode_second=NULL;
+		    BestNodePartners (r_node, q_node->left (), q_node->right (),&qnode_first, &qnode_second);
+		    FindKNearestNeighboursDualTree(qnode_first,r_node);
+		    FindKNearestNeighboursDualTree(qnode_second,r_node);
+
 		    double max_dist_q_left=q_node->left()->stat().distance_max;
-		
-		    FindKNearestNeighboursDualTree(q_node->right(),r_node);
 		    double max_dist_q_right=q_node->right()->stat().distance_max;
 		
 		    double max_dist_q= max_dist_q_left> 
