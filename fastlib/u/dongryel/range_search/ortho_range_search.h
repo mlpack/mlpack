@@ -11,7 +11,18 @@
 #include "range_reader.h"
 #include "fastlib/fastlib.h"
 
-/** @brief Naive orthogonal range search class 
+/** @brief Naive orthogonal range search class.
+ *
+ *  @code
+ *    NaiveOrthoRangeSearch search;
+ *    search.Init(dataset);
+ *    search.Compute(low_coord_limits, high_coord_limits);
+ *
+ *    Vector naive_search_results;
+ *
+ *    // Make sure that the vector is uninitialized before passing.
+ *    search.get_results(&naive_search_results);
+ *  @endcode
  */
 class NaiveOrthoRangeSearch {
   
@@ -75,6 +86,10 @@ class NaiveOrthoRangeSearch {
   }
 
   /** @brief The main computation of naive orthogonal range search.
+   *
+   *  @param low_coord_limits The lower coordinate range of the search window.
+   *  @param high_coord_limits The upper coordinate range of the search
+   *                           window.
    */
   void Compute(Vector &low_coord_limits, Vector &high_coord_limits) {
 
@@ -106,14 +121,27 @@ class NaiveOrthoRangeSearch {
 
 };
 
-/** Faster orthogonal range search class */
+/** @brief Faster orthogonal range search class using a tree.
+ *
+ *  @code
+ *    OrthoRangeSearch search;
+ *    search.Init(dataset, NULL);
+ *    search.Compute(low_coord_limits, high_coord_limits);
+ *
+ *    Vector search_results;
+ *
+ *    // Make sure that the vector is uninitialized before passing.
+ *    search.get_results(&search_results);
+ *  @endcode
+ */
 class OrthoRangeSearch {
 
  public:
   
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix> Tree;
+  ////////// Constructor/Destructor //////////
 
-  // constructor
+  /** @brief Constructor that initializes pointers to NULL.
+   */
   OrthoRangeSearch() {
     tree_buffer_ = NULL;
     old_from_new_buffer_ = NULL;
@@ -121,7 +149,8 @@ class OrthoRangeSearch {
     root_ = NULL;
   }
 
-  // destructor
+  /** @brief Destructor that frees up memory.
+   */
   ~OrthoRangeSearch() {
     if(tree_buffer_ != NULL) {
       mem::Free(tree_buffer_);
@@ -151,6 +180,10 @@ class OrthoRangeSearch {
   ////////// User-level Functions //////////
 
   /** @brief Perform the orthogonal range search.
+   *
+   *  @param low_coord_limits The lower coordinate range of the search window.
+   *  @param high_coord_limits The upper coordinate range of the search
+   *                           window.
    */
   void Compute(Vector &low_coord_limits, Vector &high_coord_limits) {
 
@@ -170,7 +203,10 @@ class OrthoRangeSearch {
     }
   }
 
-  /** @brief Save the tree to the file
+  /** @brief Save the tree to the file.
+   *
+   *  @param save_tree_file_name The tree is serialized to the file whose
+   *                             name is given as the argument.
    */
   void SaveTree(const char *save_tree_file_name) {
 
@@ -209,10 +245,85 @@ class OrthoRangeSearch {
     printf("Tree is serialized...\n");
   }
 
+  /** @brief Initialization function - to read the data and to construct tree.
+   *
+   *  @param dataset The dataset for orthogonal range searching.
+   *  @param load_tree_file_name If NULL, the tree is built from scratch.
+   *                             If not NULL, the tree is loaded from the
+   *                             file whose name is given as the argument.
+   */
+  void Init(Matrix &dataset, const char *load_tree_file_name) {
+
+    int leaflen = fx_param_int(NULL, "leaflen", 20);
+
+    // Make a copy of the dataset.
+    data_.Copy(dataset);
+
+    fx_timer_start(NULL, "tree_d");
+
+    // If the user wants to load the tree from a file,
+    if(load_tree_file_name != NULL) {
+      LoadTree(load_tree_file_name);
+    }
+
+    // Otherwise, construct one from scratch.
+    else {
+      root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen,
+					     &old_from_new_,
+					     &new_from_old_);
+    }
+    fx_timer_stop(NULL, "tree_d");
+    
+    // initialize candidate nodes and points */
+    candidate_points_.Init(data_.n_cols());
+    for(index_t i = 0; i < data_.n_cols(); i++) {
+      candidate_points_[i] = false;
+    }
+  }
+
+ private:
+
+  /** @brief This defines the type of the tree used in this algorithm. */
+  typedef BinarySpaceTree<DHrectBound<2>, Matrix> Tree;
+
+  /** @brief Flag determining a prune */
+  enum PruneStatus {SUBSUME, INCONCLUSIVE, EXCLUDE};
+
+  ////////// Private Member Variables //////////
+
+  /** @brief Pointer to the dataset */
+  Matrix data_;
+
+  /** @brief Buffer for loading up old_from_new mapping. */
+  ArrayList<index_t> *old_from_new_buffer_;
+
+  /** @brief Buffer for loading up new_from_old mapping. */
+  ArrayList<index_t> *new_from_old_buffer_;
+
+  /** @brief Temporary pointer used for loading the tree from a file. */
+  Tree *tree_buffer_;
+
+  ArrayList<index_t> old_from_new_;
+  
+  ArrayList<index_t> new_from_old_;
+
+  /** @brief The root of the tree */
+  Tree *root_;
+
+  /** @brief List of candidate points. The i-th position tells whether
+   *         the i-th data point was in the orthogonal search window.
+   */
+  ArrayList<bool> candidate_points_;
+
+  ////////// Private Member Functions //////////
+
   /** @brief Load the tree from the file.
+   *
+   *  @param load_tree_file_name Loads up the saved tree from the file whose
+   *                             name is given as the argument.
    */
   void LoadTree(const char *load_tree_file_name) {
-
+    
     //const char *tfname = fx_param_str(NULL, "load_tree_file", "savedtree");
     FILE *input = fopen(load_tree_file_name, "r");
     
@@ -257,76 +368,23 @@ class OrthoRangeSearch {
     data_.Destruct();
     data_.Own(&tmp_data);
   }
-
-  /** @brief Initialization function - to read the data and to construct tree.
-   */
-  void Init(Matrix &dataset, const char *load_tree_file_name) {
-
-    int leaflen = fx_param_int(NULL, "leaflen", 20);
-
-    // Make a copy of the dataset.
-    data_.Copy(dataset);
-
-    fx_timer_start(NULL, "tree_d");
-
-    // If the user wants to load the tree from a file,
-    if(load_tree_file_name != NULL) {
-      LoadTree(load_tree_file_name);
-    }
-
-    // Otherwise, construct one from scratch.
-    else {
-      root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen,
-					     &old_from_new_,
-					     &new_from_old_);
-    }
-    fx_timer_stop(NULL, "tree_d");
-    
-    // initialize candidate nodes and points */
-    candidate_points_.Init(data_.n_cols());
-    for(index_t i = 0; i < data_.n_cols(); i++) {
-      candidate_points_[i] = false;
-    }
-  }
-
- private:
-
-  /** flag determining a prune */
-  enum PruneStatus {SUBSUME, INCONCLUSIVE, EXCLUDE};
-
-  // member variables
-  /** pointer to the dataset */
-  Matrix data_;
-
-  ArrayList<index_t> *old_from_new_buffer_;
-
-  ArrayList<index_t> *new_from_old_buffer_;
-
-  Tree *tree_buffer_;
-
-  ArrayList<index_t> old_from_new_;
   
-  ArrayList<index_t> new_from_old_;
-
-  /** the root of the tree */
-  Tree *root_;
-
-  /**
-   * List of candidate points
+  /** @brief The base case.
+   *
+   *  @param node The tree node currently under consideration.
+   *  @param start_dim The dimension currently under consideration.
+   *  @param low_coord_limits The lower coordinate limits of the search.
+   *  @param high_coord_limits The upper coordinate limits of the search.
    */
-  ArrayList<bool> candidate_points_;
-
-  // member functions
-  
-  /** base case */
-  void ortho_slow_range_search(Tree *node, const Vector &low_coord_limits,
+  void ortho_slow_range_search(Tree *node, int start_dim,
+			       const Vector &low_coord_limits,
 			       const Vector &high_coord_limits) {
     PruneStatus prune_flag;
 
     for(index_t row = node->begin(); row < node->end(); row++) {
       prune_flag = SUBSUME;
 
-      for(index_t d = 0; d < data_.n_rows(); d++) {
+      for(index_t d = start_dim; d < data_.n_rows(); d++) {
 	// determine which one of the two cases we have: EXCLUDE, SUBSUME
 
 	// first the EXCLUDE case: when dist is above the upper bound distance
@@ -345,7 +403,15 @@ class OrthoRangeSearch {
     }
   }
 
-  /** the workhorse algorithm for fast orthgonal range search */
+  /** @brief The workhorse algorithm for fast orthgonal range
+   *         search.
+   *
+   *  @param node The current tree node that is under consideration.
+   *  @param start_dim The dimension currently under consideration.
+   *  @param low_coord_limits The lower coordinate limits of the search.
+   *  @param high_coord_limits The upper coordinate limits of the search
+   *                           window.
+   */
   void ortho_range_search(Tree *node, int start_dim,
 			  const Vector &low_coord_limits, 
 			  const Vector &high_coord_limits) {
@@ -390,7 +456,8 @@ class OrthoRangeSearch {
       return;
     }
     else if(node->is_leaf()) {
-      ortho_slow_range_search(node, low_coord_limits, high_coord_limits);
+      ortho_slow_range_search(node, start_dim, low_coord_limits, 
+			      high_coord_limits);
     }
     else {
       ortho_range_search(node->left(), start_dim, low_coord_limits,
