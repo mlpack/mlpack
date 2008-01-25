@@ -744,7 +744,7 @@ namespace linalg__private {
    * matrix. Whitening means the covariance matrix of the result is
    * the identity matrix
    */
-  void WhitenUsingEig(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix, Matrix* dewhitening_matrix) {
+  void WhitenUsingEig(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix) {
     Matrix cov_X, D, D_inv, E;
     Vector D_vector;
 
@@ -771,7 +771,6 @@ namespace linalg__private {
     }
 
     la::MulTransBInit(D_inv, E, whitening_matrix);
-    la::MulInit(E, D, dewhitening_matrix);
     la::MulInit(*whitening_matrix, X, X_whitened);
   }
 
