@@ -30,10 +30,15 @@ template <typename TKernel> class NaiveMatrixCalculation{
 
  public:
 
+  //getter....
+  Matrix & get_results(index_t q){
 
-  //getter function....
+    return results_[q];
 
-  ArrayList<Matrix>  &get_results(){
+  }
+
+  //Will invert the B^ T WB matrix for each query point
+  void InvertAll(){
    
 
     /** At the moment the arraylist results_ has the matrix estimate B^TWB. 
@@ -43,7 +48,7 @@ template <typename TKernel> class NaiveMatrixCalculation{
 
     //First invert the results.....   
     for(index_t q=0;q<qset_.n_cols();q++){ //for all query points 
-     
+ 
       /*This is inversion by SVD **********/
       Vector s;
       Matrix U;
@@ -68,7 +73,6 @@ template <typename TKernel> class NaiveMatrixCalculation{
       //appropriately initialize s_diagonal
 
       S_diagonal.Init(rows_in_S_diagonal,cols_in_S_diagonal);
-     
       //Fill up the s_diagonal matrix with the reciprocal elements of s
       
       for(index_t i=0;i<rows_in_S_diagonal;i++){
@@ -78,6 +82,7 @@ template <typename TKernel> class NaiveMatrixCalculation{
 	  if(i==j){
 	    
             //The diagonal element
+	    //printf("s[i] is %f\n",s[i]);
 	    S_diagonal.set(i,j,1.0/s[i]);
 	  }
 	  else{
@@ -86,6 +91,10 @@ template <typename TKernel> class NaiveMatrixCalculation{
 	  }
 	}
       }
+
+      //printf("S_diagonal is \n");
+      S_diagonal.PrintDebug();
+      
       
       //printf("Did inversion of s vector..\n");
       
@@ -97,16 +106,16 @@ template <typename TKernel> class NaiveMatrixCalculation{
       //Find transpose of U
       
       la::TransposeInit(U,&U_transpose);
-      la::MulInit(temp1, U_transpose, &temp2); //At this point the variable temp holds the pseudo-inverse of results_[q]
+      la::MulInit(temp1, U_transpose, &temp2); 
+      //At this point the variable temp holds the 
+      //pseudo-inverse of results_[q]
      
       
       //Copy the contents of temp2 to results_
       results_[q].CopyValues(temp2);
     
     }
-     
-    //Now results_ hold B^TWB for each query point
-    return results_;
+    
   }
 
 
@@ -187,6 +196,8 @@ template <typename TKernel> class NaiveMatrixCalculation{
 	}
       }
     }
+    //Invert the results obtained till now
+    InvertAll();
   }
 
 
@@ -1037,10 +1048,6 @@ template <typename TKernel > class FastMatrixCalculation {
     return results_;
   }
  
-  Vector& get_denominator_nwr(){
-
-    //    return denominator_nwr_;
-  }
   //Interesting functions.......................... 
   void Compute (double tau){
     
@@ -1062,12 +1069,12 @@ template <typename TKernel > class FastMatrixCalculation {
    
     // scale dataset if the user wants to. 
      
-    if (!strcmp (fx_param_str (NULL, "scaling", NULL), "range")){
+    /* if (!strcmp (fx_param_str (NULL, "scaling", NULL), "range")){
        
       scale_data_by_minmax ();
       printf("data was scaled in reg2...");
       
-    }
+      }*/
      
     // initialize the kernel
      
