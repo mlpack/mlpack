@@ -1,19 +1,19 @@
 /**
- * @file fastica_stylish.h
+ * @file fastica.h
  *
  * FastICA Algorithm
  *
  * Implements the FastICA Algorithm for Independent Component Analysis using
  * fixed-point optimization with various independence-minded contrast
- * functions. For sample usage, see accompanying file fastica_stylish.c
+ * functions. For sample usage, see accompanying file fastica_main.cc
  *
- * @see fastica_stylish.c
+ * @see fastica.c
  *
  * @author Nishant Mehta
  */
 
-#ifndef FASTICA_STYLISH_H
-#define FASTICA_STYLISH_H
+#ifndef FASTICA_H
+#define FASTICA_H
 
 #include "fastlib/fastlib.h"
 #include "lin_alg.h"
@@ -1330,4 +1330,4 @@ class FastICA {
   }
 }; /* class FastICA */
 
-#endif /* FASTICA_STYLISH_H */
+#endif /* FASTICA_H */

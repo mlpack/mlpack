@@ -1,12 +1,12 @@
 librule(
 	name = "fastica_lib",
-	headers = ["fastica_stylish.h", "lin_alg.h"],
+	headers = ["fastica.h", "lin_alg.h"],
 	deplibs = ["fastlib:fastlib"]
 )
 
 binrule(
 	name = "fastica",
-	sources = ["fastica_stylish.cc"],
+	sources = ["fastica_main.cc"],
 	headers = ["lin_alg.h"],
 	deplibs = [":fastica_lib"]
 )
