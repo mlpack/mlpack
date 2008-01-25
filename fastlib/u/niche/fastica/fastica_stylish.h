@@ -38,21 +38,40 @@ using namespace linalg;
 class FastICA {
   
  private:
+
+  /** Module used to pass parameters into the FastICA object */
+  struct datanode* module_;
+
+  /** data */
+  Matrix X_;
+
+  /** Optimization approach to use (deflation vs symmetric) */
   int approach_;
+  /** Nonlinearity (contrast function) to use for evaluating independence */
   int nonlinearity_;
   //const index_t first_eig;
   //const index_t last_eig;
+  /** number of independent components to find */
   index_t num_of_IC_;
+  /** whether to enable fine tuning */
   bool fine_tune_;
+  /** constant used for log cosh nonlinearity */
   double a1_;
+  /** constant used for Gauss nonlinearity */
   double a2_;
+  /** constant used for fine tuning */
   double mu_;
+  /** whether to enable stabilization */
   bool stabilization_;
+  /** threshold for convergence */
   double epsilon_;
+  /** maximum number of iterations beore giving up */
   index_t max_num_iterations_;
+  /** maximum number of times to fine tune */
   index_t max_fine_tune_;
+  /** for stabilization, percent of data to include in random draw */
   double percent_cut_;
-  Matrix X_;
+
 
 
 
@@ -481,7 +500,10 @@ class FastICA {
   /**
    * Pass in the data matrix
    */
-  void Init(Matrix X_in) {
+  void Init(Matrix X_in, struct datanode* module_in) {
+
+    module_ = module_in;
+
     X_.Copy(X_in); // for some reason Alias makes this crash, so copy for now
     d = X_.n_rows();
     n = X_.n_cols();
@@ -1208,10 +1230,10 @@ class FastICA {
    * Runs FastICA Algorithm on matrix X and Inits W to unmixing matrix and Y to
    * independent components matrix, such that \f$ X = W * Y \f$
    */
-  int DoFastICA(datanode *module, Matrix *W, Matrix *Y) {
+  int DoFastICA(Matrix *W, Matrix *Y) {
 
     const char *string_approach =
-      fx_param_str(NULL, "approach", "deflation");
+      fx_param_str(module_, "approach", "deflation");
     if(strcasecmp(string_approach, "deflation") == 0) {
       approach_ = DEFLATION;
     }
@@ -1226,7 +1248,7 @@ class FastICA {
     }
     
     const char *string_nonlinearity =
-      fx_param_str(NULL, "nonlinearity", "logcosh");
+      fx_param_str(module_, "nonlinearity", "logcosh");
     if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
       nonlinearity_ = LOGCOSH;
     }
@@ -1246,18 +1268,19 @@ class FastICA {
       return SUCCESS_FAIL;
     }
 
-    //const index_t first_eig_ = fx_param_int(NULL, "first_eig", 1);
+    //const index_t first_eig_ = fx_param_int(module_, "first_eig", 1);
     // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
-    //const index_t last_eig_ = fx_param_int(NULL, "last_eig", d);
-    num_of_IC_ = d; //fx_param_int(NULL, "num_of_IC", d);
-    fine_tune_ = fx_param_bool(NULL, "fine_tune", 0);
-    a1_ = fx_param_double(NULL, "a1", 1);
-    a2_ = fx_param_double(NULL, "a2", 1);
-    mu_ = fx_param_double(NULL, "mu", 1);
-    stabilization_ = fx_param_bool(NULL, "stabilization", false);
-    epsilon_ = fx_param_double(NULL, "epsilon", 0.0001);
+    //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
+    num_of_IC_ = d; //fx_param_int(module_, "num_of_IC", d);
+    fine_tune_ = fx_param_bool(module_, "fine_tune", 0);
+    a1_ = fx_param_double(module_, "a1", 1);
+    a2_ = fx_param_double(module_, "a2", 1);
+    mu_ = fx_param_double(module_, "mu", 1);
+    stabilization_ = fx_param_bool(module_, "stabilization", false);
+    epsilon_ = fx_param_double(module_, "epsilon", 0.0001);
   
-    int int_max_num_iterations = fx_param_int(NULL, "max_num_iterations", 1000);
+    int int_max_num_iterations =
+      fx_param_int(module_, "max_num_iterations", 1000);
     if(int_max_num_iterations < 0) {
       printf("ERROR: max_num_iterations = %d must be >= 0\n",
 	     int_max_num_iterations);
@@ -1267,7 +1290,7 @@ class FastICA {
     }
     max_num_iterations_ = (index_t) int_max_num_iterations;
 
-    int int_max_fine_tune = fx_param_int(NULL, "max_fine_tune", 5);
+    int int_max_fine_tune = fx_param_int(module_, "max_fine_tune", 5);
     if(int_max_fine_tune < 0) {
       printf("ERROR: max_fine_tune = %d must be >= 0\n",
 	     int_max_fine_tune);
@@ -1277,7 +1300,7 @@ class FastICA {
     }
     max_fine_tune_ = (index_t) int_max_fine_tune;
 
-    percent_cut_ = fx_param_double(NULL, "percent_cut", 1);
+    percent_cut_ = fx_param_double(module_, "percent_cut", 1);
     if((percent_cut() < 0) || (percent_cut() > 1)) {
       printf("ERROR: percent_cut = %f must be an element in [0,1]\n",
 	     percent_cut());
