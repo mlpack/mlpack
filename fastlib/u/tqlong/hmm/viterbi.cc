@@ -1,3 +1,15 @@
+/**
+ * @file viterbi.cc
+ *
+ * This file contains the program to compute the most probable state sequences
+ * in a Hidden Markov Model of given sequences 
+ * Model.
+ *
+ * Usage:
+ *   viterbi --type=TYPE --profile=PROFILE --seqfile=FILE [OPTIONS]
+ * See the usage() function for complete option list
+ */
+
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "discreteHMM.h"

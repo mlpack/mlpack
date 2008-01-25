@@ -1,3 +1,14 @@
+/**
+ * @file generate.cc
+ *
+ * This file contains the program to generate sequences from a Hidden Markov
+ * Model.
+ *
+ * Usage:
+ *   generate --type=TYPE --profile=PROFILE [OPTIONS]
+ * See the usage() function for complete option list
+ */
+
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "discreteHMM.h"

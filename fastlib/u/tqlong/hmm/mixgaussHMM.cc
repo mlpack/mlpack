@@ -1,3 +1,9 @@
+/**
+ * @file mixgaussHMM.cc
+ *
+ * This file contains the implementation of functions in mixgaussHMM.h
+ */
+
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "mixgaussHMM.h"

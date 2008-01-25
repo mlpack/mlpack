@@ -1,3 +1,8 @@
+/**
+ * @file mixtureDST.cc
+ *
+ * This file contains implementation of functions in mixtureDST.h
+ */
 
 #include "fastlib/fastlib.h"
 #include "support.h"

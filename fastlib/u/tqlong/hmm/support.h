@@ -39,11 +39,11 @@ namespace hmm_support {
 
   /** Compute the centroids and label the samples by K-means algorithm */
   bool kmeans(const ArrayList<Matrix>& data, int num_clusters, 
-	      ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
+	      ArrayList<int> *labels_, ArrayList<Vector> *centroids_, 
 	      int max_iter = 1000, double error_thresh = 1e-3);
 
   bool kmeans(Matrix const &data, int num_clusters, 
-	      ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
+	      ArrayList<int> *labels_, ArrayList<Vector> *centroids_, 
 	      int max_iter=1000, double error_thresh=1e-04);
 
   /** Convert a matrix in to an array list of vectors of its column */
