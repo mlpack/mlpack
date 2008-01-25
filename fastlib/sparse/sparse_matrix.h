@@ -181,6 +181,14 @@ class SparseMatrix {
    * Not Implemented yet
    */
   void SwapValues(SparseMatrix* other);
+  /**
+   * Returns a copy of a row. It allocates memory for *columns
+   * and values. Make sure that you do delete []*columns and
+   * delete []*values after you use them
+   */
+  void get_row_copy(index_t r, index_t *num, 
+                  index_t **columns, 
+                  double **values) const ; 
   /** Access values, It will fail if EndLoading() has been called
   */
   double get(index_t r, index_t c) const;

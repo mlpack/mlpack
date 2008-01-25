@@ -282,12 +282,13 @@ class SparseMatrixTest {
     SparseMatrix a_plus_b("AplusB.txt");
     SparseMatrix a_minus_b("AminusB.txt");
     SparseMatrix a_times_b("AtimesB.txt");
+    SparseMatrix a_times_a_trans("AtimesAtrans.txt");
     SparseMatrix a_dot_times_b("AdottimesB.txt");
 
     SparseMatrix temp;
     Sparsem::Add(a, b, &temp);
     temp.EndLoading();  
-//    a_plus_b.EndLoading();
+    a_plus_b.EndLoading();
 //    printf("%s\n", temp.Print().c_str());
 //    printf("%s\n", a_plus_b.Print().c_str());
     for(index_t i=0; i<20; i++) {
@@ -308,7 +309,8 @@ class SparseMatrixTest {
     }
     temp.Destruct();
     NOTIFY("Matrix subtraction success!!\n");
-    
+   
+    a.EndLoading(); 
     Sparsem::Multiply(a, b, &temp);
 //    printf("%s\n", temp.Print().c_str());
 //    printf("%s\n", a_times_b.Print().c_str());
@@ -321,7 +323,30 @@ class SparseMatrixTest {
     }
     temp.Destruct();
     NOTIFY("Matrix multiplication success!!\n");
-    
+
+    Sparsem::MultiplyT(a, &temp);
+//  printf("%s\n", temp.Print().c_str());
+//  printf("%s\n", a_times_a_trans.Print().c_str());
+    temp.EndLoading();
+    a_times_a_trans.EndLoading();
+    for(index_t i=0; i<21; i++) {
+      for(index_t j=0; j<21; j++) {
+        TEST_DOUBLE_APPROX(a_times_a_trans.get(i,j), temp.get(i,j), 0.01);
+      }
+    }
+    temp.Destruct();
+    NOTIFY("Matrix multiplication success!!\n");
+ 
+    Sparsem::Multiply(a, 3.45, &temp);
+    for(index_t i=0; i<21; i++) {
+      for(index_t j=0; j<21; j++) {
+        TEST_DOUBLE_APPROX(3.45 * a.get(i,j), temp.get(i,j), 
+                           std::numeric_limits<double>::epsilon());
+      }
+    }
+    temp.Destruct();
+    NOTIFY("Matrix scalar multiplicationn success!!\n");
+ 
     Sparsem::DotMultiply(a, b, &temp);
 //    printf("%s\n", temp.Print().c_str());
 //    printf("%s\n", a_dot_times_b.Print().c_str());
@@ -335,16 +360,6 @@ class SparseMatrixTest {
     }
     temp.Destruct();
     NOTIFY("Matrix dot multiplication success!!\n");
-    
-    Sparsem::Multiply(a, 3.45, &temp);
-    for(index_t i=0; i<21; i++) {
-      for(index_t j=0; j<21; j++) {
-        TEST_DOUBLE_APPROX(3.45 * a.get(i,j), temp.get(i,j), 
-                           std::numeric_limits<double>::epsilon());
-      }
-    }
-    temp.Destruct();
-    NOTIFY("Matrix scalar multiplicationn success!!\n");
     
   }
   void TestAll() {
