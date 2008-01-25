@@ -1,3 +1,9 @@
+/**
+ * @file gaussianHMM.cc
+ *
+ * This file contains the implementation of functions in gaussianHMM.h
+ */
+
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "gaussianHMM.h"

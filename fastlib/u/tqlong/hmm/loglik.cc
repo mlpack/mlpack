@@ -1,3 +1,14 @@
+/**
+ * @file loglik.cc
+ *
+ * This file contains the program to compute log-likelihood of sequences
+ * according to a Hidden Markov  Model.
+ *
+ * Usage:
+ *   loglik --type=TYPE --profile=PROFILE [OPTIONS]
+ * See the usage() function for complete option list
+ */
+
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "discreteHMM.h"

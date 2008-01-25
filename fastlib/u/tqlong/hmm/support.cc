@@ -97,7 +97,7 @@ namespace hmm_support {
   }
 
   bool kmeans(const ArrayList<Matrix>& data, int num_clusters, 
-	      ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
+	      ArrayList<int> *labels_, ArrayList<Vector> *centroids_, 
 	      int max_iter, double error_thresh)
   {
     ArrayList<int> counts; //number of points in each cluster
@@ -108,7 +108,7 @@ namespace hmm_support {
 
     //Assign pointers to references to avoid repeated dereferencing.
     ArrayList<int> &labels = *labels_;
-    ArrayList<Vector> &centroids = *cetroids_;
+    ArrayList<Vector> &centroids = *centroids_;
 
     num_points = 0;
     for (int i = 0; i < data.size(); i++)
@@ -183,7 +183,7 @@ namespace hmm_support {
   }
 
   bool kmeans(Matrix const &data, int num_clusters, 
-	      ArrayList<int> *labels_, ArrayList<Vector> *cetroids_, 
+	      ArrayList<int> *labels_, ArrayList<Vector> *centroids_, 
 	      int max_iter, double error_thresh)
   {
     ArrayList<int> counts; //number of points in each cluster
@@ -194,7 +194,7 @@ namespace hmm_support {
     
     //Assign pointers to references to avoid repeated dereferencing.
     ArrayList<int> &labels = *labels_;
-    ArrayList<Vector> &centroids = *cetroids_;
+    ArrayList<Vector> &centroids = *centroids_;
     
     if (data.n_cols() < num_clusters) 
       return false;

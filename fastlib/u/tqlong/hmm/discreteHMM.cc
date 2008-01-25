@@ -1,3 +1,9 @@
+/**
+ * @file discreteHMM.cc
+ *
+ * This file contains the implementation of functions in discreteHMM.h
+ */
+
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "discreteHMM.h"

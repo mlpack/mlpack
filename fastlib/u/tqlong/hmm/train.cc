@@ -1,3 +1,16 @@
+/**
+ * @file train.cc
+ *
+ * This file contains the program to estimate Hidden Markov Model parameter
+ * using training sequences.
+ *
+ * It use two algorithm: Baum-Welch (EM) and Viterbi
+ *
+ * Usage:
+ *   train --type=TYPE --profile=PROFILE --seqfile=FILE [OPTIONS]
+ * See the usage() function for complete option list
+ */
+
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "discreteHMM.h"
