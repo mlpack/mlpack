@@ -612,6 +612,7 @@ template < typename TKernel > class FastVectorCalculation{
     new_mass_l.Init (rset_.n_rows () + 1);
     new_mass_l.SetAll (0);
 
+    //I will prune only if I can prune along all the dimensions.
     for (int i = 0; i < rset_.n_rows () + 1; i++){  //Along each dimension
 
       new_mass_l[i] = stat.mass_l[i] + dl[i];
@@ -622,7 +623,7 @@ template < typename TKernel > class FastVectorCalculation{
       // this is error per each query/reference pair for a fixed query
       double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
 
-      // this is total maximumn error for each query point
+      // this is total maximumn error for each query point along a given dimension
       double error = m * rnode->stat ().weight_of_dimension[i];
 
       // check pruning condition
@@ -984,7 +985,7 @@ template < typename TKernel > class FastVectorCalculation{
      
     }
 
-    printf("the weights are ..\n");
+    
     // rset_weights_.PrintDebug();
    
     if (!strcmp (qfname, rfname)){
@@ -1003,18 +1004,11 @@ template < typename TKernel > class FastVectorCalculation{
     if (!strcmp (fx_param_str (NULL, "scaling", NULL), "range")){
 
       scale_data_by_minmax ();
-      printf("scaling over and will exit now..\n");
+      
       
     }
 
     // construct query and reference trees. This also fills up the statistics in the reference tree
-
-
-    printf("the refernece file is ..\n");
-    printf("sixe of ref file is %d\n",rset_.n_cols()*rset_.n_rows());
-
-    printf("the QUery file is ..\n");
-    printf("sixe of query file is %d\n",qset_.n_cols()*qset_.n_rows());
 
 
     
