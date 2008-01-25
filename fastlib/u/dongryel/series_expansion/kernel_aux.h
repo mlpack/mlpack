@@ -5,7 +5,7 @@
  * functions (derivative, truncation error bound)
  *
  * @author Dongryeol Lee (dongryel)
- * @bugs No known bugs.
+ * @bug No known bugs.
  */
 
 #ifndef KERNEL_AUX
