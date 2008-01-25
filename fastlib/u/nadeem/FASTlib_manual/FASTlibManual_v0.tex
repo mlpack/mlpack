@@ -1,10 +1,25 @@
 \documentclass[letter]{report}
-\usepackage{graphicx, subfigure, epsfig} 
+\usepackage{amsthm,amsmath,amssymb,bm,epic,geometry, graphicx, subfigure, epsfig} 
 \oddsidemargin -0.25in 
 \textwidth 6.5in 
 
 %\newcommand {\linespace}{\renewcommand{\baselinestretch}{2}}
 %\linespace
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{defn}[thm]{Definition}
+
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\newcommand{\spcA}{\hspace*{0in}}
+\newcommand{\spcB}{\hspace*{.1in}}
+\newcommand{\spcC}{\hspace*{.2in}}
+\newcommand{\spcD}{\hspace*{.3in}}
+\newcommand{\spcE}{\hspace*{.4in}}
+\newcommand{\spcF}{\hspace*{.5in}}
+\newcommand{\spcG}{\hspace*{.6in}}
+
 
 \begin {document}
 
@@ -13,11 +28,15 @@
 %\renewcommand{\baselinestretch}{1}
 \large \bf
 FASTlib Design and Development Manual\\
-\normalsize version 0.1\\ 
+\normalsize version 0.1\footnote{
+NOTE: Please note that this is a draft document and it is undergoing intensive revision at this time. While it provides a good and reasonably accurate insight into FASTlib and MLPack, it is by no means complete and some details may change as this document and the library are packaged for public release.
+}\\ 
 \large \bf Fundamental Algorithmic and Statistical Tools (FAST) Lab\\
 Georgia Institute of Technology\\
-Atlanta, GA
+Atlanta, GA\\
+Dated: \today
 \end{center}
+
 \end{titlepage}
 
 \tableofcontents
@@ -30,7 +49,7 @@ learning methods.  Its primary design goals are to be versatile, easy
 to use, and as fast as possible while still avoiding the worst
 problems of developing in a low-level language.  Special emphasis is
 given to scalable computation, including algorithms for generalized
-$N$-body problems \cite{gray_nips2000} and some support for
+$N$-body problems \cite{gray2000nbp} and some support for
 parallelization.  Library components are designed to be modular,
 facilitating their use as subcomputations of other algorithms.
 Further, FASTlib aims to permit rapid, distributed development in an
@@ -76,7 +95,7 @@ applications.  Our aim with FASTlib is to meet this demand by
 providing high-performance implementations for numerical and machine
 learning methods united by an effective, portable, and consistent API.
 We link to other libraries when appropriate---for instance, we defer to
-BLAS/LAPACK for (dense) linear algebra---but provide wrappers in order
+BLAS/LAPACK \cite{anderson1999lug} for (dense) linear algebra---but provide wrappers in order
 to standardize and simplify use---finding singular values in LAPACK
 involves fourteen parameters, while we need only two.  For the most
 part, though, FASTlib directly implements methods of interest in an
@@ -137,12 +156,6 @@ sketch, this path is as follows:
   everyone's needs.
 \end{enumerate}
 
-\begin {figure*}[h]
-\includegraphics[width=7in,height=5.25in]{Fastlib_Archi.png}
-\caption{ Overall Organization of the different components of FASTlib}
-\label{fastlib_archi}
-\end{figure*}
-
 \section{Why do I want to use FASTlib?} 
 Maybe you have an application for an ``out of box'' method, but other
 toolkits are too slow.  Maybe you have an algorithm you'd like to
@@ -153,9 +166,46 @@ want to make your work available to a community that values fast yet
 flexible solutions.  FASTlib is posed to help with all of these
 scenarios, so if any of them sound like you, give us a try!
 
-\chapter {Code Development in FASTlib}
+\section{Overall organization and key supported features}
 
-\section{Obtaining and Building FASTlib}
+As mentioned earlier, the library is organized in a modular fashion and it uses the proven and established open source libraries for low-level linear algebra routines. Figure \ref{fastlib_archi} shows the overall organization of the library. As of writing of this document, FASTlib supports the following key functionality and methods:
+
+\begin{enumerate}
+\item Templated classes for data structures for vectors, matrices, trees, sparse vectors and matrices etc.
+\item An extensive set of basic and expert versions of linear algebra methods. Majority of these act as wrappers for LAPACK routines and provide simple interface for linear algebra operations.
+\item Support for sparse linear algebra through the trilinos library \cite{heroux2005otp}.
+\item THOR (Tree High-Order Reduce) framework. THOR is a mechanism for parallelizing dual-tree algorithms. More details and references are provided in the next chapter.
+\item Extensive compilation and debugging infrastructure to help with development using FASTlib.
+\item methods for data storage and manipulation, memory management, serialization.
+\item MLPack - collection of machine learning algorithms that can be compiled to either run stand-alone or to be linked as libraries to other software. Following methods are currently supported:
+  \begin{itemize}
+  \item Dual-tree based Nearest Neigbour classifier
+  \item Mixture of Guassian using L2E and EM algorithms
+  \item Naive Bayes Classifier
+  \item Support Vector Machine classifier trained using SMO
+  \item Support Vector Machine with Non-negativity constrained wights
+  \item Hidden Markov Model
+  \item Kalman Filter \cite {kai2000le}
+  \item ICA using FastICA algorithm \cite{hyvarinen1999far} and ICA using Infomax method \cite{bell95}
+  \item Kernel PCA
+  \item Kernel Density Estimator - 5 different variants of fast methods for KDE
+  \item Naive and tree-based algorithms for orthogonal range search. More details in the next chapter.
+  \item Dual-tree version of Bor\r{u}vka's algorithm for finding minimum spanning trees
+  \end{itemize}
+\end{enumerate}
+
+
+\begin {figure*}[ht]
+\begin{center}
+\includegraphics[width=5in]{Fastlib_Archi.png}
+\vspace{-0.4in}
+\caption{ Overall Organization of the different components of FASTlib}
+\label{fastlib_archi}
+\end{center}
+\end{figure*}
+
+\chapter {Obtaining and Using FASTlib}
+
 FASTlib is intended to be multi-platform, though (without extension)
 it relies heavily on the command line; much of the below assumes a
 Linux-like interface.  We have tested compilation on the following
@@ -204,41 +254,390 @@ the end of the output, you should see
 to be easy.
 
 \section {Code Organization}
-The following is subject to some reorganization while FASTlib is still
-in its earliest versions, but for now FASTlib is arranged as follows:
+The following summarizes the current code organization of FASTlib
+
 \begin{itemize}
-\item Core Libraries
+
+\item - Core Library
   \begin{itemize}
-  \item \verb@base/@ - compiler abstractions, debugging, and memory management
-  \item \verb@fx/@ - FASTexec client library for managing parameters, timers, and results
-  \item \verb@col/@ - templated storage types (dynamic arrays, heaps, etc.)
-  \item \verb@data/@ - data set types and utilities
-  \item \verb@file/@ - file reading, writing, and tokenization
-  \item \verb@math/@ - a collection of math utilities, to be extended as needed
-  \item \verb@la/@ - linear algebra routines (mostly a wrapper for BLAS/LAPACK)
-  \item \verb@sparse/@ - sparse linear algebra routines (mostly a wrapper for Trilinos)
-  \item \verb@trilinos/@ - includes needed for Trilinos
-  \item \verb@tree/@ - utilities to build and manage $kd$-trees, among others
-  \item \verb@par/@ - rudimentary parallelization utilities
-  \item \verb@thor/@ - templated, parallelized algorithm for GNPs
-  \item \verb@fastlib/@ - wraps the rest of the library into one convenient include
+  \item \verb@fastlib/@ wraps the rest of the library into one convenient include
+    \begin{itemize}
+    \item \verb@base/   @- compiler abstractions, debugging, and memory management
+    \item \verb@col/    @- templated storage types (dynamic arrays, heaps, etc.)
+    \item \verb@data/   @- data set types and utilities
+    \item \verb@fx/     @- FASTexec client library for managing parameters, timers, and results
+    \item \verb@file/   @- file reading, writing, and tokenization
+    \item \verb@la/     @- linear algebra routines (mostly a wrapper for BLAS/LAPACK)
+    \item \verb@math/   @- a collection of math utilities, to be extended as needed
+    \item \verb@par/    @- rudimentary parallelization utilities
+    \item \verb@sparse/ @- sparse linear algebra routines (mostly a wrapper for Trilinos)
+      \begin{itemize}
+      \item \verb@trilinos/@ - includes needed for Trilinos
+      \end{itemize}
+    \item \verb@thor/   @- templated, parallelized algorithm for GNPs
+    \item \verb@tree/   @- utilities to build and manage $kd$-trees, among others.
+    \end{itemize}
+  \end{itemize}
+\item Toolbox of machine learning methods- this is a growing list and the listing below is incomplete as of this writing.
+  \begin{itemize}
+  \item \verb@MLPack/@ 
+    \begin{itemize}
+      \item \verb@allknn/      @- Dual-tree based Nearest Neigbour classifier
+      \item \verb@mog_l2e/     @- Mixture of Guassian using L2E
+      \item \verb@mog_em/      @- Mixture of Guassian using EM
+      \item \verb@nbc/         @- Naive Bayes Classifier
+      \item \verb@svm/         @- Support Vector Machine classifier trained using SMO
+      \item \verb@nnsvm/       @- Support Vector Machine with Non-negativity constrained wights
+      \item \verb@hmm/         @- Hidden Markov Model
+      \item \verb@kalman/      @- Kalman Filter
+      \item \verb@infomax_ica/ @- ICA using Infomax method
+      \item \verb@fastica/     @- ICA using FastICA algorithm 
+      \item more $\cdots$
+    \end{itemize}
   \end{itemize}
 \item Community-build Code
   \begin {itemize}
-  \item \verb@u/@ - the user directory, which contains individual developers' directories
+  \item \verb@contrib/@ - the user directory, which contains individual developers' directories. 
 \end {itemize} 
 \item  Other
   \begin {itemize}
-  \item \verb@script/@ - scripts for compiling code, running experiments, etc.
-  \item \verb@util/@ - additional utilities that may assist FASTlib development
-  \item \verb@bin/@ - files generated by compilation; \verb@make clean@ deletes this
-  \item \verb@bin_keep/@ - compiled binaries that should not be cleaned, such as BLAS/LAPACK
+  \item \verb@bin/      @- files generated by compilation; \verb@make clean@ deletes this
+  \item \verb@bin_keep/ @- compiled binaries that should not be cleaned, such as BLAS/LAPACK
+  \item \verb@doc/      @- All documentation, including the Doxygen generated ones are here
+  \item \verb@examples/ @- Example code and tutorial(s) for using FASTlib library and MLPack
+  \item \verb@include   @- Symbolic links to all the header files gathered in one place
+  \item \verb@lib       @- linkable libraries
+  \item \verb@script/   @- scripts for compiling code, running experiments, etc.
+  \item \verb@util/     @- simple utilities used for routine tasks, like random sampling, format conversion etc.
   \end {itemize}
 \end{itemize}
 
-\section {Developing your own code using FASTlib}
+\section{Overview of some tools}
+To help you get started with using FASTlib and MLPack for your applications, we provide a brief summary of THOR and some of the cutting edge methods available in the MLPack. We are in the process of generating user documentation for the rest of the methods in MLPack. In the meantime please refer to the README files in the individual MLPack method folders.
+
+\subsection{THOR (Tree High-Order Reduce) framework}
+THOR stands for Tree High-Order Reduce. THOR aims to solve the class of high-order-reduce problems (although currently only second-order reduce problems). Its goal is to handle the set of high-order reduce problems that can be accelerated using trees. THOR requires only very abstract information about the tree algorithm at hand, and it is designed to have a lot of freedom and flexibility in executing it. In extremely simple terms, when given a system of reduce functions to solve, in the form of template classes, THOR executes them. THOR considers a combination of summary statistics, pruning rules, and update rules, and uses these to execute your tree-based algorithm in any expansion pattern. Parallel is just another expansion pattern. THOR parallelizes very effectively by dividing the query tree (you must label one of your trees as a query tree even if it is not a query-reference problem) into smaller trees. It then solves each query subtree with the root of the reference tree, which in practice seems to have minimal noticeable overhead compared to solving the problem monolithically. Solving queries independently prevents the need of having to relay pruning information among processors. 
+
+Currently, the software implements a depth-first solver and KD-trees, with data and tree-building occurring on the originating machine. It currently sports excellent multithreaded performance for every problem tested. The networked version has good to excellent performance for small clusters (64 processors) depending on how computationally intensive the problem is. Kernel density estimation, two-point correlation, affinity propagation, high-dimensional nearest neighbors, and more will be able to take advantage of more machines you throw at it. 
+
+Please see \cite{boyer2007tho} for more details on THOR.
+
+\subsection{Kernel Density Estimator}
+Kernel density estimation (KDE) is the most widely used and studied nonparametric density estimation method. The 'model' is the reference dataset $\mathcal{R}$ itself, containing the {\it reference points}
+indexed by natural numbered. In addition, assume a local kernel function $K_h(\cdot)$ centered upon each reference point, and its scale parameter $h$ (the 'bandwidth'). The common choices for $K_h(\cdot)$ include the spherical, Gaussian and Epanechnikov kernels. We are given the {\it query dataset} $\mathcal{Q}$, which contains {\it query points} whose densities we want to predict.
+
+For the first time, this package offers the following five variants of
+the algorithms for efficiently computing kernel density estimates. All
+of these algorithms are implemented in C++, adhering to the strict
+FastLib standards.
+
+\begin{enumerate}
+\item{Dual-tree Fast Gauss Transform with $O(D^p)$ expansion for the
+Gaussian kernel~\cite{LEE06}: kde.h}
+\item{Dual-tree Fast Gauss Transform with $O(p^D)$ expansion for the
+Gaussian kernel~\cite{LEE05}: kde.h}
+\item{The original fast Gauss transform~\cite{ggstrain}: fgt\_kde.h}
+\item{The original improved fast Gauss transform with automatic
+parameter tuning~\cite{YANG03}: original\_ifgt.h}
+\item{The KDE algorithm using the multidimensional fast Fourier
+transform~\cite{wand94}: fft\_kde.h}
+\end{enumerate}
+
+These algorithms are fairly simple to use. Each algorithm has a
+separate build-rule.
+\subsubsection{Dual-tree FGT}
+In order to compile this tool, do: 
+\begin{verbatim}
+fl-build kde\_bin --mode=fast
+\end{verbatim}
+
+In order to run this method, type the following (which consists of
+both required and optional arguments) in a single command line:
+\begin{align*}
+& \mathit{./kde\_bin} \
+\mathit{--data=name\_of\_the\_reference\_dataset}\\ &
+\mathit{--query=name\_of\_the\_query\_dataset} \
+\mathit{--kde/bandwidth=0.0130619} \\ & \mathit{--kde/scaling=range} \
+\mathit{--kde/fast\_kde\_output=fast\_kde\_output.txt}\\ &
+\mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
+\mathit{--kde/do\_naive}\\ & \mathit{--kde/relative\_error=0.1} \
+\mathit{--kde/multiplicative\_expansion}
+\end{align*}
+
+Explanations for the arguments listed with possible values:
+
+\begin{enumerate}
+\item{data (required): the name of the reference dataset}
+\item{query (optional): the name of the query dataset (if missing, the
+ query dataset is assumed to be the same as the reference dataset)}
+\item{kde/bandwidth (required): smoothing parameter used for KDE; this
+ has to be positive.}
+\item{kde/scaling (optional): whether to prescale the dataset - range:
+scales both the query and the reference sets to be within the unit
+hypercube $[0, 1]^D$ where $D$ is the dimensionality.  - none: default
+value; no scaling}
+\item{kde/do\_naive (optional): run the naive algorithm after the fast
+algorithm.}
+\item{kde/fast\_kde\_output (optional): if this flag is present, the
+approximated density estimates are output to the filename provided
+after it.}
+\item{kde/naive\_kde\_output (optional): if this flag is present, the
+ exact density estimates computed by the naive algorithm are output to
+ the filename provided after it. This flag is not ignored if
+ --kde/do\_naive flag is not present.}
+\item{kde/relative\_error (optional): relative error criterion for the
+ fast algorithm; default value is 0.1 (0.1 relative error for all
+ query density estimates)}
+\item{kde/multiplicative\_expansion (optional): if present, the KDE
+algorithm does $O(p^D)$ expansion for the Gaussian kernel. Otherwise,
+it defaults to the $O(D^p)$ expansion.}
+\end{enumerate}
+
+\subsubsection{Original Fast Gauss Transform}
+In order to compile this part, do: 
+\begin{verbatim}
+fl-build fgt\_kde\_bin --mode=fast
+\end{verbatim}
+
+ To run the FGT-based KDE algorithm, type the
+following (which consists of both required and optional arguments) in
+a single command line:
+\begin{align*}
+& \mathit{./fgt\_kde\_bin} \
+\mathit{--data=name\_of\_the\_reference\_dataset}\\ &
+\mathit{--query=name\_of\_the\_query\_dataset} \
+\mathit{--kde/bandwidth=0.0130619} \\ & \mathit{--kde/scaling=range} \
+\mathit{--kde/fgt\_kde\_output=fgt\_kde\_output.txt}\\ &
+\mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
+\mathit{--kde/do\_naive}\\ & \mathit{--kde/absolute\_error=0.1}
+\end{align*}
+
+Explanations for the arguments listed with possible values:
+
+\begin{enumerate}
+\item{data (required): the name of the reference dataset}
+\item{query (optional): the name of the query dataset (if missing, the
+ query dataset is assumed to be the same as the reference dataset)}
+\item{kde/bandwidth (required): smoothing parameter used for KDE; this
+ has to be positive.}
+\item{kde/scaling (optional): whether to prescale the dataset - range:
+scales both the query and the reference sets to be within the unit
+hypercube $[0, 1]^D$ where $D$ is the dimensionality.  - none: default
+value; no scaling}
+\item{kde/do\_naive (optional): run the naive algorithm after the fast
+algorithm.}
+\item{kde/fgt\_kde\_output (optional): if this flag is present, the
+approximated density estimates are output to the filename provided
+after it.}
+\item{kde/naive\_kde\_output (optional): if this flag is present, the
+ exact density estimates computed by the naive algorithm are output to
+ the filename provided after it. This flag is not ignored if
+ --kde/do\_naive flag is not present.}
+\item{kde/absolute\_error (optional): absolute error criterion for the
+ fast algorithm; default value is 0.1 (0.1 absolute error for all
+ query density estimates)}
+\end{enumerate}
+
+\subsubsection{Improved Fast Gauss Transform}
+In order to compile this algorithm, do: 
+\begin{verbatim}
+fl-build original\_ifgt\_bin --mode=fast
+\end{verbatim}
+
+For the IFGT-based KDE algorithm, type the
+following (which consists of both required and optional arguments) in
+a single command line:
+\begin{align*}
+& \mathit{./orignal\_ifgt\_bin} \
+\mathit{--data=name\_of\_the\_reference\_dataset}\\ &
+\mathit{--query=name\_of\_the\_query\_dataset} \
+\mathit{--kde/bandwidth=0.0130619} \\ & \mathit{--kde/scaling=range} \
+\mathit{--kde/ifgt\_kde\_output=ifgt\_kde\_output.txt}\\ &
+\mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
+\mathit{--kde/do\_naive}\\ & \mathit{--kde/absolute\_error=0.1}
+\end{align*}
+
+Explanations for the arguments listed with possible values:
+
+\begin{enumerate}
+\item{data (required): the name of the reference dataset}
+\item{query (optional): the name of the query dataset (if missing, the
+ query dataset is assumed to be the same as the reference dataset)}
+\item{kde/bandwidth (required): smoothing parameter used for KDE; this
+ has to be positive.}
+\item{kde/scaling (optional): whether to prescale the dataset - range:
+scales both the query and the reference sets to be within the unit
+hypercube $[0, 1]^D$ where $D$ is the dimensionality.  - none: default
+value; no scaling}
+\item{kde/do\_naive (optional): run the naive algorithm after the fast
+algorithm.}
+\item{kde/ifgt\_kde\_output (optional): if this flag is present, the
+approximated density estimates are output to the filename provided
+after it.}
+\item{kde/naive\_kde\_output (optional): if this flag is present, the
+ exact density estimates computed by the naive algorithm are output to
+ the filename provided after it. This flag is not ignored if
+ --kde/do\_naive flag is not present.}
+\item{kde/absolute\_error (optional): absolute error criterion for the
+ fast algorithm; default value is 0.1 (0.1 absolute error for all
+ query density estimates)}
+\end{enumerate}
+
+\subsubsection{FFT-based KDE}
+In order to compile this code, do: 
+\begin{verbatim}
+fl-build fft\_kde\_bin --mode=fast
+\end{verbatim}
+For the FFT-based KDE algorithm, type the
+following (which consists of both required and optional arguments) in
+a single command line:
+\begin{align*}
+& \mathit{./fft\_kde\_bin} \
+\mathit{--data=name\_of\_the\_reference\_dataset}\\ &
+\mathit{--query=name\_of\_the\_query\_dataset} \
+\mathit{--kde/bandwidth=0.0130619} \\ & \mathit{--kde/scaling=range} \
+\mathit{--kde/fft\_kde\_output=fft\_kde\_output.txt}\\ &
+\mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
+\mathit{--kde/do\_naive}\\ & \mathit{--kde/num\_grid\_pts\_per\_dim=128}
+\end{align*}
+
+Explanations for the arguments listed with possible values:
+
+\begin{enumerate}
+\item{data (required): the name of the reference dataset}
+\item{query (optional): the name of the query dataset (if missing, the
+ query dataset is assumed to be the same as the reference dataset)}
+\item{kde/bandwidth (required): smoothing parameter used for KDE; this
+ has to be positive.}
+\item{kde/scaling (optional): whether to prescale the dataset - range:
+scales both the query and the reference sets to be within the unit
+hypercube $[0, 1]^D$ where $D$ is the dimensionality.  - none: default
+value; no scaling}
+\item{kde/do\_naive (optional): run the naive algorithm after the fast
+algorithm.}
+\item{kde/fft\_kde\_output (optional): if this flag is present, the
+approximated density estimates are output to the filename provided
+after it.}
+\item{kde/naive\_kde\_output (optional): if this flag is present, the
+ exact density estimates computed by the naive algorithm are output to
+ the filename provided after it. This flag is not ignored if
+ --kde/do\_naive flag is not present.}
+\item{kde/num\_grid\_pts\_per\_dim (optional): specifies the number of
+grid points per each dimension (for discretizing and gridding the
+datasets). This is the only way to do any type of error control on
+approximated KDE values. In general, the higher the value, more
+accurate the density estimates will be. The default value is 128.}
+\end{enumerate}
+
+\subsection{Orthogonal Range Search}
+The orthogonal range search problem answers the following question:
+Given a set of points $\mathcal{R}$ in $D$-dimensional Euclidean
+space, what points lie in the search window: $[l(1), u(1)]\times
+[l(2),u(2)]\times \cdots \times [l(D),u(D)]$?
+
+\subsubsection{FastLib-based Orthogonal Range Search}
+This package offers two algorithms - a naive algorithm and a
+tree-based algorithm for computing orthogonal range search. All of
+these algorithms are implemented in C++, adhering to the strict
+FastLib standards.
+
+In order to compile this package, do: 
+\begin{verbatim}
+fl-build ortho\_range\_search\_bin --mode=fast
+\end{verbatim}
+In order to run this tool, type the following (which consists of
+both required and optional arguments) in a single command line:
+\begin{align*}
+& \mathit{./ortho\_range\_search\_bin} \ \mathit{--data=dataset} \
+\mathit{--do\_naive}
+\end{align*}
+
+Explanations for the arguments listed with possible values:
+
+\begin{enumerate}
+\item{data (required): the name of the reference dataset}
+\item{do\_naive (optional): run the naive algorithm after the fast
+algorithm.}
+\end{enumerate}
+The example code usages are described in ortho\_range\_search.h.
+
+\subsection{EMST}
+The FASTlib EMST code implements a dual-tree version of Bor\r{u}vka's algorithm for finding minimum spanning trees.  Bor\r{u}vka's algorithm is similar to Kruskal's well-known algorithm.  Instead of connecting the two closest components of the spanning forest, Bor\r{u}vka's algorithm connects each component to its nearest neighbor.  We accelerate the computation of these neighbors in each step using a dual-tree search.  
+
+\textbf{Please note:}  This algorithm is awaiting publication.  It is not intended for widespread distribution.  
+
+\vspace{0.2in}
+\noindent \textbf{Command line use.}  
+\begin{itemize}
+\item \textbf{Compile:} \texttt{fl-build emst\_main}
+\item \textbf{Run:} \texttt{./emst\_main --data=filename}  This will create a file ``output.txt'' with the minimum spanning tree in edge-list form.
+\item \textbf{Command-line parameters:}
+  \begin{itemize}
+  \item \texttt{string --data} : The name of the input file
+  \item \texttt{int --dtb/leaf\_size} : Number of points in the leaves of the tree.  \emph{Default}=\texttt{1}
+  \item \texttt{bool --do\_naive} : If true, will perform both the \textsc{DualTreeBoruvka} algorithm and a naive implementation of Bor\r{u}vka's algorithm and will compare the results.
+  \item \texttt{string --naive/output\_filename} : The name of the file where the edge list of the naive computation will be printed.  \emph{Default}=\texttt{naive\_output.txt}
+  \item \texttt{string --dtb/output\_filename} : The name of the file where the edge list from \textsc{DualTreeBoruvka} will be printed.  \emph{Default}=\texttt{output.txt}
+  \end{itemize}
+\end{itemize}
+
+\begin{figure}[ht]
+\fbox{
+\begin{minipage}[t]{0.95\linewidth}
+\spcA \textbf{function} boruvka($V$) \newline
+\spcB $E = \emptyset$ \newline
+\spcB \textbf{while} $|E| < |V| - 1$ \newline
+\spcC \textbf{for} all components $C$ \newline
+\spcD $(u, v) = \arg \min d(i, j)$ where $i \in C, j \not\in C$\newline
+\spcD $E = E \cup (u, v)$ \newline
+\spcB \textbf{return} $E$
+\end{minipage}
+}
+\vspace{-0.1in}
+\caption{Pseudocode for Bor\r{u}vka's algorithm.}
+\label{boruvka_pseudocode}
+\end{figure}
+
+\vspace{-1.5in}
+
+\begin{figure}[tbh]
+\fbox{
+\begin{minipage}[t]{0.95\linewidth}
+\spcA \textbf{init} $E = \emptyset$  \newline
+\spcA \textbf{function} dtb($Q^{\textrm{root}}, R^{\textrm{root}}$) \newline
+\spcB \textbf{while} $|E| < |V| - 1$ \newline
+\spcC $\forall Q, a^u(Q) = \infty, \forall q, a(q) = \infty$ \newline
+\spcC cnn($Q^{\textrm{root}}, R^{\textrm{root}}$) \newline
+\spcC for all $q$, $E = E \cup n(q)$ \newline
+\spcB \textbf{end}\newline
+\spcB \textbf{return} $E$ \newline
+\newline
+\spcA \textbf{function} cnn($Q, R$) \newline
+\spcB \textbf{if} $a^u(Q) < d^l(Q, R)$, \textbf{return} \newline
+\spcB \textbf{else if} $Q$ and $R$ are fully connected, \textbf{return} \newline
+\spcB \textbf{else if} $(Q, R) = (\{q\}, \{r\})$ \newline
+\spcC \textbf{if} $d(q, r) < a(q)$ \newline
+\spcD $a(q) = d(q, r), n(q) = r$ \newline
+\spcD \textbf{if} $a(q) < a^u(Q)$ \newline
+\spcE $a^u(Q) = a(q)$ \newline
+\spcB \textbf{else} \newline
+\spcC prioritize $\{R^1, R^2\} = \{R^L, R^R\}$ by $d^l(Q^L, \cdot)$ \newline
+\spcD cnn($Q^L, R^1$), cnn($Q^L, R^2$) \newline
+\spcC prioritize $\{R^1, R^2\} = \{R^L, R^R\}$ by $d^l(Q^R, \cdot)$ \newline
+\spcD cnn($Q^R, R^1$), cnn($Q^R, R^2$) \newline
+\spcC $a^u(Q) = \max\{a^u(Q^L), a^u(Q^R)\}$
+\end{minipage}
+}
+\caption{Pseudocode for our \textsc{DualTreeBoruvka} algorithm.  $a^u(Q)$ represents the upper bound on candidate neighbors found so far for node $Q$, and $d^l(Q, R)$ represents the minimum distance between the bounding boxes of $Q$ and $R$.  $n(q)$ is the current candidate for the nearest neighbor of $q$, and $a(q) = d(q, n(q))$.}
+\label{DTB}
+\end{figure}
+
+
+\chapter {Code development using FASTlib}
  
-\subsection {Using the build tool}
+This chapter provides a very brief tutorial of modifying build files, using FASTexec and inbuilt debugging tools etc. to help you get started with writing your own code using FASTlib. For more extensive tutorial please refer to the FASTlib developer tutorial and API reference manual.
+
+\section {Using the build tool}
 
 As stated earlier, building is done via the fl-build tool, which stands for FASTlib build. This tool reads through very short files which just have a list of sources (.cc files), headers (.h files), and other sub-packages it depends on, and produces a Makefile, which it runs automatically.
 
@@ -263,7 +662,7 @@ fl-build mybinary --mode=fast --cflags="-march=pentium4 -DCOAGULATE"
 \end{verbatim}
 
 
-\subsubsection{Writing build files}
+\subsection{Writing build files}
 
 The fl-build tool looks in the current directory for a file called build.py. The build file is executed as straight Python code, with access to a few specific functions defined by the build system, that correspond to "meta build rules". In processing these, the build system recursively pulls build files from other directories and resolves the dependencies. A Makefile is then created in your current directory, which fl-build automatically runs for you.
 
@@ -298,7 +697,7 @@ binrule(
     )
 \end{verbatim}
 
-\subsection{Use of C++}
+\section{Use of C++}
 
 FASTlib is C++, but only to an extent. If you are familiar with C, you will have no problem. The things we use from C++ is:
 \begin{itemize}
@@ -321,7 +720,7 @@ for (index_t i = 0; i < 10; i++) {
 \end{verbatim}
 Some quick notes before we move on. The matrix must be initialized before it is usable, but keep in mind everything is freed by default. Caution -- if you declare a matrix and never initialize it, the program will crash at the end of the function. In debug mode, many FASTlib classes will let you know that this is happening. Next, the \verb= index_t = type is usually an regular int, but is wired through the system to become 64-bit if you tell it to.
 
-\subsection{Copying and Aliasing}
+\section{Copying and Aliasing}
 
 C++ is infamous for its desire to make copies of everything. If you forget to pass a parameter as a constant reference (const Classname\&), everything will be copied, but sometimes, there is just no way to get around of it. By avoiding constructors, we find copying is usually not needed. To avoid accidental copies of your class, put \verb= FORBID_COPY = at the beginning like this:
 \begin{verbatim}
@@ -353,7 +752,7 @@ An example is shown here:
    original.Init(99, 99);
 \end{verbatim}
 
-\subsection{Debugging}
+\section{Debugging}
 
 C++, and equally C, can sometimes make it easy to shoot yourself in the foot. To help you avoid this, we made debugging an important part of FASTlib.
 
@@ -366,7 +765,7 @@ To use debugging yourself, plaster your code with the following:
 \end{itemize}
 You can safely leave these in at no cost in non debug mode. To set verbosity level to 3.0, you would specify the command line argument: \verb= --debug/verbosity_level=3.0 =.See the Doxygen for base/debug.h for more information.
 
-\subsection{FASTexec - Command-line parameters and experimentation}
+\section{FASTexec - Command-line parameters and experimentation}
 
 We felt it is important that machine learning researchers can run a lot of experiments without too much trouble. Parameter passing is integral to the experimentation process, so we unified these.
 
@@ -479,7 +878,7 @@ We admit this is a lot of text, but when you later comb through the results, you
 \end{itemize}
 This output could indeed just be an s-expression, or it could be an attribute-less XML file. We chose this path-value dump format because it is stateless -- i.e. anyone can process it with a little bit of grep. Corruption in the file will only affect it until the next newline.
 
-\subsubsection{Running automated experiments and collecting results}
+\subsection{Running automated experiments and collecting results}
 
 Running experiments and collecting results is made simpler using FASTexec. After using the FASTexec code to store output variables in the datastore, you can use FASTexec to run multiple experiments. If you type the command:
 \begin{verbatim}
@@ -495,19 +894,19 @@ You can try an example with the K-nearest-neighbors classifier example in u/exam
   fx-latex knn_k ./main /params/knn/k /kfold/results/p_correct --preview
 \end{verbatim}
 
-\subsection{Little gotchas}
+\section{Some tips}
 
-\subsubsection{Success and failure}
+\subsection{Success and failure}
 
 The \verb= success_t type = in \verb= base/common.h = defines our standard for indicating success or failure. Rather than assuming 1 or 0 or -1 indicates something or other, we explicitly return \verb= SUCCESS_PASS = (succeeded), \verb= SUCCESS_FAIL = (failed), or \verb= SUCCESS_WARN = (something was suboptimal).
 
-\subsubsection{Basic types}
+\subsection{Basic types}
 
 You will notice heavy use of \verb= index_t = (in \verb= base/scale.h =) rather than integers. For practical purposes, \verb= index_t = is a signed integer -- signed so you can loop over >= 0. On 32-bit and 64-bit Intel/AMD machines, this will be 32-bits, which is the fastest int for both systems and is relatively compact. But if you want to operate on datasets larger than a few gigabytes, you can define the \verb= SCALE_LARGE = macro, and these will instantly switch to the largest size your computer can address.
 
 Also, the \verb= base/basic_types.h = file (it will be in bin/ since it is auto-generated) defines standard int16, int32, int64, uint16, uint32, uint64 types.
 
-\subsubsection{Printf versus Streams}
+\subsection{Printf versus Streams}
 
 We operate under the assumption that more of our audience is familiar with C I/O than with C++ I/O, especially when it comes to fancy floating-point formatting. The caveat is that printf only works with native types like int, short, long. To print an \verb= index_t =, you use:
 \begin{verbatim}
@@ -522,208 +921,10 @@ The LI macro is a string that will have the suitable "l" modifier for \verb= ind
 \end{itemize}
 Alternately, you can just cast the variable to a native type like (int) (short) or (long), if you want to be lazy.
 
-
-\chapter {Complete code development walkthrough - Dual-Tree k-NN}
-This chapter is intended for people who have read the FASTlib Tutorial and successfully compiled and run the example code. You should also understand how a dual-tree all nearest neighbors algorithm works, since this is assumed. 
-
-This should help you get started on understanding the basic features of the library. For complete documentation, please see the Doxygen file. 
-
-\section{Walkthrough} 
-\subsection{build.py} 
-The build.py file is a necessary part of any FASTlib directory. It tells the fl-build script how to compile your code and link to the rest of the library. Essentially, the build.py functions like a Makefile, but is much easier to understand and write. 
-
-There are two important kinds of entry in build.py files: binrules and librules. The distinction between these is that binrules create stand-alone executables (somewhere in their code is the main function) while librules are for code used in linking (no main). It is usually a good idea for the bulk of your project to be compiled with a librule, linked to by a simiple binrule in the same build.py: 
-
-\subsection{Librule} 
-\begin{verbatim}
- librule(
-   name = "allnn",
-   sources = ["allnn.cc"],
-   headers = ["allnn.h"],
-   deplibs = ["fastlib:fastlib"],
-   tests = ["allnn_test.cc"]
- )
-\end{verbatim}
-name - the name of the library being created. If this line is omitted, fl-build will use the name of the directory as a default.\\ 
-sources - The .c or .cc files necessary. This line can be omitted if there are none.\\ 
-headers - The .h files necessary. This line can also be omitted if there are none.\\ 
-deplibs - Other libraries linked to by the current one. The name before the colon is the directory within fastlib that contains the library, the name after the colon is the name of the library itself.  :\$LIBNAME indicates that the library is in the same directory as the build.py file. 
-tests - A file containing unit tests. If this line is in the librule, you can compile the unit tests with fl-build allnn\_test. 
-\subsection{Binrule}
-
-\begin{verbatim} 
- binrule(
-   name = "allnn_main",
-   sources = "allnn_main.cc",
-   headers = "allnn_main.h",
-   deplibs = [":allnn"]
- )
-\end{verbatim}
-The tags are similar as above. Running "fl-build allnn\_main" will create an executable called "allnn\_main". 
-
-\subsection{allnn\_main.cc} 
-Our main file contains only the main function. In general, FASTlib code should have very simple main functions. Our main function reads in the command line arguments, loads the data, and saves the results. All of the computation is done by an AllNN object, defined in allnn.h. 
-
-\section{FASTexec} 
-See FASTexec Tutorial for a more detailed discussion of FASTexec. 
-FASTlib code starts by calling: 
-
-\begin {verbatim} fx_init(argc, argv);\end{verbatim}
-which initializes the FASTexec system. It must be accompanied by: 
-
-\begin{verbatim} fx_done(argc, argv);\end{verbatim}
-at the end of the main function. 
-
-\section {Reading and writing data} 
-Our function determines the files containing the query and reference data. We accomplish this with: 
-\begin{verbatim}
-const char* queries_file_name = fx_param_str_req(NULL, "q");
-Matrix queries; 
-data::Load(queries_file_name, &queries);
-end{verbatim}
-The only other parameters our program reads are a boolean: 
-\begin{verbatim}
-int do_naive = fx_param_bool(NULL, "do_naive", 0);
-\end{verbatim}
-and the output filename: 
-\begin{verbatim}
-const char* output_filename = fx_param_str(NULL, "output_filename", "output.csv");
-\end{verbatim}
-In general, data can be read in from the command line using 
-\begin{verbatim}
-fx_param_$TYPE_req(module, "name");
-\end{verbatim}
-for required parameters (the program will terminate with an error if it is not specified). Alternatively, one can specify a default value with: 
-\begin{verbatim}
-fx_param_$TYPE(module, "name", $DEFAULT_VALUE);
-\end{verbatim}
-In both cases, the parameter is given on the command line as 
-\begin{verbatim}
---name=$VALUE"
-\end{verbatim}
-
-\section{Modules} 
-The first argument to each of these functions indicates a module. Modules contain parameters, results, and timing information for various portions of the program. For a detailed explanation of modules, consult the FASTexec Tutorial. 
-
-For this code, we only utilize a few modules. When NULL is passed as a module, it indicates the root module of FASTexec. So, the line: 
-\begin{verbatim}
-const char* output_filename = fx_param_str(NULL, "output_filename", "output.csv");
-\end{verbatim}
-indicates that \begin{verbatim}--output_filename="some_file.csv"\end{verbatim} will appear on the command line (i.e. specified in the root module's /params folder), or else "output.csv" will be used as the default. 
-
-We also create a module for our AllNN object. The line: 
-\begin{verbatim}fx_submodule(NULL, "allnn", "allnn_module");\end{verbatim}
-creates a new module called "allnn\_module", copies all parameters
-stored under allnn to this module, and places the entire thing under
-the root directory (NULL).
-
-\section{Timers} 
-Timers are also handled by FASTexec. They are stored in the /timers section of a module. We can start a timer with: 
-\begin{verbatim}
-fx_timer_start(allnn_module, "dual_tree_computation");
-\end{verbatim}
-and stop it with 
-\begin{verbatim}
-fx_timer_stop(allnn_module, "dual_tree_computation");
-\end{verbatim}
-
-These timers will print as a part of the final output of the program, and are suitable for parsing with the fx-run commands. 
-Timers, modules, and command line parameters can be accessed from any part of the program, not just main. 
-
-\section{Development Walkthrough}
-You are developing code. What to do, step by step: 
-
-Step 0: You should have read the FASTlib tutorial and successfully compiled and run the example.\\ 
-
-Step 1: Your code needs a home. You will work on it in your user directory, i.e.: u/plato/allnn\\
-
-Step 2: You need a build.py file, which tells fl-build what to do to compile your work. It is the equivalent of a Makefile, but a bit easier to understand. 
-
-There are two important kinds of entry in build.py files: binrules and librules. The distinction between these is that binrules create stand-alone executables (somewhere in their code is the main function) while librules are for code used in linking (no main). It is usually a good idea for the bulk of your project to be compiled with a librule, linked to by a simiple binrule in the same build.py: 
-
-\begin{verbatim}
- librule(
-   name = "allnn",
-   sources = ["allnn.cc"],
-   headers = ["allnn.h"],
-   deplibs = ["fastlib:fastlib"],
-   tests = ["allnn_test.cc"]
- )
-
- binrule(
-   name = "allnn_main",
-   sources = "allnn_main.cc",
-   headers = "allnn_main.h",
-   deplibs = [":allnn"]
- )
-\end{verbatim}
-
-Note that "tests" in the librule allows you to compile your unit tests with "fl-build allnn\_test". 
-
-Step 3: Now we need to start writing the code. We will start with allnn\_main.cc by incluidng allnn.h at the top and writing a main function: 
-
-\begin{verbatim}
- #include "allnn.h"
- int main(int argc, char *argv[]) {
-   fx_init(argc, argv);
-   ...
-   fx_done();
-   return 0;
- }
-\end{verbatim}
-
-FASTlib main functions should always begin and end by initializing and finalizing fx, or FASTexec, which manages command line input among other things. 
-
-In our particular project, the first logical thing to do is to load the data. We need to get the input file names out of the command line arguments and then to use a library function that reads matrices. 
-
-\begin{verbatim}
- const char *q_filename = fx_param_str_req(NULL, "queries");
- const char *r_filename = fx_param_str_req(NULL, "references");
- Matrix q;
- Matrix r;
- data::Load(q_filename, &q);
- data::Load(r_filename, &r);
-\end{verbatim}
-
-We organize all of our project's tasks into a class called AllNN. After declaring an object of this class, we initialize it with the two data sets and a submodule, which serves to pass it its own parameters from the command line. 
-
-\begin{verbatim}
- struct datanode *allnn_mod = fx_submodule(NULL, "allnn", "allnn_mod");
- AllNN allnn;
- allnn.Init(q, r, allnn_mod);
-\end{verbatim}
-We must declare a local variable to receive the results of computation. 
-\begin{verbatim}
- ArrayList<index_t> results;
- allnn.ComputeNeighbors(&results);
-\end{verbatim}
-We emit result by printing to a file. 
-\begin{verbatim}
- const char *o_filename = fx_param_str(NULL, "out", "out.csv");
- FILE* o_file = fopen(o_filename, "w");
- ot::Print(results, o_file);
-\end{verbatim}
-
-Step 4: Moving to allnn.h, the first thing to do include the rest of FASTlib within appropriate inclusion guards: 
-
-\begin{verbatim}
- #ifndef ALLNN_H
- #define ALLNN_H
- #include "fastlib/fastlib.h"
- ...
- #endif
-\end{verbatim}
-
-Make sure you include "fastlib/fastlib.h" as opposed to "fastlib.h" so the complier can properly find the file.\\ 
-
-Step n: Write your unit tests. 
-
-NOTE: This chapter still need more work.
-
-\chapter {Examples of some common tasks - FASTlib Cookbook}
-
-\chapter {Code Style Suggestion for developers}
-The coding style suggestions in this chapter stem from our own development expereince and the style used to develop FASTlib. It is recommended that you use the suggestions herein for your code development if you would like to contribute your code to be part of the standard FASTlib distribution. You could also choose to skip this chapter.
-
 \chapter {Beyond this Document} 
+
+FASTlib has a growing body of documentation. We have an online documentation of all the supported classes and API (currently temporarily available at http://www.cc.gatech.edu/\~nadeem/fastlib). There is also a code walkthrough tutorial that shows how to implement a simple machine learning method (k-NN) starting from scratch. A cook-book with tutorial and code snippets for doing various common tasks is also available. We will bringing these together through a web-page to support FASTlib.
+
+\bibliographystyle{plain}
+\bibliography{fastlib}
 \end{document}
