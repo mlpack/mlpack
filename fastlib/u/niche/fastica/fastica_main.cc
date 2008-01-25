@@ -1,13 +1,13 @@
 /**
- * @file fastica_stylish.cc
+ * @file fastica_main.cc
  *
- * Demonstrates usage of fastica_stylish.h
+ * Demonstrates usage of fastica.h
  *
- * @see fastica_stylish.h
+ * @see fastica.h
  *
  * @author Nishant Mehta
  */
-#include "fastica_stylish.h"
+#include "fastica.h"
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
