@@ -258,7 +258,7 @@ The following summarizes the current code organization of FASTlib
 
 \begin{itemize}
 
-\item - Core Library
+\item Core Library
   \begin{itemize}
   \item \verb@fastlib/@ wraps the rest of the library into one convenient include
     \begin{itemize}
@@ -305,8 +305,8 @@ The following summarizes the current code organization of FASTlib
   \item \verb@bin_keep/ @- compiled binaries that should not be cleaned, such as BLAS/LAPACK
   \item \verb@doc/      @- All documentation, including the Doxygen generated ones are here
   \item \verb@examples/ @- Example code and tutorial(s) for using FASTlib library and MLPack
-  \item \verb@include   @- Symbolic links to all the header files gathered in one place
-  \item \verb@lib       @- linkable libraries
+  \item \verb@include/  @- Symbolic links to all the header files gathered in one place
+  \item \verb@lib/      @- linkable libraries
   \item \verb@script/   @- scripts for compiling code, running experiments, etc.
   \item \verb@util/     @- simple utilities used for routine tasks, like random sampling, format conversion etc.
   \end {itemize}
@@ -333,14 +333,14 @@ FastLib standards.
 
 \begin{enumerate}
 \item{Dual-tree Fast Gauss Transform with $O(D^p)$ expansion for the
-Gaussian kernel~\cite{LEE06}: kde.h}
+Gaussian kernel~\cite{LEE06}: \verb@kde.h@}
 \item{Dual-tree Fast Gauss Transform with $O(p^D)$ expansion for the
-Gaussian kernel~\cite{LEE05}: kde.h}
-\item{The original fast Gauss transform~\cite{ggstrain}: fgt\_kde.h}
+Gaussian kernel~\cite{LEE05}: \verb@kde.h@}
+\item{The original fast Gauss transform~\cite{ggstrain}: \verb@fgt_kde.h@}
 \item{The original improved fast Gauss transform with automatic
-parameter tuning~\cite{YANG03}: original\_ifgt.h}
+parameter tuning~\cite{YANG03}: \verb@original_ifgt.h@}
 \item{The KDE algorithm using the multidimensional fast Fourier
-transform~\cite{wand94}: fft\_kde.h}
+transform~\cite{wand94}: \verb@fft_kde.h@}
 \end{enumerate}
 
 These algorithms are fairly simple to use. Each algorithm has a
@@ -348,21 +348,17 @@ separate build-rule.
 \subsubsection{Dual-tree FGT}
 In order to compile this tool, do: 
 \begin{verbatim}
-fl-build kde\_bin --mode=fast
+fl-build kde_bin --mode=fast
 \end{verbatim}
 
 In order to run this method, type the following (which consists of
 both required and optional arguments) in a single command line:
-\begin{align*}
-& \mathit{./kde\_bin} \
-\mathit{--data=name\_of\_the\_reference\_dataset}\\ &
-\mathit{--query=name\_of\_the\_query\_dataset} \
-\mathit{--kde/bandwidth=0.0130619} \\ & \mathit{--kde/scaling=range} \
-\mathit{--kde/fast\_kde\_output=fast\_kde\_output.txt}\\ &
-\mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
-\mathit{--kde/do\_naive}\\ & \mathit{--kde/relative\_error=0.1} \
-\mathit{--kde/multiplicative\_expansion}
-\end{align*}
+\begin{verbatim}
+./kde_bin} --data=name_of_the_reference_dataset --query=name_of_the_query_dataset
+           --kde/bandwidth=0.0130619 --kde/scaling=range --kde/fast_kde_output=fast_kde_output.txt
+           --kde/naive_kde_output=naive_kde_output.txt --kde/do_naive --kde/relative_error=0.1
+           --kde/multiplicative_expansion
+\end{verbatim}
 
 Explanations for the arguments listed with possible values:
 
@@ -402,7 +398,7 @@ fl-build fgt\_kde\_bin --mode=fast
  To run the FGT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
-\begin{align*}
+\begin{verbatim}
 & \mathit{./fgt\_kde\_bin} \
 \mathit{--data=name\_of\_the\_reference\_dataset}\\ &
 \mathit{--query=name\_of\_the\_query\_dataset} \
@@ -410,7 +406,7 @@ a single command line:
 \mathit{--kde/fgt\_kde\_output=fgt\_kde\_output.txt}\\ &
 \mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
 \mathit{--kde/do\_naive}\\ & \mathit{--kde/absolute\_error=0.1}
-\end{align*}
+\end{verbatim}
 
 Explanations for the arguments listed with possible values:
 
@@ -447,7 +443,7 @@ fl-build original\_ifgt\_bin --mode=fast
 For the IFGT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
-\begin{align*}
+\begin{verbatim}
 & \mathit{./orignal\_ifgt\_bin} \
 \mathit{--data=name\_of\_the\_reference\_dataset}\\ &
 \mathit{--query=name\_of\_the\_query\_dataset} \
@@ -455,7 +451,7 @@ a single command line:
 \mathit{--kde/ifgt\_kde\_output=ifgt\_kde\_output.txt}\\ &
 \mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
 \mathit{--kde/do\_naive}\\ & \mathit{--kde/absolute\_error=0.1}
-\end{align*}
+\end{verbatim}
 
 Explanations for the arguments listed with possible values:
 
@@ -491,7 +487,7 @@ fl-build fft\_kde\_bin --mode=fast
 For the FFT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
-\begin{align*}
+\begin{verbatim}
 & \mathit{./fft\_kde\_bin} \
 \mathit{--data=name\_of\_the\_reference\_dataset}\\ &
 \mathit{--query=name\_of\_the\_query\_dataset} \
@@ -499,7 +495,7 @@ a single command line:
 \mathit{--kde/fft\_kde\_output=fft\_kde\_output.txt}\\ &
 \mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
 \mathit{--kde/do\_naive}\\ & \mathit{--kde/num\_grid\_pts\_per\_dim=128}
-\end{align*}
+\end{verbatim}
 
 Explanations for the arguments listed with possible values:
 
@@ -547,10 +543,10 @@ fl-build ortho\_range\_search\_bin --mode=fast
 \end{verbatim}
 In order to run this tool, type the following (which consists of
 both required and optional arguments) in a single command line:
-\begin{align*}
+\begin{verbatim}
 & \mathit{./ortho\_range\_search\_bin} \ \mathit{--data=dataset} \
 \mathit{--do\_naive}
-\end{align*}
+\end{verbatim}
 
 Explanations for the arguments listed with possible values:
 
@@ -656,7 +652,7 @@ Thus, we could re-build the example, but turn off all debug checks:
 \begin{verbatim}
 fl-build main --mode=debug
 \end{verbatim}
-To add custom flags, add \verb= --cflags =. To get increased performance on Pentium 4 and define a macro called \verb= COAGULATE =, you would use:
+To add custom flags, add \verb@--cflags@. To get increased performance on Pentium 4 and define a macro called \verb@COAGULATE@, you would use:
 \begin{verbatim}
 fl-build mybinary --mode=fast --cflags="-march=pentium4 -DCOAGULATE"
 \end{verbatim}
@@ -664,7 +660,7 @@ fl-build mybinary --mode=fast --cflags="-march=pentium4 -DCOAGULATE"
 
 \subsection{Writing build files}
 
-The fl-build tool looks in the current directory for a file called build.py. The build file is executed as straight Python code, with access to a few specific functions defined by the build system, that correspond to "meta build rules". In processing these, the build system recursively pulls build files from other directories and resolves the dependencies. A Makefile is then created in your current directory, which fl-build automatically runs for you.
+The fl-build tool looks in the current directory for a file called build.py. The build file is executed as straight Python code, with access to a few specific functions defined by the build system, that correspond to ``meta build rules''. In processing these, the build system recursively pulls build files from other directories and resolves the dependencies. A Makefile is then created in your current directory, which fl-build automatically runs for you.
 
 Here is a sample build rule that will build an executable test compiled from test.cc and test.h, and link it against the fastlib front-end library:
 \begin{verbatim}
@@ -675,9 +671,9 @@ binrule(
    linkables = ["fastlib:fastlib"]
    )
 \end{verbatim}
-Each string you see is actually processed by the build system, which figures out what you are referring to. If there is no colon ":" character, it looks for a file in the same directory as the build file. If it finds a ":", such as "fastlib:fastlib", it looks in the directory "fastlib" for a rule named "fastlib" -- the left part of the colon is the directory, the right part is the rule name. For example, the full path to the rule for the main executable in \verb= example = would be \verb= ``example:main" =.
+Each string you see is actually processed by the build system, which figures out what you are referring to. If there is no colon ``:'' character, it looks for a file in the same directory as the build file. If it finds a ``:'', such as ``fastlib:fastlib'', it looks in the directory ``fastlib'' for a rule named ``fastlib'' -- the left part of the colon is the directory, the right part is the rule name. For example, the full path to the rule for the main executable in \verb@example@ would be \verb@"example:main"@.
 
-Next, suppose you want to create a small reusable library. Taking a look at the build file \verb= u/example/build.py =,
+Next, suppose you want to create a small reusable library. Taking a look at the build file \verb@u/example/build.py@,
 \begin{verbatim}
 librule(
     name = "example",              # this line can be safely omitted
@@ -718,20 +714,21 @@ for (index_t i = 0; i < 10; i++) {
 }
 // the matrix does not have to be freed
 \end{verbatim}
-Some quick notes before we move on. The matrix must be initialized before it is usable, but keep in mind everything is freed by default. Caution -- if you declare a matrix and never initialize it, the program will crash at the end of the function. In debug mode, many FASTlib classes will let you know that this is happening. Next, the \verb= index_t = type is usually an regular int, but is wired through the system to become 64-bit if you tell it to.
+Some quick notes before we move on. The matrix must be initialized before it is usable, but keep in mind everything is freed by default. Caution -- if you declare a matrix and never initialize it, the program will crash at the end of the function. In debug mode, many FASTlib classes will let you know that this is happening.  We are assessing this behavior and future versions of FASTlib may instead gurantee safe destruction if it doesn't critically impact performance.  (The \verb@index_t@ type is usually an regular int, but is wired through the system to become 64-bit if you tell it to.)
 
 \section{Copying and Aliasing}
 
-C++ is infamous for its desire to make copies of everything. If you forget to pass a parameter as a constant reference (const Classname\&), everything will be copied, but sometimes, there is just no way to get around of it. By avoiding constructors, we find copying is usually not needed. To avoid accidental copies of your class, put \verb= FORBID_COPY = at the beginning like this:
+C++ is infamous for its desire to make copies of everything. If you forget to pass a parameter as a constant reference (\verb@const ClassName \&@), the copy constructor is called automatically and any sane copy constructor must make a completely new and distinct instance of the object.  The cannonical means of preventing this behavior is to define the copy constructor (and assignment operator) as private.  This will result in compilation errors in lieu of mysteriously slow or buggy.  We provide a macro to automate this process:
 \begin{verbatim}
 class X {
-  FORBID_COPY(X);
+  FORBID_ACCIDENTAL_COPIES(X);
+ public:
   ...
 }
 \end{verbatim}
-Sometimes, though, you really need to make copies, or at least things like copies. Many classes support a Copy method to explicitly do so, through the Matrix and Vector.
+Sometimes, though, you really need to make copies, or at least things like copies. Many classes, especially pure-data classes, do have functional copy constructors, and yet others support a Copy method to explicitly perform the task of copy construction.  They Copy method operates as if it were an Init function.
 
-The Vector and Matrix classes support a concept of aliasing. A vector can be a vector on its own, or it could also point to some column within a matrix; a matrix can also refer to a subset of another matrix's columns. The concept is simple, but there is one caveat: without garbage collection, somebody eventually has to free the memory. Each Vector and Matrix then knows whether it is the owner of the memory it points to, and if it is, it will free the data automatically; otherwise, it is only an alias.
+The Vector and Matrix classes also support a concept of aliasing. A vector can be responsible for its own memory, or it could point to some column within a matrix; a matrix can also refer to a subset of another matrix's columns. The concept is simple, but there is one caveat: without garbage collection, somebody eventually has to free the memory. Each Vector and Matrix then knows whether it is the owner of the memory it points to, and if it is, it will free the data automatically; otherwise, it is only an alias.
 
 An example is shown here:
 \begin{verbatim}
@@ -756,20 +753,20 @@ An example is shown here:
 
 C++, and equally C, can sometimes make it easy to shoot yourself in the foot. To help you avoid this, we made debugging an important part of FASTlib.
 
-The build system by default will enable all checks in the form of \verb= #ifdef DEBUG = (we'll get back to this later). These checks and safeguards, such as bounds checking and memory poisoning, are present in nearly all core FASTlib classes. If you are debugging and find \verb= 0xDEADBEEF, 2146666666, or 0x7FF388AA, or NaN =, it probably means you forgot to initialize something; if you go beyond the end of a Vector, it will let you know. In practice, these have a 20% or so performance penalty -- as a habit, we've found it's just fine to leave these on until you want to run timing experiments. In machine learning code, since you can sometimes generate seemingly good results from garbage data, these types of safeguards are almost essential.
+The build system by default will enable all checks in the form of \verb@#ifdef DEBUG@ (we'll get back to this later). These checks and safeguards, such as bounds checking and memory poisoning, are present in nearly all core FASTlib classes. If you are debugging and find \verb@0xDEADBEEF@ or \verb@2146666666 == 0x7FF388AA == NaN@, it probably means you forgot to initialize something; if you go beyond the end of a Vector, it will let you know. In practice, these have a 20% or so performance penalty -- as a habit, we've found it's just fine to leave these on until you want to run timing experiments. In machine learning code, since you can sometimes generate seemingly good results from garbage data, these types of safeguards are almost essential.
 
 To use debugging yourself, plaster your code with the following:
 \begin{itemize}
-\item \verb= DEBUG_ASSERT_MSG(condition, format, ...) = - If the condition is false, your program will print the formatted message to stderr and die.
-\item \verb= DEBUG_GOT_HERE(3) = - If verbosity is > 3 and verbose-mode is compiled on, it will print the function and line number. 
+\item \verb@DEBUG_ASSERT_MSG(condition, format, ...)@ - If the condition is false, your program will print the formatted message to stderr and die.
+\item \verb@VERBOSE_GOT_HERE(3)@ - If verbosity is greater than 3 and verbose-mode is compiled on, it will print the function and line number. 
 \end{itemize}
-You can safely leave these in at no cost in non debug mode. To set verbosity level to 3.0, you would specify the command line argument: \verb= --debug/verbosity_level=3.0 =.See the Doxygen for base/debug.h for more information.
+You can safely leave these in at no cost in non debug mode. To set verbosity level to 3.0, you would specify the command line argument: \verb@--debug/verbosity_level=3.0@.See the Doxygen for \verb@base/debug.h@ for more information.
 
 \section{FASTexec - Command-line parameters and experimentation}
 
 We felt it is important that machine learning researchers can run a lot of experiments without too much trouble. Parameter passing is integral to the experimentation process, so we unified these.
 
-The core idea behind the system is that within one run of your program, a hierarchial data store is created. In some ways it is similar to a "Windows registry" except it only has a very brief existence. In fact, it more like an XML document tree, except without attributes, and has a "stateless" output format.
+The core idea behind the system is that within one run of your program, a hierarchial data store is created. In some ways it is similar to a ``Windows registry'' except it only has a very brief existence. In fact, it more like an XML document tree, except without attributes, and has a ``stateless'' output format.
 
 \subsubsection{Basic command-line parameters}
 
@@ -800,7 +797,7 @@ int main(int argc, char *argv[]) {
 }
 \end{verbatim}
 
-The useful functions we used were \verb= fx_param_int = (to get an integer), \verb= fx_param_double = (to get a double-precision value), \verb= fx_timer_{start|stop} = to have timers, and \verb= fx_done() = to output the results. I ran this example with the parameters:
+The useful functions we used were \verb@fx_param_int@ (to get an integer), \verb@fx_param_double@ (to get a double-precision value), \verb@fx_timer_{start|stop}@ to have timers, and \verb@fx_done()@ to output the results. I ran this example with the parameters:
 \begin{verbatim}
 ./test --count=10000 --factor=2.0
 \end{verbatim}
@@ -871,7 +868,7 @@ and the following text resulted:
 We admit this is a lot of text, but when you later comb through the results, you can select only the portions you care about. Briefly, each portion of the tree:
 \begin{itemize}
 \item params/ - Parameters you were called with. Default parameters are explicitly stored in case you later change what the default values are.
-\item timers/ - Each timer. There will always be a default timer, which runs between \verb= fx_init = and \verb= fx_done =.
+\item timers/ - Each timer. There will always be a default timer, which runs between \verb@fx_init@ and \verb@fx_done@.
 \item results/ - Results that you decided to emit.
 \item info/rusage/ - System information related to rusage. See the manpage for getrusage(2).
 \item info/system/ - Information on the system run on. See manpage for uname(2). 
@@ -898,22 +895,22 @@ You can try an example with the K-nearest-neighbors classifier example in u/exam
 
 \subsection{Success and failure}
 
-The \verb= success_t type = in \verb= base/common.h = defines our standard for indicating success or failure. Rather than assuming 1 or 0 or -1 indicates something or other, we explicitly return \verb= SUCCESS_PASS = (succeeded), \verb= SUCCESS_FAIL = (failed), or \verb= SUCCESS_WARN = (something was suboptimal).
+The \verb@success_t type@ in \verb@base/common.h@ defines our standard for indicating success or failure. Rather than assuming 1 or 0 or -1 indicates something or other, we explicitly return \verb@SUCCESS_PASS@ (succeeded), \verb@SUCCESS_FAIL@ (failed), or \verb@SUCCESS_WARN@ (something was suboptimal).
 
 \subsection{Basic types}
 
-You will notice heavy use of \verb= index_t = (in \verb= base/scale.h =) rather than integers. For practical purposes, \verb= index_t = is a signed integer -- signed so you can loop over >= 0. On 32-bit and 64-bit Intel/AMD machines, this will be 32-bits, which is the fastest int for both systems and is relatively compact. But if you want to operate on datasets larger than a few gigabytes, you can define the \verb= SCALE_LARGE = macro, and these will instantly switch to the largest size your computer can address.
+You will notice heavy use of \verb@index_t@ (in \verb@base/scale.h@) rather than integers. For practical purposes, \verb@index_t@ is a signed integer -- signed so you can loop over >= 0. On 32-bit and 64-bit Intel/AMD machines, this will be 32-bits, which is the fastest int for both systems and is relatively compact. But if you want to operate on datasets larger than a few gigabytes, you can define the \verb@SCALE_LARGE@ macro, and these will instantly switch to the largest size your computer can address.
 
-Also, the \verb= base/basic_types.h = file (it will be in bin/ since it is auto-generated) defines standard int16, int32, int64, uint16, uint32, uint64 types.
+Also, the \verb@base/basic_types.h@ file (it will be in bin/ since it is auto-generated) defines standard int16, int32, int64, uint16, uint32, uint64 types.
 
 \subsection{Printf versus Streams}
 
-We operate under the assumption that more of our audience is familiar with C I/O than with C++ I/O, especially when it comes to fancy floating-point formatting. The caveat is that printf only works with native types like int, short, long. To print an \verb= index_t =, you use:
+We operate under the assumption that more of our audience is familiar with C I/O than with C++ I/O, especially when it comes to fancy floating-point formatting. The caveat is that printf only works with native types like int, short, long. To print an \verb@index_t@, you use:
 \begin{verbatim}
 printf("Iteration %"LI"d complete.", some_index_var);   // no special formatting
 printf("Iteration %04"LI"d complete.", some_index_var); // with formatting
 \end{verbatim}
-The LI macro is a string that will have the suitable "l" modifier for \verb= index_t = (see man sprintf for more details). For other types:
+The LI macro is a string that will have the suitable ``l'' modifier for \verb@index_t@ (see man sprintf for more details). For other types:
 \begin {itemize}
 \item int16 and uint16: L16
 \item int32 and uint32: L32
