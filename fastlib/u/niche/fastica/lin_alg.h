@@ -22,8 +22,10 @@
  * Random vectors on the unit sphere, Random uniform matrices, Random
  * normal matrices, creating a Submatrix that is a slice of selected columns of
  * a matrix, Block matrix construction from a base matrix
+ * Note that the __private is temporary until this code is merged into a larger
+ * namespace of linear algebra utilities
  */
-namespace linalg {
+namespace linalg__private {
 
 
   /**
@@ -850,6 +852,33 @@ namespace linalg {
 
     return new_matrix;
   }
-}; /* namespace linalg */
+
+  /**
+   * Orthogonalize W and return the result in W, using Eigen Decomposition
+   * @pre W and W_old store the same matrix in disjoint memory
+   */
+  void Orthogonalize(const Matrix W_old, Matrix *W) {
+    Matrix W_squared, W_squared_inv_sqrt;
+    
+    la::MulTransAInit(W_old, W_old, &W_squared);
+    
+    Matrix D, E, E_times_D;
+    Vector D_vector;
+    
+    la::EigenvectorsInit(W_squared, &D_vector, &E);
+    D.InitDiagonal(D_vector);
+    
+    index_t d = D.n_rows();
+    for(index_t i = 0; i < d; i++) {
+      D.set(i, i, 1 / sqrt(D.get(i, i)));
+    }
+    
+    la::MulInit(E, D, &E_times_D);
+    la::MulTransBInit(E_times_D, E, &W_squared_inv_sqrt);
+    
+    // note that up until this point, W == W_old
+    la::MulOverwrite(W_old, W_squared_inv_sqrt, W);
+  }
+}; /* namespace linalg__private */
 
 #endif /* LIN_ALG_H */
