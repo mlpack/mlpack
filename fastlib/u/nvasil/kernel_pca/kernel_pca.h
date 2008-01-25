@@ -1,20 +1,6 @@
 /**  
  * @file kernel_pca.h
- * It computes kernel pca as described by Smola in 
- * the following paper. 
- *
- * It also computes Local Linear Embedding as described in the
- * paper
- *
- *
- * Another spectral method implemented here is spectral regression 
- * as described in the paper
- *
- * In the future it will also support Laplacian Eigenmaps
- * described here:
- * 
- * and Diffusion Maps
- * described here
+ * nvasil@ieee.org
  */
 #ifndef KERNEL_PCA_H_
 #define KERNEL_PCA_H_
@@ -30,18 +16,70 @@
 #include "u/nvasil/allknn/allknn.h"
 
 class KernelPCATest;
-/*
+/**
  * KernelPCA class is the main class that implements several spectral methods
  * that are variances of Kernel PCA
  * Most of them share an affinity (proximity) )matrix that is computed
  * with the dual-tree all nearest algorithm. All these methods share
  * this affinity matrix and then define their own kernel matrix based on
  * that. Only distance kernels are supported, kernels that are f(distance) 
+ *
+ * It computes kernel pca as described by Smola in 
+ * the following paper. 
+ * @article{scholkopf1999kpc,
+ *   title={{Kernel principal component analysis}},
+ *   author={Scholkopf, B. and Smola, A. and Muller, K.R.},
+ *   journal={Advances in Kernel Methods-Support Vector Learning},
+ *   pages={327--352},
+ *   year={1999},
+ *   publisher={Cambridge MA: MIT Press}
+ *   }
+ * It also computes Local Linear Embedding as described in the
+ * paper
+ * @misc{roweis2000ndr,
+ *  title={{Nonlinear Dimensionality Reduction by Locally Linear Embedding}},
+ *  author={Roweis, S.T. and Saul, L.K.},
+ *  journal={Science},
+ *  volume={290},
+ *  number={5500},
+ *  pages={2323--2326},
+ *  year={2000}
+ *  }
+ *
+ * Another spectral method implemented here is spectral regression 
+ * as described in the paper
+ * @article{cai2007sru,
+ *  title={{Spectral regression: a unified subspace learning framework for content-based image retrieval}},
+ *  author={Cai, D. and He, X. and Han, J.},
+ *  journal={Proceedings of the 15th international conference on Multimedia},
+ *  pages={403--412},
+ *  year={2007},
+ *  publisher={ACM Press New York, NY, USA}
+ *  }
+ * In the future it will also support Laplacian Eigenmaps
+ * described here:
+ * @misc{belkin2003led,
+ *  title={{Laplacian Eigenmaps for Dimensionality Reduction and Data Representation}},
+ *  author={Belkin, M. and Niyogi, P.},
+ *  journal={Neural Computation},
+ *  volume={15},
+ *  number={6},
+ *  pages={1373--1396},
+ *  year={2003},
+ *  publisher={MIT Press}
+ *  }
+ * and Diffusion Maps
+ * described here:
+ * @phdthesis{lafon:dma,
+ *  title={{Diffusion Maps and Geodesic Harmonics}},
+ *  author={Lafon, S.},
+ *  school={Ph. D. Thesis, Yale University, 2004}
+ *  }
  */
 class KernelPCA {
  public:
   friend class KernelPCATest;
-  /*
+  /**
    * Example of a kernel. It should be a class overloading the 
    * operator() 
    * Here we have the gaussian kernel
