@@ -21,6 +21,11 @@ SparseMatrix::SparseMatrix() {
   map_    = NULL;
   issymmetric_=false;
 }
+SparseMatrix::SparseMatrix(const SparseMatrix &other) {
+  map_=NULL;
+  Copy(other);
+}
+
 
 SparseMatrix::SparseMatrix(const index_t num_of_rows,
                            const index_t num_of_columns,
@@ -168,12 +173,15 @@ void SparseMatrix::Copy(const SparseMatrix &other) {
   num_of_rows_ = other.num_of_rows_;
   num_of_columns_ = other.num_of_columns_;
   dimension_   = other.dimension_;
-  map_ = new Epetra_Map(num_of_rows_, 0, comm_);
+  if (map_!=NULL) {
+    delete map_;
+  }
+  map_ = new Epetra_Map(other.matrix_->RowMap());
   issymmetric_ = other.issymmetric_;
   if (other.matrix_->Filled()==false) {
+    map_ = new Epetra_Map(other.matrix_->RowMap());
     matrix_ = Teuchos::rcp(
         new Epetra_CrsMatrix(Epetra_DataAccess(0), *map_, 10));
-    this->StartLoadingRows();
     for(index_t r=0; r<num_of_rows_; r++){
      index_t global_row = other.my_global_elements_[r];
      index_t num_of_entries;
@@ -184,7 +192,10 @@ void SparseMatrix::Copy(const SparseMatrix &other) {
     }
   } else {
     matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(*(other.matrix_.get())));
+    map_= new Epetra_Map(this->matrix_->RowMap());
+
   }
+  my_global_elements_ = map_->MyGlobalElements();
 }
 
 void SparseMatrix::Destruct() {
@@ -195,7 +206,7 @@ void SparseMatrix::Destruct() {
 }
 
 void SparseMatrix::StartLoadingRows() {
-   my_global_elements_ = map_->MyGlobalElements();
+  my_global_elements_ = map_->MyGlobalElements();
 }
 
 void SparseMatrix::LoadRow(index_t row, 
@@ -277,6 +288,18 @@ void SparseMatrix::SetDiagonal(const double scalar) {
   }
 } 
 
+void SparseMatrix::get_row_copy(index_t r, index_t *num, 
+                                index_t **columns, 
+                                double **values) const {
+  DEBUG_BOUNDS(r, num_of_rows_);
+  index_t global_row = my_global_elements_[r];
+  matrix_->ExtractGlobalRowView(global_row, *num, *values);
+  *values= new double[*num];
+  *columns= new index_t[*num];
+  index_t dummy_length;
+  matrix_->ExtractGlobalRowCopy(global_row, *num,
+        dummy_length, *values, *columns);    
+}
 double SparseMatrix::get(index_t r, index_t c) const {
   DEBUG_BOUNDS(r, num_of_rows_);
   DEBUG_BOUNDS(c, num_of_columns_);
@@ -634,19 +657,33 @@ inline void Sparsem::Add(const SparseMatrix &a,
   result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
   result->StartLoadingRows();
+  double *values1;
+  double *values2;
+  index_t *indices1;
+  index_t *indices2;
+  if (a.matrix_->IndicesAreLocal()) {
+    values1=new double[1];
+    indices1=new index_t[1];
+  }
+  if (b.matrix_->IndicesAreLocal()) {
+    values2=new double[1];
+    indices2=new index_t[1];
+  }
   for(index_t r=0; r<a.num_of_rows_; r++) {
     index_t num1, num2;
-    double *values1, *values2;
-    index_t *indices1, *indices2;
     if (!a.matrix_->IndicesAreLocal()) {
       a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
     } else {
-      a.matrix_->ExtractMyRowView(a.my_global_elements_[r], num1, values1, indices1);
+      delete []indices1;
+      delete []values1;
+      a.get_row_copy(r, &num1, &indices1, &values1);
     }
     if (!b.matrix_->IndicesAreLocal()) {
       b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
     } else {
-      b.matrix_->ExtractMyRowView(b.my_global_elements_[r], num2, values2, indices2);
+      delete []indices2;
+      delete []values2;
+      b.get_row_copy(r, &num2, &indices2, &values2);
     }
     std::vector<double>  values3;
     std::vector<index_t> indices3;
@@ -682,6 +719,14 @@ inline void Sparsem::Add(const SparseMatrix &a,
     }
     result->LoadRow(r, indices3, values3);
   }
+  if (a.matrix_->IndicesAreLocal()) {
+    delete []values1;
+    delete []indices1;
+  }
+  if (b.matrix_->IndicesAreLocal()) {
+    delete []values2;
+    delete []indices2;
+  }
 }
 
 inline void Sparsem::Subtract(const SparseMatrix &a,
@@ -693,19 +738,35 @@ inline void Sparsem::Subtract(const SparseMatrix &a,
       b.nnz()/b.num_of_rows_);
  
   result->StartLoadingRows();
+  double *values1;
+  double *values2;
+  index_t *indices1;
+  index_t *indices2;
+  if (a.matrix_->IndicesAreLocal()) {
+    values1=new double[1];
+    indices1=new index_t[1];
+  }
+  if (b.matrix_->IndicesAreLocal()) {
+    values2=new double[1];
+    indices2=new index_t[1];
+  }
   for(index_t r=0; r<a.num_of_rows_; r++) {
     index_t num1, num2;
-    double *values1, *values2;
-    index_t *indices1, *indices2;
     if (!a.matrix_->IndicesAreLocal()) {
-      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
+      a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], 
+                                      num1, values1, indices1);
     } else {
-      a.matrix_->ExtractMyRowView(a.my_global_elements_[r], num1, values1, indices1);
+      delete []indices1;
+      delete []values1;
+      a.get_row_copy(r, &num1, &indices1, &values1);
     }
     if (!b.matrix_->IndicesAreLocal()) {
-      b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
+      b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], 
+                                      num2, values2, indices2);
     } else {
-      b.matrix_->ExtractMyRowView(b.my_global_elements_[r], num2, values2, indices2);
+      delete []indices2;
+      delete []values2;
+      b.get_row_copy(r, &num2, &indices2, &values2);
     }
  
     std::vector<double>  values3;
@@ -747,6 +808,14 @@ inline void Sparsem::Subtract(const SparseMatrix &a,
     }
     result->LoadRow(r, indices3, values3);
   }
+  if (a.matrix_->IndicesAreLocal()) {
+    delete []values1;
+    delete []indices1;
+  }
+  if (b.matrix_->IndicesAreLocal()) {
+    delete []values2;
+    delete []indices2;
+  }
 }
 
 inline void Sparsem::Multiply(const SparseMatrix &a,
@@ -756,24 +825,40 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
   result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
   result->StartLoadingRows();
+  double *values1;
+  double *values2;
+  index_t *indices1;
+  index_t *indices2;
+  if (a.matrix_->IndicesAreLocal()) {
+    values1=new double[1];
+    indices1=new index_t[1];
+  }
+  if (b.matrix_->IndicesAreLocal()) {
+    values2=new double[1];
+    indices2=new index_t[1];
+  }
   if (b.issymmetric_ == true) {
     for(index_t r1=0; r1<a.num_of_rows_; r1++) {
       std::vector<index_t> indices3;
       std::vector<double>  values3;
       index_t num1;
-      double  *values1;
-      index_t *indices1;
       if (!a.matrix_->IndicesAreLocal()) {
         a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1], num1, values1, indices1);
       } else {
-        a.matrix_->ExtractMyRowView(a.my_global_elements_[r1], num1, values1, indices1);
+        delete []indices1;
+        delete []values1;
+        a.get_row_copy(r1, &num1, &indices1, &values1);
       }
       for(index_t r2=0; r2<b.num_of_rows_; r2++) {
         index_t num2;
-        double  *values2;
-        index_t *indices2;
-        b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r2], 
-                                        num2, values2, indices2);
+        if (!b.matrix_->IndicesAreLocal()) {
+          b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r2], 
+                                          num2, values2, indices2);
+        } else {
+          delete []indices2;
+          delete []values2;
+          b.get_row_copy(r2, &num2, &indices2, &values2);
+        }
         index_t i=0;
         index_t j=0;
         double dot_product=0;
@@ -801,12 +886,12 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
   } else {
     for(index_t r1=0; r1<a.num_of_rows_; r1++) {
       index_t num1;
-      double  *values1;
-      index_t *indices1;
       if (!a.matrix_->IndicesAreLocal()) {
         a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r1], num1, values1, indices1);
       } else {
-        a.matrix_->ExtractMyRowView(a.my_global_elements_[r1], num1, values1, indices1);
+        delete []indices1;
+        delete []values1;
+        a.get_row_copy(r1, &num1, &indices1, &values1);
       }
       double dot_product=0;
       std::vector<index_t> indices3;
@@ -827,6 +912,14 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
       indices3.clear();
       values3.clear();
     }
+  }
+  if (a.matrix_->IndicesAreLocal()) {
+    delete []values1;
+    delete []indices1;
+  }
+  if (b.matrix_->IndicesAreLocal()) {
+    delete []values2;
+    delete []indices2;
   }
 }
 
@@ -863,23 +956,37 @@ inline void Sparsem::DotMultiply(const SparseMatrix &a,
   result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
   result->StartLoadingRows();
+  double *values1;
+  double *values2;
+  index_t *indices1;
+  index_t *indices2;
+  if (a.matrix_->IndicesAreLocal()) {
+    values1=new double[1];
+    indices1=new index_t[1];
+  }
+  if (b.matrix_->IndicesAreLocal()) {
+    values2=new double[1];
+    indices2=new index_t[1];
+  }
   for(index_t r=0; r<a.num_of_rows_; r++) {
     std::vector<index_t> indices3;
     std::vector<double>   values3;
     indices3.clear();
     values3.clear();
     index_t num1, num2;
-    double *values1, *values2;
-    index_t *indices1, *indices2;
     if (!a.matrix_->IndicesAreLocal()) {
       a.matrix_->ExtractGlobalRowView(a.my_global_elements_[r], num1, values1, indices1);
-    } else {
-      a.matrix_->ExtractMyRowView(a.my_global_elements_[r], num1, values1, indices1);
-    }
+    } else{
+      delete []indices1;
+      delete []values1;
+      a.get_row_copy(r, &num1, &indices1, &values1);
+   }
     if (!b.matrix_->IndicesAreLocal()) {
       b.matrix_->ExtractGlobalRowView(b.my_global_elements_[r], num2, values2, indices2);
     } else {
-      b.matrix_->ExtractMyRowView(b.my_global_elements_[r], num2, values2, indices2);
+      delete []indices2;
+      delete []values2;
+      b.get_row_copy(r, &num2, &indices2, &values2);
     }
     index_t i=0;
     index_t j=0;
@@ -897,5 +1004,13 @@ inline void Sparsem::DotMultiply(const SparseMatrix &a,
       j++;
     }
     result->LoadRow(r, indices3, values3);
+  }
+  if (a.matrix_->IndicesAreLocal()) {
+    delete []values1;
+    delete []indices1;
+  }
+  if (b.matrix_->IndicesAreLocal()) {
+    delete []values2;
+    delete []indices2;
   }
 }
