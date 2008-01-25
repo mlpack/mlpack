@@ -48,28 +48,40 @@ class FastICA {
 
   /** Optimization approach to use (deflation vs symmetric) */
   int approach_;
+
   /** Nonlinearity (contrast function) to use for evaluating independence */
   int nonlinearity_;
+
   //const index_t first_eig;
   //const index_t last_eig;
+
   /** number of independent components to find */
   index_t num_of_IC_;
+
   /** whether to enable fine tuning */
   bool fine_tune_;
+
   /** constant used for log cosh nonlinearity */
   double a1_;
+
   /** constant used for Gauss nonlinearity */
   double a2_;
+
   /** constant used for fine tuning */
   double mu_;
+
   /** whether to enable stabilization */
   bool stabilization_;
+
   /** threshold for convergence */
   double epsilon_;
+
   /** maximum number of iterations beore giving up */
   index_t max_num_iterations_;
+
   /** maximum number of times to fine tune */
   index_t max_fine_tune_;
+
   /** for stabilization, percent of data to include in random draw */
   double percent_cut_;
 
@@ -78,7 +90,7 @@ class FastICA {
   /**
    * Symmetric Newton-Raphson using log cosh contrast function
    */
-  void SymmetricLogCoshUpdate_(index_t n, Matrix X, Matrix *B) {
+  void SymmetricLogCoshUpdate_(index_t n, Matrix X, Matrix* B) {
     Matrix hyp_tan, col_vector, sum, temp1, temp2;
     
     MapOverwrite(&TanhArg,
@@ -103,7 +115,7 @@ class FastICA {
    * Fine-tuned Symmetric Newton-Raphson using log cosh contrast
    * function
    */
-  void SymmetricLogCoshFineTuningUpdate_(index_t n, Matrix X, Matrix *B) {
+  void SymmetricLogCoshFineTuningUpdate_(index_t n, Matrix X, Matrix* B) {
     Matrix Y, hyp_tan, Beta, Beta_Diag, D, sum, temp1, temp2, temp3;
 	
     MulTransAInit(&X, B, &Y);
@@ -544,15 +556,93 @@ class FastICA {
   }
 
   /**
-   * Initializes the FastICA object by loading everything the algorithm needs
+   * Initializes the FastICA object by obtaining everything the algorithm needs
    */
-  void Init(Matrix X_in, struct datanode* module_in) {
+  int Init(Matrix X_in, struct datanode* module_in) {
 
     module_ = module_in;
 
     X_.Copy(X_in); // for some reason Alias makes this crash, so copy for now
     d = X_.n_rows();
     n = X_.n_cols();
+
+    long seed = fx_param_int(module_, "seed", clock() + time(0));
+    srand48(seed);
+
+    
+    const char* string_approach =
+      fx_param_str(module_, "approach", "deflation");
+    if(strcasecmp(string_approach, "deflation") == 0) {
+      VERBOSE_ONLY( printf("using Deflation approach ") );
+      approach_ = DEFLATION;
+    }
+    else if(strcasecmp(string_approach, "symmetric") == 0) {
+      VERBOSE_ONLY( printf("using Symmetric approach ") );
+      approach_ = SYMMETRIC;
+    }
+    else {
+      printf("ERROR: approach must be 'deflation' or 'symmetric'\n");
+      return SUCCESS_FAIL;
+    }
+    
+    const char* string_nonlinearity =
+      fx_param_str(module_, "nonlinearity", "logcosh");
+    if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
+      VERBOSE_ONLY( printf("with log cosh nonlinearity\n") );
+      nonlinearity_ = LOGCOSH;
+    }
+    else if(strcasecmp(string_nonlinearity, "gauss") == 0) {
+      VERBOSE_ONLY( printf("with Gaussian nonlinearity\n") );
+      nonlinearity_ = GAUSS;
+    }
+    else if(strcasecmp(string_nonlinearity, "kurtosis") == 0) {
+      VERBOSE_ONLY( printf("with kurtosis nonlinearity\n") );
+      nonlinearity_ = KURTOSIS;
+    }
+    else if(strcasecmp(string_nonlinearity, "skew") == 0) {
+      VERBOSE_ONLY( printf("with skew nonlinearity\n") );
+      nonlinearity_ = SKEW;
+    }
+    else {
+      printf("\nERROR: nonlinearity not in {logcosh, gauss, kurtosis, skew}\n");
+      return SUCCESS_FAIL;
+    }
+
+    //const index_t first_eig_ = fx_param_int(module_, "first_eig", 1);
+    // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
+    //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
+    num_of_IC_ = d; //fx_param_int(module_, "num_of_IC", d);
+    fine_tune_ = fx_param_bool(module_, "fine_tune", false);
+    a1_ = fx_param_double(module_, "a1", 1);
+    a2_ = fx_param_double(module_, "a2", 1);
+    mu_ = fx_param_double(module_, "mu", 1);
+    stabilization_ = fx_param_bool(module_, "stabilization", false);
+    epsilon_ = fx_param_double(module_, "epsilon", 0.0001);
+  
+    int int_max_num_iterations =
+      fx_param_int(module_, "max_num_iterations", 1000);
+    if(int_max_num_iterations < 0) {
+      printf("ERROR: max_num_iterations = %d must be >= 0\n",
+	     int_max_num_iterations);
+      return SUCCESS_FAIL;
+    }
+    max_num_iterations_ = (index_t) int_max_num_iterations;
+
+    int int_max_fine_tune = fx_param_int(module_, "max_fine_tune", 5);
+    if(int_max_fine_tune < 0) {
+      printf("ERROR: max_fine_tune = %d must be >= 0\n",
+	     int_max_fine_tune);
+      return SUCCESS_FAIL;
+    }
+    max_fine_tune_ = (index_t) int_max_fine_tune;
+
+    percent_cut_ = fx_param_double(module_, "percent_cut", 1);
+    if((percent_cut() < 0) || (percent_cut() > 1)) {
+      printf("ERROR: percent_cut = %f must be an element in [0,1]\n",
+	     percent_cut());
+      return SUCCESS_FAIL;
+    }
+    return SUCCESS_PASS;
   }
 
 
@@ -565,7 +655,7 @@ class FastICA {
    * percentage, and return indices in a Vector
    * @pre selected_indices is an uninitialized Vector, percentage in [0 1]
    */
-  index_t GetSamples(int max, double percentage, Vector *selected_indices) {   
+  index_t GetSamples(int max, double percentage, Vector* selected_indices) {   
     
     index_t num_selected = 0;
     Vector rand_nums;
@@ -614,9 +704,8 @@ class FastICA {
 			     int used_nonlinearity, int g_fine, double stroke,
 			     bool not_fine, bool taking_long,
 			     int initial_state_mode,
-			     Matrix X, Matrix* B, Matrix *W, Matrix *A,
-			     Matrix* whitening_matrix,
-			     Matrix* dewhitening_matrix) {
+			     Matrix X, Matrix* B, Matrix* W,
+			     Matrix* whitening_matrix) {
     
     if(initial_state_mode == 0) {
       //generate random B
@@ -649,7 +738,6 @@ class FastICA {
 	Orthogonalize(temp, B);
 
 	MulTransAOverwrite(B, whitening_matrix, W);
-	MulOverwrite(dewhitening_matrix, B, A);
 	return SUCCESS_PASS;
       }
 	
@@ -669,7 +757,7 @@ class FastICA {
 	}
       }
       
-      printf("min_abs_cos = %f\n", min_abs_cos);
+      VERBOSE_ONLY( printf("delta = %f\n", 1 - min_abs_cos) );
 
       if(1 - min_abs_cos < epsilon()) {
 	if(fine_tuning_enabled && not_fine) {
@@ -680,7 +768,6 @@ class FastICA {
 	  B_old2.SetZero();
 	}
 	else {
-	  MulOverwrite(dewhitening_matrix, B, A);
 	  MulTransAOverwrite(B, whitening_matrix, W);
 	  return SUCCESS_PASS;
 	}
@@ -696,6 +783,8 @@ class FastICA {
 	    min_abs_cos2 = current_cos2;
 	  }
 	}
+
+	VERBOSE_ONLY( printf("stabilization delta = %f\n", 1 - min_abs_cos2) );
 
 	if((stroke == 0) && (1 - min_abs_cos2 < epsilon())) {
 	  stroke = mu();
@@ -849,9 +938,8 @@ class FastICA {
 			     int used_nonlinearity, int g_orig, int g_fine,
 			     double stroke, bool not_fine, bool taking_long,
 			     int initial_state_mode,
-			     Matrix X, Matrix* B, Matrix *W, Matrix *A,
-			     Matrix* whitening_matrix,
-			     Matrix* dewhitening_matrix) {
+			     Matrix X, Matrix* B, Matrix* W,
+			     Matrix* whitening_matrix) {
 
     B -> Init(d, d);
     B -> SetZero();
@@ -919,17 +1007,25 @@ class FastICA {
 	bool converged = false;
 	Vector w_diff;
 	la::SubInit(w_old, w, &w_diff);
+
+	double delta1 = la::Dot(w_diff, w_diff);
+	double delta2 = DBL_MAX;
 	  
-	if(la::Dot(w_diff, w_diff) < epsilon()) {
+	if(delta1 < epsilon()) {
 	  converged = true;
 	}
 	else {
 	  la::AddOverwrite(w_old, w, &w_diff);
+
+	  delta2 = la::Dot(w_diff, w_diff);
 	    
-	  if(la::Dot(w_diff, w_diff) < epsilon()) {
+	  if(delta2 < epsilon()) {
 	    converged = true;
 	  }
 	}
+
+	VERBOSE_ONLY( printf("delta = %f\n", min(delta1, delta2)) );
+
 
 	if(converged) {
 	  if(fine_tuning_enabled & not_fine) {
@@ -944,14 +1040,12 @@ class FastICA {
 	  }
 	  else {
 	    num_failures = 0;
-	    Vector B_col_round, A_col_round, W_col_round;
+	    Vector B_col_round, W_col_round;
 
 	    B -> MakeColumnVector(round, &B_col_round);
-	    A -> MakeColumnVector(round, &A_col_round);
 	    W -> MakeColumnVector(round, &W_col_round);
 
 	    B_col_round.CopyValues(w);
-	    la::MulOverwrite(*dewhitening_matrix, w, &A_col_round);
 	    la::MulOverwrite(w, *whitening_matrix, &W_col_round);
 
 	    break; // this line is intended to take us to the next IC
@@ -999,8 +1093,6 @@ class FastICA {
 	w_old2.CopyValues(w_old);
 	w_old.CopyValues(w);
 	  
-	printf("used_nonlinearity = %d\n", used_nonlinearity);
-
 	switch(used_nonlinearity) {
 
 	case LOGCOSH: {
@@ -1121,8 +1213,7 @@ class FastICA {
    * the specified approach
    * @pre{ X is a d by n data matrix, for d dimensions and n samples}
    */
-  int FixedPointICA(Matrix X, Matrix whitening_matrix, Matrix dewhitening_matrix,
-		    Matrix* A, Matrix* W) {
+  int FixedPointICA(Matrix X, Matrix whitening_matrix, Matrix* W) {
     // ensure default values are passed into this function if the user doesn't care about certain parameters
 
     int g = nonlinearity();
@@ -1130,12 +1221,10 @@ class FastICA {
     if(d < num_of_IC()) {
       printf("ERROR: must have num_of_IC <= Dimension!\n");
       W -> Init(0,0);
-      A -> Init(0,0);
       return SUCCESS_FAIL;
     }
 
     W -> Init(d, num_of_IC());
-    A -> Init(num_of_IC(), d);
 
     if((percent_cut() > 1) || (percent_cut() < 0)) {
       percent_cut_ = 1;
@@ -1206,24 +1295,22 @@ class FastICA {
     int ret_val = SUCCESS_FAIL;
     
     if(approach() == SYMMETRIC) {
-      printf("using Symmetric approach\n");
       ret_val = 
 	SymmetricFixedPointICA(stabilization_enabled, fine_tuning_enabled,
 			       mu_orig, mu_k, failure_limit,
 			       used_nonlinearity, g_fine, stroke,
 			       not_fine, taking_long, initial_state_mode,
-			       X, &B, W, A,
-			       &whitening_matrix, &dewhitening_matrix);
+			       X, &B, W,
+			       &whitening_matrix);
     }
     else if(approach() == DEFLATION) {
-      printf("using Deflation approach\n");
       ret_val = 
 	DeflationFixedPointICA(stabilization_enabled, fine_tuning_enabled,
 			       mu_orig, mu_k, failure_limit,
 			       used_nonlinearity, g_orig, g_fine,
 			       stroke, not_fine, taking_long, initial_state_mode,
-			       X, &B, W, A,
-			       &whitening_matrix, &dewhitening_matrix);
+			       X, &B, W,
+			       &whitening_matrix);
     }
 
     return ret_val;
@@ -1234,96 +1321,18 @@ class FastICA {
    * Runs FastICA Algorithm on matrix X and Inits W to unmixing matrix and Y to
    * independent components matrix, such that \f$ X = W * Y \f$
    */
-  int DoFastICA(Matrix *W, Matrix *Y) {
+  int DoFastICA(Matrix* W, Matrix* Y) {
 
-    const char *string_approach =
-      fx_param_str(module_, "approach", "deflation");
-    if(strcasecmp(string_approach, "deflation") == 0) {
-      approach_ = DEFLATION;
-    }
-    else if(strcasecmp(string_approach, "symmetric") == 0) {
-      approach_ = SYMMETRIC;
-    }
-    else {
-      printf("ERROR: approach must be 'deflation' or 'symmetric'\n");
-      W -> Init(0,0);
-      Y -> Init(0,0);
-      return SUCCESS_FAIL;
-    }
-    
-    const char *string_nonlinearity =
-      fx_param_str(module_, "nonlinearity", "logcosh");
-    if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
-      nonlinearity_ = LOGCOSH;
-    }
-    else if(strcasecmp(string_nonlinearity, "gauss") == 0) {
-      nonlinearity_ = GAUSS;
-    }
-    else if(strcasecmp(string_nonlinearity, "kurtosis") == 0) {
-      nonlinearity_ = KURTOSIS;
-    }
-    else if(strcasecmp(string_nonlinearity, "skew") == 0) {
-      nonlinearity_ = SKEW;
-    }
-    else {
-      printf("ERROR: nonlinearity not in {logcosh, gauss, kurtosis, skew}\n");
-      W -> Init(0,0);
-      Y -> Init(0,0);
-      return SUCCESS_FAIL;
-    }
-
-    //const index_t first_eig_ = fx_param_int(module_, "first_eig", 1);
-    // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
-    //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
-    num_of_IC_ = d; //fx_param_int(module_, "num_of_IC", d);
-    fine_tune_ = fx_param_bool(module_, "fine_tune", 0);
-    a1_ = fx_param_double(module_, "a1", 1);
-    a2_ = fx_param_double(module_, "a2", 1);
-    mu_ = fx_param_double(module_, "mu", 1);
-    stabilization_ = fx_param_bool(module_, "stabilization", false);
-    epsilon_ = fx_param_double(module_, "epsilon", 0.0001);
-  
-    int int_max_num_iterations =
-      fx_param_int(module_, "max_num_iterations", 1000);
-    if(int_max_num_iterations < 0) {
-      printf("ERROR: max_num_iterations = %d must be >= 0\n",
-	     int_max_num_iterations);
-      W -> Init(0,0);
-      Y -> Init(0,0);
-      return SUCCESS_FAIL;
-    }
-    max_num_iterations_ = (index_t) int_max_num_iterations;
-
-    int int_max_fine_tune = fx_param_int(module_, "max_fine_tune", 5);
-    if(int_max_fine_tune < 0) {
-      printf("ERROR: max_fine_tune = %d must be >= 0\n",
-	     int_max_fine_tune);
-      W -> Init(0,0);
-      Y -> Init(0,0);
-      return SUCCESS_FAIL;
-    }
-    max_fine_tune_ = (index_t) int_max_fine_tune;
-
-    percent_cut_ = fx_param_double(module_, "percent_cut", 1);
-    if((percent_cut() < 0) || (percent_cut() > 1)) {
-      printf("ERROR: percent_cut = %f must be an element in [0,1]\n",
-	     percent_cut());
-      W -> Init(0,0);
-      Y -> Init(0,0);
-      return SUCCESS_FAIL;
-    }
-
-    Matrix X_centered, X_whitened, whitening_matrix, dewhitening_matrix, A;
+    Matrix X_centered, X_whitened, whitening_matrix;
 
     Center(X(), &X_centered);
 
-    WhitenUsingEig(X_centered, &X_whitened, &whitening_matrix, &dewhitening_matrix);
+    WhitenUsingEig(X_centered, &X_whitened, &whitening_matrix);
   
     int ret_val =
-      FixedPointICA(X_whitened, whitening_matrix, dewhitening_matrix, &A, W);
+      FixedPointICA(X_whitened, whitening_matrix, W);
 
     if(ret_val == SUCCESS_PASS) {
-      W -> PrintDebug("W");
       la::MulInit(*W, X(), Y);
     }
     else {
