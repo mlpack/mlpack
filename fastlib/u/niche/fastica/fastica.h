@@ -7,7 +7,7 @@
  * fixed-point optimization with various independence-minded contrast
  * functions. For sample usage, see accompanying file fastica_main.cc
  *
- * @see fastica.c
+ * @see fastica_main.cc
  *
  * @author Nishant Mehta
  */
@@ -27,13 +27,14 @@
 #define DEFLATION 1
 
 
-using namespace linalg;
+using namespace linalg__private;
 
 
 /**
  * Class for running FastICA Algorithm
  *
- * This class takes in a D by N data matrix and runs FastICA
+ * This class takes in a D by N data matrix and runs FastICA, for number
+ * of dimensions D and number of samples N
  */
 class FastICA {
   
@@ -74,8 +75,9 @@ class FastICA {
 
 
 
-
-
+  /**
+   * Symmetric Newton-Raphson using log cosh contrast function
+   */
   void SymmetricLogCoshUpdate_(index_t n, Matrix X, Matrix *B) {
     Matrix hyp_tan, col_vector, sum, temp1, temp2;
     
@@ -97,6 +99,10 @@ class FastICA {
   }
 
 
+  /**
+   * Fine-tuned Symmetric Newton-Raphson using log cosh contrast
+   * function
+   */
   void SymmetricLogCoshFineTuningUpdate_(index_t n, Matrix X, Matrix *B) {
     Matrix Y, hyp_tan, Beta, Beta_Diag, D, sum, temp1, temp2, temp3;
 	
@@ -123,6 +129,9 @@ class FastICA {
   }
 
 
+  /**
+   * Symmetric Newton-Raphson using Gaussian contrast function
+   */
   void SymmetricGaussUpdate_(index_t n, Matrix X, Matrix* B) {
     Matrix U, U_squared, ex, col_vector, sum, temp1, temp2;
     
@@ -149,6 +158,9 @@ class FastICA {
   }
 
 
+  /**
+   * Fine-tuned Symmetric Newton-Raphson using Gaussian contrast function
+   */
   void SymmetricGaussFineTuningUpdate_(index_t n, Matrix X, Matrix* B) {
     Matrix Y, Y_squared_a2, ex, gauss, D, Beta, temp1, temp2, temp3;
     Vector Beta_vector, sum_vector;
@@ -204,6 +216,9 @@ class FastICA {
   }
 
 
+  /**
+   * Symmetric Newton-Raphson using kurtosis contrast function
+   */
   void SymmetricKurtosisUpdate_(index_t n, Matrix X, Matrix* B) {
     Matrix temp1, temp2;
 
@@ -219,6 +234,9 @@ class FastICA {
   }
 
 
+  /**
+   * Fine-tuned Symmetric Newton-Raphson using kurtosis contrast function
+   */
   void SymmetricKurtosisFineTuningUpdate_(index_t n, Matrix X, Matrix* B) {
     Matrix Y, G_pow_3, Beta, Beta_Diag, D_vector, D, temp1, temp2, temp3;
 
@@ -246,6 +264,9 @@ class FastICA {
   }
 
 
+  /**
+   * Symmetric Newton-Raphson using skew contrast function
+   */
   void SymmetricSkewUpdate_(index_t n, Matrix X, Matrix* B) {
     Matrix temp1;
 
@@ -259,6 +280,9 @@ class FastICA {
   }
 
 
+  /**
+   * Fine-tuned Symmetric Newton-Raphson using skew contrast function
+   */
   void SymmetricSkewFineTuningUpdate_(index_t n, Matrix X, Matrix* B) {
     Matrix Y, G_skew, Beta, Beta_Diag, D_vector, D, temp1, temp2, temp3;
 	
@@ -279,6 +303,9 @@ class FastICA {
   }
 
   
+  /**
+   * Deflation Newton-Raphson using log cosh contrast function
+   */
   void DeflationLogCoshUpdate_(index_t n, Matrix X, Vector* w) {
     Vector hyp_tan, temp1;
     
@@ -293,6 +320,9 @@ class FastICA {
   }
 
 
+  /**
+   * Fine-tuned Deflation Newton-Raphson using log cosh contrast function
+   */
   void DeflationLogCoshFineTuningUpdate_(index_t n, Matrix X, Vector* w) {
     Vector hyp_tan, X_hyp_tan, Beta_w, temp1;
     
@@ -312,6 +342,9 @@ class FastICA {
   }
 
 
+  /**
+   * Deflation Newton-Raphson using Gaussian contrast function
+   */
   void DeflationGaussUpdate_(index_t n, Matrix X, Vector* w) {
     Vector u, u_squared, ex, temp1;
 
@@ -330,6 +363,9 @@ class FastICA {
   }
   
   
+  /**
+   * Fine-tuned Deflation Newton-Raphson using Gaussian contrast function
+   */
   void DeflationGaussFineTuningUpdate_(index_t n, Matrix X, Vector* w) {
     Vector u, u_squared, ex, X_gauss, Beta_w, temp1;
 
@@ -355,6 +391,9 @@ class FastICA {
   }
 
   
+  /**
+   * Deflation Newton-Raphson using kurtosis contrast function
+   */
   void DeflationKurtosisUpdate_(index_t n, Matrix X, Vector* w) {
     Vector temp1, temp2;
 
@@ -370,6 +409,9 @@ class FastICA {
   }
   
   
+  /**
+   * Fine-tuned Deflation Newton-Raphson using kurtosis contrast function
+   */
   void DeflationKurtosisFineTuningUpdate_(index_t n, Matrix X, Vector* w) {
     Vector EXG_pow_3, Beta_w, temp1;
 	    
@@ -389,6 +431,9 @@ class FastICA {
   }
 
   
+  /**
+   * Deflation Newton-Raphson using skew contrast function
+   */
   void DeflationSkewUpdate_(index_t n, Matrix X, Vector* w) {
     Vector temp1;
 	    
@@ -401,6 +446,9 @@ class FastICA {
   }
 
   
+  /**
+   * Fine-tuned Deflation Newton-Raphson using skew contrast function
+   */
   void DeflationSkewFineTuningUpdate_(index_t n, Matrix X, Vector* w) {
     Vector EXG_skew, Beta_w, temp1;
 	    
@@ -419,15 +467,13 @@ class FastICA {
 	      w);
   }
   
-  
-  
-
-    
     
   
  public:
 
+  /** number of dimensions (components) in original data */
   index_t d;
+  /** number of samples of original data */
   index_t n;
 
   int approach() {
@@ -498,7 +544,7 @@ class FastICA {
   }
 
   /**
-   * Pass in the data matrix
+   * Initializes the FastICA object by loading everything the algorithm needs
    */
   void Init(Matrix X_in, struct datanode* module_in) {
 
@@ -512,36 +558,7 @@ class FastICA {
 
   // NOTE: these functions currently are public because some of them can
   //       serve as utilities that actually should be moved to lin_alg.h
- 
- 
 
-  /**
-   * Orthogonalize W and return the result in W, using Eigen Decomposition
-   * @pre W and W_old store the same matrix in disjoint memory
-   */
-  void Orthogonalize(const Matrix W_old, Matrix *W) {
-    Matrix W_squared, W_squared_inv_sqrt;
-    
-    la::MulTransAInit(W_old, W_old, &W_squared);
-    
-    Matrix D, E, E_times_D;
-    Vector D_vector;
-    
-    la::EigenvectorsInit(W_squared, &D_vector, &E);
-    D.InitDiagonal(D_vector);
-    
-    index_t d = D.n_rows();
-    for(index_t i = 0; i < d; i++) {
-      D.set(i, i, 1 / sqrt(D.get(i, i)));
-    }
-    
-    la::MulInit(E, D, &E_times_D);
-    la::MulTransBInit(E_times_D, E, &W_squared_inv_sqrt);
-    
-    // note that up until this point, W == W_old
-    la::MulOverwrite(W_old, W_squared_inv_sqrt, W);
-  }
-  
 
   /**
    * Select indices < max according to probability equal to parameter
@@ -588,9 +605,9 @@ class FastICA {
   }
 
 
-
-
-
+  /**
+   * Run FastICA using Symmetric approach
+   */
   int SymmetricFixedPointICA(bool stabilization_enabled,
 			     bool fine_tuning_enabled,
 			     double mu_orig, double mu_k, index_t failure_limit,
@@ -604,20 +621,11 @@ class FastICA {
     if(initial_state_mode == 0) {
       //generate random B
       B -> Init(d, num_of_IC());
-      
-      
       for(index_t i = 0; i < num_of_IC(); i++) {
 	Vector b;
 	B -> MakeColumnVector(i, &b);
 	RandVector(b);
       }
-	
-      /*
-	B -> SetZero();
-	for(index_t i = 0; i < d; i++) {
-	B -> set(i, i, 1);
-	}
-      */
     }
       
 
@@ -649,7 +657,6 @@ class FastICA {
 	Matrix temp;
 	temp.Copy(*B);
 	Orthogonalize(temp, B);
-	B -> PrintDebug("B");
       }
 
       Matrix B_delta_cov;
@@ -723,9 +730,6 @@ class FastICA {
 
 
       // use Newton-Raphson to update B
-
-      printf("used_nonlinearity = %d\n", used_nonlinearity);
-
       switch(used_nonlinearity) {
 	  
       case LOGCOSH: {
@@ -828,17 +832,19 @@ class FastICA {
 	printf("ERROR: invalid contrast function: used_nonlinearity = %d\n",
 	       used_nonlinearity);
 	exit(SUCCESS_FAIL);
-	  
       }
     }
 
     // this code should be unreachable
     return SUCCESS_FAIL; 
   }
-
-
+  
+  
+  /**
+   * Run FastICA using Deflation approach
+   */
   int DeflationFixedPointICA(bool stabilization_enabled,
-			     bool fine_tuning_enabled,
+ 			     bool fine_tuning_enabled,
 			     double mu_orig, double mu_k, index_t failure_limit,
 			     int used_nonlinearity, int g_orig, int g_fine,
 			     double stroke, bool not_fine, bool taking_long,
@@ -1097,7 +1103,6 @@ class FastICA {
 	  printf("ERROR: invalid contrast function: used_nonlinearity = %d\n",
 		 used_nonlinearity);
 	  exit(SUCCESS_FAIL);
-	    
 	}
 	
 	la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
@@ -1110,11 +1115,10 @@ class FastICA {
   }
 
 
-
-
-
   /**
-   * Run the fixed point iterative component of FastICA
+   * Verify the validity of some settings, set some parameters needed by
+   * the algorithm, and run the fixed-point FastICA algorithm using either
+   * the specified approach
    * @pre{ X is a d by n data matrix, for d dimensions and n samples}
    */
   int FixedPointICA(Matrix X, Matrix whitening_matrix, Matrix dewhitening_matrix,

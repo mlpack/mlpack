@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     printf("FAILED!");
   }
 
-  //fx_done();
+  fx_done();
 
   return ret_val;
 }
