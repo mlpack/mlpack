@@ -56,7 +56,7 @@ class KernelPCATest {
     Init();
     engine_->ComputeNeighborhoods();
     engine_->LoadAffinityMatrix();
-    engine_->ComputeLLE(5,
+    engine_->ComputeLLE(2,
                          &eigen_vectors,
                          &eigen_values);
     engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
@@ -65,29 +65,32 @@ class KernelPCATest {
   }
   void TestSpectralRegression() {
     NOTIFY("Test ComputeSpectralRegression...\n");
-    Matrix embedded_coordinates;
-    Vector eigenvalues;
     Init();
-    engine_->Compute_neighborhoods();
+    engine_->ComputeNeighborhoods();
     double bandwidth;
     engine_->EstimateBandwidth(&bandwidth);
     NOTIFY("Estimated bandwidth %lg ...\n", bandwidth);
     kernel_.set(bandwidth); 
     engine_->LoadAffinityMatrix();
     std::map<index_t, index_t> data_label;
+    for(index_t i=0; i<20; i++) {
+      data_label[math::RandInt(0, engine_->data_.n_cols())] = 
+        math::RandInt(0 ,2);
+    }
     Matrix embedded_coordinates;
     Vector eigenvalues; 
-    engine_->ComputeSpectralRegression(data_label,
+    engine_->ComputeSpectralRegression(kernel_,
+                                       data_label,
                                        &embedded_coordinates, 
                                        &eigenvalues);
-    engine_->SaveToTextFile("results", embedded_coords, eigen_values);
+    engine_->SaveToTextFile("results", embedded_coordinates, eigenvalues);
     Destruct();
 
     NOTIFY("Test ComputeSpectralRegression passed...\n"); 
   }
   void TestAll() {
      TestGeneralKernelPCA();
-     TestLLE();
+     // TestLLE();
      TestSpectralRegression();
   }
  private:

@@ -197,7 +197,6 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
   kernel_matrix_.SetDiagonal(1.0);
   NONFATAL("Computing eigen values...\n");
   SparseMatrix kernel_matrix1;
-  kernel_matrix1.Init(data_.n_cols(), data_.n_cols(), 2*knns_);
   Sparsem::MultiplyT(kernel_matrix_, &kernel_matrix1);
   kernel_matrix1.ToFile("lle_mat.txt");
   kernel_matrix1.EndLoading();
@@ -208,7 +207,8 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 
 }
 template<typename DISTANCEKERNEL>
-void KernelPCA::ComputeSpectralRegression(std::map<index_t, index_t> &data_label,
+void KernelPCA::ComputeSpectralRegression(DISTANCEKERNEL kernel,
+                                 std::map<index_t, index_t> &data_label,
                                  Matrix *embedded_coordinates, 
                                  Vector *eigenvalues) {
   // labels has the label of every point, it is not necessary
@@ -216,22 +216,22 @@ void KernelPCA::ComputeSpectralRegression(std::map<index_t, index_t> &data_label
   // a vector
   
   // This map has the classes and the points
-  std::map<index_t, ArrayList<index_t> > classes;
-  ArrayList<index_t> default_bin;
-  default_bin.Init();
+  std::map<index_t, std::vector<index_t> > classes;
+  std::vector<index_t> default_bin;
   // find how many classes we have
   index_t num_of_classes=0;
   std::map<index_t, index_t>::iterator it;
   for(it=data_label.begin(); it!=data_label.end(); it++) {
-    if (classes.find(it->first)!=classes.end()) {
-      classes[it->first].AddBack(it->second);
+    if (classes.find(it->second)!=classes.end()) {
+      classes[it->second].push_back(it->first);
     } else {
-      classes.insert(make_pair(num_of_classes, default_bin));
+      classes.insert(make_pair(it->second, default_bin));
+      classes[it->second].push_back(it->first);
       num_of_classes++;
     }
   }
+  
   kernel_matrix_.Copy(affinity_matrix_);
-  DISTANCEKERNEL kernel;
   kernel_matrix_.ApplyFunction(kernel);
   // In the paper it is also called W^{SR}
   SparseMatrix labeled_graph;
@@ -243,33 +243,35 @@ void KernelPCA::ComputeSpectralRegression(std::map<index_t, index_t> &data_label
   d_sr_mat_diag.Init(data_.n_cols());
   d_sr_mat_diag.SetAll(0);
   // Now put the label information
-  std::map<index_t, ArrayList<index_t> >::iterator it1;
+  std::map<index_t, std::vector<index_t> >::iterator it1;
   for(it1=classes.begin(); it1!=classes.end(); it1++) {
-    for(index_t i=0; i<it1->second.size(); i++) {
-      for(index_t j=i+1; j<it1->second.size(); j++) {
-        d_sr_mat_diag[it1->second[i]]+=1/(it1->first+1);
-        d_sr_mat_diag[it1->second[j]]+=1/(it1->first+1);
+    for(index_t i=0; i<(index_t)it1->second.size(); i++) {
+      for(index_t j=i+1; j<(index_t)it1->second.size(); j++) {
+        d_sr_mat_diag[it1->second[i]]+=1.0/(it1->first+1);
+        d_sr_mat_diag[it1->second[j]]+=1.0/(it1->first+1);
         kernel_matrix_.set(it1->second[i], it1->second[j], 1.0);
-        labeled_graph.set(it1->second[i], it1->second[j], 1/(it1->first+1));
-        labeled_graph.set(it1->second[j], it1->second[i], 1/(it1->first+1));
+        labeled_graph.set(it1->second[i], it1->second[j], 1.0/(it1->first+1));
+        labeled_graph.set(it1->second[j], it1->second[i], 1.0/(it1->first+1));
       }
     }
   }
+  labeled_graph.set_symmetric(true);
   kernel_matrix_.MakeSymmetric();
+  kernel_matrix_.EndLoading();
   d_sr_mat.SetDiagonal(d_sr_mat_diag);
   // This is the matrix D that has the sum of the rows or columns
   SparseMatrix d_mat;
   d_mat.Init(data_.n_cols(), data_.n_cols(), 1);
   Vector d_diagonal;
-  kernel_matrix_.RowsSums(&d_diagonal);
+  kernel_matrix_.RowSums(&d_diagonal);
   d_mat.SetDiagonal(d_diagonal);
   SparseMatrix laplacian_mat;
-  laplacian_mat.Init(data_.n_cols(), data_.n_cols());
   Sparsem::Subtract(d_mat, kernel_matrix_, &laplacian_mat);
   SparseMatrix d_sr_plus_laplacian_mat;
-  d_sr_plus_laplacian_mat.Init(data_.n_cols(), data_.n_cols(), 2*knns_);
   Sparsem::Add(d_sr_mat, laplacian_mat, &d_sr_plus_laplacian_mat);
   Matrix eigenvectors;
+  labeled_graph.EndLoading();
+  d_sr_plus_laplacian_mat.EndLoading();
   labeled_graph.Eig(d_sr_plus_laplacian_mat, num_of_classes, "LM",
       &eigenvectors, eigenvalues, NULL); 
   // this is the embedding therms alpha as shown in 
