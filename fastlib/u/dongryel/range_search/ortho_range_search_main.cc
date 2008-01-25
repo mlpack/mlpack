@@ -29,8 +29,11 @@
  *                       is an example:
  *
  *                       0.88 INFINITY
+ *
  *                       0.90 INFINITY
+ *
  *                       0.90 INFINITY
+ *
  *                       0.90 INFINITY
  *
  *                       for 4-dimensional search window of
