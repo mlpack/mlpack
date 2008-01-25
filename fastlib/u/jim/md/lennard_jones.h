@@ -1,6 +1,8 @@
 /**
  * @file lennard_jones.h
  *
+ * @author Jim Waters (jwaters6@gatech.edu)
+ *
  * Molecular Dynamics via Lennard-Jones potential, where pairwise forces
  * are given from the gradient of the potential function
  * 4 epsilon*((sigma / r)^12 - (sigma / r)^6) 
@@ -8,7 +10,7 @@
  * Accelerations are calculated via single-tree search. 
  * Equations of motion are integrated by a leapfrogging method.
  *
- * @see LennardJones_main.cc
+ * @see atom_tree.h
  */
 
 
@@ -249,8 +251,7 @@ public:
 	la::DistanceSqEuclidean(query_->stat().centroid, naive_position);
       naive_position.Destruct();
     }    
-    rms_deviation = sqrt(rms_deviation / n_atoms_);
-    printf("RMS Deviation: %f \n", rms_deviation);
+    rms_deviation = sqrt(rms_deviation / n_atoms_);   
     naive_position.Init(0);
   } // CompareToNaive
 

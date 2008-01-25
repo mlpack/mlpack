@@ -1,6 +1,8 @@
 /**
  * @file LennardJones_main.cc
  * 
+ * @author Jim Waters (jwaters6@gatech.edu)
+ *
  * This program creates an instance of the LennardJones problem
  * class, and updates the velocities using a leapfrogging scheme
  * until a specified end time is reached. 
