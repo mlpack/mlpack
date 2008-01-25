@@ -818,7 +818,7 @@ class FastICA {
 
 
 
-      // use Newton-Raphson to update B
+      // use Newton-Raphson method to update B
       switch(used_nonlinearity) {
 	  
       case LOGCOSH: {
