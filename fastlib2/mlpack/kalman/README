@@ -1,0 +1,27 @@
+Method: Kalman Filter
+
+Implementation:
+A numerically robust implementation to ensure positive definiteness of the 
+error covariance matrices is employed. This is achieved through the use of the 
+QR and Cholesky factorizations in both the measurement and time update steps.
+
+How to use the executable
+
+1. At Matlab's command prompt, type  test_kf (m-file) to generate system 
+matrices and user-defined params (an example of these files are already 
+in this folder). 
+
+The plant/ system that the Kalman filter is interacting with is assumed to be 
+a linear dynamical system for which the Kalman filter is performing state 
+estimation/ prediction.
+ 
+Matlab will stop and control will be given to the keyboard
+
+2. Compile by typing fl-build kalman_main
+ 
+3. Execute by typing ./kalman_main
+
+4. At Matlab's prompt, type dbcont
+
+Results will be loaded into Matlab for plotting, etc. Results showing a 
+comparison between Matlab's and Fastlib's implementation will be displayed.

@@ -1,0 +1,114 @@
+#!/usr/bin/env python
+
+USAGE="""
+fx-rpc -- run programs written with garry's makeshift sockets api thing
+
+more help to come
+"""
+
+import os
+import signal
+import sys
+import util
+import time
+import random
+
+# note: we're not using fx for parameter parsing right now...
+
+if len(sys.argv) <= 1:
+  print USAGE
+  os.exit(1);
+
+do_gdb = False
+args = sys.argv[1:]
+
+while True:
+  if args[0] == "--gdb":
+    args = args[1:]
+    do_gdb = True
+  else:
+    break
+
+n = int(args[0])
+if n <= 0:
+  print "error: n must be positive"
+  os.exit(1)
+
+peers = args[1]
+executable = args[2]
+user_args = args[3:]
+cwd = os.getcwd()
+
+port = random.randrange(10000, 64000)
+
+peerlist = util.readlines(peers)
+
+pids = {}
+log = sys.stderr
+rootpid = -1
+rootexitcode = 0
+
+try:
+  for rank in range(n):
+    machinename = peerlist[rank]
+    print >> log, "****** CONNECTING TO %s ******" % machinename
+    rpc_args = [
+        "--rpc/peers=%s"%peers,
+        "--rpc/n=%d"%n,
+        "--rpc/port=%d"%port,
+        "--rpc/rank=%d"%rank]
+    chdir_prefix = ["cd", cwd, "&&"]
+    if not do_gdb:
+      remote_command = [executable] + user_args + rpc_args
+      # arguments: -x -T -n means no X11, no standard input, no TTY
+      # StrictHostKeyChecking=no means don't prompt "Do you really want to connect?"
+      # We turn off number of password prompts.  We'd rather SSH die than
+      # sit indefinitely waiting for a password.
+      argv = ["ssh", "-x", "-T", "-n", "-o", "StrictHostKeyChecking=no",
+          "-o", "NumberOfPasswordPrompts=0",
+          machinename, " ".join(chdir_prefix + remote_command)]
+    else:
+      filename = os.path.abspath("fx-rpc.gdb.%d" % rank)
+      gdb_command = ["run"] + [util.shellquote(x) for x in user_args + rpc_args]
+      util.writelines(filename, [" ".join(gdb_command)])
+      remote_command = ["xterm", "-e", "gdb", executable, "-x", filename]
+      argv = ["ssh", "-o", "StrictHostKeyChecking=no",
+          machinename, " ".join(chdir_prefix + remote_command)]
+
+    print >> log, " ".join(argv)
+    pid = os.fork()
+    if not pid:
+      os.execvp(argv[0], argv)
+    pids[pid] = rank
+    time.sleep(0.5)
+
+  while pids:
+    (pid, status) = os.wait()
+    rank = pids.pop(pid)
+    exitcode = util.getstatus(status)
+    if exitcode < 0:
+      exitmsg = "killed unexpectedly"
+    elif exitcode == 0:
+      exitmsg = "finished successfully"
+    else:
+      exitmsg = "returned an error"
+    print >> log, "*********** Machine #%d %s (code %d)" % (rank, exitmsg, exitcode)
+    if rank == 0:
+      rootexitcode = exitcode
+
+finally:
+  for pid in pids:
+    try:
+      os.kill(pid, signal.SIGINT)
+      print >> log, "Kill successful for %d" % pid
+    except:
+      try:
+        os.kill(pid, signal.SIGTERM)
+      except:
+        try:
+          os.kill(pid, signal.SIGKILL)
+        except:
+          print >> log, "Kill failed for %d" % pid
+
+sys.exit(exitcode)
+
