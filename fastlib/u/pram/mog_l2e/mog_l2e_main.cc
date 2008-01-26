@@ -22,7 +22,7 @@
  */
 
 #include "mog.h"
-#include "optimizers.h"
+#include "../opt/optimizers.h"
 
 
 int main(int argc, char* argv[]) {
