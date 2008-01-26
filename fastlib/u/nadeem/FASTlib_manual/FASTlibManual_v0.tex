@@ -231,7 +231,7 @@ As mentioned earlier, the library is organized in a modular fashion and it uses 
 \item Templated classes for data structures for vectors, matrices, trees, sparse vectors and matrices etc.
 \item An extensive set of basic and expert versions of linear algebra methods. Majority of these act as wrappers for LAPACK routines and provide simple interface for linear algebra operations.
 \item Support for sparse linear algebra through the Trilinos library \cite{heroux2005otp}.
-\item THOR (Tree High-Order Reduce) framework. THOR is a mechanism for parallelizing dual-tree algorithms. More details and references are provided in the next chapter.
+\item THOR (Tree-based High-Order Reduce) framework. THOR is a mechanism for parallelizing dual-tree algorithms. More details and references are provided in the next chapter.
 \item Extensive compilation and debugging infrastructure to help with development using FASTlib.
 \item Methods for data storage and manipulation, memory management, serialization.
 \item MLPACK - collection of machine learning algorithms that can be compiled to either run stand-alone or to be linked as libraries to other software. Following methods are currently included of as this release:
@@ -461,19 +461,19 @@ separate build-rule.
 \subsubsection{Dual-tree FGT}
 In order to compile this tool, do: 
 \begin{verbatim}
-fl-build kde_bin --mode=fast
+  fl-build kde_bin --mode=fast
 \end{verbatim}
 
 In order to run this method, type the following (which consists of
 both required and optional arguments) in a single command line:
 \begin{verbatim}
-./kde_bin} --data=name_of_the_reference_dataset
-           --query=name_of_the_query_dataset
-           --kde/bandwidth=0.0130619 --kde/scaling=range
-           --kde/fast_kde_output=fast_kde_output.txt
-           --kde/naive_kde_output=naive_kde_output.txt
-           --kde/do_naive --kde/relative_error=0.1
-           --kde/multiplicative_expansion
+  ./kde_bin} --data=name_of_the_reference_dataset
+             --query=name_of_the_query_dataset
+             --kde/bandwidth=0.0130619 --kde/scaling=range
+             --kde/fast_kde_output=fast_kde_output.txt
+             --kde/naive_kde_output=naive_kde_output.txt
+             --kde/do_naive --kde/relative_error=0.1
+             --kde/multiplicative_expansion
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -508,19 +508,19 @@ it defaults to the $O(D^p)$ expansion.}
 \subsubsection{Original Fast Gauss Transform}
 In order to compile this part, do: 
 \begin{verbatim}
-fl-build fgt_kde_bin --mode=fast
+  fl-build fgt_kde_bin --mode=fast
 \end{verbatim}
 
  To run the FGT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
 \begin{verbatim}
- ./fgt_kde_bin} --data=name_of_the_reference_dataset
-                --query=name_of_the_query_dataset
-                --kde/bandwidth=0.0130619 --kde/scaling=range
-                --kde/fgt_kde_output=fgt_kde_output.txt
-                --kde/naive_kde_output=naive_kde_output.txt
-                --kde/do_naive  --kde/absolute_error=0.1
+  ./fgt_kde_bin} --data=name_of_the_reference_dataset
+                 --query=name_of_the_query_dataset
+                 --kde/bandwidth=0.0130619 --kde/scaling=range
+                 --kde/fgt_kde_output=fgt_kde_output.txt
+                 --kde/naive_kde_output=naive_kde_output.txt
+                 --kde/do_naive  --kde/absolute_error=0.1
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -552,19 +552,19 @@ after it.}
 \subsubsection{Improved Fast Gauss Transform}
 In order to compile this algorithm, do: 
 \begin{verbatim}
-fl-build original_ifgt_bin --mode=fast
+  fl-build original_ifgt_bin --mode=fast
 \end{verbatim}
 
 For the IFGT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
 \begin{verbatim}
- ./orignal_ifgt_bin --data=name_of_the_reference_dataset
-                    --query=name_of_the_query_dataset
-                    --kde/bandwidth=0.0130619  --kde/scaling=range
-                    --kde/ifgt_kde_output=ifgt_kde_output.txt
-                    --kde/naive_kde_output=naive_kde_output.txt
-                    --kde/do_naive  --kde/absolute_error=0.1
+  ./orignal_ifgt_bin --data=name_of_the_reference_dataset
+                     --query=name_of_the_query_dataset
+                     --kde/bandwidth=0.0130619  --kde/scaling=range
+                     --kde/ifgt_kde_output=ifgt_kde_output.txt
+                     --kde/naive_kde_output=naive_kde_output.txt
+                     --kde/do_naive  --kde/absolute_error=0.1
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -596,18 +596,18 @@ after it.}
 \subsubsection{FFT-based KDE}
 In order to compile this code, do: 
 \begin{verbatim}
-fl-build fft_kde_bin --mode=fast
+  fl-build fft_kde_bin --mode=fast
 \end{verbatim}
 For the FFT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
 \begin{verbatim}
- ./fft_kde_bin --data=name_of_the_reference_dataset
-               --query=name_of_the_query_dataset
-               --kde/bandwidth=0.0130619  --kde/scaling=range
-               --kde/fft_kde_output=fft_kde_output.txt
-               --kde/naive_kde_output=naive_kde_output.txt
-               --kde/do_naive  --kde/num_grid_pts_per_dim=128
+  ./fft_kde_bin --data=name_of_the_reference_dataset
+                --query=name_of_the_query_dataset
+                --kde/bandwidth=0.0130619  --kde/scaling=range
+                --kde/fft_kde_output=fft_kde_output.txt
+                --kde/naive_kde_output=naive_kde_output.txt
+                --kde/do_naive  --kde/num_grid_pts_per_dim=128
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -652,13 +652,12 @@ FastLib standards.
 
 In order to compile this package, do: 
 \begin{verbatim}
-fl-build ortho_range_search_bin --mode=fast
+  fl-build ortho_range_search_bin --mode=fast
 \end{verbatim}
 In order to run this tool, type the following (which consists of
 both required and optional arguments) in a single command line:
 \begin{verbatim}
- ./ortho_range_search_bin} \ --data=dataset} \
---do_naive}
+  ./ortho_range_search_bin --data=dataset --do_naive
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -742,7 +741,7 @@ The FASTlib EMST code implements a dual-tree version of Bor\r{u}vka's algorithm 
 \end{figure}
 
 
-\subsection{THOR (Tree High-Order Reduce) framework}
+\subsection{THOR framework}
 THOR stands for Tree-based High-Order Reduce. THOR ultimately aims to
 solve the class of high-order reduce problems, or problems that can
 represented in the form:
@@ -803,11 +802,11 @@ The command line flags are listed in script/buildsys.py.
 
 Thus, we could re-build the example, but turn off all debug checks:
 \begin{verbatim}
-fl-build main --mode=debug
+  fl-build main --mode=debug
 \end{verbatim}
 To add custom flags, add \verb@--cflags@. To get increased performance on Pentium 4 and define a macro called \verb@COAGULATE@, you would use:
 \begin{verbatim}
-fl-build mybinary --mode=fast --cflags="-march=pentium4 -DCOAGULATE"
+  fl-build mybinary --mode=fast --cflags="-march=pentium4 -DCOAGULATE"
 \end{verbatim}
 
 
@@ -817,34 +816,54 @@ The fl-build tool looks in the current directory for a file called build.py. The
 
 Here is a sample build rule that will build an executable test compiled from test.cc and test.h, and link it against the fastlib front-end library:
 \begin{verbatim}
-binrule(
-   name = "test",
-   sources = ["test.cc"],
-   headers = ["test.h"],
-   linkables = ["fastlib:fastlib"]
-   )
+  binrule(
+      name = "test",
+      sources = ["test.cc"],
+      headers = ["test.h"],
+      linkables = ["fastlib:fastlib"]
+      )
 \end{verbatim}
 Each string you see is actually processed by the build system, which figures out what you are referring to. If there is no colon ``:'' character, it looks for a file in the same directory as the build file. If it finds a ``:'', such as ``fastlib:fastlib'', it looks in the directory ``fastlib'' for a rule named ``fastlib'' -- the left part of the colon is the directory, the right part is the rule name. For example, the full path to the rule for the main executable in \verb@example@ would be \verb@"example:main"@.
 
 Next, suppose you want to create a small reusable library. Taking a look at the build file \verb@u/example/build.py@,
 \begin{verbatim}
-librule(
-    name = "example",              # this line can be safely omitted
-          # (since this is u/example, the build system
-          # will automatically name it "example" if you omit it -- most
-          # other sub-packages will omit the name)
-    sources = ["helper.cc"],       # files that must be compiled
-    headers = ["helper.h"],        # include files part of the 'lib'
-    deplibs = ["fastlib:fastlib"]  # depends on fastlib core
-    )
+  librule(
+      name = "example",              # this line can be safely omitted
+            # (since this is u/example, the build system
+            # will automatically name it "example" if you omit it -- most
+            # other sub-packages will omit the name)
+      sources = ["helper.cc"],       # files that must be compiled
+      headers = ["helper.h"],        # include files part of the 'lib'
+      deplibs = ["fastlib:fastlib"]  # depends on fastlib core
+      )
 
-binrule(
-    name = "main",                 # the executable name
-    sources = ["main.cc"],         # compile main.cc
-    headers = [],                  # no extra headers
-    linkables = [":example"]       # depends on example in this folder
-    )
+  binrule(
+      name = "main",                 # the executable name
+      sources = ["main.cc"],         # compile main.cc
+      headers = [],                  # no extra headers
+      linkables = [":example"]       # depends on example in this folder
+      )
 \end{verbatim}
+
+\section{Basic types}
+
+You will notice heavy use of \verb@index_t@ rather than integers. For
+practical purposes, \verb@index_t@ is a signed integer -- signed so
+you can loop over >= 0. On 32-bit and 64-bit Intel/AMD machines, this
+will be 32-bits, which is the fastest int for both systems and is
+relatively compact. But if you want to operate on datasets larger than
+a few gigabytes, you can define the \verb@SCALE_LARGE@ macro, and
+these will instantly switch to the largest size your computer can
+address.  Also, the \verb@base/basic_types.h@ file (it will be in
+\verb@bin/@ since it is auto-generated) defines standard \verb@int16@,
+\verb@int32@, \verb@int64@, \verb@uint16@, \verb@uint32@,
+\verb@uint64@ types.
+
+Additionally, the \verb@success_t@ type defines our standard for
+indicating success or failure. Rather than assuming 1 or 0 or -1
+indicates something or other, we explicitly return \verb@SUCCESS_PASS@
+(succeeded), \verb@SUCCESS_FAIL@ (failed), or \verb@SUCCESS_WARN@
+(something was suboptimal).
 
 \section{Use of C++}
 
@@ -856,28 +875,28 @@ FASTlib is C++, but only to an extent. If you are familiar with C, you will have
 \end{itemize}
 FASTlib mostly avoids inheritance, virtual functions, and operator overloading. It also notably avoids most constructors due to their pickiness about when they are called. Here's an example of what this looks like. In particular, we'll create a multiplication table:
 \begin{verbatim}
-Matrix mult_table;
+  Matrix mult_table;
 
-mult_table.Init(10, 10); // make it 10 rows by 10 columns
+  mult_table.Init(10, 10); // make it 10 rows by 10 columns
 
-for (index_t i = 0; i < 10; i++) {
-  for (index_t j = 0; j < 10; j++) {
-    mult_table.set(i, j, i * j);
+  for (index_t i = 0; i < 10; i++) {
+    for (index_t j = 0; j < 10; j++) {
+      mult_table.set(i, j, i * j);
+    }
   }
-}
 // the matrix does not have to be freed
 \end{verbatim}
 Some quick notes before we move on. The matrix must be initialized before it is usable, but keep in mind everything is freed by default. Caution -- if you declare a matrix and never initialize it, the program will crash at the end of the function. In debug mode, many FASTlib classes will let you know that this is happening.  We are assessing this behavior and future versions of FASTlib may instead gurantee safe destruction if it doesn't critically impact performance.  (The \verb@index_t@ type is usually an regular int, but is wired through the system to become 64-bit if you tell it to.)
 
-\section{Copying and Aliasing}
+\subsection{Copying and Aliasing}
 
 C++ is infamous for its desire to make copies of everything. If you forget to pass a parameter as a constant reference (\verb@const ClassName \&@), the copy constructor is called automatically and any sane copy constructor must make a completely new and distinct instance of the object.  The cannonical means of preventing this behavior is to define the copy constructor (and assignment operator) as private.  This will result in compilation errors in lieu of mysteriously slow or buggy.  We provide a macro to automate this process:
 \begin{verbatim}
-class X {
-  FORBID_ACCIDENTAL_COPIES(X);
- public:
-  ...
-}
+  class X {
+    FORBID_ACCIDENTAL_COPIES(X);
+   public:
+    ...
+  }
 \end{verbatim}
 Sometimes, though, you really need to make copies, or at least things like copies. Many classes, especially pure-data classes, do have functional copy constructors, and yet others support a Copy method to explicitly perform the task of copy construction.  They Copy method operates as if it were an Init function.
 
@@ -885,22 +904,37 @@ The Vector and Matrix classes also support a concept of aliasing. A vector can b
 
 An example is shown here:
 \begin{verbatim}
-   Matrix original;
-   original.Init(5, 5);
-   ...
-   for (int j = 0; j < 3; ++) {
-     Matrix weak_alias;
-     weak_alias.Alias(original); // this matrix now aliases the original
-     weak_alias.set(j, j, 999.0); // this modifies the original matrix
-     // the destructor of weak_alias is called, but the memory is not freed
-   }
-   Matrix newowner;
-   newowner.Own(&original); // newowner
-   Matrix copy;
-   copy.Copy(original); // a completely new copy 
-   original.Destruct(); // newowner is still valid
-   original.Init(99, 99);
+  Matrix original;
+  original.Init(5, 5);
+  ...
+  for (int j = 0; j < 3; ++) {
+    Matrix weak_alias;
+    weak_alias.Alias(original); // this matrix now aliases the original
+    weak_alias.set(j, j, 999.0); // this modifies the original matrix
+    // the destructor of weak_alias is called, but the memory is not freed
+  }
+  Matrix newowner;
+  newowner.Own(&original); // newowner
+  Matrix copy;
+  copy.Copy(original); // a completely new copy 
+  original.Destruct(); // newowner is still valid
+  original.Init(99, 99);
 \end{verbatim}
+
+\subsection{Printf versus Streams}
+
+We operate under the assumption that more of our audience is familiar with C I/O than with C++ I/O, especially when it comes to fancy floating-point formatting. The caveat is that printf only works with native types like int, short, long. To print an \verb@index_t@, you use:
+\begin{verbatim}
+  printf("Iteration %"LI"d complete.", some_index_var);   // no special formatting
+  printf("Iteration %04"LI"d complete.", some_index_var); // with formatting
+\end{verbatim}
+The LI macro is a string that will have the suitable ``l'' modifier for \verb@index_t@ (see man sprintf for more details). For other types:
+\begin {itemize}
+\item int16 and uint16: L16
+\item int32 and uint32: L32
+\item int64 and uint64: L64 
+\end{itemize}
+Alternately, you can just cast the variable to a native type like (int) (short) or (long), if you want to be lazy.
 
 \section{Debugging}
 
@@ -919,104 +953,101 @@ You can safely leave these in at no cost in non debug mode. To set verbosity lev
 
 We felt it is important that machine learning researchers can run a lot of experiments without too much trouble. Parameter passing is integral to the experimentation process, so we unified these.
 
-The core idea behind the system is that within one run of your program, a hierarchial data store is created. In some ways it is similar to a ``Windows registry'' except it only has a very brief existence. In fact, it more like an XML document tree, except without attributes, and has a ``stateless'' output format.
-
-\subsubsection{Basic command-line parameters}
+The core idea behind the system is that within one run of your program, a hierarchial data store is created. In some ways it is similar to a ``Windows registry'' except it only has a very brief existence. In fact, it more like an XML document tree, except without attributes, and has a ``stateless'' output format (i.e.~rearranging the lines does not change the meaning).
 
 Let's look at a non-trivial example. We're measuring how different strided memory access patterns affect cache performance (something you probably won't care about, but is trivial to code):
 \begin{verbatim}
-#include "fastlib/fastlib.h"
-int main(int argc, char *argv[]) {
-  fx_init(argc, argv); // initialize command-line parameters and the data store
-  int count = fx_param_int_req( // get a REQUIRED integer parameter
-      NULL, // directly from command line (not from a sub module)
-      "count"); // called "count", as in --count=num
-  int stride = fx_param_int(NULL, "stride", 1); // defaults to stride 1
-  double factor = fx_param_double(NULL, "factor", 1.0); // default value 1.0
+  #include "fastlib/fastlib.h"
+  int main(int argc, char *argv[]) {
+    fx_init(argc, argv); // initialize command-line parameters and the data store
+    int count = fx_param_int_req( // get a REQUIRED integer parameter
+        NULL, // directly from command line (not from a sub module)
+        "count"); // called "count", as in --count=num
+    int stride = fx_param_int(NULL, "stride", 1); // defaults to stride 1
+    double factor = fx_param_double(NULL, "factor", 1.0); // default value 1.0
   
-  ArrayList<double> values;
-  values.Init(count);
+    ArrayList<double> values;
+    values.Init(count);
 
-  fx_timer_start(NULL, "strides"); // timers have names
-  // Let's see how stride affects cache performance
-  for (int s = 0; s < stride; s++) {
-    for (int j = s; j < count; j += stride) {
-      values[j] = factor * j;
+    fx_timer_start(NULL, "strides"); // timers have names
+    // Let's see how stride affects cache performance
+    for (int s = 0; s < stride; s++) {
+      for (int j = s; j < count; j += stride) {
+        values[j] = factor * j;
+      }
     }
+    fx_timer_stop(NULL, "strides");
+    fx_format_result(NULL, "success", "%d", 1); // store some result
+    fx_done();
   }
-  fx_timer_stop(NULL, "strides");
-  fx_format_result(NULL, "success", "%d", 1); // store some result
-  fx_done();
-}
 \end{verbatim}
 
 The useful functions we used were \verb@fx_param_int@ (to get an integer), \verb@fx_param_double@ (to get a double-precision value), \verb@fx_timer_{start|stop}@ to have timers, and \verb@fx_done()@ to output the results. I ran this example with the parameters:
 \begin{verbatim}
-./test --count=10000 --factor=2.0
+  ./test --count=10000 --factor=2.0
 \end{verbatim}
 and the following text resulted:
 \begin{verbatim}
-<code>
-/timers/strides/children/sys 0.000000
-/timers/strides/children/user 0.000000
-/timers/strides/self/sys 0.000000
-/timers/strides/self/user 0.000000
-/timers/strides/wall/sec 0.000061
-/timers/default/children/sys 0.000000
-/timers/default/children/user 0.000000
-/timers/default/self/sys 0.000000
-/timers/default/self/user 0.000000
-/timers/default/wall/sec 0.000354
-/params/stride 1
-/params/fx/timing 0
-/params/debug/print_notify_headers 1
-/params/debug/pause_on_nonfatal 0
-/params/debug/abort_on_nonfatal 0
-/params/debug/print_warnings 1
-/params/debug/print_got_heres 1
-/params/debug/verbosity_level 1
-/params/factor 2.0
-/params/count 10000
-/results/success 1
-/info/rusage/children/nivcsw 0
-/info/rusage/children/nvcsw 0
-/info/rusage/children/nsignals 0
-/info/rusage/children/msgrcv 0
-/info/rusage/children/msgsnd 0
-/info/rusage/children/oublock 0
-/info/rusage/children/inblock 0
-/info/rusage/children/nswap 0
-/info/rusage/children/isrss 0
-/info/rusage/children/idrss 0
-/info/rusage/children/ixrss 0
-/info/rusage/children/maxrss 0
-/info/rusage/children/majflt 0
-/info/rusage/children/minflt 0
-/info/rusage/children/stime 0.000000
-/info/rusage/children/utime 0.000000
-/info/rusage/children/WARNING your_OS_might_not_support_all_of_these
-/info/rusage/self/nivcsw 1
-/info/rusage/self/nvcsw 3
-/info/rusage/self/nsignals 0
-/info/rusage/self/msgrcv 0
-/info/rusage/self/msgsnd 0
-/info/rusage/self/oublock 0
-/info/rusage/self/inblock 0
-/info/rusage/self/nswap 0
-/info/rusage/self/isrss 0
-/info/rusage/self/idrss 0
-/info/rusage/self/ixrss 0
-/info/rusage/self/maxrss 0
-/info/rusage/self/majflt 0
-/info/rusage/self/minflt 393
-/info/rusage/self/stime 0.002999
-/info/rusage/self/utime 0.002999
-/info/rusage/self/WARNING your_OS_might_not_support_all_of_these
-/info/system/kernel/build %231%20SMP%20Tue%20Jan%2023%2012%3A49%3A51%20EST%202007
-/info/system/kernel/release 2.6.9-42.0.8.ELsmp
-/info/system/kernel/name Linux
-/info/system/arch/name x86_64
-/info/system/node/name shannon.cc.gatech.edu
+  /info/rusage/children/nivcsw 0
+  /info/rusage/children/nvcsw 0
+  /info/rusage/children/nsignals 0
+  /info/rusage/children/msgrcv 0
+  /info/rusage/children/msgsnd 0
+  /info/rusage/children/oublock 0
+  /info/rusage/children/inblock 0
+  /info/rusage/children/nswap 0
+  /info/rusage/children/isrss 0
+  /info/rusage/children/idrss 0
+  /info/rusage/children/ixrss 0
+  /info/rusage/children/maxrss 0
+  /info/rusage/children/majflt 0
+  /info/rusage/children/minflt 0
+  /info/rusage/children/stime 0.000000
+  /info/rusage/children/utime 0.000000
+  /info/rusage/children/WARNING your_OS_might_not_support_all_of_these
+  /info/rusage/self/nivcsw 1
+  /info/rusage/self/nvcsw 3
+  /info/rusage/self/nsignals 0
+  /info/rusage/self/msgrcv 0
+  /info/rusage/self/msgsnd 0
+  /info/rusage/self/oublock 0
+  /info/rusage/self/inblock 0
+  /info/rusage/self/nswap 0
+  /info/rusage/self/isrss 0
+  /info/rusage/self/idrss 0
+  /info/rusage/self/ixrss 0
+  /info/rusage/self/maxrss 0
+  /info/rusage/self/majflt 0
+  /info/rusage/self/minflt 393
+  /info/rusage/self/stime 0.002999
+  /info/rusage/self/utime 0.002999
+  /info/rusage/self/WARNING your_OS_might_not_support_all_of_these
+  /info/system/kernel/build %231%20SMP%20Tue%20Jan%2023%2012%3A49%3A51%20EST%202007
+  /info/system/kernel/release 2.6.9-42.0.8.ELsmp
+  /info/system/kernel/name Linux
+  /info/system/arch/name x86_64
+  /info/system/node/name shannon.cc.gatech.edu
+  /params/stride 1
+  /params/fx/timing 0
+  /params/debug/print_notify_headers 1
+  /params/debug/pause_on_nonfatal 0
+  /params/debug/abort_on_nonfatal 0
+  /params/debug/print_warnings 1
+  /params/debug/print_got_heres 1
+  /params/debug/verbosity_level 1
+  /params/factor 2.0
+  /params/count 10000
+  /timers/strides/children/sys 0.000000
+  /timers/strides/children/user 0.000000
+  /timers/strides/self/sys 0.000000
+  /timers/strides/self/user 0.000000
+  /timers/strides/wall/sec 0.000061
+  /timers/default/children/sys 0.000000
+  /timers/default/children/user 0.000000
+  /timers/default/self/sys 0.000000
+  /timers/default/self/user 0.000000
+  /timers/default/wall/sec 0.000354
+  /results/success 1
 \end{verbatim}
 We admit this is a lot of text, but when you later comb through the results, you can select only the portions you care about. Briefly, each portion of the tree:
 \begin{itemize}
@@ -1026,13 +1057,13 @@ We admit this is a lot of text, but when you later comb through the results, you
 \item info/rusage/ - System information related to rusage. See the manpage for getrusage(2).
 \item info/system/ - Information on the system run on. See manpage for uname(2). 
 \end{itemize}
-This output could indeed just be an s-expression, or it could be an attribute-less XML file. We chose this path-value dump format because it is stateless -- i.e. anyone can process it with a little bit of grep. Corruption in the file will only affect it until the next newline.
+This output could indeed just be an s-expression, or it could be an attribute-less XML file. We chose this path-value dump format because it is stateless, i.e.~anyone can process it with a little bit of grep. Corruption in the file will only affect it until the next newline.
 
 \subsection{Running automated experiments and collecting results}
 
 Running experiments and collecting results is made simpler using FASTexec. After using the FASTexec code to store output variables in the datastore, you can use FASTexec to run multiple experiments. If you type the command:
 \begin{verbatim}
-fx-run | less
+  fx-run | less
 \end{verbatim}
 you will see the help screen for fx-run. This program will run your executable with all combinations of the parameters you give it, and save results in a directory called fx that is created in the same directory you run the tests. After that, gather results using fx-csv to make an Excel-compatible comma-separated-values file, or fx-latex to create a properly escaped LaTeX table.
 
@@ -1044,32 +1075,96 @@ You can try an example with the K-nearest-neighbors classifier example in u/exam
   fx-latex knn_k ./main /params/knn/k /kfold/results/p_correct --preview
 \end{verbatim}
 
-\section{Some tips}
+\subsection{Modules}
 
-\subsection{Success and failure}
-
-The \verb@success_t type@ in \verb@base/common.h@ defines our standard for indicating success or failure. Rather than assuming 1 or 0 or -1 indicates something or other, we explicitly return \verb@SUCCESS_PASS@ (succeeded), \verb@SUCCESS_FAIL@ (failed), or \verb@SUCCESS_WARN@ (something was suboptimal).
-
-\subsection{Basic types}
-
-You will notice heavy use of \verb@index_t@ (in \verb@base/scale.h@) rather than integers. For practical purposes, \verb@index_t@ is a signed integer -- signed so you can loop over >= 0. On 32-bit and 64-bit Intel/AMD machines, this will be 32-bits, which is the fastest int for both systems and is relatively compact. But if you want to operate on datasets larger than a few gigabytes, you can define the \verb@SCALE_LARGE@ macro, and these will instantly switch to the largest size your computer can address.
-
-Also, the \verb@base/basic_types.h@ file (it will be in bin/ since it is auto-generated) defines standard int16, int32, int64, uint16, uint32, uint64 types.
-
-\subsection{Printf versus Streams}
-
-We operate under the assumption that more of our audience is familiar with C I/O than with C++ I/O, especially when it comes to fancy floating-point formatting. The caveat is that printf only works with native types like int, short, long. To print an \verb@index_t@, you use:
+Modules are the recommended way to organize parameters and results in
+FASTlib.  If your algorithm needs parameters \verb@x, y, z@ in
+addition to matrix input \verb@mat@ and vector input \verb@vec@, you
+{\em could} call
 \begin{verbatim}
-printf("Iteration %"LI"d complete.", some_index_var);   // no special formatting
-printf("Iteration %04"LI"d complete.", some_index_var); // with formatting
+  alg.Init(mat, vec, x, y, z);
 \end{verbatim}
-The LI macro is a string that will have the suitable ``l'' modifier for \verb@index_t@ (see man sprintf for more details). For other types:
-\begin {itemize}
-\item int16 and uint16: L16
-\item int32 and uint32: L32
-\item int64 and uint64: L64 
-\end{itemize}
-Alternately, you can just cast the variable to a native type like (int) (short) or (long), if you want to be lazy.
+But what if you add some new parameter \verb@w@ later on?  What if a
+user wants to set \verb@z@ and leave the others as their defaults?
+What if you want a trace of all the parameters settings used by a run
+of your program?  FASTexec provides a solution in the form of modules:
+\begin{verbatim}
+  struct datanode *alg_module = fx_submodule(NULL, "alg", "alg");
+  alg.Init(mat, vec, alg_module);
+\end{verbatim}
+The above allows \verb@alg@ to read \verb@x, y, z@ from the command
+line arguments \verb@--alg/x=5 --alg/y=foo --alg/z=9.81@.  Further,
+FASTexec will automatically record all settings, to be emitted upon
+calling \verb@fx_done()@.
+
+Let's look at a more complicated example in greater detail.  From the command line:
+\begin{verbatim}
+  ./allnn_main --q=testq.csv --r=testr.csv --q/leaf_size=10 --q/min_width=0.001
+\end{verbatim}
+results in
+\begin{verbatim}
+  /params
+     /q testq.csv
+        /leaf_size 10
+        /min_width 0.001
+     /r testr.csv
+  /timers
+  /results
+\end{verbatim}
+Note that \verb@q@ can be both a parameter and the name of a ``subfolder''.  So, in this example,
+\begin{verbatim}
+  fx_param_str_req(NULL, "q");
+\end{verbatim}
+and
+\begin{verbatim}
+  fx_param_int(NULL, "q/leaf_size", 20);
+\end{verbatim}
+will both return the values specified on the command line.  
+
+Next, let's create a submodule.  We call:
+\begin{verbatim}
+  struct datanode* query_mod = fx_submodule(NULL, "q", "query_module");
+\end{verbatim}
+This creates a new module, called \verb@query_module@, that is a
+submodule of root (NULL).  The middle argument, \verb@q@, copies the
+contents of \verb@q@ in the root's \verb@params@ folder to the new
+module's \verb@params@ folder.  In the hierarchy, we now have:
+\begin{verbatim}
+  /params
+     /q testq.csv
+        /leaf_size 10
+        /min_width 0.001
+     /r testr.csv
+  /timers
+  /results
+  /query_module
+     /params testq.csv
+         /leaf_size 10
+         /min_width 0.001
+     /timers
+     /results
+\end{verbatim}
+These parameters can be accessed as before by replacing NULL with the
+new module, e.g.:
+\begin{verbatim}
+  fx_param_double(query_mod, "min_width", 0.01);
+\end{verbatim}
+
+Submodules can be defined recursively.  Further, you can define many
+of them copying from the same directory:
+\begin{verbatim}
+  fx_format_param(NULL, "alg/n_points", "%d", mat.n_cols());
+  for (int i = 0; i < n_trials; ++i) {
+    struct datanode* trial_module = fx_submodule(NULL, "alg", "alg_trial_%d", i)
+    fx_format_param(trial_module, "bw", "%f", bw[i]);
+    ...
+  }
+\end{verbatim}
+The above performs \verb@n_trials@ different runs of some algorithm,
+varying a parameter \verb@bw@ but reusing \verb@n_points@ (and
+anything from the command line).  Note that you can use \verb@/@ in
+all FASTexec module or parameter names to ``path'' to the desired
+content.
 
 \chapter {Beyond this Document} 
 
