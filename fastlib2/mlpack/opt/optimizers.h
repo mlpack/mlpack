@@ -145,7 +145,7 @@ class NelderMead {
 	// i.e., do a one dimensional contraction
 	ysave = y[ihi];
 
-	ytry = ModSimplex_(pts, y, psum, ihi, -0.5);
+	ytry = ModSimplex_(pts, y, psum, ihi, 0.5);
 	if( ytry > y[ihi] ) { 
 	  // Can't get rid of the high point, 
 	  // try to contract around the best point
