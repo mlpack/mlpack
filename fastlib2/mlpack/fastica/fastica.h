@@ -949,6 +949,7 @@ class FastICA {
     index_t num_failures = 0;
 
     while(round < num_of_IC()) {
+      VERBOSE_ONLY( printf("Estimating IC %d\n", round + 1) );
       mu_ = mu_orig;
       used_nonlinearity = g_orig;
       stroke = 0;
