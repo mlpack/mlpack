@@ -57,6 +57,7 @@ class NelderMead {
 
   void Init(long double (*fun)(Vector&, const Matrix&),
 	    Matrix& data, datanode *opt_module) {
+
     data_.Copy(data);
     func_ptr_ = fun;
     opt_module_ = opt_module;
@@ -79,17 +80,19 @@ class NelderMead {
     long double swap_y, rtol, ytry, ysave, TINY = 1.0e-10;
     long double *y;
     Vector param_passed;
-    long double tol = fx_param_double(opt_module_,"tolerance", 1.0e-5);
+    long double tol = fx_param_double(opt_module_,"tolerance", 1.0e-7);
     index_t NMAX = fx_param_int(opt_module_, "MAX_FUNC_EVAL", 50000);
 
     param_passed.Init(dim);
     psum = (double*)malloc(dim * sizeof(double));
     num_func_eval = 0;
     y = (long double*)malloc(mpts*sizeof(long double));
-    for(i = 0; i < mpts; i++) {
+    for(i = 0; i < mpts; i++) {	    
       param_passed.CopyValues(pts[i]);
-      y[i] = (*func_ptr_)(param_passed, data());
+      y[i] = (*func_ptr_)(param_passed,data());      
+      
     }
+    
   
     for(;;) {
       ilo = 0;
@@ -113,9 +116,11 @@ class NelderMead {
 	  pts[0][i] =  pts[ilo][i] ;
 	  pts[ilo][i] = swap;
 	}
+	fx_format_result(opt_module_,"min_obtained","%Lf", y[0]);
 	break;
       }
       if(num_func_eval > NMAX){
+	fx_format_result(opt_module_,"min_obtained","%Lf", y[ilo]);
 	NOTIFY("Maximum number of function evaluations exceeded");
 	break;
       }
@@ -145,7 +150,7 @@ class NelderMead {
 	// i.e., do a one dimensional contraction
 	ysave = y[ihi];
 
-	ytry = ModSimplex_(pts, y, psum, ihi, -0.5);
+	ytry = ModSimplex_(pts, y, psum, ihi, 0.5);
 	if( ytry > y[ihi] ) { 
 	  // Can't get rid of the high point, 
 	  // try to contract around the best point
@@ -155,7 +160,7 @@ class NelderMead {
 		pts[i][j] = psum[j] = 0.5 * ( pts[i][j] + pts[ilo][j] );
 	      }
 	      param_passed.CopyValues(psum);
-	      y[i] = (*func_ptr_)(param_passed, data());
+	      y[i] = (*func_ptr_)(param_passed, data());	      
 	    }
 	  }
 	  num_func_eval += dim;
@@ -190,6 +195,7 @@ class NelderMead {
     }
     param_passed.CopyValues(ptry);
     ytry = (*func_ptr_)(param_passed, data());
+    
     if (ytry < y[ihi]) {
       y[ihi] = ytry;
       for (j = 0; j < dim; j++) {
@@ -324,6 +330,7 @@ class QuasiNewton {
       if(test < TOLERANCE) {
 	iters = its;
 	fx_format_result(opt_module_, "iters", "%d", iters);
+	fx_format_result(opt_module_,"min_obtained","%Lf", f_previous);
 	return;
       }
 
@@ -341,6 +348,7 @@ class QuasiNewton {
       if(test < g_tol) {
 	iters = its;
 	fx_format_result(opt_module_, "iters", "%d", iters);
+	fx_format_result(opt_module_,"min_obtained","%Lf", f_previous);
 	return;
       }
 
@@ -386,6 +394,7 @@ class QuasiNewton {
       la::Scale((-1.0), &xi);
     }
     NOTIFY("Too many iterations in Quasi Newton\n");
+    fx_format_result(opt_module_,"min_obtained","%Lf", f_previous);
   }
 
   void LineSearch_(Vector pold, long double fold, Vector *grad,
