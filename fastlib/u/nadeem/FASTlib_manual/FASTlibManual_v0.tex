@@ -420,14 +420,7 @@ The following summarizes the current code organization of FASTlib
 \end{itemize}
 
 \section{Overview of some tools}
-To help you get started with using FASTlib and MLPACK for your applications, we provide a brief summary of THOR and some of the cutting edge methods available in the MLPACK. We are in the process of generating user documentation for the rest of the methods in MLPACK. In the meantime please refer to the README files in the individual MLPACK method folders.
-
-\subsection{THOR (Tree High-Order Reduce) framework}
-THOR stands for Tree High-Order Reduce. THOR aims to solve the class of high-order-reduce problems (although currently only second-order reduce problems). Its goal is to handle the set of high-order reduce problems that can be accelerated using trees. THOR requires only very abstract information about the tree algorithm at hand, and it is designed to have a lot of freedom and flexibility in executing it. In extremely simple terms, when given a system of reduce functions to solve, in the form of template classes, THOR executes them. THOR considers a combination of summary statistics, pruning rules, and update rules, and uses these to execute your tree-based algorithm in any expansion pattern. Parallel is just another expansion pattern. THOR parallelizes very effectively by dividing the query tree (you must label one of your trees as a query tree even if it is not a query-reference problem) into smaller trees. It then solves each query subtree with the root of the reference tree, which in practice seems to have minimal noticeable overhead compared to solving the problem monolithically. Solving queries independently prevents the need of having to relay pruning information among processors. 
-
-Currently, the software implements a depth-first solver and KD-trees, with data and tree-building occurring on the originating machine. It currently sports excellent multithreaded performance for every problem tested. The networked version has good to excellent performance for small clusters (64 processors) depending on how computationally intensive the problem is. Kernel density estimation, two-point correlation, affinity propagation, high-dimensional nearest neighbors, and more will be able to take advantage of more machines you throw at it. 
-
-Please see \cite{boyer2007tho} for more details on THOR.
+To help you get started with using FASTlib and MLPack for your applications, we provide a brief summary of some of the cutting edge methods available in the MLPack and the THOR library component. We are in the process of generating user documentation for the rest of the methods in MLPACK. In the meantime please refer to the README files in the individual MLPack method folders.
 
 \subsection{Kernel Density Estimator}
 Kernel density estimation (KDE) is the most widely used and studied nonparametric density estimation method. The 'model' is the reference dataset $\mathcal{R}$ itself, containing the {\it reference points}
@@ -461,9 +454,12 @@ fl-build kde_bin --mode=fast
 In order to run this method, type the following (which consists of
 both required and optional arguments) in a single command line:
 \begin{verbatim}
-./kde_bin} --data=name_of_the_reference_dataset --query=name_of_the_query_dataset
-           --kde/bandwidth=0.0130619 --kde/scaling=range --kde/fast_kde_output=fast_kde_output.txt
-           --kde/naive_kde_output=naive_kde_output.txt --kde/do_naive --kde/relative_error=0.1
+./kde_bin} --data=name_of_the_reference_dataset
+           --query=name_of_the_query_dataset
+           --kde/bandwidth=0.0130619 --kde/scaling=range
+           --kde/fast_kde_output=fast_kde_output.txt
+           --kde/naive_kde_output=naive_kde_output.txt
+           --kde/do_naive --kde/relative_error=0.1
            --kde/multiplicative_expansion
 \end{verbatim}
 
@@ -499,20 +495,19 @@ it defaults to the $O(D^p)$ expansion.}
 \subsubsection{Original Fast Gauss Transform}
 In order to compile this part, do: 
 \begin{verbatim}
-fl-build fgt\_kde\_bin --mode=fast
+fl-build fgt_kde_bin --mode=fast
 \end{verbatim}
 
  To run the FGT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
 \begin{verbatim}
-& \mathit{./fgt\_kde\_bin} \
-\mathit{--data=name\_of\_the\_reference\_dataset}\\ &
-\mathit{--query=name\_of\_the\_query\_dataset} \
-\mathit{--kde/bandwidth=0.0130619} \\ & \mathit{--kde/scaling=range} \
-\mathit{--kde/fgt\_kde\_output=fgt\_kde\_output.txt}\\ &
-\mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
-\mathit{--kde/do\_naive}\\ & \mathit{--kde/absolute\_error=0.1}
+ ./fgt_kde_bin} --data=name_of_the_reference_dataset
+                --query=name_of_the_query_dataset
+                --kde/bandwidth=0.0130619 --kde/scaling=range
+                --kde/fgt_kde_output=fgt_kde_output.txt
+                --kde/naive_kde_output=naive_kde_output.txt
+                --kde/do_naive  --kde/absolute_error=0.1
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -544,20 +539,19 @@ after it.}
 \subsubsection{Improved Fast Gauss Transform}
 In order to compile this algorithm, do: 
 \begin{verbatim}
-fl-build original\_ifgt\_bin --mode=fast
+fl-build original_ifgt_bin --mode=fast
 \end{verbatim}
 
 For the IFGT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
 \begin{verbatim}
-& \mathit{./orignal\_ifgt\_bin} \
-\mathit{--data=name\_of\_the\_reference\_dataset}\\ &
-\mathit{--query=name\_of\_the\_query\_dataset} \
-\mathit{--kde/bandwidth=0.0130619} \\ & \mathit{--kde/scaling=range} \
-\mathit{--kde/ifgt\_kde\_output=ifgt\_kde\_output.txt}\\ &
-\mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
-\mathit{--kde/do\_naive}\\ & \mathit{--kde/absolute\_error=0.1}
+ ./orignal_ifgt_bin --data=name_of_the_reference_dataset
+                    --query=name_of_the_query_dataset
+                    --kde/bandwidth=0.0130619  --kde/scaling=range
+                    --kde/ifgt_kde_output=ifgt_kde_output.txt
+                    --kde/naive_kde_output=naive_kde_output.txt
+                    --kde/do_naive  --kde/absolute_error=0.1
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -589,19 +583,18 @@ after it.}
 \subsubsection{FFT-based KDE}
 In order to compile this code, do: 
 \begin{verbatim}
-fl-build fft\_kde\_bin --mode=fast
+fl-build fft_kde_bin --mode=fast
 \end{verbatim}
 For the FFT-based KDE algorithm, type the
 following (which consists of both required and optional arguments) in
 a single command line:
 \begin{verbatim}
-& \mathit{./fft\_kde\_bin} \
-\mathit{--data=name\_of\_the\_reference\_dataset}\\ &
-\mathit{--query=name\_of\_the\_query\_dataset} \
-\mathit{--kde/bandwidth=0.0130619} \\ & \mathit{--kde/scaling=range} \
-\mathit{--kde/fft\_kde\_output=fft\_kde\_output.txt}\\ &
-\mathit{--kde/naive\_kde\_output=naive\_kde\_output.txt} \
-\mathit{--kde/do\_naive}\\ & \mathit{--kde/num\_grid\_pts\_per\_dim=128}
+ ./fft_kde_bin --data=name_of_the_reference_dataset
+               --query=name_of_the_query_dataset
+               --kde/bandwidth=0.0130619  --kde/scaling=range
+               --kde/fft_kde_output=fft_kde_output.txt
+               --kde/naive_kde_output=naive_kde_output.txt
+               --kde/do_naive  --kde/num_grid_pts_per_dim=128
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -646,13 +639,13 @@ FastLib standards.
 
 In order to compile this package, do: 
 \begin{verbatim}
-fl-build ortho\_range\_search\_bin --mode=fast
+fl-build ortho_range_search_bin --mode=fast
 \end{verbatim}
 In order to run this tool, type the following (which consists of
 both required and optional arguments) in a single command line:
 \begin{verbatim}
-& \mathit{./ortho\_range\_search\_bin} \ \mathit{--data=dataset} \
-\mathit{--do\_naive}
+ ./ortho_range_search_bin} \ --data=dataset} \
+--do_naive}
 \end{verbatim}
 
 Explanations for the arguments listed with possible values:
@@ -735,6 +728,46 @@ The FASTlib EMST code implements a dual-tree version of Bor\r{u}vka's algorithm 
 \label{DTB}
 \end{figure}
 
+
+\subsection{THOR (Tree High-Order Reduce) framework}
+THOR stands for Tree-based High-Order Reduce. THOR ultimately aims to
+solve the class of high-order reduce problems, or problems that can
+represented in the form:
+\[g_1 \left( \mathop{\bigotimes\nolimits_{\!1}}_{x_1 \in X_1} \cdots g_n \left( \mathop{\bigotimes\nolimits_{\!n}}_{x_n \in X_n} f(x_1,\ldots,x_n) \right) \right) .\]
+These problems can be transformed into nested generalized $N$-body
+problems (GNPs) \cite{gray_nips2000}, which can frequently be solved
+by multi-tree computations asymptotically faster than the
+conventional, for-loop-based implementation.  At present, THOR can
+only solve second-order reduce problems and the GNP transform must be
+performed by hand.
+
+THOR is programmed by filling templated classes with types for the
+various components of the algorithm.  These components---summary
+statistics, pruning rules, update rules, etc.---implement methods that
+capture the behavior of the the operators from the original reduce
+problem.  At no additional cost to the programmer, THOR also allows
+you to select between depth-first and breadth-first expansion, which
+guides the order of computation and affects performance differently
+for different problems.  In the future, THOR will support more
+expansion patterns as well as the ability to use trees other than
+$kd$-trees and to specify different problem scales (in-memory,
+on-disk, distributed, etc.).
+
+THOR supports parallelization over multiple processors and over
+multiple machines.  Parallelization can be thought of as a special
+expansion pattern which breaks up computation over one of the involved
+trees into many sub-tasks.  Advanced methods attempt to minimize
+communication between nodes, though future work may be able to improve
+upon this further.  We currently see excellent speed-up for multicore
+parallelization and good to excellent speed-up for parallelization
+over small clusters (up to 64 processors).
+
+Presently, KDE is the only released code that uses THOR, though many
+future MLPACK and PHYSPACK extensions will also make use of it.
+Nearly complete are THOR versions of all-$k$-nearest-neighbors, kernel
+discriminant analysis, and affinity propagation.
+
+Please see \cite{boyer2007tho} for more details on THOR.
 
 \chapter {Code development using FASTlib}
  
