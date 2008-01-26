@@ -1,0 +1,50 @@
+@author Hua Ouyang
+@file README
+
+Multiclass SVM Classifier
+
+Files in this folder:
+README: this file
+# Source codes:
+build.py: build scripts
+svm_main.cc: contains main function of multilcass SVM classifier
+svm.h: contains multiclassification main routine
+smo.h: sequential minimal optimization
+# Unit test data:
+traindata2.csv: training data for a 2 classes toy problem. 10 samples in each class.
+testdata2.csv: testing data for a 2 classes toy problem. 10 samples in each class.
+traindata3.csv: training data for a 3 classes toy problem. 10 samples in each class.
+testdata3.csv: testing data for a 3 classes toy problem. 10 samples in each class.
+# Generated files:
+artificialdata.csv: artificial data if no training/testing data file provided
+svm_model: SVM model file
+testlabels: classified labels
+
+Explanation of arguments:
+1. mode (required) : the mode of svm_main, values: "cv", "train", "train_test", "test".
+2. k_cv (optional): the number of folds for cross validation, only required under "cv" mode.
+3. cv_data (optional): file name for cross validation data, only required under "cv" mode.
+4. train_data (optional): file name for training data, only required under "train" or "train_test" mode.
+5. test_data (optional): file name for testing data, only required under "test" or "train_test" mode.
+6. kernel (required): kernel name, values:"linear", "gaussian".
+7. sigma (optional): sigma in the gaussian kernel k(x1,x2)=exp(-(x1-x2)^2/(2sigma^2)), only required when using "guassian" kernel.
+8. c (required): the weight that controls compromise between large margins and small margin violations.
+9. normalize (optional): where need to do data normalization before training/testing, values: "0" for no normalize, "1" for normalize.
+
+Examples:
+
+1.Cross validation mode
+svm_main --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=linear --c=10 --normalize=0
+
+2.Training mode (model will be saved as "svm_model")
+svm_main --mode=train --train_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --mode=train --train_data=traindata3.csv --kernel=linear --c=10 --normalize=0
+
+3.Training+testing mode
+svm_main --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
+
+4.Testing mode (the model file "svm_model" should exist)
+svm_main --mode=test --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --mode=test --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
