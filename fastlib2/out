@@ -1,0 +1,2445 @@
+In file included from discrete.cc:9:
+discrete.h:12:23: base/base.h: No such file or directory
+discrete.h:13:27: col/arraylist.h: No such file or directory
+In file included from uselapack.h:10,
+                 from uselapack.cc:7:
+matrix.h:12:23: base/base.h: No such file or directory
+In file included from discrete.cc:9:
+discrete.h:22: error: expected constructor, destructor, or type conversion before "double"
+discrete.h:33: error: expected constructor, destructor, or type conversion before "double"
+discrete.h:46: error: variable or field `MakeIdentityPermutation' declared void
+discrete.h:46: error: `index_t' was not declared in this scope
+discrete.h:46: error: `index_t' was not declared in this scope
+discrete.h:46: error: `array' was not declared in this scope
+discrete.h:46: error: initializer expression list treated as compound expression
+discrete.h:56: error: variable or field `MakeIdentityPermutation' declared void
+discrete.h:56: error: `math::MakeIdentityPermutation' declared as an `inline' variable
+discrete.h:56: error: redefinition of `int math::MakeIdentityPermutation'
+discrete.h:46: error: `int math::MakeIdentityPermutation' previously defined here
+discrete.h:57: error: `index_t' was not declared in this scope
+discrete.h:57: error: `ArrayList' was not declared in this scope
+discrete.h:57: error: `index_t' was not declared in this scope
+discrete.h:57: error: `result' was not declared in this scope
+discrete.h:71: error: variable or field `MakeRandomPermutation' declared void
+discrete.h:71: error: `index_t' was not declared in this scope
+discrete.h:71: error: `index_t' was not declared in this scope
+discrete.h:71: error: `array' was not declared in this scope
+discrete.h:71: error: initializer expression list treated as compound expression
+discrete.h:79: error: variable or field `MakeRandomPermutation' declared void
+discrete.h:79: error: `math::MakeRandomPermutation' declared as an `inline' variable
+discrete.h:79: error: redefinition of `int math::MakeRandomPermutation'
+discrete.h:71: error: `int math::MakeRandomPermutation' previously defined here
+discrete.h:80: error: `index_t' was not declared in this scope
+discrete.h:80: error: `ArrayList' was not declared in this scope
+discrete.h:80: error: `index_t' was not declared in this scope
+discrete.h:80: error: `result' was not declared in this scope
+discrete.h:88: error: variable or field `MakeInversePermutation' declared void
+discrete.h:88: error: `index_t' was not declared in this scope
+discrete.h:89: error: expected primary-expression before "const"
+discrete.h:89: error: `index_t' was not declared in this scope
+discrete.h:89: error: `reverse' was not declared in this scope
+discrete.h:89: error: initializer expression list treated as compound expression
+discrete.h:95: error: expected `,' or `...' before '<' token
+discrete.h:95: error: ISO C++ forbids declaration of `ArrayList' with no type
+discrete.h: In function `void math::MakeInversePermutation(int)':
+discrete.h:95: error: `void math::MakeInversePermutation(int)' redeclared as different kind of symbol
+discrete.h:88: error: previous declaration of `int math::MakeInversePermutation'
+discrete.h:88: error: previous non-function declaration `int math::MakeInversePermutation'
+discrete.h:95: error: conflicts with function declaration `void math::MakeInversePermutation(int)'
+discrete.h:96: error: `reverse' was not declared in this scope
+discrete.h:96: error: `original' was not declared in this scope
+discrete.h:97: error: `math::MakeInversePermutation' cannot be used as a function
+discrete.h: In function `unsigned int math::IntLog2(unsigned int)':
+discrete.h:113: error: `DEBUG_ASSERT_MSG' was not declared in this scope
+discrete.h:113: warning: unused variable 'DEBUG_ASSERT_MSG'
+discrete.cc: At global scope:
+discrete.cc:13: error: `double math::BinomialCoefficient(int, int)' should have been declared inside `math'
+discrete.cc:33: error: `double math::Factorial(int)' should have been declared inside `math'
+discrete.cc: In function `double math::Factorial(int)':
+discrete.cc:36: error: `DEBUG_ASSERT' was not declared in this scope
+discrete.cc:36: warning: unused variable 'DEBUG_ASSERT'
+discrete.cc: At global scope:
+discrete.cc:45: error: variable or field `MakeIdentityPermutation' declared void
+discrete.cc:45: error: redefinition of `int math::MakeIdentityPermutation'
+discrete.h:46: error: `int math::MakeIdentityPermutation' previously defined here
+discrete.cc:45: error: `index_t' was not declared in this scope
+discrete.cc:45: error: `index_t' was not declared in this scope
+discrete.cc:45: error: `array' was not declared in this scope
+discrete.cc:51: error: variable or field `MakeRandomPermutation' declared void
+discrete.cc:51: error: redefinition of `int math::MakeRandomPermutation'
+discrete.h:71: error: `int math::MakeRandomPermutation' previously defined here
+discrete.cc:51: error: `index_t' was not declared in this scope
+discrete.cc:51: error: `index_t' was not declared in this scope
+discrete.cc:51: error: `array' was not declared in this scope
+discrete.cc:69: error: variable or field `MakeInversePermutation' declared void
+discrete.cc:69: error: redefinition of `int math::MakeInversePermutation'
+discrete.h:88: error: `int math::MakeInversePermutation' previously defined here
+discrete.cc:69: error: `index_t' was not declared in this scope
+discrete.cc:70: error: expected primary-expression before "const"
+discrete.cc:70: error: `index_t' was not declared in this scope
+discrete.cc:70: error: `reverse' was not declared in this scope
+In file included from uselapack.h:10,
+                 from uselapack.cc:7:
+matrix.h:46: error: `index_t' does not name a type
+matrix.h:50: error: ISO C++ forbids declaration of `OT_DEF_ONLY' with no type
+matrix.h:55: error: ISO C++ forbids declaration of `OT_FIX' with no type
+matrix.h:74: error: ISO C++ forbids declaration of `ASSIGN_VIA_COPY_CONSTRUCTION' with no type
+matrix.h:103: error: `index_t' has not been declared
+matrix*** [/scratch/nadeem/fastlib/bin/x86_64_Linux_check_gcc_/obj/fastlib_math_discrete.o] Error 1
+make: *** Waiting for unfinished jobs....
+matrix.h:139: error: `index_t' has not been declared
+matrix.h:139: error: ISO C++ forbids declaration of `in_length' with no type
+matrix.h:150: error: `index_t' has not been declared
+matrix.h:150: error: ISO C++ forbids declaration of `in_length' with no type
+matrix.h:192: error: `index_t' has not been declared
+matrix.h:192: error: ISO C++ forbids declaration of `in_length' with no type
+matrix.h:208: error: `index_t' has not been declared
+matrix.h:208: error: `index_t' has not been declared
+matrix.h:208: error: ISO C++ forbids declaration of `start_index' with no type
+matrix.h:208: error: ISO C++ forbids declaration of `len' with no type
+matrix.h:254: error: `FILE' has not been declared
+matrix.h:254: error: ISO C++ forbids declaration of `stream' with no type
+matrix.h:264: error: `index_t' does not name a type
+matrix.h:285: error: `index_t' has not been declared
+matrix.h:285: error: ISO C++ forbids declaration of `i' with no type
+matrix.h:293: error: declaration of `operator[]' as non-function
+matrix.h:293: error: expected `;' before '(' token
+matrix.h:311: error: expected `;' before "double"
+matrix.h:311: error: `index_t' has not been declared
+matrix.h:311: error: ISO C++ forbids declaration of `i' with no type
+matrix.h:254: error: `stderr' was not declared in this scope
+matrix.h: In member function `int Vector::OT_DEF_ONLY(Vector)':
+matrix.h:51: error: `length_' was not declared in this scope
+matrix.h:51: error: `OT_MY_OBJECT' was not declared in this scope
+matrix.h:52: error: `OT_MALLOC_ARRAY' was not declared in this scope
+matrix.h:51: warning: unused variable 'OT_MY_OBJECT'
+matrix.h:52: warning: unused variable 'OT_MALLOC_ARRAY'
+matrix.h:53: warning: no return statement in function returning non-void
+matrix.h: In member function `int Vector::OT_FIX(Vector)':
+matrix.h:57: warning: no return statement in function returning non-void
+matrix.h: In constructor `Vector::Vector()':
+matrix.h:64: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:64: warning: unused variable 'DEBUG_ONLY'
+matrix.h: In copy constructor `Vector::Vector(const Vector&)':
+matrix.h:71: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:71: warning: unused variable 'DEBUG_ONLY'
+matrix.h: In member function `void Vector::Destruct()':
+matrix.h:87: error: expected primary-expression before "double"
+matrix.h:87: error: `BIG_BAD_POINTER' was not declared in this scope
+matrix.h:88: error: `DEBUG_ASSERT_MSG' was not declared in this scope
+matrix.h:91: error: `unlikely' was not declared in this scope
+matrix.h:92: error: `mem' has not been declared
+matrix.h:92: error: `length_' was not declared in this scope
+matrix.h:92: error: `DebugPoison' was not declared in this scope
+matrix.h:93: error: `mem' has not been declared
+matrix.h:93: error: `Free' was not declared in this scope
+matrix.h:92: warning: unused variable 'length_'
+matrix.h:92: warning: unused variable 'DebugPoison'
+matrix.h:93: warning: unused variable 'Free'
+matrix.h:91: warning: unused variable 'unlikely'
+matrix.h:96: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:87: warning: unused variable 'BIG_BAD_POINTER'
+matrix.h:88: warning: unused variable 'DEBUG_ASSERT_MSG'
+matrix.h:96: warning: unused variable 'DEBUG_ONLY'
+matrix.h: In member function `void Vector::Init(int)':
+matrix.h:104: error: `mem' has not been declared
+matrix.h:104: error: `Alloc' was not declared in this scope
+matrix.h:104: error: expected primary-expression before "double"
+matrix.h:104: error: expected `;' before "double"
+matrix.h:105: error: `length_' was not declared in this scope
+matrix.h:104: warning: unused variable 'Alloc'
+matrix.h:105: warning: unused variable 'length_'
+matrix.h: In member function `void Vector::SetAll(double)':
+matrix.h:113: error: `mem' has not been declared
+matrix.h:113: error: `length_' was not declared in this scope
+matrix.h:113: error: `RepeatConstruct' was not declared in this scope
+matrix.h:113: warning: unused variable 'length_'
+matrix.h:113: warning: unused variable 'RepeatConstruct'
+matrix.h: In member function `void Vector::Copy(const Vector&)':
+matrix.h:130: error: 'const class Vector' has no member named 'length'
+matrix.h: In member function `void Vector::Copy(const double*, int)':
+matrix.h:140: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:142: error: `mem' has not been declared
+matrix.h:142: error: `AllocBitCopy' was not declared in this scope
+matrix.h:143: error: `length_' was not declared in this scope
+matrix.h:140: warning: unused variable 'DEBUG_ONLY'
+matrix.h:142: warning: unused variable 'AllocBitCopy'
+matrix.h:143: warning: unused variable 'length_'
+matrix.h: In member function `void Vector::Alias(double*, int)':
+matrix.h:151: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:154: error: `length_' was not declared in this scope
+matrix.h:151: warning: unused variable 'DEBUG_ONLY'
+matrix.h:154: warning: unused variable 'length_'
+matrix.h: In member function `void Vector::Alias(const Vector&)':
+matrix.h:172: error: 'const class Vector' has no member named 'length'
+matrix.h: In member function `void Vector::Own(Vector*)':
+matrix.h:182: error: 'class Vector' has no member named 'length'
+matrix.h:184: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:184: warning: unused variable 'DEBUG_ASSERT'
+matrix.h: In member function `void Vector::Own(double*, int)':
+matrix.h:193: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:196: error: `length_' was not declared in this scope
+matrix.h:193: warning: unused variable 'DEBUG_ONLY'
+matrix.h:196: warning: unused variable 'length_'
+matrix.h: In member function `void Vector::MakeSubvector(int, int, Vector*)':
+matrix.h:209: error: `length_' was not declared in this scope
+matrix.h:209: error: `DEBUG_BOUNDS' was not declared in this scope
+matrix.h: In member function `void Vector::SwapValues(Vector*)':
+matrix.h:224: error: `length' was not declared in this scope
+matrix.h:224: error: 'class Vector' has no member named 'length'
+matrix.h:224: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:225: error: `mem' has not been declared
+matrix.h:225: error: `length_' was not declared in this scope
+matrix.h:225: error: `BitSwap' was not declared in this scope
+matrix.h:224: warning: unused variable 'length'
+matrix.h:224: warning: unused variable 'DEBUG_ASSERT'
+matrix.h:225: warning: unused variable 'length_'
+matrix.h:225: warning: unused variable 'BitSwap'
+matrix.h: In member function `void Vector::CopyValues(const Vector&)':
+matrix.h:234: error: `length' was not declared in this scope
+matrix.h:234: error: 'const class Vector' has no member named 'length'
+matrix.h:234: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:235: error: `mem' has not been declared
+matrix.h:235: error: `length_' was not declared in this scope
+matrix.h:235: error: `BitCopy' was not declared in this scope
+matrix.h:234: warning: unused variable 'length'
+matrix.h:234: warning: unused variable 'DEBUG_ASSERT'
+matrix.h:235: warning: unused variable 'length_'
+matrix.h:235: warning: unused variable 'BitCopy'
+matrix.h: In member function `void Vector::CopyValues(const double*)':
+matrix.h:245: error: `mem' has not been declared
+matrix.h:245: error: `length_' was not declared in this scope
+matrix.h:245: error: `BitCopy' was not declared in this scope
+matrix.h:245: warning: unused variable 'length_'
+matrix.h:245: warning: unused variable 'BitCopy'
+matrix.h: In member function `void Vector::PrintDebug(const char*, int*) const':
+matrix.h:255: error: `fprintf' was not declared in this scope
+matrix.h:256: error: `index_t' was not declared in this scope
+matrix.h:256: error: expected `;' before "i"
+matrix.h:256: error: `i' was not declared in this scope
+matrix.h:256: error: `length' was not declared in this scope
+matrix.h:256: warning: unused variable 'length'
+matrix.h:256: warning: unused variable 'index_t'
+matrix.h: In member function `double Vector::operator[](int) const':
+matrix.h:286: error: `length_' was not declared in this scope
+matrix.h:286: error: `DEBUG_BOUNDS' was not declared in this scope
+matrix.h:286: warning: unused variable 'length_'
+matrix.h:286: warning: unused variable 'DEBUG_BOUNDS'
+matrix.h: In member function `double Vector::get(int) const':
+matrix.h:312: error: `length_' was not declared in this scope
+matrix.h:312: error: `DEBUG_BOUNDS' was not declared in this scope
+matrix.h:312: warning: unused variable 'length_'
+matrix.h:312: warning: unused variable 'DEBUG_BOUNDS'
+matrix.h: In member function `void Vector::AssertUninitialized_() const':
+matrix.h:318: error: `length_' was not declared in this scope
+matrix.h:318: error: `BIG_BAD_NUMBER' was not declared in this scope
+matrix.h:318: error: `DEBUG_ASSERT_MSG' was not declared in this scope
+matrix.h:318: warning: unused variable 'length_'
+matrix.h:318: warning: unused variable 'BIG_BAD_NUMBER'
+matrix.h:318: warning: unused variable 'DEBUG_ASSERT_MSG'
+matrix.h: In member function `void Vector::Uninitialize_()':
+matrix.h:322: error: expected primary-expression before "double"
+matrix.h:322: error: `BIG_BAD_POINTER' was not declared in this scope
+matrix.h:322: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:323: error: `length_' was not declared in this scope
+matrix.h:323: error: `BIG_BAD_NUMBER' was not declared in this scope
+matrix.h:322: warning: unused variable 'BIG_BAD_POINTER'
+matrix.h:323: warning: unused variable 'length_'
+matrix.h:323: warning: unused variable 'BIG_BAD_NUMBER'
+matrix.h: In member function `void Vector::AssertInitialized_()':
+matrix.h:327: error: expected primary-expression before "double"
+matrix.h:327: error: `BIG_BAD_POINTER' was not declared in this scope
+matrix.h:328: error: `DEBUG_ASSERT_MSG' was not declared in this scope
+matrix.h:327: warning: unused variable 'BIG_BAD_POINTER'
+matrix.h:328: warning: unused variable 'DEBUG_ASSERT_MSG'
+matrix.h: At global scope:
+matrix.h:347: error: `index_t' does not name a type
+matrix.h:349: error: `index_t' does not name a type
+matrix.h:353: error: ISO C++ forbids declaration of `OT_DEF_ONLY' with no type
+matrix.h:359: error: ISO C++ forbids declaration of `OT_FIX' with no type
+matrix.h:367: error: expected `)' before "in_rows"
+matrix.h:379: error: ISO C++ forbids declaration of `ASSIGN_VIA_COPY_CONSTRUCTION' with no type
+matrix.h:415: error: `index_t' has not been declared
+matrix.h:415: error: `index_t' has not been declared
+matrix.h:415: error: ISO C++ forbids declaration of `in_rows' with no type
+matrix.h:415: error: ISO C++ forbids declaration of `in_cols' with no type
+matrix.h:476: error: `index_t' has not been declared
+matrix.h:476: error: `index_t' has not been declared
+matrix.h:476: error: ISO C++ forbids declaration of `n_rows_in' with no type
+matrix.h:476: error: ISO C++ forbids declaration of `n_cols_in' with no type
+matrix.h:504: error: `index_t' has not been declared
+matrix.h:504: error: `index_t' has not been declared
+matrix.h:504: error: ISO C++ forbids declaration of `n_rows_in' with no type
+matrix.h:504: error: ISO C++ forbids declaration of `n_cols_in' with no type
+matrix.h:564: error: `index_t' has not been declared
+matrix.h:564: error: `index_t' has not been declared
+matrix.h:564: error: ISO C++ forbids declaration of `n_rows_in' with no type
+matrix.h:564: error: ISO C++ forbids declaration of `n_cols_in' with no type
+matrix.h:580: error: `index_t' has not been declared
+matrix.h:580: error: `index_t' has not been declared
+matrix.h:581: error: ISO C++ forbids declaration of `start_col' with no type
+matrix.h:581: error: ISO C++ forbids declaration of `n_cols_new' with no type
+matrix.h:608: error: `index_t' has not been declared
+matrix.h:608: error: `index_t' has not been declared
+matrix.h:609: error: ISO C++ forbids declaration of `n_rows_in' with no type
+matrix.h:609: error: ISO C++ forbids declaration of `n_cols_in' with no type
+matrix.h:621: error: `index_t' has not been declared
+matrix.h:621: error: ISO C++ forbids declaration of `col' with no type
+matrix.h:635: error: `index_t' has not been declared
+matrix.h:635: error: `index_t' has not been declared
+matrix.h:635: error: `index_t' has not been declared
+matrix.h:636: error: ISO C++ forbids declaration of `col' with no type
+matrix.h:636: error: ISO C++ forbids declaration of `start_row' with no type
+matrix.h:636: error: ISO C++ forbids declaration of `n_rows_new' with no type
+matrix.h:651: error: expected `;' before '(' token
+matrix.h:664: error: expected `;' before "const"
+matrix.h:664: error: expected `;' before '(' token
+matrix.h:677: error: expected `;' before "void"
+matrix.h:677: error: `index_t' has not been declared
+matrix.h:677: error: ISO C++ forbids declaration of `new_n_cols' with no type
+matrix.h:714: error: `FILE' has not been declared
+matrix.h:714: error: ISO C++ forbids declaration of `stream' with no type
+matrix.h:751: error: `index_t' has not been declared
+matrix.h:751: error: `index_t' has not been declared
+matrix.h:751: error: ISO C++ forbids declaration of `r' with no type
+matrix.h:751: error: ISO C++ forbids declaration of `c' with no type
+matrix.h:764: error: `index_t' has not been declared
+matrix.h:764: error: `index_t' has not been declared
+matrix.h:764: error: ISO C++ forbids declaration of `r' with no type
+matrix.h:764: error: ISO C++ forbids declaration of `c' with no type
+matrix.h:777: error: expected `;' before '(' token
+matrix.h:784: error: expected `;' before "index_t"
+matrix.h:784: error: `index_t' does not name a type
+matrix.h:789: error: `index_t' does not name a type
+matrix.h:714: error: `stderr' was not declared in this scope
+matrix.h: In member function `int Matrix::OT_DEF_ONLY(Matrix)':
+matrix.h:354: error: `n_rows_' was not declared in this scope
+matrix.h:354: error: `OT_MY_OBJECT' was not declared in this scope
+matrix.h:355: error: `n_cols_' was not declared in this scope
+matrix.h:356: error: `OT_MALLOC_ARRAY' was not declared in this scope
+matrix.h:354: warning: unused variable 'n_rows_'
+matrix.h:355: warning: unused variable 'n_cols_'
+matrix.h:356: warning: unused variable 'OT_MALLOC_ARRAY'
+matrix.h:357: warning: no return statement in function returning non-void
+matrix.h: In member function `int Matrix::OT_FIX(Matrix)':
+matrix.h:361: warning: no return statement in function returning non-void
+matrix.h: In copy constructor `Matrix::Matrix(const Matrix&)':
+matrix.h:376: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:376: warning: unused variable 'DEBUG_ONLY'
+matrix.h: In constructor `Matrix::Matrix()':
+matrix.h:385: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:385: warning: unused variable 'DEBUG_ONLY'
+matrix.h: In member function `void Matrix::Destruct()':
+matrix.h:400: error: expected primary-expression before "double"
+matrix.h:400: error: `BIG_BAD_POINTER' was not declared in this scope
+matrix.h:401: error: `DEBUG_ASSERT_MSG' was not declared in this scope
+matrix.h:402: error: `unlikely' was not declared in this scope
+matrix.h:403: error: `mem' has not been declared
+matrix.h:403: error: `n_rows_' was not declared in this scope
+matrix.h:403: error: `n_cols_' was not declared in this scope
+matrix.h:403: error: `DebugPoison' was not declared in this scope
+matrix.h:404: error: `mem' has not been declared
+matrix.h:404: error: `Free' was not declared in this scope
+matrix.h:405: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:403: warning: unused variable 'n_rows_'
+matrix.h:403: warning: unused variable 'n_cols_'
+matrix.h:403: warning: unused variable 'DebugPoison'
+matrix.h:404: warning: unused variable 'Free'
+matrix.h:405: warning: unused variable 'DEBUG_ONLY'
+matrix.h:402: warning: unused variable 'unlikely'
+matrix.h:407: error: `DEBUG_POISON_PTR' was not declared in this scope
+matrix.h:408: error: `n_rows_' was not declared in this scope
+matrix.h:408: error: `BIG_BAD_NUMBER' was not declared in this scope
+matrix.h:408: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:409: error: `n_cols_' was not declared in this scope
+matrix.h:400: warning: unused variable 'BIG_BAD_POINTER'
+matrix.h:401: warning: unused variable 'DEBUG_ASSERT_MSG'
+matrix.h:407: warning: unused variable 'DEBUG_POISON_PTR'
+matrix.h:408: warning: unused variable 'n_rows_'
+matrix.h:409: warning: unused variable 'n_cols_'
+matrix.h: In member function `void Matrix::Init(int, int)':
+matrix.h:416: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:417: error: `mem' has not been declared
+matrix.h:417: error: `Alloc' was not declared in this scope
+matrix.h:417: error: expected primary-expression before "double"
+matrix.h:417: error: expected `;' before "double"
+matrix.h:418: error: `n_rows_' was not declared in this scope
+matrix.h:419: error: `n_cols_' was not declared in this scope
+matrix.h:416: warning: unused variable 'DEBUG_ONLY'
+matrix.h:417: warning: unused variable 'Alloc'
+matrix.h:418: warning: unused variable 'n_rows_'
+matrix.h:419: warning: unused variable 'n_cols_'
+matrix.h: In member function `void Matrix::InitDiagonal(const Vector&)':
+matrix.h:427: error: 'const class Vector' has no member named 'length'
+matrix.h:427: error: 'const class Vector' has no member named 'length'
+matrix.h: In member function `void Matrix::SetAll(double)':
+matrix.h:435: error: `mem' has not been declared
+matrix.h:435: error: `RepeatConstruct' was not declared in this scope
+matrix.h:435: warning: unused variable 'RepeatConstruct'
+matrix.h: In member function `void Matrix::SetDiagonal(const Vector&)':
+matrix.h:451: error: `n_rows' was not declared in this scope
+matrix.h:451: error: 'const class Vector' has no member named 'length'
+matrix.h:451: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:452: error: `n_cols' was not declared in this scope
+matrix.h:452: error: 'const class Vector' has no member named 'length'
+matrix.h:454: error: `index_t' was not declared in this scope
+matrix.h:454: error: expected `;' before "n"
+matrix.h:455: error: expected `;' before "i"
+matrix.h:455: error: `i' was not declared in this scope
+matrix.h:455: error: `n' was not declared in this scope
+matrix.h:455: warning: unused variable 'n'
+matrix.h:451: warning: unused variable 'n_rows'
+matrix.h:452: warning: unused variable 'n_cols'
+matrix.h: In member function `void Matrix::Copy(const Matrix&)':
+matrix.h:466: error: 'const class Matrix' has no member named 'n_rows'
+matrix.h:466: error: 'const class Matrix' has no member named 'n_cols'
+matrix.h: In member function `void Matrix::Copy(const double*, int, int)':
+matrix.h:477: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:479: error: `mem' has not been declared
+matrix.h:479: error: `AllocBitCopy' was not declared in this scope
+matrix.h:480: error: `n_rows_' was not declared in this scope
+matrix.h:481: error: `n_cols_' was not declared in this scope
+matrix.h:477: warning: unused variable 'DEBUG_ONLY'
+matrix.h:479: warning: unused variable 'AllocBitCopy'
+matrix.h:480: warning: unused variable 'n_rows_'
+matrix.h:481: warning: unused variable 'n_cols_'
+matrix.h: In member function `void Matrix::Alias(const Matrix&)':
+matrix.h:494: error: 'const class Matrix' has no member named 'n_rows'
+matrix.h:494: error: 'const class Matrix' has no member named 'n_cols'
+matrix.h: In member function `void Matrix::Alias(double*, int, int)':
+matrix.h:505: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:508: error: `n_rows_' was not declared in this scope
+matrix.h:509: error: `n_cols_' was not declared in this scope
+matrix.h:505: warning: unused variable 'DEBUG_ONLY'
+matrix.h:508: warning: unused variable 'n_rows_'
+matrix.h:509: warning: unused variable 'n_cols_'
+matrix.h: In member function `void Matrix::AliasRowVector(const Vector&)':
+matrix.h:519: error: 'const class Vector' has no member named 'length'
+matrix.h: In member function `void Matrix::AliasColVector(const Vector&)':
+matrix.h:528: error: 'const class Vector' has no member named 'length'
+matrix.h: In member function `void Matrix::Own(Matrix*)':
+matrix.h:549: error: 'class Matrix' has no member named 'n_rows'
+matrix.h:549: error: 'class Matrix' has no member named 'n_cols'
+matrix.h:551: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:551: warning: unused variable 'DEBUG_ASSERT'
+matrix.h: In member function `void Matrix::Own(double*, int, int)':
+matrix.h:565: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:568: error: `n_rows_' was not declared in this scope
+matrix.h:569: error: `n_cols_' was not declared in this scope
+matrix.h:565: warning: unused variable 'DEBUG_ONLY'
+matrix.h:568: warning: unused variable 'n_rows_'
+matrix.h:569: warning: unused variable 'n_cols_'
+matrix.h: In member function `void Matrix::MakeColumnSlice(int, int, Matrix*) const':
+matrix.h:582: error: `n_cols_' was not declared in this scope
+matrix.h:582: error: `DEBUG_BOUNDS' was not declared in this scope
+matrix.h:584: error: `n_rows_' was not declared in this scope
+matrix.h: In member function `void Matrix::MakeReshaped(int, int, Matrix*) const':
+matrix.h:610: error: `n_rows' was not declared in this scope
+matrix.h:610: error: `n_cols' was not declared in this scope
+matrix.h:610: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:610: warning: unused variable 'n_rows'
+matrix.h:610: warning: unused variable 'n_cols'
+matrix.h:610: warning: unused variable 'DEBUG_ASSERT'
+matrix.h: In member function `void Matrix::MakeColumnVector(int, Vector*) const':
+matrix.h:622: error: `n_cols_' was not declared in this scope
+matrix.h:622: error: `DEBUG_BOUNDS' was not declared in this scope
+matrix.h:623: error: `n_rows_' was not declared in this scope
+matrix.h:622: warning: unused variable 'n_cols_'
+matrix.h:622: warning: unused variable 'DEBUG_BOUNDS'
+matrix.h: In member function `void Matrix::MakeColumnSubvector(int, int, int, Vector*) const':
+matrix.h:637: error: `n_cols_' was not declared in this scope
+matrix.h:637: error: `DEBUG_BOUNDS' was not declared in this scope
+matrix.h:638: error: `n_rows_' was not declared in this scope
+matrix.h:637: warning: unused variable 'n_cols_'
+matrix.h: In member function `void Matrix::ResizeNoalias(int)':
+matrix.h:678: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:679: error: `n_cols_' was not declared in this scope
+matrix.h:680: error: `mem' has not been declared
+matrix.h:680: error: `Realloc' was not declared in this scope
+matrix.h:678: warning: unused variable 'DEBUG_ASSERT'
+matrix.h:679: warning: unused variable 'n_cols_'
+matrix.h:680: warning: unused variable 'Realloc'
+matrix.h: In member function `void Matrix::SwapValues(Matrix*)':
+matrix.h:692: error: `n_cols' was not declared in this scope
+matrix.h:692: error: 'class Matrix' has no member named 'n_cols'
+matrix.h:692: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:693: error: `n_rows' was not declared in this scope
+matrix.h:693: error: 'class Matrix' has no member named 'n_rows'
+matrix.h:694: error: `mem' has not been declared
+matrix.h:694: error: `BitSwap' was not declared in this scope
+matrix.h:692: warning: unused variable 'n_cols'
+matrix.h:693: warning: unused variable 'n_rows'
+matrix.h:694: warning: unused variable 'BitSwap'
+matrix.h: In member function `void Matrix::CopyValues(const Matrix&)':
+matrix.h:703: error: `n_rows' was not declared in this scope
+matrix.h:703: error: 'const class Matrix' has no member named 'n_rows'
+matrix.h:703: error: `DEBUG_ASSERT' was not declared in this scope
+matrix.h:704: error: `n_cols' was not declared in this scope
+matrix.h:704: error: 'const class Matrix' has no member named 'n_cols'
+matrix.h:705: error: `mem' has not been declared
+matrix.h:705: error: `BitCopy' was not declared in this scope
+matrix.h:703: warning: unused variable 'n_rows'
+matrix.h:704: warning: unused variable 'n_cols'
+matrix.h:705: warning: unused variable 'BitCopy'
+matrix.h: In member function `void Matrix::PrintDebug(const char*, int*) const':
+matrix.h:715: error: `fprintf' was not declared in this scope
+matrix.h:716: error: `index_t' was not declared in this scope
+matrix.h:716: error: expected `;' before "r"
+matrix.h:716: error: `r' was not declared in this scope
+matrix.h:716: error: `n_rows' was not declared in this scope
+matrix.h:717: error: expected `;' before "c"
+matrix.h:717: error: `c' was not declared in this scope
+matrix.h:717: error: `n_cols' was not declared in this scope
+matrix.h:717: warning: unused variable 'n_cols'
+matrix.h:716: warning: unused variable 'n_rows'
+matrix.h: In member function `double Matrix::get(int, int) const':
+matrix.h:752: error: `n_rows_' was not declared in this scope
+matrix.h:752: error: `DEBUG_BOUNDS' was not declared in this scope
+matrix.h:753: error: `n_cols_' was not declared in this scope
+matrix.h:753: warning: unused variable 'n_cols_'
+matrix.h: In member function `void Matrix::set(int, int, double)':
+matrix.h:765: error: `n_rows_' was not declared in this scope
+matrix.h:765: error: `DEBUG_BOUNDS' was not declared in this scope
+matrix.h:766: error: `n_cols_' was not declared in this scope
+matrix.h:766: warning: unused variable 'n_cols_'
+matrix.h: In member function `size_t Matrix::n_elements() const':
+matrix.h:803: error: `n_rows_' was not declared in this scope
+matrix.h:803: error: `n_cols_' was not declared in this scope
+matrix.h:803: warning: unused variable 'n_rows_'
+matrix.h:803: warning: unused variable 'n_cols_'
+matrix.h: In member function `void Matrix::AssertUninitialized_() const':
+matrix.h:808: error: `n_rows_' was not declared in this scope
+matrix.h:808: error: `BIG_BAD_NUMBER' was not declared in this scope
+matrix.h:808: error: `DEBUG_ASSERT_MSG' was not declared in this scope
+matrix.h:808: warning: unused variable 'n_rows_'
+matrix.h:808: warning: unused variable 'BIG_BAD_NUMBER'
+matrix.h:808: warning: unused variable 'DEBUG_ASSERT_MSG'
+matrix.h: In member function `void Matrix::Uninitialize_()':
+matrix.h:812: error: `DEBUG_POISON_PTR' was not declared in this scope
+matrix.h:813: error: `n_rows_' was not declared in this scope
+matrix.h:813: error: `BIG_BAD_NUMBER' was not declared in this scope
+matrix.h:813: error: `DEBUG_ONLY' was not declared in this scope
+matrix.h:814: error: `n_cols_' was not declared in this scope
+matrix.h:812: warning: unused variable 'DEBUG_POISON_PTR'
+matrix.h:813: warning: unused variable 'n_rows_'
+matrix.h:814: warning: unused variable 'n_cols_'
+matrix.h: At global scope:
+matrix.h:834: error: `index_t' does not name a type
+matrix.h:846: error: `index_t' has not been declared
+matrix.h:846: error: ISO C++ forbids declaration of `i' with no type
+matrix.h:851: error: declaration of `operator[]' as non-function
+matrix.h:851: error: expected `;' before '(' token
+matrix.h:856: error: expected `;' before "double"
+matrix.h:856: error: `index_t' has not been declared
+matrix.h:856: error: ISO C++ forbids declaration of `i' with no type
+matrix.h: In member function `double SmallVector<t_length>::operator[](int) const':
+matrix.h:847: error: there are no arguments to `DEBUG_BOUNDS' that depend on a template parameter, so a declaration of `DEBUG_BOUNDS' must be available
+matrix.h:847: error: (if you use `-fpermissive', G++ will accept your code, but allowing the use of an undeclared name is deprecated)
+matrix.h: In member function `double SmallVector<t_length>::get(int) const':
+matrix.h:857: error: there are no arguments to `DEBUG_BOUNDS' that depend on a template parameter, so a declaration of `DEBUG_BOUNDS' must be available
+matrix.h: At global scope:
+matrix.h:885: error: `index_t' has not been declared
+matrix.h:885: error: `index_t' has not been declared
+matrix.h:885: error: ISO C++ forbids declaration of `r' with no type
+matrix.h:885: error: ISO C++ forbids declaration of `c' with no type
+matrix.h:891: error: `index_t' has not been declared
+matrix.h:891: error: `index_t' has not been declared
+matrix.h:891: error: ISO C++ forbids declaration of `r' with no type
+matrix.h:891: error: ISO C++ forbids declaration of `c' with no type
+matrix.h:897: error: expected `;' before '(' token
+matrix.h:903: error: expected `;' before "index_t"
+matrix.h:903: error: `index_t' does not name a type
+matrix.h:907: error: `index_t' does not name a type
+matrix.h:918: error: expected `;' before '(' token
+matrix.h:923: error: expected `;' before "const"
+matrix.h:923: error: expected `;' before '(' token
+matrix.h:927: error: expected `;' before '}' token
+matrix.h: In member function `double SmallMatrix<t_rows, t_cols>::get(int, int) const':
+matrix.h:886: error: there are no arguments to `DEBUG_BOUNDS' that depend on a template parameter, so a declaration of `DEBUG_BOUNDS' must be available
+matrix.h:887: error: there are no arguments to `DEBUG_BOUNDS' that depend on a template parameter, so a declaration of `DEBUG_BOUNDS' must be available
+matrix.h: In member function `void SmallMatrix<t_rows, t_cols>::set(int, int, double)':
+matrix.h:892: error: there are no arguments to `DEBUG_BOUNDS' that depend on a template parameter, so a declaration of `DEBUG_BOUNDS' must be available
+matrix.h:893: error: there are no arguments to `DEBUG_BOUNDS' that depend on a template parameter, so a declaration of `DEBUG_BOUNDS' must be available
+In file included from uselapack.cc:7:
+uselapack.h:11:27: col/arraylist.h: No such file or directory
+In file included from uselapack.h:41,
+                 from uselapack.cc:7:
+blas.h:4:26: base/fortran.h: No such file or directory
+blas.h:5:27: base/compiler.h: No such file or directory
+In file included from uselapack.h:41,
+                 from uselapack.cc:7:
+blas.h: At global scope:
+blas.h:8: error: `EXTERN_C_BEGIN' does not name a type
+blas.h:11: error: `f77_ret_void' does not name a type
+blas.h:12: error: `f77_ret_void' does not name a type
+blas.h:13: error: `f77_ret_void' does not name a type
+blas.h:14: error: `f77_ret_void' does not name a type
+blas.h:15: error: `f77_ret_void' does not name a type
+blas.h:16: error: `f77_ret_void' does not name a type
+blas.h:17: error: `f77_ret_real' does not name a type
+blas.h:18: error: `f77_ret_real' does not name a type
+blas.h:19: error: `f77_ret_void' does not name a type
+blas.h:20: error: `f77_ret_real' does not name a type
+blas.h:21: error: `f77_ret_real' does not name a type
+blas.h:22: error: `f77_ret_integer' does not name a type
+blas.h:23: error: `f77_ret_void' does not name a type
+blas.h:24: error: `f77_ret_void' does not name a type
+blas.h:25: error: `f77_ret_void' does not name a type
+blas.h:26: error: `f77_ret_void' does not name a type
+blas.h:27: error: `f77_ret_void' does not name a type
+blas.h:28: error: `f77_ret_void' does not name a type
+blas.h:29: error: `f77_ret_void' does not name a type
+blas.h:30: error: `f77_ret_void' does not name a type
+blas.h:31: error: `f77_ret_double' does not name a type
+blas.h:32: error: `f77_ret_double' does not name a type
+blas.h:33: error: `f77_ret_void' does not name a type
+blas.h:34: error: `f77_ret_double' does not name a type
+blas.h:35: error: `f77_ret_double' does not name a type
+blas.h:36: error: `f77_ret_integer' does not name a type
+blas.h:37: error: `f77_ret_void' does not name a type
+blas.h:38: error: `f77_ret_void' does not name a type
+blas.h:39: error: `f77_ret_void' does not name a type
+blas.h:40: error: `f77_ret_void' does not name a type
+blas.h:43: error: `f77_ret_void' does not name a type
+blas.h:44: error: `f77_ret_integer' does not name a type
+blas.h:45: error: `f77_ret_void' does not name a type
+blas.h:46: error: `f77_ret_real' does not name a type
+blas.h:47: error: `f77_ret_real' does not name a type
+blas.h:48: error: `f77_ret_void' does not name a type
+blas.h:49: error: `f77_ret_void' does not name a type
+blas.h:50: error: `f77_ret_void' does not name a type
+blas.h:51: error: `f77_ret_void' does not name a type
+blas.h:54: error: `f77_ret_void' does not name a type
+blas.h:55: error: `f77_ret_void' does not name a type
+blas.h:56: error: `f77_ret_double' does not name a type
+blas.h:57: error: `f77_ret_double' does not name a type
+blas.h:58: error: `f77_ret_integer' does not name a type
+blas.h:59: error: `f77_ret_void' does not name a type
+blas.h:60: error: `f77_ret_void' does not name a type
+blas.h:61: error: `f77_ret_void' does not name a type
+blas.h:62: error: `f77_ret_void' does not name a type
+blas.h:63: error: `f77_ret_void' does not name a type
+blas.h:64: error: `f77_ret_void' does not name a type
+blas.h:65: error: `f77_ret_void' does not name a type
+blas.h:66: error: `f77_ret_void' does not name a type
+blas.h:67: error: `f77_ret_void' does not name a type
+blas.h:68: error: `f77_ret_void' does not name a type
+blas.h:69: error: `f77_ret_void' does not name a type
+blas.h:70: error: `f77_ret_void' does not name a type
+blas.h:71: error: `f77_ret_void' does not name a type
+blas.h:72: error: `f77_ret_void' does not name a type
+blas.h:73: error: `f77_ret_void' does not name a type
+blas.h:74: error: `f77_ret_void' does not name a type
+blas.h:75: error: `f77_ret_void' does not name a type
+blas.h:76: error: `f77_ret_void' does not name a type
+blas.h:77: error: `f77_ret_void' does not name a type
+blas.h:78: error: `f77_ret_void' does not name a type
+blas.h:79: error: `f77_ret_void' does not name a type
+blas.h:80: error: `f77_ret_void' does not name a type
+blas.h:81: error: `f77_ret_void' does not name a type
+blas.h:82: error: `f77_ret_void' does not name a type
+blas.h:83: error: `f77_ret_void' does not name a type
+blas.h:84: error: `f77_ret_void' does not name a type
+blas.h:85: error: `f77_ret_void' does not name a type
+blas.h:86: error: `f77_ret_void' does not name a type
+blas.h:87: error: `f77_ret_void' does not name a type
+blas.h:88: error: `f77_ret_void' does not name a type
+blas.h:89: error: `f77_ret_void' does not name a type
+blas.h:90: error: `f77_ret_void' does not name a type
+blas.h:91: error: `f77_ret_void' does not name a type
+blas.h:92: error: `f77_ret_void' does not name a type
+blas.h:93: error: `f77_ret_void' does not name a type
+blas.h:94: error: `f77_ret_void' does not name a type
+blas.h:95: error: `f77_ret_void' does not name a type
+blas.h:96: error: `f77_ret_void' does not name a type
+blas.h:97: error: `f77_ret_void' does not name a type
+blas.h:98: error: `f77_ret_void' does not name a type
+blas.h:99: error: `f77_ret_void' does not name a type
+blas.h:100: error: `f77_ret_void' does not name a type
+blas.h:101: error: `f77_ret_void' does not name a type
+blas.h:102: error: `f77_ret_void' does not name a type
+blas.h:103: error: `f77_ret_void' does not name a type
+blas.h:104: error: `f77_ret_void' does not name a type
+blas.h:105: error: `f77_ret_void' does not name a type
+blas.h:106: error: `f77_ret_void' does not name a type
+blas.h:107: error: `f77_ret_void' does not name a type
+blas.h:108: error: `f77_ret_void' does not name a type
+blas.h:109: error: `f77_ret_void' does not name a type
+blas.h:110: error: `f77_ret_void' does not name a type
+blas.h:111: error: `f77_ret_void' does not name a type
+blas.h:112: error: `f77_ret_void' does not name a type
+blas.h:113: error: `f77_ret_void' does not name a type
+blas.h:114: error: `f77_ret_void' does not name a type
+blas.h:115: error: `f77_ret_void' does not name a type
+blas.h:116: error: `f77_ret_void' does not name a type
+blas.h:117: error: `f77_ret_void' does not name a type
+blas.h:118: error: `f77_ret_void' does not name a type
+blas.h:119: error: `f77_ret_void' does not name a type
+blas.h:120: error: `f77_ret_void' does not name a type
+blas.h:121: error: `f77_ret_void' does not name a type
+blas.h:122: error: `f77_ret_void' does not name a type
+blas.h:123: error: `f77_ret_void' does not name a type
+blas.h:124: error: `f77_ret_void' does not name a type
+blas.h:125: error: `f77_ret_void' does not name a type
+blas.h:126: error: `f77_ret_void' does not name a type
+blas.h:127: error: `f77_ret_void' does not name a type
+blas.h:128: error: `f77_ret_void' does not name a type
+blas.h:129: error: `f77_ret_void' does not name a type
+blas.h:130: error: `f77_ret_void' does not name a type
+blas.h:131: error: `f77_ret_void' does not name a type
+blas.h:132: error: `f77_ret_void' does not name a type
+blas.h:133: error: `f77_ret_void' does not name a type
+blas.h:134: error: `f77_ret_void' does not name a type
+blas.h:135: error: `f77_ret_void' does not name a type
+blas.h:136: error: `f77_ret_void' does not name a type
+blas.h:137: error: `f77_ret_void' does not name a type
+blas.h:138: error: `f77_ret_void' does not name a type
+blas.h:139: error: `f77_ret_void' does not name a type
+blas.h:140: error: `f77_ret_void' does not name a type
+blas.h:141: error: `f77_ret_void' does not name a type
+blas.h:142: error: `f77_ret_void' does not name a type
+blas.h:143: error: `f77_ret_void' does not name a type
+blas.h:144: error: `f77_ret_void' does not name a type
+blas.h:145: error: `f77_ret_void' does not name a type
+blas.h:146: error: `f77_ret_void' does not name a type
+blas.h:147: error: `f77_ret_void' does not name a type
+blas.h:148: error: `f77_ret_void' does not name a type
+blas.h:149: error: `f77_ret_void' does not name a type
+blas.h:150: error: `f77_ret_void' does not name a type
+blas.h:151: error: `f77_ret_void' does not name a type
+blas.h:152: error: `f77_ret_void' does not name a type
+blas.h:153: error: `f77_ret_void' does not name a type
+blas.h:154: error: `f77_ret_void' does not name a type
+blas.h:157: error: expected constructor, destructor, or type conversion before '}' token
+In file included from uselapack.h:42,
+                 from uselapack.cc:7:
+clapack.h:13: error: `EXTERN_C_BEGIN' does not name a type
+clapack.h:16: error: `f77_ret_void' does not name a type
+clapack.h:17: error: `f77_ret_void' does not name a type
+clapack.h:18: error: `f77_ret_void' does not name a type
+clapack.h:19: error: `f77_ret_void' does not name a type
+clapack.h:20: error: `f77_ret_void' does not name a type
+clapack.h:21: error: `f77_ret_void' does not name a type
+clapack.h:22: error: `f77_ret_void' does not name a type
+clapack.h:23: error: `f77_ret_void' does not name a type
+clapack.h:24: error: `f77_ret_void' does not name a type
+clapack.h:25: error: `f77_ret_void' does not name a type
+clapack.h:26: error: `f77_ret_void' does not name a type
+clapack.h:27: error: `f77_ret_void' does not name a type
+clapack.h:28: error: `f77_ret_void' does not name a type
+clapack.h:29: error: `f77_ret_void' does not name a type
+clapack.h:30: error: `f77_ret_void' does not name a type
+clapack.h:31: error: `f77_ret_void' does not name a type
+clapack.h:32: error: `f77_ret_void' does not name a type
+clapack.h:33: error: `f77_ret_void' does not name a type
+clapack.h:34: error: `f77_ret_void' does not name a type
+clapack.h:35: error: `f77_ret_void' does not name a type
+clapack.h:36: error: `f77_ret_void' does not name a type
+clapack.h:37: error: `f77_ret_void' does not name a type
+clapack.h:38: error: `f77_ret_void' does not name a type
+clapack.h:39: error: `f77_ret_void' does not name a type
+clapack.h:40: error: `f77_ret_void' does not name a type
+clapack.h:41: error: `f77_ret_void' does not name a type
+clapack.h:42: error: `f77_ret_void' does not name a type
+clapack.h:43: error: `f77_ret_void' does not name a type
+clapack.h:44: error: `f77_ret_void' does not name a type
+clapack.h:45: error: `f77_ret_void' does not name a type
+clapack.h:46: error: `f77_ret_void' does not name a type
+clapack.h:47: error: `f77_ret_void' does not name a type
+clapack.h:48: error: `f77_ret_void' does not name a type
+clapack.h:49: error: `f77_ret_void' does not name a type
+clapack.h:50: error: `f77_ret_void' does not name a type
+clapack.h:51: error: `f77_ret_void' does not name a type
+clapack.h:52: error: `f77_ret_void' does not name a type
+clapack.h:53: error: `f77_ret_void' does not name a type
+clapack.h:54: error: `f77_ret_void' does not name a type
+clapack.h:55: error: `f77_ret_void' does not name a type
+clapack.h:56: error: `f77_ret_void' does not name a type
+clapack.h:57: error: `f77_ret_void' does not name a type
+clapack.h:58: error: `f77_ret_void' does not name a type
+clapack.h:59: error: `f77_ret_void' does not name a type
+clapack.h:60: error: `f77_ret_void' does not name a type
+clapack.h:61: error: `f77_ret_void' does not name a type
+clapack.h:62: error: `f77_ret_void' does not name a type
+clapack.h:63: error: `f77_ret_void' does not name a type
+clapack.h:64: error: `f77_ret_void' does not name a type
+clapack.h:65: error: `f77_ret_void' does not name a type
+clapack.h:66: error: `f77_ret_void' does not name a type
+clapack.h:67: error: `f77_ret_void' does not name a type
+clapack.h:68: error: `f77_ret_void' does not name a type
+clapack.h:69: error: `f77_ret_void' does not name a type
+clapack.h:70: error: `f77_ret_void' does not name a type
+clapack.h:71: error: `f77_ret_void' does not name a type
+clapack.h:72: error: `f77_ret_void' does not name a type
+clapack.h:73: error: `f77_ret_void' does not name a type
+clapack.h:74: error: `f77_ret_void' does not name a type
+clapack.h:75: error: `f77_ret_void' does not name a type
+clapack.h:76: error: `f77_ret_void' does not name a type
+clapack.h:77: error: `f77_ret_void' does not name a type
+clapack.h:78: error: `f77_ret_void' does not name a type
+clapack.h:79: error: `f77_ret_void' does not name a type
+clapack.h:80: error: `f77_ret_void' does not name a type
+clapack.h:81: error: `f77_ret_void' does not name a type
+clapack.h:82: error: `f77_ret_void' does not name a type
+clapack.h:83: error: `f77_ret_void' does not name a type
+clapack.h:84: error: `f77_ret_void' does not name a type
+clapack.h:85: error: `f77_ret_void' does not name a type
+clapack.h:86: error: `f77_ret_void' does not name a type
+clapack.h:87: error: `f77_ret_void' does not name a type
+clapack.h:88: error: `f77_ret_void' does not name a type
+clapack.h:89: error: `f77_ret_void' does not name a type
+clapack.h:90: error: `f77_ret_void' does not name a type
+clapack.h:91: error: `f77_ret_void' does not name a type
+clapack.h:92: error: `f77_ret_void' does not name a type
+clapack.h:93: error: `f77_ret_void' does not name a type
+clapack.h:94: error: `f77_ret_void' does not name a type
+clapack.h:95: error: `f77_ret_void' does not name a type
+clapack.h:96: error: `f77_ret_void' does not name a type
+clapack.h:97: error: `f77_ret_void' does not name a type
+clapack.h:98: error: `f77_ret_void' does not name a type
+clapack.h:99: error: `f77_ret_void' does not name a type
+clapack.h:100: error: `f77_ret_void' does not name a type
+clapack.h:101: error: `f77_ret_void' does not name a type
+clapack.h:102: error: `f77_ret_void' does not name a type
+clapack.h:103: error: `f77_ret_void' does not name a type
+clapack.h:104: error: `f77_ret_void' does not name a type
+clapack.h:105: error: `f77_ret_void' does not name a type
+clapack.h:106: error: `f77_ret_void' does not name a type
+clapack.h:107: error: `f77_ret_void' does not name a type
+clapack.h:108: error: `f77_ret_void' does not name a type
+clapack.h:109: error: `f77_ret_void' does not name a type
+clapack.h:110: error: `f77_ret_void' does not name a type
+clapack.h:111: error: `f77_ret_void' does not name a type
+clapack.h:112: error: `f77_ret_void' does not name a type
+clapack.h:113: error: `f77_ret_void' does not name a type
+clapack.h:114: error: `f77_ret_void' does not name a type
+clapack.h:115: error: `f77_ret_void' does not name a type
+clapack.h:116: error: `f77_ret_void' does not name a type
+clapack.h:117: error: `f77_ret_void' does not name a type
+clapack.h:118: error: `f77_ret_void' does not name a type
+clapack.h:119: error: `f77_ret_void' does not name a type
+clapack.h:120: error: `f77_ret_void' does not name a type
+clapack.h:121: error: `f77_ret_void' does not name a type
+clapack.h:122: error: `f77_ret_void' does not name a type
+clapack.h:123: error: `f77_ret_void' does not name a type
+clapack.h:124: error: `f77_ret_void' does not name a type
+clapack.h:125: error: `f77_ret_void' does not name a type
+clapack.h:126: error: `f77_ret_void' does not name a type
+clapack.h:127: error: `f77_ret_void' does not name a type
+clapack.h:128: error: `f77_ret_void' does not name a type
+clapack.h:129: error: `f77_ret_void' does not name a type
+clapack.h:130: error: `f77_ret_void' does not name a type
+clapack.h:131: error: `f77_ret_void' does not name a type
+clapack.h:132: error: `f77_ret_void' does not name a type
+clapack.h:133: error: `f77_ret_void' does not name a type
+clapack.h:134: error: `f77_ret_void' does not name a type
+clapack.h:135: error: `f77_ret_void' does not name a type
+clapack.h:136: error: `f77_ret_void' does not name a type
+clapack.h:137: error: `f77_ret_void' does not name a type
+clapack.h:138: error: `f77_ret_void' does not name a type
+clapack.h:139: error: `f77_ret_void' does not name a type
+clapack.h:140: error: `f77_ret_void' does not name a type
+clapack.h:141: error: `f77_ret_void' does not name a type
+clapack.h:142: error: `f77_ret_void' does not name a type
+clapack.h:143: error: `f77_ret_void' does not name a type
+clapack.h:144: error: `f77_ret_void' does not name a type
+clapack.h:145: error: `f77_ret_void' does not name a type
+clapack.h:146: error: `f77_ret_void' does not name a type
+clapack.h:147: error: `f77_ret_void' does not name a type
+clapack.h:148: error: `f77_ret_void' does not name a type
+clapack.h:149: error: `f77_ret_void' does not name a type
+clapack.h:150: error: `f77_ret_void' does not name a type
+clapack.h:151: error: `f77_ret_void' does not name a type
+clapack.h:152: error: `f77_ret_void' does not name a type
+clapack.h:153: error: `f77_ret_void' does not name a type
+clapack.h:154: error: `f77_ret_void' does not name a type
+clapack.h:155: error: `f77_ret_void' does not name a type
+clapack.h:156: error: `f77_ret_void' does not name a type
+clapack.h:157: error: `f77_ret_void' does not name a type
+clapack.h:158: error: `f77_ret_void' does not name a type
+clapack.h:159: error: `f77_ret_void' does not name a type
+clapack.h:160: error: `f77_ret_void' does not name a type
+clapack.h:161: error: `f77_ret_void' does not name a type
+clapack.h:162: error: `f77_ret_void' does not name a type
+clapack.h:163: error: `f77_ret_void' does not name a type
+clapack.h:164: error: `f77_ret_void' does not name a type
+clapack.h:165: error: `f77_ret_void' does not name a type
+clapack.h:166: error: `f77_ret_void' does not name a type
+clapack.h:167: error: `f77_ret_void' does not name a type
+clapack.h:168: error: `f77_ret_void' does not name a type
+clapack.h:169: error: `f77_ret_void' does not name a type
+clapack.h:170: error: `f77_ret_void' does not name a type
+clapack.h:171: error: `f77_ret_void' does not name a type
+clapack.h:172: error: `f77_ret_void' does not name a type
+clapack.h:173: error: `f77_ret_void' does not name a type
+clapack.h:174: error: `f77_ret_void' does not name a type
+clapack.h:175: error: `f77_ret_void' does not name a type
+clapack.h:176: error: `f77_ret_void' does not name a type
+clapack.h:177: error: `f77_ret_void' does not name a type
+clapack.h:178: error: `f77_ret_void' does not name a type
+clapack.h:179: error: `f77_ret_void' does not name a type
+clapack.h:180: error: `f77_ret_void' does not name a type
+clapack.h:181: error: `f77_ret_void' does not name a type
+clapack.h:182: error: `f77_ret_void' does not name a type
+clapack.h:183: error: `f77_ret_void' does not name a type
+clapack.h:184: error: `f77_ret_void' does not name a type
+clapack.h:185: error: `f77_ret_void' does not name a type
+clapack.h:186: error: `f77_ret_void' does not name a type
+clapack.h:187: error: `f77_ret_void' does not name a type
+clapack.h:188: error: `f77_ret_void' does not name a type
+clapack.h:189: error: `f77_ret_void' does not name a type
+clapack.h:190: error: `f77_ret_void' does not name a type
+clapack.h:191: error: `f77_ret_void' does not name a type
+clapack.h:192: error: `f77_ret_void' does not name a type
+clapack.h:193: error: `f77_ret_void' does not name a type
+clapack.h:194: error: `f77_ret_void' does not name a type
+clapack.h:195: error: `f77_ret_void' does not name a type
+clapack.h:196: error: `f77_ret_void' does not name a type
+clapack.h:197: error: `f77_ret_void' does not name a type
+clapack.h:198: error: `f77_ret_void' does not name a type
+clapack.h:199: error: `f77_ret_void' does not name a type
+clapack.h:200: error: `f77_ret_void' does not name a type
+clapack.h:201: error: `f77_ret_void' does not name a type
+clapack.h:202: error: `f77_ret_void' does not name a type
+clapack.h:203: error: `f77_ret_void' does not name a type
+clapack.h:204: error: `f77_ret_void' does not name a type
+clapack.h:205: error: `f77_ret_void' does not name a type
+clapack.h:206: error: `f77_ret_void' does not name a type
+clapack.h:207: error: `f77_ret_void' does not name a type
+clapack.h:208: error: `f77_ret_void' does not name a type
+clapack.h:209: error: `f77_ret_void' does not name a type
+clapack.h:210: error: `f77_ret_void' does not name a type
+clapack.h:211: error: `f77_ret_void' does not name a type
+clapack.h:212: error: `f77_ret_void' does not name a type
+clapack.h:213: error: `f77_ret_void' does not name a type
+clapack.h:214: error: `f77_ret_void' does not name a type
+clapack.h:215: error: `f77_ret_void' does not name a type
+clapack.h:216: error: `f77_ret_void' does not name a type
+clapack.h:217: error: `f77_ret_void' does not name a type
+clapack.h:218: error: `f77_ret_void' does not name a type
+clapack.h:219: error: `f77_ret_void' does not name a type
+clapack.h:220: error: `f77_ret_void' does not name a type
+clapack.h:221: error: `f77_ret_void' does not name a type
+clapack.h:222: error: `f77_ret_void' does not name a type
+clapack.h:223: error: `f77_ret_void' does not name a type
+clapack.h:224: error: `f77_ret_void' does not name a type
+clapack.h:225: error: `f77_ret_void' does not name a type
+clapack.h:226: error: `f77_ret_void' does not name a type
+clapack.h:227: error: `f77_ret_void' does not name a type
+clapack.h:228: error: `f77_ret_void' does not name a type
+clapack.h:229: error: `f77_ret_void' does not name a type
+clapack.h:230: error: `f77_ret_void' does not name a type
+clapack.h:231: error: `f77_ret_void' does not name a type
+clapack.h:232: error: `f77_ret_void' does not name a type
+clapack.h:233: error: `f77_ret_void' does not name a type
+clapack.h:234: error: `f77_ret_void' does not name a type
+clapack.h:235: error: `f77_ret_void' does not name a type
+clapack.h:236: error: `f77_ret_void' does not name a type
+clapack.h:237: error: `f77_ret_void' does not name a type
+clapack.h:238: error: `f77_ret_void' does not name a type
+clapack.h:239: error: `f77_ret_void' does not name a type
+clapack.h:240: error: `f77_ret_void' does not name a type
+clapack.h:241: error: `f77_ret_void' does not name a type
+clapack.h:242: error: `f77_ret_void' does not name a type
+clapack.h:243: error: `f77_ret_void' does not name a type
+clapack.h:244: error: `f77_ret_void' does not name a type
+clapack.h:245: error: `f77_ret_void' does not name a type
+clapack.h:246: error: `f77_ret_void' does not name a type
+clapack.h:247: error: `f77_ret_void' does not name a type
+clapack.h:248: error: `f77_ret_void' does not name a type
+clapack.h:249: error: `f77_ret_void' does not name a type
+clapack.h:250: error: `f77_ret_void' does not name a type
+clapack.h:251: error: `f77_ret_void' does not name a type
+clapack.h:252: error: `f77_ret_void' does not name a type
+clapack.h:253: error: `f77_ret_void' does not name a type
+clapack.h:254: error: `f77_ret_void' does not name a type
+clapack.h:255: error: `f77_ret_void' does not name a type
+clapack.h:256: error: `f77_ret_void' does not name a type
+clapack.h:257: error: `f77_ret_void' does not name a type
+clapack.h:258: error: `f77_ret_void' does not name a type
+clapack.h:259: error: `f77_ret_void' does not name a type
+clapack.h:260: error: `f77_ret_void' does not name a type
+clapack.h:261: error: `f77_ret_void' does not name a type
+clapack.h:262: error: `f77_ret_void' does not name a type
+clapack.h:263: error: `f77_ret_void' does not name a type
+clapack.h:264: error: `f77_ret_void' does not name a type
+clapack.h:265: error: `f77_ret_void' does not name a type
+clapack.h:266: error: `f77_ret_void' does not name a type
+clapack.h:267: error: `f77_ret_void' does not name a type
+clapack.h:268: error: `f77_ret_void' does not name a type
+clapack.h:269: error: `f77_ret_void' does not name a type
+clapack.h:270: error: `f77_ret_void' does not name a type
+clapack.h:271: error: `f77_ret_void' does not name a type
+clapack.h:272: error: `f77_ret_void' does not name a type
+clapack.h:273: error: `f77_ret_void' does not name a type
+clapack.h:274: error: `f77_ret_void' does not name a type
+clapack.h:275: error: `f77_ret_void' does not name a type
+clapack.h:276: error: `f77_ret_void' does not name a type
+clapack.h:277: error: `f77_ret_void' does not name a type
+clapack.h:278: error: `f77_ret_void' does not name a type
+clapack.h:279: error: `f77_ret_void' does not name a type
+clapack.h:280: error: `f77_ret_void' does not name a type
+clapack.h:281: error: `f77_ret_void' does not name a type
+clapack.h:282: error: `f77_ret_void' does not name a type
+clapack.h:283: error: `f77_ret_void' does not name a type
+clapack.h:284: error: `f77_ret_void' does not name a type
+clapack.h:285: error: `f77_ret_void' does not name a type
+clapack.h:286: error: `f77_ret_void' does not name a type
+clapack.h:287: error: `f77_ret_void' does not name a type
+clapack.h:288: error: `f77_ret_void' does not name a type
+clapack.h:289: error: `f77_ret_void' does not name a type
+clapack.h:290: error: `f77_ret_void' does not name a type
+clapack.h:291: error: `f77_ret_void' does not name a type
+clapack.h:292: error: `f77_ret_void' does not name a type
+clapack.h:293: error: `f77_ret_void' does not name a type
+clapack.h:294: error: `f77_ret_void' does not name a type
+clapack.h:295: error: `f77_ret_void' does not name a type
+clapack.h:296: error: `f77_ret_void' does not name a type
+clapack.h:297: error: `f77_ret_void' does not name a type
+clapack.h:298: error: `f77_ret_void' does not name a type
+clapack.h:299: error: `f77_ret_void' does not name a type
+clapack.h:300: error: `f77_ret_void' does not name a type
+clapack.h:301: error: `f77_ret_void' does not name a type
+clapack.h:302: error: `f77_ret_void' does not name a type
+clapack.h:303: error: `f77_ret_void' does not name a type
+clapack.h:304: error: `f77_ret_void' does not name a type
+clapack.h:305: error: `f77_ret_void' does not name a type
+clapack.h:306: error: `f77_ret_void' does not name a type
+clapack.h:307: error: `f77_ret_void' does not name a type
+clapack.h:308: error: `f77_ret_void' does not name a type
+clapack.h:309: error: `f77_ret_void' does not name a type
+clapack.h:310: error: `f77_ret_void' does not name a type
+clapack.h:311: error: `f77_ret_void' does not name a type
+clapack.h:312: error: `f77_ret_void' does not name a type
+clapack.h:313: error: `f77_ret_void' does not name a type
+clapack.h:314: error: `f77_ret_void' does not name a type
+clapack.h:315: error: `f77_ret_void' does not name a type
+clapack.h:316: error: `f77_ret_void' does not name a type
+clapack.h:317: error: `f77_ret_void' does not name a type
+clapack.h:318: error: `f77_ret_void' does not name a type
+clapack.h:319: error: `f77_ret_void' does not name a type
+clapack.h:320: error: `f77_ret_void' does not name a type
+clapack.h:321: error: `f77_ret_void' does not name a type
+clapack.h:322: error: `f77_ret_void' does not name a type
+clapack.h:323: error: `f77_ret_void' does not name a type
+clapack.h:324: error: `f77_ret_void' does not name a type
+clapack.h:325: error: `f77_ret_void' does not name a type
+clapack.h:326: error: `f77_ret_void' does not name a type
+clapack.h:327: error: `f77_ret_void' does not name a type
+clapack.h:328: error: `f77_ret_void' does not name a type
+clapack.h:329: error: `f77_ret_void' does not name a type
+clapack.h:330: error: `f77_ret_void' does not name a type
+clapack.h:331: error: `f77_ret_void' does not name a type
+clapack.h:332: error: `f77_ret_void' does not name a type
+clapack.h:333: error: `f77_ret_void' does not name a type
+clapack.h:334: error: `f77_ret_void' does not name a type
+clapack.h:335: error: `f77_ret_void' does not name a type
+clapack.h:336: error: `f77_ret_void' does not name a type
+clapack.h:337: error: `f77_ret_void' does not name a type
+clapack.h:338: error: `f77_ret_void' does not name a type
+clapack.h:339: error: `f77_ret_void' does not name a type
+clapack.h:340: error: `f77_ret_void' does not name a type
+clapack.h:341: error: `f77_ret_void' does not name a type
+clapack.h:342: error: `f77_ret_void' does not name a type
+clapack.h:343: error: `f77_ret_void' does not name a type
+clapack.h:344: error: `f77_ret_void' does not name a type
+clapack.h:345: error: `f77_ret_void' does not name a type
+clapack.h:346: error: `f77_ret_void' does not name a type
+clapack.h:347: error: `f77_ret_void' does not name a type
+clapack.h:348: error: `f77_ret_void' does not name a type
+clapack.h:349: error: `f77_ret_void' does not name a type
+clapack.h:350: error: `f77_ret_void' does not name a type
+clapack.h:351: error: `f77_ret_void' does not name a type
+clapack.h:352: error: `f77_ret_void' does not name a type
+clapack.h:353: error: `f77_ret_void' does not name a type
+clapack.h:354: error: `f77_ret_void' does not name a type
+clapack.h:355: error: `f77_ret_void' does not name a type
+clapack.h:356: error: `f77_ret_void' does not name a type
+clapack.h:357: error: `f77_ret_void' does not name a type
+clapack.h:358: error: `f77_ret_void' does not name a type
+clapack.h:359: error: `f77_ret_void' does not name a type
+clapack.h:360: error: `f77_ret_void' does not name a type
+clapack.h:361: error: `f77_ret_void' does not name a type
+clapack.h:362: error: `f77_ret_void' does not name a type
+clapack.h:363: error: `f77_ret_void' does not name a type
+clapack.h:364: error: `f77_ret_void' does not name a type
+clapack.h:365: error: `f77_ret_void' does not name a type
+clapack.h:366: error: `f77_ret_void' does not name a type
+clapack.h:367: error: `f77_ret_void' does not name a type
+clapack.h:368: error: `f77_ret_void' does not name a type
+clapack.h:369: error: `f77_ret_void' does not name a type
+clapack.h:370: error: `f77_ret_void' does not name a type
+clapack.h:371: error: `f77_ret_void' does not name a type
+clapack.h:372: error: `f77_ret_void' does not name a type
+clapack.h:373: error: `f77_ret_void' does not name a type
+clapack.h:374: error: `f77_ret_void' does not name a type
+clapack.h:375: error: `f77_ret_void' does not name a type
+clapack.h:376: error: `f77_ret_void' does not name a type
+clapack.h:377: error: `f77_ret_void' does not name a type
+clapack.h:378: error: `f77_ret_void' does not name a type
+clapack.h:379: error: `f77_ret_void' does not name a type
+clapack.h:380: error: `f77_ret_void' does not name a type
+clapack.h:381: error: `f77_ret_void' does not name a type
+clapack.h:382: error: `f77_ret_void' does not name a type
+clapack.h:383: error: `f77_ret_void' does not name a type
+clapack.h:384: error: `f77_ret_void' does not name a type
+clapack.h:385: error: `f77_ret_void' does not name a type
+clapack.h:386: error: `f77_ret_void' does not name a type
+clapack.h:387: error: `f77_ret_void' does not name a type
+clapack.h:388: error: `f77_ret_void' does not name a type
+clapack.h:389: error: `f77_ret_void' does not name a type
+clapack.h:390: error: `f77_ret_void' does not name a type
+clapack.h:391: error: `f77_ret_void' does not name a type
+clapack.h:392: error: `f77_ret_void' does not name a type
+clapack.h:393: error: `f77_ret_void' does not name a type
+clapack.h:394: error: `f77_ret_void' does not name a type
+clapack.h:395: error: `f77_ret_void' does not name a type
+clapack.h:396: error: `f77_ret_void' does not name a type
+clapack.h:397: error: `f77_ret_void' does not name a type
+clapack.h:398: error: `f77_ret_void' does not name a type
+clapack.h:399: error: `f77_ret_void' does not name a type
+clapack.h:400: error: `f77_ret_void' does not name a type
+clapack.h:401: error: `f77_ret_void' does not name a type
+clapack.h:402: error: `f77_ret_void' does not name a type
+clapack.h:403: error: `f77_ret_void' does not name a type
+clapack.h:404: error: `f77_ret_void' does not name a type
+clapack.h:405: error: `f77_ret_void' does not name a type
+clapack.h:406: error: `f77_ret_void' does not name a type
+clapack.h:407: error: `f77_ret_void' does not name a type
+clapack.h:408: error: `f77_ret_void' does not name a type
+clapack.h:409: error: `f77_ret_void' does not name a type
+clapack.h:410: error: `f77_ret_void' does not name a type
+clapack.h:411: error: `f77_ret_void' does not name a type
+clapack.h:412: error: `f77_ret_void' does not name a type
+clapack.h:413: error: `f77_ret_void' does not name a type
+clapack.h:414: error: `f77_ret_void' does not name a type
+clapack.h:415: error: `f77_ret_void' does not name a type
+clapack.h:416: error: `f77_ret_void' does not name a type
+clapack.h:417: error: `f77_ret_void' does not name a type
+clapack.h:418: error: `f77_ret_void' does not name a type
+clapack.h:419: error: `f77_ret_void' does not name a type
+clapack.h:420: error: `f77_ret_void' does not name a type
+clapack.h:421: error: `f77_ret_void' does not name a type
+clapack.h:422: error: `f77_ret_void' does not name a type
+clapack.h:423: error: `f77_ret_void' does not name a type
+clapack.h:424: error: `f77_ret_void' does not name a type
+clapack.h:425: error: `f77_ret_void' does not name a type
+clapack.h:426: error: `f77_ret_void' does not name a type
+clapack.h:427: error: `f77_ret_void' does not name a type
+clapack.h:428: error: `f77_ret_void' does not name a type
+clapack.h:429: error: `f77_ret_void' does not name a type
+clapack.h:430: error: `f77_ret_void' does not name a type
+clapack.h:431: error: `f77_ret_void' does not name a type
+clapack.h:432: error: `f77_ret_void' does not name a type
+clapack.h:433: error: `f77_ret_void' does not name a type
+clapack.h:434: error: `f77_ret_void' does not name a type
+clapack.h:435: error: `f77_ret_void' does not name a type
+clapack.h:436: error: `f77_ret_void' does not name a type
+clapack.h:437: error: `f77_ret_void' does not name a type
+clapack.h:438: error: `f77_ret_void' does not name a type
+clapack.h:439: error: `f77_ret_void' does not name a type
+clapack.h:440: error: `f77_ret_void' does not name a type
+clapack.h:441: error: `f77_ret_void' does not name a type
+clapack.h:442: error: `f77_ret_void' does not name a type
+clapack.h:443: error: `f77_ret_void' does not name a type
+clapack.h:444: error: `f77_ret_void' does not name a type
+clapack.h:445: error: `f77_ret_void' does not name a type
+clapack.h:446: error: `f77_ret_void' does not name a type
+clapack.h:447: error: `f77_ret_void' does not name a type
+clapack.h:448: error: `f77_ret_void' does not name a type
+clapack.h:449: error: `f77_ret_void' does not name a type
+clapack.h:450: error: `f77_ret_void' does not name a type
+clapack.h:451: error: `f77_ret_void' does not name a type
+clapack.h:452: error: `f77_ret_void' does not name a type
+clapack.h:453: error: `f77_ret_void' does not name a type
+clapack.h:454: error: `f77_ret_void' does not name a type
+clapack.h:455: error: `f77_ret_void' does not name a type
+clapack.h:456: error: `f77_ret_void' does not name a type
+clapack.h:457: error: `f77_ret_void' does not name a type
+clapack.h:458: error: `f77_ret_void' does not name a type
+clapack.h:459: error: `f77_ret_void' does not name a type
+clapack.h:460: error: `f77_ret_void' does not name a type
+clapack.h:461: error: `f77_ret_void' does not name a type
+clapack.h:462: error: `f77_ret_void' does not name a type
+clapack.h:463: error: `f77_ret_void' does not name a type
+clapack.h:464: error: `f77_ret_void' does not name a type
+clapack.h:465: error: `f77_ret_void' does not name a type
+clapack.h:466: error: `f77_ret_void' does not name a type
+clapack.h:467: error: `f77_ret_void' does not name a type
+clapack.h:468: error: `f77_ret_void' does not name a type
+clapack.h:469: error: `f77_ret_void' does not name a type
+clapack.h:470: error: `f77_ret_void' does not name a type
+clapack.h:471: error: `f77_ret_void' does not name a type
+clapack.h:472: error: `f77_ret_void' does not name a type
+clapack.h:473: error: `f77_ret_void' does not name a type
+clapack.h:474: error: `f77_ret_void' does not name a type
+clapack.h:475: error: `f77_ret_void' does not name a type
+clapack.h:476: error: `f77_ret_void' does not name a type
+clapack.h:477: error: `f77_ret_void' does not name a type
+clapack.h:478: error: `f77_ret_void' does not name a type
+clapack.h:479: error: `f77_ret_void' does not name a type
+clapack.h:480: error: `f77_ret_void' does not name a type
+clapack.h:481: error: `f77_ret_void' does not name a type
+clapack.h:482: error: `f77_ret_void' does not name a type
+clapack.h:483: error: `f77_ret_void' does not name a type
+clapack.h:484: error: `f77_ret_void' does not name a type
+clapack.h:485: error: `f77_ret_void' does not name a type
+clapack.h:486: error: `f77_ret_void' does not name a type
+clapack.h:487: error: `f77_ret_void' does not name a type
+clapack.h:488: error: `f77_ret_void' does not name a type
+clapack.h:489: error: `f77_ret_void' does not name a type
+clapack.h:490: error: `f77_ret_void' does not name a type
+clapack.h:491: error: `f77_ret_void' does not name a type
+clapack.h:492: error: `f77_ret_void' does not name a type
+clapack.h:493: error: `f77_ret_void' does not name a type
+clapack.h:494: error: `f77_ret_void' does not name a type
+clapack.h:495: error: `f77_ret_void' does not name a type
+clapack.h:496: error: `f77_ret_void' does not name a type
+clapack.h:497: error: `f77_ret_void' does not name a type
+clapack.h:498: error: `f77_ret_void' does not name a type
+clapack.h:499: error: `f77_ret_void' does not name a type
+clapack.h:500: error: `f77_ret_void' does not name a type
+clapack.h:501: error: `f77_ret_void' does not name a type
+clapack.h:502: error: `f77_ret_void' does not name a type
+clapack.h:503: error: `f77_ret_void' does not name a type
+clapack.h:504: error: `f77_ret_void' does not name a type
+clapack.h:505: error: `f77_ret_void' does not name a type
+clapack.h:506: error: `f77_ret_void' does not name a type
+clapack.h:507: error: `f77_ret_void' does not name a type
+clapack.h:508: error: `f77_ret_void' does not name a type
+clapack.h:509: error: `f77_ret_void' does not name a type
+clapack.h:510: error: `f77_ret_void' does not name a type
+clapack.h:511: error: `f77_ret_void' does not name a type
+clapack.h:512: error: `f77_ret_void' does not name a type
+clapack.h:513: error: `f77_ret_void' does not name a type
+clapack.h:514: error: `f77_ret_void' does not name a type
+clapack.h:515: error: `f77_ret_void' does not name a type
+clapack.h:516: error: `f77_ret_void' does not name a type
+clapack.h:517: error: `f77_ret_void' does not name a type
+clapack.h:518: error: `f77_ret_void' does not name a type
+clapack.h:519: error: `f77_ret_void' does not name a type
+clapack.h:520: error: `f77_ret_void' does not name a type
+clapack.h:521: error: `f77_ret_void' does not name a type
+clapack.h:522: error: `f77_ret_void' does not name a type
+clapack.h:523: error: `f77_ret_void' does not name a type
+clapack.h:524: error: `f77_ret_void' does not name a type
+clapack.h:525: error: `f77_ret_void' does not name a type
+clapack.h:526: error: `f77_ret_void' does not name a type
+clapack.h:527: error: `f77_ret_void' does not name a type
+clapack.h:528: error: `f77_ret_void' does not name a type
+clapack.h:529: error: `f77_ret_void' does not name a type
+clapack.h:530: error: `f77_ret_void' does not name a type
+clapack.h:531: error: `f77_ret_void' does not name a type
+clapack.h:532: error: `f77_ret_void' does not name a type
+clapack.h:533: error: `f77_ret_void' does not name a type
+clapack.h:534: error: `f77_ret_void' does not name a type
+clapack.h:535: error: `f77_ret_void' does not name a type
+clapack.h:536: error: `f77_ret_void' does not name a type
+clapack.h:537: error: `f77_ret_void' does not name a type
+clapack.h:538: error: `f77_ret_void' does not name a type
+clapack.h:539: error: `f77_ret_void' does not name a type
+clapack.h:540: error: `f77_ret_void' does not name a type
+clapack.h:541: error: `f77_ret_void' does not name a type
+clapack.h:542: error: `f77_ret_void' does not name a type
+clapack.h:543: error: `f77_ret_void' does not name a type
+clapack.h:544: error: `f77_ret_void' does not name a type
+clapack.h:545: error: `f77_ret_void' does not name a type
+clapack.h:546: error: `f77_ret_void' does not name a type
+clapack.h:547: error: `f77_ret_void' does not name a type
+clapack.h:548: error: `f77_ret_void' does not name a type
+clapack.h:549: error: `f77_ret_void' does not name a type
+clapack.h:550: error: `f77_ret_void' does not name a type
+clapack.h:551: error: `f77_ret_void' does not name a type
+clapack.h:552: error: `f77_ret_void' does not name a type
+clapack.h:553: error: `f77_ret_void' does not name a type
+clapack.h:554: error: `f77_ret_void' does not name a type
+clapack.h:555: error: `f77_ret_void' does not name a type
+clapack.h:556: error: `f77_ret_void' does not name a type
+clapack.h:557: error: `f77_ret_void' does not name a type
+clapack.h:558: error: `f77_ret_void' does not name a type
+clapack.h:559: error: `f77_ret_void' does not name a type
+clapack.h:560: error: `f77_ret_void' does not name a type
+clapack.h:561: error: `f77_ret_void' does not name a type
+clapack.h:562: error: `f77_ret_void' does not name a type
+clapack.h:563: error: `f77_ret_void' does not name a type
+clapack.h:564: error: `f77_ret_void' does not name a type
+clapack.h:565: error: `f77_ret_void' does not name a type
+clapack.h:566: error: `f77_ret_void' does not name a type
+clapack.h:567: error: `f77_ret_void' does not name a type
+clapack.h:568: error: `f77_ret_void' does not name a type
+clapack.h:569: error: `f77_ret_void' does not name a type
+clapack.h:570: error: `f77_ret_void' does not name a type
+clapack.h:571: error: `f77_ret_void' does not name a type
+clapack.h:572: error: `f77_ret_void' does not name a type
+clapack.h:573: error: `f77_ret_void' does not name a type
+clapack.h:574: error: `f77_ret_void' does not name a type
+clapack.h:575: error: `f77_ret_void' does not name a type
+clapack.h:576: error: `f77_ret_void' does not name a type
+clapack.h:577: error: `f77_ret_void' does not name a type
+clapack.h:578: error: `f77_ret_void' does not name a type
+clapack.h:579: error: `f77_ret_void' does not name a type
+clapack.h:580: error: `f77_ret_void' does not name a type
+clapack.h:581: error: `f77_ret_void' does not name a type
+clapack.h:582: error: `f77_ret_void' does not name a type
+clapack.h:583: error: `f77_ret_void' does not name a type
+clapack.h:584: error: `f77_ret_void' does not name a type
+clapack.h:585: error: `f77_ret_void' does not name a type
+clapack.h:586: error: `f77_ret_void' does not name a type
+clapack.h:587: error: `f77_ret_void' does not name a type
+clapack.h:588: error: `f77_ret_void' does not name a type
+clapack.h:589: error: `f77_ret_void' does not name a type
+clapack.h:590: error: `f77_ret_void' does not name a type
+clapack.h:591: error: `f77_ret_void' does not name a type
+clapack.h:592: error: `f77_ret_void' does not name a type
+clapack.h:593: error: `f77_ret_void' does not name a type
+clapack.h:594: error: `f77_ret_void' does not name a type
+clapack.h:595: error: `f77_ret_void' does not name a type
+clapack.h:596: error: `f77_ret_void' does not name a type
+clapack.h:597: error: `f77_ret_void' does not name a type
+clapack.h:598: error: `f77_ret_void' does not name a type
+clapack.h:599: error: `f77_ret_void' does not name a type
+clapack.h:600: error: `f77_ret_void' does not name a type
+clapack.h:601: error: `f77_ret_void' does not name a type
+clapack.h:602: error: `f77_ret_void' does not name a type
+clapack.h:603: error: `f77_ret_void' does not name a type
+clapack.h:604: error: `f77_ret_void' does not name a type
+clapack.h:605: error: `f77_ret_void' does not name a type
+clapack.h:606: error: `f77_ret_void' does not name a type
+clapack.h:607: error: `f77_ret_void' does not name a type
+clapack.h:608: error: `f77_ret_void' does not name a type
+clapack.h:609: error: `f77_ret_void' does not name a type
+clapack.h:610: error: `f77_ret_void' does not name a type
+clapack.h:611: error: `f77_ret_void' does not name a type
+clapack.h:612: error: `f77_ret_void' does not name a type
+clapack.h:613: error: `f77_ret_void' does not name a type
+clapack.h:614: error: `f77_ret_void' does not name a type
+clapack.h:615: error: `f77_ret_void' does not name a type
+clapack.h:616: error: `f77_ret_void' does not name a type
+clapack.h:617: error: `f77_ret_void' does not name a type
+clapack.h:618: error: `f77_ret_void' does not name a type
+clapack.h:619: error: `f77_ret_void' does not name a type
+clapack.h:620: error: `f77_ret_void' does not name a type
+clapack.h:621: error: `f77_ret_integer' does not name a type
+clapack.h:622: error: `f77_ret_integer' does not name a type
+clapack.h:623: error: `f77_ret_integer' does not name a type
+clapack.h:624: error: `f77_ret_integer' does not name a type
+clapack.h:625: error: `f77_ret_void' does not name a type
+clapack.h:626: error: `f77_ret_void' does not name a type
+clapack.h:627: error: `f77_ret_void' does not name a type
+clapack.h:628: error: `f77_ret_void' does not name a type
+clapack.h:629: error: `f77_ret_void' does not name a type
+clapack.h:630: error: `f77_ret_void' does not name a type
+clapack.h:631: error: `f77_ret_void' does not name a type
+clapack.h:632: error: `f77_ret_void' does not name a type
+clapack.h:633: error: `f77_ret_void' does not name a type
+clapack.h:634: error: `f77_ret_void' does not name a type
+clapack.h:635: error: `f77_ret_void' does not name a type
+clapack.h:636: error: `f77_ret_void' does not name a type
+clapack.h:637: error: `f77_ret_void' does not name a type
+clapack.h:638: error: `f77_ret_void' does not name a type
+clapack.h:639: error: `f77_ret_void' does not name a type
+clapack.h:640: error: `f77_ret_void' does not name a type
+clapack.h:641: error: `f77_ret_void' does not name a type
+clapack.h:642: error: `f77_ret_void' does not name a type
+clapack.h:643: error: `f77_ret_void' does not name a type
+clapack.h:644: error: `f77_ret_void' does not name a type
+clapack.h:645: error: `f77_ret_void' does not name a type
+clapack.h:646: error: `f77_ret_void' does not name a type
+clapack.h:647: error: `f77_ret_void' does not name a type
+clapack.h:648: error: `f77_ret_void' does not name a type
+clapack.h:649: error: `f77_ret_void' does not name a type
+clapack.h:650: error: `f77_ret_void' does not name a type
+clapack.h:651: error: `f77_ret_void' does not name a type
+clapack.h:652: error: `f77_ret_void' does not name a type
+clapack.h:653: error: `f77_ret_void' does not name a type
+clapack.h:654: error: `f77_ret_void' does not name a type
+clapack.h:655: error: `f77_ret_void' does not name a type
+clapack.h:656: error: `f77_ret_void' does not name a type
+clapack.h:657: error: `f77_ret_void' does not name a type
+clapack.h:658: error: `f77_ret_void' does not name a type
+clapack.h:659: error: `f77_ret_void' does not name a type
+clapack.h:660: error: `f77_ret_void' does not name a type
+clapack.h:661: error: `f77_ret_void' does not name a type
+clapack.h:662: error: `f77_ret_void' does not name a type
+clapack.h:663: error: `f77_ret_void' does not name a type
+clapack.h:664: error: `f77_ret_void' does not name a type
+clapack.h:665: error: `f77_ret_void' does not name a type
+clapack.h:666: error: `f77_ret_void' does not name a type
+clapack.h:667: error: `f77_ret_void' does not name a type
+clapack.h:668: error: `f77_ret_void' does not name a type
+clapack.h:669: error: `f77_ret_void' does not name a type
+clapack.h:670: error: `f77_ret_void' does not name a type
+clapack.h:671: error: `f77_ret_void' does not name a type
+clapack.h:672: error: `f77_ret_void' does not name a type
+clapack.h:673: error: `f77_ret_void' does not name a type
+clapack.h:674: error: `f77_ret_void' does not name a type
+clapack.h:675: error: `f77_ret_void' does not name a type
+clapack.h:676: error: `f77_ret_void' does not name a type
+clapack.h:677: error: `f77_ret_void' does not name a type
+clapack.h:678: error: `f77_ret_void' does not name a type
+clapack.h:679: error: `f77_ret_void' does not name a type
+clapack.h:680: error: `f77_ret_void' does not name a type
+clapack.h:681: error: `f77_ret_void' does not name a type
+clapack.h:682: error: `f77_ret_void' does not name a type
+clapack.h:683: error: `f77_ret_void' does not name a type
+clapack.h:684: error: `f77_ret_void' does not name a type
+clapack.h:685: error: `f77_ret_void' does not name a type
+clapack.h:686: error: `f77_ret_void' does not name a type
+clapack.h:687: error: `f77_ret_void' does not name a type
+clapack.h:688: error: `f77_ret_void' does not name a type
+clapack.h:689: error: `f77_ret_void' does not name a type
+clapack.h:690: error: `f77_ret_void' does not name a type
+clapack.h:691: error: `f77_ret_void' does not name a type
+clapack.h:692: error: `f77_ret_void' does not name a type
+clapack.h:693: error: `f77_ret_void' does not name a type
+clapack.h:694: error: `f77_ret_void' does not name a type
+clapack.h:695: error: `f77_ret_void' does not name a type
+clapack.h:696: error: `f77_ret_void' does not name a type
+clapack.h:697: error: `f77_ret_void' does not name a type
+clapack.h:698: error: `f77_ret_void' does not name a type
+clapack.h:699: error: `f77_ret_void' does not name a type
+clapack.h:700: error: `f77_ret_void' does not name a type
+clapack.h:701: error: `f77_ret_void' does not name a type
+clapack.h:702: error: `f77_ret_void' does not name a type
+clapack.h:703: error: `f77_ret_void' does not name a type
+clapack.h:704: error: `f77_ret_void' does not name a type
+clapack.h:705: error: `f77_ret_void' does not name a type
+clapack.h:706: error: `f77_ret_void' does not name a type
+clapack.h:707: error: `f77_ret_void' does not name a type
+clapack.h:708: error: `f77_ret_void' does not name a type
+clapack.h:709: error: `f77_ret_void' does not name a type
+clapack.h:710: error: `f77_ret_void' does not name a type
+clapack.h:711: error: `f77_ret_void' does not name a type
+clapack.h:712: error: `f77_ret_void' does not name a type
+clapack.h:713: error: `f77_ret_void' does not name a type
+clapack.h:714: error: `f77_ret_void' does not name a type
+clapack.h:715: error: `f77_ret_void' does not name a type
+clapack.h:716: error: `f77_ret_void' does not name a type
+clapack.h:717: error: `f77_ret_void' does not name a type
+clapack.h:718: error: `f77_ret_void' does not name a type
+clapack.h:719: error: `f77_ret_void' does not name a type
+clapack.h:720: error: `f77_ret_void' does not name a type
+clapack.h:721: error: `f77_ret_void' does not name a type
+clapack.h:722: error: `f77_ret_void' does not name a type
+clapack.h:723: error: `f77_ret_void' does not name a type
+clapack.h:724: error: `f77_ret_void' does not name a type
+clapack.h:725: error: `f77_ret_void' does not name a type
+clapack.h:726: error: `f77_ret_void' does not name a type
+clapack.h:727: error: `f77_ret_void' does not name a type
+clapack.h:728: error: `f77_ret_void' does not name a type
+clapack.h:729: error: `f77_ret_void' does not name a type
+clapack.h:730: error: `f77_ret_void' does not name a type
+clapack.h:731: error: `f77_ret_void' does not name a type
+clapack.h:732: error: `f77_ret_void' does not name a type
+clapack.h:733: error: `f77_ret_void' does not name a type
+clapack.h:734: error: `f77_ret_void' does not name a type
+clapack.h:735: error: `f77_ret_void' does not name a type
+clapack.h:736: error: `f77_ret_void' does not name a type
+clapack.h:737: error: `f77_ret_void' does not name a type
+clapack.h:738: error: `f77_ret_void' does not name a type
+clapack.h:739: error: `f77_ret_void' does not name a type
+clapack.h:740: error: `f77_ret_void' does not name a type
+clapack.h:741: error: `f77_ret_void' does not name a type
+clapack.h:742: error: `f77_ret_void' does not name a type
+clapack.h:743: error: `f77_ret_void' does not name a type
+clapack.h:744: error: `f77_ret_void' does not name a type
+clapack.h:745: error: `f77_ret_void' does not name a type
+clapack.h:746: error: `f77_ret_void' does not name a type
+clapack.h:747: error: `f77_ret_void' does not name a type
+clapack.h:748: error: `f77_ret_void' does not name a type
+clapack.h:749: error: `f77_ret_void' does not name a type
+clapack.h:750: error: `f77_ret_void' does not name a type
+clapack.h:751: error: `f77_ret_void' does not name a type
+clapack.h:752: error: `f77_ret_void' does not name a type
+clapack.h:753: error: `f77_ret_void' does not name a type
+clapack.h:754: error: `f77_ret_void' does not name a type
+clapack.h:755: error: `f77_ret_void' does not name a type
+clapack.h:756: error: `f77_ret_void' does not name a type
+clapack.h:757: error: `f77_ret_void' does not name a type
+clapack.h:758: error: `f77_ret_void' does not name a type
+clapack.h:759: error: `f77_ret_void' does not name a type
+clapack.h:760: error: `f77_ret_void' does not name a type
+clapack.h:761: error: `f77_ret_void' does not name a type
+clapack.h:762: error: `f77_ret_void' does not name a type
+clapack.h:763: error: `f77_ret_void' does not name a type
+clapack.h:764: error: `f77_ret_void' does not name a type
+clapack.h:765: error: `f77_ret_void' does not name a type
+clapack.h:766: error: `f77_ret_void' does not name a type
+clapack.h:767: error: `f77_ret_void' does not name a type
+clapack.h:768: error: `f77_ret_void' does not name a type
+clapack.h:769: error: `f77_ret_void' does not name a type
+clapack.h:770: error: `f77_ret_void' does not name a type
+clapack.h:771: error: `f77_ret_void' does not name a type
+clapack.h:772: error: `f77_ret_void' does not name a type
+clapack.h:773: error: `f77_ret_void' does not name a type
+clapack.h:774: error: `f77_ret_void' does not name a type
+clapack.h:775: error: `f77_ret_void' does not name a type
+clapack.h:776: error: `f77_ret_void' does not name a type
+clapack.h:777: error: `f77_ret_void' does not name a type
+clapack.h:778: error: `f77_ret_void' does not name a type
+clapack.h:779: error: `f77_ret_void' does not name a type
+clapack.h:780: error: `f77_ret_void' does not name a type
+clapack.h:781: error: `f77_ret_void' does not name a type
+clapack.h:782: error: `f77_ret_void' does not name a type
+clapack.h:783: error: `f77_ret_void' does not name a type
+clapack.h:784: error: `f77_ret_void' does not name a type
+clapack.h:785: error: `f77_ret_void' does not name a type
+clapack.h:786: error: `f77_ret_void' does not name a type
+clapack.h:787: error: `f77_ret_void' does not name a type
+clapack.h:788: error: `f77_ret_void' does not name a type
+clapack.h:789: error: `f77_ret_void' does not name a type
+clapack.h:790: error: `f77_ret_void' does not name a type
+clapack.h:791: error: `f77_ret_void' does not name a type
+clapack.h:792: error: `f77_ret_void' does not name a type
+clapack.h:793: error: `f77_ret_void' does not name a type
+clapack.h:794: error: `f77_ret_void' does not name a type
+clapack.h:795: error: `f77_ret_void' does not name a type
+clapack.h:796: error: `f77_ret_void' does not name a type
+clapack.h:797: error: `f77_ret_void' does not name a type
+clapack.h:798: error: `f77_ret_void' does not name a type
+clapack.h:799: error: `f77_ret_void' does not name a type
+clapack.h:800: error: `f77_ret_void' does not name a type
+clapack.h:801: error: `f77_ret_void' does not name a type
+clapack.h:802: error: `f77_ret_void' does not name a type
+clapack.h:803: error: `f77_ret_void' does not name a type
+clapack.h:804: error: `f77_ret_void' does not name a type
+clapack.h:805: error: `f77_ret_void' does not name a type
+clapack.h:806: error: `f77_ret_void' does not name a type
+clapack.h:807: error: `f77_ret_void' does not name a type
+clapack.h:808: error: `f77_ret_void' does not name a type
+clapack.h:809: error: `f77_ret_void' does not name a type
+clapack.h:810: error: `f77_ret_void' does not name a type
+clapack.h:811: error: `f77_ret_void' does not name a type
+clapack.h:812: error: `f77_ret_void' does not name a type
+clapack.h:813: error: `f77_ret_void' does not name a type
+clapack.h:814: error: `f77_ret_void' does not name a type
+clapack.h:815: error: `f77_ret_void' does not name a type
+clapack.h:816: error: `f77_ret_void' does not name a type
+clapack.h:817: error: `f77_ret_void' does not name a type
+clapack.h:818: error: `f77_ret_void' does not name a type
+clapack.h:819: error: `f77_ret_void' does not name a type
+clapack.h:820: error: `f77_ret_void' does not name a type
+clapack.h:821: error: `f77_ret_void' does not name a type
+clapack.h:822: error: `f77_ret_void' does not name a type
+clapack.h:823: error: `f77_ret_void' does not name a type
+clapack.h:824: error: `f77_ret_void' does not name a type
+clapack.h:825: error: `f77_ret_void' does not name a type
+clapack.h:826: error: `f77_ret_void' does not name a type
+clapack.h:827: error: `f77_ret_void' does not name a type
+clapack.h:828: error: `f77_ret_void' does not name a type
+clapack.h:829: error: `f77_ret_void' does not name a type
+clapack.h:830: error: `f77_ret_void' does not name a type
+clapack.h:831: error: `f77_ret_void' does not name a type
+clapack.h:832: error: `f77_ret_void' does not name a type
+clapack.h:833: error: `f77_ret_void' does not name a type
+clapack.h:834: error: `f77_ret_void' does not name a type
+clapack.h:835: error: `f77_ret_void' does not name a type
+clapack.h:836: error: `f77_ret_void' does not name a type
+clapack.h:837: error: `f77_ret_void' does not name a type
+clapack.h:838: error: `f77_ret_void' does not name a type
+clapack.h:839: error: `f77_ret_void' does not name a type
+clapack.h:840: error: `f77_ret_void' does not name a type
+clapack.h:841: error: `f77_ret_void' does not name a type
+clapack.h:842: error: `f77_ret_void' does not name a type
+clapack.h:843: error: `f77_ret_void' does not name a type
+clapack.h:844: error: `f77_ret_void' does not name a type
+clapack.h:845: error: `f77_ret_void' does not name a type
+clapack.h:846: error: `f77_ret_void' does not name a type
+clapack.h:847: error: `f77_ret_void' does not name a type
+clapack.h:848: error: `f77_ret_void' does not name a type
+clapack.h:849: error: `f77_ret_void' does not name a type
+clapack.h:850: error: `f77_ret_void' does not name a type
+clapack.h:851: error: `f77_ret_void' does not name a type
+clapack.h:852: error: `f77_ret_void' does not name a type
+clapack.h:853: error: `f77_ret_void' does not name a type
+clapack.h:854: error: `f77_ret_void' does not name a type
+clapack.h:855: error: `f77_ret_void' does not name a type
+clapack.h:856: error: `f77_ret_void' does not name a type
+clapack.h:857: error: `f77_ret_void' does not name a type
+clapack.h:858: error: `f77_ret_void' does not name a type
+clapack.h:859: error: `f77_ret_void' does not name a type
+clapack.h:860: error: `f77_ret_void' does not name a type
+clapack.h:861: error: `f77_ret_void' does not name a type
+clapack.h:862: error: `f77_ret_void' does not name a type
+clapack.h:863: error: `f77_ret_void' does not name a type
+clapack.h:864: error: `f77_ret_void' does not name a type
+clapack.h:865: error: `f77_ret_void' does not name a type
+clapack.h:866: error: `f77_ret_void' does not name a type
+clapack.h:867: error: `f77_ret_void' does not name a type
+clapack.h:868: error: `f77_ret_void' does not name a type
+clapack.h:869: error: `f77_ret_void' does not name a type
+clapack.h:870: error: `f77_ret_void' does not name a type
+clapack.h:871: error: `f77_ret_void' does not name a type
+clapack.h:872: error: `f77_ret_void' does not name a type
+clapack.h:873: error: `f77_ret_void' does not name a type
+clapack.h:874: error: `f77_ret_void' does not name a type
+clapack.h:875: error: `f77_ret_void' does not name a type
+clapack.h:876: error: `f77_ret_void' does not name a type
+clapack.h:877: error: `f77_ret_void' does not name a type
+clapack.h:878: error: `f77_ret_void' does not name a type
+clapack.h:879: error: `f77_ret_void' does not name a type
+clapack.h:880: error: `f77_ret_void' does not name a type
+clapack.h:881: error: `f77_ret_void' does not name a type
+clapack.h:882: error: `f77_ret_void' does not name a type
+clapack.h:883: error: `f77_ret_void' does not name a type
+clapack.h:884: error: `f77_ret_void' does not name a type
+clapack.h:885: error: `f77_ret_void' does not name a type
+clapack.h:886: error: `f77_ret_void' does not name a type
+clapack.h:887: error: `f77_ret_void' does not name a type
+clapack.h:888: error: `f77_ret_void' does not name a type
+clapack.h:889: error: `f77_ret_void' does not name a type
+clapack.h:890: error: `f77_ret_void' does not name a type
+clapack.h:891: error: `f77_ret_void' does not name a type
+clapack.h:892: error: `f77_ret_void' does not name a type
+clapack.h:893: error: `f77_ret_void' does not name a type
+clapack.h:894: error: `f77_ret_void' does not name a type
+clapack.h:895: error: `f77_ret_void' does not name a type
+clapack.h:896: error: `f77_ret_void' does not name a type
+clapack.h:897: error: `f77_ret_void' does not name a type
+clapack.h:898: error: `f77_ret_void' does not name a type
+clapack.h:899: error: `f77_ret_void' does not name a type
+clapack.h:900: error: `f77_ret_void' does not name a type
+clapack.h:901: error: `f77_ret_void' does not name a type
+clapack.h:902: error: `f77_ret_void' does not name a type
+clapack.h:903: error: `f77_ret_void' does not name a type
+clapack.h:904: error: `f77_ret_void' does not name a type
+clapack.h:905: error: `f77_ret_void' does not name a type
+clapack.h:906: error: `f77_ret_void' does not name a type
+clapack.h:907: error: `f77_ret_void' does not name a type
+clapack.h:908: error: `f77_ret_void' does not name a type
+clapack.h:909: error: `f77_ret_void' does not name a type
+clapack.h:910: error: `f77_ret_void' does not name a type
+clapack.h:911: error: `f77_ret_void' does not name a type
+clapack.h:912: error: `f77_ret_void' does not name a type
+clapack.h:913: error: `f77_ret_void' does not name a type
+clapack.h:914: error: `f77_ret_void' does not name a type
+clapack.h:915: error: `f77_ret_void' does not name a type
+clapack.h:916: error: `f77_ret_void' does not name a type
+clapack.h:917: error: `f77_ret_void' does not name a type
+clapack.h:918: error: `f77_ret_void' does not name a type
+clapack.h:919: error: `f77_ret_void' does not name a type
+clapack.h:920: error: `f77_ret_void' does not name a type
+clapack.h:921: error: `f77_ret_void' does not name a type
+clapack.h:922: error: `f77_ret_void' does not name a type
+clapack.h:923: error: `f77_ret_void' does not name a type
+clapack.h:924: error: `f77_ret_void' does not name a type
+clapack.h:925: error: `f77_ret_void' does not name a type
+clapack.h:926: error: `f77_ret_void' does not name a type
+clapack.h:927: error: `f77_ret_void' does not name a type
+clapack.h:928: error: `f77_ret_void' does not name a type
+clapack.h:929: error: `f77_ret_void' does not name a type
+clapack.h:930: error: `f77_ret_void' does not name a type
+clapack.h:931: error: `f77_ret_void' does not name a type
+clapack.h:932: error: `f77_ret_void' does not name a type
+clapack.h:933: error: `f77_ret_void' does not name a type
+clapack.h:934: error: `f77_ret_void' does not name a type
+clapack.h:935: error: `f77_ret_void' does not name a type
+clapack.h:936: error: `f77_ret_void' does not name a type
+clapack.h:937: error: `f77_ret_void' does not name a type
+clapack.h:938: error: `f77_ret_void' does not name a type
+clapack.h:939: error: `f77_ret_void' does not name a type
+clapack.h:940: error: `f77_ret_void' does not name a type
+clapack.h:941: error: `f77_ret_void' does not name a type
+clapack.h:942: error: `f77_ret_void' does not name a type
+clapack.h:943: error: `f77_ret_void' does not name a type
+clapack.h:944: error: `f77_ret_void' does not name a type
+clapack.h:945: error: `f77_ret_void' does not name a type
+clapack.h:946: error: `f77_ret_void' does not name a type
+clapack.h:947: error: `f77_ret_void' does not name a type
+clapack.h:948: error: `f77_ret_void' does not name a type
+clapack.h:949: error: `f77_ret_void' does not name a type
+clapack.h:950: error: `f77_ret_void' does not name a type
+clapack.h:951: error: `f77_ret_void' does not name a type
+clapack.h:952: error: `f77_ret_void' does not name a type
+clapack.h:953: error: `f77_ret_void' does not name a type
+clapack.h:954: error: `f77_ret_void' does not name a type
+clapack.h:955: error: `f77_ret_void' does not name a type
+clapack.h:956: error: `f77_ret_void' does not name a type
+clapack.h:957: error: `f77_ret_void' does not name a type
+clapack.h:958: error: `f77_ret_void' does not name a type
+clapack.h:959: error: `f77_ret_void' does not name a type
+clapack.h:960: error: `f77_ret_void' does not name a type
+clapack.h:961: error: `f77_ret_void' does not name a type
+clapack.h:962: error: `f77_ret_void' does not name a type
+clapack.h:963: error: `f77_ret_void' does not name a type
+clapack.h:964: error: `f77_ret_void' does not name a type
+clapack.h:965: error: `f77_ret_void' does not name a type
+clapack.h:966: error: `f77_ret_void' does not name a type
+clapack.h:967: error: `f77_ret_void' does not name a type
+clapack.h:968: error: `f77_ret_void' does not name a type
+clapack.h:969: error: `f77_ret_void' does not name a type
+clapack.h:970: error: `f77_ret_void' does not name a type
+clapack.h:971: error: `f77_ret_void' does not name a type
+clapack.h:972: error: `f77_ret_void' does not name a type
+clapack.h:973: error: `f77_ret_void' does not name a type
+clapack.h:974: error: `f77_ret_void' does not name a type
+clapack.h:975: error: `f77_ret_void' does not name a type
+clapack.h:976: error: `f77_ret_void' does not name a type
+clapack.h:977: error: `f77_ret_void' does not name a type
+clapack.h:978: error: `f77_ret_void' does not name a type
+clapack.h:979: error: `f77_ret_void' does not name a type
+clapack.h:980: error: `f77_ret_void' does not name a type
+clapack.h:981: error: `f77_ret_void' does not name a type
+clapack.h:982: error: `f77_ret_void' does not name a type
+clapack.h:983: error: `f77_ret_void' does not name a type
+clapack.h:984: error: `f77_ret_void' does not name a type
+clapack.h:985: error: `f77_ret_void' does not name a type
+clapack.h:986: error: `f77_ret_void' does not name a type
+clapack.h:987: error: `f77_ret_void' does not name a type
+clapack.h:988: error: `f77_ret_void' does not name a type
+clapack.h:989: error: `f77_ret_void' does not name a type
+clapack.h:990: error: `f77_ret_void' does not name a type
+clapack.h:991: error: `f77_ret_void' does not name a type
+clapack.h:992: error: `f77_ret_void' does not name a type
+clapack.h:993: error: `f77_ret_void' does not name a type
+clapack.h:994: error: `f77_ret_void' does not name a type
+clapack.h:995: error: `f77_ret_void' does not name a type
+clapack.h:996: error: `f77_ret_void' does not name a type
+clapack.h:997: error: `f77_ret_void' does not name a type
+clapack.h:998: error: `f77_ret_void' does not name a type
+clapack.h:999: error: `f77_ret_void' does not name a type
+clapack.h:1000: error: `f77_ret_void' does not name a type
+clapack.h:1001: error: `f77_ret_void' does not name a type
+clapack.h:1002: error: `f77_ret_void' does not name a type
+clapack.h:1003: error: `f77_ret_void' does not name a type
+clapack.h:1004: error: `f77_ret_void' does not name a type
+clapack.h:1005: error: `f77_ret_void' does not name a type
+clapack.h:1006: error: `f77_ret_void' does not name a type
+clapack.h:1007: error: `f77_ret_void' does not name a type
+clapack.h:1008: error: `f77_ret_void' does not name a type
+clapack.h:1009: error: `f77_ret_void' does not name a type
+clapack.h:1010: error: `f77_ret_void' does not name a type
+clapack.h:1011: error: `f77_ret_void' does not name a type
+clapack.h:1012: error: `f77_ret_void' does not name a type
+clapack.h:1013: error: `f77_ret_void' does not name a type
+clapack.h:1014: error: `f77_ret_void' does not name a type
+clapack.h:1015: error: `f77_ret_void' does not name a type
+clapack.h:1016: error: `f77_ret_void' does not name a type
+clapack.h:1017: error: `f77_ret_void' does not name a type
+clapack.h:1018: error: `f77_ret_void' does not name a type
+clapack.h:1019: error: `f77_ret_void' does not name a type
+clapack.h:1020: error: `f77_ret_void' does not name a type
+clapack.h:1021: error: `f77_ret_void' does not name a type
+clapack.h:1022: error: `f77_ret_void' does not name a type
+clapack.h:1023: error: `f77_ret_void' does not name a type
+clapack.h:1024: error: `f77_ret_void' does not name a type
+clapack.h:1025: error: `f77_ret_void' does not name a type
+clapack.h:1026: error: `f77_ret_void' does not name a type
+clapack.h:1027: error: `f77_ret_void' does not name a type
+clapack.h:1028: error: `f77_ret_void' does not name a type
+clapack.h:1029: error: `f77_ret_void' does not name a type
+clapack.h:1030: error: `f77_ret_void' does not name a type
+clapack.h:1031: error: `f77_ret_void' does not name a type
+clapack.h:1032: error: `f77_ret_void' does not name a type
+clapack.h:1033: error: `f77_ret_void' does not name a type
+clapack.h:1034: error: `f77_ret_void' does not name a type
+clapack.h:1035: error: `f77_ret_void' does not name a type
+clapack.h:1036: error: `f77_ret_void' does not name a type
+clapack.h:1037: error: `f77_ret_void' does not name a type
+clapack.h:1038: error: `f77_ret_void' does not name a type
+clapack.h:1039: error: `f77_ret_void' does not name a type
+clapack.h:1040: error: `f77_ret_void' does not name a type
+clapack.h:1041: error: `f77_ret_void' does not name a type
+clapack.h:1042: error: `f77_ret_void' does not name a type
+clapack.h:1043: error: `f77_ret_void' does not name a type
+clapack.h:1044: error: `f77_ret_void' does not name a type
+clapack.h:1045: error: `f77_ret_void' does not name a type
+clapack.h:1046: error: `f77_ret_void' does not name a type
+clapack.h:1047: error: `f77_ret_void' does not name a type
+clapack.h:1048: error: `f77_ret_void' does not name a type
+clapack.h:1049: error: `f77_ret_void' does not name a type
+clapack.h:1050: error: `f77_ret_void' does not name a type
+clapack.h:1051: error: `f77_ret_void' does not name a type
+clapack.h:1052: error: `f77_ret_void' does not name a type
+clapack.h:1053: error: `f77_ret_void' does not name a type
+clapack.h:1054: error: `f77_ret_void' does not name a type
+clapack.h:1055: error: `f77_ret_void' does not name a type
+clapack.h:1056: error: `f77_ret_void' does not name a type
+clapack.h:1057: error: `f77_ret_void' does not name a type
+clapack.h:1058: error: `f77_ret_void' does not name a type
+clapack.h:1059: error: `f77_ret_void' does not name a type
+clapack.h:1060: error: `f77_ret_void' does not name a type
+clapack.h:1061: error: `f77_ret_void' does not name a type
+clapack.h:1062: error: `f77_ret_void' does not name a type
+clapack.h:1063: error: `f77_ret_void' does not name a type
+clapack.h:1064: error: `f77_ret_void' does not name a type
+clapack.h:1065: error: `f77_ret_void' does not name a type
+clapack.h:1066: error: `f77_ret_void' does not name a type
+clapack.h:1067: error: `f77_ret_void' does not name a type
+clapack.h:1068: error: `f77_ret_void' does not name a type
+clapack.h:1069: error: `f77_ret_void' does not name a type
+clapack.h:1070: error: `f77_ret_void' does not name a type
+clapack.h:1071: error: `f77_ret_void' does not name a type
+clapack.h:1072: error: `f77_ret_void' does not name a type
+clapack.h:1073: error: `f77_ret_void' does not name a type
+clapack.h:1074: error: `f77_ret_void' does not name a type
+clapack.h:1075: error: `f77_ret_void' does not name a type
+clapack.h:1076: error: `f77_ret_void' does not name a type
+clapack.h:1077: error: `f77_ret_void' does not name a type
+clapack.h:1078: error: `f77_ret_void' does not name a type
+clapack.h:1079: error: `f77_ret_void' does not name a type
+clapack.h:1080: error: `f77_ret_void' does not name a type
+clapack.h:1081: error: `f77_ret_void' does not name a type
+clapack.h:1082: error: `f77_ret_void' does not name a type
+clapack.h:1083: error: `f77_ret_void' does not name a type
+clapack.h:1084: error: `f77_ret_void' does not name a type
+clapack.h:1085: error: `f77_ret_void' does not name a type
+clapack.h:1086: error: `f77_ret_void' does not name a type
+clapack.h:1087: error: `f77_ret_void' does not name a type
+clapack.h:1088: error: `f77_ret_void' does not name a type
+clapack.h:1089: error: `f77_ret_void' does not name a type
+clapack.h:1090: error: `f77_ret_void' does not name a type
+clapack.h:1091: error: `f77_ret_void' does not name a type
+clapack.h:1092: error: `f77_ret_void' does not name a type
+clapack.h:1093: error: `f77_ret_void' does not name a type
+clapack.h:1094: error: `f77_ret_void' does not name a type
+clapack.h:1095: error: `f77_ret_void' does not name a type
+clapack.h:1096: error: `f77_ret_void' does not name a type
+clapack.h:1097: error: `f77_ret_void' does not name a type
+clapack.h:1098: error: `f77_ret_void' does not name a type
+clapack.h:1099: error: `f77_ret_void' does not name a type
+clapack.h:1100: error: `f77_ret_void' does not name a type
+clapack.h:1101: error: `f77_ret_void' does not name a type
+clapack.h:1102: error: `f77_ret_void' does not name a type
+clapack.h:1103: error: `f77_ret_void' does not name a type
+clapack.h:1104: error: `f77_ret_void' does not name a type
+clapack.h:1105: error: `f77_ret_void' does not name a type
+clapack.h:1106: error: `f77_ret_void' does not name a type
+clapack.h:1107: error: `f77_ret_void' does not name a type
+clapack.h:1108: error: `f77_ret_void' does not name a type
+clapack.h:1109: error: `f77_ret_void' does not name a type
+clapack.h:1110: error: `f77_ret_void' does not name a type
+clapack.h:1111: error: `f77_ret_void' does not name a type
+clapack.h:1112: error: `f77_ret_void' does not name a type
+clapack.h:1113: error: `f77_ret_void' does not name a type
+clapack.h:1114: error: `f77_ret_void' does not name a type
+clapack.h:1115: error: `f77_ret_void' does not name a type
+clapack.h:1116: error: `f77_ret_void' does not name a type
+clapack.h:1117: error: `f77_ret_void' does not name a type
+clapack.h:1118: error: `f77_ret_void' does not name a type
+clapack.h:1119: error: `f77_ret_void' does not name a type
+clapack.h:1120: error: `f77_ret_void' does not name a type
+clapack.h:1121: error: `f77_ret_void' does not name a type
+clapack.h:1122: error: `f77_ret_void' does not name a type
+clapack.h:1123: error: `f77_ret_void' does not name a type
+clapack.h:1124: error: `f77_ret_void' does not name a type
+clapack.h:1125: error: `f77_ret_void' does not name a type
+clapack.h:1126: error: `f77_ret_void' does not name a type
+clapack.h:1127: error: `f77_ret_void' does not name a type
+clapack.h:1128: error: `f77_ret_void' does not name a type
+clapack.h:1129: error: `f77_ret_void' does not name a type
+clapack.h:1130: error: `f77_ret_void' does not name a type
+clapack.h:1131: error: `f77_ret_void' does not name a type
+clapack.h:1132: error: `f77_ret_void' does not name a type
+clapack.h:1133: error: `f77_ret_void' does not name a type
+clapack.h:1134: error: `f77_ret_void' does not name a type
+clapack.h:1135: error: `f77_ret_void' does not name a type
+clapack.h:1136: error: `f77_ret_void' does not name a type
+clapack.h:1137: error: `f77_ret_void' does not name a type
+clapack.h:1138: error: `f77_ret_void' does not name a type
+clapack.h:1139: error: `f77_ret_void' does not name a type
+clapack.h:1140: error: `f77_ret_void' does not name a type
+clapack.h:1141: error: `f77_ret_void' does not name a type
+clapack.h:1142: error: `f77_ret_void' does not name a type
+clapack.h:1143: error: `f77_ret_void' does not name a type
+clapack.h:1144: error: `f77_ret_void' does not name a type
+clapack.h:1145: error: `f77_ret_void' does not name a type
+clapack.h:1146: error: `f77_ret_void' does not name a type
+clapack.h:1147: error: `f77_ret_void' does not name a type
+clapack.h:1148: error: `f77_ret_void' does not name a type
+clapack.h:1149: error: `f77_ret_void' does not name a type
+clapack.h:1150: error: `f77_ret_void' does not name a type
+clapack.h:1151: error: `f77_ret_void' does not name a type
+clapack.h:1152: error: `f77_ret_void' does not name a type
+clapack.h:1153: error: `f77_ret_void' does not name a type
+clapack.h:1154: error: `f77_ret_void' does not name a type
+clapack.h:1155: error: `f77_ret_void' does not name a type
+clapack.h:1156: error: `f77_ret_void' does not name a type
+clapack.h:1157: error: `f77_ret_void' does not name a type
+clapack.h:1158: error: `f77_ret_void' does not name a type
+clapack.h:1159: error: `f77_ret_void' does not name a type
+clapack.h:1160: error: `f77_ret_void' does not name a type
+clapack.h:1161: error: `f77_ret_void' does not name a type
+clapack.h:1162: error: `f77_ret_void' does not name a type
+clapack.h:1163: error: `f77_ret_void' does not name a type
+clapack.h:1164: error: `f77_ret_void' does not name a type
+clapack.h:1165: error: `f77_ret_void' does not name a type
+clapack.h:1166: error: `f77_ret_void' does not name a type
+clapack.h:1167: error: `f77_ret_void' does not name a type
+clapack.h:1168: error: `f77_ret_void' does not name a type
+clapack.h:1169: error: `f77_ret_void' does not name a type
+clapack.h:1170: error: `f77_ret_void' does not name a type
+clapack.h:1171: error: `f77_ret_void' does not name a type
+clapack.h:1172: error: `f77_ret_void' does not name a type
+clapack.h:1173: error: `f77_ret_void' does not name a type
+clapack.h:1174: error: `f77_ret_void' does not name a type
+clapack.h:1175: error: `f77_ret_void' does not name a type
+clapack.h:1176: error: `f77_ret_void' does not name a type
+clapack.h:1177: error: `f77_ret_void' does not name a type
+clapack.h:1178: error: `f77_ret_void' does not name a type
+clapack.h:1179: error: `f77_ret_void' does not name a type
+clapack.h:1180: error: `f77_ret_void' does not name a type
+clapack.h:1181: error: `f77_ret_void' does not name a type
+clapack.h:1182: error: `f77_ret_void' does not name a type
+clapack.h:1183: error: `f77_ret_void' does not name a type
+clapack.h:1184: error: `f77_ret_void' does not name a type
+clapack.h:1185: error: `f77_ret_void' does not name a type
+clapack.h:1186: error: `f77_ret_void' does not name a type
+clapack.h:1187: error: `f77_ret_void' does not name a type
+clapack.h:1188: error: `f77_ret_void' does not name a type
+clapack.h:1189: error: `f77_ret_void' does not name a type
+clapack.h:1190: error: `f77_ret_void' does not name a type
+clapack.h:1191: error: `f77_ret_void' does not name a type
+clapack.h:1192: error: `f77_ret_void' does not name a type
+clapack.h:1193: error: `f77_ret_void' does not name a type
+clapack.h:1194: error: `f77_ret_void' does not name a type
+clapack.h:1195: error: `f77_ret_void' does not name a type
+clapack.h:1196: error: `f77_ret_void' does not name a type
+clapack.h:1197: error: `f77_ret_void' does not name a type
+clapack.h:1198: error: `f77_ret_void' does not name a type
+clapack.h:1199: error: `f77_ret_void' does not name a type
+clapack.h:1200: error: `f77_ret_void' does not name a type
+clapack.h:1201: error: `f77_ret_void' does not name a type
+clapack.h:1202: error: `f77_ret_void' does not name a type
+clapack.h:1203: error: `f77_ret_void' does not name a type
+clapack.h:1204: error: `f77_ret_void' does not name a type
+clapack.h:1205: error: `f77_ret_void' does not name a type
+clapack.h:1206: error: `f77_ret_void' does not name a type
+clapack.h:1207: error: `f77_ret_void' does not name a type
+clapack.h:1208: error: `f77_ret_void' does not name a type
+clapack.h:1209: error: `f77_ret_void' does not name a type
+clapack.h:1210: error: `f77_ret_void' does not name a type
+clapack.h:1211: error: `f77_ret_void' does not name a type
+clapack.h:1212: error: `f77_ret_void' does not name a type
+clapack.h:1213: error: `f77_ret_void' does not name a type
+clapack.h:1214: error: `f77_ret_void' does not name a type
+clapack.h:1215: error: `f77_ret_void' does not name a type
+clapack.h:1216: error: `f77_ret_void' does not name a type
+clapack.h:1217: error: `f77_ret_void' does not name a type
+clapack.h:1218: error: `f77_ret_void' does not name a type
+clapack.h:1219: error: `f77_ret_void' does not name a type
+clapack.h:1220: error: `f77_ret_void' does not name a type
+clapack.h:1221: error: `f77_ret_void' does not name a type
+clapack.h:1222: error: `f77_ret_void' does not name a type
+clapack.h:1223: error: `f77_ret_void' does not name a type
+clapack.h:1224: error: `f77_ret_void' does not name a type
+clapack.h:1225: error: `f77_ret_void' does not name a type
+clapack.h:1226: error: `f77_ret_void' does not name a type
+clapack.h:1227: error: `f77_ret_void' does not name a type
+clapack.h:1228: error: `f77_ret_void' does not name a type
+clapack.h:1229: error: `f77_ret_void' does not name a type
+clapack.h:1230: error: `f77_ret_void' does not name a type
+clapack.h:1231: error: `f77_ret_void' does not name a type
+clapack.h:1234: error: expected constructor, destructor, or type conversion before '}' token
+In file included from uselapack.cc:7:
+uselapack.h:102: error: variable or field `ScaleRows' declared void
+uselapack.h:102: error: `la::ScaleRows' declared as an `inline' variable
+uselapack.h:102: error: `index_t' was not declared in this scope
+uselapack.h:102: error: `index_t' was not declared in this scope
+uselapack.h:103: error: expected primary-expression before "const"
+uselapack.h:103: error: expected primary-expression before "double"
+uselapack.h:103: error: initializer expression list treated as compound expression
+uselapack.h:103: error: expected `,' or `;' before '{' token
+uselapack.h:121: error: `la::LengthEuclidean' declared as an `inline' variable
+uselapack.h:121: error: `index_t' was not declared in this scope
+uselapack.h:121: error: expected primary-expression before "const"
+uselapack.h:121: error: initializer expression list treated as compound expression
+uselapack.h:121: error: expected `,' or `;' before '{' token
+uselapack.h:129: error: `la::Dot' declared as an `inline' variable
+uselapack.h:129: error: `index_t' was not declared in this scope
+uselapack.h:129: error: expected primary-expression before "const"
+uselapack.h:129: error: expected primary-expression before "const"
+uselapack.h:129: error: initializer expression list treated as compound expression
+uselapack.h:129: error: expected `,' or `;' before '{' token
+uselapack.h:137: error: variable or field `Scale' declared void
+uselapack.h:137: error: `la::Scale' declared as an `inline' variable
+uselapack.h:137: error: `index_t' was not declared in this scope
+uselapack.h:137: error: expected primary-expression before "double"
+uselapack.h:137: error: expected primary-expression before "double"
+uselapack.h:137: error: initializer expression list treated as compound expression
+uselapack.h:137: error: expected `,' or `;' before '{' token
+uselapack.h:144: error: variable or field `ScaleOverwrite' declared void
+uselapack.h:144: error: `la::ScaleOverwrite' declared as an `inline' variable
+uselapack.h:144: error: `index_t' was not declared in this scope
+uselapack.h:145: error: expected primary-expression before "double"
+uselapack.h:145: error: expected primary-expression before "const"
+uselapack.h:145: error: expected primary-expression before "double"
+uselapack.h:145: error: initializer expression list treated as compound expression
+uselapack.h:145: error: expected `,' or `;' before '{' token
+uselapack.h:154: error: variable or field `AddExpert' declared void
+uselapack.h:154: error: `la::AddExpert' declared as an `inline' variable
+uselapack.h:154: error: `index_t' was not declared in this scope
+uselapack.h:155: error: expected primary-expression before "double"
+uselapack.h:155: error: expected primary-expression before "const"
+uselapack.h:155: error: expected primary-expression before "double"
+uselapack.h:155: error: initializer expression list treated as compound expression
+uselapack.h:155: error: expected `,' or `;' before '{' token
+uselapack.h:163: error: variable or field `AddTo' declared void
+uselapack.h:163: error: `la::AddTo' declared as an `inline' variable
+uselapack.h:163: error: `index_t' was not declared in this scope
+uselapack.h:163: error: expected primary-expression before "const"
+uselapack.h:163: error: expected primary-expression before "double"
+uselapack.h:163: error: initializer expression list treated as compound expression
+uselapack.h:163: error: expected `,' or `;' before '{' token
+uselapack.h:170: error: variable or field `AddOverwrite' declared void
+uselapack.h:170: error: `la::AddOverwrite' declared as an `inline' variable
+uselapack.h:170: error: `index_t' was not declared in this scope
+uselapack.h:171: error: expected primary-expression before "const"
+uselapack.h:171: error: expected primary-expression before "const"
+uselapack.h:171: error: expected primary-expression before "double"
+uselapack.h:171: error: initializer expression list treated as compound expression
+uselapack.h:171: error: expected `,' or `;' before '{' token
+uselapack.h:180: error: variable or field `SubFrom' declared void
+uselapack.h:180: error: `la::SubFrom' declared as an `inline' variable
+uselapack.h:180: error: `index_t' was not declared in this scope
+uselapack.h:180: error: expected primary-expression before "const"
+uselapack.h:180: error: expected primary-expression before "double"
+uselapack.h:180: error: initializer expression list treated as compound expression
+uselapack.h:180: error: expected `,' or `;' before '{' token
+uselapack.h:187: error: variable or field `SubOverwrite' declared void
+uselapack.h:187: error: `la::SubOverwrite' declared as an `inline' variable
+uselapack.h:187: error: `index_t' was not declared in this scope
+uselapack.h:188: error: expected primary-expression before "const"
+uselapack.h:188: error: expected primary-expression before "const"
+uselapack.h:188: error: expected primary-expression before "double"
+uselapack.h:188: error: initializer expression list treated as compound expression
+uselapack.h:188: error: expected `,' or `;' before '{' token
+uselapack.h: In function `double la::LengthEuclidean(const Vector&)':
+uselapack.h:270: error: `double la::LengthEuclidean(const Vector&)' redeclared as different kind of symbol
+uselapack.h:121: error: previous declaration of `double la::LengthEuclidean'
+uselapack.h:121: error: previous non-function declaration `double la::LengthEuclidean'
+uselapack.h:270: error: conflicts with function declaration `double la::LengthEuclidean(const Vector&)'
+uselapack.h:271: error: 'const class Vector' has no member named 'length'
+uselapack.h:271: error: `la::LengthEuclidean' cannot be used as a function
+uselapack.h: In function `double la::Dot(const Vector&, const Vector&)':
+uselapack.h:278: error: `double la::Dot(const Vector&, const Vector&)' redeclared as different kind of symbol
+uselapack.h:129: error: previous declaration of `double la::Dot'
+uselapack.h:129: error: previous non-function declaration `double la::Dot'
+uselapack.h:278: error: conflicts with function declaration `double la::Dot(const Vector&, const Vector&)'
+uselapack.h:279: error: 'const class Vector' has no member named 'length'
+uselapack.h:279: error: 'const class Vector' has no member named 'length'
+uselapack.h:279: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:280: error: 'const class Vector' has no member named 'length'
+uselapack.h:280: error: `la::Dot' cannot be used as a function
+uselapack.h:279: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.h: In function `void la::Scale(double, Vector*)':
+uselapack.h:289: error: `void la::Scale(double, Vector*)' redeclared as different kind of symbol
+uselapack.h:137: error: previous declaration of `int la::Scale'
+uselapack.h:137: error: previous non-function declaration `int la::Scale'
+uselapack.h:289: error: conflicts with function declaration `void la::Scale(double, Vector*)'
+uselapack.h:290: error: 'class Vector' has no member named 'length'
+uselapack.h:290: error: `la::Scale' cannot be used as a function
+uselapack.h: In function `void la::Scale(double, Matrix*)':
+uselapack.h:296: error: `void la::Scale(double, Matrix*)' redeclared as different kind of symbol
+uselapack.h:137: error: previous declaration of `int la::Scale'
+uselapack.h:137: error: previous non-function declaration `int la::Scale'
+uselapack.h:296: error: conflicts with function declaration `void la::Scale(double, Matrix*)'
+uselapack.h:297: error: `la::Scale' cannot be used as a function
+uselapack.h: In function `void la::ScaleRows(const Vector&, Matrix*)':
+uselapack.h:307: error: `void la::ScaleRows(const Vector&, Matrix*)' redeclared as different kind of symbol
+uselapack.h:102: error: previous declaration of `int la::ScaleRows'
+uselapack.h:102: error: previous non-function declaration `int la::ScaleRows'
+uselapack.h:307: error: conflicts with function declaration `void la::ScaleRows(const Vector&, Matrix*)'
+uselapack.h:308: error: 'const class Vector' has no member named 'length'
+uselapack.h:308: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:308: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:309: error: 'const class Vector' has no member named 'length'
+uselapack.h:309: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:309: error: `la::ScaleRows' cannot be used as a function
+uselapack.h:308: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.h: In function `void la::ScaleOverwrite(double, const Vector&, Vector*)':
+uselapack.h:316: error: `void la::ScaleOverwrite(double, const Vector&, Vector*)' redeclared as different kind of symbol
+uselapack.h:144: error: previous declaration of `int la::ScaleOverwrite'
+uselapack.h:144: error: previous non-function declaration `int la::ScaleOverwrite'
+uselapack.h:316: error: conflicts with function declaration `void la::ScaleOverwrite(double, const Vector&, Vector*)'
+uselapack.h:317: error: 'const class Vector' has no member named 'length'
+uselapack.h:317: error: 'class Vector' has no member named 'length'
+uselapack.h:317: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:318: error: 'const class Vector' has no member named 'length'
+uselapack.h:318: error: `la::ScaleOverwrite' cannot be used as a function
+uselapack.h:317: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.h: In function `void la::ScaleOverwrite(double, const Matrix&, Matrix*)':
+uselapack.h:324: error: `void la::ScaleOverwrite(double, const Matrix&, Matrix*)' redeclared as different kind of symbol
+uselapack.h:144: error: previous declaration of `int la::ScaleOverwrite'
+uselapack.h:144: error: previous non-function declaration `int la::ScaleOverwrite'
+uselapack.h:324: error: conflicts with function declaration `void la::ScaleOverwrite(double, const Matrix&, Matrix*)'
+uselapack.h:325: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:325: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:325: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:326: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:326: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:327: error: `la::ScaleOverwrite' cannot be used as a function
+uselapack.h: In function `void la::ScaleInit(double, const Vector&, Vector*)':
+uselapack.h:335: error: 'const class Vector' has no member named 'length'
+uselapack.h:336: error: `la::ScaleOverwrite' cannot be used as a function
+uselapack.h: In function `void la::ScaleInit(double, const Matrix&, Matrix*)':
+uselapack.h:343: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:343: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:344: error: `la::ScaleOverwrite' cannot be used as a function
+uselapack.h: In function `void la::AddExpert(double, const Vector&, Vector*)':
+uselapack.h:353: error: `void la::AddExpert(double, const Vector&, Vector*)' redeclared as different kind of symbol
+uselapack.h:154: error: previous declaration of `int la::AddExpert'
+uselapack.h:154: error: previous non-function declaration `int la::AddExpert'
+uselapack.h:353: error: conflicts with function declaration `void la::AddExpert(double, const Vector&, Vector*)'
+uselapack.h:354: error: 'const class Vector' has no member named 'length'
+uselapack.h:354: error: 'class Vector' has no member named 'length'
+uselapack.h:354: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:355: error: 'const class Vector' has no member named 'length'
+uselapack.h:355: error: `la::AddExpert' cannot be used as a function
+uselapack.h:354: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.h: In function `void la::AddExpert(double, const Matrix&, Matrix*)':
+uselapack.h:361: error: `void la::AddExpert(double, const Matrix&, Matrix*)' redeclared as different kind of symbol
+uselapack.h:154: error: previous declaration of `int la::AddExpert'
+uselapack.h:154: error: previous non-function declaration `int la::AddExpert'
+uselapack.h:361: error: conflicts with function declaration `void la::AddExpert(double, const Matrix&, Matrix*)'
+uselapack.h:362: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:362: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:362: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:363: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:363: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:364: error: `la::AddExpert' cannot be used as a function
+uselapack.h: In function `void la::AddTo(const Vector&, Vector*)':
+uselapack.h:373: error: `void la::AddTo(const Vector&, Vector*)' redeclared as different kind of symbol
+uselapack.h:163: error: previous declaration of `int la::AddTo'
+uselapack.h:163: error: previous non-function declaration `int la::AddTo'
+uselapack.h:373: error: conflicts with function declaration `void la::AddTo(const Vector&, Vector*)'
+uselapack.h:374: error: 'const class Vector' has no member named 'length'
+uselapack.h:374: error: 'class Vector' has no member named 'length'
+uselapack.h:374: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:375: error: 'const class Vector' has no member named 'length'
+uselapack.h:375: error: `la::AddTo' cannot be used as a function
+uselapack.h:374: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.h: In function `void la::AddTo(const Matrix&, Matrix*)':
+uselapack.h:381: error: `void la::AddTo(const Matrix&, Matrix*)' redeclared as different kind of symbol
+uselapack.h:163: error: previous declaration of `int la::AddTo'
+uselapack.h:163: error: previous non-function declaration `int la::AddTo'
+uselapack.h:381: error: conflicts with function declaration `void la::AddTo(const Matrix&, Matrix*)'
+uselapack.h:382: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:382: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:382: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:383: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:383: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:384: error: `la::AddTo' cannot be used as a function
+uselapack.h: In function `void la::AddOverwrite(const Vector&, const Vector&, Vector*)':
+uselapack.h:391: error: `void la::AddOverwrite(const Vector&, const Vector&, Vector*)' redeclared as different kind of symbol
+uselapack.h:170: error: previous declaration of `int la::AddOverwrite'
+uselapack.h:170: error: previous non-function declaration `int la::AddOverwrite'
+uselapack.h:391: error: conflicts with function declaration `void la::AddOverwrite(const Vector&, const Vector&, Vector*)'
+uselapack.h:392: error: 'const class Vector' has no member named 'length'
+uselapack.h:392: error: 'const class Vector' has no member named 'length'
+uselapack.h:392: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:393: error: 'class Vector' has no member named 'length'
+uselapack.h:393: error: 'const class Vector' has no member named 'length'
+uselapack.h:394: error: 'const class Vector' has no member named 'length'
+uselapack.h:394: error: `la::AddOverwrite' cannot be used as a function
+uselapack.h: In function `void la::AddOverwrite(const Matrix&, const Matrix&, Matrix*)':
+uselapack.h:400: error: `void la::AddOverwrite(const Matrix&, const Matrix&, Matrix*)' redeclared as different kind of symbol
+uselapack.h:170: error: previous declaration of `int la::AddOverwrite'
+uselapack.h:170: error: previous non-function declaration `int la::AddOverwrite'
+uselapack.h:400: error: conflicts with function declaration `void la::AddOverwrite(const Matrix&, const Matrix&, Matrix*)'
+uselapack.h:401: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:401: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:401: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:402: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:402: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:403: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:403: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:404: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:404: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:405: error: `la::AddOverwrite' cannot be used as a function
+uselapack.h: In function `void la::AddInit(const Vector&, const Vector&, Vector*)':
+uselapack.h:413: error: 'const class Vector' has no member named 'length'
+uselapack.h:414: error: `la::AddOverwrite' cannot be used as a function
+uselapack.h: In function `void la::AddInit(const Matrix&, const Matrix&, Matrix*)':
+uselapack.h:421: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:421: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:422: error: `la::AddOverwrite' cannot be used as a function
+uselapack.h: In function `void la::SubFrom(const Vector&, Vector*)':
+uselapack.h:431: error: `void la::SubFrom(const Vector&, Vector*)' redeclared as different kind of symbol
+uselapack.h:180: error: previous declaration of `int la::SubFrom'
+uselapack.h:180: error: previous non-function declaration `int la::SubFrom'
+uselapack.h:431: error: conflicts with function declaration `void la::SubFrom(const Vector&, Vector*)'
+uselapack.h:432: error: 'const class Vector' has no member named 'length'
+uselapack.h:432: error: 'class Vector' has no member named 'length'
+uselapack.h:432: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:433: error: 'const class Vector' has no member named 'length'
+uselapack.h:433: error: `la::SubFrom' cannot be used as a function
+uselapack.h:432: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.h: In function `void la::SubFrom(const Matrix&, Matrix*)':
+uselapack.h:439: error: `void la::SubFrom(const Matrix&, Matrix*)' redeclared as different kind of symbol
+uselapack.h:180: error: previous declaration of `int la::SubFrom'
+uselapack.h:180: error: previous non-function declaration `int la::SubFrom'
+uselapack.h:439: error: conflicts with function declaration `void la::SubFrom(const Matrix&, Matrix*)'
+uselapack.h:440: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:440: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:440: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:441: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:441: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:442: error: `la::SubFrom' cannot be used as a function
+uselapack.h: In function `void la::SubOverwrite(const Vector&, const Vector&, Vector*)':
+uselapack.h:449: error: `void la::SubOverwrite(const Vector&, const Vector&, Vector*)' redeclared as different kind of symbol
+uselapack.h:187: error: previous declaration of `int la::SubOverwrite'
+uselapack.h:187: error: previous non-function declaration `int la::SubOverwrite'
+uselapack.h:449: error: conflicts with function declaration `void la::SubOverwrite(const Vector&, const Vector&, Vector*)'
+uselapack.h:450: error: 'const class Vector' has no member named 'length'
+uselapack.h:450: error: 'const class Vector' has no member named 'length'
+uselapack.h:450: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:451: error: 'class Vector' has no member named 'length'
+uselapack.h:451: error: 'const class Vector' has no member named 'length'
+uselapack.h:452: error: 'const class Vector' has no member named 'length'
+uselapack.h:452: error: `la::SubOverwrite' cannot be used as a function
+uselapack.h: In function `void la::SubOverwrite(const Matrix&, const Matrix&, Matrix*)':
+uselapack.h:458: error: `void la::SubOverwrite(const Matrix&, const Matrix&, Matrix*)' redeclared as different kind of symbol
+uselapack.h:187: error: previous declaration of `int la::SubOverwrite'
+uselapack.h:187: error: previous non-function declaration `int la::SubOverwrite'
+uselapack.h:458: error: conflicts with function declaration `void la::SubOverwrite(const Matrix&, const Matrix&, Matrix*)'
+uselapack.h:459: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:459: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:459: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:460: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:460: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:461: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:461: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:462: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:462: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:463: error: `la::SubOverwrite' cannot be used as a function
+uselapack.h: In function `void la::SubInit(const Vector&, const Vector&, Vector*)':
+uselapack.h:471: error: 'const class Vector' has no member named 'length'
+uselapack.h:472: error: `la::SubOverwrite' cannot be used as a function
+uselapack.h: In function `void la::SubInit(const Matrix&, const Matrix&, Matrix*)':
+uselapack.h:479: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:479: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:480: error: `la::SubOverwrite' cannot be used as a function
+uselapack.h: In function `void la::TransposeSquare(Matrix*)':
+uselapack.h:495: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:495: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:495: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:496: error: `index_t' was not declared in this scope
+uselapack.h:496: error: expected `;' before "nr"
+uselapack.h:497: error: expected `;' before "r"
+uselapack.h:497: error: `r' was not declared in this scope
+uselapack.h:497: error: `nr' was not declared in this scope
+uselapack.h:498: error: expected `;' before "c"
+uselapack.h:498: error: `c' was not declared in this scope
+uselapack.h:497: warning: unused variable 'nr'
+uselapack.h:495: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.h: In function `void la::TransposeOverwrite(const Matrix&, Matrix*)':
+uselapack.h:511: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:511: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:511: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:512: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:512: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:513: error: `index_t' was not declared in this scope
+uselapack.h:513: error: expected `;' before "nr"
+uselapack.h:514: error: expected `;' before "nc"
+uselapack.h:515: error: expected `;' before "r"
+uselapack.h:515: error: `r' was not declared in this scope
+uselapack.h:515: error: `nr' was not declared in this scope
+uselapack.h:516: error: expected `;' before "c"
+uselapack.h:516: error: `c' was not declared in this scope
+uselapack.h:516: error: `nc' was not declared in this scope
+uselapack.h:516: warning: unused variable 'nc'
+uselapack.h:515: warning: unused variable 'nr'
+uselapack.h: In function `void la::TransposeInit(const Matrix&, Matrix*)':
+uselapack.h:526: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:526: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h: In function `void la::MulExpert(double, const Matrix&, const Vector&, double, Vector*)':
+uselapack.h:548: error: `DEBUG_ASSERT' was not declared in this scope
+uselapack.h:549: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:549: error: 'const class Vector' has no member named 'length'
+uselapack.h:549: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:550: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:550: error: 'class Vector' has no member named 'length'
+uselapack.h:551: error: `dgemv' was not declared in this scope
+uselapack.h:551: error: `F77_FUNC' was not declared in this scope
+uselapack.h:551: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:551: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:552: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:548: warning: unused variable 'DEBUG_ASSERT'
+uselapack.h:551: warning: unused variable 'dgemv'
+uselapack.h:551: warning: unused variable 'F77_FUNC'
+uselapack.h: In function `void la::MulInit(const Matrix&, const Vector&, Vector*)':
+uselapack.h:588: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h: In function `void la::MulExpert(double, const Vector&, const Matrix&, double, Vector*)':
+uselapack.h:607: error: `DEBUG_ASSERT' was not declared in this scope
+uselapack.h:608: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:608: error: 'const class Vector' has no member named 'length'
+uselapack.h:608: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:609: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:609: error: 'class Vector' has no member named 'length'
+uselapack.h:610: error: `dgemv' was not declared in this scope
+uselapack.h:610: error: `F77_FUNC' was not declared in this scope
+uselapack.h:610: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:610: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:611: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:607: warning: unused variable 'DEBUG_ASSERT'
+uselapack.h:610: warning: unused variable 'dgemv'
+uselapack.h:610: warning: unused variable 'F77_FUNC'
+uselapack.h: In function `void la::MulInit(const Vector&, const Matrix&, Vector*)':
+uselapack.h:636: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h: In function `void la::MulExpert(double, bool, const Matrix&, bool, const Matrix&, double, Matrix*)':
+uselapack.h:661: error: `DEBUG_ASSERT' was not declared in this scope
+uselapack.h:663: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:663: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:664: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:664: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:664: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.h:665: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:665: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:665: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:666: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:666: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:666: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:667: error: `dgemm' was not declared in this scope
+uselapack.h:667: error: `F77_FUNC' was not declared in this scope
+uselapack.h:668: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:668: error: 'class Matrix' has no member named 'n_cols'
+uselapack.h:668: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:668: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:669: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:669: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:670: error: 'class Matrix' has no member named 'n_rows'
+uselapack.h:667: warning: unused variable 'dgemm'
+uselapack.h:667: warning: unused variable 'F77_FUNC'
+uselapack.h: In function `void la::MulInit(const Matrix&, const Matrix&, Matrix*)':
+uselapack.h:720: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:720: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h: In function `void la::MulTransAInit(const Matrix&, const Matrix&, Matrix*)':
+uselapack.h:747: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h:747: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.h: In function `void la::MulTransBInit(const Matrix&, const Matrix&, Matrix*)':
+uselapack.h:774: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h:774: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.h: At global scope:
+uselapack.h:797: error: `success_t' does not name a type
+uselapack.h:815: error: `success_t' does not name a type
+uselapack.h:825: error: `success_t' does not name a type
+uselapack.h:848: error: `success_t' does not name a type
+uselapack.h:866: error: `success_t' does not name a type
+uselapack.h:876: error: `success_t' does not name a type
+uselapack.h:923: error: `success_t' does not name a type
+uselapack.h:956: error: `success_t' does not name a type
+uselapack.h:989: error: `success_t' does not name a type
+uselapack.h:1013: error: `success_t' does not name a type
+uselapack.h:1040: error: `success_t' does not name a type
+uselapack.h:1055: error: `success_t' does not name a type
+uselapack.h:1071: error: `success_t' does not name a type
+uselapack.h:1095: error: `success_t' does not name a type
+uselapack.h:1108: error: `success_t' does not name a type
+uselapack.h:1136: error: `success_t' does not name a type
+uselapack.h:1165: error: `success_t' does not name a type
+uselapack.h:1181: error: `success_t' does not name a type
+uselapack.h:1198: error: `success_t' does not name a type
+uselapack.h:1208: error: `success_t' does not name a type
+uselapack.h:1246: error: `success_t' does not name a type
+uselapack.h:1264: error: `success_t' does not name a type
+uselapack.h:1286: error: `success_t' does not name a type
+In file included from uselapack.cc:8:
+la.h:17:23: math/math.h: No such file or directory
+In file included from uselapack.cc:8:
+la.h:25: error: `la::DistanceSqEuclidean' declared as an `inline' variable
+la.h:26: error: `index_t' was not declared in this scope
+la.h:26: error: expected primary-expression before "const"
+la.h:26: error: expected primary-expression before "const"
+la.h:26: error: initializer expression list treated as compound expression
+la.h:26: error: expected `,' or `;' before '{' token
+la.h: In function `double la::DistanceSqEuclidean(const Vector&, const Vector&)':
+la.h:37: error: `double la::DistanceSqEuclidean(const Vector&, const Vector&)' redeclared as different kind of symbol
+la.h:25: error: previous declaration of `double la::DistanceSqEuclidean'
+la.h:25: error: previous non-function declaration `double la::DistanceSqEuclidean'
+la.h:37: error: conflicts with function declaration `double la::DistanceSqEuclidean(const Vector&, const Vector&)'
+la.h:38: error: 'const class Vector' has no member named 'length'
+la.h:38: error: 'const class Vector' has no member named 'length'
+la.h:38: error: `DEBUG_SAME_SIZE' was not declared in this scope
+la.h:39: error: 'const class Vector' has no member named 'length'
+la.h:39: error: `la::DistanceSqEuclidean' cannot be used as a function
+la.h:38: warning: unused variable 'DEBUG_SAME_SIZE'
+la.h: At global scope:
+la.h:51: error: `la::RawLMetric' declared as an `inline' variable
+la.h:51: error: template declaration of `double la::RawLMetric'
+la.h:52: error: `index_t' was not declared in this scope
+la.h:52: error: expected primary-expression before "const"
+la.h:52: error: expected primary-expression before "const"
+la.h:70: error: `la::LMetric' declared as an `inline' variable
+la.h:70: error: template declaration of `double la::LMetric'
+la.h:71: error: `index_t' was not declared in this scope
+la.h:71: error: expected primary-expression before "const"
+la.h:71: error: expected primary-expression before "const"
+la.h: In function `double la::Trace(Matrix&)':
+la.h:79: error: 'class Matrix' has no member named 'n_cols'
+la.h:79: error: 'class Matrix' has no member named 'n_rows'
+la.h:79: error: `DEBUG_SAME_SIZE' was not declared in this scope
+la.h:81: error: `index_t' was not declared in this scope
+la.h:81: error: expected `;' before "i"
+la.h:81: error: `i' was not declared in this scope
+la.h:81: error: 'class Matrix' has no member named 'n_cols'
+la.h:81: warning: unused variable 'index_t'
+la.h:79: warning: unused variable 'DEBUG_SAME_SIZE'
+la.h: At global scope:
+la.h:94: error: `success_t' does not name a type
+la.h:119: error: `success_t' does not name a type
+la.h:144: error: `success_t' does not name a type
+uselapack.cc: In constructor `la::zzzLapackInit::zzzLapackInit()':
+uselapack.cc:22: error: `f77_integer' was not declared in this scope
+uselapack.cc:22: error: expected `;' before "fake_pivots"
+uselapack.cc:23: error: expected `;' before "fake_info"
+uselapack.cc:26: error: `dgetri' was not declared in this scope
+uselapack.cc:26: error: `F77_FUNC' was not declared in this scope
+uselapack.cc:26: error: `fake_pivots' was not declared in this scope
+uselapack.cc:27: error: `fake_info' was not declared in this scope
+uselapack.cc:30: error: `dgeqrf' was not declared in this scope
+uselapack.cc:34: error: `dorgqr' was not declared in this scope
+uselapack.cc:39: error: `max' is not a member of `std'
+uselapack.cc:26: warning: unused variable 'dgetri'
+uselapack.cc:26: warning: unused variable 'fake_pivots'
+uselapack.cc:30: warning: unused variable 'dgeqrf'
+uselapack.cc:34: warning: unused variable 'dorgqr'
+uselapack.cc: At global scope:
+uselapack.cc:44: error: `success_t' does not name a type
+uselapack.cc:93: error: `success_t' does not name a type
+uselapack.cc:106: error: `success_t' does not name a type
+uselapack.cc: In function `long double la::Determinant(const Matrix&)':
+uselapack.cc:122: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.cc:122: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.cc:122: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.cc:123: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.cc:124: error: `f77_integer' was not declared in this scope
+uselapack.cc:124: error: expected `;' before "pivots"
+uselapack.cc:128: error: `pivots' was not declared in this scope
+uselapack.cc:128: error: `PLUExpert' was not declared in this scope
+uselapack.cc:132: error: `index_t' was not declared in this scope
+uselapack.cc:132: error: expected `;' before "i"
+uselapack.cc:132: error: `i' was not declared in this scope
+uselapack.cc:132: warning: unused variable 'index_t'
+uselapack.cc:122: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.cc:124: warning: unused variable 'f77_integer'
+uselapack.cc:128: warning: unused variable 'PLUExpert'
+uselapack.cc: In function `double la::DeterminantLog(const Matrix&, int*)':
+uselapack.cc:144: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.cc:144: error: 'const class Matrix' has no member named 'n_cols'
+uselapack.cc:144: error: `DEBUG_SAME_SIZE' was not declared in this scope
+uselapack.cc:145: error: 'const class Matrix' has no member named 'n_rows'
+uselapack.cc:146: error: `f77_integer' was not declared in this scope
+uselapack.cc:146: error: expected `;' before "pivots"
+uselapack.cc:150: error: `pivots' was not declared in this scope
+uselapack.cc:150: error: `PLUExpert' was not declared in this scope
+uselapack.cc:155: error: `index_t' was not declared in this scope
+uselapack.cc:155: error: expected `;' before "i"
+uselapack.cc:155: error: `i' was not declared in this scope
+uselapack.cc:168: error: `DBL_NAN' was not declared in this scope
+uselapack.cc:168: warning: unused variable 'DBL_NAN'
+uselapack.cc:155: warning: unused variable 'index_t'
+uselapack.cc:144: warning: unused variable 'DEBUG_SAME_SIZE'
+uselapack.cc:146: warning: unused variable 'f77_integer'
+uselapack.cc:150: warning: unused variable 'PLUExpert'
+uselapack.cc: At global scope:
+uselapack.cc:230: error: `success_t' does not name a type
+uselapack.cc:263: error: `success_t' does not name a type
+uselapack.cc:273: error: `success_t' does not name a type
+uselapack.cc:297: error: `success_t' does not name a type
+uselapack.cc:318: error: `success_t' does not name a type
+uselapack.cc:341: error: `success_t' does not name a type
+uselapack.cc:379: error: `success_t' does not name a type
+uselapack.cc:430: error: `success_t' does not name a type
+uselapack.cc:457: error: `success_t' does not name a type
+make: *** [/scratch/nadeem/fastlib/bin/x86_64_Linux_check_gcc_/obj/fastlib_la_uselapack.o] Error 1
