@@ -10,7 +10,7 @@ librule(
 binrule(
     name = "mog_l2e_main",                  # the executable name
     sources = ["mog_l2e_main.cc"],          # compile main.cc
-    headers = ["optimizers.h"], # no extra headers
+    headers = ["../opt/optimizers.h"], # no extra headers
     deplibs = [":mog_l2e","fastlib:fastlib"]           #
     )
 

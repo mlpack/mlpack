@@ -14,12 +14,9 @@ The files are the following:
 
 4. phi.h - this contains the functions that calculates the value of the multivariate Gaussian PDF, and also the gradients of the gaussian PDF with respect to the mean and variance when d(sigma) is provided.
 
-5. optimizers.h - this file contains the implementation of two optimizer
-classes
+5. build.py
 
-6. build.py
-
-7. The .arff and .csv file - the data files on which you can run the program.
+6. The .arff and .csv file - the data files on which you can run the program.
 
 -> An example run would be:
 fl-build mog_l2e_main
