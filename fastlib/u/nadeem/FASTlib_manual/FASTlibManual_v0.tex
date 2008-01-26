@@ -26,15 +26,48 @@
 \begin{titlepage}
 \begin{center}
 %\renewcommand{\baselinestretch}{1}
-\large \bf
+\large {\bf
 FASTlib Design and Development Manual\\
-\normalsize version 0.1\footnote{
+\normalsize Version 0.1}\footnote{
 NOTE: Please note that this is a draft document and it is undergoing intensive revision at this time. While it provides a good and reasonably accurate insight into FASTlib and MLPack, it is by no means complete and some details may change as this document and the library are packaged for public release.
 }\\ 
-\large \bf Fundamental Algorithmic and Statistical Tools (FAST) Lab\\
+\vspace{.1in}
+\large {\bf Fundamental Algorithmic and Statistical Tools Laboratory (FASTlab)}\\
+College of Computing\\
 Georgia Institute of Technology\\
 Atlanta, GA\\
-Dated: \today
+\vspace{.1in}
+Director:\\
+Alexander Gray\\
+\vspace{.1in}
+Core designers:\\
+Garry Boyer, Ryan Riegel, Nikolaos Vasiloglou\\
+\vspace{.1in}
+Core maintainers:\\
+Ryan Riegel, Nadeem Syed\\
+\vspace{.1in}
+Developers (alphabetical):\\
+Abhimanyu Aditya, 
+Hrishikesh Amur, 
+Sooraj Bhat, 
+Garry Boyer, 
+Wei Guan, 
+Michael Holmes, 
+Dongryeol Lee,
+Chip Mappus, 
+Nishant Mehta, 
+Hua Ouyang, 
+Arkadas Ozakin, 
+Parikshit Ram, 
+Ryan Riegel, 
+Ravi Sastry,
+Long Tran, 
+Nikolaos Vasiloglou, 
+Ping Wang, 
+James Waters, 
+Wee Chin Wong\\
+\vspace{.1in}
+{\bf As of: \today}
 \end{center}
 
 \end{titlepage}
@@ -44,17 +77,23 @@ Dated: \today
 \chapter {Introduction}
 
 \section {Overview}
-FASTlib is a C/C++ library of state-of-the-art numerical and machine
-learning methods.  Its primary design goals are to be versatile, easy
-to use, and as fast as possible while still avoiding the worst
-problems of developing in a low-level language.  Special emphasis is
-given to scalable computation, including algorithms for generalized
-$N$-body problems \cite{gray2000nbp} and some support for
-parallelization.  Library components are designed to be modular,
-facilitating their use as subcomputations of other algorithms.
-Further, FASTlib aims to permit rapid, distributed development in an
-effort to stay up to date with advances in scientific computation.
-Its features include:
+FASTlib is a C/C++ library of tools intended for developing
+state-of-the-art machine learning and other numerical methods to support
+the FASTlab's development and application of data analysis and scientific
+computing methods to today's largest-scale data problems, as represented
+by our collaborations with the Sloan Digital Sky Survey, the Large Hadron 
+Collider, the Skolnick protein folding lab, Google, and others.
+Its primary design goals are to be versatile, easy to use, and as fast as
+possible while still avoiding the worst problems of developing in a
+low-level language.  Special emphasis is given to scalable
+computation, including algorithms and data structures 
+for generalized $N$-body problems
+\cite{gray2000nbp} and support for modern linear algebra, optimization, 
+signal processing, and parallelization methods.  Library
+components are designed to be modular, facilitating their use as
+subcomputations of other algorithms.  Further, FASTlib aims to permit
+rapid, distributed development in an effort to stay up to date with
+advances in scientific computation.  Its features include:
 \begin{enumerate}
 \item A collection of machine learning methods in both executable and
   linkable form that can be used for ``out of box'' analysis.
@@ -68,8 +107,17 @@ Its features include:
 \item An array of debugging and unit testing tools that can be
   compiled out but are still fast when left in.
 \item Handy Python scripts for compilation, conducting experiments,
-  and analysing resutls.
+  and analysing results.
 \end{enumerate}
+While FASTlib was designed for development by the FASTlab in order to 
+serve the lab's customers with massive data problems, it also serves
+to fill the need we believe exists for a machine learning equivalent
+of BLAS/LAPACK \cite{anderson1999lug}, the standard 
+high-performance library for (dense) linear algebra.  The (eventually 
+comprehensive) package of 
+machine learning methods built using FASTlib is what we call MLPACK.  A
+similar need exists in computational physics, for which we have also begun
+PHYSPACK.
 
 \section {Background and Motivation}
 FASTlib was created in response to the presently disorganized state of
@@ -94,12 +142,13 @@ generally speedy enough to serve today's premier data mining
 applications.  Our aim with FASTlib is to meet this demand by
 providing high-performance implementations for numerical and machine
 learning methods united by an effective, portable, and consistent API.
-We link to other libraries when appropriate---for instance, we defer to
-BLAS/LAPACK \cite{anderson1999lug} for (dense) linear algebra---but provide wrappers in order
-to standardize and simplify use---finding singular values in LAPACK
-involves fourteen parameters, while we need only two.  For the most
-part, though, FASTlib directly implements methods of interest in an
-effort to maximize their efficiency.
+We link to other libraries when appropriate---for instance, we defer
+to BLAS/LAPACK  for dense linear algebra and Trilinos for sparse 
+linear algebra---but
+provide wrappers in order to standardize and simplify use---finding
+singular values in LAPACK involves fourteen parameters, while we need
+only two.  For the most part, though, FASTlib directly implements
+methods of interest in an effort to maximize their efficiency.
 
 \section {Language and Style}
 Various reasons motivated our choice of C/C++ for FASTlib:
@@ -122,7 +171,15 @@ to C's standard library for I/O tasks, we employ only shallow class
 hierarchies, and we make frequent use of compiler-optimized debug
 checks.  This last point is especially important in machine learning
 as it can be difficult to tell whether statistical or typographical
-problems are to blame for an algorithm's lack of convergence.
+problems are to blame for an algorithm's lack of convergence.  We are
+aware of the places in which our design/style decisions deviate from
+``standard'' practice, and for each departure we have weighed the cost of the
+added learning burden and imposition on programmer freedom versus its
+benefits with respect to the fundamental goals of the library.  One
+note regarding this is that our design decisions are not far from
+those of Google, a top-notch coding house (not completely coincidental
+-- two of FASTlib's core designers were Google interns and its chief
+designer is now with Google).
 
 \section{Development Model}
 Core tenets of FASTlib include openness and extensibility, but
@@ -173,25 +230,75 @@ As mentioned earlier, the library is organized in a modular fashion and it uses 
 \begin{enumerate}
 \item Templated classes for data structures for vectors, matrices, trees, sparse vectors and matrices etc.
 \item An extensive set of basic and expert versions of linear algebra methods. Majority of these act as wrappers for LAPACK routines and provide simple interface for linear algebra operations.
-\item Support for sparse linear algebra through the trilinos library \cite{heroux2005otp}.
+\item Support for sparse linear algebra through the Trilinos library \cite{heroux2005otp}.
 \item THOR (Tree High-Order Reduce) framework. THOR is a mechanism for parallelizing dual-tree algorithms. More details and references are provided in the next chapter.
 \item Extensive compilation and debugging infrastructure to help with development using FASTlib.
-\item methods for data storage and manipulation, memory management, serialization.
-\item MLPack - collection of machine learning algorithms that can be compiled to either run stand-alone or to be linked as libraries to other software. Following methods are currently supported:
+\item Methods for data storage and manipulation, memory management, serialization.
+\item MLPACK - collection of machine learning algorithms that can be compiled to either run stand-alone or to be linked as libraries to other software. Following methods are currently included of as this release:
+
   \begin{itemize}
-  \item Dual-tree based Nearest Neigbour classifier
-  \item Mixture of Guassian using L2E and EM algorithms
   \item Naive Bayes Classifier
-  \item Support Vector Machine classifier trained using SMO
-  \item Support Vector Machine with Non-negativity constrained wights
-  \item Hidden Markov Model
+  \item Mixture of Gaussians using EM algorithm
+  \item Mixture of Gaussians using $L_2$ estimation
+  \item Support Vector Machine multi-class classifier using SMO
+  \item Support Vector Machine with non-negativity constrained weights 
+        (to be submitted)
+  \item Hidden Markov Model---discrete, Gaussian, mixtures of Gaussians
   \item Kalman Filter \cite {kai2000le}
-  \item ICA using FastICA algorithm \cite{hyvarinen1999far} and ICA using Infomax method \cite{bell95}
-  \item Kernel PCA
-  \item Kernel Density Estimator - 5 different variants of fast methods for KDE
-  \item Naive and tree-based algorithms for orthogonal range search. More details in the next chapter.
-  \item Dual-tree version of Bor\r{u}vka's algorithm for finding minimum spanning trees
+  \item Independent Component Analysis using FastICA algorithm \cite{hyvarinen1999far}
+  \item Indepedent Component Analysis using Infomax method \cite{bell95}
+  \item Kernel PCA and Spectral Regression
+  \item Nearest Neighbor Search using dual-tree algorithm
+  \item Orthogonal Range Search using single-tree algorithm
+  \item Kernel Density Estimator using 5 different fast algorithms: Fast Fourier Transform, Fast Gauss Transform, Improved Fast Gauss Transform, Dual-tree $p^D$ Fast Gauss Transform, Dual-tree $D^p$ Fast Gauss Transform
+  \item Local Linear Kernel Regression (to be submitted)
+  \item Hierarchical Clustering and Minimum Spanning Trees using 
+        dual-tree Bor\r{u}vka's algorithm (to be submitted)
   \end{itemize}
+Though tested and code-reviewed for this release, these codes will undergo further testing, review, documentation, unit tests, and internal standardization for the next release in one or two months.  For that release, we also plan to include:
+  \begin{itemize}
+  \item Parallel $k$-means and EM
+  \item Sparse Kernel Density Estimator using quadratic programming    
+  \item Diffusion Maps, Laplacian Eigenmaps, Locally Linear Embedding
+  \item SVM Regression
+  \item Ranking SVM
+  \item C\# versions of Nearest-Neighbor, Hilbert Curves, Kernel Density Estimator (for integration into Microsoft products, beginning with SQL Server)
+  \item Nearest Neighbor dual-tree algorithm using cover-trees
+  \item Kernel Discriminant Analysis using dual-tree algorithm
+  \item Affinity Propagation using dual-tree algorithm
+  \end{itemize}
+and possibly a few others.
+
+\item PHYSPACK - collection of computational physics methods, currently only including:
+  \begin{itemize}
+  \item Molecular Dynamics simulation using Lennard-Jones potential
+  \end{itemize}
+For the next release in a few months we plan to include:
+  \begin{itemize}
+  \item Axilrod-Teller Molecular Dynamics using triple-tree method (to be submitted)
+  \item Hartree-Fock Quantum Simulation using quadruple-tree method (to be submitted)
+  \end{itemize}
+
+\item State-of-the-art optimization methods.  Currently our collection of
+available general optimizers is sorely lacking, containing only
+Nelder-Mead and quasi-Newton.  Stochastic gradient descent and
+meta-descent will be in the next release, but optimization is
+currently a major hole which needs to be filled.  
+
+\item Other libraries.  We plan to incorporate the best tools from other
+libraries by wrapping them in FASTlib, including FFTW and Boost in the 
+next release.
+
+\item Automatic derivation support.  Long term, our intention is to 
+automatically generate all of these codes using an algorithm
+derivation engine we are starting to design, called
+Algorithmica.  We believe this is the ultimate answer to many
+difficult issues in software engineering, especially for intricate
+mathematical software, including the need to support multiple
+languages and interactive environments, correctness, and code
+optimization.  This system will be built in a functional language such 
+as Haskell or ML but generate C++ code based on FASTlib.
+
 \end{enumerate}
 
 
@@ -222,7 +329,7 @@ In order to build FASTlib, you will need the following tools:
 \item (optional) doxygen and graphviz's dot, for formatted documentation
 \end {itemize}
 
-FASTlib is maintained in a Subversion repositoroy at Georgia Tech, but
+FASTlib is maintained in a Subversion repository at Georgia Tech, but
 presently it is available to others in tar-ball format via request.
 Let \verb@$FASTLIBPATH@ be the absolute path (i.e.~starting with
 \verb@/@) to the directory where you have extracted FASTlib.  You will
@@ -280,7 +387,7 @@ The following summarizes the current code organization of FASTlib
   \end{itemize}
 \item Toolbox of machine learning methods- this is a growing list and the listing below is incomplete as of this writing.
   \begin{itemize}
-  \item \verb@MLPack/@ 
+  \item \verb@MLPACK/@ 
     \begin{itemize}
       \item \verb@allknn/      @- Dual-tree based Nearest Neigbour classifier
       \item \verb@mog_l2e/     @- Mixture of Guassian using L2E
@@ -304,7 +411,7 @@ The following summarizes the current code organization of FASTlib
   \item \verb@bin/      @- files generated by compilation; \verb@make clean@ deletes this
   \item \verb@bin_keep/ @- compiled binaries that should not be cleaned, such as BLAS/LAPACK
   \item \verb@doc/      @- All documentation, including the Doxygen generated ones are here
-  \item \verb@examples/ @- Example code and tutorial(s) for using FASTlib library and MLPack
+  \item \verb@examples/ @- Example code and tutorial(s) for using FASTlib library and MLPACK
   \item \verb@include/  @- Symbolic links to all the header files gathered in one place
   \item \verb@lib/      @- linkable libraries
   \item \verb@script/   @- scripts for compiling code, running experiments, etc.
@@ -313,7 +420,7 @@ The following summarizes the current code organization of FASTlib
 \end{itemize}
 
 \section{Overview of some tools}
-To help you get started with using FASTlib and MLPack for your applications, we provide a brief summary of THOR and some of the cutting edge methods available in the MLPack. We are in the process of generating user documentation for the rest of the methods in MLPack. In the meantime please refer to the README files in the individual MLPack method folders.
+To help you get started with using FASTlib and MLPACK for your applications, we provide a brief summary of THOR and some of the cutting edge methods available in the MLPACK. We are in the process of generating user documentation for the rest of the methods in MLPACK. In the meantime please refer to the README files in the individual MLPACK method folders.
 
 \subsection{THOR (Tree High-Order Reduce) framework}
 THOR stands for Tree High-Order Reduce. THOR aims to solve the class of high-order-reduce problems (although currently only second-order reduce problems). Its goal is to handle the set of high-order reduce problems that can be accelerated using trees. THOR requires only very abstract information about the tree algorithm at hand, and it is designed to have a lot of freedom and flexibility in executing it. In extremely simple terms, when given a system of reduce functions to solve, in the form of template classes, THOR executes them. THOR considers a combination of summary statistics, pruning rules, and update rules, and uses these to execute your tree-based algorithm in any expansion pattern. Parallel is just another expansion pattern. THOR parallelizes very effectively by dividing the query tree (you must label one of your trees as a query tree even if it is not a query-reference problem) into smaller trees. It then solves each query subtree with the root of the reference tree, which in practice seems to have minimal noticeable overhead compared to solving the problem monolithically. Solving queries independently prevents the need of having to relay pruning information among processors. 
