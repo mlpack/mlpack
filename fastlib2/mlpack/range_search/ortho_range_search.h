@@ -400,6 +400,9 @@ class OrthoRangeSearch {
       if(prune_flag == SUBSUME) {
 	candidate_points_[row] = true;
       }
+      else {
+	candidate_points_[row] = false;
+      }
     }
   }
 
@@ -433,6 +436,9 @@ class OrthoRangeSearch {
       // distance of this dimension
       if(node_dir_range.lo > high_coord_limits[d] ||
 	 node_dir_range.hi < low_coord_limits[d]) {
+	for(index_t i = node->begin(); i < node->end(); i++) {
+	  candidate_points_[i] = false;
+	}
 	return;
       }
       // otherwise, check for SUBSUME case
