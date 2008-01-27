@@ -136,6 +136,9 @@ class NaiveOrthoRangeSearch {
  */
 class OrthoRangeSearch {
 
+  // This class object cannot be copied!
+  FORBID_ACCIDENTAL_COPIES(OrthoRangeSearch);
+
  public:
   
   ////////// Constructor/Destructor //////////
