@@ -151,6 +151,22 @@ class SparseMatrix {
   void LoadRow(index_t row, index_t *columns, Vector &values);
   void LoadRow(index_t row, index_t num, index_t *columns, double  *values);
   void LoadRow(index_t row, std::vector<index_t> &columns, std::vector<double>  &values);
+  /**
+   * Sort Indices. This is a precondition for running any operation in Sparsem
+   * addition, subdraction, multiplication, between matrices. EndLoading also does 
+   * that, but it also does other things. SortIndices() is a lighter operation
+   * as it still allows insertions. Note also that if you call EndLoading gets
+   * are slower, so prefer SortIndices if you don't need EndLoading. But if you 
+   * need EndLoading do not call SortIndices, as EndLoading will do the sorting too.
+   * It is just redundant
+   */
+   void SortIndices(); 
+   /**
+    * Explicitly set if indices are sorted
+    */
+   void set_indices_sorted(bool indices_sorted) {
+     indices_sorted_=indices_sorted;
+   }
   /** When you are done call this it does some optimization in the storage, no
    *  further asignment 
    *  !!!WARNING !!!!
@@ -421,6 +437,7 @@ class SparseMatrix {
   index_t num_of_columns_;
   Epetra_SerialComm comm_;
   bool issymmetric_;
+  bool indices_sorted_;
   Epetra_Map *map_;
   Teuchos::RCP<Epetra_CrsMatrix> matrix_;
   index_t *my_global_elements_;
