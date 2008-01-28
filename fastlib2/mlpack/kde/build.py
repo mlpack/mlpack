@@ -9,6 +9,17 @@ librule(
                "fastlib:fastlib_int"]
     )
 
+# The linkable library for original dualtree KDE algorithm
+librule(
+    name = "dualtree_kde",
+    sources = [],
+    headers = ["dataset_scaler.h",
+               "dualtree_kde.h",
+               "naive_kde.h"],
+    deplibs = ["../series_expansion:series_expansion",
+               "fastlib:fastlib_int"]
+    )
+
 # The linkable library for KDE using the original fast Gauss transform
 librule(
     name = "fgt_kde",
@@ -70,6 +81,16 @@ binrule(
     deplibs = [":fft_kde",
                ":fgt_kde",
                ":kde",
+               "../series_expansion:series_expansion",
+               "fastlib:fastlib_int"]
+    )
+
+# The test-driver for the original dualtree KDE
+binrule(
+    name = "dualtree_kde_bin",
+    sources = ["dualtree_kde_main.cc"],
+    headers = [],
+    deplibs = [":dualtree_kde",
                "../series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )

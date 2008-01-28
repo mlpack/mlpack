@@ -105,6 +105,7 @@ class NaiveKde {
     // then normalize it
     double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) * 
       rset_.n_cols();
+
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       densities_[q] /= norm_const;
     }
@@ -137,6 +138,7 @@ class NaiveKde {
     // then normalize it
     double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) * 
       rset_.n_cols();
+
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       densities_[q] /= norm_const;
     }
