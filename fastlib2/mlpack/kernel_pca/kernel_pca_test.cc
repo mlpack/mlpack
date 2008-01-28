@@ -90,7 +90,7 @@ class KernelPCATest {
   }
   void TestAll() {
      TestGeneralKernelPCA();
-     // TestLLE();
+     //TestLLE();
      TestSpectralRegression();
   }
  private:
