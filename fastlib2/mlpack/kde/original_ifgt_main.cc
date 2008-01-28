@@ -15,20 +15,20 @@
  * algorithms to run.
  *
  * In order to compile this driver, do:
- * fl-build fgt_kde_bin --mode=fast
+ * fl-build original_ifgt_bin --mode=fast
  *
- * In order to run this driver for the FGT-based KDE algorithm, type
+ * In order to run this driver for the IFGT-based KDE algorithm, type
  * the following (which consists of both required and optional
  * arguments) in a single command line:
  *
- * ./fgt_kde_bin --data=name_of_the_reference_dataset
- *               --query=name_of_the_query_dataset
- *               --kde/bandwidth=0.0130619
- *               --kde/scaling=range
- *               --kde/ifgt_kde_output=ifgt_kde_output.txt
- *               --kde/naive_kde_output=naive_kde_output.txt
- *               --kde/do_naive
- *               --kde/absolute_error=0.01
+ * ./original_ifgt_bin --data=name_of_the_reference_dataset
+ *                     --query=name_of_the_query_dataset
+ *                     --kde/bandwidth=0.0130619
+ *                     --kde/scaling=range
+ *                     --kde/ifgt_kde_output=ifgt_kde_output.txt
+ *                     --kde/naive_kde_output=naive_kde_output.txt
+ *                     --kde/do_naive
+ *                     --kde/absolute_error=0.01
  *
  * Explanations for the arguments listed with possible values:
  *
