@@ -197,6 +197,7 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
   kernel_matrix_.SetDiagonal(1.0);
   NONFATAL("Computing eigen values...\n");
   SparseMatrix kernel_matrix1;
+  kernel_matrix_.EndLoading();
   Sparsem::MultiplyT(kernel_matrix_, &kernel_matrix1);
   kernel_matrix1.ToFile("lle_mat.txt");
   kernel_matrix1.EndLoading();
@@ -259,12 +260,15 @@ void KernelPCA::ComputeSpectralRegression(DISTANCEKERNEL kernel,
   kernel_matrix_.MakeSymmetric();
   kernel_matrix_.EndLoading();
   d_sr_mat.SetDiagonal(d_sr_mat_diag);
+  d_sr_mat.set_indices_sorted(true);
   // This is the matrix D that has the sum of the rows or columns
   SparseMatrix d_mat;
   d_mat.Init(data_.n_cols(), data_.n_cols(), 1);
+  d_mat.set_indices_sorted(true);
   Vector d_diagonal;
   kernel_matrix_.RowSums(&d_diagonal);
   d_mat.SetDiagonal(d_diagonal);
+  d_mat.set_indices_sorted(true);
   SparseMatrix laplacian_mat;
   Sparsem::Subtract(d_mat, kernel_matrix_, &laplacian_mat);
   SparseMatrix d_sr_plus_laplacian_mat;
