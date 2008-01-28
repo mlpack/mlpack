@@ -24,8 +24,8 @@
 #include <vector>
 #include <map>
 #include "fastlib/fastlib.h"
-#include "base/test.h"
-#include "sparse/sparse_matrix.h"
+#include "fastlib/base/test.h"
+#include "sparse_matrix.h"
 
 class SparseMatrixTest {
  public:
@@ -278,7 +278,9 @@ class SparseMatrixTest {
   }
   void TestBasicOperations() {
     SparseMatrix a("A.txt");
+    a.EndLoading();
     SparseMatrix b("B.txt");
+    b.EndLoading();
     SparseMatrix a_plus_b("AplusB.txt");
     SparseMatrix a_minus_b("AminusB.txt");
     SparseMatrix a_times_b("AtimesB.txt");
@@ -322,6 +324,24 @@ class SparseMatrixTest {
     temp.Destruct();
     NOTIFY("Matrix multiplication success!!\n");
     
+    SparseMatrix i_w("I-W.txt");
+    SparseMatrix i_w_i_w_trans("I-W_time_I-W_trans.txt");
+    i_w.SortIndices();
+    Sparsem::MultiplyT(i_w, &temp);
+//  printf("%s\n", temp.Print().c_str());
+//  printf("%s\n", a_times_a_trans.Print().c_str());
+    temp.EndLoading();
+    i_w_i_w_trans.EndLoading();
+//  printf("%s\n", i_w_i_w_trans.Print().c_str());
+    for(index_t i=0; i<i_w.num_of_rows(); i++) {
+      for(index_t j=0; j<i_w.num_of_columns(); j++) {
+        TEST_DOUBLE_APPROX(i_w_i_w_trans.get(i,j), temp.get(i,j), 0.01);
+      }
+    }
+    temp.Destruct();
+    NOTIFY("Matrix multiplication success!!\n");
+
+    
     Sparsem::DotMultiply(a, b, &temp);
 //    printf("%s\n", temp.Print().c_str());
 //    printf("%s\n", a_dot_times_b.Print().c_str());
@@ -344,7 +364,7 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NOTIFY("Matrix scalar multiplicationn success!!\n");
+    NOTIFY("Matrix scalar multiplication success!!\n");
     
   }
   void TestAll() {

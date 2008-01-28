@@ -20,6 +20,7 @@
 SparseMatrix::SparseMatrix() {
   map_    = NULL;
   issymmetric_=false;
+  indices_sorted_=false;
 }
 SparseMatrix::SparseMatrix(const SparseMatrix &other) {
   map_=NULL;
@@ -190,10 +191,11 @@ void SparseMatrix::Copy(const SparseMatrix &other) {
      other.matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
      this->LoadRow(r, num_of_entries, indices, values);
     }
+    indices_sorted_=false;
   } else {
     matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(*(other.matrix_.get())));
     map_= new Epetra_Map(this->matrix_->RowMap());
-
+    indices_sorted_=true;
   }
   my_global_elements_ = map_->MyGlobalElements();
 }
@@ -251,9 +253,36 @@ void SparseMatrix::LoadRow(index_t row,
 
 }
 
+void SparseMatrix::SortIndices() {
+  if (matrix_->IndicesAreLocal()) {
+    NONFATAL("EndLoading has been called, indices are already sorted,"  
+        "SortIndices cannot do anything further\n");
+    return;
+  }
+  double *values;
+  index_t *indices;
+  index_t num_of_entries;
+  my_global_elements_ = map_->MyGlobalElements();
+  std::vector<pair<index_t, double> > buffer;
+  for(index_t i=0; i<num_of_rows_; i++) {
+    index_t global_row = my_global_elements_[i];
+    matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
+    for(index_t j=0; j<num_of_entries; j++) {
+      buffer.push_back(make_pair(indices[j], values[j]));
+    }
+    std::sort(buffer.begin(), buffer.end());
+    for(index_t j=0; j<num_of_entries; j++) {
+      indices[j]=buffer[j].first;
+      values[j]=buffer[j].second;
+    }
+    buffer.clear();
+  }
+  indices_sorted_=true;
+}
 void SparseMatrix::EndLoading() {
   matrix_->FillComplete(false);
   matrix_->OptimizeStorage();
+  indices_sorted_=true;
 }
 
 void SparseMatrix::MakeSymmetric() {
@@ -654,6 +683,12 @@ inline void Sparsem::Add(const SparseMatrix &a,
                          SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
   DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
+  if (a.indices_sorted_==false) {
+    FATAL("The indices of a are not sorted");
+  }
+  if (b.indices_sorted_==false) {
+    FATAL("The indices of b are not sorted");
+  }
   result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
   result->StartLoadingRows();
@@ -734,6 +769,13 @@ inline void Sparsem::Subtract(const SparseMatrix &a,
                               SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
   DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
+  if (a.indices_sorted_==false) {
+    FATAL("The indices of a are not sorted");
+  }
+  if (b.indices_sorted_==false) {
+    FATAL("The indices of b are not sorted");
+  }
+
   result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
  
@@ -822,6 +864,13 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
                               const SparseMatrix &b,
                               SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
+  if (a.indices_sorted_==false) {
+    FATAL("The indices of a are not sorted");
+  }
+  if (b.indices_sorted_==false) {
+    FATAL("The indices of b are not sorted");
+  }
+
   result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
   result->StartLoadingRows();
@@ -926,6 +975,10 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
 
 inline void Sparsem::MultiplyT(SparseMatrix &a,
                                SparseMatrix *result) {
+  if (a.indices_sorted_==false) {
+    FATAL("The indices of a are not sorted");
+  }
+
   bool flag=a.issymmetric_;
   a.issymmetric_=true;
   Multiply(a, a, result);
@@ -953,6 +1006,13 @@ inline void Sparsem::DotMultiply(const SparseMatrix &a,
                                  const SparseMatrix &b,
                                  SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
+  if (a.indices_sorted_==false) {
+    FATAL("The indices of a are not sorted");
+  }
+  if (b.indices_sorted_==false) {
+    FATAL("The indices of b are not sorted");
+  }
+
   result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
   result->StartLoadingRows();
