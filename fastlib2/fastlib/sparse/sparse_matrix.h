@@ -457,6 +457,9 @@ class SparseMatrix {
  * class
  *
  * WARNING !!!! THE RESULT SHOULD NOT BE INITIALIZED !!!
+ * WARNING !!!! Before running any of those call SortIndices() or EndLoading() or
+ * if you know that you have  loaded the rows with sorted indices then
+ * explicitly set the indice_sorted flag to true with  set_indices_sorted(true);
  */
 class Sparsem {
  public:
