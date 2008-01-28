@@ -179,8 +179,10 @@ void SparseMatrix::Copy(const SparseMatrix &other) {
   }
   map_ = new Epetra_Map(other.matrix_->RowMap());
   issymmetric_ = other.issymmetric_;
+
   if (other.matrix_->Filled()==false) {
     map_ = new Epetra_Map(other.matrix_->RowMap());
+    my_global_elements_ = map_->MyGlobalElements(); 
     matrix_ = Teuchos::rcp(
         new Epetra_CrsMatrix(Epetra_DataAccess(0), *map_, 10));
     for(index_t r=0; r<num_of_rows_; r++){
@@ -191,13 +193,13 @@ void SparseMatrix::Copy(const SparseMatrix &other) {
      other.matrix_->ExtractGlobalRowView(global_row, num_of_entries, values, indices);
      this->LoadRow(r, num_of_entries, indices, values);
     }
-    indices_sorted_=false;
+    indices_sorted_=other.indices_sorted_;
   } else {
     matrix_ = Teuchos::rcp(new Epetra_CrsMatrix(*(other.matrix_.get())));
     map_= new Epetra_Map(this->matrix_->RowMap());
     indices_sorted_=true;
+    my_global_elements_ = map_->MyGlobalElements();
   }
-  my_global_elements_ = map_->MyGlobalElements();
 }
 
 void SparseMatrix::Destruct() {
@@ -366,6 +368,7 @@ void SparseMatrix::set(index_t r, index_t c, double v) {
   DEBUG_BOUNDS(c, num_of_columns_);
   if (get(r,c)==0) {
     matrix_->InsertGlobalValues(my_global_elements_[r], 1, &v, &c);
+    indices_sorted_=false;
   } else {
     matrix_->ReplaceGlobalValues(my_global_elements_[r], 1, &v, &c); 
   }
@@ -691,6 +694,7 @@ inline void Sparsem::Add(const SparseMatrix &a,
   }
   result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
+  result->indices_sorted_=true;
   result->StartLoadingRows();
   double *values1;
   double *values2;
@@ -778,7 +782,8 @@ inline void Sparsem::Subtract(const SparseMatrix &a,
 
   result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
- 
+  result->indices_sorted_=true;
+
   result->StartLoadingRows();
   double *values1;
   double *values2;
@@ -873,6 +878,7 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
 
   result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
+  result->indices_sorted_=true;
   result->StartLoadingRows();
   double *values1;
   double *values2;
@@ -1015,6 +1021,7 @@ inline void Sparsem::DotMultiply(const SparseMatrix &a,
 
   result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
+  result->indices_sorted_=true;
   result->StartLoadingRows();
   double *values1;
   double *values2;
