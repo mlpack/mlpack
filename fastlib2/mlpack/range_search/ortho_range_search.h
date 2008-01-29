@@ -251,16 +251,24 @@ class OrthoRangeSearch {
   /** @brief Initialization function - to read the data and to construct tree.
    *
    *  @param dataset The dataset for orthogonal range searching.
+   *  @param make_copy Whether to make the copy of the incoming dataset or
+   *                   not. If true, a copy is made. Otherwise, the object
+   *                   will "steal" the incoming matrix.
    *  @param load_tree_file_name If NULL, the tree is built from scratch.
    *                             If not NULL, the tree is loaded from the
    *                             file whose name is given as the argument.
    */
-  void Init(Matrix &dataset, const char *load_tree_file_name) {
+  void Init(Matrix &dataset, bool make_copy, const char *load_tree_file_name) {
 
     int leaflen = fx_param_int(NULL, "leaflen", 20);
 
-    // Make a copy of the dataset.
-    data_.Copy(dataset);
+    // decide whether to make a copy or not.
+    if(make_copy) {
+      data_.Copy(dataset);
+    }
+    else {
+      data_.Own(&dataset);
+    }
 
     fx_timer_start(NULL, "tree_d");
 

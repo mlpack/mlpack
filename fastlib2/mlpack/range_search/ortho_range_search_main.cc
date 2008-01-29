@@ -93,7 +93,8 @@ int main(int argc, char *argv[]) {
 
   // Declare fast tree-based orthogonal range search algorithm object.
   OrthoRangeSearch fast_search;
-  fast_search.Init(dataset, load_tree_file_name);
+  fast_search.Init(dataset, fx_param_exists(NULL, "do_naive"),
+		   load_tree_file_name);
   fast_search.Compute(low_coord_limits, high_coord_limits);
 
   if(fx_param_exists(NULL, "save_tree_file")) {
