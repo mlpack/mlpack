@@ -38,8 +38,8 @@
  *
  * @code
  * ./fastica --data=X_t.dat --ic_filename=ic.dat --unmixing_filename=W.dat
- * --fastica/approach=symmetric --fastica/nonlinearity=gauss --fastica/stabilization=true
- * --fastica/epsilon=0.0000001 --percent_cut=0.5
+ * --fastica/approach=symmetric --fastica/nonlinearity=gauss
+ * --fastica/stabilization=true --fastica/epsilon=0.0000001 --percent_cut=0.5
  * @endcode
  *
  * Note: Compile with verbose mode to display convergence-related values
