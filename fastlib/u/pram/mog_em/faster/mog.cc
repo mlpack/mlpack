@@ -68,11 +68,12 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
       // calculating the conditional probabilities 
       // of choosing a particular gaussian given 
       // the data and the present theta value   
+      /**********
       for (index_t j = 0; j < num_points; j++) {
 	x.CopyValues(data_points.GetColumnPtr(j));
 	sum = 0;
 	for (index_t i = 0; i < num_gauss; i++) {
-	  tmp = phi(x, mu_temp[i], sigma_temp[i]) * omega_temp.get(i);
+	  tmp = phi(x, mu_temp[i], sigma_temp[i]) * omega_temp.get(i); // can be made faster by sending all the data at once instead of looping over
 	  cond_prob.set(i, j, tmp);
 	  sum += tmp;	  
 	}
@@ -81,6 +82,16 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
 	  cond_prob.set(i, j, tmp / sum); 
 	}
       }
+      ******/
+
+      /*******FIX THIS SOON********/
+      Vector phi_val;
+      phi_val.Init(num_points);
+
+      for(index_t i = 0; i < num_gauss; i++) {
+	phi_val.CopyValues(phi(data_points, mu_temp[i], sigma_temp[i]));
+	la::Scale(omega_temp.get(i), &phi_val);
+      */
 			
       // calculating the new value of the mu 
       // using the updated conditional probabilities
