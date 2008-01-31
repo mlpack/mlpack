@@ -1,7 +1,7 @@
 
 #include "fastlib/fastlib_int.h"
-#include "regression_ll.h"
 #include "dataset_scaler.h"
+#include "regression_parent.h"
 
 
 int main(int argc, char *argv[]){
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
   //Both default to 0.2
 
   double bandwidth=fx_param_double(regression_module,"bandwidth",0.2);
-  double tau=fx_param_double(regression_module,"tau",0.2);
+  double tau=fx_param_double(regression_module,"tau",0.0);
 
   //Get the weights for the reference set
   const char *rwfname=NULL;
@@ -77,7 +77,7 @@ int main(int argc, char *argv[]){
 
   //Get the length of the leaf. Defaulted to 2
 
-  index_t leaf_length=fx_param_int(regression_module,"leaf_length",2);
+  index_t leaf_length=fx_param_int(regression_module,"leaf_length",1);
 
   if(!strcmp(fx_param_str(regression_module,"kernel","gaussian"),"gaussian")){
 
@@ -86,8 +86,20 @@ int main(int argc, char *argv[]){
 			 rset_weights);
 
     fast_regression.Compute();
-  }
 
+    //Lets do naive calculations too............
+
+    //Lets first declare an object of the naive type
+
+    ArrayList<index_t> old_from_new_r;
+    old_from_new_r.Copy(fast_regression.get_old_from_new_r());
+
+    NaiveB_TWYCalculation<GaussianKernel> naive_b_twy;
+    naive_b_twy.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
+    naive_b_twy.Compute();
+    naive_b_twy.print();
+  }
+  fx_done();
 }
 
 
