@@ -49,8 +49,9 @@ int main(int argc, char *argv[]){
   //Get the bandwidth for kernel calculations and the tolerance limit. 
   //Both default to 0.2
 
-  double bandwidth=fx_param_double(regression_module,"bandwidth",0.2);
-  double tau=fx_param_double(regression_module,"tau",0.0);
+  double bandwidth=fx_param_double(regression_module,"bandwidth",0.1);
+  double tau=fx_param_double(regression_module,"tau",0.10);
+
 
   //Get the weights for the reference set
   const char *rwfname=NULL;
@@ -82,23 +83,47 @@ int main(int argc, char *argv[]){
   if(!strcmp(fx_param_str(regression_module,"kernel","gaussian"),"gaussian")){
 
     FastRegression<GaussianKernel> fast_regression;
+    fx_timer_start(NULL,"fast");
     fast_regression.Init(q_matrix,r_matrix,bandwidth,tau,leaf_length,
+
 			 rset_weights);
 
     fast_regression.Compute();
 
+    fx_timer_stop(NULL,"fast");
     //Lets do naive calculations too............
-
+  
     //Lets first declare an object of the naive type
-
+    printf("FAST CALCULATIONS ALL DONE");
     ArrayList<index_t> old_from_new_r;
     old_from_new_r.Copy(fast_regression.get_old_from_new_r());
 
     NaiveB_TWYCalculation<GaussianKernel> naive_b_twy;
+
+    fx_timer_start(NULL,"naive");
     naive_b_twy.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
     naive_b_twy.Compute();
+    fx_timer_stop(NULL,"naive");
+
     naive_b_twy.print();
+
+
+    //Will need to verify if this is fine to do...
+
+    ArrayList<Matrix> fast_b_twy_estimate;
+    fast_b_twy_estimate.Init(q_matrix.n_cols());
+
+    for(index_t q=0;q<q_matrix.n_cols();q++){
+
+      fast_b_twy_estimate[q].Alias(fast_regression.get_b_twy_estimates(q));
+    }
+
+    naive_b_twy.ComputeMaximumRelativeError(fast_b_twy_estimate);
+
+    printf("reference dataset is ...\n");
+    r_matrix.PrintDebug();
   }
+
   fx_done();
 }
 

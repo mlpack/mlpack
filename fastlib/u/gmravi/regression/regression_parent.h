@@ -279,6 +279,8 @@ public:
  
   Matrix& get_reference_dataset();
 
+  Matrix &  get_b_twy_estimates(index_t );
+
   /** This function will be called after update bounds has been called in the 
    *  function Prunable. This will flush the owed values as they have already 
    * been incorporated in the mass values by the function Update Bounds
@@ -346,6 +348,8 @@ template < typename TKernel > class NaiveB_TWYCalculation{
   void Init (Matrix &, Matrix &, 
 	     ArrayList<index_t> &,double ,Vector&);
   void print();
+
+  void ComputeMaximumRelativeError(ArrayList<Matrix> &);
 };
 
 #include "regression_ll1.h"
