@@ -28,6 +28,7 @@ index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode,
   la::ScaleOverwrite(m, rnode->stat().b_ty, &dl);
   
   //The new upper bound
+
   
   m = -1+kernel_value_range.hi;
   la::ScaleOverwrite (m, rnode->stat().b_ty, &du);
@@ -58,6 +59,7 @@ index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode,
   //scaled version of new_mass_l
     
      
+
   //Now we can prune only if max_error is componentwise lesser than allowed_error
     
   for(index_t col=0;col<qnode->stat().b_twy_mass_u.n_cols();col++){
@@ -67,18 +69,20 @@ index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode,
       //We will prune only if the matrix is prunable componenet wise
       //This is what test now
 
+      //printf("tau_ is %f\n",tau_);
+      
+      
       double alpha=tau_*
 	(double)(rnode->stat().b_ty.get(row,col))/
-	(rroot_->stat().b_ty.get(row,col));
-
-      if(max_error.get(row,col)>alpha*new_mass_l.get(row,col)){
+	(double)(rroot_->stat().b_ty.get(row,col));
+      
+      if(max_error.get(row,col)>=alpha*new_mass_l.get(row,col)){
 	//pruning failed
 	//Set everything back to 0 and return
 	  
 	dl.SetAll(0);
 	du.SetAll(0);
 	return 0;
-	  
       }
     }
   }
@@ -107,6 +111,7 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
     
   double m=kernel_value_range.lo;
     
+  //printf("kernel value lo is %f\n",m);
   la::ScaleOverwrite(m, rnode->stat().b_tb, &dl);
     
   //The new upper bound
@@ -140,34 +145,38 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
   //Now it is easy to see that the allowed error is nothing but the 
   //scaled version of new_mass_l
     
-    
+
   //Now we can prune only if max_error is componentwise lesser than allowed_error
     
   for(index_t col=0;col<qnode->stat().b_twb_mass_u.n_cols();col++){
       
     for(index_t row=0;row<qnode->stat().b_twb_mass_u.n_rows();row++){
 
+      //printf("It is %f\n",(rroot_->stat().b_tb.get(row,col)));
+
       //We shall prune only if the matrix is componenet
       //wise prunable
 	
-      //Lets define a constant alpha as shown below
-    
-      double alpha=
-	tau_*(double)(rnode->stat().b_tb.get(row,col))/
-	(rroot_->stat().b_tb.get(row,col));
-    
-
-      if(max_error.get(row,col)>alpha*new_mass_l.get(row,col)){
+      //Lets define a constant alpha as shown below.
+     	double alpha=
+	  tau_*(double)(rnode->stat().b_tb.get(row,col))/
+	  (rroot_->stat().b_tb.get(row,col));
+      
+      //printf("alpha is %f\n",alpha);
+      
+      //printf("the max error is %f\n",max_error.get(row,col));
+      //printf("allowed error is %f\n",alpha*new_mass_l.get(row,col));
+      if(max_error.get(row,col)>=alpha*new_mass_l.get(row,col)){
 	//pruning failed
 	  
 	dl.SetAll(0);
 	du.SetAll(0);
-	return 0;
 	  
       }
     }
   }
   //pruning was succesful
+  
   return 1;
 }
   
@@ -188,8 +197,9 @@ UpdateBoundsForPruningB_TWY_(Tree *qnode, Matrix &dl_b_twy, Matrix &du_b_twy){
   //b_twy_mass_l <- b_twy_mass_l+dl
   //b_twy_mass_u <- b_twy_mass_u+du
     
-  la::AddOverwrite (qnode->stat().b_twy_mass_l, dl_b_twy, &qnode->stat().b_twy_mass_l);
-  la::AddOverwrite (qnode->stat().b_twy_mass_u, du_b_twy, &qnode->stat().b_twy_mass_u);
+ 
+  la::AddTo(dl_b_twy, &qnode->stat().b_twy_mass_l);
+  la::AddTo(du_b_twy, &qnode->stat().b_twy_mass_u);
     
     
   // for a leaf node, incorporate the lower and upper bound changes into
@@ -225,6 +235,8 @@ template <typename TKernel>
 void FastRegression<TKernel>::UpdateBoundsForPruningB_TWB_(Tree *qnode, Matrix &dl_b_twb, 
 							   Matrix &du_b_twb){
     
+ 
+  
   //In this function we shall  update bounds of the quantity that is prunable.
   //This is similar to the UpdateBounds_(..) function. However this will be
   //called to incoprorate changes in bounds due to pruning
@@ -239,9 +251,12 @@ void FastRegression<TKernel>::UpdateBoundsForPruningB_TWB_(Tree *qnode, Matrix &
   //b_twb_mass_l <- b_twb_mass_l+dl
   //b_twb_mass_u <- b_twb_mass_u+du
     
-  la::AddOverwrite (qstat.b_twb_mass_l, dl_b_twb, &qstat.b_twb_mass_l);
-  la::AddOverwrite (qstat.b_twb_mass_u, du_b_twb, &qstat.b_twb_mass_u);
-    
+ 
+
+  la::AddTo (dl_b_twb ,&qstat.b_twb_mass_l);
+  la::AddTo(du_b_twb, &qstat.b_twb_mass_u);
+
+
     
   // for a leaf node, incorporate the lower and upper bound changes into
   // its additional offset
@@ -270,6 +285,9 @@ void FastRegression<TKernel>::UpdateBoundsForPruningB_TWB_(Tree *qnode, Matrix &
     la::AddTo (du_b_twb, &qnode->right()->stat().b_twb_owed_u);
       
   }
+
+ 
+ 
 }
  
 template <typename TKernel>
@@ -290,6 +308,9 @@ MergeChildBoundsB_TWB_( typename FastRegression<TKernel>::
   //    parent
   
   //So lets finf the componentwise minimum and maximum 
+
+
+  
 
   Matrix max_children;
   Matrix min_children;
@@ -326,30 +347,30 @@ MergeChildBoundsB_TWB_( typename FastRegression<TKernel>::
 
       }
 
-
     }
       
   }
 
+ 
   //Now compare with parent...
  
-  for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
+   for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
     for(index_t row=0;row<parent_stat.b_twb_mass_l.n_rows();row++){
 
       if(parent_stat.b_twb_mass_l.get(row,col)<min_children.get(row,col)){
 	//parents value is less than the minimum of children. Hence update the 
-	//value of the parent
+	//value of the parent 
 	parent_stat.b_twb_mass_l.set(row,col,min_children.get(row,col));
       }
 
       if(parent_stat.b_twb_mass_u.get(row,col)>max_children.get(row,col)){
 	//parents value is greater than the maximmum of children. 
 	//Hence update the value of the parent
-
 	parent_stat.b_twb_mass_u.set(row,col,max_children.get(row,col));
       }      
     }
-  }
+   }
+
 }
 
 
@@ -381,7 +402,7 @@ MergeChildBoundsB_TWY_( FastRegression<TKernel>::
   for(index_t col=0;col<parent_stat.b_twy_mass_l.n_cols();col++){
     for(index_t row=0;row<parent_stat.b_twy_mass_l.n_rows();row++){
 
-      if(left_stat->b_twy_mass_l.get(row,col) < 
+      if(left_stat->b_twy_mass_l.get(row,col) <= 
 	 right_stat->b_twy_mass_l.get(row,col)){
 
 	//left child has lesser mass_l value
@@ -478,13 +499,35 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
   //subtract along each dimension as we are now doing exhaustive calculations
 
   //more_u <- more_u - rnode->stat().b_ty
+  printf("Before subtraction...\n");
+  printf("more_u is..\n");
+  qnode->stat().b_twy_more_u.PrintDebug();
+
+  printf("will now subtract..\n");
+  rnode->stat().b_ty.PrintDebug();
 
   la::SubFrom (rnode->stat().b_ty, &qnode->stat().b_twy_more_u);
+
+  printf("after suntraction...\n");
+  printf("more_u is..\n");
+  qnode->stat().b_twy_more_u.PrintDebug();
+  printf("Hit base regression..HENCE EXITING\n");
+ 
 
   //Having subtracted calculate B^TWY exhaustively
   //One can do this by using linear algebra routines available 
   //in LaPack. however we shall not use them because B can be a 
   //very large matrix
+  //printf("Came to regression BTWY base..\n");
+ 
+  //printf("In base regression of BTWY..\n");
+  //printf("qnode->start=%d\n",qnode->begin());
+  //printf("qnode->end=%d\n",qnode->end());
+
+  //printf("In base regression of BTWY..\n");
+  //printf("rnode->start=%d\n",qnode->begin());
+  //printf("rnode->end=%d\n",qnode->end());
+
 
   for(index_t q=qnode->begin();q<qnode->end();q++){
     
@@ -505,6 +548,8 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
 	  double dsqd =
 	    la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	  double ker_value = kernel_.EvalUnnormOnSq (dsqd);
+	  printf("Kernel value is %f\n",ker_value);
+	  printf("distance sqd is %f\n",dsqd);
 
 	  //This is nothing but B^TWY being evaluated dimension wise
 	  if (row != 0){
@@ -571,7 +616,7 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
 	   qnode->stat().b_twy_more_u.get(row,col) > max_u.get(row,col)){
 	  
 	  double val=b_twy_u_estimate_[q].get(row,col) + 
-		      qnode->stat().b_twy_more_u.get(row,col);
+	    qnode->stat().b_twy_more_u.get(row,col);
 	  max_u.set(row,col,val);
 	  
 	}
@@ -600,10 +645,11 @@ template <typename TKernel>
 
 void FastRegression<TKernel>::FRegressionBase_(Tree *qnode, Tree *rnode, check_for_prune_t flag){
 
+  //printf("Came to FRegressionBase_.....\n");
+
   if(flag==CHECK_FOR_PRUNE_B_TWB){
 
-    //So we need to calculate only B^TWB exhaustively
-
+   
     FRegressionBaseB_TWB_(qnode,rnode);
   }
 
@@ -688,10 +734,22 @@ void FastRegression<TKernel>::PostProcess_(Tree *qnode){
       la::Scale(0.50,&more_mean2);
 
       //Final estimate is just the sum of estimate_mean and more_mean
+      printf("Estimates for node %d\n",q);
+      printf("The more_l value  is\n");
+      qstat.b_twy_more_l.PrintDebug();
+
+      printf("The more_u value  is\n");
+      qstat.b_twy_more_u.PrintDebug();
+
+      printf("the lower bound estimate is \n");
+      b_twy_l_estimate_[q].PrintDebug();
+
+      printf("the upper bound estimate is \n");
+      b_twy_u_estimate_[q].PrintDebug();
+
+
 
       la::AddOverwrite(estimate_mean2,more_mean2,&b_twy_e_estimate_[q]);
-     
-      
     }
   }
 }
