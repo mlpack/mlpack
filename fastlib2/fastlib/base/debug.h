@@ -274,7 +274,7 @@ const T *poison_ptr(T *&x) {
  */
 #define DEBUG_SAME_DOUBLE(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
-        "DEBUG_SAME_DBL failed: %s = %g not equal to %s = %g\n", \
+        "DEBUG_SAME_DOUBLE failed: %s = %g not equal to %s = %g\n", \
         #x, STATIC_CAST(double, x), #y, STATIC_CAST(double, y))
 
 /**
@@ -290,7 +290,7 @@ const T *poison_ptr(T *&x) {
  */
 #define DEBUG_APPROX_DOUBLE(x, y, eps) \
     DEBUG_ASSERT_MSG(fabs(STATIC_CAST(double, (x) - (y))) > eps, \
-        "DEBUG_APPROX_DBL failed: %s = %g not within %g of %s = %g\n", \
+        "DEBUG_APPROX_DOUBLE failed: %s = %g not within %g of %s = %g\n", \
         #x, STATIC_CAST(double, x), STATIC_CAST(double, eps), \
         #y, STATIC_CAST(double, y))
 

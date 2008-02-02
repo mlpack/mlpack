@@ -57,7 +57,9 @@ namespace mem {
     /* Sanity check for small-scale problems. */
     DEBUG_BOUNDS(bytes, BIG_BAD_NUMBER);
 #endif
-    return DebugPoisonBytes(reinterpret_cast<T *>(::malloc(bytes)), bytes);
+    T *array = reinterpret_cast<T *>(::malloc(bytes));
+    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    return DebugPoisonBytes(array, bytes);
   }
   /** Allocates a (debug) poisoned array, measured in elements. */
   template<typename T>
@@ -82,12 +84,16 @@ namespace mem {
   /** Allocates a bit-zerod array, measured in bytes. */
   template<typename T>
   inline T *AllocBitZeroBytes(size_t bytes) {
-    return reinterpret_cast<T *>(::calloc(bytes, 1));
+    T *array = reinterpret_cast<T *>(::calloc(bytes, 1));
+    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    return array;
   }
   /** Allocates a bit-zerod array, measured in elements. */
   template<typename T>
   inline T *AllocBitZero(size_t elems = 1) {
-    return reinterpret_cast<T *>(::calloc(elems, sizeof(T)));
+    T *array = reinterpret_cast<T *>(::calloc(elems, sizeof(T)));
+    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    return array;
   }
 
   /** Bit-copies from src to dest, measured in bytes. */
@@ -108,7 +114,9 @@ namespace mem {
   /** Allocates an array bit-copied from src, measured in bytes. */
   template<typename T, typename U>
   inline T *AllocBitCopyBytes(const U *src, size_t bytes) {
-    return BitCopyBytes(reinterpret_cast<T *>(::malloc(bytes)), src, bytes);
+    T *array = reinterpret_cast<T *>(::malloc(bytes));
+    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    return BitCopyBytes(array, src, bytes);
   }
   /** Allocates an array bit-copied from src, measured in elements. */
   template<typename T, typename U>
@@ -130,7 +138,9 @@ namespace mem {
    */
   template<typename T>
   inline T *ReallocBytes(T *array, size_t bytes) {
-     return reinterpret_cast<T *>(::realloc(array, bytes));
+    array = reinterpret_cast<T *>(::realloc(array, bytes));
+    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    return array;
   }
   /**
    * Resizes allocated memory, measured in elements.
@@ -141,13 +151,13 @@ namespace mem {
    */
   template<typename T>
   inline T *Realloc(T *array, size_t elems) {
-     return ReallocBytes<T>(array, elems * sizeof(T));
+    return ReallocBytes<T>(array, elems * sizeof(T));
   }
 
   /** Frees memory allocated by mem::Alloc and its derivatives. */
   template<typename T>
   inline void Free(T* ptr) {
-     ::free(ptr);
+    ::free(ptr);
   }
 
 
