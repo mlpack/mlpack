@@ -3,7 +3,8 @@
 librule(
     name = "local_linear_krylov",
     sources = [],
-    headers = ["local_linear_krylov.h"],
+    headers = ["local_linear_krylov.h",
+               "local_linear_krylov_setup_impl.h"],
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
     )
