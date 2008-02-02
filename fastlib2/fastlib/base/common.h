@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <limits.h>
 #include <float.h>
 
 EXTERN_C_BEGIN
