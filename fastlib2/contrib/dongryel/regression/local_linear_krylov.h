@@ -132,11 +132,24 @@ class LocalLinearKrylov {
 
   ////////// Private Member Functions //////////
   
+  void DualtreeRightHandSidesCanonical_(Tree *qnode, Tree *rnode);
+
+  /** @brief Compute B^T W(q) Y vector for each query point, which
+   *         essentially becomes the right-hand side for the linear
+   *         system associated with each query point: (B^T W(q) B)
+   *         z(q) = B^T W(q) Y. This function calls a dual-tree based
+   *         fast vector summation to achieve this effect.
+   */
+  void ComputeRightHandSides_() {
+
+    DualtreeRightHandSidesCanonical_(qroot_, rroot_);
+  }
+
   /** @brief Finalize the regression estimate for each query point by
    *         taking the dot-product between [1; q^T] and the final
    *         solution vector for (B^T W(q) B)^+ (B^T W(q) Y).
    */
-  void FinalizeRegressionEstimate_() {
+  void FinalizeRegressionEstimates_() {
 
     // Loop over each query point and take the dot-product.
     for(index_t i = 0; i < qset_.n_cols(); i++) {
@@ -172,10 +185,15 @@ class LocalLinearKrylov {
     //          using a matrix-free Krylov solver.
     // Phase 3: Compute [1; q^T] z(q) for each query point (the final
     //          post-processing step.)
+
+    // The first phase computes B^T W(q) Y vector for each query
+    // point. This essentially becomes the right-hand side for each
+    // query point.
+    ComputeRightHandSides_();
     
     // Proceed with the third phase of the computation to output the
     // final regression value.
-    FinalizeRegressionEstimate_();
+    FinalizeRegressionEstimates_();
   }
 
   void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
@@ -221,5 +239,7 @@ class LocalLinearKrylov {
   }
   
 };
+
+#include "local_linear_krylov_setup_impl.h"
 
 #endif
