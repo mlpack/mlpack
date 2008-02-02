@@ -281,6 +281,8 @@ public:
 
   Matrix &  get_b_twy_estimates(index_t );
 
+  Matrix &  get_b_twb_estimates(index_t );
+
   /** This function will be called after update bounds has been called in the 
    *  function Prunable. This will flush the owed values as they have already 
    * been incorporated in the mass values by the function Update Bounds
@@ -297,10 +299,10 @@ public:
 
 
 
-/** This class contains functions to calculate B^TWY 
-  * naively
+/** This class contains functions to calculate B^TWY and B^TWB
+    naively
   */
-template < typename TKernel > class NaiveB_TWYCalculation{
+template < typename TKernel > class NaiveCalculation{
 
  private:
 
@@ -315,6 +317,10 @@ template < typename TKernel > class NaiveB_TWYCalculation{
 
   /** computed Matrices */
   ArrayList <Matrix > b_twy_naive_estimate_;
+
+  /**computed Matrix */
+ /** computed Matrices */
+  ArrayList <Matrix > b_twb_naive_estimate_;
 
   /**Reference weights. these are nothing but the regression values
     of the reference points. These are used in forming the Y vector
@@ -349,7 +355,7 @@ template < typename TKernel > class NaiveB_TWYCalculation{
 	     ArrayList<index_t> &,double ,Vector&);
   void print();
 
-  void ComputeMaximumRelativeError(ArrayList<Matrix> &);
+  void ComputeMaximumRelativeError(ArrayList<Matrix> &, ArrayList<Matrix> &);
 };
 
 #include "regression_ll1.h"

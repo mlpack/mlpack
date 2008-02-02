@@ -98,7 +98,7 @@ int main(int argc, char *argv[]){
     ArrayList<index_t> old_from_new_r;
     old_from_new_r.Copy(fast_regression.get_old_from_new_r());
 
-    NaiveB_TWYCalculation<GaussianKernel> naive_b_twy;
+    NaiveCalculation<GaussianKernel> naive_b_twy;
 
     fx_timer_start(NULL,"naive");
     naive_b_twy.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
@@ -112,19 +112,25 @@ int main(int argc, char *argv[]){
 
     ArrayList<Matrix> fast_b_twy_estimate;
     fast_b_twy_estimate.Init(q_matrix.n_cols());
+    
+    ArrayList<Matrix> fast_b_twb_estimate;
+    fast_b_twb_estimate.Init(q_matrix.n_cols());
 
     for(index_t q=0;q<q_matrix.n_cols();q++){
+
+      fast_b_twb_estimate[q].Alias(fast_regression.get_b_twb_estimates(q));
 
       fast_b_twy_estimate[q].Alias(fast_regression.get_b_twy_estimates(q));
     }
 
-    naive_b_twy.ComputeMaximumRelativeError(fast_b_twy_estimate);
+    naive_b_twy.ComputeMaximumRelativeError(fast_b_twy_estimate, 
+					    fast_b_twb_estimate);
 
     printf("reference dataset is ...\n");
     r_matrix.PrintDebug();
-  }
 
-  fx_done();
+    fx_done();
+  }
 }
 
 

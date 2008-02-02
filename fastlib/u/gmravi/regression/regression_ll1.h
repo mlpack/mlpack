@@ -283,6 +283,7 @@ void FastRegression<TKernel>::BestNodePartners_ (Tree * nd, Tree * nd1,
     *partner1 = nd2;
     *partner2 = nd1;
   }
+  return;
 }
 
 
@@ -321,6 +322,15 @@ Matrix& FastRegression<TKernel>::get_b_twy_estimates(index_t q){
 
   return b_twy_e_estimate_[q];
 }
+
+template <typename TKernel>
+Matrix& FastRegression<TKernel>::get_b_twb_estimates(index_t q){
+
+  return b_twb_e_estimate_[q];
+}
+
+
+
 template <typename TKernel>
 void FastRegression<TKernel>::FlushOwedValues_(Tree *qnode, 
 					       check_for_prune_t flag){
@@ -359,11 +369,16 @@ void FastRegression<TKernel>::FlushOwedValues_(Tree *qnode,
     }
 
     else{
-
-      //Flush owed values of B^TWY
+      if(flag==CHECK_FOR_PRUNE_B_TWY){
+	//Flush owed values of B^TWY
 	
-      qnode->stat().b_twy_owed_l.SetAll(0);
-      qnode->stat().b_twy_owed_u.SetAll(0);
+	qnode->stat().b_twy_owed_l.SetAll(0);
+	qnode->stat().b_twy_owed_u.SetAll(0);
+      }
+      else{
+	printf("Horribel error occured ........exiting..\n");
+	exit(0);
+      }
     }
   }
 }
@@ -396,8 +411,8 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
     //Add dl_b_twb and du_b_twb to mass_l and mass_u of B^TWB 
 
      
-    la::AddTo(dl_b_twb, &qnode->stat().b_twb_mass_l);
-    la::AddTo(du_b_twb, &qnode->stat().b_twb_mass_u);
+    la::AddTo(dl_b_twb, &(qnode->stat().b_twb_mass_l));
+    la::AddTo(du_b_twb, &(qnode->stat().b_twb_mass_u));
 
     //Add dl_b_twy  and du_b_twy  to mass_l and mass_u of B^TWY
 
@@ -431,7 +446,7 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
 
     else{
 	
-      //printf("A child node..\n");
+      //printf("A leaf node..\n");
       /* in case of leaf nodes add these values to more_l and more_u */
 
       la::AddTo(dl_b_twb,&(qnode->stat().b_twb_more_l));
@@ -472,6 +487,7 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
     }
 
     else{
+      if(flag==CHECK_FOR_PRUNE_B_TWY){
       //the flag is CHECK_FOR_PRUNE_B_TWY
 	
       //Add dl_b_twy and du_b_twy to mass_l and mass_u of B^TWY
@@ -495,6 +511,10 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
 	/* in case of leaf nodes add these values to more_l and more_u */
 	la::AddTo(dl_b_twy,&(qnode->stat().b_twy_more_l));
 	la::AddTo(du_b_twy,&(qnode->stat().b_twy_more_u));
+      }
+      }
+      else{
+	printf("Horrible error occured2..\n");
       }
 
     }
@@ -539,12 +559,13 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
       FastRegression<GaussianKernel>::
       PrunableB_TWB_(qnode, rnode, dl_b_twb, du_b_twb);
 
+   
+
     if(flag1==1&&flag2==1){
 
       /** this means both the quantities are prunable
        */ 
-
-         
+      // printf("will prune both..\n");
       return PRUNE_BOTH; 
     }
     else{
@@ -553,6 +574,7 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
 	/** This means that only B_TWY is prunable
 	 */
 	  
+	//	printf("will prune only BTWY..\n");
 	return PRUNE_B_TWY;
       }
       else{
@@ -560,12 +582,14 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
 	if(flag2==1){ 
 	  /** This means that only B_TWB is prunable
 	   */
+
+	  //printf("will prune only BTWB..\n");
 	  return PRUNE_B_TWB;
 	}
 	else{
 	  /** None of the quantities is prunable
 	   */
-
+	  //printf("will prune NONE..\n");
 	  return PRUNE_NONE;
 	}
 	
@@ -584,29 +608,40 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
 	  PrunableB_TWB_(qnode,rnode,dl_b_twb,du_b_twb);
 
 	if(flag1==1){
+	  //printf("will prune BTWB");
 	  return PRUNE_B_TWB;
+
 
 	}
 	else{
 	  //it is not prunable. 
+	  // printf("will prune NOT THIS");
 	  return PRUNE_NOT_THIS;
 	}
 	
       }
       else{
-	//flag is now set to CHECK_FOR_PRUNE_B_TWY
 
-	index_t flag2=FastRegression<GaussianKernel>::PrunableB_TWY_(qnode,rnode,dl_b_twy,du_b_twy);
+	if(flag==CHECK_FOR_PRUNE_B_TWY){
+	  //flag is now set to CHECK_FOR_PRUNE_B_TWY
 
-	if(flag2==1){
-	  //this means B_TWY is prunable
-	  return PRUNE_B_TWY;
-
+	  index_t flag2=FastRegression<GaussianKernel>::PrunableB_TWY_(qnode,rnode,dl_b_twy,du_b_twy);
+	  
+	  if(flag2==1){
+	    //this means B_TWY is prunable
+	    // printf("will prune BTWY");
+	    return PRUNE_B_TWY;
+	    
+	  }
+	  else{
+	    //it is not prunable. 
+	    
+	    return PRUNE_NOT_THIS;
+	  }
 	}
 	else{
-	  //it is not prunable. 
-
-	  return PRUNE_NOT_THIS;
+	  printf("HORRIBLE ERROR 3..\n");
+	  exit(0);
 	}
 
       }
@@ -621,6 +656,10 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 					   FastRegression<TKernel>::
 					   check_for_prune_t flag){
 
+
+ 
+
+ 
   //The first thing to do is to update bounds.
   //We now have to use the flag to decide what
   //quantity we are checking if it is prunable.
@@ -682,54 +721,43 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
     //we first UpdateBounds for 
     //pruning by calling the function as declared below
 
-    printf("qnode start is %d\n",qnode->begin());
-    printf("Both qunats are prunable is prunable..\n");
-    printf("Hence exiting..\n");
-    exit(0);
+    //printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
+    //printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
+    // printf("du_b_twy recv  is\n");
+    //du_b_twy.PrintDebug("log.txt");
     
-      
+    //printf("Hence will update bounds with these values...\n");
+
+    printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
+    printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
+    printf("will prune both .\n\n");
+    
     UpdateBoundsForPruningB_TWB_(qnode, dl_b_twb, du_b_twb);
     UpdateBoundsForPruningB_TWY_(qnode, dl_b_twy, du_b_twy);
     
+    
     //Check if qnode is a leaf or not. if it is not call mergebounds
-    if(!qnode->is_leaf()){
-      FastRegressionStat &stat=qnode->stat();
-      
-      FastRegressionStat *left_stat=NULL;
-      FastRegressionStat *right_stat=NULL;
-       
-      right_stat= &(qnode->right()->stat());
-      left_stat= &(qnode->left()->stat());
-      MergeChildBounds_(left_stat,right_stat,stat,flag);
-    }
+    
     return;
   }
 
   else{
+
     if(what_is_prunable==PRUNE_B_TWB){
+
+      printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
+      printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
+      printf("will prune BTWB \n\n");
       
-      printf("qnode start is %d\n",qnode->begin());
-      printf("BTWB is prunable..\n");
-      printf("Hence exiting..\n");
-      printf("flag is %d\n",flag);
+      // printf("qnode start is %d\n",qnode->begin());
      
-   
+     
       //Since B^TWB was prunable therefore prune this
       UpdateBoundsForPruningB_TWB_(qnode, dl_b_twb, du_b_twb);
-      printf("Updated bounds..\n");
+      
+      //printf("Updated bounds..\n");
       //Check if qnode is a leaf or not. if it is not call mergebounds
-      if(!qnode->is_leaf()){
-	FastRegressionStat &stat=qnode->stat();
-	
-	FastRegressionStat *left_stat=NULL;
-	FastRegressionStat *right_stat=NULL;
-	
-	right_stat= &(qnode->right()->stat());
-	left_stat= &(qnode->left()->stat());
-
-	MergeChildBounds_(left_stat,right_stat,stat,flag);
-	printf("Merged child bounds..\n");
-      }
+     
 
       //Now if the variable *flag* passed to the function is
       //CHECK_FOR_PRUNE_B_TWB then our job is done and hence we return
@@ -747,22 +775,12 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 
 	flag=CHECK_FOR_PRUNE_B_TWY;
 	//CallRecursively_(qnode,rnode,flag);
-	printf("will do recursion for flag=check-for-prune-btwy..\n");
+	//printf("will do recursion for flag=check-for-prune-btwy..\n");
 	FRegression_(qnode, rnode, flag);
-
-
+	return;
 	//Check if qnode is a leaf or not. if it is not call mergebounds
-	if(!qnode->is_leaf()){
-	  FastRegressionStat &stat=qnode->stat();
-	  
-	  FastRegressionStat *left_stat=NULL;
-	  FastRegressionStat *right_stat=NULL;
-	  
-	  right_stat= &(qnode->right()->stat());
-	  left_stat= &(qnode->left()->stat());
-	  MergeChildBounds_(left_stat,right_stat,stat,flag);
-	}
-	return; 
+	
+ 
       }
     }
 
@@ -770,28 +788,13 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
       
       if(what_is_prunable==PRUNE_B_TWY){
 
-	printf("qnode start is %d\n",qnode->begin());
-	printf("BTWB is prunable..\n");
-	printf("Hence exiting..\n");
-	exit(0);
-	  
-	//Since B^TWY was prunable therefore prune this
-	  
+	printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
+	printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
+	printf("will prune BTWY..\n\n");
 	UpdateBoundsForPruningB_TWY_(qnode, dl_b_twy, du_b_twy);
-
+	
 	//Check if qnode is a leaf or not. if it is not call mergebounds
-	if(!qnode->is_leaf()){
-	  FastRegressionStat &stat=qnode->stat();
-	  
-	  FastRegressionStat *left_stat=NULL;
-	  FastRegressionStat *right_stat=NULL;
-	  
-	  right_stat= &(qnode->right()->stat());
-	  left_stat= &(qnode->left()->stat());
-	  MergeChildBounds_(left_stat,right_stat,stat,flag);
-	}
-
-	  
+	
 	//Now if the variable *flag* passed to the function is
 	//CHECK_FOR_PRUNE_B_TWY then our job is done and hence we return
 	//However if it is CHECK_FOR_PRUNE_BOTH then our job is still 
@@ -809,22 +812,15 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 	  flag=CHECK_FOR_PRUNE_B_TWB;
 	  //CallRecursively_(qnode,rnode,flag);
 	  FRegression_(qnode, rnode, flag);
+	  //  printf("And having returned i come hereeeeeeeee..\n");
 
 	  //Check if qnode is a leaf or not. if it is not call mergebounds
-	  if(!qnode->is_leaf()){
-	    FastRegressionStat &stat=qnode->stat();
-	    
-	    FastRegressionStat *left_stat=NULL;
-	    FastRegressionStat *right_stat=NULL;
-	    
-	    right_stat= &(qnode->right()->stat());
-	    left_stat= &(qnode->left()->stat());
-	    MergeChildBounds_(left_stat,right_stat,stat,flag);
-	  }
+	 
 	}	  
       }
 
       else{//prunable is not!=B_TWB and !=B_TWY
+
 	if(what_is_prunable==PRUNE_NONE){
 
 	  //printf("foun none to be prunable...\n");
@@ -834,10 +830,14 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 	  //Hence we need to recuse
 
 	  flag=CHECK_FOR_PRUNE_BOTH;
-	  //CallRecursively_(qnode,rnode,flag);
+	  //printf("Will prune none...\n");
+	  //printf("qnode start is %d and qnode end is %d\n",qnode->begin(),qnode->end());
+	  // printf("rnode start is %d and rnode end is %d\n",rnode->begin(),rnode->end());
+       
 	}
 	else{
 	    
+
 	  //this means what is prunable is PRUNE_NOT_THIS
 	  //This means that the flag was either CHECK_FOR_PRUNE_B_TWB
 	  //or CHECK_FOR_PRUNE_B_TWY, and that particular quantity 
@@ -846,13 +846,11 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 	  //Note here the flag remains just the same thing, 
 	  //as the qunatity is still
 	  //not prunable
+	  //printf("Will prune not this+ flag=%d...\n",flag);
+	  //printf("qnode start is %d and qnode end is %d\n",qnode->begin(),qnode->end());
+	  //printf("rnode start is %d and rnode end is %d\n",rnode->begin(),rnode->end());
 
-	  //printf("B_NOT THIS found\n");
-	 
-      
-	  //CallRecursively_(qnode,rnode,flag);
-	    
-	}
+	  }
 
 	//So the pruning failed on atleast 1 qunatity. Hence we shall
 	//now test for the exhaustive case or go for pairwise
@@ -884,8 +882,11 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 	    Tree *rnode_first = NULL, *rnode_second = NULL;
 	    BestNodePartners_(qnode, rnode->left (), rnode->right (),
 			      &rnode_first, &rnode_second);
+	    // printf(" IIIIIIIIIIIIIII do 1\n");
 	    FRegression_(qnode, rnode_first,flag);
+	    // printf("Then iIIIIIIIIIIIIIIIIIII do 2..\n");
 	    FRegression_(qnode, rnode_second,flag);
+	    // printf("and now i am about to returnnnnnnnnnnn..\n");
 	    return;
 	  }
 	}
@@ -921,11 +922,18 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 	   * the values of the children node
 	   */
 	  MergeChildBounds_(left_stat,right_stat,stat,flag);
+
+	  //printf("I merged child bounds for qnode->start=%d and qnode->end=%d\n",qnode->begin(),qnode->end());
+	  //printf("I merged child bounds for rnode->start=%d and rnode->end=%d\n",rnode->begin(),rnode->end());
+	  return;
+
 	}
       }
     }
   }
 }
+
+
 
 template <typename TKernel>
 
@@ -948,6 +956,12 @@ void FastRegression<TKernel>::Compute(){
 
   printf("BTY is......\n");
   rroot_->stat().b_ty.PrintDebug();
+
+  printf("ref Tree is ..\n");
+  rroot_->Print();
+
+  printf("query tree is..........\n");
+  qroot_->Print();
  
 }
  
@@ -1062,8 +1076,6 @@ void FastRegression<TKernel>::Init(Matrix &q_matrix, Matrix &r_matrix,
   qroot_=tree::MakeKdTreeMidpoint < Tree >
     (qset_, leaflen, NULL, NULL);   
 
-  //printf("Tree is..\n");
-  //qroot_->Print();
 
   /**Note the init function of the statistics of the node 
    * calculates the
