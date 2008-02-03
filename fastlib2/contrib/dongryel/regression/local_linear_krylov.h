@@ -115,7 +115,8 @@ class LocalLinearKrylov {
   };
 
   /** @brief The internal tree type used for the computation. */
-  typedef BinarySpaceTree< DHrectBound<2>, Matrix, LocalLinearKrylov > Tree;
+  typedef BinarySpaceTree< DHrectBound<2>, Matrix, LocalLinearKrylovStat > 
+    Tree;
 
   ////////// Private Member Variables //////////
 
@@ -147,7 +148,7 @@ class LocalLinearKrylov {
   /** @brief The original training target value for the reference
    *         dataset.
    */
-  Vector rset_targets_;
+  Matrix rset_targets_;
 
   /** @brief The original training target value for the reference
    *         dataset weighted by the reference coordinate.  (i.e. y_i
@@ -158,6 +159,10 @@ class LocalLinearKrylov {
   /** @brief The dimensionality of each point.
    */
   int dimension_;
+
+  /** @brief The length of each column vector in local linear regression.
+   */
+  int row_length_;
 
   /** @brief The lower bounds on the right hand side of the linear system we
    *         are solving for each query point. (i.e. B^T W(q) Y)
@@ -187,8 +192,47 @@ class LocalLinearKrylov {
    */
   TKernel kernel_;
 
-  ////////// Private Member Functions //////////
+  /** @brief The number of finite difference prunes made.
+   */
+  int num_finite_difference_prunes_;
+
+  /** @brief Temporary variable for holding lower bound change made
+   *         during a prune.
+   */
+  Vector right_hand_sides_l_change_;
+
+  /** @brief Temporary variable for holding the pruned quantity.
+   */
+  Vector right_hand_sides_e_change_;
   
+  /** @brief Temporary variable for holding upper bound change made
+   *         during a prune.
+   */
+  Vector right_hand_sides_u_change_;
+
+  ////////// Private Member Functions //////////
+
+  /** @brief Determine which of the node to expand first.
+   */
+  void BestNodePartners_(Tree *nd, Tree *nd1, Tree *nd2, Tree **partner1,
+			 Tree **partner2) {
+    
+    double d1 = nd->bound().MinDistanceSq(nd1->bound());
+    double d2 = nd->bound().MinDistanceSq(nd2->bound());
+    
+    if(d1 <= d2) {
+      *partner1 = nd1;
+      *partner2 = nd2;
+    }
+    else {
+      *partner1 = nd2;
+      *partner2 = nd1;
+    }
+  }
+  
+  bool PrunableRightHandSides_(Tree *qnode, Tree *rnode, DRange &dsqd_range,
+			       DRange &kernel_value_range);
+
   /** @brief The base-case exhaustive computation for dual-tree based
    *         computation of B^T W(q) Y.
    *
@@ -278,7 +322,8 @@ class LocalLinearKrylov {
     right_hand_sides_u_.SetZero();
     solution_vectors_.SetZero();
     regression_estimates_.SetZero();
-
+    num_finite_difference_prunes_ = 0;
+    
     // The computation proceeds in three phases:
     //
     // Phase 1: Compute B^T W(q) Y vector for each query point.
@@ -313,7 +358,11 @@ class LocalLinearKrylov {
     // copy reference dataset and reference weights.
     rset_.Copy(references);
     rset_targets_.Copy(reference_targets);
+    
+    // Record dimensionality and the appropriately cache the number of
+    // components required for local linear (which is D + 1).
     dimension_ = rset_.n_rows();
+    row_length_ = dimension_ + 1;
     
     // copy query dataset.
     if(queries_equal_references) {
@@ -342,13 +391,16 @@ class LocalLinearKrylov {
     kernel_.Init(fx_param_double_req(module_, "bandwidth"));
 
     // allocate memory for storing computation results.
-    rset_targets_weighted_by_coordinates_.Init(dimension_ + 1, rset_.n_cols());
-    right_hand_sides_l_.Init(dimension_ + 1, qset_.n_cols());
-    right_hand_sides_e_.Init(dimension_ + 1, qset_.n_cols());
-    right_hand_sides_u_.Init(dimension_ + 1, qset_.n_cols());
-    solution_vectors_.Init(dimension_ + 1, qset_.n_cols());
+    rset_targets_weighted_by_coordinates_.Init(row_length_, rset_.n_cols());
+    right_hand_sides_l_.Init(row_length_, qset_.n_cols());
+    right_hand_sides_e_.Init(row_length_, qset_.n_cols());
+    right_hand_sides_u_.Init(row_length_, qset_.n_cols());
+    solution_vectors_.Init(row_length_, qset_.n_cols());
     regression_estimates_.Init(qset_.n_cols());
-
+    right_hand_sides_l_change_.Init(row_length_);
+    right_hand_sides_e_change_.Init(row_length_);
+    right_hand_sides_u_change_.Init(row_length_);
+    
     // initialize the reference side statistics.
     
   }
