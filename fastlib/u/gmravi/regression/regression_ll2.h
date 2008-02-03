@@ -74,24 +74,30 @@ index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode,
       
       double alpha=tau_*
 	(double)(rnode->stat().b_ty.get(row,col))/
-	(double)(rroot_->stat().b_ty.get(row,col));
-      
+	(rroot_->stat().b_ty.get(row,col));
+
+      if(rroot_->stat().b_ty.get(row,col)==0){
+	printf("BTY Wrongly estimated..\n");
+	rroot_->stat().b_ty.PrintDebug();
+	exit(0);
+      }
+          
       if(max_error.get(row,col)>=alpha*new_mass_l.get(row,col)){
 	//pruning failed
 	//Set everything back to 0 and return
-	  
-	//printf("couldnt prune..COULDNT PRUNE\n");
+	
 	dl.SetAll(0);
 	du.SetAll(0);
 	return 0;
       }
     }
   }
-  //pruning was succesful
-  //printf("BTWY pruned..PRUNED\n");
-
  
+  printf("dl beign sent from BTWY is ...\n");
+  dl.PrintDebug();
 
+  printf("du being sent from BTWY is ..\n");
+  du.PrintDebug();
   return 1;
 }
   
@@ -167,8 +173,11 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
      	double alpha=
 	  tau_*(double)(rnode->stat().b_tb.get(row,col))/
 	  (rroot_->stat().b_tb.get(row,col));
-      
-      //printf("alpha is %f\n",alpha);
+	if(rroot_->stat().b_tb.get(row,col)==0){
+
+	  printf("btb.is not properly defined\n");
+	}
+	//printf("alpha is %f\n",alpha);
       
 
 
@@ -184,11 +193,11 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
       }
     }
   }
-  //pruning was succesful
-
-  //printf("BTWB is prunable..\n");
+  printf("dl beign sent from BTWB is ...\n");
+  dl.PrintDebug();
   
-  
+  printf("du being sent from BTWB is ..\n");
+  du.PrintDebug();
   return 1;
 }
   
@@ -202,13 +211,7 @@ UpdateBoundsForPruningB_TWY_(Tree *qnode, Matrix &dl_b_twy, Matrix &du_b_twy){
   //In this function we shall  update bounds of the quantity that is prunable.
   //This is similar to the UpdateBounds_(..) function. However this will be
   //called to incoprorate changes in bounds due to pruning
-    
-  // query self statistics
-  FastRegressionStat & qstat = qnode->stat ();
-    
-  //printf("Came to update bounds of B^TWY..\n");
-  // Changes the upper and lower bounds.
-    
+   
   //b_twy_mass_l <- b_twy_mass_l+dl
   //b_twy_mass_u <- b_twy_mass_u+du
     
@@ -224,16 +227,9 @@ UpdateBoundsForPruningB_TWY_(Tree *qnode, Matrix &dl_b_twy, Matrix &du_b_twy){
       
     //more_l <- more_l + dl
     //more_u <-more_u + du
-
-    //printf("It was a leaf node     \n");
-
    
     la::AddTo (dl_b_twy, &(qnode->stat().b_twy_more_l));
     la::AddTo (du_b_twy, &(qnode->stat().b_twy_more_u));   
-
-   
-    
-
 
   }
     
@@ -265,11 +261,6 @@ void FastRegression<TKernel>::UpdateBoundsForPruningB_TWB_(Tree
   //In this function we shall  update bounds of the quantity that is prunable.
   //This is similar to the UpdateBounds_(..) function. However this will be
   //called to incoprorate changes in bounds due to pruning
-    
-
-  //printf("Came to udpate bounds of B^TWB..\n");
-  // query self statistics
-  FastRegressionStat & qstat = qnode->stat ();
     
   // Changes the upper and lower bounds.
     
@@ -315,25 +306,22 @@ void FastRegression<TKernel>::UpdateBoundsForPruningB_TWB_(Tree
 template <typename TKernel>
 
 void FastRegression<TKernel>:: 
-MergeChildBoundsB_TWB_( typename FastRegression<TKernel>::
-			FastRegressionStat *left_stat,
-
-		        typename FastRegression<TKernel>::
-			FastRegressionStat *right_stat,
-
-		        typename FastRegression<TKernel>::
-			FastRegressionStat &parent_stat){
+MergeChildBoundsB_TWB_(  FastRegression<TKernel>::
+			 FastRegressionStat *left_stat,
+			 FastRegression<TKernel>::
+			 FastRegressionStat *right_stat,
+			 FastRegression<TKernel>::
+			 FastRegressionStat &parent_stat){
 
   //This means we want to merge the bounds of b_twb
   //b_twb_mass_l_parent= 
   //max(min(b_twb_mass_l,left_child,b_twb_mass_l_right_child),
   //    parent
   
-  //So lets finf the componentwise minimum and maximum 
+  //So lets find the componentwise minimum and maximum 
 
-
-  
-
+  //The first thing to do is check if qnode is a leaf. if it is then
+  //return
   Matrix max_children;
   Matrix min_children;
   max_children.Init(parent_stat.b_twb_mass_l.n_rows(), 
@@ -392,7 +380,6 @@ MergeChildBoundsB_TWB_( typename FastRegression<TKernel>::
       }      
     }
    }
-
 }
 
 
@@ -478,18 +465,21 @@ MergeChildBoundsB_TWY_( FastRegression<TKernel>::
 */  
 template <typename TKernel>
 void FastRegression<TKernel>::
-MergeChildBounds_( FastRegression<TKernel>::
-		   FastRegressionStat *left_stat, 
-		   FastRegression<TKernel>::
-		   FastRegressionStat *right_stat, 
-		   FastRegression<TKernel>::
-		   FastRegressionStat &parent_stat, 
-		   check_for_prune_t flag){
-  //this function will be filled
-  //printf("Came to Merge child bounds...\n");
-
+MergeChildBounds_( Tree *qnode,check_for_prune_t flag){
+ 
   //We will merge bounds depending on the value of the flag
 
+  //But firstly we will check if the qnode is a leaf node. if it is
+  //then we will simply return
+
+  if(qnode->is_leaf()){
+    return;
+  }
+
+  //The statistics of the parent and the children node
+  FastRegressionStat &parent_stat=qnode->stat();
+  FastRegressionStat *left_stat=&(qnode->left()->stat());
+  FastRegressionStat *right_stat=&(qnode->right()->stat());
   if(flag==CHECK_FOR_PRUNE_B_TWB){
 
     MergeChildBoundsB_TWB_(left_stat,right_stat,parent_stat);
@@ -845,10 +835,29 @@ void FastRegression<TKernel>::PostProcess_(Tree *qnode){
     PostProcess_(qnode->left());
     PostProcess_(qnode->right());
 
+    printf("Mass lower bound of bTWB is ..\n");
+    qnode->stat().b_twb_mass_l.PrintDebug();
+
+    printf("mass upper bound of BTWB is ..\n");
+    qnode->stat().b_twb_mass_u.PrintDebug();
+
+
+    printf("Mass lower bound of bTWY is ..\n");
+    qnode->stat().b_twy_mass_l.PrintDebug();
+    
+    printf("mass upper bound of BTWY is ..\n");
+    qnode->stat().b_twy_mass_u.PrintDebug();
+
+
+
   }
 
   else{
 
+  UpdateBounds_(qnode, qnode->stat().b_twb_owed_l, 
+		  qnode->stat().b_twb_owed_u, 
+		  qnode->stat().b_twy_owed_l, 
+		  qnode->stat().b_twy_owed_u, CHECK_FOR_PRUNE_BOTH);
     // b_twb_e_estimate= 
     //0.5*(b_twy_l_estimate+b_twy_u_estimate+b_twy_more_l+b_twy_more_u)
     for(index_t q=qnode->begin();q<qnode->end();q++){
@@ -907,6 +916,17 @@ void FastRegression<TKernel>::Print_(){
     b_twy_e_estimate_[q].PrintDebug(NULL,fp);
   }
   fclose(fp);
+
+  FILE *gp;
+  gp=fopen("fast_b_twb.txt","w+");
+
+  for(index_t q=0;q<qset_.n_cols();q++){
+    
+    
+    // printf("The BTWY estimate for q is..\n");
+    b_twb_e_estimate_[q].PrintDebug(NULL,gp);
+  }
+  fclose(gp);
 }
 
 

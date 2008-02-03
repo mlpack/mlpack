@@ -375,10 +375,7 @@ void FastRegression<TKernel>::FlushOwedValues_(Tree *qnode,
 	qnode->stat().b_twy_owed_l.SetAll(0);
 	qnode->stat().b_twy_owed_u.SetAll(0);
       }
-      else{
-	printf("Horribel error occured ........exiting..\n");
-	exit(0);
-      }
+     
     }
   }
 }
@@ -513,14 +510,9 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
 	la::AddTo(du_b_twy,&(qnode->stat().b_twy_more_u));
       }
       }
-      else{
-	printf("Horrible error occured2..\n");
-      }
-
+      
     }
   }
-
- 
 }
 
 
@@ -565,16 +557,15 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
 
       /** this means both the quantities are prunable
        */ 
-      // printf("will prune both..\n");
-      return PRUNE_BOTH; 
+      //For a moment lets makc a change
+
+       return PRUNE_BOTH; 
     }
     else{
       if(flag1==1){
 	  
 	/** This means that only B_TWY is prunable
 	 */
-	  
-	//	printf("will prune only BTWY..\n");
 	return PRUNE_B_TWY;
       }
       else{
@@ -582,15 +573,13 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
 	if(flag2==1){ 
 	  /** This means that only B_TWB is prunable
 	   */
-
-	  //printf("will prune only BTWB..\n");
+	 
 	  return PRUNE_B_TWB;
 	}
 	else{
 	  /** None of the quantities is prunable
 	   */
-	  //printf("will prune NONE..\n");
-	  return PRUNE_NONE;
+	  return PRUNE_NOT;
 	}
 	
       }
@@ -608,42 +597,26 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
 	  PrunableB_TWB_(qnode,rnode,dl_b_twb,du_b_twb);
 
 	if(flag1==1){
-	  //printf("will prune BTWB");
+	  
 	  return PRUNE_B_TWB;
-
-
 	}
 	else{
 	  //it is not prunable. 
-	  // printf("will prune NOT THIS");
-	  return PRUNE_NOT_THIS;
+	  return PRUNE_NOT;
 	}
+      }
+      //flag==CHECK_FOR_PRUNE_B_TWY
+
+      index_t flag2=FastRegression<GaussianKernel>::PrunableB_TWY_(qnode,rnode,dl_b_twy,du_b_twy);
+      
+      if(flag2==1){
+	//this means B_TWY is prunable
+	return PRUNE_B_TWY;
 	
       }
       else{
-
-	if(flag==CHECK_FOR_PRUNE_B_TWY){
-	  //flag is now set to CHECK_FOR_PRUNE_B_TWY
-
-	  index_t flag2=FastRegression<GaussianKernel>::PrunableB_TWY_(qnode,rnode,dl_b_twy,du_b_twy);
-	  
-	  if(flag2==1){
-	    //this means B_TWY is prunable
-	    // printf("will prune BTWY");
-	    return PRUNE_B_TWY;
-	    
-	  }
-	  else{
-	    //it is not prunable. 
-	    
-	    return PRUNE_NOT_THIS;
-	  }
-	}
-	else{
-	  printf("HORRIBLE ERROR 3..\n");
-	  exit(0);
-	}
-
+	//it is not prunable. 
+	return PRUNE_NOT;
       }
     }
 }
@@ -715,223 +688,127 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 
  
  
-  if(what_is_prunable==PRUNE_BOTH){
+  if(what_is_prunable!=PRUNE_NOT){
       
-    //This menas both B^TWB and B^TWY are prunable. 
+    //This means atleast one of  B^TWB or B^TWY is prunable. 
     //we first UpdateBounds for 
     //pruning by calling the function as declared below
 
-    //printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
-    //printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
-    // printf("du_b_twy recv  is\n");
-    //du_b_twy.PrintDebug("log.txt");
-    
-    //printf("Hence will update bounds with these values...\n");
-
     printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
     printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
-    printf("will prune both .\n\n");
+    printf("will prune %d .\n\n",what_is_prunable);
     
-    UpdateBoundsForPruningB_TWB_(qnode, dl_b_twb, du_b_twb);
-    UpdateBoundsForPruningB_TWY_(qnode, dl_b_twy, du_b_twy);
-    
-    
-    //Check if qnode is a leaf or not. if it is not call mergebounds
-    
-    return;
-  }
-
-  else{
+    //Now we update bound due to pruning of the qunatity that is
+    //prunable and dependin on the value of flag we either continue
+    //pruning for the same or we return. THIS CODE can be made simple
+    //if we have just one UpdateBoundsForPruninig function
 
     if(what_is_prunable==PRUNE_B_TWB){
 
-      printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
-      printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
-      printf("will prune BTWB \n\n");
-      
-      // printf("qnode start is %d\n",qnode->begin());
-     
-     
-      //Since B^TWB was prunable therefore prune this
       UpdateBoundsForPruningB_TWB_(qnode, dl_b_twb, du_b_twb);
-      
-      //printf("Updated bounds..\n");
-      //Check if qnode is a leaf or not. if it is not call mergebounds
-     
 
-      //Now if the variable *flag* passed to the function is
-      //CHECK_FOR_PRUNE_B_TWB then our job is done and hence we return
-      //However if it is CHECK_FOR_PRUNE_BOTH then our job is still 
-      //not done and we will need to recurse
-      
-      if(flag==CHECK_FOR_PRUNE_B_TWB){
-	
+      MergeChildBounds_(qnode,flag);
+      if((index_t)what_is_prunable==(index_t)flag){
+	//this means the job is done and we may return now
 	return;
       }
       else{
-
-	//the flag is CHECK_FOR_PRUNE_BOTH. 
-	//AS B^TWY is still not prunable we recurse
-
+	//the job is still not over as the other qunatity has not yet
+	//been pruned. Hence invert the flag and continue 
 	flag=CHECK_FOR_PRUNE_B_TWY;
-	//CallRecursively_(qnode,rnode,flag);
-	//printf("will do recursion for flag=check-for-prune-btwy..\n");
-	FRegression_(qnode, rnode, flag);
-	return;
-	//Check if qnode is a leaf or not. if it is not call mergebounds
-	
- 
+
       }
     }
 
-    else{ //Now what is prunable!=B_TWB
-      
+    else{
+
       if(what_is_prunable==PRUNE_B_TWY){
 
-	printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
-	printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
-	printf("will prune BTWY..\n\n");
 	UpdateBoundsForPruningB_TWY_(qnode, dl_b_twy, du_b_twy);
-	
-	//Check if qnode is a leaf or not. if it is not call mergebounds
-	
-	//Now if the variable *flag* passed to the function is
-	//CHECK_FOR_PRUNE_B_TWY then our job is done and hence we return
-	//However if it is CHECK_FOR_PRUNE_BOTH then our job is still 
-	//not done and we will need to recurse
-	  
-	if(flag==CHECK_FOR_PRUNE_B_TWY){
-	    
-	  return;
+	MergeChildBounds_(qnode,flag);
+
+	if((index_t)what_is_prunable==(index_t)flag){
+	  //this means the job is done and we may return now
+	  return;	  
 	}
 	else{
-	    
-	  //the flag is CHECK_FOR_PRUNE_BOTH. 
-	  //AS BTWB is still not prunable we recurse
-	    
+	  //the job is still not over as the other qunatity has not yet
+	  //been pruned. Hence invert the flag and continue 
 	  flag=CHECK_FOR_PRUNE_B_TWB;
-	  //CallRecursively_(qnode,rnode,flag);
-	  FRegression_(qnode, rnode, flag);
-	  //  printf("And having returned i come hereeeeeeeee..\n");
-
-	  //Check if qnode is a leaf or not. if it is not call mergebounds
-	 
-	}	  
+	  
+	}
       }
-
-      else{//prunable is not!=B_TWB and !=B_TWY
-
-	if(what_is_prunable==PRUNE_NONE){
-
-	  //printf("foun none to be prunable...\n");
-
-	  //This means the flag was CHECK_FOR_PRUNE_BOTH and 
-	  //none of B^TWB and B^TWY were prunable.
-	  //Hence we need to recuse
-
-	  flag=CHECK_FOR_PRUNE_BOTH;
-	  //printf("Will prune none...\n");
-	  //printf("qnode start is %d and qnode end is %d\n",qnode->begin(),qnode->end());
-	  // printf("rnode start is %d and rnode end is %d\n",rnode->begin(),rnode->end());
-       
-	}
-	else{
-	    
-
-	  //this means what is prunable is PRUNE_NOT_THIS
-	  //This means that the flag was either CHECK_FOR_PRUNE_B_TWB
-	  //or CHECK_FOR_PRUNE_B_TWY, and that particular quantity 
-	  //was not prunable
-	  //hence we continue recursing.
-	  //Note here the flag remains just the same thing, 
-	  //as the qunatity is still
-	  //not prunable
-	  //printf("Will prune not this+ flag=%d...\n",flag);
-	  //printf("qnode start is %d and qnode end is %d\n",qnode->begin(),qnode->end());
-	  //printf("rnode start is %d and rnode end is %d\n",rnode->begin(),rnode->end());
-
-	  }
-
-	//So the pruning failed on atleast 1 qunatity. Hence we shall
-	//now test for the exhaustive case or go for pairwise
-	//recursion
-
-	FastRegressionStat &stat=qnode->stat();
+      else{
+	//both are prunable
 	
-	FastRegressionStat *left_stat=NULL;
-	FastRegressionStat *right_stat=NULL;
-	
-	if(!qnode->is_leaf()){
-	  
-	  right_stat= &(qnode->right()->stat());
-	  left_stat= &(qnode->left()->stat());
-	}
+	UpdateBoundsForPruningB_TWB_(qnode, dl_b_twb, du_b_twb);
+	UpdateBoundsForPruningB_TWY_(qnode, dl_b_twy, du_b_twy);
+	MergeChildBounds_(qnode,flag);
+	return;
 
-	if(qnode->is_leaf()){
-	  
-	  if(rnode->is_leaf()){
-	    
-	    /* This is the Base Case */
-	    //printf("Hey man I hit the leaf nodes..\n");
-	    FRegressionBase_(qnode,rnode,flag);
-	    return;
-	  }
-	  else{
-	    //printf("qnode is a leaf and rnode is not leaf...\n");
-	    /* rnode is not a leaf node */
-	    Tree *rnode_first = NULL, *rnode_second = NULL;
-	    BestNodePartners_(qnode, rnode->left (), rnode->right (),
-			      &rnode_first, &rnode_second);
-	    // printf(" IIIIIIIIIIIIIII do 1\n");
-	    FRegression_(qnode, rnode_first,flag);
-	    // printf("Then iIIIIIIIIIIIIIIIIIII do 2..\n");
-	    FRegression_(qnode, rnode_second,flag);
-	    // printf("and now i am about to returnnnnnnnnnnn..\n");
-	    return;
-	  }
-	}
-	
-	/* qnode is not a leaf node */
-	else{
-	  
-	  if(rnode->is_leaf()){
-	    //printf("qnode is not a leaf but rnode is ...\n");
-	    Tree *qnode_first = NULL, *qnode_second = NULL;
-	    BestNodePartners_(rnode, qnode->left (), qnode->right (),
-			      &qnode_first, &qnode_second);
-	    FRegression_(qnode_first,rnode,flag);
-	    FRegression_(qnode_second,rnode,flag);
-	  }
-	  else{
-	    //printf("Both are non-leaf nodes...\n");
-	    /* Both are non-leaf nodes */
-	    Tree *rnode_first = NULL, *rnode_second = NULL;
-	    
-	    BestNodePartners_(qnode->left (), rnode->left (), rnode->right (),
-			      &rnode_first, &rnode_second);
-	    FRegression_(qnode->left (), rnode_first,flag);
-	    FRegression_(qnode->left (), rnode_second,flag);
-	    
-	    BestNodePartners_(qnode->right (), rnode->left (),rnode->right (), 
-			      &rnode_first, &rnode_second);
-	    FRegression_(qnode->right (), rnode_first,flag);
-	    FRegression_(qnode->right (), rnode_second,flag);
-	  }
-	  
-	  /* this will now update the bounds of the parent by using 
-	   * the values of the children node
-	   */
-	  MergeChildBounds_(left_stat,right_stat,stat,flag);
-
-	  //printf("I merged child bounds for qnode->start=%d and qnode->end=%d\n",qnode->begin(),qnode->end());
-	  //printf("I merged child bounds for rnode->start=%d and rnode->end=%d\n",rnode->begin(),rnode->end());
-	  return;
-
-	}
       }
     }
   }
+  //If we have reached this point then it means atleast one of the
+  //quantitities was not prunable. So if we have reached the leaves
+  //then we do base case else we do 4 way recursion
+  
+  
+  if (qnode->is_leaf()){
+    
+    if(rnode->is_leaf()){
+      
+      /* This is the Base Case */
+      //printf("Hey man I hit the leaf nodes..\n");
+      FRegressionBase_(qnode,rnode,flag);
+      return;
+    }
+    else{
+    
+      /* rnode is not a leaf node */
+      Tree *rnode_first = NULL, *rnode_second = NULL;
+      BestNodePartners_(qnode, rnode->left (), rnode->right (),
+			&rnode_first, &rnode_second);
+      FRegression_(qnode, rnode_first,flag);
+      FRegression_(qnode, rnode_second,flag);
+      return;
+    }
+  }
+  
+  /* qnode is not a leaf node */
+  else{
+    
+    if(rnode->is_leaf()){
+   
+      Tree *qnode_first = NULL, *qnode_second = NULL;
+      BestNodePartners_(rnode, qnode->left (), qnode->right (),
+			&qnode_first, &qnode_second);
+      FRegression_(qnode_first,rnode,flag);
+      FRegression_(qnode_second,rnode,flag);
+    }
+    else{
+       /* Both are non-leaf nodes */
+      Tree *rnode_first = NULL, *rnode_second = NULL;
+      
+      BestNodePartners_(qnode->left (), rnode->left (), rnode->right (),
+			&rnode_first, &rnode_second);
+      FRegression_(qnode->left (), rnode_first,flag);
+      FRegression_(qnode->left (), rnode_second,flag);
+      
+      BestNodePartners_(qnode->right (), rnode->left (),rnode->right (), 
+			&rnode_first, &rnode_second);
+      FRegression_(qnode->right (), rnode_first,flag);
+      FRegression_(qnode->right (), rnode_second,flag);
+    }
+    
+    /* this will now update the bounds of the parent by using 
+     * the values of the children node
+     */
+    MergeChildBounds_(qnode,flag);
+   
+  }
 }
+
 
 
 
@@ -1140,7 +1017,7 @@ void FastRegression<TKernel>::Init(Matrix &q_matrix, Matrix &r_matrix,
     b_twy_l_estimate_[i].SetAll(0);
     b_twy_e_estimate_[i].SetAll(0);
 
-  }
+   }
     
     
   //However we still have 2 quantities uninitialized namely b_twb_u_
