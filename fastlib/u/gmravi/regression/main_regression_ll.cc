@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
   //Get the bandwidth for kernel calculations and the tolerance limit. 
   //Both default to 0.2
 
-  double bandwidth=fx_param_double(regression_module,"bandwidth",0.1);
+  double bandwidth=fx_param_double(regression_module,"bandwidth",0.015);
   double tau=fx_param_double(regression_module,"tau",0.10);
 
 
@@ -97,12 +97,13 @@ int main(int argc, char *argv[]){
     printf("FAST CALCULATIONS ALL DONE");
     ArrayList<index_t> old_from_new_r;
     old_from_new_r.Copy(fast_regression.get_old_from_new_r());
-
+    
     NaiveCalculation<GaussianKernel> naive_b_twy;
 
     fx_timer_start(NULL,"naive");
     naive_b_twy.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
     naive_b_twy.Compute();
+
     fx_timer_stop(NULL,"naive");
 
     naive_b_twy.print();
@@ -124,10 +125,7 @@ int main(int argc, char *argv[]){
     }
 
     naive_b_twy.ComputeMaximumRelativeError(fast_b_twy_estimate, 
-					    fast_b_twb_estimate);
-
-    printf("reference dataset is ...\n");
-    r_matrix.PrintDebug();
+					    fast_b_twb_estimate); 
 
     fx_done();
   }

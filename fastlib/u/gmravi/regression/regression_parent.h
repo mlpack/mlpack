@@ -125,16 +125,16 @@ public:
  //public members of the class FastMatrix
 
 
+
   //So lets create an enum that will tell us whether we should prune
   //both the matrix B^TWB and the vector B^TWY or none of them or
   //just one of them
   typedef enum prune_t{
 
-    PRUNE_NONE,
     PRUNE_BOTH,
     PRUNE_B_TWB,
     PRUNE_B_TWY,
-    PRUNE_NOT_THIS,
+    PRUNE_NOT,
   }prune_t;
 
 
@@ -234,8 +234,7 @@ public:
 
  void FRegressionBase_(Tree *qnode, Tree *rnode, check_for_prune_t flag);
 
- void MergeChildBounds_(FastRegressionStat *left_stat, FastRegressionStat *right_stat, 
-			FastRegressionStat &parent_stat, check_for_prune_t flag);
+ void MergeChildBounds_(Tree *,check_for_prune_t flag);
 
 
  void CallRecursively_(Tree *qnode, Tree *rnode,check_for_prune_t flag);
