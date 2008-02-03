@@ -33,8 +33,35 @@ class LocalLinearKrylov {
 
     ////////// Member Variables //////////
 
+    /** @brief The lower bound on each sum component of the right hand
+     *         sides owned by this node.
+     */
+    Vector right_hand_sides_l_;
+    
+    /** @brief The upper bound on each sum component of the right hand
+     *         sides owned by this node.
+     */
+    Vector right_hand_sides_u_;
+
+    /** @brief The lower bound vector offset passed from the above on
+     *         each sum component of the right hand sides owned by
+     *         this node.
+     */
+    Vector postponed_right_hand_sides_l_;
+    
+    /** @brief This stores the portion pruned by finite difference for
+     *         the right hand sides.
+     */
+    Vector postponed_right_hand_sides_e_;
+
+    /** @brief The upper bound vector offset passed from above on each
+     *         sum component of the right hand sides owned by this
+     *         node.
+     */
+    Vector postponed_right_hand_sides_u_;
+
     /** @brief The data weighted by the target values. */
-    Vector data_weighted_by_target_values_;
+    Vector sum_targets_weighted_by_data_;
     
     /** @brief The bounding box for the solution vectors. */
     DHrectBound<2> bound_for_solutions_;
@@ -55,9 +82,14 @@ class LocalLinearKrylov {
      */
     void AllocateMemory(int dimension) {
 
-      // For local linear regression, each solution vector is a vector
-      // containing (D + 1) numbers.
-      data_weighted_by_target_values_.Init(dimension + 1);
+      // For local linear regression, each vector contains (D + 1)
+      // numbers.
+      right_hand_sides_l_.Init(dimension + 1);
+      right_hand_sides_u_.Init(dimension + 1);
+      postponed_right_hand_sides_l_.Init(dimension + 1);
+      postponed_right_hand_sides_e_.Init(dimension + 1);
+      postponed_right_hand_sides_u_.Init(dimension + 1);
+      sum_targets_weighted_by_data_.Init(dimension + 1);
       bound_for_solutions_.Init(dimension + 1);
     }
 
@@ -117,10 +149,31 @@ class LocalLinearKrylov {
    */
   Vector rset_targets_;
 
+  /** @brief The original training target value for the reference
+   *         dataset weighted by the reference coordinate.  (i.e. y_i
+   *         [1; r^T]^T ).
+   */
+  Matrix rset_targets_weighted_by_coordinates_;
+
   /** @brief The dimensionality of each point.
    */
   int dimension_;
-  
+
+  /** @brief The lower bounds on the right hand side of the linear system we
+   *         are solving for each query point. (i.e. B^T W(q) Y)
+   */
+  Matrix right_hand_sides_l_;
+
+  /** @brief The approximated right hand side of the linear system we
+   *         are solving for each query point. (i.e. B^T W(q) Y)
+   */
+  Matrix right_hand_sides_e_;
+
+  /** @brief The upper bounds on the right hand side of the linear system we
+   *         are solving for each query point. (i.e. B^T W(q) Y)
+   */
+  Matrix right_hand_sides_u_;
+
   /** @brief The solution vector of (B^T W(q) B)^+ (B^T W(q) Y) for
    *         each query point.
    */
@@ -130,8 +183,26 @@ class LocalLinearKrylov {
    */
   Vector regression_estimates_;
 
+  /** @brief The kernel function.
+   */
+  TKernel kernel_;
+
   ////////// Private Member Functions //////////
   
+  /** @brief The base-case exhaustive computation for dual-tree based
+   *         computation of B^T W(q) Y.
+   *
+   *  @param qnode The query node.
+   *  @param rnode The reference node.
+   */
+  void DualtreeRightHandSidesBase_(Tree *qnode, Tree *rnode);
+
+  /** @brief The canonical case for dual-tree based computation of B^T
+   *         W(q) Y.
+   *
+   *  @param qnode The query node.
+   *  @param rnode The reference node.
+   */
   void DualtreeRightHandSidesCanonical_(Tree *qnode, Tree *rnode);
 
   /** @brief Compute B^T W(q) Y vector for each query point, which
@@ -143,6 +214,9 @@ class LocalLinearKrylov {
   void ComputeRightHandSides_() {
 
     DualtreeRightHandSidesCanonical_(qroot_, rroot_);
+  }
+
+  void SolveLeastSquaresByKrylov_() {
   }
 
   /** @brief Finalize the regression estimate for each query point by
@@ -172,9 +246,36 @@ class LocalLinearKrylov {
 
  public:
   
+  ////////// Constructor/Destructor //////////
+  
+  /** @brief The constructor that sets every pointer owned by this
+   *         object to NULL.
+   */
+  LocalLinearKrylov() {
+    qroot_ = rroot_ = NULL;
+  }
+
+  /** @brief The destructor that frees memory owned by the trees.
+   */
+  ~LocalLinearKrylov() {
+
+    // If the query and the reference share the same tree, delete only one.
+    if(rroot_ == qroot_) {
+      delete rroot_;
+      rroot_ = qroot_ = NULL;
+    }
+    else {
+      delete rroot_;
+      delete qroot_;
+    }
+  }
+
   void Compute() {
     
     // Zero out computation results.
+    right_hand_sides_l_.SetZero();
+    right_hand_sides_e_.SetZero();
+    right_hand_sides_u_.SetZero();
     solution_vectors_.SetZero();
     regression_estimates_.SetZero();
 
@@ -190,7 +291,11 @@ class LocalLinearKrylov {
     // point. This essentially becomes the right-hand side for each
     // query point.
     ComputeRightHandSides_();
-    
+
+    // The second phase solves the least squares problem: (B^T W(q) B)
+    // z(q) = B^T W(q) Y for each query point q.
+    SolveLeastSquaresByKrylov_();
+
     // Proceed with the third phase of the computation to output the
     // final regression value.
     FinalizeRegressionEstimates_();
@@ -233,13 +338,26 @@ class LocalLinearKrylov {
     }
     fx_timer_stop(NULL, "tree_d");
 
+    // initialize the kernel.
+    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
+
     // allocate memory for storing computation results.
+    rset_targets_weighted_by_coordinates_.Init(dimension_ + 1, rset_.n_cols());
+    right_hand_sides_l_.Init(dimension_ + 1, qset_.n_cols());
+    right_hand_sides_e_.Init(dimension_ + 1, qset_.n_cols());
+    right_hand_sides_u_.Init(dimension_ + 1, qset_.n_cols());
     solution_vectors_.Init(dimension_ + 1, qset_.n_cols());
     regression_estimates_.Init(qset_.n_cols());
+
+    // initialize the reference side statistics.
+    
   }
   
 };
 
+#define INSIDE_LOCAL_LINEAR_KRYLOV_H
 #include "local_linear_krylov_setup_impl.h"
+
+#undef INSIDE_LOCAL_LINEAR_KRYLOV_H
 
 #endif
