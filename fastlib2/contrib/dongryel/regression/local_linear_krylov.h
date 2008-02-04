@@ -192,21 +192,26 @@ class LocalLinearKrylov {
    */
   Matrix right_hand_sides_u_;
   
-  /** @brief The coordinatewise lower bound on the solution vector of
-   *         (B^T W(q) B)^+ (B^T W(q) Y) for each query point.
+  /** @brief The coordinate-wise lower bound on the temporary vector
+   *         generated during the iterative method.
    */
-  Matrix solution_vectors_l_;
+  Matrix krylov_tmp_vectors_l_;
+
+  /** @brief The estimate on the temporary vector generated during the
+   *         iterative method.
+   */
+  Matrix krylov_tmp_vectors_e_;
+
+  /** @brief The coordinate-wise upper bound on the temporary vector
+   *         generated during the iterative method.
+   */
+  Matrix krylov_tmp_vectors_u_;
 
   /** @brief The estimate of the solution vector of (B^T W(q) B)^+
    *         (B^T W(q) Y) for each query point.
    */
   Matrix solution_vectors_e_;
   
-  /** @brief The coordinatewise upper bound on the solution vector of
-   *         (B^T W(q) B)^+ (B^T W(q) Y) for each query point
-   */
-  Matrix solution_vectors_u_;
-
   /** @brief The final regression estimate for each query point.
    */
   Vector regression_estimates_;
@@ -350,9 +355,8 @@ class LocalLinearKrylov {
 
       // Make aliases of the current query point and its associated
       // solution vector.
-      Vector query_pt, query_pt_solution;
-      qset_.MakeColumnVector(i, &query_pt);
-      solution_vectors_e_.MakeColumnVector(i, &query_pt_solution);
+      const double *query_pt = qset_.GetColumnPtr(i);
+      const double *query_pt_solution = solution_vectors_e_.GetColumnPtr(i);
 
       // Set the first component of the dot-product.
       regression_estimates_[i] = query_pt_solution[0];
@@ -470,9 +474,12 @@ class LocalLinearKrylov {
     right_hand_sides_l_.Init(row_length_, qset_.n_cols());
     right_hand_sides_e_.Init(row_length_, qset_.n_cols());
     right_hand_sides_u_.Init(row_length_, qset_.n_cols());
-    solution_vectors_l_.Init(row_length_, qset_.n_cols());
+    
     solution_vectors_e_.Init(row_length_, qset_.n_cols());
-    solution_vectors_u_.Init(row_length_, qset_.n_cols());
+    krylov_tmp_vectors_l_.Init(row_length_, qset_.n_cols());
+    krylov_tmp_vectors_e_.Init(row_length_, qset_.n_cols());
+    krylov_tmp_vectors_u_.Init(row_length_, qset_.n_cols());
+
     regression_estimates_.Init(qset_.n_cols());
     new_right_hand_sides_l_.Init(row_length_);
     right_hand_sides_l_change_.Init(row_length_);

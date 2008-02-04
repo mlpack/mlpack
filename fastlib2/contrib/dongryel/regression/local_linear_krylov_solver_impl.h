@@ -62,7 +62,10 @@ void LocalLinearKrylov<TKernel>::InitializeQueryTreeSolver_(Tree *qnode) {
 
 template<typename TKernel>
 void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
-  
+
+  // Initialize the initial solutions to zero vectors.
+  solution_vectors_e_.SetZero();
+
   // Initialize the query tree bounds.
   InitializeQueryTreeSolver_(qroot_);
   
