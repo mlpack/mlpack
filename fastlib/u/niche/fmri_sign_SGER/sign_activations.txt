@@ -1,5 +1,5 @@
-bed - 2 hand (like going to sleep) - repetitive artificially
-RED - left hand, right hand, left elbow, right elbow
+bed - 1 hand (like going to sleep) - repetitive artificially
+RED - right hand, right elbow
 
 bathroom - 1 hand shaking back and forth (elbow movement) a little bit, with thumb between first and second finger like a T - repetitive naturally
 RED - right elbow
@@ -21,9 +21,35 @@ OK - hand like O, then like K - doing this repeatedly - index extended, thumb on
 RED - all right fingers
 
 
+I - hand like fist with thumb pointing, elbow swings arm inwards
+RED - right elbow
+YELLOW - all right fingers, right thumb
 
-VOI (volumr of interest) sizes
+
+Bed Hot I Pain - Activations without temporal filtering kernel
+t1: FULL - right hand, right elbow
+    HALF - 
+t2: FULL - all right fingers, right wrist, right elbow
+    HALF - 
+t3: FULL - right elbow, all right fingers, right thumb
+    HALF - 
+t4: FULL - left wrist, right wrist, left index finger, right index finger
+    HALF - 
+
+Bed Hot I Pain - Activations with temporal filtering kernel
+t1: FULL - right hand, right elbow
+    HALF - 
+t2: FULL - all right fingers, right wrist, right elbow
+    HALF - right hand
+t3: FULL - right elbow, all right fingers, right thumb
+    HALF - right wrist
+t4: FULL - left wrist, right wrist, left index finger, right index finger
+    HALF - right elbow, all right fingers, right thumb
+
+
+
+VOI (volume of interest) sizes
 hand		5566
-fingers	2972
+fingers		2972
 wrist		4409
 elbow		2267

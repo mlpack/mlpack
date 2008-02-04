@@ -1,0 +1,3 @@
+Origin X,Y = (0, 165)
+Width, Height = (462, 126)
+
