@@ -316,7 +316,15 @@ class LocalLinearKrylov {
     FinalizeQueryTreeRightHandSides_(qroot_);
   }
 
+  /** @brief Initialize the query tree for an iteration inside a
+   *         Krylov solver.
+   *
+   *  @param qnode The current query node.
+   */
+  void InitializeQueryTreeSolver_(Tree *qnode);
+
   void SolveLeastSquaresByKrylov_() {
+    
   }
 
   /** @brief Finalize the regression estimate for each query point by
@@ -469,10 +477,8 @@ class LocalLinearKrylov {
 };
 
 #define INSIDE_LOCAL_LINEAR_KRYLOV_H
-#include "local_linear_krylov_pre_impl.h"
-#include "local_linear_krylov_post_impl.h"
 #include "local_linear_krylov_setup_impl.h"
-
+#include "local_linear_krylov_solver_impl.h"
 #undef INSIDE_LOCAL_LINEAR_KRYLOV_H
 
 #endif
