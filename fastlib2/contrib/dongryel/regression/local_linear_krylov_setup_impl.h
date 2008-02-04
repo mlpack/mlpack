@@ -16,9 +16,26 @@ void LocalLinearKrylov<TKernel>::InitializeQueryTreeRightHandSides_
   (qnode->stat().postponed_ll_vector_e_).SetZero();
   (qnode->stat().postponed_ll_vector_u_).SetZero();
 
-  // If the query node is not a leaf node, then traverse to the left
-  // and the right.
-  if(!qnode->is_leaf()) {
+  // If the query node is a leaf, then initialize the corresponding
+  // bound quantities for each query point.
+  if(qnode->is_leaf()) {
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+
+      Vector q_right_hand_sides_l, q_right_hand_sides_e, q_right_hand_sides_u;
+
+      right_hand_sides_l_.MakeColumnVector(q, &q_right_hand_sides_l);
+      right_hand_sides_e_.MakeColumnVector(q, &q_right_hand_sides_e);
+      right_hand_sides_u_.MakeColumnVector(q, &q_right_hand_sides_u);
+      
+      q_right_hand_sides_l.SetZero();
+      q_right_hand_sides_e.SetZero();
+      q_right_hand_sides_u.CopyValues
+	(rroot_->stat().sum_targets_weighted_by_data_);
+    }
+  }
+
+  // Otherwise, then traverse to the left and the right.
+  else {
     InitializeQueryTreeRightHandSides_(qnode->left());
     InitializeQueryTreeRightHandSides_(qnode->right());
   }
