@@ -1,7 +1,11 @@
 /** @file local_linear_krylov.h
  *
+ *  This implementation can handle only non-negative training target
+ *  values and points that lie the positive quadrant.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  *  @see local_linear_krylov_main.cc
+ *
  *  @bug No known bugs.
  */
 
@@ -62,7 +66,12 @@ class LocalLinearKrylov {
 
     /** @brief The data weighted by the target values. */
     Vector sum_targets_weighted_by_data_;
-    
+
+    /** @brief The 1-norm of the vector containing the target values
+     *         weighted by the data.
+     */
+    double l1_norm_sum_targets_weighted_by_data_;
+
     /** @brief The bounding box for the solution vectors. */
     DHrectBound<2> bound_for_solutions_;
 
@@ -91,6 +100,8 @@ class LocalLinearKrylov {
       postponed_right_hand_sides_u_.Init(dimension + 1);
       sum_targets_weighted_by_data_.Init(dimension + 1);
       bound_for_solutions_.Init(dimension + 1);
+
+      l1_norm_sum_targets_weighted_by_data_ = 0;
     }
 
     /** @brief Computing the statistics for a leaf node involves
@@ -119,6 +130,9 @@ class LocalLinearKrylov {
     Tree;
 
   ////////// Private Member Variables //////////
+
+  /** @brief The required relative error. */
+  double relative_error_;
 
   /** @brief The module holding the list of parameters. */
   struct datanode *module_;
@@ -196,6 +210,10 @@ class LocalLinearKrylov {
    */
   int num_finite_difference_prunes_;
 
+  /** @brief Temporary variable for holding newly refined lower bound.
+   */
+  Vector new_right_hand_sides_l_;
+
   /** @brief Temporary variable for holding lower bound change made
    *         during a prune.
    */
@@ -211,6 +229,18 @@ class LocalLinearKrylov {
   Vector right_hand_sides_u_change_;
 
   ////////// Private Member Functions //////////
+
+  /** @brief Compute the L1 norm of the given vector.
+   */
+  double L1Norm_(Vector &v) {
+
+    double norm = 0;
+    
+    for(index_t i = 0; i < v.length(); i++) {
+      norm += fabs(v[i]);
+    }
+    return norm;
+  }
 
   /** @brief Determine which of the node to expand first.
    */
@@ -231,7 +261,7 @@ class LocalLinearKrylov {
   }
   
   bool PrunableRightHandSides_(Tree *qnode, Tree *rnode, DRange &dsqd_range,
-			       DRange &kernel_value_range);
+			       DRange &kernel_value_range, double &used_error);
 
   /** @brief The base-case exhaustive computation for dual-tree based
    *         computation of B^T W(q) Y.
@@ -324,6 +354,9 @@ class LocalLinearKrylov {
     regression_estimates_.SetZero();
     num_finite_difference_prunes_ = 0;
     
+    // Set relative error.
+    relative_error_ = fx_param_double(module_, "relative_error", 0.01);
+
     // The computation proceeds in three phases:
     //
     // Phase 1: Compute B^T W(q) Y vector for each query point.
@@ -397,6 +430,7 @@ class LocalLinearKrylov {
     right_hand_sides_u_.Init(row_length_, qset_.n_cols());
     solution_vectors_.Init(row_length_, qset_.n_cols());
     regression_estimates_.Init(qset_.n_cols());
+    new_right_hand_sides_l_.Init(row_length_);
     right_hand_sides_l_change_.Init(row_length_);
     right_hand_sides_e_change_.Init(row_length_);
     right_hand_sides_u_change_.Init(row_length_);
