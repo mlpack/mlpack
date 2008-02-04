@@ -37,32 +37,31 @@ class LocalLinearKrylov {
 
     ////////// Member Variables //////////
 
-    /** @brief The lower bound on each sum component of the right hand
-     *         sides owned by this node.
+    /** @brief The general purpose lower bound on each sum component
+     *         for the local linear computation.
      */
-    Vector right_hand_sides_l_;
+    Vector ll_vector_l_;
     
-    /** @brief The upper bound on each sum component of the right hand
-     *         sides owned by this node.
+    /** @brief The general purpose upper bound on each sum component
+     *         for the local linear computation.
      */
-    Vector right_hand_sides_u_;
+    Vector ll_vector_u_;
 
     /** @brief The lower bound vector offset passed from the above on
-     *         each sum component of the right hand sides owned by
-     *         this node.
+     *         each sum component of the vector owned by this node.
      */
-    Vector postponed_right_hand_sides_l_;
+    Vector postponed_ll_vector_l_;
     
     /** @brief This stores the portion pruned by finite difference for
      *         the right hand sides.
      */
-    Vector postponed_right_hand_sides_e_;
+    Vector postponed_ll_vector_e_;
 
     /** @brief The upper bound vector offset passed from above on each
      *         sum component of the right hand sides owned by this
      *         node.
      */
-    Vector postponed_right_hand_sides_u_;
+    Vector postponed_ll_vector_u_;
 
     /** @brief The data weighted by the target values. */
     Vector sum_targets_weighted_by_data_;
@@ -93,11 +92,11 @@ class LocalLinearKrylov {
 
       // For local linear regression, each vector contains (D + 1)
       // numbers.
-      right_hand_sides_l_.Init(dimension + 1);
-      right_hand_sides_u_.Init(dimension + 1);
-      postponed_right_hand_sides_l_.Init(dimension + 1);
-      postponed_right_hand_sides_e_.Init(dimension + 1);
-      postponed_right_hand_sides_u_.Init(dimension + 1);
+      ll_vector_l_.Init(dimension + 1);
+      ll_vector_u_.Init(dimension + 1);
+      postponed_ll_vector_l_.Init(dimension + 1);
+      postponed_ll_vector_e_.Init(dimension + 1);
+      postponed_ll_vector_u_.Init(dimension + 1);
       sum_targets_weighted_by_data_.Init(dimension + 1);
       bound_for_solutions_.Init(dimension + 1);
 

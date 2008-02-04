@@ -9,12 +9,12 @@ void LocalLinearKrylov<TKernel>::InitializeQueryTreeRightHandSides_
 (Tree *qnode) {
   
   // Set the bounds to default values.
-  (qnode->stat().right_hand_sides_l_).SetZero();
-  (qnode->stat().right_hand_sides_u_).CopyValues
+  (qnode->stat().ll_vector_l_).SetZero();
+  (qnode->stat().ll_vector_u_).CopyValues
     (rroot_->stat().sum_targets_weighted_by_data_);
-  (qnode->stat().postponed_right_hand_sides_l_).SetZero();
-  (qnode->stat().postponed_right_hand_sides_e_).SetZero();
-  (qnode->stat().postponed_right_hand_sides_u_).SetZero();
+  (qnode->stat().postponed_ll_vector_l_).SetZero();
+  (qnode->stat().postponed_ll_vector_e_).SetZero();
+  (qnode->stat().postponed_ll_vector_u_).SetZero();
 
   // If the query node is not a leaf node, then traverse to the left
   // and the right.
@@ -100,8 +100,8 @@ bool LocalLinearKrylov<TKernel>::PrunableRightHandSides_
   // Refine the lower bound based on the current postponed lower bound
   // change and the newly gained refinement due to comparing the
   // current query and reference node pair.
-  la::AddOverwrite(qnode->stat().right_hand_sides_l_,
-		   qnode->stat().postponed_right_hand_sides_l_,
+  la::AddOverwrite(qnode->stat().ll_vector_l_,
+		   qnode->stat().postponed_ll_vector_l_,
 		   &new_right_hand_sides_l_);
   la::AddTo(right_hand_sides_l_change_, &new_right_hand_sides_l_);
 
@@ -128,8 +128,8 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesBase_
   
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
-  (qnode->stat().right_hand_sides_l_).SetAll(DBL_MAX);
-  (qnode->stat().right_hand_sides_u_).SetAll(-DBL_MAX);
+  (qnode->stat().ll_vector_l_).SetAll(DBL_MAX);
+  (qnode->stat().ll_vector_u_).SetAll(-DBL_MAX);
   
   // for each query point
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -144,10 +144,10 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesBase_
 
     // Incorporate the postponed information.
     la::AddTo(row_length_, 
-	      (qnode->stat().postponed_right_hand_sides_l_).ptr(),
+	      (qnode->stat().postponed_ll_vector_l_).ptr(),
 	      q_right_hand_sides_l);
     la::AddTo(row_length_, 
-	      (qnode->stat().postponed_right_hand_sides_u_).ptr(),
+	      (qnode->stat().postponed_ll_vector_u_).ptr(),
 	      q_right_hand_sides_u);
 
     // for each reference point
@@ -187,11 +187,11 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesBase_
 	(rnode->stat().sum_targets_weighted_by_data_)[d];
       
       // Refine bounds.
-      (qnode->stat().right_hand_sides_l_)[d] =
-	std::min((qnode->stat().right_hand_sides_l_)[d], 
+      (qnode->stat().ll_vector_l_)[d] =
+	std::min((qnode->stat().ll_vector_l_)[d], 
 		 q_right_hand_sides_l[d]);
-      (qnode->stat().right_hand_sides_u_)[d] =
-	std::max((qnode->stat().right_hand_sides_u_)[d],
+      (qnode->stat().ll_vector_u_)[d] =
+	std::max((qnode->stat().ll_vector_u_)[d],
 		 q_right_hand_sides_u[d]);
 
     } // end of looping over each vector component.
@@ -199,8 +199,8 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesBase_
   } // end of iterating over each query point.
 
   // Clear postponed information.
-  (qnode->stat().postponed_right_hand_sides_l_).SetZero();
-  (qnode->stat().postponed_right_hand_sides_u_).SetZero();
+  (qnode->stat().postponed_ll_vector_l_).SetZero();
+  (qnode->stat().postponed_ll_vector_u_).SetZero();
 }
 
 template<typename TKernel>
@@ -218,11 +218,11 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesCanonical_
   if(PrunableRightHandSides_(qnode, rnode, dsqd_range, kernel_value_range,
 			     used_error)) {
     la::AddTo(right_hand_sides_l_change_,
-	      &(qnode->stat().postponed_right_hand_sides_l_));
+	      &(qnode->stat().postponed_ll_vector_l_));
     la::AddTo(right_hand_sides_e_change_,
-	      &(qnode->stat().postponed_right_hand_sides_e_));
+	      &(qnode->stat().postponed_ll_vector_e_));
     la::AddTo(right_hand_sides_u_change_,
-	      &(qnode->stat().postponed_right_hand_sides_u_));
+	      &(qnode->stat().postponed_ll_vector_u_));
     num_finite_difference_prunes_++;
     return;
   }
@@ -252,16 +252,16 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesCanonical_
     
     // Push down postponed bound changes owned by the current query
     // node to the children of the query node and clear them.
-    la::AddTo(qnode->stat().postponed_right_hand_sides_l_,
-	      &((qnode->left()->stat()).postponed_right_hand_sides_l_));
-    la::AddTo(qnode->stat().postponed_right_hand_sides_l_,
-	      &((qnode->right()->stat()).postponed_right_hand_sides_l_));
-    la::AddTo(qnode->stat().postponed_right_hand_sides_u_,
-	      &((qnode->left()->stat()).postponed_right_hand_sides_u_));
-    la::AddTo(qnode->stat().postponed_right_hand_sides_u_,
-	      &((qnode->right()->stat()).postponed_right_hand_sides_u_));
-    (qnode->stat().postponed_right_hand_sides_l_).SetZero();
-    (qnode->stat().postponed_right_hand_sides_u_).SetZero();
+    la::AddTo(qnode->stat().postponed_ll_vector_l_,
+	      &((qnode->left()->stat()).postponed_ll_vector_l_));
+    la::AddTo(qnode->stat().postponed_ll_vector_l_,
+	      &((qnode->right()->stat()).postponed_ll_vector_l_));
+    la::AddTo(qnode->stat().postponed_ll_vector_u_,
+	      &((qnode->left()->stat()).postponed_ll_vector_u_));
+    la::AddTo(qnode->stat().postponed_ll_vector_u_,
+	      &((qnode->right()->stat()).postponed_ll_vector_u_));
+    (qnode->stat().postponed_ll_vector_l_).SetZero();
+    (qnode->stat().postponed_ll_vector_u_).SetZero();
 
     // For a leaf reference node, expand query node
     if(rnode->is_leaf()) {
@@ -290,16 +290,16 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesCanonical_
     
     // reaccumulate the summary statistics.
     for(index_t d = 0; d <= dimension_; d++) {
-      (qnode->stat().right_hand_sides_l_)[d] =
-	std::min(((qnode->left()->stat()).right_hand_sides_l_)[d] +
-		 ((qnode->left()->stat()).postponed_right_hand_sides_l_)[d],
-		 ((qnode->right()->stat()).right_hand_sides_l_)[d] +
-		 ((qnode->right()->stat()).postponed_right_hand_sides_l_)[d]);
-      (qnode->stat().right_hand_sides_u_)[d] =
-	std::max(((qnode->left()->stat()).right_hand_sides_u_)[d] +
-		 ((qnode->left()->stat()).postponed_right_hand_sides_u_)[d],
-		 ((qnode->right()->stat()).right_hand_sides_u_)[d] +
-		 ((qnode->right()->stat()).postponed_right_hand_sides_u_)[d]);
+      (qnode->stat().ll_vector_l_)[d] =
+	std::min(((qnode->left()->stat()).ll_vector_l_)[d] +
+		 ((qnode->left()->stat()).postponed_ll_vector_l_)[d],
+		 ((qnode->right()->stat()).ll_vector_l_)[d] +
+		 ((qnode->right()->stat()).postponed_ll_vector_l_)[d]);
+      (qnode->stat().ll_vector_u_)[d] =
+	std::max(((qnode->left()->stat()).ll_vector_u_)[d] +
+		 ((qnode->left()->stat()).postponed_ll_vector_u_)[d],
+		 ((qnode->right()->stat()).ll_vector_u_)[d] +
+		 ((qnode->right()->stat()).postponed_ll_vector_u_)[d]);
     }
     return;
   } // end of the case: non-leaf query node.
@@ -322,13 +322,13 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeRightHandSides_
 
       // Incorporate the postponed information.
       la::AddTo(row_length_,
-		(q_stat.postponed_right_hand_sides_l_).ptr(),
+		(q_stat.postponed_ll_vector_l_).ptr(),
 		q_right_hand_sides_l);
       la::AddTo(row_length_,
-		(q_stat.postponed_right_hand_sides_e_).ptr(),
+		(q_stat.postponed_ll_vector_e_).ptr(),
 		q_right_hand_sides_e);
       la::AddTo(row_length_,
-		(q_stat.postponed_right_hand_sides_u_).ptr(),
+		(q_stat.postponed_ll_vector_u_).ptr(),
 		q_right_hand_sides_u);
 
       // Maybe I should normalize the sums here to prevent overflow...
@@ -340,18 +340,18 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeRightHandSides_
     LocalLinearKrylovStat &q_right_stat = qnode->right()->stat();
 
     // Push down approximations
-    la::AddTo(q_stat.postponed_right_hand_sides_l_,
-	      &(q_left_stat.postponed_right_hand_sides_l_));
-    la::AddTo(q_stat.postponed_right_hand_sides_l_,
-	      &(q_right_stat.postponed_right_hand_sides_l_));
-    la::AddTo(q_stat.postponed_right_hand_sides_e_,
-              &(q_left_stat.postponed_right_hand_sides_e_));
-    la::AddTo(q_stat.postponed_right_hand_sides_e_,
-              &(q_right_stat.postponed_right_hand_sides_e_));
-    la::AddTo(q_stat.postponed_right_hand_sides_u_,
-              &(q_left_stat.postponed_right_hand_sides_u_));
-    la::AddTo(q_stat.postponed_right_hand_sides_u_,
-              &(q_right_stat.postponed_right_hand_sides_u_));
+    la::AddTo(q_stat.postponed_ll_vector_l_,
+	      &(q_left_stat.postponed_ll_vector_l_));
+    la::AddTo(q_stat.postponed_ll_vector_l_,
+	      &(q_right_stat.postponed_ll_vector_l_));
+    la::AddTo(q_stat.postponed_ll_vector_e_,
+              &(q_left_stat.postponed_ll_vector_e_));
+    la::AddTo(q_stat.postponed_ll_vector_e_,
+              &(q_right_stat.postponed_ll_vector_e_));
+    la::AddTo(q_stat.postponed_ll_vector_u_,
+              &(q_left_stat.postponed_ll_vector_u_));
+    la::AddTo(q_stat.postponed_ll_vector_u_,
+              &(q_right_stat.postponed_ll_vector_u_));
 
     FinalizeQueryTreeRightHandSides_(qnode->left());
     FinalizeQueryTreeRightHandSides_(qnode->right());
