@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
   // Declare local linear krylov object.
   LocalLinearKrylov<GaussianKernel> local_linear;
   local_linear.Init(queries, references, reference_targets,
-		    queries_equal_references, local_linear_module);
+		    queries_equal_references, local_linear_module);  
   local_linear.Compute();
 
   // Finalize FastExec and print output results.

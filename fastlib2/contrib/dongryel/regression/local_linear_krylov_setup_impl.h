@@ -6,9 +6,51 @@
 
 template<typename TKernel>
 bool LocalLinearKrylov<TKernel>::PrunableRightHandSides_
-(Tree *qnode, Tree *rnode, DRange &dsqd_range, DRange &kernel_value_range) {
+(Tree *qnode, Tree *rnode, DRange &dsqd_range, DRange &kernel_value_range,
+ double &used_error) {
+      
+  // try pruning after bound refinement: first compute distance/kernel
+  // value bounds
+  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
+  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
+  kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
+
+  // Compute the vector component lower and upper bound changes. This
+  // assumes that the maximum kernel value is 1.
+  la::ScaleOverwrite(kernel_value_range.lo,
+		     rnode->stat().sum_targets_weighted_by_data_,
+		     &right_hand_sides_l_change_);
+  la::ScaleOverwrite(0.5 * (kernel_value_range.lo +
+			    kernel_value_range.hi),
+		     rnode->stat().sum_targets_weighted_by_data_,
+		     &right_hand_sides_e_change_);
+  la::ScaleOverwrite((kernel_value_range.hi - 1.0),
+		     rnode->stat().sum_targets_weighted_by_data_,
+		     &right_hand_sides_u_change_);
+
+  // Refine the lower bound based on the current postponed lower bound
+  // change and the newly gained refinement due to comparing the
+  // current query and reference node pair.
+  la::AddOverwrite(qnode->stat().right_hand_sides_l_,
+		   qnode->stat().postponed_right_hand_sides_l_,
+		   &new_right_hand_sides_l_);
+  la::AddTo(right_hand_sides_l_change_, &new_right_hand_sides_l_);
+
+  // Compute the L1 norm of the most refined lower bound.
+  double l1_norm_new_right_hand_sides_l_ = L1Norm_(new_right_hand_sides_l_);
+    
+  // Compute the allowed amount of error for pruning the given query
+  // and reference pair.
+  double allowed_err = 
+    (relative_error_ * (rnode->stat().l1_norm_sum_targets_weighted_by_data_) *
+     l1_norm_new_right_hand_sides_l_) / 
+    (rroot_->stat().l1_norm_sum_targets_weighted_by_data_);
+
+  used_error = 0.5 * kernel_value_range.width() * 
+    (rnode->stat().l1_norm_sum_targets_weighted_by_data_);
   
-  return true;
+  // check pruning condition  
+  return (used_error <= allowed_err);
 }
 
 template<typename TKernel>
@@ -95,13 +137,17 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesBase_
 template<typename TKernel>
 void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesCanonical_
 (Tree *qnode, Tree *rnode) {
-      
+  
+  // Total amount of used error
+  double used_error;
+
   // temporary variable for holding distance/kernel value bounds
   DRange dsqd_range;
   DRange kernel_value_range;
   
   // try finite difference pruning first
-  if(PrunableRightHandSides_(qnode, rnode, dsqd_range, kernel_value_range)) {
+  if(PrunableRightHandSides_(qnode, rnode, dsqd_range, kernel_value_range,
+			     used_error)) {
     la::AddTo(right_hand_sides_l_change_,
 	      &(qnode->stat().postponed_right_hand_sides_l_));
     la::AddTo(right_hand_sides_e_change_,
