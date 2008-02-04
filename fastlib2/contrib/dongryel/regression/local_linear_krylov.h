@@ -263,6 +263,17 @@ class LocalLinearKrylov {
     }
   }
 
+  /** @brief Initialize the bound statistics relevant to the right
+   *         hand side computation.
+   */
+  void InitializeQueryTreeRightHandSides_(Tree *qnode);
+
+  /** @brief The postprocessing function to finalize the computation
+   *         of the right-hand sides of the linear system for each
+   *         query point.
+   */
+  void FinalizeQueryTreeRightHandSides_(Tree *qnode);
+
   /** @brief Preprocess the reference tree for bottom up statistics
    *         computation.
    */
@@ -300,7 +311,9 @@ class LocalLinearKrylov {
    */
   void ComputeRightHandSides_() {
 
+    InitializeQueryTreeRightHandSides_(qroot_);
     DualtreeRightHandSidesCanonical_(qroot_, rroot_);
+    FinalizeQueryTreeRightHandSides_(qroot_);
   }
 
   void SolveLeastSquaresByKrylov_() {
@@ -456,7 +469,8 @@ class LocalLinearKrylov {
 };
 
 #define INSIDE_LOCAL_LINEAR_KRYLOV_H
-#include "local_linear_krylov_preprocess_impl.h"
+#include "local_linear_krylov_pre_impl.h"
+#include "local_linear_krylov_post_impl.h"
 #include "local_linear_krylov_setup_impl.h"
 
 #undef INSIDE_LOCAL_LINEAR_KRYLOV_H
