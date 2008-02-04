@@ -5,6 +5,26 @@
 #endif
 
 template<typename TKernel>
+void LocalLinearKrylov<TKernel>::InitializeQueryTreeRightHandSides_
+(Tree *qnode) {
+  
+  // Set the bounds to default values.
+  (qnode->stat().right_hand_sides_l_).SetZero();
+  (qnode->stat().right_hand_sides_u_).CopyValues
+    (rroot_->stat().sum_targets_weighted_by_data_);
+  (qnode->stat().postponed_right_hand_sides_l_).SetZero();
+  (qnode->stat().postponed_right_hand_sides_e_).SetZero();
+  (qnode->stat().postponed_right_hand_sides_u_).SetZero();
+
+  // If the query node is not a leaf node, then traverse to the left
+  // and the right.
+  if(!qnode->is_leaf()) {
+    InitializeQueryTreeRightHandSides_(qnode->left());
+    InitializeQueryTreeRightHandSides_(qnode->right());
+  }
+}
+
+template<typename TKernel>
 void LocalLinearKrylov<TKernel>::ComputeWeightedTargetVectors_(Tree *rnode) {
   
   if(rnode->is_leaf()) {
