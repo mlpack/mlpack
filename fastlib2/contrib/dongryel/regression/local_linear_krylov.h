@@ -162,7 +162,7 @@ class LocalLinearKrylov {
   /** @brief The original training target value for the reference
    *         dataset.
    */
-  Matrix rset_targets_;
+  Vector rset_targets_;
 
   /** @brief The original training target value for the reference
    *         dataset weighted by the reference coordinate.  (i.e. y_i
@@ -231,6 +231,9 @@ class LocalLinearKrylov {
   ////////// Private Member Functions //////////
 
   /** @brief Compute the L1 norm of the given vector.
+   *
+   *  @param v The vector for which we want to compute the L1 norm.
+   *  @return The L1 norm of the vector.
    */
   double L1Norm_(Vector &v) {
 
@@ -259,7 +262,17 @@ class LocalLinearKrylov {
       *partner2 = nd1;
     }
   }
-  
+
+  /** @brief Preprocess the reference tree for bottom up statistics
+   *         computation.
+   */
+  void ComputeWeightedTargetVectors_(Tree *rnode);
+
+  /** @brief Determine whether the given query and the reference node
+   *         pair can be pruned.
+   *
+   *  @return True, if it can be pruned. False, otherwise.
+   */
   bool PrunableRightHandSides_(Tree *qnode, Tree *rnode, DRange &dsqd_range,
 			       DRange &kernel_value_range, double &used_error);
 
@@ -390,7 +403,8 @@ class LocalLinearKrylov {
     
     // copy reference dataset and reference weights.
     rset_.Copy(references);
-    rset_targets_.Copy(reference_targets);
+    rset_targets_.Copy(reference_targets.GetColumnPtr(0),
+		       reference_targets.n_rows());
     
     // Record dimensionality and the appropriately cache the number of
     // components required for local linear (which is D + 1).
@@ -436,12 +450,13 @@ class LocalLinearKrylov {
     right_hand_sides_u_change_.Init(row_length_);
     
     // initialize the reference side statistics.
-    
+    ComputeWeightedTargetVectors_(rroot_);
   }
   
 };
 
 #define INSIDE_LOCAL_LINEAR_KRYLOV_H
+#include "local_linear_krylov_preprocess_impl.h"
 #include "local_linear_krylov_setup_impl.h"
 
 #undef INSIDE_LOCAL_LINEAR_KRYLOV_H
