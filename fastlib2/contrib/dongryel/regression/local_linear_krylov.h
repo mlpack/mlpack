@@ -191,11 +191,21 @@ class LocalLinearKrylov {
    *         are solving for each query point. (i.e. B^T W(q) Y)
    */
   Matrix right_hand_sides_u_;
-
-  /** @brief The solution vector of (B^T W(q) B)^+ (B^T W(q) Y) for
-   *         each query point.
+  
+  /** @brief The coordinatewise lower bound on the solution vector of
+   *         (B^T W(q) B)^+ (B^T W(q) Y) for each query point.
    */
-  Matrix solution_vectors_;
+  Matrix solution_vectors_l_;
+
+  /** @brief The estimate of the solution vector of (B^T W(q) B)^+
+   *         (B^T W(q) Y) for each query point.
+   */
+  Matrix solution_vectors_e_;
+  
+  /** @brief The coordinatewise upper bound on the solution vector of
+   *         (B^T W(q) B)^+ (B^T W(q) Y) for each query point
+   */
+  Matrix solution_vectors_u_;
 
   /** @brief The final regression estimate for each query point.
    */
@@ -262,6 +272,11 @@ class LocalLinearKrylov {
     }
   }
 
+  /** @brief Compute the maximum dot product possible for a pair of
+   *         point lying in each of the two given regions.
+   */
+  double MaxDotProductBetweenTwoBounds_(Tree *qnode, Tree *rnode);
+
   /** @brief Initialize the bound statistics relevant to the right
    *         hand side computation.
    */
@@ -322,9 +337,7 @@ class LocalLinearKrylov {
    */
   void InitializeQueryTreeSolver_(Tree *qnode);
 
-  void SolveLeastSquaresByKrylov_() {
-    
-  }
+  void SolveLeastSquaresByKrylov_();
 
   /** @brief Finalize the regression estimate for each query point by
    *         taking the dot-product between [1; q^T] and the final
@@ -339,7 +352,7 @@ class LocalLinearKrylov {
       // solution vector.
       Vector query_pt, query_pt_solution;
       qset_.MakeColumnVector(i, &query_pt);
-      solution_vectors_.MakeColumnVector(i, &query_pt_solution);
+      solution_vectors_e_.MakeColumnVector(i, &query_pt_solution);
 
       // Set the first component of the dot-product.
       regression_estimates_[i] = query_pt_solution[0];
@@ -379,12 +392,7 @@ class LocalLinearKrylov {
 
   void Compute() {
     
-    // Zero out computation results.
-    right_hand_sides_l_.SetZero();
-    right_hand_sides_e_.SetZero();
-    right_hand_sides_u_.SetZero();
-    solution_vectors_.SetZero();
-    regression_estimates_.SetZero();
+    // Zero out statistics.
     num_finite_difference_prunes_ = 0;
     
     // Set relative error.
@@ -462,7 +470,9 @@ class LocalLinearKrylov {
     right_hand_sides_l_.Init(row_length_, qset_.n_cols());
     right_hand_sides_e_.Init(row_length_, qset_.n_cols());
     right_hand_sides_u_.Init(row_length_, qset_.n_cols());
-    solution_vectors_.Init(row_length_, qset_.n_cols());
+    solution_vectors_l_.Init(row_length_, qset_.n_cols());
+    solution_vectors_e_.Init(row_length_, qset_.n_cols());
+    solution_vectors_u_.Init(row_length_, qset_.n_cols());
     regression_estimates_.Init(qset_.n_cols());
     new_right_hand_sides_l_.Init(row_length_);
     right_hand_sides_l_change_.Init(row_length_);
