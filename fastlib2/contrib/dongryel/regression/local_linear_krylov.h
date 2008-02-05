@@ -47,21 +47,47 @@ class LocalLinearKrylov {
      */
     Vector ll_vector_u_;
 
+    /** @brief The general purpose lower bound on each negative sum
+     *         component for the local linear computation.
+     */
+    Vector neg_ll_vector_l_;
+    
+    /** @brief The general purpose upper bound on each negative sum
+     *         component for the local linear computation.
+     */
+    Vector neg_ll_vector_u_;
+
     /** @brief The lower bound vector offset passed from the above on
      *         each sum component of the vector owned by this node.
      */
     Vector postponed_ll_vector_l_;
     
     /** @brief This stores the portion pruned by finite difference for
-     *         the right hand sides.
+     *         each sum component.
      */
     Vector postponed_ll_vector_e_;
 
     /** @brief The upper bound vector offset passed from above on each
-     *         sum component of the right hand sides owned by this
-     *         node.
+     *         sum component owned by this node.
      */
     Vector postponed_ll_vector_u_;
+
+    /** @brief The lower bound vector offset passed from the above on
+     *         each negative sum component owned by this node.
+     */
+    Vector neg_postponed_ll_vector_l_;
+    
+    /** @brief This stores the portion pruned by finite difference for
+     *         each negative sum component of the vector owned by this
+     *         node.
+     */
+    Vector neg_postponed_ll_vector_e_;
+
+    /** @brief The upper bound vector offset passed from above on each
+     *         negative sum component of the right hand sides owned by
+     *         this node.
+     */
+    Vector neg_postponed_ll_vector_u_;
 
     /** @brief The data weighted by the target values. */
     Vector sum_targets_weighted_by_data_;
@@ -70,6 +96,13 @@ class LocalLinearKrylov {
      *         weighted by the data.
      */
     double l1_norm_sum_targets_weighted_by_data_;
+
+    /** @brief For local linear regression, this is the sum of the
+     *         coordinates of the points owned by this node (with the
+     *         first coordinate denoting the number of points, and the
+     *         remaining D coordinates being the sum).
+     */
+    Vector sum_coordinates_;
 
     /** @brief The bounding box for the solution vectors. */
     DHrectBound<2> bound_for_solutions_;
@@ -94,10 +127,18 @@ class LocalLinearKrylov {
       // numbers.
       ll_vector_l_.Init(dimension + 1);
       ll_vector_u_.Init(dimension + 1);
+      neg_ll_vector_l_.Init(dimension + 1);
+      neg_ll_vector_u_.Init(dimension + 1);
+
       postponed_ll_vector_l_.Init(dimension + 1);
       postponed_ll_vector_e_.Init(dimension + 1);
       postponed_ll_vector_u_.Init(dimension + 1);
+      neg_postponed_ll_vector_l_.Init(dimension + 1);
+      neg_postponed_ll_vector_e_.Init(dimension + 1);
+      neg_postponed_ll_vector_u_.Init(dimension + 1);
+
       sum_targets_weighted_by_data_.Init(dimension + 1);
+      sum_coordinates_.Init(dimension + 1);
       bound_for_solutions_.Init(dimension + 1);
 
       l1_norm_sum_targets_weighted_by_data_ = 0;
@@ -112,6 +153,17 @@ class LocalLinearKrylov {
 
       // Allocate all memory required for the statistics.
       AllocateMemory(dataset.n_rows());
+
+      // Here, run over each point and compute the coordinate sums.
+      sum_coordinates_.SetZero();
+      for(index_t i = 0; i < count; i++) {
+	const double *point = dataset.GetColumnPtr(i + start);
+
+	for(index_t j = 1; j <= dataset.n_rows(); j++) {
+	  sum_coordinates_[j] += point[j - 1];
+	}
+      }
+      sum_coordinates_[0] = count;
     }
 
     void Init(const Matrix &dataset, index_t start, index_t count,
@@ -120,6 +172,10 @@ class LocalLinearKrylov {
 
       // Allocate all memory required for the statatistics.
       AllocateMemory(dataset.n_rows());
+
+      // Combine the two coordinate sums.
+      la::AddOverwrite(left_stat.sum_coordinates_,
+		       right_stat.sum_coordinates_, &sum_coordinates_);
     }
 
   };
@@ -277,10 +333,12 @@ class LocalLinearKrylov {
     }
   }
 
-  /** @brief Compute the maximum dot product possible for a pair of
+  /** @brief Compute the dot-product bounds possible for a pair of
    *         point lying in each of the two given regions.
    */
-  double MaxDotProductBetweenTwoBounds_(Tree *qnode, Tree *rnode);
+  void DotProductBetweenTwoBounds_(Tree *qnode, Tree *rnode, 
+				   DRange &negative_dot_product_range,
+				   DRange &positive_dot_product_range);
 
   /** @brief Initialize the bound statistics relevant to the right
    *         hand side computation.
@@ -336,11 +394,20 @@ class LocalLinearKrylov {
   }
 
   /** @brief Initialize the query tree for an iteration inside a
-   *         Krylov solver.
+   *         Krylov solver. This forms the bounds for the solution
+   *         vectors owned by the query points for a given query node.
    *
    *  @param qnode The current query node.
    */
-  void InitializeQueryTreeSolver_(Tree *qnode);
+  void InitializeQueryTreeSolutionBound_(Tree *qnode);
+
+  /** @brief Initialize the query tree for an iteration inside a
+   *         Krylov solver. This resets the required vector bound
+   *         statistics to default.
+   */
+  void InitializeQueryTreeSumBound_
+    (Tree *qnode, DRange &root_negative_dot_product_range,
+     DRange &root_posistive_dot_product_range);
 
   void SolveLeastSquaresByKrylov_();
 
