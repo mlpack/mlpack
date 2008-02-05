@@ -21,23 +21,48 @@
 
 #include <string>
 #include "fastlib/fastlib.h"
-#include "mlpack/allknn/all_knn.h"
+#include "mlpack/allknn/allknn.h"
 
+class NonConvexMVUTest;
 class NonConvexMVU {
  public:
-  void Init(std::string filename);
-  void ComputeNeigborhoods(index_t knns);
-  void Compute(index_t new_dimension, Matrix *new_coordinates);
+  friend class NonConvexMVUTest;
+  NonConvexMVU::NonConvexMVU();
+  void Init(std::string data_file, index_t knns);
+  void Init(std::string data_file, index_t knns, index_t leaf_size);
+  void ComputeLocalOptimum();
+  void set_eta(double eta);
+  void set_gamma(double gamma);
+  void set_convergence_rate(double convergence_rate);
+  void set_max_iterations(index_t max_iterations);
+  void set_new_dimension(index_t new_dimension);
+  void set_tolerance(double tolerance); 
+  Matrix &coordinates();
+
  private:
   AllkNN allknn_;
+  index_t leaf_size_;
   index_t num_of_points_;
   index_t dimension_;
   index_t knns_;
-  Vector distances_;
-  ArrayList<indext_> neighbors_;
+  ArrayList<double> distances_;
+  ArrayList<index_t> neighbors_;
   Vector lagrange_mult_;
   double sigma_;
-  void ComputeGradient_(Matrix &cooridnate, Matrix &gradient);
+  double eta_;
+  double gamma_;
+  double previous_feasibility_error_;
+  double convergence_rate_;
+  double tolerance_;
+  index_t max_iterations_;
+  index_t new_dimension_;
+  Matrix coordinates_;
+  Matrix gradient_;
+  Matrix data_;
+
+  void ComputeGradient_();
+  void UpdateLagrangeMult_();
+  double ComputeFeasibilityError_();
 };
 
 #include "non_convex_mvu_impl.h"
