@@ -53,6 +53,7 @@ void NonConvexMVU::ComputeLocalOptimum() {
   }
   NOTIFY("Initializing optimization ...\n");
   coordinates_.Init(new_dimension_, num_of_points_);
+  gradient_.Init(new_dimension_, num_of_points_);
   for(index_t i=0; i< coordinates_.n_rows(); i++) {
     for(index_t j=0; j<coordinates_.n_cols(); j++) {
       coordinates_.set(i, j, math::Random(0.1, 1));
@@ -68,7 +69,7 @@ void NonConvexMVU::ComputeLocalOptimum() {
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       ComputeGradient_();
-      la::AddExpert(convergence_rate_, gradient_, &coordinates_);
+      la::AddExpert(-convergence_rate_, gradient_, &coordinates_);
       new_feasibility_error = ComputeFeasibilityError_();
       NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error: %lg \n", it1, it2, 
           new_feasibility_error);
@@ -110,7 +111,7 @@ void NonConvexMVU::set_tolerance(double tolerance) {
 }
 
 void NonConvexMVU::ComputeGradient_() {
-  gradient_.Copy(coordinates_);
+  gradient_.CopyValues(coordinates_);
   for(index_t i=0; i<gradient_.n_cols(); i++) {
     for(index_t k=0; k<knns_; k++) {
       double a_i_r[new_dimension_];
