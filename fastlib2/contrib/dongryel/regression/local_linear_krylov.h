@@ -104,8 +104,8 @@ class LocalLinearKrylov {
      */
     Vector sum_coordinates_;
 
-    /** @brief The bounding box for the solution vectors. */
-    DHrectBound<2> bound_for_solutions_;
+    /** @brief The bounding box for the Lanczos vectors. */
+    DHrectBound<2> lanczos_vectors_bound_;
 
     ////////// Constructor/Destructor //////////
 
@@ -139,7 +139,7 @@ class LocalLinearKrylov {
 
       sum_targets_weighted_by_data_.Init(dimension + 1);
       sum_coordinates_.Init(dimension + 1);
-      bound_for_solutions_.Init(dimension + 1);
+      lanczos_vectors_bound_.Init(dimension + 1);
 
       l1_norm_sum_targets_weighted_by_data_ = 0;
     }
@@ -398,8 +398,11 @@ class LocalLinearKrylov {
    *         vectors owned by the query points for a given query node.
    *
    *  @param qnode The current query node.
+   *  @param current_lanczos_vectors Each column of this matrix is a current
+   *                                 Lanczos vector for each query point.
    */
-  void InitializeQueryTreeSolutionBound_(Tree *qnode);
+  void InitializeQueryTreeSolutionBound_(Tree *qnode, 
+					 Matrix &current_lanczos_vectors);
 
   /** @brief Initialize the query tree for an iteration inside a
    *         Krylov solver. This resets the required vector bound
@@ -414,16 +417,26 @@ class LocalLinearKrylov {
    *
    *  @param qnode The query node.
    *  @param rnode The reference node.
+   *  @param current_lanczos_vectors Each column of this matrix is a current
+   *                                 Lanczos vector for each query point.
    */
-  void DualtreeSolverBase_(Tree *qnode, Tree *rnode);
+  void DualtreeSolverBase_(Tree *qnode, Tree *rnode,
+			   Matrix &current_lanczos_vectors,
+			   DRange &root_negative_dot_product_range,
+			   DRange &root_positive_dot_product_range);
 
   /** @brief The canonical case for dual-tree based computation of
    *         (B^T W(q) B) z(q)
    *
    *  @param qnode The query node.
    *  @param rnode The reference node.
+   *  @param current_lanczos_vectors Each column of this matrix is a current
+   *                                 Lanczos vector for each query point.
    */
-  void DualtreeSolverCanonical_(Tree *qnode, Tree *rnode);
+  void DualtreeSolverCanonical_(Tree *qnode, Tree *rnode,
+				Matrix &current_lanczos_vectors,
+				DRange &root_negative_dot_product_range,
+				DRange &root_positive_dot_product_range);
 
   void SolveLeastSquaresByKrylov_();
 
