@@ -236,38 +236,38 @@ class LocalLinearKrylov {
   /** @brief The lower bounds on the right hand side of the linear system we
    *         are solving for each query point. (i.e. B^T W(q) Y)
    */
-  Matrix right_hand_sides_l_;
+  Matrix vector_l_;
 
   /** @brief The approximated right hand side of the linear system we
    *         are solving for each query point. (i.e. B^T W(q) Y)
    */
-  Matrix right_hand_sides_e_;
+  Matrix vector_e_;
 
   /** @brief The upper bounds on the right hand side of the linear system we
    *         are solving for each query point. (i.e. B^T W(q) Y)
    */
-  Matrix right_hand_sides_u_;
-  
-  /** @brief The coordinate-wise lower bound on the temporary vector
-   *         generated during the iterative method.
-   */
-  Matrix krylov_tmp_vectors_l_;
+  Matrix vector_u_;
 
-  /** @brief The estimate on the temporary vector generated during the
-   *         iterative method.
+  /** @brief The lower bounds on the right hand side of the linear system we
+   *         are solving for each query point. (i.e. B^T W(q) Y)
    */
-  Matrix krylov_tmp_vectors_e_;
+  Matrix neg_vector_l_;
 
-  /** @brief The coordinate-wise upper bound on the temporary vector
-   *         generated during the iterative method.
+  /** @brief The approximated right hand side of the linear system we
+   *         are solving for each query point. (i.e. B^T W(q) Y)
    */
-  Matrix krylov_tmp_vectors_u_;
+  Matrix neg_vector_e_;
+
+  /** @brief The upper bounds on the right hand side of the linear system we
+   *         are solving for each query point. (i.e. B^T W(q) Y)
+   */
+  Matrix neg_vector_u_;
 
   /** @brief The estimate of the solution vector of (B^T W(q) B)^+
    *         (B^T W(q) Y) for each query point.
    */
   Matrix solution_vectors_e_;
-  
+    
   /** @brief The final regression estimate for each query point.
    */
   Vector regression_estimates_;
@@ -409,6 +409,22 @@ class LocalLinearKrylov {
     (Tree *qnode, DRange &root_negative_dot_product_range,
      DRange &root_posistive_dot_product_range);
 
+  /** @brief The base-case exhaustive computation for dual-tree based
+   *         computation of (B^T W(q) B) z(q).
+   *
+   *  @param qnode The query node.
+   *  @param rnode The reference node.
+   */
+  void DualtreeSolverBase_(Tree *qnode, Tree *rnode);
+
+  /** @brief The canonical case for dual-tree based computation of
+   *         (B^T W(q) B) z(q)
+   *
+   *  @param qnode The query node.
+   *  @param rnode The reference node.
+   */
+  void DualtreeSolverCanonical_(Tree *qnode, Tree *rnode);
+
   void SolveLeastSquaresByKrylov_();
 
   /** @brief Finalize the regression estimate for each query point by
@@ -538,14 +554,14 @@ class LocalLinearKrylov {
 
     // allocate memory for storing computation results.
     rset_targets_weighted_by_coordinates_.Init(row_length_, rset_.n_cols());
-    right_hand_sides_l_.Init(row_length_, qset_.n_cols());
-    right_hand_sides_e_.Init(row_length_, qset_.n_cols());
-    right_hand_sides_u_.Init(row_length_, qset_.n_cols());
+    vector_l_.Init(row_length_, qset_.n_cols());
+    vector_e_.Init(row_length_, qset_.n_cols());
+    vector_u_.Init(row_length_, qset_.n_cols());
+    neg_vector_l_.Init(row_length_, qset_.n_cols());
+    neg_vector_e_.Init(row_length_, qset_.n_cols());
+    neg_vector_u_.Init(row_length_, qset_.n_cols());
     
     solution_vectors_e_.Init(row_length_, qset_.n_cols());
-    krylov_tmp_vectors_l_.Init(row_length_, qset_.n_cols());
-    krylov_tmp_vectors_e_.Init(row_length_, qset_.n_cols());
-    krylov_tmp_vectors_u_.Init(row_length_, qset_.n_cols());
 
     regression_estimates_.Init(qset_.n_cols());
     new_right_hand_sides_l_.Init(row_length_);
