@@ -5,6 +5,18 @@
 #endif
 
 template<typename TKernel>
+void LocalLinearKrylov<TKernel>::DualtreeSolverBase_(Tree *qnode,
+						     Tree *rnode) {
+  
+}
+
+
+template<typename TKernel>
+void LocalLinearKrylov<TKernel>::DualtreeSolverCanonical_(Tree *qnode,
+							  Tree *rnode) {
+}
+
+template<typename TKernel>
 void LocalLinearKrylov<TKernel>::DotProductBetweenTwoBounds_
 (Tree *qnode, Tree *rnode, DRange &negative_dot_product_range,
  DRange &positive_dot_product_range) {
@@ -92,7 +104,31 @@ void LocalLinearKrylov<TKernel>::InitializeQueryTreeSumBound_
   (qnode->stat().postponed_ll_vector_e_).SetZero();
   (qnode->stat().postponed_ll_vector_u_).SetZero();
 
-  if(!qnode->is_leaf()) {
+  // If the query node is a leaf, then initialize the corresponding
+  // bound statistics for each query point.
+  if(qnode->is_leaf()) {
+
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+      Vector q_vector_l, q_vector_e, q_vector_u;
+      Vector q_neg_vector_l, q_neg_vector_e, q_neg_vector_u;
+      
+      vector_l_.MakeColumnVector(q, &q_vector_l);
+      vector_e_.MakeColumnVector(q, &q_vector_e);
+      vector_u_.MakeColumnVector(q, &q_vector_u);
+      neg_vector_l_.MakeColumnVector(q, &q_neg_vector_l);
+      neg_vector_e_.MakeColumnVector(q, &q_neg_vector_e);
+      neg_vector_u_.MakeColumnVector(q, &q_neg_vector_u);
+      
+      q_vector_l.SetZero();
+      q_vector_e.SetZero();
+      q_vector_u.CopyValues(qnode->stat().ll_vector_u_);
+      
+      q_neg_vector_l.CopyValues(qnode->stat().neg_ll_vector_l_);
+      q_neg_vector_e.SetZero();
+      q_neg_vector_u.SetZero();
+    }
+  }
+  else {
     
     InitializeQueryTreeSumBound_(qnode->left(), 
 				 root_negative_dot_product_range,
@@ -124,4 +160,35 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
   InitializeQueryTreeSumBound_(qroot_, root_negative_dot_product_range,
 			       root_positive_dot_product_range);
 
+
+  // Temporary variables needed for Lanczos iteration...
+  Matrix previous_lanczos_vector;
+  Matrix current_lanczos_vector;
+  previous_lanczos_vector.Init(row_length_, qset_.n_cols());
+  current_lanczos_vector.Init(row_length_, qset_.n_cols());
+  Matrix omega;
+  omega.Init(row_length_, qset_.n_cols());
+  Vector alpha, beta, rho, previous_rho, lambda;
+  Vector zeta, previous_zeta;
+  alpha.Init(qset_.n_cols());
+  beta.Init(qset_.n_cols());
+  rho.Init(qset_.n_cols());
+  previous_rho.Init(qset_.n_cols());
+  lambda.Init(qset_.n_cols());
+  zeta.Init(qset_.n_cols());
+  previous_zeta.Init(qset_.n_cols());
+  
+  // Main iteration of the Lanczos - repeat until "convergence"...
+  for(index_t m = 0; m < row_length_; m++) {
+
+    // Multiply the current lanczos vector with the linear operator.
+    DualtreeSolverCanonical_(qroot_, rroot_);
+    
+    // Take the dot product between the product above and the current
+    // lanczos vector.
+
+    if(m > 0) {
+      
+    }
+  }
 }

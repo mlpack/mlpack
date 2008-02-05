@@ -23,9 +23,9 @@ void LocalLinearKrylov<TKernel>::InitializeQueryTreeRightHandSides_
 
       Vector q_right_hand_sides_l, q_right_hand_sides_e, q_right_hand_sides_u;
 
-      right_hand_sides_l_.MakeColumnVector(q, &q_right_hand_sides_l);
-      right_hand_sides_e_.MakeColumnVector(q, &q_right_hand_sides_e);
-      right_hand_sides_u_.MakeColumnVector(q, &q_right_hand_sides_u);
+      vector_l_.MakeColumnVector(q, &q_right_hand_sides_l);
+      vector_e_.MakeColumnVector(q, &q_right_hand_sides_e);
+      vector_u_.MakeColumnVector(q, &q_right_hand_sides_u);
       
       q_right_hand_sides_l.SetZero();
       q_right_hand_sides_e.SetZero();
@@ -155,9 +155,9 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesBase_
     const double *q_col = qset_.GetColumnPtr(q);
 
     // get the column vectors accumulating the sums to update.
-    double *q_right_hand_sides_l = right_hand_sides_l_.GetColumnPtr(q);
-    double *q_right_hand_sides_e = right_hand_sides_e_.GetColumnPtr(q);
-    double *q_right_hand_sides_u = right_hand_sides_u_.GetColumnPtr(q);
+    double *q_right_hand_sides_l = vector_l_.GetColumnPtr(q);
+    double *q_right_hand_sides_e = vector_e_.GetColumnPtr(q);
+    double *q_right_hand_sides_u = vector_u_.GetColumnPtr(q);
 
     // Incorporate the postponed information.
     la::AddTo(row_length_, 
@@ -332,9 +332,9 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeRightHandSides_
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
       
       // Get the column vectors accumulating the sums to update.
-      double *q_right_hand_sides_l = right_hand_sides_l_.GetColumnPtr(q);
-      double *q_right_hand_sides_e = right_hand_sides_e_.GetColumnPtr(q);
-      double *q_right_hand_sides_u = right_hand_sides_u_.GetColumnPtr(q);
+      double *q_right_hand_sides_l = vector_l_.GetColumnPtr(q);
+      double *q_right_hand_sides_e = vector_e_.GetColumnPtr(q);
+      double *q_right_hand_sides_u = vector_u_.GetColumnPtr(q);
       
 
       // Incorporate the postponed information.
