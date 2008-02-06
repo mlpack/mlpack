@@ -1,6 +1,7 @@
 #ifndef REGRESSION_LL1_H
 #define REGRESSION_LL1_H
 #include "regression_ll2.h"
+#include "pseudo_inverse.h"
 
 
 /** In this code we shalll evaluate (B^TWB)^-1 by first calculating B^TWB
@@ -145,7 +146,7 @@ void FastRegression <TKernel>::
 FastRegressionStat::
 Init (const Matrix & dataset, index_t & start, index_t & count, 
       const FastRegressionStat &left_stat, const FastRegressionStat &right_stat){
-     
+  
 
   int num_of_dimensions=dataset.n_rows();
       
@@ -308,7 +309,14 @@ Matrix& FastRegression<TKernel>::get_reference_dataset(){
 template <typename TKernel>
 ArrayList<index_t>& FastRegression<TKernel>::get_old_from_new_r(){
   
+  
   return old_from_new_r_;
+}
+
+template <typename TKernel>
+Vector& FastRegression<TKernel>::get_regression_estimate(){
+  return regression_estimate_;
+ 
 }
 
 /** This function will be called after update bounds has been called in the 
@@ -825,21 +833,13 @@ void FastRegression<TKernel>::Compute(){
   check_for_prune_t flag=CHECK_FOR_PRUNE_BOTH;
   FRegression_(qroot_,rroot_,flag);
   PostProcess_(qroot_);
+
+  //This will print the matrices B^TWB and B^TWY to an output file
   Print_();
 
-  printf("At the end of regression...\n");
-  printf("BTB is...\n");
-  rroot_->stat().b_tb.PrintDebug();
-
-  printf("BTY is......\n");
-  rroot_->stat().b_ty.PrintDebug();
-
-  printf("ref Tree is ..\n");
-  rroot_->Print();
-
-  printf("query tree is..........\n");
-  qroot_->Print();
  
+  ObtainRegressionEstimate_();
+  PrintRegressionEstimate_();
 }
  
 template <typename TKernel>
@@ -978,6 +978,9 @@ void FastRegression<TKernel>::Init(Matrix &q_matrix, Matrix &r_matrix,
  
  
   //Initialize everything else.......
+
+  //this will hold the regression estimates due to FRegression
+  regression_estimate_.Init(qset_.n_cols());
 
   b_twb_l_estimate_.Init(qset_.n_cols());
   b_twb_u_estimate_.Init(qset_.n_cols());

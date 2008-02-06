@@ -97,35 +97,23 @@ int main(int argc, char *argv[]){
     printf("FAST CALCULATIONS ALL DONE");
     ArrayList<index_t> old_from_new_r;
     old_from_new_r.Copy(fast_regression.get_old_from_new_r());
+
+    Vector fast_regression_estimate;
+    fast_regression_estimate.Copy(fast_regression.get_regression_estimate());
     
     NaiveCalculation<GaussianKernel> naive_b_twy;
 
     fx_timer_start(NULL,"naive");
     naive_b_twy.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
-    naive_b_twy.Compute();
-
+    naive_b_twy.Compute(fast_regression_estimate);
+   
     fx_timer_stop(NULL,"naive");
 
-    naive_b_twy.print();
-
+   
 
     //Will need to verify if this is fine to do...
 
-    ArrayList<Matrix> fast_b_twy_estimate;
-    fast_b_twy_estimate.Init(q_matrix.n_cols());
-    
-    ArrayList<Matrix> fast_b_twb_estimate;
-    fast_b_twb_estimate.Init(q_matrix.n_cols());
-
-    for(index_t q=0;q<q_matrix.n_cols();q++){
-
-      fast_b_twb_estimate[q].Alias(fast_regression.get_b_twb_estimates(q));
-
-      fast_b_twy_estimate[q].Alias(fast_regression.get_b_twy_estimates(q));
-    }
-
-    naive_b_twy.ComputeMaximumRelativeError(fast_b_twy_estimate, 
-					    fast_b_twb_estimate); 
+ 
 
     fx_done();
   }
