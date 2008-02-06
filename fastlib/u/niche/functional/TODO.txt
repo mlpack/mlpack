@@ -52,3 +52,34 @@ for j = 1:p_small
 end
 
 
+
+
+LATEST THING TO DO:
+construct autoregressive functions s_j(t) = a * s_j(t-1) + r, r ~ N(0,R)
+smooth using moving average: \tilde{s}_j = MA(s_j)
+construct mixture of data x_i(t) = \sum_{j=1}^p b_{i,j} s_j(t) + q, q ~ N(0,Q)
+
+1) test fPCA
+ a) run fPCA does with different settings of lambda (lamda = alpha^i, for i \in {0, 1, ..., 10} and alpha = 0.9
+ b) choose the optimal labmda via cross-validation on the test set of the sum of squares of the inner products of the fPC's with the data curves
+
+2) see how well other ICA algorithms are able to extract the independent component functions
+
+
+
+
+for event-related potential data, are the extracted components interesting
+    so far, the answer is no
+
+what are applications where the proposed model does make sense?
+
+for a mixing model where there exist a small number of sources and many more mixtures than sources
+
+each observation is a mixture of many sources
+
+if one object emits a constant signal and a microphone stochastically picks up the object as it appears in different areas of a room
+
+
+The examples where functional PCA is able to show interesting results 
+
+

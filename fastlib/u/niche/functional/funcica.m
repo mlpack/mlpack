@@ -14,7 +14,8 @@ pc_coef = getcoef(pca_results.harmfd);
 
 % pc_scores = pca_results.harmscr;% this doesn't work if lambda > 0
 % instead, we do:
-pc_scores = get_scores(data_coef, pc_coef(:,1:2)', basis_inner_products);
+%pc_scores = get_scores(data_coef, pc_coef(:,1:2)', basis_inner_products);
+pc_scores = get_scores(data_coef, pc_coef', basis_inner_products);
 
 %mean_coef = getcoef(pca_results.meanfd);
 
@@ -26,7 +27,7 @@ pc_scores = get_scores(data_coef, pc_coef(:,1:2)', basis_inner_products);
 
 % p_small should be automatically selected according to some
 % reconstruction error threshold
-%{
+
 total_sum_var = 0;
 for i = 1:p
   total_sum_var = total_sum_var + sum(pc_scores(:,i).^2);
@@ -40,8 +41,8 @@ for p_small = 1:p
     break
   end
 end
-%}
-p_small = 2;
+
+%p_small = 2;
 
 p_small
 
@@ -77,11 +78,15 @@ end
   
 white_E = whitening_transform * E;
 
-[Y_pos, Y_neg, post_whitening_W_pos, post_whitening_W_neg] = ...
-    find_opt_unmixing_matrix(white_E);
+% Use my simplified version of RADICAL
+%[Y_pos, Y_neg, post_whitening_W_pos, post_whitening_W_neg] = ...
+%    find_opt_unmixing_matrix(white_E);
+
+% Use RADICAL
+[Y_pos, W_pos] = RADICAL(white_E);
 
 %Y = Y_pos;
-W_pos = post_whitening_W_pos * whitening_transform;
+%W_pos = post_whitening_W_pos * whitening_transform;
 ic_coef_pos = (W_pos * sub_pc_coef')';
 %{
 W_neg = post_whitening_W_neg * whitening_transform;
