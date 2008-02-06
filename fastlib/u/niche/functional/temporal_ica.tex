@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage{amsmath,amsthm,amsfonts}
+\title{independence via temporal generating distribution}
+\author{Nishant Mehta}
+
+\begin{document}
+  \maketitle
+
+  \section{Related Work}
+
+  \subsection{Stone - Blind Source Separation using Temporal Predictability}
+
+  Defines signal predictability as
+  \[
+  F(W_i, x) = \log \frac{V(W_i, x)}{U(W_i,x)} = \log \frac{V_i}{U_i}
+  = \log \frac{\sum_{\tau = 1}^n (\bar{y}_{\tau} - y_{\tau})^2}{\sum_{\tau = 1}^n (\tilde{y}_{\tau} - y_{\tau})^2}
+  \]
+  for $n$ the number of samples, $y_{\tau} = W_i x_{\tau}$, and $\tilde{y}_{\tau}$ and $\bar{y}_{\tau}$ are respectively are short-term and long-term exponential moving average of $y$ up to time $(\tau - 1)$
+
+  Is this the right measure? Empirically Stone's conjecture that independent components are more predictable than mixtures is confirmed by mixtures of signals with different pdf's, voice mixtures, and music mixtures.
+
+  The weak point of the algorithm is when two independent signals have the same predictability score $F$.
+
+  Rather than maximizing signal predictability, it instead seems more correct to minimize the cross-covariance of two signals. In cases where one signal is a lagged version of the other signal, minimizing cross-covariance will have the effect of deconvolving the signals.
+
+  In ``A Note on Stone's Conjecture of Blind Signal Separation'', Xie, He, and Fu show Stone's temporal predictability conjecture to be false and they modify it to use something called the covariance rate:
+\[
+R_z = \frac{\text{cov}(f_z^a(t), f_z^a(t))}{\text{cov}(g_z^b(t), g_z^b(t))}
+\]
+where $f_z^a = z_k - \bar{z}_k$ and $g_z^a = z_j - \tilde{z}_k$ (note that they claim to define $g_z^a = z_k - \bar{z}_k$ but this is probably a typo).
+
+  \subsection{Bussgang techniques}
+  These techniques are directed the the blind deconvolution problem. Blind deconvolution refers to a signal that has been convolved with some filter so that there exists a significant amount of redundancy in the signal. One method for learning a deconvolution filter is to estimate a deconvolution vector $w$ of weights that can deconvolve according to $u_t = \sum_{k=1}^L w_k x_{t-k} = w_t^T x_t$, for convolved signal $x$, deconvolution filter $w$, and deconvolved signal $u$.
+
+  The objective of deconvolution seems to be totally incompatible with maximizing temporal predictability. Deconvolution aims to remove redundancy entirely and hence reduce temporal predictability, while maximizing temporal predictability obviously does the opposite.
+
+  Pearlmutter and Parra - linear predictive coding extension to Infomax -> contextual ICA
+
+  Attias - augment independent factor analysis with first-order HMM to model temporal dependencies within each source signal
+
+  Hyvarinen - complexity pursuit
+
+  Molgedy and Schuster - assume source signals uncorrelated at two time lags ($L=0$ and $L=\delta t$)
+
+  Cichocki and Thawonmas - ``On-line algorithm for blind signal extraction of arbitrarily distributed, but temporally correlated sources using second order statistics'' - represent signals using AR model - no mention of cross-covariance or even covariance function
+
+  Shun-ichi Amari - ``Estimating functions of independent component analysis for temporally correlated signals'' - read this, mentions cross-covariance, is this the cross-covariance function?
+
+Jung and Kaiser - ``Considering temporal structures in independent component analysis''
+
+  \section{Current}
+  
+  
+  Let $X \in \mathfrak{R}^d$, $S \in \mathfrak{R}^d$, $g$ a function from $\mathfrak{R}^d \Rightarrow \mathfrak{R}^d$ such that $g(S) = X$.
+  
+  Consider non-IID $T$ samples of $X$: $X[1], X[2], \ldots, X[T]$.
+
+  Let the autocovariance function
+
+  
+  
+  
+  
+\end{document}
