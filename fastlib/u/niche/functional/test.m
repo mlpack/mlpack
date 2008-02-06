@@ -32,7 +32,8 @@ myfd_train = data2fd(y_train, argvals, mybasis);
 myfd_test = data2fd(y_test, argvals, mybasis);
 %myfd_shifted = data2fd(y_shifted, argvals, mybasis);
 
-pca_results = pca_fd(myfd_train, 30);
+%pca_results = pca_fd(myfd_train, 30);
+pca_results = pca_fd(myfd_train, 30, fdPar(mybasis, 2, 0));
 
 % treat left and right data differently
 
