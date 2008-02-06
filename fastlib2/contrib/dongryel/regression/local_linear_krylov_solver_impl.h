@@ -495,21 +495,26 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeLanczosMultiplier_
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
       
       // Get the column vectors accumulating the sums to update.
-      double *q_right_hand_sides_l = vector_l_.GetColumnPtr(q);
-      double *q_right_hand_sides_e = vector_e_.GetColumnPtr(q);
-      double *q_right_hand_sides_u = vector_u_.GetColumnPtr(q);
+      double *q_vector_l = vector_l_.GetColumnPtr(q);
+      double *q_vector_e = vector_e_.GetColumnPtr(q);
+      double *q_vector_u = vector_u_.GetColumnPtr(q);
+      double *q_neg_vector_l = neg_vector_l_.GetColumnPtr(q);
+      double *q_neg_vector_e = neg_vector_e_.GetColumnPtr(q);
+      double *q_neg_vector_u = neg_vector_u_.GetColumnPtr(q);
       
-
       // Incorporate the postponed information.
-      la::AddTo(row_length_,
-		(q_stat.postponed_ll_vector_l_).ptr(),
-		q_right_hand_sides_l);
-      la::AddTo(row_length_,
-		(q_stat.postponed_ll_vector_e_).ptr(),
-		q_right_hand_sides_e);
-      la::AddTo(row_length_,
-		(q_stat.postponed_ll_vector_u_).ptr(),
-		q_right_hand_sides_u);
+      la::AddTo(row_length_, (q_stat.postponed_ll_vector_l_).ptr(),
+		q_vector_l);
+      la::AddTo(row_length_, (q_stat.postponed_ll_vector_e_).ptr(),
+		q_vector_e);
+      la::AddTo(row_length_, (q_stat.postponed_ll_vector_u_).ptr(),
+		q_vector_u);
+      la::AddTo(row_length_, (q_stat.postponed_neg_ll_vector_l_).ptr(),
+		q_neg_vector_l);
+      la::AddTo(row_length_, (q_stat.postponed_neg_ll_vector_e_).ptr(),
+		q_neg_vector_e);
+      la::AddTo(row_length_, (q_stat.postponed_neg_ll_vector_u_).ptr(),
+		q_neg_vector_u);
 
       // Maybe I should normalize the sums here to prevent overflow...
     }
@@ -577,8 +582,6 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
   
   // Initialize the initial solutions to zero vectors.
   solution_vectors_e_.SetZero();
-
-
   
   // Main iteration of the Lanczos - repeat until "convergence"...
   for(index_t m = 0; m < row_length_; m++) {
