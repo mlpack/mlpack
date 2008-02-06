@@ -17,11 +17,13 @@ int main(int argc, char *argv[]) {
     fx_submodule(NULL, "local_linear", "local_linear_module");
 
   // The reference data file is a required parameter.
-  const char* references_file_name = fx_param_str_req(NULL, "data");
+  const char* references_file_name = fx_param_str
+    (NULL, "data", "alldata_deltacolors_stdized");
   
   // The file containing the reference target values is a required
   // parameter.
-  const char* reference_targets_file_name = fx_param_str_req(NULL, "dtarget");
+  const char* reference_targets_file_name = 
+    fx_param_str(NULL, "dtarget", "alldata_zs");
 
   // The query data file defaults to the references.
   const char* queries_file_name =
@@ -51,6 +53,7 @@ int main(int argc, char *argv[]) {
   local_linear.Init(queries, references, reference_targets,
 		    queries_equal_references, local_linear_module);  
   local_linear.Compute();
+  local_linear.PrintDebug();
 
   // Finalize FastExec and print output results.
   fx_done();

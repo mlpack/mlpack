@@ -552,6 +552,23 @@ class LocalLinearKrylov {
     }
   }
 
+  ////////// Getter/Setters //////////
+
+  /** @brief Get the regression estimates.
+   *
+   *  @param results The uninitialized vector which will be filled
+   *                 with the computed regression estimates.
+   */
+  void get_regression_estimates(Vector *results) { 
+    results->Init(regression_estimates_.length());
+    
+    for(index_t i = 0; i < regression_estimates_.length(); i++) {
+      (*results)[i] = regression_estimates_[i];
+    }
+  }
+
+  ////////// User-level Functions //////////
+
   void Compute() {
     
     // Zero out statistics.
@@ -571,15 +588,36 @@ class LocalLinearKrylov {
     // The first phase computes B^T W(q) Y vector for each query
     // point. This essentially becomes the right-hand side for each
     // query point.
+    fx_timer_start(module_, "local_linear_compute");
+    printf("Starting Phase 1...\n");
     ComputeRightHandSides_();
+    printf("Phase 1 completed...\n");
 
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
+    printf("Starting Phase 2...\n");
     SolveLeastSquaresByKrylov_();
+    printf("Phase 2 completed...\n");
 
     // Proceed with the third phase of the computation to output the
     // final regression value.
+    printf("Starting Phase 3...\n");
     FinalizeRegressionEstimates_();
+    printf("Phase 3 completed...\n");
+    fx_timer_stop(module_, "local_linear_compute");
+
+
+    // Reshuffle the results to account for dataset reshuffling
+    // resulted from tree constructions
+    Vector tmp_q_results;
+    tmp_q_results.Init(regression_estimates_.length());
+    
+    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+      tmp_q_results[old_from_new_queries_[i]] =	regression_estimates_[i];
+    }
+    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+      regression_estimates_[i] = tmp_q_results[i];
+    }
   }
 
   void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
@@ -594,13 +632,15 @@ class LocalLinearKrylov {
     // copy reference dataset and reference weights.
     rset_.Copy(references);
     rset_targets_.Copy(reference_targets.GetColumnPtr(0),
-		       reference_targets.n_rows());
+		       reference_targets.n_cols());
     
     // Record dimensionality and the appropriately cache the number of
     // components required for local linear (which is D + 1).
     dimension_ = rset_.n_rows();
     row_length_ = dimension_ + 1;
     
+    printf("row_length_ = %d %d\n", row_length_, rset_.n_cols());
+
     // copy query dataset.
     if(queries_equal_references) {
       qset_.Alias(rset_);
@@ -651,7 +691,25 @@ class LocalLinearKrylov {
     // initialize the reference side statistics.
     ComputeWeightedTargetVectors_(rroot_);
   }
-  
+
+  void PrintDebug() {
+    
+    FILE *stream = stdout;
+    const char *fname = NULL;
+    
+    if((fname = fx_param_str(module_, 
+			     "fast_local_linear_output", NULL)) != NULL) {
+      stream = fopen(fname, "w+");
+    }
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      fprintf(stream, "%g\n", regression_estimates_[q]);
+    }
+    
+    if(stream != stdout) {
+      fclose(stream);
+    }
+  }
+
 };
 
 #define INSIDE_LOCAL_LINEAR_KRYLOV_H
