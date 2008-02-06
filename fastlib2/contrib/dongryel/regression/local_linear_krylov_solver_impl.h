@@ -559,32 +559,52 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeLanczosMultiplier_
 template<typename TKernel>
 void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
 
-  // Temporary variables needed for Lanczos iteration...
+  // Initialize the initial solutions to zero vectors.
+  solution_vectors_e_.SetZero();
+
+  // Temporary variables needed for SYMMLQ iteration...
   Matrix previous_lanczos_vectors;
   Matrix current_lanczos_vectors;
-  previous_lanczos_vectors.Init(row_length_, qset_.n_cols());
+  Matrix v_tilde_mat;
+  previous_lanczos_vectors.Init(row_length_, qset_.n_cols()); 
+  v_tilde_mat.Init(row_length_, qset_.n_cols());
+
+  Vector g_double_tilde_vec;
+  Vector g_vec;
+  g_double_tilde_vec.Init(qset_.n_cols());
+  g_vec.Init(qset_.n_cols());
+  
   current_lanczos_vectors.Init(row_length_, qset_.n_cols());
-  Matrix omega;
-  omega.Init(row_length_, qset_.n_cols());
-  Vector alpha, beta, rho, previous_rho, lambda;
-  Vector zeta, previous_zeta;
-  alpha.Init(qset_.n_cols());
-  beta.Init(qset_.n_cols());
-  rho.Init(qset_.n_cols());
-  previous_rho.Init(qset_.n_cols());
-  lambda.Init(qset_.n_cols());
-  zeta.Init(qset_.n_cols());
-  previous_zeta.Init(qset_.n_cols());
+
+  // More temporary variables for SYMMLQ routine...
+  Vector c_vec, beta_vec, beta_tilde_vec, s_vec;
+  Matrix w_mat;
+  c_vec.Init(qset_.n_cols());
+  beta_vec.Init(qset_.n_cols());
+  beta_tilde_vec.Init(qset_.n_cols());
+  s_vec.Init(qset_.n_cols());
+  w_mat.Init(row_length_, qset_.n_cols());
+  
+  // Initialize before entering the main iteration... This
+  // initialization implicitly assumes that initial guess to the
+  // linear system is the zero vector.
+  current_lanczos_vectors.CopyValues(vector_e_);
+  NormalizeMatrixColumnVectors_(current_lanczos_vectors, g_double_tilde_vec);
+  beta_vec.SetZero();
+  beta_tilde_vec.SetZero();
+  c_vec.SetAll(-1);
+  s_vec.SetZero();
+  previous_lanczos_vectors.SetZero();
+  w_mat.CopyValues(current_lanczos_vectors);
+  g_vec.SetZero();
 
   // Temporary variables to hold dot product ranges for the root nodes
   // of the two trees.
   DRange root_negative_dot_product_range, root_positive_dot_product_range;
-  
-  // Initialize the initial solutions to zero vectors.
-  solution_vectors_e_.SetZero();
-  
-  // Main iteration of the Lanczos - repeat until "convergence"...
-  for(index_t m = 0; m < row_length_; m++) {
+    
+  // Main iteration of the SYMMLQ algorithm - repeat until
+  // "convergence"...
+  for(index_t m = 0; m < sqrt(row_length_); m++) {
 
     // Initialize the query tree solution bounds.
     InitializeQueryTreeSolutionBound_(qroot_, current_lanczos_vectors);
@@ -603,12 +623,91 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
 			     root_negative_dot_product_range,
 			     root_positive_dot_product_range);
     FinalizeQueryTreeLanczosMultiplier_(qroot_);
-    
-    // Take the dot product between the product above and the current
-    // lanczos vector.
 
-    if(m > 0) {
+    // Compute v_tilde_mat (the residue after applying the linear
+    // operator the current Lanczos vector).
+    la::AddOverwrite(vector_e_, neg_vector_e_, &v_tilde_mat);
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      double *v_tilde_mat_column = v_tilde_mat.GetColumnPtr(q);
+      double *previous_lanczos_vector = 
+	previous_lanczos_vectors.GetColumnPtr(q);
+      double *current_lanczos_vector =
+	current_lanczos_vectors.GetColumnPtr(q);
+
+      la::AddExpert(row_length_, -beta_vec[q], previous_lanczos_vector,
+		    v_tilde_mat_column);
+
+
+      // Compute alpha (a dot product b etween the current Lanczos
+      // vector and v_tilde vector).
+      double alpha = la::Dot(row_length_, current_lanczos_vector,
+			     v_tilde_mat_column);
       
-    }
-  }
+      // Subtract the component of the current Lanczos vector (a form
+      // of Gram-Schmidt orthogonalization.)
+      la::AddExpert(row_length_, -alpha, current_lanczos_vector,
+		    v_tilde_mat_column);
+      
+      // Compute the length of v_tilde_mat_column and store into
+      // beta_vec.
+      beta_vec[q] = la::LengthEuclidean(row_length_, v_tilde_mat_column);
+
+      // Make a backup copy of the current Lanczos vector.
+      previous_lanczos_vectors.CopyValues(current_lanczos_vectors);
+      
+      // Set a new current Lanczos vector based on v_tilde_mat_column
+      if(beta_vec[q] > 0) {
+	la::ScaleOverwrite(row_length_, 1.0 / beta_vec[q], v_tilde_mat_column,
+			   current_lanczos_vector);
+      }
+      else {
+	la::ScaleOverwrite(row_length_, 1.0, v_tilde_mat_column,
+			   current_lanczos_vector);
+      }
+
+      // Compute l_1
+      double l_1 = s_vec[q] * alpha - c_vec[q] * beta_tilde_vec[q];
+
+      // Compute l_2
+      double l_2 = s_vec[q] * beta_vec[q];
+      
+      // Compute alpha_tilde
+      double alpha_tilde = -s_vec[q] * beta_tilde_vec[q] - c_vec[q] * alpha;
+      
+      // Compute beta_tilde
+      beta_tilde_vec[q] = c_vec[q] * beta_vec[q];
+
+      double l_0 = sqrt(alpha_tilde * alpha_tilde + beta_vec[q] * beta_vec[q]);
+
+      if(l_0 != 0) {
+	c_vec[q] = alpha_tilde / l_0;
+	s_vec[q] = beta_vec[q] / l_0;
+      }
+      else {
+	printf("Warning: Division by zero attempted!\n");
+      }
+      
+      double g_tilde = g_double_tilde_vec[q] - l_1 * g_vec[q];
+      g_double_tilde_vec[q] = -l_2 * g_vec[q];
+
+      if(l_0 != 0) {
+	g_vec[q] = g_tilde / l_0;
+      }
+      else {
+	printf("Warning: Division by zero attempted!\n");
+      }
+      
+      // Update solution.
+      la::AddExpert(row_length_, g_vec[q] * c_vec[q], w_mat.GetColumnPtr(q),
+		    solution_vectors_e_.GetColumnPtr(q));
+      la::AddExpert(row_length_, g_vec[q] * s_vec[q], current_lanczos_vector,
+		    solution_vectors_e_.GetColumnPtr(q));
+
+      la::Scale(row_length_, s_vec[q], w_mat.GetColumnPtr(q));
+      la::AddExpert(row_length_, -c_vec[q], current_lanczos_vector,
+		    w_mat.GetColumnPtr(q));
+      
+    } // end of iterating over each query point.
+    
+  } // end of an iteration of SYMMLQ
 }

@@ -331,6 +331,18 @@ class LocalLinearKrylov {
 
   ////////// Private Member Functions //////////
 
+  void NormalizeMatrixColumnVectors_(Matrix &m, Vector &lengths) {
+    
+    for(index_t i = 0; i < m.n_cols(); i++) {
+      double *column_vector = m.GetColumnPtr(i);
+      lengths[i] = la::LengthEuclidean(row_length_, column_vector);
+      
+      if(lengths[i] > 0) {
+	la::Scale(row_length_, 1.0 / lengths[i], column_vector);
+      }
+    }
+  }
+
   /** @brief Compute the L1 norm of the given vector.
    *
    *  @param v The vector for which we want to compute the L1 norm.
