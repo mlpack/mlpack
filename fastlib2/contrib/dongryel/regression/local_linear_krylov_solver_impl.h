@@ -127,13 +127,238 @@ void LocalLinearKrylov<TKernel>::DualtreeSolverBase_
   (qnode->stat().postponed_neg_ll_vector_u_).SetZero();
 }
 
+template<typename TKernel>
+bool LocalLinearKrylov<TKernel>::PrunableSolver_
+(Tree *qnode, Tree *rnode, Matrix &current_lanczos_vectors,
+ DRange &root_negative_dot_product_range, 
+ DRange &root_positive_dot_product_range, DRange &dsqd_range, 
+ DRange &kernel_value_range, double &used_error) {
+  
+  // Temporary variables hold the dot product ranges.
+  DRange negative_dot_product_range, positive_dot_product_range;
+  
+  // Compute the dot product range.
+  DotProductBetweenTwoBounds_(qnode, rnode, negative_dot_product_range,
+			      positive_dot_product_range);
+
+  // try pruning after bound refinement: first compute distance/kernel
+  // value bounds
+  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
+  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
+  kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
+
+  // Compute the vector component lower and upper bound changes. This
+  // assumes that the maximum kernel value is 1.
+  la::ScaleOverwrite(positive_dot_product_range.lo * kernel_value_range.lo,
+		     rnode->stat().sum_coordinates_,
+		     &vector_l_change_);
+  la::ScaleOverwrite(0.5 * (positive_dot_product_range.lo *
+			    kernel_value_range.lo +
+			    positive_dot_product_range.hi *
+			    kernel_value_range.hi),
+		     rnode->stat().sum_coordinates_,
+		     &vector_e_change_);
+  la::ScaleOverwrite(positive_dot_product_range.hi * kernel_value_range.hi - 
+		     root_positive_dot_product_range.hi,
+		     rnode->stat().sum_coordinates_,
+		     &vector_u_change_);
+
+  la::ScaleOverwrite(negative_dot_product_range.lo * kernel_value_range.hi - 
+		     root_negative_dot_product_range.lo,
+		     rnode->stat().sum_coordinates_,
+		     &neg_vector_u_change_);
+  la::ScaleOverwrite(0.5 * (negative_dot_product_range.lo *
+			    kernel_value_range.hi +
+			    negative_dot_product_range.hi *
+			    kernel_value_range.lo),
+		     rnode->stat().sum_coordinates_,
+		     &neg_vector_e_change_);
+  la::ScaleOverwrite(negative_dot_product_range.hi * kernel_value_range.lo,
+		     rnode->stat().sum_coordinates_,
+		     &neg_vector_l_change_);
+
+  // Refine the positive lower bound based on the current postponed
+  // lower bound change and the newly gained refinement due to
+  // comparing the current query and reference node pair. Do the same
+  // for the negative upper bound.
+  la::AddOverwrite(qnode->stat().ll_vector_l_,
+		   qnode->stat().postponed_ll_vector_l_,
+		   &new_vector_l_);
+  la::AddTo(vector_l_change_, &new_vector_l_);
+  la::AddOverwrite(qnode->stat().neg_ll_vector_u_,
+		   qnode->stat().postponed_neg_ll_vector_u_,
+		   &new_neg_vector_u_);
+  la::AddTo(neg_vector_u_change_, &new_neg_vector_u_);
+
+  // Compute the L1 norm of the most refined lower bound.
+  double l1_norm_vector_l = L1Norm_(new_vector_l_);
+  double l1_norm_neg_vector_u = L1Norm_(new_neg_vector_u_);
+  
+  // Compute the allowed amount of error for pruning the given query
+  // and reference pair.
+  double allowed_err = 
+    (relative_error_ * (rnode->stat().l1_norm_sum_coordinates_) *
+     (l1_norm_vector_l + l1_norm_neg_vector_u)) / 
+    (rroot_->stat().l1_norm_sum_coordinates_);
+
+  used_error = 0.5 * ((positive_dot_product_range.hi *
+		       kernel_value_range.hi -
+		       positive_dot_product_range.lo *
+		       kernel_value_range.lo) +
+		      (negative_dot_product_range.hi *
+		       kernel_value_range.lo -
+		       negative_dot_product_range.lo *
+		       kernel_value_range.hi)) *
+    rnode->stat().l1_norm_sum_coordinates_;
+  
+  // check pruning condition  
+  return (used_error <= allowed_err);
+}
 
 template<typename TKernel>
 void LocalLinearKrylov<TKernel>::DualtreeSolverCanonical_
 (Tree *qnode, Tree *rnode, Matrix &current_lanczos_vectors,
  DRange &root_negative_dot_product_range,
  DRange &root_positive_dot_product_range) {
+    
+  // Total amount of used error
+  double used_error;
   
+  // temporary variable for holding distance/kernel value bounds
+  DRange dsqd_range;
+  DRange kernel_value_range;
+  
+  // try finite difference pruning first
+  if(PrunableSolver_(qnode, rnode, current_lanczos_vectors,
+		     root_negative_dot_product_range,
+		     root_positive_dot_product_range,
+		     dsqd_range, kernel_value_range, used_error)) {
+
+    la::AddTo(vector_l_change_,
+	      &(qnode->stat().postponed_ll_vector_l_));
+    la::AddTo(vector_e_change_,
+	      &(qnode->stat().postponed_ll_vector_e_));
+    la::AddTo(vector_u_change_,
+	      &(qnode->stat().postponed_ll_vector_u_));
+    la::AddTo(neg_vector_l_change_,
+	      &(qnode->stat().postponed_neg_ll_vector_l_));
+    la::AddTo(neg_vector_e_change_,
+	      &(qnode->stat().postponed_neg_ll_vector_e_));
+    la::AddTo(neg_vector_u_change_,
+	      &(qnode->stat().postponed_neg_ll_vector_u_));
+
+    num_finite_difference_prunes_++;
+    return;
+  }
+  
+  // for leaf query node
+  if(qnode->is_leaf()) {
+    
+    // for leaf pairs, go exhaustive
+    if(rnode->is_leaf()) {
+      DualtreeSolverBase_(qnode, rnode, current_lanczos_vectors,
+			  root_negative_dot_product_range,
+			  root_positive_dot_product_range);
+      return;
+    }
+    
+    // for non-leaf reference, expand reference node
+    else {
+      Tree *rnode_first = NULL, *rnode_second = NULL;
+      BestNodePartners_(qnode, rnode->left(), rnode->right(), &rnode_first,
+			&rnode_second);
+      DualtreeSolverCanonical_(qnode, rnode_first, current_lanczos_vectors,
+			       root_negative_dot_product_range,
+			       root_positive_dot_product_range);
+      DualtreeSolverCanonical_(qnode, rnode_second, current_lanczos_vectors,
+			       root_negative_dot_product_range,
+			       root_positive_dot_product_range);
+      return;
+    }
+  }
+  
+  // for non-leaf query node
+  else {
+    
+    // Push down postponed bound changes owned by the current query
+    // node to the children of the query node and clear them.
+    la::AddTo(qnode->stat().postponed_ll_vector_l_,
+	      &((qnode->left()->stat()).postponed_ll_vector_l_));
+    la::AddTo(qnode->stat().postponed_ll_vector_l_,
+	      &((qnode->right()->stat()).postponed_ll_vector_l_));
+    la::AddTo(qnode->stat().postponed_ll_vector_u_,
+	      &((qnode->left()->stat()).postponed_ll_vector_u_));
+    la::AddTo(qnode->stat().postponed_ll_vector_u_,
+	      &((qnode->right()->stat()).postponed_ll_vector_u_));
+    (qnode->stat().postponed_ll_vector_l_).SetZero();
+    (qnode->stat().postponed_ll_vector_u_).SetZero();
+
+    // For a leaf reference node, expand query node
+    if(rnode->is_leaf()) {
+      Tree *qnode_first = NULL, *qnode_second = NULL;
+      
+      BestNodePartners_(rnode, qnode->left(), qnode->right(), &qnode_first,
+			&qnode_second);
+      DualtreeSolverCanonical_(qnode_first, rnode, current_lanczos_vectors,
+			       root_negative_dot_product_range,
+			       root_positive_dot_product_range);
+      DualtreeSolverCanonical_(qnode_second, rnode, current_lanczos_vectors,
+			       root_negative_dot_product_range,
+			       root_positive_dot_product_range);
+    }
+    
+    // for non-leaf reference node, expand both query and reference nodes
+    else {
+      Tree *rnode_first = NULL, *rnode_second = NULL;
+      
+      BestNodePartners_(qnode->left(), rnode->left(), rnode->right(),
+			&rnode_first, &rnode_second);
+      DualtreeSolverCanonical_(qnode->left(), rnode_first,
+			       current_lanczos_vectors,
+			       root_negative_dot_product_range,
+			       root_positive_dot_product_range);
+      DualtreeSolverCanonical_(qnode->left(), rnode_second,
+			       current_lanczos_vectors,
+			       root_negative_dot_product_range,
+			       root_positive_dot_product_range);
+      
+      BestNodePartners_(qnode->right(), rnode->left(), rnode->right(),
+			&rnode_first, &rnode_second);
+      DualtreeSolverCanonical_(qnode->right(), rnode_first,
+			       current_lanczos_vectors,
+			       root_negative_dot_product_range,
+			       root_positive_dot_product_range);
+      DualtreeSolverCanonical_(qnode->right(), rnode_second,
+			       current_lanczos_vectors,
+			       root_negative_dot_product_range,
+			       root_positive_dot_product_range);
+    }
+    
+    // reaccumulate the summary statistics.
+    for(index_t d = 0; d <= dimension_; d++) {
+      (qnode->stat().ll_vector_l_)[d] =
+	std::min(((qnode->left()->stat()).ll_vector_l_)[d] +
+		 ((qnode->left()->stat()).postponed_ll_vector_l_)[d],
+		 ((qnode->right()->stat()).ll_vector_l_)[d] +
+		 ((qnode->right()->stat()).postponed_ll_vector_l_)[d]);
+      (qnode->stat().ll_vector_u_)[d] =
+	std::max(((qnode->left()->stat()).ll_vector_u_)[d] +
+		 ((qnode->left()->stat()).postponed_ll_vector_u_)[d],
+		 ((qnode->right()->stat()).ll_vector_u_)[d] +
+		 ((qnode->right()->stat()).postponed_ll_vector_u_)[d]);
+      (qnode->stat().neg_ll_vector_l_)[d] =
+	std::min(((qnode->left()->stat()).neg_ll_vector_l_)[d] +
+		 ((qnode->left()->stat()).postponed_neg_ll_vector_l_)[d],
+		 ((qnode->right()->stat()).neg_ll_vector_l_)[d] +
+		 ((qnode->right()->stat()).postponed_neg_ll_vector_l_)[d]);
+      (qnode->stat().neg_ll_vector_u_)[d] =
+	std::max(((qnode->left()->stat()).neg_ll_vector_u_)[d] +
+		 ((qnode->left()->stat()).postponed_neg_ll_vector_u_)[d],
+		 ((qnode->right()->stat()).neg_ll_vector_u_)[d] +
+		 ((qnode->right()->stat()).postponed_neg_ll_vector_u_)[d]);
+    }
+    return;
+  } // end of the case: non-leaf query node.
   
 }
 
@@ -221,9 +446,9 @@ void LocalLinearKrylov<TKernel>::InitializeQueryTreeSumBound_
   (qnode->stat().postponed_ll_vector_l_).SetZero();
   (qnode->stat().postponed_ll_vector_e_).SetZero();
   (qnode->stat().postponed_ll_vector_u_).SetZero();
-  (qnode->stat().postponed_ll_vector_l_).SetZero();
-  (qnode->stat().postponed_ll_vector_e_).SetZero();
-  (qnode->stat().postponed_ll_vector_u_).SetZero();
+  (qnode->stat().postponed_neg_ll_vector_l_).SetZero();
+  (qnode->stat().postponed_neg_ll_vector_e_).SetZero();
+  (qnode->stat().postponed_neg_ll_vector_u_).SetZero();
 
   // If the query node is a leaf, then initialize the corresponding
   // bound statistics for each query point.
@@ -261,6 +486,72 @@ void LocalLinearKrylov<TKernel>::InitializeQueryTreeSumBound_
 }
 
 template<typename TKernel>
+void LocalLinearKrylov<TKernel>::FinalizeQueryTreeLanczosMultiplier_
+(Tree *qnode) {
+
+  LocalLinearKrylovStat &q_stat = qnode->stat();
+
+  if(qnode->is_leaf()) {
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+      
+      // Get the column vectors accumulating the sums to update.
+      double *q_right_hand_sides_l = vector_l_.GetColumnPtr(q);
+      double *q_right_hand_sides_e = vector_e_.GetColumnPtr(q);
+      double *q_right_hand_sides_u = vector_u_.GetColumnPtr(q);
+      
+
+      // Incorporate the postponed information.
+      la::AddTo(row_length_,
+		(q_stat.postponed_ll_vector_l_).ptr(),
+		q_right_hand_sides_l);
+      la::AddTo(row_length_,
+		(q_stat.postponed_ll_vector_e_).ptr(),
+		q_right_hand_sides_e);
+      la::AddTo(row_length_,
+		(q_stat.postponed_ll_vector_u_).ptr(),
+		q_right_hand_sides_u);
+
+      // Maybe I should normalize the sums here to prevent overflow...
+    }
+  }
+  else {
+    
+    LocalLinearKrylovStat &q_left_stat = qnode->left()->stat();
+    LocalLinearKrylovStat &q_right_stat = qnode->right()->stat();
+
+    // Push down approximations
+    la::AddTo(q_stat.postponed_ll_vector_l_,
+	      &(q_left_stat.postponed_ll_vector_l_));
+    la::AddTo(q_stat.postponed_ll_vector_l_,
+	      &(q_right_stat.postponed_ll_vector_l_));
+    la::AddTo(q_stat.postponed_ll_vector_e_,
+              &(q_left_stat.postponed_ll_vector_e_));
+    la::AddTo(q_stat.postponed_ll_vector_e_,
+              &(q_right_stat.postponed_ll_vector_e_));
+    la::AddTo(q_stat.postponed_ll_vector_u_,
+              &(q_left_stat.postponed_ll_vector_u_));
+    la::AddTo(q_stat.postponed_ll_vector_u_,
+              &(q_right_stat.postponed_ll_vector_u_));
+    
+    la::AddTo(q_stat.postponed_neg_ll_vector_l_,
+	      &(q_left_stat.postponed_neg_ll_vector_l_));
+    la::AddTo(q_stat.postponed_neg_ll_vector_l_,
+	      &(q_right_stat.postponed_neg_ll_vector_l_));
+    la::AddTo(q_stat.postponed_neg_ll_vector_e_,
+              &(q_left_stat.postponed_neg_ll_vector_e_));
+    la::AddTo(q_stat.postponed_neg_ll_vector_e_,
+              &(q_right_stat.postponed_neg_ll_vector_e_));
+    la::AddTo(q_stat.postponed_neg_ll_vector_u_,
+              &(q_left_stat.postponed_neg_ll_vector_u_));
+    la::AddTo(q_stat.postponed_neg_ll_vector_u_,
+              &(q_right_stat.postponed_neg_ll_vector_u_));
+
+    FinalizeQueryTreeLanczosMultiplier_(qnode->left());
+    FinalizeQueryTreeLanczosMultiplier_(qnode->right());
+  }
+}
+
+template<typename TKernel>
 void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
 
   // Temporary variables needed for Lanczos iteration...
@@ -287,24 +578,28 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
   // Initialize the initial solutions to zero vectors.
   solution_vectors_e_.SetZero();
 
-  // Initialize the query tree solution bounds.
-  InitializeQueryTreeSolutionBound_(qroot_, current_lanczos_vectors);
 
-  // Compute the dot product bounds.
-  DotProductBetweenTwoBounds_(qroot_, rroot_, root_negative_dot_product_range,
-			      root_positive_dot_product_range);
-
-  // Initialize the query tree bound statistics.
-  InitializeQueryTreeSumBound_(qroot_, root_negative_dot_product_range,
-			       root_positive_dot_product_range);
   
   // Main iteration of the Lanczos - repeat until "convergence"...
   for(index_t m = 0; m < row_length_; m++) {
+
+    // Initialize the query tree solution bounds.
+    InitializeQueryTreeSolutionBound_(qroot_, current_lanczos_vectors);
+    
+    // Compute the dot product bounds.
+    DotProductBetweenTwoBounds_(qroot_, rroot_, 
+				root_negative_dot_product_range,
+				root_positive_dot_product_range);
+    
+    // Initialize the query tree bound statistics.
+    InitializeQueryTreeSumBound_(qroot_, root_negative_dot_product_range,
+				 root_positive_dot_product_range);
 
     // Multiply the current lanczos vector with the linear operator.
     DualtreeSolverCanonical_(qroot_, rroot_, current_lanczos_vectors,
 			     root_negative_dot_product_range,
 			     root_positive_dot_product_range);
+    FinalizeQueryTreeLanczosMultiplier_(qroot_);
     
     // Take the dot product between the product above and the current
     // lanczos vector.

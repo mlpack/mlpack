@@ -105,25 +105,25 @@ bool LocalLinearKrylov<TKernel>::PrunableRightHandSides_
   // assumes that the maximum kernel value is 1.
   la::ScaleOverwrite(kernel_value_range.lo,
 		     rnode->stat().sum_targets_weighted_by_data_,
-		     &right_hand_sides_l_change_);
+		     &vector_l_change_);
   la::ScaleOverwrite(0.5 * (kernel_value_range.lo +
 			    kernel_value_range.hi),
 		     rnode->stat().sum_targets_weighted_by_data_,
-		     &right_hand_sides_e_change_);
+		     &vector_e_change_);
   la::ScaleOverwrite((kernel_value_range.hi - 1.0),
 		     rnode->stat().sum_targets_weighted_by_data_,
-		     &right_hand_sides_u_change_);
+		     &vector_u_change_);
 
   // Refine the lower bound based on the current postponed lower bound
   // change and the newly gained refinement due to comparing the
   // current query and reference node pair.
   la::AddOverwrite(qnode->stat().ll_vector_l_,
 		   qnode->stat().postponed_ll_vector_l_,
-		   &new_right_hand_sides_l_);
-  la::AddTo(right_hand_sides_l_change_, &new_right_hand_sides_l_);
+		   &new_vector_l_);
+  la::AddTo(vector_l_change_, &new_vector_l_);
 
   // Compute the L1 norm of the most refined lower bound.
-  double l1_norm_new_right_hand_sides_l_ = L1Norm_(new_right_hand_sides_l_);
+  double l1_norm_new_right_hand_sides_l_ = L1Norm_(new_vector_l_);
     
   // Compute the allowed amount of error for pruning the given query
   // and reference pair.
@@ -234,11 +234,11 @@ void LocalLinearKrylov<TKernel>::DualtreeRightHandSidesCanonical_
   // try finite difference pruning first
   if(PrunableRightHandSides_(qnode, rnode, dsqd_range, kernel_value_range,
 			     used_error)) {
-    la::AddTo(right_hand_sides_l_change_,
+    la::AddTo(vector_l_change_,
 	      &(qnode->stat().postponed_ll_vector_l_));
-    la::AddTo(right_hand_sides_e_change_,
+    la::AddTo(vector_e_change_,
 	      &(qnode->stat().postponed_ll_vector_e_));
-    la::AddTo(right_hand_sides_u_change_,
+    la::AddTo(vector_u_change_,
 	      &(qnode->stat().postponed_ll_vector_u_));
     num_finite_difference_prunes_++;
     return;

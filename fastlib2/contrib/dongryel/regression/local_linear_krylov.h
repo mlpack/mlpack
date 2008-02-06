@@ -75,19 +75,19 @@ class LocalLinearKrylov {
     /** @brief The lower bound vector offset passed from the above on
      *         each negative sum component owned by this node.
      */
-    Vector neg_postponed_ll_vector_l_;
+    Vector postponed_neg_ll_vector_l_;
     
     /** @brief This stores the portion pruned by finite difference for
      *         each negative sum component of the vector owned by this
      *         node.
      */
-    Vector neg_postponed_ll_vector_e_;
+    Vector postponed_neg_ll_vector_e_;
 
     /** @brief The upper bound vector offset passed from above on each
      *         negative sum component of the right hand sides owned by
      *         this node.
      */
-    Vector neg_postponed_ll_vector_u_;
+    Vector postponed_neg_ll_vector_u_;
 
     /** @brief The data weighted by the target values. */
     Vector sum_targets_weighted_by_data_;
@@ -103,6 +103,13 @@ class LocalLinearKrylov {
      *         remaining D coordinates being the sum).
      */
     Vector sum_coordinates_;
+
+    /** @brief The 1-norm of the sum of the coordinates of the points
+     *         owned by this node (with the first coordinate denoting
+     *         the number of points, and the remaining D coordinates
+     *         being the sum).
+     */
+    double l1_norm_sum_coordinates_;
 
     /** @brief The bounding box for the Lanczos vectors. */
     DHrectBound<2> lanczos_vectors_bound_;
@@ -133,15 +140,16 @@ class LocalLinearKrylov {
       postponed_ll_vector_l_.Init(dimension + 1);
       postponed_ll_vector_e_.Init(dimension + 1);
       postponed_ll_vector_u_.Init(dimension + 1);
-      neg_postponed_ll_vector_l_.Init(dimension + 1);
-      neg_postponed_ll_vector_e_.Init(dimension + 1);
-      neg_postponed_ll_vector_u_.Init(dimension + 1);
+      postponed_neg_ll_vector_l_.Init(dimension + 1);
+      postponed_neg_ll_vector_e_.Init(dimension + 1);
+      postponed_neg_ll_vector_u_.Init(dimension + 1);
 
       sum_targets_weighted_by_data_.Init(dimension + 1);
       sum_coordinates_.Init(dimension + 1);
       lanczos_vectors_bound_.Init(dimension + 1);
 
       l1_norm_sum_targets_weighted_by_data_ = 0;
+      l1_norm_sum_coordinates_ = 0;
     }
 
     /** @brief Computing the statistics for a leaf node involves
@@ -161,9 +169,11 @@ class LocalLinearKrylov {
 
 	for(index_t j = 1; j <= dataset.n_rows(); j++) {
 	  sum_coordinates_[j] += point[j - 1];
+	  l1_norm_sum_coordinates_ += point[j - 1];
 	}
       }
       sum_coordinates_[0] = count;
+      l1_norm_sum_coordinates_ += count;
     }
 
     void Init(const Matrix &dataset, index_t start, index_t count,
@@ -176,6 +186,8 @@ class LocalLinearKrylov {
       // Combine the two coordinate sums.
       la::AddOverwrite(left_stat.sum_coordinates_,
 		       right_stat.sum_coordinates_, &sum_coordinates_);
+      l1_norm_sum_coordinates_ = left_stat.l1_norm_sum_coordinates_ + 
+	right_stat.l1_norm_sum_coordinates_;
     }
 
   };
@@ -282,21 +294,40 @@ class LocalLinearKrylov {
 
   /** @brief Temporary variable for holding newly refined lower bound.
    */
-  Vector new_right_hand_sides_l_;
+  Vector new_vector_l_;
+
+  /** @brief Temporary variables for holding newly refined upper bound
+   *         on the negative components.
+   */
+  Vector new_neg_vector_u_;
 
   /** @brief Temporary variable for holding lower bound change made
    *         during a prune.
    */
-  Vector right_hand_sides_l_change_;
+  Vector vector_l_change_;
 
   /** @brief Temporary variable for holding the pruned quantity.
    */
-  Vector right_hand_sides_e_change_;
+  Vector vector_e_change_;
   
   /** @brief Temporary variable for holding upper bound change made
    *         during a prune.
    */
-  Vector right_hand_sides_u_change_;
+  Vector vector_u_change_;
+
+  /** @brief Temporary variable for holding lower bound change made
+   *         during a prune.
+   */
+  Vector neg_vector_l_change_;
+
+  /** @brief Temporary variable for holding the pruned quantity.
+   */
+  Vector neg_vector_e_change_;
+  
+  /** @brief Temporary variable for holding upper bound change made
+   *         during a prune.
+   */
+  Vector neg_vector_u_change_;
 
   ////////// Private Member Functions //////////
 
@@ -411,6 +442,25 @@ class LocalLinearKrylov {
   void InitializeQueryTreeSumBound_
     (Tree *qnode, DRange &root_negative_dot_product_range,
      DRange &root_posistive_dot_product_range);
+
+  /** @brief Finalize the Lanczos vector generator by traversing the
+   *         query tree and summing up any unincorporated quantities.
+   *
+   *  @param qnode The query node.
+   */
+  void FinalizeQueryTreeLanczosMultiplier_(Tree *qnode);
+  
+  /** @brief Determine whether the given query and the reference node
+   *         pair can be pruned.
+   *
+   *  @return True, if it can be pruned. False, otherwise.
+   */
+  bool PrunableSolver_(Tree *qnode, Tree *rnode, 
+		       Matrix &current_lanczos_vectors, 
+		       DRange &root_negative_dot_product_range,
+		       DRange &root_positive_dot_product_range,
+		       DRange &dsqd_range,
+		       DRange &kernel_value_range, double &used_error);
 
   /** @brief The base-case exhaustive computation for dual-tree based
    *         computation of (B^T W(q) B) z(q).
@@ -577,11 +627,15 @@ class LocalLinearKrylov {
     solution_vectors_e_.Init(row_length_, qset_.n_cols());
 
     regression_estimates_.Init(qset_.n_cols());
-    new_right_hand_sides_l_.Init(row_length_);
-    right_hand_sides_l_change_.Init(row_length_);
-    right_hand_sides_e_change_.Init(row_length_);
-    right_hand_sides_u_change_.Init(row_length_);
-    
+    new_vector_l_.Init(row_length_);
+    new_neg_vector_u_.Init(row_length_);
+    vector_l_change_.Init(row_length_);
+    vector_e_change_.Init(row_length_);
+    vector_u_change_.Init(row_length_);
+    neg_vector_l_change_.Init(row_length_);
+    neg_vector_e_change_.Init(row_length_);
+    neg_vector_u_change_.Init(row_length_);
+
     // initialize the reference side statistics.
     ComputeWeightedTargetVectors_(rroot_);
   }
