@@ -195,6 +195,9 @@ public:
   /** Set of weights for the reference points */
   Vector rset_weights_;
 
+  /** Regression estimates of the query points */
+  Vector regression_estimate_;
+
   /** Mappings from old dataset to new dataset
    * Remember that when we build the query tree and the
    * reference tree out of the query and reference
@@ -270,17 +273,19 @@ public:
 
  void Print_();
 
+ void ObtainRegressionEstimate_();
+
+ void PrintRegressionEstimate_();
+
  public:
  
   /* getter functions */
- 
-  Matrix & get_query_dataset();
- 
-  Matrix& get_reference_dataset();
 
-  Matrix &  get_b_twy_estimates(index_t );
-
-  Matrix &  get_b_twb_estimates(index_t );
+ Vector & get_regression_estimate(); 
+ Matrix & get_query_dataset();
+ Matrix& get_reference_dataset();
+ Matrix &  get_b_twy_estimates(index_t );
+ Matrix &  get_b_twb_estimates(index_t );
 
   /** This function will be called after update bounds has been called in the 
    *  function Prunable. This will flush the owed values as they have already 
@@ -327,6 +332,8 @@ template < typename TKernel > class NaiveCalculation{
 
   Vector rset_weights_;
 
+  Vector regression_estimate_;
+
   /** Remember that we first do the the fast vector calculations and 
    *  then pass on the datasets to the naive method for naive calculations.
    *  when we do so we are actually permuting the dataset.Hence we need to know the 
@@ -348,7 +355,9 @@ template < typename TKernel > class NaiveCalculation{
   *  optimized by using fastlib's Lapack functions 
   */
    
-  void Compute ();
+  void   PrintRegressionEstimate_(Vector &);
+  void ObtainRegressionEstimate_();
+  void Compute (Vector &);
   
   void Init (Matrix &, Matrix &, 
 	     ArrayList<index_t> &,double ,Vector&);
@@ -360,4 +369,5 @@ template < typename TKernel > class NaiveCalculation{
 #include "regression_ll1.h"
 #include "regression_ll2.h"
 #include "regression_ll_naive.h"
+
 #endif

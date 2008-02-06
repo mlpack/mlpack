@@ -1,6 +1,7 @@
 #ifndef REGRESSION_LL2_H
 #define REGRESSION_LL2_H
 #include "fastlib/fastlib_int.h"
+#include "pseudo_inverse.h"
 
 
 // This function checks for the prunability of B^TWY
@@ -834,22 +835,6 @@ void FastRegression<TKernel>::PostProcess_(Tree *qnode){
 		  qnode->stat().b_twy_owed_u, CHECK_FOR_PRUNE_BOTH);
     PostProcess_(qnode->left());
     PostProcess_(qnode->right());
-
-    printf("Mass lower bound of bTWB is ..\n");
-    qnode->stat().b_twb_mass_l.PrintDebug();
-
-    printf("mass upper bound of BTWB is ..\n");
-    qnode->stat().b_twb_mass_u.PrintDebug();
-
-
-    printf("Mass lower bound of bTWY is ..\n");
-    qnode->stat().b_twy_mass_l.PrintDebug();
-    
-    printf("mass upper bound of BTWY is ..\n");
-    qnode->stat().b_twy_mass_u.PrintDebug();
-
-
-
   }
 
   else{
@@ -925,6 +910,103 @@ void FastRegression<TKernel>::Print_(){
     
     // printf("The BTWY estimate for q is..\n");
     b_twb_e_estimate_[q].PrintDebug(NULL,gp);
+  }
+  fclose(gp);
+}
+
+
+template <typename TKernel>
+void FastRegression<TKernel>::ObtainRegressionEstimate_(){
+
+  //With this we have the BTWB estimate for each query point by
+  //calling the invert function I can invert them
+
+  for(index_t q=0;q<qset_.n_cols();q++){
+
+    PseudoInverse::FindPseudoInverse(qset_.n_cols(),b_twb_e_estimate_[q]);
+  }
+
+  //We now have both (B^TWB)-1 and (B^TWY). The Regression Estimates
+  //will be obtained by simply multiplying these 2 matrices
+
+
+  //So we now have for each query point the (B^TWB)-1 matri and B^TWY
+  //matrix. In order to get the regression estimates we perform
+  //y_hat= [1,q] (B^TWB)^-1 (B^TWY) where q are the coordinates of the query
+  //point
+
+  //lets perform these multiplications by using LaPack utilities
+
+  //The vector temp will hold the multiplication of (B^TWB)^-1 and
+  //(B^TWY)
+
+
+  //Now lets form a vector q_vector using the coordinates of the query
+  //point
+
+  ArrayList<Matrix> temp;
+  temp.Init(qset_.n_cols());
+  
+  for(index_t q=0;q<qset_.n_cols();q++){
+
+    la::MulInit (b_twb_e_estimate_[q],b_twy_e_estimate_[q], &temp[q]);
+  }
+
+  printf("The arraylist temp formed...\n");
+  //Now lets form a matrix q_vector using the coordinates of the
+  //query point
+  
+  
+  Matrix q_matrix;
+  
+  //Initialize q matrix and set it up
+  q_matrix.Init(1,qset_.n_rows()+1);
+  q_matrix.set(0,0,1);
+  
+  
+  for(index_t q=0;q<qset_.n_cols();q++){
+    
+    
+    for(index_t col=0;col<qset_.n_rows();col++){
+      
+      q_matrix.set(0,col+1,qset_.get(col,q));
+    }
+
+    printf("q_matrix is ..\n");
+    q_matrix.PrintDebug();
+
+    printf("temp[q] is..\n");
+    temp[q].PrintDebug();
+    
+    //Now lets multiply the resulting q_matrix with temp to get the
+    //regression estimate
+
+    Matrix temp2;
+    la::MulInit(q_matrix,temp[q],&temp2);
+
+    //This temp2 is the regression estimate for the query point q
+    printf("Regression estimate formed is..\n");
+    temp2.PrintDebug();
+    regression_estimate_[q]=temp2.get(0,0);
+    printf("regression estimate value copied..\n");
+  }
+  //having finished computations print them onto a file
+  PrintRegressionEstimate_();
+}
+
+template <typename TKernel>
+void FastRegression<TKernel>::PrintRegressionEstimate_(){
+
+  FILE *gp;
+  gp=fopen("regression_estimate.txt","w+");
+
+  for(index_t q=0;q<qset_.n_cols();q++){
+
+    for(index_t dim=0;dim<qset_.n_rows();dim++){ 
+
+      fprintf(gp,"%f, ",qset_.get(dim,q));
+    }
+    fprintf(gp,"fast:%f\n",regression_estimate_[q]); 
   }
   fclose(gp);
 }
