@@ -1,5 +1,6 @@
 #include "fastlib/fastlib.h"
 #include "local_linear_krylov.h"
+#include "mlpack/kde/dataset_scaler.h"
 
 int main(int argc, char *argv[]) {
 
@@ -34,24 +35,18 @@ int main(int argc, char *argv[]) {
   Matrix reference_targets;
   Matrix queries;
 
-  // flag for telling whether references are equal to queries
-  bool queries_equal_references = 
-    !strcmp(queries_file_name, references_file_name);
-
   // data::Load inits a matrix with the contents of a .csv or .arff.
   data::Load(references_file_name, &references);  
-  if(queries_equal_references) {
-    queries.Alias(references);
-  }
-  else {
-    data::Load(queries_file_name, &queries);
-  }
+  data::Load(queries_file_name, &queries);
   data::Load(reference_targets_file_name, &reference_targets);
+
+  // Scale the datasets.
+  DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Declare local linear krylov object.
   LocalLinearKrylov<GaussianKernel> local_linear;
   local_linear.Init(queries, references, reference_targets,
-		    queries_equal_references, local_linear_module);  
+		    local_linear_module);
   local_linear.Compute();
   local_linear.PrintDebug();
 

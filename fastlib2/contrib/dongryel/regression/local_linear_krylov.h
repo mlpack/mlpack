@@ -592,6 +592,10 @@ class LocalLinearKrylov {
     printf("Starting Phase 1...\n");
     ComputeRightHandSides_();
     printf("Phase 1 completed...\n");
+    vector_e_.PrintDebug();
+    
+    exit(0);
+
 
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
@@ -621,7 +625,7 @@ class LocalLinearKrylov {
   }
 
   void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
-	    bool queries_equal_references, struct datanode *module_in) {
+	    struct datanode *module_in) {
     
     // point to the incoming module
     module_ = module_in;
@@ -638,30 +642,30 @@ class LocalLinearKrylov {
     // components required for local linear (which is D + 1).
     dimension_ = rset_.n_rows();
     row_length_ = dimension_ + 1;
-    
-    printf("row_length_ = %d %d\n", row_length_, rset_.n_cols());
 
     // copy query dataset.
-    if(queries_equal_references) {
-      qset_.Alias(rset_);
-    }
-    else {
-      qset_.Copy(queries);
-    }
+    qset_.Copy(queries);
     
-    // construct query and reference trees
+    // Start measuring the tree construction time.
     fx_timer_start(NULL, "tree_d");
+
+    // Construct the reference tree.
     rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen,
 					    &old_from_new_references_, NULL);
-    
-    if(queries_equal_references) {
-      qroot_ = rroot_;
-      old_from_new_queries_.Copy(old_from_new_references_);
+
+    // We need to shuffle the reference training target values
+    // according to the shuffled order of the reference dataset.
+    Vector tmp_rset_targets;
+    tmp_rset_targets.Init(rset_targets_.length());
+    for(index_t j = 0; j < rset_targets_.length(); j++) {
+      tmp_rset_targets[j] = rset_targets_[old_from_new_references_[j]];
     }
-    else {
-      qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen,
-					      &old_from_new_queries_, NULL);
-    }
+    rset_targets_.CopyValues(tmp_rset_targets);
+
+    // Construct the query tree.
+    qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen,
+					    &old_from_new_queries_, NULL);
+
     fx_timer_stop(NULL, "tree_d");
 
     // initialize the kernel.
