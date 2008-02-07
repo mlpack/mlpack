@@ -372,6 +372,18 @@ void LocalLinearKrylov<TKernel>::DotProductBetweenTwoBounds_
   // Initialize the dot-product ranges.
   negative_dot_product_range.lo = negative_dot_product_range.hi = 0;
   positive_dot_product_range.lo = positive_dot_product_range.hi = 0;
+  
+  if(lanczos_vectors_bound.get(0).lo > 0) {
+    positive_dot_product_range.hi += lanczos_vectors_bound.get(0).hi;
+  }
+  else if(lanczos_vectors_bound.get(0).Contains(0)) {
+    positive_dot_product_range.hi += lanczos_vectors_bound.get(0).hi;
+    negative_dot_product_range.lo += lanczos_vectors_bound.get(0).lo;
+  }
+  else {
+    negative_dot_product_range.lo += lanczos_vectors_bound.get(0).lo;
+    negative_dot_product_range.hi += lanczos_vectors_bound.get(0).hi;
+  }
 
   for(index_t d = 1; d <= dimension_; d++) {
 
@@ -393,7 +405,7 @@ void LocalLinearKrylov<TKernel>::DotProductBetweenTwoBounds_
 	reference_node_directional_bound.hi;
       negative_dot_product_range.hi += lanczos_directional_bound.hi *
 	reference_node_directional_bound.lo;
-    }    
+    }
   } // End of looping over each component...
 }
 
@@ -515,8 +527,6 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeLanczosMultiplier_
 		q_neg_vector_e);
       la::AddTo(row_length_, (q_stat.postponed_neg_ll_vector_u_).ptr(),
 		q_neg_vector_u);
-
-      // Maybe I should normalize the sums here to prevent overflow...
     }
   }
   else {
@@ -627,6 +637,13 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
     // Compute v_tilde_mat (the residue after applying the linear
     // operator the current Lanczos vector).
     la::AddOverwrite(vector_e_, neg_vector_e_, &v_tilde_mat);
+    /*
+    printf("Finished multiplying..\n");
+
+    TestKrylovComputation_(v_tilde_mat, current_lanczos_vectors);
+    exit(0);
+    */
+
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       double *v_tilde_mat_column = v_tilde_mat.GetColumnPtr(q);
       double *previous_lanczos_vector = 

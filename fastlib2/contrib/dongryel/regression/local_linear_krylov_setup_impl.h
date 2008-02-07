@@ -69,8 +69,10 @@ void LocalLinearKrylov<TKernel>::ComputeWeightedTargetVectors_(Tree *rnode) {
       }
 
       // Normalize each referene target weights before summing up.
+      /*
       la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), 
 		r_target_weighted_by_coordinates);
+      */
 
       // Tally up the weighted targets.
       la::AddTo(row_length_, r_target_weighted_by_coordinates,
@@ -342,7 +344,6 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeRightHandSides_
       double *q_right_hand_sides_e = vector_e_.GetColumnPtr(q);
       double *q_right_hand_sides_u = vector_u_.GetColumnPtr(q);
       
-
       // Incorporate the postponed information.
       la::AddTo(row_length_,
 		(q_stat.postponed_ll_vector_l_).ptr(),
@@ -353,8 +354,6 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeRightHandSides_
       la::AddTo(row_length_,
 		(q_stat.postponed_ll_vector_u_).ptr(),
 		q_right_hand_sides_u);
-
-      // Maybe I should normalize the sums here to prevent overflow...
     }
   }
   else {

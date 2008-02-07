@@ -5,6 +5,38 @@
 #endif
 
 template<typename TKernel>
+void LocalLinearKrylov<TKernel>::MaximumRelativeErrorInL1Norm_
+(const Matrix &exact_vector_e, const Matrix &approximated) {
+  
+  double max_relative_error = 0;
+  
+  for(index_t q = 0; q < qset_.n_cols(); q++) {
+    
+    // get the column vector containing the approximation.
+    const double *approx_column = approximated.GetColumnPtr(q);
+    
+    // get the column vector accumulating the sum.
+    const double *exact_vector_e_column = exact_vector_e.GetColumnPtr(q);
+    double l1_norm_exact_vector_e_column = 0;
+    double l1_norm_diff_sum = 0;
+    
+    for(index_t d = 0; d <= dimension_; d++) {
+      
+      l1_norm_exact_vector_e_column += exact_vector_e_column[d];
+      l1_norm_diff_sum += fabs(exact_vector_e_column[d] - approx_column[d]);
+    }
+    
+    double relative_error = l1_norm_diff_sum / l1_norm_exact_vector_e_column;
+    if(relative_error > max_relative_error) {
+      max_relative_error = relative_error;
+    }
+    
+  } // end of iterating over each query point.
+  
+  printf("Maximum relative error: %g\n", max_relative_error);
+}
+
+template<typename TKernel>
 void LocalLinearKrylov<TKernel>::TestRightHandSideComputation_
 (const Matrix &approximated) {
   
@@ -43,30 +75,57 @@ void LocalLinearKrylov<TKernel>::TestRightHandSideComputation_
       
   } // end of iterating over each query point.
 
-  double max_relative_error = 0;
-  
-  for(index_t q = 0; q < qset_.n_cols(); q++) {
+  MaximumRelativeErrorInL1Norm_(exact_vector_e, approximated);
+}
 
-    // get the column vector containing the approximation.
-    const double *approx_column = approximated.GetColumnPtr(q);
+template<typename TKernel>
+void LocalLinearKrylov<TKernel>::TestKrylovComputation_
+(const Matrix &approximated, const Matrix &current_lanczos_vectors) {
+  
+  Matrix exact_vector_e;
+  exact_vector_e.Init(approximated.n_rows(), approximated.n_cols());
+  exact_vector_e.SetZero();
+
+  for(index_t q = 0; q < qset_.n_cols(); q++) {
+    
+    // get the column vector corresponding to the current query point.
+    const double *q_col = qset_.GetColumnPtr(q);
+
+    // get the column vector corresponding to the Lanczos vector owned
+    // by the current query point.
+    const double *q_lanczos_vector = current_lanczos_vectors.GetColumnPtr(q);
 
     // get the column vector accumulating the sum.
     double *exact_vector_e_column = exact_vector_e.GetColumnPtr(q);
-    double l1_norm_exact_vector_e_column = 0;
-    double l1_norm_diff_sum = 0;
 
-    for(index_t d = 0; d <= dimension_; d++) {
-
-      l1_norm_exact_vector_e_column += exact_vector_e_column[d];
-      l1_norm_diff_sum += fabs(exact_vector_e_column[d] - approx_column[d]);
-    }
+    for(index_t r = 0; r < rset_.n_cols(); r++) {
     
-    double relative_error = l1_norm_diff_sum / l1_norm_exact_vector_e_column;
-    if(relative_error > max_relative_error) {
-      max_relative_error = relative_error;
-    }
+      // get the column vector corresponding to the current reference point.
+      const double *r_col = rset_.GetColumnPtr(r);
+      
+      // compute the pairwise squared distance and kernel value.
+      double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
+      double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
 
+      // Take the dot product between the query point's Lanczos vector
+      // and [1 r^T]^T.
+      double dot_product = q_lanczos_vector[0];
+      for(index_t d = 1; d <= dimension_; d++) {
+	dot_product += r_col[d - 1] * q_lanczos_vector[d];
+      }
+      double front_factor = dot_product * kernel_value;
+
+      // For each vector component,
+      exact_vector_e_column[0] += front_factor;
+
+      for(index_t d = 1; d <= dimension_; d++) {
+	exact_vector_e_column[d] += front_factor * r_col[d - 1];
+
+      } // end of iterating over each vector component.      
+
+    } // end of iterating over each reference point.
+      
   } // end of iterating over each query point.
 
-  printf("Maximum relative error: %g\n", max_relative_error);
+  MaximumRelativeErrorInL1Norm_(exact_vector_e, approximated);
 }

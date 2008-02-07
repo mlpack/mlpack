@@ -168,14 +168,22 @@ class LocalLinearKrylov {
 	const double *point = dataset.GetColumnPtr(i + start);
 
 	for(index_t j = 1; j <= dataset.n_rows(); j++) {
+	  /*
 	  sum_coordinates_[j] += point[j - 1] / ((double) dataset.n_cols());
 	  l1_norm_sum_coordinates_ += point[j - 1] /
 	    ((double) dataset.n_cols());
+	  */
+	  sum_coordinates_[j] += point[j - 1];
+	  l1_norm_sum_coordinates_ += point[j - 1];
 	}
       }
+      /*
       sum_coordinates_[0] = ((double) count) / ((double) dataset.n_cols());
       l1_norm_sum_coordinates_ += ((double) count) / 
 	((double) dataset.n_cols());
+      */
+      sum_coordinates_[0] = ((double) count);
+      l1_norm_sum_coordinates_ += ((double) count);
     }
 
     void Init(const Matrix &dataset, index_t start, index_t count,
@@ -333,11 +341,20 @@ class LocalLinearKrylov {
 
   ////////// Private Member Functions //////////
 
+  void LocalLinearKrylov<TKernel>::MaximumRelativeErrorInL1Norm_
+    (const Matrix &exact_vector_e, const Matrix &approximated);
+
   /** @brief This function tests the first phase computation (i.e.,
    *         the computation of B^T W(q) Y vectors for each query
    *         point).
    */
   void TestRightHandSideComputation_(const Matrix &approximated);
+
+  /** @brief This function test the second phase computation (i.e.
+   *         the computation of the product of B^T W(q) B and z(q).
+   */
+  void TestKrylovComputation_(const Matrix &approximated,
+			      const Matrix &current_lanczos_vectors);
 
   void NormalizeMatrixColumnVectors_(Matrix &m, Vector &lengths) {
     
