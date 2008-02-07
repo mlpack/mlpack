@@ -1,7 +1,7 @@
 #include "fastlib/fastlib.h"
 #include "local_linear_krylov.h"
 #include "mlpack/kde/dataset_scaler.h"
-#include "naive_lpr.h"
+#include "naive_local_linear.h"
 
 int main(int argc, char *argv[]) {
 
