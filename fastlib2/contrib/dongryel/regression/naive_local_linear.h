@@ -4,9 +4,9 @@
 #include "fastlib/fastlib_int.h"
 
 template<typename TKernel>
-class NaiveLpr {
+class NaiveLocalLinear {
 
-  FORBID_ACCIDENTAL_COPIES(NaiveLpr);
+  FORBID_ACCIDENTAL_COPIES(NaiveLocalLinear);
 
  private:
 
@@ -54,7 +54,7 @@ class NaiveLpr {
 
     // initialize the diagonal by the inverse of ro_s
     for(index_t i = 0; i < ro_s.length(); i++) {
-      if(ro_s[i] > 0) {
+      if(ro_s[i] > 0.001 * ro_s[0]) {
 	ro_s_inv.set(i, i, 1.0 / ro_s[i]);
       }
       else {
@@ -68,22 +68,14 @@ class NaiveLpr {
 
  public:
   
-  NaiveLpr() {}
+  NaiveLocalLinear() {}
 
-  ~NaiveLpr() {}
+  ~NaiveLocalLinear() {}
 
   void Compute() {
 
-    // temporary variables for multiindex looping
-    ArrayList<int> heads;
-    Vector weighted_values;
-
-    printf("\nStarting naive LPR...\n");
-    fx_timer_start(NULL, "naive_lpr_compute");
-
-    // initialization of temporary variables for computation...
-    heads.Init(qset_.n_rows() + 1);
-    weighted_values.Init(total_num_coeffs_);    
+    printf("\nStarting naive local linear...\n");
+    fx_timer_start(NULL, "naive_local_linear_compute");
 
     // compute unnormalized sum for the numerator vector and the denominator
     // matrix
@@ -91,6 +83,7 @@ class NaiveLpr {
       
       const double *q_col = qset_.GetColumnPtr(q);
       for(index_t r = 0; r < rset_.n_cols(); r++) {
+
 	const double *r_col = rset_.GetColumnPtr(r);
 	const double r_target = rset_targets_[r];
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
@@ -122,7 +115,7 @@ class NaiveLpr {
 	    }
 
 	    denominator_[q].set(j, i, denominator_[q].get(j, i) +
-				factor_j * factor_j);
+				factor_j * factor_i * kernel_value);
 	  }
 	}
 
@@ -135,7 +128,7 @@ class NaiveLpr {
       const double *q_col = qset_.GetColumnPtr(q);
       Matrix denominator_inv_q;
       Vector beta_q;
-
+      
       // now invert the denominator matrix for each query point and multiply
       // by the numerator vector
       PseudoInverse(denominator_[q], &denominator_inv_q);      
@@ -149,8 +142,8 @@ class NaiveLpr {
       }
     }
     
-    fx_timer_stop(NULL, "naive_lpr_compute");
-    printf("\nNaive LPR completed...\n");
+    fx_timer_stop(NULL, "naive_local_linear_compute");
+    printf("\nNaive local linear completed...\n");
   }
 
   void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
@@ -196,7 +189,8 @@ class NaiveLpr {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(module_, "naive_lpr_output", NULL)) != NULL) {
+    if((fname = fx_param_str(module_, 
+			     "naive_local_linear_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
