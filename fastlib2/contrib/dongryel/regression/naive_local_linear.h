@@ -1,5 +1,5 @@
-#ifndef NAIVE_LPR_H
-#define NAIVE_LPR_H
+#ifndef NAIVE_LOCAL_LINEAR_H
+#define NAIVE_LOCAL_LINEAR_H
 
 #include "fastlib/fastlib_int.h"
 
@@ -33,9 +33,6 @@ class NaiveLpr {
   /** computed regression values */
   Vector regression_values_;
 
-  /** local polynomial approximation order */
-  int lpr_order_;
-
   /** total number of coefficients for the local polynomial */
   int total_num_coeffs_;
 
@@ -57,7 +54,12 @@ class NaiveLpr {
 
     // initialize the diagonal by the inverse of ro_s
     for(index_t i = 0; i < ro_s.length(); i++) {
-      ro_s_inv.set(i, i, 1.0 / ro_s[i]);
+      if(ro_s[i] > 0) {
+	ro_s_inv.set(i, i, 1.0 / ro_s[i]);
+      }
+      else {
+	ro_s_inv.set(i, i, 0);
+      }
     }
     Matrix intermediate;
     la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
@@ -94,36 +96,36 @@ class NaiveLpr {
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
 
-	// multiindex looping
-	for(index_t i = 0; i < qset_.n_rows(); i++) {
-	  heads[i] = 0;
-	}
-	heads[qset_.n_rows()] = INT_MAX;
+	for(index_t i = 0; i <= qset_.n_rows(); i++) {
 
-	weighted_values[0] = 1.0;
-	for(index_t k = 1, t = 1, tail = 1; k <= lpr_order_; k++, tail = t) {
-	  for(index_t i = 0; i < qset_.n_rows(); i++) {
-	    int head = (int) heads[i];
-	    heads[i] = t;
-	    for(index_t j = head; j < tail; j++, t++) {
+	  double factor_i;
 
-	      // compute numerator vector position t based on position j
-	      weighted_values[t] = weighted_values[j] * r_col[i];
+	  // Compute the numerator vector.
+	  if(i == 0) {
+	    numerator_[q][0] += r_target * kernel_value;
+	    factor_i = 1.0;
+	  }
+	  else {
+	    numerator_[q][i] += r_col[i - 1] * r_target * kernel_value;
+	    factor_i = r_col[i - 1];
+	  }
+	  
+	  // Here, compute each component of the denominator matrix.
+	  for(index_t j = 0; j <= qset_.n_rows(); j++) {
+	    double factor_j;
+
+	    if(j == 0) {
+	      factor_j = 1.0;	      
 	    }
+	    else {
+	      factor_j = r_col[j - 1];
+	    }
+
+	    denominator_[q].set(j, i, denominator_[q].get(j, i) +
+				factor_j * factor_j);
 	  }
 	}
 
-	// tally up the sum here
-	for(index_t i = 0; i < total_num_coeffs_; i++) {
-	  numerator_[q][i] = numerator_[q][i] + r_target *
-	    weighted_values[i] * kernel_value;
-
-	  for(index_t j = 0; j < total_num_coeffs_; j++) {
-	    denominator_[q].set(i, j, denominator_[q].get(i, j) + 
-				weighted_values[i] * weighted_values[j] *
-				kernel_value);
-	  }
-	}
       } // end of looping over each reference point
     } // end of looping over each query point
 
@@ -139,23 +141,12 @@ class NaiveLpr {
       PseudoInverse(denominator_[q], &denominator_inv_q);      
       la::MulInit(denominator_inv_q, numerator_[q], &beta_q);
 
-      // compute the vector [1, x_1, \cdots, x_D, second order, ...]
-      weighted_values[0] = 1.0;
-      for(index_t k = 1, t = 1, tail = 1; k <= lpr_order_; k++, tail = t) {
-	for(index_t i = 0; i < qset_.n_rows(); i++) {
-	  int head = (int) heads[i];
-	  heads[i] = t;
-	  for(index_t j = head; j < tail; j++, t++) {
-
-	    // compute numerator vector position t based on position j
-	    weighted_values[t] = weighted_values[j] * q_col[i];
-	  }
-	}
-      }
-
       // compute the dot product between the multiindex vector for the query
       // point by the beta_q
-      regression_values_[q] = la::Dot(weighted_values, beta_q);
+      regression_values_[q] = beta_q[0];
+      for(index_t i = 1; i <= qset_.n_rows(); i++) {
+	regression_values_[q] += beta_q[i] * q_col[i - 1];
+      }
     }
     
     fx_timer_stop(NULL, "naive_lpr_compute");
@@ -181,10 +172,7 @@ class NaiveLpr {
     kernel_.Init(fx_param_double_req(module_, "bandwidth"));
 
     // compute total number of coefficients
-    lpr_order_ = fx_param_int(module_in, "lpr_order", 1);
-    total_num_coeffs_ = (int) math::BinomialCoefficient(lpr_order_ + 
-							qset_.n_rows(),
-							qset_.n_rows());
+    total_num_coeffs_ = qset_.n_rows() + 1;
     
     // allocate temporary storages for storing the numerator vectors and
     // the denominator matrices
@@ -220,11 +208,11 @@ class NaiveLpr {
     }    
   }
 
-  void ComputeMaximumRelativeError(const Vector &regression_estimate) {
+  void ComputeMaximumRelativeError(const Vector &approx_estimate) {
     
     double max_rel_err = 0;
     for(index_t q = 0; q < regression_values_.length(); q++) {
-      double rel_err = fabs(regression_estimate[q] - regression_values_[q]) / 
+      double rel_err = fabs(approx_estimate[q] - regression_values_[q]) / 
 	regression_values_[q];
       
       if(rel_err > max_rel_err) {
