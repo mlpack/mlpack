@@ -469,8 +469,9 @@ class LocalLinearKrylov {
    *  @param current_lanczos_vectors Each column of this matrix is a current
    *                                 Lanczos vector for each query point.
    */
-  void InitializeQueryTreeSolutionBound_(Tree *qnode, 
-					 Matrix &current_lanczos_vectors);
+  void InitializeQueryTreeLanczosVectorBound_
+    (Tree *qnode, Matrix &current_lanczos_vectors,
+     const ArrayList<bool> &exclude_query_flag);
 
   /** @brief Initialize the query tree for an iteration inside a
    *         Krylov solver. This resets the required vector bound

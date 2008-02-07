@@ -410,31 +410,55 @@ void LocalLinearKrylov<TKernel>::DotProductBetweenTwoBounds_
 }
 
 template<typename TKernel>
-void LocalLinearKrylov<TKernel>::InitializeQueryTreeSolutionBound_
-(Tree *qnode, Matrix &current_lanczos_vectors) {
+void LocalLinearKrylov<TKernel>::InitializeQueryTreeLanczosVectorBound_
+(Tree *qnode, Matrix &current_lanczos_vectors,
+ const ArrayList<bool> &exclude_query_flag) {
 
   // If the query node is a leaf, then exhaustively iterate over and
   // form bounding boxes of the current solution.
   if(qnode->is_leaf()) {
     (qnode->stat().lanczos_vectors_bound_).Reset();
+    qnode->bound().Reset();
+
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+
+      // If the current query point is not to be included in the
+      // bounding box, then skip it.
+      if(exclude_query_flag[q]) {
+	continue;
+      }
+
+      Vector query_vector;
       Vector lanczos_vector;
       current_lanczos_vectors.MakeColumnVector(q, &lanczos_vector);
+      qset_.MakeColumnVector(q, &query_vector);
       qnode->stat().lanczos_vectors_bound_ |= lanczos_vector;
+      qnode->bound() |= query_vector;
     }
   }
 
   // Otherwise, traverse the left and the right and combine the
   // bounding boxes of the solutions for the two children.
   else {    
-    InitializeQueryTreeSolutionBound_(qnode->left(), current_lanczos_vectors);
-    InitializeQueryTreeSolutionBound_(qnode->right(), current_lanczos_vectors);
+    InitializeQueryTreeLanczosVectorBound_(qnode->left(), 
+					   current_lanczos_vectors,
+					   exclude_query_flag);
+    InitializeQueryTreeLanczosVectorBound_(qnode->right(), 
+					   current_lanczos_vectors,
+					   exclude_query_flag);
     
+    // Reset the bounding box for the Lanczos vectors and reform it
+    // using the bounding boxes owned by the children.
     (qnode->stat().lanczos_vectors_bound_).Reset();
     qnode->stat().lanczos_vectors_bound_ |= 
       (qnode->left()->stat()).lanczos_vectors_bound_;
     qnode->stat().lanczos_vectors_bound_ |=
       (qnode->right()->stat()).lanczos_vectors_bound_;
+
+    // Ditto for the bounding box for the query points.
+    qnode->bound().Reset();
+    qnode->bound() |= qnode->left()->bound();
+    qnode->bound() |= qnode->right()->bound();
   }
 }
 
@@ -611,13 +635,35 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
   // Temporary variables to hold dot product ranges for the root nodes
   // of the two trees.
   DRange root_negative_dot_product_range, root_positive_dot_product_range;
-    
+
+  // Flag to tell whether each query stays in the Krylov loop or not.
+  ArrayList<bool> query_should_exit_the_loop;
+  query_should_exit_the_loop.Init(qset_.n_cols());
+
+  // Set the boolean flags to false
+  for(index_t q = 0; q < qset_.n_cols(); q++) {
+    query_should_exit_the_loop[q] = false;
+  }
+
   // Main iteration of the SYMMLQ algorithm - repeat until
   // "convergence"...
-  for(index_t m = 0; m < sqrt(row_length_); m++) {
+  for(index_t m = 0; m < row_length_; m++) {
 
-    // Initialize the query tree solution bounds.
-    InitializeQueryTreeSolutionBound_(qroot_, current_lanczos_vectors);
+    // Determine how many queries are in the Krylov loop.
+    int num_queries_in_krylov_loop = 0;
+    for(index_t q = 0; q < qset_.n_cols(); q++) {
+      if(!query_should_exit_the_loop[q]) {
+	num_queries_in_krylov_loop++;
+      }
+    }
+    printf("%d queries are alive...\n", num_queries_in_krylov_loop);
+    if(num_queries_in_krylov_loop == 0) {
+      break;
+    }
+    
+    // Initialize the query tree Lanzcos vector bounds.
+    InitializeQueryTreeLanczosVectorBound_(qroot_, current_lanczos_vectors,
+					   query_should_exit_the_loop);
     
     // Compute the dot product bounds.
     DotProductBetweenTwoBounds_(qroot_, rroot_, 
@@ -637,14 +683,14 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
     // Compute v_tilde_mat (the residue after applying the linear
     // operator the current Lanczos vector).
     la::AddOverwrite(vector_e_, neg_vector_e_, &v_tilde_mat);
-    /*
-    printf("Finished multiplying..\n");
-
-    TestKrylovComputation_(v_tilde_mat, current_lanczos_vectors);
-    exit(0);
-    */
 
     for(index_t q = 0; q < qset_.n_cols(); q++) {
+
+      // If the current query is not in the Krylov loop, skip it.
+      if(query_should_exit_the_loop[q]) {
+	continue;
+      }
+
       double *v_tilde_mat_column = v_tilde_mat.GetColumnPtr(q);
       double *previous_lanczos_vector = 
 	previous_lanczos_vectors.GetColumnPtr(q);
@@ -653,7 +699,6 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
 
       la::AddExpert(row_length_, -beta_vec[q], previous_lanczos_vector,
 		    v_tilde_mat_column);
-
 
       // Compute alpha (a dot product b etween the current Lanczos
       // vector and v_tilde vector).
@@ -670,14 +715,18 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
       beta_vec[q] = la::LengthEuclidean(row_length_, v_tilde_mat_column);
 
       // Make a backup copy of the current Lanczos vector.
-      previous_lanczos_vectors.CopyValues(current_lanczos_vectors);
+      for(index_t i = 0; i < row_length_; i++) {
+	previous_lanczos_vector[i] = current_lanczos_vector[i];
+      }
       
-      // Set a new current Lanczos vector based on v_tilde_mat_column
+      // Set a new current Lanczos vector based on v_tilde_mat_column.
+      // A potential place to watch out for division by zero!!
       if(beta_vec[q] > 0) {
 	la::ScaleOverwrite(row_length_, 1.0 / beta_vec[q], v_tilde_mat_column,
 			   current_lanczos_vector);
       }
       else {
+	query_should_exit_the_loop[q] = true;
 	la::ScaleOverwrite(row_length_, 1.0, v_tilde_mat_column,
 			   current_lanczos_vector);
       }
@@ -696,22 +745,24 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
 
       double l_0 = sqrt(alpha_tilde * alpha_tilde + beta_vec[q] * beta_vec[q]);
 
+      // Another potential place to watch for division by zero!!
       if(l_0 != 0) {
 	c_vec[q] = alpha_tilde / l_0;
 	s_vec[q] = beta_vec[q] / l_0;
       }
       else {
-	printf("Warning: Division by zero attempted!\n");
+	query_should_exit_the_loop[q] = true;
       }
       
       double g_tilde = g_double_tilde_vec[q] - l_1 * g_vec[q];
       g_double_tilde_vec[q] = -l_2 * g_vec[q];
 
+      // Another potential place to watch for division by zero!!
       if(l_0 != 0) {
 	g_vec[q] = g_tilde / l_0;
       }
       else {
-	printf("Warning: Division by zero attempted!\n");
+	query_should_exit_the_loop[q] = true;
       }
       
       // Update solution.
@@ -723,8 +774,8 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
       la::Scale(row_length_, s_vec[q], w_mat.GetColumnPtr(q));
       la::AddExpert(row_length_, -c_vec[q], current_lanczos_vector,
 		    w_mat.GetColumnPtr(q));
-      
+
     } // end of iterating over each query point.
-    
+
   } // end of an iteration of SYMMLQ
 }
