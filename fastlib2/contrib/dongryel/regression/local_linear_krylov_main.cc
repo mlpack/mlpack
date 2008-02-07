@@ -1,6 +1,7 @@
 #include "fastlib/fastlib.h"
 #include "local_linear_krylov.h"
 #include "mlpack/kde/dataset_scaler.h"
+#include "naive_lpr.h"
 
 int main(int argc, char *argv[]) {
 
@@ -48,12 +49,22 @@ int main(int argc, char *argv[]) {
   DatasetScaler::TranslateDataByMin(queries, references, false);
 
   // Declare local linear krylov object.
+  Vector fast_local_linear_results;
   LocalLinearKrylov<EpanKernel> local_linear;
   local_linear.Init(queries, references, reference_targets,
 		    local_linear_module);
   local_linear.Compute();
+  local_linear.get_regression_estimates(&fast_local_linear_results);
   local_linear.PrintDebug();
 
+  // Do naive algorithm.
+  NaiveLpr<EpanKernel> naive_local_linear;
+  naive_local_linear.Init(queries, references, reference_targets,
+			  local_linear_module);
+  naive_local_linear.Compute();
+  naive_local_linear.PrintDebug();
+  naive_local_linear.ComputeMaximumRelativeError(fast_local_linear_results);  
+  
   // Finalize FastExec and print output results.
   fx_done();
   return 0;
