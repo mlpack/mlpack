@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
   // the datasets to fit in the hypercube. This should be replaced
   // with more general dataset scaling operation, requested by the
   // users.
-  DatasetScaler::ScaleDataByMinMax(queries, references, false);
+  DatasetScaler::TranslateDataByMin(queries, references, false);
 
   // Declare local linear krylov object.
   LocalLinearKrylov<EpanKernel> local_linear;
