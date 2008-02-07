@@ -313,11 +313,11 @@ ArrayList<index_t>& FastRegression<TKernel>::get_old_from_new_r(){
   return old_from_new_r_;
 }
 
-template <typename TKernel>
-Vector& FastRegression<TKernel>::get_regression_estimate(){
-  return regression_estimate_;
+//template <typename TKernel>
+//Vector& FastRegression<TKernel>::get_regression_estimate(){
+// return regression_estimate_;
  
-}
+//}
 
 /** This function will be called after update bounds has been called in the 
  *  function Prunable. This will flush the owed values as they have already 
@@ -344,7 +344,8 @@ void FastRegression<TKernel>::FlushOwedValues_(Tree *qnode,
 					       check_for_prune_t flag){
     
   //We use the value of flag to flush the bounds of 
-  //the appropriate quantity
+  //the appropriate quantity. THis function is NOT
+  //dependent on the pruning criteria
     
   /**  flag=PRUNE_BOTH =>Flush owed values of B^TWB, B^TWY.
    *   flag=PRUNE_B_TWB =>Flush owed values of B^TWB
@@ -404,7 +405,7 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
    *   flag=PRUNE_B_TWY => Update Bounds of B^TWY
    */
    
-  
+  //Note this function is NOT dependent on the pruning criteria
 
  
 
@@ -641,10 +642,9 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
  
 
  
-  //The first thing to do is to update bounds.
-  //We now have to use the flag to decide what
-  //quantity we are checking if it is prunable.
-  //
+  //The first thing to do is to update bounds.  We now have to use the
+  //flag to decide what quantity we are checking if it is prunable.
+  //This function is independent of the pruning criteria
    UpdateBounds_(qnode, qnode->stat().b_twb_owed_l, 
 		qnode->stat().b_twb_owed_u, 
 		qnode->stat().b_twy_owed_l, 
@@ -685,11 +685,13 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
   du_b_twy.SetAll(0);
     
  
-  //Lets send in all the above defined parameters, though depending on the 
-  //value of flag not all parameters are necessary. however I am not able 
-  //to think of anything better. the function prunable will tell us  
-  //which quantity to prune
-  //This is exactly what the enum variable what_is_prunable will tell us
+  //Lets send in all the above defined parameters, though depending on
+  //the value of flag not all parameters are necessary. however I am
+  //not able to think of anything better. the function prunable will
+  //tell us which quantity to prune This is exactly what the enum
+  //variable what_is_prunable will tell us. This function will depend
+  //on the criteria for pruning.
+  //
 
   prune_t what_is_prunable = Prunable_(qnode, rnode, dl_b_twb, du_b_twb,
 				       dl_b_twy, du_b_twy, flag);
@@ -702,14 +704,13 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
     //we first UpdateBounds for 
     //pruning by calling the function as declared below
 
-    printf("qnode start is %d and qnode end is %d \n",qnode->begin(),qnode->end());
-    printf("rnode start is %d and rnode end is %d \n",rnode->begin(),rnode->end());
-    printf("will prune %d .\n\n",what_is_prunable);
+   
     
     //Now we update bound due to pruning of the qunatity that is
     //prunable and dependin on the value of flag we either continue
     //pruning for the same or we return. THIS CODE can be made simple
-    //if we have just one UpdateBoundsForPruninig function
+    //if we have just one UpdateBoundsForPruninig function. This
+    //function depends on the criteria for pruning
 
     if(what_is_prunable==PRUNE_B_TWB){
 
@@ -767,12 +768,12 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
     if(rnode->is_leaf()){
       
       /* This is the Base Case */
-      //printf("Hey man I hit the leaf nodes..\n");
+      /* this function will depend on the criteria of pruning */
       FRegressionBase_(qnode,rnode,flag);
       return;
     }
     else{
-    
+      
       /* rnode is not a leaf node */
       Tree *rnode_first = NULL, *rnode_second = NULL;
       BestNodePartners_(qnode, rnode->left (), rnode->right (),
@@ -831,15 +832,17 @@ void FastRegression<TKernel>::Compute(){
   //quantities B^TWB and B^TWY are prunable
   
   check_for_prune_t flag=CHECK_FOR_PRUNE_BOTH;
+  fx_timer_start(NULL,"fast_timer");
   FRegression_(qroot_,rroot_,flag);
+  
   PostProcess_(qroot_);
-
+  fx_timer_stop(NULL,"fast_timer");
   //This will print the matrices B^TWB and B^TWY to an output file
   Print_();
 
  
-  ObtainRegressionEstimate_();
-  PrintRegressionEstimate_();
+  //ObtainRegressionEstimate_();
+  //PrintRegressionEstimate_();
 }
  
 template <typename TKernel>
@@ -935,7 +938,7 @@ void FastRegression<TKernel>::Init(Matrix &q_matrix, Matrix &r_matrix,
 				   double bandwidth,
 				   double tau,
 				   index_t leaf_length,
-				   Vector &rset_weights){
+				   Vector &rset_weights, char *criteria){
 
   //Set up value of tau,qset_,rset_
 
@@ -1039,6 +1042,18 @@ void FastRegression<TKernel>::Init(Matrix &q_matrix, Matrix &r_matrix,
  
     
   kernel_.Init (bandwidth);
+  if(!strcmp(criteria,"component_wise")){
+    printf("criteria is component_wise..\n");
+    pruning_criteria=CRITERIA_FOR_PRUNE_COMPONENT;
+  }
+  else{
+    if(!strcmp(criteria,"fnorm")){
+      printf("Fnorm critreia...........\n");
+      pruning_criteria=CRITERIA_FOR_PRUNE_FNORM;
+    }
+    else exit(0);
+  }
+
   printf("Kernel Initialized...\n");
     
 }

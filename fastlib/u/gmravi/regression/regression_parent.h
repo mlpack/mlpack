@@ -141,18 +141,27 @@ public:
   //We need another enum to tell us to check for prunability of
   //B^TWB or B^TWY or both
 
-  enum check_for_prune_t{
+  typedef enum check_for_prune_t{
  
     CHECK_FOR_PRUNE_BOTH,
     CHECK_FOR_PRUNE_B_TWB,
     CHECK_FOR_PRUNE_B_TWY,
-  };
+  }check_for_prune_t;
+
+
+  typedef enum CRITERIA_FOR_PRUNE_t{
+ 
+    CRITERIA_FOR_PRUNE_COMPONENT,
+    CRITERIA_FOR_PRUNE_FNORM,
+  }criteria_for_prune_t;
 
  //Private member of FastMatrix
  private:
 
   //Lets declare private variables
  
+  /**The criteria for pruning */
+  criteria_for_prune_t pruning_criteria;
   /** query dataset */
   Matrix qset_;
  
@@ -268,15 +277,13 @@ public:
 
  void FRegressionBaseB_TWB_(Tree *, Tree *);
  void FRegressionBaseB_TWY_(Tree *, Tree *);
-
- void  PostProcess_(Tree *qnode);
-
+ void PostProcess_(Tree *qnode);
  void Print_();
-
  void ObtainRegressionEstimate_();
-
  void PrintRegressionEstimate_();
-
+ double SquaredFrobeniusNorm_(Matrix &);
+ double Compute1NormLike_(Matrix &);
+ 
  public:
  
   /* getter functions */
@@ -298,7 +305,7 @@ public:
   void Compute();
 
   void Init(Matrix &q_matrix, Matrix &r_matrix, double bandwidth,
-	  double tau,index_t leaf_length,Vector &rset_weights);
+	  double tau,index_t leaf_length,Vector &rset_weights, char *);
 };
 
 
@@ -332,7 +339,7 @@ template < typename TKernel > class NaiveCalculation{
 
   Vector rset_weights_;
 
-  Vector regression_estimate_;
+  // Vector regression_estimate_;
 
   /** Remember that we first do the the fast vector calculations and 
    *  then pass on the datasets to the naive method for naive calculations.
@@ -343,6 +350,7 @@ template < typename TKernel > class NaiveCalculation{
    */
 
   ArrayList<index_t> old_from_new_r_;
+
 
  public:
 
@@ -357,13 +365,13 @@ template < typename TKernel > class NaiveCalculation{
    
   void   PrintRegressionEstimate_(Vector &);
   void ObtainRegressionEstimate_();
-  void Compute (Vector &);
+  void Compute ();
   
-  void Init (Matrix &, Matrix &, 
-	     ArrayList<index_t> &,double ,Vector&);
-  void print();
+  void Init (Matrix &, Matrix &, ArrayList<index_t> &,double ,Vector&);
+  void Print_();
 
-  void ComputeMaximumRelativeError(ArrayList<Matrix> &, ArrayList<Matrix> &);
+  void ComputeMaximumRelativeError(ArrayList<Matrix> &, ArrayList<Matrix> &, char *);
+  double SquaredFrobeniusNorm_(Matrix &);
 };
 
 #include "regression_ll1.h"
