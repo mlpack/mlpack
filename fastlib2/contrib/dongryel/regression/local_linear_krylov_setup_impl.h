@@ -348,6 +348,14 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeRightHandSides_
       la::AddTo(row_length_,
 		(q_stat.postponed_ll_vector_u_).ptr(),
 		q_right_hand_sides_u);
+
+      // Normalize.
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), 
+		q_right_hand_sides_l);
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()),
+		q_right_hand_sides_e);
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()),
+		q_right_hand_sides_u);
     }
   }
   else {
