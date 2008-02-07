@@ -67,6 +67,12 @@ void LocalLinearKrylov<TKernel>::ComputeWeightedTargetVectors_(Tree *rnode) {
       for(index_t d = 0; d < dimension_; d++) {
 	r_target_weighted_by_coordinates[d + 1] = rset_targets_[r] * r_col[d];
       }
+
+      // Normalize each referene target weights before summing up.
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), 
+		r_target_weighted_by_coordinates);
+
+      // Tally up the weighted targets.
       la::AddTo(row_length_, r_target_weighted_by_coordinates,
 		(rnode->stat().sum_targets_weighted_by_data_).ptr());
     }
@@ -74,7 +80,7 @@ void LocalLinearKrylov<TKernel>::ComputeWeightedTargetVectors_(Tree *rnode) {
     // Compute L1 norm of the accumulated sum
     rnode->stat().l1_norm_sum_targets_weighted_by_data_ =
       L1Norm_(rnode->stat().sum_targets_weighted_by_data_);
-  }
+  }  
   else {
     
     // Recursively call the function with left and right and merge.
