@@ -49,8 +49,8 @@ int main(int argc, char *argv[]){
   //Get the bandwidth for kernel calculations and the tolerance limit. 
   //Both default to 0.2
 
-  double bandwidth=fx_param_double(regression_module,"bandwidth",0.015);
-  double tau=fx_param_double(regression_module,"tau",0.10);
+  double bandwidth=fx_param_double(regression_module,"bandwidth",0.15);
+  double tau=fx_param_double(regression_module,"tau",0.140);
 
 
   //Get the weights for the reference set
@@ -78,16 +78,18 @@ int main(int argc, char *argv[]){
 
   //Get the length of the leaf. Defaulted to 2
 
-  index_t leaf_length=fx_param_int(regression_module,"leaf_length",1);
+  index_t leaf_length=fx_param_int(regression_module,"leaf_length",3);
 
   if(!strcmp(fx_param_str(regression_module,"kernel","gaussian"),"gaussian")){
 
     FastRegression<GaussianKernel> fast_regression;
     fx_timer_start(NULL,"fast");
-    fast_regression.Init(q_matrix,r_matrix,bandwidth,tau,leaf_length,
-
-			 rset_weights);
-
+    char *criteria;
+    criteria=(char*)malloc(40*sizeof(char));
+    strcpy(criteria,fx_param_str(regression_module,"criteria","fnorm"));
+    printf("criteria is %s\n",criteria);
+    
+    fast_regression.Init(q_matrix, r_matrix, bandwidth, tau, leaf_length, rset_weights, criteria);
     fast_regression.Compute();
 
     fx_timer_stop(NULL,"fast");
@@ -98,14 +100,28 @@ int main(int argc, char *argv[]){
     ArrayList<index_t> old_from_new_r;
     old_from_new_r.Copy(fast_regression.get_old_from_new_r());
 
-    Vector fast_regression_estimate;
-    fast_regression_estimate.Copy(fast_regression.get_regression_estimate());
+    //Vector fast_regression_estimate;
+    //fast_regression_estimate.Copy(fast_regression.get_regression_estimate());
+
+    ArrayList<Matrix> fast_b_twy_estimates;
+    ArrayList<Matrix> fast_b_twb_estimates;
+
+    fast_b_twy_estimates.Init(q_matrix.n_cols());
+    fast_b_twb_estimates.Init(q_matrix.n_cols());
+
+    for(index_t q=0;q<q_matrix.n_cols();q++){
+
+      fast_b_twy_estimates[q].Alias(fast_regression.get_b_twy_estimates(q));
+      fast_b_twb_estimates[q].Alias(fast_regression.get_b_twb_estimates(q));
+    }
     
     NaiveCalculation<GaussianKernel> naive_b_twy;
 
     fx_timer_start(NULL,"naive");
     naive_b_twy.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
-    naive_b_twy.Compute(fast_regression_estimate);
+    
+    naive_b_twy.Compute();
+    naive_b_twy.ComputeMaximumRelativeError(fast_b_twy_estimates,fast_b_twb_estimates, criteria);
    
     fx_timer_stop(NULL,"naive");
 

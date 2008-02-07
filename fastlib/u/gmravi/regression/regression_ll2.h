@@ -3,9 +3,38 @@
 #include "fastlib/fastlib_int.h"
 #include "pseudo_inverse.h"
 
+template <typename TKernel>
+double FastRegression<TKernel>::Compute1NormLike_(Matrix &a){
+
+  //This function computes treats the natrix as a vector and computes
+  //it's 1-norm
+  double value=0;
+  for(index_t col=0;col<a.n_cols();col++){
+    for(index_t row=0;row<a.n_rows();row++){
+      value+=fabs(a.get(row,col));
+    }
+  }
+  return value;
+}
+
+template <typename TKernel>
+double FastRegression<TKernel>::SquaredFrobeniusNorm_(Matrix &a){
+
+  double sqd_frobenius_norm=0.0;
+  for(index_t col=0;col<a.n_cols();col++){
+    //Along each column
+    for(index_t row=0;row<a.n_rows();row++){
+      //Alon each row
+
+      sqd_frobenius_norm+=a.get(row,col)*a.get(row,col);
+    }
+  }
+  return sqd_frobenius_norm;
+}
+
 
 // This function checks for the prunability of B^TWY
-
+//This function depends on the pruning criteria
 template <typename TKernel>
 index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode, 
 						Matrix &dl, Matrix &du){
@@ -24,13 +53,13 @@ index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode,
   // the new lower bound after scaling the B^TY matrix with the scalar the 
   //minimum value of kernel
   
+  //Set up the dl
   double m=kernel_value_range.lo;
   
   la::ScaleOverwrite(m, rnode->stat().b_ty, &dl);
   
-  //The new upper bound
+  //The new upper bound. Set up the du
 
-  
   m = -1+kernel_value_range.hi;
   la::ScaleOverwrite (m, rnode->stat().b_ty, &du);
     
@@ -43,7 +72,7 @@ index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode,
   //max_error <- m*(b_ty)
   la::ScaleInit (m, rnode->stat().b_ty, &max_error); 
     
-  //Now lets calculate the allowed error. 
+  //Now lets calculate the allowed error. this depends on the 
   //allowed_error=tau*(rnode->stat().b_ty/rroot->stat().b_ty)(b_twy_mass_l+dl)
     
     
@@ -59,48 +88,71 @@ index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode,
   //Now it is easy to see that the allowed error is nothing but the 
   //scaled version of new_mass_l
     
- 
+  //Now depending on the pruning criteria we shall have a different
+  //pruning condition Now we can prune only if max_error is
 
-  //Now we can prune only if max_error is componentwise lesser than allowed_error
+  //component wise lesser than allowed_error
+
+  //This is for componentwise bounding.........................................
+  if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
     
-  for(index_t col=0;col<qnode->stat().b_twy_mass_u.n_cols();col++){
+    for(index_t col=0;col<qnode->stat().b_twy_mass_u.n_cols();col++){
       
-    for(index_t row=0;row<qnode->stat().b_twy_mass_u.n_rows();row++){
+      for(index_t row=0;row<qnode->stat().b_twy_mass_u.n_rows();row++){
 	
-      //We will prune only if the matrix is prunable componenet wise
-      //This is what test now
+	//We will prune only if the matrix is prunable componenet wise
+	//This is what test now
+	
+	//printf("tau_ is %f\n",tau_);
+	
+	
+	double alpha=tau_*
+	  (double)(rnode->stat().b_ty.get(row,col))/
+	  (rroot_->stat().b_ty.get(row,col));
 
-      //printf("tau_ is %f\n",tau_);
-      
-      
-      double alpha=tau_*
-	(double)(rnode->stat().b_ty.get(row,col))/
-	(rroot_->stat().b_ty.get(row,col));
-
-      if(rroot_->stat().b_ty.get(row,col)==0){
-	printf("BTY Wrongly estimated..\n");
-	rroot_->stat().b_ty.PrintDebug();
-	exit(0);
-      }
+	
           
-      if(max_error.get(row,col)>=alpha*new_mass_l.get(row,col)){
-	//pruning failed
-	//Set everything back to 0 and return
-	
-	dl.SetAll(0);
-	du.SetAll(0);
-	return 0;
+	if(max_error.get(row,col)>=alpha*new_mass_l.get(row,col)){
+	  //pruning failed
+	  //Set everything back to 0 and return
+	  
+	  dl.SetAll(0);
+	  du.SetAll(0);
+	  return 0;
+	}
       }
     }
+    //successfully pruned for component wise calculations
+    return 1;
   }
- 
-  printf("dl beign sent from BTWY is ...\n");
-  dl.PrintDebug();
 
-  printf("du being sent from BTWY is ..\n");
-  du.PrintDebug();
-  return 1;
+  //THIS Means we are interested in the frobenius norm pruning................
+  
+  //Maximum allowed error is the sqaured frobenius norm of the matrix max_error
+
+  double squared_frobenius_norm_of_max_error=SquaredFrobeniusNorm_(max_error);
+  double ratio_of_1norms=
+    Compute1NormLike_(rnode->stat().b_ty)/Compute1NormLike_(rroot_->stat().b_ty);  
+
+  //Now lets calculate the squared frobenius norm of new_mass_l
+  double sqd_frobenius_norm_of_new_mass_l=SquaredFrobeniusNorm_(new_mass_l);
+ 
+  double allowed_error= ratio_of_1norms*tau_*sqd_frobenius_norm_of_new_mass_l;
+  if(squared_frobenius_norm_of_max_error<=allowed_error)
+    {
+      //prune
+      return 1;
+    }
+  else{
+    //Dont prune. So set dl and du to 0
+    
+    dl.SetAll(0);
+    du.SetAll(0);
+    return 0;
+  }
+
 }
+
   
 template <typename TKernel>
 index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matrix &dl, Matrix &du){
@@ -160,55 +212,76 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
 
  
   //Now we can prune only if max_error is componentwise lesser than allowed_error
+
+  if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
     
-  for(index_t col=0;col<qnode->stat().b_twb_mass_u.n_cols();col++){
+    for(index_t col=0;col<qnode->stat().b_twb_mass_u.n_cols();col++){
       
-    for(index_t row=0;row<qnode->stat().b_twb_mass_u.n_rows();row++){
-
-      //printf("It is %f\n",(rroot_->stat().b_tb.get(row,col)));
-
-      //We shall prune only if the matrix is componenet
-      //wise prunable
+      for(index_t row=0;row<qnode->stat().b_twb_mass_u.n_rows();row++){
 	
-      //Lets define a constant alpha as shown below.
+	//printf("It is %f\n",(rroot_->stat().b_tb.get(row,col)));
+	
+	//We shall prune only if the matrix is componenet
+	//wise prunable
+	
+	//Lets define a constant alpha as shown below.
      	double alpha=
 	  tau_*(double)(rnode->stat().b_tb.get(row,col))/
 	  (rroot_->stat().b_tb.get(row,col));
 	if(rroot_->stat().b_tb.get(row,col)==0){
-
+	  
 	  printf("btb.is not properly defined\n");
 	}
 	//printf("alpha is %f\n",alpha);
-      
-
-
+	
+	
+	
 	// printf("the max error is %f\n",max_error.get(row,col));
 	//printf("allowed error is %f\n",alpha*new_mass_l.get(row,col));
-      if(max_error.get(row,col)>=alpha*new_mass_l.get(row,col)){
-	//pruning failed
+	if(max_error.get(row,col)>=alpha*new_mass_l.get(row,col)){
+	  //pruning failed
 	  
-	dl.SetAll(0);
-	du.SetAll(0);
-	return 0;
+	  dl.SetAll(0);
+	  du.SetAll(0);
+	  return 0;
 	  
+	}
       }
     }
+    //This means the matrix is compoenent wise prunable. hence return 1
+    return 1;
   }
-  printf("dl beign sent from BTWB is ...\n");
-  dl.PrintDebug();
-  
-  printf("du being sent from BTWB is ..\n");
-  du.PrintDebug();
+  //THIS MEANS WE ARE INTERESTED IN PRUNING BY FROBENIUS NORM
+  //First lets calculate the squared frobenius norm of max_error.
+
+  double squared_frobenius_norm_of_max_error=SquaredFrobeniusNorm_(max_error);
+  double ratio_of_1norms=
+    Compute1NormLike_(rnode->stat().b_tb)/Compute1NormLike_(rroot_->stat().b_tb); 
+  //Now lets calculate the squared frobenius norm of new_mass_l
+
+  double squared_frobenius_norm_of_new_mass_l=SquaredFrobeniusNorm_(new_mass_l);
+
+  double allowed_error=tau_*ratio_of_1norms*squared_frobenius_norm_of_new_mass_l;
+
+  if(squared_frobenius_norm_of_max_error > allowed_error){
+
+    //then this matrix is NOT runable
+    dl.SetAll(0);
+    du.SetAll(0);
+    return 0;
+  }
+
+  //This means that the quantity is prunable
   return 1;
 }
   
+
+/* The Update Boundws function is independent of the pruning criteria */
+
 template <typename TKernel>
 void FastRegression<TKernel>::
 UpdateBoundsForPruningB_TWY_(Tree *qnode, Matrix &dl_b_twy, Matrix &du_b_twy){
     
- 
-
-
   //In this function we shall  update bounds of the quantity that is prunable.
   //This is similar to the UpdateBounds_(..) function. However this will be
   //called to incoprorate changes in bounds due to pruning
@@ -252,16 +325,16 @@ UpdateBoundsForPruningB_TWY_(Tree *qnode, Matrix &dl_b_twy, Matrix &du_b_twy){
   }
 }
   
+
+/* The Update Boundws function is independent of the pruning criteria */
 template <typename TKernel>
 void FastRegression<TKernel>::UpdateBoundsForPruningB_TWB_(Tree
 							   *qnode, Matrix &dl_b_twb,
 							   Matrix &du_b_twb){
-    
- 
-  
-  //In this function we shall  update bounds of the quantity that is prunable.
-  //This is similar to the UpdateBounds_(..) function. However this will be
-  //called to incoprorate changes in bounds due to pruning
+  //In this function we shall update bounds of the quantity that is
+  //prunable.  This is similar to the UpdateBounds_(..)
+  //function. However this will be called to incoprorate changes in
+  //bounds due to pruning
     
   // Changes the upper and lower bounds.
     
@@ -275,8 +348,8 @@ void FastRegression<TKernel>::UpdateBoundsForPruningB_TWB_(Tree
 
 
     
-  // for a leaf node, incorporate the lower and upper bound changes into
-  // its additional offset
+  // for a leaf node, incorporate the lower and upper bound changes
+  // into its additional offset
     
   if (qnode->is_leaf ()){
       
@@ -304,6 +377,9 @@ void FastRegression<TKernel>::UpdateBoundsForPruningB_TWB_(Tree
   }
 }
  
+
+//This function depends on the pruning criteria........
+
 template <typename TKernel>
 
 void FastRegression<TKernel>:: 
@@ -321,8 +397,6 @@ MergeChildBoundsB_TWB_(  FastRegression<TKernel>::
   
   //So lets find the componentwise minimum and maximum 
 
-  //The first thing to do is check if qnode is a leaf. if it is then
-  //return
   Matrix max_children;
   Matrix min_children;
   max_children.Init(parent_stat.b_twb_mass_l.n_rows(), 
@@ -331,56 +405,125 @@ MergeChildBoundsB_TWB_(  FastRegression<TKernel>::
   min_children.Init(parent_stat.b_twb_mass_l.n_rows(), 
 		    parent_stat.b_twb_mass_l.n_cols());
 
-
-  for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
-    for(index_t row=0;row<parent_stat.b_twb_mass_l.n_rows();row++){
-
-      if(left_stat->b_twb_mass_l.get(row,col) <= 
-	 right_stat->b_twb_mass_l.get(row,col)){
-
-	//left child has lesser mass_l value
-
-	min_children.set(row,col,
-			 left_stat->b_twb_mass_l.get(row,col));
-
-	max_children.set(row,col,
-			 right_stat->b_twb_mass_l.get(row,col));
-      }
-
-      else{
-	//right child has lesser mass-l value
+  if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
+    for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
+      for(index_t row=0;row<parent_stat.b_twb_mass_l.n_rows();row++){
+	
+	if(left_stat->b_twb_mass_l.get(row,col) <= 
+	   right_stat->b_twb_mass_l.get(row,col)){
 	  
-	min_children.set(row,col,
-			 right_stat->b_twb_mass_l.get(row,col));
+	  //left child has lesser mass_l value
 	  
-	max_children.set(row,col,
-			 left_stat->b_twb_mass_l.get(row,col));
-
+	  min_children.set(row,col,
+			   left_stat->b_twb_mass_l.get(row,col));
+	  
+	  max_children.set(row,col,
+			   right_stat->b_twb_mass_l.get(row,col));
+	}
+	
+	else{
+	  //right child has lesser mass-l value
+	  
+	  min_children.set(row,col,
+			   right_stat->b_twb_mass_l.get(row,col));
+	  
+	  max_children.set(row,col,
+			   left_stat->b_twb_mass_l.get(row,col));
+	  
+	}
+	
       }
-
-    }
       
+    }
+    //Now compare with parent...
+ 
+    for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
+      for(index_t row=0;row<parent_stat.b_twb_mass_l.n_rows();row++){
+	
+	if(parent_stat.b_twb_mass_l.get(row,col)<min_children.get(row,col)){
+	  //parents value is less than the minimum of children. Hence update the 
+	  //value of the parent 
+	  parent_stat.b_twb_mass_l.set(row,col,min_children.get(row,col));
+	}
+	
+	if(parent_stat.b_twb_mass_u.get(row,col)>max_children.get(row,col)){
+	  //parents value is greater than the maximmum of children. 
+	  //Hence update the value of the parent
+	  parent_stat.b_twb_mass_u.set(row,col,max_children.get(row,col));
+	}      
+      }
+    }
   }
 
- 
-  //Now compare with parent...
- 
-   for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
-    for(index_t row=0;row<parent_stat.b_twb_mass_l.n_rows();row++){
+  //THe pruning criteria is Frobenius norm pruning...
 
-      if(parent_stat.b_twb_mass_l.get(row,col)<min_children.get(row,col)){
-	//parents value is less than the minimum of children. Hence update the 
-	//value of the parent 
-	parent_stat.b_twb_mass_l.set(row,col,min_children.get(row,col));
+  else{
+    //Will update the frobenius norm as follows
+    // lower_of_parent=max (parent, min (children))  
+    // upper_of_parent=min(parent, max(children))
+    
+    //lets first find out the squared frobenius norms of the lower
+    //bound masses of both the children
+
+    double sqd_frobenius_norm_of_left_child= SquaredFrobeniusNorm_(left_stat->b_twb_mass_l);
+    double sqd_frobenius_norm_of_right_child=SquaredFrobeniusNorm_(right_stat->b_twb_mass_l);
+
+    //Now compare it with that of the parent
+    
+    double sqd_frobenius_norm_of_parent=SquaredFrobeniusNorm_(parent_stat.b_twb_mass_l);
+
+    if(sqd_frobenius_norm_of_left_child <sqd_frobenius_norm_of_right_child)
+      {
+	//This means the left child has lower frobenius norm compared
+	//to the right child
+
+	if(sqd_frobenius_norm_of_parent < sqd_frobenius_norm_of_left_child){
+
+	  // Change the parents mass_l matrix
+	  parent_stat.b_twb_mass_l.CopyValues(left_stat->b_twb_mass_l);
+	}
+	
       }
+    else{
 
-      if(parent_stat.b_twb_mass_u.get(row,col)>max_children.get(row,col)){
-	//parents value is greater than the maximmum of children. 
-	//Hence update the value of the parent
-	parent_stat.b_twb_mass_u.set(row,col,max_children.get(row,col));
-      }      
+      //The right child has lesser valued frobenius norm for mass_l
+      if(sqd_frobenius_norm_of_parent < sqd_frobenius_norm_of_right_child){
+	
+	// Change the parents mass_l matrix
+	parent_stat.b_twb_mass_l.CopyValues(right_stat->b_twb_mass_l);
+      }
+     
     }
-   }
+
+    //A similar logic holds for mass_u values
+
+    sqd_frobenius_norm_of_left_child=SquaredFrobeniusNorm_(left_stat->b_twb_mass_u);
+    sqd_frobenius_norm_of_right_child=SquaredFrobeniusNorm_(right_stat->b_twb_mass_u);
+
+    //Now compare it with that of the parent
+
+    sqd_frobenius_norm_of_parent=SquaredFrobeniusNorm_(parent_stat.b_twb_mass_u);
+
+    if(sqd_frobenius_norm_of_left_child > sqd_frobenius_norm_of_right_child){
+
+      //So the left child has higher frobenius norm
+      if(sqd_frobenius_norm_of_parent > sqd_frobenius_norm_of_left_child){
+	//the parent has a higher frobenius norm. So decrease it
+	parent_stat.b_twb_mass_u.CopyValues(left_stat->b_twb_mass_u);
+      }
+      
+    }
+    else{
+      //So the right child has higher frobenius norm.
+      if(sqd_frobenius_norm_of_parent > sqd_frobenius_norm_of_right_child){
+	//the parent has higher frobenius norm. Hence decrease it
+
+	parent_stat.b_twb_mass_u.CopyValues(right_stat->b_twb_mass_u);
+
+      }
+      
+    }
+  }
 }
 
 
@@ -393,72 +536,145 @@ MergeChildBoundsB_TWY_( FastRegression<TKernel>::
 		        FastRegression<TKernel>::
 			FastRegressionStat &parent_stat){
 
-  //This means we want to merge the bounds of b_twb
-  //b_twb_mass_l_parent= 
-  //max(min(b_twy_mass_l,left_child,b_twy_mass_l_right_child),
-  //    parent)
-  
-  //So lets find the componentwise minimum and maximum 
 
-  Matrix max_children;
-  Matrix min_children;
-  max_children.Init(parent_stat.b_twy_mass_l.n_rows(), 
-		    parent_stat.b_twy_mass_l.n_cols());
-
-  min_children.Init(parent_stat.b_twy_mass_l.n_rows(), 
-		    parent_stat.b_twy_mass_l.n_cols());
-
-
-  for(index_t col=0;col<parent_stat.b_twy_mass_l.n_cols();col++){
-    for(index_t row=0;row<parent_stat.b_twy_mass_l.n_rows();row++){
-
-      if(left_stat->b_twy_mass_l.get(row,col) <= 
-	 right_stat->b_twy_mass_l.get(row,col)){
-
-	//left child has lesser mass_l value
-
-	min_children.set(row,col,
-			 left_stat->b_twy_mass_l.get(row,col));
-
-	max_children.set(row,col,
-			 right_stat->b_twy_mass_l.get(row,col));
-      }
-
-      else{
-	//right child has lesser mass-l value
+  if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
+    //This means we want to merge the bounds of b_twb
+    //b_twb_mass_l_parent= 
+    //max(min(b_twy_mass_l,left_child,b_twy_mass_l_right_child),
+    //    parent)
+    
+    //So lets find the componentwise minimum and maximum 
+    
+    Matrix max_children;
+    Matrix min_children;
+    max_children.Init(parent_stat.b_twy_mass_l.n_rows(), 
+		      parent_stat.b_twy_mass_l.n_cols());
+    
+    min_children.Init(parent_stat.b_twy_mass_l.n_rows(), 
+		      parent_stat.b_twy_mass_l.n_cols());
+    
+    
+    for(index_t col=0;col<parent_stat.b_twy_mass_l.n_cols();col++){
+      for(index_t row=0;row<parent_stat.b_twy_mass_l.n_rows();row++){
+	
+	if(left_stat->b_twy_mass_l.get(row,col) <= 
+	   right_stat->b_twy_mass_l.get(row,col)){
 	  
-	min_children.set(row,col,
-			 right_stat->b_twy_mass_l.get(row,col));
+	  //left child has lesser mass_l value
 	  
-	max_children.set(row,col,
-			 left_stat->b_twy_mass_l.get(row,col));
-
+	  min_children.set(row,col,
+			   left_stat->b_twy_mass_l.get(row,col));
+	  
+	  max_children.set(row,col,
+			   right_stat->b_twy_mass_l.get(row,col));
+	}
+	
+	else{
+	  //right child has lesser mass-l value
+	  
+	  min_children.set(row,col,
+			   right_stat->b_twy_mass_l.get(row,col));
+	  
+	  max_children.set(row,col,
+			   left_stat->b_twy_mass_l.get(row,col));
+	  
+	}
+      }   
+    }
+    
+    //Now compare with parent...
+    
+    for(index_t col=0;col<parent_stat.b_twy_mass_l.n_cols();col++){
+      for(index_t row=0;row<parent_stat.b_twy_mass_l.n_rows();row++){
+	
+	if(parent_stat.b_twy_mass_l.get(row,col)<min_children.get(row,col)){
+	  //parents value is less than the minimum of children. Hence update the 
+	  //value of the parent
+	  parent_stat.b_twy_mass_l.set(row,col,min_children.get(row,col));
+	}
+	
+	if(parent_stat.b_twy_mass_u.get(row,col)> max_children.get(row,col)){
+	  //parents value is more than the maximmum of children. 
+	  //Hence update the value of the parent
+	  
+	  parent_stat.b_twy_mass_u.set(row,col,max_children.get(row,col));
+	}      
       }
-    }   
+    }
   }
+  //IF Pruning criteria is Frobenius Norm Pruning criteria.....
+  else{
 
-  //Now compare with parent...
- 
-  for(index_t col=0;col<parent_stat.b_twy_mass_l.n_cols();col++){
-    for(index_t row=0;row<parent_stat.b_twy_mass_l.n_rows();row++){
+    //Will update the frobenius norm as follows
+    // lower_of_parent=max (parent, min (children))  
+    // upper_of_parent=min(parent, max(children))
 
-      if(parent_stat.b_twy_mass_l.get(row,col)<min_children.get(row,col)){
-	//parents value is less than the minimum of children. Hence update the 
-	//value of the parent
-	parent_stat.b_twy_mass_l.set(row,col,min_children.get(row,col));
+    //lets first frind out the squared frobenius norms of the lower
+    //bound masses of both the children
+
+    double sqd_frobenius_norm_of_left_child=SquaredFrobeniusNorm_(left_stat->b_twy_mass_l);
+    double sqd_frobenius_norm_of_right_child=SquaredFrobeniusNorm_(right_stat->b_twy_mass_l);
+
+    //Now compare it with that of the parent
+    
+    double sqd_frobenius_norm_of_parent=SquaredFrobeniusNorm_(parent_stat.b_twy_mass_l);
+
+    if(sqd_frobenius_norm_of_left_child <sqd_frobenius_norm_of_right_child)
+      {
+	//This means the left child has lower frobenius norm compared
+	//to the right child
+
+	if(sqd_frobenius_norm_of_parent < sqd_frobenius_norm_of_left_child){
+
+	  // Change the parents mass_l matrix
+	  parent_stat.b_twy_mass_l.CopyValues(left_stat->b_twy_mass_l);
+	}
+	else{
+	  //Do nothing
+	}
+      }
+    else{
+
+      //The right child has lesser valued frobenius norm for mass_l
+      if(sqd_frobenius_norm_of_parent < sqd_frobenius_norm_of_right_child){
+	
+	// Change the parents mass_l matrix
+	parent_stat.b_twy_mass_l.CopyValues(right_stat->b_twy_mass_l);
+      }
+      else{
+	//Do nothing
+      } 
+    }
+
+    //A similar logic for mass_u values
+    sqd_frobenius_norm_of_left_child=SquaredFrobeniusNorm_(left_stat->b_twy_mass_u);
+    sqd_frobenius_norm_of_right_child=SquaredFrobeniusNorm_(right_stat->b_twy_mass_u);
+
+    //Now compute it with that of the parent
+
+    sqd_frobenius_norm_of_parent=SquaredFrobeniusNorm_(parent_stat.b_twy_mass_u);
+
+    if(sqd_frobenius_norm_of_left_child < sqd_frobenius_norm_of_right_child){
+      //This means that the right child has higher mass_u
+      if(sqd_frobenius_norm_of_parent > sqd_frobenius_norm_of_right_child){
+
+	//Decrease the mass_u value
+	parent_stat.b_twy_mass_u.CopyValues(right_stat->b_twy_mass_u);
+
+      }
+    }
+    else{
+      //the left child has higher mass_u value
+      if(sqd_frobenius_norm_of_parent > sqd_frobenius_norm_of_left_child){
+
+	//Decrease the mass_u value
+	parent_stat.b_twy_mass_u.CopyValues(left_stat->b_twy_mass_u);
+
       }
 
-      if(parent_stat.b_twy_mass_u.get(row,col)> max_children.get(row,col)){
-	//parents value is more than the maximmum of children. 
-	//Hence update the value of the parent
-
-	parent_stat.b_twy_mass_u.set(row,col,max_children.get(row,col));
-      }      
     }
   }
 }
-
-
 
 /* This function merges child bounds with that of the parent
  * and the children
@@ -504,7 +720,7 @@ MergeChildBounds_( Tree *qnode,check_for_prune_t flag){
  *  qunatities will be calculated exhaustively 
  */
 
-
+//This function depends on the pruning criteria.......................
 template <typename TKernel>
 
 void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
@@ -513,29 +729,13 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
 
   //more_u <- more_u - rnode->stat().b_ty
 
-  printf("qnode start is %d and qnode end id %d\n",qnode->begin(),qnode->end());
- 
- printf("rnode start is %d and rnode end id %d\n",rnode->begin(),rnode->end());
-  
-  printf("Hit base regression of BTWY..\n");
-
   la::SubFrom (rnode->stat().b_ty, &qnode->stat().b_twy_more_u);
 
   //Having subtracted calculate B^TWY exhaustively
   //One can do this by using linear algebra routines available 
   //in LaPack. however we shall not use them because B can be a 
   //very large matrix
-  //printf("Came to regression BTWY base..\n");
- 
-  //printf("In base regression of BTWY..\n");
-  //printf("qnode->start=%d\n",qnode->begin());
-  //printf("qnode->end=%d\n",qnode->end());
-
-  //printf("In base regression of BTWY..\n");
-  //printf("rnode->start=%d\n",qnode->begin());
-  //printf("rnode->end=%d\n",qnode->end());
-
-
+  
   for(index_t q=qnode->begin();q<qnode->end();q++){
     
     //Get Query point
@@ -589,74 +789,120 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
   }
   //Loop over each point and set the max and min 
 
-  Matrix min_l;
-  min_l.Init(rset_.n_rows()+1,1);
-
-  Matrix max_u;
-  max_u.Init(rset_.n_rows()+1,1);
-
-  min_l.SetAll(DBL_MAX);
-  max_u.SetAll(DBL_MIN);
-
-
-  //Iterate over each row 
-  for(index_t row=0;row<min_l.n_rows();row++){
-
-    //iterate over each column
-    for(index_t col=0;col<min_l.n_cols();col++){
-
-      //iterate over each query point
-      for(index_t q = qnode->begin (); q < qnode->end (); q++){
-
-	if(b_twy_l_estimate_[q].get(row,col) + 
-	   qnode->stat().b_twy_more_l.get(row,col) < min_l.get(row,col)){
-	  
-	  double val=(b_twy_l_estimate_[q].get(row,col) + 
-		      qnode->stat().b_twy_more_l.get(row,col));
-	  min_l.set(row,col,val);
-	  
-	}
+  if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
+    Matrix min_l;
+    min_l.Init(rset_.n_rows()+1,1);
+    
+    Matrix max_u;
+    max_u.Init(rset_.n_rows()+1,1);
+    
+    min_l.SetAll(DBL_MAX);
+    max_u.SetAll(DBL_MIN);
+    
+    
+    //Iterate over each row 
+    for(index_t row=0;row<min_l.n_rows();row++){
+      
+      //iterate over each column
+      for(index_t col=0;col<min_l.n_cols();col++){
 	
-	if(b_twy_u_estimate_[q].get(row,col) + 
-	   qnode->stat().b_twy_more_u.get(row,col) > max_u.get(row,col)){
+	//iterate over each query point
+	for(index_t q = qnode->begin (); q < qnode->end (); q++){
 	  
-	  double val=b_twy_u_estimate_[q].get(row,col) + 
-	    qnode->stat().b_twy_more_u.get(row,col);
-	  max_u.set(row,col,val);
+	  if(b_twy_l_estimate_[q].get(row,col) + 
+	     qnode->stat().b_twy_more_l.get(row,col) < min_l.get(row,col)){
+	    
+	    double val=(b_twy_l_estimate_[q].get(row,col) + 
+			qnode->stat().b_twy_more_l.get(row,col));
+	    min_l.set(row,col,val);
+	    
+	  }
 	  
+	  if(b_twy_u_estimate_[q].get(row,col) + 
+	     qnode->stat().b_twy_more_u.get(row,col) > max_u.get(row,col)){
+	    
+	    double val=b_twy_u_estimate_[q].get(row,col) + 
+	      qnode->stat().b_twy_more_u.get(row,col);
+	    max_u.set(row,col,val);
+	    
+	  }
 	}
       }
     }
+    
+    //having looped over each point
+    
+    qnode->stat().b_twy_mass_u.CopyValues(max_u);
+    qnode->stat().b_twy_mass_l.CopyValues(min_l);
+    
   }
+  else{
 
-  //having looped over each point
-
-  qnode->stat().b_twy_mass_u.CopyValues(max_u);
-  qnode->stat().b_twy_mass_l.CopyValues(min_l);
-
+    //We are doing frobenius norm pruning
+    /** get a tighter lower and upper boiounf by looping over each query
+     *  point to find that particular query point that has the least sqd
+     *  frobenius norm of the matrix b_twy_l_estimate_[q]+qnode->stat().b_twy_more_l
+     */
+    double min_norm=DBL_MAX;
+    double max_norm=DBL_MIN;
+    Matrix temp;
+    
+    //The min_pointer and the max_pointer store the index number of the
+    //query point which possibly has the least and the highest squared frobenius norm
+    
+    index_t min_pointer;
+    index_t max_pointer;
+    
+    temp.Init(rset_.n_rows()+1,1);
+    for(index_t i=qnode->begin();i<qnode->end();i++){
+      
+      //look for the lower bound
+      la::AddOverwrite(b_twy_l_estimate_[i],qnode->stat().b_twy_more_l,&temp);
+      
+      double var=SquaredFrobeniusNorm_(temp);
+      if(var< min_norm){
+	
+	min_pointer=i;
+	min_norm=var;
+      }
+      
+      //Look for the upper bound
+      la::AddOverwrite(b_twy_u_estimate_[i],qnode->stat().b_twy_more_u,&temp);
+      var=SquaredFrobeniusNorm_(temp);
+      if(var>max_norm){
+	
+	max_pointer=i;
+	max_norm=var;
+      }
+      
+    }
+    
+    //Once done with the looping process set up the mass_l and mass_u values
+    
+    la::AddOverwrite(b_twy_l_estimate_[min_pointer],qnode->stat().b_twy_more_l,&qnode->stat().b_twy_mass_l);
+    la::AddOverwrite(b_twy_u_estimate_[max_pointer],qnode->stat().b_twy_more_u,&qnode->stat().b_twy_mass_u);
+    
+  }
 }
+
+
 
 template <typename TKernel>
 void FastRegression<TKernel>::FRegressionBaseB_TWB_(Tree *qnode,Tree *rnode){
 
-  printf("qnode start is %d and qnode end id %d\n",qnode->begin(),qnode->end());
-
-  printf("rnode start is %d and rnode end id %d\n",rnode->begin(),rnode->end());
- 
-  printf("Hit base regression of BTWB........\n\n");
 
   la::SubFrom (rnode->stat().b_tb, &qnode->stat().b_twb_more_u);
-
-
- for (index_t q = qnode->begin(); q < qnode->end(); q++){	//for each query point
+  
+  
+  for (index_t q = qnode->begin(); q < qnode->end(); q++){	//for each query point
     
     const double *q_col = qset_.GetColumnPtr (q);
-
+    
     for (index_t r = rnode->begin(); r < rnode->end(); r++){ //for each reference point
-
+      
       //Get reference point
       const double *r_col = rset_.GetColumnPtr (r);
-
+      
       // pairwise distance and kernel value
       double dsqd =
 	la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
@@ -729,55 +975,107 @@ void FastRegression<TKernel>::FRegressionBaseB_TWB_(Tree *qnode,Tree *rnode){
     }
  }
 
- //Loop over each point and set the max and min 
-
-  Matrix min_l;
-  min_l.Init(rset_.n_rows()+1,rset_.n_rows()+1);
-
-  Matrix max_u;
-  max_u.Init(rset_.n_rows()+1,rset_.n_rows()+1);
-
-  min_l.SetAll(DBL_MAX);
-  max_u.SetAll(DBL_MIN);
-
-
-  //Iterate over each row 
-  for(index_t row=0;row<min_l.n_rows();row++){
-
-    //iterate over each column
-    for(index_t col=0;col<min_l.n_cols();col++){
-
-      //iterate over each query point
-      for(index_t q = qnode->begin (); q < qnode->end (); q++){
-
-	if(b_twb_l_estimate_[q].get(row,col) + 
-	   qnode->stat().b_twb_more_l.get(row,col) < min_l.get(row,col)){
-	  
-	  double val=(b_twb_l_estimate_[q].get(row,col) + 
-		      qnode->stat().b_twb_more_l.get(row,col));
-	  min_l.set(row,col,val);
-	  
-	}
+  if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
+    //Loop over each point and set the max and min 
+    
+    Matrix min_l;
+    min_l.Init(rset_.n_rows()+1,rset_.n_rows()+1);
+    
+    Matrix max_u;
+    max_u.Init(rset_.n_rows()+1,rset_.n_rows()+1);
+    
+    min_l.SetAll(DBL_MAX);
+    max_u.SetAll(DBL_MIN);
+    
+    
+    //Iterate over each row 
+    for(index_t row=0;row<min_l.n_rows();row++){
+      
+      //iterate over each column
+      for(index_t col=0;col<min_l.n_cols();col++){
 	
-	if(b_twb_u_estimate_[q].get(row,col) + 
-	   qnode->stat().b_twb_more_u.get(row,col) > max_u.get(row,col)){
+	//iterate over each query point
+	for(index_t q = qnode->begin (); q < qnode->end (); q++){
 	  
-	  double val=b_twb_u_estimate_[q].get(row,col) + 
-	    qnode->stat().b_twb_more_u.get(row,col);
-	  max_u.set(row,col,val);
+	  if(b_twb_l_estimate_[q].get(row,col) + 
+	     qnode->stat().b_twb_more_l.get(row,col) < min_l.get(row,col)){
+	    
+	    double val=(b_twb_l_estimate_[q].get(row,col) + 
+			qnode->stat().b_twb_more_l.get(row,col));
+	    min_l.set(row,col,val);
+	    
+	  }
 	  
+	  if(b_twb_u_estimate_[q].get(row,col) + 
+	     qnode->stat().b_twb_more_u.get(row,col) > max_u.get(row,col)){
+	    
+	    double val=b_twb_u_estimate_[q].get(row,col) + 
+	      qnode->stat().b_twb_more_u.get(row,col);
+	    max_u.set(row,col,val);
+	    
+	  }
 	}
       }
     }
+    
+    //having looped over each point
+    
+    qnode->stat().b_twb_mass_u.CopyValues(max_u);
+    qnode->stat().b_twb_mass_l.CopyValues(min_l);
+    
+  }
+  //We are interested in frobenius norm pruning
+  else{
+    
+    
+
+ //We are doing frobenius norm pruning
+  /** get a tighter lower and upper boiounf by looping over each query
+   *  point to find that particular query point that has the least sqd
+   *  frobenius norm of the matrix b_twy_l_estimate_[q]+qnode->stat().b_twy_more_l
+  */
+  double min_norm=DBL_MAX;
+  double max_norm=DBL_MIN;
+  Matrix temp;
+
+  //The min_pointer and the max_pointer store the index number of the
+  //query point which possibly has the least and the highest squared frobenius norm
+
+  index_t min_pointer;
+  index_t max_pointer;
+
+  temp.Init(rset_.n_rows()+1,rset_.n_rows()+1);
+  for(index_t i=qnode->begin();i<qnode->end();i++){
+
+    //look for the lower bound
+    la::AddOverwrite(b_twb_l_estimate_[i],qnode->stat().b_twb_more_l,&temp);
+    
+    double var=SquaredFrobeniusNorm_(temp);
+    if(var< min_norm){
+
+      min_pointer=i;
+      min_norm=var;
+    }
+
+    //Look for the upper bound
+    la::AddOverwrite(b_twb_u_estimate_[i],qnode->stat().b_twb_more_u,&temp);
+    var=SquaredFrobeniusNorm_(temp);
+    if(var>max_norm){
+      
+      max_pointer=i;
+      max_norm=var;
+    }
+    
   }
 
-  //having looped over each point
+  //Once done with the looping process set up the mass_l and mass_u values
 
-  qnode->stat().b_twb_mass_u.CopyValues(max_u);
-  qnode->stat().b_twb_mass_l.CopyValues(min_l);
+  la::AddOverwrite(b_twb_l_estimate_[min_pointer],qnode->stat().b_twb_more_l,&qnode->stat().b_twb_mass_l);
+  la::AddOverwrite(b_twb_u_estimate_[max_pointer],qnode->stat().b_twb_more_u,&qnode->stat().b_twb_mass_u);
 
+  }
 }
-
+  
    
 
 
