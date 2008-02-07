@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   local_linear.PrintDebug();
 
   // Do naive algorithm.
-  NaiveLpr<EpanKernel> naive_local_linear;
+  NaiveLocalLinear<EpanKernel> naive_local_linear;
   naive_local_linear.Init(queries, references, reference_targets,
 			  local_linear_module);
   naive_local_linear.Compute();
