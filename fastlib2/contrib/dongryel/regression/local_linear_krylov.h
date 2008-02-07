@@ -168,20 +168,10 @@ class LocalLinearKrylov {
 	const double *point = dataset.GetColumnPtr(i + start);
 
 	for(index_t j = 1; j <= dataset.n_rows(); j++) {
-	  /*
-	  sum_coordinates_[j] += point[j - 1] / ((double) dataset.n_cols());
-	  l1_norm_sum_coordinates_ += point[j - 1] /
-	    ((double) dataset.n_cols());
-	  */
 	  sum_coordinates_[j] += point[j - 1];
 	  l1_norm_sum_coordinates_ += point[j - 1];
 	}
       }
-      /*
-      sum_coordinates_[0] = ((double) count) / ((double) dataset.n_cols());
-      l1_norm_sum_coordinates_ += ((double) count) / 
-	((double) dataset.n_cols());
-      */
       sum_coordinates_[0] = ((double) count);
       l1_norm_sum_coordinates_ += ((double) count);
     }
@@ -724,7 +714,8 @@ class LocalLinearKrylov {
     const char *fname = NULL;
     
     if((fname = fx_param_str(module_, 
-			     "fast_local_linear_output", NULL)) != NULL) {
+			     "fast_local_linear_output", 
+			     "fast_local_linear_output.txt")) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {

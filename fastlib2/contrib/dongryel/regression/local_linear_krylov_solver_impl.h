@@ -374,6 +374,7 @@ void LocalLinearKrylov<TKernel>::DotProductBetweenTwoBounds_
   positive_dot_product_range.lo = positive_dot_product_range.hi = 0;
   
   if(lanczos_vectors_bound.get(0).lo > 0) {
+    positive_dot_product_range.lo += lanczos_vectors_bound.get(0).lo;
     positive_dot_product_range.hi += lanczos_vectors_bound.get(0).hi;
   }
   else if(lanczos_vectors_bound.get(0).Contains(0)) {
@@ -391,6 +392,8 @@ void LocalLinearKrylov<TKernel>::DotProductBetweenTwoBounds_
     const DRange &reference_node_directional_bound = rnode->bound().get(d - 1);
     
     if(lanczos_directional_bound.lo > 0) {
+      positive_dot_product_range.lo += lanczos_directional_bound.lo *
+	reference_node_directional_bound.lo;
       positive_dot_product_range.hi += lanczos_directional_bound.hi *
 	reference_node_directional_bound.hi;
     }
@@ -407,6 +410,25 @@ void LocalLinearKrylov<TKernel>::DotProductBetweenTwoBounds_
 	reference_node_directional_bound.lo;
     }
   } // End of looping over each component...
+
+  /*
+  for(index_t d = 0; d <= dimension_; d++) {
+    printf("Lanczos vector: [%g %g]\n", lanczos_vectors_bound.get(d).lo,
+	   lanczos_vectors_bound.get(d).hi);
+    if(d > 0) {
+      printf("Reference: [%g %g]\n", rnode->bound().get(d - 1).lo,
+	     rnode->bound().get(d - 1).hi);
+    }
+    else {
+      printf("Reference: [%g %g]\n", (double) rnode->count(), 
+	     (double) rnode->count());
+    }
+  }
+
+  printf("Bounds: %g %g %g %g\n\n", negative_dot_product_range.lo,
+	 negative_dot_product_range.hi, positive_dot_product_range.lo,
+	 positive_dot_product_range.hi);
+  */
 }
 
 template<typename TKernel>
@@ -551,6 +573,14 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeLanczosMultiplier_
 		q_neg_vector_e);
       la::AddTo(row_length_, (q_stat.postponed_neg_ll_vector_u_).ptr(),
 		q_neg_vector_u);
+
+      // Normalize
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_vector_l);
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_vector_e);
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_vector_u);
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_neg_vector_l);
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_neg_vector_e);
+      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_neg_vector_u);
     }
   }
   else {
@@ -669,7 +699,7 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
     DotProductBetweenTwoBounds_(qroot_, rroot_, 
 				root_negative_dot_product_range,
 				root_positive_dot_product_range);
-    
+
     // Initialize the query tree bound statistics.
     InitializeQueryTreeSumBound_(qroot_, root_negative_dot_product_range,
 				 root_positive_dot_product_range);

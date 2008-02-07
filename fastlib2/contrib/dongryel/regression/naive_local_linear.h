@@ -190,7 +190,8 @@ class NaiveLocalLinear {
     const char *fname = NULL;
 
     if((fname = fx_param_str(module_, 
-			     "naive_local_linear_output", NULL)) != NULL) {
+			     "naive_local_linear_output", 
+			     "naive_local_linear_output.txt")) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
