@@ -193,7 +193,7 @@ bool LocalLinearKrylov<TKernel>::PrunableSolver_
   // Compute the L1 norm of the most refined lower bound.
   double l1_norm_vector_l = L1Norm_(new_vector_l_);
   double l1_norm_neg_vector_u = L1Norm_(new_neg_vector_u_);
-  
+
   // Compute the allowed amount of error for pruning the given query
   // and reference pair.
   double allowed_err = 
@@ -210,7 +210,7 @@ bool LocalLinearKrylov<TKernel>::PrunableSolver_
 		       negative_dot_product_range.lo *
 		       kernel_value_range.hi)) *
     rnode->stat().l1_norm_sum_coordinates_;
-  
+
   // check pruning condition  
   return (used_error <= allowed_err);
 }
@@ -420,14 +420,14 @@ void LocalLinearKrylov<TKernel>::DotProductBetweenTwoBounds_
 	     rnode->bound().get(d - 1).hi);
     }
     else {
-      printf("Reference: [%g %g]\n", (double) rnode->count(), 
-	     (double) rnode->count());
+      printf("Reference: [1 1]\n");
     }
   }
 
   printf("Bounds: %g %g %g %g\n\n", negative_dot_product_range.lo,
 	 negative_dot_product_range.hi, positive_dot_product_range.lo,
 	 positive_dot_product_range.hi);
+  exit(0);
   */
 }
 
@@ -573,14 +573,6 @@ void LocalLinearKrylov<TKernel>::FinalizeQueryTreeLanczosMultiplier_
 		q_neg_vector_e);
       la::AddTo(row_length_, (q_stat.postponed_neg_ll_vector_u_).ptr(),
 		q_neg_vector_u);
-
-      // Normalize
-      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_vector_l);
-      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_vector_e);
-      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_vector_u);
-      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_neg_vector_l);
-      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_neg_vector_e);
-      la::Scale(row_length_, 1.0 / ((double) rset_.n_cols()), q_neg_vector_u);
     }
   }
   else {
@@ -795,15 +787,17 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
 	query_should_exit_the_loop[q] = true;
       }
       
-      // Update solution.
-      la::AddExpert(row_length_, g_vec[q] * c_vec[q], w_mat.GetColumnPtr(q),
-		    solution_vectors_e_.GetColumnPtr(q));
-      la::AddExpert(row_length_, g_vec[q] * s_vec[q], current_lanczos_vector,
-		    solution_vectors_e_.GetColumnPtr(q));
-
-      la::Scale(row_length_, s_vec[q], w_mat.GetColumnPtr(q));
-      la::AddExpert(row_length_, -c_vec[q], current_lanczos_vector,
-		    w_mat.GetColumnPtr(q));
+      // Update solution...
+      if(!query_should_exit_the_loop[q]) {
+	la::AddExpert(row_length_, g_vec[q] * c_vec[q], w_mat.GetColumnPtr(q),
+		      solution_vectors_e_.GetColumnPtr(q));
+	la::AddExpert(row_length_, g_vec[q] * s_vec[q], current_lanczos_vector,
+		      solution_vectors_e_.GetColumnPtr(q));
+	
+	la::Scale(row_length_, s_vec[q], w_mat.GetColumnPtr(q));
+	la::AddExpert(row_length_, -c_vec[q], current_lanczos_vector,
+		      w_mat.GetColumnPtr(q));
+      }
 
     } // end of iterating over each query point.
 

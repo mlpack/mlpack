@@ -591,7 +591,7 @@ class LocalLinearKrylov {
     num_finite_difference_prunes_ = 0;
     
     // Set relative error.
-    relative_error_ = fx_param_double(module_, "relative_error", 0.1);
+    relative_error_ = fx_param_double(module_, "relative_error", 0.01);
 
     // The computation proceeds in three phases:
     //
