@@ -40,11 +40,15 @@ int main(int argc, char *argv[]) {
   data::Load(queries_file_name, &queries);
   data::Load(reference_targets_file_name, &reference_targets);
 
-  // Scale the datasets.
+  // We assume that the reference dataset lies in the positive
+  // quadrant for simplifying the algorithmic implementation. Scale
+  // the datasets to fit in the hypercube. This should be replaced
+  // with more general dataset scaling operation, requested by the
+  // users.
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Declare local linear krylov object.
-  LocalLinearKrylov<GaussianKernel> local_linear;
+  LocalLinearKrylov<EpanKernel> local_linear;
   local_linear.Init(queries, references, reference_targets,
 		    local_linear_module);
   local_linear.Compute();

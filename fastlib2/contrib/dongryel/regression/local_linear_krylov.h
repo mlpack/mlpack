@@ -168,12 +168,14 @@ class LocalLinearKrylov {
 	const double *point = dataset.GetColumnPtr(i + start);
 
 	for(index_t j = 1; j <= dataset.n_rows(); j++) {
-	  sum_coordinates_[j] += point[j - 1];
-	  l1_norm_sum_coordinates_ += point[j - 1];
+	  sum_coordinates_[j] += point[j - 1] / ((double) dataset.n_cols());
+	  l1_norm_sum_coordinates_ += point[j - 1] /
+	    ((double) dataset.n_cols());
 	}
       }
-      sum_coordinates_[0] = count;
-      l1_norm_sum_coordinates_ += count;
+      sum_coordinates_[0] = ((double) count) / ((double) dataset.n_cols());
+      l1_norm_sum_coordinates_ += ((double) count) / 
+	((double) dataset.n_cols());
     }
 
     void Init(const Matrix &dataset, index_t start, index_t count,
@@ -330,6 +332,12 @@ class LocalLinearKrylov {
   Vector neg_vector_u_change_;
 
   ////////// Private Member Functions //////////
+
+  /** @brief This function tests the first phase computation (i.e.,
+   *         the computation of B^T W(q) Y vectors for each query
+   *         point).
+   */
+  void TestRightHandSideComputation_(const Matrix &approximated);
 
   void NormalizeMatrixColumnVectors_(Matrix &m, Vector &lengths) {
     
@@ -521,7 +529,7 @@ class LocalLinearKrylov {
 
       // Loop over each dimension.
       for(index_t j = 1; j <= dimension_; j++) {
-	regression_estimates_[i] += query_pt[j - 1] * query_pt_solution[i];
+	regression_estimates_[i] += query_pt[j - 1] * query_pt_solution[j];
       }
     }
   }
@@ -575,7 +583,7 @@ class LocalLinearKrylov {
     num_finite_difference_prunes_ = 0;
     
     // Set relative error.
-    relative_error_ = fx_param_double(module_, "relative_error", 0.01);
+    relative_error_ = fx_param_double(module_, "relative_error", 0.1);
 
     // The computation proceeds in three phases:
     //
@@ -592,10 +600,6 @@ class LocalLinearKrylov {
     printf("Starting Phase 1...\n");
     ComputeRightHandSides_();
     printf("Phase 1 completed...\n");
-    vector_e_.PrintDebug();
-    
-    exit(0);
-
 
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
@@ -719,6 +723,7 @@ class LocalLinearKrylov {
 #define INSIDE_LOCAL_LINEAR_KRYLOV_H
 #include "local_linear_krylov_setup_impl.h"
 #include "local_linear_krylov_solver_impl.h"
+#include "local_linear_krylov_test.h"
 #undef INSIDE_LOCAL_LINEAR_KRYLOV_H
 
 #endif
