@@ -35,16 +35,18 @@ t = linspace(0,1,1000);
 
 load s1s2_10;
 s = [s1(t); s2(t)]';
-z = normrnd(zeros(length(t), N), .2);
+%z = normrnd(zeros(length(t), N), .2);
 
 data = s * x;
 
-data = data + z;
+%data = data + z;
 
-indices = 1:10:1000;
-t = t(indices);
-data = data(indices,:);
+%indices = 1:10:1000;
+%t = t(indices);
+%data = data(indices,:);
 
 
 
 %data = noisy_data;
+
+fprintf('done loading data\n');
