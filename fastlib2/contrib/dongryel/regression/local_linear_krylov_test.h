@@ -6,12 +6,17 @@
 
 template<typename TKernel>
 void LocalLinearKrylov<TKernel>::MaximumRelativeErrorInL1Norm_
-(const Matrix &exact_vector_e, const Matrix &approximated) {
+(const Matrix &exact_vector_e, const Matrix &approximated,
+ const ArrayList<bool> *query_should_exit_the_loop) {
   
   double max_relative_error = 0;
   
   for(index_t q = 0; q < qset_.n_cols(); q++) {
     
+    if((*query_should_exit_the_loop)[q]) {
+      continue;
+    }
+
     // get the column vector containing the approximation.
     const double *approx_column = approximated.GetColumnPtr(q);
     
@@ -75,12 +80,14 @@ void LocalLinearKrylov<TKernel>::TestRightHandSideComputation_
       
   } // end of iterating over each query point.
 
-  MaximumRelativeErrorInL1Norm_(exact_vector_e, approximated);
+  MaximumRelativeErrorInL1Norm_(exact_vector_e, approximated,
+				NULL);
 }
 
 template<typename TKernel>
 void LocalLinearKrylov<TKernel>::TestKrylovComputation_
-(const Matrix &approximated, const Matrix &current_lanczos_vectors) {
+(const Matrix &approximated, const Matrix &current_lanczos_vectors,
+ const ArrayList<bool> &query_should_exit_the_loop) {
   
   Matrix exact_vector_e;
   exact_vector_e.Init(approximated.n_rows(), approximated.n_cols());
@@ -88,6 +95,11 @@ void LocalLinearKrylov<TKernel>::TestKrylovComputation_
 
   for(index_t q = 0; q < qset_.n_cols(); q++) {
     
+    // If the current query should not be computed, then skip it.
+    if(query_should_exit_the_loop[q]) {
+      continue;
+    }
+
     // get the column vector corresponding to the current query point.
     const double *q_col = qset_.GetColumnPtr(q);
 
@@ -124,8 +136,9 @@ void LocalLinearKrylov<TKernel>::TestKrylovComputation_
       } // end of iterating over each vector component.      
 
     } // end of iterating over each reference point.
-      
+    
   } // end of iterating over each query point.
 
-  MaximumRelativeErrorInL1Norm_(exact_vector_e, approximated);
+  MaximumRelativeErrorInL1Norm_(exact_vector_e, approximated,
+				&query_should_exit_the_loop);
 }
