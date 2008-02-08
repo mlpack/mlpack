@@ -535,7 +535,8 @@ class LocalLinearKrylov {
   void DualtreeSolverBase_(Tree *qnode, Tree *rnode,
 			   Matrix &current_lanczos_vectors,
 			   DRange &root_negative_dot_product_range,
-			   DRange &root_positive_dot_product_range);
+			   DRange &root_positive_dot_product_range,
+			   const ArrayList<bool> &query_should_exit_the_loop);
 
   /** @brief The canonical case for dual-tree based computation of
    *         (B^T W(q) B) z(q)
@@ -545,10 +546,11 @@ class LocalLinearKrylov {
    *  @param current_lanczos_vectors Each column of this matrix is a current
    *                                 Lanczos vector for each query point.
    */
-  void DualtreeSolverCanonical_(Tree *qnode, Tree *rnode,
-				Matrix &current_lanczos_vectors,
-				DRange &root_negative_dot_product_range,
-				DRange &root_positive_dot_product_range);
+  void DualtreeSolverCanonical_
+    (Tree *qnode, Tree *rnode, Matrix &current_lanczos_vectors,
+     DRange &root_negative_dot_product_range,
+     DRange &root_positive_dot_product_range,
+     const ArrayList<bool> &query_should_exit_the_loop);
 
   void SolveLeastSquaresByKrylov_();
 
@@ -572,6 +574,20 @@ class LocalLinearKrylov {
       // Loop over each dimension.
       for(index_t j = 1; j <= dimension_; j++) {
 	regression_estimates_[i] += query_pt[j - 1] * query_pt_solution[j];
+      }
+
+      if(regression_estimates_[i] < 0) {
+	printf("Regression estimate: %g\n", regression_estimates_[i]);
+	for(index_t j = 0; j <= dimension_; j++) {
+	  if(j == 0) {
+	    printf("Query: 1\n");
+	  }
+	  else {
+	    printf("Query: %g\n", query_pt[j - 1]);
+	  }
+	  printf("Solution: %g\n", query_pt_solution[j]);
+	}
+	printf("\n");
       }
     }
   }
