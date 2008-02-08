@@ -714,9 +714,6 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
     // operator the current Lanczos vector).
     la::AddOverwrite(vector_e_, neg_vector_e_, &v_tilde_mat);
 
-    TestKrylovComputation_(v_tilde_mat, current_lanczos_vectors,
-			   query_should_exit_the_loop);
-
     for(index_t q = 0; q < qset_.n_cols(); q++) {
 
       // If the current query is not in the Krylov loop, skip it.
