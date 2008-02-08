@@ -313,11 +313,10 @@ ArrayList<index_t>& FastRegression<TKernel>::get_old_from_new_r(){
   return old_from_new_r_;
 }
 
-//template <typename TKernel>
-//Vector& FastRegression<TKernel>::get_regression_estimate(){
-// return regression_estimate_;
- 
-//}
+template <typename TKernel>
+Vector& FastRegression<TKernel>::get_regression_estimate(){
+ return regression_estimate_;
+ }
 
 /** This function will be called after update bounds has been called in the 
  *  function Prunable. This will flush the owed values as they have already 
@@ -833,15 +832,14 @@ void FastRegression<TKernel>::Compute(){
   
   check_for_prune_t flag=CHECK_FOR_PRUNE_BOTH;
   fx_timer_start(NULL,"fast_timer");
-  FRegression_(qroot_,rroot_,flag);
-  
+  FRegression_(qroot_,rroot_,flag);  
   PostProcess_(qroot_);
+  ObtainRegressionEstimate_();
   fx_timer_stop(NULL,"fast_timer");
+
   //This will print the matrices B^TWB and B^TWY to an output file
   Print_();
-
  
-  //ObtainRegressionEstimate_();
   //PrintRegressionEstimate_();
 }
  
@@ -950,12 +948,13 @@ void FastRegression<TKernel>::Init(Matrix &q_matrix, Matrix &r_matrix,
   rset_weights_.Alias(rset_weights);
    
   /* Construct Query and Reference trees */
+  fx_timer_start(NULL,"tree_create");
   rroot_ = tree::MakeKdTreeMidpoint < Tree >
     (rset_, leaflen, &old_from_new_r_, &new_from_old_r_);
 
   qroot_=tree::MakeKdTreeMidpoint < Tree >
     (qset_, leaflen, NULL, NULL);   
-
+  fx_timer_stop(NULL,"tree_create");
 
   /**Note the init function of the statistics of the node 
    * calculates the
