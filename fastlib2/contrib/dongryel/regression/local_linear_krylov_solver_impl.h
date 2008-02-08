@@ -8,7 +8,8 @@ template<typename TKernel>
 void LocalLinearKrylov<TKernel>::DualtreeSolverBase_
 (Tree *qnode, Tree *rnode, Matrix &current_lanczos_vectors,
  DRange &root_negative_dot_product_range,
- DRange &root_positive_dot_product_range) {
+ DRange &root_positive_dot_product_range,
+ const ArrayList<bool> &query_should_exit_the_loop) {
   
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
@@ -20,6 +21,10 @@ void LocalLinearKrylov<TKernel>::DualtreeSolverBase_
   // for each query point
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
     
+    if(query_should_exit_the_loop[q]) {
+      continue;
+    }
+
     // get query point.
     const double *q_col = qset_.GetColumnPtr(q);
 
@@ -199,15 +204,13 @@ bool LocalLinearKrylov<TKernel>::PrunableSolver_
   la::AddTo(neg_vector_u_change_, &new_neg_vector_u_);
 
   // Compute the L1 norm of the most refined lower bound.
-  double min_l1_norm = MinL1Norm_(new_neg_vector_l_, new_neg_vector_u_,
-				  new_vector_l_, new_vector_u_);
+  double min_l1_norm = L1Norm_(new_neg_vector_u_) + L1Norm_(new_vector_l_);
 
   // Compute the allowed amount of error for pruning the given query
   // and reference pair.
   double allowed_err = 
     (relative_error_ * (rnode->stat().l1_norm_sum_coordinates_) *
-     min_l1_norm) / 
-    (rroot_->stat().l1_norm_sum_coordinates_);
+     min_l1_norm) / (rroot_->stat().l1_norm_sum_coordinates_);
   
   used_error = 0.5 * ((positive_dot_product_range.hi *
 		       kernel_value_range.hi -
@@ -227,7 +230,8 @@ template<typename TKernel>
 void LocalLinearKrylov<TKernel>::DualtreeSolverCanonical_
 (Tree *qnode, Tree *rnode, Matrix &current_lanczos_vectors,
  DRange &root_negative_dot_product_range,
- DRange &root_positive_dot_product_range) {
+ DRange &root_positive_dot_product_range,
+ const ArrayList<bool> &query_should_exit_the_loop) {
     
   // Total amount of used error
   double used_error;
@@ -266,7 +270,8 @@ void LocalLinearKrylov<TKernel>::DualtreeSolverCanonical_
     if(rnode->is_leaf()) {
       DualtreeSolverBase_(qnode, rnode, current_lanczos_vectors,
 			  root_negative_dot_product_range,
-			  root_positive_dot_product_range);
+			  root_positive_dot_product_range,
+			  query_should_exit_the_loop);
       return;
     }
     
@@ -277,10 +282,12 @@ void LocalLinearKrylov<TKernel>::DualtreeSolverCanonical_
 			&rnode_second);
       DualtreeSolverCanonical_(qnode, rnode_first, current_lanczos_vectors,
 			       root_negative_dot_product_range,
-			       root_positive_dot_product_range);
+			       root_positive_dot_product_range,
+			       query_should_exit_the_loop);
       DualtreeSolverCanonical_(qnode, rnode_second, current_lanczos_vectors,
 			       root_negative_dot_product_range,
-			       root_positive_dot_product_range);
+			       root_positive_dot_product_range,
+			       query_should_exit_the_loop);
       return;
     }
   }
@@ -309,10 +316,12 @@ void LocalLinearKrylov<TKernel>::DualtreeSolverCanonical_
 			&qnode_second);
       DualtreeSolverCanonical_(qnode_first, rnode, current_lanczos_vectors,
 			       root_negative_dot_product_range,
-			       root_positive_dot_product_range);
+			       root_positive_dot_product_range,
+			       query_should_exit_the_loop);
       DualtreeSolverCanonical_(qnode_second, rnode, current_lanczos_vectors,
 			       root_negative_dot_product_range,
-			       root_positive_dot_product_range);
+			       root_positive_dot_product_range,
+			       query_should_exit_the_loop);
     }
     
     // for non-leaf reference node, expand both query and reference nodes
@@ -324,22 +333,26 @@ void LocalLinearKrylov<TKernel>::DualtreeSolverCanonical_
       DualtreeSolverCanonical_(qnode->left(), rnode_first,
 			       current_lanczos_vectors,
 			       root_negative_dot_product_range,
-			       root_positive_dot_product_range);
+			       root_positive_dot_product_range,
+			       query_should_exit_the_loop);
       DualtreeSolverCanonical_(qnode->left(), rnode_second,
 			       current_lanczos_vectors,
 			       root_negative_dot_product_range,
-			       root_positive_dot_product_range);
+			       root_positive_dot_product_range,
+			       query_should_exit_the_loop);
       
       BestNodePartners_(qnode->right(), rnode->left(), rnode->right(),
 			&rnode_first, &rnode_second);
       DualtreeSolverCanonical_(qnode->right(), rnode_first,
 			       current_lanczos_vectors,
 			       root_negative_dot_product_range,
-			       root_positive_dot_product_range);
+			       root_positive_dot_product_range,
+			       query_should_exit_the_loop);
       DualtreeSolverCanonical_(qnode->right(), rnode_second,
 			       current_lanczos_vectors,
 			       root_negative_dot_product_range,
-			       root_positive_dot_product_range);
+			       root_positive_dot_product_range,
+			       query_should_exit_the_loop);
     }
     
     // reaccumulate the summary statistics.
@@ -677,7 +690,7 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
 
   // Main iteration of the SYMMLQ algorithm - repeat until
   // "convergence"...
-  for(index_t m = 0; m < row_length_; m++) {
+  for(; ;) {
 
     // Determine how many queries are in the Krylov loop.
     int num_queries_in_krylov_loop = 0;
@@ -707,8 +720,10 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
     // Multiply the current lanczos vector with the linear operator.
     DualtreeSolverCanonical_(qroot_, rroot_, current_lanczos_vectors,
 			     root_negative_dot_product_range,
-			     root_positive_dot_product_range);
+			     root_positive_dot_product_range,
+			     query_should_exit_the_loop);
     FinalizeQueryTreeLanczosMultiplier_(qroot_);
+    printf("Finished multiplying Lanczos...\n");
 
     // Compute v_tilde_mat (the residue after applying the linear
     // operator the current Lanczos vector).
@@ -805,6 +820,12 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
 	la::Scale(row_length_, s_vec[q], w_mat.GetColumnPtr(q));
 	la::AddExpert(row_length_, -c_vec[q], current_lanczos_vector,
 		      w_mat.GetColumnPtr(q));
+      }
+
+      // Another criterion for quitting the Krylov loop...
+      if(sqrt(g_tilde * g_tilde + g_double_tilde_vec[q] * 
+	      g_double_tilde_vec[q]) < 0.1) {
+	query_should_exit_the_loop[q] = true;
       }
 
     } // end of iterating over each query point.
