@@ -185,22 +185,30 @@ bool LocalLinearKrylov<TKernel>::PrunableSolver_
 		   qnode->stat().postponed_ll_vector_l_,
 		   &new_vector_l_);
   la::AddTo(vector_l_change_, &new_vector_l_);
+  la::AddOverwrite(qnode->stat().ll_vector_u_,
+		   qnode->stat().postponed_ll_vector_u_,
+		   &new_vector_u_);
+  la::AddTo(vector_u_change_, &new_vector_u_);
+  la::AddOverwrite(qnode->stat().neg_ll_vector_l_,
+		   qnode->stat().postponed_neg_ll_vector_l_,
+		   &new_neg_vector_l_);
+  la::AddTo(neg_vector_l_change_, &new_neg_vector_l_);
   la::AddOverwrite(qnode->stat().neg_ll_vector_u_,
 		   qnode->stat().postponed_neg_ll_vector_u_,
 		   &new_neg_vector_u_);
   la::AddTo(neg_vector_u_change_, &new_neg_vector_u_);
 
   // Compute the L1 norm of the most refined lower bound.
-  double l1_norm_vector_l = L1Norm_(new_vector_l_);
-  double l1_norm_neg_vector_u = L1Norm_(new_neg_vector_u_);
+  double min_l1_norm = MinL1Norm_(new_neg_vector_l_, new_neg_vector_u_,
+				  new_vector_l_, new_vector_u_);
 
   // Compute the allowed amount of error for pruning the given query
   // and reference pair.
   double allowed_err = 
     (relative_error_ * (rnode->stat().l1_norm_sum_coordinates_) *
-     (l1_norm_vector_l + l1_norm_neg_vector_u)) / 
+     min_l1_norm) / 
     (rroot_->stat().l1_norm_sum_coordinates_);
-
+  
   used_error = 0.5 * ((positive_dot_product_range.hi *
 		       kernel_value_range.hi -
 		       positive_dot_product_range.lo *
@@ -705,6 +713,9 @@ void LocalLinearKrylov<TKernel>::SolveLeastSquaresByKrylov_() {
     // Compute v_tilde_mat (the residue after applying the linear
     // operator the current Lanczos vector).
     la::AddOverwrite(vector_e_, neg_vector_e_, &v_tilde_mat);
+
+    TestKrylovComputation_(v_tilde_mat, current_lanczos_vectors,
+			   query_should_exit_the_loop);
 
     for(index_t q = 0; q < qset_.n_cols(); q++) {
 

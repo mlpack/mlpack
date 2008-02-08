@@ -296,6 +296,10 @@ class LocalLinearKrylov {
    */
   Vector new_vector_l_;
 
+  Vector new_vector_u_;
+
+  Vector new_neg_vector_l_;
+
   /** @brief Temporary variables for holding newly refined upper bound
    *         on the negative components.
    */
@@ -332,7 +336,8 @@ class LocalLinearKrylov {
   ////////// Private Member Functions //////////
 
   void LocalLinearKrylov<TKernel>::MaximumRelativeErrorInL1Norm_
-    (const Matrix &exact_vector_e, const Matrix &approximated);
+    (const Matrix &exact_vector_e, const Matrix &approximated,
+     const ArrayList<bool> *query_should_exit_the_loop);
 
   /** @brief This function tests the first phase computation (i.e.,
    *         the computation of B^T W(q) Y vectors for each query
@@ -343,8 +348,9 @@ class LocalLinearKrylov {
   /** @brief This function test the second phase computation (i.e.
    *         the computation of the product of B^T W(q) B and z(q).
    */
-  void TestKrylovComputation_(const Matrix &approximated,
-			      const Matrix &current_lanczos_vectors);
+  void TestKrylovComputation_
+    (const Matrix &approximated, const Matrix &current_lanczos_vectors,
+     const ArrayList<bool> &query_should_exit_the_loop);
 
   void NormalizeMatrixColumnVectors_(Matrix &m, Vector &lengths) {
     
@@ -358,6 +364,34 @@ class LocalLinearKrylov {
     }
   }
 
+  /** @brief Computes the minimum L1 norm.
+   */
+  double MinL1Norm_(const Vector &negative_lower_limit, 
+		    const Vector &negative_upper_limit,
+		    const Vector &positive_lower_limit,
+		    const Vector &positive_upper_limit) {
+
+    double norm = 0;
+
+    for(index_t i = 0; i < negative_lower_limit.length(); i++) {
+      double upper_limit = negative_upper_limit[i] +
+	positive_upper_limit[i];
+      double lower_limit = negative_lower_limit[i] +
+	positive_lower_limit[i];
+
+      DEBUG_ASSERT(upper_limit >= lower_limit);
+
+      if(lower_limit > 0) {
+	norm += lower_limit;
+      }
+      else if(upper_limit < 0) {
+	norm += (-upper_limit);
+      }
+    }
+    DEBUG_ASSERT(norm >= 0);
+    return norm;
+  }
+  
   /** @brief Compute the L1 norm of the given vector.
    *
    *  @param v The vector for which we want to compute the L1 norm.
@@ -696,6 +730,8 @@ class LocalLinearKrylov {
 
     regression_estimates_.Init(qset_.n_cols());
     new_vector_l_.Init(row_length_);
+    new_vector_u_.Init(row_length_);
+    new_neg_vector_l_.Init(row_length_);
     new_neg_vector_u_.Init(row_length_);
     vector_l_change_.Init(row_length_);
     vector_e_change_.Init(row_length_);
