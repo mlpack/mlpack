@@ -204,7 +204,8 @@ bool LocalLinearKrylov<TKernel>::PrunableSolver_
   la::AddTo(neg_vector_u_change_, &new_neg_vector_u_);
 
   // Compute the L1 norm of the most refined lower bound.
-  double min_l1_norm = L1Norm_(new_neg_vector_u_) + L1Norm_(new_vector_l_);
+  double min_l1_norm = MinL1Norm_(new_neg_vector_u_, new_neg_vector_l_,
+				  new_vector_l_, new_vector_u_);
 
   // Compute the allowed amount of error for pruning the given query
   // and reference pair.

@@ -575,20 +575,7 @@ class LocalLinearKrylov {
       for(index_t j = 1; j <= dimension_; j++) {
 	regression_estimates_[i] += query_pt[j - 1] * query_pt_solution[j];
       }
-
-      if(regression_estimates_[i] < 0) {
-	printf("Regression estimate: %g\n", regression_estimates_[i]);
-	for(index_t j = 0; j <= dimension_; j++) {
-	  if(j == 0) {
-	    printf("Query: 1\n");
-	  }
-	  else {
-	    printf("Query: %g\n", query_pt[j - 1]);
-	  }
-	  printf("Solution: %g\n", query_pt_solution[j]);
-	}
-	printf("\n");
-      }
+      regression_estimates_[i] = std::max(regression_estimates_[i], 0.0);
     }
   }
 
