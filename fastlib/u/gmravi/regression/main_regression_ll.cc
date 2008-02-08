@@ -50,8 +50,8 @@ int main(int argc, char *argv[]){
   //Both default to 0.2
 
   double bandwidth=fx_param_double(regression_module,"bandwidth",0.15);
-  double tau=fx_param_double(regression_module,"tau",0.140);
-
+  double tau=fx_param_double(regression_module,"tau",0.15);
+  printf("tau is %f\n",tau);
 
   //Get the weights for the reference set
   const char *rwfname=NULL;
@@ -83,16 +83,16 @@ int main(int argc, char *argv[]){
   if(!strcmp(fx_param_str(regression_module,"kernel","gaussian"),"gaussian")){
 
     FastRegression<GaussianKernel> fast_regression;
-    fx_timer_start(NULL,"fast");
+   
     char *criteria;
     criteria=(char*)malloc(40*sizeof(char));
     strcpy(criteria,fx_param_str(regression_module,"criteria","fnorm"));
-    printf("criteria is %s\n",criteria);
     
     fast_regression.Init(q_matrix, r_matrix, bandwidth, tau, leaf_length, rset_weights, criteria);
     fast_regression.Compute();
 
-    fx_timer_stop(NULL,"fast");
+
+
     //Lets do naive calculations too............
   
     //Lets first declare an object of the naive type
@@ -100,8 +100,11 @@ int main(int argc, char *argv[]){
     ArrayList<index_t> old_from_new_r;
     old_from_new_r.Copy(fast_regression.get_old_from_new_r());
 
-    //Vector fast_regression_estimate;
-    //fast_regression_estimate.Copy(fast_regression.get_regression_estimate());
+    //Get the fast regression estimates.We shall use it to compare the
+    //accuracy
+
+    Vector fast_regression_estimate;
+    fast_regression_estimate.Copy(fast_regression.get_regression_estimate());
 
     ArrayList<Matrix> fast_b_twy_estimates;
     ArrayList<Matrix> fast_b_twb_estimates;
@@ -115,16 +118,12 @@ int main(int argc, char *argv[]){
       fast_b_twb_estimates[q].Alias(fast_regression.get_b_twb_estimates(q));
     }
     
-    NaiveCalculation<GaussianKernel> naive_b_twy;
-
-    fx_timer_start(NULL,"naive");
-    naive_b_twy.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
-    
-    naive_b_twy.Compute();
-    naive_b_twy.ComputeMaximumRelativeError(fast_b_twy_estimates,fast_b_twb_estimates, criteria);
-   
-    fx_timer_stop(NULL,"naive");
-
+    NaiveCalculation<GaussianKernel> naive;
+    naive.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
+    naive.Compute();
+    naive.ComputeMaximumRelativeError
+      (fast_b_twy_estimates,fast_b_twb_estimates,criteria);
+    naive.CompareFastWithNaive(fast_regression_estimate);
    
 
     //Will need to verify if this is fine to do...

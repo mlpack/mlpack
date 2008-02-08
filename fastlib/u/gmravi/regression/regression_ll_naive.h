@@ -120,9 +120,65 @@ void NaiveCalculation<TKernel>::Compute (){
   Print_();
   //Having done this get regression estimates by calling the function
   //ObtainRegressionEstimates
-  //ObtainRegressionEstimate_();
+  ObtainRegressionEstimate_();
   //PrintRegressionEstimate_(fast_regression_estimate);
 }
+
+
+template <typename TKernel>
+void NaiveCalculation<TKernel>::ObtainRegressionEstimate_(){
+
+  //So we now have BTWB and BTWY calculated naively.  To calculate the
+  //regression_estimate of the query point we first calculate the inverse of
+  //BTWB by usinf SVD
+
+  for(index_t q=0;q<qset_.n_cols();q++){
+    
+    PseudoInverse::FindPseudoInverse(qset_.n_cols(),b_twb_naive_estimate_[q]);
+  }
+
+  //We now have both BTWB^-1 and BTWY. We shall multiply them by using
+  //LAPack and store them ia temporary variable
+
+  ArrayList<Matrix> temp;
+  temp.Init(qset_.n_cols());
+
+  //Calculate BTWB^-1 BTWY for all the query points
+  for(index_t q=0;q<qset_.n_cols();q++){
+    la::MulInit(b_twb_naive_estimate_[q],b_twy_naive_estimate_[q],&temp[q]);
+  }
+
+  //Now lets form a q matrix by usinf the coordiantes of the query point
+  Matrix q_matrix;
+  
+  //Initialize q matrix and set it up
+  q_matrix.Init(1,qset_.n_rows()+1);
+  
+  //The first element of the q matrix is a 1
+  q_matrix.set(0,0,1);
+
+  //fill up the remaining elements and find the regression estimates
+  for(index_t q=0;q<qset_.n_cols();q++){
+    
+    for(index_t col=0;col<qset_.n_rows();col++){
+      
+      q_matrix.set(0,col+1,qset_.get(col,q));
+    }
+
+    //Now lets multiply the resulting q_matrix with temp to get our
+    //required regression estimates
+    
+    Matrix temp2;
+    la::MulInit(q_matrix,temp[q],&temp2);
+
+    //This temp2 is the regression estimate for the query point q
+    regression_estimate_[q]=temp2.get(0,0);
+    printf("regression estimate is %f\n",regression_estimate_[q]);
+  }
+}
+
+
+
 
 template <typename TKernel>
 void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &fast_b_twy_estimate, ArrayList<Matrix> & fast_b_twb_estimate, char *pruning_criteria){
@@ -140,7 +196,7 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
       double f_norm=SquaredFrobeniusNorm_(temp1);
       double f_norm_naive=SquaredFrobeniusNorm_(b_twy_naive_estimate_[q]);
       double rel_error_b_twy=fabs(f_norm)/f_norm_naive;
-      printf("relative frobenius norm error for BTWY is %f\n",rel_error_b_twy);
+      //printf("relative frobenius norm error for BTWY is %f\n",rel_error_b_twy);
 
       if(max_frobenius_error_b_twy<rel_error_b_twy){
 
@@ -153,7 +209,7 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
       f_norm=SquaredFrobeniusNorm_(temp2);
       f_norm_naive=SquaredFrobeniusNorm_(b_twb_naive_estimate_[q]);
       double rel_error_b_twb=fabs(f_norm)/f_norm_naive;
-      printf("relative frobenius norm error for BTWB is %f\n",rel_error_b_twb);
+      // printf("relative frobenius norm error for BTWB is %f\n",rel_error_b_twb);
 
       if(max_frobenius_error_b_twb < rel_error_b_twb){
 
@@ -195,7 +251,7 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
 
       }
     }
-    printf("Max error on the whole for BTWB is %f\n",	max_error_on_the_whole);
+    printf("Max error on the whole for BTWB is %f\n",max_error_on_the_whole);
     //Now lets get BTWY error
 
     max_error_on_the_whole=0;
@@ -229,6 +285,26 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
 }
 
 
+//Having done this now lets compare the naive regression estimates
+//with the fast regression estimates
+
+template<typename TKernel>
+void NaiveCalculation<TKernel>::CompareFastWithNaive(Vector &fast_regression_estimate){
+
+  //Lets compare the fast estimates with the naive estimates first
+  double total_error=0.0;
+  for(index_t q=0;q<qset_.n_cols();q++){
+
+    double diff=fast_regression_estimate[q]-regression_estimate_[q];
+    total_error+=diff*diff;
+  }
+
+  double mean_squared_error=total_error/qset_.n_cols();
+  printf("so the mean squared error is %f\n",mean_squared_error);
+  //We shall also compare the fast estimates with the actual regression
+  //estimates
+
+}
 
 template <typename TKernel>
 void NaiveCalculation<TKernel>::Init (Matrix & qset, Matrix & rset, ArrayList<index_t> &old_from_new_r,double bandwidth,Vector &rset_weights){
@@ -246,6 +322,10 @@ void NaiveCalculation<TKernel>::Init (Matrix & qset, Matrix & rset, ArrayList<in
   //get the weights
   rset_weights_.Alias(rset_weights);   
 
+  //To store all the regression estimates that i get from naive
+  //calculations
+
+  regression_estimate_.Init(qset_.n_cols());
 
   //ArrayList of matrices to store results
   

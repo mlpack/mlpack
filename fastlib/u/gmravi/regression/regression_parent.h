@@ -339,7 +339,7 @@ template < typename TKernel > class NaiveCalculation{
 
   Vector rset_weights_;
 
-  // Vector regression_estimate_;
+  Vector regression_estimate_;
 
   /** Remember that we first do the the fast vector calculations and 
    *  then pass on the datasets to the naive method for naive calculations.
@@ -363,7 +363,7 @@ template < typename TKernel > class NaiveCalculation{
   *  optimized by using fastlib's Lapack functions 
   */
    
-  void   PrintRegressionEstimate_(Vector &);
+  void PrintRegressionEstimate_(Vector &);
   void ObtainRegressionEstimate_();
   void Compute ();
   
@@ -372,6 +372,8 @@ template < typename TKernel > class NaiveCalculation{
 
   void ComputeMaximumRelativeError(ArrayList<Matrix> &, ArrayList<Matrix> &, char *);
   double SquaredFrobeniusNorm_(Matrix &);
+
+  void CompareFastWithNaive(Vector &);
 };
 
 #include "regression_ll1.h"

@@ -1228,7 +1228,7 @@ void FastRegression<TKernel>::ObtainRegressionEstimate_(){
   //will be obtained by simply multiplying these 2 matrices
 
 
-  //So we now have for each query point the (B^TWB)-1 matri and B^TWY
+  //So we now have for each query point the (B^TWB)-1 matrix and B^TWY
   //matrix. In order to get the regression estimates we perform
   //y_hat= [1,q] (B^TWB)^-1 (B^TWY) where q are the coordinates of the query
   //point
@@ -1239,9 +1239,6 @@ void FastRegression<TKernel>::ObtainRegressionEstimate_(){
   //(B^TWY)
 
 
-  //Now lets form a vector q_vector using the coordinates of the query
-  //point
-
   ArrayList<Matrix> temp;
   temp.Init(qset_.n_cols());
   
@@ -1251,6 +1248,7 @@ void FastRegression<TKernel>::ObtainRegressionEstimate_(){
   }
 
   printf("The arraylist temp formed...\n");
+
   //Now lets form a matrix q_vector using the coordinates of the
   //query point
   
@@ -1259,37 +1257,28 @@ void FastRegression<TKernel>::ObtainRegressionEstimate_(){
   
   //Initialize q matrix and set it up
   q_matrix.Init(1,qset_.n_rows()+1);
+
+  //The first element of the q matrix is a 1
   q_matrix.set(0,0,1);
   
   
   for(index_t q=0;q<qset_.n_cols();q++){
-    
     
     for(index_t col=0;col<qset_.n_rows();col++){
       
       q_matrix.set(0,col+1,qset_.get(col,q));
     }
 
-    printf("q_matrix is ..\n");
-    q_matrix.PrintDebug();
-
-    printf("temp[q] is..\n");
-    temp[q].PrintDebug();
-    
-    //Now lets multiply the resulting q_matrix with temp to get the
+      //Now lets multiply the resulting q_matrix with temp to get the
     //regression estimate
 
     Matrix temp2;
     la::MulInit(q_matrix,temp[q],&temp2);
 
     //This temp2 is the regression estimate for the query point q
-    printf("Regression estimate formed is..\n");
-    temp2.PrintDebug();
     regression_estimate_[q]=temp2.get(0,0);
-    printf("regression estimate value copied..\n");
+    printf("regression estimate is %f\n",regression_estimate_[q]);
   }
-  //having finished computations print them onto a file
-  PrintRegressionEstimate_();
 }
 
 template <typename TKernel>
