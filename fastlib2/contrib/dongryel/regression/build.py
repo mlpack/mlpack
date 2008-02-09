@@ -7,7 +7,7 @@ librule(
                "local_linear_krylov_setup_impl.h",
                "local_linear_krylov_solver_impl.h",
                "local_linear_krylov_test.h",
-               "naive_local_linear.h"],
+               "naive_local_polynomial_regression.h"],
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
     )

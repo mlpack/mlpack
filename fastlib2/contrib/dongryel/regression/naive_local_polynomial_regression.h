@@ -1,36 +1,43 @@
-#ifndef NAIVE_LOCAL_LINEAR_H
-#define NAIVE_LOCAL_LINEAR_H
+#ifndef NAIVE_LOCAL_POLYNOMIAL_REGRESSION_H
+#define NAIVE_LOCAL_POLYNOMIAL_REGRESSION_H
 
 #include "fastlib/fastlib_int.h"
 
-template<typename TKernel>
-class NaiveLocalLinear {
+template<typename TKernel, int order = 1>
+class NaiveLocalPolynomialRegression {
 
-  FORBID_ACCIDENTAL_COPIES(NaiveLocalLinear);
+  FORBID_ACCIDENTAL_COPIES(NaiveLocalPolynomialRegression);
 
  private:
 
   struct datanode *module_;
 
-  /** query dataset */
+  /** @brief The column-oriented query dataset.
+   */
   Matrix qset_;
 
-  /** reference dataset */
+  /** @brief The column-oriented reference dataset.
+   */
   Matrix rset_;
 
-  /** reference target */
+  /** @brief The reference target training values.
+   */
   Vector rset_targets_;
 
-  /** kernel */
+  /** @brief The kernel function.
+   */
   TKernel kernel_;
 
-  /** numerator vector X^T W(q) Y for each query point */
+  /** @brief The numerator vector X^T W(q) Y for each query point.
+   */
   ArrayList<Vector> numerator_;
   
-  /** denominator matrix X^T W(q) X for each query point */
+  /** @brief The denominator matrix X^T W(q) X for each query point.
+   */
   ArrayList<Matrix> denominator_;
 
-  /** computed regression values */
+  /** @brief The computed regression values.
+   */
   Vector regression_values_;
 
   /** total number of coefficients for the local polynomial */
@@ -51,6 +58,9 @@ class NaiveLocalLinear {
     Matrix ro_s_inv;
     ro_s_inv.Init(ro_VT_trans.n_cols(), ro_U_trans.n_rows());
     ro_s_inv.SetZero();
+    
+    printf("Condition number: %g / %g = %g\n", ro_s[0],
+	   ro_s[ro_s.length() - 1], ro_s[0] / ro_s[ro_s.length() - 1]);
 
     // initialize the diagonal by the inverse of ro_s
     for(index_t i = 0; i < ro_s.length(); i++) {
@@ -68,13 +78,13 @@ class NaiveLocalLinear {
 
  public:
   
-  NaiveLocalLinear() {}
+  NaiveLocalPolynomialRegression() {}
 
-  ~NaiveLocalLinear() {}
+  ~NaiveLocalPolynomialRegression() {}
 
   void Compute() {
 
-    printf("\nStarting naive local linear...\n");
+    printf("\nStarting naive local polynomial of order %d...\n", order);
     fx_timer_start(NULL, "naive_local_linear_compute");
 
     // compute unnormalized sum for the numerator vector and the denominator
@@ -143,7 +153,7 @@ class NaiveLocalLinear {
     }
     
     fx_timer_stop(NULL, "naive_local_linear_compute");
-    printf("\nNaive local linear completed...\n");
+    printf("\nNaive local polynomial of order %d completed...\n", order);
   }
 
   void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
@@ -165,7 +175,8 @@ class NaiveLocalLinear {
     kernel_.Init(fx_param_double_req(module_, "bandwidth"));
 
     // compute total number of coefficients
-    total_num_coeffs_ = qset_.n_rows() + 1;
+    total_num_coeffs_ = (int) 
+      math::BinomialCoefficient(order + qset_.n_rows(), qset_.n_rows());
     
     // allocate temporary storages for storing the numerator vectors and
     // the denominator matrices
@@ -190,8 +201,8 @@ class NaiveLocalLinear {
     const char *fname = NULL;
 
     if((fname = fx_param_str(module_, 
-			     "naive_local_linear_output", 
-			     "naive_local_linear_output.txt")) != NULL) {
+			     "naive_local_polynomial_output", 
+			     "naive_local_polynomial_output.txt")) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
