@@ -27,7 +27,7 @@ p_small = size(ic_coef, 2);
 
 pc_curves = basis_curves * pc_coef;
 
-ic_curves = pc_curves(:,1:2) * W';
+ic_curves = pc_curves * W';
 
 pc_coef = pc_coef';
 
@@ -57,3 +57,4 @@ end
 
 h_pc_sum = sum(h_pc);
 h_ic_sum = sum(h_ic);
+logiszero

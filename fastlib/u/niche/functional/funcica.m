@@ -33,7 +33,7 @@ sum_var = 0;
 for p_small = 1:p
   sum_var = sum_var + sum(pc_scores(:,p_small).^2);
   disp(sprintf('i = %d, sum_var = %f', p_small, sum_var / total_sum_var));
-  if sum_var / total_sum_var > 0.9
+  if sum_var / total_sum_var > 0.5
     break
   end
 end
@@ -42,6 +42,7 @@ fprintf('p_small = %d\n', p_small);
 
 
 sub_pc_coef = pc_coef(:,1:p_small);
+sub_pc_curves = basis_curves * sub_pc_coef;
 E = pc_scores(:,1:p_small)';
 
 %{
@@ -112,6 +113,5 @@ fprintf('joint entropy Y = %f\n', sum(h_Y_pos));
 
 
 
-sub_pc_curves = basis_curves * sub_pc_coef;
 ic_curves_neg = basis_curves * ic_coef_neg;
 %}
