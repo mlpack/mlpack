@@ -1,5 +1,6 @@
-function [ic_curves_pos, ic_coef_pos, Y_pos, h_Y_pos, pc_coef, pc_curves, pc_scores, W_pos, whitening_transform] = ...
-    funcica(t, s, myfd_data, p, basis_curves, myfdPar, basis_inner_products);
+function [ic_curves_pos, ic_coef_pos, Y_pos, ...
+	  sub_pc_coef, sub_pc_curves, sub_pc_scores, W_pos] = ...
+    funcica(t, myfd_data, p, basis_curves, myfdPar, basis_inner_products);
 % funcica() - functional ICA
 % first call prelim_funcica
 % USAGE: [ic_curves_pos, ic_coef_pos, h_Y_pos] = funcica(t, s, data)
@@ -14,7 +15,6 @@ pc_curves = basis_curves * pc_coef;
 
 % pc_scores = pca_results.harmscr;% this doesn't work if lambda > 0
 % instead, we do:
-%pc_scores = get_scores(data_coef, pc_coef(:,1:2)', basis_inner_products);
 pc_scores = get_scores(data_coef, pc_coef', basis_inner_products);
 
 %mean_coef = getcoef(pca_results.meanfd);
@@ -33,14 +33,12 @@ sum_var = 0;
 for p_small = 1:p
   sum_var = sum_var + sum(pc_scores(:,p_small).^2);
   disp(sprintf('i = %d, sum_var = %f', p_small, sum_var / total_sum_var));
-  if sum_var / total_sum_var > 0.99
+  if sum_var / total_sum_var > 0.9
     break
   end
 end
 
-%p_small = 2;
-
-p_small
+fprintf('p_small = %d\n', p_small);
 
 
 sub_pc_coef = pc_coef(:,1:p_small);
@@ -71,7 +69,8 @@ else
   % scale it so that cov(E') is white
   whitening_transform = diag(1./std(E'));
 end
-  
+
+
 white_E = whitening_transform * E;
 
 % Use my simplified version of RADICAL
@@ -85,6 +84,8 @@ white_E = whitening_transform * E;
 %W_pos = post_whitening_W_pos * whitening_transform;
 ic_coef_pos = (W_pos * sub_pc_coef')';
 ic_curves_pos = basis_curves * ic_coef_pos;
+
+sub_pc_scores = E';
 
 %{
 W_neg = post_whitening_W_neg * whitening_transform;
@@ -114,16 +115,3 @@ fprintf('joint entropy Y = %f\n', sum(h_Y_pos));
 sub_pc_curves = basis_curves * sub_pc_coef;
 ic_curves_neg = basis_curves * ic_coef_neg;
 %}
-
-%{
-figure(1);
-clf;
-hold on;
-plot(s, 'b');
-plot(sub_pc_curves, 'r');
-plot(ic_curves_pos, 'g');
-plot(ic_curves_neg, 'c');
-%}
-
-
-h_Y_pos = 0;;

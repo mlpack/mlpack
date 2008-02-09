@@ -1,6 +1,8 @@
 \documentclass{article}
 \usepackage{amsmath,amsthm,amsfonts}
+\usepackage[colorlinks=true]{hyperref}
 \title{independence via temporal generating distribution}
+\bibliographystyle{unsrt}
 \author{Nishant Mehta}
 
 \begin{document}
@@ -24,10 +26,10 @@
   Rather than maximizing signal predictability, it instead seems more correct to minimize the cross-covariance of two signals. In cases where one signal is a lagged version of the other signal, minimizing cross-covariance will have the effect of deconvolving the signals.
 
   In ``A Note on Stone's Conjecture of Blind Signal Separation'', Xie, He, and Fu show Stone's temporal predictability conjecture to be false and they modify it to use something called the covariance rate:
-\[
-R_z = \frac{\text{cov}(f_z^a(t), f_z^a(t))}{\text{cov}(g_z^b(t), g_z^b(t))}
-\]
-where $f_z^a = z_k - \bar{z}_k$ and $g_z^a = z_j - \tilde{z}_k$ (note that they claim to define $g_z^a = z_k - \bar{z}_k$ but this is probably a typo).
+  \[
+  R_z = \frac{\text{cov}(f_z^a(t), f_z^a(t))}{\text{cov}(g_z^b(t), g_z^b(t))}
+  \]
+  where $f_z^a = z_k - \bar{z}_k$ and $g_z^a = z_j - \tilde{z}_k$ (note that they claim to define $g_z^a = z_k - \bar{z}_k$ but this is probably a typo).
 
   \subsection{Bussgang techniques}
   These techniques are directed at the blind deconvolution problem. Blind deconvolution refers to a signal that has been convolved with some filter so that there exists a significant amount of redundancy in the signal. One method for learning a deconvolution filter is to estimate a deconvolution vector $w$ of weights that can deconvolve according to $u_t = \sum_{k=1}^L w_k x_{t-k} = w_t^T x_t$, for convolved signal $x$, deconvolution filter $w$, and deconvolved signal $u$.
@@ -59,8 +61,30 @@ where $f_z^a = z_k - \bar{z}_k$ and $g_z^a = z_j - \tilde{z}_k$ (note that they 
   
   Let the autocovariance function
 
+
+
+  \section{Kalman filtering and ICA}
+  Has there been work related to linear dynamic systems with independent component source models?
+  If not, this should be framed using a probabilistic graphical model
+  Can we think of cases where such a model would be superior to Kalman filtering?
+  What is the optimal update (not the Kalman update anymore) for minimizing L2 error?
+
+
+  \section{Notes on application of fICA for gene regulatory networks}
   
+  talk to:
   
-  
-  
+  \begin{itemize}
+  \item Nicoleta Serban - does research related to statistical bioinformatics
+  \item John McDonald - biology department chair
+  \item Mark Borodovsky - microarray data
+
+  \end{itemize}
+
+Application of ICA to identifying linear modes of gene expression \cite{liebermeister2002lmg}.
+\href{http://scholar.google.com/scholar?hl=en&lr=&cluster=15236205428324185707}{link}
+
+
+\bibliography{temporal}
+
 \end{document}
