@@ -33,10 +33,18 @@ class NonConvexMVU {
   void ComputeLocalOptimum();
   void set_eta(double eta);
   void set_gamma(double gamma);
-  void set_convergence_rate(double convergence_rate);
+  void set_step_size(double step_size);
   void set_max_iterations(index_t max_iterations);
   void set_new_dimension(index_t new_dimension);
   void set_tolerance(double tolerance); 
+  /**
+   *  sigma for armijo rule somewhere between 1e-5 to 1e-1
+   */
+  void set_armijo_sigma(double armijo_sigma);
+  /**
+   *  beta for armijo rule somewhere between 0.5 to 0.1
+   */
+  void set_armijo_beta(double armijo_beta);
   Matrix &coordinates();
 
  private:
@@ -52,17 +60,21 @@ class NonConvexMVU {
   double eta_;
   double gamma_;
   double previous_feasibility_error_;
-  double convergence_rate_;
+  double step_size_;
   double tolerance_;
+  double armijo_sigma_;
+  double armijo_beta_;
   index_t max_iterations_;
   index_t new_dimension_;
   Matrix coordinates_;
   Matrix gradient_;
   Matrix data_;
 
-  void ComputeGradient_();
   void UpdateLagrangeMult_();
+  void LocalSearch_();
+  double ComputeLagrangian_(Matrix &coordinates);
   double ComputeFeasibilityError_();
+  void ComputeGradient_();
 };
 
 #include "non_convex_mvu_impl.h"
