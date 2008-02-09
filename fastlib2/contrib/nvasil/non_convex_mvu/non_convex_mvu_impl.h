@@ -20,7 +20,7 @@ NonConvexMVU::NonConvexMVU() {
  eta_ = 0.9;
  gamma_ = 0.9;
  step_size_ = 1; 
- max_iterations_ = 1000;
+ max_iterations_ = 100;
  tolerance_ = 1e-4;
  armijo_sigma_=1e-1;
  armijo_beta_=0.5;
@@ -65,7 +65,7 @@ void NonConvexMVU::ComputeLocalOptimum() {
   for(index_t i=0; i<lagrange_mult_.length(); i++) {
     lagrange_mult_[i]=math::Random(0.1, 1.0);
   }
-  sigma_ = 1.0;
+  sigma_ = 100.0;
   
   previous_feasibility_error_= ComputeFeasibilityError_();
   NOTIFY("Starting optimization ...\n");
@@ -135,13 +135,12 @@ void NonConvexMVU::UpdateLagrangeMult_() {
     }  
     // I know this looks redundant but we just follow the algorithm
     // sigma_ = sigma_; 
-    previous_feasibility_error_ = feasibility_error;
   } else {
     // langange multipliers unchanged
     sigma_*=gamma_;
     // previous feasibility error unchanged
   }
-
+  previous_feasibility_error_ = feasibility_error;
 }
 
 void NonConvexMVU::LocalSearch_() {
@@ -151,12 +150,12 @@ void NonConvexMVU::LocalSearch_() {
   double lagrangian2 = 0;
   double beta=armijo_beta_;
   double gradient_norm = la::LengthEuclidean(gradient_.n_rows()
-                                             *gradient_.n_cols(),
+                                             * gradient_.n_cols(),
                                              gradient_.ptr());
-  double armijo_factor = gradient_norm *armijo_sigma_ * armijo_beta_ * step_size_;
+  double armijo_factor =  gradient_norm * armijo_sigma_ * armijo_beta_ * step_size_;
   for(index_t i=0; ; i++) {
     temp_coordinates.CopyValues(coordinates_);
-    la::AddExpert(-step_size_*beta, gradient_, &temp_coordinates);
+    la::AddExpert(-step_size_*beta/gradient_norm, gradient_, &temp_coordinates);
     lagrangian2 =  ComputeLagrangian_(temp_coordinates);
     if (lagrangian1-lagrangian2 >= armijo_factor) {
       break;
@@ -165,17 +164,25 @@ void NonConvexMVU::LocalSearch_() {
       armijo_factor *=armijo_beta_;
     }
   }
+ 
+/*  temp_coordinates.CopyValues(coordinates_);
+  la::AddExpert(-0.00001/gradient_norm, gradient_, &temp_coordinates);
+  lagrangian2 =  ComputeLagrangian_(temp_coordinates);
+*/
+  NOTIFY("step_size: %lg, sigma: %lg\n", beta * step_size_, sigma_);
   NOTIFY("lagrangian1 - lagrangian2 = %lg\n", lagrangian1-lagrangian2);
+  NOTIFY("lagrangian2: %lg\n", lagrangian2);
   coordinates_.CopyValues(temp_coordinates);   
 }
 
-double NonConvexMVU::ComputeLagrangian_(Matrix &coordinates) {
+double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
   double lagrangian=0;
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
-    lagrangian += la::LengthEuclidean(new_dimension_, coordinates.GetColumnPtr(i));
+  for(index_t i=0; i<coord.n_cols(); i++) {
+    // we are maximizing the trace or minimize the -trace
+    lagrangian -= la::LengthEuclidean(new_dimension_, coord.GetColumnPtr(i));
     for(index_t k=0; k<knns_; k++) {
-      double *point1 = coordinates_.GetColumnPtr(i);
-      double *point2 = coordinates_.GetColumnPtr(neighbors_[i*knns_+k]);
+      double *point1 = coord.GetColumnPtr(i);
+      double *point2 = coord.GetColumnPtr(neighbors_[i*knns_+k]);
       double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
                           -distances_[i*knns_+k];
       lagrangian += -lagrange_mult_[i]*dist_diff +  0.5*sigma_*dist_diff*dist_diff;
@@ -188,26 +195,29 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coordinates) {
 
 double NonConvexMVU::ComputeFeasibilityError_() {
   double error=0;
+  double total_distances=0;
   for(index_t i=0; i<coordinates_.n_cols(); i++) {
     for(index_t k=0; k<knns_; k++) {
       double *point1 = coordinates_.GetColumnPtr(i);
       double *point2 = coordinates_.GetColumnPtr(neighbors_[i*knns_+k]);
       error+= math::Sqr((la::DistanceSqEuclidean(new_dimension_, point1, point2) 
                           -distances_[i*knns_+k]));
+      total_distances += math::Sqr(distances_[i*knns_+k]);
     }
   }
-  return error;  
+  return error/total_distances;  
 }
 
 void NonConvexMVU::ComputeGradient_() {
   gradient_.CopyValues(coordinates_);
-//  la::Scale(-1.0, &gradient_);
+  //  we need to use -CRR^T because we want to maximize CRR^T
+  la::Scale(-1.0, &gradient_);
   for(index_t i=0; i<gradient_.n_cols(); i++) {
     for(index_t k=0; k<knns_; k++) {
       double a_i_r[new_dimension_];
       double *point1 = coordinates_.GetColumnPtr(i);
       double *point2 = coordinates_.GetColumnPtr(neighbors_[i*knns_+k]);
-      la::SubOverwrite(new_dimension_, point1, point2, a_i_r);
+      la::SubOverwrite(new_dimension_, point2, point1, a_i_r);
       double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
                           -distances_[i*knns_+k] ;
       la::AddExpert(new_dimension_,
