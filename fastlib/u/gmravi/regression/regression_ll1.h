@@ -1,7 +1,7 @@
 #ifndef REGRESSION_LL1_H
 #define REGRESSION_LL1_H
 #include "regression_ll2.h"
-#include "pseudo_inverse.h"
+//#include "pseudo_inverse.h"
 
 
 /** In this code we shalll evaluate (B^TWB)^-1 by first calculating B^TWB
@@ -421,8 +421,8 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
 
     //Add dl_b_twy  and du_b_twy  to mass_l and mass_u of B^TWY
 
-    la::AddTo(dl_b_twy, &qnode->stat().b_twy_mass_l);
-    la::AddTo(du_b_twy, &qnode->stat().b_twy_mass_u);
+    la::AddTo(dl_b_twy, &(qnode->stat().b_twy_mass_l));
+    la::AddTo(du_b_twy, &(qnode->stat().b_twy_mass_u));
 
        
     if(!qnode->is_leaf()){
@@ -469,8 +469,8 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
 
       //Add dl_b_twb and du_b_twb to mass_l and mass_u of B^TWB 
 	
-      la::AddTo(dl_b_twb, &qnode->stat().b_twb_mass_l);
-      la::AddTo(du_b_twb, &qnode->stat().b_twb_mass_u);
+      la::AddTo(dl_b_twb, &(qnode->stat().b_twb_mass_l));
+      la::AddTo(du_b_twb, &(qnode->stat().b_twb_mass_u));
 
       if(!qnode->is_leaf()){
 	
@@ -493,30 +493,30 @@ void FastRegression<TKernel>::UpdateBounds_(Tree *qnode,
 
     else{
       if(flag==CHECK_FOR_PRUNE_B_TWY){
-      //the flag is CHECK_FOR_PRUNE_B_TWY
+	//the flag is CHECK_FOR_PRUNE_B_TWY
 	
-      //Add dl_b_twy and du_b_twy to mass_l and mass_u of B^TWY
+	//Add dl_b_twy and du_b_twy to mass_l and mass_u of B^TWY
 	
-      la::AddTo(dl_b_twy, &qnode->stat().b_twy_mass_l);
-      la::AddTo(du_b_twy, &qnode->stat().b_twy_mass_u);
+	la::AddTo(dl_b_twy, &(qnode->stat().b_twy_mass_l));
+	la::AddTo(du_b_twy, &(qnode->stat().b_twy_mass_u));
 	
-      if(!qnode->is_leaf()){
+	if(!qnode->is_leaf()){
 	  
-	// transmit these values to the children node
+	  // transmit these values to the children node
 	  
-	la::AddTo(dl_b_twy,&(qnode->left()->stat().b_twy_owed_l));
-	la::AddTo(du_b_twy,&(qnode->left()->stat().b_twy_owed_u));
+	  la::AddTo(dl_b_twy,&(qnode->left()->stat().b_twy_owed_l));
+	  la::AddTo(du_b_twy,&(qnode->left()->stat().b_twy_owed_u));
 	  
-	la::AddTo(dl_b_twy,&(qnode->right()->stat().b_twy_owed_l));
-	la::AddTo(du_b_twy,&(qnode->right()->stat().b_twy_owed_u));
-      }
+	  la::AddTo(dl_b_twy,&(qnode->right()->stat().b_twy_owed_l));
+	  la::AddTo(du_b_twy,&(qnode->right()->stat().b_twy_owed_u));
+	}
 	
-      else{
-
-	/* in case of leaf nodes add these values to more_l and more_u */
-	la::AddTo(dl_b_twy,&(qnode->stat().b_twy_more_l));
-	la::AddTo(du_b_twy,&(qnode->stat().b_twy_more_u));
-      }
+	else{
+	  
+	  /* in case of leaf nodes add these values to more_l and more_u */
+	  la::AddTo(dl_b_twy,&(qnode->stat().b_twy_more_l));
+	  la::AddTo(du_b_twy,&(qnode->stat().b_twy_more_u));
+	}
       }
       
     }
@@ -565,9 +565,10 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
 
       /** this means both the quantities are prunable
        */ 
-      //For a moment lets makc a change
-
-       return PRUNE_BOTH; 
+   
+      //FOR DEBUGGING
+      //return PRUNE_NOT;
+      return PRUNE_BOTH; 
     }
     else{
       if(flag1==1){
@@ -587,6 +588,7 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
 	else{
 	  /** None of the quantities is prunable
 	   */
+	  printf("Couldnt prune anything..\n");
 	  return PRUNE_NOT;
 	}
 	
@@ -615,7 +617,8 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
       }
       //flag==CHECK_FOR_PRUNE_B_TWY
 
-      index_t flag2=FastRegression<GaussianKernel>::PrunableB_TWY_(qnode,rnode,dl_b_twy,du_b_twy);
+      index_t flag2=FastRegression<GaussianKernel>::
+	PrunableB_TWY_(qnode,rnode,dl_b_twy,du_b_twy);
       
       if(flag2==1){
 	//this means B_TWY is prunable
@@ -624,6 +627,7 @@ FastRegression<TKernel>::Prunable_(Tree *qnode, Tree *rnode, Matrix &dl_b_twb,
       }
       else{
 	//it is not prunable. 
+	printf("Could not prune..\n");
 	return PRUNE_NOT;
       }
     }
@@ -713,9 +717,11 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
 
     if(what_is_prunable==PRUNE_B_TWB){
 
+      printf("BTWB pruned..\n");
+
       UpdateBoundsForPruningB_TWB_(qnode, dl_b_twb, du_b_twb);
 
-      MergeChildBounds_(qnode,flag);
+      // MergeChildBounds_(qnode,what_is_prunable);
       if((index_t)what_is_prunable==(index_t)flag){
 	//this means the job is done and we may return now
 	return;
@@ -731,9 +737,10 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
     else{
 
       if(what_is_prunable==PRUNE_B_TWY){
+	printf("BTWY pruned..\n");
 
 	UpdateBoundsForPruningB_TWY_(qnode, dl_b_twy, du_b_twy);
-	MergeChildBounds_(qnode,flag);
+	//MergeChildBounds_(qnode,what_is_prunable);
 
 	if((index_t)what_is_prunable==(index_t)flag){
 	  //this means the job is done and we may return now
@@ -748,10 +755,10 @@ void FastRegression<TKernel>::FRegression_(Tree *qnode, Tree *rnode,
       }
       else{
 	//both are prunable
-	
+	printf("Both pruned...\n");
 	UpdateBoundsForPruningB_TWB_(qnode, dl_b_twb, du_b_twb);
 	UpdateBoundsForPruningB_TWY_(qnode, dl_b_twy, du_b_twy);
-	MergeChildBounds_(qnode,flag);
+	MergeChildBounds_(qnode,CHECK_FOR_PRUNE_BOTH);
 	return;
 
       }
@@ -832,9 +839,13 @@ void FastRegression<TKernel>::Compute(){
   
   check_for_prune_t flag=CHECK_FOR_PRUNE_BOTH;
   fx_timer_start(NULL,"fast_timer");
+  printf("entered recursive function..\n");
   FRegression_(qroot_,rroot_,flag);  
+  printf("Completed recursion..\n");
   PostProcess_(qroot_);
-  ObtainRegressionEstimate_();
+  printf("Will postprocess now..\n");
+  //ObtainRegressionEstimate_();
+  //CompareWithTrueValues_();
   fx_timer_stop(NULL,"fast_timer");
 
   //This will print the matrices B^TWB and B^TWY to an output file
@@ -916,15 +927,22 @@ void FastRegression<TKernel>::SetUpperBounds_(Tree *node){
 
 
   if(node->is_leaf()){
-    node->stat().b_twy_mass_u.Copy(rroot_->stat().b_ty);
+
+    node->stat().b_twy_mass_u.Init(rset_.n_rows()+1,1);
+    node->stat().b_twy_mass_u.CopyValues(rroot_->stat().b_ty);
   
-    node->stat().b_twb_mass_u.Copy(rroot_->stat().b_tb);
+    node->stat().b_twb_mass_u.Init(rset_.n_rows()+1,rset_.n_rows()+1);
+    node->stat().b_twb_mass_u.CopyValues(rroot_->stat().b_tb);
    
   }
   else
     {
-      node->stat().b_twy_mass_u .Copy(rroot_->stat().b_ty);
-      node->stat().b_twb_mass_u.Copy(rroot_->stat().b_tb);
+      node->stat().b_twy_mass_u.Init(rset_.n_rows()+1,1);
+      node->stat().b_twb_mass_u.Init(rset_.n_rows()+1,rset_.n_rows()+1);
+
+      node->stat().b_twy_mass_u .CopyValues(rroot_->stat().b_ty);
+      node->stat().b_twb_mass_u.CopyValues(rroot_->stat().b_tb);
+
       SetUpperBounds_(node->left());
       SetUpperBounds_(node->right());
     }
@@ -936,18 +954,25 @@ void FastRegression<TKernel>::Init(Matrix &q_matrix, Matrix &r_matrix,
 				   double bandwidth,
 				   double tau,
 				   index_t leaf_length,
-				   Vector &rset_weights, char *criteria){
+				   Vector &rset_weights, 
+				   char *criteria, 
+				   Vector &true_regression_values){
 
-  //Set up value of tau,qset_,rset_
+  
+
+  //Set up value of tau,qset_,rset_, true_regression_values
 
 
   qset_.Alias(q_matrix);
   rset_.Alias(r_matrix);
+  true_regression_values_.Alias(true_regression_values);
   tau_=tau;
   index_t leaflen=leaf_length;
   rset_weights_.Alias(rset_weights);
    
+ 
   /* Construct Query and Reference trees */
+  
   fx_timer_start(NULL,"tree_create");
   rroot_ = tree::MakeKdTreeMidpoint < Tree >
     (rset_, leaflen, &old_from_new_r_, &new_from_old_r_);
