@@ -1,7 +1,7 @@
 #ifndef REGRESSION_LL_NAIVE_H
 #define REGRESSION_LL_NAIVE_H
 #include "fastlib/fastlib_int.h"
-#include "pseudo_inverse.h"
+//#include "pseudo_inverse.h"
 
 template <typename TKernel>
 double NaiveCalculation<TKernel>::SquaredFrobeniusNorm_(Matrix &a){
@@ -9,9 +9,9 @@ double NaiveCalculation<TKernel>::SquaredFrobeniusNorm_(Matrix &a){
   //This function computes treats the natrix as a vector and computes
   //it's 1-norm
   double value=0;
-  for(index_t col=0;col<a.n_cols();col++){
-    for(index_t row=0;row<a.n_rows();row++){
-      value+=a.get(row,col)*a.get(row,col);
+  for(index_t row=0;row<a.n_rows();row++){
+    for(index_t col=0;col<a.n_cols();col++){
+      value+=(a.get(row,col)*a.get(row,col));
     }
   }
   return value;
@@ -62,7 +62,7 @@ void NaiveCalculation<TKernel>::Compute (){
 	      //Fill B^TWY naive
 	      
 	      double val=b_twy_naive_estimate_[q].get(row,col)+ 
-		ker_value * rset_weights_[old_from_new_r_[r]] * rset_.get (row- 1, r);
+		ker_value * rset_weights_[old_from_new_r_[r]] * rset_.get (row-1, r);
 	      
 	      b_twy_naive_estimate_[q].set(row,col,val);
 
@@ -75,6 +75,7 @@ void NaiveCalculation<TKernel>::Compute (){
 	    }
 
 	    else{
+	      //this is row =0
 
 	      //Fill B^TWY naive 
 	      
@@ -120,7 +121,7 @@ void NaiveCalculation<TKernel>::Compute (){
   Print_();
   //Having done this get regression estimates by calling the function
   //ObtainRegressionEstimates
-  ObtainRegressionEstimate_();
+  //ObtainRegressionEstimate_();
   //PrintRegressionEstimate_(fast_regression_estimate);
 }
 
@@ -181,9 +182,15 @@ void NaiveCalculation<TKernel>::ObtainRegressionEstimate_(){
 
 
 template <typename TKernel>
-void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &fast_b_twy_estimate, ArrayList<Matrix> & fast_b_twb_estimate, char *pruning_criteria){
+void NaiveCalculation<TKernel>:: 
+ComputeMaximumRelativeError(ArrayList<Matrix> &fast_b_twy_estimate, 
+			    ArrayList<Matrix> & fast_b_twb_estimate, 
+			    char *pruning_criteria){
 
   if(!strcmp(pruning_criteria,"fnorm")){
+
+    FILE *fp;
+    fp=fopen("errors.txt","w+");
 
     double max_frobenius_error_b_twb=0;
     double max_frobenius_error_b_twy=0;
@@ -195,27 +202,49 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
       la::SubInit (b_twy_naive_estimate_[q],fast_b_twy_estimate[q] , &temp1);
       double f_norm=SquaredFrobeniusNorm_(temp1);
       double f_norm_naive=SquaredFrobeniusNorm_(b_twy_naive_estimate_[q]);
-      double rel_error_b_twy=fabs(f_norm)/f_norm_naive;
-      //printf("relative frobenius norm error for BTWY is %f\n",rel_error_b_twy);
+      double rel_error_b_twy;
+      if(f_norm==0.0 && f_norm_naive==0.0){
+	 rel_error_b_twy=0;
+      }
+      else{
+	 rel_error_b_twy=fabs(f_norm)/f_norm_naive;
+      }
+      fprintf(fp,"\n");
+      fprintf(fp,"diff norm is %f\n",f_norm);
+      fprintf(fp,"naive norm is %f\n",f_norm_naive);
+      fprintf(fp,"relative frobenius norm error for BTWY is %f\n",rel_error_b_twy);
 
       if(max_frobenius_error_b_twy<rel_error_b_twy){
 
 	max_frobenius_error_b_twy=rel_error_b_twy;
       }      
 
+      //Comparing BTWB estimates with the naive estimate
 
       Matrix temp2;
       la::SubInit (b_twb_naive_estimate_[q],fast_b_twb_estimate[q] , &temp2);
       f_norm=SquaredFrobeniusNorm_(temp2);
       f_norm_naive=SquaredFrobeniusNorm_(b_twb_naive_estimate_[q]);
-      double rel_error_b_twb=fabs(f_norm)/f_norm_naive;
-      // printf("relative frobenius norm error for BTWB is %f\n",rel_error_b_twb);
+      double rel_error_b_twb=0.0;
+      if(f_norm==0.0 && f_norm_naive==0.0){
+	rel_error_b_twb=0;
+      }
+      else{
+	rel_error_b_twb=fabs(f_norm)/f_norm_naive;
+      }
+      fprintf(fp,"\n");
+      fprintf(fp,"diff norm is %f\n",f_norm);
+      fprintf(fp,"naive norm is %f\n",f_norm_naive);
+      fprintf(fp,"relative frobenius norm error for BTWB is %f\n",rel_error_b_twb);
 
       if(max_frobenius_error_b_twb < rel_error_b_twb){
 
 	max_frobenius_error_b_twb= rel_error_b_twb;
       }       
     }
+    fprintf(fp,"The max frobenius error for BTWY is %f\n",max_frobenius_error_b_twy);
+    fprintf(fp,"The max frobenius error for BTWB is %f\n",max_frobenius_error_b_twb);
+
     printf("The max frobenius error for BTWY is %f\n",max_frobenius_error_b_twy);
     printf("The max frobenius error for BTWB is %f\n",max_frobenius_error_b_twb);
   }
@@ -237,6 +266,9 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
 	    fabs(fast_b_twb_estimate[q].get(row,col)-b_twb_naive_estimate_[q].get(row,col));
 
 	  double error=diff/b_twb_naive_estimate_[q].get(row,col);
+
+	  printf("diff =%f\n",diff);
+	  printf("Being compared against %f\n",b_twb_naive_estimate_[q].get(row,col));
 	  if(error>max_error_for_this_point){
 
 	    max_error_for_this_point=error;
@@ -245,8 +277,8 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
 	}
       }//Calculations complete for this point
 
-      printf("Maximum error for this point is %f\n",max_error_for_this_point);
-      if(max_error_for_this_point<max_error_on_the_whole){
+      printf("Maximum error for this point BTWB is %f\n",max_error_for_this_point);
+      if(max_error_for_this_point>max_error_on_the_whole){
 	max_error_on_the_whole=max_error_for_this_point;
 
       }
@@ -266,7 +298,10 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
 	  double diff=
 	    fabs(fast_b_twy_estimate[q].get(row,col)-b_twy_naive_estimate_[q].get(row,col));
 	  
-	  double error=diff/b_twb_naive_estimate_[q].get(row,col);
+	  double error=diff/b_twy_naive_estimate_[q].get(row,col);
+
+	  printf("diff =%f\n",diff);
+	  printf("Being compared against %f\n",b_twy_naive_estimate_[q].get(row,col));
 	  if(error>max_error_for_this_point){
 	    
 	    max_error_for_this_point=error;
@@ -274,9 +309,9 @@ void NaiveCalculation<TKernel>:: ComputeMaximumRelativeError(ArrayList<Matrix> &
 	  
 	}
       }  //Calculations complete for this point
-      printf("Maximum error for this point is %f\n",max_error_for_this_point);
+      printf("Maximum error for this point BTWY is %f\n",max_error_for_this_point);
       
-      if(max_error_for_this_point<max_error_on_the_whole){
+      if(max_error_for_this_point>max_error_on_the_whole){
 	max_error_on_the_whole=max_error_for_this_point;
       }
     }

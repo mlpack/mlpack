@@ -11,6 +11,7 @@ int main(int argc, char *argv[]){
   Matrix q_matrix;
   Matrix r_matrix;
   Vector rset_weights;
+  Vector true_regression_values;
 
   //Reading parameters and loading data
 
@@ -18,7 +19,8 @@ int main(int argc, char *argv[]){
     fx_submodule(NULL, "regression", "regression_module");
   
   // The reference data file is a required parameter.
-  const char* reference_file_name = fx_param_str_req(regression_module, "data");
+  const char* reference_file_name = 
+    fx_param_str_req(regression_module, "data");
   
   // The query data file defaults to the references.
   const char* query_file_name =
@@ -49,8 +51,8 @@ int main(int argc, char *argv[]){
   //Get the bandwidth for kernel calculations and the tolerance limit. 
   //Both default to 0.2
 
-  double bandwidth=fx_param_double(regression_module,"bandwidth",0.15);
-  double tau=fx_param_double(regression_module,"tau",0.15);
+  double bandwidth=fx_param_double(regression_module,"bandwidth",0.125);
+  double tau=fx_param_double(regression_module,"tau",0.0025);
   printf("tau is %f\n",tau);
 
   //Get the weights for the reference set
@@ -65,7 +67,7 @@ int main(int argc, char *argv[]){
     
     Dataset ref_weights;
     ref_weights.InitFromFile (rwfname);
-    rset_weights.Copy (ref_weights.matrix ().GetColumnPtr (0), ref_weights.matrix ().n_rows ());	//Note rset_weights_ is a vector of weights
+    rset_weights.Copy (ref_weights.matrix ().GetColumnPtr (0), ref_weights.matrix ().n_rows ());	//Note rset_weights is a vector of weights
     
   }
   
@@ -75,6 +77,30 @@ int main(int argc, char *argv[]){
     rset_weights.SetAll (1);
     
   }
+
+  //Also get the true regression values of all the reference points
+  const char *are=NULL;
+  if (fx_param_exists (NULL, "true_reg")){
+    
+    //are is the filename having the regression estimates of the 
+    are =  fx_param_str (NULL, "true_reg", NULL);
+  }
+  
+  if (are != NULL){
+    
+    Dataset true_reg;
+    true_reg.InitFromFile (are);
+    true_regression_values.Copy (true_reg.matrix ().GetColumnPtr (0), true_reg.matrix ().n_rows ()); 
+    
+  }
+  
+  else{
+    
+    true_regression_values.Init (r_matrix.n_cols ());
+    true_regression_values.SetAll (1);
+    
+  }//Hence the true regression values have been stored
+
 
   //Get the length of the leaf. Defaulted to 2
 
@@ -88,23 +114,31 @@ int main(int argc, char *argv[]){
     criteria=(char*)malloc(40*sizeof(char));
     strcpy(criteria,fx_param_str(regression_module,"criteria","fnorm"));
     
-    fast_regression.Init(q_matrix, r_matrix, bandwidth, tau, leaf_length, rset_weights, criteria);
+    fast_regression.Init(q_matrix, r_matrix, bandwidth, tau, 
+			 leaf_length, rset_weights, criteria,true_regression_values);
     fast_regression.Compute();
+    printf("FAST CALCULATIONS ALL DONE");
+
+    //These are the regression estimates provided by the fast
+    //algorithm
+
+    // Vector fast_regression_estimate;
+    //fast_regression_estimate.Copy(fast_regression.get_regression_estimate());
 
 
 
     //Lets do naive calculations too............
-  
-    //Lets first declare an object of the naive type
-    printf("FAST CALCULATIONS ALL DONE");
+      
     ArrayList<index_t> old_from_new_r;
     old_from_new_r.Copy(fast_regression.get_old_from_new_r());
+
+   
+    
 
     //Get the fast regression estimates.We shall use it to compare the
     //accuracy
 
-    Vector fast_regression_estimate;
-    fast_regression_estimate.Copy(fast_regression.get_regression_estimate());
+   
 
     ArrayList<Matrix> fast_b_twy_estimates;
     ArrayList<Matrix> fast_b_twb_estimates;
@@ -113,22 +147,31 @@ int main(int argc, char *argv[]){
     fast_b_twb_estimates.Init(q_matrix.n_cols());
 
     for(index_t q=0;q<q_matrix.n_cols();q++){
+ 
+      fast_b_twb_estimates[q].Init(r_matrix.n_rows()+1,r_matrix.n_rows()+1);
+      fast_b_twy_estimates[q].Init(r_matrix.n_rows()+1,1);
 
-      fast_b_twy_estimates[q].Alias(fast_regression.get_b_twy_estimates(q));
-      fast_b_twb_estimates[q].Alias(fast_regression.get_b_twb_estimates(q));
+    }
+
+
+    for(index_t q=0;q<q_matrix.n_cols();q++){
+
+      fast_b_twy_estimates[q].CopyValues(fast_regression.get_b_twy_estimates(q));
+      fast_b_twb_estimates[q].CopyValues(fast_regression.get_b_twb_estimates(q));
     }
     
     NaiveCalculation<GaussianKernel> naive;
-    naive.Init(q_matrix,r_matrix,old_from_new_r,bandwidth,rset_weights);
+    naive.Init(q_matrix,r_matrix,
+	       old_from_new_r,bandwidth,rset_weights);
+
+    printf("started naive computations..\n");
     naive.Compute();
+    printf("completed naive calculations..\n");
     naive.ComputeMaximumRelativeError
-      (fast_b_twy_estimates,fast_b_twb_estimates,criteria);
-    naive.CompareFastWithNaive(fast_regression_estimate);
+    (fast_b_twy_estimates,fast_b_twb_estimates,criteria);
+    //naive.CompareFastWithNaive(fast_regression_estimate);
    
-
     //Will need to verify if this is fine to do...
-
- 
 
     fx_done();
   }

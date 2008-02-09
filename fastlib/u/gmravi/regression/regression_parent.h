@@ -207,6 +207,9 @@ public:
   /** Regression estimates of the query points */
   Vector regression_estimate_;
 
+  /* True regression values of the query points */
+  Vector true_regression_values_;
+
   /** Mappings from old dataset to new dataset
    * Remember that when we build the query tree and the
    * reference tree out of the query and reference
@@ -246,8 +249,9 @@ public:
 
  void FRegressionBase_(Tree *qnode, Tree *rnode, check_for_prune_t flag);
 
- void MergeChildBounds_(Tree *,check_for_prune_t flag);
+ void MergeChildBounds_(Tree *,prune_t flag);
 
+ void MergeChildBounds_(Tree *,check_for_prune_t flag);
 
  void CallRecursively_(Tree *qnode, Tree *rnode,check_for_prune_t flag);
 
@@ -283,6 +287,8 @@ public:
  void PrintRegressionEstimate_();
  double SquaredFrobeniusNorm_(Matrix &);
  double Compute1NormLike_(Matrix &);
+
+ void CompareWithTrueValues_();
  
  public:
  
@@ -305,7 +311,7 @@ public:
   void Compute();
 
   void Init(Matrix &q_matrix, Matrix &r_matrix, double bandwidth,
-	  double tau,index_t leaf_length,Vector &rset_weights, char *);
+	  double tau,index_t leaf_length,Vector &rset_weights, char *, Vector &);
 };
 
 

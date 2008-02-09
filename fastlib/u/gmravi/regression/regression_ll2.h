@@ -8,9 +8,9 @@ double FastRegression<TKernel>::Compute1NormLike_(Matrix &a){
 
   //This function computes treats the natrix as a vector and computes
   //it's 1-norm
-  double value=0;
-  for(index_t col=0;col<a.n_cols();col++){
-    for(index_t row=0;row<a.n_rows();row++){
+  double value=0.0;
+  for(index_t row=0;row<a.n_rows();row++){
+    for(index_t col=0;row<a.n_cols();row++){
       value+=fabs(a.get(row,col));
     }
   }
@@ -21,12 +21,12 @@ template <typename TKernel>
 double FastRegression<TKernel>::SquaredFrobeniusNorm_(Matrix &a){
 
   double sqd_frobenius_norm=0.0;
-  for(index_t col=0;col<a.n_cols();col++){
+  for(index_t row=0;row<a.n_rows();row++){
     //Along each column
-    for(index_t row=0;row<a.n_rows();row++){
+    for(index_t col=0;col<a.n_cols();col++){
       //Alon each row
 
-      sqd_frobenius_norm+=a.get(row,col)*a.get(row,col);
+      sqd_frobenius_norm+=(a.get(row,col)*a.get(row,col));
     }
   }
   return sqd_frobenius_norm;
@@ -128,19 +128,28 @@ index_t FastRegression<TKernel>::PrunableB_TWY_(Tree *qnode, Tree *rnode,
 
   //THIS Means we are interested in the frobenius norm pruning................
   
-  //Maximum allowed error is the sqaured frobenius norm of the matrix max_error
+  //Maximum  error is the sqaured frobenius norm of the matrix max_error
 
   double squared_frobenius_norm_of_max_error=SquaredFrobeniusNorm_(max_error);
   double ratio_of_1norms=
-    Compute1NormLike_(rnode->stat().b_ty)/Compute1NormLike_(rroot_->stat().b_ty);  
+   (double) Compute1NormLike_(rnode->stat().b_ty)/Compute1NormLike_(rroot_->stat().b_ty);  
 
   //Now lets calculate the squared frobenius norm of new_mass_l
   double sqd_frobenius_norm_of_new_mass_l=SquaredFrobeniusNorm_(new_mass_l);
  
   double allowed_error= ratio_of_1norms*tau_*sqd_frobenius_norm_of_new_mass_l;
-  if(squared_frobenius_norm_of_max_error<=allowed_error)
+  if(squared_frobenius_norm_of_max_error<allowed_error)
     {
       //prune
+ 
+      printf("kernel value lo is %f\n",kernel_value_range.lo);
+      printf("kernel value hi is %f\n",kernel_value_range.hi);
+      
+      printf("squared_frobenius_norm_of_max_error was %f\n",squared_frobenius_norm_of_max_error);
+      printf("allowed error is %f\n",allowed_error);
+
+      printf("\n\n");
+
       return 1;
     }
   else{
@@ -195,7 +204,7 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
  
   //Now lets calculate the allowed error. 
     
-  //allowed_error=tau*(rnode->stat().b_tb/rrot->stat().b_tb)(b_twb_mass_l+dl)
+  //allowed_error=tau*(rnode->stat().b_tb/rroot->stat().b_tb)(b_twb_mass_l+dl)
   //Lets define a matrix new_mass_l as shown below.This matrix takes 
   //into account the addditional dl that will be added if pruning takes 
   //place
@@ -228,7 +237,7 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
      	double alpha=
 	  tau_*(double)(rnode->stat().b_tb.get(row,col))/
 	  (rroot_->stat().b_tb.get(row,col));
-	if(rroot_->stat().b_tb.get(row,col)==0){
+	 if(rroot_->stat().b_tb.get(row,col)==0){
 	  
 	  printf("btb.is not properly defined\n");
 	}
@@ -249,6 +258,7 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
       }
     }
     //This means the matrix is compoenent wise prunable. hence return 1
+
     return 1;
   }
   //THIS MEANS WE ARE INTERESTED IN PRUNING BY FROBENIUS NORM
@@ -256,14 +266,15 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
 
   double squared_frobenius_norm_of_max_error=SquaredFrobeniusNorm_(max_error);
   double ratio_of_1norms=
-    Compute1NormLike_(rnode->stat().b_tb)/Compute1NormLike_(rroot_->stat().b_tb); 
+    (double)Compute1NormLike_(rnode->stat().b_tb)/Compute1NormLike_(rroot_->stat().b_tb); 
   //Now lets calculate the squared frobenius norm of new_mass_l
 
   double squared_frobenius_norm_of_new_mass_l=SquaredFrobeniusNorm_(new_mass_l);
 
   double allowed_error=tau_*ratio_of_1norms*squared_frobenius_norm_of_new_mass_l;
 
-  if(squared_frobenius_norm_of_max_error > allowed_error){
+ 
+  if(squared_frobenius_norm_of_max_error >= allowed_error){
 
     //then this matrix is NOT runable
     dl.SetAll(0);
@@ -271,12 +282,19 @@ index_t FastRegression<TKernel>:: PrunableB_TWB_(Tree *qnode, Tree *rnode, Matri
     return 0;
   }
 
-  //This means that the quantity is prunable
-  return 1;
+  else{
+    //This means that the quantity is prunable
+    printf("squared_frobenius_norm_of_max_error was %f\n",squared_frobenius_norm_of_max_error);
+    printf("allowed error is %f\n",allowed_error);
+    printf("kernel value lo is %f\n",kernel_value_range.lo);
+    printf("kernel value hi is %f\n",kernel_value_range.hi);
+    printf("\n\n");
+    return 1;
+  }
 }
-  
 
-/* The Update Boundws function is independent of the pruning criteria */
+
+/* The Update Bounds function is independent of the pruning criteria */
 
 template <typename TKernel>
 void FastRegression<TKernel>::
@@ -290,8 +308,8 @@ UpdateBoundsForPruningB_TWY_(Tree *qnode, Matrix &dl_b_twy, Matrix &du_b_twy){
   //b_twy_mass_u <- b_twy_mass_u+du
     
  
-  la::AddTo(dl_b_twy, &qnode->stat().b_twy_mass_l);
-  la::AddTo(du_b_twy, &qnode->stat().b_twy_mass_u);
+  la::AddTo(dl_b_twy, &(qnode->stat().b_twy_mass_l));
+  la::AddTo(du_b_twy, &(qnode->stat().b_twy_mass_u));
     
     
   // for a leaf node, incorporate the lower and upper bound changes into
@@ -396,31 +414,31 @@ MergeChildBoundsB_TWB_(  FastRegression<TKernel>::
   //    parent
   
   //So lets find the componentwise minimum and maximum 
+ if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
+   Matrix max_children;
+   Matrix min_children;
+   max_children.Init(parent_stat.b_twb_mass_l.n_rows(), 
+		     parent_stat.b_twb_mass_l.n_cols());
+   
+   min_children.Init(parent_stat.b_twb_mass_l.n_rows(), 
+		     parent_stat.b_twb_mass_l.n_cols());
 
-  Matrix max_children;
-  Matrix min_children;
-  max_children.Init(parent_stat.b_twb_mass_l.n_rows(), 
-		    parent_stat.b_twb_mass_l.n_cols());
-
-  min_children.Init(parent_stat.b_twb_mass_l.n_rows(), 
-		    parent_stat.b_twb_mass_l.n_cols());
-
-  if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
-    for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
-      for(index_t row=0;row<parent_stat.b_twb_mass_l.n_rows();row++){
-	
-	if(left_stat->b_twb_mass_l.get(row,col) <= 
-	   right_stat->b_twb_mass_l.get(row,col)){
-	  
-	  //left child has lesser mass_l value
-	  
-	  min_children.set(row,col,
-			   left_stat->b_twb_mass_l.get(row,col));
-	  
-	  max_children.set(row,col,
-			   right_stat->b_twb_mass_l.get(row,col));
-	}
-	
+   
+   for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
+     for(index_t row=0;row<parent_stat.b_twb_mass_l.n_rows();row++){
+       
+       if(left_stat->b_twb_mass_l.get(row,col) <= 
+	  right_stat->b_twb_mass_l.get(row,col)){
+	 
+	 //left child has lesser mass_l value
+	 
+	 min_children.set(row,col,
+			  left_stat->b_twb_mass_l.get(row,col));
+	 
+	 max_children.set(row,col,
+			  right_stat->b_twb_mass_l.get(row,col));
+       }
+       
 	else{
 	  //right child has lesser mass-l value
 	  
@@ -432,9 +450,9 @@ MergeChildBoundsB_TWB_(  FastRegression<TKernel>::
 	  
 	}
 	
-      }
+     }
       
-    }
+   }
     //Now compare with parent...
  
     for(index_t col=0;col<parent_stat.b_twb_mass_l.n_cols();col++){
@@ -453,7 +471,8 @@ MergeChildBoundsB_TWB_(  FastRegression<TKernel>::
 	}      
       }
     }
-  }
+    return;
+ }
 
   //THe pruning criteria is Frobenius norm pruning...
 
@@ -538,6 +557,7 @@ MergeChildBoundsB_TWY_( FastRegression<TKernel>::
 
 
   if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
+
     //This means we want to merge the bounds of b_twb
     //b_twb_mass_l_parent= 
     //max(min(b_twy_mass_l,left_child,b_twy_mass_l_right_child),
@@ -601,7 +621,9 @@ MergeChildBoundsB_TWY_( FastRegression<TKernel>::
 	}      
       }
     }
+    return;
   }
+
   //IF Pruning criteria is Frobenius Norm Pruning criteria.....
   else{
 
@@ -609,17 +631,20 @@ MergeChildBoundsB_TWY_( FastRegression<TKernel>::
     // lower_of_parent=max (parent, min (children))  
     // upper_of_parent=min(parent, max(children))
 
-    //lets first frind out the squared frobenius norms of the lower
+    //lets first find out the squared frobenius norms of the lower
     //bound masses of both the children
 
-    double sqd_frobenius_norm_of_left_child=SquaredFrobeniusNorm_(left_stat->b_twy_mass_l);
-    double sqd_frobenius_norm_of_right_child=SquaredFrobeniusNorm_(right_stat->b_twy_mass_l);
+    double sqd_frobenius_norm_of_left_child=
+      SquaredFrobeniusNorm_(left_stat->b_twy_mass_l);
+    double sqd_frobenius_norm_of_right_child=
+      SquaredFrobeniusNorm_(right_stat->b_twy_mass_l);
 
     //Now compare it with that of the parent
     
-    double sqd_frobenius_norm_of_parent=SquaredFrobeniusNorm_(parent_stat.b_twy_mass_l);
+    double sqd_frobenius_norm_of_parent=
+      SquaredFrobeniusNorm_(parent_stat.b_twy_mass_l);
 
-    if(sqd_frobenius_norm_of_left_child <sqd_frobenius_norm_of_right_child)
+    if(sqd_frobenius_norm_of_left_child < sqd_frobenius_norm_of_right_child)
       {
 	//This means the left child has lower frobenius norm compared
 	//to the right child
@@ -647,10 +672,13 @@ MergeChildBoundsB_TWY_( FastRegression<TKernel>::
     }
 
     //A similar logic for mass_u values
-    sqd_frobenius_norm_of_left_child=SquaredFrobeniusNorm_(left_stat->b_twy_mass_u);
-    sqd_frobenius_norm_of_right_child=SquaredFrobeniusNorm_(right_stat->b_twy_mass_u);
+    sqd_frobenius_norm_of_left_child=
+      SquaredFrobeniusNorm_(left_stat->b_twy_mass_u);
 
-    //Now compute it with that of the parent
+    sqd_frobenius_norm_of_right_child=
+      SquaredFrobeniusNorm_(right_stat->b_twy_mass_u);
+
+    //Now compare it with that of the parent
 
     sqd_frobenius_norm_of_parent=SquaredFrobeniusNorm_(parent_stat.b_twy_mass_u);
 
@@ -682,6 +710,43 @@ MergeChildBoundsB_TWY_( FastRegression<TKernel>::
 */  
 template <typename TKernel>
 void FastRegression<TKernel>::
+MergeChildBounds_( Tree *qnode,prune_t flag){
+ 
+  //We will merge bounds depending on the value of the flag
+
+  //But firstly we will check if the qnode is a leaf node. if it is
+  //then we will simply return
+
+  if(qnode->is_leaf()){
+    return;
+  }
+
+  //The statistics of the parent and the children node
+  FastRegressionStat &parent_stat=qnode->stat();
+  FastRegressionStat *left_stat=&(qnode->left()->stat());
+  FastRegressionStat *right_stat=&(qnode->right()->stat());
+  if(flag==PRUNE_B_TWB){
+
+    MergeChildBoundsB_TWB_(left_stat,right_stat,parent_stat);
+   
+  }
+  else{
+    if(flag==PRUNE_B_TWY){
+
+      MergeChildBoundsB_TWY_(left_stat,right_stat,parent_stat);
+    }
+    else{
+      if(flag==PRUNE_BOTH){
+	MergeChildBoundsB_TWB_(left_stat,right_stat,parent_stat);
+	MergeChildBoundsB_TWY_(left_stat,right_stat,parent_stat);
+      }
+    }
+  }
+}
+
+
+template <typename TKernel>
+void FastRegression<TKernel>::
 MergeChildBounds_( Tree *qnode,check_for_prune_t flag){
  
   //We will merge bounds depending on the value of the flag
@@ -708,10 +773,10 @@ MergeChildBounds_( Tree *qnode,check_for_prune_t flag){
       MergeChildBoundsB_TWY_(left_stat,right_stat,parent_stat);
     }
     else{
-      //printf("will merge both the bounds...\n");
-      MergeChildBoundsB_TWB_(left_stat,right_stat,parent_stat);
-      MergeChildBoundsB_TWY_(left_stat,right_stat,parent_stat);
-
+      if(flag==CHECK_FOR_PRUNE_BOTH){
+	MergeChildBoundsB_TWB_(left_stat,right_stat,parent_stat);
+	MergeChildBoundsB_TWY_(left_stat,right_stat,parent_stat);
+      }
     }
   }
 }
@@ -725,13 +790,15 @@ template <typename TKernel>
 
 void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
 
+  //printf("Hit the base case for BTWY..\n");
+
   //subtract along each dimension as we are now doing exhaustive calculations
 
   //more_u <- more_u - rnode->stat().b_ty
 
   la::SubFrom (rnode->stat().b_ty, &qnode->stat().b_twy_more_u);
 
-  //Having subtracted calculate B^TWY exhaustively
+  //Having subtracted, calculate B^TWY exhaustively
   //One can do this by using linear algebra routines available 
   //in LaPack. however we shall not use them because B can be a 
   //very large matrix
@@ -759,27 +826,27 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
 	   //This is nothing but B^TWY being evaluated dimension wise
 	  if (row != 0){
 
-	    double val=b_twy_l_estimate_[q].get(row,col)+ 
+	    double val1=b_twy_l_estimate_[q].get(row,col)+ 
 	      ker_value * rset_weights_[old_from_new_r_[r]] * rset_.get (row- 1, r);
 
-	    b_twy_l_estimate_[q].set(row,col,val);
+	    b_twy_l_estimate_[q].set(row,col,val1);
 
-	    val=b_twy_u_estimate_[q].get(row,col)+ 
+	    double val2 =b_twy_u_estimate_[q].get(row,col)+ 
 	      ker_value * rset_weights_[old_from_new_r_[r]] * rset_.get (row- 1, r);
 	    
-	    b_twy_u_estimate_[q].set(row,col,val);
+	    b_twy_u_estimate_[q].set(row,col,val2);
 	    
 	  }
 	  else{
-	    double val= b_twy_l_estimate_[q].get(row,col) + 
+	    double val1= b_twy_l_estimate_[q].get(row,col) + 
 	      ker_value * rset_weights_[old_from_new_r_[r]];
 
-	    b_twy_l_estimate_[q].set(row,col,val);
+	    b_twy_l_estimate_[q].set(row,col,val1);
 
-	    val= b_twy_u_estimate_[q].get(row,col) + 
+	   double  val2= b_twy_u_estimate_[q].get(row,col) + 
 	      ker_value * rset_weights_[old_from_new_r_[r]];
 	   
-	    b_twy_u_estimate_[q].set(row,col,val);
+	    b_twy_u_estimate_[q].set(row,col,val2);
 
 	  }
 	
@@ -833,13 +900,15 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
     //having looped over each point
     
     qnode->stat().b_twy_mass_u.CopyValues(max_u);
-    qnode->stat().b_twy_mass_l.CopyValues(min_l);
-    
+    qnode->stat().b_twy_mass_l.CopyValues(min_l); 
+    return;
+
   }
+
   else{
 
     //We are doing frobenius norm pruning
-    /** get a tighter lower and upper boiounf by looping over each query
+    /** get a tighter lower and upper bound by looping over each query
      *  point to find that particular query point that has the least sqd
      *  frobenius norm of the matrix b_twy_l_estimate_[q]+qnode->stat().b_twy_more_l
      */
@@ -850,8 +919,8 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
     //The min_pointer and the max_pointer store the index number of the
     //query point which possibly has the least and the highest squared frobenius norm
     
-    index_t min_pointer;
-    index_t max_pointer;
+    index_t min_pointer=qnode->begin();
+    index_t max_pointer=qnode->begin();
     
     temp.Init(rset_.n_rows()+1,1);
     for(index_t i=qnode->begin();i<qnode->end();i++){
@@ -879,9 +948,13 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
     
     //Once done with the looping process set up the mass_l and mass_u values
     
-    la::AddOverwrite(b_twy_l_estimate_[min_pointer],qnode->stat().b_twy_more_l,&qnode->stat().b_twy_mass_l);
-    la::AddOverwrite(b_twy_u_estimate_[max_pointer],qnode->stat().b_twy_more_u,&qnode->stat().b_twy_mass_u);
+    la::AddOverwrite(b_twy_l_estimate_[min_pointer],
+		     qnode->stat().b_twy_more_l,&qnode->stat().b_twy_mass_l);
+
+    la::AddOverwrite(b_twy_u_estimate_[max_pointer],
+		     qnode->stat().b_twy_more_u,&qnode->stat().b_twy_mass_u);
     
+  
   }
 }
 
@@ -890,6 +963,7 @@ void FastRegression<TKernel>::FRegressionBaseB_TWY_(Tree *qnode, Tree *rnode){
 template <typename TKernel>
 void FastRegression<TKernel>::FRegressionBaseB_TWB_(Tree *qnode,Tree *rnode){
 
+  printf("Hit the base case for BTWB\n");
 
   la::SubFrom (rnode->stat().b_tb, &qnode->stat().b_twb_more_u);
   
@@ -973,7 +1047,7 @@ void FastRegression<TKernel>::FRegressionBaseB_TWB_(Tree *qnode,Tree *rnode){
 	}
       }
     }
- }
+  }
 
   if(pruning_criteria==CRITERIA_FOR_PRUNE_COMPONENT){
     //Loop over each point and set the max and min 
@@ -1022,35 +1096,37 @@ void FastRegression<TKernel>::FRegressionBaseB_TWB_(Tree *qnode,Tree *rnode){
     
     qnode->stat().b_twb_mass_u.CopyValues(max_u);
     qnode->stat().b_twb_mass_l.CopyValues(min_l);
+    return;
     
   }
   //We are interested in frobenius norm pruning
+
   else{
-    
-    
 
  //We are doing frobenius norm pruning
   /** get a tighter lower and upper boiounf by looping over each query
    *  point to find that particular query point that has the least sqd
-   *  frobenius norm of the matrix b_twy_l_estimate_[q]+qnode->stat().b_twy_more_l
+   *  frobenius norm of the matrix b_twb_l_estimate_[q]+qnode->stat().b_twb_more_l
   */
   double min_norm=DBL_MAX;
   double max_norm=DBL_MIN;
-  Matrix temp;
+  Matrix temp1;
+  Matrix temp2;
 
   //The min_pointer and the max_pointer store the index number of the
   //query point which possibly has the least and the highest squared frobenius norm
 
-  index_t min_pointer;
-  index_t max_pointer;
+  index_t min_pointer=qnode->begin();
+  index_t max_pointer=qnode->begin();
 
-  temp.Init(rset_.n_rows()+1,rset_.n_rows()+1);
+  temp1.Init(rset_.n_rows()+1,rset_.n_rows()+1);
+  temp2.Init(rset_.n_rows()+1,rset_.n_rows()+1);
   for(index_t i=qnode->begin();i<qnode->end();i++){
 
     //look for the lower bound
-    la::AddOverwrite(b_twb_l_estimate_[i],qnode->stat().b_twb_more_l,&temp);
-    
-    double var=SquaredFrobeniusNorm_(temp);
+
+    la::AddOverwrite(b_twb_l_estimate_[i],qnode->stat().b_twb_more_l,&temp1);
+    double var=SquaredFrobeniusNorm_(temp1);
     if(var< min_norm){
 
       min_pointer=i;
@@ -1058,20 +1134,22 @@ void FastRegression<TKernel>::FRegressionBaseB_TWB_(Tree *qnode,Tree *rnode){
     }
 
     //Look for the upper bound
-    la::AddOverwrite(b_twb_u_estimate_[i],qnode->stat().b_twb_more_u,&temp);
-    var=SquaredFrobeniusNorm_(temp);
-    if(var>max_norm){
+    la::AddOverwrite(b_twb_u_estimate_[i],qnode->stat().b_twb_more_u,&temp2);
+    var=SquaredFrobeniusNorm_(temp2);
+    if(var > max_norm){
       
       max_pointer=i;
       max_norm=var;
     }
-    
   }
 
   //Once done with the looping process set up the mass_l and mass_u values
 
-  la::AddOverwrite(b_twb_l_estimate_[min_pointer],qnode->stat().b_twb_more_l,&qnode->stat().b_twb_mass_l);
-  la::AddOverwrite(b_twb_u_estimate_[max_pointer],qnode->stat().b_twb_more_u,&qnode->stat().b_twb_mass_u);
+  la::AddOverwrite(b_twb_l_estimate_[min_pointer],
+		   qnode->stat().b_twb_more_l,&qnode->stat().b_twb_mass_l);
+
+  la::AddOverwrite(b_twb_u_estimate_[max_pointer],
+		   qnode->stat().b_twb_more_u,&qnode->stat().b_twb_mass_u);
 
   }
 }
@@ -1118,31 +1196,28 @@ void FastRegression<TKernel>::PostProcess_(Tree *qnode){
   //mass_u <- owed_u+mass_u
 
 
-
-
+   
+  UpdateBounds_(qnode, qnode->stat().b_twb_owed_l, 
+		qnode->stat().b_twb_owed_u, 
+		qnode->stat().b_twy_owed_l, 
+		qnode->stat().b_twy_owed_u, CHECK_FOR_PRUNE_BOTH);
+  
 
   if(!qnode->is_leaf()){
 
     //Having completed all the tree calculations we now update bounds for both
     //the qunatities. this can be done by calling the UpdateBounds_ function
     //with the flag set to CHECK_FOR_PRUNE_BOTH
-      
-    UpdateBounds_(qnode, qnode->stat().b_twb_owed_l, 
-		  qnode->stat().b_twb_owed_u, 
-		  qnode->stat().b_twy_owed_l, 
-		  qnode->stat().b_twy_owed_u, CHECK_FOR_PRUNE_BOTH);
+   
     PostProcess_(qnode->left());
     PostProcess_(qnode->right());
   }
 
   else{
 
-  UpdateBounds_(qnode, qnode->stat().b_twb_owed_l, 
-		  qnode->stat().b_twb_owed_u, 
-		  qnode->stat().b_twy_owed_l, 
-		  qnode->stat().b_twy_owed_u, CHECK_FOR_PRUNE_BOTH);
+   
     // b_twb_e_estimate= 
-    //0.5*(b_twy_l_estimate+b_twy_u_estimate+b_twy_more_l+b_twy_more_u)
+    //0.5*(b_twb_l_estimate+b_twb_u_estimate+b_twb_more_l+b_twb_more_u)
     for(index_t q=qnode->begin();q<qnode->end();q++){
      
       FastRegressionStat qstat=qnode->stat();
@@ -1150,16 +1225,16 @@ void FastRegression<TKernel>::PostProcess_(Tree *qnode){
       la::AddInit(b_twb_l_estimate_[q],
 		  b_twb_u_estimate_[q],&estimate_mean1);
       
-      la::Scale(0.50,&estimate_mean1);
+      // la::Scale(0.50,&estimate_mean1);
       
       Matrix more_mean1;
       la::AddInit(qstat.b_twb_more_l,qstat.b_twb_more_u,&more_mean1);
-      la::Scale(0.50,&more_mean1);
+      //la::Scale(0.50,&more_mean1);
 
       //Final estimate is just the sum of estimate_mean and more_mean
 
       la::AddOverwrite(estimate_mean1,more_mean1,&b_twb_e_estimate_[q]);
-
+      la::Scale(0.50,&b_twb_e_estimate_[q]);
 
       // b_twy_e_estimate= 
       //0.5*(b_twy_l_estimate+b_twy_u_estimate+b_twy_more_l+b_twy_more_u)
@@ -1168,15 +1243,17 @@ void FastRegression<TKernel>::PostProcess_(Tree *qnode){
       la::AddInit(b_twy_l_estimate_[q],
 		  b_twy_u_estimate_[q],&estimate_mean2);
 
-      la::Scale(0.50,&estimate_mean2);
+      // la::Scale(0.50,&estimate_mean2);
 
       Matrix more_mean2;
       la::AddInit(qstat.b_twy_more_l,qstat.b_twy_more_u,&more_mean2);
-      la::Scale(0.50,&more_mean2);
+      // la::Scale(0.50,&more_mean2);
 
       //Final estimate is just the sum of estimate_mean and more_mean
      
       la::AddOverwrite(estimate_mean2,more_mean2,&b_twy_e_estimate_[q]);
+      la::Scale(0.50,&b_twy_e_estimate_[q]);
+
     }
   }
 }
@@ -1298,11 +1375,22 @@ void FastRegression<TKernel>::PrintRegressionEstimate_(){
   fclose(gp);
 }
 
+template<typename TKernel>
+void FastRegression<TKernel>::CompareWithTrueValues_(){
+  //We have regression_estimate_ and true_regression_values_.Lets get
+  //mean squared error
+
+  double error=0.0;
+  for(index_t q=0;q<qset_.n_cols();q++){
+    double diff=regression_estimate_[q]-true_regression_values_[q];
+    error+=diff*diff;
+  }
+  double mean_squared_error=error/qset_.n_cols();
+  printf("Mean squared error when compared with true regression values  is %f\n",mean_squared_error);
+
+}
 
 #endif
-
-
-
 
 
 
