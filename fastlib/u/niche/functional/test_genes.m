@@ -1,11 +1,38 @@
-data = dlmread('combined.txt', '\t', 1, 1)';
-data = data(7:7+17,:);
-t = 0:7:119;
+%data = dlmread('combined.txt', '\t', 1, 1)';
+%data = data(7:7+17,:);
+%t = 0:7:119;
 
+fid = fopen('combined.txt');
 
+% throw away first line
+textscan(fid, '%s', 83, 'delimiter', '\t', 'emptyValue', -inf);
 
+cur_row = [1];
 
+row_num = 0;
 
+while(length(cur_row) > 0)
+  textscan(fid, '%s', 1, 'delimiter', '\t', 'emptyValue', -inf);
+  cur_row = textscan(fid, '%f', 82, 'delimiter', '\t', ...
+		     'emptyValue', -inf);
+  cur_row = cur_row{1};
+  
+  if(length(cur_row) > 0)
+    row_num = row_num + 1;
+    if length(cur_row) < 82
+      fprintf('row %d has only %d elements\n', row_num, ...
+	      length(cur_row));
+    end
+    while length(cur_row) < 82
+      cur_row(end+1) = -inf;
+    end
+    data(:,row_num) = cur_row;
+  end
+  
+  %fprintf('%f\n', length(cur_row));
+end
+
+return
 N = size(data,2);
 p = 17;
 
