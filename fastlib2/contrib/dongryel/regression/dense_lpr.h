@@ -2,12 +2,15 @@
  *
  *  @author Dongryeol Lee (dongryel)
  *  @see kde_main.cc
- *  @bug No known bugs.
+ *
+ *  @bug No known bugs. However, This code only works for nonnegative
+ *  reference training values and nonnegative reference dataset.
  */
 
 #ifndef DUALTREE_LPR_H
 #define DUALTREE_LPR_H
 
+#include "matrix_util.h"
 #include "multi_index_util.h"
 #include "fastlib/fastlib.h"
 #include "mlpack/series_expansion/farfield_expansion.h"
@@ -55,13 +58,21 @@ class DenseLpr {
         /** @brief The matrix summing up the unweighted data B^T B
 	 *         under the current reference node.
 	 */
-        Matrix sum_data_outerproducts_;
-      
+        Matrix sum_data_outer_products_;
+
+        /** @brief The L1-norm of the summed up matrix B^T B.
+	 */
+        double l1_norm_sum_data_outer_products_;
+
         /** @brief The vector summing up the reference polynomial term
-	 *         weighted by its target training value.
+	 *         weighted by its target training value (i.e. B^T Y).
 	 */
         Vector sum_target_weighted_data_;
 
+        /** @brief THe L1-norm of the summed up vector B^T Y.
+	 */
+        double l1_norm_sum_target_weighted_data_;
+      
         /** @brief Basic memory allocation stuffs.
 	 *
 	 *  @param dimension The dimensionality of the dataset.
@@ -71,8 +82,11 @@ class DenseLpr {
 	  int matrix_dimension = 
 	    (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 
-	  sum_data_outerproducts_.Init(matrix_dimension, matrix_dimension);
+	  sum_data_outer_products_.Init(matrix_dimension, matrix_dimension);
 	  sum_target_weighted_data_.Init(matrix_dimension);
+
+	  l1_norm_sum_data_outer_products_ = 0;
+	  l1_norm_sum_target_weighted_data_ = 0;
         }
 
         /** @brief Computes the \sum\limits_{r \in R} [1 ; r^T]^T [1;
@@ -90,11 +104,11 @@ class DenseLpr {
 	  reference_point_expansion.Init(sum_target_weighted_data_.length());
 
 	  // Zero out the sum matrix before tallying up.
-	  sum_data_outerproducts_.SetZero();
+	  sum_data_outer_products_.SetZero();
 
 	  // Loop over each reference point.
 	  for(index_t r = 0; r < count; r++) {
-
+	    
 	    // Get the reference point.
 	    const double *reference_point = dataset.GetColumnPtr(start + r);
 
@@ -103,22 +117,41 @@ class DenseLpr {
 	       reference_point_expansion);
 	    
 	    // Based on the polynomial expansion computed, sum up its
-	    // outerproduct.
-	    for(index_t i = 0; i < sum_data_outerproducts_.n_cols(); i++) {
+	    // outer product.
+	    for(index_t i = 0; i < sum_data_outer_products_.n_cols(); i++) {
 
-	      for(index_t j = 0; j < sum_data_outerproducts_.n_rows(); j++) {
-		sum_data_outerproducts_.set
-		  (j, i, sum_data_outerproducts_.get(j, i) + 
+	      for(index_t j = 0; j < sum_data_outer_products_.n_rows(); j++) {
+		sum_data_outer_products_.set
+		  (j, i, sum_data_outer_products_.get(j, i) + 
 		   reference_point_expansion[j] * 
 		   reference_point_expansion[i]);
 	      }
 	    }
 	  } // End of iterating over each reference point.
+
+	  l1_norm_sum_data_outer_products_ = 
+	    MatrixUtil::L1Norm(sum_data_outer_products_);
 	}
     
+        /** @brief Computes \sum\limits_{r \in R} [1 ; r^T]^T [1; r^T] by
+	 *         summing up the sub-sums computed by the children.
+	 *
+	 *  @param dataset The reference dataset
+	 *  @param start The starting index of the reference dataset.
+	 *  @param count The number of points in this reference node.
+	 *  @param left_stat The statistics owned by the left child.
+	 *  @param right_stat The statistics owned by the right child.
+	 */
         void Init(const Matrix& dataset, index_t &start, index_t &count,
 		  const LprRStat& left_stat, const LprRStat& right_stat) {
 	  Init(dataset.n_rows());
+	  
+	  // Combine the two sub-sums and compute its L1 norm.
+	  la::AddOverwrite(left_stat.sum_data_outer_products_,
+			   right_stat.sum_data_outer_products_,
+			   &sum_data_outer_products_);
+	  l1_norm_sum_data_outer_products_ = 
+	    MatrixUtil::L1Norm(sum_data_outer_products_);
 	}
 
         /** @brief The constructor which does not do anything. */
@@ -342,6 +375,8 @@ class DenseLpr {
     Vector regression_estimates_;
 
     ////////// Private Member Functions //////////
+  
+    void ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode);
 
   public:
   
@@ -419,7 +454,7 @@ class DenseLpr {
       target_weighted_rset_.Init(row_length_, rset_.n_cols());
       
       // initialize the reference side statistics.
-      //ComputeWeightedTargetVectors_(rroot_);
+      ComputeTargetWeightedReferenceVectors_(rroot_);
     }
 
     void PrintDebug() {
