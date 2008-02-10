@@ -1,7 +1,9 @@
 librule(
     name = "dense_lpr",
     sources = [],
-    headers = ["dense_lpr.h"],
+    headers = ["dense_lpr.h",
+               "dense_lpr_impl.h",
+               "multi_index_util.h"],
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
