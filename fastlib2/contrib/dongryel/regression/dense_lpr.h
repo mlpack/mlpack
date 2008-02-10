@@ -8,6 +8,7 @@
 #ifndef DUALTREE_LPR_H
 #define DUALTREE_LPR_H
 
+#include "multi_index_util.h"
 #include "fastlib/fastlib.h"
 #include "mlpack/series_expansion/farfield_expansion.h"
 #include "mlpack/series_expansion/local_expansion.h"
@@ -97,8 +98,9 @@ class DenseLpr {
 	    // Get the reference point.
 	    const double *reference_point = dataset.GetColumnPtr(start + r);
 
-	    ComputePointMultivariatePolynomial_(reference_point, 
-						reference_point_expansion);
+	    MultiIndexUtil::ComputePointMultivariatePolynomial
+	      (dataset.n_rows(), lpr_order, reference_point, 
+	       reference_point_expansion);
 	    
 	    // Based on the polynomial expansion computed, sum up its
 	    // outerproduct.
@@ -341,38 +343,6 @@ class DenseLpr {
 
     ////////// Private Member Functions //////////
 
-    /** @brief Computes the polynomial expansion in terms of
-     *         multiindex for a D-dimensional point.
-     *
-     *  @param dimension The dimensionality.
-     *  @param point The pointer array of doubles containing the coordinates.
-     *  @param point_expansion The computed multiindex expansion of the
-     *                         point.
-     */
-    void ComputePointMultivariatePolynomial_(int dimension, 
-                                             const double *point,
-					     Vector &point_expansion) {
-
-      // Temporary variables for multiindex looping
-      ArrayList<int> heads;
-      heads.Init(dimension + 1);
-      for(index_t i = 0; i < dimension; i++) {
-        heads[i] = 0;
-      }
-      heads[dimension] = INT_MAX;
-      
-      point_expansion[0] = 1.0;
-      for(index_t k = 1, t = 1, tail = 1; k <= lpr_order; k++, tail = t) {
-	for(index_t i = 0; i < dimension; i++) {
-	  int head = (int) heads[i];
-	  heads[i] = t;
-	  for(index_t j = head; j < tail; j++, t++) {	  
-	    point_expansion[t] = point_expansion[j] * point[i];
-	  }
-	}
-      }
-    }
-
   public:
   
     /** @brief The constructor which sets pointers to NULL. */
@@ -449,7 +419,7 @@ class DenseLpr {
       target_weighted_rset_.Init(row_length_, rset_.n_cols());
       
       // initialize the reference side statistics.
-      ComputeWeightedTargetVectors_(rroot_);
+      //ComputeWeightedTargetVectors_(rroot_);
     }
 
     void PrintDebug() {

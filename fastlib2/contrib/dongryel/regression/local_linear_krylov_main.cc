@@ -1,7 +1,7 @@
 #include "fastlib/fastlib.h"
 #include "local_linear_krylov.h"
 #include "mlpack/kde/dataset_scaler.h"
-#include "naive_local_polynomial_regression.h"
+#include "naive_lpr.h"
 
 int main(int argc, char *argv[]) {
 
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   local_linear.PrintDebug();
 
   // Do naive algorithm.
-  NaiveLocalPolynomialRegression<EpanKernel> naive_local_linear;
+  NaiveLpr<EpanKernel> naive_local_linear;
   naive_local_linear.Init(queries, references, reference_targets,
 			  local_linear_module);
   naive_local_linear.Compute();
