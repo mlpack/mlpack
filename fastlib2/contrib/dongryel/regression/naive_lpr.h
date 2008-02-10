@@ -1,15 +1,25 @@
-#ifndef NAIVE_LOCAL_POLYNOMIAL_REGRESSION_H
-#define NAIVE_LOCAL_POLYNOMIAL_REGRESSION_H
+/** @file naive_lpr.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ *
+ *  @bug No known bugs, but currently only supports up to local
+ *  linear.
+ */
 
-#include "fastlib/fastlib_int.h"
+#ifndef NAIVE_LPR_H
+#define NAIVE_LPR_H
+
+#include "fastlib/fastlib.h"
 
 template<typename TKernel, int order = 1>
-class NaiveLocalPolynomialRegression {
+class NaiveLpr {
 
-  FORBID_ACCIDENTAL_COPIES(NaiveLocalPolynomialRegression);
+  FORBID_ACCIDENTAL_COPIES(NaiveLpr);
 
  private:
 
+  /** @brief The module holding the parameters necessary for execution.
+   */
   struct datanode *module_;
 
   /** @brief The column-oriented query dataset.
@@ -40,9 +50,16 @@ class NaiveLocalPolynomialRegression {
    */
   Vector regression_values_;
 
-  /** total number of coefficients for the local polynomial */
+  /** @brief The total number of coefficients for the local
+   *         polynomial.
+   */
   int total_num_coeffs_;
 
+  /** @brief Compute the pseudoinverse of the matrix.
+   *
+   *  @param A The matrix to compute the pseudoinverse of.
+   *  @param A_inv The computed pseudoinverse by singular value decomposition.
+   */
   void PseudoInverse(const Matrix &A, Matrix *A_inv) {
     Vector ro_s;
     Matrix ro_U, ro_VT;
@@ -58,9 +75,6 @@ class NaiveLocalPolynomialRegression {
     Matrix ro_s_inv;
     ro_s_inv.Init(ro_VT_trans.n_cols(), ro_U_trans.n_rows());
     ro_s_inv.SetZero();
-    
-    printf("Condition number: %g / %g = %g\n", ro_s[0],
-	   ro_s[ro_s.length() - 1], ro_s[0] / ro_s[ro_s.length() - 1]);
 
     // initialize the diagonal by the inverse of ro_s
     for(index_t i = 0; i < ro_s.length(); i++) {
@@ -78,28 +92,40 @@ class NaiveLocalPolynomialRegression {
 
  public:
   
-  NaiveLocalPolynomialRegression() {}
+  /** @brief The constructor which does nothing.
+   */
+  NaiveLpr() {}
 
-  ~NaiveLocalPolynomialRegression() {}
+  /** @brief The destructor which does nothing.
+   */
+  ~NaiveLpr() {}
 
+  /** @brief Compute the local polynomial regression values using the
+   *         brute-force algorithm.
+   */
   void Compute() {
 
     printf("\nStarting naive local polynomial of order %d...\n", order);
     fx_timer_start(NULL, "naive_local_linear_compute");
 
-    // compute unnormalized sum for the numerator vector and the denominator
-    // matrix
+    // Compute unnormalized sum for the numerator vector and the
+    // denominator matrix.
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       
+      // Get the query point.
       const double *q_col = qset_.GetColumnPtr(q);
       for(index_t r = 0; r < rset_.n_cols(); r++) {
 
+	// Get the reference point and the reference target training
+	// value.
 	const double *r_col = rset_.GetColumnPtr(r);
 	const double r_target = rset_targets_[r];
+
+	// Compute the pairwise distance and the resulting kernel value.
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
 
-	for(index_t i = 0; i <= qset_.n_rows(); i++) {
+	for(index_t i = 0; i < total_num_coeffs_; i++) {
 
 	  double factor_i;
 
@@ -114,7 +140,7 @@ class NaiveLocalPolynomialRegression {
 	  }
 	  
 	  // Here, compute each component of the denominator matrix.
-	  for(index_t j = 0; j <= qset_.n_rows(); j++) {
+	  for(index_t j = 0; j < total_num_coeffs_; j++) {
 	    double factor_j;
 
 	    if(j == 0) {
@@ -126,8 +152,10 @@ class NaiveLocalPolynomialRegression {
 
 	    denominator_[q].set(j, i, denominator_[q].get(j, i) +
 				factor_j * factor_i * kernel_value);
-	  }
-	}
+	  } // End of looping over each (j, i)-th component of the
+	    // denominator matrix.
+	} // End of looping over each i-th component of the numerator
+	  // vector.
 
       } // end of looping over each reference point
     } // end of looping over each query point
@@ -139,13 +167,13 @@ class NaiveLocalPolynomialRegression {
       Matrix denominator_inv_q;
       Vector beta_q;
       
-      // now invert the denominator matrix for each query point and multiply
-      // by the numerator vector
+      // Now invert the denominator matrix for each query point and
+      // multiply by the numerator vector.
       PseudoInverse(denominator_[q], &denominator_inv_q);      
       la::MulInit(denominator_inv_q, numerator_[q], &beta_q);
 
-      // compute the dot product between the multiindex vector for the query
-      // point by the beta_q
+      // Compute the dot product between the multiindex vector for the
+      // query point by the beta_q.
       regression_values_[q] = beta_q[0];
       for(index_t i = 1; i <= qset_.n_rows(); i++) {
 	regression_values_[q] += beta_q[i] * q_col[i - 1];
@@ -156,30 +184,37 @@ class NaiveLocalPolynomialRegression {
     printf("\nNaive local polynomial of order %d completed...\n", order);
   }
 
+  /** @brief Initialize the naive algorithm for initial usage.
+   *
+   *  @param queries The column-oriented query dataset.
+   *  @param refererences The column-oriented reference dataset.
+   *  @param reference_targets The training values for the reference set.
+   *  @param module_in The module holding the parameters necessary for
+   *                   execution.
+   */
   void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
 	    struct datanode *module_in) {
 
-    // Set the module to the incoming.
+    // Set the module to the incoming one.
     module_ = module_in;
 
     // Copy the datasets.
     qset_.Copy(queries);
     rset_.Copy(references);
 
-    // read the reference weights
-    
+    // Read the reference weights.
     rset_targets_.Copy(reference_targets.GetColumnPtr(0),
 		       reference_targets.n_cols());
-
-    // get bandwidth
+    
+    // Get bandwidth.
     kernel_.Init(fx_param_double_req(module_, "bandwidth"));
 
-    // compute total number of coefficients
+    // Compute total number of coefficients.
     total_num_coeffs_ = (int) 
       math::BinomialCoefficient(order + qset_.n_rows(), qset_.n_rows());
     
-    // allocate temporary storages for storing the numerator vectors and
-    // the denominator matrices
+    // Allocate temporary storages for storing the numerator vectors
+    // and the denominator matrices.
     numerator_.Init(qset_.n_cols());
     denominator_.Init(qset_.n_cols());
 
@@ -190,11 +225,13 @@ class NaiveLocalPolynomialRegression {
       denominator_[i].SetZero();
     }
     
-    // allocate density storage
+    // Allocate the space for holding the computed regression values.
     regression_values_.Init(qset_.n_cols());
     regression_values_.SetZero();
   }
 
+  /** @brief Output the naive results to the file or the screen.
+   */
   void PrintDebug() {
 
     FILE *stream = stdout;

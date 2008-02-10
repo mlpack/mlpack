@@ -1,3 +1,11 @@
+librule(
+    name = "dense_lpr",
+    sources = [],
+    headers = ["dense_lpr.h"],
+    deplibs = ["mlpack/series_expansion:series_expansion",
+               "fastlib:fastlib_int"]
+    )
+
 # The library build rule for Krylov-subspace based local linear
 # regression.
 librule(
@@ -7,7 +15,7 @@ librule(
                "local_linear_krylov_setup_impl.h",
                "local_linear_krylov_solver_impl.h",
                "local_linear_krylov_test.h",
-               "naive_local_polynomial_regression.h"],
+               "naive_lpr.h"],
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
     )
@@ -19,6 +27,15 @@ binrule(
     sources = ["local_linear_krylov_main.cc"],
     headers = [],
     deplibs = [":local_linear_krylov",
+               "mlpack/series_expansion:series_expansion",
+               "fastlib:fastlib_int"]
+    )
+
+binrule(
+    name = "dense_lpr_bin",
+    sources = ["dense_lpr_main.cc"],
+    headers = [],
+    deplibs = [":dense_lpr",
                "mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
