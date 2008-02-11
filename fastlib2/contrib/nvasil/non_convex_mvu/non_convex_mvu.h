@@ -31,7 +31,9 @@ class NonConvexMVU {
   void Init(std::string data_file, index_t knns);
   void Init(std::string data_file, index_t knns, index_t leaf_size);
   void ComputeLocalOptimum();
+  // eta < 1
   void set_eta(double eta);
+  // gamma > 1
   void set_gamma(double gamma);
   void set_step_size(double step_size);
   void set_max_iterations(index_t max_iterations);
@@ -55,7 +57,11 @@ class NonConvexMVU {
   index_t knns_;
   ArrayList<double> distances_;
   ArrayList<index_t> neighbors_;
-  Vector lagrange_mult_;
+  // Lagrange multipliers for distance constraints
+  Vector lagrange_mult_; 
+  // Lagrange multiplier for the centering constraint
+  // We want the final coordinates to have zero mean
+  Vector centering_lagrange_mult_;
   double sigma_;
   double eta_;
   double gamma_;
@@ -71,10 +77,13 @@ class NonConvexMVU {
   Matrix data_;
 
   void UpdateLagrangeMult_();
-  void LocalSearch_();
+  void LocalSearch_(double *step);
   double ComputeLagrangian_(Matrix &coordinates);
+  void ComputeFeasibilityError_(double *distance_constraint, 
+                                double *centering_constraint);
   double ComputeFeasibilityError_();
   void ComputeGradient_();
+  double ComputeObjective_(Matrix &coord);
 };
 
 #include "non_convex_mvu_impl.h"
