@@ -64,6 +64,11 @@ class DenseLpr {
 	 *         error criterion.
 	 */
         double sum_data_outer_products_error_norm_;
+
+        /** @brief The norm of the summed up matrix B^T B used for the
+	 *         pruning error allocation.
+	 */
+        double sum_data_outer_products_alloc_norm_;
       
         /** @brief The vector summing up the reference polynomial term
 	 *         weighted by its target training value (i.e. B^T Y).
@@ -75,6 +80,11 @@ class DenseLpr {
 	 */
         double sum_target_weighted_data_error_norm_;
       
+        /** @brief The norm of the summed up vector B^T Y used for the
+	 *         pruning error allocation.
+	 */
+        double sum_target_weighted_data_alloc_norm_;
+
         /** @brief Basic memory allocation stuffs.
 	 *
 	 *  @param dimension The dimensionality of the dataset.
@@ -88,7 +98,9 @@ class DenseLpr {
 	  sum_target_weighted_data_.Init(matrix_dimension);
 
 	  sum_data_outer_products_error_norm_ = 0;
+	  sum_data_outer_products_alloc_norm_ = 0;
 	  sum_target_weighted_data_error_norm_ = 0;
+	  sum_target_weighted_data_alloc_norm_ = 0;
         }
 
         /** @brief Computes the \sum\limits_{r \in R} [1 ; r^T]^T [1;
@@ -131,8 +143,12 @@ class DenseLpr {
 	    }
 	  } // End of iterating over each reference point.
 
+	  // Compute the norm of the B^T B used for error criterion
+	  // and the pruning error allocation.
 	  sum_data_outer_products_error_norm_ = 
-	    MatrixUtil::FrobeniusNorm(sum_data_outer_products_);
+	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 2);
+	  sum_data_outer_products_alloc_norm_ =
+	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	}
     
         /** @brief Computes \sum\limits_{r \in R} [1 ; r^T]^T [1; r^T] by
@@ -148,12 +164,14 @@ class DenseLpr {
 		  const LprRStat& left_stat, const LprRStat& right_stat) {
 	  Init(dataset.n_rows());
 	  
-	  // Combine the two sub-sums and compute its Frobenius norm.
+	  // Combine the two sub-sums.
 	  la::AddOverwrite(left_stat.sum_data_outer_products_,
 			   right_stat.sum_data_outer_products_,
 			   &sum_data_outer_products_);
 	  sum_data_outer_products_error_norm_ =
-	    MatrixUtil::FrobeniusNorm(sum_data_outer_products_);
+	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 2);
+	  sum_data_outer_products_alloc_norm_ =
+	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	}
 
         /** @brief The constructor which does not do anything. */
