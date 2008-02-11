@@ -1,4 +1,4 @@
-/** @file dualtree_lpr.h
+/** @file dense_lpr.h
  *
  *  @author Dongryeol Lee (dongryel)
  *  @see kde_main.cc
@@ -7,8 +7,8 @@
  *  reference training values and nonnegative reference dataset.
  */
 
-#ifndef DUALTREE_LPR_H
-#define DUALTREE_LPR_H
+#ifndef DENSE_LPR_H
+#define DENSE_LPR_H
 
 #include "matrix_util.h"
 #include "multi_index_util.h"
@@ -60,18 +60,20 @@ class DenseLpr {
 	 */
         Matrix sum_data_outer_products_;
 
-        /** @brief The Frobenius norm of the summed up matrix B^T B.
+        /** @brief The norm of the summed up matrix B^T B used for the
+	 *         error criterion.
 	 */
-        double frobenius_norm_sum_data_outer_products_;
-
+        double sum_data_outer_products_error_norm_;
+      
         /** @brief The vector summing up the reference polynomial term
 	 *         weighted by its target training value (i.e. B^T Y).
 	 */
         Vector sum_target_weighted_data_;
 
-        /** @brief The Frobenius norm of the summed up vector B^T Y.
+        /** @brief The norm of the summed up vector B^T Y used for the
+	 *         error criterion.
 	 */
-        double frobenius_norm_sum_target_weighted_data_;
+        double sum_target_weighted_data_error_norm_;
       
         /** @brief Basic memory allocation stuffs.
 	 *
@@ -85,8 +87,8 @@ class DenseLpr {
 	  sum_data_outer_products_.Init(matrix_dimension, matrix_dimension);
 	  sum_target_weighted_data_.Init(matrix_dimension);
 
-	  frobenius_norm_sum_data_outer_products_ = 0;
-	  frobenius_norm_sum_target_weighted_data_ = 0;
+	  sum_data_outer_products_error_norm_ = 0;
+	  sum_target_weighted_data_error_norm_ = 0;
         }
 
         /** @brief Computes the \sum\limits_{r \in R} [1 ; r^T]^T [1;
@@ -129,7 +131,7 @@ class DenseLpr {
 	    }
 	  } // End of iterating over each reference point.
 
-	  frobenius_norm_sum_data_outer_products_ = 
+	  sum_data_outer_products_error_norm_ = 
 	    MatrixUtil::FrobeniusNorm(sum_data_outer_products_);
 	}
     
@@ -146,13 +148,12 @@ class DenseLpr {
 		  const LprRStat& left_stat, const LprRStat& right_stat) {
 	  Init(dataset.n_rows());
 	  
-	  // Combine the two sub-sums and compute its Frbenius norm.
+	  // Combine the two sub-sums and compute its Frobenius norm.
 	  la::AddOverwrite(left_stat.sum_data_outer_products_,
 			   right_stat.sum_data_outer_products_,
 			   &sum_data_outer_products_);
-	  frobenius_norm_sum_data_outer_products_ =
-	    left_stat.frobenius_norm_sum_data_outer_products_ +
-	    right_stat.frobenius_norm_sum_data_outer_products_;
+	  sum_data_outer_products_error_norm_ =
+	    MatrixUtil::FrobeniusNorm(sum_data_outer_products_);
 	}
 
         /** @brief The constructor which does not do anything. */
@@ -164,43 +165,33 @@ class DenseLpr {
 
     class LprQStat {
       public:
-     
-        /** @brief The componentwise lower bound on the numerator matrix
-	 *         B^T W(q) B for the query points owned by this node.
+
+        /** @brief The lower bound on the norm of the B^T W(q) Y
+	 *         vector.
 	 */
-        Matrix numerator_l_;
-    
-        /** @brief The componentwise upper bound on the numerator matrix
-	 *         B^T W(q) B for the query points owned by this node.
-	 */
-        Matrix numerator_u_;
+        double numerator_norm_l_;
 
         /** @brief The upper bound on the used error for the numerator
-	 *         matrix B^T W(q) B for the query points owned by this
-	 *         node.
+	 *         vector B^T W(q) Y for the query points owned by
+	 *         this node.
 	 */
         double numerator_used_error_;
 
-        /** @brief The lower bound on the number of reference points taken
-	 *         care of for the numerator matrix B^T W(q) B for the
-	 *         query points owned by this node.
+        /** @brief The lower bound on the number of reference points
+	 *         taken care of for the numerator vector B^T W(q) Y
+	 *         for the query points owned by this node.
 	 */
         double numerator_n_pruned_;
    
-        /** @brief The lower bound offset for the numerator matrix B^T
-         *         W(q) B passed from above.
+        /** @brief The componentwise lower bound offset for the B^T W(q) Y
+	 *         vector passed from above.
 	 */
-        Matrix postponed_numerator_l_;
+        Vector postponed_numerator_l_;
     
-        /** @brief Stores the portion pruned by finite difference for the
-	 *         numerator matrix B^T W(q) B.
+        /** @brief Stores the portion pruned by finite difference for
+	 *         the numerator vector B^T W(q) Y.
 	 */
-        Matrix postponed_numerator_e_;
-
-        /** @brief The upper bound offset for the numerator matrix B^T
-	 *         W(q) B passed from above.
-	 */
-        Matrix postponed_numerator_u_;
+        Vector postponed_numerator_e_;
 
         /** @brief The total amount of error used in approximation for
 	 *         all query points that must be propagated downwards.
@@ -213,54 +204,65 @@ class DenseLpr {
 	 */
         double postponed_numerator_n_pruned_;
 
-        /** @brief The componentwise lower bound on the denominator matrix
-	 *         B^T W(q) Y for the query points owned by this node.
+        /** @brief The lower bound on the norm of the denominator
+	 *         matrix B^T W(q) B for the query points owned by
+	 *         this node.
 	 */
-        Matrix denominator_l_;
-
-        /** @brief The componentwise upper bound on the denominator matrix
-	 *         B^T W(q) B for the query points owned by this node.
-	 */
-        Matrix denominator_u_;
+        double denominator_norm_l_;
 
         /** @brief The upper bound on the used error for the denominator
-	 *         matrix B^T W(q) Y for the query points owned by this
+	 *         matrix B^T W(q) B for the query points owned by this
 	 *         node.
 	 */
         double denominator_used_error_;
       
-        /** @brief The lower bound on the number of reference points taken
-	 *         care of for the denominator matrix B^T W(q) Y for the
-	 *         query points owned by this node.
+        /** @brief The lower bound on the number of reference points
+	 *         taken care of for the denominator matrix B^T W(q) B
+	 *         for the query points owned by this node.
 	 */
         double denominator_n_pruned_;
 
-        /** @brief The lower bound offset for the denominator matrix B^T
-	 *         W(q) Y passed from above.
+        /** @brief The lower bound offset for the norm of the
+         *         numerator vector B^T W(q) B passed from above.
 	 */
         Matrix postponed_denominator_l_;
     
-        /** @brief Stores the portion pruned by finite difference for the
-         *         numerator matrix B^T W(q) Y.
+        /** @brief Stores the portion pruned by finite difference for
+         *         the numerator matrix B^T W(q) B.
          */
         Matrix postponed_denominator_e_;
-
-        /** @brief The upper bound offset for the denominator matrix B^T
-	 *         W(q) Y passed from above.
-	 */
-        Matrix postponed_denominator_u_;
 
         /** @brief The total amount of error used in approximation for
 	 *         all query points that must be propagated downwards.
 	 */
         double postponed_denominator_used_error_;
 
-        /** @brief The number of reference points that were taken care of
-	 *         for all query points under this node; this information
-	 *         must be propagated downwards.
+        /** @brief The number of reference points that were taken care
+	 *         of for all query points under this node; this
+	 *         information must be propagated downwards.
 	 */
         double postponed_denominator_n_pruned_;
     
+        /** @brief Resets the statistics to zero.
+         */
+        void SetZero() {
+	  numerator_norm_l_ = 0;
+	  numerator_used_error_ = 0;
+	  numerator_n_pruned_ = 0;
+	  postponed_numerator_l_.SetZero();
+	  postponed_numerator_e_.SetZero();
+	  postponed_numerator_used_error_ = 0;
+	  postponed_numerator_n_pruned_ = 0;
+
+	  denominator_norm_l_ = 0;
+	  denominator_used_error_ = 0;
+	  denominator_n_pruned_ = 0;
+	  postponed_denominator_l_.SetZero();
+	  postponed_denominator_e_.SetZero();
+	  postponed_denominator_used_error_ = 0;
+	  postponed_denominator_n_pruned_ = 0;	  
+        }
+
         /** @brief Initialize the statistics by doing basic memory
 	 *         allocations.
 	 */
@@ -270,24 +272,20 @@ class DenseLpr {
 	    (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 	  
 	  // Initialize quantities associated with the numerator matrix.
-	  numerator_l_.Init(matrix_dimension, matrix_dimension);
-	  numerator_u_.Init(matrix_dimension, matrix_dimension);
+	  numerator_norm_l_ = 0;
 	  numerator_used_error_ = 0;
 	  numerator_n_pruned_ = 0;
-	  postponed_numerator_l_.Init(matrix_dimension, matrix_dimension);
-	  postponed_numerator_e_.Init(matrix_dimension, matrix_dimension);
-	  postponed_numerator_u_.Init(matrix_dimension, matrix_dimension);
+	  postponed_numerator_l_.Init(matrix_dimension);
+	  postponed_numerator_e_.Init(matrix_dimension);
 	  postponed_numerator_used_error_ = 0;
 	  postponed_numerator_n_pruned_ = 0;
 	  
 	  // Initialize quantities associated with the denominator matrix.
-	  denominator_l_.Init(matrix_dimension, matrix_dimension);
-	  denominator_u_.Init(matrix_dimension, matrix_dimension);
+	  denominator_norm_l_ = 0;
 	  denominator_used_error_ = 0;
 	  denominator_n_pruned_ = 0;
 	  postponed_denominator_l_.Init(matrix_dimension, matrix_dimension);
 	  postponed_denominator_e_.Init(matrix_dimension, matrix_dimension);
-	  postponed_denominator_u_.Init(matrix_dimension, matrix_dimension);
 	  postponed_denominator_used_error_ = 0;
 	  postponed_denominator_n_pruned_ = 0;
 	}
@@ -383,10 +381,6 @@ class DenseLpr {
      */
     ArrayList<Matrix> denominator_e_;
 
-    /** @brief The componentwise upper bound on the matrix B^T W(q) B.
-     */
-    ArrayList<Matrix> denominator_u_;
-
     /** @brief The used error for computing B^T W(q) B for each query.
      */
     Vector denominator_used_error_;
@@ -403,10 +397,6 @@ class DenseLpr {
     /** @brief The componentwise estimate on the vector B^T W(q) Y.
      */
     Matrix numerator_e_;
-
-    /** @brief The componentwise upper bound on the vector B^T W(q) Y.
-     */
-    Matrix numerator_u_;
     
     /** @brief The used error for computing B^T W(q) Y for each query.
      */
@@ -418,6 +408,10 @@ class DenseLpr {
     Vector numerator_n_pruned_;
   
     ////////// Private Member Functions //////////
+
+    /** @brief Resets bounds relevant to the given query point.
+     */
+    void Reset_(int q);
 
     /** @brief Initialize the query tree bounds.
      */
@@ -431,12 +425,22 @@ class DenseLpr {
      */
     void ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode);
 
+    void BestNodePartners_(QueryTree *nd, ReferenceTree *nd1, 
+			   ReferenceTree *nd2, ReferenceTree **partner1, 
+			   ReferenceTree **partner2);
+
     /** @brief The exhaustive base LPR case.
      *
      *  @param qnode The query node.
      *  @param rnode The reference node.
      */
     void DualtreeLprBase_(QueryTree *qnode, ReferenceTree *rnode);
+
+    void DualtreeLprCanonical_(QueryTree *qnode, ReferenceTree *rnode);
+
+    /** @brief Finalize the regression estimates.
+     */
+    void FinalizeQueryTree_(QueryTree *qnode);
 
   public:
   
@@ -515,15 +519,12 @@ class DenseLpr {
       regression_estimates_.Init(qset_.n_cols());
       denominator_l_.Init(qset_.n_cols());
       denominator_e_.Init(qset_.n_cols());
-      denominator_u_.Init(qset_.n_cols());
       for(index_t q = 0; q < qset_.n_cols(); q++) {
 	denominator_l_[q].Init(row_length_, row_length_);
 	denominator_e_[q].Init(row_length_, row_length_);
-	denominator_u_[q].Init(row_length_, row_length_);
       }
       numerator_l_.Init(row_length_, qset_.n_cols());
       numerator_e_.Init(row_length_, qset_.n_cols());
-      numerator_u_.Init(row_length_, qset_.n_cols());
       
       // initialize the reference side statistics.
       ComputeTargetWeightedReferenceVectors_(rroot_);
