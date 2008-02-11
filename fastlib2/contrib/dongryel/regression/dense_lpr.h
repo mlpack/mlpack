@@ -419,6 +419,10 @@ class DenseLpr {
   
     ////////// Private Member Functions //////////
 
+    /** @brief Initialize the query tree bounds.
+     */
+    void InitializeQueryTree_(QueryTree *qnode);
+
     /** @brief Computes the target weighted reference vectors and sums
      *         them up.
      *
