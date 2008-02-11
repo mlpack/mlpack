@@ -18,10 +18,10 @@
 
 NonConvexMVU::NonConvexMVU() {
  eta_ = 0.25;
- gamma_ = 1.1;
- sigma_ = 1000.0;
+ gamma_ = 1.92;
+ sigma_ = 1e2;
  step_size_ = 1; 
- max_iterations_ = 10000;
+ max_iterations_ = 20000;
  tolerance_ = 1e-5;
  armijo_sigma_=1e-1;
  armijo_beta_=0.5;
@@ -94,7 +94,8 @@ void NonConvexMVU::ComputeLocalOptimum() {
               distance_constraint/sum_of_dist_square, centering_constraint);
       return;
     }
-    UpdateLagrangeMult_();
+   // UpdateLagrangeMult_();
+   UpdateLagrangeMultStochastic_();
   }
     NOTIFY("Didn't converge, maximum number of iterations reached !!\n");
     NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
@@ -162,6 +163,31 @@ void NonConvexMVU::UpdateLagrangeMult_() {
     // previous feasibility error unchanged
   }
   previous_feasibility_error_ = feasibility_error;
+}
+
+// This one choses stocastically what to update, sigma or lagrange multipliers
+// This guarantees that both happening
+void NonConvexMVU::UpdateLagrangeMultStochastic_() {
+  if (math::Random(0, 1) < 0.5) {
+    // Update lagrange multipliers
+    for(index_t i=0; i<num_of_points_; i++) {
+      for(index_t j=0; j<new_dimension_; j++) {
+        // Update the Lagrange multiplier for the centering constraint
+        centering_lagrange_mult_[j] -= sigma_ * coordinates_.get(j, i);
+      }
+      for(index_t k=0; k<knns_; k++) {
+        double *point1 = coordinates_.GetColumnPtr(i);
+        double *point2 = coordinates_.GetColumnPtr(neighbors_[i*knns_+k]);
+        double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
+                           -distances_[i*knns_+k];
+        lagrange_mult_[i*knns_+k]-=sigma_*dist_diff;
+      }
+    }  
+      
+  } else {
+    // increase sigma
+    sigma_ =std::min(sigma_ *gamma_, 1e7)    ;
+  }
 }
 
 void NonConvexMVU::LocalSearch_(double *step) {

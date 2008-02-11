@@ -77,6 +77,7 @@ class NonConvexMVU {
   Matrix data_;
 
   void UpdateLagrangeMult_();
+  void UpdateLagrangeMultStochastic_(); 
   void LocalSearch_(double *step);
   double ComputeLagrangian_(Matrix &coordinates);
   void ComputeFeasibilityError_(double *distance_constraint, 
