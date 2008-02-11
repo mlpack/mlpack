@@ -59,7 +59,9 @@ void DenseLpr<TKernel, lpr_order>::ComputeTargetWeightedReferenceVectors_
     
     // Compute Frobenius norm of the accumulated sum
     rnode->stat().sum_target_weighted_data_error_norm_ =
-      MatrixUtil::FrobeniusNorm(rnode->stat().sum_target_weighted_data_);
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 2);
+    rnode->stat().sum_target_weighted_data_alloc_norm_ =
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
   }  
   else {
     
@@ -71,7 +73,9 @@ void DenseLpr<TKernel, lpr_order>::ComputeTargetWeightedReferenceVectors_
 		     (rnode->right()->stat()).sum_target_weighted_data_,
 		     &(rnode->stat().sum_target_weighted_data_));
     rnode->stat().sum_target_weighted_data_error_norm_ =
-      MatrixUtil::FrobeniusNorm(rnode->stat().sum_target_weighted_data_);
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 2);
+    rnode->stat().sum_target_weighted_data_alloc_norm_ =
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1); 
   }
 }
 
@@ -127,10 +131,10 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
 
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
-  qnode->stat().numerator_l_.SetAll(DBL_MAX);
+  qnode->stat().numerator_norm_l_ = DBL_MAX;
   qnode->stat().numerator_used_error_ = 0;
   qnode->stat().numerator_n_pruned_ = DBL_MAX;
-  qnode->stat().denominator_l_.SetAll(DBL_MAX);
+  qnode->stat().denominator_norm_l_ = DBL_MAX;
   qnode->stat().denominator_used_error_ = 0;
   qnode->stat().denominator_n_pruned_ = DBL_MAX;
   
@@ -204,26 +208,34 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
     denominator_n_pruned_[q] +=
       rnode->stat().sum_data_outer_products_alloc_norm_;
     
-    // Refine min and max summary statistics for the numerator.
-
+    // Refine min summary statistics for the numerator.
+    qnode->stat().numerator_norm_l_ =
+      std::min(qnode->stat().numerator_norm_l_,
+	       MatrixUtil::EntrywiseLpNorm(row_length_, q_numerator_l, 2));
     qnode->stat().numerator_used_error_ =
       std::max(qnode->stat().numerator_used_error_, numerator_used_error_[q]);
     qnode->stat().numerator_n_pruned_ =
       std::min(qnode->stat().numerator_n_pruned_, numerator_n_pruned_[q]);
     
-
     // Refine summary statistics for the denominator.
-  }
+    qnode->stat().denominator_norm_l_ =
+      std::min(qnode->stat().denominator_norm_l_,
+	       MatrixUtil::EntrywiseLpNorm(denominator_l_[q], 2));
+    qnode->stat().denominator_used_error_ =
+      std::max(qnode->stat().denominator_used_error_, 
+	       denominator_used_error_[q]);
+    qnode->stat().denominator_n_pruned_ =
+      std::min(qnode->stat().denominator_n_pruned_, denominator_n_pruned_[q]);
+
+  } // End of iterating over each query point.
   
   // Clear postponed information for the numerator matrix.
   qnode->stat().postponed_numerator_l_.SetZero();
-  qnode->stat().postponed_numerator_u_.SetZero();
   qnode->stat().postponed_numerator_used_error_ = 0;
   qnode->stat().postponed_numerator_n_pruned_ = 0;
 
   // Clear postponed information for the denominator matrix.
   qnode->stat().postponed_denominator_l_.SetZero();
-  qnode->stat().postponed_denominator_u_.SetZero();
   qnode->stat().postponed_denominator_used_error_ = 0;
   qnode->stat().postponed_denominator_n_pruned_ = 0;  
 }
@@ -293,13 +305,9 @@ void DenseLpr<TKernel, lpr_order>::FinalizeQueryTree_(QueryTree *qnode) {
       la::AddTo(row_length_, q_stat.postponed_numerator_e_.ptr(),
 		q_numerator_e);
 
-      // Get the denominator matrices accumulating the sums to update.
-      Matrix &q_denominator_l = denominator_l_[q];
-      Matrix &q_denominator_e = denominator_e_[q];
-
       // Incorporate the postponed information for the denominator.
-      la::AddTo(q_stat.postponed_denominator_l_, &q_denominator_l);
-      la::AddTo(q_stat.postponed_denominator_e_, &q_denominator_e);
+      la::AddTo(q_stat.postponed_denominator_l_, &(denominator_l_[q]));
+      la::AddTo(q_stat.postponed_denominator_e_, &(denominator_e_[q]));
     }
   }
   else {
