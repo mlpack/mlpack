@@ -17,11 +17,12 @@
  */
 
 NonConvexMVU::NonConvexMVU() {
- eta_ = 0.9;
- gamma_ = 0.9;
+ eta_ = 0.25;
+ gamma_ = 1.1;
+ sigma_ = 1000.0;
  step_size_ = 1; 
- max_iterations_ = 100;
- tolerance_ = 1e-4;
+ max_iterations_ = 10000;
+ tolerance_ = 1e-5;
  armijo_sigma_=1e-1;
  armijo_beta_=0.5;
  new_dimension_ = -1;
@@ -48,8 +49,9 @@ void NonConvexMVU::Init(std::string data_file, index_t knns, index_t leaf_size) 
 }
 
 void NonConvexMVU::ComputeLocalOptimum() {
-  double new_feasibility_error = DBL_MAX;
-  double old_feasibility_error = DBL_MAX; 
+  double distance_constraint;
+  double centering_constraint;
+  double sum_of_dist_square = la::LengthEuclidean(distances_.size(), &distances_[0]);
   if (unlikely(new_dimension_<0)) {
     FATAL("You forgot to set the new dimension\n");
   }
@@ -65,28 +67,40 @@ void NonConvexMVU::ComputeLocalOptimum() {
   for(index_t i=0; i<lagrange_mult_.length(); i++) {
     lagrange_mult_[i]=math::Random(0.1, 1.0);
   }
-  sigma_ = 100.0;
-  
-  previous_feasibility_error_= ComputeFeasibilityError_();
+  centering_lagrange_mult_.Init(new_dimension_);
+  for(index_t i=0; i<new_dimension_; i++) {
+    centering_lagrange_mult_[i]=math::Random(0.1, 1.0);
+  }
   NOTIFY("Starting optimization ...\n");
+  ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+  previous_feasibility_error_= distance_constraint + centering_constraint; 
+  double step; 
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       ComputeGradient_();
-      LocalSearch_();
-      new_feasibility_error = ComputeFeasibilityError_();
-      NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error: %lg \n", it1, it2, 
-          new_feasibility_error);
-      if (fabs(new_feasibility_error-old_feasibility_error)<tolerance_){
+      LocalSearch_(&step);
+      ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+      NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error (dist)): %lg\n"
+             "feasibility error (center): %lg \n", it1, it2, 
+               distance_constraint , centering_constraint);
+      if (step < tolerance_){
         break;
       }
-      old_feasibility_error = new_feasibility_error;
     }
-    if (new_feasibility_error < tolerance_) {
-      break;
+    if (distance_constraint/sum_of_dist_square < tolerance_) {
+      NOTIFY("Converged !!\n");
+      NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
+      NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
+              distance_constraint/sum_of_dist_square, centering_constraint);
+      return;
     }
     UpdateLagrangeMult_();
   }
-  NOTIFY("Converged !!\n");
+    NOTIFY("Didn't converge, maximum number of iterations reached !!\n");
+    NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
+    NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
+              distance_constraint, centering_constraint);
+ 
 }
 
 void NonConvexMVU::set_eta(double eta) {
@@ -122,9 +136,16 @@ void NonConvexMVU::set_armijo_beta(double armijo_beta) {
 }
  
 void NonConvexMVU::UpdateLagrangeMult_() {
-  double feasibility_error = ComputeFeasibilityError_();
+  double distance_constraint;
+  double centering_constraint;
+  ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+  double feasibility_error = distance_constraint + centering_constraint;
   if (feasibility_error< eta_ * previous_feasibility_error_) {
-    for(index_t i=0; i<gradient_.n_cols(); i++) {
+    for(index_t i=0; i<num_of_points_; i++) {
+      for(index_t j=0; j<new_dimension_; j++) {
+        // Update the Lagrange multiplier for the centering constraint
+        centering_lagrange_mult_[j] -= sigma_ * coordinates_.get(j, i);
+      }
       for(index_t k=0; k<knns_; k++) {
         double *point1 = coordinates_.GetColumnPtr(i);
         double *point2 = coordinates_.GetColumnPtr(neighbors_[i*knns_+k]);
@@ -143,7 +164,7 @@ void NonConvexMVU::UpdateLagrangeMult_() {
   previous_feasibility_error_ = feasibility_error;
 }
 
-void NonConvexMVU::LocalSearch_() {
+void NonConvexMVU::LocalSearch_(double *step) {
   Matrix temp_coordinates;
   temp_coordinates.Init(coordinates_.n_rows(), coordinates_.n_cols()); 
   double lagrangian1 = ComputeLagrangian_(coordinates_);
@@ -164,22 +185,29 @@ void NonConvexMVU::LocalSearch_() {
       armijo_factor *=armijo_beta_;
     }
   }
- 
-/*  temp_coordinates.CopyValues(coordinates_);
-  la::AddExpert(-0.00001/gradient_norm, gradient_, &temp_coordinates);
+  *step=step_size_*beta;
+/*  
+  temp_coordinates.CopyValues(coordinates_);
+  la::AddExpert(-0.01/gradient_norm, gradient_, &temp_coordinates);
   lagrangian2 =  ComputeLagrangian_(temp_coordinates);
 */
   NOTIFY("step_size: %lg, sigma: %lg\n", beta * step_size_, sigma_);
   NOTIFY("lagrangian1 - lagrangian2 = %lg\n", lagrangian1-lagrangian2);
-  NOTIFY("lagrangian2: %lg\n", lagrangian2);
+  NOTIFY("lagrangian2: %lg, Objective: %lg\n", lagrangian2,
+                                               ComputeObjective_(temp_coordinates));
   coordinates_.CopyValues(temp_coordinates);   
 }
 
 double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
   double lagrangian=0;
+  Vector deviations;
+  deviations.Init(new_dimension_);
+  deviations.SetAll(0.0);
   for(index_t i=0; i<coord.n_cols(); i++) {
     // we are maximizing the trace or minimize the -trace
-    lagrangian -= la::LengthEuclidean(new_dimension_, coord.GetColumnPtr(i));
+    lagrangian -= la::Dot(new_dimension_, 
+                          coord.GetColumnPtr(i),
+                          coord.GetColumnPtr(i));
     for(index_t k=0; k<knns_; k++) {
       double *point1 = coord.GetColumnPtr(i);
       double *point2 = coord.GetColumnPtr(neighbors_[i*knns_+k]);
@@ -187,31 +215,59 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
                           -distances_[i*knns_+k];
       lagrangian += -lagrange_mult_[i]*dist_diff +  0.5*sigma_*dist_diff*dist_diff;
     }
-  }  
+    for(index_t k=0; k<new_dimension_; k++) {
+      deviations[k] += coord.get(k, i);
+    }
+  }
+  // Update the centering conditions  
+  for(index_t k=0; k<new_dimension_; k++) {
+    lagrangian += -deviations[k]*centering_lagrange_mult_[k] +
+        0.5 * sigma_ * deviations[k] * deviations[k];
+  }
+  
   return 0.5*lagrangian; 
 }
 
 
 
-double NonConvexMVU::ComputeFeasibilityError_() {
-  double error=0;
-  double total_distances=0;
+void NonConvexMVU::ComputeFeasibilityError_(double *distance_constraint,
+                                            double *centering_constraint) {
+  Vector deviations;
+  deviations.Init(new_dimension_);
+  deviations.SetAll(0.0);
+  *distance_constraint=0;
+  *centering_constraint=0;
   for(index_t i=0; i<coordinates_.n_cols(); i++) {
     for(index_t k=0; k<knns_; k++) {
       double *point1 = coordinates_.GetColumnPtr(i);
       double *point2 = coordinates_.GetColumnPtr(neighbors_[i*knns_+k]);
-      error+= math::Sqr((la::DistanceSqEuclidean(new_dimension_, point1, point2) 
-                          -distances_[i*knns_+k]));
-      total_distances += math::Sqr(distances_[i*knns_+k]);
+      *distance_constraint+= math::Sqr((la::DistanceSqEuclidean(new_dimension_, 
+                                                                point1, point2) 
+                             -distances_[i*knns_+k]));
+    }
+    for(index_t k=0; k<new_dimension_; k++) {
+      deviations[k] += coordinates_.get(k, i);
     }
   }
-  return error/total_distances;  
+  for(index_t k=0; k<new_dimension_; k++) {
+    *centering_constraint += deviations[k] * deviations[k];
+  }
+}
+
+double NonConvexMVU::ComputeFeasibilityError_() {
+  double distance_constraint;
+  double centering_constraint;
+  ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+  return distance_constraint+centering_constraint;
 }
 
 void NonConvexMVU::ComputeGradient_() {
   gradient_.CopyValues(coordinates_);
-  //  we need to use -CRR^T because we want to maximize CRR^T
+  // we need to use -CRR^T because we want to maximize CRR^T
   la::Scale(-1.0, &gradient_);
+  Vector dimension_sums;
+  dimension_sums.Init(new_dimension_);
+  dimension_sums.SetAll(0.0);
   for(index_t i=0; i<gradient_.n_cols(); i++) {
     for(index_t k=0; k<knns_; k++) {
       double a_i_r[new_dimension_];
@@ -229,7 +285,27 @@ void NonConvexMVU::ComputeGradient_() {
           a_i_r, 
           gradient_.GetColumnPtr(neighbors_[i*knns_+k]));
     }
-  }   
+    
+    for(index_t k=0; k<new_dimension_; k++) {
+      gradient_.set(k, i, gradient_.get(k, i) - centering_lagrange_mult_[k]);
+      dimension_sums[k] += coordinates_.get(k, i);
+    }   
+  }
+  
+  for(index_t i=0; i<gradient_.n_cols(); i++)  {
+    la::AddExpert(new_dimension_, sigma_, 
+        dimension_sums.ptr(), 
+        gradient_.GetColumnPtr(i));
+  }  
 }
 
+double NonConvexMVU::ComputeObjective_(Matrix &coord) {
+  double variance=0;
+  for(index_t i=0; i< coord.n_cols(); i++) {
+    variance-=la::Dot(new_dimension_, 
+                      coord.GetColumnPtr(i),
+                      coord.GetColumnPtr(i));
 
+  }
+  return variance;
+}

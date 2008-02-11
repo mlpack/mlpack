@@ -35,6 +35,7 @@ class NonConvexMVUTest {
     engine_->coordinates_.Init(1, 1);
     engine_->gradient_.Init(1, 1);
     engine_->lagrange_mult_.Init(30);
+    engine_->centering_lagrange_mult_.Init(20);
     NOTIFY("TestInit passed!!\n");
   }
   
