@@ -58,6 +58,57 @@ void DenseLpr<TKernel, lpr_order>::ComputeTargetWeightedReferenceVectors_
 }
 
 template<typename TKernel, int lpr_order>
+void DenseLpr<TKernel, lpr_order>::InitializeQueryTree_(QueryTree *qnode) {
+    
+  // Set the bounds to default values for the numerator.
+  (qnode->stat().numerator_l_).SetZero();
+  (qnode->stat().numerator_u_).CopyValues
+    (rroot_->stat().sum_target_weighted_by_data_);
+  (qnode->stat().postponed_numerator_l_).SetZero();
+  (qnode->stat().postponed_numerator_e_).SetZero();
+  (qnode->stat().postponed_numerator_u_).SetZero();
+
+  // Set the bounds to default for the denominator.
+  (qnode->stat().denominator_l_).SetZero();
+  (qnode->stat().denominator_u_).CopyValues
+    (rroot_->stat().sum_data_outer_products_);
+  (qnode->stat().postponed_denominator_l_).SetZero();
+  (qnode->stat().postponed_denominator_e_).SetZero();
+  (qnode->stat().postponed_denominator_u_).SetZero();
+
+  // If the query node is a leaf, then initialize the corresponding
+  // bound quantities for each query point.
+  if(qnode->is_leaf()) {
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+
+      // First the numerator quantities,
+      Vector q_numerator_l, q_numerator_e, q_numerator_u;
+      numerator_l_.MakeColumnVector(q, &q_numerator_l);
+      numerator_e_.MakeColumnVector(q, &q_numerator_e);
+      numerator_u_.MakeColumnVector(q, &q_numerator_u);      
+      q_numerator_l.SetZero();
+      q_numerator_e.SetZero();
+      q_numerator_u.CopyValues(rroot_->stat().sum_target_weighted_data_);
+
+      // Then the denominator quantities,
+      Matrix &q_denominator_l = denominator_l_[q];
+      Matrix &q_denominator_e = denominator_e_[q];
+      Matrix &q_denominator_u = denominator_u_[q];
+      q_denominator_l.SetZero();
+      q_denominator_e.SetZero();
+      q_denominator_u.CopyValues(rroot_->stat().sum_data_outer_products_);
+      
+    }
+  }
+
+  // Otherwise, then traverse to the left and the right.
+  else {
+    InitializeQueryTree_(qnode->left());
+    InitializeQueryTree_(qnode->right());
+  }
+}
+
+template<typename TKernel, int lpr_order>
 void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
 (QueryTree *qnode, ReferenceTree *rnode) {
 
