@@ -60,18 +60,18 @@ class DenseLpr {
 	 */
         Matrix sum_data_outer_products_;
 
-        /** @brief The L1-norm of the summed up matrix B^T B.
+        /** @brief The Frobenius norm of the summed up matrix B^T B.
 	 */
-        double l1_norm_sum_data_outer_products_;
+        double frobenius_norm_sum_data_outer_products_;
 
         /** @brief The vector summing up the reference polynomial term
 	 *         weighted by its target training value (i.e. B^T Y).
 	 */
         Vector sum_target_weighted_data_;
 
-        /** @brief THe L1-norm of the summed up vector B^T Y.
+        /** @brief The Frobenius norm of the summed up vector B^T Y.
 	 */
-        double l1_norm_sum_target_weighted_data_;
+        double frobenius_norm_sum_target_weighted_data_;
       
         /** @brief Basic memory allocation stuffs.
 	 *
@@ -85,8 +85,8 @@ class DenseLpr {
 	  sum_data_outer_products_.Init(matrix_dimension, matrix_dimension);
 	  sum_target_weighted_data_.Init(matrix_dimension);
 
-	  l1_norm_sum_data_outer_products_ = 0;
-	  l1_norm_sum_target_weighted_data_ = 0;
+	  frobenius_norm_sum_data_outer_products_ = 0;
+	  frobenius_norm_sum_target_weighted_data_ = 0;
         }
 
         /** @brief Computes the \sum\limits_{r \in R} [1 ; r^T]^T [1;
@@ -114,7 +114,7 @@ class DenseLpr {
 
 	    MultiIndexUtil::ComputePointMultivariatePolynomial
 	      (dataset.n_rows(), lpr_order, reference_point, 
-	       reference_point_expansion);
+	       reference_point_expansion.ptr());
 	    
 	    // Based on the polynomial expansion computed, sum up its
 	    // outer product.
@@ -129,8 +129,8 @@ class DenseLpr {
 	    }
 	  } // End of iterating over each reference point.
 
-	  l1_norm_sum_data_outer_products_ = 
-	    MatrixUtil::L1Norm(sum_data_outer_products_);
+	  frobenius_norm_sum_data_outer_products_ = 
+	    MatrixUtil::FrobeniusNorm(sum_data_outer_products_);
 	}
     
         /** @brief Computes \sum\limits_{r \in R} [1 ; r^T]^T [1; r^T] by
@@ -146,12 +146,13 @@ class DenseLpr {
 		  const LprRStat& left_stat, const LprRStat& right_stat) {
 	  Init(dataset.n_rows());
 	  
-	  // Combine the two sub-sums and compute its L1 norm.
+	  // Combine the two sub-sums and compute its Frbenius norm.
 	  la::AddOverwrite(left_stat.sum_data_outer_products_,
 			   right_stat.sum_data_outer_products_,
 			   &sum_data_outer_products_);
-	  l1_norm_sum_data_outer_products_ = 
-	    MatrixUtil::L1Norm(sum_data_outer_products_);
+	  frobenius_norm_sum_data_outer_products_ =
+	    left_stat.frobenius_norm_sum_data_outer_products_ +
+	    right_stat.frobenius_norm_sum_data_outer_products_;
 	}
 
         /** @brief The constructor which does not do anything. */
@@ -374,9 +375,64 @@ class DenseLpr {
      */
     Vector regression_estimates_;
 
-    ////////// Private Member Functions //////////
+    /** @brief The componentwise lower bound on the matrix B^T W(q) B.
+     */
+    ArrayList<Matrix> denominator_l_;
   
+    /** @brief The componentwise estimate on the matrix B^T W(q) B.
+     */
+    ArrayList<Matrix> denominator_e_;
+
+    /** @brief The componentwise upper bound on the matrix B^T W(q) B.
+     */
+    ArrayList<Matrix> denominator_u_;
+
+    /** @brief The used error for computing B^T W(q) B for each query.
+     */
+    Vector denominator_used_error_;
+  
+    /** @brief The portion of the reference points taken care of for
+     *         each query.
+     */
+    Vector denominator_n_pruned_;
+
+    /** @brief The componentwise lower bound on the vector B^T W(q) Y.
+     */
+    Matrix numerator_l_;
+
+    /** @brief The componentwise estimate on the vector B^T W(q) Y.
+     */
+    Matrix numerator_e_;
+
+    /** @brief The componentwise upper bound on the vector B^T W(q) Y.
+     */
+    Matrix numerator_u_;
+    
+    /** @brief The used error for computing B^T W(q) Y for each query.
+     */
+    Vector numerator_used_error_;
+  
+    /** @brief The portion of the reference points taken care of for
+     *         each query.
+     */
+    Vector numerator_n_pruned_;
+  
+    ////////// Private Member Functions //////////
+
+    /** @brief Computes the target weighted reference vectors and sums
+     *         them up.
+     *
+     *  @param rnode The current reference node. Initially called with
+     *               the root of the reference tree.
+     */
     void ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode);
+
+    /** @brief The exhaustive base LPR case.
+     *
+     *  @param qnode The query node.
+     *  @param rnode The reference node.
+     */
+    void DualtreeLprBase_(QueryTree *qnode, ReferenceTree *rnode);
 
   public:
   
@@ -402,7 +458,7 @@ class DenseLpr {
     void Compute() {
       
     }
-  
+
     void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
 	      struct datanode *module_in) {
       
@@ -450,8 +506,20 @@ class DenseLpr {
       // initialize the kernel.
       kernel_.Init(fx_param_double_req(module_, "bandwidth"));
       
-      // allocate memory for storing computation results.
+      // Allocate memory for storing computation results.
       target_weighted_rset_.Init(row_length_, rset_.n_cols());
+      regression_estimates_.Init(qset_.n_cols());
+      denominator_l_.Init(qset_.n_cols());
+      denominator_e_.Init(qset_.n_cols());
+      denominator_u_.Init(qset_.n_cols());
+      for(index_t q = 0; q < qset_.n_cols(); q++) {
+	denominator_l_[q].Init(row_length_, row_length_);
+	denominator_e_[q].Init(row_length_, row_length_);
+	denominator_u_[q].Init(row_length_, row_length_);
+      }
+      numerator_l_.Init(row_length_, qset_.n_cols());
+      numerator_e_.Init(row_length_, qset_.n_cols());
+      numerator_u_.Init(row_length_, qset_.n_cols());
       
       // initialize the reference side statistics.
       ComputeTargetWeightedReferenceVectors_(rroot_);

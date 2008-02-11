@@ -17,7 +17,7 @@ class MultiIndexUtil {
     static void ComputePointMultivariatePolynomial(int dimension, 
 						   int lpr_order,
 						   const double *point,
-						   Vector &point_expansion) {
+						   double *point_expansion) {
 
       // Temporary variables for multiindex looping
       ArrayList<int> heads;
