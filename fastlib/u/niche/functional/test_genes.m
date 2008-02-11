@@ -1,6 +1,8 @@
 %data = dlmread('combined.txt', '\t', 1, 1)';
 %data = data(7:7+17,:);
-%t = 0:7:119;
+t = 0:7:119;
+
+data = zeros(82, 6178);
 
 fid = fopen('combined.txt');
 
@@ -19,10 +21,6 @@ while(length(cur_row) > 0)
   
   if(length(cur_row) > 0)
     row_num = row_num + 1;
-    if length(cur_row) < 82
-      fprintf('row %d has only %d elements\n', row_num, ...
-	      length(cur_row));
-    end
     while length(cur_row) < 82
       cur_row(end+1) = -inf;
     end
@@ -32,12 +30,20 @@ while(length(cur_row) > 0)
   %fprintf('%f\n', length(cur_row));
 end
 
-return
+good_indices = [];
+for i = 1:size(data,2)
+  if length(find(data(7:7+17,i) == -inf)) == 0
+    good_indices(end+1) = i;
+  end
+end
+
+data = data(7:7+17, good_indices);
+
 N = size(data,2);
 p = 17;
 
 mybasis = create_bspline_basis([min(t) max(t)], p, 4);
-basis_curves = eval_basis(t, mybasis);
+basis_curves = eval_basis(0:1:119, mybasis);
 basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
 myfd_data = data2fd(data, t, mybasis);
@@ -84,4 +90,3 @@ end
 
 h_pc_sum = sum(h_pc);
 h_ic_sum = sum(h_ic);
-logiszero
