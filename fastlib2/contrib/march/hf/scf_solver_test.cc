@@ -3,7 +3,7 @@
  * 
  * @author Bill March (march@gatech.edu)
  *
- * Unit tests for the Hartree-Fock code.  
+ * Unit tests for the SCF solver code.  
  */
 
 #include "fastlib/base/test.h"
@@ -23,29 +23,33 @@ public:
   static const index_t num_electrons = 2;
   static const double eps = 0.01;
   
-  void Init() {
+  void Setup() {
     
-    solver_ = new HFSolver();
+    solver_ = new SCFSolver();
   
     Matrix overlap;
     Matrix kinetic;
     Matrix potential;
-    ArrayList<double> two_electron;
+    Vector two_electron;
     
     Matrix core;
     
     double nuclear_energy = 0.0;
+    double convergence_tolerance = 1e-5;
     
     data::Load("overlap_test.csv", &overlap);
     data::Load("kinetic_test.csv", &kinetic);
     data::Load("potential_test.csv", &potential);
-    //data::Load("two_electron_test.csv", &two_electron);
-    two_electron.Init();
+    
+    Matrix two_electron_mat;
+    data::Load("two_electron_test.csv", &two_electron_mat);
+    DEBUG_ASSERT(two_electron_mat.n_cols() == 1);
+    two_electron_mat.MakeColumnVector(0, &two_electron);
     
     data::Load("core_test.csv", &core);
     
     solver_->Init(nuclear_energy, overlap, kinetic, potential, two_electron, 
-                 num_electrons);
+                 num_electrons, convergence_tolerance, NULL);
     
     for (index_t i = 0; i < core.n_rows(); i++) {
       for (index_t j = 0; j < core.n_cols(); j++) {
@@ -64,7 +68,7 @@ public:
   }
   
   void TestOrthogonalizingMatrix() {
-    Init();
+    Setup();
     
     solver_->FormOrthogonalizingMatrix_();
     
@@ -87,7 +91,7 @@ public:
   
   void TestDensityMatrix() {
     
-    Init();
+    Setup();
     
     solver_->FormOrthogonalizingMatrix_();
     
@@ -112,7 +116,7 @@ public:
   
   void TestFillOrbitals() {
     
-    Init();
+    Setup();
     
     solver_->number_of_electrons_ = 5;
     solver_->number_of_basis_functions_ = 10;
@@ -158,15 +162,107 @@ public:
     
     index_t test5 = solver_->FindIntegralIndex_(1, 0, 1, 0);
     
+    index_t test6 = solver_->FindIntegralIndex_(0, 0, 1, 1);
+    
+    index_t test7 = solver_->FindIntegralIndexHelper_(4, 5);
+    
     TEST_ASSERT(test1 == 1);
     TEST_ASSERT(test2 == 19);
     TEST_ASSERT(test3 == 0);
     TEST_ASSERT(test4 == 3);
     TEST_ASSERT(test5 == 2);
+    TEST_ASSERT(test6 == test4);
+    TEST_ASSERT(test7 == test2);
     
     NONFATAL("FindIntegralIndex correct.\n");
 
   } // TestFindIntegralIndex
+  
+  void TestDiagonalizeFockMatrix() {
+    
+    NONFATAL("TestDiagonalizeFockMatrix not implemented!\n");
+    
+  } // TestDiagonalizeFockMatrix
+
+  void TestUpdateFockMatrix() {
+    
+    Setup();
+    
+    /*index_t test1 = solver_->FindIntegralIndex_(0, 0, 0, 0);
+    printf("0,0,0,0 = %d\n", test1);
+    index_t test2 = solver_->FindIntegralIndex_(1, 0, 0, 0);
+    printf("1,0,0,0 = %d\n", test2);
+    index_t test3 = solver_->FindIntegralIndex_(1, 0, 1, 0);
+    printf("1,0,1,0 = %d\n", test3);
+    index_t test4 = solver_->FindIntegralIndex_(1, 1, 0, 0);
+    printf("1,1,0,0 = %d\n", test4);
+    index_t test5 = solver_->FindIntegralIndex_(1, 1, 1, 0);
+    printf("1,1,1,0 = %d\n", test5);
+    index_t test6 = solver_->FindIntegralIndex_(1, 1, 1, 1);
+    printf("1,1,1,1 = %d\n", test6);
+    */
+    
+    Matrix true_density;
+    data::Load("density_test.csv", &true_density);
+    solver_->density_matrix_.CopyValues(true_density);
+    
+    solver_->UpdateFockMatrix_();
+    
+    Matrix true_updated_fock;
+    data::Load("updated_fock_test.csv", &true_updated_fock);
+    
+    printf("true_updated_fock\n");
+    ot::Print(true_updated_fock);
+    printf("fock_matrix_\n");
+    ot::Print(solver_->fock_matrix_);
+    
+    for (index_t i = 0; i < true_updated_fock.n_rows(); i++) {
+      for (index_t j = 0; j < true_updated_fock.n_cols(); j++) {
+        TEST_DOUBLE_APPROX(true_updated_fock.ref(i, j), 
+                           solver_->fock_matrix_.ref(i, j), eps); 
+      }
+    }
+    
+    Destruct();
+    
+    NONFATAL("TestUpdateFockMatrix correct.\n");
+    
+  } // TestUpdateFockMatrix
+  
+  void TestTestConvergence() {
+    
+    // Not quite sure how to do this one
+    // Need to make sure I'm storing the energies correctly and 
+    // keeping up with the density matrix norm
+    
+    NONFATAL("TestTestConvergence not implemented!\n");
+    
+  } // TestTestConvergence
+  
+  void TestComputeElectronicEnergy() {
+    
+    Setup();
+    
+    double true_energy = -3.87;
+    
+    Matrix true_density;
+    data::Load("density_test.csv", &true_density);
+    solver_->density_matrix_.CopyValues(true_density);
+    
+    Matrix true_fock;
+    data::Load("updated_fock_test.csv", &true_fock);
+    solver_->density_matrix_.CopyValues(true_fock);
+    
+    double test_energy = solver_->ComputeElectronicEnergy_();
+    
+    TEST_DOUBLE_APPROX(true_energy, test_energy, eps);
+    
+    Destruct();
+    
+    NONFATAL("TestComputeElectronicEnergy correct.\n");
+    
+  } // TestComputeElectronicEnergy
+  
   
   void TestAll() {
    
@@ -177,6 +273,14 @@ public:
     TestFillOrbitals();
     
     TestFindIntegralIndex();
+    
+    TestDiagonalizeFockMatrix();
+    
+    TestUpdateFockMatrix();
+    
+    TestTestConvergence();
+    
+    TestComputeElectronicEnergy();
     
     NONFATAL("All tests passed\n");
     
@@ -190,12 +294,12 @@ private:
 
 // There's some kind of weird bug in the apple loader.  eps won't be recognized
 // properly without this line.  
-const double HartreeFockTest::eps;
+const double SCFSolverTest::eps;
 
 
 int main(int argc, char *argv[]) {
 
-  HartreeFockTest tester;
+  SCFSolverTest tester;
   tester.TestAll();
   
   return 0;
