@@ -71,7 +71,7 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
     
     // Compute Frobenius norm of the accumulated sum
     rnode->stat().sum_target_weighted_data_error_norm_ =
-      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 2);
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
     rnode->stat().sum_target_weighted_data_alloc_norm_ =
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
   }  
@@ -85,7 +85,7 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 		     (rnode->right()->stat()).sum_target_weighted_data_,
 		     &(rnode->stat().sum_target_weighted_data_));
     rnode->stat().sum_target_weighted_data_error_norm_ =
-      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 2);
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
     rnode->stat().sum_target_weighted_data_alloc_norm_ =
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1); 
   }
@@ -241,7 +241,7 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprBase_
     // Refine min summary statistics for the numerator.
     qnode->stat().numerator_norm_l_ =
       std::min(qnode->stat().numerator_norm_l_,
-	       MatrixUtil::EntrywiseLpNorm(row_length_, q_numerator_l, 2));
+	       MatrixUtil::EntrywiseLpNorm(row_length_, q_numerator_l, 1));
     qnode->stat().numerator_used_error_ =
       std::max(qnode->stat().numerator_used_error_, numerator_used_error_[q]);
     qnode->stat().numerator_n_pruned_ =
@@ -250,7 +250,7 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprBase_
     // Refine summary statistics for the denominator.
     qnode->stat().denominator_norm_l_ =
       std::min(qnode->stat().denominator_norm_l_,
-	       MatrixUtil::EntrywiseLpNorm(denominator_l_[q], 2));
+	       MatrixUtil::EntrywiseLpNorm(denominator_l_[q], 1));
     qnode->stat().denominator_used_error_ =
       std::max(qnode->stat().denominator_used_error_, 
 	       denominator_used_error_[q]);
@@ -408,9 +408,9 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprCanonical_
     q_stat.numerator_norm_l_ = 
       std::min
       (q_left_stat.numerator_norm_l_ +
-       MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_numerator_l_, 2),
+       MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_numerator_l_, 1),
        q_right_stat.numerator_norm_l_ +
-       MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_numerator_l_, 2));
+       MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_numerator_l_, 1));
     q_stat.numerator_used_error_ = 
       std::max(q_left_stat.numerator_used_error_,
 	       q_right_stat.numerator_used_error_);
@@ -420,9 +420,9 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprCanonical_
     q_stat.denominator_norm_l_ = 
       std::min
       (q_left_stat.denominator_norm_l_ +
-       MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_denominator_l_, 2),
+       MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_denominator_l_, 1),
        q_right_stat.denominator_norm_l_ +
-       MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_denominator_l_, 2));
+       MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_denominator_l_, 1));
     q_stat.denominator_used_error_ = 
       std::max(q_left_stat.denominator_used_error_,
 	       q_right_stat.denominator_used_error_);

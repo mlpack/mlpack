@@ -146,7 +146,7 @@ class DenseLpr {
 	  // Compute the norm of the B^T B used for error criterion
 	  // and the pruning error allocation.
 	  sum_data_outer_products_error_norm_ = 
-	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 2);
+	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	  sum_data_outer_products_alloc_norm_ =
 	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	}
@@ -169,7 +169,7 @@ class DenseLpr {
 			   right_stat.sum_data_outer_products_,
 			   &sum_data_outer_products_);
 	  sum_data_outer_products_error_norm_ =
-	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 2);
+	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	  sum_data_outer_products_alloc_norm_ =
 	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	}
