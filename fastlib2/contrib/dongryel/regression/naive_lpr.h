@@ -222,8 +222,8 @@ class NaiveLpr {
     const char *fname = NULL;
 
     if((fname = fx_param_str(module_, 
-			     "naive_local_polynomial_output", 
-			     "naive_local_polynomial_output.txt")) != NULL) {
+			     "naive_lpr_output",
+			     "naive_lpr_output.txt")) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
