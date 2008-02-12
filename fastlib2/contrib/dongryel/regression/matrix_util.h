@@ -97,7 +97,7 @@ class MatrixUtil {
       }
       Matrix intermediate;
       la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
-      la::MulInit(ro_VT_trans, intermediate, A_inv);
+      la::MulOverwrite(ro_VT_trans, intermediate, A_inv);
     }
 };
 
