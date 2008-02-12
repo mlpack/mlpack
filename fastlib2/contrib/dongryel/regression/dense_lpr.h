@@ -339,6 +339,9 @@ class DenseLpr {
     /** @brief The required relative error. */
     double relative_error_;
 
+    /** @brief The internal relative error factor. */
+    double internal_relative_error_;
+
     /** @brief The module holding the list of parameters. */
     struct datanode *module_;
 
@@ -496,6 +499,7 @@ class DenseLpr {
       
       // Set the relative error tolerance.
       relative_error_ = fx_param_double(module_, "relative_error", 0.01);
+      internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
 
       fx_timer_start(module_, "dense_lpr_compute");
       InitializeQueryTree_(qroot_);
