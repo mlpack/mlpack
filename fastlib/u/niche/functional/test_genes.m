@@ -127,3 +127,11 @@ end
 
 h_pc_sum = sum(h_pc);
 h_ic_sum = sum(h_ic);
+
+
+
+
+
+% discriminant analysis using pc features %
+% pc_scores is d x N
+pc_scores
