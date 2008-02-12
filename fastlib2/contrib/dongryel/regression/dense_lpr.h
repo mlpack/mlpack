@@ -500,6 +500,7 @@ class DenseLpr {
       // Set the relative error tolerance.
       relative_error_ = fx_param_double(module_, "relative_error", 0.01);
       internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
+      internal_relative_error_ *= internal_relative_error_;
 
       fx_timer_start(module_, "dense_lpr_compute");
       InitializeQueryTree_(qroot_);
