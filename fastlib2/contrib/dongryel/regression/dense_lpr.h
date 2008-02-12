@@ -497,6 +497,16 @@ class DenseLpr {
 
     ////////// Getter/Setters //////////
   
+    /** @brief Get the intermediate computation results.
+     */
+    void get_intermediate_results(Matrix *numerator,
+				  ArrayList<Matrix> *denominator,
+				  ArrayList<int> *old_from_new_queries) {
+      numerator = &numerator_e_;
+      denominator = &denominator_e_;
+      old_from_new_queries = &old_from_new_queries_;
+    }
+
     /** @brief Get the regression estimates.
      *
      *  @param results The uninitialized vector which will be filled
@@ -611,8 +621,8 @@ class DenseLpr {
       const char *fname = NULL;
       
       if((fname = fx_param_str(module_, 
-			       "fast_local_linear_output", 
-			       "fast_local_linear_output.txt")) != NULL) {
+			       "fast_lpr_output", 
+			       "fast_lpr_output.txt")) != NULL) {
 	stream = fopen(fname, "w+");
       }
       for(index_t q = 0; q < qset_.n_cols(); q++) {
