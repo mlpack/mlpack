@@ -21,16 +21,25 @@ svmlwrite('funknet', svm_data, svm_labels);
 % set initial svm options %
 svm_options = ...
     svmlopt('Kernel', 2, 'KernelParam', .01, 'C', .2, 'ComputeLOO', 1, ...
-	    'ExecPath','/home/niche/matlab/toolboxes/svml');
+	    'ExecPath','/home/niche/matlab/toolboxes/svml');\
+
+
+% let's do a retarded random sampling of sigma and C on a grid!
+
+
+
 C = 1e-3;
 
 C_epoch = 1;
 
-while C < 100
-
+for epoch = 1:1000
+  
+  C = 10 * exp(-rand * 10);
+  sigma = 10 * exp(-rand * 10);
+  
   % set option for C (the regularization parameter)
   svm_options = ...
-      svmlopt(svm_options, 'C', C);
+      svmlopt(svm_options, 'KernelParam', sigma, 'C', C);
   
   latestSVM = svml('latestSVM', svm_options);
 
@@ -39,11 +48,12 @@ while C < 100
   
   load loocv_error.txt
   
-  C_array(C_epoch) = C;
-  loocv_errors(C_epoch) = loocv_error;
+  sigma_array(epoch) = C;
+  C_array(epoch) = C;
+  loocv_errors(epoch) = loocv_error;
   
-  C = C * 1.01; % geometrically increase C
-  C_epoch = C_epoch + 1;
+%  C = C * 1.01; % geometrically increase C
+%  C_epoch = C_epoch + 1;
 end
 
 % for i=1:size(svm_data, 1)
