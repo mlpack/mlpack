@@ -476,6 +476,8 @@ class DenseLpr {
 
   public:
   
+    ////////// Constructor/Destructor //////////
+  
     /** @brief The constructor which sets pointers to NULL. */
     DenseLpr() {
       qroot_ = NULL;
@@ -490,6 +492,21 @@ class DenseLpr {
       }
       if(rroot_ != NULL) {
 	delete rroot_;
+      }
+    }
+
+    ////////// Getter/Setters //////////
+  
+    /** @brief Get the regression estimates.
+     *
+     *  @param results The uninitialized vector which will be filled
+     *                 with the computed regression estimates.
+     */
+    void get_regression_estimates(Vector *results) { 
+      results->Init(regression_estimates_.length());
+      
+      for(index_t i = 0; i < regression_estimates_.length(); i++) {
+	(*results)[i] = regression_estimates_[i];
       }
     }
 

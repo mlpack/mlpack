@@ -112,6 +112,33 @@ class MatrixUtil {
       }
       return norm_diff;
     }
+
+    static double MaxRelativeDifference(const Vector &true_results,
+					const Vector &approx_results) {
+
+      double max_relative_error = 0;
+
+      for(index_t d = 0; d < true_results.length(); d++) {
+
+	if(isnan(approx_results[d]) || isinf(approx_results[d]) ||
+	   isnan(true_results[d]) || isinf(true_results[d])) {
+	  printf("Warning: Got infinites and NaNs!\n");
+	}
+
+	max_relative_error =
+	  std::max(max_relative_error, 
+		   (fabs(approx_results[d]) - fabs(true_results[d])) /
+		   fabs(true_results[d]));
+
+	printf("%g against %g gives %g\n",
+	       approx_results[d], true_results[d],
+	       (fabs(approx_results[d]) - fabs(true_results[d])) /
+	       fabs(true_results[d]));
+      }
+
+      return max_relative_error;
+    }
+  
 };
 
 #endif

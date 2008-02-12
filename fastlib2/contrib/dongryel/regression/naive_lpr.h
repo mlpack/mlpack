@@ -12,7 +12,7 @@
 #include "multi_index_util.h"
 #include "fastlib/fastlib.h"
 
-template<typename TKernel, int lpr_order = 1>
+template<typename TKernel, int lpr_order>
 class NaiveLpr {
 
   FORBID_ACCIDENTAL_COPIES(NaiveLpr);
@@ -61,7 +61,9 @@ class NaiveLpr {
   int dimension_;
 
  public:
-  
+
+  ////////// Constructor/Destructor //////////
+
   /** @brief The constructor which does nothing.
    */
   NaiveLpr() {}
@@ -70,15 +72,30 @@ class NaiveLpr {
    */
   ~NaiveLpr() {}
 
+  ////////// Getter/Setters //////////
+  
+  /** @brief Get the regression estimates.
+   *
+   *  @param results The uninitialized vector which will be filled
+   *                 with the computed regression estimates.
+   */
+  void get_regression_estimates(Vector *results) { 
+    results->Init(regression_values_.length());
+    
+    for(index_t i = 0; i < regression_values_.length(); i++) {
+      (*results)[i] = regression_values_[i];
+    }
+  }
+
   /** @brief Compute the local polynomial regression values using the
    *         brute-force algorithm.
    */
   void Compute() {
 
     // Temporary variable for storing multivariate expansion of a
-    // reference point.
-    Vector reference_point_expansion;
-    reference_point_expansion.Init(total_num_coeffs_);
+    // point.
+    Vector point_expansion;
+    point_expansion.Init(total_num_coeffs_);
 
     printf("\nStarting naive local polynomial of order %d...\n", lpr_order);
     fx_timer_start(NULL, "naive_local_linear_compute");
@@ -98,7 +115,7 @@ class NaiveLpr {
 
 	// Compute the reference point expansion.
 	MultiIndexUtil::ComputePointMultivariatePolynomial
-	  (dimension_, lpr_order, r_col, reference_point_expansion.ptr());
+	  (dimension_, lpr_order, r_col, point_expansion.ptr());
 	
 	// Compute the pairwise distance and the resulting kernel value.
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
@@ -106,14 +123,13 @@ class NaiveLpr {
 
 	for(index_t i = 0; i < total_num_coeffs_; i++) {
 
-	  numerator_[q][i] += r_target * kernel_value * 
-	    reference_point_expansion[i];
+	  numerator_[q][i] += r_target * kernel_value * point_expansion[i];
 	  
 	  // Here, compute each component of the denominator matrix.
 	  for(index_t j = 0; j < total_num_coeffs_; j++) {
 	    denominator_[q].set(j, i, denominator_[q].get(j, i) +
-				reference_point_expansion[j] * 
-				reference_point_expansion[i] * kernel_value);
+				point_expansion[j] * point_expansion[i] * 
+				kernel_value);
 	  } // End of looping over each (j, i)-th component of the
 	    // denominator matrix.
 	} // End of looping over each i-th component of the numerator
@@ -131,6 +147,10 @@ class NaiveLpr {
       const double *q_col = qset_.GetColumnPtr(q);
       Vector beta_q;
       
+      // Compute the query point expansion.
+      MultiIndexUtil::ComputePointMultivariatePolynomial
+	(dimension_, lpr_order, q_col, point_expansion.ptr());
+
       // Now invert the denominator matrix for each query point and
       // multiply by the numerator vector.
       MatrixUtil::PseudoInverse(denominator_[q], &denominator_inv_q);      
@@ -138,10 +158,7 @@ class NaiveLpr {
 
       // Compute the dot product between the multiindex vector for the
       // query point by the beta_q.
-      regression_values_[q] = beta_q[0];
-      for(index_t i = 1; i <= qset_.n_rows(); i++) {
-	regression_values_[q] += beta_q[i] * q_col[i - 1];
-      }
+      regression_values_[q] = la::Dot(beta_q, point_expansion);
     }
     
     fx_timer_stop(NULL, "naive_local_linear_compute");

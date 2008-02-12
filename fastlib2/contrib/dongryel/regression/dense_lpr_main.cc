@@ -1,5 +1,6 @@
 #include "mlpack/kde/dataset_scaler.h"
 #include "dense_lpr.h"
+#include "naive_lpr.h"
 #include "relative_prune_lpr.h"
 
 int main(int argc, char *argv[]) {
@@ -48,12 +49,24 @@ int main(int argc, char *argv[]) {
   DatasetScaler::TranslateDataByMin(queries, references, false);
 
   // Declare local linear krylov object.
-  DenseLpr<GaussianKernel, 0, RelativePruneLpr> local_linear;
-  local_linear.Init(queries, references, reference_targets, 
-		    local_linear_module);
-  local_linear.Compute();
-  local_linear.PrintDebug();
-  
+  Vector fast_lpr_results;
+  DenseLpr<GaussianKernel, 0, RelativePruneLpr> fast_lpr;
+  fast_lpr.Init(queries, references, reference_targets, local_linear_module);
+  fast_lpr.Compute();
+  fast_lpr.PrintDebug();
+  fast_lpr.get_regression_estimates(&fast_lpr_results);
+
+  // Do naive algorithm.
+  Vector naive_lpr_results;
+  NaiveLpr<GaussianKernel, 0> naive_lpr;
+  naive_lpr.Init(queries, references, reference_targets, local_linear_module);
+  naive_lpr.Compute();
+  naive_lpr.PrintDebug();
+  naive_lpr.get_regression_estimates(&naive_lpr_results);
+  printf("Maximum relative error: %g\n", 
+	 MatrixUtil::MaxRelativeDifference(naive_lpr_results, 
+					   fast_lpr_results));
+ 
   // Finalize FastExec and print output results.
   fx_done();
   return 0;
