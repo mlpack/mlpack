@@ -126,11 +126,13 @@ class NaiveLpr {
       } // end of looping over each reference point
     } // end of looping over each query point
 
+    Matrix denominator_inv_q;
+    denominator_inv_q.Init(total_num_coeffs_, total_num_coeffs_);
+    
     // now iterate over all query points and compute regression estimate
     for(index_t q = 0; q < qset_.n_cols(); q++) {
 
       const double *q_col = qset_.GetColumnPtr(q);
-      Matrix denominator_inv_q;
       Vector beta_q;
       
       // Now invert the denominator matrix for each query point and
