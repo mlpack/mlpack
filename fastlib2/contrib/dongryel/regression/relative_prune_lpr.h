@@ -6,7 +6,7 @@
 class RelativePruneLpr {
   
   public:
-  
+
     template<typename QueryTree, typename ReferenceTree>
     static bool Prunable(double relative_error,
 			 double numerator_total_alloc_error,

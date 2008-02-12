@@ -1,5 +1,6 @@
 #include "mlpack/kde/dataset_scaler.h"
 #include "dense_lpr.h"
+#include "relative_prune_lpr.h"
 
 int main(int argc, char *argv[]) {
   
@@ -47,7 +48,7 @@ int main(int argc, char *argv[]) {
   DatasetScaler::TranslateDataByMin(queries, references, false);
 
   // Declare local linear krylov object.
-  DenseLpr<GaussianKernel, 0> local_linear;
+  DenseLpr<GaussianKernel, 0, RelativePruneLpr> local_linear;
   local_linear.Init(queries, references, reference_targets, 
 		    local_linear_module);
   local_linear.Compute();
