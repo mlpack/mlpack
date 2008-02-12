@@ -42,7 +42,7 @@
  *    fast_kde.Compute(&results);
  *  @endcode
  */
-template<typename TKernel, int lpr_order = 1>
+template<typename TKernel, int lpr_order, typename TPruneRule>
 class DenseLpr {
   
   FORBID_ACCIDENTAL_COPIES(DenseLpr);

@@ -5,10 +5,9 @@
 #endif
 
 #include "matrix_util.h"
-#include "relative_prune_lpr.h"
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::SqdistAndKernelRanges_
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::SqdistAndKernelRanges_
 (QueryTree *qnode, ReferenceTree *rnode,
  DRange &dsqd_range, DRange &kernel_value_range) {
 
@@ -17,8 +16,8 @@ void DenseLpr<TKernel, lpr_order>::SqdistAndKernelRanges_
   kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);      
 }
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::ResetQuery_(int q) {
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::ResetQuery_(int q) {
   
   // First the numerator quantities.
   Vector q_numerator_l, q_numerator_e;
@@ -36,9 +35,9 @@ void DenseLpr<TKernel, lpr_order>::ResetQuery_(int q) {
   denominator_n_pruned_[q] = 0;      
 }
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::ComputeTargetWeightedReferenceVectors_
-(ReferenceTree *rnode) {
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::
+ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
   
   if(rnode->is_leaf()) {
     
@@ -92,8 +91,9 @@ void DenseLpr<TKernel, lpr_order>::ComputeTargetWeightedReferenceVectors_
   }
 }
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::InitializeQueryTree_(QueryTree *qnode) {
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::
+InitializeQueryTree_(QueryTree *qnode) {
     
   // Set the bounds to default values for the statistics.
   qnode->stat().SetZero();
@@ -115,8 +115,8 @@ void DenseLpr<TKernel, lpr_order>::InitializeQueryTree_(QueryTree *qnode) {
   }
 }
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::BestNodePartners_
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::BestNodePartners_
 (QueryTree *nd, ReferenceTree *nd1, ReferenceTree *nd2, 
  ReferenceTree **partner1, ReferenceTree **partner2) {
   
@@ -133,8 +133,8 @@ void DenseLpr<TKernel, lpr_order>::BestNodePartners_
   }
 }
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::BestNodePartners_
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::BestNodePartners_
 (ReferenceTree *nd, QueryTree *nd1, QueryTree *nd2, 
  QueryTree **partner1, QueryTree **partner2) {
   
@@ -151,8 +151,8 @@ void DenseLpr<TKernel, lpr_order>::BestNodePartners_
   }
 }
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprBase_
 (QueryTree *qnode, ReferenceTree *rnode) {
 
   // Temporary variable for storing multivariate expansion of a
@@ -270,8 +270,8 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
   qnode->stat().postponed_denominator_n_pruned_ = 0;  
 }
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprCanonical_
 (QueryTree *qnode, ReferenceTree *rnode) {
 
   // Total amount of used error
@@ -295,7 +295,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
   SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range);
   
   // Try finite difference pruning first
-  if(RelativePruneLpr::Prunable<QueryTree, ReferenceTree>
+  if(TPruneRule::Prunable
      (relative_error_, rroot_->stat().sum_target_weighted_data_alloc_norm_,
       rroot_->stat().sum_data_outer_products_alloc_norm_,
       qnode, rnode, dsqd_range, kernel_value_range,
@@ -433,8 +433,9 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
   } // end of the case: non-leaf query node.  
 }
 
-template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::FinalizeQueryTree_(QueryTree *qnode) {
+template<typename TKernel, int lpr_order, typename TPruneRule>
+void DenseLpr<TKernel, lpr_order, TPruneRule>::
+FinalizeQueryTree_(QueryTree *qnode) {
   
   LprQStat &q_stat = qnode->stat();
 
