@@ -18,7 +18,7 @@ void DenseLpr<TKernel, lpr_order>::SqdistAndKernelRanges_
 }
 
 template<typename TKernel, int lpr_order>
-void DenseLpr<TKernel, lpr_order>::Reset_(int q) {
+void DenseLpr<TKernel, lpr_order>::ResetQuery_(int q) {
   
   // First the numerator quantities.
   Vector q_numerator_l, q_numerator_e;
@@ -104,7 +104,7 @@ void DenseLpr<TKernel, lpr_order>::InitializeQueryTree_(QueryTree *qnode) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Reset the bounds corresponding to the particular query point.
-      Reset_(q);
+      ResetQuery_(q);
     }
   }
 
@@ -169,7 +169,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
   qnode->stat().denominator_used_error_ = 0;
   qnode->stat().denominator_n_pruned_ = DBL_MAX;
   
-  // compute unnormalized sum
+  // Iterate over each query point.
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
     
     // Get the query point.
@@ -191,6 +191,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
       qnode->stat().postponed_denominator_used_error_;
     denominator_n_pruned_[q] += qnode->stat().postponed_denominator_n_pruned_;
 
+    // Iterate over each reference point.
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the reference point and its training value.
@@ -202,7 +203,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
 
       // Pairwise distance and kernel value and kernel value weighted
       // by the reference target training value.
-      double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+      double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
       double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
       double target_weighted_kernel_value = rset_targets_[r] * kernel_value;
       
@@ -220,12 +221,10 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
 	  
 	  // Tally the sum up for the denominator matrix B^T W(q) B.
 	  denominator_l_[q].set(i, j, denominator_l_[q].get(i, j) +
-				kernel_value *
-				reference_point_expansion[i] *
+				kernel_value * reference_point_expansion[i] *
 				reference_point_expansion[j]);
 	  denominator_e_[q].set(i, j, denominator_e_[q].get(i, j) +
-				kernel_value * 
-				reference_point_expansion[i] *
+				kernel_value * reference_point_expansion[i] *
 				reference_point_expansion[j]);
 	  
 	} // End of iterating over each row.
@@ -282,8 +281,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
   double numerator_n_pruned, denominator_n_pruned;
 
   // temporary variable for holding distance/kernel value bounds
-  DRange dsqd_range;
-  DRange kernel_value_range;
+  DRange dsqd_range, kernel_value_range;
   
   // Temporary variable for holding lower and estimate changes.
   Vector numerator_dl, numerator_de;
@@ -293,27 +291,25 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
   denominator_dl.Init(row_length_, row_length_);
   denominator_de.Init(row_length_, row_length_);
   
+  // Compute distance ranges and kernel ranges first.
+  SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range);
+  
   // Try finite difference pruning first
   if(RelativePruneLpr::Prunable<QueryTree, ReferenceTree>
      (relative_error_, rroot_->stat().sum_target_weighted_data_alloc_norm_,
       rroot_->stat().sum_data_outer_products_alloc_norm_,
-      qnode, rnode, 
-      dsqd_range, kernel_value_range,
+      qnode, rnode, dsqd_range, kernel_value_range,
       numerator_dl, numerator_de, numerator_used_error, numerator_n_pruned,
       denominator_dl, denominator_de, denominator_used_error,
       denominator_n_pruned)) {
     
-    la::AddTo(numerator_dl,
-              &(qnode->stat().postponed_numerator_l_));
-    la::AddTo(numerator_de,
-              &(qnode->stat().postponed_numerator_e_));
+    la::AddTo(numerator_dl, &(qnode->stat().postponed_numerator_l_));
+    la::AddTo(numerator_de, &(qnode->stat().postponed_numerator_e_));
     qnode->stat().postponed_numerator_used_error_ += numerator_used_error;
     qnode->stat().postponed_numerator_n_pruned_ += numerator_n_pruned;
     
-    la::AddTo(denominator_dl,
-              &(qnode->stat().postponed_denominator_l_));
-    la::AddTo(denominator_de,
-              &(qnode->stat().postponed_denominator_e_));
+    la::AddTo(denominator_dl, &(qnode->stat().postponed_denominator_l_));
+    la::AddTo(denominator_de, &(qnode->stat().postponed_denominator_e_));
     qnode->stat().postponed_denominator_used_error_ += denominator_used_error;
     qnode->stat().postponed_denominator_n_pruned_ += denominator_n_pruned;
     return;
@@ -372,7 +368,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
     q_left_stat.postponed_denominator_n_pruned_ += 
       q_stat.postponed_denominator_n_pruned_;
     q_right_stat.postponed_denominator_n_pruned_ += 
-      q_stat.postponed_denominator_n_pruned_;   
+      q_stat.postponed_denominator_n_pruned_;
 
     // Clear the passed down postponed information.
     q_stat.postponed_numerator_l_.SetZero();
