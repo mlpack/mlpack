@@ -134,4 +134,21 @@ h_ic_sum = sum(h_ic);
 
 % discriminant analysis using pc features %
 % pc_scores is d x N
-pc_scores
+
+g1_indices = find(phases == g1_phase);
+nong1_indices = find(phases ~=g1_phase);
+
+svm_data = [pc_scores(:,g1_indices) pc_scores(:,nong1_indices)]';
+svm_labels = [1 * ones(length(g1_indices),1);
+	      -1 * ones(length(nong1_indices),1)];
+
+
+latestSVM = svml('latestSVM','Kernel',1,'KernelParam',3,'C',1, ...
+		 'ExecPath','/home/niche/matlab/toolboxes/svml');
+
+for i=1:size(svm_data, 1)
+  latestSVM = ...
+      svmltrain(latestSVM, [svm_data([1:(i-1) (i+1):end], :)], ...
+		svm_labels([1:(i-1) (i+1):end]));
+  ypred(i) = svmlfwd(latestSVM, svm_data(i,:), svm_labels(i));
+end
