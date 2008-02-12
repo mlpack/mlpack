@@ -296,7 +296,8 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprCanonical_
   
   // Try finite difference pruning first
   if(TPruneRule::Prunable
-     (relative_error_, rroot_->stat().sum_target_weighted_data_alloc_norm_,
+     (internal_relative_error_, 
+      rroot_->stat().sum_target_weighted_data_alloc_norm_,
       rroot_->stat().sum_data_outer_products_alloc_norm_,
       qnode, rnode, dsqd_range, kernel_value_range,
       numerator_dl, numerator_de, numerator_used_error, numerator_n_pruned,
