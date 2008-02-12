@@ -63,11 +63,11 @@ class NaiveLpr {
  public:
 
   ////////// Getter/Setter //////////
-  void get_intermediate_results(ArrayList<Vector> *numerator,
-				ArrayList<Matrix> *denominator) {
-
-    numerator = &numerator_;
-    denominator = &denominator_;
+  void get_intermediate_results(ArrayList<Vector> **numerator,
+				ArrayList<Matrix> **denominator) {
+    
+    *numerator = &numerator_;
+    *denominator = &denominator_;
   }
 
   ////////// Constructor/Destructor //////////
