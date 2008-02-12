@@ -2,23 +2,23 @@
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  *
- *  @bug No known bugs, but currently only supports up to local
- *  linear.
+ *  @bug No known bugs.
  */
 
 #ifndef NAIVE_LPR_H
 #define NAIVE_LPR_H
 
 #include "matrix_util.h"
+#include "multi_index_util.h"
 #include "fastlib/fastlib.h"
 
-template<typename TKernel, int order = 1>
+template<typename TKernel, int lpr_order = 1>
 class NaiveLpr {
 
   FORBID_ACCIDENTAL_COPIES(NaiveLpr);
-
+  
  private:
-
+  
   /** @brief The module holding the parameters necessary for execution.
    */
   struct datanode *module_;
@@ -56,6 +56,10 @@ class NaiveLpr {
    */
   int total_num_coeffs_;
 
+  /** @brief The dimensionality.
+   */
+  int dimension_;
+
  public:
   
   /** @brief The constructor which does nothing.
@@ -71,7 +75,12 @@ class NaiveLpr {
    */
   void Compute() {
 
-    printf("\nStarting naive local polynomial of order %d...\n", order);
+    // Temporary variable for storing multivariate expansion of a
+    // reference point.
+    Vector reference_point_expansion;
+    reference_point_expansion.Init(total_num_coeffs_);
+
+    printf("\nStarting naive local polynomial of order %d...\n", lpr_order);
     fx_timer_start(NULL, "naive_local_linear_compute");
 
     // Compute unnormalized sum for the numerator vector and the
@@ -87,37 +96,24 @@ class NaiveLpr {
 	const double *r_col = rset_.GetColumnPtr(r);
 	const double r_target = rset_targets_[r];
 
+	// Compute the reference point expansion.
+	MultiIndexUtil::ComputePointMultivariatePolynomial
+	  (dimension_, lpr_order, r_col, reference_point_expansion.ptr());
+	
 	// Compute the pairwise distance and the resulting kernel value.
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
 
 	for(index_t i = 0; i < total_num_coeffs_; i++) {
 
-	  double factor_i;
-
-	  // Compute the numerator vector.
-	  if(i == 0) {
-	    numerator_[q][0] += r_target * kernel_value;
-	    factor_i = 1.0;
-	  }
-	  else {
-	    numerator_[q][i] += r_col[i - 1] * r_target * kernel_value;
-	    factor_i = r_col[i - 1];
-	  }
+	  numerator_[q][i] += r_target * kernel_value * 
+	    reference_point_expansion[i];
 	  
 	  // Here, compute each component of the denominator matrix.
 	  for(index_t j = 0; j < total_num_coeffs_; j++) {
-	    double factor_j;
-
-	    if(j == 0) {
-	      factor_j = 1.0;	      
-	    }
-	    else {
-	      factor_j = r_col[j - 1];
-	    }
-
 	    denominator_[q].set(j, i, denominator_[q].get(j, i) +
-				factor_j * factor_i * kernel_value);
+				reference_point_expansion[j] * 
+				reference_point_expansion[i] * kernel_value);
 	  } // End of looping over each (j, i)-th component of the
 	    // denominator matrix.
 	} // End of looping over each i-th component of the numerator
@@ -149,7 +145,7 @@ class NaiveLpr {
     }
     
     fx_timer_stop(NULL, "naive_local_linear_compute");
-    printf("\nNaive local polynomial of order %d completed...\n", order);
+    printf("\nNaive local polynomial of order %d completed...\n", lpr_order);
   }
 
   /** @brief Initialize the naive algorithm for initial usage.
@@ -166,6 +162,9 @@ class NaiveLpr {
     // Set the module to the incoming one.
     module_ = module_in;
 
+    // Set the dimensionality.
+    dimension_ = queries.n_rows();
+
     // Copy the datasets.
     qset_.Copy(queries);
     rset_.Copy(references);
@@ -179,7 +178,7 @@ class NaiveLpr {
 
     // Compute total number of coefficients.
     total_num_coeffs_ = (int) 
-      math::BinomialCoefficient(order + qset_.n_rows(), qset_.n_rows());
+      math::BinomialCoefficient(lpr_order + qset_.n_rows(), qset_.n_rows());
     
     // Allocate temporary storages for storing the numerator vectors
     // and the denominator matrices.

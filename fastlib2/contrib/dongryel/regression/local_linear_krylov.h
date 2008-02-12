@@ -379,7 +379,7 @@ class LocalLinearKrylov {
       double lower_limit = negative_lower_limit[i] +
 	positive_lower_limit[i];
 
-      DEBUG_ASSERT(upper_limit >= lower_limit);
+      //DEBUG_ASSERT(upper_limit >= lower_limit);
 
       if(lower_limit > 0) {
 	norm += lower_limit;
