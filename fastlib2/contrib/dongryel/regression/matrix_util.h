@@ -70,7 +70,7 @@ class MatrixUtil {
      *  @param A_inv The computed pseudoinverse by singular value
      *               decomposition.
      */
-    void PseudoInverse(const Matrix &A, Matrix *A_inv) {
+    static void PseudoInverse(const Matrix &A, Matrix *A_inv) {
       Vector ro_s;
       Matrix ro_U, ro_VT;
       
