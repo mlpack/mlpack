@@ -32,7 +32,7 @@ class RelativePruneLpr {
       la::ScaleOverwrite(kernel_value_range.lo,
 			 rnode->stat().sum_target_weighted_data_,
 			 &numerator_dl);
-      la::ScaleOverwrite(0.5 * kernel_value_range.width(),
+      la::ScaleOverwrite(kernel_value_range.mid(),
 			 rnode->stat().sum_target_weighted_data_,
 			 &numerator_de);
       
@@ -41,7 +41,7 @@ class RelativePruneLpr {
       la::ScaleOverwrite(kernel_value_range.lo,
 			 rnode->stat().sum_data_outer_products_,
 			 &denominator_dl);
-      la::ScaleOverwrite(0.5 * kernel_value_range.width(),
+      la::ScaleOverwrite(kernel_value_range.mid(),
 			 rnode->stat().sum_data_outer_products_,
 			 &denominator_de);
             
@@ -68,8 +68,7 @@ class RelativePruneLpr {
 	(denominator_total_alloc_error - qnode->stat().denominator_n_pruned_);
            
       // this is error per each query/reference pair for a fixed query
-      double kernel_error = 
-	0.5 * (kernel_value_range.hi - kernel_value_range.lo);
+      double kernel_error = 0.5 * kernel_value_range.width();
       
       // This is total norm error for each query point for
       // approximating the B^T W(q) Y vector.

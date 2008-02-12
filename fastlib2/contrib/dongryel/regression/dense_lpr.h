@@ -1,6 +1,6 @@
 /** @file dense_lpr.h
  *
- *  @author Dongryeol Lee (dongryel)
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  *  @see kde_main.cc
  *
  *  @bug No known bugs. However, This code only works for nonnegative
@@ -321,7 +321,7 @@ class DenseLpr {
         LprQStat() { }
     
         /** @brief The destructor which does not do anything. */
-        ~LprQStat() { }    
+        ~LprQStat() { }
     };
 
     /** @brief The type of the query tree the local polynomial algorithm
@@ -436,7 +436,7 @@ class DenseLpr {
 
     /** @brief Resets bounds relevant to the given query point.
      */
-    void Reset_(int q);
+    void ResetQuery_(int q);
 
     /** @brief Initialize the query tree bounds.
      */
@@ -494,6 +494,9 @@ class DenseLpr {
 
     void Compute() {
       
+      // Set the relative error tolerance.
+      relative_error_ = fx_param_double(module_, "relative_error", 0.01);
+
       fx_timer_start(module_, "dense_lpr_compute");
       InitializeQueryTree_(qroot_);
       DualtreeLprCanonical_(qroot_, rroot_);

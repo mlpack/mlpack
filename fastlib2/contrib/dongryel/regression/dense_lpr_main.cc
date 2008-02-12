@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
   DatasetScaler::TranslateDataByMin(queries, references, false);
 
   // Declare local linear krylov object.
-  DenseLpr<GaussianKernel> local_linear;
+  DenseLpr<GaussianKernel, 0> local_linear;
   local_linear.Init(queries, references, reference_targets, 
 		    local_linear_module);
   local_linear.Compute();

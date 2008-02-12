@@ -99,6 +99,19 @@ class MatrixUtil {
       la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
       la::MulOverwrite(ro_VT_trans, intermediate, A_inv);
     }
+
+    static double EntrywiseNormDifference(const Matrix &a_mat,
+					  const Matrix &b_mat,
+					  int p) {
+      double norm_diff = 0;
+
+      for(index_t j = 0; j < a_mat.n_cols(); j++) {
+	for(index_t i = 0; i < a_mat.n_rows(); i++) {
+	  norm_diff += pow(a_mat.get(i, j) - b_mat.get(i, j), p);
+	}
+      }
+      return norm_diff;
+    }
 };
 
 #endif
