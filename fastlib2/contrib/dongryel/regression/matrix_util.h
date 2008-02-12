@@ -113,6 +113,16 @@ class MatrixUtil {
       return norm_diff;
     }
 
+    static double EntrywiseNormDifference(const Vector &a_vec,
+					  const Vector &b_vec, int p) {
+      double norm_diff = 0;
+
+      for(index_t j = 0; j < a_vec.length(); j++) {
+	norm_diff += pow(fabs(a_vec[j] - b_vec[j]), p);
+      }
+      return norm_diff;
+    } 
+  
     static double MaxRelativeDifference(const Vector &true_results,
 					const Vector &approx_results) {
 
@@ -138,7 +148,19 @@ class MatrixUtil {
 
       return max_relative_error;
     }
-  
+
+    template<typename TCollection>
+    static double EntrywiseNormDifferenceRelative
+    (const TCollection &true_results, const TCollection &approx_results, 
+     int p) {
+
+      double norm_diff = EntrywiseNormDifference(true_results, approx_results,
+						 p);
+      double true_norm = EntrywiseLpNorm(true_results, p);
+
+      return norm_diff / true_norm;
+    }
+
 };
 
 #endif
