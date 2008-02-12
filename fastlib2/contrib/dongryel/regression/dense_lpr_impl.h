@@ -26,14 +26,14 @@ void DenseLpr<TKernel, lpr_order>::Reset_(int q) {
   numerator_e_.MakeColumnVector(q, &q_numerator_e);
   q_numerator_l.SetZero();
   q_numerator_e.SetZero();
-  numerator_used_error_ = 0;
-  numerator_n_pruned_ = 0;
+  numerator_used_error_[q] = 0;
+  numerator_n_pruned_[q] = 0;
   
   // Then the denominator quantities,
   denominator_l_[q].SetZero();
   denominator_e_[q].SetZero();
-  denominator_used_error_ = 0;
-  denominator_n_pruned_ = 0;      
+  denominator_used_error_[q] = 0;
+  denominator_n_pruned_[q] = 0;      
 }
 
 template<typename TKernel, int lpr_order>
@@ -180,10 +180,10 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprBase_
     double *q_numerator_e = numerator_e_.GetColumnPtr(q);
 
     // Incorporate the postponed information for the numerator vector.
-    la::AddTo(row_length_, qnode->stat().postponed_numerator_l_,
+    la::AddTo(row_length_, qnode->stat().postponed_numerator_l_.ptr(),
 	      q_numerator_l);
     numerator_used_error_[q] += qnode->stat().postponed_numerator_used_error_;
-    numerator_n_pruned_[q] += qnode->stat().postponed_n_pruned_;
+    numerator_n_pruned_[q] += qnode->stat().postponed_numerator_n_pruned_;
 
     // Incorporate the postponed information for the denominator matrix.
     la::AddTo(qnode->stat().postponed_denominator_l_, &(denominator_l_[q]));
@@ -312,7 +312,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
     
     la::AddTo(denominator_dl,
               &(qnode->stat().postponed_denominator_l_));
-    la::AddTo(numerator_de,
+    la::AddTo(denominator_de,
               &(qnode->stat().postponed_denominator_e_));
     qnode->stat().postponed_denominator_used_error_ += denominator_used_error;
     qnode->stat().postponed_denominator_n_pruned_ += denominator_n_pruned;
@@ -349,7 +349,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
     // Push down postponed bound changes owned by the current query
     // node to the children of the query node.
     la::AddTo(q_stat.postponed_numerator_l_, 
-	      &q_left_stat.postponsted_numerator_l_);
+	      &q_left_stat.postponed_numerator_l_);
     la::AddTo(q_stat.postponed_numerator_l_,
 	      &q_right_stat.postponed_numerator_l_);
     q_left_stat.postponed_numerator_used_error_ += 
@@ -362,7 +362,7 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
       q_stat.postponed_numerator_n_pruned_;
     
     la::AddTo(q_stat.postponed_denominator_l_, 
-	      &q_left_stat.postponsted_denominator_l_);
+	      &q_left_stat.postponed_denominator_l_);
     la::AddTo(q_stat.postponed_denominator_l_,
 	      &q_right_stat.postponed_denominator_l_);
     q_left_stat.postponed_denominator_used_error_ += 
@@ -442,7 +442,7 @@ void DenseLpr<TKernel, lpr_order>::FinalizeQueryTree_(QueryTree *qnode) {
   
   LprQStat &q_stat = qnode->stat();
 
-  if(qnode->ls_leaf()) {
+  if(qnode->is_leaf()) {
 
     Matrix pseudoinverse_denominator;
     pseudoinverse_denominator.Init(row_length_, row_length_);

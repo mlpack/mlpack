@@ -48,7 +48,7 @@ class RelativePruneLpr {
       // Refine the lower bound norm using the new lower bound info
       // for the numerator B^T W(q) Y.
       la::AddOverwrite(qnode->stat().postponed_numerator_l_, numerator_dl,
-		       tmp_numerator_dl);
+		       &tmp_numerator_dl);
       double new_numerator_norm_l = qnode->stat().numerator_norm_l_ + 
 	MatrixUtil::EntrywiseLpNorm(tmp_numerator_dl, 2);
       double numerator_allowed_err = 
@@ -59,7 +59,7 @@ class RelativePruneLpr {
       // Refine the lower bound norm using the new lower bound info
       // for the denominator B^T W(q) B.
       la::AddOverwrite(qnode->stat().postponed_denominator_l_, denominator_dl,
-		       tmp_denominator_dl);
+		       &tmp_denominator_dl);
       double new_denominator_norm_l = qnode->stat().denominator_norm_l_ + 
 	MatrixUtil::EntrywiseLpNorm(tmp_denominator_dl, 2);
       double denominator_allowed_err = 

@@ -51,6 +51,7 @@ int main(int argc, char *argv[]) {
   DenseLpr<GaussianKernel> local_linear;
   local_linear.Init(queries, references, reference_targets, 
 		    local_linear_module);
+  local_linear.Compute();
   
   // Finalize FastExec and print output results.
   fx_done();
