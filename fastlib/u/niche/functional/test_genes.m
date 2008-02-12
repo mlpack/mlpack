@@ -1,10 +1,17 @@
-%data = dlmread('combined.txt', '\t', 1, 1)';
-%data = data(7:7+17,:);
+unknown_phase = -1;
+m_g1_boundary_phase = 0;
+g1_phase = 1;
+s_phase = 2;
+s_g2_phase = 3;
+g2_m_phase = 4;
+
+
 t = 0:7:119;
 
 data = zeros(82, 6178);
+phases = zeros(1,6178);
 
-fid = fopen('combined.txt');
+fid = fopen('genes/combined_phase.txt');
 
 % throw away first line
 textscan(fid, '%s', 83, 'delimiter', '\t', 'emptyValue', -inf);
@@ -14,6 +21,26 @@ cur_row = [1];
 row_num = 0;
 
 while(length(cur_row) > 0)
+  phasestring = textscan(fid, '%s', 1, 'delimiter', '\t', 'emptyValue', ...
+		   -inf);
+  phasestring = char(phasestring{1});
+%  phasestring
+  if strcmp(phasestring, 'm_g1_boundary') == 1
+    phase = m_g1_boundary_phase;
+  elseif strcmp(phasestring, 'g1') == 1
+    phase = g1_phase;
+  elseif strcmp(phasestring, 's') == 1
+    phase = s_phase;
+  elseif strcmp(phasestring, 's_g2') == 1
+    phase = s_g2_phase;
+  elseif strcmp(phasestring, 'g2_m') == 1
+    phase = g2_m_phase;
+  elseif strcmp(phasestring, 'unknown') == 1
+    phase = unknown_phase;
+  else
+    disp(phasestring);
+  end
+  
   textscan(fid, '%s', 1, 'delimiter', '\t', 'emptyValue', -inf);
   cur_row = textscan(fid, '%f', 82, 'delimiter', '\t', ...
 		     'emptyValue', -inf);
@@ -25,6 +52,7 @@ while(length(cur_row) > 0)
       cur_row(end+1) = -inf;
     end
     data(:,row_num) = cur_row;
+    phases(row_num) = phase;
   end
   
   %fprintf('%f\n', length(cur_row));
@@ -32,12 +60,21 @@ end
 
 good_indices = [];
 for i = 1:size(data,2)
-  if length(find(data(7:7+17,i) == -inf)) == 0
+  if length(find(data(7:7+17,i) == -inf)) <= 1
     good_indices(end+1) = i;
   end
 end
 
+
+
 data = data(7:7+17, good_indices);
+phases = phases(good_indices);
+
+% indicate missing values with NaN, as required by the fd tools data2fd()
+data(find(data == -inf)) = NaN;
+
+% data ready!
+
 
 N = size(data,2);
 p = 17;
