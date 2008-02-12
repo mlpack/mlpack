@@ -427,6 +427,13 @@ class DenseLpr {
   
     ////////// Private Member Functions //////////
 
+    /** @brief Computes the distance range and the kernel value ranges
+     *         for a given query and a reference node pair.
+     */
+    void SqdistAndKernelRanges_(QueryTree *qnode, ReferenceTree *rnode,
+				DRange &dsqd_range, 
+				DRange &kernel_value_range);
+
     /** @brief Resets bounds relevant to the given query point.
      */
     void Reset_(int q);
@@ -446,6 +453,10 @@ class DenseLpr {
     void BestNodePartners_(QueryTree *nd, ReferenceTree *nd1, 
 			   ReferenceTree *nd2, ReferenceTree **partner1, 
 			   ReferenceTree **partner2);
+
+    void BestNodePartners_(ReferenceTree *nd, QueryTree *nd1, 
+			   QueryTree *nd2, QueryTree **partner1, 
+			   QueryTree **partner2);
 
     /** @brief The exhaustive base LPR case.
      *
@@ -482,7 +493,9 @@ class DenseLpr {
     /////////// User-level Functions //////////
 
     void Compute() {
-      
+      InitializeQueryTree_(qroot_);
+      DualtreeLprCanonical_(qroot_, rroot_);
+      FinalizeQueryTree_(qroot_);
     }
 
     void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,

@@ -45,7 +45,7 @@ class MatrixUtil {
       return lp_norm;
     }
 
-    static double EntrywiseLpNorm(int length, const double *v_arr, int p) {      
+    static double EntrywiseLpNorm(int length, const double *v_arr, int p) {
       double lp_norm = 0;
       for(index_t d = 0; d < length; d++) {
 	lp_norm += pow(fabs(v_arr[d]), p);
@@ -64,6 +64,41 @@ class MatrixUtil {
       return lp_norm;
     }
 
+    /** @brief Compute the pseudoinverse of the matrix.
+     *
+     *  @param A The matrix to compute the pseudoinverse of.
+     *  @param A_inv The computed pseudoinverse by singular value
+     *               decomposition.
+     */
+    void PseudoInverse(const Matrix &A, Matrix *A_inv) {
+      Vector ro_s;
+      Matrix ro_U, ro_VT;
+      
+      // compute the SVD of A
+      la::SVDInit(A, &ro_s, &ro_U, &ro_VT);
+      
+      // take the transpose of V^T and U
+      Matrix ro_VT_trans;
+      Matrix ro_U_trans;
+      la::TransposeInit(ro_VT, &ro_VT_trans);
+      la::TransposeInit(ro_U, &ro_U_trans);
+      Matrix ro_s_inv;
+      ro_s_inv.Init(ro_VT_trans.n_cols(), ro_U_trans.n_rows());
+      ro_s_inv.SetZero();
+      
+      // initialize the diagonal by the inverse of ro_s
+      for(index_t i = 0; i < ro_s.length(); i++) {
+	if(ro_s[i] > 0.001 * ro_s[0]) {
+	  ro_s_inv.set(i, i, 1.0 / ro_s[i]);
+	}
+	else {
+	  ro_s_inv.set(i, i, 0);
+	}
+      }
+      Matrix intermediate;
+      la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
+      la::MulInit(ro_VT_trans, intermediate, A_inv);
+    }
 };
 
 #endif
