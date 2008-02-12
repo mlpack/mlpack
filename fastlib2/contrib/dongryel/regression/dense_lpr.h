@@ -493,9 +493,25 @@ class DenseLpr {
     /////////// User-level Functions //////////
 
     void Compute() {
+      
+      fx_timer_start(module_, "dense_lpr_compute");
       InitializeQueryTree_(qroot_);
       DualtreeLprCanonical_(qroot_, rroot_);
       FinalizeQueryTree_(qroot_);
+
+      // Reshuffle the results to account for dataset reshuffling
+      // resulted from tree constructions
+      Vector tmp_q_results;
+      tmp_q_results.Init(regression_estimates_.length());
+      
+      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+	tmp_q_results[old_from_new_queries_[i]] = regression_estimates_[i];
+      }
+      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+	regression_estimates_[i] = tmp_q_results[i];
+      }
+
+      fx_timer_stop(module_, "dense_lpr_compute");
     }
 
     void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
@@ -554,8 +570,12 @@ class DenseLpr {
 	denominator_l_[q].Init(row_length_, row_length_);
 	denominator_e_[q].Init(row_length_, row_length_);
       }
+      denominator_used_error_.Init(qset_.n_cols());
+      denominator_n_pruned_.Init(qset_.n_cols());
       numerator_l_.Init(row_length_, qset_.n_cols());
       numerator_e_.Init(row_length_, qset_.n_cols());
+      numerator_used_error_.Init(qset_.n_cols());
+      numerator_n_pruned_.Init(qset_.n_cols());
       
       // initialize the reference side statistics.
       ComputeTargetWeightedReferenceVectors_(rroot_);
