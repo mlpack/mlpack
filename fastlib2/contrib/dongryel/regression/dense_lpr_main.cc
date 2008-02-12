@@ -58,8 +58,8 @@ int main(int argc, char *argv[]) {
   fast_lpr.Compute();
   fast_lpr.PrintDebug();
   fast_lpr.get_regression_estimates(&fast_lpr_results);
-  fast_lpr.get_intermediate_results(fast_numerator, fast_denominator,
-				    old_from_new_queries);
+  fast_lpr.get_intermediate_results(&fast_numerator, &fast_denominator,
+				    &old_from_new_queries);
 
   // Do naive algorithm.
   ArrayList<Vector> *naive_numerator = NULL;
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
   naive_lpr.Compute();
   naive_lpr.PrintDebug();
   naive_lpr.get_regression_estimates(&naive_lpr_results);
-  naive_lpr.get_intermediate_results(naive_numerator, naive_denominator);
+  naive_lpr.get_intermediate_results(&naive_numerator, &naive_denominator);
   printf("Maximum relative error: %g\n", 
 	 MatrixUtil::MaxRelativeDifference(naive_lpr_results, 
 					   fast_lpr_results));
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
   double max_relative_error = 0;
   for(index_t q = 0; q < queries.n_cols(); q++) {
     Vector q_fast_numerator;
-    fast_numerator->MakeColumnVector(q, &q_fast_numerator);
+    (*fast_numerator).MakeColumnVector(q, &q_fast_numerator);
 
     max_relative_error = 
       std::max(max_relative_error,

@@ -139,11 +139,6 @@ class MatrixUtil {
 	  std::max(max_relative_error, 
 		   fabs(approx_results[d] - true_results[d]) /
 		   fabs(true_results[d]));
-
-	printf("%g against %g gives %g\n",
-	       approx_results[d], true_results[d],
-	       fabs(approx_results[d] - true_results[d]) /
-	       fabs(true_results[d]));
       }
 
       return max_relative_error;
