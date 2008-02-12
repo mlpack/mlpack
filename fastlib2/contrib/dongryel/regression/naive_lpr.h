@@ -9,6 +9,7 @@
 #ifndef NAIVE_LPR_H
 #define NAIVE_LPR_H
 
+#include "matrix_util.h"
 #include "fastlib/fastlib.h"
 
 template<typename TKernel, int order = 1>
@@ -54,41 +55,6 @@ class NaiveLpr {
    *         polynomial.
    */
   int total_num_coeffs_;
-
-  /** @brief Compute the pseudoinverse of the matrix.
-   *
-   *  @param A The matrix to compute the pseudoinverse of.
-   *  @param A_inv The computed pseudoinverse by singular value decomposition.
-   */
-  void PseudoInverse(const Matrix &A, Matrix *A_inv) {
-    Vector ro_s;
-    Matrix ro_U, ro_VT;
-
-    // compute the SVD of A
-    la::SVDInit(A, &ro_s, &ro_U, &ro_VT);
-    
-    // take the transpose of V^T and U
-    Matrix ro_VT_trans;
-    Matrix ro_U_trans;
-    la::TransposeInit(ro_VT, &ro_VT_trans);
-    la::TransposeInit(ro_U, &ro_U_trans);
-    Matrix ro_s_inv;
-    ro_s_inv.Init(ro_VT_trans.n_cols(), ro_U_trans.n_rows());
-    ro_s_inv.SetZero();
-
-    // initialize the diagonal by the inverse of ro_s
-    for(index_t i = 0; i < ro_s.length(); i++) {
-      if(ro_s[i] > 0.001 * ro_s[0]) {
-	ro_s_inv.set(i, i, 1.0 / ro_s[i]);
-      }
-      else {
-	ro_s_inv.set(i, i, 0);
-      }
-    }
-    Matrix intermediate;
-    la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
-    la::MulInit(ro_VT_trans, intermediate, A_inv);
-  }
 
  public:
   
@@ -169,7 +135,7 @@ class NaiveLpr {
       
       // Now invert the denominator matrix for each query point and
       // multiply by the numerator vector.
-      PseudoInverse(denominator_[q], &denominator_inv_q);      
+      MatrixUtil::PseudoInverse(denominator_[q], &denominator_inv_q);      
       la::MulInit(denominator_inv_q, numerator_[q], &beta_q);
 
       // Compute the dot product between the multiindex vector for the

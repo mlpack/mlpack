@@ -4,7 +4,8 @@ librule(
     headers = ["dense_lpr.h",
                "dense_lpr_impl.h",
                "matrix_util.h",
-               "multi_index_util.h"],
+               "multi_index_util.h",
+               "relative_prune_lpr.h"],
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )

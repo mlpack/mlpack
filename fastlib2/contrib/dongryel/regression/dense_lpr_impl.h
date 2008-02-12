@@ -4,6 +4,19 @@
 #error "This file is not a public header file!"
 #endif
 
+#include "matrix_util.h"
+#include "relative_prune_lpr.h"
+
+template<typename TKernel, int lpr_order>
+void DenseLpr<TKernel, lpr_order>::SqdistAndKernelRanges_
+(QueryTree *qnode, ReferenceTree *rnode,
+ DRange &dsqd_range, DRange &kernel_value_range) {
+
+  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
+  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
+  kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);      
+}
+
 template<typename TKernel, int lpr_order>
 void DenseLpr<TKernel, lpr_order>::Reset_(int q) {
   
@@ -106,6 +119,24 @@ template<typename TKernel, int lpr_order>
 void DenseLpr<TKernel, lpr_order>::BestNodePartners_
 (QueryTree *nd, ReferenceTree *nd1, ReferenceTree *nd2, 
  ReferenceTree **partner1, ReferenceTree **partner2) {
+  
+  double d1 = nd->bound().MinDistanceSq(nd1->bound());
+  double d2 = nd->bound().MinDistanceSq(nd2->bound());
+  
+  if(d1 <= d2) {
+    *partner1 = nd1;
+    *partner2 = nd2;
+  }
+  else {
+    *partner1 = nd2;
+    *partner2 = nd1;
+  }
+}
+
+template<typename TKernel, int lpr_order>
+void DenseLpr<TKernel, lpr_order>::BestNodePartners_
+(ReferenceTree *nd, QueryTree *nd1, QueryTree *nd2, 
+ QueryTree **partner1, QueryTree **partner2) {
   
   double d1 = nd->bound().MinDistanceSq(nd1->bound());
   double d2 = nd->bound().MinDistanceSq(nd2->bound());
@@ -247,31 +278,53 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
   // Total amount of used error
   double numerator_used_error, denominator_used_error;
   
+  // Total portion accounted by pruning.
+  double numerator_n_pruned, denominator_n_pruned;
+
   // temporary variable for holding distance/kernel value bounds
   DRange dsqd_range;
   DRange kernel_value_range;
   
-  // try finite difference pruning first
-  /*
-  if(DualtreeLpr::Prunable_(qnode, rnode, dsqd_range, kernel_value_range,
-			    used_error, denominator_used_error)) {
-    la::AddTo(numerator_l_change_,
+  // Temporary variable for holding lower and estimate changes.
+  Vector numerator_dl, numerator_de;
+  numerator_dl.Init(row_length_);
+  numerator_de.Init(row_length_);
+  Matrix denominator_dl, denominator_de;
+  denominator_dl.Init(row_length_, row_length_);
+  denominator_de.Init(row_length_, row_length_);
+  
+  // Try finite difference pruning first
+  if(RelativePruneLpr::Prunable<QueryTree, ReferenceTree>
+     (relative_error_, rroot_->stat().sum_target_weighted_data_alloc_norm_,
+      rroot_->stat().sum_data_outer_products_alloc_norm_,
+      qnode, rnode, 
+      dsqd_range, kernel_value_range,
+      numerator_dl, numerator_de, numerator_used_error, numerator_n_pruned,
+      denominator_dl, denominator_de, denominator_used_error,
+      denominator_n_pruned)) {
+    
+    la::AddTo(numerator_dl,
               &(qnode->stat().postponed_numerator_l_));
-    la::AddTo(numerator_e_change_,
+    la::AddTo(numerator_de,
               &(qnode->stat().postponed_numerator_e_));
-    la::AddTo(numerator_u_change_,
-              &(qnode->stat().postponed_numerator_u_));
-    num_finite_difference_prunes_++;
+    qnode->stat().postponed_numerator_used_error_ += numerator_used_error;
+    qnode->stat().postponed_numerator_n_pruned_ += numerator_n_pruned;
+    
+    la::AddTo(denominator_dl,
+              &(qnode->stat().postponed_denominator_l_));
+    la::AddTo(numerator_de,
+              &(qnode->stat().postponed_denominator_e_));
+    qnode->stat().postponed_denominator_used_error_ += denominator_used_error;
+    qnode->stat().postponed_denominator_n_pruned_ += denominator_n_pruned;
     return;
   }
-  */
 
   // for leaf query node
   if(qnode->is_leaf()) {
 
     // for leaf pairs, go exhaustive
     if(rnode->is_leaf()) {
-      DualtreeRightHandSidesBase_(qnode, rnode);
+      DualtreeLprBase_(qnode, rnode);
       return;
     }
 
@@ -280,11 +333,108 @@ void DenseLpr<TKernel, lpr_order>::DualtreeLprCanonical_
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
       BestNodePartners_(qnode, rnode->left(), rnode->right(), &rnode_first,
                         &rnode_second);
-      DualtreeRightHandSidesCanonical_(qnode, rnode_first);
-      DualtreeRightHandSidesCanonical_(qnode, rnode_second);
+      DualtreeLprCanonical_(qnode, rnode_first);
+      DualtreeLprCanonical_(qnode, rnode_second);
       return;
     }
   }
+  
+  // for non-leaf query node
+  else {
+    
+    LprQStat &q_stat = qnode->stat();
+    LprQStat &q_left_stat = qnode->left()->stat();
+    LprQStat &q_right_stat = qnode->right()->stat();
+
+    // Push down postponed bound changes owned by the current query
+    // node to the children of the query node.
+    la::AddTo(q_stat.postponed_numerator_l_, 
+	      &q_left_stat.postponsted_numerator_l_);
+    la::AddTo(q_stat.postponed_numerator_l_,
+	      &q_right_stat.postponed_numerator_l_);
+    q_left_stat.postponed_numerator_used_error_ += 
+      q_stat.postponed_numerator_used_error_;
+    q_right_stat.postponed_numerator_used_error_ += 
+      q_stat.postponed_numerator_used_error_;
+    q_left_stat.postponed_numerator_n_pruned_ += 
+      q_stat.postponed_numerator_n_pruned_;
+    q_right_stat.postponed_numerator_n_pruned_ += 
+      q_stat.postponed_numerator_n_pruned_;
+    
+    la::AddTo(q_stat.postponed_denominator_l_, 
+	      &q_left_stat.postponsted_denominator_l_);
+    la::AddTo(q_stat.postponed_denominator_l_,
+	      &q_right_stat.postponed_denominator_l_);
+    q_left_stat.postponed_denominator_used_error_ += 
+      q_stat.postponed_denominator_used_error_;
+    q_right_stat.postponed_denominator_used_error_ += 
+      q_stat.postponed_denominator_used_error_;
+    q_left_stat.postponed_denominator_n_pruned_ += 
+      q_stat.postponed_denominator_n_pruned_;
+    q_right_stat.postponed_denominator_n_pruned_ += 
+      q_stat.postponed_denominator_n_pruned_;   
+
+    // Clear the passed down postponed information.
+    q_stat.postponed_numerator_l_.SetZero();
+    q_stat.postponed_numerator_used_error_ = 0;
+    q_stat.postponed_numerator_n_pruned_ = 0;
+    q_stat.postponed_denominator_l_.SetZero();
+    q_stat.postponed_denominator_used_error_ = 0;
+    q_stat.postponed_denominator_n_pruned_ = 0;
+    
+    // For a leaf reference node, expand query node
+    if(rnode->is_leaf()) {
+      QueryTree *qnode_first = NULL, *qnode_second = NULL;
+      
+      BestNodePartners_(rnode, qnode->left(), qnode->right(), &qnode_first,
+			&qnode_second);
+      DualtreeLprCanonical_(qnode_first, rnode);
+      DualtreeLprCanonical_(qnode_second, rnode);
+    }
+    
+    // for non-leaf reference node, expand both query and reference nodes
+    else {
+      ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
+      
+      BestNodePartners_(qnode->left(), rnode->left(), rnode->right(),
+			&rnode_first, &rnode_second);
+      DualtreeLprCanonical_(qnode->left(), rnode_first);
+      DualtreeLprCanonical_(qnode->left(), rnode_second);
+      
+      BestNodePartners_(qnode->right(), rnode->left(), rnode->right(),
+			&rnode_first, &rnode_second);
+      DualtreeLprCanonical_(qnode->right(), rnode_first);
+      DualtreeLprCanonical_(qnode->right(), rnode_second);
+    }
+    
+    // reaccumulate the summary statistics.
+    q_stat.numerator_norm_l_ = 
+      std::min
+      (q_left_stat.numerator_norm_l_ +
+       MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_numerator_l_, 2),
+       q_right_stat.numerator_norm_l_ +
+       MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_numerator_l_, 2));
+    q_stat.numerator_used_error_ = 
+      std::max(q_left_stat.numerator_used_error_,
+	       q_right_stat.numerator_used_error_);
+    q_stat.numerator_n_pruned_ = 
+      std::min(q_left_stat.numerator_n_pruned_,
+	       q_right_stat.numerator_n_pruned_);
+    q_stat.denominator_norm_l_ = 
+      std::min
+      (q_left_stat.denominator_norm_l_ +
+       MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_denominator_l_, 2),
+       q_right_stat.denominator_norm_l_ +
+       MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_denominator_l_, 2));
+    q_stat.denominator_used_error_ = 
+      std::max(q_left_stat.denominator_used_error_,
+	       q_right_stat.denominator_used_error_);
+    q_stat.denominator_n_pruned_ = 
+      std::min(q_left_stat.denominator_n_pruned_,
+	       q_right_stat.denominator_n_pruned_);    
+
+    return;
+  } // end of the case: non-leaf query node.  
 }
 
 template<typename TKernel, int lpr_order>
@@ -293,21 +443,44 @@ void DenseLpr<TKernel, lpr_order>::FinalizeQueryTree_(QueryTree *qnode) {
   LprQStat &q_stat = qnode->stat();
 
   if(qnode->ls_leaf()) {
+
+    Matrix pseudoinverse_denominator;
+    pseudoinverse_denominator.Init(row_length_, row_length_);
+    Vector least_squares_solution;
+    least_squares_solution.Init(row_length_);
+    Vector query_point_expansion;
+    query_point_expansion.Init(row_length_);
+
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
+      // Get the query point.
+      const double *query_point = qset_.GetColumnPtr(q);
+
       // Get the numerator vectors accumulating the sums to update.
-      double *q_numerator_l = numerator_l_.GetColumnPtr(q);
-      double *q_numerator_e = numerator_e_.GetColumnPtr(q);
+      Vector q_numerator_l, q_numerator_e;
+      numerator_l_.MakeColumnVector(q, &q_numerator_l);
+      numerator_e_.MakeColumnVector(q, &q_numerator_e);
 
       // Incorporate the postponed information for the numerator.
-      la::AddTo(row_length_, q_stat.postponed_numerator_l_.ptr(),
-		q_numerator_l);
-      la::AddTo(row_length_, q_stat.postponed_numerator_e_.ptr(),
-		q_numerator_e);
+      la::AddTo(q_stat.postponed_numerator_l_, &q_numerator_l);
+      la::AddTo(q_stat.postponed_numerator_e_, &q_numerator_e);
 
       // Incorporate the postponed information for the denominator.
       la::AddTo(q_stat.postponed_denominator_l_, &(denominator_l_[q]));
       la::AddTo(q_stat.postponed_denominator_e_, &(denominator_e_[q]));
+
+      // After incorporating all of the postponed information,
+      // finalize the regression estimate by solving the appropriate
+      // linear system (B^T W(q) B) z(q) = B^T W(q) Y for z(q) and
+      // taking the dot product between z(q) and the polynomial power
+      // formed from the query point coordinates.
+      MatrixUtil::PseudoInverse(denominator_e_[q], &pseudoinverse_denominator);
+      la::MulOverwrite(pseudoinverse_denominator, q_numerator_e,
+		       &least_squares_solution);
+      MultiIndexUtil::ComputePointMultivariatePolynomial
+	(dimension_, lpr_order, query_point, query_point_expansion.ptr());
+      regression_estimates_[q] = la::Dot(query_point_expansion,
+					 least_squares_solution);
     }
   }
   else {
