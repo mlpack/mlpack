@@ -21,39 +21,50 @@ svmlwrite('funknet', svm_data, svm_labels);
 % set initial svm options %
 svm_options = ...
     svmlopt('Kernel', 2, 'KernelParam', .01, 'C', .2, 'ComputeLOO', 1, ...
-	    'ExecPath','/home/niche/matlab/toolboxes/svml');\
+	    'ExecPath','/home/niche/matlab/toolboxes/svml');
 
 
 % let's do a retarded random sampling of sigma and C on a grid!
 
 
+num_sigma_epochs = 100;
+num_C_epochs = 100;
 
-C = 1e-3;
+loocv_errors = zeros(num_sigma_epochs, num_C_epochs);
 
-C_epoch = 1;
 
-for epoch = 1:1000
-  
-  C = 10 * exp(-rand * 10);
-  sigma = 10 * exp(-rand * 10);
-  
-  % set option for C (the regularization parameter)
-  svm_options = ...
-      svmlopt(svm_options, 'KernelParam', sigma, 'C', C);
-  
-  latestSVM = svml('latestSVM', svm_options);
+sigma = 1e-4;
+for sigma_epoch = 1:num_sigma_epochs
+  C = 1e-3;
+  for C_epoch = 1:num_C_epochs
+    
+    %  C = 10 * exp(-rand * 10);
+    %  sigma = 10 * exp(-rand * 10);
+    
+    % set option for C (the regularization parameter)
+    svm_options = ...
+	svmlopt(svm_options, 'KernelParam', sigma, 'C', C);
+    
+    latestSVM = svml('latestSVM', svm_options);
+    
+    latestSVM = ...
+	svmltrain(latestSVM, 'funknet');
+    
+    load loocv_error.txt
 
-  latestSVM = ...
-      svmltrain(latestSVM, 'funknet');
+    C_array(C_epoch) = C;
+    C = C * 1.1;
+    
+
+
+    loocv_errors(sigma_epoch, C_epoch) = loocv_error;
+    
+    %  C = C * 1.01; % geometrically increase C
+    %  C_epoch = C_epoch + 1;
+  end
   
-  load loocv_error.txt
-  
-  sigma_array(epoch) = C;
-  C_array(epoch) = C;
-  loocv_errors(epoch) = loocv_error;
-  
-%  C = C * 1.01; % geometrically increase C
-%  C_epoch = C_epoch + 1;
+  sigma_array(sigma_epoch) = sigma;  
+  sigma = sigma * 1.1;
 end
 
 % for i=1:size(svm_data, 1)
@@ -64,3 +75,9 @@ end
 % end
 
 % sum((2 * (ypred > 0) - 1) == svm_labels') / length(svm_labels) 
+
+
+
+% cluster genes using ICs?
+
+% find a way to do fPCA/fICA using multiple sets of curves
