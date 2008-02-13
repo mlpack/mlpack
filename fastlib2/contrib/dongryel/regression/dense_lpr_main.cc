@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
   // we initialize it with all parameters defined
   // "--local_linear/...=...".
   struct datanode* local_linear_module =
-    fx_submodule(NULL, "local_linear", "local_linear_module");
+    fx_submodule(NULL, "lpr", "lpr_module");
 
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   ArrayList<Matrix> *fast_denominator = NULL;
   ArrayList<int> *old_from_new_queries = NULL;
   Vector fast_lpr_results;
-  DenseLpr<GaussianKernel, 1, RelativePruneLpr> fast_lpr;
+  DenseLpr<EpanKernel, 1, RelativePruneLpr> fast_lpr;
   fast_lpr.Init(queries, references, reference_targets, local_linear_module);
   fast_lpr.Compute();
   fast_lpr.PrintDebug();
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
   ArrayList<Matrix> *naive_denominator = NULL;
   
   Vector naive_lpr_results;
-  NaiveLpr<GaussianKernel, 1> naive_lpr;
+  NaiveLpr<EpanKernel, 1> naive_lpr;
   naive_lpr.Init(queries, references, reference_targets, local_linear_module);
   naive_lpr.Compute();
   naive_lpr.PrintDebug();
