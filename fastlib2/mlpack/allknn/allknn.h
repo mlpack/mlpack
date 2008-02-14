@@ -86,7 +86,7 @@ class AllkNN {
     } 
     
   }; //class AllNNStat  
-  
+ public: 
   // QueryTrees are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
@@ -149,7 +149,15 @@ class AllkNN {
       delete reference_tree_;
     }
   } 
-    
+ /** Accessors 
+	*/
+ 	QueryTree *get_query_tree() {
+	 return query_tree_;
+	}
+
+	ReferenceTree *get_reference_tree() {
+	  return reference_tree_;
+	}
       
  /////////////////////////////// Helper Functions ///////////////////////////////////////////////////
   
