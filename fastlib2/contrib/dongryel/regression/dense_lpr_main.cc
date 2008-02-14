@@ -46,54 +46,18 @@ int main(int argc, char *argv[]) {
   // the datasets to fit in the hypercube. This should be replaced
   // with more general dataset scaling operation, requested by the
   // users.
-  DatasetScaler::TranslateDataByMin(queries, references, false);
-
-  // Declare local linear krylov object.
-  Matrix *fast_numerator = NULL;
-  ArrayList<Matrix> *fast_denominator = NULL;
-  ArrayList<int> *old_from_new_queries = NULL;
-  Vector fast_lpr_results;
-  DenseLpr<EpanKernel, 1, RelativePruneLpr> fast_lpr;
-  fast_lpr.Init(queries, references, reference_targets, local_linear_module);
-  fast_lpr.Compute();
-  fast_lpr.PrintDebug();
-  fast_lpr.get_regression_estimates(&fast_lpr_results);
-  fast_lpr.get_intermediate_results(&fast_numerator, &fast_denominator,
-				    &old_from_new_queries);
+  DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Do naive algorithm.
-  ArrayList<Vector> *naive_numerator = NULL;
-  ArrayList<Matrix> *naive_denominator = NULL;
+  Vector naive_query_regression_estimates;
+  ArrayList<DRange> naive_query_confidence_bands;
+  Vector naive_query_magnitude_weight_diagrams;
+  NaiveLpr<EpanKernel> naive_lpr;
+  naive_lpr.Init(references, reference_targets, local_linear_module);
+  naive_lpr.Compute(queries, &naive_query_regression_estimates,
+		    &naive_query_confidence_bands, 
+		    &naive_query_magnitude_weight_diagrams, NULL);
   
-  Vector naive_lpr_results;
-  NaiveLpr<EpanKernel, 1> naive_lpr;
-  naive_lpr.Init(queries, references, reference_targets, local_linear_module);
-  naive_lpr.Compute();
-  naive_lpr.PrintDebug();
-  naive_lpr.get_regression_estimates(&naive_lpr_results);
-  naive_lpr.get_intermediate_results(&naive_numerator, &naive_denominator);
-  printf("Maximum relative error: %g\n", 
-	 MatrixUtil::MaxRelativeDifference(naive_lpr_results, 
-					   fast_lpr_results));
-  
-  double max_relative_error = 0;
-  for(index_t q = 0; q < queries.n_cols(); q++) {
-    Vector q_fast_numerator;
-    (*fast_numerator).MakeColumnVector(q, &q_fast_numerator);
-
-    max_relative_error = 
-      std::max(max_relative_error,
-	       MatrixUtil::EntrywiseNormDifferenceRelative<Matrix>
-	       ((*naive_denominator)[(*old_from_new_queries)[q]], 
-		(*fast_denominator)[q], 1));
-    max_relative_error = 
-      std::max(max_relative_error,
-	       MatrixUtil::EntrywiseNormDifferenceRelative<Vector>
-	       ((*naive_numerator)[(*old_from_new_queries)[q]], 
-		q_fast_numerator, 1));
-  }
-  printf("Matrix difference: %g\n", max_relative_error);
-
   // Finalize FastExec and print output results.
   fx_done();
   return 0;

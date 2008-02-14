@@ -3,7 +3,7 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  *  @see kde_main.cc
  *
- *  @bug No known bugs. However, This code only works for nonnegative
+ *  @bug No known bugs. However, This code works only for nonnegative
  *  reference training values and nonnegative reference dataset.
  */
 
