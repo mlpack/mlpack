@@ -209,7 +209,8 @@ class NaiveLpr {
 		     intermediate_product));
 
       // Compute the influence value at each point (if it belongs to
-      // the reference set).
+      // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
+      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
       if(query_influence_values != NULL) {
 	(*query_influence_values)[q] = 
 	  la::Dot(point_expansion, pseudo_inverse_times_query_expansion);
@@ -315,6 +316,8 @@ class NaiveLpr {
     BasicCompute_(queries, query_regression_estimates,
 		  query_magnitude_weight_diagrams, query_influence_values);
 
+    // If the reference dataset is being used for training, then
+    // compute variance and degrees of freedom.
     if(query_influence_values != NULL) {
       ComputeVariance_();
     }
