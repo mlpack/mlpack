@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
   naive_lpr.Compute(queries, &naive_query_regression_estimates,
 		    &naive_query_confidence_bands, 
 		    &naive_query_magnitude_weight_diagrams, NULL);
-  
+
   // Finalize FastExec and print output results.
   fx_done();
   return 0;
