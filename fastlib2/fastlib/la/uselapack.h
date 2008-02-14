@@ -308,7 +308,19 @@ namespace la {
     DEBUG_SAME_SIZE(d.length(), X->n_rows());
     ScaleRows(d.length(), X->n_cols(), d.ptr(), X->ptr());
   }
-
+  /**
+   * Scales each row of the matrix to a different scale.
+   *
+   * X <- diag(d) * X
+   * 
+   * @param d is an one dimensional matrix (1xM or Mx1);
+   * @param X the matrix to scale
+   */
+  inline void ScaleRows(const Matrix& d, Matrix *X) {
+    DEBUG_SAME_SIZE(min(d.n_cols(), d.n_rows()), 1);
+    DEBUG_SAME_SIZE(max(d.n_cols(), d.n_rows()), X->n_rows());
+    ScaleRows(X->n_rows(), X->n_cols(), d.ptr(), X->ptr());
+  }
   /**
    * Sets a vector to another scaled by some factor
    * (\f$\vec{y} \gets \alpha \vec{x}\f$).
