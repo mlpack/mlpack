@@ -31,6 +31,7 @@ class NonConvexMVU {
   void Init(std::string data_file, index_t knns);
   void Init(std::string data_file, index_t knns, index_t leaf_size);
   void ComputeLocalOptimum();
+  void ComputeLocalOptimumBFGS_();
   // eta < 1
   void set_eta(double eta);
   // gamma > 1
@@ -75,10 +76,30 @@ class NonConvexMVU {
   Matrix coordinates_;
   Matrix gradient_;
   Matrix data_;
-
+  // These parameters are used for limited BFGS
+ 
+  //ro_k = 1/(y^T * s)
+  ArrayList<Matrix> ro_bfgs_; 
+  // the memory of bfgs 
+  index_t mem_bfgs_;
+  // s_k = x_{k+1}-x_{k};
+  ArrayList<Matrix> s_bfgs_;
+  // y_k = g_{k+1} -g_k (g is the gradient)
+  ArrayList<Matrix> y_bfgs_;
+  // 
+  index_t index_bfgs_;
+  // previous gradient
+  Matrix previous_gradient_;
+  // previous coordinates
+  Matrix previous_coordinates_;
+  
+  void InitOptimization_(); 
   void UpdateLagrangeMult_();
   void UpdateLagrangeMultStochastic_(); 
   void LocalSearch_(double *step);
+  void ComputeBFGS_();
+  void InitBFGS();
+  void UpdateBFGS_();
   double ComputeLagrangian_(Matrix &coordinates);
   void ComputeFeasibilityError_(double *distance_constraint, 
                                 double *centering_constraint);

@@ -26,6 +26,7 @@ NonConvexMVU::NonConvexMVU() {
  armijo_sigma_=1e-1;
  armijo_beta_=0.5;
  new_dimension_ = -1;
+ mem_bfgs_ = -1;
 }
 void NonConvexMVU::Init(std::string data_file, index_t knns) {
   Init(data_file, knns, 20);
@@ -52,25 +53,7 @@ void NonConvexMVU::ComputeLocalOptimum() {
   double distance_constraint;
   double centering_constraint;
   double sum_of_dist_square = la::LengthEuclidean(distances_.size(), &distances_[0]);
-  if (unlikely(new_dimension_<0)) {
-    FATAL("You forgot to set the new dimension\n");
-  }
-  NOTIFY("Initializing optimization ...\n");
-  coordinates_.Init(new_dimension_, num_of_points_);
-  gradient_.Init(new_dimension_, num_of_points_);
-  for(index_t i=0; i< coordinates_.n_rows(); i++) {
-    for(index_t j=0; j<coordinates_.n_cols(); j++) {
-      coordinates_.set(i, j, math::Random(0.1, 1));
-    }
-  }
-  lagrange_mult_.Init(knns_ * num_of_points_);
-  for(index_t i=0; i<lagrange_mult_.length(); i++) {
-    lagrange_mult_[i]=math::Random(0.1, 1.0);
-  }
-  centering_lagrange_mult_.Init(new_dimension_);
-  for(index_t i=0; i<new_dimension_; i++) {
-    centering_lagrange_mult_[i]=math::Random(0.1, 1.0);
-  }
+  InitOptimization_();
   NOTIFY("Starting optimization ...\n");
   ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
   previous_feasibility_error_= distance_constraint + centering_constraint; 
@@ -104,6 +87,79 @@ void NonConvexMVU::ComputeLocalOptimum() {
  
 }
 
+void NonConvexMVU::ComputeLocalOptimumBFGS_() {
+  double distance_constraint;
+  double centering_constraint;
+  double sum_of_dist_square = la::LengthEuclidean(distances_.size(), &distances_[0]);
+  if (unlikely(mem_bfgs_<0)) {
+    FATAL("You forgot to initialize the memory for BFGS\n");
+  }
+  InitOptimization_();
+  // You have to compute also the previous_gradient_ and previous_coordinates_
+  // tha are needed only by BFGS
+  ComputeGradient_();
+  previous_gradient_.Copy(gradient_);
+  previous_coordinates_.Copy(coordinates_);
+  // Init the memory for BFGS
+  s_bfgs_.Init(mem_bfgs_);
+  y_bfgs_.Init(mem_bfgs_);
+  ro_bfgs_.Init(mem_bfgs_);
+  for(index_t i=0; i<mem_bfgs_; i++) {
+    s_bfgs_[i].Init(new_dimension_, num_of_points_);
+    y_bfgs_[i].Init(new_dimension_, num_of_points_);
+    ro_bfgs_[i].Init(new_dimension_, 1);
+  } 
+  NOTIFY("Starting optimization ...\n");
+  ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+  previous_feasibility_error_= distance_constraint + centering_constraint; 
+  double step; 
+  // Run a few iterations with gradient descend to fill the memory of BFGS
+  NOTIFY("Running a few iterations with gradient descent to fill "
+         "the memory of BFGS...\n");
+  index_bfgs_=0;
+  for(index_t i=0; i<mem_bfgs_; i++) {
+    LocalSearch_(&step);
+    ComputeGradient_();
+    la::SubOverwrite(coordinates_, previous_coordinates_, &s_bfgs_[i]);
+    la::SubOverwrite(gradient_, previous_gradient_, &y_bfgs_[i]);
+    la::MulTransBOverwrite(s_bfgs_[i], y_bfgs_[i], &ro_bfgs_[i]);
+    previous_gradient_.CopyValues(gradient_);
+    previous_coordinates_.CopyValues(coordinates_);
+  } 
+  NOTIFY("Now starting optimizing with BFGS...\n");
+  for(index_t it1=0; it1<max_iterations_; it1++) {  
+    for(index_t it2=0; it2<max_iterations_; it2++) {
+      ComputeBFGS_();
+      UpdateBFGS_();
+      ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+      NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error (dist)): %lg\n"
+             "feasibility error (center): %lg \n", it1, it2, 
+               distance_constraint , centering_constraint);
+      step=la::DistanceSqEuclidean(new_dimension_ * num_of_points_,
+          previous_coordinates_.ptr(), coordinates_.ptr());
+      if (step  < tolerance_){
+        break;
+      }
+      previous_coordinates_.CopyValues(coordinates_);
+      previous_gradient_.CopyValues(gradient_);
+    }
+    if (distance_constraint/sum_of_dist_square < tolerance_) {
+      NOTIFY("Converged !!\n");
+      NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
+      NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
+              distance_constraint/sum_of_dist_square, centering_constraint);
+      return;
+    }
+   // UpdateLagrangeMult_();
+   UpdateLagrangeMultStochastic_();
+  }
+    NOTIFY("Didn't converge, maximum number of iterations reached !!\n");
+    NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
+    NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
+              distance_constraint, centering_constraint);
+  
+}
+
 void NonConvexMVU::set_eta(double eta) {
   eta_ = eta;
 }
@@ -135,7 +191,30 @@ void NonConvexMVU::set_armijo_sigma(double armijo_sigma) {
 void NonConvexMVU::set_armijo_beta(double armijo_beta) {
   armijo_beta_ = armijo_beta;
 }
+
+void NonConvexMVU::InitOptimization_() {
+  if (unlikely(new_dimension_<0)) {
+    FATAL("You forgot to set the new dimension\n");
+  }
+  NOTIFY("Initializing optimization ...\n");
+  coordinates_.Init(new_dimension_, num_of_points_);
+  gradient_.Init(new_dimension_, num_of_points_);
+  for(index_t i=0; i< coordinates_.n_rows(); i++) {
+    for(index_t j=0; j<coordinates_.n_cols(); j++) {
+      coordinates_.set(i, j, math::Random(0.1, 1));
+    }
+  }
+  lagrange_mult_.Init(knns_ * num_of_points_);
+  for(index_t i=0; i<lagrange_mult_.length(); i++) {
+    lagrange_mult_[i]=math::Random(0.1, 1.0);
+  }
+  centering_lagrange_mult_.Init(new_dimension_);
+  for(index_t i=0; i<new_dimension_; i++) {
+    centering_lagrange_mult_[i]=math::Random(0.1, 1.0);
+  }
  
+}
+
 void NonConvexMVU::UpdateLagrangeMult_() {
   double distance_constraint;
   double centering_constraint;
@@ -222,6 +301,45 @@ void NonConvexMVU::LocalSearch_(double *step) {
   NOTIFY("lagrangian2: %lg, Objective: %lg\n", lagrangian2,
                                                ComputeObjective_(temp_coordinates));
   coordinates_.CopyValues(temp_coordinates);   
+}
+
+void NonConvexMVU::ComputeBFGS_() {
+  ArrayList<Matrix> alpha;
+  alpha.Init(mem_bfgs_);
+  for(index_t i=0; i<mem_bfgs_; i++){
+    alpha[i].Init(new_dimension_, 1); 
+  }
+  Matrix scaled_y;
+  scaled_y.Init(new_dimension_, 1);
+  index_t num=0;
+  for(index_t i=index_bfgs_, num=0; num<mem_bfgs_; i=i%(mem_bfgs_+1), num++) {
+    la::MulTransBOverwrite(s_bfgs_[i], gradient_, &alpha[i]);
+    la::ScaleRows(ro_bfgs_[i], &alpha[i]);
+    scaled_y.CopyValues(y_bfgs_[i]);
+    la::ScaleRows(alpha[i], &scaled_y);
+    la::SubFrom(scaled_y, &gradient_);
+  }
+  Matrix scaled_s;
+  Matrix beta;
+  beta.Init(new_dimension_, 1);
+  scaled_s.Init(new_dimension_, num_of_points_);
+  num=0;
+  for(index_t j=index_bfgs_, num=0; num<mem_bfgs_; 
+      num++, j=(j-1)%mem_bfgs_) {
+    la::MulTransBOverwrite(y_bfgs_[j], gradient_, &beta);
+    la::ScaleRows(ro_bfgs_[j], &beta);
+    la::SubFrom(alpha[j], &beta);
+    scaled_s.CopyValues(s_bfgs_[j]);
+    la::ScaleRows(beta, &scaled_s);
+    la::AddTo(scaled_s, &gradient_);
+  }
+}
+
+void NonConvexMVU::UpdateBFGS_() {
+  // shift all values
+  index_bfgs_ = (index_bfgs_ - 1) % mem_bfgs_;
+  la::SubOverwrite(coordinates_, previous_coordinates_, &s_bfgs_[index_bfgs_]);
+  la::SubOverwrite(gradient_, previous_gradient_, &y_bfgs_[index_bfgs_]);
 }
 
 double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
