@@ -11,6 +11,7 @@
 #include "matrix_util.h"
 #include "multi_index_util.h"
 #include "fastlib/fastlib.h"
+#include "mlpack/allknn/allknn.h"
 
 template<typename TKernel>
 class NaiveLpr {
@@ -39,9 +40,9 @@ class NaiveLpr {
    */
   int dimension_;
 
-  /** @brief The kernel function.
+  /** @brief The kernel function on each reference point.
    */
-  TKernel kernel_;
+  ArrayList<TKernel> kernels_;
 
   /** @brief The Z score to use for confidence bands.
    */
@@ -152,7 +153,7 @@ class NaiveLpr {
 	
 	// Compute the pairwise distance and the resulting kernel value.
 	double dsqd = la::DistanceSqEuclidean(queries.n_rows(), q_col, r_col);
-	double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
+	double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
 
 	for(index_t i = 0; i < total_num_coeffs_; i++) {
 
@@ -301,7 +302,37 @@ class NaiveLpr {
 			    query_confidence_bands,
 			    query_magnitude_weight_diagrams);
   }
-  
+
+  /** @brief Initialize the bandwidth by either fixed bandwidth
+   *         parameter or a nearest neighbor based one (i.e. perform
+   *         nearest neighbor and set the bandwidth equal to the k-th
+   *         nearest neighbor distance).
+   */
+  void InitializeBandwidths_() {
+
+    kernels_.Init(rset_.n_cols());
+
+    if(fx_param_exists(module_, "bandwidth")) {      
+      for(index_t i = 0; i < kernels_.size(); i++) {
+	kernels_[i].Init(fx_param_double(module_, "bandwidth", 0.1));
+      }
+    }
+    else {
+      AllkNN all_knn;
+      double knn_factor = fx_param_double(module_, "knn_factor", 0.2);
+      int knns = (int) (knn_factor * rset_.n_cols());
+      all_knn.Init(rset_, rset_, 20, knns);
+      ArrayList<index_t> resulting_neighbors;
+      ArrayList<double> distances;
+      
+      all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
+
+      for(index_t i = 0; i < distances.size(); i ++) {
+	kernels_[i / knns].Init(distances[i]);
+      }
+    }
+  }
+
  public:
 
   ////////// Getter/Setters //////////
@@ -346,13 +377,14 @@ class NaiveLpr {
 	       Vector *query_magnitude_weight_diagrams,
 	       Vector *query_influence_values) {
 
+    fx_timer_start(module_, "naive_lpr_querying_time");
     ComputeMain_(queries, query_regression_estimates, query_confidence_bands, 
 		 query_magnitude_weight_diagrams, query_influence_values, 
 		 false);
+    fx_timer_stop(module_, "naive_lpr_querying_time");
   }
 
-  /** @brief Initialize the naive algorithm for initial usage,
-   *         i.e. the training phase.
+  /** @brief Initialize the naive algorithm for initial usage.
    *
    *  @param references The column-oriented reference dataset.
    *  @param reference_targets The training values for the reference set.
@@ -380,17 +412,38 @@ class NaiveLpr {
 		       reference_targets.n_cols());
     
     // Get bandwidth.
-    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
+    InitializeBandwidths_();
 
     // Compute total number of coefficients.
     total_num_coeffs_ = (int) 
       math::BinomialCoefficient(lpr_order_ + rset_.n_rows(), rset_.n_rows());
-
+    
     // Train the model using the reference set (i.e. compute
     // confidence interval and degrees of freedom.)
+    fx_timer_start(module_, "naive_lpr_training_time");
     ComputeMain_(references, &rset_regression_estimates_, 
 		 &rset_confidence_bands_, &rset_magnitude_weight_diagrams_, 
 		 &rset_influence_values_, true);
+    fx_timer_stop(module_, "naive_lpr_training_time");
+  }
+
+  void PrintDebug() {
+
+    FILE *stream = stdout;
+    const char *fname = NULL;
+    
+    if((fname = fx_param_str(module_, "naive_lpr_output", 
+			     "naive_lpr_output.txt")) != NULL) {
+      stream = fopen(fname, "w+");
+    }
+    for(index_t r = 0; r < rset_.n_cols(); r++) {
+      fprintf(stream, "%g %g %g\n", rset_confidence_bands_[r].lo,
+	      rset_regression_estimates_[r], rset_confidence_bands_[r].hi);
+    }
+    
+    if(stream != stdout) {
+      fclose(stream);
+    }
   }
 
 };

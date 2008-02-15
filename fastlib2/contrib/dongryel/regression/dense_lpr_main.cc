@@ -53,18 +53,10 @@ int main(int argc, char *argv[]) {
   // users.
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
-  // Do fast algorithm.
-  DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
-  
   // Do naive algorithm.
-  Vector naive_query_regression_estimates;
-  ArrayList<DRange> naive_query_confidence_bands;
-  Vector naive_query_magnitude_weight_diagrams;
-  NaiveLpr<EpanKernel> naive_lpr;
+  NaiveLpr<GaussianKernel> naive_lpr;
   naive_lpr.Init(references, reference_targets, local_linear_module);
-  naive_lpr.Compute(queries, &naive_query_regression_estimates,
-		    &naive_query_confidence_bands, 
-		    &naive_query_magnitude_weight_diagrams, NULL);
+  naive_lpr.PrintDebug();
 
   // Finalize FastExec and print output results.
   fx_done();
