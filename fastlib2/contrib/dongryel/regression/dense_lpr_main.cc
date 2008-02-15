@@ -53,6 +53,9 @@ int main(int argc, char *argv[]) {
   // users.
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
+  // Do fast algorithm.
+  DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
+  
   // Do naive algorithm.
   Vector naive_query_regression_estimates;
   ArrayList<DRange> naive_query_confidence_bands;

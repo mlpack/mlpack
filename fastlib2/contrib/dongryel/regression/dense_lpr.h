@@ -42,7 +42,7 @@
  *    fast_kde.Compute(&results);
  *  @endcode
  */
-template<typename TKernel, int lpr_order, typename TPruneRule>
+template<typename TKernel, typename TPruneRule>
 class DenseLpr {
   
   FORBID_ACCIDENTAL_COPIES(DenseLpr);
@@ -91,6 +91,9 @@ class DenseLpr {
 	 */
         void Init(int dimension) {
 	  
+	  struct datanode* local_linear_module =
+	    fx_submodule(NULL, "lpr", "lpr_module");
+	  int lpr_order = fx_param_int(local_linear_module, "lpr_order", 0);
 	  int matrix_dimension = 
 	    (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 
@@ -127,7 +130,7 @@ class DenseLpr {
 	    const double *reference_point = dataset.GetColumnPtr(start + r);
 
 	    MultiIndexUtil::ComputePointMultivariatePolynomial
-	      (dataset.n_rows(), lpr_order, reference_point, 
+	      (dataset.n_rows(), lpr_order_, reference_point, 
 	       reference_point_expansion.ptr());
 	    
 	    // Based on the polynomial expansion computed, sum up its
@@ -287,7 +290,7 @@ class DenseLpr {
         void Init(int dimension) {
 
 	  int matrix_dimension = 
-	    (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
+	    (int) math::BinomialCoefficient(dimension + lpr_order_, dimension);
 	  
 	  // Initialize quantities associated with the numerator matrix.
 	  numerator_norm_l_ = 0;
@@ -335,7 +338,10 @@ class DenseLpr {
     typedef BinarySpaceTree<DHrectBound<2>, Matrix, LprRStat > ReferenceTree;
 
     ////////// Private Member Variables //////////
-  
+
+    /** @brief The local polynomial order. */
+    int lpr_order_;
+
     /** @brief The required relative error. */
     double relative_error_;
 
@@ -551,11 +557,15 @@ class DenseLpr {
     void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
 	      struct datanode *module_in) {
       
+      // set the incoming parameter module.
       module_ = module_in;
                 
       // read in the number of points owned by a leaf
       int leaflen = fx_param_int(module_in, "leaflen", 20);
       
+      // set the local polynomial approximation order.
+      lpr_order_ = fx_param_double(module_in, "lpr_order", 0);
+
       // copy reference dataset and reference weights.
       rset_.Copy(references);
       rset_targets_.Copy(reference_targets.GetColumnPtr(0),
@@ -564,7 +574,7 @@ class DenseLpr {
       // Record dimensionality and the appropriately cache the number of
       // components required.
       dimension_ = rset_.n_rows();
-      row_length_ = (int) math::BinomialCoefficient(dimension_ + lpr_order,
+      row_length_ = (int) math::BinomialCoefficient(dimension_ + lpr_order_,
 						    dimension_);
       
       // copy query dataset.
