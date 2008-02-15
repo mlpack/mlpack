@@ -31,7 +31,7 @@ class NonConvexMVU {
   void Init(std::string data_file, index_t knns);
   void Init(std::string data_file, index_t knns, index_t leaf_size);
   void ComputeLocalOptimum();
-  void ComputeLocalOptimumBFGS_();
+  void ComputeLocalOptimumBFGS();
   // eta < 1
   void set_eta(double eta);
   // gamma > 1
@@ -48,6 +48,10 @@ class NonConvexMVU {
    *  beta for armijo rule somewhere between 0.5 to 0.1
    */
   void set_armijo_beta(double armijo_beta);
+  /**
+   * Set the memory for the BFGS method
+   */
+  void set_mem_bfgs(index_t mem_bfgs);
   Matrix &coordinates();
 
  private:
@@ -79,7 +83,7 @@ class NonConvexMVU {
   // These parameters are used for limited BFGS
  
   //ro_k = 1/(y^T * s)
-  ArrayList<Matrix> ro_bfgs_; 
+  Vector ro_bfgs_; 
   // the memory of bfgs 
   index_t mem_bfgs_;
   // s_k = x_{k+1}-x_{k};

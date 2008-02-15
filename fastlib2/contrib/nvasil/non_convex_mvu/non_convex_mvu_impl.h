@@ -87,7 +87,7 @@ void NonConvexMVU::ComputeLocalOptimum() {
  
 }
 
-void NonConvexMVU::ComputeLocalOptimumBFGS_() {
+void NonConvexMVU::ComputeLocalOptimumBFGS() {
   double distance_constraint;
   double centering_constraint;
   double sum_of_dist_square = la::LengthEuclidean(distances_.size(), &distances_[0]);
@@ -107,7 +107,6 @@ void NonConvexMVU::ComputeLocalOptimumBFGS_() {
   for(index_t i=0; i<mem_bfgs_; i++) {
     s_bfgs_[i].Init(new_dimension_, num_of_points_);
     y_bfgs_[i].Init(new_dimension_, num_of_points_);
-    ro_bfgs_[i].Init(new_dimension_, 1);
   } 
   NOTIFY("Starting optimization ...\n");
   ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
@@ -122,7 +121,8 @@ void NonConvexMVU::ComputeLocalOptimumBFGS_() {
     ComputeGradient_();
     la::SubOverwrite(coordinates_, previous_coordinates_, &s_bfgs_[i]);
     la::SubOverwrite(gradient_, previous_gradient_, &y_bfgs_[i]);
-    la::MulTransBOverwrite(s_bfgs_[i], y_bfgs_[i], &ro_bfgs_[i]);
+    ro_bfgs_[i] = la::Dot(num_of_points_ * new_dimension_, s_bfgs_[i].ptr(),
+                          y_bfgs_[i].ptr());
     previous_gradient_.CopyValues(gradient_);
     previous_coordinates_.CopyValues(coordinates_);
   } 
@@ -130,6 +130,8 @@ void NonConvexMVU::ComputeLocalOptimumBFGS_() {
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       ComputeBFGS_();
+      ComputeGradient_();
+      la::SubFrom(gradient_, &coordinates_);
       UpdateBFGS_();
       ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
       NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error (dist)): %lg\n"
@@ -190,6 +192,10 @@ void NonConvexMVU::set_armijo_sigma(double armijo_sigma) {
 
 void NonConvexMVU::set_armijo_beta(double armijo_beta) {
   armijo_beta_ = armijo_beta;
+}
+
+void NonConvexMVU::set_mem_bfgs(index_t mem_bfgs) {
+  mem_bfgs_ = mem_bfgs;
 }
 
 void NonConvexMVU::InitOptimization_() {
@@ -304,42 +310,50 @@ void NonConvexMVU::LocalSearch_(double *step) {
 }
 
 void NonConvexMVU::ComputeBFGS_() {
-  ArrayList<Matrix> alpha;
+  Vector alpha;
   alpha.Init(mem_bfgs_);
-  for(index_t i=0; i<mem_bfgs_; i++){
-    alpha[i].Init(new_dimension_, 1); 
-  }
   Matrix scaled_y;
-  scaled_y.Init(new_dimension_, 1);
+  scaled_y.Init(new_dimension_, num_of_points_);
   index_t num=0;
-  for(index_t i=index_bfgs_, num=0; num<mem_bfgs_; i=i%(mem_bfgs_+1), num++) {
-    la::MulTransBOverwrite(s_bfgs_[i], gradient_, &alpha[i]);
-    la::ScaleRows(ro_bfgs_[i], &alpha[i]);
+  for(index_t i=index_bfgs_, num=0; num<mem_bfgs_; i=(i+1)%mem_bfgs_, num++) {
+    alpha[i] = la::Dot(new_dimension_ * num_of_points_,
+                       s_bfgs_[i].ptr(), 
+                       gradient_.ptr());
+    alpha[i] *= ro_bfgs_[i];
     scaled_y.CopyValues(y_bfgs_[i]);
-    la::ScaleRows(alpha[i], &scaled_y);
+    la::Scale(alpha[i], &scaled_y);
     la::SubFrom(scaled_y, &gradient_);
   }
+  // We need to scale the gradient here
+  double norm_scale=1/ro_bfgs_[index_bfgs_]/la::Dot(num_of_points_ *
+                    new_dimension_, y_bfgs_[index_bfgs_].ptr(),
+                    y_bfgs_[index_bfgs_].ptr());
+  la::Scale(norm_scale, &gradient_);
+  
   Matrix scaled_s;
-  Matrix beta;
-  beta.Init(new_dimension_, 1);
+  double beta;
   scaled_s.Init(new_dimension_, num_of_points_);
   num=0;
-  for(index_t j=index_bfgs_, num=0; num<mem_bfgs_; 
-      num++, j=(j-1)%mem_bfgs_) {
-    la::MulTransBOverwrite(y_bfgs_[j], gradient_, &beta);
-    la::ScaleRows(ro_bfgs_[j], &beta);
-    la::SubFrom(alpha[j], &beta);
+  for(index_t j=(index_bfgs_-1+mem_bfgs_)%mem_bfgs_, num=0; num<mem_bfgs_; 
+      num++, j=(j-1+mem_bfgs_)%mem_bfgs_) {
+    beta = la::Dot(new_dimension_ * num_of_points_, 
+                   y_bfgs_[j].ptr(),
+                   gradient_.ptr());
+    beta *= ro_bfgs_[j];
     scaled_s.CopyValues(s_bfgs_[j]);
-    la::ScaleRows(beta, &scaled_s);
+    la::Scale(alpha[j]-beta, &scaled_s);
     la::AddTo(scaled_s, &gradient_);
   }
 }
 
 void NonConvexMVU::UpdateBFGS_() {
   // shift all values
-  index_bfgs_ = (index_bfgs_ - 1) % mem_bfgs_;
+  index_bfgs_ = (index_bfgs_ - 1 + mem_bfgs_ ) % mem_bfgs_;
   la::SubOverwrite(coordinates_, previous_coordinates_, &s_bfgs_[index_bfgs_]);
   la::SubOverwrite(gradient_, previous_gradient_, &y_bfgs_[index_bfgs_]);
+  ro_bfgs_[index_bfgs_] = 1.0/la::Dot(new_dimension_ * num_of_points_, 
+                                      s_bfgs_[index_bfgs_].ptr(),
+                                      y_bfgs_[index_bfgs_].ptr());
 }
 
 double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
