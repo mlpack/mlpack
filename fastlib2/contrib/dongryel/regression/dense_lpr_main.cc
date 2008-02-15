@@ -55,11 +55,10 @@ int main(int argc, char *argv[]) {
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Do fast algorithm.
-  /*
   DenseLpr<EpanKernel, QuickPruneLpr> fast_lpr;
   fast_lpr.Init(queries, references, reference_targets, local_linear_module);
   fast_lpr.Compute();
-  */
+  fast_lpr.PrintDebug();
 
   // Do naive algorithm.
   NaiveLpr<GaussianKernel> naive_lpr;

@@ -616,7 +616,7 @@ class DenseLpr {
       fx_timer_stop(NULL, "tree_d");
       
       // initialize the kernel.
-      kernel_.Init(fx_param_double_req(module_, "bandwidth"));
+      kernel_.Init(fx_param_double(module_, "bandwidth", 0.2));
       
       // Allocate memory for storing computation results.
       target_weighted_rset_.Init(row_length_, rset_.n_cols());
