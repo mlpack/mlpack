@@ -98,7 +98,7 @@ class NaiveLpr {
    */
   void BasicCompute_(const Matrix &queries, Vector *query_regression_estimates,
 		     Vector *query_magnitude_weight_diagrams, 
-		     Vector *query_influence_values, bool leave_one_out) {
+		     Vector *query_influence_values) {
 
     // Allocate memory to hold the final results.
     query_regression_estimates->Init(queries.n_cols());
@@ -135,12 +135,6 @@ class NaiveLpr {
       // Get the query point.
       const double *q_col = queries.GetColumnPtr(q);
       for(index_t r = 0; r < rset_.n_cols(); r++) {
-
-	// If leave one out is toggled on, then we skip the index with
-	// the same number.
-	if(leave_one_out && q == r) {
-	  continue;
-	}
 
 	// Get the reference point and the reference target training
 	// value.
@@ -286,11 +280,10 @@ class NaiveLpr {
   void ComputeMain_(const Matrix &queries, Vector *query_regression_estimates,
 		    ArrayList<DRange> *query_confidence_bands,
 		    Vector *query_magnitude_weight_diagrams,
-		    Vector *query_influence_values, bool leave_one_out) {
+		    Vector *query_influence_values) {
 
     BasicCompute_(queries, query_regression_estimates,
-		  query_magnitude_weight_diagrams, query_influence_values,
-		  leave_one_out);
+		  query_magnitude_weight_diagrams, query_influence_values);
 
     // If the reference dataset is being used for training, then
     // compute variance and degrees of freedom.
@@ -314,7 +307,7 @@ class NaiveLpr {
 
     if(fx_param_exists(module_, "bandwidth")) {      
       for(index_t i = 0; i < kernels_.size(); i++) {
-	kernels_[i].Init(fx_param_double(module_, "bandwidth", 0.1));
+	kernels_[i].Init(fx_param_double(module_, "bandwidth", 0.2));
       }
     }
     else {
@@ -327,7 +320,7 @@ class NaiveLpr {
       
       all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
 
-      for(index_t i = 0; i < distances.size(); i ++) {
+      for(index_t i = 0; i < distances.size(); i += knns) {
 	kernels_[i / knns].Init(distances[i]);
       }
     }
@@ -423,7 +416,7 @@ class NaiveLpr {
     fx_timer_start(module_, "naive_lpr_training_time");
     ComputeMain_(references, &rset_regression_estimates_, 
 		 &rset_confidence_bands_, &rset_magnitude_weight_diagrams_, 
-		 &rset_influence_values_, true);
+		 &rset_influence_values_);
     fx_timer_stop(module_, "naive_lpr_training_time");
   }
 

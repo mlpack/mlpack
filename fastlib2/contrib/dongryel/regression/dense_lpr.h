@@ -116,6 +116,9 @@ class DenseLpr {
         void Init(const Matrix& dataset, index_t &start, index_t &count) {
 	  Init(dataset.n_rows());
 
+	  struct datanode* local_linear_module =
+	    fx_submodule(NULL, "lpr", "lpr_module");
+	  int lpr_order = fx_param_int(local_linear_module, "lpr_order", 0);
 	  // Temporary variables for multiindex looping
 	  Vector reference_point_expansion;
 	  reference_point_expansion.Init(sum_target_weighted_data_.length());
@@ -130,7 +133,7 @@ class DenseLpr {
 	    const double *reference_point = dataset.GetColumnPtr(start + r);
 
 	    MultiIndexUtil::ComputePointMultivariatePolynomial
-	      (dataset.n_rows(), lpr_order_, reference_point, 
+	      (dataset.n_rows(), lpr_order, reference_point, 
 	       reference_point_expansion.ptr());
 	    
 	    // Based on the polynomial expansion computed, sum up its
@@ -231,6 +234,11 @@ class DenseLpr {
 	 */
         double denominator_norm_l_;
 
+        /** @brief The lower bound on the kernel sum for the query
+	 *         points belonging to this query node.
+	 */
+        double kernel_sum_l_;
+
         /** @brief The upper bound on the used error for the denominator
 	 *         matrix B^T W(q) B for the query points owned by this
 	 *         node.
@@ -276,6 +284,7 @@ class DenseLpr {
 	  postponed_numerator_n_pruned_ = 0;
 
 	  denominator_norm_l_ = 0;
+	  kernel_sum_l_ = 0;
 	  denominator_used_error_ = 0;
 	  denominator_n_pruned_ = 0;
 	  postponed_denominator_l_.SetZero();
@@ -289,8 +298,11 @@ class DenseLpr {
 	 */
         void Init(int dimension) {
 
+	  struct datanode* local_linear_module =
+	    fx_submodule(NULL, "lpr", "lpr_module");
+	  int lpr_order = fx_param_int(local_linear_module, "lpr_order", 0);
 	  int matrix_dimension = 
-	    (int) math::BinomialCoefficient(dimension + lpr_order_, dimension);
+	    (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 	  
 	  // Initialize quantities associated with the numerator matrix.
 	  numerator_norm_l_ = 0;
@@ -303,6 +315,7 @@ class DenseLpr {
 	  
 	  // Initialize quantities associated with the denominator matrix.
 	  denominator_norm_l_ = 0;
+	  kernel_sum_l_ = 0;
 	  denominator_used_error_ = 0;
 	  denominator_n_pruned_ = 0;
 	  postponed_denominator_l_.Init(matrix_dimension, matrix_dimension);
@@ -564,7 +577,7 @@ class DenseLpr {
       int leaflen = fx_param_int(module_in, "leaflen", 20);
       
       // set the local polynomial approximation order.
-      lpr_order_ = fx_param_double(module_in, "lpr_order", 0);
+      lpr_order_ = fx_param_int(module_in, "lpr_order", 0);
 
       // copy reference dataset and reference weights.
       rset_.Copy(references);

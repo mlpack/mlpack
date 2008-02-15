@@ -6,6 +6,7 @@
 #include "mlpack/kde/dataset_scaler.h"
 #include "dense_lpr.h"
 #include "naive_lpr.h"
+#include "quick_prune_lpr.h"
 #include "relative_prune_lpr.h"
 
 int main(int argc, char *argv[]) {
@@ -52,6 +53,13 @@ int main(int argc, char *argv[]) {
   // with more general dataset scaling operation, requested by the
   // users.
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
+
+  // Do fast algorithm.
+  /*
+  DenseLpr<EpanKernel, QuickPruneLpr> fast_lpr;
+  fast_lpr.Init(queries, references, reference_targets, local_linear_module);
+  fast_lpr.Compute();
+  */
 
   // Do naive algorithm.
   NaiveLpr<GaussianKernel> naive_lpr;
