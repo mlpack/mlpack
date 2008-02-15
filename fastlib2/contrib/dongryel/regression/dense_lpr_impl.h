@@ -166,6 +166,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
   qnode->stat().numerator_used_error_ = 0;
   qnode->stat().numerator_n_pruned_ = DBL_MAX;
   qnode->stat().denominator_norm_l_ = DBL_MAX;
+  qnode->stat().kernel_sum_l_ = DBL_MAX;
   qnode->stat().denominator_used_error_ = 0;
   qnode->stat().denominator_n_pruned_ = DBL_MAX;
   
@@ -251,6 +252,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
     qnode->stat().denominator_norm_l_ =
       std::min(qnode->stat().denominator_norm_l_,
 	       MatrixUtil::EntrywiseLpNorm(denominator_l_[q], 1));
+    qnode->stat().kernel_sum_l_ =
+      std::min(qnode->stat().kernel_sum_l_, denominator_l_[q].get(0, 0));
     qnode->stat().denominator_used_error_ =
       std::max(qnode->stat().denominator_used_error_, 
 	       denominator_used_error_[q]);
@@ -423,6 +426,11 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
        MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_denominator_l_, 1),
        q_right_stat.denominator_norm_l_ +
        MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_denominator_l_, 1));
+    q_stat.kernel_sum_l_ =
+      std::min(q_left_stat.kernel_sum_l_ +
+	       q_left_stat.postponed_denominator_l_.get(0, 0),
+	       q_right_stat.kernel_sum_l_ +
+	       q_right_stat.postponed_denominator_l_.get(0, 0));
     q_stat.denominator_used_error_ = 
       std::max(q_left_stat.denominator_used_error_,
 	       q_right_stat.denominator_used_error_);
