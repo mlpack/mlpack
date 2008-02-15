@@ -1,3 +1,8 @@
+/** @file dense_lpr_main.cc
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #include "mlpack/kde/dataset_scaler.h"
 #include "dense_lpr.h"
 #include "naive_lpr.h"
