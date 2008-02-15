@@ -13,9 +13,7 @@ class TestAllkNN {
     naive_  = new AllkNN();
     data_for_tree_ = new Matrix();
     data::Load("test_data_3_1000.csv", data_for_tree_);
-    allknn_->Init(*data_for_tree_, *data_for_tree_, 20, 5);
-    naive_->InitNaive(*data_for_tree_, *data_for_tree_, 5);
-  }
+ }
 
   void Destruct() {
    delete data_for_tree_;
@@ -23,8 +21,11 @@ class TestAllkNN {
    delete naive_;
   }
 
-  void TestTreeVsNaive() {
+  void TestTreeVsNaive1() {
     Init();
+    allknn_->Init(*data_for_tree_, *data_for_tree_, 20, 5);
+    naive_->InitNaive(*data_for_tree_, *data_for_tree_, 5);
+ 
     ArrayList<index_t> resulting_neighbors_tree;
     ArrayList<double> distances_tree;
     allknn_->ComputeNeighbors(&resulting_neighbors_tree,
@@ -37,13 +38,34 @@ class TestAllkNN {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
-    NOTIFY("Allknn test passed");
+    NOTIFY("Allknn test 1 passed");
     Destruct();
   }
-  
-  void TestAll() {
-    TestTreeVsNaive();
+   void TestTreeVsNaive2() {
+    Init();
+    allknn_->Init(*data_for_tree_, 20, 5);
+    naive_->InitNaive(*data_for_tree_, 5);
+
+    ArrayList<index_t> resulting_neighbors_tree;
+    ArrayList<double> distances_tree;
+    allknn_->ComputeNeighbors(&resulting_neighbors_tree,
+                              &distances_tree);
+    ArrayList<index_t> resulting_neighbors_naive;
+    ArrayList<double> distances_naive;
+    naive_->ComputeNaive(&resulting_neighbors_naive,
+                         &distances_naive);
+    for(index_t i=0; i<resulting_neighbors_tree.size(); i++) {
+      TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
+      TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
+    }
+    NOTIFY("Allknn test 2 passed");
+    Destruct();
   }
+ 
+  void TestAll() {
+    TestTreeVsNaive1();
+    TestTreeVsNaive2();
+ }
  
  private:
   AllkNN *allknn_;
