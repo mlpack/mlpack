@@ -97,7 +97,7 @@ class NaiveLpr {
    */
   void BasicCompute_(const Matrix &queries, Vector *query_regression_estimates,
 		     Vector *query_magnitude_weight_diagrams, 
-		     Vector *query_influence_values) {
+		     Vector *query_influence_values, bool leave_one_out) {
 
     // Allocate memory to hold the final results.
     query_regression_estimates->Init(queries.n_cols());
@@ -134,6 +134,12 @@ class NaiveLpr {
       // Get the query point.
       const double *q_col = queries.GetColumnPtr(q);
       for(index_t r = 0; r < rset_.n_cols(); r++) {
+
+	// If leave one out is toggled on, then we skip the index with
+	// the same number.
+	if(leave_one_out && q == r) {
+	  continue;
+	}
 
 	// Get the reference point and the reference target training
 	// value.
@@ -212,7 +218,7 @@ class NaiveLpr {
       // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
       // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
       if(query_influence_values != NULL) {
-	(*query_influence_values)[q] = 
+	(*query_influence_values)[q] =
 	  la::Dot(point_expansion, pseudo_inverse_times_query_expansion);
       }      
     } // end of iterating over each query point.
@@ -261,9 +267,39 @@ class NaiveLpr {
 	rset_regression_estimates_[i];
       rset_variance_ += prediction_error * prediction_error;
     }
+    
+    // This could happen if enough matrices are singular...
+    if(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
+       rset_second_degree_of_freedom_ <= 0) {
+      rset_variance_ = DBL_MAX;
+    }
+
     rset_variance_ *= 1.0 / 
       (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_);
+  }
+
+  /** @brief Predicts the regression estimates along with the
+   *         confidence intervals for the given set of query points.
+   */
+  void ComputeMain_(const Matrix &queries, Vector *query_regression_estimates,
+		    ArrayList<DRange> *query_confidence_bands,
+		    Vector *query_magnitude_weight_diagrams,
+		    Vector *query_influence_values, bool leave_one_out) {
+
+    BasicCompute_(queries, query_regression_estimates,
+		  query_magnitude_weight_diagrams, query_influence_values,
+		  leave_one_out);
+
+    // If the reference dataset is being used for training, then
+    // compute variance and degrees of freedom.
+    if(query_influence_values != NULL) {
+      ComputeVariance_();
+    }
+
+    ComputeConfidenceBands_(queries, query_regression_estimates,
+			    query_confidence_bands,
+			    query_magnitude_weight_diagrams);
   }
   
  public:
@@ -304,29 +340,17 @@ class NaiveLpr {
   ~NaiveLpr() {}
 
   ////////// User-level Functions //////////
-
-  /** @brief Predicts the regression estimates along with the
-   *         confidence intervals for the given set of query points.
-   */
+  
   void Compute(const Matrix &queries, Vector *query_regression_estimates,
 	       ArrayList<DRange> *query_confidence_bands,
 	       Vector *query_magnitude_weight_diagrams,
 	       Vector *query_influence_values) {
 
-    BasicCompute_(queries, query_regression_estimates,
-		  query_magnitude_weight_diagrams, query_influence_values);
-
-    // If the reference dataset is being used for training, then
-    // compute variance and degrees of freedom.
-    if(query_influence_values != NULL) {
-      ComputeVariance_();
-    }
-
-    ComputeConfidenceBands_(queries, query_regression_estimates,
-			    query_confidence_bands,
-			    query_magnitude_weight_diagrams);
+    ComputeMain_(queries, query_regression_estimates, query_confidence_bands, 
+		 query_magnitude_weight_diagrams, query_influence_values, 
+		 false);
   }
-  
+
   /** @brief Initialize the naive algorithm for initial usage,
    *         i.e. the training phase.
    *
@@ -342,7 +366,7 @@ class NaiveLpr {
     module_ = module_in;
 
     // Set the local polynomial order.
-    lpr_order_ = fx_param_int(module_in, "lpr_order", 1);
+    lpr_order_ = fx_param_int(module_in, "lpr_order", 0);
 
     // Set the z-score
     z_score_ = fx_param_double(module_in, "z_score", 1.96);
@@ -364,8 +388,9 @@ class NaiveLpr {
 
     // Train the model using the reference set (i.e. compute
     // confidence interval and degrees of freedom.)
-    Compute(references, &rset_regression_estimates_, &rset_confidence_bands_,
-	    &rset_magnitude_weight_diagrams_, &rset_influence_values_);
+    ComputeMain_(references, &rset_regression_estimates_, 
+		 &rset_confidence_bands_, &rset_magnitude_weight_diagrams_, 
+		 &rset_influence_values_, true);
   }
 
 };
