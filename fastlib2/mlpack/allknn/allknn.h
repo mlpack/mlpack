@@ -86,15 +86,12 @@ class AllkNN {
     } 
     
   }; //class AllNNStat  
- public: 
-  // QueryTrees are BinarySpaceTrees where the data are bounded by 
+  
+  // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, QueryStat> QueryTree;
-  
-  // ReferenceTrees are the same as QueryTrees, but don't need node 
-  // statistics for this algorithm.
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix> ReferenceTree;  
+  typedef BinarySpaceTree<DHrectBound<2>, Matrix, QueryStat> TreeType;
+   
   
   /////////////////////////////// Members //////////////////////////////////////////////////
  private:
@@ -102,8 +99,8 @@ class AllkNN {
   Matrix queries_;
   Matrix references_;
   // Pointers to the roots of the two trees.
-  QueryTree* query_tree_;
-  ReferenceTree* reference_tree_;
+  TreeType* query_tree_;
+  TreeType* reference_tree_;
   // The total number of prunes.
   index_t number_of_prunes_;
   // A permutation of the indices for tree building.
@@ -149,22 +146,14 @@ class AllkNN {
       delete reference_tree_;
     }
   } 
- /** Accessors 
-	*/
- 	QueryTree *get_query_tree() {
-	 return query_tree_;
-	}
-
-	ReferenceTree *get_reference_tree() {
-	  return reference_tree_;
-	}
+    
       
  /////////////////////////////// Helper Functions ///////////////////////////////////////////////////
   
   /**
    * Computes the minimum squared distance between the bounding boxes of two nodes
    */
-  double MinNodeDistSq_ (QueryTree* query_node, ReferenceTree* reference_node) {
+  double MinNodeDistSq_ (TreeType* query_node, TreeType* reference_node) {
     // node->bound() gives us the DHrectBound class for the node
     // It has a function MinDistanceSq which takes another DHrectBound
     return query_node->bound().MinDistanceSq(reference_node->bound());
@@ -174,7 +163,7 @@ class AllkNN {
   /**
    * Performs exhaustive computation between two leaves.  
    */
-  void ComputeBaseCase_(QueryTree* query_node, ReferenceTree* reference_node) {
+  void ComputeBaseCase_(TreeType* query_node, TreeType* reference_node) {
    
     // DEBUG statements should be used frequently, since they incur no overhead
     // when compiled in fast mode
@@ -212,7 +201,9 @@ class AllkNN {
         
         // We'll use lapack to find the distance between the two vectors
         double distance = la::DistanceSqEuclidean(query_point, reference_point);
-        
+        if (unlikely(reference_node == query_node && distance ==0)) {
+          continue;
+        } 
         // If the reference point is closer than the current candidate, 
         // we'll update the candidate
         if (distance < neighbor_distances_[ind+knns_-1]) {
@@ -242,8 +233,8 @@ class AllkNN {
   /**
    * The recursive function
    */
-  void ComputeNeighborsRecursion_ (QueryTree* query_node, 
-      ReferenceTree* reference_node, double lower_bound_distance) {
+  void ComputeNeighborsRecursion_ (TreeType* query_node, TreeType* reference_node, 
+      double lower_bound_distance) {
    
     // DEBUG statements should be used frequently, 
     // either with or without messages 
@@ -395,9 +386,9 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    query_tree_ = tree::MakeKdTreeMidpoint<QueryTree>(queries_, leaf_size_, 
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
 				&old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<ReferenceTree>(references_, 
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
 				leaf_size_, &old_from_new_references_, NULL);
     
     // Stop the timer we started above
@@ -405,9 +396,51 @@ class AllkNN {
 
   } // Init
 
+  /** Use this if you want to run allknn it on a single dataset 
+   * the query tree and reference tree are the same
+   */
+  void Init(const Matrix& references_in, struct datanode* module_in) {
+     
+    // set the module
+    module_ = module_in;
+    
+    // track the number of prunes
+    number_of_prunes_ = 0;
+    
+    // Get the leaf size from the module
+    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    // Make sure the leaf size is valid
+    DEBUG_ASSERT(leaf_size_ > 0);
+    
+    // Copy the matrices to the class members since they will be rearranged.  
+    references_.Copy(references_in);
+    queries_.Alias(references_);    
+		// K-nearest neighbors initialization
+		knns_ = fx_param_int(module_, "knns", 5);
+  
+    // Initialize the list of nearest neighbor candidates
+    neighbor_indices_.Init(references_.n_cols() * knns_);
+    
+		// Initialize the vector of upper bounds for each point.  
+    neighbor_distances_.Init(references_.n_cols() * knns_);
+    neighbor_distances_.SetAll(DBL_MAX);
+
+    // We'll time tree building
+    fx_timer_start(module_, "tree_building");
+
+    // This call makes each tree from a matrix, leaf size, and two arrays 
+		// that record the permutation of the data points
+    // Instead of NULL, it is possible to specify an array new_from_old_
+    query_tree_ = NULL;
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+				leaf_size_, &old_from_new_references_, NULL);
+    
+    // Stop the timer we started above
+    fx_timer_stop(module_, "tree_building");
+
+  }
   void Init(const Matrix& queries_in, const Matrix& references_in, 
       index_t leaf_size, index_t knns) {
-    
     
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -438,13 +471,45 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
     // that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    query_tree_ = tree::MakeKdTreeMidpoint<QueryTree>(queries_, leaf_size_, 
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
         &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<ReferenceTree>(references_, 
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
         leaf_size_, &old_from_new_references_, NULL);
 
   } // Init
 
+  void Init(const Matrix& references_in, index_t leaf_size, index_t knns) {
+    // track the number of prunes
+    number_of_prunes_ = 0;
+    
+    // Make sure the leaf size is valid
+    leaf_size_ = leaf_size;
+    DEBUG_ASSERT(leaf_size_ > 0);
+    
+    // Make sure the knns is valid
+    knns_ = knns;
+    DEBUG_ASSERT(knns_ > 0);
+    // Copy the matrices to the class members since they will be rearranged.  
+    references_.Copy(references_in);
+    queries_.Alias(references_); 
+  
+    // Initialize the list of nearest neighbor candidates
+    neighbor_indices_.Init(references_.n_cols() * knns_);
+    
+    // Initialize the vector of upper bounds for each point.  
+    neighbor_distances_.Init(references_.n_cols() * knns_);
+    neighbor_distances_.SetAll(DBL_MAX);
+
+
+    // This call makes each tree from a matrix, leaf size, and two arrays 
+    // that record the permutation of the data points
+    // Instead of NULL, it is possible to specify an array new_from_old_
+    query_tree_ = NULL;
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+        leaf_size_, &old_from_new_references_, NULL);
+   // This is an annoying feature of fastlib
+    old_from_new_queries_.Init();
+  }
   /**
    * Initializes the AllNN structure for naive computation.  
    * This means that we simply ignore the tree building.
@@ -466,13 +531,33 @@ class AllkNN {
     // that each tree has only one node
     leaf_size_ = max(queries_.n_cols(), references_.n_cols());
     
-    query_tree_ = tree::MakeKdTreeMidpoint<QueryTree>(queries_, 
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, 
         leaf_size_, &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<ReferenceTree>(
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
         references_, leaf_size_, &old_from_new_references_, NULL);
         
   } // InitNaive
   
+   void InitNaive(const Matrix& references_in, index_t knns){
+    
+    references_.Copy(references_in);
+    queries_.Alias(references_);
+    knns_=knns;
+    
+    neighbor_indices_.Init(references_.n_cols()*knns_);
+    neighbor_distances_.Init(references_.n_cols()*knns_);
+    neighbor_distances_.SetAll(DBL_MAX);
+    
+    // The only difference is that we set leaf_size_ to be large enough 
+    // that each tree has only one node
+    leaf_size_ = references_.n_cols();
+    
+    query_tree_ = NULL;
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
+        references_, leaf_size_, &old_from_new_references_, NULL);
+    // This is an annoying feature of fastlib
+    old_from_new_queries_.Init();
+  } // InitNaive
   
   /**
    * Computes the nearest neighbors and stores them in *results
@@ -481,24 +566,38 @@ class AllkNN {
                         ArrayList<double>* distances) {
     
     // Start on the root of each tree
-    ComputeNeighborsRecursion_(query_tree_, reference_tree_, 
-        MinNodeDistSq_(query_tree_, reference_tree_));
+    if (query_tree_!=NULL) {
+      ComputeNeighborsRecursion_(query_tree_, reference_tree_, 
+          MinNodeDistSq_(query_tree_, reference_tree_));
+    } else {
+       ComputeNeighborsRecursion_(reference_tree_, reference_tree_, 
+          MinNodeDistSq_(reference_tree_, reference_tree_));
+    }
     
     // We need to initialize the results list before filling it
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
     // We need to map the indices back from how they have 
     // been permuted
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      (*resulting_neighbors)[
-        old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
-        old_from_new_references_[neighbor_indices_[i]];
-      (*distances)[
-        old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
-        neighbor_distances_[i];
-
+    if (query_tree_ != NULL) {
+      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+        (*resulting_neighbors)[
+          old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_references_[neighbor_indices_[i]];
+        (*distances)[
+          old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
+          neighbor_distances_[i];
+      }
+    } else {
+      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+        (*resulting_neighbors)[
+          old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_references_[neighbor_indices_[i]];
+        (*distances)[
+          old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+          neighbor_distances_[i];
+      }
     }
-    
   } // ComputeNeighbors
   
   
@@ -507,8 +606,12 @@ class AllkNN {
    */
   void ComputeNaive(ArrayList<index_t>* resulting_neighbors,
                     ArrayList<double>*  distances) {
-    
-    ComputeBaseCase_(query_tree_, reference_tree_);
+    if (query_tree_!=NULL) {
+      ComputeBaseCase_(query_tree_, reference_tree_);
+    } else {
+       ComputeBaseCase_(reference_tree_, reference_tree_);
+    }
+
     // The same code as above
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
@@ -516,10 +619,10 @@ class AllkNN {
     // been permuted
     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[
-        old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
+        old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
         old_from_new_references_[neighbor_indices_[i]];
       (*distances)[
-        old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
+        old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
         neighbor_distances_[i];
 
     }
