@@ -321,7 +321,7 @@ class NaiveLpr {
       AllkNN all_knn;
       double knn_factor = fx_param_double(module_, "knn_factor", 0.2);
       int knns = (int) (knn_factor * rset_.n_cols());
-      all_knn.Init(rset_, rset_, 20, knns);
+      all_knn.Init(rset_, 20, knns);
       ArrayList<index_t> resulting_neighbors;
       ArrayList<double> distances;
       
