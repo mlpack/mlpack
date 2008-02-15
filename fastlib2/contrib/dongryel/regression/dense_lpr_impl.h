@@ -6,8 +6,8 @@
 
 #include "matrix_util.h"
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::SqdistAndKernelRanges_
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
 (QueryTree *qnode, ReferenceTree *rnode,
  DRange &dsqd_range, DRange &kernel_value_range) {
 
@@ -16,8 +16,8 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::SqdistAndKernelRanges_
   kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);      
 }
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::ResetQuery_(int q) {
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::ResetQuery_(int q) {
   
   // First the numerator quantities.
   Vector q_numerator_l, q_numerator_e;
@@ -35,8 +35,8 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::ResetQuery_(int q) {
   denominator_n_pruned_[q] = 0;      
 }
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::
 ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
   
   if(rnode->is_leaf()) {
@@ -58,7 +58,7 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 
       // Compute the multiindex expansion of the given reference point.
       MultiIndexUtil::ComputePointMultivariatePolynomial
-	(dimension_, lpr_order, r_col, r_target_weighted_by_coordinates);
+	(dimension_, lpr_order_, r_col, r_target_weighted_by_coordinates);
       
       // Scale the expansion by the reference target.
       la::Scale(row_length_, rset_targets_[r], 
@@ -91,8 +91,8 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
   }
 }
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::
 InitializeQueryTree_(QueryTree *qnode) {
     
   // Set the bounds to default values for the statistics.
@@ -115,8 +115,8 @@ InitializeQueryTree_(QueryTree *qnode) {
   }
 }
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::BestNodePartners_
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::BestNodePartners_
 (QueryTree *nd, ReferenceTree *nd1, ReferenceTree *nd2, 
  ReferenceTree **partner1, ReferenceTree **partner2) {
   
@@ -133,8 +133,8 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::BestNodePartners_
   }
 }
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::BestNodePartners_
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::BestNodePartners_
 (ReferenceTree *nd, QueryTree *nd1, QueryTree *nd2, 
  QueryTree **partner1, QueryTree **partner2) {
   
@@ -151,8 +151,8 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::BestNodePartners_
   }
 }
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprBase_
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
 (QueryTree *qnode, ReferenceTree *rnode) {
 
   // Temporary variable for storing multivariate expansion of a
@@ -199,7 +199,7 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprBase_
 
       // Compute the reference point expansion.
       MultiIndexUtil::ComputePointMultivariatePolynomial
-	(dimension_, lpr_order, r_col, reference_point_expansion.ptr());
+	(dimension_, lpr_order_, r_col, reference_point_expansion.ptr());
 
       // Pairwise distance and kernel value and kernel value weighted
       // by the reference target training value.
@@ -270,8 +270,8 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprBase_
   qnode->stat().postponed_denominator_n_pruned_ = 0;  
 }
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprCanonical_
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 (QueryTree *qnode, ReferenceTree *rnode) {
 
   // Total amount of used error
@@ -434,8 +434,8 @@ void DenseLpr<TKernel, lpr_order, TPruneRule>::DualtreeLprCanonical_
   } // end of the case: non-leaf query node.  
 }
 
-template<typename TKernel, int lpr_order, typename TPruneRule>
-void DenseLpr<TKernel, lpr_order, TPruneRule>::
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::
 FinalizeQueryTree_(QueryTree *qnode) {
   
   LprQStat &q_stat = qnode->stat();
@@ -476,7 +476,7 @@ FinalizeQueryTree_(QueryTree *qnode) {
       la::MulOverwrite(pseudoinverse_denominator, q_numerator_e,
 		       &least_squares_solution);
       MultiIndexUtil::ComputePointMultivariatePolynomial
-	(dimension_, lpr_order, query_point, query_point_expansion.ptr());
+	(dimension_, lpr_order_, query_point, query_point_expansion.ptr());
       regression_estimates_[q] = la::Dot(query_point_expansion,
 					 least_squares_solution);
     }
