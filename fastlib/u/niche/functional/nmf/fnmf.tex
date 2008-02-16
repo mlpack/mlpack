@@ -10,8 +10,8 @@
   
   Find non-negative matrices $W$ and $H$ that factorize $V$.
 
-  Let $\mathcal{S}^k = (+\mathcal{C}_0^2(\mathbf{R}))^k$ denote a set of $k$ non-negative functions with compact support that map from $\mathbf{R}$ to $\mathbf{R}_+$, such that if $Z \in (+\mathcal{C}_0^2(\mathbf{R}))^k$, then $Z_i \in (+\mathcal{C}_0^2(\mathbf{R})$.
-  Note that $+C_0^2(\mathbf{R})$ is the function space of smooth functions who are continuous up and including their 2nd derivative. The zero denotes compact support, and the + indicates that the range is non-negative.
+  Let $\mathcal{S}^k = (+\mathcal{C}_0^2(\mathbf{R}))^k$ denote a set of $k$ non-negative functions with compact support that map from $\mathbf{R} \rightarrow \mathbf{R}_+$, such that if $Z \in (+\mathcal{C}_0^2(\mathbf{R}))^k$, then $Z_i \in (+\mathcal{C}_0^2(\mathbf{R})$.
+  Note that $+C_0^2(\mathbf{R})$ is the function space of smooth functions who are continuous up to and including their 2nd derivative. The zero denotes compact support, and the + indicates that the range is non-negative.
 
   For a vector of functions $V \in \mathcal{S}^n$ with compact support $[0, T]$
   \[
@@ -28,24 +28,24 @@
   
   \begin{align*}
     \Gamma & = \min_W \sum_{t=1}^T (W_{(t)} \cdot H^{(1)} - V_{t,1})^2\\
-    & = \min_{\phi_W} \sum_{t=1}^T ([\beta_{(t)} \cdot \phi_W^{(1)} \ldots \beta_{(t)} \cdot \phi_W^{(k)}] \cdot H^{(1)} - V_{t,1})^2\\
-    & = \sum_{t=1}^T \left( \sum_{i=1}^k \beta_{(t)} \cdot \phi_W^{(i)} H_{i,1} - V_{t,1} \right)^2\\
-    & = \int_0^T \left(\sum_{i=1}^k \beta(t) \cdot \phi_W^{(i)} H_{i,1} - V^{(1)}(t) \right)^2 dt\\
-    & = \int_0^T \left(\sum_{i=1}^k \beta(t) \cdot \phi_W^{(i)} H_{i,1} - V^{(1)}(t) \right) \left(\sum_{j=1}^k \beta(t) \cdot \phi_W^{(j)} H_{j,1} - V^{(1)}(t) \right) dt\\
-    & = \int_0^T \left( \sum_{i=1}^k \beta(t) \cdot \phi_W^{(i)} H_{i,1} \left( \sum_{j=1}^k \left( \beta(t) \cdot \phi_W^{(j)} H_{j,1} \right) - k V^{(1)}(t) \right) \right) dt\\
-    & - \int_0^T \left( k V^{(1)}(t) \left( \sum_{j=1}^k \left(\beta(t) \cdot \phi_W^{(j} \right) H_{j,1} - k V^{(1)}(t) \right) \right) dt\\
-    & = \int_0^T \sum_{i=1}^k H_{i,1} \left(\sum_{a=1} \phi_{W,a,i} \beta_a(t) \right) \left(\sum_{j=1}^k \left( H_{j,1} \sum_{b=1} \phi_{W,b,j} \beta_b(t) \right) - k V^{(1)}(t) \right) dt\\
-    & - \int_0^T \left(\sum_{j=1}^k H_{j,1} \left(\sum_{c=1} \phi_{W,c,j} \beta_c(t) \right) - k V^{(1)}(t) \right) k V^{(1)}(t) dt\\
-    & = \sum_{i=1}^k H_{i,1} \left(\sum_{a=1} \phi_{W,a,i} \int_0^T \beta_a(t) \right) \left(\sum_{j=1}^k \left(H_{j,1} \sum_{b=1} \phi_{W,b,j} \beta_b(t) \right) - k V^{(1)}(t) \right) dt\\
-    & - \int_0^T \left(\sum_{j=1}^k H_{j,1} \left(\sum_{c=1} \phi_{W,c,j} \beta_c(t) \right) - k V^{(1)}(t) \right) k V^{(1)}(t) dt\\
+    & = \min_{\phi} \sum_{t=1}^T ([\beta_{(t)} \cdot \phi^{(1)} \ldots \beta_{(t)} \cdot \phi^{(k)}] \cdot H^{(1)} - V_{t,1})^2\\
+    & = \sum_{t=1}^T \left( \sum_{i=1}^k \beta_{(t)} \cdot \phi^{(i)} H_{i,1} - V_{t,1} \right)^2\\
+    & = \int_0^T \left(\sum_{i=1}^k \beta(t) \cdot \phi^{(i)} H_{i,1} - V_1(t) \right)^2 dt\\
+    & = \int_0^T \left(\sum_{i=1}^k \beta(t) \cdot \phi^{(i)} H_{i,1} - V_1(t) \right) \left(\sum_{j=1}^k \beta(t) \cdot \phi^{(j)} H_{j,1} - V_1(t) \right) dt\\
+    & = \int_0^T \left( \sum_{i=1}^k \beta(t) \cdot \phi^{(i)} H_{i,1} \left( \sum_{j=1}^k \left( \beta(t) \cdot \phi^{(j)} H_{j,1} \right) - k V_1(t) \right) \right) dt\\
+    & - \int_0^T \left( k V_1(t) \left( \sum_{j=1}^k \left(\beta(t) \cdot \phi^{(j} \right) H_{j,1} - k V_1(t) \right) \right) dt\\
+    & = \int_0^T \sum_{i=1}^k H_{i,1} \left(\sum_{a=1} \phi_{a,i} \beta_a(t) \right) \left(\sum_{j=1}^k \left( H_{j,1} \sum_{b=1} \phi_{b,j} \beta_b(t) \right) - k V_1(t) \right) dt\\
+    & - \int_0^T \left(\sum_{j=1}^k H_{j,1} \left(\sum_{c=1} \phi_{c,j} \beta_c(t) \right) - k V_1(t) \right) k V_1(t) dt\\
+    & = \sum_{i=1}^k H_{i,1} \left(\sum_{a=1} \phi_{a,i} \int_0^T \beta_a(t) \right) \left(\sum_{j=1}^k \left(H_{j,1} \sum_{b=1} \phi_{b,j} \beta_b(t) \right) - k V_1(t) \right) dt\\
+    & - \int_0^T \left(\sum_{j=1}^k H_{j,1} \left(\sum_{c=1} \phi_{c,j} \beta_c(t) \right) - k V_1(t) \right) k V_1(t) dt\\
   \end{align*}
 
 which after some simplification becomes
 
   \begin{align*}
     & = \sum_{i,j,a,b} H_{i,1} H_{j,1} \phi_{a,i} \phi_{b,j} \int_0^T \beta_a(t) \beta_b(t) dt\\
-    & - 2 k \sum_{i,a} H_{i,1} \phi_{a,i} \int_0^T \beta_a(t) V^{(1)}(t) dt\\
-    & + k^2 \int_0^T V^{(1)}(t)^2 dt
+    & - 2 k \sum_{i,a} H_{i,1} \phi_{a,i} \int_0^T \beta_a(t) V_1(t) dt\\
+    & + k^2 \int_0^T V_1(t)^2 dt
   \end{align*}
 
 \end{document}
