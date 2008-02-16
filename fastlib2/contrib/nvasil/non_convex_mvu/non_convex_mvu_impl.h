@@ -17,16 +17,17 @@
  */
 
 NonConvexMVU::NonConvexMVU() {
- eta_ = 0.25;
- gamma_ = 1.92;
- sigma_ = 1e2;
- step_size_ = 1; 
- max_iterations_ = 20000;
- tolerance_ = 1e-5;
+ eta_ = 0.8;
+ gamma_ =1.3;
+ sigma_ = 1e1;
+ step_size_ = 2; 
+ max_iterations_ = 100000;
+ tolerance_ =5* 1e-5;
  armijo_sigma_=1e-1;
  armijo_beta_=0.5;
  new_dimension_ = -1;
  mem_bfgs_ = -1;
+ trace_factor_=1;
 }
 void NonConvexMVU::Init(std::string data_file, index_t knns) {
   Init(data_file, knns, 20);
@@ -61,7 +62,7 @@ void NonConvexMVU::ComputeLocalOptimum() {
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       ComputeGradient_();
-      LocalSearch_(&step);
+      LocalSearch_(&step, gradient_);
       ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
       NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error (dist)): %lg\n"
              "feasibility error (center): %lg \n", it1, it2, 
@@ -77,8 +78,8 @@ void NonConvexMVU::ComputeLocalOptimum() {
               distance_constraint/sum_of_dist_square, centering_constraint);
       return;
     }
-   // UpdateLagrangeMult_();
-   UpdateLagrangeMultStochastic_();
+   UpdateLagrangeMult_();
+   //UpdateLagrangeMultStochastic_();
   }
     NOTIFY("Didn't converge, maximum number of iterations reached !!\n");
     NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
@@ -90,6 +91,7 @@ void NonConvexMVU::ComputeLocalOptimum() {
 void NonConvexMVU::ComputeLocalOptimumBFGS() {
   double distance_constraint;
   double centering_constraint;
+  double step; 
   double sum_of_dist_square = la::LengthEuclidean(distances_.size(), &distances_[0]);
   if (unlikely(mem_bfgs_<0)) {
     FATAL("You forgot to initialize the memory for BFGS\n");
@@ -109,42 +111,61 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
     y_bfgs_[i].Init(new_dimension_, num_of_points_);
   } 
   NOTIFY("Starting optimization ...\n");
-  ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
-  previous_feasibility_error_= distance_constraint + centering_constraint; 
-  double step; 
   // Run a few iterations with gradient descend to fill the memory of BFGS
   NOTIFY("Running a few iterations with gradient descent to fill "
          "the memory of BFGS...\n");
   index_bfgs_=0;
   for(index_t i=0; i<mem_bfgs_; i++) {
-    LocalSearch_(&step);
+    LocalSearch_(&step, gradient_);
     ComputeGradient_();
-    la::SubOverwrite(coordinates_, previous_coordinates_, &s_bfgs_[i]);
-    la::SubOverwrite(gradient_, previous_gradient_, &y_bfgs_[i]);
-    ro_bfgs_[i] = la::Dot(num_of_points_ * new_dimension_, s_bfgs_[i].ptr(),
-                          y_bfgs_[i].ptr());
+    UpdateBFGS_();
     previous_gradient_.CopyValues(gradient_);
     previous_coordinates_.CopyValues(coordinates_);
+    ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+    NOTIFY("%li Feasibility error: %lg\n",i, distance_constraint);
   } 
   NOTIFY("Now starting optimizing with BFGS...\n");
+  previous_feasibility_error_= distance_constraint + centering_constraint; 
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
-      ComputeBFGS_();
+      ComputeBFGS_(&step, gradient_);
       ComputeGradient_();
-      la::SubFrom(gradient_, &coordinates_);
-      UpdateBFGS_();
       ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+      double norm_gradient = la::LengthEuclidean(num_of_points_ *new_dimension_,
+                                                 gradient_.ptr());
+      double norm_coordinates = la::LengthEuclidean(num_of_points_ *new_dimension_,
+                                                 coordinates_.ptr());
+      double augmented_lagrangian=ComputeLagrangian_(coordinates_);
+      double objective =ComputeObjective_(coordinates_);
+      double lagrangian = augmented_lagrangian
+        -(distance_constraint+centering_constraint)*sigma_/2;
+      double termination_criterion=fabs(augmented_lagrangian-0.5*objective)/
+        max(fabs(lagrangian), 1.0);
       NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error (dist)): %lg\n"
-             "feasibility error (center): %lg \n", it1, it2, 
-               distance_constraint , centering_constraint);
-      step=la::DistanceSqEuclidean(new_dimension_ * num_of_points_,
-          previous_coordinates_.ptr(), coordinates_.ptr());
-      if (step  < tolerance_){
+             "    feasibility error (center): %lg \n"
+             "    objective: %lg\n"
+             "    grad/coord: %lg\n"
+             "    lang_mult : %lg\n"
+             "    sigma     : %lg\n"
+             "    term_cond : %lg\n", it1, it2, 
+               distance_constraint, 
+               centering_constraint,
+               objective,
+               step*norm_gradient/norm_coordinates,
+               la::LengthEuclidean(lagrange_mult_),
+               sigma_,
+               termination_criterion);
+
+     // step=la::DistanceSqEuclidean(new_dimension_ * num_of_points_,
+     //     previous_coordinates_.ptr(), coordinates_.ptr());
+      if (step * norm_gradient/norm_coordinates < tolerance_){
         break;
       }
+      UpdateBFGS_();
       previous_coordinates_.CopyValues(coordinates_);
       previous_gradient_.CopyValues(gradient_);
     }
+    UpdateBFGS_();
     if (distance_constraint/sum_of_dist_square < tolerance_) {
       NOTIFY("Converged !!\n");
       NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
@@ -152,14 +173,15 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
               distance_constraint/sum_of_dist_square, centering_constraint);
       return;
     }
-   // UpdateLagrangeMult_();
-   UpdateLagrangeMultStochastic_();
+    //UpdateLagrangeMultStochastic_();
+    UpdateLagrangeMult_();
+    previous_feasibility_error_= distance_constraint + centering_constraint; 
+    ComputeGradient_();
   }
     NOTIFY("Didn't converge, maximum number of iterations reached !!\n");
     NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
     NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
               distance_constraint, centering_constraint);
-  
 }
 
 void NonConvexMVU::set_eta(double eta) {
@@ -275,19 +297,19 @@ void NonConvexMVU::UpdateLagrangeMultStochastic_() {
   }
 }
 
-void NonConvexMVU::LocalSearch_(double *step) {
+void NonConvexMVU::LocalSearch_(double *step, Matrix &grad) {
   Matrix temp_coordinates;
   temp_coordinates.Init(coordinates_.n_rows(), coordinates_.n_cols()); 
   double lagrangian1 = ComputeLagrangian_(coordinates_);
   double lagrangian2 = 0;
   double beta=armijo_beta_;
-  double gradient_norm = la::LengthEuclidean(gradient_.n_rows()
-                                             * gradient_.n_cols(),
-                                             gradient_.ptr());
+  double gradient_norm = la::LengthEuclidean(grad.n_rows()
+                                             * grad.n_cols(),
+                                             grad.ptr());
   double armijo_factor =  gradient_norm * armijo_sigma_ * armijo_beta_ * step_size_;
   for(index_t i=0; ; i++) {
     temp_coordinates.CopyValues(coordinates_);
-    la::AddExpert(-step_size_*beta/gradient_norm, gradient_, &temp_coordinates);
+    la::AddExpert(-step_size_*beta/gradient_norm, grad, &temp_coordinates);
     lagrangian2 =  ComputeLagrangian_(temp_coordinates);
     if (lagrangian1-lagrangian2 >= armijo_factor) {
       break;
@@ -302,34 +324,47 @@ void NonConvexMVU::LocalSearch_(double *step) {
   la::AddExpert(-0.01/gradient_norm, gradient_, &temp_coordinates);
   lagrangian2 =  ComputeLagrangian_(temp_coordinates);
 */
-  NOTIFY("step_size: %lg, sigma: %lg\n", beta * step_size_, sigma_);
-  NOTIFY("lagrangian1 - lagrangian2 = %lg\n", lagrangian1-lagrangian2);
-  NOTIFY("lagrangian2: %lg, Objective: %lg\n", lagrangian2,
-                                               ComputeObjective_(temp_coordinates));
+//  NOTIFY("step_size: %lg, sigma: %lg\n", beta * step_size_, sigma_);
+//  NOTIFY("lagrangian1 - lagrangian2 = %lg\n", lagrangian1-lagrangian2);
+//  NOTIFY("lagrangian2: %lg, Objective: %lg\n", lagrangian2,
+//                                               ComputeObjective_(temp_coordinates));
   coordinates_.CopyValues(temp_coordinates);   
 }
 
-void NonConvexMVU::ComputeBFGS_() {
+void NonConvexMVU::ComputeBFGS_(double *step, Matrix &grad) {
   Vector alpha;
   alpha.Init(mem_bfgs_);
   Matrix scaled_y;
   scaled_y.Init(new_dimension_, num_of_points_);
   index_t num=0;
+  Matrix temp_gradient(grad);
   for(index_t i=index_bfgs_, num=0; num<mem_bfgs_; i=(i+1)%mem_bfgs_, num++) {
     alpha[i] = la::Dot(new_dimension_ * num_of_points_,
                        s_bfgs_[i].ptr(), 
-                       gradient_.ptr());
+                       temp_gradient.ptr());
     alpha[i] *= ro_bfgs_[i];
     scaled_y.CopyValues(y_bfgs_[i]);
     la::Scale(alpha[i], &scaled_y);
-    la::SubFrom(scaled_y, &gradient_);
+    la::SubFrom(scaled_y, &temp_gradient);
   }
   // We need to scale the gradient here
-  double norm_scale=1/ro_bfgs_[index_bfgs_]/la::Dot(num_of_points_ *
+  double s_y = la::Dot(num_of_points_* 
                     new_dimension_, y_bfgs_[index_bfgs_].ptr(),
-                    y_bfgs_[index_bfgs_].ptr());
-  la::Scale(norm_scale, &gradient_);
-  
+                    s_bfgs_[index_bfgs_].ptr());
+  double y_y = la::Dot(num_of_points_* 
+                   new_dimension_, y_bfgs_[index_bfgs_].ptr(),
+                   y_bfgs_[index_bfgs_].ptr());
+ 
+  double norm_scale=s_y/(y_y+1e-10);
+  norm_scale=fabs(norm_scale); 
+ 
+  //double norm_scale = la::LengthEuclidean(num_of_points_* new_dimension_, 
+  //                            gradient_.ptr());
+  la::Scale(norm_scale, &temp_gradient);
+  NOTIFY("gradient_norm = %lg norm_scalar %lg\n", 
+         la::Dot(num_of_points_*new_dimension_, 
+         temp_gradient.ptr(), temp_gradient.ptr()),
+         norm_scale);
   Matrix scaled_s;
   double beta;
   scaled_s.Init(new_dimension_, num_of_points_);
@@ -338,12 +373,13 @@ void NonConvexMVU::ComputeBFGS_() {
       num++, j=(j-1+mem_bfgs_)%mem_bfgs_) {
     beta = la::Dot(new_dimension_ * num_of_points_, 
                    y_bfgs_[j].ptr(),
-                   gradient_.ptr());
+                   temp_gradient.ptr());
     beta *= ro_bfgs_[j];
     scaled_s.CopyValues(s_bfgs_[j]);
     la::Scale(alpha[j]-beta, &scaled_s);
-    la::AddTo(scaled_s, &gradient_);
+    la::AddTo(scaled_s, &temp_gradient);
   }
+  LocalSearch_(step, temp_gradient);
 }
 
 void NonConvexMVU::UpdateBFGS_() {
@@ -351,9 +387,14 @@ void NonConvexMVU::UpdateBFGS_() {
   index_bfgs_ = (index_bfgs_ - 1 + mem_bfgs_ ) % mem_bfgs_;
   la::SubOverwrite(coordinates_, previous_coordinates_, &s_bfgs_[index_bfgs_]);
   la::SubOverwrite(gradient_, previous_gradient_, &y_bfgs_[index_bfgs_]);
-  ro_bfgs_[index_bfgs_] = 1.0/la::Dot(new_dimension_ * num_of_points_, 
-                                      s_bfgs_[index_bfgs_].ptr(),
-                                      y_bfgs_[index_bfgs_].ptr());
+  ro_bfgs_[index_bfgs_] = la::Dot(new_dimension_ * num_of_points_, 
+                                  s_bfgs_[index_bfgs_].ptr(),
+                                  y_bfgs_[index_bfgs_].ptr());
+  if (fabs(ro_bfgs_[index_bfgs_]) <=1e-20) {
+    ro_bfgs_[index_bfgs_] =1.0/1e-20;
+  } else {
+    ro_bfgs_[index_bfgs_] = 1.0/ro_bfgs_[index_bfgs_];
+  }
 }
 
 double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
@@ -365,7 +406,7 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
     // we are maximizing the trace or minimize the -trace
     lagrangian -= la::Dot(new_dimension_, 
                           coord.GetColumnPtr(i),
-                          coord.GetColumnPtr(i));
+                          coord.GetColumnPtr(i))*trace_factor_;
     for(index_t k=0; k<knns_; k++) {
       double *point1 = coord.GetColumnPtr(i);
       double *point2 = coord.GetColumnPtr(neighbors_[i*knns_+k]);
@@ -422,7 +463,7 @@ double NonConvexMVU::ComputeFeasibilityError_() {
 void NonConvexMVU::ComputeGradient_() {
   gradient_.CopyValues(coordinates_);
   // we need to use -CRR^T because we want to maximize CRR^T
-  la::Scale(-1.0, &gradient_);
+  la::Scale(-1.0*trace_factor_, &gradient_);
   Vector dimension_sums;
   dimension_sums.Init(new_dimension_);
   dimension_sums.SetAll(0.0);
@@ -465,5 +506,5 @@ double NonConvexMVU::ComputeObjective_(Matrix &coord) {
                       coord.GetColumnPtr(i));
 
   }
-  return variance;
+  return variance*trace_factor_;
 }

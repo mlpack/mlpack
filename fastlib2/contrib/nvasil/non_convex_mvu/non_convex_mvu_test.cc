@@ -55,7 +55,7 @@ class NonConvexMVUTest {
     NOTIFY("Testing ComputeLocalOptimum() ...\n");
     engine_->Init("test_data_3_1000.csv", 5);
     engine_->set_new_dimension(3);
-    engine_->set_mem_bfgs(5);
+    engine_->set_mem_bfgs(150);
     engine_->ComputeLocalOptimumBFGS();
     NOTIFY("TestComputeLocalOptimum() passed!!\n");
   }
