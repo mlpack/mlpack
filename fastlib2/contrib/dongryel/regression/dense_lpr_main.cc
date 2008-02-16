@@ -56,14 +56,15 @@ int main(int argc, char *argv[]) {
 
   // Do fast algorithm.
   DenseLpr<EpanKernel, QuickPruneLpr> fast_lpr;
-  fast_lpr.Init(queries, references, reference_targets, local_linear_module);
-  fast_lpr.Compute();
+  fast_lpr.Init(references, reference_targets, local_linear_module);
   fast_lpr.PrintDebug();
 
+  /*
   // Do naive algorithm.
   NaiveLpr<GaussianKernel> naive_lpr;
   naive_lpr.Init(references, reference_targets, local_linear_module);
   naive_lpr.PrintDebug();
+  */
 
   // Finalize FastExec and print output results.
   fx_done();

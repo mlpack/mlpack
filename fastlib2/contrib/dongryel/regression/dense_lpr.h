@@ -364,17 +364,6 @@ class DenseLpr {
     /** @brief The module holding the list of parameters. */
     struct datanode *module_;
 
-    /** @brief The column-oriented query dataset. */
-    Matrix qset_;
-
-    /** @brief The pointer to the query tree. */
-    QueryTree *qroot_;
-
-    /** @brief The permutation mapping indices of queries_ to original
-     *         order.
-     */
-    ArrayList<index_t> old_from_new_queries_;
-
     /** @brief The column-oriented reference dataset. */
     Matrix rset_;
 
@@ -396,6 +385,37 @@ class DenseLpr {
      *         (i.e. y_i [1; r^T]^T ).
      */
     Matrix target_weighted_rset_;
+  
+    /** @brief The computed fit values at each reference point.
+     */
+    Vector rset_regression_estimates_;
+  
+    /** @brief The confidence band on the fit at each reference point.
+     */
+    ArrayList<DRange> rset_confidence_bands_;
+
+    /** @brief The influence value at each reference point.
+     */
+    Vector rset_influence_values_;
+
+    /** @brief The magnitude of the weight diagram vector at each
+     *         reference point.
+     */
+    Vector rset_magnitude_weight_diagrams_;
+
+    /** @brief The first degree of freedom, i.e. the sum of the
+     *         influence value at each reference point.
+     */
+    double rset_first_degree_of_freedom_;
+  
+    /** @brief The second degree of freedom, i.e. the sum of the
+     *         magnitudes of the weight diagram at each reference point.
+     */
+    double rset_second_degree_of_freedom_;
+
+    /** @brief The variance of the reference set.
+     */
+    double rset_variance_;
 
     /** @brief The dimensionality of each point.
      */
@@ -408,45 +428,11 @@ class DenseLpr {
     /** @brief The kernel function to use.
      */
     TKernel kernel_;
+ 
+    /** @brief The z-score for the confidence band.
+     */
+    double z_score_;
 
-    /** @brief The final regression estimate for each query point.
-     */
-    Vector regression_estimates_;
-
-    /** @brief The componentwise lower bound on the matrix B^T W(q) B.
-     */
-    ArrayList<Matrix> denominator_l_;
-  
-    /** @brief The componentwise estimate on the matrix B^T W(q) B.
-     */
-    ArrayList<Matrix> denominator_e_;
-
-    /** @brief The used error for computing B^T W(q) B for each query.
-     */
-    Vector denominator_used_error_;
-  
-    /** @brief The portion of the reference points taken care of for
-     *         each query.
-     */
-    Vector denominator_n_pruned_;
-
-    /** @brief The componentwise lower bound on the vector B^T W(q) Y.
-     */
-    Matrix numerator_l_;
-
-    /** @brief The componentwise estimate on the vector B^T W(q) Y.
-     */
-    Matrix numerator_e_;
-    
-    /** @brief The used error for computing B^T W(q) Y for each query.
-     */
-    Vector numerator_used_error_;
-  
-    /** @brief The portion of the reference points taken care of for
-     *         each query.
-     */
-    Vector numerator_n_pruned_;
-  
     ////////// Private Member Functions //////////
 
     /** @brief Computes the distance range and the kernel value ranges
@@ -458,11 +444,20 @@ class DenseLpr {
 
     /** @brief Resets bounds relevant to the given query point.
      */
-    void ResetQuery_(int q);
+    void ResetQuery_(int q, Matrix &numerator_l, Matrix &numerator_e,
+		     Vector &numerator_used_error, Vector &numerator_n_pruned,
+		     ArrayList<Matrix> &denominator_l,
+		     ArrayList<Matrix> &denominator_e,
+		     Vector &denominator_used_error,
+		     Vector &denominator_n_pruned);
 
     /** @brief Initialize the query tree bounds.
      */
-    void InitializeQueryTree_(QueryTree *qnode);
+    void InitializeQueryTree_
+    (QueryTree *qnode, Matrix &numerator_l, Matrix &numerator_e, 
+     Vector &numerator_used_error, Vector &numerator_n_pruned,
+     ArrayList<Matrix> &denominator_l, ArrayList<Matrix> &denominator_e,
+     Vector &denominator_used_error, Vector &denominator_n_pruned);
 
     /** @brief Computes the target weighted reference vectors and sums
      *         them up.
@@ -485,13 +480,188 @@ class DenseLpr {
      *  @param qnode The query node.
      *  @param rnode The reference node.
      */
-    void DualtreeLprBase_(QueryTree *qnode, ReferenceTree *rnode);
-
-    void DualtreeLprCanonical_(QueryTree *qnode, ReferenceTree *rnode);
-
+    void DualtreeLprBase_
+    (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
+     Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
+     Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
+     ArrayList<Matrix> &denominator_e, Vector &denominator_used_error, 
+     Vector &denominator_n_pruned);
+  
+    /** @brief The canonical recursion for the LPR computation.
+     *
+     *  @param qnode The query node.
+     *  @param rnode The reference node.
+     */
+    void DualtreeLprCanonical_
+    (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
+     Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
+     Vector &numerator_n_pruned,
+     ArrayList<Matrix> &denominator_l, ArrayList<Matrix> &denominator_e,
+     Vector &denominator_used_error, Vector &denominator_n_pruned);
+  
     /** @brief Finalize the regression estimates.
      */
-    void FinalizeQueryTree_(QueryTree *qnode);
+    void FinalizeQueryTree_
+    (QueryTree *qnode, const Matrix &qset, Vector *query_regression_estimates,
+     Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
+     Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
+     ArrayList<Matrix> &denominator_e, Vector &denominator_used_error, 
+     Vector &denominator_n_pruned);
+
+    /** @brief Computes the variance by the normalized redisual sum of
+     *         squares for the reference dataset.
+     */
+    void ComputeVariance_() {
+      
+      // Compute the degrees of freedom, i.e. the sum of the influence
+      // values at each reference point and the sum of the squared
+      // magnitudes of the weight diagram vectors at each reference
+      // point.
+      rset_first_degree_of_freedom_ = rset_second_degree_of_freedom_ = 0;
+      for(index_t i = 0; i < rset_.n_cols(); i++) {
+	rset_first_degree_of_freedom_ += rset_influence_values_[i];
+	rset_second_degree_of_freedom_ += rset_magnitude_weight_diagrams_[i] * 
+	  rset_magnitude_weight_diagrams_[i];
+      }
+      
+      // Reset the sum accumulated to zero.
+      rset_variance_ = 0;
+      
+      // Loop over each reference point and add up the residual.
+      for(index_t i = 0; i < rset_.n_cols(); i++) {
+	double prediction_error = rset_targets_[i] - 
+	  rset_regression_estimates_[i];
+	rset_variance_ += prediction_error * prediction_error;
+      }
+      
+      // This could happen if enough matrices are singular...
+      if(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
+	 rset_second_degree_of_freedom_ <= 0) {
+	rset_variance_ = DBL_MAX;
+      }
+      
+      rset_variance_ *= 1.0 / 
+	(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
+	 rset_second_degree_of_freedom_);
+    }
+
+    void ComputeConfidenceBands_(const Matrix &queries,
+				 Vector *query_regression_estimates,
+				 ArrayList<DRange> *query_confidence_bands,
+				 Vector *query_magnitude_weight_diagrams) {
+      
+      // Initialize the storage for the confidene bands.
+      query_confidence_bands->Init(queries.n_cols());
+      
+      for(index_t q = 0; q < queries.n_cols(); q++) {
+	DRange &q_confidence_band = (*query_confidence_bands)[q];
+	double spread = z_score_ * (*query_magnitude_weight_diagrams)[q] * 
+	  sqrt(rset_variance_);
+	
+	q_confidence_band.lo = (*query_regression_estimates)[q] - spread;
+	q_confidence_band.hi = (*query_regression_estimates)[q] + spread;
+      }
+    }
+
+    void BasicCompute_(const Matrix &queries,
+		       Vector *query_regression_estimates,
+		       ArrayList<DRange> *query_confidence_bands,
+		       Vector *query_magnitude_weight_diagrams,
+		       Vector *query_influence_values) {
+      
+      // Set the relative error tolerance.
+      relative_error_ = fx_param_double(module_, "relative_error", 0.01);
+      internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
+
+      // Copy the query set.
+      Matrix qset;
+      qset.Copy(queries);
+
+      // read in the number of points owned by a leaf
+      int leaflen = fx_param_int(module_, "leaflen", 20);
+
+      // Construct the query tree.
+      ArrayList<index_t> old_from_new_queries;
+      QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
+	(qset, leaflen, &old_from_new_queries, NULL);
+      
+      // Initialize storage space for intermediate computations.
+      Matrix numerator_l, numerator_e;
+      Vector numerator_used_error, numerator_n_pruned;
+      ArrayList<Matrix> denominator_l, denominator_e;
+      Vector denominator_used_error, denominator_n_pruned;
+      numerator_l.Init(row_length_, queries.n_cols());
+      numerator_e.Init(row_length_, queries.n_cols());
+      numerator_used_error.Init(queries.n_cols());
+      numerator_n_pruned.Init(queries.n_cols());
+      denominator_l.Init(queries.n_cols());
+      denominator_e.Init(queries.n_cols());
+      for(index_t i = 0; i < queries.n_cols(); i++) {
+	denominator_l[i].Init(row_length_, row_length_);
+	denominator_e[i].Init(row_length_, row_length_);
+      }
+      denominator_used_error.Init(queries.n_cols());
+      denominator_n_pruned.Init(queries.n_cols());      
+
+      // Initialize storage for the final results.
+      query_regression_estimates->Init(queries.n_cols());
+      query_magnitude_weight_diagrams->Init(queries.n_cols());
+      query_influence_values->Init(queries.n_cols());
+      
+      // Three steps: initialize the query tree, then call dualtree,
+      // then final postprocess.
+      InitializeQueryTree_(qroot, numerator_l, numerator_e,
+			   numerator_used_error, numerator_n_pruned,
+			   denominator_l, denominator_e, 
+			   denominator_used_error, denominator_n_pruned);
+      DualtreeLprCanonical_(qroot, rroot_, qset, numerator_l, numerator_e,
+			    numerator_used_error, numerator_n_pruned,
+			    denominator_l, denominator_e,
+			    denominator_used_error, denominator_n_pruned);
+      FinalizeQueryTree_(qroot, qset, query_regression_estimates,
+			 numerator_l, numerator_e, numerator_used_error,
+			 numerator_n_pruned, denominator_l, denominator_e,
+			 denominator_used_error, denominator_n_pruned);
+
+      // After the computation, we do not need the query tree, so we
+      // free it.
+      delete qroot;
+
+      // Reshuffle the results to account for dataset reshuffling
+      // resulted from tree constructions
+      Vector tmp_q_results;
+      tmp_q_results.Init(query_regression_estimates->length());
+      
+      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+	tmp_q_results[old_from_new_queries[i]] = 
+	  (*query_regression_estimates)[i];
+      }
+      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+	(*query_regression_estimates)[i] = tmp_q_results[i];
+      }
+    }
+
+    void ComputeMain_(const Matrix &queries,
+		      Vector *query_regression_estimates,
+		      ArrayList<DRange> *query_confidence_bands,
+		      Vector *query_magnitude_weight_diagrams,
+		      Vector *query_influence_values) {
+ 
+      // This is the basic N-body based computation.
+      BasicCompute_(queries, query_regression_estimates,
+		    query_confidence_bands, query_magnitude_weight_diagrams,
+		    query_influence_values);
+
+      // If the reference dataset is being used for training, then
+      // compute variance and degrees of freedom.
+      if(query_influence_values != NULL) {
+	ComputeVariance_();
+      }
+      
+      ComputeConfidenceBands_(queries, query_regression_estimates,
+			      query_confidence_bands,
+			      query_magnitude_weight_diagrams);
+    }
 
   public:
   
@@ -499,16 +669,11 @@ class DenseLpr {
   
     /** @brief The constructor which sets pointers to NULL. */
     DenseLpr() {
-      qroot_ = NULL;
       rroot_ = NULL;
     }
 
     /** @brief The destructor which does not do anything. */
     ~DenseLpr() {
-    
-      if(qroot_ != NULL) {
-	delete qroot_;
-      }
       if(rroot_ != NULL) {
 	delete rroot_;
       }
@@ -516,58 +681,25 @@ class DenseLpr {
 
     ////////// Getter/Setters //////////
   
-    /** @brief Get the intermediate computation results.
-     */
-    void get_intermediate_results(Matrix **numerator,
-				  ArrayList<Matrix> **denominator,
-				  ArrayList<int> **old_from_new_queries) {
-      *numerator = &numerator_e_;
-      *denominator = &denominator_e_;
-      *old_from_new_queries = &old_from_new_queries_;
-    }
-
-    /** @brief Get the regression estimates.
-     *
-     *  @param results The uninitialized vector which will be filled
-     *                 with the computed regression estimates.
-     */
-    void get_regression_estimates(Vector *results) { 
-      results->Init(regression_estimates_.length());
-      
-      for(index_t i = 0; i < regression_estimates_.length(); i++) {
-	(*results)[i] = regression_estimates_[i];
-      }
-    }
-
     /////////// User-level Functions //////////
 
-    void Compute() {
+    /** @brief Computes the query regression estimates with the
+     *         confidence bands.
+     */
+    void Compute(const Matrix &queries, Vector *query_regression_estimates,
+		 ArrayList<DRange> *query_confidence_bands,
+		 Vector *query_magnitude_weight_diagrams) {
       
-      // Set the relative error tolerance.
-      relative_error_ = fx_param_double(module_, "relative_error", 0.01);
-      internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
-
-      fx_timer_start(module_, "dense_lpr_compute");
-      InitializeQueryTree_(qroot_);
-      DualtreeLprCanonical_(qroot_, rroot_);
-      FinalizeQueryTree_(qroot_);
-
-      // Reshuffle the results to account for dataset reshuffling
-      // resulted from tree constructions
-      Vector tmp_q_results;
-      tmp_q_results.Init(regression_estimates_.length());
-      
-      for(index_t i = 0; i < tmp_q_results.length(); i++) {
-	tmp_q_results[old_from_new_queries_[i]] = regression_estimates_[i];
-      }
-      for(index_t i = 0; i < tmp_q_results.length(); i++) {
-	regression_estimates_[i] = tmp_q_results[i];
-      }
-
-      fx_timer_stop(module_, "dense_lpr_compute");
+      fx_timer_start(module_, "fast_lpr_prediction_time");
+      ComputeMain_(queries, query_regression_estimates, query_confidence_bands,
+		   query_magnitude_weight_diagrams, NULL);
+      fx_timer_stop(module_, "fast_lpr_prediction_time");
     }
 
-    void Init(Matrix &queries, Matrix &references, Matrix &reference_targets,
+    /** @brief Initialize with the given reference set and the
+     *         reference target set.
+     */
+    void Init(Matrix &references, Matrix &reference_targets,
 	      struct datanode *module_in) {
       
       // set the incoming parameter module.
@@ -590,11 +722,8 @@ class DenseLpr {
       row_length_ = (int) math::BinomialCoefficient(dimension_ + lpr_order_,
 						    dimension_);
       
-      // copy query dataset.
-      qset_.Copy(queries);
-      
       // Start measuring the tree construction time.
-      fx_timer_start(NULL, "tree_d");
+      fx_timer_start(NULL, "dense_lpr_reference_tree_construct");
       
       // Construct the reference tree.
       rroot_ = tree::MakeKdTreeMidpoint<ReferenceTree>
@@ -608,34 +737,22 @@ class DenseLpr {
 	tmp_rset_targets[j] = rset_targets_[old_from_new_references_[j]];
       }
       rset_targets_.CopyValues(tmp_rset_targets);
+      fx_timer_stop(NULL, "dense_lpr_reference_tree_construct");
       
-      // Construct the query tree.
-      qroot_ = tree::MakeKdTreeMidpoint<QueryTree>
-	(qset_, leaflen, &old_from_new_queries_, NULL);
-      
-      fx_timer_stop(NULL, "tree_d");
-      
-      // initialize the kernel.
+      // Initialize the kernel.
       kernel_.Init(fx_param_double(module_, "bandwidth", 0.2));
-      
-      // Allocate memory for storing computation results.
-      target_weighted_rset_.Init(row_length_, rset_.n_cols());
-      regression_estimates_.Init(qset_.n_cols());
-      denominator_l_.Init(qset_.n_cols());
-      denominator_e_.Init(qset_.n_cols());
-      for(index_t q = 0; q < qset_.n_cols(); q++) {
-	denominator_l_[q].Init(row_length_, row_length_);
-	denominator_e_[q].Init(row_length_, row_length_);
-      }
-      denominator_used_error_.Init(qset_.n_cols());
-      denominator_n_pruned_.Init(qset_.n_cols());
-      numerator_l_.Init(row_length_, qset_.n_cols());
-      numerator_e_.Init(row_length_, qset_.n_cols());
-      numerator_used_error_.Init(qset_.n_cols());
-      numerator_n_pruned_.Init(qset_.n_cols());
-      
+
       // initialize the reference side statistics.
+      target_weighted_rset_.Init(row_length_, rset_.n_cols());
       ComputeTargetWeightedReferenceVectors_(rroot_);
+
+      // Train the model using the reference set (i.e. compute
+      // confidence interval and degrees of freedom.)
+      fx_timer_start(module_, "dense_lpr_training_time");
+      ComputeMain_(references, &rset_regression_estimates_,
+		   &rset_confidence_bands_, &rset_magnitude_weight_diagrams_,
+		   &rset_influence_values_);
+      fx_timer_stop(module_, "dense_lpr_training_time");
     }
 
     void PrintDebug() {
@@ -648,8 +765,8 @@ class DenseLpr {
 			       "fast_lpr_output.txt")) != NULL) {
 	stream = fopen(fname, "w+");
       }
-      for(index_t q = 0; q < qset_.n_cols(); q++) {
-	fprintf(stream, "%g\n", regression_estimates_[q]);
+      for(index_t r = 0; r < rset_.n_cols(); r++) {
+	fprintf(stream, "%g\n", rset_regression_estimates_[r]);
       }
       
       if(stream != stdout) {
