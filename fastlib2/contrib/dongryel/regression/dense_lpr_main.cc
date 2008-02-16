@@ -18,9 +18,8 @@ int main(int argc, char *argv[]) {
 
   // FASTexec organizes parameters and results into submodules.  Think
   // of this as creating a new folder named "kde_module" under the
-  // root directory (NULL) for the Kde object to work inside.  Here,
-  // we initialize it with all parameters defined
-  // "--local_linear/...=...".
+  // root directory (NULL) for the Lpr object to work inside.  Here,
+  // we initialize it with all parameters defined "--lpr/...=...".
   struct datanode* local_linear_module =
     fx_submodule(NULL, "lpr", "lpr_module");
 
@@ -55,16 +54,22 @@ int main(int argc, char *argv[]) {
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Do fast algorithm.
-  DenseLpr<EpanKernel, QuickPruneLpr> fast_lpr;
+  Vector fast_lpr_results;
+  DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
   fast_lpr.Init(references, reference_targets, local_linear_module);
   fast_lpr.PrintDebug();
+  fast_lpr.get_regression_estimates(&fast_lpr_results);
 
-  /*
   // Do naive algorithm.
+  Vector naive_lpr_results;
   NaiveLpr<GaussianKernel> naive_lpr;
   naive_lpr.Init(references, reference_targets, local_linear_module);
   naive_lpr.PrintDebug();
-  */
+  naive_lpr.get_regression_estimates(&naive_lpr_results);
+
+  printf("Maximum relative difference: %g\n",
+	 MatrixUtil::MaxRelativeDifference(naive_lpr_results,
+					   fast_lpr_results));
 
   // Finalize FastExec and print output results.
   fx_done();
