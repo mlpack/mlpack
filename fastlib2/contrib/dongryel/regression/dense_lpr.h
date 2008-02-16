@@ -711,7 +711,7 @@ class DenseLpr {
       int leaflen = fx_param_int(module_in, "leaflen", 20);
       
       // set the local polynomial approximation order.
-      lpr_order_ = fx_param_int(module_in, "lpr_order", 0);
+      lpr_order_ = fx_param_int_req(NULL, "lpr_order");
 
       // copy reference dataset and reference weights.
       rset_.Copy(references);
@@ -742,7 +742,7 @@ class DenseLpr {
       fx_timer_stop(NULL, "dense_lpr_reference_tree_construct");
       
       // Initialize the kernel.
-      kernel_.Init(fx_param_double_req(module_, "bandwidth"));
+      kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
 
       // initialize the reference side statistics.
       target_weighted_rset_.Init(row_length_, rset_.n_cols());

@@ -305,8 +305,8 @@ class NaiveLpr {
 
     kernels_.Init(rset_.n_cols());
 
-    if(fx_param_exists(module_, "bandwidth")) {     
-      double bandwidth = fx_param_double_req(module_, "bandwidth");
+    if(fx_param_exists(NULL, "bandwidth")) {     
+      double bandwidth = fx_param_double_req(NULL, "bandwidth");
       for(index_t i = 0; i < kernels_.size(); i++) {	
 	kernels_[i].Init(bandwidth);
       }
