@@ -22,7 +22,7 @@ NonConvexMVU::NonConvexMVU() {
  sigma_ = 1e1;
  step_size_ = 2; 
  max_iterations_ = 100000;
- tolerance_ =5* 1e-5;
+ tolerance_ = 1e-4;
  armijo_sigma_=1e-1;
  armijo_beta_=0.5;
  new_dimension_ = -1;
@@ -92,7 +92,6 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   double distance_constraint;
   double centering_constraint;
   double step; 
-  double sum_of_dist_square = la::LengthEuclidean(distances_.size(), &distances_[0]);
   if (unlikely(mem_bfgs_<0)) {
     FATAL("You forgot to initialize the memory for BFGS\n");
   }
@@ -122,7 +121,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
     previous_gradient_.CopyValues(gradient_);
     previous_coordinates_.CopyValues(coordinates_);
     ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
-    NOTIFY("%li Feasibility error: %lg\n",i, distance_constraint);
+    NOTIFY("%i Feasibility error: %lg\n",i, distance_constraint);
   } 
   NOTIFY("Now starting optimizing with BFGS...\n");
   previous_feasibility_error_= distance_constraint + centering_constraint; 
@@ -158,7 +157,8 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
 
      // step=la::DistanceSqEuclidean(new_dimension_ * num_of_points_,
      //     previous_coordinates_.ptr(), coordinates_.ptr());
-      if (step * norm_gradient/norm_coordinates < tolerance_){
+      if (step * norm_gradient/norm_coordinates < tolerance_ ||
+          distance_constraint < tolerance_){
         break;
       }
       UpdateBFGS_();
@@ -166,11 +166,11 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
       previous_gradient_.CopyValues(gradient_);
     }
     UpdateBFGS_();
-    if (distance_constraint/sum_of_dist_square < tolerance_) {
+    if (distance_constraint < tolerance_) {
       NOTIFY("Converged !!\n");
       NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
       NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
-              distance_constraint/sum_of_dist_square, centering_constraint);
+              distance_constraint, centering_constraint);
       return;
     }
     //UpdateLagrangeMultStochastic_();
