@@ -305,9 +305,10 @@ class NaiveLpr {
 
     kernels_.Init(rset_.n_cols());
 
-    if(fx_param_exists(module_, "bandwidth")) {      
-      for(index_t i = 0; i < kernels_.size(); i++) {
-	kernels_[i].Init(fx_param_double(module_, "bandwidth", 0.2));
+    if(fx_param_exists(module_, "bandwidth")) {     
+      double bandwidth = fx_param_double_req(module_, "bandwidth");
+      for(index_t i = 0; i < kernels_.size(); i++) {	
+	kernels_[i].Init(bandwidth);
       }
     }
     else {
@@ -329,7 +330,13 @@ class NaiveLpr {
  public:
 
   ////////// Getter/Setters //////////
-  
+
+  /** @brief Gets the regresion estimates of the model.
+   */
+  void get_regression_estimates(Vector *rset_regression_estimates_copy) {
+    rset_regression_estimates_copy->Copy(rset_regression_estimates_);
+  }
+
   /** @brief Get the regression estimates of the model (i.e. on the
    *         reference set).
    *
@@ -391,7 +398,7 @@ class NaiveLpr {
     module_ = module_in;
 
     // Set the local polynomial order.
-    lpr_order_ = fx_param_int(module_in, "lpr_order", 0);
+    lpr_order_ = fx_param_int_req(NULL, "lpr_order");
 
     // Set the z-score
     z_score_ = fx_param_double(module_in, "z_score", 1.96);

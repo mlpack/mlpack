@@ -91,9 +91,7 @@ class DenseLpr {
 	 */
         void Init(int dimension) {
 	  
-	  struct datanode* local_linear_module =
-	    fx_submodule(NULL, "lpr", "lpr_module");
-	  int lpr_order = fx_param_int(local_linear_module, "lpr_order", 0);
+	  int lpr_order = fx_param_int_req(NULL, "lpr_order");
 	  int matrix_dimension = 
 	    (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 
@@ -114,11 +112,10 @@ class DenseLpr {
 	 *  @param count The number of points in this reference node.
          */
         void Init(const Matrix& dataset, index_t &start, index_t &count) {
+
 	  Init(dataset.n_rows());
 
-	  struct datanode* local_linear_module =
-	    fx_submodule(NULL, "lpr", "lpr_module");
-	  int lpr_order = fx_param_int(local_linear_module, "lpr_order", 0);
+	  int lpr_order = fx_param_int_req(NULL, "lpr_order");
 	  // Temporary variables for multiindex looping
 	  Vector reference_point_expansion;
 	  reference_point_expansion.Init(sum_target_weighted_data_.length());
@@ -298,9 +295,7 @@ class DenseLpr {
 	 */
         void Init(int dimension) {
 
-	  struct datanode* local_linear_module =
-	    fx_submodule(NULL, "lpr", "lpr_module");
-	  int lpr_order = fx_param_int(local_linear_module, "lpr_order", 0);
+	  int lpr_order = fx_param_int_req(NULL, "lpr_order");
 	  int matrix_dimension = 
 	    (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 	  
@@ -680,7 +675,14 @@ class DenseLpr {
     }
 
     ////////// Getter/Setters //////////
+
+    /** @brief Gets the regresion estimates of the model.
+     */
+    void get_regression_estimates(Vector *rset_regression_estimates_copy) {
+      rset_regression_estimates_copy->Copy(rset_regression_estimates_);
+    }
   
+
     /////////// User-level Functions //////////
 
     /** @brief Computes the query regression estimates with the
@@ -740,7 +742,7 @@ class DenseLpr {
       fx_timer_stop(NULL, "dense_lpr_reference_tree_construct");
       
       // Initialize the kernel.
-      kernel_.Init(fx_param_double(module_, "bandwidth", 0.2));
+      kernel_.Init(fx_param_double_req(module_, "bandwidth"));
 
       // initialize the reference side statistics.
       target_weighted_rset_.Init(row_length_, rset_.n_cols());
