@@ -70,6 +70,7 @@ class NonConvexMVU {
   double sigma_;
   double eta_;
   double gamma_;
+  double trace_factor_;
   double previous_feasibility_error_;
   double step_size_;
   double tolerance_;
@@ -100,8 +101,8 @@ class NonConvexMVU {
   void InitOptimization_(); 
   void UpdateLagrangeMult_();
   void UpdateLagrangeMultStochastic_(); 
-  void LocalSearch_(double *step);
-  void ComputeBFGS_();
+  void LocalSearch_(double *step, Matrix &grad);
+  void ComputeBFGS_(double *step, Matrix &grad);
   void InitBFGS();
   void UpdateBFGS_();
   double ComputeLagrangian_(Matrix &coordinates);
