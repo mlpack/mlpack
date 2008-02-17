@@ -269,7 +269,34 @@ class DenseLpr {
 	 *         information must be propagated downwards.
 	 */
         double postponed_denominator_n_pruned_;
+
+        /** @brief The lower bound on the norm of the denominator
+	 *         matrix B^T W(q) B for the query points owned by
+	 *         this node.
+	 */
+        double weight_diagram_numerator_norm_l_;
+
+        /** @brief The upper bound on the used error for the denominator
+	 *         matrix B^T W(q) B for the query points owned by this
+	 *         node.
+	 */
+        double weight_diagram_numerator_used_error_;
+
+        /** @brief The lower bound offset for the norm of the
+         *         numerator vector B^T W(q) B passed from above.
+	 */
+        Matrix postponed_weight_diagram_numerator_l_;
     
+        /** @brief Stores the portion pruned by finite difference for
+         *         the numerator matrix B^T W(q) B.
+         */
+        Matrix postponed_weight_diagram_numerator_e_;
+
+        /** @brief The total amount of error used in approximation for
+	 *         all query points that must be propagated downwards.
+	 */
+        double postponed_weight_diagram_numerator_used_error_;
+  
         /** @brief Resets the statistics to zero.
          */
         void SetZero() {
@@ -288,7 +315,13 @@ class DenseLpr {
 	  postponed_denominator_l_.SetZero();
 	  postponed_denominator_e_.SetZero();
 	  postponed_denominator_used_error_ = 0;
-	  postponed_denominator_n_pruned_ = 0;	  
+	  postponed_denominator_n_pruned_ = 0;
+
+ 	  weight_diagram_numerator_norm_l_ = 0;
+	  weight_diagram_numerator_used_error_ = 0;
+	  postponed_weight_diagram_numerator_l_.SetZero();
+	  postponed_weight_diagram_numerator_e_.SetZero();
+	  postponed_weight_diagram_numerator_used_error_ = 0;
         }
 
         /** @brief Initialize the statistics by doing basic memory
@@ -318,6 +351,14 @@ class DenseLpr {
 	  postponed_denominator_e_.Init(matrix_dimension, matrix_dimension);
 	  postponed_denominator_used_error_ = 0;
 	  postponed_denominator_n_pruned_ = 0;
+
+	  weight_diagram_numerator_norm_l_ = 0;
+	  weight_diagram_numerator_used_error_ = 0;
+	  postponed_weight_diagram_numerator_l_.Init(matrix_dimension,
+						     matrix_dimension);
+	  postponed_weight_diagram_numerator_e_.Init(matrix_dimension,
+						     matrix_dimension);
+	  postponed_weight_diagram_numerator_used_error_ = 0;
 	}
       
         void Init(const Matrix& dataset, index_t &start, index_t &count) {
@@ -445,7 +486,10 @@ class DenseLpr {
 		     ArrayList<Matrix> &denominator_l,
 		     ArrayList<Matrix> &denominator_e,
 		     Vector &denominator_used_error,
-		     Vector &denominator_n_pruned);
+		     Vector &denominator_n_pruned,
+		     ArrayList<Matrix> &weight_matrix_numerator_l,
+		     ArrayList<Matrix> &weight_matrix_numerator_e,
+		     Vector &weight_matrix_used_error);
 
     /** @brief Initialize the query tree bounds.
      */
@@ -453,7 +497,10 @@ class DenseLpr {
     (QueryTree *qnode, Matrix &numerator_l, Matrix &numerator_e, 
      Vector &numerator_used_error, Vector &numerator_n_pruned,
      ArrayList<Matrix> &denominator_l, ArrayList<Matrix> &denominator_e,
-     Vector &denominator_used_error, Vector &denominator_n_pruned);
+     Vector &denominator_used_error, Vector &denominator_n_pruned,
+     ArrayList<Matrix> &weight_diagram_numerator_l,
+     ArrayList<Matrix> &weight_diagram_numerator_e,
+     Vector &weight_diagram_used_error);
 
     /** @brief Computes the target weighted reference vectors and sums
      *         them up.
@@ -481,7 +528,10 @@ class DenseLpr {
      Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
      Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
      ArrayList<Matrix> &denominator_e, Vector &denominator_used_error, 
-     Vector &denominator_n_pruned);
+     Vector &denominator_n_pruned,
+     ArrayList<Matrix> &weight_diagram_numerator_l,
+     ArrayList<Matrix> &weight_diagram_numerator_e,
+     Vector &weight_diagram_used_error);
   
     /** @brief The canonical recursion for the LPR computation.
      *
@@ -493,16 +543,23 @@ class DenseLpr {
      Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
      Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
      ArrayList<Matrix> &denominator_e, Vector &denominator_used_error, 
-     Vector &denominator_n_pruned);
+     Vector &denominator_n_pruned,
+     ArrayList<Matrix> &weight_diagram_numerator_l,
+     ArrayList<Matrix> &weight_diagram_numerator_e,
+     Vector &weight_diagram_used_error);
   
     /** @brief Finalize the regression estimates.
      */
     void FinalizeQueryTree_
     (QueryTree *qnode, const Matrix &qset, Vector *query_regression_estimates,
+     Vector *query_magnitude_weight_diagrams, Vector *query_influence_values,
      Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
      Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
      ArrayList<Matrix> &denominator_e, Vector &denominator_used_error, 
-     Vector &denominator_n_pruned);
+     Vector &denominator_n_pruned,
+     ArrayList<Matrix> &weight_diagram_numerator_l,
+     ArrayList<Matrix> &weight_diagram_numerator_e,
+     Vector &weight_diagram_used_error);
 
     /** @brief Computes the variance by the normalized redisual sum of
      *         squares for the reference dataset.
@@ -598,6 +655,15 @@ class DenseLpr {
       }
       denominator_used_error.Init(queries.n_cols());
       denominator_n_pruned.Init(queries.n_cols());      
+      ArrayList<Matrix> weight_diagram_numerator_l, weight_diagram_numerator_e;
+      Vector weight_diagram_used_error;
+      weight_diagram_numerator_l.Init(queries.n_cols());
+      weight_diagram_numerator_e.Init(queries.n_cols());
+      for(index_t i = 0; i < queries.n_cols(); i++) {
+	weight_diagram_numerator_l[i].Init(row_length_, row_length_);
+	weight_diagram_numerator_e[i].Init(row_length_, row_length_);
+      }
+      weight_diagram_used_error.Init(queries.n_cols());
 
       // Initialize storage for the final results.
       query_regression_estimates->Init(queries.n_cols());
@@ -609,15 +675,23 @@ class DenseLpr {
       InitializeQueryTree_(qroot, numerator_l, numerator_e,
 			   numerator_used_error, numerator_n_pruned,
 			   denominator_l, denominator_e, 
-			   denominator_used_error, denominator_n_pruned);
-      DualtreeLprCanonical_(qroot, rroot_, qset, numerator_l, numerator_e,
-			    numerator_used_error, numerator_n_pruned,
-			    denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
-      FinalizeQueryTree_(qroot, qset, query_regression_estimates,
-			 numerator_l, numerator_e, numerator_used_error,
-			 numerator_n_pruned, denominator_l, denominator_e,
-			 denominator_used_error, denominator_n_pruned);
+			   denominator_used_error, denominator_n_pruned,
+			   weight_diagram_numerator_l,
+			   weight_diagram_numerator_e,
+			   weight_diagram_used_error);
+      DualtreeLprCanonical_
+	(qroot, rroot_, qset, numerator_l, numerator_e, numerator_used_error, 
+	 numerator_n_pruned, denominator_l, denominator_e,
+	 denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e,
+	 weight_diagram_used_error);
+      FinalizeQueryTree_
+	(qroot, qset, query_regression_estimates, 
+	 query_magnitude_weight_diagrams, query_influence_values,
+	 numerator_l, numerator_e, numerator_used_error, numerator_n_pruned, 
+	 denominator_l, denominator_e, denominator_used_error, 
+	 denominator_n_pruned, weight_diagram_numerator_l, 
+	 weight_diagram_numerator_e, weight_diagram_used_error);
 
       // After the computation, we do not need the query tree, so we
       // free it.
@@ -708,7 +782,7 @@ class DenseLpr {
       
       // set the incoming parameter module.
       module_ = module_in;
-                
+      
       // read in the number of points owned by a leaf
       int leaflen = fx_param_int(module_in, "leaflen", 20);
       
@@ -725,6 +799,9 @@ class DenseLpr {
       dimension_ = rset_.n_rows();
       row_length_ = (int) math::BinomialCoefficient(dimension_ + lpr_order_,
 						    dimension_);
+
+      // Set the z-score necessary for computing the confidence band.
+      z_score_ = fx_param_double(module_, "z_score", 1.96);
       
       // Start measuring the tree construction time.
       fx_timer_start(NULL, "dense_lpr_reference_tree_construct");
@@ -769,7 +846,8 @@ class DenseLpr {
 	stream = fopen(fname, "w+");
       }
       for(index_t r = 0; r < rset_.n_cols(); r++) {
-	fprintf(stream, "%g\n", rset_regression_estimates_[r]);
+	fprintf(stream, "%g %g %g\n", rset_confidence_bands_[r].lo,
+		rset_regression_estimates_[r], rset_confidence_bands_[r].hi);
       }
       
       if(stream != stdout) {
