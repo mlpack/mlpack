@@ -30,12 +30,20 @@ class NonConvexMVU {
   NonConvexMVU::NonConvexMVU();
   void Init(std::string data_file, index_t knns);
   void Init(std::string data_file, index_t knns, index_t leaf_size);
-  void ComputeLocalOptimum();
+  /**
+   * Computes a local optimum for a given rank
+   * PROBLEM_TYPE
+   * 0 = Feasibility problem
+   * 1 = Equality Constraints for the distances
+   * 2 = Inequality Constraints for the distances
+   */
+  template<int PROBLEM_TYPE>
   void ComputeLocalOptimumBFGS();
   // eta < 1
   void set_eta(double eta);
   // gamma > 1
   void set_gamma(double gamma);
+  void set_sigma(double sigma);
   void set_step_size(double step_size);
   void set_max_iterations(index_t max_iterations);
   void set_new_dimension(index_t new_dimension);
@@ -71,7 +79,6 @@ class NonConvexMVU {
   double sigma_;
   double eta_;
   double gamma_;
-  double trace_factor_;
   double previous_feasibility_error_;
   double step_size_;
   double gradient_tolerance_;
@@ -99,23 +106,31 @@ class NonConvexMVU {
   Matrix previous_gradient_;
   // previous coordinates
   Matrix previous_coordinates_;
-  
+  template<int PROBLEM_TYPE> 
   void InitOptimization_(); 
+  template<int PROBLEM_TYPE>
   void UpdateLagrangeMult_();
-  void UpdateLagrangeMultStochastic_(); 
+  template<int PROPLEM_TYPE>
   void LocalSearch_(double *step, Matrix &grad);
+  template<int PROPLEM_TYPE>
   void ComputeBFGS_(double *step, Matrix &grad);
   void InitBFGS();
   void UpdateBFGS_();
+  template<int PROBLEM_TYPE>
   double ComputeLagrangian_(Matrix &coordinates);
+  template<int PROBLEM_TYPE>
   void ComputeFeasibilityError_(double *distance_constraint, 
                                 double *centering_constraint);
+  template<int PROBLEM_TYPE>
   void ComputeRelativeFeasibilityError_(double *distance_constraint, 
                                         double *centering_constraint);
+  template<int PROBLEM_TYPE>
   double ComputeFeasibilityError_();
+  template<int PROBLEM_TYPE>
   void ComputeGradient_();
   double ComputeObjective_(Matrix &coord);
   void Variance_(Matrix &coord, Vector *variance);
+  void RemoveMean_(Matrix &mat);
 };
 
 #include "non_convex_mvu_impl.h"
