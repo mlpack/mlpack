@@ -8,12 +8,12 @@
 
 template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
-(QueryTree *qnode, ReferenceTree *rnode,
- DRange &dsqd_range, DRange &kernel_value_range) {
+(QueryTree *qnode, ReferenceTree *rnode, DRange &dsqd_range, 
+ DRange &kernel_value_range) {
 
   dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
   dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-  kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);      
+  kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -387,7 +387,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 
     // Push down postponed bound changes owned by the current query
     // node to the children of the query node.
-    la::AddTo(q_stat.postponed_numerator_l_, 
+    la::AddTo(q_stat.postponed_numerator_l_,
 	      &q_left_stat.postponed_numerator_l_);
     la::AddTo(q_stat.postponed_numerator_l_,
 	      &q_right_stat.postponed_numerator_l_);
@@ -400,7 +400,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
     q_right_stat.postponed_numerator_n_pruned_ += 
       q_stat.postponed_numerator_n_pruned_;
     
-    la::AddTo(q_stat.postponed_denominator_l_, 
+    la::AddTo(q_stat.postponed_denominator_l_,
 	      &q_left_stat.postponed_denominator_l_);
     la::AddTo(q_stat.postponed_denominator_l_,
 	      &q_right_stat.postponed_denominator_l_);
@@ -477,7 +477,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
     q_stat.numerator_n_pruned_ = 
       std::min(q_left_stat.numerator_n_pruned_,
 	       q_right_stat.numerator_n_pruned_);
-    q_stat.denominator_norm_l_ = 
+    q_stat.denominator_norm_l_ =
       std::min
       (q_left_stat.denominator_norm_l_ +
        MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_denominator_l_, 1),
@@ -545,8 +545,10 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
       // taking the dot product between z(q) and the polynomial power
       // formed from the query point coordinates.
       MatrixUtil::PseudoInverse(denominator_e[q], &pseudoinverse_denominator);
+
       la::MulOverwrite(pseudoinverse_denominator, q_numerator_e,
 		       &least_squares_solution);
+
       MultiIndexUtil::ComputePointMultivariatePolynomial
 	(dimension_, lpr_order_, query_point, query_point_expansion.ptr());
       (*query_regression_estimates)[q] = la::Dot(query_point_expansion,
