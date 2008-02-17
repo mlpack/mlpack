@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 
   // Do fast algorithm.
   Vector fast_lpr_results;
-  DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
+  DenseLpr<GaussianKernel, RelativePruneLpr> fast_lpr;
   fast_lpr.Init(references, reference_targets, local_linear_module);
   fast_lpr.PrintDebug();
   fast_lpr.get_regression_estimates(&fast_lpr_results);
