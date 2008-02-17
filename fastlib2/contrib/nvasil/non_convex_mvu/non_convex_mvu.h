@@ -39,7 +39,8 @@ class NonConvexMVU {
   void set_step_size(double step_size);
   void set_max_iterations(index_t max_iterations);
   void set_new_dimension(index_t new_dimension);
-  void set_tolerance(double tolerance); 
+  void set_distance_tolerance(double tolerance); 
+  void set_gradient_tolerance(double tolerance);
   /**
    *  sigma for armijo rule somewhere between 1e-5 to 1e-1
    */
@@ -73,7 +74,8 @@ class NonConvexMVU {
   double trace_factor_;
   double previous_feasibility_error_;
   double step_size_;
-  double tolerance_;
+  double gradient_tolerance_;
+  double distance_tolerance_;
   double armijo_sigma_;
   double armijo_beta_;
   index_t max_iterations_;
@@ -108,9 +110,12 @@ class NonConvexMVU {
   double ComputeLagrangian_(Matrix &coordinates);
   void ComputeFeasibilityError_(double *distance_constraint, 
                                 double *centering_constraint);
+  void ComputeRelativeFeasibilityError_(double *distance_constraint, 
+                                        double *centering_constraint);
   double ComputeFeasibilityError_();
   void ComputeGradient_();
   double ComputeObjective_(Matrix &coord);
+  void Variance_(Matrix &coord, Vector *variance);
 };
 
 #include "non_convex_mvu_impl.h"

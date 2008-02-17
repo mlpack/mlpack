@@ -52,11 +52,12 @@ class NonConvexMVUTest {
     NOTIFY("TestComputeLocalOptimum() passed!!\n");
   }
   void TestComputeLocalOptimumBFGS() {
-    NOTIFY("Testing ComputeLocalOptimum() ...\n");
-    engine_->Init("test_data_3_1000.csv", 5);
+    NOTIFY("Testing ComputeLocalOptimumBFGS() ...\n");
+    engine_->Init("swiss_roll.csv", 5);
     engine_->set_new_dimension(3);
     engine_->set_mem_bfgs(150);
     engine_->ComputeLocalOptimumBFGS();
+    data::Save("results.csv", engine_->coordinates());
     NOTIFY("TestComputeLocalOptimum() passed!!\n");
   }
  

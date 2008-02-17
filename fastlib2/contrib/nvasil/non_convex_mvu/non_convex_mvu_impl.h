@@ -19,10 +19,11 @@
 NonConvexMVU::NonConvexMVU() {
  eta_ = 0.8;
  gamma_ =1.3;
- sigma_ = 1e1;
+ sigma_ = 1e3;
  step_size_ = 2; 
  max_iterations_ = 100000;
- tolerance_ = 1e-4;
+ distance_tolerance_ = 1e-1;
+ gradient_tolerance_ = 1e-20;
  armijo_sigma_=1e-1;
  armijo_beta_=0.5;
  new_dimension_ = -1;
@@ -67,11 +68,11 @@ void NonConvexMVU::ComputeLocalOptimum() {
       NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error (dist)): %lg\n"
              "feasibility error (center): %lg \n", it1, it2, 
                distance_constraint , centering_constraint);
-      if (step < tolerance_){
+      if (step < gradient_tolerance_){
         break;
       }
     }
-    if (distance_constraint/sum_of_dist_square < tolerance_) {
+    if (distance_constraint/sum_of_dist_square < distance_tolerance_) {
       NOTIFY("Converged !!\n");
       NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
       NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
@@ -114,6 +115,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   NOTIFY("Running a few iterations with gradient descent to fill "
          "the memory of BFGS...\n");
   index_bfgs_=0;
+  // Remove this;
   for(index_t i=0; i<mem_bfgs_; i++) {
     LocalSearch_(&step, gradient_);
     ComputeGradient_();
@@ -125,11 +127,17 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   } 
   NOTIFY("Now starting optimizing with BFGS...\n");
   previous_feasibility_error_= distance_constraint + centering_constraint; 
+  double old_feasibility_error = previous_feasibility_error_;
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       ComputeBFGS_(&step, gradient_);
       ComputeGradient_();
       ComputeFeasibilityError_(&distance_constraint, &centering_constraint);
+/*      if (distance_constraint+centering_constraint > old_feasibility_error) {
+        break;
+      }
+*/
+      old_feasibility_error = distance_constraint+centering_constraint;
       double norm_gradient = la::LengthEuclidean(num_of_points_ *new_dimension_,
                                                  gradient_.ptr());
       double norm_coordinates = la::LengthEuclidean(num_of_points_ *new_dimension_,
@@ -140,37 +148,45 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
         -(distance_constraint+centering_constraint)*sigma_/2;
       double termination_criterion=fabs(augmented_lagrangian-0.5*objective)/
         max(fabs(lagrangian), 1.0);
+      ComputeRelativeFeasibilityError_(&distance_constraint, &centering_constraint);
       NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error (dist)): %lg\n"
              "    feasibility error (center): %lg \n"
-             "    objective: %lg\n"
-             "    grad/coord: %lg\n"
+             "    objective : %lg\n"
+             "    grad      : %lg\n"
              "    lang_mult : %lg\n"
              "    sigma     : %lg\n"
              "    term_cond : %lg\n", it1, it2, 
                distance_constraint, 
                centering_constraint,
                objective,
-               step*norm_gradient/norm_coordinates,
+               norm_gradient,
                la::LengthEuclidean(lagrange_mult_),
                sigma_,
                termination_criterion);
-
      // step=la::DistanceSqEuclidean(new_dimension_ * num_of_points_,
      //     previous_coordinates_.ptr(), coordinates_.ptr());
-      if (step * norm_gradient/norm_coordinates < tolerance_ ||
-          distance_constraint < tolerance_){
+      if (step * norm_gradient < gradient_tolerance_ ||
+          distance_constraint < distance_tolerance_){
         break;
       }
+
       UpdateBFGS_();
       previous_coordinates_.CopyValues(coordinates_);
       previous_gradient_.CopyValues(gradient_);
     }
     UpdateBFGS_();
-    if (distance_constraint < tolerance_) {
+    if (distance_constraint < distance_tolerance_) {
       NOTIFY("Converged !!\n");
       NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
       NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
               distance_constraint, centering_constraint);
+      Vector var;
+      Variance_(coordinates_, &var);
+      printf("Variance: ");
+      for(index_t i=0; i<new_dimension_; i++) {
+        printf("%lg ", var[i]);
+      }
+      printf("\n");
       return;
     }
     //UpdateLagrangeMultStochastic_();
@@ -182,6 +198,14 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
     NOTIFY("Objective function: %lg\n", ComputeObjective_(coordinates_));
     NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
               distance_constraint, centering_constraint);
+    printf("Variance: ");
+    Vector var;
+    Variance_(coordinates_, &var);
+
+    for(index_t i=0; i<new_dimension_; i++) {
+      printf("%lg ", var[i]);
+    }
+    printf("\n");
 }
 
 void NonConvexMVU::set_eta(double eta) {
@@ -204,8 +228,12 @@ void NonConvexMVU::set_new_dimension(index_t new_dimension) {
   new_dimension_ = new_dimension;
 }
 
-void NonConvexMVU::set_tolerance(double tolerance) {
-  tolerance_ = tolerance;
+void NonConvexMVU::set_distance_tolerance(double tolerance) {
+  distance_tolerance_ = tolerance;
+}
+
+void NonConvexMVU::set_gradient_tolerance(double tolerance) {
+  gradient_tolerance_ = tolerance;
 }
 
 void NonConvexMVU::set_armijo_sigma(double armijo_sigma) {
@@ -220,6 +248,9 @@ void NonConvexMVU::set_mem_bfgs(index_t mem_bfgs) {
   mem_bfgs_ = mem_bfgs;
 }
 
+Matrix &NonConvexMVU::coordinates() {
+  return coordinates_;
+}
 void NonConvexMVU::InitOptimization_() {
   if (unlikely(new_dimension_<0)) {
     FATAL("You forgot to set the new dimension\n");
@@ -440,9 +471,9 @@ void NonConvexMVU::ComputeFeasibilityError_(double *distance_constraint,
     for(index_t k=0; k<knns_; k++) {
       double *point1 = coordinates_.GetColumnPtr(i);
       double *point2 = coordinates_.GetColumnPtr(neighbors_[i*knns_+k]);
-      *distance_constraint+= math::Sqr((la::DistanceSqEuclidean(new_dimension_, 
+      *distance_constraint += math::Sqr(la::DistanceSqEuclidean(new_dimension_, 
                                                                 point1, point2) 
-                             -distances_[i*knns_+k]));
+                             -distances_[i*knns_+k]);
     }
     for(index_t k=0; k<new_dimension_; k++) {
       deviations[k] += coordinates_.get(k, i);
@@ -451,6 +482,34 @@ void NonConvexMVU::ComputeFeasibilityError_(double *distance_constraint,
   for(index_t k=0; k<new_dimension_; k++) {
     *centering_constraint += deviations[k] * deviations[k];
   }
+}
+
+void NonConvexMVU::ComputeRelativeFeasibilityError_(double *distance_constraint,
+                                                     double *centering_constraint) {
+  Vector deviations;
+  deviations.Init(new_dimension_);
+  deviations.SetAll(0.0);
+  *distance_constraint=0;
+  *centering_constraint=0;
+  for(index_t i=0; i<num_of_points_; i++) {
+    for(index_t k=0; k<knns_; k++) {
+      double *point1 = coordinates_.GetColumnPtr(i);
+      double *point2 = coordinates_.GetColumnPtr(neighbors_[i*knns_+k]);
+      if (distances_[i*knns_+k]==0) {
+        continue;
+      }
+      *distance_constraint+= fabs(la::DistanceSqEuclidean(new_dimension_, 
+                                                                point1, point2) 
+                             -distances_[i*knns_+k])/distances_[i*knns_+k];
+    }
+    for(index_t k=0; k<new_dimension_; k++) {
+      deviations[k] += coordinates_.get(k, i);
+    }
+  }
+  for(index_t k=0; k<new_dimension_; k++) {
+    *centering_constraint += deviations[k] * deviations[k];
+  }
+  *distance_constraint/=knns_ * num_of_points_;
 }
 
 double NonConvexMVU::ComputeFeasibilityError_() {
@@ -508,3 +567,14 @@ double NonConvexMVU::ComputeObjective_(Matrix &coord) {
   }
   return variance*trace_factor_;
 }
+
+// Assumes zero mean
+// variance should not be initialized
+void NonConvexMVU::Variance_(Matrix &coord, Vector *variance) {
+  variance->Init(new_dimension_);
+  for(index_t i=0; i<new_dimension_; i++) {
+    (*variance)[i]=la::LengthEuclidean(num_of_points_, 
+                                       coord.GetColumnPtr(i))/num_of_points_;
+  }
+}
+
