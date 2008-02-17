@@ -4,6 +4,9 @@ pos_threshold = 2;
 
 neg_counts = zeros(num_ics, 9);
 pos_counts = zeros(num_ics, 9);
+
+choose_indices = find(clusters ~= -1);
+
 for i = 1:num_ics
   neg_counts(i,:) = hist(clusters(find(ic_scores(i,:) < neg_threshold)), -1:7);
 end
