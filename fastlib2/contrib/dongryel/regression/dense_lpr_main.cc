@@ -55,14 +55,14 @@ int main(int argc, char *argv[]) {
 
   // Do fast algorithm.
   Vector fast_lpr_results;
-  DenseLpr<GaussianKernel, RelativePruneLpr> fast_lpr;
+  DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
   fast_lpr.Init(references, reference_targets, local_linear_module);
   fast_lpr.PrintDebug();
   fast_lpr.get_regression_estimates(&fast_lpr_results);
 
   // Do naive algorithm.
   Vector naive_lpr_results;
-  NaiveLpr<GaussianKernel> naive_lpr;
+  NaiveLpr<EpanKernel> naive_lpr;
   naive_lpr.Init(references, reference_targets, local_linear_module);
   naive_lpr.PrintDebug();
   naive_lpr.get_regression_estimates(&naive_lpr_results);

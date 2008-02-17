@@ -21,7 +21,9 @@ void DenseLpr<TKernel, TPruneRule>::ResetQuery_
 (int q, Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error,
  Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l,
  ArrayList<Matrix> &denominator_e, Vector &denominator_used_error,
- Vector &denominator_n_pruned) {
+ Vector &denominator_n_pruned, ArrayList<Matrix> &weight_diagram_numerator_l,
+ ArrayList<Matrix> &weight_diagram_numerator_e,
+ Vector &weight_diagram_used_error) {
   
   // First the numerator quantities.
   Vector q_numerator_l, q_numerator_e;
@@ -37,6 +39,12 @@ void DenseLpr<TKernel, TPruneRule>::ResetQuery_
   denominator_e[q].SetZero();
   denominator_used_error[q] = 0;
   denominator_n_pruned[q] = 0;
+
+  // The quantities related to the weight diagram computation
+  // (confidence band).
+  weight_diagram_numerator_l[q].SetZero();
+  weight_diagram_numerator_e[q].SetZero();
+  weight_diagram_used_error[q] = 0;
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -103,7 +111,10 @@ InitializeQueryTree_(QueryTree *qnode, Matrix &numerator_l,
 		     ArrayList<Matrix> &denominator_l,
 		     ArrayList<Matrix> &denominator_e,
 		     Vector &denominator_used_error,
-		     Vector &denominator_n_pruned) {
+		     Vector &denominator_n_pruned,
+		     ArrayList<Matrix> &weight_diagram_numerator_l,
+		     ArrayList<Matrix> &weight_diagram_numerator_e,
+		     Vector &weight_diagram_used_error) {
     
   // Set the bounds to default values for the statistics.
   qnode->stat().SetZero();
@@ -116,7 +127,9 @@ InitializeQueryTree_(QueryTree *qnode, Matrix &numerator_l,
       // Reset the bounds corresponding to the particular query point.
       ResetQuery_(q, numerator_l, numerator_e, numerator_used_error,
 		  numerator_n_pruned, denominator_l, denominator_e,
-		  denominator_used_error, denominator_n_pruned);
+		  denominator_used_error, denominator_n_pruned,
+		  weight_diagram_numerator_l, weight_diagram_numerator_e,
+		  weight_diagram_used_error);
     }
   }
 
@@ -125,11 +138,15 @@ InitializeQueryTree_(QueryTree *qnode, Matrix &numerator_l,
     InitializeQueryTree_(qnode->left(), numerator_l, numerator_e,
 			 numerator_used_error, numerator_n_pruned,
 			 denominator_l, denominator_e, denominator_used_error,
-			 denominator_n_pruned);
+			 denominator_n_pruned, weight_diagram_numerator_l,
+			 weight_diagram_numerator_e, 
+			 weight_diagram_used_error);
     InitializeQueryTree_(qnode->right(), numerator_l, numerator_e,
 			 numerator_used_error, numerator_n_pruned,
 			 denominator_l, denominator_e, denominator_used_error,
-			 denominator_n_pruned);
+			 denominator_n_pruned, weight_diagram_numerator_l,
+			 weight_diagram_numerator_e, 
+			 weight_diagram_used_error);
   }
 }
 
@@ -176,7 +193,9 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
  Matrix &numerator_e, Vector &numerator_used_error, 
  Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
  ArrayList<Matrix> &denominator_e, Vector &denominator_used_error, 
- Vector &denominator_n_pruned) {
+ Vector &denominator_n_pruned, ArrayList<Matrix> &weight_diagram_numerator_l,
+ ArrayList<Matrix> &weight_diagram_numerator_e,
+ Vector &weight_diagram_numerator_used_error) {
 
   // Temporary variable for storing multivariate expansion of a
   // reference point.
@@ -192,6 +211,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
   qnode->stat().kernel_sum_l_ = DBL_MAX;
   qnode->stat().denominator_used_error_ = 0;
   qnode->stat().denominator_n_pruned_ = DBL_MAX;
+  qnode->stat().weight_diagram_numerator_norm_l_ = DBL_MAX;
+  qnode->stat().weight_diagram_numerator_used_error_ = 0;
   
   // Iterate over each query point.
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -214,6 +235,13 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
     denominator_used_error[q] += 
       qnode->stat().postponed_denominator_used_error_;
     denominator_n_pruned[q] += qnode->stat().postponed_denominator_n_pruned_;
+
+    // Incorporate the postponed information for the weight diagram
+    // numerator matrix.
+    la::AddTo(qnode->stat().postponed_weight_diagram_numerator_l_, 
+	      &(weight_diagram_numerator_l[q]));
+    weight_diagram_numerator_used_error[q] += 
+      qnode->stat().postponed_weight_diagram_numerator_used_error_;
 
     // Iterate over each reference point.
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
@@ -250,6 +278,17 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
 	  denominator_e[q].set(i, j, denominator_e[q].get(i, j) +
 				kernel_value * reference_point_expansion[i] *
 				reference_point_expansion[j]);
+
+	  // Tally up the sum for the weight diagram numerator matrix
+	  // B^T W(q) W(q) B.
+	  weight_diagram_numerator_l[q].set
+	    (i, j, weight_diagram_numerator_l[q].get(i, j) +
+	     kernel_value * kernel_value * reference_point_expansion[i] *
+	     reference_point_expansion[j]);
+	  weight_diagram_numerator_e[q].set
+	    (i, j, weight_diagram_numerator_e[q].get(i, j) +
+	     kernel_value * kernel_value * reference_point_expansion[i] *
+	     reference_point_expansion[j]);	  
 	  
 	} // End of iterating over each row.
       } // End of iterating over each column.
@@ -283,6 +322,14 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
     qnode->stat().denominator_n_pruned_ =
       std::min(qnode->stat().denominator_n_pruned_, denominator_n_pruned[q]);
 
+    // Refine summary statistics for the weight diagram numerator.
+    qnode->stat().weight_diagram_numerator_norm_l_ =
+      std::min(qnode->stat().weight_diagram_numerator_norm_l_,
+	       MatrixUtil::EntrywiseLpNorm(weight_diagram_numerator_l[q], 1));
+    qnode->stat().weight_diagram_numerator_used_error_ =
+      std::max(qnode->stat().weight_diagram_numerator_used_error_, 
+	       weight_diagram_numerator_used_error[q]);
+
   } // End of iterating over each query point.
   
   // Clear postponed information for the numerator matrix.
@@ -294,6 +341,11 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
   qnode->stat().postponed_denominator_l_.SetZero();
   qnode->stat().postponed_denominator_used_error_ = 0;
   qnode->stat().postponed_denominator_n_pruned_ = 0;  
+
+  // Clear postponed information for the weight diagram numerator
+  // matrix.
+  qnode->stat().postponed_weight_diagram_numerator_l_.SetZero();
+  qnode->stat().postponed_weight_diagram_numerator_used_error_ = 0;
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -302,10 +354,13 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
  Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
  Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
  ArrayList<Matrix> &denominator_e, Vector &denominator_used_error, 
- Vector &denominator_n_pruned) {
+ Vector &denominator_n_pruned, ArrayList<Matrix> &weight_diagram_numerator_l,
+ ArrayList<Matrix> &weight_diagram_numerator_e, 
+ Vector &weight_diagram_used_error) {
 
   // Total amount of used error
-  double delta_numerator_used_error, delta_denominator_used_error;
+  double delta_numerator_used_error, delta_denominator_used_error,
+    delta_weight_diagram_numerator_used_error;
   
   // Total portion accounted by pruning.
   double delta_numerator_n_pruned, delta_denominator_n_pruned;
@@ -317,9 +372,12 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   Vector numerator_dl, numerator_de;
   numerator_dl.Init(row_length_);
   numerator_de.Init(row_length_);
-  Matrix denominator_dl, denominator_de;
+  Matrix denominator_dl, denominator_de, weight_diagram_numerator_dl,
+    weight_diagram_numerator_de;
   denominator_dl.Init(row_length_, row_length_);
   denominator_de.Init(row_length_, row_length_);
+  weight_diagram_numerator_dl.Init(row_length_, row_length_);
+  weight_diagram_numerator_de.Init(row_length_, row_length_);
   
   // Compute distance ranges and kernel ranges first.
   SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range);
@@ -332,7 +390,9 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
       qnode, rnode, dsqd_range, kernel_value_range,
       numerator_dl, numerator_de, delta_numerator_used_error, 
       delta_numerator_n_pruned, denominator_dl, denominator_de, 
-      delta_denominator_used_error, delta_denominator_n_pruned)) {
+      delta_denominator_used_error, delta_denominator_n_pruned,
+      weight_diagram_numerator_dl, weight_diagram_numerator_de,
+      delta_weight_diagram_numerator_used_error)) {
     
     la::AddTo(numerator_dl, &(qnode->stat().postponed_numerator_l_));
     la::AddTo(numerator_de, &(qnode->stat().postponed_numerator_e_));
@@ -346,6 +406,13 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
       delta_denominator_used_error;
     qnode->stat().postponed_denominator_n_pruned_ += 
       delta_denominator_n_pruned;
+
+    la::AddTo(weight_diagram_numerator_dl, 
+	      &(qnode->stat().postponed_weight_diagram_numerator_l_));
+    la::AddTo(weight_diagram_numerator_de, 
+	      &(qnode->stat().postponed_weight_diagram_numerator_e_));
+    qnode->stat().postponed_weight_diagram_numerator_used_error_ += 
+      delta_weight_diagram_numerator_used_error;
     return;
   }
 
@@ -357,7 +424,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
       DualtreeLprBase_(qnode, rnode, qset, numerator_l, numerator_e, 
 		       numerator_used_error, numerator_n_pruned,
 		       denominator_l, denominator_e, denominator_used_error, 
-		       denominator_n_pruned);
+		       denominator_n_pruned, weight_diagram_numerator_l,
+		       weight_diagram_numerator_e, weight_diagram_used_error);
       return;
     }
 
@@ -366,14 +434,18 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
       BestNodePartners_(qnode, rnode->left(), rnode->right(), &rnode_first,
                         &rnode_second);
-      DualtreeLprCanonical_(qnode, rnode_first, qset, numerator_l, 
-			    numerator_e, numerator_used_error, 
-			    numerator_n_pruned, denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
-      DualtreeLprCanonical_(qnode, rnode_second, qset, numerator_l, 
-			    numerator_e, numerator_used_error, 
-			    numerator_n_pruned, denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
+      DualtreeLprCanonical_
+	(qnode, rnode_first, qset, numerator_l, numerator_e, 
+	 numerator_used_error, numerator_n_pruned, denominator_l, 
+	 denominator_e, denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
+	 weight_diagram_used_error);
+      DualtreeLprCanonical_
+	(qnode, rnode_second, qset, numerator_l, numerator_e, 
+	 numerator_used_error, numerator_n_pruned, denominator_l, 
+	 denominator_e, denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
+	 weight_diagram_used_error);
       return;
     }
   }
@@ -413,6 +485,15 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
     q_right_stat.postponed_denominator_n_pruned_ += 
       q_stat.postponed_denominator_n_pruned_;
 
+    la::AddTo(q_stat.postponed_weight_diagram_numerator_l_,
+	      &q_left_stat.postponed_weight_diagram_numerator_l_);
+    la::AddTo(q_stat.postponed_weight_diagram_numerator_l_,
+	      &q_right_stat.postponed_weight_diagram_numerator_l_);
+    q_left_stat.postponed_weight_diagram_numerator_used_error_ += 
+      q_stat.postponed_weight_diagram_numerator_used_error_;
+    q_right_stat.postponed_weight_diagram_numerator_used_error_ += 
+      q_stat.postponed_weight_diagram_numerator_used_error_;
+
     // Clear the passed down postponed information.
     q_stat.postponed_numerator_l_.SetZero();
     q_stat.postponed_numerator_used_error_ = 0;
@@ -420,6 +501,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
     q_stat.postponed_denominator_l_.SetZero();
     q_stat.postponed_denominator_used_error_ = 0;
     q_stat.postponed_denominator_n_pruned_ = 0;
+    q_stat.postponed_weight_diagram_numerator_l_.SetZero();
+    q_stat.postponed_weight_diagram_numerator_used_error_ = 0;
     
     // For a leaf reference node, expand query node
     if(rnode->is_leaf()) {
@@ -427,14 +510,18 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
       
       BestNodePartners_(rnode, qnode->left(), qnode->right(), &qnode_first,
 			&qnode_second);
-      DualtreeLprCanonical_(qnode_first, rnode, qset, numerator_l, 
-			    numerator_e, numerator_used_error, 
-			    numerator_n_pruned, denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
-      DualtreeLprCanonical_(qnode_second, rnode, qset, numerator_l, 
-			    numerator_e, numerator_used_error, 
-			    numerator_n_pruned, denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
+      DualtreeLprCanonical_
+	(qnode_first, rnode, qset, numerator_l, numerator_e, 
+	 numerator_used_error, numerator_n_pruned, denominator_l, 
+	 denominator_e, denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
+	 weight_diagram_used_error);
+      DualtreeLprCanonical_
+	(qnode_second, rnode, qset, numerator_l, numerator_e, 
+	 numerator_used_error, numerator_n_pruned, denominator_l, 
+	 denominator_e, denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
+	 weight_diagram_used_error);
     }
     
     // for non-leaf reference node, expand both query and reference nodes
@@ -443,25 +530,33 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
       
       BestNodePartners_(qnode->left(), rnode->left(), rnode->right(),
 			&rnode_first, &rnode_second);
-      DualtreeLprCanonical_(qnode->left(), rnode_first, qset, numerator_l, 
-			    numerator_e, numerator_used_error, 
-			    numerator_n_pruned, denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
-      DualtreeLprCanonical_(qnode->left(), rnode_second, qset, numerator_l, 
-			    numerator_e, numerator_used_error, 
-			    numerator_n_pruned, denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
+      DualtreeLprCanonical_
+	(qnode->left(), rnode_first, qset, numerator_l, numerator_e, 
+	 numerator_used_error, numerator_n_pruned, denominator_l, 
+	 denominator_e, denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
+	 weight_diagram_used_error);
+      DualtreeLprCanonical_
+	(qnode->left(), rnode_second, qset, numerator_l, numerator_e, 
+	 numerator_used_error, numerator_n_pruned, denominator_l, 
+	 denominator_e, denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
+	 weight_diagram_used_error);
       
       BestNodePartners_(qnode->right(), rnode->left(), rnode->right(),
 			&rnode_first, &rnode_second);
-      DualtreeLprCanonical_(qnode->right(), rnode_first, qset, numerator_l, 
-			    numerator_e, numerator_used_error, 
-			    numerator_n_pruned, denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
-      DualtreeLprCanonical_(qnode->right(), rnode_second, qset, numerator_l, 
-			    numerator_e, numerator_used_error, 
-			    numerator_n_pruned, denominator_l, denominator_e,
-			    denominator_used_error, denominator_n_pruned);
+      DualtreeLprCanonical_
+	(qnode->right(), rnode_first, qset, numerator_l, numerator_e, 
+	 numerator_used_error, numerator_n_pruned, denominator_l, 
+	 denominator_e, denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
+	 weight_diagram_used_error);
+      DualtreeLprCanonical_
+	(qnode->right(), rnode_second, qset, numerator_l, numerator_e, 
+	 numerator_used_error, numerator_n_pruned, denominator_l, 
+	 denominator_e, denominator_used_error, denominator_n_pruned,
+	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
+	 weight_diagram_used_error);
     }
     
     // reaccumulate the summary statistics.
@@ -495,6 +590,17 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
       std::min(q_left_stat.denominator_n_pruned_,
 	       q_right_stat.denominator_n_pruned_);    
 
+    q_stat.weight_diagram_numerator_norm_l_ =
+      std::min
+      (q_left_stat.weight_diagram_numerator_norm_l_ +
+       MatrixUtil::EntrywiseLpNorm
+       (q_left_stat.postponed_weight_diagram_numerator_l_, 1),
+       q_right_stat.weight_diagram_numerator_norm_l_ +
+       MatrixUtil::EntrywiseLpNorm
+       (q_right_stat.postponed_weight_diagram_numerator_l_, 1));
+    q_stat.weight_diagram_numerator_used_error_ = 
+      std::max(q_left_stat.weight_diagram_numerator_used_error_,
+	       q_right_stat.weight_diagram_numerator_used_error_);
     return;
   } // end of the case: non-leaf query node.  
 }
@@ -503,12 +609,17 @@ template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::
 FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 		   Vector *query_regression_estimates,
+		   Vector *query_magnitude_weight_diagrams,
+		   Vector *query_influence_values,
 		   Matrix &numerator_l, Matrix &numerator_e, 
 		   Vector &numerator_used_error, Vector &numerator_n_pruned,
 		   ArrayList<Matrix> &denominator_l, 
 		   ArrayList<Matrix> &denominator_e,
 		   Vector &denominator_used_error, 
-		   Vector &denominator_n_pruned) {
+		   Vector &denominator_n_pruned,
+		   ArrayList<Matrix> &weight_diagram_numerator_l,
+		   ArrayList<Matrix> &weight_diagram_numerator_e,
+		   Vector &weight_diagram_used_error) {
   
   LprQStat &q_stat = qnode->stat();
 
@@ -539,6 +650,12 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
       la::AddTo(q_stat.postponed_denominator_l_, &(denominator_l[q]));
       la::AddTo(q_stat.postponed_denominator_e_, &(denominator_e[q]));
 
+      // Incorporate the postponed information for the weight diagram.
+      la::AddTo(q_stat.postponed_weight_diagram_numerator_l_,
+		&(weight_diagram_numerator_l[q]));
+      la::AddTo(q_stat.postponed_weight_diagram_numerator_e_,
+		&(weight_diagram_numerator_e[q]));
+
       // After incorporating all of the postponed information,
       // finalize the regression estimate by solving the appropriate
       // linear system (B^T W(q) B) z(q) = B^T W(q) Y for z(q) and
@@ -553,6 +670,26 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	(dimension_, lpr_order_, query_point, query_point_expansion.ptr());
       (*query_regression_estimates)[q] = la::Dot(query_point_expansion,
 						 least_squares_solution);
+      
+      // Now we compute the magnitude of the weight diagram for each
+      // query point.
+      Vector pseudo_inverse_times_query_expansion;
+      Vector intermediate_product;
+      la::MulInit(pseudoinverse_denominator, query_point_expansion,
+		  &pseudo_inverse_times_query_expansion);
+      la::MulInit(weight_diagram_numerator_e[q],
+		  pseudo_inverse_times_query_expansion, &intermediate_product);
+      (*query_magnitude_weight_diagrams)[q] =
+	sqrt(la::Dot(pseudo_inverse_times_query_expansion, 
+		     intermediate_product));
+
+      // Compute the influence value at each point (if it belongs to
+      // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
+      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
+      if(query_influence_values != NULL) {
+	(*query_influence_values)[q] =
+	  la::Dot(query_point_expansion, pseudo_inverse_times_query_expansion);
+      }
     }
   }
   else {
@@ -579,14 +716,30 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
               &(q_right_stat.postponed_denominator_l_));
     la::AddTo(q_stat.postponed_denominator_e_,
               &(q_right_stat.postponed_denominator_e_));
-    
+
+    // Push down approximations for the weight diagram.
+    la::AddTo(q_stat.postponed_weight_diagram_numerator_l_,
+	      &(q_left_stat.postponed_weight_diagram_numerator_l_));
+    la::AddTo(q_stat.postponed_weight_diagram_numerator_e_,
+	      &(q_left_stat.postponed_weight_diagram_numerator_e_));
+    la::AddTo(q_stat.postponed_weight_diagram_numerator_l_,
+	      &(q_right_stat.postponed_weight_diagram_numerator_l_));   
+    la::AddTo(q_stat.postponed_weight_diagram_numerator_e_, 
+	      &(q_right_stat.postponed_weight_diagram_numerator_e_));
+
     FinalizeQueryTree_(qnode->left(), qset, query_regression_estimates,
+		       query_magnitude_weight_diagrams, query_influence_values,
 		       numerator_l, numerator_e, numerator_used_error, 
 		       numerator_n_pruned, denominator_l, denominator_e, 
-		       denominator_used_error, denominator_n_pruned);
+		       denominator_used_error, denominator_n_pruned,
+		       weight_diagram_numerator_l, weight_diagram_numerator_e, 
+		       weight_diagram_used_error);
     FinalizeQueryTree_(qnode->right(), qset, query_regression_estimates,
+		       query_magnitude_weight_diagrams, query_influence_values,
 		       numerator_l, numerator_e, numerator_used_error, 
 		       numerator_n_pruned, denominator_l, denominator_e, 
-		       denominator_used_error, denominator_n_pruned);
+		       denominator_used_error, denominator_n_pruned,
+		       weight_diagram_numerator_l, weight_diagram_numerator_e,
+		       weight_diagram_used_error);
   }
 }
