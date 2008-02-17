@@ -490,9 +490,9 @@ class DenseLpr {
     void DualtreeLprCanonical_
     (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
      Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
-     Vector &numerator_n_pruned,
-     ArrayList<Matrix> &denominator_l, ArrayList<Matrix> &denominator_e,
-     Vector &denominator_used_error, Vector &denominator_n_pruned);
+     Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
+     ArrayList<Matrix> &denominator_e, Vector &denominator_used_error, 
+     Vector &denominator_n_pruned);
   
     /** @brief Finalize the regression estimates.
      */
@@ -653,6 +653,7 @@ class DenseLpr {
 	ComputeVariance_();
       }
       
+      // Compute the confidence band around each query point.
       ComputeConfidenceBands_(queries, query_regression_estimates,
 			      query_confidence_bands,
 			      query_magnitude_weight_diagrams);
@@ -692,10 +693,10 @@ class DenseLpr {
 		 ArrayList<DRange> *query_confidence_bands,
 		 Vector *query_magnitude_weight_diagrams) {
       
-      fx_timer_start(module_, "fast_lpr_prediction_time");
+      fx_timer_start(module_, "dense_lpr_prediction_time");
       ComputeMain_(queries, query_regression_estimates, query_confidence_bands,
 		   query_magnitude_weight_diagrams, NULL);
-      fx_timer_stop(module_, "fast_lpr_prediction_time");
+      fx_timer_stop(module_, "dense_lpr_prediction_time");
     }
 
     /** @brief Initialize with the given reference set and the

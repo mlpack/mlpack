@@ -18,7 +18,7 @@ class RelativePruneLpr {
 			 double &numerator_used_error,
 			 double &numerator_n_pruned,
 			 Matrix &denominator_dl, Matrix &denominator_de, 
-			 double &denominator_used_error, 
+			 double &denominator_used_error,
 			 double &denominator_n_pruned) {
       
       Vector tmp_numerator_dl;
@@ -50,7 +50,7 @@ class RelativePruneLpr {
       la::AddOverwrite(qnode->stat().postponed_numerator_l_, numerator_dl,
 		       &tmp_numerator_dl);
       double new_numerator_norm_l = qnode->stat().numerator_norm_l_ + 
-	MatrixUtil::EntrywiseLpNorm(tmp_numerator_dl, 2);
+	MatrixUtil::EntrywiseLpNorm(tmp_numerator_dl, 1);
       double numerator_allowed_err = 
 	(relative_error * new_numerator_norm_l - 
 	 qnode->stat().numerator_used_error_) /
@@ -61,7 +61,7 @@ class RelativePruneLpr {
       la::AddOverwrite(qnode->stat().postponed_denominator_l_, denominator_dl,
 		       &tmp_denominator_dl);
       double new_denominator_norm_l = qnode->stat().denominator_norm_l_ + 
-	MatrixUtil::EntrywiseLpNorm(tmp_denominator_dl, 2);
+	MatrixUtil::EntrywiseLpNorm(tmp_denominator_dl, 1);
       double denominator_allowed_err = 
 	(relative_error * new_denominator_norm_l - 
 	 qnode->stat().denominator_used_error_) /
