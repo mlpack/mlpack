@@ -68,7 +68,7 @@ for sigma_epoch = 1:num_sigma_epochs
     latestSVM = ...
 	svmltrain(latestSVM, 'funknet');
     
-    load loocv_error.txt
+    loocv_error = load('/tmp/niche/loocv_error.txt');
 
     C_array(C_epoch) = C;
     C = C * C_grow;
