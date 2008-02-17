@@ -171,6 +171,7 @@ class DenseLpr {
 	  la::AddOverwrite(left_stat.sum_data_outer_products_,
 			   right_stat.sum_data_outer_products_,
 			   &sum_data_outer_products_);
+
 	  sum_data_outer_products_error_norm_ =
 	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	  sum_data_outer_products_alloc_norm_ =
@@ -763,8 +764,7 @@ class DenseLpr {
       FILE *stream = stdout;
       const char *fname = NULL;
       
-      if((fname = fx_param_str(module_, 
-			       "fast_lpr_output", 
+      if((fname = fx_param_str(module_, "fast_lpr_output",
 			       "fast_lpr_output.txt")) != NULL) {
 	stream = fopen(fname, "w+");
       }
