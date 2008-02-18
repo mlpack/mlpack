@@ -147,7 +147,7 @@ class FarFieldExpansion {
    *  @param order The order up to which the far-field moments should be 
    *               accumulated up to.
    */
-  void Accumulate(const Vector &reference_points, double weight, int order);
+  void Accumulate(const Vector &reference_point, double weight, int order);
 
   /** @brief Accumulates the far field moment represented by the given
    *         reference data into the coefficients.
