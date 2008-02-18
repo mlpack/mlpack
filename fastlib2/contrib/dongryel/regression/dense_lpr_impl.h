@@ -13,7 +13,7 @@ void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
 
   dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
   dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-  kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
+  kernel_value_range = kernel_aux_.kernel_.RangeUnnormOnSq(dsqd_range);
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -51,8 +51,27 @@ template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::
 ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
   
+  // Initialize the center of expansions and bandwidth for series
+  // expansion.
+  rnode->stat().Init(kernel_aux_, row_length_);
+  for(index_t j = 0; j < row_length_; j++) {
+    rnode->bound().CalculateMidpoint
+      (rnode->stat().target_weighted_data_far_field_expansion_[j].
+       get_center());
+
+    for(index_t i = 0; i < row_length_; i++) {
+      rnode->bound().CalculateMidpoint
+	(rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	 get_center());
+    }
+  }
+
   if(rnode->is_leaf()) {
     
+    // Temporary vector for computing the reference point expansion.
+    Vector reference_point_expansion;
+    reference_point_expansion.Init(row_length_);
+
     // Clear the sum statistics before accumulating.
     (rnode->stat().sum_target_weighted_data_).SetZero();
 
@@ -62,7 +81,8 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the pointer to the current reference point.
-      const double *r_col = rset_.GetColumnPtr(r);
+      Vector r_col;
+      rset_.MakeColumnVector(r, &r_col);
 
       // Get the pointer to the reference column to be updated.
       double *r_target_weighted_by_coordinates = 
@@ -70,12 +90,30 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 
       // Compute the multiindex expansion of the given reference point.
       MultiIndexUtil::ComputePointMultivariatePolynomial
-	(dimension_, lpr_order_, r_col, r_target_weighted_by_coordinates);
+	(dimension_, lpr_order_, r_col.ptr(), reference_point_expansion.ptr());
       
       // Scale the expansion by the reference target.
-      la::Scale(row_length_, rset_targets_[r], 
-		r_target_weighted_by_coordinates);
+      la::ScaleOverwrite
+	(row_length_, rset_targets_[r], reference_point_expansion.ptr(),
+	 r_target_weighted_by_coordinates);
       
+      // Accumulate the far field coefficient for the target weighted
+      // reference vector and the outerproduct. The outer loop
+      // iterates over each column and the inner iterates over each
+      // row.
+      for(index_t j = 0; j < row_length_; j++) {
+	rnode->stat().target_weighted_data_far_field_expansion_[j].
+	  Accumulate(r_col, r_target_weighted_by_coordinates[j],
+		     kernel_aux_.sea_.get_max_order());
+
+	for(index_t i = 0; i < row_length_; i++) {
+	  rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	    Accumulate(r_col, reference_point_expansion[j] *
+		       reference_point_expansion[i],
+		       kernel_aux_.sea_.get_max_order());
+	}
+      }
+
       // Tally up the weighted targets.
       la::AddTo(row_length_, r_target_weighted_by_coordinates,
 		(rnode->stat().sum_target_weighted_data_).ptr());
@@ -92,14 +130,36 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
     // Recursively call the function with left and right and merge.
     ComputeTargetWeightedReferenceVectors_(rnode->left());
     ComputeTargetWeightedReferenceVectors_(rnode->right());
-    
+   
+    // Compute the sum of the sub sums.
     la::AddOverwrite((rnode->left()->stat()).sum_target_weighted_data_,
 		     (rnode->right()->stat()).sum_target_weighted_data_,
 		     &(rnode->stat().sum_target_weighted_data_));
     rnode->stat().sum_target_weighted_data_error_norm_ =
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
     rnode->stat().sum_target_weighted_data_alloc_norm_ =
-      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1); 
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
+
+    // Translate far-field moments of the child to form the parent.
+    for(index_t j = 0; j < row_length_; j++) {
+      rnode->stat().target_weighted_data_far_field_expansion_[j].
+	TranslateFromFarField(rnode->left()->stat().
+			      target_weighted_data_far_field_expansion_[j]);
+      rnode->stat().target_weighted_data_far_field_expansion_[j].
+	TranslateFromFarField(rnode->right()->stat().
+			      target_weighted_data_far_field_expansion_[j]);
+      
+      for(index_t i = 0; i < row_length_; i++) {
+	rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	  TranslateFromFarField
+	  (rnode->left()->stat().
+	   data_outer_products_far_field_expansion_[j][i]);
+	rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	  TranslateFromFarField
+	  (rnode->right()->stat().
+	   data_outer_products_far_field_expansion_[j][i]);
+      }
+    }
   }
 }
 
@@ -256,7 +316,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
       // Pairwise distance and kernel value and kernel value weighted
       // by the reference target training value.
       double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
-      double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
+      double kernel_value = kernel_aux_.kernel_.EvalUnnormOnSq(dsqd);
       double target_weighted_kernel_value = rset_targets_[r] * kernel_value;
       
       // Loop over each column of the matrix to be updated.
@@ -381,7 +441,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   
   // Compute distance ranges and kernel ranges first.
   SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range);
-  
+
   // Try finite difference pruning first
   if(TPruneRule::Prunable
      (internal_relative_error_, 
@@ -413,6 +473,45 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 	      &(qnode->stat().postponed_weight_diagram_numerator_e_));
     qnode->stat().postponed_weight_diagram_numerator_used_error_ += 
       delta_weight_diagram_numerator_used_error;
+    return;
+  }
+
+  // For the Epanechnikov kernel, we can prune using the far field
+  // moments if the maximum distance between the two nodes is within
+  // the bandwidth! This if-statement does not apply to the Gaussian
+  // kernel, so I need to fix in the future!
+  if(kernel_aux_.kernel_.bandwidth_sq() >= dsqd_range.hi) {
+
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+      for(index_t j = 0; j < row_length_; j++) {
+
+	numerator_e.set
+	  (j, q, numerator_e.get(j, q) + 
+	   rnode->stat().target_weighted_data_far_field_expansion_[j].
+	   EvaluateField(qset, q, 2));
+
+	for(index_t i = 0; i < row_length_; i++) {
+	  denominator_e[q].set
+	    (j, i, denominator_e[q].get(j, i) +
+	     rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	     EvaluateField(qset, q, 2));
+	  weight_diagram_numerator_e[q].set
+	    (j, i, weight_diagram_numerator_e[q].get(j, i) +
+	     rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	     EvaluateField(qset, q, 2));
+	}
+      }
+    }
+    
+    la::AddTo(numerator_dl, &(qnode->stat().postponed_numerator_l_));
+    qnode->stat().postponed_numerator_n_pruned_ += delta_numerator_n_pruned;
+    
+    la::AddTo(denominator_dl, &(qnode->stat().postponed_denominator_l_));
+    qnode->stat().postponed_denominator_n_pruned_ += 
+      delta_denominator_n_pruned;
+
+    la::AddTo(weight_diagram_numerator_dl, 
+	      &(qnode->stat().postponed_weight_diagram_numerator_l_));
     return;
   }
 
