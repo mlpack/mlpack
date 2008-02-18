@@ -4,7 +4,9 @@
  *  @see kde_main.cc
  *
  *  @bug No known bugs. However, This code works only for nonnegative
- *  reference training values and nonnegative reference dataset.
+ *  reference training values and nonnegative reference dataset and
+ *  the Epanechnikov kernel. The Gaussian kernel extension for
+ *  supporting the series expansion is forth-coming.
  */
 
 #ifndef DENSE_LPR_H
@@ -42,7 +44,7 @@
  *    fast_kde.Compute(&results);
  *  @endcode
  */
-template<typename TKernel, typename TPruneRule>
+template<typename TKernelAux, typename TPruneRule>
 class DenseLpr {
   
   FORBID_ACCIDENTAL_COPIES(DenseLpr);
@@ -70,6 +72,14 @@ class DenseLpr {
 	 */
         double sum_data_outer_products_alloc_norm_;
       
+        /** @brief The far field expansion created by the outer
+	 *         products. The (i, j)-th element denotes the
+	 *         far-field expansion of the (i, j)-th component of
+	 *         the sum_data_outer_products_ matrix.
+	 */
+        ArrayList< ArrayList<typename TKernelAux::TFarFieldExpansion> >
+	  data_outer_products_far_field_expansion_;
+      
         /** @brief The vector summing up the reference polynomial term
 	 *         weighted by its target training value (i.e. B^T Y).
 	 */
@@ -85,6 +95,30 @@ class DenseLpr {
 	 */
         double sum_target_weighted_data_alloc_norm_;
 
+        /** @brief The far field expansion created by the target
+	 *         weighted reference set. The i-th element denotes
+	 *         the far-field expansion of the i-th component of
+	 *         the sum_target_weighted_data_ vector.
+	 */
+        ArrayList<typename TKernelAux::TFarFieldExpansion>
+	  target_weighted_data_far_field_expansion_;
+
+        /** @brief Initialize the far field expansion objects with the
+	 *	   kernel auxiliary object. You need to call this
+	 *	   function before doing anything to the expansion
+	 *	   object!
+	 */
+        void Init(const TKernelAux &ka, int matrix_dimension) {
+
+	  for(index_t j = 0; j < matrix_dimension; j++) {
+	    target_weighted_data_far_field_expansion_[j].Init(ka);
+
+	    for(index_t i = 0; i < matrix_dimension; i++) {
+	      data_outer_products_far_field_expansion_[j][i].Init(ka);
+	    }
+	  }
+	}
+
         /** @brief Basic memory allocation stuffs.
 	 *
 	 *  @param dimension The dimensionality of the dataset.
@@ -96,7 +130,13 @@ class DenseLpr {
 	    (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 
 	  sum_data_outer_products_.Init(matrix_dimension, matrix_dimension);
+	  data_outer_products_far_field_expansion_.Init(matrix_dimension);
+	  for(index_t i = 0; i < matrix_dimension; i++) {
+	    data_outer_products_far_field_expansion_[i].Init(matrix_dimension);
+	  }
+
 	  sum_target_weighted_data_.Init(matrix_dimension);
+	  target_weighted_data_far_field_expansion_.Init(matrix_dimension);
 
 	  sum_data_outer_products_error_norm_ = 0;
 	  sum_data_outer_products_alloc_norm_ = 0;
@@ -464,7 +504,7 @@ class DenseLpr {
 
     /** @brief The kernel function to use.
      */
-    TKernel kernel_;
+    TKernelAux kernel_aux_;
  
     /** @brief The z-score for the confidence band.
      */
@@ -821,7 +861,8 @@ class DenseLpr {
       fx_timer_stop(NULL, "dense_lpr_reference_tree_construct");
       
       // Initialize the kernel.
-      kernel_.Init(fx_param_double_req(NULL, "bandwidth"));
+      double bandwidth = fx_param_double_req(NULL, "bandwidth");
+      kernel_aux_.Init(bandwidth, 2, dimension_);
 
       // initialize the reference side statistics.
       target_weighted_rset_.Init(row_length_, rset_.n_cols());

@@ -4,6 +4,7 @@
  */
 
 #include "mlpack/kde/dataset_scaler.h"
+#include "mlpack/series_expansion/kernel_aux.h"
 #include "dense_lpr.h"
 #include "naive_lpr.h"
 #include "quick_prune_lpr.h"
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]) {
 
   // Do fast algorithm.
   Vector fast_lpr_results;
-  DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
+  DenseLpr<EpanKernelAux, RelativePruneLpr> fast_lpr;
   fast_lpr.Init(references, reference_targets, local_linear_module);
   fast_lpr.PrintDebug();
   fast_lpr.get_regression_estimates(&fast_lpr_results);
