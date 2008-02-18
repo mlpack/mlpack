@@ -56,7 +56,7 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
   
   // Initialize the center of expansions and bandwidth for series
   // expansion.
-  rnode->stat().Init(kernel_aux_, weight_diagram_kernel_aux_, row_length_);
+  rnode->stat().Init(kernel_aux_, row_length_);
   for(index_t j = 0; j < row_length_; j++) {
     rnode->bound().CalculateMidpoint
       (rnode->stat().target_weighted_data_far_field_expansion_[j].
@@ -65,9 +65,6 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
     for(index_t i = 0; i < row_length_; i++) {
       rnode->bound().CalculateMidpoint
 	(rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	 get_center());
-      rnode->bound().CalculateMidpoint
-	(rnode->stat().scaled_data_outer_products_far_field_expansion_[j][i].
 	 get_center());
     }
   }
@@ -117,10 +114,6 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 	    Accumulate(r_col, reference_point_expansion[j] *
 		       reference_point_expansion[i],
 		       kernel_aux_.sea_.get_max_order());
-	  rnode->stat().scaled_data_outer_products_far_field_expansion_[j][i].
-	    Accumulate(r_col, reference_point_expansion[j] *
-		       reference_point_expansion[i],
-		       weight_diagram_kernel_aux_.sea_.get_max_order());
 	}
       }
 
@@ -170,17 +163,6 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 	  TranslateFromFarField
 	  (rnode->right()->stat().
 	   data_outer_products_far_field_expansion_[j][i]);
-
-	// Then the far field moments of oute rproduct using the
-	// bandwidth divided by the square root of 2.
-	rnode->stat().scaled_data_outer_products_far_field_expansion_[j][i].
-	  TranslateFromFarField
-	  (rnode->left()->stat().
-	   scaled_data_outer_products_far_field_expansion_[j][i]);	
-	rnode->stat().scaled_data_outer_products_far_field_expansion_[j][i].
-	  TranslateFromFarField
-	  (rnode->right()->stat().
-	   scaled_data_outer_products_far_field_expansion_[j][i]);	
       }
     }
   }
@@ -508,7 +490,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   // moments if the maximum distance between the two nodes is within
   // the bandwidth! This if-statement does not apply to the Gaussian
   // kernel, so I need to fix in the future!
-  if(weight_diagram_kernel_aux_.kernel_.bandwidth_sq() >= dsqd_range.hi &&
+  if(kernel_aux_.kernel_.bandwidth_sq() >= dsqd_range.hi &&
      rnode->count() > 32) {
 
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -527,7 +509,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 	  weight_diagram_numerator_e[q].set
 	    (j, i, weight_diagram_numerator_e[q].get(j, i) +
 	     rnode->stat().
-	     scaled_data_outer_products_far_field_expansion_[j][i].
+	     data_outer_products_far_field_expansion_[j][i].
 	     EvaluateField(qset, q, 2));
 	}
       }
@@ -548,7 +530,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 	qnode->stat().postponed_weight_diagram_numerator_l_.set
 	  (j, i, qnode->stat().postponed_weight_diagram_numerator_l_.get(j, i) 
 	   + rnode->stat().
-	   scaled_data_outer_products_far_field_expansion_[j][i].
+	   data_outer_products_far_field_expansion_[j][i].
 	   EvaluateField(furthest_point_in_qnode, 2));
       }
     }
