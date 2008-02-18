@@ -36,8 +36,10 @@ sigma_grow = 1.1;
 %order_init = 1;
 %order_inc = 1;
 
-num_C_epochs = 81;
-C_init = 1e-2;
+num_C_epochs = 20;
+%81;
+C_init = 20;
+%1e-2;
 C_grow = 1.1;
 
 
