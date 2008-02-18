@@ -55,18 +55,22 @@ int main(int argc, char *argv[]) {
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Do fast algorithm.
+  printf("Running the fast algorithm...\n");
   Vector fast_lpr_results;
   DenseLpr<EpanKernelAux, RelativePruneLpr> fast_lpr;
   fast_lpr.Init(references, reference_targets, local_linear_module);
   fast_lpr.PrintDebug();
   fast_lpr.get_regression_estimates(&fast_lpr_results);
+  printf("Finished running the fast algorithm...\n");
 
   // Do naive algorithm.
+  printf("Running the naive algorithm...\n");
   Vector naive_lpr_results;
   NaiveLpr<EpanKernel> naive_lpr;
   naive_lpr.Init(references, reference_targets, local_linear_module);
   naive_lpr.PrintDebug();
   naive_lpr.get_regression_estimates(&naive_lpr_results);
+  printf("Finished running the naive algorithm...\n");
 
   printf("Maximum relative difference: %g\n",
 	 MatrixUtil::MaxRelativeDifference(naive_lpr_results,

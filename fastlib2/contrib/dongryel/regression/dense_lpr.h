@@ -429,6 +429,12 @@ class DenseLpr {
 
     ////////// Private Member Variables //////////
 
+    /** @brief The number of finite difference prunes. */
+    int num_finite_difference_prunes_;
+
+    /** @brief The number of far-field prunes. */
+    int num_far_field_prunes_;
+
     /** @brief The local polynomial order. */
     int lpr_order_;
 
@@ -757,10 +763,17 @@ class DenseLpr {
 		      Vector *query_magnitude_weight_diagrams,
 		      Vector *query_influence_values) {
  
+      // Clear prune statistics.
+      num_finite_difference_prunes_ = num_far_field_prunes_ = 0;
+
       // This is the basic N-body based computation.
       BasicCompute_(queries, query_regression_estimates,
 		    query_confidence_bands, query_magnitude_weight_diagrams,
 		    query_influence_values);
+
+      printf("Number of finite difference prunes: %d\n",
+	     num_finite_difference_prunes_);
+      printf("Number of far-field prunes: %d\n", num_far_field_prunes_);
 
       // If the reference dataset is being used for training, then
       // compute variance and degrees of freedom.

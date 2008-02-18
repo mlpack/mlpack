@@ -122,12 +122,12 @@ class RelativePruneLpr {
       denominator_used_error = kernel_error *
 	(rnode->stat().sum_data_outer_products_error_norm_);
       denominator_n_pruned = rnode->stat().sum_data_outer_products_alloc_norm_;
-      
+
       // The total norm error for each query point for approximating
       // the B^T W(q)^2 B matrix.
       weight_diagram_numerator_used_error = squared_kernel_error *
 	(rnode->stat().sum_data_outer_products_error_norm_);
-      
+
       // Check pruning condition.
       return (numerator_used_error <= numerator_allowed_err &&
 	      denominator_used_error <= denominator_allowed_err &&

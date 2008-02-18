@@ -473,6 +473,9 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 	      &(qnode->stat().postponed_weight_diagram_numerator_e_));
     qnode->stat().postponed_weight_diagram_numerator_used_error_ += 
       delta_weight_diagram_numerator_used_error;
+
+    // Keep track of the number of finite difference prunes.
+    num_finite_difference_prunes_++;
     return;
   }
 
@@ -480,7 +483,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   // moments if the maximum distance between the two nodes is within
   // the bandwidth! This if-statement does not apply to the Gaussian
   // kernel, so I need to fix in the future!
-  if(kernel_aux_.kernel_.bandwidth_sq() >= dsqd_range.hi) {
+  if(kernel_aux_.kernel_.bandwidth_sq() >= dsqd_range.hi &&
+     rnode->count() > 32) {
 
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
       for(index_t j = 0; j < row_length_; j++) {
@@ -512,6 +516,9 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 
     la::AddTo(weight_diagram_numerator_dl, 
 	      &(qnode->stat().postponed_weight_diagram_numerator_l_));
+
+    // Keep track of the far-field prunes.
+    num_far_field_prunes_++;
     return;
   }
 
