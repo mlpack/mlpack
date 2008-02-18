@@ -7,7 +7,20 @@ mybasis = create_bspline_basis([1/240 1], 30, 4);
 basis_curves = eval_basis(argvals, mybasis);
 basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
-load /home/niche/neurofunk/bci_comp_III_Wads_2004/BCI_Comp_III_Wads_2004/responses.mat
+responses_filename = ['../../../../neurofunk/' ...
+		    'bci_comp_III_Wads_2004/' ...
+		    'BCI_Comp_III_Wads_2004/responses.mat'];
+		    
+		    
+	    
+responses = load(responses_filename);
+return
+responses = responses(:,:,:,cz);
+
+responses = ...
+    reshape(a, [size(responses, 1) * size(responses, 2) ...
+		size(responses, 3)]);  
+return
 
 myfdPar = fdPar(mybasis, 2, 0);
 
@@ -28,3 +41,4 @@ pca_results = pca_fd(myfd, 30, myfdPar);
 pc_curves = basis_curves * pc_coef;
 ic_curves = basis_curves * ic_coef_pos;
 
+%}
