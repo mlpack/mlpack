@@ -4,15 +4,18 @@
 #error "This file is not a public header file!"
 #endif
 
+#include "mlpack/series_expansion/bounds_aux.h"
 #include "matrix_util.h"
 
 template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
 (QueryTree *qnode, ReferenceTree *rnode, DRange &dsqd_range, 
- DRange &kernel_value_range) {
+ DRange &kernel_value_range, Vector *furthest_point_in_qnode) {
 
+  furthest_point_in_qnode->Init(dimension_);
   dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
-  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
+  bounds_aux::MaxDistanceSq(qnode->bound(), rnode->bound(),
+			    *furthest_point_in_qnode, dsqd_range.hi);
   kernel_value_range = kernel_aux_.kernel_.RangeUnnormOnSq(dsqd_range);
 }
 
@@ -53,7 +56,7 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
   
   // Initialize the center of expansions and bandwidth for series
   // expansion.
-  rnode->stat().Init(kernel_aux_, row_length_);
+  rnode->stat().Init(kernel_aux_, weight_diagram_kernel_aux_, row_length_);
   for(index_t j = 0; j < row_length_; j++) {
     rnode->bound().CalculateMidpoint
       (rnode->stat().target_weighted_data_far_field_expansion_[j].
@@ -62,6 +65,9 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
     for(index_t i = 0; i < row_length_; i++) {
       rnode->bound().CalculateMidpoint
 	(rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	 get_center());
+      rnode->bound().CalculateMidpoint
+	(rnode->stat().scaled_data_outer_products_far_field_expansion_[j][i].
 	 get_center());
     }
   }
@@ -111,6 +117,10 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 	    Accumulate(r_col, reference_point_expansion[j] *
 		       reference_point_expansion[i],
 		       kernel_aux_.sea_.get_max_order());
+	  rnode->stat().scaled_data_outer_products_far_field_expansion_[j][i].
+	    Accumulate(r_col, reference_point_expansion[j] *
+		       reference_point_expansion[i],
+		       weight_diagram_kernel_aux_.sea_.get_max_order());
 	}
       }
 
@@ -150,6 +160,8 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 			      target_weighted_data_far_field_expansion_[j]);
       
       for(index_t i = 0; i < row_length_; i++) {
+
+	// First the far field moments of outer product using the bandwidth
 	rnode->stat().data_outer_products_far_field_expansion_[j][i].
 	  TranslateFromFarField
 	  (rnode->left()->stat().
@@ -158,6 +170,17 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 	  TranslateFromFarField
 	  (rnode->right()->stat().
 	   data_outer_products_far_field_expansion_[j][i]);
+
+	// Then the far field moments of oute rproduct using the
+	// bandwidth divided by the square root of 2.
+	rnode->stat().scaled_data_outer_products_far_field_expansion_[j][i].
+	  TranslateFromFarField
+	  (rnode->left()->stat().
+	   scaled_data_outer_products_far_field_expansion_[j][i]);	
+	rnode->stat().scaled_data_outer_products_far_field_expansion_[j][i].
+	  TranslateFromFarField
+	  (rnode->right()->stat().
+	   scaled_data_outer_products_far_field_expansion_[j][i]);	
       }
     }
   }
@@ -440,7 +463,9 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   weight_diagram_numerator_de.Init(row_length_, row_length_);
   
   // Compute distance ranges and kernel ranges first.
-  SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range);
+  Vector furthest_point_in_qnode;
+  SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range,
+			 &furthest_point_in_qnode);
 
   // Try finite difference pruning first
   if(TPruneRule::Prunable
@@ -483,7 +508,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   // moments if the maximum distance between the two nodes is within
   // the bandwidth! This if-statement does not apply to the Gaussian
   // kernel, so I need to fix in the future!
-  if(kernel_aux_.kernel_.bandwidth_sq() >= dsqd_range.hi &&
+  if(weight_diagram_kernel_aux_.kernel_.bandwidth_sq() >= dsqd_range.hi &&
      rnode->count() > 32) {
 
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -501,21 +526,36 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 	     EvaluateField(qset, q, 2));
 	  weight_diagram_numerator_e[q].set
 	    (j, i, weight_diagram_numerator_e[q].get(j, i) +
-	     rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	     rnode->stat().
+	     scaled_data_outer_products_far_field_expansion_[j][i].
 	     EvaluateField(qset, q, 2));
 	}
       }
     }
-    
-    la::AddTo(numerator_dl, &(qnode->stat().postponed_numerator_l_));
+
+    for(index_t j = 0; j < row_length_; j++) {
+      
+      qnode->stat().postponed_numerator_l_[j] += 
+	rnode->stat().target_weighted_data_far_field_expansion_[j].
+	EvaluateField(furthest_point_in_qnode, 2);
+
+      for(index_t i = 0; i < row_length_; i++) {
+
+	qnode->stat().postponed_denominator_l_.set
+	  (j, i, qnode->stat().postponed_denominator_l_.get(j, i) +
+	   rnode->stat().data_outer_products_far_field_expansion_[j][i].
+	   EvaluateField(furthest_point_in_qnode, 2));
+	qnode->stat().postponed_weight_diagram_numerator_l_.set
+	  (j, i, qnode->stat().postponed_weight_diagram_numerator_l_.get(j, i) 
+	   + rnode->stat().
+	   scaled_data_outer_products_far_field_expansion_[j][i].
+	   EvaluateField(furthest_point_in_qnode, 2));
+      }
+    }
+
     qnode->stat().postponed_numerator_n_pruned_ += delta_numerator_n_pruned;
-    
-    la::AddTo(denominator_dl, &(qnode->stat().postponed_denominator_l_));
     qnode->stat().postponed_denominator_n_pruned_ += 
       delta_denominator_n_pruned;
-
-    la::AddTo(weight_diagram_numerator_dl, 
-	      &(qnode->stat().postponed_weight_diagram_numerator_l_));
 
     // Keep track of the far-field prunes.
     num_far_field_prunes_++;
