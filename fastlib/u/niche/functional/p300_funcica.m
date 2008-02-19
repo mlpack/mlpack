@@ -96,7 +96,6 @@ centered_data_coef = ...
     repmat(getcoef(mean_result.meanfd), 1, size(getcoef(myfd), 2));
 centered_myfd = fd(centered_data_coef, mybasis);
 
-basis_curves = eval_basis(t, mybasis);
 centered_data_curves = basis_curves * getcoef(centered_myfd);
 
 
