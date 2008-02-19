@@ -63,7 +63,7 @@ responses = ...
 is_target = ...
     reshape(is_target, [num_epochs * num_flashes * num_trials, ...
 		    1])';
-
+%{
 target_data = responses(:, find(is_target));
 nontarget_data = responses(:,find(~is_target));
 
@@ -72,7 +72,9 @@ selected_indices = selected_indices(1:length(target_data));
 nontarget_data = nontarget_data(:, selected_indices);
 
 data = [target_data nontarget_data];
+%}
 
+data = responses(:,1:5100);
 
 
 t = 1/240:1/240:1;
@@ -88,21 +90,44 @@ basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 myfdPar = fdPar(mybasis, 2, 0);
 
 myfd = data2fd(data, t, mybasis);
+mean_result = pca_fd(myfd, 0);
+centered_data_coef = ...
+    getcoef(myfd) - ...
+    repmat(getcoef(mean_result.meanfd), 1, size(getcoef(myfd), 2));
+centered_myfd = fd(centered_data_coef, mybasis);
 
 basis_curves = eval_basis(t, mybasis);
-data_curves = basis_curves * getcoef(myfd);
+centered_data_curves = basis_curves * getcoef(centered_myfd);
 
 
 myfdPar = fdPar(mybasis, 2, 1e-7);
-pca_results = pca_fd(myfd, 30, myfdPar);
+pca_results = pca_fd(centered_myfd, 30, myfdPar);
 
-[ic_curves, ic_coef, Y, pc_coef, pc_curves, pc_scores, W] = ...
-    funcica(t, myfd, 30, basis_curves, myfdPar, ...
+[ic_curves, ic_coef, ic_scores, ...
+ pc_coef, pc_curves, pc_scores, W] = ...
+    funcica(t, centered_myfd, 30, basis_curves, myfdPar, ...
 	    basis_inner_products);
 
-plot(t, -ic_curves(:,6));
+%plot(t, -ic_curves(:,6));
 
-%pc_curves = basis_curves * pc_coef;
-%ic_curves = basis_curves * ic_coef_pos;
+for i = 1:size(ic_curves,2)
+  scale_up_factor = ...
+      1 / sqrt(l2_fnorm(t, ic_curves(:,i), ic_curves(:,i)));
+  ic_curves(:,i) = scale_up_factor * ic_curves(:,i);
+  ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
+end
 
-%}
+% given a set of curves, identify component curves of variation
+% once we have these curves, see how well each curve differentiates
+% the data
+
+% decision rule - given 6 curves (corresponding to rows or
+% columns), pick the curve with the greatest score for a particular
+% independent component curve
+% consider each trial as indepedent and take a vote over the 1st k
+% trials for k <= 15
+
+% re-run experiments with gene expression data using correct ic
+% scores
+
+
