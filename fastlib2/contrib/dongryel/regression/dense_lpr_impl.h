@@ -764,7 +764,7 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	  weight_diagram_numerator_e[q].set
 	    (j, i, weight_diagram_numerator_e[q].get(j, i) +
 	     qnode->stat().postponed_moment_weight_diagram_numerator_e_[j][i].
-	     ComputeKernelSum(q_col));
+	     ComputeSquaredKernelSum(q_col));
 	}
       }
 
