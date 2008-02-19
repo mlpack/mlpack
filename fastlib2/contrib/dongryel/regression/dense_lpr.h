@@ -788,8 +788,8 @@ class DenseLpr {
      *         for a given query and a reference node pair.
      */
     void SqdistAndKernelRanges_(QueryTree *qnode, ReferenceTree *rnode,
-				DRange &dsqd_range, DRange &kernel_value_range,
-				Vector *furthest_point_in_qnode);
+				DRange &dsqd_range, 
+				DRange &kernel_value_range);
 
     /** @brief Resets bounds relevant to the given query point.
      */
