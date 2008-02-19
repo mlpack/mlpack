@@ -1,5 +1,5 @@
-function [ic_curves_pos, ic_coef_pos, Y_pos, ...
-	  sub_pc_coef, sub_pc_curves, sub_pc_scores, W_pos] = ...
+function [ic_curves_pos, ic_coef_pos, ic_scores, ...
+	  sub_pc_coef, sub_pc_curves, sub_pc_scores, W] = ...
     funcica(t, myfd_data, p, basis_curves, myfdPar, basis_inner_products);
 % funcica() - functional ICA
 % first call prelim_funcica
@@ -43,7 +43,7 @@ fprintf('p_small = %d\n', p_small);
 
 sub_pc_coef = pc_coef(:,1:p_small);
 sub_pc_curves = basis_curves * sub_pc_coef;
-E = pc_scores(:,1:p_small)';
+sub_pc_scores = pc_scores(:,1:p_small)';
 
 %{
 inv_pc_coef = inv(pc_coef);
@@ -58,60 +58,30 @@ disp(sprintf('the difference is %f', maxall(calc_pc_scores' - pc_scores)));
 
 
 % check to ensure covariance matrix is orthogonal
-cov_E = cov(E');
-off_diag_max = maxall(cov_E - diag(diag(cov_E)));
+cov_sub_pc_scores = cov(sub_pc_scores');
+off_diag_max = maxall(cov_sub_pc_scores - diag(diag(cov_sub_pc_scores)));
 if off_diag_max > eps
   fprintf('covariance matrix is not orthogonal!\n');
   fprintf('off_diag_max = %f\n', off_diag_max);
-  [V,D] = eig(cov_E);
+  [V,D] = eig(cov_sub_pc_scores);
   whitening_transform = V * (D^(-.5)) * V';
 else
-  % the covariance matrix of E is already diagonal, but we need to
-  % scale it so that cov(E') is white
-  whitening_transform = diag(1./std(E'));
+  % the covariance matrix of sub_pc_scores is already diagonal, but we need to
+  % scale it so that cov(sub_pc_scores') is white
+  whitening_transform = diag(1./std(sub_pc_scores'));
 end
 
 
-white_E = whitening_transform * E;
+white_sub_pc_scores = whitening_transform * sub_pc_scores;
 
 % Use my simplified version of RADICAL
 %[Y_pos, Y_neg, post_whitening_W_pos, post_whitening_W_neg] = ...
 %    find_opt_unmixing_matrix(white_E);
 
 % Use RADICAL
-[Y_pos, W_pos] = RADICAL(white_E);
+[ic_scores, W] = RADICAL(white_sub_pc_scores);
 
-%Y = Y_pos;
-%W_pos = post_whitening_W_pos * whitening_transform;
-ic_coef_pos = (W_pos * sub_pc_coef')';
+W = W * whitening_transform;
+
+ic_coef_pos = (W * sub_pc_coef')';
 ic_curves_pos = basis_curves * ic_coef_pos;
-
-sub_pc_scores = E';
-
-%{
-W_neg = post_whitening_W_neg * whitening_transform;
-ic_coef_neg = (W_neg * sub_pc_coef')';
-
-W = W_pos;
-
-%save('YWE.mat', 'E', 'Y', 'W');
-
-h_E = zeros(p_small,1);
-h_white_E = zeros(size(h_E));
-h_Y_pos = zeros(size(h_E));
-h_Y_neg = zeros(size(h_E));
-for i = 1:p_small
-  h_E(i) = get_vasicek_entropy_estimate(E(i,:));
-  h_white_E(i) = get_vasicek_entropy_estimate(white_E(i,:));
-  h_Y_pos(i) = get_vasicek_entropy_estimate(Y_pos(i,:));
-  h_Y_neg(i) = get_vasicek_entropy_estimate(Y_neg(i,:));
-end
-
-%fprintf('joint entropy E = %f\n', sum(h_E));
-%fprintf('joint entropy white_E = %f\n', sum(h_white_E));
-fprintf('joint entropy Y = %f\n', sum(h_Y_pos));
-
-
-
-ic_curves_neg = basis_curves * ic_coef_neg;
-%}
