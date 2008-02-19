@@ -91,7 +91,6 @@ class RelativePruneLpr {
            
       // Refine the bound using the new info for the weight diagram
       // numerator matrix.
-      /*
       la::AddOverwrite(qnode->stat().postponed_weight_diagram_numerator_l_, 
 		       weight_diagram_numerator_dl,
 		       &tmp_weight_diagram_numerator_dl);
@@ -102,7 +101,6 @@ class RelativePruneLpr {
 	(relative_error * new_weight_diagram_numerator_norm_l - 
 	 qnode->stat().weight_diagram_numerator_used_error_) /
 	(denominator_total_alloc_error - qnode->stat().denominator_n_pruned_);
-      */
 
       // this is error per each query/reference pair for a fixed query
       // for the numerator and the denominator used for computing the
@@ -134,7 +132,9 @@ class RelativePruneLpr {
       // does not enforce error directly on the weight diagram
       // computation.
       return (numerator_used_error <= numerator_allowed_err &&
-	      denominator_used_error <= denominator_allowed_err);
+	      denominator_used_error <= denominator_allowed_err &&
+	      weight_diagram_numerator_used_error <= 
+	      weight_diagram_numerator_allowed_err);
     }
 };
 
