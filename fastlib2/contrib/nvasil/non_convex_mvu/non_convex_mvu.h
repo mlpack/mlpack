@@ -70,12 +70,10 @@ class NonConvexMVU {
   index_t dimension_;
   index_t knns_;
   ArrayList<double> distances_;
-  ArrayList<index_t> neighbors_;
+  ArrayList<std::pair<index_t, index_t> > neighbor_pairs_;
+  index_t num_of_pairs_;
   // Lagrange multipliers for distance constraints
   Vector lagrange_mult_; 
-  // Lagrange multiplier for the centering constraint
-  // We want the final coordinates to have zero mean
-  Vector centering_lagrange_mult_;
   double sigma_;
   double eta_;
   double gamma_;
@@ -113,24 +111,28 @@ class NonConvexMVU {
   template<int PROPLEM_TYPE>
   void LocalSearch_(double *step, Matrix &grad);
   template<int PROPLEM_TYPE>
-  void ComputeBFGS_(double *step, Matrix &grad);
+  void ComputeBFGS_(double *step, Matrix &grad, index_t memory);
   void InitBFGS();
   void UpdateBFGS_();
+  void UpdateBFGS_(index_t index_bfgs);
   template<int PROBLEM_TYPE>
   double ComputeLagrangian_(Matrix &coordinates);
   template<int PROBLEM_TYPE>
   void ComputeFeasibilityError_(double *distance_constraint, 
                                 double *centering_constraint);
   template<int PROBLEM_TYPE>
-  void ComputeRelativeFeasibilityError_(double *distance_constraint, 
-                                        double *centering_constraint);
-  template<int PROBLEM_TYPE>
   double ComputeFeasibilityError_();
   template<int PROBLEM_TYPE>
   void ComputeGradient_();
+  template<int PROBLEM_TYPE>
   double ComputeObjective_(Matrix &coord);
   void Variance_(Matrix &coord, Vector *variance);
   void RemoveMean_(Matrix &mat);
+  void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
+      ArrayList<double>  &from_tree_dist,
+      ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
+      ArrayList<double> *distances,
+      index_t *num_of_pairs);
 };
 
 #include "non_convex_mvu_impl.h"
