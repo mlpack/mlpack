@@ -222,15 +222,24 @@ class NaiveLpr {
   void ComputeConfidenceBands_(const Matrix &queries,
 			       Vector *query_regression_estimates,
 			       ArrayList<DRange> *query_confidence_bands,
-			       Vector *query_magnitude_weight_diagrams) {
+			       Vector *query_magnitude_weight_diagrams,
+			       bool queries_equal_references) {
 
     // Initialize the storage for the confidene bands.
     query_confidence_bands->Init(queries.n_cols());
     
     for(index_t q = 0; q < queries.n_cols(); q++) {
       DRange &q_confidence_band = (*query_confidence_bands)[q];
-      double spread = z_score_ * (*query_magnitude_weight_diagrams)[q] * 
-	sqrt(rset_variance_);
+      double spread;
+      
+      if(queries_equal_references) {
+	spread = z_score_ * (*query_magnitude_weight_diagrams)[q] * 
+	  sqrt(rset_variance_);
+      }
+      else {
+	spread = z_score_ * (1 + (*query_magnitude_weight_diagrams)[q]) * 
+	  sqrt(rset_variance_);
+      }
 
       q_confidence_band.lo = (*query_regression_estimates)[q] - spread;
       q_confidence_band.hi = (*query_regression_estimates)[q] + spread;
@@ -293,7 +302,8 @@ class NaiveLpr {
 
     ComputeConfidenceBands_(queries, query_regression_estimates,
 			    query_confidence_bands,
-			    query_magnitude_weight_diagrams);
+			    query_magnitude_weight_diagrams,
+			    (query_influence_values != NULL));
   }
 
   /** @brief Initialize the bandwidth by either fixed bandwidth

@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
 
   // Store the results computed by the tree-based results.
   Vector fast_lpr_results;
-  if(!strcmp(fx_param_str_req(lpr_module, "mode"), "dt-dense-quick")) {
+  if(!strcmp(fx_param_str_req(lpr_module, "method"), "dt-dense-quick")) {
     printf("Running the DT-DENSE-LPR with Deng and Moore's prune rule.\n");
     DenseLpr<EpanKernel, QuickPruneLpr> fast_lpr;
     fast_lpr.Init(references, reference_targets, lpr_module);
