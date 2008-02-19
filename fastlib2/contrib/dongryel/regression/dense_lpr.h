@@ -333,6 +333,14 @@ class DenseLpr {
         ArrayList< EpanKernelMomentInfo >
 	  target_weighted_data_far_field_expansion_;
 
+        /** @brief The minimum bandwidth among the reference point.
+	 */
+        TKernel min_bandwidth_kernel;
+
+        /** @brief The maximum bandwidth among the reference point.
+	 */
+        TKernel max_bandwidth_kernel;
+
         /** @brief Basic memory allocation stuffs.
 	 *
 	 *  @param dimension The dimensionality of the dataset.
@@ -362,6 +370,10 @@ class DenseLpr {
 	  sum_data_outer_products_alloc_norm_ = 0;
 	  sum_target_weighted_data_error_norm_ = 0;
 	  sum_target_weighted_data_alloc_norm_ = 0;
+	  
+	  // Initialize the bandwidth information to defaults.
+	  min_bandwidth_kernel.Init(DBL_MAX);
+	  max_bandwidth_kernel.Init(0);
         }
 
         /** @brief Computes the \sum\limits_{r \in R} [1 ; r^T]^T [1;
@@ -776,7 +788,7 @@ class DenseLpr {
 
     /** @brief The kernel function to use.
      */
-    TKernel kernel_;
+    ArrayList<TKernel> kernels_;
  
     /** @brief The z-score for the confidence band.
      */
@@ -820,7 +832,7 @@ class DenseLpr {
      *  @param rnode The current reference node. Initially called with
      *               the root of the reference tree.
      */
-    void ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode);
+    void InitializeReferenceStatistics_(ReferenceTree *rnode);
 
     void BestNodePartners_(QueryTree *nd, ReferenceTree *nd1, 
 			   ReferenceTree *nd2, ReferenceTree **partner1, 
@@ -1141,11 +1153,14 @@ class DenseLpr {
       
       // Initialize the kernel.
       double bandwidth = fx_param_double_req(NULL, "bandwidth");
-      kernel_.Init(bandwidth);
+      kernels_.Init(rset_.n_cols());
+      for(index_t i = 0; i < rset_.n_cols(); i++) {
+	kernels_[i].Init(bandwidth);
+      }
 
       // initialize the reference side statistics.
       target_weighted_rset_.Init(row_length_, rset_.n_cols());
-      ComputeTargetWeightedReferenceVectors_(rroot_);
+      InitializeReferenceStatistics_(rroot_);
 
       // Train the model using the reference set (i.e. compute
       // confidence interval and degrees of freedom.)

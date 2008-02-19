@@ -12,8 +12,13 @@ void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
 (QueryTree *qnode, ReferenceTree *rnode, DRange &dsqd_range, 
  DRange &kernel_value_range) {
 
+  // The following assumes that you are using a monotonically
+  // decreasing kernel!
   dsqd_range = qnode->bound().RangeDistanceSq(rnode->bound());
-  kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
+  kernel_value_range.lo =
+    rnode->stat().min_bandwidth_kernel.EvalUnnormOnSq(dsqd_range.hi);
+  kernel_value_range.hi =
+    rnode->stat().max_bandwidth_kernel.EvalUnnormOnSq(dsqd_range.lo);
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -49,7 +54,7 @@ void DenseLpr<TKernel, TPruneRule>::ResetQuery_
 
 template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::
-ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
+InitializeReferenceStatistics_(ReferenceTree *rnode) {
   
   if(rnode->is_leaf()) {
     
@@ -88,20 +93,29 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
       // row.
       for(index_t j = 0; j < row_length_; j++) {
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
-	  Add(r_target_weighted_by_coordinates[j], kernel_.bandwidth_sq(),
+	  Add(r_target_weighted_by_coordinates[j], kernels_[r].bandwidth_sq(),
 	      r_col);
 
 	for(index_t i = 0; i < row_length_; i++) {
 	  rnode->stat().data_outer_products_far_field_expansion_[j][i].
 	    Add(reference_point_expansion[j] * reference_point_expansion[i],
-		kernel_.bandwidth_sq(), r_col);
+		kernels_[r].bandwidth_sq(), r_col);
 	}
       }
 
       // Tally up the weighted targets.
       la::AddTo(row_length_, r_target_weighted_by_coordinates,
 		(rnode->stat().sum_target_weighted_data_).ptr());
-    }
+      
+      // Accumulate the bandwidth statistics.
+      rnode->stat().min_bandwidth_kernel.Init
+	(std::min(sqrt(rnode->stat().min_bandwidth_kernel.bandwidth_sq()),
+		  sqrt(kernels_[r].bandwidth_sq())));
+      rnode->stat().max_bandwidth_kernel.Init
+	(std::max(sqrt(rnode->stat().max_bandwidth_kernel.bandwidth_sq()),
+		  sqrt(kernels_[r].bandwidth_sq())));
+
+    } // end of iterating over each reference point.
     
     // Compute Frobenius norm of the accumulated sum
     rnode->stat().sum_target_weighted_data_error_norm_ =
@@ -112,8 +126,8 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
   else {
     
     // Recursively call the function with left and right and merge.
-    ComputeTargetWeightedReferenceVectors_(rnode->left());
-    ComputeTargetWeightedReferenceVectors_(rnode->right());
+    InitializeReferenceStatistics_(rnode->left());
+    InitializeReferenceStatistics_(rnode->right());
    
     // Compute the sum of the sub sums.
     la::AddOverwrite((rnode->left()->stat()).sum_target_weighted_data_,
@@ -142,9 +156,19 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
 	rnode->stat().data_outer_products_far_field_expansion_[j][i].
 	  Add(rnode->right()->stat().
 	      data_outer_products_far_field_expansion_[j][i]);
-      }
-    }
-  }
+      }  // end of iterating over each row.
+    } // end of iterating over each column.
+    
+    rnode->stat().min_bandwidth_kernel.Init
+      (std::min
+       (sqrt(rnode->left()->stat().min_bandwidth_kernel.bandwidth_sq()),
+	sqrt(rnode->right()->stat().min_bandwidth_kernel.bandwidth_sq())));
+    rnode->stat().max_bandwidth_kernel.Init
+      (std::max
+       (sqrt(rnode->left()->stat().max_bandwidth_kernel.bandwidth_sq()),
+	sqrt(rnode->right()->stat().max_bandwidth_kernel.bandwidth_sq())));
+					   
+  } // end of the non-leaf case.
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -300,7 +324,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
       // Pairwise distance and kernel value and kernel value weighted
       // by the reference target training value.
       double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
-      double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
+      double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
       double target_weighted_kernel_value = rset_targets_[r] * kernel_value;
       
       // Loop over each column of the matrix to be updated.
@@ -467,7 +491,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   // moments if the maximum distance between the two nodes is within
   // the bandwidth! This if-statement does not apply to the Gaussian
   // kernel, so I need to fix in the future!
-  if(kernel_.bandwidth_sq() >= dsqd_range.hi && 
+  if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
      rnode->count() > dimension_ * dimension_) {
 
     for(index_t j = 0; j < row_length_; j++) {

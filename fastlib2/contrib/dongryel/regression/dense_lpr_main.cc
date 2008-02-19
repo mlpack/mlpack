@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   // of this as creating a new folder named "kde_module" under the
   // root directory (NULL) for the Lpr object to work inside.  Here,
   // we initialize it with all parameters defined "--lpr/...=...".
-  struct datanode* local_linear_module =
+  struct datanode* lpr_module =
     fx_submodule(NULL, "lpr", "lpr_module");
 
   // The reference data file is a required parameter.
@@ -54,25 +54,37 @@ int main(int argc, char *argv[]) {
   // users.
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
-  // Do fast algorithm.
-  printf("Running the fast algorithm...\n");
+  // Store the results computed by the tree-based results.
   Vector fast_lpr_results;
-  DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
-  fast_lpr.Init(references, reference_targets, local_linear_module);
-  fast_lpr.PrintDebug();
-  fast_lpr.get_regression_estimates(&fast_lpr_results);
-  printf("Finished running the fast algorithm...\n");
+  if(!strcmp(fx_param_str_req(lpr_module, "mode"), "dt-dense-quick")) {
+    printf("Running the DT-DENSE-LPR with Deng and Moore's prune rule.\n");
+    DenseLpr<EpanKernel, QuickPruneLpr> fast_lpr;
+    fast_lpr.Init(references, reference_targets, lpr_module);
+    fast_lpr.PrintDebug();
+    fast_lpr.get_regression_estimates(&fast_lpr_results);
+    printf("Finished the DT-DENSE-LPR with Deng and Moore's prune rule.\n");
+  }
+  else if(!strcmp(fx_param_str_req(lpr_module, "method"), 
+		  "dt-dense-relative")) {
+
+    printf("Running the DT-DENSE-LPR algorithm with relative prune rule.\n");
+    DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
+    fast_lpr.Init(references, reference_targets, lpr_module);
+    fast_lpr.PrintDebug();
+    fast_lpr.get_regression_estimates(&fast_lpr_results);
+    printf("Finished the DT-DENSE-LPR algorithm with relative prune rule.\n");
+  }
 
   // Do naive algorithm.
   printf("Running the naive algorithm...\n");
   Vector naive_lpr_results;
   NaiveLpr<EpanKernel> naive_lpr;
-  naive_lpr.Init(references, reference_targets, local_linear_module);
+  naive_lpr.Init(references, reference_targets, lpr_module);
   naive_lpr.PrintDebug();
   naive_lpr.get_regression_estimates(&naive_lpr_results);
   printf("Finished running the naive algorithm...\n");
 
-  printf("Maximum relative difference: %g\n",
+  printf("Maximum relative difference in regression estimate: %g\n",
 	 MatrixUtil::MaxRelativeDifference(naive_lpr_results,
 					   fast_lpr_results));
 
