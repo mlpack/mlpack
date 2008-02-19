@@ -948,101 +948,18 @@ class DenseLpr {
 	q_confidence_band.hi = (*query_regression_estimates)[q] + spread;
       }
     }
+  
+    void BasicComputeSingleTree_(const Matrix &queries,
+				 Vector *query_regression_estimates,
+				 ArrayList<DRange> *query_confidence_bands,
+				 Vector *query_magnitude_weight_diagrams,
+				 Vector *query_influence_values);
 
-    void BasicCompute_(const Matrix &queries,
-		       Vector *query_regression_estimates,
-		       ArrayList<DRange> *query_confidence_bands,
-		       Vector *query_magnitude_weight_diagrams,
-		       Vector *query_influence_values) {
-      
-      // Set the relative error tolerance.
-      relative_error_ = fx_param_double(module_, "relative_error", 0.01);
-      internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
-
-      // Copy the query set.
-      Matrix qset;
-      qset.Copy(queries);
-
-      // read in the number of points owned by a leaf
-      int leaflen = fx_param_int(module_, "leaflen", 20);
-
-      // Construct the query tree.
-      ArrayList<index_t> old_from_new_queries;
-      QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
-	(qset, leaflen, &old_from_new_queries, NULL);
-      
-      // Initialize storage space for intermediate computations.
-      Matrix numerator_l, numerator_e;
-      Vector numerator_used_error, numerator_n_pruned;
-      ArrayList<Matrix> denominator_l, denominator_e;
-      Vector denominator_used_error, denominator_n_pruned;
-      numerator_l.Init(row_length_, queries.n_cols());
-      numerator_e.Init(row_length_, queries.n_cols());
-      numerator_used_error.Init(queries.n_cols());
-      numerator_n_pruned.Init(queries.n_cols());
-      denominator_l.Init(queries.n_cols());
-      denominator_e.Init(queries.n_cols());
-      for(index_t i = 0; i < queries.n_cols(); i++) {
-	denominator_l[i].Init(row_length_, row_length_);
-	denominator_e[i].Init(row_length_, row_length_);
-      }
-      denominator_used_error.Init(queries.n_cols());
-      denominator_n_pruned.Init(queries.n_cols());      
-      ArrayList<Matrix> weight_diagram_numerator_l, weight_diagram_numerator_e;
-      Vector weight_diagram_used_error;
-      weight_diagram_numerator_l.Init(queries.n_cols());
-      weight_diagram_numerator_e.Init(queries.n_cols());
-      for(index_t i = 0; i < queries.n_cols(); i++) {
-	weight_diagram_numerator_l[i].Init(row_length_, row_length_);
-	weight_diagram_numerator_e[i].Init(row_length_, row_length_);
-      }
-      weight_diagram_used_error.Init(queries.n_cols());
-
-      // Initialize storage for the final results.
-      query_regression_estimates->Init(queries.n_cols());
-      query_magnitude_weight_diagrams->Init(queries.n_cols());
-      query_influence_values->Init(queries.n_cols());
-      
-      // Three steps: initialize the query tree, then call dualtree,
-      // then final postprocess.
-      InitializeQueryTree_(qroot, numerator_l, numerator_e,
-			   numerator_used_error, numerator_n_pruned,
-			   denominator_l, denominator_e, 
-			   denominator_used_error, denominator_n_pruned,
-			   weight_diagram_numerator_l,
-			   weight_diagram_numerator_e,
-			   weight_diagram_used_error);
-      DualtreeLprCanonical_
-	(qroot, rroot_, qset, numerator_l, numerator_e, numerator_used_error, 
-	 numerator_n_pruned, denominator_l, denominator_e,
-	 denominator_used_error, denominator_n_pruned,
-	 weight_diagram_numerator_l, weight_diagram_numerator_e,
-	 weight_diagram_used_error);
-      FinalizeQueryTree_
-	(qroot, qset, query_regression_estimates, 
-	 query_magnitude_weight_diagrams, query_influence_values,
-	 numerator_l, numerator_e, numerator_used_error, numerator_n_pruned, 
-	 denominator_l, denominator_e, denominator_used_error, 
-	 denominator_n_pruned, weight_diagram_numerator_l, 
-	 weight_diagram_numerator_e, weight_diagram_used_error);
-
-      // After the computation, we do not need the query tree, so we
-      // free it.
-      delete qroot;
-
-      // Reshuffle the results to account for dataset reshuffling
-      // resulted from tree constructions
-      Vector tmp_q_results;
-      tmp_q_results.Init(query_regression_estimates->length());
-      
-      for(index_t i = 0; i < tmp_q_results.length(); i++) {
-	tmp_q_results[old_from_new_queries[i]] = 
-	  (*query_regression_estimates)[i];
-      }
-      for(index_t i = 0; i < tmp_q_results.length(); i++) {
-	(*query_regression_estimates)[i] = tmp_q_results[i];
-      }
-    }
+    void BasicComputeDualTree_(const Matrix &queries,
+			       Vector *query_regression_estimates,
+			       ArrayList<DRange> *query_confidence_bands,
+			       Vector *query_magnitude_weight_diagrams,
+			       Vector *query_influence_values);
 
     void ComputeMain_(const Matrix &queries,
 		      Vector *query_regression_estimates,
@@ -1054,9 +971,18 @@ class DenseLpr {
       num_finite_difference_prunes_ = num_far_field_prunes_ = 0;
 
       // This is the basic N-body based computation.
-      BasicCompute_(queries, query_regression_estimates,
-		    query_confidence_bands, query_magnitude_weight_diagrams,
-		    query_influence_values);
+      if(!strncmp(fx_param_str_req(module_, "method"),"st", 2)) {
+	BasicComputeSingleTree_(queries, query_regression_estimates,
+				query_confidence_bands,
+				query_magnitude_weight_diagrams,
+				query_influence_values);
+      }
+      else {
+	BasicComputeDualTree_(queries, query_regression_estimates,
+			      query_confidence_bands,
+			      query_magnitude_weight_diagrams,
+			      query_influence_values);
+      }
 
       printf("Number of finite difference prunes: %d\n",
 	     num_finite_difference_prunes_);

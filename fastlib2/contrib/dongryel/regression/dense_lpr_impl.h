@@ -8,6 +8,200 @@
 #include "matrix_util.h"
 
 template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
+(const Matrix &queries, Vector *query_regression_estimates,
+ ArrayList<DRange> *query_confidence_bands,
+ Vector *query_magnitude_weight_diagrams, Vector *query_influence_values) {
+  
+  // Set the relative error tolerance.
+  relative_error_ = fx_param_double(module_, "relative_error", 0.01);
+  internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
+  
+  // Copy the query set.
+  Matrix qset;
+  qset.Copy(queries);
+  
+  // read in the number of points owned by a leaf
+  int leaflen = fx_param_int(module_, "leaflen", 20);
+  
+  // Construct the query tree.
+  ArrayList<index_t> old_from_new_queries;
+  QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
+    (qset, leaflen, &old_from_new_queries, NULL);
+      
+  // Initialize storage space for intermediate computations.
+  Matrix numerator_l, numerator_e;
+  Vector numerator_used_error, numerator_n_pruned;
+  ArrayList<Matrix> denominator_l, denominator_e;
+  Vector denominator_used_error, denominator_n_pruned;
+  numerator_l.Init(row_length_, queries.n_cols());
+  numerator_e.Init(row_length_, queries.n_cols());
+  numerator_used_error.Init(queries.n_cols());
+  numerator_n_pruned.Init(queries.n_cols());
+  denominator_l.Init(queries.n_cols());
+  denominator_e.Init(queries.n_cols());
+  for(index_t i = 0; i < queries.n_cols(); i++) {
+    denominator_l[i].Init(row_length_, row_length_);
+    denominator_e[i].Init(row_length_, row_length_);
+  }
+  denominator_used_error.Init(queries.n_cols());
+  denominator_n_pruned.Init(queries.n_cols());      
+  ArrayList<Matrix> weight_diagram_numerator_l, weight_diagram_numerator_e;
+  Vector weight_diagram_used_error;
+  weight_diagram_numerator_l.Init(queries.n_cols());
+  weight_diagram_numerator_e.Init(queries.n_cols());
+  for(index_t i = 0; i < queries.n_cols(); i++) {
+    weight_diagram_numerator_l[i].Init(row_length_, row_length_);
+    weight_diagram_numerator_e[i].Init(row_length_, row_length_);
+  }
+  weight_diagram_used_error.Init(queries.n_cols());
+  
+  // Initialize storage for the final results.
+  query_regression_estimates->Init(queries.n_cols());
+  query_magnitude_weight_diagrams->Init(queries.n_cols());
+  query_influence_values->Init(queries.n_cols());
+  
+  // Three steps: initialize the query tree, then call dualtree,
+  // then final postprocess.
+  InitializeQueryTree_(qroot, numerator_l, numerator_e,
+		       numerator_used_error, numerator_n_pruned,
+		       denominator_l, denominator_e, 
+		       denominator_used_error, denominator_n_pruned,
+		       weight_diagram_numerator_l,
+		       weight_diagram_numerator_e,
+		       weight_diagram_used_error);
+  DualtreeLprCanonical_
+    (qroot, rroot_, qset, numerator_l, numerator_e, numerator_used_error, 
+     numerator_n_pruned, denominator_l, denominator_e,
+     denominator_used_error, denominator_n_pruned,
+     weight_diagram_numerator_l, weight_diagram_numerator_e,
+     weight_diagram_used_error);
+  FinalizeQueryTree_
+    (qroot, qset, query_regression_estimates, 
+     query_magnitude_weight_diagrams, query_influence_values,
+     numerator_l, numerator_e, numerator_used_error, numerator_n_pruned, 
+     denominator_l, denominator_e, denominator_used_error, 
+     denominator_n_pruned, weight_diagram_numerator_l, 
+     weight_diagram_numerator_e, weight_diagram_used_error);
+  
+  // After the computation, we do not need the query tree, so we
+  // free it.
+  delete qroot;
+  
+  // Reshuffle the results to account for dataset reshuffling
+  // resulted from tree constructions
+  Vector tmp_q_results;
+  tmp_q_results.Init(query_regression_estimates->length());
+  
+  for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    tmp_q_results[old_from_new_queries[i]] = 
+      (*query_regression_estimates)[i];
+      }
+  for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    (*query_regression_estimates)[i] = tmp_q_results[i];
+  }
+}
+
+template<typename TKernel, typename TPruneRule>
+void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
+(const Matrix &queries, Vector *query_regression_estimates,
+ ArrayList<DRange> *query_confidence_bands,
+ Vector *query_magnitude_weight_diagrams, Vector *query_influence_values) {
+        
+  // Set the relative error tolerance.
+  relative_error_ = fx_param_double(module_, "relative_error", 0.01);
+  internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
+  
+  // read in the number of points owned by a leaf
+  int leaflen = fx_param_int(module_, "leaflen", 20);
+  
+  // Initialize storage space for intermediate computations.
+  Matrix numerator_l, numerator_e;
+  Vector numerator_used_error, numerator_n_pruned;
+  ArrayList<Matrix> denominator_l, denominator_e;
+  Vector denominator_used_error, denominator_n_pruned;
+  numerator_l.Init(row_length_, 1);
+  numerator_e.Init(row_length_, 1);
+  numerator_used_error.Init(1);
+  numerator_n_pruned.Init(1);
+  denominator_l.Init(1);
+  denominator_e.Init(1);
+  for(index_t i = 0; i < 1; i++) {
+    denominator_l[i].Init(row_length_, row_length_);
+    denominator_e[i].Init(row_length_, row_length_);
+  }
+  denominator_used_error.Init(1);
+  denominator_n_pruned.Init(1);      
+  ArrayList<Matrix> weight_diagram_numerator_l, weight_diagram_numerator_e;
+  Vector weight_diagram_used_error;
+  weight_diagram_numerator_l.Init(1);
+  weight_diagram_numerator_e.Init(1);
+  for(index_t i = 0; i < 1; i++) {
+    weight_diagram_numerator_l[i].Init(row_length_, row_length_);
+    weight_diagram_numerator_e[i].Init(row_length_, row_length_);
+  }
+  weight_diagram_used_error.Init(1);
+
+  // Initialize storage for the final results.
+  query_regression_estimates->Init(queries.n_cols());
+  query_magnitude_weight_diagrams->Init(queries.n_cols());
+  query_influence_values->Init(queries.n_cols());
+
+  // iterate over each query point.
+  for(index_t q = 0; q < queries.n_cols(); q++) {
+
+    // Make each column query vector as the whole dataset.
+    Vector q_col;
+    queries.MakeColumnVector(q, &q_col);
+    Vector q_col_copy;
+    q_col_copy.Copy(q_col);
+    Matrix qset;
+    qset.AliasColVector(q_col_copy);
+
+    // Make an appropriate alias of the final storage.
+    Vector query_regression_estimates_alias, query_influence_values_alias;
+    Vector query_magnitude_weight_diagrams_alias;
+    query_regression_estimates_alias.Alias
+      ((query_regression_estimates->ptr()) + q, 1);
+    query_magnitude_weight_diagrams_alias.Alias
+      ((query_magnitude_weight_diagrams->ptr()) + q, 1);
+    query_influence_values_alias.Alias((query_influence_values->ptr()) + q, 1);
+
+    // Construct the query tree.
+    QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
+      (qset, leaflen, NULL, NULL);
+    
+    // Three steps: initialize the query tree, then call dualtree,
+    // then final postprocess.
+    InitializeQueryTree_(qroot, numerator_l, numerator_e,
+			 numerator_used_error, numerator_n_pruned,
+			 denominator_l, denominator_e, 
+			 denominator_used_error, denominator_n_pruned,
+			 weight_diagram_numerator_l, 
+			 weight_diagram_numerator_e,
+			 weight_diagram_used_error);
+    DualtreeLprCanonical_
+      (qroot, rroot_, qset, numerator_l, numerator_e, numerator_used_error, 
+       numerator_n_pruned, denominator_l, denominator_e,
+       denominator_used_error, denominator_n_pruned,
+       weight_diagram_numerator_l, weight_diagram_numerator_e,
+       weight_diagram_used_error);
+    FinalizeQueryTree_
+      (qroot, qset, &query_regression_estimates_alias,
+       &query_magnitude_weight_diagrams_alias, &query_influence_values_alias,
+       numerator_l, numerator_e, numerator_used_error, numerator_n_pruned, 
+       denominator_l, denominator_e, denominator_used_error,
+       denominator_n_pruned, weight_diagram_numerator_l,
+       weight_diagram_numerator_e, weight_diagram_used_error);
+    
+    // After the computation, we do not need the query tree, so we
+    // free it.
+    delete qroot;
+
+  } // end of iterating over each query.
+}
+
+template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
 (QueryTree *qnode, ReferenceTree *rnode, DRange &dsqd_range, 
  DRange &kernel_value_range) {

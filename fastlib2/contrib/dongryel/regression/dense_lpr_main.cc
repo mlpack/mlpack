@@ -64,6 +64,14 @@ int main(int argc, char *argv[]) {
     fast_lpr.get_regression_estimates(&fast_lpr_results);
     printf("Finished the DT-DENSE-LPR with Deng and Moore's prune rule.\n");
   }
+  else if(!strcmp(fx_param_str_req(lpr_module, "method"), "st-dense-quick")) {
+    printf("Running the ST-DENSE-LPR with Deng and Moore's prune rule.\n");
+    DenseLpr<EpanKernel, QuickPruneLpr> fast_lpr;
+    fast_lpr.Init(references, reference_targets, lpr_module);
+    fast_lpr.PrintDebug();
+    fast_lpr.get_regression_estimates(&fast_lpr_results);
+    printf("Finished the ST-DENSE-LPR with Deng and Moore's prune rule.\n");
+  }
   else if(!strcmp(fx_param_str_req(lpr_module, "method"), 
 		  "dt-dense-relative")) {
 
@@ -73,6 +81,16 @@ int main(int argc, char *argv[]) {
     fast_lpr.PrintDebug();
     fast_lpr.get_regression_estimates(&fast_lpr_results);
     printf("Finished the DT-DENSE-LPR algorithm with relative prune rule.\n");
+  }
+  else if(!strcmp(fx_param_str_req(lpr_module, "method"), 
+		  "st-dense-relative")) {
+
+    printf("Running the ST-DENSE-LPR algorithm with relative prune rule.\n");
+    DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
+    fast_lpr.Init(references, reference_targets, lpr_module);
+    fast_lpr.PrintDebug();
+    fast_lpr.get_regression_estimates(&fast_lpr_results);
+    printf("Finished the ST-DENSE-LPR algorithm with relative prune rule.\n");
   }
 
   // Do naive algorithm.
