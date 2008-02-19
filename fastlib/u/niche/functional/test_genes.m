@@ -31,26 +31,37 @@ mybasis = create_bspline_basis([min(t) max(t)], p, 4);
 basis_curves = eval_basis(0:1:119, mybasis);
 basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
-myfd_data = data2fd(data, t, mybasis);
+myfd = data2fd(data, t, mybasis);
+mean_result = pca_fd(myfd, 0);
+centered_data_coef = ...
+    getcoef(myfd) - ...
+    repmat(getcoef(mean_result.meanfd), 1, size(getcoef(myfd), 2));
+centered_myfd = fd(centered_data_coef, mybasis);
+
+centered_data_curves = basis_curves * getcoef(centered_myfd);
 
 lambda = 0;
 myfdPar = fdPar(mybasis, 2, lambda);
+pca_results = pca_fd(centered_myfd, p, myfdPar);
 
 fprintf('calling funcica\n');
-[ic_curves, ic_coef, Y, pc_coef, pc_curves, pc_scores, W] = ...
-    funcica(t, myfd_data, p, basis_curves, myfdPar, basis_inner_products);
+[ic_curves, ic_coef, ic_scores, ...
+ pc_coef, pc_curves, pc_scores, W] = ...
+    funcica(t, centered_myfd, p, basis_curves, myfdPar, ...
+	    basis_inner_products);
 fprintf('funcica returned\n');
 
-p_small = size(ic_coef, 2);
-
-pc_curves = basis_curves * pc_coef;
-
-ic_curves = pc_curves * W';
-
-pc_coef = pc_coef';
 
 
+for i = 1:size(ic_curves,2)
+  scale_up_factor = ...
+      1 / sqrt(l2_fnorm(t, ic_curves(:,i), ic_curves(:,i)));
+  ic_curves(:,i) = scale_up_factor * ic_curves(:,i);
+  ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
+end
 
+
+%{
 % rescale the utilized parts of pc_coef such that
 % the pc_curves square integrate to 1
 
@@ -79,7 +90,6 @@ h_ic_sum = sum(h_ic);
 
 
 
-
 % discriminant analysis using pc features %
 % pc_scores is d x N
 
@@ -100,3 +110,4 @@ for i=1:size(svm_data, 1)
 		svm_labels([1:(i-1) (i+1):end]));
   ypred(i) = svmlfwd(latestSVM, svm_data(i,:), svm_labels(i));
 end
+%}
