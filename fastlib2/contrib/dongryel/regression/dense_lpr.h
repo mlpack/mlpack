@@ -5,8 +5,7 @@
  *
  *  @bug No known bugs. However, This code works only for nonnegative
  *  reference training values and nonnegative reference dataset and
- *  the Epanechnikov kernel. The Gaussian kernel extension for
- *  supporting the series expansion is forth-coming.
+ *  the Epanechnikov kernel.
  */
 
 #ifndef DENSE_LPR_H
@@ -15,6 +14,7 @@
 #include "matrix_util.h"
 #include "multi_index_util.h"
 #include "fastlib/fastlib.h"
+#include "mlpack/series_expansion/bounds_aux.h"
 #include "mlpack/series_expansion/farfield_expansion.h"
 #include "mlpack/series_expansion/local_expansion.h"
 #include "mlpack/series_expansion/mult_farfield_expansion.h"
@@ -44,7 +44,7 @@
  *    fast_kde.Compute(&results);
  *  @endcode
  */
-template<typename TKernelAux, typename TPruneRule>
+template<typename TKernel, typename TPruneRule>
 class DenseLpr {
   
   FORBID_ACCIDENTAL_COPIES(DenseLpr);
@@ -52,6 +52,103 @@ class DenseLpr {
   private:
 
     ////////// Private Class Definitions //////////
+    class EpanKernelMomentInfo {
+      public:
+        Vector weighted_mass;      
+        double weighted_sumsq;
+        double count;
+        double weighted_count;
+
+      public:
+
+        EpanKernelMomentInfo() {}
+      
+        ~EpanKernelMomentInfo() {}
+
+        void Init(index_t length) {
+	  weighted_mass.Init(length);
+	  Reset();
+	}
+
+        void Reset() {
+	  weighted_mass.SetZero();
+	  weighted_sumsq = 0;
+	  count = 0;
+	  weighted_count = 0;
+	}
+
+        void Add(double weight, double bandwidth_sq,
+		 const Vector &reference_point) {
+
+	  double factor = weight / bandwidth_sq;
+	  double reference_point_squared_length =
+	    la::Dot(reference_point, reference_point);
+
+	  la::AddExpert(factor, reference_point, &weighted_mass);
+	  weighted_sumsq += factor * reference_point_squared_length;
+	  count += weight;
+	  weighted_count += factor;
+	}
+
+        void Add(const EpanKernelMomentInfo& other) {
+	  la::AddTo(other.weighted_mass, &weighted_mass);
+	  weighted_sumsq += other.weighted_sumsq;
+	  count += other.count;
+	  weighted_count += other.weighted_count;
+	}
+
+        /**
+	 * Compute kernel sum for a region of reference points assuming we have
+	 * the actual query point.
+	 */
+        double ComputeKernelSum(const Vector& q) const {
+	  double quadratic_term =
+	    weighted_count * la::Dot(q, q)
+	    - 2.0 * la::Dot(q, weighted_mass)
+	    + weighted_sumsq;
+	  return count - quadratic_term;
+	}
+
+        double ComputeKernelSum(const Vector &q, 
+				const Vector &reference_center,
+				double distance_squared,
+				double center_dot_center) const {
+
+	  double quadratic_term =
+	    (distance_squared - center_dot_center) * weighted_count
+	    + weighted_sumsq
+	    - 2 * la::Dot(q, weighted_mass)
+	    + 2 * weighted_count * la::Dot(q, reference_center);
+	  
+	  return -quadratic_term + count;
+	}
+      
+        template<int t_pow>
+        double ComputeMinKernelSum(const DHrectBound<t_pow> query_bound) 
+	  const {
+
+	  Vector center;
+	  double center_dot_center = 
+	    la::Dot(weighted_mass, weighted_mass) / weighted_count / 
+	    weighted_count;
+	  
+	  DEBUG_ASSERT(weighted_count != 0);
+	  
+	  center.Copy(weighted_mass);
+	  la::Scale(1.0 / weighted_count, &center);
+	  
+	  Vector furthest_point_in_query_bound;
+	  furthest_point_in_query_bound.Init(weighted_mass.length());
+	  double furthest_dsqd;
+
+	  bounds_aux::MaxDistanceSq(query_bound, center,
+				    furthest_point_in_query_bound,
+				    furthest_dsqd);
+
+	  return ComputeKernelSum(furthest_point_in_query_bound,
+				  center, furthest_dsqd, center_dot_center);
+	}
+    };
 
     class LprRStat {
 
@@ -77,7 +174,7 @@ class DenseLpr {
 	 *         far-field expansion of the (i, j)-th component of
 	 *         the sum_data_outer_products_ matrix.
 	 */
-        ArrayList< ArrayList<typename TKernelAux::TFarFieldExpansion> >
+        ArrayList< ArrayList< EpanKernelMomentInfo > >
 	  data_outer_products_far_field_expansion_;
       
         /** @brief The vector summing up the reference polynomial term
@@ -100,24 +197,8 @@ class DenseLpr {
 	 *         the far-field expansion of the i-th component of
 	 *         the sum_target_weighted_data_ vector.
 	 */
-        ArrayList<typename TKernelAux::TFarFieldExpansion>
+        ArrayList< EpanKernelMomentInfo >
 	  target_weighted_data_far_field_expansion_;
-
-        /** @brief Initialize the far field expansion objects with the
-	 *	   kernel auxiliary object. You need to call this
-	 *	   function before doing anything to the expansion
-	 *	   object!
-	 */
-        void Init(const TKernelAux &ka, int matrix_dimension) {
-
-	  for(index_t j = 0; j < matrix_dimension; j++) {
-	    target_weighted_data_far_field_expansion_[j].Init(ka);
-
-	    for(index_t i = 0; i < matrix_dimension; i++) {
-	      data_outer_products_far_field_expansion_[j][i].Init(ka);
-	    }
-	  }
-	}
 
         /** @brief Basic memory allocation stuffs.
 	 *
@@ -131,12 +212,18 @@ class DenseLpr {
 
 	  sum_data_outer_products_.Init(matrix_dimension, matrix_dimension);
 	  data_outer_products_far_field_expansion_.Init(matrix_dimension);
-	  for(index_t i = 0; i < matrix_dimension; i++) {
-	    data_outer_products_far_field_expansion_[i].Init(matrix_dimension);
-	  }
-
 	  sum_target_weighted_data_.Init(matrix_dimension);
 	  target_weighted_data_far_field_expansion_.Init(matrix_dimension);
+
+	  for(index_t j = 0; j < matrix_dimension; j++) {
+	    
+	    target_weighted_data_far_field_expansion_[j].Init(dimension);
+	    data_outer_products_far_field_expansion_[j].Init(matrix_dimension);
+	    
+	    for(index_t i = 0; i < matrix_dimension; i++) {
+	      data_outer_products_far_field_expansion_[j][i].Init(dimension);
+	    }
+	  }
 
 	  sum_data_outer_products_error_norm_ = 0;
 	  sum_data_outer_products_alloc_norm_ = 0;
@@ -255,6 +342,11 @@ class DenseLpr {
 	 */
         Vector postponed_numerator_e_;
 
+        /** @brief Stores the portion pruned by the Epanechnikov inclusion
+	 *         pruning for the numerator vector B^T W(q) Y.
+	 */
+        ArrayList<EpanKernelMomentInfo> postponed_moment_numerator_e_;
+
         /** @brief The total amount of error used in approximation for
 	 *         all query points that must be propagated downwards.
 	 */
@@ -299,6 +391,12 @@ class DenseLpr {
          */
         Matrix postponed_denominator_e_;
 
+        /** @brief Stores the series expansion based pruning for the
+	 *         Epanechnikov kernel for the denominator matrix B^T W(q) B.
+	 */
+        ArrayList< ArrayList < EpanKernelMomentInfo > >
+	  postponed_moment_denominator_e_;
+
         /** @brief The total amount of error used in approximation for
 	 *         all query points that must be propagated downwards.
 	 */
@@ -332,6 +430,13 @@ class DenseLpr {
          */
         Matrix postponed_weight_diagram_numerator_e_;
 
+        /** @brief Stores the portion pruned by the Epanechnikov
+	 *         series expansion for the numerator matrix B^T
+	 *         W(q)^2 B.
+	 */
+        ArrayList< ArrayList < EpanKernelMomentInfo > >
+	  postponed_moment_weight_diagram_numerator_e_;
+
         /** @brief The total amount of error used in approximation for
 	 *         all query points that must be propagated downwards.
 	 */
@@ -362,6 +467,14 @@ class DenseLpr {
 	  postponed_weight_diagram_numerator_l_.SetZero();
 	  postponed_weight_diagram_numerator_e_.SetZero();
 	  postponed_weight_diagram_numerator_used_error_ = 0;
+
+	  for(index_t i = 0; i < postponed_numerator_l_.length(); i++) {
+	    postponed_moment_numerator_e_[i].Reset();
+	    for(index_t j = 0; j < postponed_numerator_l_.length(); j++) {
+	      postponed_moment_denominator_e_[i][j].Reset();
+	      postponed_moment_weight_diagram_numerator_e_[i][j].Reset();
+	    }
+	  }
         }
 
         /** @brief Initialize the statistics by doing basic memory
@@ -379,6 +492,10 @@ class DenseLpr {
 	  numerator_n_pruned_ = 0;
 	  postponed_numerator_l_.Init(matrix_dimension);
 	  postponed_numerator_e_.Init(matrix_dimension);
+	  postponed_moment_numerator_e_.Init(matrix_dimension);
+	  for(index_t i = 0; i < matrix_dimension; i++) {
+	    postponed_moment_numerator_e_[i].Init(dimension);
+	  }	  
 	  postponed_numerator_used_error_ = 0;
 	  postponed_numerator_n_pruned_ = 0;
 	  
@@ -389,6 +506,13 @@ class DenseLpr {
 	  denominator_n_pruned_ = 0;
 	  postponed_denominator_l_.Init(matrix_dimension, matrix_dimension);
 	  postponed_denominator_e_.Init(matrix_dimension, matrix_dimension);
+	  postponed_moment_denominator_e_.Init(matrix_dimension);
+	  for(index_t i = 0; i < matrix_dimension; i++) {
+	    postponed_moment_denominator_e_[i].Init(matrix_dimension);
+	    for(index_t j = 0; j < matrix_dimension; j++) {
+	      postponed_moment_denominator_e_[i][j].Init(dimension);
+	    }
+	  }
 	  postponed_denominator_used_error_ = 0;
 	  postponed_denominator_n_pruned_ = 0;
 
@@ -398,6 +522,15 @@ class DenseLpr {
 						     matrix_dimension);
 	  postponed_weight_diagram_numerator_e_.Init(matrix_dimension,
 						     matrix_dimension);
+	  postponed_moment_weight_diagram_numerator_e_.Init(matrix_dimension);
+	  for(index_t i = 0; i < matrix_dimension; i++) {
+	    postponed_moment_weight_diagram_numerator_e_[i].Init
+	      (matrix_dimension);
+	    for(index_t j = 0; j < matrix_dimension; j++) {
+	      postponed_moment_weight_diagram_numerator_e_[i][j].Init
+		(dimension);
+	    }
+	  }
 	  postponed_weight_diagram_numerator_used_error_ = 0;
 	}
       
@@ -510,7 +643,7 @@ class DenseLpr {
 
     /** @brief The kernel function to use.
      */
-    TKernelAux kernel_aux_;
+    TKernel kernel_;
  
     /** @brief The z-score for the confidence band.
      */
@@ -875,7 +1008,7 @@ class DenseLpr {
       
       // Initialize the kernel.
       double bandwidth = fx_param_double_req(NULL, "bandwidth");
-      kernel_aux_.Init(bandwidth, 2, dimension_);
+      kernel_.Init(bandwidth);
 
       // initialize the reference side statistics.
       target_weighted_rset_.Init(row_length_, rset_.n_cols());

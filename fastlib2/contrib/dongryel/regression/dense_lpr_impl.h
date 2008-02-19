@@ -13,10 +13,8 @@ void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
  DRange &kernel_value_range, Vector *furthest_point_in_qnode) {
 
   furthest_point_in_qnode->Init(dimension_);
-  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
-  bounds_aux::MaxDistanceSq(qnode->bound(), rnode->bound(),
-			    *furthest_point_in_qnode, dsqd_range.hi);
-  kernel_value_range = kernel_aux_.kernel_.RangeUnnormOnSq(dsqd_range);
+  dsqd_range = qnode->bound().RangeDistanceSq(rnode->bound());
+  kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -54,21 +52,6 @@ template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::
 ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
   
-  // Initialize the center of expansions and bandwidth for series
-  // expansion.
-  rnode->stat().Init(kernel_aux_, row_length_);
-  for(index_t j = 0; j < row_length_; j++) {
-    rnode->bound().CalculateMidpoint
-      (rnode->stat().target_weighted_data_far_field_expansion_[j].
-       get_center());
-
-    for(index_t i = 0; i < row_length_; i++) {
-      rnode->bound().CalculateMidpoint
-	(rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	 get_center());
-    }
-  }
-
   if(rnode->is_leaf()) {
     
     // Temporary vector for computing the reference point expansion.
@@ -106,14 +89,13 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
       // row.
       for(index_t j = 0; j < row_length_; j++) {
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
-	  Accumulate(r_col, r_target_weighted_by_coordinates[j],
-		     kernel_aux_.sea_.get_max_order());
+	  Add(r_target_weighted_by_coordinates[j], kernel_.bandwidth_sq(),
+	      r_col);
 
 	for(index_t i = 0; i < row_length_; i++) {
 	  rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	    Accumulate(r_col, reference_point_expansion[j] *
-		       reference_point_expansion[i],
-		       kernel_aux_.sea_.get_max_order());
+	    Add(reference_point_expansion[j] * reference_point_expansion[i],
+		kernel_.bandwidth_sq(), r_col);
 	}
       }
 
@@ -146,23 +128,21 @@ ComputeTargetWeightedReferenceVectors_(ReferenceTree *rnode) {
     // Translate far-field moments of the child to form the parent.
     for(index_t j = 0; j < row_length_; j++) {
       rnode->stat().target_weighted_data_far_field_expansion_[j].
-	TranslateFromFarField(rnode->left()->stat().
-			      target_weighted_data_far_field_expansion_[j]);
+	Add(rnode->left()->stat().
+	    target_weighted_data_far_field_expansion_[j]);
       rnode->stat().target_weighted_data_far_field_expansion_[j].
-	TranslateFromFarField(rnode->right()->stat().
-			      target_weighted_data_far_field_expansion_[j]);
+	Add(rnode->right()->stat().
+	    target_weighted_data_far_field_expansion_[j]);
       
       for(index_t i = 0; i < row_length_; i++) {
 
 	// First the far field moments of outer product using the bandwidth
 	rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	  TranslateFromFarField
-	  (rnode->left()->stat().
-	   data_outer_products_far_field_expansion_[j][i]);
+	  Add(rnode->left()->stat().
+	      data_outer_products_far_field_expansion_[j][i]);
 	rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	  TranslateFromFarField
-	  (rnode->right()->stat().
-	   data_outer_products_far_field_expansion_[j][i]);
+	  Add(rnode->right()->stat().
+	      data_outer_products_far_field_expansion_[j][i]);
       }
     }
   }
@@ -321,7 +301,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
       // Pairwise distance and kernel value and kernel value weighted
       // by the reference target training value.
       double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
-      double kernel_value = kernel_aux_.kernel_.EvalUnnormOnSq(dsqd);
+      double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
       double target_weighted_kernel_value = rset_targets_[r] * kernel_value;
       
       // Loop over each column of the matrix to be updated.
@@ -490,48 +470,32 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   // moments if the maximum distance between the two nodes is within
   // the bandwidth! This if-statement does not apply to the Gaussian
   // kernel, so I need to fix in the future!
-  if(kernel_aux_.kernel_.bandwidth_sq() >= dsqd_range.hi &&
-     rnode->count() > 32) {
-
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      for(index_t j = 0; j < row_length_; j++) {
-
-	numerator_e.set
-	  (j, q, numerator_e.get(j, q) + 
-	   rnode->stat().target_weighted_data_far_field_expansion_[j].
-	   EvaluateField(qset, q, 2));
-
-	for(index_t i = 0; i < row_length_; i++) {
-	  denominator_e[q].set
-	    (j, i, denominator_e[q].get(j, i) +
-	     rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	     EvaluateField(qset, q, 2));
-	  weight_diagram_numerator_e[q].set
-	    (j, i, weight_diagram_numerator_e[q].get(j, i) +
-	     rnode->stat().
-	     data_outer_products_far_field_expansion_[j][i].
-	     EvaluateField(qset, q, 2));
-	}
-      }
-    }
+  if(kernel_.bandwidth_sq() >= dsqd_range.hi) {
 
     for(index_t j = 0; j < row_length_; j++) {
       
       qnode->stat().postponed_numerator_l_[j] += 
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
-	EvaluateField(furthest_point_in_qnode, 2);
+	ComputeMinKernelSum(qnode->bound());
+      qnode->stat().postponed_moment_numerator_e_[j].
+	Add(rnode->stat().target_weighted_data_far_field_expansion_[j]);
 
       for(index_t i = 0; i < row_length_; i++) {
 
 	qnode->stat().postponed_denominator_l_.set
 	  (j, i, qnode->stat().postponed_denominator_l_.get(j, i) +
 	   rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	   EvaluateField(furthest_point_in_qnode, 2));
+	   ComputeMinKernelSum(qnode->bound()));
+	qnode->stat().postponed_moment_denominator_e_[j][i].
+	  Add(rnode->stat().data_outer_products_far_field_expansion_[j][i]);
+	
 	qnode->stat().postponed_weight_diagram_numerator_l_.set
 	  (j, i, qnode->stat().postponed_weight_diagram_numerator_l_.get(j, i) 
 	   + rnode->stat().
 	   data_outer_products_far_field_expansion_[j][i].
-	   EvaluateField(furthest_point_in_qnode, 2));
+	   ComputeMinKernelSum(qnode->bound()));
+	qnode->stat().postponed_moment_weight_diagram_numerator_e_[j][i].
+	  Add(rnode->stat().data_outer_products_far_field_expansion_[j][i]);
       }
     }
 
@@ -763,7 +727,9 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Get the query point.
-      const double *query_point = qset.GetColumnPtr(q);
+      Vector q_col;
+      qset.MakeColumnVector(q, &q_col);
+      const double *query_point = q_col.ptr();
 
       // Get the numerator vectors accumulating the sums to update.
       Vector q_numerator_l, q_numerator_e;
@@ -783,6 +749,24 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 		&(weight_diagram_numerator_l[q]));
       la::AddTo(q_stat.postponed_weight_diagram_numerator_e_,
 		&(weight_diagram_numerator_e[q]));
+
+      // Incorporate the postponed estimates using the Epanechnikov
+      // series expansion.
+      for(index_t i = 0; i < row_length_; i++) {
+	q_numerator_e[i] += 
+	  qnode->stat().postponed_moment_numerator_e_[i].
+	  ComputeKernelSum(q_col);
+	for(index_t j = 0; j < row_length_; j++) {
+	  denominator_e[q].set
+	    (j, i, denominator_e[q].get(j, i) +
+	     qnode->stat().postponed_moment_denominator_e_[j][i].
+	     ComputeKernelSum(q_col));
+	  weight_diagram_numerator_e[q].set
+	    (j, i, weight_diagram_numerator_e[q].get(j, i) +
+	     qnode->stat().postponed_moment_weight_diagram_numerator_e_[j][i].
+	     ComputeKernelSum(q_col));
+	}
+      }
 
       // After incorporating all of the postponed information,
       // finalize the regression estimate by solving the appropriate
@@ -854,6 +838,25 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	      &(q_right_stat.postponed_weight_diagram_numerator_l_));   
     la::AddTo(q_stat.postponed_weight_diagram_numerator_e_, 
 	      &(q_right_stat.postponed_weight_diagram_numerator_e_));
+
+    // Push down Epanechnikov series expansion pruning.
+    for(index_t i = 0; i < row_length_; i++) {
+      q_left_stat.postponed_moment_numerator_e_[i].Add
+	(q_stat.postponed_moment_numerator_e_[i]);
+      q_right_stat.postponed_moment_numerator_e_[i].Add
+	(q_stat.postponed_moment_numerator_e_[i]);
+
+      for(index_t j = 0; j < row_length_; j++) {
+	q_left_stat.postponed_moment_denominator_e_[i][j].Add
+	  (q_stat.postponed_moment_denominator_e_[i][j]);
+	q_right_stat.postponed_moment_denominator_e_[i][j].Add
+	  (q_stat.postponed_moment_denominator_e_[i][j]);
+	q_left_stat.postponed_moment_weight_diagram_numerator_e_[i][j].Add
+	  (q_stat.postponed_moment_weight_diagram_numerator_e_[i][j]);
+	q_right_stat.postponed_moment_weight_diagram_numerator_e_[i][j].Add
+	  (q_stat.postponed_moment_weight_diagram_numerator_e_[i][j]);
+      }
+    }
 
     FinalizeQueryTree_(qnode->left(), qset, query_regression_estimates,
 		       query_magnitude_weight_diagrams, query_influence_values,
