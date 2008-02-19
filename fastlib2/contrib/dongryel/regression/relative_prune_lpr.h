@@ -88,7 +88,8 @@ class RelativePruneLpr {
 	(relative_error * new_denominator_norm_l - 
 	 qnode->stat().denominator_used_error_) /
 	(denominator_total_alloc_error - qnode->stat().denominator_n_pruned_);
-           
+        
+      /*
       // Refine the bound using the new info for the weight diagram
       // numerator matrix.
       la::AddOverwrite(qnode->stat().postponed_weight_diagram_numerator_l_, 
@@ -101,6 +102,7 @@ class RelativePruneLpr {
 	(relative_error * new_weight_diagram_numerator_norm_l - 
 	 qnode->stat().weight_diagram_numerator_used_error_) /
 	(denominator_total_alloc_error - qnode->stat().denominator_n_pruned_);
+      */
 
       // this is error per each query/reference pair for a fixed query
       // for the numerator and the denominator used for computing the
@@ -109,7 +111,7 @@ class RelativePruneLpr {
       
       // This is the error per each query/reference pair for a fixed
       // query for the weight diagram numerator matrix approximation.
-      double squared_kernel_error = 0.5 * squared_kernel_value_range.width();
+      //double squared_kernel_error = 0.5 * squared_kernel_value_range.width();
 
       // This is total norm error for each query point for
       // approximating the B^T W(q) Y vector.
@@ -123,18 +125,18 @@ class RelativePruneLpr {
 	(rnode->stat().sum_data_outer_products_error_norm_);
       denominator_n_pruned = rnode->stat().sum_data_outer_products_alloc_norm_;
 
+      /*
       // The total norm error for each query point for approximating
       // the B^T W(q)^2 B matrix.
       weight_diagram_numerator_used_error = squared_kernel_error *
 	(rnode->stat().sum_data_outer_products_error_norm_);
+      */
 
       // Check pruning condition. Note that this pruning criterion
       // does not enforce error directly on the weight diagram
       // computation.
       return (numerator_used_error <= numerator_allowed_err &&
-	      denominator_used_error <= denominator_allowed_err &&
-	      weight_diagram_numerator_used_error <= 
-	      weight_diagram_numerator_allowed_err);
+	      denominator_used_error <= denominator_allowed_err);
     }
 };
 

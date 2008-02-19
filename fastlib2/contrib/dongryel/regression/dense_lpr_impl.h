@@ -10,9 +10,8 @@
 template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
 (QueryTree *qnode, ReferenceTree *rnode, DRange &dsqd_range, 
- DRange &kernel_value_range, Vector *furthest_point_in_qnode) {
+ DRange &kernel_value_range) {
 
-  furthest_point_in_qnode->Init(dimension_);
   dsqd_range = qnode->bound().RangeDistanceSq(rnode->bound());
   kernel_value_range = kernel_.RangeUnnormOnSq(dsqd_range);
 }
@@ -425,9 +424,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   weight_diagram_numerator_de.Init(row_length_, row_length_);
   
   // Compute distance ranges and kernel ranges first.
-  Vector furthest_point_in_qnode;
-  SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range,
-			 &furthest_point_in_qnode);
+  SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range);
 
   // Try finite difference pruning first
   if(TPruneRule::Prunable
@@ -470,7 +467,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   // moments if the maximum distance between the two nodes is within
   // the bandwidth! This if-statement does not apply to the Gaussian
   // kernel, so I need to fix in the future!
-  if(kernel_.bandwidth_sq() >= dsqd_range.hi) {
+  if(kernel_.bandwidth_sq() >= dsqd_range.hi && 
+     rnode->count() > dimension_ * dimension_) {
 
     for(index_t j = 0; j < row_length_; j++) {
       
