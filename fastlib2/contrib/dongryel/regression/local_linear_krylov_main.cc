@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
   // the datasets to fit in the hypercube. This should be replaced
   // with more general dataset scaling operation, requested by the
   // users.
-  DatasetScaler::TranslateDataByMin(queries, references, false);
+  DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Declare local linear krylov object.
   Vector fast_local_linear_results;
@@ -59,11 +59,9 @@ int main(int argc, char *argv[]) {
 
   // Do naive algorithm.
   NaiveLpr<EpanKernel> naive_local_linear;
-  naive_local_linear.Init(queries, references, reference_targets,
+  naive_local_linear.Init(references, reference_targets,
 			  local_linear_module);
-  naive_local_linear.Compute();
   naive_local_linear.PrintDebug();
-  naive_local_linear.ComputeMaximumRelativeError(fast_local_linear_results);  
   
   // Finalize FastExec and print output results.
   fx_done();
