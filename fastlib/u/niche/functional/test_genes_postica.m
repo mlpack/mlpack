@@ -1,15 +1,15 @@
 clear;
-load gene_results;
+load correct_gene_results;
 
 % discriminant analysis using pc features %
 % pc_scores is d x N
 
-g1_indices = find(phases == g1_phase);
-nong1_indices = find(phases ~=g1_phase & phases ~= unknown_phase);
+g1_indices = find(phases == G1_phase);
+nong1_indices = find((phases ~= G1_phase) & (phases ~= unknown_phase));
 
 used_scores = ic_scores;
 
-used_scores = used_scores([1],:);
+used_scores = used_scores([6],:);
 
 svm_data = [used_scores(:,g1_indices) used_scores(:,nong1_indices)]';
 svm_labels = [1 * ones(length(g1_indices),1);
@@ -36,10 +36,8 @@ sigma_grow = 1.1;
 %order_init = 1;
 %order_inc = 1;
 
-num_C_epochs = 20;
-%81;
-C_init = 20;
-%1e-2;
+num_C_epochs = 81;
+C_init = 1e-2;
 C_grow = 1.1;
 
 
