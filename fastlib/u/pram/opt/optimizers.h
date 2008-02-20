@@ -271,7 +271,7 @@ class QuasiNewton {
   void Eval(double *pt){
 
     index_t n = dimension(), iters;
-    index_t i, its, MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",200);
+    index_t i, its, MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",500);
     long double temp_1, temp_2, temp_3, temp_4, f_previous, f_min, 
       maximum_step_length, sum = 0.0, sumdg, sumxi, temp, test;
     Vector dgrad, grad, hdgrad, xi;
