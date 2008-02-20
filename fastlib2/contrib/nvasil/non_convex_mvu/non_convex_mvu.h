@@ -50,13 +50,14 @@ class NonConvexMVU {
   void set_distance_tolerance(double tolerance); 
   void set_gradient_tolerance(double tolerance);
   /**
-   *  sigma for armijo rule somewhere between 1e-5 to 1e-1
+   *  sigma1 and sigma2 for wolfe rule somewhere between 1e-5 to 1e-1
+   *  and sigma1 < sigma2
    */
-  void set_armijo_sigma(double armijo_sigma);
+  void set_wolfe_sigma(double wolfe_sigma1, double wolfe_sigma2);
   /**
-   *  beta for armijo rule somewhere between 0.5 to 0.1
+   *  beta for wolfe rule somewhere between 0.5 to 0.1
    */
-  void set_armijo_beta(double armijo_beta);
+  void set_wolfe_beta(double wolfe_beta);
   /**
    * Set the memory for the BFGS method
    */
@@ -81,8 +82,9 @@ class NonConvexMVU {
   double step_size_;
   double gradient_tolerance_;
   double distance_tolerance_;
-  double armijo_sigma_;
-  double armijo_beta_;
+  double wolfe_sigma1_;
+  double wolfe_sigma2_;
+  double wolfe_beta_;
   index_t max_iterations_;
   index_t new_dimension_;
   Matrix coordinates_;
@@ -109,7 +111,7 @@ class NonConvexMVU {
   template<int PROBLEM_TYPE>
   void UpdateLagrangeMult_();
   template<int PROPLEM_TYPE>
-  void LocalSearch_(double *step, Matrix &grad);
+  void LocalSearch_(double *step, Matrix &direction);
   template<int PROPLEM_TYPE>
   void ComputeBFGS_(double *step, Matrix &grad, index_t memory);
   void InitBFGS();
@@ -123,7 +125,7 @@ class NonConvexMVU {
   template<int PROBLEM_TYPE>
   double ComputeFeasibilityError_();
   template<int PROBLEM_TYPE>
-  void ComputeGradient_();
+  void ComputeGradient_(Matrix &coord, Matrix *grad);
   template<int PROBLEM_TYPE>
   double ComputeObjective_(Matrix &coord);
   void Variance_(Matrix &coord, Vector *variance);
