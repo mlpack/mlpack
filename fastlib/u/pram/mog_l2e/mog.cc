@@ -198,7 +198,7 @@ long double MoGL2E::GoodnessOfFitTerm_(const Matrix& data, Vector *g_fit) {
   Vector g_omega,tmp_g_omega;
   ArrayList<Vector> g_mu, g_sigma;
  
- num_gauss = number_of_gaussians();
+  num_gauss = number_of_gaussians();
   num_points = data.n_cols();
   dim = data.n_rows();
   phi_x.Init(num_gauss, num_points);
