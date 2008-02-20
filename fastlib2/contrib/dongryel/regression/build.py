@@ -3,6 +3,7 @@ librule(
     sources = [],
     headers = ["dense_lpr.h",
                "dense_lpr_impl.h",
+               "epan_kernel_moment_info.h",
                "matrix_util.h",
                "multi_index_util.h",
                "quick_prune_lpr.h",
@@ -16,7 +17,8 @@ librule(
 librule(
     name = "local_linear_krylov",
     sources = [],
-    headers = ["local_linear_krylov.h",
+    headers = ["epan_kernel_moment_info.h",
+               "local_linear_krylov.h",
                "local_linear_krylov_setup_impl.h",
                "local_linear_krylov_solver_impl.h",
                "local_linear_krylov_test.h",
