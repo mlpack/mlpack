@@ -480,6 +480,11 @@ class QuasiNewton {
   }
 };
 
+/**
+ * Normal Gradient Descent implemented here
+ * documentation later
+ *
+ */
 
 class GradientDescent {
 
@@ -517,19 +522,22 @@ class GradientDescent {
   void Eval(double *pt){
 
     index_t iters;
-    index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",5000);
+    index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
     double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
     fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
     double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
-    double MAX_STEP_SIZE = fx_param_double(opt_module_, 
-					   "MAX_STEP_SIZE", 100.0);
+    // double MAX_STEP_SIZE = fx_param_double(opt_module_, 
+    //					   "MAX_STEP_SIZE", 100.0);
     index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
     Vector pold, pnew, grad;
     long double f_old, f_new;
     double scale, alpha = 0.1, gamma;
-    long double p_tol, f_tol;
+    long double p_tol = 0.0, f_tol = 0.0;
 
     // have to decide what to assign alpha value as 
+    // step lengths are crucial because this is 
+    // ending up oscillating close to the optimal
+    // hence never actually reaching the optimal
 
     pold.Init(dim);
     pnew.Init(dim);
@@ -538,17 +546,7 @@ class GradientDescent {
 
     f_old = (*func_ptr_)(pold, data(), &grad);
     printf("first val: %Lf\n", f_old);
-    // printf("scale : %lf\n", la::Dot(grad, grad));
-
-    // scale = sqrt(la::Dot(grad, grad));
-    // gamma = - alpha / scale;
-    // pnew.SetZero();
-    // la::AddTo(pold, &pnew);
-    // la::AddExpert(gamma, grad, &pnew);
-
-    // f_new = (*func_ptr_)(pnew, data(), &grad);
-    // printf("second val : %Lf\n", f_new);
-
+ 
     // Here we are doing the normal gradient step
     // scale = || - \nabla_\theta f(X, \theta_k) ||
     // \theta_{k+1} = \theta_k - 
@@ -569,7 +567,7 @@ class GradientDescent {
       f_new = (*func_ptr_)(pnew, data(), &grad);
       f_tol = fabs(f_new - f_old);
 
-      if ((f_tol < EPSILON) && (p_tol < TOLERANCE)) {
+      if (((f_tol < EPSILON) && (p_tol < TOLERANCE)) || (scale < EPSILON)) {
 	fx_format_result(opt_module_, "iters", "%d", iters+1);
 	fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
 	for (index_t i = 0; i < dim; i++) {
@@ -587,12 +585,321 @@ class GradientDescent {
     for(index_t i = 0; i < dim; i++) {
       printf("%lf, ", pold.get(i));
     }
-    printf("\nfinal val: %Lf\n, p_tol : %Lf, f_tol : %Lf\n", f_old, p_tol, f_tol);
+    printf("\nfinal val: %Lf\n p_tol : %Lf, f_tol : %Lf, iters : %"LI"d\n", f_old, p_tol, f_tol, iters);
     return;
   }
   
 };
 
+/**
+ * Stochastic Gradient Descent implemented here
+ * documentation later
+ *
+ */
 
+class SGD {
+
+ private:
+  index_t dimension_;
+  Matrix data_;
+  long double (*func_ptr_)(Vector&, const Matrix&, Vector*);
+  datanode *opt_module_;
+
+ public:
+
+  SGD(){
+  }
+
+  ~SGD(){ 
+  }
+
+  void Init(long double (*fun)(Vector&, const Matrix&, Vector*),
+	    Matrix& data, datanode *opt_module){
+	  
+    data_.Copy(data);
+    func_ptr_ = fun;
+    opt_module_ = opt_module;
+    dimension_ = fx_param_int_req(opt_module_, "param_space_dim");
+  }
+
+  const Matrix data() {
+    return data_;
+  }
+
+  index_t dimension() {
+    return dimension_;
+  }
+
+  void Eval(double *pt){
+
+    index_t iters;
+    index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
+    double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
+    fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
+    double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
+    // double MAX_STEP_SIZE = fx_param_double(opt_module_, 
+    //					   "MAX_STEP_SIZE", 100.0);
+    index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
+    index_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
+    Vector pold, pnew, grad;
+    long double f_old, f_new;
+    double scale, alpha = 0.1, gamma;
+    long double p_tol = 0.0, f_tol = 0.0;
+    Matrix data_batched;
+    index_t batch_size = data().n_cols() / num_batch;
+
+    // have to decide what to assign alpha value as 
+    // step lengths are crucial because this is 
+    // ending up oscillating close to the optimal
+    // hence never actually reaching the optimal
+
+    pold.Init(dim);
+    pnew.Init(dim);
+    pold.CopyValues(pt);
+    grad.Init(dim);
+    data_batched.Copy(data());
+
+    f_old = (*func_ptr_)(pold, data(), &grad);
+    printf("first val: %Lf\n", f_old);
+ 
+    // Here we are doing the normal gradient step
+    // scale = || - \nabla_\theta f(X_t, \theta_t) ||
+    // \theta_{t+1} = \theta_t - 
+    //                alpha * \nabla_\theta f(X_t,\theta_t) / scale;
+
+    for (iters = 0; iters < MAXIMUM_ITERATIONS; iters++) {
+
+      // Now going through the data batchwise
+      for (index_t in = 0; in < num_batch; in++) {
+
+	scale = sqrt(la::Dot(grad, grad));
+	gamma = - alpha / scale;
+	pnew.SetZero();
+	la::AddTo(pold, &pnew);
+	la::AddExpert(gamma, grad, &pnew);
+
+	Vector diff;
+	la::SubInit(pnew, pold, &diff);
+	p_tol = sqrt(la::Dot(diff, diff));
+
+	// using a batch
+	Matrix single_batch;
+	index_t st_pt = in * batch_size;
+	data_batched.MakeColumnSlice(st_pt, batch_size, &single_batch);
+	f_new = (*func_ptr_)(pnew, single_batch, &grad);
+	f_tol = fabs(f_new - f_old);
+
+	if ((f_tol < EPSILON) && (p_tol < TOLERANCE)) {
+	  fx_format_result(opt_module_, "iters", "%d", iters+1);
+	  fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
+	  for (index_t i = 0; i < dim; i++) {
+	    pt[i] = pold.get(i);
+	  }
+	  printf("iters: %"LI"d, min: %Lf\n", iters, f_old);
+	  return;
+	}
+
+	pold.CopyValues(pnew);
+	f_old = f_new;
+ 
+      }
+
+      // permuting the data matrix
+      data_batched.Destruct();
+      PermuteMatrix_(data(), &data_batched);
+      //printf("data permuted\n");
+    }
+
+    NOTIFY("Too many iterations in Stochastic Gradient Descent\n");
+    fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
+    for(index_t i = 0; i < dim; i++) {
+      printf("%lf, ", pold.get(i));
+    }
+    long double f_final = (*func_ptr_)(pold, data(), &grad);
+    printf("\nfinal val: %Lf\n p_tol : %Lf, f_tol : %Lf, iters : %"LI"d\n",
+	   f_final, p_tol, f_tol, iters);
+    return;
+  }
+
+  void PermuteMatrix_(const Matrix& input, Matrix *output) {
+  
+    ArrayList<index_t> perm_array;
+    index_t size = input.n_cols();
+    Matrix perm_mat;
+
+    perm_mat.Init(size, size);
+    perm_mat.SetAll(0.0);
+
+    math::MakeRandomPermutation(size, &perm_array);
+    for(index_t i = 0; i < size; i++) {
+      perm_mat.set(perm_array[i], i, 1.0);
+    }
+
+    la::MulInit(input, perm_mat, output);
+    return;
+  }
+};
+
+
+/**
+ * Stochastic Meta Descent with a 
+ * Single step model implemented here
+ * documentation later
+ *
+ */
+
+class SMD_SingleStep {
+
+ private:
+  index_t dimension_;
+  Matrix data_;
+  long double (*func_ptr_)(Vector&, const Matrix&, Vector*);
+  datanode *opt_module_;
+
+ public:
+
+  SMD_SingleStep(){
+  }
+
+  ~SMD_SingleStep(){ 
+  }
+
+  void Init(long double (*fun)(Vector&, const Matrix&, Vector*),
+	    Matrix& data, datanode *opt_module){
+	  
+    data_.Copy(data);
+    func_ptr_ = fun;
+    opt_module_ = opt_module;
+    dimension_ = fx_param_int_req(opt_module_, "param_space_dim");
+  }
+
+  const Matrix data() {
+    return data_;
+  }
+
+  index_t dimension() {
+    return dimension_;
+  }
+
+  void Eval(double *pt){
+
+    index_t iters;
+    index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
+    double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
+    fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
+    double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
+    index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
+    index_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
+    Vector pold, pnew, grad, prev_grad;
+    long double f_old, f_new;
+    double scale, scale_prev, alpha = 10, gamma, mu = 0.1;
+    long double p_tol = 0.0, f_tol = 0.0;
+    Matrix data_batched;
+    index_t batch_size = data().n_cols() / num_batch;
+
+    // have to decide how to chose starting value
+    // of alpha (right now it is just 1). 
+    // also have to decide the value for the 
+    // meta parameter mu (right now it is 
+    // arbitrarily chosen as 0.1)
+
+    pold.Init(dim);
+    pnew.Init(dim);
+    pold.CopyValues(pt);
+    grad.Init(dim);
+    prev_grad.Init(dim);
+    data_batched.Copy(data());
+
+    f_old = (*func_ptr_)(pold, data(), &grad);
+    printf("first val: %Lf\n", f_old);
+    scale = sqrt(la::Dot(grad, grad));
+
+    // Here we are doing the gradient step
+    // scale = || - \nabla_\theta f(X_t, \theta_t) ||
+    // \theta_{t+1} = \theta_t - 
+    //                \eta_t * \nabla_\theta f(X_t,\theta_t) / scale;
+
+    for (iters = 0; iters < MAXIMUM_ITERATIONS; iters++) {
+
+      // Now going through the data batchwise
+      for (index_t in = 0; in < num_batch; in++) {
+
+	gamma = - alpha / scale;
+	pnew.SetZero();
+	la::AddTo(pold, &pnew);
+	la::AddExpert(gamma, grad, &pnew);
+
+	Vector diff;
+	la::SubInit(pnew, pold, &diff);
+	p_tol = sqrt(la::Dot(diff, diff));
+
+	// using a batch
+	Matrix single_batch;
+	index_t st_pt = in * batch_size;
+	data_batched.MakeColumnSlice(st_pt, batch_size, &single_batch);
+	prev_grad.CopyValues(grad);
+	f_new = (*func_ptr_)(pnew, single_batch, &grad);
+	f_tol = fabs(f_new - f_old);
+
+	if ((f_tol < EPSILON) && (p_tol < TOLERANCE)) {
+	  fx_format_result(opt_module_, "iters", "%d", iters+1);
+	  fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
+	  for (index_t i = 0; i < dim; i++) {
+	    pt[i] = pold.get(i);
+	  }
+	  printf("iters: %"LI"d, min: %Lf\n", iters, f_old);
+	  return;
+	}
+
+	pold.CopyValues(pnew);
+	f_old = f_new;
+
+	// updating the step size as per the following
+	// \eta_i = \eta_{i-1} * max(0.5, 1 + mu * \eta_{i-1} * 
+	//                           \nabla_\theta f_{i-1}'* 
+	//                           \nabla_\theta f_i 
+	//                          )
+	scale_prev = scale;
+	scale = sqrt(la::Dot(grad, grad));
+	double temp_alpha = 1 + mu * alpha * (la::Dot(grad, prev_grad)) / 
+	  (scale * scale_prev);
+	alpha = alpha * ((0.5 > temp_alpha)?0.5 : temp_alpha);
+      }
+
+      // permuting the data matrix
+      data_batched.Destruct();
+      PermuteMatrix_(data(), &data_batched);
+      //printf("data permuted\n");
+    }
+
+    NOTIFY("Too many iterations in Stochastic Meta Descent\n");
+    fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
+    for(index_t i = 0; i < dim; i++) {
+      printf("%lf, ", pold.get(i));
+    }
+    long double f_final = (*func_ptr_)(pold, data(), &grad);
+    printf("\nfinal val: %Lf\n p_tol : %Lf, f_tol : %Lf, iters : %"LI"d\n",
+	   f_final, p_tol, f_tol, iters);
+    return;
+  }
+
+  void PermuteMatrix_(const Matrix& input, Matrix *output) {
+  
+    ArrayList<index_t> perm_array;
+    index_t size = input.n_cols();
+    Matrix perm_mat;
+
+    perm_mat.Init(size, size);
+    perm_mat.SetAll(0.0);
+
+    math::MakeRandomPermutation(size, &perm_array);
+    for(index_t i = 0; i < size; i++) {
+      perm_mat.set(perm_array[i], i, 1.0);
+    }
+
+    la::MulInit(input, perm_mat, output);
+    return;
+  }
+};
 
 #endif
