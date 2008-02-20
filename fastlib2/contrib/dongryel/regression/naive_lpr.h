@@ -109,29 +109,31 @@ class NaiveLpr {
     }
 
     // Temporary variables to hold intermediate computation results.
-    ArrayList<Matrix> denominator;
-    denominator.Init(queries.n_cols());
-    Matrix numerator;
-    numerator.Init(total_num_coeffs_, queries.n_cols());
-    numerator.SetZero();
-    ArrayList<Matrix> weight_diagram_numerator;
-    weight_diagram_numerator.Init(queries.n_cols());
-    for(index_t i = 0; i < queries.n_cols(); i++) {
-      denominator[i].Init(total_num_coeffs_, total_num_coeffs_);
-      denominator[i].SetZero();
-      weight_diagram_numerator[i].Init(total_num_coeffs_, total_num_coeffs_);
-      weight_diagram_numerator[i].SetZero();
-    }
+    Matrix denominator;
+    denominator.Init(total_num_coeffs_, total_num_coeffs_);
+    Vector numerator;
+    numerator.Init(total_num_coeffs_);
+    Matrix weight_diagram_numerator;
+    weight_diagram_numerator.Init(total_num_coeffs_, total_num_coeffs_);
     
     // Temporary variable for storing multivariate expansion of a
     // point.
     Vector point_expansion;
     point_expansion.Init(total_num_coeffs_);
 
+    // Temporary variable for holding the pseudoinverse.
+    Matrix denominator_inv_q;
+    denominator_inv_q.Init(total_num_coeffs_, total_num_coeffs_);
+
     // Compute unnormalized sum for the numerator vector and the
     // denominator matrix.
     for(index_t q = 0; q < queries.n_cols(); q++) {
-      
+
+      // Initialize the temporary variables holding the sum.
+      numerator.SetZero();
+      denominator.SetZero();
+      weight_diagram_numerator.SetZero();
+
       // Get the query point.
       const double *q_col = queries.GetColumnPtr(q);
       for(index_t r = 0; r < rset_.n_cols(); r++) {
@@ -152,16 +154,15 @@ class NaiveLpr {
 	for(index_t i = 0; i < total_num_coeffs_; i++) {
 
 	  // Compute each component of the numerator matrix.
-	  numerator.set(i, q, numerator.get(i, q) +
-			r_target * kernel_value * point_expansion[i]);
+	  numerator[i] += r_target * kernel_value * point_expansion[i];
 	  
 	  // Here, compute each component of the denominator matrix.
 	  for(index_t j = 0; j < total_num_coeffs_; j++) {
-	    denominator[q].set(j, i, denominator[q].get(j, i) +
-			       point_expansion[j] * point_expansion[i] * 
-			       kernel_value);
-	    weight_diagram_numerator[q].set
-	      (j, i, weight_diagram_numerator[q].get(j, i) +
+	    denominator.set(j, i, denominator.get(j, i) +
+			    point_expansion[j] * point_expansion[i] * 
+			    kernel_value);
+	    weight_diagram_numerator.set
+	      (j, i, weight_diagram_numerator.get(j, i) +
 	       point_expansion[j] * point_expansion[i] * kernel_value *
 	       kernel_value);
 	    
@@ -171,18 +172,10 @@ class NaiveLpr {
 	  // vector.
 
       } // end of looping over each reference point
-    } // end of looping over each query point
 
-    Matrix denominator_inv_q;
-    denominator_inv_q.Init(total_num_coeffs_, total_num_coeffs_);
-    
-    // now iterate over all query points and compute regression estimate
-    for(index_t q = 0; q < queries.n_cols(); q++) {
-
-      const double *q_col = queries.GetColumnPtr(q);
+      // The coefficients computed for the local fit at the given
+      // query point.
       Vector beta_q;
-      Vector q_numerator;
-      numerator.MakeColumnVector(q, &q_numerator);
       
       // Compute the query point expansion.
       MultiIndexUtil::ComputePointMultivariatePolynomial
@@ -190,8 +183,8 @@ class NaiveLpr {
 
       // Now invert the denominator matrix for each query point and
       // multiply by the numerator vector.
-      MatrixUtil::PseudoInverse(denominator[q], &denominator_inv_q);      
-      la::MulInit(denominator_inv_q, q_numerator, &beta_q);
+      MatrixUtil::PseudoInverse(denominator, &denominator_inv_q);
+      la::MulInit(denominator_inv_q, numerator, &beta_q);
 
       // Compute the dot product between the multiindex vector for the
       // query point by the beta_q.
@@ -199,14 +192,13 @@ class NaiveLpr {
 
       // Now we compute the magnitude of the weight diagram for each
       // query point.
-      Vector pseudo_inverse_times_query_expansion;
-      Vector intermediate_product;
+      Vector pseudo_inverse_times_query_expansion, intermediate_product;
       la::MulInit(denominator_inv_q, point_expansion,
 		  &pseudo_inverse_times_query_expansion);
-      la::MulInit(weight_diagram_numerator[q],
+      la::MulInit(weight_diagram_numerator,
 		  pseudo_inverse_times_query_expansion, &intermediate_product);
       (*query_magnitude_weight_diagrams)[q] =
-	sqrt(la::Dot(pseudo_inverse_times_query_expansion, 
+	sqrt(la::Dot(pseudo_inverse_times_query_expansion,
 		     intermediate_product));
 
       // Compute the influence value at each point (if it belongs to
@@ -216,7 +208,7 @@ class NaiveLpr {
 	(*query_influence_values)[q] =
 	  la::Dot(point_expansion, pseudo_inverse_times_query_expansion);
       }      
-    } // end of iterating over each query point.
+    } // end of looping over each query point
   }
 
   void ComputeConfidenceBands_(const Matrix &queries,

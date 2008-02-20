@@ -59,7 +59,9 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   // Initialize storage for the final results.
   query_regression_estimates->Init(queries.n_cols());
   query_magnitude_weight_diagrams->Init(queries.n_cols());
-  query_influence_values->Init(queries.n_cols());
+  if(query_influence_values != NULL) {
+    query_influence_values->Init(queries.n_cols());
+  }
   
   // Three steps: initialize the query tree, then call dualtree,
   // then final postprocess.
@@ -145,7 +147,9 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
   // Initialize storage for the final results.
   query_regression_estimates->Init(queries.n_cols());
   query_magnitude_weight_diagrams->Init(queries.n_cols());
-  query_influence_values->Init(queries.n_cols());
+  if(query_influence_values != NULL) {
+    query_influence_values->Init(queries.n_cols());
+  }
 
   // iterate over each query point.
   for(index_t q = 0; q < queries.n_cols(); q++) {
