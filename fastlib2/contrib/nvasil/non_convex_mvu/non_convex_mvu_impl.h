@@ -24,8 +24,9 @@ NonConvexMVU::NonConvexMVU() {
  max_iterations_ = 100000;
  distance_tolerance_ = 1e-1;
  gradient_tolerance_ = 1e-20;
- armijo_sigma_=1e-1;
- armijo_beta_=0.5;
+ wolfe_sigma1_=1e-1;
+ wolfe_sigma2_=0.9;
+ wolfe_beta_=0.8;
  new_dimension_ = -1;
  mem_bfgs_ = -1;
 }
@@ -88,11 +89,11 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
    index_bfgs_=0;
   // You have to compute also the previous_gradient_ and previous_coordinates_
   // tha are needed only by BFGS
-  ComputeGradient_<PROBLEM_TYPE>();
+  ComputeGradient_<PROBLEM_TYPE>(coordinates_, &gradient_);
   previous_gradient_.Copy(gradient_);
   previous_coordinates_.Copy(coordinates_);
   LocalSearch_<PROBLEM_TYPE>(&step, gradient_);
-  ComputeGradient_<PROBLEM_TYPE>();
+  ComputeGradient_<PROBLEM_TYPE>(coordinates_, &gradient_);
   la::SubOverwrite(previous_coordinates_, coordinates_, &s_bfgs_[0]);
   la::SubOverwrite(previous_gradient_, gradient_, &y_bfgs_[0]);
   ro_bfgs_[0] = la::Dot(s_bfgs_[0].n_elements(), 
@@ -100,7 +101,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   for(index_t i=0; i<mem_bfgs_; i++) {
     //LocalSearch_<PROBLEM_TYPE>(&step, gradient_);
     ComputeBFGS_<PROBLEM_TYPE>(&step, gradient_, i);
-    ComputeGradient_<PROBLEM_TYPE>();
+    ComputeGradient_<PROBLEM_TYPE>(coordinates_, &gradient_);
     UpdateBFGS_();
     previous_gradient_.CopyValues(gradient_);
     previous_coordinates_.CopyValues(coordinates_);
@@ -114,7 +115,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       ComputeBFGS_<PROBLEM_TYPE>(&step, gradient_, mem_bfgs_);
-      ComputeGradient_<PROBLEM_TYPE>();
+      ComputeGradient_<PROBLEM_TYPE>(coordinates_, &gradient_);
       ComputeFeasibilityError_<PROBLEM_TYPE>(&distance_constraint, 
                                              &centering_constraint);
  
@@ -142,7 +143,8 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
      // step=la::DistanceSqEuclidean(new_dimension_ * num_of_points_,
      //     previous_coordinates_.ptr(), coordinates_.ptr());
       if (step < gradient_tolerance_ ||
-          distance_constraint < distance_tolerance_){
+          distance_constraint < distance_tolerance_
+          || sigma_>=1e120){
         break;
       }
       UpdateBFGS_();
@@ -163,9 +165,12 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
       printf("\n");
       return;
     }
+    if (sigma_>1e120) {
+      break;
+    }
     //UpdateLagrangeMultStochastic_();
     UpdateLagrangeMult_<PROBLEM_TYPE>();
-    ComputeGradient_<PROBLEM_TYPE>();
+    ComputeGradient_<PROBLEM_TYPE>(coordinates_, &gradient_);
   }
     NOTIFY("Didn't converge, maximum number of iterations reached !!\n");
     NOTIFY("Objective function: %lg\n", ComputeObjective_<PROBLEM_TYPE>(coordinates_));
@@ -213,12 +218,21 @@ void NonConvexMVU::set_gradient_tolerance(double tolerance) {
   gradient_tolerance_ = tolerance;
 }
 
-void NonConvexMVU::set_armijo_sigma(double armijo_sigma) {
-  armijo_sigma_ = armijo_sigma;
+void NonConvexMVU::set_wolfe_sigma(double wolfe_sigma1, double wolfe_sigma2) {
+  if (unlikely(wolfe_sigma1>=wolfe_sigma2_)) {
+    FATAL("Wolfe sigma1 %lg should be less than sigma2 %lg", 
+        wolfe_sigma1, wolfe_sigma2);
+  }
+  DEBUG_ASSERT(wolfe_sigma1>0);
+  DEBUG_ASSERT(wolfe_sigma1<1);
+  DEBUG_ASSERT(wolfe_sigma2>0);
+  DEBUG_ASSERT(wolfe_sigma2<1);
+  wolfe_sigma1_ = wolfe_sigma1;
+  wolfe_sigma2_ = wolfe_sigma2;
 }
 
-void NonConvexMVU::set_armijo_beta(double armijo_beta) {
-  armijo_beta_ = armijo_beta;
+void NonConvexMVU::set_wolfe_beta(double wolfe_beta) {
+  wolfe_beta_ = wolfe_beta;
 }
 
 void NonConvexMVU::set_mem_bfgs(index_t mem_bfgs) {
@@ -264,10 +278,6 @@ template<int PROBLEM_TYPE>
 void NonConvexMVU::UpdateLagrangeMult_() {
   double distance_constraint;
   double centering_constraint;
-  //  in the case of feasibility problem  we do nothing
-  if (PROBLEM_TYPE==0) {
-    return;
-  }
   ComputeFeasibilityError_<PROBLEM_TYPE>(&distance_constraint, &centering_constraint);
   double feasibility_error = distance_constraint + centering_constraint;
   if (feasibility_error< eta_ * previous_feasibility_error_) {
@@ -299,28 +309,38 @@ void NonConvexMVU::UpdateLagrangeMult_() {
 }
 
 template<int PROBLEM_TYPE>
-void NonConvexMVU::LocalSearch_(double *step, Matrix &grad) {
+void NonConvexMVU::LocalSearch_(double *step, Matrix &direction) {
   Matrix temp_coordinates;
+  Matrix temp_gradient;
+  temp_gradient.Init(new_dimension_, num_of_points_);
   temp_coordinates.Init(coordinates_.n_rows(), coordinates_.n_cols()); 
   double lagrangian1 = ComputeLagrangian_<PROBLEM_TYPE>(coordinates_);
   double lagrangian2 = 0;
-  double beta=armijo_beta_;
-  double gradient_norm = la::LengthEuclidean(grad.n_rows()
-                                             * grad.n_cols(),
-                                             grad.ptr());
-  double armijo_factor =  gradient_norm * armijo_sigma_ * armijo_beta_ * step_size_;
-  for(index_t i=0; ; i++) {
+  double beta=wolfe_beta_;
+  double dot_product = la::Dot(direction.n_elements(),
+                               gradient_.ptr(),
+                               direction.ptr());
+  double wolfe_factor =  dot_product * wolfe_sigma1_ * wolfe_beta_ * step_size_;
+  for(index_t i=0; beta>1e-100; i++) { 
     temp_coordinates.CopyValues(coordinates_);
-    la::AddExpert(-step_size_*beta/gradient_norm, grad, &temp_coordinates);
+    la::AddExpert(-step_size_*beta, direction, &temp_coordinates);
     lagrangian2 =  ComputeLagrangian_<PROBLEM_TYPE>(temp_coordinates);
-    if (lagrangian1-lagrangian2 >= armijo_factor) {
-      break;
-    } else {
-      beta *=armijo_beta_;
-      armijo_factor *=armijo_beta_;
+    if (lagrangian1-lagrangian2 >= wolfe_factor)  {
+      ComputeGradient_<PROBLEM_TYPE>(temp_coordinates, &temp_gradient);
+      double dot_product_new = la::Dot(temp_gradient.n_elements(), 
+          temp_gradient.ptr(), direction.ptr());
+      if (dot_product_new <= wolfe_sigma2_*dot_product) {
+        break;
+      }     
     }
+    beta *=wolfe_beta_;
+    wolfe_factor *=wolfe_beta_;
   }
-  *step=step_size_*beta;
+  if(beta<=1e-100) {
+    *step=0;
+  } else {
+    *step=step_size_*beta;
+  }
   
 /*
   temp_coordinates.CopyValues(coordinates_);
@@ -342,16 +362,16 @@ void NonConvexMVU::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
   Matrix scaled_y;
   scaled_y.Init(new_dimension_, num_of_points_);
   index_t num=0;
-  Matrix temp_gradient(grad);
+  Matrix temp_direction(grad);
   for(index_t i=index_bfgs_, num=0; num<memory; i=(i+1+mem_bfgs_)%mem_bfgs_, num++) {
    // printf("i:%i  index_bfgs_:%i\n", i, index_bfgs_);
     alpha[i] = la::Dot(new_dimension_ * num_of_points_,
                        s_bfgs_[i].ptr(), 
-                       temp_gradient.ptr());
+                       temp_direction.ptr());
     alpha[i] *= ro_bfgs_[i];
     scaled_y.CopyValues(y_bfgs_[i]);
     la::Scale(alpha[i], &scaled_y);
-    la::SubFrom(scaled_y, &temp_gradient);
+    la::SubFrom(scaled_y, &temp_direction);
   }
   // We need to scale the gradient here
   double s_y = la::Dot(num_of_points_* 
@@ -364,7 +384,7 @@ void NonConvexMVU::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
     NONFATAL("Gradient differences close to singular...\n");
   } 
   double norm_scale=s_y/(y_y+1e-10);
-  la::Scale(norm_scale, &temp_gradient);
+  la::Scale(norm_scale, &temp_direction);
   Matrix scaled_s;
   double beta;
   scaled_s.Init(new_dimension_, num_of_points_);
@@ -375,20 +395,24 @@ void NonConvexMVU::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
 
     beta = la::Dot(new_dimension_ * num_of_points_, 
                    y_bfgs_[j].ptr(),
-                   temp_gradient.ptr());
+                   temp_direction.ptr());
     beta *= ro_bfgs_[j];
     scaled_s.CopyValues(s_bfgs_[j]);
     la::Scale(alpha[j]-beta, &scaled_s);
-    la::AddTo(scaled_s, &temp_gradient);
+    la::AddTo(scaled_s, &temp_direction);
   }
- LocalSearch_<PROBLEM_TYPE>(step, temp_gradient);
+ LocalSearch_<PROBLEM_TYPE>(step, temp_direction);
+ if (step==0) {
+   la::Scale(-1.0, &temp_direction);
+   LocalSearch_<PROBLEM_TYPE>(step, temp_direction);
+ }
 /*  NOTIFY("gradient_norm = %lg norm_scalar %lg\n", 
          la::Dot(num_of_points_*new_dimension_, 
          temp_gradient.ptr(), temp_gradient.ptr()),
          norm_scale);
 */         
   (*step)*= la::Dot(num_of_points_*new_dimension_, 
-         temp_gradient.ptr(), temp_gradient.ptr());
+         temp_direction.ptr(), temp_direction.ptr());
 }
 
 void NonConvexMVU::UpdateBFGS_() {
@@ -515,24 +539,24 @@ double NonConvexMVU::ComputeFeasibilityError_() {
 // 1 = equality constraints
 // 2 = inequality constraints
 template<int PROBLEM_TYPE>
-void NonConvexMVU::ComputeGradient_() {
+void NonConvexMVU::ComputeGradient_(Matrix &coord, Matrix *grad) {
   if (PROBLEM_TYPE==0) {
-    gradient_.SetAll(0.0);
+    grad->SetAll(0.0);
   }
   if (PROBLEM_TYPE==1) {
-    gradient_.CopyValues(coordinates_);
+    grad->CopyValues(coord);
     // we need to use -CRR^T because we want to maximize CRR^T
-    la::Scale(-1.0, &gradient_);
+    la::Scale(-1.0, grad);
   }
   if (PROBLEM_TYPE==2){
-    gradient_.CopyValues(coordinates_);
+    grad->CopyValues(coord);
   }
  for(index_t i=0; i<num_of_pairs_; i++) {
    double a_i_r[new_dimension_];
    index_t n1=neighbor_pairs_[i].first;
    index_t n2=neighbor_pairs_[i].second;
-   double *point1 = coordinates_.GetColumnPtr(n1);
-   double *point2 = coordinates_.GetColumnPtr(n2);
+   double *point1 = coord.GetColumnPtr(n1);
+   double *point2 = coord.GetColumnPtr(n2);
    double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
                           -distances_[i];
    la::SubOverwrite(new_dimension_, point2, point1, a_i_r);
@@ -541,11 +565,11 @@ void NonConvexMVU::ComputeGradient_() {
      la::AddExpert(new_dimension_,
                    dist_diff*sigma_, 
          a_i_r, 
-         gradient_.GetColumnPtr(n1));
+         grad->GetColumnPtr(n1));
          la::AddExpert(new_dimension_,
                       -dist_diff*sigma_, 
           a_i_r, 
-          gradient_.GetColumnPtr(n2));
+          grad->GetColumnPtr(n2));
  
     } 
     // equality constraints
@@ -553,11 +577,11 @@ void NonConvexMVU::ComputeGradient_() {
       la::AddExpert(new_dimension_,
           -lagrange_mult_[i]+dist_diff*sigma_,
           a_i_r, 
-          gradient_.GetColumnPtr(n1));
+          grad->GetColumnPtr(n1));
       la::AddExpert(new_dimension_,
           lagrange_mult_[i]-dist_diff*sigma_,
           a_i_r, 
-          gradient_.GetColumnPtr(n2));
+          grad->GetColumnPtr(n2));
     }
     // inequality constraints
     if (PROBLEM_TYPE==2) {
@@ -565,11 +589,11 @@ void NonConvexMVU::ComputeGradient_() {
         la::AddExpert(new_dimension_,
             -lagrange_mult_[i]+dist_diff*sigma_,
             a_i_r, 
-            gradient_.GetColumnPtr(n1));
+            grad->GetColumnPtr(n1));
         la::AddExpert(new_dimension_,
             lagrange_mult_[i]-dist_diff*sigma_, //***
             a_i_r, 
-            gradient_.GetColumnPtr(n2));
+            grad->GetColumnPtr(n2));
       }
     }
   }
