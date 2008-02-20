@@ -480,4 +480,119 @@ class QuasiNewton {
   }
 };
 
+
+class GradientDescent {
+
+ private:
+  index_t dimension_;
+  Matrix data_;
+  long double (*func_ptr_)(Vector&, const Matrix&, Vector*);
+  datanode *opt_module_;
+
+ public:
+
+  GradientDescent(){
+  }
+
+  ~GradientDescent(){ 
+  }
+
+  void Init(long double (*fun)(Vector&, const Matrix&, Vector*),
+	    Matrix& data, datanode *opt_module){
+	  
+    data_.Copy(data);
+    func_ptr_ = fun;
+    opt_module_ = opt_module;
+    dimension_ = fx_param_int_req(opt_module_, "param_space_dim");
+  }
+
+  const Matrix data() {
+    return data_;
+  }
+
+  index_t dimension() {
+    return dimension_;
+  }
+
+  void Eval(double *pt){
+
+    index_t iters;
+    index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",5000);
+    double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
+    fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
+    double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
+    double MAX_STEP_SIZE = fx_param_double(opt_module_, 
+					   "MAX_STEP_SIZE", 100.0);
+    index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
+    Vector pold, pnew, grad;
+    long double f_old, f_new;
+    double scale, alpha = 0.1, gamma;
+    long double p_tol, f_tol;
+
+    // have to decide what to assign alpha value as 
+
+    pold.Init(dim);
+    pnew.Init(dim);
+    pold.CopyValues(pt);
+    grad.Init(dim);
+
+    f_old = (*func_ptr_)(pold, data(), &grad);
+    printf("first val: %Lf\n", f_old);
+    // printf("scale : %lf\n", la::Dot(grad, grad));
+
+    // scale = sqrt(la::Dot(grad, grad));
+    // gamma = - alpha / scale;
+    // pnew.SetZero();
+    // la::AddTo(pold, &pnew);
+    // la::AddExpert(gamma, grad, &pnew);
+
+    // f_new = (*func_ptr_)(pnew, data(), &grad);
+    // printf("second val : %Lf\n", f_new);
+
+    // Here we are doing the normal gradient step
+    // scale = || - \nabla_\theta f(X, \theta_k) ||
+    // \theta_{k+1} = \theta_k - 
+    //                alpha * \nabla_\theta f(X,\theta_k) / scale;
+
+    for (iters = 0; iters < MAXIMUM_ITERATIONS; iters++) {
+
+      scale = sqrt(la::Dot(grad, grad));
+      gamma = - alpha / scale;
+      pnew.SetZero();
+      la::AddTo(pold, &pnew);
+      la::AddExpert(gamma, grad, &pnew);
+
+      Vector diff;
+      la::SubInit(pnew, pold, &diff);
+      p_tol = sqrt(la::Dot(diff, diff));
+
+      f_new = (*func_ptr_)(pnew, data(), &grad);
+      f_tol = fabs(f_new - f_old);
+
+      if ((f_tol < EPSILON) && (p_tol < TOLERANCE)) {
+	fx_format_result(opt_module_, "iters", "%d", iters+1);
+	fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
+	for (index_t i = 0; i < dim; i++) {
+	  pt[i] = pold.get(i);
+	}
+	return;
+      }
+
+      pold.CopyValues(pnew);
+      f_old = f_new;
+    }
+
+    NOTIFY("Too many iterations in Gradient Descent\n");
+    fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
+    for(index_t i = 0; i < dim; i++) {
+      printf("%lf, ", pold.get(i));
+    }
+    printf("\nfinal val: %Lf\n, p_tol : %Lf, f_tol : %Lf\n", f_old, p_tol, f_tol);
+    return;
+  }
+  
+};
+
+
+
 #endif
