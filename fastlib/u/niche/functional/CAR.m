@@ -8,6 +8,8 @@ function [filtered_data] = CAR(data)
 
 disp('applying CAR filter');
 
-for z = 1:28
-  filtered_data(:,z,:) = data(:,z,:) - (sum(data,2) / 28);
+num_channels = size(data, 2);
+
+for z = 1:num_channels
+  filtered_data(:,z,:) = data(:,z,:) - (sum(data,2) / num_channels);
 end

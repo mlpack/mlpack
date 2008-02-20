@@ -1,6 +1,8 @@
 load_gene_data;
 
-t = 0:7:119;
+t = 0:1:119;
+
+argvals = 0:7:119;
 first = 7;
 span = 18;
 
@@ -23,15 +25,14 @@ data(find(data == -inf)) = NaN;
 
 % data ready!
 
-
 N = size(data,2);
 p = 17;
 
-mybasis = create_bspline_basis([min(t) max(t)], p, 4);
+mybasis = create_bspline_basis([min(argvals) max(argvals)], p, 4);
 basis_curves = eval_basis(0:1:119, mybasis);
 basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
-myfd = data2fd(data, t, mybasis);
+myfd = data2fd(data, argvals, mybasis);
 mean_result = pca_fd(myfd, 0);
 centered_data_coef = ...
     getcoef(myfd) - ...
@@ -60,6 +61,7 @@ for i = 1:size(ic_curves,2)
   ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
 end
 
+save correct_gene_results;
 
 %{
 % rescale the utilized parts of pc_coef such that

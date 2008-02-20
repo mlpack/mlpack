@@ -6,7 +6,7 @@ data_dir = ['../../../../neurofunk/' ...
 
 
 TargetChar_filename = [data_dir 'TargetChar.mat'];
-responses_filename = [data_dir 'responses.mat'];
+responses_filename = [data_dir 'filtered_responses.mat'];
 
 
 % load and do inits for TargetChar data
@@ -33,7 +33,7 @@ screen = reshape(screen, 6, 6)';
 % load and do inits for responses data
 
 responses = load(responses_filename);
-responses = responses.responses;
+responses = responses.filtered_responses;
 
 [num_epochs, num_flashes, num_trials, T] = size(responses);
 
@@ -98,8 +98,8 @@ centered_myfd = fd(centered_data_coef, mybasis);
 
 centered_data_curves = basis_curves * getcoef(centered_myfd);
 
-
-myfdPar = fdPar(mybasis, 2, 1e-7);
+lambda = 0;
+myfdPar = fdPar(mybasis, 2, lambda);
 pca_results = pca_fd(centered_myfd, 30, myfdPar);
 
 [ic_curves, ic_coef, ic_scores, ...
@@ -115,6 +115,8 @@ for i = 1:size(ic_curves,2)
   ic_curves(:,i) = scale_up_factor * ic_curves(:,i);
   ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
 end
+
+save p300_filtered_lambda0_correct_results.mat;
 
 % given a set of curves, identify component curves of variation
 % once we have these curves, see how well each curve differentiates
