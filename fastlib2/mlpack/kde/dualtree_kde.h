@@ -358,9 +358,11 @@ class DualtreeKde {
       qstat.local_expansion_;
 
     // refine the lower bound using the new lower bound info
-    double new_mass_l = qstat.mass_l_ + qstat.postponed_l_ + dl;    
-    double allowed_err = (tau_ * new_mass_l - qstat.used_error_) /
-      ((double) rroot_->count() - qstat.n_pruned_);
+    double new_mass_l = qstat.mass_l_ + qstat.postponed_l_ + dl;
+    double new_used_error = qstat.used_error_ + qstat.postponed_used_error_;
+    double new_n_pruned = qstat.n_pruned_ + qstat.postponed_n_pruned_;
+    double allowed_err = (tau_ * new_mass_l - new_used_error) /
+      ((double) rroot_->count() - new_n_pruned);
     
     // get the order of approximations
     order_farfield_to_local = 
@@ -445,9 +447,11 @@ class DualtreeKde {
 
     // refine the lower bound using the new lower bound info
     double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
+    double new_used_error = stat.used_error_ + stat.postponed_used_error_;
+    double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
 
-    double allowed_err = (tau_ * new_mass_l - qnode->stat().used_error_) /
-      ((double) rroot_->count() - qnode->stat().n_pruned_);
+    double allowed_err = (tau_ * new_mass_l - new_used_error) /
+      ((double) rroot_->count() - new_n_pruned);
 
     // this is error per each query/reference pair for a fixed query
     double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
