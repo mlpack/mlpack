@@ -162,7 +162,7 @@ public:
 template<typename TKernel>
 class KrylovLprRStat {
 
-public:
+ public:
 
   ////////// Member Variables //////////
 
@@ -197,6 +197,9 @@ public:
    */
   TKernel max_bandwidth_kernel;
 
+  /** @brief The bounding box for the reference point expansion */
+  DHrectBound<2> reference_point_expansion_bound_;
+
   ////////// Constructor/Destructor //////////
 
   /** @brief The constructor which does not do anything. */
@@ -230,6 +233,9 @@ public:
     // Initialize the bandwidth information to defaults.
     min_bandwidth_kernel.Init(DBL_MAX);
     max_bandwidth_kernel.Init(0);
+
+    // Initialize memory for bound on reference point expansions.
+    reference_point_expansion_bound_.Init(matrix_dimension);
   }
 
   /** @brief Computing the statistics for a leaf node involves
