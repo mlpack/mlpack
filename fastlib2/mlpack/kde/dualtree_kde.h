@@ -613,10 +613,15 @@ class DualtreeKde {
 				       (qnode->right()->stat()).mass_u_ +
 				       (qnode->right()->stat()).postponed_u_);
       qnode->stat().used_error_ = 
-	std::max((qnode->left()->stat()).used_error_,
-		 (qnode->right()->stat()).used_error_);
-      qnode->stat().n_pruned_ = std::min((qnode->left()->stat()).n_pruned_,
-					 (qnode->right()->stat()).n_pruned_);
+	std::max((qnode->left()->stat()).used_error_ +
+		 (qnode->left()->stat()).postponed_used_error_,
+		 (qnode->right()->stat()).used_error_ +
+		 (qnode->right()->stat()).postponed_used_error_);
+      qnode->stat().n_pruned_ = 
+	std::min((qnode->left()->stat()).n_pruned_ +
+		 (qnode->left()->stat()).postponed_n_pruned_,
+		 (qnode->right()->stat()).n_pruned_ +
+		 (qnode->right()->stat()).n_pruned_);
       return;
     } // end of the case: non-leaf query node.
   } // end of DualtreeKdeCanonical_
