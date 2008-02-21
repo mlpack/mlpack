@@ -119,52 +119,6 @@ void KrylovLpr<TKernel>::InitializeReferenceStatistics_(ReferenceTree *rnode) {
 }
 
 template<typename TKernel>
-bool KrylovLpr<TKernel>::PrunableRightHandSides_
-(QueryTree *qnode, ReferenceTree *rnode, DRange &dsqd_range, 
- DRange &kernel_value_range, double &used_error) {
-
-  // The following assumes that you are using a monotonically
-  // decreasing kernel!
-  dsqd_range = qnode->bound().RangeDistanceSq(rnode->bound());
-  kernel_value_range.lo =
-    rnode->stat().min_bandwidth_kernel.EvalUnnormOnSq(dsqd_range.hi);
-  kernel_value_range.hi =
-    rnode->stat().max_bandwidth_kernel.EvalUnnormOnSq(dsqd_range.lo);
-
-  // Compute the vector component lower and upper bound changes. This
-  // assumes that the maximum kernel value is 1.
-  la::ScaleOverwrite(kernel_value_range.lo,
-		     rnode->stat().sum_targets_weighted_by_data_, NULL);
-  la::ScaleOverwrite(0.5 * (kernel_value_range.lo +
-			    kernel_value_range.hi),
-		     rnode->stat().sum_targets_weighted_by_data_, NULL);
-
-  // Refine the lower bound based on the current postponed lower bound
-  // change and the newly gained refinement due to comparing the
-  // current query and reference node pair.
-  la::AddOverwrite(qnode->stat().ll_vector_l_,
-		   qnode->stat().postponed_ll_vector_l_, NULL);
-  //la::AddTo(vector_l_change_, NULL);
-
-  // Compute the L1 norm of the most refined lower bound.
-  //double l1_norm_new_right_hand_sides_l_ = L1Norm_(new_vector_l_);
-  double l1_norm_new_right_hand_sides_l_ = 0;
-
-  // Compute the allowed amount of error for pruning the given query
-  // and reference pair.
-  double allowed_err = 
-    (relative_error_ * (rnode->stat().l1_norm_sum_targets_weighted_by_data_) *
-     l1_norm_new_right_hand_sides_l_) / 
-    (rroot_->stat().l1_norm_sum_targets_weighted_by_data_);
-
-  used_error = 0.5 * kernel_value_range.width() * 
-    (rnode->stat().l1_norm_sum_targets_weighted_by_data_);
-  
-  // check pruning condition  
-  return (used_error <= allowed_err);
-}
-
-template<typename TKernel>
 void KrylovLpr<TKernel>::DualtreeRightHandSidesBase_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
