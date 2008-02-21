@@ -315,7 +315,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 
     } // end of iterating over each reference point.
     
-    // Compute Frobenius norm of the accumulated sum
+    // Compute L1 norm of the accumulated sum
     rnode->stat().sum_target_weighted_data_error_norm_ =
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
     rnode->stat().sum_target_weighted_data_alloc_norm_ =
@@ -879,11 +879,15 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
        q_right_stat.numerator_norm_l_ +
        MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_numerator_l_, 1));
     q_stat.numerator_used_error_ = 
-      std::max(q_left_stat.numerator_used_error_,
-	       q_right_stat.numerator_used_error_);
+      std::max(q_left_stat.numerator_used_error_ +
+	       q_left_stat.postponed_numerator_used_error_,
+	       q_right_stat.numerator_used_error_ +
+	       q_right_stat.postponed_numerator_used_error_);
     q_stat.numerator_n_pruned_ = 
-      std::min(q_left_stat.numerator_n_pruned_,
-	       q_right_stat.numerator_n_pruned_);
+      std::min(q_left_stat.numerator_n_pruned_ +
+	       q_left_stat.postponed_numerator_n_pruned_,
+	       q_right_stat.numerator_n_pruned_ +
+	       q_right_stat.postponed_numerator_n_pruned_);
     q_stat.denominator_norm_l_ =
       std::min
       (q_left_stat.denominator_norm_l_ +
@@ -896,11 +900,15 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 	       q_right_stat.kernel_sum_l_ +
 	       q_right_stat.postponed_denominator_l_.get(0, 0));
     q_stat.denominator_used_error_ = 
-      std::max(q_left_stat.denominator_used_error_,
-	       q_right_stat.denominator_used_error_);
+      std::max(q_left_stat.denominator_used_error_ +
+	       q_left_stat.postponed_denominator_used_error_,
+	       q_right_stat.denominator_used_error_ +
+	       q_right_stat.postponed_denominator_used_error_);
     q_stat.denominator_n_pruned_ = 
-      std::min(q_left_stat.denominator_n_pruned_,
-	       q_right_stat.denominator_n_pruned_);    
+      std::min(q_left_stat.denominator_n_pruned_ +
+	       q_left_stat.postponed_denominator_n_pruned_,
+	       q_right_stat.denominator_n_pruned_ +
+	       q_right_stat.postponed_denominator_n_pruned_);    
 
     q_stat.weight_diagram_numerator_norm_l_ =
       std::min
@@ -911,8 +919,10 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
        MatrixUtil::EntrywiseLpNorm
        (q_right_stat.postponed_weight_diagram_numerator_l_, 1));
     q_stat.weight_diagram_numerator_used_error_ = 
-      std::max(q_left_stat.weight_diagram_numerator_used_error_,
-	       q_right_stat.weight_diagram_numerator_used_error_);
+      std::max(q_left_stat.weight_diagram_numerator_used_error_ +
+	       q_left_stat.postponed_weight_diagram_numerator_used_error_,
+	       q_right_stat.weight_diagram_numerator_used_error_ +
+	       q_right_stat.postponed_weight_diagram_numerator_used_error_);
     return;
   } // end of the case: non-leaf query node.  
 }

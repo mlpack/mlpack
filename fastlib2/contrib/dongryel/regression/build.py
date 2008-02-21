@@ -12,28 +12,29 @@ librule(
                "fastlib:fastlib_int"]
     )
 
-# The library build rule for Krylov-subspace based local linear
+# The library build rule for Krylov-subspace based local polynomial
 # regression.
+
 librule(
-    name = "local_linear_krylov",
+    name = "krylov_lpr",
     sources = [],
     headers = ["epan_kernel_moment_info.h",
-               "local_linear_krylov.h",
-               "local_linear_krylov_setup_impl.h",
-               "local_linear_krylov_solver_impl.h",
-               "local_linear_krylov_test.h",
+               "krylov_lpr.h",
+               "krylov_lpr_setup_impl.h",
+               "krylov_lpr_solver_impl.h",
+               "krylov_lpr_test.h",
                "naive_lpr.h"],
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
     )
 
-# The binary executable rule for Krylov-subspace based local linear
-# regression.
+# The binary executable rule for Krylov-subspace based local
+# polynomial regression.
 binrule(
-    name = "local_linear_krylov_bin",
-    sources = ["local_linear_krylov_main.cc"],
+    name = "krylov_lpr_bin",
+    sources = ["krylov_lpr_main.cc"],
     headers = [],
-    deplibs = [":local_linear_krylov",
+    deplibs = [":krylov_lpr",
                "mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
