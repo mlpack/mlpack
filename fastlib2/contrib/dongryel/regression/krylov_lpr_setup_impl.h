@@ -8,35 +8,20 @@
 #include "matrix_util.h"
 
 template<typename TKernel>
-void KrylovLpr<TKernel>::InitializeQueryTreeRightHandSides_
-(QueryTree *qnode, Matrix &right_hand_sides_l, Matrix &right_hand_sides_e) {
+void KrylovLpr<TKernel>::InitializeQueryTreeRightHandSides_(QueryTree *qnode) {
   
   // Set the bounds to default values.
   qnode->stat().ll_vector_norm_l_ = 0;
   (qnode->stat().postponed_ll_vector_l_).SetZero();
   (qnode->stat().postponed_ll_vector_e_).SetZero();
+  qnode->stat().postponed_ll_vector_used_error_ = 0;
+  qnode->stat().postponed_ll_vector_n_pruned_ = 0;
 
-  // If the query node is a leaf, then initialize the corresponding
-  // bound quantities for each query point.
-  if(qnode->is_leaf()) {
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+  // If the query node is not a leaf, then recurse.
+  if(!qnode->is_leaf()) {
 
-      Vector q_right_hand_side_l, q_right_hand_side_e;
-
-      right_hand_sides_l.MakeColumnVector(q, &q_right_hand_side_l);
-      right_hand_sides_e.MakeColumnVector(q, &q_right_hand_side_e);
-      
-      q_right_hand_side_l.SetZero();
-      q_right_hand_side_e.SetZero();
-    }
-  }
-
-  // Otherwise, then traverse to the left and the right.
-  else {
-    InitializeQueryTreeRightHandSides_(qnode->left(), right_hand_sides_l,
-				       right_hand_sides_e);
-    InitializeQueryTreeRightHandSides_(qnode->right(), right_hand_sides_l,
-				       right_hand_sides_e);
+    InitializeQueryTreeRightHandSides_(qnode->left());
+    InitializeQueryTreeRightHandSides_(qnode->right());
   }
 }
 
@@ -263,7 +248,9 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesBase_
 
 template<typename TKernel>
 void KrylovLpr<TKernel>::DualtreeRightHandSidesCanonical_
-(QueryTree *qnode, ReferenceTree *rnode) {
+(QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
+ Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+ Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
   
   // Total amount of used error
   double used_error;
@@ -292,7 +279,9 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesCanonical_
     
     // for leaf pairs, go exhaustive
     if(rnode->is_leaf()) {
-      DualtreeRightHandSidesBase_(qnode, rnode);
+      DualtreeRightHandSidesBase_
+	(qnode, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
+	 right_hand_sides_used_error, right_hand_sides_n_pruned);
       return;
     }
     
@@ -301,8 +290,12 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesCanonical_
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
       BestNodePartners_(qnode, rnode->left(), rnode->right(), &rnode_first,
 			&rnode_second);
-      DualtreeRightHandSidesCanonical_(qnode, rnode_first);
-      DualtreeRightHandSidesCanonical_(qnode, rnode_second);
+      DualtreeRightHandSidesCanonical_
+	(qnode, rnode_first, qset, right_hand_sides_l, right_hand_sides_e, 
+	 right_hand_sides_used_error, right_hand_sides_n_pruned);
+      DualtreeRightHandSidesCanonical_
+	(qnode, rnode_second, qset, right_hand_sides_l, right_hand_sides_e, 
+	 right_hand_sides_used_error, right_hand_sides_n_pruned);
       return;
     }
   }
@@ -341,8 +334,12 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesCanonical_
       
       BestNodePartners_(rnode, qnode->left(), qnode->right(), &qnode_first,
 			&qnode_second);
-      DualtreeRightHandSidesCanonical_(qnode_first, rnode);
-      DualtreeRightHandSidesCanonical_(qnode_second, rnode);
+      DualtreeRightHandSidesCanonical_
+	(qnode_first, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
+	 right_hand_sides_used_error, right_hand_sides_n_pruned);
+      DualtreeRightHandSidesCanonical_
+	(qnode_second, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
+	 right_hand_sides_used_error, right_hand_sides_n_pruned);
     }
     
     // for non-leaf reference node, expand both query and reference nodes
@@ -351,13 +348,25 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesCanonical_
       
       BestNodePartners_(qnode->left(), rnode->left(), rnode->right(),
 			&rnode_first, &rnode_second);
-      DualtreeRightHandSidesCanonical_(qnode->left(), rnode_first);
-      DualtreeRightHandSidesCanonical_(qnode->left(), rnode_second);
+      DualtreeRightHandSidesCanonical_
+	(qnode->left(), rnode_first, qset, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
+      DualtreeRightHandSidesCanonical_
+	(qnode->left(), rnode_second, qset, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
       
       BestNodePartners_(qnode->right(), rnode->left(), rnode->right(),
 			&rnode_first, &rnode_second);
-      DualtreeRightHandSidesCanonical_(qnode->right(), rnode_first);
-      DualtreeRightHandSidesCanonical_(qnode->right(), rnode_second);
+      DualtreeRightHandSidesCanonical_
+	(qnode->right(), rnode_first, qset, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
+      DualtreeRightHandSidesCanonical_
+	(qnode->right(), rnode_second, qset, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
     }
 
     // reaccumulate the summary statistics.
@@ -385,7 +394,8 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesCanonical_
 
 template<typename TKernel>
 void KrylovLpr<TKernel>::FinalizeQueryTreeRightHandSides_
-(QueryTree *qnode, Matrix &right_hand_sides_l, Matrix &right_hand_sides_e) {
+(QueryTree *qnode, Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
+ Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
   KrylovLprQStat &q_stat = qnode->stat();
 
@@ -420,9 +430,11 @@ void KrylovLpr<TKernel>::FinalizeQueryTreeRightHandSides_
     la::AddTo(q_stat.postponed_ll_vector_e_,
               &(q_right_stat.postponed_ll_vector_e_));
 
-    FinalizeQueryTreeRightHandSides_(qnode->left(), right_hand_sides_l,
-				     right_hand_sides_e);
-    FinalizeQueryTreeRightHandSides_(qnode->right(), right_hand_sides_l,
-				     right_hand_sides_e);
+    FinalizeQueryTreeRightHandSides_
+      (qnode->left(), right_hand_sides_l, right_hand_sides_e,
+       right_hand_sides_used_error, right_hand_sides_n_pruned);
+    FinalizeQueryTreeRightHandSides_
+      (qnode->right(), right_hand_sides_l, right_hand_sides_e,
+       right_hand_sides_used_error, right_hand_sides_n_pruned);
   }
 }

@@ -688,11 +688,10 @@ void KrylovLpr<TKernel>::FinalizeQueryTreeLanczosMultiplier_
 
 template<typename TKernel>
 void KrylovLpr<TKernel>::SolveLeastSquaresByKrylov_
-(QueryTree *qroot, const Matrix &qset, const Matrix &right_hand_sides) {
+(QueryTree *qroot, const Matrix &qset, const Matrix &right_hand_sides,
+ Matrix &solution_vectors_e) {
 
-  // Initialize the initial solutions to zero vectors.
-  Matrix solution_vectors_e;
-  solution_vectors_e.Init(row_length_, qset.n_cols());
+  // Initialize the initial solutions to be zero vectors.
   solution_vectors_e.SetZero();
 
   // Temporary variables needed for SYMMLQ iteration...
@@ -792,8 +791,8 @@ void KrylovLpr<TKernel>::SolveLeastSquaresByKrylov_
 
     // Multiply the current lanczos vector with the linear operator.
     DualtreeSolverCanonical_
-      (qroot, rroot_, qset, root_negative_dot_product_range,
-       root_positive_dot_product_range, query_should_exit_the_loop,
+      (qroot, rroot_, root_negative_dot_product_range,
+       root_positive_dot_product_range, qset, query_should_exit_the_loop,
        current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
        lanczos_prod_used_error, lanczos_prod_n_pruned, neg_lanczos_prod_e,
        neg_lanczos_prod_u, neg_lanczos_prod_used_error, 

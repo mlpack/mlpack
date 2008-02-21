@@ -244,17 +244,15 @@ class KrylovLpr {
   /** @brief Initialize the bound statistics relevant to the right
    *         hand side computation.
    */
-  void InitializeQueryTreeRightHandSides_(QueryTree *qnode,
-					  Matrix &right_hand_sides_l,
-					  Matrix &right_hand_sides_e);
+  void InitializeQueryTreeRightHandSides_(QueryTree *qnode);
 
   /** @brief The postprocessing function to finalize the computation
    *         of the right-hand sides of the linear system for each
    *         query point.
    */
-  void FinalizeQueryTreeRightHandSides_(QueryTree *qnode,
-					Matrix &right_hand_sides_l,
-					Matrix &right_hand_sides_e);
+  void FinalizeQueryTreeRightHandSides_
+  (QueryTree *qnode, Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
+   Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
 
   /** @brief Preprocess the reference tree for bottom up statistics
    *         computation.
@@ -287,8 +285,10 @@ class KrylovLpr {
    *  @param qnode The query node.
    *  @param rnode The reference node.
    */
-  void DualtreeRightHandSidesCanonical_(QueryTree *qnode, 
-					ReferenceTree *rnode);
+  void DualtreeRightHandSidesCanonical_
+    (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
+     Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+     Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
 
   /** @brief Compute B^T W(q) Y vector for each query point, which
    *         essentially becomes the right-hand side for the linear
@@ -296,13 +296,27 @@ class KrylovLpr {
    *         z(q) = B^T W(q) Y. This function calls a dual-tree based
    *         fast vector summation to achieve this effect.
    */
-  void ComputeRightHandSides_() {
+  void ComputeRightHandSides_
+    (QueryTree *qroot, const Matrix &qset, Matrix &right_hand_sides_l,
+     Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error,
+     Vector &right_hand_sides_n_pruned) {
 
-    QueryTree *qroot_ = NULL;
+    // Initialize the bound quantities.
+    right_hand_sides_l.SetZero();
+    right_hand_sides_e.SetZero();
+    right_hand_sides_used_error.SetZero();
+    right_hand_sides_n_pruned.SetZero();
+    InitializeQueryTreeRightHandSides_(qroot);
 
-    InitializeQueryTreeRightHandSides_(qroot_);
-    DualtreeRightHandSidesCanonical_(qroot_, rroot_);
-    FinalizeQueryTreeRightHandSides_(qroot_);
+    // Call dualtree function.
+    DualtreeRightHandSidesCanonical_
+      (qroot, rroot_, qset, right_hand_sides_l, right_hand_sides_e,
+       right_hand_sides_used_error, right_hand_sides_n_pruned);
+
+    // Final traversal of the query tree to finalize estimates.
+    FinalizeQueryTreeRightHandSides_
+      (qroot, right_hand_sides_l, right_hand_sides_e,
+       right_hand_sides_used_error, right_hand_sides_n_pruned);
   }
 
   /** @brief Initialize the query tree for an iteration inside a
@@ -392,7 +406,8 @@ class KrylovLpr {
    Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned);
 
   void SolveLeastSquaresByKrylov_(QueryTree *qroot, const Matrix &qset,
-				  const Matrix &right_hand_sides);
+				  const Matrix &right_hand_sides,
+				  Matrix &solution_vectors_e);
 
   /** @brief Finalize the regression estimate for each query point by
    *         taking the dot-product between [1; q^T] and the final
@@ -509,11 +524,13 @@ class KrylovLpr {
       (qset, leaflen, &old_from_new_queries, NULL);
 
     // Initialize storage space for intermediate computations.
-    Matrix vector_l, vector_e, neg_vector_e, neg_vector_u;
-    vector_l.Init(row_length_, qset.n_cols());
-    vector_e.Init(row_length_, qset.n_cols());
-    neg_vector_e.Init(row_length_, qset.n_cols());
-    neg_vector_u.Init(row_length_, qset.n_cols());
+    Matrix right_hand_sides_l, right_hand_sides_e, solution_vectors_e;
+    Vector right_hand_sides_used_error, right_hand_sides_n_pruned;
+    right_hand_sides_l.Init(row_length_, qset.n_cols());
+    right_hand_sides_e.Init(row_length_, qset.n_cols());
+    right_hand_sides_used_error.Init(qset.n_cols());
+    right_hand_sides_n_pruned.Init(qset.n_cols());
+    solution_vectors_e.Init(row_length_, qset.n_cols());
     
     // The computation proceeds in three phases:
     //
@@ -527,19 +544,23 @@ class KrylovLpr {
     // point. This essentially becomes the right-hand side for each
     // query point.
     printf("Starting Phase 1...\n");
-    ComputeRightHandSides_();
+    ComputeRightHandSides_
+      (qroot, qset, right_hand_sides_l, right_hand_sides_e,
+       right_hand_sides_used_error, right_hand_sides_n_pruned);
     printf("Phase 1 completed...\n");
 
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
-    SolveLeastSquaresByKrylov_();
+    SolveLeastSquaresByKrylov_(qroot, qset, right_hand_sides_e,
+			       solution_vectors_e);
     printf("Phase 2 completed...\n");
 
     // Proceed with the third phase of the computation to output the
     // final regression value.
     printf("Starting Phase 3...\n");
-    FinalizeRegressionEstimates_();
+    FinalizeRegressionEstimates_(qset, solution_vectors_e, 
+				 (*query_regression_estimates));
     printf("Phase 3 completed...\n");
 
     // Reshuffle the results to account for dataset reshuffling
@@ -554,14 +575,6 @@ class KrylovLpr {
     for(index_t i = 0; i < tmp_q_results.length(); i++) {
       (*query_regression_estimates)[i] = tmp_q_results[i];
     }
-  }
-
-  void BasicComputeDualTree_(const Matrix &queries,
-			     Vector *query_regression_estimates,
-			     ArrayList<DRange> *query_confidence_bands,
-			     Vector *query_magnitude_weight_diagrams,
-			     Vector *query_influence_values) {
-    
   }
 
   void ComputeMain_(const Matrix &queries,
@@ -584,7 +597,6 @@ class KrylovLpr {
     }
     else {
       BasicComputeDualTree_(queries, query_regression_estimates,
-			    query_confidence_bands,
 			    query_magnitude_weight_diagrams,
 			    query_influence_values);
     }
