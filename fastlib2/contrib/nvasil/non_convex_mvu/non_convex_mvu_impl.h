@@ -23,25 +23,28 @@ NonConvexMVU::NonConvexMVU() {
  step_size_ = 2; 
  max_iterations_ = 100000;
  distance_tolerance_ = 1e-1;
- gradient_tolerance_ = 1e-20;
  wolfe_sigma1_=1e-1;
  wolfe_sigma2_=0.9;
  wolfe_beta_=0.8;
  new_dimension_ = -1;
  mem_bfgs_ = -1;
+ max_violation_of_distance_constraint_ =4*1e6;
 }
-void NonConvexMVU::Init(std::string data_file, index_t knns) {
-  Init(data_file, knns, 20);
+void NonConvexMVU::Init(std::string data_file, index_t knns, index_t kfns) {
+  Init(data_file, knns, kfns, 20);
 }
 
-void NonConvexMVU::Init(std::string data_file, index_t knns, index_t leaf_size) {
+void NonConvexMVU::Init(std::string data_file, index_t knns, index_t kfns,
+    index_t leaf_size) {
   knns_=knns;
+  kfns_=kfns;
   leaf_size_=leaf_size;
   NOTIFY("Loading data ...\n");
   data::Load(data_file.c_str(), &data_);
   RemoveMean_(data_);
   num_of_points_ = data_.n_cols();
   NOTIFY("Data loaded ...\n");
+  NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
   allknn_.Init(data_, leaf_size_, knns_);
   NOTIFY("Tree built ...\n");
@@ -54,9 +57,32 @@ void NonConvexMVU::Init(std::string data_file, index_t knns, index_t leaf_size) 
   NOTIFY("Consolidating neighbors...\n");
   ConsolidateNeighbors_(from_tree_neighbors,
                         from_tree_distances,
-                        &neighbor_pairs_,
-                        &distances_,
-                        &num_of_pairs_);
+                        knns_,
+                        &nearest_neighbor_pairs_,
+                        &nearest_distances_,
+                        &num_of_nearest_pairs_);
+  if (kfns_!=0) {
+    NOTIFY("Furthest neighbor factors ...\n");
+    allkfn_.Init(data_, leaf_size_, kfns_);
+    NOTIFY("Tree built ...\n");
+    NOTIFY("Computing neighborhoods ...\n");
+    from_tree_neighbors.Destruct();
+    from_tree_distances.Destruct();
+    allkfn_.ComputeNeighbors(&from_tree_neighbors,
+                             &from_tree_distances);
+    NOTIFY("Neighborhoods computed...\n");
+    ConsolidateNeighbors_(from_tree_neighbors,
+                        from_tree_distances,
+                        kfns_,
+                        &furthest_neighbor_pairs_,
+                        &furthest_distances_,
+                        &num_of_furthest_pairs_);
+  
+  } else {
+    //the annoying fastlib initialization thing
+    furthest_neighbor_pairs_.Init();
+    furthest_distances_.Init();
+  }
   previous_feasibility_error_ = DBL_MAX;
 }
 
@@ -111,15 +137,13 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   } 
   NOTIFY("Now starting optimizing with BFGS...\n");
   ComputeFeasibilityError_<PROBLEM_TYPE>(&distance_constraint, &centering_constraint);
-  double old_feasibility_error = previous_feasibility_error_;
+  double old_distance_constraint = distance_constraint;
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       ComputeBFGS_<PROBLEM_TYPE>(&step, gradient_, mem_bfgs_);
       ComputeGradient_<PROBLEM_TYPE>(coordinates_, &gradient_);
       ComputeFeasibilityError_<PROBLEM_TYPE>(&distance_constraint, 
                                              &centering_constraint);
- 
-      old_feasibility_error = distance_constraint+centering_constraint;
       double norm_gradient = la::LengthEuclidean(gradient_.n_elements(),
                                                  gradient_.ptr());
       double augmented_lagrangian=ComputeLagrangian_<PROBLEM_TYPE>(coordinates_);
@@ -140,18 +164,18 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
                la::LengthEuclidean(lagrange_mult_),
                sigma_,
                augmented_lagrangian);
-     // step=la::DistanceSqEuclidean(new_dimension_ * num_of_points_,
-     //     previous_coordinates_.ptr(), coordinates_.ptr());
-      if (step < gradient_tolerance_ ||
-          distance_constraint < distance_tolerance_
-          || sigma_>=1e120){
+     
+      if (fabs(old_distance_constraint - distance_constraint) < distance_tolerance_
+          || sigma_>=1e50 || 
+          distance_constraint > max_violation_of_distance_constraint_) {
         break;
       }
       UpdateBFGS_();
       previous_coordinates_.CopyValues(coordinates_);
       previous_gradient_.CopyValues(gradient_);
+      old_distance_constraint = distance_constraint;
     }
-    if (distance_constraint < distance_tolerance_) {
+    if (sigma_>1e50) {
       NOTIFY("Converged !!\n");
       NOTIFY("Objective function: %lg\n", ComputeObjective_<PROBLEM_TYPE>(coordinates_));
       NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
@@ -214,10 +238,6 @@ void NonConvexMVU::set_distance_tolerance(double tolerance) {
   distance_tolerance_ = tolerance;
 }
 
-void NonConvexMVU::set_gradient_tolerance(double tolerance) {
-  gradient_tolerance_ = tolerance;
-}
-
 void NonConvexMVU::set_wolfe_sigma(double wolfe_sigma1, double wolfe_sigma2) {
   if (unlikely(wolfe_sigma1>=wolfe_sigma2_)) {
     FATAL("Wolfe sigma1 %lg should be less than sigma2 %lg", 
@@ -258,11 +278,11 @@ void NonConvexMVU::InitOptimization_() {
   }
   data::Save("init.csv", coordinates_);
   RemoveMean_(coordinates_);
-  lagrange_mult_.Init(num_of_pairs_);
+  lagrange_mult_.Init(num_of_nearest_pairs_);
   if (PROBLEM_TYPE==0) {
     lagrange_mult_.SetAll(0.0);
   }
-  if (PROBLEM_TYPE==1) {
+  if (PROBLEM_TYPE==1 || PROBLEM_TYPE==3) {
     for(index_t i=0; i<lagrange_mult_.length(); i++) {
       lagrange_mult_[i]=math::Random(0.1, 1.0)-0.5; 
     }
@@ -278,18 +298,21 @@ template<int PROBLEM_TYPE>
 void NonConvexMVU::UpdateLagrangeMult_() {
   double distance_constraint;
   double centering_constraint;
+  if (PROBLEM_TYPE == 0) {
+    return;
+  }
   ComputeFeasibilityError_<PROBLEM_TYPE>(&distance_constraint, &centering_constraint);
   double feasibility_error = distance_constraint + centering_constraint;
   if (feasibility_error< eta_ * previous_feasibility_error_) {
-    for(index_t i=0; i<num_of_pairs_; i++) {
-      index_t n1=neighbor_pairs_[i].first;
-      index_t n2=neighbor_pairs_[i].second;
+    for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+      index_t n1=nearest_neighbor_pairs_[i].first;
+      index_t n2=nearest_neighbor_pairs_[i].second;
       double *point1 = coordinates_.GetColumnPtr(n1);
       double *point2 = coordinates_.GetColumnPtr(n2);
       double dist_diff =la::DistanceSqEuclidean(new_dimension_, point1, point2) 
-                           -distances_[i];
+                           -nearest_distances_[i];
       // this is for equality constraints
-      if (PROBLEM_TYPE==1) {
+      if (PROBLEM_TYPE==1 || PROBLEM_TYPE==3) {
         lagrange_mult_[i]-=sigma_*dist_diff;
       }
       // this is for inequality constraints
@@ -341,16 +364,6 @@ void NonConvexMVU::LocalSearch_(double *step, Matrix &direction) {
   } else {
     *step=step_size_*beta;
   }
-  
-/*
-  temp_coordinates.CopyValues(coordinates_);
-  la::AddExpert(-0.00001/gradient_norm, gradient_, &temp_coordinates);
-  lagrangian2 =  ComputeLagrangian_<PROBLEM_TYPE>(temp_coordinates);
-*/
-//  NOTIFY("step_size: %lg, sigma: %lg\n", beta * step_size_, sigma_);
-//  NOTIFY("lagrangian1 - lagrangian2 = %lg\n", lagrangian1-lagrangian2);
-//  NOTIFY("lagrangian2: %lg, Objective: %lg\n", lagrangian2,
-//                                               ComputeObjective_(temp_coordinates));
   coordinates_.CopyValues(temp_coordinates);   
   RemoveMean_(coordinates_); 
 }
@@ -440,6 +453,7 @@ void NonConvexMVU::UpdateBFGS_(index_t index_bfgs) {
 // 0 = feasibility problem
 // 1 = equality constraints
 // 2 = inequality constraints
+// 3 = furthest neighbor objective
 template<int PROBLEM_TYPE>
 double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
   double lagrangian=0;
@@ -455,24 +469,33 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
   }
   if (PROBLEM_TYPE==2) {
     for(index_t i=0; i<coord.n_cols(); i++) {
-      // we are maximizing the trace or minimize the -trace(RR^T)
-      // we dont need it for the feasibility problem
+      // we are minimizing the trace  -trace(RR^T)
       lagrangian += la::Dot(new_dimension_, 
                             coord.GetColumnPtr(i),
                             coord.GetColumnPtr(i));
     }
   }
-  for(index_t i=0; i<num_of_pairs_; i++) {
-    index_t n1=neighbor_pairs_[i].first;
-    index_t n2=neighbor_pairs_[i].second;
+  if (PROBLEM_TYPE==3) {
+    for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+      // we are maximizing the distances of the furthest neighbors
+      index_t n1=furthest_neighbor_pairs_[i].first;
+      index_t n2=furthest_neighbor_pairs_[i].second;
+      lagrangian -= la::DistanceSqEuclidean(new_dimension_,
+                        coord.GetColumnPtr(n1),
+                        coord.GetColumnPtr(n2)); 
+    }
+  }
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    index_t n1=nearest_neighbor_pairs_[i].first;
+    index_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coord.GetColumnPtr(n1);
     double *point2 = coord.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
-                          -distances_[i];
+                          -nearest_distances_[i];
     if (PROBLEM_TYPE==0) {
       lagrangian +=  0.5*sigma_*dist_diff*dist_diff; 
     }
-    if (PROBLEM_TYPE==1) {
+    if (PROBLEM_TYPE==1 || PROBLEM_TYPE==3) {
       lagrangian += -lagrange_mult_[i]*dist_diff +  0.5*sigma_*dist_diff*dist_diff;
     }
     if (PROBLEM_TYPE==2) {
@@ -494,20 +517,20 @@ void NonConvexMVU::ComputeFeasibilityError_(double *distance_constraint,
   deviations.SetAll(0.0);
   *distance_constraint=0;
   *centering_constraint=0;
-  for(index_t i=0; i<num_of_pairs_; i++) {
-    index_t n1=neighbor_pairs_[i].first;
-    index_t n2=neighbor_pairs_[i].second;
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    index_t n1=nearest_neighbor_pairs_[i].first;
+    index_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates_.GetColumnPtr(n1);
     double *point2 = coordinates_.GetColumnPtr(n2);
     if (PROBLEM_TYPE !=2) {
       *distance_constraint += math::Sqr(la::DistanceSqEuclidean(new_dimension_, 
                                                                 point1, point2) 
-                                        -distances_[i]);
+                                        -nearest_distances_[i]);
     }
     if (PROBLEM_TYPE == 2) {
       double dist =(la::DistanceSqEuclidean(new_dimension_, 
                                             point1, point2) 
-                    -distances_[i]);
+                    -nearest_distances_[i]);
       if (dist<0) {
         *distance_constraint += math::Sqr(dist); 
       }
@@ -538,6 +561,7 @@ double NonConvexMVU::ComputeFeasibilityError_() {
 // 0 = feasibility problem
 // 1 = equality constraints
 // 2 = inequality constraints
+// 3 = furthest neighbor objective
 template<int PROBLEM_TYPE>
 void NonConvexMVU::ComputeGradient_(Matrix &coord, Matrix *grad) {
   if (PROBLEM_TYPE==0) {
@@ -551,29 +575,45 @@ void NonConvexMVU::ComputeGradient_(Matrix &coord, Matrix *grad) {
   if (PROBLEM_TYPE==2){
     grad->CopyValues(coord);
   }
- for(index_t i=0; i<num_of_pairs_; i++) {
-   double a_i_r[new_dimension_];
-   index_t n1=neighbor_pairs_[i].first;
-   index_t n2=neighbor_pairs_[i].second;
-   double *point1 = coord.GetColumnPtr(n1);
-   double *point2 = coord.GetColumnPtr(n2);
-   double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
-                          -distances_[i];
-   la::SubOverwrite(new_dimension_, point2, point1, a_i_r);
-   // feasibility problem
-   if (PROBLEM_TYPE==0) {
-     la::AddExpert(new_dimension_,
-                   dist_diff*sigma_, 
-         a_i_r, 
-         grad->GetColumnPtr(n1));
-         la::AddExpert(new_dimension_,
-                      -dist_diff*sigma_, 
+  if (PROBLEM_TYPE==3) {
+    grad->SetAll(0.0);
+    for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+      // we are maximizing the distances of the furthest neighbors
+      index_t n1=furthest_neighbor_pairs_[i].first;
+      index_t n2=furthest_neighbor_pairs_[i].second;
+      double diff[new_dimension_];
+      la::SubOverwrite(new_dimension_,
+                       coord.GetColumnPtr(n2), 
+                       coord.GetColumnPtr(n1),
+                       diff);
+      la::AddExpert(new_dimension_, -1.0, diff, grad->GetColumnPtr(n1));
+      la::AddTo(new_dimension_, diff, grad->GetColumnPtr(n2));
+    }
+  }
+ 
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    double a_i_r[new_dimension_];
+    index_t n1=nearest_neighbor_pairs_[i].first;
+    index_t n2=nearest_neighbor_pairs_[i].second;
+    double *point1 = coord.GetColumnPtr(n1);
+    double *point2 = coord.GetColumnPtr(n2);
+    double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
+                           -nearest_distances_[i];
+    la::SubOverwrite(new_dimension_, point2, point1, a_i_r);
+    // feasibility problem
+    if (PROBLEM_TYPE==0) {
+      la::AddExpert(new_dimension_,
+                    dist_diff*sigma_, 
+          a_i_r, 
+          grad->GetColumnPtr(n1));
+          la::AddExpert(new_dimension_,
+                       -dist_diff*sigma_, 
           a_i_r, 
           grad->GetColumnPtr(n2));
  
     } 
     // equality constraints
-    if (PROBLEM_TYPE==1) {     
+    if (PROBLEM_TYPE==1 || PROBLEM_TYPE==3) {     
       la::AddExpert(new_dimension_,
           -lagrange_mult_[i]+dist_diff*sigma_,
           a_i_r, 
@@ -615,6 +655,17 @@ double NonConvexMVU::ComputeObjective_(Matrix &coord) {
                         coord.GetColumnPtr(i));
     }
   }
+  if (PROBLEM_TYPE==3) {
+    for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+      // we are maximizing the distances of the furthest neighbors
+      index_t n1=furthest_neighbor_pairs_[i].first;
+      index_t n2=furthest_neighbor_pairs_[i].second;
+      variance -= la::DistanceSqEuclidean(new_dimension_,
+                        coord.GetColumnPtr(n1),
+                        coord.GetColumnPtr(n2)); 
+    }
+  }
+
   return variance;
 }
 
@@ -644,6 +695,7 @@ void NonConvexMVU::RemoveMean_(Matrix &mat) {
 
 void NonConvexMVU::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
     ArrayList<double>  &from_tree_dist,
+    index_t num_of_neighbors,
     ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
     ArrayList<double> *distances,
     index_t *num_of_pairs) {
@@ -653,12 +705,12 @@ void NonConvexMVU::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
   distances->Init();
   bool skip=false;
   for(index_t i=0; i<num_of_points_; i++) {
-    for(index_t k=0; k<knns_; k++) {  
+    for(index_t k=0; k<num_of_neighbors; k++) {  
       index_t n1=i;                         //neighbor 1
-      index_t n2=from_tree_ind[i*knns_+k];  //neighbor 2
+      index_t n2=from_tree_ind[i*num_of_neighbors+k];  //neighbor 2
       if (n1 > n2) {
-        for(index_t n=0; n<knns_; n++) {
-          if (from_tree_ind[n2*knns_+n] == n1) {
+        for(index_t n=0; n<num_of_neighbors; n++) {
+          if (from_tree_ind[n2*num_of_neighbors+n] == n1) {
             skip=true;
             break;
           }
@@ -667,7 +719,7 @@ void NonConvexMVU::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
       if (skip==false) {
         *num_of_pairs+=1;
         neighbor_pairs->AddBackItem(std::make_pair(n1, n2));
-        distances->AddBackItem(from_tree_dist[i*knns_+k]);
+        distances->AddBackItem(from_tree_dist[i*num_of_neighbors+k]);
       }
       skip=false;
     }

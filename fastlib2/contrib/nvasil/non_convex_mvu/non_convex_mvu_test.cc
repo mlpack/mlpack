@@ -32,7 +32,7 @@ class NonConvexMVUTest {
   
   void TestInit() {
     NOTIFY("Testing Init() ...\n");
-    engine_->Init("test_data_3_1000.csv", 5);
+    engine_->Init("test_data_3_1000.csv", 5, 0);
     engine_->coordinates_.Init(1, 1);
     engine_->gradient_.Init(1, 1);
     engine_->previous_gradient_.Init(1, 1);
@@ -46,7 +46,7 @@ class NonConvexMVUTest {
   
  void TestFeasibilityGradient(){
     NOTIFY("Testing  Feasibility and Gradient...\n");
-    engine_->Init("swiss_roll.csv", 10);
+    engine_->Init("swiss_roll.csv", 10, 0);
     engine_->set_new_dimension(3);
     engine_->coordinates_.Copy(engine_->data_);
     double distance_constraint, center_constraint;
@@ -82,13 +82,12 @@ class NonConvexMVUTest {
   }
   void TestComputeLocalOptimumBFGS1() {
     NOTIFY("Testing ComputeLocalOptimumBFGS() ...\n");
-    engine_->Init("test_data_3_100.csv", 5);
+    engine_->Init("test_data_3_100.csv", 5, 0);
     engine_->set_new_dimension(3);
     engine_->set_sigma(100);
     engine_->set_gamma(3);
     engine_->set_eta(0.25);
     engine_->set_distance_tolerance(1e-5);
-    engine_->set_gradient_tolerance(1e-5);
     engine_->set_mem_bfgs(150);
     engine_->ComputeLocalOptimumBFGS<2>();
     data::Save("results.csv", engine_->coordinates());
@@ -96,13 +95,12 @@ class NonConvexMVUTest {
   }
   void TestComputeLocalOptimumBFGS2() {
     NOTIFY("Testing ComputeLocalOptimumBFGS() ...\n");
-    engine_->Init("test_data_3_100.csv", 5);
+    engine_->Init("test_data_3_100.csv", 5, 0);
     engine_->set_new_dimension(2);
     engine_->set_sigma(140);
     engine_->set_gamma(4);
     engine_->set_eta(0.999);
     engine_->set_distance_tolerance(1e-5);
-    engine_->set_gradient_tolerance(1e-5);
     engine_->set_mem_bfgs(150);
     engine_->ComputeLocalOptimumBFGS<2>();
     data::Save("results.csv", engine_->coordinates());
@@ -110,14 +108,13 @@ class NonConvexMVUTest {
   }
   void TestComputeLocalOptimumBFGS3() {
     NOTIFY("Testing ComputeLocalOptimumBFGS() ...\n");
-    engine_->Init("test_data_3_1000.csv", 5);
+    engine_->Init("test_data_3_1000.csv", 5, 0);
     engine_->set_new_dimension(3);
     engine_->set_sigma(1e6);
     engine_->set_gamma(4);
     engine_->set_eta(0.9);
     engine_->set_wolfe_beta(0.8);
     engine_->set_distance_tolerance(5*1e-5);
-    engine_->set_gradient_tolerance(1e-5);
     engine_->set_mem_bfgs(150);
     engine_->ComputeLocalOptimumBFGS<0>();
     data::Save("results.csv", engine_->coordinates());
@@ -125,15 +122,15 @@ class NonConvexMVUTest {
   }
   void TestComputeLocalOptimumBFGS4() {
     NOTIFY("Testing ComputeLocalOptimumBFGS() ...\n");
-    engine_->Init("swiss_roll.csv", 4);
+    engine_->Init("swiss_roll.csv", 5, 1);
     engine_->set_new_dimension(2);
-    engine_->set_sigma(1e5);
+    engine_->set_sigma(1e3);
     engine_->set_gamma(5);
-    engine_->set_eta(0.9);
-    engine_->set_distance_tolerance(1e-120);
-    engine_->set_gradient_tolerance(1e-6);
-    engine_->set_mem_bfgs(100);
-    engine_->ComputeLocalOptimumBFGS<1>();
+    engine_->set_eta(0.999999);
+    engine_->set_wolfe_beta(0.9);
+    engine_->set_distance_tolerance(1e-3);
+    engine_->set_mem_bfgs(150);
+    engine_->ComputeLocalOptimumBFGS<3>();
     data::Save("results.csv", engine_->coordinates());
     NOTIFY("TestComputeLocalOptimumBFGS4() passed!!\n");
   }
