@@ -15,6 +15,7 @@
 #include "fastlib/fastlib.h"
 #include "epan_kernel_moment_info.h"
 #include "multi_index_util.h"
+#include "lpr_util.h"
 
 #define INSIDE_KRYLOV_LPR_H
 #include "krylov_stat.h"
@@ -25,7 +26,7 @@
  *
  *  This class is only intended to compute once per instantiation.
  */
-template<typename TKernel>
+template<typename TKernel, typename TPruneRule>
 class KrylovLpr {
 
   FORBID_ACCIDENTAL_COPIES(KrylovLpr);

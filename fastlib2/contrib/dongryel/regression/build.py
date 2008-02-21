@@ -4,6 +4,7 @@ librule(
     headers = ["dense_lpr.h",
                "dense_lpr_impl.h",
                "epan_kernel_moment_info.h",
+               "lpr_util.h",
                "matrix_util.h",
                "multi_index_util.h",
                "quick_prune_lpr.h",
@@ -23,6 +24,7 @@ librule(
                "krylov_lpr_setup_impl.h",
                "krylov_lpr_solver_impl.h",
                "krylov_lpr_test.h",
+               "lpr_util.h",
                "naive_lpr.h"],
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency

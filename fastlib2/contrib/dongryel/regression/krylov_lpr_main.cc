@@ -2,6 +2,7 @@
 #include "krylov_lpr.h"
 #include "mlpack/kde/dataset_scaler.h"
 #include "naive_lpr.h"
+#include "relative_prune_lpr.h"
 
 int main(int argc, char *argv[]) {
 
@@ -50,7 +51,7 @@ int main(int argc, char *argv[]) {
 
   // Declare local linear krylov object.
   Vector fast_local_linear_results;
-  KrylovLpr<EpanKernel> local_linear;
+  KrylovLpr<EpanKernel, RelativePruneLpr> local_linear;
   local_linear.Init(references, reference_targets, krylov_lpr_module);
   local_linear.get_regression_estimates(&fast_local_linear_results);
   local_linear.PrintDebug();

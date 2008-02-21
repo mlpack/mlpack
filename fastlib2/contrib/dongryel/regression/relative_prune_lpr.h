@@ -153,20 +153,19 @@ class RelativePruneLpr {
     }
 
     template<typename QueryTree, typename ReferenceTree>
-    bool Prunable(double relative_error, double total_alloc_error,
-		  QueryTree *qnode, ReferenceTree *rnode, 
-		  const DRange &dsqd_range, const DRange &kernel_value_range, 
-		  Vector &delta_l, Vector &delta_e, double &delta_used_error,
-		  double &delta_n_pruned) {
+    static bool Prunable(double relative_error, double total_alloc_error,
+			 QueryTree *qnode, ReferenceTree *rnode, 
+			 const DRange &dsqd_range, 
+			 const DRange &kernel_value_range, 
+			 Vector &delta_l, Vector &delta_e, 
+			 double &delta_used_error, double &delta_n_pruned) {
       
       // Compute the vector component lower and upper bound changes. This
       // assumes that the maximum kernel value is 1.
       la::ScaleOverwrite(kernel_value_range.lo,
-			 rnode->stat().sum_targets_weighted_by_data_,
-			 &delta_l);
+			 rnode->stat().sum_target_weighted_data_, &delta_l);
       la::ScaleOverwrite(kernel_value_range.mid(),
-			 rnode->stat().sum_targets_weighted_by_data_,
-			 &delta_e);
+			 rnode->stat().sum_target_weighted_data_, &delta_e);
       
       // Compute the L1 norm of the most refined lower bound.
       double new_ll_vector_norm_l = 
@@ -188,7 +187,8 @@ class RelativePruneLpr {
       // were to succeed.
       delta_used_error = 0.5 * kernel_value_range.width() * 
 	(rnode->stat().sum_target_weighted_data_error_norm_);
-      delta_n_pruned = rnode->stat().sum_target_weighted_data_error_alloc_;
+      delta_n_pruned = 
+	rnode->stat().sum_target_weighted_data_alloc_norm_;
       
       // check pruning condition  
       return (delta_used_error <= allowed_err);

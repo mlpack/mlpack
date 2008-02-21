@@ -4,8 +4,8 @@
 #error "This file is not a public header file!"
 #endif
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::MaximumRelativeErrorInL1Norm_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::MaximumRelativeErrorInL1Norm_
 (const Matrix &qset, const Matrix &exact_vector_e, const Matrix &approximated,
  const ArrayList<bool> *query_should_exit_the_loop) {
   
@@ -41,8 +41,8 @@ void KrylovLpr<TKernel>::MaximumRelativeErrorInL1Norm_
   printf("Maximum relative error: %g\n", max_relative_error);
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::TestRightHandSideComputation_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::TestRightHandSideComputation_
 (const Matrix &qset, const Matrix &approximated) {
   
   Matrix exact_vector_e;
@@ -84,8 +84,8 @@ void KrylovLpr<TKernel>::TestRightHandSideComputation_
 				NULL);
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::TestKrylovComputation_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::TestKrylovComputation_
 (const Matrix &qset, const Matrix &approximated, 
  const Matrix &current_lanczos_vectors,
  const ArrayList<bool> &query_should_exit_the_loop) {
