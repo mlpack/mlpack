@@ -55,8 +55,16 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
     // Incorporate the postponed information.
     la::AddTo(row_length_, (qnode->stat().postponed_ll_vector_l_).ptr(),
 	      q_lanczos_prod_l);
+    lanczos_prod_used_error[q] += 
+      qnode->stat().postponed_ll_vector_used_error_;
+    lanczos_prod_n_pruned[q] += qnode->stat().postponed_ll_vector_n_pruned_;
+
     la::AddTo(row_length_, (qnode->stat().postponed_neg_ll_vector_u_).ptr(),
 	      q_neg_lanczos_prod_u);
+    neg_lanczos_prod_used_error[q] +=
+      qnode->stat().postponed_neg_ll_vector_used_error_;
+    neg_lanczos_prod_n_pruned[q] += 
+      qnode->stat().postponed_neg_ll_vector_n_pruned_;
     
     // for each reference point
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
@@ -94,6 +102,12 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
       }
 
     } // end of iterating over each reference point.
+
+    // Update the pruned quantities.
+    lanczos_prod_n_pruned[q] += 
+      rnode->stat().sum_target_weighted_data_alloc_norm_;
+    neg_lanczos_prod_n_pruned[q] += 
+      rnode->stat().sum_target_weighted_data_alloc_norm_;
 
     // Now, loop over each vector component for the current query and
     // correct the upper bound by the assumption made in the
