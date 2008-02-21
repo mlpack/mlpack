@@ -404,42 +404,6 @@ InitializeQueryTree_(QueryTree *qnode, Matrix &numerator_l,
 }
 
 template<typename TKernel, typename TPruneRule>
-void DenseLpr<TKernel, TPruneRule>::BestNodePartners_
-(QueryTree *nd, ReferenceTree *nd1, ReferenceTree *nd2, 
- ReferenceTree **partner1, ReferenceTree **partner2) {
-  
-  double d1 = nd->bound().MinDistanceSq(nd1->bound());
-  double d2 = nd->bound().MinDistanceSq(nd2->bound());
-  
-  if(d1 <= d2) {
-    *partner1 = nd1;
-    *partner2 = nd2;
-  }
-  else {
-    *partner1 = nd2;
-    *partner2 = nd1;
-  }
-}
-
-template<typename TKernel, typename TPruneRule>
-void DenseLpr<TKernel, TPruneRule>::BestNodePartners_
-(ReferenceTree *nd, QueryTree *nd1, QueryTree *nd2, 
- QueryTree **partner1, QueryTree **partner2) {
-  
-  double d1 = nd->bound().MinDistanceSq(nd1->bound());
-  double d2 = nd->bound().MinDistanceSq(nd2->bound());
-  
-  if(d1 <= d2) {
-    *partner1 = nd1;
-    *partner2 = nd2;
-  }
-  else {
-    *partner1 = nd2;
-    *partner2 = nd1;
-  }
-}
-
-template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
  Matrix &numerator_l, 
@@ -732,8 +696,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
     // for non-leaf reference, expand reference node
     else {
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
-      BestNodePartners_(qnode, rnode->left(), rnode->right(), &rnode_first,
-                        &rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode, rnode->left(), rnode->right(), 
+					 &rnode_first, &rnode_second);
       DualtreeLprCanonical_
 	(qnode, rnode_first, qset, numerator_l, numerator_e, 
 	 numerator_used_error, numerator_n_pruned, denominator_l, 
@@ -808,8 +772,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
     if(rnode->is_leaf()) {
       QueryTree *qnode_first = NULL, *qnode_second = NULL;
       
-      BestNodePartners_(rnode, qnode->left(), qnode->right(), &qnode_first,
-			&qnode_second);
+      LprUtil::BestQueryNodePartners(rnode, qnode->left(), qnode->right(), 
+				     &qnode_first, &qnode_second);
       DualtreeLprCanonical_
 	(qnode_first, rnode, qset, numerator_l, numerator_e, 
 	 numerator_used_error, numerator_n_pruned, denominator_l, 
@@ -828,8 +792,9 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
     else {
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
       
-      BestNodePartners_(qnode->left(), rnode->left(), rnode->right(),
-			&rnode_first, &rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode->left(), rnode->left(), 
+					 rnode->right(), &rnode_first, 
+					 &rnode_second);
       DualtreeLprCanonical_
 	(qnode->left(), rnode_first, qset, numerator_l, numerator_e, 
 	 numerator_used_error, numerator_n_pruned, denominator_l, 
@@ -843,8 +808,9 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 	 weight_diagram_numerator_l, weight_diagram_numerator_e, 
 	 weight_diagram_used_error);
       
-      BestNodePartners_(qnode->right(), rnode->left(), rnode->right(),
-			&rnode_first, &rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode->right(), rnode->left(), 
+					 rnode->right(),
+					 &rnode_first, &rnode_second);
       DualtreeLprCanonical_
 	(qnode->right(), rnode_first, qset, numerator_l, numerator_e, 
 	 numerator_used_error, numerator_n_pruned, denominator_l, 

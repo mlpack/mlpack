@@ -596,14 +596,6 @@ class DenseLpr {
      */
     void InitializeReferenceStatistics_(ReferenceTree *rnode);
 
-    void BestNodePartners_(QueryTree *nd, ReferenceTree *nd1, 
-			   ReferenceTree *nd2, ReferenceTree **partner1, 
-			   ReferenceTree **partner2);
-
-    void BestNodePartners_(ReferenceTree *nd, QueryTree *nd1, 
-			   QueryTree *nd2, QueryTree **partner1, 
-			   QueryTree **partner2);
-
     /** @brief The exhaustive base LPR case.
      *
      *  @param qnode The query node.
