@@ -160,9 +160,8 @@ bool KrylovLpr<TKernel, TPruneRule>::PrunableSolver_
 
   // try pruning after bound refinement: first compute distance/kernel
   // value bounds
-  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
-  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-  kernel_value_range = kernels_[0].RangeUnnormOnSq(dsqd_range);
+  LprUtil::SqdistAndKernelRanges_(qnode, rnode, dsqd_range, 
+				  kernel_value_range);
 
   // Compute the vector component lower and upper bound changes. This
   // assumes that the maximum kernel value is 1.
@@ -469,24 +468,12 @@ void KrylovLpr<TKernel, TPruneRule>::DotProductBetweenTwoBounds_
   // Initialize the dot-product ranges.
   negative_dot_product_range.lo = negative_dot_product_range.hi = 0;
   positive_dot_product_range.lo = positive_dot_product_range.hi = 0;
-  
-  if(lanczos_vectors_bound.get(0).lo > 0) {
-    positive_dot_product_range.lo += lanczos_vectors_bound.get(0).lo;
-    positive_dot_product_range.hi += lanczos_vectors_bound.get(0).hi;
-  }
-  else if(lanczos_vectors_bound.get(0).Contains(0)) {
-    positive_dot_product_range.hi += lanczos_vectors_bound.get(0).hi;
-    negative_dot_product_range.lo += lanczos_vectors_bound.get(0).lo;
-  }
-  else {
-    negative_dot_product_range.lo += lanczos_vectors_bound.get(0).lo;
-    negative_dot_product_range.hi += lanczos_vectors_bound.get(0).hi;
-  }
 
-  for(index_t d = 1; d <= dimension_; d++) {
+  for(index_t d = 0; d < row_length_; d++) {
 
     const DRange &lanczos_directional_bound = lanczos_vectors_bound.get(d);
-    const DRange &reference_node_directional_bound = rnode->bound().get(d - 1);
+    const DRange &reference_node_directional_bound = 
+      rnode->stat().reference_point_expansion_bound_.get(d);
     
     if(lanczos_directional_bound.lo > 0) {
       positive_dot_product_range.lo += lanczos_directional_bound.lo *

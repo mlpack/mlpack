@@ -1,6 +1,8 @@
 #ifndef LPR_UTIL_H
 #define LPR_UTIL_H
 
+#include "fastlib/fastlib.h"
+
 class LprUtil {
   
  public:

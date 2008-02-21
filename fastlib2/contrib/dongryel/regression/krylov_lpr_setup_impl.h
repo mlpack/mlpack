@@ -35,6 +35,10 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
     // Clear the sum statistics before accumulating.
     (rnode->stat().sum_target_weighted_data_).SetZero();
 
+    // Clear the bound on the reference point expansion before
+    // accumulating.
+    reference_point_expansion_bound_.Reset();
+
     // For a leaf reference node, iterate over each reference point
     // and compute the weighted vector and tally these up for the
     // sum statistics owned by the reference node.
@@ -52,6 +56,10 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
       MultiIndexUtil::ComputePointMultivariatePolynomial
 	(dimension_, lpr_order_, r_col.ptr(), reference_point_expansion.ptr());
       
+      // Accumulate each expansion onto its bounding box.
+      rnode->stat().reference_point_expansion_bound_ |=
+	reference_point_expansion;
+
       // Scale the expansion by the reference target.
       la::ScaleOverwrite(row_length_, rset_targets_[r], 
 			 reference_point_expansion.ptr(),
@@ -109,6 +117,16 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	    target_weighted_data_far_field_expansion_[j]);
     } // end of iterating over each column.
     
+    // Combine the bounds of the reference point expansion owned by
+    // the two children.
+    rnode->stat().reference_point_expansion_bound_.Reset();
+    rnode->stat().reference_point_expansion_bound_ |=
+      rnode->left()->stat().reference_point_expansion_bound_;
+    rnode->stat().reference_point_expansion_bound_ |=
+      rnode->right()->stat().reference_point_expansion_bound_;
+
+    // Compute the min of the min bandwidths and the max of the max
+    // bandwidths owned among the children.
     rnode->stat().min_bandwidth_kernel.Init
       (std::min
        (sqrt(rnode->left()->stat().min_bandwidth_kernel.bandwidth_sq()),
