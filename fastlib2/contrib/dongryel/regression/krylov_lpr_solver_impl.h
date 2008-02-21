@@ -4,8 +4,8 @@
 #error "This file is not a public header file!"
 #endif
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::DualtreeSolverBase_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
 (QueryTree *qnode, ReferenceTree *rnode, 
  const DRange &root_negative_dot_product_range,
  const DRange &root_positive_dot_product_range, const Matrix &qset,
@@ -130,8 +130,8 @@ void KrylovLpr<TKernel>::DualtreeSolverBase_
   qnode->stat().postponed_neg_ll_vector_n_pruned_ = 0;
 }
 
-template<typename TKernel>
-bool KrylovLpr<TKernel>::PrunableSolver_
+template<typename TKernel, typename TPruneRule>
+bool KrylovLpr<TKernel, TPruneRule>::PrunableSolver_
 (QueryTree *qnode, ReferenceTree *rnode, Matrix &current_lanczos_vectors,
  DRange &root_negative_dot_product_range, 
  DRange &root_positive_dot_product_range, DRange &dsqd_range, 
@@ -210,8 +210,8 @@ bool KrylovLpr<TKernel>::PrunableSolver_
   return (used_error <= allowed_err);
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::DualtreeSolverCanonical_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
 (QueryTree *qnode, ReferenceTree *rnode,
  const DRange &root_negative_dot_product_range,
  const DRange &root_positive_dot_product_range, const Matrix &qset,
@@ -443,8 +443,8 @@ void KrylovLpr<TKernel>::DualtreeSolverCanonical_
   
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::DotProductBetweenTwoBounds_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::DotProductBetweenTwoBounds_
 (QueryTree *qnode, ReferenceTree *rnode, DRange &negative_dot_product_range,
  DRange &positive_dot_product_range) {
   
@@ -512,8 +512,8 @@ void KrylovLpr<TKernel>::DotProductBetweenTwoBounds_
   */
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::InitializeQueryTreeLanczosVectorBound_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTreeLanczosVectorBound_
 (QueryTree *qnode, const Matrix &qset, 
  const ArrayList<bool> &exclude_query_flag,
  const Matrix &current_lanczos_vectors) {
@@ -566,8 +566,8 @@ void KrylovLpr<TKernel>::InitializeQueryTreeLanczosVectorBound_
   }
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::InitializeQueryTreeSumBound_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTreeSumBound_
 (QueryTree *qnode, const DRange &root_negative_dot_product_range,
  const DRange &root_positive_dot_product_range,
  Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
@@ -622,8 +622,8 @@ void KrylovLpr<TKernel>::InitializeQueryTreeSumBound_
   }
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::FinalizeQueryTreeLanczosMultiplier_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
 (QueryTree *qnode, Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
  Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
  Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
@@ -686,8 +686,8 @@ void KrylovLpr<TKernel>::FinalizeQueryTreeLanczosMultiplier_
   }
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::SolveLeastSquaresByKrylov_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
 (QueryTree *qroot, const Matrix &qset, const Matrix &right_hand_sides,
  Matrix &solution_vectors_e) {
 

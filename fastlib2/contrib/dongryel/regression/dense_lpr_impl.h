@@ -5,6 +5,7 @@
 #endif
 
 #include "mlpack/series_expansion/bounds_aux.h"
+#include "lpr_util.h"
 #include "matrix_util.h"
 
 template<typename TKernel, typename TPruneRule>
@@ -203,20 +204,6 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
     delete qroot;
 
   } // end of iterating over each query.
-}
-
-template<typename TKernel, typename TPruneRule>
-void DenseLpr<TKernel, TPruneRule>::SqdistAndKernelRanges_
-(QueryTree *qnode, ReferenceTree *rnode, DRange &dsqd_range, 
- DRange &kernel_value_range) {
-
-  // The following assumes that you are using a monotonically
-  // decreasing kernel!
-  dsqd_range = qnode->bound().RangeDistanceSq(rnode->bound());
-  kernel_value_range.lo =
-    rnode->stat().min_bandwidth_kernel.EvalUnnormOnSq(dsqd_range.hi);
-  kernel_value_range.hi =
-    rnode->stat().max_bandwidth_kernel.EvalUnnormOnSq(dsqd_range.lo);
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -646,7 +633,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   weight_diagram_numerator_de.Init(row_length_, row_length_);
   
   // Compute distance ranges and kernel ranges first.
-  SqdistAndKernelRanges_(qnode, rnode, dsqd_range, kernel_value_range);
+  LprUtil::SqdistAndKernelRanges_(qnode, rnode, dsqd_range, 
+				  kernel_value_range);
 
   // Try finite difference pruning first
   if(TPruneRule::Prunable

@@ -7,8 +7,9 @@
 #include "multi_index_util.h"
 #include "matrix_util.h"
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::InitializeQueryTreeRightHandSides_(QueryTree *qnode) {
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::
+InitializeQueryTreeRightHandSides_(QueryTree *qnode) {
   
   // Set the bounds to default values.
   qnode->stat().Reset();
@@ -21,8 +22,9 @@ void KrylovLpr<TKernel>::InitializeQueryTreeRightHandSides_(QueryTree *qnode) {
   }
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::InitializeReferenceStatistics_(ReferenceTree *rnode) {
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::
+InitializeReferenceStatistics_(ReferenceTree *rnode) {
   
   if(rnode->is_leaf()) {
     
@@ -118,8 +120,8 @@ void KrylovLpr<TKernel>::InitializeReferenceStatistics_(ReferenceTree *rnode) {
   }
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::DualtreeRightHandSidesBase_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesBase_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
@@ -159,15 +161,12 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesBase_
 
       // compute the pairwise squared distance and kernel value.
       double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
-      double kernel_value = kernels_[0].EvalUnnormOnSq(dsqd);
+      double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
 
-      // for each vector component, update the lower/estimate/upper
-      // bound quantities.
-      for(index_t d = 0; d < row_length_; d++) {	
-	q_right_hand_side_l[d] += kernel_value * r_weights[d];
-	q_right_hand_side_e[d] += kernel_value * r_weights[d];
-
-      } // end of iterating over each vector component.
+      // For each vector component, update the lower/estimate bound
+      // quantities.
+      la::AddExpert(row_length_, kernel_value, r_weights, q_right_hand_side_l);
+      la::AddExpert(row_length_, kernel_value, r_weights, q_right_hand_side_e);
       
     } // end of iterating over each reference point.
 
@@ -198,33 +197,39 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesBase_
   qnode->stat().postponed_ll_vector_n_pruned_ = 0;
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::DualtreeRightHandSidesCanonical_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
   
-  // Total amount of used error
-  double used_error;
+  // Variables for storing changes due to a prune.
+  double delta_used_error, delta_n_pruned;
+  Vector delta_l, delta_e;
+  delta_l.Init(row_length_);
+  delta_e.Init(row_length_);
 
   // temporary variable for holding distance/kernel value bounds
   DRange dsqd_range;
   DRange kernel_value_range;
   
+  // Compute the squared distance and kernel value ranges.
+  LprUtil::SqdistAndKernelRanges_
+    (qnode, rnode, dsqd_range, kernel_value_range);
+
   // try finite difference pruning first
-  /*
-  if(PrunableRightHandSides_(qnode, rnode, dsqd_range, kernel_value_range,
-			     used_error)) {
-    la::AddTo(vector_l_change_,
-	      &(qnode->stat().postponed_ll_vector_l_));
-    la::AddTo(vector_e_change_,
-	      &(qnode->stat().postponed_ll_vector_e_));
-    la::AddTo(vector_u_change_,
-	      &(qnode->stat().postponed_ll_vector_u_));
+  if(TPruneRule::Prunable
+     (internal_relative_error_, 
+      rnode->stat().sum_target_weighted_data_alloc_norm_,
+      qnode, rnode, dsqd_range, kernel_value_range, delta_l, delta_e,
+      delta_used_error, delta_n_pruned)) {
+    la::AddTo(delta_l, &(qnode->stat().postponed_ll_vector_l_));
+    la::AddTo(delta_e, &(qnode->stat().postponed_ll_vector_e_));
+    qnode->stat().postponed_ll_vector_used_error_ += delta_used_error;
+    qnode->stat().postponed_ll_vector_n_pruned_ += delta_n_pruned;
     num_finite_difference_prunes_++;
     return;
   }
-  */
   
   // for leaf query node
   if(qnode->is_leaf()) {
@@ -323,29 +328,28 @@ void KrylovLpr<TKernel>::DualtreeRightHandSidesCanonical_
 
     // reaccumulate the summary statistics.
     q_stat.ll_vector_norm_l_ =
-      std::min
-      (q_left_stat.ll_vector_norm_l_ +
-       MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_ll_vector_l_, 1),
-       q_right_stat.ll_vector_norm_l_ +
-       MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_ll_vector_l_, 1));
+      std::min(q_left_stat.ll_vector_norm_l_ +
+	       MatrixUtil::EntrywiseLpNorm
+	       (q_left_stat.postponed_ll_vector_l_, 1),
+	       q_right_stat.ll_vector_norm_l_ +
+	       MatrixUtil::EntrywiseLpNorm
+	       (q_right_stat.postponed_ll_vector_l_, 1));
     q_stat.ll_vector_used_error_ =
-      std::max
-      (q_left_stat.ll_vector_used_error_ +
-       q_left_stat.postponed_ll_vector_used_error_,
-       q_right_stat.ll_vector_used_error_ +
-       q_right_stat.postponed_ll_vector_used_error_);
+      std::max(q_left_stat.ll_vector_used_error_ +
+	       q_left_stat.postponed_ll_vector_used_error_,
+	       q_right_stat.ll_vector_used_error_ +
+	       q_right_stat.postponed_ll_vector_used_error_);
     q_stat.ll_vector_n_pruned_ =
-      std::min
-      (q_left_stat.ll_vector_n_pruned_ +
-       q_left_stat.postponed_ll_vector_n_pruned_,
-       q_right_stat.ll_vector_n_pruned_ +
-       q_right_stat.postponed_ll_vector_n_pruned_);
+      std::min(q_left_stat.ll_vector_n_pruned_ +
+	       q_left_stat.postponed_ll_vector_n_pruned_,
+	       q_right_stat.ll_vector_n_pruned_ +
+	       q_right_stat.postponed_ll_vector_n_pruned_);
     return;
   } // end of the case: non-leaf query node.
 }
 
-template<typename TKernel>
-void KrylovLpr<TKernel>::FinalizeQueryTreeRightHandSides_
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeRightHandSides_
 (QueryTree *qnode, Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
@@ -359,12 +363,12 @@ void KrylovLpr<TKernel>::FinalizeQueryTreeRightHandSides_
       double *q_right_hand_sides_e = right_hand_sides_e.GetColumnPtr(q);
       
       // Incorporate the postponed information.
-      la::AddTo(row_length_,
-		(q_stat.postponed_ll_vector_l_).ptr(),
+      la::AddTo(row_length_, (q_stat.postponed_ll_vector_l_).ptr(),
 		q_right_hand_sides_l);
-      la::AddTo(row_length_,
-		(q_stat.postponed_ll_vector_e_).ptr(),
+      la::AddTo(row_length_, (q_stat.postponed_ll_vector_e_).ptr(),
 		q_right_hand_sides_e);
+      right_hand_sides_used_error[q] += q_stat.postponed_ll_vector_used_error_;
+      right_hand_sides_n_pruned[q] += q_stat.postponed_ll_vector_n_pruned_;
     }
   }
   else {
@@ -381,6 +385,14 @@ void KrylovLpr<TKernel>::FinalizeQueryTreeRightHandSides_
               &(q_left_stat.postponed_ll_vector_e_));
     la::AddTo(q_stat.postponed_ll_vector_e_,
               &(q_right_stat.postponed_ll_vector_e_));
+    q_left_stat.postponed_ll_vector_used_error_ +=
+      q_stat.postponed_ll_vector_used_error_;
+    q_right_stat.postponed_ll_vector_used_error_ += 
+      q_stat.postponed_ll_vector_used_error_;
+    q_left_stat.postponed_ll_vector_n_pruned_ +=
+      q_stat.postponed_ll_vector_n_pruned_;
+    q_right_stat.postponed_ll_vector_n_pruned_ +=
+      q_stat.postponed_ll_vector_n_pruned_;
 
     FinalizeQueryTreeRightHandSides_
       (qnode->left(), right_hand_sides_l, right_hand_sides_e,

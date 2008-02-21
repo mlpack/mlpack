@@ -565,13 +565,6 @@ class DenseLpr {
 
     ////////// Private Member Functions //////////
 
-    /** @brief Computes the distance range and the kernel value ranges
-     *         for a given query and a reference node pair.
-     */
-    void SqdistAndKernelRanges_(QueryTree *qnode, ReferenceTree *rnode,
-				DRange &dsqd_range, 
-				DRange &kernel_value_range);
-
     /** @brief Resets bounds relevant to the given query point.
      */
     void ResetQuery_(int q, Matrix &numerator_l, Matrix &numerator_e,
