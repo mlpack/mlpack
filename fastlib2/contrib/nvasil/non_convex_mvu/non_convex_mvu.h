@@ -22,20 +22,23 @@
 #include <string>
 #include "fastlib/fastlib.h"
 #include "mlpack/allknn/allknn.h"
+#include "contrib/nvasil/allkfn/allkfn.h"
 
 class NonConvexMVUTest;
 class NonConvexMVU {
  public:
   friend class NonConvexMVUTest;
   NonConvexMVU::NonConvexMVU();
-  void Init(std::string data_file, index_t knns);
-  void Init(std::string data_file, index_t knns, index_t leaf_size);
+  void Init(std::string data_file, index_t knns, index_t kfns);
+  void Init(std::string data_file, index_t knns, index_t kfns, index_t leaf_size);
   /**
    * Computes a local optimum for a given rank
    * PROBLEM_TYPE
    * 0 = Feasibility problem
    * 1 = Equality Constraints for the distances
    * 2 = Inequality Constraints for the distances
+   * 3 = Equality Constraint but the objective is to maximize furthest
+   *     neighbor distances
    */
   template<int PROBLEM_TYPE>
   void ComputeLocalOptimumBFGS();
@@ -48,7 +51,6 @@ class NonConvexMVU {
   void set_max_iterations(index_t max_iterations);
   void set_new_dimension(index_t new_dimension);
   void set_distance_tolerance(double tolerance); 
-  void set_gradient_tolerance(double tolerance);
   /**
    *  sigma1 and sigma2 for wolfe rule somewhere between 1e-5 to 1e-1
    *  and sigma1 < sigma2
@@ -66,13 +68,20 @@ class NonConvexMVU {
 
  private:
   AllkNN allknn_;
+  AllkFN allkfn_;
   index_t leaf_size_;
   index_t num_of_points_;
   index_t dimension_;
-  index_t knns_;
-  ArrayList<double> distances_;
-  ArrayList<std::pair<index_t, index_t> > neighbor_pairs_;
-  index_t num_of_pairs_;
+  index_t knns_;  //  k nearest neighbors
+  index_t kfns_;   //  k furthest neighbors 
+  ArrayList<double> nearest_distances_;
+  // the nearest neighbor pairs for the constraints
+  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  index_t num_of_nearest_pairs_;
+  ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
+  index_t num_of_furthest_pairs_;
+  ArrayList<double> furthest_distances_;
+  
   // Lagrange multipliers for distance constraints
   Vector lagrange_mult_; 
   double sigma_;
@@ -80,11 +89,11 @@ class NonConvexMVU {
   double gamma_;
   double previous_feasibility_error_;
   double step_size_;
-  double gradient_tolerance_;
   double distance_tolerance_;
   double wolfe_sigma1_;
   double wolfe_sigma2_;
   double wolfe_beta_;
+  double max_violation_of_distance_constraint_;
   index_t max_iterations_;
   index_t new_dimension_;
   Matrix coordinates_;
@@ -132,6 +141,7 @@ class NonConvexMVU {
   void RemoveMean_(Matrix &mat);
   void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
       ArrayList<double>  &from_tree_dist,
+      index_t num_of_neighbors,
       ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
       ArrayList<double> *distances,
       index_t *num_of_pairs);
