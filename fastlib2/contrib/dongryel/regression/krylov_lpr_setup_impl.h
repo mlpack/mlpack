@@ -245,8 +245,8 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
     // for non-leaf reference, expand reference node
     else {
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
-      BestNodePartners_(qnode, rnode->left(), rnode->right(), &rnode_first,
-			&rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode, rnode->left(), rnode->right(), 
+					 &rnode_first, &rnode_second);
       DualtreeRightHandSidesCanonical_
 	(qnode, rnode_first, qset, right_hand_sides_l, right_hand_sides_e, 
 	 right_hand_sides_used_error, right_hand_sides_n_pruned);
@@ -289,8 +289,8 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
     if(rnode->is_leaf()) {
       QueryTree *qnode_first = NULL, *qnode_second = NULL;
       
-      BestNodePartners_(rnode, qnode->left(), qnode->right(), &qnode_first,
-			&qnode_second);
+      LprUtil::BestQueryNodePartners(rnode, qnode->left(), qnode->right(), 
+				     &qnode_first, &qnode_second);
       DualtreeRightHandSidesCanonical_
 	(qnode_first, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
 	 right_hand_sides_used_error, right_hand_sides_n_pruned);
@@ -303,8 +303,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
     else {
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
       
-      BestNodePartners_(qnode->left(), rnode->left(), rnode->right(),
-			&rnode_first, &rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode->left(), rnode->left(), 
+					 rnode->right(),
+					 &rnode_first, &rnode_second);
       DualtreeRightHandSidesCanonical_
 	(qnode->left(), rnode_first, qset, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
@@ -314,8 +315,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
       
-      BestNodePartners_(qnode->right(), rnode->left(), rnode->right(),
-			&rnode_first, &rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode->right(), rnode->left(), 
+					 rnode->right(),
+					 &rnode_first, &rnode_second);
       DualtreeRightHandSidesCanonical_
 	(qnode->right(), rnode_first, qset, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 

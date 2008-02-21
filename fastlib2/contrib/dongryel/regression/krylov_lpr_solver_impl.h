@@ -286,8 +286,8 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
     // for non-leaf reference, expand reference node
     else {
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
-      BestNodePartners_(qnode, rnode->left(), rnode->right(), &rnode_first,
-			&rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode, rnode->left(), rnode->right(), 
+					 &rnode_first, &rnode_second);
       DualtreeSolverCanonical_
 	(qnode, rnode_first, root_negative_dot_product_range,
 	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
@@ -355,8 +355,8 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
     if(rnode->is_leaf()) {
       QueryTree *qnode_first = NULL, *qnode_second = NULL;
       
-      BestNodePartners_(rnode, qnode->left(), qnode->right(), &qnode_first,
-			&qnode_second);
+      LprUtil::BestQueryNodePartners(rnode, qnode->left(), qnode->right(), 
+				     &qnode_first, &qnode_second);
       DualtreeSolverCanonical_
 	(qnode_first, rnode, root_negative_dot_product_range,
 	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
@@ -377,8 +377,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
     else {
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
       
-      BestNodePartners_(qnode->left(), rnode->left(), rnode->right(),
-			&rnode_first, &rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode->left(), rnode->left(), 
+					 rnode->right(), &rnode_first, 
+					 &rnode_second);
       DualtreeSolverCanonical_
 	(qnode->left(), rnode_first, root_negative_dot_product_range,
 	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
@@ -394,8 +395,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
 	 neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
       
-      BestNodePartners_(qnode->right(), rnode->left(), rnode->right(),
-			&rnode_first, &rnode_second);
+      LprUtil::BestReferenceNodePartners(qnode->right(), rnode->left(), 
+					 rnode->right(), &rnode_first, 
+					 &rnode_second);
       DualtreeSolverCanonical_
 	(qnode->right(), rnode_first, root_negative_dot_product_range,
 	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
