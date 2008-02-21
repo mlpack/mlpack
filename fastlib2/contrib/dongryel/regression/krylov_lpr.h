@@ -14,6 +14,7 @@
 
 #include "fastlib/fastlib.h"
 #include "epan_kernel_moment_info.h"
+#include "multi_index_util.h"
 
 #define INSIDE_KRYLOV_LPR_H
 #include "krylov_stat.h"
@@ -416,6 +417,10 @@ class KrylovLpr {
   void FinalizeRegressionEstimates_(const Matrix &qset,
 				    Matrix &solution_vectors_e,
 				    Vector &regression_estimates) {
+    
+    // Temporary variable storing query point expansion.
+    Vector query_point_expansion;
+    query_point_expansion.Init(row_length_);
 
     // Loop over each query point and take the dot-product.
     for(index_t i = 0; i < qset.n_cols(); i++) {
@@ -425,13 +430,14 @@ class KrylovLpr {
       const double *query_pt = qset.GetColumnPtr(i);
       const double *query_pt_solution = solution_vectors_e.GetColumnPtr(i);
 
-      // Set the first component of the dot-product.
-      regression_estimates[i] = query_pt_solution[0];
+      // Compute the expansion of the current query point.
+      MultiIndexUtil::ComputePointMultivariatePolynomial
+	(dimension_, lpr_order_, query_pt, query_point_expansion.ptr());
 
-      // Loop over each dimension.
-      for(index_t j = 1; j <= dimension_; j++) {
-	regression_estimates[i] += query_pt[j - 1] * query_pt_solution[j];
-      }
+      // Take the dot product between the query point solution and the
+      // query point expansion to get the regression estimate.
+      regression_estimates[i] = la::Dot(row_length_, query_pt_solution,
+					query_point_expansion.ptr());
     }
   }
   
@@ -701,14 +707,15 @@ class KrylovLpr {
     for(index_t i = 0; i < rset_.n_cols(); i++) {
       kernels_[i].Init(bandwidth);
     }
-    
-    // initialize the reference side statistics.
-    target_weighted_rset_.Init(row_length_, rset_.n_cols());
-    InitializeReferenceStatistics_(rroot_);
-    
+        
     // Train the model using the reference set (i.e. compute
     // confidence interval and degrees of freedom.)
     fx_timer_start(module_, "krylov_lpr_training_time");
+
+    // initialize the reference side statistics.
+    target_weighted_rset_.Init(row_length_, rset_.n_cols());
+    InitializeReferenceStatistics_(rroot_);
+
     ComputeMain_(references, &rset_regression_estimates_,
 		 &rset_confidence_bands_, &rset_magnitude_weight_diagrams_,
 		 &rset_influence_values_);
