@@ -1,5 +1,5 @@
 #include "fastlib/fastlib.h"
-#include "local_linear_krylov.h"
+#include "krylov_lpr.h"
 #include "mlpack/kde/dataset_scaler.h"
 #include "naive_lpr.h"
 
@@ -14,9 +14,9 @@ int main(int argc, char *argv[]) {
   // of this as creating a new folder named "kde_module" under the
   // root directory (NULL) for the Kde object to work inside.  Here,
   // we initialize it with all parameters defined
-  // "--local_linear/...=...".
-  struct datanode* local_linear_module =
-    fx_submodule(NULL, "local_linear", "local_linear_module");
+  // "--lpr/...=...".
+  struct datanode* krylov_lpr_module =
+    fx_submodule(NULL, "lpr", "krylov_lpr_module");
 
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str
@@ -50,17 +50,14 @@ int main(int argc, char *argv[]) {
 
   // Declare local linear krylov object.
   Vector fast_local_linear_results;
-  LocalLinearKrylov<EpanKernel> local_linear;
-  local_linear.Init(queries, references, reference_targets,
-		    local_linear_module);
-  local_linear.Compute();
+  KrylovLpr<EpanKernel> local_linear;
+  local_linear.Init(references, reference_targets, krylov_lpr_module);
   local_linear.get_regression_estimates(&fast_local_linear_results);
   local_linear.PrintDebug();
 
   // Do naive algorithm.
   NaiveLpr<EpanKernel> naive_local_linear;
-  naive_local_linear.Init(references, reference_targets,
-			  local_linear_module);
+  naive_local_linear.Init(references, reference_targets, krylov_lpr_module);
   naive_local_linear.PrintDebug();
   
   // Finalize FastExec and print output results.
