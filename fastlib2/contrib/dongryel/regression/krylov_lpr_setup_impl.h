@@ -11,11 +11,7 @@ template<typename TKernel>
 void KrylovLpr<TKernel>::InitializeQueryTreeRightHandSides_(QueryTree *qnode) {
   
   // Set the bounds to default values.
-  qnode->stat().ll_vector_norm_l_ = 0;
-  (qnode->stat().postponed_ll_vector_l_).SetZero();
-  (qnode->stat().postponed_ll_vector_e_).SetZero();
-  qnode->stat().postponed_ll_vector_used_error_ = 0;
-  qnode->stat().postponed_ll_vector_n_pruned_ = 0;
+  qnode->stat().Reset();
 
   // If the query node is not a leaf, then recurse.
   if(!qnode->is_leaf()) {
@@ -126,12 +122,14 @@ template<typename TKernel>
 bool KrylovLpr<TKernel>::PrunableRightHandSides_
 (QueryTree *qnode, ReferenceTree *rnode, DRange &dsqd_range, 
  DRange &kernel_value_range, double &used_error) {
-      
-  // try pruning after bound refinement: first compute distance/kernel
-  // value bounds
-  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
-  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-  kernel_value_range = kernels_[0].RangeUnnormOnSq(dsqd_range);
+
+  // The following assumes that you are using a monotonically
+  // decreasing kernel!
+  dsqd_range = qnode->bound().RangeDistanceSq(rnode->bound());
+  kernel_value_range.lo =
+    rnode->stat().min_bandwidth_kernel.EvalUnnormOnSq(dsqd_range.hi);
+  kernel_value_range.hi =
+    rnode->stat().max_bandwidth_kernel.EvalUnnormOnSq(dsqd_range.lo);
 
   // Compute the vector component lower and upper bound changes. This
   // assumes that the maximum kernel value is 1.
