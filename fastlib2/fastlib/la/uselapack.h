@@ -199,7 +199,7 @@ namespace la {
       sum += *x * *x;
       x++;
     } while (--length);
-    return sum;
+    return sqrt(sum);
   }
 
   inline double Dot(index_t length, const double *x, const double *y) {
