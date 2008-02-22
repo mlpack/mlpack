@@ -785,15 +785,15 @@ class SMD_SingleStep {
 
     index_t iters;
     index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
-    double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
-    fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.1);
+    double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-2);
+    fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.01);
     double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
     index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
     index_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
     Vector pold, pnew, grad, prev_grad;
     long double f_old, f_new;
     double scale, scale_prev, eta = 0.01, gamma, mu = 0.01;
-    long double p_tol = 0.0, f_tol = 0.0;
+    double p_tol = 0.0, f_tol = 0.0;
     Matrix data_batched;
     index_t batch_size = data().n_cols() / num_batch;
 
@@ -858,14 +858,29 @@ class SMD_SingleStep {
 
 	// using just the point in the param_space 
 	// which refuses to move
-	if (p_tol < TOLERANCE) {
-	  fx_format_result(opt_module_, "iters", "%d", iters+1);
-	  fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
-	  for (index_t i = 0; i < dim; i++) {
-	    pt[i] = pold.get(i);
+	if (p_tol < TOLERANCE) { 
+	  // rejected because stops too early, need the check
+	  // the overall gradient is small
+	  Vector temp_grad;
+	  temp_grad.Init(dim);
+	  long double f_final = (*func_ptr_)(pold, data(), &temp_grad);
+	  double temp_grad_val = sqrt(la::Dot(temp_grad, temp_grad));
+	  if (temp_grad_val < EPSILON) {
+
+	    fx_format_result(opt_module_, "iters", "%d", iters+1);
+	    fx_format_result(opt_module_,"min_obtained","%Lf", f_final);
+	    for (index_t i = 0; i < dim; i++) {
+	      pt[i] = pold.get(i);
+	    }
+	    printf("iters: %"LI"d\n", iters); 
+	    for(index_t i = 0; i < dim; i++) {
+	      printf("%lf, ", pold.get(i));
+	    }
+	    printf("\nfinal val: %Lf\n p_tol : %lf, iters : %"LI"d, g_tol : %lf\n", 
+		   f_final, p_tol, iters, temp_grad_val);
+	    
+	    return;
 	  }
-	  printf("iters: %"LI"d, min: %Lf\n", iters, f_old);
-	  return;
 	}
 
 	pold.CopyValues(pnew);
@@ -896,8 +911,9 @@ class SMD_SingleStep {
       printf("%lf, ", pold.get(i));
     }
     long double f_final = (*func_ptr_)(pold, data(), &grad);
-    printf("\nfinal val: %Lf\n p_tol : %Lf, iters : %"LI"d\n",
-	   f_final, p_tol, iters);
+    scale = sqrt(la::Dot(grad, grad));
+    printf("\nfinal val: %Lf, p_tol : %lf, iters : %"LI"d, g_tol : %lf\n",
+	   f_final, p_tol, iters, scale);
     return;
   }
 
