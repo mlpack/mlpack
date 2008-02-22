@@ -541,19 +541,9 @@ class KrylovLpr {
     num_finite_difference_prunes_ = num_epanechnikov_prunes_ = 0;
     
     // This is the basic N-body based computation.
-    if(!strncmp(fx_param_str_req(module_, "method"),"st", 2)) {
-      /*
-      BasicComputeSingleTree_(queries, query_regression_estimates,
-			      query_confidence_bands,
-			      query_magnitude_weight_diagrams,
-			      query_influence_values);
-      */
-    }
-    else {
-      BasicComputeDualTree_(queries, query_regression_estimates,
-			    query_magnitude_weight_diagrams,
-			    query_influence_values);
-    }
+    BasicComputeDualTree_(queries, query_regression_estimates,
+			  query_magnitude_weight_diagrams,
+			  query_influence_values);
     
     printf("Number of finite difference prunes: %d\n",
 	   num_finite_difference_prunes_);

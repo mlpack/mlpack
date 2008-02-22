@@ -249,6 +249,7 @@ class KrylovLprRStat {
     int matrix_dimension = 
       (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 
+    sum_target_weighted_data_.Init(matrix_dimension);
     target_weighted_data_far_field_expansion_.Init(matrix_dimension);
     sum_reference_point_expansion_.Init(matrix_dimension);
 

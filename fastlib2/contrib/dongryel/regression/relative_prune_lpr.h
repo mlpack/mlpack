@@ -214,7 +214,7 @@ class RelativePruneLpr {
 				positive_dot_product_range.hi *
 				kernel_value_range.hi),
 			 rnode->stat().sum_reference_point_expansion_,
-			 NULL);
+			 &delta_e);
       
       la::ScaleOverwrite(0.5 * (negative_dot_product_range.lo *
 				kernel_value_range.hi +
