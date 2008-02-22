@@ -139,14 +139,11 @@ class KrylovLpr {
   
   ////////// Private Member Functions //////////
 
-  void MaximumRelativeErrorInL1Norm_
-  (const Matrix &qset, const Matrix &exact_vector_e, 
-   const Matrix &approximated,
-   const ArrayList<bool> *query_should_exit_the_loop);
-
   /** @brief This function tests the first phase computation (i.e.,
    *         the computation of B^T W(q) Y vectors for each query
-   *         point).
+   *         point). Add this function call right after the
+   *         ComputeRightHandSides_ function call to test the
+   *         correctness.
    */
   void TestRightHandSideComputation_(const Matrix &qset,
 				     const Matrix &approximated);
@@ -169,34 +166,6 @@ class KrylovLpr {
 	la::Scale(row_length_, 1.0 / lengths[i], column_vector);
       }
     }
-  }
-
-  /** @brief Computes the minimum L1 norm.
-   */
-  double MinL1Norm_(const Vector &negative_lower_limit, 
-		    const Vector &negative_upper_limit,
-		    const Vector &positive_lower_limit,
-		    const Vector &positive_upper_limit) {
-
-    double norm = 0;
-
-    for(index_t i = 0; i < negative_lower_limit.length(); i++) {
-      double upper_limit = negative_upper_limit[i] +
-	positive_upper_limit[i];
-      double lower_limit = negative_lower_limit[i] +
-	positive_lower_limit[i];
-
-      //DEBUG_ASSERT(upper_limit >= lower_limit);
-
-      if(lower_limit > 0) {
-	norm += lower_limit;
-      }
-      else if(upper_limit < 0) {
-	norm += (-upper_limit);
-      }
-    }
-    DEBUG_ASSERT(norm >= 0);
-    return norm;
   }
 
   /** @brief Compute the dot-product bounds possible for a pair of
@@ -381,7 +350,7 @@ class KrylovLpr {
       // Compute the expansion of the current query point.
       MultiIndexUtil::ComputePointMultivariatePolynomial
 	(dimension_, lpr_order_, query_pt, query_point_expansion.ptr());
-      
+
       // Take the dot product between the query point solution and the
       // query point expansion to get the regression estimate.
       regression_estimates[i] = la::Dot(row_length_, query_pt_solution,
@@ -501,6 +470,8 @@ class KrylovLpr {
     ComputeRightHandSides_
       (qroot, qset, right_hand_sides_l, right_hand_sides_e,
        right_hand_sides_used_error, right_hand_sides_n_pruned);
+    // TestRightHandSideComputation_(qset, right_hand_sides_e);
+    
     printf("Phase 1 completed...\n");
 
     // The second phase solves the least squares problem: (B^T W(q) B)
