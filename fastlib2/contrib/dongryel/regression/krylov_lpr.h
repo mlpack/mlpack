@@ -381,7 +381,7 @@ class KrylovLpr {
       // Compute the expansion of the current query point.
       MultiIndexUtil::ComputePointMultivariatePolynomial
 	(dimension_, lpr_order_, query_pt, query_point_expansion.ptr());
-
+      
       // Take the dot product between the query point solution and the
       // query point expansion to get the regression estimate.
       regression_estimates[i] = la::Dot(row_length_, query_pt_solution,
@@ -485,7 +485,7 @@ class KrylovLpr {
     right_hand_sides_used_error.Init(qset.n_cols());
     right_hand_sides_n_pruned.Init(qset.n_cols());
     solution_vectors_e.Init(row_length_, qset.n_cols());
-    
+
     // The computation proceeds in three phases:
     //
     // Phase 1: Compute B^T W(q) Y vector for each query point.
@@ -513,6 +513,8 @@ class KrylovLpr {
     // Proceed with the third phase of the computation to output the
     // final regression value.
     printf("Starting Phase 3...\n");
+    query_regression_estimates->Init(qset.n_cols());
+    query_magnitude_weight_diagrams->Init(qset.n_cols());
     FinalizeRegressionEstimates_(qset, solution_vectors_e, 
 				 (*query_regression_estimates));
     printf("Phase 3 completed...\n");
@@ -552,6 +554,7 @@ class KrylovLpr {
     // If the reference dataset is being used for training, then
     // compute variance and degrees of freedom.
     if(query_influence_values != NULL) {
+      query_influence_values->Init(queries.n_cols());
       ComputeVariance_();
     }
     
