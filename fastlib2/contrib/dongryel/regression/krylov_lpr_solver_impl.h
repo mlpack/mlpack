@@ -197,9 +197,10 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
     qnode->stat().postponed_neg_ll_vector_n_pruned_ += delta_neg_n_pruned;
 
     num_finite_difference_prunes_++;
+
     return;
   }
-  
+
   // for leaf query node
   if(qnode->is_leaf()) {
     
@@ -675,12 +676,15 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
     // Compute v_tilde_mat (the residue after applying the linear
     // operator the current Lanczos vector).
     la::AddOverwrite(lanczos_prod_e, neg_lanczos_prod_e, &v_tilde_mat);
+
+    /*
     printf("Positive matrix: %g\n",
 	   MatrixUtil::EntrywiseLpNorm(lanczos_prod_e, 1));
     printf("Negative matrix: %g\n",
 	   MatrixUtil::EntrywiseLpNorm(neg_lanczos_prod_e, 1));
     TestKrylovComputation_(qset, v_tilde_mat, current_lanczos_vectors,
 			   query_should_exit_the_loop);
+    */
 
     for(index_t q = 0; q < qset.n_cols(); q++) {
 
@@ -764,7 +768,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
       }
       
       // Update solution...
-      if(!query_should_exit_the_loop[q]) {
+      {
 	la::AddExpert(row_length_, g_vec[q] * c_vec[q], w_mat.GetColumnPtr(q),
 		      solution_vectors_e.GetColumnPtr(q));
 	la::AddExpert(row_length_, g_vec[q] * s_vec[q], current_lanczos_vector,
