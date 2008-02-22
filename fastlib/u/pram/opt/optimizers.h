@@ -792,7 +792,7 @@ class SMD_SingleStep {
     index_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
     Vector pold, pnew, grad, prev_grad;
     long double f_old, f_new;
-    double scale, scale_prev, eta = 0.01, gamma, mu = 0.01;
+    double scale, scale_prev, eta = 0.01, gamma, mu = 0.1;
     double p_tol = 0.0, f_tol = 0.0;
     Matrix data_batched;
     index_t batch_size = data().n_cols() / num_batch;
