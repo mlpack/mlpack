@@ -616,10 +616,10 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
   lanczos_prod_e.Init(row_length_, qset.n_cols());
   neg_lanczos_prod_e.Init(row_length_, qset.n_cols());
   neg_lanczos_prod_u.Init(row_length_, qset.n_cols());
-  lanczos_prod_used_error.Init(row_length_);
-  lanczos_prod_n_pruned.Init(row_length_);
-  neg_lanczos_prod_used_error.Init(row_length_);
-  neg_lanczos_prod_n_pruned.Init(row_length_);
+  lanczos_prod_used_error.Init(qset.n_cols());
+  lanczos_prod_n_pruned.Init(qset.n_cols());
+  neg_lanczos_prod_used_error.Init(qset.n_cols());
+  neg_lanczos_prod_n_pruned.Init(qset.n_cols());
 
   // Main iteration of the SYMMLQ algorithm - repeat until
   // "convergence"...
