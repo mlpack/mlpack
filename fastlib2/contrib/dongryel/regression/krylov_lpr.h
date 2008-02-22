@@ -297,18 +297,6 @@ class KrylovLpr {
      const ArrayList<bool> &exclude_query_flag,
      const Matrix &current_lanczos_vectors);
 
-  /** @brief Initialize the query tree for an iteration inside a
-   *         Krylov solver. This resets the required vector bound
-   *         statistics to default.
-   */
-  void InitializeQueryTreeSumBound_
-    (QueryTree *qnode, const DRange &root_negative_dot_product_range,
-     const DRange &root_posistive_dot_product_range,
-     Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
-     Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
-     Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
-     Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned);
-
   /** @brief Finalize the Lanczos vector generator by traversing the
    *         query tree and summing up any unincorporated quantities.
    *
@@ -341,9 +329,7 @@ class KrylovLpr {
    *                                 Lanczos vector for each query point.
    */
   void DualtreeSolverBase_
-  (QueryTree *qnode, ReferenceTree *rnode,
-   const DRange &root_negative_dot_product_range,
-   const DRange &root_positive_dot_product_range, const Matrix &qset, 
+  (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset, 
    const ArrayList<bool> &query_should_exit_the_loop,
    const Matrix &current_lanczos_vectors, Matrix &lanczos_prod_l,
    Matrix &lanczos_prod_e, Vector &lanczos_prod_used_error,
@@ -360,9 +346,7 @@ class KrylovLpr {
    *                                 Lanczos vector for each query point.
    */
   void DualtreeSolverCanonical_
-  (QueryTree *qnode, ReferenceTree *rnode,
-   const DRange &root_negative_dot_product_range,
-   const DRange &root_positive_dot_product_range, const Matrix &qset,
+  (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
    const ArrayList<bool> &query_should_exit_the_loop,
    const Matrix &current_lanczos_vectors, 
    Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,

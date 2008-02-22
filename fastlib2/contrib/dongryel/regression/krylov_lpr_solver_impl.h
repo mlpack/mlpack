@@ -6,9 +6,7 @@
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
-(QueryTree *qnode, ReferenceTree *rnode, 
- const DRange &root_negative_dot_product_range,
- const DRange &root_positive_dot_product_range, const Matrix &qset,
+(QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
  const ArrayList<bool> &query_should_exit_the_loop,
  const Matrix &current_lanczos_vectors,
  Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
@@ -26,7 +24,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
   qnode->stat().ll_vector_norm_l_ = DBL_MAX;
   qnode->stat().ll_vector_used_error_ = 0;
   qnode->stat().ll_vector_n_pruned_ = DBL_MAX;
-  qnode->stat().neg_ll_vector_norm_u_ = -DBL_MAX;
+  qnode->stat().neg_ll_vector_norm_l_ = DBL_MAX;
   qnode->stat().neg_ll_vector_used_error_ = 0;
   qnode->stat().neg_ll_vector_n_pruned_ = DBL_MAX;
   
@@ -81,7 +79,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
       double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
 
       // Take the dot product between the query point's Lanczos vector
-      // and [1 r^T]^T.
+      // and the reference point expansion.
       double dot_product = la::Dot(row_length_, q_lanczos_vector, 
 				   reference_point_expansion.ptr());
       double front_factor = dot_product * kernel_value;
@@ -105,9 +103,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
 
     // Update the pruned quantities.
     lanczos_prod_n_pruned[q] += 
-      rnode->stat().sum_target_weighted_data_alloc_norm_;
+      rnode->stat().sum_reference_point_expansion_norm_;
     neg_lanczos_prod_n_pruned[q] += 
-      rnode->stat().sum_target_weighted_data_alloc_norm_;
+      rnode->stat().sum_reference_point_expansion_norm_;
 
     // Now, loop over each vector component for the current query and
     // correct the upper bound by the assumption made in the
@@ -122,8 +120,8 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
     qnode->stat().ll_vector_n_pruned_ =
       std::min(qnode->stat().ll_vector_n_pruned_, lanczos_prod_n_pruned[q]);
     
-    qnode->stat().neg_ll_vector_norm_u_ =
-      std::max(qnode->stat().neg_ll_vector_norm_u_,
+    qnode->stat().neg_ll_vector_norm_l_ =
+      std::min(qnode->stat().neg_ll_vector_norm_l_,
 	       MatrixUtil::EntrywiseLpNorm(row_length_, 
 					   q_neg_lanczos_prod_u, 1));
     qnode->stat().neg_ll_vector_used_error_ =
@@ -145,89 +143,8 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverBase_
 }
 
 template<typename TKernel, typename TPruneRule>
-bool KrylovLpr<TKernel, TPruneRule>::PrunableSolver_
-(QueryTree *qnode, ReferenceTree *rnode, Matrix &current_lanczos_vectors,
- DRange &root_negative_dot_product_range, 
- DRange &root_positive_dot_product_range, DRange &dsqd_range, 
- DRange &kernel_value_range, double &used_error) {
-  
-  // Temporary variables hold the dot product ranges.
-  DRange negative_dot_product_range, positive_dot_product_range;
-  
-  // Compute the dot product range.
-  DotProductBetweenTwoBounds_(qnode, rnode, negative_dot_product_range,
-			      positive_dot_product_range);
-
-  // try pruning after bound refinement: first compute distance/kernel
-  // value bounds
-  LprUtil::SqdistAndKernelRanges_(qnode, rnode, dsqd_range, 
-				  kernel_value_range);
-
-  // Compute the vector component lower and upper bound changes. This
-  // assumes that the maximum kernel value is 1.
-  la::ScaleOverwrite(positive_dot_product_range.lo * kernel_value_range.lo,
-		     rnode->stat().sum_coordinates_,
-		     NULL);
-  la::ScaleOverwrite(0.5 * (positive_dot_product_range.lo *
-			    kernel_value_range.lo +
-			    positive_dot_product_range.hi *
-			    kernel_value_range.hi),
-		     rnode->stat().sum_coordinates_,
-		     NULL);
-
-  la::ScaleOverwrite(negative_dot_product_range.lo * kernel_value_range.hi - 
-		     root_negative_dot_product_range.lo,
-		     rnode->stat().sum_coordinates_, NULL);
-  la::ScaleOverwrite(0.5 * (negative_dot_product_range.lo *
-			    kernel_value_range.hi +
-			    negative_dot_product_range.hi *
-			    kernel_value_range.lo),
-		     rnode->stat().sum_coordinates_, NULL);
-
-  // Refine the positive lower bound based on the current postponed
-  // lower bound change and the newly gained refinement due to
-  // comparing the current query and reference node pair. Do the same
-  // for the negative upper bound.
-  la::AddOverwrite(qnode->stat().ll_vector_l_,
-		   qnode->stat().postponed_ll_vector_l_, NULL);
-  //la::AddTo(vector_l_change_, NULL);
-
-  la::AddOverwrite(qnode->stat().neg_ll_vector_u_,
-		   qnode->stat().postponed_neg_ll_vector_u_, NULL);
-  //la::AddTo(neg_vector_u_change_, NULL);
-
-  // Compute the L1 norm of the most refined lower bound.
-  /*
-  double min_l1_norm = MinL1Norm_(new_neg_vector_u_, new_neg_vector_l_,
-				  new_vector_l_, new_vector_u_);
-  */
-  double min_l1_norm = 0;
-
-  // Compute the allowed amount of error for pruning the given query
-  // and reference pair.
-  double allowed_err = 
-    (relative_error_ * (rnode->stat().l1_norm_sum_coordinates_) *
-     min_l1_norm) / (rroot_->stat().l1_norm_sum_coordinates_);
-  
-  used_error = 0.5 * ((positive_dot_product_range.hi *
-		       kernel_value_range.hi -
-		       positive_dot_product_range.lo *
-		       kernel_value_range.lo) +
-		      (negative_dot_product_range.hi *
-		       kernel_value_range.lo -
-		       negative_dot_product_range.lo *
-		       kernel_value_range.hi)) *
-    rnode->stat().l1_norm_sum_coordinates_;
-
-  // check pruning condition  
-  return (used_error <= allowed_err);
-}
-
-template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
-(QueryTree *qnode, ReferenceTree *rnode,
- const DRange &root_negative_dot_product_range,
- const DRange &root_positive_dot_product_range, const Matrix &qset,
+(QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
  const ArrayList<bool> &query_should_exit_the_loop,
  const Matrix &current_lanczos_vectors, 
  Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
@@ -235,37 +152,53 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
  Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
  Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned) {
     
-  // Total amount of used error
-  double used_error;
-  
+  // Variables for storing changes due to a prune.
+  double delta_used_error, delta_n_pruned, delta_neg_used_error, 
+    delta_neg_n_pruned;
+  Vector delta_l, delta_e, delta_neg_u, delta_neg_e;
+  delta_l.Init(row_length_);
+  delta_e.Init(row_length_);
+  delta_neg_u.Init(row_length_);
+  delta_neg_e.Init(row_length_);
+
   // temporary variable for holding distance/kernel value bounds
   DRange dsqd_range;
   DRange kernel_value_range;
-  
-  // try finite difference pruning first
-  /*
-  if(PrunableSolver_(qnode, rnode, current_lanczos_vectors,
-		     root_negative_dot_product_range,
-		     root_positive_dot_product_range,
-		     dsqd_range, kernel_value_range, used_error)) {
 
-    la::AddTo(vector_l_change_,
-	      &(qnode->stat().postponed_ll_vector_l_));
-    la::AddTo(vector_e_change_,
-	      &(qnode->stat().postponed_ll_vector_e_));
-    la::AddTo(vector_u_change_,
-	      &(qnode->stat().postponed_ll_vector_u_));
-    la::AddTo(neg_vector_l_change_,
-	      &(qnode->stat().postponed_neg_ll_vector_l_));
-    la::AddTo(neg_vector_e_change_,
-	      &(qnode->stat().postponed_neg_ll_vector_e_));
-    la::AddTo(neg_vector_u_change_,
-	      &(qnode->stat().postponed_neg_ll_vector_u_));
+  // First compute distance/kernel value bounds and dot product bound
+  // ranges.
+  LprUtil::SqdistAndKernelRanges_(qnode, rnode, dsqd_range, 
+				  kernel_value_range);
+
+  // Temporary variables hold the dot product ranges.
+  DRange negative_dot_product_range, positive_dot_product_range;
+  
+  // Compute the dot product range.
+  DotProductBetweenTwoBounds_(qnode, rnode, negative_dot_product_range,
+			      positive_dot_product_range);
+
+  // try finite difference pruning first
+  if(TPruneRule::PrunableKrylovSolver
+     (internal_relative_error_, 
+      rnode->stat().sum_reference_point_expansion_norm_,
+      qnode, rnode, dsqd_range, kernel_value_range, 
+      negative_dot_product_range, positive_dot_product_range,
+      delta_l, delta_e, delta_used_error, delta_n_pruned,
+      delta_neg_u, delta_neg_e, delta_neg_used_error, delta_neg_n_pruned)) {
+
+    la::AddTo(delta_l, &(qnode->stat().postponed_ll_vector_l_));
+    la::AddTo(delta_e, &(qnode->stat().postponed_ll_vector_e_));
+    qnode->stat().postponed_ll_vector_used_error_ += delta_used_error;
+    qnode->stat().postponed_ll_vector_n_pruned_ += delta_n_pruned;
+
+    la::AddTo(delta_neg_u, &(qnode->stat().postponed_neg_ll_vector_u_));
+    la::AddTo(delta_neg_e, &(qnode->stat().postponed_neg_ll_vector_e_));
+    qnode->stat().postponed_neg_ll_vector_used_error_ += delta_neg_used_error;
+    qnode->stat().postponed_neg_ll_vector_n_pruned_ += delta_neg_n_pruned;
 
     num_finite_difference_prunes_++;
     return;
   }
-  */
   
   // for leaf query node
   if(qnode->is_leaf()) {
@@ -273,8 +206,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
     // for leaf pairs, go exhaustive
     if(rnode->is_leaf()) {
       DualtreeSolverBase_
-	(qnode, rnode, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode, rnode, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
@@ -288,15 +220,13 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
       LprUtil::BestReferenceNodePartners(qnode, rnode->left(), rnode->right(), 
 					 &rnode_first, &rnode_second);
       DualtreeSolverCanonical_
-	(qnode, rnode_first, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode, rnode_first, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
 	 neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
       DualtreeSolverCanonical_
-	(qnode, rnode_second, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode, rnode_second, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
@@ -357,15 +287,13 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
       LprUtil::BestQueryNodePartners(rnode, qnode->left(), qnode->right(), 
 				     &qnode_first, &qnode_second);
       DualtreeSolverCanonical_
-	(qnode_first, rnode, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode_first, rnode, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
 	 neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
       DualtreeSolverCanonical_
-	(qnode_second, rnode, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode_second, rnode, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
@@ -380,15 +308,13 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
 					 rnode->right(), &rnode_first, 
 					 &rnode_second);
       DualtreeSolverCanonical_
-	(qnode->left(), rnode_first, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode->left(), rnode_first, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
 	 neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
       DualtreeSolverCanonical_
-	(qnode->left(), rnode_second, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode->left(), rnode_second, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
@@ -398,16 +324,14 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
 					 rnode->right(), &rnode_first, 
 					 &rnode_second);
       DualtreeSolverCanonical_
-	(qnode->right(), rnode_first, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode->right(), rnode_first, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
 	 neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
 
       DualtreeSolverCanonical_
-	(qnode->right(), rnode_second, root_negative_dot_product_range,
-	 root_positive_dot_product_range, qset, query_should_exit_the_loop,
+	(qnode->right(), rnode_second, qset, query_should_exit_the_loop,
 	 current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
 	 lanczos_prod_used_error, lanczos_prod_n_pruned,
 	 neg_lanczos_prod_e, neg_lanczos_prod_u,
@@ -422,37 +346,33 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
        q_right_stat.ll_vector_norm_l_ +
        MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_ll_vector_l_, 1));
     q_stat.ll_vector_used_error_ =
-      std::max
-      (q_left_stat.ll_vector_used_error_ +
-       q_left_stat.postponed_ll_vector_used_error_,
-       q_right_stat.ll_vector_used_error_ +
-       q_right_stat.postponed_ll_vector_used_error_);
+      std::max(q_left_stat.ll_vector_used_error_ +
+	       q_left_stat.postponed_ll_vector_used_error_,
+	       q_right_stat.ll_vector_used_error_ +
+	       q_right_stat.postponed_ll_vector_used_error_);
     q_stat.ll_vector_n_pruned_ =
-      std::min
-      (q_left_stat.ll_vector_n_pruned_ +
-       q_left_stat.postponed_ll_vector_n_pruned_,
-       q_right_stat.ll_vector_n_pruned_ +
-       q_right_stat.postponed_ll_vector_n_pruned_);
+      std::min(q_left_stat.ll_vector_n_pruned_ +
+	       q_left_stat.postponed_ll_vector_n_pruned_,
+	       q_right_stat.ll_vector_n_pruned_ +
+	       q_right_stat.postponed_ll_vector_n_pruned_);
 
-    q_stat.neg_ll_vector_norm_u_ =
-      std::max
-      (q_left_stat.neg_ll_vector_norm_u_ +
-       MatrixUtil::EntrywiseLpNorm(q_left_stat.postponed_neg_ll_vector_u_, 1),
-       q_right_stat.neg_ll_vector_norm_u_ +
-       MatrixUtil::EntrywiseLpNorm(q_right_stat.postponed_neg_ll_vector_u_, 
-				   1));
+    q_stat.neg_ll_vector_norm_l_ =
+      std::min(q_left_stat.neg_ll_vector_norm_l_ +
+	       MatrixUtil::EntrywiseLpNorm
+	       (q_left_stat.postponed_neg_ll_vector_u_, 1),
+	       q_right_stat.neg_ll_vector_norm_l_ +
+	       MatrixUtil::EntrywiseLpNorm
+	       (q_right_stat.postponed_neg_ll_vector_u_, 1));
     q_stat.neg_ll_vector_used_error_ =
-      std::max
-      (q_left_stat.neg_ll_vector_used_error_ +
-       q_left_stat.postponed_neg_ll_vector_used_error_,
-       q_right_stat.neg_ll_vector_used_error_ +
-       q_right_stat.postponed_neg_ll_vector_used_error_);
+      std::max(q_left_stat.neg_ll_vector_used_error_ +
+	       q_left_stat.postponed_neg_ll_vector_used_error_,
+	       q_right_stat.neg_ll_vector_used_error_ +
+	       q_right_stat.postponed_neg_ll_vector_used_error_);
     q_stat.neg_ll_vector_n_pruned_ =
-      std::min
-      (q_left_stat.neg_ll_vector_n_pruned_ +
-       q_left_stat.postponed_neg_ll_vector_n_pruned_,
-       q_right_stat.neg_ll_vector_n_pruned_ +
-       q_right_stat.postponed_neg_ll_vector_n_pruned_);
+      std::min(q_left_stat.neg_ll_vector_n_pruned_ +
+	       q_left_stat.postponed_neg_ll_vector_n_pruned_,
+	       q_right_stat.neg_ll_vector_n_pruned_ +
+	       q_right_stat.postponed_neg_ll_vector_n_pruned_);
     return;
   } // end of the case: non-leaf query node.
   
@@ -521,10 +441,12 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTreeLanczosVectorBound_
  const ArrayList<bool> &exclude_query_flag,
  const Matrix &current_lanczos_vectors) {
 
+  // Set the bound quantities to default.
+  qnode->stat().Reset();
+
   // If the query node is a leaf, then exhaustively iterate over and
   // form bounding boxes of the current solution.
   if(qnode->is_leaf()) {
-    (qnode->stat().lanczos_vectors_bound_).Reset();
     qnode->bound().Reset();
 
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -556,7 +478,6 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTreeLanczosVectorBound_
     
     // Reset the bounding box for the Lanczos vectors and reform it
     // using the bounding boxes owned by the children.
-    (qnode->stat().lanczos_vectors_bound_).Reset();
     qnode->stat().lanczos_vectors_bound_ |= 
       (qnode->left()->stat()).lanczos_vectors_bound_;
     qnode->stat().lanczos_vectors_bound_ |=
@@ -566,62 +487,6 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTreeLanczosVectorBound_
     qnode->bound().Reset();
     qnode->bound() |= qnode->left()->bound();
     qnode->bound() |= qnode->right()->bound();
-  }
-}
-
-template<typename TKernel, typename TPruneRule>
-void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTreeSumBound_
-(QueryTree *qnode, const DRange &root_negative_dot_product_range,
- const DRange &root_positive_dot_product_range,
- Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
- Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
- Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
- Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned) {
-  
-  // Set the bounds to default values.
-  qnode->stat().ll_vector_norm_l_ = 0;
-  qnode->stat().neg_ll_vector_norm_u_ = 0;
-  
-  // Set the postponed quantities to zero.
-  (qnode->stat().postponed_ll_vector_l_).SetZero();
-  (qnode->stat().postponed_ll_vector_e_).SetZero();
-  (qnode->stat().postponed_neg_ll_vector_e_).SetZero();
-  (qnode->stat().postponed_neg_ll_vector_u_).SetZero();
-
-  // If the query node is a leaf, then initialize the corresponding
-  // bound statistics for each query point.
-  if(qnode->is_leaf()) {
-
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      Vector q_lanczos_prod_l, q_lanczos_prod_e;
-      Vector q_neg_lanczos_prod_e, q_neg_lanczos_prod_u;
-      
-      lanczos_prod_l.MakeColumnVector(q, &q_lanczos_prod_l);
-      lanczos_prod_e.MakeColumnVector(q, &q_lanczos_prod_e);
-      neg_lanczos_prod_e.MakeColumnVector(q, &q_neg_lanczos_prod_e);
-      neg_lanczos_prod_u.MakeColumnVector(q, &q_neg_lanczos_prod_u);
-      
-      q_lanczos_prod_l.SetZero();
-      q_lanczos_prod_e.SetZero();
-
-      q_neg_lanczos_prod_e.SetZero();
-      q_neg_lanczos_prod_u.SetZero();
-    }
-  }
-  else {
-    
-    InitializeQueryTreeSumBound_
-      (qnode->left(), root_negative_dot_product_range,
-       root_positive_dot_product_range, lanczos_prod_l, lanczos_prod_e,
-       lanczos_prod_used_error, lanczos_prod_n_pruned,
-       neg_lanczos_prod_e, neg_lanczos_prod_u,
-       neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
-    InitializeQueryTreeSumBound_
-      (qnode->right(), root_negative_dot_product_range,
-       root_positive_dot_product_range, lanczos_prod_l, lanczos_prod_e,
-       lanczos_prod_used_error, lanczos_prod_n_pruned,
-       neg_lanczos_prod_e, neg_lanczos_prod_u,
-       neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
   }
 }
 
@@ -733,10 +598,6 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
   w_mat.CopyValues(current_lanczos_vectors);
   g_vec.SetZero();
 
-  // Temporary variables to hold dot product ranges for the root nodes
-  // of the two trees.
-  DRange root_negative_dot_product_range, root_positive_dot_product_range;
-
   // Flag to tell whether each query stays in the Krylov loop or not.
   ArrayList<bool> query_should_exit_the_loop;
   query_should_exit_the_loop.Init(qset.n_cols());
@@ -779,23 +640,20 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
     // Initialize the query tree Lanzcos vector bounds.
     InitializeQueryTreeLanczosVectorBound_
       (qroot, qset, query_should_exit_the_loop, current_lanczos_vectors);
-    
-    // Compute the dot product bounds.
-    DotProductBetweenTwoBounds_(qroot, rroot_, root_negative_dot_product_range,
-				root_positive_dot_product_range);
 
     // Initialize the query tree bound statistics.
-    InitializeQueryTreeSumBound_
-      (qroot, root_negative_dot_product_range, 
-       root_positive_dot_product_range, lanczos_prod_l, lanczos_prod_e,
-       lanczos_prod_used_error, lanczos_prod_n_pruned, neg_lanczos_prod_e,
-       neg_lanczos_prod_u, neg_lanczos_prod_used_error,
-       neg_lanczos_prod_n_pruned);
+    lanczos_prod_l.SetZero();
+    lanczos_prod_e.SetZero();
+    lanczos_prod_used_error.SetZero();
+    lanczos_prod_n_pruned.SetZero();
+    neg_lanczos_prod_e.SetZero();
+    neg_lanczos_prod_u.SetZero();
+    neg_lanczos_prod_used_error.SetZero();
+    neg_lanczos_prod_n_pruned.SetZero();
 
     // Multiply the current lanczos vector with the linear operator.
     DualtreeSolverCanonical_
-      (qroot, rroot_, root_negative_dot_product_range,
-       root_positive_dot_product_range, qset, query_should_exit_the_loop,
+      (qroot, rroot_, qset, query_should_exit_the_loop,
        current_lanczos_vectors, lanczos_prod_l, lanczos_prod_e,
        lanczos_prod_used_error, lanczos_prod_n_pruned, neg_lanczos_prod_e,
        neg_lanczos_prod_u, neg_lanczos_prod_used_error, 

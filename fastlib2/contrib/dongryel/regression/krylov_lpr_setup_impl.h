@@ -33,11 +33,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
     reference_point_expansion.Init(row_length_);
 
     // Clear the sum statistics before accumulating.
-    (rnode->stat().sum_target_weighted_data_).SetZero();
-
-    // Clear the bound on the reference point expansion before
-    // accumulating.
-    reference_point_expansion_bound_.Reset();
+    rnode->stat().Reset();
 
     // For a leaf reference node, iterate over each reference point
     // and compute the weighted vector and tally these up for the
@@ -236,7 +232,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
     (qnode, rnode, dsqd_range, kernel_value_range);
 
   // try finite difference pruning first
-  if(TPruneRule::Prunable
+  if(TPruneRule::PrunableKrylovRightHandSides
      (internal_relative_error_, 
       rnode->stat().sum_target_weighted_data_alloc_norm_,
       qnode, rnode, dsqd_range, kernel_value_range, delta_l, delta_e,

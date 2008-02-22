@@ -26,10 +26,10 @@ public:
    */
   double ll_vector_n_pruned_;
 
-  /** @brief The upper bound on the norm of the negative components
+  /** @brief The lower bound on the norm of the negative components
    *         of the vector computation.
    */
-  double neg_ll_vector_norm_u_;
+  double neg_ll_vector_norm_l_;
 
   /** @brief The upper bound on the used error for approximating the
    *         negative components of the vector computation.
@@ -105,7 +105,7 @@ public:
     ll_vector_norm_l_ = 0;
     ll_vector_used_error_ = 0;
     ll_vector_n_pruned_ = 0;
-    neg_ll_vector_norm_u_ = 0;
+    neg_ll_vector_norm_l_ = 0;
     neg_ll_vector_used_error_ = 0;
     neg_ll_vector_n_pruned_ = 0;
     postponed_ll_vector_l_.SetZero();
@@ -116,6 +116,7 @@ public:
     postponed_neg_ll_vector_u_.SetZero();
     postponed_neg_ll_vector_used_error_ = 0;
     postponed_neg_ll_vector_n_pruned_ = 0;
+    lanczos_vectors_bound_.Reset();
   }
 
   /** @brief Allocate and initialize memory for the given dimension.
@@ -170,7 +171,7 @@ class KrylovLprRStat {
    *         weighted by its target training value (i.e. B^T Y).
    */
   Vector sum_target_weighted_data_;
-    
+
   /** @brief The norm of the summed up vector B^T Y used for the
    *         error criterion.
    */
@@ -189,6 +190,14 @@ class KrylovLprRStat {
   ArrayList< EpanKernelMomentInfo >
     target_weighted_data_far_field_expansion_;
     
+  /** @brief The vector summing up the reference point expansion.
+   */
+  Vector sum_reference_point_expansion_;
+
+  /** @brief The norm of the sum_reference_point_expansion_
+   */
+  double sum_reference_point_expansion_norm_;
+  
   /** @brief The minimum bandwidth among the reference point.
    */
   TKernel min_bandwidth_kernel;
@@ -210,6 +219,24 @@ class KrylovLprRStat {
     
   ////////// Functions during the tree construction //////////
 
+  /** @brief Resets the statistics to be a default value.
+   */
+  void Reset() {
+
+    sum_target_weighted_data_.SetZero();
+    sum_target_weighted_data_error_norm_ = 0;
+    sum_target_weighted_data_alloc_norm_ = 0;
+
+    sum_reference_point_expansion_.SetZero();
+    sum_reference_point_expansion_norm_ = 0;
+
+    // Initialize the bandwidth information to defaults.
+    min_bandwidth_kernel.Init(DBL_MAX);
+    max_bandwidth_kernel.Init(0);
+
+    reference_point_expansion_bound_.Reset();
+  }
+
   /** @brief Allocate and initialize memory for the given dimension.
    *
    *  @param dimension The dimensionality.
@@ -223,16 +250,11 @@ class KrylovLprRStat {
       (int) math::BinomialCoefficient(dimension + lpr_order, dimension);
 
     target_weighted_data_far_field_expansion_.Init(matrix_dimension);
-      
-    for(index_t j = 0; j < matrix_dimension; j++) {	
+    sum_reference_point_expansion_.Init(matrix_dimension);
+
+    for(index_t j = 0; j < matrix_dimension; j++) {
       target_weighted_data_far_field_expansion_[j].Init(dimension);
     }
-    sum_target_weighted_data_error_norm_ = 0;
-    sum_target_weighted_data_alloc_norm_ = 0;
-      
-    // Initialize the bandwidth information to defaults.
-    min_bandwidth_kernel.Init(DBL_MAX);
-    max_bandwidth_kernel.Init(0);
 
     // Initialize memory for bound on reference point expansions.
     reference_point_expansion_bound_.Init(matrix_dimension);
