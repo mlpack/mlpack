@@ -623,7 +623,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
 
   // Main iteration of the SYMMLQ algorithm - repeat until
   // "convergence"...
-  for(; ;) {
+  for(index_t num_iter = 0; num_iter < row_length_; num_iter++) {
 
     // Determine how many queries are in the Krylov loop.
     int num_queries_in_krylov_loop = 0;
@@ -667,6 +667,8 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
     // Compute v_tilde_mat (the residue after applying the linear
     // operator the current Lanczos vector).
     la::AddOverwrite(lanczos_prod_e, neg_lanczos_prod_e, &v_tilde_mat);
+    TestKrylovComputation_(qset, v_tilde_mat, current_lanczos_vectors,
+			   query_should_exit_the_loop);
 
     for(index_t q = 0; q < qset.n_cols(); q++) {
 
@@ -762,10 +764,12 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
       }
 
       // Another criterion for quitting the Krylov loop...
+      /*
       if(sqrt(g_tilde * g_tilde + g_double_tilde_vec[q] * 
-	      g_double_tilde_vec[q]) < 0.1) {
+	      g_double_tilde_vec[q]) < 0.001) {
 	query_should_exit_the_loop[q] = true;
       }
+      */
 
     } // end of iterating over each query point.
 

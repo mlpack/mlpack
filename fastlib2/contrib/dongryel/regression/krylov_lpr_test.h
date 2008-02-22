@@ -5,49 +5,13 @@
 #endif
 
 template<typename TKernel, typename TPruneRule>
-void KrylovLpr<TKernel, TPruneRule>::MaximumRelativeErrorInL1Norm_
-(const Matrix &qset, const Matrix &exact_vector_e, const Matrix &approximated,
- const ArrayList<bool> *query_should_exit_the_loop) {
-  
-  double max_relative_error = 0;
-  
-  for(index_t q = 0; q < qset.n_cols(); q++) {
-    
-    if((*query_should_exit_the_loop)[q]) {
-      continue;
-    }
-
-    // get the column vector containing the approximation.
-    const double *approx_column = approximated.GetColumnPtr(q);
-    
-    // get the column vector accumulating the sum.
-    const double *exact_vector_e_column = exact_vector_e.GetColumnPtr(q);
-    double l1_norm_exact_vector_e_column = 0;
-    double l1_norm_diff_sum = 0;
-    
-    for(index_t d = 0; d <= dimension_; d++) {
-      
-      l1_norm_exact_vector_e_column += exact_vector_e_column[d];
-      l1_norm_diff_sum += fabs(exact_vector_e_column[d] - approx_column[d]);
-    }
-    
-    double relative_error = l1_norm_diff_sum / l1_norm_exact_vector_e_column;
-    if(relative_error > max_relative_error) {
-      max_relative_error = relative_error;
-    }
-    
-  } // end of iterating over each query point.
-  
-  printf("Maximum relative error: %g\n", max_relative_error);
-}
-
-template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::TestRightHandSideComputation_
 (const Matrix &qset, const Matrix &approximated) {
   
   Matrix exact_vector_e;
   exact_vector_e.Init(approximated.n_rows(), approximated.n_cols());
   exact_vector_e.SetZero();
+  double max_relative_error = 0;
 
   for(index_t q = 0; q < qset.n_cols(); q++) {
     
@@ -55,7 +19,9 @@ void KrylovLpr<TKernel, TPruneRule>::TestRightHandSideComputation_
     const double *q_col = qset.GetColumnPtr(q);
 
     // get the column vector accumulating the sum.
-    double *exact_vector_e_column = exact_vector_e.GetColumnPtr(q);
+    Vector exact_vector_e_column, approx_column;
+    exact_vector_e.MakeColumnVector(q, &exact_vector_e_column);
+    approximated.MakeColumnVector(q, &approx_column);
 
     for(index_t r = 0; r < rset_.n_cols(); r++) {
     
@@ -63,25 +29,27 @@ void KrylovLpr<TKernel, TPruneRule>::TestRightHandSideComputation_
       const double *r_col = rset_.GetColumnPtr(r);
       
       // get the column vector containing the appropriate weights.
-      const double *r_weights = 
-	target_weighted_rset_.GetColumnPtr(r);
+      const double *r_weights = target_weighted_rset_.GetColumnPtr(r);
       
       // compute the pairwise squared distance and kernel value.
       double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
       double kernel_value = kernels_[0].EvalUnnormOnSq(dsqd);
 
-      // for each vector component, update the lower/estimate/upper
-      // bound quantities.
-      for(index_t d = 0; d <= dimension_; d++) {
-	exact_vector_e_column[d] += kernel_value * r_weights[d];
-      } // end of iterating over each vector component.
+      // Add up the contribution of the reference point.
+      la::AddExpert(row_length_, kernel_value, r_weights,
+		    exact_vector_e_column.ptr());
 
     } // end of iterating over each reference point.
-      
+
+    double relative_error = 
+      MatrixUtil::EntrywiseNormDifferenceRelative
+      (exact_vector_e_column, approx_column, 1);
+
+    max_relative_error = std::max(max_relative_error, relative_error);
+
   } // end of iterating over each query point.
 
-  MaximumRelativeErrorInL1Norm_(exact_vector_e, approximated,
-				NULL);
+  printf("Maximum relative error: %g\n", max_relative_error);
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -90,9 +58,13 @@ void KrylovLpr<TKernel, TPruneRule>::TestKrylovComputation_
  const Matrix &current_lanczos_vectors,
  const ArrayList<bool> &query_should_exit_the_loop) {
   
+  double max_relative_error = 0;
   Matrix exact_vector_e;
   exact_vector_e.Init(approximated.n_rows(), approximated.n_cols());
   exact_vector_e.SetZero();
+
+  Vector reference_point_expansion;
+  reference_point_expansion.Init(row_length_);
 
   for(index_t q = 0; q < qset.n_cols(); q++) {
     
@@ -109,7 +81,9 @@ void KrylovLpr<TKernel, TPruneRule>::TestKrylovComputation_
     const double *q_lanczos_vector = current_lanczos_vectors.GetColumnPtr(q);
 
     // get the column vector accumulating the sum.
-    double *exact_vector_e_column = exact_vector_e.GetColumnPtr(q);
+    Vector exact_vector_e_column, approx_column;
+    exact_vector_e.MakeColumnVector(q, &exact_vector_e_column);
+    approximated.MakeColumnVector(q, &approx_column);
 
     for(index_t r = 0; r < rset_.n_cols(); r++) {
     
@@ -120,26 +94,30 @@ void KrylovLpr<TKernel, TPruneRule>::TestKrylovComputation_
       double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
       double kernel_value = kernels_[0].EvalUnnormOnSq(dsqd);
 
+      // Compute the reference point expansion.
+      MultiIndexUtil::ComputePointMultivariatePolynomial
+	(dimension_, lpr_order_, r_col, reference_point_expansion.ptr());
+
       // Take the dot product between the query point's Lanczos vector
       // and [1 r^T]^T.
-      double dot_product = q_lanczos_vector[0];
-      for(index_t d = 1; d <= dimension_; d++) {
-	dot_product += r_col[d - 1] * q_lanczos_vector[d];
-      }
+      double dot_product = 
+	la::Dot(row_length_, q_lanczos_vector, 
+		reference_point_expansion.ptr());
       double front_factor = dot_product * kernel_value;
 
-      // For each vector component,
-      exact_vector_e_column[0] += front_factor;
-
-      for(index_t d = 1; d <= dimension_; d++) {
-	exact_vector_e_column[d] += front_factor * r_col[d - 1];
-
-      } // end of iterating over each vector component.      
+      // Add the contribution of the current reference point.
+      la::AddExpert(row_length_, front_factor, reference_point_expansion.ptr(),
+		    exact_vector_e_column.ptr());
 
     } // end of iterating over each reference point.
-    
+
+    double relative_error = 
+      MatrixUtil::EntrywiseNormDifferenceRelative
+      (exact_vector_e_column, approx_column, 1);
+
+    max_relative_error = std::max(max_relative_error, relative_error);
+
   } // end of iterating over each query point.
 
-  MaximumRelativeErrorInL1Norm_(exact_vector_e, approximated,
-				&query_should_exit_the_loop);
+  printf("Maximum relative error: %g\n", max_relative_error);
 }
