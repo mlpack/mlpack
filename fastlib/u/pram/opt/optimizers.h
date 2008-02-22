@@ -786,13 +786,13 @@ class SMD_SingleStep {
     index_t iters;
     index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
     double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
-    fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
+    fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.1);
     double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
     index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
     index_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
     Vector pold, pnew, grad, prev_grad;
     long double f_old, f_new;
-    double scale, scale_prev, alpha = 10, gamma, mu = 0.1;
+    double scale, scale_prev, eta = 0.01, gamma, mu = 0.01;
     long double p_tol = 0.0, f_tol = 0.0;
     Matrix data_batched;
     index_t batch_size = data().n_cols() / num_batch;
@@ -824,14 +824,16 @@ class SMD_SingleStep {
       // Now going through the data batchwise
       for (index_t in = 0; in < num_batch; in++) {
 
-	gamma = - alpha / scale;
+	// instead of scaling the gradient, how about using low values
+	// of the step sizes, because scaling the gradients result
+	// in the gradient being significant even when it is close
+	// to the optimal
+	//	gamma = - eta / scale;
+	gamma = -eta;
 	pnew.SetZero();
 	la::AddTo(pold, &pnew);
 	la::AddExpert(gamma, grad, &pnew);
 
-	Vector diff;
-	la::SubInit(pnew, pold, &diff);
-	p_tol = sqrt(la::Dot(diff, diff));
 
 	// using a batch
 	Matrix single_batch;
@@ -839,9 +841,24 @@ class SMD_SingleStep {
 	data_batched.MakeColumnSlice(st_pt, batch_size, &single_batch);
 	prev_grad.CopyValues(grad);
 	f_new = (*func_ptr_)(pnew, single_batch, &grad);
-	f_tol = fabs(f_new - f_old);
 
-	if ((f_tol < EPSILON) && (p_tol < TOLERANCE)) {
+	// Terminating conditions
+	// |f_t+1 - f_t| < epsilon & ||\theta_t+1 - \theta_t|| < delta
+	Vector diff;
+	la::SubInit(pnew, pold, &diff);
+	f_tol = fabs(f_new - f_old);
+	p_tol = sqrt(la::Dot(diff, diff));
+
+	// but instead if we used the condition
+	// ||grad_t|| < epsilon' & ||\theta_t+1 - \theta_t|| < delta
+	// if ((f_tol < EPSILON) && (p_tol < TOLERANCE)) {
+
+	// this doesn't work either, same problem
+	// if ((scale < EPSILON) && (p_tol < TOLERANCE)){
+
+	// using just the point in the param_space 
+	// which refuses to move
+	if (p_tol < TOLERANCE) {
 	  fx_format_result(opt_module_, "iters", "%d", iters+1);
 	  fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
 	  for (index_t i = 0; i < dim; i++) {
@@ -861,9 +878,10 @@ class SMD_SingleStep {
 	//                          )
 	scale_prev = scale;
 	scale = sqrt(la::Dot(grad, grad));
-	double temp_alpha = 1 + mu * alpha * (la::Dot(grad, prev_grad)) / 
-	  (scale * scale_prev);
-	alpha = alpha * ((0.5 > temp_alpha)?0.5 : temp_alpha);
+	//	double temp_eta = 1 + mu * eta * (la::Dot(grad, prev_grad)) / 
+	//(scale * scale_prev);
+	double temp_eta = 1 + mu * eta * (la::Dot(grad, prev_grad));
+	eta = eta * ((0.5 > temp_eta)?0.5 : temp_eta);
       }
 
       // permuting the data matrix
@@ -878,8 +896,8 @@ class SMD_SingleStep {
       printf("%lf, ", pold.get(i));
     }
     long double f_final = (*func_ptr_)(pold, data(), &grad);
-    printf("\nfinal val: %Lf\n p_tol : %Lf, f_tol : %Lf, iters : %"LI"d\n",
-	   f_final, p_tol, f_tol, iters);
+    printf("\nfinal val: %Lf\n p_tol : %Lf, iters : %"LI"d\n",
+	   f_final, p_tol, iters);
     return;
   }
 
