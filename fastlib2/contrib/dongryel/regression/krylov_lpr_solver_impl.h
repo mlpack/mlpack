@@ -492,7 +492,8 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTreeLanczosVectorBound_
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
-(QueryTree *qnode, Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
+(QueryTree *qnode, const ArrayList<bool> &exclude_query_flag, 
+ Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
  Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
  Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
  Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned) {
@@ -502,6 +503,10 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
   if(qnode->is_leaf()) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
       
+      if(exclude_query_flag[q]) {
+	continue;
+      }
+
       // Get the column vectors accumulating the sums to update.
       double *q_lanczos_prod_l = lanczos_prod_l.GetColumnPtr(q);
       double *q_lanczos_prod_e = lanczos_prod_e.GetColumnPtr(q);
@@ -544,11 +549,13 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
               &(q_right_stat.postponed_neg_ll_vector_u_));
 
     FinalizeQueryTreeLanczosMultiplier_
-      (qnode->left(), lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error, 
+      (qnode->left(), exclude_query_flag,
+       lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error, 
        lanczos_prod_n_pruned, neg_lanczos_prod_e, neg_lanczos_prod_u,
        neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
     FinalizeQueryTreeLanczosMultiplier_
-      (qnode->right(), lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error,
+      (qnode->right(), exclude_query_flag,
+       lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error,
        lanczos_prod_n_pruned, neg_lanczos_prod_e, neg_lanczos_prod_u,
        neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
   }
@@ -659,7 +666,8 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
        neg_lanczos_prod_u, neg_lanczos_prod_used_error, 
        neg_lanczos_prod_n_pruned);
     FinalizeQueryTreeLanczosMultiplier_
-      (qroot, lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error,
+      (qroot, query_should_exit_the_loop,
+       lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error,
        lanczos_prod_n_pruned, neg_lanczos_prod_e, neg_lanczos_prod_u,
        neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
     printf("Finished multiplying Lanczos...\n");
@@ -667,6 +675,10 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
     // Compute v_tilde_mat (the residue after applying the linear
     // operator the current Lanczos vector).
     la::AddOverwrite(lanczos_prod_e, neg_lanczos_prod_e, &v_tilde_mat);
+    printf("Positive matrix: %g\n",
+	   MatrixUtil::EntrywiseLpNorm(lanczos_prod_e, 1));
+    printf("Negative matrix: %g\n",
+	   MatrixUtil::EntrywiseLpNorm(neg_lanczos_prod_e, 1));
     TestKrylovComputation_(qset, v_tilde_mat, current_lanczos_vectors,
 			   query_should_exit_the_loop);
 
@@ -764,12 +776,10 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
       }
 
       // Another criterion for quitting the Krylov loop...
-      /*
       if(sqrt(g_tilde * g_tilde + g_double_tilde_vec[q] * 
 	      g_double_tilde_vec[q]) < 0.001) {
 	query_should_exit_the_loop[q] = true;
       }
-      */
 
     } // end of iterating over each query point.
 

@@ -52,6 +52,8 @@ public:
    */
   Vector postponed_ll_vector_e_;
   
+  ArrayList<EpanKernelMomentInfo> postponed_moment_ll_vector_e_;
+
   /** @brief The amount of used error passed down from above for
    *         approximating the positive components of the vector sum.
    */
@@ -117,6 +119,10 @@ public:
     postponed_neg_ll_vector_used_error_ = 0;
     postponed_neg_ll_vector_n_pruned_ = 0;
     lanczos_vectors_bound_.Reset();
+
+    for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
+      postponed_moment_ll_vector_e_[i].Reset();
+    }
   }
 
   /** @brief Allocate and initialize memory for the given dimension.
@@ -133,6 +139,10 @@ public:
 
     postponed_ll_vector_l_.Init(matrix_dimension);
     postponed_ll_vector_e_.Init(matrix_dimension);
+    postponed_moment_ll_vector_e_.Init(matrix_dimension);
+    for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
+      postponed_moment_ll_vector_e_[i].Init(dimension);
+    }
     postponed_neg_ll_vector_e_.Init(matrix_dimension);
     postponed_neg_ll_vector_u_.Init(matrix_dimension);
 

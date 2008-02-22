@@ -267,7 +267,7 @@ class RelativePruneLpr {
       delta_n_pruned = 
 	rnode->stat().sum_reference_point_expansion_norm_;
       
-      delta_neg_used_error = 
+      delta_neg_used_error =
 	0.5 * (negative_dot_product_range.hi * kernel_value_range.lo -
 	       negative_dot_product_range.lo * kernel_value_range.hi) * 
 	(rnode->stat().sum_reference_point_expansion_norm_);

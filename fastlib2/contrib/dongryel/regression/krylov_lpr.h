@@ -185,8 +185,9 @@ class KrylovLpr {
    *         query point.
    */
   void FinalizeQueryTreeRightHandSides_
-  (QueryTree *qnode, Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
-   Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
+  (QueryTree *qnode, const Matrix &qset, Matrix &right_hand_sides_l, 
+   Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
+   Vector &right_hand_sides_n_pruned);
 
   /** @brief Preprocess the reference tree for bottom up statistics
    *         computation.
@@ -249,7 +250,7 @@ class KrylovLpr {
 
     // Final traversal of the query tree to finalize estimates.
     FinalizeQueryTreeRightHandSides_
-      (qroot, right_hand_sides_l, right_hand_sides_e,
+      (qroot, qset, right_hand_sides_l, right_hand_sides_e,
        right_hand_sides_used_error, right_hand_sides_n_pruned);
   }
 
@@ -272,7 +273,8 @@ class KrylovLpr {
    *  @param qnode The query node.
    */
   void FinalizeQueryTreeLanczosMultiplier_
-    (QueryTree *qnode, Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
+    (QueryTree *qnode, const ArrayList<bool> &exclude_query_flag,
+     Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
      Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
      Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
      Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned);
@@ -470,7 +472,7 @@ class KrylovLpr {
     ComputeRightHandSides_
       (qroot, qset, right_hand_sides_l, right_hand_sides_e,
        right_hand_sides_used_error, right_hand_sides_n_pruned);
-    // TestRightHandSideComputation_(qset, right_hand_sides_e);
+    TestRightHandSideComputation_(qset, right_hand_sides_e);
     
     printf("Phase 1 completed...\n");
 

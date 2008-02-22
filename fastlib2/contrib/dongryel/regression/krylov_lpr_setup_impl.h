@@ -245,6 +245,29 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
     return;
   }
   
+  // For the Epanechnikov kernel, we can prune using the far field
+  // moments if the maximum distance between the two nodes is within
+  // the bandwidth! This if-statement does not apply to the Gaussian
+  // kernel, so I need to fix in the future!
+  if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
+     rnode->count() > dimension_ * dimension_) {
+
+    for(index_t j = 0; j < row_length_; j++) {
+      
+      qnode->stat().postponed_ll_vector_l_[j] += 
+	rnode->stat().target_weighted_data_far_field_expansion_[j].
+	ComputeMinKernelSum(qnode->bound());
+      qnode->stat().postponed_moment_ll_vector_e_[j].
+	Add(rnode->stat().target_weighted_data_far_field_expansion_[j]);
+    }
+
+    qnode->stat().postponed_ll_vector_n_pruned_ += delta_n_pruned;
+
+    // Keep track of the far-field prunes.
+
+    return;
+  }
+
   // for leaf query node
   if(qnode->is_leaf()) {
     
@@ -366,14 +389,19 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeRightHandSides_
-(QueryTree *qnode, Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
+(QueryTree *qnode, const Matrix &qset, 
+ Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
   KrylovLprQStat &q_stat = qnode->stat();
 
   if(qnode->is_leaf()) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      
+
+      // Get the current query point.
+      Vector q_col;
+      qset.MakeColumnVector(q, &q_col);
+
       // Get the column vectors accumulating the sums to update.
       double *q_right_hand_sides_l = right_hand_sides_l.GetColumnPtr(q);
       double *q_right_hand_sides_e = right_hand_sides_e.GetColumnPtr(q);
@@ -383,6 +411,15 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeRightHandSides_
 		q_right_hand_sides_l);
       la::AddTo(row_length_, (q_stat.postponed_ll_vector_e_).ptr(),
 		q_right_hand_sides_e);
+
+      // Incorporate the postponed estimates using the Epanechnikov
+      // series expansion.
+      for(index_t i = 0; i < row_length_; i++) {
+	q_right_hand_sides_e[i] += 
+	  qnode->stat().postponed_moment_ll_vector_e_[i].
+	  ComputeKernelSum(q_col);
+      }
+
       right_hand_sides_used_error[q] += q_stat.postponed_ll_vector_used_error_;
       right_hand_sides_n_pruned[q] += q_stat.postponed_ll_vector_n_pruned_;
     }
@@ -410,11 +447,19 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeRightHandSides_
     q_right_stat.postponed_ll_vector_n_pruned_ +=
       q_stat.postponed_ll_vector_n_pruned_;
 
+    // Push down Epanechnikov series expansion pruning.
+    for(index_t i = 0; i < row_length_; i++) {
+      q_left_stat.postponed_moment_ll_vector_e_[i].Add
+	(q_stat.postponed_moment_ll_vector_e_[i]);
+      q_right_stat.postponed_moment_ll_vector_e_[i].Add
+	(q_stat.postponed_moment_ll_vector_e_[i]);
+    }
+
     FinalizeQueryTreeRightHandSides_
-      (qnode->left(), right_hand_sides_l, right_hand_sides_e,
+      (qnode->left(), qset, right_hand_sides_l, right_hand_sides_e,
        right_hand_sides_used_error, right_hand_sides_n_pruned);
     FinalizeQueryTreeRightHandSides_
-      (qnode->right(), right_hand_sides_l, right_hand_sides_e,
+      (qnode->right(), qset, right_hand_sides_l, right_hand_sides_e,
        right_hand_sides_used_error, right_hand_sides_n_pruned);
   }
 }
