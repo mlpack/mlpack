@@ -207,7 +207,13 @@ class KrylovLprRStat {
   /** @brief The norm of the sum_reference_point_expansion_
    */
   double sum_reference_point_expansion_norm_;
-  
+
+  /** @brief The far field expansion created by the reference point
+   *         expansion set.
+   */
+  ArrayList< EpanKernelMomentInfo > 
+    reference_point_expansion_far_field_expansion_;
+
   /** @brief The minimum bandwidth among the reference point.
    */
   TKernel min_bandwidth_kernel;
@@ -245,6 +251,12 @@ class KrylovLprRStat {
     max_bandwidth_kernel.Init(0);
 
     reference_point_expansion_bound_.Reset();
+
+    for(index_t j = 0; j < target_weighted_data_far_field_expansion_.size(); 
+	j++) {
+      target_weighted_data_far_field_expansion_[j].Reset();
+      reference_point_expansion_far_field_expansion_[j].Reset();
+    }
   }
 
   /** @brief Allocate and initialize memory for the given dimension.
@@ -269,6 +281,10 @@ class KrylovLprRStat {
 
     // Initialize memory for bound on reference point expansions.
     reference_point_expansion_bound_.Init(matrix_dimension);
+    reference_point_expansion_far_field_expansion_.Init(matrix_dimension);
+    for(index_t j = 0; j < matrix_dimension; j++) {
+      reference_point_expansion_far_field_expansion_[j].Init(dimension);
+    }
   }
 
   /** @brief Computing the statistics for a leaf node involves

@@ -357,6 +357,11 @@ class KrylovLpr {
       // query point expansion to get the regression estimate.
       regression_estimates[i] = la::Dot(row_length_, query_pt_solution,
 					query_point_expansion.ptr());
+
+      Vector query_pt_solution_vector;
+      solution_vectors_e.MakeColumnVector(i, &query_pt_solution_vector);
+      query_pt_solution_vector.PrintDebug();
+      
     }
   }
   
@@ -433,7 +438,7 @@ class KrylovLpr {
     num_finite_difference_prunes_ = num_epanechnikov_prunes_ = 0;
     
     // Set relative error.
-    relative_error_ = fx_param_double(module_, "relative_error", 0.01);
+    relative_error_ = fx_param_double(module_, "relative_error", 0);
     internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
 
     // Copy the query set.
@@ -472,7 +477,7 @@ class KrylovLpr {
     ComputeRightHandSides_
       (qroot, qset, right_hand_sides_l, right_hand_sides_e,
        right_hand_sides_used_error, right_hand_sides_n_pruned);
-    TestRightHandSideComputation_(qset, right_hand_sides_e);
+    // TestRightHandSideComputation_(qset, right_hand_sides_e);
     
     printf("Phase 1 completed...\n");
 

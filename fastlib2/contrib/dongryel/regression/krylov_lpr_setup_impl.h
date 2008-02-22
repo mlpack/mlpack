@@ -67,6 +67,9 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
 	  Add(r_target_weighted_by_coordinates[j], kernels_[r].bandwidth_sq(),
 	      r_col);
+	rnode->stat().reference_point_expansion_far_field_expansion_[j].
+	  Add(reference_point_expansion[j], kernels_[r].bandwidth_sq(),
+	      r_col);
       }
 
       // Tally up the weighted targets.
@@ -111,6 +114,13 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
       rnode->stat().target_weighted_data_far_field_expansion_[j].
 	Add(rnode->right()->stat().
 	    target_weighted_data_far_field_expansion_[j]);
+
+      rnode->stat().reference_point_expansion_far_field_expansion_[j].
+	Add(rnode->left()->stat().
+	    reference_point_expansion_far_field_expansion_[j]);
+      rnode->stat().reference_point_expansion_far_field_expansion_[j].
+	Add(rnode->right()->stat().
+	    reference_point_expansion_far_field_expansion_[j]);
     } // end of iterating over each column.
     
     // Combine the bounds of the reference point expansion owned by
