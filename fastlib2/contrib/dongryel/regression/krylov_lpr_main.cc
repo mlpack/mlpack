@@ -50,16 +50,23 @@ int main(int argc, char *argv[]) {
   DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Declare local linear krylov object.
-  Vector fast_local_linear_results;
-  KrylovLpr<EpanKernel, RelativePruneLpr> local_linear;
-  local_linear.Init(references, reference_targets, krylov_lpr_module);
-  local_linear.get_regression_estimates(&fast_local_linear_results);
-  local_linear.PrintDebug();
+  Vector fast_lpr_results;
+  KrylovLpr<EpanKernel, RelativePruneLpr> fast_lpr;
+  fast_lpr.Init(references, reference_targets, krylov_lpr_module);
+  fast_lpr.get_regression_estimates(&fast_lpr_results);
+  fast_lpr.PrintDebug();
 
   // Do naive algorithm.
-  NaiveLpr<EpanKernel> naive_local_linear;
-  naive_local_linear.Init(references, reference_targets, krylov_lpr_module);
-  naive_local_linear.PrintDebug();
+  Vector naive_lpr_results;
+  NaiveLpr<EpanKernel> naive_lpr;
+  naive_lpr.Init(references, reference_targets, krylov_lpr_module);
+  naive_lpr.PrintDebug();
+  naive_lpr.get_regression_estimates(&naive_lpr_results);
+  printf("Finished running the naive algorithm...\n");
+
+  printf("Maximum relative difference in regression estimate: %g\n",
+	 MatrixUtil::MaxRelativeDifference(naive_lpr_results,
+					   fast_lpr_results));
   
   // Finalize FastExec and print output results.
   fx_done();
