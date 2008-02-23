@@ -9,8 +9,7 @@ librule(
                "multi_index_util.h",
                "quick_prune_lpr.h",
                "relative_prune_lpr.h"],
-    deplibs = ["mlpack/series_expansion:series_expansion",
-               "fastlib:fastlib_int"]
+    deplibs = ["fastlib:fastlib_int"]
     )
 
 # The library build rule for Krylov-subspace based local polynomial
@@ -26,8 +25,7 @@ librule(
                "krylov_lpr_test.h",
                "lpr_util.h",
                "naive_lpr.h"],
-    deplibs = ["mlpack/series_expansion:series_expansion",
-               "fastlib:fastlib_int"]        # dependency
+    deplibs = ["fastlib:fastlib_int"]        # dependency
     )
 
 # The binary executable rule for Krylov-subspace based local
@@ -37,7 +35,6 @@ binrule(
     sources = ["krylov_lpr_main.cc"],
     headers = [],
     deplibs = [":krylov_lpr",
-               "mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
 
@@ -46,7 +43,6 @@ binrule(
     sources = ["dense_lpr_main.cc"],
     headers = [],
     deplibs = [":dense_lpr",
-               "mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
 

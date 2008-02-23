@@ -15,11 +15,6 @@
 #include "matrix_util.h"
 #include "multi_index_util.h"
 #include "fastlib/fastlib.h"
-#include "mlpack/series_expansion/farfield_expansion.h"
-#include "mlpack/series_expansion/local_expansion.h"
-#include "mlpack/series_expansion/mult_farfield_expansion.h"
-#include "mlpack/series_expansion/mult_local_expansion.h"
-#include "mlpack/series_expansion/kernel_aux.h"
 
 /** @brief A computation class for dual-tree based local polynomial
  *         regression.

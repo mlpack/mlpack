@@ -153,8 +153,8 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
  Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned) {
     
   // Variables for storing changes due to a prune.
-  double delta_used_error, delta_n_pruned, delta_neg_used_error, 
-    delta_neg_n_pruned;
+  double delta_used_error = 0, delta_n_pruned = 0, delta_neg_used_error = 0, 
+    delta_neg_n_pruned = 0;
   Vector delta_l, delta_e, delta_neg_u, delta_neg_e;
   delta_l.Init(row_length_);
   delta_e.Init(row_length_);
@@ -179,7 +179,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
 
   // try finite difference pruning first
   if(TPruneRule::PrunableKrylovSolver
-     (internal_relative_error_, 
+     (internal_relative_error_,
       rnode->stat().sum_reference_point_expansion_norm_,
       qnode, rnode, dsqd_range, kernel_value_range, 
       negative_dot_product_range, positive_dot_product_range,
@@ -200,7 +200,28 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
 
     return;
   }
+  
+  // For the Epanechnikov kernel, we can prune using the far field
+  // moments if the maximum distance between the two nodes is within
+  // the bandwidth! This if-statement does not apply to the Gaussian
+  // kernel, so I need to fix in the future!
+  if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
+     rnode->count() > dimension_ * dimension_) {
 
+    la::AddTo(delta_l, &(qnode->stat().postponed_ll_vector_l_));
+    qnode->stat().postponed_ll_vector_n_pruned_ += delta_n_pruned;
+
+    la::AddTo(delta_neg_u, &(qnode->stat().postponed_neg_ll_vector_u_));
+    qnode->stat().postponed_neg_ll_vector_n_pruned_ += delta_neg_n_pruned;
+
+    // Add the pruned reference node to the node list
+    qnode->stat().epanechnikov_pruned_reference_nodes_.AddBackItem(rnode);
+
+    // Keep track of the far-field prunes.
+    num_epanechnikov_prunes_++;
+    return;
+  }
+  
   // for leaf query node
   if(qnode->is_leaf()) {
     
@@ -241,9 +262,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
   else {
 
     // Declare references to the query stats.
-    KrylovLprQStat &q_stat = qnode->stat();
-    KrylovLprQStat &q_left_stat = qnode->left()->stat();
-    KrylovLprQStat &q_right_stat = qnode->right()->stat();
+    KrylovLprQStat<TKernel> &q_stat = qnode->stat();
+    KrylovLprQStat<TKernel> &q_left_stat = qnode->left()->stat();
+    KrylovLprQStat<TKernel> &q_right_stat = qnode->right()->stat();
 
     // Push down postponed bound changes owned by the current query
     // node to the children of the query node.
@@ -415,25 +436,6 @@ void KrylovLpr<TKernel, TPruneRule>::DotProductBetweenTwoBounds_
 	reference_node_directional_bound.lo;
     }
   } // End of looping over each component...
-
-  /*
-  for(index_t d = 0; d <= dimension_; d++) {
-    printf("Lanczos vector: [%g %g]\n", lanczos_vectors_bound.get(d).lo,
-	   lanczos_vectors_bound.get(d).hi);
-    if(d > 0) {
-      printf("Reference: [%g %g]\n", rnode->bound().get(d - 1).lo,
-	     rnode->bound().get(d - 1).hi);
-    }
-    else {
-      printf("Reference: [1 1]\n");
-    }
-  }
-
-  printf("Bounds: %g %g %g %g\n\n", negative_dot_product_range.lo,
-	 negative_dot_product_range.hi, positive_dot_product_range.lo,
-	 positive_dot_product_range.hi);
-  exit(0);
-  */
 }
 
 template<typename TKernel, typename TPruneRule>
@@ -493,20 +495,84 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTreeLanczosVectorBound_
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
-(QueryTree *qnode, const ArrayList<bool> &exclude_query_flag, 
+(QueryTree *qnode, const Matrix &qset,
+ const ArrayList<bool> &exclude_query_flag,
+ const Matrix &current_lanczos_vectors,
  Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
  Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
  Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
  Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned) {
 
-  KrylovLprQStat &q_stat = qnode->stat();
+  KrylovLprQStat<TKernel> &q_stat = qnode->stat();
 
   if(qnode->is_leaf()) {
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+
+    // Form the Epanechnikov moments on the fly here and evaluate the
+    // expansions.
+    ArrayList< ArrayList < EpanKernelMomentInfo > > moments;
+    moments.Init(row_length_);
+    for(index_t i = 0; i < row_length_; i++) {
+      moments[i].Init(row_length_);
+      for(index_t j = 0; j < row_length_; j++) {
+	moments[i][j].Init(dimension_);
+      }
+    }
+    
+    // Temporary variable for storing the multiindex expansion of a
+    // reference point.
+    Vector reference_point_expansion;
+    reference_point_expansion.Init(row_length_);
+    
+    for(index_t n = 0; n < q_stat.
+	  epanechnikov_pruned_reference_nodes_.size(); n++) {
       
+      // The current reference node in the list.
+      ReferenceTree *rnode =  q_stat.epanechnikov_pruned_reference_nodes_[n];
+      
+      for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+
+	// Get the pointer to the reference point.
+	Vector r_col;
+	rset_.MakeColumnVector(r, &r_col);
+	
+	// Compute the reference point expansion.
+	MultiIndexUtil::ComputePointMultivariatePolynomial
+	  (dimension_, lpr_order_, r_col.ptr(),
+	   reference_point_expansion.ptr());
+	
+	for(index_t j = 0; j < row_length_; j++) {
+	  for(index_t i = 0; i < row_length_; i++) {
+	    moments[j][i].Add(reference_point_expansion[j] *
+			      reference_point_expansion[i],
+			      kernels_[r].bandwidth_sq(), r_col);
+	  }
+	}
+	
+      } // end of iterating over each reference point.
+      
+    } // end of iterating over each pruned reference node.
+    
+    // The matrix to store the evaluated moments at each query point.
+    Matrix evaluated_moments;
+    evaluated_moments.Init(row_length_, row_length_);
+    Vector evaluated_moments_times_lanczos_vector;
+    evaluated_moments_times_lanczos_vector.Init(row_length_);
+
+    // Iterate over each query point.
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+
       if(exclude_query_flag[q]) {
 	continue;
       }
+
+      // Get the current query point.
+      Vector q_col;
+      qset.MakeColumnVector(q, &q_col);
+
+      // Get the pointer to the current lanczos vector owned by the
+      // current query point.
+      Vector q_current_lanczos_vector;
+      current_lanczos_vectors.MakeColumnVector(q, &q_current_lanczos_vector);
 
       // Get the column vectors accumulating the sums to update.
       double *q_lanczos_prod_l = lanczos_prod_l.GetColumnPtr(q);
@@ -523,12 +589,36 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
 		q_neg_lanczos_prod_e);
       la::AddTo(row_length_, (q_stat.postponed_neg_ll_vector_u_).ptr(),
 		q_neg_lanczos_prod_u);
-    }
+
+      // Evaluate the Epanechnikov moments.
+      for(index_t i = 0; i < row_length_; i++) {
+	for(index_t j = 0; j < row_length_; j++) {
+	  evaluated_moments.set(j, i, moments[j][i].ComputeKernelSum(q_col));
+	}
+      }
+
+      // Now compute the product between the evaluated moments and the
+      // Lanczos vector owned by this query point.
+      la::MulOverwrite(evaluated_moments, q_current_lanczos_vector,
+		       &evaluated_moments_times_lanczos_vector);
+
+      // Now accumulate the sum depending on the negativity or the
+      // positivity of each component.
+      for(index_t i = 0; i < row_length_; i++) {
+	if(evaluated_moments_times_lanczos_vector[i] > 0) {
+	  q_lanczos_prod_e[i] += evaluated_moments_times_lanczos_vector[i];
+	}
+	else {
+	  q_neg_lanczos_prod_e[i] += evaluated_moments_times_lanczos_vector[i];
+	}
+      }
+
+    } // end of iterating over each query point.
   }
   else {
     
-    KrylovLprQStat &q_left_stat = qnode->left()->stat();
-    KrylovLprQStat &q_right_stat = qnode->right()->stat();
+    KrylovLprQStat<TKernel> &q_left_stat = qnode->left()->stat();
+    KrylovLprQStat<TKernel> &q_right_stat = qnode->right()->stat();
 
     // Push down approximations
     la::AddTo(q_stat.postponed_ll_vector_l_,
@@ -549,13 +639,25 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
     la::AddTo(q_stat.postponed_neg_ll_vector_u_,
               &(q_right_stat.postponed_neg_ll_vector_u_));
 
+    // Push down Epanechnikov pruned reference nodes.
+    for(index_t i = 0; i < q_stat.
+	  epanechnikov_pruned_reference_nodes_.size(); i++) {
+      
+      q_left_stat.epanechnikov_pruned_reference_nodes_.
+	AddBackItem(q_stat.epanechnikov_pruned_reference_nodes_[i]);
+      q_right_stat.epanechnikov_pruned_reference_nodes_.
+	AddBackItem(q_stat.epanechnikov_pruned_reference_nodes_[i]);
+    }
+    q_stat.epanechnikov_pruned_reference_nodes_.Resize(0);
+
+    // Recurse both branches of the query node.
     FinalizeQueryTreeLanczosMultiplier_
-      (qnode->left(), exclude_query_flag,
+      (qnode->left(), qset, exclude_query_flag, current_lanczos_vectors,
        lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error, 
        lanczos_prod_n_pruned, neg_lanczos_prod_e, neg_lanczos_prod_u,
        neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
     FinalizeQueryTreeLanczosMultiplier_
-      (qnode->right(), exclude_query_flag,
+      (qnode->right(), qset, exclude_query_flag, current_lanczos_vectors,
        lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error,
        lanczos_prod_n_pruned, neg_lanczos_prod_e, neg_lanczos_prod_u,
        neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
@@ -631,7 +733,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
 
   // Main iteration of the SYMMLQ algorithm - repeat until
   // "convergence"...
-  for(index_t num_iter = 0; num_iter < row_length_; num_iter++) {
+  for(index_t num_iter = 0; num_iter < sqrt(row_length_); num_iter++) {
 
     // Determine how many queries are in the Krylov loop.
     int num_queries_in_krylov_loop = 0;
@@ -640,7 +742,6 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
 	num_queries_in_krylov_loop++;
       }
     }
-    printf("%d queries are alive...\n", num_queries_in_krylov_loop);
     if(num_queries_in_krylov_loop == 0) {
       break;
     }
@@ -667,16 +768,15 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
        neg_lanczos_prod_u, neg_lanczos_prod_used_error, 
        neg_lanczos_prod_n_pruned);
     FinalizeQueryTreeLanczosMultiplier_
-      (qroot, query_should_exit_the_loop,
+      (qroot, qset, query_should_exit_the_loop, current_lanczos_vectors,
        lanczos_prod_l, lanczos_prod_e, lanczos_prod_used_error,
        lanczos_prod_n_pruned, neg_lanczos_prod_e, neg_lanczos_prod_u,
        neg_lanczos_prod_used_error, neg_lanczos_prod_n_pruned);
-    printf("Finished multiplying Lanczos...\n");
 
     // Compute v_tilde_mat (the residue after applying the linear
     // operator the current Lanczos vector).
     la::AddOverwrite(lanczos_prod_e, neg_lanczos_prod_e, &v_tilde_mat);
-
+    
     /*
     printf("Positive matrix: %g\n",
 	   MatrixUtil::EntrywiseLpNorm(lanczos_prod_e, 1));
@@ -706,7 +806,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
       // vector and v_tilde vector).
       double alpha = la::Dot(row_length_, current_lanczos_vector,
 			     v_tilde_mat_column);
-      
+
       // Subtract the component of the current Lanczos vector (a form
       // of Gram-Schmidt orthogonalization.)
       la::AddExpert(row_length_, -alpha, current_lanczos_vector,
@@ -720,7 +820,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
       for(index_t i = 0; i < row_length_; i++) {
 	previous_lanczos_vector[i] = current_lanczos_vector[i];
       }
-      
+
       // Set a new current Lanczos vector based on v_tilde_mat_column.
       // A potential place to watch out for division by zero!!
       if(beta_vec[q] > 0) {

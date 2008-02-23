@@ -274,7 +274,7 @@ class RelativePruneLpr {
       delta_neg_n_pruned = 
 	rnode->stat().sum_reference_point_expansion_norm_;
 
-      // check pruning condition  
+      // check pruning condition
       return (delta_used_error <= allowed_err &&
 	      delta_neg_used_error <= neg_allowed_err);
     }
