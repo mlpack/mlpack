@@ -308,9 +308,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
   else {
     
     // Declare references to the query stats.
-    KrylovLprQStat &q_stat = qnode->stat();
-    KrylovLprQStat &q_left_stat = qnode->left()->stat();
-    KrylovLprQStat &q_right_stat = qnode->right()->stat();
+    KrylovLprQStat<TKernel> &q_stat = qnode->stat();
+    KrylovLprQStat<TKernel> &q_left_stat = qnode->left()->stat();
+    KrylovLprQStat<TKernel> &q_right_stat = qnode->right()->stat();
 
     // Push down postponed bound changes owned by the current query
     // node to the children of the query node
@@ -403,7 +403,7 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeRightHandSides_
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
-  KrylovLprQStat &q_stat = qnode->stat();
+  KrylovLprQStat<TKernel> &q_stat = qnode->stat();
 
   if(qnode->is_leaf()) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -436,8 +436,8 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeRightHandSides_
   }
   else {
     
-    KrylovLprQStat &q_left_stat = qnode->left()->stat();
-    KrylovLprQStat &q_right_stat = qnode->right()->stat();
+    KrylovLprQStat<TKernel> &q_left_stat = qnode->left()->stat();
+    KrylovLprQStat<TKernel> &q_right_stat = qnode->right()->stat();
 
     // Push down approximations
     la::AddTo(q_stat.postponed_ll_vector_l_,

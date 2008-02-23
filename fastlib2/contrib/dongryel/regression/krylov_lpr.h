@@ -36,7 +36,7 @@ class KrylovLpr {
   ////////// Private Type Declarations //////////
 
   /** @brief The internal query tree type used for the computation. */
-  typedef BinarySpaceTree< DHrectBound<2>, Matrix, KrylovLprQStat > 
+  typedef BinarySpaceTree< DHrectBound<2>, Matrix, KrylovLprQStat<TKernel> > 
     QueryTree;
 
   /** @brief The internal reference tree type used for the
@@ -273,7 +273,9 @@ class KrylovLpr {
    *  @param qnode The query node.
    */
   void FinalizeQueryTreeLanczosMultiplier_
-    (QueryTree *qnode, const ArrayList<bool> &exclude_query_flag,
+    (QueryTree *qnode, const Matrix &qset,
+     const ArrayList<bool> &exclude_query_flag,
+     const Matrix &current_lanczos_vectors,
      Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
      Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
      Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
@@ -357,11 +359,6 @@ class KrylovLpr {
       // query point expansion to get the regression estimate.
       regression_estimates[i] = la::Dot(row_length_, query_pt_solution,
 					query_point_expansion.ptr());
-
-      Vector query_pt_solution_vector;
-      solution_vectors_e.MakeColumnVector(i, &query_pt_solution_vector);
-      query_pt_solution_vector.PrintDebug();
-      
     }
   }
   
@@ -484,9 +481,34 @@ class KrylovLpr {
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
-    SolveLeastSquaresByKrylov_(qroot, qset, right_hand_sides_e,
+    /*
+    for(index_t q = 0; q < qset.n_cols(); q++) {
+      Matrix qset_single_alias, right_hand_sides_e_single_alias,
+	solution_vectors_e_single_alias;
+      qset_single_alias.Alias(qset.GetColumnPtr(q), qset.n_rows(), 1);
+      right_hand_sides_e_single_alias.Alias(right_hand_sides_e.GetColumnPtr(q),
+					    right_hand_sides_e.n_rows(), 1);
+      solution_vectors_e_single_alias.Alias(solution_vectors_e.GetColumnPtr(q),
+					    solution_vectors_e.n_rows(), 1);
+
+      // This is hack - construct a query tree out of only the current
+      // query point.
+      QueryTree *qroot_single = tree::MakeKdTreeMidpoint<QueryTree>
+	(qset_single_alias, leaflen, NULL, NULL);
+
+      SolveLeastSquaresByKrylov_
+	(qroot_single, qset_single_alias, right_hand_sides_e_single_alias,
+	 solution_vectors_e_single_alias);
+      delete qroot_single;
+    }
+    */
+    SolveLeastSquaresByKrylov_(qroot, qset, right_hand_sides_e, 
 			       solution_vectors_e);
+
     printf("Phase 2 completed...\n");
+
+    // Delete the query tree.
+    delete qroot;
 
     // Proceed with the third phase of the computation to output the
     // final regression value.
