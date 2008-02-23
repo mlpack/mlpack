@@ -24,24 +24,43 @@
 #include "mlpack/allknn/allknn.h"
 #include "contrib/nvasil/allkfn/allkfn.h"
 
+#define OPT_PARAM_ objective_mode, constraints_mode, gradient_mode
+#define TEMPLATE_TAG_ template<ObjectiveEnum objective_mode, \
+                               ConstraintsEnum constraints_mode, \
+                               GradientEnum gradient_mode>
+enum GradientEnum {
+  DeterministicGrad=0, 
+  StochasticGrad=1
+};
+enum ObjectiveEnum {
+  Feasibility=0,
+  MaxVariance=1,
+  MinVariance=2,
+  MaxFurthestNeighbors=3
+};
+enum ConstraintsEnum {
+  EqualityOnNearest=0,
+  InequalityOnNearest=1,
+  InequalityOnFurthest=2
+};
+ 
 class NonConvexMVUTest;
 class NonConvexMVU {
  public:
   friend class NonConvexMVUTest;
   NonConvexMVU::NonConvexMVU();
+  TEMPLATE_TAG_
   void Init(std::string data_file, index_t knns, index_t kfns);
+  TEMPLATE_TAG_
   void Init(std::string data_file, index_t knns, index_t kfns, index_t leaf_size);
   /**
    * Computes a local optimum for a given rank
    * PROBLEM_TYPE
-   * 0 = Feasibility problem
-   * 1 = Equality Constraints for the distances
-   * 2 = Inequality Constraints for the distances
-   * 3 = Equality Constraint but the objective is to maximize furthest
-   *     neighbor distances
-   */
-  template<int PROBLEM_TYPE>
+  */
+  TEMPLATE_TAG_
   void ComputeLocalOptimumBFGS();
+  TEMPLATE_TAG_
+  void ComputeLocalOptimumSGD();
   // eta < 1
   void set_eta(double eta);
   // gamma > 1
@@ -74,11 +93,13 @@ class NonConvexMVU {
   index_t dimension_;
   index_t knns_;  //  k nearest neighbors
   index_t kfns_;   //  k furthest neighbors 
-  ArrayList<double> nearest_distances_;
   // the nearest neighbor pairs for the constraints
   ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  ArrayList<index_t> nearest_neighbors_;
+  ArrayList<double> nearest_distances_;
   index_t num_of_nearest_pairs_;
   ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
+  ArrayList<index_t> furthest_neighbors_;
   index_t num_of_furthest_pairs_;
   ArrayList<double> furthest_distances_;
   
@@ -115,27 +136,31 @@ class NonConvexMVU {
   Matrix previous_gradient_;
   // previous coordinates
   Matrix previous_coordinates_;
-  template<int PROBLEM_TYPE> 
+  TEMPLATE_TAG_
   void InitOptimization_(); 
-  template<int PROBLEM_TYPE>
+  TEMPLATE_TAG_
   void UpdateLagrangeMult_();
-  template<int PROPLEM_TYPE>
+  TEMPLATE_TAG_
   void LocalSearch_(double *step, Matrix &direction);
-  template<int PROPLEM_TYPE>
+  TEMPLATE_TAG_
   void ComputeBFGS_(double *step, Matrix &grad, index_t memory);
   void InitBFGS();
   void UpdateBFGS_();
   void UpdateBFGS_(index_t index_bfgs);
-  template<int PROBLEM_TYPE>
+  TEMPLATE_TAG_
   double ComputeLagrangian_(Matrix &coordinates);
-  template<int PROBLEM_TYPE>
+  TEMPLATE_TAG_
   void ComputeFeasibilityError_(double *distance_constraint, 
                                 double *centering_constraint);
-  template<int PROBLEM_TYPE>
+  TEMPLATE_TAG_
   double ComputeFeasibilityError_();
-  template<int PROBLEM_TYPE>
+  TEMPLATE_TAG_
   void ComputeGradient_(Matrix &coord, Matrix *grad);
-  template<int PROBLEM_TYPE>
+  TEMPLATE_TAG_
+  void ComputePairGradient_(index_t p1, index_t chosen_neighbor, 
+    Matrix &coord, Vector *gradient1, Vector *gradient2);
+ 
+  TEMPLATE_TAG_
   double ComputeObjective_(Matrix &coord);
   void Variance_(Matrix &coord, Vector *variance);
   void RemoveMean_(Matrix &mat);
@@ -148,4 +173,5 @@ class NonConvexMVU {
 };
 
 #include "non_convex_mvu_impl.h"
+#undef TEMPLATE_TAG_
 #endif //NON_CONVEX_MVU_H__
