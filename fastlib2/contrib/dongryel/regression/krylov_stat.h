@@ -35,7 +35,15 @@ class KrylovLprRStat {
    */
   ArrayList< EpanKernelMomentInfo >
     target_weighted_data_far_field_expansion_;
-    
+  
+  /** @brief The far field expansion created by the outer
+   *         products. The (i, j)-th element denotes the
+   *         far-field expansion of the (i, j)-th component of
+   *         the sum_data_outer_products_ matrix.
+   */
+  ArrayList< ArrayList< EpanKernelMomentInfo > >
+    data_outer_products_far_field_expansion_;
+
   /** @brief The vector summing up the reference point expansion.
    */
   Vector sum_reference_point_expansion_;
@@ -43,12 +51,6 @@ class KrylovLprRStat {
   /** @brief The norm of the sum_reference_point_expansion_
    */
   double sum_reference_point_expansion_norm_;
-
-  /** @brief The far field expansion created by the reference point
-   *         expansion set.
-   */
-  ArrayList< EpanKernelMomentInfo > 
-    reference_point_expansion_far_field_expansion_;
 
   /** @brief The minimum bandwidth among the reference point.
    */
@@ -91,7 +93,6 @@ class KrylovLprRStat {
     for(index_t j = 0; j < target_weighted_data_far_field_expansion_.size(); 
 	j++) {
       target_weighted_data_far_field_expansion_[j].Reset();
-      reference_point_expansion_far_field_expansion_[j].Reset();
     }
   }
 
@@ -115,11 +116,14 @@ class KrylovLprRStat {
       target_weighted_data_far_field_expansion_[j].Init(dimension);
     }
 
-    // Initialize memory for bound on reference point expansions.
+    // Initialize memory for bound on outer product expansions.
     reference_point_expansion_bound_.Init(matrix_dimension);
-    reference_point_expansion_far_field_expansion_.Init(matrix_dimension);
+    data_outer_products_far_field_expansion_.Init(matrix_dimension);
     for(index_t j = 0; j < matrix_dimension; j++) {
-      reference_point_expansion_far_field_expansion_[j].Init(dimension);
+      data_outer_products_far_field_expansion_[j].Init(matrix_dimension);
+      for(index_t i = 0; i < matrix_dimension; i++) {
+	data_outer_products_far_field_expansion_[j][i].Init(dimension);
+      }
     }
   }
 
@@ -230,10 +234,8 @@ public:
   /** @brief The bounding box for the Lanczos vectors. */
   DHrectBound<2> lanczos_vectors_bound_;
 
-  /** @brief The list of reference nodes that were pruned using the
-   *         Epanechnikov series expansion.
-   */
-  ArrayList<BinarySpaceTree< DHrectBound<2>, Matrix, KrylovLprRStat<TKernel> >  *> epanechnikov_pruned_reference_nodes_;
+  ArrayList< ArrayList < EpanKernelMomentInfo > >
+    postponed_epanechnikov_moments_;
 
   ////////// Constructor/Destructor //////////
 
@@ -266,8 +268,10 @@ public:
 
     for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Reset();
+      for(index_t j = 0; j < postponed_moment_ll_vector_e_.size(); j++) {
+	postponed_epanechnikov_moments_[i][j].Reset();
+      }
     }
-    epanechnikov_pruned_reference_nodes_.Resize(0);
   }
 
   /** @brief Allocate and initialize memory for the given dimension.
@@ -285,15 +289,18 @@ public:
     postponed_ll_vector_l_.Init(matrix_dimension);
     postponed_ll_vector_e_.Init(matrix_dimension);
     postponed_moment_ll_vector_e_.Init(matrix_dimension);
+    postponed_epanechnikov_moments_.Init(matrix_dimension);
     for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Init(dimension);
+      postponed_epanechnikov_moments_[i].Init(matrix_dimension);
+      for(index_t j = 0; j < matrix_dimension; j++) {
+	postponed_epanechnikov_moments_[i][j].Init(dimension);
+      }
     }
     postponed_neg_ll_vector_e_.Init(matrix_dimension);
     postponed_neg_ll_vector_u_.Init(matrix_dimension);
 
     lanczos_vectors_bound_.Init(matrix_dimension);
-    
-    epanechnikov_pruned_reference_nodes_.Init();
   }
 
   /** @brief Computing the statistics for a leaf node involves

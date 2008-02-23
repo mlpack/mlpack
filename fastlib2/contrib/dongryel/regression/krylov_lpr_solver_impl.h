@@ -214,8 +214,13 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
     la::AddTo(delta_neg_u, &(qnode->stat().postponed_neg_ll_vector_u_));
     qnode->stat().postponed_neg_ll_vector_n_pruned_ += delta_neg_n_pruned;
 
-    // Add the pruned reference node to the node list
-    qnode->stat().epanechnikov_pruned_reference_nodes_.AddBackItem(rnode);
+    // Add the Epanechnikov moments
+    for(index_t j = 0; j < row_length_; j++) {
+      for(index_t i = 0; i < row_length_; i++) {
+	qnode->stat().postponed_epanechnikov_moments_[j][i].
+	  Add(rnode->stat().data_outer_products_far_field_expansion_[j][i]);
+      }
+    }
 
     // Keep track of the far-field prunes.
     num_epanechnikov_prunes_++;
@@ -506,51 +511,6 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
   KrylovLprQStat<TKernel> &q_stat = qnode->stat();
 
   if(qnode->is_leaf()) {
-
-    // Form the Epanechnikov moments on the fly here and evaluate the
-    // expansions.
-    ArrayList< ArrayList < EpanKernelMomentInfo > > moments;
-    moments.Init(row_length_);
-    for(index_t i = 0; i < row_length_; i++) {
-      moments[i].Init(row_length_);
-      for(index_t j = 0; j < row_length_; j++) {
-	moments[i][j].Init(dimension_);
-      }
-    }
-    
-    // Temporary variable for storing the multiindex expansion of a
-    // reference point.
-    Vector reference_point_expansion;
-    reference_point_expansion.Init(row_length_);
-    
-    for(index_t n = 0; n < q_stat.
-	  epanechnikov_pruned_reference_nodes_.size(); n++) {
-      
-      // The current reference node in the list.
-      ReferenceTree *rnode =  q_stat.epanechnikov_pruned_reference_nodes_[n];
-      
-      for(index_t r = rnode->begin(); r < rnode->end(); r++) {
-
-	// Get the pointer to the reference point.
-	Vector r_col;
-	rset_.MakeColumnVector(r, &r_col);
-	
-	// Compute the reference point expansion.
-	MultiIndexUtil::ComputePointMultivariatePolynomial
-	  (dimension_, lpr_order_, r_col.ptr(),
-	   reference_point_expansion.ptr());
-	
-	for(index_t j = 0; j < row_length_; j++) {
-	  for(index_t i = 0; i < row_length_; i++) {
-	    moments[j][i].Add(reference_point_expansion[j] *
-			      reference_point_expansion[i],
-			      kernels_[r].bandwidth_sq(), r_col);
-	  }
-	}
-	
-      } // end of iterating over each reference point.
-      
-    } // end of iterating over each pruned reference node.
     
     // The matrix to store the evaluated moments at each query point.
     Matrix evaluated_moments;
@@ -593,7 +553,9 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
       // Evaluate the Epanechnikov moments.
       for(index_t i = 0; i < row_length_; i++) {
 	for(index_t j = 0; j < row_length_; j++) {
-	  evaluated_moments.set(j, i, moments[j][i].ComputeKernelSum(q_col));
+	  evaluated_moments.set
+	    (j, i, qnode->stat().postponed_epanechnikov_moments_[j][i].
+	     ComputeKernelSum(q_col));
 	}
       }
 
@@ -639,16 +601,15 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
     la::AddTo(q_stat.postponed_neg_ll_vector_u_,
               &(q_right_stat.postponed_neg_ll_vector_u_));
 
-    // Push down Epanechnikov pruned reference nodes.
-    for(index_t i = 0; i < q_stat.
-	  epanechnikov_pruned_reference_nodes_.size(); i++) {
-      
-      q_left_stat.epanechnikov_pruned_reference_nodes_.
-	AddBackItem(q_stat.epanechnikov_pruned_reference_nodes_[i]);
-      q_right_stat.epanechnikov_pruned_reference_nodes_.
-	AddBackItem(q_stat.epanechnikov_pruned_reference_nodes_[i]);
+    // Push down Epanechnikov pruned portions.
+    for(index_t i = 0; i < row_length_; i++) {
+      for(index_t j = 0; j < row_length_; j++) {
+	q_left_stat.postponed_epanechnikov_moments_[i][j].Add
+	  (q_stat.postponed_epanechnikov_moments_[i][j]);
+	q_right_stat.postponed_epanechnikov_moments_[i][j].Add
+	  (q_stat.postponed_epanechnikov_moments_[i][j]);
+      }
     }
-    q_stat.epanechnikov_pruned_reference_nodes_.Resize(0);
 
     // Recurse both branches of the query node.
     FinalizeQueryTreeLanczosMultiplier_
