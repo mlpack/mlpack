@@ -36,22 +36,27 @@ int main(int argc, char *argv[]) {
                                     DeterministicGrad>();
 
     fx_timer_stop(NULL,  "optimization"); 
-  }
-  if (opt_method=="bfgs_max_furth") {
-    fx_timer_start(NULL, "optimization");
-    engine.ComputeLocalOptimumBFGS<MaxFurthestNeighbors, 
-                                    EqualityOnNearest,
-                                    DeterministicGrad>();
-    fx_timer_stop(NULL,  "optimization"); 
+  } else {
+    if (opt_method=="bfgs_max_furth") {
+      fx_timer_start(NULL, "optimization");
+      engine.ComputeLocalOptimumBFGS<MaxFurthestNeighbors, 
+                                      EqualityOnNearest,
+                                      DeterministicGrad>();
+      fx_timer_stop(NULL,  "optimization"); 
  
+    } else {
+      if (opt_method=="spe") {
+        fx_timer_start(NULL, "optimization");
+        engine.ComputeLocalOptimumBFGS<MaxFurthestNeighbors, 
+                                      EqualityOnNearest,
+                                      DeterministicGrad>();
+        fx_timer_stop(NULL,  "optimization"); 
+      } else {
+        FATAL("You didn't select a valid optimization method \n");
+      }
+    }
   }
-  if (opt_method=="spe") {
-    fx_timer_start(NULL, "optimization");
-    engine.ComputeLocalOptimumBFGS<MaxFurthestNeighbors, 
-                                    EqualityOnNearest,
-                                    DeterministicGrad>();
-    fx_timer_stop(NULL,  "optimization"); 
-  }
+      
   std::string out_file = fx_param_str(NULL, "out_file", "results.csv");
   data::Save(out_file.c_str(), engine.coordinates());
   fx_done();
@@ -100,7 +105,7 @@ void LoadData(std::string data_file,
     data::Load(data_file.c_str(), &temp);
     index_t num_of_points = temp.n_cols();
     index_t reduced_num_of_points = index_t(num_of_points *sample_factor);
-    index_t *permutations = new index_t[reduced_num_of_points];
+    index_t *permutations = new index_t[num_of_points];
     for(index_t i=0; i<num_of_points; i++) {
       permutations[i]=i;
     }
