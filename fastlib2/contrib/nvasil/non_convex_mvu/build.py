@@ -3,4 +3,8 @@ librule(name="non_convex_mvu",
     tests=["non_convex_mvu_test.cc"],
     deplibs=["fastlib:fastlib", "mlpack/allknn:allknn", 
     "contrib/nvasil/allkfn:allkfn"])
+
+binrule(name="ncmvu",
+    sources=["main.cc"],
+    deplibs=[":non_convex_mvu", "fastlib:fastlib"]);
     

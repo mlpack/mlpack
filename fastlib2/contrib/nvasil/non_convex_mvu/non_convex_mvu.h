@@ -49,10 +49,11 @@ class NonConvexMVU {
  public:
   friend class NonConvexMVUTest;
   NonConvexMVU::NonConvexMVU();
-  TEMPLATE_TAG_
-  void Init(std::string data_file, index_t knns, index_t kfns);
-  TEMPLATE_TAG_
-  void Init(std::string data_file, index_t knns, index_t kfns, index_t leaf_size);
+  template<GradientEnum gradient_mode>
+  void Init(std::string data_file);
+  template<GradientEnum gradient_mode>
+  void Init(Matrix &data);
+   
   /**
    * Computes a local optimum for a given rank
    * PROBLEM_TYPE
@@ -61,6 +62,9 @@ class NonConvexMVU {
   void ComputeLocalOptimumBFGS();
   TEMPLATE_TAG_
   void ComputeLocalOptimumSGD();
+  void set_knns(index_t knns);
+  void set_kfns(index_t kfns);
+  void set_leaf_size(index_t leaf_size);
   // eta < 1
   void set_eta(double eta);
   // gamma > 1
