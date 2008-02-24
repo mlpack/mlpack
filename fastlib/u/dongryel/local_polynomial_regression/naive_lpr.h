@@ -400,7 +400,7 @@ class NaiveLpr {
       all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
 
       for(index_t i = 0; i < distances.size(); i += knns) {
-	kernels_[i / knns].Init(sqrt(distances[i]));
+	kernels_[i / knns].Init(sqrt(distances[i + knns - 1]));
       }
     }
   }
