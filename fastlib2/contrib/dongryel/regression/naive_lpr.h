@@ -63,6 +63,10 @@ class NaiveLpr {
   /** @brief The computed fit values at each reference point.
    */
   Vector rset_regression_estimates_;
+
+  /** @brief The leave-one-out fit values at each reference point.
+   */
+  Vector leave_one_out_rset_regression_estimates_;
   
   /** @brief The confidence band on the fit at each reference point.
    */
@@ -91,17 +95,26 @@ class NaiveLpr {
    */
   double rset_variance_;
 
+  /** @brief The root mean square deviation used for cross-validating
+   *         the model.
+   */
+  double root_mean_square_deviation_;
+
   ////////// Private Member Functions //////////
 
   /** @brief Compute the local polynomial regression values using the
    *         brute-force algorithm.
    */
   void BasicCompute_(const Matrix &queries, Vector *query_regression_estimates,
+		     Vector *leave_one_out_query_regression_estimates,
 		     Vector *query_magnitude_weight_diagrams, 
 		     Vector *query_influence_values) {
 
     // Allocate memory to hold the final results.
     query_regression_estimates->Init(queries.n_cols());
+    if(leave_one_out_query_regression_estimates != NULL) {
+      leave_one_out_query_regression_estimates->Init(queries.n_cols());
+    }
     query_magnitude_weight_diagrams->Init(queries.n_cols());
 
     if(query_influence_values != NULL) {
@@ -149,7 +162,8 @@ class NaiveLpr {
 	
 	// Compute the pairwise distance and the resulting kernel value.
 	double dsqd = la::DistanceSqEuclidean(queries.n_rows(), q_col, r_col);
-	double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
+	double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd) / 
+	  kernels_[r].CalcNormConstant(dimension_);
 
 	for(index_t i = 0; i < total_num_coeffs_; i++) {
 
@@ -207,8 +221,57 @@ class NaiveLpr {
       if(query_influence_values != NULL) {
 	(*query_influence_values)[q] =
 	  la::Dot(point_expansion, pseudo_inverse_times_query_expansion);
-      }      
+      }
+
+      // Now compute the leave-one-out regression estimate
+      if(leave_one_out_query_regression_estimates != NULL) {
+
+	// Subtract the contribution of the point itself from the
+	// numerator and the denominator.
+	Matrix point_expansion_alias;
+	point_expansion_alias.AliasColVector(point_expansion);
+	
+	double norm_constant = kernels_[q].CalcNormConstant(dimension_);
+	la::AddExpert(-rset_targets_[q] / norm_constant,
+		      point_expansion, &numerator);
+	
+	for(index_t j = 0; j < total_num_coeffs_; j++) {
+	  for(index_t i = 0; i < total_num_coeffs_; i++) {
+	    denominator.set(i, j, denominator.get(i, j) -
+			    1.0 / norm_constant * point_expansion[i] *
+			    point_expansion[j]);
+	  }
+	}
+
+	// Now invert the denominator matrix for each query point and
+	// multiply by the numerator vector.
+	MatrixUtil::PseudoInverse(denominator, &denominator_inv_q);
+	la::MulOverwrite(denominator_inv_q, numerator, &beta_q);
+	
+	// Compute the dot product between the multiindex vector for the
+	// query point by the beta_q.
+	(*leave_one_out_query_regression_estimates)[q] =
+	  la::Dot(beta_q, point_expansion);
+      }
+
     } // end of looping over each query point
+  }
+
+  /** @brief Computes the root mean square deviation of the current
+   *         model. This function should be called after the model has
+   *         been completely built.
+   */
+  void ComputeRootMeanSquareDeviation_() {
+    
+    root_mean_square_deviation_ = 0;
+    for(index_t i = 0; i < rset_.n_cols(); i++) {
+      
+      double diff_regression = rset_targets_[i] - 
+	leave_one_out_rset_regression_estimates_[i];
+      root_mean_square_deviation_ += diff_regression * diff_regression;
+    }
+    root_mean_square_deviation_ *= 1.0 / ((double) rset_.n_cols());
+    root_mean_square_deviation_ = sqrt(root_mean_square_deviation_);
   }
 
   void ComputeConfidenceBands_(const Matrix &queries,
@@ -264,7 +327,7 @@ class NaiveLpr {
       rset_variance_ += prediction_error * prediction_error;
     }
     
-    // This could happen if enough matrices are singular...
+    // This MIGHT happen if we have too few data points...
     if(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_ <= 0) {
       rset_variance_ = DBL_MAX;
@@ -273,17 +336,21 @@ class NaiveLpr {
     rset_variance_ *= 1.0 / 
       (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_);
+
+    printf("Reference set variance: %g\n", rset_variance_);
   }
 
   /** @brief Predicts the regression estimates along with the
    *         confidence intervals for the given set of query points.
    */
   void ComputeMain_(const Matrix &queries, Vector *query_regression_estimates,
+		    Vector *leave_one_out_query_regression_estimates,
 		    ArrayList<DRange> *query_confidence_bands,
 		    Vector *query_magnitude_weight_diagrams,
 		    Vector *query_influence_values) {
 
     BasicCompute_(queries, query_regression_estimates,
+		  leave_one_out_query_regression_estimates,
 		  query_magnitude_weight_diagrams, query_influence_values);
 
     // If the reference dataset is being used for training, then
@@ -296,6 +363,12 @@ class NaiveLpr {
 			    query_confidence_bands,
 			    query_magnitude_weight_diagrams,
 			    (query_influence_values != NULL));
+    
+    // If the reference dataset is being used for training, then
+    // compute the root mean square deviation.
+    if(query_influence_values != NULL) {
+      ComputeRootMeanSquareDeviation_();
+    }
   }
 
   /** @brief Initialize the bandwidth by either fixed bandwidth
@@ -307,13 +380,16 @@ class NaiveLpr {
 
     kernels_.Init(rset_.n_cols());
 
-    if(fx_param_exists(NULL, "bandwidth")) {     
+    if(fx_param_exists(NULL, "bandwidth")) {
+      printf("Using the fixed bandwidth method...\n");
+
       double bandwidth = fx_param_double_req(NULL, "bandwidth");
       for(index_t i = 0; i < kernels_.size(); i++) {	
 	kernels_[i].Init(bandwidth);
       }
     }
     else {
+      printf("Using the nearest neighbor method...\n");
       AllkNN all_knn;
       double knn_factor = fx_param_double(module_, "knn_factor", 0.2);
       int knns = (int) (knn_factor * rset_.n_cols());
@@ -373,16 +449,20 @@ class NaiveLpr {
   ~NaiveLpr() {}
 
   ////////// User-level Functions //////////
-  
+
+  double root_mean_square_deviation() {
+    return root_mean_square_deviation_;
+  }
+
   void Compute(const Matrix &queries, Vector *query_regression_estimates,
 	       ArrayList<DRange> *query_confidence_bands,
 	       Vector *query_magnitude_weight_diagrams,
 	       Vector *query_influence_values) {
 
     fx_timer_start(module_, "naive_lpr_querying_time");
-    ComputeMain_(queries, query_regression_estimates, query_confidence_bands, 
-		 query_magnitude_weight_diagrams, query_influence_values, 
-		 false);
+    ComputeMain_(queries, query_regression_estimates, NULL, 
+		 query_confidence_bands, query_magnitude_weight_diagrams, 
+		 query_influence_values, false);
     fx_timer_stop(module_, "naive_lpr_querying_time");
   }
 
@@ -423,7 +503,8 @@ class NaiveLpr {
     // Train the model using the reference set (i.e. compute
     // confidence interval and degrees of freedom.)
     fx_timer_start(module_, "naive_lpr_training_time");
-    ComputeMain_(references, &rset_regression_estimates_, 
+    ComputeMain_(references, &rset_regression_estimates_,
+		 &leave_one_out_rset_regression_estimates_,
 		 &rset_confidence_bands_, &rset_magnitude_weight_diagrams_, 
 		 &rset_influence_values_);
     fx_timer_stop(module_, "naive_lpr_training_time");

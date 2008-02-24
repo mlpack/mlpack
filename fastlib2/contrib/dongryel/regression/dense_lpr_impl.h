@@ -11,6 +11,7 @@
 template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
 (const Matrix &queries, Vector *query_regression_estimates,
+ Vector *leave_one_out_query_regression_estimates,
  ArrayList<DRange> *query_confidence_bands,
  Vector *query_magnitude_weight_diagrams, Vector *query_influence_values) {
   
@@ -59,6 +60,9 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   
   // Initialize storage for the final results.
   query_regression_estimates->Init(queries.n_cols());
+  if(leave_one_out_query_regression_estimates != NULL) {
+    leave_one_out_query_regression_estimates->Init(queries.n_cols());
+  }
   query_magnitude_weight_diagrams->Init(queries.n_cols());
   if(query_influence_values != NULL) {
     query_influence_values->Init(queries.n_cols());
@@ -81,6 +85,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
      weight_diagram_used_error);
   FinalizeQueryTree_
     (qroot, qset, query_regression_estimates, 
+     leave_one_out_query_regression_estimates,
      query_magnitude_weight_diagrams, query_influence_values,
      numerator_l, numerator_e, numerator_used_error, numerator_n_pruned, 
      denominator_l, denominator_e, denominator_used_error, 
@@ -99,15 +104,22 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   for(index_t i = 0; i < tmp_q_results.length(); i++) {
     tmp_q_results[old_from_new_queries[i]] = 
       (*query_regression_estimates)[i];
-      }
-  for(index_t i = 0; i < tmp_q_results.length(); i++) {
-    (*query_regression_estimates)[i] = tmp_q_results[i];
+  }
+  query_regression_estimates->CopyValues(tmp_q_results);
+
+  if(leave_one_out_query_regression_estimates != NULL) {
+    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+      tmp_q_results[old_from_new_queries[i]] = 
+      (*leave_one_out_query_regression_estimates)[i];
+    }
+    leave_one_out_query_regression_estimates->CopyValues(tmp_q_results);
   }
 }
 
 template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
 (const Matrix &queries, Vector *query_regression_estimates,
+ Vector *leave_one_out_query_regression_estimates,
  ArrayList<DRange> *query_confidence_bands,
  Vector *query_magnitude_weight_diagrams, Vector *query_influence_values) {
         
@@ -134,7 +146,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
     denominator_e[i].Init(row_length_, row_length_);
   }
   denominator_used_error.Init(1);
-  denominator_n_pruned.Init(1);      
+  denominator_n_pruned.Init(1);
   ArrayList<Matrix> weight_diagram_numerator_l, weight_diagram_numerator_e;
   Vector weight_diagram_used_error;
   weight_diagram_numerator_l.Init(1);
@@ -147,6 +159,9 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
 
   // Initialize storage for the final results.
   query_regression_estimates->Init(queries.n_cols());
+  if(leave_one_out_query_regression_estimates != NULL) {
+    leave_one_out_query_regression_estimates->Init(queries.n_cols());
+  }
   query_magnitude_weight_diagrams->Init(queries.n_cols());
   if(query_influence_values != NULL) {
     query_influence_values->Init(queries.n_cols());
@@ -171,6 +186,12 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
     query_magnitude_weight_diagrams_alias.Alias
       ((query_magnitude_weight_diagrams->ptr()) + q, 1);
     query_influence_values_alias.Alias((query_influence_values->ptr()) + q, 1);
+    Vector *leave_one_out_query_regression_estimates_alias = NULL;
+    if(leave_one_out_query_regression_estimates != NULL) {
+      leave_one_out_query_regression_estimates_alias = new Vector();
+      leave_one_out_query_regression_estimates_alias->Alias
+	((leave_one_out_query_regression_estimates->ptr()) + q, 1);
+    }
 
     // Construct the query tree.
     QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
@@ -193,6 +214,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
        weight_diagram_used_error);
     FinalizeQueryTree_
       (qroot, qset, &query_regression_estimates_alias,
+       leave_one_out_query_regression_estimates_alias,
        &query_magnitude_weight_diagrams_alias, &query_influence_values_alias,
        numerator_l, numerator_e, numerator_used_error, numerator_n_pruned, 
        denominator_l, denominator_e, denominator_used_error,
@@ -202,6 +224,9 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
     // After the computation, we do not need the query tree, so we
     // free it.
     delete qroot;
+    if(leave_one_out_query_regression_estimates_alias != NULL) {
+      delete leave_one_out_query_regression_estimates_alias;
+    }
 
   } // end of iterating over each query.
 }
@@ -249,6 +274,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 
     // Clear the sum statistics before accumulating.
     (rnode->stat().sum_target_weighted_data_).SetZero();
+    rnode->stat().sum_data_outer_products_.SetZero();
 
     // For a leaf reference node, iterate over each reference point
     // and compute the weighted vector and tally these up for the
@@ -272,25 +298,34 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	(row_length_, rset_targets_[r], reference_point_expansion.ptr(),
 	 r_target_weighted_by_coordinates);
       
+      // Normalization constant for the kernel centered at the current
+      // reference point.
+      double norm_constant = kernels_[r].CalcNormConstant(dimension_);
+
       // Accumulate the far field coefficient for the target weighted
       // reference vector and the outerproduct. The outer loop
       // iterates over each column and the inner iterates over each
       // row.
       for(index_t j = 0; j < row_length_; j++) {
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
-	  Add(r_target_weighted_by_coordinates[j], kernels_[r].bandwidth_sq(),
-	      r_col);
+	  Add(r_target_weighted_by_coordinates[j] / norm_constant, 
+	      kernels_[r].bandwidth_sq(), r_col);
 
 	for(index_t i = 0; i < row_length_; i++) {
 	  rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	    Add(reference_point_expansion[j] * reference_point_expansion[i],
-		kernels_[r].bandwidth_sq(), r_col);
+	    Add(reference_point_expansion[j] * reference_point_expansion[i] /
+		norm_constant, kernels_[r].bandwidth_sq(), r_col);
+	  rnode->stat().sum_data_outer_products_.set
+	    (i, j, rnode->stat().sum_data_outer_products_.get(i, j) + 
+	     reference_point_expansion[j] * 
+	     reference_point_expansion[i] / norm_constant);
 	}
       }
 
       // Tally up the weighted targets.
-      la::AddTo(row_length_, r_target_weighted_by_coordinates,
-		(rnode->stat().sum_target_weighted_data_).ptr());
+      la::AddExpert(row_length_, 1.0 / norm_constant,
+		    r_target_weighted_by_coordinates,
+		    (rnode->stat().sum_target_weighted_data_).ptr());
       
       // Accumulate the bandwidth statistics.
       rnode->stat().min_bandwidth_kernel.Init
@@ -307,6 +342,13 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
     rnode->stat().sum_target_weighted_data_alloc_norm_ =
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
+
+    // Compute the norm of the B^T B used for error criterion and the
+    // pruning error allocation.
+    rnode->stat().sum_data_outer_products_error_norm_ = 
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_data_outer_products_, 1);
+    rnode->stat().sum_data_outer_products_alloc_norm_ =
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_data_outer_products_, 1);
   }  
   else {
     
@@ -323,6 +365,15 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
     rnode->stat().sum_target_weighted_data_alloc_norm_ =
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
 
+    la::AddOverwrite(rnode->left()->stat().sum_data_outer_products_,
+		     rnode->right()->stat().sum_data_outer_products_,
+		     &(rnode->stat().sum_data_outer_products_));
+    
+    rnode->stat().sum_data_outer_products_error_norm_ =
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_data_outer_products_, 1);
+    rnode->stat().sum_data_outer_products_alloc_norm_ =
+      MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_data_outer_products_, 1);
+    
     // Translate far-field moments of the child to form the parent.
     for(index_t j = 0; j < row_length_; j++) {
       rnode->stat().target_weighted_data_far_field_expansion_[j].
@@ -473,7 +524,8 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
       // Pairwise distance and kernel value and kernel value weighted
       // by the reference target training value.
       double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
-      double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
+      double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd) /
+	kernels_[r].CalcNormConstant(dimension_);
       double target_weighted_kernel_value = rset_targets_[r] * kernel_value;
       
       // Loop over each column of the matrix to be updated.
@@ -885,6 +937,7 @@ template<typename TKernel, typename TPruneRule>
 void DenseLpr<TKernel, TPruneRule>::
 FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 		   Vector *query_regression_estimates,
+		   Vector *leave_one_out_query_regression_estimates,
 		   Vector *query_magnitude_weight_diagrams,
 		   Vector *query_influence_values,
 		   Matrix &numerator_l, Matrix &numerator_e, 
@@ -966,7 +1019,41 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	(dimension_, lpr_order_, query_point, query_point_expansion.ptr());
       (*query_regression_estimates)[q] = la::Dot(query_point_expansion,
 						 least_squares_solution);
-      
+
+      // Compute the leave-one-out regression estimate for
+      // cross-validation stage.
+      if(leave_one_out_query_regression_estimates != NULL) {
+
+	// Subtract the contribution of the point itself from the
+	// numerator and the denominator. We use the implicit
+	// assumption that the unnormalized kernel takes a max value
+	// of 1 at distance zero.
+	double norm_constant = kernels_[q].CalcNormConstant(dimension_);
+	la::AddExpert(-rset_targets_[q] / norm_constant,
+		      query_point_expansion, &q_numerator_e);
+	
+	for(index_t j = 0; j < row_length_; j++) {
+	  for(index_t i = 0; i < row_length_; i++) {
+	    denominator_e[q].set
+	      (i, j, denominator_e[q].get(i, j) -
+	       1.0 / norm_constant * query_point_expansion[i] *
+	       query_point_expansion[j]);
+	  }
+	}
+
+	// Now invert the denominator matrix for each query point and
+	// multiply by the numerator vector.
+	MatrixUtil::PseudoInverse(denominator_e[q], 
+				  &pseudoinverse_denominator);
+	la::MulOverwrite(pseudoinverse_denominator, q_numerator_e, 
+			 &least_squares_solution);
+	
+	// Compute the dot product between the multiindex vector for the
+	// query point by the beta_q.
+	(*leave_one_out_query_regression_estimates)[q] =
+	  la::Dot(least_squares_solution, query_point_expansion);
+      }
+            
       // Now we compute the magnitude of the weight diagram for each
       // query point.
       Vector pseudo_inverse_times_query_expansion;
@@ -986,7 +1073,7 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	(*query_influence_values)[q] =
 	  la::Dot(query_point_expansion, pseudo_inverse_times_query_expansion);
       }
-    }
+    } // end of iterating over each query point.
   }
   else {
     
@@ -1043,6 +1130,7 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
     }
 
     FinalizeQueryTree_(qnode->left(), qset, query_regression_estimates,
+		       leave_one_out_query_regression_estimates,
 		       query_magnitude_weight_diagrams, query_influence_values,
 		       numerator_l, numerator_e, numerator_used_error, 
 		       numerator_n_pruned, denominator_l, denominator_e, 
@@ -1050,6 +1138,7 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 		       weight_diagram_numerator_l, weight_diagram_numerator_e, 
 		       weight_diagram_used_error);
     FinalizeQueryTree_(qnode->right(), qset, query_regression_estimates,
+		       leave_one_out_query_regression_estimates,
 		       query_magnitude_weight_diagrams, query_influence_values,
 		       numerator_l, numerator_e, numerator_used_error, 
 		       numerator_n_pruned, denominator_l, denominator_e, 
