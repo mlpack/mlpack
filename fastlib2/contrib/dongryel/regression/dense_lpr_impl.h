@@ -1036,8 +1036,8 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	  for(index_t i = 0; i < row_length_; i++) {
 	    denominator_e[q].set
 	      (i, j, denominator_e[q].get(i, j) -
-	       1.0 / norm_constant * query_point_expansion[i] *
-	       query_point_expansion[j]);
+	       query_point_expansion[i] *
+	       query_point_expansion[j] / norm_constant);
 	  }
 	}
 
