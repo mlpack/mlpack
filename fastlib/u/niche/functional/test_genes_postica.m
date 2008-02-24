@@ -9,7 +9,7 @@ nong1_indices = find((phases ~= G1_phase) & (phases ~= unknown_phase));
 
 used_scores = ic_scores;
 
-used_scores = used_scores([6],:);
+used_scores = used_scores([4 6],:);
 
 svm_data = [used_scores(:,g1_indices) used_scores(:,nong1_indices)]';
 svm_labels = [1 * ones(length(g1_indices),1);
@@ -36,7 +36,7 @@ sigma_grow = 1.1;
 %order_init = 1;
 %order_inc = 1;
 
-num_C_epochs = 81;
+num_C_epochs = 100;
 C_init = 1e-2;
 C_grow = 1.1;
 
