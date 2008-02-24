@@ -153,7 +153,7 @@ class RelativePruneLpr {
     }
 
     template<typename QueryTree, typename ReferenceTree>
-    static bool PrunableKrylovRightHandSides
+    static bool PrunableWeightedVectorSum
     (double relative_error, double total_alloc_error, QueryTree *qnode, 
      ReferenceTree *rnode, const DRange &dsqd_range, 
      const DRange &kernel_value_range, Vector &delta_l, Vector &delta_e, 
@@ -191,92 +191,6 @@ class RelativePruneLpr {
       
       // check pruning condition  
       return (delta_used_error <= allowed_err);
-    }
-  
-    template<typename QueryTree, typename ReferenceTree>
-    static bool PrunableKrylovSolver
-    (double relative_error, double total_alloc_error, QueryTree *qnode, 
-     ReferenceTree *rnode, const DRange &dsqd_range, 
-     const DRange &kernel_value_range, 
-     const DRange &negative_dot_product_range,
-     const DRange &positive_dot_product_range,
-     Vector &delta_l, Vector &delta_e, double &delta_used_error, 
-     double &delta_n_pruned, Vector &delta_neg_u, Vector &delta_neg_e,
-     double &delta_neg_used_error, double &delta_neg_n_pruned) {
-
-      // Compute the vector component lower and upper bound changes. This
-      // assumes that the maximum kernel value is 1.
-      la::ScaleOverwrite(positive_dot_product_range.lo * kernel_value_range.lo,
-			 rnode->stat().sum_reference_point_expansion_,
-			 &delta_l);
-      la::ScaleOverwrite(0.5 * (positive_dot_product_range.lo *
-				kernel_value_range.lo +
-				positive_dot_product_range.hi *
-				kernel_value_range.hi),
-			 rnode->stat().sum_reference_point_expansion_,
-			 &delta_e);
-      
-      la::ScaleOverwrite(0.5 * (negative_dot_product_range.lo *
-				kernel_value_range.hi +
-				negative_dot_product_range.hi *
-				kernel_value_range.lo),
-			 rnode->stat().sum_reference_point_expansion_, 
-			 &delta_neg_e);
-      la::ScaleOverwrite(negative_dot_product_range.hi * kernel_value_range.lo,
-			 rnode->stat().sum_reference_point_expansion_,
-			 &delta_neg_u);
-
-      // Compute the L1 norm of the most refined lower bound.
-      double new_ll_vector_norm_l = 
-	qnode->stat().ll_vector_norm_l_ +
-	MatrixUtil::EntrywiseLpNorm(qnode->stat().postponed_ll_vector_l_, 1) +
-	MatrixUtil::EntrywiseLpNorm(delta_l, 1);
-      double new_ll_vector_used_error = qnode->stat().ll_vector_used_error_ +
-	qnode->stat().postponed_ll_vector_used_error_;
-      double new_ll_vector_n_pruned = qnode->stat().ll_vector_n_pruned_ +
-	qnode->stat().postponed_ll_vector_n_pruned_;
-
-      double new_neg_ll_vector_norm_l = 
-	qnode->stat().neg_ll_vector_norm_l_ +
-	MatrixUtil::EntrywiseLpNorm
-	(qnode->stat().postponed_neg_ll_vector_u_, 1) +
-	MatrixUtil::EntrywiseLpNorm(delta_neg_u, 1);
-      double new_neg_ll_vector_used_error = 
-	qnode->stat().neg_ll_vector_used_error_ +
-	qnode->stat().postponed_neg_ll_vector_used_error_;
-      double new_neg_ll_vector_n_pruned = 
-	qnode->stat().neg_ll_vector_n_pruned_ + 
-	qnode->stat().postponed_neg_ll_vector_n_pruned_;
-
-      // Compute the allowed amount of error for pruning the given query
-      // and reference pair.
-      double allowed_err = 
-	(relative_error * new_ll_vector_norm_l - new_ll_vector_used_error) /
-	(total_alloc_error - new_ll_vector_n_pruned);
-      double neg_allowed_err = 
-	(relative_error * new_neg_ll_vector_norm_l - 
-	 new_neg_ll_vector_used_error) /
-	(total_alloc_error - new_neg_ll_vector_n_pruned);
-
-      // Record how much error and pruned portion will be if pruning
-      // were to succeed.
-      delta_used_error = 
-	0.5 * (positive_dot_product_range.hi * kernel_value_range.hi -
-	       positive_dot_product_range.lo * kernel_value_range.lo) *
-	(rnode->stat().sum_reference_point_expansion_norm_);
-      delta_n_pruned = 
-	rnode->stat().sum_reference_point_expansion_norm_;
-      
-      delta_neg_used_error =
-	0.5 * (negative_dot_product_range.hi * kernel_value_range.lo -
-	       negative_dot_product_range.lo * kernel_value_range.hi) * 
-	(rnode->stat().sum_reference_point_expansion_norm_);
-      delta_neg_n_pruned = 
-	rnode->stat().sum_reference_point_expansion_norm_;
-
-      // check pruning condition
-      return (delta_used_error <= allowed_err &&
-	      delta_neg_used_error <= neg_allowed_err);
     }
 };
 

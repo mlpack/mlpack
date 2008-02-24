@@ -21,7 +21,6 @@ librule(
     headers = ["epan_kernel_moment_info.h",
                "krylov_lpr.h",
                "krylov_lpr_setup_impl.h",
-               "krylov_lpr_solver_impl.h",
                "krylov_lpr_test.h",
                "lpr_util.h",
                "naive_lpr.h"],

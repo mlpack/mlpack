@@ -35,22 +35,6 @@ class KrylovLprRStat {
    */
   ArrayList< EpanKernelMomentInfo >
     target_weighted_data_far_field_expansion_;
-  
-  /** @brief The far field expansion created by the outer
-   *         products. The (i, j)-th element denotes the
-   *         far-field expansion of the (i, j)-th component of
-   *         the sum_data_outer_products_ matrix.
-   */
-  ArrayList< ArrayList< EpanKernelMomentInfo > >
-    data_outer_products_far_field_expansion_;
-
-  /** @brief The vector summing up the reference point expansion.
-   */
-  Vector sum_reference_point_expansion_;
-
-  /** @brief The norm of the sum_reference_point_expansion_
-   */
-  double sum_reference_point_expansion_norm_;
 
   /** @brief The minimum bandwidth among the reference point.
    */
@@ -59,9 +43,6 @@ class KrylovLprRStat {
   /** @brief The maximum bandwidth among the reference point.
    */
   TKernel max_bandwidth_kernel;
-
-  /** @brief The bounding box for the reference point expansion */
-  DHrectBound<2> reference_point_expansion_bound_;
 
   ////////// Constructor/Destructor //////////
 
@@ -81,14 +62,9 @@ class KrylovLprRStat {
     sum_target_weighted_data_error_norm_ = 0;
     sum_target_weighted_data_alloc_norm_ = 0;
 
-    sum_reference_point_expansion_.SetZero();
-    sum_reference_point_expansion_norm_ = 0;
-
     // Initialize the bandwidth information to defaults.
     min_bandwidth_kernel.Init(DBL_MAX);
     max_bandwidth_kernel.Init(0);
-
-    reference_point_expansion_bound_.Reset();
 
     for(index_t j = 0; j < target_weighted_data_far_field_expansion_.size(); 
 	j++) {
@@ -110,20 +86,9 @@ class KrylovLprRStat {
 
     sum_target_weighted_data_.Init(matrix_dimension);
     target_weighted_data_far_field_expansion_.Init(matrix_dimension);
-    sum_reference_point_expansion_.Init(matrix_dimension);
 
     for(index_t j = 0; j < matrix_dimension; j++) {
       target_weighted_data_far_field_expansion_[j].Init(dimension);
-    }
-
-    // Initialize memory for bound on outer product expansions.
-    reference_point_expansion_bound_.Init(matrix_dimension);
-    data_outer_products_far_field_expansion_.Init(matrix_dimension);
-    for(index_t j = 0; j < matrix_dimension; j++) {
-      data_outer_products_far_field_expansion_[j].Init(j + 1);
-      for(index_t i = 0; i <= j; i++) {
-	data_outer_products_far_field_expansion_[j][i].Init(dimension);
-      }
     }
   }
 
@@ -169,22 +134,6 @@ public:
    */
   double ll_vector_n_pruned_;
 
-  /** @brief The lower bound on the norm of the negative components
-   *         of the vector computation.
-   */
-  double neg_ll_vector_norm_l_;
-
-  /** @brief The upper bound on the used error for approximating the
-   *         negative components of the vector computation.
-   */
-  double neg_ll_vector_used_error_;
-
-  /** @brief The lower bound on the portion of the reference set
-   *         pruned for the query points owned by this node for the
-   *         negative components.
-   */
-  double neg_ll_vector_n_pruned_;
-
   /** @brief The lower bound vector offset passed from the above on
    *         each sum component of the vector owned by this node.
    */
@@ -208,35 +157,6 @@ public:
    */
   double postponed_ll_vector_n_pruned_;
 
-  /** @brief This stores the portion pruned by finite difference for
-   *         each negative sum component of the vector owned by this
-   *         node.
-   */
-  Vector postponed_neg_ll_vector_e_;
-
-  /** @brief The upper bound vector offset passed from above on each
-   *         negative sum component of the right hand sides owned by
-   *         this node.
-   */
-  Vector postponed_neg_ll_vector_u_;
-
-  /** @brief The amount of used error passed down from above for
-   *         approximating the negative components of the vector sum.
-   */
-  double postponed_neg_ll_vector_used_error_;
-  
-  /** @brief The portion of the reference set pruned for approximating
-   *         the negative components of the vector sum passed down
-   *         from above.
-   */
-  double postponed_neg_ll_vector_n_pruned_;
-
-  /** @brief The bounding box for the Lanczos vectors. */
-  DHrectBound<2> lanczos_vectors_bound_;
-
-  ArrayList< ArrayList < EpanKernelMomentInfo > >
-    postponed_epanechnikov_moments_;
-
   ////////// Constructor/Destructor //////////
 
   /** @brief The constructor which does not do anything. */
@@ -253,24 +173,13 @@ public:
     ll_vector_norm_l_ = 0;
     ll_vector_used_error_ = 0;
     ll_vector_n_pruned_ = 0;
-    neg_ll_vector_norm_l_ = 0;
-    neg_ll_vector_used_error_ = 0;
-    neg_ll_vector_n_pruned_ = 0;
     postponed_ll_vector_l_.SetZero();
     postponed_ll_vector_e_.SetZero();
     postponed_ll_vector_used_error_ = 0;
     postponed_ll_vector_n_pruned_ = 0;
-    postponed_neg_ll_vector_e_.SetZero();
-    postponed_neg_ll_vector_u_.SetZero();
-    postponed_neg_ll_vector_used_error_ = 0;
-    postponed_neg_ll_vector_n_pruned_ = 0;
-    lanczos_vectors_bound_.Reset();
 
     for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Reset();
-      for(index_t j = 0; j <= i; j++) {
-	postponed_epanechnikov_moments_[i][j].Reset();
-      }
     }
   }
 
@@ -289,18 +198,9 @@ public:
     postponed_ll_vector_l_.Init(matrix_dimension);
     postponed_ll_vector_e_.Init(matrix_dimension);
     postponed_moment_ll_vector_e_.Init(matrix_dimension);
-    postponed_epanechnikov_moments_.Init(matrix_dimension);
     for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Init(dimension);
-      postponed_epanechnikov_moments_[i].Init(i + 1);
-      for(index_t j = 0; j <= i; j++) {
-	postponed_epanechnikov_moments_[i][j].Init(dimension);
-      }
     }
-    postponed_neg_ll_vector_e_.Init(matrix_dimension);
-    postponed_neg_ll_vector_u_.Init(matrix_dimension);
-
-    lanczos_vectors_bound_.Init(matrix_dimension);
   }
 
   /** @brief Computing the statistics for a leaf node involves
