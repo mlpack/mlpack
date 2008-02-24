@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
 
   // Store the results computed by the tree-based results.
   Vector fast_lpr_results;
+  bool fast_lpr_has_run = false;
   if(!strcmp(fx_param_str_req(lpr_module, "method"), "dt-dense-quick")) {
     printf("Running the DT-DENSE-LPR with Deng and Moore's prune rule.\n");
     DenseLpr<EpanKernel, QuickPruneLpr> fast_lpr;
@@ -63,6 +64,9 @@ int main(int argc, char *argv[]) {
     fast_lpr.PrintDebug();
     fast_lpr.get_regression_estimates(&fast_lpr_results);
     printf("Finished the DT-DENSE-LPR with Deng and Moore's prune rule.\n");
+    printf("Root mean square deviation of %g...\n",
+	   fast_lpr.root_mean_square_deviation());
+    fast_lpr_has_run = true;
   }
   else if(!strcmp(fx_param_str_req(lpr_module, "method"), "st-dense-quick")) {
     printf("Running the ST-DENSE-LPR with Deng and Moore's prune rule.\n");
@@ -71,6 +75,9 @@ int main(int argc, char *argv[]) {
     fast_lpr.PrintDebug();
     fast_lpr.get_regression_estimates(&fast_lpr_results);
     printf("Finished the ST-DENSE-LPR with Deng and Moore's prune rule.\n");
+    printf("Root mean square deviation of %g...\n",
+	   fast_lpr.root_mean_square_deviation());
+    fast_lpr_has_run = true;
   }
   else if(!strcmp(fx_param_str_req(lpr_module, "method"), 
 		  "dt-dense-relative")) {
@@ -81,6 +88,9 @@ int main(int argc, char *argv[]) {
     fast_lpr.PrintDebug();
     fast_lpr.get_regression_estimates(&fast_lpr_results);
     printf("Finished the DT-DENSE-LPR algorithm with relative prune rule.\n");
+    printf("Root mean square deviation of %g...\n",
+	   fast_lpr.root_mean_square_deviation());
+    fast_lpr_has_run = true;
   }
   else if(!strcmp(fx_param_str_req(lpr_module, "method"), 
 		  "st-dense-relative")) {
@@ -91,9 +101,11 @@ int main(int argc, char *argv[]) {
     fast_lpr.PrintDebug();
     fast_lpr.get_regression_estimates(&fast_lpr_results);
     printf("Finished the ST-DENSE-LPR algorithm with relative prune rule.\n");
+    printf("Root mean square deviation of %g...\n",
+	   fast_lpr.root_mean_square_deviation());
+    fast_lpr_has_run = true;
   }
 
-  /*
   // Do naive algorithm.
   printf("Running the naive algorithm...\n");
   Vector naive_lpr_results;
@@ -102,11 +114,20 @@ int main(int argc, char *argv[]) {
   naive_lpr.PrintDebug();
   naive_lpr.get_regression_estimates(&naive_lpr_results);
   printf("Finished running the naive algorithm...\n");
+  printf("Got root mean square deviation of %g...\n",
+	 naive_lpr.root_mean_square_deviation());
 
-  printf("Maximum relative difference in regression estimate: %g\n",
-	 MatrixUtil::MaxRelativeDifference(naive_lpr_results,
-					   fast_lpr_results));
-  */
+  if(fast_lpr_has_run) {
+    printf("Maximum relative difference in regression estimate: %g\n",
+	   MatrixUtil::MaxRelativeDifference(naive_lpr_results,
+					     fast_lpr_results));
+  }
+  else {
+
+    // This is to prevent the code from complaining from uninitialized
+    // object stuff.
+    fast_lpr_results.Init(0);
+  }
 
   // Finalize FastExec and print output results.
   fx_done();

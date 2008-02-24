@@ -15,6 +15,7 @@
 #include "matrix_util.h"
 #include "multi_index_util.h"
 #include "fastlib/fastlib.h"
+#include "mlpack/allknn/allknn.h"
 
 /** @brief A computation class for dual-tree based local polynomial
  *         regression.
@@ -148,46 +149,7 @@ class DenseLpr {
 	 *  @param count The number of points in this reference node.
          */
         void Init(const Matrix& dataset, index_t &start, index_t &count) {
-
 	  Init(dataset.n_rows());
-
-	  int lpr_order = fx_param_int_req(NULL, "lpr_order");
-	  // Temporary variables for multiindex looping
-	  Vector reference_point_expansion;
-	  reference_point_expansion.Init(sum_target_weighted_data_.length());
-
-	  // Zero out the sum matrix before tallying up.
-	  sum_data_outer_products_.SetZero();
-
-	  // Loop over each reference point.
-	  for(index_t r = 0; r < count; r++) {
-	    
-	    // Get the reference point.
-	    const double *reference_point = dataset.GetColumnPtr(start + r);
-
-	    MultiIndexUtil::ComputePointMultivariatePolynomial
-	      (dataset.n_rows(), lpr_order, reference_point, 
-	       reference_point_expansion.ptr());
-	    
-	    // Based on the polynomial expansion computed, sum up its
-	    // outer product.
-	    for(index_t i = 0; i < sum_data_outer_products_.n_cols(); i++) {
-
-	      for(index_t j = 0; j < sum_data_outer_products_.n_rows(); j++) {
-		sum_data_outer_products_.set
-		  (j, i, sum_data_outer_products_.get(j, i) + 
-		   reference_point_expansion[j] * 
-		   reference_point_expansion[i]);
-	      }
-	    }
-	  } // End of iterating over each reference point.
-
-	  // Compute the norm of the B^T B used for error criterion
-	  // and the pruning error allocation.
-	  sum_data_outer_products_error_norm_ = 
-	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
-	  sum_data_outer_products_alloc_norm_ =
-	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	}
     
         /** @brief Computes \sum\limits_{r \in R} [1 ; r^T]^T [1; r^T] by
@@ -202,16 +164,6 @@ class DenseLpr {
         void Init(const Matrix& dataset, index_t &start, index_t &count,
 		  const LprRStat& left_stat, const LprRStat& right_stat) {
 	  Init(dataset.n_rows());
-	  
-	  // Combine the two sub-sums.
-	  la::AddOverwrite(left_stat.sum_data_outer_products_,
-			   right_stat.sum_data_outer_products_,
-			   &sum_data_outer_products_);
-
-	  sum_data_outer_products_error_norm_ =
-	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
-	  sum_data_outer_products_alloc_norm_ =
-	    MatrixUtil::EntrywiseLpNorm(sum_data_outer_products_, 1);
 	}
 
         /** @brief The constructor which does not do anything. */
@@ -500,6 +452,8 @@ class DenseLpr {
      */
     ArrayList<index_t> old_from_new_references_;
   
+    ArrayList<index_t> new_from_old_references_;
+
     /** @brief The original training target value for the reference
      *         dataset.
      */
@@ -514,7 +468,11 @@ class DenseLpr {
     /** @brief The computed fit values at each reference point.
      */
     Vector rset_regression_estimates_;
-  
+
+    /** @brief The leave-one-out fit values at each reference point.
+     */
+    Vector leave_one_out_rset_regression_estimates_;
+
     /** @brief The confidence band on the fit at each reference point.
      */
     ArrayList<DRange> rset_confidence_bands_;
@@ -541,6 +499,11 @@ class DenseLpr {
     /** @brief The variance of the reference set.
      */
     double rset_variance_;
+
+    /** @brief The root mean square deviation used for cross-validating
+     *         the model.
+     */
+    double root_mean_square_deviation_;
 
     /** @brief The dimensionality of each point.
      */
@@ -625,6 +588,7 @@ class DenseLpr {
      */
     void FinalizeQueryTree_
     (QueryTree *qnode, const Matrix &qset, Vector *query_regression_estimates,
+     Vector *leave_one_out_query_regression_estimates,
      Vector *query_magnitude_weight_diagrams, Vector *query_influence_values,
      Matrix &numerator_l, Matrix &numerator_e, Vector &numerator_used_error, 
      Vector &numerator_n_pruned, ArrayList<Matrix> &denominator_l, 
@@ -633,6 +597,23 @@ class DenseLpr {
      ArrayList<Matrix> &weight_diagram_numerator_l,
      ArrayList<Matrix> &weight_diagram_numerator_e,
      Vector &weight_diagram_used_error);
+
+    /** @brief Computes the root mean square deviation of the current
+     *         model. This function should be called after the model has
+     *         been completely built.
+     */
+    void ComputeRootMeanSquareDeviation_() {
+      
+      root_mean_square_deviation_ = 0;
+      for(index_t i = 0; i < rset_.n_cols(); i++) {
+
+	double diff_regression = rset_targets_[new_from_old_references_[i]] - 
+	  leave_one_out_rset_regression_estimates_[i];
+	root_mean_square_deviation_ += diff_regression * diff_regression;
+      }
+      root_mean_square_deviation_ *= 1.0 / ((double) rset_.n_cols());
+      root_mean_square_deviation_ = sqrt(root_mean_square_deviation_);
+    }
 
     /** @brief Computes the variance by the normalized redisual sum of
      *         squares for the reference dataset.
@@ -655,7 +636,7 @@ class DenseLpr {
       
       // Loop over each reference point and add up the residual.
       for(index_t i = 0; i < rset_.n_cols(); i++) {
-	double prediction_error = rset_targets_[i] - 
+	double prediction_error = rset_targets_[new_from_old_references_[i]] - 
 	  rset_regression_estimates_[i];
 	rset_variance_ += prediction_error * prediction_error;
       }
@@ -700,18 +681,20 @@ class DenseLpr {
   
     void BasicComputeSingleTree_(const Matrix &queries,
 				 Vector *query_regression_estimates,
+				 Vector *leave_one_out_regression_estimates,
 				 ArrayList<DRange> *query_confidence_bands,
 				 Vector *query_magnitude_weight_diagrams,
 				 Vector *query_influence_values);
 
-    void BasicComputeDualTree_(const Matrix &queries,
-			       Vector *query_regression_estimates,
-			       ArrayList<DRange> *query_confidence_bands,
-			       Vector *query_magnitude_weight_diagrams,
-			       Vector *query_influence_values);
+    void BasicComputeDualTree_
+    (const Matrix &queries, Vector *query_regression_estimates,
+     Vector *leave_one_out_query_regression_estimates,
+     ArrayList<DRange> *query_confidence_bands,
+     Vector *query_magnitude_weight_diagrams, Vector *query_influence_values);
 
     void ComputeMain_(const Matrix &queries,
 		      Vector *query_regression_estimates,
+		      Vector *leave_one_out_query_regression_estimates,
 		      ArrayList<DRange> *query_confidence_bands,
 		      Vector *query_magnitude_weight_diagrams,
 		      Vector *query_influence_values) {
@@ -722,12 +705,14 @@ class DenseLpr {
       // This is the basic N-body based computation.
       if(!strncmp(fx_param_str_req(module_, "method"),"st", 2)) {
 	BasicComputeSingleTree_(queries, query_regression_estimates,
+				leave_one_out_query_regression_estimates,
 				query_confidence_bands,
 				query_magnitude_weight_diagrams,
 				query_influence_values);
       }
       else {
 	BasicComputeDualTree_(queries, query_regression_estimates,
+			      leave_one_out_query_regression_estimates,
 			      query_confidence_bands,
 			      query_magnitude_weight_diagrams,
 			      query_influence_values);
@@ -748,6 +733,46 @@ class DenseLpr {
 			      query_confidence_bands,
 			      query_magnitude_weight_diagrams,
 			      (query_influence_values != NULL));
+
+      // If the reference dataset is being used for training, then
+      // compute the root mean square deviation.
+      if(query_influence_values != NULL) {
+	ComputeRootMeanSquareDeviation_();
+      }
+    }
+
+    /** @brief Initialize the bandwidth by either fixed bandwidth
+     *         parameter or a nearest neighbor based one (i.e. perform
+     *         nearest neighbor and set the bandwidth equal to the k-th
+     *         nearest neighbor distance).
+     */
+    void InitializeBandwidths_() {
+      
+      kernels_.Init(rset_.n_cols());
+      
+      if(fx_param_exists(NULL, "bandwidth")) {
+	printf("Using the fixed bandwidth method...\n");
+	
+	double bandwidth = fx_param_double_req(NULL, "bandwidth");
+	for(index_t i = 0; i < kernels_.size(); i++) {	
+	  kernels_[i].Init(bandwidth);
+	}
+      }
+      else {
+	printf("Using the nearest neighbor method...\n");
+	AllkNN all_knn;
+	double knn_factor = fx_param_double(module_, "knn_factor", 0.2);
+	int knns = (int) (knn_factor * rset_.n_cols());
+	all_knn.Init(rset_, 20, knns);
+	ArrayList<index_t> resulting_neighbors;
+	ArrayList<double> distances;
+	
+	all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
+	
+	for(index_t i = 0; i < distances.size(); i += knns) {
+	  kernels_[i / knns].Init(distances[i]);
+	}
+      }
     }
 
   public:
@@ -777,6 +802,10 @@ class DenseLpr {
 
     /////////// User-level Functions //////////
 
+    double root_mean_square_deviation() {
+      return root_mean_square_deviation_;
+    }
+  
     /** @brief Computes the query regression estimates with the
      *         confidence bands.
      */
@@ -785,7 +814,8 @@ class DenseLpr {
 		 Vector *query_magnitude_weight_diagrams) {
       
       fx_timer_start(module_, "dense_lpr_prediction_time");
-      ComputeMain_(queries, query_regression_estimates, query_confidence_bands,
+      ComputeMain_(queries, query_regression_estimates, NULL,
+		   query_confidence_bands,
 		   query_magnitude_weight_diagrams, NULL);
       fx_timer_stop(module_, "dense_lpr_prediction_time");
     }
@@ -821,11 +851,12 @@ class DenseLpr {
       
       // Start measuring the tree construction time.
       fx_timer_start(NULL, "dense_lpr_reference_tree_construct");
-      
+
       // Construct the reference tree.
       rroot_ = tree::MakeKdTreeMidpoint<ReferenceTree>
-	(rset_, leaflen, &old_from_new_references_, NULL);
-      
+	(rset_, leaflen, &old_from_new_references_, 
+	 &new_from_old_references_);
+
       // We need to shuffle the reference training target values
       // according to the shuffled order of the reference dataset.
       Vector tmp_rset_targets;
@@ -835,13 +866,10 @@ class DenseLpr {
       }
       rset_targets_.CopyValues(tmp_rset_targets);
       fx_timer_stop(NULL, "dense_lpr_reference_tree_construct");
-      
-      // Initialize the kernel.
-      double bandwidth = fx_param_double_req(NULL, "bandwidth");
-      kernels_.Init(rset_.n_cols());
-      for(index_t i = 0; i < rset_.n_cols(); i++) {
-	kernels_[i].Init(bandwidth);
-      }
+
+      // Initialize the kernel. It is important to initialize the
+      // kernel after reshuffling of the reference dataset is done!
+      InitializeBandwidths_();
 
       // initialize the reference side statistics.
       target_weighted_rset_.Init(row_length_, rset_.n_cols());
@@ -851,6 +879,7 @@ class DenseLpr {
       // confidence interval and degrees of freedom.)
       fx_timer_start(module_, "dense_lpr_training_time");
       ComputeMain_(references, &rset_regression_estimates_,
+		   &leave_one_out_rset_regression_estimates_,
 		   &rset_confidence_bands_, &rset_magnitude_weight_diagrams_,
 		   &rset_influence_values_);
       fx_timer_stop(module_, "dense_lpr_training_time");
@@ -866,8 +895,9 @@ class DenseLpr {
 	stream = fopen(fname, "w+");
       }
       for(index_t r = 0; r < rset_.n_cols(); r++) {
-	fprintf(stream, "%g %g %g\n", rset_confidence_bands_[r].lo,
-		rset_regression_estimates_[r], rset_confidence_bands_[r].hi);
+	fprintf(stream, "%g %g %g %g\n", rset_confidence_bands_[r].lo,
+		rset_regression_estimates_[r], rset_confidence_bands_[r].hi,
+		leave_one_out_rset_regression_estimates_[r]);
       }
       
       if(stream != stdout) {
