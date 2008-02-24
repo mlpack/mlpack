@@ -699,7 +699,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLeastSquaresByKrylov_
 
   // Main iteration of the SYMMLQ algorithm - repeat until
   // "convergence"...
-  for(index_t num_iter = 0; num_iter < row_length_; num_iter++) {
+  for(index_t num_iter = 0; num_iter < sqrt(row_length_); num_iter++) {
 
     // Determine how many queries are in the Krylov loop.
     int num_queries_in_krylov_loop = 0;

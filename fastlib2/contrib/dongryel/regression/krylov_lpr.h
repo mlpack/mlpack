@@ -481,7 +481,10 @@ class KrylovLpr {
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
-    /*
+    
+    // Delete the query tree.
+    delete qroot;
+
     for(index_t q = 0; q < qset.n_cols(); q++) {
       Matrix qset_single_alias, right_hand_sides_e_single_alias,
 	solution_vectors_e_single_alias;
@@ -501,14 +504,15 @@ class KrylovLpr {
 	 solution_vectors_e_single_alias);
       delete qroot_single;
     }
-    */
+    /*
     SolveLeastSquaresByKrylov_(qroot, qset, right_hand_sides_e, 
 			       solution_vectors_e);
 
-    printf("Phase 2 completed...\n");
-
     // Delete the query tree.
     delete qroot;
+    */
+
+    printf("Phase 2 completed...\n");
 
     // Proceed with the third phase of the computation to output the
     // final regression value.
