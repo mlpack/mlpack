@@ -9,7 +9,7 @@
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::
-InitializeQueryTreeRightHandSides_(QueryTree *qnode) {
+InitializeQueryTree_(QueryTree *qnode) {
   
   // Set the bounds to default values.
   qnode->stat().Reset();
@@ -17,14 +17,15 @@ InitializeQueryTreeRightHandSides_(QueryTree *qnode) {
   // If the query node is not a leaf, then recurse.
   if(!qnode->is_leaf()) {
 
-    InitializeQueryTreeRightHandSides_(qnode->left());
-    InitializeQueryTreeRightHandSides_(qnode->right());
+    InitializeQueryTree_(qnode->left());
+    InitializeQueryTree_(qnode->right());
   }
 }
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::
-InitializeReferenceStatistics_(ReferenceTree *rnode) {
+InitializeReferenceStatistics_(ReferenceTree *rnode, int column_index,
+			       const Vector &weights) {
   
   if(rnode->is_leaf()) {
     
@@ -51,15 +52,11 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
       // Compute the multiindex expansion of the given reference point.
       MultiIndexUtil::ComputePointMultivariatePolynomial
 	(dimension_, lpr_order_, r_col.ptr(), reference_point_expansion.ptr());
-      
-      // Accumulate each expansion onto its bounding box.
-      rnode->stat().reference_point_expansion_bound_ |=
-	reference_point_expansion;
 
       // Scale the expansion by the reference target.
-      la::ScaleOverwrite(row_length_, rset_targets_[r], 
-			 reference_point_expansion.ptr(),
-			 r_target_weighted_by_coordinates);
+      la::ScaleOverwrite
+	(row_length_, weights[r] * reference_point_expansion[column_index], 
+	 reference_point_expansion.ptr(), r_target_weighted_by_coordinates);
       
       // Accumulate the far field coefficient for the target weighted
       // reference vector and the outerproduct.
@@ -67,12 +64,6 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
 	  Add(r_target_weighted_by_coordinates[j], kernels_[r].bandwidth_sq(),
 	      r_col);
-	
-	for(index_t i = 0; i <= j; i++) {
-	  rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	    Add(reference_point_expansion[j] * reference_point_expansion[i],
-		kernels_[r].bandwidth_sq(), r_col);
-	}
       }
 
       // Tally up the weighted targets.
@@ -97,8 +88,8 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
   else {
     
     // Recursively call the function with left and right and merge.
-    InitializeReferenceStatistics_(rnode->left());
-    InitializeReferenceStatistics_(rnode->right());
+    InitializeReferenceStatistics_(rnode->left(), column_index, weights);
+    InitializeReferenceStatistics_(rnode->right(), column_index, weights);
    
     // Compute the sum of the sub sums.
     la::AddOverwrite((rnode->left()->stat()).sum_target_weighted_data_,
@@ -117,26 +108,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
       rnode->stat().target_weighted_data_far_field_expansion_[j].
 	Add(rnode->right()->stat().
 	    target_weighted_data_far_field_expansion_[j]);
-      
-      for(index_t i = 0; i <= j; i++) {
-
-	// First the far field moments of outer product using the bandwidth
-	rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	  Add(rnode->left()->stat().
-	      data_outer_products_far_field_expansion_[j][i]);
-	rnode->stat().data_outer_products_far_field_expansion_[j][i].
-	  Add(rnode->right()->stat().
-	      data_outer_products_far_field_expansion_[j][i]);
-      }  // end of iterating over each row.
     } // end of iterating over each column.
-    
-    // Combine the bounds of the reference point expansion owned by
-    // the two children.
-    rnode->stat().reference_point_expansion_bound_.Reset();
-    rnode->stat().reference_point_expansion_bound_ |=
-      rnode->left()->stat().reference_point_expansion_bound_;
-    rnode->stat().reference_point_expansion_bound_ |=
-      rnode->right()->stat().reference_point_expansion_bound_;
 
     // Compute the min of the min bandwidths and the max of the max
     // bandwidths owned among the children.
@@ -152,7 +124,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 }
 
 template<typename TKernel, typename TPruneRule>
-void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesBase_
+void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
@@ -229,7 +201,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesBase_
 }
 
 template<typename TKernel, typename TPruneRule>
-void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
+void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
@@ -249,7 +221,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
     (qnode, rnode, dsqd_range, kernel_value_range);
 
   // try finite difference pruning first
-  if(TPruneRule::PrunableKrylovRightHandSides
+  if(TPruneRule::PrunableWeightedVectorSum
      (internal_relative_error_, 
       rnode->stat().sum_target_weighted_data_alloc_norm_,
       qnode, rnode, dsqd_range, kernel_value_range, delta_l, delta_e,
@@ -290,7 +262,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
     
     // for leaf pairs, go exhaustive
     if(rnode->is_leaf()) {
-      DualtreeRightHandSidesBase_
+      DualtreeWeightedVectorSumBase_
 	(qnode, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
 	 right_hand_sides_used_error, right_hand_sides_n_pruned);
       return;
@@ -301,10 +273,10 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
       ReferenceTree *rnode_first = NULL, *rnode_second = NULL;
       LprUtil::BestReferenceNodePartners(qnode, rnode->left(), rnode->right(), 
 					 &rnode_first, &rnode_second);
-      DualtreeRightHandSidesCanonical_
+      DualtreeWeightedVectorSumCanonical_
 	(qnode, rnode_first, qset, right_hand_sides_l, right_hand_sides_e, 
 	 right_hand_sides_used_error, right_hand_sides_n_pruned);
-      DualtreeRightHandSidesCanonical_
+      DualtreeWeightedVectorSumCanonical_
 	(qnode, rnode_second, qset, right_hand_sides_l, right_hand_sides_e, 
 	 right_hand_sides_used_error, right_hand_sides_n_pruned);
       return;
@@ -345,10 +317,10 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
       
       LprUtil::BestQueryNodePartners(rnode, qnode->left(), qnode->right(), 
 				     &qnode_first, &qnode_second);
-      DualtreeRightHandSidesCanonical_
+      DualtreeWeightedVectorSumCanonical_
 	(qnode_first, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
 	 right_hand_sides_used_error, right_hand_sides_n_pruned);
-      DualtreeRightHandSidesCanonical_
+      DualtreeWeightedVectorSumCanonical_
 	(qnode_second, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
 	 right_hand_sides_used_error, right_hand_sides_n_pruned);
     }
@@ -360,11 +332,11 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
       LprUtil::BestReferenceNodePartners(qnode->left(), rnode->left(), 
 					 rnode->right(),
 					 &rnode_first, &rnode_second);
-      DualtreeRightHandSidesCanonical_
+      DualtreeWeightedVectorSumCanonical_
 	(qnode->left(), rnode_first, qset, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
-      DualtreeRightHandSidesCanonical_
+      DualtreeWeightedVectorSumCanonical_
 	(qnode->left(), rnode_second, qset, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
@@ -372,11 +344,11 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
       LprUtil::BestReferenceNodePartners(qnode->right(), rnode->left(), 
 					 rnode->right(),
 					 &rnode_first, &rnode_second);
-      DualtreeRightHandSidesCanonical_
+      DualtreeWeightedVectorSumCanonical_
 	(qnode->right(), rnode_first, qset, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
-      DualtreeRightHandSidesCanonical_
+      DualtreeWeightedVectorSumCanonical_
 	(qnode->right(), rnode_second, qset, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
@@ -405,7 +377,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeRightHandSidesCanonical_
 }
 
 template<typename TKernel, typename TPruneRule>
-void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeRightHandSides_
+void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 (QueryTree *qnode, const Matrix &qset, 
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
@@ -472,11 +444,11 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeRightHandSides_
 	(q_stat.postponed_moment_ll_vector_e_[i]);
     }
 
-    FinalizeQueryTreeRightHandSides_
-      (qnode->left(), qset, right_hand_sides_l, right_hand_sides_e,
-       right_hand_sides_used_error, right_hand_sides_n_pruned);
-    FinalizeQueryTreeRightHandSides_
-      (qnode->right(), qset, right_hand_sides_l, right_hand_sides_e,
-       right_hand_sides_used_error, right_hand_sides_n_pruned);
+    FinalizeQueryTree_(qnode->left(), qset, right_hand_sides_l, 
+		       right_hand_sides_e, right_hand_sides_used_error, 
+		       right_hand_sides_n_pruned);
+    FinalizeQueryTree_(qnode->right(), qset, right_hand_sides_l, 
+		       right_hand_sides_e, right_hand_sides_used_error, 
+		       right_hand_sides_n_pruned);
   }
 }

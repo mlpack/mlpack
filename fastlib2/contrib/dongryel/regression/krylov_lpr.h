@@ -16,6 +16,7 @@
 #include "epan_kernel_moment_info.h"
 #include "multi_index_util.h"
 #include "lpr_util.h"
+#include "mlpack/allknn/allknn.h"
 
 #define INSIDE_KRYLOV_LPR_H
 #include "krylov_stat.h"
@@ -72,12 +73,23 @@ class KrylovLpr {
    */
   Vector rset_targets_;
 
+  /** @brief The reference training target value divided by the
+   *         normalization constant of the kernel centered at each
+   *         reference point.
+   */
+  Vector rset_target_divided_by_norm_consts_;
+
+  /** @brief The inverse of the normalization constant of the kernel
+   *         centered at each reference point.
+   */
+  Vector rset_inv_norm_consts_;
+
   /** @brief The original training target value for the reference
    *         dataset weighted by the reference coordinate.  (i.e. y_i
    *         [1; r^T]^T ).
    */
   Matrix target_weighted_rset_;
-  
+
   /** @brief The computed fit values at each reference point.
    */
   Vector rset_regression_estimates_;
@@ -148,43 +160,16 @@ class KrylovLpr {
   void TestRightHandSideComputation_(const Matrix &qset,
 				     const Matrix &approximated);
 
-  /** @brief This function test the second phase computation (i.e.
-   *         the computation of the product of B^T W(q) B and z(q).
-   */
-  void TestKrylovComputation_
-    (const Matrix &qset, const Matrix &approximated, 
-     const Matrix &current_lanczos_vectors,
-     const ArrayList<bool> &query_should_exit_the_loop);
-
-  void NormalizeMatrixColumnVectors_(Matrix &m, Vector &lengths) {
-    
-    for(index_t i = 0; i < m.n_cols(); i++) {
-      double *column_vector = m.GetColumnPtr(i);
-      lengths[i] = la::LengthEuclidean(row_length_, column_vector);
-      
-      if(lengths[i] > 0) {
-	la::Scale(row_length_, 1.0 / lengths[i], column_vector);
-      }
-    }
-  }
-
-  /** @brief Compute the dot-product bounds possible for a pair of
-   *         point lying in each of the two given regions.
-   */
-  void DotProductBetweenTwoBounds_(QueryTree *qnode, ReferenceTree *rnode, 
-				   DRange &negative_dot_product_range,
-				   DRange &positive_dot_product_range);
-
   /** @brief Initialize the bound statistics relevant to the right
    *         hand side computation.
    */
-  void InitializeQueryTreeRightHandSides_(QueryTree *qnode);
+  void InitializeQueryTree_(QueryTree *qnode);
 
   /** @brief The postprocessing function to finalize the computation
    *         of the right-hand sides of the linear system for each
    *         query point.
    */
-  void FinalizeQueryTreeRightHandSides_
+  void FinalizeQueryTree_
   (QueryTree *qnode, const Matrix &qset, Matrix &right_hand_sides_l, 
    Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
    Vector &right_hand_sides_n_pruned);
@@ -192,16 +177,17 @@ class KrylovLpr {
   /** @brief Preprocess the reference tree for bottom up statistics
    *         computation.
    */
-  void InitializeReferenceStatistics_(ReferenceTree *rnode);
+  void InitializeReferenceStatistics_(ReferenceTree *rnode, int column_index,
+				      const Vector &weights);
 
   /** @brief Determine whether the given query and the reference node
    *         pair can be pruned.
    *
    *  @return True, if it can be pruned. False, otherwise.
    */
-  bool PrunableRightHandSides_(QueryTree *qnode, ReferenceTree *rnode, 
-			       DRange &dsqd_range, DRange &kernel_value_range, 
-			       double &used_error);
+  bool PrunableKrylov_(QueryTree *qnode, ReferenceTree *rnode, 
+		       DRange &dsqd_range, DRange &kernel_value_range, 
+		       double &used_error);
 
   /** @brief The base-case exhaustive computation for dual-tree based
    *         computation of B^T W(q) Y.
@@ -209,7 +195,7 @@ class KrylovLpr {
    *  @param qnode The query node.
    *  @param rnode The reference node.
    */
-  void DualtreeRightHandSidesBase_
+  void DualtreeWeightedVectorSumBase_
   (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset, 
    Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
    Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
@@ -220,7 +206,7 @@ class KrylovLpr {
    *  @param qnode The query node.
    *  @param rnode The reference node.
    */
-  void DualtreeRightHandSidesCanonical_
+  void DualtreeWeightedVectorSumCanonical_
     (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
      Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
      Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
@@ -231,105 +217,30 @@ class KrylovLpr {
    *         z(q) = B^T W(q) Y. This function calls a dual-tree based
    *         fast vector summation to achieve this effect.
    */
-  void ComputeRightHandSides_
-    (QueryTree *qroot, const Matrix &qset, Matrix &right_hand_sides_l,
-     Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error,
-     Vector &right_hand_sides_n_pruned) {
+  void ComputeWeightedVectorSum_
+    (QueryTree *qroot, const Matrix &qset, const Vector &weights,
+     Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+     Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
-    // Initialize the bound quantities.
+    // Initialize the weight statistics on the reference side.
+    InitializeReferenceStatistics_(rroot_, 0, weights);
+	
+    // Initialize the bound quantities on the query side.
     right_hand_sides_l.SetZero();
     right_hand_sides_e.SetZero();
     right_hand_sides_used_error.SetZero();
     right_hand_sides_n_pruned.SetZero();
-    InitializeQueryTreeRightHandSides_(qroot);
-
+    InitializeQueryTree_(qroot);
+    
     // Call dualtree function.
-    DualtreeRightHandSidesCanonical_
+    DualtreeWeightedVectorSumCanonical_
       (qroot, rroot_, qset, right_hand_sides_l, right_hand_sides_e,
        right_hand_sides_used_error, right_hand_sides_n_pruned);
 
     // Final traversal of the query tree to finalize estimates.
-    FinalizeQueryTreeRightHandSides_
-      (qroot, qset, right_hand_sides_l, right_hand_sides_e,
-       right_hand_sides_used_error, right_hand_sides_n_pruned);
+    FinalizeQueryTree_(qroot, qset, right_hand_sides_l, right_hand_sides_e,
+		       right_hand_sides_used_error, right_hand_sides_n_pruned);
   }
-
-  /** @brief Initialize the query tree for an iteration inside a
-   *         Krylov solver. This forms the bounds for the solution
-   *         vectors owned by the query points for a given query node.
-   *
-   *  @param qnode The current query node.
-   *  @param current_lanczos_vectors Each column of this matrix is a current
-   *                                 Lanczos vector for each query point.
-   */
-  void InitializeQueryTreeLanczosVectorBound_
-    (QueryTree *qnode, const Matrix &qset,
-     const ArrayList<bool> &exclude_query_flag,
-     const Matrix &current_lanczos_vectors);
-
-  /** @brief Finalize the Lanczos vector generator by traversing the
-   *         query tree and summing up any unincorporated quantities.
-   *
-   *  @param qnode The query node.
-   */
-  void FinalizeQueryTreeLanczosMultiplier_
-    (QueryTree *qnode, const Matrix &qset,
-     const ArrayList<bool> &exclude_query_flag,
-     const Matrix &current_lanczos_vectors,
-     Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
-     Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
-     Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
-     Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned);
-
-  /** @brief Determine whether the given query and the reference node
-   *         pair can be pruned.
-   *
-   *  @return True, if it can be pruned. False, otherwise.
-   */
-  bool PrunableSolver_(QueryTree *qnode, ReferenceTree *rnode, 
-		       Matrix &current_lanczos_vectors, 
-		       DRange &root_negative_dot_product_range,
-		       DRange &root_positive_dot_product_range,
-		       DRange &dsqd_range,
-		       DRange &kernel_value_range, double &used_error);
-
-  /** @brief The base-case exhaustive computation for dual-tree based
-   *         computation of (B^T W(q) B) z(q).
-   *
-   *  @param qnode The query node.
-   *  @param rnode The reference node.
-   *  @param current_lanczos_vectors Each column of this matrix is a current
-   *                                 Lanczos vector for each query point.
-   */
-  void DualtreeSolverBase_
-  (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset, 
-   const ArrayList<bool> &query_should_exit_the_loop,
-   const Matrix &current_lanczos_vectors, Matrix &lanczos_prod_l,
-   Matrix &lanczos_prod_e, Vector &lanczos_prod_used_error,
-   Vector &lanczos_prod_n_pruned, Matrix &neg_lanczos_prod_e,
-   Matrix &neg_lanczos_prod_u, Vector &neg_lanczos_prod_used_error,
-   Vector &neg_lanczos_prod_n_pruned);
-
-  /** @brief The canonical case for dual-tree based computation of
-   *         (B^T W(q) B) z(q)
-   *
-   *  @param qnode The query node.
-   *  @param rnode The reference node.
-   *  @param current_lanczos_vectors Each column of this matrix is a current
-   *                                 Lanczos vector for each query point.
-   */
-  void DualtreeSolverCanonical_
-  (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
-   const ArrayList<bool> &query_should_exit_the_loop,
-   const Matrix &current_lanczos_vectors, 
-   Matrix &lanczos_prod_l, Matrix &lanczos_prod_e,
-   Vector &lanczos_prod_used_error, Vector &lanczos_prod_n_pruned,
-   Matrix &neg_lanczos_prod_e, Matrix &neg_lanczos_prod_u,
-   Vector &neg_lanczos_prod_used_error, Vector &neg_lanczos_prod_n_pruned);
-
-  void SolveLeastSquaresByKrylov_(QueryTree *qroot, const Matrix &qset,
-				  const Matrix &right_hand_sides,
-				  Matrix &solution_vectors_e);
 
   /** @brief Finalize the regression estimate for each query point by
    *         taking the dot-product between [1; q^T] and the final
@@ -471,13 +382,15 @@ class KrylovLpr {
     // point. This essentially becomes the right-hand side for each
     // query point.
     printf("Starting Phase 1...\n");
-    ComputeRightHandSides_
-      (qroot, qset, right_hand_sides_l, right_hand_sides_e,
+    ComputeWeightedVectorSum_
+      (qroot, qset, rset_target_divided_by_norm_consts_,
+       right_hand_sides_l, right_hand_sides_e,
        right_hand_sides_used_error, right_hand_sides_n_pruned);
     // TestRightHandSideComputation_(qset, right_hand_sides_e);
     
     printf("Phase 1 completed...\n");
 
+    /*
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
@@ -504,6 +417,7 @@ class KrylovLpr {
 	 solution_vectors_e_single_alias);
       delete qroot_single;
     }
+    */
     /*
     SolveLeastSquaresByKrylov_(qroot, qset, right_hand_sides_e, 
 			       solution_vectors_e);
@@ -568,7 +482,53 @@ class KrylovLpr {
 			    query_magnitude_weight_diagrams,
 			    (query_influence_values != NULL));
   }
-  
+
+  /** @brief Initialize the bandwidth by either fixed bandwidth
+   *         parameter or a nearest neighbor based one (i.e. perform
+   *         nearest neighbor and set the bandwidth equal to the k-th
+   *         nearest neighbor distance).
+   */
+  void InitializeBandwidths_() {
+
+    kernels_.Init(rset_.n_cols());
+
+    if(fx_param_exists(NULL, "bandwidth")) {
+      printf("Using the fixed bandwidth method...\n");
+
+      double bandwidth = fx_param_double_req(NULL, "bandwidth");
+      for(index_t i = 0; i < kernels_.size(); i++) {	
+	kernels_[i].Init(bandwidth);
+      }
+    }
+    else {
+      printf("Using the nearest neighbor method...\n");
+      AllkNN all_knn;
+      double knn_factor = fx_param_double(module_, "knn_factor", 0.2);
+      int knns = (int) (knn_factor * rset_.n_cols());
+      all_knn.Init(rset_, 20, knns);
+      ArrayList<index_t> resulting_neighbors;
+      ArrayList<double> distances;
+      
+      all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
+
+      for(index_t i = 0; i < distances.size(); i += knns) {
+	kernels_[i / knns].Init(sqrt(distances[i + knns - 1]));
+      }
+    }
+  }
+
+  void PrecomputeWeights_() {
+    rset_target_divided_by_norm_consts_.Init(rset_.n_cols());
+    rset_inv_norm_consts_.Init(rset_.n_cols());
+
+    for(index_t i = 0; i < rset_.n_cols(); i++) {
+      rset_target_divided_by_norm_consts_[i] = 
+	rset_targets_[i] / kernels_[i].CalcNormConstant(dimension_);
+      rset_inv_norm_consts_[i] = 1.0 / 
+	kernels_[i].CalcNormConstant(dimension_);
+    }
+  }
+
  public:
   
   ////////// Constructor/Destructor //////////
@@ -659,12 +619,9 @@ class KrylovLpr {
     rset_targets_.CopyValues(tmp_rset_targets);
     fx_timer_stop(NULL, "krylov_lpr_reference_tree_construct");
     
-    // Initialize the kernel.
-    double bandwidth = fx_param_double_req(NULL, "bandwidth");
-    kernels_.Init(rset_.n_cols());
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
-      kernels_[i].Init(bandwidth);
-    }
+    // Initialize the kernels.
+    InitializeBandwidths_();
+    PrecomputeWeights_();
         
     // Train the model using the reference set (i.e. compute
     // confidence interval and degrees of freedom.)
@@ -672,7 +629,6 @@ class KrylovLpr {
 
     // initialize the reference side statistics.
     target_weighted_rset_.Init(row_length_, rset_.n_cols());
-    InitializeReferenceStatistics_(rroot_);
 
     ComputeMain_(references, &rset_regression_estimates_,
 		 &rset_confidence_bands_, &rset_magnitude_weight_diagrams_,
@@ -701,7 +657,6 @@ class KrylovLpr {
 };
 
 #include "krylov_lpr_setup_impl.h"
-#include "krylov_lpr_solver_impl.h"
 #include "krylov_lpr_test.h"
 #undef INSIDE_KRYLOV_LPR_H
 
