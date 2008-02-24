@@ -17,6 +17,9 @@
  */
 
 NonConvexMVU::NonConvexMVU() {
+ knns_=5;
+ kfns_=0;
+ leaf_size_=20;
  eta_ = 0.9;
  gamma_ =1.3;
  sigma_ = 1e3;
@@ -31,21 +34,20 @@ NonConvexMVU::NonConvexMVU() {
  max_violation_of_distance_constraint_ =4*1e6;
 }
 
-TEMPLATE_TAG_
-void NonConvexMVU::Init(std::string data_file, index_t knns, index_t kfns) {
-  Init<OPT_PARAM_>(data_file, knns, kfns, 20);
-}
-TEMPLATE_TAG_
-void NonConvexMVU::Init(std::string data_file, index_t knns, index_t kfns,
-    index_t leaf_size) {
-  knns_=knns;
-  kfns_=kfns;
-  leaf_size_=leaf_size;
+template<GradientEnum gradient_mode>
+void NonConvexMVU::Init(std::string data_file) {
+  Matrix data;
   NOTIFY("Loading data ...\n");
-  data::Load(data_file.c_str(), &data_);
+  data::Load(data_file.c_str(), &data);
   if (unlikely(data_.n_cols()<=0)) {
     FATAL("Failed to load data, 0 entries found, probably empty file\n");
   }
+  Init(data);
+}
+
+template<GradientEnum gradient_mode>
+void NonConvexMVU::Init(Matrix &data) {
+  data_.Own(&data);
   RemoveMean_(data_);
   num_of_points_ = data_.n_cols();
   NOTIFY("Data loaded ...\n");
@@ -296,6 +298,18 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
     printf("\n");
 }
 
+void NonConvexMVU::set_knns(index_t knns) {
+ knns_=knns;
+}
+
+void NonConvexMVU::set_kfns(index_t kfns) {
+  kfns_=kfns;
+}
+
+void NonConvexMVU::set_leaf_size(index_t leaf_size) {
+  leaf_size_ =leaf_size;
+}
+ 
 void NonConvexMVU::set_eta(double eta) {
   eta_ = eta;
 }
