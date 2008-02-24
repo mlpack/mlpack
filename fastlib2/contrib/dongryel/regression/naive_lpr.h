@@ -400,7 +400,7 @@ class NaiveLpr {
       all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
 
       for(index_t i = 0; i < distances.size(); i += knns) {
-	kernels_[i / knns].Init(distances[i]);
+	kernels_[i / knns].Init(sqrt(distances[i + knns - 1]));
       }
     }
   }
@@ -520,8 +520,9 @@ class NaiveLpr {
       stream = fopen(fname, "w+");
     }
     for(index_t r = 0; r < rset_.n_cols(); r++) {
-      fprintf(stream, "%g %g %g\n", rset_confidence_bands_[r].lo,
-	      rset_regression_estimates_[r], rset_confidence_bands_[r].hi);
+      fprintf(stream, "%g %g %g %g\n", rset_confidence_bands_[r].lo,
+	      rset_regression_estimates_[r], rset_confidence_bands_[r].hi,
+	      leave_one_out_rset_regression_estimates_[r]);
     }
     
     if(stream != stdout) {
