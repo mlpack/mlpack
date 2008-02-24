@@ -216,7 +216,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeSolverCanonical_
 
     // Add the Epanechnikov moments
     for(index_t j = 0; j < row_length_; j++) {
-      for(index_t i = 0; i < row_length_; i++) {
+      for(index_t i = 0; i <= j; i++) {
 	qnode->stat().postponed_epanechnikov_moments_[j][i].
 	  Add(rnode->stat().data_outer_products_far_field_expansion_[j][i]);
       }
@@ -552,10 +552,15 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
 
       // Evaluate the Epanechnikov moments.
       for(index_t i = 0; i < row_length_; i++) {
-	for(index_t j = 0; j < row_length_; j++) {
+	for(index_t j = 0; j <= i; j++) {
 	  evaluated_moments.set
-	    (j, i, qnode->stat().postponed_epanechnikov_moments_[j][i].
+	    (j, i, qnode->stat().postponed_epanechnikov_moments_[i][j].
 	     ComputeKernelSum(q_col));
+	}
+      }
+      for(index_t i = 0; i < row_length_; i++) {
+	for(index_t j = i + 1; j < row_length_; j++) {
+	  evaluated_moments.set(j, i, evaluated_moments.get(i, j));
 	}
       }
 
@@ -603,7 +608,7 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTreeLanczosMultiplier_
 
     // Push down Epanechnikov pruned portions.
     for(index_t i = 0; i < row_length_; i++) {
-      for(index_t j = 0; j < row_length_; j++) {
+      for(index_t j = 0; j <= i; j++) {
 	q_left_stat.postponed_epanechnikov_moments_[i][j].Add
 	  (q_stat.postponed_epanechnikov_moments_[i][j]);
 	q_right_stat.postponed_epanechnikov_moments_[i][j].Add

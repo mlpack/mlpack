@@ -68,7 +68,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	  Add(r_target_weighted_by_coordinates[j], kernels_[r].bandwidth_sq(),
 	      r_col);
 	
-	for(index_t i = 0; i < row_length_; i++) {
+	for(index_t i = 0; i <= j; i++) {
 	  rnode->stat().data_outer_products_far_field_expansion_[j][i].
 	    Add(reference_point_expansion[j] * reference_point_expansion[i],
 		kernels_[r].bandwidth_sq(), r_col);
@@ -118,7 +118,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	Add(rnode->right()->stat().
 	    target_weighted_data_far_field_expansion_[j]);
       
-      for(index_t i = 0; i < row_length_; i++) {
+      for(index_t i = 0; i <= j; i++) {
 
 	// First the far field moments of outer product using the bandwidth
 	rnode->stat().data_outer_products_far_field_expansion_[j][i].

@@ -93,6 +93,7 @@ int main(int argc, char *argv[]) {
     printf("Finished the ST-DENSE-LPR algorithm with relative prune rule.\n");
   }
 
+  /*
   // Do naive algorithm.
   printf("Running the naive algorithm...\n");
   Vector naive_lpr_results;
@@ -105,6 +106,7 @@ int main(int argc, char *argv[]) {
   printf("Maximum relative difference in regression estimate: %g\n",
 	 MatrixUtil::MaxRelativeDifference(naive_lpr_results,
 					   fast_lpr_results));
+  */
 
   // Finalize FastExec and print output results.
   fx_done();

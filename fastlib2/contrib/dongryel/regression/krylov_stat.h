@@ -120,8 +120,8 @@ class KrylovLprRStat {
     reference_point_expansion_bound_.Init(matrix_dimension);
     data_outer_products_far_field_expansion_.Init(matrix_dimension);
     for(index_t j = 0; j < matrix_dimension; j++) {
-      data_outer_products_far_field_expansion_[j].Init(matrix_dimension);
-      for(index_t i = 0; i < matrix_dimension; i++) {
+      data_outer_products_far_field_expansion_[j].Init(j + 1);
+      for(index_t i = 0; i <= j; i++) {
 	data_outer_products_far_field_expansion_[j][i].Init(dimension);
       }
     }
@@ -268,7 +268,7 @@ public:
 
     for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Reset();
-      for(index_t j = 0; j < postponed_moment_ll_vector_e_.size(); j++) {
+      for(index_t j = 0; j <= i; j++) {
 	postponed_epanechnikov_moments_[i][j].Reset();
       }
     }
@@ -292,8 +292,8 @@ public:
     postponed_epanechnikov_moments_.Init(matrix_dimension);
     for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Init(dimension);
-      postponed_epanechnikov_moments_[i].Init(matrix_dimension);
-      for(index_t j = 0; j < matrix_dimension; j++) {
+      postponed_epanechnikov_moments_[i].Init(i + 1);
+      for(index_t j = 0; j <= i; j++) {
 	postponed_epanechnikov_moments_[i][j].Init(dimension);
       }
     }
