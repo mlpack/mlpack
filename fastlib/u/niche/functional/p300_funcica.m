@@ -54,15 +54,31 @@ for epoch = 1:num_epochs
   end
 end
 
+new_responses = zeros(T, num_flashes, num_trials, num_epochs);
+new_is_target = zeros(num_flashes, num_trials, num_epochs);
+for i = 1:T
+  for j = 1:num_flashes
+    for k = 1:num_trials
+      for l = 1:num_epochs
+	new_responses(i,j,k,l) = responses(l,j,k,i);
+	new_is_target(j,k,l) = is_target(l,j,k);
+      end
+    end
+  end
+end
+
+responses = new_responses;
+is_target = new_is_target;
+clear new_responses;
+clear new_is_target;
 
 responses = ...
-    reshape(responses, [num_epochs * num_flashes * num_trials, ...
-		    T])';
-
+    reshape(responses, [T, num_flashes * num_trials * num_epochs]);
 
 is_target = ...
-    reshape(is_target, [num_epochs * num_flashes * num_trials, ...
-		    1])';
+    reshape(is_target, [1 num_flashes * num_trials * num_epochs]);
+
+
 %{
 target_data = responses(:, find(is_target));
 nontarget_data = responses(:,find(~is_target));
@@ -74,7 +90,7 @@ nontarget_data = nontarget_data(:, selected_indices);
 data = [target_data nontarget_data];
 %}
 
-data = responses(:,1:5100);
+data = responses(:,1:(num_flashes*num_trials*29));
 
 
 t = 1/240:1/240:1;
@@ -85,10 +101,6 @@ basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
 
 
-
-
-myfdPar = fdPar(mybasis, 2, 0);
-
 myfd = data2fd(data, t, mybasis);
 mean_result = pca_fd(myfd, 0);
 centered_data_coef = ...
@@ -98,7 +110,7 @@ centered_myfd = fd(centered_data_coef, mybasis);
 
 centered_data_curves = basis_curves * getcoef(centered_myfd);
 
-lambda = 0;
+lambda = 1e-7;
 myfdPar = fdPar(mybasis, 2, lambda);
 pca_results = pca_fd(centered_myfd, 30, myfdPar);
 
@@ -116,7 +128,7 @@ for i = 1:size(ic_curves,2)
   ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
 end
 
-save p300_filtered_lambda0_correct_results.mat;
+save p300_filtered_lambda1Eneg7_correct_results_2.mat;
 
 % given a set of curves, identify component curves of variation
 % once we have these curves, see how well each curve differentiates
