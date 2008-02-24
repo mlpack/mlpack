@@ -1,18 +1,22 @@
-
 librule(
-    name = "lpr",                            # this line can be safely omitted
-    sources = [],                            # files that must be compiled
-    headers = ["lpr.h"],                     # include files part of the 'lib'
-    deplibs = ["u/dongryel/series_expansion:series_expansion",
-               "fastlib:fastlib_int"]        # dependency
+    name = "dense_lpr",
+    sources = [],
+    headers = ["dense_lpr.h",
+               "dense_lpr_impl.h",
+               "epan_kernel_moment_info.h",
+               "lpr_util.h",
+               "matrix_util.h",
+               "multi_index_util.h",
+               "quick_prune_lpr.h",
+               "relative_prune_lpr.h"],
+    deplibs = ["fastlib:fastlib_int"]
     )
 
 binrule(
-    name = "lpr_bin",                        # the executable name
-    sources = ["main.cc"],
-    headers = [],                            # no extra headers
-    deplibs = [":lpr",
-               "u/dongryel/series_expansion:series_expansion",
+    name = "dense_lpr_bin",
+    sources = ["dense_lpr_main.cc"],
+    headers = [],
+    deplibs = [":dense_lpr",
                "fastlib:fastlib_int"]
     )
 
