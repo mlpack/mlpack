@@ -95,7 +95,10 @@ data = responses(:,1:(num_flashes*num_trials*29));
 
 t = 1/240:1/240:1;
 
-mybasis = create_bspline_basis([1/240 1], 30, 4);
+m = 120;
+p = 12;
+
+mybasis = create_bspline_basis([1/240 1], m, 4);
 basis_curves = eval_basis(t, mybasis);
 basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
@@ -110,25 +113,27 @@ centered_myfd = fd(centered_data_coef, mybasis);
 
 centered_data_curves = basis_curves * getcoef(centered_myfd);
 
-lambda = 1e-7;
+lambda = 1.6034e-8;
 myfdPar = fdPar(mybasis, 2, lambda);
-pca_results = pca_fd(centered_myfd, 30, myfdPar);
+pca_results = pca_fd(centered_myfd, p, myfdPar);
 
 [ic_curves, ic_coef, ic_scores, ...
  pc_coef, pc_curves, pc_scores, W] = ...
-    funcica(t, centered_myfd, 30, basis_curves, myfdPar, ...
+    funcica(t, centered_myfd, p, basis_curves, myfdPar, ...
 	    basis_inner_products);
 
 %plot(t, -ic_curves(:,6));
 
-for i = 1:size(ic_curves,2)
-  scale_up_factor = ...
-      1 / sqrt(l2_fnorm(t, ic_curves(:,i), ic_curves(:,i)));
-  ic_curves(:,i) = scale_up_factor * ic_curves(:,i);
-  ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
-end
+%for i = 1:size(ic_curves,2)
+%  scale_up_factor = ...
+%      1 / sqrt(l2_fnorm(t, ic_curves(:,i), ic_curves(:,i))); DON'T ...
+%      USE L2_FNORM HERE!
+%  ic_curves(:,i) = scale_up_factor * ic_curves(:,i);
+%  ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
+%end
 
-save p300_filtered_lambda1Eneg7_correct_results_2.mat;
+save p300_filtered_lambda16034Eneg8_correct_results_2.mat;
+
 
 % given a set of curves, identify component curves of variation
 % once we have these curves, see how well each curve differentiates

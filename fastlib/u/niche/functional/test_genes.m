@@ -56,7 +56,8 @@ fprintf('funcica returned\n');
 
 for i = 1:size(ic_curves,2)
   scale_up_factor = ...
-      1 / sqrt(l2_fnorm(t, ic_curves(:,i), ic_curves(:,i)));
+      1 / sqrt(l2_fnorm(t, ic_curves(:,i), ic_curves(:,i))); DON'T ...
+      USE L2_FNORM HERE!
   ic_curves(:,i) = scale_up_factor * ic_curves(:,i);
   ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
 end
