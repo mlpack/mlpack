@@ -8,8 +8,7 @@
 #include "matrix_util.h"
 
 template<typename TKernel, typename TPruneRule>
-void KrylovLpr<TKernel, TPruneRule>::
-InitializeQueryTree_(QueryTree *qnode) {
+void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTree_(QueryTree *qnode) {
   
   // Set the bounds to default values.
   qnode->stat().Reset();
@@ -23,9 +22,8 @@ InitializeQueryTree_(QueryTree *qnode) {
 }
 
 template<typename TKernel, typename TPruneRule>
-void KrylovLpr<TKernel, TPruneRule>::
-InitializeReferenceStatistics_(ReferenceTree *rnode, int column_index,
-			       const Vector &weights) {
+void KrylovLpr<TKernel, TPruneRule>::InitializeReferenceStatistics_
+(ReferenceTree *rnode, int column_index, const Vector &weights) {
   
   if(rnode->is_leaf()) {
     
