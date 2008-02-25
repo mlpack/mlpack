@@ -91,7 +91,7 @@ template<typename TKernel> class KNNRegression{
   double sigma_hat_;
 
   //This stores the knn distance of all the reference points
-  Vector knn_distances_;
+  Vector knn_distance_reference_points_;
 
 
 
@@ -181,6 +181,7 @@ template<typename TKernel> class KNNRegression{
     double df1=0.0;
     double df2=0.0;
 
+
     for(index_t r=0;r<rset_.n_cols();r++){
       
       //For each reference point. Compute the kernel sum of its knn
@@ -188,7 +189,9 @@ template<typename TKernel> class KNNRegression{
       double sum=0;
       for(index_t l=0;l<k_;l++){
 	
-	sum+=kernel_.EvalUnnormOnSq(nn_distances_reference_points_[r*k_+l]);
+	double bw=bandwidth_*knn_distance_reference_points_[nn_neighbours_reference_points_[r*k_+l]];
+	kernel_.Init(bw);
+	sum+=(kernel_.EvalUnnormOnSq(nn_distances_reference_points_[r*k_+l]))/kernel_.CalcNormConstant(rset_.n_rows());
       }
 
       //So we now have the sum of the kernel weights of all the
@@ -219,14 +222,21 @@ template<typename TKernel> class KNNRegression{
     double sum=0;
 
     for(index_t l=0;l<k_;l++){
-      
-      sum+=kernel_.EvalUnnormOnSq(nn_distances_[q*k_+l]);
+
+      //Note the array knn_distance_reference_points holds the kth
+      //nearest neighbour of a particular point
+      double bw=bandwidth_*knn_distance_reference_points_[nn_neighbours_reference_points_[q*k_+l]];
+      kernel_.Init(bw);
+      sum+=kernel_.EvalUnnormOnSq(nn_distances_[q*k_+l])/kernel_.CalcNormConstant(rset_.n_rows());
     }
 
     double sqdlength=0;
     for(index_t l=0;l<k_;l++){
-      
-      double contribution_due_to_other_point=kernel_.EvalUnnormOnSq(nn_distances_[q*k_+l]);
+
+      double bw=bandwidth_*knn_distance_reference_points_[nn_neighbours_reference_points_[q*k_+l]];
+      kernel_.Init(bw);
+      double contribution_due_to_other_point=
+	kernel_.EvalUnnormOnSq(nn_distances_[q*k_+l])/(kernel_.CalcNormConstant(rset_.n_rows()));
       double ratio=contribution_due_to_other_point/sum;
       sqdlength+=ratio*ratio;
     }
@@ -279,6 +289,8 @@ template<typename TKernel> class KNNRegression{
  
 
     //perform local linear regression on the reference set of points
+
+    index_t flag= CALCULATE_FOR_REFERENCE_POINTS_;
     KNNLocalLinearRegression_(flag);
 
 
@@ -327,12 +339,10 @@ template<typename TKernel> class KNNRegression{
     //point
 
     
-  
+    index_t flag= CALCULATE_FOR_REFERENCE_POINTS_;
     KNNNWRegression_(flag);
-    //printf("Did KNNNWR regression...\n");
     
-    
-    
+   
     //We need to do two things to compute the C.I. of an point. First
     //we need to calculate the sigma_hat and then we need to calculate
     //the length of l(x) vector. Lets do them in 2 functions.Note that
@@ -352,7 +362,7 @@ template<typename TKernel> class KNNRegression{
       //Once we have the length of the hat vector we should be able to
       //calculate the upper and lower bounds of the C.I for the query
       //point
-      double lower_bound=regression_estimates_[q]+1.96*sigma_hat_*(1+sqdlength);
+      double lower_bound=regression_estimates_[q]-1.96*sigma_hat_*(1+sqdlength);
       confidence_interval_[q*2]=lower_bound;
 
       double upper_bound=regression_estimates_[q]+1.96*sigma_hat_*(1+sqdlength);
@@ -370,6 +380,7 @@ template<typename TKernel> class KNNRegression{
     //For each query point
     
     index_t number_of_points;
+
     if(flag==CALCULATE_FOR_QUERY_POINTS_){
       
       number_of_points = qset_.n_cols();
@@ -386,7 +397,7 @@ template<typename TKernel> class KNNRegression{
    
 
     for(index_t q=0; q<number_of_points; q++){
-      printf("q is %d\n",q);
+      
       
       float numerator=0;
       float denominator=0;
@@ -397,11 +408,14 @@ template<typename TKernel> class KNNRegression{
        
 	for(index_t l=0;l<k_;l++){
 	  
+	  double bw=bandwidth_*knn_distance_reference_points_[nn_neighbours_reference_points_[q*k_+l]];
+	  kernel_.Init(bw);
+
 	  numerator+=
 	    rset_weights_[nn_neighbours_[q*k_+l]]*
-	    kernel_.EvalUnnormOnSq (nn_distances_[q*k_+l]); 
+	    kernel_.EvalUnnormOnSq (nn_distances_[q*k_+l])/kernel_.CalcNormConstant(rset_.n_rows()); 
 	  
-	  denominator+=kernel_.EvalUnnormOnSq(nn_distances_[q*k_+l]);
+	  denominator+=kernel_.EvalUnnormOnSq(nn_distances_[q*k_+l])/kernel_.CalcNormConstant(rset_.n_rows());
 	}
 	regression_estimates_[q]=numerator/denominator;
       }
@@ -411,14 +425,17 @@ template<typename TKernel> class KNNRegression{
 	
 	for(index_t l=0;l<k_;l++){
 
-	    
+	  double bw=bandwidth_*knn_distance_reference_points_[nn_neighbours_reference_points_[q*k_+l]];
+	  kernel_.Init(bw);
 
 	  numerator+=
 	    rset_weights_[nn_neighbours_reference_points_[q*k_+l]]*
-	    kernel_.EvalUnnormOnSq (nn_distances_reference_points_[q*k_+l]); 
+	    kernel_.EvalUnnormOnSq (nn_distances_reference_points_[q*k_+l])/
+	    kernel_.CalcNormConstant(rset_.n_rows()); 
 	  
 	  denominator+=
-	    kernel_.EvalUnnormOnSq(nn_distances_reference_points_[q*k_+l]);
+	    kernel_.EvalUnnormOnSq(nn_distances_reference_points_[q*k_+l])/
+	    kernel_.CalcNormConstant(rset_.n_rows());
 	}
 	regression_estimates_reference_points_[q]=numerator/denominator;
 
@@ -440,6 +457,12 @@ template<typename TKernel> class KNNRegression{
       //the query point
       
       for (index_t r = 0; r < k_; r++){ 
+
+
+	//Set up the bandwidth as per the reference point
+
+	double bw=bandwidth_*knn_distance_reference_points_[nn_neighbours_reference_points_[q*k_+r]];
+	kernel_.Init(bw);
 	
 	//Get reference point
 	const double *r_col = rset_.GetColumnPtr(nn_neighbours_[q*k_+r]);
@@ -448,7 +471,7 @@ template<typename TKernel> class KNNRegression{
 	double dsqd =
 	  la::DistanceSqEuclidean (qset_.n_rows (), q_col, r_col);
 	
-	double ker_value = kernel_.EvalUnnormOnSq (dsqd);
+	double ker_value = kernel_.EvalUnnormOnSq (dsqd)/kernel_.CalcNormConstant(rset_.n_rows());
 	
 	for(index_t col = 0; col < rset_.n_rows () + 1; col++){	//along each direction
 	  
@@ -466,6 +489,8 @@ template<typename TKernel> class KNNRegression{
 	      if (row != 0){
 		
 		//Fill B^TWY naive
+
+	
 		
 		double val=b_twy_[q].get(row,col)+ 
 		  ker_value * rset_weights_[nn_neighbours_[q*k_+r]] * 
@@ -563,6 +588,12 @@ template<typename TKernel> class KNNRegression{
       //the query point 
       
       for (index_t r = 0; r < k_; r++){ 
+
+
+	//Set the bandiwdth as per the reference point
+
+	double bw=bandwidth_*knn_distance_reference_points_[nn_neighbours_reference_points_[q*k_+r]];
+	kernel_.Init(bw);
 	
 	//Get reference point
 	const double *r_col = rset_.GetColumnPtr(nn_neighbours_reference_points_[q*k_+r]);
@@ -571,7 +602,7 @@ template<typename TKernel> class KNNRegression{
 	double dsqd =
 	  la::DistanceSqEuclidean (rset_.n_rows (), q_col, r_col);
 	
-	double ker_value = kernel_.EvalUnnormOnSq (dsqd);
+	double ker_value = kernel_.EvalUnnormOnSq (dsqd)/kernel_.CalcNormConstant(rset_.n_rows());
 	
 	for(index_t col = 0; col < rset_.n_rows () + 1; col++){	//along each direction
 	  
@@ -691,11 +722,6 @@ template<typename TKernel> class KNNRegression{
 
 
 	PseudoInverse::FindPseudoInverse(b_twb_[q]);  
-
-
-
-
-
 	la::MulInit (b_twb_[q],b_twy_[q], &temp[q]);
 	Matrix q_matrix;
 	
@@ -762,15 +788,11 @@ template<typename TKernel> class KNNRegression{
 	la::MulInit(q_matrix,temp[q],&temp2);  
 	
 	regression_estimates_reference_points_[q]=temp2.get(0,0);
-      }
-
-      printf("Priniting regression estimates for reference points ..\n");
-      regression_estimates_reference_points_.PrintDebug();
-     
+      }  
     }
   }
     
-  void GetTheKNNNeighbours_(index_t flag){
+  void GetTheKNNNeighbours_(){
     
     
     //First lets get the knn of all the query points We shall
@@ -778,26 +800,33 @@ template<typename TKernel> class KNNRegression{
     
     AllkNN *all_knn;
     all_knn=new AllkNN();
-  
 
-    if(flag==CALCULATE_FOR_QUERY_POINTS_){
 
-     
-      all_knn->Init(rset_,rset_,LEAF_SIZE,k_);
-     
-      //Now lets call the compute function.
-      all_knn->ComputeNeighbors(&nn_neighbours_,&nn_distances_);
-
-      
-    }
-
-    else{
+    //First lets perform allknn on the query set
     
-      all_knn->Init(rset_,rset_,LEAF_SIZE,k_);
-      all_knn->ComputeNeighbors
-	(&nn_neighbours_reference_points_,&nn_distances_reference_points_);
+    all_knn->Init(qset_,rset_,LEAF_SIZE,k_);
+    
+    //Now lets call the compute function.
+    all_knn->ComputeNeighbors(&nn_neighbours_,&nn_distances_);
+
+    //Now lets do allknn on the reference set
+    
+    AllkNN *all_knn1;
+    all_knn1=new AllkNN();
+    all_knn1->Init(rset_,rset_,LEAF_SIZE,k_);
+    all_knn1->ComputeNeighbors
+      (&nn_neighbours_reference_points_,&nn_distances_reference_points_);
+    
+    for(index_t l=0;l<rset_.n_cols();l++){
+      
+      knn_distance_reference_points_[l]=nn_distances_reference_points_[(l+1)*k_-1];
     }
+    
+    printf("farthest neighbours are...\n");
+    
+    knn_distance_reference_points_.PrintDebug();
   }
+  
 
 
 
@@ -812,19 +841,10 @@ template<typename TKernel> class KNNRegression{
     
 
     //We first find the knn of all the query points
+    
+    GetTheKNNNeighbours_();
+
     index_t flag=CALCULATE_FOR_QUERY_POINTS_;
-    
-    GetTheKNNNeighbours_(flag);
-
-
-    //We also need to find out the knn of all the reference
-    //points. This will act as a bandwidth
-
-
-    index_t flag=CALCULATE_FOR_REFERENCE_POINTS_;
-    
-    GetTheKNNNeighbours_(flag);
-    
     
     if(!strcmp(method,"nwr")){
       
@@ -860,7 +880,7 @@ template<typename TKernel> class KNNRegression{
     rset_weights_.Copy(rset_weights);
 
     //Initialize the kerneL
-    kernel_.Init(bandwidth);
+    kernel_.Init(bandwidth_);
 
   
 
@@ -920,9 +940,9 @@ template<typename TKernel> class KNNRegression{
     //Set them to all 0's
     confidence_interval_.SetZero();
 
-    //Store the knn distances of all the reference points
+    //Store the knn distance of all the reference points
 
-    knn_distances_.Init(rset_.n_cols());
+    knn_distance_reference_points_.Init(rset_.n_cols());
     
   }
 };
