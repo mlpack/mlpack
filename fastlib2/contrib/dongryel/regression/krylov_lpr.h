@@ -28,7 +28,7 @@
 template<typename TKernel, typename TPruneRule>
 class KrylovLpr {
 
-  // Declare friend class of this method.
+  // Declare friend class of this class.
   template<typename TKernel_, typename TPruneRule_>
   friend class KrylovLinearOperator;
 
@@ -182,7 +182,7 @@ class KrylovLpr {
   void InitializeReferenceStatistics_(ReferenceTree *rnode, int column_index,
 				      const Vector &weights);
 
-  void SolveLinearProblems_(QueryTree *qroot, const Matrix &qset, 
+  void SolveLinearProblems_(const Matrix &qset, 
 			    const Matrix &right_hand_sides_e);
 
   /** @brief The base-case exhaustive computation for dual-tree based
@@ -390,9 +390,8 @@ class KrylovLpr {
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
-    
-    // Delete the query tree.
-    SolveLinearProblems_(qroot, qset, right_hand_sides_e);
+    SolveLinearProblems_(qset, right_hand_sides_e);
+    delete qroot;
     printf("Phase 2 completed...\n");
 
     // Proceed with the third phase of the computation to output the
