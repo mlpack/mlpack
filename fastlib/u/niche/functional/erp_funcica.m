@@ -45,8 +45,6 @@ p_small = size(W, 1);
 %pc_curves = basis_curves * pc_coef;
 %ic_curves = basis_curves * ic_coef_pos;
 
-pc_coef = pc_coef';
-
 scores_train = get_scores(getcoef(myfd_train), pc_coef(1:p_small,:), ...
 					basis_inner_products)';
 scores_test = get_scores(getcoef(myfd_test), pc_coef(1:p_small,:), ...

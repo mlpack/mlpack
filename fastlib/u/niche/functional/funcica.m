@@ -15,7 +15,7 @@ pc_curves = basis_curves * pc_coef;
 
 % pc_scores = pca_results.harmscr;% this doesn't work if lambda > 0
 % instead, we do:
-pc_scores = get_scores(data_coef, pc_coef', basis_inner_products);
+pc_scores = get_scores(data_coef, pc_coef, basis_inner_products);
 
 %mean_coef = getcoef(pca_results.meanfd);
 
@@ -23,20 +23,22 @@ pc_scores = get_scores(data_coef, pc_coef', basis_inner_products);
 
 % p_small should be automatically selected according to some
 % reconstruction error threshold
+threshold = 0.9;
+p_small = min(find((cumsum(pca_results.varprop) >= threshold) == 1))
 
-total_sum_var = 0;
-for i = 1:p
-  total_sum_var = total_sum_var + sum(pc_scores(:,i).^2);
-end
+%total_sum_var = 0;
+%for i = 1:p
+%  total_sum_var = total_sum_var + sum(pc_scores(:,i).^2);
+%end
 
-sum_var = 0;
-for p_small = 1:p
-  sum_var = sum_var + sum(pc_scores(:,p_small).^2);
-  disp(sprintf('i = %d, sum_var = %f', p_small, sum_var / total_sum_var));
-  if sum_var / total_sum_var > 0.9
-    break
-  end
-end
+%sum_var = 0;
+%for p_small = 1:p
+%  sum_var = sum_var + sum(pc_scores(:,p_small).^2);
+%  disp(sprintf('i = %d, sum_var = %f', p_small, sum_var / total_sum_var));
+%  if sum_var / total_sum_var > 0.9
+%    break
+%  end
+%end
 
 fprintf('p_small = %d\n', p_small);
 
