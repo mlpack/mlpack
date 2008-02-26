@@ -56,7 +56,6 @@ int main(int argc, char *argv[]) {
   fast_lpr.get_regression_estimates(&fast_lpr_results);
   fast_lpr.PrintDebug();
 
-  /*
   // Do naive algorithm.
   Vector naive_lpr_results;
   NaiveLpr<EpanKernel> naive_lpr;
@@ -68,8 +67,6 @@ int main(int argc, char *argv[]) {
   printf("Maximum relative difference in regression estimate: %g\n",
 	 MatrixUtil::MaxRelativeDifference(naive_lpr_results,
 					   fast_lpr_results));
-					   
-  */
 
   // Finalize FastExec and print output results.
   fx_done();

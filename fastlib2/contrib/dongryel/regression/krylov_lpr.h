@@ -333,11 +333,6 @@ class KrylovLpr {
     // Final traversal of the query tree to finalize estimates.
     FinalizeQueryTree_(qroot, qset, right_hand_sides_l, right_hand_sides_e,
 		       right_hand_sides_used_error, right_hand_sides_n_pruned);
-    
-    printf("Column index: %d\n", column_index);
-    if(column_index > 0) {
-      right_hand_sides_e.PrintDebug();
-    }
   }
 
   void BasicComputeDualTree_(const Matrix &queries,
