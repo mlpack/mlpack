@@ -1,7 +1,7 @@
 function scores = get_scores(data_coef, components_coef, ...
 					basis_inner_products);
 % this function is for use with the fdaM toolbox
-% USAGE: scores = get_scores2(data_coef, components_coef, basis_inner_products)
+% USAGE: scores = get_scores(data_coef, components_coef, basis_inner_products)
 % data_coef is a matrix of size num_basis by N
 % components_coef is a matrix of size num_basis by num_components
 % basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)))
