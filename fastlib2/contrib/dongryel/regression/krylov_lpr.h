@@ -183,7 +183,8 @@ class KrylovLpr {
 				      const Vector &weights);
 
   void SolveLinearProblems_(const Matrix &qset, 
-			    const Matrix &right_hand_sides_e);
+			    const Matrix &right_hand_sides_e,
+			    Matrix &solution_vectors_e);
 
   /** @brief The base-case exhaustive computation for dual-tree based
    *         computation of B^T W(q) Y.
@@ -332,6 +333,11 @@ class KrylovLpr {
     // Final traversal of the query tree to finalize estimates.
     FinalizeQueryTree_(qroot, qset, right_hand_sides_l, right_hand_sides_e,
 		       right_hand_sides_used_error, right_hand_sides_n_pruned);
+    
+    printf("Column index: %d\n", column_index);
+    if(column_index > 0) {
+      right_hand_sides_e.PrintDebug();
+    }
   }
 
   void BasicComputeDualTree_(const Matrix &queries,
@@ -390,7 +396,7 @@ class KrylovLpr {
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
-    SolveLinearProblems_(qset, right_hand_sides_e);
+    SolveLinearProblems_(qset, right_hand_sides_e, solution_vectors_e);
     delete qroot;
     printf("Phase 2 completed...\n");
 
