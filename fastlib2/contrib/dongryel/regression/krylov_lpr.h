@@ -342,7 +342,7 @@ class KrylovLpr {
     num_finite_difference_prunes_ = num_epanechnikov_prunes_ = 0;
     
     // Set relative error.
-    relative_error_ = fx_param_double(module_, "relative_error", 0);
+    relative_error_ = fx_param_double(module_, "relative_error", 0.01);
     internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
 
     // Copy the query set.
