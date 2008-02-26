@@ -66,7 +66,7 @@ for i = 1:k
 end
 
 fprintf('\n');
-
+return;
 % use matlab's built-in bounded local optimizer
 [lambda_opt, alpha_opt, exitflag] = ...
     fminbnd(@(lambda) ...
@@ -75,3 +75,9 @@ fprintf('\n');
 				      test_fd_cells, basis_inner_products, ...
 				      basis_inner_products_diag), ...
 	    0, 1e-4, optimset('TolX', 1e-9));
+
+
+% variance of all test data (not just residuals) is 1.6280E6
+% variance of alpha_opt (residual for optimal lambda) is 0.0947
+% 10% cutoff point is 1.6280E5
+% 6.6E-5 -> alpha = 1.62780E5

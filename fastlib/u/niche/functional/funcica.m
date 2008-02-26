@@ -24,7 +24,7 @@ pc_scores = get_scores(data_coef, pc_coef, basis_inner_products);
 % p_small should be automatically selected according to some
 % reconstruction error threshold
 threshold = 0.9;
-p_small = min(find((cumsum(pca_results.varprop) >= threshold) == 1))
+p_small = p; %min(find((cumsum(pca_results.varprop) >= threshold) == 1))
 
 %total_sum_var = 0;
 %for i = 1:p

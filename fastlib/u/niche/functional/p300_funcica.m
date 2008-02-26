@@ -96,7 +96,7 @@ data = responses(:,1:(num_flashes*num_trials*29));
 t = 1/240:1/240:1;
 
 m = 120;
-p = 12;
+p = 11;
 
 mybasis = create_bspline_basis([1/240 1], m, 4);
 basis_curves = eval_basis(t, mybasis);
@@ -113,7 +113,7 @@ centered_myfd = fd(centered_data_coef, mybasis);
 
 centered_data_curves = basis_curves * getcoef(centered_myfd);
 
-lambda = 1.6034e-8;
+lambda = 3e-6;
 myfdPar = fdPar(mybasis, 2, lambda);
 pca_results = pca_fd(centered_myfd, p, myfdPar);
 
@@ -126,13 +126,14 @@ pca_results = pca_fd(centered_myfd, p, myfdPar);
 
 %for i = 1:size(ic_curves,2)
 %  scale_up_factor = ...
-%      1 / sqrt(l2_fnorm(t, ic_curves(:,i), ic_curves(:,i))); DON'T ...
-%      USE L2_FNORM HERE!
+%      1 / sqrt(sum(sum((ic_coef(:,i) * ic_coef(:,i)') .* ...
+%		       basis_inner_products)));
+%  ic_coef(:,i) = scale_up_factor * ic_coef(:,i);
 %  ic_curves(:,i) = scale_up_factor * ic_curves(:,i);
 %  ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
 %end
 
-save p300_filtered_lambda16034Eneg8_correct_results_2.mat;
+save p300_filtered_lambda3Eneg6_correct_results_120.mat;
 
 
 % given a set of curves, identify component curves of variation
