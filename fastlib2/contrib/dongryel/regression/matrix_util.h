@@ -127,6 +127,7 @@ class MatrixUtil {
 					const Vector &approx_results) {
 
       double max_relative_error = 0;
+      int max_index = -1;
 
       for(index_t d = 0; d < true_results.length(); d++) {
 
@@ -135,12 +136,19 @@ class MatrixUtil {
 	  printf("Warning: Got infinites and NaNs!\n");
 	}
 
+	if(max_relative_error < fabs(approx_results[d] - true_results[d]) /
+	   fabs(true_results[d])) {
+	  max_index = d;
+	}
+
 	max_relative_error =
 	  std::max(max_relative_error, 
 		   fabs(approx_results[d] - true_results[d]) /
 		   fabs(true_results[d]));
       }
 
+      printf("Maximum difference occurred at index %d: %g vs %g...\n",
+	     max_index, approx_results[max_index], true_results[max_index]);
       return max_relative_error;
     }
 

@@ -486,11 +486,19 @@ class KrylovLpr {
     rset_target_divided_by_norm_consts_.Init(rset_.n_cols());
     rset_inv_norm_consts_.Init(rset_.n_cols());
 
+    // Find out the minimum normalization constant.
+    double min_norm_const = DBL_MAX;
+    for(index_t i = 0; i < rset_.n_cols(); i++) {
+      min_norm_const = std::min(min_norm_const,
+				kernels_[i].CalcNormConstant(dimension_));
+    }
+
     for(index_t i = 0; i < rset_.n_cols(); i++) {
       rset_target_divided_by_norm_consts_[i] = 
-	rset_targets_[i] / kernels_[i].CalcNormConstant(dimension_);
+	rset_targets_[i] / 
+	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
       rset_inv_norm_consts_[i] = 1.0 / 
-	kernels_[i].CalcNormConstant(dimension_);
+	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
     }
   }
 
