@@ -24,15 +24,15 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTree_(QueryTree *qnode) {
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::InitializeReferenceStatistics_
 (ReferenceTree *rnode, int column_index, const Vector &weights) {
-  
+
+  // Clear the sum statistics before accumulating.
+  rnode->stat().Reset();
+
   if(rnode->is_leaf()) {
     
     // Temporary vector for computing the reference point expansion.
     Vector reference_point_expansion;
     reference_point_expansion.Init(row_length_);
-
-    // Clear the sum statistics before accumulating.
-    rnode->stat().Reset();
 
     // For a leaf reference node, iterate over each reference point
     // and compute the weighted vector and tally these up for the
