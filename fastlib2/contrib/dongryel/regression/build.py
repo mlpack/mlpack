@@ -23,9 +23,9 @@ librule(
                "krylov_lpr_setup_impl.h",
                "krylov_lpr_test.h",
                "lpr_util.h",
+               "multi_conjugate_gradient.h",
                "naive_lpr.h"],
-    deplibs = ["fastlib:fastlib_int",
-               "fastlib/sparse/trilinos:libtrilinos"]        # dependency
+    deplibs = ["fastlib:fastlib_int"]        # dependency
     )
 
 # The binary executable rule for Krylov-subspace based local
@@ -35,8 +35,7 @@ binrule(
     sources = ["krylov_lpr_main.cc"],
     headers = [],
     deplibs = [":krylov_lpr",
-               "fastlib:fastlib_int",
-               "fastlib/sparse/trilinos:libtrilinos"]
+               "fastlib:fastlib_int"]
     )
 
 binrule(

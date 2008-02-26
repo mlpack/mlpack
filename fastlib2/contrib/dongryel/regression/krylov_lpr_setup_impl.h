@@ -251,6 +251,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
     qnode->stat().postponed_ll_vector_n_pruned_ += delta_n_pruned;
 
     // Keep track of the far-field prunes.
+    num_epanechnikov_prunes_++;
 
     return;
   }

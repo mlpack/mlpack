@@ -28,15 +28,11 @@
 template<typename TKernel, typename TPruneRule>
 class KrylovLpr {
 
-  // Declare friend class of this class.
-  template<typename TKernel_, typename TPruneRule_>
-  friend class KrylovLinearOperator;
-
   FORBID_ACCIDENTAL_COPIES(KrylovLpr);
 
- private:
+ public:
 
-  ////////// Private Type Declarations //////////
+  ////////// Public Type Declarations //////////
   
   /** @brief The internal query tree type used for the computation. */
   typedef BinarySpaceTree< DHrectBound<2>, Matrix, KrylovLprQStat<TKernel> > 
@@ -47,6 +43,8 @@ class KrylovLpr {
    */
   typedef BinarySpaceTree< DHrectBound<2>, Matrix, KrylovLprRStat<TKernel> > 
     ReferenceTree;
+
+ private:
 
   ////////// Private Member Variables //////////
 
@@ -182,7 +180,7 @@ class KrylovLpr {
   void InitializeReferenceStatistics_(ReferenceTree *rnode, int column_index,
 				      const Vector &weights);
 
-  void SolveLinearProblems_(const Matrix &qset, 
+  void SolveLinearProblems_(QueryTree *qroot, const Matrix &qset, 
 			    const Matrix &right_hand_sides_e,
 			    Matrix &solution_vectors_e);
 
@@ -391,7 +389,7 @@ class KrylovLpr {
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
-    SolveLinearProblems_(qset, right_hand_sides_e, solution_vectors_e);
+    SolveLinearProblems_(qroot, qset, right_hand_sides_e, solution_vectors_e);
     delete qroot;
     printf("Phase 2 completed...\n");
 
@@ -529,6 +527,10 @@ class KrylovLpr {
   }
 
   ////////// User-level Functions //////////
+
+  void LinearOperator(QueryTree *qroot, const Matrix &qset,
+		      const Matrix &original_vectors, 
+		      Matrix &linear_transformed_vectors);
 
   /** @brief Computes the query regression estimates with the
    *         confidence bands.
