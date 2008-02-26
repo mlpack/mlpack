@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
       
   std::string out_file = fx_param_str(NULL, "out_file", "results.csv");
   data::Save(out_file.c_str(), engine.coordinates());
+  fx_format_result(NULL,"summary", "%s",engine.result_summary().c_str() );
   fx_done();
 }
 
