@@ -263,6 +263,7 @@ private:
 	// Now check whether the current query point has converged...
 	if(scaled_residual_norms[q] < 1e-2) {
 	  query_in_cg_loop[q] = false;
+	  num_queries_in_cg_loop--;
 	}
 
       } // end of iterating over each query point.
