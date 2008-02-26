@@ -88,7 +88,8 @@ class NonConvexMVU {
    */
   void set_mem_bfgs(index_t mem_bfgs);
   Matrix &coordinates();
-
+  std::string result_summary();
+ 
  private:
   AllkNN allknn_;
   AllkFN allkfn_;
@@ -140,6 +141,8 @@ class NonConvexMVU {
   Matrix previous_gradient_;
   // previous coordinates
   Matrix previous_coordinates_;
+  std::string result_summary_;
+  
   TEMPLATE_TAG_
   void InitOptimization_(); 
   TEMPLATE_TAG_

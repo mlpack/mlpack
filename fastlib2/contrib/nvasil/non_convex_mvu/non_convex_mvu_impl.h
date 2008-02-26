@@ -74,6 +74,9 @@ void NonConvexMVU::Init(Matrix &data) {
   if (gradient_mode == StochasticGrad) {
     nearest_neighbors_.Steal(&from_tree_neighbors);
     nearest_distances_.Steal(&from_tree_distances);
+  } else {
+    // dummy Init
+    nearest_neighbors_.Init();
   }
   if (kfns_!=0) {
     NOTIFY("Furthest neighbor factors ...\n");
@@ -223,6 +226,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
     NOTIFY("%i Feasibility error: %lg + %lg\n", i, distance_constraint, 
         centering_constraint);
   } 
+  max_violation_of_distance_constraint_= DBL_MAX*ComputeFeasibilityError_<OPT_PARAM_>();
   NOTIFY("Now starting optimizing with BFGS...\n");
   ComputeFeasibilityError_<OPT_PARAM_>(&distance_constraint, &centering_constraint);
   double old_distance_constraint = distance_constraint;
@@ -264,6 +268,14 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
       old_distance_constraint = distance_constraint;
     }
     if (sigma_>1e50) {
+      char buffer[1024];
+      sprintf(buffer, "Converged_"
+          "Objective_function_%lg_"
+          "Distances_constraints_%lg_Centering_constraint_%lg",
+           ComputeObjective_<OPT_PARAM_>(coordinates_),
+           distance_constraint, centering_constraint);
+      result_summary_=buffer;
+      printf("%s\n", result_summary_.c_str());
       NOTIFY("Converged !!\n");
       NOTIFY("Objective function: %lg\n", ComputeObjective_<OPT_PARAM_>(coordinates_));
       NOTIFY("Distances constraints: %lg, Centering constraint: %lg\n", 
@@ -361,6 +373,10 @@ void NonConvexMVU::set_mem_bfgs(index_t mem_bfgs) {
 
 Matrix &NonConvexMVU::coordinates() {
   return coordinates_;
+}
+
+std::string NonConvexMVU::result_summary() {
+  return result_summary_;
 }
 
 TEMPLATE_TAG_
