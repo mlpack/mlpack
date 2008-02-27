@@ -231,9 +231,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
- const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
- Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
- Vector &right_hand_sides_n_pruned) {
+ const ArrayList<bool> *query_in_cg_loop,
+ Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+ Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
   // If the current query node effectively has no query points, then
   // return.
@@ -266,6 +266,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
     qnode->stat().postponed_ll_vector_used_error_ += delta_used_error;
     qnode->stat().postponed_ll_vector_n_pruned_ += delta_n_pruned;
     num_finite_difference_prunes_++;
+
+    // Add the reference node to the pruned list.
+    qnode->stat().pruned_reference_nodes_.AddBackItem(rnode);
     return;
   }
   
@@ -289,6 +292,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 
     // Keep track of the far-field prunes.
     num_epanechnikov_prunes_++;
+
+    // Add the reference node to the pruned list.
+    qnode->stat().pruned_reference_nodes_.AddBackItem(rnode);
     return;
   }
 
@@ -301,6 +307,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 	(qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
+
+      // Add the reference node to the exhaustively computed list.
+      qnode->stat().exhaustive_reference_nodes_.AddBackItem(rnode);
       return;
     }
     
@@ -503,4 +512,204 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 		       right_hand_sides_l, right_hand_sides_e, 
 		       right_hand_sides_used_error, right_hand_sides_n_pruned);
   }
+}
+
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
+(QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset, 
+ const ArrayList<bool> *query_in_cg_loop,
+ Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+ Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
+
+  // Variables for storing changes due to a prune.
+  double delta_used_error, delta_n_pruned;
+  Vector delta_l, delta_e;
+  delta_l.Init(row_length_);
+  delta_e.Init(row_length_);
+
+  // Temporary variable for holding distance/kernel value bounds
+  DRange dsqd_range;
+  DRange kernel_value_range;
+
+  // Compute the squared distance and kernel value ranges.
+  LprUtil::SqdistAndKernelRanges_
+    (qnode, rnode, dsqd_range, kernel_value_range);
+  
+  // try finite difference pruning first
+  if(TPruneRule::PrunableWeightedVectorSum
+     (internal_relative_error_, 
+      rnode->stat().sum_target_weighted_data_alloc_norm_,
+      qnode, rnode, dsqd_range, kernel_value_range, delta_l, delta_e,
+      delta_used_error, delta_n_pruned)) {
+    la::AddTo(delta_l, &(qnode->stat().postponed_ll_vector_l_));
+    la::AddTo(delta_e, &(qnode->stat().postponed_ll_vector_e_));
+    qnode->stat().postponed_ll_vector_used_error_ += delta_used_error;
+    qnode->stat().postponed_ll_vector_n_pruned_ += delta_n_pruned;
+    num_finite_difference_prunes_++;
+    return;
+  }
+  
+  // For the Epanechnikov kernel, we can prune using the far field
+  // moments if the maximum distance between the two nodes is within
+  // the bandwidth! This if-statement does not apply to the Gaussian
+  // kernel, so I need to fix in the future!
+  if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
+     rnode->count() > dimension_ * dimension_) {
+    
+    for(index_t j = 0; j < row_length_; j++) {
+      
+      qnode->stat().postponed_ll_vector_l_[j] += 
+	rnode->stat().target_weighted_data_far_field_expansion_[j].
+	ComputeMinKernelSum(qnode->bound());
+      qnode->stat().postponed_moment_ll_vector_e_[j].
+	Add(rnode->stat().target_weighted_data_far_field_expansion_[j]);
+    }
+    
+    qnode->stat().postponed_ll_vector_n_pruned_ += delta_n_pruned;
+    
+    // Keep track of the far-field prunes.
+    num_epanechnikov_prunes_++;
+    return;
+  }
+  
+  // Otherwise, if we cannot prune, then exhaustively compute.
+  DualtreeWeightedVectorSumBase_
+    (qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+     right_hand_sides_e, right_hand_sides_used_error, 
+     right_hand_sides_n_pruned);
+}
+
+template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
+(QueryTree *qnode, const Matrix &qset, 
+ const ArrayList<bool> *query_in_cg_loop,
+ Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+ Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
+
+  // Clear the summary statistics of the current query node so that
+  // we can refine it to better bounds.
+  qnode->stat().ll_vector_norm_l_ = DBL_MAX;
+  qnode->stat().ll_vector_used_error_ = 0;
+  qnode->stat().ll_vector_n_pruned_ = DBL_MAX;
+
+  if(qnode->is_leaf()) {
+
+    // Go through the exhaustively computed list first.
+    for(index_t r = 0; r < qnode->stat().exhaustive_reference_nodes_.size() +
+	  qnode->stat().pruned_reference_nodes_.size();	r++) {
+
+      // Point to the current reference node.
+      ReferenceTree *rnode = NULL;
+
+      if(r < qnode->stat().exhaustive_reference_nodes_.size()) {
+	rnode = qnode->stat().exhaustive_reference_nodes_[r];
+      }
+      else {
+	rnode = qnode->stat().pruned_reference_nodes_
+	  [r - qnode->stat().exhaustive_reference_nodes_.size()];
+      }
+
+      DecideComputationMethod_
+	(qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
+    }
+
+    // After all computation is finished, go through each query point and
+    // refine bounds.
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+      
+      // If the current query point is not in the CG loop, then skip
+      // it.
+      if(!(*query_in_cg_loop)[q]) {
+	continue;
+      }
+      
+      // get the column vectors accumulating the sums to update.
+      double *q_right_hand_side_l = right_hand_sides_l.GetColumnPtr(q);
+      
+      // Incorporate the postponed information.
+      la::AddTo(row_length_, (qnode->stat().postponed_ll_vector_l_).ptr(),
+		q_right_hand_side_l);
+      right_hand_sides_used_error[q] += 
+	qnode->stat().postponed_ll_vector_used_error_;
+      right_hand_sides_n_pruned[q] += 
+	qnode->stat().postponed_ll_vector_n_pruned_;
+      
+      // Refine the lower bound on the L1-norm of the vector sum, the
+      // used error and the portion of the reference set pruned for
+      // the query points.
+      qnode->stat().ll_vector_norm_l_ =
+	std::min
+	(qnode->stat().ll_vector_norm_l_,
+	 MatrixUtil::EntrywiseLpNorm(row_length_, q_right_hand_side_l, 1));
+      qnode->stat().ll_vector_used_error_ =
+	std::max(qnode->stat().ll_vector_used_error_, 
+		 right_hand_sides_used_error[q]);
+      qnode->stat().ll_vector_n_pruned_ =
+	std::min(qnode->stat().ll_vector_n_pruned_, 
+		 right_hand_sides_n_pruned[q]);
+    }
+  }
+  else {
+
+    KrylovLprQStat<TKernel> &q_stat = qnode->stat();
+    KrylovLprQStat<TKernel> &q_left_stat = qnode->left()->stat();
+    KrylovLprQStat<TKernel> &q_right_stat = qnode->right()->stat();
+
+    // Recurse both branches.
+    if(qnode->left()->stat().effective_count_ > 0) {
+      StratifiedComputation_(qnode->left(), qset, query_in_cg_loop, 
+			     right_hand_sides_l, right_hand_sides_e,
+			     right_hand_sides_used_error, 
+			     right_hand_sides_n_pruned);
+      q_stat.ll_vector_norm_l_ =
+	std::min(q_stat.ll_vector_norm_l_,
+		 q_left_stat.ll_vector_norm_l_ +
+		 MatrixUtil::EntrywiseLpNorm
+		 (q_left_stat.postponed_ll_vector_l_, 1));
+      q_stat.ll_vector_used_error_ =
+	std::max(q_stat.ll_vector_used_error_,
+		 q_left_stat.ll_vector_used_error_ +
+		 q_left_stat.postponed_ll_vector_used_error_);
+      q_stat.ll_vector_n_pruned_ =
+	std::min(q_stat.ll_vector_n_pruned_,
+		 q_left_stat.ll_vector_n_pruned_ +
+		 q_left_stat.postponed_ll_vector_n_pruned_);
+    }
+    if(qnode->right()->stat().effective_count_ > 0) {
+      StratifiedComputation_(qnode->right(), qset, query_in_cg_loop, 
+			     right_hand_sides_l, right_hand_sides_e,
+			     right_hand_sides_used_error, 
+			     right_hand_sides_n_pruned);
+      q_stat.ll_vector_norm_l_ =
+	std::min(q_stat.ll_vector_norm_l_,
+		 q_right_stat.ll_vector_norm_l_ +
+		 MatrixUtil::EntrywiseLpNorm
+		 (q_right_stat.postponed_ll_vector_l_, 1));
+      q_stat.ll_vector_used_error_ =
+	std::max(q_stat.ll_vector_used_error_,
+		 q_right_stat.ll_vector_used_error_ +
+		 q_right_stat.postponed_ll_vector_used_error_);
+      q_stat.ll_vector_n_pruned_ =
+	std::min(q_stat.ll_vector_n_pruned_,
+		 q_right_stat.ll_vector_n_pruned_ +
+		 q_right_stat.postponed_ll_vector_n_pruned_);
+    }
+
+    // Note that there are no exhaustively computed nodes for an
+    // internal query node by the structure of our 4-way recursion.
+
+    // Go through the pruned list first.
+    for(index_t r = 0; r < qnode->stat().pruned_reference_nodes_.size(); r++) {
+  
+      ReferenceTree *rnode = qnode->stat().pruned_reference_nodes_[r];
+      
+      DecideComputationMethod_
+	(qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
+    }
+  }
+  
 }
