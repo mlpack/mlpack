@@ -9,7 +9,7 @@ function [ic_curves_pos, ic_coef_pos, ic_scores, ...
 
 
 data_coef = getcoef(myfd_data);
-pca_results = pca_fd(myfd_data, p, myfdPar);
+pca_results = pca_fd(myfd_data, 2, myfdPar);
 pc_coef = getcoef(pca_results.harmfd);
 pc_curves = basis_curves * pc_coef;
 
@@ -24,7 +24,8 @@ pc_scores = get_scores(data_coef, pc_coef, basis_inner_products);
 % p_small should be automatically selected according to some
 % reconstruction error threshold
 threshold = 0.9;
-p_small = p; %min(find((cumsum(pca_results.varprop) >= threshold) == 1))
+p_small = min(find((cumsum(pca_results.varprop) >= threshold) == 1))
+%p_small = p;
 
 %total_sum_var = 0;
 %for i = 1:p
