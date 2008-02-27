@@ -161,6 +161,18 @@ public:
    */
   int effective_count_;
 
+  /** @brief The list of pruned reference nodes.
+   */
+  ArrayList<BinarySpaceTree< DHrectBound<2>, Matrix, 
+			     KrylovLprRStat<TKernel> > *> 
+    pruned_reference_nodes_;
+
+  /** @brief The list of exhaustively computed reference nodes.
+   */
+  ArrayList<BinarySpaceTree< DHrectBound<2>, Matrix,
+			     KrylovLprRStat<TKernel> > *> 
+    exhaustive_reference_nodes_;
+
   ////////// Constructor/Destructor //////////
 
   /** @brief The constructor which does not do anything. */
@@ -206,6 +218,9 @@ public:
     for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Init(dimension);
     }
+
+    pruned_reference_nodes_.Init();
+    exhaustive_reference_nodes_.Init();
   }
 
   /** @brief Computing the statistics for a leaf node involves

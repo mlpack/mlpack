@@ -206,9 +206,9 @@ class KrylovLpr {
    */
   void DualtreeWeightedVectorSumCanonical_
     (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
-     const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
-     Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
-     Vector &right_hand_sides_n_pruned);
+     const ArrayList<bool> *query_in_cg_loop,
+     Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+     Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
 
   /** @brief Finalize the regression estimate for each query point by
    *         taking the dot-product between [1; q^T] and the final
@@ -305,6 +305,18 @@ class KrylovLpr {
     }
   }
 
+  void DecideComputationMethod_
+  (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset, 
+   const ArrayList<bool> *query_in_cg_loop,
+   Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+   Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
+
+  void StratifiedComputation_
+  (QueryTree *qroot, const Matrix &qset,
+   const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l,
+   Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error,
+   Vector &right_hand_sides_n_pruned);
+
   /** @brief Compute B^T W(q) Y vector for each query point, which
    *         essentially becomes the right-hand side for the linear
    *         system associated with each query point: (B^T W(q) B)
@@ -328,10 +340,17 @@ class KrylovLpr {
     InitializeQueryTree_(qroot, qset, query_in_cg_loop);
     
     // Call dualtree function.
-    DualtreeWeightedVectorSumCanonical_
-      (qroot, rroot_, qset, query_in_cg_loop, right_hand_sides_l, 
-       right_hand_sides_e, right_hand_sides_used_error, 
-       right_hand_sides_n_pruned);
+    if(query_in_cg_loop == NULL) {
+      DualtreeWeightedVectorSumCanonical_
+	(qroot, rroot_, qset, query_in_cg_loop, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
+    }
+    else {
+      StratifiedComputation_(qroot, qset, query_in_cg_loop, right_hand_sides_l,
+			     right_hand_sides_e, right_hand_sides_used_error,
+			     right_hand_sides_n_pruned);
+    }
 
     // Final traversal of the query tree to finalize estimates.
     FinalizeQueryTree_(qroot, qset, query_in_cg_loop, right_hand_sides_l, 
