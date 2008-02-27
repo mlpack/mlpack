@@ -474,7 +474,7 @@ class KrylovLpr {
     else {
       printf("Using the nearest neighbor method...\n");
       AllkNN all_knn;
-      double knn_factor = fx_param_double(NULL, "knn_factor", 0.02);
+      double knn_factor = fx_param_double(NULL, "knn_factor", 0.001);
       int knns = (int) (knn_factor * rset_.n_cols());
 
       printf("Each reference point will look for %d nearest neighbors...\n",

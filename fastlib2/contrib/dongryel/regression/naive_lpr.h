@@ -391,8 +391,10 @@ class NaiveLpr {
     else {
       printf("Using the nearest neighbor method...\n");
       AllkNN all_knn;
-      double knn_factor = fx_param_double(module_, "knn_factor", 0.2);
+      double knn_factor = fx_param_double(NULL, "knn_factor", 0.001);
       int knns = (int) (knn_factor * rset_.n_cols());
+      printf("Each reference point will look for %d nearest neighbors...\n",
+	     knns);
       all_knn.Init(rset_, 20, knns);
       ArrayList<index_t> resulting_neighbors;
       ArrayList<double> distances;
