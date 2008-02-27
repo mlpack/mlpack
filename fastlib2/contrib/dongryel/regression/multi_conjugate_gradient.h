@@ -179,7 +179,7 @@ private:
     for(index_t iter = 1; iter <= row_length_ && num_queries_in_cg_loop > 0; 
 	iter++) {
       
-      printf("%d queries are alive...\n", num_queries_in_cg_loop);
+      printf("%d queries are in the CG loop...\n", num_queries_in_cg_loop);
 
       // p  = z + beta * p
       for(index_t q = 0; q < p_vecs.n_cols(); q++) {
