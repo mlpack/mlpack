@@ -8,16 +8,39 @@
 #include "matrix_util.h"
 
 template<typename TKernel, typename TPruneRule>
-void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTree_(QueryTree *qnode) {
+void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTree_
+(QueryTree *qnode, const Matrix &qset, 
+ const ArrayList<bool> *query_in_cg_loop) {
   
   // Set the bounds to default values.
   qnode->stat().Reset();
 
-  // If the query node is not a leaf, then recurse.
-  if(!qnode->is_leaf()) {
+  // Reset the bounding box to be empty.
+  qnode->bound().Reset();
 
-    InitializeQueryTree_(qnode->left());
-    InitializeQueryTree_(qnode->right());
+  // If the query node is a leaf, then go through each query point and
+  // determine whether it should remain in the tree or not.
+  if(qnode->is_leaf()) {
+
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+      if(query_in_cg_loop == NULL || (*query_in_cg_loop)[q]) {
+	Vector q_col;
+	qset.MakeColumnVector(q, &q_col);
+	qnode->bound() |= q_col;
+	qnode->stat().effective_count_++;
+      }
+    }
+  }
+  else {
+
+    // Recurse left and right first, then combine information.
+    InitializeQueryTree_(qnode->left(), qset, query_in_cg_loop);
+    InitializeQueryTree_(qnode->right(), qset, query_in_cg_loop);
+    
+    qnode->bound() |= qnode->left()->bound();
+    qnode->bound() |= qnode->right()->bound();
+    qnode->stat().effective_count_ = qnode->left()->stat().effective_count_ +
+      qnode->right()->stat().effective_count_;
   }
 }
 
@@ -124,8 +147,9 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeReferenceStatistics_
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
- Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
- Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
+ const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
+ Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
+ Vector &right_hand_sides_n_pruned) {
   
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
@@ -135,7 +159,13 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
   
   // for each query point
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-    
+ 
+    // If the function is called within CG iteration and this query
+    // has finished, then skip it.
+    if(query_in_cg_loop != NULL && (!(*query_in_cg_loop)[q])) {
+      continue;
+    }
+
     // get query point.
     const double *q_col = qset.GetColumnPtr(q);
 
@@ -201,9 +231,16 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
- Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
- Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
-  
+ const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
+ Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
+ Vector &right_hand_sides_n_pruned) {
+
+  // If the current query node effectively has no query points, then
+  // return.
+  if(qnode->stat().effective_count_ == 0) {
+    return;
+  }
+
   // Variables for storing changes due to a prune.
   double delta_used_error, delta_n_pruned;
   Vector delta_l, delta_e;
@@ -252,7 +289,6 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 
     // Keep track of the far-field prunes.
     num_epanechnikov_prunes_++;
-
     return;
   }
 
@@ -262,8 +298,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
     // for leaf pairs, go exhaustive
     if(rnode->is_leaf()) {
       DualtreeWeightedVectorSumBase_
-	(qnode, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
-	 right_hand_sides_used_error, right_hand_sides_n_pruned);
+	(qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
       return;
     }
     
@@ -273,11 +310,13 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
       LprUtil::BestReferenceNodePartners(qnode, rnode->left(), rnode->right(), 
 					 &rnode_first, &rnode_second);
       DualtreeWeightedVectorSumCanonical_
-	(qnode, rnode_first, qset, right_hand_sides_l, right_hand_sides_e, 
-	 right_hand_sides_used_error, right_hand_sides_n_pruned);
+	(qnode, rnode_first, qset, query_in_cg_loop, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
       DualtreeWeightedVectorSumCanonical_
-	(qnode, rnode_second, qset, right_hand_sides_l, right_hand_sides_e, 
-	 right_hand_sides_used_error, right_hand_sides_n_pruned);
+	(qnode, rnode_second, qset, query_in_cg_loop, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
       return;
     }
   }
@@ -317,11 +356,13 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
       LprUtil::BestQueryNodePartners(rnode, qnode->left(), qnode->right(), 
 				     &qnode_first, &qnode_second);
       DualtreeWeightedVectorSumCanonical_
-	(qnode_first, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
-	 right_hand_sides_used_error, right_hand_sides_n_pruned);
+	(qnode_first, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
       DualtreeWeightedVectorSumCanonical_
-	(qnode_second, rnode, qset, right_hand_sides_l, right_hand_sides_e, 
-	 right_hand_sides_used_error, right_hand_sides_n_pruned);
+	(qnode_second, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+	 right_hand_sides_e, right_hand_sides_used_error, 
+	 right_hand_sides_n_pruned);
     }
     
     // for non-leaf reference node, expand both query and reference nodes
@@ -332,24 +373,24 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 					 rnode->right(),
 					 &rnode_first, &rnode_second);
       DualtreeWeightedVectorSumCanonical_
-	(qnode->left(), rnode_first, qset, right_hand_sides_l, 
-	 right_hand_sides_e, right_hand_sides_used_error, 
+	(qnode->left(), rnode_first, qset, query_in_cg_loop, 
+	 right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
       DualtreeWeightedVectorSumCanonical_
-	(qnode->left(), rnode_second, qset, right_hand_sides_l, 
-	 right_hand_sides_e, right_hand_sides_used_error, 
+	(qnode->left(), rnode_second, qset, query_in_cg_loop,
+	 right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
       
       LprUtil::BestReferenceNodePartners(qnode->right(), rnode->left(), 
 					 rnode->right(),
 					 &rnode_first, &rnode_second);
       DualtreeWeightedVectorSumCanonical_
-	(qnode->right(), rnode_first, qset, right_hand_sides_l, 
-	 right_hand_sides_e, right_hand_sides_used_error, 
+	(qnode->right(), rnode_first, qset, query_in_cg_loop,
+	 right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
       DualtreeWeightedVectorSumCanonical_
-	(qnode->right(), rnode_second, qset, right_hand_sides_l, 
-	 right_hand_sides_e, right_hand_sides_used_error, 
+	(qnode->right(), rnode_second, qset, query_in_cg_loop,
+	 right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
     }
 
@@ -377,14 +418,26 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
-(QueryTree *qnode, const Matrix &qset, 
+(QueryTree *qnode, const Matrix &qset, const ArrayList<bool> *query_in_cg_loop,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
   KrylovLprQStat<TKernel> &q_stat = qnode->stat();
 
+  // If the current query point effectively has no points, then just
+  // return.
+  if(qnode->stat().effective_count_ == 0) {
+    return;
+  }
+
   if(qnode->is_leaf()) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+
+      // If the current query point has exited the CG loop, then skip
+      // it.
+      if(query_in_cg_loop != NULL && (!(*query_in_cg_loop)[q])) {
+	continue;
+      }
 
       // Get the current query point.
       Vector q_col;
@@ -443,11 +496,11 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 	(q_stat.postponed_moment_ll_vector_e_[i]);
     }
 
-    FinalizeQueryTree_(qnode->left(), qset, right_hand_sides_l, 
-		       right_hand_sides_e, right_hand_sides_used_error, 
-		       right_hand_sides_n_pruned);
-    FinalizeQueryTree_(qnode->right(), qset, right_hand_sides_l, 
-		       right_hand_sides_e, right_hand_sides_used_error, 
-		       right_hand_sides_n_pruned);
+    FinalizeQueryTree_(qnode->left(), qset, query_in_cg_loop,
+		       right_hand_sides_l, right_hand_sides_e, 
+		       right_hand_sides_used_error, right_hand_sides_n_pruned);
+    FinalizeQueryTree_(qnode->right(), qset, query_in_cg_loop,
+		       right_hand_sides_l, right_hand_sides_e, 
+		       right_hand_sides_used_error, right_hand_sides_n_pruned);
   }
 }

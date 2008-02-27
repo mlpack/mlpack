@@ -39,11 +39,13 @@ private:
 	    100.0 * p_vec_norm * linear_transformed_p_vec_norm * DBL_EPSILON);
   }
 
-  void ComputeResiduals_(const Matrix &right_hand_sides, 
+  void ComputeResiduals_(const ArrayList<bool> &query_in_cg_loop,
+			 const Matrix &right_hand_sides, 
 			 const Matrix &current_solutions, Matrix &residuals) {
 
     // Multiply the current solutions by the linear operator.
-    algorithm_->LinearOperator(qroot_, qset_, current_solutions, residuals);
+    algorithm_->LinearOperator(qroot_, qset_, query_in_cg_loop,
+			       current_solutions, residuals);
 
     // Compute the residuals by subtracting from b in Ax = b.
     for(index_t i = 0; i < residuals.n_cols(); i++) {
@@ -155,8 +157,10 @@ private:
     beta_vec.Init(right_hand_sides.n_cols());
     beta_vec.SetZero();
 
-    // Compute the initial residual based on the initial guess.
-    ComputeResiduals_(right_hand_sides, solutions, residuals);
+    // Compute the initial residual based on the initial guess. Since
+    //we assume that the initial guesses are all zero vectors, we can
+    //just assume that the initial residuals are the right hand sides.
+    residuals.CopyValues(right_hand_sides);
 
     //  z = M r - this is assuming no preconditioner.
     z_vecs.CopyValues(residuals);
@@ -175,6 +179,8 @@ private:
     for(index_t iter = 1; iter <= row_length_ && num_queries_in_cg_loop > 0; 
 	iter++) {
       
+      printf("%d queries are alive...\n", num_queries_in_cg_loop);
+
       // p  = z + beta * p
       for(index_t q = 0; q < p_vecs.n_cols(); q++) {
 	// p = beta * p
@@ -184,7 +190,7 @@ private:
 
       // ap = A p: applies the linear operator to each query point
       // simultaneously.
-      algorithm_->LinearOperator(qroot_, qset_, p_vecs, 
+      algorithm_->LinearOperator(qroot_, qset_, query_in_cg_loop, p_vecs, 
 				 linear_transformed_p_vecs);
       
       // Now loop over each query point.
