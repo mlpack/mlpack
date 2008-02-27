@@ -157,6 +157,10 @@ public:
    */
   double postponed_ll_vector_n_pruned_;
 
+  /** @brief The effective query point remaining in computation.
+   */
+  int effective_count_;
+
   ////////// Constructor/Destructor //////////
 
   /** @brief The constructor which does not do anything. */
@@ -177,6 +181,7 @@ public:
     postponed_ll_vector_e_.SetZero();
     postponed_ll_vector_used_error_ = 0;
     postponed_ll_vector_n_pruned_ = 0;
+    effective_count_ = 0;
 
     for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Reset();

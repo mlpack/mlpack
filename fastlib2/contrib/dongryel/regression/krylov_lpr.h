@@ -163,14 +163,16 @@ class KrylovLpr {
   /** @brief Initialize the bound statistics relevant to the right
    *         hand side computation.
    */
-  void InitializeQueryTree_(QueryTree *qnode);
+  void InitializeQueryTree_(QueryTree *qnode, const Matrix &qset,
+			    const ArrayList<bool> *query_in_cg_loop);
 
   /** @brief The postprocessing function to finalize the computation
    *         of the right-hand sides of the linear system for each
    *         query point.
    */
   void FinalizeQueryTree_
-  (QueryTree *qnode, const Matrix &qset, Matrix &right_hand_sides_l, 
+  (QueryTree *qnode, const Matrix &qset, 
+   const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
    Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
    Vector &right_hand_sides_n_pruned);
 
@@ -191,9 +193,10 @@ class KrylovLpr {
    *  @param rnode The reference node.
    */
   void DualtreeWeightedVectorSumBase_
-  (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset, 
-   Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
-   Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
+  (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
+   const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
+   Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
+   Vector &right_hand_sides_n_pruned);
 
   /** @brief The canonical case for dual-tree based computation of B^T
    *         W(q) Y.
@@ -203,8 +206,9 @@ class KrylovLpr {
    */
   void DualtreeWeightedVectorSumCanonical_
     (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
-     Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
-     Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
+     const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
+     Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
+     Vector &right_hand_sides_n_pruned);
 
   /** @brief Finalize the regression estimate for each query point by
    *         taking the dot-product between [1; q^T] and the final
@@ -309,9 +313,9 @@ class KrylovLpr {
    */
   void ComputeWeightedVectorSum_
     (QueryTree *qroot, const Matrix &qset, const Vector &weights,
-     index_t column_index, Matrix &right_hand_sides_l, 
-     Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
-     Vector &right_hand_sides_n_pruned) {
+     const ArrayList<bool> *query_in_cg_loop, index_t column_index, 
+     Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+     Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
     // Initialize the weight statistics on the reference side.
     InitializeReferenceStatistics_(rroot_, column_index, weights);
@@ -321,16 +325,18 @@ class KrylovLpr {
     right_hand_sides_e.SetZero();
     right_hand_sides_used_error.SetZero();
     right_hand_sides_n_pruned.SetZero();
-    InitializeQueryTree_(qroot);
+    InitializeQueryTree_(qroot, qset, query_in_cg_loop);
     
     // Call dualtree function.
     DualtreeWeightedVectorSumCanonical_
-      (qroot, rroot_, qset, right_hand_sides_l, right_hand_sides_e,
-       right_hand_sides_used_error, right_hand_sides_n_pruned);
+      (qroot, rroot_, qset, query_in_cg_loop, right_hand_sides_l, 
+       right_hand_sides_e, right_hand_sides_used_error, 
+       right_hand_sides_n_pruned);
 
     // Final traversal of the query tree to finalize estimates.
-    FinalizeQueryTree_(qroot, qset, right_hand_sides_l, right_hand_sides_e,
-		       right_hand_sides_used_error, right_hand_sides_n_pruned);
+    FinalizeQueryTree_(qroot, qset, query_in_cg_loop, right_hand_sides_l, 
+		       right_hand_sides_e, right_hand_sides_used_error, 
+		       right_hand_sides_n_pruned);
   }
 
   void BasicComputeDualTree_(const Matrix &queries,
@@ -379,7 +385,7 @@ class KrylovLpr {
     // query point.
     printf("Starting Phase 1...\n");
     ComputeWeightedVectorSum_
-      (qroot, qset, rset_target_divided_by_norm_consts_, 0,
+      (qroot, qset, rset_target_divided_by_norm_consts_, NULL, 0,
        right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
        right_hand_sides_n_pruned);
     // TestRightHandSideComputation_(qset, right_hand_sides_e);
@@ -537,6 +543,7 @@ class KrylovLpr {
   ////////// User-level Functions //////////
 
   void LinearOperator(QueryTree *qroot, const Matrix &qset,
+		      const ArrayList<bool> &query_in_cg_loop,
 		      const Matrix &original_vectors, 
 		      Matrix &linear_transformed_vectors);
 
