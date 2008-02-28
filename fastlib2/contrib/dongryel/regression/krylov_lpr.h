@@ -141,6 +141,11 @@ class KrylovLpr {
    */
   double z_score_;
 
+  /** @brief The partially cached linear operator for each query
+   *         point.
+   */
+  Matrix cached_linear_operators_;
+
   /** @brief Finite difference prune statistics.
    */
   int num_finite_difference_prunes_;
@@ -565,10 +570,10 @@ class KrylovLpr {
 
   ////////// User-level Functions //////////
 
-  void LinearOperator(QueryTree *qroot, const Matrix &qset,
-		      const ArrayList<bool> &query_in_cg_loop,
-		      const Matrix &original_vectors, 
-		      Matrix &linear_transformed_vectors);
+  void LinearOperator
+  (QueryTree *qroot, const Matrix &qset,
+   const ArrayList<bool> &query_in_cg_loop, const Matrix &original_vectors, 
+   Matrix &linear_transformed_vectors, bool &called_for_first_time);
 
   /** @brief Computes the query regression estimates with the
    *         confidence bands.
@@ -636,6 +641,9 @@ class KrylovLpr {
 
     // initialize the reference side statistics.
     target_weighted_rset_.Init(row_length_, rset_.n_cols());
+
+    // initialize space for caching the linear operator.
+    cached_linear_operators_.Init(row_length_, rset_.n_cols());
 
     ComputeMain_(references, &rset_regression_estimates_,
 		 &rset_confidence_bands_, &rset_magnitude_weight_diagrams_,

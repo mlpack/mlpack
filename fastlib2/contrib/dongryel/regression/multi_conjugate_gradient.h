@@ -95,9 +95,7 @@ private:
   
   MultiConjugateGradient() {}
 
-  ~MultiConjugateGradient() {
-    
-  }
+  ~MultiConjugateGradient() {}
 
   void Init(typename TAlgorithm::QueryTree *qroot_in, const Matrix &qset_in,
 	    const Vector &rset_inv_norm_consts_in, int row_length_in,
@@ -175,6 +173,9 @@ private:
     // Make a copy of the true residual norms.
     true_scaled_residuals.CopyValues(scaled_residual_norms);
 
+    // flag that denotes whether the linear operator has been called before.
+    bool called_for_first_time = true;
+
     // Start the main loop of the CG iteration.
     for(index_t iter = 1; iter <= row_length_ && num_queries_in_cg_loop > 0; 
 	iter++) {
@@ -190,8 +191,9 @@ private:
 
       // ap = A p: applies the linear operator to each query point
       // simultaneously.
-      algorithm_->LinearOperator(qroot_, qset_, query_in_cg_loop, p_vecs, 
-				 linear_transformed_p_vecs);
+      algorithm_->LinearOperator
+	(qroot_, qset_, query_in_cg_loop, p_vecs, linear_transformed_p_vecs,
+	 called_for_first_time);
       
       // Now loop over each query point.
       for(index_t q = 0; q < solutions.n_cols(); q++) {
