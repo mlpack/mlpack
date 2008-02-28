@@ -8,9 +8,9 @@
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::LinearOperator
-(QueryTree *qroot, const Matrix &qset, 
- const ArrayList<bool> &query_in_cg_loop, const Matrix &original_vectors, 
- Matrix &linear_transformed_vectors) {
+(QueryTree *qroot, const Matrix &qset, const ArrayList<bool> &query_in_cg_loop,
+ const Matrix &original_vectors, Matrix &linear_transformed_vectors,
+ bool &called_for_first_time) {
 
   Matrix vector_l, vector_e;
   Vector vector_used_error, vector_n_pruned;
@@ -24,10 +24,28 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
   linear_transformed_vectors.SetZero();
   
   for(index_t d = 0; d < row_length_; d++) {
-    ComputeWeightedVectorSum_
-      (qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, d,
-       vector_l, vector_e, vector_used_error, vector_n_pruned);
-    
+
+    if(called_for_first_time) {
+      ComputeWeightedVectorSum_
+	(qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, d,
+	 vector_l, vector_e, vector_used_error, vector_n_pruned);
+
+      if(d == 0) {
+	cached_linear_operators_.CopyValues(vector_e);
+      }
+    }
+    else {
+
+      if(d == 0) {
+	vector_e.CopyValues(cached_linear_operators_);
+      }
+      else {
+	ComputeWeightedVectorSum_
+	(qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, d,
+	 vector_l, vector_e, vector_used_error, vector_n_pruned);
+      }
+    }
+
     // Accumulate the product between the computed vector and each
     // scalar component of the X.
     for(index_t q = 0; q < qset.n_cols(); q++) {
@@ -45,6 +63,9 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
       }
     } // end of iterating over each query.
   } // end of iterating over each component.
+
+  // Switch the flag to false after this function is finished.
+  called_for_first_time = false;
 }
 
 template<typename TKernel, typename TPruneRule>
