@@ -586,12 +586,6 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
-  // Clear the summary statistics of the current query node so that
-  // we can refine it to better bounds.
-  qnode->stat().ll_vector_norm_l_ = DBL_MAX;
-  qnode->stat().ll_vector_used_error_ = 0;
-  qnode->stat().ll_vector_n_pruned_ = DBL_MAX;
-
   if(qnode->is_leaf()) {
 
     // Go through the exhaustively computed list first.
@@ -615,6 +609,12 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
 	 right_hand_sides_n_pruned);
     }
 
+    // Clear the summary statistics of the current query node so that
+    // we can refine it to better bounds.
+    qnode->stat().ll_vector_norm_l_ = DBL_MAX;
+    qnode->stat().ll_vector_used_error_ = 0;
+    qnode->stat().ll_vector_n_pruned_ = DBL_MAX;
+    
     // After all computation is finished, go through each query point and
     // refine bounds.
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -650,8 +650,19 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
 	std::min(qnode->stat().ll_vector_n_pruned_, 
 		 right_hand_sides_n_pruned[q]);
     }
+
+    // Clear postponed information.
+    qnode->stat().postponed_ll_vector_l_.SetZero();
+    qnode->stat().postponed_ll_vector_used_error_ = 0;
+    qnode->stat().postponed_ll_vector_n_pruned_ = 0;  
   }
   else {
+
+    // Clear the summary statistics of the current query node so that
+    // we can refine it to better bounds.
+    qnode->stat().ll_vector_norm_l_ = DBL_MAX;
+    qnode->stat().ll_vector_used_error_ = 0;
+    qnode->stat().ll_vector_n_pruned_ = DBL_MAX;
 
     KrylovLprQStat<TKernel> &q_stat = qnode->stat();
     KrylovLprQStat<TKernel> &q_left_stat = qnode->left()->stat();
