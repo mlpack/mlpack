@@ -5,6 +5,8 @@ librule(
     headers = ["pca_tree.h",
                "gen_kdtree.h",
                "gen_kdtree_impl.h",
+               "gen_metric_tree.h",
+               "gen_metric_tree_impl.h",
                "general_spacetree.h"],       # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # dependency
     )

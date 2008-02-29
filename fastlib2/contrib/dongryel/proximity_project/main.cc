@@ -1,10 +1,10 @@
-#include "fastlib/fastlib_int.h"
+#include "fastlib/fastlib.h"
+#include "fastlib/tree/bounds.h"
 #include "general_spacetree.h"
 #include "pca_tree.h"
-#include "gen_kdtree.h"
+#include "gen_metric_tree.h"
 
-typedef BinarySpaceTree<DHrectBound<2>, Matrix, PCAStat> Tree;
-typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, PCAStat> GTree;
+typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix> GTree;
 
 void PCA(Matrix &data) {
   
@@ -63,8 +63,8 @@ int main(int argc, char *argv[]) {
   fx_timer_start(NULL, "pca tree");
 
   ArrayList<int> old_from_new;
-  GTree *root_ = proximity::MakeGenKdTree<GTree, 
-    proximity::GenKdTreeMedianSplitter>(data_, leaflen, &old_from_new);
+  GTree *root_ = proximity::MakeGenMetricTree<GTree>
+    (data_, leaflen, &old_from_new);
 
   for(index_t i = 0; i < old_from_new.size(); i++) {
     printf("%d ", old_from_new[i]);
@@ -74,6 +74,7 @@ int main(int argc, char *argv[]) {
   fx_timer_stop(NULL, "pca tree");
   printf("Finished constructing the tree...\n");
 
+  /*
   // recursively computed PCA
   printf("Recursive PCA\n");
   (root_->stat().eigenvectors_).PrintDebug();
@@ -85,6 +86,7 @@ int main(int argc, char *argv[]) {
   fx_timer_start(NULL, "exhaustive pca");
   PCA(data_);
   fx_timer_stop(NULL, "exhaustive pca");
+  */
 
   fx_done();
   return 0;
