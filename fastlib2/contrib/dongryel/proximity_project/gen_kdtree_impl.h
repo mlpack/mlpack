@@ -122,23 +122,11 @@ namespace tree_gen_kdtree_private {
 
 	left->Init(node->begin(), split_col - node->begin());
 	right->Init(split_col, node->begin() + node->count() - split_col);
-
-	if(left->count() < 2 || right->count() < 2) {
-	  left->left_ = NULL;
-	  left->right_ = NULL;
-	  right->left_ = NULL;
-	  right->right_ = NULL;
-	  delete left;
-	  delete right;
-	  left = NULL;
-	  right = NULL;
-	}
-	else {
-	  SplitGenKdTree<TKdTree, TKdTreeSplitter>
-	    (matrix, left, leaf_size, old_from_new);
-	  SplitGenKdTree<TKdTree, TKdTreeSplitter>
-	    (matrix, right, leaf_size, old_from_new);
-	}
+	
+	SplitGenKdTree<TKdTree, TKdTreeSplitter>
+	  (matrix, left, leaf_size, old_from_new);
+	SplitGenKdTree<TKdTree, TKdTreeSplitter>
+	  (matrix, right, leaf_size, old_from_new);
       }
     }
 
