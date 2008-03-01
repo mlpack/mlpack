@@ -26,7 +26,8 @@ librule(
                "lpr_util.h",
                "multi_conjugate_gradient.h",
                "naive_lpr.h"],
-    deplibs = ["fastlib:fastlib_int"]        # dependency
+    deplibs = ["contrib/dongryel/proximity_project:proximity_project",
+               "fastlib:fastlib_int"]        # dependency
     )
 
 # The binary executable rule for Krylov-subspace based local

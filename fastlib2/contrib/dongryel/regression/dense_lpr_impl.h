@@ -24,7 +24,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   qset.Copy(queries);
   
   // read in the number of points owned by a leaf
-  int leaflen = fx_param_int(module_, "leaflen", 20);
+  int leaflen = fx_param_int(module_, "leaflen", 40);
   
   // Construct the query tree.
   ArrayList<index_t> old_from_new_queries;
@@ -128,7 +128,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
   internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
   
   // read in the number of points owned by a leaf
-  int leaflen = fx_param_int(module_, "leaflen", 20);
+  int leaflen = fx_param_int(module_, "leaflen", 40);
   
   // Initialize storage space for intermediate computations.
   Matrix numerator_l, numerator_e;

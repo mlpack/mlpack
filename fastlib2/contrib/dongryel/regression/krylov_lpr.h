@@ -16,6 +16,7 @@
 #include "epan_kernel_moment_info.h"
 #include "multi_index_util.h"
 #include "lpr_util.h"
+#include "contrib/dongryel/proximity_project/gen_kdtree.h"
 #include "mlpack/allknn/allknn.h"
 
 #define INSIDE_KRYLOV_LPR_H
@@ -35,14 +36,14 @@ class KrylovLpr {
   ////////// Public Type Declarations //////////
   
   /** @brief The internal query tree type used for the computation. */
-  typedef BinarySpaceTree< DHrectBound<2>, Matrix, KrylovLprQStat<TKernel> > 
-    QueryTree;
+  typedef BinarySpaceTree< DHrectBound<2>, Matrix, 
+			   KrylovLprQStat<TKernel> > QueryTree;
 
   /** @brief The internal reference tree type used for the
    *         computation.
    */
-  typedef BinarySpaceTree< DHrectBound<2>, Matrix, KrylovLprRStat<TKernel> > 
-    ReferenceTree;
+  typedef BinarySpaceTree< DHrectBound<2>, Matrix, 
+			   KrylovLprRStat<TKernel> > ReferenceTree;
 
  private:
 
@@ -224,8 +225,10 @@ class KrylovLpr {
   void FinalizeRegressionEstimates_
   (const Matrix &qset, const Matrix &query_expansions,
    const Matrix &solution_vectors_e,
-   Matrix *leave_one_out_solution_vectors_e, Vector &regression_estimates,
-   Vector *leave_one_out_regression_estimates) {
+   Matrix *leave_one_out_solution_vectors_e, 
+   const Matrix &expansion_solution_vectors_e, Vector &regression_estimates,
+   Vector *leave_one_out_regression_estimates,
+   Vector *query_magnitude_weight_diagrams, Vector *query_influence_values) {
 
     // Loop over each query point and take the dot-product.
     for(index_t i = 0; i < qset.n_cols(); i++) {
@@ -236,6 +239,11 @@ class KrylovLpr {
 
       // Retrieve the expansion of the current query point.
       const double *query_point_expansion = query_expansions.GetColumnPtr(i);
+
+      // Retrieve the solution vector associated with the linear
+      // system: (B^T W(q) B)^{-1} t(q)
+      const double *query_point_expansion_solution =
+	expansion_solution_vectors_e.GetColumnPtr(i);
 
       // Take the dot product between the query point solution and the
       // query point expansion to get the regression estimate.
@@ -248,6 +256,15 @@ class KrylovLpr {
 	  leave_one_out_solution_vectors_e->GetColumnPtr(i);
 	(*leave_one_out_regression_estimates)[i] =
 	  la::Dot(row_length_, query_pt_leave_one_out_solution,
+		  query_point_expansion);
+      }
+
+      // Compute the influence value at each point (if it belongs to
+      // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
+      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
+      if(query_influence_values != NULL) {
+	(*query_influence_values)[i] =
+	  la::Dot(row_length_, query_point_expansion_solution,
 		  query_point_expansion);
       }
     }
@@ -390,7 +407,7 @@ class KrylovLpr {
     qset.Copy(queries);
 
     // read in the number of points owned by a leaf
-    int leaflen = fx_param_int(module_, "leaflen", 20);
+    int leaflen = fx_param_int(module_, "leaflen", 40);
     
     // Construct the query tree.
     ArrayList<index_t> old_from_new_queries;
@@ -460,10 +477,16 @@ class KrylovLpr {
       leave_one_out_query_regression_estimates->Init(qset.n_cols());
     }
     query_magnitude_weight_diagrams->Init(qset.n_cols());
+    if(query_influence_values != NULL) {
+      query_influence_values->Init(qset.n_cols());
+    }
     FinalizeRegressionEstimates_(qset, query_expansions, solution_vectors_e, 
 				 leave_one_out_solution_vectors_e,
+				 query_expansion_solution_vectors_e,
 				 (*query_regression_estimates),
-				 leave_one_out_query_regression_estimates);
+				 leave_one_out_query_regression_estimates,
+				 query_magnitude_weight_diagrams, 
+				 query_influence_values);
     printf("Phase 3 completed...\n");
 
     // Reshuffle the results to account for dataset reshuffling
@@ -517,7 +540,6 @@ class KrylovLpr {
     // If the reference dataset is being used for training, then
     // compute variance and degrees of freedom.
     if(query_influence_values != NULL) {
-      query_influence_values->Init(queries.n_cols());
       ComputeVariance_();
     }
     
@@ -623,8 +645,9 @@ class KrylovLpr {
   void LinearOperator
   (QueryTree *qroot, const Matrix &qset,
    const ArrayList<bool> &query_in_cg_loop, const Matrix &original_vectors,
-   Matrix *loo_original_vectors, Matrix &linear_transformed_vectors,
-   Matrix *linear_transformed_loo_vectors);
+   Matrix *loo_original_vectors, const Matrix &expansion_original_vectors,
+   Matrix &linear_transformed_vectors, Matrix *linear_transformed_loo_vectors,
+   Matrix &linear_transformed_expansion_vectors);
 
   /** @brief Computes the query regression estimates with the
    *         confidence bands.
@@ -646,7 +669,7 @@ class KrylovLpr {
     module_ = module_in;
     
     // read in the number of points owned by a leaf
-    int leaflen = fx_param_int(module_in, "leaflen", 20);
+    int leaflen = fx_param_int(module_in, "leaflen", 40);
     
     // set the local polynomial approximation order.
     lpr_order_ = fx_param_int_req(NULL, "lpr_order");
