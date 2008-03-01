@@ -124,8 +124,8 @@ private:
     brkdown_tol.Init(solutions.n_cols());
     brkdown_tol.SetAll(DBL_EPSILON);
 
-    double       alpha, nalpha;
-    double       r_z_dot_old, p_ap_dot;
+    double alpha;
+    double p_ap_dot;
     
     // Temporary space to store the residuals
     Matrix residuals;
@@ -142,10 +142,11 @@ private:
     Matrix linear_transformed_p_vecs;
     linear_transformed_p_vecs.Init(right_hand_sides.n_rows(),
 				   right_hand_sides.n_cols());
-    Vector residual_norms, scaled_residual_norms, r_z_dots;    
+    Vector residual_norms, scaled_residual_norms, r_z_dots, r_z_dot_olds;
     residual_norms.Init(right_hand_sides.n_cols());
     scaled_residual_norms.Init(right_hand_sides.n_cols());
     r_z_dots.Init(right_hand_sides.n_cols());
+    r_z_dot_olds.Init(right_hand_sides.n_cols());
 
     // p = 0
     p_vecs.SetZero();
@@ -226,7 +227,6 @@ private:
 	}
 	
 	alpha  = r_z_dots[q] / p_ap_dot;
-	nalpha = -alpha;
 
 	// x = x + alpha * p
 	la::AddExpert(row_length_, alpha, p_vecs.GetColumnPtr(q),
@@ -241,7 +241,7 @@ private:
 	la::ScaleOverwrite(row_length_, 1, residuals.GetColumnPtr(q),
 			   z_vecs.GetColumnPtr(q));
 	
-	r_z_dot_old = r_z_dots[q];
+	r_z_dot_olds[q] = r_z_dots[q];
 
 	// Compute a few global scalars:
 	//     1) ||r||
@@ -254,7 +254,7 @@ private:
 	  break;
 	}
 	
-	beta_vec[q] = r_z_dots[q] / r_z_dot_old;
+	beta_vec[q] = r_z_dots[q] / r_z_dot_olds[q];
 	
 	// This points to another possible problem...
 	if (fabs(r_z_dots[q]) < brkdown_tol[q]) {
