@@ -39,6 +39,17 @@ class MultiIndexUtil {
       }
     }
 
+    static void ComputePointMultivariatePolynomial(int dimension, 
+						   int lpr_order,
+						   const Matrix &points,
+						   Matrix &point_expansions) {
+      
+      for(index_t i = 0; i < points.n_cols(); i++) {
+	ComputePointMultivariatePolynomial(dimension, lpr_order,
+					   points.GetColumnPtr(i),
+					   point_expansions.GetColumnPtr(i));
+      }
+    }
 };
 
 #endif
