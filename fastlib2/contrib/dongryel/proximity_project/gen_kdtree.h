@@ -16,9 +16,9 @@
 
 #include "general_spacetree.h"
 
-#include "base/common.h"
-#include "col/arraylist.h"
-#include "fx/fx.h"
+#include "fastlib/base/common.h"
+#include "fastlib/col/arraylist.h"
+#include "fastlib/fx/fx.h"
 
 #include "gen_kdtree_impl.h"
 
