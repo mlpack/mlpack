@@ -188,8 +188,10 @@ class KrylovLpr {
   void SolveLinearProblems_(QueryTree *qroot, const Matrix &qset, 
 			    const Matrix &right_hand_sides_e,
 			    Matrix *leave_one_out_right_hand_sides_e,
+			    const Matrix &query_expansions,
 			    Matrix &solution_vectors_e,
-			    Matrix *leave_one_out_solution_vectors_e);
+			    Matrix *leave_one_out_solution_vectors_e,
+			    Matrix &query_expansion_solution_vectors_e);
 
   /** @brief The base-case exhaustive computation for dual-tree based
    *         computation of B^T W(q) Y.
@@ -220,30 +222,25 @@ class KrylovLpr {
    *         solution vector for (B^T W(q) B)^+ (B^T W(q) Y).
    */
   void FinalizeRegressionEstimates_
-  (const Matrix &qset, const Matrix &solution_vectors_e,
+  (const Matrix &qset, const Matrix &query_expansions,
+   const Matrix &solution_vectors_e,
    Matrix *leave_one_out_solution_vectors_e, Vector &regression_estimates,
    Vector *leave_one_out_regression_estimates) {
-    
-    // Temporary variable storing query point expansion.
-    Vector query_point_expansion;
-    query_point_expansion.Init(row_length_);
 
     // Loop over each query point and take the dot-product.
     for(index_t i = 0; i < qset.n_cols(); i++) {
 
-      // Make aliases of the current query point and its associated
-      // solution vector.
-      const double *query_pt = qset.GetColumnPtr(i);
+      // Make aliases of the current query point associated solution
+      // vector.
       const double *query_pt_solution = solution_vectors_e.GetColumnPtr(i);
 
-      // Compute the expansion of the current query point.
-      MultiIndexUtil::ComputePointMultivariatePolynomial
-	(dimension_, lpr_order_, query_pt, query_point_expansion.ptr());
+      // Retrieve the expansion of the current query point.
+      const double *query_point_expansion = query_expansions.GetColumnPtr(i);
 
       // Take the dot product between the query point solution and the
       // query point expansion to get the regression estimate.
       regression_estimates[i] = la::Dot(row_length_, query_pt_solution,
-					query_point_expansion.ptr());
+					query_point_expansion);
 
       // Now take care of the leave-one-out estimate, if we have to.
       if(leave_one_out_solution_vectors_e != NULL) {
@@ -251,7 +248,7 @@ class KrylovLpr {
 	  leave_one_out_solution_vectors_e->GetColumnPtr(i);
 	(*leave_one_out_regression_estimates)[i] =
 	  la::Dot(row_length_, query_pt_leave_one_out_solution,
-		  query_point_expansion.ptr());
+		  query_point_expansion);
       }
     }
   }
@@ -440,9 +437,16 @@ class KrylovLpr {
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
+    Matrix query_expansions, query_expansion_solution_vectors_e;
+    query_expansions.Init(row_length_, qset.n_cols());
+    query_expansion_solution_vectors_e.Init(row_length_, qset.n_cols());
+    MultiIndexUtil::ComputePointMultivariatePolynomial(dimension_, lpr_order_,
+						       qset, query_expansions);
     SolveLinearProblems_(qroot, qset, right_hand_sides_e,
-			 leave_one_out_right_hand_sides_e, solution_vectors_e,
-			 leave_one_out_solution_vectors_e);
+			 leave_one_out_right_hand_sides_e, 
+			 query_expansions, solution_vectors_e,
+			 leave_one_out_solution_vectors_e,
+			 query_expansion_solution_vectors_e);
 
     // Free the query tree (very important!)
     delete qroot;
@@ -456,7 +460,7 @@ class KrylovLpr {
       leave_one_out_query_regression_estimates->Init(qset.n_cols());
     }
     query_magnitude_weight_diagrams->Init(qset.n_cols());
-    FinalizeRegressionEstimates_(qset, solution_vectors_e, 
+    FinalizeRegressionEstimates_(qset, query_expansions, solution_vectors_e, 
 				 leave_one_out_solution_vectors_e,
 				 (*query_regression_estimates),
 				 leave_one_out_query_regression_estimates);
