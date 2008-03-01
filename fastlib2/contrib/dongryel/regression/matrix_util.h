@@ -5,165 +5,204 @@
 
 class MatrixUtil {
 
-  public:
+ public:
 
-    static double L1Norm(const Matrix &m_mat) {
+  static double L1Norm(const Matrix &m_mat) {
 
-      double l1_norm = 0;
-      for(index_t j = 0; j < m_mat.n_cols(); j++) {
-	const double *m_mat_column = m_mat.GetColumnPtr(j);
-	double tmp_l1_norm = 0;
+    double l1_norm = 0;
+    for(index_t j = 0; j < m_mat.n_cols(); j++) {
+      const double *m_mat_column = m_mat.GetColumnPtr(j);
+      double tmp_l1_norm = 0;
 
-	for(index_t i = 0; i < m_mat.n_rows(); i++) {
-	  tmp_l1_norm += fabs(m_mat_column[i]);
-	}
-	l1_norm = std::max(l1_norm, tmp_l1_norm);
+      for(index_t i = 0; i < m_mat.n_rows(); i++) {
+	tmp_l1_norm += fabs(m_mat_column[i]);
       }
-      return l1_norm;
+      l1_norm = std::max(l1_norm, tmp_l1_norm);
     }
+    return l1_norm;
+  }
 
-    static double L1Norm(const Vector &v_vec) {
+  static double L1Norm(const Vector &v_vec) {
       
-      double l1_norm = 0;
-      for(index_t d = 0; d < v_vec.length(); d++) {
-	l1_norm += fabs(v_vec[d]);
-      }
-      
-      return l1_norm;
+    double l1_norm = 0;
+    for(index_t d = 0; d < v_vec.length(); d++) {
+      l1_norm += fabs(v_vec[d]);
     }
+      
+    return l1_norm;
+  }
 
-    static double EntrywiseLpNorm(const Matrix &m_mat, int p) {
+  static double EntrywiseLpNorm(const Matrix &m_mat, int p) {
 
-      double lp_norm = 0;
-      for(index_t j = 0; j < m_mat.n_cols(); j++) {
-	const double *m_mat_column = m_mat.GetColumnPtr(j);
+    double lp_norm = 0;
+    for(index_t j = 0; j < m_mat.n_cols(); j++) {
+      const double *m_mat_column = m_mat.GetColumnPtr(j);
 
-	for(index_t i = 0; i < m_mat.n_rows(); i++) {
-	  lp_norm += pow(fabs(m_mat_column[i]), p);
-	}
+      for(index_t i = 0; i < m_mat.n_rows(); i++) {
+	lp_norm += pow(fabs(m_mat_column[i]), p);
       }
-      return lp_norm;
     }
+    return lp_norm;
+  }
 
-    static double EntrywiseLpNorm(int length, const double *v_arr, int p) {
-      double lp_norm = 0;
-      for(index_t d = 0; d < length; d++) {
-	lp_norm += pow(fabs(v_arr[d]), p);
-      }
-      
-      return lp_norm;
+  static double EntrywiseLpNorm(int length, const double *v_arr, int p) {
+    double lp_norm = 0;
+    for(index_t d = 0; d < length; d++) {
+      lp_norm += pow(fabs(v_arr[d]), p);
     }
+      
+    return lp_norm;
+  }
 
-    static double EntrywiseLpNorm(const Vector &v_vec, int p) {
+  static double EntrywiseLpNorm(const Vector &v_vec, int p) {
       
-      double lp_norm = 0;
-      for(index_t d = 0; d < v_vec.length(); d++) {
-	lp_norm += pow(fabs(v_vec[d]), p);
-      }
-      
-      return lp_norm;
+    double lp_norm = 0;
+    for(index_t d = 0; d < v_vec.length(); d++) {
+      lp_norm += pow(fabs(v_vec[d]), p);
     }
+      
+    return lp_norm;
+  }
 
-    /** @brief Compute the pseudoinverse of the matrix.
-     *
-     *  @param A The matrix to compute the pseudoinverse of.
-     *  @param A_inv The computed pseudoinverse by singular value
-     *               decomposition.
-     */
-    static void PseudoInverse(const Matrix &A, Matrix *A_inv) {
-      Vector ro_s;
-      Matrix ro_U, ro_VT;
+  /** @brief Compute the pseudoinverse of the matrix.
+   *
+   *  @param A The matrix to compute the pseudoinverse of.
+   *  @param A_inv The computed pseudoinverse by singular value
+   *               decomposition.
+   */
+  static void PseudoInverse(const Matrix &A, Matrix *A_inv) {
+    Vector ro_s;
+    Matrix ro_U, ro_VT;
       
-      // compute the SVD of A
-      la::SVDInit(A, &ro_s, &ro_U, &ro_VT);
+    // compute the SVD of A
+    la::SVDInit(A, &ro_s, &ro_U, &ro_VT);
       
-      // take the transpose of V^T and U
-      Matrix ro_VT_trans;
-      Matrix ro_U_trans;
-      la::TransposeInit(ro_VT, &ro_VT_trans);
-      la::TransposeInit(ro_U, &ro_U_trans);
-      Matrix ro_s_inv;
-      ro_s_inv.Init(ro_VT_trans.n_cols(), ro_U_trans.n_rows());
-      ro_s_inv.SetZero();
+    // take the transpose of V^T and U
+    Matrix ro_VT_trans;
+    Matrix ro_U_trans;
+    la::TransposeInit(ro_VT, &ro_VT_trans);
+    la::TransposeInit(ro_U, &ro_U_trans);
+    Matrix ro_s_inv;
+    ro_s_inv.Init(ro_VT_trans.n_cols(), ro_U_trans.n_rows());
+    ro_s_inv.SetZero();
       
-      // initialize the diagonal by the inverse of ro_s
-      for(index_t i = 0; i < ro_s.length(); i++) {
-	if(ro_s[i] > 0.001 * ro_s[0]) {
-	  ro_s_inv.set(i, i, 1.0 / ro_s[i]);
-	}
-	else {
-	  ro_s_inv.set(i, i, 0);
-	}
+    // initialize the diagonal by the inverse of ro_s
+    for(index_t i = 0; i < ro_s.length(); i++) {
+      if(ro_s[i] > 0.001 * ro_s[0]) {
+	ro_s_inv.set(i, i, 1.0 / ro_s[i]);
       }
-      Matrix intermediate;
-      la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
-      la::MulOverwrite(ro_VT_trans, intermediate, A_inv);
+      else {
+	ro_s_inv.set(i, i, 0);
+      }
     }
+    Matrix intermediate;
+    la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
+    la::MulOverwrite(ro_VT_trans, intermediate, A_inv);
+  }
 
-    static double EntrywiseNormDifference(const Matrix &a_mat,
-					  const Matrix &b_mat,
-					  int p) {
-      double norm_diff = 0;
+  static double EntrywiseNormDifference(const Matrix &a_mat,
+					const Matrix &b_mat,
+					int p) {
+    double norm_diff = 0;
 
-      for(index_t j = 0; j < a_mat.n_cols(); j++) {
-	for(index_t i = 0; i < a_mat.n_rows(); i++) {
-	  norm_diff += pow(a_mat.get(i, j) - b_mat.get(i, j), p);
-	}
+    for(index_t j = 0; j < a_mat.n_cols(); j++) {
+      for(index_t i = 0; i < a_mat.n_rows(); i++) {
+	norm_diff += pow(a_mat.get(i, j) - b_mat.get(i, j), p);
       }
-      return norm_diff;
     }
+    return norm_diff;
+  }
 
-    static double EntrywiseNormDifference(const Vector &a_vec,
-					  const Vector &b_vec, int p) {
-      double norm_diff = 0;
+  static double EntrywiseNormDifference(const Vector &a_vec,
+					const Vector &b_vec, int p) {
+    double norm_diff = 0;
 
-      for(index_t j = 0; j < a_vec.length(); j++) {
-	norm_diff += pow(fabs(a_vec[j] - b_vec[j]), p);
-      }
-      return norm_diff;
-    } 
+    for(index_t j = 0; j < a_vec.length(); j++) {
+      norm_diff += pow(fabs(a_vec[j] - b_vec[j]), p);
+    }
+    return norm_diff;
+  } 
   
-    static double MaxRelativeDifference(const Vector &true_results,
-					const Vector &approx_results) {
+  static double MaxRelativeDifference(const Vector &true_results,
+				      const Vector &approx_results) {
 
-      double max_relative_error = 0;
-      int max_index = -1;
+    double max_relative_error = 0;
+    int max_index = -1;
 
-      for(index_t d = 0; d < true_results.length(); d++) {
+    for(index_t d = 0; d < true_results.length(); d++) {
 
-	if(isnan(approx_results[d]) || isinf(approx_results[d]) ||
-	   isnan(true_results[d]) || isinf(true_results[d])) {
-	  printf("Warning: Got infinites and NaNs!\n");
-	}
-
-	if(max_relative_error < fabs(approx_results[d] - true_results[d]) /
-	   fabs(true_results[d])) {
-	  max_index = d;
-	}
-
-	max_relative_error =
-	  std::max(max_relative_error, 
-		   fabs(approx_results[d] - true_results[d]) /
-		   fabs(true_results[d]));
+      if(isnan(approx_results[d]) || isinf(approx_results[d]) ||
+	 isnan(true_results[d]) || isinf(true_results[d])) {
+	printf("Warning: Got infinites and NaNs!\n");
       }
 
-      printf("Maximum difference occurred at index %d: %g vs %g...\n",
-	     max_index, approx_results[max_index], true_results[max_index]);
-      return max_relative_error;
+      if(max_relative_error < fabs(approx_results[d] - true_results[d]) /
+	 fabs(true_results[d])) {
+	max_index = d;
+      }
+
+      max_relative_error =
+	std::max(max_relative_error, 
+		 fabs(approx_results[d] - true_results[d]) /
+		 fabs(true_results[d]));
     }
 
-    template<typename TCollection>
-    static double EntrywiseNormDifferenceRelative
-    (const TCollection &true_results, const TCollection &approx_results, 
-     int p) {
+    printf("Maximum difference occurred at index %d: %g vs %g...\n",
+	   max_index, approx_results[max_index], true_results[max_index]);
+    return max_relative_error;
+  }
 
-      double norm_diff = EntrywiseNormDifference(true_results, approx_results,
-						 p);
-      double true_norm = EntrywiseLpNorm(true_results, p);
+  template<typename TCollection>
+  static double EntrywiseNormDifferenceRelative
+  (const TCollection &true_results, const TCollection &approx_results, 
+   int p) {
 
-      return norm_diff / true_norm;
+    double norm_diff = EntrywiseNormDifference(true_results, approx_results,
+					       p);
+    double true_norm = EntrywiseLpNorm(true_results, p);
+
+    return norm_diff / true_norm;
+  }
+
+  static int ModifiedGramSchmidt(const Matrix &input_matrix, 
+				 Matrix &orthonormal_basis) {
+
+    // The numerical rank as determined by the modified Gram Schmidt.
+    int rank = 0;
+
+    // Initialize the orthonormal basis to be zero.
+    orthonormal_basis.SetZero();
+
+    for(index_t i = 0; i < orthonormal_basis.n_cols(); i++) {
+      
+      Vector input_matrix_column;
+      input_matrix.MakeColumnVector(i, &input_matrix_column);
+
+      Vector column_copy;
+      orthonormal_basis.MakeColumnVector(i, &column_copy);
+      column_copy.CopyValues(input_matrix_column);
+
+      for(index_t j = 0; j < i; j++) {
+	double dot_product = 
+	  la::Dot(input_matrix.n_rows(), column_copy.ptr(), 
+		  orthonormal_basis.GetColumnPtr(j));
+
+	// If the numerical rank deficiency is detected, then
+	// terminate.
+	if(fabs(dot_product) < DBL_MIN) {
+	  column_copy.SetZero();
+	  return rank;
+	}
+
+	la::AddExpert(input_matrix.n_rows(), -dot_product, 
+		      orthonormal_basis.GetColumnPtr(j), column_copy.ptr());
+      }
+      
+      la::Scale(1.0 / la::LengthEuclidean(column_copy), &column_copy);
+      rank++;
     }
-
+    return rank;
+  }
 };
 
 #endif
