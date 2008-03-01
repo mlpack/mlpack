@@ -94,6 +94,8 @@ class KrylovLpr {
    */
   Vector rset_regression_estimates_;
   
+  Vector leave_one_out_rset_regression_estimates_;
+
   /** @brief The confidence band on the fit at each reference point.
    */
   ArrayList<DRange> rset_confidence_bands_;
@@ -141,11 +143,6 @@ class KrylovLpr {
    */
   double z_score_;
 
-  /** @brief The partially cached linear operator for each query
-   *         point.
-   */
-  Matrix cached_linear_operators_;
-
   /** @brief Finite difference prune statistics.
    */
   int num_finite_difference_prunes_;
@@ -179,7 +176,8 @@ class KrylovLpr {
   (QueryTree *qnode, const Matrix &qset, 
    const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
    Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
-   Vector &right_hand_sides_n_pruned);
+   Vector &right_hand_sides_n_pruned, 
+   Matrix *leave_one_out_right_hand_sides_e);
 
   /** @brief Preprocess the reference tree for bottom up statistics
    *         computation.
@@ -189,7 +187,9 @@ class KrylovLpr {
 
   void SolveLinearProblems_(QueryTree *qroot, const Matrix &qset, 
 			    const Matrix &right_hand_sides_e,
-			    Matrix &solution_vectors_e);
+			    Matrix *leave_one_out_right_hand_sides_e,
+			    Matrix &solution_vectors_e,
+			    Matrix *leave_one_out_solution_vectors_e);
 
   /** @brief The base-case exhaustive computation for dual-tree based
    *         computation of B^T W(q) Y.
@@ -219,9 +219,10 @@ class KrylovLpr {
    *         taking the dot-product between [1; q^T] and the final
    *         solution vector for (B^T W(q) B)^+ (B^T W(q) Y).
    */
-  void FinalizeRegressionEstimates_(const Matrix &qset,
-				    Matrix &solution_vectors_e,
-				    Vector &regression_estimates) {
+  void FinalizeRegressionEstimates_
+  (const Matrix &qset, const Matrix &solution_vectors_e,
+   Matrix *leave_one_out_solution_vectors_e, Vector &regression_estimates,
+   Vector *leave_one_out_regression_estimates) {
     
     // Temporary variable storing query point expansion.
     Vector query_point_expansion;
@@ -243,6 +244,15 @@ class KrylovLpr {
       // query point expansion to get the regression estimate.
       regression_estimates[i] = la::Dot(row_length_, query_pt_solution,
 					query_point_expansion.ptr());
+
+      // Now take care of the leave-one-out estimate, if we have to.
+      if(leave_one_out_solution_vectors_e != NULL) {
+	const double *query_pt_leave_one_out_solution =
+	  leave_one_out_solution_vectors_e->GetColumnPtr(i);
+	(*leave_one_out_regression_estimates)[i] =
+	  la::Dot(row_length_, query_pt_leave_one_out_solution,
+		  query_point_expansion.ptr());
+      }
     }
   }
   
@@ -332,7 +342,8 @@ class KrylovLpr {
     (QueryTree *qroot, const Matrix &qset, const Vector &weights,
      const ArrayList<bool> *query_in_cg_loop, index_t column_index, 
      Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
-     Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
+     Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned,
+     Matrix *leave_one_out_right_hand_sides_e) {
 
     // Initialize the weight statistics on the reference side.
     InitializeReferenceStatistics_(rroot_, column_index, weights);
@@ -342,6 +353,7 @@ class KrylovLpr {
     right_hand_sides_e.SetZero();
     right_hand_sides_used_error.SetZero();
     right_hand_sides_n_pruned.SetZero();
+    leave_one_out_right_hand_sides_e->SetZero();
     InitializeQueryTree_(qroot, qset, query_in_cg_loop);
     
     // Call dualtree function.
@@ -352,21 +364,22 @@ class KrylovLpr {
 	 right_hand_sides_n_pruned);
     }
     else {
-      StratifiedComputation_(qroot, qset, query_in_cg_loop, right_hand_sides_l,
-			     right_hand_sides_e, right_hand_sides_used_error,
-			     right_hand_sides_n_pruned);
+      StratifiedComputation_
+	(qroot, qset, query_in_cg_loop, right_hand_sides_l, right_hand_sides_e,
+	 right_hand_sides_used_error, right_hand_sides_n_pruned);
     }
 
     // Final traversal of the query tree to finalize estimates.
     FinalizeQueryTree_(qroot, qset, query_in_cg_loop, right_hand_sides_l, 
 		       right_hand_sides_e, right_hand_sides_used_error, 
-		       right_hand_sides_n_pruned);
+		       right_hand_sides_n_pruned, 
+		       leave_one_out_right_hand_sides_e);
   }
 
-  void BasicComputeDualTree_(const Matrix &queries,
-			     Vector *query_regression_estimates,
-			     Vector *query_magnitude_weight_diagrams,
-			     Vector *query_influence_values) {
+  void BasicComputeDualTree_
+  (const Matrix &queries, Vector *query_regression_estimates,
+   Vector *leave_one_out_query_regression_estimates,
+   Vector *query_magnitude_weight_diagrams, Vector *query_influence_values) {
     
     // Zero out statistics.
     num_finite_difference_prunes_ = num_epanechnikov_prunes_ = 0;
@@ -389,11 +402,20 @@ class KrylovLpr {
 
     // Initialize storage space for intermediate computations.
     Matrix right_hand_sides_l, right_hand_sides_e, solution_vectors_e;
+    Matrix *leave_one_out_right_hand_sides_e = NULL;
+    Matrix *leave_one_out_solution_vectors_e = NULL;
     Vector right_hand_sides_used_error, right_hand_sides_n_pruned;
     right_hand_sides_l.Init(row_length_, qset.n_cols());
     right_hand_sides_e.Init(row_length_, qset.n_cols());
     right_hand_sides_used_error.Init(qset.n_cols());
     right_hand_sides_n_pruned.Init(qset.n_cols());
+
+    if(query_influence_values != NULL) {
+      leave_one_out_right_hand_sides_e = new Matrix();
+      leave_one_out_right_hand_sides_e->Init(row_length_, qset.n_cols());
+      leave_one_out_solution_vectors_e = new Matrix();
+      leave_one_out_solution_vectors_e->Init(row_length_, qset.n_cols());
+    }
     solution_vectors_e.Init(row_length_, qset.n_cols());
 
     // The computation proceeds in three phases:
@@ -411,15 +433,18 @@ class KrylovLpr {
     ComputeWeightedVectorSum_
       (qroot, qset, rset_target_divided_by_norm_consts_, NULL, 0,
        right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
-       right_hand_sides_n_pruned);
-    // TestRightHandSideComputation_(qset, right_hand_sides_e);
+       right_hand_sides_n_pruned, leave_one_out_right_hand_sides_e);
     
     printf("Phase 1 completed...\n");
 
     // The second phase solves the least squares problem: (B^T W(q) B)
     // z(q) = B^T W(q) Y for each query point q.
     printf("Starting Phase 2...\n");
-    SolveLinearProblems_(qroot, qset, right_hand_sides_e, solution_vectors_e);
+    SolveLinearProblems_(qroot, qset, right_hand_sides_e,
+			 leave_one_out_right_hand_sides_e, solution_vectors_e,
+			 leave_one_out_solution_vectors_e);
+
+    // Free the query tree (very important!)
     delete qroot;
     printf("Phase 2 completed...\n");
 
@@ -427,16 +452,20 @@ class KrylovLpr {
     // final regression value.
     printf("Starting Phase 3...\n");
     query_regression_estimates->Init(qset.n_cols());
+    if(leave_one_out_query_regression_estimates != NULL) {
+      leave_one_out_query_regression_estimates->Init(qset.n_cols());
+    }
     query_magnitude_weight_diagrams->Init(qset.n_cols());
     FinalizeRegressionEstimates_(qset, solution_vectors_e, 
-				 (*query_regression_estimates));
+				 leave_one_out_solution_vectors_e,
+				 (*query_regression_estimates),
+				 leave_one_out_query_regression_estimates);
     printf("Phase 3 completed...\n");
 
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions
     Vector tmp_q_results;
-    tmp_q_results.Init(query_regression_estimates->length());
-    
+    tmp_q_results.Init(query_regression_estimates->length());    
     for(index_t i = 0; i < tmp_q_results.length(); i++) {
       tmp_q_results[old_from_new_queries[i]] =	
 	(*query_regression_estimates)[i];
@@ -444,10 +473,26 @@ class KrylovLpr {
     for(index_t i = 0; i < tmp_q_results.length(); i++) {
       (*query_regression_estimates)[i] = tmp_q_results[i];
     }
+    if(leave_one_out_query_regression_estimates != NULL) {
+      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+	tmp_q_results[old_from_new_queries[i]] =	
+	  (*leave_one_out_query_regression_estimates)[i];
+      }
+      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+	(*leave_one_out_query_regression_estimates)[i] = tmp_q_results[i];
+      }
+    }
+
+    // Memory cleanup
+    if(leave_one_out_right_hand_sides_e != NULL) {
+      delete leave_one_out_right_hand_sides_e;
+      delete leave_one_out_solution_vectors_e;
+    }
   }
 
   void ComputeMain_(const Matrix &queries,
 		    Vector *query_regression_estimates,
+		    Vector *leave_one_out_query_regression_estimates,
 		    ArrayList<DRange> *query_confidence_bands,
 		    Vector *query_magnitude_weight_diagrams,
 		    Vector *query_influence_values) {
@@ -457,6 +502,7 @@ class KrylovLpr {
     
     // This is the basic N-body based computation.
     BasicComputeDualTree_(queries, query_regression_estimates,
+			  leave_one_out_query_regression_estimates,
 			  query_magnitude_weight_diagrams,
 			  query_influence_values);
     
@@ -572,8 +618,9 @@ class KrylovLpr {
 
   void LinearOperator
   (QueryTree *qroot, const Matrix &qset,
-   const ArrayList<bool> &query_in_cg_loop, const Matrix &original_vectors, 
-   Matrix &linear_transformed_vectors, bool &called_for_first_time);
+   const ArrayList<bool> &query_in_cg_loop, const Matrix &original_vectors,
+   Matrix *loo_original_vectors, Matrix &linear_transformed_vectors,
+   Matrix *linear_transformed_loo_vectors);
 
   /** @brief Computes the query regression estimates with the
    *         confidence bands.
@@ -642,10 +689,8 @@ class KrylovLpr {
     // initialize the reference side statistics.
     target_weighted_rset_.Init(row_length_, rset_.n_cols());
 
-    // initialize space for caching the linear operator.
-    cached_linear_operators_.Init(row_length_, rset_.n_cols());
-
     ComputeMain_(references, &rset_regression_estimates_,
+		 &leave_one_out_rset_regression_estimates_,
 		 &rset_confidence_bands_, &rset_magnitude_weight_diagrams_,
 		 &rset_influence_values_);
     fx_timer_stop(module_, "krylov_lpr_training_time");
@@ -661,7 +706,8 @@ class KrylovLpr {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < rset_.n_cols(); q++) {
-      fprintf(stream, "%g\n", rset_regression_estimates_[q]);
+      fprintf(stream, "%g %g\n", rset_regression_estimates_[q],
+	      leave_one_out_rset_regression_estimates_[q]);
     }
     
     if(stream != stdout) {

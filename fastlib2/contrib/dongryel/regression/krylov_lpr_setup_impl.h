@@ -429,7 +429,8 @@ template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 (QueryTree *qnode, const Matrix &qset, const ArrayList<bool> *query_in_cg_loop,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
- Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
+ Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned,
+ Matrix *leave_one_out_right_hand_sides_e) {
 
   KrylovLprQStat<TKernel> &q_stat = qnode->stat();
 
@@ -455,7 +456,7 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
       // Get the column vectors accumulating the sums to update.
       double *q_right_hand_sides_l = right_hand_sides_l.GetColumnPtr(q);
       double *q_right_hand_sides_e = right_hand_sides_e.GetColumnPtr(q);
-      
+
       // Incorporate the postponed information.
       la::AddTo(row_length_, (q_stat.postponed_ll_vector_l_).ptr(),
 		q_right_hand_sides_l);
@@ -468,6 +469,17 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 	q_right_hand_sides_e[i] += 
 	  qnode->stat().postponed_moment_ll_vector_e_[i].
 	  ComputeKernelSum(q_col);
+      }
+
+      // Now compute the leave-one-out estimate by subtracting the
+      // self-contribution (makes sense only in the case where the
+      // query set equals the reference set).
+      if(leave_one_out_right_hand_sides_e != NULL) {
+	double *q_leave_one_out_right_hand_sides_e =
+	  leave_one_out_right_hand_sides_e->GetColumnPtr(q);
+	la::SubOverwrite(row_length_, target_weighted_rset_.GetColumnPtr(q),
+			 q_right_hand_sides_e, 
+			 q_leave_one_out_right_hand_sides_e);
       }
 
       right_hand_sides_used_error[q] += q_stat.postponed_ll_vector_used_error_;
@@ -507,10 +519,12 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 
     FinalizeQueryTree_(qnode->left(), qset, query_in_cg_loop,
 		       right_hand_sides_l, right_hand_sides_e, 
-		       right_hand_sides_used_error, right_hand_sides_n_pruned);
+		       right_hand_sides_used_error, right_hand_sides_n_pruned,
+		       leave_one_out_right_hand_sides_e);
     FinalizeQueryTree_(qnode->right(), qset, query_in_cg_loop,
 		       right_hand_sides_l, right_hand_sides_e, 
-		       right_hand_sides_used_error, right_hand_sides_n_pruned);
+		       right_hand_sides_used_error, right_hand_sides_n_pruned,
+		       leave_one_out_right_hand_sides_e);
   }
 }
 

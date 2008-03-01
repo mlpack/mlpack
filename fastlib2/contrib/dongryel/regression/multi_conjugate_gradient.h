@@ -62,7 +62,10 @@ private:
   void ComputeGlobalScalar_
   (int q, const Matrix &right_hand_sides, const Matrix &z_vecs, 
    const Matrix &residuals, Vector &residual_norms, 
-   Vector &scaled_residual_norms, Vector &r_z_dots) {
+   Vector &scaled_residual_norms, Vector &r_z_dots,
+   Matrix *loo_right_hand_sides, Matrix *loo_z_vecs, 
+   Matrix *loo_residuals, Vector *loo_residual_norms, 
+   Vector *loo_scaled_residual_norms, Vector *loo_r_z_dots) {
 
     residual_norms[q] = la::LengthEuclidean(row_length_,
 					    residuals.GetColumnPtr(q));
@@ -70,6 +73,16 @@ private:
       la::LengthEuclidean(row_length_, right_hand_sides.GetColumnPtr(q));
     r_z_dots[q] = la::Dot(row_length_, residuals.GetColumnPtr(q),
 			  z_vecs.GetColumnPtr(q));
+
+    if(loo_residual_norms != NULL) {
+      (*loo_residual_norms)[q] = la::LengthEuclidean
+	(row_length_, loo_residuals->GetColumnPtr(q));
+      (*loo_scaled_residual_norms)[q] = (*loo_residual_norms)[q] /
+	la::LengthEuclidean(row_length_, 
+			    loo_right_hand_sides->GetColumnPtr(q));
+      (*loo_r_z_dots)[q] = la::Dot(row_length_, loo_residuals->GetColumnPtr(q),
+				   loo_z_vecs->GetColumnPtr(q));
+    }
   }
 
   /** @brief Computes the residual norm, the residual norm divided by
@@ -79,7 +92,10 @@ private:
   void ComputeGlobalScalars_
   (const Matrix &right_hand_sides, const Matrix &z_vecs, 
    const Matrix &residuals, Vector &residual_norms, 
-   Vector &scaled_residual_norms, Vector &r_z_dots) {
+   Vector &scaled_residual_norms, Vector &r_z_dots,
+   Matrix *loo_right_hand_sides, Matrix *loo_z_vecs, 
+   Matrix *loo_residuals, Vector *loo_residual_norms, 
+   Vector *loo_scaled_residual_norms, Vector *loo_r_z_dots) {
 
     for(index_t q = 0; q < right_hand_sides.n_cols(); q++) {
       residual_norms[q] = la::LengthEuclidean(row_length_,
@@ -88,6 +104,17 @@ private:
 	la::LengthEuclidean(row_length_, right_hand_sides.GetColumnPtr(q));
       r_z_dots[q] = la::Dot(row_length_, residuals.GetColumnPtr(q),
 			    z_vecs.GetColumnPtr(q));
+
+      if(loo_residual_norms != NULL) {
+	(*loo_residual_norms)[q] = la::LengthEuclidean
+	  (row_length_, loo_residuals->GetColumnPtr(q));
+	(*loo_scaled_residual_norms)[q] = (*loo_residual_norms)[q] /
+	  la::LengthEuclidean(row_length_, 
+			      loo_right_hand_sides->GetColumnPtr(q));
+	(*loo_r_z_dots)[q] = la::Dot(row_length_, 
+				     loo_residuals->GetColumnPtr(q),
+				     loo_z_vecs->GetColumnPtr(q));
+      }
     }
   }
 
@@ -108,11 +135,13 @@ private:
     algorithm_ = algorithm_in;
   }
 
-  void Iterate(const Matrix &right_hand_sides, Matrix &solutions) {
+  void Iterate(const Matrix &right_hand_sides,
+	       Matrix *loo_right_hand_sides, Matrix &solutions,
+	       Matrix *loo_solutions) {
 
     // This is for storing the flag for each query point - whether it
     // is in the outer CG loop or not.
-    ArrayList<bool> query_in_cg_loop;
+    ArrayList<bool> query_in_cg_loop, *loo_query_in_cg_loop = NULL;
     query_in_cg_loop.Init(solutions.n_cols());
     int num_queries_in_cg_loop = solutions.n_cols();
     for(index_t q = 0; q < solutions.n_cols(); q++) {
@@ -120,62 +149,105 @@ private:
     }
     
     // Stores the break-down tolerance for each query point.
-    Vector brkdown_tol;
+    Vector brkdown_tol, *loo_brkdown_tol = NULL;
     brkdown_tol.Init(solutions.n_cols());
     brkdown_tol.SetAll(DBL_EPSILON);
 
-    double alpha;
-    double p_ap_dot;
+    double alpha = 0, loo_alpha = 0;
+    double p_ap_dot = 0, loo_p_ap_dot = 0;
     
     // Temporary space to store the residuals
-    Matrix residuals;
-    Vector true_scaled_residuals;
+    Matrix residuals, *loo_residuals = NULL;
     residuals.Init(right_hand_sides.n_rows(), right_hand_sides.n_cols());
-    true_scaled_residuals.Init(right_hand_sides.n_cols());
 
     // More temporary variables for storing intermediate computation
     // results.
-    Matrix p_vecs;
+    Matrix p_vecs, *loo_p_vecs = NULL;
     p_vecs.Init(right_hand_sides.n_rows(), right_hand_sides.n_cols());
-    Matrix z_vecs;
+    Matrix z_vecs, *loo_z_vecs = NULL;
     z_vecs.Init(right_hand_sides.n_rows(), right_hand_sides.n_cols());
-    Matrix linear_transformed_p_vecs;
+    Matrix linear_transformed_p_vecs, *linear_transformed_loo_p_vecs = NULL;
     linear_transformed_p_vecs.Init(right_hand_sides.n_rows(),
 				   right_hand_sides.n_cols());
-    Vector residual_norms, scaled_residual_norms, r_z_dots, r_z_dot_olds;
+    Vector beta_vec, *loo_beta_vec = NULL;
+    beta_vec.Init(right_hand_sides.n_cols());
+
+    Vector residual_norms, scaled_residual_norms, r_z_dots, r_z_dot_olds,
+      *loo_residual_norms = NULL, *loo_scaled_residual_norms = NULL,
+      *loo_r_z_dots = NULL, *loo_r_z_dot_olds = NULL;
     residual_norms.Init(right_hand_sides.n_cols());
     scaled_residual_norms.Init(right_hand_sides.n_cols());
     r_z_dots.Init(right_hand_sides.n_cols());
     r_z_dot_olds.Init(right_hand_sides.n_cols());
 
+    // Allocate stuffs for leave-one-out estimates.
+    if(loo_right_hand_sides != NULL) {
+      loo_query_in_cg_loop = new ArrayList<bool>();
+      loo_query_in_cg_loop->Init(right_hand_sides.n_cols());
+      for(index_t i = 0; i < right_hand_sides.n_cols(); i++) {
+	(*loo_query_in_cg_loop)[i] = true;
+      }
+      loo_brkdown_tol = new Vector();
+      loo_brkdown_tol->Init(right_hand_sides.n_cols());
+      loo_brkdown_tol->SetAll(DBL_EPSILON);
+      loo_residuals = new Matrix();
+      loo_residuals->Init(right_hand_sides.n_rows(), 
+			  right_hand_sides.n_cols());
+      loo_p_vecs = new Matrix();
+      loo_p_vecs->Init(right_hand_sides.n_rows(), right_hand_sides.n_cols());
+      loo_z_vecs = new Matrix();
+      loo_z_vecs->Init(right_hand_sides.n_rows(), right_hand_sides.n_cols());
+      linear_transformed_loo_p_vecs = new Matrix();
+      linear_transformed_loo_p_vecs->Init(right_hand_sides.n_rows(), 
+					  right_hand_sides.n_cols());
+      loo_beta_vec = new Vector();
+      loo_beta_vec->Init(right_hand_sides.n_cols());
+      loo_residual_norms = new Vector();
+      loo_residual_norms->Init(right_hand_sides.n_cols());
+      loo_scaled_residual_norms = new Vector();
+      loo_scaled_residual_norms->Init(right_hand_sides.n_cols());
+      loo_r_z_dots = new Vector();
+      loo_r_z_dots->Init(right_hand_sides.n_cols());
+      loo_r_z_dot_olds = new Vector();
+      loo_r_z_dot_olds->Init(right_hand_sides.n_cols());
+    }
+
     // p = 0
     p_vecs.SetZero();
+    if(loo_p_vecs != NULL) {
+      loo_p_vecs->SetZero();
+    }
 
     // beta = 0
-    Vector beta_vec;
-    beta_vec.Init(right_hand_sides.n_cols());
     beta_vec.SetZero();
+    if(loo_beta_vec != NULL) {
+      loo_beta_vec->SetZero();
+    }
 
     // Compute the initial residual based on the initial guess. Since
-    //we assume that the initial guesses are all zero vectors, we can
-    //just assume that the initial residuals are the right hand sides.
+    // we assume that the initial guesses are all zero vectors, we can
+    // just assume that the initial residuals are the right hand
+    // sides.
     residuals.CopyValues(right_hand_sides);
+    if(loo_residuals != NULL) {
+      loo_residuals->CopyValues(*loo_right_hand_sides);
+    }
 
     //  z = M r - this is assuming no preconditioner.
     z_vecs.CopyValues(residuals);
+    if(loo_z_vecs != NULL) {
+      loo_z_vecs->CopyValues(*loo_residuals);
+    }
     
     // Compute a few global scalars:
     //     1) ||r||
     //     2) scaled ||r|| (i.e. ||r|| / ||b||)
     //     3) r_z_dot = <z, r>
     ComputeGlobalScalars_(right_hand_sides, z_vecs, residuals,
-			  residual_norms, scaled_residual_norms, r_z_dots);
-    
-    // Make a copy of the true residual norms.
-    true_scaled_residuals.CopyValues(scaled_residual_norms);
-
-    // flag that denotes whether the linear operator has been called before.
-    bool called_for_first_time = true;
+			  residual_norms, scaled_residual_norms, r_z_dots,
+			  loo_right_hand_sides, loo_z_vecs, loo_residuals,
+			  loo_residual_norms, loo_scaled_residual_norms, 
+			  loo_r_z_dots);
 
     // Start the main loop of the CG iteration.
     for(index_t iter = 1; iter <= row_length_ && num_queries_in_cg_loop > 0; 
@@ -187,14 +259,22 @@ private:
       for(index_t q = 0; q < p_vecs.n_cols(); q++) {
 	// p = beta * p
 	la::Scale(row_length_, beta_vec[q], p_vecs.GetColumnPtr(q));
+	// p += z;
 	la::AddTo(row_length_, z_vecs.GetColumnPtr(q), p_vecs.GetColumnPtr(q));
+
+	if(loo_beta_vec != NULL) {
+	  la::Scale(row_length_, (*loo_beta_vec)[q], 
+		    loo_p_vecs->GetColumnPtr(q));
+	  la::AddTo(row_length_, loo_z_vecs->GetColumnPtr(q), 
+		    loo_p_vecs->GetColumnPtr(q));
+	}
       }
 
       // ap = A p: applies the linear operator to each query point
       // simultaneously.
       algorithm_->LinearOperator
-	(qroot_, qset_, query_in_cg_loop, p_vecs, linear_transformed_p_vecs,
-	 called_for_first_time);
+	(qroot_, qset_, query_in_cg_loop, p_vecs, loo_p_vecs,
+	 linear_transformed_p_vecs, linear_transformed_loo_p_vecs);
       
       // Now loop over each query point.
       for(index_t q = 0; q < solutions.n_cols(); q++) {
@@ -207,6 +287,11 @@ private:
 	// Compute p^T A p for each query.
 	p_ap_dot = la::Dot(row_length_, p_vecs.GetColumnPtr(q),
 			   linear_transformed_p_vecs.GetColumnPtr(q));
+	if(loo_p_vecs != NULL) {
+	  loo_p_ap_dot = la::Dot(row_length_, loo_p_vecs->GetColumnPtr(q),
+				 linear_transformed_loo_p_vecs->
+				 GetColumnPtr(q));
+	}
 
 	// If we are losing symmetric positive definiteness, then we
 	// should stop updating solution for this query point.
@@ -227,34 +312,81 @@ private:
 	}
 	
 	alpha  = r_z_dots[q] / p_ap_dot;
+	if(loo_r_z_dots != NULL) {
+	  loo_alpha = (*loo_r_z_dots)[q] / loo_p_ap_dot;
+	}
 
 	// x = x + alpha * p
 	la::AddExpert(row_length_, alpha, p_vecs.GetColumnPtr(q),
 		      solutions.GetColumnPtr(q));
+	if(loo_solutions != NULL && (*loo_query_in_cg_loop)[q]) {
+	  
+	  // If we are losing symmetric positive definiteness for the
+	  // leave-one-out estimates, then we should stop updating
+	  // solution for this query point.
+	  if (loo_p_ap_dot < (*loo_brkdown_tol)[q]) {
+	    
+	    if(loo_p_ap_dot < 0 || 
+	       BreakDown_(loo_p_vecs->GetColumnPtr(q), 
+			  linear_transformed_loo_p_vecs->GetColumnPtr(q), 
+			  loo_p_ap_dot)) {
+	      (*loo_query_in_cg_loop)[q] = false;
+	    }
+	    
+	    // Otherwise, readjust breakdown tolerance according to the
+	    // current postive-definiteness of the matrix.
+	    else {
+	      (*loo_brkdown_tol)[q] = 0.1 * loo_p_ap_dot;
+	    }
+	  }
+
+	  if((*loo_query_in_cg_loop)[q]) {
+	    la::AddExpert(row_length_, loo_alpha, loo_p_vecs->GetColumnPtr(q),
+			  loo_solutions->GetColumnPtr(q));
+	  }
+	}
 
 	// r = r - alpha * Ap
 	la::AddExpert(row_length_, -alpha,
 		      linear_transformed_p_vecs.GetColumnPtr(q),
 		      residuals.GetColumnPtr(q));
+	if(loo_residuals != NULL) {
+	  la::AddExpert(row_length_, -loo_alpha,
+			linear_transformed_loo_p_vecs->GetColumnPtr(q),
+			loo_residuals->GetColumnPtr(q));
+	}
 
 	// z = M^-1 r - currently no preconditioner is used.
 	la::ScaleOverwrite(row_length_, 1, residuals.GetColumnPtr(q),
 			   z_vecs.GetColumnPtr(q));
-	
+	if(loo_residuals != NULL) {
+	  la::ScaleOverwrite(row_length_, 1, loo_residuals->GetColumnPtr(q),
+			     loo_z_vecs->GetColumnPtr(q));
+	}
+
 	r_z_dot_olds[q] = r_z_dots[q];
+	if(loo_r_z_dot_olds != NULL) {
+	  (*loo_r_z_dot_olds)[q] = (*loo_r_z_dots)[q];
+	}
 
 	// Compute a few global scalars:
 	//     1) ||r||
 	//     2) scaled ||r|| (i.e. ||r|| / ||b||)
 	//     3) r_z_dot = <z, r>
 	ComputeGlobalScalar_(q, right_hand_sides, z_vecs, residuals,
-			     residual_norms, scaled_residual_norms, r_z_dots);
+			     residual_norms, scaled_residual_norms, r_z_dots,
+			     loo_right_hand_sides, loo_z_vecs, loo_residuals,
+			     loo_residual_norms, loo_scaled_residual_norms, 
+			     loo_r_z_dots);
 	
 	if(!query_in_cg_loop[q]) {
 	  break;
 	}
 	
 	beta_vec[q] = r_z_dots[q] / r_z_dot_olds[q];
+	if(loo_beta_vec != NULL) {
+	  (*loo_beta_vec)[q] = (*loo_r_z_dots)[q] / (*loo_r_z_dot_olds)[q];
+	}
 	
 	// This points to another possible problem...
 	if (fabs(r_z_dots[q]) < brkdown_tol[q]) {
@@ -267,6 +399,18 @@ private:
 	    brkdown_tol[q] = 0.1 * fabs(r_z_dots[q]);
 	  }
 	}
+	if(loo_r_z_dots != NULL) {
+	  if (fabs((*loo_r_z_dots)[q]) < (*loo_brkdown_tol)[q]) {
+	    if(BreakDown_(loo_residuals->GetColumnPtr(q), 
+			  loo_z_vecs->GetColumnPtr(q),
+			  (*loo_r_z_dots)[q])) {
+	      (*loo_query_in_cg_loop)[q] = false;
+	    }
+	    else {
+	      (*loo_brkdown_tol)[q] = 0.1 * fabs((*loo_r_z_dots)[q]);
+	  }
+	  }
+	}
 
 	// Now check whether the current query point has converged...
 	if(scaled_residual_norms[q] < 1e-2) {
@@ -277,6 +421,21 @@ private:
       } // end of iterating over each query point.
 
     } // end of iterating over each iteration of CG.
+
+    // Memory cleanup
+    if(loo_right_hand_sides != NULL) {
+      delete loo_query_in_cg_loop;
+      delete loo_brkdown_tol;
+      delete loo_residuals;
+      delete loo_p_vecs;
+      delete loo_z_vecs;
+      delete linear_transformed_loo_p_vecs;
+      delete loo_beta_vec;
+      delete loo_residual_norms;
+      delete loo_scaled_residual_norms;
+      delete loo_r_z_dots;
+      delete loo_r_z_dot_olds;
+    }
   }
   
 };

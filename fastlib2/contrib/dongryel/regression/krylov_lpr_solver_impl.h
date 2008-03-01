@@ -9,42 +9,34 @@
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 (QueryTree *qroot, const Matrix &qset, const ArrayList<bool> &query_in_cg_loop,
- const Matrix &original_vectors, Matrix &linear_transformed_vectors,
- bool &called_for_first_time) {
+ const Matrix &original_vectors, Matrix *leave_one_out_original_vectors,
+ Matrix &linear_transformed_vectors, 
+ Matrix *linear_transformed_leave_one_out_vectors) {
 
-  Matrix vector_l, vector_e;
+  Matrix vector_l, vector_e, *leave_one_out_vector_e = NULL;
   Vector vector_used_error, vector_n_pruned;
   
   vector_l.Init(row_length_, original_vectors.n_cols());
   vector_e.Init(row_length_, original_vectors.n_cols());
+
+  if(leave_one_out_original_vectors != NULL) {
+    leave_one_out_vector_e = new Matrix();
+    leave_one_out_vector_e->Init(row_length_, original_vectors.n_cols());
+    linear_transformed_leave_one_out_vectors->SetZero();
+  }
   vector_used_error.Init(original_vectors.n_cols());
   vector_n_pruned.Init(original_vectors.n_cols());
   
   // Initialize the multivector to zero.
   linear_transformed_vectors.SetZero();
-  
+    
   for(index_t d = 0; d < row_length_; d++) {
 
-    if(called_for_first_time) {
-      ComputeWeightedVectorSum_
-	(qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, d,
-	 vector_l, vector_e, vector_used_error, vector_n_pruned);
-
-      if(d == 0) {
-	cached_linear_operators_.CopyValues(vector_e);
-      }
-    }
-    else {
-
-      if(d == 0) {
-	vector_e.CopyValues(cached_linear_operators_);
-      }
-      else {
-	ComputeWeightedVectorSum_
-	(qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, d,
-	 vector_l, vector_e, vector_used_error, vector_n_pruned);
-      }
-    }
+    // Compute the current column linear operator.
+    ComputeWeightedVectorSum_
+      (qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, d,
+       vector_l, vector_e, vector_used_error, vector_n_pruned,
+       leave_one_out_vector_e);
 
     // Accumulate the product between the computed vector and each
     // scalar component of the X.
@@ -60,23 +52,36 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 	linear_transformed_vectors.set
 	  (j, q, linear_transformed_vectors.get(j, q) +
 	   original_vectors.get(d, q) * vector_e.get(j, q));
+
+	if(linear_transformed_leave_one_out_vectors != NULL) {
+	  linear_transformed_leave_one_out_vectors->set
+	    (j, q, linear_transformed_leave_one_out_vectors->get(j, q) +
+	     leave_one_out_original_vectors->get(d, q) *
+	     leave_one_out_vector_e->get(j, q));
+	}
       }
     } // end of iterating over each query.
   } // end of iterating over each component.
 
-  // Switch the flag to false after this function is finished.
-  called_for_first_time = false;
+  // Memory cleanup
+  delete leave_one_out_vector_e;
 }
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
 (QueryTree *qroot, const Matrix &qset, const Matrix &right_hand_sides_e,
- Matrix &solution_vectors_e) {
+ Matrix *leave_one_out_right_hand_sides_e, Matrix &solution_vectors_e,
+ Matrix *leave_one_out_solution_vectors_e) {
   
   MultiConjugateGradient<KrylovLpr<TKernel, TPruneRule> > mcg_algorithm;
   mcg_algorithm.Init(qroot, qset, rset_inv_norm_consts_, row_length_, this);
 
   // Initialize the solution vectors to be zero.
   solution_vectors_e.SetZero();
-  mcg_algorithm.Iterate(right_hand_sides_e, solution_vectors_e);
+  if(leave_one_out_solution_vectors_e != NULL) {
+    leave_one_out_solution_vectors_e->SetZero();
+  }
+
+  mcg_algorithm.Iterate(right_hand_sides_e, leave_one_out_right_hand_sides_e,
+			solution_vectors_e, leave_one_out_solution_vectors_e);
 }
