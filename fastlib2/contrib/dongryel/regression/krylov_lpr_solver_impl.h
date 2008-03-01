@@ -70,8 +70,9 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
 (QueryTree *qroot, const Matrix &qset, const Matrix &right_hand_sides_e,
- Matrix *leave_one_out_right_hand_sides_e, Matrix &solution_vectors_e,
- Matrix *leave_one_out_solution_vectors_e) {
+ Matrix *leave_one_out_right_hand_sides_e, const Matrix &query_expansions,
+ Matrix &solution_vectors_e, Matrix *leave_one_out_solution_vectors_e,
+ Matrix &query_expansion_solutions) {
   
   MultiConjugateGradient<KrylovLpr<TKernel, TPruneRule> > mcg_algorithm;
   mcg_algorithm.Init(qroot, qset, rset_inv_norm_consts_, row_length_, this);
@@ -81,6 +82,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
   if(leave_one_out_solution_vectors_e != NULL) {
     leave_one_out_solution_vectors_e->SetZero();
   }
+  query_expansion_solutions.SetZero();
 
   mcg_algorithm.Iterate(right_hand_sides_e, leave_one_out_right_hand_sides_e,
 			solution_vectors_e, leave_one_out_solution_vectors_e);
