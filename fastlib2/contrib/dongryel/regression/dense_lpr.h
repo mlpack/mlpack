@@ -830,7 +830,7 @@ class DenseLpr {
       module_ = module_in;
       
       // read in the number of points owned by a leaf
-      int leaflen = fx_param_int(module_in, "leaflen", 20);
+      int leaflen = fx_param_int(module_in, "leaflen", 40);
       
       // set the local polynomial approximation order.
       lpr_order_ = fx_param_int_req(NULL, "lpr_order");

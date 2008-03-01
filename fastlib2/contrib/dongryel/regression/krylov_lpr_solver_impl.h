@@ -10,8 +10,9 @@ template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 (QueryTree *qroot, const Matrix &qset, const ArrayList<bool> &query_in_cg_loop,
  const Matrix &original_vectors, Matrix *leave_one_out_original_vectors,
- Matrix &linear_transformed_vectors, 
- Matrix *linear_transformed_leave_one_out_vectors) {
+ const Matrix &expansion_original_vectors, Matrix &linear_transformed_vectors, 
+ Matrix *linear_transformed_leave_one_out_vectors,
+ Matrix &linear_transformed_expansion_vectors) {
 
   Matrix vector_l, vector_e, *leave_one_out_vector_e = NULL;
   Vector vector_used_error, vector_n_pruned;
@@ -29,6 +30,7 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
   
   // Initialize the multivector to zero.
   linear_transformed_vectors.SetZero();
+  linear_transformed_expansion_vectors.SetZero();
     
   for(index_t d = 0; d < row_length_; d++) {
 
@@ -52,6 +54,9 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 	linear_transformed_vectors.set
 	  (j, q, linear_transformed_vectors.get(j, q) +
 	   original_vectors.get(d, q) * vector_e.get(j, q));
+	linear_transformed_expansion_vectors.set
+	  (j, q, linear_transformed_expansion_vectors.get(j, q) +
+	   expansion_original_vectors.get(d, q) * vector_e.get(j, q));
 
 	if(linear_transformed_leave_one_out_vectors != NULL) {
 	  linear_transformed_leave_one_out_vectors->set
@@ -85,5 +90,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
   query_expansion_solutions.SetZero();
 
   mcg_algorithm.Iterate(right_hand_sides_e, leave_one_out_right_hand_sides_e,
-			solution_vectors_e, leave_one_out_solution_vectors_e);
+			query_expansions, solution_vectors_e, 
+			leave_one_out_solution_vectors_e,
+			query_expansion_solutions);
 }
