@@ -7,6 +7,44 @@
 #include "multi_conjugate_gradient.h"
 
 template<typename TKernel, typename TPruneRule>
+void KrylovLpr<TKernel, TPruneRule>::LinearOperatorConfidenceBand
+(QueryTree *qroot, const Matrix &qset, 
+ const Matrix &query_expansion_solution_vectors,
+ Matrix &linear_transformed_query_expansion_solution_vectors) {
+  
+  Matrix vector_l, vector_e;
+  Vector vector_used_error, vector_n_pruned;
+  
+  vector_l.Init(row_length_, qset.n_cols());
+  vector_e.Init(row_length_, qset.n_cols());
+  vector_used_error.Init(qset.n_cols());
+  vector_n_pruned.Init(qset.n_cols());
+  
+  // Initialize the multivector to zero.
+  linear_transformed_query_expansion_solution_vectors.SetZero();
+    
+  for(index_t d = 0; d < row_length_; d++) {
+
+    // Compute the current column linear operator.
+    ComputeWeightedVectorSum_
+      (qroot, qset, rset_inv_squared_norm_consts_, NULL, true, d,
+       vector_l, vector_e, vector_used_error, vector_n_pruned, NULL);
+
+    // Accumulate the product between the computed vector and each
+    // scalar component of the X.
+    for(index_t q = 0; q < qset.n_cols(); q++) {
+
+      for(index_t j = 0; j < row_length_; j++) {
+	linear_transformed_query_expansion_solution_vectors.set
+	  (j, q, 
+	   linear_transformed_query_expansion_solution_vectors.get(j, q) +
+	   query_expansion_solution_vectors.get(d, q) * vector_e.get(j, q));
+      }
+    } // end of iterating over each query.
+  } // end of iterating over each component.  
+}
+
+template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 (QueryTree *qroot, const Matrix &qset, const ArrayList<bool> &query_in_cg_loop,
  const Matrix &original_vectors, Matrix *leave_one_out_original_vectors,

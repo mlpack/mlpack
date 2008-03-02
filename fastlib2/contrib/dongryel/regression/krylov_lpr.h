@@ -85,6 +85,11 @@ class KrylovLpr {
    */
   Vector rset_inv_norm_consts_;
 
+  /** @brief The inverses of the squared normalization constant of the
+   *         kernel center at each reference point.
+   */
+  Vector rset_inv_squared_norm_consts_;
+
   /** @brief The original training target value for the reference
    *         dataset weighted by the reference coordinate.  (i.e. y_i
    *         [1; r^T]^T ).
@@ -175,7 +180,8 @@ class KrylovLpr {
    */
   void FinalizeQueryTree_
   (QueryTree *qnode, const Matrix &qset, 
-   const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
+   const ArrayList<bool> *query_in_cg_loop, 
+   const bool confidence_band_computation_phase, Matrix &right_hand_sides_l, 
    Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
    Vector &right_hand_sides_n_pruned, 
    Matrix *leave_one_out_right_hand_sides_e);
@@ -226,8 +232,9 @@ class KrylovLpr {
   (const Matrix &qset, const Matrix &query_expansions,
    const Matrix &solution_vectors_e,
    Matrix *leave_one_out_solution_vectors_e, 
-   const Matrix &expansion_solution_vectors_e, Vector &regression_estimates,
-   Vector *leave_one_out_regression_estimates,
+   const Matrix &expansion_solution_vectors_e,
+   const Matrix &linear_transformed_expansion_solution_vectors_e,
+   Vector &regression_estimates, Vector *leave_one_out_regression_estimates,
    Vector *query_magnitude_weight_diagrams, Vector *query_influence_values) {
 
     // Loop over each query point and take the dot-product.
@@ -245,6 +252,12 @@ class KrylovLpr {
       const double *query_point_expansion_solution =
 	expansion_solution_vectors_e.GetColumnPtr(i);
 
+      // Retrieve the linear transformed solution vector asociated
+      // with the current query: (B^T W(q)^2 B) (B^T W(q) B)^{-1}
+      // t(q).
+      const double *linear_transformed_query_point_expansion_solution =
+	linear_transformed_expansion_solution_vectors_e.GetColumnPtr(i);
+
       // Take the dot product between the query point solution and the
       // query point expansion to get the regression estimate.
       regression_estimates[i] = la::Dot(row_length_, query_pt_solution,
@@ -257,6 +270,15 @@ class KrylovLpr {
 	(*leave_one_out_regression_estimates)[i] =
 	  la::Dot(row_length_, query_pt_leave_one_out_solution,
 		  query_point_expansion);
+      }
+
+      // Compute the magnitude of the weight diagram vector for each
+      // query, i.e. r(q)^T (B^T W(q) B)^-1 B^T W(q)^2 B (B^T W(q)
+      // B)^-1 r(q).
+      if(query_magnitude_weight_diagrams != NULL) {
+	(*query_magnitude_weight_diagrams)[i] =
+	  la::Dot(row_length_, query_point_expansion_solution,
+		  linear_transformed_query_point_expansion_solution);
       }
 
       // Compute the influence value at each point (if it belongs to
@@ -337,12 +359,14 @@ class KrylovLpr {
   void DecideComputationMethod_
   (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset, 
    const ArrayList<bool> *query_in_cg_loop,
+   const bool confidence_band_computation_phase,
    Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
    Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
 
   void StratifiedComputation_
   (QueryTree *qroot, const Matrix &qset,
-   const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l,
+   const ArrayList<bool> *query_in_cg_loop, 
+   const bool confidence_band_computation_phase, Matrix &right_hand_sides_l,
    Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error,
    Vector &right_hand_sides_n_pruned);
 
@@ -355,7 +379,7 @@ class KrylovLpr {
   void ComputeWeightedVectorSum_
     (QueryTree *qroot, const Matrix &qset, const Vector &weights,
      const ArrayList<bool> *query_in_cg_loop, 
-     const bool confidence_band_computaton_phase, index_t column_index, 
+     const bool confidence_band_computation_phase, index_t column_index, 
      Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
      Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned,
      Matrix *leave_one_out_right_hand_sides_e) {
@@ -368,7 +392,11 @@ class KrylovLpr {
     right_hand_sides_e.SetZero();
     right_hand_sides_used_error.SetZero();
     right_hand_sides_n_pruned.SetZero();
-    leave_one_out_right_hand_sides_e->SetZero();
+    if(leave_one_out_right_hand_sides_e != NULL) {
+      leave_one_out_right_hand_sides_e->SetZero();
+    }
+
+    // Initialize the query tree summary statistics bound.
     InitializeQueryTree_(qroot, qset, query_in_cg_loop);
     
     // Call dualtree function.
@@ -380,12 +408,14 @@ class KrylovLpr {
     }
     else {
       StratifiedComputation_
-	(qroot, qset, query_in_cg_loop, right_hand_sides_l, right_hand_sides_e,
+	(qroot, qset, query_in_cg_loop, confidence_band_computation_phase,
+	 right_hand_sides_l, right_hand_sides_e,
 	 right_hand_sides_used_error, right_hand_sides_n_pruned);
     }
 
     // Final traversal of the query tree to finalize estimates.
-    FinalizeQueryTree_(qroot, qset, query_in_cg_loop, right_hand_sides_l, 
+    FinalizeQueryTree_(qroot, qset, query_in_cg_loop, 
+		       confidence_band_computation_phase, right_hand_sides_l, 
 		       right_hand_sides_e, right_hand_sides_used_error, 
 		       right_hand_sides_n_pruned, 
 		       leave_one_out_right_hand_sides_e);
@@ -466,6 +496,16 @@ class KrylovLpr {
 			 leave_one_out_solution_vectors_e,
 			 query_expansion_solution_vectors_e);
 
+    // Now take the least squares solution to the system (B^T W(q)
+    // B)^{-1} t(q) and multiple by the B^T W(q)^2 B for the final
+    // pass.
+    Matrix linear_transformed_query_expansion_solution_vectors_e;
+    linear_transformed_query_expansion_solution_vectors_e.Init
+      (row_length_, qset.n_cols());
+    LinearOperatorConfidenceBand
+      (qroot, qset, query_expansion_solution_vectors_e,
+       linear_transformed_query_expansion_solution_vectors_e);
+
     // Free the query tree (very important!)
     delete qroot;
     printf("Phase 2 completed...\n");
@@ -481,13 +521,14 @@ class KrylovLpr {
     if(query_influence_values != NULL) {
       query_influence_values->Init(qset.n_cols());
     }
-    FinalizeRegressionEstimates_(qset, query_expansions, solution_vectors_e, 
-				 leave_one_out_solution_vectors_e,
-				 query_expansion_solution_vectors_e,
-				 (*query_regression_estimates),
-				 leave_one_out_query_regression_estimates,
-				 query_magnitude_weight_diagrams, 
-				 query_influence_values);
+    FinalizeRegressionEstimates_
+      (qset, query_expansions, solution_vectors_e, 
+       leave_one_out_solution_vectors_e, query_expansion_solution_vectors_e,
+       linear_transformed_query_expansion_solution_vectors_e,
+       (*query_regression_estimates),
+       leave_one_out_query_regression_estimates,
+       query_magnitude_weight_diagrams, 
+       query_influence_values);
     printf("Phase 3 completed...\n");
 
     // Reshuffle the results to account for dataset reshuffling
@@ -603,8 +644,10 @@ class KrylovLpr {
   void PrecomputeWeights_() {
     rset_target_divided_by_norm_consts_.Init(rset_.n_cols());
     rset_inv_norm_consts_.Init(rset_.n_cols());
+    rset_inv_squared_norm_consts_.Init(rset_.n_cols());
 
-    // Find out the minimum normalization constant.
+    // Find out the minimum normalization constant. This assumes that
+    // the minimum normalization constant is greater than zero...
     double min_norm_const = DBL_MAX;
     for(index_t i = 0; i < rset_.n_cols(); i++) {
       min_norm_const = std::min(min_norm_const,
@@ -617,6 +660,9 @@ class KrylovLpr {
 	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
       rset_inv_norm_consts_[i] = 1.0 / 
 	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
+      rset_inv_squared_norm_consts_[i] = 1.0 /
+	(kernels_[i].CalcNormConstant(dimension_) *
+	 kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
     }
   }
 
@@ -750,8 +796,11 @@ class KrylovLpr {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < rset_.n_cols(); q++) {
-      fprintf(stream, "%g %g\n", rset_regression_estimates_[q],
-	      leave_one_out_rset_regression_estimates_[q]);
+      fprintf(stream, "%g %g %g %g %g %g\n", rset_confidence_bands_[q].lo,
+	      rset_regression_estimates_[q], rset_confidence_bands_[q].hi,
+	      leave_one_out_rset_regression_estimates_[q],
+	      rset_magnitude_weight_diagrams_[q],
+	      rset_influence_values_[q]);
     }
     
     if(stream != stdout) {
