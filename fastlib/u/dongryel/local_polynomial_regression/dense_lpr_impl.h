@@ -24,7 +24,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   qset.Copy(queries);
   
   // read in the number of points owned by a leaf
-  int leaflen = fx_param_int(module_, "leaflen", 20);
+  int leaflen = fx_param_int(module_, "leaflen", 40);
   
   // Construct the query tree.
   ArrayList<index_t> old_from_new_queries;
@@ -110,9 +110,23 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   if(leave_one_out_query_regression_estimates != NULL) {
     for(index_t i = 0; i < tmp_q_results.length(); i++) {
       tmp_q_results[old_from_new_queries[i]] = 
-      (*leave_one_out_query_regression_estimates)[i];
+	(*leave_one_out_query_regression_estimates)[i];
     }
     leave_one_out_query_regression_estimates->CopyValues(tmp_q_results);
+  }
+  if(query_magnitude_weight_diagrams != NULL) {
+    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+      tmp_q_results[old_from_new_queries[i]] = 
+	(*query_magnitude_weight_diagrams)[i];
+    }
+    query_magnitude_weight_diagrams->CopyValues(tmp_q_results);
+  }
+  if(query_influence_values != NULL) {
+    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+      tmp_q_results[old_from_new_queries[i]] = 
+	(*query_influence_values)[i];
+    }
+    query_influence_values->CopyValues(tmp_q_results);
   }
 }
 
@@ -128,7 +142,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
   internal_relative_error_ = relative_error_ / (relative_error_ + 2.0);
   
   // read in the number of points owned by a leaf
-  int leaflen = fx_param_int(module_, "leaflen", 20);
+  int leaflen = fx_param_int(module_, "leaflen", 40);
   
   // Initialize storage space for intermediate computations.
   Matrix numerator_l, numerator_e;
@@ -315,6 +329,18 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	  rnode->stat().data_outer_products_far_field_expansion_[j][i].
 	    Add(reference_point_expansion[j] * reference_point_expansion[i] /
 		norm_constant, kernels_[r].bandwidth_sq(), r_col);
+
+	  // Note that for computing the magnitude of the weight
+	  // diagram vector, we need to compute the far-field
+	  // expansion of B^T W(q)^2 B, so the thing is a bit tricky
+	  // in the variable-bandwidth case. Note that we divide by
+	  // the squared normalization constant due to the squaring
+	  // the weight matrix W(q).
+	  rnode->stat().weight_diagram_far_field_expansion_[j][i].
+	    Add(reference_point_expansion[j] * reference_point_expansion[i] /
+		(norm_constant * norm_constant), kernels_[r].bandwidth_sq(),
+		r_col);
+
 	  rnode->stat().sum_data_outer_products_.set
 	    (i, j, rnode->stat().sum_data_outer_products_.get(i, j) + 
 	     reference_point_expansion[j] * 
@@ -392,6 +418,12 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	rnode->stat().data_outer_products_far_field_expansion_[j][i].
 	  Add(rnode->right()->stat().
 	      data_outer_products_far_field_expansion_[j][i]);
+	
+	rnode->stat().weight_diagram_far_field_expansion_[j][i].
+	  Add(rnode->left()->stat().weight_diagram_far_field_expansion_[j][i]);
+	rnode->stat().weight_diagram_far_field_expansion_[j][i].
+	  Add(rnode->right()->stat().
+	      weight_diagram_far_field_expansion_[j][i]);
       }  // end of iterating over each row.
     } // end of iterating over each column.
     
@@ -716,10 +748,10 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
 	qnode->stat().postponed_weight_diagram_numerator_l_.set
 	  (j, i, qnode->stat().postponed_weight_diagram_numerator_l_.get(j, i) 
 	   + rnode->stat().
-	   data_outer_products_far_field_expansion_[j][i].
+	   weight_diagram_far_field_expansion_[j][i].
 	   ComputeMinKernelSum(qnode->bound()));
 	qnode->stat().postponed_moment_weight_diagram_numerator_e_[j][i].
-	  Add(rnode->stat().data_outer_products_far_field_expansion_[j][i]);
+	  Add(rnode->stat().weight_diagram_far_field_expansion_[j][i]);
       }
     }
 
@@ -1019,9 +1051,33 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	(dimension_, lpr_order_, query_point, query_point_expansion.ptr());
       (*query_regression_estimates)[q] = la::Dot(query_point_expansion,
 						 least_squares_solution);
+            
+      // Now we compute the magnitude of the weight diagram for each
+      // query point. This step depends on the pseudoinverse computed
+      // above.
+      Vector pseudo_inverse_times_query_expansion;
+      Vector intermediate_product;
+      la::MulInit(pseudoinverse_denominator, query_point_expansion,
+		  &pseudo_inverse_times_query_expansion);
+      la::MulInit(weight_diagram_numerator_e[q],
+		  pseudo_inverse_times_query_expansion, &intermediate_product);
+      (*query_magnitude_weight_diagrams)[q] =
+	sqrt(la::Dot(pseudo_inverse_times_query_expansion, 
+		     intermediate_product));
+
+      // Compute the influence value at each point (if it belongs to
+      // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
+      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
+      if(query_influence_values != NULL) {
+	(*query_influence_values)[q] =
+	  la::Dot(query_point_expansion, pseudo_inverse_times_query_expansion);
+      }
 
       // Compute the leave-one-out regression estimate for
-      // cross-validation stage.
+      // cross-validation stage. Note that this needs to be after
+      // computing the magnitude of the weight diagram and the
+      // influence values, since these two depend on the
+      // non-leave-one-out quantities.
       if(leave_one_out_query_regression_estimates != NULL) {
 
 	// Subtract the contribution of the point itself from the
@@ -1052,27 +1108,8 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	// query point by the beta_q.
 	(*leave_one_out_query_regression_estimates)[q] =
 	  la::Dot(least_squares_solution, query_point_expansion);
-      }
-            
-      // Now we compute the magnitude of the weight diagram for each
-      // query point.
-      Vector pseudo_inverse_times_query_expansion;
-      Vector intermediate_product;
-      la::MulInit(pseudoinverse_denominator, query_point_expansion,
-		  &pseudo_inverse_times_query_expansion);
-      la::MulInit(weight_diagram_numerator_e[q],
-		  pseudo_inverse_times_query_expansion, &intermediate_product);
-      (*query_magnitude_weight_diagrams)[q] =
-	sqrt(la::Dot(pseudo_inverse_times_query_expansion, 
-		     intermediate_product));
+      } // end of computing loo regression estimate...
 
-      // Compute the influence value at each point (if it belongs to
-      // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
-      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
-      if(query_influence_values != NULL) {
-	(*query_influence_values)[q] =
-	  la::Dot(query_point_expansion, pseudo_inverse_times_query_expansion);
-      }
     } // end of iterating over each query point.
   }
   else {
