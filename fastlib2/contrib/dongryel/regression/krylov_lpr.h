@@ -498,17 +498,28 @@ class KrylovLpr {
       tmp_q_results[old_from_new_queries[i]] =	
 	(*query_regression_estimates)[i];
     }
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
-      (*query_regression_estimates)[i] = tmp_q_results[i];
-    }
+    query_regression_estimates->CopyValues(tmp_q_results);
+
     if(leave_one_out_query_regression_estimates != NULL) {
       for(index_t i = 0; i < tmp_q_results.length(); i++) {
 	tmp_q_results[old_from_new_queries[i]] =	
 	  (*leave_one_out_query_regression_estimates)[i];
       }
+      leave_one_out_query_regression_estimates->CopyValues(tmp_q_results);
+    }
+    if(query_magnitude_weight_diagrams != NULL) {
       for(index_t i = 0; i < tmp_q_results.length(); i++) {
-	(*leave_one_out_query_regression_estimates)[i] = tmp_q_results[i];
+	tmp_q_results[old_from_new_queries[i]] =	
+	  (*query_magnitude_weight_diagrams)[i];
       }
+      query_magnitude_weight_diagrams->CopyValues(tmp_q_results);
+    }
+    if(query_influence_values != NULL) {
+      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+	tmp_q_results[old_from_new_queries[i]] =
+	  (*query_influence_values)[i];
+      }
+      query_influence_values->CopyValues(tmp_q_results);
     }
 
     // Memory cleanup
