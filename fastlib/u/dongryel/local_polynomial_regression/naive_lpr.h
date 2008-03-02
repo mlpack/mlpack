@@ -337,6 +337,8 @@ class NaiveLpr {
       (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_);
 
+    printf("First degree of freedom: %g\n", rset_first_degree_of_freedom_);
+    printf("Second degree of freedom: %g\n", rset_second_degree_of_freedom_);
     printf("Reference set variance: %g\n", rset_variance_);
   }
 
@@ -391,8 +393,10 @@ class NaiveLpr {
     else {
       printf("Using the nearest neighbor method...\n");
       AllkNN all_knn;
-      double knn_factor = fx_param_double(module_, "knn_factor", 0.2);
+      double knn_factor = fx_param_double(NULL, "knn_factor", 0.001);
       int knns = (int) (knn_factor * rset_.n_cols());
+      printf("Each reference point will look for %d nearest neighbors...\n",
+	     knns);
       all_knn.Init(rset_, 20, knns);
       ArrayList<index_t> resulting_neighbors;
       ArrayList<double> distances;
@@ -462,7 +466,7 @@ class NaiveLpr {
     fx_timer_start(module_, "naive_lpr_querying_time");
     ComputeMain_(queries, query_regression_estimates, NULL, 
 		 query_confidence_bands, query_magnitude_weight_diagrams, 
-		 query_influence_values, false);
+		 query_influence_values);
     fx_timer_stop(module_, "naive_lpr_querying_time");
   }
 
@@ -520,9 +524,11 @@ class NaiveLpr {
       stream = fopen(fname, "w+");
     }
     for(index_t r = 0; r < rset_.n_cols(); r++) {
-      fprintf(stream, "%g %g %g %g\n", rset_confidence_bands_[r].lo,
+      fprintf(stream, "%g %g %g %g %g %g\n", rset_confidence_bands_[r].lo,
 	      rset_regression_estimates_[r], rset_confidence_bands_[r].hi,
-	      leave_one_out_rset_regression_estimates_[r]);
+	      leave_one_out_rset_regression_estimates_[r],
+	      rset_magnitude_weight_diagrams_[r],
+	      rset_influence_values_[r]);
     }
     
     if(stream != stdout) {
