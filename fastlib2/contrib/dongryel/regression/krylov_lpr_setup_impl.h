@@ -428,9 +428,9 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 (QueryTree *qnode, const Matrix &qset, const ArrayList<bool> *query_in_cg_loop,
- Matrix &right_hand_sides_l, Matrix &right_hand_sides_e,
- Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned,
- Matrix *leave_one_out_right_hand_sides_e) {
+ const bool confidence_band_computation_phase, Matrix &right_hand_sides_l, 
+ Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
+ Vector &right_hand_sides_n_pruned, Matrix *leave_one_out_right_hand_sides_e) {
 
   KrylovLprQStat<TKernel> &q_stat = qnode->stat();
 
@@ -462,13 +462,23 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 		q_right_hand_sides_l);
       la::AddTo(row_length_, (q_stat.postponed_ll_vector_e_).ptr(),
 		q_right_hand_sides_e);
+      right_hand_sides_used_error[q] += q_stat.postponed_ll_vector_used_error_;
+      right_hand_sides_n_pruned[q] += q_stat.postponed_ll_vector_n_pruned_;
 
       // Incorporate the postponed estimates using the Epanechnikov
       // series expansion.
       for(index_t i = 0; i < row_length_; i++) {
-	q_right_hand_sides_e[i] += 
-	  qnode->stat().postponed_moment_ll_vector_e_[i].
-	  ComputeKernelSum(q_col);
+
+	if(!confidence_band_computation_phase) {
+	  q_right_hand_sides_e[i] += 
+	    qnode->stat().postponed_moment_ll_vector_e_[i].
+	    ComputeKernelSum(q_col);
+	}
+	else {
+	  q_right_hand_sides_e[i] += 
+	    qnode->stat().postponed_moment_ll_vector_e_[i].
+	    ComputeSquaredKernelSum(q_col);
+	}
       }
 
       // Now compute the leave-one-out estimate by subtracting the
@@ -481,9 +491,6 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 			 q_right_hand_sides_e, 
 			 q_leave_one_out_right_hand_sides_e);
       }
-
-      right_hand_sides_used_error[q] += q_stat.postponed_ll_vector_used_error_;
-      right_hand_sides_n_pruned[q] += q_stat.postponed_ll_vector_n_pruned_;
     }
   }
   else {
@@ -518,10 +525,12 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
     }
 
     FinalizeQueryTree_(qnode->left(), qset, query_in_cg_loop,
+		       confidence_band_computation_phase,
 		       right_hand_sides_l, right_hand_sides_e, 
 		       right_hand_sides_used_error, right_hand_sides_n_pruned,
 		       leave_one_out_right_hand_sides_e);
     FinalizeQueryTree_(qnode->right(), qset, query_in_cg_loop,
+		       confidence_band_computation_phase,
 		       right_hand_sides_l, right_hand_sides_e, 
 		       right_hand_sides_used_error, right_hand_sides_n_pruned,
 		       leave_one_out_right_hand_sides_e);
@@ -532,6 +541,7 @@ template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset, 
  const ArrayList<bool> *query_in_cg_loop,
+ const bool confidence_band_computation_phase,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
@@ -548,6 +558,14 @@ void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
   // Compute the squared distance and kernel value ranges.
   LprUtil::SqdistAndKernelRanges_
     (qnode, rnode, dsqd_range, kernel_value_range);
+  
+  // If the computation phase is for applying the linear operator B^T
+  // W(q)^2 B for every query point solution to the linear system (B^T
+  // W(q) B)^{-1} t(q), take the square of the computed kernel values.
+  if(confidence_band_computation_phase) {
+    kernel_value_range.lo *= kernel_value_range.lo;
+    kernel_value_range.hi *= kernel_value_range.hi;
+  }
   
   // try finite difference pruning first
   if(TPruneRule::PrunableWeightedVectorSum
@@ -571,10 +589,18 @@ void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
      rnode->count() > dimension_ * dimension_) {
     
     for(index_t j = 0; j < row_length_; j++) {
-      
-      qnode->stat().postponed_ll_vector_l_[j] += 
-	rnode->stat().target_weighted_data_far_field_expansion_[j].
-	ComputeMinKernelSum(qnode->bound());
+
+      if(!confidence_band_computation_phase) {
+	qnode->stat().postponed_ll_vector_l_[j] += 
+	  rnode->stat().target_weighted_data_far_field_expansion_[j].
+	  ComputeMinKernelSum(qnode->bound());
+      }
+      else {
+	qnode->stat().postponed_ll_vector_l_[j] += 
+	  rnode->stat().target_weighted_data_far_field_expansion_[j].
+	  ComputeMinSquaredKernelSum(qnode->bound());	
+      }
+
       qnode->stat().postponed_moment_ll_vector_e_[j].
 	Add(rnode->stat().target_weighted_data_far_field_expansion_[j]);
     }
@@ -595,8 +621,8 @@ void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
-(QueryTree *qnode, const Matrix &qset, 
- const ArrayList<bool> *query_in_cg_loop,
+(QueryTree *qnode, const Matrix &qset, const ArrayList<bool> *query_in_cg_loop,
+ const bool confidence_band_computation_phase,
  Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
  Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned) {
 
@@ -618,7 +644,8 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
       }
 
       DecideComputationMethod_
-	(qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+	(qnode, rnode, qset, query_in_cg_loop, 
+	 confidence_band_computation_phase, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
     }
@@ -684,7 +711,8 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
 
     // Recurse both branches.
     if(qnode->left()->stat().effective_count_ > 0) {
-      StratifiedComputation_(qnode->left(), qset, query_in_cg_loop, 
+      StratifiedComputation_(qnode->left(), qset, query_in_cg_loop,
+			     confidence_band_computation_phase,
 			     right_hand_sides_l, right_hand_sides_e,
 			     right_hand_sides_used_error, 
 			     right_hand_sides_n_pruned);
@@ -703,7 +731,8 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
 		 q_left_stat.postponed_ll_vector_n_pruned_);
     }
     if(qnode->right()->stat().effective_count_ > 0) {
-      StratifiedComputation_(qnode->right(), qset, query_in_cg_loop, 
+      StratifiedComputation_(qnode->right(), qset, query_in_cg_loop,
+			     confidence_band_computation_phase,
 			     right_hand_sides_l, right_hand_sides_e,
 			     right_hand_sides_used_error, 
 			     right_hand_sides_n_pruned);
@@ -731,7 +760,8 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
       ReferenceTree *rnode = qnode->stat().pruned_reference_nodes_[r];
       
       DecideComputationMethod_
-	(qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+	(qnode, rnode, qset, query_in_cg_loop, 
+	 confidence_band_computation_phase, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
     }

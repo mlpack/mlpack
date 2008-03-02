@@ -190,10 +190,6 @@ public:
   (const DHrectBound<t_pow> query_bound) const {
 
     Vector center;
-    double center_dot_center = 
-      la::Dot(weighted_mass, weighted_mass) / weighted_count / 
-      weighted_count;
-	  
     DEBUG_ASSERT(weighted_count != 0);
 	  
     center.Copy(weighted_mass);
@@ -207,9 +203,7 @@ public:
 			      furthest_point_in_query_bound,
 			      furthest_dsqd);
 
-    return ComputeSquaredKernelSum(furthest_point_in_query_bound,
-				   center, furthest_dsqd, 
-				   center_dot_center);
+    return ComputeSquaredKernelSum(furthest_point_in_query_bound);
   }
       
   template<int t_pow>
@@ -217,7 +211,7 @@ public:
     const {
 
     Vector center;
-	  
+    
     DEBUG_ASSERT(weighted_count != 0);
 	  
     center.Copy(weighted_mass);
