@@ -75,6 +75,14 @@ class DenseLpr {
         ArrayList< ArrayList< EpanKernelMomentInfo > >
 	  data_outer_products_far_field_expansion_;
       
+        /** @brief The far field expansion created by the outer
+	 *         products. The (i, j)-th element denotes the
+	 *         far-field expansion of the (i, j)-th component of
+	 *         the sum_data_outer_products_ matrix.
+	 */
+        ArrayList< ArrayList< EpanKernelMomentInfo > >
+	  weight_diagram_far_field_expansion_;
+
         /** @brief The vector summing up the reference polynomial term
 	 *         weighted by its target training value (i.e. B^T Y).
 	 */
@@ -118,6 +126,7 @@ class DenseLpr {
 
 	  sum_data_outer_products_.Init(matrix_dimension, matrix_dimension);
 	  data_outer_products_far_field_expansion_.Init(matrix_dimension);
+	  weight_diagram_far_field_expansion_.Init(matrix_dimension);
 	  sum_target_weighted_data_.Init(matrix_dimension);
 	  target_weighted_data_far_field_expansion_.Init(matrix_dimension);
 
@@ -125,9 +134,11 @@ class DenseLpr {
 	    
 	    target_weighted_data_far_field_expansion_[j].Init(dimension);
 	    data_outer_products_far_field_expansion_[j].Init(matrix_dimension);
-	    
+	    weight_diagram_far_field_expansion_[j].Init(matrix_dimension);
+
 	    for(index_t i = 0; i < matrix_dimension; i++) {
 	      data_outer_products_far_field_expansion_[j][i].Init(dimension);
+	      weight_diagram_far_field_expansion_[j][i].Init(dimension);
 	    }
 	  }
 
@@ -650,6 +661,10 @@ class DenseLpr {
       rset_variance_ *= 1.0 / 
 	(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
 	 rset_second_degree_of_freedom_);
+
+      printf("First degree of freedom: %g\n", rset_first_degree_of_freedom_);
+      printf("Second degree of freedom: %g\n", rset_second_degree_of_freedom_);
+      printf("Reference set variance: %g\n", rset_variance_);
     }
 
     void ComputeConfidenceBands_(const Matrix &queries,
@@ -895,9 +910,11 @@ class DenseLpr {
 	stream = fopen(fname, "w+");
       }
       for(index_t r = 0; r < rset_.n_cols(); r++) {
-	fprintf(stream, "%g %g %g %g\n", rset_confidence_bands_[r].lo,
+	fprintf(stream, "%g %g %g %g %g %g\n", rset_confidence_bands_[r].lo,
 		rset_regression_estimates_[r], rset_confidence_bands_[r].hi,
-		leave_one_out_rset_regression_estimates_[r]);
+		leave_one_out_rset_regression_estimates_[r],
+		rset_magnitude_weight_diagrams_[r],
+		rset_influence_values_[r]);
       }
       
       if(stream != stdout) {

@@ -36,7 +36,7 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 
     // Compute the current column linear operator.
     ComputeWeightedVectorSum_
-      (qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, d,
+      (qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, false, d,
        vector_l, vector_e, vector_used_error, vector_n_pruned,
        leave_one_out_vector_e);
 

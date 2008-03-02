@@ -354,7 +354,8 @@ class KrylovLpr {
    */
   void ComputeWeightedVectorSum_
     (QueryTree *qroot, const Matrix &qset, const Vector &weights,
-     const ArrayList<bool> *query_in_cg_loop, index_t column_index, 
+     const ArrayList<bool> *query_in_cg_loop, 
+     const bool confidence_band_computaton_phase, index_t column_index, 
      Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
      Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned,
      Matrix *leave_one_out_right_hand_sides_e) {
@@ -445,7 +446,7 @@ class KrylovLpr {
     // query point.
     printf("Starting Phase 1...\n");
     ComputeWeightedVectorSum_
-      (qroot, qset, rset_target_divided_by_norm_consts_, NULL, 0,
+      (qroot, qset, rset_target_divided_by_norm_consts_, NULL, false, 0,
        right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
        right_hand_sides_n_pruned, leave_one_out_right_hand_sides_e);
     
@@ -607,6 +608,11 @@ class KrylovLpr {
 	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
     }
   }
+
+  void LinearOperatorConfidenceBand
+  (QueryTree *qroot, const Matrix &qset, 
+   const Matrix &query_expansion_solution_vectors,
+   Matrix &linear_transformed_query_expansion_solution_vectors);
 
  public:
   
