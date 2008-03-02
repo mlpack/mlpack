@@ -8,6 +8,9 @@
 #ifndef NAIVE_LPR_H
 #define NAIVE_LPR_H
 
+#include <sstream>
+#include <iostream>
+#include <string>
 #include "matrix_util.h"
 #include "multi_index_util.h"
 #include "fastlib/fastlib.h"
@@ -337,9 +340,12 @@ class NaiveLpr {
       (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_);
 
-    printf("First degree of freedom: %g\n", rset_first_degree_of_freedom_);
-    printf("Second degree of freedom: %g\n", rset_second_degree_of_freedom_);
-    printf("Reference set variance: %g\n", rset_variance_);
+    fx_format_result(module_, "reference_set_first_degree_of_freedom",
+		     "%g", rset_first_degree_of_freedom_);
+    fx_format_result(module_, "reference_set_second_degree_of_freedom",
+		     "%g", rset_second_degree_of_freedom_);
+    fx_format_result(module_, "reference_set_variance", "%g",
+		     rset_variance_);
   }
 
   /** @brief Predicts the regression estimates along with the
@@ -417,6 +423,12 @@ class NaiveLpr {
    */
   void get_regression_estimates(Vector *rset_regression_estimates_copy) {
     rset_regression_estimates_copy->Copy(rset_regression_estimates_);
+  }
+
+  /** @brief Gets the confidence bands of the model.
+   */
+  void get_confidence_bands(ArrayList<DRange> *rset_confidence_bands_copy) {
+    rset_confidence_bands_copy->Copy(rset_confidence_bands_);
   }
 
   /** @brief Get the regression estimates of the model (i.e. on the
@@ -516,13 +528,28 @@ class NaiveLpr {
 
   void PrintDebug() {
 
-    FILE *stream = stdout;
-    const char *fname = NULL;
+    FILE *stream = NULL;
+    std::ostringstream string_converter;
+    std::string fname("naive_lpr");
     
-    if((fname = fx_param_str(module_, "naive_lpr_output", 
-			     "naive_lpr_output.txt")) != NULL) {
-      stream = fopen(fname, "w+");
+    // Convert the local polynomial order to string.
+    string_converter << fx_param_int_req(NULL, "lpr_order");
+    fname += "_lpr_order_" + string_converter.str();
+    if(fx_param_exists(NULL, "bandwidth")) {
+      string_converter.str("");
+      string_converter << fx_param_double_req(NULL, "bandwidth");
+      fname += "_bandwidth_" + string_converter.str();
     }
+    if(fx_param_exists(NULL, "knn_factor")) {
+      string_converter.str("");
+      string_converter << fx_param_double_req(NULL, "knn_factor");
+      fname += "_knn_factor_" + string_converter.str();	
+    }
+    fname += ".txt";
+
+    // Open the file stream for writing.
+    stream = fopen(fname.c_str(), "w+");
+
     for(index_t r = 0; r < rset_.n_cols(); r++) {
       fprintf(stream, "%g %g %g %g %g %g\n", rset_confidence_bands_[r].lo,
 	      rset_regression_estimates_[r], rset_confidence_bands_[r].hi,
@@ -530,10 +557,9 @@ class NaiveLpr {
 	      rset_magnitude_weight_diagrams_[r],
 	      rset_influence_values_[r]);
     }
-    
-    if(stream != stdout) {
-      fclose(stream);
-    }
+
+    // Make sure you close the file stream.
+    fclose(stream);
   }
 
 };

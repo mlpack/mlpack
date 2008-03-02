@@ -122,12 +122,84 @@ class MatrixUtil {
     }
     return norm_diff;
   } 
+
+  static DRange AvgRelativeDifference
+  (const ArrayList<DRange> &true_results,
+   const ArrayList<DRange> &approx_results) {
+
+    DRange avg_relative_error;
+    avg_relative_error.lo = avg_relative_error.hi = 0;
+
+    for(index_t d = 0; d < true_results.size(); d++) {
+
+      if(isnan(approx_results[d].lo) || isinf(approx_results[d].lo) ||
+	 isnan(true_results[d].lo) || isinf(true_results[d].lo) ||
+	 isnan(approx_results[d].hi) || isinf(approx_results[d].hi) ||
+	 isnan(true_results[d].hi) || isinf(true_results[d].hi)) {
+
+	printf("Warning: Got infinites and NaNs!\n");
+      }
+      avg_relative_error.lo +=
+	fabs(approx_results[d].lo - true_results[d].lo) /
+	fabs(true_results[d].lo);
+      avg_relative_error.hi +=
+	fabs(approx_results[d].hi - true_results[d].hi) /
+	fabs(true_results[d].hi);
+    }
+    avg_relative_error *= 1.0 / ((double) true_results.size());
+    return avg_relative_error;
+  }
+
+  static DRange MaxRelativeDifference
+  (const ArrayList<DRange> &true_results,
+   const ArrayList<DRange> &approx_results) {
+
+    DRange max_relative_error;
+    max_relative_error.lo = max_relative_error.hi = 0;
+
+    for(index_t d = 0; d < true_results.size(); d++) {
+
+      if(isnan(approx_results[d].lo) || isinf(approx_results[d].lo) ||
+	 isnan(true_results[d].lo) || isinf(true_results[d].lo) ||
+	 isnan(approx_results[d].hi) || isinf(approx_results[d].hi) ||
+	 isnan(true_results[d].hi) || isinf(true_results[d].hi)) {
+
+	printf("Warning: Got infinites and NaNs!\n");
+      }
+
+      max_relative_error.lo =
+	std::max(max_relative_error.lo,
+		 fabs(approx_results[d].lo - true_results[d].lo) /
+		 fabs(true_results[d].lo));
+      max_relative_error.hi =
+	std::max(max_relative_error.hi,
+		 fabs(approx_results[d].hi - true_results[d].hi) /
+		 fabs(true_results[d].hi));
+    }
+    return max_relative_error;
+  }
   
+  static double AvgRelativeDifference(const Vector &true_results,
+				      const Vector &approx_results) {
+
+    double avg_relative_error = 0;
+
+    for(index_t d = 0; d < true_results.length(); d++) {
+
+      if(isnan(approx_results[d]) || isinf(approx_results[d]) ||
+	 isnan(true_results[d]) || isinf(true_results[d])) {
+	printf("Warning: Got infinites and NaNs!\n");
+      }
+      avg_relative_error +=
+	fabs(approx_results[d] - true_results[d]) / fabs(true_results[d]);
+    }
+    return avg_relative_error / ((double) true_results.length());
+  }
+
   static double MaxRelativeDifference(const Vector &true_results,
 				      const Vector &approx_results) {
 
     double max_relative_error = 0;
-    int max_index = -1;
 
     for(index_t d = 0; d < true_results.length(); d++) {
 
@@ -136,19 +208,11 @@ class MatrixUtil {
 	printf("Warning: Got infinites and NaNs!\n");
       }
 
-      if(max_relative_error < fabs(approx_results[d] - true_results[d]) /
-	 fabs(true_results[d])) {
-	max_index = d;
-      }
-
       max_relative_error =
 	std::max(max_relative_error, 
 		 fabs(approx_results[d] - true_results[d]) /
 		 fabs(true_results[d]));
     }
-
-    printf("Maximum difference occurred at index %d: %g vs %g...\n",
-	   max_index, approx_results[max_index], true_results[max_index]);
     return max_relative_error;
   }
 
