@@ -466,7 +466,7 @@ class NaiveLpr {
     fx_timer_start(module_, "naive_lpr_querying_time");
     ComputeMain_(queries, query_regression_estimates, NULL, 
 		 query_confidence_bands, query_magnitude_weight_diagrams, 
-		 query_influence_values, false);
+		 query_influence_values);
     fx_timer_stop(module_, "naive_lpr_querying_time");
   }
 
