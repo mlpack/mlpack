@@ -635,7 +635,7 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
       
       // If the current query point is not in the CG loop, then skip
       // it.
-      if(!(*query_in_cg_loop)[q]) {
+      if(!((*query_in_cg_loop)[q])) {
 	continue;
       }
       
