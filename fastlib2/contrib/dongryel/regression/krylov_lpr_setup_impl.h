@@ -78,7 +78,7 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeReferenceStatistics_
       la::ScaleOverwrite
 	(row_length_, weights[r] * reference_point_expansion[column_index], 
 	 reference_point_expansion.ptr(), r_target_weighted_by_coordinates);
-      
+
       // Accumulate the far field coefficient for the target weighted
       // reference vector and the outerproduct.
       for(index_t j = 0; j < row_length_; j++) {
@@ -205,7 +205,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
       // quantities.
       la::AddExpert(row_length_, kernel_value, r_weights, q_right_hand_side_l);
       la::AddExpert(row_length_, kernel_value, r_weights, q_right_hand_side_e);
-      
+
     } // end of iterating over each reference point.
 
     // The current query point now has taken care of all reference
@@ -621,8 +621,8 @@ void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
   
   // Otherwise, if we cannot prune, then exhaustively compute.
   DualtreeWeightedVectorSumBase_
-    (qnode, rnode, qset, query_in_cg_loop, true, right_hand_sides_l, 
-     right_hand_sides_e, right_hand_sides_used_error, 
+    (qnode, rnode, qset, query_in_cg_loop, confidence_band_computation_phase, 
+     right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
      right_hand_sides_n_pruned);
 }
 
@@ -669,7 +669,7 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
       
       // If the current query point is not in the CG loop, then skip
       // it.
-      if(!((*query_in_cg_loop)[q])) {
+      if(query_in_cg_loop != NULL && !((*query_in_cg_loop)[q])) {
 	continue;
       }
       

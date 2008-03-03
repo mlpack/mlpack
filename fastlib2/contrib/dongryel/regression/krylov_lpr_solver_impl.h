@@ -30,6 +30,11 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperatorConfidenceBand
       (qroot, qset, rset_inv_squared_norm_consts_, NULL, true, d,
        vector_l, vector_e, vector_used_error, vector_n_pruned, NULL);
 
+    /*
+    TestDualtreeComputation_(qset, NULL, true, 
+			     rset_inv_squared_norm_consts_, d, vector_e);
+    */
+
     // Accumulate the product between the computed vector and each
     // scalar component of the X.
     for(index_t q = 0; q < qset.n_cols(); q++) {
@@ -77,6 +82,11 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
       (qroot, qset, rset_inv_norm_consts_, &query_in_cg_loop, false, d,
        vector_l, vector_e, vector_used_error, vector_n_pruned,
        leave_one_out_vector_e);
+
+    /*
+    TestDualtreeComputation_(qset, &query_in_cg_loop, false, 
+			     rset_inv_norm_consts_, d, vector_e);
+    */
 
     // Accumulate the product between the computed vector and each
     // scalar component of the X.

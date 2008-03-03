@@ -328,15 +328,15 @@ class NaiveLpr {
       rset_variance_ += prediction_error * prediction_error;
     }
     
+    rset_variance_ *= 1.0 / 
+      (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
+       rset_second_degree_of_freedom_);
+
     // This MIGHT happen if we have too few data points...
     if(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_ <= 0) {
       rset_variance_ = DBL_MAX;
     }
-
-    rset_variance_ *= 1.0 / 
-      (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
-       rset_second_degree_of_freedom_);
 
     fx_format_result(module_, "reference_set_first_degree_of_freedom",
 		     "%g", rset_first_degree_of_freedom_);
@@ -474,7 +474,8 @@ class NaiveLpr {
 
     fx_timer_start(module_, "naive_lpr_querying_time");
     ComputeMain_(queries, query_regression_estimates, NULL, 
-		 query_confidence_bands, query_magnitude_weight_diagrams);
+		 query_confidence_bands, query_magnitude_weight_diagrams,
+		 NULL);
     fx_timer_stop(module_, "naive_lpr_querying_time");
   }
 

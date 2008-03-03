@@ -165,8 +165,11 @@ class KrylovLpr {
    *         ComputeRightHandSides_ function call to test the
    *         correctness.
    */
-  void TestRightHandSideComputation_(const Matrix &qset,
-				     const Matrix &approximated);
+  void TestDualtreeComputation_
+  (const Matrix &qset, const ArrayList<bool> *query_in_cg_loop,
+   const bool confidence_band_computation_phase,
+   const Vector &reference_weights, index_t column_index, 
+   const Matrix &approximated);
 
   /** @brief Initialize the bound statistics relevant to the right
    *         hand side computation.
@@ -319,16 +322,16 @@ class KrylovLpr {
 	rset_regression_estimates_[i];
       rset_variance_ += prediction_error * prediction_error;
     }
-    
-    // This could happen if enough matrices are singular...
+        
+    rset_variance_ *= 1.0 / 
+      (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
+       rset_second_degree_of_freedom_);
+
+    // This MIGHT happen if we have too few data points...
     if(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_ <= 0) {
       rset_variance_ = DBL_MAX;
     }
-    
-    rset_variance_ *= 1.0 / 
-      (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
-       rset_second_degree_of_freedom_);
   }
   
   void ComputeConfidenceBands_(const Matrix &queries,
@@ -402,7 +405,7 @@ class KrylovLpr {
     InitializeQueryTree_(qroot, qset, query_in_cg_loop);
     
     // Call dualtree function.
-    if(query_in_cg_loop == NULL) {
+    if(query_in_cg_loop == NULL && !confidence_band_computation_phase) {
       DualtreeWeightedVectorSumCanonical_
 	(qroot, rroot_, qset, query_in_cg_loop, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
@@ -481,7 +484,15 @@ class KrylovLpr {
       (qroot, qset, rset_target_divided_by_norm_consts_, NULL, false, 0,
        right_hand_sides_l, right_hand_sides_e, right_hand_sides_used_error, 
        right_hand_sides_n_pruned, leave_one_out_right_hand_sides_e);
-    
+
+    // Uncomment the following three lines to test the correctness of
+    // the weighted vector sum.
+    /*
+    TestDualtreeComputation_(qset, NULL, false,
+			     rset_target_divided_by_norm_consts_, 0,
+			     right_hand_sides_e);
+    */
+
     printf("Phase 1 completed...\n");
 
     // The second phase solves the least squares problem: (B^T W(q) B)
@@ -646,25 +657,14 @@ class KrylovLpr {
     rset_inv_norm_consts_.Init(rset_.n_cols());
     rset_inv_squared_norm_consts_.Init(rset_.n_cols());
 
-    // Find out the minimum normalization constant. This assumes that
-    // the minimum normalization constant is greater than zero...
-    double min_norm_const = DBL_MAX;
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
-      min_norm_const = std::min(min_norm_const,
-				kernels_[i].CalcNormConstant(dimension_));
-    }
-    min_norm_const = 1;
-
     for(index_t i = 0; i < rset_.n_cols(); i++) {
       rset_target_divided_by_norm_consts_[i] = 
-	rset_targets_[i] / 
-	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
-      rset_inv_norm_consts_[i] = 1.0 / 
-	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
+	rset_targets_[i] / kernels_[i].CalcNormConstant(dimension_);
+      rset_inv_norm_consts_[i] = 
+	1.0 / kernels_[i].CalcNormConstant(dimension_);
       rset_inv_squared_norm_consts_[i] = 1.0 /
 	(kernels_[i].CalcNormConstant(dimension_) *
-	 kernels_[i].CalcNormConstant(dimension_) / 
-	 (min_norm_const * min_norm_const));
+	 kernels_[i].CalcNormConstant(dimension_));
     }
   }
 
