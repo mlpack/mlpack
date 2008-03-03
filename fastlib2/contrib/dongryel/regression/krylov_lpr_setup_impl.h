@@ -147,7 +147,8 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeReferenceStatistics_
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
 (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
- const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
+ const ArrayList<bool> *query_in_cg_loop, 
+ const bool confidence_band_computation_phase, Matrix &right_hand_sides_l, 
  Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
  Vector &right_hand_sides_n_pruned) {
   
@@ -193,6 +194,12 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
       // compute the pairwise squared distance and kernel value.
       double dsqd = la::DistanceSqEuclidean(dimension_, q_col, r_col);
       double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
+
+      // The kernel value must be squared during the confidence band
+      // computation phase...
+      if(confidence_band_computation_phase) {
+	kernel_value *= kernel_value;
+      }
 
       // For each vector component, update the lower/estimate bound
       // quantities.
@@ -304,7 +311,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
     // for leaf pairs, go exhaustive
     if(rnode->is_leaf()) {
       DualtreeWeightedVectorSumBase_
-	(qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+	(qnode, rnode, qset, query_in_cg_loop, false, right_hand_sides_l, 
 	 right_hand_sides_e, right_hand_sides_used_error, 
 	 right_hand_sides_n_pruned);
 
@@ -614,7 +621,7 @@ void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
   
   // Otherwise, if we cannot prune, then exhaustively compute.
   DualtreeWeightedVectorSumBase_
-    (qnode, rnode, qset, query_in_cg_loop, right_hand_sides_l, 
+    (qnode, rnode, qset, query_in_cg_loop, true, right_hand_sides_l, 
      right_hand_sides_e, right_hand_sides_used_error, 
      right_hand_sides_n_pruned);
 }

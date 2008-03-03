@@ -208,9 +208,10 @@ class KrylovLpr {
    */
   void DualtreeWeightedVectorSumBase_
   (QueryTree *qnode, ReferenceTree *rnode, const Matrix &qset,
-   const ArrayList<bool> *query_in_cg_loop, Matrix &right_hand_sides_l, 
-   Matrix &right_hand_sides_e, Vector &right_hand_sides_used_error, 
-   Vector &right_hand_sides_n_pruned);
+   const ArrayList<bool> *query_in_cg_loop, 
+   const bool confidence_band_computation_phase,
+   Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
+   Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned);
 
   /** @brief The canonical case for dual-tree based computation of B^T
    *         W(q) Y.
@@ -273,21 +274,22 @@ class KrylovLpr {
       }
 
       // Compute the magnitude of the weight diagram vector for each
-      // query, i.e. r(q)^T (B^T W(q) B)^-1 B^T W(q)^2 B (B^T W(q)
-      // B)^-1 r(q).
+      // query, i.e. sqrt(r(q)^T (B^T W(q) B)^-1 B^T W(q)^2 B (B^T
+      // W(q) B)^-1 r(q)).
       if(query_magnitude_weight_diagrams != NULL) {
 	(*query_magnitude_weight_diagrams)[i] =
-	  la::Dot(row_length_, query_point_expansion_solution,
-		  linear_transformed_query_point_expansion_solution);
+	  sqrt(la::Dot(row_length_, query_point_expansion_solution,
+		       linear_transformed_query_point_expansion_solution));
       }
 
       // Compute the influence value at each point (if it belongs to
       // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
-      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
+      // e_i = (r(q))^T (B^T W(q) B)-1 W(0) r(q).
       if(query_influence_values != NULL) {
 	(*query_influence_values)[i] =
 	  la::Dot(row_length_, query_point_expansion_solution,
-		  query_point_expansion);
+		  query_point_expansion) /
+	  kernels_[i].CalcNormConstant(dimension_);
       }
     }
   }
@@ -525,10 +527,8 @@ class KrylovLpr {
       (qset, query_expansions, solution_vectors_e, 
        leave_one_out_solution_vectors_e, query_expansion_solution_vectors_e,
        linear_transformed_query_expansion_solution_vectors_e,
-       (*query_regression_estimates),
-       leave_one_out_query_regression_estimates,
-       query_magnitude_weight_diagrams, 
-       query_influence_values);
+       (*query_regression_estimates), leave_one_out_query_regression_estimates,
+       query_magnitude_weight_diagrams, query_influence_values);
     printf("Phase 3 completed...\n");
 
     // Reshuffle the results to account for dataset reshuffling
@@ -653,6 +653,7 @@ class KrylovLpr {
       min_norm_const = std::min(min_norm_const,
 				kernels_[i].CalcNormConstant(dimension_));
     }
+    min_norm_const = 1;
 
     for(index_t i = 0; i < rset_.n_cols(); i++) {
       rset_target_divided_by_norm_consts_[i] = 
@@ -662,7 +663,8 @@ class KrylovLpr {
 	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
       rset_inv_squared_norm_consts_[i] = 1.0 /
 	(kernels_[i].CalcNormConstant(dimension_) *
-	 kernels_[i].CalcNormConstant(dimension_) / min_norm_const);
+	 kernels_[i].CalcNormConstant(dimension_) / 
+	 (min_norm_const * min_norm_const));
     }
   }
 

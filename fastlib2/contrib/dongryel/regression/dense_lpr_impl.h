@@ -1067,10 +1067,11 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 
       // Compute the influence value at each point (if it belongs to
       // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
-      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
+      // e_i = (r(q))^T (B^T W(q) B)-1 r(q) W(0).
       if(query_influence_values != NULL) {
 	(*query_influence_values)[q] =
-	  la::Dot(query_point_expansion, pseudo_inverse_times_query_expansion);
+	  la::Dot(query_point_expansion, pseudo_inverse_times_query_expansion) /
+	  kernels_[q].CalcNormConstant(dimension_);
       }
 
       // Compute the leave-one-out regression estimate for
