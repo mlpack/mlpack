@@ -220,10 +220,11 @@ class NaiveLpr {
 
       // Compute the influence value at each point (if it belongs to
       // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
-      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
+      // e_i = (r(q))^T (B^T W(q) B)-1 W(0) r(q).
       if(query_influence_values != NULL) {
 	(*query_influence_values)[q] =
-	  la::Dot(point_expansion, pseudo_inverse_times_query_expansion);
+	  la::Dot(point_expansion, pseudo_inverse_times_query_expansion) /
+	  kernels_[q].CalcNormConstant(dimension_);
       }
 
       // Now compute the leave-one-out regression estimate
@@ -231,9 +232,6 @@ class NaiveLpr {
 
 	// Subtract the contribution of the point itself from the
 	// numerator and the denominator.
-	Matrix point_expansion_alias;
-	point_expansion_alias.AliasColVector(point_expansion);
-	
 	double norm_constant = kernels_[q].CalcNormConstant(dimension_);
 	la::AddExpert(-rset_targets_[q] / norm_constant,
 		      point_expansion, &numerator);

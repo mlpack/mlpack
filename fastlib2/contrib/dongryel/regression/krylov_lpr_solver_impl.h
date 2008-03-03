@@ -22,7 +22,7 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperatorConfidenceBand
   
   // Initialize the multivector to zero.
   linear_transformed_query_expansion_solution_vectors.SetZero();
-    
+
   for(index_t d = 0; d < row_length_; d++) {
 
     // Compute the current column linear operator.
