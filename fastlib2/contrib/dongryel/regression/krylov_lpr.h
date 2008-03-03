@@ -144,7 +144,12 @@ class KrylovLpr {
   /** @brief The kernel function to use.
    */
   ArrayList<TKernel> kernels_;
-  
+ 
+  /** @brief The minimum normalization constant among the kernels
+   *         centered at the reference points.
+   */
+  double min_norm_const_;
+
   /** @brief The z-score for the confidence band.
    */
   double z_score_;
@@ -292,7 +297,7 @@ class KrylovLpr {
 	(*query_influence_values)[i] =
 	  la::Dot(row_length_, query_point_expansion_solution,
 		  query_point_expansion) /
-	  kernels_[i].CalcNormConstant(dimension_);
+	  (kernels_[i].CalcNormConstant(dimension_) / min_norm_const_);
       }
     }
   }
@@ -656,15 +661,24 @@ class KrylovLpr {
     rset_target_divided_by_norm_consts_.Init(rset_.n_cols());
     rset_inv_norm_consts_.Init(rset_.n_cols());
     rset_inv_squared_norm_consts_.Init(rset_.n_cols());
+    
+    // Find out the minimum normalization constant
+    min_norm_const_ = DBL_MAX;
+    for(index_t i = 0; i < rset_.n_cols(); i++) {
+      min_norm_const_ = std::min(min_norm_const_,
+				 kernels_[i].CalcNormConstant(dimension_));
+    }
 
     for(index_t i = 0; i < rset_.n_cols(); i++) {
       rset_target_divided_by_norm_consts_[i] = 
-	rset_targets_[i] / kernels_[i].CalcNormConstant(dimension_);
+	rset_targets_[i] / 
+	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const_);
       rset_inv_norm_consts_[i] = 
-	1.0 / kernels_[i].CalcNormConstant(dimension_);
+	1.0 / 
+	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const_);
       rset_inv_squared_norm_consts_[i] = 1.0 /
-	(kernels_[i].CalcNormConstant(dimension_) *
-	 kernels_[i].CalcNormConstant(dimension_));
+	((kernels_[i].CalcNormConstant(dimension_) / min_norm_const_) *
+	 (kernels_[i].CalcNormConstant(dimension_) / min_norm_const_));
     }
   }
 
