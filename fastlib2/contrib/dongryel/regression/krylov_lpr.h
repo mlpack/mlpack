@@ -720,8 +720,9 @@ class KrylovLpr {
 	       Vector *query_magnitude_weight_diagrams) {
     
     fx_timer_start(module_, "krylov_lpr_prediction_time");
-    ComputeMain_(queries, query_regression_estimates, query_confidence_bands,
-		 query_magnitude_weight_diagrams, NULL);
+    ComputeMain_(queries, query_regression_estimates, NULL, 
+		 query_confidence_bands, query_magnitude_weight_diagrams, 
+		 NULL);
     fx_timer_stop(module_, "krylov_lpr_prediction_time");
   }
 
