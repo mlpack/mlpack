@@ -472,13 +472,11 @@ class NaiveLpr {
 
   void Compute(const Matrix &queries, Vector *query_regression_estimates,
 	       ArrayList<DRange> *query_confidence_bands,
-	       Vector *query_magnitude_weight_diagrams,
-	       Vector *query_influence_values) {
+	       Vector *query_magnitude_weight_diagrams) {
 
     fx_timer_start(module_, "naive_lpr_querying_time");
     ComputeMain_(queries, query_regression_estimates, NULL, 
-		 query_confidence_bands, query_magnitude_weight_diagrams, 
-		 query_influence_values);
+		 query_confidence_bands, query_magnitude_weight_diagrams);
     fx_timer_stop(module_, "naive_lpr_querying_time");
   }
 
