@@ -110,17 +110,16 @@ template<typename TKernel> class KNNRegression{
       //Once we have the length of the hat vector we should be able to
       //calculate the upper and lower bounds of the C.I for the query
       //point
-      printf("sigma hat is %f\n",sigma_hat_);
 
       double lower_bound=
 	regression_estimates_[q]-
-	1.96*sigma_hat_*(1+sqdlength_of_weight_diagram_query_[q]);
+	1.96*sigma_hat_*sqrt(1+sqdlength_of_weight_diagram_query_[q]);
 
       confidence_interval_[q*2]=lower_bound;
 
       double upper_bound=
 	regression_estimates_[q]+
-	1.96*sigma_hat_*(1+sqdlength_of_weight_diagram_query_[q]);
+	1.96*sigma_hat_*sqrt(1+sqdlength_of_weight_diagram_query_[q]);
 
       confidence_interval_[q*2+1]=upper_bound;
 
@@ -128,9 +127,10 @@ template<typename TKernel> class KNNRegression{
 	printf("nans found %d\n",q);
 	exit(0);
       }
-      //printf("regression estimate of %d is %f\n",q,regression_estimates_[q]);
-      //printf("Upper bound is %f\n",upper_bound);
-      //printf("lower bound id %f\n",lower_bound);
+      printf("sqd length is %f\n",sqdlength_of_weight_diagram_query_[q]);
+      printf("regression estimate of %d is %f\n",q,regression_estimates_[q]);
+      printf("Upper bound is %f\n",upper_bound);
+      printf("lower bound id %f\n",lower_bound);
     }
 
   }
@@ -150,9 +150,9 @@ template<typename TKernel> class KNNRegression{
   //This returns the influence of q_point on its own estimate. This
   //shall be used to calculate the df1
 
-  double CalculateInfluenceForLocalLinear_(double *q_point){
+  double CalculateInfluenceForLocalLinear_(double *q_point,index_t q){
 
-    //influence is [1,q_point] (B^TWB)^-1 [1,q_point]^T
+    //influence is norm_const*[1,q_point] (B^TWB)^-1 [1,q_point]^T
 
     Matrix point;
     point.Init(1,number_of_dimensions_+1);
@@ -170,10 +170,6 @@ template<typename TKernel> class KNNRegression{
     la::MulInit(point,b_twb_inv_,&temp);
 
 
-
-    printf("btwb_inv in Calculate local influence   is..\n");
-    b_twb_inv_.PrintDebug();
-
     //NOw multiply temp with [1,q_point]^T. So lets first compute the
     //tranpose of [1,q_point]
 
@@ -182,7 +178,12 @@ template<typename TKernel> class KNNRegression{
 
     Matrix influence_matrix;
     la::MulInit(temp,point_transpose,&influence_matrix);
-    return influence_matrix.get(0,0);
+
+    //Lets calculate the normalization constant
+    double bw=global_smoothing_*nn_distances_[q*k_+k_-1]; 
+    kernel_.Init(bw);
+    double norm_constant=1/kernel_.CalcNormConstant(number_of_dimensions_);
+    return norm_constant*influence_matrix.get(0,0);
   }
 
   //This function will calculate ||l(x)||^2 for the point provided as
@@ -371,15 +372,18 @@ template<typename TKernel> class KNNRegression{
     }
   }
   
-  void PerformKNNLocalLinearRegression_(double *q_point,index_t q, 
-					index_t flag,double &influence, 
-					double &sqdlength, double &estimate){
-
+  void PerformKNNLocalLinearRegression_(double *q_point,
+					index_t q, 
+					index_t flag,
+					double &influence, 
+					double &sqdlength,
+					double &estimate){
+    
     //This involves computing 2 matrices namely B^TWB and B^TWY nad
     //the matrix B^T W^2B for C.I calculations
     
     ComputeMatrices_(q_point,q);
-    printf("Matrices computed...\n");
+    //printf("Matrices computed...\n");
 
     //Let q_matrix hold [q,q_point]^T
 
@@ -401,6 +405,8 @@ template<typename TKernel> class KNNRegression{
 
       Matrix b_twb_cross_validation,b_twy_cross_validation;
       Matrix b_twb_cross_validation_inv;
+
+      b_twb_cross_validation_inv.Init(b_twb_.n_rows(),b_twb_.n_cols());
 
       //We shall modify these matrices to get cross validation score...
       //We shall subtract from B^TWB 1/NormConstat * [1,q_point]^T [1.q_point]
@@ -428,11 +434,11 @@ template<typename TKernel> class KNNRegression{
 
       la::SubInit(temp_product,b_twb_,&b_twb_cross_validation); 
       
-      // printf("cross validated btwb[%d] is\n",q);
-      //b_twb_cross_validation.PrintDebug();
+     
 
-      //Similarily to get b^TWY value without considering its own contribution 
-      //b_twy_cross_validation <- b_twy_ - rset_weight*normconstant [1,q_point]^T
+      //Similarily to get b^TWY value without considering its own
+      //contribution b_twy_cross_validation <- b_twy_ -
+      //rset_weight*normconstant [1,q_point]^T
 
       //Scale B^TWY by rset_weight*nomalization constant. 
 
@@ -445,11 +451,12 @@ template<typename TKernel> class KNNRegression{
       //printf("cross validated btwy[%d] is\n",q);
       //b_twy_cross_validation.PrintDebug();
 
-      //Now cross validated regression estimate is obtained by multiplying BTWB^-1 with B^TWY
+      //Now cross validated regression estimate is obtained by
+      //multiplying BTWB^-1 with B^TWY
 
       
       Matrix temp1,temp2;
-      b_twb_cross_validation_inv.Init(b_twb_.n_rows(),b_twb_.n_cols());
+     
       MatrixUtil::PseudoInverse(b_twb_cross_validation,&b_twb_cross_validation_inv);  
       la::MulInit (b_twb_cross_validation_inv,b_twy_cross_validation, &temp1);
       //printf("first prioduct found..\n");
@@ -462,7 +469,6 @@ template<typename TKernel> class KNNRegression{
       double regression_estimate_cross_validation=temp2.get(0,0);
       double diff=regression_estimate_cross_validation-rset_weights_.get(q,0);
     
-      //printf("cross validated regression estimate is %f\n",regression_estimate_cross_validation);
       cross_validation_score_+=diff*diff;
     }
       
@@ -473,10 +479,7 @@ template<typename TKernel> class KNNRegression{
    
     la::MulInit (b_twb_inv_,b_twy_, &temp);
 
-    printf("B_twb %d is \n",q);
-    b_twb_.PrintDebug();
-   
-    
+     
     //Now lets multiply the resulting q_matrix with temp to get the
     //regression estimate
     
@@ -495,10 +498,8 @@ template<typename TKernel> class KNNRegression{
     if(flag==CALCULATE_FOR_REFERENCE_POINTS_){
       //Also if we are doing regression on reference points then we
       //need to cacluclate the influence
-      printf("while calling i have...\n");
-      b_twb_inv_.PrintDebug();
-      influence=CalculateInfluenceForLocalLinear_(q_point);
-      printf("influence is %f\n",influence);
+     
+      influence=CalculateInfluenceForLocalLinear_(q_point,q);
     }
     
   }
@@ -575,13 +576,14 @@ template<typename TKernel> class KNNRegression{
 	kernel_.Init(bw);
 	double norm_constant=(1/kernel_.CalcNormConstant(number_of_dimensions_));
 	double denominator_cross_validation=denominator-norm_constant;
-	double numerator_cross_validation=numerator-(rset_weights_.get(q,0)*norm_constant);
+
+	double numerator_cross_validation=numerator-
+	  (rset_weights_.get(q,0)*norm_constant);
+
 	double regression_estimate_cross_validation=
 	  numerator_cross_validation/denominator_cross_validation;
 	double diff=regression_estimate_cross_validation-rset_weights_.get(q,0);
 	cross_validation_score_+=diff*diff;
-	//printf("cross validated regression estimate is %f\n",regression_estimate_cross_validation);
-	//printf("cross validation score has now become..%f\n",cross_validation_score_);
       }
       //In case this function was called to call the regression
       //estimates at the query side then we need to store even the
@@ -592,6 +594,9 @@ template<typename TKernel> class KNNRegression{
       }
       df2_+=sqdlength;
     }
+
+    cross_validation_score_/=rset_.n_cols();
+    cross_validation_score_=sqrt(cross_validation_score_);
   }
 
 
@@ -599,23 +604,21 @@ template<typename TKernel> class KNNRegression{
 
     //For this we need to calculate the regression estimates of the
     //reference set first using local fitting methods
+
+    printf("Method is %s\n",method);
     if(!strcmp(method,"nwr")){
 
       //Performing regression on the reference set. Please note this
       //function also finds out the first and second degrees of
       //freedom
 
-      printf("Came to compute sigma hat...\n");
+      printf("Came to compute sigma hat of nwr calc...\n");
 
       //Lets perform KNN Based NWR Regression However before we do
       //that lets initialize the vector regression_estimates
 
-
-      regression_estimates_.Init(max(rset_.n_cols(),qset_.n_cols()));
       index_t flag=CALCULATE_FOR_REFERENCE_POINTS_;
-
       PerformKNNNWRegression_(rset_,flag);
-
       printf("KNN Regression performed.......\n");
 
       //So we now have the NWR fits on the reference points.We need to
@@ -629,7 +632,7 @@ template<typename TKernel> class KNNRegression{
 	double diff=regression_estimates_[r]-rset_weights_.get(r,0);
 	sqd_residual_error+=diff*diff;
       }
-      sigma_hat_=sqd_residual_error/(rset_.n_cols()-2*df1_+df2_);     
+      sigma_hat_=sqrt(sqd_residual_error/(rset_.n_cols()-2*df1_+df2_));     
 
       printf("degrees of freedom1 are %f\n",df1_);
       printf("degrees of freedom2 are %f\n",df2_);
@@ -638,6 +641,8 @@ template<typename TKernel> class KNNRegression{
 
     //Do local linear fitting...............................................
     else{
+
+      printf("came to sigm ahat of local linear calc..\n");
       
       //We have found out the k-nearest neighbours of all the
       //reference points 
@@ -656,12 +661,13 @@ template<typename TKernel> class KNNRegression{
 	index_t flag=CALCULATE_FOR_REFERENCE_POINTS_;
 	//We first perform local linear regression on
 	//the reference set
-	PerformKNNLocalLinearRegression_(rset_.GetColumnPtr(r),r,flag,
-					 influence,sqdlength,estimate);
+	PerformKNNLocalLinearRegression_(rset_.GetColumnPtr(r),r,flag,influence,sqdlength,estimate);
 
-	
+	regression_estimates_[r]=estimate;
 	df1_+=influence;
 	df2_+=sqdlength;
+
+	printf("regression estimate of ref is %f\n",regression_estimates_[r]);
 
 	//Flush b_twb and b_twy and b_tw2b_ matrices for new computations
 	b_twb_.SetZero();
@@ -689,6 +695,9 @@ template<typename TKernel> class KNNRegression{
       printf("degrees of freedom1 are %f\n",df1_);
       printf("degrees of freedom2 are %f\n",df2_);
       printf("sigma_hat is %f\n",sigma_hat_);
+
+      cross_validation_score_/=rset_.n_cols();
+      cross_validation_score_=sqrt(cross_validation_score_);
     }
   }
 
@@ -724,7 +733,7 @@ template<typename TKernel> class KNNRegression{
 	kth_nn_distances_[l]=nn_distances_[(l+1)*k_-1];
       }
 
-      printf("Kth neareast neighbours all found..\n");
+      printf("Kth neareast neighbours all found..for ref points\n");
       CalculateSigmaHat_(method);
 
       //With this we have completed our reference side
@@ -732,6 +741,7 @@ template<typename TKernel> class KNNRegression{
       //query side calculations. hence lets destruct them
       nn_neighbours_.Destruct();
       nn_distances_.Destruct();
+
     }
 
 
@@ -753,7 +763,7 @@ template<typename TKernel> class KNNRegression{
       struct datanode* lpr_module =
 	fx_submodule(NULL, "lpr", "lpr_module");
       
-      Vector naive_lpr_results;
+   
 
       Matrix rset_weights_column;
       la::TransposeInit(rset_weights_,&rset_weights_column);
@@ -773,11 +783,7 @@ template<typename TKernel> class KNNRegression{
       ArrayList<DRange> query_confidence_bands_naive;
       Vector query_magnitude_weight_diagrams_naive;
       Vector query_influence_values_naive;
-      
-      //regression_estimates_naive.Init(qset_.n_cols());
-      //query_confidence_bands_naive.Init(qset_.n_cols());
-      //query_magnitude_weight_diagrams_naive.Init(qset_.n_cols());
-      //query_influence_values_naive.Init(qset_.n_cols());
+   
       
       naive_lpr.Compute(qset_, &regression_estimates_naive,
 			&query_confidence_bands_naive,
@@ -793,9 +799,14 @@ template<typename TKernel> class KNNRegression{
       printf("all computations of naive lpr done...\n");
       
 	max_relative_error_regression_estimates_=
-	  MatrixUtil::MaxRelativeDifference(regression_estimates_naive,regression_estimates_);
+	  MatrixUtil::
+	  MaxRelativeDifference(regression_estimates_naive,
+				regression_estimates_);
      
-       printf("Ma relative error in regression estimates is %f\n",max_relative_error_regression_estimates_);
+	printf("regression estimates as returned by naive are..\n");
+	regression_estimates_naive.PrintDebug();
+	printf("Max relative error in regression estimates is %f\n",
+	      max_relative_error_regression_estimates_);
       //We next get the max relative diff of knn based regression w.rt. naive
       
       Vector upper_bounds_knn;
@@ -814,15 +825,15 @@ template<typename TKernel> class KNNRegression{
 	lower_bounds_knn[l]=confidence_interval_[2*l];
 	upper_bounds_knn[l]=confidence_interval_[2*l+1];
 
-	printf("C.I %d is %f\n",l,lower_bounds_knn[l]);
-	printf("C.I.%d is %f\n",l,lower_bounds_knn[l]);
+	//printf("C.I %d is %f\n",l,lower_bounds_knn[l]);
+	//printf("C.I.%d is %f\n",l,lower_bounds_knn[l]);
 
       }
       for(index_t l=0;l<qset_.n_cols();l++){
 	lower_bounds_naive[l]=query_confidence_bands_naive[l].mid();
 	upper_bounds_naive[l]=query_confidence_bands_naive[l].mid();
 	printf("lower_bounds_naive is %f\n",lower_bounds_naive[l]);
-       printf("Upper bounds naive is %f\n",upper_bounds_naive[l]);
+        printf("Upper bounds naive is %f\n",upper_bounds_naive[l]);
 	
       }
 
@@ -844,11 +855,16 @@ template<typename TKernel> class KNNRegression{
 	MatrixUtil::AverageRelativeDifference(upper_bounds_naive,upper_bounds_knn);
 
        printf("On comparison with naive i have..\n");
-       printf("Ma relative error in regression estimates is %f\n",max_relative_error_regression_estimates_);
-       printf("Max rel err in lower bound of CI is %f\n",max_relative_error_confidence_interval_lower_);
-       printf("Max rel err in upper bound of CI is %f\n",max_relative_error_confidence_interval_upper_);
-       printf("average relative error lower is \n",average_relative_error_confidence_interval_lower_);
-       printf("average relative error upper is \n",average_relative_error_confidence_interval_upper_);
+       printf("Ma relative error in regression estimates is %f\n",
+	      max_relative_error_regression_estimates_);
+       printf("Max rel err in lower bound of CI is %f\n",
+	      max_relative_error_confidence_interval_lower_);
+       printf("Max rel err in upper bound of CI is %f\n",
+	      max_relative_error_confidence_interval_upper_);
+       printf("average relative error lower is %f \n",
+	      average_relative_error_confidence_interval_lower_);
+       printf("average relative error upper is %f\n",
+	      average_relative_error_confidence_interval_upper_);
 
 
     }
@@ -935,6 +951,8 @@ template<typename TKernel> class KNNRegression{
 	//regression estimate at the query point
 	sqdlength_of_weight_diagram_query_[q]=sqdlength;
 	regression_estimates_[q]=estimate;
+
+	printf("regression estimate of query point :%d is %f\n",q,estimate);
       
 	//With the above function call we have the regression estimates
 	//of the different query points
@@ -945,7 +963,7 @@ template<typename TKernel> class KNNRegression{
 
       //So we have finisehd all our caclulations. Lets compare our results
 
-      CompareWithNaive_(method);
+      //CompareWithNaive_(method);
     }
 
     void Init(index_t k, Matrix q_matrix, Matrix r_matrix,  
@@ -977,8 +995,9 @@ template<typename TKernel> class KNNRegression{
       b_twb_.Init(number_of_dimensions_+1,number_of_dimensions_+1);
       b_tw2b_.Init(number_of_dimensions_+1,number_of_dimensions_+1);
       b_twy_.Init(number_of_dimensions_+1,1);
-
       b_twb_inv_.Init(number_of_dimensions_+1,number_of_dimensions_+1);
+
+      regression_estimates_.Init(max(rset_.n_cols(),qset_.n_cols()));
 
       //Set thses matrices all to 0
 
