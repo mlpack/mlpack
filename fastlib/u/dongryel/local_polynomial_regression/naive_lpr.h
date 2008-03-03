@@ -8,6 +8,9 @@
 #ifndef NAIVE_LPR_H
 #define NAIVE_LPR_H
 
+#include <sstream>
+#include <iostream>
+#include <string>
 #include "matrix_util.h"
 #include "multi_index_util.h"
 #include "fastlib/fastlib.h"
@@ -217,10 +220,11 @@ class NaiveLpr {
 
       // Compute the influence value at each point (if it belongs to
       // the reference set), i.e. (r(q))^T (B^T W(q) B)^-1 B^T W(q)
-      // e_i = (r(q))^T (B^T W(q) B)-1 r(q).
+      // e_i = (r(q))^T (B^T W(q) B)-1 W(0) r(q).
       if(query_influence_values != NULL) {
 	(*query_influence_values)[q] =
-	  la::Dot(point_expansion, pseudo_inverse_times_query_expansion);
+	  la::Dot(point_expansion, pseudo_inverse_times_query_expansion) /
+	  kernels_[q].CalcNormConstant(dimension_);
       }
 
       // Now compute the leave-one-out regression estimate
@@ -228,9 +232,6 @@ class NaiveLpr {
 
 	// Subtract the contribution of the point itself from the
 	// numerator and the denominator.
-	Matrix point_expansion_alias;
-	point_expansion_alias.AliasColVector(point_expansion);
-	
 	double norm_constant = kernels_[q].CalcNormConstant(dimension_);
 	la::AddExpert(-rset_targets_[q] / norm_constant,
 		      point_expansion, &numerator);
@@ -337,9 +338,12 @@ class NaiveLpr {
       (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_);
 
-    printf("First degree of freedom: %g\n", rset_first_degree_of_freedom_);
-    printf("Second degree of freedom: %g\n", rset_second_degree_of_freedom_);
-    printf("Reference set variance: %g\n", rset_variance_);
+    fx_format_result(module_, "reference_set_first_degree_of_freedom",
+		     "%g", rset_first_degree_of_freedom_);
+    fx_format_result(module_, "reference_set_second_degree_of_freedom",
+		     "%g", rset_second_degree_of_freedom_);
+    fx_format_result(module_, "reference_set_variance", "%g",
+		     rset_variance_);
   }
 
   /** @brief Predicts the regression estimates along with the
@@ -419,6 +423,12 @@ class NaiveLpr {
     rset_regression_estimates_copy->Copy(rset_regression_estimates_);
   }
 
+  /** @brief Gets the confidence bands of the model.
+   */
+  void get_confidence_bands(ArrayList<DRange> *rset_confidence_bands_copy) {
+    rset_confidence_bands_copy->Copy(rset_confidence_bands_);
+  }
+
   /** @brief Get the regression estimates of the model (i.e. on the
    *         reference set).
    *
@@ -460,13 +470,11 @@ class NaiveLpr {
 
   void Compute(const Matrix &queries, Vector *query_regression_estimates,
 	       ArrayList<DRange> *query_confidence_bands,
-	       Vector *query_magnitude_weight_diagrams,
-	       Vector *query_influence_values) {
+	       Vector *query_magnitude_weight_diagrams) {
 
     fx_timer_start(module_, "naive_lpr_querying_time");
     ComputeMain_(queries, query_regression_estimates, NULL, 
-		 query_confidence_bands, query_magnitude_weight_diagrams, 
-		 query_influence_values);
+		 query_confidence_bands, query_magnitude_weight_diagrams);
     fx_timer_stop(module_, "naive_lpr_querying_time");
   }
 
@@ -516,13 +524,28 @@ class NaiveLpr {
 
   void PrintDebug() {
 
-    FILE *stream = stdout;
-    const char *fname = NULL;
+    FILE *stream = NULL;
+    std::ostringstream string_converter;
+    std::string fname("naive_lpr");
     
-    if((fname = fx_param_str(module_, "naive_lpr_output", 
-			     "naive_lpr_output.txt")) != NULL) {
-      stream = fopen(fname, "w+");
+    // Convert the local polynomial order to string.
+    string_converter << fx_param_int_req(NULL, "lpr_order");
+    fname += "_lpr_order_" + string_converter.str();
+    if(fx_param_exists(NULL, "bandwidth")) {
+      string_converter.str("");
+      string_converter << fx_param_double_req(NULL, "bandwidth");
+      fname += "_bandwidth_" + string_converter.str();
     }
+    if(fx_param_exists(NULL, "knn_factor")) {
+      string_converter.str("");
+      string_converter << fx_param_double_req(NULL, "knn_factor");
+      fname += "_knn_factor_" + string_converter.str();	
+    }
+    fname += ".txt";
+
+    // Open the file stream for writing.
+    stream = fopen(fname.c_str(), "w+");
+
     for(index_t r = 0; r < rset_.n_cols(); r++) {
       fprintf(stream, "%g %g %g %g %g %g\n", rset_confidence_bands_[r].lo,
 	      rset_regression_estimates_[r], rset_confidence_bands_[r].hi,
@@ -530,10 +553,9 @@ class NaiveLpr {
 	      rset_magnitude_weight_diagrams_[r],
 	      rset_influence_values_[r]);
     }
-    
-    if(stream != stdout) {
-      fclose(stream);
-    }
+
+    // Make sure you close the file stream.
+    fclose(stream);
   }
 
 };
