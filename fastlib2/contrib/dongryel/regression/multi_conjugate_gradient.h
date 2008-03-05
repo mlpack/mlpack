@@ -513,10 +513,10 @@ private:
 	    }
 	    else {
 	      (*loo_brkdown_tol)[q] = 0.1 * fabs((*loo_r_z_dots)[q]);
-	  }
+	    }
 	  }
 	}
-
+	
 	// Now check whether the current query point has converged...
 	if(scaled_residual_norms[q] < 1e-2) {
 	  query_in_cg_loop[q] = false;
