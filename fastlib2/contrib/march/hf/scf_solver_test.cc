@@ -21,7 +21,7 @@ public:
   
   
   static const index_t num_electrons = 2;
-  static const double eps = 0.01;
+  static const double eps = 0.001;
   
   void Setup() {
     
@@ -83,6 +83,7 @@ public:
                            solver_->overlap_matrix_.ref(i, j), eps); 
       }
     }
+    
     
     Destruct();
     
@@ -206,6 +207,8 @@ public:
     data::Load("density_test.csv", &true_density);
     solver_->density_matrix_.CopyValues(true_density);
     
+    solver_->Setup_();
+    
     solver_->UpdateFockMatrix_();
     
     Matrix true_updated_fock;
@@ -215,6 +218,8 @@ public:
     ot::Print(true_updated_fock);
     printf("fock_matrix_\n");
     ot::Print(solver_->fock_matrix_);
+    
+    //solver_->PrintMatrices();
     
     for (index_t i = 0; i < true_updated_fock.n_rows(); i++) {
       for (index_t j = 0; j < true_updated_fock.n_cols(); j++) {
