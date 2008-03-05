@@ -66,6 +66,8 @@ class KrylovLpr {
    */
   ArrayList<index_t> old_from_new_references_;
 
+  ArrayList<index_t> new_from_old_references_;
+
   /** @brief The reference tree. */
   ReferenceTree *rroot_;
   
@@ -128,6 +130,10 @@ class KrylovLpr {
   /** @brief The variance of the reference set.
    */
   double rset_variance_;
+
+  /** @brief The root mean square deviation of the reference set.
+   */
+  double root_mean_square_deviation_;
 
   /** @brief The dimensionality of each point.
    */
@@ -296,10 +302,26 @@ class KrylovLpr {
       if(query_influence_values != NULL) {
 	(*query_influence_values)[i] =
 	  la::Dot(row_length_, query_point_expansion_solution,
-		  query_point_expansion) /
-	  (kernels_[i].CalcNormConstant(dimension_) / min_norm_const_);
+		  query_point_expansion);
       }
     }
+  }
+  
+  /** @brief Computes the root mean square deviation of the current
+   *         model. This function should be called after the model has
+   *         been completely built.
+   */
+  void ComputeRootMeanSquareDeviation_() {
+    
+    root_mean_square_deviation_ = 0;
+    for(index_t i = 0; i < rset_.n_cols(); i++) {
+      
+      double diff_regression = rset_targets_[new_from_old_references_[i]] - 
+	leave_one_out_rset_regression_estimates_[i];
+      root_mean_square_deviation_ += diff_regression * diff_regression;
+    }
+    root_mean_square_deviation_ *= 1.0 / ((double) rset_.n_cols());
+    root_mean_square_deviation_ = sqrt(root_mean_square_deviation_);
   }
   
   /** @brief Computes the variance by the normalized redisual sum of
@@ -317,17 +339,17 @@ class KrylovLpr {
       rset_second_degree_of_freedom_ += rset_magnitude_weight_diagrams_[i] * 
 	rset_magnitude_weight_diagrams_[i];
     }
-    
+
     // Reset the sum accumulated to zero.
     rset_variance_ = 0;
     
     // Loop over each reference point and add up the residual.
     for(index_t i = 0; i < rset_.n_cols(); i++) {
-      double prediction_error = rset_targets_[i] - 
+      double prediction_error = 
+	rset_targets_[new_from_old_references_[i]] - 
 	rset_regression_estimates_[i];
       rset_variance_ += prediction_error * prediction_error;
     }
-        
     rset_variance_ *= 1.0 / 
       (rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
        rset_second_degree_of_freedom_);
@@ -337,6 +359,15 @@ class KrylovLpr {
        rset_second_degree_of_freedom_ <= 0) {
       rset_variance_ = DBL_MAX;
     }
+
+    fx_format_result(module_, 
+		     "krylov_lpr_reference_set_first_degree_of_freedom",
+		     "%g", rset_first_degree_of_freedom_);
+    fx_format_result(module_, 
+		     "krylov_lpr_reference_set_second_degree_of_freedom",
+		     "%g", rset_second_degree_of_freedom_);
+    fx_format_result(module_, "krylov_lpr_reference_set_variance", "%g",
+		     rset_variance_);
   }
   
   void ComputeConfidenceBands_(const Matrix &queries,
@@ -617,6 +648,12 @@ class KrylovLpr {
 			    query_confidence_bands,
 			    query_magnitude_weight_diagrams,
 			    (query_influence_values != NULL));
+        
+    // If the reference dataset is being used for training, then
+    // compute the root mean square deviation.
+    if(query_influence_values != NULL) {
+      ComputeRootMeanSquareDeviation_();
+    }
   }
 
   /** @brief Initialize the bandwidth by either fixed bandwidth
@@ -662,23 +699,14 @@ class KrylovLpr {
     rset_inv_norm_consts_.Init(rset_.n_cols());
     rset_inv_squared_norm_consts_.Init(rset_.n_cols());
     
-    // Find out the minimum normalization constant
-    min_norm_const_ = DBL_MAX;
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
-      min_norm_const_ = std::min(min_norm_const_,
-				 kernels_[i].CalcNormConstant(dimension_));
-    }
-
     for(index_t i = 0; i < rset_.n_cols(); i++) {
       rset_target_divided_by_norm_consts_[i] = 
-	rset_targets_[i] / 
-	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const_);
+	rset_targets_[i] / kernels_[i].CalcNormConstant(dimension_);
       rset_inv_norm_consts_[i] = 
-	1.0 / 
-	(kernels_[i].CalcNormConstant(dimension_) / min_norm_const_);
+	1.0 / kernels_[i].CalcNormConstant(dimension_);
       rset_inv_squared_norm_consts_[i] = 1.0 /
-	((kernels_[i].CalcNormConstant(dimension_) / min_norm_const_) *
-	 (kernels_[i].CalcNormConstant(dimension_) / min_norm_const_));
+	(kernels_[i].CalcNormConstant(dimension_) *
+	 kernels_[i].CalcNormConstant(dimension_));
     }
   }
 
@@ -717,6 +745,18 @@ class KrylovLpr {
     for(index_t i = 0; i < rset_regression_estimates_.length(); i++) {
       (*results)[i] = rset_regression_estimates_[i];
     }
+  }
+
+  /** @brief Gets the confidence bands of the model.
+   */
+  void get_confidence_bands
+  (ArrayList<DRange> *rset_confidence_bands_copy) {
+    
+    rset_confidence_bands_copy->Copy(rset_confidence_bands_);
+  }
+
+  double root_mean_square_deviation() {
+    return root_mean_square_deviation_;
   }
 
   ////////// User-level Functions //////////
@@ -773,7 +813,8 @@ class KrylovLpr {
     
     // Construct the reference tree.
     rroot_ = tree::MakeKdTreeMidpoint<ReferenceTree>
-      (rset_, leaflen, &old_from_new_references_, NULL);
+      (rset_, leaflen, &old_from_new_references_, 
+       &new_from_old_references_);
     
     // We need to shuffle the reference training target values
     // according to the shuffled order of the reference dataset.
