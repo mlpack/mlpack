@@ -25,6 +25,7 @@ librule(
                "krylov_lpr_test.h",
                "lpr_util.h",
                "multi_conjugate_gradient.h",
+               "multi_lanczos.h",
                "naive_lpr.h"],
     deplibs = ["contrib/dongryel/proximity_project:proximity_project",
                "fastlib:fastlib_int"]        # dependency

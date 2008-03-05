@@ -654,22 +654,25 @@ class DenseLpr {
 	  rset_regression_estimates_[i];
 	rset_variance_ += prediction_error * prediction_error;
       }
-      
+           
+      rset_variance_ *= 1.0 / 
+	(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
+	 rset_second_degree_of_freedom_);
+
       // This could happen if enough matrices are singular...
       if(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
 	 rset_second_degree_of_freedom_ <= 0) {
 	rset_variance_ = DBL_MAX;
       }
-      
-      rset_variance_ *= 1.0 / 
-	(rset_.n_cols() - 2.0 * rset_first_degree_of_freedom_ +
-	 rset_second_degree_of_freedom_);
 
-      fx_format_result(module_, "reference_set_first_degree_of_freedom",
+      fx_format_result(module_, 
+		       "dense_lpr_reference_set_first_degree_of_freedom",
 		       "%g", rset_first_degree_of_freedom_);
-      fx_format_result(module_, "reference_set_second_degree_of_freedom",
+      fx_format_result(module_, 
+		       "dense_lpr_reference_set_second_degree_of_freedom",
 		       "%g", rset_second_degree_of_freedom_);
-      fx_format_result(module_, "reference_set_variance", "%g",
+      fx_format_result(module_, 
+		       "dense_lpr_reference_set_variance", "%g",
 		       rset_variance_);
     }
 
@@ -831,11 +834,11 @@ class DenseLpr {
       rset_confidence_bands_copy->Copy(rset_confidence_bands_);
     }
 
-    /////////// User-level Functions //////////
-
     double root_mean_square_deviation() {
       return root_mean_square_deviation_;
     }
+
+    /////////// User-level Functions //////////
   
     /** @brief Computes the query regression estimates with the
      *         confidence bands.

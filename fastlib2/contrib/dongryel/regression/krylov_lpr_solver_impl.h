@@ -5,6 +5,7 @@
 #endif
 
 #include "multi_conjugate_gradient.h"
+#include "multi_lanczos.h"
 
 template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::LinearOperatorConfidenceBand
@@ -127,8 +128,9 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
  Matrix &solution_vectors_e, Matrix *leave_one_out_solution_vectors_e,
  Matrix &query_expansion_solutions) {
   
-  MultiConjugateGradient<KrylovLpr<TKernel, TPruneRule> > mcg_algorithm;
-  mcg_algorithm.Init(qroot, qset, rset_inv_norm_consts_, row_length_, this);
+  MultiConjugateGradient<KrylovLpr<TKernel, TPruneRule> > mlanczos_algorithm;
+  mlanczos_algorithm.Init(qroot, qset, rset_inv_norm_consts_, row_length_, 
+			  this);
 
   // Initialize the solution vectors to be zero.
   solution_vectors_e.SetZero();
@@ -137,8 +139,9 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
   }
   query_expansion_solutions.SetZero();
 
-  mcg_algorithm.Iterate(right_hand_sides_e, leave_one_out_right_hand_sides_e,
-			query_expansions, solution_vectors_e, 
-			leave_one_out_solution_vectors_e,
-			query_expansion_solutions);
+  mlanczos_algorithm.Iterate(right_hand_sides_e, 
+			     leave_one_out_right_hand_sides_e,
+			     query_expansions, solution_vectors_e, 
+			     leave_one_out_solution_vectors_e,
+			     query_expansion_solutions);
 }
