@@ -156,55 +156,36 @@ class SCFSolver {
   
   
   /**
-    * Create the matrix S^{-1/2} using the Schur decomposition.  Overwrites 
+   * Create the matrix S^{-1/2} using the eigenvector decomposition.  Overwrites 
    * overlap_matrix_ with S^{-1/2}.
    *
-   * TODO: go over the linear algrebra and make sure it is efficient.  I should
-   * probably change this to eigenvector computations.  
    */
   void FormOrthogonalizingMatrix_() {
     
-    // Form the orthogonalizing matrix S^{-1/2}
-    // Should change this to SchurExpert eventually
-    Vector real_eigenvalues;
-    Vector imaginary_eigenvalues;
-    Matrix schur_form;
-    Matrix schur_vectors;
+    Vector eigenvalues;
+    Matrix eigenvectors;
+    la::EigenvectorsInit(overlap_matrix_, &eigenvalues, &eigenvectors);
     
-    success_t diagonalize = 
-        la::SchurInit(overlap_matrix_, &real_eigenvalues,
-                      &imaginary_eigenvalues, &schur_form, &schur_vectors);
-    
-    if unlikely(diagonalize == SUCCESS_FAIL) {
-      // Need to handle this better
-      FATAL("Schur Decomposition Failed\n");
-    }
-    
-    // Check that the eigenvalues are all real
 #ifdef DEBUG
-    for (index_t i = 0; i < imaginary_eigenvalues.length(); i++) {
-      DEBUG_ASSERT(imaginary_eigenvalues[i] == 0.0);
+    
+    for (index_t i = 0; i < eigenvalues.length(); i++) {
+      DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
+                       "Complex eigenvalue in diagonalizing overlap matrix.\n");
     }
     
-    // Also check that the Schur form is strictly diagonal
-    for (index_t i = 0; i < schur_form.n_rows(); i++) {
-      for (index_t j = (i+1); j < schur_form.n_cols(); j++) {
-        DEBUG_ASSERT(schur_form.ref(i,j) == 0.0); 
-      }
-    }
-#endif  
+#endif
     
-    // Compute lambda^{-1/2}
-    for (index_t i = 0; i < real_eigenvalues.length(); i++) {
-      real_eigenvalues[i] = 1/sqrt(real_eigenvalues[i]);
+    for (index_t i = 0; i < eigenvalues.length(); i++) {
+      DEBUG_ASSERT(eigenvalues[i] > 0.0);
+      eigenvalues[i] = 1/sqrt(eigenvalues[i]);
     }
     
     Matrix sqrt_lambda;
-    sqrt_lambda.InitDiagonal(real_eigenvalues);
+    sqrt_lambda.InitDiagonal(eigenvalues);
     
     Matrix lambda_times_u_transpose;
-    la::MulTransBInit(sqrt_lambda, schur_vectors, &lambda_times_u_transpose);
-    la::MulOverwrite(schur_vectors, lambda_times_u_transpose, &overlap_matrix_);
+    la::MulTransBInit(sqrt_lambda, eigenvectors, &lambda_times_u_transpose);
+    la::MulOverwrite(eigenvectors, lambda_times_u_transpose, &overlap_matrix_);
     
   } // FormOrthogonalizingMatrix_
   
@@ -249,7 +230,7 @@ class SCFSolver {
         // Computing the frobenius norm of the difference between this 
         // iteration's density matrix and the previous one for testing 
         // convergence
-        if likely(current_iteration_ > 0) {
+        if (likely(current_iteration_ > 0)) {
           density_matrix_frobenius_norm_ = density_matrix_frobenius_norm_ + 
               (this_sum - density_matrix_.ref(density_row, density_column)) * 
               (this_sum - density_matrix_.ref(density_row, density_column)); 
@@ -312,7 +293,7 @@ class SCFSolver {
     
     for (index_t i = 0; i < number_of_basis_functions_; i++) {
       
-      if unlikely(i < number_to_fill)  {
+      if (unlikely(i < number_to_fill))  {
         
         (*indices)[i] = i;
         if (energy_vector_[i] > max_energy_kept) {
@@ -354,6 +335,8 @@ class SCFSolver {
    *
    * TODO: Figure out how to make a matrix that is the density weighted two
    * electron integrals.  That would eliminate at least two of the for loops.
+   *
+   * BUG: I'm counting each integral more than once.  
    */
   void UpdateFockMatrix_() {
     
@@ -365,8 +348,10 @@ class SCFSolver {
         
         for (index_t rho = 0; rho < number_of_basis_functions_; rho++) {
          
-          for (index_t sigma = 0; sigma < number_of_basis_functions_; sigma++) {
+          for (index_t sigma = 0; sigma <= rho; sigma++) {
            
+            printf("%d,%d,%d,%d\n", mu, nu, rho, sigma);
+            
             index_t first_index = FindIntegralIndex_(mu, nu, rho, sigma);
             index_t second_index = FindIntegralIndex_(mu, rho, nu, sigma);
             
@@ -416,19 +401,19 @@ class SCFSolver {
     
     bool is_converged = true;
     
-    if unlikely(current_iteration_ == 0) {
+    if (unlikely(current_iteration_ == 0)) {
       density_matrix_frobenius_norm_ = 0.0;
       return false;
     }
     
-    if likely(density_matrix_frobenius_norm_ > 
-                (convergence_tolerance_ * convergence_tolerance_) {
+    if (likely(density_matrix_frobenius_norm_ > 
+                (convergence_tolerance_ * convergence_tolerance_))) {
       is_converged = false;
     }
     
-    if likely((total_energy_[current_iteration_] 
+    if (likely((total_energy_[current_iteration_] 
                  - total_energy_[current_iteration_ - 1]) 
-                > convergence_tolerance_) {
+                > convergence_tolerance_)) {
       is_converged = false;
     }
     
@@ -464,7 +449,7 @@ class SCFSolver {
       UpdateFockMatrix_();
       
       // Step 4b.
-      if unlikely(current_iteration_ >= total_energy_.size()) {
+      if (unlikely(current_iteration_ >= total_energy_.size())) {
         total_energy_.EnsureSizeAtLeast(2*total_energy_.size());
       }
       
@@ -499,9 +484,11 @@ class SCFSolver {
     // F' = S^{-1/2} H S^{-1/2}
     // For now, we assume the initial density matrix is zero
     // In the future, I should support non-zero initialization
+   
+    fock_matrix_.CopyValues(one_electron_integrals_);
     
     TransformFockBasis_();  // fock_matrix_ should now be F'
-    
+   
     // 2. Solve the transformed Fock matrix eigenvalue problem
     
     DiagonalizeFockMatrix_();
@@ -519,10 +506,11 @@ class SCFSolver {
    */
   void OutputResults_() {
     
-    char* coefficients_file = fx_param_str(module_, "C", "coefficients.csv");
+    const char* coefficients_file = 
+        fx_param_str(module_, "C", "coefficients.csv");
     data::Save(coefficients_file, coefficient_matrix_);
     
-    char* energy_file = fx_param_str(module_, "Etot", "total_energy.csv");
+    const char* energy_file = fx_param_str(module_, "Etot", "total_energy.csv");
     FILE* energy_pointer = fopen(energy_file, "w");
     for (index_t i = 0; i < (current_iteration_ - 1); i++) {
      
@@ -531,9 +519,11 @@ class SCFSolver {
     }
     fclose(energy_pointer);
     
-    char* energy_vector_file = 
+    const char* energy_vector_file = 
         fx_param_str(module_, "Evec", "energy_vector.csv");
-    data::Save(energy_vector_file, energy_vector_);
+    Matrix energy_vector_matrix;
+    energy_vector_matrix.AliasColVector(energy_vector_);
+    data::Save(energy_vector_file, energy_vector_matrix);
     
   }
   
