@@ -354,7 +354,7 @@ private:
 
 	// If we are losing symmetric positive definiteness, then we
 	// should stop updating solution for this query point.
-	if(p_ap_dot < brkdown_tol[q]) {
+	if(query_in_cg_loop[q] && p_ap_dot < brkdown_tol[q]) {
 	  
 	  if(p_ap_dot < 0 || 
 	     BreakDown_(p_vecs.GetColumnPtr(q), 
@@ -369,7 +369,8 @@ private:
 	    brkdown_tol[q] = 0.1 * p_ap_dot;
 	  }
 	}
-	if(expansion_p_ap_dot < expansion_brkdown_tol[q]) {
+	if(expansion_query_in_cg_loop[q] &&
+	   expansion_p_ap_dot < expansion_brkdown_tol[q]) {
 	  
 	  if(expansion_p_ap_dot < 0 || 
 	     BreakDown_(expansion_p_vecs.GetColumnPtr(q), 
@@ -472,7 +473,7 @@ private:
 			     expansion_r_z_dots);
 	
 	if(!query_in_cg_loop[q]) {
-	  break;
+	  continue;
 	}
 	
 	// Compute beta
@@ -484,7 +485,7 @@ private:
 	}
 	
 	// This points to another possible problem...
-	if (fabs(r_z_dots[q]) < brkdown_tol[q]) {
+	if (query_in_cg_loop[q] && fabs(r_z_dots[q]) < brkdown_tol[q]) {
 	  if(BreakDown_(residuals.GetColumnPtr(q), z_vecs.GetColumnPtr(q),
 			r_z_dots[q])) {
 	    query_in_cg_loop[q] = false;
@@ -494,7 +495,8 @@ private:
 	    brkdown_tol[q] = 0.1 * fabs(r_z_dots[q]);
 	  }
 	}
-	if(fabs(expansion_r_z_dots[q]) < expansion_brkdown_tol[q]) {
+	if(expansion_query_in_cg_loop[q] &&
+	   fabs(expansion_r_z_dots[q]) < expansion_brkdown_tol[q]) {
 	  if(BreakDown_(expansion_residuals.GetColumnPtr(q), 
 			expansion_z_vecs.GetColumnPtr(q),
 			expansion_r_z_dots[q])) {
@@ -504,7 +506,8 @@ private:
 	    expansion_brkdown_tol[q] = 0.1 * fabs(expansion_r_z_dots[q]);
 	  }
 	}
-	if(loo_r_z_dots != NULL) {
+	if(loo_r_z_dots != NULL &&
+	   (*loo_query_in_cg_loop)[q]) {
 	  if (fabs((*loo_r_z_dots)[q]) < (*loo_brkdown_tol)[q]) {
 	    if(BreakDown_(loo_residuals->GetColumnPtr(q), 
 			  loo_z_vecs->GetColumnPtr(q),
@@ -518,7 +521,7 @@ private:
 	}
 	
 	// Now check whether the current query point has converged...
-	if(scaled_residual_norms[q] < 1e-2) {
+	if(query_in_cg_loop[q] && scaled_residual_norms[q] < 1e-3) {
 	  query_in_cg_loop[q] = false;
 	  num_queries_in_cg_loop--;
 	}
