@@ -302,7 +302,8 @@ class KrylovLpr {
       if(query_influence_values != NULL) {
 	(*query_influence_values)[i] =
 	  la::Dot(row_length_, query_point_expansion_solution,
-		  query_point_expansion);
+		  query_point_expansion) /
+	  kernels_[i].CalcNormConstant(dimension_);
       }
     }
   }

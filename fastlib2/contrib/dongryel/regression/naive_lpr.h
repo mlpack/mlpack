@@ -338,11 +338,14 @@ class NaiveLpr {
       rset_variance_ = DBL_MAX;
     }
 
-    fx_format_result(module_, "reference_set_first_degree_of_freedom",
+    fx_format_result(module_, 
+		     "naive_lpr_reference_set_first_degree_of_freedom",
 		     "%g", rset_first_degree_of_freedom_);
-    fx_format_result(module_, "reference_set_second_degree_of_freedom",
+    fx_format_result(module_, 
+		     "naive_lpr_reference_set_second_degree_of_freedom",
 		     "%g", rset_second_degree_of_freedom_);
-    fx_format_result(module_, "reference_set_variance", "%g",
+    fx_format_result(module_, 
+		     "naive_lpr_reference_set_variance", "%g",
 		     rset_variance_);
   }
 
