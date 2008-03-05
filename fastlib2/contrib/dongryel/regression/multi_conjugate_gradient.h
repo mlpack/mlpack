@@ -415,14 +415,16 @@ private:
 	}
 
 	// x = x + alpha * p
-	la::AddExpert(row_length_, alpha, p_vecs.GetColumnPtr(q),
-		      solutions.GetColumnPtr(q));
-	{
+	if(query_in_cg_loop[q]) {
+	  la::AddExpert(row_length_, alpha, p_vecs.GetColumnPtr(q),
+			solutions.GetColumnPtr(q));
+	}
+	if(expansion_query_in_cg_loop[q]) {
 	  la::AddExpert(row_length_, expansion_alpha, 
 			expansion_p_vecs.GetColumnPtr(q),
 			query_expansion_solutions.GetColumnPtr(q));
 	}
-	if(loo_solutions != NULL) {
+	if(loo_solutions != NULL && (*loo_query_in_cg_loop)[q]) {
 	  la::AddExpert(row_length_, loo_alpha, loo_p_vecs->GetColumnPtr(q),
 			loo_solutions->GetColumnPtr(q));
 	}
