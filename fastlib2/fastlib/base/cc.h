@@ -8,7 +8,6 @@
 #define BASE_CC_H
 
 #include "common.h"
-#include "ccmem.h"
 
 #include <algorithm>
 #include <limits>
@@ -64,13 +63,9 @@ extern const float FLT_INF;
  * contain and is not contained by the right-hand side, i.e. when
  * destructing the left does not inadvertantly change the right.
  *
- * Always follow member declaration macros with the appropriate
- * visibility label (public, private, or protected).
- *
  * @see ASSIGN_VIA_RECURSION_SAFE_COPY_CONSTRUCTION
  */
 #define ASSIGN_VIA_COPY_CONSTRUCTION(C) \
-   public: \
     const C &operator=(const C &src) { \
       if (likely(this != &src)) { \
         this->~C(); \
@@ -90,17 +85,13 @@ extern const float FLT_INF;
  * the first layer, this method is slower than the recursion-unsafe
  * version for shallow data structures but about the same otherwise.
  *
- * Always follow member declaration macros with the appropriate
- * visibility label (public, private, or protected).
- *
  * @see ASSIGN_VIA_COPY_CONSTRUCTION
  */
 #define ASSIGN_VIA_RECURSION_SAFE_COPY_CONSTRUCTION(C) \
-   public: \
     const C &operator=(const C &src) { \
       if (likely(this != &src)) { \
         char buf[sizeof(C)]; \
-        mem::BitCopy<C>(buf, this); \
+        memcpy(buf, this, sizeof(C)); \
         new(this) C(src); \
         reinterpret_cast<C *>(buf)->~C(); \
       } \
@@ -253,6 +244,29 @@ extern const float FLT_INF;
     friend bool operator==(T const &b, C const &a) {return a == b;} \
     friend bool operator!=(C const &a, T const &b) {return !(a == b);} \
     friend bool operator!=(T const &b, C const &a) {return !(a == b);}
+
+/**
+ * Applies some type-parameterized macro to all C/C++ primitives.
+ *
+ * This is handy for defining templated functions with special
+ * behavior for primitive types.  The input macro must accept two
+ * arguments: the type and the printf format specifier for the type;
+ * it does not have to make use of the latter.
+ */
+#define FOR_ALL_PRIMITIVES_DO(macro) \
+    macro(char, "%c") \
+    macro(short, "%d") \
+    macro(int, "%d") \
+    macro(long, "%ld") \
+    macro(long long, "%lld") \
+    macro(unsigned char, "%u") \
+    macro(unsigned short, "%u") \
+    macro(unsigned int, "%u") \
+    macro(unsigned long, "%lu") \
+    macro(unsigned long long, "%llu") \
+    macro(float, "%g") \
+    macro(double, "%g") \
+    macro(long double, "%Lg")
 
 /** Empty object. */
 class Empty {};

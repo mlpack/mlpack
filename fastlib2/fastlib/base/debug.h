@@ -177,6 +177,12 @@ extern int print_warnings;
  */
 #define BIG_BAD_NUMBER 2146666666
 
+/** Size of array to contain repititions of BIG_BAD_NUMBER. */
+#define BIG_BAD_BUF_SIZE 64
+
+/** A 64-byte addressable location containing BIG_BAD_NUMBER. */
+extern const int32 BIG_BAD_BUF[];
+
 /** 
  * An obviously invalid pointer, for use with debugging tools.
  *
@@ -227,6 +233,21 @@ const T *poison_ptr(T *&x) {
 #define DEBUG_BOUNDS(x, bound) \
     DEBUG_ASSERT_MSG(STATIC_CAST(uint64, x) < STATIC_CAST(uint64, bound), \
         "DEBUG_BOUNDS failed: %s = %"L64"d not in [0, %s = %"L64"d)\n", \
+        #x, STATIC_CAST(int64, x), #bound, STATIC_CAST(int64, bound))
+
+/**
+ * Asserts than an index is positive and less than or equal to its
+ * upper bound.
+ *
+ * This macro is nearly the same as DEBUG_BOUNDS, but permits the
+ * index and upper bound to be equal.
+ *
+ * @param x the index value to test
+ * @param bound the upper bound for x; 0 is the implicit lower bound
+ */
+#define DEBUG_BOUNDS_INCLUSIVE(x, bound) \
+    DEBUG_ASSERT_MSG(STATIC_CAST(uint64, x) <= STATIC_CAST(uint64, bound), \
+        "DEBUG_BOUNDS failed: %s = %"L64"d not in [0, %s = %"L64"d]\n", \
         #x, STATIC_CAST(int64, x), #bound, STATIC_CAST(int64, bound))
 
 /**

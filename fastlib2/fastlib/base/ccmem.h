@@ -13,6 +13,7 @@
 
 #include "common.h"
 #include "debug.h"
+#include "cc.h"
 
 #include <new>
 
@@ -37,19 +38,36 @@ namespace mem {
   template<typename T>
   inline T *DebugPoisonBytes(T *array, size_t bytes) {
 #ifdef DEBUG
-    int32 *ptr = reinterpret_cast<int32 *>(array);
-    size_t len = bytes / sizeof(int32);
-    for (size_t i = 0; i < len; ++i) {
-      ptr[i] = BIG_BAD_NUMBER;
+    char *array_cp = reinterpret_cast<char *>(array);
+
+    while (bytes >= BIG_BAD_BUF_SIZE) {
+      ::memcpy(array_cp, BIG_BAD_BUF, BIG_BAD_BUF_SIZE);
+
+      bytes -= BIG_BAD_BUF_SIZE;
+      array_cp += BIG_BAD_BUF_SIZE;
+    }
+    if (bytes > 0) {
+      ::memcpy(array_cp, BIG_BAD_BUF, bytes);
     }
 #endif
     return array;
   }
   /** Fills memory with BIG_BAD_NUMBER, measured in elements. */
   template<typename T>
-  inline T *DebugPoison(T *array, size_t elems = 1) {
+  inline T *DebugPoison(T *array, size_t elems) {
     return DebugPoisonBytes(array, elems * sizeof(T));
   }
+  /** Fills an element with BIG_BAD_NUMBER. */
+  template<typename T>
+  inline T *DebugPoison(T *ptr) {
+    if (sizeof(T) <= BIG_BAD_BUF_SIZE) {
+      DEBUG_ONLY(::memcpy(ptr, BIG_BAD_BUF, sizeof(T)));
+      return ptr;
+    } else {
+      return DebugPoisonBytes(ptr, sizeof(T));
+    }
+  }
+
   /** Allocates a (debug) poisoned array, measured in bytes. */
   template<typename T>
   inline T *AllocBytes(size_t bytes) {
@@ -63,12 +81,19 @@ namespace mem {
   }
   /** Allocates a (debug) poisoned array, measured in elements. */
   template<typename T>
-  inline T *Alloc(size_t elems = 1) {
+  inline T *Alloc(size_t elems) {
 #ifdef SCALE_NORMAL
     /* Sanity check for small-scale problems. */
     DEBUG_BOUNDS(elems, BIG_BAD_NUMBER);
 #endif
     return AllocBytes<T>(elems * sizeof(T));
+  }
+  /** Allocates a (debug) poisoned element. */
+  template<typename T>
+  inline T *Alloc() {
+    T *array = reinterpret_cast<T *>(::malloc(sizeof(T)));
+    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    return DebugPoisonBytes(array);
   }
 
   /** Bit-zeros memory, measured in bytes. */
@@ -109,7 +134,7 @@ namespace mem {
   /** Bit-copies from src to dest, measured in elements. */
   template<typename T>
   inline T *BitCopy(T *dest, const T *src, size_t elems = 1) {
-    return BitCopyBytes(dest, src, elems * sizeof(T));
+    return BitCopy<T, T, T>(dest, src, elems);
   }
   /** Allocates an array bit-copied from src, measured in bytes. */
   template<typename T, typename U>
@@ -126,7 +151,7 @@ namespace mem {
   /** Allocates an array bit-copied from src, measured in elements. */
   template<typename T>
   inline T *AllocBitCopy(const T *src, size_t elems = 1) {
-    return AllocBitCopyBytes<T>(src, elems * sizeof(T));
+    return AllocBitCopy<T, T>(src, elems);
   }
 
   /**
@@ -163,7 +188,7 @@ namespace mem {
 
 
   /** Buffer size used when swapping memory via memcpy. */
-#define SWAP_BUF_SIZE 64
+  const size_t SWAP_BUF_SIZE = 64;
 
   /**
    * Bit-swaps two arrays, measured in bytes.
@@ -181,7 +206,7 @@ namespace mem {
     char *b_cp = reinterpret_cast<char *>(b);
     char buf[SWAP_BUF_SIZE];
 
-    while (bytes > SWAP_BUF_SIZE) {
+    while (bytes >= SWAP_BUF_SIZE) {
       ::memcpy(buf, a_cp, SWAP_BUF_SIZE);
       ::memcpy(a_cp, b_cp, SWAP_BUF_SIZE);
       ::memcpy(b_cp, buf, SWAP_BUF_SIZE);
@@ -207,22 +232,28 @@ namespace mem {
    * such as portions of strings.
    */
   template<typename V, typename T, typename U>
-  inline void BitSwap(T *a, U *b, size_t elems = 1) {
+  inline void BitSwap(T *a, U *b, size_t elems) {
     BitSwapBytes(a, b, elems * sizeof(V));
   }
-  /**
-   * Bit-swaps two arrays, measured in elements.
-   *
-   * This code is optimized for swapping arrays starting at
-   * multiple-of-eight byte locations.  Freshly allocated memory and
-   * all locations within arrays of longs, doubles, and most structs
-   * will have this property.  Suboptimal performance will arise only
-   * when swapping between offset locations in arrays of small types,
-   * such as portions of strings.
-   */
   template<typename T>
-  inline void BitSwap(T *a, T *b, size_t elems = 1) {
-    BitSwapBytes(a, b, elems * sizeof(T));
+  inline void BitSwap(T *a, T *b, size_t elems) {
+    BitSwap<T, T, T>(a, b, elems);
+  }
+  template<typename V, typename T, typename U>
+  inline void BitSwap(T *a, U *b) {
+    if (sizeof(V) <= SWAP_BUF_SIZE * 2) {
+      char buf[sizeof(V)];
+
+      ::memcpy(buf, a, sizeof(V));
+      ::memcpy(a, b, sizeof(V));
+      ::memcpy(b, buf, sizeof(V));
+    } else {
+      BitSwapBytes(a, b, sizeof(V));
+    }
+  }
+  template<typename T>
+  inline void BitSwap(T *a, T *b) {
+    BitSwap<T, T, T>(a, b);
   }
 
 
@@ -271,7 +302,7 @@ namespace mem {
   }
 
   /** Simple constructors and destcutors for primatives types. */
-#define BASE_CCMEM__SIMPLE_CONSTRUCTORS(T) \
+#define BASE_CCMEM__SIMPLE_CONSTRUCTORS(T, TF) \
   template<> \
   inline T *Construct< T >(T *ptr) \
     {return DebugPoison(ptr);} \
@@ -291,18 +322,7 @@ namespace mem {
   inline T *CopyConstruct< T >(T *dest, const T *src, size_t elems) \
     {return BitCopy(dest, src, elems);}
 
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(char)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(short)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(int)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(long)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(long long)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned char)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned short)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned int)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned long)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(unsigned long long)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(float)
-  BASE_CCMEM__SIMPLE_CONSTRUCTORS(double)
+  FOR_ALL_PRIMITIVES_DO(BASE_CCMEM__SIMPLE_CONSTRUCTORS)
 
   /** No-op constructs an array of pointers. */
   template<typename T>
@@ -316,6 +336,8 @@ namespace mem {
   template<typename T>
   inline T **CopyConstruct(T **dest, const T **src, size_t elems = 1)
     {return BitCopy(dest, src, elems);}
+
+#undef BASE_CCMEM__SIMPLE_CONSTRUCTORS
 
   /** Constructs each element in an array with an initial value. */
   template<typename T, typename U>
@@ -336,9 +358,19 @@ namespace mem {
   inline T *AllocCopyConstruct(const U *src, size_t elems = 1) {
     return CopyConstruct(Alloc<T>(elems), src, elems);
   }
+  /** Allocates and element-wise copy constructs an array. */
+  template<typename T>
+  inline T *AllocCopyConstruct(const T *src, size_t elems = 1) {
+    return CopyConstruct(Alloc<T>(elems), src, elems);
+  }
   /** Allocates and copy constructs an array. */
   template<typename T, typename U>
   inline T *AllocRepeatConstruct(const U &init, size_t elems) {
+    return RepeatConstruct(Alloc<T>(elems), init, elems);
+  }
+  /** Allocates and copy constructs an array. */
+  template<typename T>
+  inline T *AllocRepeatConstruct(const T &init, size_t elems) {
     return RepeatConstruct(Alloc<T>(elems), init, elems);
   }
 
