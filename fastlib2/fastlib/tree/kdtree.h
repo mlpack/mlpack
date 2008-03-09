@@ -44,8 +44,8 @@ namespace tree {
    * @param new_from_old pointer to an unitialized arraylist; it will map
    *        original indexes to new indices
    */
-  template<typename TKdTree>
-  TKdTree *MakeKdTreeMidpoint(Matrix& matrix, index_t leaf_size,
+  template<typename TKdTree, typename T>
+  TKdTree *MakeKdTreeMidpoint(GenMatrix<T>& matrix, index_t leaf_size,
       ArrayList<index_t> *old_from_new = NULL,
       ArrayList<index_t> *new_from_old = NULL) {
     TKdTree *node = new TKdTree();
@@ -119,10 +119,10 @@ namespace tree {
    *        the matrix returned to the original data point indices
    * @return SUCCESS_PASS or SUCCESS_FAIL
    */
-  template<typename TKdTree>
-  success_t LoadKdTree(datanode *module,
-      Matrix *matrix, TKdTree **tree_pp,
-      ArrayList<index_t> *old_from_new) {
+  template<typename TKdTree, typename T>
+  success_t LoadKdTree(datanode *module, GenMatrix<T> *matrix, 
+		       TKdTree **tree_pp, ArrayList<index_t> *old_from_new) {
+
     const char *type = fx_param_str(module, "type", "text");
     const char *fname = fx_param_str(module, "", NULL);
     success_t success = SUCCESS_PASS;
@@ -135,11 +135,8 @@ namespace tree {
       success = data::Load(fname, matrix);
       fx_timer_stop(module, "load_matrix");
 
-      //if (fx_param_exists("do_pca")) {}
-
       fx_timer_start(module, "make_tree");
-      *tree_pp = MakeKdTreeMidpoint<TKdTree>(
-          *matrix, leaflen, old_from_new);
+      *tree_pp = MakeKdTreeMidpoint<TKdTree>(*matrix, leaflen, old_from_new);
       fx_timer_stop(module, "make_tree");
     }
     fx_timer_stop(module, "load");

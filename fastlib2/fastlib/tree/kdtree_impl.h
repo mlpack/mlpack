@@ -2,24 +2,24 @@
 
 namespace tree_kdtree_private {
 
-  template<typename TBound>
-  void FindBoundFromMatrix(const Matrix& matrix,
+  template<typename TBound, typename T>
+  void FindBoundFromMatrix(const GenMatrix<T>& matrix,
       index_t first, index_t count, TBound *bounds) {
     index_t end = first + count;
     for (index_t i = first; i < end; i++) {
-      Vector col;
+      GenVector<T> col;
 
       matrix.MakeColumnVector(i, &col);
       *bounds |= col;
     }
   }
 
-  template<typename TBound>
-  index_t MatrixPartition(
-      Matrix& matrix, index_t dim, double splitvalue,
-      index_t first, index_t count,
-      TBound* left_bound, TBound* right_bound,
-      index_t *old_from_new) {
+  template<typename TBound, typename T>
+  index_t MatrixPartition(GenMatrix<T>& matrix, index_t dim, double splitvalue,
+			  index_t first, index_t count,
+			  TBound* left_bound, TBound* right_bound,
+			  index_t *old_from_new) {
+
     index_t left = first;
     index_t right = first + count - 1;
     
@@ -30,14 +30,14 @@ namespace tree_kdtree_private {
      */
     for (;;) {
       while (matrix.get(dim, left) < splitvalue && likely(left <= right)) {
-        Vector left_vector;
+        GenVector<T> left_vector;
         matrix.MakeColumnVector(left, &left_vector);
         *left_bound |= left_vector;
         left++;
       }
 
       while (matrix.get(dim, right) >= splitvalue && likely(left <= right)) {
-        Vector right_vector;
+        GenVector<T> right_vector;
         matrix.MakeColumnVector(right, &right_vector);
         *right_bound |= right_vector;
         right--;
@@ -48,8 +48,8 @@ namespace tree_kdtree_private {
         break;
       }
 
-      Vector left_vector;
-      Vector right_vector;
+      GenVector<T> left_vector;
+      GenVector<T> right_vector;
 
       matrix.MakeColumnVector(left, &left_vector);
       matrix.MakeColumnVector(right, &right_vector);
@@ -79,9 +79,10 @@ namespace tree_kdtree_private {
     return left;
   }
 
-  template<typename TKdTree>
-  void SplitKdTreeMidpoint(Matrix& matrix,
-      TKdTree *node, index_t leaf_size, index_t *old_from_new) {
+  template<typename TKdTree, typename T>
+  void SplitKdTreeMidpoint(GenMatrix<T>& matrix, TKdTree *node, 
+			   index_t leaf_size, index_t *old_from_new) {
+
     TKdTree *left = NULL;
     TKdTree *right = NULL;
     
