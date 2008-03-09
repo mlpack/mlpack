@@ -1,7 +1,7 @@
 /** @file ortho_range_search.h
  *
- *  This file contains an implementation of a tree-based and a naive
- *  algorithm for orthogonal range search.
+ *  This file contains an implementation of a tree-based algorithm for
+ *  orthogonal range search.
  *
  *  @author Dongryeol Lee (dongryel)
  */
@@ -11,115 +11,6 @@
 #include "range_reader.h"
 #include "fastlib/fastlib.h"
 
-/** @brief Naive orthogonal range search class.
- *
- *  @code
- *    NaiveOrthoRangeSearch search;
- *    search.Init(dataset);
- *    search.Compute(low_coord_limits, high_coord_limits);
- *
- *    Vector naive_search_results;
- *
- *    // Make sure that the vector is uninitialized before passing.
- *    search.get_results(&naive_search_results);
- *  @endcode
- */
-class NaiveOrthoRangeSearch {
-  
-  // This class object cannot be copied!
-  FORBID_ACCIDENTAL_COPIES(NaiveOrthoRangeSearch);
-
- private:
-
-  /** @brief The i-th position of this array tells whether the i-th
-   *         point is in the specified orthogonal range.
-   */
-  ArrayList<bool> in_range_;
-
-  /** @brief The dataset. 
-   */
-  Matrix data_;
-  
- public:
-  
-  ////////// Constructor/Destructor //////////
-
-  /** @brief Constructor which does not do anything.
-   */
-  NaiveOrthoRangeSearch() {}
-
-  /** @brief Destructor which does not do anything.
-   */
-  ~NaiveOrthoRangeSearch() {}
-
-  ////////// Getters/Setters //////////
-
-  /** @brief Retrieve the result of the search.
-   *
-   *  @param results An uninitialized vector which will have the boolean 
-   *                 results representing the search results.
-   */
-  void get_results(ArrayList<bool> *results) const {
-    results->Init(in_range_.size());
-
-    for(index_t i = 0; i < in_range_.size(); i++) {
-      (*results)[i] = in_range_[i];
-    }
-  }
-
-  ////////// User-level Functions //////////
-
-  /** @brief Initialize the computation object.
-   *
-   *  @param data The data used for orthogonal range search.
-   */
-  void Init(Matrix &data) {
-
-    // copy the incoming data
-    data_.Copy(data);
-    
-    // re-initialize boolean flag
-    in_range_.Init(data_.n_cols());
-    for(index_t i = 0; i < data_.n_cols(); i++) {
-      in_range_[i] = false;
-    }
-  }
-
-  /** @brief The main computation of naive orthogonal range search.
-   *
-   *  @param low_coord_limits The lower coordinate range of the search window.
-   *  @param high_coord_limits The upper coordinate range of the search
-   *                           window.
-   */
-  void Compute(Vector &low_coord_limits, Vector &high_coord_limits) {
-
-    // Start the search.
-    fx_timer_start(NULL, "naive_search");
-    for(index_t i = 0; i < data_.n_cols(); i++) {
-
-      Vector pt;
-      bool flag = true;
-      data_.MakeColumnVector(i, &pt);
-      
-      // Determine which one of the two cases we have: EXCLUDE, SUBSUME
-      // first the EXCLUDE case: when dist is above the upper bound distance
-      // of this dimension, or dist is below the lower bound distance of
-      // this dimension
-      for(index_t d = 0; d < data_.n_rows(); d++) {
-	if(pt[d] < low_coord_limits[d] || pt[d] > high_coord_limits[d]) {
-	  flag = false;
-	  break;
-	}
-      }
-      in_range_[i] = flag;
-    }
-    fx_timer_stop(NULL, "naive_search");
-    
-    // Search is now finished.
-    
-  }
-
-};
 
 /** @brief Faster orthogonal range search class using a tree.
  *
@@ -134,6 +25,7 @@ class NaiveOrthoRangeSearch {
  *    search.get_results(&search_results);
  *  @endcode
  */
+template<typename T>
 class OrthoRangeSearch {
 
   // This class object cannot be copied!
@@ -188,7 +80,8 @@ class OrthoRangeSearch {
    *  @param high_coord_limits The upper coordinate range of the search
    *                           window.
    */
-  void Compute(Vector &low_coord_limits, Vector &high_coord_limits) {
+  void Compute(const GenVector<T> &low_coord_limits, 
+	       const GenVector<T> &high_coord_limits) {
 
     fx_timer_start(NULL, "tree_range_search");
     ortho_range_search(root_, 0, low_coord_limits, high_coord_limits);
@@ -258,7 +151,8 @@ class OrthoRangeSearch {
    *                             If not NULL, the tree is loaded from the
    *                             file whose name is given as the argument.
    */
-  void Init(Matrix &dataset, bool make_copy, const char *load_tree_file_name) {
+  void Init(GenMatrix<T> &dataset, bool make_copy, 
+	    const char *load_tree_file_name) {
 
     int leaflen = fx_param_int(NULL, "leaflen", 20);
 
@@ -295,7 +189,7 @@ class OrthoRangeSearch {
  private:
 
   /** @brief This defines the type of the tree used in this algorithm. */
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix> Tree;
+  typedef BinarySpaceTree<DHrectBound<2>, GenMatrix<T> > Tree;
 
   /** @brief Flag determining a prune */
   enum PruneStatus {SUBSUME, INCONCLUSIVE, EXCLUDE};
@@ -303,7 +197,7 @@ class OrthoRangeSearch {
   ////////// Private Member Variables //////////
 
   /** @brief Pointer to the dataset */
-  Matrix data_;
+  GenMatrix<T> data_;
 
   /** @brief Buffer for loading up old_from_new mapping. */
   ArrayList<index_t> *old_from_new_buffer_;
@@ -367,11 +261,11 @@ class OrthoRangeSearch {
     printf("Tree has been loaded...\n");
 
     // apply permutation to the dataset
-    Matrix tmp_data;
+    GenMatrix<T> tmp_data;
     tmp_data.Init(data_.n_rows(), data_.n_cols());
 
     for(index_t i = 0; i < data_.n_cols(); i++) {
-      Vector source, dest;
+      GenVector<T> source, dest;
       data_.MakeColumnVector(i, &source);
       tmp_data.MakeColumnVector(new_from_old_[i], &dest);
       dest.CopyValues(source);
@@ -388,8 +282,8 @@ class OrthoRangeSearch {
    *  @param high_coord_limits The upper coordinate limits of the search.
    */
   void ortho_slow_range_search(Tree *node, int start_dim,
-			       const Vector &low_coord_limits,
-			       const Vector &high_coord_limits) {
+			       const GenVector<T> &low_coord_limits,
+			       const GenVector<T> &high_coord_limits) {
     PruneStatus prune_flag;
 
     for(index_t row = node->begin(); row < node->end(); row++) {
@@ -427,8 +321,8 @@ class OrthoRangeSearch {
    *                           window.
    */
   void ortho_range_search(Tree *node, int start_dim,
-			  const Vector &low_coord_limits, 
-			  const Vector &high_coord_limits) {
+			  const GenVector<T> &low_coord_limits, 
+			  const GenVector<T> &high_coord_limits) {
 
     PruneStatus prune_flag = SUBSUME;
     
