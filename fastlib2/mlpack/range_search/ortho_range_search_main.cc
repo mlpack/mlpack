@@ -4,6 +4,8 @@
  *
  *  @author Dongryeol Lee (dongryel)
  */
+#include "data_aux.h"
+#include "naive_ortho_range_search.h"
 #include "ortho_range_search.h"
 
 /** Main function which reads parameters and runs the orthogonal
@@ -67,14 +69,14 @@ int main(int argc, char *argv[]) {
   const char* dataset_file_name = fx_param_str(NULL, "data", "data.ds");
 
   // column-oriented dataset matrix.
-  Matrix dataset;
+  GenMatrix<double> dataset;
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
-  data::Load(dataset_file_name, &dataset);
+  data_aux::Load(dataset_file_name, &dataset);
 
   // Read the search range from the file.
   const char *range_data_file_name = fx_param_str(NULL, "range", "range.ds");
-  Vector low_coord_limits, high_coord_limits;
+  GenVector<double> low_coord_limits, high_coord_limits;
   RangeReader::ReadRangeData(&low_coord_limits, &high_coord_limits,
 			     dataset, range_data_file_name);
 
@@ -92,7 +94,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Declare fast tree-based orthogonal range search algorithm object.
-  OrthoRangeSearch fast_search;
+  OrthoRangeSearch<double> fast_search;
   fast_search.Init(dataset, fx_param_exists(NULL, "do_naive"),
 		   load_tree_file_name);
   fast_search.Compute(low_coord_limits, high_coord_limits);
@@ -108,7 +110,7 @@ int main(int argc, char *argv[]) {
 
   // if naive option is specified, do naive algorithm
   if(do_naive) {
-    NaiveOrthoRangeSearch search;
+    NaiveOrthoRangeSearch<double> search;
     search.Init(dataset);
     search.Compute(low_coord_limits, high_coord_limits);
     ArrayList<bool> naive_search_results;

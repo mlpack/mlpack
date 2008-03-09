@@ -39,9 +39,10 @@ class RangeReader {
    *                 rows of the text file to read in).
    *  @param range_data_file_name The file to read the range data from.
    */
-  static void ReadRangeData(Vector *low_coord_limits, 
-			    Vector *high_coord_limits,
-			    Matrix &dataset,
+  template<typename T>
+  static void ReadRangeData(GenVector<T> *low_coord_limits, 
+			    GenVector<T> *high_coord_limits,
+			    GenMatrix<T> &dataset,
 			    const char *range_data_file_name) {
 
     TextTokenizer tokenizer;
