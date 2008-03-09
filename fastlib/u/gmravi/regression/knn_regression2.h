@@ -632,26 +632,19 @@ template<typename TKernel> class KNNRegression{
       //printf("numerator was %f\n",numerator);
       printf("denominator is %f\n",denominator);
       printf("regression estimates are %f\n",regression_estimates_[q]);
+      if(isnan(regression_estimates_[q])||isinf(regression_estimates_[q])){
+
+	printf("regression estimate is inf!!!!");
+	exit(0);
+
+      }
       //printf("\n");
       
       for(index_t i=0;i<k_;i++){
 	
 	weight_diagram[i]/=denominator;
       }
-      //printf("weight diagram caclulated as %f...\n",weight_diagram[0]);
-      df1_+=weight_diagram[0];
-
-      if(weight_diagram[0]>1.0){
-
-	printf("the influence was too heavy...\n");
-	exit(0);
-      }
-
-      //printf("df1 has become %f\n",df1_);
-      if(isnan(weight_diagram[0])){
-	printf("weight diagram is nan\n");
-	exit(0);
-      }
+    
       double sqdlength=SquaredLengthOfVector_(weight_diagram,k_); 
 
 
@@ -660,6 +653,30 @@ template<typename TKernel> class KNNRegression{
       //final regression value
 
       if(flag==CALCULATE_FOR_REFERENCE_POINTS_){
+
+
+	/*******************Set df1 and df2 here ****************************************/
+
+
+
+	//printf("weight diagram caclulated as %f...\n",weight_diagram[0]);
+	df1_+=weight_diagram[0];
+	
+	if(weight_diagram[0]>1.0){
+	  
+	  printf("the influence was too heavy...\n");
+	  exit(0);
+	}
+	
+	//printf("df1 has become %f\n",df1_);
+	if(isnan(weight_diagram[0])){
+	  printf("weight diagram is nan\n");
+	  exit(0);
+	}
+
+	df2_+=sqdlength;
+
+	/*********************************************************************/
 	
 	double bw=global_smoothing_*sqrt(nn_distances_[q*k_+k_-1]);
 	kernel_.Init(bw);
@@ -701,7 +718,7 @@ template<typename TKernel> class KNNRegression{
 	double diff=regression_estimate_cross_validation-rset_weights_.get(q,0);
        
 	cross_validation_score_+=diff*diff;
-	df2_+=sqdlength;
+
 	printf("Cross validation score has become %f\n",cross_validation_score_);
       }
 
@@ -756,6 +773,11 @@ template<typename TKernel> class KNNRegression{
 
       printf("sqd residual error is %f\n",sqd_residual_error);
       printf("denominator is %f\n",rset_.n_cols()-2*df1_+df2_);
+
+      if(abs(rset_.n_cols()-2*df1_+df2_)<=pow(10,-10)){
+	printf("Too few neighbours chosen,,,exiting....\n");
+	exit(0);
+      }
       sigma_hat_=sqrt(sqd_residual_error/(rset_.n_cols()-2*df1_+df2_));     
 
       printf("degrees of freedom1 are %f\n",df1_);
@@ -814,6 +836,13 @@ template<typename TKernel> class KNNRegression{
       }
 
       printf("Squared residual errror is %f\n",sqd_residual_error);
+
+      if(abs(rset_.n_cols()-2*df1_+df2_)){
+
+	printf("too few neighbours chose....exiting....\n");
+	exit(0);
+
+      }
       sigma_hat_=sqd_residual_error/(rset_.n_cols()-2*df1_+df2_);  
 
       if(sigma_hat_<0){
@@ -1188,10 +1217,15 @@ template<typename TKernel> class KNNRegression{
 
 	index_t flag=CALCULATE_FOR_QUERY_POINTS_;
 
+	printf("df1 is %f\n",df1_);
+	printf("df2 is %f\n",df2_);
+
 	printf("WILL PERFORM REGRESSION FOR QSET..\n");
 
 	fx_timer_start(NULL,"knn_nwr");
 	PerformKNNNWRegression_(qset_,flag);
+	printf("df1 is %f\n",df1_);
+	printf("df2 is %f\n",df2_);
 
 	printf("Performed regression for qset too..\n");
 
@@ -1300,7 +1334,9 @@ template<typename TKernel> class KNNRegression{
 
       printf("Cross validation results are %f\n",cross_validation_score_);
       printf("Comparing with naive..\n");
-      //CompareWithNaive_(method);
+      printf("degree of freeedom1 is %f\n",df1_);
+      printf("degree of freedom2 is %f\n",df2_);
+      CompareWithNaive_(method);
 
       /**************************PRINT RESULTS TO A FILE *******************************************/
       //printf("Priniting results to a file...\n");
