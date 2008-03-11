@@ -69,16 +69,20 @@ int main(int argc, char *argv[]) {
   const char* dataset_file_name = fx_param_str(NULL, "data", "data.ds");
 
   // column-oriented dataset matrix.
-  GenMatrix<double> dataset;
+  GenMatrix<short int> dataset;
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
   data_aux::Load(dataset_file_name, &dataset);
 
-  // Read the search range from the file.
+  // Read the search range from the file. Note that the ranges will be
+  // a two-column dataset: the first column denotes the lower limits
+  // and the second column denotes the upper limits.
   const char *range_data_file_name = fx_param_str(NULL, "range", "range.ds");
-  GenVector<double> low_coord_limits, high_coord_limits;
-  RangeReader::ReadRangeData(&low_coord_limits, &high_coord_limits,
-			     dataset, range_data_file_name);
+  GenVector<short int> low_coord_limits, high_coord_limits;
+  GenMatrix<short int> range_dataset;
+  data_aux::LoadTranspose(range_data_file_name, &range_dataset);
+  range_dataset.MakeColumnVector(0, &low_coord_limits);
+  range_dataset.MakeColumnVector(1, &high_coord_limits);
 
   // flag for determining whether we need to do naive algorithm.
   bool do_naive = fx_param_exists(NULL, "do_naive");
@@ -94,7 +98,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Declare fast tree-based orthogonal range search algorithm object.
-  OrthoRangeSearch<double> fast_search;
+  OrthoRangeSearch<short int> fast_search;
   fast_search.Init(dataset, fx_param_exists(NULL, "do_naive"),
 		   load_tree_file_name);
   fast_search.Compute(low_coord_limits, high_coord_limits);
@@ -110,7 +114,7 @@ int main(int argc, char *argv[]) {
 
   // if naive option is specified, do naive algorithm
   if(do_naive) {
-    NaiveOrthoRangeSearch<double> search;
+    NaiveOrthoRangeSearch<short int> search;
     search.Init(dataset);
     search.Compute(low_coord_limits, high_coord_limits);
     ArrayList<bool> naive_search_results;

@@ -189,7 +189,7 @@ class OrthoRangeSearch {
  private:
 
   /** @brief This defines the type of the tree used in this algorithm. */
-  typedef BinarySpaceTree<DHrectBound<2>, GenMatrix<T> > Tree;
+  typedef BinarySpaceTree<GenHrectBound<T, 2>, GenMatrix<T> > Tree;
 
   /** @brief Flag determining a prune */
   enum PruneStatus {SUBSUME, INCONCLUSIVE, EXCLUDE};
@@ -331,7 +331,7 @@ class OrthoRangeSearch {
     // for the given reference node, kn
     for(index_t d = start_dim; d < data_.n_rows(); d++) {
 
-      DRange node_dir_range = node->bound().get(d);
+      GenRange<T> node_dir_range = node->bound().get(d);
 
       // determine which one of the three cases we have: EXCLUDE, SUBSUME, or
       // INCONCLUSIVE.

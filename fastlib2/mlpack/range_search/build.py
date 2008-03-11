@@ -4,8 +4,7 @@ librule(
     sources = [],
     headers = ["data_aux.h",
                "naive_ortho_range_search.h",
-               "ortho_range_search.h",
-               "range_reader.h"],
+               "ortho_range_search.h"]
     deplibs = ["fastlib:fastlib_int"]
     )
 
