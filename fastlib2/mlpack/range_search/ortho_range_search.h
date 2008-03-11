@@ -8,7 +8,6 @@
 #ifndef ORTHO_RANGE_SEARCH_H
 #define ORTHO_RANGE_SEARCH_H
 
-#include "range_reader.h"
 #include "fastlib/fastlib.h"
 
 
@@ -84,7 +83,8 @@ class OrthoRangeSearch {
 	       const GenVector<T> &high_coord_limits) {
 
     fx_timer_start(NULL, "tree_range_search");
-    ortho_range_search(root_, 0, low_coord_limits, high_coord_limits);
+    ortho_range_search(root_, 0, data_.n_rows() - 1, 
+		       low_coord_limits, high_coord_limits);
     fx_timer_stop(NULL, "tree_range_search");
 
     // reshuffle the results to account for shuffling during tree construction
@@ -277,11 +277,13 @@ class OrthoRangeSearch {
   /** @brief The base case.
    *
    *  @param node The tree node currently under consideration.
-   *  @param start_dim The dimension currently under consideration.
+   *  @param start_dim The starting dimension currently under consideration.
+   *  @param end_dim The ending index of the dimension currently under 
+   *                 consideration.
    *  @param low_coord_limits The lower coordinate limits of the search.
    *  @param high_coord_limits The upper coordinate limits of the search.
    */
-  void ortho_slow_range_search(Tree *node, int start_dim,
+  void ortho_slow_range_search(Tree *node, index_t start_dim, index_t end_dim,
 			       const GenVector<T> &low_coord_limits,
 			       const GenVector<T> &high_coord_limits) {
     PruneStatus prune_flag;
@@ -289,7 +291,7 @@ class OrthoRangeSearch {
     for(index_t row = node->begin(); row < node->end(); row++) {
       prune_flag = SUBSUME;
 
-      for(index_t d = start_dim; d < data_.n_rows(); d++) {
+      for(index_t d = start_dim; d <= end_dim; d++) {
 	// determine which one of the two cases we have: EXCLUDE, SUBSUME
 
 	// first the EXCLUDE case: when dist is above the upper bound distance
@@ -320,7 +322,7 @@ class OrthoRangeSearch {
    *  @param high_coord_limits The upper coordinate limits of the search
    *                           window.
    */
-  void ortho_range_search(Tree *node, int start_dim,
+  void ortho_range_search(Tree *node, index_t start_dim, index_t end_dim,
 			  const GenVector<T> &low_coord_limits, 
 			  const GenVector<T> &high_coord_limits) {
 
@@ -329,7 +331,7 @@ class OrthoRangeSearch {
     // loop over each dimension to determine inclusion/exclusion by 
     // determining the lower and the upper bound distance per each dimension 
     // for the given reference node, kn
-    for(index_t d = start_dim; d < data_.n_rows(); d++) {
+    for(index_t d = start_dim; d <= end_dim; d++) {
 
       GenRange<T> node_dir_range = node->bound().get(d);
 
@@ -356,9 +358,45 @@ class OrthoRangeSearch {
 	prune_flag = INCONCLUSIVE;
 	break;
       }
-    }
-    
-    // in case of subsume, then add all points owned by this node to
+    } // end of iterating over each dimension.
+
+    // Now scan from backwards to look for a EXCLUDE prune.
+    if(prune_flag != SUBSUME) {
+      for(index_t d = end_dim; d >= start_dim; d--) {
+
+	GenRange<T> node_dir_range = node->bound().get(d);
+	
+	// determine which one of the three cases we have: EXCLUDE,
+	// SUBSUME, or INCONCLUSIVE.
+	
+	// first the EXCLUDE case: when mindist is above the upper
+	// bound distance of this dimension, or maxdist is below the
+	// lower bound distance of this dimension
+	if(node_dir_range.lo > high_coord_limits[d] ||
+	   node_dir_range.hi < low_coord_limits[d]) {
+	  for(index_t i = node->begin(); i < node->end(); i++) {
+	    candidate_points_[i] = false;
+	  }
+	  return;
+	}
+	// otherwise, check for SUBSUME case
+	else if(low_coord_limits[d] <= node_dir_range.lo &&
+		node_dir_range.hi <= high_coord_limits[d]) {
+	}
+	// if any dimension turns out to be inconclusive, then break.
+	else {
+	  end_dim = d;
+	  prune_flag = INCONCLUSIVE;
+	  break;
+	}
+      } // end of iterating over each dimension.
+    } // end of non-SUBSUME case.
+
+    // At this point: our invariant is that [0, start_dim - 1] union
+    // [end_dim + 1, dimension - 1] of the current node is subsumed by
+    // the current search window, if prune_flag is not SUBSUME.
+
+    // In case of subsume, then add all points owned by this node to
     // candidates
     if(prune_flag == SUBSUME) {
       for(index_t i = node->begin(); i < node->end(); i++) {
@@ -367,13 +405,13 @@ class OrthoRangeSearch {
       return;
     }
     else if(node->is_leaf()) {
-      ortho_slow_range_search(node, start_dim, low_coord_limits, 
+      ortho_slow_range_search(node, start_dim, end_dim, low_coord_limits, 
 			      high_coord_limits);
     }
     else {
-      ortho_range_search(node->left(), start_dim, low_coord_limits,
+      ortho_range_search(node->left(), start_dim, end_dim, low_coord_limits,
 			 high_coord_limits);
-      ortho_range_search(node->right(), start_dim, low_coord_limits,
+      ortho_range_search(node->right(), start_dim, end_dim, low_coord_limits,
 			 high_coord_limits);
     }
   }
