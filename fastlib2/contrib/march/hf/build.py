@@ -18,3 +18,10 @@ librule(
 	deplibs = [":scf_solver", ":dual_tree_integrals", "fastlib:fastlib"],
 	tests = ["hf_test.cc"]
 )
+
+binrule(
+	name = "dual_tree_integrals_main",
+	headers = ["dual_tree_integrals.h", "naive_fock_matrix.h"],
+	deplibs = ["fastlib:fastlib"],
+	sources = ["dual_tree_integrals.cc"]
+)
