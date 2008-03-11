@@ -177,7 +177,7 @@ class ArrayList {
   void Copy(const Element *ptr, index_t size) {
     DEBUG_ASSERT_MSG(size_ == BIG_BAD_NUMBER, "reinitialization not allowed");
 
-    ptr_ = mem::AllocCopyConstruct<Element>(ptr, size);
+    ptr_ = mem::AllocCopyConstruct(ptr, size);
     cap_ = size;
     size_ = size;
   }
