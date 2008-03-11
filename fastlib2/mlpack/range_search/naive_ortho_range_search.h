@@ -9,7 +9,6 @@
 #ifndef NAIVE_ORTHO_RANGE_SEARCH_H
 #define NAIVE_ORTHO_RANGE_SEARCH_H
 
-#include "range_reader.h"
 #include "fastlib/fastlib.h"
 
 
