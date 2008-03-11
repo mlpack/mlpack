@@ -5,7 +5,7 @@
 #include "rangeset.h"
 #include "queue.h"
 
-#include "base/test.h"
+#include "fastlib/base/test.h"
 
 TEST_SUITE_BEGIN(col)
 
