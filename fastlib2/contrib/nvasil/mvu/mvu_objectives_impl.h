@@ -274,7 +274,8 @@ void MaxVarianceInequalityOnFurthest::ComputeObjective(Matrix &coordinates,
   }
 }
 
-void MaxVarianceInequalityOnFurthest::ComputeFeasibilityError(Matrix &coordinates, double *error) {
+void MaxVarianceInequalityOnFurthest::ComputeFeasibilityError(Matrix &coordinates, 
+    double *error) {
   index_t dimension=coordinates.n_rows();
   *error=0;
   for(index_t i=0; i<num_of_nearest_pairs_; i++) {
@@ -294,11 +295,10 @@ void MaxVarianceInequalityOnFurthest::ComputeFeasibilityError(Matrix &coordinate
     double dist_diff=math::Sqr(la::DistanceSqEuclidean(dimension, 
                          point1, point2) 
                          -furthest_distances_[i]);
-    if (dist_diff>=0) {
+    if (dist_diff<=0) {
       *error+=dist_diff*dist_diff;
     }
   }
-
 }
 
 double MaxVarianceInequalityOnFurthest::ComputeLagrangian(Matrix &coordinates) {
@@ -312,8 +312,8 @@ double MaxVarianceInequalityOnFurthest::ComputeLagrangian(Matrix &coordinates) {
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
                            -nearest_distances_[i];
-    lagrangian+=dist_diff*dist_diff*sigma_+
-        eq_lagrange_mult_[i]*dist_diff;
+    lagrangian+=dist_diff*dist_diff*sigma_/2
+       -eq_lagrange_mult_[i]*dist_diff;
   }
   for(index_t i=0; i<num_of_furthest_pairs_; i++) {
     index_t n1=furthest_neighbor_pairs_[i].first;
@@ -324,7 +324,7 @@ double MaxVarianceInequalityOnFurthest::ComputeLagrangian(Matrix &coordinates) {
                          point1, point2) 
                          -furthest_distances_[i]);
     if (dist_diff*sigma_<=ineq_lagrange_mult_[i]) {
-      lagrangian+=(-ineq_lagrange_mult_[i]+sigma_*dist_diff)*dist_diff;
+      lagrangian+=(-ineq_lagrange_mult_[i]+sigma_/2*dist_diff)*dist_diff;
     } else {
       lagrangian-=math::Sqr(ineq_lagrange_mult_[i])/(2*sigma_);
     }
@@ -455,9 +455,11 @@ void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
                            -furthest_distances_[i];
-    la::AddExpert(dimension, -dist_diff, a_i_r,
+    la::SubOverwrite(dimension, point2, point1, a_i_r);
+
+    la::AddExpert(dimension, -2*dist_diff, a_i_r,
         gradient->GetColumnPtr(n1));
-    la::AddExpert(dimension, dist_diff, a_i_r,
+    la::AddExpert(dimension, 2*dist_diff, a_i_r,
         gradient->GetColumnPtr(n2));
   }
   // equality constraints
@@ -492,8 +494,8 @@ void MaxFurthestNeighbors::ComputeObjective(Matrix &coordinates,
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
-                           -nearest_distances_[i];
-    *objective-=dist_diff;   
+                           -furthest_distances_[i];
+    *objective-=dist_diff*dist_diff;   
   }
 }
 
@@ -505,9 +507,10 @@ void MaxFurthestNeighbors::ComputeFeasibilityError(Matrix &coordinates, double *
     index_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
-    *error += math::Sqr(la::DistanceSqEuclidean(dimension, 
+    double dist_diff = la::DistanceSqEuclidean(dimension, 
                                                point1, point2) 
-                                          -nearest_distances_[i]);
+                           -nearest_distances_[i];
+    *error+=dist_diff*dist_diff;
   }
 }
 
@@ -522,8 +525,8 @@ double MaxFurthestNeighbors::ComputeLagrangian(Matrix &coordinates) {
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
                            -nearest_distances_[i];
-    lagrangian+=dist_diff*dist_diff*sigma_+
-        eq_lagrange_mult_[i]*dist_diff;
+    lagrangian+=dist_diff*dist_diff*sigma_/2
+        -eq_lagrange_mult_[i]*dist_diff;
   }
   return lagrangian;
 }
