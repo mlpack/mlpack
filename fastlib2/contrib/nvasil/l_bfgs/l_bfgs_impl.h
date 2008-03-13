@@ -27,7 +27,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   eta_ = fx_param_double(module_, "eta", 0.99);
   gamma_ = fx_param_double(module_, "gamma", 5);
   new_dimension_ = fx_param_int(module, "new_dimension", 2);
-  feasibility_tolerance_ = fx_param_double(module_, "feasibility_tolerance", 0.1);
+  feasibility_tolerance_ = fx_param_double(module_, "feasibility_tolerance", 0.01);
   wolfe_sigma1_ = fx_param_double(module_, "wolfe_sigma1", 0.1);
   wolfe_sigma2_ = fx_param_double(module_, "wolfe_sigma2", 0.9);
   step_size_=fx_param_double(module_, "step_size", 1.0);
@@ -126,9 +126,11 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
       previous_gradient_.CopyValues(gradient_);
       num_of_iterations_++;
     }
-    NOTIFY("%lg %lg\n", fabs(old_feasibility_error - feasibility_error), 
+    NOTIFY("%lg %lg\n", fabs(old_feasibility_error - feasibility_error)
+        /old_feasibility_error, 
        feasibility_tolerance_);
-    if (fabs(old_feasibility_error - feasibility_error) < feasibility_tolerance_) {
+    if (fabs(old_feasibility_error - feasibility_error)
+        /old_feasibility_error < feasibility_tolerance_) {
       break;
     }
     old_feasibility_error = feasibility_error;
@@ -180,7 +182,7 @@ void LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &direction
                                gradient_.ptr(),
                                direction.ptr());
   double wolfe_factor =  dot_product * wolfe_sigma1_ * wolfe_beta_ * step_size_;
-  for(index_t i=0; beta>1e-100; i++) { 
+  for(index_t i=0; beta>1e-200; i++) { 
     temp_coordinates.CopyValues(coordinates_);
     la::AddExpert(-step_size_*beta, direction, &temp_coordinates);
     lagrangian2 = optimized_function_->ComputeLagrangian(temp_coordinates);

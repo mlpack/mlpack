@@ -64,9 +64,9 @@ class LBfgsTest {
     engine.Destruct();
   }
   void TestAll() {
-    TestMaxVar1();
-    TestMaxVar2();
-    TestMaxVar2();
+   // TestMaxVar1();
+   // TestMaxVar2();
+    TestMaxVar3();
   }
    
  private:
