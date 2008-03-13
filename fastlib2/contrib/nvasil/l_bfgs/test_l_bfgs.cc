@@ -22,7 +22,7 @@
 class LBfgsTest {
  public:
   LBfgsTest(){
-    data_file_="swiss_roll";
+    data_file_="swiss_roll_1000.csv";
   }
   void TestMaxVar1() {
     Matrix test_data;
@@ -73,8 +73,10 @@ class LBfgsTest {
   std::string data_file_;
 };
 
-int main() {
+int main(int argc, char *argv[]) {
+  fx_init(argc, argv);
   LBfgsTest test;
   test.TestAll();
+  fx_done();
 }
 

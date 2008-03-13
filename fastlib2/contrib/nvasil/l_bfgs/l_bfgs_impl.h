@@ -81,6 +81,8 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     y_bfgs_[i].Init(new_dimension_, num_of_points_);
   } 
   NOTIFY("Starting optimization ...\n");
+  //datanode_write(module_, stdout);
+  //datanode_write(module_, fp_log_);
   // Run a few iterations with gradient descend to fill the memory of BFGS
   NOTIFY("Running a few iterations with gradient descent to fill "
          "the memory of BFGS...\n");
@@ -115,7 +117,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
           &feasibility_error);
       double norm_grad = la::Dot(gradient_.n_elements(), 
           gradient_.ptr(), gradient_.ptr()); 
-      if (norm_grad < norm_grad_tolerance_) {
+      if (step*norm_grad < norm_grad_tolerance_) {
         break;
       }
       ReportProgressFile_();
@@ -124,6 +126,8 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
       previous_gradient_.CopyValues(gradient_);
       num_of_iterations_++;
     }
+    NOTIFY("%lg %lg\n", fabs(old_feasibility_error - feasibility_error), 
+       feasibility_tolerance_);
     if (fabs(old_feasibility_error - feasibility_error) < feasibility_tolerance_) {
       break;
     }
@@ -293,8 +297,9 @@ std::string LBfgs<OptimizedFunction>::ComputeProgress_() {
   double norm_grad=la::Dot(gradient_.n_elements(), 
       gradient_.ptr(), gradient_.ptr());
   char buffer[1024];
-  sprintf(buffer, "iteration:%i objective:%lg error:%lg grad_norm:%lg",
-      num_of_iterations_, objective, feasibility_error, norm_grad);
+  sprintf(buffer, "iteration:%i sigma:%lg objective:%lg error:%lg "
+      "grad_norm:%lg",
+      num_of_iterations_, sigma_, objective, feasibility_error, norm_grad);
   return std::string(buffer);
 }
 
