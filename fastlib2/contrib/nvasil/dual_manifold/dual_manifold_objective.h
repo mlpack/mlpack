@@ -27,6 +27,7 @@ class DualMaxVariance {
   void Init(datanode *module, Matrix *other_part, 
       ArrayList<std::pair<index_t, index_t> > *pairs_to_consider,
       ArrayList<double> *dot_prod_values);
+  void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
   void ComputeFeasibilityError(Matrix &coordinates, double *error);
@@ -40,6 +41,7 @@ class DualMaxVariance {
   ArrayList<std::pair<index_t, index_t> > *pairs_to_consider_;
   ArrayList<double> *dot_prod_values_;
   Matrix *other_part_;
+  Vector eq_lagrange_mult_;
   double sigma_;
 };
 
