@@ -16,7 +16,7 @@
  * =====================================================================================
  */
 
-void DualMaxVarianc::eInit(datanode *module, Matrix *other_part, 
+void DualMaxVarianc::Init(datanode *module, Matrix *other_part, 
       ArrayList<std::pair<index_t, index_t> > pairs_to_consider,
       ArrayList<double> *dot_prod_values) {
   other_part_=other_part;

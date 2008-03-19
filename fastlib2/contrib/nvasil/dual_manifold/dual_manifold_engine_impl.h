@@ -17,10 +17,25 @@
  */
 
 template<typename OptimizedFunction>
-DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
-    Matrix &matrix1, Matrix &matrix2, 
+DualManifoldEngine<OptimizedFunction>::Init(datanode *module, 
     ArrayList<std::pair<index_t, index_t> > &pairs_to_consider,
     ArrayList<double> &dot_prod_values) {
 
+  module_=module;
+  lbfg1_.Init(&optimized_function1_, fx_param_node(module_, "lbfgs"));
+  lbfg2_.Init(&optimized_function2_, fx_param_node(module_, "lbfgs"));
+
+  optimized_function1_.Init(fx_param_node(module_, "opt1"), 
+      lbfgs1_.coordinates(), 
+      pairs_to_consider,
+      dot_prod_values);
+  for(index_t i=0; i<pairs_to_consider.size(); i++) {
+    std::swap(pairs_to_consider[i].first, pairs_to_consider[i].second);
+  }
+  optimized_function2_.Init(fx_param_node(module_, "opt2"), 
+      lbfgs1_.coordinates(), 
+      pairs_to_consider,
+      dot_prod_values);
+  
 }
 

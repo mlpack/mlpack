@@ -29,8 +29,12 @@ class DualManifoldEngine {
     
   
  private:
+  datanode *module;
   LBfgs<OptimizedFunction> lbfgs1_;
   LBfgs<OptimizedFunction> lbfgs2_;
+  OptimizedFunction optimized_function1_;
+  OptimizedFunction optimized_function2_;
+
 };
 
 #include "dual_manifold_engine_impl.h"
