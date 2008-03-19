@@ -38,7 +38,7 @@ class DualMaxVariance {
   
  private:
   datanode *module_;
-  ArrayList<std::pair<index_t, index_t> > *pairs_to_consider_;
+  ArrayList<std::pair<index_t, index_t> > pairs_to_consider_;
   ArrayList<double> *dot_prod_values_;
   Matrix *other_part_;
   Vector eq_lagrange_mult_;
