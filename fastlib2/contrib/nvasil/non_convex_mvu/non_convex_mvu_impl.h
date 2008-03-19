@@ -72,6 +72,7 @@ void NonConvexMVU::Init(Matrix &data) {
                           &num_of_nearest_pairs_);
   } 
   if (gradient_mode == StochasticGrad) {
+    NOTIFY("Initializing for stochastic grad\n");
     nearest_neighbors_.Steal(&from_tree_neighbors);
     nearest_distances_.Steal(&from_tree_distances);
   } else {
@@ -118,67 +119,108 @@ void NonConvexMVU::ComputeLocalOptimumSGD() {
   Vector gradient2;
   gradient1.Init(new_dimension_);
   gradient2.Init(new_dimension_);
-  index_t current_index = math::RandInt(0, num_of_points_);
-  index_t it1,it2;
-  double step0=1.0e-0;
+  index_t it1;
+  double step0=1.0e0;
   double step;
   double total_distances=0.0;
+  double objective=0;
+  double feasibility_error=0;
   for(index_t i=0; i<nearest_distances_.size(); i++) {
     total_distances+=nearest_distances_[i]*nearest_distances_[i];
   }
     
   NOTIFY("Optimization with Stochastic Gradient Descent Started\n");
-  for(it1=0; it1<max_iterations_; it1++) {  
-    step=step0/(it1+1);
-    for(it2=0; it2<max_iterations_; it2++) {
-       index_t random_k_neighbor = math::RandInt(0, knns_);
-       index_t nearest_index = nearest_neighbors_[current_index*knns_ +
-                                          random_k_neighbor];
-       //printf("%i  %i\n", current_index, nearest_index);
-       double *point1=coordinates_.GetColumnPtr(current_index);
-       double *point2=coordinates_.GetColumnPtr(nearest_index);
-       double dist1=la::DistanceSqEuclidean(new_dimension_, point1, point2); 
-       ComputePairGradient_<OPT_PARAM_>(current_index, random_k_neighbor, 
-           coordinates_, &gradient1, &gradient2);
-       double norm_grad1=la::LengthEuclidean(gradient1);
-       double norm_grad2=la::LengthEuclidean(gradient2);
-       if (norm_grad1<1e-10 or norm_grad2<1e-10) {
-         //NOTIFY("Gradient norms close to zero...\n");
-       }
-       //printf("%lg  %lg\n", norm_grad1, norm_grad2);
-       double scale_factor=1;//1.0/(dist1+1e-10);
-       la::AddExpert(new_dimension_, -step*scale_factor, 
-                     gradient1.ptr(),
-                     point1);
-       la::AddExpert(new_dimension_, -step*scale_factor, 
-                     gradient2.ptr(),
-                     point2);
-      current_index = math::RandInt(0, num_of_points_);//nearest_index;     
+  double prev_feas=DBL_MAX;
+  index_t exterior_points=0;
+  for(index_t kk=0; kk<3; kk++) {
+  for(it1=0; it1<100; it1++) {  
+    step=math::Pow<1,2>(step0/(it1+1));
+    for(index_t it2=0; it2<max_iterations_; it2++) {
+      for(index_t i=0; i<num_of_points_; i++) {
+        for(index_t k=0; k<kfns_; k++) {
+          index_t current_index = i;
+          index_t furthest_index = furthest_neighbors_[i*kfns_+k];
+          //printf("%i  %i\n", current_index, nearest_index);
+          double *point1=coordinates_.GetColumnPtr(current_index);
+          double *point2=coordinates_.GetColumnPtr(furthest_index);
+          double dist1=la::DistanceSqEuclidean(new_dimension_, point1, point2); 
+          //printf("%lg  %lg\n", norm_grad1, norm_grad2);
+          double scale_factor=sigma_*(furthest_distances_[i*kfns_+k]-dist1)/(dist1+1e-10);
+          
+          if (dist1<furthest_distances_[i*kfns_+k]) {
+            la::SubOverwrite(new_dimension_, point2, point1, gradient1.ptr());
+            la::SubOverwrite(new_dimension_, point1, point2, gradient2.ptr());
+            exterior_points++;
+
+            la::AddExpert(new_dimension_, step*scale_factor, 
+                          gradient1.ptr(),
+                          point1);
+            la::AddExpert(new_dimension_, step*scale_factor, 
+                          gradient2.ptr(),
+                          point2);
+          }
+        }
+        for(index_t k=0; k<knns_; k++) {
+          index_t current_index = i;
+          index_t nearest_index = nearest_neighbors_[i*knns_ + k];
+          //printf("%i  %i\n", current_index, nearest_index);
+          double *point1=coordinates_.GetColumnPtr(current_index);
+          double *point2=coordinates_.GetColumnPtr(nearest_index);
+          double dist1=la::DistanceSqEuclidean(new_dimension_, point1, point2); 
+          ComputePairGradient_<OPT_PARAM_>(current_index, k, 
+              coordinates_, &gradient1, &gradient2);
+          //printf("%lg  %lg\n", norm_grad1, norm_grad2);
+          double scale_factor=1.0/(dist1+1e-10);
+          la::AddExpert(new_dimension_, -step*scale_factor, 
+                        gradient1.ptr(),
+                        point1);
+          la::AddExpert(new_dimension_, -step*scale_factor, 
+                        gradient2.ptr(),
+                        point2);
+          //NOTIFY("%lg\n", ComputeFeasibilityError_<OPT_PARAM_>());
+        }
+      }
     }
     RemoveMean_(coordinates_);
     double augmented_lagrangian=ComputeLagrangian_<OPT_PARAM_>(coordinates_);
-    double objective =ComputeObjective_<OPT_PARAM_>(coordinates_);
-    double feasibility_error =ComputeFeasibilityError_<OPT_PARAM_>();
+    objective =ComputeObjective_<OPT_PARAM_>(coordinates_);
+    feasibility_error =ComputeFeasibilityError_<OPT_PARAM_>();
+    if (fabs(prev_feas-feasibility_error)<distance_tolerance_) {
+      break;
+    } else{
+      prev_feas=feasibility_error;
+    }
     NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error: %lg\n"
            "    stress     : %lg\n"
-           "    objective  : %lg\n"
+           "    exteriors  : %i\n"
            "    step       : %lg\n"
            "    lang_mult  : %lg\n"
            "    sigma      : %lg\n"
-           "    lagrangian : %lg\n", it1, it2, 
+           "    lagrangian : %lg\n", it1, it1,
            feasibility_error, 
            feasibility_error/total_distances,
-           objective,
+           exterior_points,
            step,
            la::LengthEuclidean(lagrange_mult_),
            sigma_,
            augmented_lagrangian);
-    UpdateLagrangeMult_<OPT_PARAM_>();
-    current_index=math::RandInt(0, num_of_points_);
-    if (sigma_>1e50) {
+   // UpdateLagrangeMult_<OPT_PARAM_>();
+   // current_index=math::RandInt(0, num_of_points_);
+    if (feasibility_error/total_distances<1e-6) {
       break;
     }
+    exterior_points=0;
   }
+  }
+  char buffer[1024];
+  sprintf(buffer, "Converged_"
+      "Objective_function_%lg_"
+      "stress_%lg_objective_%lg",
+       ComputeObjective_<OPT_PARAM_>(coordinates_),
+       feasibility_error/total_distances, objective);
+  result_summary_=buffer;
+  printf("%s\n", result_summary_.c_str());
+ 
 }
 
 // PROBLEM_TYPE:
