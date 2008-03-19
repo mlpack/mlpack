@@ -47,9 +47,9 @@ int main(int argc, char *argv[]) {
     } else {
       if (opt_method=="spe") {
         fx_timer_start(NULL, "optimization");
-        engine.ComputeLocalOptimumBFGS<MaxFurthestNeighbors, 
+        engine.ComputeLocalOptimumSGD<Feasibility, 
                                       EqualityOnNearest,
-                                      DeterministicGrad>();
+                                      StochasticGrad>();
         fx_timer_stop(NULL,  "optimization"); 
       } else {
         FATAL("You didn't select a valid optimization method \n");

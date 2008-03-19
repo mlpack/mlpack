@@ -55,6 +55,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   std::string log_file=fx_param_str(module_, "log_file", "opt_log");
   fp_log_=fopen(log_file.c_str(), "w");
   optimized_function_->set_sigma(sigma_);
+  InitOptimization_();
 }
 
 template<typename OptimizedFunction>
@@ -67,19 +68,7 @@ template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
   double feasibility_error;
   double step; 
-  if (unlikely(mem_bfgs_<0)) {
-    FATAL("You forgot to initialize the memory for BFGS\n");
-  }
-  InitOptimization_();
-  // Init the memory for BFGS
-  s_bfgs_.Init(mem_bfgs_);
-  y_bfgs_.Init(mem_bfgs_);
-  ro_bfgs_.Init(mem_bfgs_);
-  ro_bfgs_.SetAll(0.0);
-  for(index_t i=0; i<mem_bfgs_; i++) {
-    s_bfgs_[i].Init(new_dimension_, num_of_points_);
-    y_bfgs_[i].Init(new_dimension_, num_of_points_);
-  } 
+
   NOTIFY("Starting optimization ...\n");
   //datanode_write(module_, stdout);
   //datanode_write(module_, fp_log_);
@@ -130,7 +119,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
         /old_feasibility_error, 
        feasibility_tolerance_);
     if (fabs(old_feasibility_error - feasibility_error)
-        /old_feasibility_error < feasibility_tolerance_) {
+        /(old_feasibility_error+1e-20) < feasibility_tolerance_) {
       break;
     }
     old_feasibility_error = feasibility_error;
@@ -142,6 +131,11 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::GetResults(Matrix *result) {
   result->Copy(coordinates_);
+}
+
+template<typename OptimizedFunction>
+void LBfgs<OptimizedFunction>::Reset() {
+  sigma_ = fx_param_double(module_, "sigma", 10);
 }
 
 
@@ -159,6 +153,18 @@ void LBfgs<OptimizedFunction>::InitOptimization_() {
     }
   }
   optimized_function_->Project(&coordinates_);
+  if (unlikely(mem_bfgs_<0)) {
+    FATAL("You forgot to initialize the memory for BFGS\n");
+  }
+  // Init the memory for BFGS
+  s_bfgs_.Init(mem_bfgs_);
+  y_bfgs_.Init(mem_bfgs_);
+  ro_bfgs_.Init(mem_bfgs_);
+  ro_bfgs_.SetAll(0.0);
+  for(index_t i=0; i<mem_bfgs_; i++) {
+    s_bfgs_[i].Init(new_dimension_, num_of_points_);
+    y_bfgs_[i].Init(new_dimension_, num_of_points_);
+  } 
 }
 
 template<typename OptimizedFunction>

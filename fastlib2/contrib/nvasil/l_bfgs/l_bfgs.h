@@ -31,7 +31,9 @@ class LBfgs {
   void ReportProgress();
   void ReportProgressFile(std::string file);
   void GetResults(Matrix *result);
- 
+  void Reset(); 
+  void set_coordinates(Matrix &coordinates);
+  
  private:
   void InitOptimization_();
   void ComputeWolfeStep_();
