@@ -33,6 +33,7 @@ class LBfgs {
   void GetResults(Matrix *result);
   void Reset(); 
   void set_coordinates(Matrix &coordinates);
+  Matrix *coordinates();
   
  private:
   void InitOptimization_();
