@@ -39,7 +39,7 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
       &nearest_distances_,
       &num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
-  eq_lagrange_mult_.SetAll(sigma_);
+  eq_lagrange_mult_.SetAll(1.0);
 
 }
 
@@ -190,7 +190,7 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
       &nearest_distances_,
       &num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
-  eq_lagrange_mult_.SetAll(sigma_);
+  eq_lagrange_mult_.SetAll(1.0);
   NOTIFY("Furtherst neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
   allkfn_.Init(data, leaf_size_, 1); 
@@ -209,7 +209,7 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
       &furthest_distances_,
       &num_of_furthest_pairs_);
   ineq_lagrange_mult_.Init(num_of_furthest_pairs_);
-  ineq_lagrange_mult_.SetAll(sigma_);
+  ineq_lagrange_mult_.SetAll(1.0);
 }
 
 void MaxVarianceInequalityOnFurthest::ComputeGradient(Matrix &coordinates, 
@@ -423,7 +423,7 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
       &nearest_distances_,
       &num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
-  eq_lagrange_mult_.SetAll(sigma_);
+  eq_lagrange_mult_.SetAll(1.0);
   NOTIFY("Furtherst neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
   allkfn_.Init(data, leaf_size_, 1); 

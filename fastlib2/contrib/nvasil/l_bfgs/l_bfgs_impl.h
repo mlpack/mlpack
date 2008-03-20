@@ -126,11 +126,23 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     UpdateLagrangeMult_();
     optimized_function_->ComputeGradient(coordinates_, &gradient_);
   }
+
+  double objective;
+  optimized_function_->ComputeObjective(coordinates_, &objective);
+  fx_format_result(module_, "iterations", "%i", num_of_iterations_);
+  fx_format_result(module_, "feasibility_error", "%lg", feasibility_error);
+  fx_format_result(module_, "final_sigma", "%lg", sigma_);
+  fx_format_result(module_, "objective","%lg", objective);
 }
 
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::GetResults(Matrix *result) {
   result->Copy(coordinates_);
+}
+
+template<typename OptimizedFunction>
+Matrix *LBfgs<OptimizedFunction>::coordinates() {
+  return &coordinates_;
 }
 
 template<typename OptimizedFunction>
