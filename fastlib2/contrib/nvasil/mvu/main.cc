@@ -31,6 +31,10 @@ int main(int argc, char *argv[]){
   }
   datanode *optfun_node=fx_param_node(NULL, "optfun");
   datanode *l_bfgs_node=fx_param_node(NULL, "l_bfgs");
+  //we need to insert the number of points
+  char buffer[128];
+  sprintf(buffer, "%i", data_mat.n_cols());
+  fx_set_param(l_bfgs_node, "num_of_points", buffer);
   std::string result_file=fx_param_str(NULL, "result_file", "result.csv");
   bool done=false;
     
@@ -45,6 +49,7 @@ int main(int argc, char *argv[]){
     if (data::Save(result_file.c_str(), result)==SUCCESS_FAIL) {
       FATAL("Didn't manage to save %s", result_file.c_str());
     }
+    engine.Destruct();
     done=true;
   }
   if (optimized_function=="mfu") {
@@ -58,6 +63,7 @@ int main(int argc, char *argv[]){
     if (data::Save(result_file.c_str(), result)==SUCCESS_FAIL) {
       FATAL("Didn't manage to save %s", result_file.c_str());
     }
+    engine.Destruct();
     done=true;
   }
   if (optimized_function == "mvuineq"){
@@ -71,6 +77,7 @@ int main(int argc, char *argv[]){
     if (data::Save(result_file.c_str(), result)==SUCCESS_FAIL) {
       FATAL("Didn't manage to save %s", result_file.c_str());
     }
+    engine.Destruct();
     done=true;
   }
   if (done==false) {
