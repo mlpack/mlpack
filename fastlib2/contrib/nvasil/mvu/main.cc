@@ -23,16 +23,16 @@
 
 int main(int argc, char *argv[]){
   fx_init(argc, argv);
-  std::string optimized_function=fx_param_str(NULL, "optfun", "mvu");
-  std::string data_file=fx_param_str_req(NULL, "data_file");
+  std::string optimized_function=fx_param_str(NULL, "opts/optfun", "mvu");
+  std::string data_file=fx_param_str_req(NULL, "opts/data_file");
   Matrix data_mat;
   if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
     FATAL("Didn't manage to load %s", data_file.c_str());
   }
   datanode *optfun_node;
   datanode *l_bfgs_node;
-  l_bfgs_node=fx_submodule(NULL, "", "l_bfgs");
-  optfun_node=fx_submodule(NULL, "", "optfun");
+  l_bfgs_node=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs");
+  optfun_node=fx_submodule(NULL, "opts/l_bfgs", "optfun");
  
   //we need to insert the number of points
   char buffer[128];
