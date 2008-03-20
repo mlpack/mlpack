@@ -31,19 +31,8 @@ int main(int argc, char *argv[]){
   }
   datanode *optfun_node;
   datanode *l_bfgs_node;
-  if (fx_param_node(NULL, "optfun")==NULL) {
-    l_bfgs_node = new datanode();
-    fx_set_param_node(NULL, "", l_bfgs_node, "l_bfgs");
-  } else {
-    l_bfgs_node=fx_param_node(NULL, "l_bfgs");
-  }
- 
-  if (fx_param_node(NULL, "optfun")==NULL) {
-    optfun_node = new datanode();
-    fx_set_param_node(NULL, "", optfun_node, "l_bfgs");
-  } else {
-    optfun_node=fx_param_node(NULL, "optfun");
-  }
+  l_bfgs_node=fx_submodule(NULL, "", "l_bfgs");
+  optfun_node=fx_submodule(NULL, "", "optfun");
  
   //we need to insert the number of points
   char buffer[128];
