@@ -29,8 +29,22 @@ int main(int argc, char *argv[]){
   if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
     FATAL("Didn't manage to load %s", data_file.c_str());
   }
-  datanode *optfun_node=fx_param_node(NULL, "optfun");
-  datanode *l_bfgs_node=fx_param_node(NULL, "l_bfgs");
+  datanode *optfun_node;
+  datanode *l_bfgs_node;
+  if (fx_param_node(NULL, "optfun")==NULL) {
+    l_bfgs_node = new datanode();
+    fx_set_param_node(NULL, "", l_bfgs_node, "l_bfgs");
+  } else {
+    l_bfgs_node=fx_param_node(NULL, "l_bfgs");
+  }
+ 
+  if (fx_param_node(NULL, "optfun")==NULL) {
+    optfun_node = new datanode();
+    fx_set_param_node(NULL, "", optfun_node, "l_bfgs");
+  } else {
+    optfun_node=fx_param_node(NULL, "optfun");
+  }
+ 
   //we need to insert the number of points
   char buffer[128];
   sprintf(buffer, "%i", data_mat.n_cols());
