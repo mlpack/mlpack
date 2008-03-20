@@ -34,8 +34,8 @@ class OptUtils {
     }
   }
   static void NonNegativeProjection(Matrix *data) {
-    double ptr=data->ptr();
-    for(index_t i=0; i<data->n_elements(); i++) {
+    double *ptr=data->ptr();
+    for(index_t i=0; i<(index_t)data->n_elements(); i++) {
       if (ptr[i]<0) {
         ptr[i]=0;
       }
@@ -45,12 +45,12 @@ class OptUtils {
     DEBUG_ASSERT(sparse_factor<=1);
     DEBUG_ASSERT(sparse_factor>=0);
     index_t dimension=data->n_rows();
-    ArrayList<double> zero_coeff;
+    ArrayList<index_t> zero_coeff;
     zero_coeff.Init();
     Vector w_vector;
-    w.Init(dimension);
+    w_vector.Init(dimension);
     Vector v_vector;
-    v.Init(dimension);  
+    v_vector.Init(dimension);  
     Vector a_vector;
     Vector ones;
     ones.Init(dimension);
@@ -74,15 +74,15 @@ class OptUtils {
       for(index_t j=0; j<dimension; j++) {
         v_vector[j]+=factor1;
       }
-      zero_coeff.clear();
+      zero_coeff.Clear();
       Vector midpoint;
       midpoint.Init(dimension);
       while(true) {
        midpoint.SetAll(l1_norm/(dimension-zero_coeff.size()));
         for(index_t j=0; j<zero_coeff.size(); j++) {
-          midopoint[zero_coeff[j]]=0.0;
+          midpoint[zero_coeff[j]]=0.0;
         }
-        la::SubOverwrite(midopoint, v_vector, &w_vector);
+        la::SubOverwrite(midpoint, v_vector, &w_vector);
         double w_norm=la::LengthEuclidean(w_vector);
         double w_times_v = 2*la::Dot(v_vector, w_vector);
         double v_norm_minus_l2=la::LengthEuclidean(v_vector)-l2_norm;
@@ -90,7 +90,7 @@ class OptUtils {
             -4*w_norm*v_norm_minus_l2))/(2*w_norm);
         la::AddExpert(alpha, w_vector, &v_vector);
         bool all_positive=true;
-        zero_coeff.clear();
+        zero_coeff.Clear();
         double v_sum=0;
         for(index_t j=0; j<dimension; j++) {
           if (v_vector[j]<0) {

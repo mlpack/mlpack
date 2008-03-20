@@ -61,7 +61,6 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::Destruct() {
  fclose(fp_log_);
-
 }
 
 template<typename OptimizedFunction>
@@ -177,6 +176,7 @@ void LBfgs<OptimizedFunction>::InitOptimization_() {
     s_bfgs_[i].Init(new_dimension_, num_of_points_);
     y_bfgs_[i].Init(new_dimension_, num_of_points_);
   } 
+  num_of_iterations_=0;
 }
 
 template<typename OptimizedFunction>
