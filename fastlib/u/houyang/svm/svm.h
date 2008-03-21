@@ -135,9 +135,9 @@ class SVM {
   void InitTrain(const Dataset& dataset, int n_classes, datanode *module);
   void SaveModel(String modelfilename);
   void LoadModel(Dataset* testset, String modelfilename);
-  int Classify(const Vector& vector);
-  void BatchClassify(Dataset* testset, String testlabelfilename);
-  void LoadModelBatchClassify(Dataset* testset, String modelfilename, String testlabelfilename);
+  int  Predict(const Vector& vector);
+  void BatchPredict(Dataset* testset, String testlabelfilename);
+  void LoadModelBatchPredict(Dataset* testset, String modelfilename, String testlabelfilename);
 };
 
 /**
@@ -472,7 +472,7 @@ void SVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
 * @return: a label (integer)
 */
 template<typename TKernel>
-int SVM<TKernel>::Classify(const Vector& datum) {
+int SVM<TKernel>::Predict(const Vector& datum) {
   index_t i, j, k;
   ArrayList<double> keval;
   keval.Init(total_num_sv_);
@@ -536,7 +536,7 @@ int SVM<TKernel>::Classify(const Vector& datum) {
 * @param: file name of the testing data
 */
 template<typename TKernel>
-void SVM<TKernel>::BatchClassify(Dataset* testset, String testlablefilename) {
+void SVM<TKernel>::BatchPredict(Dataset* testset, String testlablefilename) {
   FILE *fp = fopen(testlablefilename, "w");
   if (fp == NULL) {
     fprintf(stderr, "Cannot save test labels to file!");
@@ -547,7 +547,7 @@ void SVM<TKernel>::BatchClassify(Dataset* testset, String testlablefilename) {
   for (index_t i = 0; i < testset->n_points(); i++) {
     Vector testvec;
     testset->matrix().MakeColumnSubvector(i, 0, num_features_, &testvec);
-    int testlabel = Classify(testvec);
+    int testlabel = Predict(testvec);
     if (testlabel != testset->matrix().get(num_features_, i))
       err_ct++;
     /* save classified labels to file*/
@@ -568,9 +568,9 @@ void SVM<TKernel>::BatchClassify(Dataset* testset, String testlablefilename) {
 * @param: name of the file to store classified labels
 */
 template<typename TKernel>
-void SVM<TKernel>::LoadModelBatchClassify(Dataset* testset, String modelfilename, String testlabelfilename) {
+void SVM<TKernel>::LoadModelBatchPredict(Dataset* testset, String modelfilename, String testlabelfilename) {
   LoadModel(testset, modelfilename);
-  BatchClassify(testset, testlabelfilename);
+  BatchPredict(testset, testlabelfilename);
 }
 
 #endif
