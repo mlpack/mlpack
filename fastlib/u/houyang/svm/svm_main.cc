@@ -3,8 +3,10 @@
  *
  * @file svm_main.cc
  *
- * This file contains main routines for performing multiclass SVM 
- * classification. One-vs-One method is employed. 
+ * This file contains main routines for performing multiclass  
+ * SVM classification (SVC, one-vs-one method is employed) and 
+ * SVM regression (epsilon-insensitive loss i.e. epsilon-SVR; and
+ * automatic adjustment of epsilon, i.e.  mu-SVR). 
  *
  * It provides four modes:
  * "cv": cross validation;
@@ -159,7 +161,7 @@ int LoadData(Dataset* dataset, String datafilename){
 }
 
 /**
-* Multiclass SVM classification- Main function
+* Multiclass SVM classification/ SVM regression - Main function
 *
 * @param: argc
 * @param: argv
@@ -170,6 +172,22 @@ int main(int argc, char *argv[]) {
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");
+  String learner_name = fx_param_str_req(NULL,"learner_name");
+  int learner_typeid;
+  
+  if (learner_name == "svc") { // Support Vector Classfication
+    learner_typeid = 0;
+  }
+  else if (learner_name == "svr") { // Support Vector Regression
+    learner_typeid = 1;
+  }
+  else if (learner_name == "svde") { // Support Vector Density Estimation
+    learner_typeid = 2;
+  }
+  else {
+    fprintf(stderr, "Unknown support vector learner name! Program stops!\n");
+    return 0;
+  }
   
   // TODO: more kernels to be supported
 
@@ -183,20 +201,20 @@ int main(int argc, char *argv[]) {
     return 1;
     
     if (kernel == "linear") {
-      SimpleCrossValidator< SVM<SVMLinearKernel> > cross_validator; 
+      GeneralCrossValidator< SVM<SVMLinearKernel> > cross_validator; 
       /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1 */
-      cross_validator.Init(&cvset,cvset.n_labels(),fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
+      cross_validator.Init(learner_typeid, fx_param_int_req(NULL,"k_cv"), &cvset, fx_root, "svm");
       /* k_cv folds cross validation; (true): do training set permutation */
       cross_validator.Run(true);
-      cross_validator.confusion_matrix().PrintDebug("confusion matrix");
+      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
     }
     else if (kernel == "gaussian") {
-      SimpleCrossValidator< SVM<SVMRBFKernel> > cross_validator; 
+      GeneralCrossValidator< SVM<SVMRBFKernel> > cross_validator; 
       /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds */
-      cross_validator.Init(&cvset,cvset.n_labels(),fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
+      cross_validator.Init(learner_typeid, fx_param_int_req(NULL,"k_cv"), &cvset, fx_root, "svm");
       /* k_cv folds cross validation; (true): do training set permutation */
       cross_validator.Run(true);
-      cross_validator.confusion_matrix().PrintDebug("confusion matrix");
+      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
     }
   }
   /* Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data */
@@ -216,12 +234,12 @@ int main(int argc, char *argv[]) {
       svm.InitTrain(trainset, trainset.n_labels(), svm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
-	fprintf(stderr, "SVM Classifying... \n");
+	fprintf(stderr, "SVM Predicting... \n");
 	/* Load testing data */
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchClassify(&testset, "testlabels");
+	svm.BatchPredict(&testset, "testlabels");
       }
     }
     else if (kernel == "gaussian") {
@@ -229,18 +247,18 @@ int main(int argc, char *argv[]) {
       svm.InitTrain(trainset, trainset.n_labels(), svm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
-	fprintf(stderr, "SVM Classifying... \n");
+	fprintf(stderr, "SVM Predicting... \n");
 	/* Load testing data */
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchClassify(&testset, "testlabels"); // TODO:param_req
+	svm.BatchPredict(&testset, "testlabels"); // TODO:param_req
       }
     }
   }
   /* Testing(offline) Mode, need loading model file and testing data */
   else if (mode=="test") {
-    fprintf(stderr, "SVM Classifying... \n");
+    fprintf(stderr, "SVM Predicting... \n");
 
     /* Load testing data */
     Dataset testset;
@@ -253,12 +271,12 @@ int main(int argc, char *argv[]) {
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
       svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchClassify(&testset, "svm_model", "testlabels"); // TODO:param_req
+      svm.LoadModelBatchPredict(&testset, "svm_model", "testlabels"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
       svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchClassify(&testset, "svm_model", "testlabels"); // TODO:param_req
+      svm.LoadModelBatchPredict(&testset, "svm_model", "testlabels"); // TODO:param_req
     }
   }
   fx_done();

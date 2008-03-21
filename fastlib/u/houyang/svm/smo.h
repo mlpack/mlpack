@@ -77,10 +77,6 @@ class SMO {
 
   void Train(const Dataset* dataset_in);
 
-  const Kernel& kernel() const {
-    return kernel_;
-  }
-
   Kernel& kernel() {
     return kernel_;
   }
@@ -145,6 +141,9 @@ class SMO {
     return kernel_cache_sign_.get(i, j) * (GetLabelSign_(i) * GetLabelSign_(j));
   }
   
+  /**
+   * Calculate kernel values
+   */
   void CalcKernels_() {
     kernel_cache_sign_.Init(n_data_, n_data_);
     fprintf(stderr, "Kernel Start\n");
@@ -162,7 +161,11 @@ class SMO {
   }
 };
 
-/* Budget SMO training for 2-classes */
+/**
+* Budget SMO training for 2-classes
+*
+* @param: input 2-classes data matrix with labels (1,-1) in the last row
+*/
 template<typename TKernel>
 void SMO<TKernel>::Train(const Dataset* dataset_in) {
   bool examine_all = true;
@@ -237,7 +240,11 @@ void SMO<TKernel>::Train(const Dataset* dataset_in) {
   }
 }
 
-/* SMO training iterations */
+/**
+* SMO training iterations
+*
+* @param: indicator: whether all the 
+*/
 template<typename TKernel>
 index_t SMO<TKernel>::TrainIteration_(bool examine_all) {
   index_t num_changed = 0;
