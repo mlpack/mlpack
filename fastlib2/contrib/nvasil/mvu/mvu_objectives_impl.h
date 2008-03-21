@@ -453,13 +453,11 @@ void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient
     index_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
-    double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
-                           -furthest_distances_[i];
     la::SubOverwrite(dimension, point2, point1, a_i_r);
 
-    la::AddExpert(dimension, -2*dist_diff, a_i_r,
+    la::AddExpert(dimension, -1.0, a_i_r,
         gradient->GetColumnPtr(n1));
-    la::AddExpert(dimension, 2*dist_diff, a_i_r,
+    la::AddTo(dimension, a_i_r,
         gradient->GetColumnPtr(n2));
   }
   // equality constraints
@@ -493,9 +491,8 @@ void MaxFurthestNeighbors::ComputeObjective(Matrix &coordinates,
     index_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
-    double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
-                           -furthest_distances_[i];
-    *objective-=dist_diff*dist_diff;   
+    double diff = la::DistanceSqEuclidean(dimension, point1, point2);
+    *objective-=diff;   
   }
 }
 

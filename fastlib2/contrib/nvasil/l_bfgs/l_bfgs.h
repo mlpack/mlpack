@@ -56,6 +56,7 @@ class LBfgs {
   double objective_factor_;
   double eta_;
   double gamma_;
+  double step_;
   double feasibility_tolerance_;
   double norm_grad_tolerance_;
   double wolfe_sigma1_;
