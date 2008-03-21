@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
     engine.Destruct();
     done=true;
   }
-  if (optimized_function=="mfu") {
+  if (optimized_function=="mvuineq") {
     MaxVarianceInequalityOnFurthest opt_function;
     opt_function.Init(optfun_node, data_mat);
     LBfgs<MaxVarianceInequalityOnFurthest> engine;
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]){
     engine.Destruct();
     done=true;
   }
-  if (optimized_function == "mvuineq"){
+  if (optimized_function == "mvfu"){
     MaxFurthestNeighbors opt_function;
     opt_function.Init(optfun_node, data_mat);
     LBfgs<MaxFurthestNeighbors> engine;
