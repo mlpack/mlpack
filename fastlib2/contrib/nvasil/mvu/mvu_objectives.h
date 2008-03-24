@@ -33,7 +33,8 @@ class MaxVariance {
   void UpdateLagrangeMult(Matrix &coordinates);
   void Project(Matrix *coordinates);
   void set_sigma(double sigma); 
-  
+  bool IsDiverging(double objective); 
+ 
  private:
   datanode *module_;
   AllkNN allknn_;
@@ -62,7 +63,8 @@ class MaxVarianceInequalityOnFurthest {
   double ComputeLagrangian(Matrix &coordinates);
   void UpdateLagrangeMult(Matrix &coordinates);
   void Project(Matrix *coordinates);
-  void set_sigma(double sigma); 
+  void set_sigma(double sigma);
+  bool IsDiverging(double objective); 
   
  private:
   datanode *module_;
@@ -78,7 +80,6 @@ class MaxVarianceInequalityOnFurthest {
   index_t num_of_furthest_pairs_;
   ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
   ArrayList<double> furthest_distances_;
-
   double sigma_;
 
   void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
@@ -99,8 +100,9 @@ public:
   void UpdateLagrangeMult(Matrix &coordinates);
   void Project(Matrix *coordinates);
   void set_sigma(double sigma); 
-  
- private:
+  bool IsDiverging(double objective); 
+ 
+private:
   datanode *module_;
   AllkNN allknn_;
   AllkFN allkfn_;
@@ -113,7 +115,7 @@ public:
   index_t num_of_furthest_pairs_;
   ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
   ArrayList<double> furthest_distances_;
-
+  double sum_of_furthest_distances_;
   double sigma_;
 
   void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
