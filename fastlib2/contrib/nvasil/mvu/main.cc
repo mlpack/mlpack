@@ -32,13 +32,13 @@ int main(int argc, char *argv[]){
   datanode *optfun_node;
   datanode *l_bfgs_node;
   l_bfgs_node=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs");
-  optfun_node=fx_submodule(NULL, "opts/l_bfgs", "optfun");
+  optfun_node=fx_submodule(NULL, "opts/optfun", "optfun");
  
   //we need to insert the number of points
   char buffer[128];
   sprintf(buffer, "%i", data_mat.n_cols());
   fx_set_param(l_bfgs_node, "num_of_points", buffer);
-  std::string result_file=fx_param_str(NULL, "result_file", "result.csv");
+  std::string result_file=fx_param_str(NULL, "opts/result_file", "result.csv");
   bool done=false;
     
   if (optimized_function == "mvu") {

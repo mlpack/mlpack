@@ -40,7 +40,7 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
       &num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
-
+  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
 }
 
 void MaxVariance::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
@@ -128,6 +128,10 @@ void MaxVariance::set_sigma(double sigma) {
   sigma_=sigma;
 }
 
+bool MaxVariance::IsDiverging(double feasibility_error){
+  return false;
+}
+
 void MaxVariance::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
     ArrayList<double>  &from_tree_dist,
     index_t num_of_neighbors,
@@ -189,6 +193,7 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
       &nearest_neighbor_pairs_,
       &nearest_distances_,
       &num_of_nearest_pairs_);
+  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   NOTIFY("Furtherst neighbor constraints ...\n");
@@ -360,6 +365,10 @@ void MaxVarianceInequalityOnFurthest::set_sigma(double sigma) {
   sigma_=sigma;
 }
 
+bool MaxVarianceInequalityOnFurthest::IsDiverging(double feasibility_error){
+  return false;
+}
+
 void MaxVarianceInequalityOnFurthest::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
    ArrayList<double>  &from_tree_dist,
     index_t num_of_neighbors,
@@ -414,6 +423,7 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
+
   NOTIFY("Neighborhoods computed...\n");
   NOTIFY("Consolidating neighbors...\n");
   ConsolidateNeighbors_(from_tree_neighbors,
@@ -422,6 +432,8 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
       &nearest_neighbor_pairs_,
       &nearest_distances_,
       &num_of_nearest_pairs_);
+
+  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   NOTIFY("Furtherst neighbor constraints ...\n");
@@ -441,6 +453,14 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
       &furthest_neighbor_pairs_,
       &furthest_distances_,
       &num_of_furthest_pairs_);
+  double max_nearest_distance=0;
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
+  }
+  sum_of_furthest_distances_=-max_nearest_distance*
+      data.n_cols()*num_of_furthest_pairs_;
+ 
+  NOTIFY("****************%lg", sum_of_furthest_distances_);
 }
 
 void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
@@ -543,6 +563,16 @@ void MaxFurthestNeighbors::UpdateLagrangeMult(Matrix &coordinates) {
 
 void MaxFurthestNeighbors::set_sigma(double sigma) {
   sigma_=sigma;
+}
+
+bool MaxFurthestNeighbors::IsDiverging(double objective) {
+  if (objective < sum_of_furthest_distances_) {
+    NOTIFY("objective(%lg) < sum_of_furthest_distances (%lg)", objective,
+        sum_of_furthest_distances_);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void MaxFurthestNeighbors::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
