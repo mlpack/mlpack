@@ -49,6 +49,7 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
  
   NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
   fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
+  fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
 }
 
 void MaxVariance::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
@@ -237,6 +238,7 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
       data.n_cols()*data.n_cols()*data.n_cols();
  
   NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
+  fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
 }
 
 void MaxVarianceInequalityOnFurthest::ComputeGradient(Matrix &coordinates, 
@@ -489,6 +491,7 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
       data.n_cols()*num_of_furthest_pairs_;
  
   NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
+  fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
 }
 
 void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
