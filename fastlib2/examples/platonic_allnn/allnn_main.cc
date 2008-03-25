@@ -132,7 +132,7 @@ int main(int argc, char* argv[]) {
   // the ArrayList's contents.  The library does not appear to have a
   // .csv writer for ArrayLists--this will be addressed.  You can
   // write .csv from Matrix objects with data::save.
-  ot::Print(results, output_file);
+  ot::Print(results, "neighbors", output_file);
 
   // Don't forget these things!
   fclose(output_file);

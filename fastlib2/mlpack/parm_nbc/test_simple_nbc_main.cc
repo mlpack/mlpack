@@ -1,5 +1,5 @@
 #include "simple_nbc.h"
-#include "base/test.h"
+#include "fastlib/base/test.h"
 
 class TestClassSimpleNBC{
  private:

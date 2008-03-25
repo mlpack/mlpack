@@ -48,12 +48,11 @@ class GenVector {
   /** Whether this should be freed, i.e. it is not an alias. */
   bool should_free_;
   
-  OT_DEF_ONLY(GenVector) {
-    OT_MY_OBJECT(length_);
-    OT_MALLOC_ARRAY(ptr_, length_);
+  OBJECT_TRAVERSAL_ONLY(GenVector) {
+    OT_OBJ(length_);
+    OT_ALLOC(ptr_, length_);
   }
-  
-  OT_FIX(GenVector) {
+  OT_REFILL_TRANSIENTS(GenVector) {
     should_free_ = true;
   }
   
@@ -140,7 +139,7 @@ class GenVector {
   void Copy(const T *doubles, index_t in_length) {
     DEBUG_ONLY(AssertUninitialized_());
     
-    ptr_ = mem::AllocBitCopy(doubles, in_length);
+    ptr_ = mem::AllocCopy(doubles, in_length);
     length_ = in_length;
     should_free_ = true;
   }
@@ -223,7 +222,7 @@ class GenVector {
    */
   void SwapValues(GenVector* other) {
     DEBUG_ASSERT(length() == other->length());
-    mem::BitSwap(ptr_, other->ptr_, length_);
+    mem::Swap(ptr_, other->ptr_, length_);
   }
   
   /**
@@ -233,7 +232,7 @@ class GenVector {
    */
   void CopyValues(const GenVector& other) {
     DEBUG_ASSERT(length() == other.length());
-    mem::BitCopy(ptr_, other.ptr_, length_);
+    mem::Copy(ptr_, other.ptr_, length_);
   }
 
   /**
@@ -243,7 +242,7 @@ class GenVector {
    *        length() elements
    */
   void CopyValues(const T *src_ptr) {
-    mem::BitCopy(ptr_, src_ptr, length_);
+    mem::Copy(ptr_, src_ptr, length_);
   }
   
   /**
@@ -354,14 +353,13 @@ class GenMatrix {
   /** Whether I am a strong copy (not an alias). */
   bool should_free_;
 
-  OT_DEF_ONLY(GenMatrix) {
-    OT_MY_OBJECT(n_rows_);
-    OT_MY_OBJECT(n_cols_);
-    OT_MALLOC_ARRAY(ptr_, n_elements());
+  OBJECT_TRAVERSAL_ONLY(GenMatrix) {
+    OT_OBJ(n_rows_);
+    OT_OBJ(n_cols_);
+    OT_ALLOC(ptr_, n_elements());
   }
-
-  OT_FIX(GenMatrix) {
-    should_free_ = true;
+  OT_REFILL_TRANSIENTS(GenMatrix) {
+    should_free_ = false;
   }
 
  public:
@@ -480,7 +478,7 @@ class GenMatrix {
   void Copy(const T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
     DEBUG_ONLY(AssertUninitialized_());
     
-    ptr_ = mem::AllocBitCopy(ptr_in, n_rows_in * n_cols_in);
+    ptr_ = mem::AllocCopy(ptr_in, n_rows_in * n_cols_in);
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
     should_free_ = true;
@@ -695,7 +693,7 @@ class GenMatrix {
   void SwapValues(GenMatrix* other) {
     DEBUG_ASSERT(n_cols() == other->n_cols());
     DEBUG_ASSERT(n_rows() == other->n_rows());
-    mem::BitSwap(ptr_, other->ptr_, n_elements());
+    mem::Swap(ptr_, other->ptr_, n_elements());
   }
   
   /**
@@ -706,7 +704,7 @@ class GenMatrix {
   void CopyValues(const GenMatrix& other) {
     DEBUG_ASSERT(n_rows() == other.n_rows());
     DEBUG_ASSERT(n_cols() == other.n_cols());
-    mem::BitCopy(ptr_, other.ptr_, n_elements());
+    mem::Copy(ptr_, other.ptr_, n_elements());
   }
 
   /**

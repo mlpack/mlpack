@@ -41,10 +41,10 @@ class DatasetFeature {
   /** If nominal, the names of each numbered value. */
   ArrayList<String> value_names_;
   
-  OT_DEF(DatasetFeature) {
-    OT_MY_OBJECT(name_);
-    OT_MY_OBJECT(type_);
-    OT_MY_OBJECT(value_names_);
+  OBJECT_TRAVERSAL(DatasetFeature) {
+    OT_OBJ(name_);
+    OT_OBJ(reinterpret_cast<int &>(type_));
+    OT_OBJ(value_names_);
   }
   
  public:
@@ -173,9 +173,9 @@ class DatasetInfo {
   String name_;
   ArrayList<DatasetFeature> features_;
 
-  OT_DEF(DatasetInfo) {
-    OT_MY_OBJECT(name_);
-    OT_MY_OBJECT(features_);
+  OBJECT_TRAVERSAL(DatasetInfo) {
+    OT_OBJ(name_);
+    OT_OBJ(features_);
   }
 
  public:
@@ -334,9 +334,9 @@ class Dataset {
   Matrix matrix_;
   DatasetInfo info_;
   
-  OT_DEF(Dataset) {
-    OT_MY_OBJECT(matrix_);
-    OT_MY_OBJECT(info_);
+  OBJECT_TRAVERSAL(Dataset) {
+    OT_OBJ(matrix_);
+    OT_OBJ(info_);
   }
   
  public:

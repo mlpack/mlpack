@@ -33,10 +33,10 @@ class DHrectBound {
   DRange *bounds_;
   index_t dim_;
 
-  OT_DEF(DHrectBound) {
-    OT_MY_OBJECT(dim_);
-    OT_MALLOC_ARRAY(bounds_, dim_);
-  }
+  OBJECT_TRAVERSAL(DHrectBound) {
+    OT_OBJ(dim_);
+    OT_ALLOC(bounds_, dim_);
+  };
 
  public:
   /**
@@ -394,9 +394,9 @@ class DBallBound {
   double radius_;
   TPoint center_;
 
-  OT_DEF(DBallBound) {
-    OT_MY_OBJECT(radius_);
-    OT_MY_OBJECT(center_);
+  OBJECT_TRAVERSAL(DBallBound) {
+    OT_OBJ(radius_);
+    OT_OBJ(center_);
   }
 
  public:
@@ -431,7 +431,7 @@ class DBallBound {
    * is needed.
    */
   void CalculateMidpoint(Point *centroid) const {
-    ot::Copy(center_, centroid);
+    ot::InitCopy(center_, centroid);
   }
 
   /**

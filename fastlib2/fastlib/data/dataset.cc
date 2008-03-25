@@ -157,7 +157,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
           result = SUCCESS_FAIL;
         } else {
           if (portions[2][0] == '{') { //}
-            DatasetFeature *feature = features_.AddBack();
+            DatasetFeature *feature = &features_.PushBack();
 
             feature->InitNominal(portions[1]);
             // TODO: Doesn't support values with spaces {
@@ -167,9 +167,9 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
             //portions[2].Trim(" \t", &type);
             if (type.EqualsNoCase("numeric")
                 || type.EqualsNoCase("real")) {
-              features_.AddBack()->InitContinuous(portions[1]);
+              features_.PushBack().InitContinuous(portions[1]);
             } else if (type.EqualsNoCase("integer")) {
-              features_.AddBack()->InitInteger(portions[1]);
+              features_.PushBack().InitInteger(portions[1]);
             } else {
               reader->Error(
                   "ARFF: Only support 'numeric', 'real', and {nominal}.");
@@ -223,7 +223,7 @@ success_t DatasetInfo::InitFromCsv(TextLineReader *reader,
 
   if (nonnumeric) {
     for (index_t i = 0; i < headers.size(); i++) {
-      features_.AddBack()->InitContinuous(headers[i]);
+      features_.PushBack().InitContinuous(headers[i]);
     }
     reader->Gobble();
   } else {
@@ -233,7 +233,7 @@ success_t DatasetInfo::InitFromCsv(TextLineReader *reader,
 #define LI ""
 #endif
       name.InitSprintf("feature%"LI"d", i);
-      features_.AddBack()->InitContinuous(name);
+      features_.PushBack().InitContinuous(name);
     }
   }
 
@@ -266,7 +266,7 @@ index_t Dataset::n_labels() const {
   
   ArrayList<double> labels_list;
   labels_list.Init();
-  *(labels_list.AddBack()) = matrix_.get(label_row_idx,0); 
+  labels_list.PushBack() = matrix_.get(label_row_idx,0); 
   ++n_labels;
 
   for (i = 1; i < matrix_.n_cols(); i++) {
@@ -278,7 +278,7 @@ index_t Dataset::n_labels() const {
       }
     }
     if (j == n_labels) { // new label
-      *(labels_list.AddBack()) = current_label;
+      labels_list.PushBack() = current_label;
       ++n_labels;
     }
   }
@@ -304,8 +304,8 @@ void Dataset::GetLabels(ArrayList<int> &labels_list,
   labels_temp.Init(n_points);
   labels_temp[0] = 0;
 
-  *(labels_list.AddBack()) = (int)matrix_.get(label_row_idx,0);  // labels need to be integers
-  *(labels_ct.AddBack()) = 1;
+  labels_list.PushBack() = (int)matrix_.get(label_row_idx,0);  // labels need to be integers
+  labels_ct.PushBack() = 1;
   n_labels++;
 
   for (i = 1; i < n_points; i++) {
@@ -319,15 +319,15 @@ void Dataset::GetLabels(ArrayList<int> &labels_list,
     }
     labels_temp[i] = j;
     if (j == n_labels) { // new label
-      *(labels_list.AddBack()) = (int)current_label; // labels need to be integers
-      *(labels_ct.AddBack()) = 1;
+      labels_list.PushBack() = (int)current_label; // labels need to be integers
+      labels_ct.PushBack() = 1;
       n_labels++;
     }
   }
   
-  *labels_startpos.AddBack() = 0;
+  labels_startpos.PushBack() = 0;
   for(i = 1; i < n_labels; i++){
-    *labels_startpos.AddBack() = labels_startpos[i-1] + labels_ct[i-1];
+    labels_startpos.PushBack() = labels_startpos[i-1] + labels_ct[i-1];
   }
 
   for(i = 0; i < n_points; i++) {
@@ -362,7 +362,7 @@ success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const 
   linearized.Init();
   
   do {
-    double *point = linearized.AddBack(n_features);
+    double *point = linearized.PushBackRaw(n_features);
     retval = ReadPoint(reader, point, &is_done);
     n_points++;
   } while (!is_done && !FAILED(retval));
@@ -377,7 +377,7 @@ success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const 
 
   linearized.Trim();
 
-  matrix->Own(linearized.ReleasePointer(), n_features, n_points);
+  matrix->Own(linearized.ReleasePtr(), n_features, n_points);
 
   return retval;
 }
@@ -590,10 +590,10 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
   index_t n_train = n_points() - n_test;
 
   train->InitBlank();
-  train->info().Copy(info());
+  train->info().InitCopy(info());
 
   test->InitBlank();
-  test->info().Copy(info());
+  test->info().InitCopy(info());
 
   train->matrix().Init(n_features(), n_train);
   test->matrix().Init(n_features(), n_test);
@@ -613,7 +613,7 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
       i_train++;
     }
 
-    mem::BitCopy(dest,
+    mem::Copy(dest,
         this->matrix().GetColumnPtr(permutation[i_orig]),
         n_features());
   }

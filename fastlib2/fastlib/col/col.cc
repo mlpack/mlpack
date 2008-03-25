@@ -96,7 +96,8 @@ index_t String::Split(index_t start_index,
     max_portions--;
     
     if (likely(startpos != endpos)) {
-      result->AddBack()->Copy(startpos, endpos - startpos);
+      result->PushBack();
+      result->back().Copy(startpos, endpos - startpos);
     }
   } while (!done);
   

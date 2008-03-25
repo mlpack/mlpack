@@ -164,8 +164,8 @@ class MinMaxVal {
   /** The underlying value. */
   Value val;
 
-  OT_DEF_BASIC(MinMaxVal) {
-    OT_MY_OBJECT(val);
+  OBJECT_TRAVERSAL(MinMaxVal) {
+    OT_OBJ(val);
   }
 
  public:
@@ -221,10 +221,10 @@ struct DRange {
    * The upper bound.
    */
   double hi;
-  
-  OT_DEF_BASIC(DRange) {
-    OT_MY_OBJECT(lo);
-    OT_MY_OBJECT(hi);
+
+  OBJECT_TRAVERSAL(DRange) {
+    OT_OBJ(lo);
+    OT_OBJ(hi);
   }
   
  public:

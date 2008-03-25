@@ -67,10 +67,10 @@ class AllNN {
     // OT_DEF_BASIC is suitable for when you want pretty printing, but
     // don't need a special destructor (your object has no pointers).
     // Otherwise, you should use OT_DEF.
-    OT_DEF_BASIC(QueryStat) {
+    OBJECT_TRAVERSAL_SHALLOW(QueryStat) {
       // Declare a non-pointer/array member variable to be traversed.
       // See base/otrav.h for other kinds of declarations.
-      OT_MY_OBJECT(max_distance_so_far_);
+      OT_OBJ(max_distance_so_far_);
     }
 
    public:

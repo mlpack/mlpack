@@ -26,9 +26,9 @@ class GaussianKernel {
   double neg_inv_bandwidth_2sq_;
   double bandwidth_sq_;
 
-  OT_DEF_BASIC(GaussianKernel) {
-    OT_MY_OBJECT(neg_inv_bandwidth_2sq_);
-    OT_MY_OBJECT(bandwidth_sq_);
+  OBJECT_TRAVERSAL(GaussianKernel) {
+    OT_OBJ(neg_inv_bandwidth_2sq_);
+    OT_OBJ(bandwidth_sq_);
   }
 
  public:
@@ -104,12 +104,12 @@ class GaussianStarKernel {
   double critical_point_sq_;
   double critical_point_value_;
   
-  OT_DEF_BASIC(GaussianStarKernel) {
-    OT_MY_OBJECT(neg_inv_bandwidth_2sq_);
-    OT_MY_OBJECT(factor_);
-    OT_MY_OBJECT(bandwidth_sq_);
-    OT_MY_OBJECT(critical_point_sq_);
-    OT_MY_OBJECT(critical_point_value_);
+  OBJECT_TRAVERSAL(GaussianStarKernel) {
+    OT_OBJ(neg_inv_bandwidth_2sq_);
+    OT_OBJ(factor_);
+    OT_OBJ(bandwidth_sq_);
+    OT_OBJ(critical_point_sq_);
+    OT_OBJ(critical_point_value_);
   }
   
  public:
@@ -197,9 +197,9 @@ class EpanKernel {
   double inv_bandwidth_sq_;
   double bandwidth_sq_;
 
-  OT_DEF_BASIC(EpanKernel) {
-    OT_MY_OBJECT(inv_bandwidth_sq_);
-    OT_MY_OBJECT(bandwidth_sq_);
+  OBJECT_TRAVERSAL(EpanKernel) {
+    OT_OBJ(inv_bandwidth_sq_);
+    OT_OBJ(bandwidth_sq_);
   }
   
  public:

@@ -31,12 +31,17 @@ class MinHeap {
   struct Entry {
     TKey key;
     TValue value;
+
+    OBJECT_TRAVERSAL_SHALLOW(Entry) {
+      OT_OBJ(key);
+      OT_OBJ(value);
+    }
   };
 
   ArrayList<Entry> entries_;
 
-  OT_DEF_BASIC(MinHeap) {
-    OT_MY_OBJECT(entries_);
+  OBJECT_TRAVERSAL(MinHeap) {
+    OT_OBJ(entries_);
   }
 
  public:

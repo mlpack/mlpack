@@ -37,6 +37,9 @@ EXTERN_C_BEGIN
 /** A no-op used in some macros. */
 #define NOP ((void)0)
 
+/** Potentially useful for nasty macro expansion. */
+#define COMMA ,
+
 
 
 /* Types and definitions to assist managment of problem scale. */

@@ -17,6 +17,21 @@
 
 #include <new>
 
+#define MEM__DEBUG_MEMORY(ptr) \
+    DEBUG_ASSERT_MSG((ptr) != NULL, "out of memory")
+
+namespace mem__private {
+  const size_t BIG_BAD_BUF_SIZE = 64;
+
+  extern const int32 BIG_BAD_BUF[];
+
+  void PoisonBytes(char *array_cp, size_t bytes);
+
+  const size_t SWAP_BUF_SIZE = 64;
+
+  void SwapBytes(char *a_cp, char *b_cp, size_t bytes);
+};
+
 /**
  * Wrappers and tools for low-level memory management, including:
  *
@@ -36,54 +51,62 @@
 namespace mem {
   /** Fills memory with BIG_BAD_NUMBER, measured in bytes. */
   template<typename T>
-  inline T *DebugPoisonBytes(T *array, size_t bytes) {
-#ifdef DEBUG
+  T *PoisonBytes(T *array, size_t bytes) {
     char *array_cp = reinterpret_cast<char *>(array);
-
-    while (bytes >= BIG_BAD_BUF_SIZE) {
-      ::memcpy(array_cp, BIG_BAD_BUF, BIG_BAD_BUF_SIZE);
-
-      bytes -= BIG_BAD_BUF_SIZE;
-      array_cp += BIG_BAD_BUF_SIZE;
+    mem__private::PoisonBytes(array_cp, bytes);
+    return array;
+  }
+  /** Fills memory with BIG_BAD_NUMBER, measured in elements. */
+  template<typename T>
+  inline T *Poison(T *array, size_t elems) {
+    return PoisonBytes(array, elems * sizeof(T));
+  }
+  /** Fills an element with BIG_BAD_NUMBER. */
+  template<typename T>
+  inline T *Poison(T *ptr) {
+    if (sizeof(T) <= mem__private::BIG_BAD_BUF_SIZE) {
+      return reinterpret_cast<T *>(
+          ::memcpy(ptr, mem__private::BIG_BAD_BUF, sizeof(T)));
+    } else {
+      return PoisonBytes(ptr, sizeof(T));
     }
-    if (bytes > 0) {
-      ::memcpy(array_cp, BIG_BAD_BUF, bytes);
-    }
-#endif
+  }
+
+  /** Fills memory with BIG_BAD_NUMBER, measured in bytes. */
+  template<typename T>
+  inline T *DebugPoisonBytes(T *array, size_t bytes) {
+    DEBUG_ONLY(PoisonBytes(array, bytes));
     return array;
   }
   /** Fills memory with BIG_BAD_NUMBER, measured in elements. */
   template<typename T>
   inline T *DebugPoison(T *array, size_t elems) {
-    return DebugPoisonBytes(array, elems * sizeof(T));
+    DEBUG_ONLY(Poison(array, elems));
+    return array;
   }
   /** Fills an element with BIG_BAD_NUMBER. */
   template<typename T>
   inline T *DebugPoison(T *ptr) {
-    if (sizeof(T) <= BIG_BAD_BUF_SIZE) {
-      DEBUG_ONLY(::memcpy(ptr, BIG_BAD_BUF, sizeof(T)));
-      return ptr;
-    } else {
-      return DebugPoisonBytes(ptr, sizeof(T));
-    }
+    DEBUG_ONLY(Poison(ptr));
+    return ptr;
   }
 
   /** Allocates a (debug) poisoned array, measured in bytes. */
   template<typename T>
   inline T *AllocBytes(size_t bytes) {
 #ifdef SCALE_NORMAL
-    /* Sanity check for small-scale problems. */
+    // sanity check for small-scale problems
     DEBUG_BOUNDS(bytes, BIG_BAD_NUMBER);
 #endif
     T *array = reinterpret_cast<T *>(::malloc(bytes));
-    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    MEM__DEBUG_MEMORY(array);
     return DebugPoisonBytes(array, bytes);
   }
   /** Allocates a (debug) poisoned array, measured in elements. */
   template<typename T>
   inline T *Alloc(size_t elems) {
 #ifdef SCALE_NORMAL
-    /* Sanity check for small-scale problems. */
+    // sanity check for small-scale problems
     DEBUG_BOUNDS(elems, BIG_BAD_NUMBER);
 #endif
     return AllocBytes<T>(elems * sizeof(T));
@@ -92,66 +115,64 @@ namespace mem {
   template<typename T>
   inline T *Alloc() {
     T *array = reinterpret_cast<T *>(::malloc(sizeof(T)));
-    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    MEM__DEBUG_MEMORY(array);
     return DebugPoisonBytes(array);
   }
 
   /** Bit-zeros memory, measured in bytes. */
   template<typename T>
-  inline T *BitZeroBytes(T *array, size_t bytes) {
+  inline T *ZeroBytes(T *array, size_t bytes) {
     return reinterpret_cast<T *>(::memset(array, 0, bytes));
   }
   /** Bit-zeros memory, measured in elements. */
   template<typename T>
-  inline T *BitZero(T *array, size_t elems = 1) {
-    return BitZeroBytes(array, elems * sizeof(T));
+  inline T *Zero(T *array, size_t elems = 1) {
+    return ZeroBytes(array, elems * sizeof(T));
   }
   /** Allocates a bit-zerod array, measured in bytes. */
   template<typename T>
-  inline T *AllocBitZeroBytes(size_t bytes) {
+  inline T *AllocZeroBytes(size_t bytes) {
     T *array = reinterpret_cast<T *>(::calloc(bytes, 1));
-    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    MEM__DEBUG_MEMORY(array);
     return array;
   }
   /** Allocates a bit-zerod array, measured in elements. */
   template<typename T>
-  inline T *AllocBitZero(size_t elems = 1) {
+  inline T *AllocZero(size_t elems = 1) {
     T *array = reinterpret_cast<T *>(::calloc(elems, sizeof(T)));
-    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    MEM__DEBUG_MEMORY(array);
     return array;
   }
 
   /** Bit-copies from src to dest, measured in bytes. */
   template<typename T, typename U>
-  inline T *BitCopyBytes(T *dest, const U *src, size_t bytes) {
+  inline T *CopyBytes(T *dest, const U *src, size_t bytes) {
     return reinterpret_cast<T *>(::memcpy(dest, src, bytes));
   }
   /** Bit-copies from src to dest, measured in elements. */
   template<typename V, typename T, typename U>
-  inline T *BitCopy(T *dest, const U *src, size_t elems = 1) {
-    return BitCopyBytes(dest, src, elems * sizeof(V));
+  inline T *Copy(T *dest, const U *src, size_t elems = 1) {
+    return CopyBytes(dest, src, elems * sizeof(V));
   }
-  /** Bit-copies from src to dest, measured in elements. */
   template<typename T>
-  inline T *BitCopy(T *dest, const T *src, size_t elems = 1) {
-    return BitCopy<T, T, T>(dest, src, elems);
+  inline T *Copy(T *dest, const T *src, size_t elems = 1) {
+    return Copy<T, T, T>(dest, src, elems);
   }
   /** Allocates an array bit-copied from src, measured in bytes. */
   template<typename T, typename U>
-  inline T *AllocBitCopyBytes(const U *src, size_t bytes) {
+  inline T *AllocCopyBytes(const U *src, size_t bytes) {
     T *array = reinterpret_cast<T *>(::malloc(bytes));
-    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
-    return BitCopyBytes(array, src, bytes);
+    MEM__DEBUG_MEMORY(array);
+    return CopyBytes(array, src, bytes);
   }
   /** Allocates an array bit-copied from src, measured in elements. */
   template<typename T, typename U>
-  inline T *AllocBitCopy(const U *src, size_t elems = 1) {
-    return AllocBitCopyBytes<T>(src, elems * sizeof(T));
+  inline T *AllocCopy(const U *src, size_t elems = 1) {
+    return AllocCopyBytes<T>(src, elems * sizeof(T));
   }
-  /** Allocates an array bit-copied from src, measured in elements. */
   template<typename T>
-  inline T *AllocBitCopy(const T *src, size_t elems = 1) {
-    return AllocBitCopy<T, T>(src, elems);
+  inline T *AllocCopy(const T *src, size_t elems = 1) {
+    return AllocCopy<T, T>(src, elems);
   }
 
   /**
@@ -164,7 +185,7 @@ namespace mem {
   template<typename T>
   inline T *ReallocBytes(T *array, size_t bytes) {
     array = reinterpret_cast<T *>(::realloc(array, bytes));
-    DEBUG_ASSERT_MSG(array != NULL, "out of memory");
+    MEM__DEBUG_MEMORY(array);
     return array;
   }
   /**
@@ -187,9 +208,6 @@ namespace mem {
 
 
 
-  /** Buffer size used when swapping memory via memcpy. */
-  const size_t SWAP_BUF_SIZE = 64;
-
   /**
    * Bit-swaps two arrays, measured in bytes.
    *
@@ -201,25 +219,10 @@ namespace mem {
    * such as portions of strings.
    */
   template<typename T, typename U>
-  inline void BitSwapBytes(T *a, U *b, size_t bytes) {
+  void SwapBytes(T *a, U *b, size_t bytes) {
     char *a_cp = reinterpret_cast<char *>(a);
     char *b_cp = reinterpret_cast<char *>(b);
-    char buf[SWAP_BUF_SIZE];
-
-    while (bytes >= SWAP_BUF_SIZE) {
-      ::memcpy(buf, a_cp, SWAP_BUF_SIZE);
-      ::memcpy(a_cp, b_cp, SWAP_BUF_SIZE);
-      ::memcpy(b_cp, buf, SWAP_BUF_SIZE);
-
-      bytes -= SWAP_BUF_SIZE;
-      a_cp += SWAP_BUF_SIZE;
-      b_cp += SWAP_BUF_SIZE;
-    }
-    if (bytes > 0) {
-      ::memcpy(buf, a_cp, bytes);
-      ::memcpy(a_cp, b_cp, bytes);
-      ::memcpy(b_cp, buf, bytes);
-    }
+    mem__private::SwapBytes(a_cp, b_cp, bytes);
   }
   /**
    * Bit-swaps two arrays, measured in elements.
@@ -232,44 +235,57 @@ namespace mem {
    * such as portions of strings.
    */
   template<typename V, typename T, typename U>
-  inline void BitSwap(T *a, U *b, size_t elems) {
-    BitSwapBytes(a, b, elems * sizeof(V));
+  inline void Swap(T *a, U *b, size_t elems) {
+    SwapBytes(a, b, elems * sizeof(V));
   }
   template<typename T>
-  inline void BitSwap(T *a, T *b, size_t elems) {
-    BitSwap<T, T, T>(a, b, elems);
+  inline void Swap(T *a, T *b, size_t elems) {
+    Swap<T, T, T>(a, b, elems);
   }
   template<typename V, typename T, typename U>
-  inline void BitSwap(T *a, U *b) {
-    if (sizeof(V) <= SWAP_BUF_SIZE * 2) {
+  inline void Swap(T *a, U *b) {
+    if (sizeof(V) <= mem__private::SWAP_BUF_SIZE * 2) {
       char buf[sizeof(V)];
 
       ::memcpy(buf, a, sizeof(V));
       ::memcpy(a, b, sizeof(V));
       ::memcpy(b, buf, sizeof(V));
     } else {
-      BitSwapBytes(a, b, sizeof(V));
+      SwapBytes(a, b, sizeof(V));
     }
   }
   template<typename T>
-  inline void BitSwap(T *a, T *b) {
-    BitSwap<T, T, T>(a, b);
+  inline void Swap(T *a, T *b) {
+    Swap<T, T, T>(a, b);
+  }
+
+  /** Bit-moves bytes from src to dest, permitting overlap. */
+  template<typename T, typename U>
+  inline T *MoveBytes(T *dest, const U *src, size_t bytes) {
+    return reinterpret_cast<T *>(::memmove(dest, src, bytes));
+  }
+  /** Bit-moves elements from src to dest, permitting overlap. */
+  template<typename V, typename T, typename U>
+  inline T *Move(T *dest, const U *src, size_t elems = 1) {
+    return MoveBytes(dest, src, elems * sizeof(V));
+  }
+  template<typename T>
+  inline T *Move(T *dest, const T *src, size_t elems = 1) {
+    return Move<T, T, T>(dest, src, elems);
   }
 
 
 
-  /** Default constructs an element. */
+  /** Default Constructs An element. */
   template<typename T>
   inline T *Construct(T *ptr) {
-    new(ptr) T();
+    new(ptr) T;
     return ptr;
   }
   /** Default constructs each element in an array. */
   template<typename T>
   inline T *Construct(T *array, size_t elems) {
-    for (size_t i = 0; i < elems; ++i) {
-      new(array + i) T();
-    }
+    new(array) T[elems];
     return array;
   }
   /** Destructs an element. */
@@ -304,38 +320,47 @@ namespace mem {
   /** Simple constructors and destcutors for primatives types. */
 #define BASE_CCMEM__SIMPLE_CONSTRUCTORS(T, TF) \
   template<> \
-  inline T *Construct< T >(T *ptr) \
-    {return DebugPoison(ptr);} \
+  inline T *Construct< T >(T *ptr) { \
+    return DebugPoison(ptr); \
+  } \
   template<> \
-  inline T *Construct< T >(T *array, size_t elems) \
-    {return DebugPoison(array, elems);} \
+  inline T *Construct< T >(T *array, size_t elems) { \
+    return DebugPoison(array, elems); \
+  } \
   template<> \
-  inline T *Destruct< T >(T *ptr) \
-    {return DebugPoison(ptr);} \
+  inline T *Destruct< T >(T *ptr) { \
+    return DebugPoison(ptr); \
+  } \
   template<> \
-  inline T *Destruct< T >(T *array, size_t elems) \
-    {return DebugPoison(array, elems);} \
+  inline T *Destruct< T >(T *array, size_t elems) { \
+    return DebugPoison(array, elems); \
+  } \
   template<> \
-  inline T *CopyConstruct< T >(T *dest, const T *src) \
-    {return BitCopy(dest, src, 1);} \
+  inline T *CopyConstruct< T >(T *dest, const T *src) { \
+    return Copy(dest, src, 1); \
+  } \
   template<> \
-  inline T *CopyConstruct< T >(T *dest, const T *src, size_t elems) \
-    {return BitCopy(dest, src, elems);}
+  inline T *CopyConstruct< T >(T *dest, const T *src, size_t elems) { \
+    return Copy(dest, src, elems); \
+  }
 
   FOR_ALL_PRIMITIVES_DO(BASE_CCMEM__SIMPLE_CONSTRUCTORS)
 
   /** No-op constructs an array of pointers. */
   template<typename T>
-  inline T **Construct(T **array, size_t elems = 1)
-    {return DebugPoison(array, elems);}
+  inline T **Construct(T **array, size_t elems = 1) {
+    return DebugPoison(array, elems);
+  }
   /** No-op destructs an array of pointers. */
   template<typename T>
-  inline T **Destruct(T **array, size_t elems = 1)
-    {return DebugPoison(array, elems);}
+  inline T **Destruct(T **array, size_t elems = 1) {
+    return DebugPoison(array, elems);
+  }
   /** Bit-copy copy constructs an array of pointers. */
   template<typename T>
-  inline T **CopyConstruct(T **dest, const T **src, size_t elems = 1)
-    {return BitCopy(dest, src, elems);}
+  inline T **CopyConstruct(T **dest, const T **src, size_t elems = 1) {
+    return Copy(dest, src, elems);
+  }
 
 #undef BASE_CCMEM__SIMPLE_CONSTRUCTORS
 
@@ -358,20 +383,18 @@ namespace mem {
   inline T *AllocCopyConstruct(const U *src, size_t elems = 1) {
     return CopyConstruct(Alloc<T>(elems), src, elems);
   }
-  /** Allocates and element-wise copy constructs an array. */
   template<typename T>
   inline T *AllocCopyConstruct(const T *src, size_t elems = 1) {
-    return CopyConstruct(Alloc<T>(elems), src, elems);
+    return AllocCopyConstruct<T, T>(src, elems);
   }
   /** Allocates and copy constructs an array. */
   template<typename T, typename U>
   inline T *AllocRepeatConstruct(const U &init, size_t elems) {
     return RepeatConstruct(Alloc<T>(elems), init, elems);
   }
-  /** Allocates and copy constructs an array. */
   template<typename T>
   inline T *AllocRepeatConstruct(const T &init, size_t elems) {
-    return RepeatConstruct(Alloc<T>(elems), init, elems);
+    return AllocRepeatConstruct<T, T>(init, elems);
   }
 
   /** Destructs and frees an array. */
@@ -384,16 +407,21 @@ namespace mem {
 
   /** Offsets a pointer by a given number of bytes. */
   template<typename T>
-  inline T *PtrAddBytes(const T *ptr, ptrdiff_t bytes) {
-    /* Const cast to prevent compilation errors for const T. */
-    return reinterpret_cast<T *>(const_cast<char *>(
-      reinterpret_cast<const char *>(ptr) + bytes));
+  inline T *PtrAddBytes(T *ptr, ptrdiff_t bytes) {
+    return reinterpret_cast<T *>(
+        reinterpret_cast<char *>(ptr) + bytes);
+  }
+  /** Offsets a const pointer by a given number of bytes. */
+  template<typename T>
+  inline const T *PtrAddBytes(const T *ptr, ptrdiff_t bytes) {
+    return reinterpret_cast<const T *>(
+        reinterpret_cast<const char *>(ptr) + bytes);
   }
   /** Finds the byte difference of two pointers, i.e. lhs - rhs. */
   template<typename T, typename U>
   inline ptrdiff_t PtrDiffBytes(const T *lhs, const U *rhs) {
     return reinterpret_cast<const char *>(lhs)
-      - reinterpret_cast<const char *>(rhs);
+        - reinterpret_cast<const char *>(rhs);
   }
   /** Converts a pointer to its integral absolute address. */
   template<typename T>
@@ -403,8 +431,39 @@ namespace mem {
   /** Determines if two pointers are the same, i.e. lhs == rhs. */
   template<typename T, typename U>
   inline bool PtrsEqual(const T *lhs, const U *rhs) {
-    return reinterpret_cast<size_t>(lhs) == reinterpret_cast<size_t>(rhs);
-  } 
+    return reinterpret_cast<size_t>(lhs)
+        == reinterpret_cast<size_t>(rhs);
+  }
+
+  ////////// Deprecated //////////////////////////////////////////////
+
+  /** Renamed ZeroBytes */
+  template<typename T>
+  T *BitZeroBytes(T *array, size_t bytes) {
+    return ZeroBytes(array, bytes);
+  }
+  /** Renamed Zero */
+  template<typename T>
+  T *BitZero(T *array, size_t elems = 1) {
+    return Zero(array, elems);
+  }
+  /** Renamed CopyBytes */
+  template<typename T, typename U>
+  T *BitCopyBytes(T *dest, const U *src, size_t bytes) {
+    return CopyBytes(dest, src, bytes);
+  }
+  /** Renamed Copy */
+  template<typename T>
+  T *BitCopy(T *dest, const T *src, size_t elems = 1) {
+    return Copy(dest, src, elems);
+  }
+  /** Renamed Swap */
+  template<typename T>
+  void BitSwap(T *a, T *b, size_t elems = 1) {
+    Swap(a, b, elems);
+  }
 };
+
+#undef MEM__DEGUG_MEMORY
 
 #endif
