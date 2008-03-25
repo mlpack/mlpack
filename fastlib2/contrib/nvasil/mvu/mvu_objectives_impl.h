@@ -40,6 +40,14 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
       &num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
+  double max_nearest_distance=0;
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
+  }
+  sum_of_furthest_distances_=-max_nearest_distance*
+      data.n_cols()*data.n_cols();
+ 
+  NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
   fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
 }
 
@@ -128,8 +136,14 @@ void MaxVariance::set_sigma(double sigma) {
   sigma_=sigma;
 }
 
-bool MaxVariance::IsDiverging(double feasibility_error){
-  return false;
+bool MaxVariance::IsDiverging(double objective) {
+  if (objective < sum_of_furthest_distances_) {
+    NOTIFY("objective(%lg) < sum_of_furthest_distances (%lg)", objective,
+        sum_of_furthest_distances_);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void MaxVariance::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
@@ -215,6 +229,14 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
       &num_of_furthest_pairs_);
   ineq_lagrange_mult_.Init(num_of_furthest_pairs_);
   ineq_lagrange_mult_.SetAll(1.0);
+  double max_nearest_distance=0;
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
+  }
+  sum_of_furthest_distances_=-max_nearest_distance*
+      data.n_cols()*data.n_cols()*data.n_cols();
+ 
+  NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
 }
 
 void MaxVarianceInequalityOnFurthest::ComputeGradient(Matrix &coordinates, 
@@ -365,8 +387,14 @@ void MaxVarianceInequalityOnFurthest::set_sigma(double sigma) {
   sigma_=sigma;
 }
 
-bool MaxVarianceInequalityOnFurthest::IsDiverging(double feasibility_error){
-  return false;
+bool MaxVarianceInequalityOnFurthest::IsDiverging(double objective) {
+  if (objective < sum_of_furthest_distances_) {
+    NOTIFY("objective(%lg) < sum_of_furthest_distances (%lg)", objective,
+        sum_of_furthest_distances_);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void MaxVarianceInequalityOnFurthest::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
@@ -460,7 +488,7 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
   sum_of_furthest_distances_=-max_nearest_distance*
       data.n_cols()*num_of_furthest_pairs_;
  
-  NOTIFY("****************%lg", sum_of_furthest_distances_);
+  NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
 }
 
 void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient) {

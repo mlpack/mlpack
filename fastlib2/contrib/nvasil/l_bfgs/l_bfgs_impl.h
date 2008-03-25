@@ -28,9 +28,11 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   gamma_ = fx_param_double(module_, "gamma", 5);
   new_dimension_ = fx_param_int(module, "new_dimension", 2);
   feasibility_tolerance_ = fx_param_double(module_, "feasibility_tolerance", 0.01);
+  desired_feasibility_ = fx_param_double(module_, "desired_feasibility", 100); 
   wolfe_sigma1_ = fx_param_double(module_, "wolfe_sigma1", 0.1);
   wolfe_sigma2_ = fx_param_double(module_, "wolfe_sigma2", 0.9);
   step_size_=fx_param_double(module_, "step_size", 3.0);
+  silent_=fx_param_bool(module_, "silent", false);
   if (unlikely(wolfe_sigma1_>=wolfe_sigma2_)) {
     FATAL("Wolfe sigma1 %lg should be less than sigma2 %lg", 
         wolfe_sigma1_, wolfe_sigma2_);
@@ -51,7 +53,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   wolfe_beta_   = fx_param_double(module_, "wolfe_beta", 0.8);
   max_iterations_ = fx_param_int(module_, "max_iterations", 10000);
   // the memory of bfgs 
-  mem_bfgs_ = fx_param_int(module_, "mem_bfgs_", 50);
+  mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 50);
   std::string log_file=fx_param_str(module_, "log_file", "opt_log");
   fp_log_=fopen(log_file.c_str(), "w");
   optimized_function_->set_sigma(sigma_);
@@ -71,8 +73,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
   //datanode_write(module_, stdout);
   //datanode_write(module_, fp_log_);
   // Run a few iterations with gradient descend to fill the memory of BFGS
-  NOTIFY("Running a few iterations with gradient descent to fill "
-         "the memory of BFGS...\n");
+  NOTIFY("Initializing BFGS");
    index_bfgs_=0;
   // You have to compute also the previous_gradient_ and previous_coordinates_
   // tha are needed only by BFGS
@@ -85,17 +86,28 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
   la::SubOverwrite(previous_gradient_, gradient_, &y_bfgs_[0]);
   ro_bfgs_[0] = la::Dot(s_bfgs_[0].n_elements(), 
       s_bfgs_[0].ptr(), y_bfgs_[0].ptr());
+  double old_feasibility_error = feasibility_error;
   for(index_t i=0; i<mem_bfgs_; i++) {
-    ComputeBFGS_(&step_, gradient_, i);
+   // ComputeBFGS_(&step_, gradient_, i);
+   // if (step_==0) {
+      NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
+      ComputeWolfeStep_(&step_, gradient_);
+   // }
     optimized_function_->ComputeGradient(coordinates_, &gradient_);
     UpdateBFGS_();
     previous_gradient_.CopyValues(gradient_);
     previous_coordinates_.CopyValues(coordinates_);
     optimized_function_->ComputeFeasibilityError(coordinates_,
         &feasibility_error); 
-  } 
+    num_of_iterations_++;
+    if (silent_==false) {
+        ReportProgressFile_();
+    }
+    optimized_function_->ComputeFeasibilityError(coordinates_, 
+        &feasibility_error);
+  }
+ 
   NOTIFY("Now starting optimizing with BFGS...\n");
-  double old_feasibility_error = feasibility_error;
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       ComputeBFGS_(&step_, gradient_, mem_bfgs_); 
@@ -105,17 +117,32 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
       double norm_grad = la::Dot(gradient_.n_elements(), 
           gradient_.ptr(), gradient_.ptr());
       num_of_iterations_++;
-      ReportProgressFile_();
-      if (step_*norm_grad < norm_grad_tolerance_) {
+      if (silent_==false) {
+        ReportProgressFile_();
+      }
+      if (step_*norm_grad/sigma_ < norm_grad_tolerance_) {
+        break;
+      }
+      if (feasibility_error < desired_feasibility_) {
         break;
       }
       UpdateBFGS_();
       previous_coordinates_.CopyValues(coordinates_);
       previous_gradient_.CopyValues(gradient_);
+      // Do this check to make sure the method has not started diverging
+      double objective;
+      optimized_function_->ComputeObjective(coordinates_, &objective);
+      if (optimized_function_->IsDiverging(objective)) {
+        sigma_*=gamma_;
+        optimized_function_->set_sigma(sigma_);
+        optimized_function_->ComputeGradient(coordinates_, &gradient_);
+       // break;
+      }
     }
     NOTIFY("%lg %lg\n", old_feasibility_error, feasibility_error);
     if (fabs(old_feasibility_error - feasibility_error)
-        /(old_feasibility_error+1e-20) < feasibility_tolerance_) {
+        /(old_feasibility_error+1e-20) < feasibility_tolerance_ ||
+        feasibility_error < desired_feasibility_) {
       break;
     }
     old_feasibility_error = feasibility_error;
@@ -184,7 +211,7 @@ void LBfgs<OptimizedFunction>::UpdateLagrangeMult_() {
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &direction) {
+success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &direction) {
   fx_timer_start(module_, "wolfe_step");
   Matrix temp_coordinates;
   Matrix temp_gradient;
@@ -214,16 +241,19 @@ void LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &direction
   }
   if(beta<=1e-100) {
     *step=0;
+    fx_timer_stop(module_, "wolfe_step");
+    return SUCCESS_FAIL;
   } else {
     *step=step_size_*beta;
+    coordinates_.CopyValues(temp_coordinates);   
+    optimized_function_->Project(&coordinates_); 
+    fx_timer_stop(module_, "wolfe_step");
+    return SUCCESS_PASS;
   }
-  coordinates_.CopyValues(temp_coordinates);   
-  optimized_function_->Project(&coordinates_); 
-  fx_timer_stop(module_, "wolfe_step");
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
+success_t LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
   fx_timer_start(module_, "bfgs_step");
   Vector alpha;
   alpha.Init(mem_bfgs_);
@@ -249,7 +279,7 @@ void LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, index_t 
                    new_dimension_, y_bfgs_[index_bfgs_].ptr(),
                    y_bfgs_[index_bfgs_].ptr());
   if (unlikely(y_y<1e-10)){
-    NONFATAL("Gradient differences close to singular...\n");
+    NONFATAL("Gradient differences close to singular...norm=%lg\n", y_y);
   } 
   double norm_scale=s_y/(y_y+1e-10);
   la::Scale(norm_scale, &temp_direction);
@@ -274,35 +304,49 @@ void LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, index_t 
     la::Scale(-1.0, &temp_direction);
     ComputeWolfeStep_(step, temp_direction);
     *step=-*step;
+    fx_timer_stop(module_, "bfgs_step");
+    return SUCCESS_FAIL;  
   }
-//  (*step)*= la::Dot(num_of_points_*new_dimension_, 
-//          temp_direction.ptr(), temp_direction.ptr());
+  fx_timer_stop(module_, "bfgs_step");
+  return SUCCESS_PASS;
   fx_timer_stop(module_, "bfgs_step");
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::UpdateBFGS_() {
-  index_bfgs_ = (index_bfgs_ - 1 + mem_bfgs_ ) % mem_bfgs_;
-  UpdateBFGS_(index_bfgs_);
+success_t LBfgs<OptimizedFunction>::UpdateBFGS_() {
+  index_t try_index_bfgs = (index_bfgs_ - 1 + mem_bfgs_ ) % mem_bfgs_;
+  if (UpdateBFGS_(try_index_bfgs)==SUCCESS_FAIL) {
+    return SUCCESS_FAIL;
+  } else {
+    index_bfgs_=try_index_bfgs;
+    return SUCCESS_PASS;
+  }
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
+success_t LBfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
   fx_timer_start(module_, "update_bfgs");
   // shift all values
-  la::SubOverwrite(previous_coordinates_, coordinates_, &s_bfgs_[index_bfgs]);
-  la::SubOverwrite(previous_gradient_, gradient_, &y_bfgs_[index_bfgs]);
-  ro_bfgs_[index_bfgs_] = la::Dot(new_dimension_ * num_of_points_, 
-                                  s_bfgs_[index_bfgs].ptr(),
-                                  y_bfgs_[index_bfgs].ptr());
-  if unlikely(fabs(ro_bfgs_[index_bfgs]) <=1e-20) {
-    int sign =int(2*((ro_bfgs_[index_bfgs]>0.0)-0.5));
-    ro_bfgs_[index_bfgs_] =sign/1e-20;
-    NONFATAL("Ro values close to singular ...\n");
-  } else {
-    ro_bfgs_[index_bfgs] = 1.0/ro_bfgs_[index_bfgs_];
-  }
+  Matrix temp_s_bfgs;
+  Matrix temp_y_bfgs;
+  la::SubInit(previous_coordinates_, coordinates_, &temp_s_bfgs); 
+  la::SubInit(previous_gradient_, gradient_, &temp_y_bfgs); 
+  double temp_ro=la::Dot(new_dimension_ * num_of_points_, 
+                                  temp_s_bfgs.ptr(),
+                                  temp_y_bfgs.ptr());
+  double y_norm=la::Dot(temp_y_bfgs.n_elements(), 
+      temp_y_bfgs.ptr(), temp_y_bfgs.ptr());
+  if (temp_ro<1e-10*y_norm) {
+    fx_timer_stop(module_, "update_bfgs");
+    NONFATAL("Rejecting s, y they don't satisfy curvature condition");
+    return SUCCESS_FAIL;
+  } 
+  s_bfgs_[index_bfgs].CopyValues(temp_s_bfgs);
+  y_bfgs_[index_bfgs].CopyValues(temp_y_bfgs); 
+  ro_bfgs_[index_bfgs] = 1.0/temp_ro;
+
   fx_timer_stop(module_, "update_bfgs");
+  return SUCCESS_PASS;
 }
 
 template<typename OptimizedFunction>
