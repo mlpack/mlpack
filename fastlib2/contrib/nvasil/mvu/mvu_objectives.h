@@ -45,6 +45,7 @@ class MaxVariance {
   Vector eq_lagrange_mult_;
   index_t num_of_nearest_pairs_;
   double sigma_;
+  double sum_of_furthest_distances_;
 
   void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
       ArrayList<double>  &from_tree_dist,
@@ -81,6 +82,7 @@ class MaxVarianceInequalityOnFurthest {
   ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
   ArrayList<double> furthest_distances_;
   double sigma_;
+  double sum_of_furthest_distances_;
 
   void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
       ArrayList<double>  &from_tree_dist,

@@ -39,10 +39,10 @@ class LBfgs {
   void InitOptimization_();
   void ComputeWolfeStep_();
   void UpdateLagrangeMult_();
-  void ComputeWolfeStep_(double *step, Matrix &direction);
-  void ComputeBFGS_(double *step, Matrix &grad, index_t memory);
-  void UpdateBFGS_();
-  void UpdateBFGS_(index_t index_bfgs);
+  success_t ComputeWolfeStep_(double *step, Matrix &direction);
+  success_t ComputeBFGS_(double *step, Matrix &grad, index_t memory);
+  success_t UpdateBFGS_();
+  success_t UpdateBFGS_(index_t index_bfgs);
   void BoundConstrain();
   std::string ComputeProgress_();
   void ReportProgressFile_();
@@ -57,11 +57,13 @@ class LBfgs {
   double eta_;
   double gamma_;
   double step_;
+  double desired_feasibility_;
   double feasibility_tolerance_;
   double norm_grad_tolerance_;
   double wolfe_sigma1_;
   double wolfe_sigma2_;
   double wolfe_beta_;
+  bool silent_;
   ArrayList<Matrix> s_bfgs_;
   ArrayList<Matrix> y_bfgs_;
   Vector ro_bfgs_;
