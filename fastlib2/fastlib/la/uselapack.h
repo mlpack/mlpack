@@ -143,7 +143,7 @@ namespace la {
    */
   inline void ScaleOverwrite(index_t length,
       double alpha, const double *x, double *y) {
-    mem::BitCopy(y, x, length);
+    mem::Copy(y, x, length);
     Scale(length, alpha, y);
   }
 
@@ -169,7 +169,7 @@ namespace la {
    */
   inline void AddOverwrite(index_t length,
       const double *x, const double *y, double *z) {
-    mem::BitCopy(z, y, length);
+    mem::Copy(z, y, length);
     AddTo(length, x, z);
   }
 
@@ -186,7 +186,7 @@ namespace la {
    */
   inline void SubOverwrite(index_t length,
       const double *x, const double *y, double *z) {
-    mem::BitCopy(z, y, length);
+    mem::Copy(z, y, length);
     SubFrom(length, x, z);
   }
 #else

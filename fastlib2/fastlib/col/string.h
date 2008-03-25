@@ -30,10 +30,15 @@ class String {
  private:
   ArrayList<char> array_;
 
-  OT_DEF_BASIC(String) {
-    OT_MY_OBJECT(array_);
+  OBJECT_TRAVERSAL(String) {
+    OT_OBJ(array_);
   }
-   
+  
+  OT_CUSTOM_PRINT(String) {
+    const char *c_str = this->c_str();
+    OT_OBJ(c_str);
+  }
+
  public:
   /**
    * Implicit conversion constructor.
@@ -72,7 +77,7 @@ class String {
    */
   void Copy(const char *str_region_begin, index_t len) {
     array_.Init(len + 1);
-    mem::BitCopy(array_.begin(), str_region_begin, len);
+    mem::Copy(array_.begin(), str_region_begin, len);
     Terminate();
   }
   
@@ -80,14 +85,14 @@ class String {
    * Initializes as a copy of a c-style string.
    */
   void Copy(const char *str) {
-    array_.Copy(str, index_t(strlen(str) + 1));
+    array_.InitCopy(str, index_t(strlen(str) + 1));
   }
   
   /**
    * Free up the string so you can reinitialize this to another string.
    */
   void Destruct() {
-    array_.Destruct();
+    array_.Renew();
   }
   
   /**
@@ -102,22 +107,23 @@ class String {
    * the string.
    */
   void StealDestruct(String *other) {
-    array_.StealDestruct(&other->array_);
+    array_.InitSteal(&other->array_);
+    other->Destruct();
   }
   
   /**
    * 
    */
   void Steal(ArrayList<char> *null_terminated_char_list) {
-    array_.Steal(null_terminated_char_list);
+    array_.InitSteal(null_terminated_char_list);
   }
   
   void Steal(char *str, index_t len, index_t capacity) {
-    array_.Steal(str, len + 1, capacity);
+    array_.InitSteal(str, len + 1, capacity);
   }
   
   void Steal(char *str, index_t len) {
-    array_.Steal(str, len + 1, len + 1);
+    array_.InitSteal(str, len + 1, len + 1);
   }
   
   void Steal(char *str) {
@@ -195,7 +201,7 @@ class String {
    * Puts a null terminator at the end of the string.
    */
   void Terminate() {
-    *array_.last() = 0;
+    array_.back() = 0;
   }
 
   /**
@@ -255,8 +261,8 @@ class String {
    * Amortized O(1).
    */
   void Append(char c) {
-    *array_.last() = c;
-    *array_.AddBack() = '\0';
+    array_.back() = c;
+    array_.PushBackCopy('\0');
   }
   
   /**

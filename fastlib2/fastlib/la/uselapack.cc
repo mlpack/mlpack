@@ -61,9 +61,9 @@ success_t la::PLUInit(const Matrix &A,
       double *lcol = L->GetColumnPtr(j);
       double *ucol = U->GetColumnPtr(j);
 
-      mem::BitCopy(ucol, lcol, j + 1);
-      mem::BitZero(ucol + j + 1, n - j - 1);
-      mem::BitZero(lcol, j);
+      mem::Copy(ucol, lcol, j + 1);
+      mem::Zero(ucol + j + 1, n - j - 1);
+      mem::Zero(lcol, j);
       lcol[j] = 1.0;
     }
   } else {
@@ -80,10 +80,10 @@ success_t la::PLUInit(const Matrix &A,
       double *lcol = L->GetColumnPtr(j);
       double *ucol = U->GetColumnPtr(j);
 
-      mem::BitZero(lcol, j);
+      mem::Zero(lcol, j);
       lcol[j] = 1.0;
-      mem::BitCopy(lcol + j + 1, ucol + j + 1, m - j - 1);
-      mem::BitZero(ucol + j + 1, m - j - 1);
+      mem::Copy(lcol + j + 1, ucol + j + 1, m - j - 1);
+      mem::Zero(ucol + j + 1, m - j - 1);
     }
   }
 
@@ -208,7 +208,7 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
 
   // Extract R
   for (index_t j = 0; j < n; j++) {
-    mem::BitCopy(R->GetColumnPtr(j), A_in_Q_out->GetColumnPtr(j),
+    mem::Copy(R->GetColumnPtr(j), A_in_Q_out->GetColumnPtr(j),
         std::min(j + 1, k));
   }
   
@@ -249,8 +249,8 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
     double *r_col = R->GetColumnPtr(j);
     double *q_col = A_in_Q_out->GetColumnPtr(j);
     int i = std::min(j + 1, k);
-    mem::BitCopy(r_col, q_col, i);
-    mem::BitZero(r_col + i, k - i);
+    mem::Copy(r_col, q_col, i);
+    mem::Zero(r_col + i, k - i);
   }
 
   // Fix Q
@@ -463,7 +463,7 @@ success_t la::Cholesky(Matrix *A_in_U_out) {
 
   /* set the garbage part of the matrix to 0. */
   for (f77_integer j = 0; j < n; j++) {
-    mem::BitZero(A_in_U_out->GetColumnPtr(j) + j + 1, n - j - 1);
+    mem::Zero(A_in_U_out->GetColumnPtr(j) + j + 1, n - j - 1);
   }
 
   return SUCCESS_FROM_LAPACK(info);

@@ -7,7 +7,6 @@
 #include "infomax_ica.h"
 #include "test_infomax_ica.h"
 #include "fastlib/fastlib.h"
-#include "data/dataset.h"
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
 

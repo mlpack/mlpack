@@ -177,12 +177,6 @@ extern int print_warnings;
  */
 #define BIG_BAD_NUMBER 2146666666
 
-/** Size of array to contain repititions of BIG_BAD_NUMBER. */
-#define BIG_BAD_BUF_SIZE 64
-
-/** A 64-byte addressable location containing BIG_BAD_NUMBER. */
-extern const int32 BIG_BAD_BUF[];
-
 /** 
  * An obviously invalid pointer, for use with debugging tools.
  *

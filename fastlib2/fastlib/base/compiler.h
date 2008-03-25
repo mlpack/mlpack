@@ -143,6 +143,18 @@
 #define COMPILER_NO_INLINE
 #endif
 
+/**
+ * Denotes a function as deprecated.
+ *
+ * This will raise warnings when compiling with features that may
+ * eventually be removed.
+ */
+#ifndef NO_COMPILER_DEFS
+#define COMPILER_DEPRECATED __attribute__((deprecated))
+#else
+#define COMPILER_DEPRECATED
+#endif
+
 
 
 /**

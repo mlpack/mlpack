@@ -170,8 +170,8 @@ char TextTokenizer::NextChar_() {
 
 char TextTokenizer::NextChar_(ArrayList<char> *token) {
   char c = NextChar_();
-  
-  *token->AddBack() = c;
+
+  token->PushBackCopy(c);
   
   return c;
 }
@@ -200,13 +200,14 @@ char TextTokenizer::Skip_(ArrayList<char> *token) {
     }
   }
   
-  *token->AddBack() = char(c);
+  token->PushBackCopy(char(c));
   
   return char(c);
 }
 
 void TextTokenizer::UndoNextChar_(ArrayList<char> *token) {
-  char c = *token->PopBackPtr();
+  char c;
+  token->PopBackInit(&c);
   if (c != 0) { /* don't put EOF back on the stream */
     Unget_(c);
   }
@@ -364,7 +365,7 @@ void TextTokenizer::Gobble() {
   ArrayList<char> token;
   token.Init();
   Scan_(&token);
-  *token.AddBack() = '\0';
+  token.PushBackCopy('\0');
   next_.Steal(&token);
   DEBUG_ASSERT(next_.length() == index_t(strlen(next_.c_str())));
 }
