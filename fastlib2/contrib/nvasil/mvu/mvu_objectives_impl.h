@@ -23,7 +23,11 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
-  allknn_.Init(data, leaf_size_, knns_); 
+  if (knns_==0) {
+    allknn_.Init(data, leaf_size_, MAX_KNNS); 
+  } else {
+    allknn_.Init(data, leaf_size_, knns_); 
+  }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
   ArrayList<index_t> from_tree_neighbors;
@@ -31,13 +35,27 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
   NOTIFY("Neighborhoods computed...\n");
+  if (knns_==0) {
+    NOTIFY("Auto-tuning the knn...\n" );
+    MaxVarianceUtils::EstimateKnns(from_tree_neighbors,
+        from_tree_distances,
+        MAX_KNNS, 
+        data.n_cols(),
+        data.n_rows(),
+        &knns_); 
+    NOTIFY("Optimum knns is %i", knns_);
+    fx_format_result(module_, "optimum_knns", "%i",knns_);
+  }  
   NOTIFY("Consolidating neighbors...\n");
-  ConsolidateNeighbors_(from_tree_neighbors,
+  MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
       from_tree_distances,
+      30,
       knns_,
       &nearest_neighbor_pairs_,
       &nearest_distances_,
       &num_of_nearest_pairs_);
+ 
+ 
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
@@ -147,40 +165,6 @@ bool MaxVariance::IsDiverging(double objective) {
   }
 }
 
-void MaxVariance::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
-    ArrayList<double>  &from_tree_dist,
-    index_t num_of_neighbors,
-    ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
-    ArrayList<double> *distances,
-    index_t *num_of_pairs) {
-  
-  *num_of_pairs=0;
-  index_t num_of_points=from_tree_ind.size()/num_of_neighbors;
-  neighbor_pairs->Init();
-  distances->Init();
-  bool skip=false;
-  for(index_t i=0; i<num_of_points; i++) {
-    for(index_t k=0; k<num_of_neighbors; k++) {  
-      index_t n1=i;                         //neighbor 1
-      index_t n2=from_tree_ind[i*num_of_neighbors+k];  //neighbor 2
-      if (n1 > n2) {
-        for(index_t n=0; n<num_of_neighbors; n++) {
-          if (from_tree_ind[n2*num_of_neighbors+n] == n1) {
-            skip=true;
-            break;
-          }
-        }
-      }  
-      if (skip==false) {
-        *num_of_pairs+=1;
-        neighbor_pairs->AddBackItem(std::make_pair(n1, n2));
-        distances->AddBackItem(from_tree_dist[i*num_of_neighbors+k]);
-      }
-      skip=false;
-    }
-  }
-}
-
 void MaxVariance::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
@@ -193,7 +177,11 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
-  allknn_.Init(data, leaf_size_, knns_); 
+  if (knns_==0) {
+     allknn_.Init(data, leaf_size_, MAX_KNNS); 
+  } else {
+    allknn_.Init(data, leaf_size_, knns_); 
+  }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
   ArrayList<index_t> from_tree_neighbors;
@@ -201,9 +189,21 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
   NOTIFY("Neighborhoods computed...\n");
+  if (knns_==0) {
+    NOTIFY("Auto-tuning the knn...\n" );
+    MaxVarianceUtils::EstimateKnns(from_tree_neighbors,
+        from_tree_distances,
+        MAX_KNNS, 
+        data.n_cols(),
+        data.n_rows(),
+        &knns_); 
+    NOTIFY("Optimum knns is %i", knns_);
+    fx_format_result(module_, "optimum_knns", "%i",knns_);
+  }  
   NOTIFY("Consolidating neighbors...\n");
-  ConsolidateNeighbors_(from_tree_neighbors,
+  MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
       from_tree_distances,
+      MAX_KNNS,
       knns_,
       &nearest_neighbor_pairs_,
       &nearest_distances_,
@@ -222,8 +222,9 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
                            &from_tree_distances);
   NOTIFY("Furthest Neighbors computed...\n");
   NOTIFY("Consolidating neighbors...\n");
-  ConsolidateNeighbors_(from_tree_neighbors,
+  MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
       from_tree_distances,
+      1,
       1,
       &furthest_neighbor_pairs_,
       &furthest_distances_,
@@ -399,40 +400,6 @@ bool MaxVarianceInequalityOnFurthest::IsDiverging(double objective) {
   }
 }
 
-void MaxVarianceInequalityOnFurthest::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
-   ArrayList<double>  &from_tree_dist,
-    index_t num_of_neighbors,
-    ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
-    ArrayList<double> *distances,
-    index_t *num_of_pairs) {
-  
-  *num_of_pairs=0;
-  index_t num_of_points=from_tree_ind.size()/num_of_neighbors;
-  neighbor_pairs->Init();
-  distances->Init();
-  bool skip=false;
-  for(index_t i=0; i<num_of_points; i++) {
-    for(index_t k=0; k<num_of_neighbors; k++) {  
-      index_t n1=i;                         //neighbor 1
-      index_t n2=from_tree_ind[i*num_of_neighbors+k];  //neighbor 2
-      if (n1 > n2) {
-        for(index_t n=0; n<num_of_neighbors; n++) {
-          if (from_tree_ind[n2*num_of_neighbors+n] == n1) {
-            skip=true;
-            break;
-          }
-        }
-      }  
-      if (skip==false) {
-        *num_of_pairs+=1;
-        neighbor_pairs->AddBackItem(std::make_pair(n1, n2));
-        distances->AddBackItem(from_tree_dist[i*num_of_neighbors+k]);
-      }
-      skip=false;
-    }
-  }
-}
- 
 void MaxVarianceInequalityOnFurthest::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
@@ -446,7 +413,11 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
-  allknn_.Init(data, leaf_size_, knns_); 
+  if (knns_==0) {
+     allknn_.Init(data, leaf_size_, MAX_KNNS); 
+  } else {
+    allknn_.Init(data, leaf_size_, knns_); 
+  }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
   ArrayList<index_t> from_tree_neighbors;
@@ -455,15 +426,27 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
                            &from_tree_distances);
 
   NOTIFY("Neighborhoods computed...\n");
+  if (knns_==0) {
+    NOTIFY("Auto-tuning the knn...\n" );
+    MaxVarianceUtils::EstimateKnns(from_tree_neighbors,
+        from_tree_distances,
+        MAX_KNNS, 
+        data.n_cols(),
+        data.n_rows(),
+        &knns_); 
+    NOTIFY("Optimum knns is %i", knns_);
+    fx_format_result(module_, "optimum_knns", "%i",knns_);
+  }  
   NOTIFY("Consolidating neighbors...\n");
-  ConsolidateNeighbors_(from_tree_neighbors,
+  MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
       from_tree_distances,
+      MAX_KNNS,
       knns_,
       &nearest_neighbor_pairs_,
       &nearest_distances_,
       &num_of_nearest_pairs_);
-
-  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
+ 
+ fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   NOTIFY("Furtherst neighbor constraints ...\n");
@@ -477,8 +460,9 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
                            &from_tree_distances);
   NOTIFY("Furthest Neighbors computed...\n");
   NOTIFY("Consolidating neighbors...\n");
-  ConsolidateNeighbors_(from_tree_neighbors,
+  MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
       from_tree_distances,
+      1,
       1,
       &furthest_neighbor_pairs_,
       &furthest_distances_,
@@ -606,9 +590,14 @@ bool MaxFurthestNeighbors::IsDiverging(double objective) {
   }
 }
 
-void MaxFurthestNeighbors::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
+void MaxFurthestNeighbors::Project(Matrix *coordinates) {
+  OptUtils::RemoveMean(coordinates);
+}
+
+void MaxVarianceUtils::ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,
    ArrayList<double>  &from_tree_dist,
     index_t num_of_neighbors,
+    index_t chosen_neighbors,
     ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
     ArrayList<double> *distances,
     index_t *num_of_pairs) {
@@ -619,11 +608,11 @@ void MaxFurthestNeighbors::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_i
   distances->Init();
   bool skip=false;
   for(index_t i=0; i<num_of_points; i++) {
-    for(index_t k=0; k<num_of_neighbors; k++) {  
+    for(index_t k=0; k<chosen_neighbors; k++) {  
       index_t n1=i;                         //neighbor 1
       index_t n2=from_tree_ind[i*num_of_neighbors+k];  //neighbor 2
       if (n1 > n2) {
-        for(index_t n=0; n<num_of_neighbors; n++) {
+        for(index_t n=0; n<chosen_neighbors; n++) {
           if (from_tree_ind[n2*num_of_neighbors+n] == n1) {
             skip=true;
             break;
@@ -640,7 +629,34 @@ void MaxFurthestNeighbors::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_i
   }
 }
 
-void MaxFurthestNeighbors::Project(Matrix *coordinates) {
-  OptUtils::RemoveMean(coordinates);
+void MaxVarianceUtils::EstimateKnns(ArrayList<index_t> &neares_neighbors,
+                                    ArrayList<double> &nearest_distances,
+                                    index_t maximum_knns, 
+                                    index_t num_of_points,
+                                    index_t dimension,
+                                    index_t *optimum_knns) {
+  double max_loocv_score=0.0;
+  double loocv_score=0.0;
+  //double unit_sphere_volume=math::SphereVolume(1.0, dimension);
+  *optimum_knns=0;
+  for(index_t k=2; k<maximum_knns; k++) {
+    loocv_score=0.0;
+    double mean_band=0.0;
+    for(index_t i=0; i<num_of_points; i++){
+      double scale_factor=pow(nearest_distances[i*maximum_knns+k], dimension/2);
+      double probability=0;
+      for(index_t j=0; j<k; j++) {
+        probability+=exp(-nearest_distances[i*maximum_knns+j]
+            /(2*math::Pow<1,2>(nearest_distances[i*maximum_knns+k])))/scale_factor;
+      }
+      loocv_score+=log(probability);
+      mean_band+=nearest_distances[i*maximum_knns+k];
+    }
+    NOTIFY("Knn=%i mean_band=%lg score=%lg, dimension=%i", k, mean_band/num_of_points, loocv_score, dimension);
+    if (loocv_score > max_loocv_score) {
+      max_loocv_score=loocv_score;
+      *optimum_knns=k;
+    }
+  }
 }
 

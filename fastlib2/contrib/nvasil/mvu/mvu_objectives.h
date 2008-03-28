@@ -25,6 +25,7 @@
 
 class MaxVariance {
  public:
+  static const index_t MAX_KNNS=30;
   void Init(datanode *module, Matrix &data);
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
@@ -46,17 +47,11 @@ class MaxVariance {
   index_t num_of_nearest_pairs_;
   double sigma_;
   double sum_of_furthest_distances_;
-
-  void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
-      ArrayList<double>  &from_tree_dist,
-      index_t num_of_neighbors,
-      ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
-      ArrayList<double> *distances,
-      index_t *num_of_pairs);
 };
 
 class MaxVarianceInequalityOnFurthest {
  public:
+  static const index_t MAX_KNNS=30;
   void Init(datanode *module, Matrix &data);
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
@@ -83,17 +78,11 @@ class MaxVarianceInequalityOnFurthest {
   ArrayList<double> furthest_distances_;
   double sigma_;
   double sum_of_furthest_distances_;
-
-  void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
-      ArrayList<double>  &from_tree_dist,
-      index_t num_of_neighbors,
-      ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
-      ArrayList<double> *distances,
-      index_t *num_of_pairs);
 };
 
 class MaxFurthestNeighbors {
 public:
+  static const index_t MAX_KNNS=30;
   void Init(datanode *module, Matrix &data);
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
@@ -119,14 +108,24 @@ private:
   ArrayList<double> furthest_distances_;
   double sum_of_furthest_distances_;
   double sigma_;
+};
 
-  void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
+class MaxVarianceUtils {
+ public:
+  static void ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,
       ArrayList<double>  &from_tree_dist,
       index_t num_of_neighbors,
+      index_t chosen_neighbors,
       ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
       ArrayList<double> *distances,
       index_t *num_of_pairs);
-
+  static void EstimateKnns(ArrayList<index_t> &neares_neighbors,
+                                       ArrayList<double> &nearest_distances,
+                                       index_t maximum_knns, 
+                                       index_t num_of_points,
+                                       index_t dimension,
+                                       index_t *optimum_knns); 
 };
+
 #include "mvu_objectives_impl.h"
 #endif //MVU_OBJECTIVES_H_
