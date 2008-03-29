@@ -45,11 +45,19 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
         &knns_); 
     NOTIFY("Optimum knns is %i", knns_);
     fx_format_result(module_, "optimum_knns", "%i",knns_);
+    NOTIFY("Consolidating neighbors...\n");
+    MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
+        from_tree_distances,
+        MAX_KNNS,
+        knns_,
+        &nearest_neighbor_pairs_,
+        &nearest_distances_,
+        &num_of_nearest_pairs_);
   }  
   NOTIFY("Consolidating neighbors...\n");
   MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
       from_tree_distances,
-      30,
+      knns_,
       knns_,
       &nearest_neighbor_pairs_,
       &nearest_distances_,
@@ -199,11 +207,18 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
         &knns_); 
     NOTIFY("Optimum knns is %i", knns_);
     fx_format_result(module_, "optimum_knns", "%i",knns_);
+    MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
+        from_tree_distances,
+        MAX_KNNS,
+        knns_,
+        &nearest_neighbor_pairs_,
+        &nearest_distances_,
+        &num_of_nearest_pairs_);
   }  
   NOTIFY("Consolidating neighbors...\n");
   MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
       from_tree_distances,
-      MAX_KNNS,
+      knns_,
       knns_,
       &nearest_neighbor_pairs_,
       &nearest_distances_,
@@ -436,11 +451,18 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
         &knns_); 
     NOTIFY("Optimum knns is %i", knns_);
     fx_format_result(module_, "optimum_knns", "%i",knns_);
+    MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
+        from_tree_distances,
+        MAX_KNNS,
+        knns_,
+        &nearest_neighbor_pairs_,
+        &nearest_distances_,
+        &num_of_nearest_pairs_);
   }  
   NOTIFY("Consolidating neighbors...\n");
   MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
       from_tree_distances,
-      MAX_KNNS,
+      knns_,
       knns_,
       &nearest_neighbor_pairs_,
       &nearest_distances_,
