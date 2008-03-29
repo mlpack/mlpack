@@ -53,16 +53,16 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
         &nearest_neighbor_pairs_,
         &nearest_distances_,
         &num_of_nearest_pairs_);
-  }  
-  NOTIFY("Consolidating neighbors...\n");
-  MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
-      from_tree_distances,
-      knns_,
-      knns_,
-      &nearest_neighbor_pairs_,
-      &nearest_distances_,
-      &num_of_nearest_pairs_);
- 
+  } else { 
+    NOTIFY("Consolidating neighbors...\n");
+    MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
+        from_tree_distances,
+        knns_,
+        knns_,
+        &nearest_neighbor_pairs_,
+        &nearest_distances_,
+        &num_of_nearest_pairs_);
+  }
  
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
@@ -214,15 +214,16 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
         &nearest_neighbor_pairs_,
         &nearest_distances_,
         &num_of_nearest_pairs_);
-  }  
-  NOTIFY("Consolidating neighbors...\n");
-  MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
-      from_tree_distances,
-      knns_,
-      knns_,
-      &nearest_neighbor_pairs_,
-      &nearest_distances_,
-      &num_of_nearest_pairs_);
+  } else { 
+    NOTIFY("Consolidating neighbors...\n");
+    MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
+        from_tree_distances,
+        knns_,
+        knns_,
+        &nearest_neighbor_pairs_,
+        &nearest_distances_,
+        &num_of_nearest_pairs_);
+  }
   fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
@@ -458,15 +459,16 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
         &nearest_neighbor_pairs_,
         &nearest_distances_,
         &num_of_nearest_pairs_);
-  }  
-  NOTIFY("Consolidating neighbors...\n");
-  MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
-      from_tree_distances,
-      knns_,
-      knns_,
-      &nearest_neighbor_pairs_,
-      &nearest_distances_,
-      &num_of_nearest_pairs_);
+  } else { 
+    NOTIFY("Consolidating neighbors...\n");
+    MaxVarianceUtils::ConsolidateNeighbors(from_tree_neighbors,
+        from_tree_distances,
+        knns_,
+        knns_,
+        &nearest_neighbor_pairs_,
+        &nearest_distances_,
+        &num_of_nearest_pairs_);
+  }
  
  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
