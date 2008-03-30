@@ -1,0 +1,71 @@
+\documentclass{article}
+
+\title{BrainSign}
+
+\begin{document}
+
+\maketitle
+
+Submitted to:
+DARPA IPTO
+
+Prepared by:
+Georgia Institute of Technology
+
+
+\textbf{Technical Point of Contact:}
+
+
+
+\textbf{Administrative Point of Contact:}
+
+\textbf{Co-Principal Investigators:}
+Prof. Thad Starner, Georgia Institute of Technology
+Prof. Melody Moore Jackson, Georgia Institute of Technology
+
+
+\begin{enumerate}
+ \item DEMONSTRATION SCENARIOS
+   \textbf{Scenario 1: Can we recognize single signs in the brain?}
+
+   A person executes a sign while their brain activity is recorded by fMRI. The sequence of movements used to produce the sign resemble a temporal progression of activation in the motor cortex. Previously, fMRI data for common signs were used to estimate a statistical machine learning classifier for sign prediction. This classifier now estimates the sign to which the temporal progression corresponds.
+
+   \textbf{Scenario 2: Can we recognize sign phrases in the brain?}
+
+   A person executes a sign phrase consisting of 4 individual signs while their brain activity is recorded by fMRI. During the signing, the fMRI activation resembles a fading watercolor image with impulses at each sign. Time series activation models previously estimated from a large set of fMRI for various sign phrases are used to classify this sign phrase.
+
+   \item Statement of Work
+
+
+     \textbf{Task 1 Sign classification from motor cortex activation}
+     \textbf{Task 1.1 Single signs}
+     
+     \paragraph{\underline{Objectives:}}
+       Automatically classify single signs from fMRI data of motor cortex activation over time
+     \paragraph{\underline{Approach:}}
+     Develop a discriminative spatiotemporal model of motor cortex activity during signing. Train a n-class classifier using this representation of the data.
+     \paragraph{Milestones:}
+     \begin{enumerate}
+       \item Month #1: Set the experimental procedures and record fMRI for one subject
+       \item Month #5: Construct statistical machine learning models for the fMRI data and rigorously evaluate models via cross-validation
+       \item Month #11: Iterate twice with updated experimental procedures from analysis, and evaulate classification accuracy
+       \item Month #12: Formalize results and prepare for full proposal
+     \end{enumerate}
+
+     \textbf{Task 1.2 Single Phrases}
+
+     \paragraph{\underline{Objectives:}}
+       Automatically classify a single phrases from fMRI data of motor cortex activation over time
+     \paragraph{\underline{Approach:}}
+     Apply state-switching model of neural activation that reuses the single sign model for state-identification, introduces state transition effects related to sign coarticulation, and incorporates sign grammar for the state network's graphical structure. Design a classifier that outputs the most likely sign phrase, given the data.
+     \paragraph{Milestones:}
+     \begin{enumerate}
+       \item Month #1: Set the experimental procedures and record fMRI for one subject
+       \item Month #5: Construct statistical machine learning models for the fMRI data and rigorously evaluate models via cross-validation
+       \item Month #11: Iterate twice with updated experimental procedures from analysis, and evaulate classification accuracy
+       \item Month #12: Formalize results and prepare for full proposal
+     \end{enumerate}
+
+     
+
+\end{document}
