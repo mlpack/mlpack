@@ -50,7 +50,7 @@ mean_diff_scores = mean_target_scores - mean_nontarget_scores;
 
 
 [y,ic] = max(abs(mean_diff_scores));
-ic = 6;
+%ic = 6;
 the_sign = sign(mean_diff_scores(ic));
 
 first = [1 7];
@@ -85,7 +85,7 @@ for k = 1:2
     
     result = ...
 	[used_is_target(((15*12*j) + (12*0) + first(k)):((15*12*j) + (12*0) + last(k))); ...
-	 mean(a_rank); ...
+	 mean(a); ...
 	 std(a)];
     
     true_arg_max = find(result(1,:) == 1);

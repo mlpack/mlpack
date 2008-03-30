@@ -66,7 +66,10 @@ for i = 1:k
 end
 
 fprintf('\n');
-return;
+
+k_fold_cum_result = [];
+save k_fold_cum_result k_fold_cum_result;
+
 % use matlab's built-in bounded local optimizer
 [lambda_opt, alpha_opt, exitflag] = ...
     fminbnd(@(lambda) ...

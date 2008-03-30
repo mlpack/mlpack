@@ -36,11 +36,11 @@ filenames{end+1} = ...
     'p300_filtered_lambda66Eneg6_correct_results_120.mat';
 
 
-S = load('p300_filtered_lambda66Eneg6_correct_results_120.mat');
-t = S.t;
-responses = S.responses;
-mybasis = S.mybasis;
-basis_inner_products = S.basis_inner_products;
+CommonParams = load('p300_filtered_lambda66Eneg6_correct_results_120.mat');
+t = CommonParams.t;
+responses = CommonParams.responses;
+mybasis = CommonParams.mybasis;
+basis_inner_products = CommonParams.basis_inner_products;
 
 
 rest_of_data = responses(:,5221:end);
@@ -62,13 +62,10 @@ centered_rest_of_data_myfd = fd(centered_rest_of_data_coef, mybasis);
 
 for i = 1:length(filenames)
   fprintf('processing experiment %d\n', i);
-  %[lambda(i) ,diff_sum_H(i), pre_ICA_sum_H(i), post_ICA_sum_H(i)] = ...
-  [lambda(i), ...
-   train_ICA_sum_H(i), test_ICA_sum_H(i), diff_sum_H(i), ...
-   train_ICA_sum_H_std(i), test_ICA_sum_H_std(i), diff_sum_H_std(i)] ...
-      = get_ICA_improvement(filenames{i}, ...
-			    centered_rest_of_data_coef, ...
-			    basis_inner_products);
+  [lambda(i), Q(i)] = ...
+      get_ICA_improvement(filenames{i}, ...
+			  centered_rest_of_data_coef, ...
+			  basis_inner_products);
 end
 
-plot(lambda, diff_sum_H);
+%plot(lambda, diff_sum_H);

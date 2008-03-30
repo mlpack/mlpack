@@ -44,16 +44,16 @@ centered_data_curves = basis_curves * getcoef(centered_myfd);
 lambda = 0;
 myfdPar = fdPar(mybasis, 2, lambda);
 pca_results = pca_fd(centered_myfd, p, myfdPar);
-
 fprintf('calling funcica\n');
+tic
 [ic_curves, ic_coef, ic_scores, ...
  pc_coef, pc_curves, pc_scores, W] = ...
     funcica(t, centered_myfd, p, basis_curves, myfdPar, ...
 	    basis_inner_products);
 fprintf('funcica returned\n');
+toc
 
-
-
+%{
 for i = 1:size(ic_curves,2)
   scale_up_factor = ...
       1 / sqrt(l2_fnorm(t, ic_curves(:,i), ic_curves(:,i))); DON'T ...
@@ -61,8 +61,9 @@ for i = 1:size(ic_curves,2)
   ic_curves(:,i) = scale_up_factor * ic_curves(:,i);
   ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
 end
+%}
 
-save correct_gene_results;
+save correct_gene_results_2;
 
 %{
 % rescale the utilized parts of pc_coef such that

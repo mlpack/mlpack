@@ -270,6 +270,10 @@ public:
       n_pruned = 0;
     }
 
+    void Seed(const Param& param, const QPoint& q) {
+      ;
+    }
+
     void Postprocess(const Param& param,
 		     const QPoint& q, index_t q_index,
 		     const RNode& r_root) {
@@ -305,6 +309,10 @@ public:
       density.Init(0, 0);
       used_width = 0;
       n_pruned = 0;
+    }
+
+    void Seed(const Param& param, const QNode& q_node) {
+      ;
     }
 
     /** horizontal join operator */
