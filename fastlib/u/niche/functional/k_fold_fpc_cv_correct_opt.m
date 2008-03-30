@@ -36,9 +36,13 @@ for i = 1:k
     alpha = alpha + ...
 	    sum(sum((residual_coef(l,:)' * residual_coef(l,:)) .* ...
 		    basis_inner_products));
-    end
+  end
   
 end
+
+load k_fold_cum_result;
+k_fold_cum_result(end+1,:) = [lambda, alpha];
+save k_fold_cum_result k_fold_cum_result;
 
 fprintf('\n');
 

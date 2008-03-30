@@ -9,7 +9,7 @@ nong1_indices = find((phases ~= G1_phase) & (phases ~= unknown_phase));
 
 used_scores = ic_scores;
 
-used_scores = used_scores([4 6],:);
+used_scores = used_scores([2 4],:);
 
 svm_data = [used_scores(:,g1_indices) used_scores(:,nong1_indices)]';
 svm_labels = [1 * ones(length(g1_indices),1);
