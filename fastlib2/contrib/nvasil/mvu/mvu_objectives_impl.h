@@ -660,7 +660,7 @@ void MaxVarianceUtils::EstimateKnns(ArrayList<index_t> &neares_neighbors,
                                     index_t dimension,
                                     index_t *optimum_knns) {
   double max_loocv_score=0.0;
-  double loocv_score=0.0;
+  double loocv_score=-DBL_MAX;
   //double unit_sphere_volume=math::SphereVolume(1.0, dimension);
   *optimum_knns=0;
   for(index_t k=2; k<maximum_knns; k++) {
