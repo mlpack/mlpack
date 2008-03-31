@@ -1,14 +1,14 @@
 @author Hua Ouyang
 @file README
 
-Multiclass SVM Classifier
+Support Vector Machines (Multiclass classification; Regression; Density estimation)
 
 Files in this folder:
 README: this file
 # Source codes:
 build.py: build scripts
-svm_main.cc: contains main function of multilcass SVM classifier
-svm.h: contains multiclassification main routine
+svm_main.cc: contains main function of SVM
+svm.h: contains classification/regression/density estimation main routines
 smo.h: sequential minimal optimization
 # Unit test data:
 traindata2.csv: training data for a 2 classes toy problem. 10 samples in each class.
@@ -21,6 +21,7 @@ svm_model: SVM model file
 testlabels: classified labels
 
 Explanation of arguments:
+0. learner_name (required): the name of the support vecotr learner, values: "svc" for classification, "svr" for regression, "svde" for density estimation
 1. mode (required) : the mode of svm_main, values: "cv", "train", "train_test", "test".
 2. k_cv (optional): the number of folds for cross validation, only required under "cv" mode.
 3. cv_data (optional): file name for cross validation data, only required under "cv" mode.
@@ -32,19 +33,36 @@ Explanation of arguments:
 9. normalize (optional): where need to do data normalization before training/testing, values: "0" for no normalize, "1" for normalize.
 
 Examples:
+---------------------------------------------------------------------------------------------------
+a1.Support Vector Classification, Stratified cross validation mode
+svm_main --learner_name=svc --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svc --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=linear --c=10 --normalize=0
 
-1.Cross validation mode
-svm_main --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-svm_main --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=linear --c=10 --normalize=0
+a2.Support Vector Classification, Training mode (model will be saved as "svm_model")
+svm_main --learner_name=svc --mode=train --train_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svc --mode=train --train_data=traindata3.csv --kernel=linear --c=10 --normalize=0
 
-2.Training mode (model will be saved as "svm_model")
-svm_main --mode=train --train_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-svm_main --mode=train --train_data=traindata3.csv --kernel=linear --c=10 --normalize=0
+a3.Support Vector Classification, Training+testing mode
+svm_main --learner_name=svc --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svc --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
 
-3.Training+testing mode
-svm_main --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-svm_main --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
+a4.Support Vector Classification, Testing mode (the model file "svm_model" should exist)
+svm_main --learner_name=svc --mode=test --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svc --mode=test --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
 
-4.Testing mode (the model file "svm_model" should exist)
-svm_main --mode=test --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-svm_main --mode=test --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
+---------------------------------------------------------------------------------------------------
+b1.Support Vector Regression, Cross validation mode
+svm_main --learner_name=svc --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svc --mode=cv --k_cv=4 --cv_data=traindata3.csv --kernel=linear --c=10 --normalize=0
+
+b2.Support Vector Regression, Training mode (model will be saved as "svm_model")
+svm_main --learner_name=svc --mode=train --train_data=traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svc --mode=train --train_data=traindata3.csv --kernel=linear --c=10 --normalize=0
+
+b3.Support Vector Regression, Training+testing mode
+svm_main --learner_name=svc --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svc --mode=train_test --train_data=traindata3.csv --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
+
+b4.Support Vector Regression, Testing mode (the model file "svm_model" should exist)
+svm_main --learner_name=svc --mode=test --test_data=testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svc --mode=test --test_data=testdata3.csv --kernel=linear --c=10 --normalize=0
