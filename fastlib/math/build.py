@@ -1,7 +1,7 @@
 
 librule(
-    sources = ["discrete.cc", "geometry.cc"],
-    headers = ["discrete.h", "geometry.h", "kernel.h", "math.h"],
+    sources = ["discrete.cc", "geometry.cc", "statistics.cc"],
+    headers = ["discrete.h", "geometry.h", "statistics.h", "kernel.h", "math.h"],
     deplibs = ["base:base", "col:col"]
     )
 
