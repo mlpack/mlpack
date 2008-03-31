@@ -286,7 +286,7 @@ index_t Dataset::n_labels() const {
   return n_labels;
 }
 
-void Dataset::GetLabels(ArrayList<int> &labels_list,
+void Dataset::GetLabels(ArrayList<double> &labels_list,
                         ArrayList<index_t> &labels_index,
                         ArrayList<index_t> &labels_ct,
                         ArrayList<index_t> &labels_startpos) const {
@@ -304,7 +304,7 @@ void Dataset::GetLabels(ArrayList<int> &labels_list,
   labels_temp.Init(n_points);
   labels_temp[0] = 0;
 
-  *(labels_list.AddBack()) = (int)matrix_.get(label_row_idx,0);  // labels need to be integers
+  *(labels_list.AddBack()) = matrix_.get(label_row_idx,0);  // labels need to be integers
   *(labels_ct.AddBack()) = 1;
   n_labels++;
 
