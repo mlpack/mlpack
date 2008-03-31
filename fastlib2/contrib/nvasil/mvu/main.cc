@@ -29,11 +29,23 @@ int main(int argc, char *argv[]){
   if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
     FATAL("Didn't manage to load %s", data_file.c_str());
   }
+  NOTIFY("Removing the mean., centering data...");
+  OptUtils::RemoveMean(&data_mat);
+  
   datanode *optfun_node;
   datanode *l_bfgs_node;
   l_bfgs_node=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs");
   optfun_node=fx_submodule(NULL, "opts/optfun", "optfun");
- 
+  
+  bool pca_preprocess=fx_param_bool(NULL, "opts/pca", false);
+  Matrix *initial_data;
+  if (pca_preprocess==true) {
+    NOTIFY("Preprocessing with pca");
+    initial_data = new Matrix();
+    index_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
+    OptUtils::SVDTransform(data_mat, initial_data, new_dimension);
+  }
+  
   //we need to insert the number of points
   char buffer[128];
   sprintf(buffer, "%i", data_mat.n_cols());
@@ -46,6 +58,9 @@ int main(int argc, char *argv[]){
     opt_function.Init(optfun_node, data_mat);
     LBfgs<MaxVariance> engine;
     engine.Init(&opt_function, l_bfgs_node);
+    if (pca_preprocess==true) {
+      engine.set_coordinates(*initial_data);
+    }
     engine.ComputeLocalOptimumBFGS();
     Matrix result;
     engine.GetResults(&result);
@@ -60,6 +75,9 @@ int main(int argc, char *argv[]){
     opt_function.Init(optfun_node, data_mat);
     LBfgs<MaxVarianceInequalityOnFurthest> engine;
     engine.Init(&opt_function, l_bfgs_node);
+    if (pca_preprocess==true) {
+      engine.set_coordinates(*initial_data);
+    }
     engine.ComputeLocalOptimumBFGS();
     Matrix result;
     engine.GetResults(&result);
@@ -72,8 +90,12 @@ int main(int argc, char *argv[]){
   if (optimized_function == "mvfu"){
     MaxFurthestNeighbors opt_function;
     opt_function.Init(optfun_node, data_mat);
+    opt_function.set_lagrange_mult(0.0);
     LBfgs<MaxFurthestNeighbors> engine;
     engine.Init(&opt_function, l_bfgs_node);
+    if (pca_preprocess==true) {
+      engine.set_coordinates(*initial_data);
+    }
     engine.ComputeLocalOptimumBFGS();
     Matrix result;
     engine.GetResults(&result);
@@ -86,6 +108,9 @@ int main(int argc, char *argv[]){
   if (done==false) {
     FATAL("The method you provided %s is not supported", 
         optimized_function.c_str());
+  }
+  if (pca_preprocess==true) {
+    delete initial_data;
   }
   fx_done();
 }

@@ -91,6 +91,7 @@ public:
   void UpdateLagrangeMult(Matrix &coordinates);
   void Project(Matrix *coordinates);
   void set_sigma(double sigma); 
+  void set_lagrange_mult(double val);
   bool IsDiverging(double objective); 
  
 private:

@@ -604,6 +604,9 @@ void MaxFurthestNeighbors::set_sigma(double sigma) {
   sigma_=sigma;
 }
 
+void MaxFurthestNeighbors::set_lagrange_mult(double val) {
+  eq_lagrange_mult_.SetAll(val);
+}
 bool MaxFurthestNeighbors::IsDiverging(double objective) {
   if (objective < sum_of_furthest_distances_) {
     NOTIFY("objective(%lg) < sum_of_furthest_distances (%lg)", objective,
