@@ -19,6 +19,7 @@
  */
 
 #include "svm.h"
+#include "math/statistics.h"
 
 /**
 * Data Normalization
@@ -155,7 +156,7 @@ int LoadData(Dataset* dataset, String datafilename){
     fprintf(stderr, "Normalizing\n");
     DoSvmNormalize(dataset);
   } else {
-    fprintf(stderr, "Skipping normalize\n");
+    fprintf(stderr, "Skipping normalization\n");
   }
   return 1;
 }
@@ -231,7 +232,7 @@ int main(int argc, char *argv[]) {
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.InitTrain(trainset, trainset.n_labels(), svm_module);
+      svm.InitTrain(learner_typeid, trainset, trainset.n_labels(), svm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
 	fprintf(stderr, "SVM Predicting... \n");
@@ -244,7 +245,7 @@ int main(int argc, char *argv[]) {
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.InitTrain(trainset, trainset.n_labels(), svm_module);
+      svm.InitTrain(learner_typeid, trainset, trainset.n_labels(), svm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
 	fprintf(stderr, "SVM Predicting... \n");
@@ -270,12 +271,12 @@ int main(int argc, char *argv[]) {
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
+      svm.Init(learner_typeid, testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
       svm.LoadModelBatchPredict(&testset, "svm_model", "testlabels"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
+      svm.Init(learner_typeid, testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
       svm.LoadModelBatchPredict(&testset, "svm_model", "testlabels"); // TODO:param_req
     }
   }

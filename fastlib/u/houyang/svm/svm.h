@@ -87,6 +87,14 @@ class SVMRBFKernel {
 template<typename TKernel>
 class SVM {
  private:
+  /** 
+   * Type id of the learner: 
+   *  0:SVM Classification (svc);
+   *  1:SVM Regression (svr);
+   *  2:SVM density estimation (svde);
+   * Developers may add more learner types if necessary
+   */
+  int learner_typeid_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
   struct SVM_MODELS {
@@ -96,8 +104,10 @@ class SVM {
     ArrayList<double> bi_coef_;
   };
   ArrayList<SVM_MODELS> models_;
-  /* list of labels, need to be integers. e.g. [0,1,2] for a 3-class dataset */
-  ArrayList<int> train_labels_list_;
+
+  /* list of labels, double type, but may be converted to integers.
+     e.g. [0.0,1.0,2.0] for a 3-class dataset */
+  ArrayList<double> train_labels_list_;
   
   /* total set of support vectors and their coefficients */
   Matrix sv_;
@@ -131,11 +141,11 @@ class SVM {
  public:
   typedef TKernel Kernel;
 
-  void Init(const Dataset& dataset, int n_classes, datanode *module);
-  void InitTrain(const Dataset& dataset, int n_classes, datanode *module);
+  void Init(int learner_typeid, const Dataset& dataset, int n_classes, datanode *module);
+  void InitTrain(int learner_typeid, const Dataset& dataset, int n_classes, datanode *module);
   void SaveModel(String modelfilename);
   void LoadModel(Dataset* testset, String modelfilename);
-  int  Predict(const Vector& vector);
+  double Predict(const Vector& vector);
   void BatchPredict(Dataset* testset, String testlabelfilename);
   void LoadModelBatchPredict(Dataset* testset, String modelfilename, String testlabelfilename);
 };
@@ -148,7 +158,8 @@ class SVM {
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *module){
+void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classes, datanode *module){
+  learner_typeid_ = learner_typeid;
   models_.Init();
   sv_index_.Init();
   total_num_sv_ = 0;
@@ -161,11 +172,13 @@ void SVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *module)
   /* budget parameter, contorls # of support vectors; default: # of data samples (use all) */
   param_.b_ = fx_param_int(module, "b", dataset.n_points());  // TODO: param_req
 
-  num_classes_ = n_classes;
-  num_models_ = num_classes_ * (num_classes_-1) / 2;
   num_features_ = 0;
   sv_list_startpos_.Init(n_classes);
   sv_list_ct_.Init(n_classes);
+
+  /* for SVM classificatioin*/
+  num_classes_ = n_classes;
+  num_models_ = num_classes_ * (num_classes_-1) / 2;
 }
 
 /**
@@ -177,12 +190,17 @@ void SVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *module)
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *module) {
-  Init(dataset, n_classes, module);
-  /* # of features == # of rows in data matrix, since last row in dataset is for labels */
+void SVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, int n_classes, datanode *module) {
+  Init(learner_typeid, dataset, n_classes, module);
+  /* # of features == # of rows in data matrix, since last row in dataset is for discrete labels or continuous values */
   num_features_ = dataset.n_features()-1;
 
-  /* Group labels, split the training dataset for training bi-class SVM classifiers */
+  /* bool indicators FOR THE TRAINING SET: is/isn't a support vector */
+  /* Note: it has the same index as the training !!! */
+  ArrayList<bool> trainset_sv_indicator;
+  trainset_sv_indicator.Init(dataset.n_points());
+  for (index_t i=0; i<dataset.n_points(); i++)
+    trainset_sv_indicator[i] = false;
   
   /* array of label indices, after grouping. e.g. [c1[0,5,6,7,10,13,17],c2[1,2,4,8,9],c3[...]]*/
   ArrayList<index_t> train_labels_index;
@@ -190,12 +208,7 @@ void SVM<TKernel>::InitTrain(const Dataset& dataset, int n_classes, datanode *mo
   ArrayList<index_t> train_labels_ct;
   /* start positions of each classes in the training label list. e.g. [0,7,12] */
   ArrayList<index_t> train_labels_startpos;
-  /* bool indicators FOR THE TRAINING SET: is/isn't a support vector */
-  /* Note: it has the same index as the training !!! */
-  ArrayList<bool> trainset_sv_indicator;
-  trainset_sv_indicator.Init(dataset.n_points());
-  for (index_t i=0; i<dataset.n_points(); i++)
-    trainset_sv_indicator[i] = false;
+  /* Group labels, split the training dataset for training bi-class SVM classifiers */
   dataset.GetLabels(train_labels_list_, train_labels_index, train_labels_ct, train_labels_startpos);
 
   /* Train n_classes*(n_classes-1)/2 binary class(labels:-1, 1) models using SMO */
@@ -329,7 +342,7 @@ void SVM<TKernel>::SaveModel(String modelfilename) {
   fprintf(fp, "total_num_sv %d\n", total_num_sv_);
   fprintf(fp, "labels ");
   for (i = 0; i < num_classes_; i++) 
-    fprintf(fp, "%d ", train_labels_list_[i]);
+    fprintf(fp, "%d ", int(train_labels_list_[i]));
   fprintf(fp, "\n");
   /* save models */
   fprintf(fp, "thresholds ");
@@ -469,10 +482,10 @@ void SVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
 *
 * @param: testing vector
 *
-* @return: a label (integer)
+* @return: a label (double-type-integer, e.g. 1.0, 2.0, 3.0)
 */
 template<typename TKernel>
-int SVM<TKernel>::Predict(const Vector& datum) {
+double SVM<TKernel>::Predict(const Vector& datum) {
   index_t i, j, k;
   ArrayList<double> keval;
   keval.Init(total_num_sv_);
@@ -547,7 +560,7 @@ void SVM<TKernel>::BatchPredict(Dataset* testset, String testlablefilename) {
   for (index_t i = 0; i < testset->n_points(); i++) {
     Vector testvec;
     testset->matrix().MakeColumnSubvector(i, 0, num_features_, &testvec);
-    int testlabel = Predict(testvec);
+    int testlabel = int(Predict(testvec));
     if (testlabel != testset->matrix().get(num_features_, i))
       err_ct++;
     /* save classified labels to file*/
