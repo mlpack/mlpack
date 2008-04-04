@@ -106,18 +106,10 @@ class RVM {
   };
   ArrayList<RVM_MODEL> model_;
 
-  /* list of labels, double type, but may be converted to integers.
-     e.g. [0.0,1.0,2.0] for a 3-class dataset */
-  ArrayList<double> train_labels_list_;
-
   /* total number of relevance vectors */
   index_t total_num_rv_;
   /* support vector list to store the indices (in the training set) of relevance vectors */
   ArrayList<index_t> rv_index_;
-  /* start positions of each class of relevance vectors, in the relevance vector list */
-  ArrayList<index_t> rv_list_startpos_;
-  /* counted number of relevance vectors for each class */
-  ArrayList<index_t> rv_list_ct_;
 
   /* RVM parameters, same for every binary model */
   struct RVM_PARAMETERS {
@@ -130,11 +122,22 @@ class RVM {
   };
   RVM_PARAMETERS param_;
 
-  Vector Alpha_V_;
+  Vector alpha_v_;
   
   /* number of data points in the training set */
   int num_data_;
   int num_features_;
+
+  // FOR RVM CLASSIFICATION ONLY
+  /* list of labels, double type, but may be converted to integers.
+     e.g. [0.0,1.0,2.0] for a 3-class dataset */
+  ArrayList<double> train_labels_list_;
+  /* array of label indices, after grouping. e.g. [c1[0,5,6,7,10,13,17],c2[1,2,4,8,9],c3[...]]*/
+  ArrayList<index_t> train_labels_index_;
+  /* counted number of label for each class. e.g. [7,5,8]*/
+  ArrayList<index_t> train_labels_ct_;
+  /* start positions of each classes in the training label list. e.g. [0,7,12] */
+  ArrayList<index_t> train_labels_startpos_;
 
  public:
   typedef TKernel Kernel;
@@ -175,11 +178,15 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classe
   param_.initalpha_ =  1/Sqr(num_data_);
   
   // initilialize beta_ accroding to different learner types
-  if (learner_typeid_ == 0 ) {
+  if (learner_typeid_ == 0 ) { // RVM Classification
     param_.beta_ = 0;
   }
-  else if (learner_typeid_ == 1) {
-    param_.beta_ = 1 / pow(std_div/10, 2);
+  else if (learner_typeid_ == 1) { // RVM Regression
+    Vector values; // the vector that stores the values for data points
+    values.Init(num_data_);
+    for(index_t i=0; i<num_data_; i++)
+      values[i] = dataset.get(dataset.n_features()-1, i);
+    param_.beta_ = 1 / pow(Std(values)/10, 2);
   }
   else {
     fprintf(stderr, "Unknown learner name of RVM! Program stops!\n");
@@ -190,8 +197,14 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classe
   param_.max_iter_ = fx_param_int_req(NULL, "max_iter");
   
   // init the Alpha Vector form the inital alpha value
-  Alpha_V_.init(num_data_);
-  Alpha_V_.SetAll(param_.initalpha_);
+  alpha_v_.init(num_data_ + 1); // +1:consider bias
+  alpha_v_.SetAll(param_.initalpha_);
+
+  // get labels information, for RVM classification only
+  if (learner_typeid == 0) {
+    /* Group labels, split the training dataset for training bi-class SVM classifiers */
+    dataset.GetLabels(train_labels_list_, train_labels_index_, train_labels_ct_, train_labels_startpos_);
+  }
 }
 
 /**
@@ -203,6 +216,7 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classe
 */
 template<typename TKernel>
 void RVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, int n_classes, datanode *module) {
+
   // Initialize parameters
   Init(learner_typeid, dataset, n_classes, module);
 
@@ -214,16 +228,19 @@ void RVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, int n_c
     trainset_rv_indicator[i] = false;
 
   SBL_EST<Kernel> sbl_est;
-  // Initialize parameters Alpha_V, beta_, max_itr_ for sbl_est
-  sbl_est.Init(param_.beta_, param_.max_iter_);
+  // Initialize parameters alpha_v, beta_, max_itr_ for sbl_est
+  //sbl_est.Init(param_.beta_, param_.max_iter_);
+  
   // Initialize kernels for sbl_est
   sbl_est.kernel().Init(fx_submodule(module, "kernel", "kernel"));
 
   /* Training for Relevance Vector Classification and Regression */
-  sbl_est.Train(learner_typeid_, &dataset, &Alpha_V_, &param_.beta_, param_.max_iter_ );
-  /* Get RVM results */
-  sbl_est.GetRVM(dataset_bi_index, model_.weights_, trainset_rv_indicator);
+  sbl_est.Train(learner_typeid_, &dataset, &alpha_v_, &param_.beta_, param_.max_iter_, &rv_index_, &model_.weights_);
+  total_num_rv_ = rv_index_.size();
 
+  for (index_t i=0; i<total_num_rv_; i++) {
+    trainset_rv_indicator[rv_index_[i]] = true;
+  }
   /* Save models to file "rvm_model" */
   SaveModel("rvm_model"); // TODO: param_req, and for CV mode
   // TODO: calculate training error
@@ -236,7 +253,7 @@ void RVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, int n_c
 */
 // TODO: use XML
 template<typename TKernel>
-void SVM<TKernel>::SaveModel(String modelfilename) {
+void RVM<TKernel>::SaveModel(String modelfilename) {
   FILE *fp = fopen(modelfilename, "w");
   if (fp == NULL) {
     fprintf(stderr, "Cannot save trained model to file!");
@@ -292,7 +309,7 @@ void SVM<TKernel>::SaveModel(String modelfilename) {
 */
 // TODO: use XML
 template<typename TKernel>
-void SVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
+void RVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
   /* Init */
   train_labels_list_.Init(num_classes_);
   num_features_ = testset->n_features() - 1;
@@ -389,64 +406,41 @@ void SVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
 }
 
 /**
-* Multiclass SVM classification for one testing vector
+* RVM Prediction for one testing vector
 *
 * @param: testing vector
 *
-* @return: a label (double-type-integer, e.g. 1.0, 2.0, 3.0)
+* @return: real value for regression; label (double-type-integer, e.g. 1.0, 2.0, 3.0) for classification
 */
 template<typename TKernel>
-double SVM<TKernel>::Predict(const Vector& datum) {
-  index_t i, j, k;
+double RVM<TKernel>::Predict(const Vector& datum) {
+  index_t i;
+
   ArrayList<double> keval;
-  keval.Init(total_num_sv_);
-  for (i = 0; i < total_num_sv_; i++) {
-    Vector support_vector_i;
-    sv_.MakeColumnVector(i, &support_vector_i);
-    keval[i] = param_.kernel_.Eval(datum, support_vector_i);
-  }
-  ArrayList<double> values;
-  values.Init(num_models_);
-  index_t ct = 0;
-  for (i = 0; i < num_classes_; i++) {
-    for (j = i+1; j < num_classes_; j++) {
-      double sum = 0;
-      for(k = 0; k < sv_list_ct_[i]; k++) {
-	sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
-      }
-      for(k = 0; k < sv_list_ct_[j]; k++) {
-	sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
-      }
-      sum -= models_[ct].thresh_;
-      values[ct] = sum;
-      ct++;
-    }
+  keval.Init(total_num_rv_);
+  Vector source, relevance_vector_i;
+  for (i = 0; i < total_num_rv_; i++) {
+    dataset.matrix().MakeColumnSubvector(rv_index_[i], 0, num_features_, &source); 
+    relevance_vector_i.CopyValues(source);
+    keval[i] = param_.kernel_.Eval(datum, relevance_vector_i);
   }
 
-  ArrayList<index_t> vote;
-  vote.Init(num_classes_);
-  for (i = 0; i < num_classes_; i++) {
-    vote[i] = 0;
+  double sum = 0.0;
+  for (i = 0; i < total_num_rv_; i++) {
+    sum += weights_[i] * keval[i]; // Dot product
   }
-  ct = 0;
-  for (i = 0; i < num_classes_; i++) {
-    for (j = i+1; j < num_classes_; j++) {
-      if(values[ct] > 0.0) { // label 1 in bi-classifiers (for i=...)
-	++vote[i];
-      }
-      else {  // label -1 in bi-classifiers (for j=...)
-	++vote[j];
-      }
-      ct++;
-    }
+
+  // for multiclass classification, need to obtain predicted class label
+  if (learner_typeid_ == 0) {
+    // assign the class lable with the largest predicted value
+    Vector v
   }
-  index_t vote_max_idx = 0;
-  for (i = 1; i < num_classes_; i++) {
-    if (vote[i] >= vote[vote_max_idx]) {
-      vote_max_idx = i;
-    }
+  // for regression
+  else if (learner_typeid_ == 1) {
+    value_predict = sum;
   }
-  return train_labels_list_[vote_max_idx];
+
+  return value_predict;
 }
 
 /**
@@ -460,7 +454,7 @@ double SVM<TKernel>::Predict(const Vector& datum) {
 * @param: file name of the testing data
 */
 template<typename TKernel>
-void SVM<TKernel>::BatchPredict(Dataset* testset, String testlablefilename) {
+void RVM<TKernel>::BatchPredict(Dataset* testset, String testlablefilename) {
   FILE *fp = fopen(testlablefilename, "w");
   if (fp == NULL) {
     fprintf(stderr, "Cannot save test labels to file!");
@@ -492,7 +486,7 @@ void SVM<TKernel>::BatchPredict(Dataset* testset, String testlablefilename) {
 * @param: name of the file to store classified labels
 */
 template<typename TKernel>
-void SVM<TKernel>::LoadModelBatchPredict(Dataset* testset, String modelfilename, String testlabelfilename) {
+void RVM<TKernel>::LoadModelBatchPredict(Dataset* testset, String modelfilename, String testlabelfilename) {
   LoadModel(testset, modelfilename);
   BatchPredict(testset, testlabelfilename);
 }
