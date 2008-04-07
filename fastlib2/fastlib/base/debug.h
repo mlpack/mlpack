@@ -104,6 +104,7 @@ extern int print_warnings;
 #define DEBUG_WARNING_MSG_IF(cond, msg_params...) \
     DEBUG_ONLY(unlikely((cond) && print_warnings) \
         ? NONFATAL(msg_params) : NOP)
+#define DEBUG_WARN_MSG_IF DEBUG_WARNING_MSG_IF
 
 /**
  * Conditionally emits a default warning message, which may abort of
@@ -119,6 +120,7 @@ extern int print_warnings;
  */
 #define DEBUG_WARNING_IF(cond) \
     DEBUG_WARNING_MSG_IF(cond, "warning: " #cond)
+#define DEBUG_WARN_IF DEBUG_WARNING_IF
 
 /**
  * Conditionally emits an error message, aborting process.
@@ -132,6 +134,7 @@ extern int print_warnings;
 #define DEBUG_ERROR_MSG_IF(cond, msg_params...) \
     DEBUG_ONLY(unlikely(cond) \
         ? FATAL(msg_params) : NOP)
+#define DEBUG_ERR_MSG_IF DEBUG_ERROR_MSG_IF
 
 /**
  * Conditionally emits a default error message, aborting process.
@@ -143,6 +146,7 @@ extern int print_warnings;
  */
 #define DEBUG_ERROR_IF(cond) \
     DEBUG_ERROR_MSG_IF(cond, "error: " #cond)
+#define DEBUG_ERR_IF DEBUG_ERROR_IF
 
 /**
  * Aborts process if some condition fails, printing a given message.
