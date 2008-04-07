@@ -197,9 +197,10 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
   kernel_matrix_.SetDiagonal(1.0);
   NONFATAL("Computing eigen values...\n");
   SparseMatrix kernel_matrix1;
+  kernel_matrix_.ToFile("i_w.txt");
   kernel_matrix_.EndLoading();
   Sparsem::MultiplyT(kernel_matrix_, &kernel_matrix1);
-  kernel_matrix1.ToFile("lle_mat.txt");
+  kernel_matrix1.ToFile("i_w_i_w.txt");
   kernel_matrix1.EndLoading();
   kernel_matrix1.Eig(num_of_eigenvalues, 
                      "SM", 

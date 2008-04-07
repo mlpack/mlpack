@@ -41,7 +41,7 @@ class KernelPCATest {
    NOTIFY("Estimated bandwidth %lg ...\n", bandwidth);
    kernel_.set(bandwidth); 
    engine_->LoadAffinityMatrix();
-   engine_->ComputeGeneralKernelPCA(kernel_, 5, 
+   engine_->ComputeGeneralKernelPCA(kernel_, 15, 
                                     &eigen_vectors,
                                     &eigen_values);
 
@@ -89,9 +89,9 @@ class KernelPCATest {
     NOTIFY("Test ComputeSpectralRegression passed...\n"); 
   }
   void TestAll() {
-     TestGeneralKernelPCA();
-     //TestLLE();
-     TestSpectralRegression();
+     //TestGeneralKernelPCA();
+     TestLLE();
+     //TestSpectralRegression();
   }
  private:
   KernelPCA *engine_;

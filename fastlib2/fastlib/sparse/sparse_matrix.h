@@ -212,6 +212,11 @@ class SparseMatrix {
    * Set Values
    */
   void  set(index_t r, index_t c, double v);
+  /**
+   * Returns the transpose of the matrix. 
+   * if it is symmetric it just returns a copy of the same matrix
+   */
+  void Transpose(SparseMatrix *transpose);
   /** 
    * scales the matrix with a scalar
    */

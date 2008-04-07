@@ -37,14 +37,25 @@ int main(int argc, char *argv[]){
   l_bfgs_node=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs");
   optfun_node=fx_submodule(NULL, "opts/optfun", "optfun");
   
-  bool pca_preprocess=fx_param_bool(NULL, "opts/pca", false);
+  bool pca_preprocess=fx_param_bool(NULL, "opts/pca_pre", false);
+  index_t pca_dimension=fx_param_int(NULL, "opts/pca_dim", 5);
+  bool pca_init=fx_param_bool(NULL, "opts/pca_init", false);
   Matrix *initial_data;
   if (pca_preprocess==true) {
     NOTIFY("Preprocessing with pca");
     initial_data = new Matrix();
+    Matrix temp;
+    OptUtils::SVDTransform(data_mat, &temp, pca_dimension);
+    data_mat.Destruct();
+    data_mat.Own(&temp);
+  }
+  if (pca_init==true) {
+    NOTIFY("Preprocessing with pca");
+    initial_data = new Matrix();
     index_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
     OptUtils::SVDTransform(data_mat, initial_data, new_dimension);
-  }
+ }
+ 
   
   //we need to insert the number of points
   char buffer[128];
@@ -58,7 +69,7 @@ int main(int argc, char *argv[]){
     opt_function.Init(optfun_node, data_mat);
     LBfgs<MaxVariance> engine;
     engine.Init(&opt_function, l_bfgs_node);
-    if (pca_preprocess==true) {
+    if (pca_init==true) {
       engine.set_coordinates(*initial_data);
     }
     engine.ComputeLocalOptimumBFGS();
@@ -75,7 +86,7 @@ int main(int argc, char *argv[]){
     opt_function.Init(optfun_node, data_mat);
     LBfgs<MaxVarianceInequalityOnFurthest> engine;
     engine.Init(&opt_function, l_bfgs_node);
-    if (pca_preprocess==true) {
+    if (pca_init==true) {
       engine.set_coordinates(*initial_data);
     }
     engine.ComputeLocalOptimumBFGS();
@@ -90,10 +101,10 @@ int main(int argc, char *argv[]){
   if (optimized_function == "mvfu"){
     MaxFurthestNeighbors opt_function;
     opt_function.Init(optfun_node, data_mat);
-    opt_function.set_lagrange_mult(0.0);
+    //opt_function.set_lagrange_mult(0.0);
     LBfgs<MaxFurthestNeighbors> engine;
     engine.Init(&opt_function, l_bfgs_node);
-    if (pca_preprocess==true) {
+    if (pca_init==true) {
       engine.set_coordinates(*initial_data);
     }
     engine.ComputeLocalOptimumBFGS();
