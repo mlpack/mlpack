@@ -447,7 +447,7 @@ void SparseMatrix::Eig(SparseMatrix &pencil_matrix,
           "it will fail\n");
   }
   
-  index_t block_size=2*num_of_eigvalues;
+  index_t block_size=std::min(2*num_of_eigvalues, 10);
   Teuchos::RCP<Epetra_MultiVector> ivec =
       Teuchos::rcp(new Epetra_MultiVector(*map_, block_size));
   // Fill it with random numbers

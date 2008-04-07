@@ -88,11 +88,16 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
       s_bfgs_[0].ptr(), y_bfgs_[0].ptr());
   double old_feasibility_error = feasibility_error;
   for(index_t i=0; i<mem_bfgs_; i++) {
-   // ComputeBFGS_(&step_, gradient_, i);
-   // if (step_==0) {
+    ComputeBFGS_(&step_, gradient_, i);
+    if (step_==0) {
       NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
       ComputeWolfeStep_(&step_, gradient_);
-   // }
+    }
+//    if (success=SUCCESS_FAIL) {
+//      NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
+//      ComputeWolfeStep_(&step_, gradient_);
+//      UpdateBFGS_();
+//    }
     optimized_function_->ComputeGradient(coordinates_, &gradient_);
     UpdateBFGS_();
     previous_gradient_.CopyValues(gradient_);
@@ -163,6 +168,10 @@ void LBfgs<OptimizedFunction>::GetResults(Matrix *result) {
   result->Copy(coordinates_);
 }
 
+template<typename OptimizedFunction>
+void  LBfgs<OptimizedFunction>::set_coordinates(Matrix &coordinates) {
+  coordinates_.CopyValues(coordinates);
+}
 template<typename OptimizedFunction>
 Matrix *LBfgs<OptimizedFunction>::coordinates() {
   return &coordinates_;
@@ -336,7 +345,7 @@ success_t LBfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
                                   temp_y_bfgs.ptr());
   double y_norm=la::Dot(temp_y_bfgs.n_elements(), 
       temp_y_bfgs.ptr(), temp_y_bfgs.ptr());
-  if (temp_ro<1e-10*y_norm) {
+  if (temp_ro<1e-70*y_norm) {
     fx_timer_stop(module_, "update_bfgs");
     NONFATAL("Rejecting s, y they don't satisfy curvature condition");
     return SUCCESS_FAIL;

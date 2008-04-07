@@ -33,6 +33,7 @@ class OptUtils {
       la::AddTo(dimension, mean.ptr(), data->GetColumnPtr(i));
     }
   }
+  
   static void NonNegativeProjection(Matrix *data) {
     double *ptr=data->ptr();
     for(index_t i=0; i<(index_t)data->n_elements(); i++) {
@@ -41,6 +42,49 @@ class OptUtils {
       }
     }
   }
+ 
+  static success_t SVDTransform(Matrix &input_mat, Matrix *output_mat, 
+      index_t components_to_keep) {
+    Matrix temp;
+    temp.Copy(input_mat);
+    RemoveMean(&temp);
+    Vector s;
+    Matrix U, VT;
+    success_t success=la::SVDInit(temp, &s, &U, &VT);
+    if (success==SUCCESS_PASS) {
+      NOTIFY("PCA successful !! Printing requested %i eigenvalues...",
+          components_to_keep);
+      for(index_t i=0; i<components_to_keep; i++) {
+        printf("%lg ", s[i]);
+      }
+      printf("\n");
+    }
+    output_mat->Init(components_to_keep, input_mat.n_cols());
+    Matrix temp_reconstructed;
+    Matrix temp_S;
+    temp_S.Init(input_mat.n_rows(), input_mat.n_rows());
+    temp_S.SetAll(0.0);
+    for(index_t i=0; i<components_to_keep; i++) {
+      temp_S.set(i, i, s[i]);
+    }
+    Matrix temp_U;
+    la::MulInit(U, temp_S, &temp_U);
+    la::MulInit(temp_U, VT, &temp_reconstructed);
+    for(index_t i=0; i<output_mat->n_cols(); i++) {
+      memcpy(output_mat->GetColumnPtr(i), 
+          temp_reconstructed.GetColumnPtr(i), components_to_keep*sizeof(double));  
+    }
+    double error=0;
+    for(index_t i=0; i<temp_reconstructed.n_rows(); i++) {
+      for(index_t j=0; j<temp_reconstructed.n_cols(); j++) {
+        error+=math::Sqr(temp_reconstructed.get(i,j)-temp.get(i,j));
+         error+=math::Sqr(input_mat.get(i,j)-temp.get(i,j));
+      }
+    }
+    NOTIFY("Reconstruction error : %lg", error);
+    return success;
+  }
+  
   static void SparseProjection(Matrix *data, double sparse_factor) {
     DEBUG_ASSERT(sparse_factor<=1);
     DEBUG_ASSERT(sparse_factor>=0);
