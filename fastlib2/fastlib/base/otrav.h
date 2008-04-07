@@ -206,7 +206,7 @@
       index_t ot__len = len; \
       if (ot__visitor->Pre##func(x, ot__len, ## args)) { \
 	for (index_t iter_var = 0; iter_var < ot__len; ++iter_var) { \
-	  ot__visitor->Elem(x); \
+	  ot__visitor->ElemOf(x); \
 	  loop_code; \
 	} \
         ot__visitor->Name(#x, x); \
