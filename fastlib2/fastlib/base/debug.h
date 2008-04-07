@@ -46,7 +46,7 @@
 extern double verbosity_level;
 /** Whether to process VERBOSE_GOT_HERE. */
 extern int print_got_heres;
-/** Whether to process DEBUG_WARN_MSG_IF and DEBUG_WARN_IF. */
+/** Whether to process DEBUG_WARNING_MSG_IF and DEBUG_WARNING_IF. */
 extern int print_warnings;
 
 /**
@@ -101,7 +101,7 @@ extern int print_warnings;
  * @param cond the condition when the warning should be raised
  * @param msg_params format string and variables, as in printf
  */
-#define DEBUG_WARN_MSG_IF(cond, msg_params...) \
+#define DEBUG_WARNING_MSG_IF(cond, msg_params...) \
     DEBUG_ONLY(unlikely((cond) && print_warnings) \
         ? NONFATAL(msg_params) : NOP)
 
@@ -117,8 +117,8 @@ extern int print_warnings;
  *
  * @param cond the condition when the warning should be raised
  */
-#define DEBUG_WARN_IF(cond) \
-    DEBUG_WARN_MSG_IF(cond, "warning: " #cond)
+#define DEBUG_WARNING_IF(cond) \
+    DEBUG_WARNING_MSG_IF(cond, "warning: " #cond)
 
 /**
  * Conditionally emits an error message, aborting process.
@@ -129,7 +129,7 @@ extern int print_warnings;
  * @param cond the condition when the error should be raised
  * @param msg_params format string and variables, as in printf
  */
-#define DEBUG_ERR_MSG_IF(cond, msg_params...) \
+#define DEBUG_ERROR_MSG_IF(cond, msg_params...) \
     DEBUG_ONLY(unlikely(cond) \
         ? FATAL(msg_params) : NOP)
 
@@ -141,8 +141,8 @@ extern int print_warnings;
  *
  * @param cond the condition when the error should be raised
  */
-#define DEBUG_ERR_IF(cond) \
-    DEBUG_ERR_MSG_IF(cond, "error: " #cond)
+#define DEBUG_ERROR_IF(cond) \
+    DEBUG_ERROR_MSG_IF(cond, "error: " #cond)
 
 /**
  * Aborts process if some condition fails, printing a given message.

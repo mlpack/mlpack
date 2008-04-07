@@ -248,7 +248,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {
+    void ElemOf(const T *array) {
       array_ = mem::PtrAbsAddr(array);
     }
     template<typename T>
@@ -303,12 +303,12 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
+    bool PreStaticArray(T *ptr, index_t len) {
       format_.Open(name_, index_, type_, len);
       return true;
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {
+    void PostStaticArray(T *ptr, index_t len) {
       format_.Close(name_, type_);
     }
 
@@ -351,7 +351,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -377,20 +377,20 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      if (OT__Shallow(array)) {
-	mem::DebugPoison(array, len);
+    bool PreStaticArray(T *ptr, index_t len) {
+      if (OT__Shallow(ptr)) {
+	mem::DebugPoison(ptr, len);
       } else if (t_semi) {
-	mem::Construct(array, len);
+	mem::Construct(ptr, len);
       }
       return false;
     }
     template<typename T>
-    bool PreStaticArray(T **array, index_t len) {
+    bool PreStaticArray(T **ptr, index_t len) {
       return true;
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -433,7 +433,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -457,18 +457,18 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      if (OT__Shallow(array)) {
-	mem::DebugPoison(array, len);
+    bool PreStaticArray(T *ptr, index_t len) {
+      if (OT__Shallow(ptr)) {
+	mem::DebugPoison(ptr, len);
       }
       return false;
     }
     template<typename T>
-    bool PreStaticArray(T **array, index_t len) {
+    bool PreStaticArray(T **ptr, index_t len) {
       return true;
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -510,7 +510,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -537,11 +537,11 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      return (t_semi && !OT__Shallow(array)) || OT__NonConstPtr(array);
+    bool PreStaticArray(T *ptr, index_t len) {
+      return (t_semi && !OT__Shallow(ptr)) || OT__NonConstPtr(ptr);
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -609,7 +609,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -637,11 +637,11 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      return (t_semi && !OT__Shallow(array)) || OT__NonConstPtr(array);
+    bool PreStaticArray(T *ptr, index_t len) {
+      return (t_semi && !OT__Shallow(ptr)) || OT__NonConstPtr(ptr);
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -718,7 +718,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -750,11 +750,11 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      return !OT__Shallow(array);
+    bool PreStaticArray(T *ptr, index_t len) {
+      return !OT__Shallow(ptr);
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -809,7 +809,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -835,11 +835,11 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      return !OT__Shallow(array);
+    bool PreStaticArray(T *ptr, index_t len) {
+      return !OT__Shallow(ptr);
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -887,7 +887,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -917,11 +917,11 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      return !OT__Shallow(array);
+    bool PreStaticArray(T *ptr, index_t len) {
+      return !OT__Shallow(ptr);
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -992,7 +992,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -1019,11 +1019,11 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      return !OT__Shallow(array);
+    bool PreStaticArray(T *ptr, index_t len) {
+      return !OT__Shallow(ptr);
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -1096,7 +1096,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -1155,11 +1155,11 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      return OT__PreTraverse((T *)NULL, array, len, this);
+    bool PreStaticArray(T *ptr, index_t len) {
+      return OT__PreTraverse((T *)NULL, ptr, len, this);
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,
@@ -1235,7 +1235,7 @@ namespace ot__private {
     }
 
     template<typename T>
-    void Elem(const T *array) {}
+    void ElemOf(const T *array) {}
     template<typename T>
     void Name(const char *name, const T &obj) {}
 
@@ -1280,11 +1280,11 @@ namespace ot__private {
     }
 
     template<typename T>
-    bool PreStaticArray(T *array, index_t len) {
-      return OT__PreTraverse(array, (T *)NULL, len, this);
+    bool PreStaticArray(T *ptr, index_t len) {
+      return OT__PreTraverse(ptr, (T *)NULL, len, this);
     }
     template<typename T>
-    void PostStaticArray(T *array, index_t len) {}
+    void PostStaticArray(T *ptr, index_t len) {}
 
     template<typename T>
     bool PreArray(T *&ptr, index_t len,

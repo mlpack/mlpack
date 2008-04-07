@@ -466,4 +466,4 @@ namespace mem {
 
 #undef MEM__DEGUG_MEMORY
 
-#endif
+#endif /* BASE_CCMEM_H */

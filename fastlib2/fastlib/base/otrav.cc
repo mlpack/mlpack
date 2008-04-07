@@ -66,28 +66,29 @@ FOR_ALL_PRIMITIVES_DO(STANDARD_FORMAT__PRIMITIVE)
   if (!str) {
     fprintf(stream_, "0x0");
   } else {
+    char c;
+
     putc('"', stream_);
-    while (*str) {
-      if (*str == '"') {
+    while ((c = *str++)) {
+      if (c == '"') {
 	fprintf(stream_, "\\\"");
-      } else if (*str == '\a') {
+      } else if (c == '\a') {
 	fprintf(stream_, "\\a");
-      } else if (*str == '\b') {
+      } else if (c == '\b') {
 	fprintf(stream_, "\\b");
-      } else if (*str == '\f') {
+      } else if (c == '\f') {
 	fprintf(stream_, "\\f");
-      } else if (*str == '\n') {
+      } else if (c == '\n') {
 	fprintf(stream_, "\\n");
-      } else if (*str == '\t') {
+      } else if (c == '\t') {
 	fprintf(stream_, "\\t");
-      } else if (*str == '\v') {
+      } else if (c == '\v') {
 	fprintf(stream_, "\\v");
-      } else if (*str == '\\') {
+      } else if (c == '\\') {
 	fprintf(stream_, "\\\\");
       } else {
-	putc(*str, stream_);
+	putc(c, stream_);
       }
-      ++str;
     }
     putc('"', stream_);
   }
@@ -185,21 +186,22 @@ void ot::XMLFormat::Str(const char *name, index_t index,
   PrintIndent_();
   PrintHeader_(name, index, type, -1);
   if (str) {
-    while (*str) {
-      if (*str == '"') {
+    char c;
+
+    while ((c = *str++)) {
+      if (c == '"') {
 	fprintf(stream_, "&quot;");
-      } else if (*str == '\'') {
+      } else if (c == '\'') {
 	fprintf(stream_, "&apos;");
-      } else if (*str == '&') {
+      } else if (c == '&') {
 	fprintf(stream_, "&amp;");
-      } else if (*str == '<') {
+      } else if (c == '<') {
 	fprintf(stream_, "&lt;");
-      } else if (*str == '>') {
+      } else if (c == '>') {
 	fprintf(stream_, "&gt;");
       } else {
-	putc(*str, stream_);
+	putc(c, stream_);
       }
-      ++str;
     }
   }
   PrintFooter_(type);
