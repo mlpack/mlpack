@@ -14,7 +14,6 @@
 #include <vector>
 #include "fastlib/fastlib.h"
 
-using namespace std;
 
 namespace mmapmm {
 
@@ -253,7 +252,7 @@ class MemoryManager {
 		frequency_of_logged_page_ = 0;
   }
 
-  MemoryManager(string pool_name, uint64 capacity, string page_access_filename) {
+  MemoryManager(std::string pool_name, uint64 capacity, std::string page_access_filename) {
     system_page_size_ = getpagesize();
     capacity_ = capacity;
 		if (unlikely(capacity % system_page_size_ != 0)) {
@@ -551,7 +550,7 @@ class MemoryManager {
    *         MADV_WILLNEED
    *         MADV_DONTNEED
    */ 
-  void Advise(uint64 page, uint64 number_of_pages, int advice) {
+  inline void Advise(uint64 page, uint64 number_of_pages, int advice) {
     if (unlikely(madvise(pool_+page * system_page_size_, number_of_pages*system_page_size_,
                   advice)<0)) {
       NONFATAL("Warning: Encountered %s error while advising\n", 
@@ -559,6 +558,52 @@ class MemoryManager {
     }     
   }
   
+  /**
+   * Advises a sequence of pages
+   * advice: MADV_NORMAL
+   *         MADV_RANDOM
+   *         MADV_SEQUENTIAL
+   *         MADV_WILLNEED
+   *         MADV_DONTNEED
+   */ 
+  template<typename T, bool logmode=Logmode>
+  inline void Advise(Ptr<T, logmode> ptr, size_t length, int advice) {
+    Advise((void *)ptr.get(), length*sizeof(T), advice); 
+  }
+  template<typename T>
+  inline void Advise(T *ptr, size_t length, int advice) {
+    Advise(ptr, length*sizeof(T), advice); 
+  }
+  /**
+   * Advises a sequence of pages
+   * advice: MADV_NORMAL
+   *         MADV_RANDOM
+   *         MADV_SEQUENTIAL
+   *         MADV_WILLNEED
+   *         MADV_DONTNEED
+   */ 
+  inline void Advise(void *ptr, size_t length, int advice) {
+    // locate the page the start address_begins
+    index_t page = (ptrdiff_t)(ptr-pool_)/system_page_size_;
+    index_t num_of_pages = ((ptrdiff_t)(ptr-pool_)%system_page_size_
+        + length)/system_page_size_;
+    if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
+                  advice)<0)) {
+      NONFATAL("Warning: Encountered %s error while advising\n", 
+                strerror(errno));
+    }  
+  }
+  inline void Advise(void *ptr1, void *ptr2, int advice) {
+     // locate the page the start address_begins
+    index_t page = (ptrdiff_t)(ptr1-pool_)/system_page_size_;
+    index_t num_of_pages = (ptrdiff_t)(ptr1-ptr2)/system_page_size_;
+    if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
+                  advice)<0)) {
+      NONFATAL("Warning: Encountered %s error while advising\n", 
+                strerror(errno));
+    }     
+  }
+   
   /**
    * This one advises the whole pool
    */
@@ -601,7 +646,7 @@ class MemoryManager {
     return capacity_;
   }
 
-	void set_pool_name(string pool_name) {
+	void set_pool_name(std::string pool_name) {
 	  pool_name_ = pool_name;
 	}
 
@@ -628,7 +673,7 @@ class MemoryManager {
     log_flag_=mode;
   }
   
-  void set_log_file(string file) {
+  void set_log_file(std::string file) {
     if (Logmode==false) {
 		  return;
 		}
