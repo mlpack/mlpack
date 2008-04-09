@@ -18,25 +18,32 @@
 #include "memory_manager.h"
 
 class MemoryManagerTest {
- void Init(){
-   mmapmm::MemoryManager<false>::allocator_ = new mmapmm::MemoryManager<false>();
-   mmapmm::MemoryManager<false>::allocator_->set_capacity(65536*1000);
-   mmapmm::MemoryManager<false>::allocator_->Init();
- }
+ public:
+  void Init(){
+    mmapmm::MemoryManager<false>::allocator_ = new mmapmm::MemoryManager<false>();
+    mmapmm::MemoryManager<false>::allocator_->set_capacity(65536*1000);
+    mmapmm::MemoryManager<false>::allocator_->Init();
+  }
  
- void Destruct() {
-   mmapmm::MemoryManager<false>::allocator_->Destruct();
-   delete mmapmm::MemoryManager<false>::allocator_;
- }
-
- void Test1() {
-   double *ptr=mmap::MemoryManager<false>::allocator_->malloc<double>(100000);
+  void Destruct() {
+    mmapmm::MemoryManager<false>::allocator_->Destruct();
+    delete mmapmm::MemoryManager<false>::allocator_;
+  }
  
- }
+  void Test1() {
+    NOTIFY("Just testing memory allocation\n");
+    Init();
+    double *ptr=mmapmm::MemoryManager<false>::allocator_->malloc<double>(100000);
+    for(index_t i=0; i<100000; i++) {
+      ptr[i]=math::Random(0, 1);
+    }
+    Destruct();
+    NOTIFY("Memory successfully allocated assigned and accessed...!!\n");
+  }
  
- void TestAll() {
-   Test1();
- }
+  void TestAll() {
+    Test1();
+  }
 };
 
 int main(int argc, char* argv[]) {

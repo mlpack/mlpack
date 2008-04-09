@@ -558,18 +558,7 @@ class MemoryManager {
     }     
   }
   
-  /**
-   * Advises a sequence of pages
-   * advice: MADV_NORMAL
-   *         MADV_RANDOM
-   *         MADV_SEQUENTIAL
-   *         MADV_WILLNEED
-   *         MADV_DONTNEED
-   */ 
-  template<typename T, bool logmode=Logmode>
-  inline void Advise(Ptr<T, logmode> ptr, size_t length, int advice) {
-    Advise((void *)ptr.get(), length*sizeof(T), advice); 
-  }
+ 
   template<typename T>
   inline void Advise(T *ptr, size_t length, int advice) {
     Advise(ptr, length*sizeof(T), advice); 
@@ -584,8 +573,8 @@ class MemoryManager {
    */ 
   inline void Advise(void *ptr, size_t length, int advice) {
     // locate the page the start address_begins
-    index_t page = (ptrdiff_t)(ptr-pool_)/system_page_size_;
-    index_t num_of_pages = ((ptrdiff_t)(ptr-pool_)%system_page_size_
+    index_t page = (ptrdiff_t)((char*)ptr-pool_)/system_page_size_;
+    index_t num_of_pages = ((ptrdiff_t)((char*)ptr-pool_)%system_page_size_
         + length)/system_page_size_;
     if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
                   advice)<0)) {
@@ -595,8 +584,8 @@ class MemoryManager {
   }
   inline void Advise(void *ptr1, void *ptr2, int advice) {
      // locate the page the start address_begins
-    index_t page = (ptrdiff_t)(ptr1-pool_)/system_page_size_;
-    index_t num_of_pages = (ptrdiff_t)(ptr1-ptr2)/system_page_size_;
+    index_t page = (ptrdiff_t)((char*)ptr1-pool_)/system_page_size_;
+    index_t num_of_pages = (ptrdiff_t)((char*)ptr1-(char*)ptr2)/system_page_size_;
     if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
                   advice)<0)) {
       NONFATAL("Warning: Encountered %s error while advising\n", 
