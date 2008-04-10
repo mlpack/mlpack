@@ -28,7 +28,7 @@
 namespace proximity {
 
   /**
-   * Creates a spill KD tree from data, splitting on the midpoint.
+   * Creates a ball tree from data.
    *
    * @experimental
    *

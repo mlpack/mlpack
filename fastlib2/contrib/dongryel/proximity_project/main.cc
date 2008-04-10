@@ -71,6 +71,8 @@ int main(int argc, char *argv[]) {
   }
   printf("\n");
 
+  root_->Print();
+
   fx_timer_stop(NULL, "pca tree");
   printf("Finished constructing the tree...\n");
 
