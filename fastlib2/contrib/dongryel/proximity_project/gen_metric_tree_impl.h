@@ -35,37 +35,77 @@ namespace tree_gen_metric_tree_private {
     index_t end = first + count;
     index_t left_count = 0;
 
-    // Make an alias of the last vector list.
-    Vector right_vector;
-    matrix.MakeColumnVector(end - 1, &right_vector);
-
-    for (index_t left = first; left < end - 1; left++) {
+    ArrayList<bool> left_membership;
+    left_membership.Init(count);
+    
+    for (index_t left = first; left < end; left++) {
 
       // Make alias of the current point.
-      Vector left_vector;
-      matrix.MakeColumnVector(left, &left_vector);
+      Vector point;
+      matrix.MakeColumnVector(left, &point);
 
       // Compute the distances from the two pivots.
       double distance_from_left_pivot =
-	LMetric<2>::Distance(left_vector, left_bound.center());
+	LMetric<2>::Distance(point, left_bound.center());
       double distance_from_right_pivot =
-	LMetric<2>::Distance(left_vector, right_bound.center());
+	LMetric<2>::Distance(point, right_bound.center());
 
       // We swap if the point is further away from the left pivot.
-      if(distance_from_left_pivot > distance_from_right_pivot) {
-	left_vector.SwapValues(&right_vector);
+      if(distance_from_left_pivot > distance_from_right_pivot) {	
+	left_membership[left - first] = false;
       }
       else {
+	left_membership[left - first] = true;
 	left_count++;
       }
+    }
 
-      // Take care of the swapped mapping here.
+    index_t left = first;
+    index_t right = first + count - 1;
+    
+    /* At any point:
+     *
+     *   everything < left is correct
+     *   everything > right is correct
+     */
+    for (;;) {
+      while (left_membership[left - first] && likely(left <= right)) {
+        left++;
+      }
+
+      while (!left_membership[right - first] && likely(left <= right)) {
+        right--;
+      }
+
+      if (unlikely(left > right)) {
+        /* left == right + 1 */
+        break;
+      }
+
+      Vector left_vector;
+      Vector right_vector;
+
+      matrix.MakeColumnVector(left, &left_vector);
+      matrix.MakeColumnVector(right, &right_vector);
+
+      // Swap the left vector with the right vector.
+      left_vector.SwapValues(&right_vector);
+      bool tmp = left_membership[left - first];
+      left_membership[left - first] = left_membership[right - first];
+      left_membership[right - first] = tmp;
+      
       if (old_from_new) {
         index_t t = old_from_new[left];
-        old_from_new[left] = old_from_new[end - 1];
-        old_from_new[end - 1] = t;
+        old_from_new[left] = old_from_new[right];
+        old_from_new[right] = t;
       }
+      
+      DEBUG_ASSERT(left <= right);
+      right--;
     }
+    
+    DEBUG_ASSERT(left == right + 1);
+
     return left_count;
   }
 	
