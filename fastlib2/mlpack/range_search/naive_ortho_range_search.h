@@ -78,7 +78,7 @@ class NaiveOrthoRangeSearch {
   void Init(const GenMatrix<T> &data) {
 
     // copy the incoming data
-    data_.Copy(data);
+    data_.StaticCopy(data);
     
     // re-initialize boolean flag
     in_range_.Init(data_.n_cols());
