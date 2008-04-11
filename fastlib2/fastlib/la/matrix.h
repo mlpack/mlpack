@@ -10,6 +10,7 @@
 #define LA_MATRIX_H
 
 #include "fastlib/base/base.h"
+#include "fastlib/mmanager/memory_manager.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -107,6 +108,16 @@ class GenVector {
   }
   
   /**
+   * Creates a vector of a particular length statically, but does not
+   * initialize the values in it. This vector will not be freed!
+   */
+  void StaticInit(index_t in_length) {
+    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>(in_length);
+    length_ = in_length;
+    should_free_ = false;
+  }
+
+  /**
    * Sets all elements to the same value.
    */
   void SetAll(T d) {
@@ -142,6 +153,32 @@ class GenVector {
     ptr_ = mem::AllocCopy(doubles, in_length);
     length_ = in_length;
     should_free_ = true;
+  }
+
+  /**
+   * Makes this uninitialized vector a static copy of the other
+   * vector. This copy will not be freed!
+   *
+   * @param other the vector to explicitly copy
+   */
+  void StaticCopy(const GenVector& other) {
+    StaticCopy(other.ptr(), other.length());
+  }
+
+  /**
+   * Makes this uninitialized vector a static copy of the other
+   * vector. This copy will not be freed!
+   *
+   * @param doubles the array of doubles to copy
+   * @param in_length the number of doubles in the array
+   */
+  void StaticCopy(const T *doubles, index_t in_length) {
+    DEBUG_ONLY(AssertUninitialized_());
+    
+    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>(in_length);
+    mem::Copy<T, T, T>(ptr_, doubles, in_length);
+    length_ = in_length;
+    should_free_ = false;
   }
   
   /**
@@ -431,6 +468,27 @@ class GenMatrix {
   }
 
   /**
+   * Creates a Matrix with uninitialized elements of the specified
+   * size statically. This matrix is not freed!
+   */
+  void StaticInit(index_t in_rows, index_t in_cols) {
+    DEBUG_ONLY(AssertUninitialized_());
+    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>
+      (in_rows * in_cols);
+    n_rows_ = in_rows;
+    n_cols_ = in_cols;
+    should_free_ = false;
+  }
+
+  /**
+   * Creates a diagonal matrix.
+   */
+  void StaticInitDiagonal(const GenVector<T>& v) {
+    StaticInit(v.length(), v.length());
+    SetDiagonal(v);
+  }
+
+  /**
    * Sets the entire matrix to zero.
    */
   void SetAll(T d) {
@@ -483,7 +541,37 @@ class GenMatrix {
     n_cols_ = n_cols_in;
     should_free_ = true;
   }
-  
+
+  /**
+   * Makes this uninitialized matrix a static copy of the other
+   * vector which will not be freed!
+   *
+   * @param other the vector to explicitly copy
+   */
+  void StaticCopy(const GenMatrix& other) {
+    StaticCopy(other.ptr(), other.n_rows(), other.n_cols());    
+  }
+
+  /**
+   * Makes this uninitialized matrix a static copy of the other
+   * vector, which will not be freed!
+   *
+   * @param ptr_in the pointer to a block of column-major doubles
+   * @param n_rows_in the number of rows
+   * @param n_cols_in the number of columns
+   */
+  void StaticCopy(const T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+    DEBUG_ONLY(AssertUninitialized_());
+
+    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>
+      (n_rows_in * n_cols_in);
+    mem::Copy<T, T, T>(ptr_, ptr_in, n_rows_in * n_cols_in);
+
+    n_rows_ = n_rows_in;
+    n_cols_ = n_cols_in;
+    should_free_ = false;
+  }
+ 
   /**
    * Makes this uninitialized matrix an alias of another matrix.
    *
@@ -570,6 +658,37 @@ class GenMatrix {
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
     should_free_ = true;
+  }
+
+  /**
+   * Makes this uninitialized matrix the "owning copy" of the other
+   * matrix; the other vector becomes an alias and this becomes the
+   * standard statically.
+   *
+   * The other matrix must be the "owning" copy of its memory.
+   *
+   * @param other a pointer to the other matrix
+   */
+  void StaticOwn(GenMatrix* other) {
+    StaticOwn(other->ptr(), other->n_rows(), other->n_cols());
+  }
+  
+  /**
+   * Initializes this uninitialized matrix as the "owning copy" of
+   * some linearized chunk of RAM allocated statically.
+   *
+   * @param ptr_in the pointer to a block of column-major doubles
+   *        allocated via mem::Alloc
+   * @param n_rows_in the number of rows
+   * @param n_cols_in the number of columns
+   */
+  void StaticOwn(T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+    DEBUG_ONLY(AssertUninitialized_());
+    
+    ptr_ = ptr_in;
+    n_rows_ = n_rows_in;
+    n_cols_ = n_cols_in;
+    should_free_ = false;
   }
 
   /**
