@@ -12,8 +12,8 @@
 #include <errno.h>
 #include <string>
 #include <vector>
-#include "fastlib/fastlib.h"
-
+//#include "fastlib/fastlib.h"
+#include "fastlib/base/common.h"
 
 namespace mmapmm {
 
@@ -436,7 +436,7 @@ class MemoryManager {
    */
 	template<typename T>
   static inline T* malloc() {
-	  return allocator_->Alloc<T>;
+	  return allocator_->Alloc<T>();
 	}
 	/**
    *  Use this if you want to allocate memory for an array
@@ -703,14 +703,6 @@ struct Logger<false> {
   static void Log(T *p) {
   }
 };
-
-/**
- * These global variables are necessary to instanciate a memory manager
- */
-template<>
-MemoryManager<false>  *MemoryManager<false>::allocator_ = 0;
-template<>
-MemoryManager<true>  *MemoryManager<true>::allocator_ = 0;
 
 };
 
