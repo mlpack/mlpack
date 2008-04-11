@@ -1,5 +1,4 @@
 #include "fastlib/fastlib.h"
-#include "fastlib/tree/bounds.h"
 #include "general_spacetree.h"
 #include "pca_tree.h"
 #include "gen_metric_tree.h"
