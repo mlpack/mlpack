@@ -9,7 +9,7 @@
 #define ORTHO_RANGE_SEARCH_H
 
 #include "fastlib/fastlib.h"
-
+#include "contrib/dongryel/proximity_project/general_type_bounds.h"
 
 /** @brief Faster orthogonal range search class using a tree.
  *
@@ -158,10 +158,10 @@ class OrthoRangeSearch {
 
     // decide whether to make a copy or not.
     if(make_copy) {
-      data_.Copy(dataset);
+      data_.StaticCopy(dataset);
     }
     else {
-      data_.Own(&dataset);
+      data_.StaticOwn(&dataset);
     }
 
     fx_timer_start(NULL, "tree_d");
@@ -270,8 +270,7 @@ class OrthoRangeSearch {
       tmp_data.MakeColumnVector(new_from_old_[i], &dest);
       dest.CopyValues(source);
     }
-    data_.Destruct();
-    data_.Own(&tmp_data);
+    data_.CopyValues(tmp_data);
   }
   
   /** @brief The base case.

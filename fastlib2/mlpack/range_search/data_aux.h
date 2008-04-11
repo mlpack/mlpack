@@ -26,7 +26,7 @@ namespace data_aux {
 
     // Allocate the matrix that is to be returned and copy all
     // entries.
-    matrix->Init(tmp_matrix.n_rows(), tmp_matrix.n_cols());
+    matrix->StaticInit(tmp_matrix.n_rows(), tmp_matrix.n_cols());
     for(index_t c = 0; c < tmp_matrix.n_cols(); c++) {
       for(index_t r = 0; r < tmp_matrix.n_rows(); r++) {
 	matrix->set(r, c, STATIC_CAST(T, tmp_matrix.get(r, c)));
@@ -57,7 +57,7 @@ namespace data_aux {
 
     // Allocate the matrix that is to be returned and copy all
     // entries.
-    matrix->Init(tmp_matrix.n_cols(), tmp_matrix.n_rows());
+    matrix->StaticInit(tmp_matrix.n_cols(), tmp_matrix.n_rows());
     for(index_t c = 0; c < tmp_matrix.n_cols(); c++) {
       for(index_t r = 0; r < tmp_matrix.n_rows(); r++) {
 	matrix->set(c, r, STATIC_CAST(T, tmp_matrix.get(r, c)));

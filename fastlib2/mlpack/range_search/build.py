@@ -5,7 +5,9 @@ librule(
     headers = ["data_aux.h",
                "naive_ortho_range_search.h",
                "ortho_range_search.h"],
-    deplibs = ["fastlib:fastlib_int"]
+    deplibs = ["fastlib:fastlib_int",
+               "contrib/dongryel/proximity_project:proximity_project",
+               "fastlib/mmanager:mmapmm"]
     )
 
 binrule(
