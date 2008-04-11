@@ -15,6 +15,7 @@
 #define TREE_GEN_KDTREE_H
 
 #include "general_spacetree.h"
+#include "general_type_bounds.h"
 
 #include "fastlib/base/common.h"
 #include "fastlib/col/arraylist.h"

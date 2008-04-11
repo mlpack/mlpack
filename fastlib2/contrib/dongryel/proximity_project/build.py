@@ -1,8 +1,10 @@
 
 librule(
     name = "proximity_project",              # this line can be safely omitted
-    sources = [],                            # files that must be compiled
+    sources = ["gen_range.cc"],              # files that must be compiled
     headers = ["pca_tree.h",
+               "general_type_bounds.h",
+               "gen_range.h",
                "gen_kdtree.h",
                "gen_kdtree_impl.h",
                "gen_metric_tree.h",
