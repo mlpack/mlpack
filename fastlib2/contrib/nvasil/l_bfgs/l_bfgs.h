@@ -33,6 +33,9 @@ class LBfgs {
   void GetResults(Matrix *result);
   void Reset(); 
   void set_coordinates(Matrix &coordinates);
+  void set_desired_feasibility(double desired_feasibility);
+  void set_feasibility_tolerance(double feasibility_tolerance);
+  void set_norm_grad_tolerance(double norm_grad_tolerance);
   Matrix *coordinates();
   
  private:
