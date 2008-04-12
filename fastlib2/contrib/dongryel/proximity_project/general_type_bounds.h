@@ -19,6 +19,7 @@
 
 #include "fastlib/math/math.h"
 #include "gen_range.h"
+#include "fastlib/mmanager/memory_manager.h"
 
 /**
  * Hyper-rectangle bound for an L-metric.
@@ -47,6 +48,19 @@ class GenHrectBound {
   void Init(index_t dimension) {
     //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
     bounds_ = mem::Alloc<GenRange<T> >(dimension);
+
+    dim_ = dimension;
+    Reset();
+  }
+
+  /**
+   * Initializes to specified dimensionality with each dimension the empty
+   * set statically.
+   */
+  void StaticInit(index_t dimension) {
+    //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
+    bounds_ = 
+      mmapmm::MemoryManager<false>::allocator_->Alloc<GenRange<T> >(dimension);
 
     dim_ = dimension;
     Reset();
