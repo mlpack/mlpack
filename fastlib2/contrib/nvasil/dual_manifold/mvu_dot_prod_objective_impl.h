@@ -24,8 +24,8 @@ void MVUDotProdObjective::Init(datanode *module,
   
   module_=module;
   auxiliary_mat_=coordinates;
-  pairs_to_consider_.Copy(pairs_to_consider);
-  dot_prod_values_.Copy(dot_prod_values);
+  pairs_to_consider_.InitCopy(pairs_to_consider);
+  dot_prod_values_.InitCopy(dot_prod_values);
   eq_lagrange_mult_.Init(dot_prod_values.size());
   eq_lagrange_mult_.SetAll(0.0);
   num_of_constraints_=dot_prod_values_.size();
@@ -37,7 +37,7 @@ void MVUDotProdObjective::ComputeGradient(Matrix &coordinates, Matrix *gradient)
   la::Scale(-1.0, gradient);
   index_t dimension=auxiliary_mat_->n_rows();
   Vector constant;
-  for (index_t i=0; i<num_of_constraints; i++) {
+  for (index_t i=0; i<num_of_constraints_; i++) {
     index_t ind1=pairs_to_consider_[i].first; 
     index_t ind2=pairs_to_consider_[i].second;
     double *p1=auxiliary_mat_->GetColumnPtr(ind1);
@@ -62,6 +62,7 @@ void MVUDotProdObjective::ComputeObjective(Matrix &coordinates, double *objectiv
 }
 
 void MVUDotProdObjective::ComputeFeasibilityError(Matrix &coordinates, double *error) {
+  index_t dimension = coordinates.n_rows();
   *error=0;
   for(index_t i=0; i<num_of_constraints_; i++) {
     index_t ind1=pairs_to_consider_[i].first; 
@@ -70,14 +71,15 @@ void MVUDotProdObjective::ComputeFeasibilityError(Matrix &coordinates, double *e
     double *p2=coordinates.GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
     double diff=dot_prod-dot_prod_values_[i];
-    error +=diff*diff;
+    *error +=diff*diff;
   }
 }
 
 double MVUDotProdObjective::ComputeLagrangian(Matrix &coordinates) {
   double lagrangian=0;
+  index_t dimension = coordinates.n_rows();
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<num_of_constriants_; i++) {
+  for(index_t i=0; i<num_of_constraints_; i++) {
     index_t ind1=pairs_to_consider_[i].first; 
     index_t ind2=pairs_to_consider_[i].second;
     double *p1=auxiliary_mat_->GetColumnPtr(ind1);
@@ -86,6 +88,7 @@ double MVUDotProdObjective::ComputeLagrangian(Matrix &coordinates) {
     double diff=dot_prod-dot_prod_values_[i];
     lagrangian+= -eq_lagrange_mult_[i]*diff + sigma_*diff*diff;
   }
+  return lagrangian;
 }
 
 void MVUDotProdObjective::UpdateLagrangeMult(Matrix &coordinates) {

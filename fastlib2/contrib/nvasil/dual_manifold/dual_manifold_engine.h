@@ -18,7 +18,6 @@
 
 #ifndef DUAL_MANIFOLD_ENGINE_
 #define DUAL_MANIFOLD_ENGINE_
-#include "dual_manifold_objective.h"
 #include "../l_bfgs/l_bfgs.h"
 #include "../l_bfgs/optimization_utils.h"
 /**
@@ -58,14 +57,13 @@ class DualManifoldEngine {
   double norm_grad_tolerance_;
   index_t iterations_;
   index_t max_iterations_;
-  datanode *module;
+  double desired_error_;
+  datanode *module_;
     
-  
-  LBfgs<OptimizedFunction> lbfgs1_;
-  LBfgs<OptimizedFunction> lbfgs2_;
+  LBfgs<OptimizedFunction> l_bfgs1_;
+  LBfgs<OptimizedFunction> l_bfgs2_;
   OptimizedFunction optimized_function1_;
   OptimizedFunction optimized_function2_;
-
 };
 
 #include "dual_manifold_engine_impl.h"

@@ -16,13 +16,13 @@
  * =====================================================================================
  */
 
-void DualMaxVarianc::Init(datanode *module, Matrix *other_part, 
-      ArrayList<std::pair<index_t, index_t> > pairs_to_consider,
-      ArrayList<double> *dot_prod_values) {
-  other_part_=other_part;
+void DualMaxVariance::Init(datanode *module, Matrix *other_part, 
+      ArrayList<std::pair<index_t, index_t> > &pairs_to_consider,
+      ArrayList<double> &dot_prod_values) {
+  auxiliary_mat__=other_part;
   module_=module;
-  pairs_to_consider_=pairs_to_consider;
-  dot_prod_values_=dot_prod_values;
+  pairs_to_consider_.Copy(pairs_to_consider);
+  dot_prod_values_.Copy(dot_prod_values);
   eq_lagrange_mult_.Init(pairs_to_consider_.size());
   eq_lagrange_mult_.SetAll(1.0);
 }
