@@ -88,7 +88,7 @@ class MatrixUtil {
       
     // initialize the diagonal by the inverse of ro_s
     for(index_t i = 0; i < ro_s.length(); i++) {
-      if(ro_s[i] > 0.001 * ro_s[0]) {
+      if(ro_s[i] > 0.01 * ro_s[0]) {
 	ro_s_inv.set(i, i, 1.0 / ro_s[i]);
       }
       else {
