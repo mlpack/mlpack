@@ -284,7 +284,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
   // the bandwidth! This if-statement does not apply to the Gaussian
   // kernel, so I need to fix in the future!
   if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
-     rnode->count() > dimension_ * dimension_) {
+     0 && rnode->count() > dimension_ * dimension_) {
 
     for(index_t j = 0; j < row_length_; j++) {
       
@@ -593,7 +593,7 @@ void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
   // the bandwidth! This if-statement does not apply to the Gaussian
   // kernel, so I need to fix in the future!
   if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
-     rnode->count() > dimension_ * dimension_) {
+     0 && rnode->count() > dimension_ * dimension_) {
     
     for(index_t j = 0; j < row_length_; j++) {
 
