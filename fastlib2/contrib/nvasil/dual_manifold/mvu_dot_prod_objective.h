@@ -23,7 +23,7 @@
 class MVUDotProdObjective {
  public:
   void Init(datanode *module,
-      Matrix *coordinates, 
+      Matrix *auxiliary_mat, 
       ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
       // The values of the (row, column) values, also known as the dot products
       ArrayList<double> &dot_prod_values);

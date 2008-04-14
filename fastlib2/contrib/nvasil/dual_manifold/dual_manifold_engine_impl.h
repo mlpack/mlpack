@@ -22,23 +22,58 @@ void DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
     ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
     // The values of the (row, column) values, also known as the dot products
     ArrayList<double> &dot_prod_values) {
-
+  
+  // From this matrix we deduce the size of the matrix D we are trying to decompose
+  // We want to find out how many rows and columns he has
+  index_t num_of_rows=0;
+  index_t num_of_cols=0;
+  for (index_t i=0; i<pairs_to_consider.size(); i++) {
+    if (pairs_to_consider[i].first > num_of_rows) {
+      num_of_rows=pairs_to_consider[i].first;
+    }
+    if (pairs_to_consider[i].second > num_of_cols) {
+      num_of_cols=pairs_to_consider[i].second;
+    }
+  }
+  num_of_rows+=1;
+  num_of_cols+=1;
   module_=module;
-  l_bfgs1_.Init(&optimized_function1_, fx_param_node(module_, "l_bfgs"));
-  l_bfgs2_.Init(&optimized_function2_, fx_param_node(module_, "l_bfgs"));
+  datanode *l_bfgs_node1=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs1");
+  datanode *l_bfgs_node2=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs2");
+
+  num_of_components_=fx_param_int(module_, "components", 10);
+    //we need to insert the number of points
+  char buffer[128];
+  sprintf(buffer, "%i", num_of_components_);
+
+  fx_set_param(l_bfgs_node1, "new_dimension", buffer);
+  fx_set_param(l_bfgs_node2, "new_dimension", buffer);
+ 
+  sprintf(buffer, "%lg", 1.0); 
+  fx_set_param(l_bfgs_node1, "sigma", buffer);
+  fx_set_param(l_bfgs_node2, "sigma", buffer);
+
+  sprintf(buffer, "%i", num_of_rows);
+  fx_set_param(l_bfgs_node1, "num_of_points", buffer);
+
+  sprintf(buffer, "%i", num_of_cols);
+  fx_set_param(l_bfgs_node2, "num_of_points", buffer);
+
+  l_bfgs1_.Init(&optimized_function1_, l_bfgs_node1);
+  l_bfgs2_.Init(&optimized_function2_, l_bfgs_node2);
 
   optimized_function1_.Init(fx_param_node(module_, "opt1"), 
-      l_bfgs1_.coordinates(), 
+      l_bfgs2_.coordinates(), 
       pairs_to_consider,
       dot_prod_values);
+
   for(index_t i=0; i<pairs_to_consider.size(); i++) {
     std::swap(pairs_to_consider[i].first, pairs_to_consider[i].second);
   }
   optimized_function2_.Init(fx_param_node(module_, "opt2"), 
       l_bfgs1_.coordinates(), 
       pairs_to_consider,
-      dot_prod_values);
-  
+      dot_prod_values); 
 }
 
 template<typename OptimizedFunction>
@@ -48,13 +83,15 @@ void DualManifoldEngine<OptimizedFunction>::Destruct() {
 
 template<typename OptimizedFunction>
 void DualManifoldEngine<OptimizedFunction>::ComputeLocalOptimum() {
+ // l_bfgs1_.set_max_iterations(10);
+ // l_bfgs2_.set_max_iterations(10);
   for(index_t i=0; i<max_iterations_; i++) {
     l_bfgs1_.ComputeLocalOptimumBFGS();
-    l_bfgs1_.Reset();
+ //   l_bfgs1_.Reset();
     l_bfgs2_.ComputeLocalOptimumBFGS();
-    l_bfgs2_.Reset();
+ //   l_bfgs2_.Reset();
     double error;
-    optimized_function1_.ComputeFeasibilityError(l_bfgs1_.coordinates(), &error);
+    optimized_function1_.ComputeFeasibilityError(*l_bfgs1_.coordinates(), &error);
     if (error<desired_error_) {
       break;
     }

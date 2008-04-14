@@ -24,7 +24,7 @@
 class DualManifoldEngineTest {
  public:
   void Init() {
-    std::string filename="/net/hg200/nvasil/dataset/ml-data_0/u.data";
+    std::string filename= "D_mat.txt"; //"/net/hg200/nvasil/dataset/ml-data_0/u.data";
     FILE *fp=fopen(filename.c_str(), "r");
     if (fp==NULL) {
      FATAL("Unable to open file %s, error %s\n", filename.c_str(),
@@ -35,11 +35,12 @@ class DualManifoldEngineTest {
     ArrayList<double> dot_prods;
     dot_prods.Init();
     while (!feof(fp)) {
-      index_t user_id;
-      index_t movie_id;
+      double id1;
+      double id2;
       double rating;
-      fscanf(fp, "%i %i %lg", &user_id, &movie_id, &rating);
-      pairs_to_consider.PushBackCopy(std::make_pair(user_id, movie_id));
+      fscanf(fp, "%lg %lg %lg", &id1, &id2, &rating);
+      pairs_to_consider.PushBackCopy(std::make_pair((index_t)id1-1, 
+            (index_t)id2-1));
       dot_prods.PushBackCopy(rating);
     }
     fclose(fp);
@@ -49,16 +50,16 @@ class DualManifoldEngineTest {
     engine_.Destruct();
   }
   void Test1() {
+    engine_.ComputeLocalOptimum();
+  }
+  void TestAll() {
     NOTIFY("Testing Test1..");
     Init();
     Test1();
     Destruct();
     NOTIFY("Test1 passed!!");
   }
-  void TestAll() {
-    Test1();
-  }
-  
+ 
  private:
   DualManifoldEngine<MVUDotProdObjective> engine_;
 };

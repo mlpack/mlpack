@@ -59,6 +59,7 @@ class DualManifoldEngine {
   index_t max_iterations_;
   double desired_error_;
   datanode *module_;
+  index_t num_of_components_;
     
   LBfgs<OptimizedFunction> l_bfgs1_;
   LBfgs<OptimizedFunction> l_bfgs2_;
