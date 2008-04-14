@@ -124,6 +124,8 @@ class SBL_EST {
     }
     fprintf(stderr, "Kernel Stop\n");
   }
+
+  void CalcLldRegression(Matrix* PHI_nz, Vector* alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &betaED);
 };
 
 /**
@@ -194,37 +196,16 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
     double betaED, logBeta;
 
     if (learner_typeid == 1) { // RVM Regression
-      Matrix Hessian; // dim(Hessian) == ct_non_zero x ct_non_zero
-      Hessian.InitDiagonal(alpha_nz); // Hessian = diag(alpha_nz)
+      CalcLldRegression(&PHI_nz, &alpha_nz, w_nz, U, ED, betaED);
+      /*
       
-      Matrix temp_mat; // dim(temp_mat) == ct_non_zero x ct_non_zero
-      la::MulTransAInit(PHI_nz, PHI_nz, &temp_mat); // PHI_nz'*PHI_nz
-      la::AddExpert(beta, temp_mat, &Hessian); // Hessian = (PHI_nz'*PHI_nz)*beta + diag(alpha_nz);
-      temp_mat.Destruct();
-      
-      la::CholeskyInit(Hessian, &U); // Hessian = U'*U
-      la::Inverse(&U); // U = U^-1, OUTPUT
-      Hessian.Destruct();
-      
-      la::MulTransBInit(U, U, &w_nz); // U^-1 * (U^-1)'
-      la::MulOverwrite(w_nz, PHI_t_nz, &w_nz); // U^-1 * (U^-1)' * PHI_t_nz
-      la::Scale(beta, &w_nz); // w_nz = U^-1 * (U^-1)' * PHI_t_nz * beta, OUTPUT
-      U.Destruct();
-      PHI_t_nz.Destruct();
-      
-      Matrix temp_PHInz_mult_wnz;
-      la::MulInit(PHI_nz, w_nz, &temp_PHInz_mult_wnz);
-      PHI_nz.Destruct();
-      
-      for (i=0; i<n_data_; i++)
-	ED += math::Sqr( train_values.get(i,1) - temp_PHInz_mult_wnz.get(i,1) );
-      temp_PHInz_mult_wnz.Destruct();
-      betaED = beta * ED; // OUTPUT, betaED = beta * sum((t-PHI_nz*w(nonZero)).^2);;
-      logBeta = n_data_ * log(beta);
+      */
     }
     else if (learner_typeid == 0) { // RVM Classification
-      // TODO
+      //CalcLldClassification();
+      /*
       logBeta = 0;
+      */
     }
 
     double logdetH;
@@ -287,8 +268,6 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
       }
       for(i=0; i<n_data_+1; i++) {
 	if (alpha_nz_idx[i] != 0)
-	  //dbtemp = alpha_nz[i];
-	  //alpha_v[i] = dbtemp;
 	  alpha_v[i] = alpha_nz[i];
       }
       alpha_nz_idx.Destruct();     
@@ -341,6 +320,36 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
   }
   for (i=0; i<ct_non_zero; i++)
     *weights.AddBack() = w_nz.get(i,1);
+}
+
+void CalcLldRegression(Matrix* PHI_nz, Vector* alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &betaED) {
+  Matrix Hessian; // dim(Hessian) == ct_non_zero x ct_non_zero
+      Hessian.InitDiagonal(alpha_nz); // Hessian = diag(alpha_nz)
+      
+      Matrix temp_mat; // dim(temp_mat) == ct_non_zero x ct_non_zero
+      la::MulTransAInit(PHI_nz, PHI_nz, &temp_mat); // PHI_nz'*PHI_nz
+      la::AddExpert(beta, temp_mat, &Hessian); // Hessian = (PHI_nz'*PHI_nz)*beta + diag(alpha_nz);
+      temp_mat.Destruct();
+      
+      la::CholeskyInit(Hessian, &U); // Hessian = U'*U
+      la::Inverse(&U); // OUTPUT, U = U^-1
+      Hessian.Destruct();
+      
+      la::MulTransBInit(U, U, &w_nz); // U^-1 * (U^-1)'
+      la::MulOverwrite(w_nz, PHI_t_nz, &w_nz); // U^-1 * (U^-1)' * PHI_t_nz
+      la::Scale(beta, &w_nz); // OUTPUT, w_nz = U^-1 * (U^-1)' * PHI_t_nz * beta, OUTPUT
+      U.Destruct();
+      PHI_t_nz.Destruct();
+      
+      Matrix temp_PHInz_mult_wnz;
+      la::MulInit(PHI_nz, w_nz, &temp_PHInz_mult_wnz);
+      PHI_nz.Destruct();
+      
+      for (i=0; i<n_data_; i++)
+	ED += math::Sqr( train_values.get(i,1) - temp_PHInz_mult_wnz.get(i,1) );
+      temp_PHInz_mult_wnz.Destruct();
+      betaED = beta * ED; // OUTPUT, betaED = beta * sum((t-PHI_nz*w(nonZero)).^2);;
+      logBeta = n_data_ * log(beta); // OUTPUT
 }
 
 
