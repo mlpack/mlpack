@@ -14,6 +14,8 @@
  * "train_test": training and then online batch testing; 
  * "test": offline batch testing.
  *
+ * Please refer to README for detail description of usage and examples.
+ *
  * @see svm.h
  * @see smo.h
  */
