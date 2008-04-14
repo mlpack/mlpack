@@ -33,7 +33,7 @@ class Pca {
     for(index_t i = 0; i < data.n_cols(); i++) {
       Vector data_col;
       data.MakeColumnVector(i, &data_col);
-      la::AddTo(data_col, &mean);
+      la::AddTo(data_col, mean);
     }
     la::Scale(1.0 / ((double) data.n_cols()), mean);    
   }
@@ -42,9 +42,9 @@ class Pca {
 
   /** @brief Computes the principal components of the given dataset.
    */
-  static void ComputeByCovarianceMethod(const Matrix &data,
-					Vector *eigen_values,
-					Matrix *principal_components) {
+  static void EigenDecomposeCovariance(const Matrix &data,
+				       Vector *eigen_values,
+				       Matrix *principal_components) {
 
     // Compute the mean of the column vectors.
     Vector mean_vector;
