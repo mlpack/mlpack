@@ -1,5 +1,5 @@
 #include "fastlib/fastlib.h"
-#include "lanczos_pca.h"
+#include "pca.h"
 
 int main(int argc, char *argv[]) {
  
@@ -8,9 +8,9 @@ int main(int argc, char *argv[]) {
   Matrix dataset;
   data::Load(file_name, &dataset);
 
-  // declare Lanczos-based PCA
   Matrix principal_components;
-  LanczosPca::Compute(dataset, &principal_components);
+  Vector eigen_values;
+  Pca::EigenDecomposeCovariance(dataset, &eigen_values, &principal_components);
   
   fx_done();
   return 0;
