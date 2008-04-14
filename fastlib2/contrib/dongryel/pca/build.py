@@ -2,7 +2,7 @@
 librule(
     name = "pca",              # this line can be safely omitted
     sources = [],              # files that must be compiled
-    headers = ["lanczos_pca.h"],
+    headers = ["pca.h"],
     deplibs = ["fastlib:fastlib"]        # dependency
     )
 
