@@ -15,6 +15,10 @@
  * 
  * =====================================================================================
  */
+
+#ifndef OPTIMIZATION_UTILS_H_
+#define OPTIMIZATION_UTILS_H_
+
 #include "fastlib/fastlib.h"
 
 class OptUtils {
@@ -139,7 +143,7 @@ class OptUtils {
         for(index_t j=0; j<dimension; j++) {
           if (v_vector[j]<0) {
             all_positive=false;
-            zero_coeff.AddBack(j);
+            zero_coeff.PushBackCopy(j);
             v_vector[j]=0;
           } else {
             v_sum+=v_vector[j];
@@ -158,3 +162,6 @@ class OptUtils {
   }
 
 };
+
+#endif // OPTIMIZATION_UTILS_H_
+

@@ -53,7 +53,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   wolfe_beta_   = fx_param_double(module_, "wolfe_beta", 0.8);
   max_iterations_ = fx_param_int(module_, "max_iterations", 10000);
   // the memory of bfgs 
-  mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 50);
+  mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 2);
   std::string log_file=fx_param_str(module_, "log_file", "opt_log");
   fp_log_=fopen(log_file.c_str(), "w");
   optimized_function_->set_sigma(sigma_);
@@ -70,16 +70,14 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
   double feasibility_error;
 
   NOTIFY("Starting optimization ...\n");
-  //datanode_write(module_, stdout);
-  //datanode_write(module_, fp_log_);
   // Run a few iterations with gradient descend to fill the memory of BFGS
   NOTIFY("Initializing BFGS");
    index_bfgs_=0;
   // You have to compute also the previous_gradient_ and previous_coordinates_
   // tha are needed only by BFGS
   optimized_function_->ComputeGradient(coordinates_, &gradient_);
-  previous_gradient_.Copy(gradient_);
-  previous_coordinates_.Copy(coordinates_);
+  previous_gradient_.CopyValues(gradient_);
+  previous_coordinates_.CopyValues(coordinates_);
   ComputeWolfeStep_(&step_, gradient_);
   optimized_function_->ComputeGradient(coordinates_, &gradient_);
   la::SubOverwrite(previous_coordinates_, coordinates_, &s_bfgs_[0]);
@@ -94,7 +92,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
       ComputeWolfeStep_(&step_, gradient_);
     }
 //    if (success=SUCCESS_FAIL) {
-//      NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
+//     NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
 //      ComputeWolfeStep_(&step_, gradient_);
 //      UpdateBFGS_();
 //    }
@@ -182,6 +180,10 @@ void LBfgs<OptimizedFunction>::Reset() {
   sigma_ = fx_param_double(module_, "sigma", 10);
 }
 
+template<typename OptimizedFunction>
+void LBfgs<OptimizedFunction>::set_max_iterations(index_t max_iterations) {
+  max_iterations_=max_iterations;
+}
 
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::InitOptimization_() {
@@ -190,7 +192,9 @@ void LBfgs<OptimizedFunction>::InitOptimization_() {
   }
   NOTIFY("Initializing optimization ...\n");
   coordinates_.Init(new_dimension_, num_of_points_);
+  previous_coordinates_.Init(new_dimension_, num_of_points_);
   gradient_.Init(new_dimension_, num_of_points_);
+  previous_gradient_.Init(new_dimension_, num_of_points_);
   for(index_t i=0; i< coordinates_.n_rows(); i++) {
     for(index_t j=0; j<coordinates_.n_cols(); j++) {
       coordinates_.set(i, j, math::Random(0.1, 1.0));
@@ -229,19 +233,20 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
   double lagrangian1 = optimized_function_->ComputeLagrangian(coordinates_);
   double lagrangian2 = 0;
   double beta=wolfe_beta_;
-  double dot_product = la::Dot(direction.n_elements(),
+  double dot_product = -la::Dot(direction.n_elements(),
                                gradient_.ptr(),
                                direction.ptr());
   double wolfe_factor =  dot_product * wolfe_sigma1_ * wolfe_beta_ * step_size_;
   for(index_t i=0; beta>1e-200; i++) { 
     temp_coordinates.CopyValues(coordinates_);
     la::AddExpert(-step_size_*beta, direction, &temp_coordinates);
+    optimized_function_->Project(&coordinates_); 
     lagrangian2 = optimized_function_->ComputeLagrangian(temp_coordinates);
-    if (lagrangian1-lagrangian2 >= wolfe_factor)  {
+    if (lagrangian2 <= lagrangian1 + wolfe_factor)  {
       optimized_function_->ComputeGradient(temp_coordinates, &temp_gradient);
-      double dot_product_new = la::Dot(temp_gradient.n_elements(), 
+      double dot_product_new = -la::Dot(temp_gradient.n_elements(), 
           temp_gradient.ptr(), direction.ptr());
-      if (dot_product_new <= wolfe_sigma2_*dot_product) {
+      if (dot_product_new >= wolfe_sigma2_*dot_product) {
         break;
       }     
     }
@@ -255,7 +260,6 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
   } else {
     *step=step_size_*beta;
     coordinates_.CopyValues(temp_coordinates);   
-    optimized_function_->Project(&coordinates_); 
     fx_timer_stop(module_, "wolfe_step");
     return SUCCESS_PASS;
   }
@@ -310,6 +314,7 @@ success_t LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, ind
   }
   ComputeWolfeStep_(step, temp_direction);
   if (step==0) {
+    NONFATAL("BFGS Failed looking in the other direction...\n");
     la::Scale(-1.0, &temp_direction);
     ComputeWolfeStep_(step, temp_direction);
     *step=-*step;
@@ -360,6 +365,7 @@ success_t LBfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
 
 template<typename OptimizedFunction>
 std::string LBfgs<OptimizedFunction>::ComputeProgress_() {
+  double lagrangian=optimized_function_->ComputeLagrangian(coordinates_);
   double objective;
   optimized_function_->ComputeObjective(coordinates_, &objective);
   double feasibility_error;
@@ -368,9 +374,9 @@ std::string LBfgs<OptimizedFunction>::ComputeProgress_() {
   double norm_grad=la::Dot(gradient_.n_elements(), 
       gradient_.ptr(), gradient_.ptr());
   char buffer[1024];
-  sprintf(buffer, "iteration:%i sigma:%lg objective:%lg error:%lg "
+  sprintf(buffer, "iteration:%i sigma:%lg lagrangian:%lg objective:%lg error:%lg "
       "grad_norm:%lg step:%lg",
-      num_of_iterations_, sigma_, objective, 
+      num_of_iterations_, sigma_, lagrangian, objective, 
       feasibility_error, norm_grad, step_);
   return std::string(buffer);
 }
