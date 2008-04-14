@@ -168,13 +168,14 @@ int main(int argc, char *argv[]) {
   srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
+  String kernel = fx_param_str_req(NULL, "kernel");
   String learner_name = fx_param_str_req(NULL,"learner_name");
   int learner_typeid;
   
-  if (learner_name == "rvc") { // Relevance Vector Classfication
+  if (learner_name == "rvm_c") { // Relevance Vector Classfication
     learner_typeid = 0;
   }
-  else if (learner_name == "rvr") { // Relevance Vector Regression
+  else if (learner_name == "rvm_r") { // Relevance Vector Regression
     learner_typeid = 1;
   }
   else {
@@ -261,12 +262,12 @@ int main(int argc, char *argv[]) {
 
     if (kernel == "linear") {
       RVM<RVMLinearKernel> rvm;
-      rvm.Init(testset, testset.n_labels(), rvm_module); // TODO:n_labels() -> num_classes_
+      rvm.Init(learner_typeid, testset, testset.n_labels(), rvm_module); // TODO:n_labels() -> num_classes_
       rvm.LoadModelBatchPredict(&testset, "rvm_model", "testlabels"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       RVM<RVMRBFKernel> rvm;
-      rvm.Init(testset, testset.n_labels(), rvm_module); // TODO:n_labels() -> num_classes_
+      rvm.Init(learner_typeid, testset, testset.n_labels(), rvm_module); // TODO:n_labels() -> num_classes_
       rvm.LoadModelBatchPredict(&testset, "rvm_model", "testlabels"); // TODO:param_req
     }
   }
