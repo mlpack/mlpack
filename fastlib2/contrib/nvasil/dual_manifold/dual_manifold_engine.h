@@ -50,7 +50,12 @@ class DualManifoldEngine {
     ArrayList<double> &dot_prod_values);
   void Destruct();
   void ComputeLocalOptimum(); 
- 
+  double ComputeEvaluationTest(
+      ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+      ArrayList<double> &dot_prod_values);
+  Matrix *DualManifoldEngine<OptimizedFunction>::Matrix1();
+  Matrix *DualManifoldEngine<OptimizedFunction>::Matrix2();
+  
  private:
   double feasibility_tolerance_;
   double desired_feasibility_;

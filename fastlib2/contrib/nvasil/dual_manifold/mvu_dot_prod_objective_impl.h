@@ -104,7 +104,7 @@ void MVUDotProdObjective::UpdateLagrangeMult(Matrix &coordinates) {
 }
 
 void MVUDotProdObjective::Project(Matrix *coordinates) {
-  OptUtils::NonNegativeProjection(coordinates);
+  //OptUtils::NonNegativeProjection(coordinates);
 }
 
 void MVUDotProdObjective::set_sigma(double sigma) {

@@ -41,7 +41,7 @@ void DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
   datanode *l_bfgs_node1=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs1");
   datanode *l_bfgs_node2=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs2");
 
-  num_of_components_=fx_param_int(module_, "components", 10);
+  num_of_components_=fx_param_int(module_, "components", 40);
     //we need to insert the number of points
   char buffer[128];
   sprintf(buffer, "%i", num_of_components_);
@@ -49,7 +49,7 @@ void DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
   fx_set_param(l_bfgs_node1, "new_dimension", buffer);
   fx_set_param(l_bfgs_node2, "new_dimension", buffer);
  
-  sprintf(buffer, "%lg", 1.0); 
+  sprintf(buffer, "%lg", 1000.0); 
   fx_set_param(l_bfgs_node1, "sigma", buffer);
   fx_set_param(l_bfgs_node2, "sigma", buffer);
 
@@ -78,13 +78,14 @@ void DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
 
 template<typename OptimizedFunction>
 void DualManifoldEngine<OptimizedFunction>::Destruct() {
-
+  l_bfgs1_.Destruct();
+  l_bfgs2_.Destruct();
 }
 
 template<typename OptimizedFunction>
 void DualManifoldEngine<OptimizedFunction>::ComputeLocalOptimum() {
- // l_bfgs1_.set_max_iterations(10);
- // l_bfgs2_.set_max_iterations(10);
+  l_bfgs1_.set_max_iterations(10);
+  l_bfgs2_.set_max_iterations(10);
   for(index_t i=0; i<max_iterations_; i++) {
     l_bfgs1_.ComputeLocalOptimumBFGS();
  //   l_bfgs1_.Reset();
@@ -97,4 +98,35 @@ void DualManifoldEngine<OptimizedFunction>::ComputeLocalOptimum() {
     }
   } 
 }
+
+template<typename OptimizedFunction>
+double DualManifoldEngine<OptimizedFunction>::ComputeEvaluationTest(
+    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<double> &dot_prod_values) {
+ 
+  double error=0;
+  Matrix *w_mat = l_bfgs1_.coordinates();
+  Matrix *h_mat = l_bfgs2_.coordinates();
+  for(index_t i=0; i<pairs_to_consider.size(); i++) {
+    index_t ind1=pairs_to_consider[i].first;
+    index_t ind2=pairs_to_consider[i].second;
+    error+=fabs(la::Dot(num_of_components_, 
+        w_mat->GetColumnPtr(ind1),
+        h_mat->GetColumnPtr(ind2)) - dot_prod_values[i]);
+  }
+  error/=pairs_to_consider.size();
+  fx_format_result(module_, "evaluation error", "%lg", error);
+  return error;
+}
+
+template<typename OptimizedFunction>
+Matrix *DualManifoldEngine<OptimizedFunction>::Matrix1() {
+  return l_bfgs1_.coordinates();
+}
+
+template<typename OptimizedFunction>
+Matrix *DualManifoldEngine<OptimizedFunction>::Matrix2() {
+  return l_bfgs2_.coordinates();
+}
+
 
