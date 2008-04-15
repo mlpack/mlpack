@@ -231,7 +231,7 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	rvm.BatchPredict(&testset, "testlabels");
+	rvm.BatchPredict(&testset, "predicted_values");
       }
     }
     else if (kernel == "gaussian") {
@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	rvm.BatchPredict(&testset, "testlabels"); // TODO:param_req
+	rvm.BatchPredict(&testset, "predicted_values"); // TODO:param_req
       }
     }
   }
@@ -263,12 +263,12 @@ int main(int argc, char *argv[]) {
     if (kernel == "linear") {
       RVM<RVMLinearKernel> rvm;
       rvm.Init(learner_typeid, testset, testset.n_labels(), rvm_module); // TODO:n_labels() -> num_classes_
-      rvm.LoadModelBatchPredict(&testset, "rvm_model", "testlabels"); // TODO:param_req
+      rvm.LoadModelBatchPredict(&testset, "rvm_model", "predicted_values"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       RVM<RVMRBFKernel> rvm;
       rvm.Init(learner_typeid, testset, testset.n_labels(), rvm_module); // TODO:n_labels() -> num_classes_
-      rvm.LoadModelBatchPredict(&testset, "rvm_model", "testlabels"); // TODO:param_req
+      rvm.LoadModelBatchPredict(&testset, "rvm_model", "predicted_values"); // TODO:param_req
     }
   }
   fx_done();

@@ -47,6 +47,12 @@ const index_t PRUNE_POINT = 50;
 // Terminate estimation when no log-alpha value changes by more than this
 const double MIN_DELTA_LOGALPHA = 1.0e-3;
 
+const double STOP_CRITERION = 1.0e-6;
+
+const double LAMBDA_MIN	= pow(2.0, -8.0);
+
+const index_t PM_MAXITS = 25;
+
 template<typename TKernel>
 class SBL_EST {
   FORBID_ACCIDENTAL_COPIES(SBL_EST);
@@ -73,37 +79,7 @@ class SBL_EST {
     return kernel_;
   }
 
-  //index_t num_rv() const {
-  //  return n_rv_;
-  //}
-
  private:
-  /*
-    double Error_(index_t i) const {
-    double val;
-    if (!IsBound_(alpha_[i])) {
-      val = error_[i];
-      VERBOSE_MSG(0, "error values %f and %f", error_[i], Evaluate_(i) - GetLabelSign_(i));
-    } else {
-      val = CalculateError_(i);
-    }
-    return val;
-    }
-
-  double CalculateError_(index_t i) const {
-    return Evaluate_(i) - GetLabelSign_(i);
-    }
-  
-    double Evaluate_(index_t i) const; 
-
-  double EvalKernel_(index_t i, index_t j) const {
-    return kernel_cache_sign_.get(i, j) * (GetLabelSign_(i) * GetLabelSign_(j));
-    }
-  */
-  
-  /**
-   * Calculate kernel values, dim(PHI_)==n_data_ x (1+n_data_)
-   */
 
   void GetVector_(index_t i, Vector *v) const {
     matrix_.MakeColumnSubvector(i, 0, matrix_.n_rows()-1, v);
@@ -125,13 +101,16 @@ class SBL_EST {
     fprintf(stderr, "Kernel Stop\n");
   }
 
-  void CalcLldRegression(Matrix* PHI_nz, Vector* alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &betaED);
+  void CalcLldRegression(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero);
+  
+  void CalcLldClassification(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero);
+
 };
 
 /**
 * RVM training, for both regression and classification
 *
-* @param: input 2-classes data matrix with labels (1,-1) in the last row
+* @param: inputs
 */
 template<typename TKernel>
 void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vector &alpha_v, double &beta, int max_iter, ArrayList<index_t> &rv_index, ArrayList<double> &weights) {
@@ -169,13 +148,11 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
     }
     Vector alpha_nz; // dim(alpha_nz) == ct_non_zero x 1
     Vector alpha_nz_idx; // dim(alpha_nz_idx) == n_data_
-    Matrix PHI_nz; // dim(PHI_nz) == n_data_ x ct_non_zero
-    Matrix PHI_t_nz; // dim(PHI_t_nz) == ct_non_zero x 1
+    Matrix PHI_nz; // dim(PHI_nz) == n_data_ x ct_non_zero    
     alpha_nz.Init(ct_non_zero);
     alpha_nz_idx.Init(n_data_);
     alpha_nz_idx.SetAll(0);
     PHI_nz.Init(n_data_, ct_non_zero);
-    PHI_t_nz.Init(ct_non_zero, 1);
     ct_non_zero = 0;
     Vector source, dest;
     for(i=0; i<n_data_+1; i++) {
@@ -196,16 +173,10 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
     double betaED, logBeta;
 
     if (learner_typeid == 1) { // RVM Regression
-      CalcLldRegression(&PHI_nz, &alpha_nz, w_nz, U, ED, betaED);
-      /*
-      
-      */
+      CalcLldRegression(train_values, PHI_nz, alpha_nz, w_nz, U, ED, beta, betaED, logBeta, ct_non_zero);
     }
     else if (learner_typeid == 0) { // RVM Classification
-      //CalcLldClassification();
-      /*
-      logBeta = 0;
-      */
+      CalcLldClassification(train_values, PHI_nz, alpha_nz, w_nz, U, ED, beta, betaED, logBeta, ct_non_zero);
     }
 
     double logdetH;
@@ -322,34 +293,80 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
     *weights.AddBack() = w_nz.get(i,1);
 }
 
-void CalcLldRegression(Matrix* PHI_nz, Vector* alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &betaED) {
+/**
+* Log Likelihood calculation, for RVM regression
+*
+* @param: inputs
+*/
+template<typename TKernel>
+void SBL_EST<TKernel>::CalcLldRegression(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero) {
+  index_t i;
   Matrix Hessian; // dim(Hessian) == ct_non_zero x ct_non_zero
-      Hessian.InitDiagonal(alpha_nz); // Hessian = diag(alpha_nz)
+  Hessian.InitDiagonal(alpha_nz); // Hessian = diag(alpha_nz)
       
-      Matrix temp_mat; // dim(temp_mat) == ct_non_zero x ct_non_zero
-      la::MulTransAInit(PHI_nz, PHI_nz, &temp_mat); // PHI_nz'*PHI_nz
-      la::AddExpert(beta, temp_mat, &Hessian); // Hessian = (PHI_nz'*PHI_nz)*beta + diag(alpha_nz);
-      temp_mat.Destruct();
-      
-      la::CholeskyInit(Hessian, &U); // Hessian = U'*U
-      la::Inverse(&U); // OUTPUT, U = U^-1
-      Hessian.Destruct();
-      
-      la::MulTransBInit(U, U, &w_nz); // U^-1 * (U^-1)'
-      la::MulOverwrite(w_nz, PHI_t_nz, &w_nz); // U^-1 * (U^-1)' * PHI_t_nz
-      la::Scale(beta, &w_nz); // OUTPUT, w_nz = U^-1 * (U^-1)' * PHI_t_nz * beta, OUTPUT
-      U.Destruct();
-      PHI_t_nz.Destruct();
-      
-      Matrix temp_PHInz_mult_wnz;
-      la::MulInit(PHI_nz, w_nz, &temp_PHInz_mult_wnz);
-      PHI_nz.Destruct();
-      
-      for (i=0; i<n_data_; i++)
-	ED += math::Sqr( train_values.get(i,1) - temp_PHInz_mult_wnz.get(i,1) );
-      temp_PHInz_mult_wnz.Destruct();
-      betaED = beta * ED; // OUTPUT, betaED = beta * sum((t-PHI_nz*w(nonZero)).^2);;
-      logBeta = n_data_ * log(beta); // OUTPUT
+  Matrix temp_mat; // dim(temp_mat) == ct_non_zero x ct_non_zero
+  la::MulTransAInit(PHI_nz, PHI_nz, &temp_mat); // PHI_nz'*PHI_nz
+  la::AddExpert(beta, temp_mat, &Hessian); // Hessian = (PHI_nz'*PHI_nz)*beta + diag(alpha_nz);
+  temp_mat.Destruct();
+  
+  la::CholeskyInit(Hessian, &U); // Hessian = U'*U
+  la::Inverse(&U); // OUTPUT, U = U^-1
+  Hessian.Destruct();
+  
+  Matrix PHI_t_nz; // dim(PHI_t_nz) == ct_non_zero x 1
+  PHI_t_nz.Init(ct_non_zero, 1);
+  
+  la::MulTransBInit(U, U, &w_nz); // U^-1 * (U^-1)'
+  la::MulOverwrite(w_nz, PHI_t_nz, &w_nz); // U^-1 * (U^-1)' * PHI_t_nz
+  la::Scale(beta, &w_nz); // OUTPUT, w_nz = U^-1 * (U^-1)' * PHI_t_nz * beta, OUTPUT
+  U.Destruct();
+  PHI_t_nz.Destruct();
+  
+  Matrix temp_PHInz_mult_wnz;
+  la::MulInit(PHI_nz, w_nz, &temp_PHInz_mult_wnz);
+  PHI_nz.Destruct();
+  
+  // ED = sum((t-PHI_nz*w(nonZero)).^2); % Data error
+  for (i=0; i<n_data_; i++)
+    ED += math::Sqr( train_values.get(i,1) - temp_PHInz_mult_wnz.get(i,1) );
+  temp_PHInz_mult_wnz.Destruct();
+  betaED = beta * ED; // OUTPUT, betaED = beta * sum((t-PHI_nz*w(nonZero)).^2);;
+  logBeta = n_data_ * log(beta); // OUTPUT
+}
+
+/**
+* Log Likelihood calculation, for RVM classification
+*
+* @param: inputs
+*/
+template<typename TKernel>
+void SBL_EST<TKernel>::CalcLldClassification(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero) {
+  index_t i;
+
+  /* Initialization */
+
+  Matrix A;
+  A.InitDiagonal(alpha_nz); // A = diag(alpha_nz)
+
+  // y = Sigmoid(PHI_nz * w_nz);
+  Matrix y;
+  la::MulInit(PHI_nz, w_nz, &y);
+  for (i=0; i<y.n_rows() ; i++) {
+    y.set( i, 1, math::Sigmoid(y.get(i,1)) );
+  }
+
+  // data_term = -(sum(log(y(t))) + sum(log(1-y(~t))))/N;
+
+  // regulariser = (alpha'*(w.^2))/(2*N);
+  
+  // err_new = data_term + regulariser;
+
+
+  /* Iteration */
+  for (i=0; i<PM_MAXITS; i++) {
+  }
+
+  logBeta = 0; // OUTPUT
 }
 
 
