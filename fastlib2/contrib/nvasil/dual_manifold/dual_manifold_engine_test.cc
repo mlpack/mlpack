@@ -23,8 +23,9 @@
 
 class DualManifoldEngineTest {
  public:
-  void Init() {
-    std::string filename= "D_mat.txt"; //"/net/hg200/nvasil/dataset/ml-data_0/u.data";
+  void Test1() {
+    NOTIFY("Testing Test1..");
+    std::string filename= "D_mat.txt"; 
     FILE *fp=fopen(filename.c_str(), "r");
     if (fp==NULL) {
      FATAL("Unable to open file %s, error %s\n", filename.c_str(),
@@ -45,19 +46,52 @@ class DualManifoldEngineTest {
     }
     fclose(fp);
     engine_.Init(NULL, pairs_to_consider, dot_prods);
+    engine_.ComputeLocalOptimum();
+    NOTIFY("Test1 passed!!");
   }
+  
+  void Test2() {
+    NOTIFY("Testing Test2..");
+    datanode *node=fx_submodule(NULL, "", "opts");
+    char buffer[128];
+    sprintf(buffer, "%i", 40);
+    fx_set_param(node, "components", buffer);
+
+    std::string filename="/net/hg200/nvasil/dataset/ml-data_0/u.data";
+    FILE *fp=fopen(filename.c_str(), "r");
+    if (fp==NULL) {
+     FATAL("Unable to open file %s, error %s\n", filename.c_str(),
+         strerror(errno));
+    }
+    ArrayList<std::pair<index_t, index_t> > pairs_to_consider;
+    pairs_to_consider.Init();
+    ArrayList<double> dot_prods;
+    dot_prods.Init();
+    while (!feof(fp)) {
+      index_t user_id;
+      index_t movie_id;
+      double rating;
+      index_t timestamp;
+      fscanf(fp, "%i %i %lg %i", &user_id, &movie_id, &rating, &timestamp);
+      pairs_to_consider.PushBackCopy(std::make_pair(user_id-1, 
+            movie_id-1));
+      dot_prods.PushBackCopy(rating);
+    }
+    fclose(fp);
+    engine_.Init(NULL, pairs_to_consider, dot_prods);
+    engine_.ComputeLocalOptimum();
+    NOTIFY("Test2 passed!!");
+  }
+
   void Destruct() {
     engine_.Destruct();
   }
-  void Test1() {
-    engine_.ComputeLocalOptimum();
-  }
+ 
   void TestAll() {
-    NOTIFY("Testing Test1..");
-    Init();
     Test1();
     Destruct();
-    NOTIFY("Test1 passed!!");
+    Test2();
+    Destruct();
   }
  
  private:
