@@ -7,6 +7,33 @@ class Pca {
 
  private:
 
+  static void GramSchmidt_(const Matrix *current_bases, 
+			   int num_current_components, Vector &new_basis,
+			   double epsilon) {
+    
+    // Make a backup copy of the new basis.
+    Vector new_basis_copy;    
+    new_basis_copy.Copy(new_basis);
+    
+    for(index_t i = 0; i < num_current_components; i++) {
+     
+      // Get a pointer to the i-th previous basis.
+      Vector previous_basis;
+      current_bases->MakeColumnVector(i, &previous_basis);
+
+      // Compute the dot-product between the new basis and the
+      // previous basis.
+      double dot_product = la::Dot(new_basis_copy, previous_basis);
+      
+      // Subtract off the component described the i-th previous basis.
+      la::AddExpert(-dot_product, previous_basis, &new_basis);      
+    }
+
+    // Normalize the new basis to be of unit norm.
+    la::Scale(1.0 / la::LengthEuclidean(new_basis), &new_basis);
+
+  }
+
   static void ComputeCovariance_(const Matrix &data, Matrix *covariance) {
 
     // Compute the mean vector.
@@ -88,19 +115,62 @@ class Pca {
   static void FixedPointAlgorithm(const Matrix &data,
 				  Vector *eigen_values,
 				  Matrix *principal_components,
+				  int num_components_desired,
 				  double epsilon) {
     
     // First, compute the covariance matrix of the dataset.
     Matrix covariance;
     ComputeCovariance_(data, &covariance);
 
-    // The current number of principal components to be searched.
-    int current_num_components = 1;
+    // Allocate enough space for storing the principal components and
+    // eigenvalues.
+    principal_components->Init(data.n_rows(), num_components_desired);
+    principal_components->SetZero();
+    eigen_values->Init(num_components_desired);
+    eigen_values->SetZero();
+    
+    // Temporary space for storing the product.
+    Vector product;
+    product.Init(data.n_rows());
 
-    do {
+    for(index_t c = 0; c < num_components_desired; c++) {
       
+      Vector previous_iteration_current_basis;
+      Vector current_basis;
+      principal_components->MakeColumnVector(c, &current_basis);      
+      
+      // Generate random unit vector.
+      RandomUnitVector_(current_basis);
 
-    } while(tolerance > epsilon);
+      // Set the previous iteration's vector basis to be zero vector.
+      previous_iteration_current_basis.Init(current_basis.length());
+      previous_iteration_current_basis.SetZero();
+
+      // Flag for convergence detection.
+      bool converged = false;
+
+      // Repeat until convergence.
+      do {
+
+	// Compute the product of the current basis and the covariance
+	// matrix.
+	la::MulOverwrite(covariance, current_basis, &product);
+	(*eigen_values)[c] = la::LengthEuclidean(product);
+
+	previous_iteration_current_basis.CopyValues(current_basis);
+	current_basis.CopyValues(product);	
+
+	// Orthogonalize the product against all existing basis.
+	GramSchmidt_(principal_components, c, current_basis, 
+		     epsilon);
+
+	if(fabs(la::Dot(current_basis, 
+			previous_iteration_current_basis) - 1) < epsilon ) {
+	  converged = true;
+	}
+      } while(!converged);
+      
+    } // end of iterating over components
   }
 
 };
