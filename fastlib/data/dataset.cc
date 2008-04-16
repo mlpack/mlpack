@@ -319,7 +319,7 @@ void Dataset::GetLabels(ArrayList<double> &labels_list,
     }
     labels_temp[i] = j;
     if (j == n_labels) { // new label
-      *(labels_list.AddBack()) = (int)current_label; // labels need to be integers
+      *(labels_list.AddBack()) = current_label; // add new label to list
       *(labels_ct.AddBack()) = 1;
       n_labels++;
     }

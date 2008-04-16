@@ -342,7 +342,7 @@ void SVM<TKernel>::SaveModel(String modelfilename) {
   fprintf(fp, "total_num_sv %d\n", total_num_sv_);
   fprintf(fp, "labels ");
   for (i = 0; i < num_classes_; i++) 
-    fprintf(fp, "%d ", int(train_labels_list_[i]));
+    fprintf(fp, "%f ", train_labels_list_[i]);
   fprintf(fp, "\n");
   /* save models */
   fprintf(fp, "thresholds ");
@@ -426,7 +426,7 @@ void SVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
     }
     else if (strcmp(cmd, "labels")==0) {
       for (i=0; i<num_classes_; i++) {
-	fscanf(fp,"%d",&temp_d);
+	fscanf(fp,"%f",&temp_d);
 	train_labels_list_[i] = temp_d;
       }
     }
