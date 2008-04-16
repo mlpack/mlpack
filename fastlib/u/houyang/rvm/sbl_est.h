@@ -101,7 +101,7 @@ class SBL_EST {
     fprintf(stderr, "Kernel Stop\n");
   }
 
-  void CalcLldRegression(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero);
+  void CalcLldRegression(Matrix &train_values, Matrix &PHI_t_nz, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero);
   
   void CalcLldClassification(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero);
 
@@ -121,26 +121,30 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
 
   /* weights corresponding to non zero alpha_v, dim(w_nz) == ct_non_zero x 1*/
   Matrix w_nz;
+  w_nz.Init(1,1);
 
   // Obtain kernel matrix PHI=[b K], b is the bias term
   CalcKernels_();
-  // first all-one column is for bias
-  for (i=0; i<max_iter; i++)
-    PHI_.set(i, 1, 1);
+  // the first "all-one column" is for the bias
+  for (i=0; i<n_data_; i++)
+    PHI_.set(i, 0, 1);
 
   Matrix train_values; // the vector that stores the values for data points, dim: n_data_ x 1
   train_values.Init(n_data_, 1);
+  index_t value_row_idx = dataset_in->n_features() - 1;
   for(i=0; i<n_data_; i++)
-    train_values.set(i, 1, dataset_in->get(dataset_in->n_features()-1, i) );
+    train_values.set(i, 0, dataset_in->get(value_row_idx, i) );
+
   Matrix PHI_t; // dim(PHI_t) == n_data_+1 x 1
   la::MulTransAInit(PHI_, train_values, &PHI_t); // PHI_t = PHI_' * train_values
   
   bool LastIter = false;
 
-  index_t ct_non_zero = 0;
+  index_t ct_non_zero;
   /* Training Iterations */
   for (index_t c=0; c<max_iter; c++) {
     /* 1. Prune large values of alpha, get the shrinked set */
+    ct_non_zero = 0;
     for(i=0; i<n_data_+1; i++) { // dim(alpha_v) == n_data_+1 x 1
       if (alpha_v[i] < ALPHA_MAX) {
 	ct_non_zero ++;
@@ -148,20 +152,30 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
     }
     Vector alpha_nz; // dim(alpha_nz) == ct_non_zero x 1
     Vector alpha_nz_idx; // dim(alpha_nz_idx) == n_data_
-    Matrix PHI_nz; // dim(PHI_nz) == n_data_ x ct_non_zero    
+        
     alpha_nz.Init(ct_non_zero);
-    alpha_nz_idx.Init(n_data_);
-    alpha_nz_idx.SetAll(0);
+    alpha_nz_idx.Init(n_data_+1);
+    alpha_nz_idx.SetAll(0.0) ;// dim(alpha_nz_idx) == n_data_+1 x 1
+        
+    Matrix PHI_nz; // dim(PHI_nz) == n_data_ x ct_non_zero
+    fprintf(stderr, "%d\n", ct_non_zero);
     PHI_nz.Init(n_data_, ct_non_zero);
+    
+    // PHI_t_nz = PHI_t(non_zero)
+    Matrix PHI_t_nz; // dim(PHI_t_nz) == ct_non_zero x 1
+    PHI_t_nz.Init(ct_non_zero, 1);
+
     ct_non_zero = 0;
-    Vector source, dest;
     for(i=0; i<n_data_+1; i++) {
       if (alpha_v[i] < ALPHA_MAX) {
+	Vector source, dest;
 	alpha_nz[ct_non_zero] = alpha_v[i];
 	alpha_nz_idx[i] = 1;
 	PHI_.MakeColumnVector(i, &source);
 	PHI_nz.MakeColumnVector(ct_non_zero, &dest);
 	dest.CopyValues(source);
+
+	PHI_t_nz.set(ct_non_zero, 0, PHI_t.get(i,0));
 
 	ct_non_zero ++;
       }
@@ -172,8 +186,12 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
     double ED = 0.0;
     double betaED, logBeta;
 
+    w_nz.Destruct();
+    w_nz.Init(ct_non_zero, 1);
+
     if (learner_typeid == 1) { // RVM Regression
-      CalcLldRegression(train_values, PHI_nz, alpha_nz, w_nz, U, ED, beta, betaED, logBeta, ct_non_zero);
+      CalcLldRegression(train_values, PHI_t_nz, PHI_nz, alpha_nz, w_nz, U, ED, beta, betaED, logBeta, ct_non_zero);
+      // PHI_nz.Destruct();
     }
     else if (learner_typeid == 0) { // RVM Classification
       CalcLldClassification(train_values, PHI_nz, alpha_nz, w_nz, U, ED, beta, betaED, logBeta, ct_non_zero);
@@ -202,15 +220,15 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
     ones.Init(ct_non_zero);
     ones.SetAll(1);
     la::AddTo(ones, &gamma); // gamma = 1 - alpha_nz.*diagSig;
-    ones.Destruct();
+    //ones.Destruct();
 
     // marginal	= -0.5* [(w(nonZero).^2)'*alpha_nz - sum(log(alpha_nz)) + logdetH - logBeta + betaED ];
     Vector w_nz_sq;
     w_nz_sq.Init(ct_non_zero);
     for (i=0; i<ct_non_zero; i++)
-      w_nz_sq[i] = math::Sqr(w_nz.get(i,1));
+      w_nz_sq[i] = math::Sqr(w_nz.get(i,0));
     double marginal = la::Dot(w_nz_sq, alpha_nz);
-    w_nz_sq.Destruct();
+    //w_nz_sq.Destruct();
     for (i=0; i<ct_non_zero; i++)
       marginal -= log(alpha_nz[i]);
     marginal = -0.5 * ( marginal + logdetH - logBeta + betaED);
@@ -226,13 +244,13 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
       if (c < PRUNE_POINT) {
 	// MacKay-style update given in original NIPS paper
 	for (i=0; i<ct_non_zero; i++) {
-	  alpha_nz[i] = gamma[i] / math::Sqr(w_nz.get(i,1));
+	  alpha_nz[i] = gamma[i] / math::Sqr(w_nz.get(i,0));
 	}
       }
       else {
 	// Hybrid update based on NIPS theory paper and AISTATS submission
 	for (i=0; i<ct_non_zero; i++) {
-	  alpha_nz[i] = gamma[i] / ( math::Sqr(w_nz.get(i,1))/gamma[i] - diagSig[i] );
+	  alpha_nz[i] = gamma[i] / ( math::Sqr(w_nz.get(i,0))/gamma[i] - diagSig[i] );
 	  if (alpha_nz[i] < 0)
 	    alpha_nz[i] = INFINITY;
 	}
@@ -241,7 +259,7 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
 	if (alpha_nz_idx[i] != 0)
 	  alpha_v[i] = alpha_nz[i];
       }
-      alpha_nz_idx.Destruct();     
+      //alpha_nz_idx.Destruct();     
 
       index_t ct = 0;
       for (i=0; i<ct_non_zero; i++) {
@@ -257,13 +275,13 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
 	  ct ++;
 	}
       }
-      alpha_nz.Destruct();
+      //alpha_nz.Destruct();
       double maxDAlpha = - INFINITY;
       for (i=0; i<ct; i++) {
 	if (DAlpha[i] > maxDAlpha)
 	  maxDAlpha = DAlpha[i];
       }
-      DAlpha.Destruct();
+      //DAlpha.Destruct();
 
       // Terminate if the largest alpha change is judged too small
       if (maxDAlpha < MIN_DELTA_LOGALPHA)
@@ -290,7 +308,7 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
       *rv_index.AddBack() = i;      
   }
   for (i=0; i<ct_non_zero; i++)
-    *weights.AddBack() = w_nz.get(i,1);
+    *weights.AddBack() = w_nz.get(i,0);
 }
 
 /**
@@ -299,37 +317,37 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
 * @param: inputs
 */
 template<typename TKernel>
-void SBL_EST<TKernel>::CalcLldRegression(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero) {
+void SBL_EST<TKernel>::CalcLldRegression(Matrix &train_values, Matrix &PHI_t_nz, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero) {
   index_t i;
   Matrix Hessian; // dim(Hessian) == ct_non_zero x ct_non_zero
   Hessian.InitDiagonal(alpha_nz); // Hessian = diag(alpha_nz)
-      
-  Matrix temp_mat; // dim(temp_mat) == ct_non_zero x ct_non_zero
-  la::MulTransAInit(PHI_nz, PHI_nz, &temp_mat); // PHI_nz'*PHI_nz
-  la::AddExpert(beta, temp_mat, &Hessian); // Hessian = (PHI_nz'*PHI_nz)*beta + diag(alpha_nz);
-  temp_mat.Destruct();
-  
+  Matrix temp_mat_a; // dim(temp_mat) == ct_non_zero x ct_non_zero
+fprintf(stderr, "%d_%d\n", PHI_nz.n_rows(), PHI_nz.n_cols());
+  la::MulTransAInit(PHI_nz, PHI_nz, &temp_mat_a); // PHI_nz'*PHI_nz
+
+  la::AddExpert(beta, temp_mat_a, &Hessian); // Hessian = (PHI_nz'*PHI_nz)*beta + diag(alpha_nz);
+  //temp_mat_a.Destruct();
   la::CholeskyInit(Hessian, &U); // Hessian = U'*U
   la::Inverse(&U); // OUTPUT, U = U^-1
-  Hessian.Destruct();
+  //Hessian.Destruct();
   
-  Matrix PHI_t_nz; // dim(PHI_t_nz) == ct_non_zero x 1
-  PHI_t_nz.Init(ct_non_zero, 1);
-  
-  la::MulTransBInit(U, U, &w_nz); // U^-1 * (U^-1)'
-  la::MulOverwrite(w_nz, PHI_t_nz, &w_nz); // U^-1 * (U^-1)' * PHI_t_nz
+  Matrix temp_mat_b;
+  la::MulTransBInit(U, U, &temp_mat_b); // U^-1 * (U^-1)'
+  fprintf(stderr, "%d_%d_%d_%d\n", temp_mat_b.n_rows(), temp_mat_b.n_cols(), PHI_t_nz.n_rows(), PHI_t_nz.n_cols());
+  fprintf(stderr, "%d_%d\n", w_nz.n_rows(), w_nz.n_cols());
+  la::MulOverwrite(temp_mat_b, PHI_t_nz, &w_nz); // U^-1 * (U^-1)' * PHI_t_nz
+
+  //temp_mat_b.Destruct();
+  //PHI_t_nz.Destruct();
   la::Scale(beta, &w_nz); // OUTPUT, w_nz = U^-1 * (U^-1)' * PHI_t_nz * beta, OUTPUT
-  U.Destruct();
-  PHI_t_nz.Destruct();
   
   Matrix temp_PHInz_mult_wnz;
   la::MulInit(PHI_nz, w_nz, &temp_PHInz_mult_wnz);
-  PHI_nz.Destruct();
   
   // ED = sum((t-PHI_nz*w(nonZero)).^2); % Data error
   for (i=0; i<n_data_; i++)
-    ED += math::Sqr( train_values.get(i,1) - temp_PHInz_mult_wnz.get(i,1) );
-  temp_PHInz_mult_wnz.Destruct();
+    ED += math::Sqr( train_values.get(i,0) - temp_PHInz_mult_wnz.get(i,0) );
+  //temp_PHInz_mult_wnz.Destruct();
   betaED = beta * ED; // OUTPUT, betaED = beta * sum((t-PHI_nz*w(nonZero)).^2);;
   logBeta = n_data_ * log(beta); // OUTPUT
 }
@@ -352,7 +370,7 @@ void SBL_EST<TKernel>::CalcLldClassification(Matrix &train_values, Matrix &PHI_n
   Matrix y;
   la::MulInit(PHI_nz, w_nz, &y);
   for (i=0; i<y.n_rows() ; i++) {
-    y.set( i, 1, math::Sigmoid(y.get(i,1)) );
+    y.set( i, 0, math::Sigmoid(y.get(i,1)) );
   }
 
   // data_term = -(sum(log(y(t))) + sum(log(1-y(~t))))/N;
