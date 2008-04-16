@@ -38,9 +38,12 @@ void DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
   num_of_rows+=1;
   num_of_cols+=1;
   module_=module;
-  datanode *l_bfgs_node1=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs1");
-  datanode *l_bfgs_node2=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs2");
+  datanode *l_bfgs_node1=fx_submodule(module_, "/l_bfgs", "l_bfgs1");
+  datanode *l_bfgs_node2=fx_submodule(module_, "/l_bfgs", "l_bfgs2");
 
+  max_iterations_=fx_param_int(module_, "max_iterations", 100000);
+  desired_feasibility_=fx_param_double(module_, "desired_feasibility",  1000);
+  feasibility_tolerance_ = fx_param_double(module, "feasibility_tolerance", 0.01); 
   num_of_components_=fx_param_int(module_, "components", 40);
     //we need to insert the number of points
   char buffer[128];
@@ -86,16 +89,21 @@ template<typename OptimizedFunction>
 void DualManifoldEngine<OptimizedFunction>::ComputeLocalOptimum() {
   l_bfgs1_.set_max_iterations(10);
   l_bfgs2_.set_max_iterations(10);
+  double old_feasibility_error=DBL_MAX;
+  optimized_function1_.ComputeFeasibilityError(*l_bfgs1_.coordinates(), 
+      &old_feasibility_error);
+  double feasibility_error=DBL_MAX;
   for(index_t i=0; i<max_iterations_; i++) {
     l_bfgs1_.ComputeLocalOptimumBFGS();
  //   l_bfgs1_.Reset();
     l_bfgs2_.ComputeLocalOptimumBFGS();
  //   l_bfgs2_.Reset();
-    double error;
-    optimized_function1_.ComputeFeasibilityError(*l_bfgs1_.coordinates(), &error);
-    if (error<desired_error_) {
+    optimized_function1_.ComputeFeasibilityError(*l_bfgs1_.coordinates(), &feasibility_error);
+    if (feasibility_error<desired_feasibility_ || 
+        fabs(feasibility_error-old_feasibility_error)/(old_feasibility_error)) {
       break;
     }
+    old_feasibility_error=feasibility_error;
   } 
 }
 

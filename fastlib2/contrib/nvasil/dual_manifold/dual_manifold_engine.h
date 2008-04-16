@@ -57,12 +57,11 @@ class DualManifoldEngine {
   Matrix *DualManifoldEngine<OptimizedFunction>::Matrix2();
   
  private:
-  double feasibility_tolerance_;
-  double desired_feasibility_;
   double norm_grad_tolerance_;
   index_t iterations_;
   index_t max_iterations_;
-  double desired_error_;
+  double desired_feasibility_;
+  double feasibility_tolerance_;
   datanode *module_;
   index_t num_of_components_;
     
