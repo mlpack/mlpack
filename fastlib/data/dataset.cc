@@ -304,8 +304,8 @@ void Dataset::GetLabels(ArrayList<double> &labels_list,
   labels_temp.Init(n_points);
   labels_temp[0] = 0;
 
-  *(labels_list.AddBack()) = matrix_.get(label_row_idx,0);
-  *(labels_ct.AddBack()) = 1;
+  labels_list.AddBackItem( matrix_.get(label_row_idx,0) );
+  labels_ct.AddBackItem(1);
   n_labels++;
 
   for (i = 1; i < n_points; i++) {
@@ -319,15 +319,15 @@ void Dataset::GetLabels(ArrayList<double> &labels_list,
     }
     labels_temp[i] = j;
     if (j == n_labels) { // new label
-      *(labels_list.AddBack()) = current_label; // add new label to list
-      *(labels_ct.AddBack()) = 1;
+      labels_list.AddBackItem(current_label); // add new label to list
+      labels_ct.AddBackItem(1);
       n_labels++;
     }
   }
   
-  *labels_startpos.AddBack() = 0;
+  labels_startpos.AddBackItem(0);
   for(i = 1; i < n_labels; i++){
-    *labels_startpos.AddBack() = labels_startpos[i-1] + labels_ct[i-1];
+    labels_startpos.AddBackItem(labels_startpos[i-1] + labels_ct[i-1]);
   }
 
   for(i = 0; i < n_points; i++) {
