@@ -304,7 +304,7 @@ void Dataset::GetLabels(ArrayList<double> &labels_list,
   labels_temp.Init(n_points);
   labels_temp[0] = 0;
 
-  *(labels_list.AddBack()) = matrix_.get(label_row_idx,0);  // labels need to be integers
+  *(labels_list.AddBack()) = matrix_.get(label_row_idx,0);
   *(labels_ct.AddBack()) = 1;
   n_labels++;
 
