@@ -159,9 +159,11 @@ class RVM {
 template<typename TKernel>
 void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classes, datanode *module){
   learner_typeid_ = learner_typeid;
+
+  total_num_rv_ = 0;
+
   weights_.Init();
   rv_index_.Init();
-  total_num_rv_ = 0;
 
   param_.kernel_.Init(fx_submodule(module, "kernel", "kernel"));
   param_.kernel_.GetName(&param_.kernelname_);
@@ -173,7 +175,7 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classe
   num_features_ = dataset.n_features()-1;
 
   // initialize alpha_, same for rvc and rvr
-  param_.initalpha_ =  1/math::Sqr(num_data_);
+  param_.initalpha_ =  1.0/math::Sqr(num_data_);
   
   // initilialize beta_ accroding to different learner types
   if (learner_typeid_ == 0 ) { // RVM Classification
@@ -184,7 +186,7 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classe
     values.Init(num_data_);
     for(index_t i=0; i<num_data_; i++)
       values[i] = dataset.get(dataset.n_features()-1, i);
-    param_.beta_ = 1 / pow(math::Std(values)/10, 2);
+    param_.beta_ = 1 / pow(math::Std(values)/10.0, 2);
   }
   else {
     fprintf(stderr, "Unknown learner name of RVM! Program stops!\n");
@@ -192,7 +194,7 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classe
   }
 
   // init maximum number of iterations
-  param_.max_iter_ = fx_param_int_req(NULL, "max_iter");
+  param_.max_iter_ = fx_param_int(NULL, "max_iter", 500); // defult number of iterations: 500
   
   // init the Alpha Vector form the inital alpha value
   alpha_v_.Init(num_data_ + 1); // +1:consider bias
@@ -203,6 +205,12 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, int n_classe
   if (learner_typeid == 0) {
     /* Group labels, split the training dataset for training RVM classifier */
     dataset.GetLabels(train_labels_list_, train_labels_index_, train_labels_ct_, train_labels_startpos_);
+  }
+  else {
+    train_labels_list_.Init();
+    train_labels_index_.Init();
+    train_labels_ct_.Init();
+    train_labels_startpos_.Init();
   }
 }
 
@@ -236,6 +244,8 @@ void RVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, int n_c
   /* Training for Relevance Vector Classification and Regression */
   sbl_est.Train(learner_typeid_, &dataset, alpha_v_, param_.beta_, param_.max_iter_, rv_index_, weights_);
   total_num_rv_ = rv_index_.size();
+
+  fprintf(stderr, "total_num_rv:%d\n", total_num_rv_);
 
   for (i = 0; i < total_num_rv_; i++) {
     trainset_rv_indicator[rv_index_[i]] = true;
@@ -316,8 +326,10 @@ void RVM<TKernel>::SaveModel(String modelfilename) {
 template<typename TKernel>
 void RVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
   /* Init */
+  train_labels_list_.Destruct();
   train_labels_list_.Init(num_classes_);
   num_features_ = testset->n_features() - 1;
+
 
   /* load model file */
   FILE *fp = fopen(modelfilename, "r");
@@ -367,25 +379,32 @@ void RVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
     }
     else if (strcmp(cmd, "total_num_rv")==0) {
       fscanf(fp,"%d",&total_num_rv_);
+      break;
     }
+  }
+  weights_.Destruct();
+  weights_.Init(total_num_rv_);
+
+  rv_.Init(num_features_, total_num_rv_);
+
+  rv_index_.Destruct();
+  rv_index_.Init(total_num_rv_);
+
+  while (1) {
+    fscanf(fp,"%80s",cmd);
     // load the index of RVs
-    else if (strcmp(cmd, "rv_index")==0) {
+    if (strcmp(cmd, "rv_index")==0) {
       for ( i= 0; i < total_num_rv_; i++) {
 	fscanf(fp,"%d",&temp_d);
 	rv_index_[i]= temp_d;
       }
     }
-  }
-  weights_.Init(total_num_rv_);
-  rv_.Init(num_features_, total_num_rv_);
-
-  while (1) {
     // load weights
-    fscanf(fp,"%80s",cmd);
-    if (strcmp(cmd, "weights")==0) {
+    else if (strcmp(cmd, "RV_weights")==0) {
       for (i = 0; i < total_num_rv_; i++) {
 	fscanf(fp,"%lf",&temp_f);
 	weights_[i] = temp_f;
+	fprintf(stderr, "%lf\n", weights_[i]);
       }
     }
     // load RVs
@@ -442,23 +461,11 @@ double RVM<TKernel>::Predict(const Vector& datum) {
   }
   // for regression, output: predicted regression value
   else if (learner_typeid_ == 1) {
-    /*    ArrayList<double> keval;
-    keval.Init(total_num_rv_);
-    Vector source, relevance_vector_i;
-    for (i = 0; i < total_num_rv_; i++) {
-      dataset.matrix().MakeColumnSubvector(rv_index_[i], 0, num_features_, &source); 
-      relevance_vector_i.CopyValues(source);
-      keval[i] = param_.kernel_.Eval(datum, relevance_vector_i);
-    }
-    
-    value_predict = 0.0;
-    for (i = 0; i < total_num_rv_; i++) {
-      value_predict += weights_[i] * keval[i]; // Dot product
-      }*/
     ArrayList<double> k_evals;
     k_evals.Init(total_num_rv_);
-    Vector relevance_vector_i;
+    
     for (i=0; i<total_num_rv_; i++) {
+      Vector relevance_vector_i;
       rv_.MakeColumnVector(i, &relevance_vector_i);
       k_evals[i] = param_.kernel_.Eval(datum, relevance_vector_i);
     }
