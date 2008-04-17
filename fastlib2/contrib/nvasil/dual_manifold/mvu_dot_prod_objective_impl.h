@@ -70,8 +70,9 @@ void MVUDotProdObjective::ComputeFeasibilityError(Matrix &coordinates, double *e
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
     double diff=dot_prod-dot_prod_values_[i];
-    *error +=diff*diff;
+    *error +=fabs(diff);
   }
+  *error/=pairs_to_consider_.size();
 }
 
 double MVUDotProdObjective::ComputeLagrangian(Matrix &coordinates) {
@@ -104,7 +105,7 @@ void MVUDotProdObjective::UpdateLagrangeMult(Matrix &coordinates) {
 }
 
 void MVUDotProdObjective::Project(Matrix *coordinates) {
-  //OptUtils::NonNegativeProjection(coordinates);
+  OptUtils::NonNegativeProjection(coordinates);
 }
 
 void MVUDotProdObjective::set_sigma(double sigma) {
