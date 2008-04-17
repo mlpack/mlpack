@@ -51,9 +51,10 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   DEBUG_ASSERT(wolfe_sigma2_<1);
   norm_grad_tolerance_ = fx_param_double(module_, "norm_grad_tolerance", 0.1); 
   wolfe_beta_   = fx_param_double(module_, "wolfe_beta", 0.8);
+  min_beta_ = fx_param_double(module_, "min_beta", 1e-20);
   max_iterations_ = fx_param_int(module_, "max_iterations", 10000);
   // the memory of bfgs 
-  mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 2);
+  mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 120);
   std::string log_file=fx_param_str(module_, "log_file", "opt_log");
   fp_log_=fopen(log_file.c_str(), "w");
   optimized_function_->set_sigma(sigma_);
@@ -63,6 +64,15 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::Destruct() {
  fclose(fp_log_);
+  double objective;
+  double feasibility_error;
+  optimized_function_->ComputeFeasibilityError(coordinates_,
+      &feasibility_error); 
+  optimized_function_->ComputeObjective(coordinates_, &objective);
+  fx_format_result(module_, "iterations", "%i", num_of_iterations_);
+  fx_format_result(module_, "feasibility_error", "%lg", feasibility_error);
+  fx_format_result(module_, "final_sigma", "%lg", sigma_);
+  fx_format_result(module_, "objective","%lg", objective);
 }
 
 template<typename OptimizedFunction>
@@ -106,14 +116,15 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     if (silent_==false) {
         ReportProgressFile_();
     }
-    optimized_function_->ComputeFeasibilityError(coordinates_, 
-        &feasibility_error);
+    if (feasibility_error < desired_feasibility_) {
+      return;
+    }
   }
  
   NOTIFY("Now starting optimizing with BFGS...\n");
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
-      ComputeBFGS_(&step_, gradient_, mem_bfgs_); 
+      success_t success_bfgs = ComputeBFGS_(&step_, gradient_, mem_bfgs_); 
       optimized_function_->ComputeGradient(coordinates_, &gradient_);
       optimized_function_->ComputeFeasibilityError(coordinates_, 
           &feasibility_error);
@@ -123,9 +134,13 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
       if (silent_==false) {
         ReportProgressFile_();
       }
+      if (success_bfgs==SUCCESS_FAIL){
+        break;
+      }
       if (step_*norm_grad/sigma_ < norm_grad_tolerance_) {
         break;
       }
+     // NOTIFY("feasibility_error:%lg desired_feasibility:%lg", feasibility_error, desired_feasibility_);
       if (feasibility_error < desired_feasibility_) {
         break;
       }
@@ -142,7 +157,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
        // break;
       }
     }
-    NOTIFY("%lg %lg\n", old_feasibility_error, feasibility_error);
+   // NOTIFY("%lg %lg\n", old_feasibility_error, feasibility_error);
     if (fabs(old_feasibility_error - feasibility_error)
         /(old_feasibility_error+1e-20) < feasibility_tolerance_ ||
         feasibility_error < desired_feasibility_) {
@@ -153,12 +168,6 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     optimized_function_->ComputeGradient(coordinates_, &gradient_);
   }
 
-  double objective;
-  optimized_function_->ComputeObjective(coordinates_, &objective);
-  fx_format_result(module_, "iterations", "%i", num_of_iterations_);
-  fx_format_result(module_, "feasibility_error", "%lg", feasibility_error);
-  fx_format_result(module_, "final_sigma", "%lg", sigma_);
-  fx_format_result(module_, "objective","%lg", objective);
 }
 
 template<typename OptimizedFunction>
@@ -237,7 +246,7 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
                                gradient_.ptr(),
                                direction.ptr());
   double wolfe_factor =  dot_product * wolfe_sigma1_ * wolfe_beta_ * step_size_;
-  for(index_t i=0; beta>1e-200; i++) { 
+  for(index_t i=0; beta>min_beta_/sigma_; i++) { 
     temp_coordinates.CopyValues(coordinates_);
     la::AddExpert(-step_size_*beta, direction, &temp_coordinates);
     optimized_function_->Project(&coordinates_); 
@@ -253,7 +262,7 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
     beta *=wolfe_beta_;
     wolfe_factor *=wolfe_beta_;
   }
-  if(beta<=1e-100) {
+  if(beta<=min_beta_/sigma_) {
     *step=0;
     fx_timer_stop(module_, "wolfe_step");
     return SUCCESS_FAIL;
