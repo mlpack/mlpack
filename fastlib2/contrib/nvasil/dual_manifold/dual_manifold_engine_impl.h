@@ -43,7 +43,7 @@ void DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
 
   max_iterations_=fx_param_int(module_, "max_iterations", 100000);
   desired_feasibility_=fx_param_double(module_, "desired_feasibility",  1000);
-  feasibility_tolerance_ = fx_param_double(module, "feasibility_tolerance", 0.01); 
+  feasibility_tolerance_ = fx_param_double(module, "feasibility_tolerance", 0.001); 
   num_of_components_=fx_param_int(module_, "components", 40);
     //we need to insert the number of points
   char buffer[128];
@@ -52,10 +52,6 @@ void DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
   fx_set_param(l_bfgs_node1, "new_dimension", buffer);
   fx_set_param(l_bfgs_node2, "new_dimension", buffer);
  
-  sprintf(buffer, "%lg", 1000.0); 
-  fx_set_param(l_bfgs_node1, "sigma", buffer);
-  fx_set_param(l_bfgs_node2, "sigma", buffer);
-
   sprintf(buffer, "%i", num_of_rows);
   fx_set_param(l_bfgs_node1, "num_of_points", buffer);
 
@@ -87,24 +83,33 @@ void DualManifoldEngine<OptimizedFunction>::Destruct() {
 
 template<typename OptimizedFunction>
 void DualManifoldEngine<OptimizedFunction>::ComputeLocalOptimum() {
-  l_bfgs1_.set_max_iterations(10);
-  l_bfgs2_.set_max_iterations(10);
+  //l_bfgs1_.set_max_iterations(10);
+  //l_bfgs2_.set_max_iterations(10);
   double old_feasibility_error=DBL_MAX;
   optimized_function1_.ComputeFeasibilityError(*l_bfgs1_.coordinates(), 
       &old_feasibility_error);
   double feasibility_error=DBL_MAX;
   for(index_t i=0; i<max_iterations_; i++) {
+    NOTIFY("Optimizing for W...");
     l_bfgs1_.ComputeLocalOptimumBFGS();
- //   l_bfgs1_.Reset();
-    l_bfgs2_.ComputeLocalOptimumBFGS();
- //   l_bfgs2_.Reset();
     optimized_function1_.ComputeFeasibilityError(*l_bfgs1_.coordinates(), &feasibility_error);
     if (feasibility_error<desired_feasibility_ || 
-        fabs(feasibility_error-old_feasibility_error)/(old_feasibility_error)) {
+        fabs(feasibility_error-old_feasibility_error)/old_feasibility_error 
+        < feasibility_tolerance_) {
+      break;
+    }
+    NOTIFY("Optimizing for H...");
+    l_bfgs2_.ComputeLocalOptimumBFGS();
+    optimized_function2_.ComputeFeasibilityError(*l_bfgs2_.coordinates(), &feasibility_error);
+    if (feasibility_error<desired_feasibility_ || 
+        fabs(feasibility_error-old_feasibility_error)/old_feasibility_error 
+        < feasibility_tolerance_) {
       break;
     }
     old_feasibility_error=feasibility_error;
-  } 
+  }
+  NOTIFY("feasibility_error:%lg relative error_change:%lg", feasibility_error,
+       fabs(feasibility_error-old_feasibility_error)/(old_feasibility_error)); 
 }
 
 template<typename OptimizedFunction>
@@ -118,14 +123,49 @@ double DualManifoldEngine<OptimizedFunction>::ComputeEvaluationTest(
   for(index_t i=0; i<pairs_to_consider.size(); i++) {
     index_t ind1=pairs_to_consider[i].first;
     index_t ind2=pairs_to_consider[i].second;
-    error+=fabs(la::Dot(num_of_components_, 
+    double eval=fabs(la::Dot(num_of_components_, 
         w_mat->GetColumnPtr(ind1),
         h_mat->GetColumnPtr(ind2)) - dot_prod_values[i]);
+/*    if (eval<1) {
+      eval=1;
+    }
+    if (eval>5) {
+      eval=5;
+    }
+    eval=int(eval);
+*/
+    error+=eval;
   }
+  
   error/=pairs_to_consider.size();
   fx_format_result(module_, "evaluation error", "%lg", error);
   return error;
 }
+
+template<typename OptimizedFunction>
+double DualManifoldEngine<OptimizedFunction>::ComputeRandomEvaluationTest(
+    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<double> &dot_prod_values) {
+ 
+  double error=0;
+ for(index_t i=0; i<pairs_to_consider.size(); i++) {
+   double eval=fabs(math::RandInt(1, 6)- dot_prod_values[i]);
+/*    if (eval<1) {
+      eval=1;
+    }
+    if (eval>5) {
+      eval=5;
+    }
+    eval=int(eval);
+*/
+    error+=eval;
+  }
+  
+  error/=pairs_to_consider.size();
+  fx_format_result(module_, "random predictor error", "%lg", error);
+  return error;
+}
+
 
 template<typename OptimizedFunction>
 Matrix *DualManifoldEngine<OptimizedFunction>::Matrix1() {

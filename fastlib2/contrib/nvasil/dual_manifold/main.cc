@@ -46,14 +46,16 @@ int main(int argc, char* argv[]) {
   std::string test_file=fx_param_str_req(NULL, "test_file"); 
   NOTIFY("Evaulating test file %s ...\n", test_file.c_str());
   LoadFile(test_file, test_pairs_to_consider, test_dot_prods);
-  double train_error=engine.ComputeEvaluationTest(test_pairs_to_consider,test_dot_prods);
-  NOTIFY("Training error:%lg ...\n ", train_error);
+  double test_error=engine.ComputeEvaluationTest(test_pairs_to_consider,test_dot_prods);
+  NOTIFY("Test error:%lg ...\n ", test_error);
   std::string result_file = fx_param_str(NULL, "result_file", "results");
+  double random_test_error = engine.ComputeRandomEvaluationTest(test_pairs_to_consider,test_dot_prods);
+  NOTIFY("Test error for the random predictor:%lg ...\n", random_test_error);
   std::string result_w(result_file);
   std::string result_h(result_file);
   result_w.append("_w.csv");
   result_h.append("_v.csv");
-  NONFATAL("Saving results ...\n");
+  NOTIFY("Saving results ...\n");
   if (data::Save(result_w.c_str(),*engine.Matrix1())==SUCCESS_FAIL) {
     NONFATAL("Failed to save matrix1 on %s", result_w.c_str());
   }
