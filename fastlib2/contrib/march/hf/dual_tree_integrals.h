@@ -136,7 +136,7 @@ class DualTreeIntegrals {
   // The tree 
   IntegralTree* tree_;
   
-  // The centers of the identical, spherical Gaussian basis functions
+  // The centers of the identical width, spherical Gaussian basis functions
   Matrix centers_;
   
   // The fx module
@@ -148,6 +148,7 @@ class DualTreeIntegrals {
   // The number of times an approximation is invoked
   int number_of_approximations_;
   
+  // The number of times the base case is called
   int number_of_base_cases_;
   
   // The value eps where the returned integrals are within 1-eps of the true 
@@ -156,7 +157,13 @@ class DualTreeIntegrals {
   
   // The return values are stored here
   // total_integrals_.ref(i, j) is the fock matrix entry i, j
-  Matrix total_integrals_;
+  Matrix fock_matrix_;
+  
+  // The exchange contribution
+  Matrix exchange_matrix_;
+  
+  // The coulomb contribution
+  Matrix coulomb_matrix_;
   
   // The density matrix, will be input for now
   Matrix density_matrix_;
@@ -230,22 +237,6 @@ class DualTreeIntegrals {
     double nu_sigma_min_dist = nu->bound().MinDistanceSq(sigma->bound());
     double nu_sigma_max_dist = nu->bound().MaxDistanceSq(sigma->bound());
     //double nu_sigma_mid_dist = nu->bound().MidDistanceSq(sigma->bound());
-    
-    /*
-    * don't think I actually need these 
-    double four_way_min_dist = 
-        0.25 * (mu->bound().MinDistanceSq(rho->bound()) + 
-                nu->bound().MinDistanceSq(sigma->bound()));
-    
-    double four_way_max_dist = 
-        0.25 * (mu->bound().MaxDistanceSq(rho->bound()) + 
-                nu->bound().MaxDistanceSq(sigma->bound()));
-    
-    // Not sure this one is correct
-    double four_way_mid_dist = 
-        0.25 * (mu->bound().MidDistanceSq(rho->bound()) + 
-                nu->bound().MidDistanceSq(sigma->bound()));
-    */
     
     double up_bound = ComputeSingleIntegral_(mu_nu_min_dist, rho_sigma_min_dist, 
         mu_rho_min_dist, nu_sigma_min_dist);
@@ -682,13 +673,13 @@ public:
    */
   void OutputFockMatrix() {
   
-    printf("number_of_approximations_ = %d\n", number_of_approximations_);
-    printf("number_of_base_cases_ = %d\n\n", number_of_base_cases_);
+    //printf("number_of_approximations_ = %d\n", number_of_approximations_);
+    //printf("number_of_base_cases_ = %d\n\n", number_of_base_cases_);
     fx_format_result(module_, "number_of_approximations", "%d", 
                      number_of_approximations_);
     fx_format_result(module_, "number_of_base_cases", "%d", 
                      number_of_base_cases_);
-    total_integrals_.PrintDebug();
+    //total_integrals_.PrintDebug();
   
   } // OutputFockMatrix()
   
