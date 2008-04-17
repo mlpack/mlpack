@@ -154,13 +154,13 @@ class NaiveFockMatrix {
   
     for (int i = 0; i < number_of_basis_functions_; i++) {
     
-      for (int j = 0; j < number_of_basis_functions_; j++) {
+      for (int j = i; j < number_of_basis_functions_; j++) {
       
         double current_integral = 0.0;
       
         for (int k = 0; k < number_of_basis_functions_; k++) {
         
-          for (int l = 0; l < number_of_basis_functions_; l++) {
+          for (int l = k; l < number_of_basis_functions_; l++) {
           
             double one_integral = SingleIntegral_(i, j, k, l);
           
@@ -170,15 +170,26 @@ class NaiveFockMatrix {
             if (one_integral < smallest_integral) {
               smallest_integral = one_integral;
             }
-          
-            current_integral = current_integral + 
-                densities_.ref(i, j) * one_integral;
-          
+            
+            if (k != l) {
+              one_integral = 2 * one_integral;
+            }
+            
+            
+            if (j != i) {
+              current_integral = current_integral + 
+                  2 * densities_.ref(i, j) * one_integral;
+            }
+            else {
+              current_integral = current_integral + 
+                 densities_.ref(i, j) * one_integral;
+            }
           } // l
         
         } // k
         
         repulsion_matrix_.set(i, j, current_integral);
+        repulsion_matrix_.set(j, i, current_integral);
       
       } // j
     
@@ -195,10 +206,24 @@ class NaiveFockMatrix {
    */
   void PrintFockMatrix() {
   
+    double average_value = 0.0;
+    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+     
+      for (index_t j = 0; j < number_of_basis_functions_; j++) {
+      
+        average_value = average_value + fock_matrix_.ref(i, j);
+      
+      }
+    }
+    
+    average_value = average_value/(number_of_basis_functions_ * number_of_basis_functions_);
+    
+    fx_format_result(module_, "average_matrix_value", "%g", average_value);
   
-  
-    fock_matrix_.PrintDebug();
+    //fock_matrix_.PrintDebug();
   
   } // PrintFockMatrix()
 
 }; // NaiveFockMatrix
+
+#endif
