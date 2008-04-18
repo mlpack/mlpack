@@ -4,23 +4,24 @@
 
 namespace tree_gen_kdtree_private {
 
-  template<typename TBound>
-    void FindBoundFromMatrix(const Matrix& matrix,
-			     index_t first, index_t count, TBound *bounds) {
+  template<typename T, typename TBound>
+  void FindBoundFromMatrix(const GenMatrix<T>& matrix,
+			   index_t first, index_t count, TBound *bounds) {
+    
     index_t end = first + count;
     for (index_t i = first; i < end; i++) {
-      Vector col;
+      GenVector<T> col;
       
       matrix.MakeColumnVector(i, &col);
       *bounds |= col;
     }
   }
   
-  template<typename TBound>
-    index_t MatrixPartition(Matrix& matrix, index_t dim, double splitvalue,
-			    index_t first, index_t count,
-			    TBound* left_bound, TBound* right_bound,
-			    index_t *old_from_new) {
+  template<typename T, typename TBound>
+  index_t MatrixPartition(GenMatrix<T>& matrix, index_t dim, double splitvalue,
+			  index_t first, index_t count, TBound* left_bound, 
+			  TBound* right_bound, index_t *old_from_new) {
+    
     index_t left = first;
     index_t right = first + count - 1;
     
@@ -31,14 +32,14 @@ namespace tree_gen_kdtree_private {
      */
     for (;;) {
       while (matrix.get(dim, left) < splitvalue && likely(left <= right)) {
-        Vector left_vector;
+        GenVector<T> left_vector;
         matrix.MakeColumnVector(left, &left_vector);
         *left_bound |= left_vector;
         left++;
       }
 
       while (matrix.get(dim, right) >= splitvalue && likely(left <= right)) {
-        Vector right_vector;
+        GenVector<T> right_vector;
         matrix.MakeColumnVector(right, &right_vector);
         *right_bound |= right_vector;
         right--;
@@ -49,14 +50,14 @@ namespace tree_gen_kdtree_private {
         break;
       }
 
-      Vector left_vector;
-      Vector right_vector;
+      GenVector<T> left_vector;
+      GenVector<T> right_vector;
 
       matrix.MakeColumnVector(left, &left_vector);
       matrix.MakeColumnVector(right, &right_vector);
 
       left_vector.SwapValues(&right_vector);
-
+      
       *left_bound |= left_vector;
       *right_bound |= right_vector;
       
@@ -75,19 +76,20 @@ namespace tree_gen_kdtree_private {
     return left;
   }
 
-  template<typename TKdTree, typename TKdTreeSplitter>
-    void SplitGenKdTree(Matrix& matrix, TKdTree *node, 
-			index_t leaf_size, index_t *old_from_new) {
+  template<typename T, typename TKdTree, typename TKdTreeSplitter>
+  void SplitGenKdTree(GenMatrix<T>& matrix, TKdTree *node, 
+		      index_t leaf_size, index_t *old_from_new) {
+
     TKdTree *left = NULL;
     TKdTree *right = NULL;
 
     if (node->count() > leaf_size) {
       index_t split_dim = BIG_BAD_NUMBER;
-      double max_width = -1;
-
+      T max_width = -1;
+      
       for (index_t d = 0; d < matrix.n_rows(); d++) {
-        double w = node->bound().get(d).width();
-
+        T w = node->bound().get(d).width();
+	
         if (unlikely(w > max_width)) {
           max_width = w;
           split_dim = d;
@@ -97,8 +99,8 @@ namespace tree_gen_kdtree_private {
       // choose the split value along the dimension to be splitted
       double split_val = 
 	TKdTreeSplitter::ChooseKdTreeSplitValue(matrix, node, split_dim);
-    
-      if (max_width == 0) {
+
+      if (max_width < DBL_EPSILON) {
         // Okay, we can't do any splitting, because all these points are the
         // same.  We have to give up.
       } 
@@ -123,9 +125,9 @@ namespace tree_gen_kdtree_private {
 	left->Init(node->begin(), split_col - node->begin());
 	right->Init(split_col, node->begin() + node->count() - split_col);
 	
-	SplitGenKdTree<TKdTree, TKdTreeSplitter>
+	SplitGenKdTree<T, TKdTree, TKdTreeSplitter>
 	  (matrix, left, leaf_size, old_from_new);
-	SplitGenKdTree<TKdTree, TKdTreeSplitter>
+	SplitGenKdTree<T, TKdTree, TKdTreeSplitter>
 	  (matrix, right, leaf_size, old_from_new);
       }
     }

@@ -1,47 +1,11 @@
 #ifndef PCA_TREE_H
 #define PCA_TREE_H
 
-class PCAStat {
+class PcaStat {
   
  private:
 
-  static const double epsilon_ = 0.00001;
-
-  /*
-  inline success_t FullSVDInit(const Matrix &A, Vector *s, Matrix *U, 
-			       Matrix *VT) {
-    f77_integer k = min(A.n_rows(), A.n_cols());
-    s->Init(k);
-    U->Init(A.n_rows(), A.n_rows());
-    VT->Init(A.n_cols(), A.n_cols());
-    Matrix tmp;
-    tmp.Copy(A);
-    
-    f77_integer info;
-    f77_integer m = tmp.n_rows();
-    f77_integer n = tmp.n_cols();
-    f77_integer iwork[8 * k];
-    const char *job = "A";
-    double d; // for querying optimal work size
-    
-    F77_FUNC(dgesdd)(job, m, n, tmp.ptr(), m,
-		     s->ptr(), U->ptr(), m, VT->ptr(), n, &d, -1, 
-		     iwork, &info);
-    {
-      f77_integer lwork = (f77_integer)d;
-      // work for DGESDD can be large, we really do need to malloc it
-      double *work = mem::Alloc<double>(lwork);
-      
-      F77_FUNC(dgesdd)(job, m, n, tmp.ptr(), m,
-		       s->ptr(), U->ptr(), m, VT->ptr(), n, work, 
-		       lwork, iwork, &info);
-      
-      mem::Free(work);
-    }
-
-    return TRIAL_FROM_LAPACK(info);
-  }
-  */
+  static const double epsilon_ = 0.01;
 
   void AddVectorToMatrix(Matrix &A, const Vector &v, Matrix &R) {
     
@@ -59,31 +23,6 @@ class PCAStat {
 	R.set(i, j, A.get(i, j) - v[i]);
       }
     }
-  }
-
-  void PseudoInverse(const Matrix &A, Matrix *A_inv) {
-    Vector ro_s;
-    Matrix ro_U, ro_VT;
-
-    // compute the SVD of A
-    la::SVDInit(A, &ro_s, &ro_U, &ro_VT);
-    
-    // take the transpose of V^T and U
-    Matrix ro_VT_trans;
-    Matrix ro_U_trans;
-    la::TransposeInit(ro_VT, &ro_VT_trans);
-    la::TransposeInit(ro_U, &ro_U_trans);
-    Matrix ro_s_inv;
-    ro_s_inv.Init(ro_VT_trans.n_cols(), ro_U_trans.n_rows());
-    ro_s_inv.SetZero();
-
-    // initialize the diagonal by the inverse of ro_s
-    for(index_t i = 0; i < ro_s.length(); i++) {
-      ro_s_inv.set(i, i, 1.0 / ro_s[i]);
-    }
-    Matrix intermediate;
-    la::MulInit(ro_s_inv, ro_U_trans, &intermediate);
-    la::MulInit(ro_VT_trans, intermediate, A_inv);
   }
 
   void ComputeColumnSumVector(const Matrix &A, Vector &A_sum) {    
@@ -148,10 +87,6 @@ class PCAStat {
   
   int count_;
   
-  Matrix mean_centered_;
-
-  Matrix pca_transformed_;
-  
   Vector means_;
 
   Matrix eigenvectors_;
@@ -164,9 +99,8 @@ class PCAStat {
 
   /** compute PCA exhaustively for leaf nodes */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
-    
-    mean_centered_.Destruct();
-    pca_transformed_.Destruct();
+
+    Matrix mean_centered_;
     means_.Destruct();
     eigenvectors_.Destruct();
     eigenvalues_.Destruct();
@@ -186,51 +120,50 @@ class PCAStat {
     SubtractVectorFromMatrix(mean_centered_, means_, mean_centered_);
 
     // compute PCA on the extracted submatrix
-    Matrix VT;
-    Vector svalues;
+    Matrix right_singular_vectors_transposed, left_singular_vectors;
+    Vector singular_values;
 
-    la::SVDInit(mean_centered_, &svalues, &eigenvectors_, &VT);
+    la::SVDInit(mean_centered_, &singular_values, 
+		&left_singular_vectors, &right_singular_vectors_transposed);
 
     // find out how many eigenvalues to keep
     int eigencount = 0;
-    double max_svalue = 0;
-    for(index_t i = 0; i < svalues.length(); i++) {
-      if(svalues[i] > max_svalue) {
-	max_svalue = svalues[i];
+    double max_singular_value = 0;
+    for(index_t i = 0; i < singular_values.length(); i++) {
+      if(singular_values[i] > max_singular_value) {
+	max_singular_value = singular_values[i];
       }
     }
-    for(index_t i = 0; i < svalues.length(); i++) {
-      if(svalues[i] >= epsilon_ * max_svalue) {
+    for(index_t i = 0; i < singular_values.length(); i++) {
+      if(singular_values[i] >= epsilon_ * max_singular_value) {
 	eigencount++;
       }
     }
+
     eigenvalues_.Init(eigencount, eigencount);
     eigenvalues_.SetZero();
 
     // relationship between the singular value and the eigenvalue is
     // enforced here
-    for(index_t i = 0, index = 0; i < svalues.length(); i++) {
-      if(svalues[i] > epsilon_ * max_svalue) {
-	Vector s, d;
+    for(index_t i = 0, index = 0; i < singular_values.length(); i++) {
+      if(singular_values[i] > epsilon_ * max_singular_value) {
+	Vector source, destination;
 	eigenvalues_.set(index, index, 
-			 svalues[i] * svalues[i] / ((double) count_));
-	eigenvectors_.MakeColumnVector(i, &s);
-	eigenvectors_.MakeColumnVector(index, &d);
-	d.CopyValues(s);
+			 singular_values[i] * singular_values[i] / 
+			 ((double) count_));
+	eigenvectors_.MakeColumnVector(i, &source);
+	eigenvectors_.MakeColumnVector(index, &destination);
+	destination.CopyValues(source);
 	index++;
       }
     }
-    eigenvectors_.ResizeNoalias(eigencount);
-
-    // transform coordinates
-    la::MulTransAInit(eigenvectors_, mean_centered_, &pca_transformed_);
   }
 
   /**
    * Takes the two eigenbases and 
    */
-  void ComputeLeftsideNullSpaceBasis(const PCAStat& left_stat,
-				     const PCAStat& right_stat, 
+  void ComputeLeftsideNullSpaceBasis(const PcaStat& left_stat,
+				     const PcaStat& right_stat, 
 				     Matrix *leftside_nullspace_basis,
 				     Matrix *projection_of_right_eigenbasis,
 				     Vector *mean_diff,
@@ -309,7 +242,7 @@ class PCAStat {
     }
   }
 
-  void SetupEigensystem(const PCAStat& left_stat, const PCAStat &right_stat, 
+  void SetupEigensystem(const PcaStat& left_stat, const PcaStat &right_stat, 
 			const Matrix &leftside_nullspace_basis,
 			const Matrix &projection_of_right_eigenbasis,
 			const Vector &mean_diff, 
@@ -411,10 +344,8 @@ class PCAStat {
    * Merge two eigenspaces into one
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count,
-	    const PCAStat& left_stat, const PCAStat& right_stat) {
+	    const PcaStat& left_stat, const PcaStat& right_stat) {
 
-    mean_centered_.Destruct();
-    pca_transformed_.Destruct();
     means_.Destruct();
     eigenvectors_.Destruct();
     eigenvalues_.Destruct();
@@ -492,25 +423,15 @@ class PCAStat {
     means_.Copy(left_stat.means_);
     la::Scale(factor1, &means_);
     la::AddExpert(factor2, right_stat.means_, &means_);
-
-    // extract the relevant part of the dataset and mean-center it
-    mean_centered_.Init(dataset.n_rows(), count);
-    ExtractSubMatrix(dataset, start, count, mean_centered_);
-    SubtractVectorFromMatrix(mean_centered_, means_, mean_centered_);
-
-    // transform coordinates
-    la::MulTransAInit(eigenvectors_, mean_centered_, &pca_transformed_);
   }
 
-  PCAStat() { 
-    mean_centered_.Init(1, 1);
-    pca_transformed_.Init(1, 1);
+  PcaStat() {
     means_.Init(1);
     eigenvectors_.Init(1, 1);
     eigenvalues_.Init(1, 1);
   }
 
-  ~PCAStat() { }
+  ~PcaStat() { }
 
 };
 

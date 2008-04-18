@@ -30,21 +30,21 @@ namespace proximity {
   
   class GenKdTreeMidpointSplitter {
   public:
-    template<typename TKdTree>
-      static double ChooseKdTreeSplitValue(const Matrix& matrix, 
-					   TKdTree *node, 
-					   int split_dim) {
+    template<typename T, typename TKdTree>
+    static double ChooseKdTreeSplitValue(const GenMatrix<T>& matrix,
+					 TKdTree *node, int split_dim) {
       return node->bound().get(split_dim).mid();
     }
   };
-  
+
   class GenKdTreeMedianSplitter {
 
   private:
+    template<typename T>
     static int qsort_compar(const void *a, const void *b) {
       
-      double *a_dbl = (double *) a;
-      double *b_dbl = (double *) b;
+      T *a_dbl = (T *) a;
+      T *b_dbl = (T *) b;
       
       if(*a_dbl < *b_dbl) {
 	return -1;
@@ -58,21 +58,27 @@ namespace proximity {
     }
 
   public:
-    template<typename TKdTree>
-      static double ChooseKdTreeSplitValue(const Matrix& matrix, 
-					   TKdTree *node, 
-					   int split_dim) {
-      Vector coordinate_vals;
+    template<typename T, typename TKdTree>
+    static double ChooseKdTreeSplitValue(const GenMatrix<T>& matrix, 
+					 TKdTree *node, int split_dim) {
+      GenVector<T> coordinate_vals;
       coordinate_vals.Init(node->count());
       for(index_t i = node->begin(); i < node->end(); i++) {
 	coordinate_vals[i - node->begin()] = matrix.get(split_dim, i);
       }
 
       // sort coordinate value
-      qsort(coordinate_vals.ptr(), node->count(), sizeof(double), 
-	    &GenKdTreeMedianSplitter::qsort_compar);
+      qsort(coordinate_vals.ptr(), node->count(), sizeof(T), 
+	    &GenKdTreeMedianSplitter::qsort_compar<T>);
 
-      return coordinate_vals[node->count() / 2];
+      double split_val = (double) coordinate_vals[node->count() / 2];
+      if(split_val == coordinate_vals[0] ||
+	 split_val == coordinate_vals[node->count() - 1]) {
+	split_val = 0.5 * (coordinate_vals[0] + 
+			   coordinate_vals[node->count() - 1]);
+      }
+      
+      return split_val;
     }
   };
 
@@ -92,13 +98,14 @@ namespace proximity {
    * @param new_from_old pointer to an unitialized arraylist; it will map
    *        original indexes to new indices
    */
-  template<typename TKdTree, typename TKdTreeSplitter>
-    TKdTree *MakeGenKdTree(Matrix& matrix, index_t leaf_size,
-			   ArrayList<index_t> *old_from_new = NULL,
-			   ArrayList<index_t> *new_from_old = NULL) {
+  template<typename T, typename TKdTree, typename TKdTreeSplitter>
+  TKdTree *MakeGenKdTree(GenMatrix<T>& matrix, index_t leaf_size,
+			 ArrayList<index_t> *old_from_new = NULL,
+			 ArrayList<index_t> *new_from_old = NULL) {
+    
     TKdTree *node = new TKdTree();
     index_t *old_from_new_ptr;
-
+    
     if (old_from_new) {
       old_from_new->Init(matrix.n_cols());
       
@@ -107,16 +114,17 @@ namespace proximity {
       }
       
       old_from_new_ptr = old_from_new->begin();
-    } else {
+    } 
+    else {
       old_from_new_ptr = NULL;
     }
-      
+    
     node->Init(0, matrix.n_cols());
     node->bound().Init(matrix.n_rows());
     tree_gen_kdtree_private::FindBoundFromMatrix(matrix, 0, matrix.n_cols(), 
 						 &node->bound());
-
-    tree_gen_kdtree_private::SplitGenKdTree<TKdTree, TKdTreeSplitter>
+    
+    tree_gen_kdtree_private::SplitGenKdTree<T, TKdTree, TKdTreeSplitter>
       (matrix, node, leaf_size, old_from_new_ptr);
     
     if (new_from_old) {
