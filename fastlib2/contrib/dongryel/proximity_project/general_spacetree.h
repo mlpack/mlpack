@@ -40,7 +40,17 @@ class GeneralBinarySpaceTree {
   index_t count_;
   Statistic stat_;
   
+  OT_DEF(GeneralBinarySpaceTree) {
+    OT_MY_OBJECT(bound_);
+    OT_PTR_NULLABLE(left_);
+    OT_PTR_NULLABLE(right_);
+    OT_MY_OBJECT(begin_);
+    OT_MY_OBJECT(count_);
+    OT_MY_OBJECT(stat_);
+  }
+  
   public:
+  /*
   GeneralBinarySpaceTree() {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
@@ -58,6 +68,7 @@ class GeneralBinarySpaceTree {
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
   }
+  */
   
   void Init(index_t begin_in, index_t count_in) {
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
@@ -210,7 +221,6 @@ class GeneralBinarySpaceTree {
     }
   }
 
-  FORBID_ACCIDENTAL_COPIES(GeneralBinarySpaceTree);
 };
 
 #endif
