@@ -534,6 +534,7 @@ void GeneralCrossValidator<TLearner>::Init(
     clsf_confusion_matrix_.SetZero();
   }
   else if (learner_typeid_ == 1 || learner_typeid_ == 2) {
+    clsf_confusion_matrix_.Init(1,1);
     // initialize mean squared error over all folds
     msq_err_all_folds_ = 0.0;
   }
