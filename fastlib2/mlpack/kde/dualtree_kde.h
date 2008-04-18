@@ -450,8 +450,8 @@ class DualtreeKde {
     double new_used_error = stat.used_error_ + stat.postponed_used_error_;
     double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
 
-    double allowed_err = (tau_ * new_mass_l - new_used_error) /
-      ((double) rroot_->count() - new_n_pruned);
+    double allowed_err = (tau_ * new_mass_l - new_used_error) *
+      num_references / ((double) rroot_->count() - new_n_pruned);
 
     // this is error per each query/reference pair for a fixed query
     double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
