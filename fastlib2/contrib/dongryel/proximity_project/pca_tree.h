@@ -142,6 +142,7 @@ class PcaStat {
 
     eigenvalues_.Init(eigencount, eigencount);
     eigenvalues_.SetZero();
+    eigenvectors_.Init(dataset.n_rows(), eigencount);
 
     // relationship between the singular value and the eigenvalue is
     // enforced here
@@ -151,7 +152,8 @@ class PcaStat {
 	eigenvalues_.set(index, index, 
 			 singular_values[i] * singular_values[i] / 
 			 ((double) count_));
-	eigenvectors_.MakeColumnVector(i, &source);
+
+	left_singular_vectors.MakeColumnVector(i, &source);
 	eigenvectors_.MakeColumnVector(index, &destination);
 	destination.CopyValues(source);
 	index++;
