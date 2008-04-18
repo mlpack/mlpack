@@ -446,8 +446,8 @@ class DualtreeKde {
     // refine the lower bound using the new lower bound info
     double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
 
-    double allowed_err = (tau_ * new_mass_l - qnode->stat().used_error_) /
-      ((double) rroot_->count() - qnode->stat().n_pruned_);
+    double allowed_err = (tau_ * new_mass_l - qnode->stat().used_error_) * 
+      num_references / ((double) rroot_->count() - qnode->stat().n_pruned_);
 
     // this is error per each query/reference pair for a fixed query
     double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
