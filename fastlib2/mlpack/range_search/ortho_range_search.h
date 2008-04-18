@@ -9,6 +9,7 @@
 #define ORTHO_RANGE_SEARCH_H
 
 #include "fastlib/fastlib.h"
+#include "contrib/dongryel/proximity_project/gen_kdtree.h"
 #include "contrib/dongryel/proximity_project/general_type_bounds.h"
 
 /** @brief Faster orthogonal range search class using a tree.
@@ -112,28 +113,28 @@ class OrthoRangeSearch {
 
     // first serialize the total amount of bytes needed for serializing the
     // tree and the tree itself
-    int tree_size = ot::PointerFrozenSize(*root_);
+    int tree_size = ot::FrozenSize(*root_);
     printf("Tree occupies %d bytes...\n", tree_size);
 
     fwrite((const void *) &tree_size, sizeof(int), 1, output);
     char *tmp_root = (char *) mem::AllocBytes<Tree>(tree_size);
-    ot::PointerFreeze(*root_, tmp_root);
+    ot::Freeze(tmp_root, *root_);
     fwrite((const void *) tmp_root, tree_size, 1, output);
     mem::Free(tmp_root);
 
     // then serialize the permutation of the points due to tree construction
     // along with its sizes
-    int old_from_new_size = ot::PointerFrozenSize(old_from_new_);
-    int new_from_old_size = ot::PointerFrozenSize(new_from_old_);
+    int old_from_new_size = ot::FrozenSize(old_from_new_);
+    int new_from_old_size = ot::FrozenSize(new_from_old_);
     char *tmp_array = 
       (char *) mem::AllocBytes<ArrayList<index_t> >(old_from_new_size);
 
     fwrite((const void *) &old_from_new_size, sizeof(int), 1, output);    
-    ot::PointerFreeze(old_from_new_, tmp_array);
+    ot::Freeze(tmp_array, old_from_new_);
     fwrite((const void *) tmp_array, old_from_new_size, 1, output);
     
     fwrite((const void*) &new_from_old_size, sizeof(int), 1, output);
-    ot::PointerFreeze(new_from_old_, tmp_array);
+    ot::Freeze(tmp_array, new_from_old_);
     fwrite((const void *) tmp_array, new_from_old_size, 1, output);
     
     mem::Free(tmp_array);
@@ -173,9 +174,10 @@ class OrthoRangeSearch {
 
     // Otherwise, construct one from scratch.
     else {
-      root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen,
-					     &old_from_new_,
-					     &new_from_old_);
+      root_ = proximity::MakeGenKdTree
+	<T, Tree, proximity::GenKdTreeMedianSplitter>(data_, leaflen, 
+						      &old_from_new_, 
+						      &new_from_old_);
     }
     fx_timer_stop(NULL, "tree_d");
     
@@ -189,7 +191,7 @@ class OrthoRangeSearch {
  private:
 
   /** @brief This defines the type of the tree used in this algorithm. */
-  typedef BinarySpaceTree<GenHrectBound<T, 2>, GenMatrix<T> > Tree;
+  typedef GeneralBinarySpaceTree<GenHrectBound<T, 2>, GenMatrix<T> > Tree;
 
   /** @brief Flag determining a prune */
   enum PruneStatus {SUBSUME, INCONCLUSIVE, EXCLUDE};
@@ -240,14 +242,14 @@ class OrthoRangeSearch {
 	   tree_size);
     tree_buffer_ = mem::AllocBytes<Tree>(tree_size);
     fread((void *) tree_buffer_, 1, tree_size, input);
-    root_ = ot::PointerThaw<Tree>((char *) tree_buffer_);
+    root_ = ot::SemiThaw<Tree>((char *) tree_buffer_);
     
     // read old_from_new
     fread((void *) &old_from_new_size, sizeof(int), 1, input);
     old_from_new_buffer_ = 
     mem::AllocBytes<ArrayList<index_t> >(old_from_new_size);
     fread((void *) old_from_new_buffer_, old_from_new_size, 1, input);
-    old_from_new_.Copy(*(ot::PointerThaw<ArrayList<index_t> >
+    old_from_new_.Copy(*(ot::SemiThaw<ArrayList<index_t> >
 			 ((char *) old_from_new_buffer_)));
 
     // read new_from_old
@@ -255,7 +257,7 @@ class OrthoRangeSearch {
     new_from_old_buffer_ = 
     mem::AllocBytes<ArrayList<index_t> >(new_from_old_size);
     fread((void *) new_from_old_buffer_, new_from_old_size, 1, input);
-    new_from_old_.Copy(*(ot::PointerThaw<ArrayList<index_t> >
+    new_from_old_.Copy(*(ot::SemiThaw<ArrayList<index_t> >
 			 ((char *) new_from_old_buffer_)));
 
     printf("Tree has been loaded...\n");
