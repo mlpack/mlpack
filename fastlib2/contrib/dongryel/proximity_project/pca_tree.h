@@ -93,17 +93,22 @@ class PcaStat {
 
   Matrix eigenvalues_;
 
-  /** Initialize the statistics */
-  void Init() {
-  }
-
   /** compute PCA exhaustively for leaf nodes */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
 
+    // Degenerate case: the leaf node contains only one point...
+    if(count == 1) {
+      Vector point;
+      dataset.MakeColumnVector(start, &point);
+      means_.Copy(point);
+      eigenvalues_.Init(1, 1);
+      eigenvalues_.set(0, 0, 0);
+      eigenvectors_.Init(dataset.n_rows(), 1);
+      eigenvectors_.SetZero();
+      return;
+    }
+
     Matrix mean_centered_;
-    means_.Destruct();
-    eigenvectors_.Destruct();
-    eigenvalues_.Destruct();
 
     // set the starting index and the count
     start_ = start;
@@ -147,7 +152,7 @@ class PcaStat {
     // relationship between the singular value and the eigenvalue is
     // enforced here
     for(index_t i = 0, index = 0; i < singular_values.length(); i++) {
-      if(singular_values[i] > epsilon_ * max_singular_value) {
+      if(singular_values[i] >= epsilon_ * max_singular_value) {
 	Vector source, destination;
 	eigenvalues_.set(index, index, 
 			 singular_values[i] * singular_values[i] / 
@@ -188,13 +193,13 @@ class PcaStat {
     // compute the projection of the right eigenbasis onto the left
     // eigenbasis
     la::MulTransAInit(left_eigenbasis, right_eigenbasis, 
-		      projection_of_right_eigenbasis);
+		      projection_of_right_eigenbasis);    
 
     // compute the residue of projection
     projection_residue_of_right_eigenbasis.Copy(right_eigenbasis);
     la::MulExpert(-1, left_eigenbasis, *projection_of_right_eigenbasis, 1,
 		  &projection_residue_of_right_eigenbasis);
-    
+
     // project the difference in the two means onto the eigenbasis
     // belonging to the first subspace
     la::MulInit(*mean_diff, left_eigenbasis, projection_of_mean_diff);
@@ -208,8 +213,8 @@ class PcaStat {
     // very small columns
     Matrix span_set;
     int dim = left_eigenbasis.n_rows();
-    span_set.Init(dim, 0);
-    
+    index_t span_set_count = 0;
+
     // loop over each column residue vectors
     for(index_t i = 0; i < projection_residue_of_right_eigenbasis.n_cols(); 
 	i++) {
@@ -220,17 +225,35 @@ class PcaStat {
       euclidean_norm = la::LengthEuclidean(residue_vector);
 
       if(euclidean_norm > epsilon_) {
-	Vector dest;
-	span_set.ResizeNoalias(span_set.n_cols() + 1);
-	span_set.MakeColumnVector(span_set.n_cols() - 1, &dest);
-	dest.CopyValues(residue_vector);
+	span_set_count++;
       }
     }
+    bool include_mean_projection = false;
     double euclidean_norm_of_projection_residue_of_mean_diff =
       la::LengthEuclidean(projection_residue_of_mean_diff);
     if(euclidean_norm_of_projection_residue_of_mean_diff > epsilon_) {
+      include_mean_projection = true;
+      span_set_count++;
+    }
+
+    span_set.Init(dim, span_set_count);
+    for(index_t i = 0, position = 0; i < span_set_count - 1; i++) {
+      Vector residue_vector;
+      double euclidean_norm;
+      projection_residue_of_right_eigenbasis.MakeColumnVector
+        (i, &residue_vector);
+      euclidean_norm = la::LengthEuclidean(residue_vector);
+
+      if(euclidean_norm > epsilon_) {
+	Vector destination;
+	span_set.MakeColumnVector(position, &destination);
+	destination.CopyValues(residue_vector);
+        position++;
+      }
+    }
+
+    if(include_mean_projection) {
       Vector dest;
-      span_set.ResizeNoalias(span_set.n_cols() + 1);
       span_set.MakeColumnVector(span_set.n_cols() - 1, &dest);
       dest.CopyValues(projection_residue_of_mean_diff);
     }
@@ -280,6 +303,7 @@ class PcaStat {
     // compute the top left part of the eigensystem
     Matrix top_left, top_tmp;
     la::MulInit(projection_of_right_eigenbasis, right_eigenvalues, &top_tmp);
+    
     la::MulTransBInit(top_tmp, projection_of_right_eigenbasis, &top_left);
 
     for(index_t i = 0; i < left_eigenvalues.n_rows(); i++) {
@@ -295,18 +319,21 @@ class PcaStat {
     if(leftside_nullspace_basis.n_cols() > 0) {
       Matrix proj_rightside_eigenbasis_on_leftside_nullspace;
       Vector proj_mean_diff_on_leftside_nullspace;
+
       la::MulTransAInit(leftside_nullspace_basis, right_eigenbasis,
 			&proj_rightside_eigenbasis_on_leftside_nullspace);
+
       la::MulInit(mean_diff, leftside_nullspace_basis,
 		  &proj_mean_diff_on_leftside_nullspace);
       
       // set up the eigensystem
       Matrix top_right, bottom_left, bottom_right;
       Matrix bottom_tmp;
-     
+
       la::MulTransBInit(top_tmp, 
 			proj_rightside_eigenbasis_on_leftside_nullspace,
 			&top_right);
+
       for(index_t i = 0; i < top_right.n_rows(); i++) {
 	for(index_t j = 0; j < top_right.n_cols(); j++) {
 	  eigensystem->set(i, j + top_left.n_cols(),
@@ -318,8 +345,10 @@ class PcaStat {
 
       la::MulInit(proj_rightside_eigenbasis_on_leftside_nullspace,
 		  right_eigenvalues, &bottom_tmp);
+
       la::MulTransBInit(bottom_tmp, projection_of_right_eigenbasis, 
 			&bottom_left);
+
       for(index_t i = 0; i < bottom_left.n_rows(); i++) {
 	for(index_t j = 0; j < bottom_left.n_cols(); j++) {
 	  eigensystem->set(i + top_left.n_rows(), j,
@@ -328,9 +357,11 @@ class PcaStat {
 			   projection_of_mean_diff[j]);
 	}
       }
+
       la::MulTransBInit(bottom_tmp, 
 			proj_rightside_eigenbasis_on_leftside_nullspace,
 			&bottom_right);
+
       for(index_t i = 0; i < bottom_right.n_rows(); i++) {
 	for(index_t j = 0; j < bottom_right.n_cols(); j++) {
 	  eigensystem->set(i + top_left.n_rows(), j + top_left.n_cols(),
@@ -347,10 +378,6 @@ class PcaStat {
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const PcaStat& left_stat, const PcaStat& right_stat) {
-
-    means_.Destruct();
-    eigenvectors_.Destruct();
-    eigenvalues_.Destruct();
 
     // set up starting index and the count
     start_ = start;
@@ -374,9 +401,16 @@ class PcaStat {
     Matrix rotation, combined_subspace;
     Vector evalues;
     la::EigenvectorsInit(eigensystem, &evalues, &rotation);
-    combined_subspace.Copy(left_stat.eigenvectors_);
-    combined_subspace.ResizeNoalias(combined_subspace.n_cols() + 
-				    leftside_nullspace_basis.n_cols());
+    
+    combined_subspace.Init(dataset.n_rows(), left_stat.eigenvectors_.n_cols() +
+			   leftside_nullspace_basis.n_cols());
+    combined_subspace.SetZero();
+    for(index_t i = 0; i < left_stat.eigenvectors_.n_cols(); i++) {
+      Vector source, dest;
+      left_stat.eigenvectors_.MakeColumnVector(i, &source);
+      combined_subspace.MakeColumnVector(i, &dest);
+      dest.CopyValues(source);
+    }
     for(index_t i = 0; i < leftside_nullspace_basis.n_cols(); i++) {
       Vector source, dest;
       leftside_nullspace_basis.MakeColumnVector(i, &source);
@@ -398,7 +432,7 @@ class PcaStat {
       }
     }
     for(index_t i = 0; i < evalues.length(); i++) {
-      if(evalues[i] > epsilon_ * max_eigenvalue) {
+      if(evalues[i] >= epsilon_ * max_eigenvalue) {
 	eigencount++;
       }
     }
@@ -407,17 +441,20 @@ class PcaStat {
 
     // relationship between the singular value and the eigenvalue is
     // enforced here
+    Matrix tmp_eigenvectors;
+    tmp_eigenvectors.Init(dataset.n_rows(), eigencount);
     for(index_t i = 0, index = 0; i < evalues.length(); i++) {
-      if(evalues[i] > epsilon_ * max_eigenvalue) {
+      if(evalues[i] >= epsilon_ * max_eigenvalue) {
 	Vector s, d;
 	eigenvalues_.set(index, index, evalues[i]);
 	eigenvectors_.MakeColumnVector(i, &s);
-	eigenvectors_.MakeColumnVector(index, &d);
+	tmp_eigenvectors.MakeColumnVector(index, &d);
 	d.CopyValues(s);
 	index++;
       }
     }
-    eigenvectors_.ResizeNoalias(eigencount);
+    eigenvectors_.Destruct();
+    eigenvectors_.Copy(tmp_eigenvectors);
 
     // compute the weighted average of the two means
     double factor1 = ((double) left_stat.count_) / ((double) count_);
@@ -427,11 +464,7 @@ class PcaStat {
     la::AddExpert(factor2, right_stat.means_, &means_);
   }
 
-  PcaStat() {
-    means_.Init(1);
-    eigenvectors_.Init(1, 1);
-    eigenvalues_.Init(1, 1);
-  }
+  PcaStat() { }
 
   ~PcaStat() { }
 
