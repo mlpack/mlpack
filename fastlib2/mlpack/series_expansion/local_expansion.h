@@ -179,7 +179,7 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
-      ArrayList<int> mapping = sea_->get_multiindex(j);
+      const ArrayList<int> &mapping = sea_->get_multiindex(j);
       arrtmp[j] = ka_->ComputePartialDerivative(derivative_map, mapping);
     }
 
@@ -215,7 +215,7 @@ void LocalExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
   for (index_t i = 0; i < total_num_coeffs; i++) {
-    ArrayList<int> mapping = sea_->get_multiindex(i);
+    const ArrayList<int> &mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g", coeffs_[i]);
     
     for(index_t d = 0; d < dim; d++) {
@@ -437,12 +437,12 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    ArrayList<int> beta_mapping = sea_->get_multiindex(j);
+    const ArrayList<int> &beta_mapping = sea_->get_multiindex(j);
     pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
-      ArrayList<int> alpha_mapping = sea_->get_multiindex(k);
+      const ArrayList<int> &alpha_mapping = sea_->get_multiindex(k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
@@ -516,8 +516,8 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
   // do the actual translation
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    ArrayList<int> alpha_mapping = sea_->get_multiindex(j);
-    ArrayList <int> upper_mappings_for_alpha = upper_mapping_index[j];
+    const ArrayList<int> &alpha_mapping = sea_->get_multiindex(j);
+    const ArrayList<int> &upper_mappings_for_alpha = upper_mapping_index[j];
     double pos_coeffs = 0;
     double neg_coeffs = 0;
 
@@ -527,7 +527,7 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
 	break;
       }
 
-      ArrayList<int> beta_mapping = 
+      const ArrayList<int> &beta_mapping = 
 	sea_->get_multiindex(upper_mappings_for_alpha[k]);
       int flag = 0;
       double diff1 = 1.0;

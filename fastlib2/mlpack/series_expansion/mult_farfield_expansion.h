@@ -209,7 +209,7 @@ void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
   }
   
   // get the order of traversal for the given order of approximation
-  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order_];
+  const ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
 
   // Repeat for each reference point in this reference node.
   for(index_t r = begin; r < end; r++) {
@@ -226,15 +226,15 @@ void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     for(index_t i = 1; i < total_num_coeffs; i++) {
       
       int index = traversal_order[i];
-      const ArrayList<int> lower_mappings = sea_->lower_mapping_index_[index];
+      const ArrayList<int> &lower_mappings = sea_->lower_mapping_index_[index];
 
       // from the direct descendant, recursively compute the multipole moments
       int direct_ancestor_mapping_pos = 
 	lower_mappings[lower_mappings.size() - 2];
 
       int position = 0;
-      const ArrayList<int> mapping = sea_->multiindex_mapping_[index];
-      const ArrayList<int> direct_ancestor_mapping = 
+      const ArrayList<int> &mapping = sea_->multiindex_mapping_[index];
+      const ArrayList<int> &direct_ancestor_mapping = 
 	sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
       for(index_t i = 0; i < dim; i++) {
 	if(mapping[i] != direct_ancestor_mapping[i]) {
@@ -331,13 +331,13 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data,
   ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
   
   // get the order of traversal for the given order of approximation
-  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order_];
+  const ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
     
     int index = traversal_order[j];
-    ArrayList<int> mapping = sea_->get_multiindex(index);
+    const ArrayList<int> &mapping = sea_->get_multiindex(index);
     double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
     double prod = coeffs_[index] * arrtmp;
     
@@ -562,19 +562,20 @@ void MultFarFieldExpansion<TKernelAux>::TranslateFromFarField
   }
 
   // get the order of traversal for the given order of approximation
-  const ArrayList<int> traversal_order = sea_->traversal_mapping_[order];
+  const ArrayList<int> &traversal_order = sea_->traversal_mapping_[order];
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
    
     int index = traversal_order[j];
-    ArrayList <int> gamma_mapping = multiindex_mapping[index];
-    ArrayList <int> lower_mappings_for_gamma = lower_mapping_index[index];
+    const ArrayList <int> &gamma_mapping = multiindex_mapping[index];
+    const ArrayList <int> &lower_mappings_for_gamma = 
+      lower_mapping_index[index];
     double pos_coeff = 0;
     double neg_coeff = 0;
 
     for(index_t k = 0; k < lower_mappings_for_gamma.size(); k++) {
 
-      ArrayList <int> inner_mapping = 
+      const ArrayList <int> &inner_mapping = 
 	multiindex_mapping[lower_mappings_for_gamma[k]];
 
       int flag = 0;
@@ -661,20 +662,20 @@ void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
   beta_plus_alpha.Init(dimension);
 
   // get the order of traversal for the given order of approximation
-  const ArrayList<int> traversal_order = 
+  const ArrayList<int> &traversal_order = 
     sea_->traversal_mapping_[truncation_order];
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
     int index = traversal_order[j];
-    ArrayList<int> beta_mapping = sea_->get_multiindex(index);
+    const ArrayList<int> &beta_mapping = sea_->get_multiindex(index);
     pos_arrtmp[index] = neg_arrtmp[index] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
       int index_k = traversal_order[k];
 
-      ArrayList<int> alpha_mapping = sea_->get_multiindex(index_k);
+      const ArrayList<int> &alpha_mapping = sea_->get_multiindex(index_k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }

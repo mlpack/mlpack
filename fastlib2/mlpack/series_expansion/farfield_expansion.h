@@ -453,7 +453,7 @@ void FarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data,
 
     // compute in bruteforce way
     for(i = old_total_num_coeffs; i < total_num_coeffs; i++) {
-      ArrayList<int> mapping = sea_->get_multiindex(i);
+      const ArrayList<int> &mapping = sea_->get_multiindex(i);
       tmp = 1;
       
       for(j = 0; j < dim; j++) {
@@ -522,7 +522,7 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data,
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
-    ArrayList<int> mapping = sea_->get_multiindex(j);
+    const ArrayList<int> &mapping = sea_->get_multiindex(j);
     double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
     double prod = coeffs_[j] * arrtmp;
     
@@ -1109,14 +1109,14 @@ void FarFieldExpansion<TKernelAux>::TranslateFromFarField
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
     
-    ArrayList <int> gamma_mapping = multiindex_mapping[j];
-    ArrayList <int> lower_mappings_for_gamma = lower_mapping_index[j];
+    const ArrayList <int> &gamma_mapping = multiindex_mapping[j];
+    const ArrayList <int> &lower_mappings_for_gamma = lower_mapping_index[j];
     double pos_coeff = 0;
     double neg_coeff = 0;
 
     for(index_t k = 0; k < lower_mappings_for_gamma.size(); k++) {
 
-      ArrayList <int> inner_mapping = 
+      const ArrayList <int> &inner_mapping = 
 	multiindex_mapping[lower_mappings_for_gamma[k]];
 
       int flag = 0;
@@ -1204,12 +1204,12 @@ void FarFieldExpansion<TKernelAux>::TranslateToLocal
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    ArrayList<int> beta_mapping = sea_->get_multiindex(j);
+    const ArrayList<int> &beta_mapping = sea_->get_multiindex(j);
     pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
-      ArrayList<int> alpha_mapping = sea_->get_multiindex(k);
+      const ArrayList<int> &alpha_mapping = sea_->get_multiindex(k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
