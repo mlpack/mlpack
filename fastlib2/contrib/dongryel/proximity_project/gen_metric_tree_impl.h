@@ -162,7 +162,7 @@ namespace tree_gen_metric_tree_private {
     matrix.MakeColumnVector(furthest_from_furthest_random_row,
 			    &furthest_from_furthest_random_row_vec);
 
-    if(furthest_from_furthest_distance < DBL_MIN) {
+    if(furthest_from_furthest_distance < DBL_EPSILON) {
       return false;
     }
     else {
