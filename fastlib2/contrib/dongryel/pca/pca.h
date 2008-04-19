@@ -5,11 +5,11 @@
 
 class Pca {
 
- private:
+ public:
 
-  static void GramSchmidt_(const Matrix *current_bases, 
-			   int num_current_components, Vector &new_basis,
-			   double epsilon) {
+  static void GramSchmidt(const Matrix *current_bases, 
+			  int num_current_components, Vector &new_basis,
+			  double epsilon) {
     
     // Make a backup copy of the new basis.
     Vector new_basis_copy;    
@@ -34,11 +34,11 @@ class Pca {
 
   }
 
-  static void ComputeCovariance_(const Matrix &data, Matrix *covariance) {
+  static void ComputeCovariance(const Matrix &data, Matrix *covariance) {
 
     // Compute the mean vector.
     Vector mean;
-    ComputeMean_(data, &mean);
+    ComputeMean(data, &mean);
 
     // Allocate D by D covariance matrix and initialize it to zero.
     covariance->Init(data.n_rows(), data.n_rows());
@@ -56,7 +56,7 @@ class Pca {
     la::Scale(1.0 / ((double) data.n_cols()), covariance);
   }
 
-  static void ComputeMean_(const Matrix &data, Vector *mean) {
+  static void ComputeMean(const Matrix &data, Vector *mean) {
     mean->Init(data.n_rows());
     mean->SetZero();
 
@@ -68,7 +68,20 @@ class Pca {
     la::Scale(1.0 / ((double) data.n_cols()), mean);    
   }
 
-  static void RandomUnitVector_(Vector &random_unit_vector) {
+  static void ComputeMean(const Matrix &data, index_t start, index_t count,
+			  Vector *mean) {
+    mean->Init(data.n_rows());
+    mean->SetZero();
+
+    for(index_t i = start; i < start + count; i++) {
+      Vector data_col;
+      data.MakeColumnVector(i, &data_col);
+      la::AddTo(data_col, mean);
+    }
+    la::Scale(1.0 / ((double) count), mean);    
+  }
+
+  static void RandomUnitVector(Vector &random_unit_vector) {
     
     bool done = false;
     double length;
@@ -87,7 +100,100 @@ class Pca {
     la::Scale(1.0 / length, &random_unit_vector);
   }
 
- public:
+  static void MeanCenter(const Matrix &data, Matrix *data_copy) {
+    
+    // Compute the column mean.
+    Vector mean;
+    ComputeMean(data, &mean);
+
+    data_copy->Init(data.n_rows(), data.n_cols());
+    
+    // Subtract the mean vector from each column of the matrix.
+    for(index_t i = 0; i < data.n_cols(); i++) {
+      Vector data_copy_col, data_col;
+      data_copy->MakeColumnVector(i, &data_copy_col);
+      data.MakeColumnVector(i, &data_col);
+
+      la::SubOverwrite(data_col, mean, &data_copy_col);
+    }
+  }
+
+  static void MeanCenter(const Matrix &data, const Vector &mean,
+			 Matrix *data_copy) {
+    
+    data_copy->Init(data.n_rows(), data.n_cols());
+    
+    // Subtract the mean vector from each column of the matrix.
+    for(index_t i = 0; i < data.n_cols(); i++) {
+      Vector data_copy_col, data_col;
+      data_copy->MakeColumnVector(i, &data_copy_col);
+      data.MakeColumnVector(i, &data_col);
+
+      la::SubOverwrite(data_col, mean, &data_copy_col);
+    }
+  }
+
+  static void MeanCenter(const Matrix &data, index_t start, index_t count,
+			 const Vector &mean, Matrix *data_copy) {
+    
+    data_copy->Init(data.n_rows(), count);
+    
+    // Subtract the mean vector from each column of the matrix.
+    for(index_t i = start; i < start + count; i++) {
+      Vector data_copy_col, data_col;
+      data_copy->MakeColumnVector(i - start, &data_copy_col);
+      data.MakeColumnVector(i, &data_col);
+
+      la::SubOverwrite(data_col, mean, &data_copy_col);
+    }
+  }
+
+  static void PrincipalAngles(const Matrix &left_basis,
+			      const Matrix &right_basis,
+			      Matrix *left_basis_principal_vectors,
+			      Matrix *right_basis_principal_vectors,
+			      Vector *principal_angles) {
+    
+    // Compute the QR decompositions of the two basis sets.
+    Matrix left_basis_q_factor, left_basis_r_factor;
+    Matrix right_basis_q_factor, right_basis_r_factor;
+    la::QRInit(left_basis, &left_basis_q_factor, &left_basis_r_factor);
+    la::QRInit(right_basis, &right_basis_q_factor, &right_basis_r_factor);
+    
+    // Compute the product of the two q-factors and SVD of the product.
+    Matrix prod_q_factors, left_singular_vectors, right_singular_vectors;
+    la::MulTransAInit(left_basis_q_factor, right_basis_q_factor,
+		      &prod_q_factors);
+    la::SVDInit(prod_q_factors, principal_angles, &left_singular_vectors,
+		&right_singular_vectors);
+    la::MulInit(left_basis_q_factor, left_singular_vectors, 
+		left_basis_principal_vectors);
+    la::MulTransBInit(right_basis_q_factor, right_singular_vectors, 
+		      right_basis_principal_vectors);
+  }
+
+  /** @brief Computes the principal components of the given dataset by
+   *         computing the right singular vector using SVD.
+   */
+  static void SvdLeftSingularVector(const Matrix &data,
+				    Vector *eigen_values,
+				    Matrix *principal_components) {
+
+    // Mean-center the dataset and compute its left singular vector
+    // (eigenvector).
+    Matrix mean_centered;
+    MeanCenter(data, &mean_centered);
+    
+    // Singular values and singular vectors.
+    Matrix right_singular_vectors;
+    
+    la::SVDInit(mean_centered, eigen_values, principal_components,
+		&right_singular_vectors);
+    for(index_t i = 0; i < eigen_values->length(); i++) {
+      (*eigen_values)[i] = ((*eigen_values)[i] * (*eigen_values)[i]) / 
+	((double) data.n_cols());
+    }    
+  }
 
   /** @brief Computes the principal components of the given dataset
    *         using the usual eigendecomposition of the covariance
@@ -99,7 +205,7 @@ class Pca {
 
     // First, compute the covariance matrix of the dataset.
     Matrix covariance;
-    ComputeCovariance_(data, &covariance);
+    ComputeCovariance(data, &covariance);
     
     // Compute the eigenvalues/eigenvectors of the covariance matrix.
     la::EigenvectorsInit(covariance, eigen_values, principal_components);
@@ -120,7 +226,7 @@ class Pca {
     
     // First, compute the covariance matrix of the dataset.
     Matrix covariance;
-    ComputeCovariance_(data, &covariance);
+    ComputeCovariance(data, &covariance);
 
     // Allocate enough space for storing the principal components and
     // eigenvalues.
@@ -140,7 +246,7 @@ class Pca {
       principal_components->MakeColumnVector(c, &current_basis);      
       
       // Generate random unit vector.
-      RandomUnitVector_(current_basis);
+      RandomUnitVector(current_basis);
 
       // Set the previous iteration's vector basis to be zero vector.
       previous_iteration_current_basis.Init(current_basis.length());
@@ -161,8 +267,8 @@ class Pca {
 	current_basis.CopyValues(product);	
 
 	// Orthogonalize the product against all existing basis.
-	GramSchmidt_(principal_components, c, current_basis, 
-		     epsilon);
+	GramSchmidt(principal_components, c, current_basis, 
+		    epsilon);
 
 	if(fabs(la::Dot(current_basis, 
 			previous_iteration_current_basis) - 1) < epsilon ) {
