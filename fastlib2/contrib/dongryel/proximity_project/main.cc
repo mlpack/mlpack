@@ -1,10 +1,10 @@
 #include "fastlib/fastlib.h"
 #include "general_spacetree.h"
 #include "contrib/dongryel/pca/pca.h"
-#include "pca_tree.h"
+#include "subspace_stat.h"
 #include "gen_metric_tree.h"
 
-typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, PcaStat > GTree;
+typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, SubspaceStat > GTree;
 
 int main(int argc, char *argv[]) {
  
@@ -25,12 +25,6 @@ int main(int argc, char *argv[]) {
 
   fx_timer_stop(NULL, "pca tree");
   printf("Finished constructing the tree...\n");
-
-  // recursively computed PCA
-  printf("Recursive PCA\n");
-  //(root_->stat().eigenvectors_).PrintDebug();
-  //(root_->stat().eigenvalues_).PrintDebug();
-  printf("Recursive PCA completed!\n");
 
   // exhaustively compute PCA
   printf("Exhaustive PCA\n");
