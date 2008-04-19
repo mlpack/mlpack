@@ -847,7 +847,7 @@ class DualtreeKde {
 
     if(queries_equal_references) {
       qroot_ = rroot_;
-      old_from_new_queries_.Copy(old_from_new_references_);
+      old_from_new_queries_.InitCopy(old_from_new_references_);
     }
     else {
       qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen,
