@@ -89,8 +89,8 @@ class MultSeriesExpansionAux {
       traversal_mapping_[i].Init();
 
       for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
-
-        ArrayList<int> mapping = multiindex_mapping_[j];
+	
+        const ArrayList<int> &mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -101,7 +101,7 @@ class MultSeriesExpansionAux {
         }
 
         if(flag == 0) {
-          (traversal_mapping_[i]).AddBackItem(j);
+          (traversal_mapping_[i]).PushBackCopy(j);
         }
       } // end of j-loop
     } // end of i-loop
@@ -116,11 +116,11 @@ class MultSeriesExpansionAux {
     lower_mapping_index_.Init(list_total_num_coeffs_[max_order_]);
 
     for(index_t i = 0; i < list_total_num_coeffs_[max_order_]; i++) {
-      ArrayList<int> outer_mapping = multiindex_mapping_[i];
+      const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
       lower_mapping_index_[i].Init();
 
       for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
-        ArrayList<int> inner_mapping = multiindex_mapping_[j];
+        const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -133,7 +133,7 @@ class MultSeriesExpansionAux {
         }
 
         if(flag == 0) {
-          (lower_mapping_index_[i]).AddBackItem(j);
+          (lower_mapping_index_[i]).PushBackCopy(j);
         }
       } // end of j-loop
     } // end of i-loop
@@ -147,12 +147,12 @@ class MultSeriesExpansionAux {
     for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
 
       // beta mapping
-      ArrayList<int> beta_mapping = multiindex_mapping_[j];
+      const ArrayList<int> &beta_mapping = multiindex_mapping_[j];
 
       for(index_t k = 0; k < list_total_num_coeffs_[max_order_]; k++) {
 
         // alpha mapping
-        ArrayList<int> alpha_mapping = multiindex_mapping_[k];
+        const ArrayList<int> &alpha_mapping = multiindex_mapping_[k];
 
         // initialize the factor to 1
         multiindex_combination_.set(j, k, 1);
@@ -178,11 +178,11 @@ class MultSeriesExpansionAux {
     upper_mapping_index_.Init(list_total_num_coeffs_[max_order_]);
 
     for(index_t i = 0; i < list_total_num_coeffs_[max_order_]; i++) {
-      ArrayList<int> outer_mapping = multiindex_mapping_[i];
+      const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
       upper_mapping_index_[i].Init();
 
       for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
-        ArrayList<int> inner_mapping = multiindex_mapping_[j];
+        const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -195,7 +195,7 @@ class MultSeriesExpansionAux {
         }
 
         if(flag == 0) {
-          (upper_mapping_index_[i]).AddBackItem(j);
+          (upper_mapping_index_[i]).PushBackCopy(j);
         }
       } // end of j-loop
     } // end of i-loop
@@ -328,7 +328,7 @@ class MultSeriesExpansionAux {
 	    div++;
 
 	    // copy multiindex from old to the new position
-	    multiindex_mapping_[i].Copy(multiindex_mapping_[i - step]);
+	    multiindex_mapping_[i].InitCopy(multiindex_mapping_[i - step]);
 	    (multiindex_mapping_[i])[k] = (multiindex_mapping_[i])[k] + 1;
 	  }
 	}

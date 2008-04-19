@@ -121,7 +121,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
 	neg_inv_multiindex_factorials_[t] =
 	  -neg_inv_multiindex_factorials_[j] / cinds[t];
 	
-	(multiindex_mapping_[t]).Copy(multiindex_mapping_[j]);
+	(multiindex_mapping_[t]).InitCopy(multiindex_mapping_[j]);
 	(multiindex_mapping_[t])[i] = (multiindex_mapping_[t])[i] + 1;
       }
     }

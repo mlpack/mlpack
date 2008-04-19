@@ -90,7 +90,7 @@ class GaussianKernelMultAux {
   }
 
   double ComputePartialDerivative(const Matrix &derivative_map,
-				  ArrayList<int> mapping) const {
+				  const ArrayList<int> &mapping) const {
     
     double partial_derivative = 1.0;
     
@@ -354,7 +354,7 @@ class GaussianKernelAux {
   }
 
   double ComputePartialDerivative(const Matrix &derivative_map,
-				  ArrayList<int> mapping) const {
+				  const ArrayList<int> &mapping) const {
     
     double partial_derivative = 1.0;
     
@@ -587,7 +587,7 @@ class EpanKernelAux {
   }
 
   double ComputePartialDerivative(const Matrix &derivative_map,
-				  ArrayList<int> mapping) const {
+				  const ArrayList<int> &mapping) const {
     
     int nonzero_count = 0;
     int nonzero_index = 0;
