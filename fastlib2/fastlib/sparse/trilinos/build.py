@@ -73,7 +73,7 @@ customrule(
 #---- This is the test part of the installation 
 
 librule(name = "trilinos",
-		    headers = lglob("trilinons/include/*.hpp"),
+		    headers = lglob("include/*.hpp"),
 				deplibs =["fastlib/la:libblaspack", "fastlib/la:libcomplexblaspack", ":libtrilinos"])
 
 binrule(
