@@ -66,7 +66,6 @@ class KernelVectorMult {
     OBJECT_TRAVERSAL_SHALLOW(QueryStat) {
       // Declare a non-pointer/array member variable to be traversed.
       // See base/otrav.h for other kinds of declarations.
-      OT_OBJ(sum_so_far_);
     }
 
    public:
@@ -133,6 +132,10 @@ class KernelVectorMult {
 
   // kernel function
   EpanKernel epan_kernel;
+
+  double epan_cutoff_dist_;
+
+
 
 
   /**
@@ -272,7 +275,7 @@ class KernelVectorMult {
         double distance =
             la::DistanceSqEuclidean(query_point, reference_point);
 
-	weighted_sum_[query_index] +=
+	weighted_sums_[query_index] +=
 	  weights_[reference_index] * epan_kernel.EvalUnnormOnSq(distance);
 
       } /* for reference_index */
@@ -302,7 +305,7 @@ class KernelVectorMult {
     DEBUG_SAME_DOUBLE(lower_bound_distance,
         MinNodeDistSq_(query_node, reference_node));
 
-    if (lower_bound_distance > epan_cutoff_dist) {
+    if (lower_bound_distance > epan_cutoff_dist_) {
 
       // execute prune
 
@@ -404,8 +407,7 @@ class KernelVectorMult {
   /**
    * Read parameters, copy data into the class, and build the trees.
    */
-  void Init(const Matrix& references_in, Vector& weights_in,
-	    struct datanode* module_in) {
+  void Init(const Matrix& references_in, struct datanode* module_in) {
 
     // It's a good idea to make sure the object isn't initialized a
     // second time, as this is almost certainly mistaken.
@@ -448,8 +450,14 @@ class KernelVectorMult {
     weighted_sums_.Init(queries_.n_cols());
     weighted_sums_.SetAll(0);
 
-    /* Ready the vector of weighted sums so far for use. */
-    weights_.Copy(weights_in);
+
+    // Init weights once and for all here, but we can overwrite it with
+    // the weights vector passed into ComputeKernelMatrixVectorMultiplication
+    weights_.Init(queries_.n_cols());
+
+
+
+
 
     number_of_prunes_ = 0;
 
@@ -459,6 +467,10 @@ class KernelVectorMult {
 
     // kernel function
     epan_kernel.Init(bandwidth);
+    
+    epan_cutoff_dist_ = epan_kernel.MaxUnnormValue();
+    
+    printf("epan_cutoff_dist = %f\n", epan_cutoff_dist_);
   
 
   } /* Init */
@@ -470,7 +482,7 @@ class KernelVectorMult {
    * Computes the kernel matrix vector multiplication and store the result in
    * the results vector.
    */
-  void ComputeKernelMatrixVectorMultiplication(Vector* results) {
+  void ComputeKernelMatrixVectorMultiplication(Vector weights_in, Vector* results) {
 
     // In addition to confirming the object's been initialized, we
     // want to make sure we aren't asking it to compute a second time.
@@ -478,11 +490,20 @@ class KernelVectorMult {
     DEBUG_ASSERT(already_used_ == false);
     DEBUG_ONLY(already_used_ = true);
 
+    // permute weights around to match the new reference point ordering
+    for (index_t i = 0; i < weights_.length(); i++) {
+      weights_[i] = weights_in[old_from_new_references_[i]];
+    }
+
+
+
     fx_timer_start(module_, "dual_tree_computation");
 
     /* Start recursion on the roots of either tree */
     GNPRecursion_(query_tree_, reference_tree_,
         MinNodeDistSq_(query_tree_, reference_tree_));
+
+    la::Scale(1 / epan_kernel.CalcNormConstant(queries_.n_rows()), &weighted_sums_);
 
     fx_timer_stop(module_, "dual_tree_computation");
 
@@ -500,7 +521,7 @@ class KernelVectorMult {
   /**
    * Computes the kernel matrix vector multiplication naively.
    */
-  void ComputeNaive(ArrayList<index_t>* results) {
+  void ComputeNaive(Vector* results) {
 
     DEBUG_ASSERT(initialized_ == true);
     DEBUG_ASSERT(already_used_ == false);
@@ -520,16 +541,27 @@ class KernelVectorMult {
   } /* ComputeNaive */
 
   /**
+   * Reset things so that we can use the same tree for another computation
+   */
+  void Reset() {
+
+    weighted_sums_.SetAll(0);
+
+    already_used_ = false;
+
+  } /* ResetWeightedSums */
+
+  /**
    * Initialize and fill an ArrayList of results.
    */
-  void EmitResults(ArrayList<index_t>* results) {
+  void EmitResults(Vector* results) {
 
     DEBUG_ASSERT(initialized_ == true);
 
-    results->Init(neighbor_indices_.size());
+    results->Init(weighted_sums_.length());
 
     /* Map the indices back from how they have been permuted. */
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (index_t i = 0; i < weighted_sums_.length(); i++) {
 
       (*results)[old_from_new_queries_[i]] = weighted_sums_[i];
     }
