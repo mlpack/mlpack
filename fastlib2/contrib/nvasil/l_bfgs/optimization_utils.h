@@ -46,6 +46,19 @@ class OptUtils {
       }
     }
   }
+  static void BoundProjection(Matrix *data, double lo, double hi) {
+    double *ptr=data->ptr();
+    for(index_t i=0; i<(index_t)data->n_elements(); i++) {
+      if (ptr[i]>hi) {
+        ptr[i]=hi;
+        continue;
+      }
+      if (ptr[i]<lo) {
+        ptr[i]=lo;
+      }
+    }
+  }
+ 
  
   static success_t SVDTransform(Matrix &input_mat, Matrix *output_mat, 
       index_t components_to_keep) {

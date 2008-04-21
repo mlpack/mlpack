@@ -32,9 +32,10 @@ void MVUDotProdObjective::Init(datanode *module,
 }
 
 void MVUDotProdObjective::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
-  gradient->CopyValues(coordinates);
   // we need to use -CRR^T because we want to maximize CRR^T
+  gradient->CopyValues(coordinates);
   la::Scale(-1.0, gradient);
+  gradient->SetAll(0.0);
   index_t dimension=auxiliary_mat_->n_rows();
   for (index_t i=0; i<num_of_constraints_; i++) {
     index_t ind1=pairs_to_consider_[i].first; 
@@ -57,7 +58,8 @@ void MVUDotProdObjective::ComputeObjective(Matrix &coordinates, double *objectiv
      *objective-=la::Dot(dimension, 
                         coordinates.GetColumnPtr(i),
                         coordinates.GetColumnPtr(i));
-  } 
+  }
+  
 }
 
 void MVUDotProdObjective::ComputeFeasibilityError(Matrix &coordinates, double *error) {
@@ -106,6 +108,7 @@ void MVUDotProdObjective::UpdateLagrangeMult(Matrix &coordinates) {
 
 void MVUDotProdObjective::Project(Matrix *coordinates) {
   OptUtils::NonNegativeProjection(coordinates);
+  // OptUtils::BoundProjection(coordinates, 0, 1.0);
 }
 
 void MVUDotProdObjective::set_sigma(double sigma) {
