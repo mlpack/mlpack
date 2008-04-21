@@ -96,16 +96,11 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
       s_bfgs_[0].ptr(), y_bfgs_[0].ptr());
   double old_feasibility_error = feasibility_error;
   for(index_t i=0; i<mem_bfgs_; i++) {
-    ComputeBFGS_(&step_, gradient_, i);
-    if (step_==0) {
+    success_t success=ComputeBFGS_(&step_, gradient_, i);
+    if (success==SUCCESS_FAIL) {
       NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
       ComputeWolfeStep_(&step_, gradient_);
     }
-//    if (success=SUCCESS_FAIL) {
-//     NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
-//      ComputeWolfeStep_(&step_, gradient_);
-//      UpdateBFGS_();
-//    }
     optimized_function_->ComputeGradient(coordinates_, &gradient_);
     UpdateBFGS_();
     previous_gradient_.CopyValues(gradient_);
@@ -232,9 +227,13 @@ void LBfgs<OptimizedFunction>::UpdateLagrangeMult_() {
   optimized_function_->set_sigma(sigma_);
 }
 
+// for optimization purposes the direction  is always the negative of what it is supposed 
+// in the wolfe form. so for example if the direction is the negative gradient the direction
+// should be the gradient and not the -gradient
 template<typename OptimizedFunction>
 success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &direction) {
   fx_timer_start(module_, "wolfe_step");
+  success_t success=SUCCESS_PASS;
   Matrix temp_coordinates;
   Matrix temp_gradient;
   temp_gradient.Init(new_dimension_, num_of_points_);
@@ -246,23 +245,30 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
                                gradient_.ptr(),
                                direction.ptr());
   double wolfe_factor =  dot_product * wolfe_sigma1_ * wolfe_beta_ * step_size_;
-  for(index_t i=0; beta>min_beta_/sigma_; i++) { 
+  for(index_t i=0; beta>min_beta_/(1.0+sigma_); i++) { 
     temp_coordinates.CopyValues(coordinates_);
     la::AddExpert(-step_size_*beta, direction, &temp_coordinates);
     optimized_function_->Project(&coordinates_); 
     lagrangian2 = optimized_function_->ComputeLagrangian(temp_coordinates);
+    // NOTIFY("direction:%lg", la::Dot(direction.n_elements(), direction.ptr(), direction.ptr()) );
+    // NOTIFY("step_size:%lg beta:%lg min_beta:%lg", step_size_, beta, min_beta_);
+    // NOTIFY("********lagrangian2:%lg lagrangian1:%lg wolfe_factor:%lg", lagrangian2, lagrangian1, wolfe_factor);
     if (lagrangian2 <= lagrangian1 + wolfe_factor)  {
       optimized_function_->ComputeGradient(temp_coordinates, &temp_gradient);
       double dot_product_new = -la::Dot(temp_gradient.n_elements(), 
           temp_gradient.ptr(), direction.ptr());
+    //  NOTIFY("dot_product_new:%lg wolfe_sigma2:%lg dot_product:%lg", dot_product_new,wolfe_sigma2_, dot_product);
       if (dot_product_new >= wolfe_sigma2_*dot_product) {
-        break;
-      }     
+        success = SUCCESS_PASS;
+      } else {
+        success = SUCCESS_FAIL;
+      }
+      break;    
     }
     beta *=wolfe_beta_;
     wolfe_factor *=wolfe_beta_;
   }
-  if(beta<=min_beta_/sigma_) {
+  if (beta<=min_beta_/(1.0+sigma_)) {
     *step=0;
     fx_timer_stop(module_, "wolfe_step");
     return SUCCESS_FAIL;
@@ -270,7 +276,11 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
     *step=step_size_*beta;
     coordinates_.CopyValues(temp_coordinates);   
     fx_timer_stop(module_, "wolfe_step");
-    return SUCCESS_PASS;
+    if (success==SUCCESS_FAIL) {
+      return SUCCESS_FAIL;
+    } else {
+      return SUCCESS_PASS;
+    }
   }
 }
 
@@ -321,8 +331,8 @@ success_t LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, ind
     la::Scale(alpha[j]-beta, &scaled_s);
     la::AddTo(scaled_s, &temp_direction);
   }
-  ComputeWolfeStep_(step, temp_direction);
-  if (step==0) {
+  success_t success=ComputeWolfeStep_(step, temp_direction);
+/*  if (step==0) {
     NONFATAL("BFGS Failed looking in the other direction...\n");
     la::Scale(-1.0, &temp_direction);
     ComputeWolfeStep_(step, temp_direction);
@@ -330,9 +340,9 @@ success_t LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, ind
     fx_timer_stop(module_, "bfgs_step");
     return SUCCESS_FAIL;  
   }
+*/  
   fx_timer_stop(module_, "bfgs_step");
-  return SUCCESS_PASS;
-  fx_timer_stop(module_, "bfgs_step");
+  return success;
 }
 
 template<typename OptimizedFunction>
@@ -372,6 +382,137 @@ success_t LBfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
   return SUCCESS_PASS;
 }
 
+/*
+template<typename OptimizedFunction>
+void ComputeCauchyPoint(Matrix &coordinates, Matrix &gradient, 
+    Matrix *cauchy_point) {
+  Matrix t_mat;
+  Matrix d_mat;
+  t_mat.Init(coordinates.n_rows(), coordinates.n_cols());
+  d_mat.Init(coordinates.n_rows(), coordinates.n_cols());
+  ArrayList<std::pair<double, index_t> > f_list;
+  f_list.Init();
+
+  for(index_t i=0; i<t_mat.n_rows(); i++) {
+    for(index_t j=0; j<t_mat.n_cols(); j++) {
+      double value;
+      if (gradient.get(i, j)<0) {
+       val=(coordinates.get(i,j)-get_upper_bound(i,j))/gradient.get(i,j);
+      } else {
+        if (gradient.get(i, j)>0) {
+          val=(coordinates.get(i,j)-get_lower_bound(i,j))/gradient.get(i,j);
+        } else {
+          val=DBL_MAX;
+        }
+      }
+      t_mat.set(i, j, val);
+      if (unlikely(val==0.0)) {
+        d_mat.set(i, j, 0.0);
+      } else {
+        d_mat.set(i, j, -gradient.get(i, j));
+      }
+      if (val>0) {
+        f_list.PushBack(std::make_pair(val, i*new_dimension_+j));
+      }
+    }
+  }
+  //  Initializations
+  Vector c_vec;
+  c_vec.Init(mem_bfgs_);
+  c_vec.SetAll(0.0);
+  Vector p_vec;
+  p_vec.Init(mem_bfgs_);
+  index_t  n_elements=coordinates_.n_elements();
+  double theta=ro_bfgs_[index_bfgs_];
+  for(index_t i=0; i<mem_bfgs_; i++) {
+    index_t bfgs_ind= (i+index_bfgs_) % mem_bfgs_;
+    p_vec[i]=la::Dot(n_elements, y_bfgs_[bfgs_ind].ptr(), d_mat.ptr());
+    p_vec[i+mem_bfgs_]=theta*la::Dot(n_elements, s_bfgs_[bfgs_ind].ptr(), d_mat.ptr());
+  }
+  Matrix m_mat;
+  ComputeMMatrix_(&m_mat);
+  double f_prime=-la::Dot(n_elements, d_mat.ptr(), d_mat.ptr());
+  Vector temp_p;
+  la::MulInit(m_mat, p_vec, &temp_p);
+  double f_dprime=-f_prime-la::Dot(temp_p, p_vec);
+  double delta_tau_min = -f_prime/(f_dprime+1e-20);
+  double t_old=0;
+  std::sort(f_list.begin(), f_list.end(), 
+      std::greater<std::pair<double, index_t> >);
+  double t_min=f_list.back().first;
+  index_t b=f_list.back().second;
+  f_list.PopBack();
+  double delta_tau = t_min;
+  while (delta_tau_min >= delta_tau) {
+    index_t i= b%new_dimension_;
+    index_t j= b/new_dimension_;
+    if (d_mat.get(i, j)>0) {
+      cauchy_point.set(i, j, get_upper_bound(i, j));
+    } else {
+       cauchy_point.set(i, j, get_lower_bound(i, j));    
+    }
+    double z_b=cauchy_point.get(i, j)-coordinates.get(i, j);
+    la::AddExpert(delta_tau, p_vec, &c_vec);
+    Vector temp_prod_vec;
+    Vector wb_vec;
+    wb_vec.Init(2*mem_bfgs_);
+    // form the wb_vec;
+    for(index_t i=0; i< mem_bfgs_; i++) {
+      index_t bfgs_ind= (i+index_bfgs_) % mem_bfgs_;
+      wb_vec[i]=y_bfgs_[bfgs_ind];
+      wb_vec[i+mem_bfgs_]=y_bfgs_[bfgs_ind]*theta;
+    }
+    la::MulInit(m_mat, c_vec, &temp_prod_vec);
+    f_prime=f_prime+delta_tau*f_dprime+gradient.get(i,j)*(gradient.get(i, j)
+       +theta*z_b-la::Dot(temp_prod_vec, wb_vec));
+    la::MulOverwrite(m_mat, p_vec, &temp_p);
+    la::MulOverwrite(m_mat, wb_vec, &temp_prod_vec);
+    f_dprime=f_dprime-gradient.get(i, j)*(theta*gradient.get(i, j)
+        +2*gradient.get(i,  j)*la::Dot(wb_vec, temp_p)
+        +gradient.get(i, j)*la::Dot(wb_vec, temp_prod_vec));
+    la::AddExpert(gradient.get(i, j), wb_vec, p_vec);
+    d_mat.set(i, j, 0.0);
+    delta_tau_min=-f_prime/(1e-20+f_dprime);
+    t_old=t_min;
+    double t_min=f_list.back().first;
+    index_t b=f_list.back().second;
+    f_list.PopBack();
+    delta_tau=t_min-t_old;
+  }
+  delta_tau_min=std::max(delta_tau_min, 0.0);
+  t_old=t_old+delta_tau_min;
+  for(index_t k=0; k<f_list.size(); k++) {
+    index_t b=f_list[k].second;
+    index_t i= b%new_dimension_;
+    index_t j= b/new_dimension_;
+    double val=coordinates.get(i, j)+t_old*d_mat.get(i, j);
+    cauchy_point->set(i, j, val);
+  }
+  la::AddExpert(delta_tau_min, p_vec, &c_vec);
+  //f_list is an  ArrayList with all the free variables
+  
+  // Computation of r_c
+  Matrix rc_mat;
+  rc_mat.Copy(gradient);
+  rc_mat.AddExpert(*cacuchy_point, theta, &rc_mat);
+  rc_mat.AddExpert(coordinates, -theta, &rc_mat);
+  Vector temp_prod0;
+  la::MulInit(m_mat, c_vec, &temp_prod0);
+  for(index_t i=0; i< mem_bfgs_; i++) {
+    index_t bfgs_ind = (i+index_bfgs_) % mem_bfgs_;
+    la::AddExpert(-c_vec[i], y_bfgs_[bfgs_ind], &rc_mat);
+    la::AddExpert(-c_vec[i]*theta, s_bfgs_[bfgs_ind], &rc_mat);
+  }  
+  for(index_t k=0; k<f_list.size(); k++) {
+    index_t b=f_list[k].second;
+    index_t i= b%new_dimension_;
+    index_t j= b/new_dimension_;
+    rc_mat.set(i, j, 0.0);  
+  } 
+  // the conjugate gradient method for the subspace minimization
+
+}
+*/
 template<typename OptimizedFunction>
 std::string LBfgs<OptimizedFunction>::ComputeProgress_() {
   double lagrangian=optimized_function_->ComputeLagrangian(coordinates_);
