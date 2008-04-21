@@ -32,13 +32,12 @@ int main(int argc, char* argv[]) {
 
   fx_init(argc, argv);
 
-  ////////// READING PARAMETERS AND LOADING DATA /////////////////////
-
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str_req(NULL, "r");
 
   Matrix references;
   data::Load(references_file_name, &references);
+
 
   const char* weights_file_name = fx_param_str_req(NULL, "weights");
   Matrix weights_matrix;
@@ -55,6 +54,8 @@ int main(int argc, char* argv[]) {
   kernel_vector_mult.Init(references, kernel_vector_mult_module);
   
   Vector results;
+  results.Init(references.n_cols());
+
   // Tell the KernelVectorMult object to perform its computation. 
   kernel_vector_mult.ComputeKernelMatrixVectorMultiplication(weights_vector, &results);
   const char* output_filename =
@@ -64,6 +65,7 @@ int main(int argc, char* argv[]) {
   fclose(output_file);
 
   Vector results2;
+  results2.Init(references.n_cols());
   // Tell the KernelVectorMult object to perform its computation. 
   kernel_vector_mult.Reset();
   kernel_vector_mult.ComputeKernelMatrixVectorMultiplication(weights_vector, &results2);

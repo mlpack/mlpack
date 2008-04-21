@@ -12,6 +12,7 @@
 #include "contrib/dongryel/regression/krylov_lpr.h"
 #include "contrib/dongryel/regression/relative_prune_lpr.h"
 #include "fastlib/sparse/trilinos/include/Epetra_SerialDenseMatrix.h"
+#include "kernel_vector_mult.h"
 
 
 class SimpleLinearOperator: public virtual Epetra_Operator {
@@ -27,17 +28,25 @@ private:
   Matrix data_;
   //  Matrix K_;
 
-  GaussianKernel gaussian_kernel_;
+  EpanKernel epan_kernel_;
   double norm_constant_;
 
   double sigma_;
+
+  KernelVectorMult* kernel_vector_mult_;
 
 
   
   
 public:
   
-  SimpleLinearOperator(Matrix data_in, double bandwidth_in, double sigma_in) {
+  SimpleLinearOperator(int n_points_in, Matrix data_in,
+		       double bandwidth_in, double sigma_in,
+		       KernelVectorMult* kernel_vector_mult_in) {
+
+    n_points_ = n_points_in;
+    kernel_vector_mult_ = kernel_vector_mult_in;
+
     
     data_.Copy(data_in);
 
@@ -45,12 +54,14 @@ public:
     //data::Load("K.txt", &K_);
     
     n_dims_ = data_in.n_rows();
-    n_points_ = data_in.n_cols();
+    //n_points_ = data_in.n_cols();
+
+
 
     map = new Epetra_Map(n_points_, 0, comm);
 
-    gaussian_kernel_.Init(bandwidth_in, n_dims_);
-    norm_constant_ = gaussian_kernel_.CalcNormConstant(n_dims_);
+    epan_kernel_.Init(bandwidth_in, n_dims_);
+    norm_constant_ = epan_kernel_.CalcNormConstant(n_dims_);
 
     sigma_ = sigma_in;
 
@@ -67,7 +78,32 @@ public:
   }
 
   int Apply (const Epetra_MultiVector &X, Epetra_MultiVector &Y) const {
+    
+    /* fast summation code */
+    Vector weights_vector;
+    Vector results;
+    weights_vector.Init(n_points_);
+    results.Init(n_points_);
 
+
+    for(int j = 0; j < n_points_; j++) {
+      weights_vector[j] = X.Pointers()[0][j];
+    }
+
+    kernel_vector_mult_ -> Reset();
+    kernel_vector_mult_ -> ComputeKernelMatrixVectorMultiplication(weights_vector, &results);
+
+
+    for(int i = 0; i < n_points_; i++) {
+      Y.Pointers()[0][i] = results[i] + (sigma_ * weights_vector[i]);
+    }
+
+    /* end fast summation code */
+
+
+
+
+    /*
     // LET'S ASSUME THAT DATA IS A D X N MATRIX
 
     Vector K_i;
@@ -84,10 +120,10 @@ public:
 	
 	double dist = la::DistanceSqEuclidean(v_i, v_j);
 	
-	K_i[j] = gaussian_kernel_.EvalUnnormOnSq(dist) / norm_constant_;
+	K_i[j] = epan_kernel_.EvalUnnormOnSq(dist) / norm_constant_;
       }
       
-      K_i[i] += sigma_; // add (sigma * I) term
+      //K_i[i] += sigma_; // add (sigma * I) term
 
       double sum = 0;
       for(int j = 0; j < n_points_; j++) {
@@ -96,6 +132,16 @@ public:
       
       Y.Pointers()[0][i] = sum;
     }
+
+    double my_squared_error = 0;
+    for(int i = 0; i < n_points_; i++) {
+      my_squared_error += pow(Y.Pointers()[0][i] - results[i], 2);
+    }
+
+    printf("my_squared_error = %f\n", my_squared_error);
+    */
+    
+
 
     return 0;
   }
@@ -151,20 +197,45 @@ int main(int argc, char *argv[]) {
   // Initialize FastExec...
   fx_init(argc, argv);
 
+
+
+  /* begin code from KernelVectorMult */
   
-  Matrix data, data_transpose;
+  // The reference data file is a required parameter.
+  const char* references_file_name = fx_param_str_req(NULL, "r");
+  
+  Matrix references;
+  data::Load(references_file_name, &references);
+
+  printf("references.n_rows() = %d\nreferences.n_cols() = %d\n",
+	 references.n_rows(), references.n_cols());
+
+  
+  KernelVectorMult kernel_vector_mult;
+  
+  struct datanode* kernel_vector_mult_module =
+    fx_submodule(NULL, "kernel_vector_mult", "kernel_vector_mult_module");
+  
+  kernel_vector_mult.Init(references, kernel_vector_mult_module);
+  
+  /* end code from KernelVectorMult */
+
+
+
+  
+  Matrix data;//, data_transpose;
   Matrix right_hand_side_e;
 
-  data::Load("data.txt", &data_transpose);
-  data::Load("rhs.txt", &right_hand_side_e);
-
+  data::Load("refined_astroset.ds", &data);
+  data::Load("alldata_zs", &right_hand_side_e);
+  /*
   if(data_transpose.n_cols() < data_transpose.n_rows()) {
     la::TransposeInit(data_transpose, &data);
   }
   else {
     data = data_transpose;
   }
-
+  */
   
 
   
@@ -185,11 +256,12 @@ int main(int argc, char *argv[]) {
   Epetra_MultiVector solution(blockmap, 1, true);
   Epetra_MultiVector right_hand_side(blockmap, 1, false);
   for(index_t j = 0; j < row_length; j++) {
-    (*(right_hand_side(0)))[j] = right_hand_side_e.get(j, 0);
+    (*(right_hand_side(0)))[j] = right_hand_side_e.get(0, j);
   }
 
 
-  SimpleLinearOperator simple_linear_operator(data, 1, 1);
+  SimpleLinearOperator simple_linear_operator(row_length, data, 1, 1,
+					      &kernel_vector_mult);
   
   Epetra_LinearProblem linear_problem(&simple_linear_operator,
 				      &solution, &right_hand_side);
@@ -214,8 +286,8 @@ int main(int argc, char *argv[]) {
   //iterative_solver.SetAztecOption(AZ_precond, AZ_Jacobi);
   
   // Use Conjugate Gradient
-  iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
-  //iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
+  //iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
+  iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
   
   // Use modified Gram-Schmidt.
   //iterative_solver.SetAztecOption(AZ_orthog, AZ_modified);
@@ -228,7 +300,7 @@ int main(int argc, char *argv[]) {
   iterative_solver.Iterate(row_length, 1.0E-9);
   
 
-  cout<<solution;
+  //cout<<solution;
 
 
 

@@ -448,7 +448,7 @@ class KernelVectorMult {
 
     /* Ready the vector of weighted sums so far for use. */
     weighted_sums_.Init(queries_.n_cols());
-    weighted_sums_.SetAll(0);
+    weighted_sums_.SetZero();
 
 
     // Init weights once and for all here, but we can overwrite it with
@@ -545,7 +545,7 @@ class KernelVectorMult {
    */
   void Reset() {
 
-    weighted_sums_.SetAll(0);
+    weighted_sums_.SetZero();
 
     already_used_ = false;
 
@@ -557,8 +557,6 @@ class KernelVectorMult {
   void EmitResults(Vector* results) {
 
     DEBUG_ASSERT(initialized_ == true);
-
-    results->Init(weighted_sums_.length());
 
     /* Map the indices back from how they have been permuted. */
     for (index_t i = 0; i < weighted_sums_.length(); i++) {
