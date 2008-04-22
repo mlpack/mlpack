@@ -158,11 +158,11 @@ public:
     // END FAST SUMMATION CODE
     
 
-
+    /*
     printf("data.n_rows() = %d\ndata.n_cols() = %d\n",
 	   data_.n_rows(),
 	   data_.n_cols());
-
+    */
     
     /*
     Vector K_i;
