@@ -407,7 +407,7 @@ class KernelVectorMult {
   /**
    * Read parameters, copy data into the class, and build the trees.
    */
-  void Init(const Matrix& references_in, struct datanode* module_in) {
+  void Init(const Matrix& references_in, double bandwidth, struct datanode* module_in) {
 
     // It's a good idea to make sure the object isn't initialized a
     // second time, as this is almost certainly mistaken.
@@ -462,15 +462,14 @@ class KernelVectorMult {
     number_of_prunes_ = 0;
 
 
-    double bandwidth = fx_param_int(module_, "bandwidth", 1);
     DEBUG_ASSERT(bandwidth > 0);
 
     // kernel function
     epan_kernel.Init(bandwidth);
     
-    epan_cutoff_dist_ = epan_kernel.MaxUnnormValue();
+    epan_cutoff_dist_ = bandwidth*bandwidth;
     
-    printf("epan_cutoff_dist = %f\n", epan_cutoff_dist_);
+    DEBUG_ONLY(printf("epan_cutoff_dist = %f\n", epan_cutoff_dist_));
   
 
   } /* Init */
@@ -502,7 +501,7 @@ class KernelVectorMult {
     /* Start recursion on the roots of either tree */
     GNPRecursion_(query_tree_, reference_tree_,
         MinNodeDistSq_(query_tree_, reference_tree_));
-
+    printf("queries_.n_rows() = %d\n", queries_.n_rows());
     la::Scale(1 / epan_kernel.CalcNormConstant(queries_.n_rows()), &weighted_sums_);
 
     fx_timer_stop(module_, "dual_tree_computation");

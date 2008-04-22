@@ -26,12 +26,12 @@ private:
 
   // used for a simple linear transformation operator data_^T * data  
   Matrix data_;
-  //  Matrix K_;
+  //Matrix K_;
 
-  EpanKernel epan_kernel_;
-  double norm_constant_;
+  //EpanKernel epan_kernel_;
+  //double norm_constant_;
 
-  double sigma_;
+  double sigma_squared_;
 
   KernelVectorMult* kernel_vector_mult_;
 
@@ -40,8 +40,7 @@ private:
   
 public:
   
-  SimpleLinearOperator(int n_points_in, Matrix data_in,
-		       double bandwidth_in, double sigma_in,
+  SimpleLinearOperator(int n_points_in, Matrix data_in, double sigma_squared_in,
 		       KernelVectorMult* kernel_vector_mult_in) {
 
     n_points_ = n_points_in;
@@ -50,8 +49,12 @@ public:
     
     data_.Copy(data_in);
 
-    //la::MulTransBInit(data_in, data_in, &K_);
-    //data::Load("K.txt", &K_);
+
+
+
+
+
+
     
     n_dims_ = data_in.n_rows();
     //n_points_ = data_in.n_cols();
@@ -60,10 +63,56 @@ public:
 
     map = new Epetra_Map(n_points_, 0, comm);
 
-    epan_kernel_.Init(bandwidth_in, n_dims_);
-    norm_constant_ = epan_kernel_.CalcNormConstant(n_dims_);
+    //epan_kernel_.Init(bandwidth_in, n_dims_);
+    //norm_constant_ = epan_kernel_.CalcNormConstant(n_dims_);
+    //printf("norm_constant = %f\n", norm_constant_);
 
-    sigma_ = sigma_in;
+    sigma_squared_ = sigma_squared_in;
+
+    /*
+    // for debugging purposes, explicitly represent kernel matrix K
+    K_.Init(n_points_, n_points_);
+    for(int i = 0; i < n_points_; i++) {
+      Vector v_i;
+      data_.MakeColumnVector(i, &v_i);
+      
+      for(int j = 0; j < n_points_; j++) {
+	Vector v_j;
+	data_.MakeColumnVector(j, &v_j);
+	
+	//double dist = la::Dot(v_i, v_j);
+	//K_i[j] = dist;
+	
+	double dist = la::DistanceSqEuclidean(v_i, v_j);
+	K_.set(i, j, epan_kernel_.EvalUnnormOnSq(dist));
+      }
+    }
+
+    la::Scale(1 / norm_constant_, &K_);
+    for(int i = 0; i < n_points_; i++) {
+      K_.set(i, i, K_.get(i, i) + sigma_squared_);
+    }
+    
+
+    const char *K_file_name = "K.txt";
+    data::Save(K_file_name, K_);
+
+    
+//     int errors = 0;
+//     for(int i = 0; i < n_points_; i++) {
+//       for(int j = 0; j < n_points_; j++) {
+// 	if(K_.get(i,j) != K_.get(j,i)) {
+// 	  errors++;
+// 	}
+//       }
+//     }
+    
+//     printf("sigma_squared_ = %f\n", sigma_squared_);
+//     printf("errors = %d\n", errors);
+    
+
+    // end debugging explicit representation of K
+    */
 
 
   }
@@ -79,7 +128,8 @@ public:
 
   int Apply (const Epetra_MultiVector &X, Epetra_MultiVector &Y) const {
     
-    /* fast summation code */
+    
+    // FAST SUMMATION CODE
     Vector weights_vector;
     Vector results;
     weights_vector.Init(n_points_);
@@ -93,19 +143,24 @@ public:
     kernel_vector_mult_ -> Reset();
     kernel_vector_mult_ -> ComputeKernelMatrixVectorMultiplication(weights_vector, &results);
 
-
+    printf("\n");
     for(int i = 0; i < n_points_; i++) {
-      Y.Pointers()[0][i] = results[i] + (sigma_ * weights_vector[i]);
+      Y.Pointers()[0][i] = results[i] + (sigma_squared_ * weights_vector[i]);
+      //results[i] += sigma_squared_ * weights_vector[i];
+      //printf("%f ", results[i]);
     }
+    printf("\n");
+    
+    // END FAST SUMMATION CODE
+    
 
-    /* end fast summation code */
 
+    printf("data.n_rows() = %d\ndata.n_cols() = %d\n",
+	   data_.n_rows(),
+	   data_.n_cols());
 
-
-
+    
     /*
-    // LET'S ASSUME THAT DATA IS A D X N MATRIX
-
     Vector K_i;
     K_i.Init(n_points_);
 
@@ -118,28 +173,54 @@ public:
 	Vector v_j;
 	data_.MakeColumnVector(j, &v_j);
 	
+	//double dist = la::Dot(v_i, v_j);
+	//K_i[j] = dist;
+
 	double dist = la::DistanceSqEuclidean(v_i, v_j);
-	
-	K_i[j] = epan_kernel_.EvalUnnormOnSq(dist) / norm_constant_;
+	K_i[j] = epan_kernel_.EvalUnnormOnSq(dist);
       }
+
+      la::Scale(1 / norm_constant_, &K_i);
+
       
-      //K_i[i] += sigma_; // add (sigma * I) term
+      K_i[i] += sigma_squared_; // add (sigma^2 * I) term
 
       double sum = 0;
       for(int j = 0; j < n_points_; j++) {
-	sum += K_i[j] * X[0][j];
+	sum += (K_i[j] * X.Pointers()[0][j]);
       }
       
       Y.Pointers()[0][i] = sum;
     }
+    */    
 
+    /*
+    // explicit K
+    Vector x_vec;
+    x_vec.Init(n_points_);
+    for(int i = 0; i < n_points_; i++) {
+      x_vec[i] = X.Pointers()[0][i];
+    }
+
+    Vector y_vec;
+    la::MulInit(K_, x_vec, &y_vec);
+    
+    for(int i = 0; i < n_points_; i++) {
+      Y.Pointers()[0][i] = y_vec[i];
+    }
+    
+    // end explicit K
+    
+    //y_vec.PrintDebug("y_vec");
+    */    
+
+    /*
     double my_squared_error = 0;
     for(int i = 0; i < n_points_; i++) {
       my_squared_error += pow(Y.Pointers()[0][i] - results[i], 2);
     }
-
     printf("my_squared_error = %f\n", my_squared_error);
-    */
+    */    
     
 
 
@@ -190,81 +271,54 @@ public:
 
 
 
+// A(r) x = rhs
+// A(r) is some linear operator derived from reference points r
+void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double sigma_squared, Vector* solution) {
 
-
-int main(int argc, char *argv[]) {
-
-  // Initialize FastExec...
-  fx_init(argc, argv);
-
-
-
-  /* begin code from KernelVectorMult */
+  DEBUG_ONLY(printf("references.n_rows() = %d\nreferences.n_cols() = %d\n",
+		    references.n_rows(), references.n_cols()));
   
-  // The reference data file is a required parameter.
-  const char* references_file_name = fx_param_str_req(NULL, "r");
-  
-  Matrix references;
-  data::Load(references_file_name, &references);
-
-  printf("references.n_rows() = %d\nreferences.n_cols() = %d\n",
-	 references.n_rows(), references.n_cols());
-
   
   KernelVectorMult kernel_vector_mult;
   
   struct datanode* kernel_vector_mult_module =
     fx_submodule(NULL, "kernel_vector_mult", "kernel_vector_mult_module");
+
+
+  DEBUG_ONLY(printf("sigma_squared = %f\n", sigma_squared));
+
+  kernel_vector_mult.Init(references, bandwidth, kernel_vector_mult_module);
   
-  kernel_vector_mult.Init(references, kernel_vector_mult_module);
-  
-  /* end code from KernelVectorMult */
-
-
-
-  
-  Matrix data;//, data_transpose;
-  Matrix right_hand_side_e;
-
-  data::Load("refined_astroset.ds", &data);
-  data::Load("alldata_zs", &right_hand_side_e);
-  /*
-  if(data_transpose.n_cols() < data_transpose.n_rows()) {
-    la::TransposeInit(data_transpose, &data);
-  }
-  else {
-    data = data_transpose;
-  }
-  */
+    
   
 
   
   // Communication stuff?
   Epetra_SerialComm comm;
 
-  int row_length = data.n_cols(); // this should be correct despite obvious semantic conflicts
+  int row_length = references.n_cols(); // this should be correct despite obvious semantic conflicts
 
   // Required map for multivector stuff
   Epetra_BlockMap blockmap(1, row_length, 0, comm);
 
-  printf("row_length = %d\n", row_length);
+  DEBUG_ONLY(printf("row_length = %d\n", row_length));
   
 
 
 
   // Define the linear problem.
-  Epetra_MultiVector solution(blockmap, 1, true);
-  Epetra_MultiVector right_hand_side(blockmap, 1, false);
+  Epetra_MultiVector solution_e(blockmap, 1, true);
+  Epetra_MultiVector right_hand_side_e(blockmap, 1, false);
   for(index_t j = 0; j < row_length; j++) {
-    (*(right_hand_side(0)))[j] = right_hand_side_e.get(0, j);
+    (*(right_hand_side_e(0)))[j] = rhs[j];
   }
 
 
-  SimpleLinearOperator simple_linear_operator(row_length, data, 1, 1,
-					      &kernel_vector_mult);
+  SimpleLinearOperator simple_linear_operator(row_length, references,
+					      sigma_squared, &kernel_vector_mult);
   
   Epetra_LinearProblem linear_problem(&simple_linear_operator,
-				      &solution, &right_hand_side);
+				      &solution_e, &right_hand_side_e);
 
   // Declare the iterative solver.
   AztecOO iterative_solver;
@@ -288,20 +342,56 @@ int main(int argc, char *argv[]) {
   // Use Conjugate Gradient
   //iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
   iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
+  //iterative_solver.SetAztecOption(AZ_solver, AZ_cg_condnum);
   
   // Use modified Gram-Schmidt.
-  //iterative_solver.SetAztecOption(AZ_orthog, AZ_modified);
+  iterative_solver.SetAztecOption(AZ_orthog, AZ_modified);
   
   // No output.
   //iterative_solver.SetAztecOption(AZ_diagnostics, AZ_none);
   //iterative_solver.SetAztecOption(AZ_output, AZ_none);
   
   // Solve the linear system.
-  iterative_solver.Iterate(row_length, 1.0E-9);
+  iterative_solver.Iterate(row_length, 1.0E-6);
   
+  
+  solution -> Init(row_length);
+  for(index_t j = 0; j < row_length; j++) {
+    (*solution)[j] = solution_e.Pointers()[0][j];
+  }
 
-  //cout<<solution;
+}
 
+
+
+
+int main(int argc, char *argv[]) {
+
+  // Initialize FastExec...
+  fx_init(argc, argv);
+
+
+  // The reference data file is a required parameter.
+  const char* references_file_name = fx_param_str_req(NULL, "r");
+
+  // The reference data file is a required parameter.
+  const char* right_hand_side_file_name = fx_param_str_req(NULL, "rhs");
+
+  Matrix references;
+  data::Load(references_file_name, &references);
+
+  Matrix right_hand_side_mat;
+  data::Load(right_hand_side_file_name, &right_hand_side_mat);
+
+  Vector right_hand_side_vec;
+  right_hand_side_mat.MakeColumnVector(0, &right_hand_side_vec);
+
+  Vector solution;
+
+  double bandwidth = fx_param_double(NULL, "bandwidth", 1);
+  double sigma_squared = fx_param_double(NULL, "sigma_squared", 1);
+
+  SolveLinearSystem(references, right_hand_side_vec, bandwidth, sigma_squared, &solution);
 
 
   // Finalize FastExec and print output results.
