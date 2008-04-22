@@ -64,6 +64,7 @@ namespace proximity {
     }
 
     node->Init(0, matrix.n_cols());
+    node->bound().center().Init(matrix.n_rows());
     tree_gen_metric_tree_private::SplitGenMetricTree<TMetricTree>
       (matrix, node, leaf_size, old_from_new_ptr);
     

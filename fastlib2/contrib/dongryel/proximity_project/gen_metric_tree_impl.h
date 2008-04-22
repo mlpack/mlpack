@@ -10,7 +10,6 @@ namespace tree_gen_metric_tree_private {
   void MakeLeafMetricTreeNode(const Matrix& matrix,
 			      index_t begin, index_t count, TBound *bounds) {
 
-    bounds->center().Init(matrix.n_rows());
     bounds->center().SetZero();
 
     index_t end = begin + count;
@@ -169,11 +168,11 @@ namespace tree_gen_metric_tree_private {
       *left = new TMetricTree();
       *right = new TMetricTree();
 
-      (*left)->bound().center().Init(matrix.n_rows());
-      (*right)->bound().center().Init(matrix.n_rows());
+      ((*left)->bound().center()).Init(matrix.n_rows());
+      ((*right)->bound().center()).Init(matrix.n_rows());
 
-      (*left)->bound().center().CopyValues(furthest_from_random_row_vec);
-      (*right)->bound().center().CopyValues
+      ((*left)->bound().center()).CopyValues(furthest_from_random_row_vec);
+      ((*right)->bound().center()).CopyValues
 	(furthest_from_furthest_random_row_vec);
 
       index_t left_count = MatrixPartition
@@ -192,7 +191,6 @@ namespace tree_gen_metric_tree_private {
 		     TMetricTree *right) {
     
     // First clear the internal node center.
-    node->bound().center().Init(matrix.n_rows());
     node->bound().center().SetZero();
 
     // Compute the weighted sum of the two pivots

@@ -5,7 +5,7 @@ class SubspaceStat {
   
  private:
 
-  static const double epsilon_ = 0.05;
+  static const double epsilon_ = 0.1;
 
   void AddVectorToMatrix(Matrix &A, const Vector &v, Matrix &R) {
     
@@ -91,7 +91,7 @@ class SubspaceStat {
 
   Matrix eigenvectors_;
 
-  Matrix eigenvalues_;
+  Vector eigenvalues_;
 
   /** compute PCA exhaustively for leaf nodes */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
@@ -101,8 +101,8 @@ class SubspaceStat {
       Vector point;
       dataset.MakeColumnVector(start, &point);
       means_.Copy(point);
-      eigenvalues_.Init(1, 1);
-      eigenvalues_.set(0, 0, 0);
+      eigenvalues_.Init(1);
+      eigenvalues_[0] = 0;
       eigenvectors_.Init(dataset.n_rows(), 1);
       eigenvectors_.SetZero();
       return;
@@ -145,7 +145,7 @@ class SubspaceStat {
       }
     }
 
-    eigenvalues_.Init(eigencount, eigencount);
+    eigenvalues_.Init(eigencount);
     eigenvalues_.SetZero();
     eigenvectors_.Init(dataset.n_rows(), eigencount);
 
@@ -154,9 +154,8 @@ class SubspaceStat {
     for(index_t i = 0, index = 0; i < singular_values.length(); i++) {
       if(singular_values[i] >= epsilon_ * max_singular_value) {
 	Vector source, destination;
-	eigenvalues_.set(index, index, 
-			 singular_values[i] * singular_values[i] / 
-			 ((double) count_));
+	eigenvalues_[index] = singular_values[i] * singular_values[i] / 
+	  ((double) count_);
 
 	left_singular_vectors.MakeColumnVector(i, &source);
 	eigenvectors_.MakeColumnVector(index, &destination);
@@ -165,7 +164,12 @@ class SubspaceStat {
       }
     }
 
-    printf("Leaf has %d basis sets...\n", eigenvalues_.n_cols());
+    /*
+    printf("Leaf has %d basis sets spanning %d points...\n", 
+	   eigenvalues_.length(), count_);
+    eigenvalues_.PrintDebug();
+    exit(0);
+    */
   }
 
   /**
@@ -277,8 +281,8 @@ class SubspaceStat {
 			const Vector &projection_of_mean_diff, 
 			Matrix *eigensystem) {
 
-    Matrix left_eigenbasis, right_eigenbasis, 
-      left_eigenvalues, right_eigenvalues;
+    Matrix left_eigenbasis, right_eigenbasis;
+    Vector left_eigenvalues, right_eigenvalues;
 
     // left and right's eigenbasis and the mean vectors
     left_eigenbasis.Alias(left_stat.eigenvectors_);
@@ -293,25 +297,35 @@ class SubspaceStat {
       ((double) count_ * count_);
 
     if(leftside_nullspace_basis.n_cols() > 0) {
-      eigensystem->Init(left_eigenvalues.n_rows() + 
+      eigensystem->Init(left_eigenvalues.length() + 
 			leftside_nullspace_basis.n_cols(),
-			left_eigenvalues.n_rows() +
+			left_eigenvalues.length() +
 			leftside_nullspace_basis.n_cols());
     }
     else {
-      eigensystem->Init(left_eigenvalues.n_rows(), left_eigenvalues.n_rows());
+      eigensystem->Init(left_eigenvalues.length(), left_eigenvalues.length());
     }
     eigensystem->SetZero();
     
     // compute the top left part of the eigensystem
     Matrix top_left, top_tmp;
-    la::MulInit(projection_of_right_eigenbasis, right_eigenvalues, &top_tmp);
+    top_tmp.Init(projection_of_right_eigenbasis.n_rows(),
+		 projection_of_right_eigenbasis.n_cols());
+    for(index_t i = 0; i < projection_of_right_eigenbasis.n_cols(); i++) {
+      la::ScaleOverwrite(projection_of_right_eigenbasis.n_rows(), 
+			 right_eigenvalues[i],
+			 projection_of_right_eigenbasis.GetColumnPtr(i),
+			 top_tmp.GetColumnPtr(i));
+    }
+    //la::MulInit(projection_of_right_eigenbasis, right_eigenvalues, &top_tmp);
 
     la::MulTransBInit(top_tmp, projection_of_right_eigenbasis, &top_left);
 
-    for(index_t i = 0; i < left_eigenvalues.n_rows(); i++) {
-      for(index_t j = 0; j < left_eigenvalues.n_cols(); j++) {
-	eigensystem->set(i, j, factor1 * left_eigenvalues.get(i, j) +
+    for(index_t i = 0; i < left_eigenvalues.length(); i++) {
+      for(index_t j = 0; j < left_eigenvalues.length(); j++) {
+	double left_eigenvalue_factor = (i == j) ? left_eigenvalues[j]:0;
+
+	eigensystem->set(i, j, factor1 * left_eigenvalue_factor +
 			 factor2 * top_left.get(i, j) +
 			 factor3 * projection_of_mean_diff[i] *
 			 projection_of_mean_diff[j]);
@@ -346,8 +360,21 @@ class SubspaceStat {
 	}
       }
 
-      la::MulInit(proj_rightside_eigenbasis_on_leftside_nullspace,
-		  right_eigenvalues, &bottom_tmp);
+      bottom_tmp.Init
+	(proj_rightside_eigenbasis_on_leftside_nullspace.n_rows(),
+	 proj_rightside_eigenbasis_on_leftside_nullspace.n_cols());
+      for(index_t i = 0; 
+	  i < proj_rightside_eigenbasis_on_leftside_nullspace.n_cols(); i++) {
+	
+	la::ScaleOverwrite
+	  (proj_rightside_eigenbasis_on_leftside_nullspace.n_rows(),
+	   right_eigenvalues[i],
+	   proj_rightside_eigenbasis_on_leftside_nullspace.GetColumnPtr(i),
+	   bottom_tmp.GetColumnPtr(i));
+      }
+      
+      //la::MulInit(proj_rightside_eigenbasis_on_leftside_nullspace,
+      //	    right_eigenvalues, &bottom_tmp);
 
       la::MulTransBInit(bottom_tmp, projection_of_right_eigenbasis, 
 			&bottom_left);
@@ -447,7 +474,7 @@ class SubspaceStat {
 	eigencount++;
       }
     }
-    eigenvalues_.Init(eigencount, eigencount);
+    eigenvalues_.Init(eigencount);
     eigenvalues_.SetZero();
 
     // relationship between the singular value and the eigenvalue is
@@ -457,7 +484,7 @@ class SubspaceStat {
     for(index_t i = 0, index = 0; i < evalues.length(); i++) {
       if(evalues[i] >= epsilon_ * max_eigenvalue) {
 	Vector s, d;
-	eigenvalues_.set(index, index, evalues[i]);
+	eigenvalues_[index] = evalues[i];
 	eigenvectors_.MakeColumnVector(i, &s);
 	tmp_eigenvectors.MakeColumnVector(index, &d);
 	d.CopyValues(s);
@@ -474,7 +501,10 @@ class SubspaceStat {
     la::Scale(factor1, &means_);
     la::AddExpert(factor2, right_stat.means_, &means_);
 
-    printf("Internal has %d basis sets...\n", eigenvectors_.n_cols());
+    /*
+    printf("Internal has %d basis sets spanning %d points...\n", 
+    eigenvectors_.n_cols(), count_);
+    */
   }
 
   SubspaceStat() { }
