@@ -85,6 +85,18 @@ class NaiveKernelSum {
     return_results->Copy(results_);
   
   } // ComputeTotalSum()
+  
+  void NaiveComputation(const char* dataset, const char* output, 
+                        Vector* naive_results) {
+  
+    ComputeTotalSum(naive_results);
+        
+    Matrix out_mat;
+    out_mat.AliasColVector(*naive_results);
+    data::Save(output, out_mat);
+    
+  
+  } // NaiveComputation()
 
 }; // NaiveKernelSum
 

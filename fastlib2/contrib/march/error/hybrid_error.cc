@@ -3,6 +3,8 @@
 #include "hybrid_error_analysis.h"
 #include "naive_kernel_sum.h"
 #include "fastlib/fastlib.h"
+#include <stdlib.h>
+
 
 int main(int argc, char* argv[]) {
 
@@ -51,7 +53,27 @@ int main(int argc, char* argv[]) {
   Vector naive_results;
   struct datanode* naive_mod = fx_submodule(NULL, "naive", "naive");
   naive.Init(naive_mod, centers, bandwidth);
-  naive.ComputeTotalSum(&naive_results);
+  
+  char output[50];
+  strcpy(output, "naive_");
+  char band_str[50];
+  int success = sprintf(band_str, "%.2g", bandwidth);
+  strcat(output, band_str);
+  strcat(output, "_");
+  strcat(output, dataset);
+  
+  Matrix naive_results_mat;
+  
+  if (data::Load(output, &naive_results_mat) == SUCCESS_FAIL) {
+    printf("failed to load");
+    naive.NaiveComputation(dataset, output, &naive_results);
+  }
+  else {
+    printf("succeeded at load\n");
+    naive_results_mat.MakeColumnVector(0, &naive_results);
+  }
+  
+  // naive.ComputeTotalSum(&naive_results);
   
   
   ErrorAnalysis analysis;
