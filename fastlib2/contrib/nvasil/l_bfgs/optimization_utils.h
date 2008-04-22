@@ -71,12 +71,32 @@ class OptUtils {
     if (success==SUCCESS_PASS) {
       NOTIFY("PCA successful !! Printing requested %i eigenvalues...",
           components_to_keep);
+      double energy_kept=0;
+      double total_energy=0;
       for(index_t i=0; i<components_to_keep; i++) {
         printf("%lg ", s[i]);
+        energy_kept+=s[i];
       }
       printf("\n");
+      for(index_t i=0; i<s.length(); i++) {
+        total_energy+=s[i];
+      }
+      NOTIFY("Kept %lg%% of the energy", energy_kept*100/total_energy);
     }
-    output_mat->Init(components_to_keep, input_mat.n_cols());
+    
+    Vector s_chopped;
+    s.MakeSubvector(0, components_to_keep, &s_chopped);
+//  Matrix temp_U(components_to_keep, U.components_to_keep);
+    Matrix temp_VT(components_to_keep, VT.n_cols());
+    for(index_t i=0; i<temp_VT.n_cols(); i++) {
+      memcpy(temp_VT.GetColumnPtr(i), 
+          VT.GetColumnPtr(i), components_to_keep*sizeof(double));  
+    }
+   
+    la::ScaleRows(s_chopped, &temp_VT);
+    output_mat->Own(&temp_VT);
+//    la::MulInit(temp_U, temp_VT, output_mat);
+    /*
     Matrix temp_reconstructed;
     Matrix temp_S;
     temp_S.Init(input_mat.n_rows(), input_mat.n_rows());
@@ -91,14 +111,15 @@ class OptUtils {
       memcpy(output_mat->GetColumnPtr(i), 
           temp_reconstructed.GetColumnPtr(i), components_to_keep*sizeof(double));  
     }
+    
     double error=0;
-    for(index_t i=0; i<temp_reconstructed.n_rows(); i++) {
-      for(index_t j=0; j<temp_reconstructed.n_cols(); j++) {
-        error+=math::Sqr(temp_reconstructed.get(i,j)-temp.get(i,j));
-         error+=math::Sqr(input_mat.get(i,j)-temp.get(i,j));
+    for(index_t i=0; i<output_mat->n_rows(); i++) {
+      for(index_t j=0; j<output_mat->n_cols(); j++) {
+        error+=math::Sqr(output_mat->get(i,j)-input_mat.get(i,j));
       }
     }
     NOTIFY("Reconstruction error : %lg", error);
+    */
     return success;
   }
   
