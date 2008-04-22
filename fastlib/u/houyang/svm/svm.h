@@ -480,7 +480,7 @@ void SVM<TKernel>::SVM_DE_Train_(int learner_typeid, const Dataset& dataset, dat
 */
 template<typename TKernel>
 double SVM<TKernel>::Predict(int learner_typeid, const Vector& datum) {
-  double predicted_value;
+  double predicted_value = INFINITY;
   if (learner_typeid == 0) { // Multiclass SVM Clssification
     predicted_value = SVM_C_Predict_(datum);
   }
