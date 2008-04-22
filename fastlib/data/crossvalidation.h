@@ -559,6 +559,11 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
     ArrayList<index_t> cv_labels_startpos;
     // Get label list and label indices from the cross validation data set
     index_t num_classes = data_->n_labels();
+
+    cv_labels_list.Init();
+    cv_labels_index.Init();
+    cv_labels_ct.Init();
+    cv_labels_startpos.Init();
     data_->GetLabels(cv_labels_list, cv_labels_index, cv_labels_ct, cv_labels_startpos);
 
     // randomize the original data set within each class if necessary
@@ -602,7 +607,7 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       VERBOSE_MSG(1, "cross: Training fold %d", i_fold);
       fx_timer_start(foldmodule, "train");
       // training
-      classifier.InitTrain(learner_typeid_, train, clsf_n_classes_, learner_module);
+      classifier.InitTrain(learner_typeid_, train, learner_module);
       fx_timer_stop(foldmodule, "train");
 
       // validation; measure method: percent of correctly classified validation samples
@@ -616,7 +621,7 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 	validation.matrix().MakeColumnVector(i, &validation_vector_with_label);
 	validation_vector_with_label.MakeSubvector(0, validation.n_features()-1, &validation_vector);
 	// testing (classification)
-	int label_predict = int(classifier.Predict(validation_vector));
+	int label_predict = int(classifier.Predict(learner_typeid_, validation_vector));
 	double label_expect_dbl = validation_vector_with_label[validation.n_features()-1];
 	int label_expect = int(label_expect_dbl);
 
@@ -683,7 +688,7 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       VERBOSE_MSG(1, "cross: Training fold %d", i_fold);
       fx_timer_start(foldmodule, "train");
       // training
-      learner.InitTrain(learner_typeid_, train, 0, learner_module); // 0: dummy number of classes
+      learner.InitTrain(learner_typeid_, train, learner_module); // 0: dummy number of classes
       fx_timer_stop(foldmodule, "train");
       
       // validation
@@ -697,7 +702,7 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 	validation_vector_with_label.MakeSubvector(
 					     0, validation.n_features()-1, &validation_vector);
 	// testing
-	double value_predict = learner.Predict(validation_vector);
+	double value_predict = learner.Predict(learner_typeid_, validation_vector);
 	double value_true = validation_vector_with_label[validation.n_features()-1];
 	double value_err = value_predict - value_true;
 	

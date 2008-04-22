@@ -295,6 +295,11 @@ void Dataset::GetLabels(ArrayList<double> &labels_list,
   index_t n_points = matrix_.n_cols();
   index_t n_labels = 0;
 
+  labels_list.Destruct();
+  labels_index.Destruct();
+  labels_ct.Destruct();
+  labels_startpos.Destruct();
+
   labels_index.Init(n_points);
   labels_list.Init();
   labels_ct.Init();
