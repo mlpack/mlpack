@@ -402,6 +402,8 @@ class Dataset {
    * class_2...class_k), each item indicate the position of the label
    * in the dataset.
    *
+   * All input parameters need to be initilized beforehand.
+   *
    * @param labels_list a list of labels in the dataset. e.g. [0.0,1.0,2.0]
    *        for a 3-class dataset
    * @param labels_index the label indices of each data point. e.g.
