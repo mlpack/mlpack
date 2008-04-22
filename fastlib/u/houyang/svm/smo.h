@@ -442,7 +442,7 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
     double opt_gain_max = -INFINITY;
     double grad_diff;
     double quad_kernel;
-    double opt_gain;
+    double opt_gain = -INFINITY;
     for (t=0; t<n_active_; t++) {
       double K_it = CalcKernelValue_(out_i, t);
       double K_tt = CalcKernelValue_(t, t);
@@ -459,10 +459,11 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
 	      opt_gain = ( grad_diff * grad_diff ) / quad_kernel; // actually ../2*quad_kernel
 	    else // handle non-positive definite kernels
 	      opt_gain = ( grad_diff * grad_diff ) / TAU;
-	  }
-	  if (opt_gain > opt_gain_max) {
-	    idx_j = t;
-	    opt_gain_max = opt_gain;
+	    // find max(opt_gain)
+	    if (opt_gain > opt_gain_max) {
+	      idx_j = t;
+	      opt_gain_max = opt_gain;
+	    }
 	  }
 	}
       }
@@ -479,10 +480,11 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
 	      opt_gain = ( grad_diff * grad_diff ) / quad_kernel; // actually ../2*quad_kernel
 	    else // handle non-positive definite kernels
 	      opt_gain = ( grad_diff * grad_diff ) / TAU;
-	  }
-	  if (opt_gain > opt_gain_max) {
-	    idx_j = t;
-	  opt_gain_max = opt_gain;
+	    // find max(opt_gain)
+	    if (opt_gain > opt_gain_max) {
+	      idx_j = t;
+	      opt_gain_max = opt_gain;
+	    }
 	  }
 	}
       }
