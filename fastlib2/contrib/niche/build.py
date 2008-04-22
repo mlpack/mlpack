@@ -1,5 +1,5 @@
 binrule(
-    name = "solvelinsys",
+    name = "solvelinsys_main",
     sources = ["solvelinsys_main.cc"],
     headers = ["solvelinsys.h","kernel_vector_mult.h"],
     deplibs = ["contrib/dongryel/regression:krylov_lpr",
