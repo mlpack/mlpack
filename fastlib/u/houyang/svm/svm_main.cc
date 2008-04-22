@@ -3,10 +3,10 @@
  *
  * @file svm_main.cc
  *
- * This file contains main routines for performing multiclass  
- * SVM classification (SVC, one-vs-one method is employed) and 
- * SVM regression (epsilon-insensitive loss i.e. epsilon-SVR; and
- * automatic adjustment of epsilon, i.e.  mu-SVR). 
+ * This file contains main routines for performing  
+ * 0. multiclass SVM classification (one-vs-one method is employed).
+ * 1. SVM regression (epsilon-insensitive loss i.e. epsilon-SVR).
+ * 2. SVM density estimation (one-class SVM)
  *
  * It provides four modes:
  * "cv": cross validation;
@@ -155,10 +155,10 @@ int LoadData(Dataset* dataset, String datafilename){
   }
   
   if (fx_param_bool(NULL, "normalize", 1)) {
-    fprintf(stderr, "Normalizing\n");
+    fprintf(stderr, "Normalizing...\n");
     DoSvmNormalize(dataset);
   } else {
-    fprintf(stderr, "Skipping normalization\n");
+    fprintf(stderr, "Skipping normalization...\n");
   }
   return 1;
 }
@@ -178,13 +178,13 @@ int main(int argc, char *argv[]) {
   String learner_name = fx_param_str_req(NULL,"learner_name");
   int learner_typeid;
   
-  if (learner_name == "svc") { // Support Vector Classfication
+  if (learner_name == "svm_c") { // Support Vector Classfication
     learner_typeid = 0;
   }
-  else if (learner_name == "svr") { // Support Vector Regression
+  else if (learner_name == "svm_r") { // Support Vector Regression
     learner_typeid = 1;
   }
-  else if (learner_name == "svde") { // Support Vector Density Estimation
+  else if (learner_name == "svm_de") { // Support Vector Density Estimation
     learner_typeid = 2;
   }
   else {
@@ -234,7 +234,7 @@ int main(int argc, char *argv[]) {
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.InitTrain(learner_typeid, trainset, trainset.n_labels(), svm_module);
+      svm.InitTrain(learner_typeid, trainset, svm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
 	fprintf(stderr, "SVM Predicting... \n");
@@ -242,12 +242,12 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchPredict(&testset, "testlabels");
+	svm.BatchPredict(learner_typeid, testset, "predicted_values");
       }
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.InitTrain(learner_typeid, trainset, trainset.n_labels(), svm_module);
+      svm.InitTrain(learner_typeid, trainset, svm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
 	fprintf(stderr, "SVM Predicting... \n");
@@ -255,7 +255,7 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchPredict(&testset, "testlabels"); // TODO:param_req
+	svm.BatchPredict(learner_typeid, testset, "predicted_values"); // TODO:param_req
       }
     }
   }
@@ -268,18 +268,18 @@ int main(int argc, char *argv[]) {
     if (LoadData(&testset, "test_data") == 0) // TODO:param_req
       return 1;
 
-    /* Begin Classification */
+    /* Begin Prediction */
     datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.Init(learner_typeid, testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchPredict(&testset, "svm_model", "testlabels"); // TODO:param_req
+      svm.Init(learner_typeid, testset, svm_module); 
+      svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.Init(learner_typeid, testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchPredict(&testset, "svm_model", "testlabels"); // TODO:param_req
+      svm.Init(learner_typeid, testset, svm_module); 
+      svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req
     }
   }
   fx_done();
