@@ -501,7 +501,7 @@ class KernelVectorMult {
     /* Start recursion on the roots of either tree */
     GNPRecursion_(query_tree_, reference_tree_,
         MinNodeDistSq_(query_tree_, reference_tree_));
-    printf("queries_.n_rows() = %d\n", queries_.n_rows());
+    //printf("queries_.n_rows() = %d\n", queries_.n_rows());
     la::Scale(1 / epan_kernel.CalcNormConstant(queries_.n_rows()), &weighted_sums_);
 
     fx_timer_stop(module_, "dual_tree_computation");

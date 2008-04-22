@@ -29,6 +29,7 @@ int main(int argc, char *argv[]) {
 
   SolveLinearSystem(references, right_hand_side_vec, bandwidth, sigma_squared, &solution);
 
+  //solution.PrintDebug("solution");
 
   // Finalize FastExec and print output results.
   fx_done();
