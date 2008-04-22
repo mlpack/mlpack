@@ -43,7 +43,6 @@ int main(int argc, char *argv[]){
   Matrix *initial_data;
   if (pca_preprocess==true) {
     NOTIFY("Preprocessing with pca");
-    initial_data = new Matrix();
     Matrix temp;
     OptUtils::SVDTransform(data_mat, &temp, pca_dimension);
     data_mat.Destruct();
@@ -120,7 +119,7 @@ int main(int argc, char *argv[]){
     FATAL("The method you provided %s is not supported", 
         optimized_function.c_str());
   }
-  if (pca_preprocess==true) {
+  if (pca_init==true) {
     delete initial_data;
   }
   fx_done();
