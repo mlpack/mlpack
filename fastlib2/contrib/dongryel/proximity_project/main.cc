@@ -3,6 +3,7 @@
 #include "contrib/dongryel/pca/pca.h"
 #include "subspace_stat.h"
 #include "gen_metric_tree.h"
+#include "mlpack/kde/dataset_scaler.h"
 
 typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, SubspaceStat > GTree;
 
@@ -14,6 +15,8 @@ int main(int argc, char *argv[]) {
   dataset_.InitFromFile(fname);
   Matrix data_;
   data_.Own(&(dataset_.matrix()));
+  //DatasetScaler::ScaleDataByMinMax(data_, data_, true);
+
   int leaflen = fx_param_int(NULL, "leaflen", 30);
 
   printf("Constructing the tree...\n");
@@ -24,6 +27,9 @@ int main(int argc, char *argv[]) {
     (data_, leaflen, &old_from_new);
 
   fx_timer_stop(NULL, "pca tree");
+
+  printf("Got %d eigenvalues...\n", root_->stat().eigenvalues_.n_cols());
+  root_->stat().eigenvalues_.PrintDebug();
   printf("Finished constructing the tree...\n");
 
   // exhaustively compute PCA
