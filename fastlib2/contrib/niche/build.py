@@ -1,7 +1,7 @@
 binrule(
     name = "solvelinsys",
     sources = ["solvelinsys.cc"],
-    headers = ["kernel_vector_mult.h"],
+    headers = ["solvelinsys.h","kernel_vector_mult.h"],
     deplibs = ["contrib/dongryel/regression:krylov_lpr",
                "fastlib:fastlib_int",
                "fastlib/sparse/trilinos:trilinos"]
