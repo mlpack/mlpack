@@ -33,7 +33,7 @@ private:
   float** K_;
   //Matrix K_;
 
-  //EpanKernel epan_kernel_;
+  GaussKernel kernel_;
   //double norm_constant_;
 
   double sigma_squared_;
@@ -45,7 +45,8 @@ private:
   
 public:
   
-  SimpleLinearOperator(int n_points_in, Matrix data_in, double sigma_squared_in,
+  SimpleLinearOperator(int n_points_in, Matrix data_in, 
+		       double bandwidth_in, double sigma_squared_in,
 		       KernelVectorMult* kernel_vector_mult_in) {
 
     n_points_ = n_points_in;
@@ -69,8 +70,8 @@ public:
 
     map = new Epetra_Map(n_points_, 0, comm);
 
-    //epan_kernel_.Init(bandwidth_in, n_dims_);
-    //norm_constant_ = epan_kernel_.CalcNormConstant(n_dims_);
+    kernel_.Init(bandwidth_in, n_dims_);
+    double norm_constant = kernel_.CalcNormConstant(n_dims_);
     //printf("norm_constant = %f\n", norm_constant_);
 
     sigma_squared_ = sigma_squared_in;
@@ -108,7 +109,7 @@ public:
 	data_.MakeColumnVector(j, &v_j);
 	
 	double dist = la::DistanceSqEuclidean(v_i, v_j);
-	K_[i][j] = kernel_.EvalUnnormOnSq(dist) / norm_constant_;
+	K_[i][j] = kernel_.EvalUnnormOnSq(dist) / norm_constant;
       }
     }
 
@@ -338,7 +339,8 @@ void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double s
 
 
   SimpleLinearOperator simple_linear_operator(row_length, references,
-					      sigma_squared, &kernel_vector_mult);
+					      bandwidth, sigma_squared,
+					      &kernel_vector_mult);
   
   Epetra_LinearProblem linear_problem(&simple_linear_operator,
 				      &solution_e, &right_hand_side_e);
