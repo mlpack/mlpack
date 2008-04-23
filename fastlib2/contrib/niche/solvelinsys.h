@@ -116,6 +116,9 @@ public:
     for(int i = 0; i < n_points_; i++) {
       K_[i][i] += sigma_squared_;
     }
+
+
+    printf("done computing kernel matrix\n\n\n\n");
     
 
     //const char *K_file_name = "K.txt";
