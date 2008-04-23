@@ -29,6 +29,11 @@ int main(int argc, char *argv[]) {
 
   SolveLinearSystem(references, right_hand_side_vec, bandwidth, sigma_squared, &solution);
 
+  Matrix solution_mat;
+  solution_mat.AliasColVector(solution);
+
+  data::Save("solution.txt", solution);
+
   //solution.PrintDebug("solution");
 
   // Finalize FastExec and print output results.
