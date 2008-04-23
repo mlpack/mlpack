@@ -117,6 +117,17 @@ public:
       K_[i][i] += sigma_squared_;
     }
 
+    Matrix K_mat;
+    K_mat.Init(n_points_, n_points_);
+    for(int i = 0; i < n_points_; i++) {
+      for(int j = 0; j < n_points_; j++) {
+	K_mat.set(j, i, K[i][j]);
+      }
+    }
+
+    data::Save(K_mat, "K.txt");
+      
+
 
     printf("done computing kernel matrix\n\n\n\n");
     
@@ -378,8 +389,8 @@ void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double s
   //iterative_solver.SetAztecOption(AZ_precond, AZ_Jacobi);
   
   // Use Conjugate Gradient
-  iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
-  //iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
+  //iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
+  iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
   //iterative_solver.SetAztecOption(AZ_solver, AZ_cg_condnum);
   
   // Use modified Gram-Schmidt.
