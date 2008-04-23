@@ -155,7 +155,7 @@ public:
 
   int Apply (const Epetra_MultiVector &X, Epetra_MultiVector &Y) const {
     
-    
+    /*    
     // FAST SUMMATION CODE
     Vector weights_vector;
     Vector results;
@@ -177,7 +177,7 @@ public:
       //printf("%f ", results[i]);
     }
     printf("\n");
-    
+    */
     // END FAST SUMMATION CODE
     
 
@@ -221,17 +221,27 @@ public:
     }
     */    
 
-    /*
+    
     // explicit K
     Vector x_vec;
     x_vec.Init(n_points_);
+
+    Vector y_vec;
+    y_vec.Init(n_points_);
+
     for(int i = 0; i < n_points_; i++) {
       x_vec[i] = X.Pointers()[0][i];
     }
 
-    Vector y_vec;
-    la::MulInit(K_, x_vec, &y_vec);
-    
+
+    for(int i = 0; i < n_points_; i++) {
+      double sum = 0;
+      for(int j = 0; j < n_points_; j++) {
+	sum += K_[i][j] * x_vec[j];
+      }
+      y_vec[i] = sum;
+    }
+
     for(int i = 0; i < n_points_; i++) {
       Y.Pointers()[0][i] = y_vec[i];
     }
@@ -239,7 +249,7 @@ public:
     // end explicit K
     
     //y_vec.PrintDebug("y_vec");
-    */    
+    
 
     /*
     double my_squared_error = 0;
