@@ -125,7 +125,7 @@ public:
       }
     }
 
-    data::Save(K_mat, "K.txt");
+    data::Save("K.txt", K_mat);
       
 
 
