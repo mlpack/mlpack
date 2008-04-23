@@ -242,13 +242,14 @@ public:
 
     for(int i = 0; i < n_points_; i++) {
       x_vec[i] = X.Pointers()[0][i];
+      printf("%f\t\n", X.Pointers()[0][i], x_vec[i]);
     }
 
 
     for(int i = 0; i < n_points_; i++) {
       double sum = 0;
       for(int j = 0; j < n_points_; j++) {
-	sum += K_[i][j] * x_vec[j];
+	sum += K_[i][j] * (float)x_vec[j];
       }
       y_vec[i] = sum;
     }
@@ -259,8 +260,8 @@ public:
     
     // end explicit K
     
-    x_vec.PrintDebug("y_vec");
-    
+    //   x_vec.PrintDebug("y_vec");
+
 
     /*
     double my_squared_error = 0;
