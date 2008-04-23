@@ -24,8 +24,8 @@ int main(int argc, char *argv[]) {
 
   Vector solution;
 
-  double bandwidth = fx_param_double(NULL, "bandwidth", 1);
-  double sigma_squared = fx_param_double(NULL, "sigma_squared", 1);
+  double bandwidth = fx_param_double(NULL, "bandwidth", 0.1);
+  double sigma_squared = fx_param_double(NULL, "sigma_squared", 0.5);
 
   SolveLinearSystem(references, right_hand_side_vec, bandwidth, sigma_squared, &solution);
 
