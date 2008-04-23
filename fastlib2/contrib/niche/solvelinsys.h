@@ -30,7 +30,7 @@ private:
 
   // used for a simple linear transformation operator data_^T * data  
   Matrix data_;
-  float** K_;
+  //float** K_;
   //Matrix K_;
 
   GaussianKernel kernel_;
@@ -70,13 +70,13 @@ public:
 
     map = new Epetra_Map(n_points_, 0, comm);
 
-    kernel_.Init(bandwidth_in, n_dims_);
-    double norm_constant = kernel_.CalcNormConstant(n_dims_);
+    //kernel_.Init(bandwidth_in, n_dims_);
+    //double norm_constant = kernel_.CalcNormConstant(n_dims_);
     //printf("norm_constant = %f\n", norm_constant_);
 
     sigma_squared_ = sigma_squared_in;
 
-    
+    /*
     // for debugging purposes, explicitly represent kernel matrix K
 
     if((K_ = (float**) malloc(n_points_ * sizeof(float*))) == NULL) {
@@ -126,11 +126,11 @@ public:
     }
 
     data::Save("K.txt", K_mat);
-      
+    
 
 
     printf("done computing kernel matrix\n\n\n\n");
-    
+    */
 
     //const char *K_file_name = "K.txt";
     //data::Save(K_file_name, K_);
@@ -166,7 +166,7 @@ public:
 
   int Apply (const Epetra_MultiVector &X, Epetra_MultiVector &Y) const {
     
-    /*    
+        
     // FAST SUMMATION CODE
     Vector weights_vector;
     Vector results;
@@ -181,14 +181,14 @@ public:
     kernel_vector_mult_ -> Reset();
     kernel_vector_mult_ -> ComputeKernelMatrixVectorMultiplication(weights_vector, &results);
 
-    printf("\n");
+    //printf("\n");
     for(int i = 0; i < n_points_; i++) {
       Y.Pointers()[0][i] = results[i] + (sigma_squared_ * weights_vector[i]);
       //results[i] += sigma_squared_ * weights_vector[i];
-      //printf("%f ", results[i]);
+      //printf("%f ", Y.Pointers()[0][i]);//results[i]);
     }
-    printf("\n");
-    */
+    //printf("\n");
+    
     // END FAST SUMMATION CODE
     
 
@@ -232,7 +232,7 @@ public:
     }
     */    
 
-    
+    /*
     // explicit K
     Vector x_vec;
     x_vec.Init(n_points_);
@@ -244,7 +244,7 @@ public:
       x_vec[i] = X.Pointers()[0][i];
       printf("%f\t%f\n", X.Pointers()[0][i], x_vec[i]);
     }
-    exit(1);
+    //exit(1);
 
     for(int i = 0; i < n_points_; i++) {
       double sum = 0;
@@ -261,7 +261,7 @@ public:
     // end explicit K
     
     //   x_vec.PrintDebug("y_vec");
-
+    */
 
     /*
     double my_squared_error = 0;
@@ -383,15 +383,15 @@ void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double s
   double params[AZ_PARAMS_SIZE];
   AZ_defaults(options, params);
 
-  //iterative_solver.SetAllAztecOptions(options);
-  //iterative_solver.SetAllAztecParams(params);
+  iterative_solver.SetAllAztecOptions(options);
+  iterative_solver.SetAllAztecParams(params);
   
   iterative_solver.SetAztecOption(AZ_precond, AZ_none);
   //iterative_solver.SetAztecOption(AZ_precond, AZ_Jacobi);
   
   // Use Conjugate Gradient
-  //iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
-  iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
+  iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
+  //iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
   //iterative_solver.SetAztecOption(AZ_solver, AZ_cg_condnum);
   
   // Use modified Gram-Schmidt.

@@ -19,8 +19,11 @@ int main(int argc, char *argv[]) {
   Matrix right_hand_side_mat;
   data::Load(right_hand_side_file_name, &right_hand_side_mat);
 
+  Matrix right_hand_side_mat_transpose;
+  la::TransposeInit(right_hand_side_mat, &right_hand_side_mat_transpose);
+
   Vector right_hand_side_vec;
-  right_hand_side_mat.MakeColumnVector(0, &right_hand_side_vec);
+  right_hand_side_mat_transpose.MakeColumnVector(0, &right_hand_side_vec);
 
   Vector solution;
 
