@@ -33,7 +33,7 @@ private:
   float** K_;
   //Matrix K_;
 
-  GaussKernel kernel_;
+  GaussianKernel kernel_;
   //double norm_constant_;
 
   double sigma_squared_;
