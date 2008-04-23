@@ -79,21 +79,21 @@ public:
     
     // for debugging purposes, explicitly represent kernel matrix K
 
-    if((K_ = (float**) malloc(40000 * sizeof(float*))) == NULL) {
+    if((K_ = (float**) malloc(n_points_ * sizeof(float*))) == NULL) {
       printf("failed\n");
       exit(1);
     }
 
-    for(int i = 0; i < 40000; i++) {
-      if((K_[i] = (float*) malloc(40000 * sizeof(float))) == NULL) {
+    for(int i = 0; i < n_points_; i++) {
+      if((K_[i] = (float*) malloc(n_points_ * sizeof(float))) == NULL) {
 	printf("failed on %d\n", i);
 	exit(1);
       }
     }
 
     printf("start writing\n");
-    for(int i = 0; i < 40000; i++) {
-      for(int j = 0; j < 40000; j++) {
+    for(int i = 0; i < n_points_; i++) {
+      for(int j = 0; j < n_points_; j++) {
 	K_[i][j] = 0;
       }
     }
