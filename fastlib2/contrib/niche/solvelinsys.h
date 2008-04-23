@@ -121,7 +121,7 @@ public:
     K_mat.Init(n_points_, n_points_);
     for(int i = 0; i < n_points_; i++) {
       for(int j = 0; j < n_points_; j++) {
-	K_mat.set(j, i, K[i][j]);
+	K_mat.set(j, i, K_[i][j]);
       }
     }
 
