@@ -30,6 +30,7 @@ private:
 
   // used for a simple linear transformation operator data_^T * data  
   Matrix data_;
+  float** K_;
   //Matrix K_;
 
   //EpanKernel epan_kernel_;
@@ -55,6 +56,7 @@ public:
 
 
 
+    
 
 
 
@@ -73,9 +75,30 @@ public:
 
     sigma_squared_ = sigma_squared_in;
 
-    /*
+    
     // for debugging purposes, explicitly represent kernel matrix K
-    K_.Init(n_points_, n_points_);
+
+    if((K_ = (float**) malloc(40000 * sizeof(float*))) == NULL) {
+      printf("failed\n");
+      exit(1);
+    }
+
+    for(int i = 0; i < 40000; i++) {
+      if((K_[i] = (float*) malloc(40000 * sizeof(float))) == NULL) {
+	printf("failed on %d\n", i);
+	exit(1);
+      }
+    }
+
+    printf("start writing\n");
+    for(int i = 0; i < 40000; i++) {
+      for(int j = 0; j < 40000; j++) {
+	K_[i][j] = 0;
+      }
+    }
+    printf("done writing\n");
+
+
     for(int i = 0; i < n_points_; i++) {
       Vector v_i;
       data_.MakeColumnVector(i, &v_i);
@@ -84,22 +107,18 @@ public:
 	Vector v_j;
 	data_.MakeColumnVector(j, &v_j);
 	
-	//double dist = la::Dot(v_i, v_j);
-	//K_i[j] = dist;
-	
 	double dist = la::DistanceSqEuclidean(v_i, v_j);
-	K_.set(i, j, epan_kernel_.EvalUnnormOnSq(dist));
+	K_[i][j] = kernel_.EvalUnnormOnSq(dist) / norm_constant_;
       }
     }
 
-    la::Scale(1 / norm_constant_, &K_);
     for(int i = 0; i < n_points_; i++) {
-      K_.set(i, i, K_.get(i, i) + sigma_squared_);
+      K_[i][i] += sigma_squared_;
     }
     
 
-    const char *K_file_name = "K.txt";
-    data::Save(K_file_name, K_);
+    //const char *K_file_name = "K.txt";
+    //data::Save(K_file_name, K_);
 
     
 //     int errors = 0;
@@ -116,7 +135,7 @@ public:
     
 
     // end debugging explicit representation of K
-    */
+    
 
 
   }
@@ -344,8 +363,8 @@ void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double s
   //iterative_solver.SetAztecOption(AZ_precond, AZ_Jacobi);
   
   // Use Conjugate Gradient
-  //iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
-  iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
+  iterative_solver.SetAztecOption(AZ_solver, AZ_cg);
+  //iterative_solver.SetAztecOption(AZ_solver, AZ_gmres);
   //iterative_solver.SetAztecOption(AZ_solver, AZ_cg_condnum);
   
   // Use modified Gram-Schmidt.

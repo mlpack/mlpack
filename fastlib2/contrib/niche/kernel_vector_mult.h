@@ -131,9 +131,9 @@ class KernelVectorMult {
 
 
   // kernel function
-  EpanKernel epan_kernel;
+  GaussianKernel kernel;
 
-  double epan_cutoff_dist_;
+  double cutoff_dist_;
 
 
 
@@ -276,7 +276,7 @@ class KernelVectorMult {
             la::DistanceSqEuclidean(query_point, reference_point);
 
 	weighted_sums_[query_index] +=
-	  weights_[reference_index] * epan_kernel.EvalUnnormOnSq(distance);
+	  weights_[reference_index] * kernel.EvalUnnormOnSq(distance);
 
       } /* for reference_index */
 
@@ -305,7 +305,7 @@ class KernelVectorMult {
     DEBUG_SAME_DOUBLE(lower_bound_distance,
         MinNodeDistSq_(query_node, reference_node));
 
-    if (lower_bound_distance > epan_cutoff_dist_) {
+    if (0) {//lower_bound_distance > cutoff_dist_) {
 
       // execute prune
 
@@ -465,11 +465,11 @@ class KernelVectorMult {
     DEBUG_ASSERT(bandwidth > 0);
 
     // kernel function
-    epan_kernel.Init(bandwidth);
+    kernel.Init(bandwidth);
     
-    epan_cutoff_dist_ = bandwidth*bandwidth;
+    cutoff_dist_ = bandwidth*bandwidth;
     
-    DEBUG_ONLY(printf("epan_cutoff_dist = %f\n", epan_cutoff_dist_));
+    DEBUG_ONLY(printf("cutoff_dist = %f\n", cutoff_dist_));
   
 
   } /* Init */
@@ -502,7 +502,7 @@ class KernelVectorMult {
     GNPRecursion_(query_tree_, reference_tree_,
         MinNodeDistSq_(query_tree_, reference_tree_));
     //printf("queries_.n_rows() = %d\n", queries_.n_rows());
-    la::Scale(1 / epan_kernel.CalcNormConstant(queries_.n_rows()), &weighted_sums_);
+    la::Scale(1 / kernel.CalcNormConstant(queries_.n_rows()), &weighted_sums_);
 
     fx_timer_stop(module_, "dual_tree_computation");
 
