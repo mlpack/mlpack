@@ -244,7 +244,7 @@ public:
       x_vec[i] = X.Pointers()[0][i];
       printf("%f\t%f\n", X.Pointers()[0][i], x_vec[i]);
     }
-
+    exit(1);
 
     for(int i = 0; i < n_points_; i++) {
       double sum = 0;
