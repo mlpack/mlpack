@@ -8,6 +8,8 @@ librule(
                "gen_range.h",
                "gen_kdtree.h",
                "gen_kdtree_impl.h",
+               "gen_kdtree_hyper.h",
+               "gen_kdtree_hyper_impl.h",
                "gen_metric_tree.h",
                "gen_metric_tree_impl.h",
                "general_spacetree.h"],       # include files part of the 'lib'
