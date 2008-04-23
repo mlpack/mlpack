@@ -28,7 +28,6 @@
  */
 namespace proximity {
 
- public:
   /**
    * Creates a KD tree from hyperrectangles
    *
