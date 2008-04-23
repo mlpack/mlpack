@@ -172,6 +172,6 @@ namespace tree_gen_kdtree_private {
       }
     }
 
-    node->set_children(matrix, left, right);
+    node->set_children(lower_limit_matrix, left, right);
   }
 };
