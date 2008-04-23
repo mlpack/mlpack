@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   Matrix solution_mat;
   solution_mat.AliasColVector(solution);
 
-  data::Save("solution.txt", solution);
+  data::Save("solution.txt", solution_mat);
 
   //solution.PrintDebug("solution");
 
