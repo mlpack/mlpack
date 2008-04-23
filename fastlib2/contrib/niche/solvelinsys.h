@@ -259,7 +259,7 @@ public:
     
     // end explicit K
     
-    y_vec.PrintDebug("y_vec");
+    x_vec.PrintDebug("y_vec");
     
 
     /*
