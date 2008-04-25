@@ -10,11 +10,6 @@ int main(int argc, char* argv[]) {
 
   fx_init(argc, argv);
 
-  GaussianKernelErrorTester<AbsoluteErrorStat> absolute;
-  GaussianKernelErrorTester<RelativeErrorStat> relative;
-  GaussianKernelErrorTester<ExponentialErrorStat> exponential;
-  GaussianKernelErrorTester<GaussianErrorStat> gaussian;
-  GaussianKernelErrorTester<HybridErrorStat> hybrid;
   
   Matrix centers;
   
@@ -24,62 +19,103 @@ int main(int argc, char* argv[]) {
   double bandwidth = fx_param_double(NULL, "bandwidth", 0.1);
   DEBUG_ASSERT(bandwidth > 0.0);
   
-  Vector abs_results;
-  struct datanode* abs_mod = fx_submodule(NULL, "abs", "absolute");
-  absolute.Init(abs_mod, centers, bandwidth);
-  absolute.ComputeTotalSum(&abs_results);
   
-  Vector rel_results;
-  struct datanode* rel_mod = fx_submodule(NULL, "rel", "relative");
-  relative.Init(rel_mod, centers, bandwidth);
-  relative.ComputeTotalSum(&rel_results);
+  const char* kernel_name = fx_param_str_req(NULL, "kernel");
   
-  Vector exp_results;
-  struct datanode* exp_mod = fx_submodule(NULL, "exp", "exponential");
-  exponential.Init(exp_mod, centers, bandwidth);
-  exponential.ComputeTotalSum(&exp_results);
+  double max_error = fx_param_double(NULL, "max_error", 0.1);
   
-  Vector gauss_results;
-  struct datanode* gauss_mod = fx_submodule(NULL, "gauss", "gaussian");
-  gaussian.Init(gauss_mod, centers, bandwidth);
-  gaussian.ComputeTotalSum(&gauss_results);
+  double min_error = fx_param_double(NULL, "min_error", 0.01);
   
-  Vector hybrid_results;
-  struct datanode* hybrid_mod = fx_submodule(NULL, "hybrid", "hybrid");
-  hybrid.Init(hybrid_mod, centers, bandwidth);
-  hybrid.ComputeTotalSum(&hybrid_results);
+  double steepness = fx_param_double(NULL, "steepness", 0.1);
   
-  NaiveKernelSum naive;
+  Vector kernel_results;
+  
+  struct datanode* kernel_mod;
+  
+  if (!strcmp(kernel_name, "abs")) {
+    // max_error will just be epsilon, the others don't matter
+    GaussianKernelErrorTester<AbsoluteErrorStat> absolute;
+    kernel_mod = fx_submodule(NULL, "abs", "absolute");
+    absolute.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
+                  steepness);
+    absolute.ComputeTotalSum(&kernel_results);
+    
+  } // abs
+  else if (!strcmp(kernel_name, "rel")) {
+    // max_error will just be epsilon, the others don't matter
+    GaussianKernelErrorTester<RelativeErrorStat> relative;
+    
+    kernel_mod = fx_submodule(NULL, "rel", "relative");
+    relative.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
+                  steepness);
+    relative.ComputeTotalSum(&kernel_results);
+    
+  } // rel
+  else if (!strcmp(kernel_name, "exp")) {
+ 
+    GaussianKernelErrorTester<ExponentialErrorStat> exponential;
+    
+    kernel_mod = fx_submodule(NULL, "exp", "exponential");
+    exponential.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
+                     steepness);
+    exponential.ComputeTotalSum(&kernel_results);
+    
+  } // exp
+  else if (!strcmp(kernel_name, "gauss")) {
+  
+    GaussianKernelErrorTester<GaussianErrorStat> gaussian;
+    
+    kernel_mod = fx_submodule(NULL, "gauss", "gaussian");
+    gaussian.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
+                  steepness);
+    gaussian.ComputeTotalSum(&kernel_results);
+    
+  } // gauss
+  else if (!strcmp(kernel_name, "hybrid")) {
+    // max_error will be epsilon, others won't count
+    
+    GaussianKernelErrorTester<HybridErrorStat> hybrid;
+    
+    kernel_mod = fx_submodule(NULL, "hybrid", "hybrid");
+    hybrid.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
+                steepness);
+    hybrid.ComputeTotalSum(&kernel_results);
+  
+  } // hybrid
+  else {
+    printf("Invalid choice for kernel\n");
+    return 1;
+  }
+  
   Vector naive_results;
   struct datanode* naive_mod = fx_submodule(NULL, "naive", "naive");
-  naive.Init(naive_mod, centers, bandwidth);
   
   char output[50];
-  strcpy(output, "naive_");
+  strcpy(output, "naive/");
   char band_str[50];
-  int success = sprintf(band_str, "%.2g", bandwidth);
-  strcat(output, band_str);
-  strcat(output, "_");
   strcat(output, dataset);
+  strcat(output, "_");
+  sprintf(band_str, "%.2g", bandwidth);
+  strcat(output, band_str);
   
   Matrix naive_results_mat;
   
   if (data::Load(output, &naive_results_mat) == SUCCESS_FAIL) {
-    printf("failed to load");
+    // printf("failed to load");
+    
+    NaiveKernelSum naive;
+    naive.Init(naive_mod, centers, bandwidth);
     naive.NaiveComputation(dataset, output, &naive_results);
   }
   else {
-    printf("succeeded at load\n");
+    // printf("succeeded at load\n");
     naive_results_mat.MakeColumnVector(0, &naive_results);
   }
   
   // naive.ComputeTotalSum(&naive_results);
-  
-  
+
   ErrorAnalysis analysis;
-  analysis.Init(abs_results, rel_results, exp_results, gauss_results, 
-                hybrid_results, naive_results, abs_mod, rel_mod, exp_mod, 
-                gauss_mod, hybrid_mod, naive_mod);
+  analysis.Init(kernel_results, naive_results, kernel_mod, naive_mod);
                 
   analysis.ComputeResults();
   

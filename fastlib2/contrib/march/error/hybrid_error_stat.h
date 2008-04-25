@@ -19,6 +19,8 @@ class GenericErrorStat {
  
   index_t query_count_;
   
+  // This isn't right as a global max error bound, since it should apply to each
+  // query separately
   double epsilon_;
   
   virtual double Epsilon_(double upper_bound, double lower_bound) = 0;
@@ -31,38 +33,46 @@ public:
     
   void Init(const Matrix& matrix, index_t start, index_t count) {
       
-    query_count_ = count;
+    query_count_ = -1;
       
   } // Init() (leaves)
   
   void Init(const Matrix& matrix, index_t start, index_t count, 
             const GenericErrorStat& left, const GenericErrorStat& right) {
     
-    query_count_ = count;
+    query_count_ = -1;
     
   } // Init() (non-leaves)
   
   bool CanPrune(double q_upper_bound, double q_lower_bound, 
                 index_t reference_count) {
     
+    /*printf("upper_bound = %g\n", q_upper_bound);
+    printf("lower_bound = %g\n", q_lower_bound);
+    */
     bool prune = false;
     
     double max_error_incurred = 0.5 * (q_upper_bound - q_lower_bound);
     DEBUG_ASSERT(max_error_incurred >= 0.0);
     
+//    printf("max_error = %g\n", max_error_incurred);
+    
     double allowed_error = q_lower_bound * 
       Epsilon_(q_upper_bound, q_lower_bound) * reference_count / query_count_;
-    DEBUG_ASSERT(allowed_error >= 0.0);
+    DEBUG_ASSERT(allowed_error >= 0.0); 
+    
+  //  printf("allowed_error = %g\n", allowed_error);
     
     if (max_error_incurred < allowed_error) {
       
       prune = true;
       
-      epsilon_ = epsilon_ - max_error_incurred;
-      
-      query_count_ = query_count_ - reference_count;
-      DEBUG_ASSERT(query_count_ >= 0.0);
-      
+      /*epsilon_ = epsilon_ - max_error_incurred;
+      DEBUG_ASSERT(epsilon_ >= 0.0);
+      */
+     /* query_count_ = query_count_ - reference_count;
+      DEBUG_ASSERT(query_count_ >= 0);
+      */
     }
     
     return prune;
@@ -90,8 +100,6 @@ public:
  */
 class AbsoluteErrorStat : public GenericErrorStat {
 
-
-
  protected:
 
   /**
@@ -114,9 +122,9 @@ class AbsoluteErrorStat : public GenericErrorStat {
     
   ~AbsoluteErrorStat() {}
   
-  void SetParams(struct datanode* mod) {
+  void SetParams(double max_err, double min_err, double steep) {
   
-    epsilon_ = fx_param_double_req(mod, "epsilon");
+    epsilon_ = max_err;
   
   } // SetParams()
 
@@ -137,7 +145,7 @@ protected:
    * Relative error just depends on epsilon_
    */
   double Epsilon_(double upper_bound, double lower_bound) {
-    
+      
     DEBUG_ASSERT(epsilon_ >= 0.0);
     return epsilon_;
     
@@ -149,11 +157,9 @@ protected:
     
   ~RelativeErrorStat() {}
     
-  void SetParams(struct datanode* mod) {
+  void SetParams(double max_err, double min_err, double steep) {
   
-    epsilon_ = fx_param_double_req(mod, "epsilon");
-    DEBUG_ASSERT(epsilon_ >= 0.0);
-  
+    epsilon_ = max_err;
   
   } // SetParams  
   
@@ -196,13 +202,13 @@ protected:
     
   ~ExponentialErrorStat() {}
 
-    void SetParams(struct datanode* mod) {
+    void SetParams(double max_err, double min_err, double steep) {
     
-      max_error_ = fx_param_double_req(mod, "max_error");
+      max_error_ = max_err;
     
-      steepness_ = fx_param_double_req(mod, "steepness");
+      steepness_ = steep;
       
-      min_error_ = fx_param_double_req(mod, "min_error");
+      min_error_ = min_err;
       
       epsilon_ = 0.0;
          
@@ -246,16 +252,16 @@ protected:
     
   ~GaussianErrorStat() {}
     
-    void SetParams(struct datanode* mod) {
+    void SetParams(double max_err, double min_err, double steep) {
     
-      max_error_ = fx_param_double_req(mod, "max_error");
+      max_error_ = max_err;
       
-      steepness_ = fx_param_double_req(mod, "steepness");
+      steepness_ = steep;
       
-      min_error_ = fx_param_double_req(mod, "min_error");     
+      min_error_ = min_err;
       
       epsilon_ = 0.0;
-    
+      
     } // SetParams  
 
 }; // class GaussianErrorStat
@@ -287,11 +293,14 @@ public:
     
   ~HybridErrorStat() {}
   
-  void SetParams(struct datanode* mod) {
+  void SetParams(double max_err, double min_err, double steep) {
   
-    steepness_ = fx_param_double_req(mod, "steepness");
+    steepness_ = steep;
     
-    epsilon_ = fx_param_double_req(mod, "epsilon");
+    // NOTE: I'm not sure this is right for the purposes of keeping up with 
+    // the remaining error
+    // I might want to treat this like the exp and gauss kernels
+    epsilon_ = max_err;
   
   } // SetParams()
 
