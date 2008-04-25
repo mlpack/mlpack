@@ -68,6 +68,12 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
   
   ArrayList<index_t> old_from_new_;
   
+  double max_error_;
+  double min_error_;
+  double steepness_;
+  
+  index_t num_prunes_;
+  
   
   /**
    * Computes the value of the gaussian centered at r at the point referred to 
@@ -119,6 +125,7 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
     
     index_t query_count = query->stat().query_count();
     index_t reference_count = reference->count();
+    DEBUG_ASSERT(query_count - reference_count >= 0);
     query->stat().set_query_count(query_count - reference_count);
     
   } // ComputeSumBaseCase_()
@@ -140,7 +147,13 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
     else if(query->stat().CanPrune(
                 q_upper_bound, q_lower_bound, reference->count())) {
       
+      //printf("query_count=%d\n", query->stat().query_count());
+      num_prunes_++;
+      
+     // ot::Print(results_);
+      
       double approximate_result = 0.5 * (q_upper_bound + q_lower_bound);
+    //  printf("approximate_result = %g\n", approximate_result);
       DEBUG_ASSERT(approximate_result >= 0.0);
       
       Vector subvec;
@@ -149,9 +162,17 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
       Vector approx;
       approx.Init(query->count());
       approx.SetAll(approximate_result);
+      /*printf("subvec\n");
+      ot::Print(subvec);
+      printf("approx\n");
+      ot::Print(approx);
+      */
       // I'm pretty sure this will work, but I should check
-      la::AddOverwrite(subvec, approx, &subvec);
+      la::AddTo(approx, &subvec);
       
+/*      printf("after\n");
+      ot::Print(results_);
+  */    
     } // Pruning case
     else if(query->is_leaf()) {
       
@@ -167,13 +188,13 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
       ComputeSumRecursion_(query->left(), reference);
       ComputeSumRecursion_(query->right(), reference);
       
-      index_t left_count = query->left()->stat().query_count();
+      /*index_t left_count = query->left()->stat().query_count();
       // This gives an unused variable warning in fast mode
       index_t right_count = query->right()->stat().query_count();
       DEBUG_ASSERT(left_count == right_count);
       
       query->stat().set_query_count(left_count);
-      
+      */
     } // only split queries
     else {
       
@@ -189,12 +210,12 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
       ComputeSumRecursion_(query->right(), reference->left());
       ComputeSumRecursion_(query->right(), reference->right());
       
-      index_t left_count = query->left()->stat().query_count();
+      /*index_t left_count = query->left()->stat().query_count();
       index_t right_count = query->right()->stat().query_count();
       DEBUG_ASSERT(left_count == right_count);
       
       query->stat().set_query_count(left_count);
-      
+      */
     } // four-way
     
   } // ComputeSumRecursion_
@@ -210,12 +231,14 @@ public:
       
     }
     
-    node->stat().SetParams(module_);
+    node->stat().SetParams(max_error_, min_error_, steepness_);
+    node->stat().set_query_count(num_points_);
     
   } // InitStats()
 
   
-  void Init(struct datanode* mod, const Matrix& cent, double band) {
+  void Init(struct datanode* mod, const Matrix& cent, double band, 
+            double max_err, double min_err, double steep) {
     
     module_ = mod;
     
@@ -224,9 +247,20 @@ public:
     bandwidth_ = band;
     DEBUG_ASSERT(bandwidth_ > 0.0);
     
+    max_error_ = max_err;
+    DEBUG_ASSERT(max_error_ > 0.0);
+    
+    min_error_ = min_err;
+    DEBUG_ASSERT(min_error_ > 0.0);
+    
+    steepness_ = steep;
+    DEBUG_ASSERT(steepness_ > 0.0);
+    
     num_points_ = centers_.n_cols();
     
     dimension_ = centers_.n_rows();
+    
+    num_prunes_ = 0;
     
     results_.Init(num_points_);
     results_.SetZero();
@@ -246,7 +280,19 @@ public:
     ComputeSumRecursion_(tree_, tree_);
     fx_timer_stop(module_, "timer");
     
-    results_vec->Copy(results_);
+    results_vec->Init(num_points_);
+    
+    // unpermute the results for analysis
+    for (index_t i = 0; i < num_points_; i++) {
+    
+      (*results_vec)[old_from_new_[i]] = results_[i];
+    
+    } // i
+    
+   // ot::Print(*results_vec);
+    
+    fx_format_result(module_, "num_prunes", "%d", num_prunes_);
+    
     
   } // ComputeTotalSum()
 
