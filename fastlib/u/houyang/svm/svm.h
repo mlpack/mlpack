@@ -157,7 +157,7 @@ class SVM {
 
  public:
   typedef TKernel Kernel;
-friend class SMO<Kernel>;
+  class SMO<Kernel>;
 
   void Init(int learner_typeid, const Dataset& dataset, datanode *module);
   void InitTrain(int learner_typeid, const Dataset& dataset, datanode *module);
