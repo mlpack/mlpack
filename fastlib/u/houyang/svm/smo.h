@@ -291,7 +291,8 @@ void SMO<TKernel>::ReconstructGradient_(int learner_typeid) {
   }
   else if (learner_typeid == 1) { // SVM_R
     for (i=n_active_; i<n_alpha_; i++) {
-      grad_[i] = grad_bar_[i] + datamatrix_.get(datamatrix_.n_rows()-1, i) - epsilon_;
+      j = i >= n_data_ ? (i-n_data_) : i;
+      grad_[j] = grad_bar_[j] + datamatrix_.get(datamatrix_.n_rows()-1, j) - epsilon_;
     }
   }
 
