@@ -3,7 +3,7 @@
  *
  * @file smo.h
  *
- * This head file contains functions for performing Budget Sequential Minimal Optimization (SMO) 
+ * This head file contains functions for performing Sequential Minimal Optimization (SMO) 
  *
  * The algorithms in the following papers are implemented:
  *
@@ -16,7 +16,7 @@
  * publisher = "MIT Press"
  * }
  *
- * 2. Shrinkng for SMO
+ * 2. Shrinkng and Caching for SMO
  * @ARTICLE{Joachims_SVMLIGHT,
  * author = "T. Joachims",
  * title = "{Making large-Scale SVM Learning Practical}",
@@ -33,6 +33,7 @@
  * year = 2005
  * }
  *
+ * 4. TODO: budget L2 SVM
  * @INPROCEEDINGS{Budge_SVM,
  * author = "O. Dekel and Y. Singer",
  * title = "{Support Vector Machines on a Budget}",
@@ -49,17 +50,22 @@
 
 #include "fastlib/fastlib.h"
 
+// the tolerance for determing the optimality
 const double SMO_OPT_TOLERANCE = 1.0e-4;
+// maximum # of interations for SMO training
 const index_t MAX_NUM_ITER = 10000;
+// after # of iterations to do shrinking
 const index_t NUM_FOR_SHRINKING = 1000;
+// threshold that determines whether need to do unshrinking
+const double SMO_UNSHRINKING_TOLERANCE = 10 * SMO_OPT_TOLERANCE;
+// threshold that determines whether an alpha is a SV or not
+const double SMO_ALPHA_ZERO = 1.0e-4;
+// for indefinite kernels
+const double TAU = 1e-12;
 
 const double ID_LOWER_BOUNDED = -1;
 const double ID_UPPER_BOUNDED = 1;
 const double ID_FREE = 0;
-
-const double TAU = 1e-12;
-
-const double SMO_ALPHA_ZERO = 1.0e-4;
 
 template<typename TKernel>
 class SMO {
@@ -83,9 +89,12 @@ class SMO {
   
   index_t n_alpha_; /* number of variables to be optimized */
   index_t n_active_; /* number of samples in the active set */
-  ArrayList<int> active_set_;
+  ArrayList<index_t> active_set_; /* list that stores the indices of active alphas */
+  bool unshrinked_; /* indicator: where unshrinking has be carried out  */
+  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
+  double cached_kernel_value_; /* cache */
 
-  ArrayList<int> y_;
+  ArrayList<int> y_; /* list that stores "labels" */
 
   double bias_;
   index_t n_sv_; /* number of support vectors */
@@ -143,7 +152,7 @@ class SMO {
   void ReconstructGradient_(int learner_typeid);
   
   void Shrinking_();
-  
+
   bool WorkingSetSelection_(index_t &i, index_t &j);
 
   void UpdatingGradientAlpha_(index_t i, index_t j);
@@ -184,19 +193,34 @@ class SMO {
    * Calculate kernel values
    */
   double CalcKernelValue_(index_t i, index_t j) {
-    i = i >= n_data_ ? (i-n_data_) : i; // for SVM_R
+    // the alpha indices have been swaped in shrinking processes
+    i = active_set_[i];
+    j = active_set_[j];
+
+    // for SVM_R where n_alpha_==2*n_data_
+    i = i >= n_data_ ? (i-n_data_) : i;
     j = j >= n_data_ ? (j-n_data_) : j;
-    Vector v_i;
+
+    // Check cache
+    //if (i == i_cache_ && j == j_cache_) {
+    //  return cached_kernel_value_;
+    //}
+
+    Vector v_i, v_j;
     GetVector_(i, &v_i);
-    Vector v_j;
     GetVector_(j, &v_j);
-    return kernel_.Eval(v_i, v_j);
+
+    // Do Caching. Store the recently caculated kernel values.
+    //i_cache_ = i;
+    //j_cache_ = j;
+    cached_kernel_value_ = kernel_.Eval(v_i, v_j);
+    return cached_kernel_value_;
   }
 };
 
 
 /**
- * Initialization for different SVM learners
+ * Initialization according to different SVM learner types
  *
  * @param: learner type id 
  */
@@ -282,23 +306,94 @@ void SMO<TKernel>::ReconstructGradient_(int learner_typeid) {
 
 
 /**
- * Do Shrinking
+ * Do Shrinking. Temporarily remove alphas (from the active set) that are 
+ * unlikely to be selected in the working set, since they have reached their 
+ * lower/upper bound.
  * 
  */
 template<typename TKernel>
 void SMO<TKernel>::Shrinking_() {
+  index_t t;
+  double yg;
+
+  // find grad_max and grad_min
+  double grad_max = -INFINITY;
+  double grad_min =  INFINITY;
+  for (t=0; t<n_active_; t++) { // find argmax(y*grad), t\in I_up
+    if (y_[t] == 1) {
+      if (!IsUpperBounded(t)) // t\in I_up, y==1: y[t]alpha[t] <= C
+	if (grad_[t] >= grad_max) { // y==1
+	  grad_max = grad_[t];
+	}
+      if (!IsLowerBounded(t)) // t\in I_down, y==1: y[t]alpha[t] >= 0
+	if (grad_[t] <= grad_min) { // y==1
+	  grad_min = grad_[t];
+	}
+    }
+    else { // y[t] == -1
+      if (!IsLowerBounded(t)) // t\in I_up, y==-1: y[t]alpha[t] <= 0
+	if (-grad_[t] >= grad_max) { // y==-1
+	  grad_max = -grad_[t];
+	}
+      if (!IsUpperBounded(t)) // t\in I_down, y==-1: y[t]alpha[t] >= -C
+	if (-grad_[t] <= grad_min) { // y==-1
+	  grad_min = -grad_[t];
+	}
+    }
+  }
+
+  // find the alpha to be shrunk
+  for (t=0; t<n_active_; t++) {
+    // Shrinking: put inactive alphas behind the active set
+    yg = y_[t] * grad_[t];
+    if ( yg < grad_min || yg > grad_max ) { // this alpha need be shrunk
+      n_active_ --;
+      while (n_active_ > t) {
+	yg = y_[n_active_] * grad_[n_active_];
+	if ( yg >= grad_min && yg <= grad_max ) { // this alpha need not be shrunk
+	  active_set_[t] = n_active_; // swap indices
+	  active_set_[n_active_] = t;
+	  break;
+	}
+	n_active_ --;
+      }
+    }
+  }
+
+  // determine whether need to do Unshrinking
+  if ( unshrinked_ || grad_max - grad_min <= SMO_UNSHRINKING_TOLERANCE ) {
+    // Unshrinking: put shrinked alphas back to active set
+    ReconstructGradient_(learner_typeid_);
+    for ( t=n_alpha_-1; t>n_active_; t-- ) {
+      yg = y_[t] * grad_[t];
+      if (yg >= grad_min && yg <= grad_max) { // this alpha need be unshrunk
+	while (n_active_ < t) {
+	  yg = y_[n_active_] * grad_[n_active_];
+	  if ( yg < grad_min || yg > grad_max ) { // this alpha need not be unshrunk
+	    active_set_[t] = n_active_; // swap indices
+	    active_set_[n_active_] = t;
+	    break;
+	  }
+	  n_active_ ++;
+	}
+	n_active_ ++;
+      }
+    }
+    unshrinked_ = true; // indicator: unshrinking has been carried out in this round
+  }
+
 }
 
 
 /**
-* Budget SMO training for 2-classes
+* SMO training for 2-classes
 *
 * @param: input 2-classes data matrix with labels (1,-1) in the last row
 */
 template<typename TKernel>
 void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t i,j;
-  /* General initializations */
+  /* general learner-independent initializations */
   dataset_ = dataset_in;
   datamatrix_.Alias(dataset_->matrix());
   n_data_ = datamatrix_.n_cols();
@@ -306,6 +401,9 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   budget_ = min(budget_, n_data_);
   bias_ = 0.0;
   n_sv_ = 0;
+  unshrinked_ = false;
+  i_cache_ = -1; j_cache_ = -1;
+  cached_kernel_value_ = INFINITY;
 
   /* learners initialization */
   LearnersInit_(learner_typeid);
@@ -347,7 +445,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     if (stop_condition == 1) // optimality reached
       break;
     else if (stop_condition == 2) {// max num of iterations exceeded
-      fprintf(stderr, "Max iterations (%d) exceeded !!!\n", MAX_NUM_ITER);
+      fprintf(stderr, "Max # of iterations (%d) exceeded !!!\n", MAX_NUM_ITER);
       break;
     }
   }
@@ -383,7 +481,8 @@ int SMO<TKernel>::TrainIteration_() {
 }
 
 /**
-* Try to find a working set (i,j)
+* Try to find a working set (i,j). Both 1st order and 2nd order approximations of 
+* the objective function Z(\alpha+\lambda u_ij)-Z(\alpha) are implemented.
 *
 * @param: working set (i, j)
 *
@@ -416,7 +515,7 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   }
   out_i = idx_i; // i found
 
-  /*  Find j using maximal violating pair scheme (1st order approximation of obj func) */
+  /*  Find j using maximal violating pair scheme (1st order approximation) */
   if (wss_ == 1) {
     for (t=0; t<n_active_; t++) { // find argmin(y*grad), t\in I_down
       if (y_[t] == 1) {
@@ -525,7 +624,7 @@ void SMO<TKernel>::UpdatingGradientAlpha_(index_t i, index_t j) {
 
   double first_order_diff = y_i * grad_[i] - y_j * grad_[j];
   double second_order_diff = K_ii + K_jj - 2 * K_ij;
-  if (second_order_diff < 0)
+  if (second_order_diff < 0) // handle non-positive definite kernels
     second_order_diff = TAU;
   double newton_step = first_order_diff / second_order_diff;
 
@@ -662,4 +761,3 @@ void SMO<TKernel>::GetSVM(ArrayList<index_t> &dataset_index, ArrayList<double> &
 }
 
 #endif
-
