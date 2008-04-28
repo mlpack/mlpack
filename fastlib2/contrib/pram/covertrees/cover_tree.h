@@ -3,7 +3,11 @@
 
 #include <fastlib/fastlib.h>
 
+template<class TStatistic>
 class CoverTreeNode {
+
+ public:
+  typedef TStatistic Statistic;
 
  private:
   index_t point_;
@@ -12,6 +16,7 @@ class CoverTreeNode {
   ArrayList<CoverTreeNode*> children_;
   index_t num_of_children_;
   index_t scale_depth_; // depth of the node in terms of scale
+  Statistic stat_;
 
  public:
 
@@ -69,8 +74,8 @@ class CoverTreeNode {
     return dist_to_parent_;
   }
 
-  ArrayList<CoverTreeNode*> children() {
-    return children_;
+  ArrayList<CoverTreeNode*> *children() {
+    return &children_;
   }
 
   CoverTreeNode *child(index_t i) {
@@ -85,8 +90,13 @@ class CoverTreeNode {
     return scale_depth_;
   }
 
+  Statistic& stat() {
+    return stat_;
+  }
+
   void MakeNode(index_t point) {
     point_ = point;
+    stat_.Init();
     return;
   }
 
@@ -97,9 +107,10 @@ class CoverTreeNode {
     point_ = point;
     max_dist_to_grandchild_ = max_dist;
     scale_depth_ = scale_depth;
-    children_.Destruct();
+    children_.Renew();
     children_.Steal(children);
     num_of_children_ = children_.size();
+    stat_.Init();
 
     return;
   }
@@ -110,6 +121,9 @@ class CoverTreeNode {
     dist_to_parent_ = 0.0;
     num_of_children_ = 0;
     scale_depth_ = 100;
+    stat_.Init();
+
+    // NOTIFY("Leaf node for point %"LI"d\n", point);
     return;
   }
 

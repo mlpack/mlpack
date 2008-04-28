@@ -12,8 +12,9 @@ int main(int argc, char *argv[]) {
 
   CoverTreeNode *root;
 
+  //NOTIFY("Entering tree construction\n");
   root = ctree::MakeCoverTree(r_set);
-
+  //NOTIFY("Tree construction done\n");
   ctree::PrintTree(root);
 
   fx_silence();
