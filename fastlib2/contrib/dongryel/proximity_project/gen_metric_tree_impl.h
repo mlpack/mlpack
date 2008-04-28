@@ -116,6 +116,7 @@ namespace tree_gen_metric_tree_private {
     index_t end = begin + count;
     *furthest_distance = 0;
 
+    printf("begin: %d, end: %d\n", begin, end);
     for(index_t i = begin; i < end; i++) {
       Vector point;
       matrix.MakeColumnVector(i, &point);
@@ -139,6 +140,7 @@ namespace tree_gen_metric_tree_private {
     // Pick a random row.
     index_t random_row = math::RandInt(node->begin_, node->begin_ +
 				       node->count_);
+    random_row = node->begin_;
     Vector random_row_vec;
     matrix.MakeColumnVector(random_row, &random_row_vec);
 
