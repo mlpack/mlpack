@@ -35,6 +35,13 @@ namespace proximity {
 					 TKdTree *node, int split_dim) {
       return node->bound().get(split_dim).mid();
     }
+
+    template<typename T, typename TKdTree>
+    static double ChooseKdTreeSplitValue
+    (const GenMatrix<T>& lower_limit_matrix,
+     const GenMatrix<T>& upper_limit_matrix, TKdTree *node, int split_dim) {
+      return node->bound().get(split_dim).mid();
+    }
   };
 
   class GenKdTreeMedianSplitter {
@@ -78,6 +85,34 @@ namespace proximity {
 			   coordinate_vals[node->count() - 1]);
       }
       
+      return split_val;
+    }
+
+    template<typename T, typename TKdTree>
+    static double ChooseKdTreeSplitValue
+    (const GenMatrix<T>& lower_limit_matrix,
+     const GenMatrix<T>& upper_limit_matrix, TKdTree *node, int split_dim) {
+
+      GenVector<T> coordinate_vals;
+      coordinate_vals.Init(node->count() * 2);
+      for(index_t i = node->begin(); i < node->end(); i++) {
+        coordinate_vals[2 * (i - node->begin())] = 
+	  lower_limit_matrix.get(split_dim, i);
+	coordinate_vals[2 * (i - node->begin()) + 1] =
+	  upper_limit_matrix.get(split_dim, i);
+      }
+
+      // sort coordinate value
+      qsort(coordinate_vals.ptr(), 2 * node->count(), sizeof(T),
+            &GenKdTreeMedianSplitter::qsort_compar<T>);
+
+      double split_val = (double) coordinate_vals[node->count()];
+      if(split_val == coordinate_vals[0] ||
+         split_val == coordinate_vals[2 * node->count() - 1]) {
+        split_val = 0.5 * (coordinate_vals[0] +
+                           coordinate_vals[2 * node->count() - 1]);
+      }
+
       return split_val;
     }
   };
