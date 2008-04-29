@@ -83,7 +83,8 @@ namespace ctree {
     return;
   }
 
-  void print_tree(index_t depth, CoverTreeNode *top_node) {
+  template<typename TCoverTreeNode>
+  void print_tree(index_t depth, TCoverTreeNode *top_node) {
     print_space(depth);
     printf("Point %"LI"d:", top_node->point()+1);
     if (top_node->num_of_children() > 0) {
@@ -100,7 +101,8 @@ namespace ctree {
     return;
   }
 
-  void PrintTree(CoverTreeNode *top_node) {
+  template<typename TCoverTreeNode>
+  void PrintTree(TCoverTreeNode *top_node) {
     print_tree(0, top_node);
     return;
   }
@@ -130,7 +132,8 @@ namespace ctree {
 		     "split_far: point set size doesn't add up\n");
 
     point_set->Renew();
-    point_set->Steal(&near);
+    //NOTIFY("steal @ 135");
+    point_set->InitSteal(&near);
 
     return;
   }
@@ -170,7 +173,8 @@ namespace ctree {
 		     "split_near: point set doesn't add up\n");
 
     point_set->Renew();
-    point_set->Steal(&far);
+    //NOTIFY("steal @ 176");
+    point_set->InitSteal(&far);
 
     return;
   }
@@ -226,15 +230,17 @@ namespace ctree {
 	//NOTIFY("Splitting far");
 	split_far(point_set, &far, current_scale);
 	//NOTIFY("split into covered and uncovered set");
-	TCoverTreeNode *child = private_make_tree(point, data, 
-						  next_scale, max_scale,
-						  point_set, consumed_set);
+	TCoverTreeNode *child = 
+	  private_make_tree<TCoverTreeNode>(point, data, next_scale, 
+					    max_scale, point_set, 
+					    consumed_set);
 	
 	//NOTIFY("selfchild made");
 	if (point_set->size() == 0) {
 	  //NOTIFY("point set out");
 	  point_set->Renew();
-	  point_set->Steal(&far);
+	  //NOTIFY("Steal @ 242");
+	  point_set->InitSteal(&far);
 
 	  return child;
 	}
@@ -267,12 +273,12 @@ namespace ctree {
 	    //	   current_scale, new_point_set.size(), 
 	    //     new_consumed_set.size());
 
-	    TCoverTreeNode *child_node = private_make_tree(new_point, data,
-							   next_scale,
-							   max_scale,
-							   &new_point_set, 
-							   &new_consumed_set);
-
+	    TCoverTreeNode *child_node = 
+	      private_make_tree<TCoverTreeNode>(new_point, data,
+						next_scale,max_scale,
+						&new_point_set,
+						&new_consumed_set);
+	    
 	    child_node->set_dist_to_parent(new_dist);
 	    children.PushBackCopy(child_node);
 	    //NOTIFY("Child added");
@@ -304,7 +310,8 @@ namespace ctree {
 	  }
 
 	  point_set->Renew();
-	  point_set->Steal(&far);
+	  //NOTIFY("Steal @ 313");
+	  point_set->InitSteal(&far);
 
 	  TCoverTreeNode *node = new TCoverTreeNode();
 
@@ -353,9 +360,10 @@ namespace ctree {
     index_t max_scale = scale_of_distance(max_dist);
     //NOTIFY("%lf",point_set[0]->distances()->back());
     //NOTIFY("private tree making");
-    TCoverTreeNode *root_node = private_make_tree(0, dataset, max_scale,
-						  max_scale, &point_set,
-						  &consumed_set);
+    TCoverTreeNode *root_node = 
+      private_make_tree<TCoverTreeNode>(0, dataset, max_scale,
+					max_scale, &point_set,
+					&consumed_set);
     //NOTIFY("private_tree_made");
     
     return root_node;
