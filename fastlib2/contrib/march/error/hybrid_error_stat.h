@@ -17,13 +17,16 @@ class GenericErrorStat {
 
  protected:
  
-  index_t query_count_;
+  index_t remaining_references_;
   
   // This isn't right as a global max error bound, since it should apply to each
   // query separately
-  double epsilon_;
+  double error_incurred_;
   
-  virtual double Epsilon_(double upper_bound, double lower_bound) = 0;
+ // double query_upper_bound_;
+  double query_lower_bound_;
+  
+  virtual double Epsilon_() = 0;
   
 public:
     
@@ -33,32 +36,32 @@ public:
     
   void Init(const Matrix& matrix, index_t start, index_t count) {
       
-    query_count_ = -1;
+    //query_count_ = -1;
+    error_incurred_ = 0.0;
       
   } // Init() (leaves)
   
   void Init(const Matrix& matrix, index_t start, index_t count, 
             const GenericErrorStat& left, const GenericErrorStat& right) {
     
-    query_count_ = -1;
+    //query_count_ = -1;
+    error_incurred_ = 0.0;
     
   } // Init() (non-leaves)
   
   bool CanPrune(double q_upper_bound, double q_lower_bound, 
                 index_t reference_count) {
     
-    /*printf("upper_bound = %g\n", q_upper_bound);
-    printf("lower_bound = %g\n", q_lower_bound);
-    */
     bool prune = false;
     
     double max_error_incurred = 0.5 * (q_upper_bound - q_lower_bound);
     DEBUG_ASSERT(max_error_incurred >= 0.0);
     
-//    printf("max_error = %g\n", max_error_incurred);
+    double allowed_error = Epsilon_() * 
+      reference_count / remaining_references_;
     
-    double allowed_error = q_lower_bound * 
-      Epsilon_(q_upper_bound, q_lower_bound) * reference_count / query_count_;
+    
+    
     DEBUG_ASSERT(allowed_error >= 0.0); 
     
   //  printf("allowed_error = %g\n", allowed_error);
@@ -67,31 +70,47 @@ public:
       
       prune = true;
       
-      /*epsilon_ = epsilon_ - max_error_incurred;
-      DEBUG_ASSERT(epsilon_ >= 0.0);
-      */
-     /* query_count_ = query_count_ - reference_count;
-      DEBUG_ASSERT(query_count_ >= 0);
-      */
+      //error_incurred_ = error_incurred_ + max_error_incurred;
+      
+      //remaining_references_ = remaining_references_ - reference_count;
+      DEBUG_ASSERT(remaining_references_ >= 0);
+      
     }
     
     return prune;
     
   } // CanPrune()  
   
-  void set_query_count(index_t new_count) {
+  void set_remaining_references(index_t new_count) {
   
-    query_count_ = new_count;
+    remaining_references_ = new_count;
     
-    DEBUG_ASSERT(query_count_ >= 0);
+    DEBUG_ASSERT(remaining_references_ >= 0);
   
   } // set_query_count()
   
-  index_t query_count() {
+  index_t remaining_references() {
   
-    return query_count_;
+    return remaining_references_;
   
   } // query_count()
+  
+  /*void set_query_upper_bound(double bd) {
+    query_upper_bound_ = bd;
+  }
+  
+  double query_upper_bound() {
+    return query_upper_bound_;
+  }
+  */
+  
+  void set_query_lower_bound(double bd) {
+    query_lower_bound_ = bd;
+  }
+  
+  double query_lower_bound() {
+    return query_lower_bound_;
+  }
 
 }; // GenericErrorStat
 
@@ -100,15 +119,19 @@ public:
  */
 class AbsoluteErrorStat : public GenericErrorStat {
 
+ private: 
+
+  double max_error_;
+
  protected:
 
   /**
    * Returns the error tolerance as a function of the bounds on Q.  In this case
    * we divide by the lower bound to get absolute error.
    */ 
-  double Epsilon_(double upper_bound, double lower_bound) {
+  double Epsilon_() {
   
-    double eps = epsilon_ / lower_bound;
+    double eps = max_error_;
     DEBUG_ASSERT(eps >= 0.0);
     
     return (eps);
@@ -124,7 +147,7 @@ class AbsoluteErrorStat : public GenericErrorStat {
   
   void SetParams(double max_err, double min_err, double steep) {
   
-    epsilon_ = max_err;
+    max_error_ = max_err;
   
   } // SetParams()
 
@@ -138,16 +161,17 @@ class RelativeErrorStat : public GenericErrorStat {
 
  private:
 
-  index_t query_count_;
+  double max_error_;
 
 protected:
   /**
    * Relative error just depends on epsilon_
    */
-  double Epsilon_(double upper_bound, double lower_bound) {
+  double Epsilon_() {
       
-    DEBUG_ASSERT(epsilon_ >= 0.0);
-    return epsilon_;
+    double eps = max_error_ * query_lower_bound_;
+    DEBUG_ASSERT(eps >= 0.0);
+    return eps;
     
   } // Epsilon_
 
@@ -159,7 +183,7 @@ protected:
     
   void SetParams(double max_err, double min_err, double steep) {
   
-    epsilon_ = max_err;
+    max_error_ = max_err;
   
   } // SetParams  
   
@@ -185,10 +209,12 @@ protected:
   /**
    * Hybrid error using the exponential criterion
    */
-  double Epsilon_(double upper_bound, double lower_bound) {
+  double Epsilon_() {
     
-    double eps = (max_error_ * exp(-steepness_ * upper_bound)) + min_error_ + 
-        epsilon_;
+    double eps = (max_error_ * exp(-steepness_ * query_lower_bound_)) + 
+        min_error_;
+        
+    eps = eps * query_lower_bound_;
     
     DEBUG_ASSERT(eps >= 0.0);
     
@@ -210,7 +236,7 @@ protected:
       
       min_error_ = min_err;
       
-      epsilon_ = 0.0;
+      error_incurred_ = 0.0;
          
     } // SetParams()
   
@@ -235,10 +261,13 @@ protected:
   /**
     * Hybrid error using the gaussian criterion
    */
-  double Epsilon_(double upper_bound, double lower_bound) {
+  double Epsilon_() {
     
-    double eps = (max_error_ * exp(-steepness_ * upper_bound * upper_bound)) 
-    + min_error_ + epsilon_;
+    double eps = (max_error_ * 
+                  exp(-steepness_ * query_lower_bound_ * query_lower_bound_)) 
+                  + min_error_ + error_incurred_;
+                  
+    eps = eps * query_lower_bound_;
     
     DEBUG_ASSERT(eps >= 0.0);
 
@@ -260,7 +289,7 @@ protected:
       
       min_error_ = min_err;
       
-      epsilon_ = 0.0;
+      error_incurred_ = 0.0;
       
     } // SetParams  
 
@@ -272,14 +301,21 @@ private:
 
   double steepness_;
   
+  double max_error_;
+  
+  double min_error_;
+  
   
 protected:
 
-  double Epsilon_(double upper_bound, double lower_bound) {
+  double Epsilon_() {
   
-    double eps = (1 - exp(-steepness_ * lower_bound)) * epsilon_;
+    // Would like to multiply this by 1 - exp(query_upper_bound)
+    double eps = min_error_ * query_lower_bound_;
     
-    eps = eps + (exp(-steepness_ * upper_bound) * epsilon_ / lower_bound);
+    eps = eps + 
+        max_error_ * exp(-steepness_ * query_lower_bound_);
+    
     
     DEBUG_ASSERT(eps >= 0.0);
     
@@ -297,10 +333,9 @@ public:
   
     steepness_ = steep;
     
-    // NOTE: I'm not sure this is right for the purposes of keeping up with 
-    // the remaining error
-    // I might want to treat this like the exp and gauss kernels
-    epsilon_ = max_err;
+    max_error_ = max_err;
+    
+    min_error_ = min_err;
   
   } // SetParams()
 
