@@ -29,8 +29,10 @@ int main(int argc, char* argv[]) {
   double steepness = fx_param_double(NULL, "steepness", 0.1);
   
   Vector kernel_results;
+  Vector naive_results;
   
   struct datanode* kernel_mod;
+  struct datanode* naive_mod = fx_submodule(NULL, "naive", "naive");
   
   if (!strcmp(kernel_name, "abs")) {
     // max_error will just be epsilon, the others don't matter
@@ -82,18 +84,30 @@ int main(int argc, char* argv[]) {
     hybrid.ComputeTotalSum(&kernel_results);
   
   } // hybrid
+  else if (!strcmp(kernel_name, "naive")) {
+  
+    NaiveKernelSum naive_sum;
+    naive_sum.Init(naive_mod, centers, bandwidth);
+    naive_sum.NaiveComputation(dataset, "/dev/null", &naive_results);
+    //ot::Print(naive_results);
+    fx_done();
+    return 0;
+
+  }
   else {
     printf("Invalid choice for kernel\n");
     return 1;
   }
   
-  Vector naive_results;
-  struct datanode* naive_mod = fx_submodule(NULL, "naive", "naive");
   
   char output[50];
-  strcpy(output, "naive/");
+  strcpy(output, "../../../../naive/dist1/");
+//  strcpy(output, "naive/");
   char band_str[50];
-  strcat(output, dataset);
+//  strcat(output, dataset);
+  char num_str[50];
+  sprintf(num_str, "%d", centers.n_cols());
+  strcat(output, num_str);
   strcat(output, "_");
   sprintf(band_str, "%.2g", bandwidth);
   strcat(output, band_str);
@@ -119,7 +133,10 @@ int main(int argc, char* argv[]) {
                 
   analysis.ComputeResults();
   
-  
+  //ot::Print(kernel_results);
+  /*printf("naive_results\n");
+  ot::Print(naive_results);
+  */
  
   fx_done();
 

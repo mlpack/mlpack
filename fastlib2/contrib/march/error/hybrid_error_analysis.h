@@ -28,7 +28,8 @@ private:
     double average_abs_error;
     double average_rel_error;
     
-   /* printf("kernel vec:\n");
+    /*
+    printf("kernel vec:\n");
     ot::Print(kernel_vec_);
     printf("\n\n naive_vec:\n");
     ot::Print(naive_vec_);

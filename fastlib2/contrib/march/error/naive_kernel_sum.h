@@ -61,7 +61,7 @@ class NaiveKernelSum {
   
   void ComputeTotalSum(Vector* return_results) {
   
-    fx_timer_start(module_, "timing");
+    fx_timer_start(module_, "naive_time");
   
     for (index_t i = 0; i < num_points_; i++) {
     
@@ -77,10 +77,11 @@ class NaiveKernelSum {
       } // j
       
       results_[i] = this_result;
+      //printf("results[%d] = %g\n", i, this_result);
     
     } // i
     
-    fx_timer_stop(module_, "timing");
+    fx_timer_stop(module_, "naive_time");
     
     return_results->Copy(results_);
   

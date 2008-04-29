@@ -105,6 +105,8 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
   // to allocate any more error to those query points 
   void ComputeSumBaseCase_(ErrorTree* query, ErrorTree* reference) {
     
+    double min_query_val = DBL_MAX;
+    
     for (index_t query_index = query->begin(); query_index < query->end(); 
          query_index++) {
       
@@ -120,14 +122,19 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
       DEBUG_ASSERT(query_value >= 0.0);
       
       results_[query_index] = query_value;
+      if (query_value < min_query_val) {
+        min_query_val = query_value;
+      }
       
     }
     
-    index_t query_count = query->stat().query_count();
-    index_t reference_count = reference->count();
-    DEBUG_ASSERT(query_count - reference_count >= 0);
-    query->stat().set_query_count(query_count - reference_count);
+  query->stat().set_query_lower_bound(min_query_val);
     
+    /*index_t remainder = query->stat().remaining_references();
+    index_t reference_count = reference->count();
+    DEBUG_ASSERT(remainder - reference_count >= 0);
+    query->stat().set_remaining_references(remainder - reference_count);
+    */
   } // ComputeSumBaseCase_()
   
   void ComputeSumRecursion_(ErrorTree* query, ErrorTree* reference) {
@@ -138,22 +145,13 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
     double q_upper_bound = ComputeGaussian_(q_min_dist) * reference->count();
     double q_lower_bound = ComputeGaussian_(q_max_dist) * reference->count();
     
-    if (query->is_leaf() && reference->is_leaf()) {
-      
-      ComputeSumBaseCase_(query, reference);
-      
-    } // Base case
-    // Maybe I should put the prune check before the base case
-    else if(query->stat().CanPrune(
+   
+    if(query->stat().CanPrune(
                 q_upper_bound, q_lower_bound, reference->count())) {
       
-      //printf("query_count=%d\n", query->stat().query_count());
       num_prunes_++;
       
-     // ot::Print(results_);
-      
       double approximate_result = 0.5 * (q_upper_bound + q_lower_bound);
-    //  printf("approximate_result = %g\n", approximate_result);
       DEBUG_ASSERT(approximate_result >= 0.0);
       
       Vector subvec;
@@ -162,18 +160,18 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
       Vector approx;
       approx.Init(query->count());
       approx.SetAll(approximate_result);
-      /*printf("subvec\n");
-      ot::Print(subvec);
-      printf("approx\n");
-      ot::Print(approx);
-      */
-      // I'm pretty sure this will work, but I should check
+
       la::AddTo(approx, &subvec);
-      
-/*      printf("after\n");
-      ot::Print(results_);
-  */    
+
+      query->stat().set_query_lower_bound(
+          query->stat().query_lower_bound() + approximate_result);
+
     } // Pruning case
+    else if (query->is_leaf() && reference->is_leaf()) {
+      
+      ComputeSumBaseCase_(query, reference);
+      
+    } // Base case
     else if(query->is_leaf()) {
       
       ComputeSumRecursion_(query, reference->left());
@@ -182,27 +180,32 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
     } // only split references
     else if(reference->is_leaf()) {
       
-      query->left()->stat().set_query_count(query->stat().query_count());
-      query->right()->stat().set_query_count(query->stat().query_count());
+      // How to propagate lower bound down the tree?
+      // Will try parent's bound
+      // it's loose on one (both?) children, but I don't have a better idea
       
+      query->left()->stat().set_query_lower_bound(
+          query->stat().query_lower_bound());
+      query->right()->stat().set_query_lower_bound(
+          query->stat().query_lower_bound());
+     
       ComputeSumRecursion_(query->left(), reference);
       ComputeSumRecursion_(query->right(), reference);
       
-      /*index_t left_count = query->left()->stat().query_count();
-      // This gives an unused variable warning in fast mode
-      index_t right_count = query->right()->stat().query_count();
-      DEBUG_ASSERT(left_count == right_count);
+      query->stat().set_query_lower_bound(
+          min(query->left()->stat().query_lower_bound(), 
+              query->right()->stat().query_lower_bound()));
+              
+      DEBUG_ASSERT(query->stat().query_lower_bound() >= 0.0);
       
-      query->stat().set_query_count(left_count);
-      */
     } // only split queries
     else {
       
-      // Should consider some kind of priority here
-      // which side could use the error more effectively?
       
-      query->left()->stat().set_query_count(query->stat().query_count());
-      query->right()->stat().set_query_count(query->stat().query_count());
+      query->left()->stat().set_query_lower_bound(
+          query->stat().query_lower_bound());
+      query->right()->stat().set_query_lower_bound(
+          query->stat().query_lower_bound());      
       
       ComputeSumRecursion_(query->left(), reference->left());
       ComputeSumRecursion_(query->left(), reference->right());
@@ -210,12 +213,12 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
       ComputeSumRecursion_(query->right(), reference->left());
       ComputeSumRecursion_(query->right(), reference->right());
       
-      /*index_t left_count = query->left()->stat().query_count();
-      index_t right_count = query->right()->stat().query_count();
-      DEBUG_ASSERT(left_count == right_count);
+      query->stat().set_query_lower_bound(
+          min(query->left()->stat().query_lower_bound(), 
+              query->right()->stat().query_lower_bound()));
       
-      query->stat().set_query_count(left_count);
-      */
+      DEBUG_ASSERT(query->stat().query_lower_bound() >= 0.0);
+
     } // four-way
     
   } // ComputeSumRecursion_
@@ -232,7 +235,10 @@ public:
     }
     
     node->stat().SetParams(max_error_, min_error_, steepness_);
-    node->stat().set_query_count(num_points_);
+    node->stat().set_remaining_references(num_points_);
+    // This is only true for these unit coefficient Gaussians
+    //node->stat().set_query_upper_bound(num_points_);
+    node->stat().set_query_lower_bound(0.0);
     
   } // InitStats()
 
@@ -268,7 +274,7 @@ public:
     tree_ = tree::MakeKdTreeMidpoint<ErrorTree>(centers_, 
                 fx_param_int(mod, "leaf_size", 20), &old_from_new_, NULL);
                 
-    tree_->stat().set_query_count(num_points_);
+    //tree_->stat().set_query_count(num_points_);
     
     InitStats(tree_);
             
@@ -276,9 +282,9 @@ public:
   
   void ComputeTotalSum(Vector* results_vec) {
     
-    fx_timer_start(module_, "timer");
+    fx_timer_start(module_, "summation");
     ComputeSumRecursion_(tree_, tree_);
-    fx_timer_stop(module_, "timer");
+    fx_timer_stop(module_, "summation");
     
     results_vec->Init(num_points_);
     
@@ -292,6 +298,7 @@ public:
    // ot::Print(*results_vec);
     
     fx_format_result(module_, "num_prunes", "%d", num_prunes_);
+    fx_format_result(module_, "num_points", "%d", num_points_);
     
     
   } // ComputeTotalSum()
