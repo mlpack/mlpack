@@ -108,7 +108,8 @@ class CoverTreeNode {
     max_dist_to_grandchild_ = max_dist;
     scale_depth_ = scale_depth;
     children_.Renew();
-    children_.Steal(children);
+    //NOTIFY("Stealing here");
+    children_.InitSteal(children);
     num_of_children_ = children_.size();
     stat_.Init();
 
