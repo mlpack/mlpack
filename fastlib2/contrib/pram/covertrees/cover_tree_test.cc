@@ -26,11 +26,13 @@ int main(int argc, char *argv[]) {
 
   DEBUG_ASSERT(q_set.n_cols() * knn == neighbor_indices.size());
   for (index_t i = 0; i < q_set.n_cols(); i++) {
-    //for(index_t j = 0; j < knn; j++) {
-      NOTIFY("%"LI"d -> %"LI"d : %lf, %"LI"d : %lf", i, 
-	     neighbor_indices[knn * i], neighbor_distances[i*knn], 
-	     neighbor_indices[knn*i + 1], neighbor_distances[i*knn + 1]);
-      //}
+    NOTIFY("%"LI"d :", i);
+    for(index_t j = 0; j < knn; j++) {
+      NOTIFY("\t%"LI"d : %lf", 
+	     neighbor_indices[knn*i+j], neighbor_distances[i*knn
+							   +knn-1
+							   -j]);
+    }
   }
 
   fx_silence();
