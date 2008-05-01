@@ -819,7 +819,7 @@
     } \
     void InitSteal(C *src) { \
       DEBUG_INIT_OK(this); \
-      DEBUG_WARN_MSG_IF(!OT__IsAlias(src), \
+      DEBUG_WARN_MSG_IF(OT__IsAlias(src), \
           "Stealing from an alias."); \
       mem::Copy(this, src); \
       ot__private::Aliaser ot__aliaser(src); \
