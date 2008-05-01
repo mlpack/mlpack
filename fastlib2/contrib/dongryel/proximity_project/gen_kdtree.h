@@ -94,25 +94,22 @@ namespace proximity {
      const GenMatrix<T>& upper_limit_matrix, TKdTree *node, int split_dim) {
 
       GenVector<T> coordinate_vals;
-      coordinate_vals.Init(node->count() * 2);
+      coordinate_vals.Init(node->count());
       for(index_t i = node->begin(); i < node->end(); i++) {
-        coordinate_vals[2 * (i - node->begin())] = 
+        coordinate_vals[i - node->begin()] = 
 	  lower_limit_matrix.get(split_dim, i);
-	coordinate_vals[2 * (i - node->begin()) + 1] =
-	  upper_limit_matrix.get(split_dim, i);
       }
 
       // sort coordinate value
-      qsort(coordinate_vals.ptr(), 2 * node->count(), sizeof(T),
+      qsort(coordinate_vals.ptr(), node->count(), sizeof(T),
             &GenKdTreeMedianSplitter::qsort_compar<T>);
 
-      double split_val = (double) coordinate_vals[node->count()];
+      double split_val = (double) coordinate_vals[node->count() / 2];
       if(split_val == coordinate_vals[0] ||
-         split_val == coordinate_vals[2 * node->count() - 1]) {
+         split_val == coordinate_vals[node->count() - 1]) {
         split_val = 0.5 * (coordinate_vals[0] +
-                           coordinate_vals[2 * node->count() - 1]);
+                           coordinate_vals[node->count() - 1]);
       }
-
       return split_val;
     }
   };
