@@ -28,7 +28,7 @@ namespace tree_gen_kdtree_private {
 			  index_t dim, double splitvalue,
 			  index_t first, index_t count, TBound* left_bound, 
 			  TBound* right_bound, index_t *old_from_new) {
-    
+
     index_t left = first;
     index_t right = first + count - 1;
     
@@ -41,7 +41,7 @@ namespace tree_gen_kdtree_private {
 
       // If the lower limit is at most the split value, then put it in
       // the left.
-      while (lower_limit_matrix.get(dim, left) <= splitvalue && 
+      while (lower_limit_matrix.get(dim, left) < splitvalue && 
 	     likely(left <= right)) {
         GenVector<T> left_vector;
         lower_limit_matrix.MakeColumnVector(left, &left_vector);
@@ -54,7 +54,7 @@ namespace tree_gen_kdtree_private {
 
       // If the upper limit is at least the split value, then put it
       // in the right.
-      while (upper_limit_matrix.get(dim, right) >= splitvalue && 
+      while (lower_limit_matrix.get(dim, right) >= splitvalue && 
 	     likely(left <= right)) {
         GenVector<T> right_vector;
 	lower_limit_matrix.MakeColumnVector(right, &right_vector);
@@ -122,7 +122,26 @@ namespace tree_gen_kdtree_private {
       T max_width = -1;
       
       for (index_t d = 0; d < lower_limit_matrix.n_rows(); d++) {
-        T w = node->bound().get(d).width();
+	T min_coord = 1;
+	T max_coord = 0;
+	for(index_t p = node->begin(); p < node->end(); p++) {
+	  if(p == node->begin()) {
+	  }
+	  else {
+	    min_coord = std::min(min_coord, lower_limit_matrix.get(d, p));
+	    max_coord = std::max(max_coord, lower_limit_matrix.get(d, p));
+	  }
+	}
+        T w = max_coord - min_coord;
+        for(index_t p = node->begin(); p < node->end(); p++) {
+	  if(p == node->begin()) {
+	  }
+	  else {
+	    min_coord = std::min(min_coord, upper_limit_matrix.get(d, p));
+	    max_coord = std::max(max_coord, upper_limit_matrix.get(d, p));
+	  }
+        }
+	w = std::max(w, (T) (max_coord - min_coord));
 	
         if (unlikely(w > max_width)) {
           max_width = w;
