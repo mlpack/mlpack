@@ -10,6 +10,7 @@
 
 #include "fastlib/fastlib.h"
 #include "contrib/dongryel/proximity_project/gen_kdtree.h"
+#include "contrib/dongryel/proximity_project/gen_kdtree_hyper.h"
 #include "contrib/dongryel/proximity_project/general_type_bounds.h"
 
 /** @brief Faster orthogonal range search class using a tree.
@@ -57,47 +58,91 @@ class OrthoRangeSearch {
     }
   }
 
-  ////////// Getters/Setters //////////
-
-  /** @brief Retrieve the result of the search.
-   *
-   *  @param results An uninitialized vector which will have the boolean
-   *                 results representing the search results.
-   */
-  void get_results(ArrayList<bool> *results) {
-    results->Init(candidate_points_.size());
-    
-    for(index_t i = 0; i < candidate_points_.size(); i++) {
-      (*results)[i] = candidate_points_[i];
-    }
-  }
-
   ////////// User-level Functions //////////
 
-  /** @brief Perform the orthogonal range search.
+  /** @brief Performs the multiple orthogonal range searches
+   *         simultaneously.
    *
-   *  @param low_coord_limits The lower coordinate range of the search window.
-   *  @param high_coord_limits The upper coordinate range of the search
-   *                           window.
+   *  @param set_of_low_coord_limits
+   *  @param set_of_high_coord_limits
    */
-  void Compute(const GenVector<T> &low_coord_limits, 
-	       const GenVector<T> &high_coord_limits) {
+  void Compute(GenMatrix<T> &set_of_low_coord_limits,
+	       GenMatrix<T> &set_of_high_coord_limits, 
+	       ArrayList<ArrayList<bool> > *candidate_points) {
+
+    // Allocate space for storing candidate points found during
+    // search.
+    candidate_points->Init(set_of_low_coord_limits.n_cols());
+    for(index_t j = 0; j < set_of_low_coord_limits.n_cols(); j++) {
+      ((*candidate_points)[j]).Init(data_.n_cols());
+      for(index_t i = 0; i < data_.n_cols(); i++) {
+	(*candidate_points)[j][i] = false;
+      }
+    }
 
     fx_timer_start(NULL, "tree_range_search");
-    ortho_range_search(root_, 0, data_.n_rows() - 1, 
-		       low_coord_limits, high_coord_limits);
+
+    set_of_low_coord_limits.PrintDebug();
+
+    // First build a tree out of the set of range windows.
+    ArrayList<index_t> old_from_new_windows;
+    ArrayList<index_t> new_from_old_windows;
+    Tree *tree_of_windows = 
+      proximity::MakeGenKdTree<T, Tree, proximity::GenKdTreeMedianSplitter>
+      (set_of_low_coord_limits, set_of_high_coord_limits, 2,
+       &old_from_new_windows, &new_from_old_windows);
+    for(index_t i = 0; i < old_from_new_windows.size(); i++) {
+      printf("%d ", old_from_new_windows[i]);
+    }
+    printf("\n");
+    for(index_t i = 0; i < new_from_old_windows.size(); i++) {
+      printf("%d ", new_from_old_windows[i]);
+    }
+    printf("\n");
+
+    set_of_low_coord_limits.PrintDebug();
+
+    ortho_range_search(tree_of_windows, set_of_low_coord_limits, 
+		       set_of_high_coord_limits, old_from_new_windows,
+		       new_from_old_windows,
+		       root_, 0, data_.n_rows() - 1, *candidate_points);
+    
     fx_timer_stop(NULL, "tree_range_search");
+    delete tree_of_windows;
 
     // reshuffle the results to account for shuffling during tree construction
     ArrayList<bool> tmp_results;
-    tmp_results.Init(candidate_points_.size());
+    tmp_results.Init((*candidate_points)[0].size());
 
-    for(index_t i = 0; i < candidate_points_.size(); i++) {
-      tmp_results[old_from_new_[i]] = candidate_points_[i];
+    for(index_t j = 0; j < set_of_low_coord_limits.n_cols(); j++) {
+      for(index_t i = 0; i < (*candidate_points)[0].size(); i++) {
+	tmp_results[old_from_new_[i]] = (*candidate_points)[j][i];
+      }
+      for(index_t i = 0; i < (*candidate_points)[0].size(); i++) {
+	(*candidate_points)[j][i] = tmp_results[i];
+      }
     }
-    for(index_t i = 0; i < candidate_points_.size(); i++) {
-      candidate_points_[i] = tmp_results[i];
+
+    // Reshuffle the search windows.
+    GenMatrix<T> tmp_matrix;
+    tmp_matrix.Init(set_of_low_coord_limits.n_rows(),
+		    set_of_low_coord_limits.n_cols());
+    for(index_t i = 0; i < tmp_matrix.n_cols(); i++) {
+      GenVector<T> dest;
+      GenVector<T> src;
+      tmp_matrix.MakeColumnVector(old_from_new_windows[i], &dest);
+      set_of_low_coord_limits.MakeColumnVector(i, &src);
+      dest.CopyValues(src);
     }
+    set_of_low_coord_limits.CopyValues(tmp_matrix);
+    for(index_t i = 0; i < tmp_matrix.n_cols(); i++) {
+      GenVector<T> dest;
+      GenVector<T> src;
+      tmp_matrix.MakeColumnVector(old_from_new_windows[i], &dest);
+      set_of_high_coord_limits.MakeColumnVector(i, &src);
+      dest.CopyValues(src);
+    }
+    set_of_high_coord_limits.CopyValues(tmp_matrix);
   }
 
   /** @brief Save the tree to the file.
@@ -180,12 +225,6 @@ class OrthoRangeSearch {
 						      &new_from_old_);
     }
     fx_timer_stop(NULL, "tree_d");
-    
-    // initialize candidate nodes and points */
-    candidate_points_.Init(data_.n_cols());
-    for(index_t i = 0; i < data_.n_cols(); i++) {
-      candidate_points_[i] = false;
-    }
   }
 
  private:
@@ -249,16 +288,16 @@ class OrthoRangeSearch {
     old_from_new_buffer_ = 
     mem::AllocBytes<ArrayList<index_t> >(old_from_new_size);
     fread((void *) old_from_new_buffer_, old_from_new_size, 1, input);
-    old_from_new_.Copy(*(ot::SemiThaw<ArrayList<index_t> >
-			 ((char *) old_from_new_buffer_)));
+    old_from_new_.InitCopy(*(ot::SemiThaw<ArrayList<index_t> >
+			     ((char *) old_from_new_buffer_)));
 
     // read new_from_old
     fread((void *) &new_from_old_size, sizeof(int), 1, input);
     new_from_old_buffer_ = 
     mem::AllocBytes<ArrayList<index_t> >(new_from_old_size);
     fread((void *) new_from_old_buffer_, new_from_old_size, 1, input);
-    new_from_old_.Copy(*(ot::SemiThaw<ArrayList<index_t> >
-			 ((char *) new_from_old_buffer_)));
+    new_from_old_.InitCopy(*(ot::SemiThaw<ArrayList<index_t> >
+			     ((char *) new_from_old_buffer_)));
 
     printf("Tree has been loaded...\n");
 
@@ -277,81 +316,118 @@ class OrthoRangeSearch {
   
   /** @brief The base case.
    *
-   *  @param node The tree node currently under consideration.
+   *  @param search_window_node The node containing the search windows.
+   *  @param low_coord_limits The lower coordinate limits of the search for
+   *                          the current search window node.
+   *  @param high_coord_limits The upper coordinate limits of the search for
+   *                           the current search window node.
+   *  @param reference_node The reference tree node currently under 
+   *                        consideration.
    *  @param start_dim The starting dimension currently under consideration.
    *  @param end_dim The ending index of the dimension currently under 
    *                 consideration.
-   *  @param low_coord_limits The lower coordinate limits of the search.
-   *  @param high_coord_limits The upper coordinate limits of the search.
+   *  @param candiate_points Records the membership of each point for each
+   *                         search window.
    */
-  void ortho_slow_range_search(Tree *node, index_t start_dim, index_t end_dim,
-			       const GenVector<T> &low_coord_limits,
-			       const GenVector<T> &high_coord_limits) {
+  void ortho_slow_range_search(Tree *search_window_node,
+			       GenMatrix<T> &low_coord_limits,
+			       GenMatrix<T> &high_coord_limits,
+			       const ArrayList<index_t> &old_from_new_windows,
+			       const ArrayList<index_t> &new_from_old_windows,
+			       Tree *reference_node, 
+			       index_t start_dim, index_t end_dim,
+			       ArrayList<ArrayList<bool> > &candidate_points) {
     PruneStatus prune_flag;
 
-    for(index_t row = node->begin(); row < node->end(); row++) {
-      prune_flag = SUBSUME;
+    // Loop over each search window...
+    for(index_t window = search_window_node->begin();
+	window < search_window_node->end(); window++) {
 
-      for(index_t d = start_dim; d <= end_dim; d++) {
-	// determine which one of the two cases we have: EXCLUDE, SUBSUME
+      // Loop over each reference point...
+      for(index_t row = reference_node->begin(); row < reference_node->end(); 
+	  row++) {
+	prune_flag = SUBSUME;
+	
+	// loop over each dimension...
+	for(index_t d = start_dim; d <= end_dim; d++) {
+	  // determine which one of the two cases we have: EXCLUDE,
+	  // SUBSUME.
+	  
+	  // first the EXCLUDE case: when dist is above the upper
+	  // bound distance of this dimension, or dist is below the
+	  // lower bound distance of this dimension
+	  if(data_.get(d, row) > high_coord_limits.get(d, window) ||
+	     data_.get(d, row) < low_coord_limits.get(d, window)) {
+	    prune_flag = EXCLUDE;
+	    break;
+	  }
+	} // end of looping over dimensions...
 
-	// first the EXCLUDE case: when dist is above the upper bound distance
-	// of this dimension, or dist is below the lower bound distance of
-	// this dimension
-	if(data_.get(d, row) > high_coord_limits[d] ||
-	   data_.get(d, row) < low_coord_limits[d]) {
-	  prune_flag = EXCLUDE;
-	  break;
-	}
-      }
+	// Set each point result depending on the flag...
+	candidate_points[old_from_new_windows[window]][row] = 
+	  (prune_flag == SUBSUME);
 
-      if(prune_flag == SUBSUME) {
-	candidate_points_[row] = true;
-      }
-      else {
-	candidate_points_[row] = false;
-      }
-    }
+      } // end of iterating over reference points...
+    } // end of iterating over search window...
   }
 
   /** @brief The workhorse algorithm for fast orthgonal range
    *         search.
    *
-   *  @param node The current tree node that is under consideration.
-   *  @param start_dim The dimension currently under consideration.
-   *  @param low_coord_limits The lower coordinate limits of the search.
-   *  @param high_coord_limits The upper coordinate limits of the search
-   *                           window.
+   *  @param search_window_node The node containing the search windows.
+   *  @param low_coord_limits The lower coordinate limits of the search for
+   *                          the current search window node.
+   *  @param high_coord_limits The upper coordinate limits of the search for
+   *                           the current search window node.
+   *  @param reference_node The reference tree node currently under
+   *                        consideration.
+   *  @param start_dim The starting dimension currently under consideration.
+   *  @param end_dim The ending index of the dimension currently under
+   *                 consideration.
+   *  @param candiate_points Records the membership of each point for each
+   *                         search window.
    */
-  void ortho_range_search(Tree *node, index_t start_dim, index_t end_dim,
-			  const GenVector<T> &low_coord_limits, 
-			  const GenVector<T> &high_coord_limits) {
+  void ortho_range_search(Tree *search_window_node, 
+			  GenMatrix<T> &low_coord_limits, 
+			  GenMatrix<T> &high_coord_limits,
+			  const ArrayList<index_t> &old_from_new_windows,
+			  const ArrayList<index_t> &new_from_old_windows,
+			  Tree *reference_node, index_t start_dim,
+			  index_t end_dim,
+			  ArrayList<ArrayList<bool> > &candidate_points) {
 
     PruneStatus prune_flag = SUBSUME;
     
-    // loop over each dimension to determine inclusion/exclusion by 
-    // determining the lower and the upper bound distance per each dimension 
-    // for the given reference node, kn
+    // loop over each dimension to determine inclusion/exclusion by
+    // determining the lower and the upper bound distance per each
+    // dimension for the given reference node, kn
     for(index_t d = start_dim; d <= end_dim; d++) {
 
-      GenRange<T> node_dir_range = node->bound().get(d);
-
-      // determine which one of the three cases we have: EXCLUDE, SUBSUME, or
-      // INCONCLUSIVE.
+      const GenRange<T> &reference_node_dir_range = 
+	reference_node->bound().get(d);
+      const GenRange<T> &search_window_node_dir_range =
+	search_window_node->bound().get(d);
       
-      // first the EXCLUDE case: when mindist is above the upper bound 
-      // distance of this dimension,  or maxdist is below the lower bound 
-      // distance of this dimension
-      if(node_dir_range.lo > high_coord_limits[d] ||
-	 node_dir_range.hi < low_coord_limits[d]) {
-	for(index_t i = node->begin(); i < node->end(); i++) {
-	  candidate_points_[i] = false;
+      // determine which one of the three cases we have: EXCLUDE,
+      // SUBSUME, or INCONCLUSIVE.
+      
+      // First the EXCLUDE case: when mindist is above the upper bound
+      // distance of this dimension, or maxdist is below the lower
+      // bound distance of this dimension
+      if(reference_node_dir_range.lo > search_window_node_dir_range.hi ||
+	 reference_node_dir_range.hi < search_window_node_dir_range.lo) {
+	for(index_t j = search_window_node->begin(); 
+	    j < search_window_node->end(); j++) {
+	  for(index_t i = reference_node->begin(); 
+	      i < reference_node->end(); i++) {
+	    candidate_points[old_from_new_windows[j]][i] = false;
+	  }
 	}
 	return;
       }
       // otherwise, check for SUBSUME case
-      else if(low_coord_limits[d] <= node_dir_range.lo &&
-	      node_dir_range.hi <= high_coord_limits[d]) {
+      else if(search_window_node_dir_range.lo <= reference_node_dir_range.lo &&
+	      reference_node_dir_range.hi <= search_window_node_dir_range.hi) {
       }
       // if any dimension turns out to be inconclusive, then break.
       else {
@@ -365,7 +441,10 @@ class OrthoRangeSearch {
     if(prune_flag != SUBSUME) {
       for(index_t d = end_dim; d >= start_dim; d--) {
 
-	GenRange<T> node_dir_range = node->bound().get(d);
+	const GenRange<T> &reference_node_dir_range = 
+	  reference_node->bound().get(d);
+	const GenRange<T> &search_window_node_dir_range =
+	  search_window_node->bound().get(d);
 	
 	// determine which one of the three cases we have: EXCLUDE,
 	// SUBSUME, or INCONCLUSIVE.
@@ -373,16 +452,22 @@ class OrthoRangeSearch {
 	// first the EXCLUDE case: when mindist is above the upper
 	// bound distance of this dimension, or maxdist is below the
 	// lower bound distance of this dimension
-	if(node_dir_range.lo > high_coord_limits[d] ||
-	   node_dir_range.hi < low_coord_limits[d]) {
-	  for(index_t i = node->begin(); i < node->end(); i++) {
-	    candidate_points_[i] = false;
+	if(reference_node_dir_range.lo > search_window_node_dir_range.hi ||
+	   reference_node_dir_range.hi < search_window_node_dir_range.lo) {
+	  for(index_t j = search_window_node->begin(); 
+	      j < search_window_node->end(); j++) {
+	    for(index_t i = reference_node->begin(); 
+		i < reference_node->end(); i++) {
+	      candidate_points[old_from_new_windows[j]][i] = false;
+	    }
 	  }
 	  return;
 	}
 	// otherwise, check for SUBSUME case
-	else if(low_coord_limits[d] <= node_dir_range.lo &&
-		node_dir_range.hi <= high_coord_limits[d]) {
+	else if(search_window_node_dir_range.lo <= 
+		reference_node_dir_range.lo &&
+		reference_node_dir_range.hi <= 
+		search_window_node_dir_range.hi) {
 	}
 	// if any dimension turns out to be inconclusive, then break.
 	else {
@@ -398,22 +483,74 @@ class OrthoRangeSearch {
     // the current search window, if prune_flag is not SUBSUME.
 
     // In case of subsume, then add all points owned by this node to
-    // candidates
-    if(prune_flag == SUBSUME) {
-      for(index_t i = node->begin(); i < node->end(); i++) {
-	candidate_points_[i] = true;
+    // candidates - note that subsume prunes cannot be performed
+    // always in batch query.
+    if(search_window_node->count() == 1 && prune_flag == SUBSUME) {
+      for(index_t j = search_window_node->begin(); 
+	  j < search_window_node->end(); j++) {
+	for(index_t i = reference_node->begin(); 
+	    i < reference_node->end(); i++) {
+	  candidate_points[old_from_new_windows[j]][i] = true;
+	}
       }
       return;
     }
-    else if(node->is_leaf()) {
-      ortho_slow_range_search(node, start_dim, end_dim, low_coord_limits, 
-			      high_coord_limits);
-    }
     else {
-      ortho_range_search(node->left(), start_dim, end_dim, low_coord_limits,
-			 high_coord_limits);
-      ortho_range_search(node->right(), start_dim, end_dim, low_coord_limits,
-			 high_coord_limits);
+      if(search_window_node->is_leaf()) {
+
+	// If both the search window and the reference nodes are
+	// leaves, then compute exhaustively.
+	if(reference_node->is_leaf()) {
+	  ortho_slow_range_search(search_window_node, low_coord_limits,
+				  high_coord_limits, old_from_new_windows,
+				  new_from_old_windows, reference_node,
+				  start_dim, end_dim, candidate_points);
+	}
+	// If the reference node can be expanded, then do so.
+	else {
+	  ortho_range_search(search_window_node, low_coord_limits,
+			     high_coord_limits, old_from_new_windows,
+			     new_from_old_windows, reference_node->left(),
+			     start_dim, end_dim, candidate_points);
+	  ortho_range_search(search_window_node, low_coord_limits,
+			     high_coord_limits, old_from_new_windows,
+			     new_from_old_windows, reference_node->right(),
+			     start_dim, end_dim, candidate_points);
+	}
+      }
+      else {
+
+	// In this case, expand the query side.
+	if(reference_node->is_leaf()) {
+	  ortho_range_search(search_window_node->left(), low_coord_limits,
+                             high_coord_limits, old_from_new_windows,
+			     new_from_old_windows, reference_node,
+                             start_dim, end_dim, candidate_points);
+          ortho_range_search(search_window_node->right(), low_coord_limits,
+                             high_coord_limits, old_from_new_windows,
+			     new_from_old_windows, reference_node,
+                             start_dim, end_dim, candidate_points);
+	}
+	// Otherwise, expand both query and the reference sides.
+	else {
+          ortho_range_search(search_window_node->left(), low_coord_limits,
+                             high_coord_limits, old_from_new_windows,
+			     new_from_old_windows, reference_node->left(),
+                             start_dim, end_dim, candidate_points);
+          ortho_range_search(search_window_node->left(), low_coord_limits,
+                             high_coord_limits, old_from_new_windows,
+			     new_from_old_windows, reference_node->right(),
+                             start_dim, end_dim, candidate_points);
+          ortho_range_search(search_window_node->right(), low_coord_limits,
+                             high_coord_limits, old_from_new_windows,
+			     new_from_old_windows, reference_node->left(),
+                             start_dim, end_dim, candidate_points);
+          ortho_range_search(search_window_node->right(), low_coord_limits,
+                             high_coord_limits, old_from_new_windows,
+			     new_from_old_windows, reference_node->right(),
+                             start_dim, end_dim, candidate_points);
+	}
+      }
     }
   }
 };
