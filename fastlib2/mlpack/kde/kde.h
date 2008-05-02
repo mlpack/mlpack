@@ -855,13 +855,15 @@ class FastKde {
    */
   void PreProcess(Tree *node) {
 
-    // initialize the center of expansions and bandwidth for
-    // series expansion
+    // Initialize the center of expansions and bandwidth for series
+    // expansion.
+    Vector bounding_box_center;
     node->stat().Init(parameters_.ka_);
-    node->bound().CalculateMidpoint
-      (node->stat().farfield_expansion_.get_center());
-    node->bound().CalculateMidpoint
-      (node->stat().local_expansion_.get_center());
+    node->bound().CalculateMidpoint(&bounding_box_center);
+    (node->stat().farfield_expansion_.get_center())->CopyValues
+      (bounding_box_center);
+    (node->stat().local_expansion_.get_center())->CopyValues
+      (bounding_box_center);
 
     // reset summary result and postponed information
     node->stat().summary_result_.Init(parameters_);
