@@ -637,14 +637,16 @@ class DualtreeKde {
    */
   void PreProcess(Tree *node) {
 
-    // initialize the center of expansions and bandwidth for
-    // series expansion
+    // Initialize the center of expansions and bandwidth for series
+    // expansion.
+    Vector bounding_box_center;
     node->stat().Init(ka_);
-    node->bound().CalculateMidpoint
-      (node->stat().farfield_expansion_.get_center());
-    node->bound().CalculateMidpoint
-      (node->stat().local_expansion_.get_center());
-    
+    node->bound().CalculateMidpoint(&bounding_box_center);
+    (node->stat().farfield_expansion_.get_center())->CopyValues
+      (bounding_box_center);
+    (node->stat().local_expansion_.get_center())->CopyValues
+      (bounding_box_center);
+
     // initialize lower bound to 0
     node->stat().mass_l_ = 0;
     
