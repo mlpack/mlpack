@@ -25,6 +25,7 @@ namespace tree_gen_kdtree_private {
   template<typename T, typename TBound>
   index_t MatrixPartition(GenMatrix<T>& lower_limit_matrix, 
 			  GenMatrix<T>& upper_limit_matrix,
+			  index_t split_matrix,
 			  index_t dim, double splitvalue,
 			  index_t first, index_t count, TBound* left_bound, 
 			  TBound* right_bound, index_t *old_from_new) {
@@ -41,8 +42,11 @@ namespace tree_gen_kdtree_private {
 
       // If the lower limit is at most the split value, then put it in
       // the left.
-      while (lower_limit_matrix.get(dim, left) < splitvalue && 
-	     likely(left <= right)) {
+      double left_split = (split_matrix == 0) ?
+	lower_limit_matrix.get(dim, left):upper_limit_matrix.get(dim, left);
+      double right_split = (split_matrix == 0) ?
+	lower_limit_matrix.get(dim, right):upper_limit_matrix.get(dim, right);
+      while (left_split < splitvalue && likely(left <= right)) {
         GenVector<T> left_vector;
         lower_limit_matrix.MakeColumnVector(left, &left_vector);
         *left_bound |= left_vector;
@@ -50,12 +54,13 @@ namespace tree_gen_kdtree_private {
 	upper_limit_matrix.MakeColumnVector(left, &left_vector);
 	*left_bound |= left_vector;
         left++;
+	left_split = (split_matrix == 0) ?
+	  lower_limit_matrix.get(dim, left):upper_limit_matrix.get(dim, left);
       }
 
       // If the upper limit is at least the split value, then put it
       // in the right.
-      while (lower_limit_matrix.get(dim, right) >= splitvalue && 
-	     likely(left <= right)) {
+      while (right_split >= splitvalue && likely(left <= right)) {
         GenVector<T> right_vector;
 	lower_limit_matrix.MakeColumnVector(right, &right_vector);
 	*right_bound |= right_vector;
@@ -63,6 +68,9 @@ namespace tree_gen_kdtree_private {
         upper_limit_matrix.MakeColumnVector(right, &right_vector);
         *right_bound |= right_vector;
         right--;
+	right_split = (split_matrix == 0) ?
+	  lower_limit_matrix.get(dim, right):
+	  upper_limit_matrix.get(dim, right);
       }
 
       if (unlikely(left > right)) {
@@ -120,12 +128,15 @@ namespace tree_gen_kdtree_private {
     if (node->count() > leaf_size) {
       index_t split_dim = BIG_BAD_NUMBER;
       T max_width = -1;
+      double split_val = -1;
+      index_t split_matrix = -1;
       
       for (index_t d = 0; d < lower_limit_matrix.n_rows(); d++) {
 	T min_coord = 1;
 	T max_coord = 0;
 	for(index_t p = node->begin(); p < node->end(); p++) {
 	  if(p == node->begin()) {
+	    min_coord = max_coord = lower_limit_matrix.get(d, p);
 	  }
 	  else {
 	    min_coord = std::min(min_coord, lower_limit_matrix.get(d, p));
@@ -135,25 +146,29 @@ namespace tree_gen_kdtree_private {
         T w = max_coord - min_coord;
         for(index_t p = node->begin(); p < node->end(); p++) {
 	  if(p == node->begin()) {
+	    min_coord = max_coord = upper_limit_matrix.get(d, p);
 	  }
 	  else {
 	    min_coord = std::min(min_coord, upper_limit_matrix.get(d, p));
 	    max_coord = std::max(max_coord, upper_limit_matrix.get(d, p));
 	  }
         }
-	w = std::max(w, (T) (max_coord - min_coord));
-	
+	T w2 = max_coord - min_coord;
+	if(w > w2) {
+	  split_matrix = 0;
+	}
+	else {
+	  split_matrix = 1;
+	}
+
+	w = std::max(w2, (T) (max_coord - min_coord));
+		
         if (unlikely(w > max_width)) {
           max_width = w;
           split_dim = d;
+	  split_val = 0.5 * (max_coord + min_coord);
         }
       }
-      
-      // choose the split value along the dimension to be splitted
-      double split_val = 
-	TKdTreeSplitter::ChooseKdTreeSplitValue(lower_limit_matrix, 
-						upper_limit_matrix, node, 
-						split_dim);
 
       if (max_width < DBL_EPSILON) {
         // Okay, we can't do any splitting, because all these points are the
@@ -167,7 +182,7 @@ namespace tree_gen_kdtree_private {
         right->bound().Init(lower_limit_matrix.n_rows());
 
         index_t split_col = 
-	  MatrixPartition(lower_limit_matrix, upper_limit_matrix, 
+	  MatrixPartition(lower_limit_matrix, upper_limit_matrix, split_matrix,
 			  split_dim, split_val,
 			  node->begin(), node->count(),
 			  &left->bound(), &right->bound(),
