@@ -61,17 +61,17 @@
  */
 int main(int argc, char *argv[]) {
 
+  // Always initialize FASTexec with main's inputs at the beggining of
+  // your program.  This reads the command line, among other things.
+  fx_init(argc, argv);
+
   // Initialize Nick's memory manager...
   std::string pool_name("/scratch/temp_mem");
-  mmapmm::MemoryManager<false>::allocator_ = 
+  mmapmm::MemoryManager<false>::allocator_ =
     new mmapmm::MemoryManager<false>();
   mmapmm::MemoryManager<false>::allocator_->set_pool_name(pool_name);
   mmapmm::MemoryManager<false>::allocator_->set_capacity(65536*1000);
   mmapmm::MemoryManager<false>::allocator_->Init();
-
-  // Always initialize FASTexec with main's inputs at the beggining of
-  // your program.  This reads the command line, among other things.
-  fx_init(argc, argv);
 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
@@ -163,10 +163,10 @@ int main(int argc, char *argv[]) {
   fx_format_result(NULL, "speedup", "%g", 
 		   ((double)(naive_search_time->total).micros) / 
 		   ((double)(tree_range_search_time->total).micros));
-  fx_done();
 
   // Destroy Nick's memory manager...
   mmapmm::MemoryManager<false>::allocator_->Destruct();
   delete mmapmm::MemoryManager<false>::allocator_;
+  fx_done();
   return 0;
 }
