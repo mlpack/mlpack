@@ -41,8 +41,8 @@ class SVMLinearKernel {
     return ID_LINEAR;
   }
   /* Kernel value evaluation */
-  double Eval(const Vector& a, const Vector& b) const {
-    return la::Dot(a, b);
+  double Eval(const double* a, const double* b, index_t n_features) const {
+    return la::Dot(n_features, a, b);
   }
   /* Save kernel parameters to file */
   void SaveParam(FILE* fp) {
@@ -70,8 +70,8 @@ class SVMRBFKernel {
     return ID_GAUSSIAN;
   }
   /* Kernel value evaluation */
-  double Eval(const Vector& a, const Vector& b) const {
-    double distance_squared = la::DistanceSqEuclidean(a, b);
+  double Eval(const double *a, const double *b, index_t n_features) const {
+    double distance_squared = la::DistanceSqEuclidean(n_features, a, b);
     return exp(kpara_[1] * distance_squared);
   }
   /* Save kernel parameters to file */
@@ -506,9 +506,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   ArrayList<double> keval;
   keval.Init(total_num_sv_);
   for (i = 0; i < total_num_sv_; i++) {
-    Vector support_vector_i;
-    sv_.MakeColumnVector(i, &support_vector_i);
-    keval[i] = param_.kernel_.Eval(datum, support_vector_i);
+    keval[i] = param_.kernel_.Eval(datum.ptr(), sv_.GetColumnPtr(i), num_features_);
   }
   ArrayList<double> values;
   values.Init(num_models_);
@@ -566,9 +564,7 @@ double SVM<TKernel>::SVM_R_Predict_(const Vector& datum) {
   index_t i;
   double sum = 0.0;
   for (i = 0; i < total_num_sv_; i++) {
-    Vector support_vector_i;
-    sv_.MakeColumnVector(i, &support_vector_i);
-    sum += sv_coef_.get(0, i) * param_.kernel_.Eval(datum, support_vector_i);
+    sum += sv_coef_.get(0, i) * param_.kernel_.Eval(datum.ptr(), sv_.GetColumnPtr(i), num_features_);
   }
   sum += models_[0].bias_;
   return sum;

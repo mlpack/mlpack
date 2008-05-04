@@ -82,6 +82,7 @@ class SMO {
   Kernel kernel_;
   const Dataset *dataset_;
   index_t n_data_; /* number of data samples */
+  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector alpha_; /* the alphas, to be optimized */
@@ -159,9 +160,10 @@ class SMO {
 
   void CalcBias_();
 
-  void GetVector_(index_t i, Vector *v) const {
+  /*  void GetVector_(index_t i, Vector *v) const {
     datamatrix_.MakeColumnSubvector(i, 0, datamatrix_.n_rows()-1, v);
   }
+  */
 
   /**
    * Instead of C, we use C_+ and C_- to handle unbalanced data
@@ -198,22 +200,24 @@ class SMO {
     j = active_set_[j];
 
     // for SVM_R where n_alpha_==2*n_data_
-    i = i >= n_data_ ? (i-n_data_) : i;
-    j = j >= n_data_ ? (j-n_data_) : j;
+    if (learner_typeid_ == 1) {
+      i = i >= n_data_ ? (i-n_data_) : i;
+      j = j >= n_data_ ? (j-n_data_) : j;
+    }
 
     // Check cache
     //if (i == i_cache_ && j == j_cache_) {
     //  return cached_kernel_value_;
     //}
 
-    Vector v_i, v_j;
-    GetVector_(i, &v_i);
-    GetVector_(j, &v_j);
+    double *v_i, *v_j;
+    v_i = datamatrix_.GetColumnPtr(i);
+    v_j = datamatrix_.GetColumnPtr(j);
 
     // Do Caching. Store the recently caculated kernel values.
     //i_cache_ = i;
     //j_cache_ = j;
-    cached_kernel_value_ = kernel_.Eval(v_i, v_j);
+    cached_kernel_value_ = kernel_.Eval(v_i, v_j, n_features_);
     return cached_kernel_value_;
   }
 };
@@ -398,6 +402,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   dataset_ = dataset_in;
   datamatrix_.Alias(dataset_->matrix());
   n_data_ = datamatrix_.n_cols();
+  n_features_ = datamatrix_.n_rows() - 1;
 
   budget_ = min(budget_, n_data_);
   bias_ = 0.0;
