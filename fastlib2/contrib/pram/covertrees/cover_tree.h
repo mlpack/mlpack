@@ -108,15 +108,15 @@ class CoverTreeNode {
     max_dist_to_grandchild_ = max_dist;
     scale_depth_ = scale_depth;
     children_.Renew();
-    //NOTIFY("Stealing here");
     children_.InitSteal(children);
     num_of_children_ = children_.size();
     stat_.Init();
-
+    
     return;
   }
 
   void MakeLeafNode(index_t point) {
+    
     point_ = point;
     max_dist_to_grandchild_ = 0.0;
     dist_to_parent_ = 0.0;
@@ -124,7 +124,6 @@ class CoverTreeNode {
     scale_depth_ = 100;
     stat_.Init();
 
-    // NOTIFY("Leaf node for point %"LI"d\n", point);
     return;
   }
 

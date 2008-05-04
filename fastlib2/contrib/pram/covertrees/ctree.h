@@ -4,6 +4,7 @@
 #include <fastlib/fastlib.h>
 
 #include "cover_tree.h"
+#include "distances.h"
 
 namespace ctree {
 
@@ -32,8 +33,6 @@ namespace ctree {
   public:
     
     NodeDistances() {
-
-      // point_ = 0;
       distances_.Init(0);
     }
     
@@ -85,18 +84,19 @@ namespace ctree {
 
   template<typename TCoverTreeNode>
   void print_tree(index_t depth, TCoverTreeNode *top_node) {
-    print_space(depth);
-    printf("Point %"LI"d:", top_node->point()+1);
+    //print_space(depth);
+    //printf("Point %"LI"d:", top_node->point()+1);
+    NOTIFY("%"LI"d:%"LI"d", top_node->point()+1, top_node->scale_depth());
     if (top_node->num_of_children() > 0) {
-      printf("scale_depth = %"LI"d, max_dist = %lf, children = %"LI"d\n",
-	     top_node->scale_depth(), top_node->max_dist_to_grandchild(),
-	     top_node->num_of_children());
+      //printf("scale_depth = %"LI"d, max_dist = %lf, children = %"LI"d\n",
+      //     top_node->scale_depth(), top_node->max_dist_to_grandchild(),
+      //     top_node->num_of_children());
       for (index_t i = 0; i < top_node->num_of_children(); i++) {
 	print_tree(depth+1, top_node->child(i));
       }
     }
     else {
-      printf("\n");
+      //printf("\n");
     }
     return;
   }
@@ -114,16 +114,18 @@ namespace ctree {
 		 index_t scale) {
 
     double bound = scaled_distance(scale);
-    ArrayList<NodeDistances*> near;
     index_t initial_size = far->size();
+    ArrayList<NodeDistances*> near;
+    NodeDistances **begin = point_set->begin();
+    NodeDistances **end = point_set->end();
 
     near.Init(0);
-    for (index_t i = 0; i < point_set->size(); i++) {
-      if ((*point_set)[i]->distances()->back() > bound) {
-	far->PushBackCopy((*point_set)[i]);
+    for (; begin < end; begin++) {
+      if ((*begin)->distances()->back() > bound) {
+	far->PushBackCopy(*begin);
       }
       else {
-	near.PushBackCopy((*point_set)[i]);
+	near.PushBackCopy(*begin);
       }
     }
 
@@ -132,7 +134,6 @@ namespace ctree {
 		     "split_far: point set size doesn't add up\n");
 
     point_set->Renew();
-    //NOTIFY("steal @ 135");
     point_set->InitSteal(&near);
 
     return;
@@ -146,25 +147,27 @@ namespace ctree {
 		  index_t scale) {
 
     double bound = scaled_distance(scale);
-    ArrayList<NodeDistances*> far;
     index_t initial_size = near->size();
+    ArrayList<NodeDistances*> far;
+    NodeDistances **begin = point_set->begin();
+    NodeDistances **end = point_set->end();
+    Vector p;
 
+    data.MakeColumnVector(point, &p);
     far.Init(0);
-    for (index_t i = 0; i < point_set->size(); i++) {
+    for (; begin < end; begin++) {
 
-      Vector p1, p2;
+      Vector q;
 
-      data.MakeColumnVector(point, &p1);
-      data.MakeColumnVector((*point_set)[i]->point(), &p2);
-      double dist = sqrt(la::DistanceSqEuclidean(p1, p2));
+      data.MakeColumnVector((*begin)->point(), &q);
+      //double dist = sqrt(la::DistanceSqEuclidean(p,q));
+      double dist = pdc::DistanceEuclidean(p, q, bound);
       if (dist > bound) {
-	far.PushBackCopy((*point_set)[i]);
+	far.PushBackCopy(*begin);
       }
       else {
-	//NOTIFY("psize:%"LI"d",(*point_set)[i]->distances()->size());
-	(*point_set)[i]->add_distance(dist);
-	//NOTIFY("size:%"LI"d",(*point_set)[i]->distances()->size());
-	near->PushBackCopy((*point_set)[i]);
+	(*begin)->add_distance(dist);
+	near->PushBackCopy(*begin);
       }
     }
 
@@ -173,7 +176,6 @@ namespace ctree {
 		     "split_near: point set doesn't add up\n");
 
     point_set->Renew();
-    //NOTIFY("steal @ 176");
     point_set->InitSteal(&far);
 
     return;
@@ -188,7 +190,6 @@ namespace ctree {
     
     // no other point so leaf in explicit tree
     if (point_set->size() == 0) { 
-      //NOTIFY("Leaf level reached via end of points");
       TCoverTreeNode *node = new TCoverTreeNode();
       node->MakeLeafNode(point);
       return node;
@@ -196,21 +197,20 @@ namespace ctree {
     else {
       double max_dist = max_set(point_set);
       index_t next_scale = min(current_scale - 1, scale_of_distance(max_dist));
-      //NOTIFY("%"LI"d, %"LI"d,%"LI"d", current_scale, next_scale,
-      //     point_set->back()->point());
-
+      
       // At the -INF level so all points are nodes
       // and we have point with zero distances
       if (next_scale == NEG_INF) { 
-	//NOTIFY("leaf level reached via neginf");
 	ArrayList<TCoverTreeNode*> children;
+	NodeDistances **begin = point_set->begin();
+	NodeDistances **end = point_set->end();
 
 	children.Init(0);
 	children.PushBack()->MakeLeafNode(point);
 
-	for (index_t i = 0; i < point_set->size(); i++) {
-	  children.PushBack()->MakeLeafNode((*point_set)[i]->point());
-	  consumed_set->PushBackCopy((*point_set)[i]);
+	for (; begin < end; begin++) {
+	  children.PushBack()->MakeLeafNode((*begin)->point());
+	  consumed_set->PushBackCopy(*begin);
 	}
 
 	DEBUG_ASSERT(children.size() == point_set->size());
@@ -227,19 +227,15 @@ namespace ctree {
 	ArrayList<NodeDistances*> far;
 
 	far.Init(0);
-	//NOTIFY("Splitting far");
 	split_far(point_set, &far, current_scale);
-	//NOTIFY("split into covered and uncovered set");
+	
 	TCoverTreeNode *child = 
 	  private_make_tree<TCoverTreeNode>(point, data, next_scale, 
 					    max_scale, point_set, 
 					    consumed_set);
 	
-	//NOTIFY("selfchild made");
 	if (point_set->size() == 0) {
-	  //NOTIFY("point set out");
 	  point_set->Renew();
-	  //NOTIFY("Steal @ 242");
 	  point_set->InitSteal(&far);
 
 	  return child;
@@ -254,6 +250,7 @@ namespace ctree {
 	  new_point_set.Init(0);
 	  new_consumed_set.Init(0);
 	  children.PushBackCopy(child);
+	  //NOTIFY("%"LI"d:%"LI"d", child->point()+1, child->scale_depth());
 
 	  while (point_set->size() != 0) {
 
@@ -269,10 +266,7 @@ namespace ctree {
 		       &new_point_set, current_scale);
 	    split_near(new_point, data, &far, 
 		       &new_point_set, current_scale);
-	    //NOTIFY("%"LI"d new_point_set made %"LI"d, %"LI"d", 
-	    //	   current_scale, new_point_set.size(), 
-	    //     new_consumed_set.size());
-
+	    
 	    TCoverTreeNode *child_node = 
 	      private_make_tree<TCoverTreeNode>(new_point, data,
 						next_scale,max_scale,
@@ -281,28 +275,25 @@ namespace ctree {
 	    
 	    child_node->set_dist_to_parent(new_dist);
 	    children.PushBackCopy(child_node);
-	    //NOTIFY("Child added");
-
+	    //NOTIFY("%"LI"d:%"LI"d", child_node->point()+1, child_node->scale_depth());
+	    
 	    double bound = scaled_distance(current_scale);
+	    NodeDistances **begin = new_point_set.begin();
+	    NodeDistances **end = new_point_set.end();
 
-	    for (index_t i = 0; i < new_point_set.size(); i++) {
+	    for (; begin < end; begin++) {
 
-	      new_point_set[i]->distances()->PopBack();
-	      if (new_point_set[i]->distances()->back() > bound) {
-		point_set->PushBackCopy(new_point_set[i]);
+	      (*begin)->distances()->PopBack();
+	      if ((*begin)->distances()->back() > bound) {
+		point_set->PushBackCopy(*begin);
 	      }
 	      else {
-		far.PushBackCopy(new_point_set[i]);
+		far.PushBackCopy(*begin);
 	      }
 	    }
-	    //NOTIFY("New point set cleared %"LI"d", new_point_set.size());
 	    new_point_set.Resize(0);
-	    //NOTIFY("%"LI"d - %"LI"d %"LI"d", 
-	    //   max_scale, current_scale, new_consumed_set.size());
+	    
 	    while (new_consumed_set.size() > 0) {
-	      //NOTIFY("%"LI"d, %"LI"d",
-	      //     new_consumed_set.back()->point(),
-	      //     new_consumed_set.back()->distances()->size());
 	      new_consumed_set.back()->distances()->PopBack();
 	      new_consumed_set.PopBackInit(consumed_set->PushBackRaw());
 	    }
@@ -310,15 +301,13 @@ namespace ctree {
 	  }
 
 	  point_set->Renew();
-	  //NOTIFY("Steal @ 313");
 	  point_set->InitSteal(&far);
 
 	  TCoverTreeNode *node = new TCoverTreeNode();
 
 	  node->MakeNode(point, max_set(consumed_set), 
 			 max_scale - current_scale, &children);
-	  //NOTIFY("Node made with self shild and other children");
-
+	  
 	  return node;
 	}
       }
@@ -337,7 +326,7 @@ namespace ctree {
     point_set.Init(0);
     consumed_set.Init(0);
 
-    //NOTIFY("Making point set");
+    // speed up possible here by using pointers
     for (index_t i = 1; i < n; i++) {
       NodeDistances *node_distances = new NodeDistances();
       Vector point;
@@ -346,25 +335,20 @@ namespace ctree {
       dataset.MakeColumnVector(i, &point);
       dist = sqrt(la::DistanceSqEuclidean(root_point, point));
 
-      //NOTIFY("Init Node Distance\n");
       node_distances->Init(i, dist);
 
-      //NOTIFY("adding ot point set");
       point_set.PushBackCopy(node_distances);
-      //      NOTIFY("%"LI"d,%"LI"d",point_set.back()->point(),
-      //     point_set.back()->distances()->size());
     }
     DEBUG_ASSERT(point_set.size() == n - 1);
 
     double max_dist = max_set(&point_set);
     index_t max_scale = scale_of_distance(max_dist);
-    //NOTIFY("%lf",point_set[0]->distances()->back());
-    //NOTIFY("private tree making");
+    
+    
     TCoverTreeNode *root_node = 
       private_make_tree<TCoverTreeNode>(0, dataset, max_scale,
 					max_scale, &point_set,
 					&consumed_set);
-    //NOTIFY("private_tree_made");
     
     return root_node;
   }

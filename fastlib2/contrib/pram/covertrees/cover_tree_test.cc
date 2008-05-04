@@ -12,18 +12,21 @@ int main(int argc, char *argv[]) {
   data::Load(ref_data, &r_set);
   data::Load(q_data, &q_set);
 
+  //NOTIFY("%"LI"d , %"LI"d", q_set.n_rows(), q_set.n_cols());
   AllKNN allknn;
   ArrayList<double> neighbor_distances;
   ArrayList<index_t> neighbor_indices;
 
   datanode *allknn_module = fx_submodule(NULL, "allknn", "allknn");
-  index_t knn = fx_param_int(allknn_module, "knns",1);
+  //index_t knn = fx_param_int(allknn_module, "knns",1);
+  
   allknn.Init(q_set, r_set, allknn_module);
-
+   
   fx_timer_start(allknn_module, "computing_neighbors");
   allknn.ComputeNeighbors(&neighbor_indices, &neighbor_distances);
   fx_timer_stop(allknn_module, "computing_neighbors");
-
+  
+  /*
   DEBUG_ASSERT(q_set.n_cols() * knn == neighbor_indices.size());
   for (index_t i = 0; i < q_set.n_cols(); i++) {
     NOTIFY("%"LI"d :", i);
@@ -34,8 +37,8 @@ int main(int argc, char *argv[]) {
 							   -j]);
     }
   }
-
-  fx_silence();
+  */
+  //fx_silence();
   fx_done();
 
   return 0;
