@@ -84,25 +84,20 @@ int main(int argc, char *argv[]) {
   // data::Load inits a matrix with the contents of a .csv or .arff.
   data_aux::Load(dataset_file_name, &dataset);
 
-  // Read the search range from the file. Note that the ranges will be
-  // a two-column dataset: the first column denotes the lower limits
-  // and the second column denotes the upper limits.
-  const char *range_data_file_name = fx_param_str(NULL, "range", "range.ds");
+  // Generate the 200 uniformly distributed search ranges.
   GenMatrix<short int> low_coord_limits, high_coord_limits;
-  GenMatrix<short int> range_dataset;
-  data_aux::LoadTranspose(range_data_file_name, &range_dataset);
-  low_coord_limits.Init(range_dataset.n_rows(), range_dataset.n_cols() / 2);
-  high_coord_limits.Init(range_dataset.n_rows(), range_dataset.n_cols() / 2);
-  for(index_t i = 0; i < range_dataset.n_cols() / 2; i++) {
-    GenVector<short int> low_coord_limit_src, high_coord_limit_src;
-    GenVector<short int> low_coord_limit_dest, high_coord_limit_dest;
-    range_dataset.MakeColumnVector(2 * i, &low_coord_limit_src);
-    range_dataset.MakeColumnVector(2 * i + 1, &high_coord_limit_src);
-    low_coord_limits.MakeColumnVector(i, &low_coord_limit_dest);
-    high_coord_limits.MakeColumnVector(i, &high_coord_limit_dest);
+  low_coord_limits.Init(dataset.n_rows(), 200);
+  high_coord_limits.Init(dataset.n_rows(), 200);
+  for(index_t i = 0; i < 200; i++) {
+    
+    // For each dimension, generate random number between 0 and 230.
+    for(index_t j = 0; j < dataset.n_rows(); j++) {
+      short int random_num = math::RandInt(21, 230);
+      short int perturbation = math::RandInt(0, 20);
 
-    low_coord_limit_dest.CopyValues(low_coord_limit_src);
-    high_coord_limit_dest.CopyValues(high_coord_limit_src);
+      low_coord_limits.set(j, i, random_num - perturbation);
+      high_coord_limits.set(j, i, random_num + perturbation);
+    }
   }
 
   // flag for determining whether we need to do naive algorithm.
@@ -122,7 +117,7 @@ int main(int argc, char *argv[]) {
   OrthoRangeSearch<short int> fast_search;
   fast_search.Init(dataset, fx_param_exists(NULL, "do_naive"),
 		   load_tree_file_name);
-  ArrayList<ArrayList<bool> > fast_search_results;
+  GenMatrix<bool> fast_search_results;
   fast_search.Compute(low_coord_limits, high_coord_limits, 
 		      &fast_search_results);
 
@@ -135,17 +130,16 @@ int main(int argc, char *argv[]) {
   // if naive option is specified, do naive algorithm
   if(do_naive) {
     NaiveOrthoRangeSearch<short int> search;
-    ArrayList<ArrayList<bool> > naive_search_results;
+    GenMatrix<bool> naive_search_results;
     search.Init(dataset);
     search.Compute(low_coord_limits, high_coord_limits, &naive_search_results);
     bool flag = true;
 
-    for(index_t j = 0; j < high_coord_limits.n_cols(); j++) {
-      for(index_t i = 0; i < fast_search_results.size(); i++) {
-	
-	if(fast_search_results[j][i] != naive_search_results[j][i]) {
+    for(index_t i = 0; i < fast_search_results.n_cols(); i++) {
+      for(index_t j = 0; j < dataset.n_cols(); j++) {	
+	if(fast_search_results.get(j, i) != naive_search_results.get(j, i)) {
 	  flag = false;
-	  printf("Differ on %d\n", i);
+	  printf("Differ on (%d, %d)\n", i, j);
 	  break;
 	}
       }
