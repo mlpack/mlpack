@@ -581,7 +581,7 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       }
     } // e.g. [10,13,5,17,0,6,7,,4,9,8,1,2,,...]
     else {
-      permutation.Copy(cv_labels_index); // e.g. [0,5,6,7,10,13,17,,1,2,4,8,9,,...]
+      permutation.InitCopy(cv_labels_index); // e.g. [0,5,6,7,10,13,17,,1,2,4,8,9,,...]
     }
     // begin CV
     for (int i_fold = 0; i_fold < n_folds_; i_fold++) {

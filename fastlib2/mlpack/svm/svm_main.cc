@@ -3,8 +3,10 @@
  *
  * @file svm_main.cc
  *
- * This file contains main routines for performing multiclass SVM 
- * classification. One-vs-One method is employed. 
+ * This file contains main routines for performing  
+ * 0. multiclass SVM classification (one-vs-one method is employed).
+ * 1. SVM regression (epsilon-insensitive loss i.e. epsilon-SVR).
+ * 2. SVM density estimation (one-class SVM)
  *
  * It provides four modes:
  * "cv": cross validation;
@@ -12,11 +14,14 @@
  * "train_test": training and then online batch testing; 
  * "test": offline batch testing.
  *
+ * Please refer to README for detail description of usage and examples.
+ *
  * @see svm.h
  * @see smo.h
  */
 
 #include "svm.h"
+#include "fastlib/math/statistics.h"
 
 /**
 * Data Normalization
@@ -150,16 +155,16 @@ int LoadData(Dataset* dataset, String datafilename){
   }
   
   if (fx_param_bool(NULL, "normalize", 1)) {
-    fprintf(stderr, "Normalizing\n");
+    fprintf(stderr, "Normalizing...\n");
     DoSvmNormalize(dataset);
   } else {
-    fprintf(stderr, "Skipping normalize\n");
+    fprintf(stderr, "Skipping normalization...\n");
   }
   return 1;
 }
 
 /**
-* Multiclass SVM classification- Main function
+* Multiclass SVM classification/ SVM regression - Main function
 *
 * @param: argc
 * @param: argv
@@ -170,6 +175,22 @@ int main(int argc, char *argv[]) {
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");
+  String learner_name = fx_param_str_req(NULL,"learner_name");
+  int learner_typeid;
+  
+  if (learner_name == "svm_c") { // Support Vector Classfication
+    learner_typeid = 0;
+  }
+  else if (learner_name == "svm_r") { // Support Vector Regression
+    learner_typeid = 1;
+  }
+  else if (learner_name == "svm_de") { // Support Vector Density Estimation
+    learner_typeid = 2;
+  }
+  else {
+    fprintf(stderr, "Unknown support vector learner name! Program stops!\n");
+    return 0;
+  }
   
   // TODO: more kernels to be supported
 
@@ -183,20 +204,20 @@ int main(int argc, char *argv[]) {
     return 1;
     
     if (kernel == "linear") {
-      SimpleCrossValidator< SVM<SVMLinearKernel> > cross_validator; 
+      GeneralCrossValidator< SVM<SVMLinearKernel> > cross_validator; 
       /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1 */
-      cross_validator.Init(&cvset,cvset.n_labels(),fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
+      cross_validator.Init(learner_typeid, fx_param_int_req(NULL,"k_cv"), &cvset, fx_root, "svm");
       /* k_cv folds cross validation; (true): do training set permutation */
       cross_validator.Run(true);
-      cross_validator.confusion_matrix().PrintDebug("confusion matrix");
+      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
     }
     else if (kernel == "gaussian") {
-      SimpleCrossValidator< SVM<SVMRBFKernel> > cross_validator; 
+      GeneralCrossValidator< SVM<SVMRBFKernel> > cross_validator; 
       /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds */
-      cross_validator.Init(&cvset,cvset.n_labels(),fx_param_int_req(NULL,"k_cv"), fx_root, "svm");
+      cross_validator.Init(learner_typeid, fx_param_int_req(NULL,"k_cv"), &cvset, fx_root, "svm");
       /* k_cv folds cross validation; (true): do training set permutation */
       cross_validator.Run(true);
-      cross_validator.confusion_matrix().PrintDebug("confusion matrix");
+      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
     }
   }
   /* Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data */
@@ -213,52 +234,52 @@ int main(int argc, char *argv[]) {
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.InitTrain(trainset, trainset.n_labels(), svm_module);
+      svm.InitTrain(learner_typeid, trainset, svm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
-	fprintf(stderr, "SVM Classifying... \n");
+	fprintf(stderr, "SVM Predicting... \n");
 	/* Load testing data */
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchClassify(&testset, "testlabels");
+	svm.BatchPredict(learner_typeid, testset, "predicted_values");
       }
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.InitTrain(trainset, trainset.n_labels(), svm_module);
+      svm.InitTrain(learner_typeid, trainset, svm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
-	fprintf(stderr, "SVM Classifying... \n");
+	fprintf(stderr, "SVM Predicting... \n");
 	/* Load testing data */
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	svm.BatchClassify(&testset, "testlabels"); // TODO:param_req
+	svm.BatchPredict(learner_typeid, testset, "predicted_values"); // TODO:param_req
       }
     }
   }
   /* Testing(offline) Mode, need loading model file and testing data */
   else if (mode=="test") {
-    fprintf(stderr, "SVM Classifying... \n");
+    fprintf(stderr, "SVM Predicting... \n");
 
     /* Load testing data */
     Dataset testset;
     if (LoadData(&testset, "test_data") == 0) // TODO:param_req
       return 1;
 
-    /* Begin Classification */
+    /* Begin Prediction */
     datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchClassify(&testset, "svm_model", "testlabels"); // TODO:param_req
+      svm.Init(learner_typeid, testset, svm_module); 
+      svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.Init(testset, testset.n_labels(), svm_module); // TODO:n_labels() -> num_classes_
-      svm.LoadModelBatchClassify(&testset, "svm_model", "testlabels"); // TODO:param_req
+      svm.Init(learner_typeid, testset, svm_module); 
+      svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req
     }
   }
   fx_done();

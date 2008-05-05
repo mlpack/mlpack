@@ -290,16 +290,16 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
   index_t i, j;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      models_.AddBack();
+      models_.PushBack();
 
       SMO<Kernel> smo;
       /* Initialize SMO parameters */
       ArrayList<double> param_feed_db;
       param_feed_db.Init();
-      param_feed_db.AddBackItem(param_.b_);
-      param_feed_db.AddBackItem(param_.Cp_);
-      param_feed_db.AddBackItem(param_.Cn_);
-      param_feed_db.AddBackItem(param_.wss_);
+      param_feed_db.PushBack() = param_.b_;
+      param_feed_db.PushBack() = param_.Cp_;
+      param_feed_db.PushBack() = param_.Cn_;
+      param_feed_db.PushBack() = param_.wss_;
       smo.InitPara(learner_typeid, param_feed_db);
       /* Initialize kernel */
       smo.kernel().Init(fx_submodule(module, "kernel", "kernel"));
@@ -351,8 +351,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
     ct = 0;
     for (j = 0; j < train_labels_ct_[i]; j++) {
       if (trainset_sv_indicator_[ train_labels_index_[train_labels_startpos_[i]+j] ]) {
-	//*sv_index_.AddBack() = train_labels_index_[train_labels_startpos_[i]+j];
-	sv_index_.AddBackItem( train_labels_index_[train_labels_startpos_[i]+j] );
+	sv_index_.PushBack() = train_labels_index_[train_labels_startpos_[i]+j];
 	total_num_sv_++;
 	ct++;
       }
@@ -413,16 +412,16 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
   for (i=0; i<n_data_; i++)
     dataset_index[i] = i;
 
-  models_.AddBack();
+  models_.PushBack();
 
   SMO<Kernel> smo;
   /* Initialize SMO parameters */
   ArrayList<double> param_feed_db;
   param_feed_db.Init();
-  param_feed_db.AddBackItem(param_.b_);
-  param_feed_db.AddBackItem(param_.C_);
-  param_feed_db.AddBackItem(param_.epsilon_);
-  param_feed_db.AddBackItem(param_.wss_);
+  param_feed_db.PushBack() = param_.b_;
+  param_feed_db.PushBack() = param_.C_;
+  param_feed_db.PushBack() = param_.epsilon_;
+  param_feed_db.PushBack() = param_.wss_;
   smo.InitPara(learner_typeid, param_feed_db);
   /* Initialize kernel */
   smo.kernel().Init(fx_submodule(module, "kernel", "kernel"));
@@ -437,7 +436,7 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
   /* Get index list of support vectors */
   for (i = 0; i < n_data_; i++) {
     if (trainset_sv_indicator_[i]) {
-      sv_index_.AddBackItem(i);
+      sv_index_.PushBack() = i;
       total_num_sv_++;
     }
   }
@@ -728,7 +727,7 @@ void SVM<TKernel>::SaveModel_(int learner_typeid, String model_filename) {
 template<typename TKernel>
 void SVM<TKernel>::LoadModel_(int learner_typeid, String model_filename) {
   if (learner_typeid == 0) {// SVM_C
-    train_labels_list_.Destruct();
+    train_labels_list_.Renew();
     train_labels_list_.Init(num_classes_); // get labels list from the model file
   }
 
@@ -741,7 +740,7 @@ void SVM<TKernel>::LoadModel_(int learner_typeid, String model_filename) {
   char cmd[80]; 
   int i, j; int temp_d; double temp_f;
   for (i = 0; i < num_models_; i++) {
-	models_.AddBack();
+	models_.PushBack();
 	models_[i].coef_.Init();
   }
   while (1) {
@@ -784,7 +783,7 @@ void SVM<TKernel>::LoadModel_(int learner_typeid, String model_filename) {
     else if (strcmp(cmd, "sv_index")==0) {
       for ( i= 0; i < total_num_sv_; i++) {
 	fscanf(fp,"%d",&temp_d); 
-	sv_index_.AddBackItem(temp_d);
+	sv_index_.PushBack() = temp_d;
       }
     }
     // load kernel info
