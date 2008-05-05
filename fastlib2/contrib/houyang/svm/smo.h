@@ -742,12 +742,12 @@ void SMO<TKernel>::GetSVM(ArrayList<index_t> &dataset_index, ArrayList<double> &
   if (learner_typeid_ == 0) {// SVM_C
     for (index_t i = 0; i < n_data_; i++) {
       if (alpha_[i] >= SMO_ALPHA_ZERO) { // support vectors found
-	coef.AddBackItem( alpha_[i] * y_[i] );
+	coef.PushBack() = alpha_[i] * y_[i];
 	sv_indicator[dataset_index[i]] = true;
 	n_sv_++;
       }
       else {
-	coef.AddBackItem(0);
+	coef.PushBack() = 0;
       }
     }
   }
@@ -755,12 +755,12 @@ void SMO<TKernel>::GetSVM(ArrayList<index_t> &dataset_index, ArrayList<double> &
     for (index_t i = 0; i < n_data_; i++) {
       double alpha_diff = -alpha_[i] + alpha_[i+n_data_]; // alpha_i^* - alpha_i
       if (fabs(alpha_diff) >= SMO_ALPHA_ZERO) { // support vectors found
-	coef.AddBackItem(alpha_diff); 
+	coef.PushBack() = alpha_diff; 
 	sv_indicator[dataset_index[i]] = true;
 	n_sv_++;
       }
       else {
-	coef.AddBackItem(0);
+	coef.PushBack() = 0;
       }
     }
   }

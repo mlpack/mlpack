@@ -21,7 +21,7 @@
  */
 
 #include "svm.h"
-#include "math/statistics.h"
+#include "fastlib/math/statistics.h"
 
 /**
 * Data Normalization

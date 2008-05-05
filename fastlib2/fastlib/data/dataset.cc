@@ -26,7 +26,7 @@ void DatasetFeature::Format(double value, String *result) const {
       }
       break;
     case INTEGER: result->InitSprintf("%lu", long(value)); break;
-    case NOMINAL: result->Copy(value_name(int(value))); break;
+    case NOMINAL: result->InitCopy(value_name(int(value))); break;
     #ifdef DEBUG
     default: abort();
     #endif
@@ -263,14 +263,16 @@ index_t Dataset::n_labels() const {
   index_t i = 0;
   index_t label_row_idx = matrix_.n_rows() - 1; // the last row is for labels
   index_t n_labels = 0;
+
+  double current_label;
   
   ArrayList<double> labels_list;
   labels_list.Init();
   labels_list.PushBack() = matrix_.get(label_row_idx,0); 
-  ++n_labels;
+  n_labels++;
 
   for (i = 1; i < matrix_.n_cols(); i++) {
-    double current_label = matrix_.get(label_row_idx,i);
+    current_label = matrix_.get(label_row_idx,i);
     index_t j = 0;
     for (j = 0; j < n_labels; j++) {
       if (current_label == labels_list[j]) {
@@ -279,14 +281,14 @@ index_t Dataset::n_labels() const {
     }
     if (j == n_labels) { // new label
       labels_list.PushBack() = current_label;
-      ++n_labels;
+      n_labels++;
     }
   }
   labels_list.Clear();
   return n_labels;
 }
 
-void Dataset::GetLabels(ArrayList<int> &labels_list,
+void Dataset::GetLabels(ArrayList<double> &labels_list,
                         ArrayList<index_t> &labels_index,
                         ArrayList<index_t> &labels_ct,
                         ArrayList<index_t> &labels_startpos) const {
@@ -294,6 +296,14 @@ void Dataset::GetLabels(ArrayList<int> &labels_list,
   index_t label_row_idx = matrix_.n_rows() - 1; // the last row is for labels
   index_t n_points = matrix_.n_cols();
   index_t n_labels = 0;
+
+  double current_label;
+
+  // these Arraylists need initialization before-hand
+  labels_list.Renew();
+  labels_index.Renew();
+  labels_ct.Renew();
+  labels_startpos.Renew();
 
   labels_index.Init(n_points);
   labels_list.Init();
@@ -304,22 +314,22 @@ void Dataset::GetLabels(ArrayList<int> &labels_list,
   labels_temp.Init(n_points);
   labels_temp[0] = 0;
 
-  labels_list.PushBack() = (int)matrix_.get(label_row_idx,0);  // labels need to be integers
+  labels_list.PushBack() = matrix_.get(label_row_idx,0);
   labels_ct.PushBack() = 1;
   n_labels++;
 
   for (i = 1; i < n_points; i++) {
-    double current_label = matrix_.get(label_row_idx, i);
+    current_label = matrix_.get(label_row_idx, i);
     index_t j = 0;
     for (j = 0; j < n_labels; j++) {
       if (current_label == labels_list[j]) {
         labels_ct[j]++;
-              break;
+	break;
       }
     }
     labels_temp[i] = j;
     if (j == n_labels) { // new label
-      labels_list.PushBack() = (int)current_label; // labels need to be integers
+      labels_list.PushBack() = current_label; // add new label to list
       labels_ct.PushBack() = 1;
       n_labels++;
     }

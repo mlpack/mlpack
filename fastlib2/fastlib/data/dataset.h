@@ -402,7 +402,7 @@ class Dataset {
    * class_2...class_k), each item indicate the position of the label
    * in the dataset.
    *
-   * @param labels_list a list of labels in the dataset. e.g. [0,1,2]
+   * @param labels_list a list of labels in the dataset. e.g. [0.0,1.0,2.0]
    *        for a 3-class dataset
    * @param labels_index the label indices of each data point. e.g.
    *        [(c1)[0,5,6,7,10,13,17],
@@ -413,7 +413,7 @@ class Dataset {
    * @param labels_startpos start positions of each label class in
    *        labels_index. e.g. [0,7,12]
    */
-  void GetLabels(ArrayList<int> &labels_list,
+  void GetLabels(ArrayList<double> &labels_list,
                  ArrayList<index_t> &labels_index,
                  ArrayList<index_t> &labels_ct,
                  ArrayList<index_t> &labels_startpos) const;
