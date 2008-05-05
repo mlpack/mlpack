@@ -19,7 +19,7 @@
  *    search.Init(dataset);
  *    search.Compute(low_coord_limits, high_coord_limits);
  *
- *    ArrayList<bool> naive_search_results;
+ *    GenMatrix<bool> naive_search_results;
  *
  *    // Make sure that the vector is uninitialized before passing.
  *    search.get_results(&naive_search_results);
@@ -70,15 +70,14 @@ class NaiveOrthoRangeSearch {
    */
   void Compute(const GenMatrix<T> &low_coord_limits, 
 	       const GenMatrix<T> &high_coord_limits,
-	       ArrayList<ArrayList<bool> > *search_results) {
+	       GenMatrix<bool> *search_results) {
 
     // Allocate the space for holding the search results.
-    search_results->Init(low_coord_limits.n_cols());
+    search_results->Init(data_.n_cols(), low_coord_limits.n_cols());
 
     // Start the search.
     fx_timer_start(NULL, "naive_search");
     for(index_t j = 0; j < low_coord_limits.n_cols(); j++) {
-      (*search_results)[j].Init(data_.n_cols());
       for(index_t i = 0; i < data_.n_cols(); i++) {	
 	GenVector<T> pt;
 	bool flag = true;
@@ -95,7 +94,7 @@ class NaiveOrthoRangeSearch {
 	    break;
 	  }
 	}
-	(*search_results)[j][i] = flag;
+	(*search_results).set(i, j, flag);
       }
     }
     fx_timer_stop(NULL, "naive_search");

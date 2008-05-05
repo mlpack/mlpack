@@ -68,39 +68,27 @@ class OrthoRangeSearch {
    */
   void Compute(GenMatrix<T> &set_of_low_coord_limits,
 	       GenMatrix<T> &set_of_high_coord_limits, 
-	       ArrayList<ArrayList<bool> > *candidate_points) {
+	       GenMatrix<bool> *candidate_points) {
 
     // Allocate space for storing candidate points found during
     // search.
-    candidate_points->Init(set_of_low_coord_limits.n_cols());
+    candidate_points->Init(data_.n_cols(), set_of_low_coord_limits.n_cols());
     for(index_t j = 0; j < set_of_low_coord_limits.n_cols(); j++) {
-      ((*candidate_points)[j]).Init(data_.n_cols());
       for(index_t i = 0; i < data_.n_cols(); i++) {
-	(*candidate_points)[j][i] = false;
+	(*candidate_points).set(i, j, false);
       }
     }
 
     fx_timer_start(NULL, "tree_range_search");
 
-    set_of_low_coord_limits.PrintDebug();
-
     // First build a tree out of the set of range windows.
     ArrayList<index_t> old_from_new_windows;
     ArrayList<index_t> new_from_old_windows;
+
     Tree *tree_of_windows = 
       proximity::MakeGenKdTree<T, Tree, proximity::GenKdTreeMedianSplitter>
       (set_of_low_coord_limits, set_of_high_coord_limits, 2,
        &old_from_new_windows, &new_from_old_windows);
-    for(index_t i = 0; i < old_from_new_windows.size(); i++) {
-      printf("%d ", old_from_new_windows[i]);
-    }
-    printf("\n");
-    for(index_t i = 0; i < new_from_old_windows.size(); i++) {
-      printf("%d ", new_from_old_windows[i]);
-    }
-    printf("\n");
-
-    set_of_low_coord_limits.PrintDebug();
 
     ortho_range_search(tree_of_windows, set_of_low_coord_limits, 
 		       set_of_high_coord_limits, old_from_new_windows,
@@ -108,20 +96,9 @@ class OrthoRangeSearch {
 		       root_, 0, data_.n_rows() - 1, *candidate_points);
     
     fx_timer_stop(NULL, "tree_range_search");
+
+    // Delete the tree of search windows...
     delete tree_of_windows;
-
-    // reshuffle the results to account for shuffling during tree construction
-    ArrayList<bool> tmp_results;
-    tmp_results.Init((*candidate_points)[0].size());
-
-    for(index_t j = 0; j < set_of_low_coord_limits.n_cols(); j++) {
-      for(index_t i = 0; i < (*candidate_points)[0].size(); i++) {
-	tmp_results[old_from_new_[i]] = (*candidate_points)[j][i];
-      }
-      for(index_t i = 0; i < (*candidate_points)[0].size(); i++) {
-	(*candidate_points)[j][i] = tmp_results[i];
-      }
-    }
 
     // Reshuffle the search windows.
     GenMatrix<T> tmp_matrix;
@@ -135,6 +112,7 @@ class OrthoRangeSearch {
       dest.CopyValues(src);
     }
     set_of_low_coord_limits.CopyValues(tmp_matrix);
+
     for(index_t i = 0; i < tmp_matrix.n_cols(); i++) {
       GenVector<T> dest;
       GenVector<T> src;
@@ -256,11 +234,6 @@ class OrthoRangeSearch {
   /** @brief The root of the tree */
   Tree *root_;
 
-  /** @brief List of candidate points. The i-th position tells whether
-   *         the i-th data point was in the orthogonal search window.
-   */
-  ArrayList<bool> candidate_points_;
-
   ////////// Private Member Functions //////////
 
   /** @brief Load the tree from the file.
@@ -336,7 +309,7 @@ class OrthoRangeSearch {
 			       const ArrayList<index_t> &new_from_old_windows,
 			       Tree *reference_node, 
 			       index_t start_dim, index_t end_dim,
-			       ArrayList<ArrayList<bool> > &candidate_points) {
+			       GenMatrix<bool> &candidate_points) {
     PruneStatus prune_flag;
 
     // Loop over each search window...
@@ -364,8 +337,8 @@ class OrthoRangeSearch {
 	} // end of looping over dimensions...
 
 	// Set each point result depending on the flag...
-	candidate_points[old_from_new_windows[window]][row] = 
-	  (prune_flag == SUBSUME);
+	candidate_points.set(old_from_new_[row], old_from_new_windows[window],
+			     (prune_flag == SUBSUME));
 
       } // end of iterating over reference points...
     } // end of iterating over search window...
@@ -393,8 +366,7 @@ class OrthoRangeSearch {
 			  const ArrayList<index_t> &old_from_new_windows,
 			  const ArrayList<index_t> &new_from_old_windows,
 			  Tree *reference_node, index_t start_dim,
-			  index_t end_dim,
-			  ArrayList<ArrayList<bool> > &candidate_points) {
+			  index_t end_dim, GenMatrix<bool> &candidate_points) {
 
     PruneStatus prune_flag = SUBSUME;
     
@@ -416,13 +388,6 @@ class OrthoRangeSearch {
       // bound distance of this dimension
       if(reference_node_dir_range.lo > search_window_node_dir_range.hi ||
 	 reference_node_dir_range.hi < search_window_node_dir_range.lo) {
-	for(index_t j = search_window_node->begin(); 
-	    j < search_window_node->end(); j++) {
-	  for(index_t i = reference_node->begin(); 
-	      i < reference_node->end(); i++) {
-	    candidate_points[old_from_new_windows[j]][i] = false;
-	  }
-	}
 	return;
       }
       // otherwise, check for SUBSUME case
@@ -431,56 +396,13 @@ class OrthoRangeSearch {
       }
       // if any dimension turns out to be inconclusive, then break.
       else {
-	start_dim = d;
+	if(search_window_node->count() == 1) {
+	  start_dim = d;
+	}
 	prune_flag = INCONCLUSIVE;
 	break;
       }
     } // end of iterating over each dimension.
-
-    // Now scan from backwards to look for a EXCLUDE prune.
-    if(prune_flag != SUBSUME) {
-      for(index_t d = end_dim; d >= start_dim; d--) {
-
-	const GenRange<T> &reference_node_dir_range = 
-	  reference_node->bound().get(d);
-	const GenRange<T> &search_window_node_dir_range =
-	  search_window_node->bound().get(d);
-	
-	// determine which one of the three cases we have: EXCLUDE,
-	// SUBSUME, or INCONCLUSIVE.
-	
-	// first the EXCLUDE case: when mindist is above the upper
-	// bound distance of this dimension, or maxdist is below the
-	// lower bound distance of this dimension
-	if(reference_node_dir_range.lo > search_window_node_dir_range.hi ||
-	   reference_node_dir_range.hi < search_window_node_dir_range.lo) {
-	  for(index_t j = search_window_node->begin(); 
-	      j < search_window_node->end(); j++) {
-	    for(index_t i = reference_node->begin(); 
-		i < reference_node->end(); i++) {
-	      candidate_points[old_from_new_windows[j]][i] = false;
-	    }
-	  }
-	  return;
-	}
-	// otherwise, check for SUBSUME case
-	else if(search_window_node_dir_range.lo <= 
-		reference_node_dir_range.lo &&
-		reference_node_dir_range.hi <= 
-		search_window_node_dir_range.hi) {
-	}
-	// if any dimension turns out to be inconclusive, then break.
-	else {
-	  end_dim = d;
-	  prune_flag = INCONCLUSIVE;
-	  break;
-	}
-      } // end of iterating over each dimension.
-    } // end of non-SUBSUME case.
-
-    // At this point: our invariant is that [0, start_dim - 1] union
-    // [end_dim + 1, dimension - 1] of the current node is subsumed by
-    // the current search window, if prune_flag is not SUBSUME.
 
     // In case of subsume, then add all points owned by this node to
     // candidates - note that subsume prunes cannot be performed
@@ -490,7 +412,8 @@ class OrthoRangeSearch {
 	  j < search_window_node->end(); j++) {
 	for(index_t i = reference_node->begin(); 
 	    i < reference_node->end(); i++) {
-	  candidate_points[old_from_new_windows[j]][i] = true;
+	  candidate_points.set(old_from_new_[i], old_from_new_windows[j],
+			       true);
 	}
       }
       return;
