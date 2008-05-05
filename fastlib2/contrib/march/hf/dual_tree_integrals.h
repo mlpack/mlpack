@@ -33,6 +33,8 @@ class DualTreeIntegrals {
    * Stat class for tree building.  
    *
    * Maybe something for allocating error.  
+   *
+   * Should also include density matrix bounds.
    */
   class IntegralStat {
    
@@ -125,16 +127,31 @@ class DualTreeIntegrals {
     
   }; // class IntegralStat
   
+  /**
+   * The stat class for the square tree
+   */
+  class SquareIntegralStat {
+  
+  
+  }; // class SquareIntegralStat
+  
  public:
   // This assumes identical bandwidth small Gaussians
   // Otherwise, I'll need something other than a Matrix
   // I should also consider something better than bounding boxes
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, IntegralStat> IntegralTree; 
   
+  typedef SquareTree<IntegralTree, IntegralTree, SquareIntegralStat> 
+          SquareIntegralTree;
+  
  private:
     
   // The tree 
   IntegralTree* tree_;
+  
+  // the square tree
+  SquareIntegralTree* square_tree_;
+  
   
   // The centers of the identical width, spherical Gaussian basis functions
   Matrix centers_;
@@ -215,7 +232,7 @@ class DualTreeIntegrals {
   /**
    * Determines if the integral among the four nodes can be approximated
    *
-   * May need some idea of the amount of error allowed for these nodes
+   * TODO: This function is wrong, needs to be updated
    */
   bool CanApproximate_(IntegralTree* mu, IntegralTree* nu, IntegralTree* rho, 
                  IntegralTree* sigma, double* approximate_value) { 
@@ -376,13 +393,18 @@ class DualTreeIntegrals {
    * it does in the case where rho and sigma are the same node.  There is a 
    * similar problem when mu and nu are the same.
    */
-  void ComputeIntegralsBaseCase_(IntegralTree* mu, IntegralTree* nu, 
+  void ComputeIntegralsBaseCase_(SquareIntegralTree* mu_nu, 
                                  IntegralTree* rho, IntegralTree* sigma) {
+    
+    IntegralTree* mu = mu_nu->query1();
+    IntegralTree* nu = mu_nu->query2();
     
     for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
      
       for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
        
+       // Not sure about this one, maybe it should be something other than 
+       // total integrals here. . .
         double integral_value = total_integrals_.ref(mu_index, nu_index);
         
         for (index_t rho_index = rho->begin(); rho_index < rho->end();
@@ -502,107 +524,155 @@ class DualTreeIntegrals {
    * TODO: make sure I take advantage of symmetry using some kind of a 
    * tree traversal
    */
-  void ComputeIntegralsRecursion_(IntegralTree* mu, IntegralTree* nu, 
-                                  IntegralTree* rho, IntegralTree* sigma) {
+  void ComputeIntegralsRecursion_(SquareIntegralTree* query, 
+                                  SquareIntegralTree* reference) {
     
     
-    // Need to figure out the right way to take advantage of the four-way 
-    // symmetry
-    /*if ((mu->stat().node_index() <= nu->stat().node_index()) &&
-        (rho->stat().node_index() <= sigma->stat().node_index()) &&
-        (((mu->stat().node_index() + nu->stat().node_index()) <= 
-          (rho->stat().node_index() + sigma->stat().node_index())))) {
-    */
-   /* if ((mu->stat().node_index() <= nu->stat().node_index()) &&
-        (rho->stat().node_index() <= sigma->stat().node_index())) {
-     */ 
-    if (mu->stat().node_index() <= nu->stat().node_index()) {
+    double integral_approximation;
+    
+    // Makes the if statements below simpler
+    // might be slow though - lots of extra calls on the stack
+    if ((query == NULL || reference == NULL)) {
+      return;
+    }
+    //Not sure if I should check for approximations or leaves first
+    else if (query->is_leaf() && reference->is_leaf()) {
       
-      //printf("Considering nodes: %d, %d, %d, %d\n", mu->stat().node_index(), 
-            // nu->stat().node_index(), rho->stat().node_index(), sigma->stat().node_index());
+      number_of_base_cases_++;
+      ComputeIntegralsBaseCase_(query, reference);
       
+    }      
+    else if (CanApproximate_(query, reference, &integral_approximation)) {
       
-      double integral_approximation;
+      DEBUG_ASSERT(integral_approximation != BIG_BAD_NUMBER);
       
-      //Not sure if I should check for approximations or leaves first
-      if (mu->is_leaf() && nu->is_leaf() && rho->is_leaf()
-               && sigma->is_leaf()) {
+      number_of_approximations_++;
+      
+      FillApproximation_(query, reference, integral_approximation);
+      
+    }
+    else if (query->is_leaf()){
+    
+      ComputeIntegralsRecursion_(query, reference->left_left_child());
+      ComputeIntegralsRecursion_(query, reference->left_right_child());
+      ComputeIntegralsRecursion_(query, reference->right_left_child());
+      ComputeIntegralsRecursion_(query, reference->right_right_child());
+    
+    }    
+    else if (reference->is_leaf()) {
+    
+      ComputeIntegralsRecursion_(query->left_left_child(), reference);
+      ComputeIntegralsRecursion_(query->left_right_child(), reference);
+      ComputeIntegralsRecursion_(query->right_left_child(), reference);
+      ComputeIntegralsRecursion_(query->right_right_child(), reference);
+      
+    }
+    else {
+    
+    // I have to do better than this, symmetry is being ignored
+      ComputeIntegralsRecursion_(query->left_left_child(), 
+                                 reference->left_left_child());
+      ComputeIntegralsRecursion_(query->left_left_child(), 
+                                 reference->left_right_child());
+      ComputeIntegralsRecursion_(query->left_left_child(), 
+                                 reference->right_left_child());
+      ComputeIntegralsRecursion_(query->left_left_child(), 
+                                 reference->right_right_child());
+      
+      ComputeIntegralsRecursion_(query->left_right_child(), 
+                                 reference->left_left_child());
+      ComputeIntegralsRecursion_(query->left_right_child(), 
+                                 reference->left_right_child());
+      ComputeIntegralsRecursion_(query->left_right_child(), 
+                                 reference->right_left_child());
+      ComputeIntegralsRecursion_(query->left_right_child(), 
+                                 reference->right_right_child());
+      
+      ComputeIntegralsRecursion_(query->right_left_child(), 
+                                 reference->left_left_child());
+      ComputeIntegralsRecursion_(query->right_left_child(), 
+                                 reference->left_right_child());
+      ComputeIntegralsRecursion_(query->right_left_child(), 
+                                 reference->right_left_child());
+      ComputeIntegralsRecursion_(query->right_left_child(), 
+                                 reference->right_right_child());
+      
+      ComputeIntegralsRecursion_(query->right_right_child(), 
+                                 reference->left_left_child());
+      ComputeIntegralsRecursion_(query->right_right_child(), 
+                                 reference->left_right_child());
+      ComputeIntegralsRecursion_(query->right_right_child(), 
+                                 reference->right_left_child());
+      ComputeIntegralsRecursion_(query->right_right_child(), 
+                                 reference->right_right_child());
+          
+      
+    }
+    
+    /*
+    else {
+    
+      IntegralTree* mu = query->query1();
+      IntegralTree* nu = query->query2();
+      
+      IntegralTree* rho = reference->query1();
+      IntegralTree* sigma = reference->query2();
+    
+      index_t mu_height = mu->stat().height();
+      index_t nu_height = nu->stat().height();
+      index_t rho_height = rho->stat().height();
+      index_t sigma_height = sigma->stat().height();
+      
+      index_t greatest_height = mu_height;
+      
+      if (nu_height > greatest_height) {
+        greatest_height = nu_height;
+      }
+      if (rho_height > greatest_height) {
+        greatest_height = rho_height;
+      }
+      if (sigma_height > greatest_height) {
+        greatest_height = sigma_height;
+      }
+      
+      DEBUG_ASSERT(greatest_height > 0);
+      
+      if (greatest_height == mu_height) {
         
+        DEBUG_ASSERT(!(mu->is_leaf()));
         
-        number_of_base_cases_++;
-        ComputeIntegralsBaseCase_(mu, nu, rho, sigma);
+        ComputeIntegralsRecursion_(mu->left(), nu, rho, sigma);
+        ComputeIntegralsRecursion_(mu->right(), nu, rho, sigma);
         
-      }      
-      else if (CanApproximate_(mu, nu, rho, sigma, &integral_approximation)) {
+      }
+      else if (greatest_height == nu_height) {
+
+        DEBUG_ASSERT(!(nu->is_leaf()));
+      
+        ComputeIntegralsRecursion_(mu, nu->left(), rho, sigma);
+        ComputeIntegralsRecursion_(mu, nu->right(), rho, sigma);
         
-        DEBUG_ASSERT(integral_approximation != BIG_BAD_NUMBER);
-        
-        number_of_approximations_++;
-        
-        FillApproximation_(mu, nu, rho, sigma, integral_approximation);
-        
+      }
+      else if (greatest_height == rho_height) {
+      
+        DEBUG_ASSERT(!(rho->is_leaf()));
+
+        ComputeIntegralsRecursion_(mu, nu, rho->left(), sigma);
+        ComputeIntegralsRecursion_(mu, nu, rho->right(), sigma);
+      
       }
       else {
-        // find the node with greatest height
-        // should also consider node with most points
-        index_t mu_height = mu->stat().height();
-        index_t nu_height = nu->stat().height();
-        index_t rho_height = rho->stat().height();
-        index_t sigma_height = sigma->stat().height();
         
-        index_t greatest_height = mu_height;
+        DEBUG_ASSERT(greatest_height == sigma_height);
         
-        if (nu_height > greatest_height) {
-          greatest_height = nu_height;
-        }
-        if (rho_height > greatest_height) {
-          greatest_height = rho_height;
-        }
-        if (sigma_height > greatest_height) {
-          greatest_height = sigma_height;
-        }
+        DEBUG_ASSERT(!(sigma->is_leaf()));
         
-        DEBUG_ASSERT(greatest_height > 0);
+        ComputeIntegralsRecursion_(mu, nu, rho, sigma->left());
+        ComputeIntegralsRecursion_(mu, nu, rho, sigma->right());
         
-        if (greatest_height == mu_height) {
-          
-          DEBUG_ASSERT(!(mu->is_leaf()));
-          
-          ComputeIntegralsRecursion_(mu->left(), nu, rho, sigma);
-          ComputeIntegralsRecursion_(mu->right(), nu, rho, sigma);
-          
-        }
-        else if (greatest_height == nu_height) {
-
-          DEBUG_ASSERT(!(nu->is_leaf()));
-        
-          ComputeIntegralsRecursion_(mu, nu->left(), rho, sigma);
-          ComputeIntegralsRecursion_(mu, nu->right(), rho, sigma);
-          
-        }
-        // Should consider prioritizing here, but maybe later
-        else if (greatest_height == rho_height) {
-        
-          DEBUG_ASSERT(!(rho->is_leaf()));
-
-          ComputeIntegralsRecursion_(mu, nu, rho->left(), sigma);
-          ComputeIntegralsRecursion_(mu, nu, rho->right(), sigma);
-        
-        }
-        else {
-          
-          DEBUG_ASSERT(greatest_height == sigma_height);
-          
-          DEBUG_ASSERT(!(sigma->is_leaf()));
-          
-          ComputeIntegralsRecursion_(mu, nu, rho, sigma->left());
-          ComputeIntegralsRecursion_(mu, nu, rho, sigma->right());
-          
-        }
-                
       }
-          
-    }
+              
+    } */
     
   } // ComputeIntegralsRecursion_
   
