@@ -104,6 +104,7 @@ int main(int argc, char *argv[]){
     LBfgs<MaxFurthestNeighbors> engine;
     engine.Init(&opt_function, l_bfgs_node);
     if (pca_init==true) {
+      la::Scale(1e-1, initial_data);
       engine.set_coordinates(*initial_data);
     }
     engine.ComputeLocalOptimumBFGS();

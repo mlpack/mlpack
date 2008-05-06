@@ -85,7 +85,18 @@ class DHrectBound {
     DEBUG_BOUNDS(i, dim_);
     return bounds_[i];
   }
-
+  
+  /**
+   * Calculates the maximum distance within the rectangle
+   */
+  double CalculateMaxDistanceSq() const {
+    double max_distance=0;
+    for (index_t i = 0; i < dim_; i++) {
+      max_distance+=math::Sqr(bounds_[i].width());
+    }
+    return max_distance;  
+  }
+  
   /** Calculates the midpoint of the range */
   void CalculateMidpoint(Vector *centroid) const {
     centroid->Init(dim_);
@@ -93,6 +104,13 @@ class DHrectBound {
       (*centroid)[i] = bounds_[i].mid();
     }
   }
+  /** Calculates the midpoint of the range */
+  void CalculateMidpointOverwrite(Vector *centroid) const {
+    for (index_t i = 0; i < dim_; i++) {
+      (*centroid)[i] = bounds_[i].mid();
+    }
+  }
+
 
   /**
    * Calculates minimum bound-to-point squared distance.
