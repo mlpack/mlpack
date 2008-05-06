@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
 
     if (kernel == "linear") {
       RVM<RVMLinearKernel> rvm;
-      rvm.InitTrain(learner_typeid, trainset, trainset.n_labels(), rvm_module);
+      rvm.InitTrain(learner_typeid, trainset, rvm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
 	fprintf(stderr, "RVM Predicting... \n");
@@ -231,12 +231,12 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	rvm.BatchPredict(&testset, "predicted_values");
+	rvm.BatchPredict(learner_typeid, testset, "predicted_values");
       }
     }
     else if (kernel == "gaussian") {
       RVM<RVMRBFKernel> rvm;
-      rvm.InitTrain(learner_typeid, trainset, trainset.n_labels(), rvm_module);
+      rvm.InitTrain(learner_typeid, trainset, rvm_module);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
 	fprintf(stderr, "RVM Predicting... \n");
@@ -244,7 +244,7 @@ int main(int argc, char *argv[]) {
 	Dataset testset;
 	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	rvm.BatchPredict(&testset, "predicted_values"); // TODO:param_req
+	rvm.BatchPredict(learner_typeid, testset, "predicted_values"); // TODO:param_req
       }
     }
   }
@@ -262,13 +262,13 @@ int main(int argc, char *argv[]) {
 
     if (kernel == "linear") {
       RVM<RVMLinearKernel> rvm;
-      rvm.Init(learner_typeid, testset, testset.n_labels(), rvm_module); // TODO:n_labels() -> num_classes_
-      rvm.LoadModelBatchPredict(&testset, "rvm_model", "predicted_values"); // TODO:param_req
+      rvm.Init(learner_typeid, testset, rvm_module); // TODO:n_labels() -> num_classes_
+      rvm.LoadModelBatchPredict(learner_typeid, testset, "rvm_model", "predicted_values"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       RVM<RVMRBFKernel> rvm;
-      rvm.Init(learner_typeid, testset, testset.n_labels(), rvm_module); // TODO:n_labels() -> num_classes_
-      rvm.LoadModelBatchPredict(&testset, "rvm_model", "predicted_values"); // TODO:param_req
+      rvm.Init(learner_typeid, testset, rvm_module); // TODO:n_labels() -> num_classes_
+      rvm.LoadModelBatchPredict(learner_typeid, testset, "rvm_model", "predicted_values"); // TODO:param_req
     }
   }
   fx_done();

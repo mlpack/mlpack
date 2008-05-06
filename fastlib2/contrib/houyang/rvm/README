@@ -36,23 +36,6 @@ Explanation of arguments:
 
 Examples:
 ---------------------------------------------------------------------------------------------------
-a1.Relevance Vector Classification, Stratified cross validation mode
-rvm_main --learner_name=rvm_c --mode=cv --k_cv=4 --cv_data=synthClassTrain.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-rvm_main --learner_name=rvm_c --mode=cv --k_cv=4 --cv_data=synthClassTrain.csv --kernel=linear --c=10 --normalize=0
-
-a2.Relevance Vector Classification, Training mode (model will be saved as "rvm_model")
-rvm_main --learner_name=rvm_c --mode=train --train_data=synthClassTrain.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-rvm_main --learner_name=rvm_c --mode=train --train_data=synthClassTrain.csv --kernel=linear --c=10 --normalize=0
-
-a3.Relevance Vector Classification, Training+testing mode
-rvm_main --learner_name=rvm_c --mode=train_test --train_data=synthClassTrain.csv --test_data=synthClassTest.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-rvm_main --learner_name=rvm_c --mode=train_test --train_data=synthClassTrain.csv --test_data=synthClassTest.csv --kernel=linear --c=10 --normalize=0
-
-a4.Relevance Vector Classification, Testing mode (the model file "rvm_model" should exist)
-rvm_main --learner_name=rvm_c --mode=test --test_data=synthClassTest.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-rvm_main --learner_name=rvm_c --mode=test --test_data=synthClassTest.csv --kernel=linear --c=10 --normalize=0
-
----------------------------------------------------------------------------------------------------
 b1.Relevance Vector Regression, Cross validation mode
 rvm_main --learner_name=rvm_r --mode=cv --k_cv=4 --cv_data=sincTrain.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
 rvm_main --learner_name=rvm_r --mode=cv --k_cv=4 --cv_data=sincTrain.csv --kernel=linear --c=10 --normalize=0
@@ -68,3 +51,21 @@ rvm_main --learner_name=rvm_r --mode=train_test --train_data=sincTrain.csv --tes
 b4.Relevance Vector Regression, Testing mode (the model file "rvm_model" should exist)
 rvm_main --learner_name=rvm_r --mode=test --test_data=sincTest.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
 rvm_main --learner_name=rvm_r --mode=test --test_data=sincTest.csv --kernel=linear --c=10 --normalize=0
+
+---------------------------------------------------------------------------------------------------
+TODO:
+a1.Relevance Vector Classification, Stratified cross validation mode
+rvm_main --learner_name=rvm_c --mode=cv --k_cv=4 --cv_data=synthClassTrain.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+rvm_main --learner_name=rvm_c --mode=cv --k_cv=4 --cv_data=synthClassTrain.csv --kernel=linear --c=10 --normalize=0
+
+a2.Relevance Vector Classification, Training mode (model will be saved as "rvm_model")
+rvm_main --learner_name=rvm_c --mode=train --train_data=synthClassTrain.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+rvm_main --learner_name=rvm_c --mode=train --train_data=synthClassTrain.csv --kernel=linear --c=10 --normalize=0
+
+a3.Relevance Vector Classification, Training+testing mode
+rvm_main --learner_name=rvm_c --mode=train_test --train_data=synthClassTrain.csv --test_data=synthClassTest.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+rvm_main --learner_name=rvm_c --mode=train_test --train_data=synthClassTrain.csv --test_data=synthClassTest.csv --kernel=linear --c=10 --normalize=0
+
+a4.Relevance Vector Classification, Testing mode (the model file "rvm_model" should exist)
+rvm_main --learner_name=rvm_c --mode=test --test_data=synthClassTest.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+rvm_main --learner_name=rvm_c --mode=test --test_data=synthClassTest.csv --kernel=linear --c=10 --normalize=0
