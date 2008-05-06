@@ -37,7 +37,7 @@
 
 #include "fastlib/fastlib.h"
 
-#include "math/statistics.h"
+#include "fastlib/math/statistics.h"
 
 /* TODO: I don't actually want these to be public */
 // Prune basis function when its alpha is greater than this
@@ -255,31 +255,33 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
 	    alpha_nz[i] = INFINITY;
 	}
       }
-
-      Vector anz;
-      anz.Copy(alpha_nz);
-
-      index_t anz_ct = 0;
-      for (i=0; i<anz.length(); i++) {
-	if (anz[i] != 0)
-	  anz_ct ++;
+      for(i=0; i<n_data_+1; i++) {
+	if (alpha_nz_idx[i] != 0)
+	  alpha_v[i] = alpha_nz[i];
       }
+      //alpha_nz_idx.Destruct();     
 
-      Vector DAlpha;
-      DAlpha.Init(anz_ct);
       index_t ct = 0;
-      for (i=0; i<anz.length(); i++) {
-	if (anz[i] != 0) {
-	  DAlpha[ct] = fabs( logAlpha_nz[i] - log(anz[i]) );
-	  ct++;
+      for (i=0; i<ct_non_zero; i++) {
+	if (alpha_nz[i] != 0)
+	  ct ++;
+      }
+      Vector DAlpha;
+      DAlpha.Init(ct);
+      ct = 0;
+      for (i=0; i<ct_non_zero; i++) {
+	if (alpha_nz[i] != 0) {
+	  DAlpha[ct] = fabs( logAlpha_nz[i] - log(alpha_nz[i]) );
+	  ct ++;
 	}
       }
-
+      //alpha_nz.Destruct();
       double maxDAlpha = - INFINITY;
-      for (i=0; i<anz_ct; i++) {
+      for (i=0; i<ct; i++) {
 	if (DAlpha[i] > maxDAlpha)
 	  maxDAlpha = DAlpha[i];
       }
+      //DAlpha.Destruct();
 
       // Terminate if the largest alpha change is judged too small
       if (maxDAlpha < MIN_DELTA_LOGALPHA)
@@ -303,10 +305,10 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
   for (i=0; i<n_data_; i++) {
     alpha_v_temp = alpha_v[i];
     if (alpha_v_temp != 0)
-      *rv_index.AddBack() = i;      
+      rv_index.PushBack() = i;      
   }
   for (i=0; i<ct_non_zero; i++)
-    *weights.AddBack() = w_nz.get(i,0);
+    weights.PushBack() = w_nz.get(i,0);
 }
 
 /**
@@ -321,22 +323,28 @@ void SBL_EST<TKernel>::CalcLldRegression(Matrix &train_values, Matrix &PHI_t_nz,
   Hessian.InitDiagonal(alpha_nz); // Hessian = diag(alpha_nz)
   Matrix temp_mat_a; // dim(temp_mat) == ct_non_zero x ct_non_zero
   la::MulTransAInit(PHI_nz, PHI_nz, &temp_mat_a); // PHI_nz'*PHI_nz
-  la::AddExpert(beta, temp_mat_a, &Hessian); // Hessian = (PHI_nz'*PHI_nz)*beta + diag(alpha_nz);
 
+  la::AddExpert(beta, temp_mat_a, &Hessian); // Hessian = (PHI_nz'*PHI_nz)*beta + diag(alpha_nz);
+  //temp_mat_a.Destruct();
   la::CholeskyInit(Hessian, &U); // Hessian = U'*U
   la::Inverse(&U); // OUTPUT, U = U^-1
+  //Hessian.Destruct();
   
   Matrix temp_mat_b;
   la::MulTransBInit(U, U, &temp_mat_b); // U^-1 * (U^-1)'
   la::MulOverwrite(temp_mat_b, PHI_t_nz, &w_nz); // U^-1 * (U^-1)' * PHI_t_nz
+
+  //temp_mat_b.Destruct();
+  //PHI_t_nz.Destruct();
   la::Scale(beta, &w_nz); // OUTPUT, w_nz = U^-1 * (U^-1)' * PHI_t_nz * beta, OUTPUT
   
   Matrix temp_PHInz_mult_wnz;
   la::MulInit(PHI_nz, w_nz, &temp_PHInz_mult_wnz);
-
+  
+  // ED = sum((t-PHI_nz*w(nonZero)).^2); % Data error
   for (i=0; i<n_data_; i++)
     ED += math::Sqr( train_values.get(i,0) - temp_PHInz_mult_wnz.get(i,0) );
-
+  //temp_PHInz_mult_wnz.Destruct();
   betaED = beta * ED; // OUTPUT, betaED = beta * sum((t-PHI_nz*w(nonZero)).^2);;
   logBeta = n_data_ * log(beta); // OUTPUT
 }
