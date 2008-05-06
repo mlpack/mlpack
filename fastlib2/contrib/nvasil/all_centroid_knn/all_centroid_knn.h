@@ -51,7 +51,7 @@ class AllCentroidkNN {
     
    public:
     index_t centroid_id() {
-      return centroind_id_;
+      return centroid_id_;
     }
     void set_centroid_id(index_t centroid_id) {
       centroid_id_=centroid_id;
@@ -101,21 +101,19 @@ class AllCentroidkNN {
   // The number of points in a leaf
   index_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
-  Vector neighbor_distances_;
-  // The indices of the candidate nearest neighbor for each query
-  ArrayList<index_t> neighbor_indices_;
-  // number of nearest neighbrs
+    // number of nearest neighbrs
   index_t knns_; 
    // The module containing the parameters for this computation. 
   struct datanode* module_;
+  index_t dimension_;
  
  /////////////////////////////// Helper Functions ///////////////////////////////////////////////////
   void ComputeCentroidsRecursion_(TreeType *node, Matrix *centroids) {
     Vector vec;
     index_t centroid_id=node->stat().centroid_id();
-    centroids->MakeVector(centroid_id, &vec);
-    node->bound().CalculateMidpoint(&vec);	
-    if (!nodes->IsLeaf()) {
+    centroids->MakeColumnVector(centroid_id, &vec);
+    node->bound().CalculateMidpointOverwrite(&vec);	
+    if (!node->is_leaf()) {
       ComputeCentroidsRecursion_(node->left(), centroids);
       ComputeCentroidsRecursion_(node->right(), centroids);
     }
@@ -123,43 +121,47 @@ class AllCentroidkNN {
  
   void RetrieveCentroidsRecursion_(TreeType *node, index_t level,
       index_t parent_centroid_id,  
-      GenVector<index_t> *centroid_ids, Matrix *features) { 
+      ArrayList<index_t> *centroid_ids, Matrix *features) { 
     
     index_t centroid_id=node->stat().centroid_id();
-    if (level==0 || node->IsLeaf()) {
+    if (level==0 || node->is_leaf()) {
       centroid_ids->PushBackCopy(centroid_id);
       memcpy(features->GetColumnPtr(centroid_id), 
           features->GetColumnPtr(parent_centroid_id), sizeof(double)*dimension_);
       return;
     }
-    if (!node->IsLeaf()) {
+    if (!node->is_leaf()) {
       level--;
-      RetrieveCentroidsRecursion_(node->left(), level, centroid_id, centroid_ids);
-      RetrieveCentroidsRecursion_(node->right(), level, centroid_id, centroid_ids);
+      RetrieveCentroidsRecursion_(node->left(), level, centroid_id, 
+          centroid_ids, features);
+      RetrieveCentroidsRecursion_(node->right(), level, centroid_id, centroid_ids, 
+          features);
     }
   }
 
   void RetrieveCentroidsRecursion_(TreeType *node, double range, 
       index_t parent_centroid_id,  
-      GenVector<index_t> *centroid_ids) { 
+      ArrayList<index_t> *centroid_ids, Matrix *features) { 
     
     index_t centroid_id=node->stat().centroid_id();
-    if (node.bounds().CalculateMaxDistanceSq()<range || node->IsLeaf()) {
+    if (node->bound().CalculateMaxDistanceSq()<range || node->is_leaf()) {
       centroid_ids->PushBackCopy(centroid_id);
       memcpy(features->GetColumnPtr(centroid_id), 
           features->GetColumnPtr(parent_centroid_id), sizeof(double)*dimension_);
     }
-    if (!data_tree->IsLeaf()) {
-      RetrieveCentroidsRecursion_(data_tree->left(), range, centroid_id, centroid_ids);
-      RetrieveCentroidsRecursion_(data_tree->right(), range, centroid_id, centroid_ids);
+    if (!node->is_leaf()) {
+      RetrieveCentroidsRecursion_(node->left(), range, centroid_id, centroid_ids,
+          features);
+      RetrieveCentroidsRecursion_(node->right(), range, centroid_id, centroid_ids,
+          features);
     }
   } 
 
   void FromCentroidsToPointsRecurse_(TreeType *node, Matrix &centroid_features, 
       Matrix *point_features) {
-    if (node->IsLeaf()) {
+    if (node->is_leaf()) {
       for(index_t i=node->begin(); i<node->end() ;i++) {
-        index_t ind=old_from_new_points(i);
+        index_t ind=old_from_new_points_[i];
         memcpy(point_features->GetColumnPtr(ind), 
             centroid_features.GetColumnPtr(node->stat().centroid_id()), 
             dimension_* sizeof(double));
@@ -174,9 +176,9 @@ class AllCentroidkNN {
 
   void FromCentroidsToPointsRecurse_(TreeType *node, Matrix &centroid_features, 
       index_t level, Matrix *point_features) {
-    if (level==0 || node->IsLeaf()) {
+    if (level==0 || node->is_leaf()) {
       for(index_t i=node->begin(); i<node->end() ;i++) {
-        index_t ind=old_from_new_points(i);
+        index_t ind=old_from_new_points_[i];
         memcpy(point_features->GetColumnPtr(ind), 
             centroid_features.GetColumnPtr(node->stat().centroid_id()), 
             dimension_* sizeof(double));
@@ -209,8 +211,8 @@ class AllCentroidkNN {
   * The tree is the only member we are responsible for deleting.  The others will take care of themselves.  
   */
   ~AllCentroidkNN() {
-    if (tree_for_centroid!=NULL) {
-      delete tree_for_centroid_;
+    if (tree_for_centroids_!=NULL) {
+      delete tree_for_centroids_;
     }
   } 
     
@@ -226,7 +228,7 @@ class AllCentroidkNN {
      
     // set the module
     module_ = module_in;
-    
+    dimension_=points.n_rows(); 
     points_.Copy(points);
     // Get the leaf size from the module
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
@@ -238,43 +240,40 @@ class AllCentroidkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    tree_for_centroid_ = tree::MakeKdTreeMidpoint<TreeType>(points_, leaf_size_, 
+    tree_for_centroids_ = tree::MakeKdTreeMidpoint<TreeType>(points_, leaf_size_, 
 				&old_from_new_points_, NULL);
    
     // Stop the timer we started above
     fx_timer_stop(module_, "tree_building");
 
   }
-  
-  void InitCentroidList(
-      ArrayList<FEATURE> > *centroids) {
+
+/*  
+  void InitCentroidList(ArrayList<FEATURE> > *centroids) {
     centroids->Init(centroid_counter_);
   }
-
-  void InitCentroidList(
-      ArrayList<Vector> *centroids) {
+*/
+  
+  void ComputeCentroids(Matrix *centroids) {
     centroids->Init(dimension_, centroid_counter_);
+    ComputeCentroidsRecursion_(tree_for_centroids_, centroids); 
   }
 
-  void ComputeCentroids(TreeType *data_tree, Matrix *centroids) {
-    ComputeCentroidsRecursion_(data_tree, centroids); 
-  }
-
-  void RetrieveCentroids(TreeType *data_tree, index_t level, 
-      GenVector<index_t> *centroid_ids, Matrix *features) {
+  void RetrieveCentroids(index_t level, ArrayList<index_t> *centroid_ids, 
+      Matrix *features) {
     centroid_ids->Init();
-    RetrieveCentroidsRecursion_(data_tree, level, 0, centroid_ids, features);
+    RetrieveCentroidsRecursion_(tree_for_centroids_, level, 0, centroid_ids, features);
   }
 
-  void RetrieveCentroids(TreeType *data_tree, double range, 
-      GenVector<index_t> *centroid_ids, Matrix *features) {
+  void RetrieveCentroids(double range, ArrayList<index_t> *centroid_ids, 
+      Matrix *features) {
     centroid_ids->Init();
-    RetrieveCentroidsRecursion_(data_tree, range, 0, centroid_ids, features);
+    RetrieveCentroidsRecursion_(tree_for_centroids_, range, 0, centroid_ids, features);
   }
 
-  void AllkCentroids(Matrix &centroids, GenVector<index_t> &centroid_ids,
+  void AllkCentroids(Matrix &centroids, ArrayList<index_t> &centroid_ids,
       ArrayList<index_t> *resulting_neighbors, 
-      GenVector<double> *distances) {
+      ArrayList<double> *distances) {
   
     AllkNN allknn_;
     Matrix centroid_data;
@@ -290,10 +289,14 @@ class AllCentroidkNN {
   
   void FromCentroidsToPoints(Matrix &centroid_features, 
       Matrix *point_features) {
-    FromCentroidsToPointsRecurse_(data_tree_, centroid_features, point_features);
+    FromCentroidsToPointsRecurse_(tree_for_centroids_, centroid_features, point_features);
   }
-   
-}; //class AllNN
+  
+  TreeType* tree_for_centroids();
+ 
+}; //class AllCentroidkNN 
+
+index_t AllCentroidkNN::centroid_counter_=0; 
 
 
 #endif
