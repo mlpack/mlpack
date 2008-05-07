@@ -1,510 +1,217 @@
 #ifndef SUBSPACE_STAT_H
 #define SUBSPACE_STAT_H
 
+#include "fastlib/fastlib.h"
+
 class SubspaceStat {
   
  private:
 
-  static const double epsilon_ = 0.1;
+  static const double epsilon_ = 0.01;
 
-  void AddVectorToMatrix(Matrix &A, const Vector &v, Matrix &R) {
+  static void ComputeMean_(const Matrix &data, index_t start, index_t count,
+			   Vector *mean) {
+
+    mean->Init(data.n_rows());
+    mean->SetZero();
     
-    for(index_t i = 0; i < A.n_rows(); i++) {
-      for(index_t j = 0; j < A.n_cols(); j++) {
-	R.set(i, j, A.get(i, j) + v[i]);
+    for(index_t i = start; i < start + count; i++) {
+      Vector data_col;
+      data.MakeColumnVector(i, &data_col);
+      la::AddTo(data_col, mean);
+    }
+    la::Scale(1.0 / ((double) count), mean);    
+  }
+  
+  static void MeanCenter_(const Matrix &data, index_t start, index_t count,
+			  const Vector &mean, Matrix *data_copy) {
+    
+    data_copy->Init(data.n_rows(), count);
+    
+    // Subtract the mean vector from each column of the matrix.
+    for(index_t i = start; i < start + count; i++) {
+      Vector data_copy_col, data_col;
+      data_copy->MakeColumnVector(i - start, &data_copy_col);
+      data.MakeColumnVector(i, &data_col);
+
+      la::SubOverwrite(data_col, mean, &data_copy_col);
+    }
+  }
+
+  static void ComputeNormalizedCumulativeDistribution_(const Vector &src,
+						       Vector *dest,
+						       double *total) {
+    *total = 0;
+    dest->Init(src.length());
+    (*dest)[0] = src[0];
+    (*total) += src[0];
+    
+    for(index_t i = 1; i < src.length(); i++) {
+      (*dest)[i] = (*dest)[i - 1] + src[i];
+      (*total) += src[i];
+    }
+  }
+
+  static index_t FindBinNumber_(const Vector &cumulative_distribution, 
+				double random_number) {
+
+    for(index_t i = 0; i < cumulative_distribution.length(); i++) {
+      if(random_number < cumulative_distribution[i]) {
+	return i;
       }
     }
+    return cumulative_distribution.length() - 1;
   }
 
-  void SubtractVectorFromMatrix(Matrix &A, const Vector &v, Matrix &R) {
+  void FastSvdByRowSampling_(const Matrix& mean_centered) {
+    
+  }
 
-    for(index_t i = 0; i < A.n_rows(); i++) {
-      for(index_t j = 0; j < A.n_cols(); j++) {
-	R.set(i, j, A.get(i, j) - v[i]);
+  void FastSvdByColumnSampling_(const Matrix& mean_centered) {
+
+    // First determine the column length-squared distribution...
+    Vector squared_lengths;
+    squared_lengths.Init(mean_centered.n_cols());
+    for(index_t i = 0; i < mean_centered.n_cols(); i++) {
+      squared_lengths[i] = 
+	la::Dot(mean_centered.n_rows(), mean_centered.GetColumnPtr(i),
+		mean_centered.GetColumnPtr(i));
+    }
+
+    // Compute the normalized cumulative distribution on the squared lengths.
+    Vector normalized_cumulative_squared_lengths;
+    double total_squared_lengths;
+    ComputeNormalizedCumulativeDistribution_
+      (squared_lengths, &normalized_cumulative_squared_lengths,
+       &total_squared_lengths);
+    
+    // The number of samples...
+    int num_samples = max(mean_centered.n_cols() / 2, 1);
+    Matrix sampled_columns;
+    sampled_columns.Init(mean_centered.n_rows(), num_samples);
+
+    // Commence sampling...
+    for(index_t s = 0; s < num_samples; s++) {
+      
+      // Generate random number between 0 and total_squared_lengths
+      // and find out which column is picked.
+      double random_number = math::Random(0, total_squared_lengths);
+      index_t sample_number = 
+	FindBinNumber_(normalized_cumulative_squared_lengths, random_number);
+      
+      // Normalize proportion to squared length and the number of
+      // samples.
+      double probability =
+	squared_lengths[sample_number] / total_squared_lengths;
+      for(index_t j = 0; j < mean_centered.n_rows(); j++) {
+	sampled_columns.set(j, s, mean_centered.get(j, sample_number) /
+			    sqrt(num_samples * probability));
       }
     }
-  }
 
-  void ComputeColumnSumVector(const Matrix &A, Vector &A_sum) {    
-    A_sum.SetZero();
-    for(index_t i = 0; i < A.n_cols(); i++) {
-      Vector s;
-      A.MakeColumnVector(i, &s);
-      la::AddTo(s, &A_sum);
-    }
-  }
-
-  void ComputeColumnMeanVector(const Matrix &A, int start, int count,
-			       Vector &A_mean) {
+    // Let C = sampled columns. Then here we compute C^T C and
+    // computes its eigenvector.
+    Matrix sampled_product, tmp_right_singular_vectors;
+    Vector tmp_eigen_values;
+    la::MulTransAInit(sampled_columns, sampled_columns, &sampled_product);
+    la::EigenvectorsInit(sampled_product, &tmp_eigen_values, 
+			 &tmp_right_singular_vectors);
     
-    A_mean.SetZero();
-    for(index_t i = 0; i < count; i++) {
-      Vector s;
-      A.MakeColumnVector(start + i, &s);
-      la::AddTo(s, &A_mean);
+    // Cut off small eigen values...
+    int eigen_count = 0;
+    for(index_t i = 0; i < tmp_eigen_values.length(); i++) {
+      if(tmp_eigen_values[i] >= 0 &&
+	 tmp_eigen_values[i] >= epsilon_ * tmp_eigen_values[0]) {
+	eigen_count++;
+      }
     }
-    la::Scale(1.0 / ((double) count), &A_mean);
-  }
+    Matrix aliased_right_singular_vectors;
+    aliased_right_singular_vectors.Alias
+      (tmp_right_singular_vectors.GetColumnPtr(0),
+       tmp_right_singular_vectors.n_rows(), eigen_count);
 
-  void ComputeColumnMeanVector(const Matrix &A, Vector &A_mean) {
-
-    A_mean.SetZero();
-    for(index_t i = 0; i < A.n_cols(); i++) {
-      Vector s;
-      A.MakeColumnVector(i, &s);
-      la::AddTo(s, &A_mean);
+    // Now exploit the relationship between the right and the left
+    // singular vectors. Normalize and retrieve the singular values.
+    la::MulInit(sampled_columns, aliased_right_singular_vectors,
+		&left_singular_vectors_);
+    singular_values_.Init(eigen_count);
+    for(index_t i = 0; i < eigen_count; i++) {
+      singular_values_[i] = sqrt(tmp_eigen_values[i]);
+      la::Scale(mean_centered.n_rows(), 1.0 / singular_values_[i],
+		left_singular_vectors_.GetColumnPtr(i));
     }
-    la::Scale(1.0 / ((double) A.n_cols()), &A_mean);
-  }
-
-  void ExtractSubMatrix(const Matrix &source, int start, int count,
-			Matrix &dest) {
-
-    // copy from source to target, while computing the mean coordinates
-    for(int i = start; i < start + count; i++) {
-      Vector s, t;
-      source.MakeColumnVector(i, &s);
-      dest.MakeColumnVector(i - start, &t);
-      t.CopyValues(s);
-    }
-  }
-
-  void ExtractSubMatrix(Matrix &source, int start, 
-			int count, Matrix &dest) {
     
-    // copy from source to target, while computing the mean coordinates
-    for(int i = start; i < start + count; i++) {
-      Vector s, t;
-      source.MakeColumnVector(i, &s);
-      dest.MakeColumnVector(i - start, &t);
-      t.CopyValues(s);
+    // Now compute the right singular vectors from the left singular
+    // vectors.
+    la::MulTransAInit(mean_centered, left_singular_vectors_,
+		      &right_singular_vectors_);
+    for(index_t i = 0; i < right_singular_vectors_.n_cols(); i++) {
+      double length = 
+	la::LengthEuclidean(right_singular_vectors_.n_rows(),
+			    right_singular_vectors_.GetColumnPtr(i));
+      la::Scale(right_singular_vectors_.n_rows(), 1.0 / length,
+		right_singular_vectors_.GetColumnPtr(i));
     }
+
+    mean_centered.PrintDebug();
+
+    // Check by using exact SVD...
+    Vector test_singular_values;
+    Matrix test_left_singular_vectors, test_right_singular_vectors;
+    la::SVDInit(mean_centered, &test_singular_values,
+		&test_left_singular_vectors, &test_right_singular_vectors);
+    test_singular_values.PrintDebug();
+    test_left_singular_vectors.PrintDebug();
+    test_right_singular_vectors.PrintDebug();
+    
+    singular_values_.PrintDebug();
+    left_singular_vectors_.PrintDebug();
+    right_singular_vectors_.PrintDebug();
+    exit(0);
   }
 
  public:
-
+  
   int start_;
   
   int count_;
   
-  Vector means_;
+  Vector mean_vector_;
 
-  Matrix eigenvectors_;
+  Matrix left_singular_vectors_;
+  
+  Vector singular_values_;
 
-  Vector eigenvalues_;
+  Matrix right_singular_vectors_;
 
-  /** compute PCA exhaustively for leaf nodes */
+  /** @brief Compute PCA exhaustively for leaf nodes.
+   */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
 
-    // Degenerate case: the leaf node contains only one point...
-    if(count == 1) {
-      Vector point;
-      dataset.MakeColumnVector(start, &point);
-      means_.Copy(point);
-      eigenvalues_.Init(1);
-      eigenvalues_[0] = 0;
-      eigenvectors_.Init(dataset.n_rows(), 1);
-      eigenvectors_.SetZero();
-      return;
-    }
+    // Compute the mean vector owned by this node.
+    ComputeMean_(dataset, start, count, &mean_vector_);
 
-    Matrix mean_centered_;
-
-    // set the starting index and the count
-    start_ = start;
-    count_ = count;
-
-    // copy the mean-centered submatrix of the points in this leaf node
-    mean_centered_.Init(dataset.n_rows(), count);
-    means_.Init(dataset.n_rows());
-
-    // extract the relevant part of the dataset and mean-center it
-    ExtractSubMatrix(dataset, start, count, mean_centered_);
-
-    ComputeColumnMeanVector(mean_centered_, means_);
-    SubtractVectorFromMatrix(mean_centered_, means_, mean_centered_);
-
-    // compute PCA on the extracted submatrix
-    Matrix right_singular_vectors_transposed, left_singular_vectors;
-    Vector singular_values;
-
-    la::SVDInit(mean_centered_, &singular_values, 
-		&left_singular_vectors, &right_singular_vectors_transposed);
-
-    // find out how many eigenvalues to keep
-    int eigencount = 0;
-    double max_singular_value = 0;
-    for(index_t i = 0; i < singular_values.length(); i++) {
-      if(singular_values[i] > max_singular_value) {
-	max_singular_value = singular_values[i];
-      }
-    }
-    for(index_t i = 0; i < singular_values.length(); i++) {
-      if(singular_values[i] >= epsilon_ * max_singular_value) {
-	eigencount++;
-      }
-    }
-
-    eigenvalues_.Init(eigencount);
-    eigenvalues_.SetZero();
-    eigenvectors_.Init(dataset.n_rows(), eigencount);
-
-    // relationship between the singular value and the eigenvalue is
-    // enforced here
-    for(index_t i = 0, index = 0; i < singular_values.length(); i++) {
-      if(singular_values[i] >= epsilon_ * max_singular_value) {
-	Vector source, destination;
-	eigenvalues_[index] = singular_values[i] * singular_values[i] / 
-	  ((double) count_);
-
-	left_singular_vectors.MakeColumnVector(i, &source);
-	eigenvectors_.MakeColumnVector(index, &destination);
-	destination.CopyValues(source);
-	index++;
-      }
-    }
-
-    /*
-    printf("Leaf has %d basis sets spanning %d points...\n", 
-	   eigenvalues_.length(), count_);
-    eigenvalues_.PrintDebug();
-    exit(0);
-    */
-  }
-
-  /**
-   * Takes the two eigenbases and 
-   */
-  void ComputeLeftsideNullSpaceBasis(const SubspaceStat& left_stat,
-				     const SubspaceStat& right_stat, 
-				     Matrix *leftside_nullspace_basis,
-				     Matrix *projection_of_right_eigenbasis,
-				     Vector *mean_diff,
-				     Vector *projection_of_mean_diff) {
-
-    Matrix left_eigenbasis, right_eigenbasis;
-    Vector left_means, right_means;
-    Matrix projection_residue_of_right_eigenbasis;
-    Vector projection_residue_of_mean_diff;
-
-    // left and right's eigenbasis and the mean vectors
-    left_eigenbasis.Alias(left_stat.eigenvectors_);
-    right_eigenbasis.Alias(right_stat.eigenvectors_);
-    left_means.Alias(left_stat.means_);
-    right_means.Alias(right_stat.means_);
-
-    // compute mean difference between two eigenspaces
-    la::SubInit(right_means, left_means, mean_diff);
-
-    // compute the projection of the right eigenbasis onto the left
-    // eigenbasis
-    la::MulTransAInit(left_eigenbasis, right_eigenbasis, 
-		      projection_of_right_eigenbasis);    
-
-    // compute the residue of projection
-    projection_residue_of_right_eigenbasis.Copy(right_eigenbasis);
-    la::MulExpert(-1, left_eigenbasis, *projection_of_right_eigenbasis, 1,
-		  &projection_residue_of_right_eigenbasis);
-
-    // project the difference in the two means onto the eigenbasis
-    // belonging to the first subspace
-    la::MulInit(*mean_diff, left_eigenbasis, projection_of_mean_diff);
-
-    // compute the projection residue of the mean difference
-    projection_residue_of_mean_diff.Copy(*mean_diff);
-    la::MulExpert(-1, left_eigenbasis, *projection_of_mean_diff, 1,
-		  &projection_residue_of_mean_diff);
-
-    // copy onto a temporary matrix for QR decomposition by filtering
-    // very small columns
-    Matrix span_set;
-    int dim = left_eigenbasis.n_rows();
-    index_t span_set_count = 0;
-
-    // loop over each column residue vectors
-    for(index_t i = 0; i < projection_residue_of_right_eigenbasis.n_cols(); 
-	i++) {
-      Vector residue_vector;
-      double euclidean_norm;
-      projection_residue_of_right_eigenbasis.MakeColumnVector
-	(i, &residue_vector);
-      euclidean_norm = la::LengthEuclidean(residue_vector);
-
-      if(euclidean_norm > epsilon_) {
-	span_set_count++;
-      }
-    }
-    bool include_mean_projection = false;
-    double euclidean_norm_of_projection_residue_of_mean_diff =
-      la::LengthEuclidean(projection_residue_of_mean_diff);
-    if(euclidean_norm_of_projection_residue_of_mean_diff > epsilon_) {
-      include_mean_projection = true;
-      span_set_count++;
-    }
-
-    span_set.Init(dim, span_set_count);
-    for(index_t i = 0, position = 0; i < span_set_count - 1; i++) {
-      Vector residue_vector;
-      double euclidean_norm;
-      projection_residue_of_right_eigenbasis.MakeColumnVector
-        (i, &residue_vector);
-      euclidean_norm = la::LengthEuclidean(residue_vector);
-
-      if(euclidean_norm > epsilon_) {
-	Vector destination;
-	span_set.MakeColumnVector(position, &destination);
-	destination.CopyValues(residue_vector);
-        position++;
-      }
-    }
-
-    if(include_mean_projection) {
-      Vector dest;
-      span_set.MakeColumnVector(span_set.n_cols() - 1, &dest);
-      dest.CopyValues(projection_residue_of_mean_diff);
-    }
-
-    if(span_set.n_cols() > 0) {
-      Matrix dummy;
-      la::QRInit(span_set, leftside_nullspace_basis, &dummy);
-    }
-    else {
-      leftside_nullspace_basis->Init(dim, 0);
-    }
-  }
-
-  void SetupEigensystem(const SubspaceStat& left_stat, 
-			const SubspaceStat &right_stat, 
-			const Matrix &leftside_nullspace_basis,
-			const Matrix &projection_of_right_eigenbasis,
-			const Vector &mean_diff, 
-			const Vector &projection_of_mean_diff, 
-			Matrix *eigensystem) {
-
-    Matrix left_eigenbasis, right_eigenbasis;
-    Vector left_eigenvalues, right_eigenvalues;
-
-    // left and right's eigenbasis and the mean vectors
-    left_eigenbasis.Alias(left_stat.eigenvectors_);
-    right_eigenbasis.Alias(right_stat.eigenvectors_);
-    left_eigenvalues.Alias(left_stat.eigenvalues_);
-    right_eigenvalues.Alias(right_stat.eigenvalues_);
-
-    // precomputed factors
-    double factor1 = ((double) left_stat.count_) / ((double) count_);
-    double factor2 = ((double) right_stat.count_) / ((double) count_);
-    double factor3 = ((double) left_stat.count_ * right_stat.count_) /
-      ((double) count_ * count_);
-
-    if(leftside_nullspace_basis.n_cols() > 0) {
-      eigensystem->Init(left_eigenvalues.length() + 
-			leftside_nullspace_basis.n_cols(),
-			left_eigenvalues.length() +
-			leftside_nullspace_basis.n_cols());
-    }
-    else {
-      eigensystem->Init(left_eigenvalues.length(), left_eigenvalues.length());
-    }
-    eigensystem->SetZero();
+    // Compute the mean centered dataset.
+    Matrix mean_centered;
+    MeanCenter_(dataset, start, count, mean_vector_, &mean_centered);
     
-    // compute the top left part of the eigensystem
-    Matrix top_left, top_tmp;
-    top_tmp.Init(projection_of_right_eigenbasis.n_rows(),
-		 projection_of_right_eigenbasis.n_cols());
-    for(index_t i = 0; i < projection_of_right_eigenbasis.n_cols(); i++) {
-      la::ScaleOverwrite(projection_of_right_eigenbasis.n_rows(), 
-			 right_eigenvalues[i],
-			 projection_of_right_eigenbasis.GetColumnPtr(i),
-			 top_tmp.GetColumnPtr(i));
+    // Determine which dimension is longer: the row or the column...
+    // If there are more columns than rows, then we do
+    // column-sampling.
+    if(dataset.n_rows() <= count) {
+      FastSvdByColumnSampling_(mean_centered);
     }
-    //la::MulInit(projection_of_right_eigenbasis, right_eigenvalues, &top_tmp);
-
-    la::MulTransBInit(top_tmp, projection_of_right_eigenbasis, &top_left);
-
-    for(index_t i = 0; i < left_eigenvalues.length(); i++) {
-      for(index_t j = 0; j < left_eigenvalues.length(); j++) {
-	double left_eigenvalue_factor = (i == j) ? left_eigenvalues[j]:0;
-
-	eigensystem->set(i, j, factor1 * left_eigenvalue_factor +
-			 factor2 * top_left.get(i, j) +
-			 factor3 * projection_of_mean_diff[i] *
-			 projection_of_mean_diff[j]);
-      }
+    else {
+      FastSvdByRowSampling_(mean_centered);
     }
-
-    // handling the top right, bottom left, and bottom right
-    if(leftside_nullspace_basis.n_cols() > 0) {
-      Matrix proj_rightside_eigenbasis_on_leftside_nullspace;
-      Vector proj_mean_diff_on_leftside_nullspace;
-
-      la::MulTransAInit(leftside_nullspace_basis, right_eigenbasis,
-			&proj_rightside_eigenbasis_on_leftside_nullspace);
-
-      la::MulInit(mean_diff, leftside_nullspace_basis,
-		  &proj_mean_diff_on_leftside_nullspace);
-      
-      // set up the eigensystem
-      Matrix top_right, bottom_left, bottom_right;
-      Matrix bottom_tmp;
-
-      la::MulTransBInit(top_tmp, 
-			proj_rightside_eigenbasis_on_leftside_nullspace,
-			&top_right);
-
-      for(index_t i = 0; i < top_right.n_rows(); i++) {
-	for(index_t j = 0; j < top_right.n_cols(); j++) {
-	  eigensystem->set(i, j + top_left.n_cols(),
-			   factor2 * top_right.get(i, j) +
-			   factor3 * projection_of_mean_diff[i] *
-			   proj_mean_diff_on_leftside_nullspace[j]);
-	}
-      }
-
-      bottom_tmp.Init
-	(proj_rightside_eigenbasis_on_leftside_nullspace.n_rows(),
-	 proj_rightside_eigenbasis_on_leftside_nullspace.n_cols());
-      for(index_t i = 0; 
-	  i < proj_rightside_eigenbasis_on_leftside_nullspace.n_cols(); i++) {
-	
-	la::ScaleOverwrite
-	  (proj_rightside_eigenbasis_on_leftside_nullspace.n_rows(),
-	   right_eigenvalues[i],
-	   proj_rightside_eigenbasis_on_leftside_nullspace.GetColumnPtr(i),
-	   bottom_tmp.GetColumnPtr(i));
-      }
-      
-      //la::MulInit(proj_rightside_eigenbasis_on_leftside_nullspace,
-      //	    right_eigenvalues, &bottom_tmp);
-
-      la::MulTransBInit(bottom_tmp, projection_of_right_eigenbasis, 
-			&bottom_left);
-
-      for(index_t i = 0; i < bottom_left.n_rows(); i++) {
-	for(index_t j = 0; j < bottom_left.n_cols(); j++) {
-	  eigensystem->set(i + top_left.n_rows(), j,
-			   factor2 * bottom_left.get(i, j) +
-			   factor3 * proj_mean_diff_on_leftside_nullspace[i] *
-			   projection_of_mean_diff[j]);
-	}
-      }
-
-      la::MulTransBInit(bottom_tmp, 
-			proj_rightside_eigenbasis_on_leftside_nullspace,
-			&bottom_right);
-
-      for(index_t i = 0; i < bottom_right.n_rows(); i++) {
-	for(index_t j = 0; j < bottom_right.n_cols(); j++) {
-	  eigensystem->set(i + top_left.n_rows(), j + top_left.n_cols(),
-			   factor2 * bottom_right.get(i, j) +
-			   factor3 * proj_mean_diff_on_leftside_nullspace[i] *
-			   proj_mean_diff_on_leftside_nullspace[j]);
-	}
-      }
-    } // end of case for nonempty leftside nullspace
+    exit(0);
   }
 
-  /** 
-   * Merge two eigenspaces into one
+  /** Merge two eigenspaces into one.
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const SubspaceStat& left_stat, const SubspaceStat& right_stat) {
 
-    // set up starting index and the count
-    start_ = start;
-    count_ = count;
-
-    Matrix leftside_nullspace_basis, projection_of_right_eigenbasis;
-    Vector mean_diff, projection_of_mean_diff;
-    Matrix eigensystem;
-
-    ComputeLeftsideNullSpaceBasis(left_stat, right_stat, 
-				  &leftside_nullspace_basis,
-				  &projection_of_right_eigenbasis,
-				  &mean_diff, &projection_of_mean_diff);
-
-    SetupEigensystem(left_stat, right_stat,
-		     leftside_nullspace_basis,
-		     projection_of_right_eigenbasis,
-		     mean_diff, projection_of_mean_diff, &eigensystem);
-
-    // compute eigenvalues and eigenvectors of the system
-    Matrix rotation, combined_subspace;
-    Vector evalues;
-
-    la::EigenvectorsInit(eigensystem, &evalues, &rotation);
-    
-    combined_subspace.Init(dataset.n_rows(), left_stat.eigenvectors_.n_cols() +
-			   leftside_nullspace_basis.n_cols());
-    combined_subspace.SetZero();
-    for(index_t i = 0; i < left_stat.eigenvectors_.n_cols(); i++) {
-      Vector source, dest;
-      left_stat.eigenvectors_.MakeColumnVector(i, &source);
-      combined_subspace.MakeColumnVector(i, &dest);
-      dest.CopyValues(source);
-    }
-    for(index_t i = 0; i < leftside_nullspace_basis.n_cols(); i++) {
-      Vector source, dest;
-      leftside_nullspace_basis.MakeColumnVector(i, &source);
-      combined_subspace.MakeColumnVector(i + left_stat.eigenvectors_.n_cols(), 
-					 &dest);
-      dest.CopyValues(source);
-    }
-
-    // rotate the left eigenbasis plus the null space of the leftside to
-    // get the global eigenbasis
-    la::MulInit(combined_subspace, rotation, &eigenvectors_);
-
-    // find out how many eigenvalues to keep
-    int eigencount = 0;
-    double max_eigenvalue = 0;
-    for(index_t i = 0; i < evalues.length(); i++) {
-
-      // This is to make sure that we don't have any numerical
-      // instability - make sure to convert any NaN's to zeros.
-      if(isnan(evalues[i])) {
-	evalues[i] = 0;
-      }
-
-      if(evalues[i] > max_eigenvalue) {
-	max_eigenvalue = evalues[i];
-      }
-    }
-    for(index_t i = 0; i < evalues.length(); i++) {
-      if(evalues[i] >= epsilon_ * max_eigenvalue) {
-	eigencount++;
-      }
-    }
-    eigenvalues_.Init(eigencount);
-    eigenvalues_.SetZero();
-
-    // relationship between the singular value and the eigenvalue is
-    // enforced here
-    Matrix tmp_eigenvectors;
-    tmp_eigenvectors.Init(dataset.n_rows(), eigencount);
-    for(index_t i = 0, index = 0; i < evalues.length(); i++) {
-      if(evalues[i] >= epsilon_ * max_eigenvalue) {
-	Vector s, d;
-	eigenvalues_[index] = evalues[i];
-	eigenvectors_.MakeColumnVector(i, &s);
-	tmp_eigenvectors.MakeColumnVector(index, &d);
-	d.CopyValues(s);
-	index++;
-      }
-    }
-    eigenvectors_.Destruct();
-    eigenvectors_.Copy(tmp_eigenvectors);
-
-    // compute the weighted average of the two means
-    double factor1 = ((double) left_stat.count_) / ((double) count_);
-    double factor2 = ((double) right_stat.count_) / ((double) count_);
-    means_.Copy(left_stat.means_);
-    la::Scale(factor1, &means_);
-    la::AddExpert(factor2, right_stat.means_, &means_);
-
-    /*
-    printf("Internal has %d basis sets spanning %d points...\n", 
-    eigenvectors_.n_cols(), count_);
-    */
   }
 
   SubspaceStat() { }

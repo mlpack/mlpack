@@ -116,7 +116,6 @@ namespace tree_gen_metric_tree_private {
     index_t end = begin + count;
     *furthest_distance = 0;
 
-    printf("begin: %d, end: %d\n", begin, end);
     for(index_t i = begin; i < end; i++) {
       Vector point;
       matrix.MakeColumnVector(i, &point);
@@ -227,7 +226,7 @@ namespace tree_gen_metric_tree_private {
     else {
       bool can_cut = AttemptSplitting(matrix, node, &left, &right, leaf_size,
 				      old_from_new);
-
+      
       if(can_cut) {
 	SplitGenMetricTree(matrix, left, leaf_size, old_from_new);
 	SplitGenMetricTree(matrix, right, leaf_size, old_from_new);

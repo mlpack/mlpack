@@ -127,48 +127,53 @@ namespace tree_gen_kdtree_private {
 
     if (node->count() > leaf_size) {
       index_t split_dim = BIG_BAD_NUMBER;
-      T max_width = -1;
+      T max_width = 0;
       double split_val = -1;
       index_t split_matrix = -1;
       
+      // iterate over each dimension
       for (index_t d = 0; d < lower_limit_matrix.n_rows(); d++) {
-	T min_coord = 1;
-	T max_coord = 0;
+	T min_coord_lower = 1, min_coord_upper = 1;
+	T max_coord_lower = 0, max_coord_upper = 0;
+
+	// First the lower limit matrix...
 	for(index_t p = node->begin(); p < node->end(); p++) {
 	  if(p == node->begin()) {
-	    min_coord = max_coord = lower_limit_matrix.get(d, p);
+	    min_coord_lower = max_coord_lower = lower_limit_matrix.get(d, p);
 	  }
 	  else {
-	    min_coord = std::min(min_coord, lower_limit_matrix.get(d, p));
-	    max_coord = std::max(max_coord, lower_limit_matrix.get(d, p));
+	    min_coord_lower = std::min(min_coord_lower, 
+				       lower_limit_matrix.get(d, p));
+	    max_coord_lower = std::max(max_coord_lower, 
+				       lower_limit_matrix.get(d, p));
 	  }
-	}
-        T w = max_coord - min_coord;
+	} // end of iterating over the lower limit matrix...
+        T w = max_coord_lower - min_coord_lower;
+
+	// Secondly the upper limit matrix...
         for(index_t p = node->begin(); p < node->end(); p++) {
 	  if(p == node->begin()) {
-	    min_coord = max_coord = upper_limit_matrix.get(d, p);
+	    min_coord_upper = max_coord_upper = upper_limit_matrix.get(d, p);
 	  }
 	  else {
-	    min_coord = std::min(min_coord, upper_limit_matrix.get(d, p));
-	    max_coord = std::max(max_coord, upper_limit_matrix.get(d, p));
+	    min_coord_upper = std::min(min_coord_upper, 
+				       upper_limit_matrix.get(d, p));
+	    max_coord_upper = std::max(max_coord_upper, 
+				       upper_limit_matrix.get(d, p));
 	  }
-        }
-	T w2 = max_coord - min_coord;
-	if(w > w2) {
-	  split_matrix = 0;
-	}
-	else {
-	  split_matrix = 1;
-	}
+        } // end of iterating over the upper limit matrix...
+	T w2 = max_coord_upper - min_coord_upper;
+	
+	T w_combined = std::max(w, w2);
 
-	w = std::max(w2, (T) (max_coord - min_coord));
-		
-        if (unlikely(w > max_width)) {
-          max_width = w;
+        if(unlikely(w_combined > max_width)) {
+          max_width = w_combined;
           split_dim = d;
-	  split_val = 0.5 * (max_coord + min_coord);
+	  split_matrix = (w > w2) ? 0:1;
+	  split_val = (w > w2) ? 0.5 * (max_coord_lower + min_coord_lower):
+	    0.5 * (max_coord_upper + min_coord_upper);
         }
-      }
+      } // end of iterating over each dimension...
 
       if (max_width < DBL_EPSILON) {
         // Okay, we can't do any splitting, because all these points are the
