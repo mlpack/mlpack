@@ -32,6 +32,7 @@ class MultiscaleMVUTest {
     data::Load("/net/hg200/nvasil/dataset/swiss_roll/swiss_roll_10000.csv" , &points);
     datanode *module=fx_submodule(NULL, "/", "temp"); 
     engine_->Init(points, module);
+    engine_->ComputeOptimum();
     Destruct();
   }
   void TestAll() {
