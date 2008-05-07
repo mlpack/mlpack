@@ -28,8 +28,6 @@ int main(int argc, char *argv[]) {
 
   fx_timer_stop(NULL, "pca tree");
 
-  printf("Got %d eigenvalues...\n", root_->stat().eigenvalues_.length());
-  root_->stat().eigenvalues_.PrintDebug();
   printf("Finished constructing the tree...\n");
 
   // exhaustively compute PCA
