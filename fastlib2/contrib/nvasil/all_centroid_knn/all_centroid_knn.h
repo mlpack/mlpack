@@ -106,7 +106,9 @@ class AllCentroidkNN {
    // The module containing the parameters for this computation. 
   struct datanode* module_;
   index_t dimension_;
- 
+  index_t tree_max_depth_;
+  index_t tree_min_depth_;
+
  /////////////////////////////// Helper Functions ///////////////////////////////////////////////////
   void ComputeCentroidsRecursion_(TreeType *node, Matrix *centroids) {
     Vector vec;
@@ -191,7 +193,21 @@ class AllCentroidkNN {
           level, point_features); 
     }
   }
-
+  
+  void ComputeDepth_(TreeType *node, index_t level) {
+    if (node->is_leaf()) {
+      if (level>tree_max_depth_) {
+        tree_max_depth_=level;
+      }
+      if (level<tree_min_depth_) {
+        tree_min_depth_=level;
+      }
+    } else {
+      level++;
+      ComputeDepth_(node->left(), level);
+      ComputeDepth_(node->right(), level);
+    }
+  }
   /////////////////////////////// Constructors /////////////////////////////////////////////
   // Add this at the beginning of a class to prevent accidentally calling the copy constructor
   FORBID_ACCIDENTAL_COPIES(AllCentroidkNN);
@@ -240,12 +256,17 @@ class AllCentroidkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
+    NOTIFY("Building the tree...");
     tree_for_centroids_ = tree::MakeKdTreeMidpoint<TreeType>(points_, leaf_size_, 
 				&old_from_new_points_, NULL);
-   
     // Stop the timer we started above
+    NOTIFY("Tree built...");
     fx_timer_stop(module_, "tree_building");
-
+    NOTIFY("Computing the minimum and the maximum depth of the tree..");
+    tree_max_depth_=0;
+    tree_min_depth_=RAND_MAX;
+    ComputeDepth_(tree_for_centroids_, 0);
+    NOTIFY("Tree max depth:%i min depth:%i \n", tree_max_depth_, tree_min_depth_);
   }
 
 /*  
@@ -292,7 +313,20 @@ class AllCentroidkNN {
     FromCentroidsToPointsRecurse_(tree_for_centroids_, centroid_features, point_features);
   }
   
-  TreeType* tree_for_centroids();
+ void FromCentroidsToPointsRecurse(Matrix &centroid_features, 
+      index_t level, Matrix *point_features) {
+    FromCentroidsToPointsRecurse_(tree_for_centroids_, centroid_features, 
+       level, point_features); 
+  }
+ 
+  
+  index_t tree_max_depth() {
+    return tree_max_depth_;
+  }
+
+  index_t tree_min_depth() {
+    return tree_min_depth_;
+  }
  
 }; //class AllCentroidkNN 
 

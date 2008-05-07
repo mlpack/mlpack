@@ -31,7 +31,7 @@ class MultiscaleMVUTest {
     Matrix points;
     data::Load("/net/hg200/nvasil/dataset/swiss_roll/swiss_roll_10000.csv" , &points);
     datanode *module=fx_submodule(NULL, "/", "temp"); 
-    engine_.Init(module_, points);
+    engine_->Init(points, module);
     Destruct();
   }
   void TestAll() {

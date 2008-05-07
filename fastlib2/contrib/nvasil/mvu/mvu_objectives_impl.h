@@ -232,8 +232,8 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
   allkfn_.Init(data, leaf_size_, 1); 
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing furthest neighborhoods ...\n");
-  from_tree_neighbors.Destruct();
-  from_tree_distances.Destruct();
+  from_tree_neighbors.Renew();
+  from_tree_distances.Renew();
   allkfn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
   NOTIFY("Furthest Neighbors computed...\n");
@@ -478,8 +478,8 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
   allkfn_.Init(data, leaf_size_, 1); 
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing furthest neighborhoods ...\n");
-  from_tree_neighbors.Destruct();
-  from_tree_distances.Destruct();
+  from_tree_neighbors.Renew();
+  from_tree_distances.Renew();
   allkfn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
   NOTIFY("Furthest Neighbors computed...\n");
@@ -648,8 +648,8 @@ void MaxVarianceUtils::ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,
       }  
       if (skip==false) {
         *num_of_pairs+=1;
-        neighbor_pairs->AddBackItem(std::make_pair(n1, n2));
-        distances->AddBackItem(from_tree_dist[i*num_of_neighbors+k]);
+        neighbor_pairs->PushBackCopy(std::make_pair(n1, n2));
+        distances->PushBackCopy(from_tree_dist[i*num_of_neighbors+k]);
       }
       skip=false;
     }

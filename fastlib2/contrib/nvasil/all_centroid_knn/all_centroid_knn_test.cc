@@ -39,7 +39,7 @@ class TestAllCentroidkNN {
     NOTIFY("Centroids computed...\n");
     ArrayList<index_t> centroid_ids;
     Matrix features;
-    features.Copy(points);
+    features.Init(points.n_rows(), points.n_cols());
     NOTIFY("Retrieving centroids ...");
     engine_->RetrieveCentroids(8, &centroid_ids, &features);
     NOTIFY("Centroids retrieved...");
