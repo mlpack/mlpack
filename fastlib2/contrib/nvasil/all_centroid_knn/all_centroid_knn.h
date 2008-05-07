@@ -266,7 +266,7 @@ class AllCentroidkNN {
     tree_max_depth_=0;
     tree_min_depth_=RAND_MAX;
     ComputeDepth_(tree_for_centroids_, 0);
-    NOTIFY("Tree max depth:%i min depth:%i \n", tree_max_depth_, tree_min_depth_);
+    NOTIFY("Tree max_depth:%i min_depth:%i \n", tree_max_depth_, tree_min_depth_);
   }
 
 /*  

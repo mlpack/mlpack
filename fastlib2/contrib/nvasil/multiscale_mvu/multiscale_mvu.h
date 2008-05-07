@@ -39,7 +39,9 @@ class MultiscaleMVU {
     dimension_=points.n_rows();
     num_of_points_=points.n_cols();
   }
-  void Destruct();
+  void Destruct() {
+  
+  }
   void ComputeOptimum() {
     datanode *l_bfgs_node=fx_submodule(module_, "/l_bfgs", "opt");
     datanode *optfun_node=fx_submodule(module_, "/optfun", "optfun");
@@ -70,7 +72,7 @@ class MultiscaleMVU {
       }
       OptimizedFunction optfun;
       optfun.Init(optfun_node, interim_data);
-      l_bfgs_.Init(l_bfgs_node, optfun);
+      l_bfgs_.Init(&optfun, l_bfgs_node);
       l_bfgs_.set_coordinates(init_data);
       l_bfgs_.ComputeLocalOptimumBFGS();
       // Now put the results back to interim data
