@@ -179,6 +179,8 @@ Matrix *LBfgs<OptimizedFunction>::coordinates() {
   return &coordinates_;
 }
 
+
+
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::Reset() {
   sigma_ = fx_param_double(module_, "sigma", 10);

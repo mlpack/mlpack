@@ -27,6 +27,8 @@
 template<typename OptimizedFunction>
 class MultiscaleMVU {
  public:
+  MultiscaleMVU(){
+  };
   void Init(Matrix &points, datanode *module) {
     module_=module;
     datanode *scaler_module=fx_submodule(module_, "/scaler", "scaler");
@@ -39,13 +41,13 @@ class MultiscaleMVU {
   }
   void Destruct();
   void ComputeOptimum() {
-    datanode *l_bfgs_module=fx_submodule(module_, "/l_bfgs", "opt");
+    datanode *l_bfgs_node=fx_submodule(module_, "/l_bfgs", "opt");
     datanode *optfun_node=fx_submodule(module_, "/optfun", "optfun");
-    new_dimension_=fx_param_int(l_bfgs_module, "new_dimension", 2);
+    new_dimension_=fx_param_int(l_bfgs_node, "new_dimension", 2);
     // get all the centroids from the tree
     Matrix centroids;
     scaler_.ComputeCentroids(&centroids); 
-    index_t num_of_cenroids=centroids.n_cols();
+    index_t num_of_centroids=centroids.n_cols();
     // for all the scales do the optimization
     ArrayList<index_t> centroid_ids;
     // This will store the results of the optimization in the intermediate
@@ -53,7 +55,7 @@ class MultiscaleMVU {
     Matrix result;
     result.Init(new_dimension_, num_of_centroids);
     // First you finish for all inermidiate steps
-    for(index_t level=start_scale; level<=end_scale; level+=step_scale_) {
+    for(index_t level=start_scale_; level<=end_scale_; level+=step_scale_) {
       scaler_.RetrieveCentroids(level, &centroid_ids, &result); 
       // These are the intermediate data for optimization
       // the centroids and the resulting optimized coordinates
