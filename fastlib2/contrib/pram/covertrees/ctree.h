@@ -8,19 +8,31 @@
 
 namespace ctree {
 
-  const double BASE = 1.3;
-  const double inverse_log_base = 1.0 / log(BASE);
+  template<typename T> 
+  T BASE() {
+    T BASE = 1.3;
+    return BASE;
+  }
+
+  template<typename T> 
+  T inverse_log_base() {
+    T inverse_log_base  = 1.0 / log(BASE<T>());
+    return inverse_log_base;
+  }
+
   const index_t NEG_INF = (int) log(0);
 
-  inline double scaled_distance(index_t scale) {
-    return pow(BASE, scale);
+  template<typename T>
+  inline T scaled_distance(index_t scale) {
+    return pow(BASE<T>(), scale);
   }
 
-  inline index_t scale_of_distance(double distance) {
-    return (index_t) ceil(log(distance)*inverse_log_base);
+  template<typename T>
+  inline index_t scale_of_distance(T distance) {
+    return (index_t) ceil(log(distance)*inverse_log_base<T>());
   }
 
-  
+  template<typename T>
   class NodeDistances {
     
   private:
@@ -28,7 +40,7 @@ namespace ctree {
     // make an arraylist for each of the point
     // Vector point_;
     index_t point_;
-    ArrayList<double> distances_;
+    ArrayList<T> distances_;
     
   public:
     
@@ -43,30 +55,30 @@ namespace ctree {
       return point_;
     }
 
-    ArrayList<double> *distances() {
+    ArrayList<T> *distances() {
       return &distances_;
     }
 
-    double distances(index_t in) {
+    T distances(index_t in) {
       return distances_[in];
     }
 
-    void add_distance(double dist) {
+    void add_distance(T dist) {
       distances_.PushBackCopy(dist);
       return;
     }
 
-    void Init(index_t point, double dist) {
+    void Init(index_t point, T dist) {
       point_ = point;
       distances_.PushBackCopy(dist);
       return;
     }
   };
   
+  template<typename T>
+  T max_set(ArrayList<NodeDistances<T>*> *set) {
 
-  double max_set(ArrayList<NodeDistances*> *set) {
-
-    double max = 0.0;
+    T max = 0.0;
     for (index_t i = 0; i < set->size(); i++) {
       if(max < (*set)[i]->distances()->back()) {
 	max = (*set)[i]->distances()->back();
@@ -82,42 +94,45 @@ namespace ctree {
     return;
   }
 
+  // find out how to print templatized things
   template<typename TCoverTreeNode>
   void print_tree(index_t depth, TCoverTreeNode *top_node) {
-    //print_space(depth);
-    //printf("Point %"LI"d:", top_node->point()+1);
-    NOTIFY("%"LI"d:%"LI"d", top_node->point()+1, top_node->scale_depth());
+    print_space(depth);
+    printf("Point %"LI"d:", top_node->point()+1);
+    //NOTIFY("%"LI"d:%"LI"d", top_node->point()+1, top_node->scale_depth());
     if (top_node->num_of_children() > 0) {
-      //printf("scale_depth = %"LI"d, max_dist = %lf, children = %"LI"d\n",
-      //     top_node->scale_depth(), top_node->max_dist_to_grandchild(),
-      //     top_node->num_of_children());
+      printf("scale_depth = %"LI"d, max_dist = %lf, children = %"LI"d\n",
+           top_node->scale_depth(), top_node->max_dist_to_grandchild(),
+           top_node->num_of_children());
       for (index_t i = 0; i < top_node->num_of_children(); i++) {
 	print_tree(depth+1, top_node->child(i));
       }
     }
     else {
-      //printf("\n");
+      printf("\n");
     }
     return;
   }
 
   template<typename TCoverTreeNode>
   void PrintTree(TCoverTreeNode *top_node) {
-    print_tree(0, top_node);
+    index_t depth = 0;
+    print_tree(depth, top_node);
     return;
   }
 
   // here we assume that both the point_set and the far set are
   // already initialized
-  void split_far(ArrayList<NodeDistances*> *point_set, 
-		 ArrayList<NodeDistances*> *far,
+  template<typename T>
+  void split_far(ArrayList<NodeDistances<T>*> *point_set, 
+		 ArrayList<NodeDistances<T>*> *far,
 		 index_t scale) {
 
-    double bound = scaled_distance(scale);
+    T bound = scaled_distance<T>(scale);
     index_t initial_size = far->size();
-    ArrayList<NodeDistances*> near;
-    NodeDistances **begin = point_set->begin();
-    NodeDistances **end = point_set->end();
+    ArrayList<NodeDistances<T>*> near;
+    NodeDistances<T> **begin = point_set->begin();
+    NodeDistances<T> **end = point_set->end();
 
     near.Init(0);
     for (; begin < end; begin++) {
@@ -141,27 +156,28 @@ namespace ctree {
 
   // here we assume that the point_set and the near set are 
   // already initialized
-  void split_near(index_t point, const Matrix& data,
-		  ArrayList<NodeDistances*> *point_set,
-		  ArrayList<NodeDistances*> *near,
+  template<typename T>
+  void split_near(index_t point, const GenMatrix<T>& data,
+		  ArrayList<NodeDistances<T>*> *point_set,
+		  ArrayList<NodeDistances<T>*> *near,
 		  index_t scale) {
 
-    double bound = scaled_distance(scale);
+    T bound = scaled_distance<T>(scale);
     index_t initial_size = near->size();
-    ArrayList<NodeDistances*> far;
-    NodeDistances **begin = point_set->begin();
-    NodeDistances **end = point_set->end();
-    Vector p;
+    ArrayList<NodeDistances<T>*> far;
+    NodeDistances<T> **begin = point_set->begin();
+    NodeDistances<T> **end = point_set->end();
+    GenVector<T> p;
 
     data.MakeColumnVector(point, &p);
     far.Init(0);
     for (; begin < end; begin++) {
 
-      Vector q;
+      GenVector<T> q;
 
       data.MakeColumnVector((*begin)->point(), &q);
-      //double dist = sqrt(la::DistanceSqEuclidean(p,q));
-      double dist = pdc::DistanceEuclidean(p, q, bound);
+      //T dist = sqrt(la::DistanceSqEuclidean(p,q));
+      T dist = pdc::DistanceEuclidean<T>(p, q, bound);
       if (dist > bound) {
 	far.PushBackCopy(*begin);
       }
@@ -181,12 +197,12 @@ namespace ctree {
     return;
   }
 
-  template<typename TCoverTreeNode>
-  TCoverTreeNode *private_make_tree(index_t point, const Matrix& data,
+  template<typename TCoverTreeNode, typename T>
+  TCoverTreeNode *private_make_tree(index_t point, const GenMatrix<T>& data,
 				    index_t current_scale,
 				    index_t max_scale, 
-				    ArrayList<NodeDistances*> *point_set,
-				    ArrayList<NodeDistances*> *consumed_set) {
+				    ArrayList<NodeDistances<T>*> *point_set,
+				    ArrayList<NodeDistances<T>*> *consumed_set) {
     
     // no other point so leaf in explicit tree
     if (point_set->size() == 0) { 
@@ -195,15 +211,15 @@ namespace ctree {
       return node;
     }
     else {
-      double max_dist = max_set(point_set);
+      T max_dist = max_set(point_set);
       index_t next_scale = min(current_scale - 1, scale_of_distance(max_dist));
       
       // At the -INF level so all points are nodes
       // and we have point with zero distances
       if (next_scale == NEG_INF) { 
 	ArrayList<TCoverTreeNode*> children;
-	NodeDistances **begin = point_set->begin();
-	NodeDistances **end = point_set->end();
+	NodeDistances<T> **begin = point_set->begin();
+	NodeDistances<T> **end = point_set->end();
 
 	children.Init(0);
 	children.PushBack()->MakeLeafNode(point);
@@ -224,7 +240,7 @@ namespace ctree {
       // otherwise you need to recurse
       else {
 
-	ArrayList<NodeDistances*> far;
+	ArrayList<NodeDistances<T>*> far;
 
 	far.Init(0);
 	split_far(point_set, &far, current_scale);
@@ -244,7 +260,7 @@ namespace ctree {
 	else {
 
 	  ArrayList<TCoverTreeNode*> children;
-	  ArrayList<NodeDistances*> new_point_set, new_consumed_set;
+	  ArrayList<NodeDistances<T>*> new_point_set, new_consumed_set;
 
 	  children.Init(0);
 	  new_point_set.Init(0);
@@ -255,7 +271,7 @@ namespace ctree {
 	  while (point_set->size() != 0) {
 
 	    index_t new_point;
-	    double new_dist = point_set->back()->distances()->back();
+	    T new_dist = point_set->back()->distances()->back();
 
 	    new_point = point_set->back()->point();
 	    // remember to check here what to use, PushBackRaw() or AddBack()
@@ -277,9 +293,9 @@ namespace ctree {
 	    children.PushBackCopy(child_node);
 	    //NOTIFY("%"LI"d:%"LI"d", child_node->point()+1, child_node->scale_depth());
 	    
-	    double bound = scaled_distance(current_scale);
-	    NodeDistances **begin = new_point_set.begin();
-	    NodeDistances **end = new_point_set.end();
+	    T bound = scaled_distance<T>(current_scale);
+	    NodeDistances<T> **begin = new_point_set.begin();
+	    NodeDistances<T> **end = new_point_set.end();
 
 	    for (; begin < end; begin++) {
 
@@ -314,13 +330,13 @@ namespace ctree {
     }
   }
 
-  template<typename TCoverTreeNode>
-  TCoverTreeNode *MakeCoverTree(const Matrix& dataset) {
+  template<typename TCoverTreeNode, typename T>
+  TCoverTreeNode *MakeCoverTree(const GenMatrix<T>& dataset) {
 
     index_t n = dataset.n_cols();
     DEBUG_ASSERT(n > 0);
-    ArrayList<NodeDistances*> point_set, consumed_set;
-    Vector root_point;
+    ArrayList<NodeDistances<T>*> point_set, consumed_set;
+    GenVector<T> root_point;
 
     dataset.MakeColumnVector(0, &root_point);
     point_set.Init(0);
@@ -328,12 +344,13 @@ namespace ctree {
 
     // speed up possible here by using pointers
     for (index_t i = 1; i < n; i++) {
-      NodeDistances *node_distances = new NodeDistances();
-      Vector point;
-      double dist;
+      NodeDistances<T> *node_distances = new NodeDistances<T>();
+      GenVector<T> point;
+      T dist;
 
       dataset.MakeColumnVector(i, &point);
-      dist = sqrt(la::DistanceSqEuclidean(root_point, point));
+      //dist = sqrt(la::DistanceSqEuclidean(root_point, point));
+      dist = pdc::DistanceEuclidean<T>(root_point, point, sqrt(DBL_MAX));
 
       node_distances->Init(i, dist);
 
@@ -341,14 +358,14 @@ namespace ctree {
     }
     DEBUG_ASSERT(point_set.size() == n - 1);
 
-    double max_dist = max_set(&point_set);
+    T max_dist = max_set(&point_set);
     index_t max_scale = scale_of_distance(max_dist);
     
     
     TCoverTreeNode *root_node = 
-      private_make_tree<TCoverTreeNode>(0, dataset, max_scale,
-					max_scale, &point_set,
-					&consumed_set);
+      private_make_tree<TCoverTreeNode, T>(0, dataset, max_scale,
+					   max_scale, &point_set,
+					   &consumed_set);
     
     return root_node;
   }
