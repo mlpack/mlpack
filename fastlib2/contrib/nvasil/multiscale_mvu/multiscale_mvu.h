@@ -72,6 +72,9 @@ class MultiscaleMVU {
       }
       OptimizedFunction optfun;
       optfun.Init(optfun_node, interim_data);
+      char buffer[128];
+      sprintf(buffer, "%i", init_data.n_cols());
+      fx_set_param(l_bfgs_node, "num_of_points", buffer);
       l_bfgs_.Init(&optfun, l_bfgs_node);
       l_bfgs_.set_coordinates(init_data);
       l_bfgs_.ComputeLocalOptimumBFGS();
