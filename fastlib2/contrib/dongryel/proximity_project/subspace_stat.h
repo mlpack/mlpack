@@ -111,12 +111,12 @@ class SubspaceStat {
 
     // Let C = sampled columns. Then here we compute C^T C and
     // computes its eigenvector.
-    Matrix sampled_product, tmp_right_singular_vectors;
+    Matrix sampled_product, tmp_right_singular_vectors, tmp_vectors;
     Vector tmp_eigen_values;
     la::MulTransAInit(sampled_columns, sampled_columns, &sampled_product);
-    la::EigenvectorsInit(sampled_product, &tmp_eigen_values, 
-			 &tmp_right_singular_vectors);
-    
+    la::SVDInit(sampled_product, &tmp_eigen_values, 
+		&tmp_right_singular_vectors, &tmp_vectors);
+
     // Cut off small eigen values...
     int eigen_count = 0;
     for(index_t i = 0; i < tmp_eigen_values.length(); i++) {
@@ -152,22 +152,6 @@ class SubspaceStat {
       la::Scale(right_singular_vectors_.n_rows(), 1.0 / length,
 		right_singular_vectors_.GetColumnPtr(i));
     }
-
-    mean_centered.PrintDebug();
-
-    // Check by using exact SVD...
-    Vector test_singular_values;
-    Matrix test_left_singular_vectors, test_right_singular_vectors;
-    la::SVDInit(mean_centered, &test_singular_values,
-		&test_left_singular_vectors, &test_right_singular_vectors);
-    test_singular_values.PrintDebug();
-    test_left_singular_vectors.PrintDebug();
-    test_right_singular_vectors.PrintDebug();
-    
-    singular_values_.PrintDebug();
-    left_singular_vectors_.PrintDebug();
-    right_singular_vectors_.PrintDebug();
-    exit(0);
   }
 
  public:
@@ -202,7 +186,7 @@ class SubspaceStat {
       FastSvdByColumnSampling_(mean_centered);
     }
     else {
-      FastSvdByRowSampling_(mean_centered);
+      FastSvdByColumnSampling_(mean_centered);
     }
     exit(0);
   }
