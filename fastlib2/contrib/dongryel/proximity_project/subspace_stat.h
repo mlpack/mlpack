@@ -11,20 +11,36 @@ class SubspaceStat {
 
   static void ComputeResidualBasis_(const Matrix &first_basis,
 				    const Matrix &second_basis,
+				    const Vector &mean_diff,
+				    Matrix *projection,
 				    Matrix *residual_basis) {
-    
-    printf("First basis: %d %d\n", first_basis.n_rows(), first_basis.n_cols());
-    printf("Second basis: %d %d\n", second_basis.n_rows(),
-	   second_basis.n_cols());
 
-    // First project second basis onto the first basis...
-    Matrix tmp_matrix;
-    la::MulTransAInit(first_basis, second_basis, &tmp_matrix);
+    // First project second basis and the difference of the two means
+    // onto the first basis...
+    Matrix projection_first_basis;
+    Vector projection_mean_diff;
+    projection->Init(first_basis.n_cols(), second_basis.n_cols() + 1);
+    projection_first_basis.Alias(projection->GetColumnPtr(0),
+				 first_basis.n_cols(), second_basis.n_cols());
+    projection_mean_diff.Alias(projection->GetColumnPtr(second_basis.n_cols()),
+			       projection->n_rows());
+    la::MulTransAOverwrite(first_basis, second_basis, &projection_first_basis);
+    la::MulOverwrite(mean_diff, first_basis, &projection_mean_diff);
     
-    // Compute the residual...
-    residual_basis->Copy(second_basis);
+    // Reconstruct and compute the reconstruction error...    
+    residual_basis->Init(second_basis.n_rows(), second_basis.n_cols() + 1);
+    Matrix residual_basis_second_basis;
+    Vector residual_basis_mean_diff;
+    residual_basis_second_basis.Alias(residual_basis->GetColumnPtr(0),
+				      first_basis.n_rows(),
+				      second_basis.n_cols());
+    residual_basis_mean_diff.Alias(residual_basis->GetColumnPtr
+				   (second_basis.n_cols()),
+				   first_basis.n_rows());
+    residual_basis_second_basis.CopyValues(second_basis);
+    residual_basis_mean_diff.CopyValues(mean_diff);
 
-    la::MulExpert(-1, false, first_basis, false, tmp_matrix, 1, 
+    la::MulExpert(-1, false, first_basis, false, *projection, 1, 
 		  residual_basis);
 
     // Loop over each residual basis...
@@ -43,8 +59,11 @@ class SubspaceStat {
       double length = la::LengthEuclidean(residual_basis->n_rows(),
 					  column_vector);
 
-      if(length > DBL_EPSILON) {
+      if(length > epsilon_) {
 	la::Scale(residual_basis->n_rows(), 1.0 / length, column_vector);
+      }
+      else {
+	la::Scale(residual_basis->n_rows(), 0, column_vector);
       }
     } // end of looping over each residual basis...
   }
@@ -301,7 +320,196 @@ class SubspaceStat {
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const SubspaceStat& left_stat, const SubspaceStat& right_stat) {
-    Init(dataset, start, count);
+
+    // Set the starting index and the count...
+    start_ = start;
+    count_ = count;
+    
+    // Compute the weighted mean of the two means...
+    mean_vector_.Copy(left_stat.mean_vector_);
+    la::Scale(left_stat.count_, &mean_vector_);
+    la::AddExpert(right_stat.count_, right_stat.mean_vector_, &mean_vector_);
+    la::Scale(1.0 / ((double) count), &mean_vector_);
+    
+    // Compute the difference between the two PCA models...
+    Vector diff_mean;
+    la::SubInit(left_stat.mean_vector_, right_stat.mean_vector_, &diff_mean);
+    
+    // Compute the residual of the projection of the right basis and
+    // the mean difference onto the left basis.
+    Matrix subspace_projection_reconstruction_error, subspace_projection;
+    ComputeResidualBasis_(left_stat.left_singular_vectors_,
+			  right_stat.left_singular_vectors_, diff_mean,
+			  &subspace_projection,
+			  &subspace_projection_reconstruction_error);
+    
+    // Now we setup the eigenproblem to be solved for stitching two
+    // PCA models together.
+    Matrix merging_problem;
+    int dimension_merging_problem = left_stat.singular_values_.length() +
+      right_stat.singular_values_.length();
+    merging_problem.Init(dimension_merging_problem, dimension_merging_problem);
+    merging_problem.SetZero();
+    
+    // Compute the multiplicative factors.
+    double factor1 = ((double) left_stat.count_) / ((double) count);
+    double factor2 = ((double) right_stat.count_) / ((double) count);
+    double factor3 = ((double) left_stat.count_ * right_stat.count_) /
+      ((double) count * count);
+    
+    // Setup the top left block...using the outer-product formulation
+    // of the matrix-matrix product.
+    //
+    // Remember that eigenvalues are squared singular values!!
+    for(index_t j = 0; j < left_stat.singular_values_.length(); j++) {
+      merging_problem.set(j, j, factor1 * left_stat.singular_values_[j] *
+			  left_stat.singular_values_[j] / 
+			  ((double) left_stat.count_));
+    }
+
+    for(index_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
+      const double *column_vector = subspace_projection.GetColumnPtr(j);
+
+      // Now loop over each component of the upper left submatrix.
+      for(index_t i = 0; i < left_stat.singular_values_.length(); i++) {
+	for(index_t k = 0; k < left_stat.singular_values_.length(); k++) {
+
+	  if(j < right_stat.singular_values_.length()) {
+	    merging_problem.set(k, i, merging_problem.get(k, i) + factor2 *
+				column_vector[k] * column_vector[i] *
+				right_stat.singular_values_[j] *
+				right_stat.singular_values_[j] /
+				((double) right_stat.count_));
+	  }
+	  else {
+	    merging_problem.set(k, i, merging_problem.get(k, i) + factor3 *
+				column_vector[k] * column_vector[i]);
+	  }
+	}
+      }
+    }
+    
+    // Compute the projection of the right basis and the mean
+    // difference onto the residual basis.
+    Matrix projection_right_basis;
+    la::MulTransAInit(subspace_projection_reconstruction_error, 
+		      right_stat.left_singular_vectors_, 
+		      &projection_right_basis);
+    Vector projection_mean_diff;
+    la::MulInit(diff_mean, subspace_projection_reconstruction_error,
+		&projection_mean_diff);
+
+    // Set up the top right block...also using the outer-product
+    // formulation of the matrix-matrix product.
+    for(index_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
+      const double *column_vector = subspace_projection.GetColumnPtr(j);
+      const double *column_vector2 = 
+	(j < right_stat.singular_values_.length()) ?
+	projection_right_basis.GetColumnPtr(j):projection_mean_diff.ptr();
+
+      // Now loop over each component of the upper right submatrix.
+      for(index_t i = left_stat.singular_values_.length(); 
+	  i < dimension_merging_problem; i++) {
+	for(index_t k = 0; k < left_stat.singular_values_.length(); k++) {
+
+	  if(j < right_stat.singular_values_.length()) {
+	    merging_problem.set
+	      (k, i, merging_problem.get(k, i) + factor2 *
+	       column_vector[k] * 
+	       column_vector2[i - left_stat.singular_values_.length()] *
+	       right_stat.singular_values_[j] *
+	       right_stat.singular_values_[j] / ((double) right_stat.count_));
+	  }
+	  else {
+	    merging_problem.set
+	      (k, i, merging_problem.get(k, i) + factor3 *
+	       column_vector[k] * 
+	       column_vector2[i - left_stat.singular_values_.length()]);
+	  }
+	} // end of iterating over each row...
+      } // end of iterating over each column...
+    } // end of iterating over each column...
+    
+    // Set up the lower left block... This is basically a tranpose of
+    // the upper right block.
+    for(index_t i = 0; i < left_stat.singular_values_.length(); i++) {
+      for(index_t j = left_stat.singular_values_.length();
+	  j < dimension_merging_problem; j++) {
+	merging_problem.set(j, i, merging_problem.get(i, j));
+      }
+    }
+    // Set up the lower right block... also using the outer-product
+    // formulation of the matrix-matrix product.
+    for(index_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
+      const double *column_vector = 
+	(j < right_stat.singular_values_.length()) ?
+	projection_right_basis.GetColumnPtr(j):projection_mean_diff.ptr();
+      
+      // Now loop over each component of the upper left submatrix.
+      for(index_t i = left_stat.singular_values_.length(); 
+	  i < dimension_merging_problem; i++) {
+	for(index_t k = left_stat.singular_values_.length(); 
+	    k < dimension_merging_problem; k++) {
+
+	  if(j < right_stat.singular_values_.length()) {
+	    merging_problem.set
+	      (k, i, merging_problem.get(k, i) + factor2 *
+	       column_vector[k - left_stat.singular_values_.length()] * 
+	       column_vector[i - left_stat.singular_values_.length()] *
+	       right_stat.singular_values_[j] * 
+	       right_stat.singular_values_[j] / ((double) right_stat.count_));
+	  }
+	  else {
+	    merging_problem.set
+	      (k, i, merging_problem.get(k, i) + factor3 *
+	       column_vector[k - left_stat.singular_values_.length()] * 
+	       column_vector[i - left_stat.singular_values_.length()]);
+	  }
+	}
+      }
+    }
+    
+    // Compute the eigenvector of the system and rotate...
+    Vector tmp_singular_values;
+    Matrix tmp_left_singular_vectors, tmp_right_singular_vectors;
+
+    la::SVDInit(merging_problem, &tmp_singular_values,
+		&tmp_left_singular_vectors, &tmp_right_singular_vectors);
+    int eigen_count = 0;
+    for(index_t i = 0; i < tmp_singular_values.length(); i++) {
+      if(tmp_singular_values[i] >= epsilon_ * tmp_singular_values[0]) {
+	eigen_count++;
+      }
+    }
+
+    // Rotation...
+    left_singular_vectors_.Init(dataset.n_rows(), eigen_count);
+    left_singular_vectors_.SetZero();
+
+    for(index_t i = 0; i < tmp_left_singular_vectors.n_cols(); i++) {
+      const double *column_vector =
+	(i < left_stat.left_singular_vectors_.n_cols()) ?
+	left_stat.left_singular_vectors_.GetColumnPtr(i):
+	subspace_projection_reconstruction_error.GetColumnPtr
+	(i - left_stat.left_singular_vectors_.n_cols());
+
+      for(index_t j = 0; j < eigen_count; j++) {
+	for(index_t k = 0; k < dataset.n_rows(); k++) {
+	  left_singular_vectors_.set
+	    (k, j, left_singular_vectors_.get(k, j) +
+	     column_vector[k] * tmp_left_singular_vectors.get(i, j));
+	}
+      }
+    }
+    
+    // Copy over the singular values...
+    singular_values_.Init(eigen_count);
+    for(index_t i = 0; i < eigen_count; i++) {
+      singular_values_[i] = sqrt(tmp_singular_values[i] * count_);
+    }
+    
+    // Initialize to dummy values...
+    right_singular_vectors_.Init(0, 0);
   }
 
   SubspaceStat() { }
