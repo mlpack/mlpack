@@ -9,6 +9,46 @@ class SubspaceStat {
 
   static const double epsilon_ = 0.01;
 
+  static void ComputeResidualBasis_(const Matrix &first_basis,
+				    const Matrix &second_basis,
+				    Matrix *residual_basis) {
+    
+    printf("First basis: %d %d\n", first_basis.n_rows(), first_basis.n_cols());
+    printf("Second basis: %d %d\n", second_basis.n_rows(),
+	   second_basis.n_cols());
+
+    // First project second basis onto the first basis...
+    Matrix tmp_matrix;
+    la::MulTransAInit(first_basis, second_basis, &tmp_matrix);
+    
+    // Compute the residual...
+    residual_basis->Copy(second_basis);
+
+    la::MulExpert(-1, false, first_basis, false, tmp_matrix, 1, 
+		  residual_basis);
+
+    // Loop over each residual basis...
+    for(index_t i = 0; i < residual_basis->n_cols(); i++) {
+      
+      double *column_vector = residual_basis->GetColumnPtr(i);
+
+      for(index_t j = 0; j < i; j++) {
+	double dot_product = la::Dot(residual_basis->n_rows(), column_vector,
+				     residual_basis->GetColumnPtr(j));
+	la::AddExpert(residual_basis->n_rows(), -dot_product,
+		      residual_basis->GetColumnPtr(j), column_vector);
+      }
+      
+      // Normalize the vector if done...
+      double length = la::LengthEuclidean(residual_basis->n_rows(),
+					  column_vector);
+
+      if(length > DBL_EPSILON) {
+	la::Scale(residual_basis->n_rows(), 1.0 / length, column_vector);
+      }
+    } // end of looping over each residual basis...
+  }
+
   static void ComputeColumnMean_(const Matrix &data, index_t start, 
 				 index_t count, Vector *mean) {
 
@@ -78,7 +118,10 @@ class SubspaceStat {
     return cumulative_distribution.length() - 1;
   }
 
-  void FastSvdByColumnSampling_(const Matrix& mean_centered, bool transposed) {
+  void FastSvdByColumnSampling_(const Matrix& mean_centered, bool transposed,
+				Vector &singular_values_arg,
+				Matrix &left_singular_vectors_arg,
+				Matrix &right_singular_vectors_arg) {
 
     // First determine the column length-squared distribution...
     Vector squared_lengths;
@@ -97,7 +140,7 @@ class SubspaceStat {
        &total_squared_lengths);
     
     // The number of samples...
-    int num_samples = max(mean_centered.n_cols() / 2, 1);
+    int num_samples = std::max((int) sqrt(mean_centered.n_cols()), 1);
     Matrix sampled_columns;
     sampled_columns.Init(mean_centered.n_rows(), num_samples);
 
@@ -145,48 +188,48 @@ class SubspaceStat {
       // Now exploit the relationship between the right and the left
       // singular vectors. Normalize and retrieve the singular values.
       la::MulInit(sampled_columns, aliased_right_singular_vectors,
-		  &right_singular_vectors_);
-      singular_values_.Init(eigen_count);
+		  &right_singular_vectors_arg);
+      singular_values_arg.Init(eigen_count);
       for(index_t i = 0; i < eigen_count; i++) {
-	singular_values_[i] = sqrt(tmp_eigen_values[i]);
-	la::Scale(mean_centered.n_rows(), 1.0 / singular_values_[i],
-		right_singular_vectors_.GetColumnPtr(i));
+	singular_values_arg[i] = sqrt(tmp_eigen_values[i]);
+	la::Scale(mean_centered.n_rows(), 1.0 / singular_values_arg[i],
+		  right_singular_vectors_arg.GetColumnPtr(i));
       }
       
       // Now compute the right singular vectors from the left singular
       // vectors.
-      la::MulTransAInit(mean_centered, right_singular_vectors_,
-			&left_singular_vectors_);
-      for(index_t i = 0; i < left_singular_vectors_.n_cols(); i++) {
+      la::MulTransAInit(mean_centered, right_singular_vectors_arg,
+			&left_singular_vectors_arg);
+      for(index_t i = 0; i < left_singular_vectors_arg.n_cols(); i++) {
 	double length = 
-	  la::LengthEuclidean(left_singular_vectors_.n_rows(),
-			      left_singular_vectors_.GetColumnPtr(i));
-	la::Scale(left_singular_vectors_.n_rows(), 1.0 / length,
-		  left_singular_vectors_.GetColumnPtr(i));
+	  la::LengthEuclidean(left_singular_vectors_arg.n_rows(),
+			      left_singular_vectors_arg.GetColumnPtr(i));
+	la::Scale(left_singular_vectors_arg.n_rows(), 1.0 / length,
+		  left_singular_vectors_arg.GetColumnPtr(i));
       }
     }
     else {
       // Now exploit the relationship between the right and the left
       // singular vectors. Normalize and retrieve the singular values.
       la::MulInit(sampled_columns, aliased_right_singular_vectors,
-		  &left_singular_vectors_);
-      singular_values_.Init(eigen_count);
+		  &left_singular_vectors_arg);
+      singular_values_arg.Init(eigen_count);
       for(index_t i = 0; i < eigen_count; i++) {
-	singular_values_[i] = sqrt(tmp_eigen_values[i]);
-	la::Scale(mean_centered.n_rows(), 1.0 / singular_values_[i],
-		left_singular_vectors_.GetColumnPtr(i));
+	singular_values_arg[i] = sqrt(tmp_eigen_values[i]);
+	la::Scale(mean_centered.n_rows(), 1.0 / singular_values_arg[i],
+		left_singular_vectors_arg.GetColumnPtr(i));
       }
       
       // Now compute the right singular vectors from the left singular
       // vectors.
-      la::MulTransAInit(mean_centered, left_singular_vectors_,
-			&right_singular_vectors_);
-      for(index_t i = 0; i < right_singular_vectors_.n_cols(); i++) {
+      la::MulTransAInit(mean_centered, left_singular_vectors_arg,
+			&right_singular_vectors_arg);
+      for(index_t i = 0; i < right_singular_vectors_arg.n_cols(); i++) {
 	double length = 
-	  la::LengthEuclidean(right_singular_vectors_.n_rows(),
-			      right_singular_vectors_.GetColumnPtr(i));
-	la::Scale(right_singular_vectors_.n_rows(), 1.0 / length,
-		  right_singular_vectors_.GetColumnPtr(i));
+	  la::LengthEuclidean(right_singular_vectors_arg.n_rows(),
+			      right_singular_vectors_arg.GetColumnPtr(i));
+	la::Scale(right_singular_vectors_arg.n_rows(), 1.0 / length,
+		  right_singular_vectors_arg.GetColumnPtr(i));
       }
     }
   }
@@ -208,43 +251,57 @@ class SubspaceStat {
   /** @brief Compute PCA exhaustively for leaf nodes.
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
+
+    // Set the start and count info before anything else...
+    start_ = start;
+    count_ = count;
+
+    if(count == 1) {
+      mean_vector_.Init(dataset.n_rows());
+      mean_vector_.SetZero();
+      left_singular_vectors_.Init(dataset.n_rows(), 1);
+      left_singular_vectors_.SetZero();
+      singular_values_.Init(1);
+      singular_values_.SetZero();
+      right_singular_vectors_.Init(count, 1);
+      right_singular_vectors_.SetZero();
+      return;
+    }
+
+    Matrix mean_centered;
     
+    // Compute the mean vector owned by this node.
+    ComputeColumnMean_(dataset, start, count, &mean_vector_);
+
     // Determine which dimension is longer: the row or the column...
     // If there are more columns than rows, then we do
     // column-sampling.
     if(dataset.n_rows() <= count) {
-      
-      Matrix mean_centered;
-
-      // Compute the mean vector owned by this node.
-      ComputeColumnMean_(dataset, start, count, &mean_vector_);
-      
+            
       // Compute the mean centered dataset.
       ColumnMeanCenter_(dataset, start, count, mean_vector_, &mean_centered);
    
-      FastSvdByColumnSampling_(mean_centered, false);
+      FastSvdByColumnSampling_(mean_centered, false, singular_values_,
+			       left_singular_vectors_, 
+			       right_singular_vectors_);
     }
     else {
-
-      Matrix mean_centered;
-
-      // Compute the mean vector owned by this node.
-      ComputeColumnMean_(dataset, start, count, &mean_vector_);
       
       // Compute the mean centered dataset.
       ColumnMeanCenterTranspose_(dataset, start, count, mean_vector_, 
 				 &mean_centered);
 
-      FastSvdByColumnSampling_(mean_centered, true);
+      FastSvdByColumnSampling_(mean_centered, true, singular_values_,
+			       left_singular_vectors_,
+			       right_singular_vectors_);
     }
-    exit(0);
   }
 
   /** Merge two eigenspaces into one.
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const SubspaceStat& left_stat, const SubspaceStat& right_stat) {
-
+    Init(dataset, start, count);
   }
 
   SubspaceStat() { }

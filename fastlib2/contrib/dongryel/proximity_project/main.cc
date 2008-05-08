@@ -25,8 +25,11 @@ int main(int argc, char *argv[]) {
   ArrayList<int> old_from_new;
   GTree *root_ = proximity::MakeGenMetricTree<GTree>
     (data_, leaflen, &old_from_new);
-
+  
   fx_timer_stop(NULL, "pca tree");
+
+  (root_->stat().singular_values_).PrintDebug();
+  (root_->stat().left_singular_vectors_).PrintDebug();
 
   printf("Finished constructing the tree...\n");
 
