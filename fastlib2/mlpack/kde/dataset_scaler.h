@@ -114,12 +114,22 @@ class DatasetScaler {
       printf("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
 
       for(index_t j = 0; j < rset.n_cols(); j++) {
-	rset.set(i, j, (rset.get(i, j) - min_coord) / width);
+	if(width > 0) {
+	  rset.set(i, j, (rset.get(i, j) - min_coord) / width);
+	}
+	else {
+	  rset.set(i, j, 0);
+	}
       }
 
       if(!queries_equal_references) {
 	for(index_t j = 0; j < qset.n_cols(); j++) {
-	  qset.set(i, j, (qset.get(i, j) - min_coord) / width);
+	  if(width > 0) {
+	    qset.set(i, j, (qset.get(i, j) - min_coord) / width);
+	  }
+	  else {
+	    qset.set(i, j, 0);
+	  }
 	}
       }
     }
