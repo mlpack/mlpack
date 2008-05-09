@@ -265,8 +265,6 @@ class SubspaceStat {
   
   Vector singular_values_;
 
-  Matrix right_singular_vectors_;
-
   /** @brief Compute PCA exhaustively for leaf nodes.
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
@@ -282,12 +280,10 @@ class SubspaceStat {
       left_singular_vectors_.SetZero();
       singular_values_.Init(1);
       singular_values_.SetZero();
-      right_singular_vectors_.Init(count, 1);
-      right_singular_vectors_.SetZero();
       return;
     }
 
-    Matrix mean_centered;
+    Matrix mean_centered, right_singular_vectors_tmp;
     
     // Compute the mean vector owned by this node.
     ComputeColumnMean_(dataset, start, count, &mean_vector_);
@@ -302,7 +298,7 @@ class SubspaceStat {
    
       FastSvdByColumnSampling_(mean_centered, false, singular_values_,
 			       left_singular_vectors_, 
-			       right_singular_vectors_);
+			       right_singular_vectors_tmp);
     }
     else {
       
@@ -312,7 +308,7 @@ class SubspaceStat {
 
       FastSvdByColumnSampling_(mean_centered, true, singular_values_,
 			       left_singular_vectors_,
-			       right_singular_vectors_);
+			       right_singular_vectors_tmp);
     }
   }
 
@@ -507,9 +503,6 @@ class SubspaceStat {
     for(index_t i = 0; i < eigen_count; i++) {
       singular_values_[i] = sqrt(tmp_singular_values[i] * count_);
     }
-    
-    // Initialize to dummy values...
-    right_singular_vectors_.Init(0, 0);
   }
 
   SubspaceStat() { }
