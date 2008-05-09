@@ -39,6 +39,7 @@ int main(int argc, char *argv[]) {
   Vector eigen_values;
   Matrix principal_components;
   Pca::EigenDecomposeCovariance(data_, &eigen_values, &principal_components);
+  principal_components.PrintDebug();
   fx_timer_stop(NULL, "exhaustive pca");
 
   // Clean up the memory used by the tree...
