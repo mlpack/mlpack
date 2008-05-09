@@ -199,6 +199,21 @@ class SeriesExpansionAux {
    */
   int ComputeMultiindexPosition(const ArrayList<int> &multiindex) const;
 
+  /** @brief Computes the computational cost of evaluating a far-field
+   *         expansion of order p at a single query point.
+   */
+  double FarFieldEvaluationCost(int order) const;
+
+  /** @brief Computes the compuational cost of translating a far-field
+   *         moment of order p into a local moment of the same order.
+   */
+  double FarFieldToLocalTranslationCost(int order) const;
+
+  /** @brief Computes the computational cost of directly accumulating
+   *         a single reference point into a local moment of order p.
+   */
+  double DirectLocalAccumulationCost(int order) const;
+
   /** 
    * Initialize the auxiliary object with precomputed quantities for
    * order up to max_order for the given dimensionality.
