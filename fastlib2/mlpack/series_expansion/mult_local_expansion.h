@@ -157,8 +157,6 @@ void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
   derivative_map.Init(dim, order + 1);
   
   // some temporary variables
-  Vector arrtmp;
-  arrtmp.Init(sea_->get_max_total_num_coeffs());
   Vector x_r_minus_x_Q;
   x_r_minus_x_Q.Init(dim);
   
@@ -184,13 +182,10 @@ void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     for(index_t j = 0; j < total_num_coeffs; j++) {
       int index = traversal_order[j];
       const ArrayList<int> &mapping = sea_->get_multiindex(index);
-      arrtmp[index] = ka_->ComputePartialDerivative(derivative_map, mapping);
-    }
-    
-    for(index_t j = 0; j < total_num_coeffs; j++) {
-      int index = traversal_order[j];
+      double partial_derivative = 
+	ka_->ComputePartialDerivative(derivative_map, mapping);
       coeffs_[index] += neg_inv_multiindex_factorials[index] * weights[r] * 
-	arrtmp[index];
+	partial_derivative;
     }
   } // End of looping through each reference point.
 }
