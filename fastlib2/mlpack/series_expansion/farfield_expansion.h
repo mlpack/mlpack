@@ -578,7 +578,7 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const Vector &x_q,
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
-    ArrayList<int> mapping = sea_->get_multiindex(j);
+    const ArrayList<int> &mapping = sea_->get_multiindex(j);
     double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
     double prod = coeffs_[j] * arrtmp;
     
@@ -676,14 +676,14 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
   // main loop
   for(index_t beta = 0; beta < total_num_coeffs2; beta++) {
     
-    ArrayList <int> beta_mapping = multiindex_mapping[beta];
-    ArrayList <int> lower_mappings_for_beta = lower_mapping_index[beta];
+    const ArrayList <int> &beta_mapping = multiindex_mapping[beta];
+    const ArrayList <int> &lower_mappings_for_beta = lower_mapping_index[beta];
     double beta_derivative = ka_->ComputePartialDerivative
       (derivative_map_beta, beta_mapping);
     
     for(index_t nu = 0; nu < lower_mappings_for_beta.size(); nu++) {
       
-      ArrayList<int> nu_mapping = 
+      const ArrayList<int> &nu_mapping = 
 	multiindex_mapping[lower_mappings_for_beta[nu]];
       
       // beta - nu
@@ -693,8 +693,8 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
       
       for(index_t gamma = 0; gamma < total_num_coeffs3; gamma++) {
 	
-	ArrayList <int> gamma_mapping = multiindex_mapping[gamma];
-	ArrayList <int> lower_mappings_for_gamma = 
+	const ArrayList <int> &gamma_mapping = multiindex_mapping[gamma];
+	const ArrayList <int> &lower_mappings_for_gamma = 
 	  lower_mapping_index[gamma];
 	double gamma_derivative = ka_->ComputePartialDerivative
 	  (derivative_map_gamma, gamma_mapping);
@@ -705,7 +705,7 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
 	  // add up alpha, mu, eta and beta, gamma, nu, eta
 	  int sign = 0;
 	  
-	  ArrayList<int> eta_mapping =
+	  const ArrayList<int> &eta_mapping =
 	    multiindex_mapping[lower_mappings_for_gamma[eta]];
 	  
 	  for(index_t d = 0; d < dim; d++) {
@@ -849,14 +849,15 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   // main loop
   for(index_t alpha = 0; alpha < total_num_coeffs1; alpha++) {
 
-    ArrayList <int> alpha_mapping = multiindex_mapping[alpha];
-    ArrayList <int> lower_mappings_for_alpha = lower_mapping_index[alpha];
+    const ArrayList <int> &alpha_mapping = multiindex_mapping[alpha];
+    const ArrayList <int> &lower_mappings_for_alpha = 
+      lower_mapping_index[alpha];
     double alpha_derivative = ka_->ComputePartialDerivative
       (derivative_map_alpha, alpha_mapping);
 
     for(index_t mu = 0; mu < lower_mappings_for_alpha.size(); mu++) {
 
-      ArrayList <int> mu_mapping = 
+      const ArrayList <int> &mu_mapping = 
 	multiindex_mapping[lower_mappings_for_alpha[mu]];
 
       // alpha - mu
@@ -866,14 +867,15 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
       
       for(index_t beta = 0; beta < total_num_coeffs2; beta++) {
 	
-	ArrayList <int> beta_mapping = multiindex_mapping[beta];
-	ArrayList <int> lower_mappings_for_beta = lower_mapping_index[beta];
+	const ArrayList <int> &beta_mapping = multiindex_mapping[beta];
+	const ArrayList <int> &lower_mappings_for_beta = 
+	  lower_mapping_index[beta];
 	double beta_derivative = ka_->ComputePartialDerivative
 	  (derivative_map_beta, beta_mapping);
 
 	for(index_t nu = 0; nu < lower_mappings_for_beta.size(); nu++) {
 	  
-	  ArrayList<int> nu_mapping = 
+	  const ArrayList<int> &nu_mapping = 
 	    multiindex_mapping[lower_mappings_for_beta[nu]];
 
 	  // mu + nu and beta - nu
@@ -884,8 +886,8 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
 
 	  for(index_t gamma = 0; gamma < total_num_coeffs3; gamma++) {
 	    
-	    ArrayList <int> gamma_mapping = multiindex_mapping[gamma];
-	    ArrayList <int> lower_mappings_for_gamma = 
+	    const ArrayList <int> &gamma_mapping = multiindex_mapping[gamma];
+	    const ArrayList <int> &lower_mappings_for_gamma = 
 	      lower_mapping_index[gamma];
 	    double gamma_derivative = ka_->ComputePartialDerivative
 	      (derivative_map_gamma, gamma_mapping);
@@ -896,7 +898,7 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
 	      // add up alpha, mu, eta and beta, gamma, nu, eta
 	      int sign = 0;
 	      
-	      ArrayList<int> eta_mapping =
+	      const ArrayList<int> &eta_mapping =
 		multiindex_mapping[lower_mappings_for_gamma[eta]];
 
 	      for(index_t d = 0; d < dim; d++) {
@@ -1046,7 +1048,7 @@ void FarFieldExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
   for (index_t i = 0; i < total_num_coeffs; i++) {
-    ArrayList<int> mapping = sea_->get_multiindex(i);
+    const ArrayList<int> &mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g ", coeffs_[i]);
     
     fprintf(stream, "(-1)^(");

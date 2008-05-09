@@ -498,7 +498,7 @@ void MultFarFieldExpansion<TKernelAux>::PrintDebug
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
   for (index_t i = 0; i < total_num_coeffs; i++) {
-    ArrayList<int> mapping = sea_->get_multiindex(i);
+    const ArrayList<int> &mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g ", coeffs_[i]);
     
     fprintf(stream, "(-1)^(");
