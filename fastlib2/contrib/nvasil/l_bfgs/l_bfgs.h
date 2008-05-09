@@ -38,7 +38,9 @@ class LBfgs {
   void set_norm_grad_tolerance(double norm_grad_tolerance);
   void set_max_iterations(index_t max_iterations);
   Matrix *coordinates();
- 
+  double sigma();
+  void set_sigma(double sigma);
+
  private:
   void InitOptimization_();
   void ComputeWolfeStep_();

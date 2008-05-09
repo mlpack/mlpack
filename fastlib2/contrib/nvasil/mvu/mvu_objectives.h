@@ -27,6 +27,7 @@ class MaxVariance {
  public:
   static const index_t MAX_KNNS=30;
   void Init(datanode *module, Matrix &data);
+  void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
   void ComputeFeasibilityError(Matrix &coordinates, double *error);
@@ -53,6 +54,7 @@ class MaxVarianceInequalityOnFurthest {
  public:
   static const index_t MAX_KNNS=30;
   void Init(datanode *module, Matrix &data);
+  void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
   void ComputeFeasibilityError(Matrix &coordinates, double *error);
@@ -84,6 +86,7 @@ class MaxFurthestNeighbors {
 public:
   static const index_t MAX_KNNS=30;
   void Init(datanode *module, Matrix &data);
+  void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
   void ComputeFeasibilityError(Matrix &coordinates, double *error);

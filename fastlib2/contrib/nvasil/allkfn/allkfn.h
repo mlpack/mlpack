@@ -512,7 +512,23 @@ class AllkFN {
    // This is an annoying feature of fastlib
     old_from_new_queries_.Init();
   }
- 
+
+  void Destruct() {
+    queries_.Destruct();
+    references_.Destruct();
+    old_from_new_queries_.Destruct();
+    old_from_new_references_.Destruct();
+    neighbor_distances_.Destruct();
+    neighbor_indices_.Destruct();
+    if (query_tree_ != NULL) {
+      delete query_tree_;
+      query_tree_=NULL;
+    }
+    if (reference_tree_ != NULL) {
+      delete reference_tree_;
+      reference_tree_=NULL;
+    }
+  } 
   
   /**
    * Initializes the AllNN structure for naive computation.  

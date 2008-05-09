@@ -78,6 +78,14 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
   fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
 }
 
+void MaxVariance::Destruct() {
+  allknn_.Destruct();
+  nearest_neighbor_pairs_.Destruct();
+  nearest_distances_.Destruct();
+  eq_lagrange_mult_.Destruct();
+
+}
+
 void MaxVariance::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   gradient->CopyValues(coordinates);
   // we need to use -CRR^T because we want to maximize CRR^T
@@ -256,6 +264,17 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
  
   NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
   fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
+}
+
+void MaxVarianceInequalityOnFurthest::Destruct() {
+  allknn_.Destruct();
+  allkfn_.Destruct();
+  nearest_neighbor_pairs_.Destruct();
+  nearest_distances_.Destruct();
+  eq_lagrange_mult_.Destruct();
+  ineq_lagrange_mult_.Destruct();
+  furthest_neighbor_pairs_.Destruct();
+  furthest_distances_.Destruct(); 
 }
 
 void MaxVarianceInequalityOnFurthest::ComputeGradient(Matrix &coordinates, 
@@ -500,6 +519,16 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
  
   NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
   fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
+}
+
+void MaxFurthestNeighbors::Destruct() {
+  allknn_.Destruct();
+  allkfn_.Destruct();
+  nearest_neighbor_pairs_.Destruct();
+  nearest_distances_.Destruct();
+  eq_lagrange_mult_.Destruct();
+  furthest_neighbor_pairs_.Destruct();
+  furthest_distances_.Destruct();
 }
 
 void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
