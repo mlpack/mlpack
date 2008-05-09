@@ -254,16 +254,61 @@ class SubspaceStat {
   }
 
  public:
-  
+
+  /** @brief The starting index of the points owned by the current
+   *         statistics object.
+   */
   int start_;
   
+  /** @brief The number of points owned by the current statistics
+   *         object.
+   */
   int count_;
   
+  /** @brief The mean of the points owned by the current statistics
+   *         object.
+   */
   Vector mean_vector_;
 
+  /** @brief The left singular vectors that comprise the subspace for
+   *         the current statistics object.
+   */
   Matrix left_singular_vectors_;
-  
+
+  /** @brief The singular values.
+   */
   Vector singular_values_;
+
+  /** @brief The maximum L2 reconstruction error of the points owned
+   *         by the node using the left singular vectors as the basis
+   *         set.
+   */
+  double max_l2_norm_reconstruction_error_;
+
+  void ComputeMaxL2NormReconstructionError(const Matrix &dataset) {
+    
+    Vector diff_vector, proj_vector, reconstructed_vector;
+    diff_vector.Init(dataset.n_rows());
+    reconstructed_vector.Init(dataset.n_rows());
+    proj_vector.Init(left_singular_vectors_.n_cols());
+
+    max_l2_norm_reconstruction_error_ = 0;
+    for(index_t i = start_; i < start_ + count_; i++) {
+      
+      // Compute the projection of each point and its reconstruction
+      // error.
+      la::SubOverwrite(dataset.n_rows(), mean_vector_.ptr(), 
+		       dataset.GetColumnPtr(i), diff_vector.ptr());
+      la::MulOverwrite(diff_vector, left_singular_vectors_,
+		       &proj_vector);
+      la::MulOverwrite(left_singular_vectors_, proj_vector,
+		       &reconstructed_vector);
+      la::SubFrom(diff_vector, &reconstructed_vector);
+      max_l2_norm_reconstruction_error_ =
+	std::max(max_l2_norm_reconstruction_error_,
+		 la::Dot(reconstructed_vector, reconstructed_vector));
+    }
+  }
 
   /** @brief Compute PCA exhaustively for leaf nodes.
    */
@@ -310,6 +355,8 @@ class SubspaceStat {
 			       left_singular_vectors_,
 			       right_singular_vectors_tmp);
     }
+
+    ComputeMaxL2NormReconstructionError(dataset);
   }
 
   /** Merge two eigenspaces into one.
@@ -503,6 +550,8 @@ class SubspaceStat {
     for(index_t i = 0; i < eigen_count; i++) {
       singular_values_[i] = sqrt(tmp_singular_values[i] * count_);
     }
+
+    ComputeMaxL2NormReconstructionError(dataset);
   }
 
   SubspaceStat() { }
