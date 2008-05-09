@@ -39,7 +39,7 @@ class MultiscaleMVUTest {
     fx_set_param(NULL, "/l_bfgs/norm_grad_tolerance", buffer);
     sprintf(buffer, "%i" , 11);
     fx_set_param(NULL, "/l_bfgs/mem_bfgs", buffer);
-    sprintf(buffer, "%i" , 11);
+    sprintf(buffer, "%i" , 9);
     fx_set_param(NULL, "/start_scale", buffer);
     sprintf(buffer, "%i" , 5);
     fx_set_param(NULL, "/scaler/leaf_size", buffer);

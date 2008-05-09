@@ -73,6 +73,14 @@ void LBfgs<OptimizedFunction>::Destruct() {
   fx_format_result(module_, "feasibility_error", "%lg", feasibility_error);
   fx_format_result(module_, "final_sigma", "%lg", sigma_);
   fx_format_result(module_, "objective","%lg", objective);
+  s_bfgs_.Destruct();
+  y_bfgs_.Destruct();
+  ro_bfgs_.Destruct();
+  coordinates_.Destruct();
+  previous_coordinates_.Destruct();
+  gradient_.Destruct();
+  previous_gradient_.Destruct();
+
 }
 
 template<typename OptimizedFunction>
@@ -179,11 +187,21 @@ Matrix *LBfgs<OptimizedFunction>::coordinates() {
   return &coordinates_;
 }
 
+template<typename OptimizedFunction>
+double LBfgs<OptimizedFunction>::sigma() {
+  return sigma_;
+}
 
+template<typename OptimizedFunction>
+void LBfgs<OptimizedFunction>::set_sigma(double sigma) {
+  sigma_=sigma;
+  optimized_function_->set_sigma(sigma_);
+}
 
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::Reset() {
   sigma_ = fx_param_double(module_, "sigma", 10);
+  optimized_function_->set_sigma(sigma_);
 }
 
 template<typename OptimizedFunction>

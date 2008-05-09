@@ -94,7 +94,7 @@ class MultiscaleMVU {
       fx_set_param(l_bfgs_node, "num_of_points", buffer);
       l_bfgs.Init(&optfun, l_bfgs_node);
       l_bfgs.set_sigma(std::max(last_sigma/100, 10.0));
-     l_bfgs.set_coordinates(init_data);
+      l_bfgs.set_coordinates(init_data);
       l_bfgs.ComputeLocalOptimumBFGS();
       init_data.Destruct();
       l_bfgs.GetResults(&init_data);
@@ -114,8 +114,10 @@ class MultiscaleMVU {
     // After you finish the intermediate steps we have to run it for 
     // the points
     Matrix final_init;
-    scaler_.FromCentroidsToPointsRecurse(result, 
-       end_scale_, &final_init);
+//    scaler_.FromCentroidsToPointsRecurse(result, 
+//       end_scale_, &final_init);
+    scaler_.FromCentroidsToPoints1(centroids, points_, result,
+        centroid_ids,   &final_init); 
     LBfgs<OptimizedFunction> l_bfgs;
     OptimizedFunction optfun;
     optfun.Init(optfun_node, points_);
