@@ -380,14 +380,16 @@ class DualtreeKde {
 
     // update computational cost and compute the minimum
     if(order_farfield_to_local >= 0) {
-      cost_farfield_to_local = (int) pow(order_farfield_to_local + 1, 
-					 2 * dim);
+      cost_farfield_to_local = (int) 
+	ka_.sea_.FarFieldToLocalTranslationCost(order_farfield_to_local);
     }
     if(order_farfield >= 0) {
-      cost_farfield = (int) pow(order_farfield + 1, dim) * (qnode->count());
+      cost_farfield = (int) 
+	ka_.sea_.FarFieldEvaluationCost(order_farfield) * (qnode->count());
     }
     if(order_local >= 0) {
-      cost_local = (int) pow(order_local + 1, dim) * (rnode->count());
+      cost_local = (int) 
+	ka_.sea_.DirectLocalAccumulationCost(order_local) * (rnode->count());
     }
 
     min_cost = min(cost_farfield_to_local, 
