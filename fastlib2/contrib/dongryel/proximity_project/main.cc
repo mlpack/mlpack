@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   dataset_.InitFromFile(fname);
   Matrix data_;
   data_.Own(&(dataset_.matrix()));
-  //DatasetScaler::ScaleDataByMinMax(data_, data_, true);
+  DatasetScaler::ScaleDataByMinMax(data_, data_, true);
 
   int leaflen = fx_param_int(NULL, "leaflen", 30);
 
@@ -30,6 +30,8 @@ int main(int argc, char *argv[]) {
 
   (root_->stat().singular_values_).PrintDebug();
   (root_->stat().left_singular_vectors_).PrintDebug();
+  printf("Reconstruction error: %g\n",
+	 (root_->stat()).max_l2_norm_reconstruction_error_);
 
   printf("Finished constructing the tree...\n");
 
