@@ -29,7 +29,24 @@ class MultiscaleMVUTest {
   void Test1() {
     Init();
     Matrix points;
-    data::Load("/net/hg200/nvasil/dataset/swiss_roll/swiss_roll_10000.csv" , &points);
+    data::Load("/net/hg200/nvasil/dataset/swiss_roll/swiss_roll_20000.csv" , &points);
+    char buffer[128];
+    sprintf(buffer, "%lg", 0.01);
+    fx_set_param(NULL, "/l_bfgs/feasibility_tolerance", buffer);
+    sprintf(buffer, "%lg", 50.0);
+    fx_set_param(NULL, "/l_bfgs/desired_feasibility", buffer);
+    sprintf(buffer, "%lg", 100.0);
+    fx_set_param(NULL, "/l_bfgs/norm_grad_tolerance", buffer);
+    sprintf(buffer, "%i" , 11);
+    fx_set_param(NULL, "/l_bfgs/mem_bfgs", buffer);
+    sprintf(buffer, "%i" , 11);
+    fx_set_param(NULL, "/start_scale", buffer);
+    sprintf(buffer, "%i" , 5);
+    fx_set_param(NULL, "/scaler/leaf_size", buffer);
+    sprintf(buffer, "%i", 6);
+    fx_set_param(NULL, "/optfun/knns", buffer);
+    sprintf(buffer, "%lg", 50.0);
+
     datanode *module=fx_submodule(NULL, "/", "temp"); 
     engine_->Init(points, module);
     engine_->ComputeOptimum();
