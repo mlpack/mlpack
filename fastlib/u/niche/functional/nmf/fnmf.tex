@@ -1,35 +1,61 @@
-\documentclass{article}
-\usepackage{amsmath,amsthm,amsfonts}
+\documentclass{amsart}
+\usepackage{amsmath,amsthm,amsfonts, amssymb}
 \title{Functional non-negative matrix factorization}
+%\author{Nishant Mehta}
+
+\addtolength{\parskip}{\baselineskip}
+
+
+
 
 \begin{document}
 
   \maketitle
 
-  Problem formulation:
-  
-  Find non-negative matrices $W$ and $H$ that factorize $V$.
+  \section{Problem formulation}
+
+  \paragraph{}
+
+  Goal: Find non-negative matrices $W$ and $H$ that factorize $V$.
+
+  \paragraph{}
 
   Let $\mathcal{S}^k = (+\mathcal{C}_0^2(\mathbf{R}))^k$ denote a set of $k$ non-negative functions with compact support that map from $\mathbf{R} \rightarrow \mathbf{R}_+$, such that if $Z \in (+\mathcal{C}_0^2(\mathbf{R}))^k$, then $Z_i \in (+\mathcal{C}_0^2(\mathbf{R})$.
-  Note that $+C_0^2(\mathbf{R})$ is the function space of smooth functions who are continuous up to and including their 2nd derivative. The zero denotes compact support, and the + indicates that the range is non-negative.
 
-  For a vector of functions $V \in \mathcal{S}^n$ with compact support $[0, T]$
+  Note that $+C_0^2(\mathbf{R})$ is the function space of smooth functions who are continuous up to and including their 2nd derivative. The zero denotes compact support, and the + indicates that the range is non-negative. Let the inner product for this Hilbert space be defined as $\langle X, Y \rangle = \int_0^T X(t) Y(t) dt$.
+
+  \paragraph{}
+
+  For some $Z \in \mathcal{S}^k$, we define the Frobenius norm such that
+
   \[
-  \min_{W,H} \|V - W H\|_F^2
+  \| Z \|_F^2 \triangleq \sum_i \langle Z_i, Z_i \rangle = \sum_{i} \int Z_i(t)^2 dt
   \]
 
-  where $W = \in \mathcal{S}^k$ with compact support $[0, T]$, and $H \in \mathbf{R}_+^{k \text{ x } n}$
+  For a vector of functions $V \in \mathcal{S}^n$ with compact support $\mathcal{T} = [0, T]$
+  \[
+  \min_{W,H} \|V - W H\|_F^2 \triangleq
+  \]
 
-  Let $\beta \in \mathcal{S}^m$ and $\phi \in \mathbf{R}^{m \text{ x } k}$, such that $W = \beta \phi$ if we treat $W$ and $\beta$ as matrices with an infinite number of rows and a finite number of columns (think of each column as a function with support $[0,T]$).
+  where $W \in \mathcal{S}^k$ with compact support $\mathcal{T}$, and $H \in \mathbf{R}_+^{k \text{ x } n}$
 
-  The formulas below is for minimizing one column of $\|V - W H\|_F^2$ for fNMF
+  \paragraph{}
 
-  
-  
+  Let $\beta \in \mathcal{S}^m$ and $\phi \in \mathbf{R}^{m \text{ x } k}$, such that $W = \beta \phi$ if we treat $W$ and $\beta$ as matrices with an infinite number of rows and a finite number of columns. We will treat each column as a function with support $\mathcal{T}$.
+
+  \paragraph{}
+
+  The formulas below is for minimizing one column of $V - W H$ for fNMF
+
+
+  \clearpage
+
   \begin{align*}
+    & \text{From a typical discrete representation} \\
     \Gamma & = \min_W \sum_{t=1}^T (W_{(t)} \cdot H^{(1)} - V_{t,1})^2\\
     & = \min_{\phi} \sum_{t=1}^T ([\beta_{(t)} \cdot \phi^{(1)} \ldots \beta_{(t)} \cdot \phi^{(k)}] \cdot H^{(1)} - V_{t,1})^2\\
     & = \sum_{t=1}^T \left( \sum_{i=1}^k \beta_{(t)} \cdot \phi^{(i)} H_{i,1} - V_{t,1} \right)^2\\
+    & \text{To our continuous, functional representation} \\
     & = \int_0^T \left(\sum_{i=1}^k \beta(t) \cdot \phi^{(i)} H_{i,1} - V_1(t) \right)^2 dt\\
     & = \int_0^T \left(\sum_{i=1}^k \beta(t) \cdot \phi^{(i)} H_{i,1} - V_1(t) \right) \left(\sum_{j=1}^k \beta(t) \cdot \phi^{(j)} H_{j,1} - V_1(t) \right) dt\\
     & = \int_0^T \left( \sum_{i=1}^k \beta(t) \cdot \phi^{(i)} H_{i,1} \left( \sum_{j=1}^k \left( \beta(t) \cdot \phi^{(j)} H_{j,1} \right) - k V_1(t) \right) \right) dt\\
@@ -40,12 +66,59 @@
     & - \int_0^T \left(\sum_{j=1}^k H_{j,1} \left(\sum_{c=1} \phi_{c,j} \beta_c(t) \right) - k V_1(t) \right) k V_1(t) dt\\
   \end{align*}
 
-which after some simplification becomes
+  which after some simplification becomes
 
   \begin{align*}
     & = \sum_{i,j,a,b} H_{i,1} H_{j,1} \phi_{a,i} \phi_{b,j} \int_0^T \beta_a(t) \beta_b(t) dt\\
     & - 2 k \sum_{i,a} H_{i,1} \phi_{a,i} \int_0^T \beta_a(t) V_1(t) dt\\
     & + k^2 \int_0^T V_1(t)^2 dt
   \end{align*}
+
+  Notice the convenient isolation of the basis function inner products $\int_0^T \beta_a(t) \beta_b(t) dt$. We replace this term using the kernel matrix $K_{a,b} = \langle \beta_a, \beta_b \rangle = \int_0^T \beta_a(t) \beta_b(t) dt$. Also, let $\psi_{a,l} = \langle \beta_a V_l \rangle = \int_0^T \beta_a(t) V_l(t) dt$. These substitutions yield 
+
+  \begin{align*}
+    & = \sum_{i,j,a,b} H_{i,1} H_{j,1} \phi_{a,i} \phi_{b,j} K_{a,b}\\
+    & - 2 k \sum_{i,a} H_{i,1} \phi_{a,i} \psi_{a,1}\\
+    & + k^2 \int_0^T V_1(t)^2 dt
+  \end{align*}
+
+
+  To simultaneously minimize the objective for all rows of $V - W H$, we have
+
+  \[
+  \sum_l \left(\sum_{i,j,a,b} H_{i,l} H_{j,l} \phi_{a,i} \phi_{b,j} K_{a,b} - 2 k \sum_{i,a} H_{i,l} \phi_{a,i} \psi_{a,l} \right) + k^2 \| V \|_F^2
+  \]
+
+  which after removing terms unnecessary for the optimization becomes
+  \[
+  \sum_l \left(\sum_{i,j,a,b} H_{i,l} H_{j,l} \phi_{a,i} \phi_{b,j} K_{a,b} - 2 k \sum_{i,a} H_{i,l} \phi_{a,i} \psi_{a,l} \right)
+  \]
+
+  Constraining $\phi$ to be positive is sufficient for maintaining positive $W$, but this constraint isn't a necessary condition. It is more useful to use a projected gradient method that projects onto positive $W$ rather than positive $\phi$.
+  
+  Let's consider basis functions such that we have at most pairwise overlap of basis function support:
+
+
+  \begin{align*}
+    & \forall t \in \mathcal{T}, \forall i, j, k \in [m], \\
+    & (\beta_i(t) > 0) \land (\beta_j(t) > 0) \Rightarrow (\beta_k(t) = 0)
+  \end{align*}
+
+  Consider some pair of overlapping basis functions $f(t)$ and $g(t)$. Possible linear additions of these functions are $q(t) = a f(t) + b g(t)$, with the constraint that $q(t) \geq 0$. This constraint is equivalent to the two constraints
+  \begin{align*}
+    & a \geq -\min_t \frac{g(t)}{f(t)} b \\
+    & b \geq -\min_t \frac{f(t)}{g(t)} a
+  \end{align*}
+
+  Note that $C = \frac{g(t)}{f(t)}$ and $D = \frac{f(t)}{g(t)}$ are easily obtained if we have a suitably differentiable closed form representation of our basisfunctions, and we can otherwise approximate $C$ and $D$ in general. After finding $C$ and $D$, we work with the constraints (after substitution)
+  \begin{align*}
+    & a \geq -C b \\
+    & b \geq -D a
+  \end{align*}
+
+
+
+
+
 
 \end{document}
