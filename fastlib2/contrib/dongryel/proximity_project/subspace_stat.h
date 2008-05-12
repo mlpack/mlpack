@@ -255,6 +255,8 @@ class SubspaceStat {
 
  public:
 
+  // Member variables
+
   /** @brief The starting index of the points owned by the current
    *         statistics object.
    */
@@ -285,6 +287,15 @@ class SubspaceStat {
    */
   double max_l2_norm_reconstruction_error_;
 
+  /** @brief The radius encompassing the projected points. With
+   *         mean_vector_, this defines the bounding hypersphere that
+   *         lives in the subspace spanned by the left singular
+   *         vectors.
+   */
+  double radius_;
+
+  // Member functions
+
   void ComputeMaxL2NormReconstructionError(const Matrix &dataset) {
     
     Vector diff_vector, proj_vector, reconstructed_vector;
@@ -293,6 +304,7 @@ class SubspaceStat {
     proj_vector.Init(left_singular_vectors_.n_cols());
 
     max_l2_norm_reconstruction_error_ = 0;
+    radius_ = 0;
     for(index_t i = start_; i < start_ + count_; i++) {
       
       // Compute the projection of each point and its reconstruction
@@ -301,8 +313,13 @@ class SubspaceStat {
 		       dataset.GetColumnPtr(i), diff_vector.ptr());
       la::MulOverwrite(diff_vector, left_singular_vectors_,
 		       &proj_vector);
+
+      // Compute the length of the projected vector.
+      radius_ = std::max(radius_, la::LengthEuclidean(proj_vector));
+      
       la::MulOverwrite(left_singular_vectors_, proj_vector,
 		       &reconstructed_vector);
+
       la::SubFrom(diff_vector, &reconstructed_vector);
       max_l2_norm_reconstruction_error_ =
 	std::max(max_l2_norm_reconstruction_error_,
@@ -320,7 +337,7 @@ class SubspaceStat {
 
     if(count == 1) {
       mean_vector_.Init(dataset.n_rows());
-      mean_vector_.SetZero();
+      mean_vector_.CopyValues(dataset.GetColumnPtr(start));
       left_singular_vectors_.Init(dataset.n_rows(), 1);
       left_singular_vectors_.SetZero();
       singular_values_.Init(1);
