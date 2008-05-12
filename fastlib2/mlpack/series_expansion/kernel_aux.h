@@ -19,11 +19,8 @@
 #include "mult_local_expansion.h"
 
 /**
- * Auxiliary computer class for multiplicative p^D expansion for Gaussian
- * kernel
- */
-/**
- * Auxiliary computer class for Gaussian kernel
+ * Auxiliary class for multiplicative p^D expansion for Gaussian
+ * kernel.
  */
 class GaussianKernelMultAux {
 
@@ -110,7 +107,7 @@ class GaussianKernelMultAux {
     double max_far_field_length = 0;
 
     for(index_t d = 0; d < sea_.get_dimension(); d++) {
-      DRange far_range = far_field_region.get(d);
+      const DRange &far_range = far_field_region.get(d);
       max_far_field_length = max(max_far_field_length, far_range.width());
     }
 
@@ -169,8 +166,8 @@ class GaussianKernelMultAux {
     double max_local_field_length = 0;
 
     for(index_t d = 0; d < sea_.get_dimension(); d++) {
-      DRange far_range = far_field_region.get(d);
-      DRange local_range = local_field_region.get(d);
+      const DRange &far_range = far_field_region.get(d);
+      const DRange &local_range = local_field_region.get(d);
       max_far_field_length = max(max_far_field_length, far_range.width());
       max_local_field_length = max(max_local_field_length, 
 				   local_range.width());
@@ -236,7 +233,7 @@ class GaussianKernelMultAux {
     double max_local_field_length = 0;
 
     for(index_t d = 0; d < sea_.get_dimension(); d++) {
-      DRange local_range = local_field_region.get(d);
+      const DRange &local_range = local_field_region.get(d);
       max_local_field_length = max(max_local_field_length, 
 				   local_range.width());
     }
@@ -284,10 +281,15 @@ class GaussianKernelMultAux {
     *actual_error = ret2;
     return p_alpha;
   }
+  
+  double UpperBoundOnDerivative(double min_dist_sqd_regions, int order) const {
+    
+    return exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq())) *
+      pow(2, order / 2.0) * sea_.factorial(order);
+  }
 };
 
-/**
- * Auxiliary computer class for Gaussian kernel
+/** @brief Auxiliary class for Gaussian kernel
  */
 class GaussianKernelAux {
 
@@ -379,7 +381,7 @@ class GaussianKernelAux {
 
     // find out the widest dimension and its length
     for(index_t d = 0; d < dim; d++) {
-      DRange range = far_field_region.get(d);
+      const DRange &range = far_field_region.get(d);
       widest_width += range.width();
     }
   
@@ -425,8 +427,8 @@ class GaussianKernelAux {
     int dim = sea_.get_dimension();
 
     for(index_t i = 0; i < dim; i++) {
-      DRange far_field_range = far_field_region.get(i);
-      DRange local_range = local_field_region.get(i);
+      const DRange &far_field_range = far_field_region.get(i);
+      const DRange &local_range = local_field_region.get(i);
       max_ref_length += far_field_range.width();
       max_query_length += local_range.width();
     }
@@ -488,7 +490,7 @@ class GaussianKernelAux {
   
     // find out the widest dimension and its length
     for(index_t d = 0; d < dim; d++) {
-      DRange range = local_field_region.get(d);
+      const DRange &range = local_field_region.get(d);
       widest_width += range.width();
     }
   
@@ -520,6 +522,12 @@ class GaussianKernelAux {
   
     *actual_error = ret;
     return p_alpha;
+  }
+
+  double UpperBoundOnDerivative(double min_dist_sqd_regions, int order) const {
+
+    // Please implement me...
+    return DBL_MAX;
   }
 };
 
@@ -635,7 +643,7 @@ class EpanKernelAux {
 
     // find out the widest dimension and its length
     for(index_t d = 0; d < dim; d++) {
-      DRange range = far_field_region.get(d);
+      const DRange &range = far_field_region.get(d);
       widest_width = max(widest_width, range.width());
     }
   
@@ -643,8 +651,8 @@ class EpanKernelAux {
     // sense
     double farthest_distance_manhattan = 0;
     for(index_t d = 0; d < dim; d++) {
-      DRange far_range = far_field_region.get(d);
-      DRange local_range = local_field_region.get(d);
+      const DRange &far_range = far_field_region.get(d);
+      const DRange &local_range = local_field_region.get(d);
       double far_range_centroid_coord = far_range.lo + far_range.width() / 2;
 
       farthest_distance_manhattan =
@@ -697,6 +705,12 @@ class EpanKernelAux {
 
     // currrently disabled buy might be worth putting in
     return -1;
+  }
+
+  double UpperBoundOnDerivative(double min_dist_sqd_regions, int order) const {
+    
+    // Please implement me...
+    return DBL_MAX;
   }
 };
 

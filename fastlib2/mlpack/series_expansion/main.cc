@@ -120,7 +120,7 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   // to-be-evaluated point
   Vector evaluate_here;
   evaluate_here.Init(2);
-  evaluate_here[0] = evaluate_here[1] = 3;
+  evaluate_here[0] = evaluate_here[1] = 7;
 
   // declare expansion objects at (0,0) and other centers
   FarFieldExpansion<GaussianKernelAux> se;
@@ -155,6 +155,66 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
   return 1;
 }
+
+int TestEvaluateFarFieldByMonteCarlo(const Matrix &data, const Vector &weights,
+				     int begin, int end) {
+  
+  printf("\n----- TestEvaluateFarFieldByMonteCarlo -----\n");
+
+  // bandwidth of sqrt(0.5) Gaussian kernel
+  double bandwidth = sqrt(0.5);
+
+  // declare auxiliary object and initialize
+  GaussianKernelAux ka;
+  ka.Init(bandwidth, 10, data.n_rows());
+
+  // declare center at the origin
+  Vector center;
+  center.Init(2);
+  center.SetZero();
+
+  // to-be-evaluated point
+  Vector evaluate_here;
+  evaluate_here.Init(2);
+  evaluate_here[0] = evaluate_here[1] = 7;
+
+  // declare expansion objects at (0,0) and other centers
+  FarFieldExpansion<GaussianKernelAux> se;
+
+  // initialize expansion objects with respective centers and the bandwidth
+  // squared of 0.5
+  se.Init(center, ka);
+
+  // compute up to 10-th order multivariate polynomial.
+  se.AccumulateCoeffs(data, weights, begin, end, 10);
+
+  // Now compute the stratified distribution...
+  se.ComputeStratifiedLengthSquareDistribution();
+  
+  // Print out the objects
+  se.PrintDebug();               // expansion at (0, 0)
+
+  // Evaluate the series expansion using Monte Carlo.
+  printf("Evaluated the expansion at (%g %g) is %g...\n",
+	 evaluate_here[0], evaluate_here[1],
+	 se.EvaluateFieldByMonteCarlo(evaluate_here, 10, 20));
+
+  // check with exhaustive method
+  double exhaustive_sum = 0;
+  for(index_t i = begin; i < end; i++) {
+    int row_num = i;
+    double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
+      (evaluate_here[0] - data.get(0, row_num)) +
+      (evaluate_here[1] - data.get(1, row_num)) * 
+      (evaluate_here[1] - data.get(1, row_num));
+    
+    exhaustive_sum += ka.kernel_.EvalUnnormOnSq(dsqd);
+
+  }
+  printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
+  return 1;
+}
+
 
 int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
 			   int begin, int end) {
@@ -587,6 +647,8 @@ int main(int argc, char *argv[]) {
   // unit tests begin here!  
   DEBUG_ASSERT(TestInitAux(data) == 1);
   DEBUG_ASSERT(TestEvaluateFarField(data, weights, begin, end) == 1);
+  DEBUG_ASSERT(TestEvaluateFarFieldByMonteCarlo
+	       (data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestEvaluateLocalField(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestTransFarToFar(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestTransLocalToLocal(data, weights, begin, end) == 1);
