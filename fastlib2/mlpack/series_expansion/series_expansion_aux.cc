@@ -65,21 +65,15 @@ int SeriesExpansionAux::ComputeMultiindexPosition
 }
 
 double SeriesExpansionAux::FarFieldEvaluationCost(int order) const {
-
-  // I need to fix this...
-  return pow(order + 1, dim_);
+  return pow(dim_, order + 1);
 }
 
 double SeriesExpansionAux::FarFieldToLocalTranslationCost(int order) const {
-
-  // I need to fix this...
-  return pow(order + 1, 2 * dim_);
+  return pow(dim_, 2 * order + 1);
 }
 
 double SeriesExpansionAux::DirectLocalAccumulationCost(int order) const {
-
-  // I need to fix this...
-  return pow(order + 1, dim_);
+  return pow(dim_, order + 1);
 }
 
 void SeriesExpansionAux::Init(int max_order, int dim) {

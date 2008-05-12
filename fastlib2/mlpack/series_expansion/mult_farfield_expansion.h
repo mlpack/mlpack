@@ -29,13 +29,16 @@ class MultFarFieldExpansion {
   
  private:
 
-  /** The center of the expansion */
+  /** @brief The center of the expansion. */
   Vector center_;
   
-  /** The coefficients */
+  /** @brief The coefficients. */
   Vector coeffs_;
   
-  /** order */
+  /** @brief The squared coefficients (for sampling). */
+  Vector squared_coeffs_;
+
+  /** @brief The order of approximation. */
   int order_;
   
   /** auxilirary methods for the kernel (derivative, truncation error bound) */
@@ -50,6 +53,7 @@ class MultFarFieldExpansion {
   OT_DEF(MultFarFieldExpansion) {
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
+    OT_MY_OBJECT(squared_coeffs_);
     OT_MY_OBJECT(order_);
   }
 
@@ -110,6 +114,9 @@ class MultFarFieldExpansion {
   double EvaluateField(const Matrix& data, int row_num, int order) const;
   double EvaluateField(const Vector& x_q, int order) const;
   
+  double EvaluateFieldByMonteCarlo(const Matrix& data, int row_num, int order, 
+				   int num_samples) const;
+
   /**
    * Evaluates the two-way convolution mixed with exhaustive computations
    * with two other far field expansions
@@ -119,6 +126,11 @@ class MultFarFieldExpansion {
 		  const MultFarFieldExpansion &fe2,
 		  const MultFarFieldExpansion &fe3,
 		  int order2, int order3) const;
+
+  /** @brief Computes the squared coefficients for length-squared
+   *         sampling.
+   */
+  void ComputeStratifiedLengthSquareDistribution();
 
   /**
    * Evaluates the three-way convolution with two other far field
@@ -135,9 +147,9 @@ class MultFarFieldExpansion {
   void Init(const Vector& center, const TKernelAux &ka);
   void Init(const TKernelAux &ka);
 
-  /**
-   * Computes the required order for evaluating the far field expansion
-   * for any query point within the specified region for a given bound.
+  /** @brief Computes the required order for evaluating the far field
+   *         expansion for any query point within the specified region
+   *         for a given bound.
    */
   int OrderForEvaluating(const DHrectBound<2> &far_field_region,
 			 const DHrectBound<2> &local_field_region,
@@ -145,11 +157,22 @@ class MultFarFieldExpansion {
 			 double max_dist_sqd_regions,
 			 double max_error, double *actual_error) const;
 
-  /**
-   * Computes the required order for converting to the local expansion
-   * inside another region, so that the total error (truncation error
-   * of the far field expansion plus the conversion error) is bounded
-   * above by the given user bound.
+  /** @brief Computes the required order for evaluating the far field
+   *         expansion for any query point within the specified region
+   *         for a given bound.
+   */
+  int OrderForEvaluatingByMonteCarlo(const DHrectBound<2> &far_field_region,
+				     const DHrectBound<2> &local_field_region,
+				     double min_dist_sqd_regions,
+				     double max_dist_sqd_regions,
+				     double max_error, double *actual_error,
+				     int *num_samples) const;
+
+  /** @brief Computes the required order for converting to the local
+   *         expansion inside another region, so that the total error
+   *         (truncation error of the far field expansion plus the
+   *         conversion * error) is bounded above by the given user
+   *         bound.
    *
    * @return the minimum approximation order required for the error,
    *         -1 if approximation up to the maximum order is not possible
@@ -161,14 +184,14 @@ class MultFarFieldExpansion {
 				double required_bound, 
 				double *actual_error) const;
 
-  /**
-   * Prints out the series expansion represented by this object.
+  /** @brief Prints out the series expansion represented by this
+   *         object.
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const;
 
-  /**
-   * Translate from a far field expansion to the expansion here.
-   * The translated coefficients are added up to the ones here.
+  /** @brief Translate from a far field expansion to the expansion
+   *         here. The translated coefficients are added up to the
+   *         ones here.
    */
   void TranslateFromFarField(const MultFarFieldExpansion &se);
   
@@ -267,6 +290,17 @@ void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     coeffs_[index] += (pos_coeffs[index] + neg_coeffs[index]) * 
       sea_->inv_multiindex_factorials_[index];
   }
+}
+
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::
+ComputeStratifiedLengthSquareDistribution() {
+
+  squared_coeffs_[0] = coeffs_[0] * coeffs_[0];
+  for(index_t i = 1; i < coeffs_.length(); i++) {
+    squared_coeffs_[i] = squared_coeffs_[i - 1] + coeffs_[i] * coeffs_[i];
+  }
+  squared_coeffs_.PrintDebug();
 }
 
 template<typename TKernelAux>
@@ -415,8 +449,16 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Vector& x_q,
 }
 
 template<typename TKernelAux>
-  void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center, 
-					       const TKernelAux &ka) {
+double MultFarFieldExpansion<TKernelAux>::EvaluateFieldByMonteCarlo
+(const Matrix& data, int row_num, int order, int num_samples) const {
+
+  // I need to implement this...
+  return 0;
+}
+
+template<typename TKernelAux>
+void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center, 
+					     const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
@@ -425,9 +467,13 @@ template<typename TKernelAux>
   sea_ = &(ka.sea_);
   ka_ = &ka;
 
-  // initialize coefficient array
+  // Initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
+
+  // Initialize the list of squared coefficients for sampling.
+  squared_coeffs_.Init(sea_->get_max_total_num_coeffs());
+  squared_coeffs_.SetZero();
 }
 
 template<typename TKernelAux>
@@ -441,9 +487,13 @@ template<typename TKernelAux>
   center_.SetZero();
   ka_ = &ka;
 
-  // initialize coefficient array
+  // Initialize coefficient array.
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
+
+  // Initialize the list of squared coefficients for sampling.
+  squared_coeffs_.Init(sea_->get_max_total_num_coeffs());
+  squared_coeffs_.SetZero();
 }
 
 template<typename TKernelAux>
@@ -457,6 +507,23 @@ int MultFarFieldExpansion<TKernelAux>::OrderForEvaluating
 					 min_dist_sqd_regions, 
 					 max_dist_sqd_regions, max_error,
 					 actual_error);
+}
+
+template<typename TKernelAux>
+int MultFarFieldExpansion<TKernelAux>::OrderForEvaluatingByMonteCarlo
+(const DHrectBound<2> &far_field_region,
+ const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+ double max_dist_sqd_regions, double max_error, double *actual_error,
+ int *num_samples) const {
+
+  int order = ka_->OrderForEvaluatingFarField(far_field_region,
+					      local_field_region,
+					      min_dist_sqd_regions,
+					      max_dist_sqd_regions, max_error,
+					      actual_error);
+  *num_samples = std::max((int) sqrt(coeffs_.length()), order + 1);
+
+  return order;
 }
 
 template<typename TKernelAux>
