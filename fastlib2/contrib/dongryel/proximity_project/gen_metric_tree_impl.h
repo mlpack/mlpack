@@ -137,9 +137,9 @@ namespace tree_gen_metric_tree_private {
 			index_t *old_from_new) {
 
     // Pick a random row.
-    index_t random_row = math::RandInt(node->begin_, node->begin_ +
-				       node->count_);
-    random_row = node->begin_;
+    index_t random_row = math::RandInt(node->begin(), node->begin() +
+				       node->count());
+    random_row = node->begin();
     Vector random_row_vec;
     matrix.MakeColumnVector(random_row, &random_row_vec);
 
@@ -147,7 +147,7 @@ namespace tree_gen_metric_tree_private {
     // above.
     double furthest_distance;
     index_t furthest_from_random_row =
-      FurthestColumnIndex(random_row_vec, matrix, node->begin_, node->count_,
+      FurthestColumnIndex(random_row_vec, matrix, node->begin(), node->count(),
 			  &furthest_distance);
     Vector furthest_from_random_row_vec;
     matrix.MakeColumnVector(furthest_from_random_row,
@@ -156,8 +156,8 @@ namespace tree_gen_metric_tree_private {
     // Then figure out the furthest point from the furthest point.
     double furthest_from_furthest_distance;
     index_t furthest_from_furthest_random_row =
-      FurthestColumnIndex(furthest_from_random_row_vec, matrix, node->begin_,
-			  node->count_, &furthest_from_furthest_distance);
+      FurthestColumnIndex(furthest_from_random_row_vec, matrix, node->begin(),
+			  node->count(), &furthest_from_furthest_distance);
     Vector furthest_from_furthest_random_row_vec;
     matrix.MakeColumnVector(furthest_from_furthest_random_row,
 			    &furthest_from_furthest_random_row_vec);
@@ -177,11 +177,11 @@ namespace tree_gen_metric_tree_private {
 	(furthest_from_furthest_random_row_vec);
 
       index_t left_count = MatrixPartition
-	(matrix, node->begin_, node->count_,
+	(matrix, node->begin(), node->count(),
 	 (*left)->bound(), (*right)->bound(), old_from_new);
 
-      (*left)->Init(node->begin_, left_count);
-      (*right)->Init(node->begin_ + left_count, node->count_ - left_count);
+      (*left)->Init(node->begin(), left_count);
+      (*right)->Init(node->begin() + left_count, node->count() - left_count);
     }
 
     return true;
@@ -202,9 +202,9 @@ namespace tree_gen_metric_tree_private {
     la::Scale(1.0 / ((double) node->count()), &(node->bound().center()));
     
     double left_max_dist, right_max_dist;
-    FurthestColumnIndex(node->bound().center(), matrix, left->begin_, 
+    FurthestColumnIndex(node->bound().center(), matrix, left->begin(), 
 			left->count(), &left_max_dist);
-    FurthestColumnIndex(node->bound().center(), matrix, right->begin_, 
+    FurthestColumnIndex(node->bound().center(), matrix, right->begin(), 
 			right->count(), &right_max_dist);    
     node->bound().set_radius(std::max(left_max_dist, right_max_dist));
   }
@@ -217,8 +217,8 @@ namespace tree_gen_metric_tree_private {
     TMetricTree *right = NULL;
 
     // If the node is just too small, then do not split.
-    if(node->count_ < leaf_size) {
-      MakeLeafMetricTreeNode(matrix, node->begin_, node->count_,
+    if(node->count() < leaf_size) {
+      MakeLeafMetricTreeNode(matrix, node->begin(), node->count(),
 			     &(node->bound()));
     }
     
@@ -233,7 +233,7 @@ namespace tree_gen_metric_tree_private {
 	CombineBounds(matrix, node, left, right);
       }
       else {
-	MakeLeafMetricTreeNode(matrix, node->begin_, node->count_,
+	MakeLeafMetricTreeNode(matrix, node->begin(), node->count(),
 			       &(node->bound()));
       }
     }
