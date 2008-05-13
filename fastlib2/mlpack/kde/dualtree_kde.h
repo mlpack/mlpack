@@ -873,7 +873,16 @@ class DualtreeKde {
 
     // initialize the series expansion object
     if(qset_.n_rows() <= 2) {
+      ka_.Init(bandwidth, fx_param_int(module_, "order", 7), qset_.n_rows());
+    }
+    else if(qset_.n_rows() <= 3) {
       ka_.Init(bandwidth, fx_param_int(module_, "order", 5), qset_.n_rows());
+    }
+    else if(qset_.n_rows() <= 5) {
+      ka_.Init(bandwidth, fx_param_int(module_, "order", 3), qset_.n_rows());
+    }
+    else if(qset_.n_rows() <= 6) {
+      ka_.Init(bandwidth, fx_param_int(module_, "order", 1), qset_.n_rows());
     }
     else {
       ka_.Init(bandwidth, fx_param_int(module_, "order", 0), qset_.n_rows());
