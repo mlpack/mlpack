@@ -109,8 +109,9 @@ class MultLocalExpansion {
    * Computes the required order for evaluating the local expansion
    * for any query point within the specified region for a given bound.
    */
-  int OrderForEvaluating(const DHrectBound<2> &far_field_region,
-			 const DHrectBound<2> &local_field_region,
+  template<typename TBound>
+  int OrderForEvaluating(const TBound &far_field_region,
+			 const TBound &local_field_region,
 			 double min_dist_sqd_regions,
 			 double max_dist_sqd_regions,
                          double max_error, double *actual_error) const;
@@ -405,9 +406,10 @@ void MultLocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
 }
 
 template<typename TKernelAux>
+template<typename TBound>
 int MultLocalExpansion<TKernelAux>::OrderForEvaluating
-(const DHrectBound<2> &far_field_region, 
- const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+(const TBound &far_field_region, 
+ const TBound &local_field_region, double min_dist_sqd_regions,
  double max_dist_sqd_regions, double max_error, double *actual_error) const {
   
   return ka_->OrderForEvaluatingLocal(far_field_region, local_field_region, 

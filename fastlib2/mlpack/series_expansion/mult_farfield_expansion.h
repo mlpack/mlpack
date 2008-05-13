@@ -151,8 +151,9 @@ class MultFarFieldExpansion {
    *         expansion for any query point within the specified region
    *         for a given bound.
    */
-  int OrderForEvaluating(const DHrectBound<2> &far_field_region,
-			 const DHrectBound<2> &local_field_region,
+  template<typename TBound>
+  int OrderForEvaluating(const TBound &far_field_region,
+			 const TBound &local_field_region,
 			 double min_dist_sqd_regions,
 			 double max_dist_sqd_regions,
 			 double max_error, double *actual_error) const;
@@ -161,8 +162,9 @@ class MultFarFieldExpansion {
    *         expansion for any query point within the specified region
    *         for a given bound.
    */
-  int OrderForEvaluatingByMonteCarlo(const DHrectBound<2> &far_field_region,
-				     const DHrectBound<2> &local_field_region,
+  template<typename TBound>
+  int OrderForEvaluatingByMonteCarlo(const TBound &far_field_region,
+				     const TBound &local_field_region,
 				     double min_dist_sqd_regions,
 				     double max_dist_sqd_regions,
 				     double max_error, double *actual_error,
@@ -177,8 +179,9 @@ class MultFarFieldExpansion {
    * @return the minimum approximation order required for the error,
    *         -1 if approximation up to the maximum order is not possible
    */
-  int OrderForConvertingToLocal(const DHrectBound<2> &far_field_region,
-				const DHrectBound<2> &local_field_region, 
+  template<typename TBound>
+  int OrderForConvertingToLocal(const TBound &far_field_region,
+				const TBound &local_field_region, 
 				double min_dist_sqd_regions, 
 				double max_dist_sqd_regions,
 				double required_bound, 
@@ -497,9 +500,10 @@ template<typename TKernelAux>
 }
 
 template<typename TKernelAux>
+template<typename TBound>
 int MultFarFieldExpansion<TKernelAux>::OrderForEvaluating
-(const DHrectBound<2> &far_field_region, 
- const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+(const TBound &far_field_region, 
+ const TBound &local_field_region, double min_dist_sqd_regions,
  double max_dist_sqd_regions, double max_error, double *actual_error) const {
   
   return ka_->OrderForEvaluatingFarField(far_field_region,
@@ -510,9 +514,10 @@ int MultFarFieldExpansion<TKernelAux>::OrderForEvaluating
 }
 
 template<typename TKernelAux>
+template<typename TBound>
 int MultFarFieldExpansion<TKernelAux>::OrderForEvaluatingByMonteCarlo
-(const DHrectBound<2> &far_field_region,
- const DHrectBound<2> &local_field_region, double min_dist_sqd_regions,
+(const TBound &far_field_region,
+ const TBound &local_field_region, double min_dist_sqd_regions,
  double max_dist_sqd_regions, double max_error, double *actual_error,
  int *num_samples) const {
 
@@ -527,9 +532,10 @@ int MultFarFieldExpansion<TKernelAux>::OrderForEvaluatingByMonteCarlo
 }
 
 template<typename TKernelAux>
+template<typename TBound>
 int MultFarFieldExpansion<TKernelAux>::
-OrderForConvertingToLocal(const DHrectBound<2> &far_field_region,
-			  const DHrectBound<2> &local_field_region, 
+OrderForConvertingToLocal(const TBound &far_field_region,
+			  const TBound &local_field_region, 
 			  double min_dist_sqd_regions, 
 			  double max_dist_sqd_regions,
 			  double max_error, 
