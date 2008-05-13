@@ -94,6 +94,76 @@ namespace bounds_aux {
 			     furthest_point_in_bound1.ptr(), 
 			     bound2_centroid.ptr()));
   }
+
+  /** @brief Returns the maximum side length of the bounding box that
+   *         encloses the given ball bound. That is, twice the radius
+   *         of the given ball bound.
+   */
+  template<int t_pow, typename TVector>
+  double MaxSideLengthOfBoundingBox
+  (const DBallBound < LMetric<t_pow>, TVector > &ball_bound) {
+    return ball_bound.radius() * 2;
+  }
+  
+  /** @brief Returns the maximum side length of the bounding box that
+   *         encloses the given bounding box. That is, its maximum
+   *         side length.
+   */
+  template<int t_pow>
+  double MaxSideLengthOfBoundingBox(const DHrectBound<t_pow> &bound) {
+
+    double max_length = 0;
+
+    for(index_t d = 0; d < bound.dim(); d++) {
+      const DRange &range = bound.get(d);
+      max_length = std::max(max_length, range.width());
+    }
+    return max_length;
+  }
+  
+  /** @brief Returns the maximum distance between two bound types in
+   *         L1 sense.
+   */
+  template<int t_pow, typename TVector>
+  double MaxL1Distance
+  (const DBallBound < LMetric<t_pow>, TVector > &ball_bound1,
+   const DBallBound < LMetric<t_pow>, TVector > &ball_bound2,
+   int *dimension) {
+    
+    const Vector &center1 = ball_bound1.center();
+    const Vector &center2 = ball_bound2.center();
+    int dim = ball_bound1.center().length();
+    double l1_distance = 0;
+    for(index_t d = 0; d < dim; d++) {
+      l1_distance += fabs(center1[d] - center2[d]);
+    }
+    l1_distance += ball_bound1.radius() + ball_bound2.radius();
+    *dimension = center1.length();
+    return l1_distance;
+  }
+
+  /** @brief Returns the maximum distance between two bound types in
+   *         L1 sense.
+   */
+  template<int t_pow>
+  double MaxL1Distance(const DHrectBound<t_pow> &bound1,
+		       const DHrectBound<t_pow> &bound2, int *dimension) {
+
+    double farthest_distance_manhattan = 0;
+    for(index_t d = 0; d < bound1.dim(); d++) {
+      const DRange &range1 = bound1.get(d);
+      const DRange &range2 = bound2.get(d);
+      double bound1_centroid_coord = range1.lo + range1.width() / 2;
+
+      farthest_distance_manhattan =
+	max(farthest_distance_manhattan,
+	    max(fabs(bound1_centroid_coord - range2.lo),
+		fabs(bound1_centroid_coord - range2.hi)));
+    }
+    *dimension = bound1.dim();
+    return farthest_distance_manhattan;
+  }
+
 };
 
 #endif
