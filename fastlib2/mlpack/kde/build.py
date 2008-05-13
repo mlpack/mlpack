@@ -17,6 +17,7 @@ librule(
                "dualtree_kde.h",
                "naive_kde.h"],
     deplibs = ["../series_expansion:series_expansion",
+               "contrib/dongryel/proximity_project:proximity_project",
                "fastlib:fastlib_int"]
     )
 
