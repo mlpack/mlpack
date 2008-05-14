@@ -5,9 +5,12 @@ librule(
     headers = ["farfield_expansion.h",
                "farfield_expansion_impl.h",
                "mult_farfield_expansion.h",
+               "mult_farfield_expansion_impl.h",
                "kernel_aux.h",
                "local_expansion.h",
+               "local_expansion_impl.h"
                "mult_local_expansion.h",
+               "mult_local_expansion_impl.h",
                "mult_series_expansion_aux.h",
                "series_expansion_aux.h",
                "mult_series_expansion_aux.h"],
