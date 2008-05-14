@@ -3,6 +3,7 @@ librule(
     name = "series_expansion",
     sources = ["series_expansion_aux.cc"],
     headers = ["farfield_expansion.h",
+               "farfield_expansion_impl.h",
                "mult_farfield_expansion.h",
                "kernel_aux.h",
                "local_expansion.h",
