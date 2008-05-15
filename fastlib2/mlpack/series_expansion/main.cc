@@ -6,6 +6,7 @@
  */
 
 #include "fastlib/fastlib.h"
+#include "cur_decomposition.h"
 #include "kernel_aux.h"
 #include "farfield_expansion.h"
 #include "mult_farfield_expansion.h"
@@ -644,6 +645,7 @@ int main(int argc, char *argv[]) {
   weights.SetAll(1);
   begin = 0; end = data.n_cols();
 
+  /*
   // unit tests begin here!  
   DEBUG_ASSERT(TestInitAux(data) == 1);
   DEBUG_ASSERT(TestEvaluateFarField(data, weights, begin, end) == 1);
@@ -658,10 +660,12 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestConvolveFarField(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestMixFarField(data, weights, begin, end) == 1);
 
-  /*
   DEBUG_ASSERT(TestMultInitAux(data) == 1);
   DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
   */
+
+  Matrix c_mat, u_mat, r_mat;
+  CURDecomposition::Compute(data, &c_mat, &u_mat, &r_mat);
 
   fx_done();
 }
