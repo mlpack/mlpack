@@ -2,7 +2,8 @@
 librule(
     name = "series_expansion",
     sources = ["series_expansion_aux.cc"],
-    headers = ["farfield_expansion.h",
+    headers = ["cur_decomposition.h",
+               "farfield_expansion.h",
                "farfield_expansion_impl.h",
                "mult_farfield_expansion.h",
                "mult_farfield_expansion_impl.h",
