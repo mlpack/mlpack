@@ -35,7 +35,7 @@ class CURDecomposition {
     }
 
     // Pick samples from the column distribution to form the matrix C.
-    int num_column_samples = (int) 2 * sqrt(a_mat.n_cols());
+    int num_column_samples = 2 * ((int) sqrt(a_mat.n_cols()));
     c_mat->Init(a_mat.n_rows(), num_column_samples);
     for(index_t s = 0; s < num_column_samples; s++) {
       double random_number = 
@@ -73,9 +73,13 @@ class CURDecomposition {
 	row_length_square_distribution[r] += a_mat.get(r, c) * a_mat.get(r, c);
       }
     }
+    for(index_t r = 1; r < a_mat.n_rows(); r++) {
+      row_length_square_distribution[r] += 
+	row_length_square_distribution[r - 1];
+    }
 
     // Sample the row vector according to its distribution.
-    int num_row_samples = (int) 2 * sqrt(a_mat.n_rows());
+    int num_row_samples = 2 * ((int) sqrt(a_mat.n_rows()));
     r_mat->Init(num_row_samples, a_mat.n_cols());
     Matrix psi_mat;
     psi_mat.Init(num_row_samples, num_column_samples);
@@ -123,16 +127,6 @@ class CURDecomposition {
     // Compute U, the rotation nmatrix that relates the row and column
     // subsets.
     la::MulTransBInit(phi_mat, psi_mat, u_mat);
-
-    a_mat.PrintDebug();
-    c_mat->PrintDebug();
-    u_mat->PrintDebug();
-    r_mat->PrintDebug();
-
-    Matrix intermediate, intermediate2;
-    la::MulInit(*c_mat, *u_mat, &intermediate);
-    la::MulInit(intermediate, *r_mat, &intermediate2);
-    intermediate2.PrintDebug();
   }
 
 };
