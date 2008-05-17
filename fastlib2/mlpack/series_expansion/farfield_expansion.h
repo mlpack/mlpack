@@ -42,15 +42,6 @@ class FarFieldExpansion {
   
   /** @brief The coefficients. */
   Vector coeffs_;
-  
-  /*
-  Vector stratified_length_square_distribution_of_coeffs_;
-  */
-
-  /** @brief The squared L2 norm of the coefficients when treated as a
-   *         vector.
-   */
-  double squared_length_of_coeffs_;
 
   /** @brief The order of the expansion. */
   int order_;
@@ -73,27 +64,8 @@ class FarFieldExpansion {
   OT_DEF(FarFieldExpansion) {
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
-    //OT_MY_OBJECT(stratified_length_square_distribution_of_coeffs_);
-    OT_MY_OBJECT(squared_length_of_coeffs_);
     OT_MY_OBJECT(order_);
   }
-
-  /*
-  // Private member functions
-  index_t FindBinNumber_(const Vector &cumulative_distribution,
-			 index_t order, double random_number) const {
-
-    index_t start = (order == 0) ? 0:sea_->get_total_num_coeffs(order - 1);
-    index_t end = sea_->get_total_num_coeffs(order);
-
-    for(index_t i = start; i < end; i++) {
-      if(random_number < cumulative_distribution[i]) {
-        return i;
-      }
-    }    
-    return end - 1;
-  }
-  */
 
  public:
   

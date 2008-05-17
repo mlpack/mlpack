@@ -5,6 +5,9 @@
 #ifndef MATRIX_FACTORIZED_FARFIELD_EXPANSION_IMPL_H
 #define MATRIX_FACTORIZED_FARFIELD_EXPANSION_IMPL_H
 
+#include "fastlib/fastlib.h"
+#include "cur_decomposition.h"
+
 template<typename TKernelAux>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::Accumulate
 (const Vector &v, double weight, int order) {
@@ -17,9 +20,8 @@ template<typename TKernelAux>
 template<typename Tree>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 (const Matrix& reference_set, const Vector& weights, int begin, int end, 
- int order = -1, const Matrix *query_set,
- const ArrayList<Tree *> *query_leaf_nodes = NULL) {
- 
+ int order, Matrix *query_set, ArrayList<Tree *> *query_leaf_nodes) {
+  
   // The sample kernel matrix is S by |R| where |R| is the number of
   // reference points in the reference node and S is the number of
   // query samples taken from the stratification.
@@ -46,25 +48,35 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 
       // Compute the pairwise distance and the kernel value.
       double squared_distance =
-	la::EuclideanSqLength(reference_set.n_rows(), reference_point
-			      query_point);
+	la::DistanceSqEuclidean(reference_set.n_rows(), reference_point,
+				query_point);
       sample_kernel_matrix.set
-	(r, c, (ka_->kernel_).EvalUnnormOnSq(squared_distance));
+	(c, r, (ka_->kernel_).EvalUnnormOnSq(squared_distance));
 
     } // end of iterating over each sample query strata...
   } // end of iterating over each reference point...
+
+  // CUR-decompose the sample kernel matrix.
+  Matrix c_mat, u_mat, r_mat;
+  CURDecomposition::Compute(sample_kernel_matrix, &c_mat, &u_mat, &r_mat);
+
+  sample_kernel_matrix.PrintDebug();
+  c_mat.PrintDebug();
+  u_mat.PrintDebug();
+  r_mat.PrintDebug();
+  exit(0);
 }
 
 template<typename TKernelAux>
 double MatrixFactorizedFarFieldExpansion<TKernelAux>::EvaluateField
 (const Matrix& data, int row_num, int order) const {
-
+  return -1;
 }
 
 template<typename TKernelAux>
 double MatrixFactorizedFarFieldExpansion<TKernelAux>::EvaluateField
 (const Vector &x_q, int order) const {
-
+  return -1;
 }
 
 template<typename TKernelAux>
@@ -74,7 +86,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
   center_.Copy(center);
-  order_ = -1;
   sea_ = &(ka.sea_);
   ka_ = &ka;
 }
@@ -85,7 +96,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);  
-  order_ = -1;
   sea_ = &(ka.sea_);
   center_.Init(sea_->get_dimension());
   center_.SetZero();
@@ -126,7 +136,6 @@ OrderForConvertingToLocal(const TBound &far_field_region,
 template<typename TKernelAux>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::PrintDebug
 (const char *name, FILE *stream) const {
-
 }
 
 template<typename TKernelAux>
