@@ -6,6 +6,27 @@
 class CURDecomposition {
 
  private:
+
+  ////////// Private Member Functions //////////
+  
+  /** @brief The comparison function used for quick sort
+   */
+  static int qsort_compar_(const void *a, const void *b) {
+    
+    index_t a_dereferenced = *((index_t *) a);
+    index_t b_dereferenced = *((index_t *) b);
+    
+    if(a_dereferenced < b_dereferenced) {
+      return -1;
+    }
+    else if(a_dereferenced > b_dereferenced) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
   static index_t FindBinNumber_(const Vector &cumulative_distribution,
 				double random_number) {
         
@@ -19,7 +40,8 @@ class CURDecomposition {
 
  public:
   static void Compute(const Matrix &a_mat, Matrix *c_mat, Matrix *u_mat, 
-		      Matrix *r_mat) {
+		      Matrix *r_mat, ArrayList<index_t> *column_indices,
+		      ArrayList<index_t> *row_indices) {
     
     Vector column_length_square_distribution;
     column_length_square_distribution.Init(a_mat.n_cols());
@@ -42,17 +64,28 @@ class CURDecomposition {
       u_mat->set(0, 0, 1);
       r_mat->Init(1, a_mat.n_cols());
       r_mat->SetZero();
+      column_indices->Init(1);
+      (*column_indices)[0] = 0;
+      row_indices->Init(1);
+      (*row_indices)[0] = 0;
       return;
     }
 
     // Pick samples from the column distribution to form the matrix C.
     int num_column_samples = ((int) sqrt(a_mat.n_cols()));
-    c_mat->Init(a_mat.n_rows(), num_column_samples);
+    column_indices->Init(num_column_samples);
     for(index_t s = 0; s < num_column_samples; s++) {
       double random_number = 
 	math::Random(0, column_length_square_distribution[a_mat.n_cols() - 1]);
-      index_t sample_column_number = 
+      (*column_indices)[s] = 
 	FindBinNumber_(column_length_square_distribution, random_number);
+    }
+    qsort(column_indices->begin(), column_indices->size(),
+	  sizeof(index_t), &qsort_compar_);
+    c_mat->Init(a_mat.n_rows(), num_column_samples);    
+    
+    for(index_t s = 0; s < num_column_samples; s++) {
+      index_t sample_column_number = (*column_indices)[s];
       double probability = 
 	((sample_column_number == 0) ?
 	 column_length_square_distribution[sample_column_number]:
@@ -64,7 +97,6 @@ class CURDecomposition {
 			 1.0 / sqrt(num_column_samples * probability),
 			 a_mat.GetColumnPtr(sample_column_number),
 			 c_mat->GetColumnPtr(s));
-
     }
 
     // Form C^T C and compute its SVD.
@@ -95,11 +127,17 @@ class CURDecomposition {
     Matrix psi_mat;
     psi_mat.Init(num_row_samples, num_column_samples);
     
+    row_indices->Init(num_row_samples);
     for(index_t s = 0; s < num_row_samples; s++) {
       double random_number = 
 	math::Random(0, row_length_square_distribution[a_mat.n_rows() - 1]);
-      index_t sample_row_number = 
+      (*row_indices)[s] = 
 	FindBinNumber_(row_length_square_distribution, random_number);
+    }
+    qsort(row_indices->begin(), row_indices->size(), sizeof(index_t), 
+	  &qsort_compar_);
+    for(index_t s = 0; s < num_row_samples; s++) {
+      index_t sample_row_number = (*row_indices)[s];
       double probability = 
 	((sample_row_number == 0) ?
 	 row_length_square_distribution[sample_row_number]:
