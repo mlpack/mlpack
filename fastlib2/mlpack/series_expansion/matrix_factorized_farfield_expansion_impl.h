@@ -20,7 +20,8 @@ template<typename TKernelAux>
 template<typename Tree>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 (const Matrix& reference_set, const Vector& weights, int begin, int end, 
- int order, Matrix *query_set, ArrayList<Tree *> *query_leaf_nodes) {
+ int order, const Matrix *query_set, 
+ const ArrayList<Tree *> *query_leaf_nodes) {
   
   // The sample kernel matrix is S by |R| where |R| is the number of
   // reference points in the reference node and S is the number of
@@ -29,7 +30,9 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   int num_reference_samples = (int) sqrt(end - begin);
   int num_query_samples = (int) query_leaf_nodes->size();
   sample_kernel_matrix.Init(num_query_samples, num_reference_samples);
-  
+
+  printf("Taking %d query samples...\n", num_query_samples);
+
   for(index_t r = 0; r < num_reference_samples; r++) {
 
     // Choose a random reference point.
