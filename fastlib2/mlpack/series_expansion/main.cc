@@ -9,11 +9,14 @@
 #include "cur_decomposition.h"
 #include "kernel_aux.h"
 #include "farfield_expansion.h"
+#include "matrix_factorized_farfield_expansion.h"
 #include "mult_farfield_expansion.h"
 #include "local_expansion.h"
 #include "mult_local_expansion.h"
 #include "mult_series_expansion_aux.h"
 #include "series_expansion_aux.h"
+#include "contrib/dongryel/proximity_project/gen_metric_tree.h"
+#include "../kde/dataset_scaler.h"
 
 int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
 				   int begin, int end) {
@@ -101,6 +104,52 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   return 1;
 }
 
+template<typename Tree>
+void ExtractLeafNodes(Tree *node, ArrayList<Tree *> &leaf_nodes) {
+
+  if(node->is_leaf()) {
+    leaf_nodes.PushBackCopy(node);
+  }
+  else {
+    ExtractLeafNodes(node->left(), leaf_nodes);
+    ExtractLeafNodes(node->right(), leaf_nodes);
+  }
+}
+
+int TestEvaluateMatrixFactorizedFarField(const Matrix &data, 
+					 const Vector &weights, int begin, 
+					 int end) {
+
+  double bandwidth = 0.005;
+  GaussianKernelAux ka;
+  ka.Init(bandwidth, 0, data.n_rows());
+  MatrixFactorizedFarFieldExpansion<GaussianKernelAux> mffe;
+  
+  Vector center;
+  center.Init(2);
+  center.SetZero();
+  mffe.Init(center, ka);
+  
+  // Build a query tree out of the data.  
+  Matrix query_data, reference_data;
+  query_data.Copy(data);
+  reference_data.Copy(data);
+  DatasetScaler::ScaleDataByMinMax(query_data, reference_data, false);
+  typedef BinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix > Tree;
+  Tree *query_root = proximity::MakeGenMetricTree<Tree>(query_data, 100);
+  Tree *reference_root = proximity::MakeGenMetricTree<Tree>(reference_data, 
+							    100);
+  ArrayList<Tree *> query_leaf_nodes;
+  query_leaf_nodes.Init();
+  ExtractLeafNodes(query_root, query_leaf_nodes);
+  mffe.AccumulateCoeffs<Tree>(reference_data, weights, begin, end, -1,
+			      &query_data, &query_leaf_nodes);
+  
+  delete query_root;
+  delete reference_root;
+  return 1;
+}
+
 int TestEvaluateFarField(const Matrix &data, const Vector &weights,
 			 int begin, int end) {
   
@@ -156,66 +205,6 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
   return 1;
 }
-
-int TestEvaluateFarFieldByMonteCarlo(const Matrix &data, const Vector &weights,
-				     int begin, int end) {
-  
-  printf("\n----- TestEvaluateFarFieldByMonteCarlo -----\n");
-
-  // bandwidth of sqrt(0.5) Gaussian kernel
-  double bandwidth = sqrt(0.5);
-
-  // declare auxiliary object and initialize
-  GaussianKernelAux ka;
-  ka.Init(bandwidth, 10, data.n_rows());
-
-  // declare center at the origin
-  Vector center;
-  center.Init(2);
-  center.SetZero();
-
-  // to-be-evaluated point
-  Vector evaluate_here;
-  evaluate_here.Init(2);
-  evaluate_here[0] = evaluate_here[1] = 7;
-
-  // declare expansion objects at (0,0) and other centers
-  FarFieldExpansion<GaussianKernelAux> se;
-
-  // initialize expansion objects with respective centers and the bandwidth
-  // squared of 0.5
-  se.Init(center, ka);
-
-  // compute up to 10-th order multivariate polynomial.
-  se.AccumulateCoeffs(data, weights, begin, end, 10);
-
-  // Now compute the stratified distribution...
-  se.ComputeStratifiedLengthSquareDistribution();
-  
-  // Print out the objects
-  se.PrintDebug();               // expansion at (0, 0)
-
-  // Evaluate the series expansion using Monte Carlo.
-  printf("Evaluated the expansion at (%g %g) is %g...\n",
-	 evaluate_here[0], evaluate_here[1],
-	 se.EvaluateFieldByMonteCarlo(evaluate_here, 10, 20));
-
-  // check with exhaustive method
-  double exhaustive_sum = 0;
-  for(index_t i = begin; i < end; i++) {
-    int row_num = i;
-    double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
-      (evaluate_here[0] - data.get(0, row_num)) +
-      (evaluate_here[1] - data.get(1, row_num)) * 
-      (evaluate_here[1] - data.get(1, row_num));
-    
-    exhaustive_sum += ka.kernel_.EvalUnnormOnSq(dsqd);
-
-  }
-  printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
-  return 1;
-}
-
 
 int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
 			   int begin, int end) {
@@ -663,9 +652,7 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestMultInitAux(data) == 1);
   DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
   */
-
-  Matrix c_mat, u_mat, r_mat;
-  CURDecomposition::Compute(data, &c_mat, &u_mat, &r_mat);
+  TestEvaluateMatrixFactorizedFarField(data, weights, begin, end);
 
   fx_done();
 }

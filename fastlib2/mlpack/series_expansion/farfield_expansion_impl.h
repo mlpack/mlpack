@@ -157,33 +157,6 @@ void FarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
 }
 
 template<typename TKernelAux>
-void FarFieldExpansion<TKernelAux>::
-ComputeStratifiedLengthSquareDistribution() {
-
-  for(index_t i = 0, cur_order = 0, first_coeff = 1; i < coeffs_.length(); 
-      i++) {
-    
-    double squared_coeff = coeffs_[i] * coeffs_[i];
-    squared_length_of_coeffs_ += squared_coeff;
-
-    if(i >= sea_->get_total_num_coeffs(cur_order)) {
-      cur_order++;
-      first_coeff = 1;
-    }
-    if(first_coeff == 1) {
-      stratified_length_square_distribution_of_coeffs_[i] = squared_coeff;
-      first_coeff = 0;
-    }
-    else {
-      stratified_length_square_distribution_of_coeffs_[i] = 
-	stratified_length_square_distribution_of_coeffs_[i - 1] +
-	squared_coeff;
-      first_coeff = 0;
-    }    
-  }
-}
-
-template<typename TKernelAux>
 void FarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data, 
 						 const Vector& weights, 
 						 int begin, int end, 
@@ -371,192 +344,6 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const Vector &x_q,
   }
 
   multipole_sum = pos_multipole_sum + neg_multipole_sum;
-  return multipole_sum;
-}
-
-template<typename TKernelAux>
-double FarFieldExpansion<TKernelAux>::EvaluateFieldByMonteCarlo
-(const Matrix &data, int row_num, int order, int num_samples) const {
-
-  // dimension
-  int dim = sea_->get_dimension();
-
-  // total number of coefficients
-  int total_num_coeffs = sea_->get_total_num_coeffs(order);
-
-  // square root times bandwidth
-  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
-
-  // the evaluated sum
-  double pos_multipole_sum = 0;
-  double neg_multipole_sum = 0;
-  double multipole_sum = 0;
-
-  // computed derivative map
-  Matrix derivative_map;
-  derivative_map.Init(dim, order + 1);
-
-  // temporary variable
-  Vector arrtmp;
-  arrtmp.Init(total_num_coeffs);
-
-  // (x_q - x_R) scaled by bandwidth
-  Vector x_q_minus_x_R;
-  x_q_minus_x_R.Init(dim);
-
-  // compute (x_q - x_R) / (sqrt(2h^2))
-  for(index_t d = 0; d < dim; d++) {
-    x_q_minus_x_R[d] = (data.get(d, row_num) - center_[d]) / bandwidth_factor;
-  }
-
-  // Compute deriative maps based on coordinate difference. This takes
-  // $O(D p)$ operation and space.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
-
-  // Determine the total number of samples required...
-  int num_samples_so_far = 0;
-
-  DEBUG_ONLY(printf("Took %d coefficient samples out of %d coefficients...\n",
-                    num_samples, total_num_coeffs));
-
-  // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
-  for(index_t j = 0; j <= order; j++) {
-
-    // The number of allocated samples for the coefficients of the
-    // current order. Add up the samples to the total tally. We make
-    // sure that each order gets a "say" in the Monte Carlo sum.
-    int allocated_samples =
-      std::max((int) (((double) num_samples) / squared_length_of_coeffs_ *
-                      stratified_length_square_distribution_of_coeffs_
-                      [sea_->get_total_num_coeffs(j) - 1]), 1);
-    num_samples_so_far += allocated_samples;
-
-    for(index_t s = 0; s < allocated_samples; s++) {
-
-      // First, pick the index randomly among the current order
-      // proportional to its length square distribution.
-      double random_number =
-        math::Random
-        (0, stratified_length_square_distribution_of_coeffs_
-         [sea_->get_total_num_coeffs(j) - 1]);
-      index_t sample_number =
-        FindBinNumber_(stratified_length_square_distribution_of_coeffs_, j,
-                       random_number);
-
-      const ArrayList<int> &mapping = sea_->get_multiindex(sample_number);
-      double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
-
-      // The product is appropriately weighted by the sampling
-      // probability.
-      double prod = coeffs_[sample_number] * arrtmp /
-        (coeffs_[sample_number] * coeffs_[sample_number] /
-         stratified_length_square_distribution_of_coeffs_
-         [sea_->get_total_num_coeffs(j) - 1]);
-
-      if(prod > 0) {
-        pos_multipole_sum += prod;
-      }
-      else {
-        neg_multipole_sum += prod;
-      }
-    } // end of looping over each sample for the fixed order...
-  } // end of looping over each approximation order...
-
-  multipole_sum = (pos_multipole_sum + neg_multipole_sum) /
-    ((double) num_samples_so_far);
-  return multipole_sum;
-}
-
-template<typename TKernelAux>
-double FarFieldExpansion<TKernelAux>::EvaluateFieldByMonteCarlo
-(const Vector &x_q, int order, int num_samples) const {
-  
-  // dimension
-  int dim = sea_->get_dimension();
-
-  // total number of coefficients
-  int total_num_coeffs = sea_->get_total_num_coeffs(order);
-
-  // square root times bandwidth
-  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
-  
-  // the evaluated sum
-  double pos_multipole_sum = 0;
-  double neg_multipole_sum = 0;
-  double multipole_sum = 0;
-  
-  // computed derivative map
-  Matrix derivative_map;
-  derivative_map.Init(dim, order + 1);
-
-  // temporary variable
-  Vector arrtmp;
-  arrtmp.Init(total_num_coeffs);
-
-  // (x_q - x_R) scaled by bandwidth
-  Vector x_q_minus_x_R;
-  x_q_minus_x_R.Init(dim);
-
-  // compute (x_q - x_R) / (sqrt(2h^2))
-  for(index_t d = 0; d < dim; d++) {
-    x_q_minus_x_R[d] = (x_q[d] - center_[d]) / bandwidth_factor;
-  }
-
-  // Compute deriative maps based on coordinate difference. This takes
-  // $O(D p)$ operation and space.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
-
-  // Determine the total number of samples required...
-  int num_samples_so_far = 0;
-
-  DEBUG_ONLY(printf("Took %d coefficient samples out of %d coefficients...\n", 
-		    num_samples, total_num_coeffs));
-
-  // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
-  for(index_t j = 0; j <= order; j++) {
-
-    // The number of allocated samples for the coefficients of the
-    // current order. Add up the samples to the total tally. We make
-    // sure that each order gets a "say" in the Monte Carlo sum.
-    int allocated_samples =
-      std::max((int) (((double) num_samples) / squared_length_of_coeffs_ *
-		      stratified_length_square_distribution_of_coeffs_
-		      [sea_->get_total_num_coeffs(j) - 1]), 1);
-    num_samples_so_far += allocated_samples;
-
-    for(index_t s = 0; s < allocated_samples; s++) {
-      
-      // First, pick the index randomly among the current order
-      // proportional to its length square distribution.
-      double random_number = 
-	math::Random
-	(0, stratified_length_square_distribution_of_coeffs_
-	 [sea_->get_total_num_coeffs(j) - 1]);
-      index_t sample_number = 
-	FindBinNumber_(stratified_length_square_distribution_of_coeffs_, j,
-		       random_number);
-
-      const ArrayList<int> &mapping = sea_->get_multiindex(sample_number);
-      double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
-
-      // The product is appropriately weighted by the sampling
-      // probability.
-      double prod = coeffs_[sample_number] * arrtmp /
-	(coeffs_[sample_number] * coeffs_[sample_number] /
-	 stratified_length_square_distribution_of_coeffs_
-	 [sea_->get_total_num_coeffs(j) - 1]);
-      
-      if(prod > 0) {
-	pos_multipole_sum += prod;
-      }
-      else {
-	neg_multipole_sum += prod;
-      }
-    } // end of looping over each sample for the fixed order...
-  } // end of looping over each approximation order...
-
-  multipole_sum = (pos_multipole_sum + neg_multipole_sum) / 
-    ((double) num_samples_so_far);
   return multipole_sum;
 }
 
@@ -941,12 +728,6 @@ void FarFieldExpansion<TKernelAux>::Init(const Vector& center,
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
-
-  // Initialize the list of squared coefficients for sampling.
-  stratified_length_square_distribution_of_coeffs_.Init
-    (sea_->get_max_total_num_coeffs());
-  stratified_length_square_distribution_of_coeffs_.SetZero();
-  squared_length_of_coeffs_ = 0;
 }
 
 template<typename TKernelAux>
@@ -963,12 +744,6 @@ void FarFieldExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   // initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
-
-  // Initialize the list of squared coefficients for sampling.
-  stratified_length_square_distribution_of_coeffs_.Init
-    (sea_->get_max_total_num_coeffs());
-  stratified_length_square_distribution_of_coeffs_.SetZero();
-  squared_length_of_coeffs_ = 0;
 }
 
 template<typename TKernelAux>
@@ -983,32 +758,6 @@ int FarFieldExpansion<TKernelAux>::OrderForEvaluating
 					min_dist_sqd_regions, 
 					max_dist_sqd_regions, max_error,
 					actual_error);
-}
-
-template<typename TKernelAux>
-template<typename TBound>
-int FarFieldExpansion<TKernelAux>::OrderForEvaluatingByMonteCarlo
-(const TBound &far_field_region, 
- const TBound &local_field_region, double min_dist_sqd_regions,
- double max_dist_sqd_regions, double max_error, double *actual_error,
- int *num_samples) const {
-  
-  int order = ka_->OrderForEvaluatingFarField(far_field_region,
-					      local_field_region,
-					      min_dist_sqd_regions, 
-					      max_dist_sqd_regions, max_error,
-					      actual_error);
-  
-  // I need to edit this - the number of samples need to be solved
-  // using the variance equation...
-  double unnormalized_variance_upper_bound = 
-    math::Sqr(ka_->UpperBoundOnDerivative(min_dist_sqd_regions, order)) * 
-    stratified_length_square_distribution_of_coeffs_
-    [sea_->get_total_num_coeffs(order) - 1];
-  *num_samples = std::max
-    ((int) (unnormalized_variance_upper_bound / (max_error * max_error)), 
-     order + 1);
-  return order;
 }
 
 template<typename TKernelAux>

@@ -34,8 +34,19 @@ class CURDecomposition {
 	column_length_square_distribution[i - 1];
     }
 
+    // If the all entries are close to zero, then we return.
+    if(column_length_square_distribution[a_mat.n_cols() - 1] < 0.01) {
+      c_mat->Init(a_mat.n_rows(), 1);
+      c_mat->SetZero();
+      u_mat->Init(1, 1);
+      u_mat->set(0, 0, 1);
+      r_mat->Init(1, a_mat.n_cols());
+      r_mat->SetZero();
+      return;
+    }
+
     // Pick samples from the column distribution to form the matrix C.
-    int num_column_samples = 2 * ((int) sqrt(a_mat.n_cols()));
+    int num_column_samples = ((int) sqrt(a_mat.n_cols()));
     c_mat->Init(a_mat.n_rows(), num_column_samples);
     for(index_t s = 0; s < num_column_samples; s++) {
       double random_number = 
@@ -79,7 +90,7 @@ class CURDecomposition {
     }
 
     // Sample the row vector according to its distribution.
-    int num_row_samples = 2 * ((int) sqrt(a_mat.n_rows()));
+    int num_row_samples = ((int) sqrt(a_mat.n_rows()));
     r_mat->Init(num_row_samples, a_mat.n_cols());
     Matrix psi_mat;
     psi_mat.Init(num_row_samples, num_column_samples);

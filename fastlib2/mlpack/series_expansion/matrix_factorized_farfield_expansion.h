@@ -15,7 +15,7 @@
 #include "kernel_aux.h"
 
 template<typename TKernelAux> 
-class LocalExpansion;
+class MatrixFactorizedLocalExpansion;
 
 /** @brief Far field expansion class using matrix factorization.
  *
@@ -70,7 +70,7 @@ class MatrixFactorizedFarFieldExpansion {
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(projection_operator_);
     OT_MY_OBJECT(outgoing_representation_);
-    OT_MY_OBJECT(outoing_skeleton_);
+    OT_MY_OBJECT(outgoing_skeleton_);
   }
 
  public:
@@ -91,13 +91,6 @@ class MatrixFactorizedFarFieldExpansion {
   Vector* get_center() { return &center_; }
 
   const Vector* get_center() const { return &center_; }
-
-  /** @brief Gets the set of far-field coefficients.
-   *
-   *  @return The const reference to the vector containing the
-   *          far-field coefficients.
-   */
-  const Vector& get_coeffs() const { return coeffs_; }
   
   /** @brief Set the center of the expansion - assumes that the center
    *         has been initialized before...
@@ -139,9 +132,9 @@ class MatrixFactorizedFarFieldExpansion {
    */
   template<typename Tree>
   void AccumulateCoeffs
-  (const Matrix& data, const Vector& weights, int begin, int end, 
-   int order = -1, const Matrix *query_set = NULL,
-   const ArrayList<Tree *> query_leaf_nodes = NULL);
+  (const Matrix& reference_set, const Vector& weights, int begin, int end, 
+   int order = -1, Matrix *query_set = NULL, 
+   ArrayList<Tree *> *query_leaf_nodes = NULL);
 
   /** @brief Refine the far field moment that has been computed before
    *         up to a new order.
@@ -208,13 +201,14 @@ class MatrixFactorizedFarFieldExpansion {
    *         here. The translated coefficients are added up to the
    *         ones here.
    */
-  void TranslateFromFarField(const FarFieldExpansion &se);
+  void TranslateFromFarField(const MatrixFactorizedFarFieldExpansion &se);
   
   /** @brief Translate to the given local expansion. The translated
    *         coefficients are added up to the passed-in local
    *         expansion coefficients.
    */
-  void TranslateToLocal(LocalExpansion<TKernelAux> &se, int truncation_order);
+  void TranslateToLocal(MatrixFactorizedLocalExpansion<TKernelAux> &se, 
+			int truncation_order);
 
 };
 
