@@ -120,7 +120,7 @@ int TestEvaluateMatrixFactorizedFarField(const Matrix &data,
 					 const Vector &weights, int begin, 
 					 int end) {
 
-  double bandwidth = 0.005;
+  double bandwidth = 20;
   GaussianKernelAux ka;
   ka.Init(bandwidth, 0, data.n_rows());
   MatrixFactorizedFarFieldExpansion<GaussianKernelAux> mffe;
@@ -136,14 +136,14 @@ int TestEvaluateMatrixFactorizedFarField(const Matrix &data,
   reference_data.Copy(data);
   DatasetScaler::ScaleDataByMinMax(query_data, reference_data, false);
   typedef BinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix > Tree;
-  Tree *query_root = proximity::MakeGenMetricTree<Tree>(query_data, 100);
+  Tree *query_root = proximity::MakeGenMetricTree<Tree>(query_data, 500);
   Tree *reference_root = proximity::MakeGenMetricTree<Tree>(reference_data, 
-							    100);
+							    20);
   ArrayList<Tree *> query_leaf_nodes;
   query_leaf_nodes.Init();
   ExtractLeafNodes(query_root, query_leaf_nodes);
-  mffe.AccumulateCoeffs<Tree>(reference_data, weights, begin, end, -1,
-			      &query_data, &query_leaf_nodes);
+  mffe.AccumulateCoeffs<Tree>(reference_data, weights, begin, sqrt(end) / 2, 
+			      -1, &query_data, &query_leaf_nodes);
   
   delete query_root;
   delete reference_root;

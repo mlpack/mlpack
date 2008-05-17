@@ -29,7 +29,42 @@ template<typename TKernelAux>
 class MatrixFactorizedFarFieldExpansion {
 
  private:
+
+  ////////// Private Member Functions //////////
   
+  /** @brief The comparison function used for quick sort
+   */
+  static int qsort_compar_(const void *a, const void *b) {
+    
+    index_t a_dereferenced = *((index_t *) a);
+    index_t b_dereferenced = *((index_t *) b);
+    
+    if(a_dereferenced < b_dereferenced) {
+      return -1;
+    }
+    else if(a_dereferenced > b_dereferenced) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
+  /** @brief Removes duplicate elements in a sorted array.
+   */
+  static void remove_duplicates_in_sorted_array_(ArrayList<index_t> &array) {
+
+    index_t i, k = 0;
+    
+    for(i = 1; i < array.size(); i++) {
+      if(array[k] != array[i]) {
+	array[k + 1] = array[i];
+	k++;
+      }
+    }
+    array.ShrinkTo(k + 1);
+  }
+
   ////////// Private Member Variables //////////
 
   /** @brief The center of expansion.

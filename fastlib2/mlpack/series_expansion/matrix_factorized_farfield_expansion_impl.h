@@ -30,16 +30,30 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   int num_reference_samples = (int) sqrt(end - begin);
   int num_query_samples = (int) query_leaf_nodes->size();
   sample_kernel_matrix.Init(num_query_samples, num_reference_samples);
+  
+  // Allocate a temporary space for holding the indices of the
+  // reference points, from which the outgoing skeleton will be
+  // chosen.
+  ArrayList<index_t> tmp_outgoing_skeleton;
+  tmp_outgoing_skeleton.Init(num_reference_samples);
+  for(index_t r = 0; r < num_reference_samples; r++) {
 
-  printf("Taking %d query samples...\n", num_query_samples);
+    // Choose a random reference point and record its index.
+    index_t random_reference_point_index = math::RandInt(begin, end);
+    tmp_outgoing_skeleton[r] = random_reference_point_index;
+  }
+  // Sort the chosen reference indices and eliminate duplicates...
+  qsort(tmp_outgoing_skeleton.begin(), tmp_outgoing_skeleton.size(),
+	sizeof(index_t), &qsort_compar_);
+  remove_duplicates_in_sorted_array_(tmp_outgoing_skeleton);
+  num_reference_samples = tmp_outgoing_skeleton.size();
 
   for(index_t r = 0; r < num_reference_samples; r++) {
 
-    // Choose a random reference point.
-    index_t random_reference_point_index = math::RandInt(begin, end);
+    // The reference point...
     const double *reference_point =
-      reference_set.GetColumnPtr(random_reference_point_index);
-    
+      reference_set.GetColumnPtr(tmp_outgoing_skeleton[r]);
+
     for(index_t c = 0; c < num_query_samples; c++) {
       
       // Choose a random query point from the current query strata...
@@ -61,12 +75,29 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 
   // CUR-decompose the sample kernel matrix.
   Matrix c_mat, u_mat, r_mat;
-  CURDecomposition::Compute(sample_kernel_matrix, &c_mat, &u_mat, &r_mat);
+  ArrayList<index_t> column_indices, row_indices;
+  CURDecomposition::Compute(sample_kernel_matrix, &c_mat, &u_mat, &r_mat,
+			    &column_indices, &row_indices);
 
+  for(index_t s = 0; s < column_indices.size(); s++) {
+    printf("%d ", column_indices[s]);
+  }
+  printf("\n");
+  for(index_t s = 0; s < row_indices.size(); s++) {
+    printf("%d ", row_indices[s]);
+  }
+  printf("\n");
   sample_kernel_matrix.PrintDebug();
   c_mat.PrintDebug();
   u_mat.PrintDebug();
   r_mat.PrintDebug();
+  
+  // The out-going skeleton is constructed from the sampled columns in
+  // the matrix factorization.
+  outgoing_representation_.Init(column_indices.size());
+  for(index_t s = 0; s < column_indices.size(); s++) {
+    outgoing_representation_[s] = tmp_outgoing_skeleton[column_indices[s]];
+  }
   exit(0);
 }
 
