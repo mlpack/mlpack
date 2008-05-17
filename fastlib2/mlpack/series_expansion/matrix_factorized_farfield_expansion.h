@@ -133,8 +133,8 @@ class MatrixFactorizedFarFieldExpansion {
   template<typename Tree>
   void AccumulateCoeffs
   (const Matrix& reference_set, const Vector& weights, int begin, int end, 
-   int order = -1, Matrix *query_set = NULL, 
-   ArrayList<Tree *> *query_leaf_nodes = NULL);
+   int order = -1, const Matrix *query_set = NULL,
+   const ArrayList<Tree *> *query_leaf_nodes = NULL);
 
   /** @brief Refine the far field moment that has been computed before
    *         up to a new order.
