@@ -1,23 +1,25 @@
+// Copyright 2007 Georgia Institute of Technology. All rights reserved.
 /**
- * @file timer.c
+ * @file stopwatch.c
  *
  * Definitions for timer utilities.
  */
 
-/* TODO: Fix CPU/User Time */
+#include "stopwatch.h"
 
-#include "timer.h"
-#include "fx.h"
 #include "fastlib/base/debug.h"
 
-#include <string.h>
-#include <sys/time.h>
-#include <time.h>
 #include <unistd.h>
+#include <time.h>
+#include <sys/time.h>
 
-void timestamp_init(struct timestamp *snapshot)
+
+
+/* TODO: Problem with user time? */
+
+void timestamp_init(struct timestamp *dest)
 {
-  memset(snapshot, 0, sizeof(*snapshot));
+  memset(dest, 0, sizeof(struct timestamp));
 }
 
 void timestamp_add(struct timestamp *dest, const struct timestamp *src)
@@ -70,41 +72,29 @@ void timestamp_now_rev(struct timestamp *dest)
 #endif
 }
 
-void timer_init(struct timer *timer)
+
+
+void stopwatch_init(struct stopwatch *timer)
 {
   timestamp_init(&timer->total);
   timestamp_init(&timer->start);
 }
 
-void timer_start(struct timer *timer)
+void stopwatch_start(struct stopwatch *timer)
 {
-  DEBUG_WARN_MSG_IF(TIMER_IS_ACTIVE(timer),
-                    "Restarting active timer");
+  DEBUG_WARN_MSG_IF(STOPWATCH_ACTIVE(timer),
+      "Restarting active stopwatch.");
 
   timestamp_now_rev(&timer->start);
 }
 
-void timer_stop(struct timer *timer, const struct timestamp *now)
+void stopwatch_stop(struct stopwatch *timer, const struct timestamp *now)
 {
-  if (likely(TIMER_IS_ACTIVE(timer))) {
+  if (likely(STOPWATCH_ACTIVE(timer))) {
     timestamp_add(&timer->total, now);
     timestamp_sub(&timer->total, &timer->start);
     timestamp_init(&timer->start);
   } else {
-    DEBUG_ONLY(NONFATAL("Tried to stop inactive timer"));
+    DEBUG_ONLY(NONFATAL("Stopping inactive stopwatch."));
   }
-}
-
-void timer_emit_results(struct timer *timer, struct datanode *node)
-{
-  double clockrate = 1.0 / sysconf(_SC_CLK_TCK);
-
-#ifdef HAVE_RDTSC
-  fx_format_result(node, "./wall/cycles", "%"LT"u", timer->total.cycles);
-#endif
-  fx_format_result(node, "./wall/sec", "%f", timer->total.micros / 1e6);
-  fx_format_result(node, "./user", "%f",
-                   timer->total.cpu.tms_utime * clockrate);
-  fx_format_result(node, "./sys", "%f",
-                   timer->total.cpu.tms_stime * clockrate);
 }

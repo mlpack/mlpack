@@ -1,20 +1,16 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
-// ABSOLUTELY NOT FOR DISTRIBUTION
 /**
- * @file timer.h
+ * @file stopwatch.h
  *
- * Timer utilities.
- *
- * More likely than not, you will want to use the convenient methods
- * in fx.h rather than this file.  The most useful part of this is the
- * RDTSC macro, which lets you have a minimal-impact timer.
+ * Timer utilities used by FASTexec; there are convenient methods in
+ * fx.h to make use of these timers.  Also, see the RDTSC macro for a
+ * minimal-impact cycle counter.
  */
 
 #ifndef FX_TIMER_H
 #define FX_TIMER_H
 
-#include "datastore.h"
-#include "base/basic_types.h"
+#include "fastlib/base/common.h"
 
 #include <sys/times.h>
 
@@ -25,8 +21,7 @@ typedef uint64 tsc_t;
 /** Length modifier for emitting tsc_t with printf. */
 #define LT L64
 
-/* TODO: Make this conditional on your architecture */
-/* TODO: Does this work for x86_64? */
+/* TODO: Check x86_64 and other architectures */
 
 #if defined(__i386__)
 /** Read the number of cycles executed into a tsc_t variable. */
@@ -34,11 +29,9 @@ typedef uint64 tsc_t;
 #define HAVE_RDTSC
 #endif
 
-/**
- * Snapshot of both CPU and real time.
- */
+/** Snapshot of both CPU and real time. */
 struct timestamp {
-  /** Microseconds since some unknown epoch. */
+  /** Microseconds since an unknown epoch. */
   tsc_t micros;
 #ifdef HAVE_RDTSC
   /** CPU cycles since an unknown epoch. */
@@ -48,27 +41,19 @@ struct timestamp {
   struct tms cpu;
 };
 
-/**
- * Stopwatch structure.
- */
-struct timer {
+/** Main timer structure. */
+struct stopwatch {
   /** Total time elapsed in all previous start/stop runs. */
   struct timestamp total;
   /** The most recent start time. */
   struct timestamp start;
 };
 
-/**
- * Initializes a timestamp to zero.
- */
+/** Initializes a timestamp to zero. */
 void timestamp_init(struct timestamp *snapshot);
-/**
- * Element-wise addition of a timestamp.
- */
+/** Element-wise addition of a timestamp. */
 void timestamp_add(struct timestamp *dest, const struct timestamp *src);
-/**
- * Element-wise subtraction of a timestamp.
- */
+/** Element-wise subtraction of a timestamp. */
 void timestamp_sub(struct timestamp *dest, const struct timestamp *src);
 /**
  * Records the current time.
@@ -83,27 +68,15 @@ void timestamp_now(struct timestamp *dest);
  */
 void timestamp_now_rev(struct timestamp *dest);
 
-/**
- * Initializes a timer.
- */
-void timer_init(struct timer *timer);
-/**
- * Starts a timing run.
- */
-void timer_start(struct timer *timer);
-/**
- * Stops a timing run and accumulates this current run into the total.
- */
-void timer_stop(struct timer *timer, const struct timestamp *now);
-/**
- * Write out the cumulative times to a datastore.
- */
-void timer_emit_results(struct timer *timer, struct datanode *dest);
+/** Initializes a timer. */
+void stopwatch_init(struct stopwatch *timer);
+/** Starts a timing run. */
+void stopwatch_start(struct stopwatch *timer);
+/** Stops a timing run, accumulating it into the total. */
+void stopwatch_stop(struct stopwatch *timer, const struct timestamp *now);
 
-/**
- * Test whether a timer is active.
- */
-#define TIMER_IS_ACTIVE(timer) ((timer)->start.micros != 0)
+/** Test whether a timer is active. */
+#define STOPWATCH_ACTIVE(timer) ((timer)->start.micros != 0)
 
 EXTERN_C_END
 
