@@ -123,12 +123,14 @@ int TestEvaluateMatrixFactorizedFarField(const Matrix &data,
   double bandwidth = 5;
   GaussianKernelAux ka;
   ka.Init(bandwidth, 0, data.n_rows());
-  MatrixFactorizedFarFieldExpansion<GaussianKernelAux> mffe;
+  MatrixFactorizedFarFieldExpansion<GaussianKernelAux> mffe, mffe2, mffe3;
   
   Vector center;
   center.Init(2);
   center.SetZero();
   mffe.Init(center, ka);
+  mffe2.Init(center, ka);
+  mffe3.Init(center, ka);
   
   // Build a query tree out of the data.  
   Matrix query_data, reference_data;
@@ -144,7 +146,11 @@ int TestEvaluateMatrixFactorizedFarField(const Matrix &data,
   ExtractLeafNodes(query_root, query_leaf_nodes);
   mffe.AccumulateCoeffs<Tree>(reference_data, weights, begin, sqrt(end) / 2, 
 			      -1, &query_data, &query_leaf_nodes);
-  
+  mffe2.AccumulateCoeffs<Tree>(reference_data, weights, sqrt(end) / 2,
+			       sqrt(end), -1, &query_data, &query_leaf_nodes);
+  mffe3.TranslateFromFarField(mffe);
+  mffe3.TranslateFromFarField(mffe2);
+    
   delete query_root;
   delete reference_root;
   return 1;

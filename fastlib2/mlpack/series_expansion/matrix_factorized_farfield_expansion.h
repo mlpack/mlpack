@@ -71,10 +71,6 @@ class MatrixFactorizedFarFieldExpansion {
    */
   Vector center_;
 
-  /** @brief The projection operator.
-   */
-  Matrix projection_operator_;
-
   /** @brief The out-going representation: the pseudo-charges on the
    *         pseudo-points.
    */
@@ -101,9 +97,14 @@ class MatrixFactorizedFarFieldExpansion {
    */
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
+  /** @brief The internal flag that states that the far-field
+   *         expansion has been initialized with a valid
+   *         representation (whether from the base case or the merging
+   *         case).
+   */
+  bool is_initialized_;
+
   OT_DEF(MatrixFactorizedFarFieldExpansion) {
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(projection_operator_);
     OT_MY_OBJECT(outgoing_representation_);
     OT_MY_OBJECT(outgoing_skeleton_);
   }
@@ -139,6 +140,18 @@ class MatrixFactorizedFarFieldExpansion {
     for(index_t i = 0; i < center.length(); i++) {
       center_[i] = center[i];
     }
+  }
+
+  /** @brief Gets the outgoing representation.
+   */
+  const Vector &outgoing_representation() const {
+    return outgoing_representation_;
+  }
+  
+  /** @brief Gets the outgoing skeleton.
+   */
+  const ArrayList<index_t> &outgoing_skeleton() const {
+    return outgoing_skeleton_;
   }
 
   ////////// User-level Functions //////////
@@ -237,7 +250,7 @@ class MatrixFactorizedFarFieldExpansion {
    *         ones here.
    */
   void TranslateFromFarField(const MatrixFactorizedFarFieldExpansion &se);
-  
+
   /** @brief Translate to the given local expansion. The translated
    *         coefficients are added up to the passed-in local
    *         expansion coefficients.
