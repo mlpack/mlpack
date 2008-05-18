@@ -91,14 +91,23 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 
   // Compute the projection operator, which is the product of the U
   // and the R factor and row scaled by the column scaled C factor.
-  la::MulInit(u_mat, r_mat, &projection_operator_);
+  Matrix projection_operator;
+
+  printf("Printing out the result...\n");
+  c_mat.PrintDebug();
+  u_mat.PrintDebug();
+  r_mat.PrintDebug();
+  
+  la::MulInit(u_mat, r_mat, &projection_operator);
   for(index_t i = 0; i < c_mat.n_cols(); i++) {
     
-    double scaling_factor = c_mat.get(0, i) / 
-      sample_kernel_matrix.get(0, column_indices[i]);
-    for(index_t j = 0; j < projection_operator_.n_cols(); j++) {
-      projection_operator_.set(i, j, projection_operator_.get(i, j) *
-			       scaling_factor);
+    double scaling_factor = 
+      (sample_kernel_matrix.get(0, column_indices[i]) < DBL_EPSILON) ?
+      0:c_mat.get(0, i) / sample_kernel_matrix.get(0, column_indices[i]);
+
+    for(index_t j = 0; j < projection_operator.n_cols(); j++) {
+      projection_operator.set(i, j, projection_operator.get(i, j) *
+			      scaling_factor);
     }
   }
 
@@ -107,13 +116,28 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   outgoing_representation_.Init(outgoing_skeleton_.size());
   outgoing_representation_.SetZero();
   for(index_t i = 0; i < outgoing_skeleton_.size(); i++) {
-    la::AddExpert(projection_operator_.n_rows(), 
-		  weights[outgoing_skeleton_[i]] * 
-		  (((double) end - begin) / 
-		   ((double) outgoing_skeleton_.size())), 
-		  projection_operator_.GetColumnPtr(i),
+    double scaling_factor = 
+      weights[outgoing_skeleton_[i]] *
+      (((double) end - begin) / ((double) outgoing_skeleton_.size()));
+
+    printf("Scaling factor: %g\n", scaling_factor);
+    la::AddExpert(projection_operator.n_rows(), scaling_factor,
+		  projection_operator.GetColumnPtr(i),
 		  outgoing_representation_.ptr());
   }
+
+  // Turn on the flag that says the object has been initialized.
+  is_initialized_ = true;
+
+
+  projection_operator.PrintDebug();
+  printf("Representation: \n");
+  outgoing_representation_.PrintDebug();
+  printf("\nSkeleton:\n");
+  for(index_t i = 0; i < outgoing_skeleton_.size(); i++) {
+    printf("%d ", outgoing_skeleton_[i]);
+  }
+  printf("\n");
 }
 
 template<typename TKernelAux>
@@ -137,6 +161,9 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   center_.Copy(center);
   sea_ = &(ka.sea_);
   ka_ = &ka;
+
+  // The default flag for initialization is false.
+  is_initialized_ = false;
 }
 
 template<typename TKernelAux>
@@ -149,6 +176,9 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   center_.Init(sea_->get_dimension());
   center_.SetZero();
   ka_ = &ka;
+  
+  // The default flag for initialization is false.
+  is_initialized_ = false;
 }
 
 template<typename TKernelAux>
@@ -185,12 +215,55 @@ OrderForConvertingToLocal(const TBound &far_field_region,
 template<typename TKernelAux>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::PrintDebug
 (const char *name, FILE *stream) const {
+  
 }
 
 template<typename TKernelAux>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateFromFarField
 (const MatrixFactorizedFarFieldExpansion &se) {
-
+  
+  // The far-field expansion using matrix factorization is formed by
+  // concatenating representations.
+  if(is_initialized_) {
+    Vector tmp_outgoing_representation;
+    const Vector &outgoing_representation_to_be_translated =
+      se.outgoing_representation();
+    const ArrayList<index_t> &outgoing_skeleton_to_be_translated =
+      se.outgoing_skeleton();
+    tmp_outgoing_representation.Copy(outgoing_representation_);
+    outgoing_representation_.Destruct();    
+    outgoing_representation_.Init
+      (tmp_outgoing_representation.length() +
+       outgoing_representation_to_be_translated.length());
+    for(index_t i = 0; i < tmp_outgoing_representation.length(); i++) {
+      outgoing_representation_[i] = tmp_outgoing_representation[i];
+    }
+    for(index_t i = tmp_outgoing_representation.length(); i < 
+	  outgoing_representation_.length(); i++) {
+      outgoing_representation_[i] = 
+	outgoing_representation_to_be_translated
+	[i - tmp_outgoing_representation.length()];
+    }
+    for(index_t i = 0; i < outgoing_skeleton_to_be_translated.size(); i++) {
+      outgoing_skeleton_.PushBackCopy(outgoing_skeleton_to_be_translated[i]);
+    }
+    
+    for(index_t i = 0; i < outgoing_representation_.length(); i++) {
+      printf("%g ", outgoing_representation_[i]);
+    }
+    printf("\n");
+    for(index_t i = 0; i < outgoing_skeleton_.size(); i++) {
+      printf("%d ", outgoing_skeleton_[i]);
+    }
+    printf("\n");
+  }
+  else {
+    outgoing_representation_.Copy(se.outgoing_representation());
+    outgoing_skeleton_.InitCopy(se.outgoing_skeleton());
+  }
+  
+  // Turn on the initialization flag on.
+  is_initialized_ = true;
 }
 
 template<typename TKernelAux>

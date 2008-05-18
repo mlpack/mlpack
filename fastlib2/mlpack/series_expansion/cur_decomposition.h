@@ -110,6 +110,8 @@ class CURDecomposition {
 	 column_length_square_distribution[sample_column_number - 1]) /
 	column_length_square_distribution[a_mat.n_cols() - 1];
 
+      printf("Probability: %g\n", probability);
+
       la::ScaleOverwrite(a_mat.n_rows(), 
 			 1.0 / sqrt(num_column_samples * probability),
 			 a_mat.GetColumnPtr(sample_column_number),
@@ -139,11 +141,7 @@ class CURDecomposition {
     }
 
     // Sample the row vector according to its distribution.
-    int num_row_samples = ((int) sqrt(a_mat.n_rows()));
-    r_mat->Init(num_row_samples, a_mat.n_cols());
-    Matrix psi_mat;
-    psi_mat.Init(num_row_samples, num_column_samples);
-    
+    int num_row_samples = ((int) sqrt(a_mat.n_rows()));    
     row_indices->Init(num_row_samples);
     for(index_t s = 0; s < num_row_samples; s++) {
       double random_number = 
@@ -154,7 +152,14 @@ class CURDecomposition {
     qsort(row_indices->begin(), row_indices->size(), sizeof(index_t), 
 	  &qsort_compar_);
     remove_duplicates_in_sorted_array_(*row_indices);
+
+    // Recompute the required row sample numbers and allocate the R
+    // factor and Psi matrix based on it.
     num_row_samples = row_indices->size();
+    r_mat->Init(num_row_samples, a_mat.n_cols());
+    Matrix psi_mat;
+    psi_mat.Init(num_row_samples, num_column_samples);
+
     for(index_t s = 0; s < num_row_samples; s++) {
       index_t sample_row_number = (*row_indices)[s];
       double probability = 
