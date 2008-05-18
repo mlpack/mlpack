@@ -27,6 +27,21 @@ class CURDecomposition {
     }
   }
 
+  /** @brief Removes duplicate elements in a sorted array.
+   */
+  static void remove_duplicates_in_sorted_array_(ArrayList<index_t> &array) {
+
+    index_t i, k = 0;
+
+    for(i = 1; i < array.size(); i++) {
+      if(array[k] != array[i]) {
+        array[k + 1] = array[i];
+        k++;
+      }
+    }
+    array.ShrinkTo(k + 1);
+  }
+
   static index_t FindBinNumber_(const Vector &cumulative_distribution,
 				double random_number) {
         
@@ -82,6 +97,8 @@ class CURDecomposition {
     }
     qsort(column_indices->begin(), column_indices->size(),
 	  sizeof(index_t), &qsort_compar_);
+    remove_duplicates_in_sorted_array_(*column_indices);
+    num_column_samples = column_indices->size();
     c_mat->Init(a_mat.n_rows(), num_column_samples);    
     
     for(index_t s = 0; s < num_column_samples; s++) {
@@ -136,6 +153,8 @@ class CURDecomposition {
     }
     qsort(row_indices->begin(), row_indices->size(), sizeof(index_t), 
 	  &qsort_compar_);
+    remove_duplicates_in_sorted_array_(*row_indices);
+    num_row_samples = row_indices->size();
     for(index_t s = 0; s < num_row_samples; s++) {
       index_t sample_row_number = (*row_indices)[s];
       double probability = 

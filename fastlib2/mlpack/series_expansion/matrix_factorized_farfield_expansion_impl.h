@@ -29,7 +29,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   Matrix sample_kernel_matrix;
   int num_reference_samples = (int) sqrt(end - begin);
   int num_query_samples = (int) query_leaf_nodes->size();
-  sample_kernel_matrix.Init(num_query_samples, num_reference_samples);
   
   // Allocate a temporary space for holding the indices of the
   // reference points, from which the outgoing skeleton will be
@@ -47,6 +46,10 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 	sizeof(index_t), &qsort_compar_);
   remove_duplicates_in_sorted_array_(tmp_outgoing_skeleton);
   num_reference_samples = tmp_outgoing_skeleton.size();
+
+  // After determining the number of reference samples to take,
+  // allocate the space for the sample kernel matrix to be computed.
+  sample_kernel_matrix.Init(num_query_samples, num_reference_samples);
 
   for(index_t r = 0; r < num_reference_samples; r++) {
 
@@ -78,27 +81,39 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   ArrayList<index_t> column_indices, row_indices;
   CURDecomposition::Compute(sample_kernel_matrix, &c_mat, &u_mat, &r_mat,
 			    &column_indices, &row_indices);
-
-  for(index_t s = 0; s < column_indices.size(); s++) {
-    printf("%d ", column_indices[s]);
-  }
-  printf("\n");
-  for(index_t s = 0; s < row_indices.size(); s++) {
-    printf("%d ", row_indices[s]);
-  }
-  printf("\n");
-  sample_kernel_matrix.PrintDebug();
-  c_mat.PrintDebug();
-  u_mat.PrintDebug();
-  r_mat.PrintDebug();
   
   // The out-going skeleton is constructed from the sampled columns in
   // the matrix factorization.
-  outgoing_representation_.Init(column_indices.size());
+  outgoing_skeleton_.Init(column_indices.size());
   for(index_t s = 0; s < column_indices.size(); s++) {
-    outgoing_representation_[s] = tmp_outgoing_skeleton[column_indices[s]];
+    outgoing_skeleton_[s] = tmp_outgoing_skeleton[column_indices[s]];
   }
-  exit(0);
+
+  // Compute the projection operator, which is the product of the U
+  // and the R factor and row scaled by the column scaled C factor.
+  la::MulInit(u_mat, r_mat, &projection_operator_);
+  for(index_t i = 0; i < c_mat.n_cols(); i++) {
+    
+    double scaling_factor = c_mat.get(0, i) / 
+      sample_kernel_matrix.get(0, column_indices[i]);
+    for(index_t j = 0; j < projection_operator_.n_cols(); j++) {
+      projection_operator_.set(i, j, projection_operator_.get(i, j) *
+			       scaling_factor);
+    }
+  }
+
+  // Compute the outgoing representation by taking the product between
+  // the projection operator and the charge distribution vector.
+  outgoing_representation_.Init(outgoing_skeleton_.size());
+  outgoing_representation_.SetZero();
+  for(index_t i = 0; i < outgoing_skeleton_.size(); i++) {
+    la::AddExpert(projection_operator_.n_rows(), 
+		  weights[outgoing_skeleton_[i]] * 
+		  (((double) end - begin) / 
+		   ((double) outgoing_skeleton_.size())), 
+		  projection_operator_.GetColumnPtr(i),
+		  outgoing_representation_.ptr());
+  }
 }
 
 template<typename TKernelAux>
