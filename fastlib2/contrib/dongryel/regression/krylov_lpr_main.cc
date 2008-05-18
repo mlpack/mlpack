@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
 
   // Initialize FastExec...
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
   // we initialize it with all parameters defined
   // "--lpr/...=...".
   struct datanode* krylov_lpr_module =
-    fx_submodule(NULL, "lpr", "krylov_lpr_module");
+    fx_submodule(NULL, "lpr");
 
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str
@@ -69,6 +69,6 @@ int main(int argc, char *argv[]) {
 					   fast_lpr_results));
 
   // Finalize FastExec and print output results.
-  fx_done();
+  fx_done(NULL);
   return 0;
 }

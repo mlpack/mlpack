@@ -5,8 +5,8 @@
  * Defines a typical multi-purpose, resizable array and its utilities.
  */
 
-#ifndef COLLECTIONS_ARRAYLIST_H
-#define COLLECTIONS_ARRAYLIST_H
+#ifndef COL_ARRAYLIST_H
+#define COL_ARRAYLIST_H
 
 #include "fastlib/base/base.h"
 
@@ -185,12 +185,12 @@ class ArrayList {
    *
    * @see Init, InitRepeat, InitRaw, InitAlias, InitSteal
    */
-  void InitCopy(const Elem *ptr, index_t size, index_t cap) {
+  void InitCopy(const Elem *src, index_t size, index_t cap) {
     ARRAYLIST__DEBUG_INIT_OK(this, size, cap);
-    ot::CopyConstruct(InitRaw(size, cap), ptr, size);
+    ot::CopyConstruct(InitRaw(size, cap), src, size);
   }
-  void InitCopy(const Elem *ptr, index_t size) {
-    InitCopy(ptr, size, size);
+  void InitCopy(const Elem *src, index_t size) {
+    InitCopy(src, size, size);
   }
 
   /**
@@ -386,9 +386,46 @@ class ArrayList {
   void Resize(index_t size) {
     DEBUG_MODIFY_OK(this);
     DEBUG_ASSERT(size >= 0);
-    if (unlikely(size >= size_)) {
+    if (unlikely(size > size_)) {
       GrowTo(size);
     } else {
+      ShrinkTo(size);
+    }
+  }
+
+  /**
+   * Ensures that an ArrayList has at least size active elements,
+   * adding and constructing elements as appropriate.
+   *
+   * This operation invalidates all pointers into the ArrayList
+   * (including aliases) unless you can prove that the new size does
+   * not exceed capacity, i.e. you Reserved space before creating the
+   * pointers/aliases.
+   *
+   * @param size a lower bound on the size for the array
+   *
+   * @see Resize, GrowTo, Reserve
+   */
+  void SizeAtLeast(index_t size) {
+    DEBUG_MODIFY_OK(this);
+    DEBUG_ASSERT(size >= 0);
+    if (unlikely(size > size_)) {
+      GrowTo(size);
+    }
+  }
+
+  /**
+   * Ensures that an ArrayList has at most size active elements,
+   * destructing and removing elements as appropriate.
+   *
+   * @param size an upper bound on the size for the array
+   *
+   * @see Resize, ShrinkTo, Trim
+   */
+  void SizeAtMost(index_t size) {
+    DEBUG_MODIFY_OK(this);
+    DEBUG_ASSERT(size >= 0);
+    if (unlikely(size < size_)) {
       ShrinkTo(size);
     }
   }
@@ -1007,13 +1044,13 @@ class ArrayList {
 
   /** Renamed InitCopy */
   COMPILER_DEPRECATED
-  void Copy(const Elem *ptr, index_t size) {
-    InitCopy(ptr, size);
+  void Copy(const Elem *src, index_t size) {
+    InitCopy(src, size);
   }
   /** Renamed InitSteal */
   COMPILER_DEPRECATED
-  void Steal(const Elem *ptr, index_t size) {
-    InitSteal(ptr, size);
+  void Steal(const Elem *src, index_t size) {
+    InitSteal(src, size);
   }
   /** Renamed InitSteal; other will alias */
   COMPILER_DEPRECATED
@@ -1035,11 +1072,10 @@ class ArrayList {
     Renew();
   }
 
-  /** Utility under investigation */
+  /** Renamed SizeAtLeast */
+  COMPILER_DEPRECATED
   void EnsureSizeAtLeast(index_t size) {
-    if (unlikely(size > size_)) {
-      GrowTo(size);
-    }
+    SizeAtLeast(size);
   }
 
   /** Renamed PushBack; no longer returns pointer */
@@ -1139,4 +1175,4 @@ void ArrayList<TElem>::ExtractAppend(index_t pos, index_t size,
 #undef ARRAYLIST__DEBUG_PUSH_BACK_OK
 #undef ARRAYLIST__DEBUG_INIT_OK
 
-#endif
+#endif /* COL_ARRAYLIST_H */

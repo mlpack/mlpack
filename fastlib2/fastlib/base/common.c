@@ -15,8 +15,8 @@ int pause_on_nonfatal = 0;
 int print_notify_locs = 0;
 
 char fl_msg_marker[] = {'X', '!', '*', '.'};
-const char * fl_msg_color[] =
-  {ANSI_HRED, ANSI_HYELLOW, ANSI_HGREEN, ANSI_BLUE};
+const char *fl_msg_color[] =
+  {ANSI_HRED, ANSI_YELLOW, ANSI_HGREEN, ANSI_HBLUE};
 
 void fl_abort(void)
 {
@@ -63,7 +63,8 @@ void fl_print_fatal_msg(const char *file, const char *func, int line,
 {
   va_list vl;
 
-  fl_print_msg_header(fl_msg_marker[FL_MSG_FATAL], fl_msg_color[FL_MSG_FATAL]);
+  fl_print_msg_header(fl_msg_marker[FL_MSG_FATAL],
+		      fl_msg_color[FL_MSG_FATAL]);
   fl_print_msg_loc(file, func, line);
 
   va_start(vl, format);
@@ -128,5 +129,57 @@ void fl_print_progress(const char *desc, int prec)
       prev_prec = prec;
       prev_desc = desc;
     }
+  }
+}
+
+void hex_to_stream(FILE *stream, const char *src, const char *ok_char)
+{
+  char c;
+
+  while ((c = *src++)) {
+    if (isalnum(c) || strchr(ok_char, c)) {
+      putc(c, stream);
+    } else {
+      fprintf(stream, "%%%02X", (unsigned)c);
+    }
+  }
+}
+
+char *hex_to_string(char *dest, const char *src, const char *ok_char)
+{
+  char c;
+
+  while ((c = *src++)) {
+    if (isalnum(c) || strchr(ok_char, c)) {
+      *dest++ = c;
+    } else {
+      sprintf(dest, "%%%02X", (unsigned)c);
+      dest += 3;
+    }
+  }
+
+  *dest = '\0';
+  return dest;
+}
+
+char *unhex_in_place(char *str)
+{
+  char *dest = strchr(str, '%');
+
+  if (dest) {
+    str = dest;
+    while (*str) {
+      if (*str == '%' && isxdigit(str[1]) && isxdigit(str[2])) {
+	sscanf(str + 1, "%2hhx", dest++);
+	str += 3;
+      } else {
+	*dest++ = *str++;
+      }
+    }
+
+    *dest = '\0';
+    return dest;
+  } else {
+    return str + strlen(str);
   }
 }

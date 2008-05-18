@@ -4,7 +4,7 @@
 int main(int argc, char* argv[]) {
 
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   
   DualTreeIntegrals integrals;
   
@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
   
   printf("\n\n");
   */
-  fx_done();
+  fx_done(NULL);
 
   return 0;
 }

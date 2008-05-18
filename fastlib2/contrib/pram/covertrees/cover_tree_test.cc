@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[]) {
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   clock_t start, end, build, build1, find = 0, find1 = 0;
   const char *ref_data = fx_param_str(NULL, "R", "my_ref_data.data");
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   ArrayList<float> neighbor_distances, new_neighbor_distances;
   ArrayList<index_t> neighbor_indices, new_neighbor_indices;
 
-  datanode *allknn_module = fx_submodule(NULL, "allknn", "allknn");
+  datanode *allknn_module = fx_submodule(NULL, "allknn");
   index_t knn = fx_param_int(allknn_module, "knns",1);
   
   start = clock();
@@ -91,8 +91,8 @@ int main(int argc, char *argv[]) {
   printf("build = %f, find = %f\n", b1, f1);
   
 
-  fx_silence();
-  fx_done();
+  fx_param_bool(NULL, "fx/silent", 1);
+  fx_done(NULL);
 
   return 0;
 }

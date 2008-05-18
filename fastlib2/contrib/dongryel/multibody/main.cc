@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
   double bandwidth;
   const char *kernel;
   
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   // PARSE INPUTS
   do_naive = fx_param_exists(NULL, "do_naive");
@@ -58,5 +58,5 @@ int main(int argc, char *argv[])
     }
   }
 
-  fx_done();
+  fx_done(NULL);
 }

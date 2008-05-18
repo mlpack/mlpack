@@ -664,7 +664,7 @@
  */
 #define OT_SERIALIZE_METHODS(C) \
    public: \
-    size_t SerialSize(FILE *stream) { \
+    size_t SerialSize() { \
       return ot::SerialSize(*this); \
     } \
     size_t Serialize(FILE *stream) { \
@@ -820,7 +820,7 @@
     void InitSteal(C *src) { \
       DEBUG_INIT_OK(this); \
       DEBUG_WARN_MSG_IF(OT__IsAlias(src), \
-          "Stealing from an alias."); \
+          "Stealing from an alias %s.", typeid(C).name()); \
       mem::Copy(this, src); \
       ot__private::Aliaser ot__aliaser(src); \
     } \
@@ -937,7 +937,7 @@
  */
 #define DEBUG_INIT_OK(x) \
     DEBUG_ASSERT_MSG(OT__DebugInitOK(x), \
-        "Reinitialization of %s detected; missing Renew()?", \
+        "Reinitialization of %s; missing Renew()?", \
         typeid(*x).name());
 
 /**
@@ -996,7 +996,7 @@
  */
 #define DEBUG_MODIFY_OK(x) \
     DEBUG_ASSERT_MSG(OT__DebugModifyOK(x), \
-        "Modification of alias/locked %s detected; missing Init?", \
+        "Modification of alias/locked %s; missing Init?", \
         typeid(*x).name());
 
 
@@ -1756,8 +1756,8 @@ namespace ot {
    * @see Serialize, Deserialize, OBJECT_TRAVERSAL
    */
   template<typename T>
-  inline size_t SerialSize(const T &obj, FILE *stream) {
-    ot__private::Serializer<true> ot__serializer(obj, stream);
+  inline size_t SerialSize(const T &obj) {
+    ot__private::Serializer<true> ot__serializer(obj, NULL);
     return ot__serializer.size();
   }
 

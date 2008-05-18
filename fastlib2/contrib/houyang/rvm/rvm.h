@@ -167,7 +167,7 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   weights_.Init();
   rv_index_.Init();
 
-  param_.kernel_.Init(fx_submodule(module, "kernel", "kernel"));
+  param_.kernel_.Init(fx_submodule(module, "kernel"));
   param_.kernel_.GetName(&param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
 
@@ -241,7 +241,7 @@ void RVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, datanod
   //sbl_est.Init(param_.beta_, param_.max_iter_);
   
   // Initialize kernels for sbl_est
-  sbl_est.kernel().Init(fx_submodule(module, "kernel", "kernel"));
+  sbl_est.kernel().Init(fx_submodule(module, "kernel"));
 
   /* Training for Relevance Vector Classification and Regression */
   sbl_est.Train(learner_typeid_, &dataset, alpha_v_, param_.beta_, param_.max_iter_, rv_index_, weights_);

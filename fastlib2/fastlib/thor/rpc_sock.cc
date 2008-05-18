@@ -120,7 +120,7 @@ void RpcSockImpl::Init() {
   FD_ZERO(&read_fd_set_);
   FD_ZERO(&write_fd_set_);
 
-  module_ = fx_submodule(fx_root, "rpc", "rpc");
+  module_ = fx_submodule(fx_root, "rpc");
 
   if (!fx_param_exists(module_, "n")) {
     n_peers_ = 1;
@@ -135,7 +135,7 @@ void RpcSockImpl::Init() {
 
   if (rank_ != 0) {
     // Only the first machine should print out FX information.
-    fx_silence();
+    fx_param_bool(fx_root, "fx/silent", 1);
   }
 
   CreatePeers_();

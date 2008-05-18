@@ -2,11 +2,11 @@
 
 int main(int argc, char *argv[]) {
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   KFoldSplitter ks;
 
   ks.Init();
   ks.Split();
-  fx_done();
+  fx_done(NULL);
   return 0;
 }

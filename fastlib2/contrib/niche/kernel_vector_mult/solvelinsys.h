@@ -331,7 +331,7 @@ void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double s
   KernelVectorMult kernel_vector_mult;
   
   struct datanode* kernel_vector_mult_module =
-    fx_submodule(NULL, "kernel_vector_mult", "kernel_vector_mult_module");
+    fx_submodule(NULL, "kernel_vector_mult");
 
 
   DEBUG_ONLY(printf("sigma_squared = %f\n", sigma_squared));

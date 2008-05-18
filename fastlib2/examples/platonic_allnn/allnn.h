@@ -18,6 +18,34 @@
 // Your "deplibs" entry in build.py should mirror your includes.
 #include <fastlib/fastlib.h>
 
+const fx_entry_doc allnn_entries[] = {
+  {"leaf_size", FX_PARAM, FX_INT, NULL,
+   "  The maximum number of points to store at a leaf.\n"},
+  {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent building the kd-tree.\n"},
+  {"dual_tree_computation", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent computing the nearest neighbors.\n"},
+  {"number_of_prunes", FX_RESULT, FX_INT, NULL,
+   "  Total node-pairs found to be too far to matter.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc allnn_doc = {
+  allnn_entries, NULL,
+  "Performs dual-tree all-nearest-neighbors computation.\n"
+};
+
+const fx_entry_doc allnn_naive_entries[] = {
+  {"naive_time", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spend performing the naive computation.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc allnn_naive_doc = {
+  allnn_naive_entries, NULL,
+  "Performs naive all-nearest-neighbors computation.\n"
+};
+
 /**
  * A computation class for dual-tree and naive all-nearest-neighbors.
  *
@@ -555,7 +583,7 @@ class AllNN {
 
     // Save the total number of prunes to the FASTexec module; this
     // will printed after calling fx_done or can be read back later.
-    fx_format_result(module_, "number_of_prunes", "%d", number_of_prunes_);
+    fx_result_int(module_, "number_of_prunes", number_of_prunes_);
 
     if (results) {
       EmitResults(results);

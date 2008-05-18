@@ -223,7 +223,7 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   for (index_t i=0; i<n_data_; i++)
     trainset_sv_indicator_[i] = false;
 
-  param_.kernel_.Init(fx_submodule(module, "kernel", "kernel"));
+  param_.kernel_.Init(fx_submodule(module, "kernel"));
   param_.kernel_.GetName(&param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // budget parameter, contorls # of support vectors; default: # of data samples (use all)
@@ -302,7 +302,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
       param_feed_db.PushBack() = param_.wss_;
       smo.InitPara(learner_typeid, param_feed_db);
       /* Initialize kernel */
-      smo.kernel().Init(fx_submodule(module, "kernel", "kernel"));
+      smo.kernel().Init(fx_submodule(module, "kernel"));
 
       /* Construct dataset consists of two classes i and j (reassign labels 1 and -1) */
       // TODO: avoid these ugly and time-consuming memory allocation
@@ -424,7 +424,7 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
   param_feed_db.PushBack() = param_.wss_;
   smo.InitPara(learner_typeid, param_feed_db);
   /* Initialize kernel */
-  smo.kernel().Init(fx_submodule(module, "kernel", "kernel"));
+  smo.kernel().Init(fx_submodule(module, "kernel"));
   /* SVM_R Training */
   smo.Train(learner_typeid, &dataset);
 

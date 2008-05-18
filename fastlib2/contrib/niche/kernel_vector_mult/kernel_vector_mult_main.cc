@@ -30,7 +30,7 @@
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str_req(NULL, "r");
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
   KernelVectorMult kernel_vector_mult;
 
   struct datanode* kernel_vector_mult_module =
-      fx_submodule(NULL, "kernel_vector_mult", "kernel_vector_mult_module");
+      fx_submodule(NULL, "kernel_vector_mult");
 
   kernel_vector_mult.Init(references, kernel_vector_mult_module);
   
@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
   fclose(output_file2);
 
 
-  fx_done();
+  fx_done(NULL);
 
   return 0;
 

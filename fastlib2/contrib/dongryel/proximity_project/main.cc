@@ -9,7 +9,7 @@ typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, Subspac
 
 int main(int argc, char *argv[]) {
  
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   const char *fname = fx_param_str(NULL, "data", NULL);
   Dataset dataset_;
   dataset_.InitFromFile(fname);
@@ -47,6 +47,6 @@ int main(int argc, char *argv[]) {
   // Clean up the memory used by the tree...
   delete root_;
 
-  fx_done();
+  fx_done(NULL);
   return 0;
 }

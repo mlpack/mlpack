@@ -178,12 +178,12 @@ private:
 
 int main(int argc, char* argv[]) {
   
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   
   DualTreeIntegralsTest tester;
   tester.TestAll();
   
-  fx_done();
+  fx_done(NULL);
   
   return 0;
   

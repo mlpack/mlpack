@@ -212,7 +212,7 @@ void SimpleCrossValidator<TClassifier>::Init(
   }
   
   root_module_ = module_root;
-  kfold_module_ = fx_submodule(module_root, kfold_fx_name, kfold_fx_name);
+  kfold_module_ = fx_submodule(module_root, kfold_fx_name);
   classifier_fx_name_ = classifier_fx_name;
   
   n_folds_ = fx_param_int(kfold_module_, "k", default_k);
@@ -242,13 +242,10 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
     Dataset test;
     Dataset train;
     index_t local_n_correct = 0;
-    datanode *foldmodule = fx_submodule(kfold_module_, NULL,
-        String().InitSprintf("%d", i_fold).c_str());
-    datanode *classifier_module = fx_submodule(foldmodule, NULL,
-        classifier_fx_name_);
-    
-    fx_default_param_node(classifier_module, "", root_module_,
-        classifier_fx_name_);
+    datanode *classifier_module = fx_copy_module(root_module_,
+        classifier_fx_name_, "%s/%d/%s",
+        kfold_module_->key, i_fold, classifier_fx_name_);
+    datanode *foldmodule = fx_submodule(classifier_module, "..");
 
     data_->SplitTrainTest(n_folds_, i_fold, permutation, &train, &test);
     
@@ -520,7 +517,7 @@ void GeneralCrossValidator<TLearner>::Init(
   data_ = data_input;
 
   root_module_ = module_root;
-  kfold_module_ = fx_submodule(module_root, kfold_fx_name, kfold_fx_name);
+  kfold_module_ = fx_submodule(module_root, kfold_fx_name);
   n_folds_ = fx_param_int(kfold_module_, "k", default_k);
   learner_fx_name_ = learner_fx_name;
 
@@ -590,13 +587,11 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       Dataset validation;
       
       index_t local_n_correct = 0;
-      datanode *foldmodule = fx_submodule(kfold_module_, NULL,
-					  String().InitSprintf("%d", i_fold).c_str());
-      datanode *learner_module = fx_submodule(foldmodule, NULL,
-						 learner_fx_name_);
-      
-      fx_default_param_node(learner_module, "", root_module_,
-			    learner_fx_name_);
+      datanode *learner_module = fx_copy_module(root_module_,
+          learner_fx_name_, "%s/%d/%s",
+          kfold_module_->key, i_fold, learner_fx_name_);
+      datanode *foldmodule = fx_submodule(learner_module, "..");
+
       // Split labeled data sets according to i_fold. Use Stratified Cross-Validation to ensure 
       // that approximately the same portion of data (training/validation) are used for each class.
       StratifiedSplitCVSet_(i_fold, num_classes, cv_labels_ct, cv_labels_startpos, permutation, &train, &validation);
@@ -670,13 +665,10 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       
       double msq_err_local = 0.0;
       double accu_sq_err_local = 0.0;
-      datanode *foldmodule = fx_submodule(kfold_module_, NULL,
-					  String().InitSprintf("%d", i_fold).c_str());
-      datanode *learner_module = fx_submodule(foldmodule, NULL,
-						 learner_fx_name_);
-      
-      fx_default_param_node(learner_module, "", root_module_,
-			    learner_fx_name_);
+      datanode *learner_module = fx_copy_module(root_module_,
+          learner_fx_name_, "%s/%d/%s",
+          kfold_module_->key, i_fold, learner_fx_name_);
+      datanode *foldmodule = fx_submodule(learner_module, "..");
       
       // Split general data sets according to i_fold
       data_->SplitTrainTest(n_folds_, i_fold, permutation, &train, &validation);
