@@ -120,7 +120,7 @@ int TestEvaluateMatrixFactorizedFarField(const Matrix &data,
 					 const Vector &weights, int begin, 
 					 int end) {
 
-  double bandwidth = 20;
+  double bandwidth = 5;
   GaussianKernelAux ka;
   ka.Init(bandwidth, 0, data.n_rows());
   MatrixFactorizedFarFieldExpansion<GaussianKernelAux> mffe;
