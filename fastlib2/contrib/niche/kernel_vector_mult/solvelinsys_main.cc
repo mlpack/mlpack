@@ -4,7 +4,7 @@
 int main(int argc, char *argv[]) {
 
   // Initialize FastExec...
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
 
   // The reference data file is a required parameter.
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   //solution.PrintDebug("solution");
 
   // Finalize FastExec and print output results.
-  fx_done();
+  fx_done(NULL);
   return 0;
 }
 

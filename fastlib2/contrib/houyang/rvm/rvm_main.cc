@@ -164,7 +164,7 @@ int LoadData(Dataset* dataset, String datafilename){
 * @param: argv
 */
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
       return 1;
     
     /* Begin RVM Training | Training and Testing */
-    datanode *rvm_module = fx_submodule(fx_root, NULL, "rvm");
+    datanode *rvm_module = fx_submodule(fx_root, "rvm");
 
     if (kernel == "linear") {
       RVM<RVMLinearKernel> rvm;
@@ -258,7 +258,7 @@ int main(int argc, char *argv[]) {
       return 1;
 
     /* Begin Classification */
-    datanode *rvm_module = fx_submodule(fx_root, NULL, "rvm");
+    datanode *rvm_module = fx_submodule(fx_root, "rvm");
 
     if (kernel == "linear") {
       RVM<RVMLinearKernel> rvm;
@@ -271,5 +271,5 @@ int main(int argc, char *argv[]) {
       rvm.LoadModelBatchPredict(learner_typeid, testset, "rvm_model", "predicted_values"); // TODO:param_req
     }
   }
-  fx_done();
+  fx_done(NULL);
 }

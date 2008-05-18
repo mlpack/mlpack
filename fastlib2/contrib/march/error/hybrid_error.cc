@@ -8,7 +8,7 @@
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   
   Matrix centers;
@@ -32,12 +32,12 @@ int main(int argc, char* argv[]) {
   Vector naive_results;
   
   struct datanode* kernel_mod;
-  struct datanode* naive_mod = fx_submodule(NULL, "naive", "naive");
+  struct datanode* naive_mod = fx_submodule(NULL, "naive");
   
   if (!strcmp(kernel_name, "abs")) {
     // max_error will just be epsilon, the others don't matter
     GaussianKernelErrorTester<AbsoluteErrorStat> absolute;
-    kernel_mod = fx_submodule(NULL, "abs", "absolute");
+    kernel_mod = fx_submodule(NULL, "abs");
     absolute.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
                   steepness);
     absolute.ComputeTotalSum(&kernel_results);
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
     // max_error will just be epsilon, the others don't matter
     GaussianKernelErrorTester<RelativeErrorStat> relative;
     
-    kernel_mod = fx_submodule(NULL, "rel", "relative");
+    kernel_mod = fx_submodule(NULL, "rel");
     relative.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
                   steepness);
     relative.ComputeTotalSum(&kernel_results);
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
  
     GaussianKernelErrorTester<ExponentialErrorStat> exponential;
     
-    kernel_mod = fx_submodule(NULL, "exp", "exponential");
+    kernel_mod = fx_submodule(NULL, "exp");
     exponential.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
                      steepness);
     exponential.ComputeTotalSum(&kernel_results);
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
   
     GaussianKernelErrorTester<GaussianErrorStat> gaussian;
     
-    kernel_mod = fx_submodule(NULL, "gauss", "gaussian");
+    kernel_mod = fx_submodule(NULL, "gauss");
     gaussian.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
                   steepness);
     gaussian.ComputeTotalSum(&kernel_results);
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     
     GaussianKernelErrorTester<HybridErrorStat> hybrid;
     
-    kernel_mod = fx_submodule(NULL, "hybrid", "hybrid");
+    kernel_mod = fx_submodule(NULL, "hybrid");
     hybrid.Init(kernel_mod, centers, bandwidth, max_error, min_error, 
                 steepness);
     hybrid.ComputeTotalSum(&kernel_results);
@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
     naive_sum.Init(naive_mod, centers, bandwidth);
     naive_sum.NaiveComputation(dataset, "/dev/null", &naive_results);
     //ot::Print(naive_results);
-    fx_done();
+    fx_done(NULL);
     return 0;
 
   }
@@ -138,7 +138,7 @@ int main(int argc, char* argv[]) {
   ot::Print(naive_results);
   */
  
-  fx_done();
+  fx_done(NULL);
 
   return 0;
 

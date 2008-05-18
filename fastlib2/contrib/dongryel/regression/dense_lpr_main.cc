@@ -13,7 +13,7 @@
 int main(int argc, char *argv[]) {
   
   // Initialize FastExec...
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
   // root directory (NULL) for the Lpr object to work inside.  Here,
   // we initialize it with all parameters defined "--lpr/...=...".
   struct datanode* lpr_module =
-    fx_submodule(NULL, "lpr", "lpr_module");
+    fx_submodule(NULL, "lpr");
 
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str
@@ -175,6 +175,6 @@ int main(int argc, char *argv[]) {
   }
 
   // Finalize FastExec and print output results.
-  fx_done();
+  fx_done(NULL);
   return 0;
 }

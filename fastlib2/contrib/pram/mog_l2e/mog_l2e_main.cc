@@ -27,7 +27,7 @@
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   ////// READING PARAMETERS AND LOADING DATA //////
   
@@ -38,14 +38,14 @@ int main(int argc, char* argv[]) {
 
   ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
 
-  datanode *mog_l2e_module = fx_submodule(NULL, "mog_l2e", "mog_l2e");
+  datanode *mog_l2e_module = fx_submodule(NULL, "mog_l2e");
   index_t number_of_gaussians = fx_param_int(mog_l2e_module, "K", 1);
   fx_format_param(mog_l2e_module, "D", "%d", data_points.n_rows());
   index_t dimension = fx_param_int_req(mog_l2e_module, "D");;
   
   ////// RUNNING AN OPTIMIZER TO MINIMIZE THE L2 ERROR //////
 
-  datanode *opt_module = fx_submodule(NULL, "opt", "opt");
+  datanode *opt_module = fx_submodule(NULL, "opt");
   const char *opt_method = fx_param_str(opt_module, "method", "QuasiNewton");
   index_t param_dim = (number_of_gaussians*(dimension+1)*(dimension+2)/2 - 1);
   fx_param_int(opt_module, "param_space_dim", param_dim);
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
   
   ot::Print(results, output_file);
   fclose(output_file);
-  fx_done();
+  fx_done(NULL);
 
   return 1;
 }

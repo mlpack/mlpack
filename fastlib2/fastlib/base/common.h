@@ -137,7 +137,7 @@ typedef enum {
 /** Default markers for FASTlib messages. */
 extern char fl_msg_marker[];
 /** Default colors for FASTlib message markers. */
-extern const char * fl_msg_color[];
+extern const char *fl_msg_color[];
 
 /**
  * Terminates with an error, flushing all streams.
@@ -223,6 +223,48 @@ void fl_print_progress(const char *name, int perc);
 
 
 
+/**
+ * Writes a string to a stream, converting non-alphanumeric characters
+ * other than those found in ok_char to format '%XX', where XX is the
+ * hexadecimal ASCII value.
+ *
+ * @param stream an output stream
+ * @param src the string to be written, hexed
+ * @param ok_char characters not converted to '%XX'
+ */
+void hex_to_stream(FILE *stream, const char *src, const char *ok_char);
+
+/**
+ * Writes a source string to a given destination, converting
+ * non-alphanumeric characters other than those found in ok_char to
+ * format '%XX', where XX is the hexadecimal ASCII value.
+ *
+ * The destination is assumed large enough to store the hexed string,
+ * which may at most tripple in size.  The destination should not
+ * overlap with the source.
+ *
+ * @param dest a memory location to receive the copy
+ * @param src the string to be copied, hexed
+ * @param ok_char characters not converted to '%XX'
+ * @returns a pointer to the null-character terminating dest
+ */
+char *hex_to_string(char *dest, const char *src, const char *ok_char);
+
+/**
+ * Replaces substrings '%XX' with the ASCII character represented by
+ * hexadecimal XX.  Percent signs with non-hexadecimal trailing
+ * characters are unchanged.
+ *
+ * This function may be paired with fgets or other stream input to
+ * invert the hex_to_stream operation.
+ *
+ * @param str the string to be modified
+ * @returns a pointer to the null-character terminating str
+ */
+char *unhex_in_place(char *str);
+
+
+
 /* Tools for expressing success or failure of FASTlib functions. */
 
 /**
@@ -232,24 +274,25 @@ void fl_print_progress(const char *name, int perc);
  * ints are interchangeably interpreted with either zero or nonzero
  * for success, but values of this type have fixed meaning.
  *
- * You may extend the meaning of this type in your code by instead
- * returning integer values other than SUCCESS_FAIL or SUCCESS_PASS,
- * but ensure that all failure values are less than or equal to
- * SUCCESS_FAIL, all success values are greater than or equal to
- * SUCCESS_PASS, and all warning values are in between.
+ * You may extend the meaning of this type in your code by returning
+ * integer values other than SUCCESS_FAIL or SUCCESS_PASS, but ensure
+ * that failure values are in the range SUCCESS_FAIL-[0,31], success
+ * values are in the range SUCCESS_PASS+[0,31], and warning values are
+ * in the range SUCCESS_WARN+[-16,15].
  *
- * Because the values given below are subject to change, special
- * values should be expressed as deltas, e.g. SUCCESS_FAIL - 5.  If
- * you need more than 64 warning values, etc., consider instead using
- * an additional pointer argument to return an error code.
+ * You may combine error codes with bit-wise & and |.  These result in
+ * success values equal in rank to the lesser or greater of the two
+ * inputs, respectively.  Extended information (recorded in the least
+ * significant bits) will likely be lost, but PASSED and FAILED checks
+ * will work as perscribed.
  */
 typedef enum {
   /** Upper-bound value indicating failed operation. */
-  SUCCESS_FAIL = 63,
+  SUCCESS_FAIL = 31,
   /** A generic warning value. */
-  SUCCESS_WARN = 96,
+  SUCCESS_WARN = 48,
   /** Lower-bound value indicating successful operation. */
-  SUCCESS_PASS = 128
+  SUCCESS_PASS = 96
 } success_t;
 
 /**
@@ -267,20 +310,40 @@ typedef enum {
 #define FAILED(x) (unlikely((x) <= SUCCESS_FAIL))
 
 /**
- * Asserts that an operation succeeds; otherwise, aborts.
+ * Asserts that an operation passes; otherwise, aborts with a given
+ * message.
+ *
+ * This optimized check occurs regardless of debug mode.
+ */
+#define MUST_PASS_MSG(x, msg_params...) \
+    (likely(x >= SUCCESS_PASS) ? NOP : FATAL(msg_params))
+
+/**
+ * Asserts that an operation passes; otherwise, aborts with a standard
+ * message.
  *
  * This optimized check occurs regardless of debug mode.
  */
 #define MUST_PASS(x) \
-    (likely(x >= SUCCESS_PASS) ? NOP : FATAL("MUST_PASS failed: %s", #x))
+    MUST_PASS_MSG(x, "MUST_PASS failed: %s", #x)
 
 /**
- * Asserts that an operation does not fail; otherwise, aborts.
+ * Asserts that an operation does not fail; otherwise, aborts with a
+ * given message.
+ *
+ * This optimized check occurs regardless of debug mode.
+ */
+#define MUST_NOT_FAIL_MSG(x, msg_params...) \
+    (likely(x > SUCCESS_FAIL) ? NOP : FATAL(msg_params))
+
+/**
+ * Asserts that an operation does not fail; otherwise, aborts with a
+ * standard message.
  *
  * This optimized check occurs regardless of debug mode.
  */
 #define MUST_NOT_FAIL(x) \
-    (likely(x > SUCCESS_FAIL) ? NOP : FATAL("MUST_NOT_FAIL failed: %s", #x))
+    MUST_NOT_FAIL_MSG(x, "MUST_NOT_FAIL failed: %s", #x)
 
 /** Converts C library non-negative success into a success_t. */
 #define SUCCESS_FROM_C(x) (unlikely((x) < 0) ? SUCCESS_FAIL : SUCCESS_PASS)

@@ -35,7 +35,7 @@
  *   struct datanode* kernel_vector_mult_module;
  *   ArrayList<index_t> results;
  *
- *   kernel_vector_mult_module = fx_submodule(NULL, "kernel_vector_mult", "kernel_vector_mult_module");
+ *   kernel_vector_mult_module = fx_submodule(NULL, "kernel_vector_mult");
  *   kernel_vector_mult.Init(query_set, reference_set, kernel_vector_mult_module);
  *   kernel_vector_mult.ComputeKernelMatrixVectorMultiplication(&results);
  * @endcode

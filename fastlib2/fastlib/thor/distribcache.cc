@@ -311,11 +311,11 @@ void DistributedCache::WaitSync(datanode *node) {
   syncing_ = false;
   if (node) {
     world_disk_stats().Report(n_block_bytes_, n_blocks_, 
-        fx_submodule(node, NULL, "world_disk_stats"));
+        fx_submodule(node, "world_disk_stats"));
     if (rpc::n_peers() > 1) {
       // net stats are only interesting if there's at least two machines
       world_net_stats().Report(n_block_bytes_, n_blocks_, 
-          fx_submodule(node, NULL, "world_net_stats"));
+          fx_submodule(node, "world_net_stats"));
     }
     #ifdef DEBUG
     fx_format_result(node, "world_n_locks", "%"L64"d", world_n_locks_);

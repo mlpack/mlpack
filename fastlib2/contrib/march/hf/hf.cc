@@ -10,7 +10,7 @@
 
 int main(int argc, char *argv[]) {
  
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   
   ////////////// Read in data //////////////
   
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
   // Spin orbitals: both filled and virtual
   
   
-  fx_done();
+  fx_done(NULL);
   
   return 0;
   

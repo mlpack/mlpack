@@ -35,7 +35,7 @@
  *    struct datanode* kde_module;
  *    Vector results;
  *
- *    kde_module = fx_submodule(NULL, "kde", "kde_module");
+ *    kde_module = fx_submodule(NULL, "kde");
  *    fast_kde.Init(queries, references, queries_equal_references,
  *                  kde_module);
  *

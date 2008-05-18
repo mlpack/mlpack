@@ -170,7 +170,7 @@ int LoadData(Dataset* dataset, String datafilename){
 * @param: argv
 */
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
@@ -230,7 +230,7 @@ int main(int argc, char *argv[]) {
       return 1;
     
     /* Begin SVM Training | Training and Testing */
-    datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
+    datanode *svm_module = fx_submodule(fx_root, "svm");
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
@@ -269,7 +269,7 @@ int main(int argc, char *argv[]) {
       return 1;
 
     /* Begin Prediction */
-    datanode *svm_module = fx_submodule(fx_root, NULL, "svm");
+    datanode *svm_module = fx_submodule(fx_root, "svm");
 
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
@@ -282,6 +282,6 @@ int main(int argc, char *argv[]) {
       svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req
     }
   }
-  fx_done();
+  fx_done(NULL);
 }
 

@@ -234,10 +234,10 @@ class Allnn {
 };
 
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv);
+  fx_module *root = fx_init(argc, argv, NULL);
 
   thor::MonochromaticDualTreeMain<Allnn, DualTreeDepthFirst<Allnn> >(
-      fx_root, "allnn");
+      root, "allnn");
   
-  fx_done();
+  fx_done(root);
 }

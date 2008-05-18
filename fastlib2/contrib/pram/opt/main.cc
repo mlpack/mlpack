@@ -130,7 +130,7 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad) {
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   const char *datafile = fx_param_str_req(NULL, "data");
 
@@ -157,7 +157,7 @@ int main(int argc, char* argv[]) {
   //fflush(NULL);
   printf("%Lf %Lf\n", val, function_val);
 
-  datanode *opt_module = fx_submodule(NULL,"opt","opt");
+  datanode *opt_module = fx_submodule(NULL,"opt");
   fx_param_int(opt_module,"param_space_dim", 5);
 
   //QuasiNewton opt;
@@ -187,7 +187,7 @@ int main(int argc, char* argv[]) {
   long double min_ob = test_function(calc_theta, data_points, &grad);
   printf("%Lf\n",min_ob);
   //fx_silence();
-  fx_done();
+  fx_done(NULL);
 
   return 1;
 }

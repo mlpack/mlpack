@@ -2,7 +2,7 @@ This folder contains the implementation of two optimizer classes, namely the Nel
 
  double init_pts[d+1][d];
  index_t number_of_function_evaluations;
- struct datanode *opt_module = fx_submodule(NULL,"NelderMead","opt_module");
+ struct datanode *opt_module = fx_submodule(NULL,"NelderMead");
  Matrix data;
  index_t dim_param_space;
 

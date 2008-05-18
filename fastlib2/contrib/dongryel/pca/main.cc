@@ -47,7 +47,7 @@ void TestEigenDecomposeCovariance(const Matrix &dataset) {
 
 int main(int argc, char *argv[]) {
  
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   const char *file_name = fx_param_str(NULL, "data", NULL);
   Matrix dataset;
   data::Load(file_name, &dataset);
@@ -66,6 +66,6 @@ int main(int argc, char *argv[]) {
 
   delete root;
 
-  fx_done();
+  fx_done(NULL);
   return 0;
 }

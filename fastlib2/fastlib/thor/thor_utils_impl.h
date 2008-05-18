@@ -164,8 +164,8 @@ void thor::RpcDualTree(datanode *module, int base_channel,
   int n_threads = fx_param_int(module, "n_threads", 2);
   RemoteSchedulerBackend *work_backend = NULL;
   SchedulerInterface *work_queue;
-  datanode *io_module = fx_submodule(module, NULL, "io");
-  datanode *work_module = fx_submodule(module, NULL, "scheduler");
+  datanode *io_module = fx_submodule(module, "io");
+  datanode *work_module = fx_submodule(module, "scheduler");
 
   if (rpc::is_root()) {
     // Make a static work queue
@@ -203,19 +203,19 @@ void thor::RpcDualTree(datanode *module, int base_channel,
     r->nodes().StartSync();
   }
   q_results->StartSync();
-  q->points().WaitSync(fx_submodule(io_module, NULL, "q_points"));
-  q->nodes().WaitSync(fx_submodule(io_module, NULL, "q_nodes"));
+  q->points().WaitSync(fx_submodule(io_module, "q_points"));
+  q->nodes().WaitSync(fx_submodule(io_module, "q_nodes"));
   if (!mem::PtrsEqual(q, r)) {
-    r->points().WaitSync(fx_submodule(io_module, NULL, "r_points"));
-    r->nodes().WaitSync(fx_submodule(io_module, NULL, "r_nodes"));
+    r->points().WaitSync(fx_submodule(io_module, "r_points"));
+    r->nodes().WaitSync(fx_submodule(io_module, "r_nodes"));
   }
-  q_results->WaitSync(fx_submodule(io_module, NULL, "q_results"));
+  q_results->WaitSync(fx_submodule(io_module, "q_results"));
   fx_timer_stop(module, "write_results");
 
 #ifdef DEBUG
   DualTreeRecursionStats stats = solver.stats();
   rpc::Reduce(base_channel + 5, DualTreeRecursionStats::Reductor(), &stats);
-  stats.Report(fx_submodule(module, NULL, "recursion"));
+  stats.Report(fx_submodule(module, "recursion"));
 #endif
 
   GlobalResultReductor<GNP> global_result_reductor;
@@ -225,7 +225,7 @@ void thor::RpcDualTree(datanode *module, int base_channel,
 
   work_queue->Report(work_module);
   my_global_result.Report(param,
-      fx_submodule(module, NULL, "global_result"));
+      fx_submodule(module, "global_result"));
 
   if (rpc::is_root()) {
     rpc::Unregister(base_channel + 0);
@@ -253,15 +253,15 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
   rpc::Init();
 
-  fx_submodule(module, NULL, "io"); // influnce output order
+  //fx_submodule(module, "io"); // influnce output order
 
-  param.Init(fx_submodule(module, gnp_name, gnp_name));
+  param.Init(fx_submodule(module, gnp_name));
 
   fx_timer_start(module, "read");
   points_cache = new DistributedCache();
   n_points = ReadPoints<typename GNP::QPoint>(
       param, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
-      fx_submodule(module, "data", "data"), points_cache);
+      fx_submodule(module, "data"), points_cache);
   fx_timer_stop(module, "read");
 
   typename GNP::QPoint default_point;
@@ -272,7 +272,7 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   fx_timer_start(module, "tree");
   CreateKdTree<typename GNP::QPoint, typename GNP::QNode>(
       param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
-      fx_submodule(module, "tree", "tree"), n_points, points_cache, &tree);
+      fx_submodule(module, "tree"), n_points, points_cache, &tree);
   fx_timer_stop(module, "tree");
 
   typename GNP::QResult default_result;
@@ -282,7 +282,7 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
   typename GNP::GlobalResult global_result;
   RpcDualTree<GNP, Solver>(
-      fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, param,
+      fx_submodule(module, "gnp"), GNP_CHANNEL, param,
       &tree, &tree, &q_results, &global_result);
 
   rpc::Done();

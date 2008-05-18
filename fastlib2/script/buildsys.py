@@ -275,7 +275,8 @@ class ArchiveRule(dep.Metarule):
   def doit(self, realrule, files, params):
     objects = files["objects"].many(Types.OBJECT)
     if len(objects) != 0:
-      libfile = realrule.file("lib" + self.name + ".a", "arch", "kernel", "mode", "compiler")
+      libfile = realrule.file("lib" + self.name + ".a",
+          "arch", "kernel", "mode", "compiler")
       realrule.command("ar r %s %s" % (sq(libfile),
           " ".join([sq(x.name) for x in objects])))
       return [(Types.LINKABLE, libfile)]
@@ -299,16 +300,18 @@ class BinRule(dep.Metarule):
     dep.Metarule.__init__(self, deplibs=deplibs)
   def doit(self, realrule, files, params):
     compiler = compilers[params["compiler"]]
-    binfile = realrule.file(self.name, "arch", "kernel", "mode", "compiler")
+    binfile = realrule.file(self.name,
+        "arch", "kernel", "mode", "compiler", "cflags")
     # TO-DO: Link flags necessary?
     lflags_start = compiler.lflags_start
     lflags_end = compiler.lflags_end
     cflags = compiler.mode_dictionary[params["mode"]]
     reversed_libs = list(files["deplibs"].to_names())
     reversed_libs.reverse()
-    realrule.command(compiler.linker + " -o %s %s %s %s %s" % (
+    realrule.command(compiler.linker + " -o %s %s %s %s %s %s" % (
         sq(binfile.name), cflags,
-        lflags_start, " ".join(sq(reversed_libs)), lflags_end))
+        lflags_start, " ".join(sq(reversed_libs)), lflags_end,
+        params["cflags"]))
     return [(Types.BINFILE, binfile)]
 
 class LibRule(dep.Metarule):

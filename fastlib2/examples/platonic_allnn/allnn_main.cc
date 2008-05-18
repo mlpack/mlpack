@@ -28,20 +28,51 @@
 // Reusable code should be linked through a librule's header file.
 #include "allnn.h"
 
+// While not strictly required for parameter parsing, etc., fx will
+// gently remind us (read: spew warning messages) if we do not
+// document our parameters, timers, and results in a structure like
+// the following.  Documentation may be accessed via --help.
+
+const fx_entry_doc allnn_main_entries[] = {
+  {"r", FX_REQUIRED, FX_STR, NULL,
+   "  A file containing reference data.\n"},
+  {"q", FX_PARAM, FX_STR, NULL,
+   "  A file containing query data (defaults to r).\n"},
+  {"do_naive", FX_PARAM, FX_BOOL, NULL,
+   "  Whether to perform naive computation as well.\n"},
+  {"output_filename", FX_PARAM, FX_STR, NULL,
+   "  A file to receive the results of computation.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc allnn_main_submodules[] = {
+  {"allnn", &allnn_doc,
+   "  Responsible for dual-tree computation.\n"},
+  {"naive", &allnn_naive_doc,
+   "  Stores results for naive computation.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc allnn_main_doc = {
+  allnn_main_entries, allnn_main_submodules,
+  "This is an example program written to demonstrate FASTlib components.\n"
+  "It performs the all-nearest-neighbors dual-tree computation.\n"
+};
+
 int main(int argc, char* argv[]) {
 
   // Always initialize FASTexec with main's inputs at the beggining of
   // your program.  This reads the command line, among other things.
-  fx_init(argc, argv);
+  fx_module *root = fx_init(argc, argv, &allnn_main_doc);
 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
   // The reference data file is a required parameter.
-  const char* references_file_name = fx_param_str_req(NULL, "r");
+  const char* references_file_name = fx_param_str_req(root, "r");
 
   // The query data file defaults to the references.
   const char* queries_file_name =
-      fx_param_str(NULL, "q", references_file_name);
+      fx_param_str(root, "q", references_file_name);
 
   // FASTlib classes only poison data in their default constructors;
   // declarations must be followed by Init or an equivalent function.
@@ -61,7 +92,7 @@ int main(int argc, char* argv[]) {
   // rood directory (NULL) for the AllNN object to work inside.  Here,
   // we initialize it with all parameters defined "--allnn/...=...".
   struct datanode* allnn_module =
-      fx_submodule(NULL, "allnn", "allnn_module");
+      fx_submodule(root, "allnn");
 
   // The Init function readies our object for action.  In this
   // example, we built the AllNN class to expect all of its inputs at
@@ -81,7 +112,7 @@ int main(int argc, char* argv[]) {
   ////////// NAIVE ALLNN /////////////////////////////////////////////
 
   /* Compare results with naive if run with "--do_naive=true" */
-  if (fx_param_bool(NULL, "do_naive", 0)) {
+  if (fx_param_bool(root, "do_naive", 0)) {
 
     // Our design of the AllNN class renders it usable only once;
     // different code could clean out intermediate results, but for
@@ -92,7 +123,7 @@ int main(int argc, char* argv[]) {
     // building the tree.  Also, note that submodules and parameters
     // may be created/accessed in-line.  (More on this shortly.)
     naive_allnn.InitNaive(queries, references,
-        fx_submodule(NULL, "naive", "naive_module"));
+        fx_submodule(root, "naive"));
 
     ArrayList<index_t> naive_results;
     naive_allnn.ComputeNaive(&naive_results);
@@ -118,7 +149,7 @@ int main(int argc, char* argv[]) {
   ////////// OUTPUT RESULTS //////////////////////////////////////////
 
   const char* output_filename =
-      fx_param_str(NULL, "output_filename", "output.txt");
+      fx_param_str(root, "output_filename", "output.txt");
 
   // We encourage you to use C-style file streams and print buffers
   // rather than C++'s complicated equivalents.
@@ -140,7 +171,7 @@ int main(int argc, char* argv[]) {
   // We must tell FASTexec to wrap up when our code is done.  This
   // emits its complete data structure--parameter settings, timers,
   // and stored results--to stdout unless you call fx_silence first.
-  fx_done();
+  fx_done(root);
 
   // main should return 0 if the program terminates normally.
   return 0;
