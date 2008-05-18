@@ -1590,6 +1590,27 @@ fx_module *fx_copy_module(fx_module *mod, const char *src_key,
 
 
 
+static const char *fx__match_prefix(const char *key, const char *prefix)
+{
+  for (; *key == '/'; ++key);  
+  for (; *prefix == '/'; ++prefix);  
+
+  while (*prefix) {
+    const char *slash = strchr(prefix, '/');
+    size_t len = slash ? slash - prefix : strlen(prefix);
+
+    if (strncmp(key, prefix, len) == 0
+	&& (key[len] == '\0' || key[len] == '/')) {
+      for (key += len; *key == '/'; ++key);
+      for (prefix += len; *prefix == '/'; ++prefix);
+    } else {
+      return NULL;
+    }
+  }
+
+  return key;
+}
+
 success_t fx_help(const fx_module_doc *doc, const char *key)
 {
   success_t retval = SUCCESS_WARN;
@@ -1598,15 +1619,20 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
 
   if (*key == '\0') {
     retval = SUCCESS_PASS;
-
     printf("%s\n", doc->text);
+  }
 
-    if (doc->entries) {
-      const fx_entry_doc *entry_doc;
+  if (doc->entries) {
+    const fx_entry_doc *entry_doc;
 
+    if (*key == '\0') {
       printf("Entries:\n");
-      for (entry_doc = doc->entries; entry_doc->key; ++entry_doc) {
-	if (entry_doc->text) {
+    }
+
+    for (entry_doc = doc->entries; entry_doc->key; ++entry_doc) {
+      if (entry_doc->text) {
+	if (fx__match_prefix(entry_doc->key, key)) {
+	  retval = SUCCESS_PASS;
 	  if (entry_doc->val_type < 0) {
 	    printf("\"%s\", %s:\n", entry_doc->key,
 		   fx_mod_name[entry_doc->mod_type]);
@@ -1619,43 +1645,25 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
 	}
       }
     }
-
-    if (doc->submodules) {
-      const fx_submodule_doc *submod_doc;
-
-      printf("Submodules:\n");
-      for (submod_doc = doc->submodules; submod_doc->key; ++submod_doc) {
-	if (submod_doc->text) {
-	  printf("\"%s\":\n%s\n", submod_doc->key, submod_doc->text);
-	}
-      }
-    }
   }
 
   if (doc->submodules) {
     const fx_submodule_doc *submod_doc;
 
+    if (*key == '\0') {
+      printf("Submodules:\n");
+    }
+
     for (submod_doc = doc->submodules; submod_doc->key; ++submod_doc) {
-      const char *doc_key = submod_doc->key;
-      const char *cur_key = key;
+      const char *match = fx__match_prefix(key, submod_doc->key);
 
-      for (; *doc_key == '/'; ++doc_key);
-
-      while (*doc_key) {
-	const char *slash = strchr(doc_key, '/');
-	size_t len = slash ? slash - doc_key : strlen(doc_key);
-
-	if (strncmp(cur_key, doc_key, len) == 0
-	    && (cur_key[len] == '\0' || cur_key[len] == '/')) {
-	  for (doc_key += len; *doc_key == '/'; ++doc_key);
-	  for (cur_key += len; *cur_key == '/'; ++cur_key);
-	} else {
-	  break;
+      if (match) {
+	retval |= fx_help(submod_doc->doc, match);
+      } else if (submod_doc->text) {
+	if (fx__match_prefix(submod_doc->key, key)) {
+	  retval = SUCCESS_PASS;
+	  printf("\"%s\":\n%s\n", submod_doc->key, submod_doc->text);
 	}
-      }
-
-      if (*doc_key == '\0') {
-	retval |= fx_help(submod_doc->doc, cur_key);
       }
     }
   }
