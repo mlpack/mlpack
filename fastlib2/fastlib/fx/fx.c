@@ -67,8 +67,8 @@ const char *fx_val_name[] = {
 const fx_entry_doc fx__fx_entries[] = {
   {"load", FX_PARAM, FX_STR_LIST, NULL,
    "  Load files containing additional input parameters.\n"},
-  {"store", FX_PARAM, FX_STR, NULL,
-   "  Store results to this file.\n"},
+  {"output", FX_PARAM, FX_STR, NULL,
+   "  Output results to this file.\n"},
   {"timing", FX_PARAM, FX_BOOL, NULL,
    "  Whether to attempt speed up for a timing run.\n"},
   {"rusage", FX_PARAM, FX_BOOL, NULL,
@@ -1989,10 +1989,10 @@ static void fx__report_rusage(fx_module *mod, int usage_type)
   fx_result_int(mod, "nivcsw", usage.ru_nivcsw);
 }
 
-static void fx__store_results(fx_module *root)
+static void fx__output_results(fx_module *root)
 {
-  if (fx_param_exists(root, "fx/store")) {
-    FILE *stream = fopen(fx_param_str_req(root, "fx/store"), "w");
+  if (fx_param_exists(root, "fx/output")) {
+    FILE *stream = fopen(fx_param_str_req(root, "fx/output"), "w");
     datanode_write(root, stream, fx_mod_marker);
     fclose(stream);
   }
@@ -2024,7 +2024,7 @@ void fx_done(fx_module *root)
         fx_submodule(root, "info/rusage/children"), RUSAGE_CHILDREN);
   }
 
-  fx__store_results(root);
+  fx__output_results(root);
 
   datanode_destroy(root);
   free(root);
