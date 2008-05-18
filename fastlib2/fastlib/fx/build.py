@@ -1,6 +1,6 @@
 
 librule(
-    sources = ["datastore.c", "timer.c", "fx.c"],
-    headers = ["datastore.h", "timer.h", "fx.h"],
+    sources = ["datanode.c", "stopwatch.c", "fx.c"],
+    headers = ["datanode.h", "stopwatch.h", "fx.h"],
     deplibs = ["fastlib/base:base"])
 
