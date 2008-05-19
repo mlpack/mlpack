@@ -27,10 +27,10 @@ class MatrixFactorizedLocalExpansion {
    */
   Vector coeffs_;
 
-  /** @brief The incoming representation: the pseudo-distribution
-   *         which is defined only for leaf nodes.
+  /** @brief The evaluation operator: the pseudo-distribution which is
+   *         defined only for leaf nodes.
    */
-  Vector *incoming_representation_;
+  Matrix *evaluation_operator_;
   
   /** @brief The query point indices that form the incoming skeleton,
    *         the pseudo-points that represent the query point
@@ -67,7 +67,7 @@ class MatrixFactorizedLocalExpansion {
 
   OT_DEF(MatrixFactorizedLocalExpansion) {
     OT_MY_OBJECT(coeffs_);
-    OT_PTR_NULLABLE(incoming_representation_);
+    OT_PTR_NULLABLE(evaluation_operator_);
     OT_MY_OBJECT(incoming_skeleton_);
     OT_MY_OBJECT(local_to_local_translation_begin_);
     OT_MY_OBJECT(local_to_local_translation_count_);
