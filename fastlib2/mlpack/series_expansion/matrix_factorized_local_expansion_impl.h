@@ -5,13 +5,6 @@
 #ifndef MATRIX_FACTORIZED_LOCAL_EXPANSION_IMPL_H
 #define MATRIX_FACTORIZED_LOCAL_EXPANSION_IMPL_H
 
-
-template<typename TKernelAux>
-void MatrixFactorizedLocalExpansion<TKernelAux>::AccumulateCoeffs
-(const Matrix& data, const Vector& weights, int begin, int end, int order) {
-
-}
-
 template<typename TKernelAux>
 void MatrixFactorizedLocalExpansion<TKernelAux>::PrintDebug
 (const char *name, FILE *stream) const {
@@ -21,13 +14,13 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::PrintDebug
 template<typename TKernelAux>
 double MatrixFactorizedLocalExpansion<TKernelAux>::EvaluateField
 (const Matrix& data, int row_num) const {
-
+  return -1;
 }
 
 template<typename TKernelAux>
 double MatrixFactorizedLocalExpansion<TKernelAux>::EvaluateField
 (const Vector& x_q) const {
-
+  return -1;
 }
 
 template<typename TKernelAux>
@@ -37,13 +30,12 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::Init
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
   center_.Copy(center);
-  order_ = -1;
   sea_ = &(ka.sea_);
   ka_ = &ka;
 
   // Set the incoming representation to be null. This is only valid
   // for a leaf node.
-  incoming_representation_ = NULL;
+  evaluation_operator_ = NULL;
 }
 
 template<typename TKernelAux>
@@ -51,14 +43,13 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
-  order_ = -1;
   sea_ = &(ka.sea_);
   center_.Init(sea_->get_dimension());
   ka_ = &ka;
 
   // Set the incoming representation to be null. This is only valid
   // for a leaf node.
-  incoming_representation_ = NULL;
+  evaluation_operator_ = NULL;
 }
 
 template<typename TKernelAux>
@@ -95,7 +86,7 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 
     // Choose a random query point and record its index.
     index_t random_query_point_index = math::RandInt(begin, end);
-    tmp_incoming_skeleton[r] = random_query_point_index;
+    tmp_incoming_skeleton[q] = random_query_point_index;
   }
   // Sort the chosen query indices and eliminate duplicates...
   qsort(tmp_incoming_skeleton.begin(), tmp_incoming_skeleton.size(),
@@ -114,17 +105,17 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
       math::RandInt(((*reference_leaf_nodes)[r])->begin(),
 		    ((*reference_leaf_nodes)[r])->end());
     const double *reference_point =
-      reference_set.GetColumnPtr(random_reference_point_index);
+      reference_set->GetColumnPtr(random_reference_point_index);
 
     for(index_t c = 0; c < num_query_samples; c++) {
       
       // The current query point
       const double *query_point = 
-	query_set->GetColumnPtr(tmp_incoming_skeleton[c]);	
+	query_set.GetColumnPtr(tmp_incoming_skeleton[c]);	
 
       // Compute the pairwise distance and the kernel value.
       double squared_distance =
-	la::DistanceSqEuclidean(reference_set.n_rows(), reference_point,
+	la::DistanceSqEuclidean(query_set.n_rows(), reference_point,
 				query_point);
       sample_kernel_matrix.set
 	(c, r, (ka_->kernel_).EvalUnnormOnSq(squared_distance));
@@ -140,10 +131,9 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
   
   // The incoming skeleton is constructed from the sampled rows in the
   // matrix factorization.
-  incoming_skeleton_ = new ArrayList<index_t>();
-  incoming_skeleton_->Init(row_indices.size());
+  incoming_skeleton_.Init(row_indices.size());
   for(index_t s = 0; s < row_indices.size(); s++) {
-    (*incoming_skeleton_)[s] = tmp_incoming_skeleton[row_incides[s]];
+    incoming_skeleton_[s] = tmp_incoming_skeleton[row_indices[s]];
   }
 
   // Compute the evaluation operator, which is the product of the C
