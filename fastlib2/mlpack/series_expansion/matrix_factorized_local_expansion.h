@@ -18,6 +18,41 @@ class MatrixFactorizedLocalExpansion {
 
  private:
 
+  ////////// Private Member Functions //////////
+  
+  /** @brief The comparison function used for quick sort
+   */
+  static int qsort_compar_(const void *a, const void *b) {
+    
+    index_t a_dereferenced = *((index_t *) a);
+    index_t b_dereferenced = *((index_t *) b);
+    
+    if(a_dereferenced < b_dereferenced) {
+      return -1;
+    }
+    else if(a_dereferenced > b_dereferenced) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
+  /** @brief Removes duplicate elements in a sorted array.
+   */
+  static void remove_duplicates_in_sorted_array_(ArrayList<index_t> &array) {
+
+    index_t i, k = 0;
+    
+    for(i = 1; i < array.size(); i++) {
+      if(array[k] != array[i]) {
+	array[k + 1] = array[i];
+	k++;
+      }
+    }
+    array.ShrinkTo(k + 1);
+  }
+
   /** @brief The center of the expansion.
    */
   Vector center_;
@@ -95,16 +130,16 @@ class MatrixFactorizedLocalExpansion {
    */
   const Vector* get_center() const { return &center_; }
 
-  /** @brief Gets the incoming representation (const reference version).
+  /** @brief Gets the evaluation operator (const reference version).
    */
-  const Vector &incoming_representation() const {
-    return incoming_representation_;
+  const Vector &evaluation_operator() const {
+    return evaluation_operator_;
   }
   
-  /** @brief Gets the incoming representation (reference version).
+  /** @brief Gets the evaluation operator (reference version).
    */
-  Vector &incoming_representation() {
-    return incoming_representation_;
+  Vector &evaluation_operator() {
+    return evaluation_operator_;
   }
 
   /** @brief Gets the incoming skeleton.
@@ -137,9 +172,8 @@ class MatrixFactorizedLocalExpansion {
   /** @brief Initializes the current local expansion object with the
    *         given center.
    */
-  void Init(const Vector& center, const TKernelAux &ka, index_t begin,
-	    index_t count);
-  void Init(const TKernelAux &ka, index_t begin, index_t count);
+  void Init(const Vector& center, const TKernelAux &ka);
+  void Init(const TKernelAux &ka);
 
   /** @brief Computes the required order for evaluating the local
    *         expansion for any query point within the specified region
