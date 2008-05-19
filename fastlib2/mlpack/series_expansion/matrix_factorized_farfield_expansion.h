@@ -92,11 +92,6 @@ class MatrixFactorizedFarFieldExpansion {
    */
   const typename TKernelAux::TKernel *kernel_;
 
-  /** @brief The pointer to the precomputed constants inside kernel
-   *         auxiliary object 
-   */
-  const typename TKernelAux::TSeriesExpansionAux *sea_;
-
   /** @brief The internal flag that states that the far-field
    *         expansion has been initialized with a valid
    *         representation (whether from the base case or the merging

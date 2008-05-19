@@ -12,6 +12,7 @@ librule(
                "kernel_aux.h",
                "local_expansion.h",
                "local_expansion_impl.h",
+               "matrix_factorized_kernel_aux.h",
                "matrix_factorized_local_expansion.h",
                "matrix_factorized_local_expansion_impl.h",
                "mult_local_expansion.h",
