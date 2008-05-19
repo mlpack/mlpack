@@ -1,9 +1,10 @@
 # Library build rule for the matrix-factorized FMM.
 librule(
     name = "matrix_factorized_fmm",
-    sources = ["series_expansion_aux.cc"],
-    headers = ["matrix_factorized_farfield_expansion.h",
-               "matrix_factorized_farfield_expansion_impl.h"],
+    sources = [],
+    headers = ["matrix_factorized_fmm.h",
+               "matrix_factorized_fmm_impl.h",
+               "matrix_factorized_fmm_stat.h"],
     deplibs = ["fastlib:fastlib_int",
                "mlpack/series_expansion:series_expansion"]
     )
