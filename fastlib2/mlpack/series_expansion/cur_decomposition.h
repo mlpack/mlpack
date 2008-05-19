@@ -110,8 +110,6 @@ class CURDecomposition {
 	 column_length_square_distribution[sample_column_number - 1]) /
 	column_length_square_distribution[a_mat.n_cols() - 1];
 
-      printf("Probability: %g\n", probability);
-
       la::ScaleOverwrite(a_mat.n_rows(), 
 			 1.0 / sqrt(num_column_samples * probability),
 			 a_mat.GetColumnPtr(sample_column_number),

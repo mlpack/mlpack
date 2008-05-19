@@ -92,11 +92,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   // Compute the projection operator, which is the product of the U
   // and the R factor and row scaled by the column scaled C factor.
   Matrix projection_operator;
-
-  printf("Printing out the result...\n");
-  c_mat.PrintDebug();
-  u_mat.PrintDebug();
-  r_mat.PrintDebug();
   
   la::MulInit(u_mat, r_mat, &projection_operator);
   for(index_t i = 0; i < c_mat.n_cols(); i++) {
@@ -119,8 +114,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
     double scaling_factor = 
       weights[outgoing_skeleton_[i]] *
       (((double) end - begin) / ((double) outgoing_skeleton_.size()));
-
-    printf("Scaling factor: %g\n", scaling_factor);
     la::AddExpert(projection_operator.n_rows(), scaling_factor,
 		  projection_operator.GetColumnPtr(i),
 		  outgoing_representation_.ptr());
@@ -128,16 +121,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 
   // Turn on the flag that says the object has been initialized.
   is_initialized_ = true;
-
-
-  projection_operator.PrintDebug();
-  printf("Representation: \n");
-  outgoing_representation_.PrintDebug();
-  printf("\nSkeleton:\n");
-  for(index_t i = 0; i < outgoing_skeleton_.size(); i++) {
-    printf("%d ", outgoing_skeleton_[i]);
-  }
-  printf("\n");
 }
 
 template<typename TKernelAux>
@@ -268,8 +251,37 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateFromFarField
 
 template<typename TKernelAux>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateToLocal
-(MatrixFactorizedLocalExpansion<TKernelAux> &se, int truncation_order) {
+(MatrixFactorizedLocalExpansion<TKernelAux> &se, int truncation_order,
+ const Matrix *reference_set, const Matrix *query_set) {
+  
+  // Translating the matrix-factorized far-field moments into local
+  // moments involve doing exhaustive evaluation between the points
+  // that constitute the incoming skeleton and the outgoing skeleton
+  // and multiplying the outgoing representation of the current
+  // object.
+  const ArrayList<index_t> &incoming_skeleton = se.incoming_skeleton();
+  Vector &local_moments = se.incoming_representation();
 
+  for(index_t q = 0; q < incoming_skeleton.size(); q++) {
+    index_t query_point_id = incoming_skeleton[q];
+    const double *query_point = query_set->GetColumnPtr(query_point_id);
+
+    for(index_t r = 0; r < outgoing_skeleton_.size(); r++) {
+      index_t reference_point_id = outgoing_skeleton_[r];
+      const double *reference_point = 
+	reference_set->GetColumnPtr(reference_point_id);
+      double squared_distance = 
+	la::DistanceSqEuclidean(reference_set->n_rows(),
+				query_point, reference_point);
+      double kernel_value = 
+	(ka_->kernel_).EvalUnnormOnSq(squared_distance);
+
+      // Add the (q, r)-th kernel value times the r-th component of
+      // outgoing representation's component to the r-th component of
+      // the local moments.
+      local_moments[r] += kernel_value * outgoing_representation_[r];
+    }
+  }
 }
 
 #endif

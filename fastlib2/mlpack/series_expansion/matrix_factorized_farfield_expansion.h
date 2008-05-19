@@ -256,7 +256,9 @@ class MatrixFactorizedFarFieldExpansion {
    *         expansion coefficients.
    */
   void TranslateToLocal(MatrixFactorizedLocalExpansion<TKernelAux> &se, 
-			int truncation_order);
+			int truncation_order = -1, 
+			const Matrix *reference_set = NULL,
+			const Matrix *query_set = NULL);
 
 };
 

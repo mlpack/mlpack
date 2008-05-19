@@ -18,46 +18,71 @@ class MatrixFactorizedLocalExpansion {
 
  private:
 
-  /** The center of the expansion */
+  /** @brief The center of the expansion.
+   */
   Vector center_;
   
-  /** auxiliary methods for the kernel (derivative, truncation error bound) */
+  /** @brief The incoming representation: the pseudo-distribution.
+   */
+  Vector incoming_representation_;
+  
+  /** @brief The query point indices that form the incoming skeleton,
+   *         the pseudo-points that represent the query point
+   *         distribution.
+   */
+  ArrayList<index_t> incoming_skeleton_;
+
+  /** @brief The auxiliary methods for the kernel (derivative,
+   *         truncation error bound).
+   */
   const TKernelAux *ka_;
 
-  /** pointer to the kernel object inside kernel auxiliary object */
+  /** @brief The pointer to the kernel object inside kernel auxiliary
+   *         object.
+   */
   const typename TKernelAux::TKernel *kernel_;
-
+  
   /** pointer to the precomputed constants inside kernel auxiliary object */
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(MatrixFactorizedLocalExpansion) {
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(order_);
+    OT_MY_OBJECT(incoming_representation_);
+    OT_MY_OBJECT(incoming_skeleton_);
   }
 
  public:
   
   // getters and setters
   
-  /** Get the coefficients */
+  /** @brief Gets the squared bandwidth value.
+   */
   double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
   
-  /** Get the center of expansion */
+  /** @brief Gets the center of expansion.
+   */
   Vector* get_center() { return &center_; }
 
+  /** @brief Gets the center of expansion.
+   */
   const Vector* get_center() const { return &center_; }
 
-  /** Get the coefficients */
-  const Vector& get_coeffs() const { return coeffs_; }
+  /** @brief Gets the incoming representation (const reference version).
+   */
+  const Vector &incoming_representation() const {
+    return incoming_representation_;
+  }
   
-  /** Get the approximation order */
-  int get_order() const { return order_; }
+  /** @brief Gets the incoming representation (reference version).
+   */
+  Vector &incoming_representation() {
+    return incoming_representation_;
+  }
 
-  /** Get the maximum possible approximation order */
-  int get_max_order() const { return sea_->get_max_order(); }
-
-  /** Set the approximation order */
-  void set_order(int new_order) { order_ = new_order; }
+  /** @brief Gets the incoming skeleton.
+   */
+  const ArrayList<index_t> &incoming_skeleton() const {
+    return incoming_skeleton_;
+  }
 
   // interesting functions...
   
