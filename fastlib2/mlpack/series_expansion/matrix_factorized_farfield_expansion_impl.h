@@ -28,7 +28,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   // query samples taken from the stratification.
   Matrix sample_kernel_matrix;
   int num_reference_samples = (int) sqrt(end - begin);
-  int num_query_samples = (int) query_leaf_nodes->size();
+  int num_query_samples = query_leaf_nodes->size();
   
   // Allocate a temporary space for holding the indices of the
   // reference points, from which the outgoing skeleton will be
