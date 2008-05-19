@@ -260,7 +260,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateToLocal
   // and multiplying the outgoing representation of the current
   // object.
   const ArrayList<index_t> &incoming_skeleton = se.incoming_skeleton();
-  Vector &local_moments = se.incoming_representation();
+  Vector &local_moments = se.coeffs();
 
   for(index_t q = 0; q < incoming_skeleton.size(); q++) {
     index_t query_point_id = incoming_skeleton[q];
@@ -277,9 +277,9 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateToLocal
 	(ka_->kernel_).EvalUnnormOnSq(squared_distance);
 
       // Add the (q, r)-th kernel value times the r-th component of
-      // outgoing representation's component to the r-th component of
+      // outgoing representation's component to the q-th component of
       // the local moments.
-      local_moments[r] += kernel_value * outgoing_representation_[r];
+      local_moments[q] += kernel_value * outgoing_representation_[r];
     }
   }
 }
