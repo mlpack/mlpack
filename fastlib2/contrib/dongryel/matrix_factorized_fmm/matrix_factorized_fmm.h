@@ -11,8 +11,8 @@
 #ifndef MATRIX_FACTORIZED_FMM_H
 #define MATRIX_FACTORIZED_FMM_H
 
-#include "matrix_factorized_farfield_expansion.h"
-#include "matrix_factorized_local_expansion.h"
+#include "mlpack/series_expansion/matrix_factorized_farfield_expansion.h"
+#include "mlpack/series_expansion/matrix_factorized_local_expansion.h"
 #include "fastlib/fastlib.h"
 
 #define INSIDE_MATRIX_FACTORIZED_FMM_IMPL_H
