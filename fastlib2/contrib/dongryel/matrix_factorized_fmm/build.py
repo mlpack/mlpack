@@ -1,33 +1,19 @@
-# Library build rule for the series expansion implementation
+# Library build rule for the matrix-factorized FMM.
 librule(
-    name = "series_expansion",
+    name = "matrix_factorized_fmm",
     sources = ["series_expansion_aux.cc"],
-    headers = ["cur_decomposition.h",
-               "farfield_expansion.h",
-               "farfield_expansion_impl.h",
-               "matrix_factorized_farfield_expansion.h",
-               "matrix_factorized_farfield_expansion_impl.h",
-               "mult_farfield_expansion.h",
-               "mult_farfield_expansion_impl.h",
-               "kernel_aux.h",
-               "local_expansion.h",
-               "local_expansion_impl.h",
-               "matrix_factorized_local_expansion.h",
-               "matrix_factorized_local_expansion_impl.h",
-               "mult_local_expansion.h",
-               "mult_local_expansion_impl.h",
-               "mult_series_expansion_aux.h",
-               "series_expansion_aux.h",
-               "mult_series_expansion_aux.h"],
-    deplibs = ["fastlib:fastlib_int"]
+    headers = ["matrix_factorized_farfield_expansion.h",
+               "matrix_factorized_farfield_expansion_impl.h"],
+    deplibs = ["fastlib:fastlib_int",
+               "mlpack/series_expansion:series_expansion"]
     )
 
 # Test driver for series expansion library
 binrule(
-    name = "main",
-    sources = ["main.cc"],
+    name = "matrix_factorized_fmm_bin",
+    sources = ["matrix_factorized_fmm_main.cc"],
     headers = [],
-    deplibs = [":series_expansion"]
+    deplibs = [":matrix_factorized_fmm"]
     )
 
 # to build:
