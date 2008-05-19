@@ -7,7 +7,7 @@ class SubspaceStat {
   
  private:
 
-  static const double epsilon_ = 0.01;
+  static const double epsilon_ = 0.1;
 
   static void ComputeResidualBasis_(const Matrix &first_basis,
 				    const Matrix &second_basis,
