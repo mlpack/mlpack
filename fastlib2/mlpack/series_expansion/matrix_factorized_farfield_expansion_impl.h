@@ -142,7 +142,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
   center_.Copy(center);
-  sea_ = &(ka.sea_);
   ka_ = &ka;
 
   // The default flag for initialization is false.
@@ -155,8 +154,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);  
-  sea_ = &(ka.sea_);
-  center_.Init(sea_->get_dimension());
+  center_.Init(0);
   center_.SetZero();
   ka_ = &ka;
   
