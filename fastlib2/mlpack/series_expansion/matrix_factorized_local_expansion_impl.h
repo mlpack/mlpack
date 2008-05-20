@@ -12,6 +12,29 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::PrintDebug
 }
 
 template<typename TKernelAux>
+void MatrixFactorizedLocalExpansion<TKernelAux>::CombineBasisFunctions
+(const MatrixFactorizedLocalExpansion &local_expansion1,
+ const MatrixFactorizedLocalExpansion &local_expansion2) {
+  
+  // The incoming skeleton for an internal node is formed by
+  // concatenating the incoming skeleton of its children.
+  const ArrayList<index_t> &incoming_skeleton1 =
+    local_expansion1.incoming_skeleton();
+  const ArrayList<index_t> &incoming_skeleton2 =
+    local_expansion2.incoming_skeleton();
+
+  incoming_skeleton_.Init(incoming_skeleton1.size() + 
+			  incoming_skeleton2.size());
+  for(index_t i = 0; i < incoming_skeleton1.size(); i++) {
+    incoming_skeleton_[i] = incoming_skeleton1[i];
+  }
+  for(index_t i = incoming_skeleton1.size(); i < incoming_skeleton_.size();
+      i++) {
+    incoming_skeleton_[i] = incoming_skeleton2[i - incoming_skeleton1.size()];
+  }
+}
+
+template<typename TKernelAux>
 double MatrixFactorizedLocalExpansion<TKernelAux>::EvaluateField
 (const Matrix& data, int row_num) const {
   return -1;
@@ -29,8 +52,6 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::Init
   
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
-  center_.Copy(center);
-  sea_ = &(ka.sea_);
   ka_ = &ka;
 
   // Set the incoming representation to be null. This is only valid
@@ -43,8 +64,6 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
-  sea_ = &(ka.sea_);
-  center_.Init(sea_->get_dimension());
   ka_ = &ka;
 
   // Set the incoming representation to be null. This is only valid

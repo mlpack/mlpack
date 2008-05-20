@@ -124,6 +124,38 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 }
 
 template<typename TKernelAux>
+void MatrixFactorizedFarFieldExpansion<TKernelAux>::CombineBasisFunctions
+(const MatrixFactorizedFarFieldExpansion &farfield_expansion1,
+ const MatrixFactorizedFarFieldExpansion &farfield_expansion2) {
+
+  // The far-field expansion using matrix factorization is formed by
+  // concatenating representations.
+  const Vector &outgoing_representation1 =
+    farfield_expansion1.outgoing_representation();
+  const Vector &outgoing_representation2 =
+    farfield_expansion2.outgoing_representation();
+  const ArrayList<index_t> &outgoing_skeleton1 =
+    farfield_expansion1.outgoing_skeleton();
+  const ArrayList<index_t> &outgoing_skeleton2 =
+    farfield_expansion2.outgoing_skeleton();
+
+  outgoing_representation_.Init(outgoing_representation1.length() + 
+				outgoing_representation2.length());
+  outgoing_skeleton_.Init(outgoing_skeleton1.size() + 
+			  outgoing_skeleton2.size());
+  for(index_t i = 0; i < outgoing_representation1.length(); i++) {
+    outgoing_representation_[i] = outgoing_representation1[i];
+    outgoing_skeleton_[i] = outgoing_skeleton1[i];
+  }
+  for(index_t i = outgoing_representation1.length(); i < 
+	outgoing_representation_.length(); i++) {
+    outgoing_representation_[i] = 
+      outgoing_representation2[i - outgoing_representation1.length()];
+    outgoing_skeleton_[i] = outgoing_skeleton2[i - outgoing_skeleton1.size()];
+  }
+}
+
+template<typename TKernelAux>
 double MatrixFactorizedFarFieldExpansion<TKernelAux>::EvaluateField
 (const Matrix& data, int row_num, int order) const {
   return -1;
@@ -141,7 +173,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
-  center_.Copy(center);
   ka_ = &ka;
 
   // The default flag for initialization is false.
@@ -154,8 +185,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);  
-  center_.Init(0);
-  center_.SetZero();
   ka_ = &ka;
   
   // The default flag for initialization is false.

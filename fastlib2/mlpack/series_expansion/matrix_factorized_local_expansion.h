@@ -52,10 +52,6 @@ class MatrixFactorizedLocalExpansion {
     }
     array.ShrinkTo(k + 1);
   }
-
-  /** @brief The center of the expansion.
-   */
-  Vector center_;
   
   /** @brief The coefficients translated from the outgoing
    *         representation.
@@ -94,11 +90,6 @@ class MatrixFactorizedLocalExpansion {
    *         object.
    */
   const typename TKernelAux::TKernel *kernel_;
-  
-  /** @brief The pointer to the precomputed constants inside kernel
-   *         auxiliary object.
-   */
-  const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(MatrixFactorizedLocalExpansion) {
     OT_MY_OBJECT(coeffs_);
@@ -121,14 +112,6 @@ class MatrixFactorizedLocalExpansion {
   /** @brief Gets the squared bandwidth value.
    */
   double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
-  
-  /** @brief Gets the center of expansion.
-   */
-  Vector* get_center() { return &center_; }
-
-  /** @brief Gets the center of expansion.
-   */
-  const Vector* get_center() const { return &center_; }
 
   /** @brief Gets the evaluation operator (const reference version).
    */
@@ -163,7 +146,13 @@ class MatrixFactorizedLocalExpansion {
   }
   
   // interesting functions...
-  
+
+  /** @brief Combines two incoming skeletons.
+   */
+  void CombineBasisFunctions
+  (const MatrixFactorizedLocalExpansion &local_expansion1,
+   const MatrixFactorizedLocalExpansion &local_expansion2);
+
   /** @brief Evaluates the local coefficients at the given point
    */
   double EvaluateField(const Matrix& data, int row_num) const;
