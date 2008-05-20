@@ -14,10 +14,17 @@ class NmfEngine {
 		 Matrix data_mat;
 		 data::Load(data_file.c_str(), &data_mat);
 		 PreprocessData(data_mat);
-     opt_function_.Init(fx_submodule(module,"optfun"), 
-				 rows_, columns_, values_);
-		 fx_module *l_bfgs_module;
+		 fx_module *opt_function_module=fx_submodule(module_, "optfun");
+     fx_set_param_int(opt_function_module, "rank", sdp_rank_);
+		 fx_set_param_int(opt_function_module, "new_dim", new_dim_);
+		 opt_function_.Init(opt_function_module, rows_, columns_, values_);
+		 fx_module *l_bfgs_module=fx_submodule(module_, "l_bfgs");
+     Matrix init_data;
+		 opt_function_.GiveInitMatrix(&init_data);
+	   fx_set_param_int(l_bfgs_module, "num_of_points", init_data.n_cols());
+		 fx_set_param_int(l_bfgs_module, "new_dimension", init_data.n_rows());
      engine_.Init(&opt_function_, l_bfgs_module);
+	 	 engine_.set_coordinates(init_data);
 	 }
 	 void Destruct() {
 	   
