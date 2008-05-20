@@ -193,7 +193,7 @@ class MatrixFactorizedLocalExpansion {
    *         coefficients are added up to the passed-in local
    *         expansion coefficients.
    */
-  void TranslateToLocal(MatrixFactorizedLocalExpansion &se);
+  void TranslateToLocal(MatrixFactorizedLocalExpansion &se) const;
 
 };
 
