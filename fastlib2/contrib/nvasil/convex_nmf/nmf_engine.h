@@ -13,10 +13,11 @@ class NmfEngine {
 		 new_dim_=fx_param_int(module_, "new_dim", 3);
 		 Matrix data_mat;
 		 data::Load(data_file.c_str(), &data_mat);
-		 PreprcessData(data_mat);
+		 PreprocessData(data_mat);
      opt_function_.Init(fx_submodule(module,"optfun"), 
 				 rows_, columns_, values_);
-     engine.Init(&opt_function, l_bfgs_node);
+		 fx_module *l_bfgs_module;
+     engine_.Init(&opt_function_, l_bfgs_module);
 	 }
 	 void Destruct() {
 	   
@@ -24,7 +25,7 @@ class NmfEngine {
 	 void ComputeNmf() {
 		  Matrix init_data;
 			opt_function_.GiveInitMatrix(&init_data);
-		  engine.set_coordinates(init_data);
+		  engine_.set_coordinates(init_data);
 	    engine_.ComputeLocalOptimumBFGS();
       Matrix result;
       engine_.GetResults(&result);
@@ -32,21 +33,21 @@ class NmfEngine {
 			h_mat_.Init(new_dim_, num_of_columns_);
 			for(index_t i=0; i<num_of_rows_; i++) {
 			  for(index_t j=0; j<new_dim_; j++) {
-				  w_mat_.set_(i, j, results.get(0, i*new_dim_+j));
+				  w_mat_.set(i, j, result.get(0, i*new_dim_+j));
 				}
 			}
 			index_t offset_h=num_of_rows_*new_dim_;
 			for(index_t i=0; i<num_of_columns_; i++) {
 			  for(index_t j=0; j<new_dim_; j++) {
-				   h_mat.set(j, i , results(0, offset_h+i*new_dim_+j ));
+				   h_mat_.set(j, i , result.get(0, offset_h+i*new_dim_+j ));
 				}
 			}
 	 }
 	 void GetW(Matrix *w_mat) {
-	   h_mat->Copy(*w_mat);
+	   w_mat->Copy(w_mat_);
 	 }
 	 void GetH(Matrix *h_mat) {
-	   w_mat->Copy(*h_mat);
+	   h_mat->Copy(h_mat_);
 	 }
 	 
  private:
@@ -69,9 +70,9 @@ class NmfEngine {
 		columns_.Init();
 		for(index_t i=0; i<data_mat.n_rows(); i++) {
 		  for(index_t j=0; j< data_mat.n_cols(); j++) {
-			  values_.PushBack(values_.get(i, j));
-				rows_.PushBack(i);
-				columns_.PushBack(j);
+			  values_.PushBackCopy(data_mat.get(i, j));
+				rows_.PushBackCopy(i);
+				columns_.PushBackCopy(j);
 			}
 		}
 	}

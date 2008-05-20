@@ -27,6 +27,7 @@ class BigSdpNmfObjective {
 	index_t num_of_rows_;
 	index_t new_dim_;
 	index_t rank_;
+	index_t offset_h_;
 	index_t offset_h_mat_; // we need this to know wher h matrix starts 
 	ArrayList<index_t> rows_;
 	ArrayList<index_t> columns_;
