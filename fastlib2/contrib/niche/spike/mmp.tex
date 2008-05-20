@@ -1,0 +1,57 @@
+\documentclass{article}
+
+\begin{document}
+  
+ \textbf{HMM with Gamma distributed states and Discriminative Loss}
+  
+  
+
+  
+  Each email occurence indicates
+  \begin{itemize}
+  \item IP
+  \item time
+  \item number of recipients
+  \item email size
+  \item spam score
+  \end{itemize}
+
+  Useful transformations of the data:
+  \begin{enumerate}
+  \item Counts occuring in fixed time windows
+  \item Interspike intervals
+  \end{enumerate}
+
+  \textbf{Interspike intervals}
+
+  $f(y_i, t_i) = \frac{e^{-\lambda t_i} (\lambda t_i)^{y_i}}{y_i!}$
+
+  Assuming $y_i = 1 \Rightarrow f(1, t_i) = e^{-\lambda t_i} (\lambda t_i)$
+
+  Let $f_1(x) = f(1, t_i)$ where $x = t_i$. Then we have $f(x) = x \lambda e^{-\lambda x}$. This is a scaled version of the Gamma distribution. To see this, normalize $f_1(x)$ by multiplying by $\lambda$ produces $f_\Gamma(x) = x \lambda^2 e^{-\lambda x}$
+
+
+  Setting $\lambda = \beta$ yields
+  \[
+  x \beta^2 e^{-\beta x} = x^{2-1} \beta^2 \frac{e^{-\beta x}}{\Gamma(2)} = \Gamma(2, \beta)
+  \]
+
+since 
+  \[
+  \Gamma(\alpha, \beta) = x^{\alpha-1} \beta^\alpha \frac{e^{-\beta x}}{\Gamma(\alpha)}
+  \]
+
+  We can model the counts as being generated from a mixture of Gamma processes. Adding a Markov switching process yields a HMM with Gamma distributions for each state. We then need to estimate the parameters of the Gamma distribution for each state, the states' prior probabilities, and the state transition probabilities. Instead of using maximum likelihood loss, another loss function that is more appealing would be
+\[
+L = \sum_i \sum_k (f(c_k | o_i) - I(Y_i = c_k))^2
+\]
+
+where the true class $Y_i$ for email observation $o_i$ is derived from the spam score.
+
+
+%  Suppose we are provided many replications of count time series for a spammer. If we assume spammers produce emails according to a Poisson process  $f(y_i) = \frac{e^{-\lambda t_i} (\lambda t_i)^{y_i}}{y_i!}$, then we estimate $\lambda$. If we allow $\lambda$ to vary according to the process history, so that we have $\lambda(t)$ that depends on the $y_{1 \ldots k-1}$. If we describe the intensity according to Markovian dynamics, $\lambda(t) = \alpha lambda(t-1) + \epsilon(t)$. If we assume the time varying Poisson process is described by a state-switching model: $\lambda(t) = \lambda_{s_t}$. 
+
+
+  
+  
+\end{document}
