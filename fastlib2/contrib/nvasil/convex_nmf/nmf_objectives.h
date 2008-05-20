@@ -5,7 +5,7 @@
 
 class BigSdpNmfObjective {
  public:
-	void Init(datanode *module, 
+	void Init(fx_module *module, 
 			ArrayList<index_t> &rows,
 			ArrayList<index_t> &columns,
       ArrayList<double>  &values);
@@ -17,10 +17,11 @@ class BigSdpNmfObjective {
   void UpdateLagrangeMult(Matrix &coordinates);
   void Project(Matrix *coordinates);
   void set_sigma(double sigma); 
-  bool IsDiverging(double objective); 
-
+  void GiveInitMatrix(Matrix *init_data);
+	bool IsDiverging(double objective); 
+ 
  private:
-  datanode *module_;
+  fx_module *module_;
   double sigma_;
 	index_t num_of_columns_;
 	index_t num_of_rows_;
