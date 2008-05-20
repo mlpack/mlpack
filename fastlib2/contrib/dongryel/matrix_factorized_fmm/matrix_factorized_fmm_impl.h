@@ -175,6 +175,33 @@ void MatrixFactorizedFMM<TKernelAux>::PreProcessReferenceTree_
 }
 
 template<typename TKernelAux>
+void MatrixFactorizedFMM<TKernelAux>::PostProcessQueryTree_
+(const Matrix &query_set, const ArrayList<index_t> &query_index_permutation,
+ QueryTree *query_node, Vector &query_kernel_sums) const {
+  
+  const MatrixFactorizedLocalExpansion<TKernelAux> &local_expansion =
+    (query_node->stat()).local_expansion_;
+
+  if(query_node->is_leaf()) {
+    for(index_t q = query_node->begin(); q < query_node->end(); q++) {
+      query_kernel_sums[query_index_permutation[q]] +=
+	local_expansion.EvaluateField(query_set, q);
+    }
+  }
+  else {
+    
+    local_expansion.TranslateToLocal
+      (query_node->left()->stat().local_expansion_);
+    local_expansion.TranslateToLocal
+      (query_node->right()->stat().local_expansion_);
+    PostProcessQueryTree_(query_set, query_index_permutation,
+			  query_node->left(), query_kernel_sums);
+    PostProcessQueryTree_(query_set, query_index_permutation, 
+			  query_node->right(), query_kernel_sums);
+  }
+}
+
+template<typename TKernelAux>
 void MatrixFactorizedFMM<TKernelAux>::Init(const Matrix &references, 
 					   struct datanode *module_in) {
   
@@ -192,7 +219,7 @@ void MatrixFactorizedFMM<TKernelAux>::Init(const Matrix &references,
 
   // Construct the reference tree.
   fx_timer_start(fx_root, "reference_tree_construction");
-  reference_tree_root_ = tree::MakeKdTreeMidpoint<ReferenceTree>
+  reference_tree_root_ = proximity::MakeGenMetricTree<ReferenceTree>
     (reference_set_, leaflen, &old_from_new_references_, NULL);
   fx_timer_stop(fx_root, "reference_tree_construction");
 
@@ -219,7 +246,7 @@ void MatrixFactorizedFMM<TKernelAux>::Compute
   fx_timer_start(fx_root, "query_tree_construction");
   ArrayList<index_t> old_from_new_queries;
   QueryTree *query_tree_root = 
-    tree::MakeKdTreeMidpoint<QueryTree>
+    proximity::MakeGenMetricTree<QueryTree>
     (query_set, leaflen, &old_from_new_queries, NULL);
   fx_timer_stop(fx_root, "query_tree_construction");
 
@@ -237,8 +264,13 @@ void MatrixFactorizedFMM<TKernelAux>::Compute
   // Compute the kernel summations.
   query_kernel_sums->Init(query_set.n_cols());
   query_kernel_sums->SetZero();
+  /*
   CanonicalCase_(query_set, old_from_new_queries, query_tree_root,
 		 reference_tree_root_, *query_kernel_sums);
+  */
+
+  PostProcessQueryTree_(query_set, old_from_new_queries, query_tree_root, 
+			*query_kernel_sums);
 
   // Delete the query tree after the computation...
   delete query_tree_root;
