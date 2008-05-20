@@ -41,7 +41,7 @@ since
   \Gamma(\alpha, \beta) = x^{\alpha-1} \beta^\alpha \frac{e^{-\beta x}}{\Gamma(\alpha)}
   \]
 
-  We can model the counts as being generated from a mixture of Gamma processes. Adding a Markov switching process yields a HMM with Gamma distributions for each state. We then need to esimate the parameters of the Gamma distribution for each state, the states' prior probabilities, and the state transition probabilities. Instead of using maximum likelihood loss, another loss function that is more appealing would be
+  We can model the counts as being generated from a mixture of Gamma processes. Adding a Markov switching process yields a HMM with Gamma distributions for each state. We then need to estimate the parameters of the Gamma distribution for each state, the states' prior probabilities, and the state transition probabilities. Instead of using maximum likelihood loss, another loss function that is more appealing would be
 \[
 L = \sum_i \sum_k (f(c_k | o_i) - I(Y_i = c_k))^2
 \]
