@@ -32,6 +32,11 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::CombineBasisFunctions
       i++) {
     incoming_skeleton_[i] = incoming_skeleton2[i - incoming_skeleton1.size()];
   }
+
+  // Allocate space for local moments based on the size of the
+  // incoming skeleton.
+  coeffs_.Init(incoming_skeleton_.size());
+  coeffs_.SetZero();
 }
 
 template<typename TKernelAux>
@@ -157,6 +162,7 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 
   // Compute the evaluation operator, which is the product of the C
   // and the U factor appropriately scaled by the row scaled R factor.
+  evaluation_operator_ = new Matrix();
   la::MulInit(c_mat, u_mat, evaluation_operator_);
   for(index_t i = 0; i < r_mat.n_rows(); i++) {
     double scaling_factor =
@@ -165,7 +171,11 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 
     la::Scale(evaluation_operator_->n_rows(), scaling_factor,
 	      evaluation_operator_->GetColumnPtr(i));
-  }  
+  }
+
+  // Allocate space based on the size of the incoming skeleton.
+  coeffs_.Init(incoming_skeleton_.size());
+  coeffs_.SetZero();
 }
 
 template<typename TKernelAux>
