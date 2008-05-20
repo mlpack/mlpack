@@ -18,6 +18,7 @@ for i = 1:D
   S(i,:) = laplacinv(rand(N, 1), mu, b);
 end
 
+length(find(S < 0))
 while 1
   neg_indices = find(S < 0);
 
@@ -28,6 +29,12 @@ while 1
   else
     break;
   end
+end
+
+% impose unit variance on each row of S
+
+for i = 1:D
+  S(i,:) = S(i,:) / std(S(i,:));
 end
 
 

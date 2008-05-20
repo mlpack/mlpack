@@ -133,7 +133,7 @@ pca_results = pca_fd(centered_myfd, p, myfdPar);
 %  ic_scores(i,:) = scale_up_factor * ic_scores(i,:);
 %end
 
-save p300_filtered_lambda3Eneg6_correct_results_120.mat;
+%save p300_filtered_lambda3Eneg6_correct_results_120.mat;
 
 
 % given a set of curves, identify component curves of variation
