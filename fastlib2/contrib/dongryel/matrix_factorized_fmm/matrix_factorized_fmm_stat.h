@@ -47,7 +47,7 @@ class MatrixFactorizedFMMQueryNodeStat {
 
   /** @brief The local expansion for the query points in this node.
    */
-  typename TKernelAux::TFarFieldExpansion local_expansion_;
+  typename TKernelAux::TLocalExpansion local_expansion_;
   
   void Init(const TKernelAux &ka) {
     local_expansion_.Init(ka);
