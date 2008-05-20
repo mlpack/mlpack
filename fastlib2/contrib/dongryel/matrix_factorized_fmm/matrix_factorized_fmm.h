@@ -11,6 +11,8 @@
 #ifndef MATRIX_FACTORIZED_FMM_H
 #define MATRIX_FACTORIZED_FMM_H
 
+#include "contrib/dongryel/proximity_project/general_spacetree.h"
+#include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "mlpack/series_expansion/matrix_factorized_farfield_expansion.h"
 #include "mlpack/series_expansion/matrix_factorized_local_expansion.h"
 #include "fastlib/fastlib.h"
@@ -95,6 +97,14 @@ class MatrixFactorizedFMM {
   void PreProcessReferenceTree_
   (ReferenceTree *reference_node, const Matrix &query_set, 
    const ArrayList<QueryTree *> &query_leaf_nodes);
+
+  /** @brief The method for postprocessing the query tree such that
+   *         unclaimed kernel sums are incorporated.
+   */
+  void PostProcessQueryTree_(const Matrix &query_set, 
+			     const ArrayList<index_t> &query_index_permutation,
+			     QueryTree *query_node,
+			     Vector &query_kernel_sums) const;
 
  public:
   

@@ -64,8 +64,8 @@ class MatrixFactorizedFMMQueryNodeStat {
 
 /** @brief The type of our query tree.
  */
-typedef BinarySpaceTree<DHrectBound<2>, Matrix, MatrixFactorizedFMMQueryNodeStat > QueryTree;
+typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, MatrixFactorizedFMMQueryNodeStat > QueryTree;
 
 /** @brief The type of our reference tree.
  */
-typedef BinarySpaceTree<DHrectBound<2>, Matrix, MatrixFactorizedFMMReferenceNodeStat > ReferenceTree;
+typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, MatrixFactorizedFMMReferenceNodeStat > ReferenceTree;
