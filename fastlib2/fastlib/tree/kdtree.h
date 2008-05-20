@@ -44,13 +44,16 @@ namespace tree {
    * @param new_from_old pointer to an unitialized arraylist; it will map
    *        original indexes to new indices
    */
-  template<typename TKdTree, typename T>
-  TKdTree *MakeKdTreeMidpoint(GenMatrix<T>& matrix, index_t leaf_size,
+  
+
+  template<typename TKdTree>
+  TKdTree *MakeKdTreeMidpointSelective(Matrix& matrix, Vector split_dimensions,
+      index_t leaf_size,
       ArrayList<index_t> *old_from_new = NULL,
       ArrayList<index_t> *new_from_old = NULL) {
     TKdTree *node = new TKdTree();
     index_t *old_from_new_ptr;
-
+   
     if (old_from_new) {
       old_from_new->Init(matrix.n_cols());
       
@@ -64,22 +67,38 @@ namespace tree {
     }
       
     node->Init(0, matrix.n_cols());
-    node->bound().Init(matrix.n_rows());
-    tree_kdtree_private::FindBoundFromMatrix(matrix,
+    node->bound().Init(split_dimensions.length());
+    tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
         0, matrix.n_cols(), &node->bound());
 
-    tree_kdtree_private::SplitKdTreeMidpoint(matrix, node, leaf_size,
-        old_from_new_ptr);
+    tree_kdtree_private::SelectSplitKdTreeMidpoint(matrix, split_dimensions, 
+	node, leaf_size, old_from_new_ptr);
     
     if (new_from_old) {
       new_from_old->Init(matrix.n_cols());
       for (index_t i = 0; i < matrix.n_cols(); i++) {
         (*new_from_old)[(*old_from_new)[i]] = i;
       }
-    }
-    
+    }    
     return node;
   }
+
+  template<typename TKdTree>
+    TKdTree *MakeKdTreeMidpoint(Matrix& matrix, index_t leaf_size,
+				ArrayList<index_t> *old_from_new = NULL,
+				ArrayList<index_t> *new_from_old = NULL) {  
+    Vector split_dimensions;
+    split_dimensions.Init(matrix.n_rows());
+    int i;
+    for (i = 0; i < matrix.n_rows(); i++){
+      split_dimensions[i] = i;
+    }
+    TKdTree *result;
+    result = MakeKdTreeMidpointSelective<TKdTree>(matrix, split_dimensions,
+		   leaf_size, old_from_new, new_from_old);
+    return result;
+  }
+  
 
   /**
    * Loads a KD tree from a command-line parameter,
@@ -119,10 +138,10 @@ namespace tree {
    *        the matrix returned to the original data point indices
    * @return SUCCESS_PASS or SUCCESS_FAIL
    */
-  template<typename TKdTree, typename T>
-  success_t LoadKdTree(datanode *module, GenMatrix<T> *matrix, 
-		       TKdTree **tree_pp, ArrayList<index_t> *old_from_new) {
-
+  template<typename TKdTree>
+  success_t LoadKdTree(datanode *module,
+      Matrix *matrix, TKdTree **tree_pp,
+      ArrayList<index_t> *old_from_new) {
     const char *type = fx_param_str(module, "type", "text");
     const char *fname = fx_param_str(module, "", NULL);
     success_t success = SUCCESS_PASS;
@@ -135,8 +154,11 @@ namespace tree {
       success = data::Load(fname, matrix);
       fx_timer_stop(module, "load_matrix");
 
+      //if (fx_param_exists("do_pca")) {}
+
       fx_timer_start(module, "make_tree");
-      *tree_pp = MakeKdTreeMidpoint<TKdTree>(*matrix, leaflen, old_from_new);
+      *tree_pp = MakeKdTreeMidpoint<TKdTree>(
+          *matrix, leaflen, old_from_new);
       fx_timer_stop(module, "make_tree");
     }
     fx_timer_stop(module, "load");
