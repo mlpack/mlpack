@@ -47,6 +47,10 @@ class MatrixFactorizedFMM {
   /** @brief The root of the reference tree.
    */
   ReferenceTree *reference_tree_root_;
+  
+  /** @brief The list of leaf nodes in the reference tree.
+   */
+  ArrayList<ReferenceTree *> reference_leaf_nodes_;
 
   /** @brief The permutation mapping indices of reference_set_ to its
    *         original order.
@@ -63,6 +67,34 @@ class MatrixFactorizedFMM {
 		 const QueryTree *query_node, 
 		 const ReferenceTree *reference_node, 
 		 Vector &query_kernel_sums) const;
+  
+  /** @brief The canonical case for evaluating the reference
+   *         contributions to the given set of query points using the
+   *         dual-tree algorithm.
+   */
+  void CanonicalCase_(const Matrix &query_set,
+		      const ArrayList<index_t> &query_index_permutation,
+		      const QueryTree *query_node,
+		      const ReferenceTree *reference_node,
+		      Vector &query_kernel_sums) const;
+
+  /** @brief Traverse the FASTLib tree to get the list of leaf nodes.
+   */
+  template<typename Tree>
+  void GetLeafNodes_(Tree *node, ArrayList<Tree *> &leaf_nodes);
+
+  /** @brief The method for preprocessing the query tree.
+   */
+  void PreProcessQueryTree_
+  (const Matrix &query_set, QueryTree *query_node, 
+   const Matrix &reference_set, 
+   const ArrayList<ReferenceTree *> &reference_leaf_nodes);
+
+  /** @brief The method for preprocessing the reference tree.
+   */
+  void PreProcessReferenceTree_
+  (ReferenceTree *reference_node, const Matrix &query_set, 
+   const ArrayList<QueryTree *> &query_leaf_nodes);
 
  public:
   
@@ -73,6 +105,11 @@ class MatrixFactorizedFMM {
    *  @param module_in The module holding the parameters.
    */
   void Init(const Matrix &references, struct datanode *module_in);
+
+  /** @brief Compute the weighted kernel sums at each point in the
+   *         given query set.
+   */
+  void Compute(const Matrix &queries, Vector *query_kernel_sums);
 
 };
 
