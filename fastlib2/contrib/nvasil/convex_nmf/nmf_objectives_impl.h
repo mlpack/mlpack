@@ -7,9 +7,10 @@ void BigSdpNmfObjective::Init(fx_module *module,
 	rows_.InitCopy(rows);
 	columns_.InitCopy(columns);
 	values_.InitCopy(values);
-	num_of_rows_=std::max_element(rows_.begin(), rows_.end())+1;
-	num_of_columns_=std::max_element(columns_.begin(), columns_.end())+1;
+	num_of_rows_=*std::max_element(rows_.begin(), rows_.end())+1;
+	num_of_columns_=*std::max_element(columns_.begin(), columns_.end())+1;
 	eq_lagrange_mult_.Init(values_.size());
+	eq_lagrange_mult_.SetAll(0);
   rank_=fx_param_int(module_, "rank", 3);
 	new_dim_=fx_param_int(module_, "new_dim", 5);
 	offset_h_ = num_of_rows_*new_dim_;
@@ -86,11 +87,11 @@ void BigSdpNmfObjective::UpdateLagrangeMult(Matrix &coordinates) {
 }
 
 void BigSdpNmfObjective::Project(Matrix *coordinates) {
-  for(index_t i=0; i<coordinates->n_cols(); i++) {
-	  if (coordinates->get(0, i)<0) {
-		  coordinates->set(0, i, 0.0);
-		}
-	}
+ // for(index_t i=0; i<coordinates->n_cols(); i++) {
+//	  if (coordinates->get(0, i)<0) {
+//		  coordinates->set(0, i, 0.0);
+//		}
+//	}
 }
 
 void BigSdpNmfObjective::set_sigma(double sigma) {
