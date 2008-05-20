@@ -713,44 +713,45 @@ public:
 	}
 	break;
       case 3:
-
-	double right_diff = right_bandwidth - mid_bandwidth;
-	double left_diff = mid_bandwidth - left_bandwidth;
-
-	if((right_diff < EPSILON) && (left_diff < EPSILON)) {
-	  search = false;
-	}
-	else {
-	  if(right_diff > left_diff) {
-	    choose = 1; //choose right
-	  }
-	  else if(left_diff > right_diff) {
-	    choose = 0; // choose left
+	{
+	  double right_diff = right_bandwidth - mid_bandwidth;
+	  double left_diff = mid_bandwidth - left_bandwidth;
+	  
+	  if((right_diff < EPSILON) && (left_diff < EPSILON)) {
+	    search = false;
 	  }
 	  else {
-	    if(left_score < right_score) {
+	    if(right_diff > left_diff) {
+	      choose = 1; //choose right
+	    }
+	    else if(left_diff > right_diff) {
 	      choose = 0; // choose left
 	    }
 	    else {
-	      choose = 1; // choose right
+	      if(left_score < right_score) {
+		choose = 0; // choose left
+	      }
+	      else {
+		choose = 1; // choose right
+	      }
 	    }
+	    
+	    if(choose == 0) {
+	      param->bandwidth = (left_bandwidth + mid_bandwidth) / 2;
+	      printf("left = %f, mid = %f\n", left_bandwidth, mid_bandwidth);
+	      printf("splitting on left and mid: ");
+	    }
+	    else {
+	      param->bandwidth = (right_bandwidth + mid_bandwidth) / 2;
+	      printf("right = %f, mid = %f\n", right_bandwidth, mid_bandwidth);
+	      printf("splitting on right and mid: ");
+	    }
+	    printf("%f\n", param->bandwidth);
 	  }
-
-	  if(choose == 0) {
-	    param->bandwidth = (left_bandwidth + mid_bandwidth) / 2;
-	    printf("left = %f, mid = %f\n", left_bandwidth, mid_bandwidth);
-	    printf("splitting on left and mid: ");
-	  }
-	  else {
-	    param->bandwidth = (right_bandwidth + mid_bandwidth) / 2;
-	    printf("right = %f, mid = %f\n", right_bandwidth, mid_bandwidth);
-	    printf("splitting on right and mid: ");
-	  }
-	  printf("%f\n", param->bandwidth);
 	}
 	break;
       default:
-	;//impossible!
+	printf("impossible\n"); //impossible!
       }
 
 
@@ -1055,40 +1056,41 @@ public:
 	}
 	break;
       case 3:
-
-	double right_diff = right_bandwidth - mid_bandwidth;
-	double left_diff = mid_bandwidth - left_bandwidth;
-
-	if((right_diff < EPSILON) && (left_diff < EPSILON)) {
-	  search = false;
-	}
-	else {
-	  if(right_diff > left_diff) {
-	    choose = 1; //choose right
-	  }
-	  else if(left_diff > right_diff) {
-	    choose = 0; // choose left
+	{
+	  double right_diff = right_bandwidth - mid_bandwidth;
+	  double left_diff = mid_bandwidth - left_bandwidth;
+	  
+	  if((right_diff < EPSILON) && (left_diff < EPSILON)) {
+	    search = false;
 	  }
 	  else {
-	    if(left_score < right_score) {
+	    if(right_diff > left_diff) {
+	      choose = 1; //choose right
+	    }
+	    else if(left_diff > right_diff) {
 	      choose = 0; // choose left
 	    }
 	    else {
-	      choose = 1; // choose right
+	      if(left_score < right_score) {
+		choose = 0; // choose left
+	      }
+	      else {
+		choose = 1; // choose right
+	      }
 	    }
+	    
+	    if(choose == 0) {
+	      param->bandwidth = (left_bandwidth + mid_bandwidth) / 2;
+	      printf("left = %f, mid = %f\n", left_bandwidth, mid_bandwidth);
+	      printf("splitting on left and mid: ");
+	    }
+	    else {
+	      param->bandwidth = (right_bandwidth + mid_bandwidth) / 2;
+	      printf("right = %f, mid = %f\n", right_bandwidth, mid_bandwidth);
+	      printf("splitting on right and mid: ");
+	    }
+	    printf("%f\n", param->bandwidth);
 	  }
-
-	  if(choose == 0) {
-	    param->bandwidth = (left_bandwidth + mid_bandwidth) / 2;
-	    printf("left = %f, mid = %f\n", left_bandwidth, mid_bandwidth);
-	    printf("splitting on left and mid: ");
-	  }
-	  else {
-	    param->bandwidth = (right_bandwidth + mid_bandwidth) / 2;
-	    printf("right = %f, mid = %f\n", right_bandwidth, mid_bandwidth);
-	    printf("splitting on right and mid: ");
-	  }
-	  printf("%f\n", param->bandwidth);
 	}
 	break;
       default:
@@ -1200,16 +1202,16 @@ public:
 	}
 
 	/*
-	Matrix ref_densities_matrix;
-	ref_densities_matrix.AliasRowVector(ref_densities);
+	  Matrix ref_densities_matrix;
+	  ref_densities_matrix.AliasRowVector(ref_densities);
 
-	Matrix linspace_densities_matrix;
-	linspace_densities_matrix.AliasRowVector(linspace_densities);
+	  Matrix linspace_densities_matrix;
+	  linspace_densities_matrix.AliasRowVector(linspace_densities);
 	
-	data::Save(fx_param_str(module, "ref_densities", "ref_densities.csv"),
-		   ref_densities_matrix);
-	data::Save(fx_param_str(module, "linspace_densities", "linspace_densities.csv"),
-		   linspace_densities_matrix);
+	  data::Save(fx_param_str(module, "ref_densities", "ref_densities.csv"),
+	  ref_densities_matrix);
+	  data::Save(fx_param_str(module, "linspace_densities", "linspace_densities.csv"),
+	  linspace_densities_matrix);
 	*/
 
 
@@ -1220,9 +1222,9 @@ public:
 	  ((double)(param->r_count));
 	
 	/*
-	double second_term =
+	  double second_term =
 	  la::Dot(h_KL_log_densities, ref_densities) / 
-	 ((double)(param->r_count));
+	  ((double)(param->r_count));
 	*/
 
 

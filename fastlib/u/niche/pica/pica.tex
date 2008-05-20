@@ -1,6 +1,6 @@
 \documentclass{article}
 \usepackage{amsmath,amsthm,amsfonts}
-\title{Postitive ICA}
+\title{Positive ICA}
 
 \begin{document}
 
@@ -8,6 +8,22 @@ Let $X$ be a set of points in $\mathbf{R}^n$. We want to find a decomposition of
 $X \in \mathbf{R}^N$
 
 model: $X = A S$
+
+$\tilde{X} = Z X$ for whitening matrix $Z$ (note that $\tilde{X}$ is not centered).
+
+We want to find some
+$Y = W \tilde{X} = W Z X = V X$ ($\Rightarrow X = V^{-1} Y$)
+
+such that $Y$ has minimum sum marginal entropy under constraints that $V^{-1}$ and $Y$ are positive (nonnegative)
+
+
+
+Plumbley's nonnegative ICA is globally converges onto the independent components if they are well-grounded. What if they are not well-grounded?
+
+Can we quantify the number of nonnegative matrix factorization candidate solutions? How many rotations satisfy the positivity constraint
+
+
+
 
 
 \end{document}
