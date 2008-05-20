@@ -1,5 +1,5 @@
 
-void BigSdpNmfObjective::Init(datanode *module, 
+void BigSdpNmfObjective::Init(fx_module *module, 
 			ArrayList<index_t> &rows,
 			ArrayList<index_t> &columns,
       ArrayList<double>  &values) {
@@ -10,6 +10,8 @@ void BigSdpNmfObjective::Init(datanode *module,
 	num_of_rows_=std::max_element(rows_.begin(), rows_.end())+1;
 	num_of_columns_=std::max_element(columns_.begin(), columns_.end())+1;
 	eq_lagrange_mult_.Init(values_.size());
+  rank_=fx_param_int(module_, "rank", 3);
+	new_dim=fx_param_int(module_, "new_dim", 5);
 }
 
 void BigSdpNmfObjective::Destruct() {
@@ -92,7 +94,18 @@ void BigSdpNmfObjective::Project(Matrix *coordinates) {
 
 void BigSdpNmfObjective::set_sigma(double sigma) {
   sigma_=sigma;
-} 
+}
+
+void BigSdpNmfObjective::GiveInitMatrix(Matrix *init_data) {
+  init_data->Init(rank_, (num_of_rows_+num_of_columns_)*new_dim);
+	for(index_t i=0; i<init_data.n_rows(); i++) {
+	  for(index_t j=0; j<init_data.n_cols(); j++) {
+		  init_data.set(i, j, math::Random());
+		}
+	}
+}
+
+
 bool BigSdpNmfObjective::IsDiverging(double objective) {
   return false;
 } 
