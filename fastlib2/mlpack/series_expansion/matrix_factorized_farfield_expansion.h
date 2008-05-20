@@ -67,10 +67,6 @@ class MatrixFactorizedFarFieldExpansion {
 
   ////////// Private Member Variables //////////
 
-  /** @brief The center of expansion.
-   */
-  Vector center_;
-
   /** @brief The out-going representation: the pseudo-charges on the
    *         pseudo-points.
    */
@@ -115,28 +111,6 @@ class MatrixFactorizedFarFieldExpansion {
    */
   double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
 
-  /** @brief Gets the center of expansion.
-   *
-   *  @return The center of expansion for the current far-field expansion.
-   */
-  Vector* get_center() { return &center_; }
-
-  const Vector* get_center() const { return &center_; }
-  
-  /** @brief Set the center of the expansion - assumes that the center
-   *         has been initialized before...
-   *
-   *  @param center The center of expansion whose coordinate values
-   *                will be copied to the center of the given far-field 
-   *                expansion object.
-   */
-  void set_center(const Vector &center) {
-    
-    for(index_t i = 0; i < center.length(); i++) {
-      center_[i] = center[i];
-    }
-  }
-
   /** @brief Gets the outgoing representation.
    */
   const Vector &outgoing_representation() const {
@@ -179,12 +153,10 @@ class MatrixFactorizedFarFieldExpansion {
    int order = -1, const Matrix *query_set = NULL,
    const ArrayList<Tree *> *query_leaf_nodes = NULL);
 
-  /** @brief Refine the far field moment that has been computed before
-   *         up to a new order.
-   */
-  void RefineCoeffs(const Matrix& data, const Vector& weights,
-		    int begin, int end, int order);
-  
+  void CombineBasisFunctions
+  (const MatrixFactorizedFarFieldExpansion &farfield_expansion1,
+   const MatrixFactorizedFarFieldExpansion &farfield_expansion2);
+
   /** @brief Evaluates the far-field coefficients at the given point.
    */
   double EvaluateField(const Matrix& data, int row_num, int order) const;
