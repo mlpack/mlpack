@@ -42,12 +42,24 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::CombineBasisFunctions
 template<typename TKernelAux>
 double MatrixFactorizedLocalExpansion<TKernelAux>::EvaluateField
 (const Matrix& data, int row_num) const {
-  return -1;
+  
+  // Take the dot product of the (row_num -
+  // local_to_local_translation_begin_) th row of the evaluation
+  // operator.
+  double dot_product = 0;
+
+  for(index_t i = 0; i < evaluation_operator_->n_cols(); i++) {
+    dot_product += 
+      evaluation_operator_->get(row_num - local_to_local_translation_begin_, 
+				i) * coeffs_[i];
+  }
+  return dot_product;
 }
 
 template<typename TKernelAux>
 double MatrixFactorizedLocalExpansion<TKernelAux>::EvaluateField
 (const Vector& x_q) const {
+  DEBUG_ASSERT_MSG(false, "Please implement me!");
   return -1;
 }
 
@@ -180,7 +192,7 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 
 template<typename TKernelAux>
 void MatrixFactorizedLocalExpansion<TKernelAux>::TranslateToLocal
-(MatrixFactorizedLocalExpansion &se) {
+(MatrixFactorizedLocalExpansion &se) const {
   
   // Local-to-local translation involves determining the indices of
   // the query points that belong to the local moment to be
