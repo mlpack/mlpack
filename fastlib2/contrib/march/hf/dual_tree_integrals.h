@@ -10,6 +10,7 @@
 #define DUAL_TREE_INTEGRALS_H
 
 #include <fastlib/fastlib.h>
+#include "square_tree.h"
 
 /**
  * Algorithm class for computing two-electron integrals.
@@ -22,6 +23,7 @@ class DualTreeIntegrals {
   FORBID_ACCIDENTAL_COPIES(DualTreeIntegrals);
   
   friend class DualTreeIntegralsTest;
+  friend class FockMatrixTest;
   
  public:
   DualTreeIntegrals() {}
@@ -84,6 +86,7 @@ class DualTreeIntegrals {
       height_ = new_height;
     } // set_height
     
+    
     index_t node_index() const {
       return node_index_;
     } // node_index
@@ -127,13 +130,6 @@ class DualTreeIntegrals {
     
   }; // class IntegralStat
   
-  /**
-   * The stat class for the square tree
-   */
-  class SquareIntegralStat {
-  
-  
-  }; // class SquareIntegralStat
   
  public:
   // This assumes identical bandwidth small Gaussians
@@ -163,14 +159,28 @@ class DualTreeIntegrals {
   double bandwidth_;
   
   // The number of times an approximation is invoked
-  int number_of_approximations_;
+  int coulomb_approximations_;
+  int exchange_approximations_;
   
   // The number of times the base case is called
-  int number_of_base_cases_;
+  int coulomb_base_cases_;
+  int exchange_base_cases_;
   
   // The value eps where the returned integrals are within 1-eps of the true 
   // value
   double epsilon_;
+  
+  // the amount of error allocated to the coulomb matrix
+  double epsilon_coulomb_;
+  
+  // the amount of error allocated to the exchange matrix
+  double epsilon_exchange_;
+  
+  double epsilon_absolute_;
+  double epsilon_coulomb_absolute_;
+  double epsilon_exchange_absolute_;
+  
+  double hybrid_cutoff_;
   
   // The return values are stored here
   // total_integrals_.ref(i, j) is the fock matrix entry i, j
@@ -199,6 +209,11 @@ class DualTreeIntegrals {
   // The normalization constant to the fourth power
   double normalization_constant_fourth_;
   
+  index_t num_mu_nu_base_cases_;
+  
+  index_t num_absolute_prunes_;
+  index_t num_relative_prunes_;
+  
 
   /////////////////////// Functions ///////////////////////////////////
   
@@ -210,6 +225,8 @@ class DualTreeIntegrals {
    */
   void PreOrderTraversal_(IntegralTree* this_node) {
     
+    traversal_index_ = traversal_index_ + 1;
+    
     if (this_node->is_leaf()) {
      
       this_node->stat().set_node_index(traversal_index_);
@@ -217,25 +234,48 @@ class DualTreeIntegrals {
     }
     else {
       
+      this_node->stat().set_node_index(traversal_index_);
+      
       PreOrderTraversal_(this_node->left());
       PreOrderTraversal_(this_node->right());
       
-      this_node->stat().set_node_index(traversal_index_);
          
     }
    
-    traversal_index_ = traversal_index_ + 1;
     
   } // PreOrderTraversal  
   
+  
+  /** 
+   * Returns the global upper bound for the given 
+   */
+  double ComputeUpperBound_() {
+  
+    return 0.0;
+    
+  } // ComputeUpperBound_()
+  
+  double ComputeLowerBound_() {
+  
+    return 0.0;
+  
+  } // ComputeLowerBound_()
+  
+  index_t CountOnDiagonal_(SquareIntegralTree* rho_sigma);
     
   /**
    * Determines if the integral among the four nodes can be approximated
    *
    * TODO: This function is wrong, needs to be updated
    */
-  bool CanApproximate_(IntegralTree* mu, IntegralTree* nu, IntegralTree* rho, 
-                 IntegralTree* sigma, double* approximate_value) { 
+  bool CanApproximateCoulomb_(SquareIntegralTree* mu_nu, 
+                              SquareIntegralTree* rho_sigma, 
+                              double* approximate_value) { 
+                              
+    IntegralTree* mu = mu_nu->query1();
+    IntegralTree* nu = mu_nu->query2();
+    IntegralTree* rho = rho_sigma->query1();
+    IntegralTree* sigma = rho_sigma->query2();
     
     bool can_prune = false;
     
@@ -247,143 +287,323 @@ class DualTreeIntegrals {
     double mu_nu_max_dist = mu->bound().MaxDistanceSq(nu->bound());
     //double mu_nu_mid_dist = mu->bound().MidDistanceSq(nu->bound());
     
-    double mu_rho_min_dist = mu->bound().MinDistanceSq(rho->bound());
-    double mu_rho_max_dist = mu->bound().MaxDistanceSq(rho->bound());
-    //double mu_rho_mid_dist = mu->bound().MidDistanceSq(rho->bound());
     
-    double nu_sigma_min_dist = nu->bound().MinDistanceSq(sigma->bound());
-    double nu_sigma_max_dist = nu->bound().MaxDistanceSq(sigma->bound());
-    //double nu_sigma_mid_dist = nu->bound().MidDistanceSq(sigma->bound());
+    DHrectBound<2> mu_nu_ave;
+    mu_nu_ave.AverageBoxesInit(mu->bound(), nu->bound());
+    DHrectBound<2> rho_sigma_ave;
+    rho_sigma_ave.AverageBoxesInit(rho->bound(), sigma->bound());
+    //ot::Print(mu_nu_ave);
+    //ot::Print(rho_sigma_ave);
+    
+    double four_way_min_dist = mu_nu_ave.MinDistanceSq(rho_sigma_ave);
+    double four_way_max_dist = mu_nu_ave.MaxDistanceSq(rho_sigma_ave);
+    //double four_way_mid_dist = mu_nu_ave.MidDistanceSq(rho_sigma_ave);
+    //printf("four_way_min: %g\n", four_way_min_dist);
     
     double up_bound = ComputeSingleIntegral_(mu_nu_min_dist, rho_sigma_min_dist, 
-        mu_rho_min_dist, nu_sigma_min_dist);
+                                             four_way_min_dist);
     double low_bound = ComputeSingleIntegral_(mu_nu_max_dist, 
-        rho_sigma_max_dist, mu_rho_max_dist, nu_sigma_max_dist);
+                                              rho_sigma_max_dist, 
+                                              four_way_max_dist);
     
-    // This only matters in the absolute error case
-    up_bound = up_bound * normalization_constant_fourth_;
-    low_bound = low_bound * normalization_constant_fourth_;
+    Vector mu_center;
+    mu->bound().CalculateMidpoint(&mu_center);
+    Vector nu_center;
+    nu->bound().CalculateMidpoint(&nu_center);
+    Vector rho_center;
+    rho->bound().CalculateMidpoint(&rho_center);
+    Vector sigma_center;
+    sigma->bound().CalculateMidpoint(&sigma_center);
+    
+    
+    double approx_val = ComputeSingleIntegral_(mu_center, nu_center, rho_center, 
+                                               sigma_center);
+                                               
+    // Need to make this work with on diagonal non-square boxes
+    if (RectangleOnDiagonal_(rho, sigma)) {
+      index_t on_diagonal = CountOnDiagonal_(rho_sigma);
+      index_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
+      up_bound = (on_diagonal * up_bound) + (2 * off_diagonal * up_bound);
+    }
+    else if (rho != sigma) {
+      up_bound = 2 * up_bound * rho->count() * sigma->count();
+      low_bound = 2 * low_bound * rho->count() * sigma->count();
+      approx_val = 2 * approx_val * rho->count() * sigma->count();
+    }
+    else {
+      up_bound = up_bound * rho->count() * sigma->count();
+      low_bound = low_bound * rho->count() * sigma->count();
+      approx_val = approx_val * rho->count() * sigma->count();
+    }
+        
+    
+    
+    
+    up_bound = up_bound * rho_sigma->stat().density_upper_bound();
+    low_bound = low_bound * rho_sigma->stat().density_lower_bound();
+   // printf("density_upper_bound: %g\n", rho_sigma->stat().density_upper_bound());
+    
+    // I'm not sure this is right, but it will work for now
+    approx_val = approx_val * 0.5 * (rho_sigma->stat().density_upper_bound() + 
+                                     rho_sigma->stat().density_lower_bound());
     
     //printf("up_bound = %g, low_bound = %g\n", up_bound, low_bound);
     
     DEBUG_ASSERT(up_bound >= low_bound);
     
-    // I think I need to account for symmetry here
-    // Multiply by 2 because each reference pair counts twice ?
-    double my_allowed_error = epsilon_ * rho->count() * sigma->count()
+    // This is absolute error, I'll need to get the lower bound out of the 
+    // mu_nu square tree to do relative
+    double my_allowed_error = epsilon_coulomb_ * rho->count() * sigma->count()
         / (number_of_basis_functions_ * number_of_basis_functions_);
+   // printf("my_allowed_error: %g\n", my_allowed_error);
     
     // The total error I'm incurring is the max error for one integral times 
     // the number of approximations I'm making
-    double my_max_error = 0.5 * (up_bound - low_bound) * rho->count() * 
-        sigma->count();
+    DEBUG_ASSERT(up_bound >= approx_val);
+    DEBUG_ASSERT(approx_val >= low_bound);
+    double my_max_error = max((up_bound - approx_val), 
+                              (approx_val - low_bound));
     
-        
+    // if using absolute error, then existing code is fine
+    
+    bool below_cutoff;
+    
+    // For hybrid error 
+    // assuming epsilon coulomb is the relative error tolerance
+    if ((mu_nu->stat().entry_upper_bound() < hybrid_cutoff_) && 
+        (mu_nu->stat().entry_lower_bound() > -1 * hybrid_cutoff_)) {
+      
+      // set my allowed_error to be the absolute bound
+      my_allowed_error = my_allowed_error * epsilon_coulomb_absolute_ / 
+                         epsilon_coulomb_;
+                         
+      below_cutoff = true;
+      
+    }
+    else {
+      my_allowed_error = my_allowed_error * mu_nu->stat().entry_lower_bound();
+      below_cutoff = false;
+    }
+    
+    // For relative error
+    /*my_allowed_error = my_allowed_error * mu_nu->stat().entry_lower_bound();*/
+
+    DEBUG_ONLY(*approximate_value = BIG_BAD_NUMBER);
+
     if (my_max_error < my_allowed_error) {
       
       //DEBUG_ASSERT(my_max_error < epsilon_);
       
       can_prune = true;
       
-      // Maybe account for symmetry here too
-      *approximate_value = 0.5 * (up_bound + low_bound);
+      *approximate_value = approx_val;
       //printf("approx_val = %g\n", *approximate_value);
+      
+      if (below_cutoff) {
+        num_absolute_prunes_++;
+      }
+      else {
+        num_relative_prunes_++;
+      }
+      
+    }
+    
+    
+    return can_prune;
+    
+  } // CanApproximateCoulomb_
+  
+  
+  /**
+   * Determines if the integral among the four nodes can be approximated
+   *
+   * Needs to be updated, I don't think I have to worry about overcounting
+   */
+  bool CanApproximateExchange_(SquareIntegralTree* mu_nu, 
+                              SquareIntegralTree* rho_sigma, 
+                              double* approximate_value) { 
+    
+    
+    IntegralTree* mu = mu_nu->query1();
+    IntegralTree* nu = mu_nu->query2();
+    IntegralTree* rho = rho_sigma->query1();
+    IntegralTree* sigma = rho_sigma->query2();
+    
+    if (RectangleOnDiagonal_(rho, sigma)) {
+      DEBUG_ONLY(*approximate_value = BIG_BAD_NUMBER);
+      return false;
+    }
+    
+    
+    bool can_prune = false;
+    
+    double mu_rho_min_dist = mu->bound().MinDistanceSq(rho->bound());
+    double mu_rho_max_dist = mu->bound().MaxDistanceSq(rho->bound());
+    
+    double nu_sigma_min_dist = nu->bound().MinDistanceSq(sigma->bound());
+    double nu_sigma_max_dist = nu->bound().MaxDistanceSq(sigma->bound());
+    
+    DHrectBound<2> mu_rho_ave;
+    mu_rho_ave.AverageBoxesInit(mu->bound(), rho->bound());
+    DHrectBound<2> nu_sigma_ave;
+    nu_sigma_ave.AverageBoxesInit(nu->bound(), sigma->bound());
+    //ot::Print(mu_nu_ave);
+    //ot::Print(rho_sigma_ave);
+    
+    double mu_rho_four_way_min_dist = mu_rho_ave.MinDistanceSq(nu_sigma_ave);
+    double mu_rho_four_way_max_dist = mu_rho_ave.MaxDistanceSq(nu_sigma_ave);
+    //double four_way_mid_dist = mu_nu_ave.MidDistanceSq(rho_sigma_ave);
+    //printf("four_way_min: %g\n", four_way_min_dist);
+    
+    double up_bound = ComputeSingleIntegral_(mu_rho_min_dist, 
+                                             nu_sigma_min_dist, 
+                                             mu_rho_four_way_min_dist);
+    double low_bound = ComputeSingleIntegral_(mu_rho_max_dist, 
+                                              nu_sigma_max_dist, 
+                                              mu_rho_four_way_max_dist);
+                                                    
+        
+    Vector mu_center;
+    mu->bound().CalculateMidpoint(&mu_center);
+    Vector nu_center;
+    nu->bound().CalculateMidpoint(&nu_center);
+    Vector rho_center;
+    rho->bound().CalculateMidpoint(&rho_center);
+    Vector sigma_center;
+    sigma->bound().CalculateMidpoint(&sigma_center);
+    
+    
+    double approx_val = ComputeSingleIntegral_(mu_center, rho_center, 
+                                               nu_center, sigma_center);
+                        
+    DEBUG_ASSERT(up_bound >= approx_val);
+    DEBUG_ASSERT(approx_val >= low_bound);
+    
+    
+    // Need to make this work with on diagonal non-square boxes
+    // this isn't right for exchange, since I don't just count them twice
+    // Adding in the swapped term is analogous to multiplying by 2 in the 
+    // Coulomb case
+    if (rho != sigma) {
+      
+      double mu_sigma_min_dist = mu->bound().MinDistanceSq(sigma->bound());
+      double mu_sigma_max_dist = mu->bound().MaxDistanceSq(sigma->bound());
+      
+      double nu_rho_min_dist = nu->bound().MinDistanceSq(rho->bound());
+      double nu_rho_max_dist = nu->bound().MaxDistanceSq(rho->bound());
+      
+      DHrectBound<2> mu_sigma_ave;
+      mu_sigma_ave.AverageBoxesInit(mu->bound(), sigma->bound());
+      DHrectBound<2> nu_rho_ave;
+      nu_rho_ave.AverageBoxesInit(nu->bound(), rho->bound());
+      
+      double mu_sigma_four_way_min_dist = mu_sigma_ave.MinDistanceSq(nu_rho_ave);
+      double mu_sigma_four_way_max_dist = mu_sigma_ave.MaxDistanceSq(nu_rho_ave);
+      
+      up_bound = up_bound + ComputeSingleIntegral_(mu_sigma_min_dist, 
+                                                   nu_rho_min_dist, 
+                                                   mu_sigma_four_way_min_dist);
+      
+      low_bound = low_bound + ComputeSingleIntegral_(mu_sigma_max_dist, 
+                                                     nu_rho_max_dist, 
+                                                     mu_sigma_four_way_max_dist);
+      
+      approx_val = approx_val + ComputeSingleIntegral_(mu_center, sigma_center, 
+                                                       nu_center, rho_center);
+      
+      DEBUG_ASSERT(up_bound >= approx_val);
+      DEBUG_ASSERT(approx_val >= low_bound);
+      
+    }
+    
+    // Because the exchange integrals have an extra 1/2 factor
+    up_bound = up_bound * 0.5;
+    low_bound = low_bound * 0.5;
+    approx_val = approx_val * 0.5;
+    
+    
+    
+    up_bound = up_bound * rho->count() * sigma->count();
+    low_bound = low_bound * rho->count() * sigma->count();
+    approx_val = approx_val * rho->count() * sigma->count();
+    
+    
+    up_bound = up_bound * rho_sigma->stat().density_upper_bound();
+    low_bound = low_bound * rho_sigma->stat().density_lower_bound();
+    
+    
+    // I'm not sure this is right, but it will work for now
+    approx_val = approx_val * 0.5 * (rho_sigma->stat().density_upper_bound() + 
+                                     rho_sigma->stat().density_lower_bound());
+    
+    
+    DEBUG_ASSERT(up_bound >= low_bound);
+    
+    // This is absolute error, I'll need to get the lower bound out of the 
+    // mu_nu square tree to do relative
+    double my_allowed_error = epsilon_exchange_ * rho->count() * sigma->count()
+      / (number_of_basis_functions_ * number_of_basis_functions_);
+    
+    // The total error I'm incurring is the max error for one integral times 
+    // the number of approximations I'm making
+    DEBUG_ASSERT(up_bound >= approx_val);
+    DEBUG_ASSERT(approx_val >= low_bound);
+    double my_max_error = max((up_bound - approx_val), 
+                              (approx_val - low_bound));
+    
+    // if using absolute error, then existing code is fine
+    
+    // For hybrid error 
+    // assuming epsilon coulomb is the relative error tolerance
+    if ((mu_nu->stat().entry_upper_bound() < hybrid_cutoff_) && 
+        (mu_nu->stat().entry_lower_bound() > -1 * hybrid_cutoff_)) {
+      
+      // set my allowed_error to be the absolute bound
+      my_allowed_error = my_allowed_error * epsilon_coulomb_absolute_ / 
+      epsilon_coulomb_;
       
     }
     else {
-      DEBUG_ONLY(*approximate_value = BIG_BAD_NUMBER);
+      my_allowed_error = my_allowed_error * mu_nu->stat().entry_lower_bound();
+    }
+    
+    // For relative error
+    /*my_allowed_error = my_allowed_error * mu_nu->stat().entry_lower_bound();*/
+    
+    DEBUG_ONLY(*approximate_value = BIG_BAD_NUMBER);
+    if (my_max_error < my_allowed_error) {
+      
+      //DEBUG_ASSERT(my_max_error < epsilon_);
+      
+      can_prune = true;
+      
+      *approximate_value = approx_val;
+      //printf("approx_val = %g\n", *approximate_value);
+      
     }
     
     return can_prune;
     
-  } // CanApproximate_
+  } // CanApproximateExchange_
   
-  /**
-   * Computes the function F from my notes, which is similar to erf 
-   *
-   * TODO: Consider inlining this function
-   *
-   * Also, the integral project notes have a slightly different definition of
-   * this function.  I should make sure they're compatible.  
-   */
-  double ErfLikeFunction_(double z) {
-    
-    if (z == 0) {
-      return 1.0;
-    }
-    else {
-      return((1/sqrt(z)) * sqrt(math::PI) * 0.5 * erf(sqrt(z)));
-    }
   
-  } // ErfLikeFunction_
   
-  /**
-   * Computes a single integral based on the distances between the centers.  
-   * Intended for use in bounding.  
-   */
+
+  double ErfLikeFunction_(double z);
+  
+
   double ComputeSingleIntegral_(double mu_nu_dist, double rho_sigma_dist, 
-                                     double mu_rho_dist, double nu_sigma_dist) {
-    
-    double return_value;
-    
-    return_value = 0.25 * pow(math::PI, 2.5);
-    
-    // the 0.25 comes from the four center distance identity
-    return_value = return_value * ErfLikeFunction_(bandwidth_ * 0.25 * 
-                                                 (mu_rho_dist + nu_sigma_dist));
-    
-    // I added a factor of 1/2, another mistake I think
-    return_value = return_value * 
-        exp(-0.5 * bandwidth_ * (mu_nu_dist + rho_sigma_dist));
-    
-    return return_value;
-    
-  } // ComputeSingleIntegral_
-  
-  /**
-   * Finds the single integral of four Gaussians at the given centers
-   *
-   *
-   * Am I including the density matrix in these computations?
-   *
-   * TODO: consider rewriting this to take the distances as the arguments so 
-   * that it can be used for pruning computations as well.  
-   *
-   * Also, rewrite the math to take advantage of the mixed centers identity
-   */
+                                double four_way_dist);
+                                
   double ComputeSingleIntegral_(const Vector& mu_center, 
                                 const Vector& nu_center, 
                                 const Vector& rho_center, 
-                                const Vector& sigma_center) {
+                                const Vector& sigma_center);
+                                
+  bool RectangleOnDiagonal_(IntegralTree* mu, IntegralTree* nu);
+
     
-    // Should just be able to plug in the formula
-    
-    // Constant in front
-    double return_value = 0.25 * pow((math::PI/bandwidth_), 2.5);
-    
-    double four_centers_dists = la::DistanceSqEuclidean(mu_center, rho_center) + 
-        la::DistanceSqEuclidean(nu_center, sigma_center);
-            
-    // F(\alpha d^2(x_{i j} x_{k l}))
-    // equivalent to F(\alpha 
-    return_value = return_value * 
-        ErfLikeFunction_(bandwidth_ * 0.25 * four_centers_dists);
-    
-    
-    // exp(-\alpha (d^2(x_i, x_j) + d^2(x_k, x_l))
-    double between_centers_dists = 
-        la::DistanceSqEuclidean(mu_center, nu_center) 
-        + la::DistanceSqEuclidean(rho_center, sigma_center);
-    
-    return_value = return_value * 
-        exp(-0.5 * bandwidth_ * between_centers_dists);
-        
-    //printf("computing integral: %g\n", return_value);
-        
-    return return_value;
-    
-  } // ComputeSingleIntegral_
-  
+   
   /**
    * Exhaustively computes the total integrals among the four nodes 
    *
@@ -392,24 +612,131 @@ class DualTreeIntegrals {
    * Bug: Does it overcount when the nodes have more than one point?  I think 
    * it does in the case where rho and sigma are the same node.  There is a 
    * similar problem when mu and nu are the same.
+   *
+   * This is automatically rectangle safe, since all leaves should automatically 
+   * be square when they're on the diagonal
    */
-  void ComputeIntegralsBaseCase_(SquareIntegralTree* mu_nu, 
-                                 IntegralTree* rho, IntegralTree* sigma) {
+  void ComputeCoulombBaseCase_(SquareIntegralTree* mu_nu, 
+                               SquareIntegralTree* rho_sigma) {
     
     IntegralTree* mu = mu_nu->query1();
     IntegralTree* nu = mu_nu->query2();
+    IntegralTree* rho = rho_sigma->query1();
+    IntegralTree* sigma = rho_sigma->query2();
+    
+    double max_entry = -DBL_INF;
+    double min_entry = DBL_INF;
+    
+    DEBUG_ASSERT(mu->end() > nu->begin());
+    DEBUG_ASSERT(rho->end() > sigma->begin());
     
     for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
      
       for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
        
-       // Not sure about this one, maybe it should be something other than 
-       // total integrals here. . .
-        double integral_value = total_integrals_.ref(mu_index, nu_index);
+        double integral_value = coulomb_matrix_.ref(mu_index, nu_index);
         
         for (index_t rho_index = rho->begin(); rho_index < rho->end();
              rho_index++) {
          
+          for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
+               sigma_index++) {
+            
+            Vector mu_vec;
+            centers_.MakeColumnVector(mu_index, &mu_vec);
+            Vector nu_vec;
+            centers_.MakeColumnVector(nu_index, &nu_vec);
+            Vector rho_vec;
+            centers_.MakeColumnVector(rho_index, &rho_vec);
+            Vector sigma_vec;
+            centers_.MakeColumnVector(sigma_index, &sigma_vec);
+            
+            // Multiply by normalization to the fourth, since it appears 
+            // once in each of the four integrals
+            
+            double this_integral = density_matrix_.ref(rho_index, sigma_index) * 
+                ComputeSingleIntegral_(mu_vec, nu_vec, rho_vec, sigma_vec);
+              
+            if (rho != sigma) {
+              this_integral = this_integral * 2;
+            }
+            
+            integral_value = integral_value + this_integral;
+            
+            } // sigma
+          
+        } // rho
+        
+        // Set both to account for mu/nu symmetry
+        coulomb_matrix_.set(mu_index, nu_index, integral_value);
+        // Necessary to fill in the lower triangle
+        if (mu != nu) {
+          coulomb_matrix_.set(nu_index, mu_index, integral_value);
+        }
+        
+        if (integral_value > max_entry) {
+          max_entry = integral_value;
+        }
+        if (integral_value < min_entry) {
+          min_entry = integral_value;
+        }
+        
+      } // nu
+      
+    } // mu
+    
+    mu_nu->stat().set_entry_upper_bound(max_entry);
+    mu_nu->stat().set_entry_lower_bound(min_entry);
+    
+    index_t new_refs = rho->count() * sigma->count();
+    
+   if (rho != sigma) {
+      new_refs = 2 * new_refs;
+      DEBUG_ASSERT(!((rho->begin() < sigma->begin()) && 
+                     (rho->end() > sigma->end())));
+      DEBUG_ASSERT(!((rho->begin() > sigma->begin()) && 
+                     (rho->end() < sigma->end())));
+    }
+    
+    mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                           - new_refs);
+    
+  } // ComputeCoulombBaseCase_
+  
+  /**
+    * Exhaustively computes the total integrals among the four nodes 
+   *
+   * TODO: account for symmetry here, particularly the mu+nu/rho+sigma kind
+   *
+   * Bug: Does it overcount when the nodes have more than one point?  I think 
+   * it does in the case where rho and sigma are the same node.  There is a 
+   * similar problem when mu and nu are the same.
+   *
+   * Also rectangle safe, see above.
+   */
+  void ComputeExchangeBaseCase_(SquareIntegralTree* mu_nu, 
+                                SquareIntegralTree* rho_sigma) {
+    
+    IntegralTree* mu = mu_nu->query1();
+    IntegralTree* nu = mu_nu->query2();
+    IntegralTree* rho = rho_sigma->query1();
+    IntegralTree* sigma = rho_sigma->query2();
+    
+    double max_entry = -DBL_INF;
+    double min_entry = DBL_INF;
+    
+    DEBUG_ASSERT(mu->end() > nu->begin());
+    DEBUG_ASSERT(rho->end() > sigma->begin());
+    
+    for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+      
+      for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+        
+        double integral_value = exchange_matrix_.ref(mu_index, nu_index);
+        
+        for (index_t rho_index = rho->begin(); rho_index < rho->end();
+             rho_index++) {
+          
           for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
                sigma_index++) {
             
@@ -427,256 +754,517 @@ class DualTreeIntegrals {
             // Multiply by normalization to the fourth, since it appears 
             // once in each of the four integrals
             
-            double this_integral = density_matrix_.ref(rho_index, sigma_index) * 
-                normalization_constant_fourth_ * 
-                ComputeSingleIntegral_(mu_vec, nu_vec, rho_vec, sigma_vec);
+            double kl_integral = density_matrix_.ref(rho_index, sigma_index) * 
+              ComputeSingleIntegral_(mu_vec, rho_vec, nu_vec, sigma_vec) * 0.5;
+              
+            integral_value = integral_value + kl_integral;
+              
+            // Account for the rho-sigma partial symmetry
+            // Need to make this rectangle safe
+            if (rho != sigma) {  
             
-            /*
-            if (mu_index == 0 && nu_index == 1) {
-              printf("this_integral = %g\n", this_integral);
+              double lk_integral = density_matrix_.ref(sigma_index, rho_index) * 
+                ComputeSingleIntegral_(mu_vec, sigma_vec, nu_vec, rho_vec) * 
+                0.5;
+            
+              integral_value = integral_value + lk_integral;
+              
             }
-            */
-            
-            // if nodes are the same, both will be counted
-            // Have to check nodes, not indices
-            /*if (rho == sigma) {
-              
-              if (mu_index == 0 && nu_index == 1) {
-                printf("considering %d, %d\n", rho_index, sigma_index);
-              }*/
-              integral_value = integral_value + this_integral;
-            /*}*/
-            // if nodes are different, then have to account for (sigma, rho)
-            // pair as well
-            /*else {
-              
-              if (mu_index == 0 && nu_index == 1) {
-                printf("considering(double) %d, %d\n", rho_index, sigma_index);
-              }
-              integral_value = integral_value + 2 * this_integral;
-            }*/
-        
-            // I should be able to compute rho/sigma and sigma/rho here as well    
-            // It should only take figuring out some kind of four-way bound on 
-            // the indices in the recursive call
-           /* double old_rho_sigma = total_integrals_.ref(rho_index, sigma_index);
-            old_rho_sigma = old_rho_sigma + 
-                density_matrix_.ref(mu_index, nu_index) * this_integral;
-                
-            total_integrals_.set(rho_index, sigma_index, old_rho_sigma);
-            total_integrals_.set(sigma_index, rho_index, old_rho_sigma);
-            
-            */
           } // sigma
           
         } // rho
         
         // Set both to account for mu/nu symmetry
-        total_integrals_.set(mu_index, nu_index, integral_value);
+        exchange_matrix_.set(mu_index, nu_index, integral_value);
         // Necessary to fill in the lower triangle
         if (mu != nu) {
-          total_integrals_.set(nu_index, mu_index, integral_value);
+          exchange_matrix_.set(nu_index, mu_index, integral_value);
         }
+        
+        if (integral_value > max_entry) {
+          max_entry = integral_value;
+        }
+        if (integral_value < min_entry) {
+          min_entry = integral_value;
+        }        
         
       } // nu
       
     } // mu
     
-  } // ComputeIntegralsBaseCase_
+    mu_nu->stat().set_entry_upper_bound(max_entry);
+    mu_nu->stat().set_entry_lower_bound(min_entry);
+    
+    index_t new_refs = rho->count() * sigma->count();
+    if (rho != sigma) {
+      new_refs = 2 * new_refs;
+    }
+    mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                           - new_refs);
+    
+  } // ComputeExchangeBaseCase_
+  
   
   /**
    * Once an integral is approximated, this function fills in the approximate
    * value in the Fock matrix.
    * 
    * TODO: think about a smarter way to do this than loops (they won't save me 
-   * much time.  Submatrices?
+   * much time.  Submatrices? - submatrices don't exist, this might be the best
    */
-  void FillApproximation_(IntegralTree* mu, IntegralTree* nu, 
-                          IntegralTree* rho, IntegralTree* sigma,
-                          double integral_approximation) {
+  void FillApproximationCoulomb_(SquareIntegralTree* mu_nu, 
+                                 SquareIntegralTree* rho_sigma,
+                                 double integral_approximation) {
   
+    IntegralTree* mu = mu_nu->query1();
+    IntegralTree* nu = mu_nu->query2();
+    IntegralTree* rho = rho_sigma->query1();
+    IntegralTree* sigma = rho_sigma->query2();
   
+  // if mu and nu overlap, recursively call this on children
+  // else if rho and sigma overlap, recursively call on children
+  // Make sure to update the integral approximation (for both) 
+  // and the bounds if splitting mu_nu
+  // else do the below
   
-    for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+    if (RectangleOnDiagonal_(mu, nu)) {
+    
+      PropagateBoundsDown_(mu_nu);
+    
+    // this doesn't hold because I haven't propagated them down this far
+      DEBUG_ASSERT(mu_nu->stat().remaining_references() ==
+                   mu_nu->left()->stat().remaining_references());
       
-      for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
-        
-        double new_value = total_integrals_.ref(mu_index, nu_index) + 
-            (rho->count() * sigma->count() * integral_approximation);
-        
-        // Set both to account for mu/nu symmetry
-        total_integrals_.set(mu_index, nu_index, new_value);
-        if (mu != nu) {
-          total_integrals_.set(nu_index, mu_index, new_value);
-        }
-        
-      } // nu
+      FillApproximationCoulomb_(mu_nu->left(), rho_sigma, 
+                                integral_approximation);
+      FillApproximationCoulomb_(mu_nu->right(), rho_sigma, 
+                                integral_approximation);
       
-    } // mu
+      PropagateBoundsUp_(mu_nu);
+      
+      /*
+      // Should be fine if the above statement holds
+      mu_nu->stat().set_remaining_references(
+           mu_nu->left()->stat().remaining_references());
+      
+      // Because it's already been updated for the children
+      mu_nu->stat().set_approximation_val(0.0);
+      
+      // It's just based on the children, right?
+      // This is the same code as the propagate bounds function
+      mu_nu->stat().set_entry_upper_bound(
+          max(mu_nu->left()->stat().entry_upper_bound(), 
+              mu_nu->right()->stat().entry_upper_bound()));
+      
+      mu_nu->stat().set_entry_lower_bound(
+           min(mu_nu->left()->stat().entry_lower_bound(), 
+               mu_nu->right()->stat().entry_lower_bound()));
+      
+      */
+      
+    }
+    else if (RectangleOnDiagonal_(rho, sigma)) {
+    
+      FillApproximationCoulomb_(mu_nu, rho_sigma->left(), 
+                                integral_approximation);
+      FillApproximationCoulomb_(mu_nu, rho_sigma->right(), 
+                                integral_approximation);
+                                
+      // Because the approximation has been counted twice
+      mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() - 
+                                          integral_approximation);
+      mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() - 
+                                          integral_approximation);
+    
+    }
+    else {
   
-  } // FillApproximation_()
+    
+      for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+        
+        for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+          
+          double new_value = coulomb_matrix_.ref(mu_index, nu_index) + 
+              integral_approximation;
+          // Set both to account for mu/nu symmetry
+          // This uses the same logic as the base case
+          coulomb_matrix_.set(mu_index, nu_index, new_value);
+          if (mu != nu) {
+            coulomb_matrix_.set(nu_index, mu_index, new_value);
+          }
+          
+        } // nu
+        
+      } // mu
+      
+      mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() + 
+                                          integral_approximation);
+
+      mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() + 
+                                          integral_approximation);
+                                          
+      index_t new_refs = rho->count() * sigma->count();
+      
+      if (rho != sigma) {
+        DEBUG_ASSERT(!((rho->begin() <= sigma->begin()) && 
+                       (rho->end() >= sigma->end())));
+        DEBUG_ASSERT(!((rho->begin() >= sigma->begin()) && 
+                       (rho->end() <= sigma->end())));
+        new_refs = 2 * new_refs;
+      }
+      
+      mu_nu->stat().set_remaining_references(
+          mu_nu->stat().remaining_references() - new_refs);
+                                             
+      mu_nu->stat().set_approximation_val(integral_approximation);
+      
+    }
+  
+  } // FillApproximationCoulomb_()
   
   /**
-   * Handles the recursive part of the algorithm
-   *
-   * TODO: Figure out the recursive expansion pattern for four nodes
-   *
-   * TODO: make sure I take advantage of symmetry using some kind of a 
-   * tree traversal
+    * Once an integral is approximated, this function fills in the approximate
+   * value in the Fock matrix.
+   * 
+   * TODO: think about a smarter way to do this than loops (they won't save me 
+   * much time.  Submatrices? - submatrices don't exist, this might be the best
    */
-  void ComputeIntegralsRecursion_(SquareIntegralTree* query, 
-                                  SquareIntegralTree* reference) {
+  void FillApproximationExchange_(SquareIntegralTree* mu_nu, 
+                                 SquareIntegralTree* rho_sigma,
+                                 double integral_approximation) {
     
+    IntegralTree* mu = mu_nu->query1();
+    IntegralTree* nu = mu_nu->query2();
+    IntegralTree* rho = rho_sigma->query1();
+    IntegralTree* sigma = rho_sigma->query2();
     
-    double integral_approximation;
-    
-    // Makes the if statements below simpler
-    // might be slow though - lots of extra calls on the stack
-    if ((query == NULL || reference == NULL)) {
-      return;
+    if (RectangleOnDiagonal_(mu, nu)) {
+      
+      PropagateBoundsDown_(mu_nu);
+      
+      // this doesn't hold because I haven't propagated them down this far
+      DEBUG_ASSERT(mu_nu->stat().remaining_references() ==
+                   mu_nu->left()->stat().remaining_references());
+      
+      FillApproximationExchange_(mu_nu->left(), rho_sigma, 
+                                integral_approximation);
+      FillApproximationExchange_(mu_nu->right(), rho_sigma, 
+                                integral_approximation);
+      
+      PropagateBoundsUp_(mu_nu);
+      
     }
-    //Not sure if I should check for approximations or leaves first
-    else if (query->is_leaf() && reference->is_leaf()) {
+    else if (RectangleOnDiagonal_(rho, sigma)) {
       
-      number_of_base_cases_++;
-      ComputeIntegralsBaseCase_(query, reference);
+      FillApproximationExchange_(mu_nu, rho_sigma->left(), 
+                                integral_approximation);
+      FillApproximationExchange_(mu_nu, rho_sigma->right(), 
+                                integral_approximation);
       
-    }      
-    else if (CanApproximate_(query, reference, &integral_approximation)) {
+      // Because the approximation has been counted twice
+      mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() - 
+                                          integral_approximation);
+      mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() - 
+                                          integral_approximation);
+      
+    }
+    else {
+    
+      for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+        
+        for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+          
+          double new_value = exchange_matrix_.ref(mu_index, nu_index) + 
+          integral_approximation;
+          // Set both to account for mu/nu symmetry
+          // This uses the same logic as the base case
+          exchange_matrix_.set(mu_index, nu_index, new_value);
+          // I could probably check for this on the outside and make this function
+          // faster
+          if (mu != nu) {
+            exchange_matrix_.set(nu_index, mu_index, new_value);
+          }
+          
+        } // nu
+        
+      } // mu
+      
+      mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() + 
+                                          integral_approximation);
+      
+      mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() + 
+                                          integral_approximation);
+      
+      index_t new_refs = rho->count() * sigma->count();
+      if (rho != sigma) {
+        new_refs = 2 * new_refs;
+      }
+      mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                             - new_refs);
+      
+      mu_nu->stat().set_approximation_val(integral_approximation);
+    
+    }
+    
+  } // FillApproximationExchange_()
+  
+  
+  /**
+   * Send bound information down the tree before recursive call.
+   */
+  void PropagateBoundsDown_(SquareIntegralTree* query) {
+  
+    query->left()->stat().set_remaining_references(
+        query->stat().remaining_references());
+    query->right()->stat().set_remaining_references(
+        query->stat().remaining_references());
+    
+    if (query->stat().approximation_val() != 0.0) {
+      
+      query->left()->stat().set_entry_upper_bound(
+          query->left()->stat().entry_upper_bound() + 
+          query->stat().approximation_val());
+      query->right()->stat().set_entry_upper_bound(
+          query->right()->stat().entry_upper_bound() + 
+          query->stat().approximation_val());
+      
+      query->left()->stat().set_entry_lower_bound(
+          query->left()->stat().entry_lower_bound() + 
+          query->stat().approximation_val());
+      query->right()->stat().set_entry_lower_bound(
+          query->right()->stat().entry_lower_bound() + 
+          query->stat().approximation_val());
+        
+      query->stat().set_approximation_val(0.0);
+      
+    }
+  
+  } // PropagateBoundsDown_()
+  
+  /** 
+   * Send bound information up the tree after a recursive call
+   */
+  void PropagateBoundsUp_(SquareIntegralTree* query) {
+  
+    double min_entry = query->left()->stat().entry_lower_bound();
+    double max_entry = query->left()->stat().entry_upper_bound();
+    
+    min_entry = min(min_entry, 
+                    query->right()->stat().entry_lower_bound());
+    max_entry = max(max_entry, 
+                    query->right()->stat().entry_upper_bound());
+                    
+    query->stat().set_entry_upper_bound(max_entry);
+    query->stat().set_entry_lower_bound(min_entry);
+   
+    query->stat().set_remaining_references(
+        query->left()->stat().remaining_references());
+    
+    DEBUG_ASSERT(query->stat().remaining_references() == 
+                 query->right()->stat().remaining_references());
+  
+  } // PropagateBoundsUp_()
+  
+  
+  /**  
+   * Handles the recursive calls for the Coulomb part of the computation
+   */
+  void ComputeCoulombRecursion_(SquareIntegralTree* query, 
+                                SquareIntegralTree* reference) {
+  
+    DEBUG_ASSERT(query->query1()->end() > query->query2()->begin());
+    DEBUG_ASSERT(reference->query1()->end() > reference->query2()->begin());
+                                           
+    double integral_approximation;
+         
+    if (query->is_leaf() && reference->is_leaf()) {
+    
+      coulomb_base_cases_++;
+      ComputeCoulombBaseCase_(query, reference);
+      
+    }
+    else if(CanApproximateCoulomb_(query, reference, &integral_approximation)) {
       
       DEBUG_ASSERT(integral_approximation != BIG_BAD_NUMBER);
       
-      number_of_approximations_++;
+      coulomb_approximations_++;
       
-      FillApproximation_(query, reference, integral_approximation);
+      FillApproximationCoulomb_(query, reference, integral_approximation);
       
+    }        
+    else if (query->is_leaf()) {
+    // Don't need to propagate stats
+    
+      ComputeCoulombRecursion_(query, reference->left());
+      ComputeCoulombRecursion_(query, reference->right());
+    
     }
-    else if (query->is_leaf()){
-    
-      ComputeIntegralsRecursion_(query, reference->left_left_child());
-      ComputeIntegralsRecursion_(query, reference->left_right_child());
-      ComputeIntegralsRecursion_(query, reference->right_left_child());
-      ComputeIntegralsRecursion_(query, reference->right_right_child());
-    
-    }    
     else if (reference->is_leaf()) {
-    
-      ComputeIntegralsRecursion_(query->left_left_child(), reference);
-      ComputeIntegralsRecursion_(query->left_right_child(), reference);
-      ComputeIntegralsRecursion_(query->right_left_child(), reference);
-      ComputeIntegralsRecursion_(query->right_right_child(), reference);
+    // Need to propagate some stats
       
+      PropagateBoundsDown_(query);
+      
+      ComputeCoulombRecursion_(query->left(), reference);
+      ComputeCoulombRecursion_(query->right(), reference);
+      
+      PropagateBoundsUp_(query);
+    
     }
     else {
-    
-    // I have to do better than this, symmetry is being ignored
-      ComputeIntegralsRecursion_(query->left_left_child(), 
-                                 reference->left_left_child());
-      ComputeIntegralsRecursion_(query->left_left_child(), 
-                                 reference->left_right_child());
-      ComputeIntegralsRecursion_(query->left_left_child(), 
-                                 reference->right_left_child());
-      ComputeIntegralsRecursion_(query->left_left_child(), 
-                                 reference->right_right_child());
       
-      ComputeIntegralsRecursion_(query->left_right_child(), 
-                                 reference->left_left_child());
-      ComputeIntegralsRecursion_(query->left_right_child(), 
-                                 reference->left_right_child());
-      ComputeIntegralsRecursion_(query->left_right_child(), 
-                                 reference->right_left_child());
-      ComputeIntegralsRecursion_(query->left_right_child(), 
-                                 reference->right_right_child());
+      PropagateBoundsDown_(query);
       
-      ComputeIntegralsRecursion_(query->right_left_child(), 
-                                 reference->left_left_child());
-      ComputeIntegralsRecursion_(query->right_left_child(), 
-                                 reference->left_right_child());
-      ComputeIntegralsRecursion_(query->right_left_child(), 
-                                 reference->right_left_child());
-      ComputeIntegralsRecursion_(query->right_left_child(), 
-                                 reference->right_right_child());
+      ComputeCoulombRecursion_(query->left(), reference->left());
+      ComputeCoulombRecursion_(query->left(), reference->right());
       
-      ComputeIntegralsRecursion_(query->right_right_child(), 
-                                 reference->left_left_child());
-      ComputeIntegralsRecursion_(query->right_right_child(), 
-                                 reference->left_right_child());
-      ComputeIntegralsRecursion_(query->right_right_child(), 
-                                 reference->right_left_child());
-      ComputeIntegralsRecursion_(query->right_right_child(), 
-                                 reference->right_right_child());
-          
-      
-    }
-    
-    /*
-    else {
-    
-      IntegralTree* mu = query->query1();
-      IntegralTree* nu = query->query2();
-      
-      IntegralTree* rho = reference->query1();
-      IntegralTree* sigma = reference->query2();
-    
-      index_t mu_height = mu->stat().height();
-      index_t nu_height = nu->stat().height();
-      index_t rho_height = rho->stat().height();
-      index_t sigma_height = sigma->stat().height();
-      
-      index_t greatest_height = mu_height;
-      
-      if (nu_height > greatest_height) {
-        greatest_height = nu_height;
-      }
-      if (rho_height > greatest_height) {
-        greatest_height = rho_height;
-      }
-      if (sigma_height > greatest_height) {
-        greatest_height = sigma_height;
-      }
-      
-      DEBUG_ASSERT(greatest_height > 0);
-      
-      if (greatest_height == mu_height) {
-        
-        DEBUG_ASSERT(!(mu->is_leaf()));
-        
-        ComputeIntegralsRecursion_(mu->left(), nu, rho, sigma);
-        ComputeIntegralsRecursion_(mu->right(), nu, rho, sigma);
-        
-      }
-      else if (greatest_height == nu_height) {
+      ComputeCoulombRecursion_(query->right(), reference->left());
+      ComputeCoulombRecursion_(query->right(), reference->right());
 
-        DEBUG_ASSERT(!(nu->is_leaf()));
+      PropagateBoundsUp_(query);
       
-        ComputeIntegralsRecursion_(mu, nu->left(), rho, sigma);
-        ComputeIntegralsRecursion_(mu, nu->right(), rho, sigma);
-        
-      }
-      else if (greatest_height == rho_height) {
-      
-        DEBUG_ASSERT(!(rho->is_leaf()));
-
-        ComputeIntegralsRecursion_(mu, nu, rho->left(), sigma);
-        ComputeIntegralsRecursion_(mu, nu, rho->right(), sigma);
-      
-      }
-      else {
-        
-        DEBUG_ASSERT(greatest_height == sigma_height);
-        
-        DEBUG_ASSERT(!(sigma->is_leaf()));
-        
-        ComputeIntegralsRecursion_(mu, nu, rho, sigma->left());
-        ComputeIntegralsRecursion_(mu, nu, rho, sigma->right());
-        
-      }
+    }   
               
-    } */
-    
-  } // ComputeIntegralsRecursion_
+  } // ComputeCoulombRecursion_()
   
+
+  /**  
+  * Handles the recursive calls for the Exchange part of the computation
+  */
+  void ComputeExchangeRecursion_(SquareIntegralTree* query, 
+                                SquareIntegralTree* reference) {
     
+    double integral_approximation;
+    
+    if (query->is_leaf() && reference->is_leaf()) {
+      
+      exchange_base_cases_++;
+      ComputeExchangeBaseCase_(query, reference);
+      
+    }
+    else if (CanApproximateExchange_(query, reference, &integral_approximation)) {
+      
+      DEBUG_ASSERT(integral_approximation != BIG_BAD_NUMBER);
+      
+      exchange_approximations_++;
+      
+      FillApproximationExchange_(query, reference, integral_approximation);
+      
+    }        
+    else if (query->is_leaf()) {
+      // Don't need to propagate stats
+      
+      ComputeExchangeRecursion_(query, reference->left());
+      ComputeExchangeRecursion_(query, reference->right());
+      
+    }
+    else if (reference->is_leaf()) {
+      // Need to propagate some stats
+      
+      PropagateBoundsDown_(query);
+      
+      ComputeExchangeRecursion_(query->left(), reference);
+      ComputeExchangeRecursion_(query->right(), reference);
+      
+      PropagateBoundsUp_(query);
+      
+    }
+    else {
+      
+      PropagateBoundsDown_(query);
+      
+      ComputeExchangeRecursion_(query->left(), reference->left());
+      ComputeExchangeRecursion_(query->left(), reference->right());
+      
+      ComputeExchangeRecursion_(query->right(), reference->left());
+      ComputeExchangeRecursion_(query->right(), reference->right());
+      
+      PropagateBoundsUp_(query);
+      
+    }
+       
+  } // ComputeExchangeRecursion_()
+
+
+  /**
+   * Set the upper and lower bounds on a result in the root node of the square 
+   * tree.  These bounds are then propagated up and down the tree during the 
+   * recursive calls.  
+   *
+   * TODO: Needs unit tests
+   *
+   * It is possible to tighten these for children, but only in the case where 
+   * the global density bounds have the same sign.  
+   */
+  void SetEntryBounds_() {
+  
+    double density_upper = square_tree_->stat().density_upper_bound();
+    double density_lower = square_tree_->stat().density_lower_bound();
+    
+    DEBUG_ASSERT(density_upper >= density_lower);
+    
+    double entry_upper;
+    double entry_lower;
+    
+    double max_dist = square_tree_->query1()->bound().MaxDistanceSq(
+        square_tree_->query2()->bound());
+    
+    if (density_upper > 0) {
+      // then, the largest value is when all the distances are 0
+      
+      entry_upper = density_upper * number_of_basis_functions_ * 
+                    number_of_basis_functions_;
+    
+    }
+    else {
+      // then, the largest value is when all the distances are max
+    
+      entry_upper = density_upper * 
+                    ComputeSingleIntegral_(max_dist, max_dist, max_dist) * 
+                    number_of_basis_functions_ * number_of_basis_functions_;
+    
+    }
+    
+    if (density_lower > 0) {
+      //then, the smallest value is when all the distances are max
+    
+      entry_lower = density_lower * 
+                    ComputeSingleIntegral_(max_dist, max_dist, max_dist) * 
+                    number_of_basis_functions_ * number_of_basis_functions_;
+    
+    }
+    else {
+    
+      entry_lower = density_lower * number_of_basis_functions_ * 
+                    number_of_basis_functions_;
+    
+    }
+    
+    DEBUG_ASSERT(entry_upper >= entry_lower);
+    
+    square_tree_->stat().set_entry_upper_bound(entry_upper);
+    square_tree_->stat().set_entry_lower_bound(entry_lower);
+  
+  } // SetEntryBounds_
+  
+  /** 
+   * Resets the tree after the Coulomb computation and before the exchange
+   */
+  void ResetTree_(SquareIntegralTree* root) {
+    
+    if (root != NULL) {
+      root->stat().set_remaining_references(number_of_basis_functions_ * 
+                                            number_of_basis_functions_);
+                                          
+      root->stat().set_approximation_val(0.0);
+    
+      ResetTree_(root->left());
+      ResetTree_(root->right());
+    
+    }
+    
+  } // ResetTree_()
+  
+      
 public:
   
   /**
@@ -684,29 +1272,55 @@ public:
    * bandwidth
    */
   void Init(const Matrix& centers_in, struct datanode* mod, 
-            const Matrix& density_in, const Matrix& core_in) {
+            const Matrix& density_in, const Matrix& core_in, double band) {
   
     centers_.Copy(centers_in);
     
     module_ = mod;
     
-    bandwidth_ = fx_param_double(module_, "bandwidth", 0.1);
+    bandwidth_ = band;
     
-    epsilon_ = fx_param_double(module_, "epsilon", 0.00001);
+    epsilon_ = fx_param_double(module_, "epsilon", 0.01);
+    // Later, I can make the factor a tuning parameter
+    epsilon_coulomb_ = 0.5 * epsilon_;
+    epsilon_exchange_ = 0.5 * epsilon_;
     
-    number_of_approximations_ = 0;
-    number_of_base_cases_ = 0;
+    epsilon_absolute_ = 
+        fx_param_double(module_, "epsilon_absolute", 1.0);
+        
+    epsilon_coulomb_absolute_ = 0.5 * epsilon_absolute_;
+    epsilon_exchange_absolute_ = 0.5 * epsilon_absolute_;
+    
+    hybrid_cutoff_ = fx_param_double(module_, "hybrid_cutoff", 0.1);
+    
+    coulomb_approximations_ = 0;
+    exchange_approximations_ = 0;
+    coulomb_base_cases_ = 0;
+    exchange_base_cases_ = 0;
+    num_absolute_prunes_ = 0;
+    num_relative_prunes_ = 0;
     
     number_of_basis_functions_ = centers_.n_cols();
     fx_format_result(module_, "N", "%d", number_of_basis_functions_);
     
+    // The common normalization constant of all the Gaussians
+    normalization_constant_fourth_ = pow((2 * bandwidth_ / math::PI), 3);
+    
     // Not sure this is right, might want to consider starting with the previous
     // iteration's version
-    total_integrals_.Copy(core_in);
+    fock_matrix_.Copy(core_in);
     
     density_matrix_.Copy(density_in);
+    
+    coulomb_matrix_.Init(number_of_basis_functions_, 
+                         number_of_basis_functions_);
+    coulomb_matrix_.SetZero();
+    
+    exchange_matrix_.Init(number_of_basis_functions_, 
+                          number_of_basis_functions_);
+    exchange_matrix_.SetZero();
         
-    leaf_size_ = fx_param_int(module_, "leaf_size", 30);
+    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
     
     tree_ = tree::MakeKdTreeMidpoint<IntegralTree>(centers_, leaf_size_, 
                 &old_from_new_centers_, NULL);
@@ -714,26 +1328,37 @@ public:
     // Set up the indices of the nodes for symmetry pruning
     traversal_index_ = 0;
     PreOrderTraversal_(tree_);
+    //tree_->Print();
     
-    // The common normalization constant of all the Gaussians
-    normalization_constant_fourth_ = pow((2 * bandwidth_ / math::PI), 3);
+    square_tree_ = new SquareIntegralTree();
+    square_tree_->Init(tree_, tree_, density_matrix_);
+    //square_tree_->Print();
+    SetEntryBounds_();
+    
+    
+    num_mu_nu_base_cases_ = 0;
     
   } // Init
-  
-  /**
-   * Resets the tree and parameters for the next Fock matrix computation
-   */
-  void ResetTrees(const Matrix& new_density) {
-
-  } // ResetTrees
   
   /**
    * Drives the computation, assuming that all the parameters are correct
    */
   void ComputeFockMatrix() {
     
-    ComputeIntegralsRecursion_(tree_, tree_, tree_, tree_);  
-   // ComputeIntegralsBaseCase_(tree_, tree_, tree_, tree_);
+    //tree_->Print();
+    //square_tree_->Print();
+    
+    ComputeCoulombRecursion_(square_tree_, square_tree_);  
+    // Will need to be followed by clearing the tree and computing the exchange 
+    // matrix
+    // I think this is the only resetting the tree will need
+    SetEntryBounds_();
+    ResetTree_(square_tree_);
+    ComputeExchangeRecursion_(square_tree_, square_tree_);
+    // Then by adding both into the Fock matrix
+    la::AddTo(coulomb_matrix_, &fock_matrix_);
+    la::Scale(-1, &exchange_matrix_);
+    la::AddTo(exchange_matrix_, &fock_matrix_);
     
   } // ComputeTwoElectronIntegrals
   
@@ -741,15 +1366,39 @@ public:
    * Returns the computed Fock matrix.  For now, it just prints it, but should 
    * eventually return it in a useable form for the SCF procedure.
    */
-  void OutputFockMatrix() {
+  void OutputFockMatrix(Matrix* coulomb_out, Matrix* exchange_out, 
+                        ArrayList<index_t>* old_from_new) {
   
     //printf("number_of_approximations_ = %d\n", number_of_approximations_);
     //printf("number_of_base_cases_ = %d\n\n", number_of_base_cases_);
-    fx_format_result(module_, "number_of_approximations", "%d", 
-                     number_of_approximations_);
-    fx_format_result(module_, "number_of_base_cases", "%d", 
-                     number_of_base_cases_);
-    //total_integrals_.PrintDebug();
+    fx_format_result(module_, "epsilon_coulomb", "%g", epsilon_coulomb_);
+    fx_format_result(module_, "epsilon_exchange", "%g", epsilon_exchange_);
+    fx_format_result(module_, "coulomb_approximations", "%d", 
+                     coulomb_approximations_);
+    fx_format_result(module_, "exchange_approximations", "%d", 
+                     exchange_approximations_);
+    fx_format_result(module_, "coulomb_base_cases", "%d", 
+                     coulomb_base_cases_);
+    fx_format_result(module_, "exchange_base_cases", "%d", 
+                     exchange_base_cases_);
+    fx_format_result(module_, "normalization", "%g", 
+                     normalization_constant_fourth_);
+    fx_format_result(module_, "abs_prunes", "%d", num_absolute_prunes_);
+    fx_format_result(module_, "rel_prunes", "%d", num_relative_prunes_);
+                     
+    //fx_format_result(module_, "num_0_3_bases", "%d", num_mu_nu_base_cases_);
+    
+   /* printf("Multi-tree Coulomb:\n");
+    coulomb_matrix_.PrintDebug();
+    
+    printf("Multi-tree Exchange:\n");
+    exchange_matrix_.PrintDebug();
+    */
+    
+    coulomb_out->Copy(coulomb_matrix_);
+    exchange_out->Copy(exchange_matrix_);
+    
+    old_from_new->Copy(old_from_new_centers_);
   
   } // OutputFockMatrix()
   
