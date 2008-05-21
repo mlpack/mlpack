@@ -1,4 +1,5 @@
 #include "matrix_factorized_fmm.h"
+#include "naive_kde.h"
 #include "fastlib/fastlib.h"
 #include "mlpack/kde/dataset_scaler.h"
 #include "mlpack/series_expansion/matrix_factorized_kernel_aux.h"
@@ -58,6 +59,20 @@ int main(int argc, char *argv[]) {
     MatrixFactorizedFMM<GaussianKernelMatrixFactorizedAux> fast_kde;
     fast_kde.Init(references, kde_module);
     fast_kde.Compute(queries, &fast_kde_results);
+    
+    FILE *fast_kde_output = fopen("fast_kde_output.txt", "w+");
+    for(index_t q = 0; q < fast_kde_results.length(); q++) {
+      fprintf(fast_kde_output, "%g\n", fast_kde_results[q]);
+    }
+    fclose(fast_kde_output);
+
+    if(do_naive) {
+      NaiveKde<GaussianKernel> naive_kde;
+      naive_kde.Init(queries, references, kde_module);
+      naive_kde.Compute();     
+      naive_kde.PrintDebug();
+      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
+    }    
   }
   else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
     MatrixFactorizedFMM<EpanKernelMatrixFactorizedAux> fast_kde;
@@ -65,6 +80,20 @@ int main(int argc, char *argv[]) {
 
     fast_kde.Init(references, kde_module);
     fast_kde.Compute(queries, &fast_kde_results);
+
+    FILE *fast_kde_output = fopen("w+", "fast_kde_output.txt");
+    for(index_t q = 0; q < fast_kde_results.length(); q++) {
+      fprintf(fast_kde_output, "%g\n", fast_kde_results[q]);
+    }
+    fclose(fast_kde_output);
+
+    if(do_naive) {
+      NaiveKde<GaussianKernel> naive_kde;
+      naive_kde.Init(queries, references, kde_module);
+      naive_kde.Compute();
+      naive_kde.PrintDebug();
+      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
+    }    
   }
 
   fx_done();

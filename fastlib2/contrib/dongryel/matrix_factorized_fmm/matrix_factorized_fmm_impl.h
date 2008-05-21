@@ -39,12 +39,19 @@ void MatrixFactorizedFMM<TKernelAux>::BaseCase_
 template<typename TKernelAux>
 void MatrixFactorizedFMM<TKernelAux>::CanonicalCase_
 (const Matrix &query_set, const ArrayList<index_t> &query_index_permutation,
- const QueryTree *query_node, const ReferenceTree *reference_node,
+ QueryTree *query_node, ReferenceTree *reference_node,
  Vector &query_kernel_sums) const {
 
   // If the current query/reference node is prunable, then
   // approximate.
-  
+  double min_distance = sqrt(query_node->bound().MinDistanceSq
+			     (reference_node->bound()));
+  if(min_distance > std::min(query_node->bound().radius(),
+			     reference_node->bound().radius())) {
+    reference_node->stat().farfield_expansion_.TranslateToLocal
+      (query_node->stat().local_expansion_, -1, &reference_set_, &query_set);
+    return;
+  }
 
   // If the query node is a leaf node,
   if(query_node->is_leaf()) {
@@ -185,7 +192,7 @@ void MatrixFactorizedFMM<TKernelAux>::PostProcessQueryTree_
   if(query_node->is_leaf()) {
     for(index_t q = query_node->begin(); q < query_node->end(); q++) {
       query_kernel_sums[query_index_permutation[q]] +=
-	local_expansion.EvaluateField(query_set, q);
+	local_expansion.EvaluateField(query_set, q, query_node->begin());
     }
   }
   else {
@@ -218,15 +225,17 @@ void MatrixFactorizedFMM<TKernelAux>::Init(const Matrix &references,
   reference_weights_.SetAll(1);
 
   // Construct the reference tree.
+  printf("Constructing the reference tree...\n");
   fx_timer_start(fx_root, "reference_tree_construction");
   reference_tree_root_ = proximity::MakeGenMetricTree<ReferenceTree>
     (reference_set_, leaflen, &old_from_new_references_, NULL);
-  fx_timer_stop(fx_root, "reference_tree_construction");
 
   // Retrieve the list of reference leaf nodes.
   reference_leaf_nodes_.Init();
   GetLeafNodes_(reference_tree_root_, reference_leaf_nodes_);
-
+  fx_timer_stop(fx_root, "reference_tree_construction");
+  printf("Finished constructing the reference tree...\n");
+  
   // Retrieve the bandwidth and initialize the kernel.
   double bandwidth = fx_param_double_req(module_, "bandwidth");
   ka_.Init(bandwidth, 0, references.n_rows());
@@ -243,34 +252,45 @@ void MatrixFactorizedFMM<TKernelAux>::Compute
   Matrix query_set;
   query_set.Copy(queries);
 
+  printf("Constructing the query tree...\n");
   fx_timer_start(fx_root, "query_tree_construction");
   ArrayList<index_t> old_from_new_queries;
   QueryTree *query_tree_root = 
     proximity::MakeGenMetricTree<QueryTree>
     (query_set, leaflen, &old_from_new_queries, NULL);
-  fx_timer_stop(fx_root, "query_tree_construction");
 
   // Retrieve the leaf node lists in the query tree.
   ArrayList<QueryTree *> query_leaf_nodes;
   query_leaf_nodes.Init();
   GetLeafNodes_(query_tree_root, query_leaf_nodes);
-  
+  fx_timer_stop(fx_root, "query_tree_construction");
+  printf("Finished constructing the query tree...\n");
+
+  printf("Training basis functions...\n");
+  fx_timer_start(fx_root, "basis_function_training_time");
+
   // Train the basis functions in the reference tree and the query
   // tree.
   PreProcessReferenceTree_(reference_tree_root_, query_set, query_leaf_nodes);
   PreProcessQueryTree_(query_set, query_tree_root, reference_set_,
 		       reference_leaf_nodes_);
-  
+  fx_timer_stop(fx_root, "basis_function_training_time");
+  printf("Finished training basis functions...\n");
+
   // Compute the kernel summations.
   query_kernel_sums->Init(query_set.n_cols());
   query_kernel_sums->SetZero();
-  /*
+
+  printf("Starting computation...\n");
+  fx_timer_start(fx_root, "computation_time");
   CanonicalCase_(query_set, old_from_new_queries, query_tree_root,
 		 reference_tree_root_, *query_kernel_sums);
-  */
+
 
   PostProcessQueryTree_(query_set, old_from_new_queries, query_tree_root, 
 			*query_kernel_sums);
+  fx_timer_stop(fx_root, "computation_time");
+  printf("Computation finished...\n");
 
   // Delete the query tree after the computation...
   delete query_tree_root;

@@ -4,7 +4,8 @@ librule(
     sources = [],
     headers = ["matrix_factorized_fmm.h",
                "matrix_factorized_fmm_impl.h",
-               "matrix_factorized_fmm_stat.h"],
+               "matrix_factorized_fmm_stat.h",
+               "naive_kde.h"],
     deplibs = ["fastlib:fastlib_int",
                "mlpack/series_expansion:series_expansion"]
     )

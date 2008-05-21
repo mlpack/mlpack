@@ -76,8 +76,7 @@ class MatrixFactorizedFMM {
    */
   void CanonicalCase_(const Matrix &query_set,
 		      const ArrayList<index_t> &query_index_permutation,
-		      const QueryTree *query_node,
-		      const ReferenceTree *reference_node,
+		      QueryTree *query_node, ReferenceTree *reference_node,
 		      Vector &query_kernel_sums) const;
 
   /** @brief Traverse the FASTLib tree to get the list of leaf nodes.
