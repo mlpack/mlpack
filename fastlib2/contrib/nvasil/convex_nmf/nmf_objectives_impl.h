@@ -10,7 +10,9 @@ void BigSdpNmfObjective::Init(fx_module *module,
 	num_of_rows_=*std::max_element(rows_.begin(), rows_.end())+1;
 	num_of_columns_=*std::max_element(columns_.begin(), columns_.end())+1;
 	eq_lagrange_mult_.Init(values_.size());
-	eq_lagrange_mult_.SetAll(0);
+	for(index_t i=0; i<eq_lagrange_mult_.length(); i++) {
+    eq_lagrange_mult_[i]=math::Random(-0.0, 1.0);
+  }
   rank_=fx_param_int(module_, "rank", 3);
 	new_dim_=fx_param_int(module_, "new_dim", 5);
 	offset_h_ = num_of_rows_*new_dim_;
@@ -25,7 +27,7 @@ void BigSdpNmfObjective::Destruct() {
 
 void BigSdpNmfObjective::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   gradient->CopyValues(coordinates);
-	la::Scale(2, gradient);
+	la::Scale(2.0, gradient);
 	for(index_t i=0; i<values_.size(); i++) {
     index_t w =rows_[i]*new_dim_;
     index_t h =offset_h_+columns_[i]*new_dim_;
@@ -33,9 +35,9 @@ void BigSdpNmfObjective::ComputeGradient(Matrix &coordinates, Matrix *gradient) 
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
 	  la::AddExpert(rank_*new_dim_, -eq_lagrange_mult_[i]+2*sigma_*diff,
-				 gradient->GetColumnPtr(w), gradient->GetColumnPtr(h));	
+				 coordinates.GetColumnPtr(w), gradient->GetColumnPtr(h));	
 		la::AddExpert(rank_*new_dim_, -eq_lagrange_mult_[i]+2*sigma_*diff, 
-				gradient->GetColumnPtr(h), gradient->GetColumnPtr(w));
+				coordinates.GetColumnPtr(h), gradient->GetColumnPtr(w));
 	}
 	
 }

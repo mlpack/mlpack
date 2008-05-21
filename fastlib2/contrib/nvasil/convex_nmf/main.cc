@@ -7,8 +7,10 @@ int main(int argc, char *argv[]) {
 	fx_module *nmf_module=fx_submodule(fx_root, "/engine");
 	NmfEngine engine;
 	fx_set_param_str(nmf_module, "data_file", "v.csv");
-	fx_set_param_double(nmf_module, "l_bfgs/sigma", 0.1);
-	engine.Init(nmf_module);
+	fx_set_param_double(nmf_module, "l_bfgs/sigma", 0.005);
+	fx_set_param_double(nmf_module, "l_bfgs/desired_feasibility", 0.1);
+  fx_set_param_int(nmf_module, "l_bfgs/mem_bfgs", 5);
+  engine.Init(nmf_module);
   engine.ComputeNmf();
 	Matrix w_mat;
 	Matrix h_mat;
