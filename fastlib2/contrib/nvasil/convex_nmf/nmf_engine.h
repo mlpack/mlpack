@@ -49,6 +49,19 @@ class NmfEngine {
 				   h_mat_.set(j, i , result.get(0, offset_h+i*new_dim_+j ));
 				}
 			}
+      // now compute reconstruction error
+      Matrix v_rec;
+      la::MulInit(w_mat_, h_mat_, &v_rec);
+      double error=0;
+      double v_sum=0;
+      for(index_t i=0; i<values_.size(); i++) {
+        index_t r=rows_[i];
+        index_t c=columns_[i];
+        error+=fabs(v_rec.get(r, c)-values_[i]);
+        v_sum+=values_[i];
+      }
+      data::Save("result.csv", result);
+      NOTIFY("Reconstruction error: %lg%%\n", error*100/v_sum);
 	 }
 	 void GetW(Matrix *w_mat) {
 	   w_mat->Copy(w_mat_);
