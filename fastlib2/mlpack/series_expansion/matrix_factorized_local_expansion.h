@@ -138,6 +138,20 @@ class MatrixFactorizedLocalExpansion {
     return local_to_local_translation_begin_;
   }
 
+  /** @brief Sets the beginning index of the local-to-local
+   *         translation operator.
+   */
+  void set_local_to_local_translation_begin(index_t begin) {
+    local_to_local_translation_begin_ = begin;
+  }
+  
+  /** @brief Sets the count of the local-to-local translation
+   *         operator.
+   */
+  void set_local_to_local_translation_count(index_t count) {
+    local_to_local_translation_count_ = count;
+  }
+
   /** @brief Gets the count of the local-to-local translation
    *         operator.
    */
@@ -150,12 +164,13 @@ class MatrixFactorizedLocalExpansion {
   /** @brief Combines two incoming skeletons.
    */
   void CombineBasisFunctions
-  (const MatrixFactorizedLocalExpansion &local_expansion1,
-   const MatrixFactorizedLocalExpansion &local_expansion2);
+  (MatrixFactorizedLocalExpansion &local_expansion1,
+   MatrixFactorizedLocalExpansion &local_expansion2);
 
   /** @brief Evaluates the local coefficients at the given point
    */
-  double EvaluateField(const Matrix& data, int row_num) const;
+  double EvaluateField(const Matrix& data, int row_num, int begin_row_num) 
+    const;
   double EvaluateField(const Vector& x_q) const;
   
   /** @brief Initializes the current local expansion object with the

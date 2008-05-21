@@ -13,8 +13,8 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::PrintDebug
 
 template<typename TKernelAux>
 void MatrixFactorizedLocalExpansion<TKernelAux>::CombineBasisFunctions
-(const MatrixFactorizedLocalExpansion &local_expansion1,
- const MatrixFactorizedLocalExpansion &local_expansion2) {
+(MatrixFactorizedLocalExpansion &local_expansion1,
+ MatrixFactorizedLocalExpansion &local_expansion2) {
   
   // The incoming skeleton for an internal node is formed by
   // concatenating the incoming skeleton of its children.
@@ -37,21 +37,29 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::CombineBasisFunctions
   // incoming skeleton.
   coeffs_.Init(incoming_skeleton_.size());
   coeffs_.SetZero();
+
+  // Compute the beginning index and the count of the local expansion
+  // for the children expansions.
+  local_expansion1.set_local_to_local_translation_begin(0);
+  local_expansion1.set_local_to_local_translation_count
+    (incoming_skeleton1.size());
+  local_expansion2.set_local_to_local_translation_begin
+    (incoming_skeleton1.size());
+  local_expansion2.set_local_to_local_translation_count
+    (incoming_skeleton2.size());
 }
 
 template<typename TKernelAux>
 double MatrixFactorizedLocalExpansion<TKernelAux>::EvaluateField
-(const Matrix& data, int row_num) const {
+(const Matrix& data, int row_num, int begin_row_num) const {
   
-  // Take the dot product of the (row_num -
-  // local_to_local_translation_begin_) th row of the evaluation
-  // operator.
+  // Take the dot product of the (row_num - begin_row_num) th row of
+  // the evaluation operator.
   double dot_product = 0;
 
   for(index_t i = 0; i < evaluation_operator_->n_cols(); i++) {
     dot_product += 
-      evaluation_operator_->get(row_num - local_to_local_translation_begin_, 
-				i) * coeffs_[i];
+      evaluation_operator_->get(row_num - begin_row_num, i) * coeffs_[i];
   }
   return dot_product;
 }
@@ -112,7 +120,7 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
   // samples taken from the stratification.
   Matrix sample_kernel_matrix;
   int num_reference_samples = reference_leaf_nodes->size();
-  int num_query_samples = (int) sqrt(end - begin);
+  int num_query_samples = end - begin;
 
   // Allocate a temporary space for holding the indices of the query
   // points, from which the incoming skeleton will be chosen.
@@ -121,8 +129,7 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
   for(index_t q = 0; q < num_query_samples; q++) {
 
     // Choose a random query point and record its index.
-    index_t random_query_point_index = math::RandInt(begin, end);
-    tmp_incoming_skeleton[q] = random_query_point_index;
+    tmp_incoming_skeleton[q] = q + begin;
   }
   // Sort the chosen query indices and eliminate duplicates...
   qsort(tmp_incoming_skeleton.begin(), tmp_incoming_skeleton.size(),
@@ -153,8 +160,9 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
       double squared_distance =
 	la::DistanceSqEuclidean(query_set.n_rows(), reference_point,
 				query_point);
+      double kernel_value = (ka_->kernel_).EvalUnnormOnSq(squared_distance);
       sample_kernel_matrix.set
-	(c, r, (ka_->kernel_).EvalUnnormOnSq(squared_distance));
+	(c, r, ((*reference_leaf_nodes)[r])->count() * kernel_value);
       
     } // end of iterating over each sample query strata...
   } // end of iterating over each reference point...

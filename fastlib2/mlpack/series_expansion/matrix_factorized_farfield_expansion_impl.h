@@ -38,13 +38,18 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   for(index_t r = 0; r < num_reference_samples; r++) {
 
     // Choose a random reference point and record its index.
+    /*
     index_t random_reference_point_index = math::RandInt(begin, end);
     tmp_outgoing_skeleton[r] = random_reference_point_index;
+    */
+    tmp_outgoing_skeleton[r] = begin + r;
   }
+  /*
   // Sort the chosen reference indices and eliminate duplicates...
   qsort(tmp_outgoing_skeleton.begin(), tmp_outgoing_skeleton.size(),
 	sizeof(index_t), &qsort_compar_);
   remove_duplicates_in_sorted_array_(tmp_outgoing_skeleton);
+  */
   num_reference_samples = tmp_outgoing_skeleton.size();
 
   // After determining the number of reference samples to take,
@@ -63,6 +68,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
       index_t random_query_point_index =
 	math::RandInt(((*query_leaf_nodes)[c])->begin(),
 		      ((*query_leaf_nodes)[c])->end());
+
       const double *query_point =
 	query_set->GetColumnPtr(random_query_point_index);	
 
@@ -70,8 +76,10 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
       double squared_distance =
 	la::DistanceSqEuclidean(reference_set.n_rows(), reference_point,
 				query_point);
+      double kernel_value = (ka_->kernel_).EvalUnnormOnSq(squared_distance);
+
       sample_kernel_matrix.set
-	(c, r, (ka_->kernel_).EvalUnnormOnSq(squared_distance));
+	(c, r, ((*query_leaf_nodes)[c])->count() * kernel_value);
 
     } // end of iterating over each sample query strata...
   } // end of iterating over each reference point...
@@ -111,9 +119,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   outgoing_representation_.Init(outgoing_skeleton_.size());
   outgoing_representation_.SetZero();
   for(index_t i = 0; i < outgoing_skeleton_.size(); i++) {
-    double scaling_factor = 
-      weights[outgoing_skeleton_[i]] *
-      (((double) end - begin) / ((double) outgoing_skeleton_.size()));
+    double scaling_factor = weights[outgoing_skeleton_[i]];
     la::AddExpert(projection_operator.n_rows(), scaling_factor,
 		  projection_operator.GetColumnPtr(i),
 		  outgoing_representation_.ptr());
@@ -279,7 +285,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateFromFarField
 template<typename TKernelAux>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateToLocal
 (MatrixFactorizedLocalExpansion<TKernelAux> &se, int truncation_order,
- const Matrix *reference_set, const Matrix *query_set) {
+ const Matrix *reference_set, const Matrix *query_set) const {
   
   // Translating the matrix-factorized far-field moments into local
   // moments involve doing exhaustive evaluation between the points

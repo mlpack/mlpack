@@ -17,7 +17,6 @@
 #include "series_expansion_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "../kde/dataset_scaler.h"
-#include "matrix_factorized_fmm.h"
 
 int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
 				   int begin, int end) {
