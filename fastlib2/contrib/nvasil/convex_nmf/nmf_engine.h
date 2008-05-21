@@ -38,15 +38,40 @@ class NmfEngine {
       engine_.GetResults(&result);
 			w_mat_.Init(num_of_rows_, new_dim_);
 			h_mat_.Init(new_dim_, num_of_columns_);
-			for(index_t i=0; i<num_of_rows_; i++) {
+      Vector s;
+      Matrix u_mat, vt_mat;
+      success_t success=la::SVDInit(result, &s, &u_mat, &vt_mat);
+      if (success==SUCCESS_PASS) {
+        NOTIFY("Svd success full...\n");
+        std::string temp;
+        char buffer[64];
+        for(index_t i=0; i<s.length(); i++) {
+          sprintf(buffer, "%lg ", s[i]);
+          temp.append(buffer);
+        }
+        NOTIFY("Singular values: %s", temp.c_str());
+      } else {
+        FATAL("Svd failed soething is wrong...\n");
+      }
+      bool negative_flag=false;
+      for (index_t i=0; i<vt_mat.n_cols(); i++) {
+        if (vt_mat.get(0, i)<0) {
+          negative_flag=true;
+        }
+        if (negative_flag==true && vt_mat.get(0, i)>0) {
+          FATAL("Method failed, first eigenvector has positive and negative elements");
+        }
+        vt_mat.set(0, i, fabs(vt_mat.get(0, i)));
+      } 
+      for(index_t i=0; i<num_of_rows_; i++) {
 			  for(index_t j=0; j<new_dim_; j++) {
-				  w_mat_.set(i, j, result.get(0, i*new_dim_+j));
+				  w_mat_.set(i, j, s[0]*vt_mat.get(0, i*new_dim_+j));
 				}
 			}
 			index_t offset_h=num_of_rows_*new_dim_;
 			for(index_t i=0; i<num_of_columns_; i++) {
 			  for(index_t j=0; j<new_dim_; j++) {
-				   h_mat_.set(j, i , result.get(0, offset_h+i*new_dim_+j ));
+				   h_mat_.set(j, i , s[0]*vt_mat.get(0, offset_h+i*new_dim_+j ));
 				}
 			}
       // now compute reconstruction error
