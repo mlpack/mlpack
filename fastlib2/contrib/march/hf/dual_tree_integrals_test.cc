@@ -5,21 +5,21 @@ class DualTreeIntegralsTest {
   
 public:
   
-  void Setup() {
+  void Setup(const char* centers_name, const char* density_name, 
+             struct datanode* mod, double band) {
     
     Matrix test_centers;
-    data::Load("test_centers.csv", &test_centers);
+    data::Load(centers_name, &test_centers);
     
     Matrix test_density;
-    data::Load("density_test.csv", &test_density);
-    
-    double test_bandwidth = 0.01;
-    
-    double test_error = 0.01;
+    data::Load(density_name, &test_density);
+        
+    Matrix test_core;
+    test_core.Init(test_centers.n_cols(), test_centers.n_cols());
+    test_core.SetZero();
     
     integrals_ = new DualTreeIntegrals();
-    integrals_->Init(test_centers, NULL, test_bandwidth, test_error, 
-                     test_density);
+    integrals_->Init(test_centers, mod, test_density, test_core, band);
                      
   } // Setup
   
@@ -169,9 +169,19 @@ public:
     
   } // TestAll
   
+  void TestMatrices() {
+  
+    Setup("test_centers.csv", "test_density.csv", 
+          small_mod, 1.0); 
+     
+  
+  } // TestMatrices() 
+  
 private:
   
   DualTreeIntegrals* integrals_;
+  
+  NaiveFockMatrix* 
   
 }; //class DualTreeIntegralsTest
 
@@ -181,7 +191,7 @@ int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
   
   DualTreeIntegralsTest tester;
-  tester.TestAll();
+  tester.TestMatrices();
   
   fx_done(NULL);
   

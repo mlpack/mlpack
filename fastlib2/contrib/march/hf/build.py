@@ -7,7 +7,8 @@ librule(
 
 librule(
 	name = "dual_tree_integrals",
-	headers = ["dual_tree_integrals.h"],
+	headers = ["dual_tree_integrals.h", "square_tree.h"],
+	sources = ["dual_tree_integrals.cc"],
 	deplibs = ["fastlib:fastlib"],
 	tests = ["dual_tree_integrals_test.cc"]
 )
@@ -22,6 +23,13 @@ librule(
 binrule(
 	name = "dual_tree_integrals_main",
 	headers = ["dual_tree_integrals.h", "naive_fock_matrix.h"],
-	deplibs = ["fastlib:fastlib"],
+	deplibs = ["fastlib:fastlib", ":dual_tree_integrals"],
 	sources = ["dual_tree_integrals.cc"]
+)
+
+binrule(
+	name = "fock_matrix_test",
+	headers = ["dual_tree_integrals.h", "naive_fock_matrix.h"],
+	deplibs = ["fastlib:fastlib", ":dual_tree_integrals"],
+	sources = ["fock_matrix_test.cc"]
 )
