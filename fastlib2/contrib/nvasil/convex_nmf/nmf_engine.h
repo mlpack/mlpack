@@ -82,6 +82,8 @@ class NmfEngine {
 				columns_.PushBackCopy(j);
 			}
 		}
+    num_of_rows_=*std::max_element(rows_.begin(), rows_.end())+1;
+    num_of_columns_=*std::max_element(columns_.begin(), columns_.end())+1;
 	}
 };
 
