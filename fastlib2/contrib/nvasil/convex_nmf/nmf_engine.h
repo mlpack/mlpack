@@ -4,6 +4,7 @@
 #include "../l_bfgs/l_bfgs.h"
 #include "nmf_objectives.h"
 
+template<typename NmfObjective>
 class NmfEngine {
  public:
 	 void  Init(fx_module *module) {
@@ -59,44 +60,55 @@ class NmfEngine {
         FATAL("Svd failed soething is wrong...\n");
       }
       bool negative_flag=false;
+      index_t positives=0;
+      index_t negatives=0;
+      index_t zeros=0;
       for (index_t i=0; i<vt_mat.n_cols(); i++) {
         if (vt_mat.get(0, i)<0) {
           negative_flag=true;
+          negatives++;
+        }  
+        if (vt_mat.get(0,i)>0) {
+          positives++;
         }
-        if (negative_flag==true && vt_mat.get(0, i)>0) {
-          NONFATAL("Method failed, first eigenvector has positive and negative elements");
-          break;          
-        }
-      } 
-      if (negative_flag==true) {
-        la::Scale(-1, &vt_mat);
-      }
-      opt_function_.Project(&vt_mat);
-      for(index_t i=0; i<num_of_rows_; i++) {
-			  for(index_t j=0; j<new_dim_; j++) {
-				  w_mat_.set(i, j, s[0]*vt_mat.get(0, i*new_dim_+j));
-				}
-			}
-			index_t offset_h=num_of_rows_*new_dim_;
-			for(index_t i=0; i<num_of_columns_; i++) {
-			  for(index_t j=0; j<new_dim_; j++) {
-				   h_mat_.set(j, i , s[0]*vt_mat.get(0, offset_h+i*new_dim_+j ));
-				}
-			}
-      // now compute reconstruction error
-      Matrix v_rec;
-      la::MulInit(w_mat_, h_mat_, &v_rec);
-      double error=0;
-      double v_sum=0;
-      for(index_t i=0; i<values_.size(); i++) {
-        index_t r=rows_[i];
-        index_t c=columns_[i];
-        error+=fabs(v_rec.get(r, c)-values_[i]);
-        v_sum+=values_[i];
-      }
-      data::Save("result.csv", result);
-      NOTIFY("Reconstruction error: %lg%%\n", error*100/v_sum);
+         if (vt_mat.get(0, i)==0) {
+          zeros++;
+        }     
+     } 
+      
+     data::Save("result.csv", result);
+     data::Save("vt_mat.csv", vt_mat);
+     NOTIFY("We found %i positives, %i negatives and %i zeros", 
+         positives, negatives, zeros);
+     if (negatives>=positives) {
+       la::Scale(-1, &vt_mat);
+     }
+     OptUtils::NonNegativeProjection(&vt_mat);
+     for(index_t i=0; i<num_of_rows_; i++) {
+		   for(index_t j=0; j<new_dim_; j++) {
+			   w_mat_.set(i, j, s[0]*vt_mat.get(0, i*new_dim_+j));
+			 }
+		 }
+		 index_t offset_h=num_of_rows_*new_dim_;
+		 for(index_t i=0; i<num_of_columns_; i++) {
+		   for(index_t j=0; j<new_dim_; j++) {
+			   h_mat_.set(j, i , s[0]*vt_mat.get(0, offset_h+i*new_dim_+j));
+			 }
+		 }
+     // now compute reconstruction error
+     Matrix v_rec;
+     la::MulInit(w_mat_, h_mat_, &v_rec);
+     double error=0;
+     double v_sum=0;
+     for(index_t i=0; i<values_.size(); i++) {
+       index_t r=rows_[i];
+       index_t c=columns_[i];
+       error+=fabs(v_rec.get(r, c)-values_[i]);
+       v_sum+=values_[i];
+     }
+     NOTIFY("Reconstruction error: %lg%%\n", error*100/v_sum);
 	 }
+   
 	 void GetW(Matrix *w_mat) {
 	   w_mat->Copy(w_mat_);
 	 }
@@ -106,8 +118,8 @@ class NmfEngine {
 	 
  private:
 	fx_module *module_;
-  LBfgs<BigSdpNmfObjective> engine_;
-	BigSdpNmfObjective opt_function_;
+  LBfgs<NmfObjective> engine_;
+	NmfObjective opt_function_;
 	ArrayList<index_t> rows_;
 	ArrayList<index_t> columns_;
 	ArrayList<double> values_;
