@@ -78,23 +78,40 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 				query_point);
       double kernel_value = (ka_->kernel_).EvalUnnormOnSq(squared_distance);
 
-      sample_kernel_matrix.set
-	(c, r, ((*query_leaf_nodes)[c])->count() * kernel_value);
+      sample_kernel_matrix.set(c, r, kernel_value);
 
     } // end of iterating over each sample query strata...
   } // end of iterating over each reference point...
 
   // CUR-decompose the sample kernel matrix.
-  Matrix projection_operator;
-  ArrayList<index_t> column_indices;
-  CURDecomposition::ExactCompute(sample_kernel_matrix, &projection_operator,
-				 &column_indices);
+  Matrix c_mat, u_mat, r_mat;
+  ArrayList<index_t> column_indices, row_indices;
+  CURDecomposition::Compute(sample_kernel_matrix, query_leaf_nodes, true,
+			    &c_mat, &u_mat, &r_mat,
+			    &column_indices, &row_indices);
   
   // The out-going skeleton is constructed from the sampled columns in
   // the matrix factorization.
   outgoing_skeleton_.Init(column_indices.size());
   for(index_t s = 0; s < column_indices.size(); s++) {
     outgoing_skeleton_[s] = tmp_outgoing_skeleton[column_indices[s]];
+  }
+
+  // Compute the projection operator, which is the product of the U
+  // and the R factor and row scaled by the column scaled C factor.
+  Matrix projection_operator;
+  
+  la::MulInit(u_mat, r_mat, &projection_operator);
+  for(index_t i = 0; i < c_mat.n_cols(); i++) {
+    
+    double scaling_factor = 
+      (sample_kernel_matrix.get(0, column_indices[i]) < DBL_EPSILON) ?
+      0:c_mat.get(0, i) / sample_kernel_matrix.get(0, column_indices[i]);
+
+    for(index_t j = 0; j < projection_operator.n_cols(); j++) {
+      projection_operator.set(i, j, projection_operator.get(i, j) *
+			      scaling_factor);
+    }
   }
 
   // Compute the outgoing representation by taking the product between
