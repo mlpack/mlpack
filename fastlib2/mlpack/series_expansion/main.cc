@@ -622,7 +622,7 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
 }
 
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv, NULL);
+  fx_init(argc, argv);
 
   const char *datafile_name = fx_param_str(NULL, "data", NULL);
   Dataset dataset;
@@ -660,5 +660,5 @@ int main(int argc, char *argv[]) {
   */
   TestEvaluateMatrixFactorizedFarField(data, weights, begin, end);
 
-  fx_done(fx_root);
+  fx_done();
 }
