@@ -2,12 +2,62 @@
 #define CUR_DECOMPOSITION_H
 
 #include "fastlib/fastlib.h"
+#include "fastlib/la/uselapack.h"
 
 class CURDecomposition {
 
  private:
 
+  static const double epsilon_ = 0.01;
+
   ////////// Private Member Functions //////////
+  
+  static success_t QRExpert(Matrix *A_in_Q_out, ArrayList<f77_integer> *pivots,
+			    Matrix *R) {
+    f77_integer info;
+    f77_integer m = A_in_Q_out->n_rows();
+    f77_integer n = A_in_Q_out->n_cols();
+    f77_integer k = std::min(m, n);
+    f77_integer lwork = n * la::dgeqrf_dorgqr_block_size;
+    double tau[k + lwork];
+    double *work = tau + k;
+    pivots->Init(n);
+    
+    // Obtain both Q and R in A_in_Q_out
+    F77_FUNC(la::dgeqp3)(m, n, A_in_Q_out->ptr(), m, pivots->begin(),
+			 tau, work, lwork, &info);
+    
+    if (info != 0) {
+      return SUCCESS_FROM_LAPACK(info);
+    }
+    
+    // Extract R
+    for (index_t j = 0; j < n; j++) {
+      double *r_col = R->GetColumnPtr(j);
+      double *q_col = A_in_Q_out->GetColumnPtr(j);
+      int i = std::min(j + 1, k);
+      mem::Copy(r_col, q_col, i);
+      mem::Zero(r_col + i, k - i);
+    }
+    
+    // Fix Q
+    F77_FUNC(la::dorgqr)(m, k, k, A_in_Q_out->ptr(), m,
+			 tau, work, lwork, &info);
+    
+    return SUCCESS_FROM_LAPACK(info);
+  }
+  
+  static success_t QRInit(const Matrix &A, ArrayList<f77_integer> *pivots, 
+			  Matrix *Q, Matrix *R) {
+
+    index_t k = std::min(A.n_rows(), A.n_cols());
+    Q->Copy(A);
+    R->Init(k, A.n_cols());
+    success_t success = QRExpert(Q, pivots, R);
+    Q->ResizeNoalias(k);
+    
+    return success;
+  }
   
   /** @brief The comparison function used for quick sort
    */
@@ -54,6 +104,108 @@ class CURDecomposition {
   }
 
  public:
+
+  static void ExactCompute(const Matrix &a_mat, Matrix *projection_operator,
+			   ArrayList<index_t> *column_indices) {
+
+    ArrayList<f77_integer> pivots;
+    Matrix q_factor_mat, r_factor_mat;
+    success_t flag = QRInit(a_mat, &pivots, &q_factor_mat, &r_factor_mat);
+
+    DEBUG_ASSERT(flag);
+
+    // Compute the Frobenius norm of each row of R matrix.
+    Vector frobenius_norm_row_r_factor_mat;
+    frobenius_norm_row_r_factor_mat.Init(r_factor_mat.n_rows());
+    frobenius_norm_row_r_factor_mat.SetZero();
+    for(index_t c = 0; c < r_factor_mat.n_cols(); c++) {
+      for(index_t r = 0; r < r_factor_mat.n_rows(); r++) {
+	frobenius_norm_row_r_factor_mat[r] +=
+	   r_factor_mat.get(r, c) * r_factor_mat.get(r, c);
+      }
+    }
+
+    // Compute the reverse cumulative distribution.
+    for(index_t i = frobenius_norm_row_r_factor_mat.length() - 1; i >= 1; 
+	i--) {      
+      frobenius_norm_row_r_factor_mat[i - 1] += 
+	frobenius_norm_row_r_factor_mat[i];
+    }
+
+    // Determine how many columns to keep. Let k be the number of
+    // columns to keep.
+    index_t last_column = frobenius_norm_row_r_factor_mat.length() - 1;
+    for(index_t i = frobenius_norm_row_r_factor_mat.length() - 1; i >= 1;
+	i--) {
+      last_column = i;
+      if(frobenius_norm_row_r_factor_mat[i] >= epsilon_ *
+	 frobenius_norm_row_r_factor_mat[0]) {
+	break;
+      }
+    }
+    index_t number_of_columns = last_column + 1;
+
+    // Get the upper left k by k matrix and the upper right k by (n -
+    // k) matrix.
+    Matrix upper_left, upper_right;
+    upper_left.Init(number_of_columns, number_of_columns);
+    upper_right.Init(number_of_columns, a_mat.n_cols() - number_of_columns);
+    for(index_t c = 0; c < a_mat.n_cols(); c++) {
+      for(index_t r = 0; r < number_of_columns; r++) {
+	if(c < number_of_columns) {
+	  upper_left.set(r, c, r_factor_mat.get(r, c));
+	}
+	else {
+	  upper_right.set(r, c - number_of_columns, r_factor_mat.get(r, c));
+	}
+      }
+    }
+
+    // Compute the SVD of the upper left matrix and solve the least
+    // squares problem.
+    Vector tmp_singular_values;
+    Matrix tmp_left_singular_vectors, tmp_right_singular_vectors_transposed;
+    Matrix intermediate, transformation_matrix;
+    la::SVDInit(upper_left, &tmp_singular_values, &tmp_left_singular_vectors,
+		&tmp_right_singular_vectors_transposed);
+    la::MulTransAInit(tmp_left_singular_vectors, upper_right,
+		      &intermediate);
+    for(index_t i = 0; i < tmp_singular_values.length(); i++) {
+      if(tmp_singular_values[i] > 0.0001) {
+	for(index_t j = 0; j < intermediate.n_cols(); j++) {
+	  intermediate.set(i, j, intermediate.get(i, j) /
+			   tmp_singular_values[i]);
+	}
+      }
+      else {
+	for(index_t j = 0; j < intermediate.n_cols(); j++) {
+	  intermediate.set(i, j, 0);
+	}
+      }
+    }
+    la::MulTransAInit(tmp_right_singular_vectors_transposed, intermediate,
+		      &transformation_matrix);
+
+    // Retreive the column indices.
+    column_indices->Init(number_of_columns);
+    for(index_t i = 0; i < number_of_columns; i++) {
+      (*column_indices)[i] = pivots[i] - 1;
+    }
+
+    // Return the projection operator.
+    projection_operator->Init(number_of_columns, a_mat.n_cols());
+    projection_operator->SetZero();
+    for(index_t i = 0; i < number_of_columns; i++) {
+      projection_operator->set(i, i, 1);
+    }
+    for(index_t i = 0; i < transformation_matrix.n_cols(); i++) {
+      la::ScaleOverwrite(transformation_matrix.n_rows(), 1, 
+			 transformation_matrix.GetColumnPtr(i),
+			 projection_operator->GetColumnPtr
+			 (i + number_of_columns));
+    }
+  }
+
   static void Compute(const Matrix &a_mat, Matrix *c_mat, Matrix *u_mat, 
 		      Matrix *r_mat, ArrayList<index_t> *column_indices,
 		      ArrayList<index_t> *row_indices) {
