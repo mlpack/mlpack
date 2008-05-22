@@ -184,6 +184,7 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 
   // Compute the evaluation operator, which is the transpose of the
   // evaluation operator computed from the decomposition.
+  evaluation_operator_ = new Matrix();
   la::TransposeInit(evaluation_operator_transposed, evaluation_operator_);
 
   // Allocate space based on the size of the incoming skeleton.

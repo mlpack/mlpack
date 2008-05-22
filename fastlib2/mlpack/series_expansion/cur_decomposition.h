@@ -112,6 +112,7 @@ class CURDecomposition {
     Matrix q_factor_mat, r_factor_mat;
     success_t flag = QRInit(a_mat, &pivots, &q_factor_mat, &r_factor_mat);
 
+    // Check to make sure that QR decomposition has succeeded.
     DEBUG_ASSERT(flag);
 
     // Compute the Frobenius norm of each row of R matrix.
