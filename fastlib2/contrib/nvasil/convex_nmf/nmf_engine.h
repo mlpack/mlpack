@@ -12,7 +12,12 @@ class NmfEngine {
      sdp_rank_=fx_param_int(module_,  "sdp_rank", 5);
 		 new_dim_=fx_param_int(module_, "new_dim", 3);
 		 Matrix data_mat;
-		 data::Load(data_file.c_str(), &data_mat);
+		 if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
+       FATAL("Terminating...");
+     }
+     NOTIFY("Factoring a %i x %i matrix in %i x %i and %i x %i\n",
+         data_mat.n_rows(), data_mat.n_cols(), data_mat.n_rows(), new_dim_,
+         new_dim_, data_mat.n_cols());
 		 PreprocessData(data_mat);
 		 fx_module *opt_function_module=fx_submodule(module_, "optfun");
      fx_set_param_int(opt_function_module, "rank", sdp_rank_);
@@ -59,10 +64,14 @@ class NmfEngine {
           negative_flag=true;
         }
         if (negative_flag==true && vt_mat.get(0, i)>0) {
-          FATAL("Method failed, first eigenvector has positive and negative elements");
+          NONFATAL("Method failed, first eigenvector has positive and negative elements");
+          break;          
         }
-        vt_mat.set(0, i, fabs(vt_mat.get(0, i)));
       } 
+      if (negative_flag==true) {
+        la::Scale(-1, &vt_mat);
+      }
+      opt_function_.Project(&vt_mat);
       for(index_t i=0; i<num_of_rows_; i++) {
 			  for(index_t j=0; j<new_dim_; j++) {
 				  w_mat_.set(i, j, s[0]*vt_mat.get(0, i*new_dim_+j));

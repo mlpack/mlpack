@@ -120,6 +120,8 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
         ReportProgressFile_();
     }
     if (feasibility_error < desired_feasibility_) {
+      NOTIFY("feasibility error %lg less than desired feasibility %lg", 
+          feasibility_error, desired_feasibility_);
       return;
     }
   }
@@ -268,6 +270,7 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
   for(index_t i=0; beta>min_beta_/(1.0+sigma_); i++) { 
     temp_coordinates.CopyValues(coordinates_);
     la::AddExpert(-step_size_*beta, direction, &temp_coordinates);
+    optimized_function_->Project(&temp_coordinates); 
     lagrangian2 = optimized_function_->ComputeLagrangian(temp_coordinates);
     // NOTIFY("direction:%lg", la::Dot(direction.n_elements(), direction.ptr(), direction.ptr()) );
     // NOTIFY("step_size:%lg beta:%lg min_beta:%lg", step_size_, beta, min_beta_);
@@ -287,8 +290,8 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
     beta *=wolfe_beta_;
     wolfe_factor *=wolfe_beta_;
   }
+  //optimized_function_->Project(&temp_coordinates); 
 
-  optimized_function_->Project(&coordinates_); 
   if (beta<=min_beta_/(1.0+sigma_)) {
     *step=0;
     fx_timer_stop(module_, "wolfe_step");
