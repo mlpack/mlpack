@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
   
   // Initialize FastExec (parameter handling stuff)
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
   
@@ -15,8 +15,7 @@ int main(int argc, char *argv[]) {
   // of this as creating a new folder named "kde_module" under the
   // root directory (NULL) for the Kde object to work inside.  Here,
   // we initialize it with all parameters defined "--kde/...=...".
-  struct datanode* kde_module =
-    fx_submodule(NULL, "kde", "kde_module");
+  struct datanode* kde_module = fx_submodule(fx_root, "kde");
   
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str_req(fx_root, "data");
@@ -96,6 +95,6 @@ int main(int argc, char *argv[]) {
     }    
   }
 
-  fx_done();
+  fx_done(fx_root);
   return 0;
 }

@@ -47,7 +47,10 @@ void MatrixFactorizedFMM<TKernelAux>::CanonicalCase_
   double min_distance = sqrt(query_node->bound().MinDistanceSq
 			     (reference_node->bound()));
   if(min_distance > std::min(query_node->bound().radius(),
-			     reference_node->bound().radius())) {
+			     reference_node->bound().radius()) &&
+     query_node->count() * reference_node->count() >
+     query_node->stat().local_expansion_.incoming_skeleton().size() *
+     reference_node->stat().farfield_expansion_.outgoing_skeleton().size()) {
     reference_node->stat().farfield_expansion_.TranslateToLocal
       (query_node->stat().local_expansion_, -1, &reference_set_, &query_set);
     return;
