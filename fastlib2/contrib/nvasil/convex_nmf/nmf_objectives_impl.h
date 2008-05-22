@@ -89,11 +89,51 @@ void BigSdpNmfObjective::UpdateLagrangeMult(Matrix &coordinates) {
 }
 
 void BigSdpNmfObjective::Project(Matrix *coordinates) {
- // for(index_t i=0; i<coordinates->n_cols(); i++) {
-//	  if (coordinates->get(0, i)<0) {
-//		  coordinates->set(0, i, 0.0);
-//		}
-//	}
+ for(index_t i=0; i<coordinates->n_cols(); i++) {
+    for(index_t j=0; j< coordinates->n_rows(); j++) {
+	    if (coordinates->get(j, i)<0.0) {
+		    coordinates->set(j, i, 0.0);
+		  }
+    }
+	}
+ /* Matrix u_mat, vt_mat;
+  Vector s;
+  success_t success=la::SVDInit(*coordinates, &s, &u_mat, &vt_mat);
+  if (success==SUCCESS_FAIL) {
+    FATAL("Svd failed...\n");
+  }
+  index_t positives=0;
+  index_t negatives=0;
+  for(index_t i=0; i<vt_mat.n_cols(); i++) {
+    if (vt_mat.get(0, i)<0) {
+     negatives++;
+    } else {
+      positives++;
+    }
+  }
+  if (positives>=negatives) {
+    for(index_t i=0; i<vt_mat.n_cols(); i++) {
+      if (vt_mat.get(0, i)<0) {
+        vt_mat.set(0, i, vt_mat.get(0, i));
+      }
+    }
+  } else {
+    for(index_t i=0; i<vt_mat.n_cols(); i++) {
+      if (vt_mat.get(0, i)>0) {
+        vt_mat.set(0, i, vt_mat.get(0, i));
+      }
+    }
+  }
+
+  Matrix s_mat;
+  s_mat.Init(s.length(), s.length());
+  s_mat.SetDiagonal(s);
+  Matrix tmp;
+  coordinates->Destruct();
+  la::MulInit(u_mat, s_mat, &tmp);
+  la::MulInit(tmp, vt_mat, coordinates);  
+*/
+  
 }
 
 void BigSdpNmfObjective::set_sigma(double sigma) {

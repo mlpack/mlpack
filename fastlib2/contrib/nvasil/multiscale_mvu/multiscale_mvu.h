@@ -116,6 +116,7 @@ class MultiscaleMVU {
     Matrix final_init;
 //    scaler_.FromCentroidsToPointsRecurse(result, 
 //       end_scale_, &final_init);
+    scaler_.RetrieveCentroids(end_scale_, &centroid_ids, &result); 
     scaler_.FromCentroidsToPoints1(centroids, points_, result,
         centroid_ids,   &final_init); 
     LBfgs<OptimizedFunction> l_bfgs;
