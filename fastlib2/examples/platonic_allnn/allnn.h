@@ -18,6 +18,12 @@
 // Your "deplibs" entry in build.py should mirror your includes.
 #include <fastlib/fastlib.h>
 
+// TODO: Move these constants into the AllNN class.  I have not
+// immediately done this because C++ doesn't like non-integers to be
+// defined on declaration within classes.  We would need to do this in
+// a .cc file, and in fact should probably move this file's function
+// definitions into one as well.
+
 const fx_entry_doc allnn_entries[] = {
   {"leaf_size", FX_PARAM, FX_INT, NULL,
    "  The maximum number of points to store at a leaf.\n"},
