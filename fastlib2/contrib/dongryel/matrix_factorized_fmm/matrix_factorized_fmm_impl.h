@@ -131,8 +131,7 @@ void MatrixFactorizedFMM<TKernelAux>::PreProcessQueryTree_
   // set of reference leaf nodes using stratified sampling.
   if(query_node->is_leaf()) {
     local_expansion.TrainBasisFunctions(query_set, query_node->begin(),
-					query_node->begin() + 
-					query_node->count(), &reference_set, 
+					query_node->end(), &reference_set, 
 					&reference_leaf_nodes);
   }
   
@@ -165,8 +164,7 @@ void MatrixFactorizedFMM<TKernelAux>::PreProcessReferenceTree_
   if(reference_node->is_leaf()) {
     farfield_expansion.AccumulateCoeffs(reference_set_, reference_weights_,
 					reference_node->begin(),
-					reference_node->begin() +
-					reference_node->count(),
+					reference_node->end(),
 					-1, &query_set, &query_leaf_nodes);
   }
 
@@ -277,6 +275,7 @@ void MatrixFactorizedFMM<TKernelAux>::Compute
   PreProcessReferenceTree_(reference_tree_root_, query_set, query_leaf_nodes);
   PreProcessQueryTree_(query_set, query_tree_root, reference_set_,
 		       reference_leaf_nodes_);
+
   fx_timer_stop(fx_root, "basis_function_training_time");
   printf("Finished training basis functions...\n");
 
