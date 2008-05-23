@@ -22,17 +22,14 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 (const Matrix& reference_set, const Vector& weights, int begin, int end, 
  int order, const Matrix *query_set, 
  const ArrayList<Tree *> *query_leaf_nodes) {
-  
+
   // The sample kernel matrix is S by |R| where |R| is the number of
   // reference points in the reference node and S is the number of
   // query samples taken from the stratification.
   Matrix sample_kernel_matrix;
-  int num_reference_samples = (int) sqrt(end - begin);
+  int num_reference_samples = end - begin;
   int num_query_samples = query_leaf_nodes->size();
-  
-  // Allocate a temporary space for holding the indices of the
-  // reference points, from which the outgoing skeleton will be
-  // chosen.
+
   ArrayList<index_t> tmp_outgoing_skeleton;
   tmp_outgoing_skeleton.Init(num_reference_samples);
   for(index_t r = 0; r < num_reference_samples; r++) {
@@ -118,12 +115,21 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   // the projection operator and the charge distribution vector.
   outgoing_representation_.Init(outgoing_skeleton_.size());
   outgoing_representation_.SetZero();
-  for(index_t i = 0; i < outgoing_skeleton_.size(); i++) {
-    double scaling_factor = weights[outgoing_skeleton_[i]];
+
+  printf("Has %d points...\n", end - begin);
+  for(index_t i = 0; i < end - begin; i++) {
+
+    // Get the weight corresponding to the (i + begin)-th reference
+    // point.
+    double scaling_factor = weights[i + begin];
     la::AddExpert(projection_operator.n_rows(), scaling_factor,
 		  projection_operator.GetColumnPtr(i),
 		  outgoing_representation_.ptr());
   }
+
+  printf("Projection operator:\n");
+  projection_operator.PrintDebug();
+  outgoing_representation_.PrintDebug();
 
   // Turn on the flag that says the object has been initialized.
   is_initialized_ = true;
