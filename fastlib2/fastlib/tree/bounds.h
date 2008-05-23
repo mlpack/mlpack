@@ -33,10 +33,10 @@ class DHrectBound {
   DRange *bounds_;
   index_t dim_;
 
-  OT_DEF(DHrectBound) {
-    OT_MY_OBJECT(dim_);
-    OT_MALLOC_ARRAY(bounds_, dim_);
-  }
+  OBJECT_TRAVERSAL(DHrectBound) {
+    OT_OBJ(dim_);
+    OT_ALLOC(bounds_, dim_);
+  };
 
  public:
   /**
@@ -85,7 +85,18 @@ class DHrectBound {
     DEBUG_BOUNDS(i, dim_);
     return bounds_[i];
   }
-
+  
+  /**
+   * Calculates the maximum distance within the rectangle
+   */
+  double CalculateMaxDistanceSq() const {
+    double max_distance=0;
+    for (index_t i = 0; i < dim_; i++) {
+      max_distance+=math::Sqr(bounds_[i].width());
+    }
+    return max_distance;  
+  }
+  
   /** Calculates the midpoint of the range */
   void CalculateMidpoint(Vector *centroid) const {
     centroid->Init(dim_);
@@ -93,6 +104,13 @@ class DHrectBound {
       (*centroid)[i] = bounds_[i].mid();
     }
   }
+  /** Calculates the midpoint of the range */
+  void CalculateMidpointOverwrite(Vector *centroid) const {
+    for (index_t i = 0; i < dim_; i++) {
+      (*centroid)[i] = bounds_[i].mid();
+    }
+  }
+
 
   /**
    * Calculates minimum bound-to-point squared distance.
@@ -118,6 +136,31 @@ class DHrectBound {
 
     return math::Pow<2, t_pow>(sum) / 4;
   }
+
+ /**
+  * Calcualtes minimum bound-to-bound squared distance, with
+  * an offset between their respective coordinate systems.
+  */
+ double MinDistanceSq(const DHrectBound& other, const Vector& offset) const {
+   double sum = 0;
+   const DRange *a = this->bounds_;
+   const DRange *b = other.bounds_;
+   index_t mdim = dim_;
+   
+   DEBUG_SAME_SIZE(dim_, other.dim_);
+   //Add Debug for offset vector
+
+   for (index_t d = 0; d < mdim; d++) {
+     double v1 = b[d].lo - offset[d] - a[d].hi;
+     double v2 = a[d].lo + offset[d] - b[d].lo;
+
+     double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
+
+     sum += math::Pow<t_pow, 1>(v);
+   } 
+
+   return math::Pow<2, t_pow>(sum) / 4;
+ }
 
   /**
    * Calculates minimum bound-to-point squared distance.
@@ -154,6 +197,7 @@ class DHrectBound {
     return math::Pow<2, t_pow>(sum) / 4;
   }
 
+
  
  /**
   * Calcualtes minimum bound-to-bound squared distance, with
@@ -169,8 +213,8 @@ class DHrectBound {
    //Add Debug for offset vector
 
    for (index_t d = 0; d < mdim; d++) {
-     double v1 = b[d].lo - offset[d] - a[d].hi;
-     double v2 = a[d].lo + offset[d] - b[d].lo;
+     double v1 = b[d].lo + offset[d] - a[d].hi;
+     double v2 = a[d].lo - offset[d] - b[d].lo;
 
      double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
@@ -180,7 +224,7 @@ class DHrectBound {
    return math::Pow<2, t_pow>(sum) / 4;
  }
 
- 
+
   /**
    * Calculates maximum bound-to-point squared distance.
    */
@@ -226,14 +270,17 @@ class DHrectBound {
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
-      double v = std::max(b[d].hi - offset[d] - a[d].lo, 
-			  a[d].hi + offset[d] - b[d].lo);
+      double v = std::max(b[d].hi + offset[d] - a[d].lo, 
+			  a[d].hi - offset[d] - b[d].lo);
       sum += math::PowAbs<t_pow, 1>(v); // v is non-negative
     }
 
     return math::Pow<2, t_pow>(sum);
- }
+  }
 
+ /**
+  * Computes minimum distance between boxes in periodic coordinate system
+  */
  double PeriodicMinDistanceSq(const DHrectBound& other, const Vector& box_size)
  const {
    double sum = 0;
@@ -257,7 +304,6 @@ class DHrectBound {
    
    return math::Pow<2, t_pow>(sum);
  }
-
 
   /**
    * Calculates minimum and maximum bound-to-bound squared distance.
@@ -465,9 +511,9 @@ class DBallBound {
   double radius_;
   TPoint center_;
 
-  OT_DEF(DBallBound) {
-    OT_MY_OBJECT(radius_);
-    OT_MY_OBJECT(center_);
+  OBJECT_TRAVERSAL(DBallBound) {
+    OT_OBJ(radius_);
+    OT_OBJ(center_);
   }
 
  public:
@@ -502,7 +548,7 @@ class DBallBound {
    * is needed.
    */
   void CalculateMidpoint(Point *centroid) const {
-    ot::Copy(center_, centroid);
+    ot::InitCopy(center_, centroid);
   }
 
   /**
