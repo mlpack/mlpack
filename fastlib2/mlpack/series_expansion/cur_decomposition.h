@@ -93,7 +93,8 @@ class CURDecomposition {
     }
 
     // Pick samples from the column distribution to form the matrix C.
-    int num_column_samples = ((int) sqrt(a_mat.n_cols()));
+    int num_column_samples = std::min((int)(4 * sqrt(a_mat.n_cols())),
+				      a_mat.n_cols());
     column_indices->Init(num_column_samples);
     for(index_t s = 0; s < num_column_samples; s++) {
       double random_number = 
@@ -147,7 +148,8 @@ class CURDecomposition {
     }
 
     // Sample the row vector according to its distribution.
-    int num_row_samples = ((int) sqrt(a_mat.n_rows()));    
+    int num_row_samples = std::min((int) (4 * sqrt(a_mat.n_rows())),
+				   a_mat.n_rows());
     row_indices->Init(num_row_samples);
     for(index_t s = 0; s < num_row_samples; s++) {
       double random_number = 

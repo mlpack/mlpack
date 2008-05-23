@@ -116,7 +116,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   outgoing_representation_.Init(outgoing_skeleton_.size());
   outgoing_representation_.SetZero();
 
-  printf("Has %d points...\n", end - begin);
   for(index_t i = 0; i < end - begin; i++) {
 
     // Get the weight corresponding to the (i + begin)-th reference
@@ -126,10 +125,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 		  projection_operator.GetColumnPtr(i),
 		  outgoing_representation_.ptr());
   }
-
-  printf("Projection operator:\n");
-  projection_operator.PrintDebug();
-  outgoing_representation_.PrintDebug();
 
   // Turn on the flag that says the object has been initialized.
   is_initialized_ = true;
