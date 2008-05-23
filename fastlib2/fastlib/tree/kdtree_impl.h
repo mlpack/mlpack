@@ -2,28 +2,29 @@
 
 namespace tree_kdtree_private {
   template<typename T>
-    void MakeBoundVector(GenVector<T>* point, GenVector<T>* bound_dimensions, 
-			 GenVector<T>* bound_vector){
+    void MakeBoundVector(const GenVector<T>& point, 
+      const Vector& bound_dimensions, GenVector<T>* bound_vector){
     int i;    
-    for (i = 0; i < bound_dimensions->length(); i++){
-      (*bound_vector)[i] = (*point)[(int)(*bound_dimensions)[i]];
+    for (i = 0; i < bound_dimensions.length(); i++){
+      (*bound_vector)[i] = point[(int)bound_dimensions[i]];
     }
   }
   
 
   template<typename TBound, typename T>
     void SelectFindBoundFromMatrix(const GenMatrix<T>& matrix,
-      Vector* split_dimensions, index_t first, index_t count, TBound *bounds){
+      const Vector& split_dimensions, index_t first, index_t count, 
+      TBound *bounds){
     index_t end = first + count;
     for (index_t i = first; i < end; i++) {
       GenVector<T> col;
       matrix.MakeColumnVector(i, &col);
-      if (split_dimensions->length() == matrix.n_rows()){
+      if (split_dimensions.length() == matrix.n_rows()){
 	*bounds |= col;
       } else {
 	GenVector<T> sub_col;
-	sub_col.Init(split_dimensions->length());
-	MakeBoundVector(&col, split_dimensions, &sub_col);	
+	sub_col.Init(split_dimensions.length());
+	MakeBoundVector(col, split_dimensions, &sub_col);	
 	*bounds |= sub_col;
       }          
     }
@@ -38,7 +39,7 @@ namespace tree_kdtree_private {
     for (i = 0; i < matrix.n_rows(); i++){
       split_dimensions[i] = i;
     }
-    SelectFindBoundFromMatrix(matrix, &split_dimensions, first, count, bounds);
+    SelectFindBoundFromMatrix(matrix, split_dimensions, first, count, bounds);
   }
 
    template<typename TBound>
@@ -59,11 +60,11 @@ namespace tree_kdtree_private {
    }
 
   template<typename TBound, typename T>
-  index_t SelectMatrixPartition(GenMatrix<T>& matrix, Vector* split_dimensions,
-				index_t dim, double splitvalue,
-				index_t first, index_t count,
-				TBound* left_bound, TBound* right_bound,
-				index_t *old_from_new) {
+  index_t SelectMatrixPartition(GenMatrix<T>& matrix, 
+    const Vector& split_dimensions, index_t dim, double splitvalue,
+    index_t first, index_t count, TBound* left_bound, TBound* right_bound,
+    index_t *old_from_new) {
+    
     index_t left = first;
     index_t right = first + count - 1;
     
@@ -76,11 +77,11 @@ namespace tree_kdtree_private {
       while (matrix.get(dim, left) < splitvalue && likely(left <= right)) {
         GenVector<T> left_vector;
         matrix.MakeColumnVector(left, &left_vector);
-	if (split_dimensions->length() == matrix.n_rows()){
+	if (split_dimensions.length() == matrix.n_rows()){
 	  *left_bound |= left_vector;
 	} else {
 	  GenVector<T> sub_left_vector;
-	  MakeBoundVector(&left_vector, split_dimensions, &sub_left_vector);
+	  MakeBoundVector(left_vector, split_dimensions, &sub_left_vector);
 	  *left_bound |= sub_left_vector;
 	}
         left++;
@@ -89,11 +90,11 @@ namespace tree_kdtree_private {
       while (matrix.get(dim, right) >= splitvalue && likely(left <= right)) {
         GenVector<T> right_vector;
         matrix.MakeColumnVector(right, &right_vector);
-	if (split_dimensions->length() == matrix.n_rows()){
+	if (split_dimensions.length() == matrix.n_rows()){
 	  *right_bound |= right_vector;
 	} else {
 	  GenVector<T> sub_right_vector;
-	  MakeBoundVector(&right_vector, split_dimensions, &sub_right_vector);
+	  MakeBoundVector(right_vector, split_dimensions, &sub_right_vector);
 	  *right_bound |= sub_right_vector;
 	}        
         right--;
@@ -112,19 +113,19 @@ namespace tree_kdtree_private {
 
       left_vector.SwapValues(&right_vector);
 
-      if (split_dimensions->length() == matrix.n_rows()){
+      if (split_dimensions.length() == matrix.n_rows()){
 	  *left_bound |= left_vector;
       } else {
 	GenVector<T> sub_left_vector;
-	MakeBoundVector(&left_vector, split_dimensions, &sub_left_vector);
+	MakeBoundVector(left_vector, split_dimensions, &sub_left_vector);
 	*left_bound |= sub_left_vector;
       }  
 
-      if (split_dimensions->length() == matrix.n_rows()){
+      if (split_dimensions.length() == matrix.n_rows()){
 	  *right_bound |= right_vector;
       } else {
 	GenVector<T> sub_right_vector;
-	MakeBoundVector(&right_vector, split_dimensions, &sub_right_vector);
+	MakeBoundVector(right_vector, split_dimensions, &sub_right_vector);
 	*right_bound |= sub_right_vector;
       }  
      
@@ -159,15 +160,15 @@ namespace tree_kdtree_private {
     for (i = 0; i < matrix.n_rows(); i++){
       split_dimensions[i] = i;
     }
-    SelectSplitKdTreeMidpoint(matrix, &split_dimensions, node, 
+    SelectSplitKdTreeMidpoint(matrix, split_dimensions, node, 
 			      leaf_size, old_from_new);
   }
   
 
   template<typename TKdTree, typename T>
-    void SelectSplitKdTreeMidpoint(GenMatrix<T>& matrix, 
-				   Vector* split_dimensions,
-      TKdTree *node, index_t leaf_size, index_t *old_from_new) {
+    void SelectSplitKdTreeMidpoint(GenMatrix<T>& matrix,
+      const Vector& split_dimensions, TKdTree *node, index_t leaf_size, 
+      index_t *old_from_new) {
   
     TKdTree *left = NULL;
     TKdTree *right = NULL;
@@ -179,7 +180,7 @@ namespace tree_kdtree_private {
       index_t split_dim = BIG_BAD_NUMBER;
       double max_width = -1;
 
-      for (index_t d = 0; d < split_dimensions->length(); d++) {
+      for (index_t d = 0; d < split_dimensions.length(); d++) {
         double w = node->bound().get(d).width();
 	
         if (w > max_width) {	
@@ -195,20 +196,20 @@ namespace tree_kdtree_private {
         // same.  We have to give up.
       } else {
         left = new TKdTree();
-        left->bound().Init(split_dimensions->length());
+        left->bound().Init(split_dimensions.length());
 
         right = new TKdTree();
-        right->bound().Init(split_dimensions->length());
+        right->bound().Init(split_dimensions.length());
 
         index_t split_col = SelectMatrixPartition(matrix, split_dimensions, 
-	     (int)(*split_dimensions)[split_dim], split_val,
+	     (int)split_dimensions[split_dim], split_val,
             node->begin(), node->count(),
             &left->bound(), &right->bound(),
             old_from_new);
         
         VERBOSE_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
             node->begin(), split_col,
-            node->begin() + node->count(), (int)(*split_dimensions)[split_dim],
+            node->begin() + node->count(), (int)split_dimensions[split_dim],
 		    split_val,
             node->bound().get(split_dim).lo,
             node->bound().get(split_dim).hi);

@@ -198,33 +198,6 @@ class DHrectBound {
   }
 
 
- 
- /**
-  * Calcualtes minimum bound-to-bound squared distance, with
-  * an offset between their respective coordinate systems.
-  */
- double MinDistanceSq(const DHrectBound& other, const Vector& offset) const {
-   double sum = 0;
-   const DRange *a = this->bounds_;
-   const DRange *b = other.bounds_;
-   index_t mdim = dim_;
-   
-   DEBUG_SAME_SIZE(dim_, other.dim_);
-   //Add Debug for offset vector
-
-   for (index_t d = 0; d < mdim; d++) {
-     double v1 = b[d].lo + offset[d] - a[d].hi;
-     double v2 = a[d].lo - offset[d] - b[d].lo;
-
-     double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
-
-     sum += math::Pow<t_pow, 1>(v);
-   } 
-
-   return math::Pow<2, t_pow>(sum) / 4;
- }
-
-
   /**
    * Calculates maximum bound-to-point squared distance.
    */

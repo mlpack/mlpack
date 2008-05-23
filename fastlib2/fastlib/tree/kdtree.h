@@ -48,7 +48,7 @@ namespace tree {
 
   template<typename TKdTree, typename T>
   TKdTree *MakeKdTreeMidpointSelective(GenMatrix<T>& matrix, 
-				       Vector* split_dimensions,
+				       const Vector& split_dimensions,
       index_t leaf_size,
       ArrayList<index_t> *old_from_new = NULL,
       ArrayList<index_t> *new_from_old = NULL) {
@@ -68,7 +68,7 @@ namespace tree {
     }
       
     node->Init(0, matrix.n_cols());
-    node->bound().Init(split_dimensions->length());
+    node->bound().Init(split_dimensions.length());
     tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
         0, matrix.n_cols(), &node->bound());
 
@@ -95,7 +95,7 @@ namespace tree {
       split_dimensions[i] = i;
     }
     TKdTree *result;
-    result = MakeKdTreeMidpointSelective<TKdTree>(matrix, &split_dimensions,
+    result = MakeKdTreeMidpointSelective<TKdTree>(matrix, split_dimensions,
 		   leaf_size, old_from_new, new_from_old);
     return result;
   }
