@@ -36,6 +36,13 @@ void SmallSdpNmf::Init(fx_module *module,
   offset_v_ = offset_th_ + num_of_columns_;
   number_of_cones_ = values_.size()*new_dim_ // sdp cones
      +values_.size(); // LP cones;
+  objective_factor_.Init(new_dim_,  2*(num_of_rows_+num_of_columns_)+values_.size());
+  objective_factor_.SetAll(1.0);
+  for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
+    for(index_t j=0; j<new_dim_; j++) {
+      objective_factor_.set(j, i, -1);
+    }
+  }
 }
 
 void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
@@ -47,11 +54,11 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
     index_t v_i=offset_v_+i;
     double diff=0;
     for(index_t j=0; j<new_dim_; j++) {
-      diff+=coordinates.get(v_i, j);
+      diff+=coordinates.get(j, v_i);
     }
     diff-=values_[i];
     for(index_t j=0; j<new_dim_; j++) {
-      gradient->set(v_i, j, gradient->get(v_i, j)-1.0/diff);
+      gradient->set(j, v_i, gradient->get(j, v_i)-1.0/diff);
     }     
   } 
   // from the SDP cones
@@ -68,11 +75,11 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
     index_t t2_i=offset_th_+columns_[i];
     index_t v_i=offset_v_+i;
     for(index_t j=0; j<new_dim_; j++) {
-      double w=coordinates.get(w_i, j);
-      double h=coordinates.get(h_i, j);
-      double t1=coordinates.get(t1_i, j);
-      double t2=coordinates.get(t2_i, j);
-      double v=coordinates.get(v_i, j);
+      double w=coordinates.get(j, w_i);
+      double h=coordinates.get(j, h_i);
+      double t1=coordinates.get(j, t1_i);
+      double t2=coordinates.get(j, t2_i);
+      double v=coordinates.get(j, v_i);
       double t1_minus_ww=(t1-w*w);
       double t2_minus_hh=(t2-h*h);
       double wh_minus_v=(w*h-v);
@@ -82,11 +89,11 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
       double dt1=(t2_minus_hh)/determinant;
       double dt2=(t1_minus_ww)/determinant;
       double dv=+2*(wh_minus_v)/determinant;
-      gradient->set(w_i, j, gradient->get(w_i, j)-dw);
-      gradient->set(h_i, j, gradient->get(h_i, j)-dh);
-      gradient->set(t1_i, j, gradient->get(t1_i, j)-dt1);
-      gradient->set(t2_i, j, gradient->get(t1_i, j)-dt2);
-      gradient->set(v_i, j, gradient->get(v_i, j)-dv);  
+      gradient->set(j, w_i, gradient->get(j, w_i)-dw);
+      gradient->set(j, h_i, gradient->get(j, h_i)-dh);
+      gradient->set(j, t1_i, gradient->get(j, t1_i)-dt1);
+      gradient->set(j, t2_i, gradient->get(j, t1_i)-dt2);
+      gradient->set(j, v_i, gradient->get(j, v_i)-dv);  
     }  
   }
 }
@@ -113,7 +120,7 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
     index_t v_i=offset_v_+i;
     double diff=0;
     for(index_t j=0; j<new_dim_; j++) {
-      diff+=coordinates.get(v_i, j);
+      diff+=coordinates.get(j, v_i);
     }
     diff-values_[i];
     DEBUG_ERR_MSG_IF(diff<=0, "LP cone is invalid, you are "
@@ -129,11 +136,11 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
     index_t t2_i=offset_th_+columns_[i];
     index_t v_i=offset_v_+i;
     for(index_t j=0; j<new_dim_; j++) {
-      double w=coordinates.get(w_i, j);
-      double h=coordinates.get(h_i, j);
-      double t1=coordinates.get(t1_i, j);
-      double t2=coordinates.get(t2_i, j);
-      double v=coordinates.get(v_i, j);
+      double w=coordinates.get(j, w_i);
+      double h=coordinates.get(j, h_i);
+      double t1=coordinates.get(j, t1_i);
+      double t2=coordinates.get(j, t2_i);
+      double v=coordinates.get(j, v_i);
       double t1_minus_ww=(t1-w*w);
       double t2_minus_hh=(t2-h*h);
       double wh_minus_v=(w*h-v);
@@ -163,7 +170,7 @@ void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
       2*(num_of_rows_+num_of_columns_)+values_.size());
   for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      init_data->set(i, j, math::Random(0.0, 1.0));
+      init_data->set(j, i, math::Random(0.0, 1.0));
     }
   }
   for(index_t i=0; i<values_.size(); i++) {
@@ -173,14 +180,14 @@ void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
     index_t t2_i=offset_th_+columns_[i];
     index_t v_i=offset_v_+i;
     for(index_t j=0; j<new_dim_; j++) {
-      double w=init_data->get(w_i, j);
-      double h=init_data->get(h_i, j);
-      double v=init_data->get(v_i, j);
+      double w=init_data->get(j, w_i);
+      double h=init_data->get(j, h_i);
+      double v=init_data->get(j, v_i);
      
       // ensure that Sum w_ij*hij > v_ij 
-      init_data->set(v_i, j, std::max(w*h+math::Random(), values_[i]));
-      init_data->set(t1_i, j, fabs(w*h-v)+w*w+math::Random());
-      init_data->set(t2_i, j, fabs(w*h-v)+h*h+math::Random());
+      init_data->set(j, v_i, std::max(w*h+math::Random(), values_[i]));
+      init_data->set(j, t1_i, fabs(w*h-v)+w*w+math::Random());
+      init_data->set(j, t2_i, fabs(w*h-v)+h*h+math::Random());
     }
   }  
 }
