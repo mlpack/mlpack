@@ -1,17 +1,17 @@
 
-#librule(
-    #name = "mog_em",                    # this line can be safely omitted
-    #sources = [],            # files that must be compiled
-    #headers = [],# include files part of the 'lib'
-    #deplibs = ["fastlib:fastlib"], # depends on fastlib core
-    #tests = ["mog_em_tests.cc"]        # this file contains a main with test functions
-    #)
+librule(
+    name = "opt",
+    sources = ["optimizers_reloaded.cc"],
+    headers = ["optimizers_reloaded.h"],
+    deplibs = ["fastlib:fastlib"],
+    #tests = ["mog_em_tests.cc"]
+    )
 
 binrule(
-    name = "main",                  # the executable name
-    sources = ["main.cc"],          # compile main.cc
-    headers = ["phi.h","optimizers_reloaded.h"],           # no extra headers
-    deplibs = ["fastlib:fastlib"]           #
+    name = "main",
+    sources = ["main.cc"],
+    headers = ["phi.h"],
+    deplibs = ["fastlib:fastlib",":opt"]
     )
 
 # to build:
