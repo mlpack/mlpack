@@ -21,32 +21,25 @@ namespace pdc {
     upper_bound *= upper_bound;
 
     
-    do {
+    while (t--) {
       do {
 	T d = *vx++ - *vy++;
 	s += d * d;
 	d = *vx++ - *vy++;
 	s += d * d;
-	//d = *vx++ - *vy++;
-	//s += d * d;
-	//d = *vx++ - *vy++;
-	//s += d * d;
 	batch -= 2;
       }while(batch);
       if (s > upper_bound) {
 	return sqrt(s) + EPS;
       }
       batch = 120;
-    }while(--t);
+    }
 
     length = length - t1 * 120;
 
-    while (length) {
+    while (length--) {
       T d = *vx++ - *vy++;
       s += d * d;
-      d = *vx++ - *vy++;
-      s += d * d;
-      length -= 2;
     }
 
     if (s > upper_bound) {
@@ -55,15 +48,6 @@ namespace pdc {
     else {
       return sqrt(s);
     }
-    
-    /* 
-    do {
-      T d = *vx++ - *vy++;
-      s += d * d;
-    } while(--length);
-
-    return sqrt(s);
-    */
   }
 
 };
