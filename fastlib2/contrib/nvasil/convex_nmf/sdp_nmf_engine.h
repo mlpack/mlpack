@@ -84,8 +84,8 @@ class SdpNmfEngine {
 	 
  private:
 	fx_module *module_;
-  LBfgs<NmfObjective> engine_;
-	NmfObjective opt_function_;
+  LBfgs<SdpNmfObjective> engine_;
+	SdpNmfObjective  opt_function_;
 	ArrayList<index_t> rows_;
 	ArrayList<index_t> columns_;
 	ArrayList<double> values_;
