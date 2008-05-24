@@ -21,7 +21,8 @@
 #include "../l_bfgs/optimization_utils.h"
 
 class SmallSdpNmf {
-	void Init(fx_module *module, 
+ public:
+  void Init(fx_module *module, 
 			ArrayList<index_t> &rows,
 			ArrayList<index_t> &columns,
       ArrayList<double>  &values);
@@ -54,6 +55,7 @@ class SmallSdpNmf {
   Matrix objective_factor_;
   index_t number_of_cones_;
   double desired_duality_gap_;
+  double gradient_tolerance_;
 };
 
 #include "sdp_objectives_impl.h"
