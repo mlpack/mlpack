@@ -59,6 +59,10 @@ class MatrixFactorizedFMM {
    */
   ArrayList<index_t> old_from_new_references_;
 
+  /** @brief The relative error accuracy requirement.
+   */
+  double relative_error_;
+
   ////////// Private Member Functions //////////
   
   /** @brief The exhaustive base case for evaluating the reference
@@ -66,8 +70,7 @@ class MatrixFactorizedFMM {
    */
   void BaseCase_(const Matrix &query_set, 
 		 const ArrayList<index_t> &query_index_permutation,
-		 const QueryTree *query_node, 
-		 const ReferenceTree *reference_node, 
+		 QueryTree *query_node, const ReferenceTree *reference_node, 
 		 Vector &query_kernel_sums) const;
   
   /** @brief The canonical case for evaluating the reference
