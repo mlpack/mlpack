@@ -35,20 +35,32 @@ class MatrixFactorizedFMMReferenceNodeStat {
 
 class MatrixFactorizedFMMQueryNodeStat {
  public:
-  
+
+  ////////// Member Variables //////////
+
+  /** @brief The local expansion for the query points in this node.
+   */
+  typename TKernelAux::TLocalExpansion local_expansion_;
+
+  /** @brief The lower bound on the kernel sum for the query points
+   *         owned by this node.
+   */
+  double mass_l_;
+
+  ////////// Constructor/Destructor //////////
+
   /** @brief The default constructor.
    */
   MatrixFactorizedFMMQueryNodeStat() {
+    mass_l_ = 0;
   }
   
   /** @brief The default destructor.
    */
   ~MatrixFactorizedFMMQueryNodeStat() {}
 
-  /** @brief The local expansion for the query points in this node.
-   */
-  typename TKernelAux::TLocalExpansion local_expansion_;
-  
+  ////////// Member Functions //////////
+
   void Init(const TKernelAux &ka) {
     local_expansion_.Init(ka);
   }

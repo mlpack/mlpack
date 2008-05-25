@@ -5,10 +5,12 @@
 template<typename TKernelAux>
 void MatrixFactorizedFMM<TKernelAux>::BaseCase_
 (const Matrix &query_set, const ArrayList<index_t> &query_index_permutation,
- const QueryTree *query_node, const ReferenceTree *reference_node,
+ QueryTree *query_node, const ReferenceTree *reference_node,
  Vector &query_kernel_sums) const {
 
-  
+  // Clear the lower bound info on the query node.
+  query_node->stat().mass_l_ = DBL_MAX;
+
   // Loop over each query point in the query node.
   for(index_t q = query_node->begin(); q < query_node->end(); q++) {
     
@@ -32,7 +34,12 @@ void MatrixFactorizedFMM<TKernelAux>::BaseCase_
       query_kernel_sums[query_index_permutation[q]] += weighted_kernel_value;
       
     } // end of iterating over each reference point.
-    
+
+    // Refine the lower bound on the kernel sum.
+    query_node->stat().mass_l_ = 
+      std::min(query_node->stat().mass_l_,
+	       query_kernel_sums[query_index_permutation[q]]);
+
   } // end of looping over each query point.
 }
 
@@ -44,10 +51,15 @@ void MatrixFactorizedFMM<TKernelAux>::CanonicalCase_
 
   // If the current query/reference node is prunable, then
   // approximate.
-  double min_distance = sqrt(query_node->bound().MinDistanceSq
-			     (reference_node->bound()));
-  if(min_distance > std::min(query_node->bound().radius(),
-			     reference_node->bound().radius()) &&
+  double reference_node_expected_max_absolute_error =
+    reference_node->stat().farfield_expansion_.
+    expected_maximum_absolute_error();
+  double max_allowed_error =
+    ((double) reference_node->count()) / 
+    ((double) reference_tree_root_->count()) *
+    relative_error_ * (query_node->stat().mass_l_);
+
+  if(reference_node_expected_max_absolute_error <= max_allowed_error &&
      query_node->count() * reference_node->count() >
      query_node->stat().local_expansion_.incoming_skeleton().size() *
      reference_node->stat().farfield_expansion_.outgoing_skeleton().size()) {
@@ -100,6 +112,11 @@ void MatrixFactorizedFMM<TKernelAux>::CanonicalCase_
       CanonicalCase_(query_set, query_index_permutation, query_node->right(),
 		     reference_node->right(), query_kernel_sums);
     }
+    
+    // Refine the bound based on the recursion results...
+    query_node->stat().mass_l_ =
+      std::min(query_node->left()->stat().mass_l_,
+	       query_node->right()->stat().mass_l_);
   }
 }
 
@@ -240,6 +257,9 @@ void MatrixFactorizedFMM<TKernelAux>::Init(const Matrix &references,
   // Retrieve the bandwidth and initialize the kernel.
   double bandwidth = fx_param_double_req(module_, "bandwidth");
   ka_.Init(bandwidth, 0, references.n_rows());
+
+  // Retrieve the required relative error level.
+  relative_error_ = fx_param_double(module_, "relative_error", 0.01);
 }
 
 template<typename TKernelAux>
