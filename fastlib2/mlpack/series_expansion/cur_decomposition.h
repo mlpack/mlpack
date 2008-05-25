@@ -54,10 +54,8 @@ class CURDecomposition {
   }
 
  public:
-  template<typename Tree>
+
   static void Compute(const Matrix &a_mat,
-		      const ArrayList<Tree *> *leaf_nodes,
-		      const bool for_farfield,
 		      Matrix *c_mat, Matrix *u_mat, Matrix *r_mat, 
 		      ArrayList<index_t> *column_indices,
 		      ArrayList<index_t> *row_indices) {
@@ -68,10 +66,9 @@ class CURDecomposition {
     // Compute the column length square distributions.
     for(index_t i = 0; i < a_mat.n_cols(); i++) {
       const double *i_th_column = a_mat.GetColumnPtr(i);
-      double squared_length = (for_farfield) ?
-	la::Dot(a_mat.n_rows(), i_th_column, i_th_column):
-	la::Dot(a_mat.n_rows(), i_th_column, i_th_column) *
-	((*leaf_nodes)[i])->count();
+      double squared_length =
+	la::Dot(a_mat.n_rows(), i_th_column, i_th_column);
+      
       column_length_square_distribution[i] = (i == 0) ? 
 	squared_length:squared_length + 
 	column_length_square_distribution[i - 1];
@@ -93,7 +90,7 @@ class CURDecomposition {
     }
 
     // Pick samples from the column distribution to form the matrix C.
-    int num_column_samples = std::min((int)(4 * sqrt(a_mat.n_cols())),
+    int num_column_samples = std::min((int) (sqrt(a_mat.n_cols())),
 				      a_mat.n_cols());
     column_indices->Init(num_column_samples);
     for(index_t s = 0; s < num_column_samples; s++) {
@@ -104,7 +101,6 @@ class CURDecomposition {
     }
     qsort(column_indices->begin(), column_indices->size(),
 	  sizeof(index_t), &qsort_compar_);
-    remove_duplicates_in_sorted_array_(*column_indices);
     num_column_samples = column_indices->size();
     c_mat->Init(a_mat.n_rows(), num_column_samples);    
     
@@ -137,8 +133,7 @@ class CURDecomposition {
     row_length_square_distribution.SetZero();
     for(index_t c = 0; c < a_mat.n_cols(); c++) {
       for(index_t r = 0; r < a_mat.n_rows(); r++) {
-	row_length_square_distribution[r] += (for_farfield) ?
-	  a_mat.get(r, c) * a_mat.get(r, c) * ((*leaf_nodes)[r])->count():
+	row_length_square_distribution[r] +=
 	  a_mat.get(r, c) * a_mat.get(r, c);
       }
     }
@@ -159,7 +154,6 @@ class CURDecomposition {
     }
     qsort(row_indices->begin(), row_indices->size(), sizeof(index_t), 
 	  &qsort_compar_);
-    remove_duplicates_in_sorted_array_(*row_indices);
 
     // Recompute the required row sample numbers and allocate the R
     // factor and Psi matrix based on it.

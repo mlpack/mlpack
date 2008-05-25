@@ -88,16 +88,15 @@ class MatrixFactorizedFarFieldExpansion {
    */
   const typename TKernelAux::TKernel *kernel_;
 
-  /** @brief The internal flag that states that the far-field
-   *         expansion has been initialized with a valid
-   *         representation (whether from the base case or the merging
-   *         case).
+  /** @brief The expected maximum absolute error incurred by
+   *         approximating.
    */
-  bool is_initialized_;
+  double expected_maximum_absolute_error_;
 
   OT_DEF(MatrixFactorizedFarFieldExpansion) {
     OT_MY_OBJECT(outgoing_representation_);
     OT_MY_OBJECT(outgoing_skeleton_);
+    OT_MY_OBJECT(expected_maximum_absolute_error_);
   }
 
  public:
@@ -121,6 +120,12 @@ class MatrixFactorizedFarFieldExpansion {
    */
   const ArrayList<index_t> &outgoing_skeleton() const {
     return outgoing_skeleton_;
+  }
+
+  /** @brief Gets the expected maximum absolute error.
+   */
+  double expected_maximum_absolute_error() const {
+    return expected_maximum_absolute_error_;
   }
 
   ////////// User-level Functions //////////
