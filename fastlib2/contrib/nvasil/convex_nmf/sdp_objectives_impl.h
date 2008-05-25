@@ -84,6 +84,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
       double t2_minus_hh=(t2-h*h);
       double wh_minus_v=(w*h-v);
       double determinant=t1_minus_ww*t2_minus_hh-math::Pow<2,1>(wh_minus_v);
+      DEBUG_ERR_MSG_IF(determinant==0.0, "Determinant equal to zero");
       double dw=(-2*w*(t2_minus_hh)-2*h*(wh_minus_v))/determinant;
       double dh=(-2*h*(t1_minus_ww)-2*w*(wh_minus_v))/determinant;
       double dt1=(t2_minus_hh)/determinant;
@@ -122,9 +123,13 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
     for(index_t j=0; j<new_dim_; j++) {
       diff+=coordinates.get(j, v_i);
     }
-    diff-values_[i];
-    DEBUG_ERR_MSG_IF(diff<=0, "LP cone is invalid, you are "
-       " out of the feasible region");
+    diff-=values_[i];
+    if unlikely(diff<0) {
+      return DBL_MAX;
+    }
+//    DEBUG_ERR_MSG_IF(diff<=0, "LP cone is invalid, you are "
+//       " out of the feasible region, constraint %i, diff %lg",
+//       i, diff);
     lagrangian-=log(diff);   
   } 
   // from the SDP cones
@@ -145,8 +150,11 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
       double t2_minus_hh=(t2-h*h);
       double wh_minus_v=(w*h-v);
       double determinant=t1_minus_ww*t2_minus_hh-math::Pow<2,1>(wh_minus_v);
-      DEBUG_ERR_MSG_IF(determinant<=0, "SDP cone is invalid, you are "
-       " out of the feasible region");
+      if (unlikely(determinant<=0)) {
+        return DBL_MAX;
+      }
+//      DEBUG_ERR_MSG_IF(determinant<=0, "SDP cone is invalid, you are "
+//       " out of the feasible region");
       lagrangian-=log(determinant);
     }  
   }
@@ -182,14 +190,17 @@ void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
     for(index_t j=0; j<new_dim_; j++) {
       double w=init_data->get(j, w_i);
       double h=init_data->get(j, h_i);
-      double v=init_data->get(j, v_i);
      
       // ensure that Sum w_ij*hij > v_ij 
       init_data->set(j, v_i, std::max(w*h+math::Random(), values_[i]));
-      init_data->set(j, t1_i, fabs(w*h-v)+w*w+math::Random());
-      init_data->set(j, t2_i, fabs(w*h-v)+h*h+math::Random());
+      double v=init_data->get(j, v_i);
+      init_data->set(j, t1_i, std::max(fabs(w*h-v)+w*w+math::Random(), 
+            init_data->get(j, t1_i)));
+      init_data->set(j, t2_i, std::max(fabs(w*h-v)+h*h+math::Random(),
+          init_data->get(j ,t2_i)));
     }
-  }  
+  } 
+  data::Save("init_data.csv", *init_data); 
 }
 
 bool SmallSdpNmf::IsDiverging(double objective) {
