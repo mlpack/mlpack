@@ -195,6 +195,10 @@ class MatrixFactorizedLocalExpansion {
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const;
 
+  /** @brief Clears the coefficients to zeros.
+   */
+  void SetZero();
+
   /** @brief Trains the incoming skeleton sampling from the set of
    *         reference leaf nodes.      
    */

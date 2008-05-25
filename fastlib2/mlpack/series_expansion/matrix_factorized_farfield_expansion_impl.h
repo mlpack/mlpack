@@ -32,21 +32,12 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 
   ArrayList<index_t> tmp_outgoing_skeleton;
   tmp_outgoing_skeleton.Init(num_reference_samples);
-  for(index_t r = 0; r < num_reference_samples; r++) {
 
-    // Choose a random reference point and record its index.
-    /*
-    index_t random_reference_point_index = math::RandInt(begin, end);
-    tmp_outgoing_skeleton[r] = random_reference_point_index;
-    */
+  // The temporary outgoing skeleton includes all of the reference
+  // points.
+  for(index_t r = 0; r < num_reference_samples; r++) {
     tmp_outgoing_skeleton[r] = begin + r;
   }
-  /*
-  // Sort the chosen reference indices and eliminate duplicates...
-  qsort(tmp_outgoing_skeleton.begin(), tmp_outgoing_skeleton.size(),
-	sizeof(index_t), &qsort_compar_);
-  remove_duplicates_in_sorted_array_(tmp_outgoing_skeleton);
-  */
   num_reference_samples = tmp_outgoing_skeleton.size();
 
   // After determining the number of reference samples to take,
@@ -59,7 +50,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
     const double *reference_point =
       reference_set.GetColumnPtr(tmp_outgoing_skeleton[r]);
 
-    for(index_t c = 0; c < num_query_samples; c++) {
+    for(index_t c = 0; c < query_leaf_nodes->size(); c++) {
       
       // Choose a random query point from the current query strata...
       index_t random_query_point_index =
@@ -74,19 +65,39 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 	la::DistanceSqEuclidean(reference_set.n_rows(), reference_point,
 				query_point);
       double kernel_value = (ka_->kernel_).EvalUnnormOnSq(squared_distance);
-
-      sample_kernel_matrix.set(c, r, kernel_value);
-
+      sample_kernel_matrix.set(c, r, kernel_value *
+			       (((*query_leaf_nodes)[c])->count()));
+      
     } // end of iterating over each sample query strata...
   } // end of iterating over each reference point...
 
   // CUR-decompose the sample kernel matrix.
   Matrix c_mat, u_mat, r_mat;
   ArrayList<index_t> column_indices, row_indices;
-  CURDecomposition::Compute(sample_kernel_matrix, query_leaf_nodes, true,
+  CURDecomposition::Compute(sample_kernel_matrix,
 			    &c_mat, &u_mat, &r_mat,
 			    &column_indices, &row_indices);
   
+  // Compute the reconstruction error by multiplying the reference
+  // weights by the kernel matrix approximation difference, reweighted
+  // by the inverse of the query points contained in each query
+  // strata.
+  Matrix reconstruction_error, intermediate_matrix;
+  la::MulInit(c_mat, u_mat, &intermediate_matrix);
+  reconstruction_error.Copy(sample_kernel_matrix);
+  la::MulExpert(-1.0, intermediate_matrix, r_mat, 1.0, &reconstruction_error);
+  for(index_t i = 0; i < reconstruction_error.n_rows(); i++) {
+    
+    double row_sum = 0;
+    for(index_t j = 0; j < reconstruction_error.n_cols(); j++) {
+      row_sum += reconstruction_error.get(i, j) * weights[begin + j];
+    }
+
+    expected_maximum_absolute_error_ =
+      std::max(expected_maximum_absolute_error_,
+	       fabs(row_sum) / ((double) ((*query_leaf_nodes)[i])->count()));
+  }
+
   // The out-going skeleton is constructed from the sampled columns in
   // the matrix factorization.
   outgoing_skeleton_.Init(column_indices.size());
@@ -106,8 +117,8 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
       0:c_mat.get(0, i) / sample_kernel_matrix.get(0, column_indices[i]);
 
     for(index_t j = 0; j < projection_operator.n_cols(); j++) {
-      projection_operator.set(i, j, projection_operator.get(i, j) *
-			      scaling_factor);
+      projection_operator.set
+	(i, j, projection_operator.get(i, j) * scaling_factor);
     }
   }
 
@@ -125,9 +136,6 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 		  projection_operator.GetColumnPtr(i),
 		  outgoing_representation_.ptr());
   }
-
-  // Turn on the flag that says the object has been initialized.
-  is_initialized_ = true;
 }
 
 template<typename TKernelAux>
@@ -160,6 +168,12 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::CombineBasisFunctions
       outgoing_representation2[i - outgoing_representation1.length()];
     outgoing_skeleton_[i] = outgoing_skeleton2[i - outgoing_skeleton1.size()];
   }
+
+  // The expected maximum absolute error is basically the sum of the
+  // errors for the two expansions.
+  expected_maximum_absolute_error_ = 
+    farfield_expansion1.expected_maximum_absolute_error() +
+    farfield_expansion2.expected_maximum_absolute_error();
 }
 
 template<typename TKernelAux>
@@ -181,9 +195,9 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
   ka_ = &ka;
-
-  // The default flag for initialization is false.
-  is_initialized_ = false;
+  
+  // Initialize the expected maximum absolute error to zero.
+  expected_maximum_absolute_error_ = 0;
 }
 
 template<typename TKernelAux>
@@ -193,9 +207,9 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::Init
   // Copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);  
   ka_ = &ka;
-  
-  // The default flag for initialization is false.
-  is_initialized_ = false;
+
+  // Initialize the expected maximum absolute error to zero.
+  expected_maximum_absolute_error_ = 0;
 }
 
 template<typename TKernelAux>
@@ -239,48 +253,8 @@ template<typename TKernelAux>
 void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateFromFarField
 (const MatrixFactorizedFarFieldExpansion &se) {
   
-  // The far-field expansion using matrix factorization is formed by
-  // concatenating representations.
-  if(is_initialized_) {
-    Vector tmp_outgoing_representation;
-    const Vector &outgoing_representation_to_be_translated =
-      se.outgoing_representation();
-    const ArrayList<index_t> &outgoing_skeleton_to_be_translated =
-      se.outgoing_skeleton();
-    tmp_outgoing_representation.Copy(outgoing_representation_);
-    outgoing_representation_.Destruct();    
-    outgoing_representation_.Init
-      (tmp_outgoing_representation.length() +
-       outgoing_representation_to_be_translated.length());
-    for(index_t i = 0; i < tmp_outgoing_representation.length(); i++) {
-      outgoing_representation_[i] = tmp_outgoing_representation[i];
-    }
-    for(index_t i = tmp_outgoing_representation.length(); i < 
-	  outgoing_representation_.length(); i++) {
-      outgoing_representation_[i] = 
-	outgoing_representation_to_be_translated
-	[i - tmp_outgoing_representation.length()];
-    }
-    for(index_t i = 0; i < outgoing_skeleton_to_be_translated.size(); i++) {
-      outgoing_skeleton_.PushBackCopy(outgoing_skeleton_to_be_translated[i]);
-    }
-    
-    for(index_t i = 0; i < outgoing_representation_.length(); i++) {
-      printf("%g ", outgoing_representation_[i]);
-    }
-    printf("\n");
-    for(index_t i = 0; i < outgoing_skeleton_.size(); i++) {
-      printf("%d ", outgoing_skeleton_[i]);
-    }
-    printf("\n");
-  }
-  else {
-    outgoing_representation_.Copy(se.outgoing_representation());
-    outgoing_skeleton_.InitCopy(se.outgoing_skeleton());
-  }
-  
-  // Turn on the initialization flag on.
-  is_initialized_ = true;
+  // Implement me sometime!
+  DEBUG_ASSERT_MSG(false, "Please implement me!");
 }
 
 template<typename TKernelAux>

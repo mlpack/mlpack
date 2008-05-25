@@ -110,6 +110,13 @@ int MatrixFactorizedLocalExpansion<TKernelAux>::OrderForEvaluating
 }
 
 template<typename TKernelAux>
+void MatrixFactorizedLocalExpansion<TKernelAux>::SetZero() {
+
+  // Clear the coefficients to zer.
+  coeffs_.SetZero();
+}
+
+template<typename TKernelAux>
 template<typename Tree>
 void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 (const Matrix &query_set, int begin, int end, const Matrix *reference_set,
@@ -131,17 +138,13 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
     // Choose a random query point and record its index.
     tmp_incoming_skeleton[q] = q + begin;
   }
-  // Sort the chosen query indices and eliminate duplicates...
-  qsort(tmp_incoming_skeleton.begin(), tmp_incoming_skeleton.size(),
-	sizeof(index_t), &qsort_compar_);
-  remove_duplicates_in_sorted_array_(tmp_incoming_skeleton);
   num_query_samples = tmp_incoming_skeleton.size();
 
   // After determining the number of query samples to take,
   // allocate the space for the sample kernel matrix to be computed.
   sample_kernel_matrix.Init(num_query_samples, num_reference_samples);
   
-  for(index_t r = 0; r < num_reference_samples; r++) {
+  for(index_t r = 0; r < reference_leaf_nodes->size(); r++) {
 
     // Choose a random reference point from the current reference strata...
     index_t random_reference_point_index =
@@ -161,7 +164,8 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 	la::DistanceSqEuclidean(query_set.n_rows(), reference_point,
 				query_point);
       double kernel_value = (ka_->kernel_).EvalUnnormOnSq(squared_distance);
-      sample_kernel_matrix.set(c, r, kernel_value);
+      sample_kernel_matrix.set(c, r, kernel_value *
+			       (((*reference_leaf_nodes)[r])->count()));
       
     } // end of iterating over each sample query strata...
   } // end of iterating over each reference point...
@@ -169,8 +173,7 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
   // CUR-decompose the sample kernel matrix.
   Matrix c_mat, u_mat, r_mat;
   ArrayList<index_t> column_indices, row_indices;
-  CURDecomposition::Compute(sample_kernel_matrix, reference_leaf_nodes,
-			    false, &c_mat, &u_mat, &r_mat,
+  CURDecomposition::Compute(sample_kernel_matrix, &c_mat, &u_mat, &r_mat,
 			    &column_indices, &row_indices);
   
   // The incoming skeleton is constructed from the sampled rows in the
@@ -189,8 +192,10 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
       (sample_kernel_matrix.get(row_indices[i], 0) < DBL_EPSILON) ?
       0:r_mat.get(i, 0) / sample_kernel_matrix.get(row_indices[i], 0);
 
-    la::Scale(evaluation_operator_->n_rows(), scaling_factor,
-	      evaluation_operator_->GetColumnPtr(i));
+    for(index_t j = 0; j < evaluation_operator_->n_rows(); j++) {
+      evaluation_operator_->set
+	(j, i, evaluation_operator_->get(j, i) * scaling_factor);
+    }
   }
 
   // Allocate space based on the size of the incoming skeleton.
