@@ -200,14 +200,14 @@ void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
           init_data->get(j ,t2_i)));
     }
   } 
-  data::Save("init_data.csv", *init_data); 
 }
 
 bool SmallSdpNmf::IsDiverging(double objective) {
   return false;
 }
 
-bool SmallSdpNmf::IsOptimizationOver(Matrix &coordinates, Matrix &gradient) {
+bool SmallSdpNmf::IsOptimizationOver(Matrix &coordinates, 
+    Matrix &gradient, double step) {
   if (number_of_cones_/sigma_ < desired_duality_gap_) {
     return true;
   } else {
@@ -215,10 +215,11 @@ bool SmallSdpNmf::IsOptimizationOver(Matrix &coordinates, Matrix &gradient) {
   }
 }
 
-bool SmallSdpNmf::IsIntermediateStepOver(Matrix &coordinates, Matrix &gradient) {
+bool SmallSdpNmf::IsIntermediateStepOver(Matrix &coordinates, 
+    Matrix &gradient, double step) {
   double norm_gradient = la::Dot(gradient.n_elements(), 
       gradient.ptr(), gradient.ptr());
-  if (norm_gradient < gradient_tolerance_) {
+  if (norm_gradient*step < gradient_tolerance_) {
     return true;
   } else {
     return false;

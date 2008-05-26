@@ -36,8 +36,8 @@ class SmallSdpNmf {
   void set_sigma(double sigma); 
   void GiveInitMatrix(Matrix *init_data);
 	bool IsDiverging(double objective); 
-  bool IsOptimizationOver(Matrix &coordinates, Matrix &gradient);
-  bool IsIntermediateStepOver(Matrix &coordinates, Matrix &gradient);
+  bool IsOptimizationOver(Matrix &coordinates, Matrix &gradient, double step);
+  bool IsIntermediateStepOver(Matrix &coordinates, Matrix &gradient, double step);
   
  private:
   fx_module *module_;
