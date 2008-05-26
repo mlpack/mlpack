@@ -40,7 +40,7 @@ void SmallSdpNmf::Init(fx_module *module,
   objective_factor_.SetAll(1.0);
   for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      objective_factor_.set(j, i, -1);
+      objective_factor_.set(j, i, 0);
     }
   }
 }
@@ -100,10 +100,8 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
 }
 
 void SmallSdpNmf::ComputeObjective(Matrix &coordinates, double *objective) {
-  *objective=0.0;
-  for(index_t i=0; i<(index_t)coordinates.n_elements(); i++) {
-    *objective+=objective_factor_.ptr()[i]*coordinates.ptr()[i];
-  }
+  *objective=la::Dot(objective_factor_.n_elements(), 
+      objective_factor_.ptr(), coordinates.ptr());
 }
 
 void SmallSdpNmf::ComputeFeasibilityError(Matrix &coordinates, double *error) {
@@ -219,6 +217,8 @@ bool SmallSdpNmf::IsIntermediateStepOver(Matrix &coordinates,
     Matrix &gradient, double step) {
   double norm_gradient = la::Dot(gradient.n_elements(), 
       gradient.ptr(), gradient.ptr());
+  //NOTIFY("norm_gradient:%lg step:%lg , gradient_tolerance_:%lg", 
+  //    norm_gradient, step, gradient_tolerance_);
   if (norm_gradient*step < gradient_tolerance_) {
     return true;
   } else {

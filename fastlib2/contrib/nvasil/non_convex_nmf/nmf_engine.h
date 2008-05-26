@@ -57,7 +57,7 @@ class NmfEngine {
         }
         NOTIFY("Singular values: %s", temp.c_str());
       } else {
-        FATAL("Svd failed soething is wrong...\n");
+        FATAL("Svd failed something is wrong...\n");
       }
       bool negative_flag=false;
       index_t positives=0;
