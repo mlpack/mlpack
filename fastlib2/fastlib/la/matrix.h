@@ -788,6 +788,46 @@ class GenMatrix {
   }
   
   /**
+   * Copies a vector to a matrix column.
+   * @param col1 the column number of this matrix
+   * @param col2 the column number of the other matrix
+   * @param mat the other matrix
+   * @return nothing
+   */  
+   void CopyColumnFromMat(index_t col1, index_t col2, GenMatrix<T> &mat) {
+     DEBUG_BOUNDS(col1, n_cols_);
+     DEBUG_BOUNDS(col2, mat.n_cols());
+     DEBUG_ASSERT(n_rows_==mat.n_rows());
+     memcpy(ptr_ + n_rows_ * col1, mat.GetColumnPtr(col2), n_rows_*sizeof(T));
+   }
+  /**
+   * Copies a block of columns to a matrix column.
+   * @param col1 the column number of this matrix
+   * @param col2 the column number of the other matrixa
+   * @param ncols the number of columns
+   * @param mat the other matrix
+   * @return nothing
+   */  
+   void CopyColumnFromMat(index_t col1, index_t col2, index_t ncols, GenMatrix<T> &mat) {
+     DEBUG_BOUNDS(col1, n_cols_);
+     DEBUG_BOUNDS(col2, mat.n_cols());
+     DEBUG_BOUNDS(col1+ncols-1, n_cols_);
+     DEBUG_BOUNDS(col2+ncols-1, mat.n_cols());
+     DEBUG_ASSERT(n_rows_==mat.n_rows());
+     memcpy(ptr_ + n_rows_ * col1, mat.GetColumnPtr(col2), ncols*n_rows_*sizeof(T));
+   }
+
+   /**
+   * Copies a column of matrix 1  to a column of matrix 2.
+   * @param col1 the column number
+   * @return nothing
+   */  
+   void CopyVectorToColumn(index_t col, GenVector<T> &vec) {
+     DEBUG_BOUNDS(col, n_cols_);
+     memcpy(ptr_ + n_rows_ * col, vec.ptr(), n_rows_*sizeof(T));
+   }
+ 
+  /**
    * Changes the number of columns, but REQUIRES that there are no aliases
    * to this matrix anywhere else.
    *
