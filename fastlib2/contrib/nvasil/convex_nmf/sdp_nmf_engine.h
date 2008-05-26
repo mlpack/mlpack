@@ -52,18 +52,18 @@ class SdpNmfEngine {
 	   
 	 };
 	 void ComputeNmf() {
-		 Matrix init_data;
      engine_.ComputeLocalOptimumBFGS();
      Matrix result;
      engine_.GetResults(&result);
-		 w_mat_.Init(num_of_rows_, new_dim_);
+		 w_mat_.Init(new_dim_, num_of_rows_);
 		 h_mat_.Init(new_dim_, num_of_columns_);
-     w_mat_.CopyColumnFromMat(0, num_of_rows_, result); 
-     h_mat_.CopyColumnFromMat(num_of_rows_, num_of_columns_, result);
+     w_mat_.CopyColumnFromMat(0, 0, num_of_rows_, result); 
+     h_mat_.CopyColumnFromMat(0, 
+         num_of_rows_, num_of_columns_, result);
      data::Save("result.csv", result);
      // now compute reconstruction error
      Matrix v_rec;
-     la::MulInit(w_mat_, h_mat_, &v_rec);
+     la::MulTransAInit(w_mat_, h_mat_, &v_rec);
      double error=0;
      double v_sum=0;
      for(index_t i=0; i<values_.size(); i++) {
