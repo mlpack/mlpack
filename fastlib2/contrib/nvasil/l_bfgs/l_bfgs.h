@@ -71,6 +71,7 @@ class LBfgs {
   double wolfe_beta_;
   double min_beta_;
   bool silent_;
+  bool use_default_termination_;
   ArrayList<Matrix> s_bfgs_;
   ArrayList<Matrix> y_bfgs_;
   Vector ro_bfgs_;

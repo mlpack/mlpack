@@ -72,6 +72,8 @@ class SdpNmfEngine {
        error+=fabs(v_rec.get(r, c)-values_[i]);
        v_sum+=values_[i];
      }
+     data::Save("w.csv", w_mat_);
+     data::Save("h.csv", h_mat_);
      NOTIFY("Reconstruction error: %lg%%\n", error*100/v_sum);
 	 }
    

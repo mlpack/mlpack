@@ -33,6 +33,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   wolfe_sigma2_ = fx_param_double(module_, "wolfe_sigma2", 0.9);
   step_size_=fx_param_double(module_, "step_size", 3.0);
   silent_=fx_param_bool(module_, "silent", false);
+  use_default_termination_=fx_param_bool(module_, "use_default_termination", true);
   if (unlikely(wolfe_sigma1_>=wolfe_sigma2_)) {
     FATAL("Wolfe sigma1 %lg should be less than sigma2 %lg", 
         wolfe_sigma1_, wolfe_sigma2_);
@@ -113,16 +114,23 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     UpdateBFGS_();
     previous_gradient_.CopyValues(gradient_);
     previous_coordinates_.CopyValues(coordinates_);
-    optimized_function_->ComputeFeasibilityError(coordinates_,
-        &feasibility_error); 
     num_of_iterations_++;
     if (silent_==false) {
         ReportProgressFile_();
     }
-    if (feasibility_error < desired_feasibility_) {
-      NOTIFY("feasibility error %lg less than desired feasibility %lg", 
-          feasibility_error, desired_feasibility_);
-      return;
+    if (use_default_termination_== true) {
+       optimized_function_->ComputeFeasibilityError(coordinates_,
+          &feasibility_error); 
+      if (feasibility_error < desired_feasibility_) {
+        NOTIFY("feasibility error %lg less than desired feasibility %lg", 
+            feasibility_error, desired_feasibility_);
+        return;
+      }
+    } else {
+      if (optimized_function_->IsOptimizationOver(
+            coordinates_, gradient_, step_)==true) {
+        return;
+      }
     }
   }
  
@@ -136,18 +144,26 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
       double norm_grad = la::Dot(gradient_.n_elements(), 
           gradient_.ptr(), gradient_.ptr());
       num_of_iterations_++;
+      if (success_bfgs==SUCCESS_FAIL){
+        NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
+        ComputeWolfeStep_(&step_, gradient_);
+      }
       if (silent_==false) {
         ReportProgressFile_();
       }
-      if (success_bfgs==SUCCESS_FAIL){
-        break;
-      }
-      if (step_*norm_grad/sigma_ < norm_grad_tolerance_) {
-        break;
-      }
-     // NOTIFY("feasibility_error:%lg desired_feasibility:%lg", feasibility_error, desired_feasibility_);
-      if (feasibility_error < desired_feasibility_) {
-        break;
+      // NOTIFY("feasibility_error:%lg desired_feasibility:%lg", feasibility_error, desired_feasibility_);
+      if (use_default_termination_==true) {
+        if (feasibility_error < desired_feasibility_) {
+          break;
+        }
+        if (step_*norm_grad/sigma_ < norm_grad_tolerance_) {
+          break;
+        }
+      } else {
+        if (optimized_function_->IsIntermediateStepOver(
+              coordinates_, gradient_, step_)==true) {
+          break;
+        }
       }
       UpdateBFGS_();
       previous_coordinates_.CopyValues(coordinates_);
@@ -162,11 +178,18 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
        // break;
       }
     }
-   NOTIFY("%lg %lg\n", old_feasibility_error, feasibility_error);
-    if (fabs(old_feasibility_error - feasibility_error)
-        /(old_feasibility_error+1e-20) < feasibility_tolerance_ ||
-        feasibility_error < desired_feasibility_) {
-      break;
+    NOTIFY("Inner loop done, increasing sigma...");
+    if (use_default_termination_==true) {
+      if (fabs(old_feasibility_error - feasibility_error)
+          /(old_feasibility_error+1e-20) < feasibility_tolerance_ ||
+          feasibility_error < desired_feasibility_) {
+        break;
+      }
+    } else {
+      if (optimized_function_->IsOptimizationOver(
+            coordinates_, gradient_, step_)==true) {
+        break;
+      }
     }
     old_feasibility_error = feasibility_error;
     UpdateLagrangeMult_();
@@ -395,7 +418,8 @@ success_t LBfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
       temp_y_bfgs.ptr(), temp_y_bfgs.ptr());
   if (temp_ro<1e-70*y_norm) {
     fx_timer_stop(module_, "update_bfgs");
-    NONFATAL("Rejecting s, y they don't satisfy curvature condition");
+    NONFATAL("Rejecting s, y they don't satisfy curvature condition "
+        "s*y=%lg < 1e-70 *||y||^2=%lg", temp_ro,1e-70*y_norm);
     return SUCCESS_FAIL;
   } 
   s_bfgs_[index_bfgs].CopyValues(temp_s_bfgs);
