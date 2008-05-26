@@ -108,7 +108,7 @@ namespace la {
       matrix += n_rows;
     } while (--n_cols);
   }
-  
+
 #if defined(USE_LAPACK) && defined(USE_BLAS_L1)
   /* --- Wrappers for BLAS level 1 --- */
   /*
@@ -278,6 +278,17 @@ namespace la {
   inline double Dot(const Vector &x, const Vector &y) {
     DEBUG_SAME_SIZE(x.length(), y.length());
     return Dot(x.length(), x.ptr(), y.ptr());
+  }
+  /**
+   * Finds the dot product of two matrices
+   * It is  pretty straigth forward, treat matrices
+   * as unfolded vectores
+   * (\f$ X \bullet Y\f$).
+   */
+  inline double Dot(const Matrix &x, const Matrix &y) {
+    DEBUG_SAME_SIZE(x.n_rows(), y.n_rows());
+    DEBUG_SAME_SIZE(x.n_cols(), y.n_cols());
+    return Dot(x.n_elements(), x.ptr(), y.ptr());
   }
 
   /* --- Matrix/Vector Scaling --- */
