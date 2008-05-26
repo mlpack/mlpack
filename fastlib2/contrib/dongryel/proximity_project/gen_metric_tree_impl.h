@@ -114,7 +114,7 @@ namespace tree_gen_metric_tree_private {
     
     index_t furthest_index = -1;
     index_t end = begin + count;
-    *furthest_distance = 0;
+    *furthest_distance = -1.0;
 
     for(index_t i = begin; i < end; i++) {
       Vector point;
