@@ -300,7 +300,7 @@ namespace ctree {
 	    for (; begin < end; begin++) {
 
 	      (*begin)->distances()->PopBack();
-	      if ((*begin)->distances()->back() > bound) {
+	      if ((*begin)->distances()->back() <= bound) {
 		point_set->PushBackCopy(*begin);
 	      }
 	      else {

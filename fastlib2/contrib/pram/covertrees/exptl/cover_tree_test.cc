@@ -10,17 +10,17 @@ int main(int argc, char *argv[]) {
 
   //const char **ref_data;
   //ref_data = (const char **)malloc(4 * sizeof(const char *));
-  const char *ref_data_0 = fx_param_str(NULL, "R1", "my_ref_data.data");
-  const char *ref_data_1 = fx_param_str(NULL, "R2", "my_ref_data.data");
-  const char *ref_data_2 = fx_param_str(NULL, "R3", "my_ref_data.data");
-  const char *ref_data_3 = fx_param_str(NULL, "R4", "my_ref_data.data");
+  const char *ref_data_0 = fx_param_str(NULL, "R1", "../my_ref_data.data");
+  const char *ref_data_1 = fx_param_str(NULL, "R2", "../my_ref_data.data");
+  const char *ref_data_2 = fx_param_str(NULL, "R3", "../my_ref_data.data");
+  const char *ref_data_3 = fx_param_str(NULL, "R4", "../my_ref_data.data");
 
   //const char **q_data;
   //q_data = (const char **) malloc (4 * sizeof(const char *));
-  const char *q_data_0 = fx_param_str(NULL, "Q1", "my_qry_data.data");
-  const char *q_data_1 = fx_param_str(NULL, "Q2", "my_qry_data.data");
-  const char *q_data_2 = fx_param_str(NULL, "Q3", "my_qry_data.data");
-  const char *q_data_3 = fx_param_str(NULL, "Q4", "my_qry_data.data");
+  const char *q_data_0 = fx_param_str(NULL, "Q1", "../my_qry_data.data");
+  const char *q_data_1 = fx_param_str(NULL, "Q2", "../my_qry_data.data");
+  const char *q_data_2 = fx_param_str(NULL, "Q3", "../my_qry_data.data");
+  const char *q_data_3 = fx_param_str(NULL, "Q4", "../my_qry_data.data");
 
   clock_t start, end, build, find;
   float b, f;
