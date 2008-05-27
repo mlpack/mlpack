@@ -47,6 +47,11 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::CombineBasisFunctions
     (incoming_skeleton1.size());
   local_expansion2.set_local_to_local_translation_count
     (incoming_skeleton2.size());
+
+  // Set the minimum estimated kernel sum to be the min of the two.
+  estimated_min_kernel_sum_l_ = 
+    std::min(local_expansion1.estimated_min_kernel_sum_l(),
+	     local_expansion2.estimated_min_kernel_sum_l());
 }
 
 template<typename TKernelAux>
@@ -82,6 +87,9 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::Init
   // Set the incoming representation to be null. This is only valid
   // for a leaf node.
   evaluation_operator_ = NULL;
+
+  // Set the minimum kernel sum to be infinity.
+  estimated_min_kernel_sum_l_ = DBL_MAX;
 }
 
 template<typename TKernelAux>
@@ -94,6 +102,9 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   // Set the incoming representation to be null. This is only valid
   // for a leaf node.
   evaluation_operator_ = NULL;
+
+  // Set the minimum kernel sum to be infinity.
+  estimated_min_kernel_sum_l_ = DBL_MAX;
 }
 
 template<typename TKernelAux>
@@ -170,6 +181,19 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
     } // end of iterating over each sample query strata...
   } // end of iterating over each reference point...
   
+  // Get the estimate on the minimum kernel sum for the query
+  // points. This code is not currently correct for weighted kernel
+  // sum.
+  for(index_t c = 0; c < num_query_samples; c++) {
+    double kernel_sum = 0;
+
+    for(index_t r = 0; r < sample_kernel_matrix.n_cols(); r++) {
+      kernel_sum += sample_kernel_matrix.get(c, r);
+    }
+    estimated_min_kernel_sum_l_ = std::min(estimated_min_kernel_sum_l_, 
+					   kernel_sum);
+  }
+
   // CUR-decompose the sample kernel matrix.
   Matrix c_mat, u_mat, r_mat;
   ArrayList<index_t> column_indices, row_indices;

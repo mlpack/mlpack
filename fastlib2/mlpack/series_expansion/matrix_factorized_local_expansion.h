@@ -81,6 +81,10 @@ class MatrixFactorizedLocalExpansion {
    */
   index_t local_to_local_translation_count_;
 
+  /** @brief The estimated lower bound on the kernel sum.
+   */
+  double estimated_min_kernel_sum_l_;
+
   /** @brief The auxiliary methods for the kernel (derivative,
    *         truncation error bound).
    */
@@ -97,6 +101,7 @@ class MatrixFactorizedLocalExpansion {
     OT_MY_OBJECT(incoming_skeleton_);
     OT_MY_OBJECT(local_to_local_translation_begin_);
     OT_MY_OBJECT(local_to_local_translation_count_);
+    OT_MY_OBJECT(estimated_min_kernel_sum_l_);
   }
 
  public:
@@ -159,6 +164,13 @@ class MatrixFactorizedLocalExpansion {
     return local_to_local_translation_count_;
   }
   
+  /** @brief Gets the estimated minimum kernel sum for the query
+   *         points represented by this local expansion.
+   */
+  double estimated_min_kernel_sum_l() const {
+    return estimated_min_kernel_sum_l_;
+  }
+
   // interesting functions...
 
   /** @brief Combines two incoming skeletons.

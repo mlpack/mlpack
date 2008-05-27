@@ -62,8 +62,8 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 
       // Compute the pairwise distance and the kernel value.
       double squared_distance =
-	la::DistanceSqEuclidean(reference_set.n_rows(), reference_point,
-				query_point);
+	la::DistanceSqEuclidean
+	(reference_set.n_rows(), reference_point, query_point);
       double kernel_value = (ka_->kernel_).EvalUnnormOnSq(squared_distance);
       sample_kernel_matrix.set(c, r, kernel_value *
 			       (((*query_leaf_nodes)[c])->count()));
@@ -279,8 +279,8 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateToLocal
       const double *reference_point = 
 	reference_set->GetColumnPtr(reference_point_id);
       double squared_distance = 
-	la::DistanceSqEuclidean(reference_set->n_rows(),
-				query_point, reference_point);
+	la::DistanceSqEuclidean(reference_set->n_rows(), query_point, 
+				reference_point);
       double kernel_value = 
 	(ka_->kernel_).EvalUnnormOnSq(squared_distance);
 

@@ -164,6 +164,46 @@ namespace bounds_aux {
     return farthest_distance_manhattan;
   }
 
+  /** @brief The comparison function used for quick sort
+   */
+  static int qsort_compar_(const void *a, const void *b) {
+    
+    index_t a_dereferenced = *((index_t *) a);
+    index_t b_dereferenced = *((index_t *) b);
+    
+    if(a_dereferenced < b_dereferenced) {
+      return -1;
+    }
+    else if(a_dereferenced > b_dereferenced) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
+  double RandomizedDistanceSqEuclidean(index_t length, const double *a, 
+				       const double *b) {
+    
+    int num_samples = (int) sqrt(length);
+    double sample_mean = 0;
+    ArrayList<index_t> dimension_indices;
+    dimension_indices.Init(num_samples);
+    for(index_t i = 0; i < num_samples; i++) {
+      dimension_indices[i] = math::RandInt(0, length);
+    }
+    qsort(dimension_indices.begin(), num_samples, sizeof(index_t), 
+	  &qsort_compar_);
+    
+    for(index_t i = 0; i < num_samples; i++) {      
+      sample_mean += math::Sqr(a[dimension_indices[i]] - 
+			       b[dimension_indices[i]]);
+    }
+
+    sample_mean /= ((double) num_samples);    
+    return sample_mean * length;
+  }
+
 };
 
 #endif
