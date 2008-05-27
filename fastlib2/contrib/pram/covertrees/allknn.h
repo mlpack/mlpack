@@ -260,6 +260,7 @@ class AllKNN {
 
 	if (dist <= upper_bound) {
 	  if (dist <= *query_upper_bound) {
+	    //	    printf("%"LI"d update %lf \n", query->point()+1, dist);
 	    update_neighbor_distances(neighbor_distances, 
 				      query->point(), dist);
 	  }
@@ -313,6 +314,7 @@ class AllKNN {
 
 	  if (dist <= upper_bound) {
 	    if (dist <= *query_upper_bound) {
+	      //	      printf("%"LI"d update %lf \n", query->point()+1, dist);
 	      update_neighbor_distances(neighbor_distances,
 					query->point(), dist);
 	    }
@@ -443,7 +445,7 @@ class AllKNN {
     }
     else {
 
-
+      //  printf("%"LI"d %"LI"d\n", query->point()+1, leaf_nodes->size());
       TreeType **begin_nn = leaf_nodes->begin();
       TreeType **end_nn = leaf_nodes->end();
       T *begin = neighbor_distances->begin() + query->point() * knns_;
@@ -457,6 +459,7 @@ class AllKNN {
       }
 
       begin = neighbor_distances->begin() + query->point() * knns_;
+      //   printf("%lf\n", *(begin));
       for (index_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
 	if ((*begin_nn)->stat().distance_to_qnode() <= *begin) {
 	  
@@ -495,6 +498,18 @@ class AllKNN {
 	TreeType **child_end = query->children()->end();
 	T *query_upper_bound = &((*neighbor_distances)[query->point() * knns_]);
 
+/* 	ArrayList<TreeType*> old_leaf_nodes; */
+/* 	old_leaf_nodes.InitCopy(*leaf_nodes); */
+/* 	ArrayList<ArrayList<TreeType*> > old_cover_sets; */
+/* 	old_cover_sets.Init(101); */
+/* 	DEBUG_ASSERT(old_cover_sets.size() == cover_sets->size()); */
+/* 	for (index_t i = 0; i < cover_sets->size(); i++) { */
+/* 	  old_cover_sets[i].InitCopy((*cover_sets)[i]); */
+/* 	} */
+/* 	ComputeNeighborRecursion(query->child(0), neighbor_distances, cover_sets, */
+/* 				 leaf_nodes, current_scale, max_scale, */
+/* 				 neighbor_indices); */
+
 	for (++child_begin; child_begin != child_end; child_begin++) {
 
 	  ArrayList<TreeType*> new_leaf_nodes;
@@ -505,8 +520,8 @@ class AllKNN {
 	  set_neighbor_distances(neighbor_distances, (*child_begin)->point(), 
 				 *query_upper_bound + (*child_begin)->dist_to_parent());
 
-	  CopyLeafNodes(*child_begin, neighbor_distances, leaf_nodes, &new_leaf_nodes);
-	  CopyCoverSets(*child_begin, neighbor_distances, cover_sets, &new_cover_sets,
+	  CopyLeafNodes(*child_begin, neighbor_distances, &leaf_nodes, &new_leaf_nodes);
+	  CopyCoverSets(*child_begin, neighbor_distances, &cover_sets, &new_cover_sets,
 			current_scale, max_scale);
 	  ComputeNeighborRecursion(*child_begin, neighbor_distances, &new_cover_sets,
 				   &new_leaf_nodes, current_scale, max_scale, 
@@ -515,9 +530,9 @@ class AllKNN {
 	  reset_new_cover_sets(&new_cover_sets, current_scale, max_scale);
 	}
 
-	ComputeNeighborRecursion(query->child(0), neighbor_distances, cover_sets, 
-				 leaf_nodes, current_scale, max_scale, 
-				 neighbor_indices);
+  	ComputeNeighborRecursion(query->child(0), neighbor_distances, cover_sets,
+  				 leaf_nodes, current_scale, max_scale,
+  				 neighbor_indices);
       }
       else {
 	halfsort(&((*cover_sets)[current_scale]));
@@ -588,8 +603,8 @@ class AllKNN {
 
     fx_timer_stop(module_, "tree_building");
 
-    //NOTIFY("Query Tree:");
-    //ctree::PrintTree<TreeType>(query_tree_);
+    // NOTIFY("Query Tree:");
+    //  ctree::PrintTree<TreeType>(query_tree_);
     //NOTIFY("Reference Tree:");
     //ctree::PrintTree<TreeType>(reference_tree_);
 

@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
   end = clock();
   
   build = end - start;
-  /*
+  
   fx_timer_start(allknn_module, "computing_neighbors");
   start = clock();
   allknn.ComputeNeighbors(&neighbor_indices, &neighbor_distances);
@@ -53,15 +53,15 @@ int main(int argc, char *argv[]) {
   fx_timer_stop(allknn_module, "computing_neighbors");
   
   find = end - start;
-  */
+  
   NOTIFY("Phase 1 complete");
 
-  
+  /* 
   start = clock();
   allknn.MakeCCoverTrees();
   end = clock();
   build1 = end - start;
-  
+  */
   /*
   NOTIFY("Phase II complete");
   start = clock();
@@ -71,12 +71,13 @@ int main(int argc, char *argv[]) {
   */
   NOTIFY("done");
   /*
+  printf("%"LI"d %"LI"d %"LI"d\n", q_set.n_cols(), neighbor_indices.size(), neighbor_distances.size());
   DEBUG_ASSERT(q_set.n_cols() * knn == neighbor_indices.size());
   for (index_t i = 0; i < q_set.n_cols(); i++) {
-    NOTIFY("%"LI"d :", i);
+    NOTIFY("%"LI"d :", i+1);
     for(index_t j = 0; j < knn; j++) {
       NOTIFY("\t%"LI"d : %lf", 
-	     neighbor_indices[knn*i+j], neighbor_distances[i*knn
+	     neighbor_indices[knn*i+j]+1, neighbor_distances[i*knn
 							   +knn-1
 							   -j]);
     }
@@ -91,7 +92,7 @@ int main(int argc, char *argv[]) {
   printf("build = %f, find = %f\n", b1, f1);
   
 
-  fx_param_bool(NULL, "fx/silent", 1);
+  //fx_param_bool(NULL, "fx/silent", 1);
   fx_done(NULL);
 
   return 0;

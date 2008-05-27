@@ -1,4 +1,4 @@
-#ifndef COVER_TREE_NODE_H
+cc#ifndef COVER_TREE_NODE_H
 #define COVER_TREE_NODE_H
 
 #include <fastlib/fastlib.h>
@@ -125,6 +125,10 @@ class CoverTreeNode {
     stat_.Init();
 
     return;
+  }
+
+  bool is_leaf() {
+    return num_of_children_ == 0;
   }
 
 };
