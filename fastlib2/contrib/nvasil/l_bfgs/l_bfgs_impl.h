@@ -40,7 +40,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   }
   DEBUG_ASSERT(wolfe_sigma1_>0);
   DEBUG_ASSERT(wolfe_sigma1_<1);
-  DEBUG_ASSERT(wolfe_sigma2_>0);
+  DEBUG_ASSERT(wolfe_sigma2_>wolfe_sigma1_);
   DEBUG_ASSERT(wolfe_sigma2_<1);
   if (unlikely(wolfe_sigma1_>=wolfe_sigma2_)) {
     FATAL("Wolfe sigma1 %lg should be less than sigma2 %lg", 
@@ -48,7 +48,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   }
   DEBUG_ASSERT(wolfe_sigma1_>0);
   DEBUG_ASSERT(wolfe_sigma1_<1);
-  DEBUG_ASSERT(wolfe_sigma2_>0);
+  DEBUG_ASSERT(wolfe_sigma2_>wolfe_sigma1_);
   DEBUG_ASSERT(wolfe_sigma2_<1);
   norm_grad_tolerance_ = fx_param_double(module_, "norm_grad_tolerance", 0.1); 
   wolfe_beta_   = fx_param_double(module_, "wolfe_beta", 0.8);
@@ -108,7 +108,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     success_t success=ComputeBFGS_(&step_, gradient_, i);
     if (success==SUCCESS_FAIL) {
       NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
-      ComputeWolfeStep_(&step_, gradient_);
+      //ComputeWolfeStep_(&step_, gradient_);
     }
     optimized_function_->ComputeGradient(coordinates_, &gradient_);
     UpdateBFGS_();
@@ -118,7 +118,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     if (silent_==false) {
         ReportProgressFile_();
     }
-    if (use_default_termination_== true) {
+/*    if (use_default_termination_== true) {
        optimized_function_->ComputeFeasibilityError(coordinates_,
           &feasibility_error); 
       if (feasibility_error < desired_feasibility_) {
@@ -132,6 +132,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
         return;
       }
     }
+*/
   }
  
   NOTIFY("Now starting optimizing with BFGS...\n");
@@ -145,8 +146,11 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
           gradient_.ptr(), gradient_.ptr());
       num_of_iterations_++;
       if (success_bfgs==SUCCESS_FAIL){
-        NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
-        ComputeWolfeStep_(&step_, gradient_);
+         NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
+        // if  (ComputeWolfeStep_(&step_, gradient_)==SUCCESS_FAIL) {
+        //   NONFATAL("Gradient descent failed too");
+        // }
+        break;
       }
       if (silent_==false) {
         ReportProgressFile_();
@@ -357,10 +361,10 @@ success_t LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, ind
   double y_y = la::Dot(num_of_points_* 
                    new_dimension_, y_bfgs_[index_bfgs_].ptr(),
                    y_bfgs_[index_bfgs_].ptr());
-  if (unlikely(y_y<1e-10)){
+  if (unlikely(y_y<1e-40)){
     NONFATAL("Gradient differences close to singular...norm=%lg\n", y_y);
   } 
-  double norm_scale=s_y/(y_y+1e-10);
+  double norm_scale=s_y/(y_y+1e-40);
   la::Scale(norm_scale, &temp_direction);
   Matrix scaled_s;
   double beta;

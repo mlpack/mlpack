@@ -25,6 +25,14 @@
 template<typename SdpNmfObjective>
 class SdpNmfEngine {
  public:
+   SdpNmfEngine() {
+     engine_=NULL;
+   }
+   ~SdpNmfEngine() {
+     if (engine_!=NULL) {
+       delete engine_;
+     }
+   }
 	 void  Init(fx_module *module) {
  		 module_=module;
 	   std::string data_file=fx_param_str_req(module_, "data_file");
@@ -40,21 +48,36 @@ class SdpNmfEngine {
 		 fx_module *opt_function_module=fx_submodule(module_, "optfun");
 		 fx_set_param_int(opt_function_module, "new_dim", new_dim_);
 		 opt_function_.Init(opt_function_module, rows_, columns_, values_);
-		 fx_module *l_bfgs_module=fx_submodule(module_, "l_bfgs");
-     Matrix init_data;
-		 opt_function_.GiveInitMatrix(&init_data);
-	   fx_set_param_int(l_bfgs_module, "num_of_points", init_data.n_cols());
-		 fx_set_param_int(l_bfgs_module, "new_dimension", init_data.n_rows());
-     engine_.Init(&opt_function_, l_bfgs_module);
-	 	 engine_.set_coordinates(init_data);
+		 l_bfgs_module_=fx_submodule(module_, "l_bfgs");
 	 }
 	 void Destruct() {
-	   
+     if (engine_!=NULL) {
+	     delete engine_;
+       engine_ = NULL;
+     }
+     SdpNmfObjective  opt_function_;
+	   rows_.Renew();
+	   columns_.Renew();
+	   values_.Renew();
+	   w_mat_.Destruct();
+	   h_mat_.Destruct();
+
 	 };
 	 void ComputeNmf() {
-     engine_.ComputeLocalOptimumBFGS();
      Matrix result;
-     engine_.GetResults(&result);
+		 opt_function_.GiveInitMatrix(&result);
+	   fx_set_param_int(l_bfgs_module_, "num_of_points", result.n_cols());
+		 fx_set_param_int(l_bfgs_module_, "new_dimension", result.n_rows());
+
+     for(double sigma=1.0; sigma<=1e4; sigma*=4) {
+       engine_=new LBfgs<SdpNmfObjective>();
+       engine_->Init(&opt_function_, l_bfgs_module_);
+       engine_->set_coordinates(result);
+       result.Destruct();
+       engine_->set_sigma(sigma);
+       engine_->ComputeLocalOptimumBFGS();
+       engine_->GetResults(&result);
+     }   
 		 w_mat_.Init(new_dim_, num_of_rows_);
 		 h_mat_.Init(new_dim_, num_of_columns_);
      w_mat_.CopyColumnFromMat(0, 0, num_of_rows_, result); 
@@ -72,8 +95,6 @@ class SdpNmfEngine {
        error+=fabs(v_rec.get(r, c)-values_[i]);
        v_sum+=values_[i];
      }
-     data::Save("w.csv", w_mat_);
-     data::Save("h.csv", h_mat_);
      NOTIFY("Reconstruction error: %lg%%\n", error*100/v_sum);
 	 }
    
@@ -86,7 +107,8 @@ class SdpNmfEngine {
 	 
  private:
 	fx_module *module_;
-  LBfgs<SdpNmfObjective> engine_;
+  fx_module *l_bfgs_module_;
+  LBfgs<SdpNmfObjective> *engine_;
 	SdpNmfObjective  opt_function_;
 	ArrayList<index_t> rows_;
 	ArrayList<index_t> columns_;

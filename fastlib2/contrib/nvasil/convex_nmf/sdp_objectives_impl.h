@@ -41,32 +41,32 @@ void SmallSdpNmf::Init(fx_module *module,
   // W
   for(index_t i=0; i<num_of_rows_; i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      objective_factor_.set(j, i, -1);
+      objective_factor_.set(j, i, -1.0);
     }
   }
   // H
   for(index_t i=offset_h_; i<offset_h_+num_of_columns_; i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      objective_factor_.set(j, i, -1);
+      objective_factor_.set(j, i, -1.0);
     }
   }
   // tw
   for(index_t i=offset_tw_; i<offset_tw_+num_of_rows_; i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      objective_factor_.set(j, i, 1);
+      objective_factor_.set(j, i, 1.0);
     }
   }
   // th
   for(index_t i=offset_th_; i<offset_th_+num_of_rows_; i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      objective_factor_.set(j, i, 1);
+      objective_factor_.set(j, i, 1.0);
     }
   }
  
   // v
   for(index_t i=offset_v_; i<offset_v_+values_.size(); i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      objective_factor_.set(j, i, 1);
+      objective_factor_.set(j, i, 1.0);
     }
   }
  
@@ -84,6 +84,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
       diff+=coordinates.get(j, v_i);
     }
     diff-=values_[i];
+    //NOTIFY("diff:%lg", diff);
     for(index_t j=0; j<new_dim_; j++) {
       gradient->set(j, v_i, gradient->get(j, v_i)-1.0/diff);
     }     
@@ -110,16 +111,18 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
       double t1_minus_ww=(t1-w*w);
       double t2_minus_hh=(t2-h*h);
       double wh_minus_v=(w*h-v);
-      double determinant=t1_minus_ww*t2_minus_hh-math::Pow<2,1>(wh_minus_v);
-      NOTIFY("determinant:%lg", determinant);
-      DEBUG_ERR_MSG_IF(determinant==0.0, "Determinant equal to zero");
-      if (determinant==0.0) {
+      double determinant=t1_minus_ww*t2_minus_hh
+        -math::Pow<2,1>(wh_minus_v);
+      
+      //NOTIFY("determinant:%lg", determinant);
+      if (determinant<=0.0) {
         gradient->set(j, w_i, -DBL_MAX);
         gradient->set(j, h_i, -DBL_MAX);
         gradient->set(j, t1_i, -DBL_MAX);
         gradient->set(j, t2_i, -DBL_MAX);
         gradient->set(j, v_i, -DBL_MAX);  
-        NONFATAL("Determinant is zero");    
+        NONFATAL("Determinant is less or equal to zero");
+        return;    
       } else {     
         double dw=(-2*w*(t2_minus_hh)-2*h*(wh_minus_v))/determinant;
         double dh=(-2*h*(t1_minus_ww)-2*w*(wh_minus_v))/determinant;
@@ -129,7 +132,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
         gradient->set(j, w_i, gradient->get(j, w_i)-dw);
         gradient->set(j, h_i, gradient->get(j, h_i)-dh);
         gradient->set(j, t1_i, gradient->get(j, t1_i)-dt1);
-        gradient->set(j, t2_i, gradient->get(j, t1_i)-dt2);
+        gradient->set(j, t2_i, gradient->get(j, t2_i)-dt2);
         gradient->set(j, v_i, gradient->get(j, v_i)-dv);  
       }
     }  
@@ -144,6 +147,10 @@ void SmallSdpNmf::ComputeObjective(Matrix &coordinates, double *objective) {
 void SmallSdpNmf::ComputeFeasibilityError(Matrix &coordinates, double *error) {
   // return duality gap instead
   *error=number_of_cones_/sigma_;
+  double lagrangian=ComputeLagrangian(coordinates);
+  double objective;
+  ComputeObjective(coordinates, &objective);
+  NOTIFY("sum of log barriers:%lg ", lagrangian-sigma_*objective);
 }
 
 double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
@@ -152,7 +159,9 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
   ComputeObjective(coordinates, &lagrangian);
   lagrangian*=sigma_;
   // from the LP cones
+  double temp_prod=1.0;
   for(index_t i=0; i<values_.size(); i++) {
+    
     index_t v_i=offset_v_+i;
     double diff=0;
     for(index_t j=0; j<new_dim_; j++) {
@@ -162,13 +171,12 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
     if unlikely(diff<0) {
       return DBL_MAX;
     }
-//    DEBUG_ERR_MSG_IF(diff<=0, "LP cone is invalid, you are "
-//       " out of the feasible region, constraint %i, diff %lg",
-//       i, diff);
-    lagrangian-=log(diff+1e-100);   
-  } 
+    temp_prod*=diff;
+  }
+  lagrangian-=log(temp_prod);   
   // from the SDP cones
   // determinant=(t1-w*w)*(t2-h*h)-math::Pow<2,1>(w*h-v);
+  temp_prod=1.0;
  for(index_t i=0; i<values_.size(); i++) {
     index_t w_i=rows_[i];
     index_t h_i=offset_h_+columns_[i];
@@ -183,16 +191,25 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
       double v=coordinates.get(j, v_i);
       double t1_minus_ww=(t1-w*w);
       double t2_minus_hh=(t2-h*h);
+      // we need this, because during Wolfe step
+      // we might accidently cross the barrier 
+      // and never realize it since the determinant
+      // will stay positive
+      if (t1_minus_ww<0 || t2_minus_hh<0) {
+        return DBL_MAX;
+      }
       double wh_minus_v=(w*h-v);
-      double determinant=t1_minus_ww*t2_minus_hh-math::Pow<2,1>(wh_minus_v);
-      if (unlikely(determinant<0)) {
+      double determinant=t1_minus_ww*t2_minus_hh
+        -math::Pow<2,1>(wh_minus_v);
+      if (unlikely(determinant<=0)) {
         return DBL_MAX;
       }
 //      DEBUG_ERR_MSG_IF(determinant<=0, "SDP cone is invalid, you are "
 //       " out of the feasible region");
-      lagrangian-=log(determinant+1e-100);
+      temp_prod*=determinant;
     }  
   }
+  lagrangian-=log(temp_prod);
   return lagrangian;
 }
 
@@ -201,7 +218,7 @@ void SmallSdpNmf::UpdateLagrangeMult(Matrix &coordinates) {
 }
 
 void SmallSdpNmf::Project(Matrix *coordinates) {
-  OptUtils::NonNegativeProjection(coordinates);
+  //OptUtils::NonNegativeProjection(coordinates);
 }
 
 void SmallSdpNmf::set_sigma(double sigma) {
@@ -213,7 +230,7 @@ void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
       2*(num_of_rows_+num_of_columns_)+values_.size());
   for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      init_data->set(j, i, math::Random(0.0, 1.0));
+      init_data->set(j, i, 0*math::Random(0.0, 1.0));
     }
   }
   for(index_t i=0; i<values_.size(); i++) {
@@ -244,7 +261,7 @@ bool SmallSdpNmf::IsDiverging(double objective) {
 
 bool SmallSdpNmf::IsOptimizationOver(Matrix &coordinates, 
     Matrix &gradient, double step) {
-  double norm_gradient = la::Dot(gradient.n_elements(), 
+/*  double norm_gradient = la::Dot(gradient.n_elements(), 
       gradient.ptr(), gradient.ptr());
   //  one of our barriers is zero
   if (norm_gradient>=DBL_MAX) {
@@ -255,6 +272,8 @@ bool SmallSdpNmf::IsOptimizationOver(Matrix &coordinates,
   } else {
     return false;
   }
+  */
+  return true;
 }
 
 bool SmallSdpNmf::IsIntermediateStepOver(Matrix &coordinates, 
