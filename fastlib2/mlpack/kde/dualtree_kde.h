@@ -72,6 +72,48 @@
 #include "mlpack/series_expansion/mult_local_expansion.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 
+
+////////// Documentation stuffs //////////
+const fx_entry_doc kde_main_entries[] = {
+  {"data", FX_REQUIRED, FX_STR, NULL,
+   "  A file containing reference data.\n"},
+  {"query", FX_PARAM, FX_STR, NULL,
+   "  A file containing query data (defaults to data).\n"},
+  {"fast_kde_output", FX_PARAM, FX_STR, NULL,
+   "  A file to receive the results of computation.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_entry_doc kde_entries[] = {
+  {"bandwidth", FX_REQUIRED, FX_DOUBLE, NULL,
+   "  The bandwidth parameter.\n"},
+  {"do_naive", FX_PARAM, FX_BOOL, NULL,
+   "  Whether to perform naive computation as well.\n"},
+  {"multiplicative_expansion", FX_PARAM, FX_BOOL, NULL,
+   "  Whether to do O(p^D) kernel expansion instead of O(D^p).\n"},
+  {"scaling", FX_PARAM, FX_STR, NULL,
+   "  The scaling option.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc kde_doc = {
+  kde_entries, NULL,
+  "Performs dual-tree kernel density estimate computation.\n"
+};
+
+const fx_submodule_doc kde_main_submodules[] = {
+  {"kde", &kde_doc,
+   "  Responsible for dual-tree kernel density estimate computation.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc kde_main_doc = {
+  kde_main_entries, kde_main_submodules,
+  "This is the driver for the kernel density estimator.\n"
+};
+
+
+
 /** @brief A computation class for dual-tree based kernel density
  *         estimation.
  *
@@ -99,7 +141,7 @@ template<typename TKernelAux>
 class DualtreeKde {
   
  public:
-  
+
   // forward declaration of KdeStat class
   class KdeStat;
   
@@ -109,11 +151,13 @@ class DualtreeKde {
   class KdeStat {
    public:
     
-    /** lower bound on the densities for the query points owned by this node 
+    /** @brief The lower bound on the densities for the query points
+     *         owned by this node.
      */
     double mass_l_;
     
-    /** upper bound on the densities for the query points owned by this node 
+    /** @brief The upper bound on the densities for the query points
+     *         owned by this node
      */
     double mass_u_;
 
@@ -127,17 +171,15 @@ class DualtreeKde {
      */
     double n_pruned_;
 
-    /**
-     * lower bound offset passed from above
+    /** @brief The lower bound offset passed from above.
      */
     double postponed_l_;
     
-    /** stores the portion pruned by finite difference
+    /** @brief Stores the portion pruned by finite difference.
      */
     double postponed_e_;
 
-    /**
-     * upper bound offset passed from above
+    /** @brief The upper bound offset passed from above.
      */
     double postponed_u_;
 
@@ -152,17 +194,17 @@ class DualtreeKde {
      */
     double postponed_n_pruned_;
 
-    /**
-     * Far field expansion created by the reference points in this node.
+    /** @brief The far field expansion created by the reference points
+     *         in this node.
      */
     typename TKernelAux::TFarFieldExpansion farfield_expansion_;
     
-    /**
-     * Local expansion stored in this node.
+    /** @brief The local expansion stored in this node.
      */
     typename TKernelAux::TLocalExpansion local_expansion_;
     
-    /** Initialize the statistics */
+    /** @brief Initialize the statistics.
+     */
     void Init() {
       mass_l_ = 0;
       mass_u_ = 0;
@@ -206,67 +248,92 @@ class DualtreeKde {
   
  private:
 
-  /** pointer to the module holding the parameters */
+  /** @brief The pointer to the module holding the parameters.
+   */
   struct datanode *module_;
 
-  /** normalization constant */
+  /** @brief The normalization constant.
+   */
   double mult_const_;
 
-  /** series expansion auxililary object */
+  /** @brief The series expansion auxililary object.
+   */
   TKernelAux ka_;
 
-  /** query dataset */
+  /** @brief The query dataset.
+   */
   Matrix qset_;
 
-  /** query tree */
+  /** @brief The query tree.
+   */
   Tree *qroot_;
 
-  /** reference dataset */
+  /** @brief The reference dataset.
+   */
   Matrix rset_;
   
-  /** reference tree */
+  /** @brief The reference tree.
+   */
   Tree *rroot_;
   
-  /** reference weights */
+  /** @brief The reference weights.
+   */
   Vector rset_weights_;
 
-  /** lower bound on the densities */
+  /** @brief The running lower bound on the densities.
+   */
   Vector densities_l_;
 
-  /** densities computed */
+  /** @brief The computed densities.
+   */
   Vector densities_e_;
 
-  /** upper bound on the densities */
+  /** @brief The running upper bound on the densities.
+   */
   Vector densities_u_;
 
-  /** used error for each query */
+  /** @brief The amount of used error for each query.
+   */
   Vector used_error_;
 
-  /** the number of reference points taken care of for each query */
+  /** @brief The number of reference points taken care of for each
+   *         query.
+   */
   Vector n_pruned_;
 
-  /** accuracy parameter */
+  /** @brief The accuracy parameter specifying the relative error
+   *         bound.
+   */
   double tau_;
 
-  /** @brief The number of far-field to local conversions */
+  /** @brief The number of far-field to local conversions.
+   */
   int num_farfield_to_local_prunes_;
 
-  /** @brief The number of far-field evaluations */
+  /** @brief The number of far-field evaluations.
+   */
   int num_farfield_prunes_;
   
-  /** @brief The number of local accumulations */
+  /** @brief The number of local accumulations.
+   */
   int num_local_prunes_;
   
-  /** @brief The number of finite difference prunes */
+  /** @brief The number of finite difference prunes.
+   */
   int num_finite_difference_prunes_;
 
-  /** Permutation mapping indices of queries_ to original order. */
+  /** @brief The permutation mapping indices of queries_ to original
+   *         order.
+   */
   ArrayList<index_t> old_from_new_queries_;
   
-  /** Permutation mapping indices of references_ to original order. */
+  /** @brief The permutation mapping indices of references_ to
+   *         original order.
+   */
   ArrayList<index_t> old_from_new_references_;
   
-  /** exhaustive base KDE case */
+  /** @brief The exhaustive base KDE case.
+   */
   void DualtreeKdeBase_(Tree *qnode, Tree *rnode) {
 
     // Clear the summary statistics of the current query node so that we
