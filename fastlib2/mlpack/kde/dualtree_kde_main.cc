@@ -47,8 +47,11 @@
  * has to be positive.
  *
  * 5. kde/scaling (optional): whether to prescale the dataset 
- * - range: scales both the query and the reference sets to be within the 
- *   unit hypercube [0, 1]^D where D is the dimensionality. 
+ *
+ * - range: scales both the query and the reference sets to be within
+ * the unit hypercube [0, 1]^D where D is the dimensionality.
+ * - standardize: scales both the query and the reference set to have
+ * zero mean and unit variance.
  * - none: default value; no scaling
  *
  * 6. kde/multiplicative_expansion (optional): If this flag is
@@ -116,6 +119,11 @@ int main(int argc, char *argv[]) {
   if(!strcmp(fx_param_str(kde_module, "scaling", "none"), "range")) {
     DatasetScaler::ScaleDataByMinMax(queries, references,
                                      queries_equal_references);
+  }
+  else if(!strcmp(fx_param_str(kde_module, "scaling", "none"), 
+		  "standardize")) {
+    DatasetScaler::StandardizeData(queries, references, 
+				   queries_equal_references);
   }
 
   if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
