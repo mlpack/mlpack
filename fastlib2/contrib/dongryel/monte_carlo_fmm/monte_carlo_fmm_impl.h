@@ -97,20 +97,19 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
 	 total_samples * sample_mean * sample_mean) /
 	((double) total_samples - 1);
 
-      printf("Sample mean: %g, sample variance: %g\n", sample_mean,
-	     sample_variance);
-
       // Compute the current threshold for guaranteeing the relative
       // error bound.
       int threshold = (sample_variance > DBL_EPSILON) ?
-	(int) ceil(math::Sqr(standard_score * (1 + relative_error_) /
-			     relative_error_ / sample_mean) * sample_variance):
+	(int) ceil(math::Sqr(standard_score * reference_tree_root_->count() /
+			     relative_error_ / 
+			     (sample_mean * reference_node->count() + 
+			      query_kernel_sums[query_index_permutation[q]]))
+		   * sample_variance):
 	0;
       num_samples = threshold - total_samples;
-      printf("I need %d samples...\n", num_samples);
-      
+
       // If it will require too many samples, give up.
-      if(num_samples > (int) sqrt(reference_node->count())) {
+      if(num_samples > (int) 2 * sqrt(reference_node->count())) {
 	flag = false;
 	break;
       }
@@ -126,7 +125,10 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
 
   // If all queries can be pruned, then add the approximations.
   if(flag) {
-    
+    for(index_t q = query_node->begin(); q < query_node->end(); q++) {
+      query_kernel_sums[query_index_permutation[q]] += 
+	query_kernel_sums_scratch_space[q] * reference_node->count();
+    }
     return true;
   }
   
@@ -142,11 +144,14 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
  double one_sided_probability) {
 
   // If prunable, then prune.
-  MonteCarloPrunable_(query_set, query_index_permutation, query_node, 
-		      reference_node, query_kernel_sums, 
-		      query_kernel_sums_scratch_space,
-		      query_squared_kernel_sums_scratch_space,
-		      one_sided_probability);
+  if(MonteCarloPrunable_(query_set, query_index_permutation, query_node, 
+			 reference_node, query_kernel_sums, 
+			 query_kernel_sums_scratch_space,
+			 query_squared_kernel_sums_scratch_space,
+			 one_sided_probability)) {
+    num_prunes_++;
+    return;
+  }
 
   // If the query node is a leaf node,
   if(query_node->is_leaf()) {
@@ -316,7 +321,7 @@ void MonteCarloFMM<TKernelAux>::Compute
   num_prunes_ = 0;
   
   // Get the probability for guaranteeing the results.
-  double probability = fx_param_double(module_, "probability", 0.99);
+  double probability = fx_param_double(module_, "probability", 0.75);
   double one_sided_probability = probability + 0.5 * (1 - probability);
   CanonicalCase_(query_set, old_from_new_queries, query_tree_root,
 		 reference_tree_root_, *query_kernel_sums, 
