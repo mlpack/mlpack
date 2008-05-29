@@ -81,6 +81,7 @@ namespace tree_kdtree_private {
 	  *left_bound |= left_vector;
 	} else {
 	  GenVector<T> sub_left_vector;
+	  sub_left_vector.Init(split_dimensions.length());
 	  MakeBoundVector(left_vector, split_dimensions, &sub_left_vector);
 	  *left_bound |= sub_left_vector;
 	}
@@ -94,6 +95,7 @@ namespace tree_kdtree_private {
 	  *right_bound |= right_vector;
 	} else {
 	  GenVector<T> sub_right_vector;
+	  sub_right_vector.Init(split_dimensions.length());
 	  MakeBoundVector(right_vector, split_dimensions, &sub_right_vector);
 	  *right_bound |= sub_right_vector;
 	}        
@@ -117,6 +119,7 @@ namespace tree_kdtree_private {
 	  *left_bound |= left_vector;
       } else {
 	GenVector<T> sub_left_vector;
+	sub_left_vector.Init(split_dimensions.length());
 	MakeBoundVector(left_vector, split_dimensions, &sub_left_vector);
 	*left_bound |= sub_left_vector;
       }  
@@ -125,6 +128,7 @@ namespace tree_kdtree_private {
 	  *right_bound |= right_vector;
       } else {
 	GenVector<T> sub_right_vector;
+	sub_right_vector.Init(split_dimensions.length());
 	MakeBoundVector(right_vector, split_dimensions, &sub_right_vector);
 	*right_bound |= sub_right_vector;
       }  

@@ -278,6 +278,36 @@ class DHrectBound {
    return math::Pow<2, t_pow>(sum);
  }
 
+ /**
+  * Computes maximum distance between boxes in periodic coordinate system
+  */
+ double PeriodicMaxDistanceSq(const DHrectBound& other, const Vector& box_size)
+ const {
+   double sum = 0;
+   const DRange *a = this->bounds_;
+   const DRange *b = other.bounds_;
+   
+   DEBUG_SAME_SIZE(dim_, other.dim_);
+   
+   for (index_t d = 0; d < dim_; d++){
+     double ab, ba, v;
+     ab = a[d].hi - b[d].lo;
+     ba = b[d].hi - a[d].lo;
+     if (ab < 0){
+       ab = ab + box_size[d];
+     }
+     if(ba < 0){
+       ba = ba + box_size[d];
+     }
+     v = min(ba, ab);
+     v = min(v, box_size[d] / 2.0);
+     sum += math::PowAbs<t_pow, 1>(v);
+   }   
+   return math::Pow<2, t_pow>(sum);
+ }
+
+
+
   /**
    * Calculates minimum and maximum bound-to-bound squared distance.
    */
