@@ -7,7 +7,7 @@ void MonteCarloFMM<TKernelAux>::BaseCase_
 (const Matrix &query_set, const ArrayList<index_t> &query_index_permutation,
  QueryTree *query_node, const ReferenceTree *reference_node,
  Vector &query_kernel_sums, double one_sided_probability,
- double *extra_probability) const {
+ Vector &query_extra_probability) const {
  
   // Loop over each query point in the query node.
   for(index_t q = query_node->begin(); q < query_node->end(); q++) {
@@ -33,10 +33,9 @@ void MonteCarloFMM<TKernelAux>::BaseCase_
       
     } // end of iterating over each reference point.
 
-  } // end of looping over each query point.
+    query_extra_probability[q] += (1 - one_sided_probability);
 
-  // Increment the leftover probability token to use later.
-  (*extra_probability) += (1 - one_sided_probability);
+  } // end of looping over each query point.
 }
 
 template<typename TKernelAux>
@@ -45,18 +44,9 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
  QueryTree *query_node, const ReferenceTree *reference_node,
  Vector &query_kernel_sums, Vector &query_kernel_sums_scratch_space,
  Vector &query_squared_kernel_sums_scratch_space,
- double one_sided_probability, double *extra_probability) {
+ double one_sided_probability, Vector &query_extra_probability) {
 
   if(num_initial_samples_per_query_ > reference_node->count()) {
-    return false;
-  }
-
-  // Compute the required standard score for the given one-sided
-  // probability.
-  double standard_score = 
-    InverseNormalCDF::Compute
-    (std::max(one_sided_probability - (*extra_probability), 0.0));
-  if(standard_score > 3) {
     return false;
   }
 
@@ -64,6 +54,12 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
   // determine how many more samples are needed.
   bool flag = true;
   for(index_t q = query_node->begin(); q < query_node->end() && flag; q++) {
+
+    // Compute the required standard score for the given one-sided
+    // probability.
+    double standard_score = 
+      InverseNormalCDF::Compute
+      (std::max(one_sided_probability - query_extra_probability[q], 0.0));
     
     // Get the pointer to the current query point.
     const double *query_point = query_set.GetColumnPtr(q);
@@ -137,10 +133,10 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
     for(index_t q = query_node->begin(); q < query_node->end(); q++) {
       query_kernel_sums[query_index_permutation[q]] += 
 	query_kernel_sums_scratch_space[q] * reference_node->count();
-    }
 
-    // This can potentially be improved...
-    *extra_probability = 0;
+      // This can potentially be improved...
+      query_extra_probability[q] = 0;
+    }    
     return true;
   }
   
@@ -177,7 +173,7 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
  QueryTree *query_node, ReferenceTree *reference_node,
  Vector &query_kernel_sums, Vector &query_kernel_sums_scratch_space,
  Vector &query_squared_kernel_sums_scratch_space,
- double one_sided_probability, double *extra_probability) {
+ double one_sided_probability, Vector &extra_probability) {
 
   // If prunable, then prune.
   if(MonteCarloPrunable_(query_set, query_index_permutation, query_node, 
@@ -358,13 +354,15 @@ void MonteCarloFMM<TKernelAux>::Compute
   // Get the probability for guaranteeing the results.
   double probability = fx_param_double(module_, "probability", 0.75);
   double one_sided_probability = probability + 0.5 * (1 - probability);
-  double extra_probability = 0;
+  Vector query_extra_probability;
+  query_extra_probability.Init(query_set.n_cols());
+  query_extra_probability.SetZero();
 
   CanonicalCase_(query_set, old_from_new_queries, query_tree_root,
 		 reference_tree_root_, *query_kernel_sums, 
 		 query_kernel_sums_scratch_space,
 		 query_squared_kernel_sums_scratch_space,
-		 one_sided_probability, &extra_probability);
+		 one_sided_probability, query_extra_probability);
   fx_timer_stop(fx_root, "computation_time");
   printf("Computation finished...\n");
   printf("Number of prunes: %d\n", num_prunes_);
