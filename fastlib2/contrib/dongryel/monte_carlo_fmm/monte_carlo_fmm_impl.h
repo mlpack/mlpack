@@ -6,7 +6,8 @@ template<typename TKernelAux>
 void MonteCarloFMM<TKernelAux>::BaseCase_
 (const Matrix &query_set, const ArrayList<index_t> &query_index_permutation,
  QueryTree *query_node, const ReferenceTree *reference_node,
- Vector &query_kernel_sums) const {
+ Vector &query_kernel_sums, double one_sided_probability,
+ double *extra_probability) const {
  
   // Loop over each query point in the query node.
   for(index_t q = query_node->begin(); q < query_node->end(); q++) {
@@ -33,6 +34,9 @@ void MonteCarloFMM<TKernelAux>::BaseCase_
     } // end of iterating over each reference point.
 
   } // end of looping over each query point.
+
+  // Increment the leftover probability token to use later.
+  (*extra_probability) += (1 - one_sided_probability);
 }
 
 template<typename TKernelAux>
@@ -41,7 +45,7 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
  QueryTree *query_node, const ReferenceTree *reference_node,
  Vector &query_kernel_sums, Vector &query_kernel_sums_scratch_space,
  Vector &query_squared_kernel_sums_scratch_space,
- double one_sided_probability) {
+ double one_sided_probability, double *extra_probability) {
 
   if(num_initial_samples_per_query_ > reference_node->count()) {
     return false;
@@ -49,7 +53,9 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
 
   // Compute the required standard score for the given one-sided
   // probability.
-  double standard_score = InverseNormalCDF::Compute(one_sided_probability);
+  double standard_score = 
+    InverseNormalCDF::Compute
+    (std::max(one_sided_probability - (*extra_probability), 0.0));
   if(standard_score > 3) {
     return false;
   }
@@ -132,6 +138,9 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
       query_kernel_sums[query_index_permutation[q]] += 
 	query_kernel_sums_scratch_space[q] * reference_node->count();
     }
+
+    // This can potentially be improved...
+    *extra_probability = 0;
     return true;
   }
   
@@ -168,14 +177,14 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
  QueryTree *query_node, ReferenceTree *reference_node,
  Vector &query_kernel_sums, Vector &query_kernel_sums_scratch_space,
  Vector &query_squared_kernel_sums_scratch_space,
- double one_sided_probability) {
+ double one_sided_probability, double *extra_probability) {
 
   // If prunable, then prune.
   if(MonteCarloPrunable_(query_set, query_index_permutation, query_node, 
 			 reference_node, query_kernel_sums, 
 			 query_kernel_sums_scratch_space,
 			 query_squared_kernel_sums_scratch_space,
-			 one_sided_probability)) {
+			 one_sided_probability, extra_probability)) {
     num_prunes_++;
     return;
   }
@@ -187,7 +196,7 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
     // computation.
     if(reference_node->is_leaf()) {
       BaseCase_(query_set, query_index_permutation, query_node, reference_node,
-		query_kernel_sums);
+		query_kernel_sums, one_sided_probability, extra_probability);
     }
     
     // ...and the reference node is not a leaf node, then recurse on
@@ -207,12 +216,12 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
 		     rnode_first, query_kernel_sums,
 		     query_kernel_sums_scratch_space, 
 		     query_squared_kernel_sums_scratch_space,
-		     one_sided_probability_first);
+		     one_sided_probability_first, extra_probability);
       CanonicalCase_(query_set, query_index_permutation, query_node,
 		     rnode_second, query_kernel_sums,
 		     query_kernel_sums_scratch_space, 
 		     query_squared_kernel_sums_scratch_space,
-		     one_sided_probability_second);
+		     one_sided_probability_second, extra_probability);
     }
   } // end case for the query node as the leaf node.
   
@@ -226,12 +235,12 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
 		     reference_node, query_kernel_sums, 
 		     query_kernel_sums_scratch_space,
 		     query_squared_kernel_sums_scratch_space,
-		     one_sided_probability);
+		     one_sided_probability, extra_probability);
       CanonicalCase_(query_set, query_index_permutation, query_node->right(),
 		     reference_node, query_kernel_sums, 
 		     query_kernel_sums_scratch_space,
 		     query_squared_kernel_sums_scratch_space,
-		     one_sided_probability);
+		     one_sided_probability, extra_probability);
     }
     
     // .. and the reference node is not a leaf node, then do the
@@ -251,12 +260,12 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
 		     rnode_first, query_kernel_sums, 
 		     query_kernel_sums_scratch_space, 
 		     query_squared_kernel_sums_scratch_space,
-		     one_sided_probability_first);
+		     one_sided_probability_first, extra_probability);
       CanonicalCase_(query_set, query_index_permutation, query_node->left(),
 		     rnode_second, query_kernel_sums, 
 		     query_kernel_sums_scratch_space, 
 		     query_squared_kernel_sums_scratch_space,
-		     one_sided_probability_second);
+		     one_sided_probability_second, extra_probability);
 
       BestNodePartners_(query_node->right(), reference_node->left(),
 			reference_node->right(), one_sided_probability,
@@ -267,28 +276,13 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
 		     rnode_first, query_kernel_sums, 
 		     query_kernel_sums_scratch_space, 
 		     query_squared_kernel_sums_scratch_space,
-		     one_sided_probability_first);
+		     one_sided_probability_first, extra_probability);
       CanonicalCase_(query_set, query_index_permutation, query_node->right(),
 		     rnode_second, query_kernel_sums, 
 		     query_kernel_sums_scratch_space, 
 		     query_squared_kernel_sums_scratch_space,
-		     one_sided_probability_second);
+		     one_sided_probability_second, extra_probability);
     }
-  }
-}
-
-template<typename TKernelAux>
-void MonteCarloFMM<TKernelAux>::PostProcessQueryTree_
-(const Matrix &query_set, const ArrayList<index_t> &query_index_permutation,
- QueryTree *query_node, Vector &query_kernel_sums) const {
-
-  if(query_node->is_leaf()) {
-  }
-  else {
-    PostProcessQueryTree_(query_set, query_index_permutation,
-			  query_node->left(), query_kernel_sums);
-    PostProcessQueryTree_(query_set, query_index_permutation, 
-			  query_node->right(), query_kernel_sums);
   }
 }
 
@@ -364,12 +358,13 @@ void MonteCarloFMM<TKernelAux>::Compute
   // Get the probability for guaranteeing the results.
   double probability = fx_param_double(module_, "probability", 0.75);
   double one_sided_probability = probability + 0.5 * (1 - probability);
+  double extra_probability = 0;
 
   CanonicalCase_(query_set, old_from_new_queries, query_tree_root,
 		 reference_tree_root_, *query_kernel_sums, 
 		 query_kernel_sums_scratch_space,
 		 query_squared_kernel_sums_scratch_space,
-		 one_sided_probability);
+		 one_sided_probability, &extra_probability);
   fx_timer_stop(fx_root, "computation_time");
   printf("Computation finished...\n");
   printf("Number of prunes: %d\n", num_prunes_);
