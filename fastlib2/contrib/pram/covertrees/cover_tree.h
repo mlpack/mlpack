@@ -1,4 +1,4 @@
-cc#ifndef COVER_TREE_NODE_H
+#ifndef COVER_TREE_NODE_H
 #define COVER_TREE_NODE_H
 
 #include <fastlib/fastlib.h>
