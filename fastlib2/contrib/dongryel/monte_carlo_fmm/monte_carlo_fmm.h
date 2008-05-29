@@ -74,7 +74,7 @@ class MonteCarloFMM {
    QueryTree *query_node, const ReferenceTree *reference_node,
    Vector &query_kernel_sums, Vector &query_kernel_sums_scratch_space,
    Vector &query_squared_kernel_sums_scratch_space,
-   double one_sided_probability, double *extra_probability);
+   double one_sided_probability, Vector &query_extra_probability);
 
   /** @brief The exhaustive base case for evaluating the reference
    *         contributions to the given set of query points.
@@ -83,7 +83,7 @@ class MonteCarloFMM {
 		 const ArrayList<index_t> &query_index_permutation,
 		 QueryTree *query_node, const ReferenceTree *reference_node, 
 		 Vector &query_kernel_sums, double one_sided_probability,
-		 double *extra_probability) const;
+		 Vector &query_extra_probability) const;
   
   template<typename Tree>
   void BestNodePartners_
@@ -100,7 +100,8 @@ class MonteCarloFMM {
 		      Vector &query_kernel_sums, 
 		      Vector &query_kernel_sums_scratch_space,
 		      Vector &query_squared_kernel_sums_scratch_space,
-		      double one_sided_probability, double *extra_probability);
+		      double one_sided_probability, 
+		      Vector &query_extra_probability);
 
  public:
   
