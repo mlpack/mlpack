@@ -36,7 +36,7 @@ class InverseNormalCDF {
 
   static double Compute(double p) {
 
-    long double x;
+    long double x = 0;
     long double q, r, u, e;
     if ((0 < p )  && (p < P_LOW)){
       q = sqrt(-2*log(p));
