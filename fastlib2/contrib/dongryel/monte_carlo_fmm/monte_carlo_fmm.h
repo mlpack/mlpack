@@ -84,6 +84,11 @@ class MonteCarloFMM {
 		 QueryTree *query_node, const ReferenceTree *reference_node, 
 		 Vector &query_kernel_sums) const;
   
+  template<typename Tree>
+  void BestNodePartners_
+  (Tree *nd, Tree *nd1, Tree *nd2, double probability, Tree **partner1, 
+   double *probability1, Tree **partner2, double *probability2);
+    
   /** @brief The canonical case for evaluating the reference
    *         contributions to the given set of query points using the
    *         dual-tree algorithm.
