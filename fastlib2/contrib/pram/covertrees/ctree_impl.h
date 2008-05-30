@@ -28,13 +28,16 @@ void ctree::print_tree(index_t depth, TCoverTreeNode *top_node) {
 }
 
 template<typename T>
-T ctree::max_set(ArrayList<NodeDistances<T>*> *set) {
+T ctree::max_set(ArrayList<NodeDistances<T>*> *set, index_t *point) {
   
   T max = 0.0;
   for (index_t i = 0; i < set->size(); i++) {
     if(max < (*set)[i]->distances()->back()) {
       max = (*set)[i]->distances()->back();
+      if (point != NULL) {
+	*point = i;
       }
+    }
   }
   return max;
 }
@@ -141,14 +144,18 @@ TCoverTreeNode *ctree::private_make_tree(index_t point,
       NodeDistances<T> **end = point_set->end();
 
       children.Init(0);
-      children.PushBack()->MakeLeafNode(point);
+      TCoverTreeNode *self_node = new TCoverTreeNode();
+      self_node->MakeLeafNode(point);
+      children.PushBackCopy(self_node);
 
       for (; begin < end; begin++) {
-	children.PushBack()->MakeLeafNode((*begin)->point());
+	TCoverTreeNode *node = new TCoverTreeNode();
+	node->MakeLeafNode((*begin)->point());
+	children.PushBackCopy(node);
 	consumed_set->PushBackCopy(*begin);
       }
 
-      DEBUG_ASSERT(children.size() == point_set->size());
+      DEBUG_ASSERT(children.size() == point_set->size()+1);
       point_set->Resize(0);
       TCoverTreeNode *node = new TCoverTreeNode();
       node->MakeNode(point, 0.0, 100, &children);

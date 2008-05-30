@@ -30,6 +30,10 @@ class CoverTreeNode {
     }
   }
 
+  void set_point(index_t point) {
+    point_ = point;
+  }
+
   void set_max_dist_to_grandchild(double dist) {
     max_dist_to_grandchild_ = dist;
     return;

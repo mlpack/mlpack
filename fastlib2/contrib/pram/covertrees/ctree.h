@@ -102,7 +102,13 @@ namespace ctree {
   // to any descendant and also to decide the next 
   // scale in the explicit representation
   template<typename T>
-  T max_set(ArrayList<NodeDistances<T>*>*);
+  T max_set(ArrayList<NodeDistances<T>*>*, index_t*);
+
+  template<typename T>
+  T max_set(ArrayList<NodeDistances<T>*> *set) {
+    return max_set(set, NULL);
+  }
+
 
   // used for printing purposes
   void print_space(index_t);

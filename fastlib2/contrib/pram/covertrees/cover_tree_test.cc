@@ -133,11 +133,11 @@ int main(int argc, char *argv[]) {
 
   float b = (float)build / (float)CLOCKS_PER_SEC;
   float f = (float)find / (float)CLOCKS_PER_SEC;
-  printf("build = %f, rbfs = %f\n", b, f);
+  NOTIFY("build = %f, rbfs = %f\n", b, f);
   
   float f2 = (float)find2 / (float)CLOCKS_PER_SEC;
   float f1 = (float)find1 / (float)CLOCKS_PER_SEC;
-  printf("dfs = %f, brute = %f\n", f1, f2);
+  NOTIFY("dfs = %f, brute = %f\n", f1, f2);
  
   compare_neighbors(&rbfs_ind, &brute_ind);
   compare_neighbors(&dfs_ind, &brute_ind); 
