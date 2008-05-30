@@ -182,11 +182,11 @@ void AllKNN<T>::CopyCoverSets_(TreeType *query,
 	T d = pdc::DistanceEuclidean<T>(q_point, r_point, upper_bound);
 
 	// pruning on its own distance
-	if (d < upper_bound) {
+	if (d <= upper_bound) {
 
 	  // distance computed is less than present upper bound
 	  // hence update
-	  if (d <= *query_upper_bound) {
+	  if (d < *query_upper_bound) {
 	    update_upper_bounds_(upper_bounds, query->point(), d);
 	  }
 
@@ -504,12 +504,13 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
   // within query_upper_bound
   if (query->is_leaf() && reference->is_leaf()) {
 
-    // the base case or something close to that (should try the traditional base case
+    // the base case or something close to that (should try 
+    // the traditional base case
     // though later
  
     //NOTIFY("leaf node for Point %"LI"d %"LI"d",
     //	     query->point()+1, reference->point()+1);
-    if (reference_query_dist <= *(query_upper_bound)){
+    if (reference_query_dist <= *query_upper_bound){
       LeafNodes leaf; 
       leaf.Init(reference->point(), reference_query_dist);
       (*neighbors)[query->point()].PushBackCopy(leaf);
@@ -529,6 +530,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
     TreeType **child_end = query->children()->end();
     for (++qchild; qchild != child_end; qchild++) {
 
+      // check this function properly
       set_update_upper_bounds_(upper_bounds, (*qchild)->point(), 
 			       *query_upper_bound 
 			       + (*qchild)->dist_to_parent());
@@ -537,8 +539,6 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
       queries_.MakeColumnVector((*qchild)->point(), &qrs);
       T *qchild_ub =  upper_bounds->begin() + (*qchild)->point() * knns_;
 
-      //CopyLeafNodes(*qchild, neighbor_distances, leaf_nodes, &new_leaf_nodes);
-      // add equivalent here
       T new_upper_bound = *qchild_ub + (*qchild)->max_dist_to_grandchild();
 	
       if (reference_query_dist 

@@ -2,7 +2,7 @@
 #define PARTIAL_DISTANCE_COMPUTATION_H
 
 #include <fastlib/fastlib.h>
-#define EPS 1.0e-5
+#define EPS 1.0e-1
 
 namespace pdc {
 
