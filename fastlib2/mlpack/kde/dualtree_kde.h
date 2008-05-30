@@ -71,7 +71,7 @@
 #include "mlpack/series_expansion/mult_farfield_expansion.h"
 #include "mlpack/series_expansion/mult_local_expansion.h"
 #include "mlpack/series_expansion/kernel_aux.h"
-
+#include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 
 ////////// Documentation stuffs //////////
 const fx_entry_doc kde_main_entries[] = {
@@ -146,7 +146,7 @@ class DualtreeKde {
   class KdeStat;
   
   // our tree type using the KdeStat
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, KdeStat > Tree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, KdeStat > Tree;
   
   class KdeStat {
    public:
@@ -913,16 +913,18 @@ class DualtreeKde {
 
     // construct query and reference trees
     fx_timer_start(NULL, "tree_d");
-    rroot_ = tree::MakeKdTreeMidpoint<Tree>(rset_, leaflen,
-					    &old_from_new_references_, NULL);
+    rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
+						&old_from_new_references_, 
+						NULL);
 
     if(queries_equal_references) {
       qroot_ = rroot_;
       old_from_new_queries_.InitCopy(old_from_new_references_);
     }
     else {
-      qroot_ = tree::MakeKdTreeMidpoint<Tree>(qset_, leaflen,
-					      &old_from_new_queries_, NULL);
+      qroot_ = proximity::MakeGenMetricTree<Tree>(qset_, leaflen,
+						  &old_from_new_queries_, 
+						  NULL);
     }
     fx_timer_stop(NULL, "tree_d");
     
