@@ -7,7 +7,7 @@
  */
 
 #include <fastlib/fastlib.h>
-#include "allknn_dfs.h"
+#include "allknn.h"
 #include <time.h>
 
 /**
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
       references.set(j, i, (float) refs.get(j, i));
     }
   }
-  fx_timer_stop(NULL,"data_coversion");
+  fx_timer_stop(NULL,"data_conversion");
 
   //AllKNN<float> allknn;
   AllKNN<float> allknn;
@@ -71,6 +71,7 @@ int main(int argc, char *argv[]) {
 
   datanode *allknn_module = fx_submodule(NULL, "allknn");
   index_t knn = fx_param_int(allknn_module, "knns",1);
+  bool pr = fx_param_bool(allknn_module, "print_results", 0);
   index_t dim = fx_param_int(allknn_module, "dim", queries.n_rows());
   index_t rsize = fx_param_int(allknn_module, "rsize", 
 			       references.n_cols());
@@ -88,7 +89,7 @@ int main(int argc, char *argv[]) {
   allknn.Init(queries, references, allknn_module);
   end = clock();
   build = end - start;
-  
+    
   // This does the recursive breadth first search 
   // of nearest neighbors
   fx_timer_start(allknn_module, "rbfs");
@@ -115,18 +116,21 @@ int main(int argc, char *argv[]) {
   end = clock();
   fx_timer_stop(allknn_module, "brute");
   find2 = end - start;
-  
+   
   NOTIFY("Phase 1 complete");
 
-//   NOTIFY("RBFS results");
-//   print_results<float>(qsize, knn, &rbfs_ind, &rbfs_dist);
+  if (pr) {
+    
+    NOTIFY("RBFS results");
+    print_results<float>(qsize, knn, &rbfs_ind, &rbfs_dist);
+    
+    NOTIFY("DFS results");
+    print_results<float>(qsize, knn, &dfs_ind, &dfs_dist);
+    
+    NOTIFY("BRUTE results");
+    print_results<float>(qsize, knn, &brute_ind, &brute_dist);
+  }
 
-//   NOTIFY("DFS results");
-//   print_results<float>(qsize, knn, &dfs_ind, &dfs_dist);
-
-//   NOTIFY("BRUTE results");
-//   print_results<float>(qsize, knn, &brute_ind, &brute_dist);
-  
   float b = (float)build / (float)CLOCKS_PER_SEC;
   float f = (float)find / (float)CLOCKS_PER_SEC;
   printf("build = %f, rbfs = %f\n", b, f);
@@ -135,8 +139,8 @@ int main(int argc, char *argv[]) {
   float f1 = (float)find1 / (float)CLOCKS_PER_SEC;
   printf("dfs = %f, brute = %f\n", f1, f2);
  
-  //compare_neighbors(&rbfs_ind, &brute_ind);
-  //compare_neighbors(&dfs_ind, &brute_ind); 
+  compare_neighbors(&rbfs_ind, &brute_ind);
+  compare_neighbors(&dfs_ind, &brute_ind); 
 
   //fx_param_bool(NULL, "fx/silent", 1);
   fx_done(NULL);
@@ -170,8 +174,9 @@ void compare_neighbors(ArrayList<index_t> *a,
   index_t *y = a->end();
   index_t *z = b->begin();
 
-  for(; x != y;) {
-    DEBUG_ASSERT_MSG(*x++ == *z++, "neighbors are not same");
+  for(index_t i = 0; x != y; x++, z++, i++) {
+    DEBUG_WARN_MSG_IF(*x != *z, 
+		     "neighbors for point %"LI"d are not same", i);
   }
   NOTIFY("Checked and passed!!");
 }

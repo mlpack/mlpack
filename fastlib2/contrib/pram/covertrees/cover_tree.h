@@ -30,18 +30,6 @@ class CoverTreeNode {
     }
   }
 
-  //  void Destruct() {
-  //  if (children_.size() == 0) {
-  //    return;
-  //  }
-  //  else {
-  //    for (index_t i = 0; i < children_.size(); i++) {
-  //	children_[i]->Destruct();
-  //    }
-  //    return;
-  //  }
-  // }
-
   void set_max_dist_to_grandchild(double dist) {
     max_dist_to_grandchild_ = dist;
     return;
