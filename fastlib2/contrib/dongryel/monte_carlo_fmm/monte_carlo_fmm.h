@@ -76,6 +76,11 @@ class MonteCarloFMM {
    Vector &query_squared_kernel_sums_scratch_space,
    double one_sided_probability, Vector &query_extra_probability);
 
+  bool Prunable_
+  (const QueryTree *query_node, 
+   const ArrayList<index_t> &query_index_permutation,
+   const ReferenceTree *reference_node, Vector &query_kernel_sums);
+  
   /** @brief The exhaustive base case for evaluating the reference
    *         contributions to the given set of query points.
    */

@@ -26,6 +26,7 @@ void MonteCarloFMM<TKernelAux>::BaseCase_
       double squared_distance = 
 	la::DistanceSqEuclidean(query_set.n_rows(), query_point,
 				reference_point);
+
       double weighted_kernel_value = reference_weights_[r] *
 	ka_.kernel_.EvalUnnormOnSq(squared_distance);
       
@@ -36,6 +37,45 @@ void MonteCarloFMM<TKernelAux>::BaseCase_
     query_extra_probability[q] += (1 - one_sided_probability);
 
   } // end of looping over each query point.
+}
+
+template<typename TKernelAux>
+bool MonteCarloFMM<TKernelAux>::Prunable_
+(const QueryTree *query_node, 
+ const ArrayList<index_t> &query_index_permutation,
+ const ReferenceTree *reference_node, Vector &query_kernel_sums) {
+  
+  // Try pruning after bound refinement: first compute distance/kernel
+  // value bounds.
+  DRange dsqd_range, kernel_value_range;
+  dsqd_range.lo = query_node->bound().MinDistanceSq(reference_node->bound());
+  dsqd_range.hi = query_node->bound().MaxDistanceSq(reference_node->bound());
+  kernel_value_range = ka_.kernel_.RangeUnnormOnSq(dsqd_range);
+
+  double used_error = 0.5 * (kernel_value_range.hi - kernel_value_range.lo) *
+    reference_node->count();
+
+  // This can probably done more in a smart way...
+  double new_mass_l = DBL_MAX;
+  for(index_t q = query_node->begin(); q < query_node->end(); q++) {
+    new_mass_l = std::min(new_mass_l, 
+			  query_kernel_sums[query_index_permutation[q]]);
+  }
+  new_mass_l += kernel_value_range.lo * reference_node->count();
+
+  double allowed_error = (relative_error_ * new_mass_l) *
+    reference_node->count() / ((double) reference_tree_root_->count());
+
+  if(used_error <= allowed_error) {
+    for(index_t q = query_node->begin(); q < query_node->end(); q++) {
+      query_kernel_sums[query_index_permutation[q]] +=
+	kernel_value_range.lo * reference_node->count();
+    } 
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 template<typename TKernelAux>
@@ -85,6 +125,7 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
 	double squared_distance = 
 	  la::DistanceSqEuclidean(query_set.n_rows(), query_point,
 				  reference_point);
+
 	double weighted_kernel_value = 
 	  ka_.kernel_.EvalUnnormOnSq(squared_distance);
 	query_kernel_sums_scratch_space[q] += weighted_kernel_value;
@@ -176,14 +217,24 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
  double one_sided_probability, Vector &extra_probability) {
 
   // If prunable, then prune.
-  if(MonteCarloPrunable_(query_set, query_index_permutation, query_node, 
-			 reference_node, query_kernel_sums, 
-			 query_kernel_sums_scratch_space,
-			 query_squared_kernel_sums_scratch_space,
-			 one_sided_probability, extra_probability)) {
-    num_prunes_++;
-    return;
+  if(one_sided_probability < 0.99) {
+    if(MonteCarloPrunable_(query_set, query_index_permutation, query_node, 
+			   reference_node, query_kernel_sums, 
+			   query_kernel_sums_scratch_space,
+			   query_squared_kernel_sums_scratch_space,
+			   one_sided_probability, extra_probability)) {
+      num_prunes_++;
+      return;
+    }
   }
+  else {
+    if(Prunable_(query_node, query_index_permutation, reference_node,
+		 query_kernel_sums)) {
+      num_prunes_++;
+      return;
+    }
+  }
+ 
 
   // If the query node is a leaf node,
   if(query_node->is_leaf()) {
