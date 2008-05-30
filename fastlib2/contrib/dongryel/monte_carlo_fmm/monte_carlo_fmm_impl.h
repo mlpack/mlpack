@@ -155,7 +155,7 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
       num_samples = threshold - total_samples;
 
       // If it will require too many samples, give up.
-      if(num_samples > (int) sqrt(reference_node->count())) {
+      if(num_samples > 10 * reference_node->count()) {
 	flag = false;
 	break;
       }
@@ -217,24 +217,19 @@ void MonteCarloFMM<TKernelAux>::CanonicalCase_
  double one_sided_probability, Vector &extra_probability) {
 
   // If prunable, then prune.
-  if(one_sided_probability < 0.99) {
-    if(MonteCarloPrunable_(query_set, query_index_permutation, query_node, 
-			   reference_node, query_kernel_sums, 
-			   query_kernel_sums_scratch_space,
-			   query_squared_kernel_sums_scratch_space,
-			   one_sided_probability, extra_probability)) {
-      num_prunes_++;
+  if(MonteCarloPrunable_(query_set, query_index_permutation, query_node, 
+			 reference_node, query_kernel_sums, 
+			 query_kernel_sums_scratch_space,
+			 query_squared_kernel_sums_scratch_space,
+			 one_sided_probability, extra_probability)) {
+    num_prunes_++;
       return;
-    }
   }
-  else {
-    if(Prunable_(query_node, query_index_permutation, reference_node,
-		 query_kernel_sums)) {
-      num_prunes_++;
-      return;
-    }
+  if(Prunable_(query_node, query_index_permutation, reference_node,
+	       query_kernel_sums)) {
+    num_prunes_++;
+    return;
   }
- 
 
   // If the query node is a leaf node,
   if(query_node->is_leaf()) {
