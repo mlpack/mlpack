@@ -155,7 +155,7 @@ bool MonteCarloFMM<TKernelAux>::MonteCarloPrunable_
       num_samples = threshold - total_samples;
 
       // If it will require too many samples, give up.
-      if(num_samples > 10 * reference_node->count()) {
+      if(num_samples > reference_node->count()) {
 	flag = false;
 	break;
       }
