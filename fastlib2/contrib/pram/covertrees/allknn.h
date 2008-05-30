@@ -33,6 +33,35 @@
 #include "ctree.h"
 #include "distances.h"
 
+const fx_entry_doc allknn_entries[] = {
+  {"dim", FX_PARAM, FX_INT, NULL,
+   " The dimension of the data we are dealing with.\n"},
+  {"qsize", FX_PARAM, FX_INT, NULL,
+   " The number of points in the query set.\n"},
+  {"rsize", FX_PARAM, FX_INT, NULL, 
+   " The number of points in the reference set.\n"},
+  {"knns", FX_PARAM, FX_INT, NULL, 
+   " The number of nearest neighbors we need to compute (defaults to 1).\n"},
+  {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
+   " The timer to record the time taken to build the query and the reference tree.\n"},
+  {"rbfs", FX_TIMER, FX_CUSTOM, NULL,
+   " The timer to record the time taken to do the recursive breadth first computation.\n"},
+  {"dfs", FX_TIMER, FX_CUSTOM, NULL, 
+   " The timer to record the time taken to do the depth first computation.\n"},
+  {"brute", FX_TIMER, FX_CUSTOM, NULL, 
+   " The timer to record the time taken to do the brute nearest neighbor computation.\n"},
+  {"ec", FX_PARAM, FX_DOUBLE, NULL,
+   " The expansion constant we will be using to make the tree (defaults to 1.3).\n"},
+  {"print_tree", FX_PARAM, FX_BOOL, NULL,
+   " The variable to decide whether to print the tree made or not (defaults to false).\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc allknn_doc = {
+  allknn_entries, NULL,
+  " Performs dual-tree all nearest neighbors computation - recursive breadth first, depth first, brute.\n"
+};
+
 template<typename T>
 class AllKNN {
   
@@ -567,8 +596,8 @@ public:
 
     fx_timer_stop(module_, "tree_building");
 
-    bool print_tree = fx_param_bool(module_, "print_tree", 0);
-    if(print_tree){
+    
+    if(fx_param_bool(module_, "print_tree", 0)){
       NOTIFY("Query Tree:");
       ctree::PrintTree<TreeType>(query_tree_);
       NOTIFY("Reference Tree:");
