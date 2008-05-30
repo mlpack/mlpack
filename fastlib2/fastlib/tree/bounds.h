@@ -551,7 +551,7 @@ class DBallBound {
    * is needed.
    */
   void CalculateMidpoint(Point *centroid) const {
-    ot::InitCopy(center_, centroid);
+    ot::InitCopy(centroid, center_);
   }
 
   /**
