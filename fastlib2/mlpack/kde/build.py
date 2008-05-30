@@ -1,20 +1,10 @@
-# The linkable library for fast KDE algorithm
-librule(
-    name = "kde",                    
-    sources = [],                    
-    headers = ["dataset_scaler.h",
-               "kde.h",
-               "naive_kde.h"],       
-    deplibs = ["../series_expansion:series_expansion",
-               "fastlib:fastlib_int"]
-    )
-
 # The linkable library for original dualtree KDE algorithm
 librule(
     name = "dualtree_kde",
     sources = [],
     headers = ["dataset_scaler.h",
                "dualtree_kde.h",
+               "dualtree_kde_impl.h",
                "naive_kde.h"],
     deplibs = ["../series_expansion:series_expansion",
                "contrib/dongryel/proximity_project:proximity_project",
@@ -72,18 +62,6 @@ binrule(
     deplibs = ["../series_expansion:series_expansion",
                "fastlib:fastlib_int",
                "fastlib/thor:thor"]
-    )
-
-# The test-driver for the fast KDE
-binrule(
-    name = "kde_bin",                       
-    sources = ["kde_main.cc"],              
-    headers = [],                           
-    deplibs = [":fft_kde",
-               ":fgt_kde",
-               ":kde",
-               "../series_expansion:series_expansion",
-               "fastlib:fastlib_int"]
     )
 
 # The test-driver for the original dualtree KDE
