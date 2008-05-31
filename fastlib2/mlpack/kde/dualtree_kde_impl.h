@@ -338,17 +338,17 @@ void DualtreeKde<TKernelAux>::BestNodePartners
     double ratio = math::Sqr((nd1->bound().radius()) / 
 			     (nd2->bound().radius()));
     *partner1 = nd1;
-    *probability1 = sqrt(probability * ratio);
+    *probability1 = (probability == 1) ? 1:sqrt(probability * ratio);
     *partner2 = nd2;
-    *probability2 = sqrt(probability / ratio);
+    *probability2 = (probability == 1) ? 1:sqrt(probability / ratio);
   }
   else {
     double ratio = math::Sqr((nd2->bound().radius()) / 
 			     (nd1->bound().radius()));
     *partner1 = nd2;
-    *probability1 = sqrt(probability * ratio);
+    *probability1 = (probability == 1) ? 1:sqrt(probability * ratio);
     *partner2 = nd1;
-    *probability2 = sqrt(probability / ratio);
+    *probability2 = (probability == 1) ? 1:sqrt(probability / ratio);
   }
 }
 
