@@ -207,9 +207,14 @@ class NaiveKde {
   void ComputeMaximumRelativeError(const Vector &density_estimates) {
     
     double max_rel_err = 0;
+    FILE *stream = fopen("relative_error_output.txt", "w+");
+    int within_limit = 0;
+
     for(index_t q = 0; q < densities_.length(); q++) {
-      double rel_err = fabs(density_estimates[q] - densities_[q]) / 
-	densities_[q];
+      double rel_err = (fabs(density_estimates[q] - densities_[q]) <
+			DBL_EPSILON) ?
+	0:fabs(density_estimates[q] - densities_[q]) / 
+	densities_[q];      
 
       if(isnan(density_estimates[q]) || isinf(density_estimates[q]) || 
 	 isnan(densities_[q]) || isinf(densities_[q])) {
@@ -219,10 +224,18 @@ class NaiveKde {
       if(rel_err > max_rel_err) {
 	max_rel_err = rel_err;
       }
+      if(rel_err < fx_param_double(module_, "relative_error", 0.01)) {
+	within_limit++;
+      }
+
+      fprintf(stream, "%g\n", rel_err);
     }
     
+    fclose(stream);
     fx_format_result(module_, "maximum_relative_error_for_fast_KDE", "%g", 
 		     max_rel_err);
+    fx_format_result(module_, "under_relative_error_limit", "%d",
+		     within_limit);
   }
 
 };

@@ -10,9 +10,6 @@
  *  to cross-validate for the optimal bandwidth using a black-box
  *  optimizer which is not implemented in this code.
  *
- *  The difference between dualtree_kde.h and kde.h is that this
- *  implementation satisfies the any-time bound criterion.
- *
  *  For more details on mathematical derivations, please take a look at
  *  the published conference papers (in chronological order):
  *
@@ -250,6 +247,12 @@ class DualtreeKde {
   
  private:
 
+  ////////// Private Constants //////////
+  /** @brief The number of initial samples to take per each query when
+   *         doing Monte Carlo sampling.
+   */
+  static const int num_initial_samples_per_query_ = 25;
+
   /** @brief The pointer to the module holding the parameters.
    */
   struct datanode *module_;
@@ -324,6 +327,10 @@ class DualtreeKde {
    */
   int num_finite_difference_prunes_;
 
+  /** @brief The number of prunes using Monte Carlo.
+   */
+  int num_monte_carlo_prunes_;
+
   /** @brief The permutation mapping indices of queries_ to original
    *         order.
    */
@@ -333,7 +340,19 @@ class DualtreeKde {
    *         original order.
    */
   ArrayList<index_t> old_from_new_references_;
-  
+
+  /** @brief Temporary scratch space to use for accumulating Monte
+   *         Carlo kernel sums.
+   */
+  Vector query_kernel_sums_scratch_space_;
+
+  /** @brief Temporary scratch space to use for accumulating Monte
+   *         Carlo squared kernel sums.
+   */
+  Vector query_squared_kernel_sums_scratch_space_;
+
+  ////////// Private Member Functions //////////
+
   /** @brief The exhaustive base KDE case.
    */
   void DualtreeKdeBase_(Tree *qnode, Tree *rnode);
@@ -341,27 +360,38 @@ class DualtreeKde {
   /** @brief Checking for prunability of the query and the reference
    *         pair using four types of pruning methods.
    */
-  bool PrunableEnhanced_(Tree *qnode, Tree *rnode, DRange &dsqd_range,
-			 DRange &kernel_value_range, double &dl, double &du,
+  bool PrunableEnhanced_(Tree *qnode, Tree *rnode, double probability,
+			 DRange &dsqd_range, DRange &kernel_value_range, 
+			 double &dl, double &du,
 			 double &used_error, double &n_pruned,
 			 int &order_farfield_to_local,
 			 int &order_farfield, int &order_local);
 
+  /** @brief Checking whether it is able to prune the query and the
+   *         reference pair using Monte Carlo sampling.
+   */
+  bool MonteCarloPrunable_(Tree *qnode, Tree *rnode, double probability,
+			   DRange &dsqd_range, DRange &kernel_value_range, 
+			   double &dl, double &de, double &du, 
+			   double &used_error, double &n_pruned);
+
   /** @brief Checking for prunability of the query and the reference
    *         pair.
    */
-  bool Prunable_(Tree *qnode, Tree *rnode, DRange &dsqd_range,
-		 DRange &kernel_value_range, double &dl, double &de,
-		 double &du, double &used_error, double &n_pruned);
+  bool Prunable_(Tree *qnode, Tree *rnode, double probability,
+		 DRange &dsqd_range, DRange &kernel_value_range, 
+		 double &dl, double &de, double &du, double &used_error, 
+		 double &n_pruned);
 
   /** @brief Determine which of the node to expand first.
    */
-  void BestNodePartners(Tree *nd, Tree *nd1, Tree *nd2, Tree **partner1,
-			Tree **partner2);
+  void BestNodePartners(Tree *nd, Tree *nd1, Tree *nd2, double probability,
+			Tree **partner1, double *probability1, Tree **partner2,
+			double *probability2);
 
   /** @brief Canonical dualtree KDE case.
    */
-  void DualtreeKdeCanonical_(Tree *qnode, Tree *rnode);
+  void DualtreeKdeCanonical_(Tree *qnode, Tree *rnode, double probability);
 
   /** @brief Pre-processing step - this wouldn't be necessary if the
    *         core fastlib supported a Init function for Stat objects
@@ -424,23 +454,33 @@ class DualtreeKde {
     used_error_.SetZero();
     n_pruned_.SetZero();
 
-    // reset prune statistics.
-    num_finite_difference_prunes_ = num_farfield_to_local_prunes_ =
-      num_farfield_prunes_ = num_local_prunes_ = 0;
+    // Reset prune statistics.
+    num_finite_difference_prunes_ = num_monte_carlo_prunes_ =
+      num_farfield_to_local_prunes_ = num_farfield_prunes_ = 
+      num_local_prunes_ = 0;
+
+    // Allocate temporary scratch space.
+    query_kernel_sums_scratch_space_.Init(qset_.n_cols());
+    query_kernel_sums_scratch_space_.SetZero();
+    query_squared_kernel_sums_scratch_space_.Init(qset_.n_cols());
+    query_squared_kernel_sums_scratch_space_.SetZero();
 
     printf("\nStarting fast KDE...\n");
     fx_timer_start(NULL, "fast_kde_compute");
 
-    // preprocessing step for initializing series expansion objects
+    // Preprocessing step for initializing series expansion objects
     PreProcess(rroot_);
     if(qroot_ != rroot_) {
       PreProcess(qroot_);
     }
     
-    // call main routine
-    DualtreeKdeCanonical_(qroot_, rroot_);
+    // Get the required probability guarantee for each query and call
+    // the main routine.
+    double probability = fx_param_double(module_, "probability", 0.75);
+    double one_sided_probability = probability + 0.5 * (1 - probability);
+    DualtreeKdeCanonical_(qroot_, rroot_, one_sided_probability);
 
-    // postprocessing step for finalizing the sums
+    // Postprocessing step for finalizing the sums.
     PostProcess(qroot_);
     fx_timer_stop(NULL, "fast_kde_compute");
     printf("\nFast KDE completed...\n");
