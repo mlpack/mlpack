@@ -334,21 +334,21 @@ void DualtreeKde<TKernelAux>::BestNodePartners
   double d2 = nd->bound().MinDistanceSq(nd2->bound());
 
   // I should fix the following lines to work with arbitrary bounds...
-  double node1_max_distance_squared = nd1->bound().radius();
-  double node2_max_distance_squared = nd2->bound().radius();
-  double total_sum = node1_max_distance_squared + node2_max_distance_squared;
-
   if(d1 <= d2) {
+    double ratio = math::Sqr((nd1->bound().radius()) / 
+			     (nd2->bound().radius()));
     *partner1 = nd1;
-    *probability1 = sqrt(probability) / total_sum * node1_max_distance_squared;
+    *probability1 = sqrt(probability * ratio);
     *partner2 = nd2;
-    *probability2 = sqrt(probability) / total_sum * node2_max_distance_squared;
+    *probability2 = sqrt(probability / ratio);
   }
   else {
+    double ratio = math::Sqr((nd2->bound().radius()) / 
+			     (nd1->bound().radius()));
     *partner1 = nd2;
-    *probability1 = sqrt(probability) / total_sum * node2_max_distance_squared;
+    *probability1 = sqrt(probability * ratio);
     *partner2 = nd1;
-    *probability2 = sqrt(probability) / total_sum * node1_max_distance_squared;
+    *probability2 = sqrt(probability / ratio);
   }
 }
 
