@@ -165,30 +165,25 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
  DRange &kernel_value_range, double &dl, double &de, double &du, 
  double &used_error, double &n_pruned) {
 
-  if(num_initial_samples_per_query_ > rnode->count()) {
+  if(num_initial_samples_per_query_ >= rnode->count()) {
     return false;
   }
 
   // Refine the lower bound using the new lower bound info.
   KdeStat &stat = qnode->stat();
-  double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
   double new_used_error = stat.used_error_ + stat.postponed_used_error_;
   double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
-  
-  double allowed_err = (tau_ * new_mass_l - new_used_error) *
-    rnode->count() / ((double) rroot_->count() - new_n_pruned);
-
-  // Compute the required standard score for the given one-sided
-  // probability.
-  double standard_score = InverseNormalCDF::Compute(probability);
-  double common_factor = math::Sqr(rnode->count() * standard_score / 
-				   allowed_err);
+  double min_lower_bound_change = DBL_MAX;
   double max_used_error = 0;
 
   // For each query point in the query node, take samples and
   // determine how many more samples are needed.
   bool flag = true;
   for(index_t q = qnode->begin(); q < qnode->end() && flag; q++) {
+    
+    // Compute the required standard score for the given one-sided
+    // probability.
+    double standard_score = InverseNormalCDF::Compute(probability);
     
     // Get the pointer to the current query point.
     const double *query_point = qset_.GetColumnPtr(q);
@@ -232,21 +227,34 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 	 total_samples * sample_mean * sample_mean) /
 	((double) total_samples - 1);
 
+      double new_mass_l = stat.mass_l_ + stat.postponed_l_ + 
+	rnode->count() * 
+	(sample_mean - standard_score * sqrt(sample_variance /
+					     ((double) total_samples)));
+      double allowed_err = (tau_ * new_mass_l - new_used_error) *
+	rnode->count() / ((double) rroot_->count() - new_n_pruned);
+      
       // Compute the current threshold for guaranteeing the relative
       // error bound.
       int threshold = (sample_variance > DBL_EPSILON) ?
-	(int) ceil(common_factor * sample_variance):0;
+	(int) ceil(math::Sqr(rnode->count() * standard_score /
+			     allowed_err) * sample_variance):0;
       num_samples = threshold - total_samples;
 
       // If it will require too many samples, give up.
-      if(num_samples > rnode->count()) {
+      if(num_samples > rnode->count() * 2) {
 	flag = false;
 	break;
       }
       
       // If we are done, then move onto the next query.
       else if(num_samples <= 0) {
-	query_kernel_sums_scratch_space_[q] /= ((double) total_samples);
+	query_kernel_sums_scratch_space_[q] = 
+	  query_kernel_sums_scratch_space_[q] / ((double) total_samples) *
+	  rnode->count();
+	min_lower_bound_change =
+	  std::min(min_lower_bound_change,
+		   query_kernel_sums_scratch_space_[q]);
 	max_used_error = std::max(max_used_error,
 				  rnode->count() * standard_score *
 				  sqrt(sample_variance / 
@@ -260,8 +268,9 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
   // If all queries can be pruned, then add the approximations.
   if(flag) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      densities_e_[q] += query_kernel_sums_scratch_space_[q] * rnode->count();
-    }    
+      densities_e_[q] += query_kernel_sums_scratch_space_[q];
+    }
+    dl = std::max(dl, min_lower_bound_change);
     de = 0;
     used_error = max_used_error;
     return true;
@@ -364,7 +373,8 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     num_finite_difference_prunes_++;
     return;
   }
-  else if(MonteCarloPrunable_(qnode, rnode, probability, dsqd_range, 
+  else if(probability < 1 &&
+	  MonteCarloPrunable_(qnode, rnode, probability, dsqd_range, 
 			      kernel_value_range, dl, de, du, used_error, 
 			      n_pruned)) {
     

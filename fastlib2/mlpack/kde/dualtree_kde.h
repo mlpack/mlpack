@@ -485,6 +485,7 @@ class DualtreeKde {
     fx_timer_stop(NULL, "fast_kde_compute");
     printf("\nFast KDE completed...\n");
     printf("Finite difference prunes: %d\n", num_finite_difference_prunes_);
+    printf("Monte Carlo prunes: %d\n", num_monte_carlo_prunes_);
     printf("F2L prunes: %d\n", num_farfield_to_local_prunes_);
     printf("F prunes: %d\n", num_farfield_prunes_);
     printf("L prunes: %d\n", num_local_prunes_);
