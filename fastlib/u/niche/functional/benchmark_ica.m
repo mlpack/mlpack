@@ -1,3 +1,5 @@
+% load data
+
 % cz = 11;
 
 data_dir = ['../../../../neurofunk/' ...
@@ -92,7 +94,17 @@ data = [target_data nontarget_data];
 
 data = responses(:,1:(num_flashes*num_trials*29));
 
+[coeff, score, latent] = princomp(data');
 
+p_small = min(find(cumsum(latent) / sum(latent) >= 0.9));
+
+p_small = min(p_small, 12);
+
+[Yopt, Wopt] = RADICAL(score(:,1:p_small)');
+
+
+
+%{
 t = 1/240:1/240:1;
 
 m = 120;
@@ -121,6 +133,7 @@ pca_results = pca_fd(centered_myfd, p, myfdPar);
  pc_coef, pc_curves, pc_scores, W] = ...
     funcica(t, centered_myfd, p, basis_curves, myfdPar, ...
 	    basis_inner_products);
+%}
 
 %plot(t, -ic_curves(:,6));
 
@@ -149,4 +162,17 @@ pca_results = pca_fd(centered_myfd, p, myfdPar);
 % re-run experiments with gene expression data using correct ic
 % scores
 
+
+
+
+% compute principal components
+
+% do dimensionality reduction
+
+% use RADICAL to compute independent components
+
+% transform components to unit components
+
+% re-use ICAFunc classifier that selects item with maximum score
+% over 15 trials
 
