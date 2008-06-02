@@ -10,40 +10,55 @@
 
 int main(int argc, char *argv[]) {
  
-  fx_init(argc, argv, NULL);
+  fx_init(argc, argv);
   
-  ////////////// Read in data //////////////
+  struct datanode* mod = fx_submodule(NULL, "hf", "hf");
   
-  // How will the data be organized?
-  // What is the best format to read in basis functions?
-  // I will likely need my own function to parse basis functions
-  // Check out the PSI3 code 
+  int num_electrons = fx_param_int_req(NULL, "num_electrons");
+  
+  const char* centers_file = fx_param_str(NULL, "basis_centers", 
+                                          "test_centers.csv");
+  Matrix centers;
+  data::Load(centers_file, &centers);
+  
+  const char* nuclear_file = fx_param_str(NULL, "nuclear_centers", 
+                                          "test_nuclear_centers.csv");
+                                          
+  Matrix nuclear;
+  data::Load(nuclear_file, &nuclear);
+  
+  const char* nuclear_mass_file = fx_param_str(NULL, "nuclear_masses", 
+                                               "test_nuclear_masses.csv");
+                                               
+  Matrix nuclear_masses;
+  data::Load(nuclear_mass_file, &nuclear_masses);
+  
+  // Need to double check if this is right
+  if (nuclear.n_cols() != nuclear_masses.n_rows()) {
+    FATAL("Number of masses must equal number of nuclear coordinates!\n");
+  }
+  
+  Vector nuclear_mass;
+  nuclear_masses.MakeColumnVector(0, &nuclear_mass);
+  
+  Matrix density;
+  if (fx_param_exists(NULL, "initial_density")) {
+    const char* density_file = fx_param_str_req(NULL, "initial_density");
+    data::Load(density_file, &density);
+  }
+  else {
+    density.Init(centers.n_cols(), centers.n_cols());
+    density.SetZero();
+  }
   
   
+  SCFSolver solver;
   
-  ////////////// Compute the integrals ///////////
+  solver.Init(mod, num_electrons, centers, density, nuclear, nuclear_mass);
   
-  // Should this be in the same, or a different class from the linear system
-  // solver?
+  solver.ComputeWavefunction();
   
-  Matrix fock_matrix;
-  Matrix overlap_matrix;
-  
-  ////////////// Solve the linear system /////////////
-  
-  //HFSolver solver;
-  //solver.Init(fock_matrix, overlap_matrix);
-  
-  
-  
-  
-  //////////// Output the results ///////////////////
-  
-  // Total energy
-  // Spin orbitals: both filled and virtual
-  
-  
-  fx_done(NULL);
+  fx_done();
   
   return 0;
   
