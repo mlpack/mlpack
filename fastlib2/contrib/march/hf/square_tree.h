@@ -38,36 +38,6 @@ private:
   
   
 public:
-    
-    // Needs null checks
-    /*void Init(const SquareIntegralStat& left_left, 
-              const SquareIntegralStat& left_right, 
-              const SquareIntegralStat& right_left, 
-              const SquareIntegralStat& right_right) {
-      
-      density_upper_bound_ = max(left_left.density_upper_bound(), 
-                                 left_right.density_upper_bound());
-      density_upper_bound_ = max(density_upper_bound_, 
-                                 right_left.density_upper_bound());
-      density_upper_bound_ = max(density_upper_bound_, 
-                                 right_right.density_upper_bound());
-      
-      density_lower_bound_ = min(left_left.density_lower_bound(), 
-                                 left_right.density_lower_bound());
-      density_lower_bound_ = min(density_lower_bound_, 
-                                 right_left.density_lower_bound());
-      density_lower_bound_ = min(density_lower_bound_, 
-                                 right_right.density_lower_bound());
-      
-      entry_lower_bound_ = 0.0;
-      entry_upper_bound_ = 0.0;
-      
-      approximation_val_ = 0.0;
-      
-      remaining_references_ = left_left.remaining_references();
-      
-    } // void Init(children)
-  */
   
   void Init(const SquareIntegralStat& left, const SquareIntegralStat& right) {
     
@@ -88,8 +58,9 @@ public:
   } // void Init (2 children)
   
   void Init(index_t start1, index_t end1, index_t start2, index_t end2, 
-            const Matrix& density) {
+            index_t num_funs) {
     
+    /*
     double min_density = DBL_MAX;
     double max_density = -DBL_MAX;
     
@@ -113,13 +84,18 @@ public:
     density_lower_bound_ = min_density;
     DEBUG_ASSERT(density_upper_bound_ > -DBL_MAX);
     DEBUG_ASSERT(density_lower_bound_ < DBL_MAX);
+    */
+    
+    density_upper_bound_ = DBL_MAX;
+    density_lower_bound_ = -DBL_MAX;
+    
     
     entry_upper_bound_ = 0.0;
     entry_lower_bound_ = 0.0;
 
     approximation_val_ = 0.0;
     
-    remaining_references_ = density.n_cols() * density.n_cols();
+    remaining_references_ = num_funs * num_funs;
     
   } // void Init(leaf)
   
@@ -220,7 +196,7 @@ class SquareTree {
    *  greater than that of q2
    */
   void Init(QueryTree1* query1_root, QueryTree2* query2_root, 
-            const Matrix& density) {
+            index_t num_funs) {
   
     query1_ = query1_root;
     query2_ = query2_root;
@@ -236,7 +212,7 @@ class SquareTree {
       right_child_ = NULL;
       
       stat_.Init(query1_->begin(), query1_->end(), query2_->begin(), 
-                 query2_->end(), density);
+                 query2_->end(), num_funs);
     
     }
     // I'm assuming that query1_ will always have two significant children
@@ -249,8 +225,8 @@ class SquareTree {
       DEBUG_ASSERT(query1_->right()->end() > query2_->begin());
       DEBUG_ASSERT(query1_->left()->end() > query2_->begin());
       
-      left_child_->Init(query1_->left(), query2_, density);
-      right_child_->Init(query1_->right(), query2_, density);
+      left_child_->Init(query1_->left(), query2_, num_funs);
+      right_child_->Init(query1_->right(), query2_, num_funs);
       
       stat_.Init(left_child_->stat(), right_child_->stat());
     
@@ -266,8 +242,8 @@ class SquareTree {
         left_child_ = new SquareTree();
         right_child_ = new SquareTree();
         
-        left_child_->Init(query1_, query2_->left(), density);
-        right_child_->Init(query1_, query2_->right(), density);
+        left_child_->Init(query1_, query2_->left(), num_funs);
+        right_child_->Init(query1_, query2_->right(), num_funs);
         
         stat_.Init(left_child_->stat(), right_child_->stat());
       
@@ -285,7 +261,7 @@ class SquareTree {
         DEBUG_ASSERT(query1_->end() > query2_->begin());
         
         stat_.Init(query1_->begin(), query1_->end(), query2_->begin(), 
-                   query2_->end(), density);
+                   query2_->end(), num_funs);
         
       }
       // Idea: since query2 isn't necessary, go farther down query2
@@ -299,8 +275,8 @@ class SquareTree {
         DEBUG_ASSERT(query1_->end() > query2_->left()->begin());
         DEBUG_ASSERT(query1_->end() > query2_->right()->begin());
                      
-        left_child_->Init(query1_, query2_->left(), density);
-        right_child_->Init(query1_, query2_->right(), density);
+        left_child_->Init(query1_, query2_->left(), num_funs);
+        right_child_->Init(query1_, query2_->right(), num_funs);
         
         stat_.Init(left_child_->stat(), right_child_->stat());
       
@@ -315,8 +291,8 @@ class SquareTree {
         left_child_ = new SquareTree();
         right_child_ = new SquareTree();
         
-        left_child_->Init(query1_->left(), query2_, density);
-        right_child_->Init(query1_->right(), query2_, density);
+        left_child_->Init(query1_->left(), query2_, num_funs);
+        right_child_->Init(query1_->right(), query2_, num_funs);
         
         stat_.Init(left_child_->stat(), right_child_->stat());        
       
@@ -332,7 +308,7 @@ class SquareTree {
         DEBUG_ASSERT(query1_->end() > query2_->begin());
         
         stat_.Init(query1_->begin(), query1_->end(), query2_->begin(), 
-                   query2_->end(), density);
+                   query2_->end(), num_funs);
               
       }
       // q1 is split twice
@@ -346,17 +322,19 @@ class SquareTree {
         DEBUG_ASSERT(query1_->left()->end() > query2_->begin());
         DEBUG_ASSERT(query1_->right()->end() > query2_->begin());
         
-        left_child_->Init(query1_->left(), query2_, density);
-        right_child_->Init(query1_->right(), query2_, density);
+        left_child_->Init(query1_->left(), query2_, num_funs);
+        right_child_->Init(query1_->right(), query2_, num_funs);
         
         stat_.Init(left_child_->stat(), right_child_->stat());  
       
       }
     
     } // q1 higher 
-    
+
+  /*    
     DEBUG_ASSERT(stat_.density_upper_bound() < DBL_MAX);
     DEBUG_ASSERT(stat_.density_lower_bound() > -DBL_MAX);
+  */
   
   } // Init() (two-children)
   

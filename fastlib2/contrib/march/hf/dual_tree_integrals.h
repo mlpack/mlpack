@@ -148,7 +148,6 @@ class DualTreeIntegrals {
   // the square tree
   SquareIntegralTree* square_tree_;
   
-  
   // The centers of the identical width, spherical Gaussian basis functions
   Matrix centers_;
   
@@ -180,6 +179,8 @@ class DualTreeIntegrals {
   double epsilon_coulomb_absolute_;
   double epsilon_exchange_absolute_;
   
+  // Values that can be guaranteed to be less than this value are pruned by the 
+  // absolute criterion
   double hybrid_cutoff_;
   
   // The return values are stored here
@@ -208,8 +209,6 @@ class DualTreeIntegrals {
   
   // The normalization constant to the fourth power
   double normalization_constant_fourth_;
-  
-  index_t num_mu_nu_base_cases_;
   
   index_t num_absolute_prunes_;
   index_t num_relative_prunes_;
@@ -246,9 +245,6 @@ class DualTreeIntegrals {
   } // PreOrderTraversal  
   
   
-  /** 
-   * Returns the global upper bound for the given 
-   */
   double ComputeUpperBound_() {
   
     return 0.0;
@@ -588,18 +584,16 @@ class DualTreeIntegrals {
   
   
   
-
-  double ErfLikeFunction_(double z);
-  
-
   double ComputeSingleIntegral_(double mu_nu_dist, double rho_sigma_dist, 
                                 double four_way_dist);
-                                
+  
+                                                              
   double ComputeSingleIntegral_(const Vector& mu_center, 
                                 const Vector& nu_center, 
                                 const Vector& rho_center, 
                                 const Vector& sigma_center);
-                                
+  
+  
   bool RectangleOnDiagonal_(IntegralTree* mu, IntegralTree* nu);
 
     
@@ -654,9 +648,12 @@ class DualTreeIntegrals {
             // Multiply by normalization to the fourth, since it appears 
             // once in each of the four integrals
             
-            double this_integral = density_matrix_.ref(rho_index, sigma_index) * 
+            
+            double this_integral = density_matrix_.get(rho_index, sigma_index) * 
                 ComputeSingleIntegral_(mu_vec, nu_vec, rho_vec, sigma_vec);
               
+            // this line gets it right
+            // double this_integral = ComputeSingleIntegral_(mu_vec, nu_vec, rho_vec, sigma_vec);
             if (rho != sigma) {
               this_integral = this_integral * 2;
             }
@@ -1246,34 +1243,92 @@ class DualTreeIntegrals {
   
   } // SetEntryBounds_
   
+  void ResetTreeForExchange_(SquareIntegralTree* root) {
+  
+    if (root != NULL) {
+      
+      root->stat().set_remaining_references(number_of_basis_functions_ * 
+                                            number_of_basis_functions_);
+      
+      root->stat().set_approximation_val(0.0);
+    
+      ResetTreeForExchange_(root->left());
+      ResetTreeForExchange_(root->right());  
+      
+    }
+  
+  } // ResetTreeForExchange_()
+  
   /** 
-   * Resets the tree after the Coulomb computation and before the exchange
+   * Resets the tree after the density matrix changes.
+   *
+   * This is also used between Coulomb and Exchange computations, which is 
+   * probably wrong.  
    */
   void ResetTree_(SquareIntegralTree* root) {
     
-    if (root != NULL) {
-      root->stat().set_remaining_references(number_of_basis_functions_ * 
-                                            number_of_basis_functions_);
-                                          
-      root->stat().set_approximation_val(0.0);
+    double max_density;
+    double min_density;
+    
+    if (root->is_leaf()) {
+      
+      max_density = -DBL_INF;
+      min_density = DBL_INF;
+      
+      for (index_t i = root->query1()->begin(); i < root->query1()->end(); 
+           i++) {
+      
+        for (index_t j = root->query2()->begin(); j < root->query2()->end(); 
+             j++) {
+        
+          double this_density = density_matrix_.ref(i, j);
+          if (this_density > max_density) {
+            max_density = this_density;
+          }
+          if (this_density < min_density) {
+            min_density = this_density;
+          }
+        
+        } // j
+      
+      } // i
+      
+    } // leaf
+    else {
     
       ResetTree_(root->left());
       ResetTree_(root->right());
+      
+      max_density = max(root->left()->stat().density_upper_bound(), 
+                        root->right()->stat().density_upper_bound());
+      min_density = min(root->left()->stat().density_lower_bound(), 
+                        root->right()->stat().density_lower_bound());
+                               
+    } // non-leaf
     
-    }
+    root->stat().set_density_upper_bound(max_density);
+    root->stat().set_density_lower_bound(min_density);
+    
+    root->stat().set_remaining_references(number_of_basis_functions_ * 
+                                          number_of_basis_functions_);
+    
+    root->stat().set_approximation_val(0.0);
     
   } // ResetTree_()
   
       
 public:
   
+  double ErfLikeFunction(double z);
+  
+  
   /**
    * Initialize the class with the centers of the data points, the fx module,
    * bandwidth
    */
-  void Init(const Matrix& centers_in, struct datanode* mod, 
-            const Matrix& density_in, const Matrix& core_in, double band) {
+  void Init(const Matrix& centers_in, struct datanode* mod, double band) {
   
+    // Needs to be copied because it will be permuted 
     centers_.Copy(centers_in);
     
     module_ = mod;
@@ -1306,12 +1361,6 @@ public:
     // The common normalization constant of all the Gaussians
     normalization_constant_fourth_ = pow((2 * bandwidth_ / math::PI), 3);
     
-    // Not sure this is right, might want to consider starting with the previous
-    // iteration's version
-    fock_matrix_.Copy(core_in);
-    
-    density_matrix_.Copy(density_in);
-    
     coulomb_matrix_.Init(number_of_basis_functions_, 
                          number_of_basis_functions_);
     coulomb_matrix_.SetZero();
@@ -1319,6 +1368,9 @@ public:
     exchange_matrix_.Init(number_of_basis_functions_, 
                           number_of_basis_functions_);
     exchange_matrix_.SetZero();
+    
+    fock_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
+    fock_matrix_.SetZero();
         
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
     
@@ -1327,18 +1379,57 @@ public:
     
     // Set up the indices of the nodes for symmetry pruning
     traversal_index_ = 0;
-    PreOrderTraversal_(tree_);
+    //PreOrderTraversal_(tree_);
     //tree_->Print();
     
     square_tree_ = new SquareIntegralTree();
-    square_tree_->Init(tree_, tree_, density_matrix_);
+    square_tree_->Init(tree_, tree_, number_of_basis_functions_);
     //square_tree_->Print();
-    SetEntryBounds_();
-    
-    
-    num_mu_nu_base_cases_ = 0;
+    //SetEntryBounds_();
     
   } // Init
+  
+  /** 
+   * Returns the permutation of the basis centers
+   */
+  void GetPermutation(ArrayList<index_t>* perm) {
+  
+    perm->Copy(old_from_new_centers_);
+  
+  } // GetPermutation()
+  
+  /**
+   * Call this after the density matrix is permuted in the SCF solver
+   */
+  void GetDensity(const Matrix& updated_density) {
+  
+    density_matrix_.Copy(updated_density);
+    
+    ResetTree_(square_tree_);
+    
+    
+    SetEntryBounds_();
+  
+  }
+  
+  /**
+   * Updates the density matrix and clears the Fock matrix between iterations
+   * Should also reset the tree for the next iteration.
+   */
+  void UpdateMatrices(const Matrix& new_density) {
+  
+    //This isn't necessary since it's already an alias
+    density_matrix_.CopyValues(new_density);
+    
+    // Reset tree density bounds
+    ResetTree_(square_tree_);
+    
+    SetEntryBounds_();
+    
+    coulomb_matrix_.SetZero();
+    exchange_matrix_.SetZero();
+  
+  } // UpdateMatrices()
   
   /**
    * Drives the computation, assuming that all the parameters are correct
@@ -1353,7 +1444,7 @@ public:
     // matrix
     // I think this is the only resetting the tree will need
     SetEntryBounds_();
-    ResetTree_(square_tree_);
+    ResetTreeForExchange_(square_tree_);
     ComputeExchangeRecursion_(square_tree_, square_tree_);
     // Then by adding both into the Fock matrix
     la::AddTo(coulomb_matrix_, &fock_matrix_);
@@ -1362,11 +1453,16 @@ public:
     
   } // ComputeTwoElectronIntegrals
   
+  const Matrix& FockMatrix() const {
+    return fock_matrix_;
+  }
+  
   /**
    * Returns the computed Fock matrix.  For now, it just prints it, but should 
    * eventually return it in a useable form for the SCF procedure.
    */
-  void OutputFockMatrix(Matrix* coulomb_out, Matrix* exchange_out, 
+  void OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
+                        Matrix* exchange_out, 
                         ArrayList<index_t>* old_from_new) {
   
     //printf("number_of_approximations_ = %d\n", number_of_approximations_);
@@ -1386,20 +1482,33 @@ public:
     fx_format_result(module_, "abs_prunes", "%d", num_absolute_prunes_);
     fx_format_result(module_, "rel_prunes", "%d", num_relative_prunes_);
                      
-    //fx_format_result(module_, "num_0_3_bases", "%d", num_mu_nu_base_cases_);
-    
    /* printf("Multi-tree Coulomb:\n");
     coulomb_matrix_.PrintDebug();
     
     printf("Multi-tree Exchange:\n");
     exchange_matrix_.PrintDebug();
     */
+    if (fock_out) {
+      fock_out->Copy(fock_matrix_);
+    }
+    if (coulomb_out) {
+      coulomb_out->Copy(coulomb_matrix_);
+    }
+    if (exchange_out) {
+      exchange_out->Copy(exchange_matrix_);
+    }
     
-    coulomb_out->Copy(coulomb_matrix_);
-    exchange_out->Copy(exchange_matrix_);
+    if (old_from_new) {
+      old_from_new->Copy(old_from_new_centers_);
+    }
     
-    old_from_new->Copy(old_from_new_centers_);
-  
+    // Need to output the Fock matrix
+    // should I unpermute here?
+    // Maybe keep it permuted in the other code, and unpermute at the end?
+    
+    // For now, unpermute it here
+    
+    
   } // OutputFockMatrix()
   
  

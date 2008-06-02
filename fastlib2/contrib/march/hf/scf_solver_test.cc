@@ -151,89 +151,14 @@ public:
     
   } // TestFillOrbitals
   
-  void TestFindIntegralIndex() {
     
-    index_t test1 = solver_->FindIntegralIndexHelper_(1, 0);
-    
-    index_t test2 = solver_->FindIntegralIndexHelper_(5, 4);
-    
-    index_t test3 = solver_->FindIntegralIndex_(0, 0, 0, 0);
-    
-    index_t test4 = solver_->FindIntegralIndex_(1, 1, 0, 0);
-    
-    index_t test5 = solver_->FindIntegralIndex_(1, 0, 1, 0);
-    
-    index_t test6 = solver_->FindIntegralIndex_(0, 0, 1, 1);
-    
-    index_t test7 = solver_->FindIntegralIndexHelper_(4, 5);
-    
-    TEST_ASSERT(test1 == 1);
-    TEST_ASSERT(test2 == 19);
-    TEST_ASSERT(test3 == 0);
-    TEST_ASSERT(test4 == 3);
-    TEST_ASSERT(test5 == 2);
-    TEST_ASSERT(test6 == test4);
-    TEST_ASSERT(test7 == test2);
-    
-    NONFATAL("FindIntegralIndex correct.\n");
-
-  } // TestFindIntegralIndex
-  
   void TestDiagonalizeFockMatrix() {
     
     NONFATAL("TestDiagonalizeFockMatrix not implemented!\n");
     
   } // TestDiagonalizeFockMatrix
 
-  void TestUpdateFockMatrix() {
-    
-    Setup();
-    
-    /*index_t test1 = solver_->FindIntegralIndex_(0, 0, 0, 0);
-    printf("0,0,0,0 = %d\n", test1);
-    index_t test2 = solver_->FindIntegralIndex_(1, 0, 0, 0);
-    printf("1,0,0,0 = %d\n", test2);
-    index_t test3 = solver_->FindIntegralIndex_(1, 0, 1, 0);
-    printf("1,0,1,0 = %d\n", test3);
-    index_t test4 = solver_->FindIntegralIndex_(1, 1, 0, 0);
-    printf("1,1,0,0 = %d\n", test4);
-    index_t test5 = solver_->FindIntegralIndex_(1, 1, 1, 0);
-    printf("1,1,1,0 = %d\n", test5);
-    index_t test6 = solver_->FindIntegralIndex_(1, 1, 1, 1);
-    printf("1,1,1,1 = %d\n", test6);
-    */
-    
-    Matrix true_density;
-    data::Load("density_test.csv", &true_density);
-    solver_->density_matrix_.CopyValues(true_density);
-    
-    solver_->Setup_();
-    
-    solver_->UpdateFockMatrix_();
-    
-    Matrix true_updated_fock;
-    data::Load("updated_fock_test.csv", &true_updated_fock);
-    
-    printf("true_updated_fock\n");
-    ot::Print(true_updated_fock);
-    printf("fock_matrix_\n");
-    ot::Print(solver_->fock_matrix_);
-    
-    //solver_->PrintMatrices();
-    
-    for (index_t i = 0; i < true_updated_fock.n_rows(); i++) {
-      for (index_t j = 0; j < true_updated_fock.n_cols(); j++) {
-        TEST_DOUBLE_APPROX(true_updated_fock.ref(i, j), 
-                           solver_->fock_matrix_.ref(i, j), eps); 
-      }
-    }
-    
-    Destruct();
-    
-    NONFATAL("TestUpdateFockMatrix correct.\n");
-    
-  } // TestUpdateFockMatrix
-  
+
   void TestTestConvergence() {
     
     // Not quite sure how to do this one
@@ -243,6 +168,8 @@ public:
     NONFATAL("TestTestConvergence not implemented!\n");
     
   } // TestTestConvergence
+
+
   
   void TestComputeElectronicEnergy() {
     
@@ -268,6 +195,46 @@ public:
     
   } // TestComputeElectronicEnergy
   
+  void TestComputeOverlapIntegral() {
+  
+    Setup();
+    
+    double dist1 = 0.5;
+    
+    double test_integral = solver_->ComputeOverlapIntegral_(dist1);
+    
+    double correct_integral = 0;
+    
+    Destruct();
+    
+    NONFATAL("TestComputeOverlapIntegral NOT IMPLEMENTED.\n");
+  
+  } // TestComputeOverlapIntegral()
+  
+  void TestComputeKineticIntegral() {
+  
+    NONFATAL("TestComputeKineticIntegral NOT IMPLEMENTED.\n");
+  
+  } // TestComputeKineticIntegral()
+  
+  void TestComputeNuclearIntegral() {
+  
+    NONFATAL("TestComputeNuclearIntegral NOT IMPLEMENTED.\n");
+  
+  } // TestComputeNuclearIntegral()
+  
+  void TestComputeOneElectronMatrices() {
+  
+    NONFATAL("TestComputeOneElectronMatrices NOT IMPLEMENTED.\n");
+  
+  } // TestComputeOneElectronMatrices()
+  
+  void TestComputeNuclearRepulsion() {
+    
+    NONFATAL("TestComputeNuclearRepulsion NOT IMPLEMENTED.\n");
+  
+  } // TestComputeNuclearRepulsion()
+  
   
   void TestAll() {
    
@@ -277,11 +244,7 @@ public:
     
     TestFillOrbitals();
     
-    TestFindIntegralIndex();
-    
     TestDiagonalizeFockMatrix();
-    
-    TestUpdateFockMatrix();
     
     TestTestConvergence();
     

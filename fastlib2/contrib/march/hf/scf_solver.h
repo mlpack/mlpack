@@ -10,14 +10,12 @@
 #define SCF_SOLVER_H
 
 #include <fastlib/fastlib.h>
+#include "dual_tree_integrals.h"
 
 /**
  * Algorithm class for the SCF part of the HF computation.  This class assumes 
  * the integrals have been computed and does the SVD-like part of the 
  * computation.
- *
- * For now, this is simply an implementation of the basic algorithm.  In the 
- * future, I should examine how this could be done better.
  */
 class SCFSolver {
   
@@ -26,20 +24,21 @@ class SCFSolver {
   FORBID_ACCIDENTAL_COPIES(SCFSolver);
   
  private:
-    
-  // I can probably be more efficient in terms of storing these matrices
-  // I don't want to store many matrices of this size in the final code
-    
-  Vector two_electron_integrals_;
   
-  Matrix one_electron_integrals_; // T + V
+  Matrix basis_centers_;
+  Matrix nuclear_centers_;  
+  
+  Vector nuclear_masses_;
+  
+  Matrix core_matrix_; // T + V
   Matrix kinetic_energy_integrals_; // T
   Matrix potential_energy_integrals_; // V
   
   Matrix coefficient_matrix_; // C or C'
   
   // Consider changing this name to reflect that it's the change of basis matrix
-  Matrix overlap_matrix_; // S or S^{-1/2}
+  Matrix overlap_matrix_; // S 
+  Matrix change_of_basis_matrix_; // S^{-1/2} 
   Matrix density_matrix_; // D
   Matrix fock_matrix_; // F or F', depending on the basis
   
@@ -47,7 +46,10 @@ class SCFSolver {
   
   index_t number_of_basis_functions_; // N
   index_t number_of_electrons_; // K
+  index_t number_of_nuclei_; 
+  index_t number_to_fill_;
   
+  // I think I'll have to compute this in the beginning
   double nuclear_repulsion_energy_;
   
   ArrayList<double> total_energy_;
@@ -62,105 +64,134 @@ class SCFSolver {
   
   struct datanode* module_;
   
+  DualTreeIntegrals integrals_;
+  
+  ArrayList<index_t> occupied_indices_;
+  
+  ArrayList<index_t> old_from_new_centers_;
+  
+  double bandwidth_;
+  
  public:
     
   SCFSolver() {}
   
   ~SCFSolver() {}
   
-  /** 
-    * Initialize the class with const references to the electron matrices and 
-    * the overlap matrix, both of which should have been computed already.
-    */
-  void Init(double nuclear_energy, const Matrix& overlap_in, 
-            const Matrix& kinetic_in, const Matrix& potential_in,
-            const Vector& two_electron_in, index_t num_electrons,
-            double converged, struct datanode* mod) {
+
+  void Init(struct datanode* mod, index_t num_electrons, 
+            const Matrix& basis_centers, const Matrix& density, 
+            const Matrix& nuclear, const Vector& nuclear_mass) {
     
-    nuclear_repulsion_energy_ = nuclear_energy;
+    module_ = mod;
     number_of_electrons_ = num_electrons;
     
-    // Read in integrals
-    overlap_matrix_.Copy(overlap_in);
-    kinetic_energy_integrals_.Copy(kinetic_in);
-    potential_energy_integrals_.Copy(potential_in);
+    struct datanode* integral_mod = fx_submodule(module_, "integrals", 
+                                                "integrals");
     
-    // Is this really the best thing to do?
-    // Copying this whole thing might be too expensive
-    two_electron_integrals_.Copy(two_electron_in);
+    bandwidth_ = fx_param_double(module_, "bandwidth", 0.1);
     
-    number_of_basis_functions_ = overlap_matrix_.n_cols();
+    integrals_.Init(basis_centers, integral_mod, bandwidth_);
     
-    DEBUG_ASSERT(number_of_basis_functions_ >= number_of_electrons_);
+    // Need to get out the permutation from the integrals_, then use it to 
+    // permute the basis centers
     
-    // Form the core Hamiltonian
-    la::AddInit(kinetic_energy_integrals_, potential_energy_integrals_, 
-                &one_electron_integrals_);
+    integrals_.GetPermutation(&old_from_new_centers_);
+    
+    PermuteMatrix_(basis_centers, &basis_centers_, old_from_new_centers_);
+    PermuteMatrix_(density, &density_matrix_, old_from_new_centers_);
+    
+    integrals_.GetDensity(density_matrix_);
+    
+    nuclear_centers_.Copy(nuclear);
+    
+    nuclear_masses_.Copy(nuclear_mass);
+    
+    number_of_nuclei_ = nuclear_centers_.n_cols();
+    
+    number_to_fill_ = (index_t)ceil((double)number_of_electrons_/2);
+    occupied_indices_.Init(number_to_fill_);
+    
+    DEBUG_ASSERT(number_of_nuclei_ == nuclear_masses_.length());
+    
+    
+    number_of_basis_functions_ = basis_centers_.n_cols();
+    
+    DEBUG_ASSERT(number_of_basis_functions_ >= number_to_fill_);
     
     // Empty inits to prevent errors on closing
+    overlap_matrix_.Init(number_of_basis_functions_, 
+                         number_of_basis_functions_);
+    kinetic_energy_integrals_.Init(number_of_basis_functions_, 
+                                   number_of_basis_functions_);
+    potential_energy_integrals_.Init(number_of_basis_functions_, 
+                                     number_of_basis_functions_);
+    
     coefficient_matrix_.Init(number_of_basis_functions_, 
                              number_of_basis_functions_);
-    density_matrix_.Init(number_of_basis_functions_, 
-                         number_of_basis_functions_);
-    fock_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
     
     energy_vector_.Init(number_of_basis_functions_);
     
     total_energy_.Init(expected_number_of_iterations_);
     
-    convergence_tolerance_ = converged;
+    convergence_tolerance_ = fx_param_double(module_, "convergence_tolerance", 
+                                             0.1);
     
+    // Need to double check that this is right
     density_matrix_frobenius_norm_ = DBL_MAX;
     
-    module_ = mod;
+    current_iteration_ = 0;
     
-  } // Init
+  } // Init()
   
  private:
+ 
+  double ComputeOverlapIntegral_(double dist);
   
+  double ComputeKineticIntegral_(double dist);
+  
+  double ComputeNuclearIntegral_(const Vector& nuclear_position, 
+                                 const Vector& mu, const Vector& nu);
+    
   /**
-   * Finds a pairwise index for use in finding the entire index of an integral.
-   */
-  index_t FindIntegralIndexHelper_(index_t mu, index_t nu) {
+   * Permutes the matrix mat according to the permutation given.  The permuted 
+   * matrix is written to new_mat, overwriting whatever was there before
+   */                               
+  void PermuteMatrix_(const Matrix& old_mat, Matrix* new_mat, 
+                      const ArrayList<index_t>& perm) {
+  
+    index_t num_cols = old_mat.n_cols();
+    DEBUG_ASSERT(num_cols == perm.size());
+    
+    new_mat->Init(old_mat.n_rows(), num_cols);
+    
+    for (index_t i = 0; i < num_cols; i++) {
       
-    //DEBUG_ASSERT(mu >= nu);
-    if (mu >= nu) {
-      return (((mu * (mu + 1))/2) + nu);
-    }
-    else {
-      return (((nu * (nu + 1))/2) + mu); 
-    }
-  } // FindIntegralIndexHelper_
-  
-  /**
-    * Find the index of the two electron integral (mu nu | rho sigma) in the 
-   * two-electron integrals array
-   */
-  index_t FindIntegralIndex_(index_t mu, index_t nu, index_t rho, index_t sig) {
-    
-    //DEBUG_ASSERT(mu >= nu);
-    //DEBUG_ASSERT(rho >= sig);
-    
-    index_t mu_nu = FindIntegralIndexHelper_(mu, nu);
-    index_t rho_sig = FindIntegralIndexHelper_(rho, sig);
-    
-    //DEBUG_ASSERT(mu_nu >= rho_sig);
-    if (mu_nu >= rho_sig) {
-      return (FindIntegralIndexHelper_(mu_nu, rho_sig));
-    }
-    else {
-      return (FindIntegralIndexHelper_(rho_sig, mu_nu)); 
-    }
+      Vector old_vec;
+      old_mat.MakeColumnVector(i, &old_vec);
+      Vector new_vec;
+      new_mat->MakeColumnVector(perm[i], &new_vec);
       
-  }// FindIntegralIndex_
+      new_vec.CopyValues(old_vec);
+      
+    }
   
+  } // PermuteMatrix_()
   
-  /**
-   * Create the matrix S^{-1/2} using the eigenvector decomposition.  Overwrites 
-   * overlap_matrix_ with S^{-1/2}.
+  /** 
+   * Given the basis set and nuclear coordinates, compute and store the one 
+   * electron matrices. 
    *
+   * For now, just using loops.  In the future, it's an N-body problem but 
+   * probably a very small fraction of the total running time.  
    */
-  void FormOrthogonalizingMatrix_() {
+  void ComputeOneElectronMatrices_();
+ 
+ 
+  /**
+   * Create the matrix S^{-1/2} using the eigenvector decomposition.     *
+   */
+  void FormChangeOfBasisMatrix_() {
     
     Vector eigenvalues;
     Matrix eigenvectors;
@@ -185,22 +216,21 @@ class SCFSolver {
     
     Matrix lambda_times_u_transpose;
     la::MulTransBInit(sqrt_lambda, eigenvectors, &lambda_times_u_transpose);
-    la::MulOverwrite(eigenvectors, lambda_times_u_transpose, &overlap_matrix_);
+    la::MulInit(eigenvectors, lambda_times_u_transpose, 
+                     &change_of_basis_matrix_);
     
-  } // FormOrthogonalizingMatrix_
+  } // FormChangeOfBasisMatrix_()
   
   
   /**
    * Compute the density matrix.
    * 
    * TODO: Consider an SVD or some eigenvalue solver that will find the 
-   * eigenvalues in decending order.
+   * eigenvalues in ascending order.
    */
   void ComputeDensityMatrix_() {
     
-    ArrayList<index_t> occupied_orbitals;
-    
-    FillOrbitals_(&occupied_orbitals);
+    FillOrbitals_();
     
     // I MUST find a smarter way to do this for large problems
     // This could also probably be a separate function
@@ -210,22 +240,27 @@ class SCFSolver {
          density_row++) {
       
       // Columns of density matrix
-      for (index_t density_column = 0; 
+      for (index_t density_column = density_row; 
            density_column < number_of_basis_functions_; density_column++) {
         
         // Occupied orbitals
         double this_sum = 0.0;
         for (index_t occupied_index = 0; 
-             occupied_index < occupied_orbitals.size(); occupied_index++) {
+             occupied_index < occupied_indices_.size(); occupied_index++) {
           
           // By multiplying by 2, I'm assuming all the orbitals are full
           this_sum = this_sum + ( 2 *
               coefficient_matrix_.ref(
-                  density_row, occupied_orbitals[occupied_index]) * 
+                  density_row, occupied_indices_[occupied_index]) * 
               coefficient_matrix_.ref(
-                  density_column, occupied_orbitals[occupied_index]));
+                  density_column, occupied_indices_[occupied_index]));
           
         } // occupied_index
+        
+        // I think this is necessary, but not sure
+        if (likely(density_row != density_column)) {
+          this_sum = 2 * this_sum;
+        }
         
         // Computing the frobenius norm of the difference between this 
         // iteration's density matrix and the previous one for testing 
@@ -237,10 +272,17 @@ class SCFSolver {
         }
         
         density_matrix_.set(density_row, density_column, this_sum);
+        if (density_row != density_column) {
+          density_matrix_.set(density_column, density_row, this_sum);        
+        }
         
       } // density_column
       
     } //density_row
+    
+    printf("density_matrix_norm: %g\n", density_matrix_frobenius_norm_);
+    
+    density_matrix_.PrintDebug();
     
   } // ComputeDensityMatrix_
   
@@ -266,7 +308,7 @@ class SCFSolver {
 #endif
     
     // 3. Find the untransformed eigenvector matrix
-    la::MulOverwrite(overlap_matrix_, coefficients_prime, 
+    la::MulOverwrite(change_of_basis_matrix_, coefficients_prime, 
                      &coefficient_matrix_);
     
   } // DiagonalizeFockMatrix_
@@ -276,52 +318,48 @@ class SCFSolver {
    * Determine the K/2 lowest energy orbitals.  
    * 
    * TODO: If K is odd, then the last entry here is the orbital that should 
-   * have one electron.
+   * have one electron.  I think the closed-shell RHF formulation I'm using
+   * forbids an odd number of electons.
    *
    * I should use the built in C++ iterator-driven routines.  Ryan suggested
    * that I write iterators for ArrayLists, since that would open up a lot of
    * functionality, including sorting.  
    */
-  void FillOrbitals_(ArrayList<index_t>* indices) {
-    
-    index_t number_to_fill = (index_t)ceil((double)number_of_electrons_/2);
-    
-    indices->Init(number_to_fill);
+  void FillOrbitals_() {
     
     double max_energy_kept = -DBL_INF;
     index_t next_to_go = 0;
     
-    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    for (index_t i = 0; i < number_to_fill_; i++) {
       
-      if (unlikely(i < number_to_fill))  {
-        
-        (*indices)[i] = i;
-        if (energy_vector_[i] > max_energy_kept) {
-          max_energy_kept = energy_vector_[i];
-          next_to_go = i;
-        }
-        
+      occupied_indices_[i] = i;
+      if (energy_vector_[i] > max_energy_kept) {
+        max_energy_kept = energy_vector_[i];
+        next_to_go = i;
       }
-      else {
+      
+    }
+    
+    
+    for (index_t i = number_to_fill_; i < number_of_basis_functions_; i++) {    
+      
+      double this_energy = energy_vector_[i];
+      if (this_energy < max_energy_kept) {
+        occupied_indices_[next_to_go] = i;
         
-        double this_energy = energy_vector_[i];
-        if (this_energy < max_energy_kept) {
-          (*indices)[next_to_go] = i;
-          
-          // Find the new index to throw out
-          double new_max = -DBL_INF;
-          next_to_go = -1;
-          for (index_t j = 0; j < number_to_fill; j++) {
-            if (energy_vector_[(*indices)[j]] > new_max) {
-              new_max = energy_vector_[(*indices)[j]];
-              next_to_go = j;
-            }
+        // Find the new index to throw out
+        double new_max = -DBL_INF;
+        next_to_go = -1;
+        for (index_t j = 0; j < number_to_fill_; j++) {
+          if (energy_vector_[occupied_indices_[j]] > new_max) {
+            new_max = energy_vector_[occupied_indices_[j]];
+            next_to_go = j;
           }
-          max_energy_kept = new_max;
-          DEBUG_ASSERT(!isinf(max_energy_kept));
-          DEBUG_ASSERT(next_to_go >= 0);
         }
-        
+        max_energy_kept = new_max;
+        DEBUG_ASSERT(!isinf(max_energy_kept));
+        DEBUG_ASSERT(next_to_go >= 0);
+        DEBUG_ASSERT(next_to_go < number_of_basis_functions_);
       }
       
     }
@@ -329,48 +367,7 @@ class SCFSolver {
   } //FillOrbitals_
   
   
-  /**
-    * Do step 4a. in Sherrill's notes.  This is a key step that could be turned 
-   * into an N-body computation.  
-   *
-   * TODO: Figure out how to make a matrix that is the density weighted two
-   * electron integrals.  That would eliminate at least two of the for loops.
-   *
-   * BUG: I'm counting each integral more than once.  
-   */
-  void UpdateFockMatrix_() {
     
-    for (index_t mu = 0; mu < number_of_basis_functions_; mu++) {
-     
-      for (index_t nu = 0; nu < number_of_basis_functions_; nu++) {
-       
-        double new_value = one_electron_integrals_.ref(mu, nu);
-        
-        for (index_t rho = 0; rho < number_of_basis_functions_; rho++) {
-         
-          for (index_t sigma = 0; sigma <= rho; sigma++) {
-           
-            printf("%d,%d,%d,%d\n", mu, nu, rho, sigma);
-            
-            index_t first_index = FindIntegralIndex_(mu, nu, rho, sigma);
-            index_t second_index = FindIntegralIndex_(mu, rho, nu, sigma);
-            
-            new_value = new_value + density_matrix_.ref(rho, sigma) * 
-                (2 * two_electron_integrals_[first_index] - 
-                 two_electron_integrals_[second_index]);
-            
-          }
-          
-        }
-        
-        fock_matrix_.set(mu, nu, new_value);
-        
-      }
-      
-    }
-    
-  } // UpdateFockMatrix_
-  
   /**
    * Find the energy of the electrons in the ground state of the current 
    * wavefunction.  
@@ -383,8 +380,10 @@ class SCFSolver {
      
       for (index_t nu = 0; nu < number_of_basis_functions_; nu++) {
        
+       // I don't think this is right
+       // I guess the density matrix needs to multiply the one electron too?
         total_energy = total_energy + density_matrix_.ref(mu, nu) 
-            * (one_electron_integrals_.ref(mu, nu) + fock_matrix_.ref(mu, nu));
+            * (core_matrix_.ref(mu, nu) + fock_matrix_.ref(mu, nu));
         
       }
       
@@ -402,7 +401,6 @@ class SCFSolver {
     bool is_converged = true;
     
     if (unlikely(current_iteration_ == 0)) {
-      density_matrix_frobenius_norm_ = 0.0;
       return false;
     }
     
@@ -429,12 +427,24 @@ class SCFSolver {
   void TransformFockBasis_() {
     
     Matrix orthogonal_transpose_times_fock;
-    la::MulTransAInit(overlap_matrix_, fock_matrix_, 
+    la::MulTransAInit(change_of_basis_matrix_, fock_matrix_, 
                            &orthogonal_transpose_times_fock);
     la::MulOverwrite(orthogonal_transpose_times_fock, 
-                     overlap_matrix_, &fock_matrix_);
+                     change_of_basis_matrix_, &fock_matrix_);
     
   } // TransformFockBasis_
+  
+  void UpdateFockMatrix_() {
+
+    // Needs to call something from the object, preferably updating it first?
+    
+    integrals_.UpdateMatrices(density_matrix_);
+    
+    integrals_.ComputeFockMatrix();
+    
+    la::AddOverwrite(core_matrix_, integrals_.FockMatrix(), &fock_matrix_);
+
+  }
   
   /**
     * Does the SCF iterations to find the HF wavefunction
@@ -474,28 +484,31 @@ class SCFSolver {
   } // FindSCFSolution_
   
   /**
+   * Returns the nuclear repulsion energy for the nuclei given in 
+   * nuclear_centers_ and nuclear_masses_
+   *
+   * I'm only counting each pair once, which I think is correct.  
+   */
+  double ComputeNuclearRepulsion_();
+  
+  /**
    * Sets up the matrices for the SCF iterations 
    */
   void Setup_() {
     
-    FormOrthogonalizingMatrix_();
+    nuclear_repulsion_energy_ = ComputeNuclearRepulsion_();
     
-    // 1. Form the core Fock matrix in transformed basis 
-    // F' = S^{-1/2} H S^{-1/2}
-    // For now, we assume the initial density matrix is zero
-    // In the future, I should support non-zero initialization
-   
-    fock_matrix_.CopyValues(one_electron_integrals_);
+    ComputeOneElectronMatrices_();
     
-    TransformFockBasis_();  // fock_matrix_ should now be F'
-   
-    // 2. Solve the transformed Fock matrix eigenvalue problem
+    FormChangeOfBasisMatrix_();
+    
+    fock_matrix_.Alias(core_matrix_);
+    
+    TransformFockBasis_();
     
     DiagonalizeFockMatrix_();
     
     ComputeDensityMatrix_();
-    
-    density_matrix_frobenius_norm_ = 0.0;
     
   } //Setup_
 
@@ -525,6 +538,16 @@ class SCFSolver {
     energy_vector_matrix.AliasColVector(energy_vector_);
     data::Save(energy_vector_file, energy_vector_matrix);
     
+    fx_format_result(module_, "density_matrix_norm", "%g", 
+                     density_matrix_frobenius_norm_);
+    
+    fx_format_result(module_, "num_iterations", "%d", current_iteration_);
+    
+    fx_format_result(module_, "total_energy", "%g", 
+                     total_energy_[current_iteration_-1]);
+    
+    integrals_.OutputFockMatrix(NULL, NULL, NULL, NULL);
+    
   }
   
  public:
@@ -535,9 +558,13 @@ class SCFSolver {
    */
   void ComputeWavefunction() {
       
+    fx_timer_start(module_, "SCF_Setup");
     Setup_();
+    fx_timer_stop(module_, "SCF_Setup");
       
+    fx_timer_start(module_, "SCF_Iterations");
     FindSCFSolution_();
+    fx_timer_stop(module_, "SCF_Iterations");
     
     OutputResults_();
       
@@ -545,8 +572,10 @@ class SCFSolver {
   
   void PrintMatrices() {
     
-    printf("One electron integrals:\n");
-    ot::Print(one_electron_integrals_);
+    // These should be changed to print debug or something
+    
+    printf("Core Matrix:\n");
+    ot::Print(core_matrix_);
     
     printf("Coefficient matrix:\n");
     ot::Print(coefficient_matrix_);
