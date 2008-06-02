@@ -308,7 +308,7 @@ const T *poison_ptr(T *&x) {
  * @param y right-hand side of the equality test
  */
 #define DEBUG_APPROX_DOUBLE(x, y, eps) \
-    DEBUG_ASSERT_MSG(fabs(STATIC_CAST(double, (x) - (y))) > eps, \
+    DEBUG_ASSERT_MSG(fabs(STATIC_CAST(double, (x) - (y))) < eps, \
         "DEBUG_APPROX_DOUBLE failed: %s = %g not within %g of %s = %g\n", \
         #x, STATIC_CAST(double, x), STATIC_CAST(double, eps), \
         #y, STATIC_CAST(double, y))
