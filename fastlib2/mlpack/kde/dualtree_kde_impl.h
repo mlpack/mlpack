@@ -15,7 +15,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
   qnode->stat().used_error_ = 0;
   qnode->stat().n_pruned_ = rset_.n_cols();
   
-  // compute unnormalized sum
+  // Compute unnormalized sum for each query point.
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
     
     // incorporate the postponed information
@@ -58,12 +58,14 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
 
     // Each query point gets an extra probability token.
     extra_probability_[q] += (1.0 - probability);
-  }
+
+  } // end of looping over each query point.
   
   // clear postponed information
   qnode->stat().postponed_l_ = qnode->stat().postponed_u_ = 0;
   qnode->stat().postponed_used_error_ = 0;
   qnode->stat().postponed_n_pruned_ = 0;
+  qnode->stat().postponed_extra_probability_ = 0;
 }
 
 template<typename TKernelAux>
@@ -472,6 +474,8 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       qnode->stat().postponed_n_pruned_;
     (qnode->right()->stat()).postponed_n_pruned_ += 
       qnode->stat().postponed_n_pruned_;
+
+    // Push down extra probability to the child nodes.
     qnode->left()->stat().postponed_extra_probability_ +=
       qnode->stat().postponed_extra_probability_;
     qnode->right()->stat().postponed_extra_probability_ +=
