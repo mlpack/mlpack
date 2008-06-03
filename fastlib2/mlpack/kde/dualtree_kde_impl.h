@@ -5,7 +5,8 @@
 #include "inverse_normal_cdf.h"
 
 template<typename TKernelAux>
-void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode) {
+void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
+					       double probability) {
   
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
@@ -22,7 +23,8 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode) {
     densities_u_[q] += qnode->stat().postponed_u_;
     used_error_[q] += qnode->stat().postponed_used_error_;
     n_pruned_[q] += qnode->stat().postponed_n_pruned_;
-    
+    extra_probability_[q] += qnode->stat().postponed_extra_probability_;
+
     // get query point
     const double *q_col = qset_.GetColumnPtr(q);
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
@@ -39,11 +41,11 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode) {
       densities_u_[q] += kernel_value;
     } // end of iterating over each reference point.
     
-      // each query point has taken care of all reference points.
+    // Each query point has taken care of all reference points.
     n_pruned_[q] += rnode->count();
     
-    // subtract the number of reference points to undo the assumption made
-    // in the function PreProcess.
+    // Subtract the number of reference points to undo the assumption
+    // made in the function PreProcess.
     densities_u_[q] -= rnode->count();
     
     // Refine min and max summary statistics.
@@ -53,6 +55,9 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode) {
 					 used_error_[q]);
     qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, 
 				       n_pruned_[q]);
+
+    // Each query point gets an extra probability token.
+    extra_probability_[q] += (1.0 - probability);
   }
   
   // clear postponed information
@@ -183,7 +188,9 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
     
     // Compute the required standard score for the given one-sided
     // probability.
-    double standard_score = InverseNormalCDF::Compute(probability);
+    double standard_score = 
+      InverseNormalCDF::Compute
+      (std::max(probability - extra_probability_[q], 0.0));
     
     // Get the pointer to the current query point.
     const double *query_point = qset_.GetColumnPtr(q);
@@ -269,6 +276,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
   if(flag) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
       densities_e_[q] += query_kernel_sums_scratch_space_[q];
+      extra_probability_[q] = 0;
     }
     dl = std::max(dl, min_lower_bound_change);
     de = 0;
@@ -375,6 +383,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_u_ += du;
     qnode->stat().postponed_used_error_ += used_error;
     qnode->stat().postponed_n_pruned_ += n_pruned;
+    qnode->stat().postponed_extra_probability_ += (1.0 - probability);
     num_finite_difference_prunes_++;
     return;
   }
@@ -387,7 +396,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_u_ += du;
     qnode->stat().postponed_used_error_ += used_error;
     qnode->stat().postponed_n_pruned_ += n_pruned;
-    num_monte_carlo_prunes_++;
+    num_monte_carlo_prunes_++;    
     return;
   }
 
@@ -420,6 +429,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_u_ += du;
     qnode->stat().postponed_used_error_ += used_error;
     qnode->stat().postponed_n_pruned_ += n_pruned;
+    qnode->stat().postponed_extra_probability_ += (1.0 - probability);
     return;
   }
   
@@ -428,7 +438,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     
       // for leaf pairs, go exhaustive
     if(rnode->is_leaf()) {
-      DualtreeKdeBase_(qnode, rnode);
+      DualtreeKdeBase_(qnode, rnode, probability);
       return;
     }
     
@@ -462,10 +472,15 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       qnode->stat().postponed_n_pruned_;
     (qnode->right()->stat()).postponed_n_pruned_ += 
       qnode->stat().postponed_n_pruned_;
+    qnode->left()->stat().postponed_extra_probability_ +=
+      qnode->stat().postponed_extra_probability_;
+    qnode->right()->stat().postponed_extra_probability_ +=
+      qnode->stat().postponed_extra_probability_;
     
     qnode->stat().postponed_l_ = qnode->stat().postponed_u_ = 0;
     qnode->stat().postponed_used_error_ = 0;
     qnode->stat().postponed_n_pruned_ = 0;
+    qnode->stat().postponed_extra_probability_ = 0;
     
     // For a leaf reference node, expand query node
     if(rnode->is_leaf()) {

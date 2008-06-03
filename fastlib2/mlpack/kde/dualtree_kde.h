@@ -193,6 +193,11 @@ class DualtreeKde {
      */
     double postponed_n_pruned_;
 
+    /** @brief The extra probability that can be used for all query
+     *         points under this ndoe.
+     */
+    double postponed_extra_probability_;
+
     /** @brief The far field expansion created by the reference points
      *         in this node.
      */
@@ -214,7 +219,8 @@ class DualtreeKde {
       postponed_e_ = 0;
       postponed_u_ = 0;
       postponed_used_error_ = 0;
-      postponed_n_pruned_ = 0;    
+      postponed_n_pruned_ = 0;
+      postponed_extra_probability_ = 0;
     }
     
     void Init(const TKernelAux &ka) {
@@ -306,6 +312,10 @@ class DualtreeKde {
    */
   Vector n_pruned_;
 
+  /** @brief Extra probability that can be used for each query.
+   */
+  Vector extra_probability_;
+
   /** @brief The accuracy parameter specifying the relative error
    *         bound.
    */
@@ -355,7 +365,7 @@ class DualtreeKde {
 
   /** @brief The exhaustive base KDE case.
    */
-  void DualtreeKdeBase_(Tree *qnode, Tree *rnode);
+  void DualtreeKdeBase_(Tree *qnode, Tree *rnode, double probability);
 
   /** @brief Checking for prunability of the query and the reference
    *         pair using four types of pruning methods.
@@ -453,6 +463,7 @@ class DualtreeKde {
     // set zero for error accounting stuff
     used_error_.SetZero();
     n_pruned_.SetZero();
+    extra_probability_.SetZero();
 
     // Reset prune statistics.
     num_finite_difference_prunes_ = num_monte_carlo_prunes_ =
@@ -555,6 +566,7 @@ class DualtreeKde {
     // initialize the error accounting stufff
     used_error_.Init(qset_.n_cols());
     n_pruned_.Init(qset_.n_cols());
+    extra_probability_.Init(qset_.n_cols());
 
     // initialize the kernel
     double bandwidth = fx_param_double_req(module_, "bandwidth");
