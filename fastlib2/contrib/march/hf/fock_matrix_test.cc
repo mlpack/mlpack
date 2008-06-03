@@ -22,7 +22,7 @@ public:
     
     multi_ = new DualTreeIntegrals();
     multi_->Init(test_centers, multi_mod, band);
-    multi_->GetDensity(test_density);
+    multi_->SetDensity(test_density);
     
     naive_ = new NaiveFockMatrix();
     naive_->Init(test_centers, naive_mod, test_density, test_core, band);
