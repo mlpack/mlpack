@@ -18,7 +18,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
   // Compute unnormalized sum for each query point.
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
     
-    // incorporate the postponed information
+    // Incorporate the postponed information.
     densities_l_[q] += qnode->stat().postponed_l_;
     densities_u_[q] += qnode->stat().postponed_u_;
     used_error_[q] += qnode->stat().postponed_used_error_;
@@ -345,20 +345,16 @@ void DualtreeKde<TKernelAux>::BestNodePartners
 
   // I should fix the following lines to work with arbitrary bounds...
   if(d1 <= d2) {
-    double ratio = math::Sqr((nd1->bound().radius()) / 
-			     (nd2->bound().radius()));
     *partner1 = nd1;
-    *probability1 = (probability == 1) ? 1:sqrt(probability * ratio);
+    *probability1 = sqrt(probability);
     *partner2 = nd2;
-    *probability2 = (probability == 1) ? 1:sqrt(probability / ratio);
+    *probability2 = sqrt(probability);
   }
   else {
-    double ratio = math::Sqr((nd2->bound().radius()) / 
-			     (nd1->bound().radius()));
     *partner1 = nd2;
-    *probability1 = (probability == 1) ? 1:sqrt(probability * ratio);
+    *probability1 = sqrt(probability);
     *partner2 = nd1;
-    *probability2 = (probability == 1) ? 1:sqrt(probability / ratio);
+    *probability2 = sqrt(probability);
   }
 }
 
