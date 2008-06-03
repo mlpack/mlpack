@@ -1,5 +1,5 @@
 /**
- * @file allknn_dfs.h
+ * @file allknn.h
  * 
  * This file defines the class AllKNN. This computes 
  * the nearest neighbors of query set from a 
@@ -32,6 +32,7 @@
 #include "cover_tree.h"
 #include "ctree.h"
 #include "distances.h"
+#include "gonzalez.h"
 
 const fx_entry_doc allknn_entries[] = {
   {"dim", FX_PARAM, FX_INT, NULL,
@@ -41,25 +42,42 @@ const fx_entry_doc allknn_entries[] = {
   {"rsize", FX_PARAM, FX_INT, NULL, 
    " The number of points in the reference set.\n"},
   {"knns", FX_PARAM, FX_INT, NULL, 
-   " The number of nearest neighbors we need to compute (defaults to 1).\n"},
+   " The number of nearest neighbors we need to compute"
+   " (defaults to 1).\n"},
   {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
-   " The timer to record the time taken to build the query and the reference tree.\n"},
+   " The timer to record the time taken to build" 
+   " the query and the reference tree.\n"},
   {"rbfs", FX_TIMER, FX_CUSTOM, NULL,
-   " The timer to record the time taken to do the recursive breadth first computation.\n"},
+   " The timer to record the time taken to do"
+   " the recursive breadth first computation.\n"},
   {"dfs", FX_TIMER, FX_CUSTOM, NULL, 
-   " The timer to record the time taken to do the depth first computation.\n"},
+   " The timer to record the time taken to do"
+   " the depth first computation.\n"},
   {"brute", FX_TIMER, FX_CUSTOM, NULL, 
-   " The timer to record the time taken to do the brute nearest neighbor computation.\n"},
+   " The timer to record the time taken to do"
+   " the brute nearest neighbor computation.\n"},
   {"ec", FX_PARAM, FX_DOUBLE, NULL,
-   " The expansion constant we will be using to make the tree (defaults to 1.3).\n"},
+   " The expansion constant we will be using"
+   " to make the tree (defaults to 1.3).\n"},
   {"print_tree", FX_PARAM, FX_BOOL, NULL,
-   " The variable to decide whether to print the tree made or not (defaults to false).\n"},
+   " The variable to decide whether to print"
+   " the tree made or not (defaults to false).\n"},
+  {"do_gonzy", FX_PARAM, FX_BOOL, NULL,
+   " This tells us whether we use gonzalez algorithm"
+   " to form the tree of not (defaults to false)"},
   FX_ENTRY_DOC_DONE
 };
 
+const fx_submodule_doc allknn_submodules[] = {
+  {"ctree", &tree_construction_doc,
+   " Responsible for building the normal cover tree.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
 const fx_module_doc allknn_doc = {
-  allknn_entries, NULL,
-  " Performs dual-tree all nearest neighbors computation - recursive breadth first, depth first, brute.\n"
+  allknn_entries, allknn_submodules,
+  " Performs dual-tree all nearest neighbors computation"
+  " - recursive breadth first, depth first, brute.\n"
 };
 
 template<typename T>
@@ -87,6 +105,7 @@ class AllKNN {
     // returns the distance to the most recent 
     // query node encountered
     inline T distance_to_qnode() {
+      DEBUG_ASSERT(distance_to_qnode_.size() > 0);
       return distance_to_qnode_.back();
     }
 
@@ -164,25 +183,20 @@ private:
   
   // The query and the references sets
   GenMatrix<T> queries_, references_;
+  
   // The query tree
   TreeType *query_tree_;
+  
   // The Reference tree
   TreeType *reference_tree_;
+  
   // The number of query points and 
   // the number of reference points
   index_t num_queries_, num_refs_;
-
-  //TreeType *cquery_tree_;
-
-  //TreeType *creference_tree_;
-
-  //index_t ref_root_node_index_, query_root_node_index_;
-
-  //ArrayList<T> neighbor_distances_;
-
-  //ArrayList<index_t> neighbor_indices_;
+  
   // The number of nearest neighbors to be computed
   index_t knns_;
+  
   // The datanode to store parameters for the object
   // of this class
   struct datanode *module_;
@@ -195,12 +209,8 @@ public:
   }
 
   ~AllKNN() {
-    if (query_tree_ != NULL) {
-      delete query_tree_;
-    }
-    if (reference_tree_ != NULL) {
-      delete reference_tree_;
-    }
+    delete query_tree_;
+    delete reference_tree_;
   }
 
   // getters
@@ -302,7 +312,6 @@ private:
     T *end = begin + knns_;
  
     for (; end != begin; begin++) {
-
       if (d < *begin) {
 	*begin = d;
       }
@@ -394,6 +403,22 @@ private:
 				 ArrayList<index_t>*);
 
 public:
+  /**
+   * This function computes the nearest neighbors of te 
+   * query set from the reference set using recursive
+   * breadth search of the cover tree formed from 
+   * the reference set and in a depth first manner 
+   * for cover tree formed from the query set.
+   * 
+   * Use:
+   * @code
+   * AllKNN<T> allknn;
+   * ....
+   * ArrayList<T> neighbor_distances;
+   * ArrayList<index_t> neighbor_indices;
+   * allknn.RecursiveBreadthFirstSearch(&neighbor_indices, &neighbor_distances);
+   * @endcode
+   */
   void RecursiveBreadthFirstSearch(ArrayList<index_t> *neighbor_indices, 
 				   ArrayList<T> *neighbor_distances) {
 
@@ -426,6 +451,7 @@ public:
     cover_sets[0].PushBackCopy(reference_tree_);
 
     // descending the query root along with the reference root
+
     ComputeNeighborRecursion_(query_tree_, neighbor_distances, &cover_sets, 
 			      &leaf_nodes, current_scale, max_scale, 
 			      neighbor_indices);
@@ -441,6 +467,21 @@ private:
 		   ArrayList<T>*); 
   
 public:
+  /**
+   * This function computes the nearest neighbors of te 
+   * query set from the reference set using depth first 
+   * search of the cover tree formed from the reference
+   * set and the query set.
+   * 
+   * Use:
+   * @code
+   * AllKNN<T> allknn;
+   * ....
+   * ArrayList<T> neighbor_distances;
+   * ArrayList<index_t> neighbor_indices;
+   * allknn.DepthFirstSearch(&neighbor_indices, &neighbor_distances);
+   * @endcode
+   */
   void DepthFirstSearch(ArrayList<index_t> *neighbor_indices, 
 			ArrayList<T> *neighbor_distances) {
     
@@ -508,6 +549,20 @@ public:
     }
   }
 
+  /**
+   * This function computes the nearest neighbors of te 
+   * query set from the reference set using brute 
+   * computation
+   * 
+   * Use:
+   * @code
+   * AllKNN<T> allknn;
+   * ....
+   * ArrayList<T> neighbor_distances;
+   * ArrayList<index_t> neighbor_indices;
+   * allknn.BruteNeighbors(&neighbor_indices, &neighbor_distances);
+   * @endcode
+   */
   void BruteNeighbors(ArrayList<index_t> *neighbor_indices, 
 		      ArrayList<T> *neighbor_distances) {
 
@@ -527,7 +582,7 @@ public:
 	GenVector<T> r;
 	references_.MakeColumnVector(j, &r);
 
-	T dist = pdc::DistanceEuclidean(q, r, *query_upper_bound);
+	T dist = pdc::DistanceEuclidean<T>(q, r, DBL_MAX);
 	if (dist <= *query_upper_bound) {
 	  update_upper_bounds_(neighbor_distances, 
 			       i, dist);
@@ -554,8 +609,6 @@ public:
 
       for (index_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
 	if (begin_nn->dist() <= *query_upper_bound) {
-	  //NOTIFY("%"LI"d %"LI"d -> %lf, ub = %lf", 
-	  //i+1, begin_nn->point()+1, begin_nn->dist(), *query_ub);
 	  index_t k = 0;
 	  while (begin_nn->dist() > *(end - k- 1)) { 
 	    k++;
@@ -573,7 +626,20 @@ public:
       neighbors.Renew();
     }
   }		
-  
+
+  /**
+   * If we are doing the all nearest neighbor search for the 
+   * bichromatic set, we use this Init()
+   * 
+   * @code
+   * GenMatrix<T> references, queries;
+   * .....
+   * AllKNN<T> allknn;
+   * datanode *allknn_module = fx_submodule(root, "allknn");
+   * 
+   * allknn.Init(queries, references, allknn_module);
+   * @endcode
+   */  
   void Init(const GenMatrix<T>& queries, 
 	    const GenMatrix<T>& references, 
 	    struct datanode *module) {
@@ -591,8 +657,71 @@ public:
 
     fx_timer_start(module_, "tree_building");
 
-    query_tree_ = ctree::MakeCoverTree<TreeType, T>(queries_, base);
-    reference_tree_ = ctree::MakeCoverTree<TreeType, T>(references_, base);
+    datanode *ctree_module = fx_submodule(module_, "ctree");
+
+    if (fx_param_bool(module_, "do_gonzy", 0)) {
+      query_tree_ = gc::Cluster<T, TreeType>(queries_, base);
+      reference_tree_ = gc::Cluster<T, TreeType>(references_, base);
+    }
+    else {
+      query_tree_ = ctree::MakeCoverTree<TreeType, T>(queries_, base, 
+						      ctree_module);
+      reference_tree_ = ctree::MakeCoverTree<TreeType, T>(references_, base,
+							  ctree_module);
+    }
+
+    fx_timer_stop(module_, "tree_building");
+
+    
+    if(fx_param_bool(module_, "print_tree", 0)){
+      NOTIFY("Query Tree:");
+      ctree::PrintTree<TreeType>(query_tree_);
+      NOTIFY("Reference Tree:");
+      ctree::PrintTree<TreeType>(reference_tree_);
+    }
+    return;
+  }
+
+  /**
+   * If we are doing the all nearest neighbor search for the 
+   * monochromatic set, we use this Init()
+   * 
+   * @code
+   * GenMatrix<T> reference;
+   * .....
+   * AllKNN<T> allknn;
+   * datanode *allknn_module = fx_submodule(root, "allknn");
+   * 
+   * allknn.Init(references, allknn_module);
+   * @endcode
+   */
+  void Init(const GenMatrix<T>& references, 
+	    struct datanode *module) {
+
+    module_ = module;
+    queries_.Copy(references);
+    num_queries_ = queries_.n_cols();
+    references_.Copy(references);
+    num_refs_ = references_.n_cols();
+
+    DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
+
+    knns_ = fx_param_int(module_, "knns", 1);
+    T base = fx_param_double(module_, "ec", 1.3);
+
+    fx_timer_start(module_, "tree_building");
+
+    datanode *ctree_module = fx_submodule(module_, "ctree");
+
+    if (fx_param_bool(module_, "do_gonzy", 0)) {
+      reference_tree_ = gc::Cluster<T, TreeType>(references_, base);
+      query_tree_ = reference_tree_;
+    }
+    else {
+      reference_tree_ = ctree::MakeCoverTree<TreeType, T>(references_, base,
+							  ctree_module);
+      query_tree_ = reference_tree_;
+    }
 
     fx_timer_stop(module_, "tree_building");
 

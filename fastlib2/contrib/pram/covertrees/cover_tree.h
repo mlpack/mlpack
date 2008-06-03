@@ -1,3 +1,10 @@
+/**
+ * @file cover_tree.h
+ * 
+ * This file defines a cover tree node. 
+ *
+ */
+
 #ifndef COVER_TREE_NODE_H
 #define COVER_TREE_NODE_H
 
@@ -10,18 +17,33 @@ class CoverTreeNode {
   typedef TStatistic Statistic;
 
  private:
+  // the point in the dataset
   index_t point_;
+
+  // the distance to the farthest descendant
   T max_dist_to_grandchild_;
+
+  // distance to the parent
   T dist_to_parent_;
+
+  // the list of children, the first one being the 
+  // self child
   ArrayList<CoverTreeNode*> children_;
+
+  // the number of children
   index_t num_of_children_;
-  index_t scale_depth_; // depth of the node in terms of scale
+
+  // depth of the node in terms of scale
+  index_t scale_depth_; 
+
+  // the cached statistic
   Statistic stat_;
 
  public:
 
   CoverTreeNode() {
     children_.Init(0);
+    stat_.Init();
   }
 
   ~CoverTreeNode() {
@@ -30,6 +52,7 @@ class CoverTreeNode {
     }
   }
 
+  // setters
   void set_point(index_t point) {
     point_ = point;
   }
@@ -58,6 +81,7 @@ class CoverTreeNode {
     return point_;
   }
 
+  // getters
   T max_dist_to_grandchild() {
     return max_dist_to_grandchild_;
   }
@@ -88,7 +112,6 @@ class CoverTreeNode {
 
   void MakeNode(index_t point) {
     point_ = point;
-    stat_.Init();
     return;
   }
 
@@ -102,8 +125,6 @@ class CoverTreeNode {
     children_.Renew();
     children_.InitSteal(children);
     num_of_children_ = children_.size();
-    stat_.Init();
-    
     return;
   }
 
@@ -114,11 +135,10 @@ class CoverTreeNode {
     dist_to_parent_ = 0.0;
     num_of_children_ = 0;
     scale_depth_ = 100;
-    stat_.Init();
-
     return;
   }
 
+  // helper function
   bool is_leaf() {
     return num_of_children_ == 0;
   }

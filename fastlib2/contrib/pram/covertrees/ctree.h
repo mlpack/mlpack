@@ -1,12 +1,35 @@
+/**
+ * @file ctree.h
+ * 
+ * This file defines and prototypes functions of 
+ * a namespace which makes a cover tree.
+ *
+ */
+
 #ifndef TREE_COVER_TREE_H
 #define TREE_COVER_TREE_H
 
 #include <fastlib/fastlib.h>
-
 #include "cover_tree.h"
 #include "distances.h"
 
+const fx_entry_doc tree_construction_entries[] = {
+  {"fc", FX_PARAM, FX_BOOL, NULL,
+   " The parameter that decides whether we chose the child"
+   " node randomly or the farthest point as the child.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc tree_construction_doc = {
+  tree_construction_entries, NULL,
+  " Builds the cover tree as per the original"
+  " algorithm.\n"
+};
+
 namespace ctree {
+
+  // The module for the namespace
+  datanode *module;
 
   // This is the expansion constant, default value 1.3
   // We assign its value when we start making the tree
@@ -182,9 +205,11 @@ namespace ctree {
    * @endcode
    */
   template<typename TCoverTreeNode, typename T>
-  TCoverTreeNode *MakeCoverTree(const GenMatrix<T>& dataset, T base) {
+  TCoverTreeNode *MakeCoverTree(const GenMatrix<T>& dataset, T base,
+				datanode *mod) {
 
-    // setting the expansion constant here    
+    // setting the expansion constant here   
+    module = mod; 
     EC = (double)base;
     index_t n = dataset.n_cols();
     DEBUG_ASSERT(n > 0);

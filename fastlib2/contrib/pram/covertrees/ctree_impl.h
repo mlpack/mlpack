@@ -1,5 +1,14 @@
+/**
+ * @file ctree_impl.h
+ *
+ * This file defines all the functions of the 
+ * namespace 'ctree' which were prototyped 
+ * in the file 'ctree.h'
+ *
+ */
 #ifndef TREE_COVER_TREE_IMPL_H
 #define TREE_COVER_TREE_IMPL_H
+
 #include "ctree.h"
 
 void ctree::print_space(index_t n) {
@@ -12,10 +21,11 @@ void ctree::print_space(index_t n) {
 template<typename TCoverTreeNode>
 void ctree::print_tree(index_t depth, TCoverTreeNode *top_node) {
   print_space(depth);
-  printf("Point %"LI"d:", top_node->point()+1);
+  printf("Point %"LI"d: %"LI"d", 
+	 top_node->point()+1, top_node->scale_depth());
   if (top_node->num_of_children() > 0) {
-    printf("scale_depth = %"LI"d, max_dist = %lf, children = %"LI"d\n",
-           top_node->scale_depth(), top_node->max_dist_to_grandchild(),
+    printf(", max_dist = %lf, children = %"LI"d\n",
+           top_node->max_dist_to_grandchild(),
            top_node->num_of_children());
     for (index_t i = 0; i < top_node->num_of_children(); i++) {
       print_tree(depth+1, top_node->child(i));
@@ -133,6 +143,10 @@ TCoverTreeNode *ctree::private_make_tree(index_t point,
   }
   else {
     T max_dist = max_set(point_set);
+
+    // The next scale is chosen so that we remove all 
+    // implicit nodes whose only child is the 
+    // self child
     index_t next_scale = min(current_scale - 1, 
 			     scale_of_distance(max_dist));
       
@@ -169,20 +183,36 @@ TCoverTreeNode *ctree::private_make_tree(index_t point,
       ArrayList<NodeDistances<T>*> far;
 
       far.Init(0);
+      // splitting so as to form the NEAR and FAR 
+      // set for the current level/scale. 
+      // The NEAR set would be used as the 
+      // NEAR + FAR set for the self child.
       split_far(point_set, &far, current_scale);
 	
+      // making the self child at the next level
       TCoverTreeNode *child = 
 	private_make_tree<TCoverTreeNode>(point, data, next_scale, 
 					  max_scale, point_set, 
 					  consumed_set);
 	
+      // if the self child consumes all the points 
+      // in the NEAR + FAR set, there will be no more 
+      // nodes at this level - meaning the parent of 
+      // this self child won't have any other child,
+      // so the self child is returned so as to remove 
+      // the implicit node whose only child is the 
+      // self child
       if (point_set->size() == 0) {
 	point_set->Renew();
 	point_set->InitSteal(&far);
-
 	return child;
       }
 
+      // otherwise use the points left in the 
+      // NEAR set to make new nodes at the same 
+      // level as the self child formed to become 
+      // the child of the node at the current 
+      // scale/level
       else {
 
 	ArrayList<TCoverTreeNode*> children;
@@ -192,23 +222,37 @@ TCoverTreeNode *ctree::private_make_tree(index_t point,
 	new_point_set.Init(0);
 	new_consumed_set.Init(0);
 	children.PushBackCopy(child);
-	//NOTIFY("%"LI"d:%"LI"d", child->point()+1, child->scale_depth());
 
 	while (point_set->size() != 0) {
 
 	  index_t new_point;
-	  T new_dist = point_set->back()->distances()->back();
+	  T new_dist;
 
-	  new_point = point_set->back()->point();
-	  // remember to check here what to use, PushBackRaw() or AddBack()
-	  // so that we can use PopBackInit(Element *dest)
-	  point_set->PopBackInit(consumed_set->PushBackRaw()); 
+	  // if we want to choose the point farthest 
+	  // from the parent node as the next child
+	  if (fx_param_bool(module, "fc", 0)) {
+	    index_t max_point;
+	    max_set(point_set, &max_point);
+	    new_dist = (*point_set)[max_point]->distances()->back();
+	    new_point = (*point_set)[max_point]->point();
+	    point_set->RemoveInit(max_point, consumed_set->PushBackRaw());
+	  }
+	  // if we want to chose the new child node 
+	  // randomly
+	  else {
+	    new_dist = point_set->back()->distances()->back();
+	    new_point = point_set->back()->point();
+	    point_set->PopBackInit(consumed_set->PushBackRaw()); 
+	  }
 
+	  // Making the NEAR + FAR set for the 
+	  // new child node
 	  split_near(new_point, data, point_set, 
 		     &new_point_set, current_scale);
 	  split_near(new_point, data, &far, 
 		     &new_point_set, current_scale);
 	    
+	  // forming the child node
 	  TCoverTreeNode *child_node = 
 	    private_make_tree<TCoverTreeNode>(new_point, data,
 					      next_scale,max_scale,
@@ -217,14 +261,15 @@ TCoverTreeNode *ctree::private_make_tree(index_t point,
 	    
 	  child_node->set_dist_to_parent(new_dist);
 	  children.PushBackCopy(child_node);
-	  //NOTIFY("%"LI"d:%"LI"d", child_node->point()+1, child_node->scale_depth());
 	    
 	  T bound = scaled_distance<T>(current_scale);
+
+	  // putting back all the points that was not 
+	  // consumed in making of the child node
 	  NodeDistances<T> **begin = new_point_set.begin();
 	  NodeDistances<T> **end = new_point_set.end();
 
 	  for (; begin < end; begin++) {
-
 	    (*begin)->distances()->PopBack();
 	    if ((*begin)->distances()->back() <= bound) {
 	      point_set->PushBackCopy(*begin);
@@ -235,18 +280,24 @@ TCoverTreeNode *ctree::private_make_tree(index_t point,
 	  }
 	  new_point_set.Resize(0);
 	    
+	  // adding all the consumed point while making the 
+	  // child node to the consumed set of the 
+	  // parent node
 	  while (new_consumed_set.size() > 0) {
 	    new_consumed_set.back()->distances()->PopBack();
 	    new_consumed_set.PopBackInit(consumed_set->PushBackRaw());
 	  }
-	   
 	}
 
+	// returning all the points that is in the FAR 
+	// set and was not consumed so that they can 
+	// be used to form nodes at the same level 
+	// as the node at the current level/scale
 	point_set->Renew();
 	point_set->InitSteal(&far);
 
+	// making the node
 	TCoverTreeNode *node = new TCoverTreeNode();
-
 	node->MakeNode(point, max_set(consumed_set), 
 		       max_scale - current_scale, &children);
 	  
