@@ -56,22 +56,8 @@ for epoch = 1:num_epochs
   end
 end
 
-new_responses = zeros(T, num_flashes, num_trials, num_epochs);
-new_is_target = zeros(num_flashes, num_trials, num_epochs);
-for i = 1:T
-  i
-  for j = 1:num_flashes
-    j
-    for k = 1:num_trials
-      k
-      for l = 1:num_epochs
-	l
-	new_responses(i,j,k,l) = responses(l,j,k,i);
-	new_is_target(j,k,l) = is_target(l,j,k);
-      end
-    end
-  end
-end
+new_responses = permute(responses, [4 2 3 1]);
+new_is_target = permute(is_target, [2 3 1]);
 
 responses = new_responses;
 is_target = new_is_target;
@@ -104,7 +90,19 @@ p_small = min(find(cumsum(latent) / sum(latent) >= 0.9));
 
 p_small = min(p_small, 12);
 
-[Yopt, Wopt] = RADICAL(score(:,1:p_small)');
+%[Yopt, Wopt] = RADICAL(score(:,1:p_small)');
+
+load standardICA_12PCs_Yopt_Wopt;
+
+
+
+
+% transform components to unit components
+
+% re-use ICAFunc classifier that selects item with maximum score
+% over 15 trials
+
+
 
 
 
@@ -166,17 +164,4 @@ pca_results = pca_fd(centered_myfd, p, myfdPar);
 % re-run experiments with gene expression data using correct ic
 % scores
 
-
-
-
-% compute principal components
-
-% do dimensionality reduction
-
-% use RADICAL to compute independent components
-
-% transform components to unit components
-
-% re-use ICAFunc classifier that selects item with maximum score
-% over 15 trials
 
