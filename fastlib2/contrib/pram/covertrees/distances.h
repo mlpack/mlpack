@@ -1,3 +1,18 @@
+/**
+ * @file distances.h
+ *
+ * This file implements the computation of 
+ * euclidean distances between two 
+ * templatized points in the presence of 
+ * and upper bound. The upper bound is 
+ * there so that we do partial distance 
+ * computation.
+ * 
+ * To compute the complete distance, you 
+ * provide upper bound as DBL_MAX or 
+ * FLOATMAX
+ */
+
 #ifndef PARTIAL_DISTANCE_COMPUTATION_H
 #define PARTIAL_DISTANCE_COMPUTATION_H
 
