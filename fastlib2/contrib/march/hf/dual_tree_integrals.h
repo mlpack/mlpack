@@ -302,6 +302,28 @@ class DualTreeIntegrals {
                                               rho_sigma_max_dist, 
                                               four_way_max_dist);
     
+    // Need to account for the change in bounds if the density matrix entries 
+    // are negative.  If the density lower bound is negative, then the lower 
+    // bound becomes the largest integral times the density lower bound, 
+    // instead of the smallest integral and vice versa.  
+    if (rho_sigma->stat().density_upper_bound() >= 0.0) {
+      up_bound = up_bound * rho_sigma->stat().density_upper_bound();
+    }
+    else {
+      up_bound = low_bound * rho_sigma->stat().density_upper_bound();
+    }
+    if (rho_sigma->stat().density_lower_bound() >= 0.0) {
+      low_bound = low_bound * rho_sigma->stat().density_lower_bound();
+    }
+    else {
+      low_bound = up_bound * rho_sigma->stat().density_lower_bound();
+    }
+    
+    
+    
+    DEBUG_ASSERT(up_bound >= low_bound);
+    
+    
     Vector mu_center;
     mu->bound().CalculateMidpoint(&mu_center);
     Vector nu_center;
@@ -320,6 +342,9 @@ class DualTreeIntegrals {
       index_t on_diagonal = CountOnDiagonal_(rho_sigma);
       index_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
       up_bound = (on_diagonal * up_bound) + (2 * off_diagonal * up_bound);
+      // These two were missing, I think they needed to be here
+      low_bound = (on_diagonal * low_bound) + (2 * off_diagonal * low_bound);
+      approx_val = (on_diagonal * approx_val) + (2 * off_diagonal * approx_val);
     }
     else if (rho != sigma) {
       up_bound = 2 * up_bound * rho->count() * sigma->count();
@@ -335,17 +360,11 @@ class DualTreeIntegrals {
     
     
     
-    up_bound = up_bound * rho_sigma->stat().density_upper_bound();
-    low_bound = low_bound * rho_sigma->stat().density_lower_bound();
-   // printf("density_upper_bound: %g\n", rho_sigma->stat().density_upper_bound());
-    
-    // I'm not sure this is right, but it will work for now
+     // I'm not sure this is right, but it will work for now
     approx_val = approx_val * 0.5 * (rho_sigma->stat().density_upper_bound() + 
                                      rho_sigma->stat().density_lower_bound());
     
-    //printf("up_bound = %g, low_bound = %g\n", up_bound, low_bound);
     
-    DEBUG_ASSERT(up_bound >= low_bound);
     
     // This is absolute error, I'll need to get the lower bound out of the 
     // mu_nu square tree to do relative
@@ -366,8 +385,8 @@ class DualTreeIntegrals {
     
     // For hybrid error 
     // assuming epsilon coulomb is the relative error tolerance
-    if ((mu_nu->stat().entry_upper_bound() < hybrid_cutoff_) && 
-        (mu_nu->stat().entry_lower_bound() > -1 * hybrid_cutoff_)) {
+    if ((fabs(mu_nu->stat().entry_upper_bound()) <= hybrid_cutoff_) && 
+        (fabs(mu_nu->stat().entry_lower_bound()) <= hybrid_cutoff_)) {
       
       // set my allowed_error to be the absolute bound
       my_allowed_error = my_allowed_error * epsilon_coulomb_absolute_ / 
@@ -425,6 +444,8 @@ class DualTreeIntegrals {
     IntegralTree* rho = rho_sigma->query1();
     IntegralTree* sigma = rho_sigma->query2();
     
+    // If it is possible to prune here, that will still be true for the two 
+    // children, where we won't have to try to handle the near symmetry
     if (RectangleOnDiagonal_(rho, sigma)) {
       DEBUG_ONLY(*approximate_value = BIG_BAD_NUMBER);
       return false;
@@ -457,7 +478,9 @@ class DualTreeIntegrals {
     double low_bound = ComputeSingleIntegral_(mu_rho_max_dist, 
                                               nu_sigma_max_dist, 
                                               mu_rho_four_way_max_dist);
+             
                                                     
+                                                                                                                                  
         
     Vector mu_center;
     mu->bound().CalculateMidpoint(&mu_center);
@@ -476,10 +499,6 @@ class DualTreeIntegrals {
     DEBUG_ASSERT(approx_val >= low_bound);
     
     
-    // Need to make this work with on diagonal non-square boxes
-    // this isn't right for exchange, since I don't just count them twice
-    // Adding in the swapped term is analogous to multiplying by 2 in the 
-    // Coulomb case
     if (rho != sigma) {
       
       double mu_sigma_min_dist = mu->bound().MinDistanceSq(sigma->bound());
@@ -523,17 +542,33 @@ class DualTreeIntegrals {
     low_bound = low_bound * rho->count() * sigma->count();
     approx_val = approx_val * rho->count() * sigma->count();
     
+    DEBUG_ASSERT(up_bound >= approx_val);
+    DEBUG_ASSERT(approx_val >= low_bound);
     
-    up_bound = up_bound * rho_sigma->stat().density_upper_bound();
-    low_bound = low_bound * rho_sigma->stat().density_lower_bound();
+    double old_up_bound = up_bound;
+    
+    if (rho_sigma->stat().density_upper_bound() >= 0.0) {
+      up_bound = up_bound * rho_sigma->stat().density_upper_bound();
+    }
+    else {
+      up_bound = low_bound * rho_sigma->stat().density_upper_bound();
+    }
+    if (rho_sigma->stat().density_lower_bound() >= 0.0) {
+      low_bound = low_bound * rho_sigma->stat().density_lower_bound();
+    }
+    else {
+      low_bound = old_up_bound * rho_sigma->stat().density_lower_bound();
+    }
+    
+    
+    
+    DEBUG_ASSERT(up_bound >= low_bound);
     
     
     // I'm not sure this is right, but it will work for now
     approx_val = approx_val * 0.5 * (rho_sigma->stat().density_upper_bound() + 
                                      rho_sigma->stat().density_lower_bound());
     
-    
-    DEBUG_ASSERT(up_bound >= low_bound);
     
     // This is absolute error, I'll need to get the lower bound out of the 
     // mu_nu square tree to do relative
@@ -551,12 +586,15 @@ class DualTreeIntegrals {
     
     // For hybrid error 
     // assuming epsilon coulomb is the relative error tolerance
-    if ((mu_nu->stat().entry_upper_bound() < hybrid_cutoff_) && 
-        (mu_nu->stat().entry_lower_bound() > -1 * hybrid_cutoff_)) {
+    if ((fabs(mu_nu->stat().entry_upper_bound()) <= hybrid_cutoff_) && 
+        (fabs(mu_nu->stat().entry_lower_bound()) <= hybrid_cutoff_)) {
+      
+      DEBUG_ASSERT(mu_nu->stat().entry_upper_bound() >= 
+                   mu_nu->stat().entry_lower_bound());
       
       // set my allowed_error to be the absolute bound
-      my_allowed_error = my_allowed_error * epsilon_coulomb_absolute_ / 
-      epsilon_coulomb_;
+      my_allowed_error = my_allowed_error * epsilon_exchange_absolute_ / 
+      epsilon_exchange_;
       
     }
     else {
@@ -568,8 +606,6 @@ class DualTreeIntegrals {
     
     DEBUG_ONLY(*approximate_value = BIG_BAD_NUMBER);
     if (my_max_error < my_allowed_error) {
-      
-      //DEBUG_ASSERT(my_max_error < epsilon_);
       
       can_prune = true;
       
@@ -1348,6 +1384,7 @@ public:
     
     hybrid_cutoff_ = fx_param_double(module_, "hybrid_cutoff", 0.1);
     
+    
     coulomb_approximations_ = 0;
     exchange_approximations_ = 0;
     coulomb_base_cases_ = 0;
@@ -1357,6 +1394,12 @@ public:
     
     number_of_basis_functions_ = centers_.n_cols();
     fx_format_result(module_, "N", "%d", number_of_basis_functions_);
+    
+    // A hack to make the pruning always absolute, since I can't input infinity
+    // with fx
+    if (hybrid_cutoff_ > number_of_basis_functions_) {
+      hybrid_cutoff_ = DBL_INF;
+    }
     
     // The common normalization constant of all the Gaussians
     normalization_constant_fourth_ = pow((2 * bandwidth_ / math::PI), 3);
@@ -1401,7 +1444,7 @@ public:
   /**
    * Call this after the density matrix is permuted in the SCF solver
    */
-  void GetDensity(const Matrix& updated_density) {
+  void SetDensity(const Matrix& updated_density) {
   
     density_matrix_.Copy(updated_density);
     
@@ -1428,6 +1471,7 @@ public:
     
     coulomb_matrix_.SetZero();
     exchange_matrix_.SetZero();
+    fock_matrix_.SetZero();
   
   } // UpdateMatrices()
   
@@ -1439,13 +1483,18 @@ public:
     //tree_->Print();
     //square_tree_->Print();
     
+    fx_timer_start(module_, "coulomb_recursion");
     ComputeCoulombRecursion_(square_tree_, square_tree_);  
+    fx_timer_stop(module_, "coulomb_recursion");
     // Will need to be followed by clearing the tree and computing the exchange 
     // matrix
     // I think this is the only resetting the tree will need
     SetEntryBounds_();
     ResetTreeForExchange_(square_tree_);
+    fx_timer_start(module_, "exchange_recursion");
     ComputeExchangeRecursion_(square_tree_, square_tree_);
+    fx_timer_stop(module_, "exchange_recursion");
+    
     // Then by adding both into the Fock matrix
     la::AddTo(coulomb_matrix_, &fock_matrix_);
     la::Scale(-1, &exchange_matrix_);

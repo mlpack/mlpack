@@ -57,7 +57,8 @@ class SCFSolver {
   
   static const index_t expected_number_of_iterations_ = 40;
   
-  double convergence_tolerance_;
+  double density_convergence_;
+  double energy_convergence_;
   
   // Used for computing the convergence of the density matrix on the fly
   double density_matrix_frobenius_norm_;
@@ -71,6 +72,8 @@ class SCFSolver {
   ArrayList<index_t> old_from_new_centers_;
   
   double bandwidth_;
+  
+  double normalization_constant_squared_;
   
  public:
     
@@ -101,7 +104,7 @@ class SCFSolver {
     PermuteMatrix_(basis_centers, &basis_centers_, old_from_new_centers_);
     PermuteMatrix_(density, &density_matrix_, old_from_new_centers_);
     
-    integrals_.GetDensity(density_matrix_);
+    integrals_.SetDensity(density_matrix_);
     
     nuclear_centers_.Copy(nuclear);
     
@@ -134,13 +137,18 @@ class SCFSolver {
     
     total_energy_.Init(expected_number_of_iterations_);
     
-    convergence_tolerance_ = fx_param_double(module_, "convergence_tolerance", 
-                                             0.1);
+    density_convergence_ = fx_param_double(module_, "density_convergence", 0.1);
+    energy_convergence_ = fx_param_double(module_, "energy_convergence", 0.1);
     
     // Need to double check that this is right
     density_matrix_frobenius_norm_ = DBL_MAX;
     
     current_iteration_ = 0;
+    
+    normalization_constant_squared_ = pow((2 * bandwidth_)/math::PI, 1.5);
+    
+    fx_format_result(module_, "normalization", "%g", 
+                     normalization_constant_squared_);
     
   } // Init()
   
@@ -151,6 +159,7 @@ class SCFSolver {
   double ComputeKineticIntegral_(double dist);
   
   double ComputeNuclearIntegral_(const Vector& nuclear_position, 
+                                 index_t nuclear_index, 
                                  const Vector& mu, const Vector& nu);
     
   /**
@@ -192,20 +201,44 @@ class SCFSolver {
    * Create the matrix S^{-1/2} using the eigenvector decomposition.     *
    */
   void FormChangeOfBasisMatrix_() {
-    
+/*    
     Vector eigenvalues;
     Matrix eigenvectors;
     la::EigenvectorsInit(overlap_matrix_, &eigenvalues, &eigenvectors);
+    
+    */
+    
+    Matrix left_vectors;
+    Vector eigenvalues;
+    Matrix right_vectors_trans;
+    
+    la::SVDInit(overlap_matrix_, &eigenvalues, &left_vectors, 
+                &right_vectors_trans);
     
 #ifdef DEBUG
     
     for (index_t i = 0; i < eigenvalues.length(); i++) {
       DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
                        "Complex eigenvalue in diagonalizing overlap matrix.\n");
+                       
+      Vector eigenvec;
+      left_vectors.MakeColumnVector(i, &eigenvec);
+      double len = la::LengthEuclidean(eigenvec);
+      DEBUG_APPROX_DOUBLE(len, 1.0, 0.01);
+      
+      for (index_t j = i+1; j < eigenvalues.length(); j++) {
+        
+        Vector eigenvec2;
+        left_vectors.MakeColumnVector(j, &eigenvec2);
+        
+        double dotprod = la::Dot(eigenvec, eigenvec2);
+        DEBUG_APPROX_DOUBLE(dotprod, 0.0, 0.01);
+        
+      }
     }
     
 #endif
-    
+
     for (index_t i = 0; i < eigenvalues.length(); i++) {
       DEBUG_ASSERT(eigenvalues[i] > 0.0);
       eigenvalues[i] = 1/sqrt(eigenvalues[i]);
@@ -215,9 +248,11 @@ class SCFSolver {
     sqrt_lambda.InitDiagonal(eigenvalues);
     
     Matrix lambda_times_u_transpose;
-    la::MulTransBInit(sqrt_lambda, eigenvectors, &lambda_times_u_transpose);
-    la::MulInit(eigenvectors, lambda_times_u_transpose, 
+    la::MulTransBInit(sqrt_lambda, left_vectors, &lambda_times_u_transpose);
+    la::MulInit(left_vectors, lambda_times_u_transpose, 
                      &change_of_basis_matrix_);
+    
+                   
     
   } // FormChangeOfBasisMatrix_()
   
@@ -234,6 +269,8 @@ class SCFSolver {
     
     // I MUST find a smarter way to do this for large problems
     // This could also probably be a separate function
+    
+    density_matrix_frobenius_norm_ = 0.0;
     
     // Rows of density_matrix
     for (index_t density_row = 0; density_row < number_of_basis_functions_;
@@ -257,32 +294,30 @@ class SCFSolver {
           
         } // occupied_index
         
+        double this_entry = density_matrix_.ref(density_row, density_column);
+        double this_diff = this_sum - this_entry;
         // I think this is necessary, but not sure
         if (likely(density_row != density_column)) {
           this_sum = 2 * this_sum;
+          this_diff = 2 * this_diff;
         }
-        
+                
         // Computing the frobenius norm of the difference between this 
         // iteration's density matrix and the previous one for testing 
         // convergence
-        if (likely(current_iteration_ > 0)) {
-          density_matrix_frobenius_norm_ = density_matrix_frobenius_norm_ + 
-              (this_sum - density_matrix_.ref(density_row, density_column)) * 
-              (this_sum - density_matrix_.ref(density_row, density_column)); 
-        }
+        
+        density_matrix_frobenius_norm_ = density_matrix_frobenius_norm_ + 
+            (this_sum - this_entry) * (this_sum - this_entry); 
         
         density_matrix_.set(density_row, density_column, this_sum);
-        if (density_row != density_column) {
+        // set the lower triangle as well
+        if (likely(density_row != density_column)) {
           density_matrix_.set(density_column, density_row, this_sum);        
         }
         
       } // density_column
       
     } //density_row
-    
-    printf("density_matrix_norm: %g\n", density_matrix_frobenius_norm_);
-    
-    density_matrix_.PrintDebug();
     
   } // ComputeDensityMatrix_
   
@@ -294,15 +329,17 @@ class SCFSolver {
   void DiagonalizeFockMatrix_() {
     
     energy_vector_.Destruct();
+    Matrix right_vectors;
     
     Matrix coefficients_prime;
-    la::EigenvectorsInit(fock_matrix_, &energy_vector_, &coefficients_prime);
+    la::SVDInit(fock_matrix_, &energy_vector_, &coefficients_prime, 
+                &right_vectors);
     
 #ifdef DEBUG
     
     for (index_t i = 0; i < energy_vector_.length(); i++) {
       DEBUG_ASSERT_MSG(!isnan(energy_vector_[i]), 
-          "Complex eigenvalue in diagonalizing initial Fock matrix.\n");
+          "Complex eigenvalue in diagonalizing Fock matrix.\n");
     }
     
 #endif
@@ -371,23 +408,35 @@ class SCFSolver {
   /**
    * Find the energy of the electrons in the ground state of the current 
    * wavefunction.  
+   *
+   * The sum needs to be over occupied orbitals, according to Leach
    */
   double ComputeElectronicEnergy_() {
     
-    double total_energy = nuclear_repulsion_energy_;
+    FillOrbitals_();
     
-    for (index_t mu = 0; mu < number_of_basis_functions_; mu++) {
+    double total_energy = 0.0;
+    
+    for (index_t mu = 0; mu < occupied_indices_.size(); mu++) {
      
-      for (index_t nu = 0; nu < number_of_basis_functions_; nu++) {
+      index_t mu_index = occupied_indices_[mu];
+     
+      for (index_t nu = 0; nu < occupied_indices_.size(); nu++) {
+       
+        index_t nu_index = occupied_indices_[nu];
        
        // I don't think this is right
        // I guess the density matrix needs to multiply the one electron too?
-        total_energy = total_energy + density_matrix_.ref(mu, nu) 
-            * (core_matrix_.ref(mu, nu) + fock_matrix_.ref(mu, nu));
+        total_energy = total_energy + density_matrix_.ref(mu_index, nu_index) 
+            * (core_matrix_.ref(mu_index, nu_index) + 
+               fock_matrix_.ref(mu_index, nu_index));
         
       }
       
     }
+    
+    total_energy = 0.5 * total_energy;
+    total_energy = total_energy + nuclear_repulsion_energy_;
     
     return total_energy;
     
@@ -398,26 +447,37 @@ class SCFSolver {
    */
   bool TestConvergence_() {
     
-    bool is_converged = true;
-    
     if (unlikely(current_iteration_ == 0)) {
       return false;
     }
     
-    if (likely(density_matrix_frobenius_norm_ > 
-                (convergence_tolerance_ * convergence_tolerance_))) {
-      is_converged = false;
+    double energy_diff = fabs(total_energy_[current_iteration_] - 
+                              total_energy_[(current_iteration_ - 1)]);
+    
+   /*
+    printf("current_iteration: %d\n", current_iteration_);
+    
+    printf("density_matrix_frobenius_norm_: %g\n", 
+           density_matrix_frobenius_norm_);
+    
+    printf("total_energy_[%d]: %g\n", current_iteration_, 
+           total_energy_[current_iteration_]);
+    printf("energy_diff: %g\n", energy_diff);
+    
+    */
+    
+    if (likely(density_matrix_frobenius_norm_ > density_convergence_)) {
+      return false;
     }
     
-    if (likely((total_energy_[current_iteration_] 
-                 - total_energy_[current_iteration_ - 1]) 
-                > convergence_tolerance_)) {
-      is_converged = false;
+    //printf("energy_convergence: %g\n", energy_convergence_);
+    if (likely(energy_diff > energy_convergence_)) {
+      return false;
     }
     
-    density_matrix_frobenius_norm_ = 0.0;
+    //density_matrix_frobenius_norm_ = 0.0;
     
-    return is_converged;
+    return true;
     
   } // TestConvergence_
   
@@ -442,6 +502,11 @@ class SCFSolver {
     
     integrals_.ComputeFockMatrix();
     
+    /*
+    printf("Integrals Fock Matrix\n");
+    integrals_.FockMatrix().PrintDebug();
+    */
+    
     la::AddOverwrite(core_matrix_, integrals_.FockMatrix(), &fock_matrix_);
 
   }
@@ -457,6 +522,17 @@ class SCFSolver {
       
       // Step 4a.
       UpdateFockMatrix_();
+      
+      /*
+      printf("Density Matrix\n");
+      density_matrix_.PrintDebug();
+      
+      printf("Fock Matrix\n");
+      fock_matrix_.PrintDebug();
+      
+      printf("Core Matrix\n");
+      core_matrix_.PrintDebug();
+      */
       
       // Step 4b.
       if (unlikely(current_iteration_ >= total_energy_.size())) {
@@ -500,9 +576,12 @@ class SCFSolver {
     
     ComputeOneElectronMatrices_();
     
+    //printf("S\n");
+    //overlap_matrix_.PrintDebug();
+    
     FormChangeOfBasisMatrix_();
     
-    fock_matrix_.Alias(core_matrix_);
+    fock_matrix_.Copy(core_matrix_);
     
     TransformFockBasis_();
     

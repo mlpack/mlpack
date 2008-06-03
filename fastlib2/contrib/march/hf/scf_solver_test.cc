@@ -27,36 +27,26 @@ public:
     
     solver_ = new SCFSolver();
   
-    Matrix overlap;
-    Matrix kinetic;
-    Matrix potential;
-    Vector two_electron;
+    Matrix basis_centers;
+    data::Load("test_centers.csv", &basis_centers);
     
-    Matrix core;
+    Matrix density;
+    density.Init(basis_centers.n_cols(), basis_centers.n_cols());
+    density.SetZero();
     
-    double nuclear_energy = 0.0;
-    double convergence_tolerance = 1e-5;
+    Matrix nuclear;
+    data::Load("test_nuclear_centers.csv", &nuclear);
     
-    data::Load("overlap_test.csv", &overlap);
-    data::Load("kinetic_test.csv", &kinetic);
-    data::Load("potential_test.csv", &potential);
+    Matrix nuclear_mass_mat;
+    data::Load("test_nuclear_masses.csv", &nuclear_mass_mat);
+    Vector nuclear_mass;
+    nuclear_mass_mat.MakeColumnVector(0, &nuclear_mass);
     
-    Matrix two_electron_mat;
-    data::Load("two_electron_test.csv", &two_electron_mat);
-    DEBUG_ASSERT(two_electron_mat.n_cols() == 1);
-    two_electron_mat.MakeColumnVector(0, &two_electron);
+    struct datanode* mod = fx_submodule(NULL, "test_scf", "test_scf");
     
-    data::Load("core_test.csv", &core);
+    solver_->Init(mod, 2, basis_centers, density, nuclear, nuclear_mass);
     
-    solver_->Init(nuclear_energy, overlap, kinetic, potential, two_electron, 
-                 num_electrons, convergence_tolerance, NULL);
-    
-    for (index_t i = 0; i < core.n_rows(); i++) {
-      for (index_t j = 0; j < core.n_cols(); j++) {
-        TEST_DOUBLE_APPROX(core.ref(i, j), 
-                           solver_->one_electron_integrals_.ref(i, j), eps);
-      }
-    }
+    solver_->Setup_();
     
     
   }
@@ -67,20 +57,28 @@ public:
     
   }
   
-  void TestOrthogonalizingMatrix() {
+  void TestChangeOfBasisMatrix() {
     Setup();
     
-    solver_->FormOrthogonalizingMatrix_();
+    Matrix true_overlap;
+    data::Load("test_overlap.csv", &true_overlap);
     
-    Matrix true_orthogonal;
-    data::Load("orthogonalizing_test.csv", &true_orthogonal);
-    
-    // Is the change-of-basis matrix unique with respect to negaives on the 
-    // diagonal?  If not, I need to add absolute values here.
-    for (index_t i = 0; i < true_orthogonal.n_rows(); i++) {
-      for (index_t j = 0; j < true_orthogonal.n_cols(); j++) {
-        TEST_DOUBLE_APPROX(true_orthogonal.ref(i, j), 
+    for (index_t i = 0; i < true_overlap.n_rows(); i++) {
+      for (index_t j = 0; j < true_overlap.n_cols(); j++) {
+        TEST_DOUBLE_APPROX(true_overlap.ref(i, j), 
                            solver_->overlap_matrix_.ref(i, j), eps); 
+      }
+    }
+    
+    Matrix true_change_basis;
+    data::Load("test_change_basis.csv", &true_change_basis);
+    
+    // Is the change-of-basis matrix unique with respect to negatives on the 
+    // diagonal?  If not, I need to add absolute values here.
+    for (index_t i = 0; i < true_change_basis.n_rows(); i++) {
+      for (index_t j = 0; j < true_change_basis.n_cols(); j++) {
+        TEST_DOUBLE_APPROX(true_change_basis.ref(i, j), 
+                           solver_->change_of_basis_matrix_.ref(i, j), eps); 
       }
     }
     
@@ -94,7 +92,7 @@ public:
     
     Setup();
     
-    solver_->FormOrthogonalizingMatrix_();
+    solver_->FormChangeOfBasisMatrix_();
     
     solver_->ComputeDensityMatrix_();
     
@@ -137,11 +135,11 @@ public:
     
     solver_->energy_vector_ = test_energy_vector;
     
-    ArrayList<index_t> test_indices;
-    solver_->FillOrbitals_(&test_indices);
+    solver_->FillOrbitals_();
     
-    TEST_ASSERT((test_indices[0] == 0) && (test_indices[1] == 5) 
-                && (test_indices[2] == 8));
+    TEST_ASSERT((solver_->occupied_indices_[0] == 0) 
+                && (solver_->occupied_indices_[1] == 5) 
+                && (solver_->occupied_indices_[2] == 8));
     
     
     NONFATAL("FillOrbitals_ correct\n");
@@ -238,18 +236,19 @@ public:
   
   void TestAll() {
    
-    TestOrthogonalizingMatrix();  
+    TestChangeOfBasisMatrix();  
     
-    TestDensityMatrix();
+    //TestDensityMatrix();
     
-    TestFillOrbitals();
+    // TestFillOrbitals();
     
+    /*
     TestDiagonalizeFockMatrix();
     
     TestTestConvergence();
     
     TestComputeElectronicEnergy();
-    
+    */
     NONFATAL("All tests passed\n");
     
   }
@@ -267,8 +266,12 @@ const double SCFSolverTest::eps;
 
 int main(int argc, char *argv[]) {
 
+  fx_init(argc, argv);
+
   SCFSolverTest tester;
   tester.TestAll();
+  
+  fx_done();
   
   return 0;
   
