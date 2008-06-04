@@ -71,6 +71,7 @@
 #include "mlpack/series_expansion/mult_local_expansion.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
+#include "contrib/dongryel/proximity_project/subspace_stat.h"
 
 ////////// Documentation stuffs //////////
 const fx_entry_doc kde_main_entries[] = {
@@ -207,6 +208,10 @@ class DualtreeKde {
      */
     typename TKernelAux::TLocalExpansion local_expansion_;
     
+    /** @brief The subspace associated with this node.
+     */
+    SubspaceStat subspace_;
+    
     /** @brief Initialize the statistics.
      */
     void Init() {
@@ -230,12 +235,15 @@ class DualtreeKde {
     
     void Init(const Matrix& dataset, index_t &start, index_t &count) {
       Init();
+      subspace_.Init(dataset, start, count);
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count,
 	      const KdeStat& left_stat,
 	      const KdeStat& right_stat) {
       Init();
+      subspace_.Init(dataset, start, count, left_stat.subspace_,
+		     right_stat.subspace_);
     }
     
     void Init(const Vector& center, const TKernelAux &ka) {
@@ -376,6 +384,14 @@ class DualtreeKde {
 			 double &used_error, double &n_pruned,
 			 int &order_farfield_to_local,
 			 int &order_farfield, int &order_local);
+
+  /** @brief Checking whether it is able to prune the query and the
+   *         reference pair using Monte Carlo sampling.
+   */
+  bool MonteCarloTrial_(Tree *qnode, Tree *rnode, double probability,
+			DRange &dsqd_range, DRange &kernel_value_range, 
+			double &dl, double &de, double &du, 
+			double &used_error, double &n_pruned);
 
   /** @brief Checking whether it is able to prune the query and the
    *         reference pair using Monte Carlo sampling.
