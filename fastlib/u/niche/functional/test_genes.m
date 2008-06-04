@@ -25,14 +25,107 @@ data(find(data == -inf)) = NaN;
 
 % data ready!
 
+%{
+%% IMPUTE MISSING VALUES USING KNN
+
+k = 10;
+
+data_copy = data;
+
+incomplete_columns = find(isnan(sum(data)));
+
+for i = 1:length(incomplete_columns)
+  if mod(i, round(length(incomplete_columns)/100)) == 0
+    fprintf('imputed %d%% of missing values\n', ...
+	   floor(100 * i / length(incomplete_columns)));
+  end
+
+  missing_index = find(isnan(data(:,incomplete_columns(i))));
+  candidate_neighbor_columns = find(~isnan(data(missing_index,:)));
+  
+  cur_gene = data([1:(missing_index - 1) ...
+		   (missing_index + 1):end], ...
+		  incomplete_columns(i));
+
+  candidate_genes = data([1:(missing_index - 1) ...
+		    (missing_index + 1):end], ...
+			 candidate_neighbor_columns);
+  
+  sq_dists = zeros(size(candidate_neighbor_columns));
+  for j = 1:length(candidate_neighbor_columns)
+    sq_dists(j) = sum((cur_gene - candidate_genes(:,j)).^2);
+  end
+  
+  [sorted_dists, sorted_indices] = sort(sq_dists, 'ascend');
+  
+  if sorted_dists(1) == 0
+    imputed_val = data(missing_index, sorted_indices(1));
+  else
+    weights = sorted_dists .^ -0.5;
+    imputed_val = ...
+	sum(weights .* data(missing_index, sorted_indices(1:k))) ...
+	/ sum(weights);
+  end
+  
+  data_copy(missing_index, incomplete_columns(i)) = imputed_val;
+  
+  
+
+end
+
+
+
+return;
+%% END IMPUTATION USING KNN
+%}
+
+
 N = size(data,2);
-p = 17;
+p = 21; %I used p = 17 for the kdd submission, this is
+	 %probably far too small
 
 mybasis = create_bspline_basis([min(argvals) max(argvals)], p, 4);
 basis_curves = eval_basis(0:1:119, mybasis);
 basis_inner_products = full(eval_penalty(mybasis, int2Lfd(0)));
 
 myfd = data2fd(data, argvals, mybasis);
+
+%{
+%% IMPUTE MISSING VALUES USING SPLINES
+
+incomplete_columns = find(isnan(sum(data)));
+
+basis_curves_for_imputation = eval_basis(argvals, mybasis);
+data_coef = getcoef(myfd);
+spline_smoothed_data = basis_curves_for_imputation * data_coef;
+data_copy = data;
+
+for i = 1:length(incomplete_columns)
+
+  missing_index = find(isnan(data(:,incomplete_columns(i))));
+  
+  data_copy(missing_index, incomplete_columns(i)) = ...
+      spline_smoothed_data(missing_index, incomplete_columns(i));
+  
+end
+
+a = basis_curves * getcoef(myfd);
+
+for i = incomplete_columns
+  hold off;
+  plot(argvals, data_copy(:,i), 'b.');
+  hold on;
+  plot(argvals, data(:,i), 'r.');
+  plot(t, a(:,i), 'r');
+  disp(i);
+  pause;
+end
+
+return; %% temporary - delete
+
+%% END IMPUTATION USING SPLINES
+%}
+
 mean_result = pca_fd(myfd, 0);
 centered_data_coef = ...
     getcoef(myfd) - ...
@@ -63,7 +156,9 @@ for i = 1:size(ic_curves,2)
 end
 %}
 
-save correct_gene_results_2;
+save correct_gene_results_21;
+
+
 
 %{
 % rescale the utilized parts of pc_coef such that
