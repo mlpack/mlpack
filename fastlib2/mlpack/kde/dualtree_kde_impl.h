@@ -312,7 +312,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
  DRange &kernel_value_range, double &dl, double &de, double &du, 
  double &used_error, double &n_pruned) {
 
-  if(num_initial_samples_per_query_ * 3 >= rnode->count()) {
+  if(num_initial_samples_per_query_ * 2 >= rnode->count()) {
     return false;
   }
 
@@ -327,11 +327,14 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
     
     // Compute the required standard score for the given one-sided
     // probability.
+    double two_sided_probability = 
+      std::max(probability -
+	       (extra_probability_[q] + 
+		qnode->stat().postponed_extra_probability_), 0.0);
     double standard_score = 
       InverseNormalCDF::Compute
-      (std::max(probability - extra_probability_[q] -
-		qnode->stat().postponed_extra_probability_, 0.0));
-    
+      (two_sided_probability + 0.5 * (1 - two_sided_probability));
+
     // Get the pointer to the current query point.
     const double *query_point = qset_.GetColumnPtr(q);
 
@@ -363,6 +366,8 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 	query_squared_kernel_sums_scratch_space_[q] +=
 	  weighted_kernel_value * weighted_kernel_value;
       }
+
+      // Increment total number of samples.
       total_samples += num_samples;
 
       // Compute the current estimate of the sample mean and the
@@ -376,7 +381,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 
       double new_used_error = used_error_[q] + stat.postponed_used_error_;
       double new_n_pruned = n_pruned_[q] + stat.postponed_n_pruned_;
-      double new_mass_l = densities_l_[q] + stat.postponed_l_ +
+      double new_mass_l = densities_e_[q] + stat.postponed_e_ +
 	rnode->count() * 
 	(sample_mean - standard_score * sqrt(sample_variance /
 					     ((double) total_samples)));
@@ -391,7 +396,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
       num_samples = threshold - total_samples;
 
       // If it will require too many samples, give up.
-      if(num_samples > rnode->count() * 2) {
+      if(num_samples > rnode->count()) {
 	flag = false;
 	break;
       }
@@ -465,7 +470,7 @@ bool DualtreeKde<TKernelAux>::Prunable_
   
   // number of reference points for possible pruning.
   n_pruned = rnode->count();
-  
+
   // If the error bound is satisfied by the hard error bound, it is
   // safe to prune.
   return (used_error <= allowed_err);
