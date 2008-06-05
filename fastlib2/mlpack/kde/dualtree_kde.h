@@ -469,7 +469,7 @@ class DualtreeKde {
 			 rset_.n_cols());
 
     // set accuracy parameter
-    tau_ = fx_param_double(module_, "relative_error", 0.01);
+    tau_ = fx_param_double(module_, "relative_error", 0.1);
     
     // initialize the lower and upper bound densities
     densities_l_.SetZero();
@@ -503,9 +503,8 @@ class DualtreeKde {
     
     // Get the required probability guarantee for each query and call
     // the main routine.
-    double probability = fx_param_double(module_, "probability", 0.75);
-    double one_sided_probability = probability + 0.5 * (1 - probability);
-    DualtreeKdeCanonical_(qroot_, rroot_, one_sided_probability);
+    double probability = fx_param_double(module_, "probability", 0.9);
+    DualtreeKdeCanonical_(qroot_, rroot_, probability);
 
     // Postprocessing step for finalizing the sums.
     PostProcess(qroot_);
