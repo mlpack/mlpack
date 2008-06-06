@@ -1,0 +1,5 @@
+<src/**>: include
+<src/tyl/mp.cmx>: for-pack(Tyl)
+<src/tyl/mp/{prog,util}.cmx>: for-pack(Tyl.Mp)
+<src/tyl/mp/util/{pos,id}.cmx>: for-pack(Tyl.Mp.Util)
+<src/tyl/mp/prog/syntax.cmx>: for-pack(Tyl.Mp.Prog)
