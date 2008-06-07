@@ -2,14 +2,14 @@
 
 # This script will auto-generate all the necessary .mlpack files.
 # From the top-level directory, run "mlpack".  It expects the source
-# files to be in "src".
+# files to be in "src".  Ignores .svn directories.
 
 subdirs () {
-    find $1 -maxdepth 1 -mindepth 1 -type d
+    find $1 -maxdepth 1 -mindepth 1 -type d -and -not -name .svn
 }
 
 submods () {
-    find $1 -maxdepth 1 -mindepth 1 -type d -or -name "*.ml" \
+    find $1 -maxdepth 1 -mindepth 1 -type d -and -not -name .svn -or -name "*.ml" \
         | awk -F/ '{print $NF}' | awk -F. '{print $1}'
 }
 
