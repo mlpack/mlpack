@@ -63,3 +63,5 @@ and prog = | PMain of direction * ((Id.t * typ) list) * expr * prop
 and syntax = | STyp of typ | SExpr of expr | SProp of prop | SPropTyp of prop_typ 
              | SProg of prog (* | SInd of I.syntax *)
 		 
+type context = string
+type category = Typ | Expr | Prop | PropTyp | Prog (* | ICat of I.category *)
