@@ -3,6 +3,18 @@ type t = String of string | Marked of Pos.range * t
 let rec expose i : string = match i with String s -> s | Marked (_,j) -> expose j
  
 let equal i j = expose i = expose j
+
+type temp = t
+module IdOrd = struct 
+  type t = temp
+  let compare = compare 
+end
+
+(* module Map = Map.Make(IdOrd) *)
+module Set = Set.Make(IdOrd)
+
+
+(*
 let compare i j = String.compare (expose i) (expose j)
 let toString = expose
   
@@ -29,18 +41,10 @@ let concat is =
     | j::js' -> Pos.uniono (getMark j) (getMark (last js'))
   in match getPos is with None -> ans | Some r -> Marked(r,ans)
         
-type temp = t
-module IdOrd = struct 
-  type t = temp
-  let compare = compare 
-end
-
-module Map = Map.Make(IdOrd)
-module Set = Set.Make(IdOrd)
-
 let fresh _ _ = String ""
 let freshl _ _ _ = []
 let freshll _ _ _ = []
+*)
 
 (* 
 let fresh s root =
