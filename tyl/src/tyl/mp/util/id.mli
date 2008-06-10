@@ -1,6 +1,8 @@
 type t
 
+val make : string -> t (* create a new id *)
 val equal : t -> t -> bool
+val fresh : Set.t -> t -> t (* return an id not in set, using input id as root of returned it *)
 
 module Set : Set.S with type elt = t  
 
@@ -14,7 +16,6 @@ val concat : t list -> t
   
 module Map : Map.S with type key = t
 
-val fresh : Set.t -> t -> t (* return an id not in set, using input id as root of returned it *)
 val freshl : Set.t -> t -> int -> t list (* return k id's not in given set *)
 val freshll : Set.t -> t list -> int -> t list list (* return k id's for each given id *)
 *)
