@@ -1,6 +1,7 @@
 type t = Pos of string * int * int | Eof of string
 type range = t * t
 
+(*
 let toString p = 
   match p with
     | Pos (f,l,c) ->
@@ -62,3 +63,4 @@ let uniono r s =
     | Some _  , None    -> r
     | None    , Some _  -> s
     | None    , None    -> None
+*)
