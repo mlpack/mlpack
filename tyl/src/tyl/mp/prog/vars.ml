@@ -91,6 +91,6 @@ let rec subec e x = function
   | CQuant (q,x',t,c) as c'  -> 
       if not (S.mem x (freeVarsc c'))       then c' 
       else if not (S.mem x' (freeVarse e))  then CQuant (q,x',t,subec e x c)
-      else let x'' = fail "FIXME" in 
-        subec e x (CQuant (q,x'',t,subec (EVar x'') x' c))
+      else let x'' = Id.fresh (union [freeVarse e; freeVarsc c]) (Id.make "x") in 
+        subec e x (CQuant (q, x'', t, subec (EVar x'') x' c))
   | _                        -> fail "FIXME"
