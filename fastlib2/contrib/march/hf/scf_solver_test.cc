@@ -21,7 +21,7 @@ public:
   
   
   static const index_t num_electrons = 2;
-  static const double eps = 0.001;
+  static const double eps = 0.01;
   
   void Setup() {
     
@@ -58,6 +58,7 @@ public:
   }
   
   void TestChangeOfBasisMatrix() {
+    
     Setup();
     
     Matrix true_overlap;
@@ -73,8 +74,6 @@ public:
     Matrix true_change_basis;
     data::Load("test_change_basis.csv", &true_change_basis);
     
-    // Is the change-of-basis matrix unique with respect to negatives on the 
-    // diagonal?  If not, I need to add absolute values here.
     for (index_t i = 0; i < true_change_basis.n_rows(); i++) {
       for (index_t j = 0; j < true_change_basis.n_cols(); j++) {
         TEST_DOUBLE_APPROX(true_change_basis.ref(i, j), 
@@ -85,14 +84,31 @@ public:
     
     Destruct();
     
-    NONFATAL("Orthogonal matrix correct.\n");
+    NONFATAL("Overlap and Change of Basis matrices correct.\n");
+    
   }
   
   void TestDensityMatrix() {
     
     Setup();
     
-    solver_->FormChangeOfBasisMatrix_();
+    Matrix true_coeffs;
+    data::Load("coefficient_test.csv", &true_coeffs);
+    solver_->coefficient_matrix_.Destruct();
+    solver_->coefficient_matrix_.Copy(true_coeffs);
+    
+    solver_->nuclear_repulsion_energy_ = 0.0;
+    
+    solver_->number_of_basis_functions_ = true_coeffs.n_cols();
+    
+    solver_->number_to_fill_ = 1;
+    solver_->occupied_indices_.Destruct();
+    solver_->occupied_indices_.Init(1);    
+    
+    solver_->energy_vector_.Destruct();
+    solver_->energy_vector_.Init(solver_->number_of_basis_functions_);
+    solver_->energy_vector_[0] = -2.458;
+    solver_->energy_vector_[1] = -1.292;
     
     solver_->ComputeDensityMatrix_();
     
@@ -107,7 +123,7 @@ public:
       }
     }
     
-    NONFATAL("Initial Density Matrix Correct.\n");
+    NONFATAL("ComputeDensityMatrix correct.\n");
     
     Destruct();
     
@@ -117,8 +133,12 @@ public:
     
     Setup();
     
-    solver_->number_of_electrons_ = 5;
+    solver_->number_of_electrons_ = 6;
+    solver_->number_to_fill_ = 3;
     solver_->number_of_basis_functions_ = 10;
+    
+    solver_->occupied_indices_.Destruct();
+    solver_->occupied_indices_.Init(3);
     
     Vector test_energy_vector;
     test_energy_vector.Init(10);
@@ -142,7 +162,7 @@ public:
                 && (solver_->occupied_indices_[2] == 8));
     
     
-    NONFATAL("FillOrbitals_ correct\n");
+    NONFATAL("FillOrbitals_ correct.\n");
 
     
     Destruct();
@@ -177,11 +197,21 @@ public:
     
     Matrix true_density;
     data::Load("density_test.csv", &true_density);
-    solver_->density_matrix_.CopyValues(true_density);
+    solver_->density_matrix_.Destruct();
+    solver_->density_matrix_.Copy(true_density);
+    
+    Matrix true_core;
+    data::Load("core_test.csv", &true_core);
+    solver_->core_matrix_.Destruct();
+    solver_->core_matrix_.Copy(true_core);
+    
+    solver_->nuclear_repulsion_energy_ = 0.0;
     
     Matrix true_fock;
     data::Load("updated_fock_test.csv", &true_fock);
-    solver_->density_matrix_.CopyValues(true_fock);
+    solver_->fock_matrix_.Destruct();
+    solver_->fock_matrix_.Copy(true_fock);
+    solver_->number_of_basis_functions_ = true_fock.n_cols();
     
     double test_energy = solver_->ComputeElectronicEnergy_();
     
@@ -193,21 +223,47 @@ public:
     
   } // TestComputeElectronicEnergy
   
-  void TestComputeOverlapIntegral() {
+  void TestPermuteMatrix() {
   
     Setup();
     
-    double dist1 = 0.5;
+    Matrix permute_me;
+    permute_me.Init(2, 5);
+    permute_me.set(0, 0, 0);
+    permute_me.set(1, 0, 0);
     
-    double test_integral = solver_->ComputeOverlapIntegral_(dist1);
+    permute_me.set(0, 1, 1);
+    permute_me.set(1, 1, 1);
     
-    double correct_integral = 0;
+    permute_me.set(0, 2, 4);
+    permute_me.set(1, 2, 4);
+    
+    permute_me.set(0, 3, 3);
+    permute_me.set(1, 3, 3);
+    
+    permute_me.set(0, 4, 2);
+    permute_me.set(1, 4, 2);
+    
+    ArrayList<index_t> perm;
+    perm.Init(5);
+    perm[0] = 0;
+    perm[1] = 1;
+    perm[2] = 4;
+    perm[3] = 3;
+    perm[4] = 2;
+    
+    
+    Matrix unpermuted;
+    
+    solver_->PermuteMatrix_(permute_me, &unpermuted, perm);
+    
+    
     
     Destruct();
     
-    NONFATAL("TestComputeOverlapIntegral NOT IMPLEMENTED.\n");
+    NONFATAL("TestPermuteMatrix correct.\n");
   
-  } // TestComputeOverlapIntegral()
+  } // TestPermuteMatrix()
   
   void TestComputeKineticIntegral() {
   
@@ -221,34 +277,60 @@ public:
   
   } // TestComputeNuclearIntegral()
   
-  void TestComputeOneElectronMatrices() {
-  
-    NONFATAL("TestComputeOneElectronMatrices NOT IMPLEMENTED.\n");
-  
-  } // TestComputeOneElectronMatrices()
-  
   void TestComputeNuclearRepulsion() {
     
     NONFATAL("TestComputeNuclearRepulsion NOT IMPLEMENTED.\n");
   
   } // TestComputeNuclearRepulsion()
   
+  void TestComputeOneElectronMatrices() {
+  
+    Setup();
+    
+    Matrix true_kinetic;
+    data::Load("test_kinetic.csv", &true_kinetic);
+    
+    for (index_t i = 0; i < true_kinetic.n_rows(); i++) {
+      for (index_t j = 0; j < true_kinetic.n_cols(); j++) {
+        TEST_DOUBLE_APPROX(true_kinetic.ref(i, j), 
+                           solver_->kinetic_energy_integrals_.ref(i, j), eps); 
+      }
+    }
+    
+    Matrix true_nuclear;
+    data::Load("test_nuclear_integrals.csv", &true_nuclear);
+    
+    for (index_t i = 0; i < true_nuclear.n_rows(); i++) {
+      for (index_t j = 0; j < true_nuclear.n_cols(); j++) {
+        TEST_DOUBLE_APPROX(true_nuclear.ref(i, j), 
+                           solver_->potential_energy_integrals_.ref(i, j), eps); 
+      }
+    }
+    
+    Destruct();
+    
+    NONFATAL("TestComputeOneElectronMatrices correct.\n");
+  
+  } // TestComputeOneElectronMatrices()
+  
+  
   
   void TestAll() {
    
     TestChangeOfBasisMatrix();  
     
-    //TestDensityMatrix();
+    TestDensityMatrix();
     
-    // TestFillOrbitals();
+    TestFillOrbitals();
     
-    /*
-    TestDiagonalizeFockMatrix();
+    TestComputeOneElectronMatrices();
     
-    TestTestConvergence();
+    // TestDiagonalizeFockMatrix();
+    
+    // TestTestConvergence();
     
     TestComputeElectronicEnergy();
-    */
+    
     NONFATAL("All tests passed\n");
     
   }

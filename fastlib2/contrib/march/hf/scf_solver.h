@@ -52,6 +52,9 @@ class SCFSolver {
   // I think I'll have to compute this in the beginning
   double nuclear_repulsion_energy_;
   
+  double one_electron_energy_;
+  double two_electron_energy_;
+  
   ArrayList<double> total_energy_;
   index_t current_iteration_;
   
@@ -74,6 +77,17 @@ class SCFSolver {
   double bandwidth_;
   
   double normalization_constant_squared_;
+  
+  // Track the largest and smallest entries in the fock matrix in order to
+  // understand pruning
+  double fock_max_;
+  double fock_min_;
+  double density_max_;
+  double density_min_;
+  double coulomb_max_;
+  double coulomb_min_;
+  double exchange_max_;
+  double exchange_min_;
   
  public:
     
@@ -164,7 +178,7 @@ class SCFSolver {
     
   /**
    * Permutes the matrix mat according to the permutation given.  The permuted 
-   * matrix is written to new_mat, overwriting whatever was there before
+   * matrix is written to the uninitialized matrix new_mat
    */                               
   void PermuteMatrix_(const Matrix& old_mat, Matrix* new_mat, 
                       const ArrayList<index_t>& perm) {
@@ -177,9 +191,9 @@ class SCFSolver {
     for (index_t i = 0; i < num_cols; i++) {
       
       Vector old_vec;
-      old_mat.MakeColumnVector(i, &old_vec);
+      old_mat.MakeColumnVector(perm[i], &old_vec);
       Vector new_vec;
-      new_mat->MakeColumnVector(perm[i], &new_vec);
+      new_mat->MakeColumnVector(i, &new_vec);
       
       new_vec.CopyValues(old_vec);
       
@@ -267,8 +281,7 @@ class SCFSolver {
     
     FillOrbitals_();
     
-    // I MUST find a smarter way to do this for large problems
-    // This could also probably be a separate function
+    ot::Print(occupied_indices_);
     
     density_matrix_frobenius_norm_ = 0.0;
     
@@ -277,7 +290,7 @@ class SCFSolver {
          density_row++) {
       
       // Columns of density matrix
-      for (index_t density_column = density_row; 
+      for (index_t density_column = 0; 
            density_column < number_of_basis_functions_; density_column++) {
         
         // Occupied orbitals
@@ -286,7 +299,7 @@ class SCFSolver {
              occupied_index < occupied_indices_.size(); occupied_index++) {
           
           // By multiplying by 2, I'm assuming all the orbitals are full
-          this_sum = this_sum + ( 2 *
+          this_sum = this_sum + (
               coefficient_matrix_.ref(
                   density_row, occupied_indices_[occupied_index]) * 
               coefficient_matrix_.ref(
@@ -297,23 +310,28 @@ class SCFSolver {
         double this_entry = density_matrix_.ref(density_row, density_column);
         double this_diff = this_sum - this_entry;
         // I think this is necessary, but not sure
-        if (likely(density_row != density_column)) {
+        /*if (likely(density_row != density_column)) {
           this_sum = 2 * this_sum;
           this_diff = 2 * this_diff;
-        }
+        }*/
                 
+        // Leach says there is a factor of 2 here
+        this_sum = 2 * this_sum;
+        
+        
         // Computing the frobenius norm of the difference between this 
         // iteration's density matrix and the previous one for testing 
         // convergence
         
         density_matrix_frobenius_norm_ = density_matrix_frobenius_norm_ + 
             (this_sum - this_entry) * (this_sum - this_entry); 
+            
         
         density_matrix_.set(density_row, density_column, this_sum);
         // set the lower triangle as well
-        if (likely(density_row != density_column)) {
+        /*if (likely(density_row != density_column)) {
           density_matrix_.set(density_column, density_row, this_sum);        
-        }
+        }*/
         
       } // density_column
       
@@ -329,11 +347,49 @@ class SCFSolver {
   void DiagonalizeFockMatrix_() {
     
     energy_vector_.Destruct();
-    Matrix right_vectors;
     
     Matrix coefficients_prime;
+    
+    
+    Matrix right_vectors_trans;
+    
+    
+    //la::EigenvectorsInit(fock_matrix_, &energy_vector_, &coefficients_prime);
+    
+    
     la::SVDInit(fock_matrix_, &energy_vector_, &coefficients_prime, 
-                &right_vectors);
+                &right_vectors_trans);
+    
+    
+    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    
+      // if the left and right vector don't have equal signs the eigenvector 
+      // is negative
+      
+      if ((coefficients_prime.ref(0,i) > 0 && right_vectors_trans.ref(i,0) < 0) 
+          || (coefficients_prime.ref(0,i) < 0 && 
+              right_vectors_trans.ref(i,0) > 0)){
+              
+        energy_vector_[i] = -1 * energy_vector_[i];
+      
+      }
+    
+    }
+    
+    
+    /*
+    printf("Fock matrix:\n");
+    fock_matrix_.PrintDebug();
+    
+    printf("Right vector:\n");
+    right_vectors_trans.PrintDebug();
+    
+    printf("Energies:\n");
+    energy_vector_.PrintDebug();
+    
+    printf("Coefficients (prime):\n");
+    coefficients_prime.PrintDebug();
+    */
     
 #ifdef DEBUG
     
@@ -360,7 +416,10 @@ class SCFSolver {
    *
    * I should use the built in C++ iterator-driven routines.  Ryan suggested
    * that I write iterators for ArrayLists, since that would open up a lot of
-   * functionality, including sorting.  
+   * functionality, including sorting. 
+   *
+   * Now that I'm using SVD, the eigenvalues are in order up to signs.  So, I 
+   * should be able to use that info to make this code more efficient.
    */
   void FillOrbitals_() {
     
@@ -409,36 +468,86 @@ class SCFSolver {
    * Find the energy of the electrons in the ground state of the current 
    * wavefunction.  
    *
-   * The sum needs to be over occupied orbitals, according to Leach
+   * The sum needs to be over occupied orbitals, according to Szabo
+   * I'm not sure about this, though, since the notation keeps changing
    */
   double ComputeElectronicEnergy_() {
     
-    FillOrbitals_();
     
     double total_energy = 0.0;
+    one_electron_energy_ = 0.0;
+    two_electron_energy_ = 0.0;
     
-    for (index_t mu = 0; mu < occupied_indices_.size(); mu++) {
-     
-      index_t mu_index = occupied_indices_[mu];
-     
-      for (index_t nu = 0; nu < occupied_indices_.size(); nu++) {
-       
-        index_t nu_index = occupied_indices_[nu];
-       
-       // I don't think this is right
-       // I guess the density matrix needs to multiply the one electron too?
-        total_energy = total_energy + density_matrix_.ref(mu_index, nu_index) 
-            * (core_matrix_.ref(mu_index, nu_index) + 
-               fock_matrix_.ref(mu_index, nu_index));
-        
-      }
+    fock_max_ = -DBL_INF;
+    fock_min_ = DBL_INF;
+    density_max_ = -DBL_INF;
+    density_min_ = DBL_INF;
+    
+    for (index_t i = 0; i < number_of_basis_functions_; i++) {
       
-    }
+      // for the diagonal entries
+      one_electron_energy_ += density_matrix_.ref(i,i) * core_matrix_.ref(i,i);
+      two_electron_energy_ += density_matrix_.ref(i,i) * 
+                              (fock_matrix_.ref(i,i) - core_matrix_.ref(i,i));
+                              
+      
+      
+      total_energy += density_matrix_.ref(i,i) * 
+          (core_matrix_.ref(i,i) + fock_matrix_.ref(i,i));
+          
+      if (fock_matrix_.ref(i, i) > fock_max_) {
+        fock_max_ = fock_matrix_.ref(i,i);
+      }
+      if (fock_matrix_.ref(i,i) < fock_min_) {
+        fock_min_ = fock_matrix_.ref(i,i);
+      } 
+      if (density_matrix_.ref(i, i) > density_max_) {
+        density_max_ = density_matrix_.ref(i,i);
+      }
+      if (density_matrix_.ref(i,i) < density_min_) {
+        density_min_ = density_matrix_.ref(i,i);
+      } 
+      
+      
+      for (index_t j = i+1; j < number_of_basis_functions_; j++) {
+      
+        // multiply by 2 to get the lower triangle
+        one_electron_energy_ += 2 * density_matrix_.ref(i,j) * 
+                                core_matrix_.ref(i,j);
+        two_electron_energy_ += 2 * density_matrix_.ref(i,j) * 
+                                (fock_matrix_.ref(i,j) - core_matrix_.ref(i,j));
+        
+        double this_energy = 2 * density_matrix_.ref(i, j) * 
+            (core_matrix_.ref(i, j) + fock_matrix_.ref(i, j));
+            
+        total_energy = total_energy + this_energy;
+
+        if (fock_matrix_.ref(i, j) > fock_max_) {
+          fock_max_ = fock_matrix_.ref(i,j);
+        }
+        if (fock_matrix_.ref(i,j) < fock_min_) {
+          fock_min_ = fock_matrix_.ref(i,j);
+        } 
+        if (density_matrix_.ref(i, j) > density_max_) {
+          density_max_ = density_matrix_.ref(i,j);
+        }
+        if (density_matrix_.ref(i,j) < density_min_) {
+          density_min_ = density_matrix_.ref(i,j);
+        } 
+        
+      } // j
     
-    total_energy = 0.5 * total_energy;
-    total_energy = total_energy + nuclear_repulsion_energy_;
+    } // i
+    
+    // Leach says there is a factor of 1/2
+    total_energy = (0.5 * total_energy) + nuclear_repulsion_energy_;
+    
+    one_electron_energy_ = 0.5 * one_electron_energy_;
+    two_electron_energy_ = 0.5 * two_electron_energy_;
+    
     
     return total_energy;
+    
     
   } // ComputeElectronicEnergy_
   
@@ -447,24 +556,28 @@ class SCFSolver {
    */
   bool TestConvergence_() {
     
-    if (unlikely(current_iteration_ == 0)) {
+    if (unlikely(current_iteration_ < 2)) {
       return false;
     }
     
     double energy_diff = fabs(total_energy_[current_iteration_] - 
                               total_energy_[(current_iteration_ - 1)]);
     
-   /*
+   
     printf("current_iteration: %d\n", current_iteration_);
     
     printf("density_matrix_frobenius_norm_: %g\n", 
            density_matrix_frobenius_norm_);
+           
+    printf("one_electron_energy: %g\n", one_electron_energy_);
+    printf("nuclear_repulsion_energy: %g\n", nuclear_repulsion_energy_);
+    printf("two_electron_energy: %g\n", two_electron_energy_);
     
     printf("total_energy_[%d]: %g\n", current_iteration_, 
            total_energy_[current_iteration_]);
     printf("energy_diff: %g\n", energy_diff);
     
-    */
+    
     
     if (likely(density_matrix_frobenius_norm_ > density_convergence_)) {
       return false;
@@ -557,6 +670,8 @@ class SCFSolver {
       
     } // end while
     
+    total_energy_[current_iteration_] = ComputeElectronicEnergy_();
+    
   } // FindSCFSolution_
   
   /**
@@ -604,7 +719,7 @@ class SCFSolver {
     
     const char* energy_file = fx_param_str(module_, "Etot", "total_energy.csv");
     FILE* energy_pointer = fopen(energy_file, "w");
-    for (index_t i = 0; i < (current_iteration_ - 1); i++) {
+    for (index_t i = 0; i < current_iteration_; i++) {
      
       fprintf(energy_pointer, "Iteration %d:\t %f\n", i, total_energy_[i]);
       
@@ -619,13 +734,61 @@ class SCFSolver {
     
     fx_format_result(module_, "density_matrix_norm", "%g", 
                      density_matrix_frobenius_norm_);
+                     
+    fx_format_result(module_, "fock_max", "%g", fock_max_);
+    fx_format_result(module_, "fock_min", "%g", fock_min_);
+    fx_format_result(module_, "density_max", "%g", density_max_);
+    fx_format_result(module_, "density_min", "%g", density_min_);
+                     
+    fx_format_result(module_, "nuclear_repulsion", "%g", 
+                     nuclear_repulsion_energy_);
+                     
+    fx_format_result(module_, "one_electron_energy", "%g", 
+                     one_electron_energy_);
+    
+    fx_format_result(module_, "two_electron_energy", "%g", 
+                     two_electron_energy_);
     
     fx_format_result(module_, "num_iterations", "%d", current_iteration_);
     
     fx_format_result(module_, "total_energy", "%g", 
-                     total_energy_[current_iteration_-1]);
+                     total_energy_[current_iteration_]);
     
-    integrals_.OutputFockMatrix(NULL, NULL, NULL, NULL);
+    Matrix coulomb_out;
+    Matrix exchange_out;
+    
+    coulomb_max_ = -DBL_INF;
+    coulomb_min_ = DBL_INF;
+    exchange_max_ = -DBL_INF;
+    exchange_min_ = DBL_INF;
+    
+    integrals_.OutputFockMatrix(NULL, &coulomb_out, &exchange_out, NULL);
+    
+    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    
+      for (index_t j = i; j < number_of_basis_functions_; j++) {
+      
+        if (coulomb_out.ref(i,j) > coulomb_max_) {
+          coulomb_max_ = coulomb_out.ref(i,j);
+        }
+        if (coulomb_out.ref(i,j) < coulomb_min_) {
+          coulomb_min_ = coulomb_out.ref(i,j);
+        }
+        if (exchange_out.ref(i,j) > exchange_max_) {
+          exchange_max_ = exchange_out.ref(i,j);
+        }
+        if (exchange_out.ref(i,j) < exchange_min_) {
+          exchange_min_ = exchange_out.ref(i,j);
+        }
+        
+      } // j
+    
+    } // i
+    
+    fx_format_result(module_, "coulomb_max", "%g", coulomb_max_);
+    fx_format_result(module_, "coulomb_min", "%g", coulomb_min_);
+    fx_format_result(module_, "exchange_max", "%g", exchange_max_);
+    fx_format_result(module_, "exchange_min", "%g", exchange_min_);
     
   }
   
@@ -654,26 +817,26 @@ class SCFSolver {
     // These should be changed to print debug or something
     
     printf("Core Matrix:\n");
-    ot::Print(core_matrix_);
+    core_matrix_.PrintDebug();
     
     printf("Coefficient matrix:\n");
-    ot::Print(coefficient_matrix_);
+    coefficient_matrix_.PrintDebug();
     
     printf("Change-of-basis matrix:\n");
-    ot::Print(overlap_matrix_);
+    overlap_matrix_.PrintDebug();
     
     printf("Density matrix:\n");
-    ot::Print(density_matrix_);
+    density_matrix_.PrintDebug();
     
     printf("Fock matrix:\n");
-    ot::Print(fock_matrix_);
+    fock_matrix_.PrintDebug();
     
     printf("Energy vector:\n");
-    ot::Print(energy_vector_);
+    energy_vector_.PrintDebug();
     
     printf("Total energy:\n");
-    ot::Print(total_energy_);
-    
+    ot::Print(total_energy_);  
+      
   } // PrintMatrices
   
 }; // class HFSolver
