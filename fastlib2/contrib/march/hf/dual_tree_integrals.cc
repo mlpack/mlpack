@@ -72,7 +72,7 @@ double DualTreeIntegrals::ComputeSingleIntegral_(const Vector& mu_center,
   
   // Constant in front
   double return_value = 0.25 * pow((math::PI/bandwidth_), 2.5) * 
-  normalization_constant_fourth_;
+      normalization_constant_fourth_;
   
   //double four_centers_dists = la::DistanceSqEuclidean(mu_center, rho_center) + 
   //la::DistanceSqEuclidean(nu_center, sigma_center);

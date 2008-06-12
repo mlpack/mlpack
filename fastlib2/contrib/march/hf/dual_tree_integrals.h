@@ -797,8 +797,7 @@ class DualTreeIntegrals {
             if (rho != sigma) {  
             
               double lk_integral = density_matrix_.ref(sigma_index, rho_index) * 
-                ComputeSingleIntegral_(mu_vec, sigma_vec, nu_vec, rho_vec) * 
-                0.5;
+                ComputeSingleIntegral_(mu_vec, sigma_vec, nu_vec, rho_vec) * 0.5;
             
               integral_value = integral_value + lk_integral;
               
@@ -1419,6 +1418,8 @@ public:
     
     tree_ = tree::MakeKdTreeMidpoint<IntegralTree>(centers_, leaf_size_, 
                 &old_from_new_centers_, NULL);
+                
+    //ot::Print(old_from_new_centers_);
     
     // Set up the indices of the nodes for symmetry pruning
     traversal_index_ = 0;
@@ -1461,8 +1462,9 @@ public:
    */
   void UpdateMatrices(const Matrix& new_density) {
   
-    //This isn't necessary since it's already an alias
     density_matrix_.CopyValues(new_density);
+    
+    //density_matrix_.PrintDebug();
     
     // Reset tree density bounds
     ResetTree_(square_tree_);
@@ -1496,9 +1498,13 @@ public:
     fx_timer_stop(module_, "exchange_recursion");
     
     // Then by adding both into the Fock matrix
+    /*
     la::AddTo(coulomb_matrix_, &fock_matrix_);
     la::Scale(-1, &exchange_matrix_);
     la::AddTo(exchange_matrix_, &fock_matrix_);
+    */
+    
+    la::SubOverwrite(exchange_matrix_, coulomb_matrix_, &fock_matrix_);
     
   } // ComputeTwoElectronIntegrals
   

@@ -12,6 +12,8 @@ int main(int argc, char *argv[]) {
  
   fx_init(argc, argv);
   
+  const double angstroms_to_bohr = 1.889725989;
+  
   struct datanode* mod = fx_submodule(NULL, "hf", "hf");
   
   int num_electrons = fx_param_int_req(NULL, "num_electrons");
@@ -40,6 +42,13 @@ int main(int argc, char *argv[]) {
   
   Vector nuclear_mass;
   nuclear_masses.MakeColumnVector(0, &nuclear_mass);
+  
+  if (fx_param_exists(NULL, "angstroms")) {
+  
+    la::Scale(angstroms_to_bohr, &centers);
+    la::Scale(angstroms_to_bohr, &nuclear);
+  
+  }
   
   Matrix density;
   if (fx_param_exists(NULL, "initial_density")) {
