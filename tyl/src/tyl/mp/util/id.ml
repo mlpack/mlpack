@@ -2,7 +2,6 @@ type t = String of string | Marked of Pos.range * t
   
 let rec expose i : string = match i with String s -> s | Marked (_,j) -> expose j
  
-let make s = String s
 let equal i j = expose i = expose j
 
 type temp = t
@@ -20,8 +19,8 @@ let (++) i j = String (expose i ^ expose j)
 let fresh taboo root =
   let isFresh id = not (Set.mem id taboo) in
   let rec firstFreshFrom k = 
-    let newId = root ++ String (string_of_int k) in
-      if isFresh newId then newId else firstFreshFrom (k+1)
+    let id = root ++ String (string_of_int k) in
+      if isFresh id then id else firstFreshFrom (k+1)
   in 
     if isFresh root then root else firstFreshFrom 0
 

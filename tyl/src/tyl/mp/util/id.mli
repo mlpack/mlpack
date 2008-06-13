@@ -1,6 +1,5 @@
 type t
 
-val make : string -> t (* create a new id *)
 val equal : t -> t -> bool
 val fresh : Set.t -> t -> t (* return an id not in set, using input id as root of returned it *)
 
