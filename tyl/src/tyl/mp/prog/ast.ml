@@ -12,6 +12,7 @@ type direction = Min | Max
     
 type typ = 
   | TVar of Id.t
+  | TReal
       (*| TIntervalr of XRat.interval *)
       (*| TIntervali of XInt.interval *)
   | TBool
