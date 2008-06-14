@@ -166,6 +166,11 @@ class DualtreeKde {
      */
     double used_error_;
 
+    /** @brief Upper bound on the squared used error for the query
+     *         points owned by this node.
+     */
+    double squared_used_error_;
+
     /** @brief Lower bound on the number of reference points taken
      *         care of for query points owned by this node.
      */
@@ -187,6 +192,11 @@ class DualtreeKde {
      *         points that must be propagated downwards.
      */
     double postponed_used_error_;
+
+    /** @brief The total amount of squared error used in approximation
+     *         for all query points that must be propagated downwards.
+     */
+    double postponed_squared_used_error_;
 
     /** @brief The number of reference points that were taken care of
      *         for all query points under this node; this information
@@ -218,12 +228,14 @@ class DualtreeKde {
       mass_l_ = 0;
       mass_u_ = 0;
       used_error_ = 0;
+      squared_used_error_ = 0;
       n_pruned_ = 0;     
      
       postponed_l_ = 0;
       postponed_e_ = 0;
       postponed_u_ = 0;
       postponed_used_error_ = 0;
+      postponed_squared_used_error_ = 0;
       postponed_n_pruned_ = 0;
       postponed_extra_probability_ = 0;
     }
@@ -255,17 +267,20 @@ class DualtreeKde {
     
     KdeStat() { }
     
-    ~KdeStat() {}
+    ~KdeStat() { }
     
   };
   
  private:
 
   ////////// Private Constants //////////
+
   /** @brief The number of initial samples to take per each query when
    *         doing Monte Carlo sampling.
    */
   static const int num_initial_samples_per_query_ = 25;
+
+  ////////// Private Member Variables //////////
 
   /** @brief The pointer to the module holding the parameters.
    */
@@ -314,6 +329,10 @@ class DualtreeKde {
   /** @brief The amount of used error for each query.
    */
   Vector used_error_;
+
+  /** @brief The amount of squared used error for each query.
+   */
+  Vector squared_used_error_;
 
   /** @brief The number of reference points taken care of for each
    *         query.
@@ -478,6 +497,7 @@ class DualtreeKde {
 
     // set zero for error accounting stuff
     used_error_.SetZero();
+    squared_used_error_.SetZero();
     n_pruned_.SetZero();
     extra_probability_.SetZero();
 
@@ -503,7 +523,7 @@ class DualtreeKde {
     
     // Get the required probability guarantee for each query and call
     // the main routine.
-    double probability = fx_param_double(module_, "probability", 0.9);
+    double probability = fx_param_double(module_, "probability", 1);
     DualtreeKdeCanonical_(qroot_, rroot_, probability);
 
     // Postprocessing step for finalizing the sums.
@@ -580,6 +600,7 @@ class DualtreeKde {
 
     // initialize the error accounting stufff
     used_error_.Init(qset_.n_cols());
+    squared_used_error_.Init(qset_.n_cols());
     n_pruned_.Init(qset_.n_cols());
     extra_probability_.Init(qset_.n_cols());
 

@@ -50,8 +50,7 @@ binrule(
 binrule(
     name = "fgt_kde_bin",
     sources = ["fgt_kde_main.cc"],
-    headers = ["fgt_kde.h",
-               "kde.h"],
+    headers = ["fgt_kde.h"],
     deplibs = ["fastlib:fastlib_int"]
     )
 
