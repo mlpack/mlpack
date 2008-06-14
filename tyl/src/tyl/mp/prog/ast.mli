@@ -14,7 +14,7 @@
 
 open Util
 
-type nullOp = Rational of float | Bool of bool
+type nullOp = Real of float | Bool of bool
 type unaryOp = Neg | Not 
 type binaryOp = Plus | Minus | Mult | Or | And
 type numRel = Equal | Lte | Gte
@@ -44,5 +44,10 @@ and prop =
       
 and prog = 
   | PMain of direction * ((Id.t * typ) list) * expr * prop
-      
-type context
+
+module Ctxt : sig
+  type t 
+  val add : t -> Id.t -> typ -> t
+  val fromList : (Id.t * typ) list -> t
+  val contains : t -> Id.t -> typ -> bool
+end

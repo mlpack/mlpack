@@ -1,6 +1,7 @@
 open Util 
+open List
 
-type nullOp = Rational of float | Bool of bool
+type nullOp = Real of float | Bool of bool
 type unaryOp = Neg | Not 
 type binaryOp = Plus | Minus | Mult | Or | And
 type numRel = Equal | Lte | Gte
@@ -30,5 +31,10 @@ and prop =
       
 and prog = 
   | PMain of direction * ((Id.t * typ) list) * expr * prop
-      
-type context = string
+
+module Ctxt = struct
+  type t = (Id.t * typ) list
+  let add ctxt x t = (x,t)::ctxt
+  let fromList xx = xx
+  let contains ctxt x t = mem (x,t) ctxt
+end

@@ -4,9 +4,9 @@ open List
 let wfType t = true
 
 let rec isOfType ctxt e t = match e,t with 
-  | EVar x                  , t'    -> failwith "FIXME"
+  | EVar x                  , t'    -> Ctxt.contains ctxt x t
   | EConst (Bool _)         , TBool -> true
-  | EConst (Rational _)     , TReal -> true
+  | EConst (Real _)         , TReal -> true
   | EUnaryOp (Neg,e')       , TReal -> isOfType ctxt e' TReal
   | EUnaryOp (Not,e')       , TBool -> isOfType ctxt e' TBool
   | EBinaryOp (Plus,e1,e2)  , TReal -> isOfType ctxt e1 TReal && isOfType ctxt e2 TReal
@@ -17,12 +17,14 @@ let rec isOfType ctxt e t = match e,t with
   | _ -> false
 
 let rec wfProp ctxt c = match c with 
-  | CBoolVal _ -> true
-  | _ -> failwith "FIXME"
+  | CBoolVal _        -> true
+  | CIsTrue e         -> isOfType ctxt e TBool
+  | CNumRel (_,e1,e2) -> isOfType ctxt e1 TReal && isOfType ctxt e2 TReal
+  | CPropOp (_,cc)    -> for_all (wfProp ctxt) cc
+  | CQuant (_,x,t,c') -> wfType t && wfProp (Ctxt.add ctxt x t) c'
 
 let wfProg p = match p with 
   | PMain (_,xx,e,c) -> 
-      let ctxt = "" in 
+      let ctxt = Ctxt.fromList xx in 
       let (_,tt) = split xx in 
-        for_all wfType tt && isOfType ctxt e TReal && wfProp ctxt c 
-
+        for_all wfType tt && isOfType ctxt e TReal && wfProp ctxt c
