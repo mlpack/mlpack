@@ -1,8 +1,3 @@
-module A = Tyl.Mp
-module B = A.Prog
-module C = A.Util
-module D = B.Ast
-module E = C.Pos
-module F = C.Id
+module A = Tyl.Mp.Prog.Ast
 
 let _ = Printf.printf "hello\n"
