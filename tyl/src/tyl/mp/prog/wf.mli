@@ -3,6 +3,6 @@
 open Ast
 
 val wfType : typ -> bool
-val isOfType : context -> expr -> typ -> bool
-val wfProp : context -> prop -> bool
+val isOfType : Ctxt.t -> expr -> typ -> bool
+val wfProp : Ctxt.t -> prop -> bool
 val wfProg : prog -> bool
